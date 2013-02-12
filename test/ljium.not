@@ -1,0 +1,43 @@
+# File: 'test/ljium.not'
+# AtomType Definitions
+AtomTypes
+  AtomType  'CT'    C  'CT'
+EndAtomTypes
+
+# Species Definitions
+Species 'Ball'
+  # Atoms
+  Atom    1    C     0.000    0.000    0.000    0.000 'CT'
+
+  # Grain Definitions
+  Grain  'Grain'  1
+
+  # Isotopologues
+  Isotopologue  'Natural'  CT=0
+EndSpecies
+
+# System Composition
+System
+  Multiplier  500
+  Density   1.0      g/cm3
+  Component  'Ball'  1.000000  1.000000  1
+EndSystem
+
+# Samples
+Sample  'Natural'
+  Isotopologue  'Ball'  'Natural'  1.000000  1.000000
+EndSample
+
+# Pair Potentials
+PairPotentials
+  Range  10.00000
+  Delta  0.0100000
+  TruncationWidth  2.000000
+  Dispersion  'CT'  'CT'  3.0  0.6
+EndPairPotentials
+
+# Setup
+Setup
+  Temperature 300.0
+  Seed  943826
+EndSetup

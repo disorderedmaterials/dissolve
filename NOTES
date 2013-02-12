@@ -1,0 +1,62 @@
+Ideas / Notes / Idiotic Algorithm Suggestions
+---------------------------------------------
+
+** The 'Ghost' Atom
+For systems which have non-uniform density, is it possible to implement an atom (element) type which has no physical presence other than to 'bulk-out' the system? For instance, in the case of MCM-41 pores, the ghost atoms will (should) cluster together to form the hole. How can the empirical potential be calculated for the ghost atom species?
+
+** Tabulated Coulomb Potential
+For now, only the LJ potential is tabulated, and charge interactions are calculated explicitly.  However, for AtomTypes which can be assigned realistic charges (i.e. those which are constant or near-constant across all atoms with the assigned type, e.g. HW, OW) the coulomb potential can be added to the tabulated potential. A check will need to be performed to determine whether the Atoms involved have their coulomb interaction accounted for by the Potential.
+
+** Fixed Atoms
+Need to allow fixed atoms, which never move throughout the course of the simulation. This will entail:
+	- Checks for fixed Atoms with GrainDefinitions - this should not be allowed since a Grain will be mobile.
+	- Provision for pre-calculation of RDF/F(Q) data between fixed atoms, and introduction of this into final RDF/F(Q) data
+	- Intermolecular potential still needs to be calculated - 
+
+** Monte Carlo 'Velocity'
+Keep track of last successful rotation / translation for each Grain, allowing similar moves to be attempted on next round? Reset if move fails.
+
+** RDF Calculation
+Can Grains be treated as a single scattering body (with average scattering length of the constituent Atoms) at far-enough distance?  Need to check this.
+
+** Empirical Potential Generation / RDFs
+If the empirical potential only depends on the partial RDFs up to the potential cutoff distance (as it states in the EPSR manual) then we can use the Cell neighbour lists to calculate the RDFs extremely quickly up to this range. In order to calculate the full RDFs for comparison with the experimental S(Q), all Atoms must be considered *unless* each Cell has a second neighbour list which includes all Cells within the maximal distance (root 3 of the cell diagonal for a cubic cell, or whatever it may be). We may then take advantage of know which Cells do/do not need minimum image calculation, and can speed up things considerably.
+
+** Model 'branching'
+Above a certain threshold of r-squared, or at certain time intervals, 'big events' could occur which radically change the structure of the system. For instance, large molecule flips / rotations / exchanges. Standard energetic criteria would normally disallow such moves, but a 'big event' could unequivically accept all such moves and progress the system back to an equilibrium, at which point the goodness of fit would be recalculated and compared against those previously stored.  We would maintain a history of branch points, storing the model coordinates at these points so that we can revert back to the previous best if necessary. Perhaps it is possible to track the r-squared value and predict its value at some future point if we keep progressing down a particular branch.
+
+** Strings
+What does the empirical potential look like?  For instance, in the case of Rowan's agglomeration of long chain stuff, are there definite negative energy parts of the potential?  If so, can we attach temporary 'restraints' between a certain proportion of the involved atoms in order to forcibly bring them together to the correct distance?
+
+** Zero-Point Disorder
+For fixed atoms, can zero-point disorded be modelled effectively by introducing a random fluctuation to the particle's coordinates each time they are retrieved (a la Simplex SA)?
+
+** Cycles
+Can store whether a Bond is involved in a cycle in the actual Bond structure, meaning randomisation / shake moves can be made accordingly. If such flags are present, can we just ignore bonds in the cycle when it comes to shakes and invent a 'ring' potential, which defines the maximum deviation of atoms from the general plane of the ring? 
+
+** Dynamic Bonding
+Could dynamic bonding be implemented? If a simple master list of Bonds / Angles is employed as suggested above then we can create / destroy them at will.
+
+** Names
+Grain
+MyGrain (migraine)
+InGrained
+Sqew
+
+** IMPORTANT TODO
+Replace simple 'returns' from failed MPI functions with a proper call to MPI_Abort (perhaps via a function such as NotEpsrComm::abort(const char* fmt, ...)?).
+
+** Cache Misses
+At the start of a Cell-based loop calculation, is it worthwhile copying all neighbouring cell data to a local Grain array, and trying to avoid cache misses? AKS mentioned before that this seemed to be beneficial. Worth trying. May work better with, for instance, larger nShakesPerGrain in GrainShake. Adapt ChangeStore to automatically create list of Grains in Cell neighbours ready for calculation? Would also work well for Molecule-based loops.
+
+** Strategy
+Automatically determine strategy based on molecules supplied? For instance, molecules with 'torsions' should have Twist enabled and the Twist method added to the main cycle loop. 
+
+** Quick MIM for Cubic/Orthorhombic boxes
+Assuming that we will onlyi ever check realistic coordinates (e.g. within +/- one box in each direction around the central one) we may create a tabulated array of Box coordinates and their 'mim'd counterparts, so all that is required is a multiply by the tabulated grid and then a lookup in the array. Will have some cost on accuracy, but might be considerably quicker.
+
+** Configuration Stack
+Store temperature_ in Configuration?  HAve a List of Configurations which all methods act on one after the other (parallel tempering?).  Can then do multiple fits to different temperature data, for example. In such a case, remembering which partials were calculated for which Configuration (and when) will be awkward, so probably better off storing partial data *inside* Configuration.
+
+** Atom Type 'Applicability'
+For an alkane, for instance, the pairpotential for the terminal H may be different from the methylene H - to what extent does this affect the possible fit?  WOuld be nice to refine a system with one potential for all H, then split into CH3 and CH2 potentials to find out.

@@ -1,0 +1,31 @@
+<RCC>
+  <qresource prefix="Icons">
+    <file>icons/logo-64x64.png</file>
+    <file>./icons/style_tube.svg</file>
+    <file>./icons/basic_cross.svg</file>
+    <file>./icons/basic_menuarrow.svg</file>
+    <file>./icons/basic_minus.svg</file>
+    <file>./icons/basic_plus.svg</file>
+    <file>./icons/file_close.svg</file>
+    <file>icons/basic_copy.svg</file>
+    <file>./icons/file_new.svg</file>
+    <file>./icons/file_open.svg</file>
+    <file>./icons/file_save.svg</file>
+    <file>./icons/file_saveas.svg</file>
+    <file>./icons/style_scaled.svg</file>
+    <file>./icons/style_sphere.svg</file>
+    <file>./icons/style_stick.svg</file>
+  </qresource>
+  <qresource prefix="Help">
+    <file>help/system.txt</file>
+    <file>help/atomtypes.txt</file>
+    <file>help/view.txt</file>
+    <file>help/mix.txt</file>
+    <file>help/sample.txt</file>
+    <file>help/grains.txt</file>
+    <file>help/pairpot.txt</file>
+    <file>help/intramolecular.txt</file>
+    <file>help/isotopologues.txt</file>
+    <file>help/species.txt</file>
+  </qresource>
+</RCC>

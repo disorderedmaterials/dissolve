@@ -1,0 +1,280 @@
+/*
+	*** OpenGL Viewer Widget (subclassing QGLWidget)
+	*** src/gui/viewer.uih
+	Copyright T. Youngs 2012
+
+	This file is part of dUQ.
+
+	dUQ is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	dUQ is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#ifndef DUQ_VIEWER_H
+#define DUQ_VIEWER_H
+
+#include <QtOpenGL/QGLWidget>
+#include <QtCore/QObject>
+#include "gui/viewer_primitive.h"
+#include "gui/viewer_primitiveinfo.h"
+#include "gui/viewer_textprimitive.h"
+#include "gui/viewer_trianglechopper.h"
+#include "templates/reflist.h"
+
+// Forward Declarations
+class Species;
+class Configuration;
+class MainWindow;
+
+// Base rendering widget
+class Viewer : public QGLWidget
+{
+	Q_OBJECT
+
+	public:
+	// Constructor / Destructor
+	Viewer(QWidget *parent);
+	~Viewer();
+
+
+	/*
+	// Character / Setup
+	// (in viewer_funcs.cpp)
+	*/
+	private:
+	// Width, height, and aspect ratio of the canvas
+	GLsizei contextWidth_, contextHeight_;
+	// Flag to indicate whether we may draw to the canvas
+	bool valid_;
+	// Flag indicating if we are currently drawing to this canvas
+	bool drawing_;
+	// Flag specifying whether we are currently rendering offscreen
+	bool renderingOffscreen_; 
+	// Projection matrix for the scene
+	Matrix4 projectionMatrix_;
+	// View matrix for the scene (modified by mouse/keyboard input)
+	Matrix4 viewMatrix_;
+	// Viewport matrix for the scene
+	GLuint viewportMatrix_[4];
+
+	protected:
+	// Initialise context widget (when created by Qt)
+	void initializeGL();
+	// General repaint callback
+	void paintGL();
+	// Paint event callback
+	void paintEvent(QPaintEvent* event);
+	// Resize function
+	void resizeGL(int, int);
+
+	public:
+	// Return the current height of the drawing area
+	GLsizei contextHeight() const;
+	// Return the current width of the drawing area
+	GLsizei contextWidth() const;
+	// Probe widget/context/format features
+	void probeFeatures();
+	// Check for GL error
+	void checkGlError();
+	// Refresh widget / scene
+	void postRedisplay();
+	// Setup projection matrix
+	void setProjectionMatrix(double perspectiveFov = 20.0);
+	// Update transformation (view) matrix
+	void setViewMatrix(Matrix4& mat);
+	// Render or grab image
+	QPixmap generateImage(int w, int h);
+	// Reset current view
+	void resetView();
+	// Project given model coordinates into world coordinates
+	Vec3<double> modelToWorld(const Vec3<double>& modelr);
+	// Project given model coordinates into screen coordinates
+	Vec4<double> modelToScreen(const Vec3<double>& modelr, double screenradius = -1.0);
+	// Convert screen coordinates into model space coordinates
+	Vec3<double> screenToModel(int x, int y, double z);
+
+	
+	/*
+	// Mouse / Keyboard Input
+	// (in viewer_input.cpp)
+	*/
+	private:
+	// MainWindow update targets, after Species content changed
+	int speciesUpdateTargets_;
+	// Atom context menu to call (if any)
+	QMenu* atomContextMenu_;
+	// Canvas coordinates of mouse down
+	Vec3<double> rMouseDown_;
+	// Canvas coordinates of mouse cursor
+	Vec3<double> rMouseLast_;
+	// State of mouse buttons on mousePressEvent
+	Qt::MouseButtons buttonStateOnPress_;
+
+	protected:
+	// Qt Virtual (mouse press event)
+	void mousePressEvent(QMouseEvent*);
+	// Qt Virtual (mouse release event)
+	void mouseReleaseEvent(QMouseEvent*);
+	// Qt Virtual (mouse move event)
+	void mouseMoveEvent(QMouseEvent*);
+	// Qt Virtual (mouse wheel event)
+	void wheelEvent(QWheelEvent*);
+
+	public:
+	// Set bit-array of GUI quantities to update after viewed model is modified
+	void setSpeciesUpdateTargets(int targets);
+	// Set atom context menu to call
+	void setAtomContextMenu(QMenu* menu);
+	// Return mouse coordinates at last mousedown event
+	Vec3<double> rMouseDown();
+	// Return mouse coordinates at last mousemove event
+	Vec3<double> rMouseLast();
+
+	public slots:
+	// Qt Slot (key press event)
+	void keyPressEvent(QKeyEvent*);
+	// Qt Slot (key release event)
+	void keyReleaseEvent(QKeyEvent*);
+
+
+	/*
+	// Rendering Engine
+	// (in viewer_engine.cpp)
+	*/
+	private:
+	// List of filtered solid primitives
+	List<PrimitiveInfo> solidPrimitives_;
+	// List of filtered transparent primitives
+	List<PrimitiveInfo> transparentPrimitives_;
+	// List of line primitives
+	Primitive linePrimitives_;
+	// List of point primitives
+	Primitive pointPrimitives_;
+	// List of plain text primitives and special isotope text primitives
+	TextPrimitiveList textPrimitives_, isotopeTextPrimitives_;
+	// Transparency chopper
+	TriangleChopper triangleChopper_;
+
+	private:
+	// Render primitive in specified colour
+	void renderPrimitive(Primitive* primitive, const GLfloat* colour, Matrix4& transform, GLenum fillMode = GL_FILL, GLfloat lineWidth = 1.0);
+	// Add text primitive for rendering later
+	void renderTextPrimitive(Vec3<double> pos, QString text, bool isIsotope = FALSE, bool rightalign = FALSE);
+	// Send all primitives to the display, sorting transparent triangles if necessary
+	void sortAndSendGL();
+
+
+	/*
+	// Rendering Preferences
+	// (in viewer_prefs.cpp)
+	*/ 
+	private:
+	// Flag specifying whether framebuffer should be used for offscreen rendering
+	static bool useFrameBuffer_;
+	// Flag specifying whether to use Qt text rendering over native OpenGL
+	static bool useNiceText_;
+	// Flag specifying whether to correct transparency artefacts
+	bool correctTransparency_;
+	// Font size to use
+	int fontSize_;
+	// Superscript fractional font size
+	double superScriptFraction_;
+	// Flag specifying whether the view has perspective
+	bool hasPerspective_;
+
+	public:
+	// Set default values for all static preferences
+	void setDefaultPreferences(bool setStaticMembers);
+	// Set whether framebuffer should be used for offscreen rendering
+	static void setUseFrameBuffer(bool b);
+	// Return whether framebuffer should be used for offscreen rendering
+	static bool useFrameBuffer();
+	// Set whether to use Qt text rendering over native OpenGL
+	static void setUseNiceText(bool b);
+	// Return whether to use Qt text rendering over native OpenGL
+	static bool useNiceText();
+	// Set whether to correct transparency artefacts
+	void setCorrectTransparency(bool b);
+	// Return whether to correct transparency artefacts
+	bool correctTransparency();
+	// Set font size to use
+	void setFontSize(int size);
+	// Return font size to use
+	int fontSize();
+	// Return superscript fractional font size
+	double superScriptFraction();
+	// Return whether the view has perspective
+	bool hasPerspective();
+	// Set whether this view has perspective
+	void setHasPerspective(bool b);
+
+
+	/*
+	// Rendering Functions / Data
+	// (in viewer_scene.cpp)
+	*/
+	public:
+	/// Draw Style enum
+	enum DrawStyle
+	{
+		PointStyle,		/**> Draw source Species/Configuration with points (atoms only) */
+		LineStyle,		/**> Draw source Species/Configuration with lines */
+		BallAndStickStyle,	/**> Draw source Species/Configuration with balls and sticks */
+		nDrawStyles		/**> Number of drawing styles */
+	};
+	
+	private:
+	// Source Species to display
+	Species *sourceSpecies_;
+	// Source Configuration to display
+	Configuration* sourceConfiguration_;
+	// Selection box (if any)
+	QRect selectionBox_;
+	// Integer logpoint or reference number, used to determine when scene needs to be reconstructed
+	long int lastScenePoint_;
+	// Reference list of all created primitives (to which all user primitives must be added)
+	RefList<Primitive,int> primitiveList_;
+	// Basic primtives
+	Primitive spherePrimitive03_, spherePrimitive04_, cubePrimitive_, wireCubePrimitive_, cylinderPrimitive_;
+	// Pointer to parent MainWindow (so we can call refresh functions)
+	MainWindow *mainWindow_;
+	// Style in which to draw source
+	Viewer::DrawStyle drawStyle_;
+
+	private:
+	// Create necessary primitives (called once when Viewer is constructed)
+	void createPrimitives();
+	// Setup basic GL properties
+	void setupGL();
+	// Draw source Species
+	void drawSpecies();
+	// Draw source Configuration
+	void drawConfiguration();
+
+	public:
+	// Set source (Species)
+	void setSource(Species *sp);
+	// Set source (Configuration)
+	void setSource(Configuration* cfg);
+	// Unset all sources
+	void unsetSource();
+	// Set parent MainWindow
+	void setParentMainWindow(MainWindow* mainWin);
+	// Set draw style
+	void setDrawStyle(Viewer::DrawStyle style);
+	
+	public slots:
+	// Change draw style
+	void changeDrawStyle(int style);
+};
+
+#endif

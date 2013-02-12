@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   version="1.0"
+   width="100"
+   height="100"
+   id="svg2">
+  <defs
+     id="defs4">
+    <filter
+       id="filter3239"
+       color-interpolation-filters="sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur3241"
+         stdDeviation="2.1418293" />
+    </filter>
+  </defs>
+  <path
+     d="M 77.468653,35.158541 C 27.557501,63.974758 27.557501,63.974758 27.557501,63.974758"
+     id="path3306"
+     style="fill:none;stroke:#282828;stroke-width:3.82999992;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+  <path
+     d="M 52.686388,13.628954 C 52.686388,86.544206 52.686388,86.544206 52.686388,86.544206"
+     id="path3294"
+     style="fill:none;stroke:#282828;stroke-width:3.83039784;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+  <path
+     d="M 89.144014,50.08658 C 16.228762,50.08658 16.228762,50.08658 16.228762,50.08658"
+     id="path3296"
+     style="fill:none;stroke:#282828;stroke-width:3.83039784;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+  <g
+     transform="matrix(1.0385707,0,0,1.1759673,-117.80751,-24.107983)"
+     id="g3157"
+     style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:2.62934494;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter3239)" />
+  <path
+     d="M 49.94053,10.934008 C 49.94053,83.84926 49.94053,83.84926 49.94053,83.84926"
+     id="path3277"
+     style="fill:none;stroke:#000000;stroke-width:3.83039784;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+  <path
+     d="M 86.398156,47.391634 C 13.482904,47.391634 13.482904,47.391634 13.482904,47.391634"
+     id="path3279"
+     style="fill:none;stroke:#000000;stroke-width:3.83039784;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+  <path
+     d="M 74.809451,32.872888 C 24.898299,61.689105 24.898299,61.689105 24.898299,61.689105"
+     id="path3281"
+     style="fill:none;stroke:#000000;stroke-width:3.82999992;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+</svg>

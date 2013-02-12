@@ -1,0 +1,91 @@
+#!/bin/bash
+
+# Script to 'wrap' around svn and update version info before commit.
+
+COMMITFILE="none"
+COMMITMSG="none"
+COMMITTYPE="none"
+TEST="false"
+UPDATE="false"
+
+# Parse CLI arguments / options
+USAGE1="commit [-F <filename>] [-m <text>] [-t]"
+
+while getopts "F:m:tu" options; do
+  case $options in
+    F ) COMMITFILE=$OPTARG
+	COMMITTYPE="file"
+        echo "Using file "$COMMITFILE" for commit message.";;
+    m ) COMMITMSG=$OPTARG
+	COMMITTYPE="msg"
+        echo "Using supplied text for commit message.";;
+    t ) TEST="true"
+	echo "Test only - no file changes will be made.";;
+    u ) UPDATE="true"
+	echo "Local source will be updated before commit.";;
+    \? ) echo -e $USAGE1
+         exit 1;;
+    * ) echo -e $USAGE1
+        exit 1;;
+  esac
+done
+
+# Check that a commit type was given
+if [ "$COMMITTYPE" = "none" ] && [ "$TEST" = "false" ]
+then
+  echo "No commit message/file was given."
+  exit 0
+fi
+
+# Update if requested
+if [ "$UPDATE" = "true" ]
+then
+  svn update
+fi
+
+# Determine current svn version number and increase it by one.
+OLDREV=`svn info -r HEAD | grep Revision | sed "s/Revision: \([0-9]*\)/\1/g"`
+let REVISION=OLDREV+1
+# Check for failed svn command
+if [ "$REVISION" = "1" ]
+then
+  echo "Failed."
+  exit 1
+fi
+echo "Current version is revision $OLDREV - committed version will be revision $REVISION..."
+
+# Determine svn URL
+URL=`svn info | grep URL | sed -e "s/URL: \(.*\)/\1/g" -e "s/https/http/g"`
+echo "Subversion repository is: "$URL
+
+# Get current date and time
+DATE=`date "+%a %d %b - %H:%M"`
+
+# Change URL revision information
+echo "Setting revision information..."
+
+if [ "$TEST" = "false" ]
+then
+  sed -i -e "s/#define DUQREVISION \"[0-9\.]\+\(.*\)\"/#define DUQREVISION \"$REVISION\"/g" -e "s/#define DUQDATE \".\+\"/#define DUQDATE \"$DATE\"/g" src/version.h
+  sed -i -e "s/m4_define(\[DUQ_VERSION\],\[.\+\])/m4_define([DUQ_VERSION],[r$REVISION])/g" configure.ac
+else
+  sed -e "s/#define DUQREVISION \"[0-9\.]\+\(.*\)\"/#define DUQREVISION \"$REVISION\"/g" -e "s/#define DUQDATE \".\+\"/#define DUQDATE \"$DATE\"/g" src/version.h
+fi
+
+# If this was just a test we're done at this point
+if [ "$TEST" = "true" ]
+then
+  exit 0
+fi
+
+# Commit changes
+if [ "$COMMITTYPE" = "file" ]
+then
+  svn commit -F $COMMITFILE
+fi
+if [ "$COMMITTYPE" = "msg" ]
+then
+  svn commit -m "$COMMITMSG"
+fi
+
+exit 0
