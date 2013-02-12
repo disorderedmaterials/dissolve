@@ -1,0 +1,5 @@
+add_subdirectory(base)
+add_subdirectory(classes)
+add_subdirectory(main)
+add_subdirectory(math)
+add_subdirectory(templates)

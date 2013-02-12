@@ -1,0 +1,63 @@
+# File: 'test/argon-85K-small-sim.not'
+# AtomType Definitions
+AtomTypes
+  AtomType  'Ar'   Ar  'Ar'
+EndAtomTypes
+
+# Species Definitions
+Species 'Argon'
+  # Atoms
+  Atom    1   Ar     0.000    0.000    0.000    0.000 'Ar'
+
+  # Grain Definitions
+  Grain  'Ar'  1
+
+  # Isotopologues
+  Isotopologue  'Ar36'  Ar=36
+EndSpecies
+
+# System Composition
+System
+  Multiplier  1000
+  Density  0.021300  atoms/A3
+  CellLengths  1.000000  1.000000  1.000000
+  CellAngles  90.000000  90.000000  90.000000
+  Component  'Argon'  1.000000  1.000000  1
+  File 'test/argon-85K-small.xyz'
+EndSystem
+
+# Samples
+# One sample - MC  simulated Ar system with potential parameters sigma=3.166 and epsilon=0.65
+Sample  'Simulation'
+  Isotopologue  'Argon'  'Ar36'  1.000000  1.000000
+  ReferenceData  'test/argon-85K-small-sim.ref'
+EndSample
+
+# Pair Potentials
+PairPotentials
+  Range  15.000000
+  Delta  0.050000
+  TruncationWidth  2.000000
+  Dispersion  'Ar'  'Ar'  3.166000  0.650000	# Potential parameters used in argon-85K-s3.166e0.65.txt
+EndPairPotentials
+
+# Setup
+Setup
+  Seed  82753633
+  Temperature  85.000000
+  BoxNormalisationPoints 500000000
+  BoxNormalisationFile 'test/argon-85K-small-sim.box.norm'
+EndSetup
+
+# Simulation
+Simulation
+e
+t 85.0
+#100 as 1 10.0
+s
+pair
+saverdfs
+savesq
+emp
+EndSimulation
+

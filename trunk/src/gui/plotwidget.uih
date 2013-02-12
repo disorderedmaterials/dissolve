@@ -1,0 +1,390 @@
+/*
+	*** Data2D Plotting Widget
+	*** src/gui/plotwidget.uih
+	Copyright T. Youngs 2012
+
+	This file is part of dUQ.
+
+	dUQ is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	dUQ is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#ifndef DUQ_PLOTWIDGET_H
+#define DUQ_PLOTWIDGET_H
+
+#include <QtGui/QWidget>
+#include <QtOpenGL/QGLWidget>
+#include <QtCore/QObject>
+#include "main/duq.h"
+#include "base/data2d.h"
+#include "templates/reflist.h"
+
+// Forward Declarations
+class QMenu;
+class QPushButton;
+class QLabel;
+
+/*!
+ * \brief PlotData
+ * \details A PlotData object is instantiated from a Graphwith data passedData pointer, and creates a local
+ * copy of the data in the form of a display list for quick drawing. Line style data is also
+ * stored and associated with the GraphData.
+ */
+class PlotData : public ListItem<PlotData>
+{
+	public:
+	// Constructor
+	PlotData();
+	// Destructor
+	~PlotData();
+
+
+	/*!
+	 * \name Plot Data
+	 */
+	///@{
+	public:
+	/// Modifiers for Input X/Y data
+	enum DataModifier
+	{
+		NoModifier,		/**> Input data is taken as-is */
+		SqrtModifier,		/**> Take square root of input data */
+		nDataModifiers		/**> Number of data modifiers */
+	};
+
+	private:
+	// Source data (local Data2D)
+	Data2D localSourceData_;
+	// Source data (external CheckPoint<Data2D>)
+	CheckPoint<Data2D>* externalSourceData_;
+	// Group index (or -1 for no group)
+	int groupIndex_;
+	// QPainterPath of data
+	QPainterPath painterPath_;
+	// Whether this data is visible (i.e. should be drawn)
+	bool visible_;
+	// Vertical offset to apply to data
+	double verticalOffset_;
+	// X range of data
+	double xMin_, xMax_;
+	// Y range of data
+	double yMin_, yMax_;
+	// Data name
+	QString name_;
+	// Input data modifiers
+	DataModifier xDataModifier_, yDataModifier_;
+
+	private:
+	// Return modified value
+	double modifiedValue(double value, PlotData::DataModifier modifier);
+
+	public:
+	// Set internal source data
+	void setSourceData(Data2D& source, DataModifier xModifier = PlotData::NoModifier, DataModifier yModifier = PlotData::NoModifier);
+	// Set source data (external CheckPoint<Data2D>)
+	void setSourceData(CheckPoint<Data2D>* source, DataModifier xModifier = PlotData::NoModifier, DataModifier yModifier = PlotData::NoModifier);
+	// Return external source data
+	CheckPoint<Data2D>* externalSourceData();
+	// (Re)Generate QPainterPath
+	void generate();
+	// Set group index
+	void setGroupIndex(int index);
+	// Return group index
+	int groupIndex();
+	// Return QPainterPath
+	QPainterPath& painterPath();
+	// Set whether this data is visible
+	void setVisible(bool v);
+	// Return whether this data is visible
+	bool visible();
+	// Set vertical offset multiplier
+	void setVerticalOffset(int offset);
+	// Return vertical offset to apply to data
+	int verticalOffset();
+	// Return minimum x value for data
+	double xMin();
+	// Return maximum x value for data
+	double xMax();
+	// Return minimum y value for data
+	double yMin();
+	// Return maximum y value for data
+	double yMax();
+	// Return name
+	QString name();
+	///@}
+
+
+	/*!
+	 * \brief Style Data
+	 */
+	///@{
+	private:
+	// Line Colour
+	QColor lineColour_;
+	// Line Style
+	Qt::PenStyle lineStyle_;
+	
+	public:
+	// Set line colour
+	void setLineColour(QColor color);
+	// Return line colour
+	QColor lineColour();
+	// Set line style
+	void setLineStyle(Qt::PenStyle style);
+	// Return line style
+	Qt::PenStyle lineStyle();
+	///@}
+};
+
+/*!
+ * \brief PlotWidget
+ * \details A PlotWidget allows the display of multiple Data2D, pointed to by a List of CheckPoint<Data2D>.
+ * All drawing is accomplished with QPainter rather than OpenGL, and no additional widgets are used - interaction
+ * is allowed through a series of small 'buttons' also drawn by the QPainter.
+ */
+class PlotWidget : public QWidget
+{
+	Q_OBJECT
+
+	public:
+	// Constructor
+	PlotWidget(QWidget *parent);
+	// Destructor
+	~PlotWidget();
+
+
+	/*!
+	 * \name Slots / Reimplementations
+	 */
+	///@{
+	private:
+	// Context Menu
+	QMenu *contextMenu_;
+	// Whether context menu is up-to-date
+	bool contextMenuValid_;
+
+	private:
+	// Recreate context menu
+	void recreateContextMenu();
+
+	protected:
+	// General repaint callback
+	void paintEvent(QPaintEvent* event);
+        // Mouse press event)
+        void mousePressEvent(QMouseEvent*);
+        // Mouse release event)
+        void mouseReleaseEvent(QMouseEvent*);
+        // Mouse move event)
+        void mouseMoveEvent(QMouseEvent*);
+        // Mouse wheel event)
+        void wheelEvent(QWheelEvent*);
+	// Key press event
+	void keyPressEvent(QKeyEvent* event);
+	// Key release event
+	void keyReleaseEvent(QKeyEvent* event);
+
+	public slots:
+	// Context Menu DataSet entry clicked
+	void contextMenuDataSetClicked(bool checked);
+	// Context Menu Group ShowAll entry clicked
+	void contextMenuGroupShowAllClicked(bool checked);
+	// Context Menu Group HideAll entry clicked
+	void contextMenuGroupHideAllClicked(bool checked);
+	///@}
+
+
+	/*!
+	 * \name Toolbar (if specified)
+	 */
+	///@{
+	private:
+	// Empty widget in which to create toolbar
+	QWidget* toolBarWidget_;
+	// Toolbar button enum
+	enum ToolBarButton { AutoScaleButton, LimitXMinButton, LimitXButton, LimitXMaxButton, LimitYMinButton, LimitYButton, LimitYMaxButton, nToolBarButtons };
+	// Toolbar buttons
+	QPushButton* toolBarButtons_[nToolBarButtons];
+	// Coordinates label
+	QLabel* coordinatesLabel_;
+
+	private:
+	// Update toolbar to reflect internal state
+	void updateToolBarWidget();
+
+	public:
+	// Set toolbar for PlotWidget
+	void setToolBarWidget(QWidget* widget);
+	///@}
+
+
+	/*!
+	 * \name Style
+	 */
+	///@{
+	public:	
+	/// Pre-defined Line Colours
+	enum LineColour
+	{
+		BlackColour,
+		RedColour,
+		BlueColour,
+		GreenColour,
+		nLineColours
+	};
+
+	private:
+	// Pre-defined colours
+	static QColor lineColours_[PlotWidget::nLineColours];
+	// Background plot colour
+	QColor backgroundColour_;
+	// Foreground pen colour
+	QColor foregroundColour_;
+	// Font for plot
+	QFont font_;
+	// Formatting strings for axis labels
+	Dnchar xLabelFormat_, yLabelFormat_;
+
+	public:
+	// Return nth (wrapped) pre-defined colour
+	static QColor lineColour(int n);
+	///@}
+
+
+	/*!
+	 * \name Plot Area
+	 */
+	///@{
+	private:
+	// Drawing area for actual data
+	QRect graphArea_;
+	// X range to display
+	double xMin_, xMax_;
+	// Y range to display
+	double yMin_, yMax_;
+	// Soft limits for X range
+	double xMinLimit_, xMaxLimit_;
+	// Soft limits for Y range
+	double yMinLimit_, yMaxLimit_;
+	// Whether soft limits are enabled
+	bool limitXMin_, limitXMax_, limitYMin_, limitYMax_;
+	// Scaling factors, converting from device to graph
+	double xScale_, yScale_;
+	// General spacing within graph
+	int spacing_;
+	// Drawing area for X-axis labels, ticks and title
+	QRect xAxisArea_;
+	// Drawing area for Y-axis labels, ticks and title
+	QRect yAxisArea_;
+	// Tick start and delta for x-axis
+	double xAxisTickStart_, xAxisTickDelta_;
+	// Tick start and delta for y-axis
+	double yAxisTickStart_, yAxisTickDelta_;
+	// Main graph title
+	QString mainTitle_;
+	// X axis title
+	QString xAxisTitle_;
+	// Y axis title
+	QString yAxisTitle_;
+	// Whether legend is visible
+	bool legendVisible_;
+	// Spacing between dataSets (multiplied by verticalOffset())
+	double verticalSpacing_;
+	// Whether to autoscale data on refresh
+	bool autoScale_;
+	
+	private:
+	// Determine suitable tick deltas based on current graph limits
+	void calculateTickDeltas(int maxTicks);
+
+	public:
+	// Set main title
+	void setMainTitle(QString title);
+	// Set x-axis title
+	void setXAxisTitle(QString title);
+	// Set y-axis title
+	void setYAxisTitle(QString title);
+	// Set x and y axis titles
+	void setTitles(QString mainTitle, QString xTitle, QString yTitle);
+	// Set soft X limits for plot area
+	void setXLimits(bool setMinLimit, bool applyMinLimit, double minLimit, bool setMaxLimit, bool applyMaxLimit, double maxLimit);
+	// Set soft Y limits for plot area
+	void setYLimits(bool setMinLimit, bool applyMinLimit, double minLimit, bool setMaxLimit, bool applyMaxLimit, double maxLimit);
+
+	public slots:
+	// Enable/disable autoscaling
+	void setAutoScale(bool enabled);
+	// Enable/disable soft x minimum limit
+	void setXMinLimit(bool enabled);
+	// Enable/disable soft x maxiimum limit
+	void setXMaxLimit(bool enabled);
+	// Enable/disable soft y minimum limit
+	void setYMinLimit(bool enabled);
+	// Enable/disable soft y maxiimum limit
+	void setYMaxLimit(bool enabled);
+	///@}
+
+
+	/*!
+	 * \name Extra
+	 */
+	///@{
+	private:
+	// Mouse button state at last mouseDown event
+	Qt::MouseButtons buttons_;
+	// Position of mouseDown event (in widget coordinates)
+	QPoint clickedWidgetPosition_;
+	// Position of mouseDown event (in graph coordinates)
+	QPointF clickedGraphPosition_;
+	// Current position of mouse (in graph coordinates)
+	QPointF currentGraphPosition_;
+	///@}
+
+
+	/*!
+	 * \name Source Data
+	*/
+	///@{
+	private:
+	// Datasets to display
+	List<PlotData> dataSets_;
+	// Dataset Groups (if any)
+	List<Dnchar> dataSetGroups_;
+
+	public:
+	// Add data to Plot (local Data2D)
+	PlotData* addDataSet(Data2D& data, const char* groupName, bool visible = TRUE, int yOffset = 0, QColor color = Qt::black, Qt::PenStyle style = Qt::SolidLine, PlotData::DataModifier xModifier = PlotData::NoModifier, PlotData::DataModifier yModifier = PlotData::NoModifier);
+	// Add data to Plot (external CheckPoint<Data2D>)
+	PlotData* addDataSet(CheckPoint<Data2D>* data, bool visible = TRUE, int yOffset = 0, QColor color = Qt::black, Qt::PenStyle style = Qt::SolidLine, PlotData::DataModifier xModifier = PlotData::NoModifier, PlotData::DataModifier yModifier = PlotData::NoModifier);
+	// Remove specified data from Plot
+	void removeDataSet(CheckPoint<Data2D>* data);
+	// Remove all data from plot
+	void removeAllDataSets();
+	// Refresh dataSets_, recreating lists etc.
+	void refreshData();
+	///@}
+
+
+	/*!
+	 * \name Functions
+	 */
+	///@{
+	public:
+	// Convert widget coordinates to graph coordinates
+	QPointF widgetToGraph(QPoint pos);
+	// Zoom to specified graph coordinates
+	void zoomToGraph(double x1, double y1, double x2, double y2);
+	// Rescale axes to fit current data
+	void fitData(bool obeySoftLimits);
+};
+
+#endif

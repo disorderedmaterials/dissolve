@@ -1,0 +1,131 @@
+10
+// Default Element Data
+// Element radii taken from:
+//	"Covalent radii revisited", 
+//	B_ Cordero, V. Gómez, A. E. Platero-Prats, M. Revés, J. Echeverría, E. Cremades, F. Barragán and S. Alvarez
+//	Dalton Trans_, 2008 (DOI: 10.1039/b801115j)
+//	Notes: High-Spin radii taken for 1st transition elements, sp3 value taken for Carbon_ Bk and beyond set to 1.50.
+//
+// Lutetium and Lawrencium are assigned to group 3, with Lanthanum and Actinium the first elements in the lanthanide and actinide series_
+//
+//  Z	Name         	Symbol	Radius  RGBA		
+119
+0	Unknown		XX	0.00	0.5	0.5	0.5	1.0 
+1	Hydrogen	H	0.31	0.87	0.87	0.87	1.0 
+2	Helium		He	0.28	1.0	0.784	0.784	1.0 
+3	Lithium		Li	1.28	0.647	0.165	0.165	1.0 
+4	Beryllium	Be	0.96	0.0	0.0	0.0	1.0 	
+5	Boron		B	0.84	0.0	1.0	0.0	1.0 	
+6	Carbon		C	0.76	0.0	1.0	0.2	1.0 	
+7	Nitrogen	N	0.71	0.561	0.561	1.0	1.0 
+8	Oxygen		O	0.66	1.0	0.0	0.0	1.0 	
+9	Fluorine	F	0.57	0.784	0.647	0.094	1.0 
+10	Neon		Ne	0.58	0.0	0.0	0.0	1.0 	
+11	Sodium		Na	1.66	0.0	0.0	1.0	1.0 	
+12	Magnesium	Mg	1.41	0.0	0.0	0.0	1.0 	
+13	Aluminium	Al	1.21	0.561	0.561	1.0	1.0 
+14	Silicon		Si	1.11	0.784	0.647	0.094	1.0 
+15	Phosphorus	P	1.07	1.0	0.647	0.0	1.0 	
+16	Sulfur		S	1.05	1.0	0.784	0.196	1.0 
+17	Chlorine	Cl	1.02	0.0	1.0	0.0	1.0 	
+18	Argon		Ar	1.06	0.0	1.0	0.0	1.0 	
+19	Potassium	K	2.03	0.0	1.0	0.0	1.0 	
+20	Calcium		Ca	1.76	1.0	1.0	1.0	1.0 	
+21	Scandium	Sc	1.70	1.0	0.86	0.66	1.0 	
+22	Titanium	Ti	1.60	0.7	0.7	0.7	1.0 	
+23	Vanadium	V	1.53	0.7	0.7	0.7	1.0 	
+24	Chromium	Cr	1.39	0.7	0.7	0.7	1.0 	
+25	Manganese	Mn	1.61	0.7	0.7	0.7	1.0 	
+26	Iron		Fe	1.52	1.0	0.647	0.0	1.0 	
+27	Cobalt		Co	1.50	0.647	0.165	0.165	1.0 
+28	Nickel		Ni	1.24	0.647	0.165	0.165	1.0 
+29	Copper		Cu	1.32	0.647	0.165	0.165	1.0 
+30	Zinc		Zn	1.22	0.647	0.165	0.165	1.0 
+31	Gallium		Ga	1.22	0.647	0.165	0.165	1.0 
+32	Germanium	Ge	1.20	0.647	0.165	0.165	1.0 
+33	Arsenic		As	1.19	0.647	0.165	0.165	1.0 
+34	Selenium	Se	1.20	0.647	0.165	0.165	1.0 
+35	Bromine		Br	1.20	0.647	0.165	0.165	1.0 
+36	Krypton		Kr	1.16	0.6	0.6	0.6	1.0 	
+37	Rubidium	Rb	2.20	0.0	1.0	0.0	1.0 	
+38	Strontium	Sr	1.95	0.0	1.0	0.0	1.0 	
+39	Yttrium		Y	1.90	0.647	0.165	0.165	1.0 
+40	Zirconium	Zr	1.75	0.784	0.647	0.094	1.0 
+41	Niobium		Nb	1.64	1.0	1.0	1.0	1.0 	
+42	Molybdenum	Mo	1.54	1.0	1.0	1.0	1.0 	
+43	Technetium	Tc	1.47	1.0	1.0	1.0	1.0 	
+44	Ruthenium	Ru	1.46	1.0	1.0	1.0	1.0 	
+45	Rhodium		Rh	1.42	1.0	1.0	1.0	1.0 	
+46	Palladium	Pd	1.39	1.0	1.0	1.0	1.0 	
+47	Silver		Ag	1.45	0.6	0.6	0.6	1.0 	
+48	Cadmium		Cd	1.44	0.0	1.0	0.0	1.0 	
+49	Indium		In	1.42	1.0	1.0	1.0	1.0 	
+50	Tin		Sn	1.39	1.0	1.0	1.0	1.0 	
+51	Antimony	Sb	1.39	1.0	1.0	1.0	1.0 	
+52	Tellurium	Te	1.38	1.0	1.0	1.0	1.0 	
+53	Iodine		I	1.39	1.0	1.0	1.0	1.0 	
+54	Xenon		Xe	1.40	1.0	1.0	1.0	1.0 	
+55	Caesium		Cs	2.44	0.647	0.165	0.165	1.0 
+56	Barium		Ba	2.15	1.0	1.0	1.0	1.0 	
+57	Lanthanum	La	2.07	1.0	1.0	1.0	1.0 	
+58	Cerium		Ce	2.04	1.0	1.0	1.0	1.0 	
+59	Praesodymium	Pr	2.03	1.0	1.0	1.0	1.0 	
+60	Neodymium	Nd	2.01	1.0	1.0	1.0	1.0 	
+61	Prometheum	Pm	1.99	1.0	1.0	1.0	1.0 	
+62	Samarium	Sm	1.98	1.0	1.0	1.0	1.0 	
+63	Europium	Eu	1.98	1.0	1.0	1.0	1.0 	
+64	Gadolinium	Gd	1.96	1.0	1.0	1.0	1.0 	
+65	Terbium		Tb	1.94	1.0	1.0	1.0	1.0 	
+66	Dysprosium	Dy	1.92	1.0	1.0	1.0	1.0 	
+67	Holmium		Ho	1.92	1.0	1.0	1.0	1.0 	
+68	Erbium		Er	1.89	1.0	1.0	1.0	1.0 	
+69	Thulium		Tm	1.90	1.0	1.0	1.0	1.0 	
+70	Ytterbium	Yb	1.87	1.0	1.0	1.0	1.0 	
+71	Lutetium	Lu	1.87	1.0	1.0	1.0	1.0 	
+72	Hafnium		Hf	1.75	1.0	1.0	1.0	1.0 	
+73	Tantalum	Ta	1.70	1.0	1.0	1.0	1.0 	
+74	Tungsten	W	1.62	1.0	1.0	1.0	1.0 	
+75	Rhenium		Re	1.51	1.0	1.0	1.0	1.0 	
+76	Osmium		Os	1.44	1.0	1.0	1.0	1.0 	
+77	Iridium		Ir	1.41	1.0	1.0	1.0	1.0 	
+78	Platinum	Pt	1.36	1.0	1.0	1.0	1.0 	
+79	Gold		Au	1.36	0.784	0.647	0.094	1.0 
+80	Mercury		Hg	1.32	1.0	1.0	1.0	1.0 	
+81	Thallium	Tl	1.45	1.0	1.0	1.0	1.0 	
+82	Lead		Pb	1.46	1.0	1.0	1.0	1.0 	
+83	Bismuth		Bi	1.48	1.0	1.0	1.0	1.0 	
+84	Polonium	Po	1.40	1.0	1.0	1.0	1.0 	
+85	Astatine	At	1.50	1.0	1.0	1.0	1.0 	
+86	Radon		Rn	1.50	1.0	1.0	1.0	1.0 	
+87	Francium	Fr	2.60	1.0	1.0	1.0	1.0 	
+88	Radium		Ra	2.21	1.0	1.0	1.0	1.0 	
+89	Actinium	Ac	2.15	1.0	1.0	1.0	1.0 	
+90	Thorium		Th	2.06	1.0	1.0	1.0	1.0 	
+91	Protactinium	Pa	2.00	1.0	1.0	1.0	1.0 	
+92	Uranium		U	1.96	1.0	1.0	1.0	1.0 	
+93	Neptunium	Np	1.90	1.0	1.0	1.0	1.0 	
+94	Plutonium	Pu	1.87	1.0	1.0	1.0	1.0 	
+95	Americium	Am	1.80	1.0	1.0	1.0	1.0 	
+96	Curium		Cm	1.69	1.0	1.0	1.0	1.0 	
+97	Berkelium	Bk	1.50	1.0	1.0	1.0	1.0 	
+98	Californium	Cf	1.50	1.0	1.0	1.0	1.0 	
+99	Einsteinium	Es	1.50	1.0	1.0	1.0	1.0 	
+100	Fermium		Fm	1.50	1.0	1.0	1.0	1.0 	
+101	Mendelevium	Md	1.50	1.0	1.0	1.0	1.0 	
+102	Nobelium	No	1.50	1.0	1.0	1.0	1.0 	
+103	Lawrencium	Lr	1.50	1.0	1.0	1.0	1.0 	
+104	Rutherfordium	Rf	1.50	1.0	1.0	1.0	1.0 	
+105	Dubnium		Db	1.50	1.0	1.0	1.0	1.0 	
+106	Seaborgium	Sg	1.50	1.0	1.0	1.0	1.0 	
+107	Bohrium		Bh	1.50	1.0	1.0	1.0	1.0 	
+108	Hassium		Hs	1.50	1.0	1.0	1.0	1.0 	
+109	Meitnerium	Mt	1.50	1.0	1.0	1.0	1.0 	
+110	Darmstadtium	Ds	1.50	1.0	1.0	1.0	1.0 	
+111	Roentgenium	Rg	1.50	1.0	1.0	1.0	1.0 	
+112	Ununium		Uub	1.50	1.0	1.0	1.0	1.0 	
+113	Ununtrium	Uut	1.50	1.0	1.0	1.0	1.0 	
+114	Ununquadium	Uuq	1.50	1.0	1.0	1.0	1.0 	
+115	Ununpentium	Uup	1.50	1.0	1.0	1.0	1.0 	
+116	Ununhexium	Uuh	1.50	1.0	1.0	1.0	1.0 	
+117	Ununseptium	Uus	1.50	1.0	1.0	1.0	1.0 	
+118	Ununoctium	Uuo	1.50	1.0	1.0	1.0	1.0 	
