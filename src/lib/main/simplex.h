@@ -53,6 +53,10 @@ class Simplex
 	int nAlpha_;
 	// Number of vertices in Simplex
 	int nVertices_;
+	// Offset to apply to parameters in fitting process
+	double parameterOffset_;
+	// Maximum fraction by which to randomise when generating initial vertices
+	double initVariation_;
 	// dUQ pointer (used to call costFunction_)
 	DUQ* dUQPtr_;
 	// Cost function pointer
@@ -77,8 +81,6 @@ class Simplex
 	int moveCount_[nSimplexMoves];
 	// Integer count of number of better points found by the Simplex (after minimisation)
 	int betterPointsFound_;
-	// Base length scale of vertices
-	double baseLengthScale_;
 	
 	private:
 	// Return (calculating if necessary) cost of supplied vertex
@@ -99,8 +101,8 @@ class Simplex
 	void shrink();
 
 	public:
-	// Initialise starting Simplex in standard way, nudging params
-	void initialise(Array<double>& initVertex, double lscale);
+	// Initialise starting Simplex
+	void initialise(Array<double>& initVertex, double paramOffset = 0.0, double pcntVariation = 0.05);
 	// Return MSD of cost values in current Simplex
 	double costMSD();
 	// Return whether Simplex has converged

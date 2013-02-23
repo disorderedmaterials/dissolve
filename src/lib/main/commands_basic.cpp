@@ -422,7 +422,7 @@ CommandReturnValue DUQ::commandShake(Configuration& cfg)
 			{
 				double delta = 0.0;
 				for (int n=data.nItems()-length; n<data.nItems()-1; ++n) delta += data[n+1] - data[n];
-				msg.print("--> (Shake) Gradient of collected RMSE data is %f.\n", delta);
+				msg.print("--> (Shake) Gradient of collected data is %f.\n", delta);
 				if (delta < 0)
 				{
 					msg.print("--> (Shake) Gradient is still negative, so continuing shake.\n");
@@ -501,19 +501,61 @@ CommandReturnValue DUQ::commandTest(Configuration& cfg)
 // 	test.forwardTransformReal();
 // 	test.save("smooth5.sq");
 
-	// Arbitrarily extend S(Q)
-	Data2D gr, sq = samples_[0]->referenceFQ();
-	sq.arrayY() /= 6.2;
-	for (int n=0; n<sq.nPoints(); ++n) if (sq.x(n) > 11.14) sq.setY(n, 0.0);
-	for (int n=0; n<1000; ++n) sq.addPoint( (sq.x(1)-sq.x(0)) + sq.arrayX().last(), 0.0);
-	sq.arrayY() += 1.0;
-	sq.save("sq.txt");
-	gr = sq;
-	gr.arrayY() -= 1.0;
-	gr.transformSQ(atomicDensity());
-	gr.arrayY() += 1.0;
-	for (int n=0; n<gr.nPoints(); ++n) if (gr.x(n) < 3.23) gr.setY(n, 0.0);
-	gr.save("gr.txt");
+	int typeI, typeJ;
+	for (typeI = 0; typeI < typeIndex_.nItems(); ++typeI)
+	{
+		for (typeJ = typeI;  typeJ < typeIndex_.nItems(); ++typeJ)
+		{
+			// Grab references to original and modified data
+			Data2D& sq = workingSQMatrixA_.ref(typeI, typeJ);
+
+			sq.save(Dnchar::string("mod%s.txt", partialSQMatrix_.ref(typeI, typeJ).name()));
+			Data2D gr = sq;
+			gr.transformSQ(atomicDensity(), windowFunction_);
+			gr.arrayY() += 1.0;
+			gr.save(Dnchar::string("mod%sft.txt", partialSQMatrix_.ref(typeI, typeJ).name()));
+			
+			// Calculate correlation function for S(Q)
+			Data2D cr = sq;
+			cr.correlateSQ(atomicDensity());
+// 			cr.save("cr.txt");
+			
+			// Calculate PP from Hypernetted chain and Percus-Yevick theories
+			Data2D hnc, py, pmf;
+			double y;
+			for (int n=0; n<cr.nPoints(); ++n)
+			{
+				// HNC
+				y = gr.y(n) - cr.y(n) - 1.0 + log(gr.y(n));
+				hnc.addPoint(cr.x(n), y);
+				
+				// Percus-Yevick
+				y = log(1.0 - cr.y(n)/gr.y(n));
+				py.addPoint(cr.x(n), y);
+				
+				// PMF
+				y = AVOGADRO * -1.3806488e-23 * temperature_ * log(gr.y(n)) / 1000.0;
+				pmf.addPoint(gr.x(n), y);
+			}
+			hnc.save(Dnchar::string("mod%s-hnc.txt", partialSQMatrix_.ref(typeI, typeJ).name()));
+			py.save(Dnchar::string("mod%s-py.txt", partialSQMatrix_.ref(typeI, typeJ).name()));
+			pmf.save(Dnchar::string("mod%s-pmf.txt", partialSQMatrix_.ref(typeI, typeJ).name()));
+		}
+	}
+	
+// 	// Arbitrarily extend S(Q)
+// 	Data2D gr, sq = samples_[0]->referenceFQ();
+// 	sq.arrayY() /= 6.2;
+// 	for (int n=0; n<sq.nPoints(); ++n) if (sq.x(n) > 11.14) sq.setY(n, 0.0);
+// 	for (int n=0; n<1000; ++n) sq.addPoint( (sq.x(1)-sq.x(0)) + sq.arrayX().last(), 0.0);
+// 	sq.arrayY() += 1.0;
+// 	sq.save("sq.txt");
+// 	gr = sq;
+// 	gr.arrayY() -= 1.0;
+// 	gr.transformSQ(atomicDensity());
+// 	gr.arrayY() += 1.0;
+// 	for (int n=0; n<gr.nPoints(); ++n) if (gr.x(n) < 3.23) gr.setY(n, 0.0);
+// 	gr.save("gr.txt");
 
 // 	// Iterate between S(Q) and g(r)
 // 	for (int n=0; n<5; ++n)
@@ -533,25 +575,25 @@ CommandReturnValue DUQ::commandTest(Configuration& cfg)
 // 		sq.save(s);
 // 	}
 
-	// Calculate correlation function for S(Q)
-	Data2D cr = sq;
-	cr.correlateSQ(atomicDensity());
-	cr.save("cr.txt");
-	
-	// Calculate PP from Hypernetted chain and Percus-Yevick theories
-	Data2D hnc, py;
-	double y;
-	for (int n=0; n<cr.nPoints(); ++n)
-	{
-		// HNC
-		y = gr.y(n) - cr.y(n) - 1.0 + log(gr.y(n));
-		hnc.addPoint(cr.x(n), y);
-		
-		// Percus-Yevick
-		y = log(1.0 - cr.y(n)/gr.y(n));
-		py.addPoint(cr.x(n), y);
-	}
-	hnc.save("hnc.txt");
-	py.save("py.txt");
+// 	// Calculate correlation function for S(Q)
+// 	Data2D cr = sq;
+// 	cr.correlateSQ(atomicDensity());
+// 	cr.save("cr.txt");
+// 	
+// 	// Calculate PP from Hypernetted chain and Percus-Yevick theories
+// 	Data2D hnc, py;
+// 	double y;
+// 	for (int n=0; n<cr.nPoints(); ++n)
+// 	{
+// 		// HNC
+// 		y = gr.y(n) - cr.y(n) - 1.0 + log(gr.y(n));
+// 		hnc.addPoint(cr.x(n), y);
+// 		
+// 		// Percus-Yevick
+// 		y = log(1.0 - cr.y(n)/gr.y(n));
+// 		py.addPoint(cr.x(n), y);
+// 	}
+// 	hnc.save("hnc.txt");
+// 	py.save("py.txt");
 	return CommandSuccess;
 }

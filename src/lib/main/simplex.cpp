@@ -48,7 +48,9 @@ Simplex::Simplex(DUQ* dUQPtr, CostFunction costFunc)
 double Simplex::cost(Array<double>& vertex)
 {
 	// Compute cold cost of vertex first, to compare against bestAlpha
+	vertex -= parameterOffset_;
 	double coldCost = (dUQPtr_->*(costFunction_))(vertex);
+	vertex += parameterOffset_;
 	
 	// Check against best point found so far 
 	if (coldCost < bestAlphaCost_)
@@ -197,21 +199,23 @@ void Simplex::shrink()
 }
 
 /*!
- * \brief Initialise starting Simplex in standard way, nudging params
+ * \brief Initialise starting Simplex
  */
-void Simplex::initialise(Array<double>& initVertex, double baselengthscale)
+void Simplex::initialise(Array<double>& initVertex, double paramOffset, double pcntVariation)
 {
 	nAlpha_ = initVertex.nItems();
 	nVertices_ = nAlpha_ + 1;
 	bestAlpha_ = initVertex;
 	betterPointsFound_ = 0;
-	baseLengthScale_ = baselengthscale;
+	initVariation_ = pcntVariation;
+	parameterOffset_ = paramOffset;
 
 	vertices_.createEmpty(nVertices_);
 	costs_.createEmpty(nVertices_);
 	
 	// Set initial vertex and starting best cost
 	vertices_[0] = initVertex;
+	vertices_[0] += parameterOffset_;
 	costs_[0] = cost(initVertex);
 	bestAlphaCost_ = costs_[0];
 }
@@ -294,12 +298,12 @@ Array<double> Simplex::minimise(int nCycles, int maxMoves, double tolerance, dou
 		costs_[0] = bestAlphaCost_;
 		
 		double r;
-	// 	msg.print("Generating initial vertices.\n");
+		msg.print("Generating initial vertices.\n");
 		for (n=1; n<nVertices_; ++n)
 		{
 			vertices_[n] = vertices_[0];
 			r = (2.0*dUQMath::random()) - 1.0;
-			vertices_[n][n-1] *= 1.0+baseLengthScale_*r;
+			vertices_[n][n-1] = (vertices_[n][n-1] - parameterOffset_) * 1.0+initVariation_*r;
 			costs_[n] = cost(vertices_[n]);
 		}
 		
@@ -307,7 +311,7 @@ Array<double> Simplex::minimise(int nCycles, int maxMoves, double tolerance, dou
 		
 		for (move=1; move<=nMoves_; ++move)
 		{
-// 			msg.print("Move = %i : best = %f %f %f\n", move, bestAlpha_[0], bestAlpha_[1], bestAlpha_[2]);
+			msg.print("Move = %i : best = %f %f %f\n", move, bestAlpha_[0], bestAlpha_[1], bestAlpha_[2]);
 			++moveCount_[Simplex::AllMoves];
 
 	// 		printf("Simplex Move no. %i\n", move);

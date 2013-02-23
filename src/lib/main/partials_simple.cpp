@@ -69,8 +69,8 @@ bool DUQ::calculatePartialsSimple(Configuration& cfg)
 	double rbin = 1.0 / rdfBinWidth_;
 	const Box* box = configuration_.box();
 
-	int start = Comm.interleavedLoopStart(dUQComm::World);
-	int stride = Comm.interleavedLoopStride(dUQComm::World);
+	int start = Comm.interleavedLoopStart(DUQComm::World);
+	int stride = Comm.interleavedLoopStride(DUQComm::World);
 	
 	// Self terms
 	for (typeI = 0; typeI<nTypes; ++typeI)

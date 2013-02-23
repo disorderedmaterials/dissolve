@@ -1,6 +1,6 @@
 /*
 	*** dUQ Main Structure
-	*** src/lib/main/notepsr.h
+	*** src/lib/main/duq.h
 	Copyright T. Youngs 2012-2013
 
 	This file is part of dUQ.
@@ -301,12 +301,20 @@ class DUQ
 	private:
 	// Partial RDF matrix
 	Array2D<Histogram> partialRDFMatrix_;
-	// Intramolecular RDF matrix
-	Array2D<Histogram> intraRDFMatrix_;
+	// Unbound RDF matrix
+	Array2D<Histogram> unboundRDFMatrix_;
+	// Bound RDF matrix
+	Array2D<Histogram> boundRDFMatrix_;
 	// RDF Normalisation for Box shape/extent
 	Data2D boxNormalisation_;
 	// Partial S(Q) matrix
 	Array2D<Data2D> partialSQMatrix_;
+	// Unbound S(Q) matrix
+	Array2D<Data2D> unboundSQMatrix_;
+	// Bound S(Q) matrix
+	Array2D<Data2D> boundSQMatrix_;
+	// Working S(Q) matrices
+	Array2D<Data2D> workingSQMatrixA_, workingSQMatrixB_;
 	// Configuration change count at which partials were last calculated
 	int partialsChangeCount_;
 	// Total RDF (unweighted)
@@ -428,11 +436,11 @@ class DUQ
 	///@{
 	private:
 	// Calculate total intramolecular forces
-	void intramolecularForces(Configuration& cfg, double* fx, double* fy, double* fz, dUQComm::CommGroup group = dUQComm::World);
+	void intramolecularForces(Configuration& cfg, double* fx, double* fy, double* fz, DUQComm::CommGroup group = DUQComm::World);
 	// Calculate total Grain forces
-	void grainForces(Configuration& cfg, double* fx, double* fy, double* fz, double cutoffSq, dUQComm::CommGroup group);
+	void grainForces(Configuration& cfg, double* fx, double* fy, double* fz, double cutoffSq, DUQComm::CommGroup group);
 	// Calculate total forces within the system
-	void totalForces(Configuration& cfg, double* fx, double* fy, double* fz, double cutoffSq, dUQComm::CommGroup group = dUQComm::World);
+	void totalForces(Configuration& cfg, double* fx, double* fy, double* fz, double cutoffSq, DUQComm::CommGroup group = DUQComm::World);
 	///@}
 
 
@@ -594,14 +602,6 @@ class DUQ
 	double simplexTolerance_;
 	// Parameter value offset to use in Simplex fitting procedure
 	double simplexParameterOffset_;
-	// Array of difference splines for each PairPotential
-	Array2D<Data2D> differenceSplines_;
-	// Current differenceSpline_ minimisation target index
-	int differenceSpline_;
-	// First point in differenceSplines_ to minimise
-	int differenceSplinesFirstPoint_;
-	// Last point in differenceSplines_ to minimise
-	int differenceSplinesLastPoint_;
 
 	private:
 	// Cost function callback (passed to Simplex on construction)

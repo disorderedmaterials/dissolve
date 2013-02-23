@@ -94,9 +94,9 @@ class ForceKernel
 	// Calculate inter-particle forces between Grain and Cell contents
 	void forces(const Grain* grain, const Cell* cell, double cutoffSq, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz);
 	// Calculate inter-particle forces between Atom and list of Cells
-	void forces(const Atom* i, RefList<Cell,bool>& neighbours, bool excludeIgtJ, double* fx, double* fy, double* fz, dUQComm::CommGroup group = dUQComm::Solo);
+	void forces(const Atom* i, RefList<Cell,bool>& neighbours, bool excludeIgtJ, double* fx, double* fy, double* fz, DUQComm::CommGroup group = DUQComm::Solo);
 	// Calculate inter-particle forces between Grain and list of Cells
-	void forces(const Grain* grain, RefList<Cell,bool>& neighbours, double cutoffSq, bool excludeIgtJ, double* fx, double* fy, double* fz, dUQComm::CommGroup group = dUQComm::Solo);
+	void forces(const Grain* grain, RefList<Cell,bool>& neighbours, double cutoffSq, bool excludeIgtJ, double* fx, double* fy, double* fz, DUQComm::CommGroup group = DUQComm::Solo);
 	///@}
 };
 

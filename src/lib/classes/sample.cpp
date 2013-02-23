@@ -374,34 +374,34 @@ bool Sample::setupPairCorrelations(double volume, double range, double binWidth,
 	double cc, bb;
 
 	// Construct a matrix based on the typeIndex_ population
-	int n, m;
+	int typeI, typeJ;
 	msg.print("--> Creating S(Q) matrix (%ix%i)...\n", typeIndex_.nItems(), typeIndex_.nItems());
 	partialSQMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), TRUE);
 	weightsMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), TRUE);
 
 	Dnchar title;
 	AtomTypeData* at1 = typeIndex_.first(), *at2;
-	for (n=0; n<typeIndex_.nItems(); ++n, at1 = at1->next)
+	for (typeI=0; typeI<typeIndex_.nItems(); ++typeI, at1 = at1->next)
 	{
 		at2 = at1;
-		for (m=n; m<typeIndex_.nItems(); ++m, at2 = at2->next)
+		for (typeJ=typeI; typeJ<typeIndex_.nItems(); ++typeJ, at2 = at2->next)
 		{
 			// Partial S(Q)
 			title.sprintf("%s[%i]-%s[%i] (%s)", at1->name(), at1->isotope()->A(), at2->name(), at2->isotope()->A(), niceSampleName.get());
-			partialSQMatrix_.ref(n,m).setName(title.get());
+			partialSQMatrix_.ref(typeI,typeJ).setName(title.get());
 			
 			// Store weighting factor for this partial
 			// Note: Divisor of 100.0 in calculation of bb converts from units of fm (1e-11 m) to barn (1e-12 m)
 			cc = at1->fraction() * at2->fraction();
 			bb = at1->isotope()->boundCoherent() * at2->isotope()->boundCoherent() * 0.01;
-			weightsMatrix_.ref(n,m) = cc * bb;
+			weightsMatrix_.ref(typeI,typeJ) = (typeI == typeJ ? 1.0 : 2.0) * cc * bb;
 		}
 	}
 
 	// Total g(r)
 	int nBins = range / binWidth;
 	totalGR_.initialise(nBins);
-	for (n=0; n<nBins; ++n) totalGR_.setX(n, (n+0.5)*binWidth);
+	for (int n=0; n<nBins; ++n) totalGR_.setX(n, (n+0.5)*binWidth);
 	totalGR_.setName(niceSampleName.get());
 
 	// Total, reference and difference F(Q) (set names only)
@@ -470,8 +470,8 @@ bool Sample::calculatePairCorrelations(Array2D<Histogram>& masterRDFs, Array2D<D
 			// Copy unweighted S(Q) data
 			partialSQMatrix_.ref(typeI, typeJ) = masterSQ.ref(masterI, masterJ);
 			
-			// Calculate weighting factor for this partial
-			factor = (typeI == typeJ ? 1.0 : 2.0) * weightsMatrix_.ref(typeI,typeJ);
+			// Grab weighting factor for this partial
+			factor = weightsMatrix_.ref(typeI,typeJ);
 			
 			// Weight S(Q) and interpolate
 			partialSQMatrix_.ref(typeI, typeJ).arrayY() *= factor;

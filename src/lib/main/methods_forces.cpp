@@ -34,7 +34,7 @@
  * 
  * This is a parallel routine..
  */
-void DUQ::intramolecularForces(Configuration& cfg, double* fx, double* fy, double* fz, dUQComm::CommGroup group)
+void DUQ::intramolecularForces(Configuration& cfg, double* fx, double* fy, double* fz, DUQComm::CommGroup group)
 {
 	double distance, angle, force, dp, magji, magjk;
 	int index, start, stride;
@@ -119,7 +119,7 @@ void DUQ::intramolecularForces(Configuration& cfg, double* fx, double* fy, doubl
  * 
  * This is a parallel routine.
  */
-void DUQ::grainForces(Configuration& cfg, double* fx, double* fy, double* fz, double cutoffSq, dUQComm::CommGroup group)
+void DUQ::grainForces(Configuration& cfg, double* fx, double* fy, double* fz, double cutoffSq, DUQComm::CommGroup group)
 {
 	// Initialise the Cell distributor
 	const bool willBeModified = FALSE, allowRepeats = FALSE;
@@ -164,7 +164,7 @@ void DUQ::grainForces(Configuration& cfg, double* fx, double* fy, double* fz, do
 			}
 			
 			// Inter-Grain interactions between this Grain and those in Cell neighbours
-			kernel.forces(grainI, cell->neighbours(), cutoffSq, TRUE, fx, fy, fz, dUQComm::Solo);
+			kernel.forces(grainI, cell->neighbours(), cutoffSq, TRUE, fx, fy, fz, DUQComm::Solo);
 		}
 
 		/*
@@ -183,7 +183,7 @@ void DUQ::grainForces(Configuration& cfg, double* fx, double* fy, double* fz, do
  * 
  * This is a serial routine (subroutines called from within are parallel).
  */
-void DUQ::totalForces(Configuration& cfg, double* fx, double* fy, double* fz, double cutoffSq, dUQComm::CommGroup group)
+void DUQ::totalForces(Configuration& cfg, double* fx, double* fy, double* fz, double cutoffSq, DUQComm::CommGroup group)
 {
 	// Create a Timer
 	Timer timer;
@@ -201,7 +201,7 @@ void DUQ::totalForces(Configuration& cfg, double* fx, double* fy, double* fz, do
 	msg.printVerbose("Time to do intramolecular forces was %s.\n", timer.timeString());
 	
 	// Gather forces together
-	if (group != dUQComm::Solo)
+	if (group != DUQComm::Solo)
 	{
 		if (!Comm.allSum(fx, cfg.nAtoms())) return;
 		if (!Comm.allSum(fy, cfg.nAtoms())) return;

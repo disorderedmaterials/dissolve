@@ -73,7 +73,7 @@ bool DUQ::calculatePartialRDFs(Configuration& cfg)
 	partialsChangeCount_ = cfg.changeCount();
 
 	// Collect all processes together
-	if (!Comm.wait(dUQComm::World)) return FALSE;
+	if (!Comm.wait(DUQComm::World)) return FALSE;
 
 	return TRUE;
 }
@@ -88,8 +88,13 @@ bool DUQ::setupPartials()
 	msg.print("--> Creating matrices (%ix%i)...\n", typeIndex_.nItems(), typeIndex_.nItems());
 
 	partialRDFMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), TRUE);
-	intraRDFMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), TRUE);
+	boundRDFMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), TRUE);
+	unboundRDFMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), TRUE);
 	partialSQMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), TRUE);
+	boundSQMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), TRUE);
+	unboundSQMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), TRUE);
+	workingSQMatrixA_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), TRUE);
+	workingSQMatrixB_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), TRUE);
 
 	Dnchar title;
 	AtomTypeData* at1 = typeIndex_.first(), *at2;
@@ -103,15 +108,20 @@ bool DUQ::setupPartials()
 			title.sprintf("%s-%s", at1->name(), at2->name());
 			partialRDFMatrix_.ref(n,m).initialise(0.0, rdfRange_, rdfBinWidth_);
 			partialRDFMatrix_.ref(n,m).normalisedData().setName(title.get());
-			intraRDFMatrix_.ref(n,m).initialise(0.0, rdfRange_, rdfBinWidth_);
-			intraRDFMatrix_.ref(n,m).normalisedData().setName(title.get());
+			boundRDFMatrix_.ref(n,m).initialise(0.0, rdfRange_, rdfBinWidth_);
+			boundRDFMatrix_.ref(n,m).normalisedData().setName(title.get());
+			unboundRDFMatrix_.ref(n,m).initialise(0.0, rdfRange_, rdfBinWidth_);
+			unboundRDFMatrix_.ref(n,m).normalisedData().setName(title.get());
 
 			// -- For normalisation, self-terms must be multiplied by 2.0
 			partialRDFMatrix_.ref(n,m).setRadialNumberDensityNormalisation(configuration_.box()->volume(), at1->population(), at2->population(), at1 == at2 ? 2.0 : 1.0, boxNormalisation_);
-			intraRDFMatrix_.ref(n,m).setRadialNumberDensityNormalisation(configuration_.box()->volume(), at1->population(), at2->population(), at1 == at2 ? 2.0 : 1.0, boxNormalisation_);
+			boundRDFMatrix_.ref(n,m).setRadialNumberDensityNormalisation(configuration_.box()->volume(), at1->population(), at2->population(), at1 == at2 ? 2.0 : 1.0, boxNormalisation_);
+			unboundRDFMatrix_.ref(n,m).setRadialNumberDensityNormalisation(configuration_.box()->volume(), at1->population(), at2->population(), at1 == at2 ? 2.0 : 1.0, boxNormalisation_);
 
 			// Partial S(Q)
 			partialSQMatrix_.ref(n,m).setName(title.get());
+			boundSQMatrix_.ref(n,m).setName(title.get());
+			unboundSQMatrix_.ref(n,m).setName(title.get());
 		}
 	}
 
@@ -137,8 +147,11 @@ void DUQ::resetPairCorrelations()
 		for (int m=n; m<typeIndex_.nItems(); ++m)
 		{
 			partialRDFMatrix_.ref(n,m).reset();
-			intraRDFMatrix_.ref(n,m).reset();
+			boundRDFMatrix_.ref(n,m).reset();
+			unboundRDFMatrix_.ref(n,m).reset();
 			partialSQMatrix_.ref(n,m).clear();
+			boundSQMatrix_.ref(n,m).clear();
+			unboundSQMatrix_.ref(n,m).clear();
 		}
 	}
 	totalRDF_.arrayY() = 0.0;
@@ -186,27 +199,47 @@ CommandReturnValue DUQ::calculatePairCorrelations(Configuration& cfg)
 		{
 			// Sum histogram data from all processes
 			if (!partialRDFMatrix_.ref(typeI,typeJ).allSum()) return CommandFail;
-			if (!intraRDFMatrix_.ref(typeI,typeJ).allSum()) return CommandFail;
+			if (!boundRDFMatrix_.ref(typeI,typeJ).allSum()) return CommandFail;
+			
+			// Create unbound histogram from total and bound data
+			unboundRDFMatrix_.ref(typeI, typeJ) = partialRDFMatrix_.ref(typeI,typeJ);
+			unboundRDFMatrix_.ref(typeI, typeJ).addHistogramData(boundRDFMatrix_.ref(typeI,typeJ), -1.0);
 
 			// Finalise (normalise) partials
 			partialRDFMatrix_.ref(typeI,typeJ).finalise();
-			intraRDFMatrix_.ref(typeI,typeJ).finalise();
-			if (rdfSmoothing_ > 0) partialRDFMatrix_.ref(typeI,typeJ).normalisedData().smooth(rdfSmoothing_*2+1);
+			boundRDFMatrix_.ref(typeI,typeJ).finalise();
+			unboundRDFMatrix_.ref(typeI,typeJ).finalise();
+
+			// Smooth partials if requested
+			if (rdfSmoothing_ > 0)
+			{
+				partialRDFMatrix_.ref(typeI,typeJ).normalisedData().smooth(rdfSmoothing_*2+1);
+				boundRDFMatrix_.ref(typeI,typeJ).normalisedData().smooth(rdfSmoothing_*2+1);
+				unboundRDFMatrix_.ref(typeI,typeJ).normalisedData().smooth(rdfSmoothing_*2+1);
+			}
 
 			// Calculate unweighted S(Q)
 			partialSQMatrix_.ref(typeI,typeJ) = partialRDFMatrix_.ref(typeI,typeJ).normalisedData();
 			partialSQMatrix_.ref(typeI,typeJ).arrayY() -= 1.0;
+			boundSQMatrix_.ref(typeI,typeJ) = boundRDFMatrix_.ref(typeI,typeJ).normalisedData();
+// 			boundSQMatrix_.ref(typeI,typeJ).arrayY() -= 1.0;
+			unboundSQMatrix_.ref(typeI,typeJ) = unboundRDFMatrix_.ref(typeI,typeJ).normalisedData();
+			unboundSQMatrix_.ref(typeI,typeJ).arrayY() -= 1.0;
 
 			// Extend partials?
 			double x = partialSQMatrix_.ref(typeI,typeJ).arrayX().last() + delta;
 			while (x < limit)
 			{
 				partialSQMatrix_.ref(typeI,typeJ).addPoint(x, 0.0);
+				boundSQMatrix_.ref(typeI,typeJ).addPoint(x, 0.0);
+				unboundSQMatrix_.ref(typeI,typeJ).addPoint(x, 0.0);
 				x += delta;
 			}
 
 			// Fourier transform partial RDF into S(Q)
 			if (!partialSQMatrix_.ref(typeI,typeJ).transformBroadenedRDF(rho, 0.05, qDependentFWHM_, qIndependentFWHM_, windowFunction_)) return CommandFail;
+			if (!boundSQMatrix_.ref(typeI,typeJ).transformBroadenedRDF(rho, 0.05, qDependentFWHM_, qIndependentFWHM_, windowFunction_)) return CommandFail;
+			if (!unboundSQMatrix_.ref(typeI,typeJ).transformBroadenedRDF(rho, 0.05, qDependentFWHM_, qIndependentFWHM_, windowFunction_)) return CommandFail;
 		}
 	}
 
@@ -261,13 +294,13 @@ void DUQ::saveRDFs(const char* baseName)
 	// Only the Master process can do this
 	if (!Comm.master()) return;
 	LineParser parser;
-	int n, m, i;
+	int typeI, typeJ, n;
 
-	for (n=0; n<typeIndex_.nItems(); ++n)
+	for (typeI=0; typeI<typeIndex_.nItems(); ++typeI)
 	{
-		for (m=n; m<typeIndex_.nItems(); ++m)
+		for (typeJ=typeI; typeJ<typeIndex_.nItems(); ++typeJ)
 		{
-			Dnchar filename(-1, "%s-unweighted-%s-%s.rdf", baseName, typeIndex_[n]->name(), typeIndex_[m]->name());
+			Dnchar filename(-1, "%s-unweighted-%s-%s.rdf", baseName, typeIndex_[typeI]->name(), typeIndex_[typeJ]->name());
 
 			// Open file and check that we're OK to proceed writing to it
 			msg.print("Writing RDF file '%s'...\n", filename.get());
@@ -279,9 +312,11 @@ void DUQ::saveRDFs(const char* baseName)
 				continue;
 			}
 			
-			Data2D& rdf = partialRDFMatrix_.ref(n,m).normalisedData(), intra = intraRDFMatrix_.ref(n,m).normalisedData();
-			parser.writeLineF("# %-14s  %-16s  %-16s\n", "r, Angstroms", "g(r)", "intra(r)"); 
-			for (i = 0; i<rdf.nPoints(); ++i) parser.writeLineF("%16.10e  %16.10e  %16.10e\n", rdf.x(i), rdf.y(i), intra.y(i));
+			Data2D& rdf = partialRDFMatrix_.ref(typeI,typeJ).normalisedData();
+			Data2D& bound = boundRDFMatrix_.ref(typeI,typeJ).normalisedData();
+			Data2D& unbound = unboundRDFMatrix_.ref(typeI,typeJ).normalisedData();
+			parser.writeLineF("# %-14s  %-16s  %-16s  %-16s\n", "r, Angstroms", "g(r)", "bound(r)", "unbound(r)"); 
+			for (n = 0; n<rdf.nPoints(); ++n) parser.writeLineF("%16.10e  %16.10e  %16.10e  %16.10e\n", rdf.x(n), rdf.y(n), bound.y(n), unbound.y(n));
 			parser.closeFiles();
 		}
 	}
@@ -295,13 +330,33 @@ void DUQ::saveRDFs(const char* baseName)
  */
 void DUQ::saveSQ(const char* baseName)
 {
+	// Only the Master process can do this
 	if (!Comm.master()) return;
-	for (int n=0; n<typeIndex_.nItems(); ++n)
+	LineParser parser;
+	int typeI, typeJ, n;
+
+	for (typeI=0; typeI<typeIndex_.nItems(); ++typeI)
 	{
-		for (int m=0; m<typeIndex_.nItems(); ++m)
+		for (typeJ=typeI; typeJ<typeIndex_.nItems(); ++typeJ)
 		{
-			Dnchar filename(-1, "%s-unweighted-%s-%s.sq", baseName, typeIndex_[n]->name(), typeIndex_[m]->name());
-			partialSQMatrix_.ref(n,m).save(filename);
+			Dnchar filename(-1, "%s-unweighted-%s-%s.sq", baseName, typeIndex_[typeI]->name(), typeIndex_[typeJ]->name());
+
+			// Open file and check that we're OK to proceed writing to it
+			msg.print("Writing S(Q) file '%s'...\n", filename.get());
+
+			parser.openOutput(filename, TRUE);
+			if (!parser.isFileGoodForWriting())
+			{
+				msg.error("Couldn't open file '%s' for writing.\n", filename.get());
+				continue;
+			}
+			
+			Data2D& sq = partialSQMatrix_.ref(typeI,typeJ);
+			Data2D& bound = boundSQMatrix_.ref(typeI,typeJ);
+			Data2D& unbound = unboundSQMatrix_.ref(typeI,typeJ);
+			parser.writeLineF("# %-14s  %-16s  %-16s  %-16s\n", "Q, 1/Angstroms", "S(Q)", "bound(Q)", "unbound(Q)"); 
+			for (n = 0; n<sq.nPoints(); ++n) parser.writeLineF("%16.10e  %16.10e  %16.10e  %16.10e\n", sq.x(n), sq.y(n), bound.y(n), unbound.y(n));
+			parser.closeFiles();
 		}
 	}
 

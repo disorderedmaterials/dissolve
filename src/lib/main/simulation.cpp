@@ -364,7 +364,7 @@ bool DUQ::goInteractive()
 		}
 		
 		// Align MPI processes
-		Comm.wait(dUQComm::World);
+		Comm.wait(DUQComm::World);
 	}
 
 	return TRUE;

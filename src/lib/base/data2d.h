@@ -111,6 +111,14 @@ class Data2D : public ListItem<Data2D>
 	Data2D operator+(const Data2D& source) const;
 	// Operator +=
 	void operator+=(const Data2D& source);
+	// Operator +=
+	void operator+=(const double dy);
+	// Operator -
+	Data2D operator-(const Data2D& source) const;
+	// Operator -=
+	void operator-=(const Data2D& source);
+	// Operator -=
+	void operator-=(const double dy);
 	// Operator *=
 	void operator*=(const double factor);
 	// Operator /=
@@ -164,16 +172,16 @@ class Data2D : public ListItem<Data2D>
 	 */
 	///@{
 	private:
-	// Array of second derivatives of function (if created)
-	Array<double> ddy_;
-	// X indices which bracketed last interpolated point
-	int splineBracketLeft_, splineBracketRight_;
+	// Array of parameters for spline fit (if created)
+	Array<double> splineA_, splineB_, splineC_, splineD_, splineH_;
+	// Interval of last interpolated point
+	int splineInterval_;
+	// Whether a constrained spline fit was used
+	bool constrainedSpline_;
 
 	public:
 	// Calculate natural spline interpolation of current data
-	void interpolate();
-	// Return second derivatives array
-	Array<double>& splineArray();
+	void interpolate(bool constrained = TRUE);
 	// Return spline interpolated y value for supplied x
 	double interpolated(double xvalue);
 	// Smooth data
@@ -206,6 +214,8 @@ class Data2D : public ListItem<Data2D>
 	void medianFilter(int length);
 	// Convolute this data with the supplied data, by products
 	bool convoluteProduct(Data2D& data);
+	// Trim data to X-range specified
+	void trim(double minX, double maxX);
 	///@}
 
 

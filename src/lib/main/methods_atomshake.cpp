@@ -72,7 +72,7 @@ CommandReturnValue DUQ::atomShake(Configuration& cfg)
 	EnergyKernel kernel(cfg.box(), potentialMap_);
 
 	// Initialise the random number buffer
-	Comm.initialiseRandomBuffer(dUQComm::Group);
+	Comm.initialiseRandomBuffer(DUQComm::Group);
 
 	// Enter calculation loop until no more Cells are available
 	int cellId, n, shake, m;
@@ -110,8 +110,8 @@ CommandReturnValue DUQ::atomShake(Configuration& cfg)
 			nTries += grainI->nAtoms() * nShakesPerAtom;
 
 			// Calculate current reference energy - base it on the current Grain since this is a convenient unit
-			currentEnergy = kernel.energy(grainI, cell->neighbours(), cutoffSq, FALSE, dUQComm::Group);
-			currentEnergy += kernel.energy(grainI, cell, cutoffSq, FALSE, FALSE, dUQComm::Group);
+			currentEnergy = kernel.energy(grainI, cell->neighbours(), cutoffSq, FALSE, DUQComm::Group);
+			currentEnergy += kernel.energy(grainI, cell, cutoffSq, FALSE, FALSE, DUQComm::Group);
 			// -- Add on all internal/connection terms associated with the Grain
 			currentEnergy += kernel.fullIntraEnergy(grainI, termScale);
 
@@ -130,8 +130,8 @@ CommandReturnValue DUQ::atomShake(Configuration& cfg)
 
 					// Translate atom and calculate new energy
 					i->translateCoordinates(rDelta);
-					newEnergy = kernel.energy(grainI, cell->neighbours(), cutoffSq, FALSE, dUQComm::Group);
-					newEnergy += kernel.energy(grainI, cell, cutoffSq, FALSE, FALSE, dUQComm::Group);
+					newEnergy = kernel.energy(grainI, cell->neighbours(), cutoffSq, FALSE, DUQComm::Group);
+					newEnergy += kernel.energy(grainI, cell, cutoffSq, FALSE, FALSE, DUQComm::Group);
 					newEnergy += kernel.fullIntraEnergy(grainI, termScale);
 
 					// Trial the transformed Grain position (the Master is in charge of this)
@@ -172,9 +172,9 @@ CommandReturnValue DUQ::atomShake(Configuration& cfg)
 	updateGrains(cfg);
 
 	// Collect statistics from process group leaders
-	if (!Comm.allSum(&nAccepted, 1, dUQComm::Leaders)) return CommandCommFail;
-	if (!Comm.allSum(&nTries, 1, dUQComm::Leaders)) return CommandCommFail;
-	if (!Comm.allSum(&totalDelta, 1, dUQComm::Leaders)) return CommandCommFail;
+	if (!Comm.allSum(&nAccepted, 1, DUQComm::Leaders)) return CommandCommFail;
+	if (!Comm.allSum(&nTries, 1, DUQComm::Leaders)) return CommandCommFail;
+	if (!Comm.allSum(&totalDelta, 1, DUQComm::Leaders)) return CommandCommFail;
 	if (Comm.processGroupLeader())
 	{
 		double rate = double(nAccepted)/nTries;
@@ -190,7 +190,7 @@ CommandReturnValue DUQ::atomShake(Configuration& cfg)
 	}
 
 	// Store updated parameter values
-	if (!Comm.broadcast(&translationStep, 1, 0, dUQComm::Group)) return CommandCommFail;
+	if (!Comm.broadcast(&translationStep, 1, 0, DUQComm::Group)) return CommandCommFail;
 	translationStepParam->setValue(translationStep);
 	msg.print("AtomShake: Updated translation step is %f Angstroms.\n", translationStep);
 	

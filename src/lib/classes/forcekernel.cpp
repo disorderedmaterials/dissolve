@@ -331,7 +331,7 @@ void ForceKernel::forces(const Grain* grain, const Cell* cell, double cutoffSq, 
  * elsewhere, no parallel summation of the calculated data is performed by this routine, and must be handled externally by
  * the calling function.
  */
-void ForceKernel::forces(const Atom* i, RefList<Cell,bool>& neighbours, bool excludeIgtJ, double* fx, double* fy, double* fz, dUQComm::CommGroup group)
+void ForceKernel::forces(const Atom* i, RefList<Cell,bool>& neighbours, bool excludeIgtJ, double* fx, double* fy, double* fz, DUQComm::CommGroup group)
 {
 #ifdef CHECKS
 	if (i == NULL)
@@ -341,7 +341,7 @@ void ForceKernel::forces(const Atom* i, RefList<Cell,bool>& neighbours, bool exc
 	}
 #endif
 	// Communication group determines loop/summation style
-	if (group == dUQComm::Solo)
+	if (group == DUQComm::Solo)
 	{
 		// Straight loop over Cell neighbours
 		for (RefListItem<Cell,bool>* cellRef = neighbours.first(); cellRef != NULL; cellRef = cellRef->next)
@@ -349,7 +349,7 @@ void ForceKernel::forces(const Atom* i, RefList<Cell,bool>& neighbours, bool exc
 			forces(i, cellRef->item, cellRef->data, excludeIgtJ, fx, fy, fz);
 		}
 	}
-	else if (group == dUQComm::Group)
+	else if (group == DUQComm::Group)
 	{
 		// Striped loop over Cell neighbours (Process Groups)
 		Cell* cell;
@@ -382,7 +382,7 @@ void ForceKernel::forces(const Atom* i, RefList<Cell,bool>& neighbours, bool exc
  * elsewhere, no parallel summation of the calculated data is performed by this routine, and must be handled externally by
  * the calling function.
  */
-void ForceKernel::forces(const Grain* grain, RefList<Cell,bool>& neighbours, double cutoffSq, bool excludeIgtJ, double* fx, double* fy, double* fz, dUQComm::CommGroup group)
+void ForceKernel::forces(const Grain* grain, RefList<Cell,bool>& neighbours, double cutoffSq, bool excludeIgtJ, double* fx, double* fy, double* fz, DUQComm::CommGroup group)
 {
 #ifdef CHECKS
 	if (grain == NULL)
@@ -392,7 +392,7 @@ void ForceKernel::forces(const Grain* grain, RefList<Cell,bool>& neighbours, dou
 	}
 #endif
 	// Communication group determines loop/summation style
-	if (group == dUQComm::Solo)
+	if (group == DUQComm::Solo)
 	{
 		// Straight loop over Cell neighbours
 		for (RefListItem<Cell,bool>* cellRef = neighbours.first(); cellRef != NULL; cellRef = cellRef->next)
@@ -400,7 +400,7 @@ void ForceKernel::forces(const Grain* grain, RefList<Cell,bool>& neighbours, dou
 			forces(grain, cellRef->item, cutoffSq, cellRef->data, excludeIgtJ, fx, fy, fz);
 		}
 	}
-	else if (group == dUQComm::Group)
+	else if (group == DUQComm::Group)
 	{
 		// Striped loop over Cell neighbours (Process Groups)
 		Cell* cell;

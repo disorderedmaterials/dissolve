@@ -76,7 +76,7 @@ CommandReturnValue DUQ::grainShake(Configuration& cfg)
 	EnergyKernel kernel(cfg.box(), potentialMap_);
 
 	// Initialise the random number buffer
-	Comm.initialiseRandomBuffer(dUQComm::Group);
+	Comm.initialiseRandomBuffer(DUQComm::Group);
 
 	// Enter calculation loop until no more Cells are available
 	int cellId, n, shake, m;
@@ -113,8 +113,8 @@ CommandReturnValue DUQ::grainShake(Configuration& cfg)
 		{
 			// Get current Grain and  
 			grainI = cell->grain(n);
-			currentEnergy = kernel.energy(grainI, cell->neighbours(), cutoffSq, FALSE, dUQComm::Group);
-			currentEnergy += kernel.energy(grainI, cell, cutoffSq, FALSE, FALSE, dUQComm::Group);
+			currentEnergy = kernel.energy(grainI, cell->neighbours(), cutoffSq, FALSE, DUQComm::Group);
+			currentEnergy += kernel.energy(grainI, cell, cutoffSq, FALSE, FALSE, DUQComm::Group);
 			currentEnergy += kernel.fullIntraEnergy(grainI, termScale);
 
 			// Set current Grain as target in ChangeStore
@@ -137,8 +137,8 @@ CommandReturnValue DUQ::grainShake(Configuration& cfg)
 				}
 
 				// Calculate new energy
-				newEnergy = kernel.energy(grainI, cell->neighbours(), cutoffSq, FALSE, dUQComm::Group);
-				newEnergy += kernel.energy(grainI, cell, cutoffSq, FALSE, FALSE, dUQComm::Group);
+				newEnergy = kernel.energy(grainI, cell->neighbours(), cutoffSq, FALSE, DUQComm::Group);
+				newEnergy += kernel.energy(grainI, cell, cutoffSq, FALSE, FALSE, DUQComm::Group);
 				newEnergy += kernel.fullIntraEnergy(grainI, termScale);
 
 				// Trial the transformed Grain position
@@ -178,9 +178,9 @@ CommandReturnValue DUQ::grainShake(Configuration& cfg)
 	updateGrains(cfg);
 
 	// Collect statistics from process group leaders
-	if (!Comm.allSum(&nAccepted, 1, dUQComm::Leaders)) return CommandCommFail;
-	if (!Comm.allSum(&nTries, 1, dUQComm::Leaders)) return CommandCommFail;
-	if (!Comm.allSum(&totalDelta, 1, dUQComm::Leaders)) return CommandCommFail;
+	if (!Comm.allSum(&nAccepted, 1, DUQComm::Leaders)) return CommandCommFail;
+	if (!Comm.allSum(&nTries, 1, DUQComm::Leaders)) return CommandCommFail;
+	if (!Comm.allSum(&totalDelta, 1, DUQComm::Leaders)) return CommandCommFail;
 	if (Comm.processGroupLeader())
 	{
 		double rate = double(nAccepted)/nTries;
@@ -198,8 +198,8 @@ CommandReturnValue DUQ::grainShake(Configuration& cfg)
 	}
 
 	// Store updated parameter values
-	if (!Comm.broadcast(&translationStep, 1, 0, dUQComm::Group)) return CommandCommFail;
-	if (!Comm.broadcast(&rotationStep, 1, 0, dUQComm::Group)) return CommandCommFail;
+	if (!Comm.broadcast(&translationStep, 1, 0, DUQComm::Group)) return CommandCommFail;
+	if (!Comm.broadcast(&rotationStep, 1, 0, DUQComm::Group)) return CommandCommFail;
 	rotationStepParam->setValue(rotationStep);
 	translationStepParam->setValue(translationStep);
 	msg.print("GrainShake: Updated translation step is %f Angstroms, rotation step is %f degrees.\n", translationStep, rotationStep);

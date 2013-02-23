@@ -37,15 +37,15 @@
 #endif
 
 /*!
- * \brief dUQComm
+ * \brief DUQComm
  * \details Basic class to define process-global variables useful to control parallel execution,
  * and provide macros to simplify coding and aid readability.
  */
-class dUQComm
+class DUQComm
 {
 	public:
 	// Constructor
-	dUQComm();
+	DUQComm();
 	/// Communications Group (for subroutines)
 	enum CommGroup
 	{
@@ -56,7 +56,7 @@ class dUQComm
 	};
 #ifdef PARALLEL
 	// Return communicator for group specified
-	MPI_Comm communicator(dUQComm::CommGroup group);
+	MPI_Comm communicator(DUQComm::CommGroup group);
 #endif
 
 
@@ -170,9 +170,9 @@ class dUQComm
 	// Return diagonal last Atom index
 	int diagonalLastAtom();
 	// Return starting index for general interleaved loop
-	int interleavedLoopStart(dUQComm::CommGroup group);
+	int interleavedLoopStart(DUQComm::CommGroup group);
 	// Return stride for general interleaved loop
-	int interleavedLoopStride(dUQComm::CommGroup group);
+	int interleavedLoopStride(DUQComm::CommGroup group);
 	///@}
 
 
@@ -182,7 +182,7 @@ class dUQComm
 	///@{
 	public:
 	// Wait for all processes
-	bool wait(dUQComm::CommGroup group);
+	bool wait(DUQComm::CommGroup group);
 	// Send single integer value to target process
 	bool send(int value, int targetProcess);
 	// Receive single integer from source process
@@ -212,19 +212,19 @@ class dUQComm
 	///@{
 	public:
 	// Broadcast Dnchar
-	bool broadcast(Dnchar& source, int rootProcess = 0, dUQComm::CommGroup group = dUQComm::World);
+	bool broadcast(Dnchar& source, int rootProcess = 0, DUQComm::CommGroup group = DUQComm::World);
 	// Broadcast char data
-	bool broadcast(char* source, int rootProcess = 0, dUQComm::CommGroup group = dUQComm::World);
+	bool broadcast(char* source, int rootProcess = 0, DUQComm::CommGroup group = DUQComm::World);
 	// Broadcast Vec3<double>
-	bool broadcast(Vec3<double>& source, int rootProcess = 0, dUQComm::CommGroup group = dUQComm::World);
+	bool broadcast(Vec3<double>& source, int rootProcess = 0, DUQComm::CommGroup group = DUQComm::World);
 	// Broadcast integer(s)
-	bool broadcast(int* source, int count, int rootProcess = 0, dUQComm::CommGroup group = dUQComm::World);
+	bool broadcast(int* source, int count, int rootProcess = 0, DUQComm::CommGroup group = DUQComm::World);
 	// Broadcast double(s)
-	bool broadcast(double* source, int count, int rootProcess = 0, dUQComm::CommGroup group = dUQComm::World);
+	bool broadcast(double* source, int count, int rootProcess = 0, DUQComm::CommGroup group = DUQComm::World);
 	// Broadcast float(s)
-	bool broadcast(float* source, int count, int rootProcess = 0, dUQComm::CommGroup group = dUQComm::World);
+	bool broadcast(float* source, int count, int rootProcess = 0, DUQComm::CommGroup group = DUQComm::World);
 	// Broadcast bool(s)
-	bool broadcast(bool* source, int count, int rootProcess = 0, dUQComm::CommGroup group = dUQComm::World);
+	bool broadcast(bool* source, int count, int rootProcess = 0, DUQComm::CommGroup group = DUQComm::World);
 	///@}
 
 
@@ -234,13 +234,13 @@ class dUQComm
 	///@{
 	public:
 	// Reduce (sum) double data to root process
-	bool sum(double* source, int count, int rootProcess = 0, dUQComm::CommGroup group = dUQComm::World);
+	bool sum(double* source, int count, int rootProcess = 0, DUQComm::CommGroup group = DUQComm::World);
 	// Reduce (sum) int data to root process
-	bool sum(int* source, int count, int rootProcess = 0, dUQComm::CommGroup group = dUQComm::World);
+	bool sum(int* source, int count, int rootProcess = 0, DUQComm::CommGroup group = DUQComm::World);
 	// Reduce (sum) double data to all processes
-	bool allSum(double* source, int count, dUQComm::CommGroup group = dUQComm::World);
+	bool allSum(double* source, int count, DUQComm::CommGroup group = DUQComm::World);
 	// Reduce (sum) int data to all processes
-	bool allSum(int* source, int count, dUQComm::CommGroup group = dUQComm::World);
+	bool allSum(int* source, int count, DUQComm::CommGroup group = DUQComm::World);
 	// Assemble integer array on target process
 	bool assemble(int* array, int nData, int* rootDest, int rootMaxData, int rootProcess = 0);
 	// Assemble double array on target process
@@ -270,7 +270,7 @@ class dUQComm
 	// Index of next buffered number
 	int randomBufferIndex_;
 	// Communicator for random number buffer
-	dUQComm::CommGroup randomBufferCommGroup_;
+	DUQComm::CommGroup randomBufferCommGroup_;
 
 	private:
 	// Refill random number buffer
@@ -278,7 +278,7 @@ class dUQComm
 
 	public:
 	// Initialise random number buffer for processes
-	void initialiseRandomBuffer(dUQComm::CommGroup group);
+	void initialiseRandomBuffer(DUQComm::CommGroup group);
 	// Get next buffered random number (0-1 inclusive)
 	double random();
 	// Get next buffered random number (-1 to +1 inclusive)
@@ -301,7 +301,7 @@ class dUQComm
 };
 
 // External Declarations
-extern dUQComm Comm;
+extern DUQComm Comm;
 
 /*!
  * \brief BroadcastList
@@ -418,28 +418,28 @@ template <class T, class D> class BroadcastRefList
  *      // Test supplied code/condition 'x', and broadcast result to all processes
  *	if (x) then
  * 	{
- * 		MPI_Bcast(&dUQComm::SUCCEEDED,1,MPI_INTEGER,0,MPI_COMM_WORLD);
+ * 		MPI_Bcast(&DUQComm::SUCCEEDED,1,MPI_INTEGER,0,MPI_COMM_WORLD);
  * 		return TRUE;
  * 	}
  * 	else
  * 	{
- * 		MPI_Bcast(&dUQComm::FAILED,1,MPI_INTEGER,0,MPI_COMM_WORLD);
+ * 		MPI_Bcast(&DUQComm::FAILED,1,MPI_INTEGER,0,MPI_COMM_WORLD);
  *		return FALSE;
  * 	}
  * }
  * else
  * {
  *      // Slaves don't evaluate 'x' - they just receive the result
- * 	MPI_Bcast(&dUQComm::RESULT,1,MPI_INTEGER,0,MPI_COMM_WORLD);
- * 	return dUQComm::RESULT;
+ * 	MPI_Bcast(&DUQComm::RESULT,1,MPI_INTEGER,0,MPI_COMM_WORLD);
+ * 	return DUQComm::RESULT;
  * }
  */
 #ifdef PARALLEL
 #define MPIRunMaster(x)\
 (Comm.master() ?\
-   (x ? (Comm.wait(dUQComm::World),MPI_Bcast(&dUQComm::SUCCEEDED,1,MPI_INTEGER,0,MPI_COMM_WORLD),TRUE)\
-      : (Comm.wait(dUQComm::World), MPI_Bcast(&dUQComm::FAILED,1,MPI_INTEGER,0,MPI_COMM_WORLD),FALSE))\
-: (Comm.wait(dUQComm::World), MPI_Bcast(&dUQComm::RESULT,1,MPI_INTEGER,0,MPI_COMM_WORLD),dUQComm::RESULT ? TRUE : FALSE))
+   (x ? (Comm.wait(DUQComm::World),MPI_Bcast(&DUQComm::SUCCEEDED,1,MPI_INTEGER,0,MPI_COMM_WORLD),TRUE)\
+      : (Comm.wait(DUQComm::World), MPI_Bcast(&DUQComm::FAILED,1,MPI_INTEGER,0,MPI_COMM_WORLD),FALSE))\
+: (Comm.wait(DUQComm::World), MPI_Bcast(&DUQComm::RESULT,1,MPI_INTEGER,0,MPI_COMM_WORLD),DUQComm::RESULT ? TRUE : FALSE))
 #else
 #define MPIRunMaster(x) x
 #endif

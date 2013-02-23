@@ -295,7 +295,7 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, bool applyMim, bool exclu
  * \details Calculate the energy between the Grain specified and the entire (Grain) contents of the given Cell,
  * applying minimum image calculations if necessary.
  */
-double EnergyKernel::energy(const Grain* grain, Cell* cell, double cutoffSq, bool applyMim, bool excludeIgtJ, dUQComm::CommGroup group)
+double EnergyKernel::energy(const Grain* grain, Cell* cell, double cutoffSq, bool applyMim, bool excludeIgtJ, DUQComm::CommGroup group)
 {
 #ifdef CHECKS
 	if (grain == NULL)
@@ -312,7 +312,7 @@ double EnergyKernel::energy(const Grain* grain, Cell* cell, double cutoffSq, boo
 	double totalEnergy = 0.0;
 
 	// Communication group determines loop/summation style
-	if (group == dUQComm::Solo)
+	if (group == DUQComm::Solo)
 	{
 		// Straight loop over Cell Grains
 		for (RefListItem<Grain,int>* grainRef = cell->grains(); grainRef != NULL; grainRef = grainRef->next)
@@ -320,7 +320,7 @@ double EnergyKernel::energy(const Grain* grain, Cell* cell, double cutoffSq, boo
 			totalEnergy += energy(grain, grainRef->item, cutoffSq, applyMim, excludeIgtJ);
 		}
 	}
-	else if (group == dUQComm::Group)
+	else if (group == DUQComm::Group)
 	{
 		// Striped loop over Cell neighbours (Process Groups)
 		Grain* otherGrain;
@@ -331,7 +331,7 @@ double EnergyKernel::energy(const Grain* grain, Cell* cell, double cutoffSq, boo
 			totalEnergy += energy(grain, otherGrain, cutoffSq, applyMim, excludeIgtJ);
 		}
 		// Reduce energy to all processes within group
-		Comm.allSum(&totalEnergy, 1, dUQComm::Group);
+		Comm.allSum(&totalEnergy, 1, DUQComm::Group);
 	}
 	else
 	{
@@ -353,7 +353,7 @@ double EnergyKernel::energy(const Grain* grain, Cell* cell, double cutoffSq, boo
 /*!
  * \brief Return PairPotential energy between Atom and list of Cells
  */
-double EnergyKernel::energy(const Atom* i, RefList<Cell,bool>& neighbours, bool excludeIgtJ, dUQComm::CommGroup group)
+double EnergyKernel::energy(const Atom* i, RefList<Cell,bool>& neighbours, bool excludeIgtJ, DUQComm::CommGroup group)
 {
 #ifdef CHECKS
 	if (i == NULL)
@@ -365,7 +365,7 @@ double EnergyKernel::energy(const Atom* i, RefList<Cell,bool>& neighbours, bool 
 	double totalEnergy = 0.0;
 
 	// Communication group determines loop/summation style
-	if (group == dUQComm::Solo)
+	if (group == DUQComm::Solo)
 	{
 		// Straight loop over Cell neighbours
 		for (RefListItem<Cell,bool>* cellRef = neighbours.first(); cellRef != NULL; cellRef = cellRef->next)
@@ -373,7 +373,7 @@ double EnergyKernel::energy(const Atom* i, RefList<Cell,bool>& neighbours, bool 
 			totalEnergy += energy(i, cellRef->item, cellRef->data, excludeIgtJ);
 		}
 	}
-	else if (group == dUQComm::Group)
+	else if (group == DUQComm::Group)
 	{
 		// Striped loop over Cell neighbours (Process Groups)
 		Cell* cell;
@@ -385,7 +385,7 @@ double EnergyKernel::energy(const Atom* i, RefList<Cell,bool>& neighbours, bool 
 			totalEnergy += energy(i, cell, applyMim, excludeIgtJ);
 		}
 		// Reduce energy to all processes within group
-		Comm.allSum(&totalEnergy, 1, dUQComm::Group);
+		Comm.allSum(&totalEnergy, 1, DUQComm::Group);
 	}
 	else
 	{
@@ -408,7 +408,7 @@ double EnergyKernel::energy(const Atom* i, RefList<Cell,bool>& neighbours, bool 
 /*!
  * \brief Return intermolecular energy between Grain and list of Cells
  */
-double EnergyKernel::energy(const Grain* grain, RefList<Cell,bool>& neighbours, double cutoffSq, bool excludeIgtJ, dUQComm::CommGroup group)
+double EnergyKernel::energy(const Grain* grain, RefList<Cell,bool>& neighbours, double cutoffSq, bool excludeIgtJ, DUQComm::CommGroup group)
 {
 #ifdef CHECKS
 	if (grain == NULL)
@@ -420,7 +420,7 @@ double EnergyKernel::energy(const Grain* grain, RefList<Cell,bool>& neighbours, 
 	double totalEnergy = 0.0;
 
 	// Communication group determines loop/summation style
-	if (group == dUQComm::Solo)
+	if (group == DUQComm::Solo)
 	{
 		// Straight loop over Cell neighbours
 		for (RefListItem<Cell,bool>* cellRef = neighbours.first(); cellRef != NULL; cellRef = cellRef->next)
@@ -428,7 +428,7 @@ double EnergyKernel::energy(const Grain* grain, RefList<Cell,bool>& neighbours, 
 			totalEnergy += energy(grain, cellRef->item, cellRef->data, excludeIgtJ);
 		}
 	}
-	else if (group == dUQComm::Group)
+	else if (group == DUQComm::Group)
 	{
 		// Striped loop over Cell neighbours (Process Groups)
 		Cell* cell;
@@ -440,7 +440,7 @@ double EnergyKernel::energy(const Grain* grain, RefList<Cell,bool>& neighbours, 
 			totalEnergy += energy(grain, cell, cutoffSq, applyMim, excludeIgtJ);
 		}
 		// Reduce energy to all processes within group
-		Comm.allSum(&totalEnergy, 1, dUQComm::Group);
+		Comm.allSum(&totalEnergy, 1, DUQComm::Group);
 	}
 	else
 	{
@@ -529,7 +529,7 @@ double EnergyKernel::fullIntraEnergy(const Grain* grain, double termFactor)
  * The argument 'halfPP' controls whether the total energy returned is suitable for summation into a total system energy (halfPP = TRUE) or whether a single
  * Molecule energy is required (halfPP = FALSE) and controls whether intermolecular Grain corrections are performed, as well as halving the total Grain energy.
  */
-double EnergyKernel::energy(Molecule* mol, double cutoffSq, dUQComm::CommGroup group, bool halfPP, double ppFactorIntra, double termFactor)
+double EnergyKernel::energy(Molecule* mol, double cutoffSq, DUQComm::CommGroup group, bool halfPP, double ppFactorIntra, double termFactor)
 {
 	double totalEnergy = 0.0, grainEnergy = 0.0, intraEnergy = 0.0, interMolGrainCorrect = 0.0;
 	
