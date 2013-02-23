@@ -49,7 +49,7 @@ CommandReturnValue DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 	EnergyKernel kernel(cfg.box(), potentialMap_);
 
 	// Initialise the random number buffer
-	Comm.initialiseRandomBuffer(dUQComm::World);
+	Comm.initialiseRandomBuffer(DUQComm::World);
 
 	// Loop over Molecules
 	Comm.resetAccumulatedTime();
@@ -60,7 +60,7 @@ CommandReturnValue DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 		changeStore.add(mol);
 
 		// Calculate reference energy for the Molecule
-		currentEnergy = kernel.energy(mol, dUQComm::World);
+		currentEnergy = kernel.energy(mol, DUQComm::World);
 
 		/*
 		// Bonds
@@ -97,7 +97,7 @@ CommandReturnValue DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 		}
 		
 		// Test energy again
-		newEnergy = kernel.energy(mol, dUQComm::World);
+		newEnergy = kernel.energy(mol, DUQComm::World);
 		delta = newEnergy - currentEnergy;
 		
 		if ((delta < 0) || (Comm.random() < exp(-delta/(.008314472*temperature_))))
@@ -155,7 +155,7 @@ CommandReturnValue DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 			}
 
 			// Test energy again
-			newEnergy = kernel.energy(mol, dUQComm::World);
+			newEnergy = kernel.energy(mol, DUQComm::World);
 			delta = newEnergy - currentEnergy;
 			
 			if ((delta < 0) || (Comm.random() < exp(-delta/(.008314472*temperature_))))
@@ -181,9 +181,9 @@ CommandReturnValue DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 	updateGrains(cfg);
 
 	// Collect statistics from process group leaders
-	if (!Comm.allSum(&nAccepted, 1, dUQComm::Leaders)) return CommandCommFail;
-	if (!Comm.allSum(&nTries, 1, dUQComm::Leaders)) return CommandCommFail;
-	if (!Comm.allSum(&totalDelta, 1, dUQComm::Leaders)) return CommandCommFail;
+	if (!Comm.allSum(&nAccepted, 1, DUQComm::Leaders)) return CommandCommFail;
+	if (!Comm.allSum(&nTries, 1, DUQComm::Leaders)) return CommandCommFail;
+	if (!Comm.allSum(&totalDelta, 1, DUQComm::Leaders)) return CommandCommFail;
 	if (Comm.processGroupLeader())
 	{
 		msg.print("IntraShake: Overall acceptance rate was %6.1f%% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*nAccepted / nTries, nAccepted, nTries, timer.timeString(), Comm.accumulatedTimeString());
@@ -253,8 +253,8 @@ CommandReturnValue DUQ::interShake(Configuration& cfg)
 		{
 			// Get current Grain and calculate base energy (inter-Grain energy with NO inter-Grain corrections)
 			grainI = cell->grain(n);
-			currentGrainEnergy = kernel.energy(grainI, cell->neighbours(), FALSE, dUQComm::Group);
-			currentGrainEnergy += kernel.energy(grainI, cell, FALSE, FALSE, dUQComm::Group);
+			currentGrainEnergy = kernel.energy(grainI, cell->neighbours(), FALSE, DUQComm::Group);
+			currentGrainEnergy += kernel.energy(grainI, cell, FALSE, FALSE, DUQComm::Group);
 
 			// Set current Grain as target in ChangeStore
 			changeStore.add(grainI);
@@ -292,8 +292,8 @@ CommandReturnValue DUQ::interShake(Configuration& cfg)
 				grainI->translate(vec);
 
 				// Calculate new energy
-				newGrainEnergy = kernel.energy(grainI, cell->neighbours(), FALSE, dUQComm::Group);
-				newGrainEnergy += kernel.energy(grainI, cell, FALSE, FALSE, dUQComm::Group);
+				newGrainEnergy = kernel.energy(grainI, cell->neighbours(), FALSE, DUQComm::Group);
+				newGrainEnergy += kernel.energy(grainI, cell, FALSE, FALSE, DUQComm::Group);
 				newBondEnergy = kernel.energy(b);
 
 				// Trial the transformed Grain position (the Master is in charge of this)
@@ -301,7 +301,7 @@ CommandReturnValue DUQ::interShake(Configuration& cfg)
 				accept = delta < 0 ? TRUE : (dUQMath::random() < exp(-delta/(.008314472*temperature_)));
 
 				// Broadcast result to process group
-				if (!Comm.broadcast(&accept, 1, 0, dUQComm::Group)) return CommandCommFail;
+				if (!Comm.broadcast(&accept, 1, 0, DUQComm::Group)) return CommandCommFail;
 				if (accept)
 				{
 // 					msg.print("Accepts move with delta %f\n", delta);
@@ -334,8 +334,8 @@ CommandReturnValue DUQ::interShake(Configuration& cfg)
 	updateGrains(cfg);
 
 	// Collect statistics from process group leaders
-	if (!Comm.allSum(&nAccepted, 1, dUQComm::Leaders)) return CommandCommFail;
-	if (!Comm.allSum(&nTries, 1, dUQComm::Leaders)) return CommandCommFail;
+	if (!Comm.allSum(&nAccepted, 1, DUQComm::Leaders)) return CommandCommFail;
+	if (!Comm.allSum(&nTries, 1, DUQComm::Leaders)) return CommandCommFail;
 	if (Comm.processGroupLeader())
 	{
 		msg.print("InterShake: Overall acceptance rate was %6.1f%% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*nAccepted / nTries, nAccepted, nTries, timer.timeString(), Comm.accumulatedTimeString());
@@ -527,9 +527,9 @@ CommandReturnValue DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 	updateGrains(cfg);
 
 	// Collect statistics from process group leaders
-	if (!Comm.allSum(&nAccepted, 1, dUQComm::Leaders)) return CommandCommFail;
-	if (!Comm.allSum(&nTries, 1, dUQComm::Leaders)) return CommandCommFail;
-	if (!Comm.allSum(&totalDelta, 1, dUQComm::Leaders)) return CommandCommFail;
+	if (!Comm.allSum(&nAccepted, 1, DUQComm::Leaders)) return CommandCommFail;
+	if (!Comm.allSum(&nTries, 1, DUQComm::Leaders)) return CommandCommFail;
+	if (!Comm.allSum(&totalDelta, 1, DUQComm::Leaders)) return CommandCommFail;
 	if (Comm.processGroupLeader())
 	{
 		msg.print("TermShake: Overall acceptance rate was %6.1f%% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*nAccepted / nTries, nAccepted, nTries, timer.timeString(), Comm.accumulatedTimeString());

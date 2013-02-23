@@ -60,3 +60,6 @@ Store temperature_ in Configuration?  HAve a List of Configurations which all me
 
 ** Atom Type 'Applicability'
 For an alkane, for instance, the pairpotential for the terminal H may be different from the methylene H - to what extent does this affect the possible fit?  WOuld be nice to refine a system with one potential for all H, then split into CH3 and CH2 potentials to find out.
+
+** Potential Library
+Keep standard (i.e. already perturbed) potentials available for things like water?

@@ -44,8 +44,8 @@ double DUQ::intramolecularEnergy(Configuration& cfg)
 	int start, stride;
 
 	// Set start/skip for parallel loop
-	start = Comm.interleavedLoopStart(dUQComm::World);
-	stride = Comm.interleavedLoopStride(dUQComm::World);
+	start = Comm.interleavedLoopStart(DUQComm::World);
+	stride = Comm.interleavedLoopStride(DUQComm::World);
 
 	// Bond energy / corrections
 	Bond* b;
@@ -94,8 +94,8 @@ double DUQ::grainEnergy(Configuration& cfg)
 	double totalEnergy = 0.0;
 
 	// Set start/skip for parallel loop
-	start = Comm.interleavedLoopStart(dUQComm::Group);
-	stride = Comm.interleavedLoopStride(dUQComm::Group);
+	start = Comm.interleavedLoopStart(DUQComm::Group);
+	stride = Comm.interleavedLoopStride(DUQComm::Group);
 
 	while (cellId = cfg.nextAvailableCell(willBeModified, allowRepeats), cellId != Cell::AllCellsComplete)
 	{
@@ -114,7 +114,7 @@ double DUQ::grainEnergy(Configuration& cfg)
 		 */
 		
 		// Loop over Grains
-		// Parallelism employed in the outer loop - as such, dUQComm::Solo is passed to the Grain/Cell method.
+		// Parallelism employed in the outer loop - as such, DUQComm::Solo is passed to the Grain/Cell method.
 		for (n=start; n<cell->nGrains(); n += stride)
 		{
 			grainI = cell->grain(n);
@@ -127,7 +127,7 @@ double DUQ::grainEnergy(Configuration& cfg)
 			}
 			
 			// Inter-Grain interactions between this Grain and those in Cell neighbours
-			totalEnergy += kernel.energy(grainI, cell->neighbours(), pairPotentialRangeSquared_, TRUE, dUQComm::Solo);
+			totalEnergy += kernel.energy(grainI, cell->neighbours(), pairPotentialRangeSquared_, TRUE, DUQComm::Solo);
 		}
 
 		/*
@@ -326,6 +326,6 @@ double DUQ::totalEnergyTestMolecules(Configuration& cfg)
 	// We will end up double-counting all Molecule-Molecule interactions, but only single-counting intramolecular terms.
 	// So, scale PairPotential contributions to the Grain energy, but leave inter-Grain correction energyies as-is.
 	double totalEnergy = 0.0;
-	for (Molecule* mol = cfg.molecules(); mol != NULL; mol = mol->next) totalEnergy += kernel.energy(mol, pairPotentialRangeSquared_, dUQComm::Solo, 0.5, 1.0, 1.0);
+	for (Molecule* mol = cfg.molecules(); mol != NULL; mol = mol->next) totalEnergy += kernel.energy(mol, pairPotentialRangeSquared_, DUQComm::Solo, 0.5, 1.0, 1.0);
 	return totalEnergy;
 }

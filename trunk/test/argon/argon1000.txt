@@ -1,7 +1,8 @@
-# File: 'test/argon-large.not'
+# File: 'test/argon/argon1000.txt'
+
 # AtomType Definitions
 AtomTypes
-  AtomType  'Ar'   Ar  'Xe'
+  AtomType  'Ar'   Ar  'Ar'
 EndAtomTypes
 
 # Species Definitions
@@ -18,20 +19,20 @@ EndSpecies
 
 # System Composition
 System
-  Multiplier  100000
+  Multiplier  1000
   Density  0.021300  atoms/A3
   CellLengths  1.000000  1.000000  1.000000
   CellAngles  90.000000  90.000000  90.000000
   Component  'Argon'  1.000000  1.000000  1
-  File 'test/argon-85K-large.xyz'
+  File 'test/argon/argon1000.xyz'
 EndSystem
 
 # Samples
-# One sample - experimental data taken from Table 1 of Yarnell, Katz, Wenzel, and Koenig, Phys. Rev. A 7, 2130 (1973).
-# Liquid Ar346 at 85 K. Data are normalised <b2>, and oscillate around 1.0 (i.e. contain incoherent background).
-Sample  'Koenig-85K'
+# Experimental data taken from Table 1 of Yarnell, Katz, Wenzel, and Koenig, Phys. Rev. A 7, 2130 (1973).
+# Liquid Ar36 at 85 K. Data are normalised <b2>, and oscillate around 1.0.
+Sample  'Yarnell-85K'
   Isotopologue  'Argon'  'Ar36'  1.000000  1.000000
-  ReferenceData  'test/argon-85K-large-exp.ref'
+  ReferenceData  'test/argon/yarnell.sq'
   NormalisedToAvSq
   SubtractSelf
 EndSample
@@ -41,16 +42,14 @@ PairPotentials
   Range  15.000000
   Delta  0.050000
   TruncationWidth  2.000000
-  Dispersion  'Ar'  'Ar'  3.166000  0.650000	# Potential parameters used in argon-85K-s3.166e0.65.txt
+  Dispersion  'Ar'  'Ar'  3.166000  0.650000
 EndPairPotentials
 
 # Setup
 Setup
-  Seed  943826
   Temperature  85.000000
-  RDFRange 80.0
-  BoxNormalisationPoints 500000000
-#  BoxNormalisationFile 'test/argon-85K-100000.box.norm'
+  RDFRange 20.0
+  BoxNormalisationFile 'test/argon/argon1000.norm'
 EndSetup
 
 # Simulation
@@ -62,8 +61,6 @@ Simulation
 
 @Shake
   5 as 1 15.0
-  pair
-  savesq
 
 @Strategy
   pair

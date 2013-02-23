@@ -385,6 +385,10 @@ bool PairPotential::generate(double maxR, double truncationWidth, double delta)
 	// Store copy of this original data
 	originalU_ = u_;
 
+	// Set up empty array for perturbation potential
+	v_ = u_;
+	v_.arrayY() = 0.0;
+
 	// Generate derivative data
 	calculateDerivative();
 
@@ -435,7 +439,9 @@ bool PairPotential:: updatePerturbation(Data2D& perturbation, double maxAddition
 	// Add this perturbation to the stack
 // 	Data2D* p = perturbationStack_.add();
 // 	(*p) = perturbation;
-
+// 	for (int n=0; n<u_.nPoints(); ++n) u_.arrayY()[n] = perturbation.interpolated(sqrt(u_.x(n)));
+// 	calculateDerivative();
+// 	return TRUE;
 	// Rescale magnitude of perturbation
 // 	p->arrayY() *= weight;
 
@@ -453,36 +459,38 @@ bool PairPotential:: updatePerturbation(Data2D& perturbation, double maxAddition
 // 	v_ += newPerturbation;
 // 	v_.interpolate();
 
-	// Determine 'magnitude' of current perturbation and new addition
-	double currentMag = v_.absIntegral();
-	Data2D addV = perturbation;
-	double addMag = addV.absIntegral();
-
-	// Scale new perturbation if it is greated than the allowed limit to add in one step
-	msg.print("AddMAG = %f\n", addMag);
-	if (addMag > maxAddition)
-	{
-		addV.arrayY() *= maxAddition / addMag;
-		addMag = addV.absIntegral();
-		printf("Too big!  New mag = %f\n", addMag);
-	}
-	
-	// Check current v_ magnitude - if it is greater than the maximum allowed, rescale it...
-	msg.print("currentMag = %f\n", currentMag);
-	if ((currentMag + addMag) > maxTotal)
-	{
-		v_.arrayY() *= maxTotal / currentMag;
-		currentMag = v_.absIntegral();
-		msg.print("Rescaled value of v_ = %f\n", currentMag);
-	}
+// 	// Determine 'magnitude' of current perturbation and new addition
+// 	double currentMag = v_.absIntegral();
+// 	Data2D addV = perturbation;
+// 	double addMag = addV.absIntegral();
+// 
+// 	// Scale new perturbation if it is greated than the allowed limit to add in one step
+// 	msg.print("AddMAG = %f\n", addMag);
+// 	if (addMag > maxAddition)
+// 	{
+// 		addV.arrayY() *= maxAddition / addMag;
+// 		addMag = addV.absIntegral();
+// 		printf("Too big!  New mag = %f\n", addMag);
+// 	}
+// 	
+// 	// Check current v_ magnitude - if it is greater than the maximum allowed, rescale it...
+// 	msg.print("currentMag = %f\n", currentMag);
+// 	if ((currentMag + addMag) > maxTotal)
+// 	{
+// 		v_.arrayY() *= maxTotal / currentMag;
+// 		currentMag = v_.absIntegral();
+// 		msg.print("Rescaled value of v_ = %f\n", currentMag);
+// 	}
 
 	// Add new perturbation 
-	v_ += addV;
+// 	v_.addInterpolated(addV);
+	v_ = perturbation;
+	v_.save("v.txt");
 
 	// Modify pair potential
 	u_ = originalU_;
 // 	for (int n=0; n<u_.nPoints(); ++n) u_.arrayY()[n] += v_.interpolated(sqrt(u_.x(n)));
-	for (int n=0; n<u_.nPoints(); ++n) u_.arrayY()[n] *= 1.0 + v_.interpolated(sqrt(u_.x(n)));
+	for (int n=0; n<u_.nPoints(); ++n) u_.arrayY()[n] = v_.interpolated(sqrt(u_.x(n)));
 	calculateDerivative();
 
 	return TRUE;

@@ -35,8 +35,7 @@
 Data2D::Data2D() : ListItem<Data2D>()
 {
 	name_ = "Untitled";
-	splineBracketLeft_ = -1;
-	splineBracketRight_ = -1;
+	splineInterval_ = -1;
 }
 
 /*!
@@ -52,11 +51,13 @@ Data2D::~Data2D()
  */
 Data2D::Data2D(const Data2D& source)
 {
-	splineBracketLeft_ = -1;
-	splineBracketRight_ = -1;
 	x_ = source.x_;
 	y_ = source.y_;
-	ddy_ = source.ddy_;
+	splineB_ = source.splineB_;
+	splineC_ = source.splineC_;
+	splineD_ = source.splineD_;
+	splineH_ = source.splineH_;
+	splineInterval_ = source.splineInterval_;
 	name_ = source.name_;
 }
 
@@ -67,8 +68,11 @@ void Data2D::clear()
 {
 	x_.clear();
 	y_.clear();
-	ddy_.clear();
-	splineBracketLeft_ = -1;
+	splineB_.clear();
+	splineC_.clear();
+	splineD_.clear();
+	splineH_.clear();
+	splineInterval_ = -1;
 }
 
 /*
@@ -92,7 +96,7 @@ void Data2D::reset()
 {
 	for (int n=0; n<x_.nItems(); ++n) x_[n] = 0.0;
 	for (int n=0; n<y_.nItems(); ++n) y_[n] = 0.0;
-	splineBracketLeft_ = -1;
+	splineInterval_ = -1;
 }
 
 /*!
@@ -130,7 +134,7 @@ void Data2D::setPoint(int index, double x, double y)
 #endif
 	x_[index] = x;
 	y_[index] = y;
-	splineBracketLeft_ = -1;
+	splineInterval_ = -1;
 }
 
 /*!
@@ -154,7 +158,7 @@ void Data2D::setX(int index, double x)
 	}
 #endif
 	x_[index] = x;
-	splineBracketLeft_ = -1;
+	splineInterval_ = -1;
 }
 
 /*!
@@ -170,7 +174,7 @@ void Data2D::addX(int index, double delta)
 	}
 #endif
 	x_[index] += delta;
-	splineBracketLeft_ = -1;
+	splineInterval_ = -1;
 }
 
 /*!
@@ -193,7 +197,7 @@ double Data2D::x(int index) const
  */
 Array<double>& Data2D::arrayX()
 {
-	splineBracketLeft_ = -1;
+	splineInterval_ = -1;
 	return x_;
 }
 
@@ -210,7 +214,7 @@ void Data2D::setY(int index, double y)
 	}
 #endif
 	y_[index] = y;
-	splineBracketLeft_ = -1;
+	splineInterval_ = -1;
 }
 
 /*!
@@ -226,7 +230,7 @@ void Data2D::addY(int index, double delta)
 	}
 #endif
 	y_[index] += delta;
-	splineBracketLeft_ = -1;
+	splineInterval_ = -1;
 }
 
 /*!
@@ -241,7 +245,7 @@ bool Data2D::addY(const Array<double>& source, double factor)
 	}
 
 	for (int n=0; n<y_.nItems(); ++n) y_[n] += source.value(n)*factor;
-	splineBracketLeft_ = -1;
+	splineInterval_ = -1;
 	return TRUE;
 }
 
@@ -258,7 +262,7 @@ void Data2D::multiplyY(int index, double factor)
 	}
 #endif
 	y_[index] *= factor;
-	splineBracketLeft_ = -1;
+	splineInterval_ = -1;
 }
 
 /*!
@@ -281,7 +285,7 @@ double Data2D::y(int index) const
  */
 Array<double>& Data2D::arrayY()
 {
-	splineBracketLeft_ = -1;
+	splineInterval_ = -1;
 	return y_;
 }
 
@@ -292,7 +296,7 @@ void Data2D::addPoint(double x, double y)
 {
 	x_.add(x);
 	y_.add(y);
-	splineBracketLeft_ = -1;
+	splineInterval_ = -1;
 }
 
 /*!
@@ -320,11 +324,13 @@ const char* Data2D::name() const
  */
 void Data2D::operator=(const Data2D& source)
 {
-	splineBracketLeft_ = source.splineBracketLeft_;
-	splineBracketRight_ = source.splineBracketRight_;
 	x_ = source.x_;
 	y_ = source.y_;
-	ddy_ = source.ddy_;
+	splineB_ = source.splineB_;
+	splineC_ = source.splineC_;
+	splineD_ = source.splineD_;
+	splineH_ = source.splineH_;
+	splineInterval_ = source.splineInterval_;
 	name_ = source.name_;
 }
 
@@ -355,7 +361,7 @@ Data2D Data2D::operator+(const Data2D& source) const
 		newData.y_[n] += source.y_.value(n);
 	}
 	
-	newData.splineBracketLeft_ = -1;
+	newData.splineInterval_ = -1;
 	
 	return newData;
 }
@@ -391,7 +397,91 @@ void Data2D::operator+=(const Data2D& source)
 		y_[n] += source.y_.value(n);
 	}
 
-	splineBracketLeft_ = -1;
+	splineInterval_ = -1;
+}
+
+/*!
+ * \brief Operator +=
+ */
+void Data2D::operator+=(const double dy)
+{
+	for (int n=0; n<x_.nItems(); ++n) y_[n] += dy;
+	splineInterval_ = -1;
+}
+
+/*!
+ * \brief Operator -
+ */
+Data2D Data2D::operator-(const Data2D& source) const
+{
+	// Construct copy of current data
+	Data2D newData(*this);
+	
+	// Check array sizes
+	if (x_.nItems() != source.x_.nItems())
+	{
+		msg.error("Can't - these Data2D together, since they are of differing sizes (%i vs %i).\n", x_.nItems(), source.x_.nItems());
+		return newData;
+	}
+
+	// Subtact source data from this data
+	for (int n=0; n<x_.nItems(); ++n)
+	{
+		// Check x values
+		if (fabs(x_.value(n) - source.x_.value(n)) > OPTOLERANCE)
+		{
+			msg.error("Can't - these Data2D, since the x axes are different.\n");
+			return newData;
+		}
+		newData.y_[n] -= source.y_.value(n);
+	}
+	
+	newData.splineInterval_ = -1;
+	
+	return newData;
+}
+
+/*!
+ * \brief Operator -=
+ */
+void Data2D::operator-=(const Data2D& source)
+{
+	// Initialise current arrays?
+	if (x_.nItems() == 0)
+	{
+		x_ = source.x_;
+		y_.createEmpty(x_.nItems(), 0.0);
+	}
+
+	// Check array sizes
+	if (x_.nItems() != source.x_.nItems())
+	{
+		msg.error("Can't -= these Data2D together, since they are of differing sizes (%i vs %i).\n", x_.nItems(), source.x_.nItems());
+		return;
+	}
+
+	// Subtact source data from this
+	for (int n=0; n<x_.nItems(); ++n)
+	{
+		// Check x values
+		if (fabs(x_.value(n) - source.x_.value(n)) > OPTOLERANCE)
+		{
+			msg.error("Can't -= these Data2D, since the x axes are different.\n");
+			return;
+		}
+		y_[n] -= source.y_.value(n);
+	}
+
+	splineInterval_ = -1;
+}
+
+/*!
+ * \brief Operator -=
+ */
+void Data2D::operator-=(const double dy)
+{
+	for (int n=0; n<x_.nItems(); ++n) y_[n] -= dy;
+	splineInterval_ = -1;
 }
 
 /*!
@@ -401,7 +491,7 @@ void Data2D::operator*=(const double factor)
 {
 	// Multiply current data
 	for (int n=0; n<x_.nItems(); ++n) y_[n] *= factor;
-	splineBracketLeft_ = -1;
+	splineInterval_ = -1;
 }
 
 /*!
@@ -411,7 +501,7 @@ void Data2D::operator/=(const double factor)
 {
 	// Divide current data
 	for (int n=0; n<x_.nItems(); ++n) y_[n] /= factor;
-	splineBracketLeft_ = -1;
+	splineInterval_ = -1;
 }
 
 /*
@@ -560,7 +650,7 @@ bool Data2D::fourierTransformReal(bool forwardTransform, Data2D::WindowFunction 
 	// Copy transform data over initial data
 	for (n=0; n<nPoints; ++n) x_[n] = (n*0.5)*k;
 	y_ = real;
-	splineBracketLeft_ = -1;
+	splineInterval_ = -1;
 	return TRUE;
 }
 
@@ -606,7 +696,7 @@ bool Data2D::transformRDF(double atomicDensity, Data2D::WindowFunction wf)
 	// Copy transform data over initial data
 	for (n=0; n<nPoints; ++n) x_[n] = (n+0.5)*k;
 	y_ = real;
-	splineBracketLeft_ = -1;
+	splineInterval_ = -1;
 	return TRUE;
 }
 
@@ -662,7 +752,7 @@ bool Data2D::transformBroadenedRDF(double atomicDensity, double qStep, double fw
 	y_ = real;
 	x_.clear();
 	for (n=0; n<y_.nItems(); ++n) x_.add((n+0.5)*qStep);
-	splineBracketLeft_ = -1;
+	splineInterval_ = -1;
 	return TRUE;
 }
 
@@ -709,7 +799,7 @@ bool Data2D::transformSQ(double atomicDensity, Data2D::WindowFunction wf)
 	// Copy transform data over initial data
 	for (n=0; n<nPoints; ++n) x_[n] = (n+0.5)*k;
 	y_ = real;
-	splineBracketLeft_ = -1;
+	splineInterval_ = -1;
 	return TRUE;
 }
 
@@ -747,7 +837,7 @@ bool Data2D::correlateSQ(double atomicDensity)
 	// Copy transform data over initial data
 	for (n=0; n<nPoints; ++n) x_[n] = (n+0.5)*k;
 	y_ = real;
-	splineBracketLeft_ = -1;
+	splineInterval_ = -1;
 	return TRUE;
 }
 
@@ -758,42 +848,207 @@ bool Data2D::correlateSQ(double atomicDensity)
 /*!
  * \brief Calculate natural spline interpolation of current data
  */
-void Data2D::interpolate()
+void Data2D::interpolate(bool constrained)
 {
-	// Initialise second derivative and working arrays
-	int nPoints = x_.nItems();
-	ddy_.createEmpty(nPoints);
-	Array<double> u(nPoints);
+	/* For a set of N points {x(i),y(i)} for i = 0 - (N-1), the i'th interval can be represented by a cubic spline
+	 * 
+	 * 	S(i)(x) = a(i) + b(i)(x - x(i)) + c(i)(x - x(i))**2 + d(i)h(x - x(i))**3.
+	 * 
+	 * As such, there are 4N unknown coefficients - {a(0),b(0),c(0),d(0),a(1),b(1),c(1),d(1),...,a(N-1),b(N-1),c(N-1),d(N-1)}
+	 * 
+	 * Conditions:
+	 * 	At the extreme values of x in each interval, the original y values are retained
+	 * 		S(i)(x = x(i)) = y(i)    and 	S(i)(x = x(i+1)) = y(i+1)		== 2N equations
+	 * 	First derivatives are continuous across intervals (i.e. match at extreme x values of intervals)
+	 * 		S'(i)(x = x(i+1)) = S'(i+1)(x = x(i+1))					== (N-1) equations
+	 * 	Second derivatives are continuous across intervals (i.e. match at extreme x values of intervals)
+	 * 		S"(i)(x = x(i+1)) = S"(i+1)(x = x(i+1))					== (N-1) equations
+	 * 
+	 * So, there are 4N-2 equations specified here - the remaining two come from specifying endpoint conditions of the spline fit. 
+	 * No derivative matching is (can) be performed at the extreme points i=0 and i=N-1, so specify exact derivatives at these points:
+	 * 	Natural splines:
+	 * 		S'(0) = 0	S'(N-1) = 0
+	 * 	Clamped splines
+	 *
+	 * We need expressions for the derivatives of S:
+	 * 	Let h(i) = x - x(i)
+	 * 	S(i)(x) = a(i) + b(i)h(i) + c(i)h(i)**2 + d(i)h(i)**3
+	 * 	S'(i)(x) = b(i) + 2 c(i)h(i) + 3 d(i)h(i)**2
+	 * 	S"(i)(x) = 2 c(i) + 6 d(i)h(i)
+	 * 
+	 * From the conditions outlined above:
+	 * 	S(i)(x = x(i)) = y(i)	  ==>	a(i) = y(i)	since x = x(i) and so h(i) = x(i) - x(i) = 0
+	 * 	S(i)(x = x(i+1)) = y(i+1) ==>	a(i) + b(i)h(i) + c(i)h(i)**2 + d(i)h(i)**3 = y(i+1)
+	 * 	S'(i)(x = x(i+1)) = S'(i+1)(x = x(i+1))   ==>	b(i) + 2 c(i)h(i) + 3 d(i)h(i)**2 - b(i+1) = 0
+	 * 							since at x = x(i+1), h(i+1) = 0 and so S'(i+1)(x = x(i+1)) = b(i+1)
+	 * 	S"(i)(x = x(i+1)) = S"(i+1)(x = x(i+1))   ==>	2 c(i) + 6 d(i)h(i) - 2 c(i+1) = 0
+	 * 							since at x = x(i+1), h(i+1) = 0 and so S"(i+1)(x = x(i+1)) = 2 c(i+1)
+	 * To summarise:
+	 * 	a(i) = y(i)						for i = 0,N-1	(N eqs)
+	 * 	a(i) + b(i)h(i) + c(i)h(i)**2 + d(i)h(i)**3 = y(i+1)	for i = 0,N-1	(N eqs)
+	 * 	b(i) + 2 c(i)h(i) + 3 d(i)h(i)**2 - b(i+1) = 0		for i = 0,N-2	(N-1 eqs)
+	 * 	2 c(i) + 6 d(i)h(i) - 2 c(i+1) = 0			for i = 0,N-2	(N-1 eqs)
+	 * 
+	 * To simplify, consider value of second derivative in i'th interval at leftmost value:
+	 * 	S"(i)(x = x(i)) = 2 c(i)	since at x = x(i+1), h(i+1) = 0 and so S"(i+1)(x = x(i+1)) = 2 c(i+1)
+	 * We will call these coefficients m(i):
+	 * 	2 c(i) + 6 d(i)h(i) - 2 c(i+1) = 0	==>	m(i) + 6 d(i)h(i) - m(i+1) = 0
+	 * 						==>	d(i) = m(i+1) - m(i)
+	 * 							       -------------
+	 * 								   6 h(i)
+	 * 											  m(i)		m(i+1) - m(i)
+	 * 	y(i) + b(i)h(i) + c(i)h(i)**2 + d(i)h(i)**3 = y(i+1)	==>	y(i) + b(i)h(i) + --- h(i)**2 + ------------- h(i)**3 = y(i+1)
+	 * 											   2		    6 h(i)
+	 * 
+	 * 									       y(i+1) - y(i)   m(i)	  m(i+1) - m(i)
+	 * 								==>	b(i) = ------------- - --- h(i) - ------------- h(i)
+	 * 										    h(i)	2	        6
+	 * 
+	 * 
+	 * 	b(i) + 2 c(i)h(i) + 3 d(i)h(i)**2 = b(i+1)	==>	
+	 * 	( y(i+1) - y(i)   m(i)	     m(i+1) - m(i)	)		 m(i+1) - m(i)		 ( y(i+2) - y(i+1)   m(i+1)	     m(i+2 - m(i+1)       )
+	 * 	( ------------- - --- h(i) - ------------- h(i) ) + m(i)h(i) + 3 ------------- h(i)**2 = ( --------------- - ------ h(i+1) - ------------- h(i+1) )
+	 * 	(      h(i)	   2	           6		)		     6 h(i)		 (      h(i+1)	        2	            6	          ) 
+	 * 
+	 * 								      ( y(i+2) - y(i+1)   y(i+1) - y(i) )
+	 * 	==>	h(i)m(i) + 2 (h(i) + h(i+1))m(i+1) + h(i+1)m(i+2) = 6 ( --------------- - ------------- )
+	 * 								      (      h(i+1)           h(i)	)
+	 * 
+	 * Written in matrix form, the above system of equations is:
+	 * 
+	 * 	[ 1		0		0		0	...	0 ] [  m(0)  ]     [			0			 ]
+	 * 	[ h(0)		2(h(0) + h(1))	h(1)		0	...	0 ] [  m(1)  ]     [ (y(2) - y(1)) / h(1) - (y(1) - y(0)) / h(0) ]
+	 * 	[ 0		h(1)		2(h(1) + h(2))	h(2)	...	0 ] [  m(2)  ] = 6 [ (y(3) - y(2)) / h(2) - (y(2) - y(1)) / h(1) ]
+	 * 	[			...				...	  ] [  ...   ]     [
+	 * 	[ 0		0		0		0	...	1 ] [ m(N-1) ]     [ 			0			 ]
+	 * 
+	 * Once solved, we have the set of m() and can thus determine a, b, c, and d as follows:
+	 *
+	 *			       y(i+1)-y(i)   h(i)        h(i)			       m(i)	       m(i+1)-m(i)
+	 * 	a(i) = y(i)	b(i) = ----------- - ---- m(i) - ---- (m(i+1)-m(i))	c(i) = ----	d(i) = -----------
+	 * 				  h(i)	      2	          6				2		  6 h(i)
+	 * 
+	 * The constrained spline fit removes the requirement that the second derivatives are equal at the boundaries of every interval, and instead specifies
+	 * that an exact first derivative is obtained there instead. As such:
+	 * 
+	 * 	S"(i)(x = x(i+1)) = S"(i+1)(x = x(i+1))	  ==>	S'(i)(x = x(i+1)) = S'(i+1)(x = x(i+1)) = f'(x = x(i+1))
+	 * 
+	 * A suitable estimate of the slope comes from consideration of the slopes of the two adjacent intervals to x(i):
+	 * 
+	 * 		      ( x(i+1)-x(i)   x(i)-x(i-1) )
+	 * 	f'(i) = 0.5 * ( ----------- + ----------- )	for i=1, N-2
+	 * 		      ( y(i+1)-y(i)   y(i)-y(i-1) )
+	 * 
+	 * At the endpoints:
+	 * 
+	 * 		3( y(1)-y(0) )   f'(1)			  3( y(i-1) - y(n-2) )   f'(N-1)
+	 * 	f'(0) = -------------- - -----		f'(N-1) = -------------------- - -------
+	 * 		2( x(1)-x(0) )     2			  2( x(i-1) - x(n-2) )      2
+	 * 
+	 * Since the slope at each point is known, there is no longer a need to solve a system of equations, and each coefficient may be calculated as follows:
+	 * 
+	 * 		  2( f'(i)+2f'(i-1) )   6(y(i) - y(i-1)
+	 * 	S"(i) =   ------------------- - ----------------	and  S"(i-1) = -S"(i)
+	 * 		     x(i) - x(i-1)	(x(i)-x(i-1))**2
+	 * 
+	 * 	       S"(i) - S"(i-1)		       x(i)S"(i-1)-x(i-1)S"(i)
+	 * 	d(i) = ---------------		c(i) = -----------------------
+	 * 	       6(x(i) - x(i-1))			   2(x(i) - x(i-1))
+	 * 
+	 * 	       (y(i) - y(i-1)) - c(i)(x(i)**2 - x(i-1)**2) - d(i)(x(i)**3 - x(i-1)**3)
+	 * 	b(i) =------------------------------------------------------------------------
+	 * 					x(i) - x(i-1)
+	 */
+	
+	int i, nPoints = x_.nItems();
+	
+	// Calculate interval array 'h'
+	splineH_.createEmpty(nPoints);
+	for (i=0; i<nPoints-1; ++i) splineH_[i] = x_[i+1] - x_[i];
 
-	// Set first and last second derivatives to zero (giving a natural spline fit)
-	ddy_[0] = 0.0;
-	ddy_[nPoints-1] = 0.0;
-	u[0] = 0.0;
-	u[nPoints-1] = 0.0;
+	// Initialise parameter arrays and working array
+	splineA_.createEmpty(nPoints-1);
+	splineB_.createEmpty(nPoints-1);
+	splineC_.createEmpty(nPoints-1);
+	splineD_.createEmpty(nPoints-1);
 
-	double B, p;
-	// Loop over data points 1 to N-2
-	for (int n=1; n<nPoints-2; ++n)
+	constrainedSpline_ = constrained;
+	
+	if (!constrainedSpline_)
 	{
-		B = (x_[n] - x_[n-1]) / (x_[n+1] - x_[n-1]);
-		p = B*ddy_[n-1] + 2.0;
-		ddy_[n] = (B-1.0)/p;
-		u[n] = (y_[n+1] - y_[n]) / (x_[n+1] - x_[n]) - (y_[n] - y_[n-1]) / (x_[n] - x_[n-1]);
-		u[n] = (6.0*u[n]/(x_[n+1] - x_[n-1]) - B*u[n-1]) / p;
-	}
-	
-	for (int n=nPoints-2; n>=0; --n) ddy_[n] = ddy_[n]*ddy_[n+1] + u[n];
-	
-	splineBracketLeft_ = 0;
-	splineBracketRight_ = 0;
-}
+		/*
+		 * Unconstrained Spline Fit
+		 */
+		// Determine 'm' values (== C) now by solving the tridiagonal matrix above. Use Thomas algorithm...
+		// -- First stage
+		double p, q, r, s;
+		Array<double> rprime(nPoints), sprime(nPoints);
+		rprime[0] = 0.0;	// Would be 0.0 / 1.0 in the case of Natural spline
+		sprime[0] = 0.0;
 
-/*!
- * \brief Return second derivatives array
- */
-Array<double>& Data2D::splineArray()
-{
-	return ddy_;
+		for (i=1; i<nPoints-1; ++i)
+		{
+			// For a given i, p(i) = h(i-1), q(i) = 2(h(i-1)+h(i)), r(i) = h(i), s(i) = 6 ((y(n+1) - y(n)) / h(n) - (y(n) - y(n-1)) / h(n-1)
+			p = splineH_[i-1];
+			q = 2.0*(splineH_[i-1]+splineH_[i]);
+			r = splineH_[i];
+			s = 6.0 * ((y_[i+1] - y_[i]) / splineH_[i] - (y_[i] - y_[i-1]) / splineH_[i-1]);
+
+			// -- Calculate r'(i) = r(i) / ( q(i) - r'(i-1)p(i) )
+			rprime[i] = r / (q - rprime[i-1]*p);
+			// -- Calculate s'(i) = (s(i) - s'(i-1)p(i) ) / ( q(i) - r'(i-1)p(i))
+			sprime[i] = (s - sprime[i-1]*p) / (q - rprime[i-1]*p);
+		}
+		rprime[nPoints-1] = 0.0;
+		sprime[nPoints-1] = (0.0 - sprime[nPoints-2]/splineH_[i-1]) / (2.0*splineH_[i-1]);
+
+		// -- Second stage - backsubstitution
+		splineC_[nPoints-1] = 0.0;
+		for (i=nPoints-2; i>=0; --i)
+		{
+			// For a given i, m(i) = s'(i) - r'(i)m(i+1)
+			splineC_[i] = sprime[i] - rprime[i]*splineC_[i+1];
+		}
+		
+		// splineC_ array now contains m(i)...
+		for (i=0; i<nPoints-1; ++i)
+		{
+			splineB_[i] = (y_[i+1] - y_[i]) / splineH_[i] - 0.5 * splineH_[i] * splineC_[i] - (splineH_[i] * (splineC_[i+1]-splineC_[i]))/6.0;
+			splineD_[i] = (splineC_[i+1] - splineC_[i]) / (6.0 * splineH_[i]);
+			splineC_[i] *= 0.5;
+			splineA_[i] = y_[i];
+		}
+	}
+	else
+	{
+		/*
+		 * Constrained Spline fit
+		 */
+		
+		// Calculate first derivatives at each point
+		Array<double> fp(nPoints);
+		for (i=1; i<nPoints-1; ++i) fp[i] = 2.0 / ((x_[i+1] - x_[i])/(y_[i+1] - y_[i]) + (x_[i] - x_[i-1])/(y_[i] - y_[i-1]));
+// 		fp[0] = (3.0*(y_[1] - y_[0])) / (2.0*x_[1]-x_[0]) - 0.5*fp[1];
+// 		fp[nPoints-1] = (3.0*(y_[nPoints-1] - y_[nPoints-2])) / (2.0*x_[nPoints-1]-x_[nPoints-2]) - 0.5*fp[nPoints-2];
+		fp[0] = 0.0;
+		fp[nPoints-1] = 0.0;
+
+		// Calculate coefficients
+		double fppi, fppim1, dx, dy;
+		for (i=1; i<nPoints; ++i)
+		{
+			dx = x_[i] - x_[i-1];
+			dy = y_[i] - y_[i-1];
+			fppim1 = -2.0*(fp[i]+2.0*fp[i-1]) / dx + 6.0*dy/(dx*dx);
+			fppi = 2.0*(2.0*fp[i]+fp[i-1]) / dx - 6.0*dy/(dx*dx);
+			splineD_[i-1] = (fppi - fppim1) / (6.0*dx);
+			splineC_[i-1] = (x_[i]*fppim1 - x_[i-1]*fppi) / (2.0*dx);
+			splineB_[i-1] = (dy - splineC_[i-1]*(x_[i]*x_[i] - x_[i-1]*x_[i-1]) - splineD_[i-1]*(x_[i]*x_[i]*x_[i] - x_[i-1]*x_[i-1]*x_[i-1])) / dx;
+			splineA_[i-1] = y_[i-1] - splineB_[i-1]*x_[i-1] - splineC_[i-1]*x_[i-1]*x_[i-1] - splineD_[i-1]*x_[i-1]*x_[i-1]*x_[i-1];
+		}
+	}
+
+	splineInterval_ = 0;
 }
 
 /*!
@@ -802,47 +1057,60 @@ Array<double>& Data2D::splineArray()
 double Data2D::interpolated(double xvalue)
 {
 	// Do we need to (re)generate the interpolation?
-	if (splineBracketLeft_ == -1) interpolate();
+	if (splineInterval_ == -1) interpolate();
 	
-	// X and ddy arrays match?
-	if (x_.nItems() != ddy_.nItems())
-	{
-		msg.error("X and ddY array sizes do not match (%i vs %i) in Data2D::interpolated().\n", x_.nItems(), ddy_.nItems());
-		return 0.0;
-	}
+// 	// X and ddy arrays match?
+// 	if (x_.nItems() != splineB_.nItems())
+// 	{
+// 		msg.error("X and spline coefficient array sizes do not match (%i vs %i) in Data2D::interpolated().\n", x_.nItems(), splineB_.nItems());
+// 		return 0.0;
+// 	}
 
 	// Bracket x-value - we'll assume that access is likely to be more sequential than random...
-	// Check previous limits...
-	if (splineBracketLeft_ != splineBracketRight_)
+
+	// Check old interval (and next one up...)
+	if (xvalue < x_[splineInterval_])
 	{
-		if ((x_[splineBracketLeft_] > xvalue) || (x_[splineBracketRight_] < xvalue))
+		if (splineInterval_ > 0)
 		{
-			splineBracketLeft_ = 0;
-			splineBracketRight_ = 0;
+			--splineInterval_;
+			if ((xvalue < x_[splineInterval_]) || (xvalue > x_[splineInterval_+1])) splineInterval_ = -1;
+		}
+		else return y_.first();
+	}
+	else if (xvalue > x_[splineInterval_+1])
+	{
+		if (splineInterval_ < splineB_.nItems()-2)
+		{
+			++splineInterval_;
+			if ((xvalue < x_[splineInterval_]) || (xvalue > x_[splineInterval_+1])) splineInterval_ = -1;
+		}
+		else return y_.last();
+	}
+
+	// If interval is now (or still) -1, must search data...
+	if (splineInterval_ == -1)
+	{
+		splineInterval_ = 0;
+		int i, right = splineB_.nItems()-1;
+		while ((right-splineInterval_) > 1)
+		{
+			i = (right+splineInterval_) / 2;
+			if (x_[i] > xvalue) right = i;
+			else splineInterval_ = i;
 		}
 	}
 	
-	// Still need new limits?
-	if (splineBracketLeft_ == splineBracketRight_)
-	{
-		splineBracketLeft_ = 0;
-		splineBracketRight_ = ddy_.nItems()-1;
-		int i;
-		while ((splineBracketRight_-splineBracketLeft_) > 1)
-		{
-			i = (splineBracketRight_+splineBracketLeft_) / 2;
-			if (x_[i] > xvalue) splineBracketRight_ = i;
-			else splineBracketLeft_ = i;
-		}
-	}
-	
+// 	printf("Requested value is %f, interval = %i (xmin=%f)\n", xvalue, splineInterval_, x_[splineInterval_]);
 	// Calculate interpolated point
-	double a, b, interval = x_[splineBracketRight_] - x_[splineBracketLeft_];
-	a = (x_[splineBracketRight_] - xvalue) / interval;
-	b = (xvalue - x_[splineBracketLeft_]) / interval;
+// 	double a, b;
+// 	a = (x_[splineBracketRight_] - xvalue) / interval;
+// 	b = (xvalue - x_[splineBracketLeft_]) / interval;
 	
 	// Calculate cubic polynomial
-	double result = a*y_[splineBracketLeft_] + b*y_[splineBracketRight_] + ((a*a*a-a)*ddy_[splineBracketLeft_] + (b*b*b-b)*ddy_[splineBracketRight_])*(interval*interval)/6.0;
+// 	double result = a*y_[splineBracketLeft_] + b*y_[splineBracketRight_] + ((a*a*a-a)*ddy_[splineBracketLeft_] + (b*b*b-b)*ddy_[splineBracketRight_])*(interval*interval)/6.0;
+	double h = constrainedSpline_ ? xvalue : xvalue - x_[splineInterval_];
+	double result = splineA_[splineInterval_] + splineB_[splineInterval_]*h + splineC_[splineInterval_]*h*h + splineD_[splineInterval_]*h*h*h;
 	return result;
 }
 
@@ -958,6 +1226,7 @@ double Data2D::integral()
  */
 double Data2D::absIntegral()
 {
+	if (nPoints() < 2) return 0.0;
 	double total = 0.0, y0 = y_.first(), y1, x0 = x_.first(), x1;
 	for (int n=1; n<x_.nItems(); ++n)
 	{
@@ -1042,6 +1311,24 @@ bool Data2D::convoluteProduct(Data2D& data)
 	for (int n=0; n<nPoints(); ++n) y_[n] *= data.y(n);
 	
 	return TRUE;
+}
+
+/*!
+ * \brief Trim data to X-range specified
+ */
+void Data2D::trim(double minX, double maxX)
+{
+	// Copy old data first...
+	Array<double> oldX = x_;
+	Array<double> oldY = y_;
+	x_.clear();
+	y_.clear();
+	for (int n=0; n<oldX.nItems(); ++n)
+	{
+		if (oldX[n] < minX) continue;
+		if (oldX[n] > maxX) break;
+		addPoint(oldX[n], oldY[n]);
+	}
 }
 
 /*
@@ -1165,15 +1452,21 @@ bool Data2D::broadcast()
 	}
 
 	// Spline data
-	nItems = ddy_.nItems();
+	nItems = splineB_.nItems();
 	if (!Comm.broadcast(&nItems, 1)) return FALSE;
 	if (nItems > 0)
 	{
-		if (Comm.slave()) ddy_.createEmpty(nItems);
-		if (!Comm.broadcast(ddy_.array(), nItems)) return FALSE;
+		if (Comm.slave())
+		{
+			splineB_.createEmpty(nItems);
+			splineC_.createEmpty(nItems);
+			splineD_.createEmpty(nItems);
+		}
+		if (!Comm.broadcast(splineB_.array(), nItems)) return FALSE;
+		if (!Comm.broadcast(splineC_.array(), nItems)) return FALSE;
+		if (!Comm.broadcast(splineD_.array(), nItems)) return FALSE;
 	}
-	if (!Comm.broadcast(&splineBracketLeft_, 1)) return FALSE;
-	if (!Comm.broadcast(&splineBracketRight_, 1)) return FALSE;
+	if (!Comm.broadcast(&splineInterval_, 1)) return FALSE;
 
 	// Axis/title information
 	if (!Comm.broadcast(name_)) return FALSE;

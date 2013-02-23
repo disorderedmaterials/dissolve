@@ -144,7 +144,7 @@ class Dnchar : public ListItem<Dnchar>
 	// C-String Routines
 	*/
 	public:
-	// Concnotepsrate supplied string on to end of this string
+	// Concatenate supplied string on to end of this string
 	void strcat(const char* s, int charcount = -1);
 	// Append formatted string (not actually a C string function, but would be useful!)
 	void strcatf(const char* fmt, ...);

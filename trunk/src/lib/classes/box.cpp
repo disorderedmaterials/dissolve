@@ -721,7 +721,7 @@ bool Box::finishedWithCell(bool willBeModified, int cellId)
 	}
 	
 	// Collect all processes together
-	if (!Comm.wait(dUQComm::World)) return FALSE;
+	if (!Comm.wait(DUQComm::World)) return FALSE;
 #else
 	if (cellId >= 0) cellIndex_[cellId]->unlock(willBeModified);
 #endif

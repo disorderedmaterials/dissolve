@@ -59,7 +59,7 @@ CommandReturnValue DUQ::twist(Configuration& cfg)
 	EnergyKernel kernel(cfg.box(), potentialMap_);
 
 	// Initialise the random number buffer
-	Comm.initialiseRandomBuffer(dUQComm::World);
+	Comm.initialiseRandomBuffer(DUQComm::World);
 
 	// TODO This can be rewritten to calculate a local reference energy for each Grain in the Molecule and a Molecular inter-Grain energy.
 	// Then, as atoms are selected and twisted all we need to calculate is the difference in energy for the Grains that have moved, and the
@@ -74,7 +74,7 @@ CommandReturnValue DUQ::twist(Configuration& cfg)
 		changeStore.add(mol);
 
 		// Calculate reference energy for the Molecule
-		currentEnergy = kernel.energy(mol, dUQComm::World);
+		currentEnergy = kernel.energy(mol, DUQComm::World);
 
 		// Grab the index of the first Atom in this Molecule
 		rootIndex = mol->atom(0)->index();
@@ -107,7 +107,7 @@ CommandReturnValue DUQ::twist(Configuration& cfg)
 			}
 
 			// Test energy again
-			newEnergy = kernel.energy(mol, dUQComm::World);
+			newEnergy = kernel.energy(mol, DUQComm::World);
 			delta = newEnergy - currentEnergy;
 			
 			if ((delta < 0) || (Comm.random() < exp(-delta/(.008314472*temperature_))))
@@ -133,8 +133,8 @@ CommandReturnValue DUQ::twist(Configuration& cfg)
 	updateGrains(cfg);
 
 	// Collect statistics from process group leaders
-	if (!Comm.allSum(&nAccepted, 1, dUQComm::Leaders)) return CommandCommFail;
-	if (!Comm.allSum(&nTries, 1, dUQComm::Leaders)) return CommandCommFail;
+	if (!Comm.allSum(&nAccepted, 1, DUQComm::Leaders)) return CommandCommFail;
+	if (!Comm.allSum(&nTries, 1, DUQComm::Leaders)) return CommandCommFail;
 	if (Comm.processGroupLeader())
 	{
 		double rate = double(nTries) / nAccepted;

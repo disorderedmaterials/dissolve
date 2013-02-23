@@ -1,4 +1,5 @@
-# File: 'test/argon-large.not'
+# File: 'test/argon/argon100000.txt'
+
 # AtomType Definitions
 AtomTypes
   AtomType  'Ar'   Ar  'Ar'
@@ -23,16 +24,17 @@ System
   CellLengths  1.000000  1.000000  1.000000
   CellAngles  90.000000  90.000000  90.000000
   Component  'Argon'  1.000000  1.000000  1
-  File 'test/argon-85K-large.xyz'
+  File 'test/argon/argon100000.xyz'
 EndSystem
 
 # Samples
-# One sample -MC  simulated Ar system with potential parameters sigma=3.166 and epsilon=0.65
-Sample  'Simulation'
+# Experimental data taken from Table 1 of Yarnell, Katz, Wenzel, and Koenig, Phys. Rev. A 7, 2130 (1973).
+# Liquid Ar36 at 85 K. Data are normalised <b2>, and oscillate around 1.0.
+Sample  'Yarnell-85K'
   Isotopologue  'Argon'  'Ar36'  1.000000  1.000000
-  ReferenceData  'test/argon-85K-large-sim.ref'
-  FitQMin 0.4
-  FitQMax 50.0
+  ReferenceData  'test/argon/yarnell.sq'
+  NormalisedToAvSq
+  SubtractSelf
 EndSample
 
 # Pair Potentials
@@ -45,7 +47,6 @@ EndPairPotentials
 
 # Setup
 Setup
-  Seed  943826
   Temperature  85.000000
   RDFRange 80.0
   BoxNormalisationPoints 500000000
@@ -60,8 +61,6 @@ Simulation
 
 @Shake
   5 as 1 15.0
-  pair
-  savesq
 
 @Strategy
   pair

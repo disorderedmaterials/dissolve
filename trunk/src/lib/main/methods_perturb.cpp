@@ -28,28 +28,79 @@
 // Public cost function callback
 double DUQ::simplexCost(Array<double>& alpha)
 {
-	// Poke coefficients back into matrix...
-	Data2D* coeffs = differenceSplines_.linearArray();
-	int count = 0;
-// 	for (int n=0; n<differenceSplines_.linearArraySize(); ++n)
-// 	{
-		for (int m=differenceSplinesFirstPoint_; m<=differenceSplinesLastPoint_; ++m) coeffs[differenceSpline_].arrayY()[m] = alpha[count++] - simplexParameterOffset_;
-		// Recreate Spline fit...
-		coeffs[differenceSpline_].interpolate();
-// 	}
+	// Loop over Samples...
+	const double deltaQ = 0.05;
+	double Q, sos = 0.0, ushift, uscale, bshift, bscale, newQ, maxQ, FQ, delta;
+	int typeI, typeJ, offset;
 
-	// Calculate SOS of calculated vs. reference data
-	double sos = 0.0;
+	// Generate modified, unweighted S(Q)
+	offset = 0;
+	for (typeI = 0; typeI < typeIndex_.nItems(); ++typeI)
+	{
+		for (typeJ = typeI;  typeJ < typeIndex_.nItems(); ++typeJ)
+		{
+			// Grab references to original and modified data
+			Data2D& unboundSQ = unboundSQMatrix_.ref(typeI, typeJ);
+			Data2D& boundSQ = boundSQMatrix_.ref(typeI, typeJ);
+			Data2D& modUnboundSQ = workingSQMatrixA_.ref(typeI, typeJ);
+			Data2D& modBoundSQ = workingSQMatrixB_.ref(typeI, typeJ);
+
+			// Grab shift and scale values
+			ushift = alpha[offset];
+			uscale = alpha[offset+1];
+			bshift = alpha[offset+2];
+			bscale = alpha[offset+3];
+
+			// Regenerate partial
+			modUnboundSQ.clear();
+			modBoundSQ.clear();
+			Q = deltaQ;
+			maxQ = unboundSQ.xMax();
+			while (Q < maxQ)
+			{
+				// Determine scaled/shifted Q
+				newQ = (Q+ushift) * uscale;
+				if (newQ > maxQ) break;
+				modUnboundSQ.addPoint(Q, unboundSQ.interpolated(newQ));
+
+				newQ = (Q+bshift) * bscale;
+				if (newQ > maxQ) break;
+				modBoundSQ.addPoint(Q, boundSQ.interpolated(newQ));
+				
+				Q += deltaQ;
+			}
+			
+			offset += 4;
+		}
+	}
+	
+	// Now, loop over Samples with reference data...
 	for (Sample* sam = samples_.first(); sam != NULL; sam = sam->next)
 	{
-		// Check if reference data is available
 		if (!sam->hasReferenceData()) continue;
-		
-		// Calculate corrected F(Q) RMSE for this sample using the current difference splines
-// 		sos += sam->correctedRMSE(rmseDeltaQ_, differenceSplines_);
+		Data2D& sampleRef = sam->referenceFQ();
+
+		// Scan over fit Q range for the Sample
+		Q = sam->referenceFitQMin();
+		while (Q < sam->referenceFitQMax())
+		{
+			// Calculate F(Q) at this Q value
+			FQ = 0.0;
+			for (typeI = 0; typeI < typeIndex_.nItems(); ++typeI)
+			{
+				for (typeJ = typeI;  typeJ < typeIndex_.nItems(); ++typeJ)
+				{
+					FQ += workingSQMatrixA_.ref(typeI, typeJ).interpolated(Q) * sam->weightsMatrix().ref(typeI, typeJ);
+					FQ += workingSQMatrixB_.ref(typeI, typeJ).interpolated(Q) * sam->weightsMatrix().ref(typeI, typeJ);
+				}
+			}
+			delta = FQ - sampleRef.interpolated(Q);
+			sos += delta*delta;
+
+			Q += deltaQ;
+		}
 	}
-// 	msg.print("Total SOS = %f\n", sos);
-	
+
 	return sos;
 }
 
@@ -115,6 +166,107 @@ CommandReturnValue DUQ::perturb(Configuration& cfg)
 	estimatedSQMatrix = zeroArray;
 	workingSQMatrix = zeroArray;
 
+	// TEST
+	Simplex stretchFitSimplex(this, &DUQ::simplexCost);
+	Array<double> alpha;
+	for (typeI = 0; typeI < typeIndex_.nItems(); ++typeI)
+	{
+		for (typeJ = typeI;  typeJ < typeIndex_.nItems(); ++typeJ)
+		{
+			alpha.add(0.0);		// Unbound Shift
+			alpha.add(1.0);		// Unbound Scale
+			alpha.add(0.0);		// Bound Shift
+			alpha.add(1.0);		// Bound Scale
+		}
+	}
+
+	stretchFitSimplex.initialise(alpha, 0.01);
+	Array<double> best = stretchFitSimplex.minimise(simplexNCycles_, simplexNMoves_, simplexTolerance_, simplexTemperature_);
+	for (n=0; n< best.nItems(); ++n) printf("%i  %f\n", n, best[n]);
+	simplexCost(best);
+	
+	// Generate modified, unweighted S(Q)
+	int offset = 0;
+	const double deltaQ = 0.05;
+	double uscale, ushift, bshift, bscale, Q, newQ, maxQ;
+	for (typeI = 0; typeI < typeIndex_.nItems(); ++typeI)
+	{
+		for (typeJ = typeI;  typeJ < typeIndex_.nItems(); ++typeJ)
+		{
+			// Grab references to original and modified data
+			Data2D& unboundSQ = unboundSQMatrix_.ref(typeI, typeJ);
+			Data2D& boundSQ = boundSQMatrix_.ref(typeI, typeJ);
+			Data2D& modUnboundSQ = workingSQMatrixA_.ref(typeI, typeJ);
+			Data2D& modBoundSQ = workingSQMatrixB_.ref(typeI, typeJ);
+
+			// Grab shift and scale values
+			ushift = best[offset];
+			uscale = best[offset+1];
+			bshift = best[offset+2];
+			bscale = best[offset+3];
+
+			// Regenerate partials
+			modUnboundSQ.clear();
+			modBoundSQ.clear();
+			Q = deltaQ;
+			maxQ = unboundSQ.xMax();
+			while (Q < maxQ)
+			{
+				// Determine scaled/shifted Q
+				newQ = (Q+ushift) * uscale;
+				if (newQ > maxQ) break;
+				modUnboundSQ.addPoint(Q, unboundSQ.interpolated(newQ));
+				newQ = (Q+bshift) * bscale;
+				if (newQ > maxQ) break;
+				modBoundSQ.addPoint(Q, boundSQ.interpolated(newQ));
+				Q += deltaQ;
+			}
+			
+			// Write out data...
+			if (Comm.master())
+			{
+				LineParser parser;
+				parser.openOutput(Dnchar::string("duq-%s.fit", partialSQMatrix_.ref(typeI, typeJ).name()), TRUE);
+				parser.writeLineF("#%-15s  %-16s  %-16s  %-16s\n", "Q, 1/Angstroms", "S(Q)", "bound(Q)", "unbound(Q)");
+				for (n=0; n<modUnboundSQ.nPoints(); ++n) parser.writeLineF("%16.10e  %16.10e  %16.10e  %16.10e\n", modUnboundSQ.x(n), modUnboundSQ.y(n) + modBoundSQ.interpolated(modUnboundSQ.x(n)),   modBoundSQ.interpolated(modUnboundSQ.x(n)), modUnboundSQ.y(n));
+				parser.closeFiles();
+			}
+
+			// Increase offset and continue
+			offset += 4;
+		}
+	}
+
+	// Now, loop over Samples with reference data...
+	for (Sample* sam = samples_.first(); sam != NULL; sam = sam->next)
+	{
+		if (!sam->hasReferenceData()) continue;
+		Data2D& sampleRef = sam->referenceFQ();
+		Data2D modFQ;
+
+		// Scan over fit Q range for the Sample
+		Q = sam->referenceFitQMin();
+		while (Q < sam->referenceFitQMax())
+		{
+			// Calculate F(Q) at this Q value
+			double FQ = 0.0;
+			for (typeI = 0; typeI < typeIndex_.nItems(); ++typeI)
+			{
+				for (typeJ = typeI;  typeJ < typeIndex_.nItems(); ++typeJ)
+				{
+					FQ += workingSQMatrixA_.ref(typeI, typeJ).interpolated(Q) * sam->weightsMatrix().ref(typeI, typeJ);
+					FQ += workingSQMatrixB_.ref(typeI, typeJ).interpolated(Q) * sam->weightsMatrix().ref(typeI, typeJ);
+				}
+			}
+			modFQ.addPoint(Q, FQ);
+			Q += deltaQ;
+		}
+		
+		// Save estimated F(Q)
+		modFQ.save(Dnchar::string("duq-%s.fq", sam->name()));
+	}
+
+/*	
 	// Now, loop over Samples with reference data...
 	for (Sample* sam = samples_.first(); sam != NULL; sam = sam->next)
 	{
@@ -218,14 +370,26 @@ CommandReturnValue DUQ::perturb(Configuration& cfg)
 						q = zeroArray.x(n);
 						if (q < sam->referenceFitQMin()) continue;
 						if (q > sam->referenceFitQMax()) break;
-						workSQ.addY(n, fraction * fabs(cntrb.y(n)) * differenceFQ.y(n));
+						workSQ.addY(n, fraction * cntrb.y(n) * differenceFQ.y(n));
 					}
 					workSQ.save(Dnchar::string("%s%02i.txt", partialSQMatrix_.ref(typeI, typeJ).name(), cycle));
 				}
 			}
 		}
 
-	}
+		// TEST - Write FTs
+		for (typeI = 0; typeI < typeIndex_.nItems(); ++typeI)
+		{
+			for (typeJ = typeI;  typeJ < typeIndex_.nItems(); ++typeJ)
+			{
+				Dnchar s(-1, "ft%i%i.txt", typeI, typeJ);
+				Data2D data = workingSQMatrix.ref(typeI, typeJ);
+				data.smooth(3);
+				data.transformSQ(atomicDensity(), Data2D::GaussianWindow);
+				data.save(s);
+			}
+		}
+	}*/
 
 	// Loop over Samples with reference data, constructing difference functions of the partials with their reference data
 // 	Data2D diff;
@@ -257,22 +421,31 @@ CommandReturnValue DUQ::perturb(Configuration& cfg)
 // 		msg.print("Absolute integral of diff(q) = %f\n", diff.absIntegral());
 
 		// Create windowed copy of the data, and transform into r-space
-// 		Data2D gr;
-// 		q = 0.0;
-// 		while (q <= fitQMax)
-// 		{
-// 			if (q < fitQMin) gr.addPoint(q, 0.0);
-// 			else gr.addPoint(q, diff.interpolated(q) * sin((q/fitQMax)*PI));
-// 			gr.addPoint(q, diff.interpolated(q));
-// 			q += diffSpacing / 2.0;
-// 		}
-// 		gr.smooth(3);
-// 		gr.transformSQ(rho, windowFunction_);
-// 		gr.smooth(3, 3);
-// 		gr.arrayY() *= -1.0;
+		Data2D gr = workingSQMatrixA_.ref(typeI, typeJ);
+		gr.save("xxx.txt");
+// 		gr.subtractInterpolated(unboundSQMatrix_.ref(typeI, typeJ));
+		gr.trim(0.0, gr.xMax()*0.5);
+		gr.transformSQ(atomicDensity(), windowFunction_);
+// 		gr.medianFilter(5);
+		gr.smooth(5);
+		gr += 1.0;
+		gr.save(Dnchar::string("duq-%s.gr", partialSQMatrix_.ref(typeI, typeJ).name()));
 
-// 		pp->updatePerturbation(diff, 300.0, 10.0);
-
+		// Construct potential of mean force
+		Data2D pmf;
+		double const mingr = 0.0, mingrmag = 1000.0;
+		double logy;
+		for (n=0; n<gr.nPoints(); ++n)
+		{
+			if (gr.y(n) < 0.0) y = mingrmag;
+			else if (gr.y(n) <= mingr) y = (1.0-exp(-10*(1.0-gr.y(n)/mingr))) * mingrmag;
+			else y = AVOGADRO * -1.3806488e-23 * temperature_ * log(gr.y(n)) / 1000.0;
+			if (gr.x(n) < 3.00) y += pow(3.0/gr.x(n), 12)-1.0;
+			pmf.addPoint(gr.x(n), y);
+		}
+		pmf.save(Dnchar::string("duq-%s.pmf", partialSQMatrix_.ref(typeI, typeJ).name()));
+		pp->updatePerturbation(pmf, 2000.0, 2000.0);
+		
 		// Write pair potential / fit data to file
 // 		if (Comm.master())
 // 		{
