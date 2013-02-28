@@ -4,8 +4,6 @@ libmain_a_SOURCES = atomtypes.cpp checkpoint.cpp command.cpp commands.cpp comman
 
 libmain_a_SOURCES += methods_atomshake.cpp methods_energy.cpp methods_forces.cpp methods_grainshake.cpp methods_intrashake.cpp methods_md.cpp methods_perturb.cpp methods_twist.cpp methods_upkeep.cpp
 
-libmain_a_SOURCES += simplex.cpp
-
-noinst_HEADERS = command.h duq.h keywords.h simplex.h
+noinst_HEADERS = command.h duq.h keywords.h
 
 INCLUDES = -I../ -I../../ @DUQ_CFLAGS@ @DUQ_READLINE@

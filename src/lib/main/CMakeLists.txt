@@ -31,9 +31,6 @@ methods_md.cpp
 methods_perturb.cpp
 methods_twist.cpp
 methods_upkeep.cpp
-
-simplex.cpp
-simplex.h
 }
 
 include_directories(

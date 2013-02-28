@@ -134,10 +134,6 @@ class PairPotential : public ListItem<PairPotential>
 	Data2D u_;
 	// Tabulated derivative
 	Data2D dU_;
-	// Additional potential
-	Data2D v_;
-	// List (stack) of perturbations to potential
-	List<Data2D> perturbationStack_;
 	
 	private:
 	// Regenerate derivative data
@@ -150,16 +146,34 @@ class PairPotential : public ListItem<PairPotential>
 	double energyAtRSquared(double rSq) const;
 	// Return derivative of potential at specified r-squared
 	double forceAtRSquared(double rSq) const;
-	// Update perturbation to potential, recreating tabulated data
-	bool updatePerturbation(Data2D& perturbation, double maxAddition, double maxTotal);
-	// Clear perturbation to potential, reverting to original
-	void clearPerturbation();
 	// Return tabulated potential (inc. modifications)
 	Data2D& u();
 	// Return tabulated derivative (inc. modifications)
 	Data2D& dU();
 	// Return original potential (without modifications)
 	Data2D& originalU();
+	///@}
+
+
+	/*!
+	 * \name Perturbation
+	 */
+	///@{
+	private:
+	// Additional potential
+	Data2D v_;
+	// List (stack) of perturbations to potential
+	List<Data2D> perturbationStack_;
+	// Range for LJ potential fit
+	double ljFitMinimum_, ljFitMaximum_;
+
+	public:
+	// Update perturbation to potential, recreating tabulated data
+	bool updatePerturbation(Data2D& perturbation, double yScale, double maxTotal);
+	// Clear perturbation to potential, reverting to original
+	void clearPerturbation();
+	// Cost function callback (passed to Simplex on construction)
+	double potentialFitCost(Array<double>& alpha);
 	// Return modification to PairPotential
 	Data2D& v();
 	///@}

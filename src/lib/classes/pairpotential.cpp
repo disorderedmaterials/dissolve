@@ -26,6 +26,7 @@
 #include "math/constants.h"
 #include "base/comms.h"
 #include "base/flag.h"
+#include "templates/simplex.h"
 #include <math.h>
 #include <string.h>
 
@@ -432,80 +433,6 @@ double PairPotential::forceAtRSquared(double distanceSq) const
 }
 
 /*!
- * \brief Update perturbation to potential, recreating tabulated data
- */
-bool PairPotential:: updatePerturbation(Data2D& perturbation, double maxAddition, double maxTotal)
-{
-	// Add this perturbation to the stack
-// 	Data2D* p = perturbationStack_.add();
-// 	(*p) = perturbation;
-// 	for (int n=0; n<u_.nPoints(); ++n) u_.arrayY()[n] = perturbation.interpolated(sqrt(u_.x(n)));
-// 	calculateDerivative();
-// 	return TRUE;
-	// Rescale magnitude of perturbation
-// 	p->arrayY() *= weight;
-
-	// Do we have five items yet?
-// 	if (perturbationStack_.nItems() < 2) return TRUE;
-
-	// Create a new perturbation based on the data in the list
-// 	Data2D newPerturbation = perturbation;
-// 	newPerturbation.arrayY() = 0.0;
-// 	for (Data2D* dat = perturbationStack_.first(); dat != NULL; dat = dat->next) newPerturbation.arrayY() += dat->arrayY();
-// 	newPerturbation.arrayY() /= perturbationStack_.nItems();
-// 	newPerturbation.smooth(3);
-// 	newPerturbation.interpolate();
-// 	perturbationStack_.clear();
-// 	v_ += newPerturbation;
-// 	v_.interpolate();
-
-// 	// Determine 'magnitude' of current perturbation and new addition
-// 	double currentMag = v_.absIntegral();
-// 	Data2D addV = perturbation;
-// 	double addMag = addV.absIntegral();
-// 
-// 	// Scale new perturbation if it is greated than the allowed limit to add in one step
-// 	msg.print("AddMAG = %f\n", addMag);
-// 	if (addMag > maxAddition)
-// 	{
-// 		addV.arrayY() *= maxAddition / addMag;
-// 		addMag = addV.absIntegral();
-// 		printf("Too big!  New mag = %f\n", addMag);
-// 	}
-// 	
-// 	// Check current v_ magnitude - if it is greater than the maximum allowed, rescale it...
-// 	msg.print("currentMag = %f\n", currentMag);
-// 	if ((currentMag + addMag) > maxTotal)
-// 	{
-// 		v_.arrayY() *= maxTotal / currentMag;
-// 		currentMag = v_.absIntegral();
-// 		msg.print("Rescaled value of v_ = %f\n", currentMag);
-// 	}
-
-	// Add new perturbation 
-// 	v_.addInterpolated(addV);
-	v_ = perturbation;
-	v_.save("v.txt");
-
-	// Modify pair potential
-	u_ = originalU_;
-// 	for (int n=0; n<u_.nPoints(); ++n) u_.arrayY()[n] += v_.interpolated(sqrt(u_.x(n)));
-	for (int n=0; n<u_.nPoints(); ++n) u_.arrayY()[n] = v_.interpolated(sqrt(u_.x(n)));
-	calculateDerivative();
-
-	return TRUE;
-}
-
-/*!
- * \brief Clear perturbation to potential, reverting to original
- */
-void PairPotential::clearPerturbation()
-{
-	u_ = originalU_;
-	calculateDerivative();
-}
-
-/*!
  * \brief Return tabulated potential
  */
 Data2D& PairPotential::u()
@@ -527,6 +454,85 @@ Data2D& PairPotential::dU()
 Data2D& PairPotential::originalU()
 {
 	return originalU_;
+}
+
+/*
+ * Perturbation
+ */
+
+/*!
+ * \brief Update perturbation to potential, recreating tabulated data
+ */
+bool PairPotential::updatePerturbation(Data2D& perturbation, double yScale, double maxTotal)
+{
+	// Add new perturbation 
+// 	v_.addInterpolated(addV);
+	v_ = perturbation;
+	v_.save("v.txt");
+	
+	// Find first negative value of potential...
+	ljFitMaximum_ = 7.0;
+	for (int n=0; n<v_.nPoints(); ++n)
+	{
+		ljFitMinimum_ = v_.x(n);
+		if (v_.y(n) < 0.0) break;
+	}
+	msg.print("LJ fit range is %f to %f Angstroms.\n", ljFitMinimum_, ljFitMaximum_);
+	
+	// Fit LJ potential to first minimum well in perturbation
+	Simplex<PairPotential> ljFitSimplex(this, &PairPotential::potentialFitCost);
+	Array<double> alpha;
+	alpha.add(3.0);	// Sigma
+	alpha.add(0.1);	// Epsilon
+	alpha.add(12.0);// Power 1
+	alpha.add(6.0);	// Power 2
+
+	ljFitSimplex.initialise(alpha, 0.1);
+	alpha = ljFitSimplex.minimise(100, 100, 1.0e-5, 1.0);
+	for (int n=0; n< alpha.nItems(); ++n) printf("%i  %f\n", n, alpha[n]);
+	printf("Final cost is %f\n", potentialFitCost(alpha));
+	double r, sigma = alpha[0], epsilon = alpha[1], power1 = alpha[2], power2 = alpha[3];
+	for (int n=0; n<v_.nPoints(); ++n)
+	{
+		r = sqrt(u_.x(n));
+		u_.arrayY()[n] = yScale * 4.0*epsilon * (pow(sigma/r, power1) - pow(sigma/r, power2));
+	}
+	u_.save("pp.txt");
+
+	// Modify pair potential
+// 	u_ = originalU_;
+// 	for (int n=0; n<u_.nPoints(); ++n) u_.arrayY()[n] += v_.interpolated(sqrt(u_.x(n)));
+// 	for (int n=0; n<u_.nPoints(); ++n) u_.arrayY()[n] = v_.interpolated(sqrt(u_.x(n)));
+	calculateDerivative();
+
+	return TRUE;
+}
+
+/*!
+ * \brief Cost function callback (passed to Simplex on construction)
+ */
+double PairPotential::potentialFitCost(Array<double>& alpha)
+{
+	double r, cost = 0.0;
+	double lj, sigma = alpha[0], epsilon = alpha[1], power1 = alpha[2], power2 = alpha[3];
+	for (int n=0; n<v_.nPoints(); ++n)
+	{
+		r = v_.x(n);
+		if (r < ljFitMinimum_) continue;
+		if (r > ljFitMaximum_) break;
+		lj = 4.0*epsilon * (pow(sigma/r, power1) - pow(sigma/r, power2));
+		cost += (v_.y(n) - lj) * (v_.y(n) - lj) * (ljFitMinimum_ / r) * (ljFitMinimum_ / r);
+	}
+	return cost;
+}
+
+/*!
+ * \brief Clear perturbation to potential, reverting to original
+ */
+void PairPotential::clearPerturbation()
+{
+	u_ = originalU_;
+	calculateDerivative();
 }
 
 /*!
