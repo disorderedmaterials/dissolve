@@ -169,7 +169,7 @@ class PairPotential : public ListItem<PairPotential>
 
 	public:
 	// Update perturbation to potential, recreating tabulated data
-	bool updatePerturbation(Data2D& perturbation, double yScale, double maxTotal);
+	bool updatePerturbation(Data2D& perturbation, double yScale, double blendFactor);
 	// Clear perturbation to potential, reverting to original
 	void clearPerturbation();
 	// Cost function callback (passed to Simplex on construction)

@@ -265,7 +265,7 @@ CommandReturnValue DUQ::perturb(Configuration& cfg)
 				pmf.addPoint(gr.x(n), y);
 			}
 			pmf.save(Dnchar::string("duq-%s.pmf", partialSQMatrix_.ref(typeI, typeJ).name()));
-			pp->updatePerturbation(pmf, uscaley, 2000.0);
+			pp->updatePerturbation(pmf, uscaley, 0.5);
 			
 			// Increase offset and continue
 			offset += 5;
@@ -301,12 +301,6 @@ CommandReturnValue DUQ::perturb(Configuration& cfg)
 		modFQ.save(Dnchar::string("duq-%s-estimated.fq", sam->name()));
 	}
 
-	// Loop over PairPotentials and apply corrections
-	for (PairPotential* pp = pairPotentials_.first(); pp != NULL; pp = pp->next)
-	{
-
-	}
-	
 	// Signal that PairPotentials have changed
 	updateCheckPointData2D(DUQ::CheckPointOriginalU);
 	updateCheckPointData2D(DUQ::CheckPointU);
