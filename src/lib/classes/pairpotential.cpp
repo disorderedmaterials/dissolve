@@ -463,7 +463,7 @@ Data2D& PairPotential::originalU()
 /*!
  * \brief Update perturbation to potential, recreating tabulated data
  */
-bool PairPotential::updatePerturbation(Data2D& perturbation, double yScale, double maxTotal)
+bool PairPotential::updatePerturbation(Data2D& perturbation, double yScale, double blendFactor)
 {
 	// Add new perturbation 
 // 	v_.addInterpolated(addV);
@@ -491,11 +491,14 @@ bool PairPotential::updatePerturbation(Data2D& perturbation, double yScale, doub
 	alpha = ljFitSimplex.minimise(100, 100, 1.0e-5, 1.0);
 	for (int n=0; n< alpha.nItems(); ++n) printf("%i  %f\n", n, alpha[n]);
 	printf("Final cost is %f\n", potentialFitCost(alpha));
-	double r, sigma = alpha[0], epsilon = alpha[1], power1 = alpha[2], power2 = alpha[3];
-	for (int n=0; n<v_.nPoints(); ++n)
+	double lj, r, sigma = alpha[0], epsilon = alpha[1], power1 = alpha[2], power2 = alpha[3];
+	for (int n=1; n<u_.nPoints(); ++n)
 	{
 		r = sqrt(u_.x(n));
-		u_.arrayY()[n] = yScale * 4.0*epsilon * (pow(sigma/r, power1) - pow(sigma/r, power2));
+		lj = yScale * 4.0*epsilon * (pow(sigma/r, power1) - pow(sigma/r, power2));
+
+		// Blend LJ potential with remainder of function
+		u_.arrayY()[n] = yScale * (lj + (v_.interpolated(r) - lj) * blendFactor);
 	}
 	u_.save("pp.txt");
 
