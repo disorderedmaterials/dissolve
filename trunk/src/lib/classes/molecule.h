@@ -31,6 +31,8 @@ class Atom;
 class Bond;
 class Grain;
 class Species;
+class SpeciesAtom;
+class SpeciesGrain;
 class Matrix3;
 
 /*!
@@ -57,8 +59,8 @@ class Molecule : public ListItem<Molecule>
 	Species* species_;
 	// Number of Atom (pointers) in Atom array
 	int nAtoms_;
-	// Array of Atom pointers
-	Atom** atoms_;
+	// Array of pointers to Atom pointers
+	Atom*** atoms_;
 	// Number of Grain (pointers) in the Grain array
 	int nGrains_;
 	// Array of Grain pointers
@@ -73,50 +75,18 @@ class Molecule : public ListItem<Molecule>
 	Species* species();
 	// Return size of Atom array
 	int nAtoms();
-	// Set nth Atom pointer
-	void setAtom(int n, Atom* i);
+	// Set nth pointer to Atom pointer
+	bool setupAtom(int n, Atom** i, SpeciesAtom* source);
 	// Return nth Atom pointer
-	Atom* atom(int n);
+	Atom* atom(int n) const;
 	// Return size of Grain array
 	int nGrains();
 	// Set nth Grain pointer
-	void setGrain(int n, Grain* grain);
+	bool setupGrain(int n, Grain* grain, SpeciesGrain* source);
 	// Return nth Grain pointer
 	Grain* grain(int n);
-	// Instantiate Molecule, setting Atom and Grain data
-	bool instantiate(bool setAtomData, Vec3<double> centre = Vec3<double>());
 	// Return index of Molecule
 	int index();
-	///@}
-
-
-	/*!
-	 * \name Intramolecular Terms
-	 */
-	///@{
-	private:
-	// Reflist of Bonds
-	RefList<Bond,int> bonds_;
-	// Reflist of Angles
-	RefList<Angle,int> angles_;
-	// Scaling matrix for intramolecular interactions
-	double **scalingMatrix_;
-
-	public:
-	// Clear intramolecular lists
-	void clearIntramolecular();
-	// Add Bond reference
-	void addBond(Bond* b);
-	// Return Bond list
-	RefList<Bond,int>& bonds();
-	// Add Angle reference
-	void addAngle(Angle* a);
-	// Return Angle list
-	RefList<Angle,int>& angles();
-	// Create scaling matrix
-	void createScalingMatrix();
-	// Return scaling factor for supplied indices
-	double scaling(int indexI, int indexJ);
 	///@}
 
 
@@ -130,7 +100,7 @@ class Molecule : public ListItem<Molecule>
 	// Transform Molecule
 	void applyTransform(const Matrix3& transform);
 	// Transform selected Atoms
-	void applyTransform(const Matrix3& transform, const Vec3<double>& origin, int count, Atom** attachedAtoms);
+	void applyTransform(const Matrix3& transform, const Vec3<double>& origin, int nTargetAtoms, int* targetIndices);
 	// Randomise geometry
 	void randomiseGeometry();
 	// Shake geometry

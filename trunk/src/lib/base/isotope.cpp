@@ -140,14 +140,14 @@ bool Isotope::broadcast()
 {
 #ifdef PARALLEL
 	// Send isotope info
-	if (!Comm.broadcast(&A_, 1)) return FALSE;
-	if (!Comm.broadcast(&atomicWeight_, 1)) return FALSE;
-	if (!Comm.broadcast(&boundCoherent_, 1)) return FALSE;
-	if (!Comm.broadcast(&boundIncoherent_, 1)) return FALSE;
-	if (!Comm.broadcast(&boundCoherentXS_, 1)) return FALSE;
-	if (!Comm.broadcast(&boundIncoherentXS_, 1)) return FALSE;
-	if (!Comm.broadcast(&totalXS_, 1)) return FALSE;
-	if (!Comm.broadcast(&absorptionXS_, 1)) return FALSE;
+	if (!Comm.broadcast(&A_, 1)) return false;
+	if (!Comm.broadcast(&atomicWeight_, 1)) return false;
+	if (!Comm.broadcast(&boundCoherent_, 1)) return false;
+	if (!Comm.broadcast(&boundIncoherent_, 1)) return false;
+	if (!Comm.broadcast(&boundCoherentXS_, 1)) return false;
+	if (!Comm.broadcast(&boundIncoherentXS_, 1)) return false;
+	if (!Comm.broadcast(&totalXS_, 1)) return false;
+	if (!Comm.broadcast(&absorptionXS_, 1)) return false;
 #endif
-	return TRUE;
+	return true;
 }

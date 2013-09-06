@@ -194,6 +194,7 @@ class Keywords
 		BoxNormalisationFileKeyword,	/**> 'BoxNormalisationFile' - Specifies a file from which to load the RDF normalisation array */
 		BoxNormalisationPointsKeyword,	/**> 'BoxNormalisationPoints' - Specifies how many random insertions to use when generating the normalisation array */
 		BroadeningKeyword,		/**> 'Broadening' - Specifies the Q-independent and Q-dependent (in that order) Gaussian broadening function FWHM to apply when transforming simulated RDF data to Q-space */
+		CellDensityMultiplierKeyword,	/**> 'CellDensityMultiplier' - Multiplier to apply to system atomic density when calculating size of atom arrays in cells */
 		EndSetupKeyword,		/**> 'EndSetup' - Signals the end of the Setup block */
 		RDFBinWidthKeyword,		/**> 'RDFBinWidth' - Specified bin width for all RDF generation */
 		RDFExtensionLimitKeyword,	/**> 'RDFExtensionLimit' - X value up to which to 'zero-extend' calculated RDFs */

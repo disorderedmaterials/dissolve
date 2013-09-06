@@ -20,7 +20,7 @@
 */
 
 // Richtig oder falsch
-#ifndef FALSE
-#define FALSE (0)
-#define TRUE (!FALSE)
+#ifndef false
+#define false (0)
+#define true (!false)
 #endif

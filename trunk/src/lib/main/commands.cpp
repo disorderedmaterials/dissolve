@@ -33,90 +33,90 @@ bool DUQ::registerCommands()
 {
 	// Standard Commands
 	// -- EndLoop
-	if (!registerCommand("endloop", "", &DUQ::commandEndLoop)) return FALSE;
+	if (!registerCommand("endloop", "", &DUQ::commandEndLoop)) return false;
 	// -- Energy
-	if (!registerCommand("energy", "e", &DUQ::commandEnergy)) return FALSE;
+	if (!registerCommand("energy", "e", &DUQ::commandEnergy)) return false;
 	// -- Help
-	if (!registerCommand("help", "h", &DUQ::commandHelp)) return FALSE;
+	if (!registerCommand("help", "h", &DUQ::commandHelp)) return false;
 	// -- LoadConfig
-	if (!registerCommand("loadconfig", "l", &DUQ::commandLoadConfig)) return FALSE;
-	if (!addCommandArgument("loadconfig", "name", "Configuration file to load", "configuration.xyz")) return FALSE;
+	if (!registerCommand("loadconfig", "l", &DUQ::commandLoadConfig)) return false;
+	if (!addCommandArgument("loadconfig", "name", "Configuration file to load", "configuration.xyz")) return false;
 	// -- Loop
-	if (!registerCommand("loop", "", &DUQ::commandLoop)) return FALSE;
+	if (!registerCommand("loop", "", &DUQ::commandLoop)) return false;
 	// -- Multiplier
-	if (!registerCommand("multiplier", "mult", &DUQ::commandMultiplier)) return FALSE;
-	if (!addCommandArgument("multiplier", "n", "New system multiplier", "-1")) return FALSE;
+	if (!registerCommand("multiplier", "mult", &DUQ::commandMultiplier)) return false;
+	if (!addCommandArgument("multiplier", "n", "New system multiplier", "-1")) return false;
 	// -- Quit
-	if (!registerCommand("quit", "q", &DUQ::commandQuit)) return FALSE;
+	if (!registerCommand("quit", "q", &DUQ::commandQuit)) return false;
 	// -- RMSE
-	if (!registerCommand("rmse", "rmse", &DUQ::commandRMSE)) return FALSE;
+	if (!registerCommand("rmse", "rmse", &DUQ::commandRMSE)) return false;
 	// -- SaveDLPOLY
-	if (!registerCommand("savedlpoly", "", &DUQ::commandSaveDLPOLY)) return FALSE;
-	if (!addCommandArgument("savedlpoly", "name", "Filename to save under", "dlpoly.CONFIG")) return FALSE;
+	if (!registerCommand("savedlpoly", "", &DUQ::commandSaveDLPOLY)) return false;
+	if (!addCommandArgument("savedlpoly", "name", "Filename to save under", "dlpoly.CONFIG")) return false;
 	// -- SaveRDFs
-	if (!registerCommand("saverdfs", "", &DUQ::commandSaveRDFs)) return FALSE;
-	if (!addCommandArgument("saverdfs", "source", "Which RDF information to save", "all")) return FALSE;
-	if (!addCommandArgument("saverdfs", "base", "Root name of RDFs to write out (will be appended by identifying name)", "current")) return FALSE;
+	if (!registerCommand("saverdfs", "", &DUQ::commandSaveRDFs)) return false;
+	if (!addCommandArgument("saverdfs", "source", "Which RDF information to save", "all")) return false;
+	if (!addCommandArgument("saverdfs", "base", "Root name of RDFs to write out (will be appended by identifying name)", "current")) return false;
 	// -- SavePP
-	if (!registerCommand("savepp", "", &DUQ::commandSavePairPotentials)) return FALSE;
-	if (!addCommandArgument("savepp", "base", "Root name of PairPotentials to write out (will be appended by '-TYPE-TYPE.pp'", "pairpotential")) return FALSE;
+	if (!registerCommand("savepp", "", &DUQ::commandSavePairPotentials)) return false;
+	if (!addCommandArgument("savepp", "base", "Root name of PairPotentials to write out (will be appended by '-TYPE-TYPE.pp'", "pairpotential")) return false;
 	// -- SaveSQ
-	if (!registerCommand("savesq", "", &DUQ::commandSaveSQ)) return FALSE;
-	if (!addCommandArgument("savesq", "source", "Which RDF information to save", "all")) return FALSE;
-	if (!addCommandArgument("savesq", "base", "Root name of S(Q) to write out (will be appended by identifying name)", "current")) return FALSE;
+	if (!registerCommand("savesq", "", &DUQ::commandSaveSQ)) return false;
+	if (!addCommandArgument("savesq", "source", "Which RDF information to save", "all")) return false;
+	if (!addCommandArgument("savesq", "base", "Root name of S(Q) to write out (will be appended by identifying name)", "current")) return false;
 	// -- SaveXYZ
-	if (!registerCommand("savexyz", "s", &DUQ::commandSaveXYZ)) return FALSE;
-	if (!addCommandArgument("savexyz", "name", "Filename to save under", "configuration.xyz")) return FALSE;
+	if (!registerCommand("savexyz", "s", &DUQ::commandSaveXYZ)) return false;
+	if (!addCommandArgument("savexyz", "name", "Filename to save under", "configuration.xyz")) return false;
 	// -- Set
-	if (!registerCommand("set", "", &DUQ::commandSet)) return FALSE;
-	if (!addCommandArgument("set", "command", "Command containing target parameter", "")) return FALSE;
-	if (!addCommandArgument("set", "parameter", "Target parameter", "")) return FALSE;
-	if (!addCommandArgument("set", "value", "Value of parameter", "")) return FALSE;
+	if (!registerCommand("set", "", &DUQ::commandSet)) return false;
+	if (!addCommandArgument("set", "command", "Command containing target parameter", "")) return false;
+	if (!addCommandArgument("set", "parameter", "Target parameter", "")) return false;
+	if (!addCommandArgument("set", "value", "Value of parameter", "")) return false;
 	// -- Shake
-	if (!registerCommand("shake", "sh", &DUQ::commandShake)) return FALSE;
-	if (!addCommandArgument("shake", "loop", "Type of loop to employ (if any)", "")) return FALSE;
+	if (!registerCommand("shake", "sh", &DUQ::commandShake)) return false;
+	if (!addCommandArgument("shake", "loop", "Type of loop to employ (if any)", "")) return false;
 	// -- Temperature
-	if (!registerCommand("temperature", "temp,t", &DUQ::commandTemperature)) return FALSE;
-	if (!addCommandArgument("temperature", "value", "New temperature to use in simulation methods", "")) return FALSE;
+	if (!registerCommand("temperature", "temp,t", &DUQ::commandTemperature)) return false;
+	if (!addCommandArgument("temperature", "value", "New temperature to use in simulation methods", "")) return false;
 	// -- Test
-	if (!registerCommand("test", "", &DUQ::commandTest)) return FALSE;
+	if (!registerCommand("test", "", &DUQ::commandTest)) return false;
 
 	// AtomShake
-	if (!registerCommand("atomshake", "as", &DUQ::atomShake)) return FALSE;
-	if (!addCommandArgument("atomshake", "n", "Number of shakes to perform per Atom", "1")) return FALSE;
-	if (!addCommandArgument("atomshake", "cut", "Cutoff radius to use in energy calculation (-1.0 to use PairPotential cutoff)", "-1.0")) return FALSE;
-	if (!addCommandParameter("atomshake", "rate", "Target acceptance rate for moves", "0.333")) return FALSE;
-	if (!addCommandParameter("atomshake", "maxtrans", "Size of maximum allowed translation in move (updated automatically)", "0.1")) return FALSE;
+	if (!registerCommand("atomshake", "as", &DUQ::atomShake)) return false;
+	if (!addCommandArgument("atomshake", "n", "Number of shakes to perform per Atom", "1")) return false;
+	if (!addCommandArgument("atomshake", "cut", "Cutoff radius to use in energy calculation (-1.0 to use PairPotential cutoff)", "-1.0")) return false;
+	if (!addCommandParameter("atomshake", "rate", "Target acceptance rate for moves", "0.333")) return false;
+	if (!addCommandParameter("atomshake", "maxtrans", "Size of maximum allowed translation in move (updated automatically)", "0.1")) return false;
 
 	// GrainShake
-	if (!registerCommand("grainshake", "gs", &DUQ::grainShake)) return FALSE;
-	if (!addCommandArgument("grainshake", "n", "Number of shakes to perform per Grain", "1")) return FALSE;
-	if (!addCommandArgument("grainshake", "cut", "Cutoff radius to use in energy calculation (-1.0 to use PairPotential cutoff)", "-1.0")) return FALSE;
-	if (!addCommandParameter("grainshake", "rate", "Target acceptance rate for moves", "0.333")) return FALSE;
-	if (!addCommandParameter("grainshake", "maxrot", "Size of maximum allowed rotation in move (updated automatically)", "30.0")) return FALSE;
-	if (!addCommandParameter("grainshake", "maxtrans", "Size of maximum allowed translation in move (updated automatically)", "1.0")) return FALSE;
+	if (!registerCommand("grainshake", "gs", &DUQ::grainShake)) return false;
+	if (!addCommandArgument("grainshake", "n", "Number of shakes to perform per Grain", "1")) return false;
+	if (!addCommandArgument("grainshake", "cut", "Cutoff radius to use in energy calculation (-1.0 to use PairPotential cutoff)", "-1.0")) return false;
+	if (!addCommandParameter("grainshake", "rate", "Target acceptance rate for moves", "0.333")) return false;
+	if (!addCommandParameter("grainshake", "maxrot", "Size of maximum allowed rotation in move (updated automatically)", "30.0")) return false;
+	if (!addCommandParameter("grainshake", "maxtrans", "Size of maximum allowed translation in move (updated automatically)", "1.0")) return false;
 
 	// Twist
-	if (!registerCommand("twist", "tw", &DUQ::twist)) return FALSE;
-	if (!addCommandArgument("twist", "n", "Number of twists to attempt per Bond", "1")) return FALSE;
-	if (!addCommandArgument("twist", "cut", "Cutoff radius to use in energy calculation (-1.0 to use PairPotential cutoff)", "-1.0")) return FALSE;
+	if (!registerCommand("twist", "tw", &DUQ::twist)) return false;
+	if (!addCommandArgument("twist", "n", "Number of twists to attempt per Bond", "1")) return false;
+	if (!addCommandArgument("twist", "cut", "Cutoff radius to use in energy calculation (-1.0 to use PairPotential cutoff)", "-1.0")) return false;
 
 	// Perturb Potential
-	if (!registerCommand("perturb", "ptb", &DUQ::perturb)) return FALSE;
+	if (!registerCommand("perturb", "ptb", &DUQ::perturb)) return false;
 
 	// Pair Correlations
-	if (!registerCommand("pair", "p", &DUQ::calculatePairCorrelations)) return FALSE;
+	if (!registerCommand("pair", "p", &DUQ::calculatePairCorrelations)) return false;
 
 	// MD
-	if (!registerCommand("md", "", &DUQ::md)) return FALSE;
-	if (!addCommandArgument("md", "n", "Number of MD steps to do", "100")) return FALSE;
-	if (!addCommandArgument("md", "cut", "Cutoff radius to use in force calculation (-1.0 to use PairPotential cutoff)", "-1.0")) return FALSE;
-	if (!addCommandArgument("md", "deltat", "Timestep to use (ps)", "0.0005")) return FALSE;
-	if (!addCommandParameter("md", "trajectory", "Name of xyz trajectory file to write", "")) return FALSE;
-	if (!addCommandParameter("md", "energy", "Whether to calculate total energy at each step", "0")) return FALSE;
-	if (!addCommandParameter("md", "freq", "Frequency to write step summary", "1")) return FALSE;
+	if (!registerCommand("md", "", &DUQ::md)) return false;
+	if (!addCommandArgument("md", "n", "Number of MD steps to do", "100")) return false;
+	if (!addCommandArgument("md", "cut", "Cutoff radius to use in force calculation (-1.0 to use PairPotential cutoff)", "-1.0")) return false;
+	if (!addCommandArgument("md", "deltat", "Timestep to use (ps)", "0.0005")) return false;
+	if (!addCommandParameter("md", "trajectory", "Name of xyz trajectory file to write", "")) return false;
+	if (!addCommandParameter("md", "energy", "Whether to calculate total energy at each step", "0")) return false;
+	if (!addCommandParameter("md", "freq", "Frequency to write step summary", "1")) return false;
 	
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -128,7 +128,7 @@ Command* DUQ::registerCommand(const char* name, const char* shortNames, CommandP
 	if (func != NULL)
 	{
 		msg.error("Tried to register a command '%s', but one with the same name already exists.\n", name);
-		return FALSE;
+		return false;
 	}
 
 	// Create a new command
@@ -152,7 +152,7 @@ Argument* DUQ::addCommandArgument(const char* commandName, const char* argumentN
 	if (func == NULL)
 	{
 		msg.error("Tried to add an argument to the unknown Command '%s'.\n", commandName);
-		return FALSE;
+		return false;
 	}
 
 	return func->addArgument(argumentName, description, defaultValue);
@@ -167,7 +167,7 @@ Argument* DUQ::addCommandParameter(const char* commandName, const char* paramete
 	if (func == NULL)
 	{
 		msg.error("Tried to add an argument to the unknown Command '%s'.\n", commandName);
-		return FALSE;
+		return false;
 	}
 
 	return func->addParameter(parameterName, description, startingValue);
@@ -232,10 +232,10 @@ const char* DUQ::commandArgumentAsConstChar(const char* commandName, const char*
 	if (arg == NULL)
 	{
 		msg.error("Couldn't find named Argument '%s' in Command '%s' in DUQ::argumentAsConstChar().\n", argumentName, commandName);
-		result = FALSE;
+		result = false;
 		return dummy;
 	}
-	result = TRUE;
+	result = true;
 	return arg->asConstChar();
 }
 
@@ -248,10 +248,10 @@ int DUQ::commandArgumentAsInteger(const char* commandName, const char* argumentN
 	if (arg == NULL)
 	{
 		msg.error("Couldn't find named Argument '%s' in Command '%s' in DUQ::argumentAsInteger().\n", argumentName, commandName);
-		result = FALSE;
+		result = false;
 		return 0;
 	}
-	result = TRUE;
+	result = true;
 	return arg->asInteger();
 }
 
@@ -264,10 +264,10 @@ double DUQ::commandArgumentAsDouble(const char* commandName, const char* argumen
 	if (arg == NULL)
 	{
 		msg.error("Couldn't find named Argument '%s' in Command '%s' in DUQ::argumentAsDouble().\n", argumentName, commandName);
-		result = FALSE;
+		result = false;
 		return 0.0;
 	}
-	result = TRUE;
+	result = true;
 	return arg->asDouble();
 }
 
@@ -302,10 +302,10 @@ const char* DUQ::commandParameterAsConstChar(const char* commandName, const char
 	if (arg == NULL)
 	{
 		msg.error("Couldn't find named parameter '%s' in Command '%s' in DUQ::argumentAsConstChar().\n", parameterName, commandName);
-		result = FALSE;
+		result = false;
 		return dummy;
 	}
-	result = TRUE;
+	result = true;
 	return arg->asConstChar();
 }
 
@@ -318,10 +318,10 @@ int DUQ::commandParameterAsInteger(const char* commandName, const char* paramete
 	if (arg == NULL)
 	{
 		msg.error("Couldn't find named parameter '%s' in Command '%s' in DUQ::argumentAsInteger().\n", parameterName, commandName);
-		result = FALSE;
+		result = false;
 		return 0;
 	}
-	result = TRUE;
+	result = true;
 	return arg->asInteger();
 }
 
@@ -334,9 +334,9 @@ double DUQ::commandParameterAsDouble(const char* commandName, const char* parame
 	if (arg == NULL)
 	{
 		msg.error("Couldn't find named parameter '%s' in Command '%s' in DUQ::argumentAsDouble().\n", parameterName, commandName);
-		result = FALSE;
+		result = false;
 		return 0.0;
 	}
-	result = TRUE;
+	result = true;
 	return arg->asDouble();
 }

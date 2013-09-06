@@ -1,6 +1,6 @@
 /*
-	*** Periodic Table
-	*** src/gui/ptable_funcs.cpp
+	*** Element Select Dialog
+	*** src/gui/element_funcs.cpp
 	Copyright T. Youngs 2012-2013
 
 	This file is part of dUQ.
@@ -19,7 +19,7 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/ptable.h"
+#include "gui/element.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "base/ptable.h"
@@ -27,7 +27,7 @@
 #include <QtGui/QGridLayout>
 
 // Constructor
-dUQPeriodicTable::dUQPeriodicTable(QWidget *parent) : QDialog(parent)
+DUQElementDialog::DUQElementDialog(QWidget *parent) : QDialog(parent)
 {
 	ui.setupUi(this);
 
@@ -41,7 +41,6 @@ dUQPeriodicTable::dUQPeriodicTable(QWidget *parent) : QDialog(parent)
 	elementButtons_ = new QPushButton*[PeriodicTable::nElements()];
 	for (n=1; n<PeriodicTable::nElements(); n++)
 	{
-		printf("jkjkjk %i\n", n);
 		elementButtons_[n] = new QPushButton(this);
 		elementButtons_[n]->setText(PeriodicTable::element(n).symbol());
 		elementButtons_[n]->setMinimumSize(24,24);
@@ -122,25 +121,25 @@ dUQPeriodicTable::dUQPeriodicTable(QWidget *parent) : QDialog(parent)
 	ui.PeriodicTableGroup->setLayout(gl);
 }
 
-dUQPeriodicTable::~dUQPeriodicTable()
+DUQElementDialog::~DUQElementDialog()
 {
 	if (elementButtons_ != NULL) delete[] elementButtons_;
 }
 
 // Cancel dialog
-void dUQPeriodicTable::on_CancelButton_clicked(bool checked)
+void DUQElementDialog::on_CancelButton_clicked(bool checked)
 {
 	reject();
 }
 
 // Return clicked element value
-void dUQPeriodicTable::ElementButton_clicked(bool checked)
+void DUQElementDialog::ElementButton_clicked(bool checked)
 {
         // Cast sender
         QPushButton *button = qobject_cast<QPushButton*> (sender());
         if (!button)
         {
-                printf("dUQPeriodicTable::ElementButton_clicked - Sender was not a QPushButton.\n");
+                printf("DUQElementDialog::ElementButton_clicked - Sender was not a QPushButton.\n");
                 reject();
 		return;
         }
@@ -152,7 +151,7 @@ void dUQPeriodicTable::ElementButton_clicked(bool checked)
 }
 
 // Select an element
-int dUQPeriodicTable::selectElement()
+int DUQElementDialog::selectElement()
 {
 	// Execute the dialog and check on the result
 	return (exec() == 1 ? selectedElement_ : -1);

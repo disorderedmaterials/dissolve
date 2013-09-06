@@ -35,13 +35,13 @@ bool DUQ::parseStep(Step* step, const char* line)
 {
 	LineParser parser;
 	parser.getArgsDelim(LineParser::Defaults, line);
-	if (parser.nArgs() == 0) return FALSE;
+	if (parser.nArgs() == 0) return false;
 
 	// Check for NULL pointer
 	if (step == NULL)
 	{
 		msg.error("NULL_POINTER - NULL Step pointer passed to DUQ::parseStep().\n");
-		return FALSE;
+		return false;
 	}
 	step->clear();
 	
@@ -54,14 +54,14 @@ bool DUQ::parseStep(Step* step, const char* line)
 	}
 
 	// Check here to make sure that we have another argument to check...
-	if (argId == parser.nArgs()) return FALSE;
+	if (argId == parser.nArgs()) return false;
 
 	// Search for the requested command
 	Command* cmd = command(parser.argc(argId));
 	if (cmd == NULL)
 	{
 		msg.print("'%s' is not a valid command name - type 'help' or 'h' for a list of available commands.\n", parser.argc(argId));
-		return FALSE;
+		return false;
 	}
 	++argId;
 
@@ -76,7 +76,7 @@ bool DUQ::parseStep(Step* step, const char* line)
 		if ((assignment && (nAssignments < 0)) || ( (!assignment) & (nAssignments > 0)))
 		{
 			msg.error("Can't mix argument assignments (arg=value) with straight value lists.\n");
-			return FALSE;
+			return false;
 		}
 		
 		if (assignment)
@@ -84,7 +84,7 @@ bool DUQ::parseStep(Step* step, const char* line)
 			if (!step->setArgumentValue(beforeChar(parser.argc(n),'='), afterChar(parser.argc(n), '=')))
 			{
 				msg.error("Couldn't set argument in command '%s'.\n", cmd->name());
-				return FALSE;
+				return false;
 			}
 		}
 		else
@@ -92,12 +92,12 @@ bool DUQ::parseStep(Step* step, const char* line)
 			if (args == NULL)
 			{
 				msg.error("Too many arguments given to command '%s'.\n", cmd->name());
-				return FALSE;
+				return false;
 			}
 			if (!step->setArgumentValue(args->name(), parser.argc(n)))
 			{
 				msg.error("Couldn't set argument '%s' in command '%s'.\n", args->name(), cmd->name());
-				return FALSE;
+				return false;
 			}
 		}
 		
@@ -105,7 +105,7 @@ bool DUQ::parseStep(Step* step, const char* line)
 		args = args->next;
 	}
 	
-	return TRUE;
+	return true;
 }
 
 void my_handler(int s){
@@ -121,7 +121,7 @@ void my_handler(int s){
 CommandReturnValue DUQ::executeSteps(Step* firstStep)
 {
 	// Loop over sup
-	bool result, error = FALSE;
+	bool result, error = false;
 	Step* interleavedLoopStart = NULL;
 	Step* step = firstStep;
 	while (step != NULL)
@@ -194,7 +194,7 @@ CommandReturnValue DUQ::executeSteps(Step* firstStep)
 void DUQ::registerEnergyChange(double deltaE)
 {
 	energyChange_ += deltaE;
-	energyChanged_ = TRUE;
+	energyChanged_ = true;
 }
 
 /*!
@@ -214,7 +214,7 @@ void DUQ::accumulateEnergyChange()
 	// Add point and signal change
 	energyData_.addPoint(x, y);
 	energyChange_ = 0.0;
-	energyChanged_ = FALSE;
+	energyChanged_ = false;
 	updateCheckPointData2D(DUQ::CheckPointEnergy);
 	sendSignal(DUQ::EnergyUpdatedSignal);
 }
@@ -264,8 +264,8 @@ bool DUQ::runSimulation()
 	{
 		msg.print("\nExecuting equilibration stage...\n\n");
 		returnValue = executeSteps(equilibrationSteps_.first());
-		if (returnValue == CommandFail) return FALSE;
-		if (returnValue == CommandQuit) return TRUE;
+		if (returnValue == CommandFail) return false;
+		if (returnValue == CommandQuit) return true;
 	}
 
 	// Execute main strategy
@@ -278,14 +278,14 @@ bool DUQ::runSimulation()
 	if (returnValue == CommandFail)
 	{
 		msg.print("Main strategy exited with errors.\n");
-		return FALSE;
+		return false;
 	}
 
-	if (returnValue == CommandQuit) return TRUE;
+	if (returnValue == CommandQuit) return true;
 	
 	msg.print("Finished.\n");
 
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -326,13 +326,13 @@ bool DUQ::goInteractive()
 			// Quit?
 			if (step.commandPointer() == &DUQ::commandQuit)
 			{
-				Comm.decide(FALSE);
+				Comm.decide(false);
 				break;
 			}
 
 			// Inform slaves that we have something to do and broadcast it
-			Comm.decide(TRUE);
-			if (!step.broadcast(commands_)) return FALSE;
+			Comm.decide(true);
+			if (!step.broadcast(commands_)) return false;
 		}
 		else
 		{
@@ -343,7 +343,7 @@ bool DUQ::goInteractive()
 			step.clear();
 
 			// Slaves get ready to receive Step information
-			if (!step.broadcast(commands_)) return FALSE;
+			if (!step.broadcast(commands_)) return false;
 		}
 
 		// Execute Step
@@ -367,5 +367,49 @@ bool DUQ::goInteractive()
 		Comm.wait(DUQComm::World);
 	}
 
-	return TRUE;
+	return true;
+}
+
+bool DUQ::runCommand(const char* commandString)
+{
+	Step step;
+	
+	// Create Step information
+	if (!parseStep(&step, commandString)) return false;
+
+	// Valid function registered?
+	if (step.commandPointer() == NULL) return false;
+
+	// Quit?
+	if (step.commandPointer() == &DUQ::commandQuit)
+	{
+		Comm.decide(false);
+		return false;
+	}
+
+	// Inform slaves that we have something to do and broadcast it
+	Comm.decide(true);
+	if (!step.broadcast(commands_)) return false;
+
+	// Execute Step
+	if (step.prepare())
+	{
+		// Function arguments are now prepped, so print data and execute command...
+		step.command()->print();
+		for (int n=0; n<step.iterations(); ++n)
+		{
+			if (step.iterations() > 1) msg.print("Iteration %i of %i\n", n+1, step.iterations());
+			bool result = ((this)->*(step.commandPointer()))(configuration_);
+			if (!result)
+			{
+				msg.print("Failed.\n");
+				break;
+			}
+		}
+	}
+	
+	// Align MPI processes
+	Comm.wait(DUQComm::World);
+	
+	return true;
 }

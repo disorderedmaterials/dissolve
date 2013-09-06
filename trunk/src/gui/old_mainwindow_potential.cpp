@@ -29,7 +29,7 @@
 void MainWindow::refreshPotentialTab(bool pairPotentialsGroup, bool pairPotentialsGraph, bool intraGroup)
 {
 	// Set the refreshing_ flag
-	potentialTabRefreshing_ = TRUE;
+	potentialTabRefreshing_ = true;
 
 	// Refresh the Pair Potentials Group?
 	if (pairPotentialsGroup)
@@ -137,7 +137,7 @@ void MainWindow::refreshPotentialTab(bool pairPotentialsGroup, bool pairPotentia
 	}
 	
 	// Unset the refreshing_ flag
-	potentialTabRefreshing_ = FALSE;
+	potentialTabRefreshing_ = false;
 }
 
 // Return selected Potential
@@ -156,8 +156,8 @@ void MainWindow::updatePairPotentialGraph()
 	if (pot != NULL)
 	{
 		int index = dUQ_.indexOf(pot);
-		ui.PairPotentialsGraph->addDataSet(pot->u(), "Energy", TRUE, 0, Qt::black, Qt::SolidLine, PlotData::SqrtModifier);
-		ui.PairPotentialsGraph->addDataSet(pot->dU(), "Force", FALSE, 0, Qt::red, Qt::DashLine, PlotData::SqrtModifier);
+		ui.PairPotentialsGraph->addDataSet(pot->u(), "Energy", true, 0, Qt::black, Qt::SolidLine, PlotData::SqrtModifier);
+		ui.PairPotentialsGraph->addDataSet(pot->dU(), "Force", false, 0, Qt::red, Qt::DashLine, PlotData::SqrtModifier);
 	}
 	refresh(PairPotentialsGraph);
 }

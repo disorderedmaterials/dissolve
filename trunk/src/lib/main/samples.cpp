@@ -20,9 +20,9 @@
 */
 
 #include "main/duq.h"
+#include "main/flags.h"
 #include "classes/box.h"
 #include "classes/species.h"
-#include "base/flag.h"
 #include "base/sysfunc.h"
 #include <string.h>
 
@@ -55,7 +55,7 @@ Sample *DUQ::addSample(const char* baseName)
 	sample->setName(baseName);
 	sample->updateIsotopologueMixtures(species_);
 	
-	SET_MODIFIED
+	Flags::wave(Flags::SamplesChanged);
 	
 	return sample;
 }
@@ -69,7 +69,7 @@ void DUQ::removeSample(Sample* sample)
 	{
 		samples_.remove(sample);
 		
-		SET_MODIFIED
+		Flags::wave(Flags::SamplesChanged);
 	}
 	else msg.print("Warning: Can't remove Sample '%s' from the list, since it isn't in this list.\n", sample->name());
 }
@@ -137,15 +137,15 @@ bool DUQ::setupSamples()
 		}
 		
 		// Create AtomType index for Sample
-		if (!sam->createTypeIndex(species_, multiplier_, configuration_.nAtoms(), typeIndex_)) return FALSE;
+		if (!sam->createTypeIndex(species_, multiplier_, configuration_.nAtoms(), typeIndex_)) return false;
 
 		// Finalise reference data
-		if (!sam->finaliseReferenceData()) return FALSE;
+		if (!sam->finaliseReferenceData()) return false;
 
 		// Setup pair correlation arrays
-		if (!sam->setupPairCorrelations(configuration_.box()->volume(), rdfRange_, rdfBinWidth_, rdfExtensionLimit_, boxNormalisation_, rho)) return FALSE;
+		if (!sam->setupPairCorrelations(configuration_.box()->volume(), rdfRange_, rdfBinWidth_, rdfExtensionLimit_, boxNormalisation_, rho)) return false;
 
 		msg.print("\n");
 	}
-	return TRUE;
+	return true;
 }

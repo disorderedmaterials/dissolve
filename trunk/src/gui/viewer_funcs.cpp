@@ -31,38 +31,26 @@ Viewer::Viewer(QWidget* parent) : QGLWidget(parent)
 	// Character / Setup
 	contextWidth_ = 0;
 	contextHeight_ = 0;
-	valid_ = FALSE;
-	drawing_ = FALSE;
-	renderingOffscreen_ = FALSE;
+	valid_ = false;
+	drawing_ = false;
+	renderingOffscreen_ = false;
 
 	// Preferences (set static members only on first instance creation)
 	setDefaultPreferences(nViewerInstances == 0);
 	
 	// Engine Setup
-	linePrimitives_.setColourData(TRUE);
+	linePrimitives_.setColourData(true);
 	linePrimitives_.setType(GL_LINES);
 	linePrimitives_.setNoInstances();
-	pointPrimitives_.setColourData(TRUE);
+	pointPrimitives_.setColourData(true);
 	pointPrimitives_.setType(GL_POINTS);
 	pointPrimitives_.setNoInstances();
 	triangleChopper_.initialise(0.0, 1000, 0.2);
 	resetView();
 
-	// Source data
-	sourceSpecies_ = NULL;
-	sourceConfiguration_ = NULL;
-	mainWindow_ = NULL;
-	lastScenePoint_ = -1;
-	drawStyle_ = Viewer::LineStyle;
-
-	// Input
-	atomContextMenu_ = NULL;
-	speciesUpdateTargets_ = 0;
-
 	// Prevent QPainter from autofilling widget background
-	setAutoFillBackground(FALSE);
-	
-	createPrimitives();
+	setAutoFillBackground(false);
+
 	++nViewerInstances;
 }
 
@@ -79,7 +67,7 @@ Viewer::~Viewer()
 void Viewer::initializeGL()
 {
 	// Initialize GL
-	valid_ = TRUE;
+	valid_ = true;
 	
 	// Create an instance for each defined user primitive - we do this in every call to initialiseGL so
 	// that, when saving a bitmap using QGLWidget::renderPixmap(), we automatically create new display list
@@ -109,7 +97,7 @@ void Viewer::paintEvent(QPaintEvent* event)
 	}
 
 	// Set the drawing flag so we don't have any rendering clashes
-	drawing_ = TRUE;
+	drawing_ = true;
 
 	// Setup basic GL stuff
 	setupGL();
@@ -148,33 +136,7 @@ void Viewer::paintEvent(QPaintEvent* event)
 		glLoadIdentity();
 	
 		// What to draw depends on the target* pointers...
-		if (sourceConfiguration_ != NULL) drawConfiguration();
-		else if (sourceSpecies_ != NULL) drawSpecies();
-		else
-		{
-			// Render sample scene
-			GLfloat colourPurple[4] = { 112/255.0, 22/255.0, 145/255.0, 1.0 };
-			GLfloat colourOrange[4] = { 238/255.0, 138/255.0, 26/255.0, 1.0 };
-			GLfloat colourGreen[4] = { 55/255.0, 132/255.0, 75/255.0, 1.0 };
-			GLfloat colourWhite[4] = { 1.0, 1.0, 1.0, 0.8 };
-			Matrix4 A;
-			renderPrimitive(&spherePrimitive03_, colourWhite, A);
-			A.columnMultiply(0, 0.5);
-			A.columnMultiply(1, 0.5);
-			A.columnMultiply(2, 0.5);
-			A.setTranslation(1.0,0.0,0.0);
-			renderPrimitive(&cubePrimitive_, colourPurple, A);
-			A.setTranslation(-1.0,0.0,0.0);
-			renderPrimitive(&cubePrimitive_, colourPurple, A);
-			A.setTranslation(0.0,1.0,0.0);
-			renderPrimitive(&cubePrimitive_, colourOrange, A);
-			A.setTranslation(0.0,-1.0,0.0);
-			renderPrimitive(&cubePrimitive_, colourOrange, A);
-			A.setTranslation(0.0,0.0,1.0);
-			renderPrimitive(&cubePrimitive_, colourGreen, A);
-			A.setTranslation(0.0,0.0,-1.0);
-			renderPrimitive(&cubePrimitive_, colourGreen, A);
-		}
+		drawScene();
 	}
 
 	// Send primitives to the display
@@ -191,19 +153,19 @@ void Viewer::paintEvent(QPaintEvent* event)
 	painter.setFont(font);
 	painter.setRenderHint(QPainter::Antialiasing);
 	textPrimitives_.renderAll(painter, this);
-	isotopeTextPrimitives_.renderAll(painter, this, TRUE, FALSE);
+	isotopeTextPrimitives_.renderAll(painter, this, true, false);
 	font.setPointSize(Viewer::fontSize()*Viewer::superScriptFraction());
 	painter.setFont(font);
-	isotopeTextPrimitives_.renderAll(painter, this, TRUE, TRUE);
+	isotopeTextPrimitives_.renderAll(painter, this, true, true);
 
 	// Render selection box (if any)
-	if (selectionBox_.width() != 0) painter.drawRect(selectionBox_);
+// 	if (selectionBox_.width() != 0) painter.drawRect(selectionBox_);
 
 	// Done.
 	painter.end();
 
 	// Set the rendering flag to false
-	drawing_ = FALSE;
+	drawing_ = false;
 
 	// If we were rendering offscreen, we may delete the topmost primitive instance here
 	if (renderingOffscreen_)
@@ -346,18 +308,18 @@ void Viewer::setViewMatrix(Matrix4& mat)
 // Render or grab image
 QPixmap Viewer::generateImage(int w, int h)
 {
-	renderingOffscreen_ = TRUE;
-	if (useFrameBuffer_ == FALSE)
+	renderingOffscreen_ = true;
+	if (useFrameBuffer_ == false)
 	{
 
 		// Generate offscreen bitmap (a temporary context will be created)
-		QPixmap pixmap = renderPixmap(w, h, FALSE);
+		QPixmap pixmap = renderPixmap(w, h, false);
 		
 		// Ensure correct widget context size is stored
 		contextWidth_ = (GLsizei) width();
 		contextHeight_ = (GLsizei) height();
 
-		renderingOffscreen_ = FALSE;
+		renderingOffscreen_ = false;
 		return pixmap;
 	}
 	else
@@ -365,7 +327,7 @@ QPixmap Viewer::generateImage(int w, int h)
 		postRedisplay();
 		QImage image = grabFrameBuffer();
 
-		renderingOffscreen_ = FALSE;
+		renderingOffscreen_ = false;
 		return QPixmap::fromImage(image);
 	}
 }

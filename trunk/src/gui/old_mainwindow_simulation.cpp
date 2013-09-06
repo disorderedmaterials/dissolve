@@ -36,8 +36,8 @@ void MainWindow::on_SimulationSetupButton_clicked(bool checked)
 	if (!MPIRunMaster(dUQ_.checkSetup()))
 	{
 		msg.print("Errors were encountered while checking the system setup.\nYou must resolve these errors before any calculation can proceed.\n");
-		ui.SimulationStartButton->setEnabled(TRUE);
-		ui.SimulationStopButton->setEnabled(FALSE);
+		ui.SimulationStartButton->setEnabled(true);
+		ui.SimulationStopButton->setEnabled(false);
 		return;
 	}
 
@@ -45,8 +45,8 @@ void MainWindow::on_SimulationSetupButton_clicked(bool checked)
 	msg.print("Broadcasting system setup...\n");
 	if (!dUQ_.broadcastSetup())
 	{
-		ui.SimulationStartButton->setEnabled(TRUE);
-		ui.SimulationStopButton->setEnabled(FALSE);
+		ui.SimulationStartButton->setEnabled(true);
+		ui.SimulationStopButton->setEnabled(false);
 		return;
 	}
 
@@ -59,8 +59,8 @@ void MainWindow::on_SimulationSetupButton_clicked(bool checked)
 	if (!dUQ_.setupSimulation())
 	{
 		msg.print("Failed to setup simulation.\n");
-		ui.SimulationStartButton->setEnabled(FALSE);
-		ui.SimulationStopButton->setEnabled(FALSE);
+		ui.SimulationStartButton->setEnabled(false);
+		ui.SimulationStopButton->setEnabled(false);
 		return;
 	}
 
@@ -73,9 +73,9 @@ void MainWindow::on_SimulationSetupButton_clicked(bool checked)
 	ui.SimulationFQGraph->refreshData();
 	
 	// Set control enabled status
-	ui.SimulationSetupButton->setEnabled(TRUE);
-	ui.SimulationStartButton->setEnabled(TRUE);
-	ui.SimulationStopButton->setEnabled(FALSE);
+	ui.SimulationSetupButton->setEnabled(true);
+	ui.SimulationStartButton->setEnabled(true);
+	ui.SimulationStopButton->setEnabled(false);
 }
 
 /*!
@@ -87,10 +87,10 @@ void MainWindow::on_SimulationStartButton_clicked(bool checked)
 	disableTabs(-(SimulationTab+MessagesTab));
 
 	// Disable the Start and LoadCheckPoint buttons, and enable Stop
-	ui.SimulationSetupButton->setEnabled(FALSE);
-	ui.SimulationStartButton->setEnabled(FALSE);
-	ui.SimulationLoadCheckPointButton->setEnabled(FALSE);
-	ui.SimulationStopButton->setEnabled(TRUE);
+	ui.SimulationSetupButton->setEnabled(false);
+	ui.SimulationStartButton->setEnabled(false);
+	ui.SimulationLoadCheckPointButton->setEnabled(false);
+	ui.SimulationStopButton->setEnabled(true);
 
 	// Now, start the simulation thread....
 	simulationThread_.start();
@@ -100,7 +100,7 @@ void MainWindow::on_SimulationStartButton_clicked(bool checked)
 void MainWindow::on_SimulationStopButton_clicked(bool checked)
 {
 	// Temporarily disable GUI
-	setEnabled(FALSE);
+	setEnabled(false);
 
 	// Send terminate signal to dUQ
 	dUQ_.receiveSignal(DUQ::TerminateSignal, 898);
@@ -119,13 +119,13 @@ void MainWindow::on_SimulationLoadCheckPointButton_clicked(bool checked)
 void MainWindow::simulationFinished(int result)
 {
 	// Re-enable GUI (in case it has been disabled)
-	setEnabled(TRUE);
+	setEnabled(true);
 
 	// Re-enable the Start and LoadCheckPoint buttons, and disable Stop
-	ui.SimulationSetupButton->setEnabled(TRUE);
-	ui.SimulationStartButton->setEnabled(TRUE);
-	ui.SimulationLoadCheckPointButton->setEnabled(TRUE);
-	ui.SimulationStopButton->setEnabled(FALSE);
+	ui.SimulationSetupButton->setEnabled(true);
+	ui.SimulationStartButton->setEnabled(true);
+	ui.SimulationLoadCheckPointButton->setEnabled(true);
+	ui.SimulationStopButton->setEnabled(false);
 }
 
 // CheckPoint data is ready to read
@@ -139,7 +139,7 @@ void MainWindow::addCheckPointDataToGraphs()
 	for (int n=0; n<dUQ_.nCheckPointData2D(DUQ::CheckPointUnweightedSQ); ++n)
 	{
 		QColor color = PlotWidget::lineColour(n);
-		ui.SimulationSQGraph->addDataSet(dUQ_.checkPointData2D(DUQ::CheckPointUnweightedSQ, n), TRUE, n, color);
+		ui.SimulationSQGraph->addDataSet(dUQ_.checkPointData2D(DUQ::CheckPointUnweightedSQ, n), true, n, color);
 	}
 
 	// Total F(Q) and reference F(Q)
@@ -147,21 +147,21 @@ void MainWindow::addCheckPointDataToGraphs()
 	for (int n=0; n<dUQ_.nCheckPointData2D(DUQ::CheckPointFQ); n += 3)
 	{
 		QColor color = PlotWidget::lineColour(n/3);
-		ui.SimulationFQGraph->addDataSet(dUQ_.checkPointData2D(DUQ::CheckPointFQ, n), TRUE, (n/3), color);
-		ui.SimulationFQGraph->addDataSet(dUQ_.checkPointData2D(DUQ::CheckPointFQ, n+1), TRUE, (n/3), color, Qt::DashLine);
-		ui.SimulationFQGraph->addDataSet(dUQ_.checkPointData2D(DUQ::CheckPointFQ, n+2), TRUE, (n/3), color, Qt::DotLine);
+		ui.SimulationFQGraph->addDataSet(dUQ_.checkPointData2D(DUQ::CheckPointFQ, n), true, (n/3), color);
+		ui.SimulationFQGraph->addDataSet(dUQ_.checkPointData2D(DUQ::CheckPointFQ, n+1), true, (n/3), color, Qt::DashLine);
+		ui.SimulationFQGraph->addDataSet(dUQ_.checkPointData2D(DUQ::CheckPointFQ, n+2), true, (n/3), color, Qt::DotLine);
 	}
 	// -- Set soft limits on graph
 	double xMax = 20.0;
 	for (Sample* sam = dUQ_.samples(); sam != NULL; sam = sam->next) if (sam->hasReferenceData() && (sam->referenceFQ().arrayX().last() > xMax)) xMax = sam->referenceFQ().arrayX().last();
-	ui.SimulationFQGraph->setXLimits(TRUE, TRUE, 0.0, TRUE,	 TRUE, xMax);
+	ui.SimulationFQGraph->setXLimits(true, true, 0.0, true,	 true, xMax);
 
 	// Unweighted partial g(r)
 	ui.SimulationPartialGRGraph->removeAllDataSets();
 	for (int n=0; n<dUQ_.nCheckPointData2D(DUQ::CheckPointUnweightedGR); ++n)
 	{
 		QColor color = PlotWidget::lineColour(n);
-		ui.SimulationPartialGRGraph->addDataSet(dUQ_.checkPointData2D(DUQ::CheckPointUnweightedGR, n), TRUE, n, color);
+		ui.SimulationPartialGRGraph->addDataSet(dUQ_.checkPointData2D(DUQ::CheckPointUnweightedGR, n), true, n, color);
 	}
 	
 	// Total, neutron-weighted g(r)
@@ -169,7 +169,7 @@ void MainWindow::addCheckPointDataToGraphs()
 	for (int n=0; n<dUQ_.nCheckPointData2D(DUQ::CheckPointTotalGR); ++n)
 	{
 		QColor color = PlotWidget::lineColour(n);
-		ui.SimulationGRGraph->addDataSet(dUQ_.checkPointData2D(DUQ::CheckPointTotalGR, n), TRUE, n, color);
+		ui.SimulationGRGraph->addDataSet(dUQ_.checkPointData2D(DUQ::CheckPointTotalGR, n), true, n, color);
 	}
 
 	// PairPotentials
@@ -177,13 +177,13 @@ void MainWindow::addCheckPointDataToGraphs()
 	for (int n=0; n<dUQ_.nCheckPointData2D(DUQ::CheckPointOriginalU); ++n)
 	{
 		QColor color = PlotWidget::lineColour(n);
-		ui.SimulationPPGraph->addDataSet(dUQ_.checkPointData2D(DUQ::CheckPointU, n), TRUE, 0, color, Qt::SolidLine, PlotData::SqrtModifier);
-		ui.SimulationPPGraph->addDataSet(dUQ_.checkPointData2D(DUQ::CheckPointOriginalU, n), TRUE, 0, color, Qt::DashLine, PlotData::SqrtModifier);
-		ui.SimulationPPGraph->addDataSet(dUQ_.checkPointData2D(DUQ::CheckPointV, n), FALSE, 0, color, Qt::DotLine, PlotData::SqrtModifier);
-// 		ui.SimulationPPGraph->addDataSet(dUQ_.checkPointData2D(DUQ::CheckPointDU, n), FALSE, 0, color, Qt::DashDotDotLine, PlotData::SqrtModifier);
+		ui.SimulationPPGraph->addDataSet(dUQ_.checkPointData2D(DUQ::CheckPointU, n), true, 0, color, Qt::SolidLine, PlotData::SqrtModifier);
+		ui.SimulationPPGraph->addDataSet(dUQ_.checkPointData2D(DUQ::CheckPointOriginalU, n), true, 0, color, Qt::DashLine, PlotData::SqrtModifier);
+		ui.SimulationPPGraph->addDataSet(dUQ_.checkPointData2D(DUQ::CheckPointV, n), false, 0, color, Qt::DotLine, PlotData::SqrtModifier);
+// 		ui.SimulationPPGraph->addDataSet(dUQ_.checkPointData2D(DUQ::CheckPointDU, n), false, 0, color, Qt::DashDotDotLine, PlotData::SqrtModifier);
 	}
 	
 	// Energy
 	ui.SimulationEnergyGraph->removeAllDataSets();
-	ui.SimulationEnergyGraph->addDataSet(dUQ_.checkPointData2D(DUQ::CheckPointEnergy, 0), TRUE, 0);
+	ui.SimulationEnergyGraph->addDataSet(dUQ_.checkPointData2D(DUQ::CheckPointEnergy, 0), true, 0);
 }

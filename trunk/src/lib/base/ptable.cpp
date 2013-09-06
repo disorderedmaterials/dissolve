@@ -25,11 +25,13 @@
 #include "base/comms.h"
 #include <string.h>
 
+// Static singleton
+PeriodicTable periodicTable;
+
 // Static Members
 int PeriodicTable::nElements_;
 Element *PeriodicTable::elements_;
 int *PeriodicTable::elementCount_;
-
 
 /*!
  * \brief Constructor
@@ -81,7 +83,7 @@ bool PeriodicTable::loadElements(const char* fileName)
 	if (!parser.isFileGoodForReading())
 	{
 		msg.error("Couldn't open elements file.\n");
-		return FALSE;
+		return false;
 	}
 	
 	// First line contains number of comment lines to follow
@@ -103,14 +105,14 @@ bool PeriodicTable::loadElements(const char* fileName)
 		{
 			msg.error("Error reading element %i from elements file.\n", n+1);
 			parser.closeFiles();
-			return FALSE;
+			return false;
 		}
 		elements_[n].set(parser.argi(0), parser.argc(1), parser.argc(2), parser.argd(3), parser.argd(4), parser.argd(5), parser.argd(6), parser.argd(7));
 	}
 	parser.closeFiles();
 	
 	msg.print("Loaded %i elements from file.\n", nElements_);
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -126,7 +128,7 @@ bool PeriodicTable::loadIsotopes(const char* fileName)
 	if (!parser.isFileGoodForReading())
 	{
 		msg.error("Couldn't open isotopes file.\n");
-		return FALSE;
+		return false;
 	}
 	
 	// First line contains number of comment lines to follow
@@ -140,16 +142,16 @@ bool PeriodicTable::loadIsotopes(const char* fileName)
 	Dnchar arg, arg2, el;
 	double weight, bc, bi, sc, si, ss, sa;
 	Isotope* isotope;
-	bool failed = FALSE;
+	bool failed = false;
 	while (parser.readNextLine(LineParser::Defaults) == 0)
 	{
 		// Split up read line into component parts...
 		// Fortran format of line is: format(a2,1x,i2,1x,i3,1x,a6,1x,f9.5,4(1x,f8.4),1x,f9.4,1x,e10.3)
 		// Corresponding to: El  Z   A  I(p)     Atwt       bc       bi       sc       si        ss     sa
 		// Element (characters 1-3) (a2,1x)
-		if (!parser.getNextN(LineParser::Defaults, 3, &arg)) failed = TRUE;
+		if (!parser.getNextN(LineParser::Defaults, 3, &arg)) failed = true;
 		// Z (characters 4-6) (i2,1x)
-		if (!parser.getNextN(LineParser::Defaults, 3, &arg2)) failed = TRUE;
+		if (!parser.getNextN(LineParser::Defaults, 3, &arg2)) failed = true;
 		// -- el/Z data might be empty - if it is, keep el and Z from last time
 		if (arg2.isNumeric())
 		{
@@ -160,34 +162,34 @@ bool PeriodicTable::loadIsotopes(const char* fileName)
 			{
 				msg.error("Element symbol for isotope (%s) doesn't match Z number (%i)\n", el.get(), Z);
 				parser.closeFiles();
-				return FALSE;
+				return false;
 			}
 		}
 		// A (characters 7-10) (i3,1x)
-		if (!parser.getNextN(LineParser::Defaults, 3, &arg)) failed = TRUE;
+		if (!parser.getNextN(LineParser::Defaults, 3, &arg)) failed = true;
 		A = arg.asInteger();
 		// I(p) - Unused (characters 11-17) (a6,1x)
-		if (!parser.getNextN(LineParser::Defaults, 7, &arg)) failed = TRUE;
+		if (!parser.getNextN(LineParser::Defaults, 7, &arg)) failed = true;
 		// Atwt (characters 18-27) (f9.5,1x)
-		if (!parser.getNextN(LineParser::Defaults, 10, &arg)) failed = TRUE;
+		if (!parser.getNextN(LineParser::Defaults, 10, &arg)) failed = true;
 		weight = arg.asDouble();
 		// bc (characters 28-36) (f8.4,1x)
-		if (!parser.getNextN(LineParser::Defaults, 9, &arg)) failed = TRUE;
+		if (!parser.getNextN(LineParser::Defaults, 9, &arg)) failed = true;
 		bc = arg.asDouble();
 		// bi (characters 37-45) (f8.4,1x)
-		if (!parser.getNextN(LineParser::Defaults, 9, &arg)) failed = TRUE;
+		if (!parser.getNextN(LineParser::Defaults, 9, &arg)) failed = true;
 		bi = arg.asDouble();
 		// sc (characters 46-54) (f8.4,1x)
-		if (!parser.getNextN(LineParser::Defaults, 9, &arg)) failed = TRUE;
+		if (!parser.getNextN(LineParser::Defaults, 9, &arg)) failed = true;
 		sc = arg.asDouble();
 		// si (characters 55-63) (f8.4,1x)
-		if (!parser.getNextN(LineParser::Defaults, 9, &arg)) failed = TRUE;
+		if (!parser.getNextN(LineParser::Defaults, 9, &arg)) failed = true;
 		si = arg.asDouble();
 		// ss (characters 64-73) (f9.4,1x)
-		if (!parser.getNextN(LineParser::Defaults, 10, &arg)) failed = TRUE;
+		if (!parser.getNextN(LineParser::Defaults, 10, &arg)) failed = true;
 		ss = arg.asDouble();
 		// sa (characters 74-83) (e10.4)
-		if (!parser.getNextN(LineParser::Defaults, 10, &arg)) failed = TRUE;
+		if (!parser.getNextN(LineParser::Defaults, 10, &arg)) failed = true;
 		sa = arg.asDouble();
 		
 		// Did we succeed?
@@ -195,7 +197,7 @@ bool PeriodicTable::loadIsotopes(const char* fileName)
 		{
 			msg.error("Error reading isotope data from file, line = '%s'.\n", parser.line());
 			parser.closeFiles();
-			return FALSE;
+			return false;
 		}
 		
 		// Create new isotope definition for target element
@@ -223,7 +225,7 @@ bool PeriodicTable::loadIsotopes(const char* fileName)
 		}
 	}
 
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -239,7 +241,7 @@ bool PeriodicTable::loadParameters(const char* fileName)
 	if (!parser.isFileGoodForReading())
 	{
 		msg.print("Couldn't open atomtypes file.\n");
-		return FALSE;
+		return false;
 	}
 	
 	// First line contains number of comment lines to follow
@@ -251,7 +253,7 @@ bool PeriodicTable::loadParameters(const char* fileName)
 	// Read data until EOF
 	int Z, count = 0;
 	Parameters* params;
-	bool failed = FALSE;
+	bool failed = false;
 	while (parser.getArgsDelim(LineParser::SkipBlanks | LineParser::StripComments | LineParser::UseQuotes) == 0)
 	{
 		// First, convert argument 1 into an element
@@ -260,7 +262,7 @@ bool PeriodicTable::loadParameters(const char* fileName)
 		{
 			msg.error("Element '%s' unrecognised in atomtype definitions file.\n", parser.argc(0));
 			parser.closeFiles();
-			return FALSE;
+			return false;
 		}
 
 		// Did we succeed?
@@ -268,7 +270,7 @@ bool PeriodicTable::loadParameters(const char* fileName)
 		{
 			msg.error("Error reading atomtype data from file, line = '%s'.\n", parser.line());
 			parser.closeFiles();
-			return FALSE;
+			return false;
 		}
 		
 		// Create new isotope definition for target element
@@ -298,7 +300,7 @@ bool PeriodicTable::loadParameters(const char* fileName)
 		params->set(2.0, 0.1, 0.0);
 	}
 
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -412,5 +414,5 @@ bool PeriodicTable::broadcast()
 	// Send elements
 	for (int n = 0; n<nElements_; ++n) elements_[n].broadcast();
 #endif
-	return TRUE;
+	return true;
 }

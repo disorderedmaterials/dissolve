@@ -38,7 +38,7 @@ void DUQ::updateGrains(Configuration& cfg)
 	{
 		newCentre = cfg.box()->fold(grains[n].centre());
 		grains[n].moveTo(newCentre);
-		cell = cfg.box()->cell(newCentre);
+		cell = cfg.cell(newCentre);
 		
 		// Is the Grain now in a different Cell?
 		if (cell != grains[n].cell())

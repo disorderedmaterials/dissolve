@@ -22,9 +22,10 @@
 #include "main/duq.h"
 #include "classes/box.h"
 #include "classes/cell.h"
+#include "classes/changestore.h"
 #include "classes/energykernel.h"
 #include "classes/molecule.h"
-#include "classes/changestore.h"
+#include "classes/species.h"
 #include "base/comms.h"
 #include "base/timer.h"
 
@@ -38,15 +39,14 @@ CommandReturnValue DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 
 	double distance, angle, delta, currentEnergy, newEnergy, totalDelta = 0.0;
 	Vec3<double> vec, vecji, vecjk, centre;
-	int n, shake, nAtoms, term, terminus, nTries = 0, nAccepted = 0;
+	int n, shake, nAttachedAtoms, terminus, nTries = 0, nAccepted = 0;
+	Atom* i, *j, *k, *l;
 	Matrix3 rotation;
-	Atom** connectedAtoms;
-	Angle* a;
-	Bond* b;
+	int* attachedIndices;
 
 	// Create a local ChangeStore and EnergyKernel
 	ChangeStore changeStore;
-	EnergyKernel kernel(cfg.box(), potentialMap_);
+	EnergyKernel kernel(cfg, potentialMap_);
 
 	// Initialise the random number buffer
 	Comm.initialiseRandomBuffer(DUQComm::World);
@@ -67,19 +67,21 @@ CommandReturnValue DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 		*/
 
 		// Loop over nShakesPerMol
-		RefList<Bond,int>& bonds = mol->bonds();
 		for (shake = 0; shake<nShakesPerMol; ++shake)
 		{
 			// Loop over Bonds
-			for (term=0; term<bonds.nItems(); ++term)
+			for (SpeciesBond* b = mol->species()->bonds(); b != NULL; b = b->next)
 			{
-				b = bonds[term]->item;
 				if (b->interGrain()) continue;
 				++nTries;
 
+				// Grab pointers to atoms involved in bond
+				i = mol->atom(b->indexI());
+				j = mol->atom(b->indexJ());
+
 				// Get current distance of this Bond, and compare it to the equilibrium distance
-				if (cfg.box()->useMim(b->i()->grain()->cell(), b->j()->grain()->cell())) vec = cfg.box()->minimumVector(b->i(), b->j());
-				else vec = b->j()->r() - b->i()->r();
+				if (cfg.useMim(i->grain()->cell(), j->grain()->cell())) vec = cfg.box()->minimumVector(i, j);
+				else vec = j->r() - i->r();
 				distance = vec.magAndNormalise();
 				delta = b->equilibrium() - distance;
 				
@@ -89,10 +91,10 @@ CommandReturnValue DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 				// Shift the fewest Atoms possible...
 				// Need to take care and reverse the vector if necessary
 				terminus = b->nAttached(0) > b->nAttached(1) ? 1 : 0;
-				nAtoms = b->nAttached(terminus);
-				connectedAtoms = b->attached(terminus);
+				nAttachedAtoms = b->nAttached(terminus);
+				attachedIndices = b->attachedIndices(terminus);
 				if (terminus == 1) vec = -vec;
-				for (n=0; n<nAtoms; ++n) connectedAtoms[n]->translateCoordinates(vec);
+				for (n=0; n< nAttachedAtoms; ++n) mol->atom(attachedIndices[n])->translateCoordinates(vec);
 			}
 		}
 		
@@ -107,29 +109,32 @@ CommandReturnValue DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 			totalDelta += delta;
 			++nAccepted;
 		}
-		else changeStore.revert();
+		else changeStore.revertAll();
 
 		/*
 		// Angles
 		*/
 
 		// Loop over nShakesPerMol
-		RefList<Angle,int>& angles = mol->angles();
 		for (shake = 0; shake<nShakesPerMol; ++shake)
 		{
 			// Loop over Angles
-			for (term=0; term<angles.nItems(); ++term)
+			for (SpeciesAngle* a = mol->species()->angles(); a != NULL; a = a->next)
 			{
-				a = angles[term]->item;
 				if (a->interGrain()) continue;
 				++nTries;
 
+				// Grab pointers to atoms involved in angle
+				i = mol->atom(a->indexI());
+				j = mol->atom(a->indexJ());
+				k = mol->atom(a->indexK());
+
 				// Get current angle and compare it to the equilibrium value
 				// Determine whether we need to apply minimum image between 'j-i' and 'j-k'
-				if (cfg.box()->useMim(a->j()->grain()->cell(), a->i()->grain()->cell())) vecji = cfg.box()->minimumVector(a->j(), a->i());
-				else vecji = a->i()->r() - a->j()->r();
-				if (cfg.box()->useMim(a->j()->grain()->cell(), a->k()->grain()->cell())) vecjk = cfg.box()->minimumVector(a->j(), a->k());
-				else vecjk = a->k()->r() - a->j()->r();
+				if (cfg.useMim(j->grain()->cell(), i->grain()->cell())) vecji = cfg.box()->minimumVector(j, i);
+				else vecji = i->r() - j->r();
+				if (cfg.useMim(j->grain()->cell(), k->grain()->cell())) vecjk = cfg.box()->minimumVector(j, k);
+				else vecjk = k->r() - j->r();
 				vecji.normalise();
 				vecjk.normalise();
 				angle = Box::angle(vecji, vecjk);
@@ -142,15 +147,16 @@ CommandReturnValue DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 				// Shift the fewest Atoms possible...
 				// Again, take care to rotate in the correct direction depending on which terminus we select
 				terminus = a->nAttached(0) > a->nAttached(1) ? 1 : 0;
-				nAtoms = a->nAttached(terminus);
-				connectedAtoms = a->attached(terminus);
-				rotation.createRotationAxis(vec.x, vec.y, vec.z, terminus == 0 ? delta : -delta, FALSE);
-				for (n=0; n<nAtoms; ++n)
+				nAttachedAtoms = a->nAttached(terminus);
+				attachedIndices = a->attachedIndices(terminus);
+				rotation.createRotationAxis(vec.x, vec.y, vec.z, terminus == 0 ? delta : -delta, false);
+				for (n=0; n< nAttachedAtoms; ++n)
 				{
+					l = mol->atom(attachedIndices[n]);
 					// Apply MIM to coordinates?
-					if (cfg.box()->useMim(a->j()->grain()->cell(), connectedAtoms[n]->grain()->cell())) centre = cfg.box()->minimumImage(a->j(), connectedAtoms[n]);
-					else centre = a->j()->r();
-					connectedAtoms[n]->setCoordinates(rotation * (connectedAtoms[n]->r() - centre) + centre);
+					if (cfg.useMim(j->grain()->cell(), l->grain()->cell())) centre = cfg.box()->minimumImage(j, l);
+					else centre = j->r();
+					l->setCoordinates(rotation * (l->r() - centre) + centre);
 				}
 			}
 
@@ -165,7 +171,7 @@ CommandReturnValue DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 				totalDelta += delta;
 				++nAccepted;
 			}
-			else changeStore.revert();
+			else changeStore.revertAll();
 		}
 
 		// Serial method with parallel energy, so all processes already have new coordinates
@@ -212,12 +218,12 @@ CommandReturnValue DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 CommandReturnValue DUQ::interShake(Configuration& cfg)
 {
 	// Initialise the Cell distributor
-	const bool willBeModified = TRUE, allowRepeats = FALSE;
+	const bool willBeModified = true, allowRepeats = false;
 	cfg.initialiseCellDistribution();
 
 	// Create a local ChangeStore and EnergyKernel
 	ChangeStore changeStore;
-	EnergyKernel kernel(cfg.box(), potentialMap_);
+	EnergyKernel kernel(cfg, potentialMap_);
 
 	// Enter calculation loop until no more Cells are available
 	int cellId, n;
@@ -225,9 +231,10 @@ CommandReturnValue DUQ::interShake(Configuration& cfg)
 	bool accept;
 	double delta, currentGrainEnergy, newGrainEnergy, currentBondEnergy, newBondEnergy, distance;
 	Cell* cell;
-	Bond* b;
-	Atom* localAtom, *otherAtom;
+	SpeciesBond* b;
+	Atom* localAtom, *otherAtom, *i, *j;
 	Grain* grainI;
+	Molecule* mol;
 	Vec3<double> vec;
 
 	Timer timer;
@@ -238,11 +245,11 @@ CommandReturnValue DUQ::interShake(Configuration& cfg)
 		if (cellId == Cell::NoCellsAvailable)
 		{
 			// No valid cell, but still need to enter into change distribution with other processes
-			changeStore.distribute(cfg.nAtoms(), cfg.atoms());
+			changeStore.distribute(cfg);
 			cfg.finishedWithCell(willBeModified, cellId);
 			continue;
 		}
-		cell = cfg.box()->cell(cellId);
+		cell = cfg.cell(cellId);
 		msg.printVerbose("Cell %i now the target, containing %i Grains interacting with %i neighbours.\n", cellId, cell->nGrains(), cell->nNeighbours());
 
 		/*
@@ -253,52 +260,57 @@ CommandReturnValue DUQ::interShake(Configuration& cfg)
 		{
 			// Get current Grain and calculate base energy (inter-Grain energy with NO inter-Grain corrections)
 			grainI = cell->grain(n);
-			currentGrainEnergy = kernel.energy(grainI, cell->neighbours(), FALSE, DUQComm::Group);
-			currentGrainEnergy += kernel.energy(grainI, cell, FALSE, FALSE, DUQComm::Group);
+			mol = grainI->parent();
+			currentGrainEnergy = kernel.energy(grainI, cell->neighbours(), false, DUQComm::Group);
+			currentGrainEnergy += kernel.energy(grainI, cell, false, false, DUQComm::Group);
 
 			// Set current Grain as target in ChangeStore
 			changeStore.add(grainI);
 
 			// Loop over Bond connections
-			for (RefListItem<Bond,int>* refBond = grainI->bondConnections(); refBond != NULL; refBond = refBond->next)
+			for (RefListItem<SpeciesBond,int>* refBond = grainI->source()->bondConnections(); refBond != NULL; refBond = refBond->next)
 			{
 				b = refBond->item;
+				
+				// Grab pointers to the atoms involved in the bond
+				i = mol->atom(b->indexI());
+				j = mol->atom(b->indexJ());
 
 				// Determine local Atom to this Grain
-				if (b->i()->grain() == grainI)
+				if (i->grain() == grainI)
 				{
-					localAtom = b->i();
-					otherAtom = b->j();
+					localAtom = i;
+					otherAtom = j;
 				}
 				else
 				{
-					localAtom = b->j();
-					otherAtom = b->i();
+					localAtom = j;
+					otherAtom = i;
 				}
 				
 				// We will always move *towards* the higher index Grain, so if the Atom index on the other atom is *lower*, continue the loop.
 				if (otherAtom->index() < localAtom->index()) continue;
 
 				// Get current distance of this Bond, and compare it to the equilibrium distance
-				if (cfg.box()->useMim(cell, otherAtom->grain()->cell())) vec = cfg.box()->minimumVector(localAtom, otherAtom);
+				if (cfg.useMim(cell, otherAtom->grain()->cell())) vec = cfg.box()->minimumVector(localAtom, otherAtom);
 				else vec = otherAtom->r() - localAtom->r();
 				distance = vec.magAndNormalise();
 				delta = b->equilibrium() - distance;
 				
 				// The delta now reflects the distance and direction we should try to travel.
 				// TODO To avoid constant sending of single values because of randomness, implement dUQMath::randomBuffer() which stores a chunk of random numbers
-				currentBondEnergy = kernel.energy(b);
+				currentBondEnergy = kernel.energy(mol, b);
 				vec *= delta * dUQMath::random();
 				grainI->translate(vec);
 
 				// Calculate new energy
-				newGrainEnergy = kernel.energy(grainI, cell->neighbours(), FALSE, DUQComm::Group);
-				newGrainEnergy += kernel.energy(grainI, cell, FALSE, FALSE, DUQComm::Group);
-				newBondEnergy = kernel.energy(b);
+				newGrainEnergy = kernel.energy(grainI, cell->neighbours(), false, DUQComm::Group);
+				newGrainEnergy += kernel.energy(grainI, cell, false, false, DUQComm::Group);
+				newBondEnergy = kernel.energy(mol, b);
 
 				// Trial the transformed Grain position (the Master is in charge of this)
 				delta = (newGrainEnergy + newBondEnergy) - (currentGrainEnergy + currentBondEnergy);
-				accept = delta < 0 ? TRUE : (dUQMath::random() < exp(-delta/(.008314472*temperature_)));
+				accept = delta < 0 ? true : (dUQMath::random() < exp(-delta/(.008314472*temperature_)));
 
 				// Broadcast result to process group
 				if (!Comm.broadcast(&accept, 1, 0, DUQComm::Group)) return CommandCommFail;
@@ -310,7 +322,7 @@ CommandReturnValue DUQ::interShake(Configuration& cfg)
 					currentGrainEnergy = newGrainEnergy;
 					++nAccepted;
 				}
-				else changeStore.revert();
+				else changeStore.revertAll();
 			}
 			
 			// Store modifications to Atom positions ready for broadcast later
@@ -322,7 +334,7 @@ CommandReturnValue DUQ::interShake(Configuration& cfg)
 		 */
 
 		// Distribute coordinate changes to all processes
-		changeStore.distribute(cfg.nAtoms(), cfg.atoms());
+		changeStore.distribute(cfg);
 		changeStore.reset();
 
 		// Must unlock the Cell when we are done with it!
@@ -374,14 +386,13 @@ CommandReturnValue DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 
 	double distance, angle, delta, currentEnergy, newEnergy, totalDelta = 0.0;
 	Vec3<double> vec, vecji, vecjk, centre;
-	int n, shake, nAtoms, term, terminus, nTries = 0, nAccepted = 0, rootIndex;
+	int n, shake, nAttachedAtoms, terminus, nTries = 0, nAccepted = 0, rootIndex;
 	Matrix3 rotation;
-	Atom** connectedAtoms;
-	Angle* a;
-	Bond* b;
+	int* attachedIndices;
+	Atom* i, *j, *k, *l;
 
 	// Create an EnergyKernel
-	EnergyKernel kernel(cfg.box(), potentialMap_);
+	EnergyKernel kernel(cfg, potentialMap_);
 
 	// Create a changestore
 	ChangeStore changeStore;
@@ -405,18 +416,20 @@ CommandReturnValue DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 		*/
 
 		// Loop over nShakesPerMol
-		RefList<Bond,int>& bonds = mol->bonds();
 		for (shake = 0; shake<nShakesPerTerm; ++shake)
 		{
 			// Loop over Bonds
-			for (term=0; term<bonds.nItems(); ++term)
+			for (SpeciesBond* b = mol->species()->bonds(); b != NULL; b = b->next)
 			{
-				b = bonds[term]->item;
 				++nTries;
 
+				// Grab pointers to atoms involved in bond
+				i = mol->atom(b->indexI());
+				j = mol->atom(b->indexJ());
+
 				// Get current distance of this Bond, and compare it to the equilibrium distance
-				if (cfg.box()->useMim(b->i()->grain()->cell(), b->j()->grain()->cell())) vec = cfg.box()->minimumVector(b->i(), b->j());
-				else vec = b->j()->r() - b->i()->r();
+				if (configuration_.useMim(i->grain()->cell(), j->grain()->cell())) vec = cfg.box()->minimumVector(i, j);
+				else vec = j->r() - i->r();
 				distance = vec.magAndNormalise();
 				delta = b->equilibrium() - distance;
 				
@@ -426,10 +439,10 @@ CommandReturnValue DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 				// Shift the fewest Atoms possible...
 				// Need to take care and reverse the vector if necessary
 				terminus = b->nAttached(0) > b->nAttached(1) ? 1 : 0;
-				nAtoms = b->nAttached(terminus);
-				connectedAtoms = b->attached(terminus);
+				nAttachedAtoms = b->nAttached(terminus);
+				attachedIndices = b->attachedIndices(terminus);
 				if (terminus == 1) vec = -vec;
-				for (n=0; n<nAtoms; ++n) connectedAtoms[n]->translateCoordinates(vec);
+				for (n=0; n<nAttachedAtoms; ++n) mol->atom(attachedIndices[n])->translateCoordinates(vec);
 // 				if (count == 9) printf("Changing Bond %i-%i from %f to %f\n", b->i()->index(), b->j()->index(), distance, cfg.box()->minimumDistance(b->i(), b->j()));
 		
 				// Test energy again
@@ -438,12 +451,12 @@ CommandReturnValue DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 				
 				if ((delta < 0) || (dUQMath::random() < exp(-delta/(.008314472*temperature_))))
 				{
-					changeStore.updateAtomsRelative(nAtoms, connectedAtoms, rootIndex);
+					changeStore.updateAtomsLocal(nAttachedAtoms, attachedIndices);
 					currentEnergy = newEnergy;
 					totalDelta += delta;
 					++nAccepted;
 				}
-				else changeStore.revert();
+				else changeStore.revertAll();
 			}
 		}
 
@@ -452,21 +465,24 @@ CommandReturnValue DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 		*/
 
 		// Loop over nShakesPerMol
-		RefList<Angle,int>& angles = mol->angles();
 		for (shake = 0; shake<nShakesPerTerm; ++shake)
 		{
-			// Loop over Angles
-			for (term=0; term<angles.nItems(); ++term)
+			// Loop over angles
+			for (SpeciesAngle* a = mol->species()->angles(); a != NULL; a = a->next)
 			{
-				a = angles[term]->item;
 				++nTries;
+
+				// Grab pointers to atoms involved in bond
+				i = mol->atom(a->indexI());
+				j = mol->atom(a->indexJ());
+				k = mol->atom(a->indexK());
 
 				// Get current angle and compare it to the equilibrium value
 				// Determine whether we need to apply minimum image between 'j-i' and 'j-k'
-				if (cfg.box()->useMim(a->j()->grain()->cell(), a->i()->grain()->cell())) vecji = cfg.box()->minimumVector(a->j(), a->i());
-				else vecji = a->i()->r() - a->j()->r();
-				if (cfg.box()->useMim(a->j()->grain()->cell(), a->k()->grain()->cell())) vecjk = cfg.box()->minimumVector(a->j(), a->k());
-				else vecjk = a->k()->r() - a->j()->r();
+				if (configuration_.useMim(j->grain()->cell(), i->grain()->cell())) vecji = cfg.box()->minimumVector(j, i);
+				else vecji = i->r() - j->r();
+				if (configuration_.useMim(j->grain()->cell(), k->grain()->cell())) vecjk = cfg.box()->minimumVector(j, k);
+				else vecjk = k->r() - j->r();
 				angle = Box::angle(vecji, vecjk);
 				delta = a->equilibrium() - angle;
 				
@@ -477,21 +493,22 @@ CommandReturnValue DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 				// Shift the fewest Atoms possible...
 				// Again, take care to rotate in the correct direction depending on which terminus we select
 				terminus = a->nAttached(0) > a->nAttached(1) ? 1 : 0;
-				nAtoms = a->nAttached(terminus);
-				connectedAtoms = a->attached(terminus);
-				rotation.createRotationAxis(vec.x, vec.y, vec.z, terminus == 0 ? delta : -delta, FALSE);
-				for (n=0; n<nAtoms; ++n)
+				nAttachedAtoms = a->nAttached(terminus);
+				attachedIndices = a->attachedIndices(terminus);
+				rotation.createRotationAxis(vec.x, vec.y, vec.z, terminus == 0 ? delta : -delta, false);
+				for (n=0; n< nAttachedAtoms; ++n)
 				{
+					l = mol->atom(attachedIndices[n]);
 					// Apply MIM to coordinates?
-					if (cfg.box()->useMim(a->j()->grain()->cell(), connectedAtoms[n]->grain()->cell())) centre = cfg.box()->minimumImage(a->j(), connectedAtoms[n]);
-					else centre = a->j()->r();
-					connectedAtoms[n]->setCoordinates(rotation * (connectedAtoms[n]->r() - centre) + centre);
+					if (configuration_.useMim(j->grain()->cell(), l->grain()->cell())) centre = cfg.box()->minimumImage(j, l);
+					else centre = j->r();
+					l->setCoordinates(rotation * (l->r() - centre) + centre);
 				}
 				// TEST
-				if (cfg.box()->useMim(a->j()->grain()->cell(), a->i()->grain()->cell())) vecji = cfg.box()->minimumVector(a->j(), a->i());
-				else vecji = a->i()->r() - a->j()->r();
-				if (cfg.box()->useMim(a->j()->grain()->cell(), a->k()->grain()->cell())) vecjk = cfg.box()->minimumVector(a->j(), a->k());
-				else vecjk = a->k()->r() - a->j()->r();
+				if (configuration_.useMim(j->grain()->cell(), i->grain()->cell())) vecji = cfg.box()->minimumVector(j, i);
+				else vecji = i->r() - j->r();
+				if (configuration_.useMim(j->grain()->cell(), k->grain()->cell())) vecjk = cfg.box()->minimumVector(j, k);
+				else vecjk = k->r() - j->r();
 				vecji.normalise();
 				vecjk.normalise();
 // 				if (count == 9) printf("Changed Angle %i-%i-%i from %f to %f.\n", a->i()->index(), a->j()->index(), a->k()->index(), angle, Box::angle(vecji, vecjk));
@@ -502,12 +519,12 @@ CommandReturnValue DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 				
 				if ((delta < 0) || (dUQMath::random() < exp(-delta/(.008314472*temperature_))))
 				{
-					changeStore.updateAtomsRelative(nAtoms, connectedAtoms, rootIndex);
+					changeStore.updateAtomsLocal(nAttachedAtoms, attachedIndices);
 					currentEnergy = newEnergy;
 					totalDelta += delta;
 					++nAccepted;
 				}
-				else changeStore.revert();
+				else changeStore.revertAll();
 			}
 		}
 
@@ -520,7 +537,7 @@ CommandReturnValue DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 	changeStore.storeAndReset();
 
 	// Distribute coordinate changes to all processes
-	changeStore.distribute(cfg.nAtoms(), cfg.atoms());
+	changeStore.distribute(cfg);
 	changeStore.reset();
 
 	// Grains have moved, so refold and update locations

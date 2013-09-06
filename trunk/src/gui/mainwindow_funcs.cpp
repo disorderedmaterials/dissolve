@@ -19,101 +19,55 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "base/messenger.h"
+#include "main/flags.h"
 #include "gui/mainwindow.h"
-#include "base/flag.h"
+#include "gui/led.uih"
+#include "base/messenger.h"
 #include "version.h"
 
 // Constructor
-MainWindow::MainWindow(QMainWindow* parent) : QMainWindow(parent)
+MainWindow::MainWindow(DUQObject& dUQ) : QMainWindow(NULL), dUQ_(dUQ),
+	periodicTable_(this), atomTypesDockWidget_(this, dUQ), fqDockWidget_(this, dUQ), samplesDockWidget_(this, dUQ), speciesDockWidget_(this, dUQ), sqDockWidget_(this, dUQ), systemDockWidget_(this, dUQ)
 {
 	// Call the main creation function
 	ui.setupUi(this);
 	
-	// Store MainWindow pointer in Viewer
-	ui.SpeciesViewer->setParentMainWindow(this);
-	ui.SpeciesViewer->setAtomContextMenu(ui.menuSelection);
-	ui.SpeciesViewer->setSpeciesUpdateTargets(ViewEditGroup);
-	
-	// Hide Selection menu in GUI
-	ui.menuSelection->setVisible(FALSE);
+	// Link MainViewer to the main DUQ configuration
+	ui.MainViewer->setSource(dUQ_.configuration());
+	dUQ_.setMainWindow(this);
 
-	// Set initial variables
-	speciesTabRefreshing_ = FALSE;
-	experimentTabRefreshing_ = FALSE;
+	// Hide / Assign Dock Widgets
+	atomTypesDockWidget_.hide();
+	addDockWidget(Qt::LeftDockWidgetArea, &atomTypesDockWidget_);
+	fqDockWidget_.hide();
+	addDockWidget(Qt::RightDockWidgetArea, &fqDockWidget_);
+	samplesDockWidget_.hide();
+	addDockWidget(Qt::RightDockWidgetArea, &samplesDockWidget_);
+	speciesDockWidget_.hide();
+	addDockWidget(Qt::RightDockWidgetArea, &speciesDockWidget_);
+	sqDockWidget_.hide();
+	addDockWidget(Qt::RightDockWidgetArea, &sqDockWidget_);
+	systemDockWidget_.hide();
+	addDockWidget(Qt::RightDockWidgetArea, &systemDockWidget_);
 
-	// Setup item delegates
-	// -- ExperimentComponentsTable
-	speciesRelativePopulationDelegate_ = new DoubleSpinDelegate(this, 0.0, 1e6, 1.0, 3);
-	ui.SystemCompositionTable->setItemDelegateForColumn(1, speciesRelativePopulationDelegate_);
-	// -- ExperimentMixTable
-	isotopologueRelativePopulationDelegate_ = new DoubleSpinDelegate(this, 0.0, 1000, 1.0, 3);
-	ui.AssignedIsotopologuesTree->setItemDelegateForColumn(2, isotopologueRelativePopulationDelegate_);
-	// -- PotentialsTable
-	Dnchar items;
-	for (int n=0; n<PairPotential::nPairPotentialTypes; ++n) items.strcatf("%s%s", n == 0 ? "" : ",", PairPotential::pairPotentialType( (PairPotential::PairPotentialType) n));
-	potentialsStyleDelegate_ = new ComboBoxDelegate(this, items.get());
-	ui.PairPotentialsTable->setItemDelegateForColumn(2, potentialsStyleDelegate_);
-	potentialsSigmaDelegate_ = new DoubleSpinDelegate(this, 0.0, 10.0, 0.1, 3);
-	ui.PairPotentialsTable->setItemDelegateForColumn(3, potentialsSigmaDelegate_);
-	potentialsEpsilonDelegate_ = new DoubleSpinDelegate(this, 0.0, 2.0, 0.05, 4);
-	ui.PairPotentialsTable->setItemDelegateForColumn(4, potentialsEpsilonDelegate_);
-	potentialsChargeDelegate_ = new DoubleSpinDelegate(this, -100.0, 100.0, 0.1, 3);
-	ui.PairPotentialsTable->setItemDelegateForColumn(5, potentialsChargeDelegate_);
-	ui.PairPotentialsTable->setItemDelegateForColumn(6, potentialsChargeDelegate_);
-	// -- SpeciesBondsTable
-	bondEquilibriumDelegate_ = new DoubleSpinDelegate(this, 0.5, 1000.0, 0.1, 3);
-	ui.SpeciesBondsTable->setItemDelegateForColumn(2, bondEquilibriumDelegate_);
-	bondForceConstantDelegate_ = new DoubleSpinDelegate(this, 10.0, 100000.0, 100.0, 1);
-	ui.SpeciesBondsTable->setItemDelegateForColumn(3, bondEquilibriumDelegate_);
-	// -- SpeciesAnglesTable
-	angleEquilibriumDelegate_ = new DoubleSpinDelegate(this, 0.5, 179.0, 1.0, 3);
-	ui.SpeciesAnglesTable->setItemDelegateForColumn(3, angleEquilibriumDelegate_);
-	angleForceConstantDelegate_ = new DoubleSpinDelegate(this, 10.0, 100000.0, 100.0, 1);
-	ui.SpeciesAnglesTable->setItemDelegateForColumn(4, angleEquilibriumDelegate_);
+	// Connect 'dataChanged' signals of dock widgets
+	connect(&atomTypesDockWidget_, SIGNAL(dataChanged(int)), this, SLOT(refresh(int)));
 
-	// Set titles and soft limits (if necessary) on PlotWidgets
-	ui.PairPotentialsGraph->setTitles("Pair Potentials", QString("r, ")+QChar(197), "U, kj/mol");
-	ui.PairPotentialsGraph->setXLimits(TRUE, TRUE, 0.0, TRUE, FALSE, 200.0);
-	ui.PairPotentialsGraph->setYLimits(TRUE, TRUE, -200.0, TRUE, TRUE, 200.0);
-	ui.SimulationSQGraph->setTitles("Simulated Partial Structure Factors", QString("Q, 1/")+QChar(197), "S(Q), barns/sr/atom");
-	ui.SimulationSQGraph->setXLimits(TRUE, TRUE, 0.0, TRUE,	 TRUE, 20.0);
-	ui.SimulationFQGraph->setTitles("Total Structure Factors", QString("Q, 1/")+QChar(197), "F(Q), barns/sr/atom");
-	ui.SimulationPartialGRGraph->setTitles("Simulated Partial RDFs", QString("r, ")+QChar(197), "g(r)");
-	ui.SimulationPartialGRGraph->setXLimits(TRUE, TRUE, 0.0, TRUE,	 TRUE, 20.0);
-	ui.SimulationGRGraph->setTitles("Simulated Total RDFs", QString("r, ")+QChar(197), "g(r)");
-	ui.SimulationGRGraph->setXLimits(TRUE, TRUE, 0.0, TRUE,	 TRUE, 20.0);
-	ui.SimulationPPGraph->setTitles("Pair Potentials", QString("r, ")+QChar(197), "U, kj/mol");
-	ui.SimulationPPGraph->setYLimits(TRUE, TRUE, -100.0, TRUE, TRUE, 100.0);
-	ui.SimulationEnergyGraph->setTitles("System Energy", "Step", "U, kj/mol");
-	ui.SimulationEnergyGraph->setXLimits(TRUE, TRUE, 0.0, FALSE, TRUE, 0.0);
-
-	// Assign toolbars to PlotWidgets
-	ui.PairPotentialsGraph->setToolBarWidget(ui.PairPotentialsGraphToolbar);
-	ui.SimulationSQGraph->setToolBarWidget(ui.SimulationSQGraphToolbar);
-	ui.SimulationFQGraph->setToolBarWidget(ui.SimulationFQGraphToolbar);
-	ui.SimulationPPGraph->setToolBarWidget(ui.SimulationPPGraphToolbar);
-	ui.SimulationGRGraph->setToolBarWidget(ui.SimulationGRGraphToolbar);
-	ui.SimulationPartialGRGraph->setToolBarWidget(ui.SimulationPartialGRGraphToolbar);
-	ui.SimulationEnergyGraph->setToolBarWidget(ui.SimulationEnergyGraphToolbar);
-
-	// Connect controls to Viewer
-	ui.SimulationViewer->connect(ui.SimulationViewerStyleCombo, SIGNAL(currentIndexChanged(int)), SLOT(changeDrawStyle(int)));
-
-	// Update GUI where necessary
-	setHelpFramesVisible(ui.actionHelpShow->isChecked());
+	// Link 
+// 	ui.SpeciesViewer->setAtomContextMenu(ui.menuSelection);
+// 	ui.SpeciesViewer->setSpeciesUpdateTargets(ViewEditGroup);
 
 	// Move dUQ execution to its own thread and connect various signals
-	dUQ_.moveToThread(&simulationThread_);
-	connect(&dUQ_, SIGNAL(simulationFinished(int)), SLOT(simulationFinished(int)));
-	dUQ_.connect(&simulationThread_, SIGNAL(started()), SLOT(startSimulation()));
-	connect(&dUQ_, SIGNAL(sendDUQSignal(int,int)), SLOT(receiveDUQSignal(int,int)));
+// 	dUQ_.moveToThread(&simulationThread_);
+// 	connect(&dUQ_, SIGNAL(simulationFinished(int)), SLOT(simulationFinished(int)));
+// 	dUQ_.connect(&simulationThread_, SIGNAL(started()), SLOT(startSimulation()));
+// 	connect(&dUQ_, SIGNAL(sendDUQSignal(int,int)), SLOT(receiveDUQSignal(int,int)));
+	
+// 	ui.statusbar->addPermanentWidget(new LED(this));
 	
 	// Connect the OutputHandler displayText signal to the QTextEdit, and link it into the main Messenger
 	connect(&outputHandler_, SIGNAL(displayText(QString)), ui.MessagesEdit, SLOT(append(QString)), Qt::QueuedConnection);
 	msg.setTargetOutputHandler(&outputHandler_);
-
-	CLEAR_MODIFIED
 }
 
 // Destructor
@@ -124,7 +78,7 @@ MainWindow::~MainWindow()
 // Window close event
 void MainWindow::closeEvent(QCloseEvent* event)
 {
-	if (IS_MODIFIED)
+	if (Flags::modificationFlag())
 	{
 		if (QMessageBox::question(this, "Changes Will be Lost", "Current file is modified and unsaved - really quit?", QMessageBox::Cancel|QMessageBox::Ok, QMessageBox::Cancel) != QMessageBox::Ok)
 		{
@@ -139,89 +93,13 @@ void MainWindow::refresh(int targets)
 {
 	// Update the main window title
 	updateTitle();
-
-	// Species Tab
-	refreshSpeciesTab(targets&DefinedSpeciesGroup, targets&DefinedAtomTypesGroup, targets&ViewEditGroup, targets&GrainsGroup, targets&IsotopologuesGroup);
 	
-	// Experiment Tab
-	refreshExperimentTab(targets&SystemCompositionGroup, targets&SamplesGroup, targets&AssignedIsotopologuesGroup, targets&ReferenceDataGroup);
-	
-	// Potential Tab
-	refreshPotentialTab(targets&PairPotentialsGroup, targets&PairPotentialsGraph, targets&IntramolecularTermsGroup);
-}
-
-// Initialise dUQ
-bool MainWindow::initialise(const char* inputFile)
-{
-	// Load external datafiles
-	if (!MPIRunMaster(dUQ_.loadDataFiles()))
-	{
-		Comm.finalise();
-		return 1;
-	}
-	
-	// Broadcast periodic table (including isotope and parameter data)
-	if (!dUQ_.periodicTable().broadcast())
-	{
-		Comm.finalise();
-		return 1;
-	}
-
-	// Register commands
-	msg.print("Registering commands...\n");
-	if (!dUQ_.registerCommands())
-	{
-		Comm.finalise();
-		return FALSE;
-	}
-
-	// Load existing input file (if specified)
-	if (inputFile != NULL)
-	{
-		if (!dUQ_.loadInput(inputFile)) return FALSE;
-		
-		CLEAR_MODIFIED
-	}
-	
-	// Update main window title
-	updateTitle();
-	
-	// Redirect output to Messages tab
-	outputHandler_.setPrintToConsole(FALSE);
-	
-	return TRUE;
-}
-
-// Return reference to dUQ
-GuiDUQ& MainWindow::dUQ()
-{
-	return dUQ_;
-}
-
-/*
- * Tab Control
- */
-
-// Enable specified tabs (use negative for 'all but')
-void MainWindow::enableTabs(int tabs)
-{
-	for (int n=0; n<ui.MainTabs->count(); ++n)
-	{
-		if (tabs == 0) ui.MainTabs->setTabEnabled(n, TRUE);
-		else if ((tabs > 0) && (tabs&(1 << n))) ui.MainTabs->setTabEnabled(n, TRUE);
-		else if (!(abs(tabs)&(1 << n))) ui.MainTabs->setTabEnabled(n, TRUE);
-	}
-}
-
-// Disable specified tabs (use negative for 'all but')
-void MainWindow::disableTabs(int tabs)
-{
-	for (int n=0; n<ui.MainTabs->count(); ++n)
-	{
-		if (tabs == 0) ui.MainTabs->setTabEnabled(n, FALSE);
-		else if ((tabs > 0) && (tabs&(1 << n))) ui.MainTabs->setTabEnabled(n, FALSE);
-		else if (!(abs(tabs)&(1 << n))) ui.MainTabs->setTabEnabled(n, FALSE);
-	}
+	atomTypesDockWidget_.refresh(targets);
+	fqDockWidget_.refresh(targets);
+	samplesDockWidget_.refresh(targets);
+	speciesDockWidget_.refresh(targets);
+	sqDockWidget_.refresh(targets);
+	systemDockWidget_.refresh(targets);
 }
 
 // Update main window title
@@ -229,6 +107,6 @@ void MainWindow::updateTitle()
 {
 	Dnchar title;
 	title.sprintf("dUQ r%s - '%s'", DUQREVISION, dUQ_.fileName());
-	if (IS_MODIFIED) title.strcat(" (modified)");
+	if (Flags::modificationFlag()) title.strcat(" (modified)");
 	setWindowTitle(title.get());
 }

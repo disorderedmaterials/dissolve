@@ -126,6 +126,8 @@ class PairPotential : public ListItem<PairPotential>
 	private:
 	// Number of points to tabulate
 	int nPoints_;
+	// Maximum distance of potential
+	double rangeSquared_;
 	// Distance between points in tabulation and reciprocal
 	double delta_, rDelta_;
 	// Tabulated original potential, calculated from AtomType parameters

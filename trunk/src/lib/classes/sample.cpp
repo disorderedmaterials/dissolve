@@ -31,9 +31,9 @@
 Sample::Sample() : ListItem<Sample>()
 {
 	// Reference F(Q)
-	hasReferenceData_ = FALSE;
+	hasReferenceData_ = false;
 	referenceDataNormalisation_ = Sample::NoNormalisation;
-	referenceDataSubtractSelf_ = FALSE;
+	referenceDataSubtractSelf_ = false;
 	referenceFitQMax_ = -1.0;
 	referenceFitQMin_ = -1.0;
 }
@@ -126,29 +126,29 @@ bool Sample::addIsotopologueToMixture(Species* sp, Isotopologue *iso, double rel
 	if (mix == NULL)
 	{
 		msg.print("Warning: Sample '%s' contains no IsotopologueMix definition for Species '%s'.\n", name_.get(), sp->name());
-		return FALSE;
+		return false;
 	}
 
 	// Check current number of Isotopologues defined against total available
 	if (sp->nIsotopologues() == mix->nIsotopologues())
 	{
 		msg.print("Can't add a new Isotopologue definition for Species '%s' in Sample '%s' since there are no unused Isotopologue definitions left.\n", sp->name(), name_.get());
-		return FALSE;
+		return false;
 	}
 
 	// Was a specific Isotopologue provided?
 	if (iso == NULL)
 	{
 		// Add next available Isotopologue to mixture
-		if (!mix->addNextIsotopologue()) return FALSE;
+		if (!mix->addNextIsotopologue()) return false;
 	}
 	else if (!mix->addIsotopologue(iso, relPop))
 	{
 		msg.error("Failed to add Isotopologue to Sample '%s'.\n", name_.get());
-		return FALSE;
+		return false;
 	}
 	
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -161,7 +161,7 @@ bool Sample::setIsotopologueInMixture(Species* sp, Isotopologue* iso, double rel
 	if (!mix)
 	{
 		msg.error("Species not found in Sample...\n");
-		return FALSE;
+		return false;
 	}
 	
 	// Now find Isotopologue in mixture
@@ -169,7 +169,7 @@ bool Sample::setIsotopologueInMixture(Species* sp, Isotopologue* iso, double rel
 	if (!ri)
 	{
 		msg.error("Isotopologue not found in mixture for Species '%s', Sample '%s'...\n", sp->name(), name_.get());
-		return FALSE;
+		return false;
 	}
 	
 	// Set new data - was a new relative population given?
@@ -182,11 +182,11 @@ bool Sample::setIsotopologueInMixture(Species* sp, Isotopologue* iso, double rel
 		if (mix->hasIsotopologue(newTope))
 		{
 			msg.error("Can't change Isotopologue '%s' into '%s' since '%s' is already present in the mix.\n", iso->name(), newTope->name(), newTope->name());
-			return FALSE;
+			return false;
 		}
 		ri->item = newTope;
 	}
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -243,12 +243,12 @@ bool Sample::createTypeIndex(const List<Species>& species, int multiplier, int n
 		if (mix->species() != sp)
 		{
 			msg.error("Species referred to in mixture in Sample '%s' does not correspond to that in the main Species list.\n", mix->species()->name());
-			return FALSE;
+			return false;
 		}
 
 		// For safety, only the master process will determine the *total* number of molecules of each component
 		if (Comm.master()) molCount = sp->relativePopulation()*multiplier;
-		if (!Comm.broadcast(&molCount, 1)) return FALSE;
+		if (!Comm.broadcast(&molCount, 1)) return false;
 		
 		double totalRelative = mix->totalRelative();
 
@@ -257,7 +257,7 @@ bool Sample::createTypeIndex(const List<Species>& species, int multiplier, int n
 		{
 			// Again, for safety only the master process will calculate the number of molecules
 			if (Comm.master()) count = sp->relativePopulation() * (tope->data / totalRelative) * multiplier;
-			if (!Comm.broadcast(&count, 1)) return FALSE;
+			if (!Comm.broadcast(&count, 1)) return false;
 			
 			// Check count against the remaining molCount
 			// -- Too many?
@@ -272,7 +272,7 @@ bool Sample::createTypeIndex(const List<Species>& species, int multiplier, int n
 				else
 				{
 					msg.error("Count exceeds remaining number by too many molecules.\n");
-					return FALSE;
+					return false;
 				}
 			}
 			else if ((tope->next == NULL) && (molCount > count))
@@ -287,12 +287,12 @@ bool Sample::createTypeIndex(const List<Species>& species, int multiplier, int n
 				else
 				{
 					msg.error("Count is less than remaining number by too many molecules.\n");
-					return FALSE;
+					return false;
 				}
 			}
 
 			// Loop over Atoms in the Species, searching for the AtomType/Isotope entry in the isotopes list of the Isotopologue
-			for (Atom* i = sp->atoms(); i != NULL; i = i->next)
+			for (SpeciesAtom* i = sp->atoms(); i != NULL; i = i->next)
 			{
 				iso = tope->item->atomTypeIsotope(i->atomType());
 				typeIndex_.add(i->atomType(), iso, count);
@@ -309,7 +309,7 @@ bool Sample::createTypeIndex(const List<Species>& species, int multiplier, int n
 	if (typeIndex_.totalPopulation() != nExpectedAtoms)
 	{
 		printf("INTERNAL_ERROR - Total AtomType usage (%i) does not correspond to number of Atoms in the system (%i).\n", typeIndex_.totalPopulation(), nExpectedAtoms);
-		return FALSE;
+		return false;
 	}
 
 	// Set master type indices
@@ -320,7 +320,7 @@ bool Sample::createTypeIndex(const List<Species>& species, int multiplier, int n
 		if (id < 0)
 		{
 			msg.print("INTERNAL_ERROR - Couldn't find entry for first AtomType '%s' in masterIndex.\n", at1->name());
-			return FALSE;
+			return false;
 		}
 		at1->setMasterIndex(id);
 	}
@@ -343,7 +343,7 @@ bool Sample::createTypeIndex(const List<Species>& species, int multiplier, int n
 	
 	msg.print("--> Calculated average scattering lengths: <b>**2 = %f, <b**2> = %f\n", boundCoherentAverageSquared_, boundCoherentSquaredAverage_);
 
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -376,8 +376,8 @@ bool Sample::setupPairCorrelations(double volume, double range, double binWidth,
 	// Construct a matrix based on the typeIndex_ population
 	int typeI, typeJ;
 	msg.print("--> Creating S(Q) matrix (%ix%i)...\n", typeIndex_.nItems(), typeIndex_.nItems());
-	partialSQMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), TRUE);
-	weightsMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), TRUE);
+	partialSQMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
+	weightsMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
 
 	Dnchar title;
 	AtomTypeData* at1 = typeIndex_.first(), *at2;
@@ -418,7 +418,7 @@ bool Sample::setupPairCorrelations(double volume, double range, double binWidth,
 		referenceDataFT_.transformSQ(rho);
 	}
 
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -451,7 +451,7 @@ bool Sample::calculatePairCorrelations(Array2D<Histogram>& masterRDFs, Array2D<D
 		if (masterI == -1)
 		{
 			msg.print("INTERNAL_ERROR - Master index for AtomType '%s' has not been set.\n", at1->name());
-			return FALSE;
+			return false;
 		}
 #endif
 
@@ -464,7 +464,7 @@ bool Sample::calculatePairCorrelations(Array2D<Histogram>& masterRDFs, Array2D<D
 			if (masterJ == -1)
 			{
 				msg.print("INTERNAL_ERROR - Master index for AtomType '%s' has not been set.\n", at2->name());
-				return FALSE;
+				return false;
 			}
 #endif
 			// Copy unweighted S(Q) data
@@ -500,7 +500,7 @@ bool Sample::calculatePairCorrelations(Array2D<Histogram>& masterRDFs, Array2D<D
 		}
 	}
 
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -611,7 +611,7 @@ bool Sample::loadReferenceData(const char* fileName)
 	if (!fileExists(fileName))
 	{
 		msg.error("Sample reference data '%s' not found.\n", fileName);
-		return FALSE;
+		return false;
 	}
 
 	referenceDataFileName_ = fileName;
@@ -623,19 +623,19 @@ bool Sample::loadReferenceData(const char* fileName)
 	if (!parser.isFileGoodForReading())
 	{
 		msg.error("Couldn't open datafile '%s'.\n", fileName);
-		return FALSE;
+		return false;
 	}
 
 	msg.print("--> Loading reference F(Q) data from '%s'...\n", referenceDataFileName_.get());
 
 	// Read data, assuming that column 0 = Q and column 1 = F(Q)...
-	bool result = TRUE;
+	bool result = true;
 	while (!parser.eofOrBlank())
 	{
 		if (parser.getArgsDelim(LineParser::SkipBlanks+LineParser::StripComments) == 1)
 		{
 			msg.error("File error while reading '%s'.\n", referenceDataFileName_.get());
-			result = FALSE;
+			result = false;
 			break;
 		}
 		referenceFQ_.addPoint(parser.argd(0), parser.argd(1));
@@ -685,7 +685,7 @@ Sample::NormalisationType Sample::referenceDataNormalisation()
  */
 void Sample::setReferenceSubtractSelf(bool b)
 {
-	referenceDataSubtractSelf_ = TRUE;
+	referenceDataSubtractSelf_ = true;
 }
 
 /*!
@@ -742,7 +742,7 @@ Data2D& Sample::differenceFQ()
 bool Sample::finaliseReferenceData()
 {
 	// Do we actually have some reference data?
-	if (referenceFQ_.nPoints() == 0) return TRUE;
+	if (referenceFQ_.nPoints() == 0) return true;
 
 	// Set name to be same as Sample (for PlotWidget)
 	Dnchar niceSampleName = name_;
@@ -794,7 +794,7 @@ bool Sample::finaliseReferenceData()
 	ft.transformSQ(0.0213, Data2D::BartlettWindow);
 	ft.save("ft.txt");
 
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -846,7 +846,7 @@ bool Sample::broadcast(const List<Species>& species)
 	IsotopologueMix* iso;
 
 	// Send name
-	if (!Comm.broadcast(name_)) return FALSE;
+	if (!Comm.broadcast(name_)) return false;
 	
 	// Mixture information
 	// Component/Species RefList will have already been constructed in DUQ::addSample(), so just update constituent Isotopologue
@@ -855,30 +855,30 @@ bool Sample::broadcast(const List<Species>& species)
 	{
 		// Master needs to determine Species index
 		if (Comm.master()) index = species.indexOf(iso->species());
-		if (!Comm.broadcast(&index, 1)) return FALSE;
+		if (!Comm.broadcast(&index, 1)) return false;
 		iso->setSpecies(species.item(index));
 
 		// Now sent number of isotopes in mixture
 		topeCount = iso->nIsotopologues();
-		if (!Comm.broadcast(&topeCount, 1)) return FALSE;
+		if (!Comm.broadcast(&topeCount, 1)) return false;
 		
 		if (Comm.master()) for (RefListItem<Isotopologue,double>* ri = iso->isotopologues(); ri != NULL; ri = ri->next)
 		{
 			// Get Isotopologue index from Species
 			index = iso->species()->indexOfIsotopologue(ri->item);
-			if (!Comm.broadcast(&index, 1)) return FALSE;
+			if (!Comm.broadcast(&index, 1)) return false;
 			// Send relative population
 			relPop = ri->data;
-			if (!Comm.broadcast(&relPop, 1)) return FALSE;
+			if (!Comm.broadcast(&relPop, 1)) return false;
 		}
 		else
 		{
 			for (int m = 0; m<topeCount; ++m)
 			{
 				// Receive Isotopologue index in associated Species
-				if (!Comm.broadcast(&index, 1)) return FALSE;
+				if (!Comm.broadcast(&index, 1)) return false;
 				// Receive relative population
-				if (!Comm.broadcast(&relPop, 1)) return FALSE;
+				if (!Comm.broadcast(&relPop, 1)) return false;
 				// Add new mixture component
 				iso->addIsotopologue(iso->species()->isotopologue(index), relPop);
 			}
@@ -886,13 +886,13 @@ bool Sample::broadcast(const List<Species>& species)
 	}
 
 	// Reference F(Q) data
-	if (!Comm.broadcast(&hasReferenceData_, 1)) return FALSE;
-	if (!referenceFQ_.broadcast()) return FALSE;
-	if (!Comm.broadcast(referenceDataFileName_)) return FALSE;
-	if (!Comm.broadcast((int*)&referenceDataNormalisation_, 1)) return FALSE;
-	if (!Comm.broadcast(&referenceDataSubtractSelf_, 1)) return FALSE;
-	if (!Comm.broadcast(&referenceFitQMin_, 1)) return FALSE;
-	if (!Comm.broadcast(&referenceFitQMax_, 1)) return FALSE;
+	if (!Comm.broadcast(&hasReferenceData_, 1)) return false;
+	if (!referenceFQ_.broadcast()) return false;
+	if (!Comm.broadcast(referenceDataFileName_)) return false;
+	if (!Comm.broadcast((int*)&referenceDataNormalisation_, 1)) return false;
+	if (!Comm.broadcast(&referenceDataSubtractSelf_, 1)) return false;
+	if (!Comm.broadcast(&referenceFitQMin_, 1)) return false;
+	if (!Comm.broadcast(&referenceFitQMax_, 1)) return false;
 #endif
-	return TRUE;
+	return true;
 }

@@ -50,14 +50,10 @@ class PotentialMap
 	 */
 	///@{
 	private:
-	// Size of types_ array
-	int nAtoms_;
-	// Atom->AtomType index
-	int* typeMap_;
 	// Number of unique types forming potentialMatrix_
 	int nTypes_;
 	// PairPotential matrix
-	PairPotential*** potentialMatrix_;
+	Array2D<PairPotential*> potentialMatrix_;
 	// PairPotential range
 	double range_;
 	// PairPotential range squared
@@ -65,9 +61,7 @@ class PotentialMap
 
 	public:
 	// Initialise maps
-	bool initialise(const AtomTypeIndex& typeIndex, const List<PairPotential>& pairPotentials, int nAtoms, Molecule* firstMolecule, double pairPotentialRange);
-	// Return type index of Atom index supplied
-	int type(int index);
+	bool initialise(const AtomTypeIndex& typeIndex, const List< PairPotential >& pairPotentials, double pairPotentialRange);
 	// Return PairPotential range
 	double range() const;
 	// Return PairPotential range squared
@@ -82,12 +76,8 @@ class PotentialMap
 	public:
 	// Return energy between Atom types at squared distance specified
 	double energy(int typeI, int typeJ, double distanceSquared) const;
-	// Return energy between Atoms at squared distance specified
-	double energy(const Atom* i, const Atom* j, double distanceSquared) const;
 	// Return force between Atom types at squared distance specified
 	double force(int typeI, int typeJ, double distanceSquared) const;
-	// Return force between Atoms at squared distance specified
-	double force(const Atom* i, const Atom* j, double distanceSquared) const;
 	///@}
 };
 

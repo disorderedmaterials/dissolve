@@ -97,4 +97,7 @@ class PeriodicTable
 	///@}
 };
 
+// Periodic table data
+extern PeriodicTable periodicTable;
+
 #endif

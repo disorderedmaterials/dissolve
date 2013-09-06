@@ -19,13 +19,13 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "main/flags.h"
 #include "classes/pairpotential.h"
 #include "classes/atomtype.h"
 #include "base/messenger.h"
 #include "base/parameters.h"
 #include "math/constants.h"
 #include "base/comms.h"
-#include "base/flag.h"
 #include "templates/simplex.h"
 #include <math.h>
 #include <string.h>
@@ -43,6 +43,7 @@ PairPotential::PairPotential() : ListItem<PairPotential>()
 	nPoints_ = 0;
 	delta_ = -1.0;
 	type_ = DispersionType;
+	rangeSquared_ = 0.0;
 }
 
 // Input File Block Keywords
@@ -74,7 +75,7 @@ const char *PairPotential::pairPotentialType(PairPotential::PairPotentialType id
  */
 void PairPotential::setType(PairPotential::PairPotentialType type)
 {
-	SET_MODIFIED
+	Flags::wave(Flags::PairPotentialChanged);
 	type_ = type;
 }
 
@@ -228,8 +229,8 @@ AtomType* PairPotential::atomTypeJ() const
  */
 void PairPotential::setSigmaIJ(double value)
 {
-	SET_MODIFIED
 	sigmaIJ_ = value;
+	Flags::wave(Flags::PairPotentialChanged);
 }
 
 /*!
@@ -245,8 +246,8 @@ double PairPotential::sigmaIJ() const
  */
 void PairPotential::setEpsilonIJ(double value)
 {
-	SET_MODIFIED
 	epsilonIJ_ = value;
+	Flags::wave(Flags::PairPotentialChanged);
 }
 
 /*!
@@ -262,8 +263,8 @@ double PairPotential::epsilonIJ() const
  */
 void PairPotential::setChargeI(double value)
 {
-	SET_MODIFIED
 	chargeI_ = value;
+	Flags::wave(Flags::PairPotentialChanged);
 }
 
 /*!
@@ -279,8 +280,8 @@ double PairPotential::chargeI() const
  */
 void PairPotential::setChargeJ(double value)
 {
-	SET_MODIFIED
 	chargeJ_ = value;
+	Flags::wave(Flags::PairPotentialChanged);
 }
 
 /*!
@@ -324,13 +325,14 @@ bool PairPotential::generate(double maxR, double truncationWidth, double delta)
 	if ((atomTypeI_ == NULL) || (atomTypeJ_ == NULL))
 	{
 		msg.error("NULL_POINTER - One or both AtomTypes in PairPotential are NULL.\n");
-		return FALSE;
+		return false;
 	}
 
 	// Determine nPoints_
 	delta_ = delta;
 	rDelta_ = 1.0/delta_;
-	nPoints_ = (maxR*maxR) / delta_;
+	rangeSquared_ = maxR*maxR;
+	nPoints_ = rangeSquared_ / delta_;
 	
 	// Initialise arrays
 	u_.initialise(nPoints_);
@@ -393,7 +395,7 @@ bool PairPotential::generate(double maxR, double truncationWidth, double delta)
 	// Generate derivative data
 	calculateDerivative();
 
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -409,9 +411,12 @@ double PairPotential::energyAtRSquared(double distanceSq) const
 		return 0.0;
 	}
 #endif
-	// Determine potential bin
-	int bin = distanceSq*rDelta_;
-	return (bin >= nPoints_ ? 0.0 : u_.y(bin));
+	// Is distance out of range?
+	if (distanceSq > rangeSquared_) return 0.0;
+// 	// Determine potential bin
+// 	int bin = distanceSq*rDelta_;
+// 	return (bin >= nPoints_ ? 0.0 : u_.y(bin));
+	return u_.y(distanceSq*rDelta_);
 }
 
 /*!
@@ -470,35 +475,38 @@ bool PairPotential::updatePerturbation(Data2D& perturbation, double yScale, doub
 	v_ = perturbation;
 	v_.save("v.txt");
 	
-	// Find first negative value of potential...
-	ljFitMaximum_ = 7.0;
-	for (int n=0; n<v_.nPoints(); ++n)
-	{
-		ljFitMinimum_ = v_.x(n);
-		if (v_.y(n) < 0.0) break;
-	}
-	msg.print("LJ fit range is %f to %f Angstroms.\n", ljFitMinimum_, ljFitMaximum_);
-	
-	// Fit LJ potential to first minimum well in perturbation
-	Simplex<PairPotential> ljFitSimplex(this, &PairPotential::potentialFitCost);
-	Array<double> alpha;
-	alpha.add(3.0);	// Sigma
-	alpha.add(0.1);	// Epsilon
-	alpha.add(12.0);// Power 1
-	alpha.add(6.0);	// Power 2
-
-	ljFitSimplex.initialise(alpha, 0.1);
-	alpha = ljFitSimplex.minimise(100, 100, 1.0e-5, 1.0);
-	for (int n=0; n< alpha.nItems(); ++n) printf("%i  %f\n", n, alpha[n]);
-	printf("Final cost is %f\n", potentialFitCost(alpha));
-	double lj, r, sigma = alpha[0], epsilon = alpha[1], power1 = alpha[2], power2 = alpha[3];
+// 	// Find first negative value of potential...
+// 	ljFitMaximum_ = 7.0;
+// 	for (int n=0; n<v_.nPoints(); ++n)
+// 	{
+// 		ljFitMinimum_ = v_.x(n);
+// 		if (v_.y(n) < 0.0) break;
+// 	}
+// 	msg.print("LJ fit range is %f to %f Angstroms.\n", ljFitMinimum_, ljFitMaximum_);
+// 	
+// 	// Fit LJ potential to first minimum well in perturbation
+// 	Simplex<PairPotential> ljFitSimplex(this, &PairPotential::potentialFitCost);
+// 	Array<double> alpha;
+// 	alpha.add(3.0);	// Sigma
+// 	alpha.add(0.1);	// Epsilon
+// 	alpha.add(12.0);// Power 1
+// 	alpha.add(6.0);	// Power 2
+// 
+// 	ljFitSimplex.initialise(alpha, 0.1);
+// 	alpha = ljFitSimplex.minimise(100, 100, 1.0e-5, 1.0);
+// 	for (int n=0; n< alpha.nItems(); ++n) printf("%i  %f\n", n, alpha[n]);
+// 	printf("Final cost is %f\n", potentialFitCost(alpha));
+// 	double lj, r, sigma = alpha[0], epsilon = alpha[1], power1 = alpha[2], power2 = alpha[3];
+	double r;
 	for (int n=1; n<u_.nPoints(); ++n)
 	{
 		r = sqrt(u_.x(n));
-		lj = yScale * 4.0*epsilon * (pow(sigma/r, power1) - pow(sigma/r, power2));
+// 		lj = yScale * 4.0*epsilon * (pow(sigma/r, power1) - pow(sigma/r, power2));
 
 		// Blend LJ potential with remainder of function
-		u_.arrayY()[n] = yScale * (lj + (v_.interpolated(r) - lj) * blendFactor);
+// 		u_.arrayY()[n] += yScale * (lj + (v_.interpolated(r) - lj) * blendFactor);
+		
+		u_.arrayY()[n] -= v_.interpolated(r) * 0.1;
 	}
 	u_.save("pp.txt");
 
@@ -508,7 +516,7 @@ bool PairPotential::updatePerturbation(Data2D& perturbation, double yScale, doub
 // 	for (int n=0; n<u_.nPoints(); ++n) u_.arrayY()[n] = v_.interpolated(sqrt(u_.x(n)));
 	calculateDerivative();
 
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -554,24 +562,24 @@ Data2D& PairPotential::v()
 bool PairPotential::save(const char* fileName)
 {
 	// Only the Master process can do this
-	if (!Comm.master()) return TRUE;
+	if (!Comm.master()) return true;
 
 	// Open file and check that we're OK to proceed writing to it
 	LineParser parser;
 	msg.print("Writing PairPotential file '%s'...\n", fileName);
 
-	parser.openOutput(fileName, TRUE);
+	parser.openOutput(fileName, true);
 	if (!parser.isFileGoodForWriting())
 	{
 		msg.error("Couldn't open file '%s' for writing.\n", fileName);
-		return FALSE;
+		return false;
 	}
 	
 	parser.writeLineF("#%9s  %12s  %12s  %12s  %12s\n", "r(Angs)", "U(kJ/mol)", "dU(kJ/mol/Ang)", "U0(kJ/mol)", "V(kJ/mol)");
 	if (v_.nPoints() > 0) for (int n = 0; n<nPoints_; ++n) parser.writeLineF("%10.4e  %12.4e  %12.4e  %12.4e  %12.4e\n", sqrt(u_.x(n)), u_.y(n), dU_.y(n), originalU_.y(n), v_.interpolated(sqrt(u_.x(n))));
 	else for (int n = 0; n<nPoints_; ++n) parser.writeLineF("%10.4e  %12.4e  %12.4e  %12.4e  %12.4e\n", sqrt(u_.x(n)), u_.y(n), dU_.y(n), originalU_.y(n), 0.0);
 	parser.closeFiles();
-	return TRUE;
+	return true;
 }
 
 /*
@@ -592,23 +600,23 @@ bool PairPotential::broadcast(const List<AtomType>& atomTypes)
 	// Source Parameters - Master needs to determine AtomType indices
 	int index;
 	if (Comm.master()) index = atomTypes.indexOf(atomTypeI_);
-	if (!Comm.broadcast(&index, 1)) return FALSE;
+	if (!Comm.broadcast(&index, 1)) return false;
 	atomTypeI_ = atomTypes.item(index);
 	if (Comm.master()) index = atomTypes.indexOf(atomTypeJ_);
-	if (!Comm.broadcast(&index, 1)) return FALSE;
+	if (!Comm.broadcast(&index, 1)) return false;
 	atomTypeJ_ = atomTypes.item(index);
-	if (!Comm.broadcast(&sigmaIJ_, 1)) return FALSE;
-	if (!Comm.broadcast(&epsilonIJ_, 1)) return FALSE;
-	if (!Comm.broadcast(&chargeI_, 1)) return FALSE;
-	if (!Comm.broadcast(&chargeJ_, 1)) return FALSE;
+	if (!Comm.broadcast(&sigmaIJ_, 1)) return false;
+	if (!Comm.broadcast(&epsilonIJ_, 1)) return false;
+	if (!Comm.broadcast(&chargeI_, 1)) return false;
+	if (!Comm.broadcast(&chargeJ_, 1)) return false;
 
 	// Tabulated Potential
-	if (!Comm.broadcast(&nPoints_, 1)) return FALSE;
-	if (!Comm.broadcast(&delta_, 1)) return FALSE;
-	if (!Comm.broadcast(&rDelta_, 1)) return FALSE;
+	if (!Comm.broadcast(&nPoints_, 1)) return false;
+	if (!Comm.broadcast(&delta_, 1)) return false;
+	if (!Comm.broadcast(&rDelta_, 1)) return false;
 	u_.broadcast();
 	originalU_.broadcast();
 	dU_.broadcast();
 #endif
-	return TRUE;
+	return true;
 }

@@ -19,9 +19,9 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "main/flags.h"
 #include "classes/atomtype.h"
 #include "base/ptable.h"
-#include "base/flag.h"
 #include "base/comms.h"
 #include <string.h>
 
@@ -55,7 +55,7 @@ void AtomType::setName(const char* name)
 {
 	name_ = name;
 	
-	SET_MODIFIED
+	Flags::wave(Flags::AtomTypeChanged);
 }
 
 /*!
@@ -73,7 +73,7 @@ void AtomType::setElement(int el)
 {
 	element_ = el;
 	
-	SET_MODIFIED
+	Flags::wave(Flags::AtomTypeChanged);
 }
 
 /*!
@@ -91,7 +91,7 @@ void AtomType::setParameters(Parameters* params)
 {
 	parameters_ = params;
 	
-	SET_MODIFIED
+	Flags::wave(Flags::AtomTypeChanged);
 }
 
 /*!
@@ -100,6 +100,22 @@ void AtomType::setParameters(Parameters* params)
 Parameters* AtomType::parameters() const
 {
 	return parameters_;
+}
+
+/*!
+ * \brief Set index of this type in the main type index
+ */
+void AtomType::setIndex(int id)
+{
+	index_ = id;
+}
+
+/*!
+ * \brief Return index of this type in the main type index
+ */
+int AtomType::index() const
+{
+	return index_;
 }
 
 /*
@@ -125,5 +141,5 @@ bool AtomType::broadcast()
 	Comm.broadcast(&index, 1);
 	parameters_ = PeriodicTable::element(element_).parameters(index);
 #endif
-	return TRUE;
+	return true;
 }

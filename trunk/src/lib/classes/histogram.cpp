@@ -279,6 +279,6 @@ void Histogram::finalise()
  */
 bool Histogram::allSum()
 {
-	if (!Comm.allSum(histogram_, nBins_)) return FALSE;
-	return TRUE;
+	if (!Comm.allSum(histogram_, nBins_)) return false;
+	return true;
 }

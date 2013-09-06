@@ -97,62 +97,6 @@ class Box
 
 
 	/*!
-	 * \name Cell Partitioning
-	 */
-	///@{
-	protected:
-	// Cell divisions along each axis
-	Vec3<int> divisions_;
-	// Fractional Cell size
-	Vec3<double> cellSize_;
-	// Real Cell size
-	Vec3<double> realCellSize_;
-	// Cell extents out from given central cell
-	Vec3<int> cellExtents_;
-	// Total number of Cells in Box
-	int nCells_;
-	// Cell array
-	Cell*** cells_;
-	// Cell index array
-	Cell** cellIndex_;
-	// Cell image matrix
-	bool** imageMatrix_;
-	// Cell modified/completed/calculated flag
-	bool* cellFlag_;
-	// Counter for distributed Cells
-	int nCellsDistributed_;
-	// Last Cell distributed
-	int lastCellDistributed_;
-	
-	private:
-	// Clear Cell arrays
-	void clearCells();
-	// Return whether the contents of two Cells should be mimd in calculations
-	bool imagesNeeded(Cell* a, Cell* b) const;
-
-	public:
-	// Generate Cells for Box
-	bool generateCells(double cellSize, double pairPotentialRange);
-	// Return number of Cells for box
-	int nCells() const;
-	// Return real Cell dimensions
-	Vec3<double> realCellSize() const;
-	// Retrieve Cell with (wrapped) grid reference specified
-	Cell* cell(int x, int y, int z) const;
-	// Retrieve Cell with id specified
-	Cell* cell(int id) const;
-	// Return whether two Cells need minimum image calculation
-	bool useMim(Cell* a, Cell* b) const;
-	// Initialise Cells for distribution
-	void initialiseCellDistribution();
-	// Return next available Cell for calculation
-	int nextAvailableCell(bool willBeModified, bool allowRepeats);
-	// Unlock Cell specified, once calculation is complete
-	bool finishedWithCell(bool willBeModified, int cellId);
-	///@}
-
-
-	/*!
 	 * \name Minimum Image Routines (Pure Virtual)
 	*/
 	///@{
@@ -175,8 +119,10 @@ class Box
 	virtual double minimumDistance(const Atom* i, const Vec3<double>& j) const = 0;
 	// Return minimum image distance from 'i' to 'j'
 	virtual double minimumDistance(const Vec3<double>& i, const Vec3<double>& j) const = 0;
-	// Return minimum image squared distance from 'i' to 'j'
+	// Return minimum image squared distance from 'i' to 'j' (pointers)
 	virtual double minimumDistanceSquared(const Atom* i, const Atom* j) const = 0;
+	// Return minimum image squared distance from 'i' to 'j' (references)
+	virtual double minimumDistanceSquared(const Atom& i, const Atom& j) const = 0;
 	// Return minimum image squared distance from 'i' to 'j'
 	virtual double minimumDistanceSquared(const Atom* i, const Vec3<double>& j) const = 0;
 	// Return minimum image squared distance from 'i' to 'j'
@@ -203,10 +149,10 @@ class Box
 	public:
 	// Return random coordinate inside Box
 	virtual Vec3<double> randomCoordinate() const = 0;
-	// Return Cell containing specified coordinate
-	virtual Cell* cell(const Vec3<double> r) const = 0;
 	// Return folded coordinate (i.e. inside current Box)
 	virtual Vec3<double> fold(const Vec3<double>& i) const = 0;
+	// Return folded fractional coordinate (i.e. inside current Box)
+	virtual Vec3<double> foldFrac(const Vec3<double>& i) const = 0;
 	///@}
 
 
@@ -259,8 +205,10 @@ class NonPeriodicBox : public Box
 	double minimumDistance(const Atom* i, const Vec3<double>& j) const;
 	// Return minimum image distance from 'i' to 'j'
 	double minimumDistance(const Vec3<double>& i, const Vec3<double>& j) const;
-	// Return minimum image squared distance from 'i' to 'j'
+	// Return minimum image squared distance from 'i' to 'j' (pointers)
 	double minimumDistanceSquared(const Atom* i, const Atom* j) const;
+	// Return minimum image squared distance from 'i' to 'j' (references)
+	double minimumDistanceSquared(const Atom& i, const Atom& j) const;
 	// Return minimum image squared distance from 'i' to 'j'
 	double minimumDistanceSquared(const Atom* i, const Vec3<double>& j) const;
 	// Return minimum image squared distance from 'i' to 'j'
@@ -275,10 +223,10 @@ class NonPeriodicBox : public Box
 	public:
 	// Return random coordinate inside Box
 	Vec3<double> randomCoordinate() const;
-	// Return Cell containing specified coordinate
-	Cell* cell(const Vec3<double> r) const;
 	// Return folded coordinate (i.e. inside current Box)
-	Vec3<double> fold(const Vec3<double>& r) const;
+	Vec3<double> fold(const Vec3<double>& i) const;
+	// Return folded fractional coordinate (i.e. inside current Box)
+	Vec3<double> foldFrac(const Vec3<double>& i) const;
 	///@}
 };
 
@@ -317,8 +265,10 @@ class CubicBox : public Box
 	double minimumDistance(const Atom* i, const Vec3<double>& j) const;
 	// Return minimum image distance from 'i' to 'j'
 	double minimumDistance(const Vec3<double>& i, const Vec3<double>& j) const;
-	// Return minimum image squared distance from 'i' to 'j'
+	// Return minimum image squared distance from 'i' to 'j' (pointers)
 	double minimumDistanceSquared(const Atom* i, const Atom* j) const;
+	// Return minimum image squared distance from 'i' to 'j' (references)
+	double minimumDistanceSquared(const Atom& i, const Atom& j) const;
 	// Return minimum image squared distance from 'i' to 'j'
 	double minimumDistanceSquared(const Atom* i, const Vec3<double>& j) const;
 	// Return minimum image squared distance from 'i' to 'j'
@@ -333,10 +283,10 @@ class CubicBox : public Box
 	public:
 	// Return random coordinate inside Box
 	Vec3<double> randomCoordinate() const;
-	// Return Cell containing specified coordinate
-	Cell* cell(const Vec3<double> r) const;
 	// Return folded coordinate (i.e. inside current Box)
-	Vec3<double> fold(const Vec3<double>& r) const;
+	Vec3<double> fold(const Vec3<double>& i) const;
+	// Return folded fractional coordinate (i.e. inside current Box)
+	Vec3<double> foldFrac(const Vec3<double>& i) const;
 	///@}
 };
 
@@ -375,8 +325,10 @@ class OrthorhombicBox : public Box
 	double minimumDistance(const Atom* i, const Vec3<double>& j) const;
 	// Return minimum image distance from 'i' to 'j'
 	double minimumDistance(const Vec3<double>& i, const Vec3<double>& j) const;
-	// Return minimum image squared distance from 'i' to 'j'
+	// Return minimum image squared distance from 'i' to 'j' (pointers)
 	double minimumDistanceSquared(const Atom* i, const Atom* j) const;
+	// Return minimum image squared distance from 'i' to 'j' (references)
+	double minimumDistanceSquared(const Atom& i, const Atom& j) const;
 	// Return minimum image squared distance from 'i' to 'j'
 	double minimumDistanceSquared(const Atom* i, const Vec3<double>& j) const;
 	// Return minimum image squared distance from 'i' to 'j'
@@ -391,10 +343,10 @@ class OrthorhombicBox : public Box
 	public:
 	// Return random coordinate inside Box
 	Vec3<double> randomCoordinate() const;
-	// Return Cell containing specified coordinate
-	Cell* cell(const Vec3<double> r) const;
 	// Return folded coordinate (i.e. inside current Box)
-	Vec3<double> fold(const Vec3<double>& r) const;
+	Vec3<double> fold(const Vec3<double>& i) const;
+	// Return folded fractional coordinate (i.e. inside current Box)
+	Vec3<double> foldFrac(const Vec3<double>& i) const;
 	///@}
 };
 
@@ -433,8 +385,10 @@ class MonoclinicBox : public Box
 	double minimumDistance(const Atom* i, const Vec3<double>& j) const;
 	// Return minimum image distance from 'i' to 'j'
 	double minimumDistance(const Vec3<double>& i, const Vec3<double>& j) const;
-	// Return minimum image squared distance from 'i' to 'j'
+	// Return minimum image squared distance from 'i' to 'j' (pointers)
 	double minimumDistanceSquared(const Atom* i, const Atom* j) const;
+	// Return minimum image squared distance from 'i' to 'j' (references)
+	double minimumDistanceSquared(const Atom& i, const Atom& j) const;
 	// Return minimum image squared distance from 'i' to 'j'
 	double minimumDistanceSquared(const Atom* i, const Vec3<double>& j) const;
 	// Return minimum image squared distance from 'i' to 'j'
@@ -449,10 +403,10 @@ class MonoclinicBox : public Box
 	public:
 	// Return random coordinate inside Box
 	Vec3<double> randomCoordinate() const;
-	// Return Cell containing specified coordinate
-	Cell* cell(const Vec3<double> r) const;
 	// Return folded coordinate (i.e. inside current Box)
-	Vec3<double> fold(const Vec3<double>& r) const;
+	Vec3<double> fold(const Vec3<double>& i) const;
+	// Return folded fractional coordinate (i.e. inside current Box)
+	Vec3<double> foldFrac(const Vec3<double>& i) const;
 	///@}
 };
 
@@ -491,8 +445,10 @@ class TriclinicBox : public Box
 	double minimumDistance(const Atom* i, const Vec3<double>& j) const;
 	// Return minimum image distance from 'i' to 'j'
 	double minimumDistance(const Vec3<double>& i, const Vec3<double>& j) const;
-	// Return minimum image squared distance from 'i' to 'j'
+	// Return minimum image squared distance from 'i' to 'j' (pointers)
 	double minimumDistanceSquared(const Atom* i, const Atom* j) const;
+	// Return minimum image squared distance from 'i' to 'j' (references)
+	double minimumDistanceSquared(const Atom& i, const Atom& j) const;
 	// Return minimum image squared distance from 'i' to 'j'
 	double minimumDistanceSquared(const Atom* i, const Vec3<double>& j) const;
 	// Return minimum image squared distance from 'i' to 'j'
@@ -507,10 +463,10 @@ class TriclinicBox : public Box
 	public:
 	// Return random coordinate inside Box
 	Vec3<double> randomCoordinate() const;
-	// Return Cell containing specified coordinate
-	Cell* cell(const Vec3<double> r) const;
 	// Return folded coordinate (i.e. inside current Box)
-	Vec3<double> fold(const Vec3<double>& r) const;
+	Vec3<double> fold(const Vec3<double>& i) const;
+	// Return folded fractional coordinate (i.e. inside current Box)
+	Vec3<double> foldFrac(const Vec3<double>& i) const;
 	///@}
 };
 

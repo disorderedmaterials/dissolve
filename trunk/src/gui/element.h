@@ -1,6 +1,6 @@
 /*
-	*** Periodic Table
-	*** src/gui/ptable.h
+	*** Element Select Dialog
+	*** src/gui/element.h
 	Copyright T. Youngs 2012-2013
 
 	This file is part of dUQ.
@@ -19,10 +19,10 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_PTABLE_H
-#define DUQ_PTABLE_H
+#ifndef DUQ_ELEMENTDIALOG_H
+#define DUQ_ELEMENTDIALOG_H
 
-#include "gui/ui_ptable.h"
+#include "gui/ui_element.h"
 #include "base/element.h"
 #include "templates/reflist.h"
 #include <QtGui/QDialog>
@@ -32,7 +32,7 @@ class QPushButton;
 class QHBoxLayout;
 
 // Periodic Table 
-class dUQPeriodicTable : public QDialog
+class DUQElementDialog : public QDialog
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
@@ -68,10 +68,10 @@ class dUQPeriodicTable : public QDialog
 	*/
 	public:
 	// Constructor / Destructor
-	dUQPeriodicTable(QWidget *parent = 0);
-	~dUQPeriodicTable();
+	DUQElementDialog(QWidget *parent = 0);
+	~DUQElementDialog();
 	// Main form declaration
-	Ui::SelectElementDialog ui;
+	Ui::DUQElementDialog ui;
 };
 
 #endif

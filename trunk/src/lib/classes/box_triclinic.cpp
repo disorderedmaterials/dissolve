@@ -189,11 +189,19 @@ double TriclinicBox::minimumDistance(const Vec3<double>& i, const Vec3<double>& 
 }
 
 /*!
- * \brief Return minimum image squared distance from 'i' to 'j'
+ * \brief Return minimum image squared distance from 'i' to 'j' (pointers)
  */
 double TriclinicBox::minimumDistanceSquared(const Atom* i, const Atom* j) const
 {
 	return minimumVector(i, j).magnitudeSq();
+}
+
+/*!
+ * \brief Return minimum image squared distance from 'i' to 'j' (references)
+ */
+double TriclinicBox::minimumDistanceSquared(const Atom& i, const Atom& j) const
+{
+	return minimumVector(i.r(), j.r()).magnitudeSq();
 }
 
 /*!
@@ -226,22 +234,6 @@ Vec3<double> TriclinicBox::randomCoordinate() const
 }
 
 /*!
- * \brief Return Cell containing specified coordinate
- */
-Cell* TriclinicBox::cell(const Vec3<double> r) const
-{
-	// Convert coordinate to fractional coords
-	Vec3<double> frac = inverseAxes_*r;
-	
-	// Fold into Box and divide by integer Cell sizes
-	int x = (frac.x - floor(frac.x)) / cellSize_.x;
-	int y = (frac.y - floor(frac.y)) / cellSize_.y;
-	int z = (frac.z - floor(frac.z)) / cellSize_.z;
-	
-	return &cells_[x%divisions_.x][y%divisions_.y][z%divisions_.z];
-}
-
-/*!
  * \brief Return folded coordinate (i.e. inside current Box)
  */
 Vec3<double> TriclinicBox::fold(const Vec3<double>& r) const
@@ -255,4 +247,20 @@ Vec3<double> TriclinicBox::fold(const Vec3<double>& r) const
 	frac.z -= floor(frac.z);
 	
 	return axes_*frac;
+}
+
+/*!
+ * \brief Return folded fractional coordinate (i.e. inside current Box)
+ */
+Vec3<double> TriclinicBox::foldFrac(const Vec3<double>& r) const
+{
+	// Convert coordinate to fractional coords
+	Vec3<double> frac = inverseAxes_*r;
+	
+	// Fold into Box and remultiply by inverse matrix
+	frac.x -= floor(frac.x);
+	frac.y -= floor(frac.y);
+	frac.z -= floor(frac.z);
+	
+	return frac;
 }

@@ -161,7 +161,7 @@ void Dnchar::createEmpty(Dnchar &s)
 // Empty?
 bool Dnchar::isEmpty() const
 {
-	return (endPosition_ <= 0 ? TRUE : FALSE);
+	return (endPosition_ <= 0 ? true : false);
 }
 
 // Return last character of string (before '\0')
@@ -269,8 +269,8 @@ bool Dnchar::operator==(const Dnchar &s) const
 {
 	if (data_ == NULL)
 	{
-		if ((s.data_ == NULL) || (s.data_[0] == '\0')) return TRUE;
-		else return FALSE;
+		if ((s.data_ == NULL) || (s.data_[0] == '\0')) return true;
+		else return false;
 	}
 	else if (s.data_ == NULL) return (data_[0] == '\0');
 	return (strcmp(data_,s.data_) == 0);
@@ -281,8 +281,8 @@ bool Dnchar::operator!=(const Dnchar &s) const
 {
 	if (data_ == NULL)
 	{
-		if ((s.data_ == NULL) || (s.data_[0] == '\0')) return FALSE;
-		else return TRUE;
+		if ((s.data_ == NULL) || (s.data_[0] == '\0')) return false;
+		else return true;
 	}
 	else if (s.data_ == NULL) return (data_[0] != '\0');
 	return (strcmp(data_,s.data_) != 0);
@@ -340,18 +340,18 @@ int Dnchar::asInteger() const
 bool Dnchar::asBool() const
 {
 	// Convert string to boolean
-	bool result = FALSE;
+	bool result = false;
 	Dnchar lcase(lowerCase(data_));
-	if (lcase == "off") result = FALSE;
-	else if (lcase == "on") result = TRUE;
-	else if (lcase == "no") result = FALSE;
-	else if (lcase == "yes") result = TRUE;
-	else if (lcase == "false") result = FALSE;
-	else if (lcase == "true") result = TRUE;
+	if (lcase == "off") result = false;
+	else if (lcase == "on") result = true;
+	else if (lcase == "no") result = false;
+	else if (lcase == "yes") result = true;
+	else if (lcase == "false") result = false;
+	else if (lcase == "true") result = true;
 	else
 	{
-		std::printf("Character constant '%s' doesn't translate directly to a boolean value - FALSE assumed.\n", lcase.get());
-		result = FALSE;
+		std::printf("Character constant '%s' doesn't translate directly to a boolean value - false assumed.\n", lcase.get());
+		result = false;
 	}
 	return result;
 }
@@ -374,7 +374,7 @@ bool Dnchar::isNumeric() const
 			case ('5'): case ('6'): case ('7'): case ('8'): case ('9'): 
 				break;
 			default:
-				return FALSE;
+				return false;
 		}
 	}
 	return (nSymbols != nChars);

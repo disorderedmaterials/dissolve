@@ -40,78 +40,10 @@ void Viewer::mousePressEvent(QMouseEvent* event)
 	rMouseDown_.set(event->x(), event->y(), 0.0);
 	
 	// Do something with the button press event (e.g. context menu function)?
-	if ((buttonStateOnPress_.testFlag(Qt::RightButton)) && sourceSpecies_)
+	if ((buttonStateOnPress_.testFlag(Qt::RightButton)))
 	{
-		// Firstly, determine whether we are on top of an Atom...
-		Vec4<double> v;
-		Atom* i;
-		for (i = sourceSpecies_->atoms(); i != NULL; i = i->next)
-		{
-			v = modelToScreen(i->r(), 0.3);
-			v.x -= event->x();
-			v.y -= (height()-event->y());
-			if (sqrt(v.x*v.x + v.y*v.y) < v.w) break;
-		}
-
-		// If we *are* over an Atom, then there is more to do...
-		if (i != NULL)
-		{
-			// If this Atom is *not* currently selected, select it after deselecting all others
-			if (!sourceSpecies_->isAtomSelected(i))
-			{
-				sourceSpecies_->clearAtomSelection();
-				sourceSpecies_->selectAtom(i);
-			}
-			
-			// Now we have update the Atom selection (if it was necessary) we must update the
-			// available isotope options in the context menu. This depends on all Atoms in the
-			// current selection being of the same element.
-			int el = sourceSpecies_->selectedAtoms()->item->element();
-			bool same = TRUE;
-			for (RefListItem<Atom,int>* ri = sourceSpecies_->selectedAtoms(); ri != NULL; ri = ri->next)
-			{
-				if (ri->item->element() != el)
-				{
-					same = FALSE;
-					break;
-				}
-			}
-			
-			// If all Atoms in the selection are *not* the same element, then disable the SetIsotope menu and the SelectSame action
-			QMenu* typeMenu = mainWindow_->ui.menuSelectionSetAtomType;
-			typeMenu->setEnabled(same);
-			mainWindow_->ui.actionSelectionSelectSame->setEnabled(same);
-			
-			if (same)
-			{
-				Dnchar text;
-				QAction* action;
-				// Elements are all the same, so present list of available AtomTypes in menu
-				typeMenu->setEnabled(TRUE);
-				typeMenu->clear();
-				int count = 0;
-				for (AtomType* at = mainWindow_->dUQ().atomTypes(); at != NULL; at = at->next)
-				{
-					if (at->element() != el) continue;
-					action = typeMenu->addAction(at->name());
-					QObject::connect(action, SIGNAL(triggered(bool)), mainWindow_, SLOT(selectionAtomTypeChanged(bool)));
-					++count;
-				}
-				
-				// Add dummy entry if there were no available AtomTypes
-				if (count == 0)
-				{
-					action = typeMenu->addAction("No AtomTypes Available");
-					action->setEnabled(FALSE);
-				}
-			}
-			
-			// Ready - execute the popup menu
-			if (atomContextMenu_) atomContextMenu_->exec(event->globalPos());
-			
-			// Clear buttonstate
-			buttonStateOnPress_ = 0;
-		}
+		// Clear buttonstate afterwards
+		buttonStateOnPress_ = 0;
 	}
 }
 
@@ -122,48 +54,13 @@ void Viewer::mouseReleaseEvent(QMouseEvent* event)
 	Qt::KeyboardModifiers km = event->modifiers();
 	
 	// Check mouse button state when the mousePressEvent occurred
-	if ((buttonStateOnPress_&Qt::LeftButton) && sourceSpecies_)
+	if ((buttonStateOnPress_&Qt::LeftButton))
 	{
-		Vec4<double> v;
-		// If the selectionBox_ is smaller than some critical size, assume it was an attempt to click an Atom
-		if (abs(selectionBox_.width()*selectionBox_.height()) <= 9)
-		{
-			// Clear current selection (unless Ctrl is pressed)
-			if (!km.testFlag(Qt::ShiftModifier)) sourceSpecies_->clearAtomSelection();
-			for (Atom* i = sourceSpecies_->atoms(); i != NULL; i = i->next)
-			{
-				v = modelToScreen(i->r(), 0.3);
-				v.x -= event->x();
-				v.y -= (height()-event->y());
-				if (sqrt(v.x*v.x + v.y*v.y) < v.w)
-				{
-					sourceSpecies_->selectAtom(i);
-					break;
-				}
-			}
-		}
-		else
-		{
-			// Perform Box Select
 
-			// Clear current selection (unless Shift is pressed)
-			if (!km.testFlag(Qt::ShiftModifier)) sourceSpecies_->clearAtomSelection();
-			for (Atom* i = sourceSpecies_->atoms(); i != NULL; i = i->next)
-			{
-				v = modelToScreen(i->r());
-				if (selectionBox_.contains(v.x, height()-v.y)) sourceSpecies_->selectAtom(i); 
-			}
-		}
-		
 		update();
 	}
 	
-	selectionBox_.setRect(0,0,0,0);
 	buttonStateOnPress_ = 0;
-	
-	update();
-	
-	if (sourceSpecies_) mainWindow_->refresh(speciesUpdateTargets_);
 }
 
 // Qt Signal (mouse move event)
@@ -179,15 +76,14 @@ void Viewer::mouseMoveEvent(QMouseEvent* event)
 
 	if (buttonStateOnPress_&Qt::LeftButton)
 	{
-		selectionBox_.setRect(rMouseDown_.x, rMouseDown_.y, event->x()-rMouseDown_.x, event->y()-rMouseDown_.y);
 	}
 	else if (buttonStateOnPress_&Qt::RightButton)
 	{
 		// View manipulation
-		if (km&Qt::ShiftModifier)
+		if (km.testFlag(Qt::ShiftModifier))
 		{
 		}
-		else if (km&Qt::ControlModifier)
+		else if (km.testFlag(Qt::ControlModifier))
 		{
 		}
 		else 
@@ -224,18 +120,6 @@ void Viewer::wheelEvent(QWheelEvent* event)
 	postRedisplay();
 }
 
-// Set bit-array of GUI quantities to update after viewed model is modified
-void Viewer::setSpeciesUpdateTargets(int targets)
-{
-	speciesUpdateTargets_ = targets;
-}
-
-// Set atom context menu to call
-void Viewer::setAtomContextMenu(QMenu* menu)
-{
-	atomContextMenu_ = menu;
-}
-
 // Return mouse coordinates at last mousedown event
 Vec3<double> Viewer::rMouseDown()
 {
@@ -256,7 +140,7 @@ Vec3<double> Viewer::rMouseLast()
 void Viewer::keyPressEvent(QKeyEvent* event)
 {
 	// Check datamodel...
-	bool refresh = FALSE, ignore = TRUE;
+	bool refresh = false, ignore = true;
 	Qt::KeyboardModifiers km = event->modifiers();
 	
 	switch (event->key())
@@ -267,36 +151,36 @@ void Viewer::keyPressEvent(QKeyEvent* event)
 				printf("Why doesn't this ever get printed?\n");
 			}
 //			else source->rotateView( keyModifier_[Viewer::ShiftKey] ? -1.0 : -10.0, 0.0);
-			refresh = TRUE;
-			ignore = FALSE;
+			refresh = true;
+			ignore = false;
 			break;
 		case (Qt::Key_Right):
 //			source->rotateView( keyModifier_[Viewer::ShiftKey] ? 1.0 : 10.0, 0.0);
-			refresh = TRUE;
-			ignore = FALSE;
+			refresh = true;
+			ignore = false;
 			break;
 		case (Qt::Key_Up):
 //			source->rotateView(0.0, keyModifier_[Viewer::ShiftKey] ? -1.0 : -10.0);
-			refresh = TRUE;
-			ignore = FALSE;
+			refresh = true;
+			ignore = false;
 			break;
 		case (Qt::Key_Down):
 //			source->rotateView(0.0, keyModifier_[Viewer::ShiftKey] ? 1.0 : 10.0);
-			refresh = TRUE;
-			ignore = FALSE;
+			refresh = true;
+			ignore = false;
 			break;
 		case (Qt::Key_Escape):
 //			gui.mainWindow()->cancelCurrentMode();
-			refresh = TRUE;
-			ignore = FALSE;
+			refresh = true;
+			ignore = false;
 			break;
 		// Cycle render styles
 		case (Qt::Key_F8):
-			ignore = FALSE;
+			ignore = false;
 			break;
 		// Cycle colouring styles
 		case (Qt::Key_F9):
-			ignore = FALSE;
+			ignore = false;
 			break;
 		default:
 			break;

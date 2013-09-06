@@ -20,9 +20,9 @@
 */
 
 #include "main/duq.h"
+#include "main/flags.h"
 #include "classes/species.h"
 #include "classes/atomtype.h"
-#include "base/flag.h"
 #include "base/sysfunc.h"
 #include <string.h>
 
@@ -41,7 +41,7 @@ AtomType* DUQ::addAtomType(int el)
 	at->setName(uniqueAtomTypeName(PeriodicTable::element(el).symbol()));
 	at->setElement(el);
 	
-	SET_MODIFIED
+	Flags::wave(Flags::AtomTypeChanged);
 	
 	return at;
 }
@@ -54,13 +54,13 @@ void DUQ::removeAtomType(AtomType* at)
 	// Nullify all Atoms using this AtomType
 	for (Species* sp = species_.first(); sp != NULL; sp = sp->next)
 	{
-		for (Atom* i = sp->atoms(); i != NULL; i = i->next) if (i->atomType() == at) i->setAtomType(NULL);
+		for (SpeciesAtom* i = sp->atoms(); i != NULL; i = i->next) if (i->atomType() == at) i->setAtomType(NULL);
 	}
 	atomTypes_.remove(at);
 
-	SET_MODIFIED
-
 	updateAtomTypes();
+
+	Flags::wave(Flags::AtomTypeChanged);
 }
 
 /*!
@@ -105,7 +105,7 @@ void DUQ::updateAtomTypes()
 	AtomType* at;
 	for (Species* sp = species_.first(); sp != NULL; sp = sp->next)
 	{
-		for (Atom* i = sp->atoms(); i != NULL; i = i->next)
+		for (SpeciesAtom* i = sp->atoms(); i != NULL; i = i->next)
 		{
 			// Is current AtomType definition valid?
 			if (i->atomType() != NULL)
@@ -133,7 +133,7 @@ void DUQ::updateAtomTypes()
 			}
 			i->setAtomType(at);
 			
-			SET_MODIFIED
+			Flags::wave(Flags::AtomTypeChanged);
 		}
 	}
 	
@@ -144,7 +144,7 @@ void DUQ::updateAtomTypes()
 		{
 			at->setParameters(PeriodicTable::element(at->element()).parameters());
 			
-			SET_MODIFIED
+			Flags::wave(Flags::AtomTypeChanged);
 		}
 	}
 }

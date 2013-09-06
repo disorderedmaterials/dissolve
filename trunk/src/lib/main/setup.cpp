@@ -20,6 +20,7 @@
 */
 
 #include "main/duq.h"
+#include "main/flags.h"
 #include "classes/species.h"
 #include "classes/atomtype.h"
 #include "classes/box.h"
@@ -46,32 +47,32 @@ void DUQ::clearModel()
 /*!
  * \brief Load Box normalisation array
  */
-bool DUQ::loadBoxNormalisationFile(const char *fileName)
+bool DUQ::loadBoxNormalisationFile(const char* fileName)
 {
 	if (!boxNormalisation_.load(fileName))
 	{
 		msg.error("Failed to load Box normalisation data.\n");
-		return FALSE;
+		return false;
 	}
 	
 	boxNormalisationFileName_ = fileName;
 	msg.print("--> Successfully loaded box normalisation data from file '%s'.\n", boxNormalisationFileName_.get());
 	boxNormalisation_.interpolate();
 
-	return TRUE;
+	return true;
 }
 
 /*!
- * \brief Create AtomType index and PairPotential map
+ * \brief Setup pairpotentials
  */
-bool DUQ::setupIndexAndMaps()
+bool DUQ::setupPotentials()
 {
 	// We will construct a complete list of all AtomTypes used over all Samples.
 	// So, loop over Samples and go through Isotopologues in each mixture
 	typeIndex_.clear();
 	for (Molecule* mol = configuration_.molecules(); mol != NULL; mol = mol->next)
 	{
-		for (Atom* i = mol->species()->atoms(); i != NULL; i = i->next) typeIndex_.add(i->atomType(), PeriodicTable::element(i->element()).isotopes(), 1);
+		for (SpeciesAtom* i = mol->species()->atoms(); i != NULL; i = i->next) typeIndex_.add(i->atomType(), PeriodicTable::element(i->element()).isotopes(), 1);
 	}
 	msg.print("--> %i unique AtomTypes (disregarding isotopic substitutions) used in system:\n", typeIndex_.nItems());
 
@@ -81,29 +82,21 @@ bool DUQ::setupIndexAndMaps()
 	// Print AtomType information (excluding isotope information)
 	typeIndex_.print();
 
+	// Assign indices to atom types
+	for (AtomType* at = atomTypes_.first(); at != NULL; at = at->next) at->setIndex(typeIndex_.indexOf(at));
+
 	// Create PairPotential matrix
 	msg.print("--> Creating matrix (%ix%i)...\n", typeIndex_.nItems(), typeIndex_.nItems());
-	return potentialMap_.initialise(typeIndex_, pairPotentials_, configuration_.nAtoms(), configuration_.molecules(), pairPotentialRange_);
-}
-
-/*!
- * \brief Set up index lists for Species
- */
-bool DUQ::setupIntramolecular()
-{
-	for (Species* sp = species_.first(); sp != NULL; sp = sp->next)
-	{
-		msg.print("--> Species: '%s'\n", sp->name());
-		if (!sp->calculateIndexLists()) return FALSE;
-	}
-	return TRUE;
+	if (!potentialMap_.initialise(typeIndex_, pairPotentials_, pairPotentialRange_)) return false;
+	
+	return true;
 }
 
 /*!
  * \brief Print Stetup
  * \details Prints all variables controlling the simulation
  */
-bool DUQ::finaliseAndPrintSetup()
+bool DUQ::printSetup()
 {
 	msg.print("\n");
 	msg.print("Simulation Setup:\n");
@@ -119,13 +112,13 @@ bool DUQ::finaliseAndPrintSetup()
 	msg.print("%-40s = %9.3e (%s)\n", "Simplex Temperature", simplexTemperature_, "barns/sr/atom");
 	msg.print("%-40s = %9.3e (%s)\n", "Simplex Tolerance", simplexTolerance_, "barns/sr/atom");
 
-	return TRUE;
+	return true;
 }
 
 /*!
  * \brief Check current setup
- * \details Checks all defined objects (Species, Grains, Samples etc.) for consistency, ommissions, and glaring errors
- * which will prevent (or badly damage) the calculation about to begin. It returns FALSE in the event of encountering
+ * \details Checks all defined objects (Species, Grains, Samples etc.) for consistency, omissions, and glaring errors
+ * which will prevent (or badly damage) the calculation about to begin. It returns false in the event of encountering
  * one or more severe errors which prevent the calculation from running.
  */
 bool DUQ::checkSetup()
@@ -240,6 +233,14 @@ bool DUQ::checkSetup()
 }
 
 /*!
+ * \brief Return whether current setup is valid
+ */
+bool DUQ::setupIsValid()
+{
+	return (setupFlagCount_ == Flags::count());
+}
+
+/*!
  * \brief Setup Simulation
  * \details This sets up all data necessary to perform a simulation, based on the current loaded configuration. The steps are as follows:
  * 1) Intramolecular terms are set up for each Species
@@ -255,20 +256,21 @@ bool DUQ::checkSetup()
 bool DUQ::setupSimulation()
 {
 	msg.print("\n");
-	msg.print("Setting up simulation...\n");
+	
+	if (setupFlagCount_ == Flags::count())
+	{
+		msg.print("Setup is still valid.\n");
+		return true;
+	}
+	else msg.print("Setting up simulation...\n");
 
 	if (multiplier_ < 1)
 	{
 		msg.error("System multiplier is zero or negative (%i).\n", multiplier_);
-		return FALSE;
+		return false;
 	}
 
 	clearModel();
-
-	// Create intramolecular index lists
-	msg.print("\n");
-	msg.print("Calculating index lists for defined intramolecular interactions...\n");
-	if (!setupIntramolecular()) return FALSE;
 	
 	// Loop over components, creating space for Molecules as we go (all processes)
 	msg.print("\n");
@@ -278,51 +280,55 @@ bool DUQ::setupSimulation()
 	{
 		// For safety, only one process will determine the number of molecules of each component
 		if (Comm.master()) count = sp->relativePopulation() * multiplier_;
-		if (!Comm.broadcast(&count, 1)) return FALSE;
+		if (!Comm.broadcast(&count, 1)) return false;
 		
 		for (int n = 0; n < count; ++n) configuration_.addMolecule(sp);
 	}
 
-	// Create a Box (all processes)
+	// Setup PairPotentials array and assign atomtype indices to atoms
 	msg.print("\n");
-	msg.print("Setting up Box...\n");
-	if (!configuration_.setupBox(pairPotentialRange_, relativeBoxLengths_, boxAngles_, atomicDensity(), nonPeriodic_))
+	msg.print("Setting up atomtypes and pair potentials...\n");
+	if (!setupPotentials())
 	{
-		msg.error("Failed to set-up Box/Cells for Configuration.\n");
-		return FALSE;
+		msg.error("Failed to create AtomType index, map, and PairPotential and array.\n");
+		return false;
 	}
 
-	// Create Atom and Grain arrays, and Molecule copies (Master only, broadcast to slaves)
+	// Create a Box (all processes)
 	msg.print("\n");
-	msg.print("Instantiating Atoms, Grains, and Molecules...\n");
-	if (!configuration_.instantiate())
+	msg.print("Setting up box...\n");
+	if (!configuration_.setupBox(pairPotentialRange_, relativeBoxLengths_, boxAngles_, atomicDensity(), cellDensityMultiplier_, nonPeriodic_))
 	{
-		msg.error("Failed to instantiate Molecules.\n");
-		return FALSE;
+		msg.error("Failed to set-up Box/Cells for Configuration.\n");
+		return false;
 	}
-	
+
+	// Create Atom and Grain arrays, and Molecule copies
+	msg.print("\n");
+	msg.print("Setting up molecules, atoms, and grains...\n");
+	if (!configuration_.setupMolecules())
+	{
+		msg.error("Failed to setup molecules.\n");
+		return false;
+	}
+
 	// Create random configuration / load initial coordinates from file
 	if (randomConfiguration_)
 	{
-		if (!MPIRunMaster(configuration_.randomise())) return FALSE;
+		if (!MPIRunMaster(configuration_.randomise())) return false;
 	}
-	else if (!MPIRunMaster(configuration_.loadInitialCoordinates(initialCoordinatesFile_.get()))) return FALSE;
-	if (!configuration_.broadcastCoordinates()) return FALSE;
+	else if (!MPIRunMaster(configuration_.loadInitialCoordinates(initialCoordinatesFile_.get()))) return false;
+
+	if (!configuration_.broadcastCoordinates()) return false;
+	if (!configuration_.updateAtomsInCells()) return false;
 	updateGrains(configuration_);
 
-	// Assign Atom/Grain limits to processes
+	// Setup parallel comms / limits etc.
 	msg.print("\n");
-	msg.print("Setting process limits...\n");
-	if (!Comm.calculateLimits(configuration_.nAtoms(), configuration_.nGrains())) return FALSE;
+	msg.print("Setting up parallel comms...\n");
 
-	// Construct AtomType index and array
-	msg.print("\n");
-	msg.print("Constructing AtomType index, map, and PairPotential array...\n");
-	if (!setupIndexAndMaps())
-	{
-		msg.error("Failed to create AtomType index, map, and PairPotentail and array.\n");
-		return FALSE;
-	}
+	// -- Assign Atom/Grain limits to processes
+	if (!Comm.calculateLimits(configuration_.nAtoms(), configuration_.nGrains())) return false;
 
 	// Construct RDF/S(Q) arrays
 	// -- Determine maximal extent of RDF (from origin to centre of box)
@@ -349,12 +355,12 @@ bool DUQ::setupSimulation()
 		if (rdfRange_ < 0.0)
 		{
 			msg.error("Negative RDF range requested.\n");
-			return FALSE;
+			return false;
 		}
 		else if (rdfRange_ > maxR)
 		{
 			msg.error("Requested RDF range is greater then the maximum possible extent for the Box.\n");
-			return FALSE;
+			return false;
 		}
 		else if (rdfRange_ > (0.90*maxR)) msg.warn("Requested RDF range is greater than 90%% of the maximum possible extent for the Box. FT may be suspect!\n");
 	}
@@ -382,7 +388,7 @@ bool DUQ::setupSimulation()
 		else
 		{
 			msg.print("--> Calculating box normalisation array for RDFs...\n");
-			if (!configuration_.box()->calculateRDFNormalisation(boxNormalisation_, rdfRange_, rdfBinWidth_, boxNormalisationPoints_)) return FALSE;
+			if (!configuration_.box()->calculateRDFNormalisation(boxNormalisation_, rdfRange_, rdfBinWidth_, boxNormalisationPoints_)) return false;
 		}
 	}
 	msg.print("\n");
@@ -390,7 +396,7 @@ bool DUQ::setupSimulation()
 	if (!setupPartials())
 	{
 		msg.error("Failed to create RDF/F(Q) lists/matrices.\n");
-		return FALSE;
+		return false;
 	}
 
 	// Prepare Samples
@@ -399,18 +405,23 @@ bool DUQ::setupSimulation()
 	if (!setupSamples())
 	{
 		msg.error("Failed to setup Samples.\n");
-		return FALSE;
+		return false;
 	}
 
 	// Setup/create simulation variables
 	msg.print("\n");
-	msg.print("Setting simulation variables...\n");
-	if (!finaliseAndPrintSetup()) return FALSE;
+	msg.print("Simulation variables:\n");
+	if (!printSetup()) return false;
+	
+	setupCheckPointData();
 	
 	msg.print("\n");
 	msg.print("Simulation setup is complete.\n");
 
-	return TRUE;
+	// Store flag count at this point so we know when the setup is invalid
+	setupFlagCount_ = Flags::count();
+
+	return true;
 }
 
 /*!
@@ -420,4 +431,13 @@ bool DUQ::setupSimulation()
 int DUQ::seed()
 {
 	return seed_;
+}
+
+/*!
+ * \brief Return configuration pointer
+ * \details Returns a pointer to the current configuration
+ */
+Configuration* DUQ::configuration()
+{
+	return &configuration_;
 }

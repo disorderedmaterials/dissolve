@@ -31,7 +31,7 @@
 NonPeriodicBox::NonPeriodicBox(double volume) : Box()
 {
 	type_ = Box::NonPeriodicBox;
-	periodic_.set(FALSE, FALSE, FALSE);
+	periodic_.set(false, false, false);
 
 	// Construct axes_
 	axes_.setColumn(0, 1.0, 0.0, 0.0);
@@ -135,11 +135,19 @@ double NonPeriodicBox::minimumDistance(const Vec3<double>& i, const Vec3<double>
 }
 
 /*!
- * \brief Return minimum image squared distance from 'i' to 'j'
+ * \brief Return minimum image squared distance from 'i' to 'j' (pointers)
  */
 double NonPeriodicBox::minimumDistanceSquared(const Atom* i, const Atom* j) const
 {
 	return (j->r() - i->r()).magnitudeSq();
+}
+
+/*!
+ * \brief Return minimum image squared distance from 'i' to 'j' (references)
+ */
+double NonPeriodicBox::minimumDistanceSquared(const Atom& i, const Atom& j) const
+{
+	return (j.r() - i.r()).magnitudeSq();
 }
 
 /*!
@@ -175,24 +183,6 @@ Vec3<double> NonPeriodicBox::randomCoordinate() const
 }
 
 /*!
- * \brief Return Cell containing specified coordinate
- */
-Cell* NonPeriodicBox::cell(const Vec3<double> r) const
-{
-	// Convert coordinate to fractional coords
-	static Vec3<double> frac;
-	frac.set(r.x*ra_, r.y*ra_, r.z*ra_);
-	
-	// Fold into Box and divide by integer Cell sizes
-	int x = (frac.x - floor(frac.x)) / cellSize_.x;
-	int y = (frac.y - floor(frac.y)) / cellSize_.y;
-	int z = (frac.z - floor(frac.z)) / cellSize_.z;
-
-	return &cells_[x%divisions_.x][y%divisions_.y][z%divisions_.z];
-}
-
-
-/*!
  * \brief Return folded coordinate (i.e. inside current Box)
  */
 Vec3<double> NonPeriodicBox::fold(const Vec3<double>& r) const
@@ -206,4 +196,20 @@ Vec3<double> NonPeriodicBox::fold(const Vec3<double>& r) const
 	frac.y -= floor(frac.y);
 	frac.z -= floor(frac.z);
 	return frac*a_;
+}
+
+/*!
+ * \brief Return folded coordinate (i.e. inside current Box)
+ */
+Vec3<double> NonPeriodicBox::foldFrac(const Vec3<double>& r) const
+{
+	// Convert coordinate to fractional coords
+	static Vec3<double> frac;
+	frac.set(r.x*ra_, r.y*ra_, r.z*ra_);
+	
+	// Fold into Box and divide by integer Cell sizes
+	frac.x -= floor(frac.x);
+	frac.y -= floor(frac.y);
+	frac.z -= floor(frac.z);
+	return frac;
 }

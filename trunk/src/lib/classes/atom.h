@@ -22,27 +22,27 @@
 #ifndef DUQ_ATOM_H
 #define DUQ_ATOM_H
 
-#include "classes/bond.h"
-#include "base/dnchar.h"
-#include "templates/list.h"
-#include "templates/reflist.h"
 #include "templates/vector3.h"
 
 // Forward Declarations
-class Grain;
 class AtomType;
+class Cell;
+class Grain;
+class Molecule;
 
 /*!
  * \brief Atom Definition
  * \details 
  */
-class Atom : public ListItem<Atom>
+class Atom
 {
 	public:
 	// Constructor
 	Atom();
 	// Destructor
 	~Atom();
+	// Special Atom Indices
+	enum SpecialAtomIndex { UnusedAtom = -100 };
 
 
 	/*!
@@ -50,16 +50,22 @@ class Atom : public ListItem<Atom>
 	 */
 	///@{
 	private:
-	// Atomic Element
-	int element_;
 	// Coordinates
 	Vec3<double> r_;
+	// Assigned AtomType index
+	int atomTypeIndex_;
+	// Index of Atom
+	int index_;
+	// Molecule which this atom is in
+	Molecule* molecule_;
+	// Local index of Atom in source molecule
+	int moleculeAtomIndex_;
+	// Cell in which the atom exists
+	Cell* cell_;
 	// Charge (if contained in file)
 	double charge_;
-	// Assigned AtomType
-	AtomType* atomType_;
-	// Index of Atom (in parent's List *or* full model)
-	int index_;
+	// Atomic Element
+	int element_;
 
 	public:
 	// Set basic atom properties
@@ -72,46 +78,32 @@ class Atom : public ListItem<Atom>
 	int element() const;
 	// Return coordinates (read-only)
 	const Vec3<double> &r() const;
-	// Set charge of Atom
+	// Set charge of atom
 	void setCharge(double charge);
-	// Return charge of Atom
+	// Return charge of atom
 	double charge() const;
-	// Set AtomType of Atom
-	void setAtomType(AtomType* at);
-	// Return AtomType of Atom
-	AtomType* atomType() const;
-	// Set List index (0->[N-1])
+	// Set AtomType index of atom
+	void setAtomTypeIndex(int id);
+	// Return AtomType of atom
+	int atomTypeIndex() const;
+	// Set index (0->[N-1])
 	void setIndex(int id);
-	// Return List index (0->[N-1])
+	// Return index (0->[N-1])
 	int index() const;
 	// Return 'user' index (1->N)
 	int userIndex() const;
+	// Set molecule and local atom index (0->[N-1])
+	void setMolecule(Molecule* mol, int id);
+	// Return molecule
+	Molecule* molecule() const;
+	// Return local atom index in molecule (0->[N-1])
+	int moleculeAtomIndex() const;
+	// Set cell in which the atom exists
+	void setCell(Cell* cell);
+	// Return cell in which the atom exists
+	Cell* cell();
 	// Copy properties from supplied Atom
 	void copyProperties(const Atom* source);
-	///@}
-
-
-	/*!
-	 * \name Bond Information
-	 */
-	///@{
-	private:
-	// List of Bonds which this Atom participates in
-	RefList<Bond,int> bonds_;
-	
-	public:
-	// Add Bond reference
-	void addBond(Bond* b);
-	// Remove Bond reference
-	void removeBond(Bond* b);
-	// Clear all Bond references
-	void clearBonds();
-	// Return number of bonds
-	int nBonds() const;
-	// Return first Bond reference
-	RefListItem<Bond,int>* bonds();
-	// Return whether Bond to specified Atom exists
-	Bond* hasBond(Atom* j);
 	///@}
 
 
@@ -149,7 +141,7 @@ class Atom : public ListItem<Atom>
 	///@{
 	public:
 	// Broadcast data from Master to all Slaves
-	bool broadcast(const List<AtomType>& atomTypes);
+	bool broadcast();
 	///@}
 };
 

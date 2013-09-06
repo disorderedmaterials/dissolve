@@ -1,9 +1,7 @@
 add_library(classes
-angle.cpp
 atom.cpp
 atomtype.cpp
 atomtypeindex.cpp
-bond.cpp
 box.cpp 
 box_cubic.cpp 
 box_monoclinic.cpp 
@@ -16,7 +14,6 @@ energykernel.cpp
 forcekernel.cpp
 grain.cpp
 histogram.cpp
-graindefinition.cpp
 isotopologue.cpp
 isotopologuemix.cpp
 molecule.cpp
@@ -24,19 +21,20 @@ pairpotential.cpp
 sample.cpp
 sdf.cpp
 species.cpp
+speciesangle.cpp
+speciesatom.cpp
+speciesbond.cpp
+speciesgrain.h
 species_io.cpp
-angle.h
 atom.h
 atomtype.h
 atomtypeindex.h
-bond.h
 box.h
 cell.h
 configuration.h
 energykernel.h
 forcekernel.h
 grain.h
-graindefinition.h
 histogram.h
 isotopologue.h
 isotopologuemix.h
@@ -46,6 +44,10 @@ potentialmap.h
 sample.h
 sdf.h
 species.h
+speciesangle.h
+speciesatom.h
+speciesbond.h
+speciesgrain.h
 )
 
 include_directories(

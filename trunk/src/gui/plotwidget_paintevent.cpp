@@ -141,7 +141,7 @@ void PlotWidget::paintEvent(QPaintEvent* event)
 	// Revert to original transform and pen style/color (drawing the data may have changed it)
 	painter.setTransform(transform);
 	painter.setPen(foregroundColour_);
-	painter.setRenderHint(QPainter::Antialiasing, FALSE);
+	painter.setRenderHint(QPainter::Antialiasing, false);
 
 	// Interaction embellishments?
 	if (!clickedWidgetPosition_.isNull())
@@ -157,7 +157,7 @@ void PlotWidget::paintEvent(QPaintEvent* event)
 	// Reset transform to cover whole area again
 	transform.reset();
 	painter.setTransform(transform);
-	painter.setClipping(FALSE);
+	painter.setClipping(false);
 
 	// -- Draw X tick marks and labels
 	double lastPos, deviceXpos, deviceYpos;

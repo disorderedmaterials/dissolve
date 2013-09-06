@@ -149,11 +149,11 @@ double Parameters::charge()
 bool Parameters::broadcast()
 {
 #ifdef PARALLEL
-	if (!Comm.broadcast(name_)) return FALSE;
-	if (!Comm.broadcast(description_)) return FALSE;
-	if (!Comm.broadcast(&sigma_, 1)) return FALSE;
-	if (!Comm.broadcast(&epsilon_, 1)) return FALSE;
-	if (!Comm.broadcast(&charge_, 1)) return FALSE;
+	if (!Comm.broadcast(name_)) return false;
+	if (!Comm.broadcast(description_)) return false;
+	if (!Comm.broadcast(&sigma_, 1)) return false;
+	if (!Comm.broadcast(&epsilon_, 1)) return false;
+	if (!Comm.broadcast(&charge_, 1)) return false;
 #endif
-	return TRUE;
+	return true;
 }

@@ -21,6 +21,8 @@
 
 #include "classes/changestore.h"
 #include "classes/atom.h"
+#include "classes/cell.h"
+#include "classes/configuration.h"
 #include "classes/grain.h"
 #include "classes/molecule.h"
 #include "base/comms.h"
@@ -46,24 +48,36 @@ ChangeStore::~ChangeStore()
 */
 
 /*!
+ * \brief Add atom to watch
+ */
+void ChangeStore::add(Atom* i)
+{
+	RefListItem<Atom, Pair<bool,Vec3<double> > >* item = targetAtoms_.add(i);
+	item->data.a = false;
+	item->data.b = i->r();
+}
+
+/*!
  * \brief Add Grain to watch
  */
 void ChangeStore::add(Grain* grain)
 {
-	for (int n=0; n<grain->nAtoms(); ++n)
-	{
-		RefListItem<Atom, Pair<bool,Vec3<double> > >* item = targetAtoms_.add(grain->atom(n));
-		item->data.a = FALSE;
-		item->data.b = grain->atom(n)->r();
-	}
+	for (int n=0; n<grain->nAtoms(); ++n) add(grain->atom(n));
 }
 
 /*!
- * \brief Add Molecule (Grains) to watch
+ * \brief Add Molecule to watch
  */
 void ChangeStore::add(Molecule* mol)
 {
-	for (int n=0; n<mol->nGrains(); ++n) add(mol->grain(n));
+	for (int n=0; n<mol->nAtoms(); ++n) add(mol->atom(n));
+}
+
+// Add cell to watch
+void ChangeStore::add(Cell* cell)
+{
+	// Don't worry about atoms which are unused in the cell's array - store them anyway so we can use the local cell atom indices
+	for (int n=0; n<cell->maxAtoms(); ++n) add(cell->atom(n));
 }
 
 /*
@@ -87,7 +101,7 @@ void ChangeStore::updateAll()
 {
 	for (RefListItem<Atom, Pair<bool,Vec3<double> > >* refAtom = targetAtoms_.first(); refAtom != NULL; refAtom = refAtom->next)
 	{
-		refAtom->data.a = TRUE;
+		refAtom->data.a = true;
 		refAtom->data.b = refAtom->item->r();
 	}
 }
@@ -108,54 +122,58 @@ void ChangeStore::updateAtomsLocal(int nAtoms, int* indices)
 		}
 #endif
 		RefListItem<Atom, Pair<bool,Vec3<double> > >* refAtom = targetAtoms_[indices[n]];
-		refAtom->data.a = TRUE;
+		refAtom->data.a = true;
 		refAtom->data.b = refAtom->item->r();
 	}
 // 	printf("Done updateAtomsLocal.\n");
 }
 
 /*!
- * \brief Update Atom positions using relative Atom indices
+ * \brief Update single atom position
  */
-void ChangeStore::updateAtomsRelative(int nAtoms, Atom** atoms, int rootIndex)
+void ChangeStore::updateAtom(int id)
 {
-// 	printf("In updateAtomsRelative...\n");
-	int listIndex;
-	for (int n=0; n<nAtoms; ++n)
+#ifdef CHECKS
+	if ((id < 0) || (id >= targetAtoms_.nItems()))
 	{
-		listIndex = atoms[n]->index() - rootIndex;
-#ifdef CHECKS
-		if ((listIndex < 0) || (listIndex >= targetAtoms_.nItems()))
-		{
-			msg.print("OUT_OF_RANGE - Calculated listIndex %i is out of range in ChangeStore::updateAtomsRelative() (nTargetAtoms = %i)\n", listIndex, targetAtoms_.nItems());
-			continue;
-		}
-#endif
-		RefListItem<Atom, Pair<bool,Vec3<double> > >* refAtom = targetAtoms_[listIndex];
-#ifdef CHECKS
-		if (refAtom->item->index() != atoms[n]->index())
-		{
-			msg.print("BAD_USAGE - Atom index for supplied atoms_[%i] (%i) does not correspond to that of item %i in targetAtoms_ (%i).\n", n, atoms[n]->index(), listIndex, refAtom->item->index());
-			continue;
-		}
-#endif
-		refAtom->data.a = TRUE;
-		refAtom->data.b = atoms[n]->r();
+		msg.print("OUT_OF_RANGE - Specified index %i is out of range in ChangeStore::updateAtom() (nTargetAtoms = %i)\n", id, targetAtoms_.nItems());
+		return;
 	}
-// 	printf("Done updateAtomsRelative.\n");
+#endif
+	RefListItem<Atom, Pair<bool,Vec3<double> > >* refAtom = targetAtoms_[id];
+	refAtom->data.a = true;
+	refAtom->data.b = refAtom->item->r();
 }
 
 /*!
- * \brief Revert to old Atom positions
+ * \brief Revert all atoms to their previous positions
  */
-void ChangeStore::revert()
+void ChangeStore::revertAll()
 {
 // 	printf("In Revert...\n");
 	for (RefListItem<Atom, Pair<bool,Vec3<double> > >* refAtom = targetAtoms_.first(); refAtom != NULL; refAtom = refAtom->next)
 	{
+		// Check for unused atom
+		if (refAtom->item->index() == Atom::UnusedAtom) continue;
 		refAtom->item->setCoordinates(refAtom->data.b);
 	}
 // 	printf("Done Revert.\n");
+}
+
+/*!
+ * \brief Revert specified index to stored position
+ */
+void ChangeStore::revert(int id)
+{
+#ifdef CHECKS
+	if ((id < 0) || (id >= targetAtoms_.nItems()))
+	{
+		msg.print("OUT_OF_RANGE - Index of Atom (%i) is out of range in ChangeStore::revert() (nAtoms = %i).\n", id, targetAtoms_.nItems());
+		return;
+	}
+#endif
+	RefListItem<Atom, Pair<bool,Vec3<double> > >* refAtom = targetAtoms_[id];
+	if (refAtom->item->index() != Atom::UnusedAtom) refAtom->item->setCoordinates(refAtom->data.b);
 }
 
 /*!
@@ -167,8 +185,8 @@ void ChangeStore::storeAndReset()
 	Pair< int,Vec3<double> >* changeData;
 	for (RefListItem<Atom, Pair<bool,Vec3<double> > >* refAtom = targetAtoms_.first(); refAtom != NULL; refAtom = refAtom->next, ++count)
 	{
-		// Has thie position of this Atom been changed (i.e. updated)?
-		if (refAtom->data.a == FALSE) continue;
+		// Has the position of this Atom been changed (i.e. updated)?
+		if (refAtom->data.a == false) continue;
 
 		// Create a new change and store info
 		changeData = changes_.add();
@@ -183,17 +201,17 @@ void ChangeStore::storeAndReset()
 /*!
  * \brief Distribute and apply changes
  */
-bool ChangeStore::distribute(int nAtoms, Atom* atoms)
+bool ChangeStore::distribute(Configuration& cfg)
 {
 #ifdef PARALLEL
 	// First, get total number of changes across all processes
 	int nTotalChanges = changes_.nItems();
-	if (!Comm.allSum(&nTotalChanges, 1)) return FALSE;
+	if (!Comm.allSum(&nTotalChanges, 1)) return false;
 
 // 	msg.print("We think there are %i changes in total to distribute.\n", nTotalChanges);
 
 	// All processes now resize their arrays so they are large enough to hold the total number of changes
-	if (nTotalChanges == 0) return TRUE;
+	if (nTotalChanges == 0) return true;
 	x_.createEmpty(nTotalChanges);
 	y_.createEmpty(nTotalChanges);
 	z_.createEmpty(nTotalChanges);
@@ -209,29 +227,51 @@ bool ChangeStore::distribute(int nAtoms, Atom* atoms)
 	}
 
 	// Now, assemble full array of the change data on the master...
-	if (!Comm.assemble(indices_, changes_.nItems(), indices_, nTotalChanges)) return FALSE;
-	if (!Comm.assemble(x_, changes_.nItems(), x_, nTotalChanges)) return FALSE;
-	if (!Comm.assemble(y_, changes_.nItems(), y_, nTotalChanges)) return FALSE;
-	if (!Comm.assemble(z_, changes_.nItems(), z_, nTotalChanges)) return FALSE;
+	if (!Comm.assemble(indices_, changes_.nItems(), indices_, nTotalChanges)) return false;
+	if (!Comm.assemble(x_, changes_.nItems(), x_, nTotalChanges)) return false;
+	if (!Comm.assemble(y_, changes_.nItems(), y_, nTotalChanges)) return false;
+	if (!Comm.assemble(z_, changes_.nItems(), z_, nTotalChanges)) return false;
 	
 	// ... then broadcast it to the slaves
-	if (!Comm.broadcast(indices_, nTotalChanges)) return FALSE;
-	if (!Comm.broadcast(x_, nTotalChanges)) return FALSE;
-	if (!Comm.broadcast(y_, nTotalChanges)) return FALSE;
-	if (!Comm.broadcast(z_, nTotalChanges)) return FALSE;
+	if (!Comm.broadcast(indices_, nTotalChanges)) return false;
+	if (!Comm.broadcast(x_, nTotalChanges)) return false;
+	if (!Comm.broadcast(y_, nTotalChanges)) return false;
+	if (!Comm.broadcast(z_, nTotalChanges)) return false;
 
 	// Apply atom changes
+	Atom** atoms = cfg.atomReferences();
 	for (int n=0; n<nTotalChanges; ++n)
 	{
 #ifdef CHECKS
-		if ((indices_[n] < 0) || (indices_[n] >= nAtoms))
+		if ((indices_[n] < 0) || (indices_[n] >= cfg.nAtoms()))
 		{
-			msg.print("OUT_OF_RANGE - Index of Atom change (%i) is out of range in ChangeStore::distribute() (nAtoms - %i).\n", indices_[n], nAtoms);
+			msg.print("OUT_OF_RANGE - Index of Atom change (%i) is out of range in ChangeStore::distribute() (nAtoms = %i).\n", indices_[n], cfg.nAtoms());
 			continue;
 		}
 #endif
-		atoms[indices_[n]].setCoordinates(x_[n], y_[n], z_[n]);
+		// Set new coordinates and check cell position
+		if (atoms[indices_[n]]->index() == Atom::UnusedAtom) continue;
+		atoms[indices_[n]]->setCoordinates(x_[n], y_[n], z_[n]);
+		cfg.updateAtomInCell(n);
+	}
+#else
+
+	// Apply atom changes
+	Atom** atoms = cfg.atomReferences();
+	for (int n=0; n<changes_.nItems(); ++n)
+	{
+#ifdef CHECKS
+		if ((changes_[n]->a < 0) || (changes_[n]->a >= cfg.nAtoms()))
+		{
+			msg.print("OUT_OF_RANGE - Index of Atom change (%i) is out of range in ChangeStore::distribute() (nAtoms = %i).\n", changes_[n]->a, cfg.nAtoms());
+			continue;
+		}
+#endif
+		// Set new coordinates and check cell position (Configuration::updateAtomInCell() will do all this)
+		if (atoms[changes_[n]->a]->index() == Atom::UnusedAtom) continue;
+		atoms[changes_[n]->a]->setCoordinates(changes_[n]->b.x, changes_[n]->b.y, changes_[n]->b.z);
+		cfg.updateAtomInCell(n);
 	}
 #endif
-	return TRUE;
+	return true;
 }

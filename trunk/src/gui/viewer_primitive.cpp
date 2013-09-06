@@ -88,12 +88,12 @@ int PrimitiveInstance::id()
 Primitive::Primitive()
 {
 	currentVertexChunk_ = NULL;
-	colouredVertexData_ = FALSE;
+	colouredVertexData_ = false;
 	type_ = GL_TRIANGLES;
 	prev = NULL;
 	next = NULL;
 	nDefinedVertices_ = 0;
-	useInstances_ = TRUE;
+	useInstances_ = true;
 	name_ = "<UnnamedPrimitive>";
 }
 
@@ -179,8 +179,8 @@ void Primitive::createWireCube(double size)
 		// Generate lines
 		for (j=0; j<3; ++j)
 		{
-			defineVertex(r[0], r[1], r[2], 1.0, 0.0, 0.0, TRUE);
-			defineVertex(j == 0 ? -r[0] : r[0], j == 1 ? -r[1] : r[1], j == 2 ? -r[2] : r[2], 1.0, 0.0, 0.0, TRUE);
+			defineVertex(r[0], r[1], r[2], 1.0, 0.0, 0.0, true);
+			defineVertex(j == 0 ? -r[0] : r[0], j == 1 ? -r[1] : r[1], j == 2 ? -r[2] : r[2], 1.0, 0.0, 0.0, true);
 		}
 	}
 }
@@ -199,15 +199,15 @@ void Primitive::createCrossedCube(double size)
 		{
 			// Determine single coordinate on positive face from which to determine all others
 			for (j = 0; j<3; ++j) r[j] = (j == i ? 0.55*size*sign : 0.4*size);
-			defineVertex(r[0], r[1], r[2], 1.0, 0.0, 0.0, TRUE);
+			defineVertex(r[0], r[1], r[2], 1.0, 0.0, 0.0, true);
 			r[(i+1)%3] = -r[(i+1)%3];
 			r[(i+2)%3] = -r[(i+2)%3];
-			defineVertex(r[0], r[1], r[2], 1.0, 0.0, 0.0, TRUE);
+			defineVertex(r[0], r[1], r[2], 1.0, 0.0, 0.0, true);
 			r[(i+1)%3] = -r[(i+1)%3];
-			defineVertex(r[0], r[1], r[2], 1.0, 0.0, 0.0, TRUE);
+			defineVertex(r[0], r[1], r[2], 1.0, 0.0, 0.0, true);
 			r[(i+1)%3] = -r[(i+1)%3];
 			r[(i+2)%3] = -r[(i+2)%3];
-			defineVertex(r[0], r[1], r[2], 1.0, 0.0, 0.0, TRUE);
+			defineVertex(r[0], r[1], r[2], 1.0, 0.0, 0.0, true);
 		}
 	}
 }
@@ -235,7 +235,7 @@ bool Primitive::colouredVertexData()
 // Flag that this primitive should not use instances (rendering will use vertex arrays)
 void Primitive::setNoInstances()
 {
-	useInstances_ = FALSE;
+	useInstances_ = false;
 }
 
 // Push instance of primitive

@@ -42,6 +42,10 @@ class Data2D : public ListItem<Data2D>
 	Data2D(const Data2D& source);
 	// Clear data
 	void clear();
+	
+	private:
+	// Whether to use local FFT code over DFT
+	static bool useFFT_;
 
 
 	/*!
@@ -155,7 +159,7 @@ class Data2D : public ListItem<Data2D>
 
 	public:
 	// Perform plain Fourier transform of real data
-	bool fourierTransformReal(bool forwardTransform = TRUE, Data2D::WindowFunction wf = Data2D::NoWindow);
+	bool fourierTransformReal(bool forwardTransform = true, Data2D::WindowFunction wf = Data2D::NoWindow);
 	// Transform g(r) to S(Q)
 	bool transformRDF(double atomicDensity, Data2D::WindowFunction wf = Data2D::NoWindow);
 	// Transform g(r) to S(Q), applying instrumental broadening functions
@@ -181,7 +185,7 @@ class Data2D : public ListItem<Data2D>
 
 	public:
 	// Calculate natural spline interpolation of current data
-	void interpolate(bool constrained = TRUE);
+	void interpolate(bool constrained = true);
 	// Return spline interpolated y value for supplied x
 	double interpolated(double xvalue);
 	// Smooth data

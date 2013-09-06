@@ -22,9 +22,10 @@
 #include "main/duq.h"
 #include "classes/box.h"
 #include "classes/cell.h"
+#include "classes/changestore.h"
 #include "classes/energykernel.h"
 #include "classes/molecule.h"
-#include "classes/changestore.h"
+#include "classes/species.h"
 #include "base/comms.h"
 #include "base/timer.h"
 
@@ -49,21 +50,21 @@ CommandReturnValue DUQ::twist(Configuration& cfg)
 
 	double delta, currentEnergy, newEnergy;
 	Vec3<double> vec, centre;
-	int n, nAtoms, term, terminus, nTries = 0, nAccepted = 0, rootIndex;
+	int n, nAttachedAtoms, terminus, nTries = 0, nAccepted = 0, rootIndex;
 	Matrix3 rotation;
-	Atom** connectedAtoms;
-	Bond* b;
+	int* attachedIndices;
+	Atom* i, *j, *l;
 
 	// Create a local ChangeStore and EnergyKernel
 	ChangeStore changeStore;
-	EnergyKernel kernel(cfg.box(), potentialMap_);
+	EnergyKernel kernel(cfg, potentialMap_);
 
 	// Initialise the random number buffer
 	Comm.initialiseRandomBuffer(DUQComm::World);
 
 	// TODO This can be rewritten to calculate a local reference energy for each Grain in the Molecule and a Molecular inter-Grain energy.
 	// Then, as atoms are selected and twisted all we need to calculate is the difference in energy for the Grains that have moved, and the
-	// Molecular inter-Grain energy. Construct and maintain a RefList of Grains within the Molecule, with a boolean data to indicate Grain movement.
+	// Molecular inter-Grain energy. Construct and maintain a RefList of Grains within the Molecule, with a boolean datum to indicate Grain movement.
 	
 	// Loop over Molecules in sequence - energy will be calculated in parallel
 	Comm.resetAccumulatedTime();
@@ -80,30 +81,33 @@ CommandReturnValue DUQ::twist(Configuration& cfg)
 		rootIndex = mol->atom(0)->index();
 
 		// Loop over Bonds
-		RefList<Bond,int>& bonds = mol->bonds();
-		for (term=0; term<bonds.nItems(); ++term)
+		for (SpeciesBond* b = mol->species()->bonds(); b != NULL; b = b->next)
 		{
-			b = bonds[term]->item;
+			// Grab atom pointers involved in the bond
+			i = mol->atom(b->indexI());
+			j = mol->atom(b->indexJ());
 
 			// Shift the fewest Atoms possible...
 			terminus = b->nAttached(0) > b->nAttached(1) ? 1 : 0;
-			nAtoms = b->nAttached(terminus);
-			if (nAtoms < 2) continue;
-			connectedAtoms = b->attached(terminus);
+			nAttachedAtoms = b->nAttached(terminus);
+			if (nAttachedAtoms < 2) continue;
+			attachedIndices = b->attachedIndices(terminus);
 			++nTries;
 			
 			// Get bond vector
-			if (cfg.box()->useMim(b->i()->grain()->cell(), b->j()->grain()->cell())) vec = cfg.box()->minimumVector(b->i(), b->j());
-			else vec = b->j()->r() - b->i()->r();
+			if (configuration_.useMim(i->grain()->cell(), j->grain()->cell())) vec = cfg.box()->minimumVector(i, j);
+			else vec = j->r() - i->r();
 			vec.normalise();
 
-			rotation.createRotationAxis(vec.x, vec.y, vec.z, Comm.randomPlusMinusOne()*180.0, FALSE);
-			for (n=0; n<nAtoms; ++n)
+			rotation.createRotationAxis(vec.x, vec.y, vec.z, Comm.randomPlusMinusOne()*180.0, false);
+			for (n=0; n< nAttachedAtoms; ++n)
 			{
+				l = mol->atom(attachedIndices[n]);
+
 				// Apply MIM to coordinates?
-				if (cfg.box()->useMim(b->j()->grain()->cell(), connectedAtoms[n]->grain()->cell())) centre = cfg.box()->minimumImage(b->j(), connectedAtoms[n]);
-				else centre = b->j()->r();
-				connectedAtoms[n]->setCoordinates(rotation * (connectedAtoms[n]->r() - centre) + centre);
+				if (configuration_.useMim(j->grain()->cell(), l->grain()->cell())) centre = cfg.box()->minimumImage(j, l);
+				else centre = j->r();
+				l->setCoordinates(rotation * (l->r() - centre) + centre);
 			}
 
 			// Test energy again
@@ -113,11 +117,11 @@ CommandReturnValue DUQ::twist(Configuration& cfg)
 			if ((delta < 0) || (Comm.random() < exp(-delta/(.008314472*temperature_))))
 			{
 // 				printf("Accepted move with current = %f, new = %f, delta = %f\n", currentEnergy, newEnergy, delta);
-				changeStore.updateAtomsRelative(nAtoms, connectedAtoms, rootIndex);
+				changeStore.updateAtomsLocal(nAttachedAtoms, attachedIndices);
 				currentEnergy = newEnergy;
 				++nAccepted;
 			}
-			else changeStore.revert();
+			else changeStore.revertAll();
 		}
 
 		// Serial method with parallel energy, so all processes already have new coordinates

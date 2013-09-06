@@ -112,26 +112,26 @@ void Primitive::defineVertex(Vec3<double> &v, Vec3<double> &u, GLfloat* colour, 
 void Primitive::defineTriangle(GLfloat* vertices, GLfloat* normals, GLfloat* colour)
 {
 	// Add vertices to list
-	defineVertex(vertices[0], vertices[1], vertices[2], normals[0], normals[1], normals[2], colour[0], colour[1], colour[2], colour[3], FALSE);
-	defineVertex(vertices[3], vertices[4], vertices[5], normals[3], normals[4], normals[5], colour[4], colour[5], colour[6], colour[7], FALSE);
-	defineVertex(vertices[6], vertices[7], vertices[8], normals[6], normals[7], normals[8], colour[8], colour[9], colour[10], colour[11], FALSE);
+	defineVertex(vertices[0], vertices[1], vertices[2], normals[0], normals[1], normals[2], colour[0], colour[1], colour[2], colour[3], false);
+	defineVertex(vertices[3], vertices[4], vertices[5], normals[3], normals[4], normals[5], colour[4], colour[5], colour[6], colour[7], false);
+	defineVertex(vertices[6], vertices[7], vertices[8], normals[6], normals[7], normals[8], colour[8], colour[9], colour[10], colour[11], false);
 }
 
 // Define triangle with same-coloured vertices
 void Primitive::defineTriangleSingleColour(GLfloat* vertices, GLfloat* normals, GLfloat* colour)
 {
 	// Add vertices to list
-	defineVertex(vertices[0], vertices[1], vertices[2], normals[0], normals[1], normals[2], colour[0], colour[1], colour[2], colour[3], FALSE);
-	defineVertex(vertices[3], vertices[4], vertices[5], normals[3], normals[4], normals[5], colour[0], colour[1], colour[2], colour[3], FALSE);
-	defineVertex(vertices[6], vertices[7], vertices[8], normals[6], normals[7], normals[8], colour[0], colour[1], colour[2], colour[3], FALSE);
+	defineVertex(vertices[0], vertices[1], vertices[2], normals[0], normals[1], normals[2], colour[0], colour[1], colour[2], colour[3], false);
+	defineVertex(vertices[3], vertices[4], vertices[5], normals[3], normals[4], normals[5], colour[0], colour[1], colour[2], colour[3], false);
+	defineVertex(vertices[6], vertices[7], vertices[8], normals[6], normals[7], normals[8], colour[0], colour[1], colour[2], colour[3], false);
 }
 
 // Plot simple line between specified coordinates
 void Primitive::plotLine(GLfloat x1, GLfloat y1, GLfloat z1, GLfloat x2, GLfloat y2, GLfloat z2)
 {
 	type_ = GL_LINES;
-	defineVertex(x1,y1,z1,0.0f,0.0f,1.0f,FALSE);
-	defineVertex(x2,y2,z2,0.0f,0.0f,1.0f,FALSE);
+	defineVertex(x1,y1,z1,0.0f,0.0f,1.0f,false);
+	defineVertex(x2,y2,z2,0.0f,0.0f,1.0f,false);
 }
 
 // Create vertices of sphere with specified radius and quality
@@ -164,18 +164,18 @@ void Primitive::plotSphere(double radius, int nstacks, int nslices)
 			// N.B Don't plot if i == 1, to avoid overlapping with subsequent vertices in this pass
 			if (i > 1)
 			{
-				defineVertex(x0 * zr0 * radius, y0 * zr0 * radius, z0 * radius, x0 * zr0, y0 * zr0, z0, TRUE);
-				defineVertex(x0 * zr1 * radius, y0 * zr1 * radius, z1 * radius, x0 * zr1, y0 * zr1, z1, TRUE);
-				defineVertex(x1 * zr0 * radius, y1 * zr0 * radius, z0 * radius, x1 * zr0, y1 * zr0, z0, TRUE);
+				defineVertex(x0 * zr0 * radius, y0 * zr0 * radius, z0 * radius, x0 * zr0, y0 * zr0, z0, true);
+				defineVertex(x0 * zr1 * radius, y0 * zr1 * radius, z1 * radius, x0 * zr1, y0 * zr1, z1, true);
+				defineVertex(x1 * zr0 * radius, y1 * zr0 * radius, z0 * radius, x1 * zr0, y1 * zr0, z0, true);
 			}
 			
 			// Second triangle - {x0,y0,z0},{x0,y0,z1},{x1,y1,z0}
 			// N.B. Don't plot if i == nstacks, to avoid overlapping with previous vertices in this pass
 			if (i < nstacks)
 			{
-				defineVertex(x0 * zr1 * radius, y0 * zr1 * radius, z1 * radius, x0 * zr1, y0 * zr1, z1, TRUE);
-				defineVertex(x1 * zr0 * radius, y1 * zr0 * radius, z0 * radius, x1 * zr0, y1 * zr0, z0, TRUE);
-				defineVertex(x1 * zr1 * radius, y1 * zr1 * radius, z1 * radius, x1 * zr1, y1 * zr1, z1, TRUE);
+				defineVertex(x0 * zr1 * radius, y0 * zr1 * radius, z1 * radius, x0 * zr1, y0 * zr1, z1, true);
+				defineVertex(x1 * zr0 * radius, y1 * zr0 * radius, z0 * radius, x1 * zr0, y1 * zr0, z0, true);
+				defineVertex(x1 * zr1 * radius, y1 * zr1 * radius, z1 * radius, x1 * zr1, y1 * zr1, z1, true);
 			}
 		}
 	}
@@ -219,33 +219,33 @@ void Primitive::plotCylinder(GLfloat ox, GLfloat oy, GLfloat oz, GLfloat vx, GLf
 			// Triangle 1
 			if ((i > 1) || (startradius > 1.0e-5))
 			{
-				defineVertex(ox+vert[0].x, oy+vert[0].y, oz+vert[0].z, normal[0].x, normal[0].y, normal[0].z, TRUE);
-				defineVertex(ox+vert[1].x, oy+vert[1].y, oz+vert[1].z, normal[0].x, normal[0].y, normal[0].z, TRUE);
-				defineVertex(ox+vert[2].x, oy+vert[2].y, oz+vert[2].z, normal[1].x, normal[1].y, normal[1].z, TRUE);
+				defineVertex(ox+vert[0].x, oy+vert[0].y, oz+vert[0].z, normal[0].x, normal[0].y, normal[0].z, true);
+				defineVertex(ox+vert[1].x, oy+vert[1].y, oz+vert[1].z, normal[0].x, normal[0].y, normal[0].z, true);
+				defineVertex(ox+vert[2].x, oy+vert[2].y, oz+vert[2].z, normal[1].x, normal[1].y, normal[1].z, true);
 			}
  
 			// Triangle 2
 			if ((i < nstacks) || (endradius > 1.0e-5))
 			{
-				defineVertex(ox+vert[1].x, oy+vert[1].y, oz+vert[1].z, normal[0].x, normal[0].y, normal[0].z, TRUE);
-				defineVertex(ox+vert[2].x, oy+vert[2].y, oz+vert[2].z, normal[1].x, normal[1].y, normal[1].z, TRUE);
-				defineVertex(ox+vert[3].x, oy+vert[3].y, oz+vert[3].z, normal[1].x, normal[1].y, normal[1].z, TRUE);
+				defineVertex(ox+vert[1].x, oy+vert[1].y, oz+vert[1].z, normal[0].x, normal[0].y, normal[0].z, true);
+				defineVertex(ox+vert[2].x, oy+vert[2].y, oz+vert[2].z, normal[1].x, normal[1].y, normal[1].z, true);
+				defineVertex(ox+vert[3].x, oy+vert[3].y, oz+vert[3].z, normal[1].x, normal[1].y, normal[1].z, true);
 			}
 			
 			// Start cap
 			if ((i == 1) && (startradius > 1.0e-5) && capStart)
 			{
-				defineVertex(ox, oy, oz, -w.x, -w.y, -w.z, TRUE);
-				defineVertex(ox+vert[0].x, oy+vert[0].y, oz+vert[0].z, -w.x, -w.y, -w.z, TRUE);
-				defineVertex(ox+vert[2].x, oy+vert[2].y, oz+vert[2].z, -w.x, -w.y, -w.z, TRUE);
+				defineVertex(ox, oy, oz, -w.x, -w.y, -w.z, true);
+				defineVertex(ox+vert[0].x, oy+vert[0].y, oz+vert[0].z, -w.x, -w.y, -w.z, true);
+				defineVertex(ox+vert[2].x, oy+vert[2].y, oz+vert[2].z, -w.x, -w.y, -w.z, true);
 			}
 
 			// End cap
 			if ((i == nstacks) && (endradius > 1.0e-5) && capEnd)
 			{
-				defineVertex(ox+rj.x, oy+rj.y, oz+rj.z, w.x, w.y, w.z, TRUE);
-				defineVertex(ox+vert[1].x, oy+vert[1].y, oz+vert[1].z, w.x, w.y, w.z, TRUE);
-				defineVertex(ox+vert[3].x, oy+vert[3].y, oz+vert[3].z, w.x, w.y, w.z, TRUE);
+				defineVertex(ox+rj.x, oy+rj.y, oz+rj.z, w.x, w.y, w.z, true);
+				defineVertex(ox+vert[1].x, oy+vert[1].y, oz+vert[1].z, w.x, w.y, w.z, true);
+				defineVertex(ox+vert[3].x, oy+vert[3].y, oz+vert[3].z, w.x, w.y, w.z, true);
 			}
 		}
 	}
@@ -296,14 +296,14 @@ void Primitive::plotRing(double radius, double width, int nstacks, int nslices, 
 				vert[3] = normal[3]*width + r2;
 	
 				// Triangle 1
-				defineVertex(vert[0].x, vert[0].y, vert[0].z, normal[0].x, normal[0].y, normal[0].z, TRUE);
-				defineVertex(vert[1].x, vert[1].y, vert[1].z, normal[1].x, normal[1].y, normal[1].z, TRUE);
-				defineVertex(vert[2].x, vert[2].y, vert[2].z, normal[2].x, normal[2].y, normal[2].z, TRUE);
+				defineVertex(vert[0].x, vert[0].y, vert[0].z, normal[0].x, normal[0].y, normal[0].z, true);
+				defineVertex(vert[1].x, vert[1].y, vert[1].z, normal[1].x, normal[1].y, normal[1].z, true);
+				defineVertex(vert[2].x, vert[2].y, vert[2].z, normal[2].x, normal[2].y, normal[2].z, true);
 				
 				// Triangle 2
-				defineVertex(vert[1].x, vert[1].y, vert[1].z, normal[1].x, normal[1].y, normal[1].z, TRUE);
-				defineVertex(vert[2].x, vert[2].y, vert[2].z, normal[2].x, normal[2].y, normal[2].z, TRUE);
-				defineVertex(vert[3].x, vert[3].y, vert[3].z, normal[3].x, normal[3].y, normal[3].z, TRUE);
+				defineVertex(vert[1].x, vert[1].y, vert[1].z, normal[1].x, normal[1].y, normal[1].z, true);
+				defineVertex(vert[2].x, vert[2].y, vert[2].z, normal[2].x, normal[2].y, normal[2].z, true);
+				defineVertex(vert[3].x, vert[3].y, vert[3].z, normal[3].x, normal[3].y, normal[3].z, true);
 			}
 		}
 	}
@@ -336,8 +336,8 @@ void Primitive::plotCircle(double radius, int nstacks, int nsegments, bool segme
 			r1.set(cosphi1*radius, sinphi1*radius, 0.0);
 			r2.set(cosphi2*radius, sinphi2*radius, 0.0);
 	
-			defineVertex(r1.x, r1.y, r1.z, 0.0, 0.0, 1.0, TRUE);
-			defineVertex(r2.x, r2.y, r2.z, 0.0, 0.0, 1.0, TRUE);
+			defineVertex(r1.x, r1.y, r1.z, 0.0, 0.0, 1.0, true);
+			defineVertex(r2.x, r2.y, r2.z, 0.0, 0.0, 1.0, true);
 		}
 	}
 }
@@ -349,8 +349,8 @@ void Primitive::plotCross(double halfWidth, Matrix4& transform, GLfloat colour[4
 	for (int i=0; i<3; ++i)
 	{
 		v = transform.columnAsVec3(i) * halfWidth;
-		defineVertex(centre.x+v.x, centre.y+v.y, centre.z+v.z, 1.0, 1.0, 1.0, colour[0], colour[1], colour[2], colour[3], FALSE);
-		defineVertex(centre.x-v.x, centre.y-v.y, centre.z-v.z, 1.0, 1.0, 1.0, colour[0], colour[1], colour[2], colour[3], FALSE);
+		defineVertex(centre.x+v.x, centre.y+v.y, centre.z+v.z, 1.0, 1.0, 1.0, colour[0], colour[1], colour[2], colour[3], false);
+		defineVertex(centre.x-v.x, centre.y-v.y, centre.z-v.z, 1.0, 1.0, 1.0, colour[0], colour[1], colour[2], colour[3], false);
 	}
 }
 
@@ -397,21 +397,21 @@ void Primitive::plotOrthorhomboid(double sizex, double sizey, double sizez, int 
 				vertex[1] = offset[1] + i*veca[1] + j*vecb[1];
 				vertex[2] = offset[2] + i*veca[2] + j*vecb[2];
 				// Define triangle vertices for 'lower' plane
-				defineVertex(vertex[0], vertex[1], vertex[2], plane == 0, -1*(plane == 1), -1*(plane == 2), TRUE);
-				defineVertex(vertex[0]+veca[0], vertex[1]+veca[1], vertex[2]+veca[2], plane == 0, -1*(plane == 1), -1*(plane == 2), TRUE);
-				defineVertex(vertex[0]+veca[0]+vecb[0], vertex[1]+veca[1]+vecb[1], vertex[2]+veca[2]+vecb[2], plane == 0, -1*(plane == 1), -1*(plane == 2), TRUE);
-				defineVertex(vertex[0], vertex[1], vertex[2], plane == 0, -1*(plane == 1), -1*(plane == 2), TRUE);
-				defineVertex(vertex[0]+vecb[0], vertex[1]+vecb[1], vertex[2]+vecb[2], plane == 0, -1*(plane == 1), -1*(plane == 2), TRUE);
-				defineVertex(vertex[0]+veca[0]+vecb[0], vertex[1]+veca[1]+vecb[1], vertex[2]+veca[2]+vecb[2], plane == 0, -1*(plane == 1), -1*(plane == 2), TRUE);
+				defineVertex(vertex[0], vertex[1], vertex[2], plane == 0, -1*(plane == 1), -1*(plane == 2), true);
+				defineVertex(vertex[0]+veca[0], vertex[1]+veca[1], vertex[2]+veca[2], plane == 0, -1*(plane == 1), -1*(plane == 2), true);
+				defineVertex(vertex[0]+veca[0]+vecb[0], vertex[1]+veca[1]+vecb[1], vertex[2]+veca[2]+vecb[2], plane == 0, -1*(plane == 1), -1*(plane == 2), true);
+				defineVertex(vertex[0], vertex[1], vertex[2], plane == 0, -1*(plane == 1), -1*(plane == 2), true);
+				defineVertex(vertex[0]+vecb[0], vertex[1]+vecb[1], vertex[2]+vecb[2], plane == 0, -1*(plane == 1), -1*(plane == 2), true);
+				defineVertex(vertex[0]+veca[0]+vecb[0], vertex[1]+veca[1]+vecb[1], vertex[2]+veca[2]+vecb[2], plane == 0, -1*(plane == 1), -1*(plane == 2), true);
 
 				// Define trangle vertices for 'upper' plane
 				vertex[plane] += sizes[plane];
-				defineVertex(vertex[0], vertex[1], vertex[2], plane == 0, plane == 1, plane == 2, TRUE);
-				defineVertex(vertex[0]+veca[0], vertex[1]+veca[1], vertex[2]+veca[2], plane == 0, plane == 1, plane == 2, TRUE);
-				defineVertex(vertex[0]+veca[0]+vecb[0], vertex[1]+veca[1]+vecb[1], vertex[2]+veca[2]+vecb[2], plane == 0, plane == 1, plane == 2, TRUE);
-				defineVertex(vertex[0], vertex[1], vertex[2], plane == 0, plane == 1, plane == 2, TRUE);
-				defineVertex(vertex[0]+vecb[0], vertex[1]+vecb[1], vertex[2]+vecb[2], plane == 0, plane == 1, plane == 2, TRUE);
-				defineVertex(vertex[0]+veca[0]+vecb[0], vertex[1]+veca[1]+vecb[1], vertex[2]+veca[2]+vecb[2], plane == 0, plane == 1, plane == 2, TRUE);
+				defineVertex(vertex[0], vertex[1], vertex[2], plane == 0, plane == 1, plane == 2, true);
+				defineVertex(vertex[0]+veca[0], vertex[1]+veca[1], vertex[2]+veca[2], plane == 0, plane == 1, plane == 2, true);
+				defineVertex(vertex[0]+veca[0]+vecb[0], vertex[1]+veca[1]+vecb[1], vertex[2]+veca[2]+vecb[2], plane == 0, plane == 1, plane == 2, true);
+				defineVertex(vertex[0], vertex[1], vertex[2], plane == 0, plane == 1, plane == 2, true);
+				defineVertex(vertex[0]+vecb[0], vertex[1]+vecb[1], vertex[2]+vecb[2], plane == 0, plane == 1, plane == 2, true);
+				defineVertex(vertex[0]+veca[0]+vecb[0], vertex[1]+veca[1]+vecb[1], vertex[2]+veca[2]+vecb[2], plane == 0, plane == 1, plane == 2, true);
 			}
 		}
 	}

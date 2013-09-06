@@ -40,7 +40,7 @@ template <class D> class CheckPoint : public ListItem< CheckPoint<D> >
 	{
 		source_ = NULL;
 		nUpdates_ = 0;
-		staticData_ = FALSE;
+		staticData_ = false;
 	};
 
 
@@ -57,14 +57,14 @@ template <class D> class CheckPoint : public ListItem< CheckPoint<D> >
 	dUQMutex mutex_;
 	// Number of times the data has been updated
 	int nUpdates_;
-	// Whether the data should be continuously updated (TRUE) or is static (FALSE)
+	// Whether the data should be continuously updated (true) or is static (false)
 	bool staticData_;
 	// Group name (if any) for this data
 	Dnchar groupName_;
 	
 	public:
 	// Set source data
-	void setSource(D* source, const char* groupName = NULL, bool staticData = FALSE)
+	void setSource(D* source, const char* groupName = NULL, bool staticData = false)
 	{
 		source_ = source;
 		staticData_ = staticData;
@@ -72,7 +72,7 @@ template <class D> class CheckPoint : public ListItem< CheckPoint<D> >
 	}
 
 	// Set source data (from reference)
-	void setSource(D& source, const char* groupName = NULL, bool staticData = FALSE)
+	void setSource(D& source, const char* groupName = NULL, bool staticData = false)
 	{
 		setSource(&source, groupName, staticData);
 	}

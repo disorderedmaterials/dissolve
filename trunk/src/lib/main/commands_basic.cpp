@@ -153,7 +153,7 @@ CommandReturnValue DUQ::commandMultiplier(Configuration& cfg)
 
 	// Print a warning
 	// Get string from user and parse it
-	bool response = getBooleanResponse("WARNING - Changing the system multiplier will destroy the current configuration. Continue (Y/n)?", TRUE, TRUE);
+	bool response = getBooleanResponse("WARNING - Changing the system multiplier will destroy the current configuration. Continue (Y/n)?", true, true);
 	if (!response) return CommandSuccess;
 
 	// Proceed...
@@ -369,22 +369,22 @@ CommandReturnValue DUQ::commandSet(Configuration& cfg)
 CommandReturnValue DUQ::commandShake(Configuration& cfg)
 {
 	// Get loop type
-	bool result, convergeCheck = FALSE, rmseCheck = FALSE;
+	bool result, convergeCheck = false, rmseCheck = false;
 	Dnchar text = commandArgumentAsConstChar("shake", "loop", result);
 	if (!result) return CommandFail;
 	if (!text.isEmpty())
 	{
-		if (text == "rmse") rmseCheck = TRUE;
-		else if (text == "energy") rmseCheck = FALSE;
-		else if (text == "<none>") convergeCheck = FALSE;
+		if (text == "rmse") rmseCheck = true;
+		else if (text == "energy") rmseCheck = false;
+		else if (text == "<none>") convergeCheck = false;
 		else
 		{
 			msg.error("Loop type '%s' not recognised.\n", text.get());
 			return CommandFail;
 		}
-		convergeCheck = TRUE;
+		convergeCheck = true;
 	}
-	else convergeCheck = FALSE;
+	else convergeCheck = false;
 	
 	// Loop variables (might not be used)
 	static Array<double> rmse, energyDelta;
@@ -394,7 +394,7 @@ CommandReturnValue DUQ::commandShake(Configuration& cfg)
 	do
 	{
 		// Reset repeat flag
-		repeat = FALSE;
+		repeat = false;
 
 		// Execute shakeSteps_ commands
 		CommandReturnValue returnValue = executeSteps(shakeSteps_.first());
@@ -416,7 +416,7 @@ CommandReturnValue DUQ::commandShake(Configuration& cfg)
 			if (data.nItems() < length)
 			{
 				msg.print("--> (Shake) Not enough points for convergence check (have %i, but need %i) so repeating shake...\n", data.nItems(), length);
-				repeat = TRUE;
+				repeat = true;
 			}
 			else
 			{
@@ -426,12 +426,12 @@ CommandReturnValue DUQ::commandShake(Configuration& cfg)
 				if (delta < 0)
 				{
 					msg.print("--> (Shake) Gradient is still negative, so continuing shake.\n");
-					repeat = TRUE;
+					repeat = true;
 				}
 				else
 				{
 					msg.print("--> (Shake) Gradient is positive, so discontinuing shake loop.\n");
-					repeat = FALSE;
+					repeat = false;
 					
 					// Reset the array here, ready for next time
 					data.clear();

@@ -63,13 +63,19 @@ DATE=`date "+%a %d %b - %H:%M"`
 
 # Change URL revision information
 echo "Setting revision information..."
+MAJOR=$(( REVISION/100 ))
+MINOR=`printf "%02i" $(( REVISION%100 ))`
 
 if [ "$TEST" = "false" ]
 then
   sed -i -e "s/#define DUQREVISION \"[0-9\.]\+\(.*\)\"/#define DUQREVISION \"$REVISION\"/g" -e "s/#define DUQDATE \".\+\"/#define DUQDATE \"$DATE\"/g" src/version.h
-  sed -i -e "s/m4_define(\[DUQ_VERSION\],\[.\+\])/m4_define([DUQ_VERSION],[r$REVISION])/g" configure.ac
+  sed -i -e "s/#define DUQVERSION \"[0-9\.]\+\(.*\)\"/#define DUQVERSION \"$MAJOR.$MINOR\"/g" src/version.h
+  sed -i -e "s/m4_define(\[DUQ_VERSION\],\[.\+\])/m4_define([DUQ_VERSION],[$MAJOR.$MINOR])/g" configure.ac
 else
-  sed -e "s/#define DUQREVISION \"[0-9\.]\+\(.*\)\"/#define DUQREVISION \"$REVISION\"/g" -e "s/#define DUQDATE \".\+\"/#define DUQDATE \"$DATE\"/g" src/version.h
+  sed -e "s/#define DUQREVISION \"[0-9\.]\+\(.*\)\"/#define DUQREVISION \"$REVISION\"/g" src/version.h | grep DUQREVISION
+  sed -e "s/#define DUQDATE \".\+\"/#define DUQDATE \"$DATE\"/g" src/version.h | grep DUQDATE
+  sed -e "s/#define DUQVERSION \"[0-9\.]\+\(.*\)\"/#define DUQVERSION \"$MAJOR.$MINOR\"/g" src/version.h | grep DUQVERSION
+  sed -e "s/m4_define(\[DUQ_VERSION\],\[.\+\])/m4_define([DUQ_VERSION],[$MAJOR.$MINOR])/g" configure.ac | grep DUQ_VERSION
 fi
 
 # If this was just a test we're done at this point

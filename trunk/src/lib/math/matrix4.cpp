@@ -264,7 +264,7 @@ void Matrix4::invert()
 	{
 		pivotrows[n] = 0;
 		pivotcols[n] = 0;
-		pivoted[n] = FALSE;
+		pivoted[n] = false;
 	}
 	// Loop over columns to be reduced
 	for (n=0; n<4; ++n)
@@ -291,7 +291,7 @@ void Matrix4::invert()
 		}
 		
 		// Mark the pivot row/column as changed
-		pivoted[pivotcol] = TRUE;
+		pivoted[pivotcol] = true;
 		pivotrows[n] = pivotrow;
 		pivotcols[n] = pivotcol;
 		

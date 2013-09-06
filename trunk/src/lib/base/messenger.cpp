@@ -50,10 +50,10 @@ void OutputHandler::printText(char* text)
 Messenger::Messenger()
 {
 	// Private variables
-	quiet_ = FALSE;
-	verbose_ = FALSE;
-	redirect_ = FALSE;
-	masterOnly_ = FALSE;
+	quiet_ = false;
+	verbose_ = false;
+	redirect_ = false;
+	masterOnly_ = false;
 
 	// Set basicOutputHandler_ as default target
 	targetOutputHandler_ = &basicOutputHandler_;
@@ -92,13 +92,13 @@ void Messenger::createAndPrintText(const char* indentText, const char* format, v
 	Dnchar newFormat;
 	if (indentText != NULL)
 	{
-		if (Comm.nProcesses() > 1) newFormat.sprintf("[%i] %s\n[%i]%s %s[%i]%s\n", Comm.rank(), indentText, Comm.rank(), indentText, format, Comm.rank(), indentText);
-		else newFormat.sprintf("%s\n%s %s%s\n", indentText, indentText, format, indentText);
+		if (redirect_ || (Comm.nProcesses() == 1)) newFormat.sprintf("%s\n%s %s%s\n", indentText, indentText, format, indentText);
+		else newFormat.sprintf("[%i] %s\n[%i]%s %s[%i]%s\n", Comm.rank(), indentText, Comm.rank(), indentText, format, Comm.rank(), indentText);
 	}
 	else
 	{
-		if (Comm.nProcesses() > 1) newFormat.sprintf("[%i] %s", Comm.rank(), format);
-		else newFormat = format;
+		if (redirect_ || (Comm.nProcesses() == 1)) newFormat = format;
+		else newFormat.sprintf("[%i] %s", Comm.rank(), format);
 	}
 
 	// Parse the argument list (...) and internally write the output string into text[]
@@ -161,13 +161,13 @@ void Messenger::warn(const char* fmt, ...)
  */
 bool Messenger::enableRedirect(const char* fileName)
 {
-	parser_.openOutput(fileName, TRUE);
+	parser_.openOutput(fileName, true);
 	if (!parser_.isFileGoodForWriting())
 	{
 		msg.print("Couldn't open output file '%s' for writing.\n", fileName);
-		return FALSE;
+		return false;
 	}
 	
-	redirect_ = TRUE;
-	return TRUE;
+	redirect_ = true;
+	return true;
 }

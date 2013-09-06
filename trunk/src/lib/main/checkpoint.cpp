@@ -30,11 +30,14 @@ void DUQ::setupCheckPointData()
 	// Master only
 	if (Comm.slave()) return;
 
+	// Clear existing data
+	for (int n=0; n<DUQ::nCheckPointData2DTypes; ++n) checkPointData2D_[n].clear();
+
 	// PairPotentials
 	msg.print("--> PairPotentials...\n");
 	for (PairPotential* pp = pairPotentials_.first(); pp != NULL; pp = pp->next)
 	{
-		checkPointData2D_[DUQ::CheckPointOriginalU].add()->setSource(pp->originalU(), "Energy (Original)", TRUE);
+		checkPointData2D_[DUQ::CheckPointOriginalU].add()->setSource(pp->originalU(), "Energy (Original)", true);
 		checkPointData2D_[DUQ::CheckPointDU].add()->setSource(pp->dU(), "Force (Full)");
 		checkPointData2D_[DUQ::CheckPointU].add()->setSource(pp->u(), "Energy (Full)");
 		checkPointData2D_[DUQ::CheckPointV].add()->setSource(pp->v(), "Energy (Perturbation)");
@@ -58,7 +61,7 @@ void DUQ::setupCheckPointData()
 		checkPointData2D_[DUQ::CheckPointFQ].add()->setSource(sam->totalFQ(), "Simulated");
 
 		// Add static reference data
-		checkPointData2D_[DUQ::CheckPointFQ].add()->setSource(sam->referenceFQ(), "Reference", TRUE);
+		checkPointData2D_[DUQ::CheckPointFQ].add()->setSource(sam->referenceFQ(), "Reference", true);
 		
 		// Add difference data
 		checkPointData2D_[DUQ::CheckPointFQ].add()->setSource(sam->differenceFQ(), "Difference");

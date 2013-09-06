@@ -20,8 +20,8 @@
 */
 
 #include "main/duq.h"
+#include "main/flags.h"
 #include "classes/species.h"
-#include "base/flag.h"
 
 /*
 // System Composition
@@ -45,7 +45,7 @@ void DUQ::setMultiplier(int mult)
 {
 	multiplier_ = mult;
 	
-	SET_MODIFIED
+	Flags::wave(Flags::SystemChanged);
 }
 
 /*!
@@ -62,7 +62,9 @@ int DUQ::multiplier() const
 void DUQ::setAtomicDensity(double density)
 {
 	density_ = density;
-	densityIsAtomic_ = TRUE;
+	densityIsAtomic_ = true;
+	
+	Flags::wave(Flags::SystemChanged);
 }
 
 /*!
@@ -71,7 +73,9 @@ void DUQ::setAtomicDensity(double density)
 void DUQ::setChemicalDensity(double density)
 {
 	density_ = density;
-	densityIsAtomic_ = FALSE;
+	densityIsAtomic_ = false;
+
+	Flags::wave(Flags::SystemChanged);
 }
 
 /*!
@@ -120,6 +124,8 @@ double DUQ::atomicDensity() const
 void DUQ::setRelativeBoxLengths(const Vec3<double> lengths)
 {
 	relativeBoxLengths_ = lengths;
+
+	Flags::wave(Flags::SystemChanged);
 }
 
 /*!
@@ -136,6 +142,8 @@ Vec3<double> DUQ::relativeBoxLengths() const
 void DUQ::setBoxAngles(const Vec3<double> angles)
 {
 	boxAngles_ = angles;
+
+	Flags::wave(Flags::SystemChanged);
 }
 
 /*!

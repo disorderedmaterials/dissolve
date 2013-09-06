@@ -64,23 +64,22 @@ CommandReturnValue DUQ::atomShake(Configuration& cfg)
 	cutoffSq *= cutoffSq;
 
 	// Initialise the Cell distributor
-	const bool willBeModified = TRUE, allowRepeats = FALSE;
+	const bool willBeModified = true, allowRepeats = false;
 	cfg.initialiseCellDistribution();
 
 	// Create a local ChangeStore and EnergyKernel
 	ChangeStore changeStore;
-	EnergyKernel kernel(cfg.box(), potentialMap_);
+	EnergyKernel kernel(cfg, potentialMap_);
 
 	// Initialise the random number buffer
 	Comm.initialiseRandomBuffer(DUQComm::Group);
 
 	// Enter calculation loop until no more Cells are available
-	int cellId, n, shake, m;
+	int cellId, shake, n;
 	int nTries = 0, nAccepted = 0;
 	bool accept;
-	double currentEnergy, newEnergy, delta, totalDelta = 0.0;
+	double currentEnergy, intraEnergy, newEnergy, newIntraEnergy, delta, totalDelta = 0.0;
 	Cell* cell;
-	Atom* i;
 	Grain* grainI;
 	Vec3<double> centre, rDelta;
 
@@ -92,75 +91,77 @@ CommandReturnValue DUQ::atomShake(Configuration& cfg)
 		if (cellId == Cell::NoCellsAvailable)
 		{
 			// No valid cell, but still need to enter into change distribution with other processes
-			changeStore.distribute(cfg.nAtoms(), cfg.atoms());
+			changeStore.distribute(cfg);
 			cfg.finishedWithCell(willBeModified, cellId);
 			continue;
 		}
-		cell = cfg.box()->cell(cellId);
+		cell = cfg.cell(cellId);
 		msg.printVerbose("Cell %i now the target, containing %i Grains interacting with %i neighbours.\n", cellId, cell->nGrains(), cell->nNeighbours());
 
 		/*
-		 * Calculation Begin
+		 * Calculation Begins
 		 */
 
-		for (n=0; n<cell->nGrains(); ++n)
+		// Set current atom targets in ChangeStore (entire cell contents)
+		changeStore.add(cell);
+
+		// Loop over atoms in this cell
+		for (n = 0; n < cell->maxAtoms(); ++n)
 		{
-			// Get current Grain and loop over Atoms
-			grainI = cell->grain(n);
-			nTries += grainI->nAtoms() * nShakesPerAtom;
+			// Check for unused atom
+			Atom& i = cell->atomReference(n);
+			if (i.index() == Atom::UnusedAtom) continue;
 
-			// Calculate current reference energy - base it on the current Grain since this is a convenient unit
-			currentEnergy = kernel.energy(grainI, cell->neighbours(), cutoffSq, FALSE, DUQComm::Group);
-			currentEnergy += kernel.energy(grainI, cell, cutoffSq, FALSE, FALSE, DUQComm::Group);
-			// -- Add on all internal/connection terms associated with the Grain
-			currentEnergy += kernel.fullIntraEnergy(grainI, termScale);
+			// Get the atom's grain pointer
+			grainI = i.grain();
 
-			for (m=0; m<grainI->nAtoms(); ++m)
+			// Calculate reference intramolecular energy for atom, including intramolecular terms through the atom's grain
+			currentEnergy = kernel.energy(i, cell, false, DUQComm::Group);
+			for (RefListItem<Cell,bool>* ri = cell->neighbours().first(); ri != NULL; ri = ri->next) currentEnergy += kernel.energy(i, ri->item, ri->data, DUQComm::Group);
+			intraEnergy = kernel.fullIntraEnergy(grainI, termScale);
+
+			// Loop over number of shakes per atom
+			for (shake=0; shake<nShakesPerAtom; ++shake)
 			{
-				i = grainI->atom(m);
+				// Create a random translation vector
+				rDelta.set(Comm.randomPlusMinusOne()*translationStep, Comm.randomPlusMinusOne()*translationStep, Comm.randomPlusMinusOne()*translationStep);
 
-				// Set current Grain as target in ChangeStore
-				changeStore.add(grainI);
+				// Translate atom and calculate new energy
+				i.translateCoordinates(rDelta);
+				newEnergy = kernel.energy(i, cell, false, DUQComm::Group);
+				for (RefListItem<Cell,bool>* ri = cell->neighbours().first(); ri != NULL; ri = ri->next) newEnergy += kernel.energy(i, ri->item, ri->data, DUQComm::Group);
+				newIntraEnergy = kernel.fullIntraEnergy(grainI, termScale);
 
-				// Loop over number of shakes per Grain
-				for (shake=0; shake<nShakesPerAtom; ++shake)
+				// Trial the transformed atom position
+				delta = (newEnergy + newIntraEnergy) - (currentEnergy - intraEnergy);
+				accept = delta < 0 ? true : (Comm.random() < exp(-delta/(.008314472*temperature_)));
+
+				if (accept)
 				{
-					// Create a random translation vector
-					rDelta.set(Comm.randomPlusMinusOne()*translationStep, Comm.randomPlusMinusOne()*translationStep, Comm.randomPlusMinusOne()*translationStep);
-
-					// Translate atom and calculate new energy
-					i->translateCoordinates(rDelta);
-					newEnergy = kernel.energy(grainI, cell->neighbours(), cutoffSq, FALSE, DUQComm::Group);
-					newEnergy += kernel.energy(grainI, cell, cutoffSq, FALSE, FALSE, DUQComm::Group);
-					newEnergy += kernel.fullIntraEnergy(grainI, termScale);
-
-					// Trial the transformed Grain position (the Master is in charge of this)
-					delta = newEnergy - currentEnergy;
-					accept = delta < 0 ? TRUE : (Comm.random() < exp(-delta/(.008314472*temperature_)));
-
-					if (accept)
-					{
-	// 					msg.print("Accepts move with delta %f\n", delta);
-						// Accept new (current) position of target Grain
-						changeStore.updateAtomsLocal(1, &m);
-						currentEnergy = newEnergy;
-						totalDelta += delta;
-						++nAccepted;
-					}
-					else changeStore.revert();
+// 					msg.print("Accepts move with delta %f\n", delta);
+					// Accept new (current) position of target Grain
+					changeStore.updateAtom(n);
+					currentEnergy = newEnergy;
+					intraEnergy = newIntraEnergy;
+					totalDelta += delta;
+					++nAccepted;
 				}
+				else changeStore.revert(n);
+				
+				++nTries;
 			}
 
-			// Store modifications to Atom positions ready for broadcast later
-			changeStore.storeAndReset();
 		}
+
+		// Store modifications to Atom positions ready for broadcast later
+		changeStore.storeAndReset();
 
 		/*
 		 * Calculation End
 		 */
 
 		// Distribute coordinate changes to all processes
-		changeStore.distribute(cfg.nAtoms(), cfg.atoms());
+		changeStore.distribute(cfg);
 		changeStore.reset();
 
 		// Must unlock the Cell when we are done with it!

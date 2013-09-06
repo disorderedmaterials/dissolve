@@ -25,7 +25,6 @@
 #include "classes/box.h"
 #include "classes/molecule.h"
 #include "base/lineparser.h"
-#include "base/flag.h"
 #include "base/sysfunc.h"
 #include "base/comms.h"
 #include "math/constants.h"
@@ -38,14 +37,16 @@
  */
 DUQ::DUQ()
 {
+	setupFlagCount_ = -1;
+
 	// System Composition
 	multiplier_ = 1;
 	density_ = 0.1;
-	densityIsAtomic_ = TRUE;
+	densityIsAtomic_ = true;
 	boxAngles_.set(90.0, 90.0, 90.0);
 	relativeBoxLengths_.set(1.0, 1.0, 1.0);
-	nonPeriodic_ = FALSE;
-	randomConfiguration_ = TRUE;
+	nonPeriodic_ = false;
+	randomConfiguration_ = true;
 
 	// PairPotentials
 	pairPotentialDelta_ = 0.01;
@@ -58,6 +59,7 @@ DUQ::DUQ()
 
 	// Setup
 	boxNormalisationPoints_ = 50000000;
+	cellDensityMultiplier_ = 1.5;
 	qDependentFWHM_ = 0.0;
 	qIndependentFWHM_ = 0.02;
 	rdfBinWidth_ = 0.025;
@@ -79,7 +81,7 @@ DUQ::DUQ()
 	
 	// Simulation
 	energyChange_ = 0.0;
-	energyChanged_ = FALSE;
+	energyChanged_ = false;
 }
 
 /*!
@@ -91,6 +93,10 @@ DUQ::~DUQ()
 	clear();
 }
 
+/*
+ * Data
+ */
+
 /*!
  * \brief Clear all data
  */
@@ -99,18 +105,6 @@ void DUQ::clear()
 	species_.clear();
 	clearModel();
 	fileName_.clear();
-}
-
-/*
- * Periodic Table Definition
- */
-
-/*!
- * \brief Return PeriodicTable
- */
-PeriodicTable &DUQ::periodicTable()
-{
-	return periodicTable_;
 }
 
 /*
@@ -147,7 +141,7 @@ CommandReturnValue DUQ::processSignals()
 		for (Pair<DUQ::Signal, int>* sig = receivedSignals_.first(); sig != NULL; sig = sig->next)
 		{
 			// Something to do, so signal slaves that they are about to receive something
-			Comm.decide(TRUE);
+			Comm.decide(true);
 			
 			// Send Signal data to slaves
 			int signal = sig->a;
@@ -161,7 +155,7 @@ CommandReturnValue DUQ::processSignals()
 			if (result != CommandSuccess)
 			{
 				msg.print("Master is terminating signal processing - reason = %i.\n", result);
-				Comm.decide(FALSE);
+				Comm.decide(false);
 				int r = result;
 				Comm.broadcast(&r, 1);
 				break;
@@ -169,7 +163,7 @@ CommandReturnValue DUQ::processSignals()
 		}
 		
 		// End of list
-		Comm.decide(FALSE);
+		Comm.decide(false);
 	}
 	else
 	{

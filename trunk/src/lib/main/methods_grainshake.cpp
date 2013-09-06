@@ -68,12 +68,12 @@ CommandReturnValue DUQ::grainShake(Configuration& cfg)
 	cutoffSq *= cutoffSq;
 
 	// Initialise the Cell distributor
-	const bool willBeModified = TRUE, allowRepeats = FALSE;
+	const bool willBeModified = true, allowRepeats = false;
 	cfg.initialiseCellDistribution();
 
 	// Create a local ChangeStore and EnergyKernel
 	ChangeStore changeStore;
-	EnergyKernel kernel(cfg.box(), potentialMap_);
+	EnergyKernel kernel(cfg, potentialMap_);
 
 	// Initialise the random number buffer
 	Comm.initialiseRandomBuffer(DUQComm::Group);
@@ -97,11 +97,11 @@ CommandReturnValue DUQ::grainShake(Configuration& cfg)
 		if (cellId == Cell::NoCellsAvailable)
 		{
 			// No valid cell, but still need to enter into change distribution with other processes
-			changeStore.distribute(cfg.nAtoms(), cfg.atoms());
+			changeStore.distribute(cfg);
 			cfg.finishedWithCell(willBeModified, cellId);
 			continue;
 		}
-		cell = cfg.box()->cell(cellId);
+		cell = cfg.cell(cellId);
 		msg.printVerbose("Cell %i now the target, containing %i Grains interacting with %i neighbours.\n", cellId, cell->nGrains(), cell->nNeighbours());
 
 		/*
@@ -113,8 +113,8 @@ CommandReturnValue DUQ::grainShake(Configuration& cfg)
 		{
 			// Get current Grain and  
 			grainI = cell->grain(n);
-			currentEnergy = kernel.energy(grainI, cell->neighbours(), cutoffSq, FALSE, DUQComm::Group);
-			currentEnergy += kernel.energy(grainI, cell, cutoffSq, FALSE, FALSE, DUQComm::Group);
+			currentEnergy = kernel.energy(grainI, cell->neighbours(), cutoffSq, false, DUQComm::Group);
+			currentEnergy += kernel.energy(grainI, cell, cutoffSq, false, false, DUQComm::Group);
 			currentEnergy += kernel.fullIntraEnergy(grainI, termScale);
 
 			// Set current Grain as target in ChangeStore
@@ -137,13 +137,13 @@ CommandReturnValue DUQ::grainShake(Configuration& cfg)
 				}
 
 				// Calculate new energy
-				newEnergy = kernel.energy(grainI, cell->neighbours(), cutoffSq, FALSE, DUQComm::Group);
-				newEnergy += kernel.energy(grainI, cell, cutoffSq, FALSE, FALSE, DUQComm::Group);
+				newEnergy = kernel.energy(grainI, cell->neighbours(), cutoffSq, false, DUQComm::Group);
+				newEnergy += kernel.energy(grainI, cell, cutoffSq, false, false, DUQComm::Group);
 				newEnergy += kernel.fullIntraEnergy(grainI, termScale);
 
 				// Trial the transformed Grain position
 				delta = newEnergy - currentEnergy;
-				accept = delta < 0 ? TRUE : (Comm.random() < exp(-delta/(.008314472*temperature_)));
+				accept = delta < 0 ? true : (Comm.random() < exp(-delta/(.008314472*temperature_)));
 
 				if (accept)
 				{
@@ -154,7 +154,7 @@ CommandReturnValue DUQ::grainShake(Configuration& cfg)
 					totalDelta += delta;
 					++nAccepted;
 				}
-				else changeStore.revert();
+				else changeStore.revertAll();
 			}
 			
 			// Store modifications to Atom positions ready for broadcast later
@@ -166,7 +166,7 @@ CommandReturnValue DUQ::grainShake(Configuration& cfg)
 		 */
 
 		// Distribute coordinate changes to all processes
-		changeStore.distribute(cfg.nAtoms(), cfg.atoms());
+		changeStore.distribute(cfg);
 		changeStore.reset();
 
 		// Must unlock the Cell when we are done with it!

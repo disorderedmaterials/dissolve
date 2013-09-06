@@ -19,10 +19,10 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "main/flags.h"
 #include "classes/isotopologue.h"
 #include "classes/species.h"
 #include "classes/atomtype.h"
-#include "base/flag.h"
 #include "base/comms.h"
 
 /*!
@@ -108,7 +108,7 @@ void Isotopologue::update(const List<AtomType>& atomTypes)
 	}
 	
 	// Loop over Atoms in species, get their assigned AtomTypes, and searching for them in the oldItems list
-	for (Atom* i = parent_->atoms(); i != NULL; i = i->next)
+	for (SpeciesAtom* i = parent_->atoms(); i != NULL; i = i->next)
 	{
 		AtomType* at = i->atomType();
 		if (at == NULL)
@@ -146,7 +146,7 @@ bool Isotopologue::setAtomTypeIsotope(AtomType* at, Isotope* isotope)
 	if (at == NULL)
 	{
 		msg.error("NULL_POINTER - NULL AtomType pointer passed to Isotopologue::setAtomTypeIsotope().\n");
-		return FALSE;
+		return false;
 	}
 
 	// Find the requested Atom in the list
@@ -154,14 +154,14 @@ bool Isotopologue::setAtomTypeIsotope(AtomType* at, Isotope* isotope)
 	if (!rli)
 	{
 		msg.error("AtomType not found in Isotopologue...\n");
-		return FALSE;
+		return false;
 	}
 	
 	rli->data = isotope;
 	
-	SET_MODIFIED
+	Flags::wave(Flags::IsotopologuesChanged);
 
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -208,21 +208,21 @@ bool Isotopologue::broadcast(const List<AtomType>& atomTypes)
 	RefListItem<AtomType,Isotope*>* ri;
 
 	// Send name
-	if (!Comm.broadcast(name_)) return FALSE;
+	if (!Comm.broadcast(name_)) return false;
 	
 	// Isotope information
 	count = isotopes_.nItems();
-	if (!Comm.broadcast(&count, 1)) return FALSE;
+	if (!Comm.broadcast(&count, 1)) return false;
 	if (Comm.master())
 	{
 		for (ri = isotopes_.first(); ri != NULL; ri = ri->next)
 		{
 			// Master needs to determine AtomType index - Isotope can be sent as the A_ value
 			index = atomTypes.indexOf(ri->item);
-			if (!Comm.broadcast(&index, 1)) return FALSE;
+			if (!Comm.broadcast(&index, 1)) return false;
 			Isotope* tope = atomTypeIsotope(ri->item);
 			A = tope->A();
-			if (!Comm.broadcast(&A, 1)) return FALSE;
+			if (!Comm.broadcast(&A, 1)) return false;
 		}
 	}
 	else
@@ -230,13 +230,13 @@ bool Isotopologue::broadcast(const List<AtomType>& atomTypes)
 		update(atomTypes);
 		for (n = 0; n < count; ++n)
 		{
-			if (!Comm.broadcast(&index, 1)) return FALSE;
-			if (!Comm.broadcast(&A, 1)) return FALSE;
+			if (!Comm.broadcast(&index, 1)) return false;
+			if (!Comm.broadcast(&A, 1)) return false;
 			AtomType* at = atomTypes.item(index);
 			Isotope* tope = PeriodicTable::element(at->element()).hasIsotope(A);
 			setAtomTypeIsotope(at, tope);
 		}
 	}
 #endif
-	return TRUE;
+	return true;
 }

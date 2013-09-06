@@ -70,7 +70,7 @@ void TriangleChopper::initialise(double startz, int nbins, double slicewidth)
 	triangleLists_ = new Primitive[nSlices_];
 	for (int n=0; n<nSlices_; ++n)
 	{
-		triangleLists_[n].setColourData(TRUE);
+		triangleLists_[n].setColourData(true);
 		triangleLists_[n].setNoInstances();
 	}
 	msg.printVerbose("Created %i bins for transparency correction.\n", nSlices_);

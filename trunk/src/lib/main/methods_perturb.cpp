@@ -115,8 +115,8 @@ CommandReturnValue DUQ::perturb(Configuration& cfg)
 	double q, diffSpacing = 0.1, rho = atomicDensity();
 
 	// Check that we have some reference data to fit against...
-	bool haveData = FALSE;
-	for (Sample* sam = samples_.first(); sam != NULL; sam = sam->next) if (sam->hasReferenceData()) haveData = TRUE;
+	bool haveData = false;
+	for (Sample* sam = samples_.first(); sam != NULL; sam = sam->next) if (sam->hasReferenceData()) haveData = true;
 	if (!haveData)
 	{
 		msg.error("Potential perturbation requested, but no reference data exists in any Sample.\n");
@@ -144,9 +144,9 @@ CommandReturnValue DUQ::perturb(Configuration& cfg)
 
 	// Initialiase arrays for storage of estimated partials and simulated contribution weights
 	Array2D<Data2D> workingSQMatrix, estimatedSQMatrix, contributions;
-	estimatedSQMatrix.initialise(atomTypes_.nItems(), atomTypes_.nItems(), TRUE);
-	workingSQMatrix.initialise(atomTypes_.nItems(), atomTypes_.nItems(), TRUE);
-	contributions.initialise(atomTypes_.nItems(), atomTypes_.nItems(), TRUE);
+	estimatedSQMatrix.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
+	workingSQMatrix.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
+	contributions.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
 
 	// Construct arrays for contribution weights
 	const double qWidth = 0.1;
@@ -186,7 +186,7 @@ CommandReturnValue DUQ::perturb(Configuration& cfg)
 	Array<double> best = stretchFitSimplex.minimise(simplexNCycles_, simplexNMoves_, simplexTolerance_, simplexTemperature_);
 	for (n=0; n< best.nItems(); ++n) printf("%i  %f\n", n, best[n]);
 	simplexCost(best);
-	
+
 	// Generate modified, unweighted S(Q)
 	int offset = 0;
 	const double deltaQ = 0.05;
@@ -215,6 +215,8 @@ CommandReturnValue DUQ::perturb(Configuration& cfg)
 			modBoundSQ.clear();
 			Q = deltaQ;
 			maxQ = unboundSQ.xMax();
+			Data2D crap;
+
 			while (Q < maxQ)
 			{
 				// Determine scaled/shifted Q
@@ -225,13 +227,14 @@ CommandReturnValue DUQ::perturb(Configuration& cfg)
 				if (newQ > maxQ) break;
 				modBoundSQ.addPoint(Q, boundSQ.interpolated(newQ));
 				Q += deltaQ;
+				crap.addPoint(Q, unboundSQ.interpolated(newQ)*uscaley - unboundSQ.interpolated(Q));
 			}
-			
+			crap.save("crap.txt");
 			// Write out data...
 			if (Comm.master())
 			{
 				LineParser parser;
-				parser.openOutput(Dnchar::string("duq-%s.fit", partialSQMatrix_.ref(typeI, typeJ).name()), TRUE);
+				parser.openOutput(Dnchar::string("duq-%s.fit", partialSQMatrix_.ref(typeI, typeJ).name()), true);
 				parser.writeLineF("#%-15s  %-16s  %-16s  %-16s\n", "Q, 1/Angstroms", "S(Q)", "bound(Q)", "unbound(Q)");
 				for (n=0; n<modUnboundSQ.nPoints(); ++n) parser.writeLineF("%16.10e  %16.10e  %16.10e  %16.10e\n", modUnboundSQ.x(n), modUnboundSQ.y(n) + modBoundSQ.interpolated(modUnboundSQ.x(n)),   modBoundSQ.interpolated(modUnboundSQ.x(n)), modUnboundSQ.y(n));
 				parser.closeFiles();
@@ -239,10 +242,10 @@ CommandReturnValue DUQ::perturb(Configuration& cfg)
 
 			// Update PairPotential
 			PairPotential* pp = hasPairPotential(at1->atomType(), at2->atomType());
-			
 
 			// Create windowed copy of the data, and transform into r-space
-			Data2D gr = workingSQMatrixA_.ref(typeI, typeJ);
+// 			Data2D gr = modUnboundSQ.ref(typeI, typeJ);
+			Data2D gr = crap;
 			gr.save("xxx.txt");
 	// 		gr.subtractInterpolated(unboundSQMatrix_.ref(typeI, typeJ));
 			gr.trim(0.0, gr.xMax()*0.5);
@@ -261,7 +264,7 @@ CommandReturnValue DUQ::perturb(Configuration& cfg)
 				if (gr.y(n) < 0.0) y = mingrmag;
 				else if (gr.y(n) <= mingr) y = (1.0-exp(-10*(1.0-gr.y(n)/mingr))) * mingrmag;
 				else y = AVOGADRO * -1.3806488e-23 * temperature_ * log(gr.y(n)) / 1000.0;
-				if (gr.x(n) < 3.00) y += pow(3.0/gr.x(n), 12)-1.0;
+// 				if (gr.x(n) < 3.00) y += pow(3.0/gr.x(n), 12)-1.0;
 				pmf.addPoint(gr.x(n), y);
 			}
 			pmf.save(Dnchar::string("duq-%s.pmf", partialSQMatrix_.ref(typeI, typeJ).name()));

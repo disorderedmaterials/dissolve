@@ -22,17 +22,16 @@
 #ifndef DUQ_CONFIGURATION_H
 #define DUQ_CONFIGURATION_H
 
-#include "classes/bond.h"
-#include "classes/angle.h"
 #include "classes/molecule.h"
 #include "templates/vector3.h"
 #include "templates/list.h"
+#include "templates/array.h"
 
 // Forward Declarations
 class Atom;
 class Box;
 class Grain;
-// class Molecule;
+class Cell;
 class Species;
 
 /*!
@@ -48,7 +47,7 @@ class Configuration : public ListItem<Configuration>
 	// Destructor
 	~Configuration();
 	// Assignment operator
-	void operator=(Configuration &source);
+	void operator=(Configuration& source);
 	// Clear all data
 	void clear();
 
@@ -58,50 +57,44 @@ class Configuration : public ListItem<Configuration>
 	 */
 	///@{
 	private:
-	// Periodic Box definition for the Model
-	Box* box_;
 	// Molecule list
 	List<Molecule> molecules_;
-	// Number of Grains in array
+	// Number of grains in array
 	int nGrains_;
 	// Grain array
 	Grain* grains_;
-	// Number of Atoms in array
+	// Number of atoms in aonfiguration / reference array
 	int nAtoms_;
-	// Atom array
-	Atom* atoms_;
+	// Array of atom references (to objects within Cells)
+	Atom** atomReferences_;
 	// Change counter (incremented when Atom positions change)
 	int changeCount_;
 
 
 	public:
-	// Return Box
-	const Box* box();
-	// Add space for a Molecule of the Species provided
+	// Add space for a molecule of the Species provided
 	void addMolecule(Species* sp);
-	// Return number of Molecules
+	// Return number of molecules
 	int nMolecules() const;
-	// Return first Molecule
+	// Return first molecule
 	Molecule* molecules();
-	// Return number of Grains
+	// Return specified molecule
+	Molecule* molecule(int id);
+	// Return number of grains
 	int nGrains() const;
-	// Return Grain array
+	// Return grain array
 	Grain* grains();
-	// Return nth Grain
+	// Return nth grain
 	Grain& grain(int n);
-	// Return number of Atoms
+	// Return number of atoms
 	int nAtoms() const;
-	// Return Atom array
-	Atom* atoms();
-	// Return nth Atom
-	Atom& atom(int n);
-	// Setup periodic Box
-	bool setupBox(double ppRange, Vec3<double> relativeLengths, Vec3<double> angles, double atomicDensity, bool nonPeriodic = FALSE);
-	// Instantiate Configuration
-	bool instantiate();
-	// Identify inter-Grain terms
-	void identifyInterGrainTerms();
-	// Generate random configuration
+	// Return atom reference array
+	Atom** atomReferences();
+	// Return nth atom
+	Atom* atom(int n);
+	// Setup molecules in configuration
+	bool setupMolecules();
+	// Randomise configuration
 	bool randomise();
 	// Load starting coordinates from file
 	bool loadInitialCoordinates(const char* fileName);
@@ -113,42 +106,72 @@ class Configuration : public ListItem<Configuration>
 
 
 	/*!
-	 * \name Intramolecular Terms
+	 * \name Box and Cells
 	 */
 	///@{
 	private:
-	// List of Bonds
-	List<Bond> bonds_;
-	// List of Angles
-	List<Angle> angles_;
+	// Periodic Box definition for the Model
+	Box* box_;
+	// Cell divisions along each axis
+	Vec3<int> divisions_;
+	// Fractional Cell size
+	Vec3<double> cellSize_;
+	// Real Cell size
+	Vec3<double> realCellSize_;
+	// Cell extents out from given central cell
+	Vec3<int> cellExtents_;
+	// Total number of Cells in Box
+	int nCells_;
+	// Maximum number of Atoms per Cell
+	int maxAtomsPerCell_;
+	// Cell array (one-dimensional)
+	Cell* cells_;
+	// Cell image matrix
+	Array2D<bool> imageMatrix_;
+	// Cell modified/completed/calculated flag
+	bool* cellFlag_;
+	// Counter for distributed Cells
+	int nCellsDistributed_;
+	// Last Cell distributed
+	int lastCellDistributed_;
+	
+	private:
+	// Clear Cell arrays
+	void clearCells();
+	// Return whether the contents of two Cells should be mimd in calculations
+	bool imagesNeeded(Cell* a, Cell* b) const;
 
 	public:
-	// Return number of Bonds
-	int nBonds() const;
-	// Return first Bond in list
-	Bond* bonds();
-	// Return nth Bond
-	Bond* bond(int n);
-	// Return number of Angles
-	int nAngles() const;
-	// Return first Angle in list
-	Angle* angles();
-	// Return nth Angle
-	Angle* angle(int n);
-	///@}
-
-
-	/*!
-	 * \name Box Pass-Thru
-	 */
-	///@{
-	public:
+	// Return Box
+	const Box* box() const;
+	// Setup periodic Box
+	bool setupBox(double ppRange, Vec3<double> relativeLengths, Vec3<double> angles, double atomicDensity, double cellDensityMultiplier, bool nonPeriodic = false);
+	// Generate Cells for Box
+	bool generateCells(double cellSize, double pairPotentialRange, double atomicDensity, double cellDensityMultiplier);
+	// Return number of Cells for box
+	int nCells() const;
+	// Return real Cell dimensions
+	Vec3<double> realCellSize() const;
+	// Retrieve Cell with (wrapped) grid reference specified
+	Cell* cell(int x, int y, int z) const;
+	// Retrieve Cell with id specified
+	Cell* cell(int id) const;
+	// Return Cell which contains specified coordinate
+	Cell* cell(const Vec3<double> r) const;
+	// Return maximum number of atoms per cell
+	int maxAtomsPerCell();
+	// Return whether two Cells need minimum image calculation
+	bool useMim(Cell* a, Cell* b) const;
 	// Initialise Cells for distribution
 	void initialiseCellDistribution();
 	// Return next available Cell for calculation
 	int nextAvailableCell(bool willBeModified, bool allowRepeats);
 	// Unlock Cell specified, once calculation is complete
-	bool finishedWithCell(bool willBeModified, int id);
+	bool finishedWithCell(bool willBeModified, int cellId);
+	// Update cell locations of all atoms
+	bool updateAtomsInCells();
+	// Update cell locations of specified atom index
+	bool updateAtomInCell(int id);
 	///@}
 
 
