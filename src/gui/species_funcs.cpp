@@ -1,6 +1,6 @@
 /*
-	*** Main Window - SpeciesTab Functions
-	*** src/gui/mainwindow_species.cpp
+	*** Species Dialog
+	*** src/gui/species_funcs.cpp
 	Copyright T. Youngs 2012-2013
 
 	This file is part of dUQ.
@@ -19,23 +19,37 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/mainwindow.h"
-#include "classes/species.h"
+#include "gui/species.h"
 #include "classes/atomtype.h"
-#include "base/ptable.h"
-#include "base/sysfunc.h"
+#include "classes/species.h"
 
-// Refresh tab
-void MainWindow::refreshSpeciesTab(bool listGroup, bool atomTypesGroup, bool viewGroup, bool grainsGroup, bool isotopologuesGroup)
+// Constructor
+DUQSpeciesDockWidget::DUQSpeciesDockWidget(QWidget* parent, DUQObject& duq) : QDockWidget(parent), dUQ_(duq)
 {
-	// Set the refreshing_ flag
-	speciesTabRefreshing_ = TRUE;
-	
-	// Update the title while we're here, just in case
-	updateTitle();
+	// Call the main creation function
+	ui.setupUi(this);
+
+	// Set initial variables
+	refreshing_ = false;
+}
+
+// Destructor
+DUQSpeciesDockWidget::~DUQSpeciesDockWidget()
+{
+}
+
+// Window close event
+void DUQSpeciesDockWidget::closeEvent(QCloseEvent* event)
+{
+}
+
+// General refresh function
+void DUQSpeciesDockWidget::refresh(int targets)
+{
+	refreshing_ = true;
 
 	// Refresh the Species list?
-	if (listGroup)
+	if (DockWidgetPanel::SpeciesListPanel)
 	{
 		// Grab current selected item
 		int oldRow = ui.DefinedSpeciesList->currentRow();
@@ -63,61 +77,13 @@ void MainWindow::refreshSpeciesTab(bool listGroup, bool atomTypesGroup, bool vie
 	if ((ui.DefinedSpeciesList->currentRow() == -1) && (dUQ_.nSpecies() > 0)) ui.DefinedSpeciesList->setCurrentRow(dUQ_.nSpecies()-1);
 	Species* currentSpecies = selectedSpecies();
 	ui.ViewEditGroup->setEnabled(currentSpecies);
-	ui.IntramolecularTermsGroup->setEnabled(currentSpecies);
-	ui.GrainsGroup->setEnabled(currentSpecies);
-	ui.IsotopologuesGroup->setEnabled(currentSpecies);
+// 	ui.IntramolecularTermsGroup->setEnabled(currentSpecies);
+	ui.GrainsTab->setEnabled(currentSpecies);
+	ui.IsotopologuesTab->setEnabled(currentSpecies);
 	ui.RemoveSpeciesButton->setEnabled(currentSpecies);
 
-	// Refresh the Atom Types group?
-	if (atomTypesGroup)
-	{
-		// Re-populate list
-		ui.DefinedAtomTypesTree->clear();
-
-		int count = 0;
-		QTreeWidgetItem* item;
-		QComboBox* combo;
-		Parameters* params;
-
-		for (AtomType* at = dUQ_.atomTypes(); at != NULL; at = at->next)
-		{
-		
-			item = new QTreeWidgetItem(ui.DefinedAtomTypesTree);
-
-			item->setData(0, Qt::UserRole, QVariant(count));
-			item->setText(0, at->name());
-			item->setText(1, PeriodicTable::element(at->element()).symbol());
-			
-			// Create a combo box with the available Parameters for this AtomType
-			combo = new QComboBox(this);
-			combo->setMinimumSize(100,20);
-			for (params = PeriodicTable::element(at->element()).parameters(); params != NULL; params = params->next)
-			{
-				combo->addItem(params->description());
-				if (params == at->parameters()) combo->setCurrentIndex(combo->count()-1);
-			}
-			combo->setItemData(0, QVariant(count));
-			ui.DefinedAtomTypesTree->setItemWidget(item, 2, combo);
-			QObject::connect(combo, SIGNAL(activated(int)), this, SLOT(atomTypeParametersChanged(int)));
-
-			item->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-			++count;
-		}
-
-		for (int n = 0; n < 3; ++n) ui.DefinedAtomTypesTree->resizeColumnToContents(n);
-		
-		// Change group title
-		Dnchar title(-1, "AtomType Definitions (%i)", dUQ_.nAtomTypes());
-		ui.DefinedAtomTypesGroup->setTitle(title.get());
-
-		// Set control button states
-		AtomType* at = selectedAtomType();
-		ui.CopyAtomTypeButton->setEnabled(at);
-		ui.RemoveAtomTypeButton->setEnabled(at);
-	}
-
 	// Refresh the Species Grains list?
-	if (grainsGroup)
+	if (DockWidgetPanel::SpeciesGrainsPanel)
 	{
 		// Grab current selected item
 		int oldRow = ui.GrainsTable->currentRow();
@@ -131,20 +97,20 @@ void MainWindow::refreshSpeciesTab(bool listGroup, bool atomTypesGroup, bool vie
 			int count = 0;
 			QTableWidgetItem* item;
 			
-			ui.GrainsTable->setRowCount(currentSpecies->nGrainDefinitions());
+			ui.GrainsTable->setRowCount(currentSpecies->nGrains());
 			
-			for (GrainDefinition* gd = currentSpecies->grainDefinitions(); gd != NULL; gd = gd->next)
+			for (SpeciesGrain* sg = currentSpecies->grains(); sg != NULL; sg = sg->next)
 			{
-				item = new QTableWidgetItem(gd->name());
+				item = new QTableWidgetItem(sg->name());
 				item->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 				ui.GrainsTable->setItem(count, 0, item);
 
-				item = new QTableWidgetItem(itoa(gd->nAtoms()));
+				item = new QTableWidgetItem(QString::number(sg->nAtoms()));
 				item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 				ui.GrainsTable->setItem(count, 1, item);
 
 				text.clear();
-				for (RefListItem<Atom,int>* ri = gd->atoms(); ri != NULL; ri = ri->next) text.strcatf("%i ", ri->item->userIndex());
+				for (RefListItem<SpeciesAtom,int>* ri = sg->atoms(); ri != NULL; ri = ri->next) text.strcatf("%i ", ri->item->userIndex());
 				item = new QTableWidgetItem(text.get());
 				item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 				ui.GrainsTable->setItem(count, 2, item);
@@ -158,13 +124,12 @@ void MainWindow::refreshSpeciesTab(bool listGroup, bool atomTypesGroup, bool vie
 			else ui.GrainsTable->setCurrentCell(0,0);
 		}
 
-		// Change group title
-		Dnchar title(-1, "Grain Definitions (%i)", ui.GrainsTable->rowCount());
-		ui.GrainsGroup->setTitle(title.get());
+		// Change count label
+		ui.NGrainsLabel->setText("NGrains = " + QString::number(ui.GrainsTable->rowCount()));
 	}
 
 	// Refresh the Species isotopologues list?
-	if (isotopologuesGroup)
+	if (DockWidgetPanel::SpeciesIsotopologuesPanel)
 	{
 		// Re-populate list
 		ui.IsotopologuesTree->clear();
@@ -184,7 +149,7 @@ void MainWindow::refreshSpeciesTab(bool listGroup, bool atomTypesGroup, bool vie
 			{
 				topItem = new QTreeWidgetItem(ui.IsotopologuesTree);
 				topItem->setText(0, iso->name());
-				topItem->setExpanded(TRUE);
+				topItem->setExpanded(true);
 				topItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable	);
 				data.clear();
 				data << iso->name();
@@ -232,22 +197,21 @@ void MainWindow::refreshSpeciesTab(bool listGroup, bool atomTypesGroup, bool vie
 			for (int n=0; n<5; ++n) ui.IsotopologuesTree->resizeColumnToContents(n);
 		}
 
-		// Change group title
-		Dnchar title(-1, "Isotopologues (%i)", currentSpecies ? currentSpecies->nIsotopologues() : 0);
-		ui.IsotopologuesGroup->setTitle(title.get());
+		// Change count label
+		ui.NIsotopologuesLabel->setText("NIsotopologues = " + QString::number(currentSpecies ? currentSpecies->nIsotopologues() : 0));
 	}
 
 	// Refresh the Species view?
-	if (viewGroup)
+	if (DockWidgetPanel::SpeciesViewPanel)
 	{
 		// Make sure the currently-selected Species is the one displayed in the panel
-		ui.SpeciesViewer->setSource(currentSpecies);
+		ui.SpeciesView->setSource(currentSpecies);
 		
 		if (currentSpecies)
 		{
 			// Set visible GrainDefinition (if any)
-			GrainDefinition* currentGrain = ui.GrainsTable->currentRow() == -1 ? NULL : currentSpecies->grainDefinition(ui.GrainsTable->currentRow());
-			currentSpecies->setHighlightedGrainDefinition(currentGrain);
+			SpeciesGrain* currentGrain = ui.GrainsTable->currentRow() == -1 ? NULL : currentSpecies->grain(ui.GrainsTable->currentRow());
+			currentSpecies->setHighlightedGrain(currentGrain);
 
 			// Set visible Isotopologue (if any)
 			Isotopologue* iso = selectedIsotopologue();
@@ -260,19 +224,18 @@ void MainWindow::refreshSpeciesTab(bool listGroup, bool atomTypesGroup, bool vie
 		ui.AddAngleFromSelectionButton->setEnabled(nSelected == 3);
 		ui.AddGrainFromSelectionButton->setEnabled(nSelected > 0);
 
-		ui.SpeciesViewer->postRedisplay();
+		ui.SpeciesView->postRedisplay();
 	}
 
-	// Unset the refreshing_ flag
-	speciesTabRefreshing_ = FALSE;
+	refreshing_ = false;
 }
 
 /*
-// General Functions
+// Private Functions
 */
 
 // Return current selected Species, if any
-Species* MainWindow::selectedSpecies()
+Species* DUQSpeciesDockWidget::selectedSpecies()
 {
 	// Get current row in SpeciesList
 	int currentRow = ui.DefinedSpeciesList->currentRow();
@@ -281,7 +244,7 @@ Species* MainWindow::selectedSpecies()
 }
 
 // Return current selected GrainDefinition, if any
-GrainDefinition* MainWindow::selectedGrainDefinition()
+SpeciesGrain* DUQSpeciesDockWidget::selectedGrainDefinition()
 {
 	// First, need a valid Species
 	Species* currentSpecies = selectedSpecies();
@@ -292,12 +255,12 @@ GrainDefinition* MainWindow::selectedGrainDefinition()
 	if (grainRow == -1) return NULL;
 	
 	// Finally, retrieve nth GrainDefinition in Species
-	GrainDefinition* gd = currentSpecies->grainDefinition(grainRow);
-	return gd;
+	SpeciesGrain* sg = currentSpecies->grain(grainRow);
+	return sg;
 }
 
 // Return current selected Isotopologue, if any
-Isotopologue* MainWindow::selectedIsotopologue()
+Isotopologue* DUQSpeciesDockWidget::selectedIsotopologue()
 {
 	// First, need a valid Species
 	Species* currentSpecies = selectedSpecies();
@@ -313,34 +276,148 @@ Isotopologue* MainWindow::selectedIsotopologue()
 	return iso;
 }
 
-// Return current selected AtomType, if any
-AtomType* MainWindow::selectedAtomType()
-{
-	QTreeWidgetItem* item = ui.DefinedAtomTypesTree->currentItem();
-	if (item == NULL) return NULL;
+/*
+// Selection Menu
+*/
 
-	QVariant data = item->data(0, Qt::UserRole);
-	if (!data.isValid()) return NULL;
-	
-	AtomType* at = dUQ_.atomType(data.toInt());
-	return at;
-}
+// // Transmute selection
+// void DUQSpeciesDockWidget::transmuteSelection(int el)
+// {
+// 	// Check for valid Species
+// 	Species* currentSpecies = selectedSpecies();
+// 	if (currentSpecies == NULL) return;
+// 
+// 	// Make sure that an AtomType definition exists for the new element
+// 	AtomType* at = GuiDUQ.atomTypeForElement(el);
+// 	if (!at) GuiDUQ.addAtomType(el);
+// 
+// 	// Change Atoms
+// 	for (RefListItem<Atom,int>* ri = currentSpecies->selectedAtoms(); ri != NULL; ri = ri->next) currentSpecies->changeAtomElement(ri->item, el, at);
+// 	currentSpecies->clearAtomSelection();
+// 	
+// 	// Update Species Isotopologues
+// 	GuiDUQ.updateIsotopologues(currentSpecies);
+// 
+// 	// Update Dialogs
+// 	refresh(
+// }
+// 
+// // Change selected Atoms into Hydrogen
+// void DUQSpeciesDockWidget::on_actionSelectionHydrogen_triggered(bool checked)
+// {
+// 	transmuteSelection(1);
+// }
+// 
+// // Change selected Atoms into Carbon
+// void DUQSpeciesDockWidget::on_actionSelectionCarbon_triggered(bool checked)
+// {
+// 	transmuteSelection(6);
+// }
+// 
+// // Change selected Atoms into Nitrogen
+// void DUQSpeciesDockWidget::on_actionSelectionNitrogen_triggered(bool checked)
+// {
+// 	transmuteSelection(7);
+// }
+// 
+// // Change selected Atoms into Oxygen
+// void DUQSpeciesDockWidget::on_actionSelectionOxygen_triggered(bool checked)
+// {
+// 	transmuteSelection(8);
+// }
+// 
+// // Change selected Atoms into Silicon
+// void DUQSpeciesDockWidget::on_actionSelectionSilicon_triggered(bool checked)
+// {
+// 	transmuteSelection(14);
+// }
+// 
+// // Change selected Atoms into Phosphorous
+// void DUQSpeciesDockWidget::on_actionSelectionPhosphorous_triggered(bool checked)
+// {
+// 	transmuteSelection(15);
+// }
+// 
+// // Change selected Atoms into Sulfur
+// void DUQSpeciesDockWidget::on_actionSelectionSulfur_triggered(bool checked)
+// {
+// 	transmuteSelection(16);
+// }
+// 
+// // Change selected Atoms into another element
+// void DUQSpeciesDockWidget::on_actionSelectionOther_triggered(bool checked)
+// {
+// 	dUQPeriodicTable ptable;
+// 	int el = ptable.selectElement();
+// 	if (el != -1) transmuteSelection(el);
+// }
+// 
+// // Select same element as current
+// void DUQSpeciesDockWidget::on_actionSelectionSelectSame_triggered(bool checked)
+// {
+// 	// Check for valid Species
+// 	Species* currentSpecies = selectedSpecies();
+// 	if (currentSpecies == NULL) return;
+// 
+// 	// Select all elements with same element as the first in the current Selection
+// 	RefListItem<Atom,int>* ri = currentSpecies->selectedAtoms();
+// 	if (ri == NULL) return;
+// 	int el = ri->item->element();
+// 	
+// 	for (Atom* i = currentSpecies->atoms(); i != NULL; i = i->next) if (i->element() == el) currentSpecies->selectAtom(i);
+// 
+// 	// Need to update view
+// 	refresh(ViewEditGroup);
+// }
+// 
+// // AtomType choice made in Selection menu
+// void DUQSpeciesDockWidget::selectionAtomTypeChanged(bool checked)
+// {
+// 	// The text of the QAction contains the AtomTypes name
+// 	QAction* action = static_cast<QAction*>(sender());
+// 	if (!action) return;
+// 	AtomType* at = GuiDUQ.findAtomType(qPrintable(action->text()));
+// 	if (at == NULL)
+// 	{
+// 		printf("GUI_ERROR - QAction contains an invalid AtomType name (%s)\n", qPrintable(action->text()));
+// 		return;
+// 	}
+// 
+// 	// Get current Species
+// 	Species* currentSpecies = selectedSpecies();
+// 	if (!currentSpecies) return;
+// 	
+// 	// Set AtomTypes for Atoms
+// 	for (RefListItem<Atom,int>* ri = currentSpecies->selectedAtoms(); ri != NULL; ri = ri->next)
+// 	{
+// 		if (at->element() != ri->item->element())
+// 		{
+// 			msg.warn("AtomType '%s' cannot be assigned to Atom %i since their elements differ.\n", at->name(), ri->item->userIndex());
+// 			continue;
+// 		}
+// 		ri->item->setAtomType(at);
+// 	}
+// 	
+// 	// Update
+// 	GuiDUQ.updateIsotopologues(currentSpecies);
+// 	refresh(ViewEditGroup | IsotopologuesGroup);
+// }
 
 /*
-// Species Group
+// Slots - Species Group
 */
 
 // Different Species selected in list
-void MainWindow::on_DefinedSpeciesList_currentRowChanged(int row)
+void DUQSpeciesDockWidget::on_DefinedSpeciesList_currentRowChanged(int row)
 {
-	if (speciesTabRefreshing_) return;
-	refresh(ViewEditGroup | GrainsGroup | IsotopologuesGroup);
+	if (refreshing_) return;
+	refresh(65535);
 }
 
 // Item changed (i.e. text changed)
-void MainWindow::on_DefinedSpeciesList_itemChanged(QListWidgetItem* item)
+void DUQSpeciesDockWidget::on_DefinedSpeciesList_itemChanged(QListWidgetItem* item)
 {
-	if (speciesTabRefreshing_) return;
+	if (refreshing_) return;
 
 	Species* currentSpecies = selectedSpecies();
 	if (currentSpecies == NULL) return;
@@ -348,37 +425,37 @@ void MainWindow::on_DefinedSpeciesList_itemChanged(QListWidgetItem* item)
 	currentSpecies->setName(dUQ_.uniqueSpeciesName(qPrintable(item->text())));
 
 	// Update dependent data
-	refreshExperimentTab();
+	emit(dataChanged(DockWidgetPanel::SystemCompositionPanel));
 }
 
 // Add a new Species to the Model
-void MainWindow::on_AddSpeciesButton_clicked(bool checked)
+void DUQSpeciesDockWidget::on_AddSpeciesButton_clicked(bool checked)
 {
 	Species* currentSpecies = dUQ_.addSpecies();
 	currentSpecies->setName(dUQ_.uniqueSpeciesName("Unnamed Species", currentSpecies));
 
 	// Refresh SpeciesTab and ExperimentTab
-	refreshSpeciesTab();
-	refreshExperimentTab();
+	refresh(65535);
+	emit(dataChanged(DockWidgetPanel::SystemCompositionPanel));
 }
 
 // Remove the current Species from the Model
-void MainWindow::on_RemoveSpeciesButton_clicked(bool checked)
+void DUQSpeciesDockWidget::on_RemoveSpeciesButton_clicked(bool checked)
 {
 	Species* currentSpecies = selectedSpecies();
 	if (currentSpecies == NULL) return;
 	
-	ui.SpeciesViewer->unsetSource();
+	ui.SpeciesView->setSource(NULL);
 
 	dUQ_.removeSpecies(currentSpecies);
 
 	// Refresh SpeciesTab and ExperimentTab
-	refreshSpeciesTab();
-	refreshExperimentTab();
+	refresh(65535);
+	emit(dataChanged(DockWidgetPanel::SystemCompositionPanel));
 }
 
 // Load Species data from a file
-void MainWindow::on_LoadSpeciesButton_clicked(bool checked)
+void DUQSpeciesDockWidget::on_LoadSpeciesButton_clicked(bool checked)
 {
 	// Create a file selector
 	static QDir currentDir(getenv("PWD"));
@@ -390,25 +467,25 @@ void MainWindow::on_LoadSpeciesButton_clicked(bool checked)
 	for (int n=0; n<fileNames.count(); ++n) dUQ_.loadSpecies(qPrintable(fileNames[n]));
 
 	// Refresh SpeciesTab and ExperimentTab
-	refreshSpeciesTab();
-	refreshExperimentTab();
+	refresh(65535);
+	emit(dataChanged(DockWidgetPanel::SystemCompositionPanel));
 
 	// Select last loaded Species
 	ui.DefinedSpeciesList->setCurrentRow(ui.DefinedSpeciesList->count()-1);
 }
 
 // Save Species definition to a file
-void MainWindow::on_SaveSpeciesButton_clicked(bool checked)
+void DUQSpeciesDockWidget::on_SaveSpeciesButton_clicked(bool checked)
 {
 	// TODO
 }
 
 /*
-// Species Viewer
+// Slots - Species Viewer
 */
 
 // Add Bond from current Atom selection
-void MainWindow::on_AddBondFromSelectionButton_clicked(bool checked)
+void DUQSpeciesDockWidget::on_AddBondFromSelectionButton_clicked(bool checked)
 {
 	Species* currentSpecies = selectedSpecies();
 	if (!currentSpecies) return;
@@ -421,17 +498,17 @@ void MainWindow::on_AddBondFromSelectionButton_clicked(bool checked)
 	}
 
 	// Get selected atoms
-	Atom* atoms[2];
+	SpeciesAtom* atoms[2];
 	for (int n=0; n<2; ++n) atoms[n] = currentSpecies->selectedAtom(n);
 	currentSpecies->addBond(atoms[0], atoms[1]);
 	
 	// Clear selection and refresh display
 	currentSpecies->clearAtomSelection();
-	refresh(ViewEditGroup | IntramolecularTermsGroup);
+	refresh(65535);
 }
 
 // Add Angle from current Atom selection
-void MainWindow::on_AddAngleFromSelectionButton_clicked(bool checked)
+void DUQSpeciesDockWidget::on_AddAngleFromSelectionButton_clicked(bool checked)
 {
 	Species* currentSpecies = selectedSpecies();
 	if (!currentSpecies) return;
@@ -444,17 +521,17 @@ void MainWindow::on_AddAngleFromSelectionButton_clicked(bool checked)
 	}
 
 	// Get selected atoms
-	Atom* atoms[3];
+	SpeciesAtom* atoms[3];
 	for (int n=0; n<3; ++n) atoms[n] = currentSpecies->selectedAtom(n);
 	currentSpecies->addAngle(atoms[0], atoms[1], atoms[2]);
 	
 	// Clear selection and refresh display
 	currentSpecies->clearAtomSelection();
-	refresh(ViewEditGroup | IntramolecularTermsGroup);
+	refresh(65535);
 }
 
 // Add Grain from current Atom selection
-void MainWindow::on_AddGrainFromSelectionButton_clicked(bool checked)
+void DUQSpeciesDockWidget::on_AddGrainFromSelectionButton_clicked(bool checked)
 {
 	Species* currentSpecies = selectedSpecies();
 	if (!currentSpecies) return;
@@ -467,138 +544,28 @@ void MainWindow::on_AddGrainFromSelectionButton_clicked(bool checked)
 	}
 
 	// Create new GrainDefinition and add selected Atoms to it
-	GrainDefinition* gd = currentSpecies->addGrainDefinition();
-	for (RefListItem<Atom,int>* ri = currentSpecies->selectedAtoms(); ri != NULL; ri = ri->next) currentSpecies->addAtomToGrainDefinition(ri->item, gd);
-	gd->setName(currentSpecies->uniqueGrainDefinitionName(gd->nameFromAtoms()));
+	SpeciesGrain* sg = currentSpecies->addGrain();
+	for (RefListItem<SpeciesAtom,int>* ri = currentSpecies->selectedAtoms(); ri != NULL; ri = ri->next) currentSpecies->addAtomToGrain(ri->item, sg);
+	sg->setName(currentSpecies->uniqueGrainName(sg->nameFromAtoms()));
 
 	// Update the list of GrainDefinitions (removing empty ones etc.)
-	currentSpecies->updateGrainDefinitions();
+	currentSpecies->updateGrains();
 	
 	// Clear selection and refresh display
 	currentSpecies->clearAtomSelection();
-	refresh(ViewEditGroup | GrainsGroup);
+	refresh(65535);
 }
 
 // View AtomType Check clicked
-void MainWindow::on_ViewAtomTypeCheck_clicked(bool checked)
+void DUQSpeciesDockWidget::on_ViewAtomTypeCheck_clicked(bool checked)
 {
-	refresh(ViewEditGroup);
+	ui.SpeciesView->postRedisplay();
 }
 
 // View Index Check clicked
-void MainWindow::on_ViewIndexCheck_clicked(bool checked)
+void DUQSpeciesDockWidget::on_ViewIndexCheck_clicked(bool checked)
 {
-	refresh(ViewEditGroup);
-}
-
-/*
-// Atom Types Group
-*/
-
-// Combo slot
-void MainWindow::atomTypeParametersChanged(int index)
-{
-	if (speciesTabRefreshing_) return;
-
-	// Data associated to column 0 gives us the AtomType index
-	QComboBox *combo = static_cast<QComboBox*>(sender());
-	if (!combo) return;
-
-	QVariant data = combo->itemData(0, Qt::UserRole);
-	if (!data.isValid()) return;
-	
-	
-	AtomType* at = dUQ_.atomType(data.toInt());
-	if (at == NULL) return;
-	
-	at->setParameters(PeriodicTable::element(at->element()).parameters(index));
-
-	// Update
-	dUQ_.updateAtomTypes();
-	refresh(ViewEditGroup | DefinedAtomTypesGroup);
-}
-
-// Item clicked in AtomTypesTree
-void MainWindow::on_DefinedAtomTypesTree_itemClicked(QTreeWidgetItem* item, int column)
-{
-	// Get selected AtomType
-	AtomType* at = selectedAtomType();
-	ui.CopyAtomTypeButton->setEnabled(at);
-	ui.RemoveAtomTypeButton->setEnabled(at);
-}
-
-// Item edited in AtomTypesTree
-void MainWindow::on_DefinedAtomTypesTree_itemChanged(QTreeWidgetItem* item, int column)
-{
-	if (speciesTabRefreshing_) return;
-
-	// Get selected AtomType
-	AtomType* at = selectedAtomType();
-	if (at == NULL) return;
-
-	// Which column was edited?
-	if (column == 0) at->setName(dUQ_.uniqueAtomTypeName(qPrintable(item->text(column)), at));
-	else if (column == 1)
-	{
-		// Element of AtomType changed...
-		int el = PeriodicTable::find(qPrintable(item->text(1)));
-		if (el == -1) msg.print("Ignored AtomType edit - '%s' is not a valid chemical element.\n", qPrintable(item->text(1)));
-		else
-		{
-			// Safest option here is to copy the existing AtomType data, remove the existing AtomType,
-			// and then add a new one, updating the AtomTypes list afterwards.
-			AtomType oldType;
-			oldType.setName(at->name());
-			oldType.setParameters(at->parameters());
-			dUQ_.removeAtomType(at);
-			at = dUQ_.addAtomType(el);
-			at->setName(oldType.name());
-			at->setParameters(oldType.parameters());
-			
-			dUQ_.updateAtomTypes();
-			dUQ_.updateIsotopologues();
-		}
-	}
-
-	// Update
-	refresh(ViewEditGroup | IsotopologuesGroup | DefinedAtomTypesGroup);
-}
-
-// Add AtomType Button
-void MainWindow::on_AddAtomTypeButton_clicked(bool checked)
-{
-	AtomType* newType = dUQ_.addAtomType(1);
-
-	// Update
-	refresh(DefinedAtomTypesGroup);
-}
-
-// Copy AtomType definition
-void MainWindow::on_CopyAtomTypeButton_clicked(bool checked)
-{
-	// Get selected AtomType
-	AtomType* at = selectedAtomType();
-	if (at == NULL) return;
-
-	// Add a copy of this AtomType, changing the name...
-	AtomType* newType = dUQ_.addAtomType(at->element());
-	newType->setParameters(at->parameters());
-
-	// Update
-	refresh(DefinedAtomTypesGroup);
-}
-
-// Remove AtomType definition
-void MainWindow::on_RemoveAtomTypeButton_clicked(bool checked)
-{
-	// Get selected AtomType
-	AtomType* at = selectedAtomType();
-	if (at == NULL) return;
-
-	dUQ_.removeAtomType(at);
-
-	// Update
-	refresh(ViewEditGroup | IsotopologuesGroup | DefinedAtomTypesGroup);
+	ui.SpeciesView->postRedisplay();
 }
 
 /*
@@ -606,77 +573,77 @@ void MainWindow::on_RemoveAtomTypeButton_clicked(bool checked)
 */
 
 // Different grain selected in table
-void MainWindow::on_GrainsTable_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)
+void DUQSpeciesDockWidget::on_GrainsTable_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)
 {
-	if (speciesTabRefreshing_) return;
-	refresh(ViewEditGroup);
+	if (refreshing_) return;
+	refresh(65535);
 }
 
 // Grain information changed
-void MainWindow::on_GrainsTable_cellChanged(int row, int column)
+void DUQSpeciesDockWidget::on_GrainsTable_cellChanged(int row, int column)
 {
-	if (speciesTabRefreshing_) return;
+	if (refreshing_) return;
 	// TODO
 }
 
 // Add new Grain to Species
-void MainWindow::on_AddGrainButton_clicked(bool checked)
+void DUQSpeciesDockWidget::on_AddGrainButton_clicked(bool checked)
 {
 	Species* currentSpecies = selectedSpecies();
 	if (currentSpecies == NULL) return;
 	
-	GrainDefinition* gd = currentSpecies->addGrainDefinition();
-	gd->setName(currentSpecies->uniqueGrainDefinitionName("NewGrain"));
+	SpeciesGrain* sg = currentSpecies->addGrain();
+	sg->setName(currentSpecies->uniqueGrainName("NewGrain"));
 
-	refresh(GrainsGroup);
+	refresh(65535);
 }
 
 // Remove the current Grain from the Model
-void MainWindow::on_RemoveGrainButton_clicked(bool checked)
+void DUQSpeciesDockWidget::on_RemoveGrainButton_clicked(bool checked)
 {
 	Species* currentSpecies = selectedSpecies();
 	if (currentSpecies == NULL) return;
 	
-	GrainDefinition* gd = selectedGrainDefinition();
+	SpeciesGrain* sg = selectedGrainDefinition();
 	
-	currentSpecies->removeGrainDefinition(gd);
+	currentSpecies->removeGrain(sg);
 	
 	// Update
-	refresh(ViewEditGroup | GrainsGroup);
+	refresh(65535);
 }
 
 // Add default grain definition
-void MainWindow::on_AddDefaultGrainButton_clicked(bool checked)
+void DUQSpeciesDockWidget::on_AddDefaultGrainButton_clicked(bool checked)
 {
 	Species* currentSpecies = selectedSpecies();
 	if (currentSpecies == NULL) return;
 	
-	if (currentSpecies->nGrainDefinitions() != 0)
+	if (currentSpecies->nGrains() != 0)
 	{
-		if (QMessageBox::question(this, "Add Default Grain", "All existing GrainDefinitions will be lost - proceed?", QMessageBox::Cancel|QMessageBox::Ok, QMessageBox::Cancel) != QMessageBox::Ok) return;
+		if (QMessageBox::question(this, "Add Default Grain", "All existing grains will be lost - proceed?", QMessageBox::Cancel|QMessageBox::Ok, QMessageBox::Cancel) != QMessageBox::Ok) return;
 	}
 	
-	currentSpecies->addDefaultGrainDefinition();
+	currentSpecies->addDefaultGrain();
 
 	// Update
-	refresh(ViewEditGroup | GrainsGroup);
+	refresh(65535);
 }
 
 // Auto-add grains
-void MainWindow::on_AutoGrainButton_clicked(bool checked)
+void DUQSpeciesDockWidget::on_AutoGrainButton_clicked(bool checked)
 {
 	Species* currentSpecies = selectedSpecies();
 	if (currentSpecies == NULL) return;
 	
-	if (currentSpecies->nGrainDefinitions() != 0)
+	if (currentSpecies->nGrains() != 0)
 	{
-		if (QMessageBox::question(this, "Auto Add Grains", "All existing GrainDefinitions will be lost - proceed?", QMessageBox::Cancel|QMessageBox::Ok, QMessageBox::Cancel) != QMessageBox::Ok) return;
+		if (QMessageBox::question(this, "Auto Add Grains", "All existing grains will be lost - proceed?", QMessageBox::Cancel|QMessageBox::Ok, QMessageBox::Cancel) != QMessageBox::Ok) return;
 	}
 	
 	currentSpecies->autoAddGrains();
 	
 	// Update
-	refresh(ViewEditGroup | GrainsGroup);
+	refresh(65535);
 }
 
 /*
@@ -684,24 +651,24 @@ void MainWindow::on_AutoGrainButton_clicked(bool checked)
 */
 
 // Determine Isotopologue and AtomType from QVariant data
-bool MainWindow::getIsotopologueAndAtomType(QStringList data, Isotopologue*& iso, AtomType*& at)
+bool DUQSpeciesDockWidget::getIsotopologueAndAtomType(QStringList data, Isotopologue*& iso, AtomType*& at)
 {
 	if (data.count() != 2)
 	{
 		printf("GUI_ERROR - QStringList must contain exactly two items (Isotopologue and AtomType names).\n");
-		return FALSE;
+		return false;
 	}
 	
 	// Get current species
 	Species* currentSpecies = selectedSpecies();
-	if (!currentSpecies) return FALSE;
+	if (!currentSpecies) return false;
 	
 	// Now we have the species, determine the isotopologue...
 	iso = currentSpecies->findIsotopologue(qPrintable(data[0]));
 	if (!iso)
 	{
 		printf("GUI_ERROR - QVariant data specifies an unknown Isotopologue ('%s').\n", qPrintable(data[0]));
-		return FALSE;
+		return false;
 	}
 	
 	// Now find AtomType
@@ -709,23 +676,23 @@ bool MainWindow::getIsotopologueAndAtomType(QStringList data, Isotopologue*& iso
 	if (!at)
 	{
 		printf("GUI_ERROR - QVariant data specifies an unknown AtomType ('%s').\n", qPrintable(data[1]));
-		return FALSE;
+		return false;
 	}
 
-	return TRUE;
+	return true;
 }
 
 // Different Isotopologue selected in list
-void MainWindow::on_IsotopologuesTree_currentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* previous)
+void DUQSpeciesDockWidget::on_IsotopologuesTree_currentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* previous)
 {
-	if (speciesTabRefreshing_) return;
-	refresh(ViewEditGroup);
+	if (refreshing_) return;
+// 	refresh(65535);
 }
 
 // Item changed (i.e. text changed)
-void MainWindow::on_IsotopologuesTree_itemChanged(QTreeWidgetItem* item, int column)
+void DUQSpeciesDockWidget::on_IsotopologuesTree_itemChanged(QTreeWidgetItem* item, int column)
 {
-	if (speciesTabRefreshing_) return;
+	if (refreshing_) return;
 
 	Species* currentSpecies = selectedSpecies();
 	if (currentSpecies == NULL) return;
@@ -737,11 +704,12 @@ void MainWindow::on_IsotopologuesTree_itemChanged(QTreeWidgetItem* item, int col
 	if (item->text(0) != iso->name()) iso->setName(currentSpecies->uniqueIsotopologueName(qPrintable(item->text(0)),iso));
 	
 	// Update
-	refresh(IsotopologuesGroup | AssignedIsotopologuesGroup);
+// 	refresh(DockWidgetPanel::SpeciesIsotopologuesPanel);
+	emit(dataChanged(DockWidgetPanel::SampleIsotopologuesPanel));
 }
 
 // Add Isotopologue to Species
-void MainWindow::on_AddIsotopologueToSpeciesButton_clicked(bool checked)
+void DUQSpeciesDockWidget::on_AddIsotopologueToSpeciesButton_clicked(bool checked)
 {
 	Species* currentSpecies = selectedSpecies();
 	if (currentSpecies == NULL) return;
@@ -750,11 +718,12 @@ void MainWindow::on_AddIsotopologueToSpeciesButton_clicked(bool checked)
 	dUQ_.updateIsotopologues(currentSpecies, iso);
 
 	// Update
-	refresh(IsotopologuesGroup | AssignedIsotopologuesGroup);
+	refresh(DockWidgetPanel::SpeciesIsotopologuesPanel);
+	emit(dataChanged(DockWidgetPanel::SampleIsotopologuesPanel));
 }
 
 // Remove Isotopologue from Species
-void MainWindow::on_RemoveIsotopologueFromSpeciesButton_clicked(bool checked)
+void DUQSpeciesDockWidget::on_RemoveIsotopologueFromSpeciesButton_clicked(bool checked)
 {
 	Species* currentSpecies = selectedSpecies();
 	if (currentSpecies == NULL) return;
@@ -765,11 +734,12 @@ void MainWindow::on_RemoveIsotopologueFromSpeciesButton_clicked(bool checked)
 	dUQ_.removeSpeciesIsotopologue(currentSpecies, iso);
 	
 	// Update
-	refresh(IsotopologuesGroup | AssignedIsotopologuesGroup);
+	refresh(DockWidgetPanel::SpeciesIsotopologuesPanel);
+	emit(dataChanged(DockWidgetPanel::SampleIsotopologuesPanel));
 }
 
 // Copy Isotopologue
-void MainWindow::on_CopyIsotopologueButton_clicked(bool checked)
+void DUQSpeciesDockWidget::on_CopyIsotopologueButton_clicked(bool checked)
 {
 	Species* currentSpecies = selectedSpecies();
 	if (currentSpecies == NULL) return;
@@ -782,13 +752,14 @@ void MainWindow::on_CopyIsotopologueButton_clicked(bool checked)
 	for (RefListItem<AtomType,Isotope*>* ri = iso->isotopes(); ri != NULL; ri = ri->next) newTope->setAtomTypeIsotope(ri->item, ri->data);
 	
 	// Update
-	refresh(ViewEditGroup | IsotopologuesGroup | AssignedIsotopologuesGroup);
+	refresh(DockWidgetPanel::SpeciesIsotopologuesPanel | DockWidgetPanel::SpeciesViewPanel);
+	emit(dataChanged(DockWidgetPanel::SampleIsotopologuesPanel));
 }
 
 // Different Isotope selected for AtomType in Isotopologue
-void MainWindow::isotopologueIsotopeChanged(int index)
+void DUQSpeciesDockWidget::isotopologueIsotopeChanged(int index)
 {
-	if (experimentTabRefreshing_) return;
+	if (refreshing_) return;
 
 	// Need to get the QComboBox which sent the signal
 	QComboBox *combo = static_cast<QComboBox*>(sender());
@@ -820,5 +791,7 @@ void MainWindow::isotopologueIsotopeChanged(int index)
 	iso->setAtomTypeIsotope(at, newTope);
 	
 	// Update
-	refresh(ViewEditGroup | AssignedIsotopologuesGroup);
+	refresh(DockWidgetPanel::SpeciesViewPanel);
+	emit(dataChanged(DockWidgetPanel::SampleIsotopologuesPanel));
 }
+

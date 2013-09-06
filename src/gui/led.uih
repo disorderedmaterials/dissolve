@@ -1,6 +1,6 @@
 /*
-	*** Instrument Dialog Functions
-	*** src/gui/instrument_funcs.cpp
+	*** LED Widget
+	*** src/gui/led.uih
 	Copyright T. Youngs 2012-2013
 
 	This file is part of dUQ.
@@ -19,12 +19,48 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/instrument.h"
-#include "base/sysfunc.h"
+#ifndef DUQ_LED_H
+#define DUQ_LED_H
 
-// Constructor
-InstrumentDialog::InstrumentDialog(QWidget* parent) : QDialog(parent)
+#include <QtCore/QObject>
+#include <QtGui/QWidget>
+
+// Forward Declarations
+/* none */
+
+// LED Tri-state Widget
+class LED : public QWidget
 {
-	// Call the main creation function
-	ui.setupUi(this);
-}
+	Q_OBJECT
+
+	public:
+	// Constructor / Destructor
+	LED(QWidget* parent);
+	~LED();
+
+
+	/*
+	// State
+	*/
+	private:
+	// Current state of LED
+	bool on_;
+	// Text to display underneath LED
+	QString text_;
+
+	public:
+	// Set state of LED
+	void setState(bool on);
+	// Set text of LED
+	void setText(QString text);
+
+
+	/*
+	 * Widgets / Reimplemented Functions
+	 */
+	protected:
+	// Main paintevent
+	void paintEvent(QPaintEvent* event);
+};
+
+#endif

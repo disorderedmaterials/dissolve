@@ -20,8 +20,8 @@
 */
 
 #include "main/duq.h"
+#include "main/flags.h"
 #include "classes/species.h"
-#include "base/flag.h"
 #include "base/sysfunc.h"
 #include <string.h>
 
@@ -40,7 +40,7 @@ Species *DUQ::addSpecies()
 	// Must update Samples...
 	updateSamples();
 
-	SET_MODIFIED
+	Flags::wave(Flags::SpeciesChanged);
 	
 	return sp;
 }
@@ -56,7 +56,7 @@ void DUQ::removeSpecies(Species* sp)
 	// Update Samples
 	updateSamples();
 
-	SET_MODIFIED
+	Flags::wave(Flags::SpeciesChanged);
 }
 
 /*!
@@ -151,5 +151,5 @@ void DUQ::removeSpeciesIsotopologue(Species* species, Isotopologue* iso)
 	species->removeIsotopologue(iso);
 	updateSamples();
 	
-	SET_MODIFIED
+	Flags::wave(Flags::IsotopologuesChanged);
 }

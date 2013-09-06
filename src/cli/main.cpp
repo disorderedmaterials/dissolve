@@ -32,6 +32,17 @@ int main(int argc, char **argv)
 	// Instantiate main class
 	DUQ dUQ;
 
+// 	Data2D test, orig;
+// 	orig.load("2048.rdf");
+// 	test = orig;
+// 	test.fourierTransformReal(true, Data2D::NoWindow);
+// 	test.save("dft.txt");
+// 
+// 	test = orig;
+// 	test.transformRDF(0.0, Data2D::NoWindow);
+// 	test.save("fft.txt");
+// 	return 0;
+	
 #ifdef PARALLEL
 	// Initialise parallel communication
 	Comm.initialise(&argc, &argv);
@@ -40,7 +51,7 @@ int main(int argc, char **argv)
 	// Parse CLI options...
 	int n = 1;
 	Dnchar inputFile, redirectFileName;
-	bool interactive = FALSE;
+	bool interactive = false;
 	while (n < argc)
 	{
 		if (argv[n][0] == '-')
@@ -48,19 +59,25 @@ int main(int argc, char **argv)
 			// Command-line switch
 			switch (argv[n][1])
 			{
-				case ('v'):
-					msg.setVerbose(TRUE);
-					msg.printVerbose("Verbose mode enabled.\n");
-					break;
-				case ('q'):
-					msg.setQuiet(TRUE);
-					break;
-				case ('m'):
-					msg.setMasterOnly(TRUE);
+				case ('h'):
+					printf("dUQ version %s\n\nAvailable CLI options are:\n\n", DUQVERSION);
+					printf("\t-i\t\tStart in interactive mode\n");
+					printf("\t-m\t\tRestrict output to be from the master process alone (parallel code only)\n");
+					printf("\t-q\t\tQuiet mode - print no output\n");
+					printf("\t-r <file>\tRedirect output from all process to 'file.N', where N is the process rank\n");
+					printf("\t-v\t\tVerbose mode - be a little more descriptive throughout\n");
+					Comm.finalise();
+					return 1;
 					break;
 				case ('i'):
-					interactive = TRUE;
+					interactive = true;
 					msg.print("Will start in interactive mode.\n");
+					break;
+				case ('m'):
+					msg.setMasterOnly(true);
+					break;
+				case ('q'):
+					msg.setQuiet(true);
 					break;
 				case ('r'):
 					// Next argument is filename
@@ -73,8 +90,13 @@ int main(int argc, char **argv)
 					redirectFileName.sprintf("%s.%i", argv[n], Comm.rank());
 					msg.enableRedirect(redirectFileName.get());
 					break;
+				case ('v'):
+					msg.setVerbose(true);
+					msg.printVerbose("Verbose mode enabled.\n");
+					break;
 				default:
 					printf("Unrecognised command-line switch '%s'.\n", argv[n]);
+					printf("Run with -h to see available switches.\n");
 					Comm.finalise();
 					return 1;
 					break;
@@ -97,9 +119,9 @@ int main(int argc, char **argv)
 
 	// Print GPL license information
 #ifdef PARALLEL
-	msg.print("dUQ PARALLEL version %s, Copyright (C) 2012  T. Youngs.\n", DUQREVISION);
+	msg.print("dUQ PARALLEL version %s, Copyright (C) 2012-2013 T. Youngs.\n", DUQREVISION);
 #else
-	msg.print("dUQ SERIAL version %s, Copyright (C) 2012  T. Youngs.\n", DUQREVISION);
+	msg.print("dUQ SERIAL version %s, Copyright (C) 2012-2013  T. Youngs.\n", DUQREVISION);
 #endif
 	msg.print("Built from %s@%s.\n", DUQURL, DUQREVISION);
 	msg.print("dUQ comes with ABSOLUTELY NO WARRANTY.\n");
@@ -114,7 +136,7 @@ int main(int argc, char **argv)
 	}
 	
 	// Broadcast periodic table (including isotope and parameter data)
-	if (!dUQ.periodicTable().broadcast())
+	if (!periodicTable.broadcast())
 	{
 		Comm.finalise();
 		return 1;
@@ -137,7 +159,6 @@ int main(int argc, char **argv)
 	}
 
 	// Check system setup
-	msg.print("Checking system setup...\n");
 	if (!MPIRunMaster(dUQ.checkSetup()))
 	{
 		msg.print("Errors were encountered while checking the system setup.\nYou must resolve these errors before any calculation can proceed.\n");
@@ -146,7 +167,6 @@ int main(int argc, char **argv)
 	}
 
 	// Broadcast System Setup to slaves
-	msg.print("Broadcasting system setup...\n");
 	if (!dUQ.broadcastSetup())
 	{
 		Comm.finalise();
@@ -164,10 +184,6 @@ int main(int argc, char **argv)
 		msg.print("Failed to setup simulation.\n");
 		return 1;
 	}
-
-	// Set up CheckPoint data structures
-	msg.print("Setting up CheckPoint data...\n");
-	dUQ.setupCheckPointData();
 
 #ifdef PARALLEL
 	msg.print("This is process %i of %i total, and exists in process group %i in which it is rank %i of %i processes.\n", Comm.rank(), Comm.nProcesses(), Comm.localGroupIndex(), Comm.localGroupRank(), Comm.localGroupSize());

@@ -216,6 +216,21 @@ double OrthorhombicBox::minimumDistanceSquared(const Atom* i, const Atom* j) con
 /*!
  * \brief Return minimum image squared distance from 'i' to 'j'
  */
+double OrthorhombicBox::minimumDistanceSquared(const Atom& i, const Atom& j) const
+{
+	Vec3<double> mimVec = j.r();
+	mimVec -= i.r();
+
+	mimVec.x -= int(mimVec.x*ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5))*a_;
+	mimVec.y -= int(mimVec.y*rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5))*b_;
+	mimVec.z -= int(mimVec.z*rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5))*c_;
+
+	return mimVec.magnitudeSq();
+}
+
+/*!
+ * \brief Return minimum image squared distance from 'i' to 'j'
+ */
 double OrthorhombicBox::minimumDistanceSquared(const Atom* i, const Vec3<double>& j) const
 {
 	Vec3<double> mimVec = j;
@@ -260,22 +275,6 @@ Vec3<double> OrthorhombicBox::randomCoordinate() const
 }
 
 /*!
- * \brief Return Cell containing specified coordinate
- */
-Cell* OrthorhombicBox::cell(const Vec3<double> r) const
-{
-	// Convert coordinate to fractional coords
-	Vec3<double> frac(r.x*ra_, r.y*rb_, r.z*rc_);
-	
-	// Fold into Box and divide by integer Cell sizes
-	int x = (frac.x - floor(frac.x)) / cellSize_.x;
-	int y = (frac.y - floor(frac.y)) / cellSize_.y;
-	int z = (frac.z - floor(frac.z)) / cellSize_.z;
-	
-	return &cells_[x%divisions_.x][y%divisions_.y][z%divisions_.z];
-}
-
-/*!
  * \brief Return folded coordinate (i.e. inside current Box)
  */
 Vec3<double> OrthorhombicBox::fold(const Vec3<double>& r) const
@@ -290,5 +289,20 @@ Vec3<double> OrthorhombicBox::fold(const Vec3<double>& r) const
 	frac.x *= a_;
 	frac.y *= b_;
 	frac.z *= c_;
+	return frac;
+}
+
+/*!
+ * \brief Return folded fractional coordinate (i.e. inside current Box)
+ */
+Vec3<double> OrthorhombicBox::foldFrac(const Vec3<double>& r) const
+{
+	// Convert coordinate to fractional coords
+	Vec3<double> frac(r.x*ra_, r.y*rb_, r.z*rc_);
+	
+	// Fold into Box and divide by integer Cell sizes
+	frac.x -= floor(frac.x);
+	frac.y -= floor(frac.y);
+	frac.z -= floor(frac.z);
 	return frac;
 }

@@ -72,11 +72,11 @@ class VertexChunk
 	// Forget all vertex data currently stored in array (but retain array)
 	void forgetAll();
 	// Define next vertex and normal
-	void defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, bool calcCentroid = TRUE);
+	void defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, bool calcCentroid = true);
 	// Define next vertex, normal, and colour (as array)
-	void defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, GLfloat* colour, bool calcCentroid = TRUE);
+	void defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, GLfloat* colour, bool calcCentroid = true);
 	// Define next vertex, normal, and colour
-	void defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, GLfloat r, GLfloat g, GLfloat b, GLfloat a, bool calcCentroid = TRUE);
+	void defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, GLfloat r, GLfloat g, GLfloat b, GLfloat a, bool calcCentroid = true);
 	// Return whether current array is full
 	bool full();
 	// Return number of defined primitive (GL) types

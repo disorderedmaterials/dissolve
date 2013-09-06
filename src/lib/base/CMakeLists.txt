@@ -3,7 +3,6 @@ comms.cpp
 data2d.cpp
 dnchar.cpp
 element.cpp
-flag.cpp
 isotope.cpp
 lineparser.cpp
 messenger.cpp
@@ -15,7 +14,6 @@ atomtype.h
 constants.h
 data2d.h
 element.h
-flag.h
 isotope.h
 lineparser.h
 messenger.h

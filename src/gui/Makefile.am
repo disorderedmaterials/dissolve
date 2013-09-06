@@ -23,11 +23,18 @@ SUFFIXES: .ui .uih .qrc
 clean:
 	rm -f *.o ui_* guiduq.cpp plotwidget.cpp viewer.cpp comboboxdelegate.cpp doublespindelegate.cpp
 
-libgui_a_SOURCES = comboboxdelegate.uih comboboxdelegate_funcs.cpp doublespindelegate.uih doublespindelegate_funcs.cpp guiduq.uih guiduq_funcs.cpp icons.qrc integerspindelegate.uih integerspindelegate_funcs.cpp ptable.ui ptable_funcs.cpp
-libgui_a_SOURCES += mainwindow.ui mainwindow_experiment.cpp mainwindow_funcs.cpp mainwindow_menus.cpp mainwindow_potential.cpp mainwindow_signals.cpp mainwindow_simulation.cpp mainwindow_species.cpp
-libgui_a_SOURCES += plotwidget.uih plotwidget_data.cpp plotwidget_funcs.cpp plotwidget_paintevent.cpp viewer.uih viewer_engine.cpp viewer_funcs.cpp viewer_input.cpp viewer_prefs.cpp viewer_primitive.cpp viewer_primitiveinfo.cpp viewer_primitivevertex.cpp viewer_scene.cpp viewer_textprimitive.cpp viewer_trianglechopper.cpp viewer_vertexchunk.cpp
+libgui_a_SOURCES = comboboxdelegate.uih comboboxdelegate_funcs.cpp doublespindelegate.uih doublespindelegate_funcs.cpp icons.qrc integerspindelegate.uih integerspindelegate_funcs.cpp 
+libgui_a_SOURCES += atomtypes.ui element.ui fq.ui samples.ui species.ui sq.ui system.ui mainwindow.ui
+libgui_a_SOURCES += mainwindow_funcs.cpp mainwindow_menus.cpp mainwindow_setup.cpp
+libgui_a_SOURCES += atomtypes_funcs.cpp element_funcs.cpp fq_funcs.cpp samples_funcs.cpp species_funcs.cpp sq_funcs.cpp system_funcs.cpp
+libgui_a_SOURCES += plotwidget.uih plotwidget_data.cpp plotwidget_funcs.cpp plotwidget_paintevent.cpp
+libgui_a_SOURCES += viewer.uih viewer_engine.cpp viewer_funcs.cpp viewer_input.cpp viewer_prefs.cpp viewer_primitive.cpp viewer_primitiveinfo.cpp viewer_primitivevertex.cpp viewer_textprimitive.cpp viewer_trianglechopper.cpp viewer_vertexchunk.cpp
+libgui_a_SOURCES += speciesviewer.uih speciesviewer_funcs.cpp speciesviewer_input.cpp speciesviewer_scene.cpp speciesviewer_funcs.cpp
+libgui_a_SOURCES += configviewer.uih configviewer_funcs.cpp configviewer_input.cpp configviewer_scene.cpp configviewer_funcs.cpp
+libgui_a_SOURCES += guiduq.uih guiduq_funcs.cpp
 
-noinst_HEADERS = mainwindow.h ptable.h pointerdialog.h viewer_primitive.h viewer_primitiveinfo.h viewer_textprimitive.h viewer_trianglechopper.h viewer_vertexchunk.h
+noinst_HEADERS = mainwindow.h fq.h sq.h samples.h system.h element.h pointerdialog.h
+noinst_HEADERS += viewer_primitive.h viewer_primitiveinfo.h viewer_textprimitive.h viewer_trianglechopper.h viewer_vertexchunk.h
 
 # Target 'duq'
 duqgui_SOURCES = main.cpp ../lib/base/mutex.cpp

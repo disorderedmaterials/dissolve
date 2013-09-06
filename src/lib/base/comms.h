@@ -314,7 +314,7 @@ template <class T> class BroadcastList
 	// Constructor
 	BroadcastList(List<T>& items, bool& result)
 	{
-		result = FALSE;
+		result = false;
 		int count;
 		if (Comm.master())
 		{
@@ -335,7 +335,7 @@ template <class T> class BroadcastList
 			}
 		}
 		// All OK - success!
-		result = TRUE;
+		result = true;
 	};
 };
 
@@ -350,7 +350,7 @@ template <class T, class D> class BroadcastRefList
 	// Constructor
 	BroadcastRefList(RefList<T,D>& items, const List<T>& itemSource, bool& result)
 	{
-		result = FALSE;
+		result = false;
 		int nItems, index;
 		T* item;
 		D data;
@@ -402,7 +402,7 @@ template <class T, class D> class BroadcastRefList
 			}
 		}
 		// Success!
-		result = TRUE;
+		result = true;
 	};
 };
 
@@ -419,12 +419,12 @@ template <class T, class D> class BroadcastRefList
  *	if (x) then
  * 	{
  * 		MPI_Bcast(&DUQComm::SUCCEEDED,1,MPI_INTEGER,0,MPI_COMM_WORLD);
- * 		return TRUE;
+ * 		return true;
  * 	}
  * 	else
  * 	{
  * 		MPI_Bcast(&DUQComm::FAILED,1,MPI_INTEGER,0,MPI_COMM_WORLD);
- *		return FALSE;
+ *		return false;
  * 	}
  * }
  * else
@@ -437,9 +437,9 @@ template <class T, class D> class BroadcastRefList
 #ifdef PARALLEL
 #define MPIRunMaster(x)\
 (Comm.master() ?\
-   (x ? (Comm.wait(DUQComm::World),MPI_Bcast(&DUQComm::SUCCEEDED,1,MPI_INTEGER,0,MPI_COMM_WORLD),TRUE)\
-      : (Comm.wait(DUQComm::World), MPI_Bcast(&DUQComm::FAILED,1,MPI_INTEGER,0,MPI_COMM_WORLD),FALSE))\
-: (Comm.wait(DUQComm::World), MPI_Bcast(&DUQComm::RESULT,1,MPI_INTEGER,0,MPI_COMM_WORLD),DUQComm::RESULT ? TRUE : FALSE))
+   (x ? (Comm.wait(DUQComm::World),MPI_Bcast(&DUQComm::SUCCEEDED,1,MPI_INTEGER,0,MPI_COMM_WORLD),true)\
+      : (Comm.wait(DUQComm::World), MPI_Bcast(&DUQComm::FAILED,1,MPI_INTEGER,0,MPI_COMM_WORLD),false))\
+: (Comm.wait(DUQComm::World), MPI_Bcast(&DUQComm::RESULT,1,MPI_INTEGER,0,MPI_COMM_WORLD),DUQComm::RESULT ? true : false))
 #else
 #define MPIRunMaster(x) x
 #endif

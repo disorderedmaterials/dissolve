@@ -28,14 +28,17 @@
  * \brief Constructor
  * \details Constructor for Atom. 
  */
-Atom::Atom() : ListItem<Atom>()
+Atom::Atom()
 {
 	element_ = 0;
 	charge_ = 0.0;
-	atomType_ = NULL;
-	index_ = -100;
+	atomTypeIndex_ = -1;
+	index_ = Atom::UnusedAtom;
+	molecule_ = NULL;
+	moleculeAtomIndex_ = 0;
 	r_.zero();
 	grain_ = NULL;
+	cell_ = NULL;
 }
 
 /*!
@@ -96,8 +99,8 @@ const Vec3<double> &Atom::r() const
 }
 
 /*!
- * \brief Set charge of Atom
- * \details Store a charge associated to this Atom. Such charges can then be used in the generation of suitable pair potentials.
+ * \brief Set charge of atom
+ * \details Store a charge associated to this atom. Such charges can then be used in the generation of suitable pair potentials.
  */
 void Atom::setCharge(double charge)
 {
@@ -105,7 +108,7 @@ void Atom::setCharge(double charge)
 }
 
 /*!
- * \brief Return charge of Atom
+ * \brief Return charge of atom
  */
 double Atom::charge() const
 {
@@ -113,24 +116,19 @@ double Atom::charge() const
 }
 
 /*!
- * \brief Set AtomType of Atom
+ * \brief Set AtomType index for atom
  */
-void Atom::setAtomType(AtomType* at)
+void Atom::setAtomTypeIndex(int id)
 {
-	// Check elements
-	if (at && (at->element() != element_))
-	{
-		msg.print("Warning: Refused to assign AtomType '%s' to Atom, since their elements differ.\n", at->name());
-	}
-	atomType_ = at;
+	atomTypeIndex_ = id;
 }
 
 /*!
- * \brief Return AtomType of Atom
+ * \brief Return AtomType index for atom
  */
-AtomType* Atom::atomType() const
+int Atom::atomTypeIndex() const
 {
-	return atomType_;
+	return atomTypeIndex_;
 }
 
 /*!
@@ -157,67 +155,59 @@ int Atom::userIndex() const
 	return index_+1;
 }
 
+/*!
+ * \brief Set molecule and local atom index (0->[N-1])
+ */
+void Atom::setMolecule(Molecule* mol, int atomIndex)
+{
+	molecule_ = mol;
+	moleculeAtomIndex_ = atomIndex;
+}
+
+/*!
+ * \brief Return associated molecule (0->[N-1])
+ */
+Molecule* Atom::molecule() const
+{
+	return molecule_;
+}
+
+/*!
+ * \brief Return local atom index in molecule (0->[N-1])
+ */
+int Atom::moleculeAtomIndex() const
+{
+	return moleculeAtomIndex_;
+}
+
+/*!
+ * \brief Set cell in which the atom exists
+ */
+void Atom::setCell(Cell* cell)
+{
+	cell_ = cell;
+}
+
+/*!
+ * \brief Return cell in which the atom exists
+ */
+Cell* Atom::cell()
+{
+	return cell_;
+}
+
 // Copy properties from supplied Atom
 void Atom::copyProperties(const Atom* source)
 {
 	r_ = source->r_;
 	element_ = source->element_;
-	atomType_ = source->atomType_;
+	atomTypeIndex_ = source->atomTypeIndex_;
 	charge_ = source->charge_;
 	index_ = source->index_;
-}
-
-/*
-// Bond Information
-*/
-
-/*!
- * \brief Add Bond reference
- */
-void Atom::addBond(Bond* b)
-{
-	bonds_.addUnique(b);
-}
-
-/*!
- * \brief Remove Bond reference
- */
-void Atom::removeBond(Bond* b)
-{
-	bonds_.remove(b);
-}
-
-/*!
- * \brief Clear all Bond references
- */
-void Atom::clearBonds()
-{
-	bonds_.clear();
-}
-
-/*!
- * \brief Return number of Bond references
- */
-int Atom::nBonds() const
-{
-	return bonds_.nItems();
-}
-
-/*!
- * \brief Return first Bond reference
- */
-RefListItem<Bond,int>* Atom::bonds()
-{
-	return bonds_.first();
-}
-
-/*!
- * \brief Return whether Bond to specified Atom exists
- */
-Bond* Atom::hasBond(Atom* j)
-{
-	for (RefListItem<Bond,int>* ri = bonds_.first(); ri != NULL; ri = ri->next) if (ri->item->partner(this) == j) return ri->item;
-	return NULL;
+	molecule_ = source->molecule_;
+	moleculeAtomIndex_ = source->moleculeAtomIndex_;
+	grain_ = source->grain_;
+	cell_ = source->cell_;
 }
 
 /*
@@ -232,7 +222,7 @@ void Atom::setGrain(Grain* grain)
 	// Check for double-set of Grain
 	if (grain_ != NULL)
 	{
-		msg.print("BAD_USAGE - Tried to set Atom's Grain for a second time.\n");
+		msg.print("BAD_USAGE - Tried to set atom %i's grain for a second time.\n", index_);
 		return;
 	}
 	grain_ = grain;
@@ -256,7 +246,7 @@ void Atom::setCoordinates(const Vec3<double>& newr)
 #ifdef CHECKS
 	if (grain_ == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Grain pointer found in Atom::setCoordinates().\n");
+		msg.error("NULL_POINTER - NULL grain pointer found in Atom::setCoordinates() (atom id = %i).\n", index_);
 		return;
 	}
 #endif
@@ -321,21 +311,15 @@ void Atom::translateCoordinatesNasty(const Vec3<double>& delta)
 /*!
  * \brief Broadcast data from Master to all Slaves
  */
-bool Atom::broadcast(const List<AtomType>& atomTypes)
+bool Atom::broadcast()
 {
 #ifdef PARALLEL
 	int index;
 
-	if (!Comm.broadcast(&element_, 1)) return FALSE;
-	if (!Comm.broadcast(r_)) return FALSE;
-	if (!Comm.broadcast(&charge_, 1)) return FALSE;
-	
-	// Must get index of AtomType...
-	if (Comm.master()) index = atomTypes.indexOf(atomType_);
-	if (!Comm.broadcast(&index, 1)) return FALSE;
-	atomType_ = atomTypes.item(index);
-	
-	// Bond information - added in Species::broadcast().
+	if (!Comm.broadcast(&element_, 1)) return false;
+	if (!Comm.broadcast(r_)) return false;
+	if (!Comm.broadcast(&charge_, 1)) return false;
+	if (!Comm.broadcast(&atomTypeIndex_, 1)) return false;
 #endif
-	return TRUE;
+	return true;
 }

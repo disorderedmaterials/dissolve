@@ -56,17 +56,17 @@ bool AtomTypeData::initialise(AtomType* atomType, Isotope* tope)
 	if (atomType == NULL)
 	{
 		msg.error("NULL_POINTER - NULL AtomType pointer passed to AtomTypeData::initialise().\n");
-		return FALSE;
+		return false;
 	}
 	if (tope == NULL)
 	{
 		msg.error("NULL_POINTER - NULL Isotope pointer passed to AtomTypeData::initialise().\n");
-		return FALSE;
+		return false;
 	}
 	population_ = 0;
 	fraction_ = 0.0;
 	msg.print("--> Initialised AtomType index entry with AtomType '%s', Isotope %i (bc = %7.3f)\n", atomType->name(), tope->A(), tope->boundCoherent());
-	return TRUE;
+	return true;
 }
 
 /*!

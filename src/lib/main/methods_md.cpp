@@ -72,7 +72,8 @@ CommandReturnValue DUQ::md(Configuration& cfg)
 
 	// Variables
 	int n, maxDeltaId;
-	Atom* atoms = cfg.atoms();
+	Atom** atoms = cfg.atomReferences();
+	Atom* i;
 	double maxDelta, deltaSq, massSum, tInstant, ke, tScale, pe;
 	double deltaTSq = deltaT*deltaT;
 	Vec3<double> vCom;
@@ -83,14 +84,16 @@ CommandReturnValue DUQ::md(Configuration& cfg)
 	 */
 	
 	// Assign random velocities to start... (grab atomic masses at the same time...)
+	msg.print("Assigning random velocities...\n");
 	vCom.zero();
 	massSum = 0.0;
 	for (n=0; n<cfg.nAtoms(); ++n)
 	{
+		i = cfg.atom(n);
 		v[n].x = exp(dUQMath::random()-0.5) / sqrt(TWOPI);
 		v[n].y = exp(dUQMath::random()-0.5) / sqrt(TWOPI);
 		v[n].z = exp(dUQMath::random()-0.5) / sqrt(TWOPI);
-		mass[n] = PeriodicTable::element(atoms[n].element()).isotope(0)->atomicWeight();
+		mass[n] = PeriodicTable::element(i->element()).isotope(0)->atomicWeight();
 		vCom += v[n] * mass[n];
 		massSum += mass[n];
 	}
@@ -118,13 +121,13 @@ CommandReturnValue DUQ::md(Configuration& cfg)
 	{
 		if (Comm.master())
 		{
-			if ((!trajParser.openOutput(trajFile, TRUE)) || (!trajParser.isFileGoodForWriting()))
+			if ((!trajParser.openOutput(trajFile, true)) || (!trajParser.isFileGoodForWriting()))
 			{
 				msg.error("Failed to open MD trajectory output file '%s'.\n", trajFile.get());
-				Comm.decide(FALSE);
+				Comm.decide(false);
 				return CommandFail;
 			}
-			Comm.decide(TRUE);
+			Comm.decide(true);
 		}
 		else if (!Comm.decision()) return CommandFail;
 	}
@@ -194,8 +197,10 @@ CommandReturnValue DUQ::md(Configuration& cfg)
 		
 		for (n=0; n<cfg.nAtoms(); ++n)
 		{
+			i = cfg.atom(n);
+
 			// Propagate positions (by whole step)...
-			atoms[n].translateCoordinates(v[n]*deltaT + a[n]*0.5*deltaTSq);
+			i->translateCoordinates(v[n]*deltaT + a[n]*0.5*deltaTSq);
 
 			// ...velocities (by half step)...
 			v[n] += a[n]*0.5*deltaT;
@@ -254,7 +259,7 @@ CommandReturnValue DUQ::md(Configuration& cfg)
 		ke *= 0.01;
 
 		// Calculate step energy
-		if (calcEnergy) pe = grainEnergy(cfg) + intramolecularEnergy(cfg);
+		if (calcEnergy) pe = intergrainEnergy(cfg) + intramolecularEnergy(cfg);
 		
 		// Write step summary?
 		if (step%writeFreq == 0)
@@ -276,7 +281,11 @@ CommandReturnValue DUQ::md(Configuration& cfg)
 				if (calcEnergy) header.strcatf(", pe = %10.3e, tot = %10.3e", pe, ke+pe);
 				trajParser.writeLineF("%s\n", header.get());
 				// Write Atoms
-				for (int n=0; n<cfg.nAtoms(); ++n) trajParser.writeLineF("%-3s   %10.3f  %10.3f  %10.3f\n", PeriodicTable::element(cfg.atom(n).element()).symbol(), cfg.atom(n).r().x, cfg.atom(n).r().y, cfg.atom(n).r().z);
+				for (int n=0; n<cfg.nAtoms(); ++n)
+				{
+					i = cfg.atom(n);
+					trajParser.writeLineF("%-3s   %10.3f  %10.3f  %10.3f\n", PeriodicTable::element(i->element()).symbol(), i->r().x, i->r().y, i->r().z);
+				}
 			}
 			else if (!Comm.decision()) return CommandFail;
 		}

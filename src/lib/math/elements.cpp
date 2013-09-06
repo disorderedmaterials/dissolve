@@ -496,11 +496,11 @@ void ElementMap::copyColour(int i, GLfloat* v) const
 int ElementMap::numberToZ(const char* s) const
 {
 	// Check that the string is entirely numerical
-	bool isnumber = TRUE;
+	bool isnumber = true;
 	for (int n=0; s[n] != '\0'; n++)
 		if ((s[n] < 48) || (s[n] > 57))
 		{
-			isnumber = FALSE;
+			isnumber = false;
 			break;
 		}
 	if (isnumber)

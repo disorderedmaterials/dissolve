@@ -62,20 +62,20 @@ bool DUQ::calculatePartialRDFs(Configuration& cfg)
 		case (DUQ::NoMethod):
 			break;
 		case (DUQ::SimpleMethod):
-			if (!calculatePartialsSimple(cfg)) return FALSE;
+			if (!calculatePartialsSimple(cfg)) return false;
 			break;
 		default:
 			msg.error("Partial calculation style unrecognised!\n");
-			return FALSE;
+			return false;
 	}
 
 	// Update partials change count...
 	partialsChangeCount_ = cfg.changeCount();
 
 	// Collect all processes together
-	if (!Comm.wait(DUQComm::World)) return FALSE;
+	if (!Comm.wait(DUQComm::World)) return false;
 
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -87,18 +87,19 @@ bool DUQ::setupPartials()
 	int n, m;
 	msg.print("--> Creating matrices (%ix%i)...\n", typeIndex_.nItems(), typeIndex_.nItems());
 
-	partialRDFMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), TRUE);
-	boundRDFMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), TRUE);
-	unboundRDFMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), TRUE);
-	partialSQMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), TRUE);
-	boundSQMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), TRUE);
-	unboundSQMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), TRUE);
-	workingSQMatrixA_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), TRUE);
-	workingSQMatrixB_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), TRUE);
+	partialRDFMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
+	boundRDFMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
+	unboundRDFMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
+	partialSQMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
+	boundSQMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
+	unboundSQMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
+	workingSQMatrixA_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
+	workingSQMatrixB_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
 
 	Dnchar title;
 	AtomTypeData* at1 = typeIndex_.first(), *at2;
 	msg.print("--> Creating Lists of partials and linking into matrices...\n");
+	msg.printVerbose("Range/binWidth/Volume = %f/%f/%f\n", rdfRange_, rdfBinWidth_, configuration_.box()->volume());
 	for (n=0; n<typeIndex_.nItems(); ++n, at1 = at1->next)
 	{
 		at2 = at1;
@@ -134,7 +135,7 @@ bool DUQ::setupPartials()
 	// Total F(Q)
 	totalFQ_.setName("Unweighted");
 
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -305,7 +306,7 @@ void DUQ::saveRDFs(const char* baseName)
 			// Open file and check that we're OK to proceed writing to it
 			msg.print("Writing RDF file '%s'...\n", filename.get());
 
-			parser.openOutput(filename, TRUE);
+			parser.openOutput(filename, true);
 			if (!parser.isFileGoodForWriting())
 			{
 				msg.error("Couldn't open file '%s' for writing.\n", filename.get());
@@ -344,7 +345,7 @@ void DUQ::saveSQ(const char* baseName)
 			// Open file and check that we're OK to proceed writing to it
 			msg.print("Writing S(Q) file '%s'...\n", filename.get());
 
-			parser.openOutput(filename, TRUE);
+			parser.openOutput(filename, true);
 			if (!parser.isFileGoodForWriting())
 			{
 				msg.error("Couldn't open file '%s' for writing.\n", filename.get());

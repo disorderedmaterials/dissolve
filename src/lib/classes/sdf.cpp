@@ -19,26 +19,4 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "classes/box.h"
-#include "classes/cell.h"
 #include <string.h>
-
-/*!
- * \brief Constructor
- * \details Constructor for Box. 
- */
-Box::Box()
-{
-	type_ = Box::nBoxTypes;
-	cells_ = NULL;
-	cellIndex_ = NULL;
-}
-
-/*!
- * \brief Destructor
- * \details Destructor for Box. 
- */
-Box::~Box()
-{
-	clearCells();
-}

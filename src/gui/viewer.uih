@@ -31,11 +31,9 @@
 #include "templates/reflist.h"
 
 // Forward Declarations
-class Species;
-class Configuration;
-class MainWindow;
+/* none */
 
-// Base rendering widget
+// Basic rendering widget
 class Viewer : public QGLWidget
 {
 	Q_OBJECT
@@ -50,7 +48,7 @@ class Viewer : public QGLWidget
 	// Character / Setup
 	// (in viewer_funcs.cpp)
 	*/
-	private:
+	protected:
 	// Width, height, and aspect ratio of the canvas
 	GLsizei contextWidth_, contextHeight_;
 	// Flag to indicate whether we may draw to the canvas
@@ -107,11 +105,7 @@ class Viewer : public QGLWidget
 	// Mouse / Keyboard Input
 	// (in viewer_input.cpp)
 	*/
-	private:
-	// MainWindow update targets, after Species content changed
-	int speciesUpdateTargets_;
-	// Atom context menu to call (if any)
-	QMenu* atomContextMenu_;
+	protected:
 	// Canvas coordinates of mouse down
 	Vec3<double> rMouseDown_;
 	// Canvas coordinates of mouse cursor
@@ -121,19 +115,15 @@ class Viewer : public QGLWidget
 
 	protected:
 	// Qt Virtual (mouse press event)
-	void mousePressEvent(QMouseEvent*);
+	virtual void mousePressEvent(QMouseEvent*);
 	// Qt Virtual (mouse release event)
-	void mouseReleaseEvent(QMouseEvent*);
+	virtual void mouseReleaseEvent(QMouseEvent*);
 	// Qt Virtual (mouse move event)
-	void mouseMoveEvent(QMouseEvent*);
+	virtual void mouseMoveEvent(QMouseEvent*);
 	// Qt Virtual (mouse wheel event)
-	void wheelEvent(QWheelEvent*);
+	virtual void wheelEvent(QWheelEvent*);
 
 	public:
-	// Set bit-array of GUI quantities to update after viewed model is modified
-	void setSpeciesUpdateTargets(int targets);
-	// Set atom context menu to call
-	void setAtomContextMenu(QMenu* menu);
 	// Return mouse coordinates at last mousedown event
 	Vec3<double> rMouseDown();
 	// Return mouse coordinates at last mousemove event
@@ -150,7 +140,7 @@ class Viewer : public QGLWidget
 	// Rendering Engine
 	// (in viewer_engine.cpp)
 	*/
-	private:
+	protected:
 	// List of filtered solid primitives
 	List<PrimitiveInfo> solidPrimitives_;
 	// List of filtered transparent primitives
@@ -164,11 +154,11 @@ class Viewer : public QGLWidget
 	// Transparency chopper
 	TriangleChopper triangleChopper_;
 
-	private:
+	protected:
 	// Render primitive in specified colour
 	void renderPrimitive(Primitive* primitive, const GLfloat* colour, Matrix4& transform, GLenum fillMode = GL_FILL, GLfloat lineWidth = 1.0);
 	// Add text primitive for rendering later
-	void renderTextPrimitive(Vec3<double> pos, QString text, bool isIsotope = FALSE, bool rightalign = FALSE);
+	void renderTextPrimitive(Vec3<double> pos, QString text, bool isIsotope = false, bool rightalign = false);
 	// Send all primitives to the display, sorting transparent triangles if necessary
 	void sortAndSendGL();
 
@@ -219,62 +209,19 @@ class Viewer : public QGLWidget
 
 
 	/*
-	// Rendering Functions / Data
-	// (in viewer_scene.cpp)
-	*/
-	public:
-	/// Draw Style enum
-	enum DrawStyle
-	{
-		PointStyle,		/**> Draw source Species/Configuration with points (atoms only) */
-		LineStyle,		/**> Draw source Species/Configuration with lines */
-		BallAndStickStyle,	/**> Draw source Species/Configuration with balls and sticks */
-		nDrawStyles		/**> Number of drawing styles */
-	};
-	
-	private:
-	// Source Species to display
-	Species *sourceSpecies_;
-	// Source Configuration to display
-	Configuration* sourceConfiguration_;
-	// Selection box (if any)
-	QRect selectionBox_;
-	// Integer logpoint or reference number, used to determine when scene needs to be reconstructed
-	long int lastScenePoint_;
+	 * Rendering Callbacks / Data
+	 */
+	protected:
 	// Reference list of all created primitives (to which all user primitives must be added)
 	RefList<Primitive,int> primitiveList_;
-	// Basic primtives
-	Primitive spherePrimitive03_, spherePrimitive04_, cubePrimitive_, wireCubePrimitive_, cylinderPrimitive_;
-	// Pointer to parent MainWindow (so we can call refresh functions)
-	MainWindow *mainWindow_;
-	// Style in which to draw source
-	Viewer::DrawStyle drawStyle_;
 
-	private:
+	protected:
 	// Create necessary primitives (called once when Viewer is constructed)
-	void createPrimitives();
+	virtual void createPrimitives() = 0;
 	// Setup basic GL properties
-	void setupGL();
+	virtual void setupGL() = 0;
 	// Draw source Species
-	void drawSpecies();
-	// Draw source Configuration
-	void drawConfiguration();
-
-	public:
-	// Set source (Species)
-	void setSource(Species *sp);
-	// Set source (Configuration)
-	void setSource(Configuration* cfg);
-	// Unset all sources
-	void unsetSource();
-	// Set parent MainWindow
-	void setParentMainWindow(MainWindow* mainWin);
-	// Set draw style
-	void setDrawStyle(Viewer::DrawStyle style);
-	
-	public slots:
-	// Change draw style
-	void changeDrawStyle(int style);
+	virtual void drawScene() = 0;
 };
 
 #endif

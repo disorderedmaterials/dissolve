@@ -334,26 +334,26 @@ bool Step::setArgumentValue(const char* argumentName, const char* value)
 	if (command_ == NULL)
 	{
 		msg.error("NULL_POINTER - NULL Command pointer found in Step::setArgumentValue().\n");
-		return FALSE;
+		return false;
 	}
 	Argument* arg = command_->argument(argumentName);
 	if (arg == NULL)
 	{
 		msg.error("Command '%s' has no argument named '%s'.\n", command_->name(), argumentName);
-		return FALSE;
+		return false;
 	}
 
 	// Is this argument already in our list?
 	if (argumentValues_.contains(arg))
 	{
 		msg.error("Argument '%s' to Command '%s' has been set more than once.\n", argumentName, command_->name());
-		return FALSE;
+		return false;
 	}
 	
 	// Add new entry
 	argumentValues_.add(arg, value);
 	
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -373,7 +373,7 @@ bool Step::prepare()
 	if (command_ == NULL)
 	{
 		msg.error("NULL_POINTER - NULL Function pointer found in Step::prepare().\n");
-		return FALSE;
+		return false;
 	}
 
 	// Reset to default argument values
@@ -382,7 +382,7 @@ bool Step::prepare()
 	// Poke any provided arguments into the Command
 	for (RefListItem<Argument,Dnchar>* refArg = argumentValues_.first(); refArg != NULL; refArg = refArg->next) refArg->item->setValue(refArg->data.get());
 	
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -394,7 +394,7 @@ CommandPointer Step::commandPointer()
 	if (command_ == NULL)
 	{
 		msg.error("NULL_POINTER - NULL Command pointer found in Step::commandPointer().\n");
-		return FALSE;
+		return false;
 	}
 	return command_->commandPointer();
 }
@@ -428,18 +428,18 @@ bool Step::broadcast(const List<Command>& commands)
 	// Master broadcasts name of Command for Slaves to find
 	Dnchar funcName;
 	if (Comm.master()) funcName = command_->name();
-	if (!Comm.broadcast(funcName)) return FALSE;
+	if (!Comm.broadcast(funcName)) return false;
 	for (command_ = commands.first(); command_ != NULL; command_ = command_->next) if (funcName == command_->name()) break;
 
 	if (command_ == NULL)
 	{
 		msg.error("Process couldn't find a Command named '%s'.\n", funcName.get());
-		return FALSE;
+		return false;
 	}
 
 	// Master broadcasts number of arguments to expect
 	int nArgs = argumentValues_.nItems();
-	if (!Comm.broadcast(&nArgs, 1)) return FALSE;
+	if (!Comm.broadcast(&nArgs, 1)) return false;
 	Dnchar argName, argValue;
 	if (Comm.master())
 	{
@@ -448,22 +448,22 @@ bool Step::broadcast(const List<Command>& commands)
 			// Master broadcasts argument name and value
 			argName = argRef->item->name();
 			argValue = argRef->data;
-			if (!Comm.broadcast(argName)) return FALSE;
-			if (!Comm.broadcast(argValue)) return FALSE;
+			if (!Comm.broadcast(argName)) return false;
+			if (!Comm.broadcast(argValue)) return false;
 		}
 	}
 	else
 	{
 		for (int n=0; n<nArgs; ++n)
 		{
-			if (!Comm.broadcast(argName)) return FALSE;
-			if (!Comm.broadcast(argValue)) return FALSE;
-			if (!setArgumentValue(argName.get(), argValue.get())) return FALSE;
+			if (!Comm.broadcast(argName)) return false;
+			if (!Comm.broadcast(argValue)) return false;
+			if (!setArgumentValue(argName.get(), argValue.get())) return false;
 		}
 	}
 	
 	// Broadcast number of iterations
-	if (!Comm.broadcast(&iterations_, 1)) return FALSE;
+	if (!Comm.broadcast(&iterations_, 1)) return false;
 #endif
-	return TRUE;
+	return true;
 }

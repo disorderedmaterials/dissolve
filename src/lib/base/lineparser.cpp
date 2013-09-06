@@ -52,14 +52,14 @@ void LineParser::reset()
 {
 	inputFilename_.clear();
 	outputFilename_.clear();
-	endOfLine_ = FALSE;
+	endOfLine_ = false;
 	lineLength_ = 0;
 	linePos_ = 0;
 	lastLineNo_ = 0;
 	inputFile_ = NULL;
 	outputFile_ = NULL;
 	cachedFile_ = NULL;
-	directOutput_ = FALSE;
+	directOutput_ = false;
 }
 
 //
@@ -127,12 +127,12 @@ bool LineParser::openInput(const char* filename)
 	{
 		closeFiles();
 		msg.error("Failed to open file '%s' for reading.\n", filename);
-		return FALSE;
+		return false;
 	}
 	// Reset variables
 	lastLineNo_ = 0;
 	inputFilename_ = filename;
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -165,13 +165,13 @@ bool LineParser::openOutput(const char* filename, bool directOutput)
 		{
 			closeFiles();
 			msg.error("Failed to open file '%s' for writing.\n", filename);
-			return FALSE;
+			return false;
 		}
 	}
 	else cachedFile_ = new stringstream;
 
 	outputFilename_ = filename;
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -197,9 +197,9 @@ void LineParser::closeFiles()
  */
 bool LineParser::isFileGoodForReading() const
 {
-	if (inputFile_ == NULL) return FALSE;
-	else if (!inputFile_->is_open()) return FALSE;
-	return TRUE;
+	if (inputFile_ == NULL) return false;
+	else if (!inputFile_->is_open()) return false;
+	return true;
 }
 
 /*!
@@ -209,11 +209,11 @@ bool LineParser::isFileGoodForWriting() const
 {
 	if (directOutput_)
 	{
-		if (outputFile_ == NULL) return FALSE;
-		else if (!outputFile_->is_open()) return FALSE;
-		return TRUE;
+		if (outputFile_ == NULL) return false;
+		else if (!outputFile_->is_open()) return false;
+		return true;
 	}
-	else return TRUE;
+	else return true;
 }
 
 /*!
@@ -272,15 +272,15 @@ void LineParser::rewind()
  */
 bool LineParser::eofOrBlank() const
 {
-	if (inputFile_ == NULL) return TRUE;
+	if (inputFile_ == NULL) return true;
 	// Simple check first - is this the end of the file?
-	if (inputFile_->eof()) return TRUE;
+	if (inputFile_->eof()) return true;
 	// Otherwise, store the current file position and search for a non-whitespace character (or end of file)
 	streampos pos = inputFile_->tellg();
 	
 	// Skip through whitespace, searching for 'hard' character
 	char c;
-	bool result = TRUE;
+	bool result = true;
 	do
 	{
 		inputFile_->get(c);
@@ -291,7 +291,7 @@ bool LineParser::eofOrBlank() const
 			if (inputFile_->eof()) break;
 			else continue;
 		}
-		result = FALSE;
+		result = false;
 		break;
 	} while (1);
 	inputFile_->seekg(pos);
@@ -392,17 +392,17 @@ bool LineParser::getNextArg(int optionMask, Dnchar* destarg)
 	int arglen;
 	bool done, hadquotes, failed;
 	char c, quotechar;
-	failed = FALSE;
-	done = FALSE;
-	hadquotes = FALSE;
+	failed = false;
+	done = false;
+	hadquotes = false;
 	quotechar = '\0';
-	endOfLine_ = FALSE;
+	endOfLine_ = false;
 	arglen = 0;
 	if (endOfLine_)
 	{
 		destarg->clear();
 		// printf("Lineparser is at end of line - returning...\n");
-		return TRUE;
+		return true;
 	}
 	while (linePos_ < lineLength_)
 	{
@@ -412,8 +412,8 @@ bool LineParser::getNextArg(int optionMask, Dnchar* destarg)
 			// End of line markers
 			case (10):	// Line feed (\n)
 			case (13):	// Carriage Return
-				done = TRUE;
-				endOfLine_ = TRUE;
+				done = true;
+				endOfLine_ = true;
 				break;
 			// Delimiters
 			// If we encounter one and arg length != 0 this signals the end of the argument.
@@ -426,7 +426,7 @@ bool LineParser::getNextArg(int optionMask, Dnchar* destarg)
 			case (9):	// Horizontal Tab
 			case (' '):	// Space
 				if (quotechar != '\0') tempArg_[arglen++] = c;
-				else if (arglen != 0) done = TRUE;
+				else if (arglen != 0) done = true;
 				break;
 			// Quote marks
 			// If LineParser::UseQuotes, keep delimiters and other quote marks inside the quoted text.
@@ -437,8 +437,8 @@ bool LineParser::getNextArg(int optionMask, Dnchar* destarg)
 				else if (quotechar == c)
 				{
 					quotechar = '\0';
-					hadquotes = TRUE;
-					done = TRUE;
+					hadquotes = true;
+					done = true;
 				}
 				else tempArg_[arglen++] = c;
 				break;
@@ -469,8 +469,8 @@ bool LineParser::getNextArg(int optionMask, Dnchar* destarg)
 				break;
 			// Comment markers
 			case ('#'):	// "#" Rest/all of line is a comment
-				endOfLine_ = TRUE;
-				done = TRUE;
+				endOfLine_ = true;
+				done = true;
 				break;
 			// Normal character
 			default: 
@@ -483,11 +483,11 @@ bool LineParser::getNextArg(int optionMask, Dnchar* destarg)
 	}
 	// Finalise argument
 	tempArg_[arglen] = '\0';
-	if (linePos_ == lineLength_) endOfLine_ = TRUE;
+	if (linePos_ == lineLength_) endOfLine_ = true;
 	// Store the result in the desired destination
 	if (destarg != NULL) *destarg = tempArg_;
-	if (failed) return FALSE;
-	return (arglen == 0 ? (hadquotes ? TRUE : FALSE) : TRUE);
+	if (failed) return false;
+	return (arglen == 0 ? (hadquotes ? true : false) : true);
 }
 
 /*!
@@ -499,7 +499,7 @@ bool LineParser::getNextN(int optionMask, int length, Dnchar* destarg)
 	// A negative length may be supplied, which we interpret as 'strip trailing spaces'
 	int arglen = 0;
 	char c;
-	if (lineLength_ == 0) return FALSE;
+	if (lineLength_ == 0) return false;
 
 	int n, charsleft = lineLength_ - linePos_;
 	bool striptrailing = (length < 0);
@@ -531,7 +531,7 @@ bool LineParser::getNextN(int optionMask, int length, Dnchar* destarg)
 	if (destarg != NULL) destarg->set(tempArg_);
 	//printf("getNextN found [%s], length = %i\n", tempArg_, arglen);
 	//line_.eraseStart(length);
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -541,7 +541,7 @@ void LineParser::getAllArgsDelim(int optionMask)
 {
 	// Parse the string in 'line_' into arguments in 'args'
 	arguments_.clear();
-	endOfLine_ = FALSE;
+	endOfLine_ = false;
 	Dnchar* arg;
 	while (!endOfLine_)
 	{
@@ -567,7 +567,7 @@ void LineParser::getAllArgsDelim(int optionMask)
  */
 int LineParser::getArgsDelim(int optionMask)
 {
-	bool done = FALSE;
+	bool done = false;
 	int result;
 	// Returns : 0=ok, 1=error, -1=eof
 	do
@@ -577,10 +577,10 @@ int LineParser::getArgsDelim(int optionMask)
 		if (result != 0) return result;
 		
 		// Assume that we will finish after parsing the line we just read in
-		done = TRUE;
+		done = true;
 		// To check for blank lines, do the parsing and then check nargs()
 		getAllArgsDelim(optionMask);
-		if ((optionMask&LineParser::SkipBlanks) && (nArgs() == 0)) done = FALSE;
+		if ((optionMask&LineParser::SkipBlanks) && (nArgs() == 0)) done = false;
 	} while (!done);
 	return 0;
 }
@@ -592,7 +592,7 @@ bool LineParser::getRestDelim(Dnchar* destarg)
 {
 	int arglen = 0, n, length;
 	char c;
-	if (lineLength_ == 0) return FALSE;
+	if (lineLength_ == 0) return false;
 	length = lineLength_ - linePos_;
 	for (n=0; n<length; n++)
 	{
@@ -618,7 +618,7 @@ bool LineParser::getRestDelim(Dnchar* destarg)
 		tempArg_[n] = '\0';
 	}
 	if (destarg != NULL) destarg->set(tempArg_);
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -627,7 +627,7 @@ bool LineParser::getRestDelim(Dnchar* destarg)
 bool LineParser::getArgDelim(int optionMask, Dnchar* destarg)
 {
 	bool result = getNextArg(optionMask, destarg);
-	printf("getArgDelim = %s [%s]\n", result ? "TRUE" : "FALSE", destarg->get());
+	printf("getArgDelim = %s [%s]\n", result ? "true" : "false", destarg->get());
 	return result;
 }
 
@@ -648,7 +648,7 @@ void LineParser::getArgsDelim(int optionMask, const char* s)
 bool LineParser::getCharsDelim(Dnchar* destarg)
 {
 	int length = 0;
-	bool result = TRUE;
+	bool result = true;
 	char c;
 	while (!inputFile_->eof())
 	{
@@ -662,7 +662,7 @@ bool LineParser::getCharsDelim(Dnchar* destarg)
 		}
 		if (c == '\0')
 		{
-			if (length == 0) result = FALSE;
+			if (length == 0) result = false;
 			break;
 		}
 		tempArg_[length] = c;
@@ -682,9 +682,9 @@ bool LineParser::getCharsDelim(int optionMask, Dnchar* source, Dnchar* destarg)
 	int arglen, pos = 0, length = source->length();
 	bool done, hadquotes, failed;
 	char c, quotechar;
-	failed = FALSE;
-	done = FALSE;
-	hadquotes = FALSE;
+	failed = false;
+	done = false;
+	hadquotes = false;
 	quotechar = '\0';
 	arglen = 0;
 	while (pos < length)
@@ -695,7 +695,7 @@ bool LineParser::getCharsDelim(int optionMask, Dnchar* source, Dnchar* destarg)
 			// End of line markers
 			case (10):	// Line feed (\n)
 			case (13):	// Carriage Return
-				done = TRUE;
+				done = true;
 				break;
 			// Delimiters
 			// If we encounter one and arg length != 0 this signals the end of the argument.
@@ -707,7 +707,7 @@ bool LineParser::getCharsDelim(int optionMask, Dnchar* source, Dnchar* destarg)
 					tempArg_[arglen] = c;
 					arglen ++;
 				}
-				else if (arglen != 0) done = TRUE;
+				else if (arglen != 0) done = true;
 				break;
 			// Quote marks
 			// If LineParser::UseQuotes, keep delimiters and other quote marks inside the quoted text.
@@ -718,8 +718,8 @@ bool LineParser::getCharsDelim(int optionMask, Dnchar* source, Dnchar* destarg)
 				else if (quotechar == c)
 				{
 					quotechar = '\0';
-					hadquotes = TRUE;
-					done = TRUE;
+					hadquotes = true;
+					done = true;
 				}
 				else
 				{
@@ -763,8 +763,8 @@ bool LineParser::getCharsDelim(int optionMask, Dnchar* source, Dnchar* destarg)
 				break;
 			// Comment markers
 			case ('#'):	// "#" Rest/all of line is a comment
-				endOfLine_ = TRUE;
-				done = TRUE;
+				endOfLine_ = true;
+				done = true;
 				break;
 			// Normal character
 			default: 
@@ -782,8 +782,8 @@ bool LineParser::getCharsDelim(int optionMask, Dnchar* source, Dnchar* destarg)
 	if (destarg != NULL) *destarg = tempArg_;
 	// Trim characters from source string
 	source->eraseStart(pos);
-	if (failed) return FALSE;
-	return (arglen == 0 ? (hadquotes ? TRUE : FALSE) : TRUE);
+	if (failed) return false;
+	return (arglen == 0 ? (hadquotes ? true : false) : true);
 }
 
 /*!
@@ -958,17 +958,17 @@ bool LineParser::writeLine(const char* s) const
 		if (cachedFile_ == NULL)
 		{
 			msg.print("Unable to delayed-writeLine - destination cache is not open.\n");
-			return FALSE;
+			return false;
 		}
 		else* cachedFile_ << s;
 	}
 	else if (outputFile_ == NULL)
 	{
 		msg.print("Unable to direct-writeLine - destination file is not open.\n");
-		return FALSE;
+		return false;
 	}
 	else* outputFile_ << s;
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -981,13 +981,13 @@ bool LineParser::writeLineF(const char* fmt, ...) const
 		if (cachedFile_ == NULL)
 		{
 			msg.print("Unable to delayed-writeLineF - destination cache is not open.\n");
-			return FALSE;
+			return false;
 		}
 	}
 	else if (outputFile_ == NULL)
 	{
 		msg.print("Unable to direct-writeLineF - destination file is not open.\n");
-		return FALSE;
+		return false;
 	}
 	
 	// Construct line
@@ -1000,7 +1000,7 @@ bool LineParser::writeLineF(const char* fmt, ...) const
 	va_end(arguments);
 	if (directOutput_) *outputFile_ << s;
 	else* cachedFile_ << s;
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -1012,7 +1012,7 @@ bool LineParser::commitCache()
 	if (directOutput_)
 	{
 		printf("Internal Error: Tried to commit cached writes when direct output was enabled.\n");
-		return FALSE;
+		return false;
 	}
 	ofstream outputFile(outputFilename_);
 	if (outputFile.is_open())
@@ -1023,9 +1023,9 @@ bool LineParser::commitCache()
 	else
 	{
 		msg.error("Couldn't open output file '%s' for writing.\n", outputFilename_.get());
-		return FALSE;
+		return false;
 	}
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -1100,8 +1100,8 @@ bool LineParser::argb(int i)
 {
 	if ((i < 0) || (i >= nArgs()))
 	{
-		printf("Warning: Argument %i is out of range - returning FALSE...\n", i);
-		return FALSE;
+		printf("Warning: Argument %i is out of range - returning false...\n", i);
+		return false;
 	}
 	return arguments_[i]->asBool();
 }
@@ -1124,6 +1124,6 @@ float LineParser::argf(int i)
  */
 bool LineParser::hasArg(int i) const
 {
-	if ((i < 0) || (i >= nArgs())) return FALSE;
-	return TRUE;
+	if ((i < 0) || (i >= nArgs())) return false;
+	return true;
 }

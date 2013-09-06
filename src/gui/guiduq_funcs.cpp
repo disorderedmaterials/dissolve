@@ -1,6 +1,6 @@
 /*
-	*** LoadDataDialog Functions
-	*** src/loaddatadialog_funcs.cpp
+	*** Qt DUQ Object
+	*** src/guiduq_funcs.cpp
 	Copyright T. Youngs 2012-2013
 
 	This file is part of dUQ.
@@ -20,52 +20,30 @@
 */
 
 #include "gui/guiduq.uih"
+#include "gui/mainwindow.h"
 #include <QtCore/QTime>
 
+// DUQ Singleton Declaration
+DUQObject GuiDUQ;
+
 /*
- * GuiDUQ
+ * DUQObject
  */
 
 // Constructor
-GuiDUQ::GuiDUQ()
+DUQObject::DUQObject()
 {
 }
 
 // Destructor
-GuiDUQ::~GuiDUQ()
+DUQObject::~DUQObject()
 {
 }
 
-/*
- * Qt Slots
- */
-
-/*!
- * \brief StartSimulation (slot)
- */
-void GuiDUQ::startSimulation()
+// Set main window pointer
+void DUQObject::setMainWindow(MainWindow* mainWindow)
 {
-	// Begin the main step loop
-	int result = runSimulation();
-
-	// Finished (for whatever reason) - emit 'Stopped' signal
-	emit(simulationFinished(0));
-}
-
-/*!
- * \name ReceiveDUQSignal (slot)
- */
-void GuiDUQ::receiveDUQSignal(int signal, int data)
-{
-	receiveSignal((DUQ::Signal) signal, data);
-}
-
-/*!
- * \brief Send signal (virtual)
- */
-void GuiDUQ::sendSignal(DUQ::Signal signal, int data)
-{
-	emit sendDUQSignal(signal, data);
+	mainWindow_ = mainWindow;
 }
 
 /*
@@ -77,7 +55,7 @@ void GuiDUQ::sendSignal(DUQ::Signal signal, int data)
  */
 GuiOutputHandler::GuiOutputHandler()
 {
-	printToConsole_ = TRUE;
+	printToConsole_ = false;
 }
 
 /*!

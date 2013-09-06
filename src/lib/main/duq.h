@@ -73,22 +73,14 @@ class DUQ
 	DUQ();
 	// Destructor
 	~DUQ();
-	// Clear all data
-	void clear();
 
 
 	/*!
-	 * \name Periodic Table Definition
+	 * \name Data
 	 */
-	///@{
-	private:
-	// Periodic table data
-	PeriodicTable periodicTable_;
-
 	public:
-	// Return PeriodicTable
-	PeriodicTable &periodicTable();
-	///@}
+	// Clear all data
+	void clear();
 
 
 	/*!
@@ -353,6 +345,8 @@ class DUQ
 	 */
 	///@{
 	private:
+	// Flag count at last succesful setup
+	int setupFlagCount_;
 	// Molecule/Grain/Atom Configuration
 	Configuration configuration_;
 	// Master AtomType index, containing unique (non-isotopic) atom types
@@ -363,6 +357,8 @@ class DUQ
 	Dnchar boxNormalisationFileName_;
 	// Number of test points to use when calculating Box normalisation array
 	int boxNormalisationPoints_;
+	// Density multiplier for cells when creating local atom arrays
+	double cellDensityMultiplier_;
 	// FWHM of Gaussian for Q-dependent instrument broadening function
 	double qDependentFWHM_;
 	// FWHM of Gaussian for Q-independent instrument broadening function
@@ -391,20 +387,22 @@ class DUQ
 	void clearModel();
 	// Load Box normalisation array
 	bool loadBoxNormalisationFile(const char *fileName);
-	// Create AtomType index and PairPotential map
-	bool setupIndexAndMaps();
-	// Set up index lists for Species
-	bool setupIntramolecular();
+	// Setup pairpotentials
+	bool setupPotentials();
 	// Finalise and print setup variables
-	bool finaliseAndPrintSetup();
+	bool printSetup();
 
 	public:
 	// Check current setup
 	bool checkSetup();
+	// Return whether current setup is valid
+	bool setupIsValid();
 	// Setup simulation
 	bool setupSimulation();
 	// Return random seed
 	int seed();
+	// Return configuration pointer
+	Configuration* configuration();
 	///@}
 
 
@@ -415,8 +413,10 @@ class DUQ
 	private:
 	// Return total intramolecular energy
 	double intramolecularEnergy(Configuration& cfg);
-	// Return total Grain energy
-	double grainEnergy(Configuration& cfg);
+	// Return total atom energy
+	double interatomicEnergy(Configuration& cfg);
+	// Return total grain energy
+	double intergrainEnergy(Configuration& cfg);
 	// Return total energy of the system
 	double totalEnergy(Configuration& cfg);
 	// Test - Return total intramolecular (+correction) energy
@@ -584,6 +584,8 @@ class DUQ
 	bool runSimulation();
 	// Enter interactive mode
 	bool goInteractive();
+	// Execute single command
+	bool runCommand(const char* commandString);
 	///@}
 
 
@@ -698,7 +700,7 @@ class DUQ
 		ConfigurationUpdatedSignal,	/**> Configuration data has been updated and stored in CheckPoint area */
 		EnergyUpdatedSignal,		/**> Total energy data has been updated and stored in CheckPoing area */
 		PairPotentialsUpdatedSignal,	/**> PairPotentials have been updated and stored in CheckPoint area */
-		PairCorrelationsUpdatedSignal,		/**> Pair correlation data (g(r), S(Q) etc.) has been updated and stored in CheckPoint area */
+		PairCorrelationsUpdatedSignal,	/**> Pair correlation data (g(r), S(Q) etc.) has been updated and stored in CheckPoint area */
 		TerminateSignal,		/**> Simulation should be terminated as soon as possible */
 		nSignals
 	};
@@ -728,6 +730,14 @@ class DUQ
 	 */
 	///@{
 	public:
+	// Messages
+	enum Message { BroadcastSetupMessage, SetupSimulationMessage, nMessages };
+	// Enter message loop (slaves only)
+	void enterMessageLoop();
+	// Pass message to slaves, forcing them to perform an action
+	void sendMessage(DUQ::Message message);
+	// Check on success of last message
+	bool messageResult(bool rootResult);
 	// Broadcast system setup data
 	bool broadcastSetup();
 	///@}

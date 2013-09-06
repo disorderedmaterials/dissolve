@@ -152,17 +152,17 @@ bool GrainDefinition::broadcast(const List<Atom>& atoms)
 	int n, count, index;
 
 	// Name
-	if (!Comm.broadcast(name_)) return FALSE;
+	if (!Comm.broadcast(name_)) return false;
 	
 	// Atoms
 	count = atoms_.nItems();
-	if (!Comm.broadcast(&count, 1)) return FALSE;
+	if (!Comm.broadcast(&count, 1)) return false;
 	for (n=0; n<count; ++n)
 	{
 		if (Comm.master()) index = atoms_.item(n)->item->index();
-		if (!Comm.broadcast(&index, 1)) return FALSE;
+		if (!Comm.broadcast(&index, 1)) return false;
 		if (Comm.slave()) addAtom(atoms.item(index));
 	}
 #endif
-	return TRUE;
+	return true;
 }

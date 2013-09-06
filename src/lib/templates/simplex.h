@@ -107,14 +107,14 @@ template<class T> class Simplex
 		double comparisonCost = costs_[vertexId];
 
 		// If supplied cost is lower, then accept it regardless
-		if (trialCost < comparisonCost) return TRUE;
+		if (trialCost < comparisonCost) return true;
 		else
 		{
 			// Accept with some probability...
 			double deltaCost = trialCost - comparisonCost;
-			if (dUQMath::random() < exp(-deltaCost/temperature)) return TRUE;
+			if (dUQMath::random() < exp(-deltaCost/temperature)) return true;
 		}
-		return FALSE;
+		return false;
 	}
 
 	/*!

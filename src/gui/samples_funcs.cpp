@@ -1,6 +1,6 @@
 /*
-	*** Main Window - ExperimentTab Functions
-	*** src/gui/mainwindow_experiment.cpp
+	*** Samples Dialog
+	*** src/gui/samples_funcs.cpp
 	Copyright T. Youngs 2012-2013
 
 	This file is part of dUQ.
@@ -19,84 +19,45 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/mainwindow.h"
-#include "gui/pointerdialog.h"
+#include "gui/samples.h"
+#include "gui/guiduq.uih"
+#include "gui/dwenum.h"
+#include "main/flags.h"
 #include "classes/species.h"
-#include "base/sysfunc.h"
-#include "base/flag.h"
+#include <QtGui/QFileDialog>
 
-// Refresh tab
-void MainWindow::refreshExperimentTab(bool compositionGroup, bool sampleGroup, bool mixGroup, bool refDataGroup)
+// Constructor
+DUQSamplesDockWidget::DUQSamplesDockWidget(QWidget* parent, DUQObject& duq) : QDockWidget(parent), dUQ_(duq)
 {
-	// Set the refreshing_ flag
-	experimentTabRefreshing_ = TRUE;
+	// Call the main creation function
+	ui.setupUi(this);
 
-	// Refresh the Component group?
-	if (compositionGroup)
-	{
-		// Grab current selected item
-		int oldRow = ui.SystemCompositionTable->currentRow();
+	// Setup item delegates
+	// -- Assigned Isotopologues Table
+	isotopologueRelativePopulationDelegate_ = new DoubleSpinDelegate(this, 0.0, 1000, 1.0, 3);
+	ui.AssignedIsotopologuesTree->setItemDelegateForColumn(2, isotopologueRelativePopulationDelegate_);
+	
+	// Set initial variables
+	refreshing_ = false;
+}
 
-		// Get total 'relative' population of components and multiplier
-		double totalRelative = dUQ_.totalRelative();
-		int multiplier = dUQ_.multiplier();
+// Destructor
+DUQSamplesDockWidget::~DUQSamplesDockWidget()
+{
+}
 
-		// Re-populate list
-		QStringList headers;
-		headers << "Species" << "Relative Population" << "Fractional Population" << "NMolecules";
-		ui.SystemCompositionTable->setHorizontalHeaderLabels(headers);
-		ui.SystemCompositionTable->horizontalHeader()->setVisible(TRUE);
-		ui.SystemCompositionTable->clearContents();
-		ui.SystemCompositionTable->setRowCount(dUQ_.nSpecies());
+// Window close event
+void DUQSamplesDockWidget::closeEvent(QCloseEvent* event)
+{
+}
 
-		QTableWidgetItem* item;
-		int count = 0, atomCount = 0, moleculeCount = 0;
+// General refresh function
+void DUQSamplesDockWidget::refresh(int targets)
+{
+	refreshing_ = true;
 
-		for (Species* sp = dUQ_.species(); sp != NULL; sp = sp->next)
-		{
-			item = new QTableWidgetItem(sp->name());
-			item->setFlags(Qt::ItemIsSelectable);
-			ui.SystemCompositionTable->setItem(count, 0, item);
-			item = new QTableWidgetItem(ftoa(sp->relativePopulation()));
-			item->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-			ui.SystemCompositionTable->setItem(count, 1, item);
-			item = new QTableWidgetItem(ftoa(sp->relativePopulation()/totalRelative));
-			item->setFlags(Qt::ItemIsSelectable);
-			ui.SystemCompositionTable->setItem(count, 2, item);
-			item = new QTableWidgetItem(itoa(int(sp->relativePopulation()*multiplier)));
-			item->setFlags(Qt::ItemIsSelectable);
-			ui.SystemCompositionTable->setItem(count, 3, item);
-			
-			// Update counters
-			++count;
-			moleculeCount += multiplier*sp->relativePopulation();
-			atomCount += multiplier*sp->relativePopulation()*sp->nAtoms();
-		}
-		ui.SystemCompositionTable->resizeColumnsToContents();
-
-		// Re-select the same index as before (if possible)
-		if ((oldRow != -1) && (oldRow < ui.SystemCompositionTable->rowCount())) ui.SystemCompositionTable->setCurrentCell(oldRow,0);
-		else ui.SystemCompositionTable->setCurrentCell(0,0);
-		
-		// Change group title
-		Dnchar title(-1, "System Composition (%i Species)", ui.SystemCompositionTable->rowCount());
-		ui.SystemCompositionGroup->setTitle(title.get());
-		
-		// Update mutiplier and density
-		ui.SystemMultiplierSpin->setValue(dUQ_.multiplier());
-		ui.SystemDensitySpin->setValue(dUQ_.density());
-		ui.SystemDensityUnitsCombo->setCurrentIndex(dUQ_.densityIsAtomic() ? 0 : 1);
-		
-		// Update system info text
-		ui.SystemTotalAtomsLabel->setText(itoa(atomCount));
-		ui.SystemTotalMoleculesLabel->setText(itoa(moleculeCount));
-	}
-
-	// Set enabled status of some components
-	ui.SystemCompositionTable->setEnabled(ui.SystemCompositionTable->rowCount());
-
-	// Refresh the Sample lists?
-	if (sampleGroup)
+	// Refresh the Sample list
+	if (targets&DockWidgetPanel::SampleListPanel)
 	{
 		// Grab current selected item
 		int oldRow = ui.SamplesList->currentRow();
@@ -120,16 +81,15 @@ void MainWindow::refreshExperimentTab(bool compositionGroup, bool sampleGroup, b
 		ui.SamplesList->setCurrentRow(oldRow);
 		
 		// Change group title
-		Dnchar title(-1, "Samples (%i)", ui.SamplesList->count());
-		ui.SampleDefinitionsGroup->setTitle(title.get());
+		ui.NSamplesLabel->setText("Samples (" + QString::number(ui.SamplesList->count()) + ")");
 	}
 	
 	// Get currently-selected Sample
 	Sample* currentSample = ui.SamplesList->currentRow() == -1 ? NULL : dUQ_.sample(ui.SamplesList->currentRow());
 	ui.RemoveSampleButton->setEnabled(currentSample);
 	
-	// Refresh the Sample Isotopologue Mix table?
-	if (mixGroup)
+	// Refresh the Sample Isotopologue Mix table
+	if (targets&DockWidgetPanel::SampleIsotopologuesPanel)
 	{
 		ui.AssignedIsotopologuesGroup->setEnabled(currentSample);
 
@@ -141,8 +101,8 @@ void MainWindow::refreshExperimentTab(bool compositionGroup, bool sampleGroup, b
 		QStringList headers;
 		headers << "Species" << "Isotopologue" << "Relative" << "Fraction" << "nMolecules";
 		ui.AssignedIsotopologuesTree->setHeaderLabels(headers);
-		ui.AssignedIsotopologuesTree->header()->setVisible(TRUE);
-		ui.AssignedIsotopologuesTree->setHeaderHidden(FALSE);
+		ui.AssignedIsotopologuesTree->header()->setVisible(true);
+		ui.AssignedIsotopologuesTree->setHeaderHidden(false);
 			
 		if (currentSample != NULL)
 		{
@@ -159,7 +119,7 @@ void MainWindow::refreshExperimentTab(bool compositionGroup, bool sampleGroup, b
 			{
 				topItem = new QTreeWidgetItem(ui.AssignedIsotopologuesTree);
 				topItem->setText(0, mix->species()->name());
-				topItem->setExpanded(TRUE);
+				topItem->setExpanded(true);
 				topItem->setFlags(Qt::ItemIsSelectable);
 				data.clear();
 				data << mix->species()->name();
@@ -208,9 +168,9 @@ void MainWindow::refreshExperimentTab(bool compositionGroup, bool sampleGroup, b
 					QObject::connect(combo, SIGNAL(activated(int)), this, SLOT(mixtureIsotopologueChanged(int)));
 
 					item->setData(0, Qt::UserRole, QVariant(data));
-					item->setText(2, ftoa(ri->data, "%6.3f"));
-					item->setText(3, ftoa(ri->data / totalRelative, "%6.3f"));
-					item->setText(4, itoa(int(ri->data / totalRelative)*mix->species()->relativePopulation()*multiplier));
+					item->setText(2, QString::number(ri->data));
+					item->setText(3, QString::number(ri->data / totalRelative));
+					item->setText(4, QString::number(int(ri->data / totalRelative)*mix->species()->relativePopulation()*multiplier));
 					item->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 				}
 			}
@@ -220,8 +180,8 @@ void MainWindow::refreshExperimentTab(bool compositionGroup, bool sampleGroup, b
 		}
 	}
 
-	// Update reference file data?
-	if (refDataGroup)
+	// Update reference file data
+	if (targets&DockWidgetPanel::SampleReferenceDataPanel)
 	{
 		ui.ReferenceDataGroup->setEnabled(currentSample);
 		if (currentSample && (!currentSample->referenceDataFileName().isEmpty()))
@@ -236,12 +196,15 @@ void MainWindow::refreshExperimentTab(bool compositionGroup, bool sampleGroup, b
 		}
 	}
 
-	// Unset the refreshing_ flag
-	experimentTabRefreshing_ = FALSE;
+	refreshing_ = false;
 }
 
+/*
+ * Private Functions
+ */
+
 // Return pointer to selected Sample
-Sample* MainWindow::selectedSample()
+Sample* DUQSamplesDockWidget::selectedSample()
 {
 	int currentRow = ui.SamplesList->currentRow();
 	if (currentRow == -1) return NULL;
@@ -254,138 +217,51 @@ Sample* MainWindow::selectedSample()
 	return sample;
 }
 
-/*
-// System Component Group
-*/
-
-// Different Component selected in list
-void MainWindow::on_SystemCompositionTable_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)
+// Determine Species and Isotopologue from QVariant data
+bool DUQSamplesDockWidget::getSpeciesAndIsotopologue(QStringList data, Species*& species, Isotopologue*& iso)
 {
-	if (experimentTabRefreshing_) return;
-	refreshExperimentTab(FALSE, FALSE, FALSE);
-}
-
-// Component data changed
-void MainWindow::on_SystemCompositionTable_cellChanged(int row, int column)
-{
-	if (experimentTabRefreshing_) return;
-
-	// We need to keep an eye on column '1' which is the relative population
-	if (column == 1)
+	if (data.count() != 2)
 	{
-		// The row corresponds to the component Species
-		Species* sp = dUQ_.species(row);
-		if (sp == NULL) return;
-		
-		// Now grab sender widget and value
-		QTableWidgetItem* item = ui.SystemCompositionTable->item(row, column);
-		if (item == NULL)
-		{
-			printf("GUI_ERROR - Row and column don't correspond to a QWidgetItem.\n");
-			return;
-		}
-		sp->setRelativePopulation(atof(qPrintable(item->text())));
+		printf("GUI_ERROR - QStringList must contain exactly two items (Species and Isotopologue names).\n");
+		return false;
+	}
+	
+	// Determine Species
+	species = dUQ_.findSpecies(qPrintable(data[0]));
+	if (!species)
+	{
+		printf("GUI_ERROR - QVariant data specifies an unknown Species ('%s').\n", qPrintable(data[0]));
+		return false;
+	}
+	
+	// Now we have the species, determine the isotopologue...
+	iso = species->findIsotopologue(qPrintable(data[1]));
+	if (!iso)
+	{
+		printf("GUI_ERROR - QVariant data specifies an unknown Isotopologue ('%s').\n", qPrintable(data[1]));
+		return false;
 	}
 
-	// Update
-	refresh(SystemCompositionGroup | AssignedIsotopologuesGroup);
-}
-
-// Set system multiplier
-void MainWindow::on_SystemMultiplierSpin_valueChanged(int value)
-{
-	if (experimentTabRefreshing_) return;
-
-	dUQ_.setMultiplier(value);
-	
-	// Update
-	refresh(SystemCompositionGroup | AssignedIsotopologuesGroup);
-}
-
-// Set system density
-void MainWindow::on_SystemDensitySpin_valueChanged(double value)
-{
-	if (experimentTabRefreshing_) return;
-	
-	// Need current index of units combo
-	if (ui.SystemDensityUnitsCombo->currentIndex() == 0) dUQ_.setAtomicDensity(value);
-	else dUQ_.setAtomicDensity(value);
-}
-
-// Density units changed
-void MainWindow::on_SystemDensityUnitsCombo_currentIndexChanged(int index)
-{
-	if (experimentTabRefreshing_) return;
-	
-	if (ui.SystemDensityUnitsCombo->currentIndex() == 0) dUQ_.setAtomicDensity(dUQ_.density());
-	else dUQ_.setAtomicDensity(dUQ_.density());	
-}
-
-// Box relative length A changed
-void MainWindow::on_SystemBoxRelativeASpin_valueChanged(double value)
-{
-	if (experimentTabRefreshing_) return;
-	Vec3<double> lengths(value, ui.SystemBoxRelativeBSpin->value(), ui.SystemBoxRelativeCSpin->value());
-	dUQ_.setRelativeBoxLengths(lengths);
-}
-
-// Box relative length B changed
-void MainWindow::on_SystemBoxRelativeBSpin_valueChanged(double value)
-{
-	if (experimentTabRefreshing_) return;
-	Vec3<double> lengths(ui.SystemBoxRelativeASpin->value(), value, ui.SystemBoxRelativeCSpin->value());
-	dUQ_.setRelativeBoxLengths(lengths);
-}
-
-// Box relative length C changed
-void MainWindow::on_SystemBoxRelativeCSpin_valueChanged(double value)
-{
-	if (experimentTabRefreshing_) return;
-	Vec3<double> lengths(ui.SystemBoxRelativeASpin->value(), ui.SystemBoxRelativeBSpin->value(), value);
-	dUQ_.setRelativeBoxLengths(lengths);
-}
-
-// Box angle alpha changed
-void MainWindow::on_SystemBoxAlphaSpin_valueChanged(double value)
-{
-	if (experimentTabRefreshing_) return;
-	Vec3<double> angles(value, ui.SystemBoxBetaSpin->value(), ui.SystemBoxGammaSpin->value());
-	dUQ_.setBoxAngles(angles);
-}
-
-// Box angle beta changed
-void MainWindow::on_SystemBoxBetaSpin_valueChanged(double value)
-{
-	if (experimentTabRefreshing_) return;
-	Vec3<double> angles(ui.SystemBoxAlphaSpin->value(), value, ui.SystemBoxGammaSpin->value());
-	dUQ_.setBoxAngles(angles);
-}
-
-// Box angle gamma changed
-void MainWindow::on_SystemBoxGammaSpin_valueChanged(double value)
-{
-	if (experimentTabRefreshing_) return;
-	Vec3<double> angles(ui.SystemBoxAlphaSpin->value(), ui.SystemBoxBetaSpin->value(), value);
-	dUQ_.setBoxAngles(angles);
+	return true;
 }
 
 /*
-// Samples Group
-*/
+ * Slots
+ */
 
 // Different Sample selected in list
-void MainWindow::on_SamplesList_currentRowChanged(int row)
+void DUQSamplesDockWidget::on_SamplesList_currentRowChanged(int row)
 {
-	if (experimentTabRefreshing_) return;
+	if (refreshing_) return;
 
 	// Update
-	refresh(AssignedIsotopologuesGroup+ReferenceDataGroup);
+	refresh(65535);
 }
 
 // Item changed (i.e. text changed)
-void MainWindow::on_SamplesList_itemChanged(QListWidgetItem* item)
+void DUQSamplesDockWidget::on_SamplesList_itemChanged(QListWidgetItem* item)
 {
-	if (experimentTabRefreshing_) return;
+	if (refreshing_) return;
 	
 	// We previously stored the items integer index as a QVariant...
 	int id = item->data(Qt::UserRole).toInt();
@@ -401,17 +277,17 @@ void MainWindow::on_SamplesList_itemChanged(QListWidgetItem* item)
 }
 
 // Add Sample to system
-void MainWindow::on_AddSampleButton_clicked(bool checked)
+void DUQSamplesDockWidget::on_AddSampleButton_clicked(bool checked)
 {
 	Sample* sample = dUQ_.addSample(dUQ_.uniqueSampleName("NewSample"));
 	sample->assignDefaultIsotopes();
 
 	// Update
-	refresh(SamplesGroup | AssignedIsotopologuesGroup | ReferenceDataGroup);
+	refresh(65535);
 }
 
 // Remove Sample from system
-void MainWindow::on_RemoveSampleButton_clicked(bool checked)
+void DUQSamplesDockWidget::on_RemoveSampleButton_clicked(bool checked)
 {
 	Sample *currentSample = selectedSample();
 	if (currentSample == NULL) return;
@@ -419,11 +295,11 @@ void MainWindow::on_RemoveSampleButton_clicked(bool checked)
 	dUQ_.removeSample(currentSample);
 	
 	// Update
-	refresh(SamplesGroup | AssignedIsotopologuesGroup | ReferenceDataGroup);
+	refresh(65535);
 }
 
 // Copy Sample
-void MainWindow::on_CopySampleButton_clicked(bool checked)
+void DUQSamplesDockWidget::on_CopySampleButton_clicked(bool checked)
 {
 	int currentRow = ui.SamplesList->currentRow();
 	Sample *currentSample = (currentRow == -1 ? NULL : dUQ_.sample(currentRow));
@@ -432,45 +308,17 @@ void MainWindow::on_CopySampleButton_clicked(bool checked)
 	// TODO
 	
 	// Update
-	refresh(SamplesGroup | AssignedIsotopologuesGroup | ReferenceDataGroup);
+	refresh(65535);
 }
 
 /*
 // Mixture Group
 */
 
-// Determine Species and Isotopologue from QVariant data
-bool MainWindow::getSpeciesAndIsotopologue(QStringList data, Species*& species, Isotopologue*& iso)
-{
-	if (data.count() != 2)
-	{
-		printf("GUI_ERROR - QStringList must contain exactly two items (Species and Isotopologue names).\n");
-		return FALSE;
-	}
-	
-	// Determine Species
-	species = dUQ_.findSpecies(qPrintable(data[0]));
-	if (!species)
-	{
-		printf("GUI_ERROR - QVariant data specifies an unknown Species ('%s').\n", qPrintable(data[0]));
-		return FALSE;
-	}
-	
-	// Now we have the species, determine the isotopologue...
-	iso = species->findIsotopologue(qPrintable(data[1]));
-	if (!iso)
-	{
-		printf("GUI_ERROR - QVariant data specifies an unknown Isotopologue ('%s').\n", qPrintable(data[1]));
-		return FALSE;
-	}
-
-	return TRUE;
-}
-
 // Something changed in the mixtures tree
-void MainWindow::on_AssignedIsotopologuesTree_itemChanged(QTreeWidgetItem* item, int column)
+void DUQSamplesDockWidget::on_AssignedIsotopologuesTree_itemChanged(QTreeWidgetItem* item, int column)
 {
-	if (experimentTabRefreshing_) return;
+	if (refreshing_) return;
 
 	// Column 0 is the isotopologue (handled by the combo callback) and 2 is the fractional population.
 	// So, we only care about column 1 (the relative population)
@@ -497,11 +345,11 @@ void MainWindow::on_AssignedIsotopologuesTree_itemChanged(QTreeWidgetItem* item,
 	sample->setIsotopologueInMixture(species, iso, relPop);
 	
 	// Update
-	refresh(AssignedIsotopologuesGroup);
+	refresh(65535);
 }
 
 // Add Isotopologue to mixture
-void MainWindow::on_AddIsotopologueToMixButton_clicked(bool checked)
+void DUQSamplesDockWidget::on_AddIsotopologueToMixButton_clicked(bool checked)
 {
 	// Need to determine current component highlighted in the list
 	QTreeWidgetItem* currentItem = ui.AssignedIsotopologuesTree->currentItem();
@@ -531,19 +379,19 @@ void MainWindow::on_AddIsotopologueToMixButton_clicked(bool checked)
 	sample->addIsotopologueToMixture(species, NULL, 1.0);
 
 	// Update
-	refresh(AssignedIsotopologuesGroup);
+	refresh(65535);
 }
 
 // Remove Isotopologue from mix
-void MainWindow::on_RemoveIsotopologueFromMixButton_clicked(bool checked)
+void DUQSamplesDockWidget::on_RemoveIsotopologueFromMixButton_clicked(bool checked)
 {
 	//TODO
 }
 
 // Different Isotopologue selected for mixture
-void MainWindow::mixtureIsotopologueChanged(int index)
+void DUQSamplesDockWidget::mixtureIsotopologueChanged(int index)
 {
-	if (experimentTabRefreshing_) return;
+	if (refreshing_) return;
 
 	// Need to get the QComboBox which sent the signal
 	QComboBox *combo = static_cast<QComboBox*>(sender());
@@ -577,7 +425,7 @@ void MainWindow::mixtureIsotopologueChanged(int index)
 	sample->setIsotopologueInMixture(species, iso, -1.0, newIso);
 	
 	// Update
-	refresh(AssignedIsotopologuesGroup);
+	refresh(65535);
 }
 
 /*
@@ -585,7 +433,7 @@ void MainWindow::mixtureIsotopologueChanged(int index)
 */
 
 // Raise a file-selector and choose a new reference data filename
-void MainWindow::on_ReferenceDataFileSelectButton_clicked(bool checked)
+void DUQSamplesDockWidget::on_ReferenceDataFileSelectButton_clicked(bool checked)
 {
 	Sample* sample = selectedSample();
 	if (!sample) return;
@@ -601,12 +449,12 @@ void MainWindow::on_ReferenceDataFileSelectButton_clicked(bool checked)
 	sample->referenceDataFileName() = qPrintable(fileName);
 	ui.ReferenceDataFilenameEdit->setText(fileName);
 
-	SET_MODIFIED;
-	refresh();
+	Flags::wave(Flags::ReferenceDataChanged);
+	refresh(65535);
 }
 
 // Reference data filename changed
-void MainWindow::on_ReferenceDataFilenameEdit_textEdited(const QString& text)
+void DUQSamplesDockWidget::on_ReferenceDataFilenameEdit_textEdited(const QString& text)
 {
 	Sample* sample = selectedSample();
 	if (!sample) return;
@@ -614,12 +462,12 @@ void MainWindow::on_ReferenceDataFilenameEdit_textEdited(const QString& text)
 	// Set data
 	sample->referenceDataFileName() = qPrintable(text);
 
-	SET_MODIFIED;
-	refresh();
+	Flags::wave(Flags::ReferenceDataChanged);
+	refresh(65535);
 }
 
 // Reference data normalisation type changed
-void MainWindow::on_ReferenceDataNormalisationComboCheck_currentIndexChanged(int index)
+void DUQSamplesDockWidget::on_ReferenceDataNormalisationComboCheck_currentIndexChanged(int index)
 {
 	Sample* sample = selectedSample();
 	if (!sample) return;
@@ -627,12 +475,12 @@ void MainWindow::on_ReferenceDataNormalisationComboCheck_currentIndexChanged(int
 	// Set data
 	sample->setReferenceDataNormalisation( (Sample::NormalisationType) index);
 
-	SET_MODIFIED;
-	refresh();
+	Flags::wave(Flags::ReferenceDataChanged);
+	refresh(65535);
 }
 
 // Reference data self-subtraction status changed
-void MainWindow::on_ReferenceDataSubtractSelfCheck_clicked(bool checked)
+void DUQSamplesDockWidget::on_ReferenceDataSubtractSelfCheck_clicked(bool checked)
 {
 	Sample* sample = selectedSample();
 	if (!sample) return;
@@ -640,6 +488,7 @@ void MainWindow::on_ReferenceDataSubtractSelfCheck_clicked(bool checked)
 	// Set data
 	sample->setReferenceSubtractSelf(checked);
 
-	SET_MODIFIED;
-	refresh();
+	Flags::wave(Flags::ReferenceDataChanged);
+	refresh(65535);
 }
+

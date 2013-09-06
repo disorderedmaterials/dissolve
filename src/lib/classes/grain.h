@@ -28,17 +28,19 @@
 #include "templates/reflist.h"
 
 // Forward Declarations
-class Angle;
 class Box;
 class Cell;
-class GrainDefinition;
+class Molecule;
 class PotentialMap;
+class SpeciesAngle;
+class SpeciesBond;
+class SpeciesGrain;
 
 /*!
  * \brief Grain
  * \details A Grain contains pointers to one or more Atoms that should be treated as an individual 'group'
  * when calculating neighbour lists, low-Q scattering etc. TODO
- * Grains represent proper instances of a GrainDefinition, and are used within a Model to provide the basic blocks which are
+ * Grains represent proper instances of a SpeciesGrain, and are used within a Model to provide the basic blocks which are
  * manipulated during the main calculation.
  */
 class Grain
@@ -57,80 +59,38 @@ class Grain
 	 */
 	///@{
 	private:
-	// Source GrainDefinition
-	GrainDefinition* grainDefinition_;
-	// Parent Molecule
+	// Parent molecule
 	Molecule* parent_;
-	// Number of Atoms contained in this Grain
+	// Source SpeciesGrain
+	SpeciesGrain* source_;
+	// Number of atoms contained in this grain
 	int nAtoms_;
 	// Array size
 	int atomsArraySize_;
-	// Pointers to Atoms
-	Atom** atoms_;
+	// Pointers to pointers to atoms
+	Atom*** atoms_;
 	// Index of Grain
 	int index_;
 
 	public:
-	// Initialise from GrainDefinition
-	bool initialise(GrainDefinition* gd);
-	// Initialise
-	bool initialise(int maxAtoms, int newIndex = -1);
-	// Set parent Molecule
+	// Initialise from SpeciesGrain
+	bool initialise(SpeciesGrain* sg);
+	// Set parent molecule
 	void setParent(Molecule* mol);
-	// Return parent Molecule
+	// Return parent molecule
 	Molecule* parent() const;
-	// Add Atom pointer to list
-	bool addAtom(Atom* i);
-	// Return number of Atoms in Grain
+	// Return source SpeciesGrain
+	const SpeciesGrain* source() const;
+	// Add atom pointer to list
+	bool addAtom(Atom** i);
+	// Return number of atoms in grain
 	int nAtoms() const;
-	// Return nth Atom in Grain
+	// Return nth atom in grain
 	Atom* atom(int n) const;
-	// Set index of Grain
+	// Set index of grain
 	void setIndex(int index);
-	// Return index of Grain
+	// Return index of grain
 	int index() const;
-	// Return name of Grain
-	const char* name() const;
-	///@}
-
-
-	/*!
-	 * \name Connections
-	 * \details Each Grain maintains a list of connections it has with other Grains, which arise because of intramolecular atomic terms.
-	 * In this way, once a Grain has been moved the resulting effect on the intramolecular terms present in the encompassing Molecule
-	 * can be immediately evaluated, and the inter-Grain energy corrected for PairPotential interactions which should not have been added
-	 * into the total inter-Grain energy in the first place (because two Atoms are bound, for example).
-	 */
-	///@{
-	private:
-	// Pointers to local intra-Grain Bonds
-	RefList<Bond,int> internalBonds_;
-	// Pointers to local intra-Grain Angles
-	RefList<Angle,int> internalAngles_;
-	// Pointers to local inter-Grain Bonds
-	RefList<Bond,int> bondConnections_;
-	// Pointers to local inter-Grain Angles
-	RefList<Angle,int> angleConnections_;
-
-	public:
-	// Clear all intra- and inter-Grain terms
-	void clearIntramolecular();
-	// Add intra-Grain Bond
-	void addInternalBond(Bond* b);
-	// Return first local intra-Grain Bond
-	RefListItem<Bond,int>* internalBonds() const;
-	// Add intra-Grain Angle
-	void addInternalAngle(Angle* a);
-	// Return first local intra-Grain Angle
-	RefListItem<Angle,int>* internalAngles() const;
-	// Add Bond connection
-	void addBondConnection(Bond* b);
-	// Return first Bond connection
-	RefListItem<Bond,int>* bondConnections() const;
-	// Add Angle connection
-	void addAngleConnection(Angle* a);
-	// Return first Angle connection
-	RefListItem<Angle,int>* angleConnections() const;
 	///@}
 
 
@@ -139,29 +99,29 @@ class Grain
 	 */
 	///@{
 	private:
-	// Centre of geometry of Grain
+	// Centre of geometry of grain
 	Vec3<double> centre_;
 	// Cell location
 	Cell* cell_;
-	// Local index of Grain in Cell's list
+	// Local index of grain in cell's list
 	int localIndex_;
 	
 	public:
 	// Adjust centre
 	void updateCentre(const Vec3<double>& atomDeltaR);
-	// Return centre of geometry of Grain
+	// Return centre of geometry of grain
 	const Vec3<double>& centre() const;
-	// Set Cell location
+	// Set cell location
 	void setCell(Cell* cell, int index);
-	// Remove Grain from its current Cell
+	// Remove grain from its current cell
 	void removeFromCell(Cell* caller);
-	// Return Cell location
+	// Return cell location
 	Cell* cell() const;
-	// Return local index of Grain in Cell's list
+	// Return local index of grain in cell's list
 	int cellListIndex() const;
-	// Move Grain centre
+	// Move grain centre
 	void moveTo(const Vec3<double>& delta);
-	// Translate Grain centre
+	// Translate grain centre
 	void translate(const Vec3<double>& delta);
 	///@}
 };

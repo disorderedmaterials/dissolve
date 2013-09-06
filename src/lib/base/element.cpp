@@ -207,15 +207,15 @@ bool Element::broadcast()
 #ifdef PARALLEL
 	// Send basic info
 	msg.printVerbose("[MPI] Element ");
-	if (!Comm.broadcast(name_)) return FALSE;
+	if (!Comm.broadcast(name_)) return false;
 	msg.printVerbose("%s...", name_.get());
-	if (!Comm.broadcast(&z_, 1)) return FALSE;
+	if (!Comm.broadcast(&z_, 1)) return false;
 	msg.printVerbose("%i...", z_);
-	if (!Comm.broadcast(symbol_)) return FALSE;
+	if (!Comm.broadcast(symbol_)) return false;
 	msg.printVerbose("%s...", symbol_.get());
-	if (!Comm.broadcast(&atomicRadius_, 1)) return FALSE;
+	if (!Comm.broadcast(&atomicRadius_, 1)) return false;
 	msg.printVerbose("%f...", atomicRadius_);
-	if (!Comm.broadcast(colour_, 4)) return FALSE;
+	if (!Comm.broadcast(colour_, 4)) return false;
 	msg.printVerbose("%f %f %f %f...", colour_[0], colour_[1], colour_[2], colour_[3]);
 
 	// Add isotopes
@@ -225,7 +225,7 @@ bool Element::broadcast()
 	if (!result)
 	{
 		msg.print("Failed to broadcast Isotope data for element '%s'.\n", name_.get());
-		return FALSE;
+		return false;
 	}
 	
 	// Add parameters
@@ -234,9 +234,9 @@ bool Element::broadcast()
 	if (!result)
 	{
 		msg.print("Failed to broadcast Parameter data for element '%s'.\n", name_.get());
-		return FALSE;
+		return false;
 	}
 	msg.printVerbose("Success.\n");
 #endif
-	return TRUE;
+	return true;
 }

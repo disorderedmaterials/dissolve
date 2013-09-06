@@ -20,11 +20,10 @@
 */
 
 #include "classes/grain.h"
-#include "classes/graindefinition.h"
+#include "classes/speciesgrain.h"
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/potentialmap.h"
-#include "classes/angle.h"
 
 /*!
  * \brief Constructor
@@ -32,13 +31,13 @@
  */
 Grain::Grain()
 {
-	grainDefinition_ = NULL;
 	atoms_ = NULL;
 	nAtoms_ = 0;
 	localIndex_ = -1;
 	cell_ = NULL;
 	index_ = -1;
 	parent_ = NULL;
+	source_ = NULL;
 }
 
 /*!
@@ -71,48 +70,27 @@ void Grain::clear()
  * \details Initialise the Grain structure based on the GrainDefinition supplied. The resulting Grain will have enough
  * storage to reference the number of Atoms contained in the original GrainDefinition.
  */
-bool Grain::initialise(GrainDefinition* gd)
+bool Grain::initialise(SpeciesGrain* sg)
 {
 	clear();
 #ifdef CHECKS
 	// Check for NULL pointer
-	if (gd == NULL)
+	if (sg == NULL)
 	{
 		msg.error("NULL_POINTER - NULL GrainDefinition pointer passed to Grain::initialise().\n");
-		return FALSE;
+		return false;
 	}
 #endif
-	grainDefinition_ = gd;
-	if (grainDefinition_->nAtoms() < 1)
+	source_ = sg;
+	if (source_->nAtoms() < 1)
 	{
-		msg.print("BAD_ARRAY - Tried to initialise an array of size %i in Grain::initialise().\n", grainDefinition_->nAtoms());
-		return FALSE;
+		msg.print("BAD_ARRAY - Tried to initialise an array of size %i in Grain::initialise().\n", source_->nAtoms());
+		return false;
 	}
-	atomsArraySize_ = grainDefinition_->nAtoms();
-	atoms_ = new Atom*[atomsArraySize_];
+	atomsArraySize_ = source_->nAtoms();
+	atoms_ = new Atom**[atomsArraySize_];
 	nAtoms_ = 0;
-	return TRUE;
-}
-
-/*!
- * \brief Initialise
- * \details Initialise the Grain structure to hold at most maxAtoms Atoms.
- */
-bool Grain::initialise(int maxAtoms, int newIndex)
-{
-	clear();
-	grainDefinition_ = NULL;
-	if (maxAtoms < 1)
-	{
-		msg.print("BAD_ARRAY - Tried to initialise an array of size %i in Grain::initialise().\n", maxAtoms);
-		return FALSE;
-	}
-	atomsArraySize_ = maxAtoms;
-	atoms_ = new Atom*[atomsArraySize_];
-	nAtoms_ = 0;
-	index_ = newIndex;
-	centre_.zero();
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -132,35 +110,43 @@ Molecule* Grain::parent() const
 }
 
 /*!
- * \brief Add Atom pointer to list
+ * \brief Return source SpeciesGrain
  */
-bool Grain::addAtom(Atom* i)
+const SpeciesGrain* Grain::source() const
+{
+	return source_;
+}
+
+/*!
+ * \brief Add atom pointer pointer to list
+ */
+bool Grain::addAtom(Atom** iptr)
 {
 #ifdef CHECKS
 	// Check for NULL pointer
-	if (i == NULL)
+	if (iptr == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Atom pointer passed to Grain::addAtom().\n");
-		return FALSE;
+		msg.error("NULL_POINTER - NULL Atom pointer pointer passed to Grain::addAtom().\n");
+		return false;
 	}
 #endif
 	if (nAtoms_ < atomsArraySize_) 
 	{
-		atoms_[nAtoms_] = i;
-		i->setGrain(this);
+		atoms_[nAtoms_] = iptr;
+		(*atoms_[nAtoms_])->setGrain(this);
 
 		// Update centre and increase nAtoms_
 		centre_ *= nAtoms_;
-		centre_ += i->r();
+		centre_ += (*atoms_[nAtoms_])->r();
 		++nAtoms_;
 		centre_ /= nAtoms_;
 	}
 	else
 	{
 		msg.error("Tried to add too many Atoms to Grain.\n");
-		return FALSE;
+		return false;
 	}
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -177,13 +163,19 @@ int Grain::nAtoms() const
 Atom* Grain::atom(int n) const
 {
 #ifdef CHECKS
+	static Atom dummy;
 	if ((n < 0) || (n >= nAtoms_))
 	{
 		msg.print("OUT_OF_RANGE - Atom index (%i) given to Grain::atom() is out of range (nAtoms_ = %i).\n", n, nAtoms_);
 		return NULL;
 	}
+	if (atoms_[n] == NULL)
+	{
+		msg.print("NULL_POINTER - Atom pointer pointer for index %i in Grain::atom() is NULL.\n", n);
+		return &dummy;
+	}
 #endif
-	return atoms_[n];
+	return (*atoms_[n]);
 }
 
 /*!
@@ -209,104 +201,9 @@ int Grain::index() const
 	return index_;
 }
 
-/*!
- * \brief Return name of Grain
- * \details Return the name of the original GrainDefinition on which this Grain is based.
- */
-const char* Grain::name() const
-{
-#ifdef CHECKS
-	if (grainDefinition_ == NULL)
-	{
-		msg.error("NULL_POINTER - Requested name of Grain, but GrainDefinition pointer is NULL.\n");
-		return "???";
-	}
-#endif
-	return grainDefinition_->name();
-}
-
 /*
- * Connections
+ * Coordinates / Manipulation
  */
-
-/*!
- * \brief Clear all intra- and inter-Grain terms
- */
-void Grain::clearIntramolecular()
-{
-	internalBonds_.clear();
-	internalAngles_.clear();
-	bondConnections_.clear();
-	angleConnections_.clear();
-}
-
-/*!
- * \brief Add intra-Grain Bond
- */
-void Grain::addInternalBond(Bond* b)
-{
-	internalBonds_.add(b);
-}
-
-/*!
- * \brief Return first local intra-Grain Bond
- */
-RefListItem<Bond,int>* Grain::internalBonds() const
-{
-	return internalBonds_.first();
-}
-
-/*!
- * \brief Add intra-Grain Angle
- */
-void Grain::addInternalAngle(Angle* a)
-{
-	internalAngles_.add(a);
-}
-
-/*!
- * \brief Return first local intra-Grain Angle
- */
-RefListItem< Angle, int >* Grain::internalAngles() const
-{
-	return internalAngles_.first();
-}
-
-/*!
- * \brief Add Bond connection
- */
-void Grain::addBondConnection(Bond* b)
-{
-	bondConnections_.add(b);
-}
-
-/*!
- * \brief Return first Bond connection
- */
-RefListItem<Bond,int>* Grain::bondConnections() const
-{
-	return bondConnections_.first();
-}
-
-/*!
- * \brief Add Angle connection
- */
-void Grain::addAngleConnection(Angle* a)
-{
-	angleConnections_.add(a);
-}
-
-/*!
- * \brief Return first Angle connection
- */
-RefListItem<Angle,int>* Grain::angleConnections() const
-{
-	return angleConnections_.first();
-}
-
-/*
-// Coordinates / Manipulation
-*/
 
 /*!
  * \brief Adjust centre
@@ -341,7 +238,7 @@ void Grain::setCell(Cell* cell, int index)
 	// Check for a different Cell assignment (ok to pass same cell, since we allow index to be updated)
 	if ((cell_ != NULL) && (cell_ != cell))
 	{
-		msg.print("BAD_USAGE - Refused to set Cell within Grain '%s' since it is still associated to a Cell.\n", name());
+		msg.print("BAD_USAGE - Refused to set Cell within Grain %i since it is still associated to a Cell.\n", index_);
 		return;
 	}
 #endif
@@ -357,7 +254,7 @@ void Grain::removeFromCell(Cell* caller)
 #ifdef CHECKS
 	if (cell_ == NULL)
 	{
-		msg.error("NULL_POINTER - Tried to remove Grain '%s' from its Cell, but Cell is NULL.\n", name());
+		msg.error("NULL_POINTER - Tried to remove Grain %i from its Cell, but Cell is NULL.\n", index_);
 		return;
 	}
 #endif
@@ -388,7 +285,7 @@ int Grain::cellListIndex() const
 void Grain::moveTo(const Vec3<double>& target)
 {
 	Vec3<double> delta = target - centre_;
-	for (int n=0; n<nAtoms_; ++n) atoms_[n]->translateCoordinatesNasty(delta);
+	for (int n=0; n<nAtoms_; ++n) atom(n)->translateCoordinatesNasty(delta);
 	centre_ = target;
 }
 
@@ -397,6 +294,6 @@ void Grain::moveTo(const Vec3<double>& target)
  */
 void Grain::translate(const Vec3<double>& delta)
 {
-	for (int n=0; n<nAtoms_; ++n) atoms_[n]->translateCoordinatesNasty(delta);
+	for (int n=0; n<nAtoms_; ++n) atom(n)->translateCoordinatesNasty(delta);
 	centre_ += delta;
 }

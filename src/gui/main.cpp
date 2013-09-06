@@ -22,6 +22,7 @@
 #include "version.h"
 #include "base/messenger.h"
 #include "gui/mainwindow.h"
+#include "main/flags.h"
 #include <QtOpenGL/QGLFormat>
 
 int main(int argc, char *argv[])
@@ -36,25 +37,68 @@ int main(int argc, char *argv[])
 		/* Create the main QApplication */
 		QApplication app(argc, argv, QApplication::GuiClient);
 		QCoreApplication::setOrganizationName("dUQ");
-		QCoreApplication::setOrganizationDomain("www.duq.net");
+		QCoreApplication::setOrganizationDomain("www.projectaten.net");
 		QCoreApplication::setApplicationName("dUQ");
+		
+		QFont font = QApplication::font();
+		font.setPointSize(10.0);
+		QApplication::setFont(font);
+
+#if QT_VERSION >= 0x040600
+		QGL::setPreferredPaintEngine(QPaintEngine::OpenGL);
+#endif
 
 		/* Tweak the default QGLFormat */
-		QGLFormat::defaultFormat().setSampleBuffers(TRUE);
+		QGLFormat::defaultFormat().setSampleBuffers(true);
 
 		/* Initialise our icon resource */
 		Q_INIT_RESOURCE(icons);
+
+		/* Create main dUQ object */
+		DUQObject dUQ;
+
+		/* Load external datafiles */
+		if (!MPIRunMaster(dUQ.loadDataFiles()))
+		{
+			Comm.finalise();
+			return 1;
+		}
 		
+		/* Broadcast periodic table (including isotope and parameter data) */
+		if (!periodicTable.broadcast())
+		{
+			Comm.finalise();
+			return 1;
+		}
+
+		/* Register commands */
+		msg.print("Registering commands...\n");
+		if (!dUQ.registerCommands())
+		{
+			Comm.finalise();
+			return false;
+		}
+
+		/* Load existing input file (if specified) */
+		Flags::clearAll();
+		if (argc == 2)
+		{
+			if (!dUQ.loadInput(argv[1]))
+			{
+				Comm.decide(false);
+				Comm.finalise();
+				return 1;
+			}
+			else Comm.decide(true);
+		}
+		else Comm.decide(true);
+
 		/* Create the main window */
-		MainWindow mainWindow;
-		
-		/* Load in element and isotope data, and supplied input file (if there was one) */
-		if (!mainWindow.initialise(argc == 2 ? argv[1] : NULL)) return -1;
-		
-		/* Start the beast... */
-		
+		MainWindow mainWindow(dUQ);
+
 		/* Refresh GUI elements */
-		mainWindow.refresh(MainWindow::AllGroups);
+		mainWindow.refresh(65535);
+		Flags::clearAll();
 
 		/* Show and Go! */
 		mainWindow.show();
@@ -73,7 +117,7 @@ int main(int argc, char *argv[])
 		}
 		
 		// Broadcast periodic table (including isotope and parameter data)
-		if (!dUQ.periodicTable().broadcast())
+		if (!periodicTable.broadcast())
 		{
 			Comm.finalise();
 			return 1;
@@ -87,8 +131,15 @@ int main(int argc, char *argv[])
 			return 1;
 		}
 
+		// Wait for a decision here (master loading input file)
+		if (!Comm.decision())
+		{
+			Comm.finalise();
+			return -1;
+		}
+
 		// Now, enter interactive mode and wait for commands...
-		result = dUQ.goInteractive();
+		dUQ.enterMessageLoop();
 	}
 	
 	return result;

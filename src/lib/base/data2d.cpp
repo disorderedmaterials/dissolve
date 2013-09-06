@@ -28,6 +28,9 @@
 #include <stddef.h>
 #include <string.h>
 
+// Static Members
+bool Data2D::useFFT_ = false;
+
 /*!
  * \brief Constructor
  * \details Constructor for Data2D.
@@ -241,12 +244,12 @@ bool Data2D::addY(const Array<double>& source, double factor)
 	if (y_.nItems() != source.nItems())
 	{
 		msg.print("BAD_USAGE - Can't add Y values from source array, since the number of items differs (%i vs %i).\n", y_.nItems(), source.nItems());
-		return FALSE;
+		return false;
 	}
 
 	for (int n=0; n<y_.nItems(); ++n) y_[n] += source.value(n)*factor;
 	splineInterval_ = -1;
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -537,14 +540,14 @@ bool Data2D::checkBeforeTransform()
 	if (x_.nItems() < 5)
 	{
 		msg.error("Not enough X data points (%i) in Data2D. Can't do transform.\n", x_.nItems());
-		return FALSE;
+		return false;
 	}
 	
 	// X and Y arrays match?
 	if (x_.nItems() != y_.nItems())
 	{
 		msg.error("X and Y array sizes do not match (%i vs %i) in Data2D. Can't do transform.\n", x_.nItems(), y_.nItems());
-		return FALSE;
+		return false;
 	}
 
 	// Check spacing of data...
@@ -552,10 +555,10 @@ bool Data2D::checkBeforeTransform()
 	for (int n=2; n<x_.nItems(); ++n) if (fabs((x_[n] - x_[n-1])-deltaX) > tolerance)
 	{
 		msg.error("Data are unevenly spaced in Data2D. Can't do transform.\n");
-		return FALSE;
+		return false;
 	}
 	
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -601,7 +604,7 @@ double Data2D::window(Data2D::WindowFunction wf, double x)
 bool Data2D::fourierTransformReal(bool forwardTransform, Data2D::WindowFunction wf)
 {
 	// Okay to continue with transform?
-	if (!checkBeforeTransform()) return FALSE;
+	if (!checkBeforeTransform()) return false;
 
 	// Assume that the entire dataset constitutes one period of the function...
 	double factor = (forwardTransform ? 1.0 : -1.0);
@@ -616,21 +619,19 @@ bool Data2D::fourierTransformReal(bool forwardTransform, Data2D::WindowFunction 
 	imaginary = 0.0;
 	
 	// Calculate complex Fourier coefficients
-	double b, cosb, sinb;
+	double b, cosb, sinb, winFunc;
 	int n, m, nPoints = x_.nItems();
-	for (n=0; n<nPoints-1; ++n)
+	for (n=0; n<nPoints; ++n)
 	{
-		for (m=1; m<nPoints; ++m)
+		for (m=0; m<nPoints; ++m)
 		{
-			b = (n+0.5)*k*x_[m];
-			
-			// Apply window function (Bartlett)
-// 			b *= 1.0 - fabs( ((m/double(nPoints))*0.5)/0.5 );
+			b = n * TWOPI * m / nPoints;
+			winFunc = window(wf, double(m) / nPoints);
 
 			cosb = cos(b);
 			sinb = sin(b) * factor;
-			real[n] += y_[m] * cosb;
-			imaginary[n] -= y_[m] * sinb;
+			real[n] += y_[m] * winFunc * cosb;
+			imaginary[n] -= y_[m] * winFunc * sinb;
 		}
 	}
 
@@ -651,7 +652,7 @@ bool Data2D::fourierTransformReal(bool forwardTransform, Data2D::WindowFunction 
 	for (n=0; n<nPoints; ++n) x_[n] = (n*0.5)*k;
 	y_ = real;
 	splineInterval_ = -1;
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -660,44 +661,150 @@ bool Data2D::fourierTransformReal(bool forwardTransform, Data2D::WindowFunction 
 bool Data2D::transformRDF(double atomicDensity, Data2D::WindowFunction wf)
 {
 	// Okay to continue with transform?
-	if (!checkBeforeTransform()) return FALSE;
+	if (!checkBeforeTransform()) return false;
 
 	// Assume that the entire dataset constitutes one period of the function...
-	// X values of original function are half-bin values, so we must add another bin width on to recover period of original function
-	double lambda = x_.last() - x_.first() + 2.0*x_.first();
+	// Assume X values of original function are central bin values, so we must add another bin width on to recover period of original function
+	double deltaR = x_[1] - x_[0];
+	double lambda = x_.last() - x_.first() + deltaR;
 	double k = TWOPI / lambda;
-	double deltaX = x_[1] - x_[0];
 	double windowPos;
-	msg.printVerbose("In Data2D::transformRDF(), period of function is %f, real deltaX is %f, and wavenumber is %f\n", lambda, deltaX, k);
+	msg.printVerbose("In Data2D::transformRDF(), period of function is %f, real deltaX is %f, and wavenumber is %f\n", lambda, deltaR, k);
 
-	// Create working arrays
-	Array<double> real(x_.nItems());
-	real = 0.0;
-
-	// Perform Fourier sine transform
-	double Q, factor;
-	int n, m, nPoints = x_.nItems();
-	for (n=0; n<nPoints; ++n)
+	if (Data2D::useFFT_)
 	{
-		Q = (n+0.5)*k;
-		for (m=0; m<nPoints; ++m)
+		// Pad input data up to power of 2 and bit-reverse data
+		int n, i, j, bit, N = pow( 2, ceil( log( x_.nItems() ) / log( 2 ) ) );
+		printf("Original input size = %i, pow2 = %i\n", x_.nItems(), N);
+		double temp;
+		Array<double> yin(N), xin(N);
+		for (n=0; n<y_.nItems(); ++n)
 		{
-			windowPos = double(m) / double(nPoints-1);
-
-// 			real[n] += x_[m]*x_[m]*y_[m] * sin(x_[m]*Q) * deltaX / (Q * x_[m]);
-			real[n] += sin(x_[m]*Q) * x_[m] * window(wf, windowPos) * y_[m] * deltaX;
+			yin[n] = y_[n]; // * window(wf, double(n)/y_.nItems());
+			xin[n] = x_[n];
+		}
+		for (n=y_.nItems(); n<N; ++n)
+		{
+			yin[n] = 0.0;
+			xin[n] = 0.0;
+		}
+		// -- Perform bit-reverse in-place in real[]
+		j = 0;
+		for (i=0; i<N; ++i)
+		{
+			// Swap values only if i < j, avoiding unnecessary symmetric and equivalent (i == j) swaps
+			if (i < j)
+			{
+// 				printf("Swapping i = ");
+// 				for (int m=1; m<=N; m<<=1) printf("%i", (i & m) ? 1 : 0); printf("  (%i) for j = ", i);
+// 				for (int m=1; m<=N; m<<=1) printf("%i", (j & m) ? 1 : 0); printf("  (%i)\n", j);
+				temp = yin[i];
+				yin[i] = yin[j];
+				yin[j] = temp;
+				temp = xin[i];
+				xin[i] = xin[j];
+				xin[j] = temp;
+			}
+			// Increment j in bit-reversed order
+			bit = N;
+			do
+			{
+				bit >>= 1;
+				j ^= bit;
+			} while( (j & bit) == 0 && bit != 1 );
 		}
 
-		// Normalise
-		factor = 4.0 * PI * atomicDensity / Q;
-		real[n] *= factor;
+// 		for (n=0; n<N; ++n) printf("Array[%i] : Orig = %f   new = %f\n", n, y_[n], yin[n]);
+
+		// Perform FFT
+		int npoint=1, istep, m;
+		double theta, wpr, wr, wi, tempr, wpi, wtemp;
+// 		double b, cosb, tempr;
+		// -- Loop over successive N-point transforms, up to and including N/2
+		while (npoint < N)
+		{
+			// Determine spacing to use between points in array
+			istep = 2*npoint;
+// 			printf("MMax = %i, IStep = %i\n", npoint, istep); 
+
+			// Calculate current theta
+			theta = 1.0*(TWOPI/istep);
+			// Initialize the trigonometric recurrence.
+			wtemp = sin(0.5*theta);
+			wpr = -2.0*wtemp*wtemp;
+			wr = 1.0;
+
+			// Loop over 
+			for (m=0; m<npoint; ++m)
+			{
+// 				printf("Middle loop : m = %i, W = %f\n", m+1, wr);
+				wr = cos(m*TWOPI/istep);
+				// Here are the two nested inner loops.
+				for (i=m; i<N; i+=istep)
+				{
+// 					b = (m+0.5)*npoint*k*xin[i];
+
+					j = i+npoint;
+// 					printf("  inner loop i = %i j = %i, f(i) = %f\n", i+1, j+1, yin[i]);
+					// This is the Danielson-Lanczos formula:
+// 					tempr=wr*data[j]-wi*data[j+1];
+// 					tempi=wr*data[j+1]+wi*data[j];
+					tempr = wr * yin[j];
+// 					cosb = cosb) * yin[j];
+					yin[j] = yin[i]-tempr;
+// 					data[j+1]=data[i+1]-tempi;
+					yin[i] += tempr;
+// 					data[i+1] += tempi;
+				}
+				wr = wr*wpr + wr;
+// 				wr = wr - wr * 2.0 * (0.5 - 0.5 * cos(TWOPI/m));
+// 				wr *= cos(TWOPI/npoint);
+				// Trigonometric recurrence.
+// 				wi=wi*wpr+wtemp*wpi+wi;
+			}
+			npoint = istep;
+		}
+
+// 		for (n=0; n<N; ++n) printf("FFT = %f\n", yin[n]);
+		
+		// Copy transform data over initial data
+		for (n=0; n<x_.nItems(); ++n) x_[n] = (n+0.5)*k;
+		for (n=0; n<x_.nItems(); ++n) y_[n] = yin[n];
+		y_ *= 2.0 / x_.nItems();
+		y_[0] / 2.0;
+	}
+	else
+	{
+		// Create working arrays
+		Array<double> real(x_.nItems());
+		real = 0.0;
+
+		// Perform Fourier sine transform
+		double Q, factor;
+		int n, m, nPoints = x_.nItems();
+		for (n=0; n<nPoints; ++n)
+		{
+			Q = (n+0.5)*k;
+			for (m=0; m<nPoints; ++m)
+			{
+				windowPos = double(m) / double(nPoints-1);
+
+	// 			real[n] += x_[m]*x_[m]*y_[m] * sin(x_[m]*Q) * deltaR / (Q * x_[m]);
+				real[n] += sin(x_[m]*Q) * x_[m] * window(wf, windowPos) * y_[m] * deltaR;
+			}
+
+			// Normalise
+			factor = 4.0 * PI * atomicDensity / Q;
+			real[n] *= factor;
+		}
+
+		// Copy transform data over initial data
+		for (n=0; n<nPoints; ++n) x_[n] = (n+0.5)*k;
+		y_ = real;
 	}
 
-	// Copy transform data over initial data
-	for (n=0; n<nPoints; ++n) x_[n] = (n+0.5)*k;
-	y_ = real;
 	splineInterval_ = -1;
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -706,7 +813,7 @@ bool Data2D::transformRDF(double atomicDensity, Data2D::WindowFunction wf)
 bool Data2D::transformBroadenedRDF(double atomicDensity, double qStep, double fwhm, double fwhmq, Data2D::WindowFunction wf)
 {
 	// Okay to continue with transform?
-	if (!checkBeforeTransform()) return FALSE;
+	if (!checkBeforeTransform()) return false;
 
 	// Assume that the entire dataset constitutes one period of the function...
 	// X values of original function are half-bin values, so we must add another bin width on to recover period of original function
@@ -753,7 +860,7 @@ bool Data2D::transformBroadenedRDF(double atomicDensity, double qStep, double fw
 	x_.clear();
 	for (n=0; n<y_.nItems(); ++n) x_.add((n+0.5)*qStep);
 	splineInterval_ = -1;
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -762,13 +869,13 @@ bool Data2D::transformBroadenedRDF(double atomicDensity, double qStep, double fw
 bool Data2D::transformSQ(double atomicDensity, Data2D::WindowFunction wf)
 {
 	// Okay to continue with transform?
-	if (!checkBeforeTransform()) return FALSE;
+	if (!checkBeforeTransform()) return false;
 
 	// Assume that the entire dataset constitutes one period of the function...
-	// X values of original function are half-bin values, so we must add another bin width on to recover period of original function
-	double lambda = x_.last() - x_.first() + 2.0*x_.first();
-	double k = TWOPI / lambda;
+	// Assume that X values of original function are half-bin values, so we must add another bin width on to recover period of original function
 	double deltaQ = x_[1] - x_[0];
+	double lambda = x_.last() - x_.first() + lambda;
+	double k = TWOPI / lambda;
 	double windowPos;
 	msg.printVerbose("In Data2D::transformSQ(), period of function is %f, real deltaX is %f, and wavenumber is %f\n", lambda, deltaQ, k);
 
@@ -799,8 +906,9 @@ bool Data2D::transformSQ(double atomicDensity, Data2D::WindowFunction wf)
 	// Copy transform data over initial data
 	for (n=0; n<nPoints; ++n) x_[n] = (n+0.5)*k;
 	y_ = real;
+
 	splineInterval_ = -1;
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -809,7 +917,7 @@ bool Data2D::transformSQ(double atomicDensity, Data2D::WindowFunction wf)
 bool Data2D::correlateSQ(double atomicDensity)
 {
 	// Okay to continue with transform?
-	if (!checkBeforeTransform()) return FALSE;
+	if (!checkBeforeTransform()) return false;
 
 	// Assume that the entire dataset constitutes one period of the function...
 	double lambda = x_.last() - x_.first();
@@ -838,7 +946,7 @@ bool Data2D::correlateSQ(double atomicDensity)
 	for (n=0; n<nPoints; ++n) x_[n] = (n+0.5)*k;
 	y_ = real;
 	splineInterval_ = -1;
-	return TRUE;
+	return true;
 }
 
 /*
@@ -1296,21 +1404,21 @@ bool Data2D::convoluteProduct(Data2D& data)
 	if (data.nPoints() != nPoints())
 	{
 		msg.error("Refusing to convolute by product two datasets of different sizes.\n");
-		return FALSE;
+		return false;
 	}
 	for (int n=0; n<nPoints(); ++n)
 	{
 		if (fabs(data.x(n) - x_[n]) > 1.0e-5)
 		{
 			msg.error("Refusing to convolute by product two datasets with different x-values.\n");
-			return FALSE;
+			return false;
 		}
 	}
 
 	// Ready to go...
 	for (int n=0; n<nPoints(); ++n) y_[n] *= data.y(n);
 	
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -1341,7 +1449,7 @@ void Data2D::trim(double minX, double maxX)
 bool Data2D::load(const char* fileName)
 {
 	// Only the Master process can do this
-	if (Comm.slave()) return TRUE;
+	if (Comm.slave()) return true;
 
 	// Open file and check that we're OK to proceed reading from it
 	LineParser parser;
@@ -1349,7 +1457,7 @@ bool Data2D::load(const char* fileName)
 	if ((!parser.openInput(fileName)) || (!parser.isFileGoodForReading()))
 	{
 		msg.error("Couldn't open file '%s' for reading.\n", fileName);
-		return FALSE;
+		return false;
 	}
 
 	int success, nCols = -1;
@@ -1361,7 +1469,7 @@ bool Data2D::load(const char* fileName)
 		{
 			parser.closeFiles();
 			msg.error("Error reading from file '%s'.\n", fileName);
-			return FALSE;
+			return false;
 		}
 
 		addPoint(parser.argd(0), parser.argd(1));
@@ -1372,7 +1480,7 @@ bool Data2D::load(const char* fileName)
 	if (nCols == 3) msg.print("Loaded %i points from file '%s' (including spline coefficients).\n", nPoints(), fileName);
 	else msg.print("Loaded %i points from file '%s'.\n", nPoints(), fileName);
 	
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -1381,22 +1489,22 @@ bool Data2D::load(const char* fileName)
 bool Data2D::save(const char* fileName) const
 {
 	// Only the Master process can do this
-	if (Comm.slave()) return TRUE;
+	if (Comm.slave()) return true;
 
 	// Open file and check that we're OK to proceed writing to it
 	LineParser parser;
 	msg.print("Writing datafile '%s'...\n", fileName);
 
-	parser.openOutput(fileName, TRUE);
+	parser.openOutput(fileName, true);
 	if (!parser.isFileGoodForWriting())
 	{
 		msg.error("Couldn't open file '%s' for writing.\n", fileName);
-		return FALSE;
+		return false;
 	}
 	
 	for (int n = 0; n<x_.nItems(); ++n) parser.writeLineF("%16.10e  %16.10e\n", x_.value(n), y_.value(n));
 	parser.closeFiles();
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -1405,22 +1513,22 @@ bool Data2D::save(const char* fileName) const
 bool Data2D::saveWithInterpolation(const char* fileName)
 {
 	// Only the Master process can do this
-	if (Comm.slave()) return TRUE;
+	if (Comm.slave()) return true;
 
 	// Open file and check that we're OK to proceed writing to it
 	LineParser parser;
 	msg.print("Writing datafile '%s'...\n", fileName);
 
-	parser.openOutput(fileName, TRUE);
+	parser.openOutput(fileName, true);
 	if (!parser.isFileGoodForWriting())
 	{
 		msg.error("Couldn't open file '%s' for writing.\n", fileName);
-		return FALSE;
+		return false;
 	}
 	
 	for (int n = 0; n<x_.nItems(); ++n) parser.writeLineF("%16.10e  %16.10e  %16.10e\n", x_.value(n), y_.value(n), interpolated(x_.value(n)));
 	parser.closeFiles();
-	return TRUE;
+	return true;
 }
 
 /*
@@ -1435,41 +1543,43 @@ bool Data2D::broadcast()
 #ifdef PARALLEL
 	// X data
 	int nItems = x_.nItems();
-	if (!Comm.broadcast(&nItems, 1)) return FALSE;
+	if (!Comm.broadcast(&nItems, 1)) return false;
 	if (nItems > 0)
 	{
 		if (Comm.slave()) x_.createEmpty(nItems);
-		if (!Comm.broadcast(x_.array(), nItems)) return FALSE;
+		if (!Comm.broadcast(x_.array(), nItems)) return false;
 	}
 
 	// Y data
 	nItems = y_.nItems();
-	if (!Comm.broadcast(&nItems, 1)) return FALSE;
+	if (!Comm.broadcast(&nItems, 1)) return false;
 	if (nItems > 0)
 	{
 		if (Comm.slave()) y_.createEmpty(nItems);
-		if (!Comm.broadcast(y_.array(), nItems)) return FALSE;
+		if (!Comm.broadcast(y_.array(), nItems)) return false;
 	}
 
 	// Spline data
 	nItems = splineB_.nItems();
-	if (!Comm.broadcast(&nItems, 1)) return FALSE;
+	if (!Comm.broadcast(&nItems, 1)) return false;
 	if (nItems > 0)
 	{
 		if (Comm.slave())
 		{
+			splineA_.createEmpty(nItems);
 			splineB_.createEmpty(nItems);
 			splineC_.createEmpty(nItems);
 			splineD_.createEmpty(nItems);
 		}
-		if (!Comm.broadcast(splineB_.array(), nItems)) return FALSE;
-		if (!Comm.broadcast(splineC_.array(), nItems)) return FALSE;
-		if (!Comm.broadcast(splineD_.array(), nItems)) return FALSE;
+		if (!Comm.broadcast(splineA_.array(), nItems)) return false;
+		if (!Comm.broadcast(splineB_.array(), nItems)) return false;
+		if (!Comm.broadcast(splineC_.array(), nItems)) return false;
+		if (!Comm.broadcast(splineD_.array(), nItems)) return false;
 	}
-	if (!Comm.broadcast(&splineInterval_, 1)) return FALSE;
+	if (!Comm.broadcast(&splineInterval_, 1)) return false;
 
 	// Axis/title information
-	if (!Comm.broadcast(name_)) return FALSE;
+	if (!Comm.broadcast(name_)) return false;
 #endif
-	return TRUE;
+	return true;
 }

@@ -20,6 +20,7 @@
 */
 
 #include "main/duq.h"
+#include "main/flags.h"
 #include "main/keywords.h"
 #include "main/command.h"
 #include "classes/atomtype.h"
@@ -27,7 +28,6 @@
 #include "classes/graindefinition.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include "base/flag.h"
 #include <string.h>
 #include <QtCore/QDate>
 
@@ -47,17 +47,17 @@ bool DUQ::loadDataFiles()
 	
 	// Load elements data
 	fileName.sprintf("%s/elements.dat", dataPath.get());
-	if (!periodicTable().loadElements(fileName)) return FALSE;
+	if (!periodicTable.loadElements(fileName)) return false;
 	
 	// Load isotope data
 	fileName.sprintf("%s/sears91_gudrun.dat", dataPath.get());
-	if (!periodicTable().loadIsotopes(fileName)) return FALSE;
+	if (!periodicTable.loadIsotopes(fileName)) return false;
 	
 	// Load parameter data
 	fileName.sprintf("%s/atomtypes.dat", dataPath.get());
-	if (!periodicTable().loadParameters(fileName)) return FALSE;
+	if (!periodicTable.loadParameters(fileName)) return false;
 	
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -70,7 +70,7 @@ bool DUQ::loadSpecies(const char* fileName)
 	{
 		msg.print("Error loading from XYZ file.\n");
 		removeSpecies(newSpecies);
-		return FALSE;
+		return false;
 	}
 	
 	// Succesfully loaded the species from file, so perform post-load operations
@@ -100,7 +100,7 @@ bool DUQ::loadSpecies(const char* fileName)
 	// Must update all existing Samples, so that this Species is added to them...
 	updateSamples();
 
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -114,25 +114,25 @@ bool DUQ::loadInput(const char* fileName)
 	if (!parser.isFileGoodForReading())
 	{
 		msg.error("Couldn't open file '%s' for reading.\n", fileName);
-		return FALSE;
+		return false;
 	}
 	
 	// Clear all existing data before we begin
 	clear();
 	
 	// Variables
-	Species* sp;
-	Sample* sam;
-	Angle* a;
-	Atom* i;
+	int el, n;
 	AtomType* at, *at2;
-	Bond* b;
-	GrainDefinition* gd;
 	Isotopologue* iso;
 	Isotope* tope;
 	Parameters* params;
 	PairPotential* pot;
-	int el, n;
+	Sample* sam;
+	Species* sp;
+	SpeciesAngle* a;
+	SpeciesAtom* i;
+	SpeciesBond* b;
+	SpeciesGrain* sg;
 	Keywords::InputBlock block;
 	Keywords::SpeciesKeyword spkeyword;
 	Keywords::AtomTypesKeyword atkeyword;
@@ -144,7 +144,7 @@ bool DUQ::loadInput(const char* fileName)
 	List<Step>* targetSteps = NULL;
 	Step* step;
 	Dnchar arg1, arg2;
-	bool error = FALSE, blockDone;
+	bool error = false, blockDone;
 
 	while (!parser.eofOrBlank())
 	{
@@ -155,7 +155,7 @@ bool DUQ::loadInput(const char* fileName)
 		{
 			case (Keywords::AtomTypesBlock):
 				msg.print("Found %s block\n", Keywords::inputBlock(block));
-				blockDone = FALSE;
+				blockDone = false;
 				while (!parser.eofOrBlank())
 				{
 					// Read in a line, which should contain a keyword and a minimum number of arguments
@@ -164,7 +164,7 @@ bool DUQ::loadInput(const char* fileName)
 					if ((atkeyword != Keywords::nAtomTypesKeywords) && ((parser.nArgs()-1) < Keywords::atomTypesBlockNArguments(atkeyword)))
 					{
 						msg.error("Not enough arguments given to '%s' keyword.\n", Keywords::atomTypesKeyword(atkeyword));
-						error = TRUE;
+						error = true;
 						break;
 					}
 					switch (atkeyword)
@@ -175,7 +175,7 @@ bool DUQ::loadInput(const char* fileName)
 							{
 								msg.error("Warning: Unrecognised element symbol '%s' found in %s keyword.\n", parser.argc(2), Keywords::atomTypesKeyword(Keywords::AtomTypeKeyword));
 								el = 0;
-								error = TRUE;
+								error = true;
 								break;
 							}
 							params = PeriodicTable::element(el).findParameters(parser.argc(3));
@@ -189,16 +189,16 @@ bool DUQ::loadInput(const char* fileName)
 							at->setParameters(params);
 							break;
 						case (Keywords::EndAtomTypesKeyword):
-							blockDone = TRUE;
+							blockDone = true;
 							break;
 						case (Keywords::nAtomTypesKeywords):
 							msg.error("Unrecognised %s block keyword found - '%s'\n", Keywords::inputBlock(block), parser.argc(0));
 							Keywords::printValidKeywords(block);
-							error = TRUE;
+							error = true;
 							break;
 						default:
 							printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", Keywords::inputBlock(block), Keywords::atomTypesKeyword(atkeyword));
-							error = TRUE;
+							error = true;
 							break;
 					}
 
@@ -211,7 +211,7 @@ bool DUQ::loadInput(const char* fileName)
 				break;
 			case (Keywords::SpeciesBlock):
 				msg.print("Found %s '%s'\n", Keywords::inputBlock(block), parser.argc(1));
-				blockDone = FALSE;
+				blockDone = false;
 				sp = addSpecies();
 				sp->setName(uniqueSpeciesName(parser.argc(1)));
 				while (!parser.eofOrBlank())
@@ -222,7 +222,7 @@ bool DUQ::loadInput(const char* fileName)
 					if ((spkeyword != Keywords::nSpeciesKeywords) && ((parser.nArgs()-1) < Keywords::speciesBlockNArguments(spkeyword)))
 					{
 						msg.error("Not enough arguments given to '%s' keyword.\n", Keywords::speciesKeyword(spkeyword));
-						error = TRUE;
+						error = true;
 						break;
 					}
 					switch (spkeyword)
@@ -234,7 +234,7 @@ bool DUQ::loadInput(const char* fileName)
 								a->setEquilibrium(parser.argd(4));
 								a->setForceConstant(parser.argd(5));
 							}
-							else error = TRUE;
+							else error = true;
 							break;
 						case (Keywords::AtomKeyword):
 							el = PeriodicTable::find(parser.argc(2));
@@ -242,7 +242,7 @@ bool DUQ::loadInput(const char* fileName)
 							{
 								msg.error("Unrecognised element symbol '%s' found in %s keyword.\n", parser.argc(2), Keywords::speciesKeyword(Keywords::AtomKeyword));
 								el = 0;
-								error = TRUE;
+								error = true;
 								break;
 							}
 							i = sp->addAtom(el, parser.argd(3), parser.argd(4), parser.argd(5));
@@ -256,7 +256,7 @@ bool DUQ::loadInput(const char* fileName)
 								else
 								{
 									msg.error("No available AtomTypes.\n");
-									error = TRUE;
+									error = true;
 									break;
 								}
 							}
@@ -269,28 +269,31 @@ bool DUQ::loadInput(const char* fileName)
 								b->setEquilibrium(parser.argd(3));
 								b->setForceConstant(parser.argd(4));
 							}
-							else error = TRUE;
+							else error = true;
 							break;
 						case (Keywords::EndSpeciesKeyword):
-							sp->updateGrainDefinitions();
+							sp->updateGrains();
 							sp->centreAtOrigin();
 							sp->orderAtomsWithinGrains();
+							sp->calculateIndexLists();
+							sp->identifyInterGrainTerms();
+							sp->createScalingMatrix();
 							msg.print("Found end of Species '%s'.\n", sp->name());
-							blockDone = TRUE;
+							blockDone = true;
 							break;
 						case (Keywords::GrainKeyword):
-							gd = sp->addGrainDefinition();
-							gd->setName(sp->uniqueGrainDefinitionName(parser.argc(1)));
-							msg.print("--> Added GrainDefinition '%s' to Species '%s'\n", gd->name(), sp->name());
+							sg = sp->addGrain();
+							sg->setName(sp->uniqueGrainName(parser.argc(1)));
+							msg.print("--> Added grain definition '%s' to Species '%s'\n", sg->name(), sp->name());
 							for (n=2; n<parser.nArgs(); ++n)
 							{
 								i = sp->atom(parser.argi(n)-1);
 								if (i == NULL)
 								{
-									msg.error("Failed to find Atom with index %i in Species '%s'\n", parser.argi(n), sp->name());
-									error = TRUE;
+									msg.error("Failed to find atom with index %i in Species '%s'\n", parser.argi(n), sp->name());
+									error = true;
 								}
-								else sp->addAtomToGrainDefinition(i, gd);
+								else sp->addAtomToGrain(i, sg);
 							}
 							break;
 						case (Keywords::IsotopologueKeyword):
@@ -308,7 +311,7 @@ bool DUQ::loadInput(const char* fileName)
 								if (at == NULL)
 								{
 									msg.error("Failed to find AtomType '%s', referred to in Isotopologue '%s', Species '%s'\n", arg1.get(), iso->name(), sp->name());
-									error = TRUE;
+									error = true;
 									break;
 								}
 
@@ -318,7 +321,7 @@ bool DUQ::loadInput(const char* fileName)
 								if (tope == NULL)
 								{
 									msg.error("No such Isotope (%i) for element %s (AtomType '%s') in Isotopologue '%s', Species '%s'\n", arg2.asInteger(), PeriodicTable::element(el).symbol(), at->name(), iso->name(), sp->name());
-									error = TRUE;
+									error = true;
 									break;
 								}
 								
@@ -329,11 +332,11 @@ bool DUQ::loadInput(const char* fileName)
 						case (Keywords::nSpeciesKeywords):
 							msg.error("Unrecognised %s block keyword found - '%s'\n", Keywords::inputBlock(block), parser.argc(0));
 							Keywords::printValidKeywords(block);
-							error = TRUE;
+							error = true;
 							break;
 						default:
 							printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", Keywords::inputBlock(block), Keywords::speciesKeyword(spkeyword));
-							error = TRUE;
+							error = true;
 							break;
 					}
 
@@ -346,7 +349,7 @@ bool DUQ::loadInput(const char* fileName)
 				break;
 			case (Keywords::SystemBlock):
 				msg.print("Found %s block\n", Keywords::inputBlock(block));
-				blockDone = FALSE;
+				blockDone = false;
 				while (!parser.eofOrBlank())
 				{
 					// Read in a line, which should contain a keyword and a minimum number of arguments
@@ -355,7 +358,7 @@ bool DUQ::loadInput(const char* fileName)
 					if ((syskeyword != Keywords::nSystemKeywords) && ((parser.nArgs()-1) < Keywords::systemBlockNArguments(syskeyword)))
 					{
 						msg.error("Not enough arguments given to '%s' keyword.\n", Keywords::systemKeyword(syskeyword));
-						error = TRUE;
+						error = true;
 						break;
 					}
 					switch (syskeyword)
@@ -371,14 +374,14 @@ bool DUQ::loadInput(const char* fileName)
 							if (sp == NULL)
 							{
 								msg.error("System refers to Species '%s', but no such Species is defined.\n", parser.argc(1));
-								error = TRUE;
+								error = true;
 							}
 							else
 							{
 								if (sp->relativePopulation() > 0.0)
 								{
 									msg.error("Composition for Species '%s' has already been set.\n", sp->name());
-									error = TRUE;
+									error = true;
 								}
 								else
 								{
@@ -394,34 +397,34 @@ bool DUQ::loadInput(const char* fileName)
 							else
 							{
 								msg.error("Unrecognised density unit given - '%s'\nValid values are 'atoms/A3' or 'g/cm3'.\n", parser.argc(2));
-								error = TRUE;
+								error = true;
 							}
 							break;
 						case (Keywords::EndSystemKeyword):
 							msg.print("Found end of %s block.\n", Keywords::inputBlock(block));
-							blockDone = TRUE;
+							blockDone = true;
 							break;
 						case (Keywords::FileModelKeyword):
 							initialCoordinatesFile_ = parser.argc(1);
-							randomConfiguration_ = FALSE;
+							randomConfiguration_ = false;
 							msg.print("Initial coordinates will be loaded from file '%s'\n", initialCoordinatesFile_.get());
 							break;
 						case (Keywords::MultiplierKeyword):
-							multiplier_ = parser.argd(1);
+							setMultiplier(parser.argd(1));
 							msg.print("--> Set system multiplier to %i\n", multiplier_);
 							break;
 						case (Keywords::NonPeriodicKeyword):
-							nonPeriodic_ = TRUE;
+							nonPeriodic_ = true;
 							msg.print("--> Flag set for a non-periodic calculation.\n");
 							break;
 						case (Keywords::nSystemKeywords):
 							msg.print("Unrecognised %s block keyword found - '%s'\n", Keywords::inputBlock(block), parser.argc(0));
 							Keywords::printValidKeywords(block);
-							error = TRUE;
+							error = true;
 							break;
 						default:
 							printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", Keywords::inputBlock(block), Keywords::systemKeyword(syskeyword));
-							error = TRUE;
+							error = true;
 							break;
 					}
 					
@@ -434,7 +437,7 @@ bool DUQ::loadInput(const char* fileName)
 				break;
 			case (Keywords::SampleBlock):
 				msg.print("Found %s '%s'\n", Keywords::inputBlock(block), parser.argc(1));
-				blockDone = FALSE;
+				blockDone = false;
 				sam = addSample(uniqueSampleName(parser.argc(1)));
 				while (!parser.eofOrBlank())
 				{
@@ -444,7 +447,7 @@ bool DUQ::loadInput(const char* fileName)
 					if ((samkeyword != Keywords::nSampleKeywords) && ((parser.nArgs()-1) < Keywords::sampleBlockNArguments(samkeyword)))
 					{
 						msg.error("Not enough arguments given to '%s' keyword.\n", Keywords::sampleKeyword(samkeyword));
-						error = TRUE;
+						error = true;
 						break;
 					}
 					switch (samkeyword)
@@ -461,7 +464,7 @@ bool DUQ::loadInput(const char* fileName)
 							if (sp == NULL)
 							{
 								msg.error("Sample refers to Species '%s', but no such Species is defined.\n", parser.argc(1));
-								error = TRUE;
+								error = true;
 								break;
 							}
 							
@@ -470,19 +473,19 @@ bool DUQ::loadInput(const char* fileName)
 							if (iso == NULL)
 							{
 								msg.error("Sample refers to Isotopologue '%s' in Species '%s', but no such Isotopologue is defined.\n", parser.argc(2), parser.argc(1));
-								error = TRUE;
+								error = true;
 								break;
 							}
 
 							// OK to add 
-							if (!sam->addIsotopologueToMixture(sp, iso, parser.argd(3))) error = TRUE;
+							if (!sam->addIsotopologueToMixture(sp, iso, parser.argd(3))) error = true;
 							else msg.print("--> Added Isotopologue '%s' (Species '%s') to Sample '%s' (%f relative population).\n", iso->name(), sp->name(), sam->name(), parser.argd(3));
 							break;
 						case (Keywords::NormalisedToAverageSquaredKeyword):
 							if (sam->referenceDataNormalisation() != Sample::NoNormalisation)
 							{
 								msg.error("Normalisation has already been set for Sample '%s'.\n", sam->name());
-								error = TRUE;
+								error = true;
 							}
 							else sam->setReferenceDataNormalisation(Sample::AverageSquaredNormalisation);
 							break;
@@ -490,32 +493,32 @@ bool DUQ::loadInput(const char* fileName)
 							if (sam->referenceDataNormalisation() != Sample::NoNormalisation)
 							{
 								msg.error("Normalisation has already been set for Sample '%s'.\n", sam->name());
-								error = TRUE;
+								error = true;
 							}
 							else sam->setReferenceDataNormalisation(Sample::SquaredAverageNormalisation);
 							break;
 						case (Keywords::ReferenceDataKeyword):
 							if (!sam->loadReferenceData(parser.argc(1)))
 							{
-								error = TRUE;
+								error = true;
 								break;
 							}
 							break;
 						case (Keywords::SubtractSelfKeyword):
-							sam->setReferenceSubtractSelf(TRUE);
+							sam->setReferenceSubtractSelf(true);
 							break;
 						case (Keywords::EndSampleKeyword):
 							msg.print("Found end of %s block '%s'.\n", Keywords::inputBlock(block), sam->name());
-							blockDone = TRUE;
+							blockDone = true;
 							break;
 						case (Keywords::nSampleKeywords):
 							msg.error("Unrecognised %s block keyword found - '%s'\n", Keywords::inputBlock(block), parser.argc(0));
 							Keywords::printValidKeywords(block);
-							error = TRUE;
+							error = true;
 							break;
 						default:
 							printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", Keywords::inputBlock(block), Keywords::sampleKeyword(samkeyword));
-							error = TRUE;
+							error = true;
 							break;
 					}
 					
@@ -528,7 +531,7 @@ bool DUQ::loadInput(const char* fileName)
 				break;
 			case (Keywords::PairPotentialsBlock):
 				msg.print("Found %s block\n", Keywords::inputBlock(block));
-				blockDone = FALSE;
+				blockDone = false;
 				while (!parser.eofOrBlank())
 				{
 					// Read in a line, which should contain a keyword and a minimum number of arguments
@@ -537,7 +540,7 @@ bool DUQ::loadInput(const char* fileName)
 					if ((ppkeyword != Keywords::nPairPotentialsKeywords) && ((parser.nArgs()-1) < Keywords::pairPotentialsBlockNArguments(ppkeyword)))
 					{
 						msg.error("Not enough arguments given to '%s' keyword.\n", Keywords::pairPotentialsKeyword(ppkeyword));
-						error = TRUE;
+						error = true;
 						break;
 					}
 					switch (ppkeyword)
@@ -551,7 +554,7 @@ bool DUQ::loadInput(const char* fileName)
 							if ((!at) || (!at2))
 							{
 								msg.error("Eror: AtomType '%s' used in PairPotential has not been defined.\n", at ? parser.argc(2) : parser.argc(1));
-								error = TRUE;
+								error = true;
 								break;
 							}
 							pot = pairPotentials_.add();
@@ -562,7 +565,7 @@ bool DUQ::loadInput(const char* fileName)
 								if (!parser.hasArg(4))
 								{
 									msg.error("Not enough charge parameters supplied in PairPotential definition.\n");
-									error = TRUE;
+									error = true;
 									break;
 								}
 								pot->setType(PairPotential::CoulombType);
@@ -574,7 +577,7 @@ bool DUQ::loadInput(const char* fileName)
 								if (!parser.hasArg(4))
 								{
 									msg.error("Not enough LJ parameters supplied in PairPotential definition.\n");
-									error = TRUE;
+									error = true;
 									break;
 								}
 								pot->setType(PairPotential::DispersionType);
@@ -586,7 +589,7 @@ bool DUQ::loadInput(const char* fileName)
 								if (!parser.hasArg(6))
 								{
 									msg.error("Not enough LJ/charge parameters supplied in PairPotential definition.\n");
-									error = TRUE;
+									error = true;
 									break;
 								}
 								pot->setType(PairPotential::FullType);
@@ -601,7 +604,7 @@ bool DUQ::loadInput(const char* fileName)
 							break;
 						case (Keywords::EndPairPotentialsKeyword):
 							msg.print("Found end of %s block.\n", Keywords::inputBlock(block));
-							blockDone = TRUE;
+							blockDone = true;
 							break;
 						case (Keywords::RangeKeyword):
 							setPairPotentialRange(parser.argd(1));
@@ -612,11 +615,11 @@ bool DUQ::loadInput(const char* fileName)
 						case (Keywords::nPairPotentialsKeywords):
 							msg.error("Unrecognised %s block keyword found - '%s'\n", Keywords::inputBlock(block), parser.argc(0));
 							Keywords::printValidKeywords(block);
-							error = TRUE;
+							error = true;
 							break;
 						default:
 							printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", Keywords::inputBlock(block), Keywords::pairPotentialsKeyword(ppkeyword));
-							error = TRUE;
+							error = true;
 							break;
 					}
 					
@@ -629,7 +632,7 @@ bool DUQ::loadInput(const char* fileName)
 				break;
 			case (Keywords::SetupBlock):
 				msg.print("Found %s block\n", Keywords::inputBlock(block));
-				blockDone = FALSE;
+				blockDone = false;
 				while (!parser.eofOrBlank())
 				{
 					// Read in a line, which should contain a keyword and a minimum number of arguments
@@ -638,13 +641,13 @@ bool DUQ::loadInput(const char* fileName)
 					if ((setkeyword != Keywords::nSetupKeywords) && ((parser.nArgs()-1) < Keywords::setupBlockNArguments(setkeyword)))
 					{
 						msg.error("Not enough arguments given to '%s' keyword.\n", Keywords::setupKeyword(setkeyword));
-						error = TRUE;
+						error = true;
 						break;
 					}
 					switch (setkeyword)
 					{
 						case (Keywords::BoxNormalisationFileKeyword):
-							if (!loadBoxNormalisationFile(parser.argc(1))) error = TRUE;
+							if (!loadBoxNormalisationFile(parser.argc(1))) error = true;
 							break;
 						case (Keywords::BoxNormalisationPointsKeyword):
 							boxNormalisationPoints_ = parser.argi(1);
@@ -653,9 +656,12 @@ bool DUQ::loadInput(const char* fileName)
 							qDependentFWHM_ = parser.argd(1);
 							qIndependentFWHM_ = parser.argd(2);
 							break;
+						case (Keywords::CellDensityMultiplierKeyword):
+							cellDensityMultiplier_ = parser.argd(1);
+							break;
 						case (Keywords::EndSetupKeyword):
 							msg.print("Found end of %s block.\n", Keywords::inputBlock(block));
-							blockDone = TRUE;
+							blockDone = true;
 							break;
 						case (Keywords::RDFBinWidthKeyword):
 							rdfBinWidth_ = parser.argd(1);
@@ -667,7 +673,7 @@ bool DUQ::loadInput(const char* fileName)
 							if (rdfMethod(parser.argc(1)) == DUQ::nRDFMethods)
 							{
 								msg.error("'%s' is not a valid calculation method.\n", parser.argc(1));
-								error = TRUE;
+								error = true;
 							}
 							else rdfMethod_ = rdfMethod(parser.argc(1));
 							break;
@@ -701,18 +707,18 @@ bool DUQ::loadInput(const char* fileName)
 							if (Data2D::windowFunction(parser.argc(1)) == Data2D::nWindowFunctions)
 							{
 								msg.error("Unrecognised window function = '%s'.\n", parser.argc(1));
-								error = TRUE;
+								error = true;
 							}
 							else windowFunction_ = Data2D::windowFunction(parser.argc(1));
 							break;
 						case (Keywords::nSetupKeywords):
 							msg.error("Unrecognised %s block keyword found - '%s'\n", Keywords::inputBlock(block), parser.argc(0));
 							Keywords::printValidKeywords(block);
-							error = TRUE;
+							error = true;
 							break;
 						default:
 							printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", Keywords::inputBlock(block), Keywords::setupKeyword(setkeyword));
-							error = TRUE;
+							error = true;
 							break;
 					}
 					
@@ -725,7 +731,7 @@ bool DUQ::loadInput(const char* fileName)
 				break;
 			case (Keywords::SimulationBlock):
 				msg.print("Found %s block\n", Keywords::inputBlock(block));
-				blockDone = FALSE;
+				blockDone = false;
 				while (!parser.eofOrBlank())
 				{
 					// Read in a line, which should contain a keyword and a minimum number of arguments
@@ -734,14 +740,14 @@ bool DUQ::loadInput(const char* fileName)
 					if ((simkeyword != Keywords::nSimulationKeywords) && ((parser.nArgs()-1) < Keywords::simulationBlockNArguments(simkeyword)))
 					{
 						msg.error("Not enough arguments given to '%s' keyword.\n", Keywords::simulationKeyword(simkeyword));
-						error = TRUE;
+						error = true;
 						break;
 					}
 					switch (simkeyword)
 					{
 						case (Keywords::EndSimulationKeyword):
 							msg.print("Found end of %s block.\n", Keywords::inputBlock(block));
-							blockDone = TRUE;
+							blockDone = true;
 							break;
 						case (Keywords::EquilibrationKeyword):
 							targetSteps = &equilibrationSteps_;
@@ -757,7 +763,7 @@ bool DUQ::loadInput(const char* fileName)
 							if (targetSteps == NULL)
 							{
 								msg.error("Simulation commands must be added to a specific stage - select one with an '@' keyword first.\n");
-								error = TRUE;
+								error = true;
 								break;
 							}
 							
@@ -766,12 +772,12 @@ bool DUQ::loadInput(const char* fileName)
 							if (!parseStep(step, parser.line()))
 							{
 								msg.error("Failed to add simulation step.\n");
-								error = TRUE;
+								error = true;
 							}
 							break;
 						default:
 							printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", Keywords::inputBlock(block), Keywords::simulationKeyword(simkeyword));
-							error = TRUE;
+							error = true;
 							break;
 					}
 					
@@ -784,11 +790,11 @@ bool DUQ::loadInput(const char* fileName)
 				break;
 			case (Keywords::nInputBlocks):
 				msg.error("Unrecognised input block found - '%s'\n", parser.argc(0));
-				error = TRUE;
+				error = true;
 				break;
 			default:
 				printf("DEV_OOPS - Input block keyword '%s' not accounted for.\n", Keywords::inputBlock(block));
-				error = TRUE;
+				error = true;
 				break;
 		}
 		
@@ -823,11 +829,11 @@ bool DUQ::saveInput(const char* fileName)
 	LineParser parser;
 	msg.print("Writing input file '%s'...\n", fileName);
 
-	parser.openOutput(fileName, TRUE);
+	parser.openOutput(fileName, true);
 	if (!parser.isFileGoodForWriting())
 	{
 		msg.error("Couldn't open file '%s' for writing.\n", fileName);
-		return FALSE;
+		return false;
 	}
 	
 	int count;
@@ -842,7 +848,7 @@ bool DUQ::saveInput(const char* fileName)
 	parser.writeLineF("%s\n", Keywords::inputBlock(Keywords::AtomTypesBlock));
 	for (AtomType* at = atomTypes_.first(); at != NULL; at = at->next)
 	{
-		parser.writeLineF("  %s  '%s'  %3s  '%s'\n", Keywords::atomTypesKeyword(Keywords::AtomTypeKeyword), at->name(), periodicTable_.element(at->element()).symbol(), at->parameters()->name());
+		parser.writeLineF("  %s  '%s'  %3s  '%s'\n", Keywords::atomTypesKeyword(Keywords::AtomTypeKeyword), at->name(), periodicTable.element(at->element()).symbol(), at->parameters()->name());
 	}
 	parser.writeLineF("%s\n\n", Keywords::atomTypesKeyword(Keywords::EndAtomTypesKeyword));
 
@@ -855,32 +861,32 @@ bool DUQ::saveInput(const char* fileName)
 		// Atoms
 		parser.writeLineF("  # Atoms\n");
 		count = 0;
-		for (Atom* i = sp->atoms(); i != NULL; i = i->next)
+		for (SpeciesAtom* i = sp->atoms(); i != NULL; i = i->next)
 		{
 			++count;
-			parser.writeLineF("  %s  %3i  %3s  %8.3f %8.3f %8.3f %8.3f '%s'\n", Keywords::speciesKeyword(Keywords::AtomKeyword), count, periodicTable_.element(i->element()).symbol(), i->r().x, i->r().y, i->r().z, i->charge(), i->atomType() == NULL ? "???" : i->atomType()->name());
+			parser.writeLineF("  %s  %3i  %3s  %8.3f %8.3f %8.3f %8.3f '%s'\n", Keywords::speciesKeyword(Keywords::AtomKeyword), count, periodicTable.element(i->element()).symbol(), i->r().x, i->r().y, i->r().z, i->charge(), i->atomType() == NULL ? "???" : i->atomType()->name());
 		}
 		
 		// Bonds
 		parser.writeLineF("\n  # Bonds\n");
-		for (Bond* b = sp->bonds(); b != NULL; b = b->next)
+		for (SpeciesBond* b = sp->bonds(); b != NULL; b = b->next)
 		{
 			parser.writeLineF("  %s  %3i  %3i  %8.3f %8.3f\n", Keywords::speciesKeyword(Keywords::BondKeyword), b->indexI()+1, b->indexJ()+1, b->equilibrium(), b->forceConstant());
 		}
 		
 		// Angles
 		parser.writeLineF("\n  # Angles\n");
-		for (Angle* a = sp->angles(); a != NULL; a = a->next)
+		for (SpeciesAngle* a = sp->angles(); a != NULL; a = a->next)
 		{
 			parser.writeLineF("  %s  %3i  %3i  %3i  %8.3f %8.3f\n", Keywords::speciesKeyword(Keywords::AngleKeyword), a->indexI()+1, a->indexJ()+1, a->indexK()+1, a->equilibrium(), a->forceConstant());
 		}
 		
 		// Grains
 		parser.writeLineF("\n  # Grain Definitions\n");
-		for (GrainDefinition* gd = sp->grainDefinitions(); gd != NULL; gd = gd->next)
+		for (SpeciesGrain* sg = sp->grains(); sg != NULL; sg = sg->next)
 		{
-			parser.writeLineF("  %s  '%s'", Keywords::speciesKeyword(Keywords::GrainKeyword), gd->name());
-			for (RefListItem<Atom,int>* ri = gd->atoms(); ri != NULL; ri = ri->next) parser.writeLineF("  %i", ri->item->userIndex());
+			parser.writeLineF("  %s  '%s'", Keywords::speciesKeyword(Keywords::GrainKeyword), sg->name());
+			for (RefListItem<SpeciesAtom,int>* ri = sg->atoms(); ri != NULL; ri = ri->next) parser.writeLineF("  %i", ri->item->userIndex());
 			parser.writeLineF("\n");
 		}
 
@@ -1029,9 +1035,9 @@ bool DUQ::saveInput(const char* fileName)
 
 	// Update logpoint
 	fileName_ = fileName;
-	CLEAR_MODIFIED
+	Flags::clearAll();
 
-	return TRUE;
+	return true;
 }
 
 /*!

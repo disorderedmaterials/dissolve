@@ -74,7 +74,7 @@ class TextPrimitiveChunk
 	// Return whether array is full
 	bool full();
 	// Add primitive to list
-	void add(Vec3<double> pos, QString text, bool rightAlign = FALSE);
+	void add(Vec3<double> pos, QString text, bool rightAlign = false);
 	// Render all primitives in chunk
 	void renderAll(QPainter &painter, Viewer* viewer, bool isIsotope, bool superScripts);
 };
@@ -96,9 +96,9 @@ class TextPrimitiveList
 	// Forget all text primitives, but keeping lists intact
 	void forgetAll();
 	// Add primitive to list
-	void add(Vec3<double> pos, QString text, bool rightAlign = FALSE);
+	void add(Vec3<double> pos, QString text, bool rightAlign = false);
 	// Render all primitives in list
-	void renderAll(QPainter& painter, Viewer* viewer, bool isIsotope = FALSE, bool superScripts = FALSE);
+	void renderAll(QPainter& painter, Viewer* viewer, bool isIsotope = false, bool superScripts = false);
 };
 
 #endif

@@ -1,6 +1,6 @@
 /*
-	*** Simple Flag
-	*** src/lib/base/flag.cpp
+	*** Species Viewer Functions
+	*** src/gui/speciesviewer_funcs.cpp
 	Copyright T. Youngs 2012-2013
 
 	This file is part of dUQ.
@@ -19,36 +19,25 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "base/flag.h"
-
-// External Declarations
-Flag dUQFlag;
+#include "gui/speciesviewer.uih"
+#include "base/messenger.h"
 
 // Constructor
-Flag::Flag()
+SpeciesViewer::SpeciesViewer(QWidget* parent) : Viewer(parent)
 {
-	flag_ = false;
+	// Source data
+	sourceSpecies_ = NULL;
+	drawStyle_ = SpeciesViewer::LineStyle;
+
+	// Input
+// 	atomContextMenu_ = NULL;
+// 	speciesUpdateTargets_ = 0;
+
+	createPrimitives();
 }
 
-/*
-// Flag and Access
-*/
-
-// Set flag to TRUE
-void Flag::setTrue()
+// Destructor
+SpeciesViewer::~SpeciesViewer()
 {
-	flag_ = true;
-}
-
-// Set flag to FALSE
-void Flag::setFalse()
-{
-	flag_ = false;
-}
-
-// Return flag
-bool Flag::flag()
-{
-	return flag_;
 }
 

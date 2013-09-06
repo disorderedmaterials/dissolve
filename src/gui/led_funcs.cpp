@@ -1,6 +1,6 @@
 /*
-	*** Simple Flag
-	*** src/lib/base/flag.h
+	*** LED Widget Functions
+	*** src/gui/led_funcs.cpp
 	Copyright T. Youngs 2012-2013
 
 	This file is part of dUQ.
@@ -19,43 +19,31 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_FLAG_H
-#define DUQ_FLAG_H
+#include <QtGui/QLabel>
+#include <QtGui/QPainter>
+#include "gui/led.uih"
 
 /*!
- * \brief Flag
- * \details Simple class to allow 
+ * \brief Constructor
  */
-class Flag
+LED::LED(QWidget* parent) : QWidget(parent)
 {
-	public:
-	// Constructor
-	Flag();
+	resize(10,10);
+}
 
+/*!
+ * \brief Destructor
+ */
+LED::~LED()
+{
+}
 
-	/*!
-	 * \name Flag and Access
-	 */
-	///@{
-	private:
-	// Flag
-	bool flag_;
-	
-	public:
-	// Set flag to TRUE
-	void setTrue();
-	// Set flag to FALSE
-	void setFalse();
-	// Return flag
-	bool flag();
-	///@}
-};
-
-// External Declarations
-extern Flag dUQFlag;
-
-#define SET_MODIFIED dUQFlag.setTrue();
-#define CLEAR_MODIFIED dUQFlag.setFalse();
-#define IS_MODIFIED dUQFlag.flag()
-
-#endif
+/*!
+ * \brief Widget PaintEvent
+ */
+void LED::paintEvent(QPaintEvent* event)
+{
+	QPainter painter(this);
+	QImage image(":/icons/style_sphere.svg");
+	painter.drawImage(QPoint(10,10), image);
+}

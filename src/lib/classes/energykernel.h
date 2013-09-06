@@ -29,8 +29,11 @@
 // Forward Declarations
 class Cell;
 class Box;
+class Configuration;
 class PotentialMap;
 class Molecule;
+class SpeciesBond;
+class SpeciesAngle;
 
 /*!
  * \brief Energy Kernel
@@ -40,7 +43,7 @@ class EnergyKernel
 {
 	public:
 	// Constructor
-	EnergyKernel(const Box* box, const PotentialMap& potentialMap);
+	EnergyKernel(const Configuration& config, const PotentialMap& potentialMap);
 	// Destructor
 	~EnergyKernel();
 	// Clear all data
@@ -52,7 +55,9 @@ class EnergyKernel
 	 */
 	///@{
 	protected:
-	// Source Box
+	// Source Configuration
+	const Configuration& configuration_;
+	// Source Box (from Configuration)
 	const Box* box_;
 	// Potential map to use
 	const PotentialMap& potentialMap_;
@@ -64,16 +69,32 @@ class EnergyKernel
 	 */
 	///@{
 	private:
-	// Return PairPotential energy between Atoms provided (no minimum image calculation)
+	// Return PairPotential energy between atoms provided as pointers (no minimum image calculation)
 	double energyWithoutMim(const Atom* i, const Atom* j);
-	// Return PairPotential energy between Atom and Grain provided (no minimum image calculation)
-	double energyWithoutMim(const Atom* i, const Grain* grain, bool excludeIgtJ = FALSE);
-	// Return PairPotential energy between Grains provided (no minimum image calculation)
+	// Return PairPotential energy between atoms provided as info and reference (minimum image calculation)
+	double energyWithoutMim(const int typeI, const Vec3<double>& rI, const Atom& j);
+	// Return PairPotential energy between atoms provided as references (no minimum image calculation)
+	double energyWithoutMim(const Atom& i, const Atom& j);
+	// Return PairPotential energy between atoms provided as reference/pointer (no minimum image calculation)
+	double energyWithoutMim(const Atom& i, const Atom* j);
+	// Return PairPotential energy between atom (pointer) and grain provided (no minimum image calculation)
+	double energyWithoutMim(const Atom* i, const Grain* grain, bool excludeIgeJ = false);
+	// Return PairPotential energy between atom (reference) and grain provided (no minimum image calculation)
+	double energyWithoutMim(const Atom& i, const Grain* grain, bool excludeIgeJ = false);
+	// Return PairPotential energy between grains provided (no minimum image calculation)
 	double energyWithoutMim(const Grain* grainI, const Grain* grainJ);
-	// Return PairPotential energy between Atoms provided (minimum image calculation)
+	// Return PairPotential energy between atoms provided as pointers (minimum image calculation)
 	double energyWithMim(const Atom* i, const Atom* j);
-	// Return PairPotential energy between Atom and Grain provided (minimum image calculation)
-	double energyWithMim(const Atom* i, const Grain* grain, bool excludeIgtJ = FALSE);
+	// Return PairPotential energy between atoms provided as info and reference (minimum image calculation)
+	double energyWithMim(const int typeI, const Vec3<double>& rI, const Atom& j);
+	// Return PairPotential energy between atoms provided as references (minimum image calculation)
+	double energyWithMim(const Atom& i, const Atom& j);
+	// Return PairPotential energy between atoms provided as reference/pointer (minimum image calculation)
+	double energyWithMim(const Atom& i, const Atom* j);
+	// Return PairPotential energy between atom (pointer) and Grain provided (minimum image calculation)
+	double energyWithMim(const Atom* i, const Grain* grain, bool excludeIgeJ = false);
+	// Return PairPotential energy between atom (reference) and grain provided (minimum image calculation)
+	double energyWithMim(const Atom& i, const Grain* grain, bool excludeIgeJ = false);
 	// Return PairPotential energy between Grains provided (minimum image calculation)
 	double energyWithMim(const Grain* grainI, const Grain* grainJ);
 	///@}
@@ -84,20 +105,24 @@ class EnergyKernel
 	 */
 	///@{
 	public:
-	// Return PairPotential energy between Atoms provided
-	double energy(const Atom* i, const Atom* j, bool applyMim, bool excludeIgtJ = FALSE);
-	// Return PairPotential energy between Atom and Grain provided
-	double energy(const Atom* i, const Grain* grain, bool applyMim, bool excludeIgtJ = FALSE);
-	// Return PairPotential energy between Grains provided
-	double energy(const Grain* grainI, const Grain* grainJ, double cutoffSq, bool applyMim, bool excludeIgtJ = FALSE);
-	// Return PairPotential energy between Atom and Cell contents
-	double energy(const Atom* i, Cell* cell, bool applyMim, bool excludeIgtJ = FALSE);
-	// Return PairPotential energy between Grain and Cell contents
-	double energy(const Grain* grain, Cell* cell, double cutoffSq, bool applyMim, bool excludeIgtJ = FALSE, DUQComm::CommGroup group = DUQComm::Solo);
-	// Return PairPotential energy between Atom and list of Cells
-	double energy(const Atom* i, RefList<Cell,bool>& neighbours, bool excludeIgtJ = FALSE, DUQComm::CommGroup group = DUQComm::Solo);
-	// Return PairPotential energy between Grain and list of Cells
-	double energy(const Grain* grain, RefList<Cell,bool>& neighbours, double cutoffSq, bool excludeIgtJ = FALSE, DUQComm::CommGroup group = DUQComm::Solo);
+	// Return PairPotential energy between atoms provided (as pointers)
+	double energy(const Atom* i, const Atom* j, bool applyMim, bool excludeIgeJ = false);
+	// Return PairPotential energy between atoms provided (as references)
+	double energy(const Atom& i, const Atom& j, bool applyMim, bool excludeIgeJ = false);
+	// Return PairPotential energy between atom (pointer) and grain provided
+	double energy(const Atom* i, const Grain* grain, bool applyMim, bool excludeIgeJ = false);
+	// Return PairPotential energy between atom (reference) and grain provided
+	double energy(const Atom& i, const Grain* grain, bool applyMim, bool excludeIgeJ = false);
+	// Return PairPotential energy between grains provided
+	double energy(const Grain* grainI, const Grain* grainJ, double cutoffSq, bool applyMim, bool excludeIgeJ = false);
+	// Return PairPotential energy between two cells
+	double energy(Cell* centralCell, Cell* otherCell, bool applyMim, bool excludeIgeJ = false, DUQComm::CommGroup group = DUQComm::Solo);
+	// Return PairPotential energy between atom and cell
+	double energy(const Atom& i, Cell* cell, bool applyMim, DUQComm::CommGroup group = DUQComm::Solo);
+	// Return PairPotential energy between grain and cell contents
+	double energy(const Grain* grain, Cell* cell, double cutoffSq, bool applyMim, bool excludeIgeJ = false, DUQComm::CommGroup group = DUQComm::Solo);
+	// Return PairPotential energy between Grain and list of cells
+	double energy(const Grain* grain, RefList<Cell,bool>& neighbours, double cutoffSq, bool excludeIgeJ = false, DUQComm::CommGroup group = DUQComm::Solo);
 	///@}
 
 
@@ -107,9 +132,9 @@ class EnergyKernel
 	///@{
 	public:
 	// Return Bond energy
-	double energy(const Bond* b);
+	double energy(const Molecule* mol, const SpeciesBond* b);
 	// Return Angle energy
-	double energy(const Angle* a);
+	double energy(const Molecule* mol, const SpeciesAngle* a);
 	// Return full intramolecular energy
 	double fullIntraEnergy(const Grain* grain, double termFactor = 1.0);
 	///@}
@@ -121,7 +146,7 @@ class EnergyKernel
 	///@{
 	public:
 	// Return total Molecule energy
-	double energy(Molecule* mol, double cutoffSq, DUQComm::CommGroup group = DUQComm::Solo, bool halfPP = FALSE, double ppFactorIntra = 1.0, double termFactor = 1.0);
+	double energy(Molecule* mol, double cutoffSq, DUQComm::CommGroup group = DUQComm::Solo, bool halfPP = false, double ppFactorIntra = 1.0, double termFactor = 1.0);
 	///@}
 };
 

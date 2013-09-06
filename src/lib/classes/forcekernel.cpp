@@ -24,6 +24,7 @@
 #include "classes/cell.h"
 #include "classes/potentialmap.h"
 #include "classes/molecule.h"
+#include "classes/species.h"
 #include "base/comms.h"
 
 /*!
@@ -53,7 +54,7 @@ void ForceKernel::forcesWithoutMim(const Atom* i, const Atom* j, double* fx, dou
 {
 	Vec3<double> force = j->r() - i->r();
 	double distanceSq = force.magSqAndNormalise();
-	force *= potentialMap_.force(i, j, distanceSq) * scale;
+	force *= potentialMap_.force(i->atomTypeIndex(), j->atomTypeIndex(), distanceSq) * scale;
 	int index = i->index();
 	fx[index] += force.x;
 	fy[index] += force.y;
@@ -107,7 +108,7 @@ void ForceKernel::forcesWithoutMim(const Grain* grainI, const Grain* grainJ, dou
 			for (m=0; m<nAtomsJ; ++m)
 			{
 				j = grainJ->atom(m);
-				scale = grainI->parent()->scaling(i->index(), j->index());
+				scale = grainI->parent()->species()->scaling(i->moleculeAtomIndex(), j->moleculeAtomIndex());
 				if (scale < 1.0e-3) continue;
 				forcesWithoutMim(i, j, fx, fy, fz, scale);
 			}
@@ -122,7 +123,7 @@ void ForceKernel::forcesWithMim(const Atom* i, const Atom* j, double* fx, double
 {
 	Vec3<double> force = box_->minimumVector(i, j);
 	double distanceSq = force.magSqAndNormalise();
-	force *= potentialMap_.force(i, j, distanceSq) * scale;
+	force *= potentialMap_.force(i->atomTypeIndex(), j->atomTypeIndex(), distanceSq) * scale;
 	int index = i->index();
 	fx[index] += force.x;
 	fy[index] += force.y;
@@ -176,7 +177,7 @@ void ForceKernel::forcesWithMim(const Grain* grainI, const Grain* grainJ, double
 			for (m=0; m<nAtomsJ; ++m)
 			{
 				j = grainJ->atom(m);
-				scale = grainI->parent()->scaling(i->index(), j->index());
+				scale = grainI->parent()->species()->scaling(i->moleculeAtomIndex(), j->moleculeAtomIndex());
 				if (scale < 1.0e-3) continue;
 				forcesWithMim(i, j, fx, fy, fz, scale);
 			}

@@ -65,11 +65,11 @@ const char* afterChar(const char* s, char delim)
 {
 	static Dnchar result(1024);
 	result.clear();
-	bool found = FALSE;
+	bool found = false;
 	for (int i = 0; s[i] != '\0'; i++)
 	{
 		if (found) result += s[i];
-		if (s[i] == delim) found = TRUE;
+		if (s[i] == delim) found = true;
 	}
 	return result;
 }
@@ -126,7 +126,7 @@ const char* afterStr(const char* s, const char* search)
 void removeComments(char* s)
 {
 	char* c, quotechar = '\0';
-	bool escaped = FALSE;
+	bool escaped = false;
 	for (c = s; *c != '\0'; ++c)
 	{
 		// Remember current quoting info...
@@ -162,7 +162,7 @@ void removeComments(char* s)
 // Return whether string consists of empty whitespace characters only
 bool isEmpty(const char* s)
 {
-	if (s == NULL) return TRUE;
+	if (s == NULL) return true;
 	for (const char* c = s; *c != '\0'; ++c)
 	{
 		printf("%p\n", c);
@@ -175,10 +175,10 @@ bool isEmpty(const char* s)
 			case ('\r'):
 				continue;
 			default:
-				return FALSE;
+				return false;
 		}
 	}
-	return TRUE;
+	return true;
 }
 
 // Search enum list for text
@@ -257,12 +257,12 @@ const char* replaceChars(const char* s, const char* charstoreplace, char r)
 	result.clear();
 	for (c1 = &s[0]; *c1 != '\0'; c1++)
 	{
-		found = FALSE;
+		found = false;
 		for (c2 = charstoreplace; *c2 != '\0'; c2++)
 		{
 			if (*c1 == *c2)
 			{
-				found = TRUE;
+				found = true;
 				break;
 			}
 		}
@@ -281,12 +281,12 @@ const char* stripChars(const char* s, const char* charstostrip)
 	result.clear();
 	for (c1 = &s[0]; *c1 != '\0'; c1++)
 	{
-		found = FALSE;
+		found = false;
 		for (c2 = &charstostrip[0]; *c2 != '\0'; c2++)
 		{
 			if (*c1 == *c2)
 			{
-				found = TRUE;
+				found = true;
 				break;
 			}
 		}
@@ -318,9 +318,9 @@ bool fileExists(const char* filename)
 	if (f.is_open())
 	{
 		f.close();
-		return TRUE;
+		return true;
 	}
-	else return FALSE;
+	else return false;
 }
 
 // Get boolean response from the user
@@ -337,5 +337,5 @@ bool getBooleanResponse(const char* promptText, bool hasDefaultResponse, bool de
 		else if (strcmp(lowerCase(line),"n") == 0) response = 0;
 		else if ((strlen(line) == 0) && hasDefaultResponse) response = (defaultResponse ? 1 : 0);
 	}
-	return (response == 1 ? TRUE : FALSE);
+	return (response == 1 ? true : false);
 }

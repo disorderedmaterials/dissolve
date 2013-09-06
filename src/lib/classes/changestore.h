@@ -29,8 +29,10 @@
 
 // Forward Declarations
 class Atom;
+class Cell;
 class Grain;
 class Molecule;
+class Configuration;
 
 /*!
  * \brief ChangeStore
@@ -49,14 +51,18 @@ class ChangeStore
 	 */
 	///@{
 	private:
-	// List of target Atoms (and modification data)
+	// List of target atoms (and modification data)
 	RefList<Atom, Pair< bool,Vec3<double> > > targetAtoms_;
 
 	public:
-	// Add Grain to watch
+	// Add atom to watch
+	void add(Atom* i);
+	// Add grain to watch
 	void add(Grain* grain);
-	// Add Molecule (Grains) to watch
+	// Add molecule to watch
 	void add(Molecule* mol);
+	// Add cell to watch
+	void add(Cell* cell);
 	///@}
 
 
@@ -77,12 +83,14 @@ class ChangeStore
 	void reset();
 	// Update all Atom positions
 	void updateAll();
+	// Update single atom position
+	void updateAtom(int id);
 	// Update Atom positions using list indices
 	void updateAtomsLocal(int nAtoms, int* indices);
-	// Update Atom positions using relative Atom indices
-	void updateAtomsRelative(int nAtoms, Atom** atoms, int rootIndex);
-	// Revert to stored Atom positions
-	void revert();
+	// Revert all atoms to stored positions
+	void revertAll();
+	// Revert specified index to stored position
+	void revert(int id);
 	// Save Atom changes for broadcast, and reset arrays for new data
 	void storeAndReset();
 	///@}
@@ -93,8 +101,8 @@ class ChangeStore
 	 */
 	///@{
 	public:
-	// Distribute change data to all processes
-	bool distribute(int nAtoms, Atom* atoms);
+	// Distribute and apply change data to all processes
+	bool distribute(Configuration& cfg);
 	///@}
 };
 

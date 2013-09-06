@@ -126,7 +126,7 @@ template <class T> class Vec3
 	// Normalise the vector to unity
 	void normalise();
 	// Returns an orthogonal unit vector
-	Vec3<T> orthogonal(bool isNormalised = FALSE) const;
+	Vec3<T> orthogonal(bool isNormalised = false) const;
 	// Orthogonalise (Gram-Schmidt) w.r.t. supplied vector
 	void orthogonalise(const Vec3<T>&);
 	// Orthogonalise (two vectors)

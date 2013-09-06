@@ -20,8 +20,8 @@
 */
 
 #include "main/duq.h"
+#include "main/flags.h"
 #include "classes/atomtype.h"
-#include "base/flag.h"
 
 /*
 // Pair Potentials
@@ -35,7 +35,7 @@ void DUQ::setPairPotentialRange(double range)
 	pairPotentialRange_ = range;
 	pairPotentialRangeSquared_ = range*range;
 	
-	SET_MODIFIED
+	Flags::wave(Flags::PairPotentialChanged);
 }
 
 /*!
@@ -61,7 +61,7 @@ void DUQ::setPairPotentialTruncationWidth(double width)
 {
 	pairPotentialTruncationWidth_ = width;
 	
-	SET_MODIFIED
+	Flags::wave(Flags::PairPotentialChanged);
 }
 
 /*!
@@ -120,7 +120,7 @@ bool DUQ::addMissingPairPotentials()
 		}
 	}
 	
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -130,7 +130,7 @@ void DUQ::removePairPotential(PairPotential* pot)
 {
 	pairPotentials_.remove(pot);
 	
-	SET_MODIFIED
+	Flags::wave(Flags::PairPotentialChanged);
 }
 
 /*!
@@ -201,8 +201,8 @@ void DUQ::regeneratePairPotential(PairPotential* pp)
 bool DUQ::savePairPotentials(const char* baseName) const
 {
 	// I/O Operation so Master only.
-	if (Comm.slave()) return TRUE;
-	bool result = TRUE;
+	if (Comm.slave()) return true;
+	bool result = true;
 
 	for (PairPotential* pp = pairPotentials_.first(); pp != NULL; pp = pp->next)
 	{

@@ -55,6 +55,8 @@ class AtomType : public MPIListItem<AtomType>
 	int element_;
 	// Associated Parameters
 	Parameters* parameters_;
+	// Index of this type in the main type index
+	int index_;
 
 	public:
 	// Set name of AtomType
@@ -69,6 +71,10 @@ class AtomType : public MPIListItem<AtomType>
 	void setParameters(Parameters* params);
 	// Return associated Parameters
 	Parameters* parameters() const;
+	// Set index of this type in the main type index
+	void setIndex(int id);
+	// Return index of this type in the main type index
+	int index() const;
 	///@}
 
 

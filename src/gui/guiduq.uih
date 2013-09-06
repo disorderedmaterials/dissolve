@@ -26,38 +26,29 @@
 #include <QtCore/QObject>
 #include <QtCore/QThread>
 
-class GuiDUQ : public QObject, public DUQ
+// Forward Declarations
+class MainWindow;
+
+class DUQObject : public QObject, public DUQ
 {
 	Q_OBJECT
 
 	public:
 	// Constructor / Destructor
-	GuiDUQ();
-	~GuiDUQ();
+	DUQObject();
+	~DUQObject();
+
 
 	/*!
-	 * \name Signalling
+	 * \name Qt Link
 	 */
+	private:
+	// Pointer to main GUI window
+	MainWindow* mainWindow_;
+	
 	public:
-	// Send signal
-	void sendSignal(DUQ::Signal signal, int data);
-
-
-	/*!
-	 * \name Qt Slots
-	 */
-	public slots:
-	void startSimulation();
-	void receiveDUQSignal(int signal, int data);
-
-
-	/*!
-	 * \name Qt Signals
-	 */
-	signals:
-	void simulationFinished(int);
-	void checkPointDataReady();
-	void sendDUQSignal(int signal, int data);
+	// Set main window pointer
+	void setMainWindow(MainWindow* mainWindow);
 };
 
 class GuiOutputHandler : public QObject, public OutputHandler
@@ -91,6 +82,5 @@ class QThreadEx : public QThread
 	protected:
 	void run() { exec(); }
 };
-
 
 #endif

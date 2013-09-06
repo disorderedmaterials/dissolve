@@ -31,17 +31,17 @@
 bool DUQ::saveConfigurationXYZ(Configuration& cfg, const char* fileName)
 {
 	// I/O operation, so Master only...
-	if (Comm.slave()) return TRUE;
+	if (Comm.slave()) return true;
 
 	// Open file and check that we're OK to proceed writing to it
 	LineParser parser;
 	msg.print("Writing model as XYZ file '%s'...\n", fileName);
 
-	parser.openOutput(fileName, TRUE);
+	parser.openOutput(fileName, true);
 	if (!parser.isFileGoodForWriting())
 	{
 		msg.error("Couldn't open file '%s' for writing.\n", fileName);
-		return FALSE;
+		return false;
 	}
 
 	// Write number of atoms and title
@@ -49,14 +49,18 @@ bool DUQ::saveConfigurationXYZ(Configuration& cfg, const char* fileName)
 	parser.writeLineF("%s\n", fileName_.get());
 	
 	// Write Atoms
-	for (int n=0; n<cfg.nAtoms(); ++n) parser.writeLineF("%-3s   %10.4f  %10.4f  %10.4f\n", PeriodicTable::element(cfg.atom(n).element()).symbol(), cfg.atom(n).r().x, cfg.atom(n).r().y, cfg.atom(n).r().z);
+	for (int n=0; n<cfg.nAtoms(); ++n)
+	{
+		Atom* i = cfg.atom(n);
+		parser.writeLineF("%-3s   %10.4f  %10.4f  %10.4f\n", PeriodicTable::element(i->element()).symbol(), i->r().x, i->r().y, i->r().z);
+	}
 
 	msg.print("Finished writing model XYZ file.\n");
 
 	// Close file
 	parser.closeFiles();
 
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -65,17 +69,17 @@ bool DUQ::saveConfigurationXYZ(Configuration& cfg, const char* fileName)
 bool DUQ::saveConfigurationDLPOLY(Configuration& cfg, const char* fileName)
 {
 	// I/O operation, so Master only...
-	if (Comm.slave()) return TRUE;
+	if (Comm.slave()) return true;
 
 	// Open file and check that we're OK to proceed writing to it
 	LineParser parser;
 	msg.print("Writing model as CONFIG file '%s'...\n", fileName);
 
-	parser.openOutput(fileName, TRUE);
+	parser.openOutput(fileName, true);
 	if (!parser.isFileGoodForWriting())
 	{
 		msg.error("Couldn't open file '%s' for writing.\n", fileName);
-		return FALSE;
+		return false;
 	}
 
 	// Write title
@@ -99,8 +103,8 @@ bool DUQ::saveConfigurationDLPOLY(Configuration& cfg, const char* fileName)
 	// Write Atoms
 	for (int n=0; n<cfg.nAtoms(); ++n)
 	{
-		Atom& i = cfg.atom(n);
-		parser.writeLineF("%-6s%10i%20.10f\n%20.12f%20.12f%20.12f\n", i.atomType()->name(), n+1, PeriodicTable::element(i.element()).isotope(0)->atomicWeight(), i.r().x, i.r().y, i.r().z);
+		Atom* i = cfg.atom(n);
+		parser.writeLineF("%-6s%10i%20.10f\n%20.12f%20.12f%20.12f\n", typeIndex_[i->atomTypeIndex()]->name(), n+1, PeriodicTable::element(i->element()).isotope(0)->atomicWeight(), i->r().x, i->r().y, i->r().z);
 	}
 
 	msg.print("Finished writing model XYZ file.\n");
@@ -108,5 +112,5 @@ bool DUQ::saveConfigurationDLPOLY(Configuration& cfg, const char* fileName)
 	// Close file
 	parser.closeFiles();
 
-	return TRUE;
+	return true;
 }

@@ -38,7 +38,7 @@ PlotWidget::PlotWidget(QWidget* parent) : QWidget(parent)
 {
 	// Context Menu
 	contextMenu_ = new QMenu(this);
-	contextMenuValid_ = FALSE;
+	contextMenuValid_ = false;
 
 	// Toolbar
 	toolBarWidget_ = NULL;
@@ -60,17 +60,17 @@ PlotWidget::PlotWidget(QWidget* parent) : QWidget(parent)
 	yAxisTickDelta_ = 2.0;
 	xLabelFormat_ = "%4.1f";
 	yLabelFormat_ = "%4.1f";
-	legendVisible_ = TRUE;
+	legendVisible_ = true;
 	verticalSpacing_ = 1.0;
 	xMinLimit_ = 0.0;
 	xMaxLimit_ = 0.0;
 	yMinLimit_ = 0.0;
 	yMaxLimit_ = 0.0;
-	limitXMin_ = FALSE;
-	limitXMax_ = FALSE;
-	limitYMin_ = FALSE;
-	limitYMax_ = FALSE;
-	autoScale_ = TRUE;
+	limitXMin_ = false;
+	limitXMax_ = false;
+	limitYMin_ = false;
+	limitYMax_ = false;
+	autoScale_ = true;
 	
 	// Pre-defined colours
 	lineColours_[PlotWidget::BlackColour] = Qt::black;
@@ -110,7 +110,7 @@ void PlotWidget::recreateContextMenu()
 	if (dataSetGroups_.nItems() == 0)
 	{
 		QAction* action = subMenu->addAction("<No Groups Defined>");
-		action->setEnabled(FALSE);
+		action->setEnabled(false);
 	}
 	else
 	{
@@ -125,6 +125,7 @@ void PlotWidget::recreateContextMenu()
 			action = groupMenu->addAction("Hide All");
 			action->setData(QVariant(count));
 			QObject::connect(action, SIGNAL(triggered(bool)), this, SLOT(contextMenuGroupHideAllClicked(bool)));
+			++count;
 		}
 	}
 
@@ -134,14 +135,14 @@ void PlotWidget::recreateContextMenu()
 	for (PlotData* pd = dataSets_.first(); pd != NULL; pd = pd->next)
 	{
 		QAction* action = contextMenu_->addAction(pd->name());
-		action->setCheckable(TRUE);
+		action->setCheckable(true);
 		action->setChecked(pd->visible());
 		action->setData(QVariant(count));
 		QObject::connect(action, SIGNAL(triggered(bool)), this, SLOT(contextMenuDataSetClicked(bool)));
 		++count;
 	}
 	
-	contextMenuValid_ = TRUE;
+	contextMenuValid_ = true;
 }
 
 /*!
@@ -189,9 +190,9 @@ void PlotWidget::mouseReleaseEvent(QMouseEvent* event)
 		if (graphArea_.contains(clickedWidgetPosition_))
 		{
 			// If the box is too small in either direction, assume that we are translating to the point instead...
-			bool small = FALSE;
-			if (fabs(currentGraphPosition_.x()-clickedGraphPosition_.x()) < (xMax_-xMin_)*0.01) small = TRUE;
-			if (fabs(currentGraphPosition_.y()-clickedGraphPosition_.y()) < (yMax_-yMin_)*0.01) small = TRUE;
+			bool small = false;
+			if (fabs(currentGraphPosition_.x()-clickedGraphPosition_.x()) < (xMax_-xMin_)*0.01) small = true;
+			if (fabs(currentGraphPosition_.y()-clickedGraphPosition_.y()) < (yMax_-yMin_)*0.01) small = true;
 			if (small)
 			{
 				double dx = currentGraphPosition_.x() - (xMin_+xMax_)*0.5;
@@ -271,7 +272,7 @@ void PlotWidget::wheelEvent(QWheelEvent* event)
  */
 void PlotWidget::keyPressEvent(QKeyEvent* event)
 {
-	bool accept = TRUE;
+	bool accept = true;
 	switch (event->key())
 	{
 		// Toggle autoscaling
@@ -282,8 +283,8 @@ void PlotWidget::keyPressEvent(QKeyEvent* event)
 			break;
 		// Fit graph to data (optionally obeying soft limits)
 		case (Qt::Key_F):
-			if (event->modifiers().testFlag(Qt::ShiftModifier)) fitData(FALSE);
-			else fitData(TRUE);
+			if (event->modifiers().testFlag(Qt::ShiftModifier)) fitData(false);
+			else fitData(true);
 			update();
 			break;
 		// Toggle X axis soft limits
@@ -291,7 +292,7 @@ void PlotWidget::keyPressEvent(QKeyEvent* event)
 			if (event->modifiers().testFlag(Qt::ShiftModifier)) limitXMax_ = !limitXMax_;
 			else limitXMin_ = !limitXMin_;
 			updateToolBarWidget();
-			fitData(TRUE);
+			fitData(true);
 			update();
 			break;
 		// Toggle Y axis soft limits
@@ -299,11 +300,11 @@ void PlotWidget::keyPressEvent(QKeyEvent* event)
 			if (event->modifiers().testFlag(Qt::ShiftModifier)) limitYMax_ = !limitYMax_;
 			else limitYMin_ = !limitYMin_;
 			updateToolBarWidget();
-			fitData(TRUE);
+			fitData(true);
 			update();
 			break;
 		default:
-			accept = FALSE;
+			accept = false;
 			break;
 	}
 	if (accept) event->accept();
@@ -355,7 +356,7 @@ void PlotWidget::contextMenuGroupShowAllClicked(bool checked)
 		return;
 	}
 
-	for (PlotData* pd = dataSets_.first(); pd != NULL; pd = pd->next) if (pd->groupIndex() == data.toInt()) pd->setVisible(TRUE);
+	for (PlotData* pd = dataSets_.first(); pd != NULL; pd = pd->next) if (pd->groupIndex() == data.toInt()) pd->setVisible(true);
 	
 	update();
 }
@@ -375,7 +376,7 @@ void PlotWidget::contextMenuGroupHideAllClicked(bool checked)
 		return;
 	}
 
-	for (PlotData* pd = dataSets_.first(); pd != NULL; pd = pd->next) if (pd->groupIndex() == data.toInt()) pd->setVisible(FALSE);
+	for (PlotData* pd = dataSets_.first(); pd != NULL; pd = pd->next) if (pd->groupIndex() == data.toInt()) pd->setVisible(false);
 
 	update();
 }
@@ -402,7 +403,7 @@ void PlotWidget::updateToolBarWidget()
  */
 void PlotWidget::setToolBarWidget(QWidget* widget)
 {
-	const bool checkable[PlotWidget::nToolBarButtons] = { TRUE, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE } ;
+	const bool checkable[PlotWidget::nToolBarButtons] = { true, true, false, true, true, false, true } ;
 
 	// Set widget target
 	toolBarWidget_ = widget;
@@ -434,9 +435,9 @@ void PlotWidget::setToolBarWidget(QWidget* widget)
 
 		// Set button propertieas
 		btn->setFont(font);
-		if (checkable[n]) btn->setCheckable(TRUE);
+		if (checkable[n]) btn->setCheckable(true);
 		btn->setMaximumSize( QSize(20,20) );
-		btn->setVisible(TRUE);
+		btn->setVisible(true);
 	}
 
 	// Add horizontal spacer between buttons and label
@@ -601,7 +602,7 @@ void PlotWidget::setXLimits(bool setMinLimit, bool applyMinLimit, double minLimi
 		limitXMax_ = applyMaxLimit;
 		xMaxLimit_ = maxLimit;
 	}
-	fitData(TRUE);
+	fitData(true);
 }
 
 /*!
@@ -619,7 +620,7 @@ void PlotWidget::setYLimits(bool setMinLimit, bool applyMinLimit, double minLimi
 		limitYMax_ = applyMaxLimit;
 		yMaxLimit_ = maxLimit;
 	}
-	fitData(TRUE);
+	fitData(true);
 }
 
 /*!
@@ -637,7 +638,7 @@ void PlotWidget::setAutoScale(bool enabled)
 void PlotWidget::setXMinLimit(bool enabled)
 {
 	limitXMin_ = enabled;
-	fitData(TRUE);
+	fitData(true);
 }
 
 /*!
@@ -646,7 +647,7 @@ void PlotWidget::setXMinLimit(bool enabled)
 void PlotWidget::setXMaxLimit(bool enabled)
 {
 	limitXMax_ = enabled;
-	fitData(TRUE);
+	fitData(true);
 }
 
 /*!
@@ -655,7 +656,7 @@ void PlotWidget::setXMaxLimit(bool enabled)
 void PlotWidget::setYMinLimit(bool enabled)
 {
 	limitYMin_ = enabled;
-	fitData(TRUE);
+	fitData(true);
 }
 
 /*!
@@ -664,7 +665,7 @@ void PlotWidget::setYMinLimit(bool enabled)
 void PlotWidget::setYMaxLimit(bool enabled)
 {
 	limitYMax_ = enabled;
-	fitData(TRUE);
+	fitData(true);
 }
 
 /*
@@ -696,7 +697,7 @@ PlotData* PlotWidget::addDataSet(CheckPoint<Data2D>* data, bool visible, int yOf
 	}
 
 	// Flag recreation of contextMenu_, and repaint widget
-	contextMenuValid_ = FALSE;
+	contextMenuValid_ = false;
 	repaint();
 
 	return pd;
@@ -727,7 +728,7 @@ PlotData* PlotWidget::addDataSet(Data2D& data, const char* groupName, bool visib
 	}
 
 	// Flag recreation of contextMenu_, and repaint widget
-	contextMenuValid_ = FALSE;
+	contextMenuValid_ = false;
 	repaint();
 
 	return pd;
@@ -750,7 +751,7 @@ void PlotWidget::removeDataSet(CheckPoint<Data2D>* data)
 	dataSets_.remove(pd);
 
 	// Flag recreation of contextMenu_, and repaint widget
-	contextMenuValid_ = FALSE;
+	contextMenuValid_ = false;
 	repaint();
 }
 
@@ -762,7 +763,7 @@ void PlotWidget::removeAllDataSets()
 	dataSets_.clear();
 
 	// Flag recreation of contextMenu_, and repaint widget
-	contextMenuValid_ = FALSE;
+	contextMenuValid_ = false;
 
 	repaint();
 }
@@ -773,7 +774,7 @@ void PlotWidget::removeAllDataSets()
 void PlotWidget::refreshData()
 {
 	for (PlotData* pd = dataSets_.first(); pd != NULL; pd = pd->next) pd->generate();
-	if (autoScale_) fitData(TRUE);
+	if (autoScale_) fitData(true);
 	repaint();
 }
 

@@ -76,23 +76,23 @@ bool DUQComm::initialise(int* argn, char*** argv)
 		if (MPI_Comm_size(MPI_COMM_WORLD, &nProcesses_))
 		{
 			msg.error("Failed to get world size.\n");
-			return FALSE;
+			return false;
 		}
 		msg.print("Number of processes = %i\n", nProcesses_);
 
 		if (MPI_Comm_rank(MPI_COMM_WORLD, &rank_))
 		{
 			msg.error("Failed to get process rank.\n");
-			return FALSE;
+			return false;
 		}
 	}
 	else
 	{
 		msg.error("Failed to initialise MPI.\n");
-		return FALSE;
+		return false;
 	}
 #endif
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -103,7 +103,7 @@ bool DUQComm::finalise()
 #ifdef PARALLEL
 	MPI_Finalize();
 #endif
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -266,8 +266,8 @@ bool DUQComm::setupStrategy(const Vec3<int>& divisions, const Vec3<int>& cellExt
 	// Create MPI groups and communicators
 	MPI_Group origGroup;
 	MPI_Comm_group(MPI_COMM_WORLD, &origGroup);
-	if (MPI_Group_incl(origGroup, localGroupSize(), processes(localGroupIndex_), &localGroup_) != MPI_SUCCESS) return FALSE;
-	if (MPI_Comm_create(MPI_COMM_WORLD, localGroup_, &localCommunicator_) != MPI_SUCCESS) return FALSE;
+	if (MPI_Group_incl(origGroup, localGroupSize(), processes(localGroupIndex_), &localGroup_) != MPI_SUCCESS) return false;
+	if (MPI_Comm_create(MPI_COMM_WORLD, localGroup_, &localCommunicator_) != MPI_SUCCESS) return false;
 	MPI_Group_rank(localGroup_, &localGroupRank_);
 	msg.printVerbose("Process with world rank %i has local group (%i) rank %i, pgl? = %i\n", rank_, localGroupIndex_, localGroupRank_, processGroupLeader());
 
@@ -283,7 +283,7 @@ bool DUQComm::setupStrategy(const Vec3<int>& divisions, const Vec3<int>& cellExt
 			{
 				// Is this us?
 				if (processes(group)[n] == rank_) leader = processGroupLeader();
-				else if (!Comm.receive(leader, processes(group)[n])) return FALSE;
+				else if (!Comm.receive(leader, processes(group)[n])) return false;
 				
 // 				printf("Group %i, process el %i : leader = %i\n", group, n, leader);
 				
@@ -295,23 +295,23 @@ bool DUQComm::setupStrategy(const Vec3<int>& divisions, const Vec3<int>& cellExt
 					else
 					{
 						msg.print("MPI Error: More than one process group leader for group %i.\n", group);
-						return FALSE;
+						return false;
 					}
 				}
 			}
 		}
 	}
-	else if (!Comm.send(processGroupLeader(), 0)) return FALSE;
+	else if (!Comm.send(processGroupLeader(), 0)) return false;
 	
 	// Broadcast group leader list
-	if (!Comm.broadcast(groupLeaders_.array(), processGroups_.nItems())) return FALSE;
+	if (!Comm.broadcast(groupLeaders_.array(), processGroups_.nItems())) return false;
 	msg.print("Group leader processes are :\n");
 	for (int group=0; group<processGroups_.nItems(); ++group) msg.print("--> Group %3i : process rank %i\n", group, groupLeaders_[group]);
 
 	// Create group leader communicator
 	MPI_Comm_group(MPI_COMM_WORLD, &origGroup);
-	if (MPI_Group_incl(origGroup, processGroups_.nItems(), groupLeaders_.array(), &leaderGroup_) != MPI_SUCCESS) return FALSE;
-	if (MPI_Comm_create(MPI_COMM_WORLD, leaderGroup_, &leaderCommunicator_) != MPI_SUCCESS) return FALSE;
+	if (MPI_Group_incl(origGroup, processGroups_.nItems(), groupLeaders_.array(), &leaderGroup_) != MPI_SUCCESS) return false;
+	if (MPI_Comm_create(MPI_COMM_WORLD, leaderGroup_, &leaderCommunicator_) != MPI_SUCCESS) return false;
 #else
 	// No MPI, but must still setup a dummy process group
 	Array<int>* procList = processGroups_.add();
@@ -319,7 +319,7 @@ bool DUQComm::setupStrategy(const Vec3<int>& divisions, const Vec3<int>& cellExt
 	localGroupIndex_ = 0;
 	localGroupRank_ = 0;
 #endif
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -446,8 +446,8 @@ bool DUQComm::calculateLimits(int nAtoms, int nGrains)
 			else
 			{
 #ifdef PARALLEL
-				if (MPI_Send(&startAtom, 1, MPI_INTEGER, process, 0, MPI_COMM_WORLD) != MPI_SUCCESS) return FALSE;
-				if (MPI_Send(&finishAtom, 1, MPI_INTEGER, process, 1, MPI_COMM_WORLD) != MPI_SUCCESS) return FALSE;
+				if (MPI_Send(&startAtom, 1, MPI_INTEGER, process, 0, MPI_COMM_WORLD) != MPI_SUCCESS) return false;
+				if (MPI_Send(&finishAtom, 1, MPI_INTEGER, process, 1, MPI_COMM_WORLD) != MPI_SUCCESS) return false;
 #endif
 			}
 
@@ -462,12 +462,12 @@ bool DUQComm::calculateLimits(int nAtoms, int nGrains)
 		// Slaves just wait to receive their limits
 #ifdef PARALLEL
 		MPI_Status mpiStatus;
-		if (MPI_Recv(&diagonalFirstAtom_, 1, MPI_INTEGER, 0, 0, MPI_COMM_WORLD, &mpiStatus) != MPI_SUCCESS) return FALSE;
-		if (MPI_Recv(&diagonalLastAtom_, 1, MPI_INTEGER, 0, 1, MPI_COMM_WORLD, &mpiStatus) != MPI_SUCCESS) return FALSE;
+		if (MPI_Recv(&diagonalFirstAtom_, 1, MPI_INTEGER, 0, 0, MPI_COMM_WORLD, &mpiStatus) != MPI_SUCCESS) return false;
+		if (MPI_Recv(&diagonalLastAtom_, 1, MPI_INTEGER, 0, 1, MPI_COMM_WORLD, &mpiStatus) != MPI_SUCCESS) return false;
 #endif
 	}
 	
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -548,9 +548,9 @@ int DUQComm::interleavedLoopStride(DUQComm::CommGroup group)
 bool DUQComm::wait(DUQComm::CommGroup group)
 {
 #ifdef PARALLEL
-	if (MPI_Barrier(communicator(group)) != MPI_SUCCESS) return FALSE;
+	if (MPI_Barrier(communicator(group)) != MPI_SUCCESS) return false;
 #endif
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -561,11 +561,11 @@ bool DUQComm::send(int value, int targetProcess)
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
-	if (MPI_Send(&value, 1, MPI_INTEGER, targetProcess, 0, MPI_COMM_WORLD) != MPI_SUCCESS) return FALSE;
+	if (MPI_Send(&value, 1, MPI_INTEGER, targetProcess, 0, MPI_COMM_WORLD) != MPI_SUCCESS) return false;
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -577,11 +577,11 @@ bool DUQComm::receive(int& value, int sourceProcess)
 	totalTime_.start();
 	accumTime_.start();
 	MPI_Status status;
-	if (MPI_Recv(&value, 1, MPI_INTEGER, sourceProcess, 0, MPI_COMM_WORLD, &status) != MPI_SUCCESS) return FALSE;
+	if (MPI_Recv(&value, 1, MPI_INTEGER, sourceProcess, 0, MPI_COMM_WORLD, &status) != MPI_SUCCESS) return false;
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -592,11 +592,11 @@ bool DUQComm::send(double value, int targetProcess)
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
-	if (MPI_Send(&value, 1, MPI_DOUBLE, targetProcess, 0, MPI_COMM_WORLD) != MPI_SUCCESS) return FALSE;
+	if (MPI_Send(&value, 1, MPI_DOUBLE, targetProcess, 0, MPI_COMM_WORLD) != MPI_SUCCESS) return false;
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -608,11 +608,11 @@ bool DUQComm::receive(double& value, int sourceProcess)
 	totalTime_.start();
 	accumTime_.start();
 	MPI_Status status;
-	if (MPI_Recv(&value, 1, MPI_DOUBLE, sourceProcess, 0, MPI_COMM_WORLD, &status) != MPI_SUCCESS) return FALSE;
+	if (MPI_Recv(&value, 1, MPI_DOUBLE, sourceProcess, 0, MPI_COMM_WORLD, &status) != MPI_SUCCESS) return false;
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -623,11 +623,11 @@ bool DUQComm::send(bool value, int targetProcess)
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
-	if (MPI_Send(&value, 1, MPI_INTEGER, targetProcess, 0, MPI_COMM_WORLD) != MPI_SUCCESS) return FALSE;
+	if (MPI_Send(&value, 1, MPI_INTEGER, targetProcess, 0, MPI_COMM_WORLD) != MPI_SUCCESS) return false;
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -639,11 +639,11 @@ bool DUQComm::receive(bool& value, int sourceProcess)
 	totalTime_.start();
 	accumTime_.start();
 	MPI_Status status;
-	if (MPI_Recv(&value, 1, MPI_INTEGER, sourceProcess, 0, MPI_COMM_WORLD, &status) != MPI_SUCCESS) return FALSE;
+	if (MPI_Recv(&value, 1, MPI_INTEGER, sourceProcess, 0, MPI_COMM_WORLD, &status) != MPI_SUCCESS) return false;
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -654,11 +654,11 @@ bool DUQComm::send(int* source, int nData, int targetProcess)
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
-	if (MPI_Send(source, nData, MPI_INTEGER, targetProcess, 0, MPI_COMM_WORLD) != MPI_SUCCESS) return FALSE;
+	if (MPI_Send(source, nData, MPI_INTEGER, targetProcess, 0, MPI_COMM_WORLD) != MPI_SUCCESS) return false;
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -670,11 +670,11 @@ bool DUQComm::receive(int* source, int nData, int sourceProcess)
 	totalTime_.start();
 	accumTime_.start();
 	MPI_Status status;
-	if (MPI_Recv(source, nData, MPI_INTEGER, sourceProcess, 0, MPI_COMM_WORLD, &status) != MPI_SUCCESS) return FALSE;
+	if (MPI_Recv(source, nData, MPI_INTEGER, sourceProcess, 0, MPI_COMM_WORLD, &status) != MPI_SUCCESS) return false;
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -685,11 +685,11 @@ bool DUQComm::send(double* source, int nData, int targetProcess)
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
-	if (MPI_Send(source, nData, MPI_DOUBLE, targetProcess, 0, MPI_COMM_WORLD) != MPI_SUCCESS) return FALSE;
+	if (MPI_Send(source, nData, MPI_DOUBLE, targetProcess, 0, MPI_COMM_WORLD) != MPI_SUCCESS) return false;
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -701,11 +701,11 @@ bool DUQComm::receive(double* source, int nData, int sourceProcess)
 	totalTime_.start();
 	accumTime_.start();
 	MPI_Status status;
-	if (MPI_Recv(source, nData, MPI_DOUBLE, sourceProcess, 0, MPI_COMM_WORLD, &status) != MPI_SUCCESS) return FALSE;
+	if (MPI_Recv(source, nData, MPI_DOUBLE, sourceProcess, 0, MPI_COMM_WORLD, &status) != MPI_SUCCESS) return false;
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
-	return TRUE;
+	return true;
 }
 
 /*
@@ -726,13 +726,13 @@ bool DUQComm::broadcast(Dnchar& source, int rootProcess, DUQComm::CommGroup grou
 	if (rank_ == rootProcess) strcpy(buffer, source.get());
 
 	// Broadcast data
-	if (!broadcast(buffer, rootProcess, group)) return FALSE;
+	if (!broadcast(buffer, rootProcess, group)) return false;
 	
 	if (slave()) source = buffer;
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -751,14 +751,14 @@ bool DUQComm::broadcast(char* source, int rootProcess, DUQComm::CommGroup group)
 		if (MPI_Bcast(&length, 1, MPI_INTEGER, rootProcess, communicator(group)) != MPI_SUCCESS)
 		{
 			msg.print("Failed to broadcast char length data from rootProcess %i.\n", rootProcess);
-			return FALSE;
+			return false;
 		}
 		
 		// Now broadcast character data. We need to make a local copy of the string, to avoid the const-ness of Dnchar.get().
 		if (MPI_Bcast(source, length, MPI_CHARACTER, rootProcess, communicator(group)) != MPI_SUCCESS)
 		{
 			msg.print("Failed to broadcast char data from rootProcess %i.\n", rootProcess);
-			return FALSE;
+			return false;
 		}
 	}
 	else
@@ -768,19 +768,19 @@ bool DUQComm::broadcast(char* source, int rootProcess, DUQComm::CommGroup group)
 		if (MPI_Bcast(&length, 1, MPI_INTEGER, rootProcess, communicator(group)) != MPI_SUCCESS)
 		{
 			msg.print("Slave %i failed to receive char length data from rootProcess %i.\n", rank_, rootProcess);
-			return FALSE;
+			return false;
 		}
 		
 		if (MPI_Bcast(source, length, MPI_CHARACTER, rootProcess, communicator(group)) != MPI_SUCCESS)
 		{
 			msg.print("Slave %i failed to receive char data from rootProcess %i.\n", rank_, rootProcess);
-			return FALSE;
+			return false;
 		}
 	}
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -801,7 +801,7 @@ bool DUQComm::broadcast(Vec3<double>& source, int rootProcess, DUQComm::CommGrou
 		if (MPI_Bcast(buffer, 3, MPI_DOUBLE, rootProcess, communicator(group)) != MPI_SUCCESS)
 		{
 			msg.print("Failed to broadcast Vec3<double> data from rootProcess %i.\n", rootProcess);
-			return FALSE;
+			return false;
 		}
 	}
 	else
@@ -810,7 +810,7 @@ bool DUQComm::broadcast(Vec3<double>& source, int rootProcess, DUQComm::CommGrou
 		if (MPI_Bcast(buffer, 3, MPI_DOUBLE, rootProcess, communicator(group)) != MPI_SUCCESS)
 		{
 			msg.print("Slave %i failed to receive Vec3<double> data from rootProcess %i.\n", rank_, rootProcess);
-			return FALSE;
+			return false;
 		}
 		source.x = buffer[0];
 		source.y = buffer[1];
@@ -819,7 +819,7 @@ bool DUQComm::broadcast(Vec3<double>& source, int rootProcess, DUQComm::CommGrou
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -833,12 +833,12 @@ bool DUQComm::broadcast(int* source, int count, int rootProcess, DUQComm::CommGr
 	if (MPI_Bcast(source, count, MPI_INTEGER, rootProcess, communicator(group)) != MPI_SUCCESS)
 	{
 		msg.print("Failed to broadcast int data from rootProcess %i.\n", rootProcess);
-		return FALSE;
+		return false;
 	}
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -852,12 +852,12 @@ bool DUQComm::broadcast(double* source, int count, int rootProcess, DUQComm::Com
 	if (MPI_Bcast(source, count, MPI_DOUBLE, rootProcess, communicator(group)) != MPI_SUCCESS)
 	{
 		msg.print("Failed to broadcast int data from rootProcess %i.\n", rootProcess);
-		return FALSE;
+		return false;
 	}
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -871,12 +871,12 @@ bool DUQComm::broadcast(float* source, int count, int rootProcess, DUQComm::Comm
 	if (MPI_Bcast(source, count, MPI_FLOAT, rootProcess, communicator(group)) != MPI_SUCCESS)
 	{
 		msg.print("Failed to broadcast int data from rootProcess %i.\n", rootProcess);
-		return FALSE;
+		return false;
 	}
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -890,12 +890,12 @@ bool DUQComm::broadcast(bool* source, int count, int rootProcess, DUQComm::CommG
 	if (MPI_Bcast(source, count, MPI_INTEGER, rootProcess, communicator(group)) != MPI_SUCCESS)
 	{
 		msg.print("Failed to broadcast int data from rootProcess %i.\n", rootProcess);
-		return FALSE;
+		return false;
 	}
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
-	return TRUE;
+	return true;
 }
 
 /*
@@ -911,23 +911,23 @@ bool DUQComm::sum(double* source, int count, int rootProcess, DUQComm::CommGroup
 	totalTime_.start();
 	accumTime_.start();
 	// If we are the target process then we need to construct a temporary buffer to store the received data in.
-	if ((group == DUQComm::Leaders) && (!processGroupLeader())) return TRUE;
+	if ((group == DUQComm::Leaders) && (!processGroupLeader())) return true;
 	if (rank_ == rootProcess)
 	{
 		double buffer[count];
-		if (MPI_Reduce(source, buffer, count, MPI_DOUBLE, MPI_SUM, rootProcess, communicator(group)) != MPI_SUCCESS) return FALSE;
+		if (MPI_Reduce(source, buffer, count, MPI_DOUBLE, MPI_SUM, rootProcess, communicator(group)) != MPI_SUCCESS) return false;
 		// Put reduced data back into original buffer
 		for (int n=0; n<count; ++n) source[n] = buffer[n];
 	}
 	else
 	{
 		// Not the target process, so just send data
-		if (MPI_Reduce(source, NULL, count, MPI_DOUBLE, MPI_SUM, rootProcess, MPI_COMM_WORLD) != MPI_SUCCESS) return FALSE;
+		if (MPI_Reduce(source, NULL, count, MPI_DOUBLE, MPI_SUM, rootProcess, MPI_COMM_WORLD) != MPI_SUCCESS) return false;
 	}
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -939,23 +939,23 @@ bool DUQComm::sum(int* source, int count, int rootProcess, DUQComm::CommGroup gr
 	totalTime_.start();
 	accumTime_.start();
 	// If we are the target process then we need to construct a temporary buffer to store the received data in.
-	if ((group == DUQComm::Leaders) && (!processGroupLeader())) return TRUE;
+	if ((group == DUQComm::Leaders) && (!processGroupLeader())) return true;
 	if (rank_ == rootProcess)
 	{
 		int buffer[count];
-		if (MPI_Reduce(source, buffer, count, MPI_INTEGER, MPI_SUM, rootProcess, communicator(group)) != MPI_SUCCESS) return FALSE;
+		if (MPI_Reduce(source, buffer, count, MPI_INTEGER, MPI_SUM, rootProcess, communicator(group)) != MPI_SUCCESS) return false;
 		// Put reduced data back into original buffer
 		for (int n=0; n<count; ++n) source[n] = buffer[n];
 	}
 	else
 	{
 		// Not the target process, so just send data
-		if (MPI_Reduce(source, NULL, count, MPI_INTEGER, MPI_SUM, rootProcess, MPI_COMM_WORLD) != MPI_SUCCESS) return FALSE;
+		if (MPI_Reduce(source, NULL, count, MPI_INTEGER, MPI_SUM, rootProcess, MPI_COMM_WORLD) != MPI_SUCCESS) return false;
 	}
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -967,14 +967,14 @@ bool DUQComm::allSum(double* source, int count, DUQComm::CommGroup group)
 	totalTime_.start();
 	accumTime_.start();
 	double buffer[count];
-	if ((group == DUQComm::Leaders) && (!processGroupLeader())) return TRUE;
-	if (MPI_Allreduce(source, &buffer, count, MPI_DOUBLE, MPI_SUM, communicator(group)) != MPI_SUCCESS) return FALSE;
+	if ((group == DUQComm::Leaders) && (!processGroupLeader())) return true;
+	if (MPI_Allreduce(source, &buffer, count, MPI_DOUBLE, MPI_SUM, communicator(group)) != MPI_SUCCESS) return false;
 	// Put reduced data back into original buffer
 	for (int n=0; n<count; ++n) source[n] = buffer[n];
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -986,14 +986,14 @@ bool DUQComm::allSum(int* source, int count, DUQComm::CommGroup group)
 	totalTime_.start();
 	accumTime_.start();
 	int buffer[count];
-	if ((group == DUQComm::Leaders) && (!processGroupLeader())) return TRUE;
-	if (MPI_Allreduce(source, &buffer, count, MPI_INTEGER, MPI_SUM, communicator(group)) != MPI_SUCCESS) return FALSE;
+	if ((group == DUQComm::Leaders) && (!processGroupLeader())) return true;
+	if (MPI_Allreduce(source, &buffer, count, MPI_INTEGER, MPI_SUM, communicator(group)) != MPI_SUCCESS) return false;
 	// Put reduced data back into original buffer
 	for (int n=0; n<count; ++n) source[n] = buffer[n];
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -1020,29 +1020,29 @@ bool DUQComm::assemble(int* array, int nData, int* rootDest, int rootMaxData, in
 			if (rank_ == n) continue;
 
 			// Get length of data to receive
-			if (!receive(slaveNData, n)) return FALSE;
+			if (!receive(slaveNData, n)) return false;
 
 			// Check buffer length
 			if ((nData + slaveNData) > rootMaxData)
 			{
 				printf("MPI ERROR: Tried to assemble more data on process '%i' than the array allows for (maxData = %i).\n", rootProcess, rootMaxData);
-				return FALSE;
+				return false;
 			}
 			// Receive data
-			if (!receive(&rootDest[nData], slaveNData, n)) return FALSE;
+			if (!receive(&rootDest[nData], slaveNData, n)) return false;
 			nData += slaveNData;
 		}
 	}
 	else
 	{
 		// Slaves send array size and then the data to the master...
-		if (!send(nData, rootProcess)) return FALSE;
-		if (!send(array, nData, rootProcess)) return FALSE;
+		if (!send(nData, rootProcess)) return false;
+		if (!send(array, nData, rootProcess)) return false;
 	}
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -1069,29 +1069,29 @@ bool DUQComm::assemble(double* array, int nLocalData, double* rootDest, int root
 			if (rank_ == n) continue;
 			
 			// Get length of data to receive
-			if (!receive(slaveNData, n)) return FALSE;
+			if (!receive(slaveNData, n)) return false;
 			
 			// Check buffer length
 			if ((nLocalData + slaveNData) > rootMaxData)
 			{
 				printf("MPI ERROR: Tried to assemble more data on process '%i' than the array allows for (maxData = %i).\n", rootProcess, rootMaxData);
-				return FALSE;
+				return false;
 			}
 			// Receive data
-			if (!receive(&rootDest[nLocalData], slaveNData, n)) return FALSE;
+			if (!receive(&rootDest[nLocalData], slaveNData, n)) return false;
 			nLocalData += slaveNData;
 		}
 	}
 	else
 	{
 		// Slaves send array size and then the data to the master...
-		if (!send(nLocalData, rootProcess)) return FALSE;
-		if (!send(array, nLocalData, rootProcess)) return FALSE;
+		if (!send(nLocalData, rootProcess)) return false;
+		if (!send(array, nLocalData, rootProcess)) return false;
 	}
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
-	return TRUE;
+	return true;
 }
 
 /*
@@ -1122,7 +1122,7 @@ bool DUQComm::decision()
 	if (!Comm.slave())
 	{
 		msg.print("BAD_USAGE - Master tried to receive a decision.\n");
-		return FALSE;
+		return false;
 	}
 	bool data;
 	if (!Comm.broadcast(&data, 1)) msg.print("Error receiving decision.\n");

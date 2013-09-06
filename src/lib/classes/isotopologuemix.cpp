@@ -87,14 +87,14 @@ bool IsotopologueMix::addNextIsotopologue()
 	if (species_ == NULL)
 	{
 		msg.error("NULL_POINTER - NULL Species pointer in IsotopologueMix::addNextIsotopologue().\n");
-		return FALSE;
+		return false;
 	}
 	
 	// Check to see if the are any Isotopologues available to add
 	if (mix_.nItems() == species_->nIsotopologues())
 	{
 		msg.print("Warning: Can't add another Isotopologue to the mixture since there are none left for Species '%s'.\n", species_->name());
-		return FALSE;
+		return false;
 	}
 	
 	// Find unique (unused) Isotopologue
@@ -104,12 +104,12 @@ bool IsotopologueMix::addNextIsotopologue()
 	if (iso == NULL)
 	{
 		msg.error("Couldn't find an unused Isotopologue in Species '%s'.\n", species_->name());
-		return FALSE;
+		return false;
 	}
 	
 	mix_.add(iso, 1.0);
 	
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -121,11 +121,11 @@ bool IsotopologueMix::addIsotopologue(Isotopologue* iso, double relPop)
 	if (hasIsotopologue(iso))
 	{
 		msg.error("Can't add Isotopologue '%s' (of Species '%s') to Sample since it is already there.\n", iso->name(), species_->name());
-		return FALSE;
+		return false;
 	}
 
 	mix_.add(iso, relPop);
-	return TRUE;
+	return true;
 }
 
 /*!
@@ -137,7 +137,7 @@ bool IsotopologueMix::setIsotopologue(Isotopologue* iso, double relPop)
 	if (iso == NULL)
 	{
 		msg.error("NULL_POINTER - NULL Isotopologue passed to IsotopologueMix::setIsotopologue().\n");
-		return FALSE;
+		return false;
 	}
 	
 	// Find this Isotopologue in the list
@@ -145,10 +145,10 @@ bool IsotopologueMix::setIsotopologue(Isotopologue* iso, double relPop)
 	if (tope == NULL)
 	{
 		msg.warn("Warning: IsotopologueMix doest not contain the Isotopologue '%s', so its fraction can't be set.\n", iso->name());
-		return FALSE;
+		return false;
 	}
 	tope->data = relPop;
-	return TRUE;
+	return true;
 }
 
 /*!

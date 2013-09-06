@@ -19,11 +19,11 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "main/flags.h"
 #include "classes/species.h"
 #include "classes/atomtype.h"
 #include "classes/box.h"
 #include "base/lineparser.h"
-#include "base/flag.h"
 #include "base/comms.h"
 #include <string.h>
 #include <base/sysfunc.h>
@@ -35,7 +35,7 @@
 Species::Species() : ListItem<Species>()
 {
 	highlightedIsotopologue_ = NULL;
-	highlightedGrainDefinition_ = NULL;
+	highlightedGrain_ = NULL;
 	relativePopulation_ = -1.0;
 }
 
@@ -55,13 +55,13 @@ void Species::clear()
 {
 	highlightedIsotopologue_ = NULL;
 	isotopologues_.clear();
-	highlightedGrainDefinition_ = NULL;
-	grainDefinitions_.clear();
+	highlightedGrain_ = NULL;
+	grains_.clear();
 	angles_.clear();
 	bonds_.clear();
 	atoms_.clear();
-	
-	SET_MODIFIED
+
+	Flags::wave(Flags::SpeciesChanged);
 }
 
 /*
@@ -75,7 +75,7 @@ void Species::setName(const char* name)
 {
 	name_ = name;
 	
-	SET_MODIFIED
+	Flags::wave(Flags::SpeciesChanged);
 }
 
 /*!
@@ -113,7 +113,7 @@ int Species::checkSetup(const List<AtomType>& atomTypes)
 	if (atoms_.nItems() == 0) msg.print("[[[ WARNING ]]]	Species contains no Atoms.\n");
 	
 	/* Check AtomTypes */
-	for (Atom* i = atoms_.first(); i != NULL; i = i->next)
+	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next)
 	{
 		if (i->atomType() == NULL)
 		{
@@ -129,50 +129,50 @@ int Species::checkSetup(const List<AtomType>& atomTypes)
 	
 	/* GrainDefinitions */
 	/* Each Atom must be in exactly one GrainDefinition */
-	RefList<Atom,int> grainCount(atoms_, 0);
-	for (GrainDefinition* gd = grainDefinitions_.first(); gd != NULL; gd = gd->next)
+	RefList<SpeciesAtom,int> grainCount(atoms_, 0);
+	for (SpeciesGrain* sg = grains_.first(); sg != NULL; sg = sg->next)
 	{
-		for (RefListItem<Atom,int>* ri = gd->atoms(); ri != NULL; ri = ri->next)
+		for (RefListItem<SpeciesAtom,int>* ri = sg->atoms(); ri != NULL; ri = ri->next)
 		{
-			RefListItem<Atom,int>* rj = grainCount.contains(ri->item);
+			RefListItem<SpeciesAtom,int>* rj = grainCount.contains(ri->item);
 			if (rj == NULL)
 			{
-				msg.error("GrainDefinition '%s' references a non-existent Atom.\n", gd->name());
+				msg.error("GrainDefinition '%s' references a non-existent Atom.\n", sg->name());
 				++nErrors;
 			}
 			else ++rj->data;
 		}
 	}
-	for (RefListItem<Atom,int>* ri = grainCount.first(); ri != NULL; ri = ri->next)
+	for (RefListItem<SpeciesAtom,int>* ri = grainCount.first(); ri != NULL; ri = ri->next)
 	{
 		if (ri->data == 0)
 		{
-			msg.error("Atom %i (%s) is not present in any GrainDefinition.\n", ri->item->userIndex(), PeriodicTable::element(ri->item->element()).symbol());
+			msg.error("SpeciesAtom %i (%s) is not present in any GrainDefinition.\n", ri->item->userIndex(), PeriodicTable::element(ri->item->element()).symbol());
 			++nErrors;
 		}
 		else if (ri->data > 1)
 		{
-			msg.error("Atom %i (%s) is present in more than one (%i) GrainDefinition.\n", ri->item->userIndex(), PeriodicTable::element(ri->item->element()).symbol(), ri->data);
+			msg.error("SpeciesAtom %i (%s) is present in more than one (%i) GrainDefinition.\n", ri->item->userIndex(), PeriodicTable::element(ri->item->element()).symbol(), ri->data);
 			++nErrors;
 		}
 	}
 	
 	/* Check IntraMolecular Data */
-	for (Atom* i = atoms_.first(); i != NULL; i = i->next)
+	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next)
 	{
 		if ((i->nBonds() == 0) && (atoms_.nItems() > 1))
 		{
-			msg.error("Atom %i (%s) participates in no Bonds, but is part of a multi-atom Species.\n", i->userIndex(), PeriodicTable::element(i->element()).symbol());
+			msg.error("SpeciesAtom %i (%s) participates in no Bonds, but is part of a multi-atom Species.\n", i->userIndex(), PeriodicTable::element(i->element()).symbol());
 			++nErrors;
 		}
 		
 		/* Check each Bond for two-way consistency */
-		for (RefListItem<Bond,int>* ri = i->bonds(); ri != NULL; ri = ri->next)
+		for (RefListItem<SpeciesBond,int>* ri = i->bonds(); ri != NULL; ri = ri->next)
 		{
-			Atom* j = ri->item->partner(i);
+			SpeciesAtom* j = ri->item->partner(i);
 			if (!j->hasBond(i))
 			{
-				msg.error("Atom %i references a Bond to Atom %i, but Atom %i does not.\n", i->userIndex(), j->userIndex(), j->userIndex());
+				msg.error("SpeciesAtom %i references a Bond to SpeciesAtom %i, but SpeciesAtom %i does not.\n", i->userIndex(), j->userIndex(), j->userIndex());
 				++nErrors;
 			}
 		}
@@ -220,9 +220,10 @@ int Species::checkSetup(const List<AtomType>& atomTypes)
  * geometries for all occurrences of this Species within the Model. As such, they should be set so as to provide
  * a reasonable starting geometry for the species (i.e. a chemically reasonable one).
  */
-Atom *Species::addAtom(int element, double rx, double ry, double rz)
+SpeciesAtom *Species::addAtom(int element, double rx, double ry, double rz)
 {
-	Atom* i = atoms_.add();
+	SpeciesAtom* i = atoms_.add();
+	i->setParent(this);
 	i->set(element, rx, ry, rz);
 	i->setIndex(atoms_.nItems()-1);
 	return i;
@@ -241,7 +242,7 @@ int Species::nAtoms() const
  * \brief Return the first Atom in the Species
  * \details Return the first Atom defined in the Species (if one exists, otherwise NULL will be returned)
  */
-Atom *Species::atoms() const
+SpeciesAtom *Species::atoms() const
 {
 	return atoms_.first();
 }
@@ -250,7 +251,7 @@ Atom *Species::atoms() const
  * \brief Return the nth Atom in the Species
  * \details Return the nth Atom defined in the Species (or NULL if n is out of range)
  */
-Atom *Species::atom(int n)
+SpeciesAtom *Species::atom(int n)
 {
 	return atoms_[n];
 }
@@ -269,7 +270,7 @@ void Species::clearAtomSelection()
  * \details Add the specified Atom to the list of selected Atoms. Atom selections are used solely by
  * the GUI, in order to allow easy selection of Grains etc.
  */
-void Species::selectAtom(Atom* i)
+void Species::selectAtom(SpeciesAtom* i)
 {
 	selectedAtoms_.addUnique(i);
 }
@@ -277,12 +278,12 @@ void Species::selectAtom(Atom* i)
 /*!
  * \brief Select Atoms along any path from the specified one
  */
-void Species::selectFromAtom(Atom* i, Bond* exclude)
+void Species::selectFromAtom(SpeciesAtom* i, SpeciesBond* exclude)
 {
 	// Loop over Bonds on specified Atom
 	selectAtom(i);
-	Atom* j;
-	for (RefListItem<Bond,int>* refBond = i->bonds(); refBond != NULL; refBond = refBond->next)
+	SpeciesAtom* j;
+	for (RefListItem<SpeciesBond,int>* refBond = i->bonds(); refBond != NULL; refBond = refBond->next)
 	{
 		// Is this the excluded Bond?
 		if (exclude == refBond->item) continue;
@@ -295,7 +296,7 @@ void Species::selectFromAtom(Atom* i, Bond* exclude)
 /*!
  * \brief Return first selected Atom reference
  */
-RefListItem<Atom,int>* Species::selectedAtoms() const
+RefListItem<SpeciesAtom,int>* Species::selectedAtoms() const
 {
 	return selectedAtoms_.first();
 }
@@ -303,9 +304,9 @@ RefListItem<Atom,int>* Species::selectedAtoms() const
 /*!
  * \brief Return nth selected Atom
  */
-Atom* Species::selectedAtom(int n)
+SpeciesAtom* Species::selectedAtom(int n)
 {
-	RefListItem<Atom,int>* ri = selectedAtoms_[n];
+	RefListItem<SpeciesAtom,int>* ri = selectedAtoms_[n];
 	if (ri == NULL) return NULL;
 	else return ri->item;
 }
@@ -321,7 +322,7 @@ int Species::nSelectedAtoms() const
 /*!
  * \brief Return whether specified Atom is selected
  */
-bool Species::isAtomSelected(Atom* i) const
+bool Species::isAtomSelected(SpeciesAtom* i) const
 {
 	return selectedAtoms_.contains(i);
 }
@@ -332,7 +333,7 @@ bool Species::isAtomSelected(Atom* i) const
  * Note that it is necessary to update Isotopologue data after any calls to this function, through either
  * of the Species-specific or global (dUQ) updateIsotopologues() functions.
  */
-void Species::changeAtomElement(Atom* i, int el, AtomType* at)
+void Species::changeAtomElement(SpeciesAtom* i, int el, AtomType* at)
 {
 	// Check for NULL pointer
 	if (i == NULL)
@@ -347,8 +348,8 @@ void Species::changeAtomElement(Atom* i, int el, AtomType* at)
 	
 	// Now, must assign an AtomType. Isotopologue data should be updated after this function!
 	i->setAtomType(at);
-	
-	SET_MODIFIED
+
+	Flags::wave(Flags::SpeciesChanged);
 }
 
 /*!
@@ -357,7 +358,7 @@ void Species::changeAtomElement(Atom* i, int el, AtomType* at)
 double Species::mass() const
 {
 	double m = 0.0;
-	for (Atom* i = atoms_.first(); i != NULL; i = i->next) m += PeriodicTable::element(i->element()).isotopes()->atomicWeight();
+	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next) m += PeriodicTable::element(i->element()).isotopes()->atomicWeight();
 	return m;
 }
 
@@ -367,9 +368,9 @@ double Species::mass() const
 void Species::centreAtOrigin()
 {
 	Vec3<double> centre;
-	for (Atom* i = atoms_.first(); i != NULL; i = i->next) centre += i->r();
+	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next) centre += i->r();
 	centre /= atoms_.nItems();
-	for (Atom* i = atoms_.first(); i != NULL; i = i->next) i->translateCoordinatesNasty(-centre);
+	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next) i->translateCoordinates(-centre);
 }
 
 /*
@@ -380,7 +381,7 @@ void Species::centreAtOrigin()
  * \brief Add new Bond definition (from Atoms*)
  * \details Add a new Bond definition to the Species, between the Atoms specified.
  */
-Bond* Species::addBond(Atom* i, Atom* j)
+SpeciesBond* Species::addBond(SpeciesAtom* i, SpeciesAtom* j)
 {
 	// Check ownership of these Atoms
 	if (!atoms_.contains(i))
@@ -402,13 +403,13 @@ Bond* Species::addBond(Atom* i, Atom* j)
 	}
 	
 	// OK to add new Bond
-	Bond* b = bonds_.add();
+	SpeciesBond* b = bonds_.add();
 	b->setParent(this);
 	b->setAtoms(i, j);
 	i->addBond(b);
 	j->addBond(b);
 
-	SET_MODIFIED
+	Flags::wave(Flags::SpeciesChanged);
 	
 	return b;
 }
@@ -417,24 +418,24 @@ Bond* Species::addBond(Atom* i, Atom* j)
  * \brief Add new Bond definition
  * \details Add a new Bond definition to the Species, between the Atoms with indices specified.
  */
-Bond* Species::addBond(int i, int j)
+SpeciesBond* Species::addBond(int i, int j)
 {
 	if ((i < 0) || (i >= atoms_.nItems()))
 	{
 		msg.print("OUT_OF_RANGE - Internal index 'i' supplied to Species::addBond() is out of range (%i) for Species '%s'\n", i, name_.get());
-		return FALSE;
+		return false;
 	}
 	if ((j < 0) || (j >= atoms_.nItems()))
 	{
 		msg.print("OUT_OF_RANGE - Internal index 'j' supplied to Species::addBond() is out of range (%i) for Species '%s'\n", j, name_.get());
-		return FALSE;
+		return false;
 	}
 
 	return addBond(atoms_[i], atoms_[j]);
 }
 
 /*!
- * \brief Return number of Bonds in list
+ * \brief Return number of bonds in list
  */
 int Species::nBonds() const
 {
@@ -442,35 +443,35 @@ int Species::nBonds() const
 }
 
 /*!
- * \brief Return list of Bonds
+ * \brief Return list of bonds
  */
-Bond *Species::bonds() const
+SpeciesBond *Species::bonds() const
 {
 	return bonds_.first();
 }
 
 /*!
- * \brief Return nth Bond
+ * \brief Return nth bond
  */
-Bond *Species::bond(int n)
+SpeciesBond *Species::bond(int n)
 {
 	return bonds_[n];
 }
 
 /*!
- * \brief Return whether Bond between Atoms exists
+ * \brief Return whether bond between atoms exists
  */
-Bond* Species::hasBond(Atom* i, Atom* j) const
+SpeciesBond* Species::hasBond(SpeciesAtom* i, SpeciesAtom* j) const
 {
-	for (Bond* b = bonds_.first(); b != NULL; b = b->next) if (b->matches(i, j)) return b;
+	for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next) if (b->matches(i, j)) return b;
 	return NULL;
 }
 
 /*!
- * \brief Add new Angle definition (from Atoms*)
- * \details Add a new Angle definition to the Species, between the Atoms specified.
+ * \brief Add new angle definition (from supplied atom pointers)
+ * \details Add a new angle definition to the species, between the atoms specified.
  */
-Angle* Species::addAngle(Atom* i, Atom* j, Atom* k)
+SpeciesAngle* Species::addAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k)
 {
 	// Check ownership of these Atoms
 	if (!atoms_.contains(i))
@@ -496,42 +497,42 @@ Angle* Species::addAngle(Atom* i, Atom* j, Atom* k)
 		return NULL;
 	}
 
-	// OK to add new Angle
-	Angle* a = angles_.add();
+	// OK to add new angle
+	SpeciesAngle* a = angles_.add();
 	a->setParent(this);
 	a->setAtoms(i, j, k);
 	
-	SET_MODIFIED
+	Flags::wave(Flags::SpeciesChanged);
 	
 	return a;
 }
 
 /*!
- * \brief Add new Angle definition
- * \details Add a new Angle definition to the Species, between the Atoms with indices specified.
+ * \brief Add new angle definition
+ * \details Add a new angle definition to the species, between the atoms with indices specified.
  */
-Angle* Species::addAngle(int i, int j, int k)
+SpeciesAngle* Species::addAngle(int i, int j, int k)
 {
 	if ((i < 0) || (i >= atoms_.nItems()))
 	{
 		msg.print("OUT_OF_RANGE - Internal index 'i' supplied to Species::addAngle() is out of range (%i) for Species '%s'\n", i, name_.get());
-		return FALSE;
+		return false;
 	}
 	if ((j < 0) || (j >= atoms_.nItems()))
 	{
 		msg.print("OUT_OF_RANGE - Internal index 'j' supplied to Species::addAngle() is out of range (%i) for Species '%s'\n", j, name_.get());
-		return FALSE;
+		return false;
 	}
 	if ((k < 0) || (k >= atoms_.nItems()))
 	{
 		msg.print("OUT_OF_RANGE - Internal index 'k' supplied to Species::addAngle() is out of range (%i) for Species '%s'\n", k, name_.get());
-		return FALSE;
+		return false;
 	}
 	return addAngle(atoms_[i], atoms_[j], atoms_[k]);
 }
 
 /*!
- * \brief Return number of Angles in list
+ * \brief Return number of angles in list
  */
 int Species::nAngles() const
 {
@@ -539,45 +540,45 @@ int Species::nAngles() const
 }
 
 /*!
- * \brief Return list of Angles
+ * \brief Return list of angles
  */
-Angle *Species::angles() const
+SpeciesAngle *Species::angles() const
 {
 	return angles_.first();
 }
 
 /*!
- * \brief Return nth Angle
+ * \brief Return nth angle
  */
-Angle *Species::angle(int n)
+SpeciesAngle *Species::angle(int n)
 {
 	return angles_[n];
 }
 
 /*!
- * \brief Return whether Angle between Atoms exists
+ * \brief Return whether angle between atoms exists
  */
-bool Species::hasAngle(Atom* i, Atom* j, Atom* k) const
+bool Species::hasAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const
 {
-	for (Angle* a = angles_.first(); a != NULL; a = a->next) if (a->matches(i, j, k)) return TRUE;
-	return FALSE;
+	for (SpeciesAngle* a = angles_.first(); a != NULL; a = a->next) if (a->matches(i, j, k)) return true;
+	return false;
 }
 
 /*!
  * \brief Recalculate intramolecular terms between Atoms in the Species
  * \details Determines chemical Bonds within the Species, based on the distances between defined Atoms and a table of
- * representative atomic radii. Once Bonds have been determined, Angle terms are automatically generated.
+ * representative atomic radii. Once bonds have been determined, angle terms are automatically generated.
  */
 void Species::recalculateIntramolecular()
 {
-	Atom* i, *j;
-	Bond* b;
-	Angle* a;
-	RefListItem<Bond,int>* ri, *rj;
+	SpeciesAtom* i, *j;
+	SpeciesBond* b;
+	SpeciesAngle* a;
+	RefListItem<SpeciesBond,int>* ri, *rj;
 	int n = 0;
 	double dist, radius_i;
 
-	// Clear existing Bond and Angle definitions
+	// Clear existing bond and angle definitions
 	for (i = atoms_.first(); i != NULL; i = i->next) i->clearBonds();
 	bonds_.clear();
 	angles_.clear();
@@ -617,7 +618,7 @@ void Species::recalculateIntramolecular()
 		}
 	}
 	
-	SET_MODIFIED
+	Flags::wave(Flags::SpeciesChanged);
 }
 
 /*!
@@ -630,15 +631,19 @@ void Species::recalculateIntramolecular()
 bool Species::calculateIndexLists()
 {
 	// Bonds
-	for (Bond* b = bonds_.first(); b != NULL; b = b->next)
+	for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next)
 	{
 		// Atom 'i'
 		clearAtomSelection();
 		selectFromAtom(b->i(), b);
 		if (selectedAtoms_.contains(b->j()))
 		{
-			msg.error("Species '%s' contains one or more cycles, and these cannot be dealt with at present.\n", name_.get());
-			return FALSE;
+// 			msg.error("Species '%s' contains one or more cycles, and these cannot be dealt with at present.\n", name_.get());
+// 			return false;
+			msg.print("Bond between Atoms %i and %i in Species '%s' exists in a cycle, so a minimal set of attached atoms will be used.\n", b->indexI()+1, b->indexJ()+1, name_.get());
+			clearAtomSelection();
+// 			for (RefListItem<Bond,int>* ri = b->i()->bonds(); ri != NULL; ri = ri->next) if (ri->item->partner(b->i()) != b->j()) selectedAtoms_.add(ri->item->partner(b->i()));
+			selectedAtoms_.add(b->j());
 		}
 		b->setAttachedAtoms(0, selectedAtoms_);
 
@@ -647,28 +652,35 @@ bool Species::calculateIndexLists()
 		selectFromAtom(b->j(), b);
 		if (selectedAtoms_.contains(b->i()))
 		{
-			msg.error("Species '%s' contains one or more cycles, and these cannot be dealt with at present.\n", name_.get());
-			return FALSE;
+// 			msg.error("Species '%s' contains one or more cycles, and these cannot be dealt with at present.\n", name_.get());
+// 			return false;
+			msg.print("Bond between Atoms %i and %i in Species '%s' exists in a cycle, so a minimal set of attached atoms will be used.\n", b->indexI()+1, b->indexJ()+1, name_.get());
+			clearAtomSelection();
+// 			for (RefListItem<Bond,int>* ri = b->j()->bonds(); ri != NULL; ri = ri->next) if (ri->item->partner(b->j()) != b->i()) selectedAtoms_.add(ri->item->partner(b->j()));
+			selectedAtoms_.add(b->j());
 		}
 		b->setAttachedAtoms(1, selectedAtoms_);
 	}
 
 	// Angles
-	for (Angle* a = angles_.first(); a != NULL; a = a->next)
+	for (SpeciesAngle* a = angles_.first(); a != NULL; a = a->next)
 	{
 		// Atom 'i'
 		clearAtomSelection();
-		Bond* b = hasBond(a->i(), a->j());
+		SpeciesBond* b = hasBond(a->i(), a->j());
 		if (b == NULL)
 		{
-			msg.error("Species '%s' contains an Angle %i-%i-%i, but a Bond %i-%i is not defined.\n", name_.get(), a->indexI()+1, a->indexJ()+1, a->indexK()+1, a->indexI()+1, a->indexJ()+1 );
-			return FALSE;
+			msg.error("Species '%s' contains an angle %i-%i-%i, but a bond %i-%i is not defined.\n", name_.get(), a->indexI()+1, a->indexJ()+1, a->indexK()+1, a->indexI()+1, a->indexJ()+1 );
+			return false;
 		}
 		selectFromAtom(a->i(), b);
 		if (selectedAtoms_.contains(a->j()))
 		{
-			msg.error("Species '%s' contains one or more cycles, and these cannot be dealt with at present.\n", name_.get());
-			return FALSE;
+// 			msg.error("Species '%s' contains one or more cycles, and these cannot be dealt with at present.\n", name_.get());
+// 			return false;
+			msg.print("Angle between atoms %i-%i-%i in species '%s' exists in a cycle, so a minimal set of attached atoms will be used.\n", a->indexI()+1, a->indexJ()+1, a->indexK()+1, name_.get());
+			clearAtomSelection();
+			selectedAtoms_.add(a->i());
 		}
 		a->setAttachedAtoms(0, selectedAtoms_);
 
@@ -677,19 +689,154 @@ bool Species::calculateIndexLists()
 		b = hasBond(a->j(), a->k());
 		if (b == NULL)
 		{
-			msg.error("Species '%s' contains an Angle %i-%i-%i, but a Bond %i-%i is not defined.\n", name_.get(), a->indexI()+1, a->indexJ()+1, a->indexK()+1, a->indexJ()+1, a->indexK()+1 );
-			return FALSE;
+			msg.error("Species '%s' contains an angle %i-%i-%i, but a bond %i-%i is not defined.\n", name_.get(), a->indexI()+1, a->indexJ()+1, a->indexK()+1, a->indexJ()+1, a->indexK()+1 );
+			return false;
 		}
 		selectFromAtom(a->k(), b);
 		if (selectedAtoms_.contains(a->j()))
 		{
-			msg.error("Species '%s' contains one or more cycles, and these cannot be dealt with at present.\n", name_.get());
-			return FALSE;
+// 			msg.error("Species '%s' contains one or more cycles, and these cannot be dealt with at present.\n", name_.get());
+// 			return false;
+			msg.print("Angle between atoms %i-%i-%i in species '%s' exists in a cycle, so a minimal set of attached atoms will be used.\n", a->indexI()+1, a->indexJ()+1, a->indexK()+1, name_.get());
+			clearAtomSelection();
+			selectedAtoms_.add(a->k());
 		}
 		a->setAttachedAtoms(1, selectedAtoms_);
 	}
+}
+
+/*!
+ * \brief Create scaling matrix
+ */
+void Species::createScalingMatrix()
+{
+	int n, m, rootIndex = atoms_[0]->index();
+
+	scalingMatrix_.initialise(atoms_.nItems(), atoms_.nItems());
+
+	// Unitise matrix (i.e. set all Atom pairs to interact fully)
+	scalingMatrix_ = 1.0;
 	
-	return TRUE;
+	// 'Torsion' interactions (set to 0.5)
+	for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next)
+	{
+		// TODO
+	}
+	
+	// Bond interactions (set to 0.0)
+	for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next)
+	{
+		n = b->indexI() - rootIndex;
+		m = b->indexJ() - rootIndex;
+		scalingMatrix_.ref(n,m) = 0.0;
+		scalingMatrix_.ref(m,n) = 0.0;
+	}
+
+	// Angle interactions (set to 0.0)
+	for (SpeciesAngle* a = angles_.first(); a != NULL; a = a->next)
+	{
+		n = a->indexI() - rootIndex;
+		m = a->indexK() - rootIndex;
+		scalingMatrix_.ref(n,m) = 0.0;
+		scalingMatrix_.ref(m,n) = 0.0;
+	}
+}
+
+/*!
+ * \brief Return scaling factor for supplied indices
+ */
+double Species::scaling(int indexI, int indexJ)
+{
+#ifdef CHECKS
+	if ((indexI < 0) || (indexI >= atoms_.nItems()))
+	{
+		msg.print("OUT_OF_RANGE - After rooting, supplied Atom indexI is out of range (%i) (nAtoms = %i).\n", indexI, atoms_.nItems());
+		return 0.0;
+	}
+	if ((indexJ < 0) || (indexJ >= atoms_.nItems()))
+	{
+		msg.print("OUT_OF_RANGE - After rooting, supplied Atom indexJ is out of range (%i) (nAtoms = %i).\n", indexJ, atoms_.nItems());
+		return 0.0;
+	}
+#endif
+	return scalingMatrix_.value(indexI, indexJ);
+}
+
+/*!
+ * \brief Identify inter-Grain terms
+ */
+void Species::identifyInterGrainTerms()
+{
+	// Clear existing connections in grains
+	for (SpeciesGrain* sg = grains_.first(); sg != NULL; sg = sg->next) sg->clearConnections();
+
+	// Bonds
+	for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next)
+	{
+#ifdef CHECKS
+		if ((b->i() == NULL) || (b->j() == NULL))
+		{
+			msg.error("NULL_POINTER - One or both Atom pointers in a Bond are NULL (%p, %p)\n", b->i(), b->j());
+			continue;
+		}
+		if ((b->i()->grain() == NULL) || (b->j()->grain() == NULL))
+		{
+			msg.error("NULL_POINTER - One or both Grain pointers in a Bond are NULL (%p, %p)\n", b->i()->grain(), b->j()->grain());
+			continue;
+		}
+#endif
+
+		// Is this an entirely INTRA-Grain Bond?
+		if (b->i()->grain() == b->j()->grain())
+		{
+			b->i()->grain()->addInternalBond(b);
+			continue;
+		}
+
+		// Bond is between two Grains, so add it to both and set the interGrain flag
+		b->setInterGrain(true);
+		b->i()->grain()->addBondConnection(b);
+		b->j()->grain()->addBondConnection(b);
+	}
+
+	// Angles
+	for (SpeciesAngle* a = angles_.first(); a != NULL; a = a->next)
+	{
+#ifdef CHECKS
+		if ((a->i() == NULL) || (a->j() == NULL) || (a->k() == NULL))
+		{
+			msg.error("NULL_POINTER - One or more Atom pointers in an Angle are NULL (%p, %p, %p)\n", a->i(), a->j(), a->k());
+			continue;
+		}
+		if ((a->i()->grain() == NULL) || (a->j()->grain() == NULL) || (a->k()->grain() == NULL))
+		{
+			msg.error("NULL_POINTER - One or more Grain pointers in an Angle are NULL (%p, %p, %p)\n", a->i()->grain(), a->j()->grain(), a->k()->grain());
+			continue;
+		}
+#endif
+
+		// Is this an entirely INTRA-Grain Angle?
+		if ((a->i()->grain() == a->j()->grain()) && (a->j()->grain() == a->k()->grain()))
+		{
+			a->i()->grain()->addInternalAngle(a);
+			continue;
+		}
+		
+		// Angle is between at least two Grains, so add it to the relevant parties.
+		// Always add to central Atom...
+		a->j()->grain()->addAngleConnection(a);
+		
+		// If Atom 'i' is in a different Grain, add it to that...
+		if (a->j()->grain() != a->i()->grain()) a->i()->grain()->addAngleConnection(a);
+		
+		// If Atom 'k' is in *another* different Grain, add it to that too
+		
+		// Only add to third Atom if its different again...
+		if ((a->k()->grain() != a->i()->grain()) && (a->k()->grain() != a->j()->grain())) a->k()->grain()->addAngleConnection(a);
+		
+		// Finally, if 'i' and 'k' are in different Grains, set the intraGrain flag to intramolecular correction energies are calculated correctly
+		if (a->i()->grain() != a->k()->grain()) a->setInterGrain(true);
+	}
 }
 
 /*
@@ -697,63 +844,66 @@ bool Species::calculateIndexLists()
 */
 
 /*!
- * \brief Update GrainDefinitions after change
- * \details Update the current list of GrainDefinitions, checking for duplicate Atoms and empty definitions
+ * \brief Update grains after change
+ * \details Update the current list of grains, checking for duplicate Atoms and empty definitions
  */
-void Species::updateGrainDefinitions()
+void Species::updateGrains()
 {
 	// Construct a list of Atom references as we go along, so we can check for duplicates
-	RefList<Atom,GrainDefinition*> refAtoms;
-	for (GrainDefinition* gd = grainDefinitions_.first(); gd != NULL; gd = gd->next)
+	RefList<SpeciesAtom,SpeciesGrain*> refAtoms;
+	for (SpeciesGrain* sg = grains_.first(); sg != NULL; sg = sg->next)
 	{
 		// Loop over Atoms in GrainDefinition
-		RefListItem<Atom,int>* ri = gd->atoms(), *next;
-		RefListItem<Atom,GrainDefinition*>* rj;
+		RefListItem<SpeciesAtom,int>* ri = sg->atoms(), *next;
+		RefListItem<SpeciesAtom,SpeciesGrain*>* rj;
 		while (ri != NULL)
 		{
 			next = ri->next;
 			rj = refAtoms.contains(ri->item);
 			if (rj)
 			{
-				gd->removeAtom(rj->item);
-				msg.print("Removed Atom %i from GrainDefinition '%s' since it already exists in '%s'.\n", rj->item->userIndex(), gd->name(), rj->data->name());
+				sg->removeAtom(rj->item);
+				msg.print("Removed Atom %i from GrainDefinition '%s' since it already exists in '%s'.\n", rj->item->userIndex(), sg->name(), rj->data->name());
 				
-				SET_MODIFIED
+				Flags::wave(Flags::GrainsChanged);
 			}
-			else refAtoms.add(ri->item, gd);
+			else refAtoms.add(ri->item, sg);
 					  
 			ri = next;
 		}
 	}
 	
 	// Check for empty GrainDefinitions
-	GrainDefinition* gd = grainDefinitions_.first(), *next;
-	while (gd != NULL)
+	SpeciesGrain* sg = grains_.first(), *next;
+	while (sg != NULL)
 	{
-		next = gd->next;
-		if (gd->nAtoms() == 0)
+		next = sg->next;
+		if (sg->nAtoms() == 0)
 		{
-			msg.print("Removing GrainDefinition '%s' since it no longer contains any Atoms.\n", gd->name());
-			removeGrainDefinition(gd);
+			msg.print("Removing grain '%s' since it no longer contains any atoms.\n", sg->name());
+			removeGrain(sg);
 
-			SET_MODIFIED
+			Flags::wave(Flags::GrainsChanged);
 		}
-		gd = next;
+		sg = next;
 	}
 }
 
 /*!
  * \brief Add default GrainDefinition (i.e. one which contains all atoms) for this Species 
  */
-void Species::addDefaultGrainDefinition()
+void Species::addDefaultGrain()
 {
-	GrainDefinition* gd = grainDefinitions_.add();
+	SpeciesGrain* sg = grains_.add();
 	
-	for (Atom* i = atoms_.first(); i != NULL; i = i->next) gd->addAtom(i);
+	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next) sg->addAtom(i);
 	
-	gd->setName(gd->nameFromAtoms());
-	
-	SET_MODIFIED
+	sg->setName(sg->nameFromAtoms());
+
+	// Locate inter/intra-grain terms
+	identifyInterGrainTerms();
+
+	Flags::wave(Flags::GrainsChanged);
 }
 
 /*!
@@ -761,18 +911,18 @@ void Species::addDefaultGrainDefinition()
  */
 void Species::autoAddGrains()
 {
-	grainDefinitions_.clear();
+	grains_.clear();
 	
 	// Make a list of bonds for each atom
-	RefList<Bond,int> bondList[atoms_.nItems()];
-	for (Bond* b = bonds_.first(); b != NULL; b = b->next)
+	RefList<SpeciesBond,int> bondList[atoms_.nItems()];
+	for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next)
 	{
 		bondList[b->indexI()].add(b,1);
 		bondList[b->indexJ()].add(b,1);
 	}
 	
 	// Now loop over Atoms
-	GrainDefinition* gd;
+	SpeciesGrain* sg;
 	int n, m, *group = new int[atoms_.nItems()];
 	for (n=0; n<atoms_.nItems(); ++n) group[n] = 0;
 	for (n=0; n<atoms_.nItems(); ++n)
@@ -781,130 +931,133 @@ void Species::autoAddGrains()
 		else if (bondList[n].nItems() == 0)
 		{
 			group[n] = 1;
-			gd = grainDefinitions_.add();
-			gd->setParent(this);
-			gd->addAtom(atoms_[n]);
+			sg = grains_.add();
+			sg->setParent(this);
+			sg->addAtom(atoms_[n]);
 		}
 		else if (bondList[n].nItems() == 1) continue;
 		else
 		{
-			gd = grainDefinitions_.add();
-			gd->setParent(this);
+			sg = grains_.add();
+			sg->setParent(this);
 			group[n] = 1;
-			gd->addAtom(atoms_[n]);
-			for (RefListItem<Bond,int>* ri = bondList[n].first(); ri != NULL; ri = ri->next)
+			sg->addAtom(atoms_[n]);
+			for (RefListItem<SpeciesBond,int>* ri = bondList[n].first(); ri != NULL; ri = ri->next)
 			{
 				m = ri->item->indexI() == n ? ri->item->indexJ() : ri->item->indexI();
 				if ((bondList[m].nItems() != 1) || (group[m] == 1)) continue;
 				group[m] = 1;
-				gd->addAtom(atoms_[m]);
+				sg->addAtom(atoms_[m]);
 			}
 		}
 	}
 	
 	// Name each grain....
-	for (GrainDefinition* gd = grainDefinitions_.first(); gd != NULL; gd = gd->next) gd->setName(uniqueGrainDefinitionName(gd->nameFromAtoms()));
-	
-	SET_MODIFIED
+	for (SpeciesGrain* sg = grains_.first(); sg != NULL; sg = sg->next) sg->setName(uniqueGrainName(sg->nameFromAtoms()));
+
+	// Locate inter/intra-grain terms
+	identifyInterGrainTerms();
+
+	Flags::wave(Flags::GrainsChanged);
 }
 
 /*!
  * \brief Add new GrainDefinition for this Species
  */
-GrainDefinition *Species::addGrainDefinition()
+SpeciesGrain* Species::addGrain()
 {
-	GrainDefinition* gd = grainDefinitions_.add();
+	SpeciesGrain* sg = grains_.add();
 	
-	SET_MODIFIED
+	Flags::wave(Flags::GrainsChanged);
 
-	return gd;
+	return sg;
 }
 
 /*!
  * \brief Remove GrainDefinition specified
  */
-void Species::removeGrainDefinition(GrainDefinition* gd)
+void Species::removeGrain(SpeciesGrain* sg)
 {
-	if (gd == NULL) msg.error("NULL_POINTER - NULL GrainDefinition passed to Species::removeGrainDefinition().\n");
-	else if (grainDefinitions_.contains(gd))
+	if (sg == NULL) msg.error("NULL_POINTER - NULL GrainDefinition passed to Species::removeGrainDefinition().\n");
+	else if (grains_.contains(sg))
 	{
-		if (highlightedGrainDefinition_ == gd) highlightedGrainDefinition_ = NULL;
-		grainDefinitions_.remove(gd);
-		msg.print("Removed GrainDefinition from Species '%s'.\n", name_.get());
+		if (highlightedGrain_ == sg) highlightedGrain_ = NULL;
+		grains_.remove(sg);
+		msg.print("Removed grain from Species '%s'.\n", name_.get());
 		
-		SET_MODIFIED
+		Flags::wave(Flags::GrainsChanged);
 	}
-	else msg.print("BAD_REMOVE - Can't remove specified GrainDefinition from Species '%s' since it doesn't exist.\n", name_.get());
+	else msg.print("BAD_REMOVE - Can't remove specified grain from Species '%s' since it doesn't exist.\n", name_.get());
 }
 
 /*!
  * \brief Return number of GrainDefinitions present for this Species
  */
-int Species::nGrainDefinitions() const
+int Species::nGrains() const
 {
-	return grainDefinitions_.nItems();
+	return grains_.nItems();
 }
 
 /*!
  * \brief Return first GrainDefinition in list
  */
-GrainDefinition *Species::grainDefinitions() const
+SpeciesGrain* Species::grains() const
 {
-	return grainDefinitions_.first();
+	return grains_.first();
 }
 
 /*!
  * \brief Return nth GrainDefinition in list
  */
-GrainDefinition *Species::grainDefinition(int n)
+SpeciesGrain* Species::grain(int n)
 {
-	return grainDefinitions_[n];
+	return grains_[n];
 }
 
 /*!
  * \brief Add Atom to GrainDefinition
  */
-void Species::addAtomToGrainDefinition(Atom* i, GrainDefinition* gd)
+void Species::addAtomToGrain(SpeciesAtom* i, SpeciesGrain* gd)
 {
 	// Check for presence of Atom in another definition - if it exists there, remove it...
-	for (GrainDefinition* def = grainDefinitions_.first(); def != NULL; def = def->next)
+	for (SpeciesGrain* def = grains_.first(); def != NULL; def = def->next)
 	{
 		if (def->containsAtom(i))
 		{
 			// Is this the target GrainDefinition?
 			if (def == gd)
 			{
-				msg.print("Warning: Won't add duplicate of Atom %i to GrainDefinition '%s' in Species '%s'.\n", i->userIndex(), gd->name(), name());
+				msg.print("Warning: Won't add duplicate of atom %i to grain '%s' in Species '%s'.\n", i->userIndex(), gd->name(), name());
 				return;
 			}
 			def->removeAtom(i);
-			msg.print("Removed Atom %i from GrainDefinition '%s' so it can be added to '%s'.\n", i->userIndex(), def->name(), gd->name());
+			msg.print("Removed atom %i from grain '%s' so it can be added to '%s'.\n", i->userIndex(), def->name(), gd->name());
 			break;
 		}
 	}
 	gd->addAtom(i);
 	
-	SET_MODIFIED
+	Flags::wave(Flags::GrainsChanged);
 }
 
 /*!
  * \brief Generate unique GrainDefinition name with base name provided
  */
-const char* Species::uniqueGrainDefinitionName(const char* base, GrainDefinition* exclude) const
+const char* Species::uniqueGrainName(const char* base, SpeciesGrain* exclude) const
 {
 	static Dnchar uniqueName;
 	Dnchar baseName = base;
-	GrainDefinition* gd;
+	SpeciesGrain* sg;
 	int highest = -1;
 	
 	if (baseName.isEmpty()) baseName = "Unnamed";
 
 	// Find all existing names which are the same as 'baseName' up to the first '_', and get the highest appended number
-	for (gd = grainDefinitions_.first(); gd != NULL; gd = gd->next)
+	for (sg = grains_.first(); sg != NULL; sg = sg->next)
 	{
-		if (gd == exclude) continue;
-		if (strcmp(baseName, gd->name()) == 0) highest = 0;
-		else if (strcmp(baseName,beforeLastChar(gd->name(),'_')) == 0) highest = atoi(afterLastChar(gd->name(), '_'));
+		if (sg == exclude) continue;
+		if (strcmp(baseName, sg->name()) == 0) highest = 0;
+		else if (strcmp(baseName,beforeLastChar(sg->name(),'_')) == 0) highest = atoi(afterLastChar(sg->name(), '_'));
 	}
 	if (highest > -1) uniqueName.sprintf("%s_%i", baseName.get(), ++highest);
 	else uniqueName = baseName;
@@ -913,20 +1066,20 @@ const char* Species::uniqueGrainDefinitionName(const char* base, GrainDefinition
 }
 
 /*!
- * \brief Order Atoms within Grains
- * \details Reorders Atoms within the Species such that all Grains contain a consecutive set of Atom indices, and that indices
- * present within one Grain are *higher* than those in preceeding Grains in the list.
+ * \brief Order atoms within grains
+ * \details Reorders atoms within the Species such that all grains contain a consecutive set of atom indices, and that indices
+ * present within one grain are *higher* than those in preceeding Grains in the list.
  */
 void Species::orderAtomsWithinGrains()
 {
 	// Loop over Grains.
-	// The variable 'index' will represent the target position in the Atom list of the next Atom to be considered within a GrainDefinition.
+	// The variable 'index' will represent the target position in the Atom list of the next Atom to be considered within a grain.
 	int n, index = 0, oldIndex;
-	for (GrainDefinition* gd = grainDefinitions_.first(); gd != NULL; gd = gd->next)
+	for (SpeciesGrain* sg = grains_.first(); sg != NULL; sg = sg->next)
 	{
-		for (n=0; n<gd->nAtoms(); ++n)
+		for (n=0; n<sg->nAtoms(); ++n)
 		{
-			oldIndex = atoms_.indexOf(gd->atom(n)->item);
+			oldIndex = atoms_.indexOf(sg->atom(n)->item);
 			atoms_.move(oldIndex, index - oldIndex);
 			++index;
 		}
@@ -934,23 +1087,23 @@ void Species::orderAtomsWithinGrains()
 	
 	// Now need to renumber Atoms
 	index = 0;
-	for (Atom* i = atoms_.first(); i != NULL; i = i->next) i->setIndex(index++);
+	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next) i->setIndex(index++);
 }
 
 /*!
- * \brief Set highlighted GrainDefinition
+ * \brief Set highlighted grain
  */
-void Species::setHighlightedGrainDefinition(GrainDefinition *gd)
+void Species::setHighlightedGrain(SpeciesGrain* sg)
 {
-	highlightedGrainDefinition_ = gd;
+	highlightedGrain_ = sg;
 }
 
 /*!
- * \brief Return highlighted GrainDefinition
+ * \brief Return highlighted grain
  */
-GrainDefinition* Species::highlightedGrainDefinition()
+SpeciesGrain* Species::highlightedGrain()
 {
-	return highlightedGrainDefinition_;
+	return highlightedGrain_;
 }
 
 /*
@@ -974,7 +1127,7 @@ Isotopologue *Species::addIsotopologue(const char *baseName)
 	itp->setParent(this);
 	itp->setName(uniqueIsotopologueName(baseName));
 
-	SET_MODIFIED
+	Flags::wave(Flags::IsotopologuesChanged);
 
 	return itp;
 }
@@ -992,7 +1145,7 @@ void Species::removeIsotopologue(Isotopologue* iso)
 		isotopologues_.remove(iso);
 		msg.print("Removed Isotopologue '%s' from Species '%s'.\n", tempName.get(), name_.get());
 		
-		SET_MODIFIED
+		Flags::wave(Flags::IsotopologuesChanged);
 	}
 	else
 	{
@@ -1111,7 +1264,7 @@ bool Species::broadcast(const List<AtomType>& atomTypes)
 	// Atoms
 	msg.printVerbose("[MPI] Broadcasting Atoms...\n");
 	count = atoms_.nItems();
-	if (!Comm.broadcast(&count, 1)) return FALSE;
+	if (!Comm.broadcast(&count, 1)) return false;
 	msg.printVerbose("[MPI] Expecting %i items...\n", count);
 	for (n=0; n<count; ++n)
 	{
@@ -1120,16 +1273,16 @@ bool Species::broadcast(const List<AtomType>& atomTypes)
 	}
 	
 	// Bonds
-	msg.printVerbose("[MPI] Broadcasting Bonds...\n");
+	msg.printVerbose("[MPI] Broadcasting bonds...\n");
 	count = bonds_.nItems();
-	if (!Comm.broadcast(&count, 1)) return FALSE;
+	if (!Comm.broadcast(&count, 1)) return false;
 	msg.printVerbose("[MPI] Expecting %i items...\n", count);
 	for (n=0; n<count; ++n)
 	{
 		// This is not ideal, since we are not using the safer addBond() function
 		if (Comm.slave())
 		{
-			Bond* b = bonds_.add();
+			SpeciesBond* b = bonds_.add();
 			b->setParent(this);
 			b->broadcast(atoms_);
 		}
@@ -1137,32 +1290,37 @@ bool Species::broadcast(const List<AtomType>& atomTypes)
 	}
 
 	// Angles
-	msg.printVerbose("[MPI] Broadcasting Angles...\n");
+	msg.printVerbose("[MPI] Broadcasting angles...\n");
 	count = angles_.nItems();
-	if (!Comm.broadcast(&count, 1)) return FALSE;
+	if (!Comm.broadcast(&count, 1)) return false;
 	msg.printVerbose("[MPI] Expecting %i items...\n", count);
 	for (n=0; n<count; ++n)
 	{
 		// This is not ideal, since we are not using the safer addAngle() function
-		if (Comm.slave()) angles_.add();
-		angles_[n]->broadcast(atoms_);
+		if (Comm.slave())
+		{
+			SpeciesAngle* a = angles_.add();
+			a->setParent(this);
+			a->broadcast(atoms_);
+		}
+		else angles_[n]->broadcast(atoms_);
 	}
 	
-	// GrainDefinitions
-	msg.printVerbose("[MPI] Broadcasting GrainDefinitions...\n");
-	count = grainDefinitions_.nItems();
-	if (!Comm.broadcast(&count, 1)) return FALSE;
+	// Grains
+	msg.printVerbose("[MPI] Broadcasting grains...\n");
+	count = grains_.nItems();
+	if (!Comm.broadcast(&count, 1)) return false;
 	msg.printVerbose("[MPI] Expecting %i items...\n", count);
 	for (n=0; n<count; ++n)
 	{
-		if (Comm.slave()) addGrainDefinition();
-		grainDefinitions_[n]->broadcast(atoms_);
+		if (Comm.slave()) addGrain();
+		grains_[n]->broadcast(atoms_, bonds_, angles_);
 	}
 
 	// Isotopologues
-	msg.printVerbose("[MPI] Broadcasting Isotopologues...\n");
+	msg.printVerbose("[MPI] Broadcasting isotopologues...\n");
 	count = isotopologues_.nItems();
-	if (!Comm.broadcast(&count, 1)) return FALSE;
+	if (!Comm.broadcast(&count, 1)) return false;
 	msg.printVerbose("[MPI] Expecting %i items...\n", count);
 	for (n=0; n<count; ++n)
 	{
@@ -1170,6 +1328,6 @@ bool Species::broadcast(const List<AtomType>& atomTypes)
 		isotopologues_[n]->broadcast(atomTypes);
 	}
 #endif
-	return TRUE;
+	return true;
 }
 

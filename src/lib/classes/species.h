@@ -23,12 +23,12 @@
 #define DUQ_SPECIES_H
 
 #include "templates/list.h"
-#include "classes/angle.h"
-#include "classes/atom.h"
-#include "classes/bond.h"
+#include "templates/array.h"
+#include "classes/speciesangle.h"
+#include "classes/speciesatom.h"
+#include "classes/speciesbond.h"
+#include "classes/speciesgrain.h"
 #include "classes/isotopologue.h"
-#include "classes/grain.h"
-#include "classes/graindefinition.h"
 #include "base/dnchar.h"
 
 // Forward Declarations
@@ -90,35 +90,35 @@ class Species : public ListItem<Species>
 	///@{
 	private:
 	// List of Atoms in the Species
-	List<Atom> atoms_;
+	List<SpeciesAtom> atoms_;
 	// Selected Atoms (for GUI-based manipulation)
-	RefList<Atom,int> selectedAtoms_;
+	RefList<SpeciesAtom,int> selectedAtoms_;
 	
 	public:
 	// Add a new Atom to the Species
-	Atom* addAtom(int element = 0, double rx = 0.0, double ry = 0.0, double rz = 0.0);
+	SpeciesAtom* addAtom(int element = 0, double rx = 0.0, double ry = 0.0, double rz = 0.0);
 	// Return the number of atoms in the species
 	int nAtoms() const;
 	// Return the first atom in the Species
-	Atom* atoms() const;
+	SpeciesAtom* atoms() const;
 	// Return the nth atom in the Species
-	Atom* atom(int n);
+	SpeciesAtom* atom(int n);
 	// Clear current Atom selection
 	void clearAtomSelection();
 	// Add Atom to selection
-	void selectAtom(Atom* i);
+	void selectAtom(SpeciesAtom* i);
 	// Select Atoms along any path from the specified one
-	void selectFromAtom(Atom* i, Bond* exclude = NULL);
+	void selectFromAtom(SpeciesAtom* i, SpeciesBond* exclude);
 	// Return first selected Atom reference
-	RefListItem<Atom,int>* selectedAtoms() const;
+	RefListItem<SpeciesAtom,int>* selectedAtoms() const;
 	// Return nth selected Atom
-	Atom* selectedAtom(int n);
+	SpeciesAtom* selectedAtom(int n);
 	// Return number of selected Atoms
 	int nSelectedAtoms() const;
 	// Return whether specified Atom is selected
-	bool isAtomSelected(Atom* i) const;
+	bool isAtomSelected(SpeciesAtom* i) const;
 	// Change element of specified Atom
-	void changeAtomElement(Atom* i, int el, AtomType* at);
+	void changeAtomElement(SpeciesAtom* i, int el, AtomType* at);
 	// Return total atomic mass of Species
 	double mass() const;
 	// Centre coordinates at origin
@@ -132,79 +132,87 @@ class Species : public ListItem<Species>
 	///@{
 	private:
 	// List of Bonds between Atoms in the Species
-	List<Bond> bonds_;
+	List<SpeciesBond> bonds_;
 	// List of Angles between Atoms in the Species
-	List<Angle> angles_;
-
+	List<SpeciesAngle> angles_;
+	// Scaling matrix for intramolecular interactions
+	Array2D<double> scalingMatrix_;
+	
 	public:
-	// Add new Bond definition (from Atoms*)
-	Bond* addBond(Atom* i, Atom* j);
+	// Add new Bond definition (from SpeciesAtom*)
+	SpeciesBond* addBond(SpeciesAtom* i, SpeciesAtom* j);
 	// Add new Bond definition
-	Bond* addBond(int i, int j);
+	SpeciesBond* addBond(int i, int j);
 	// Return number of Bonds in list
 	int nBonds() const;
 	// Return list of Bonds
-	Bond* bonds() const;
+	SpeciesBond* bonds() const;
 	// Return nth Bond
-	Bond* bond(int n);
+	SpeciesBond* bond(int n);
 	// Return whether Bond between Atoms exists
-	Bond* hasBond(Atom* i, Atom* j) const;
+	SpeciesBond* hasBond(SpeciesAtom* i, SpeciesAtom* j) const;
 	// Add new Angle definition (from Atoms*)
-	Angle* addAngle(Atom* i, Atom* j, Atom* k);
+	SpeciesAngle* addAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k);
 	// Add new Angle definition
-	Angle* addAngle(int i, int j, int k);
+	SpeciesAngle* addAngle(int i, int j, int k);
 	// Return number of Angles in list
 	int nAngles() const;
 	// Return list of Angles
-	Angle* angles() const;
+	SpeciesAngle* angles() const;
 	// Return nth Angle
-	Angle* angle(int n);
+	SpeciesAngle* angle(int n);
 	// Return whether Angle between Atoms exists
-	bool hasAngle(Atom* i, Atom* j, Atom* k) const;
+	bool hasAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const;
 	// Recalculate intramolecular terms between atoms in the Species
 	void recalculateIntramolecular();
 	// Calculate local Atom index lists for interactions
 	bool calculateIndexLists();
+	// Create scaling matrix
+	void createScalingMatrix();
+	// Return scaling factor for supplied indices
+	double scaling(int indexI, int indexJ);
+	// Identify inter-Grain terms
+	void identifyInterGrainTerms();
 	///@}
 
 
 	/*!
-	 * \name GrainDefinitions
+	 * \name Grains
 	 */
 	///@{
 	private:
-	// List of GrainDefinitions, dividing the Atoms of this Species into individual groups
-	List<GrainDefinition> grainDefinitions_;
-	// Highlighted GrainDefinition (in Viewer)
-	GrainDefinition* highlightedGrainDefinition_;
+	// List of grain, dividing the Atoms of this Species into individual groups
+	List<SpeciesGrain> grains_;
+	// Highlighted grain (in Viewer)
+	SpeciesGrain* highlightedGrain_;
 	
 	public:
-	// Update GrainDefinitions after change
-	void updateGrainDefinitions();
-	// Add default GrainDefinition (i.e. one which contains all atoms) for this Species 
-	void addDefaultGrainDefinition();
+	// Update SpeciesGrains after change
+	void updateGrains();
+	// Add default grain definition (i.e. one which contains all atoms) for this Species 
+	void addDefaultGrain();
 	// Automatically determine Grains based on chemical connectivity
 	void autoAddGrains();
-	// Add new GrainDefinition for this Species
-	GrainDefinition* addGrainDefinition();
-	// Remove GrainDefinition with ID specified
-	void removeGrainDefinition(GrainDefinition* gd);
-	// Return number of GrainDefinitions present for this Species
-	int nGrainDefinitions() const;
-	// Return first GrainDefinition in list
-	GrainDefinition* grainDefinitions() const;
-	// Return nth GrainDefinition in list
-	GrainDefinition* grainDefinition(int n);
-	// Add Atom to GrainDefinition
-	void addAtomToGrainDefinition(Atom* i, GrainDefinition* gd);
-	// Generate unique GrainDefinition name with base name provided
-	const char* uniqueGrainDefinitionName(const char* baseName, GrainDefinition* exclude = NULL) const;
-	// Order Atoms within Grains
+	// Add new grain for this Species
+	SpeciesGrain* addGrain();
+	// Remove grain with ID specified
+	void removeGrain(SpeciesGrain* sg);
+	// Return number of grain present for this Species
+	int nGrains() const;
+	// Return first grain in list
+	SpeciesGrain* grains() const;
+	// Return nth grain in list
+	SpeciesGrain* grain(int n);
+	// Add Atom to grain
+	void addAtomToGrain(SpeciesAtom* i, SpeciesGrain* gd);
+	// Generate unique grain name with base name provided
+	const char* uniqueGrainName(const char* baseName, SpeciesGrain* exclude = NULL) const;
+	// Order atoms within grains
 	void orderAtomsWithinGrains();
-	// Set highlighted GrainDefinition
-	void setHighlightedGrainDefinition(GrainDefinition *gd);
-	// Return highlighted GrainDefinition
-	GrainDefinition* highlightedGrainDefinition();
+	// Set highlighted grain
+	void setHighlightedGrain(SpeciesGrain* gd);
+	// Return highlighted grain
+	SpeciesGrain* highlightedGrain();
 	///@}
 
 

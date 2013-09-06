@@ -19,16 +19,15 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/viewer.uih"
-#include "mainwindow.h"
+#include "gui/speciesviewer.uih"
 #include "classes/atomtype.h"
 #include "classes/species.h"
 #include "classes/isotopologue.h"
-#include <classes/box.h>
-#include "base/sysfunc.h"
+// #include "classes/box.h"
+// #include "base/sysfunc.h"
 
 // Create necessary primitives (must be called before any rendering is done)
-void Viewer::createPrimitives()
+void SpeciesViewer::createPrimitives()
 {
 	// Create basic primitives
 	spherePrimitive03_.plotSphere(0.3, 8, 10);
@@ -46,7 +45,7 @@ void Viewer::createPrimitives()
 }
 
 // Setup basic GL properties (called each time before renderScene())
-void Viewer::setupGL()
+void SpeciesViewer::setupGL()
 {
 	// Define colours etc.
 	GLfloat backgroundColour[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -117,9 +116,9 @@ void Viewer::setupGL()
 }
 
 /*!
- * \brief Draw referenced Species
+ * \brief Draw scene
  */
-void Viewer::drawSpecies()
+void SpeciesViewer::drawScene()
 {
 	Matrix4 A;
 	Vec3<double> v;
@@ -129,16 +128,16 @@ void Viewer::drawSpecies()
 	// Check pointer is valid
 	if (sourceSpecies_ == NULL)
 	{
-		msg.error("Called Viewer::drawSpecies() with a NULL Species pointer.\n");
+		msg.error("Called SpeciesViewer::drawScene() with a NULL Species pointer.\n");
 		return;
 	}
 
 	// Draw Atoms
 	Dnchar text(128);
 	Isotope* iso;
-	bool atomTypeLabel = mainWindow_->ui.ViewAtomTypeCheck->isChecked();
-	bool indexLabel = mainWindow_->ui.ViewIndexCheck->isChecked();
-	for (Atom* i = sourceSpecies_->atoms(); i != NULL; i = i->next)
+	bool atomTypeLabel = false; //mainWindow_->ui.ViewAtomTypeCheck->isChecked();
+	bool indexLabel = false; //mainWindow_->ui.ViewIndexCheck->isChecked();
+	for (SpeciesAtom* i = sourceSpecies_->atoms(); i != NULL; i = i->next)
 	{
 		A.setTranslation(i->r());
 		renderPrimitive(&spherePrimitive03_, PeriodicTable::element(i->element()).colour(), A);
@@ -153,11 +152,11 @@ void Viewer::drawSpecies()
 			if (iso == NULL) text.sprintf("%s [???]", i->atomType()->name());
 			else text.strcatf("[%i-%s]", iso->A(), PeriodicTable::element(i->element()).symbol());
 		}
-		renderTextPrimitive(i->r(), text.get(), FALSE, FALSE);
+		renderTextPrimitive(i->r(), text.get(), false, false);
 	}
 	
 	// Draw Atom Selection
-	for (RefListItem<Atom,int>* ri = sourceSpecies_->selectedAtoms(); ri != NULL; ri = ri->next)
+	for (RefListItem<SpeciesAtom,int>* ri = sourceSpecies_->selectedAtoms(); ri != NULL; ri = ri->next)
 	{
 		A.setTranslation(ri->item->r());
 		col = PeriodicTable::element(ri->item->element()).colour();
@@ -171,7 +170,7 @@ void Viewer::drawSpecies()
 	// Draw Bonds
 	Vec3<double> vij;
 	double mag;
-	for (Bond* b = sourceSpecies_->bonds(); b != NULL; b = b->next)
+	for (SpeciesBond* b = sourceSpecies_->bonds(); b != NULL; b = b->next)
 	{
 		// Get vector between Atoms i->j and move to Bond centre
 		vij = b->j()->r() - b->i()->r();
@@ -193,13 +192,13 @@ void Viewer::drawSpecies()
 	}
 	
 	// If a GrainDefinition is selected, add on highlight to involved atoms
-	if (sourceSpecies_->highlightedGrainDefinition())
+	if (sourceSpecies_->highlightedGrain())
 	{
 		A.setIdentity();
 		A.applyScaling(1.1,1.1,1.1);
 		GLfloat colour[4] = {0.0, 0.0, 0.0, 0.6};
-		Atom* i;
-		for (RefListItem<Atom,int>* ri = sourceSpecies_->highlightedGrainDefinition()->atoms(); ri != NULL; ri = ri->next)
+		SpeciesAtom* i;
+		for (RefListItem<SpeciesAtom,int>* ri = sourceSpecies_->highlightedGrain()->atoms(); ri != NULL; ri = ri->next)
 		{
 			i = ri->item;
 			A.setTranslation(i->r());
@@ -212,151 +211,17 @@ void Viewer::drawSpecies()
 }
 
 /*!
- * \brief Draw referenced Configuration
- */
-void Viewer::drawConfiguration()
-{
-	Matrix4 A;
-	Vec3<double> v;
-	GLfloat colourBlack[4] = { 0.0, 0.0, 0.0, 1.0 };
-	const float *col;
-
-	// Check pointer is valid
-	if (sourceConfiguration_ == NULL)
-	{
-		msg.error("Called Viewer::drawConfiguration() with a NULL Configuration pointer.\n");
-		return;
-	}
-
-	if (sourceConfiguration_->box() == NULL) return;
-
-	// Draw Box
-	Vec3<double> boxCentre;
-	if (sourceConfiguration_->box()->type() != Box::NonPeriodicBox)
-	{
-		boxCentre = sourceConfiguration_->box()->axes() * Vec3<double>(-0.5,-0.5,-0.5);
-		A.setColumn(0, sourceConfiguration_->box()->axes().columnAsVec3(0), 0.0);
-		A.setColumn(1, sourceConfiguration_->box()->axes().columnAsVec3(1), 0.0);
-		A.setColumn(2, sourceConfiguration_->box()->axes().columnAsVec3(2), 0.0);
-		A.setColumn(3, 0.0, 0.0, 0.0, 1.0);
-		renderPrimitive(&wireCubePrimitive_, colourBlack, A, GL_LINE);
-		A.setIdentity();
-	}
-
-	if ((drawStyle_ == Viewer::LineStyle) || (drawStyle_ == Viewer::PointStyle))
-	{
-		Vec3<double> ri, halfvij;
-		const float* colour;
-
-		// Draw Atoms
-		Atom* atoms = sourceConfiguration_->atoms(), *i;
-		for (int n=0; n<sourceConfiguration_->nAtoms(); ++n)
-		{
-			i = &atoms[n];
-			ri = i->r() + boxCentre;
-			colour = PeriodicTable::element(i->element()).colour();
-			pointPrimitives_.defineVertex(ri.x, ri.y, ri.z, 0.0, 0.0, 1.0, colour[0], colour[1], colour[2], colour[3], FALSE);
-		}
-
-		// Draw Bonds
-		if (drawStyle_ == Viewer::LineStyle) for (Bond* b = sourceConfiguration_->bonds(); b != NULL; b = b->next)
-		{
-			// Get vector between Atoms i->j and move to Bond centre
-			ri = b->i()->r();
-			halfvij = b->j()->r() - ri;
-			halfvij *= 0.5;
-			ri += boxCentre;
-
-			// Render half of Bond in colour of Atom i
-			colour = PeriodicTable::element(b->i()->element()).colour();
-			linePrimitives_.defineVertex(ri.x, ri.y, ri.z, 0.0, 0.0, 1.0, colour[0], colour[1], colour[2], colour[3], FALSE);
-			ri += halfvij;
-			linePrimitives_.defineVertex(ri.x, ri.y, ri.z, 0.0, 0.0, 1.0, colour[0], colour[1], colour[2], colour[3], FALSE);
-			
-			// Render half of Bond in colour of Atom j
-			colour = PeriodicTable::element(b->j()->element()).colour();
-			linePrimitives_.defineVertex(ri.x, ri.y, ri.z, 0.0, 0.0, 1.0, colour[0], colour[1], colour[2], colour[3], FALSE);
-			ri += halfvij;
-			linePrimitives_.defineVertex(ri.x, ri.y, ri.z, 0.0, 0.0, 1.0, colour[0], colour[1], colour[2], colour[3], FALSE);
-		}
-	}
-	else if (drawStyle_ == Viewer::BallAndStickStyle)
-	{
-		// Draw Atoms
-		Isotope* iso;
-		Atom* atoms = sourceConfiguration_->atoms(), *i;
-		for (int n=0; n<sourceConfiguration_->nAtoms(); ++n)
-		{
-			i = &atoms[n];
-			A.setTranslation(i->r() + boxCentre);
-			renderPrimitive(&spherePrimitive03_, PeriodicTable::element(i->element()).colour(), A);
-		}
-
-		// Draw Bonds
-		Vec3<double> vij;
-		double mag;
-		for (Bond* b = sourceConfiguration_->bonds(); b != NULL; b = b->next)
-		{
-			// Get vector between Atoms i->j and move to Bond centre
-			vij = b->j()->r() - b->i()->r();
-			A.setTranslation(b->i()->r()+vij*0.5 + boxCentre);
-			mag = vij.magAndNormalise();
-			
-			// Create rotation matrix for Bond
-			A.setColumn(2, vij.x, vij.y, vij.z, 0.0);
-			A.setColumn(0, vij.orthogonal(), 0.0);
-			A.setColumn(1, vij * A.columnAsVec3(0), 0.0);
-			A.columnMultiply(2, 0.5*mag);
-
-			// Render half of Bond in colour of Atom j
-			renderPrimitive(&cylinderPrimitive_, PeriodicTable::element(b->j()->element()).colour(), A);
-			
-			// Render half of Bond in colour of Atom i
-			A.columnMultiply(2,-1.0);
-			renderPrimitive(&cylinderPrimitive_, PeriodicTable::element(b->i()->element()).colour(), A);
-		}
-	}
-}
-
-/*!
  * \brief Set source (Species)
  */
-void Viewer::setSource(Species *sp)
+void SpeciesViewer::setSource(Species *sp)
 {
-	sourceConfiguration_ = NULL;
 	sourceSpecies_ = sp;
-}
-
-/*!
- * \brief Set source (Configuration)
- */
-void Viewer::setSource(Configuration* cfg)
-{
-	sourceConfiguration_ = cfg;
-	sourceSpecies_ = NULL;
-}
-
-/*!
- * \brief Unset source
- */
-void Viewer::unsetSource()
-{
-	sourceConfiguration_ = NULL;
-	sourceSpecies_ = NULL;
-}
-
-/*!
- * \brief Set parent MainWindow
- */
-void Viewer::setParentMainWindow(MainWindow* mainWin)
-{
-	mainWindow_ = mainWin;
 }
 
 /*!
  * \brief Set draw style
  */
-void Viewer::setDrawStyle(Viewer::DrawStyle style)
+void SpeciesViewer::setDrawStyle(SpeciesViewer::DrawStyle style)
 {
 	drawStyle_ = style;
 	update();
@@ -365,8 +230,8 @@ void Viewer::setDrawStyle(Viewer::DrawStyle style)
 /*!
  * \brief Change draw style
  */
-void Viewer::changeDrawStyle(int style)
+void SpeciesViewer::changeDrawStyle(int style)
 {
-	drawStyle_ = (Viewer::DrawStyle) style;
+	drawStyle_ = (SpeciesViewer::DrawStyle) style;
 	update();
 }

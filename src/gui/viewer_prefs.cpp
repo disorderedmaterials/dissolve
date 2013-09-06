@@ -28,15 +28,15 @@ bool Viewer::useNiceText_;
 // Set default values for all preferences
 void Viewer::setDefaultPreferences(bool setStaticMembers)
 {
-	correctTransparency_ = TRUE;
+	correctTransparency_ = true;
 	fontSize_ = 12;
 	superScriptFraction_ = 0.6;
 	if (setStaticMembers)
 	{
-		Viewer::useFrameBuffer_ = TRUE;
-		Viewer::useNiceText_ = TRUE;
+		Viewer::useFrameBuffer_ = true;
+		Viewer::useNiceText_ = true;
 	}
-	hasPerspective_ = TRUE;
+	hasPerspective_ = true;
 }
 
 // Set whether framebuffer should be used for offscreen rendering

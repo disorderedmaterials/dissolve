@@ -201,12 +201,27 @@ double CubicBox::minimumDistance(const Vec3<double>& i, const Vec3<double>& j) c
 }
 
 /*!
- * \brief Return minimum image squared distance from 'i' to 'j'
+ * \brief Return minimum image squared distance from 'i' to 'j' (pointers)
  */
 double CubicBox::minimumDistanceSquared(const Atom* i, const Atom* j) const
 {
 	Vec3<double> mimVec = j->r();
 	mimVec -= i->r();
+
+	mimVec.x -= int(mimVec.x*ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5))*a_;
+	mimVec.y -= int(mimVec.y*ra_ + (mimVec.y < 0.0 ? -0.5 : 0.5))*a_;
+	mimVec.z -= int(mimVec.z*ra_ + (mimVec.z < 0.0 ? -0.5 : 0.5))*a_;
+
+	return mimVec.magnitudeSq();
+}
+
+/*!
+ * \brief Return minimum image squared distance from 'i' to 'j' (references)
+ */
+double CubicBox::minimumDistanceSquared(const Atom& i, const Atom& j) const
+{
+	Vec3<double> mimVec = j.r();
+	mimVec -= i.r();
 
 	mimVec.x -= int(mimVec.x*ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5))*a_;
 	mimVec.y -= int(mimVec.y*ra_ + (mimVec.y < 0.0 ? -0.5 : 0.5))*a_;
@@ -262,25 +277,6 @@ Vec3<double> CubicBox::randomCoordinate() const
 }
 
 /*!
- * \brief Return Cell containing specified coordinate
- */
-Cell* CubicBox::cell(const Vec3<double> r) const
-{
-	// Convert coordinate to fractional coords
-	static Vec3<double> frac;
-	frac.set(r.x*ra_, r.y*ra_, r.z*ra_);
-	// TODO Convert to standard int() cast, rather than using floor()
-	// TODO Store reciprocals of cellSize_ and use those instead.
-	
-	// Fold into Box and divide by integer Cell sizes
-	int x = (frac.x - floor(frac.x)) / cellSize_.x;
-	int y = (frac.y - floor(frac.y)) / cellSize_.y;
-	int z = (frac.z - floor(frac.z)) / cellSize_.z;
-	
-	return &cells_[x%divisions_.x][y%divisions_.y][z%divisions_.z];
-}
-
-/*!
  * \brief Return folded coordinate (i.e. inside current Box)
  */
 Vec3<double> CubicBox::fold(const Vec3<double>& r) const
@@ -295,4 +291,21 @@ Vec3<double> CubicBox::fold(const Vec3<double>& r) const
 	frac.y -= floor(frac.y);
 	frac.z -= floor(frac.z);
 	return frac*a_;
+}
+
+/*!
+ * \brief Return folded fractional coordinate (i.e. inside current Box)
+ */
+Vec3<double> CubicBox::foldFrac(const Vec3<double>& r) const
+{
+	// Convert coordinate to fractional coords
+	static Vec3<double> frac;
+	frac.set(r.x*ra_, r.y*ra_, r.z*ra_);
+	
+	// Fold into Box
+	// TODO Convert to standard int() cast, rather than using floor()
+	frac.x -= floor(frac.x);
+	frac.y -= floor(frac.y);
+	frac.z -= floor(frac.z);
+	return frac;
 }

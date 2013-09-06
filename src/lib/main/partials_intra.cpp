@@ -20,10 +20,11 @@
 */
 
 #include "main/duq.h"
-#include "classes/box.h"
 #include "classes/atom.h"
-#include "classes/cell.h"
 #include "classes/atomtype.h"
+#include "classes/box.h"
+#include "classes/cell.h"
+#include "classes/species.h"
 #include "base/comms.h"
 
 /*!
@@ -40,29 +41,36 @@ bool DUQ::calculateIntramolecularRDFs(Configuration& cfg)
 	start = Comm.interleavedLoopStart(DUQComm::World);
 	stride = Comm.interleavedLoopStride(DUQComm::World);
 
-	// Bonds
-	Bond* b;
-	for (int n=start; n<cfg.nBonds(); n += stride)
+	// Loop over molecules...
+	int n;
+	Atom* i, *j, *k;
+	for (int m=start; m<cfg.nMolecules(); m += stride)
 	{
-		b = cfg.bond(n);
+		Molecule* mol = cfg.molecule(m);
 
-		if (box->useMim(b->i()->grain()->cell(), b->j()->grain()->cell())) distance = box->minimumDistance(b->i(), b->j());
-		else distance = (b->i()->r() - b->j()->r()).magnitude();
-		boundRDFMatrix_.ref(potentialMap_.type(b->i()->index()), potentialMap_.type(b->j()->index())).add(distance);
+		// Bonds
+		for (SpeciesBond* b = mol->species()->bonds(); b != NULL; b = b->next)
+		{
+			i = mol->atom(b->indexI());
+			j = mol->atom(b->indexJ());
+			if (configuration_.useMim(i->grain()->cell(), j->grain()->cell())) distance = box->minimumDistance(i, j);
+			else distance = (i->r() - j->r()).magnitude();
+			boundRDFMatrix_.ref(i->atomTypeIndex(), j->atomTypeIndex()).add(distance);
+		}
+
+		// Angles
+		for (SpeciesAngle* a = mol->species()->angles(); a != NULL; a = a->next)
+		{
+			i = mol->atom(a->indexI());
+			j = mol->atom(a->indexJ());
+			k = mol->atom(a->indexK());
+			
+			// Determine whether we need to apply minimum image between 'j-i' and 'j-k'
+			if (configuration_.useMim(i->grain()->cell(), k->grain()->cell())) distance = box->minimumDistance(i, k);
+			else distance = (i->r() - k->r()).magnitude();
+			boundRDFMatrix_.ref(i->atomTypeIndex(), k->atomTypeIndex()).add(distance);
+		}
 	}
 
-	// Angles
-	Angle* a;
-	for (int n=start; n<cfg.nAngles(); n += stride)
-	{
-		a = cfg.angle(n);
-
-		// Determine whether we need to apply minimum image between 'j-i' and 'j-k'
-		if (box->useMim(a->i()->grain()->cell(), a->k()->grain()->cell())) distance = box->minimumDistance(a->i(), a->k());
-		else distance = (a->i()->r() - a->k()->r()).magnitude();
-	
-		boundRDFMatrix_.ref(potentialMap_.type(a->i()->index()), potentialMap_.type(a->k()->index())).add(distance);
-	}
-
-	return TRUE;
+	return true;
 }

@@ -119,6 +119,11 @@ template <class A> class Array : public ListItem< Array<A> >
 	{
 		return nItems_;
 	}
+	// Return current maximum size of array
+	int size() const
+	{
+		return size_;
+	}
 	// Return data array
 	A* array()
 	{
@@ -260,7 +265,7 @@ template <class A> class Array2D
 {
 	public:
 	// Constructor
-	Array2D(int nrows = 0, int ncolumns = 0, bool half = FALSE)
+	Array2D(int nrows = 0, int ncolumns = 0, bool half = false)
 	{
 		array_ = NULL;
 		linearSize_ = 0;
@@ -371,14 +376,37 @@ template <class A> class Array2D
 
 	public:
 	// Initialise array
-	void initialise(int nrows, int ncolumns, bool half = FALSE)
+	void initialise(int nrows, int ncolumns, bool half = false)
 	{
 		half_ = half;
 		if ((nrows > 0) && (ncolumns > 0)) resize(nrows, ncolumns);
 		else printf("BAD_USAGE - Zero or negative row/column size(s) given to Array2D::initialise() (r=%i, c=%i)\n", nrows, ncolumns);
 	}
-	// Return specified element
+	// Return specified element as reference
 	A& ref(int row, int column)
+	{
+#ifdef CHECKS
+		static A dummy;
+		if ((row < 0) || (row >= nRows_))
+		{
+			msg.print("OUT_OF_RANGE - Row number is out of range in Array2D::ref().\n", row);
+			return dummy;
+		}
+		if ((column < 0) || (column >= nColumns_))
+		{
+			msg.print("OUT_OF_RANGE - Row number is out of range in Array2D::ref().\n", column);
+			return dummy;
+		}
+#endif
+		if (half_) 
+		{
+			if (row > column) return array_[rowOffsets_[column] + row - column];
+			else return array_[rowOffsets_[row] + column - row];
+		}
+		else return array_[rowOffsets_[row] + column];
+	}
+	// Return specified element as value
+	A value(int row, int column) const
 	{
 #ifdef CHECKS
 		static A dummy;
