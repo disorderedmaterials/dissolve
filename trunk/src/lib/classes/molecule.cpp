@@ -23,6 +23,7 @@
 #include "classes/species.h"
 #include "classes/grain.h"
 #include "classes/atomtype.h"
+#include "classes/box.h"
 #include "base/messenger.h"
 
 /*!
@@ -226,35 +227,38 @@ int Molecule::index()
 /*!
  * \brief Calculate and return centre of geometry
  */
-Vec3<double> Molecule::centre() const
+Vec3<double> Molecule::centre(const Box* box) const
 {
-	Vec3<double> cog;
-	XXX This is tragically bad, since no minimum image is performed.  Fix this!
-	for (int n=0; n<nAtoms_; ++n) cog += atom(n)->r();
+	if (nAtoms_ == 0) return Vec3<double>();
+	
+	// Calculate center relative to first atom in molecule
+	Vec3<double> cog = atom(0)->r();
+	for (int n = 1; n<nAtoms_; ++n) cog += box->minimumImage(atom(n), cog);
+
 	return (cog / nAtoms_);
 }
 
 /*!
- * \brief Transform molecule
+ * \brief Transform molecule with supplied matrix
  */
-void Molecule::applyTransform(const Matrix3& transform)
+void Molecule::applyTransform(const Box* box, const Matrix3& transform)
 {
 	// Calculate Molecule centre of geometry
-	Vec3<double> newR, cog = centre();
+	Vec3<double> newR, cog = centre(box);
 	
 	// Apply transform
 	for (int n=0; n<nAtoms_; ++n)
 	{
-		newR = transform * (atom(n)->r() - cog) + cog;
+		newR = transform * box->minimumVector(atom(n), cog) + cog;
 		atom(n)->setCoordinates(newR);
 	}
 }
 
 
 /*!
- * \brief Transform selected Atoms
+ * \brief Transform selected atoms with supplied matrix
  */
-void Molecule::applyTransform(const Matrix3& transform, const Vec3< double >& origin, int nTargetAtoms, int* targetIndices)
+void Molecule::applyTransform(const Box* box, const Matrix3& transform, const Vec3<double>& origin, int nTargetAtoms, int* targetIndices)
 {
 	// Loop over supplied Atoms
 	Vec3<double> newR;
@@ -268,12 +272,28 @@ void Molecule::applyTransform(const Matrix3& transform, const Vec3< double >& or
 }
 
 /*!
+ * \brief Set centre of geometry of molecule
+ */
+void Molecule::setCentre(const Box* box, const Vec3<double> newCentre)
+{
+	// Calculate Molecule centre of geometry
+	Vec3<double> newR, cog = centre(box);
+
+	// Apply transform
+	for (int n=0; n<nAtoms_; ++n)
+	{
+		newR = box->minimumVector(atom(n), cog) + newCentre;
+		atom(n)->setCoordinates(newR);
+	}
+}
+
+/*!
  * \brief Randomise geometry
  * \details Randomise the geometry of the Molecule, exploring conformation space as best we can. This routine should be used when
  * instantiating the initial ensemble of Molecules such that a variety of conformations exist in the starting system. Each defined
  * Bond is taken in turn, and the connect Atoms at one end (chosen randomly) are rotated about the Bond axis.
  */ 
-void Molecule::randomiseGeometry()
+void Molecule::randomiseGeometry(const Box* box)
 {
 #ifdef CHECKS
 	// Check for NULL Species pointer
@@ -315,7 +335,7 @@ void Molecule::randomiseGeometry()
 		transform.createRotationAxis(axis.x, axis.y, axis.z, dUQMath::random()*360.0, true);
 
 		// Perform transform
-		applyTransform(transform, terminus == 0 ? localI->r() : localJ->r(), b->nAttached(terminus), b->attachedIndices(terminus));
+		applyTransform(box, transform, terminus == 0 ? localI->r() : localJ->r(), b->nAttached(terminus), b->attachedIndices(terminus));
 	}
 }
 

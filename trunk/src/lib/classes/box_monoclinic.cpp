@@ -27,18 +27,25 @@
  * \brief Constructor
  * \details Constructor for Monoclinic Box. 
  */
-MonoclinicBox::MonoclinicBox(double volume, const Vec3<double> relativeCellLengths, double alpha) : Box()
+MonoclinicBox::MonoclinicBox(double volume, const Vec3<double> relativeLengths, double beta) : Box()
 {
 	type_ = Box::MonoclinicBox;
 	
-	// Construct axes_
-	alpha_ = alpha;
-	// Assume that A lays along x-axis, and B lays along the y-axis (since gamma = 90)
+	// Construct axes
+	alpha_ = 90.0;
+	beta_ = beta;
+	gamma_ = 90.0;
+	// Assume that A lays along x-axis and C lays along the z-axis (since gamma = 90)
 	axes_.setColumn(0, 1.0, 0.0, 0.0);
 	axes_.setColumn(1, 0.0, 1.0, 0.0);
-	// The C vector will only have components in y and z (since beta = 90)
-	double cosAlpha = cos(alpha_/DEGRAD);
-	axes_.setColumn(2, 0.0, cosAlpha, sqrt(1.0-cosAlpha*cosAlpha));
+	// The C vector will only have components in x and z
+	double cosBeta = cos(beta_/DEGRAD);
+	axes_.setColumn(2, cosBeta, 0.0, sqrt(1.0-cosBeta*cosBeta));
+
+	// Multiply the unit vectors to have the correct relative lengths
+	axes_.columnMultiply(0, relativeLengths.x);
+	axes_.columnMultiply(1, relativeLengths.y);
+	axes_.columnMultiply(2, relativeLengths.z);
 
 	// Rescale to desired volume
 	setVolume(volume);
@@ -51,6 +58,8 @@ MonoclinicBox::MonoclinicBox(double volume, const Vec3<double> relativeCellLengt
 	// Calculate inverse
 	inverseAxes_ = axes_;
 	inverseAxes_.invert();
+	
+	axes_.print();
 }
 
 /*!
@@ -70,8 +79,15 @@ MonoclinicBox::~MonoclinicBox()
  */
 Vec3<double> MonoclinicBox::minimumImage(const Atom* i, const Atom* ref) const
 {
-	msg.print("MonoclinicBox::minimumImage() not written yet.\n");
-	return Vec3<double>();
+	// TODO Can speedup this since we know which matrix elements are zero
+	Vec3<double> mim = inverseAxes_*(ref->r() - i->r());
+	if (mim.x < -0.5) mim.x += 1.0;
+	else if (mim.x > 0.5) mim.x -= 1.0;
+	if (mim.y < -0.5) mim.y += 1.0;
+	else if (mim.y > 0.5) mim.y -= 1.0;
+	if (mim.z < -0.5) mim.z += 1.0;
+	else if (mim.z > 0.5) mim.z -= 1.0;
+	return axes_*mim + ref->r();
 }
 
 /*!
@@ -79,8 +95,15 @@ Vec3<double> MonoclinicBox::minimumImage(const Atom* i, const Atom* ref) const
  */
 Vec3<double> MonoclinicBox::minimumImage(const Atom* i, const Vec3<double>& ref) const
 {
-	msg.print("MonoclinicBox::minimumImage() not written yet.\n");
-	return Vec3<double>();
+	// TODO Can speedup this since we know which matrix elements are zero
+	Vec3<double> mim = inverseAxes_*(ref - i->r());
+	if (mim.x < -0.5) mim.x += 1.0;
+	else if (mim.x > 0.5) mim.x -= 1.0;
+	if (mim.y < -0.5) mim.y += 1.0;
+	else if (mim.y > 0.5) mim.y -= 1.0;
+	if (mim.z < -0.5) mim.z += 1.0;
+	else if (mim.z > 0.5) mim.z -= 1.0;
+	return axes_*mim + ref;
 }
 
 /*!
@@ -88,8 +111,15 @@ Vec3<double> MonoclinicBox::minimumImage(const Atom* i, const Vec3<double>& ref)
  */
 Vec3<double> MonoclinicBox::minimumImage(const Vec3<double>& i, const Vec3<double>& ref) const
 {
-	msg.print("MonoclinicBox::minimumImage() not written yet.\n");
-	return Vec3<double>();
+	// TODO Can speedup this since we know which matrix elements are zero
+	Vec3<double> mim = inverseAxes_*(ref - i);
+	if (mim.x < -0.5) mim.x += 1.0;
+	else if (mim.x > 0.5) mim.x -= 1.0;
+	if (mim.y < -0.5) mim.y += 1.0;
+	else if (mim.y > 0.5) mim.y -= 1.0;
+	if (mim.z < -0.5) mim.z += 1.0;
+	else if (mim.z > 0.5) mim.z -= 1.0;
+	return axes_*mim + ref;
 }
 
 /*!
@@ -97,8 +127,15 @@ Vec3<double> MonoclinicBox::minimumImage(const Vec3<double>& i, const Vec3<doubl
  */
 Vec3<double> MonoclinicBox::minimumVector(const Atom* i, const Atom* j) const
 {
-	msg.print("MonoclinicBox::minimumVector() not written yet.\n");
-	return Vec3<double>();
+	// TODO Can speedup this since we know which matrix elements are zero
+	Vec3<double> mim = inverseAxes_*(j->r() - i->r());
+	if (mim.x < -0.5) mim.x += 1.0;
+	else if (mim.x > 0.5) mim.x -= 1.0;
+	if (mim.y < -0.5) mim.y += 1.0;
+	else if (mim.y > 0.5) mim.y -= 1.0;
+	if (mim.z < -0.5) mim.z += 1.0;
+	else if (mim.z > 0.5) mim.z -= 1.0;
+	return axes_*mim;
 }
 
 /*!
@@ -106,8 +143,15 @@ Vec3<double> MonoclinicBox::minimumVector(const Atom* i, const Atom* j) const
  */
 Vec3<double> MonoclinicBox::minimumVector(const Atom* i, const Vec3<double>& j) const
 {
-	msg.print("MonoclinicBox::minimumVector() not written yet.\n");
-	return Vec3<double>();
+	// TODO Can speedup this since we know which matrix elements are zero
+	Vec3<double> mim = inverseAxes_*(j - i->r());
+	if (mim.x < -0.5) mim.x += 1.0;
+	else if (mim.x > 0.5) mim.x -= 1.0;
+	if (mim.y < -0.5) mim.y += 1.0;
+	else if (mim.y > 0.5) mim.y -= 1.0;
+	if (mim.z < -0.5) mim.z += 1.0;
+	else if (mim.z > 0.5) mim.z -= 1.0;
+	return axes_*mim;
 }
 
 /*!
@@ -115,8 +159,15 @@ Vec3<double> MonoclinicBox::minimumVector(const Atom* i, const Vec3<double>& j) 
  */
 Vec3<double> MonoclinicBox::minimumVector(const Vec3<double>& i, const Vec3<double>& j) const
 {
-	msg.print("MonoclinicBox::minimumVector() not written yet.\n");
-	return Vec3<double>();
+	// TODO Can speedup this since we know which matrix elements are zero
+	Vec3<double> mim = inverseAxes_*(j - i);
+	if (mim.x < -0.5) mim.x += 1.0;
+	else if (mim.x > 0.5) mim.x -= 1.0;
+	if (mim.y < -0.5) mim.y += 1.0;
+	else if (mim.y > 0.5) mim.y -= 1.0;
+	if (mim.z < -0.5) mim.z += 1.0;
+	else if (mim.z > 0.5) mim.z -= 1.0;
+	return axes_*mim;
 }
 
 /*!
@@ -184,8 +235,8 @@ double MonoclinicBox::minimumDistanceSquared(const Vec3<double>& i, const Vec3<d
  */
 Vec3<double> MonoclinicBox::randomCoordinate() const
 {
-	msg.print("MonoclinicBox::randomCoordinate() not written yet.\n");
-	return Vec3<double>();
+	Vec3<double> pos(dUQMath::random(), dUQMath::random(), dUQMath::random());
+	return axes_*pos;
 }
 
 /*!
@@ -193,16 +244,17 @@ Vec3<double> MonoclinicBox::randomCoordinate() const
  */
 Vec3<double> MonoclinicBox::fold(const Vec3<double>& r) const
 {
-// 	// Convert coordinate to fractional coords
-// 	Vec3<double> frac(r.x/a_, r.y/a_, r.z/a_);
-// 	
-// 	// Fold into Box and divide by integer Cell sizes
-// 	frac.x -= floor(frac.x);
-// 	frac.y -= floor(frac.y);
-// 	frac.z -= floor(frac.z);
-// 	return frac*a_;
-	msg.print("MonoclinicBox::fold() not written yet.\n");
-	return Vec3<double>();
+	// TODO Can speedup this part since we know which matrix elements are zero
+
+	// Convert coordinate to fractional coords
+	Vec3<double> frac = inverseAxes_*r;
+	
+	// Fold into Box and remultiply by inverse matrix
+	frac.x -= floor(frac.x);
+	frac.y -= floor(frac.y);
+	frac.z -= floor(frac.z);
+	
+	return axes_*frac;
 }
 
 /*!
@@ -210,14 +262,15 @@ Vec3<double> MonoclinicBox::fold(const Vec3<double>& r) const
  */
 Vec3<double> MonoclinicBox::foldFrac(const Vec3<double>& r) const
 {
-// 	// Convert coordinate to fractional coords
-// 	Vec3<double> frac(r.x/a_, r.y/a_, r.z/a_);
-// 	
-// 	// Fold into Box and divide by integer Cell sizes
-// 	frac.x -= floor(frac.x);
-// 	frac.y -= floor(frac.y);
-// 	frac.z -= floor(frac.z);
-// 	return frac*a_;
-	msg.print("MonoclinicBox::foldFrac() not written yet.\n");
-	return Vec3<double>();
+	// TODO Can speedup this part since we know which matrix elements are zero
+
+	// Convert coordinate to fractional coords
+	Vec3<double> frac = inverseAxes_*r;
+	
+	// Fold into Box and remultiply by inverse matrix
+	frac.x -= floor(frac.x);
+	frac.y -= floor(frac.y);
+	frac.z -= floor(frac.z);
+	
+	return frac;
 }
