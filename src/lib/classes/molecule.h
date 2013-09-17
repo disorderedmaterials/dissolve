@@ -29,6 +29,7 @@
 class Angle;
 class Atom;
 class Bond;
+class Box;
 class Grain;
 class Species;
 class SpeciesAtom;
@@ -96,13 +97,15 @@ class Molecule : public ListItem<Molecule>
 	///@{
 	public:
 	// Calculate and return centre of geometry
-	Vec3<double> centre() const;
-	// Transform Molecule
-	void applyTransform(const Matrix3& transform);
+	Vec3<double> centre(const Box* box) const;
+	// Transform molecule with supplied matrix and translation vector
+	void applyTransform(const Box* box, const Matrix3& transform);
 	// Transform selected Atoms
-	void applyTransform(const Matrix3& transform, const Vec3<double>& origin, int nTargetAtoms, int* targetIndices);
+	void applyTransform(const Box* box, const Matrix3& transform, const Vec3<double>& origin, int nTargetAtoms, int* targetIndices);
+	// Set centre of geometry of molecule
+	void setCentre(const Box* box, const Vec3<double> newCentre);
 	// Randomise geometry
-	void randomiseGeometry();
+	void randomiseGeometry(const Box* box);
 	// Shake geometry
 	void shakeGeometry();
 	///@}

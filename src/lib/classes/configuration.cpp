@@ -387,7 +387,7 @@ bool Configuration::setupMolecules()
 		{
 			if (atomCount >= nAtoms_)
 			{
-				msg.error("Mismatch between size of Atom array in Configuration, and number of Atoms needed by Molecules.\n");
+				msg.error("Mismatch between size of atom array in configuration, and number of atoms needed by molecules.\n");
 				return false;
 			}
 			if (!mol->setupAtom(n, &atomReferences_[atomCount], sp->atom(n))) return false;
@@ -400,7 +400,7 @@ bool Configuration::setupMolecules()
 		{
 			if (grainCount >= nGrains_)
 			{
-				msg.error("Mismatch between size of Grain array in Configuration, and number of Grains needed by Molecules.\n");
+				msg.error("Mismatch between size of grain array in configuration, and number of grains needed by molecules.\n");
 				return false;
 			}
 			if (!mol->setupGrain(n, &grains_[grainCount], sp->grain(n))) return false;
@@ -417,20 +417,24 @@ bool Configuration::setupMolecules()
 
 /*!
  * \brief Generate random configuration
- * \details For the current list of Molecules, give each a random position, orientation, and geometry within the box.
+ * \details Give each a random position, orientation, and geometry within the box.
  */
 bool Configuration::randomise()
 {
 	Matrix3 transform;
+	Vec3<double> centre;
 	msg.print("--> Generating random positions/orientations for %i molecules...\n", molecules_.nItems());
 	for (Molecule* mol = molecules_.first(); mol != NULL; mol = mol->next)
 	{
+		// Move the molecule to a random position
+		mol->setCentre(box_, box_->randomCoordinate());
+		
 		// Apply random rotation to Molecule
 		transform.createRotationXY(dUQMath::randomPlusMinusOne()*180.0, dUQMath::randomPlusMinusOne()*180.0);
-		mol->applyTransform(transform);
+		mol->applyTransform(box_, transform);
 		
 		// Randomisation of intramolecular geometry (rotations around bonds)
-		mol->randomiseGeometry();
+		mol->randomiseGeometry(box_);
 	}
 
 	// Coordinates have changed, so increment change counter
@@ -525,7 +529,7 @@ bool Configuration::setupBox(double ppRange, Vec3<double> relativeLengths, Vec3<
 		if (abSame && acSame) box_ = new CubicBox(volume);
 		else box_ = new OrthorhombicBox(volume, relativeLengths);
 	}
-	else if (rightBeta && rightGamma) box_ = new MonoclinicBox(volume, relativeLengths, angles.x);	// Monoclinic
+// 	else if (rightAlpha && (!rightBeta) && rightGamma) box_ = new MonoclinicBox(volume, relativeLengths, angles.y);	// Monoclinic
 	else
 	{
 		// Triclinic
