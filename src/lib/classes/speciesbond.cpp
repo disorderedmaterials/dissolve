@@ -238,8 +238,6 @@ void SpeciesBond::setAttachedAtoms(int terminus, const RefList<SpeciesAtom,int>&
 	msg.print("%s\n", s.get());
 }
 
-
-
 /*!
  * \brief Return number of attached SpeciesAtoms for terminus specified
  */

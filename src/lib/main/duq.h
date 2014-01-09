@@ -345,8 +345,6 @@ class DUQ
 	 */
 	///@{
 	private:
-	// Flag count at last succesful setup
-	int setupFlagCount_;
 	// Molecule/Grain/Atom Configuration
 	Configuration configuration_;
 	// Master AtomType index, containing unique (non-isotopic) atom types
@@ -387,6 +385,8 @@ class DUQ
 	void clearModel();
 	// Load Box normalisation array
 	bool loadBoxNormalisationFile(const char *fileName);
+	// Setup atomic configuration
+	bool setupConfiguration();
 	// Setup pairpotentials
 	bool setupPotentials();
 	// Finalise and print setup variables
@@ -395,8 +395,6 @@ class DUQ
 	public:
 	// Check current setup
 	bool checkSetup();
-	// Return whether current setup is valid
-	bool setupIsValid();
 	// Setup simulation
 	bool setupSimulation();
 	// Return random seed

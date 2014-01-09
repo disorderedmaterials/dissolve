@@ -63,7 +63,7 @@ class Configuration : public ListItem<Configuration>
 	int nGrains_;
 	// Grain array
 	Grain* grains_;
-	// Number of atoms in aonfiguration / reference array
+	// Number of atoms in configuration / reference array
 	int nAtoms_;
 	// Array of atom references (to objects within Cells)
 	Atom** atomReferences_;
@@ -92,12 +92,10 @@ class Configuration : public ListItem<Configuration>
 	Atom** atomReferences();
 	// Return nth atom
 	Atom* atom(int n);
+	// Setup arrays
+	bool setupArrays();
 	// Setup molecules in configuration
-	bool setupMolecules();
-	// Randomise configuration
-	bool randomise();
-	// Load starting coordinates from file
-	bool loadInitialCoordinates(const char* fileName);
+	bool setupMolecules(Species& sourceCoordinates);
 	// Return current change count
 	int changeCount();
 	// Increment current change count
@@ -138,7 +136,7 @@ class Configuration : public ListItem<Configuration>
 	private:
 	// Clear Cell arrays
 	void clearCells();
-	// Return whether the contents of two Cells should be mimd in calculations
+	// Return whether the contents of two Cells should be mim'd in calculations
 	bool imagesNeeded(Cell* a, Cell* b) const;
 
 	public:

@@ -320,27 +320,24 @@ Atom* Configuration::atom(int n)
 }
 
 /*!
- * \brief Setup Molecules
- * \details Once Molecules have been added to the Configuration with addMolecule(), the master arrays of atom references and grains are 
- * created by calling setupMolecules(). 'Empty' atoms have already been created by generateCells() - this routine assigns
- * pointers to these empty structures in each molecule in the system. The coordinates of the original species are copied, but no further
- * movement (i.e. randomisation) is applied.
+ * \brief Setup Arrays
+ * \details Allocates atom and grain arrays
  */
-bool Configuration::setupMolecules()
+bool Configuration::setupArrays()
 {
 	if (molecules_.nItems() == 0)
 	{
-		msg.error("No Molecules have been added to the Configuration - nothing to do.\n");
+		msg.error("Configuration::setupArrays - No Molecules have been added to the Configuration - no arrays to be created.\n");
 		return false;
 	}
 	if (nAtoms_== 0)
 	{
-		msg.error("Molecules have been added to the Configuration, but no Atoms were counted.\n");
+		msg.error("Configuration::setupArrays - Molecules have been added to the Configuration, but no Atoms were counted.\n");
 		return false;
 	}
 	if (nGrains_ == 0)
 	{
-		msg.error("Molecules have been added to the Configuration, but no Grains were counted.\n");
+		msg.error("Configuration::setupArrays - Molecules have been added to the Configuration, but no Grains were counted.\n");
 		return false;
 	}
 	
@@ -352,9 +349,22 @@ bool Configuration::setupMolecules()
 	}
 	catch (bad_alloc& alloc)
 	{
-		msg.error("Failed to allocate sufficient memory. Exception was : %s\n", alloc.what());
+		msg.error("Configuration::setupArrays - Failed to allocate sufficient memory. Exception was : %s\n", alloc.what());
 		return false;
 	}
+	return true;
+}
+
+/*!
+ * \brief Setup Molecules
+ * \details Once Molecules have been added to the Configuration with addMolecule(), and the master arrays of atom references and grains have
+ * been allocated by setupArrays(), the coordinates of the individual atoms can be set. created by calling setupMolecules(). 'Empty' atoms have already been created by generateCells() - this routine assigns
+ * pointers to these empty structures in each molecule in the system. The coordinates of the original species are copied, but no further
+ * movement (i.e. randomisation) is applied.
+ */
+bool Configuration::setupMolecules(Species& sourceCoordinates)
+{
+
 
 	// Setup indices and atom references
 	int n, count = 0, atomsPerCell = nAtoms_ / nCells_, extraOne = nAtoms_ - (nCells_*atomsPerCell);
@@ -444,31 +454,6 @@ bool Configuration::randomise()
 }
 
 /*!
- * \brief Load starting coordinates from file
- */
-bool Configuration::loadInitialCoordinates(const char* fileName)
-{
-	// Construct a temporary Species to store the coordinates
-	Species species;
-	if (!species.load(fileName)) return false;
-
-	// Species now contains stuff - does the number of Atoms match the Configuration?
-	if (nAtoms_ != species.nAtoms())
-	{
-		msg.error("Number of Atoms in initial coordinates file (%i) does not match that in Configuration (%i).\n", species.nAtoms(), nAtoms_);
-		return false;
-	}
-	
-	// Copy coordinates from Species to Configuration
-	for (int n=0; n<nAtoms_; ++n) atomReferences_[n]->setCoordinates( species.atom(n)->r() );
-
-	// Coordinates have changed, so increment change counter
-	++changeCount_;
-
-	return true;
-}
-
-/*!
  * \brief Return current change count
  */
 int Configuration::changeCount()
@@ -529,14 +514,14 @@ bool Configuration::setupBox(double ppRange, Vec3<double> relativeLengths, Vec3<
 		if (abSame && acSame) box_ = new CubicBox(volume);
 		else box_ = new OrthorhombicBox(volume, relativeLengths);
 	}
-// 	else if (rightAlpha && (!rightBeta) && rightGamma) box_ = new MonoclinicBox(volume, relativeLengths, angles.y);	// Monoclinic
+	else if (rightAlpha && (!rightBeta) && rightGamma) box_ = new MonoclinicBox(volume, relativeLengths, angles.y);	// Monoclinic
 	else
 	{
 		// Triclinic
 		box_ = new TriclinicBox(volume, relativeLengths, angles);
 	}
 	
-	msg.print("--> %s Box created for system.\n", Box::boxType(box_->type()));
+	msg.print("--> %s xox created for system.\n", Box::boxType(box_->type()));
 	Matrix3 axes = box_->axes();
 	msg.print("--> Axes Matrix : A = %10.4e %10.4e %10.4e, length = %10.4e Angstroms\n", axes[0], axes[1], axes[2], box_->axisLength(0));
 	msg.print("-->               B = %10.4e %10.4e %10.4e, length = %10.4e Angstroms\n", axes[3], axes[4], axes[5], box_->axisLength(1));
@@ -623,7 +608,7 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 	const double tolerance = 0.01;
 	int n, m, x, y, z;
 
-	msg.print("--> Generating Cells for Box - minimum Cells per side is %i, PairPotential range is %f...\n", minCellsPerSide, cellSize);
+	msg.print("--> Generating cells for box - minimum cells per side is %i, cell size is %f...\n", minCellsPerSide, cellSize);
 
 	// Get Box axis lengths and divide through by cellSize
 	Vec3<double> boxLengths(box_->axisLength(0), box_->axisLength(1),  box_->axisLength(2));
@@ -632,12 +617,12 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 	divisions_.zero();
 	realCellSize_.zero();
 
-	msg.print("--> Initial divisions based on PairPotential range are (x,y,z) = (%i,%i,%i)\n", divisions.x, divisions.y, divisions.z);
+	msg.print("--> Initial divisions based on cell size are (x,y,z) = (%i,%i,%i)\n", divisions.x, divisions.y, divisions.z);
 	
 	// How does the smalles length compare with the PairPotential range?
 	if (divisions.min() < minCellsPerSide)
 	{
-		msg.print("Warning: Box size only allows for %i whole divisions of the PairPotential range (%f) along one or more axes, while we require at least %i.\n", divisions.min(), cellSize, minCellsPerSide);
+		msg.print("Warning: Box size only allows for %i whole divisions of the cell size (%f) along one or more axes, while we require at least %i.\n", divisions.min(), cellSize, minCellsPerSide);
 		
 		// We must now take the shortest box length and divide by 3 to get the absolute maximum length to use on that side
 		minEl = boxLengths.minElement();
@@ -653,7 +638,7 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 		divisions_[minEl] = divisions[minEl];
 	}
 	
-	msg.print("--> Shortest side (axis %i) will have Cell length of %f Angstroms.\n", minEl, realCellSize_[minEl]);
+	msg.print("--> Shortest side (axis %i) will have cell length of %f Angstroms.\n", minEl, realCellSize_[minEl]);
 
 	// Now, set our other cellLengths_ based on the minimum value we have just set
 	// We try to get all lengths as similar as possible
@@ -669,20 +654,20 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 		{
 			divisions_[el] = int(x) + 1;
 			realCellSize_[el] = boxLengths[el] / divisions_[el];
-			msg.print("--> Accepted Cell length of %f Angstroms (%i divisions) for axis %i, since it was within tolerance (-%e).\n", realCellSize_[minEl], divisions_[el], el, remainder);
+			msg.print("--> Accepted cell length of %f Angstroms (%i divisions) for axis %i, since it was within tolerance (-%e).\n", realCellSize_[minEl], divisions_[el], el, remainder);
 		}
 		else if (remainder < tolerance)
 		{
 			divisions_[el] = int(x);
 			realCellSize_[el] = boxLengths[el] / divisions_[el];
-			msg.print("--> Accepted Cell length of %f Angstroms (%i divisions) for axis %i, since it was within tolerance (+%e).\n", realCellSize_[minEl], divisions_[el], el, remainder);
+			msg.print("--> Accepted cell length of %f Angstroms (%i divisions) for axis %i, since it was within tolerance (+%e).\n", realCellSize_[minEl], divisions_[el], el, remainder);
 		}
 		else if (remainder < 0.5)
 		{
 			// Can't fit more than half another cell in, so reduce number of divisions...
 			divisions_[el] = int(x);
 			realCellSize_[el] = boxLengths[el] / divisions_[el];
-			msg.print("--> Decreased Cell length for axis %i to %f Angstroms (%i divisions).\n", el, realCellSize_[el], divisions_[el]);
+			msg.print("--> Decreased cell length for axis %i to %f Angstroms (%i divisions).\n", el, realCellSize_[el], divisions_[el]);
 		}
 		else
 		{
@@ -693,15 +678,15 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 			{
 				--divisions_[el];
 				realCellSize_[el] = boxLengths[el] / divisions_[el];
-				msg.print("--> Forced decrease of Cell length for axis %i to %f Angstroms (%i divisions) since increasing it gave a length larger than the PairPotential range.\n", el, realCellSize_[el], divisions_[el]);
+				msg.print("--> Forced decrease of cell length for axis %i to %f Angstroms (%i divisions) since increasing it gave a length larger than the cell size.\n", el, realCellSize_[el], divisions_[el]);
 			}
-			else msg.print("--> Increased Cell length for axis %i to %f Angstroms (%i divisions).\n", el, realCellSize_[el], divisions_[el]);
+			else msg.print("--> Increased cell length for axis %i to %f Angstroms (%i divisions).\n", el, realCellSize_[el], divisions_[el]);
 		}
 	}
 
 	// Summarise
 	cellSize_.set(1.0 / divisions_.x, 1.0 / divisions_.y, 1.0 / divisions_.z);
-	msg.print("--> Final Cell partitioning is (x,y,z) = (%i,%i,%i), giving %i cells in total.\n", divisions_.x, divisions_.y, divisions_.z, divisions_.x*divisions_.y*divisions_.z);
+	msg.print("--> Final cell partitioning is (x,y,z) = (%i,%i,%i), giving %i cells in total.\n", divisions_.x, divisions_.y, divisions_.z, divisions_.x*divisions_.y*divisions_.z);
 
 	// Construct Cell arrays
 	clearCells();
@@ -727,7 +712,7 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 	}
 	
 	// Construct Cell neighbour lists
-	msg.print("--> Creating Cell neighbour lists...\n");
+	msg.print("--> Creating cell neighbour lists...\n");
 	// Make a list of integer vectors which we'll then use to pick Cells for the neighbour lists
 	Vec3<double> r;
 	Matrix3 cellAxes = box_->axes();

@@ -233,48 +233,13 @@ bool DUQ::checkSetup()
 }
 
 /*!
- * \brief Return whether current setup is valid
+ * \brief Setup atomic configuration
+ * \details Create or load the atomic configuration to simulate
  */
-bool DUQ::setupIsValid()
+bool DUQ::setupConfiguration()
 {
-	return (setupFlagCount_ == Flags::count());
-}
-
-/*!
- * \brief Setup Simulation
- * \details This sets up all data necessary to perform a simulation, based on the current loaded configuration. The steps are as follows:
- * 1) Intramolecular terms are set up for each Species
- * 2) A set of empty Molecules is created through repeated calls to Configuration::addMolecule(Species*)
- * 3) A periodic Box and Cell definition are created to hold the Molecules at the desired density with Configuration::setupBox()
- * 4) Master Atom and Grain arrays are created, linked together, and copies of randomised Species coordinates made with Configuration::instantiate()
- * 5) Process limits are determined
- * 6) An AtomType index and PairPotential map is created with setupIndexAndMaps()
- * 7) Partial RDF and S(Q) matrices are created
- * 8) Samples are setup
- * 9) Calculation variables are checked and printed out
- */
-bool DUQ::setupSimulation()
-{
-	msg.print("\n");
-	
-	if (setupFlagCount_ == Flags::count())
-	{
-		msg.print("Setup is still valid.\n");
-		return true;
-	}
-	else msg.print("Setting up simulation...\n");
-
-	if (multiplier_ < 1)
-	{
-		msg.error("System multiplier is zero or negative (%i).\n", multiplier_);
-		return false;
-	}
-
-	clearModel();
-	
-	// Loop over components, creating space for Molecules as we go (all processes)
-	msg.print("\n");
-	msg.print("Adding Molecules...\n");
+	// First stage is always to create 'empty' molecules in the main Configuration
+	msg.print("--> Creating space for molecules...\n");
 	int count;
 	for (Species* sp = species_.first(); sp != NULL; sp = sp->next)
 	{
@@ -285,28 +250,51 @@ bool DUQ::setupSimulation()
 		for (int n = 0; n < count; ++n) configuration_.addMolecule(sp);
 	}
 
-	// Setup PairPotentials array and assign atomtype indices to atoms
-	msg.print("\n");
-	msg.print("Setting up atomtypes and pair potentials...\n");
-	if (!setupPotentials())
-	{
-		msg.error("Failed to create AtomType index, map, and PairPotential and array.\n");
-		return false;
-	}
-
 	// Create a Box (all processes)
-	msg.print("\n");
-	msg.print("Setting up box...\n");
+	msg.print("--> Creating periodic box...\n");
 	if (!configuration_.setupBox(pairPotentialRange_, relativeBoxLengths_, boxAngles_, atomicDensity(), cellDensityMultiplier_, nonPeriodic_))
 	{
 		msg.error("Failed to set-up Box/Cells for Configuration.\n");
 		return false;
 	}
 
+	// Now, we need some coordinates - either we are creating a random configuration of molecules, or we are loading in a set of coordinates from a file
+	if (randomConfiguration_)
+	{
+	}
+	else
+	{
+		// Construct a temporary Species to load the source coordinates into
+		Species sourceCoordinates;
+		if (!sourceCoordinates.load(fileName)) return false;
+
+		// Species now contains stuff - does the number of Atoms match the Configuration?
+		if (configuration_.nAtoms() != sourceCoordinates.nAtoms())
+		{
+			msg.error("Number of Atoms in initial coordinates file (%i) does not match that in Configuration (%i).\n", species.nAtoms(), nAtoms_);
+			return false;
+		}
+		
+		// Copy coordinates from Species to Configuration
+		SpeciesAtom* i;
+		for (int n=0; n<nAtoms_; ++n)
+		{
+			i = species.atom(n);
+			atomReferences_[n]->setCoordinates( i->r() );
+			if (i->element() != atomReferences_[n]->element()) msg.warn("Atom %i in loaded configuration has a different element (%i) to that expected (%i).\n", n+1, i->element(), atomReferences_[n]->element());
+		}
+
+		// Coordinates have changed, so increment change counter
+		++changeCount_;
+
+		return true;
+	}
+	
+	
 	// Create Atom and Grain arrays, and Molecule copies
 	msg.print("\n");
 	msg.print("Setting up molecules, atoms, and grains...\n");
-	if (!configuration_.setupMolecules())
+	if (!configuration_.setupRandomMolecules())
 	{
 		msg.error("Failed to setup molecules.\n");
 		return false;
@@ -322,6 +310,38 @@ bool DUQ::setupSimulation()
 	if (!configuration_.broadcastCoordinates()) return false;
 	if (!configuration_.updateAtomsInCells()) return false;
 	updateGrains(configuration_);
+}
+
+/*!
+ * \brief Setup Simulation
+ * \details This sets up all data necessary to perform a simulation, based on the current loaded configuration.
+ */
+bool DUQ::setupSimulation()
+{
+	msg.print("\n");
+	msg.print("Setting up simulation...\n");
+
+	if (multiplier_ < 1)
+	{
+		msg.error("System multiplier is zero or negative (%i).\n", multiplier_);
+		return false;
+	}
+
+	clearModel();
+
+	// Setup / load / create simulation system
+	msg.print("\n");
+	msg.print("Setting up atomic configuration...\n");
+	setupConfiguration();
+
+	// Setup PairPotentials array and assign atomtype indices to atoms
+	msg.print("\n");
+	msg.print("Setting up atomtypes and pair potentials...\n");
+	if (!setupPotentials())
+	{
+		msg.error("Failed to create AtomType index, map, and PairPotential and array.\n");
+		return false;
+	}
 
 	// Setup parallel comms / limits etc.
 	msg.print("\n");

@@ -252,6 +252,7 @@ void SpeciesAngle::setAttachedAtoms(int terminus, const RefList<SpeciesAtom,int>
 		++index;
 	}
 
+	printf("Terminus = %i, this = %p\n", terminus, this);
 	Dnchar s(-1, "--> For angle between atoms %i-%i-%i, terminus %i moves %i other atoms :", indexI()+1, indexJ()+1, indexK()+1, terminus+1, nAttached_[terminus]);
 	for (int n=0; n<nAttached_[terminus]; ++n) s.strcatf(" %i", attachedAtoms_[terminus][n]->userIndex());
 	msg.print("%s\n", s.get());
