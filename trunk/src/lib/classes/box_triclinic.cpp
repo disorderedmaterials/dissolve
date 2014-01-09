@@ -240,12 +240,12 @@ Vec3<double> TriclinicBox::fold(const Vec3<double>& r) const
 {
 	// Convert coordinate to fractional coords
 	Vec3<double> frac = inverseAxes_*r;
-	
+
 	// Fold into Box and remultiply by inverse matrix
 	frac.x -= floor(frac.x);
 	frac.y -= floor(frac.y);
 	frac.z -= floor(frac.z);
-	
+
 	return axes_*frac;
 }
 

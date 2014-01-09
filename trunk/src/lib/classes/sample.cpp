@@ -391,7 +391,7 @@ bool Sample::setupPairCorrelations(double volume, double range, double binWidth,
 			partialSQMatrix_.ref(typeI,typeJ).setName(title.get());
 			
 			// Store weighting factor for this partial
-			// Note: Divisor of 100.0 in calculation of bb converts from units of fm (1e-11 m) to barn (1e-12 m)
+			// Note: Divisor of 100.0 in calculation of bb converts from units of fm (1e-11 m) to barn (1e-12 m) squared
 			cc = at1->fraction() * at2->fraction();
 			bb = at1->isotope()->boundCoherent() * at2->isotope()->boundCoherent() * 0.01;
 			weightsMatrix_.ref(typeI,typeJ) = (typeI == typeJ ? 1.0 : 2.0) * cc * bb;
@@ -416,6 +416,18 @@ bool Sample::setupPairCorrelations(double volume, double range, double binWidth,
 	{
 		referenceDataFT_ = referenceFQ_;
 		referenceDataFT_.transformSQ(rho);
+		printf("jklhlkjlkj\n");
+		referenceFQ_.interpolate(false);
+		Data2D newData;
+		double q = 2.32;
+		while (q < 100.0)
+		{
+			newData.addPoint(q, referenceFQ_.interpolated(q));
+			q += 0.01;
+		}
+		newData.save("crap.txt");
+		newData.transformSQ(0.107, Data2D::GaussianWindow);
+		newData.save("crap.ft");
 	}
 
 	return true;

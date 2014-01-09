@@ -37,8 +37,6 @@
  */
 DUQ::DUQ()
 {
-	setupFlagCount_ = -1;
-
 	// System Composition
 	multiplier_ = 1;
 	density_ = 0.1;

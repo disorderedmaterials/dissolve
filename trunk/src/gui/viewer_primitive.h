@@ -142,6 +142,8 @@ class Primitive
 	public:
 	// Define next vertex and normal
 	void defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, bool calcCentroid);
+	// Define next vertex and normal (as Vec3<double>)
+	void defineVertex(Vec3<double> vertex, Vec3<double> normal, bool calcCentroid);
 	// Define next vertex, normal, and colour (as array)
 	void defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, GLfloat* colour, bool calcCentroid);
 	// Define next vertex, normal, and colour
