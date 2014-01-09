@@ -116,9 +116,10 @@ CommandReturnValue DUQ::commandLoadConfig(Configuration& cfg)
 	Dnchar fileName = commandArgumentAsConstChar("loadconfig", "name", result);
 	if (!result) return CommandFail;
 	
-	if (!MPIRunMaster(cfg.loadInitialCoordinates(fileName))) return CommandFail;
-	if (!cfg.broadcastCoordinates()) return CommandFail;
-	updateGrains(cfg);
+// 	if (!MPIRunMaster(cfg.loadInitialCoordinates(fileName))) return CommandFail;
+// 	if (!cfg.broadcastCoordinates()) return CommandFail;
+// 	updateGrains(cfg);
+	return CommandFail;
 
 	return CommandSuccess;
 }

@@ -268,9 +268,9 @@ double OrthorhombicBox::minimumDistanceSquared(const Vec3<double>& i, const Vec3
 Vec3<double> OrthorhombicBox::randomCoordinate() const
 {
 	Vec3<double> pos;
-	pos.x = a_*dUQMath::random();
-	pos.y = b_*dUQMath::random();
-	pos.z = c_*dUQMath::random();
+	pos.x = a_*DUQMath::random();
+	pos.y = b_*DUQMath::random();
+	pos.z = c_*DUQMath::random();
 	return pos;
 }
 

@@ -235,7 +235,7 @@ double MonoclinicBox::minimumDistanceSquared(const Vec3<double>& i, const Vec3<d
  */
 Vec3<double> MonoclinicBox::randomCoordinate() const
 {
-	Vec3<double> pos(dUQMath::random(), dUQMath::random(), dUQMath::random());
+	Vec3<double> pos(DUQMath::random(), DUQMath::random(), DUQMath::random());
 	return axes_*pos;
 }
 

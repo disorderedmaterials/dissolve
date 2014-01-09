@@ -176,9 +176,9 @@ double NonPeriodicBox::minimumDistanceSquared(const Vec3<double>& i, const Vec3<
 Vec3<double> NonPeriodicBox::randomCoordinate() const
 {
 	static Vec3<double> pos;
-	pos.x = a_*dUQMath::random();
-	pos.y = a_*dUQMath::random();
-	pos.z = a_*dUQMath::random();
+	pos.x = a_*DUQMath::random();
+	pos.y = a_*DUQMath::random();
+	pos.z = a_*DUQMath::random();
 	return pos;
 }
 

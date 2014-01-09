@@ -97,7 +97,7 @@ class Molecule : public ListItem<Molecule>
 	///@{
 	public:
 	// Calculate and return centre of geometry
-	Vec3<double> centre(const Box* box) const;
+	Vec3<double> centreOfGeometry(const Box* box) const;
 	// Transform molecule with supplied matrix and translation vector
 	void applyTransform(const Box* box, const Matrix3& transform);
 	// Transform selected Atoms

@@ -25,7 +25,7 @@
 #include <math.h>
 
 // Error Function
-double dUQMath::erfc(double x)
+double DUQMath::erfc(double x)
 {
 	// Approximation to the complementary error function.
 	// Ref: Abramowitz and Stegun, Handbook of Mathematical Functions,
@@ -39,13 +39,13 @@ double dUQMath::erfc(double x)
 }
 
 // Complementary error function
-double dUQMath::erf(double x)
+double DUQMath::erf(double x)
 {
 	return (1.0 - erfc(x));
 }
 
 // Random Number Generator (0 - 1)
-double dUQMath::random()
+double DUQMath::random()
 {
 	// Simple random number generator from C++ stdlib.
 	// Returns numbers from 0.0 to 1.0 inclusive.
@@ -54,27 +54,27 @@ double dUQMath::random()
 }
 
 // Return random value between -1 and 1.0 inclusive
-double dUQMath::randomPlusMinusOne()
+double DUQMath::randomPlusMinusOne()
 {
 	return (random()-0.5)*2.0;
 }
 
 // Random number generator (0 - RAND_MAX)
-int dUQMath::randomimax()
+int DUQMath::randomimax()
 {
 	// Returns a random number from 0->(RAND_MAX-1) inclusive.
 	return rand();
 }
 
 // Random number generator (0 - range-1)
-int dUQMath::randomi(int range)
+int DUQMath::randomi(int range)
 {
 	// Returns a random number from 0->(range-1) inclusive.
 	return int(range * (double(rand()-1) / RAND_MAX));
 }
 
 // Integer power function
-int dUQMath::power(int i, int p)
+int DUQMath::power(int i, int p)
 {
 	static int result, n;
 	result = i;
@@ -84,7 +84,7 @@ int dUQMath::power(int i, int p)
 }
 
 // Sign function
-int dUQMath::sgn(int x)
+int DUQMath::sgn(int x)
 {
 	return (x < 0 ? -1 : x > 0);
 }

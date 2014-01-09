@@ -25,6 +25,7 @@
 #include "classes/grain.h"
 #include "classes/molecule.h"
 #include "classes/species.h"
+#include "math/matrix3.h"
 #include "base/comms.h"
 #include <string.h>
 #include <new>
@@ -357,33 +358,87 @@ bool Configuration::setupArrays()
 
 /*!
  * \brief Setup Molecules
- * \details Once Molecules have been added to the Configuration with addMolecule(), and the master arrays of atom references and grains have
- * been allocated by setupArrays(), the coordinates of the individual atoms can be set. created by calling setupMolecules(). 'Empty' atoms have already been created by generateCells() - this routine assigns
- * pointers to these empty structures in each molecule in the system. The coordinates of the original species are copied, but no further
- * movement (i.e. randomisation) is applied.
+ * \details Once molecules have been added to the Configuration with addMolecule(), and the master arrays of atom references and grains have
+ * been allocated by setupArrays(), the coordinates of the individual atoms can be set. If atoms are present in the supplied Species, setupMolecules()
+ * takes coordinates from there and copies them to the molecules defined in the configuration. Otherwise, a random centre of geometry and orientation is
+ * generated for each molecule.
  */
 bool Configuration::setupMolecules(Species& sourceCoordinates)
 {
-
-
-	// Setup indices and atom references
-	int n, count = 0, atomsPerCell = nAtoms_ / nCells_, extraOne = nAtoms_ - (nCells_*atomsPerCell);
-	Cell* currentCell;
-	for (int c = 0; c < nCells_; ++c)
+	// If there are no atoms in the sourceCoordinates species, assume that we are creating a random configuration.
+	int count = 0, id;
+	Cell* c;
+	if (sourceCoordinates.nAtoms() == 0)
 	{
-		currentCell = cell(c);
-		for (n=0; n<(c < extraOne ? atomsPerCell+1 : atomsPerCell); ++n)
+		Matrix3 transform;
+		Vec3<double> r, cog, newCentre;
+
+		// Initialise a shared random number pool - this will ensure all processes generate the same coordinates
+		Comm.initialiseRandomBuffer(DUQComm::Solo);
+		
+		// Loop over defined molecules
+		for (Molecule* mol = molecules_.first(); mol != NULL; mol = mol->next)
 		{
-			atomReferences_[count] = currentCell->atom(n);
-			(atomReferences_[count])->setIndex(count);
-			(atomReferences_[count])->setCell(currentCell);
-			++count;
+			// Calculate the centre of geometry of the molecule's source species
+			cog = mol->species()->centreOfGeometry(box_);
+
+			// Generate a new random centre of geometry for the molecule
+			newCentre = box_->randomCoordinate();
+			
+			// Generate a random rotation matrix
+			transform.createRotationXY(Comm.randomPlusMinusOne()*180.0, Comm.randomPlusMinusOne()*180.0);
+
+			// Loop over atoms, generate translated and rotated position, and determine cell
+			for (SpeciesAtom* i = mol->species()->atoms(); i != NULL; i = i->next)
+			{
+				r = (transform * (i->r() - cog)) + newCentre;
+				c = cell(r);
+				id = c->nextUnusedAtom();
+				if (id == Cell::NoAtomsAvailable)
+				{
+					msg.error("No space left in cell.\n");
+					return false;
+				}
+				atomReferences_[count] = c->atom(id);
+				(atomReferences_[count])->setIndex(count);
+				(atomReferences_[count])->setCell(c);
+				++count;
+			}
 		}
+
 	}
-	for (n=0; n<nGrains_; ++n) grains_[n].setIndex(n);
+	else
+	{
+		SpeciesAtom* sourceI = sourceCoordinates.atoms();
+
+		// Loop over defined molecules
+		for (Molecule* mol = molecules_.first(); mol != NULL; mol = mol->next)
+		{
+			// Loop over atoms, generate translated and rotated position, and determine cell
+			for (SpeciesAtom* i = mol->species()->atoms(); i != NULL; i = i->next)
+			{
+				c = cell(sourceI->r());
+				id = c->nextUnusedAtom();
+				if (id == Cell::NoAtomsAvailable)
+				{
+					msg.error("No space left in cell.\n");
+					return false;
+				}
+				atomReferences_[count] = c->atom(id);
+				(atomReferences_[count])->setIndex(count);
+				(atomReferences_[count])->setCell(c);
+				++count;
+				sourceI = sourceI->next;
+			}
+		}
+		
+	}
+
+	// Setup grain indices
+	for (int n=0; n<nGrains_; ++n) grains_[n].setIndex(n);
 
 	// Set each Molecule's atoms and grains
-	msg.print("--> Creating %i Molecule instances...\n", molecules_.nItems());
+	msg.print("--> Assigning atoms and grains to %i molecules...\n", molecules_.nItems());
 	int atomCount = 0, grainCount = 0, startAtom = 0;
 	Species* sp;
 	Atom* i;
@@ -393,7 +448,7 @@ bool Configuration::setupMolecules(Species& sourceCoordinates)
 		sp = mol->species();
 
 		// Atoms
-		for (n = 0; n<mol->nAtoms(); ++n)
+		for (int n = 0; n<mol->nAtoms(); ++n)
 		{
 			if (atomCount >= nAtoms_)
 			{
@@ -406,7 +461,7 @@ bool Configuration::setupMolecules(Species& sourceCoordinates)
 		}
 		
 		// Grains
-		for (n = 0; n<mol->nGrains(); ++n)
+		for (int n = 0; n<mol->nGrains(); ++n)
 		{
 			if (grainCount >= nGrains_)
 			{
@@ -421,34 +476,6 @@ bool Configuration::setupMolecules(Species& sourceCoordinates)
 		// Increase startAtom
 		startAtom += mol->nAtoms();
 	}
-
-	return true;
-}
-
-/*!
- * \brief Generate random configuration
- * \details Give each a random position, orientation, and geometry within the box.
- */
-bool Configuration::randomise()
-{
-	Matrix3 transform;
-	Vec3<double> centre;
-	msg.print("--> Generating random positions/orientations for %i molecules...\n", molecules_.nItems());
-	for (Molecule* mol = molecules_.first(); mol != NULL; mol = mol->next)
-	{
-		// Move the molecule to a random position
-		mol->setCentre(box_, box_->randomCoordinate());
-		
-		// Apply random rotation to Molecule
-		transform.createRotationXY(dUQMath::randomPlusMinusOne()*180.0, dUQMath::randomPlusMinusOne()*180.0);
-		mol->applyTransform(box_, transform);
-		
-		// Randomisation of intramolecular geometry (rotations around bonds)
-		mol->randomiseGeometry(box_);
-	}
-
-	// Coordinates have changed, so increment change counter
-	++changeCount_;
 
 	return true;
 }
@@ -587,9 +614,9 @@ bool Configuration::imagesNeeded(Cell* a, Cell* b) const
 	if (abs(u.z)*2 >= divisions_.z) return true;
 
 	// Second check - mirrored Cell 'b'
-	u.x -= dUQMath::sgn(u.x) * divisions_.x;
-	u.y -= dUQMath::sgn(u.y) * divisions_.y;
-	u.z -= dUQMath::sgn(u.z) * divisions_.z;
+	u.x -= DUQMath::sgn(u.x) * divisions_.x;
+	u.y -= DUQMath::sgn(u.y) * divisions_.y;
+	u.z -= DUQMath::sgn(u.z) * divisions_.z;
 	if (abs(u.x)-1 <= cellExtents_.x) return true;
 	if (abs(u.y)-1 <= cellExtents_.y) return true;
 	if (abs(u.z)-1 <= cellExtents_.z) return true;
@@ -766,7 +793,7 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 				// Set the grid reference of the cell to check, but reduce the extent by one
 				// unit towards the central box since we need to check the distance of the closest
 				// edge to this central Cell.
-				r.set(x - dUQMath::sgn(x), y - dUQMath::sgn(y), z - dUQMath::sgn(z));
+				r.set(x - DUQMath::sgn(x), y - DUQMath::sgn(y), z - DUQMath::sgn(z));
 				r = cellAxes * r;
 				if (r.magnitude() < pairPotentialRange) nbrs.add()->set(x, y, z);
 			}

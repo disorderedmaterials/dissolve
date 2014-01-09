@@ -90,9 +90,9 @@ CommandReturnValue DUQ::md(Configuration& cfg)
 	for (n=0; n<cfg.nAtoms(); ++n)
 	{
 		i = cfg.atom(n);
-		v[n].x = exp(dUQMath::random()-0.5) / sqrt(TWOPI);
-		v[n].y = exp(dUQMath::random()-0.5) / sqrt(TWOPI);
-		v[n].z = exp(dUQMath::random()-0.5) / sqrt(TWOPI);
+		v[n].x = exp(DUQMath::random()-0.5) / sqrt(TWOPI);
+		v[n].y = exp(DUQMath::random()-0.5) / sqrt(TWOPI);
+		v[n].z = exp(DUQMath::random()-0.5) / sqrt(TWOPI);
 		mass[n] = PeriodicTable::element(i->element()).isotope(0)->atomicWeight();
 		vCom += v[n] * mass[n];
 		massSum += mass[n];

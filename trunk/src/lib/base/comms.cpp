@@ -1195,7 +1195,7 @@ double DUQComm::random()
 	if (randomBufferIndex_ == RANDBUFFERSIZE) refillRandomBuffer();
 	return randomBuffer_[randomBufferIndex_++];
 #else
-	return dUQMath::random();
+	return DUQMath::random();
 #endif
 }
 
@@ -1209,6 +1209,6 @@ double DUQComm::randomPlusMinusOne()
 	if (randomBufferIndex_ == RANDBUFFERSIZE) refillRandomBuffer();
 	return (randomBuffer_[randomBufferIndex_++]-0.5)*2.0;
 #else
-	return dUQMath::randomPlusMinusOne();
+	return DUQMath::randomPlusMinusOne();
 #endif
 }

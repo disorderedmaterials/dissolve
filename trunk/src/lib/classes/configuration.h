@@ -94,7 +94,7 @@ class Configuration : public ListItem<Configuration>
 	Atom* atom(int n);
 	// Setup arrays
 	bool setupArrays();
-	// Setup molecules in configuration
+	// Setup molecules
 	bool setupMolecules(Species& sourceCoordinates);
 	// Return current change count
 	int changeCount();
