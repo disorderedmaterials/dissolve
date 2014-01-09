@@ -227,7 +227,7 @@ int Molecule::index()
 /*!
  * \brief Calculate and return centre of geometry
  */
-Vec3<double> Molecule::centre(const Box* box) const
+Vec3<double> Molecule::centreOfGeometry(const Box* box) const
 {
 	if (nAtoms_ == 0) return Vec3<double>();
 	
@@ -244,7 +244,7 @@ Vec3<double> Molecule::centre(const Box* box) const
 void Molecule::applyTransform(const Box* box, const Matrix3& transform)
 {
 	// Calculate Molecule centre of geometry
-	Vec3<double> newR, cog = centre(box);
+	Vec3<double> newR, cog = centreOfGeometry(box);
 	
 	// Apply transform
 	for (int n=0; n<nAtoms_; ++n)
@@ -277,7 +277,7 @@ void Molecule::applyTransform(const Box* box, const Matrix3& transform, const Ve
 void Molecule::setCentre(const Box* box, const Vec3<double> newCentre)
 {
 	// Calculate Molecule centre of geometry
-	Vec3<double> newR, cog = centre(box);
+	Vec3<double> newR, cog = centreOfGeometry(box);
 
 	// Apply transform
 	for (int n=0; n<nAtoms_; ++n)
@@ -311,7 +311,7 @@ void Molecule::randomiseGeometry(const Box* box)
 	for (SpeciesBond* b = species_->bonds(); b!= NULL; b = b->next)
 	{
 		// Select random terminus
-		terminus = dUQMath::random() > 0.5;
+		terminus = DUQMath::random() > 0.5;
 		if (b->nAttached(terminus) < 2) continue;
 
 		// Get local Atom pointers
@@ -332,7 +332,7 @@ void Molecule::randomiseGeometry(const Box* box)
 
 		// Create axis rotation matrix
 		axis = localI->r() - localJ->r();
-		transform.createRotationAxis(axis.x, axis.y, axis.z, dUQMath::random()*360.0, true);
+		transform.createRotationAxis(axis.x, axis.y, axis.z, DUQMath::random()*360.0, true);
 
 		// Perform transform
 		applyTransform(box, transform, terminus == 0 ? localI->r() : localJ->r(), b->nAttached(terminus), b->attachedIndices(terminus));

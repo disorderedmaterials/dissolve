@@ -298,9 +298,9 @@ CommandReturnValue DUQ::interShake(Configuration& cfg)
 				delta = b->equilibrium() - distance;
 				
 				// The delta now reflects the distance and direction we should try to travel.
-				// TODO To avoid constant sending of single values because of randomness, implement dUQMath::randomBuffer() which stores a chunk of random numbers
+				// TODO To avoid constant sending of single values because of randomness, implement DUQMath::randomBuffer() which stores a chunk of random numbers
 				currentBondEnergy = kernel.energy(mol, b);
-				vec *= delta * dUQMath::random();
+				vec *= delta * DUQMath::random();
 				grainI->translate(vec);
 
 				// Calculate new energy
@@ -310,7 +310,7 @@ CommandReturnValue DUQ::interShake(Configuration& cfg)
 
 				// Trial the transformed Grain position (the Master is in charge of this)
 				delta = (newGrainEnergy + newBondEnergy) - (currentGrainEnergy + currentBondEnergy);
-				accept = delta < 0 ? true : (dUQMath::random() < exp(-delta/(.008314472*temperature_)));
+				accept = delta < 0 ? true : (DUQMath::random() < exp(-delta/(.008314472*temperature_)));
 
 				// Broadcast result to process group
 				if (!Comm.broadcast(&accept, 1, 0, DUQComm::Group)) return CommandCommFail;
@@ -356,13 +356,13 @@ CommandReturnValue DUQ::interShake(Configuration& cfg)
 // 		double acceptanceRate = double(nAccepted)/nTries;
 // 		if (acceptanceRate < reqAcceptandRate)
 // 		{
-// 			translationStep_ *= 1.0-(0.1 * dUQMath::random());
-// 			rotationStep_ *= 1.0-(0.1 * dUQMath::random());
+// 			translationStep_ *= 1.0-(0.1 * DUQMath::random());
+// 			rotationStep_ *= 1.0-(0.1 * DUQMath::random());
 // 		}
 // 		else
 // 		{
-// 			translationStep_ /= 1.0-(0.1 * dUQMath::random());
-// 			rotationStep_ /= 1.0-(0.1 * dUQMath::random());
+// 			translationStep_ /= 1.0-(0.1 * DUQMath::random());
+// 			rotationStep_ /= 1.0-(0.1 * DUQMath::random());
 // 		}
 // 		if (translationStep_ < 0.05) translationStep_ = 0.05;
 // 		else if (translationStep_ > maxTranslationStep_) translationStep_ = maxTranslationStep_;
@@ -434,7 +434,7 @@ CommandReturnValue DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 				delta = b->equilibrium() - distance;
 				
 				// The delta now reflects the distance and direction we should try to travel.
-				vec *= -delta * dUQMath::random();
+				vec *= -delta * DUQMath::random();
 				
 				// Shift the fewest Atoms possible...
 				// Need to take care and reverse the vector if necessary
@@ -449,7 +449,7 @@ CommandReturnValue DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 				newEnergy = kernel.energy(mol, pairPotentialRangeSquared_);
 				delta = newEnergy - currentEnergy;
 				
-				if ((delta < 0) || (dUQMath::random() < exp(-delta/(.008314472*temperature_))))
+				if ((delta < 0) || (DUQMath::random() < exp(-delta/(.008314472*temperature_))))
 				{
 					changeStore.updateAtomsLocal(nAttachedAtoms, attachedIndices);
 					currentEnergy = newEnergy;
@@ -487,7 +487,7 @@ CommandReturnValue DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 				delta = a->equilibrium() - angle;
 				
 				// The delta now reflects the distance and direction we should try to travel.
-				delta *= dUQMath::random();
+				delta *= DUQMath::random();
 				vec = vecji*vecjk;
 
 				// Shift the fewest Atoms possible...
@@ -517,7 +517,7 @@ CommandReturnValue DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 				newEnergy = kernel.energy(mol, pairPotentialRangeSquared_);
 				delta = newEnergy - currentEnergy;
 				
-				if ((delta < 0) || (dUQMath::random() < exp(-delta/(.008314472*temperature_))))
+				if ((delta < 0) || (DUQMath::random() < exp(-delta/(.008314472*temperature_))))
 				{
 					changeStore.updateAtomsLocal(nAttachedAtoms, attachedIndices);
 					currentEnergy = newEnergy;

@@ -32,11 +32,11 @@
 #include "base/dnchar.h"
 
 // Forward Declarations
-/* None */
+class Box;
 
 /*!
  * \brief Species Definition
- * \details A Species is a distinct molecule type, ion, or fragment present in the real system. For instance, a water molecule, sodium ion,
+ * \details A Species is a distinct molecule type, ion, or fragment present in the real system. For instance, a water molecule, solute molecule,
  * a protein, or a single atom species such as Si (as might be used, e.g. for simulations of solid frameworks). The underlying Model for
  * the system is constructed from these species, mixed in the correct proportion (i.e. molar ratios). The basic Species does not define
  * the isotopic make-up of its atoms - these are added as Isotopologues within the Species.
@@ -121,8 +121,6 @@ class Species : public ListItem<Species>
 	void changeAtomElement(SpeciesAtom* i, int el, AtomType* at);
 	// Return total atomic mass of Species
 	double mass() const;
-	// Centre coordinates at origin
-	void centreAtOrigin();
 	///@}
 
 
@@ -251,6 +249,20 @@ class Species : public ListItem<Species>
 	void setHighlightedIsotopologue(Isotopologue* iso);
 	// Return highlighted Isotopologue
 	Isotopologue* highlightedIsotopologue();
+	///@}
+
+
+	/*!
+	 * \name Transforms
+	 */
+	///@{
+	public:
+	// Calculate and return centre of geometry
+	Vec3<double> centreOfGeometry(const Box* box) const;
+	// Set centre of geometry
+	void setCentre(const Box* box, const Vec3<double> newCentre);
+	// Centre coordinates at origin
+	void centreAtOrigin();
 	///@}
 
 

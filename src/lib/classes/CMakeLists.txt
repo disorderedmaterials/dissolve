@@ -21,6 +21,12 @@ pairpotential.cpp
 sample.cpp
 sdf.cpp
 species.cpp
+species_atomic.cpp
+species_grains.cpp
+species_intra.cpp
+species_io.cpp
+species_isotopologues.cpp
+species_transform.cpp
 speciesangle.cpp
 speciesatom.cpp
 speciesbond.cpp

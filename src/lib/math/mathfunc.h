@@ -23,7 +23,7 @@
 #define DUQ_MATHFUNC_H
 
 // Mathematical functions
-class dUQMath
+class DUQMath
 {
 	// Error functions
 	public:

@@ -259,55 +259,30 @@ bool DUQ::setupConfiguration()
 	}
 
 	// Now, we need some coordinates - either we are creating a random configuration of molecules, or we are loading in a set of coordinates from a file
-	if (randomConfiguration_)
-	{
-	}
-	else
+	Species sourceCoordinates;
+	if (!randomConfiguration_)
 	{
 		// Construct a temporary Species to load the source coordinates into
-		Species sourceCoordinates;
-		if (!sourceCoordinates.load(fileName)) return false;
+		if (!MPIRunMaster(sourceCoordinates.load(initialCoordinatesFile_.get()))) return false;
+		sourceCoordinates.broadcast(atomTypes_);
 
-		// Species now contains stuff - does the number of Atoms match the Configuration?
+		// Species now contains some number of atoms - does it match the number in the configuration's molecules?
 		if (configuration_.nAtoms() != sourceCoordinates.nAtoms())
 		{
-			msg.error("Number of Atoms in initial coordinates file (%i) does not match that in Configuration (%i).\n", species.nAtoms(), nAtoms_);
+			msg.error("Number of atoms in initial coordinates file (%i) does not match that in configuration (%i).\n", sourceCoordinates.nAtoms(), configuration_.nAtoms());
 			return false;
 		}
-		
-		// Copy coordinates from Species to Configuration
-		SpeciesAtom* i;
-		for (int n=0; n<nAtoms_; ++n)
-		{
-			i = species.atom(n);
-			atomReferences_[n]->setCoordinates( i->r() );
-			if (i->element() != atomReferences_[n]->element()) msg.warn("Atom %i in loaded configuration has a different element (%i) to that expected (%i).\n", n+1, i->element(), atomReferences_[n]->element());
-		}
-
-		// Coordinates have changed, so increment change counter
-		++changeCount_;
-
-		return true;
 	}
-	
-	
+
 	// Create Atom and Grain arrays, and Molecule copies
 	msg.print("\n");
 	msg.print("Setting up molecules, atoms, and grains...\n");
-	if (!configuration_.setupRandomMolecules())
+	if (!configuration_.setupMolecules(sourceCoordinates))
 	{
 		msg.error("Failed to setup molecules.\n");
 		return false;
 	}
 
-	// Create random configuration / load initial coordinates from file
-	if (randomConfiguration_)
-	{
-		if (!MPIRunMaster(configuration_.randomise())) return false;
-	}
-	else if (!MPIRunMaster(configuration_.loadInitialCoordinates(initialCoordinatesFile_.get()))) return false;
-
-	if (!configuration_.broadcastCoordinates()) return false;
 	if (!configuration_.updateAtomsInCells()) return false;
 	updateGrains(configuration_);
 }
@@ -437,9 +412,6 @@ bool DUQ::setupSimulation()
 	
 	msg.print("\n");
 	msg.print("Simulation setup is complete.\n");
-
-	// Store flag count at this point so we know when the setup is invalid
-	setupFlagCount_ = Flags::count();
 
 	return true;
 }

@@ -542,9 +542,9 @@ template <class T> void Vec3<T>::print() const
 template <class T> void Vec3<T>::randomUnit()
 {
 	// Generates a random unit vector
-	x = dUQMath::random()-0.5;
-	y = dUQMath::random()-0.5;
-	z = dUQMath::random()-0.5;
+	x = DUQMath::random()-0.5;
+	y = DUQMath::random()-0.5;
+	z = DUQMath::random()-0.5;
 	normalise();
 }
 
