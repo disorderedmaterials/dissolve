@@ -53,7 +53,7 @@ bool DUQ::calculateIntramolecularRDFs(Configuration& cfg)
 		{
 			i = mol->atom(b->indexI());
 			j = mol->atom(b->indexJ());
-			if (configuration_.useMim(i->grain()->cell(), j->grain()->cell())) distance = box->minimumDistance(i, j);
+			if (configuration_.useMim(i->cell(), j->cell())) distance = box->minimumDistance(i, j);
 			else distance = (i->r() - j->r()).magnitude();
 			boundRDFMatrix_.ref(i->atomTypeIndex(), j->atomTypeIndex()).add(distance);
 		}

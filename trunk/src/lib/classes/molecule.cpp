@@ -104,6 +104,8 @@ int Molecule::nAtoms()
 
 /*!
  * \brief Set nth pointer to Atom pointer
+ * \details Sets the n'th atom pointer location in the molecule, and copies characteristic atom data (e.g. element, charge, atomtype) from the 
+ * source SpeciesAtom. Note that the coordinates of the original SpeciesAtom are *not* copied over.
  */
 bool Molecule::setupAtom(int n, Atom** i, SpeciesAtom* source)
 {
@@ -131,7 +133,6 @@ bool Molecule::setupAtom(int n, Atom** i, SpeciesAtom* source)
 	(*atoms_[n])->setCharge(source->charge());
 	(*atoms_[n])->setAtomTypeIndex(source->atomType()->index());
 	(*atoms_[n])->setMolecule(this, source->index());
-	(*atoms_[n])->setCoordinatesNasty(source->r());
 
 	return true;
 }

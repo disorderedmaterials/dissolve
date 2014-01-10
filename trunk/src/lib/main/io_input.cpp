@@ -173,7 +173,7 @@ bool DUQ::loadInput(const char* fileName)
 							el = PeriodicTable::find(parser.argc(2));
 							if (el == -1)
 							{
-								msg.error("Warning: Unrecognised element symbol '%s' found in %s keyword.\n", parser.argc(2), Keywords::atomTypesKeyword(Keywords::AtomTypeKeyword));
+								msg.error("Unrecognised element symbol '%s' found in %s keyword.\n", parser.argc(2), Keywords::atomTypesKeyword(Keywords::AtomTypeKeyword));
 								el = 0;
 								error = true;
 								break;
@@ -181,8 +181,10 @@ bool DUQ::loadInput(const char* fileName)
 							params = PeriodicTable::element(el).findParameters(parser.argc(3));
 							if (!params)
 							{
-								msg.error("Warning: Couldn't find Parameters called '%s' when adding AtomType '%s' - defaults will be used.\n", parser.argc(3), parser.argc(1));
+								msg.error("Couldn't find Parameters called '%s' when adding AtomType '%s'.\n", parser.argc(3), parser.argc(1));
 								params = PeriodicTable::element(el).parameters();
+								error = true;
+								break;
 							}
 							at = addAtomType(el);
 							at->setName(parser.argc(1));

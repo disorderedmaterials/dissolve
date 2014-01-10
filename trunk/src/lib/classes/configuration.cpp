@@ -20,6 +20,7 @@
 */
 
 #include "classes/configuration.h"
+#include "classes/atomtype.h"
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/grain.h"
@@ -353,6 +354,10 @@ bool Configuration::setupArrays()
 		msg.error("Configuration::setupArrays - Failed to allocate sufficient memory. Exception was : %s\n", alloc.what());
 		return false;
 	}
+
+	// Setup grain indices
+	for (int n=0; n<nGrains_; ++n) grains_[n].setIndex(n);
+
 	return true;
 }
 
@@ -366,18 +371,25 @@ bool Configuration::setupArrays()
 bool Configuration::setupMolecules(Species& sourceCoordinates)
 {
 	// If there are no atoms in the sourceCoordinates species, assume that we are creating a random configuration.
-	int count = 0, id;
+	int atomCount = 0, grainCount = 0, id;
 	Cell* c;
-	if (sourceCoordinates.nAtoms() == 0)
-	{
-		Matrix3 transform;
-		Vec3<double> r, cog, newCentre;
+	Matrix3 transform;
+	Vec3<double> r, cog, newCentre;
+	bool randomising = sourceCoordinates.nAtoms() == 0;
+	Species* sp;
+	SpeciesAtom* sourceI = sourceCoordinates.atoms();
 
-		// Initialise a shared random number pool - this will ensure all processes generate the same coordinates
-		Comm.initialiseRandomBuffer(DUQComm::Solo);
-		
-		// Loop over defined molecules
-		for (Molecule* mol = molecules_.first(); mol != NULL; mol = mol->next)
+	// Initialise a shared random number pool - this will ensure all processes generate the same coordinates
+	Comm.initialiseRandomBuffer(DUQComm::Solo);
+
+	// Loop over defined molecules
+	for (Molecule* mol = molecules_.first(); mol != NULL; mol = mol->next)
+	{
+		// Grab pointer to parent species
+		sp = mol->species();
+
+		// If we are randomising the configuration, get the centre of geometry for the species and generate a random centre and rotation matrix
+		if (randomising)
 		{
 			// Calculate the centre of geometry of the molecule's source species
 			cog = mol->species()->centreOfGeometry(box_);
@@ -387,79 +399,42 @@ bool Configuration::setupMolecules(Species& sourceCoordinates)
 			
 			// Generate a random rotation matrix
 			transform.createRotationXY(Comm.randomPlusMinusOne()*180.0, Comm.randomPlusMinusOne()*180.0);
-
-			// Loop over atoms, generate translated and rotated position, and determine cell
-			for (SpeciesAtom* i = mol->species()->atoms(); i != NULL; i = i->next)
-			{
-				r = (transform * (i->r() - cog)) + newCentre;
-				c = cell(r);
-				id = c->nextUnusedAtom();
-				if (id == Cell::NoAtomsAvailable)
-				{
-					msg.error("No space left in cell.\n");
-					return false;
-				}
-				atomReferences_[count] = c->atom(id);
-				(atomReferences_[count])->setIndex(count);
-				(atomReferences_[count])->setCell(c);
-				++count;
-			}
 		}
-
-	}
-	else
-	{
-		SpeciesAtom* sourceI = sourceCoordinates.atoms();
-
-		// Loop over defined molecules
-		for (Molecule* mol = molecules_.first(); mol != NULL; mol = mol->next)
-		{
-			// Loop over atoms, generate translated and rotated position, and determine cell
-			for (SpeciesAtom* i = mol->species()->atoms(); i != NULL; i = i->next)
-			{
-				c = cell(sourceI->r());
-				id = c->nextUnusedAtom();
-				if (id == Cell::NoAtomsAvailable)
-				{
-					msg.error("No space left in cell.\n");
-					return false;
-				}
-				atomReferences_[count] = c->atom(id);
-				(atomReferences_[count])->setIndex(count);
-				(atomReferences_[count])->setCell(c);
-				++count;
-				sourceI = sourceI->next;
-			}
-		}
-		
-	}
-
-	// Setup grain indices
-	for (int n=0; n<nGrains_; ++n) grains_[n].setIndex(n);
-
-	// Set each Molecule's atoms and grains
-	msg.print("--> Assigning atoms and grains to %i molecules...\n", molecules_.nItems());
-	int atomCount = 0, grainCount = 0, startAtom = 0;
-	Species* sp;
-	Atom* i;
-	for (Molecule* mol = molecules_.first(); mol != NULL; mol = mol->next)
-	{
-		// Grab pointer to parent species
-		sp = mol->species();
 
 		// Atoms
-		for (int n = 0; n<mol->nAtoms(); ++n)
+		SpeciesAtom* i = mol->species()->atoms();
+		for (int n = 0; n<sp->nAtoms(); ++n)
 		{
-			if (atomCount >= nAtoms_)
+			// Get / generate atom coordinate
+			if (randomising) r = (transform * (i->r() - cog)) + newCentre;
+			else
 			{
-				msg.error("Mismatch between size of atom array in configuration, and number of atoms needed by molecules.\n");
+				r = sourceI->r();
+				sourceI = sourceI->next;
+			}
+
+			// Get cell location of atom, and find an empty atom slot in that cell
+			c = cell(r);
+			id = c->nextUnusedAtom();
+			if (id == Cell::NoAtomsAvailable)
+			{
+				msg.error("No space left in cell.\n");
 				return false;
 			}
-			if (!mol->setupAtom(n, &atomReferences_[atomCount], sp->atom(n))) return false;
 
+			// Set the master atom reference
+			atomReferences_[atomCount] = c->atom(id);
+			(atomReferences_[atomCount])->setIndex(atomCount);
+			(atomReferences_[atomCount])->setCoordinatesNasty(r);
+			(atomReferences_[atomCount])->setCell(c);
+
+			// Set atom pointer and character (charge, atomtype etc.) of atom in molecule from the source Species
+			if (!mol->setupAtom(n, &atomReferences_[atomCount], i)) return false;
+			
 			++atomCount;
+			i = i->next;
 		}
-		
+
 		// Grains
 		for (int n = 0; n<mol->nGrains(); ++n)
 		{
@@ -473,8 +448,6 @@ bool Configuration::setupMolecules(Species& sourceCoordinates)
 			++grainCount;
 		}
 
-		// Increase startAtom
-		startAtom += mol->nAtoms();
 	}
 
 	return true;
@@ -721,7 +694,7 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 	maxAtomsPerCell_ = (box_->volume() / nCells_) * atomicDensity * cellDensityMultiplier;
 	if (maxAtomsPerCell_ == 0) maxAtomsPerCell_ = 1;
 	cellFlag_ = new bool[nCells_];
-	msg.print("--> Constructing array of %i cells (maximum atoms per cell = %i)...\n", nCells_, maxAtomsPerCell_);
+	msg.print("--> Constructing array of %i cells containing maximum of %i atoms (volume*rho = %i, multiplied by %f)...\n", nCells_, maxAtomsPerCell_, int((box_->volume() / nCells_) * atomicDensity), cellDensityMultiplier);
 	cells_ = new Cell[nCells_];
 	int count = 0;
 	for (x = 0; x<divisions_.x; ++x)
@@ -827,7 +800,7 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 	}
 
 	// Send Cell info to Comm so suitable parallel strategy can be deduced
-	if (!Comm.setupStrategy(divisions_, cellExtents_, nbrs)) return false;
+	if (!Comm.setupStrategy(divisions_, cellExtents_, nbrs)) return false;   // TODO Move to setupComms()?
 
 	return true;
 }
@@ -1107,6 +1080,7 @@ bool Configuration::updateAtomsInCells()
 			i = currentCell->atom(atomId);
 			if (i->index() == Atom::UnusedAtom) continue;
 
+			// TODO Overload cell() to take a pointer to a Vec3<> in which the folded r can be returned
 			foldedR = box_->fold(i->r());
 			i->setCoordinates(foldedR);
 			targetCell = cell(i->r());
