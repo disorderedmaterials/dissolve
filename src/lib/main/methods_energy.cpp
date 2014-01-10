@@ -210,8 +210,8 @@ double DUQ::totalEnergy(Configuration& cfg)
 {
 	msg.print("Calculating total energy...\n");
 	
-	printf("Test energy is %f\n", totalEnergyTest(cfg));
-	printf("Grain energy is %f\n", intergrainEnergy(cfg));
+// 	printf("Test energy is %f\n", totalEnergyTest(cfg));
+// 	printf("Grain energy is %f\n", intergrainEnergy(cfg));
 	
 	double atomEnergy, intraEnergy;
 	
@@ -226,8 +226,8 @@ double DUQ::totalEnergy(Configuration& cfg)
 	intraTimer.stop();
 
 	msg.print("Time to do atom energy was %s, intramolecular energy was %s.\n", grainTimer.timeString(), intraTimer.timeString());
-
 	msg.print("Total Energy (World) is %15.9e (%15.9e Grain + %15.9e Intramolecular)\n", atomEnergy + intraEnergy, atomEnergy, intraEnergy);
+
 	return atomEnergy + intraEnergy;
 }
 

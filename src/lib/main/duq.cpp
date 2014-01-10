@@ -63,7 +63,7 @@ DUQ::DUQ()
 	rdfBinWidth_ = 0.025;
 	rdfRange_ = -1.0;
 	rdfExtensionLimit_ = 0.0;
-	rdfSmoothing_ = 1;
+	rdfSmoothing_ = 0;
 	requestedRDFRange_ = -1.0;
 	rmseDeltaQ_ = 0.05;
 	seed_ = -1;

@@ -135,6 +135,8 @@ class Cell
 	private:
 	// List of neighbouring Cells, and whether they are images
 	RefList<Cell,bool> neighbours_;
+	// Array of neighbouring atoms, within the defined potential cutoff (from anywhere in the cell)
+	Atom** atomNeighbours_;
 
 	public:
 	// Add Cell neighbour
@@ -143,6 +145,8 @@ class Cell
 	int nNeighbours();
 	// Return neighbour list
 	RefList<Cell,bool>& neighbours();
+	// Initialise atom neighbour list
+// 	void initialise
 	///@}
 };
 

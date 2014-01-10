@@ -96,6 +96,7 @@ bool DUQ::calculatePartialsSimple(Configuration& cfg)
 	}
 
 	// Cross terms
+	int count = 0;
 	for (typeI = 0; typeI<nTypes; ++typeI)
 	{
 		ri = r[typeI];
@@ -116,7 +117,7 @@ bool DUQ::calculatePartialsSimple(Configuration& cfg)
 				for (j = 0; j < maxr[typeJ]; ++j)
 				{
 					bins[j] = box->minimumDistance(centre, rj[j]) * rbin;
-// 						++count;
+					if (box->minimumDistance(centre, rj[j]) < 1.3) ++count;
 				}
 				for (j = 0; j < maxr[typeJ]; ++j) 
 				{
@@ -127,5 +128,6 @@ bool DUQ::calculatePartialsSimple(Configuration& cfg)
 		}
 	}
 
+	printf("Here count = %i\n", count);
 	return true;
 }

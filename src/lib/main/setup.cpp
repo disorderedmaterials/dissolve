@@ -238,18 +238,6 @@ bool DUQ::checkSetup()
  */
 bool DUQ::setupConfiguration()
 {
-	// First stage is always to create 'empty' molecules in the main Configuration
-	msg.print("--> Creating space for molecules...\n");
-	int count;
-	for (Species* sp = species_.first(); sp != NULL; sp = sp->next)
-	{
-		// For safety, only one process will determine the number of molecules of each component
-		if (Comm.master()) count = sp->relativePopulation() * multiplier_;
-		if (!Comm.broadcast(&count, 1)) return false;
-		
-		for (int n = 0; n < count; ++n) configuration_.addMolecule(sp);
-	}
-
 	// Create a Box (all processes)
 	msg.print("--> Creating periodic box...\n");
 	if (!configuration_.setupBox(pairPotentialRange_, relativeBoxLengths_, boxAngles_, atomicDensity(), cellDensityMultiplier_, nonPeriodic_))
@@ -285,6 +273,8 @@ bool DUQ::setupConfiguration()
 
 	if (!configuration_.updateAtomsInCells()) return false;
 	updateGrains(configuration_);
+	
+	return true;
 }
 
 /*!
@@ -304,10 +294,24 @@ bool DUQ::setupSimulation()
 
 	clearModel();
 
-	// Setup / load / create simulation system
-	msg.print("\n");
-	msg.print("Setting up atomic configuration...\n");
-	setupConfiguration();
+	// First stage is always to create 'empty' molecules in the main Configuration
+	msg.print("--> Creating space for molecules...\n");
+	int count;
+	for (Species* sp = species_.first(); sp != NULL; sp = sp->next)
+	{
+		// For safety, only one process will determine the number of molecules of each component
+		if (Comm.master()) count = sp->relativePopulation() * multiplier_;
+		if (!Comm.broadcast(&count, 1)) return false;
+		
+		for (int n = 0; n < count; ++n) configuration_.addMolecule(sp);
+	}
+
+	// Setup arrays for atoms and grains, based on the local molecules list
+	if (!configuration_.setupArrays())
+	{
+		msg.error("Failed to set-up arrays in Configuration.\n");
+		return false;
+	}
 
 	// Setup PairPotentials array and assign atomtype indices to atoms
 	msg.print("\n");
@@ -317,6 +321,11 @@ bool DUQ::setupSimulation()
 		msg.error("Failed to create AtomType index, map, and PairPotential and array.\n");
 		return false;
 	}
+
+	// Setup / load / create simulation system
+	msg.print("\n");
+	msg.print("Setting up atomic configuration...\n");
+	if (!setupConfiguration()) return false;
 
 	// Setup parallel comms / limits etc.
 	msg.print("\n");

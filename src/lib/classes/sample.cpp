@@ -416,18 +416,6 @@ bool Sample::setupPairCorrelations(double volume, double range, double binWidth,
 	{
 		referenceDataFT_ = referenceFQ_;
 		referenceDataFT_.transformSQ(rho);
-		printf("jklhlkjlkj\n");
-		referenceFQ_.interpolate(false);
-		Data2D newData;
-		double q = 2.32;
-		while (q < 100.0)
-		{
-			newData.addPoint(q, referenceFQ_.interpolated(q));
-			q += 0.01;
-		}
-		newData.save("crap.txt");
-		newData.transformSQ(0.107, Data2D::GaussianWindow);
-		newData.save("crap.ft");
 	}
 
 	return true;

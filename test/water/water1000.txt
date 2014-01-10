@@ -80,6 +80,7 @@ EndPairPotentials
 
 # Setup
 Setup
+  CellDensityMultiplier 2.0
   Seed  943723867
   Temperature  298.000000
   RDFRange  20.0
@@ -100,6 +101,7 @@ Simulation
   1 gs 1 15.0
 
 @Strategy
+p
 #  ptb
 #  saverdfs
 #  savesq

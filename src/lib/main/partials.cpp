@@ -201,7 +201,7 @@ CommandReturnValue DUQ::calculatePairCorrelations(Configuration& cfg)
 			// Sum histogram data from all processes
 			if (!partialRDFMatrix_.ref(typeI,typeJ).allSum()) return CommandFail;
 			if (!boundRDFMatrix_.ref(typeI,typeJ).allSum()) return CommandFail;
-			
+
 			// Create unbound histogram from total and bound data
 			unboundRDFMatrix_.ref(typeI, typeJ) = partialRDFMatrix_.ref(typeI,typeJ);
 			unboundRDFMatrix_.ref(typeI, typeJ).addHistogramData(boundRDFMatrix_.ref(typeI,typeJ), -1.0);
