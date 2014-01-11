@@ -472,6 +472,65 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 	return totalEnergy;
 }
 
+// Return PairPotential energy between cell and atomic neighbours
+double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, DUQComm::CommGroup group)
+{
+	double totalEnergy = 0.0;
+	Atom* centralAtoms = centralCell->atoms(), **otherAtoms;
+	int i, j, start = 0, stride = 1;
+	double scale;
+
+	// Communication group determines loop/summation style
+	start = Comm.interleavedLoopStart(group);
+	stride = Comm.interleavedLoopStride(group);
+
+	// Loop over central cell atoms
+	for (i = start; i < centralCell->maxAtoms(); i += stride)
+	{
+		if (centralAtoms[i].index() == Atom::UnusedAtom) continue;
+
+		// Straight loop over atoms *not* requiring mim
+		otherAtoms = centralCell->atomNeighbours();
+		for (j = 0; j < centralCell->nAtomNeighbours(); ++j)
+		{
+			// Check exclusion of I > J
+			if (excludeIgeJ && (centralAtoms[i].index() >= otherAtoms[j]->index())) continue;
+
+			// Check for atoms in the same species
+			if (centralAtoms[i].molecule() == otherAtoms[j]->molecule())
+			{
+				scale = centralAtoms[i].molecule()->species()->scaling(centralAtoms[i].moleculeAtomIndex(), otherAtoms[j]->moleculeAtomIndex());
+				if (scale < 1.0e-3) continue;
+				totalEnergy += energyWithoutMim(centralAtoms[i], otherAtoms[j]) * scale;
+			}
+			else totalEnergy += energyWithoutMim(centralAtoms[i], otherAtoms[j]);
+		}
+
+		// Straight loop over atoms requiring mim
+		otherAtoms = centralCell->mimAtomNeighbours();
+		for (j = 0; j < centralCell->nMimAtomNeighbours(); ++j)
+		{
+			// Check exclusion of I > J
+			if (excludeIgeJ && (centralAtoms[i].index() >= otherAtoms[j]->index())) continue;
+
+			// Check for atoms in the same species
+			if (centralAtoms[i].molecule() == otherAtoms[j]->molecule())
+			{
+				scale = centralAtoms[i].molecule()->species()->scaling(centralAtoms[i].moleculeAtomIndex(), otherAtoms[j]->moleculeAtomIndex());
+				if (scale < 1.0e-3) continue;
+				totalEnergy += energyWithMim(centralAtoms[i], otherAtoms[j]) * scale;
+			}
+			else totalEnergy += energyWithMim(centralAtoms[i], otherAtoms[j]);
+		}
+	}
+
+	// Sum over processes if necessary
+	if (group == DUQComm::Group) Comm.allSum(&totalEnergy, 1, DUQComm::Group);
+	else if (group == DUQComm::World) Comm.allSum(&totalEnergy, 1);
+
+	return totalEnergy;
+}
+
 /*!
  * \brief Return PairPotential energy between atom and cell
  * \details Calculate the energy between the atom and the supplied cell, applying minimum image calculations if necessary.

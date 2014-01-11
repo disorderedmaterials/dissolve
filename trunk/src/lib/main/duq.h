@@ -530,6 +530,8 @@ class DUQ
 	public:
 	// Upkeep - Update Grains
 	void updateGrains(Configuration& cfg);
+	// Upkeep - Recalculate cell atom neighbour lists
+	void updateCellAtomNeighbourLists(Configuration& cfg);
 	// Perform an Atom shake
 	CommandReturnValue atomShake(Configuration& cfg);
 	// Perform a Grain shake

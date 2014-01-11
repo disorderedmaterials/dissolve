@@ -117,6 +117,8 @@ class EnergyKernel
 	double energy(const Grain* grainI, const Grain* grainJ, double cutoffSq, bool applyMim, bool excludeIgeJ = false);
 	// Return PairPotential energy between two cells
 	double energy(Cell* centralCell, Cell* otherCell, bool applyMim, bool excludeIgeJ = false, DUQComm::CommGroup group = DUQComm::Solo);
+	// Return PairPotential energy between cell and atomic neighbours
+	double energy(Cell* centralCell, bool excludeIgeJ = false, DUQComm::CommGroup group = DUQComm::Solo);
 	// Return PairPotential energy between atom and cell
 	double energy(const Atom& i, Cell* cell, bool applyMim, DUQComm::CommGroup group = DUQComm::Solo);
 	// Return PairPotential energy between grain and cell contents

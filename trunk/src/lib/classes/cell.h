@@ -135,8 +135,14 @@ class Cell
 	private:
 	// List of neighbouring Cells, and whether they are images
 	RefList<Cell,bool> neighbours_;
-	// Array of neighbouring atoms, within the defined potential cutoff (from anywhere in the cell)
-	Atom** atomNeighbours_;
+	// Maximum number of atoms in neighbour list
+	int maxAtomNeighbours_;
+	// Number of atoms in neighbour list
+	int nAtomNeighbours_;
+	// Number of atoms in neighbour list requiring mim
+	int nMimAtomNeighbours_;
+	// Arrays of neighbouring atoms, within the defined potential cutoff (from anywhere in the cell)
+	Atom** atomNeighbours_, **mimAtomNeighbours_;
 
 	public:
 	// Add Cell neighbour
@@ -146,7 +152,19 @@ class Cell
 	// Return neighbour list
 	RefList<Cell,bool>& neighbours();
 	// Initialise atom neighbour list
-// 	void initialise
+	void initialiseAtomNeighbourList(double atomicDensity, double ppRange, Vec3< double > realCellSize);
+	// Clear atom neighbour list
+	void clearAtomNeighbourList();
+	// Add atom to neighbour list
+	void addAtomToNeighbourList(Atom* i, bool useMim);
+	// Return atom neighbour list
+	Atom** atomNeighbours();
+	// Return number of atom neighbours in list
+	int nAtomNeighbours();
+	// Return atom neighbour list requiring mim
+	Atom** mimAtomNeighbours();
+	// Return number of atom neighbours in list requiring mim
+	int nMimAtomNeighbours();
 	///@}
 };
 

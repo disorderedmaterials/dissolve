@@ -107,12 +107,13 @@ double DUQ::interatomicEnergy(Configuration& cfg)
 		totalEnergy += kernel.energy(cell, cell, false, true, DUQComm::Solo);
 		
 		// Interatomic interactions between atoms in this cell and its neighbours
-		for (RefListItem<Cell,bool>* ri = cell->neighbours().first(); ri != NULL; ri = ri->next)
-		{
-			// Perform i >= j exclusion here by comparing cell indices rather than atom indices, since for the i-j and j-i pairs will both be trialled at some point
-			if (cell->index() >= ri->item->index()) continue;
-			totalEnergy += kernel.energy(cell, ri->item, ri->data, false, DUQComm::Solo);
-		}
+// 		for (RefListItem<Cell,bool>* ri = cell->neighbours().first(); ri != NULL; ri = ri->next)
+// 		{
+// 			// Perform i >= j exclusion here by comparing cell indices rather than atom indices, since for the i-j and j-i pairs will both be trialled at some point
+// 			if (cell->index() >= ri->item->index()) continue;
+// 			totalEnergy += kernel.energy(cell, ri->item, ri->data, false, DUQComm::Solo);
+// 		}
+		totalEnergy += kernel.energy(cell, true, DUQComm::Solo);
 
 		/*
 		 * Calculation End
