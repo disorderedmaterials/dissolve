@@ -78,7 +78,7 @@ void DUQ::updateCellAtomNeighbourLists(Configuration& cfg)
 			for (int m=0; m<otherCell->maxAtoms(); ++m)
 			{
 				Atom* i = otherCell->atom(m);
-				if (i->index() == Atom::UnusedAtom) continue;
+				if (i == NULL) continue;
 
 				// Get minimum image vector w.r.t. cell centre
 				r = cfg.box()->minimumVector(cellCentre, i->r());

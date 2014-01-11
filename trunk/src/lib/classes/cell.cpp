@@ -194,14 +194,15 @@ void Cell::createAtomArray(int maxAtoms)
 	}
 #endif
 	maxAtoms_ = maxAtoms;
-	atoms_ = new Atom[maxAtoms_];
+	atoms_ = new Atom*[maxAtoms_];
+	for (int n=0; n<maxAtoms_; ++n) atoms_[n] = NULL;
 	nextAvailableAtom_ = 0;
 }
 
 /*!
  * \brief Return Atom array
  */
-Atom* Cell::atoms() const
+Atom** Cell::atoms() const
 {
 	return atoms_;
 }
@@ -217,22 +218,6 @@ Atom* Cell::atom(int id)
 	{
 		msg.print("OUT_OF_RANGE - Atom id passed to Cell::atom() (%i) is out of range (maxAtoms_ = %i)\n", id, maxAtoms_);
 		return &dummy;
-	}
-#endif
-	return &atoms_[id];
-}
-
-/*!
- * \brief Return reference to specified atom
- */
-Atom& Cell::atomReference(int id)
-{
-#ifdef CHECKS
-	static Atom dummy;
-	if ((id < 0) || (id >= maxAtoms_))
-	{
-		msg.print("OUT_OF_RANGE - Atom id passed to Cell::atomReference() (%i) is out of range (maxAtoms_ = %i)\n", id, maxAtoms_);
-		return dummy;
 	}
 #endif
 	return atoms_[id];
@@ -258,14 +243,14 @@ bool Cell::atomUsed(int id) const
 		return true;
 	}
 #endif
-	return (atoms_[id].index() != Atom::UnusedAtom);
+	return (atoms_[id] == NULL);
 }
 
 /*!
  * \brief Add specified atom to this Cell
  * \details Add (copy) data from the supplied atom into a free space in the cell's atom array. The original atom is not 
  */
-bool Cell::moveAtom(int id, Cell* targetCell, Atom** atomReferences)
+bool Cell::moveAtom(int id, Cell* targetCell)
 {
 #ifdef CHECKS
 	if ((id < 0) || (id >= maxAtoms_))
@@ -280,7 +265,7 @@ bool Cell::moveAtom(int id, Cell* targetCell, Atom** atomReferences)
 	}
 #endif
 	// Check target atom
-	if (atoms_[id].index() == Atom::UnusedAtom)
+	if (atoms_[id] == NULL)
 	{
 		msg.print("Error - Trying to move an atom which is already unused (index %i).\n", id);
 		return false;
@@ -295,12 +280,11 @@ bool Cell::moveAtom(int id, Cell* targetCell, Atom** atomReferences)
 	}
 
 	// Copy source atom data to target atom, and set new reference to atom
-	atomReferences[atoms_[id].index()] = &targetCell->atoms_[targetId];
-	targetCell->atoms_[targetId].copyProperties(&atoms_[id]);
-	targetCell->atoms_[targetId].setCell(targetCell);
-	atoms_[id].setIndex(Atom::UnusedAtom);
+	targetCell->atoms_[targetId] = atoms_[id];
+	targetCell->atoms_[targetId]->setCell(targetCell);
+	atoms_[id] = NULL;
 
-	// Set available atom indices in source cell (since we know what it will be
+	// Set available atom indices in source cell (since we know what it will be)
 	nextAvailableAtom_ = id;
 	
 	return true;
@@ -313,14 +297,14 @@ int Cell::nextUnusedAtom()
 {
 	// Check current atom position referenced by nextAvailableAtom_
 	if ((nextAvailableAtom_ < 0) || (nextAvailableAtom_ >= maxAtoms_)) nextAvailableAtom_ = 0;
-	if (atoms_[nextAvailableAtom_].index() == Atom::UnusedAtom) return nextAvailableAtom_;
+	if (atoms_[nextAvailableAtom_] == NULL) return nextAvailableAtom_;
 	
 	// Need to locate one...
 	int n, newId = Cell::NoAtomsAvailable;
 	// -- First half of loop - current position to end of array
 	for (n=nextAvailableAtom_+1; n<maxAtoms_; ++n)
 	{
-		if (atoms_[n].index() == Atom::UnusedAtom)
+		if (atoms_[n] == NULL)
 		{
 			newId = n;
 			break;
@@ -329,7 +313,7 @@ int Cell::nextUnusedAtom()
 	// -- Second half of loop - start of array up to current atom position (only if we haven't already found an empty slot)
 	if (newId == Cell::NoAtomsAvailable) for (n=0; n<nextAvailableAtom_; ++n)
 	{
-		if (atoms_[n].index() == Atom::UnusedAtom)
+		if (atoms_[n] == NULL)
 		{
 			newId = n;
 			break;
@@ -339,6 +323,48 @@ int Cell::nextUnusedAtom()
 	// Store and return the result
 	nextAvailableAtom_ = newId;
 	return nextAvailableAtom_;
+}
+
+// Add atom to Cell
+bool Cell::addAtom(Atom* atom)
+{
+	// Check supplied atom
+	if (atom == NULL)
+	{
+		msg.print("Error - Trying to add a NULL atom to cell.\n");
+		return false;
+	}
+
+	// Check available space in target cell
+	int targetId = nextUnusedAtom();
+	if (targetId == Cell::NoAtomsAvailable)
+	{
+		msg.error("Can't add atom to cell because no space is available. Increase the CellDensityMultiplier and restart the calculation.\n");
+		return false;
+	}
+
+	// Copy source atom data to target atom, and set new reference to atom
+	atoms_[targetId] = atom;
+	atoms_[targetId]->setCell(this);
+
+	return true;
+}
+
+// Remove atom from Cell
+bool Cell::removeAtom(Atom* atom)
+{
+	// Find atom in list
+	int id;
+	for (id=0; id<maxAtoms_; ++id) if (atoms_[id] == atom) break;
+	if (id == maxAtoms_)
+	{
+		msg.error("Couldn't find atom in cell to remove it.\n");
+		return false;
+	}
+
+	atoms_[id] = NULL;
+	nextAvailableAtom_ = id;
+	return true;
 }
 
 /*!

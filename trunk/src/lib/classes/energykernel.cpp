@@ -61,9 +61,9 @@ double EnergyKernel::energyWithoutMim(const Atom* i, const Atom* j)
 /*!
  * \brief Return PairPotential energy between atoms provided as info and reference (minimum image calculation)
  */
-double EnergyKernel::energyWithoutMim(const int typeI, const Vec3<double>& rI, const Atom& j)
+double EnergyKernel::energyWithoutMim(const int typeI, const Vec3< double >& rI, const Atom* j)
 {
-	return potentialMap_.energy(typeI, j.atomTypeIndex(), (rI - j.r()).magnitudeSq());
+	return potentialMap_.energy(typeI, j->atomTypeIndex(), (rI - j->r()).magnitudeSq());
 }
 
 /*!
@@ -166,9 +166,9 @@ double EnergyKernel::energyWithMim(const Atom* i, const Atom* j)
 /*!
  * \brief Return PairPotential energy between atoms provided as info and reference (minimum image calculation)
  */
-double EnergyKernel::energyWithMim(const int typeI, const Vec3<double>& rI, const Atom& j)
+double EnergyKernel::energyWithMim(const int typeI, const Vec3< double >& rI, const Atom* j)
 {
-	return potentialMap_.energy(typeI, j.atomTypeIndex(), box_->minimumDistanceSquared(j.r(), rI));
+	return potentialMap_.energy(typeI, j->atomTypeIndex(), box_->minimumDistanceSquared(j->r(), rI));
 }
 
 /*!
@@ -405,7 +405,7 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 	}
 #endif
 	double totalEnergy = 0.0;
-	Atom* centralAtoms = centralCell->atoms(), *otherAtoms = otherCell->atoms();
+	Atom** centralAtoms = centralCell->atoms(), **otherAtoms = otherCell->atoms();
 	int i, j, start = 0, stride = 1;
 	double scale;
 
@@ -418,20 +418,20 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 	{
 		for (i = start; i < centralCell->maxAtoms(); i += stride)
 		{
-			if (centralAtoms[i].index() == Atom::UnusedAtom) continue;
+			if (centralAtoms[i]== NULL) continue;
 
 			// Straight loop over other cell atoms
 			for (j = 0; j < otherCell->maxAtoms(); ++j)
 			{
-				if (otherAtoms[j].index() == Atom::UnusedAtom) continue;
+				if (otherAtoms[j] == NULL) continue;
 				
 				// Check exclusion of I > J
-				if (excludeIgeJ && (centralAtoms[i].index() >= otherAtoms[j].index())) continue;
+				if (excludeIgeJ && (centralAtoms[i]->index() >= otherAtoms[j]->index())) continue;
 
 				// Check for atoms in the same species
-				if (centralAtoms[i].molecule() == otherAtoms[j].molecule())
+				if (centralAtoms[i]->molecule() == otherAtoms[j]->molecule())
 				{
-					scale = centralAtoms[i].molecule()->species()->scaling(centralAtoms[i].moleculeAtomIndex(), otherAtoms[j].moleculeAtomIndex());
+					scale = centralAtoms[i]->molecule()->species()->scaling(centralAtoms[i]->moleculeAtomIndex(), otherAtoms[j]->moleculeAtomIndex());
 					if (scale < 1.0e-3) continue;
 					totalEnergy += energyWithMim(centralAtoms[i], otherAtoms[j]) * scale;
 				}
@@ -443,20 +443,20 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 	{
 		for (i = start; i < centralCell->maxAtoms(); i += stride)
 		{
-			if (centralAtoms[i].index() == Atom::UnusedAtom) continue;
+			if (centralAtoms[i] == NULL) continue;
 
 			// Straight loop over other cell atoms
 			for (j = 0; j < otherCell->maxAtoms(); ++j)
 			{
-				if (otherAtoms[j].index() == Atom::UnusedAtom) continue;
+				if (otherAtoms[j] == NULL) continue;
 				
 				// Check exclusion of I > J
-				if (excludeIgeJ && (centralAtoms[i].index() >= otherAtoms[j].index())) continue;
+				if (excludeIgeJ && (centralAtoms[i]->index() >= otherAtoms[j]->index())) continue;
 
 				// Check for atoms in the same molecule
-				if (centralAtoms[i].molecule() == otherAtoms[j].molecule())
+				if (centralAtoms[i]->molecule() == otherAtoms[j]->molecule())
 				{
-					scale = centralAtoms[i].molecule()->species()->scaling(centralAtoms[i].moleculeAtomIndex(), otherAtoms[j].moleculeAtomIndex());
+					scale = centralAtoms[i]->molecule()->species()->scaling(centralAtoms[i]->moleculeAtomIndex(), otherAtoms[j]->moleculeAtomIndex());
 					if (scale < 1.0e-3) continue;
 					totalEnergy += energyWithoutMim(centralAtoms[i], otherAtoms[j]) * scale;
 				}
@@ -476,7 +476,7 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, DUQComm::CommGroup group)
 {
 	double totalEnergy = 0.0;
-	Atom* centralAtoms = centralCell->atoms(), **otherAtoms;
+	Atom** centralAtoms = centralCell->atoms(), **otherAtoms;
 	int i, j, start = 0, stride = 1;
 	double scale;
 
@@ -487,19 +487,19 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, DUQComm::CommGr
 	// Loop over central cell atoms
 	for (i = start; i < centralCell->maxAtoms(); i += stride)
 	{
-		if (centralAtoms[i].index() == Atom::UnusedAtom) continue;
+		if (centralAtoms[i] == NULL) continue;
 
 		// Straight loop over atoms *not* requiring mim
 		otherAtoms = centralCell->atomNeighbours();
 		for (j = 0; j < centralCell->nAtomNeighbours(); ++j)
 		{
 			// Check exclusion of I > J
-			if (excludeIgeJ && (centralAtoms[i].index() >= otherAtoms[j]->index())) continue;
+			if (excludeIgeJ && (centralAtoms[i]->index() >= otherAtoms[j]->index())) continue;
 
 			// Check for atoms in the same species
-			if (centralAtoms[i].molecule() == otherAtoms[j]->molecule())
+			if (centralAtoms[i]->molecule() == otherAtoms[j]->molecule())
 			{
-				scale = centralAtoms[i].molecule()->species()->scaling(centralAtoms[i].moleculeAtomIndex(), otherAtoms[j]->moleculeAtomIndex());
+				scale = centralAtoms[i]->molecule()->species()->scaling(centralAtoms[i]->moleculeAtomIndex(), otherAtoms[j]->moleculeAtomIndex());
 				if (scale < 1.0e-3) continue;
 				totalEnergy += energyWithoutMim(centralAtoms[i], otherAtoms[j]) * scale;
 			}
@@ -511,12 +511,12 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, DUQComm::CommGr
 		for (j = 0; j < centralCell->nMimAtomNeighbours(); ++j)
 		{
 			// Check exclusion of I > J
-			if (excludeIgeJ && (centralAtoms[i].index() >= otherAtoms[j]->index())) continue;
+			if (excludeIgeJ && (centralAtoms[i]->index() >= otherAtoms[j]->index())) continue;
 
 			// Check for atoms in the same species
-			if (centralAtoms[i].molecule() == otherAtoms[j]->molecule())
+			if (centralAtoms[i]->molecule() == otherAtoms[j]->molecule())
 			{
-				scale = centralAtoms[i].molecule()->species()->scaling(centralAtoms[i].moleculeAtomIndex(), otherAtoms[j]->moleculeAtomIndex());
+				scale = centralAtoms[i]->molecule()->species()->scaling(centralAtoms[i]->moleculeAtomIndex(), otherAtoms[j]->moleculeAtomIndex());
 				if (scale < 1.0e-3) continue;
 				totalEnergy += energyWithMim(centralAtoms[i], otherAtoms[j]) * scale;
 			}
@@ -535,7 +535,7 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, DUQComm::CommGr
  * \brief Return PairPotential energy between atom and cell
  * \details Calculate the energy between the atom and the supplied cell, applying minimum image calculations if necessary.
  */
-double EnergyKernel::energy(const Atom& i, Cell* cell, bool applyMim, DUQComm::CommGroup group)
+double EnergyKernel::energy(const Atom* i, Cell* cell, bool applyMim, DUQComm::CommGroup group)
 {
 #ifdef CHECKS
 	if (cell == NULL)
@@ -545,14 +545,14 @@ double EnergyKernel::energy(const Atom& i, Cell* cell, bool applyMim, DUQComm::C
 	}
 #endif
 	double totalEnergy = 0.0;
-	Atom* cellAtoms = cell->atoms();
+	Atom** cellAtoms = cell->atoms();
 	int j, start = 0, stride = 1;
 	double scale;
 	
 	// Grab some information on the supplied atom
-	int indexI = i.index(), typeI = i.atomTypeIndex();
-	Molecule* moleculeI = i.molecule();
-	Vec3<double> rI = i.r();
+	int indexI = i->index(), typeI = i->atomTypeIndex();
+	Molecule* moleculeI = i->molecule();
+	Vec3<double> rI = i->r();
 
 	// Communication group determines loop/summation style
 	start = Comm.interleavedLoopStart(group);
@@ -563,15 +563,15 @@ double EnergyKernel::energy(const Atom& i, Cell* cell, bool applyMim, DUQComm::C
 	{
 		for (j = start; j < cell->maxAtoms(); j += stride)
 		{
-			if (cellAtoms[j].index() == Atom::UnusedAtom) continue;
+			if (cellAtoms[j] == NULL) continue;
 
 			// Check exclusion of I == J
-			if (indexI == cellAtoms[j].index()) continue;
+			if (indexI == cellAtoms[j]->index()) continue;
 
 			// Check for atoms in the same species
-			if (moleculeI == cellAtoms[j].molecule())
+			if (moleculeI == cellAtoms[j]->molecule())
 			{
-				scale = moleculeI->species()->scaling(i.moleculeAtomIndex(), cellAtoms[j].moleculeAtomIndex());
+				scale = moleculeI->species()->scaling(i->moleculeAtomIndex(), cellAtoms[j]->moleculeAtomIndex());
 				if (scale < 1.0e-3) continue;
 				totalEnergy += energyWithMim(typeI, rI, cellAtoms[j]) * scale;
 			}
@@ -582,15 +582,15 @@ double EnergyKernel::energy(const Atom& i, Cell* cell, bool applyMim, DUQComm::C
 	{
 		for (j = start; j < cell->maxAtoms(); j += stride)
 		{
-			if (cellAtoms[j].index() == Atom::UnusedAtom) continue;
+			if (cellAtoms[j] == NULL) continue;
 
 			// Check exclusion of I == J
-			if (indexI == cellAtoms[j].index()) continue;
+			if (indexI == cellAtoms[j]->index()) continue;
 
 			// Check for atoms in the same species
-			if (moleculeI == cellAtoms[j].molecule())
+			if (moleculeI == cellAtoms[j]->molecule())
 			{
-				scale = moleculeI->species()->scaling(i.moleculeAtomIndex(), cellAtoms[j].moleculeAtomIndex());
+				scale = moleculeI->species()->scaling(i->moleculeAtomIndex(), cellAtoms[j]->moleculeAtomIndex());
 				if (scale < 1.0e-3) continue;
 				totalEnergy += energyWithoutMim(typeI, rI, cellAtoms[j]) * scale;
 			}
@@ -625,7 +625,7 @@ double EnergyKernel::energy(const Grain* grain, Cell* cell, double cutoffSq, boo
 	}
 #endif
 	double totalEnergy = 0.0;
-	Atom* cellAtoms = cell->atoms();
+	Atom** cellAtoms = cell->atoms();
 	int i, j, start, stride, typeI, indexI;
 	Vec3<double> rI;
 	Molecule* moleculeI;
@@ -651,16 +651,16 @@ double EnergyKernel::energy(const Grain* grain, Cell* cell, double cutoffSq, boo
 			// Loop over cell atoms
 			for (j = start; j < cell->maxAtoms(); j += stride)
 			{
-				Atom& atomJ = cellAtoms[j];
-				if (atomJ.index() == Atom::UnusedAtom) continue;
+				Atom* atomJ = cellAtoms[j];
+				if (atomJ == NULL) continue;
 
 				// Check exclusion of I == J
-				if (indexI == atomJ.index()) continue;
+				if (indexI == atomJ->index()) continue;
 
 				// Check for atoms in the same species
-				if (moleculeI == atomJ.molecule())
+				if (moleculeI == atomJ->molecule())
 				{
-					scale = moleculeI->species()->scaling(atomI->moleculeAtomIndex(), atomJ.moleculeAtomIndex());
+					scale = moleculeI->species()->scaling(atomI->moleculeAtomIndex(), atomJ->moleculeAtomIndex());
 					if (scale < 1.0e-3) continue;
 					totalEnergy += energyWithMim(typeI, rI, atomJ) * scale;
 				}
@@ -682,16 +682,16 @@ double EnergyKernel::energy(const Grain* grain, Cell* cell, double cutoffSq, boo
 			// Loop over cell atoms
 			for (j = start; j < cell->maxAtoms(); j += stride)
 			{
-				Atom& atomJ = cellAtoms[j];
-				if (atomJ.index() == Atom::UnusedAtom) continue;
+				Atom* atomJ = cellAtoms[j];
+				if (atomJ == NULL) continue;
 
 				// Check exclusion of I == J
-				if (indexI == atomJ.index()) continue;
+				if (indexI == atomJ->index()) continue;
 
 				// Check for atoms in the same species
-				if (moleculeI == atomJ.molecule())
+				if (moleculeI == atomJ->molecule())
 				{
-					scale = moleculeI->species()->scaling(atomI->moleculeAtomIndex(), atomJ.moleculeAtomIndex());
+					scale = moleculeI->species()->scaling(atomI->moleculeAtomIndex(), atomJ->moleculeAtomIndex());
 					if (scale < 1.0e-3) continue;
 					totalEnergy += energyWithoutMim(typeI, rI, atomJ) * scale;
 				}

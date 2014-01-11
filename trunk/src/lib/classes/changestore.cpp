@@ -54,7 +54,7 @@ void ChangeStore::add(Atom* i)
 {
 	RefListItem<Atom, Pair<bool,Vec3<double> > >* item = targetAtoms_.add(i);
 	item->data.a = false;
-	item->data.b = i->r();
+	if (i != NULL) item->data.b = i->r();
 }
 
 /*!
@@ -77,6 +77,7 @@ void ChangeStore::add(Molecule* mol)
 void ChangeStore::add(Cell* cell)
 {
 	// Don't worry about atoms which are unused in the cell's array - store them anyway so we can use the local cell atom indices
+	// TODO Don't do this anymore
 	for (int n=0; n<cell->maxAtoms(); ++n) add(cell->atom(n));
 }
 
@@ -257,7 +258,7 @@ bool ChangeStore::distribute(Configuration& cfg)
 #else
 
 	// Apply atom changes
-	Atom** atoms = cfg.atomReferences();
+	Atom* atoms = cfg.atoms();
 	for (int n=0; n<changes_.nItems(); ++n)
 	{
 #ifdef CHECKS
@@ -268,8 +269,7 @@ bool ChangeStore::distribute(Configuration& cfg)
 		}
 #endif
 		// Set new coordinates and check cell position (Configuration::updateAtomInCell() will do all this)
-		if (atoms[changes_[n]->a]->index() == Atom::UnusedAtom) continue;
-		atoms[changes_[n]->a]->setCoordinates(changes_[n]->b.x, changes_[n]->b.y, changes_[n]->b.z);
+		atoms[changes_[n]->a].setCoordinates(changes_[n]->b.x, changes_[n]->b.y, changes_[n]->b.z);
 		cfg.updateAtomInCell(n);
 	}
 #endif

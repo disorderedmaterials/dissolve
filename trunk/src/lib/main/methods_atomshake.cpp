@@ -109,11 +109,11 @@ CommandReturnValue DUQ::atomShake(Configuration& cfg)
 		for (n = 0; n < cell->maxAtoms(); ++n)
 		{
 			// Check for unused atom
-			Atom& i = cell->atomReference(n);
-			if (i.index() == Atom::UnusedAtom) continue;
+			Atom* i = cell->atom(n);
+			if (i == NULL) continue;
 
 			// Get the atom's grain pointer
-			grainI = i.grain();
+			grainI = i->grain();
 
 			// Calculate reference intramolecular energy for atom, including intramolecular terms through the atom's grain
 			currentEnergy = kernel.energy(i, cell, false, DUQComm::Group);
@@ -127,7 +127,7 @@ CommandReturnValue DUQ::atomShake(Configuration& cfg)
 				rDelta.set(Comm.randomPlusMinusOne()*translationStep, Comm.randomPlusMinusOne()*translationStep, Comm.randomPlusMinusOne()*translationStep);
 
 				// Translate atom and calculate new energy
-				i.translateCoordinates(rDelta);
+				i->translateCoordinates(rDelta);
 				newEnergy = kernel.energy(i, cell, false, DUQComm::Group);
 				for (RefListItem<Cell,bool>* ri = cell->neighbours().first(); ri != NULL; ri = ri->next) newEnergy += kernel.energy(i, ri->item, ri->data, DUQComm::Group);
 				newIntraEnergy = kernel.fullIntraEnergy(grainI, termScale);

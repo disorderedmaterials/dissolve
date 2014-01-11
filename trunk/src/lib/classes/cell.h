@@ -91,8 +91,8 @@ class Cell
 	private:
 	// Maximum number of Atoms in Cell
 	int maxAtoms_;
-	// Array of Atoms in Cell
-	Atom* atoms_;
+	// Array of pointers to Atoms in Cell
+	Atom** atoms_;
 	// Next available (empty) Atom in cell
 	int nextAvailableAtom_;
 	// List of Grains in Cell
@@ -102,19 +102,21 @@ class Cell
 	// Create atom array
 	void createAtomArray(int maxAtoms);
 	// Return atom array
-	Atom* atoms() const;
+	Atom** atoms() const;
 	// Return pointer to specified atom
 	Atom* atom(int id);
-	// Return reference to specified atom
-	Atom& atomReference(int id);
 	// Return maximum size of atom array
 	int maxAtoms() const;
 	// Return whether specified atom index is used
 	bool atomUsed(int id) const;
 	// Move specified atom to specified Cell
-	bool moveAtom(int id, Cell* targetCell, Atom** atomReferences);
+	bool moveAtom(int id, Cell* targetCell);
 	// Find and return next available (unused) atom index
 	int nextUnusedAtom();
+	// Add atom to Cell
+	bool addAtom(Atom* atom);
+	// Remove atom from Cell
+	bool removeAtom(Atom* atom);
 	// Add Grain to Cell
 	void addGrain(Grain* grain);
 	// Remove Grain from Cell

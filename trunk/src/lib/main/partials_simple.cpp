@@ -54,11 +54,11 @@ bool DUQ::calculatePartialsSimple(Configuration& cfg)
 	}
 
 	// Loop over Atoms and construct arrays
-	Atom** atoms = cfg.atomReferences();
+	Atom* atoms = cfg.atoms();
 	for (n=0; n<cfg.nAtoms(); ++n)
 	{
-		m = atoms[n]->atomTypeIndex();
-		r[m][nr[m]++] = atoms[n]->r();
+		m = atoms[n].atomTypeIndex();
+		r[m][nr[m]++] = atoms[n].r();
 	}
 
 	msg.printVerbose("Ready..\n");

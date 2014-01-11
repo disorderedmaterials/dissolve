@@ -65,8 +65,8 @@ class Configuration : public ListItem<Configuration>
 	Grain* grains_;
 	// Number of atoms in configuration / reference array
 	int nAtoms_;
-	// Array of atom references (to objects within Cells)
-	Atom** atomReferences_;
+	// Array of atoms
+	Atom* atoms_;
 	// Change counter (incremented when Atom positions change)
 	int changeCount_;
 
@@ -89,7 +89,7 @@ class Configuration : public ListItem<Configuration>
 	// Return number of atoms
 	int nAtoms() const;
 	// Return atom reference array
-	Atom** atomReferences();
+	Atom* atoms();
 	// Return nth atom
 	Atom* atom(int n);
 	// Setup arrays

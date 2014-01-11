@@ -77,7 +77,7 @@ bool Molecule::initialise(Species* sp, int index)
 	
 	// Get data from Species and create local arrays
 	nAtoms_ = species_->nAtoms();
-	atoms_ = new Atom**[nAtoms_];
+	atoms_ = new Atom*[nAtoms_];
 	nGrains_ = species_->nGrains();
 	grains_ = new Grain*[nGrains_];
 	
@@ -107,7 +107,7 @@ int Molecule::nAtoms()
  * \details Sets the n'th atom pointer location in the molecule, and copies characteristic atom data (e.g. element, charge, atomtype) from the 
  * source SpeciesAtom. Note that the coordinates of the original SpeciesAtom are *not* copied over.
  */
-bool Molecule::setupAtom(int n, Atom** i, SpeciesAtom* source)
+bool Molecule::setupAtom(int n, Atom* i, SpeciesAtom* source)
 {
 #ifdef CHECKS
 	if (i == NULL)
@@ -129,10 +129,10 @@ bool Molecule::setupAtom(int n, Atom** i, SpeciesAtom* source)
 	atoms_[n] = i;
 
 	// Copy information from supplied SpeciesAtom
-	(*atoms_[n])->setElement(source->element());
-	(*atoms_[n])->setCharge(source->charge());
-	(*atoms_[n])->setAtomTypeIndex(source->atomType()->index());
-	(*atoms_[n])->setMolecule(this, source->index());
+	atoms_[n]->setElement(source->element());
+	atoms_[n]->setCharge(source->charge());
+	atoms_[n]->setAtomTypeIndex(source->atomType()->index());
+	atoms_[n]->setMolecule(this, source->index());
 
 	return true;
 }
@@ -155,7 +155,7 @@ Atom* Molecule::atom(int n) const
 		return &dummy;
 	}
 #endif
-	return (*atoms_[n]);
+	return atoms_[n];
 }
 
 /*!
