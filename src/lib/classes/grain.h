@@ -67,8 +67,8 @@ class Grain
 	int nAtoms_;
 	// Array size
 	int atomsArraySize_;
-	// Pointers to pointers to atoms
-	Atom*** atoms_;
+	// Pointers to atoms
+	Atom** atoms_;
 	// Index of Grain
 	int index_;
 
@@ -82,7 +82,7 @@ class Grain
 	// Return source SpeciesGrain
 	const SpeciesGrain* source() const;
 	// Add atom pointer to list
-	bool addAtom(Atom** i);
+	bool addAtom(Atom* i);
 	// Return number of atoms in grain
 	int nAtoms() const;
 	// Return nth atom in grain

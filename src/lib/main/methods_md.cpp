@@ -72,7 +72,7 @@ CommandReturnValue DUQ::md(Configuration& cfg)
 
 	// Variables
 	int n, maxDeltaId;
-	Atom** atoms = cfg.atomReferences();
+	Atom* atoms = cfg.atoms();
 	Atom* i;
 	double maxDelta, deltaSq, massSum, tInstant, ke, tScale, pe;
 	double deltaTSq = deltaT*deltaT;

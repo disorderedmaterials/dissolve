@@ -60,8 +60,8 @@ class Molecule : public ListItem<Molecule>
 	Species* species_;
 	// Number of Atom (pointers) in Atom array
 	int nAtoms_;
-	// Array of pointers to Atom pointers
-	Atom*** atoms_;
+	// Array of pointers to Atoms
+	Atom** atoms_;
 	// Number of Grain (pointers) in the Grain array
 	int nGrains_;
 	// Array of Grain pointers
@@ -77,7 +77,7 @@ class Molecule : public ListItem<Molecule>
 	// Return size of Atom array
 	int nAtoms();
 	// Set nth pointer to Atom pointer
-	bool setupAtom(int n, Atom** i, SpeciesAtom* source);
+	bool setupAtom(int n, Atom* i, SpeciesAtom* source);
 	// Return nth Atom pointer
 	Atom* atom(int n) const;
 	// Return size of Grain array

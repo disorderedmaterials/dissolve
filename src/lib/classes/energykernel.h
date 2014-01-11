@@ -72,7 +72,7 @@ class EnergyKernel
 	// Return PairPotential energy between atoms provided as pointers (no minimum image calculation)
 	double energyWithoutMim(const Atom* i, const Atom* j);
 	// Return PairPotential energy between atoms provided as info and reference (minimum image calculation)
-	double energyWithoutMim(const int typeI, const Vec3<double>& rI, const Atom& j);
+	double energyWithoutMim(const int typeI, const Vec3<double>& rI, const Atom* j);
 	// Return PairPotential energy between atoms provided as references (no minimum image calculation)
 	double energyWithoutMim(const Atom& i, const Atom& j);
 	// Return PairPotential energy between atoms provided as reference/pointer (no minimum image calculation)
@@ -86,7 +86,7 @@ class EnergyKernel
 	// Return PairPotential energy between atoms provided as pointers (minimum image calculation)
 	double energyWithMim(const Atom* i, const Atom* j);
 	// Return PairPotential energy between atoms provided as info and reference (minimum image calculation)
-	double energyWithMim(const int typeI, const Vec3<double>& rI, const Atom& j);
+	double energyWithMim(const int typeI, const Vec3<double>& rI, const Atom* j);
 	// Return PairPotential energy between atoms provided as references (minimum image calculation)
 	double energyWithMim(const Atom& i, const Atom& j);
 	// Return PairPotential energy between atoms provided as reference/pointer (minimum image calculation)
@@ -120,7 +120,7 @@ class EnergyKernel
 	// Return PairPotential energy between cell and atomic neighbours
 	double energy(Cell* centralCell, bool excludeIgeJ = false, DUQComm::CommGroup group = DUQComm::Solo);
 	// Return PairPotential energy between atom and cell
-	double energy(const Atom& i, Cell* cell, bool applyMim, DUQComm::CommGroup group = DUQComm::Solo);
+	double energy(const Atom* i, Cell* cell, bool applyMim, DUQComm::CommGroup group = DUQComm::Solo);
 	// Return PairPotential energy between grain and cell contents
 	double energy(const Grain* grain, Cell* cell, double cutoffSq, bool applyMim, bool excludeIgeJ = false, DUQComm::CommGroup group = DUQComm::Solo);
 	// Return PairPotential energy between Grain and list of cells

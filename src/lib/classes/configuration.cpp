@@ -39,7 +39,7 @@ using namespace std;
 Configuration::Configuration() : ListItem<Configuration>()
 {
 	// Contents
-	atomReferences_= NULL;
+	atoms_ = NULL;
 	grains_ = NULL;
 	nAtoms_ = 0;
 	nGrains_ = 0;
@@ -301,9 +301,9 @@ int Configuration::nAtoms() const
 /*!
  * \brief Return atom references array
  */
-Atom** Configuration::atomReferences()
+Atom* Configuration::atoms()
 {
-	return atomReferences_;
+	return atoms_;
 }
 
 /*!
@@ -318,7 +318,7 @@ Atom* Configuration::atom(int n)
 		return NULL;
 	}
 #endif
-	return atomReferences_[n];
+	return &atoms_[n];
 }
 
 /*!
@@ -346,7 +346,7 @@ bool Configuration::setupArrays()
 	msg.print("--> Creating arrays for %i atom references and %i grains...\n", nAtoms_, nGrains_);
 	try
 	{
-		atomReferences_ = new Atom*[nAtoms_];
+		atoms_ = new Atom[nAtoms_];
 		grains_ = new Grain[nGrains_];
 	}
 	catch (bad_alloc& alloc)
@@ -423,13 +423,13 @@ bool Configuration::setupMolecules(Species& sourceCoordinates)
 			}
 
 			// Set the master atom reference
-			atomReferences_[atomCount] = c->atom(id);
-			(atomReferences_[atomCount])->setIndex(atomCount);
-			(atomReferences_[atomCount])->setCoordinatesNasty(r);
-			(atomReferences_[atomCount])->setCell(c);
+			atoms_[atomCount].setIndex(atomCount);
+			atoms_[atomCount].setCoordinatesNasty(r);
+			atoms_[atomCount].setCell(c);
+			if (!c->addAtom(&atoms_[atomCount])) return false;
 
 			// Set atom pointer and character (charge, atomtype etc.) of atom in molecule from the source Species
-			if (!mol->setupAtom(n, &atomReferences_[atomCount], i)) return false;
+			if (!mol->setupAtom(n, &atoms_[atomCount], i)) return false;
 			
 			++atomCount;
 			i = i->next;
@@ -1081,7 +1081,7 @@ bool Configuration::updateAtomsInCells()
 
 			// If this atom is unused, move on...
 			i = currentCell->atom(atomId);
-			if (i->index() == Atom::UnusedAtom) continue;
+			if (i == NULL) continue;
 
 			// TODO Overload cell() to take a pointer to a Vec3<> in which the folded r can be returned
 			foldedR = box_->fold(i->r());
@@ -1091,7 +1091,7 @@ bool Configuration::updateAtomsInCells()
 			// Need to move?
 			if (targetCell != currentCell)
 			{
-				if (!currentCell->moveAtom(atomId, targetCell, atomReferences_)) return false;
+				if (!currentCell->moveAtom(atomId, targetCell)) return false;
 			}
 		}
 		
@@ -1112,14 +1112,7 @@ bool Configuration::updateAtomInCell(int id)
 	Vec3<double> foldedR;
 
 	// Grab atom pointers
-	Atom* i = atomReferences_[id];
-#ifdef CHECKS
-	if (i->index() == Atom::UnusedAtom)
-	{
-		msg.print("BAD_USAGE - Tried to check the cell of an unused atom.\n");
-		return false;
-	}
-#endif
+	Atom* i = &atoms_[id];
 
 	// Grab current cell pointer, and calculate folded coordinate and new cell location
 	currentCell = i->cell();
@@ -1139,11 +1132,8 @@ bool Configuration::updateAtomInCell(int id)
 		}
 
 		// Copy source atom data to target atom, and set new reference to atom
-		atomReferences_[id] = targetCell->atom(targetId);
-		targetCell->atom(targetId)->copyProperties(i);
-		targetCell->atom(targetId)->setCell(targetCell);
-		i->setIndex(Atom::UnusedAtom);
-		// TODO Could set currentCell's nextAvailableCell here (perhaps with Cell::removeAtom() or similar)?
+		currentCell->removeAtom(i);
+		targetCell->addAtom(i);
 	}
 
 	return true;

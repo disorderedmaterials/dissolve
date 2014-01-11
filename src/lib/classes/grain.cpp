@@ -88,7 +88,7 @@ bool Grain::initialise(SpeciesGrain* sg)
 		return false;
 	}
 	atomsArraySize_ = source_->nAtoms();
-	atoms_ = new Atom**[atomsArraySize_];
+	atoms_ = new Atom*[atomsArraySize_];
 	nAtoms_ = 0;
 	return true;
 }
@@ -120,7 +120,7 @@ const SpeciesGrain* Grain::source() const
 /*!
  * \brief Add atom pointer pointer to list
  */
-bool Grain::addAtom(Atom** iptr)
+bool Grain::addAtom(Atom* i)
 {
 #ifdef CHECKS
 	// Check for NULL pointer
@@ -132,12 +132,12 @@ bool Grain::addAtom(Atom** iptr)
 #endif
 	if (nAtoms_ < atomsArraySize_) 
 	{
-		atoms_[nAtoms_] = iptr;
-		(*atoms_[nAtoms_])->setGrain(this);
+		atoms_[nAtoms_] = i;
+		atoms_[nAtoms_]->setGrain(this);
 
 		// Update centre and increase nAtoms_
 		centre_ *= nAtoms_;
-		centre_ += (*atoms_[nAtoms_])->r();
+		centre_ += atoms_[nAtoms_]->r();
 		++nAtoms_;
 		centre_ /= nAtoms_;
 	}
@@ -175,7 +175,7 @@ Atom* Grain::atom(int n) const
 		return &dummy;
 	}
 #endif
-	return (*atoms_[n]);
+	return atoms_[n];
 }
 
 /*!
