@@ -534,7 +534,7 @@ bool Configuration::setupBox(double ppRange, Vec3<double> relativeLengths, Vec3<
 		return false;
 	}
 
-	generateCells(7.0, ppRange, atomicDensity, cellDensityMultiplier);
+	generateCells(5.0, ppRange, atomicDensity, cellDensityMultiplier);
 	 
 	return true;
 }
@@ -710,6 +710,9 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 			}
 		}
 	}
+
+	// Initialise atom neighbour lists
+	for (n=0; n<nCells_; ++n) cells_[n].initialiseAtomNeighbourList(atomicDensity, pairPotentialRange, realCellSize_);
 	
 	// Construct Cell neighbour lists
 	msg.print("--> Creating cell neighbour lists...\n");
