@@ -82,6 +82,7 @@ CommandReturnValue DUQ::atomShake(Configuration& cfg)
 	Cell* cell;
 	Grain* grainI;
 	Vec3<double> centre, rDelta;
+	RefListItem<Atom,int>** cellAtoms;
 
 	Timer timer;
 	Comm.resetAccumulatedTime();
@@ -106,11 +107,11 @@ CommandReturnValue DUQ::atomShake(Configuration& cfg)
 		changeStore.add(cell);
 
 		// Loop over atoms in this cell
-		for (n = 0; n < cell->maxAtoms(); ++n)
+		cellAtoms = cell->atoms().array();
+		for (n = 0; n < cell->atoms().nItems(); ++n)
 		{
 			// Check for unused atom
-			Atom* i = cell->atom(n);
-			if (i == NULL) continue;
+			Atom* i = cellAtoms[n]->item;
 
 			// Get the atom's grain pointer
 			grainI = i->grain();

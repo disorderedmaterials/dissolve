@@ -371,7 +371,7 @@ bool Configuration::setupArrays()
 bool Configuration::setupMolecules(Species& sourceCoordinates)
 {
 	// If there are no atoms in the sourceCoordinates species, assume that we are creating a random configuration.
-	int atomCount = 0, grainCount = 0, id;
+	int atomCount = 0, grainCount = 0;
 	Cell* c;
 	Matrix3 transform;
 	Vec3<double> r, cog, newCentre;
@@ -415,12 +415,6 @@ bool Configuration::setupMolecules(Species& sourceCoordinates)
 
 			// Get cell location of atom, and find an empty atom slot in that cell
 			c = cell(r);
-			id = c->nextUnusedAtom();
-			if (id == Cell::NoAtomsAvailable)
-			{
-				msg.error("No space left in cell.\n");
-				return false;
-			}
 
 			// Set the master atom reference
 			atoms_[atomCount].setIndex(atomCount);
@@ -705,7 +699,6 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 			{
 				cells_[count].setIndex(count);
 				cells_[count].setGridReference(x,y,z);
-				cells_[count].createAtomArray(maxAtomsPerCell_);
 				++count;
 			}
 		}
@@ -741,7 +734,7 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 		if ((cellExtents_[n]*2+1) > divisions_[n])
 		{
 			msg.warn("--> Cells required along axis %i is %i (2*%i + 1) exceeds number of available cells (%i). Parallelism will be affected!\n", n, cellExtents_[n]*2+1, cellExtents_[n], divisions_[n]);
-// 			cellExtents_[n] = (divisions_[n]-1)/2;
+			cellExtents_[n] = (divisions_[n]-1)/2;
 		}
 	}
 
@@ -1072,18 +1065,15 @@ bool Configuration::updateAtomsInCells()
 	Cell* currentCell, *targetCell;
 	Vec3<double> foldedR;
 	Atom* i;
-	while (atomId < maxAtomsPerCell_)
+	for (int c = 0; c < nCells_; ++c)
 	{
-		for (int c = 0; c < nCells_; ++c)
+		// Grab cell pointer
+		currentCell = &cells_[c];
+
+		// TODO Overload cell() to take a pointer to a Vec3<> in which the folded r can be returned
+		for (RefListItem<Atom,int>* ri = currentCell->atoms().first(); ri != NULL; ri = ri->next)
 		{
-			// Grab cell pointer
-			currentCell = &cells_[c];
-
-			// If this atom is unused, move on...
-			i = currentCell->atom(atomId);
-			if (i == NULL) continue;
-
-			// TODO Overload cell() to take a pointer to a Vec3<> in which the folded r can be returned
+			i = ri->item;
 			foldedR = box_->fold(i->r());
 			i->setCoordinates(foldedR);
 			targetCell = cell(i->r());
@@ -1091,14 +1081,11 @@ bool Configuration::updateAtomsInCells()
 			// Need to move?
 			if (targetCell != currentCell)
 			{
-				if (!currentCell->moveAtom(atomId, targetCell)) return false;
+				if (!currentCell->moveAtom(i, targetCell)) return false;
 			}
 		}
-		
-		// Increase atomId
-		++atomId;
 	}
-	
+
 	return true;
 }
 
@@ -1123,17 +1110,7 @@ bool Configuration::updateAtomInCell(int id)
 	// Need to move?
 	if (targetCell != currentCell)
 	{
-		// Check available space in target cell
-		int targetId = targetCell->nextUnusedAtom();
-		if (targetId == Cell::NoAtomsAvailable)
-		{
-			msg.error("Can't move atom to target cell because no space is available. Increase the CellDensityMultiplier and restart the calculation.\n");
-			return false;
-		}
-
-		// Copy source atom data to target atom, and set new reference to atom
-		currentCell->removeAtom(i);
-		targetCell->addAtom(i);
+		currentCell->moveAtom(i, targetCell);
 	}
 
 	return true;
