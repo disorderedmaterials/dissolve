@@ -61,6 +61,7 @@ void DUQ::updateCellAtomNeighbourLists(Configuration& cfg)
 	double distSq, cutoffSq = pairPotentialRange_ + sqrt(cfg.realCellSize().dp(cfg.realCellSize()))*0.5;
 	msg.print("Cutoff for atom cell neighbours is %f\n", cutoffSq);
 	cutoffSq *= cutoffSq;
+	RefListItem<Atom,int>** otherAtoms;
 
 	// Loop over cells
 	for (int n=0; n<cfg.nCells(); ++n)
@@ -74,11 +75,11 @@ void DUQ::updateCellAtomNeighbourLists(Configuration& cfg)
 		for (RefListItem<Cell,bool>* ri = cell->neighbours().first(); ri != NULL; ri = ri->next)
 		{
 			Cell* otherCell = ri->item;
+			otherAtoms = otherCell->atoms().array();
 
-			for (int m=0; m<otherCell->maxAtoms(); ++m)
+			for (int m=0; m<otherCell->atoms().nItems(); ++m)
 			{
-				Atom* i = otherCell->atom(m);
-				if (i == NULL) continue;
+				Atom* i = otherAtoms[m]->item;
 
 				// Get minimum image vector w.r.t. cell centre
 				r = cfg.box()->minimumVector(cellCentre, i->r());

@@ -76,9 +76,7 @@ void ChangeStore::add(Molecule* mol)
 // Add cell to watch
 void ChangeStore::add(Cell* cell)
 {
-	// Don't worry about atoms which are unused in the cell's array - store them anyway so we can use the local cell atom indices
-	// TODO Don't do this anymore
-	for (int n=0; n<cell->maxAtoms(); ++n) add(cell->atom(n));
+	for (RefListItem<Atom,int>* ri = cell->atoms().first(); ri != NULL; ri = ri->next) add(ri->item);
 }
 
 /*

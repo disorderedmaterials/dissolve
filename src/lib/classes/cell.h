@@ -89,30 +89,16 @@ class Cell
 	 */
 	///@{
 	private:
-	// Maximum number of Atoms in Cell
-	int maxAtoms_;
 	// Array of pointers to Atoms in Cell
-	Atom** atoms_;
-	// Next available (empty) Atom in cell
-	int nextAvailableAtom_;
+	RefList<Atom,int> atoms_;
 	// List of Grains in Cell
 	RefList<Grain,int> grains_;
 
 	public:
-	// Create atom array
-	void createAtomArray(int maxAtoms);
-	// Return atom array
-	Atom** atoms() const;
-	// Return pointer to specified atom
-	Atom* atom(int id);
-	// Return maximum size of atom array
-	int maxAtoms() const;
-	// Return whether specified atom index is used
-	bool atomUsed(int id) const;
+	// Return list of contained atoms
+	RefList<Atom,int>& atoms();
 	// Move specified atom to specified Cell
-	bool moveAtom(int id, Cell* targetCell);
-	// Find and return next available (unused) atom index
-	int nextUnusedAtom();
+	bool moveAtom(Atom* i, Cell* targetCell);
 	// Add atom to Cell
 	bool addAtom(Atom* atom);
 	// Remove atom from Cell

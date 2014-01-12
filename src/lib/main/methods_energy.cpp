@@ -105,7 +105,7 @@ double DUQ::interatomicEnergy(Configuration& cfg)
 // 		printf("Cell index %i:\n", cell->index());
 // 		for (n=0; n<cell->maxAtoms(); ++n) if (cell->atom(n)->index() != Atom::UnusedAtom) printf("   %3i  %s  %3i  %3i %f  %f  %f\n", n, typeIndex_[cell->atom(n)->atomTypeIndex()]->name(), cell->atom(n)->index(), cell->atom(n)->moleculeAtomIndex(), cell->atom(n)->r().x, cell->atom(n)->r().y, cell->atom(n)->r().z);
 		totalEnergy += kernel.energy(cell, cell, false, true, DUQComm::Solo);
-		
+
 		// Interatomic interactions between atoms in this cell and its neighbours
 // 		for (RefListItem<Cell,bool>* ri = cell->neighbours().first(); ri != NULL; ri = ri->next)
 // 		{
