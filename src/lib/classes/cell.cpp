@@ -180,9 +180,9 @@ bool Cell::unlock(bool willBeModified)
 */
 
 /*!
- * \brief Return Atom array
+ * \brief Return Atom list
  */
-RefList<Atom,int>& Cell::atoms()
+OrderedList<Atom>& Cell::atoms()
 {
 	return atoms_;
 }
@@ -212,35 +212,21 @@ bool Cell::moveAtom(Atom* i, Cell* targetCell)
 		return false;
 	}
 
-	// Remove atom from local list, and add to target Cell
-	atoms_.remove(i);
-	targetCell->addAtom(i);
+	// Move atom from this cell to target cell
+	atoms_.move(i->index(), targetCell->atoms_);
+// 	atoms_.remove(i);
+// 	targetCell->addAtom(i);
 
 	return true;
 }
 
 // Add atom to Cell
-bool Cell::addAtom(Atom* atom)
+bool Cell::addAtom(Atom& atom)
 {
-	// Check supplied atom
-	if (atom == NULL)
-	{
-		msg.print("Error - Trying to add a NULL atom to cell.\n");
-		return false;
-	}
-
 	// Copy source atom data to target atom, and set new reference to atom
 	atoms_.add(atom);
-	atom->setCell(this);
-	printf("Added atom %i to Cell %i\n", atom->index(), index_);
+	atom.setCell(this);
 
-	return true;
-}
-
-// Remove atom from Cell
-bool Cell::removeAtom(Atom* atom)
-{
-	atoms_.remove(atom);
 	return true;
 }
 

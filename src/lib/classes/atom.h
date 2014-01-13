@@ -41,8 +41,6 @@ class Atom
 	Atom();
 	// Destructor
 	~Atom();
-	// Special Atom Indices
-	enum SpecialAtomIndex { UnusedAtom = -100 };
 
 
 	/*!

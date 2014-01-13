@@ -73,10 +73,13 @@ void ChangeStore::add(Molecule* mol)
 	for (int n=0; n<mol->nAtoms(); ++n) add(mol->atom(n));
 }
 
-// Add cell to watch
+/*!
+ * \brief Add Cell to watch
+ * \details Add all the atoms in the specified cell to the watch list
+ */
 void ChangeStore::add(Cell* cell)
 {
-	for (RefListItem<Atom,int>* ri = cell->atoms().first(); ri != NULL; ri = ri->next) add(ri->item);
+	for (OrderedListitem<Atom>* item = cell->atoms().first(); item != NULL; item = item->next) add(item->object());
 }
 
 /*
@@ -110,7 +113,6 @@ void ChangeStore::updateAll()
  */
 void ChangeStore::updateAtomsLocal(int nAtoms, int* indices)
 {
-// 	printf("In updateAtomsLocal...\n");
 	for (int n=0; n<nAtoms; ++n)
 	{
 #ifdef CHECKS
@@ -124,7 +126,6 @@ void ChangeStore::updateAtomsLocal(int nAtoms, int* indices)
 		refAtom->data.a = true;
 		refAtom->data.b = refAtom->item->r();
 	}
-// 	printf("Done updateAtomsLocal.\n");
 }
 
 /*!
@@ -152,8 +153,6 @@ void ChangeStore::revertAll()
 // 	printf("In Revert...\n");
 	for (RefListItem<Atom, Pair<bool,Vec3<double> > >* refAtom = targetAtoms_.first(); refAtom != NULL; refAtom = refAtom->next)
 	{
-		// Check for unused atom
-		if (refAtom->item->index() == Atom::UnusedAtom) continue;
 		refAtom->item->setCoordinates(refAtom->data.b);
 	}
 // 	printf("Done Revert.\n");
@@ -172,7 +171,7 @@ void ChangeStore::revert(int id)
 	}
 #endif
 	RefListItem<Atom, Pair<bool,Vec3<double> > >* refAtom = targetAtoms_[id];
-	if (refAtom->item->index() != Atom::UnusedAtom) refAtom->item->setCoordinates(refAtom->data.b);
+	refAtom->item->setCoordinates(refAtom->data.b);
 }
 
 /*!
