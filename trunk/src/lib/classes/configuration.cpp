@@ -1110,7 +1110,10 @@ bool Configuration::updateAtomInCell(int id)
 	// Need to move?
 	if (targetCell != currentCell)
 	{
+		// Need to update cell neighbour lists here
+		// -- First, loop over all neighbour cells for this atom
 		currentCell->moveAtom(i, targetCell);
+		
 	}
 
 	return true;

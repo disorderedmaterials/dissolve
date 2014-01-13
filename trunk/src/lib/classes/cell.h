@@ -24,6 +24,7 @@
 
 #include "classes/grain.h"
 #include "templates/vector3.h"
+#include "templates/orderedlist.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
@@ -89,20 +90,18 @@ class Cell
 	 */
 	///@{
 	private:
-	// Array of pointers to Atoms in Cell
-	RefList<Atom,int> atoms_;
+	// List of atoms contained in this cell
+	OrderedList<Atom> atoms_;
 	// List of Grains in Cell
 	RefList<Grain,int> grains_;
 
 	public:
 	// Return list of contained atoms
-	RefList<Atom,int>& atoms();
+	OrderedList< Atom >& atoms();
 	// Move specified atom to specified Cell
 	bool moveAtom(Atom* i, Cell* targetCell);
 	// Add atom to Cell
-	bool addAtom(Atom* atom);
-	// Remove atom from Cell
-	bool removeAtom(Atom* atom);
+	bool addAtom(Atom& atom);
 	// Add Grain to Cell
 	void addGrain(Grain* grain);
 	// Remove Grain from Cell

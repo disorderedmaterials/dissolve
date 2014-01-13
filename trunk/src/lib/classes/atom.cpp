@@ -33,7 +33,7 @@ Atom::Atom()
 	element_ = 0;
 	charge_ = 0.0;
 	atomTypeIndex_ = -1;
-	index_ = Atom::UnusedAtom;
+	index_ = -1;
 	molecule_ = NULL;
 	moleculeAtomIndex_ = 0;
 	r_.zero();

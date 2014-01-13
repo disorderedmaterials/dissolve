@@ -3,7 +3,7 @@
 AC_PREREQ(2.60)
 
 # Set program name, version, bug-address and source directory
-m4_define([DUQ_VERSION],[0.13])
+m4_define([DUQ_VERSION],[0.14])
 AC_INIT(duq,DUQ_VERSION,tris@duq.net)
 AC_CONFIG_SRCDIR([src/])
 
