@@ -704,9 +704,6 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 		}
 	}
 
-	// Initialise atom neighbour lists
-	for (n=0; n<nCells_; ++n) cells_[n].initialiseAtomNeighbourList(atomicDensity, pairPotentialRange, realCellSize_);
-	
 	// Construct Cell neighbour lists
 	msg.print("--> Creating cell neighbour lists...\n");
 	// Make a list of integer vectors which we'll then use to pick Cells for the neighbour lists

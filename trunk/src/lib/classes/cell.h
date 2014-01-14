@@ -44,8 +44,6 @@ class Cell
 	~Cell();
 	// Special Cell Indices
 	enum SpecialCellIndices { AllCellsComplete = -1, NoCellsAvailable = -2 };
-	// Special Atom Reference Indices
-	enum SpecialAtomIndices { NoAtomsAvailable = -2 };
 
 
 	/*!
@@ -98,7 +96,7 @@ class Cell
 
 	public:
 	// Return list of contained atoms
-	OrderedList< Atom >& atoms();
+	OrderedList<Atom>& atoms();
 	// Move specified atom to specified Cell
 	bool moveAtom(Atom* i, Cell* targetCell);
 	// Add atom to Cell
@@ -123,14 +121,8 @@ class Cell
 	private:
 	// List of neighbouring Cells, and whether they are images
 	RefList<Cell,bool> neighbours_;
-	// Maximum number of atoms in neighbour list
-	int maxAtomNeighbours_;
-	// Number of atoms in neighbour list
-	int nAtomNeighbours_;
-	// Number of atoms in neighbour list requiring mim
-	int nMimAtomNeighbours_;
-	// Arrays of neighbouring atoms, within the defined potential cutoff (from anywhere in the cell)
-	Atom** atomNeighbours_, **mimAtomNeighbours_;
+	// Lists of neighbouring atoms, within the defined potential cutoff (from anywhere in the cell)
+	OrderedList<Atom> atomNeighbours_, mimAtomNeighbours_;
 
 	public:
 	// Add Cell neighbour
@@ -139,20 +131,14 @@ class Cell
 	int nNeighbours();
 	// Return neighbour list
 	RefList<Cell,bool>& neighbours();
-	// Initialise atom neighbour list
-	void initialiseAtomNeighbourList(double atomicDensity, double ppRange, Vec3< double > realCellSize);
 	// Clear atom neighbour list
 	void clearAtomNeighbourList();
 	// Add atom to neighbour list
 	void addAtomToNeighbourList(Atom* i, bool useMim);
 	// Return atom neighbour list
-	Atom** atomNeighbours();
-	// Return number of atom neighbours in list
-	int nAtomNeighbours();
+	OrderedList<Atom>& atomNeighbours();
 	// Return atom neighbour list requiring mim
-	Atom** mimAtomNeighbours();
-	// Return number of atom neighbours in list requiring mim
-	int nMimAtomNeighbours();
+	OrderedList<Atom>& mimAtomNeighbours();
 	///@}
 };
 
