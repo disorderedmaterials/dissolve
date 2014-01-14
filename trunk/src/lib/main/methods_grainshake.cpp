@@ -137,6 +137,7 @@ CommandReturnValue DUQ::grainShake(Configuration& cfg)
 				}
 
 				// Calculate new energy
+// 				newEnergy = kernel.energy(grainI, cell->neighbours(), cutoffSq, false, DUQComm::Group);
 				newEnergy = kernel.energy(grainI, cell->neighbours(), cutoffSq, false, DUQComm::Group);
 				newEnergy += kernel.energy(grainI, cell, cutoffSq, false, false, DUQComm::Group);
 				newEnergy += kernel.fullIntraEnergy(grainI, termScale);

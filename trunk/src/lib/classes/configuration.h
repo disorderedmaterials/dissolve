@@ -168,8 +168,9 @@ class Configuration : public ListItem<Configuration>
 	bool finishedWithCell(bool willBeModified, int cellId);
 	// Update cell locations of all atoms
 	bool updateAtomsInCells();
-	// Update cell locations of specified atom index
+	// Update cell locations of specified atom index, and update neighbour
 	bool updateAtomInCell(int id);
+	// Update neighbour 
 	///@}
 
 

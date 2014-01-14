@@ -26,6 +26,7 @@
 #include "templates/vector3.h"
 #include "templates/orderedlist.h"
 #include "templates/reflist.h"
+#include "templates/orderedlist.h"
 
 // Forward Declarations
 class Box;
@@ -101,7 +102,7 @@ class Cell
 	// Move specified atom to specified Cell
 	bool moveAtom(Atom* i, Cell* targetCell);
 	// Add atom to Cell
-	bool addAtom(Atom& atom);
+	bool addAtom(Atom* atom);
 	// Add Grain to Cell
 	void addGrain(Grain* grain);
 	// Remove Grain from Cell

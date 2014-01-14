@@ -9,6 +9,8 @@ box_nonperiodic.cpp
 box_orthorhombic.cpp 
 box_triclinic.cpp 
 cell.cpp
+changestore.cpp
+changestore_changedata.cpp
 configuration.cpp
 energykernel.cpp
 forcekernel.cpp

@@ -378,6 +378,7 @@ template <class T, class D> void RefList<T,D>::cut(RefListItem<T,D>* item)
 	else next->prev = prev;
 	item->next = NULL;
 	item->prev = NULL;
+	--nItems_;
 	regenerate_ = 1;
 }
 
