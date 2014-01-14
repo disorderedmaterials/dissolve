@@ -30,10 +30,6 @@ Cell::Cell()
 {
 	index_ = -1;
 	lockCount_ = 0;
-	maxAtomNeighbours_ = 1000;
-	nAtomNeighbours_ = 0;
-	atomNeighbours_ = NULL;
-	mimAtomNeighbours_ = NULL;
 }
 
 /*!
@@ -341,68 +337,36 @@ RefList<Cell,bool>& Cell::neighbours()
 	return neighbours_;
 }
 
-// Initialise atom neighbour list
-void Cell::initialiseAtomNeighbourList(double atomicDensity, double ppRange, Vec3<double> realCellSize)
-{
-	maxAtomNeighbours_ = (4.0/3.0)*PI*pow(ppRange+sqrt(realCellSize.dp(realCellSize))*0.5,3) * atomicDensity * 2.0;
-	atomNeighbours_ = new Atom*[maxAtomNeighbours_];
-	mimAtomNeighbours_ = new Atom*[maxAtomNeighbours_];
-	nAtomNeighbours_ = 0;
-	nMimAtomNeighbours_ = 0;
-}
-
-// Clear atom neighbour list
+/*!
+ * \brief Clear atom neighbour list
+ */
 void Cell::clearAtomNeighbourList()
 {
-	nAtomNeighbours_ = 0;
-	nMimAtomNeighbours_ = 0;
+	atomNeighbours_.clear();
+	mimAtomNeighbours_.clear();
 }
 
-// Add atom to neighbour list
+/*!
+ * \brief Add atom to neighbour list
+ */
 void Cell::addAtomToNeighbourList(Atom* i, bool useMim)
 {
-	if (useMim)
-	{
-		if (nMimAtomNeighbours_ == maxAtomNeighbours_)
-		{
-			msg.print("We're full!!!!\n");
-			return;
-		}
-		mimAtomNeighbours_[nMimAtomNeighbours_] = i;
-		++nMimAtomNeighbours_;
-	}
-	else
-	{
-		if (nAtomNeighbours_ == maxAtomNeighbours_)
-		{
-			msg.print("We're full!!!!\n");
-			return;
-		}
-		atomNeighbours_[nAtomNeighbours_] = i;
-		++nAtomNeighbours_;
-	}
+	if (useMim) mimAtomNeighbours_.add(i);
+	else atomNeighbours_.add(i);
 }
 
-// Return atom neighbour list
-Atom** Cell::atomNeighbours()
+/*!
+ * \brief Return atom neighbour list
+ */
+OrderedList<Atom>& Cell::atomNeighbours()
 {
 	return atomNeighbours_;
 }
 
-// Return number of atom neighbours in list
-int Cell::nAtomNeighbours()
-{
-	return nAtomNeighbours_;
-}
-
-// Return atom neighbour list requiring mim
-Atom** Cell::mimAtomNeighbours()
+/*!
+ * \brief Return atom neighbour list requiring mim
+ */
+OrderedList<Atom>& Cell::mimAtomNeighbours()
 {
 	return mimAtomNeighbours_;
-}
-
-// Return number of atom neighbours in list requiring mim
-int Cell::nMimAtomNeighbours()
-{
-	return nMimAtomNeighbours_;
 }

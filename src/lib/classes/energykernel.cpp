@@ -492,8 +492,8 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, DUQComm::CommGr
 		ii = centralAtoms[i];
 
 		// Straight loop over atoms *not* requiring mim
-		otherAtoms = centralCell->atomNeighbours();
-		for (j = 0; j < centralCell->nAtomNeighbours(); ++j)
+		otherAtoms = centralCell->atomNeighbours().objects();
+		for (j = 0; j < centralCell->atomNeighbours().nItems(); ++j)
 		{
 			// Check exclusion of I > J
 			if (excludeIgeJ && (ii->index() >= otherAtoms[j]->index())) continue;
@@ -509,8 +509,8 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, DUQComm::CommGr
 		}
 
 		// Straight loop over atoms requiring mim
-		otherAtoms = centralCell->mimAtomNeighbours();
-		for (j = 0; j < centralCell->nMimAtomNeighbours(); ++j)
+		otherAtoms = centralCell->mimAtomNeighbours().objects();
+		for (j = 0; j < centralCell->mimAtomNeighbours().nItems(); ++j)
 		{
 			// Check exclusion of I > J
 			if (excludeIgeJ && (ii->index() >= otherAtoms[j]->index())) continue;
