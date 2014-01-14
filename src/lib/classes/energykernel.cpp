@@ -405,7 +405,7 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 	}
 #endif
 	double totalEnergy = 0.0;
-	RefListItem<Atom,int>** centralAtoms = centralCell->atoms().array(), **otherAtoms = otherCell->atoms().array();
+	Atom** centralAtoms = centralCell->atoms().objects(), **otherAtoms = otherCell->atoms().objects();
 	Atom* ii, *jj;
 	int i, j, start = 0, stride = 1;
 	double scale;
@@ -419,12 +419,12 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 	{
 		for (i = start; i < centralCell->atoms().nItems(); i += stride)
 		{
-			ii = centralAtoms[i]->item;
+			ii = centralAtoms[i];
 
 			// Straight loop over other cell atoms
 			for (j = 0; j < otherCell->atoms().nItems(); ++j)
 			{
-				jj = otherAtoms[j]->item;
+				jj = otherAtoms[j];
 				
 				// Check exclusion of I > J
 				if (excludeIgeJ && (ii->index() >= jj->index())) continue;
@@ -444,12 +444,12 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 	{
 		for (i = start; i < centralCell->atoms().nItems(); i += stride)
 		{
-			ii = centralAtoms[i]->item;
+			ii = centralAtoms[i];
 
 			// Straight loop over other cell atoms
 			for (j = 0; j < otherCell->atoms().nItems(); ++j)
 			{
-				jj = otherAtoms[j]->item;
+				jj = otherAtoms[j];
 				
 				// Check exclusion of I > J
 				if (excludeIgeJ && (ii->index() >= jj->index())) continue;
@@ -477,8 +477,7 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, DUQComm::CommGroup group)
 {
 	double totalEnergy = 0.0;
-	RefListItem<Atom,int>** centralAtoms = centralCell->atoms().array();
-	Atom** otherAtoms;
+	Atom** centralAtoms = centralCell->atoms().objects(), **otherAtoms;
 	Atom* ii, *jj;
 	int i, j, start = 0, stride = 1;
 	double scale;
@@ -490,7 +489,7 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, DUQComm::CommGr
 	// Loop over central cell atoms
 	for (i = start; i < centralCell->atoms().nItems(); i += stride)
 	{
-		ii = centralAtoms[i]->item;
+		ii = centralAtoms[i];
 
 		// Straight loop over atoms *not* requiring mim
 		otherAtoms = centralCell->atomNeighbours();
@@ -548,7 +547,7 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, bool applyMim, DUQComm::C
 	}
 #endif
 	double totalEnergy = 0.0;
-	RefListItem<Atom,int>** cellAtoms = cell->atoms().array();
+	Atom** cellAtoms = cell->atoms().objects();
 	Atom* jj;
 	int j, start = 0, stride = 1;
 	double scale;
@@ -567,7 +566,7 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, bool applyMim, DUQComm::C
 	{
 		for (j = start; j < cell->atoms().nItems(); j += stride)
 		{
-			jj = cellAtoms[j]->item;
+			jj = cellAtoms[j];
 
 			// Check exclusion of I == J
 			if (indexI == jj->index()) continue;
@@ -586,7 +585,7 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, bool applyMim, DUQComm::C
 	{
 		for (j = start; j < cell->atoms().nItems(); j += stride)
 		{
-			jj = cellAtoms[j]->item;
+			jj = cellAtoms[j];
 
 			// Check exclusion of I == J
 			if (indexI == jj->index()) continue;
@@ -629,7 +628,7 @@ double EnergyKernel::energy(const Grain* grain, Cell* cell, double cutoffSq, boo
 	}
 #endif
 	double totalEnergy = 0.0;
-	RefListItem<Atom,int>** cellAtoms = cell->atoms().array();
+	Atom** cellAtoms = cell->atoms().objects();
 	int i, j, start, stride, typeI, indexI;
 	Vec3<double> rI;
 	Molecule* moleculeI;
@@ -655,7 +654,7 @@ double EnergyKernel::energy(const Grain* grain, Cell* cell, double cutoffSq, boo
 			// Loop over cell atoms
 			for (j = start; j < cell->atoms().nItems(); j += stride)
 			{
-				Atom* atomJ = cellAtoms[j]->item;
+				Atom* atomJ = cellAtoms[j];
 
 				// Check exclusion of I == J
 				if (indexI == atomJ->index()) continue;
@@ -685,7 +684,7 @@ double EnergyKernel::energy(const Grain* grain, Cell* cell, double cutoffSq, boo
 			// Loop over cell atoms
 			for (j = start; j < cell->atoms().nItems(); j += stride)
 			{
-				Atom* atomJ = cellAtoms[j]->item;
+				Atom* atomJ = cellAtoms[j];
 
 				// Check exclusion of I == J
 				if (indexI == atomJ->index()) continue;

@@ -428,6 +428,7 @@ template <class T> void List<T>::cut(T *item)
 	else next->prev = prev;
 	item->next = NULL;
 	item->prev = NULL;
+	--nItems_;
 	regenerate_ = 1;
 }
 

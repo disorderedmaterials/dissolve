@@ -124,7 +124,7 @@ bool Grain::addAtom(Atom* i)
 {
 #ifdef CHECKS
 	// Check for NULL pointer
-	if (iptr == NULL)
+	if (i == NULL)
 	{
 		msg.error("NULL_POINTER - NULL Atom pointer pointer passed to Grain::addAtom().\n");
 		return false;

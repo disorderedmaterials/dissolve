@@ -27,23 +27,23 @@
 
 /*!
  * \brief OrderedListItem Class
- * \details OrderedList maintains a list of OrderedListItems, which contain a reference to an object of the template class type.
+ * \details OrderedList maintains a list of OrderedListItems, which contain a pointer to an object of the template class type.
  */
 template <class T> class OrderedListItem
 {
 	public:
 	// Constructor
-	OrderedListItem<T>(T& object);
+	OrderedListItem<T>(T* object);
 	// List pointers
 	OrderedListItem<T>* prev, *next;
 
 	private:
 	// Reference to object
-	T& object_;
+	T* object_;
 
 	public:
 	// Return reference to object
-	T& object();
+	T* object();
 	// Return object index
 	int objectIndex();
 };
@@ -52,7 +52,7 @@ template <class T> class OrderedListItem
  * \brief Constructor
  * \details Constructor for OrderedListItem
  */
-template <class T> OrderedListItem<T>::OrderedListItem(T& object) : object_(object)
+template <class T> OrderedListItem<T>::OrderedListItem(T* object) : object_(object)
 {
 	prev = NULL;
 	next = NULL;
@@ -61,7 +61,7 @@ template <class T> OrderedListItem<T>::OrderedListItem(T& object) : object_(obje
 /*!
  * \brief Return reference to object
  */
-template <class T> T& OrderedListItem<T>::object()
+template <class T> T* OrderedListItem<T>::object()
 {
 	return object_;
 }
@@ -71,7 +71,14 @@ template <class T> T& OrderedListItem<T>::object()
  */
 template <class T> int OrderedListItem<T>::objectIndex()
 {
-	return object_.index();
+#ifdef CHECKS
+	if (object_ == NULL)
+	{
+		printf("NULL_POINTER - NULL object_ pointer encountered in OrderedListItem::objectIndex().\n");
+		return -1;
+	}
+#endif
+	return object_->index();
 }
 
 /*!
@@ -93,25 +100,29 @@ template <class T> class OrderedList
 	///@{
 	private:
 	// Pointers to head and tail of list
-	OrderedListItem<T> *listHead_, *listTail_;
+	OrderedListItem<T>* listHead_, *listTail_;
 	// Number of items in list
 	int nItems_;
 	// Static array of items
-	OrderedListItem<T> *items_;
-	// Array regeneration flag
-	bool regenerate_;
+	OrderedListItem<T>** items_;
+	// Static array of objects
+	T** objects_;
+	// Array sizes (at last new)
+	int itemArraySize_, objectArraySize_;
+	// Array regeneration flags
+	bool regenerateItemArray_, regenerateObjectArray_;
 
 
 	/*!
 	 * \name Access / Manipulation
 	 */
 	private:
-	// Insert reference to specified object after specified item
-	OrderedListItem<T>* insertAfter(T& object, OrderedListItem<T>* afterThis);
-	// Insert reference to specified object after specified item
-	OrderedListItem<T>* insertBefore(T& object, OrderedListItem<T>* beforeThis);
-	// Add the item into this list
-	void own(T *item);
+	// Insert item pointing to specified object, after specified item
+	OrderedListItem<T>* insertAfter(T* object, OrderedListItem<T>* afterThis);
+	// Insert item pointing to specified object, before specified item
+	OrderedListItem<T>* insertBefore(T* object, OrderedListItem<T>* beforeThis);
+	// Insert specified item, before specified item
+	void insertBefore(OrderedListItem<T>* item, OrderedListItem<T>* beforeThis);
 	// Remove an item from the list
 	void remove(T *item);
 	// Return whether the item is owned by the list
@@ -127,13 +138,15 @@ template <class T> class OrderedList
 	// Returns the number of items referenced in the list
 	int nItems() const;
 	// Add a new item reference to the list
-	void add(T& object);
+	void add(T* object);
 	// Move specified item to target list
 	void move(int objectIndex, OrderedList<T>& targetList);
 	// Returns the list head
 	OrderedListItem<T>* first() const;
 	// Generate (if necessary) and return item array
-	OrderedListItem<T> *array();
+	OrderedListItem<T>** items();
+	// Generate (if necessary) and return object array
+	T** objects();
 
 
 	/*!
@@ -141,7 +154,7 @@ template <class T> class OrderedList
 	*/
 	public:
 	// Element access operator
-	OrderedListItem<T> *operator[](int);
+	OrderedListItem<T>* operator[](int);
 };
 
 /*!
@@ -153,8 +166,12 @@ template <class T> OrderedList<T>::OrderedList()
 	listHead_ = NULL;
 	listTail_ = NULL;
 	nItems_ = 0;
-	regenerate_ = 1;
+	regenerateItemArray_ = 1;
+	regenerateObjectArray_ = 1;
+	itemArraySize_ = 0;
+	objectArraySize_ = 0;
 	items_ = NULL;
+	objects_ = NULL;
 }
 
 /*!
@@ -173,7 +190,7 @@ template <class T> OrderedList<T>::~OrderedList()
 /*!
  * \brief Insert reference to specifed object after supplied item
  */
-template <class T> OrderedListItem<T>* OrderedList<T>::insertAfter(T& object, OrderedListItem<T>* afterThis)
+template <class T> OrderedListItem<T>* OrderedList<T>::insertAfter(T* object, OrderedListItem<T>* afterThis)
 {
 	// Create new list item
 	OrderedListItem<T>* newItem = new OrderedListItem<T>(object);
@@ -205,7 +222,8 @@ template <class T> OrderedListItem<T>* OrderedList<T>::insertAfter(T& object, Or
 
 	// Increase item count, and flag that the array should be regenerated.
 	++nItems_;
-	regenerate_ = 1;
+	regenerateItemArray_ = 1;
+	regenerateObjectArray_ = 1;
 	
 	return newItem;
 }
@@ -213,65 +231,48 @@ template <class T> OrderedListItem<T>* OrderedList<T>::insertAfter(T& object, Or
 /*!
  * \brief Insert reference to specifed object after supplied item
  */
-template <class T> OrderedListItem<T>* OrderedList<T>::insertBefore(T& object, OrderedListItem< T >* beforeThis)
+template <class T> OrderedListItem<T>* OrderedList<T>::insertBefore(T* object, OrderedListItem<T>* beforeThis)
 {
 	// Create new list item
 	OrderedListItem<T>* newItem = new OrderedListItem<T>(object);
-	
-	// Get pointer to prev item in list, after the list item 'afterThis'
-	// If 'afterThis' is NULL, then we insert at the end of the list (and make listTail_ point to the new item)
-	OrderedListItem<T>* newPrev;
-	if (beforeThis == NULL)
-	{
-		// First item in list will be the newItem, so 'newPrev will be the current listTail_
-		newPrev = listTail_;
-		listTail_ = newItem;
-	}
-	else
-	{
-		newPrev = beforeThis->prev;
-		beforeThis->prev = newItem;
-	}
-
-	// Set pointer to next item (of our newItem)
-	newItem->next = beforeThis;
-
-	// Re-point nextious pointer of newPrev
-	if (newPrev != NULL) newPrev->next = newItem;
-	else listHead_ = newItem;
-
-	// Re-point 'prev' pointer of newItem;
-	newItem->prev = newPrev;
-
-	// Increase item count, and flag that the array should be regenerated.
-	++nItems_;
-	regenerate_ = 1;
-	
+	insertBefore(newItem, beforeThis);
 	return newItem;
 }
 
 /*!
- * \brief Own an existing item
+ * \brief Insert specified item, before specified item
  */
-template <class T> void OrderedList<T>::own(T* olditem)
+template <class T> void OrderedList<T>::insertBefore(OrderedListItem<T>* item, OrderedListItem<T>* beforeThis)
 {
-	if (olditem == NULL)
+	// Get pointer to prev item in list, after the list item 'beforeThis'
+	// If 'beforeThis' is NULL, then we insert at the end of the list (and make listTail_ point to the new item)
+	OrderedListItem<T>* newPrev;
+	if (beforeThis == NULL)
 	{
-		printf("Internal Error: NULL pointer passed to OrderedList<T>::own().\n");
-		return;
+		// First item in list will be the item, so newPrev will be the current listTail_
+		newPrev = listTail_;
+		listTail_ = item;
 	}
-	// In the interests of 'pointer etiquette', refuse to own the item if its pointers are not NULL
-	if ((olditem->next != NULL) || (olditem->prev != NULL))
+	else
 	{
-		printf("list::own <<<< List refused to own an item that still had ties >>>>\n");
-		return;
+		newPrev = beforeThis->prev;
+		beforeThis->prev = item;
 	}
-	listHead_ == NULL ? listHead_ = olditem : listTail_->next = olditem;
-	olditem->prev = listTail_;
-	olditem->next = NULL;
-	listTail_ = olditem;
-	nItems_ ++;
-	regenerate_ = 1;
+
+	// Set pointer to next item (of our item)
+	item->next = beforeThis;
+
+	// Re-point nextious pointer of newPrev
+	if (newPrev != NULL) newPrev->next = item;
+	else listHead_ = item;
+
+	// Re-point 'prev' pointer of item;
+	item->prev = newPrev;
+
+	// Increase item count, and flag that the array should be regenerated.
+	++nItems_;
+	regenerateItemArray_ = 1;
+	regenerateObjectArray_ = 1;
 }
 
 /*!
@@ -289,7 +290,8 @@ template <class T> void OrderedList<T>::remove(T *xitem)
 	xitem->next == NULL ? listTail_ = xitem->prev : xitem->next->prev = xitem->prev;
 	delete xitem;
 	--nItems_;
-	regenerate_ = 1;
+	regenerateItemArray_ = 1;
+	regenerateObjectArray_ = 1;
 }
 
 /*!
@@ -301,8 +303,8 @@ template <class T> OrderedListItem<T>* OrderedList<T>::contains(int objectIndex)
 	OrderedListItem<T> *item = listHead_;
 	while (item)
 	{
-		if (item->index() == objectIndex) return item;
-		if (item->index() > objectIndex) return NULL;
+		if (item->objectIndex() > objectIndex) return NULL;
+		if (item->objectIndex() == objectIndex) return item;
 		item = item->next;
 	}
 	return NULL;
@@ -318,16 +320,26 @@ template <class T> void OrderedList<T>::cut(OrderedListItem<T>* item)
 		printf("Internal Error: NULL pointer passed to OrderedList<T>::cut().\n");
 		return;
 	}
-	T *prev, *next;
+
+	// Grab list pointers for specified item
+	OrderedListItem<T>* prev, *next;
 	prev = item->prev;
 	next = item->next;
+
+	// Adjust previous item
 	if (prev == NULL) listHead_ = next;
 	else prev->next = next;
+
+	// Adjust next item
 	if (next == NULL) listTail_ = prev;
 	else next->prev = prev;
+
 	item->next = NULL;
 	item->prev = NULL;
-	regenerate_ = 1;
+
+	--nItems_;
+	regenerateItemArray_ = 1;
+	regenerateObjectArray_ = 1;
 }
 
 /*!
@@ -348,22 +360,53 @@ template <class T> OrderedListItem<T>* OrderedList<T>::nextHighestIndex(int obje
 /*!
  * \brief Create (or just return) the item array
  */
-template <class T> OrderedListItem<T>* OrderedList<T>::array()
+template <class T> OrderedListItem<T>** OrderedList<T>::items()
 {
-	if (regenerate_ == 0) return items_;
+	if (regenerateItemArray_ == 0) return items_;
 	
-	// Delete old item list if it is too small (and if there is one)
-	if (items_ != NULL) delete[] items_;
-	
-	// Create new list
-	items_ = new OrderedListItem<T>*[nItems_];
-	
+	// Recreate item array if it is NULL or too small
+	if ((items_ == NULL) || (nItems_ > itemArraySize_))
+	{
+		// Delete old list if necessary
+		if (items_ != NULL) delete[] items_;
+		
+		// Create new list
+		itemArraySize_ = nItems_;
+		items_ = new OrderedListItem<T>*[itemArraySize_];
+	}
+
 	// Fill in pointers
 	int count = 0;
-	for (OrderedListItem<T>* i = listHead_; i != NULL; i = i->next) items_[count++] = i;
-	regenerate_ = 0;
+	for (OrderedListItem<T>* item = listHead_; item != NULL; item = item->next) items_[count++] = item;
+	regenerateItemArray_ = 0;
 	return items_;
 }
+
+/*!
+ * \brief Create (or just return) the object array
+ */
+template <class T> T** OrderedList<T>::objects()
+{
+	if (regenerateObjectArray_ == 0) return objects_;
+	
+	// Recreate object array if it is NULL or too small
+	if ((objects_ == NULL) || (nItems_ > objectArraySize_))
+	{
+		// Delete old list if necessary
+		if (objects_ != NULL) delete[] objects_;
+		
+		// Create new list
+		objectArraySize_ = nItems_;
+		objects_ = new T*[objectArraySize_];
+	}
+
+	// Fill in pointers
+	int count = 0;
+	for (OrderedListItem<T>* item = listHead_; item != NULL; item = item->next) objects_[count++] = item->object();
+	regenerateObjectArray_ = 0;
+	return objects_;
+}
+
 
 /*!
  * \brief Remove all items in the list
@@ -380,7 +423,8 @@ template <class T> void OrderedList<T>::clear()
 	// Delete static items array if its there
 	if (items_ != NULL) delete[] items_;
 	items_ = NULL;
-	regenerate_ = 1;
+	regenerateItemArray_ = 1;
+	regenerateObjectArray_ = 1;
 }
 
 /*!
@@ -394,18 +438,40 @@ template <class T> int OrderedList<T>::nItems() const
 /*!
  * \brief Add item to list
  */
-template <class T> void OrderedList<T>::add(T& object)
+template <class T> void OrderedList<T>::add(T* object)
 {
+#ifdef CHECKS
+	if (object == NULL)
+	{
+		printf("NULL_POINTER - NULL object passed to OrderedList<T>::add().\n");
+		return;
+	}
+#endif
 	// Add it in the correct place in the list
-	OrderedListItem<T>* nextLargest = nextHighestIndex(object.index());
+	OrderedListItem<T>* nextLargest = nextHighestIndex(object->index());
 	insertBefore(object, nextLargest);
 }
 
 // Move specified item to target list
 template <class T> void OrderedList<T>::move(int objectIndex, OrderedList<T>& targetList)
 {
+	// Get item for specified objectIndex
+	OrderedListItem<T>* item = contains(objectIndex);
+#ifdef CHECKS
+	if (item == NULL)
+	{
+		printf("Internal Error: Specified objectIndex (%i) does not exist in this OrderedList.\n", objectIndex);
+		return;
+	}
+#endif
+	// Remove the item from this list
+	cut(item);
+
+	// Find next highest index item in targetList
+	OrderedListItem<T>* nextHighest = targetList.nextHighestIndex(objectIndex);
+	targetList.insertBefore(item, nextHighest);
 }
-	
+
 /*!
  * \brief Return the list head
  */
@@ -430,7 +496,7 @@ template <class T> OrderedListItem<T> *OrderedList<T>::operator[](int index)
 		return NULL;
 	}
 #endif
-	return array()[index];
+	return items()[index];
 }
 
 #endif

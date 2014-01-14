@@ -1,22 +1,22 @@
 /*
-	*** ChangeStore
+	*** WatchTarget
 	*** src/lib/classes/changestore.cpp
 	Copyright T. Youngs 2012-2013
 
-	This file is part of ChangeStore.
+	This file is part of dUQ.
 
-	ChangeStore is free software: you can redistribute it and/or modify
+	dUQ is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	ChangeStore is distributed in the hope that it will be useful,
+	dUQ is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with ChangeStore.  If not, see <http://www.gnu.org/licenses/>.
+	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "classes/changestore.h"
@@ -25,7 +25,7 @@
 #include "classes/configuration.h"
 #include "classes/grain.h"
 #include "classes/molecule.h"
-#include "base/comms.h"
+#include "templates/orderedlist.h"
 
 /*!
  * \brief Constructor
@@ -52,9 +52,8 @@ ChangeStore::~ChangeStore()
  */
 void ChangeStore::add(Atom* i)
 {
-	RefListItem<Atom, Pair<bool,Vec3<double> > >* item = targetAtoms_.add(i);
-	item->data.a = false;
-	if (i != NULL) item->data.b = i->r();
+	ChangeData* item = targetAtoms_.add();
+	item->setAtom(i);
 }
 
 /*!
@@ -79,7 +78,7 @@ void ChangeStore::add(Molecule* mol)
  */
 void ChangeStore::add(Cell* cell)
 {
-	for (OrderedListitem<Atom>* item = cell->atoms().first(); item != NULL; item = item->next) add(item->object());
+	for (OrderedListItem<Atom>* item = cell->atoms().first(); item != NULL; item = item->next) add(item->object());
 }
 
 /*
@@ -101,11 +100,7 @@ void ChangeStore::reset()
  */
 void ChangeStore::updateAll()
 {
-	for (RefListItem<Atom, Pair<bool,Vec3<double> > >* refAtom = targetAtoms_.first(); refAtom != NULL; refAtom = refAtom->next)
-	{
-		refAtom->data.a = true;
-		refAtom->data.b = refAtom->item->r();
-	}
+	for (ChangeData* item = targetAtoms_.first(); item != NULL; item = item->next) item->updatePosition();
 }
 
 /*!
@@ -118,13 +113,12 @@ void ChangeStore::updateAtomsLocal(int nAtoms, int* indices)
 #ifdef CHECKS
 		if ((indices[n] < 0) || (indices[n] >= targetAtoms_.nItems()))
 		{
-			msg.print("OUT_OF_RANGE - Supplied indidices_[n] (%i) is out of range in ChangeStore::updateAtomsLocal() (nTargetAtoms = %i)\n", n, indices_[n], targetAtoms_.nItems());
+			msg.print("OUT_OF_RANGE - Supplied indices_[n] (%i) is out of range in ChangeStore::updateAtomsLocal() (nTargetAtoms = %i)\n", n, indices_[n], targetAtoms_.nItems());
 			continue;
 		}
 #endif
-		RefListItem<Atom, Pair<bool,Vec3<double> > >* refAtom = targetAtoms_[indices[n]];
-		refAtom->data.a = true;
-		refAtom->data.b = refAtom->item->r();
+		ChangeData* item = targetAtoms_[indices[n]];
+		item->updatePosition();
 	}
 }
 
@@ -140,9 +134,8 @@ void ChangeStore::updateAtom(int id)
 		return;
 	}
 #endif
-	RefListItem<Atom, Pair<bool,Vec3<double> > >* refAtom = targetAtoms_[id];
-	refAtom->data.a = true;
-	refAtom->data.b = refAtom->item->r();
+	ChangeData* item = targetAtoms_[id];
+	item->updatePosition();
 }
 
 /*!
@@ -151,10 +144,7 @@ void ChangeStore::updateAtom(int id)
 void ChangeStore::revertAll()
 {
 // 	printf("In Revert...\n");
-	for (RefListItem<Atom, Pair<bool,Vec3<double> > >* refAtom = targetAtoms_.first(); refAtom != NULL; refAtom = refAtom->next)
-	{
-		refAtom->item->setCoordinates(refAtom->data.b);
-	}
+	for (ChangeData* item = targetAtoms_.first(); item != NULL; item = item->next) item->revertPosition();
 // 	printf("Done Revert.\n");
 }
 
@@ -170,8 +160,8 @@ void ChangeStore::revert(int id)
 		return;
 	}
 #endif
-	RefListItem<Atom, Pair<bool,Vec3<double> > >* refAtom = targetAtoms_[id];
-	refAtom->item->setCoordinates(refAtom->data.b);
+	ChangeData* item = targetAtoms_[id];
+	item->revertPosition();
 }
 
 /*!
@@ -179,17 +169,21 @@ void ChangeStore::revert(int id)
  */
 void ChangeStore::storeAndReset()
 {
-	int count = 0;
-	Pair< int,Vec3<double> >* changeData;
-	for (RefListItem<Atom, Pair<bool,Vec3<double> > >* refAtom = targetAtoms_.first(); refAtom != NULL; refAtom = refAtom->next, ++count)
+	ChangeData* item = targetAtoms_.first();
+	ChangeData* nextItem;
+	while (item != NULL)
 	{
-		// Has the position of this Atom been changed (i.e. updated)?
-		if (refAtom->data.a == false) continue;
+		// Grab pointer to next item
+		nextItem = item->next;
 
-		// Create a new change and store info
-		changeData = changes_.add();
-		changeData->a = refAtom->item->index();
-		changeData->b = refAtom->data.b;
+		// Has the position of this Atom been changed (i.e. updated)?
+		if (item->hasMoved())
+		{
+			targetAtoms_.cut(item);
+			changes_.own(item);
+		}
+
+		item = nextItem;
 	}
 
 	// Clear target Atom data
@@ -250,24 +244,16 @@ bool ChangeStore::distribute(Configuration& cfg)
 		// Set new coordinates and check cell position
 		if (atoms[indices_[n]]->index() == Atom::UnusedAtom) continue;
 		atoms[indices_[n]]->setCoordinates(x_[n], y_[n], z_[n]);
-		cfg.updateAtomInCell(n);
+		cfg.updateAtomInCell(atoms[indices_[n]);
 	}
 #else
 
 	// Apply atom changes
-	Atom* atoms = cfg.atoms();
-	for (int n=0; n<changes_.nItems(); ++n)
+	for (ChangeData* data = changes_.first(); data != NULL; data = data->next)
 	{
-#ifdef CHECKS
-		if ((changes_[n]->a < 0) || (changes_[n]->a >= cfg.nAtoms()))
-		{
-			msg.print("OUT_OF_RANGE - Index of Atom change (%i) is out of range in ChangeStore::distribute() (nAtoms = %i).\n", changes_[n]->a, cfg.nAtoms());
-			continue;
-		}
-#endif
 		// Set new coordinates and check cell position (Configuration::updateAtomInCell() will do all this)
-		atoms[changes_[n]->a].setCoordinates(changes_[n]->b.x, changes_[n]->b.y, changes_[n]->b.z);
-		cfg.updateAtomInCell(n);
+		data->revertPosition();
+		cfg.updateAtomInCell(data->atomIndex());
 	}
 #endif
 	return true;

@@ -194,9 +194,9 @@ OrderedList<Atom>& Cell::atoms()
 bool Cell::moveAtom(Atom* i, Cell* targetCell)
 {
 #ifdef CHECKS
-	if ((id < 0) || (id >= maxAtoms_))
+	if (i == NULL)
 	{
-		msg.print("OUT_OF_RANGE - Atom index given to Cell::moveAtom() (%i) is out of range (maxAtoms_ = %i)\n", id, maxAtoms_);
+		msg.print("NULL_POINTER - NULL Atom pointer given to Cell::moveAtom().\n");
 		return false;
 	}
 	if (targetCell == NULL)
@@ -214,18 +214,23 @@ bool Cell::moveAtom(Atom* i, Cell* targetCell)
 
 	// Move atom from this cell to target cell
 	atoms_.move(i->index(), targetCell->atoms_);
-// 	atoms_.remove(i);
-// 	targetCell->addAtom(i);
 
 	return true;
 }
 
 // Add atom to Cell
-bool Cell::addAtom(Atom& atom)
+bool Cell::addAtom(Atom* atom)
 {
+#ifdef CHECKS
+	if (atom == NULL)
+	{
+		msg.print("NULL_POINTER - NULL Atom pointer given to Cell::addAtom().\n");
+		return false;
+	}
+#endif
 	// Copy source atom data to target atom, and set new reference to atom
 	atoms_.add(atom);
-	atom.setCell(this);
+	atom->setCell(this);
 
 	return true;
 }

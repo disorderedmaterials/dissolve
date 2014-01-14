@@ -1071,9 +1071,9 @@ bool Configuration::updateAtomsInCells()
 		currentCell = &cells_[c];
 
 		// TODO Overload cell() to take a pointer to a Vec3<> in which the folded r can be returned
-		for (RefListItem<Atom,int>* ri = currentCell->atoms().first(); ri != NULL; ri = ri->next)
+		for (OrderedListItem<Atom>* item = currentCell->atoms().first(); item != NULL; item = item->next)
 		{
-			i = ri->item;
+			i = item->object();
 			foldedR = box_->fold(i->r());
 			i->setCoordinates(foldedR);
 			targetCell = cell(i->r());
@@ -1081,6 +1081,7 @@ bool Configuration::updateAtomsInCells()
 			// Need to move?
 			if (targetCell != currentCell)
 			{
+				// We first must remove
 				if (!currentCell->moveAtom(i, targetCell)) return false;
 			}
 		}
@@ -1101,6 +1102,7 @@ bool Configuration::updateAtomInCell(int id)
 	// Grab atom pointers
 	Atom* i = &atoms_[id];
 
+	// TODO Overload cell() to take a pointer to a Vec3<> in which the folded r can be returned
 	// Grab current cell pointer, and calculate folded coordinate and new cell location
 	currentCell = i->cell();
 	foldedR = box_->fold(i->r());
@@ -1111,9 +1113,9 @@ bool Configuration::updateAtomInCell(int id)
 	if (targetCell != currentCell)
 	{
 		// Need to update cell neighbour lists here
-		// -- First, loop over all neighbour cells for this atom
+		// -- First, loop over all neighbour cells for the old atom location, and remove it from any neighbour 
 		currentCell->moveAtom(i, targetCell);
-		
+		i->setCell(targetCell);
 	}
 
 	return true;

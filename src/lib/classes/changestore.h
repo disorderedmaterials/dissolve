@@ -35,6 +35,44 @@ class Molecule;
 class Configuration;
 
 /*!
+ * \brief Change Data
+ */
+class ChangeData
+{
+	public:
+	// Constructor
+	ChangeData();
+	// Destructor
+	~ChangeData();
+	// List pointers
+	ChangeData* next, *prev;
+
+
+	/*!
+	 * \name Target Data
+	 */
+	private:
+	// Atom
+	Atom* atom_;
+	// Flag indicating that atom has moved
+	bool moved_;
+	// Current coordinates of Atom (either original or newly-accepted)
+	Vec3<double> r_;
+
+	public:
+	// Set target atom
+	void setAtom(Atom* i);
+	// Return index of stored atom
+	int atomIndex();
+	// Update stored position, and flag as moved
+	void updatePosition();
+	// Revert atom to stored position
+	void revertPosition();
+	// Return whether atom has moved
+	bool hasMoved();
+};
+
+/*!
  * \brief ChangeStore
  */
 class ChangeStore
@@ -52,7 +90,7 @@ class ChangeStore
 	///@{
 	private:
 	// List of target atoms (and modification data)
-	RefList<Atom, Pair< bool,Vec3<double> > > targetAtoms_;
+	List<ChangeData> targetAtoms_;
 
 	public:
 	// Add atom to watch
@@ -72,7 +110,7 @@ class ChangeStore
 	///@{
 	private:
 	// List of local changes
-	List< Pair< int,Vec3<double> > > changes_;
+	List<ChangeData> changes_;
 	// Coordinate broadcast arrays
 	Array<double> x_, y_, z_;
 	// Index broadcast array
