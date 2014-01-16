@@ -159,7 +159,7 @@ double Box::axisAngle(int n) const
 /*!
  * \brief Return axes matrix
  */
-Matrix3 Box::axes() const
+const Matrix3& Box::axes() const
 {
 	return axes_;
 }

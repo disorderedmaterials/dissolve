@@ -520,6 +520,8 @@ class DUQ
 	CommandReturnValue commandTemperature(Configuration& cfg);
 	// Test Routine
 	CommandReturnValue commandTest(Configuration& cfg);
+	// Test Energy Calculation Routines
+	CommandReturnValue commandTestEnergy(Configuration& cfg);
 	///@}
 
 
@@ -530,8 +532,8 @@ class DUQ
 	public:
 	// Upkeep - Update Grains
 	void updateGrains(Configuration& cfg);
-	// Upkeep - Recalculate cell atom neighbour lists
-	void updateCellAtomNeighbourLists(Configuration& cfg);
+	// Upkeep - Create cell atom neighbour lists
+	void createCellAtomNeighbourLists(Configuration& cfg);
 	// Perform an Atom shake
 	CommandReturnValue atomShake(Configuration& cfg);
 	// Perform a Grain shake

@@ -264,3 +264,14 @@ Vec3<double> TriclinicBox::foldFrac(const Vec3<double>& r) const
 	
 	return frac;
 }
+
+
+/*!
+ * \brief Convert supplied fractional coordinates to real space
+ */
+Vec3<double> TriclinicBox::fracToReal(const Vec3<double>& r) const
+{
+	// Multiply by axes matrix
+	// TODO Can speedup this part since we know which matrix elements are zero
+	return axes_*r;
+}

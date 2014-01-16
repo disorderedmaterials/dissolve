@@ -80,6 +80,22 @@ int Cell::index() const
 }
 
 /*!
+ * \brief Set real-space cell centre
+ */
+void Cell::setCentre(Vec3<double> r)
+{
+	centre_ = r;
+}
+
+/*! 
+ * \brief Return real-space cell centre
+ */
+const Vec3< double >& Cell::centre() const
+{
+	return centre_;
+}
+
+/*!
  * \brief Add lock
  */
 bool Cell::addLock()
@@ -208,8 +224,12 @@ bool Cell::moveAtom(Atom* i, Cell* targetCell)
 		return false;
 	}
 
+	// Need to first remove atom
+// 	for (int n=0; n<cell->nNeighbours(); ++n)
+		
 	// Move atom from this cell to target cell
 	atoms_.move(i->index(), targetCell->atoms_);
+	i->setCell(targetCell);
 
 	return true;
 }
@@ -316,9 +336,9 @@ Grain* Cell::grain(int n)
 /*!
  * \brief Add Cell neighbour
  */
-void Cell::addNeighbour(Cell* cell, bool isImage)
+void Cell::addNeighbour(Cell* cell, bool mimRequired)
 {
-	neighbours_.add(cell, isImage);
+	neighbours_.add(cell, mimRequired);
 }
 
 /*!
@@ -349,10 +369,18 @@ void Cell::clearAtomNeighbourList()
 /*!
  * \brief Add atom to neighbour list
  */
-void Cell::addAtomToNeighbourList(Atom* i, bool useMim)
+void Cell::addAtomToNeighbourList(Atom* i, bool useMim, bool atEnd)
 {
-	if (useMim) mimAtomNeighbours_.add(i);
-	else atomNeighbours_.add(i);
+	if (useMim)
+	{
+		if (atEnd) mimAtomNeighbours_.addAtEnd(i);
+		else mimAtomNeighbours_.add(i);
+	}
+	else
+	{
+		if (atEnd) atomNeighbours_.addAtEnd(i);
+		else atomNeighbours_.add(i);
+	}
 }
 
 /*!

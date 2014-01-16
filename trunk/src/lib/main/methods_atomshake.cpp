@@ -132,9 +132,10 @@ CommandReturnValue DUQ::atomShake(Configuration& cfg)
 				newEnergy = kernel.energy(i, cell, false, DUQComm::Group);
 				for (RefListItem<Cell,bool>* ri = cell->neighbours().first(); ri != NULL; ri = ri->next) newEnergy += kernel.energy(i, ri->item, ri->data, DUQComm::Group);
 				newIntraEnergy = kernel.fullIntraEnergy(grainI, termScale);
-
+				
 				// Trial the transformed atom position
-				delta = (newEnergy + newIntraEnergy) - (currentEnergy - intraEnergy);
+				delta = (newEnergy + newIntraEnergy) - (currentEnergy + intraEnergy);
+// 				printf("delta = %f\n", delta);
 				accept = delta < 0 ? true : (Comm.random() < exp(-delta/(.008314472*temperature_)));
 
 				if (accept)

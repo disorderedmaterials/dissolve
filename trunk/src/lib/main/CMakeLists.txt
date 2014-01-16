@@ -22,6 +22,7 @@ notepsr.h
 
 commands.cpp
 commands_basic.cpp
+commands_test.cpp
 methods_atomshake.cpp
 methods_energy.cpp
 methods_forces.cpp

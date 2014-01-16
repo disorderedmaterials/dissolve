@@ -55,6 +55,8 @@ class Cell
 	Vec3<int> gridReference_;
 	// Unique index
 	int index_;
+	// Real-space coordinates at the centre of this cell
+	Vec3<double> centre_;
 	// Number of locks on this Cell (-1 indicates subject of calculation)
 	int lockCount_;
 
@@ -67,6 +69,10 @@ class Cell
 	void setIndex(int id);
 	// Return unique index
 	int index() const;
+	// Set real-space cell centre
+	void setCentre(Vec3<double> r);
+	// Return real-space cell centre
+	const Vec3<double>& centre() const;
 	// Add lock
 	bool addLock();
 	// Remove lock
@@ -126,7 +132,7 @@ class Cell
 
 	public:
 	// Add Cell neighbour
-	void addNeighbour(Cell* cell, bool isImage);
+	void addNeighbour(Cell* cell, bool mimRequired);
 	// Return number of neighbours in list
 	int nNeighbours();
 	// Return neighbour list
@@ -134,7 +140,7 @@ class Cell
 	// Clear atom neighbour list
 	void clearAtomNeighbourList();
 	// Add atom to neighbour list
-	void addAtomToNeighbourList(Atom* i, bool useMim);
+	void addAtomToNeighbourList(Atom* i, bool useMim, bool atEnd = false);
 	// Return atom neighbour list
 	OrderedList<Atom>& atomNeighbours();
 	// Return atom neighbour list requiring mim

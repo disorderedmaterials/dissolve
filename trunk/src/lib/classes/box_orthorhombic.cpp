@@ -306,3 +306,12 @@ Vec3<double> OrthorhombicBox::foldFrac(const Vec3<double>& r) const
 	frac.z -= floor(frac.z);
 	return frac;
 }
+
+/*!
+ * \brief Convert supplied fractional coordinates to real space
+ */
+Vec3<double> OrthorhombicBox::fracToReal(const Vec3<double>& r) const
+{
+	// Multiply by box lengths
+	return Vec3<double>(r.x*a_, r.y*b_, r.z*c_);
+}
