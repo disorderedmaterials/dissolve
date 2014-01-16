@@ -88,6 +88,14 @@ double DUQ::interatomicEnergy(Configuration& cfg)
 	int cellId, n, m, start, stride;
 	Cell* cell, *otherCell;
 	double totalEnergy = 0.0;
+	
+	// TEST Invalidate all cell atom lists
+	for (int n=0; n<cfg.nCells(); ++n)
+	{
+		cfg.cell(n)->atoms().invalidateLists();
+		cfg.cell(n)->atomNeighbours().invalidateLists();
+		cfg.cell(n)->mimAtomNeighbours().invalidateLists();
+	}
 
 	// Set start/skip for parallel loop
 	start = Comm.interleavedLoopStart(DUQComm::Group);
@@ -210,17 +218,14 @@ double DUQ::intergrainEnergy(Configuration& cfg)
 double DUQ::totalEnergy(Configuration& cfg)
 {
 	msg.print("Calculating total energy...\n");
-	
-// 	printf("Test energy is %f\n", totalEnergyTest(cfg));
-// 	printf("Grain energy is %f\n", intergrainEnergy(cfg));
-	
+
 	double atomEnergy, intraEnergy;
-	
+
 	// Calculate Grain energy
 	Timer grainTimer;
 	atomEnergy = interatomicEnergy(cfg);
 	grainTimer.stop();
-	
+
 	// Calculate intramolecular and interGrain correction energy
 	Timer intraTimer;
 	intraEnergy = intramolecularEnergy(cfg);

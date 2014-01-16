@@ -167,13 +167,6 @@ void Configuration::operator=(Configuration &source)
 		for (ri = source.cells_[n].neighbours().first(); ri != NULL; ri = ri->next) cells_[n].addNeighbour(&cells_[ri->item->index()], ri->data);
 	}
 
-	// Copy imageMatrix_
-	imageMatrix_.initialise(nCells_, nCells_);
-	for (n=0; n<nCells_; ++n)
-	{
-		for (m=0; m<nCells_; ++m) imageMatrix_.ref(n,m) = source.imageMatrix_.ref(n,m);
-	}
-
 	nCellsDistributed_ = source.nCellsDistributed_;
 	lastCellDistributed_ = source.lastCellDistributed_;
 
@@ -299,7 +292,7 @@ int Configuration::nAtoms() const
 }
 
 /*!
- * \brief Return atom references array
+ * \brief Return atom array
  */
 Atom* Configuration::atoms()
 {
@@ -343,7 +336,7 @@ bool Configuration::setupArrays()
 		return false;
 	}
 	
-	msg.print("--> Creating arrays for %i atom references and %i grains...\n", nAtoms_, nGrains_);
+	msg.print("--> Creating arrays for %i atoms and %i grains...\n", nAtoms_, nGrains_);
 	try
 	{
 		atoms_ = new Atom[nAtoms_];
@@ -363,7 +356,7 @@ bool Configuration::setupArrays()
 
 /*!
  * \brief Setup Molecules
- * \details Once molecules have been added to the Configuration with addMolecule(), and the master arrays of atom references and grains have
+ * \details Once molecules have been added to the Configuration with addMolecule(), and the master arrays of atoms and grains have
  * been allocated by setupArrays(), the coordinates of the individual atoms can be set. If atoms are present in the supplied Species, setupMolecules()
  * takes coordinates from there and copies them to the molecules defined in the configuration. Otherwise, a random centre of geometry and orientation is
  * generated for each molecule.
@@ -542,7 +535,6 @@ void Configuration::clearCells()
 	cells_ = NULL;
 	if (cellFlag_ != NULL) delete[] cellFlag_;
 	cellFlag_ = NULL;
-	imageMatrix_.clear();
 	nCells_ = 0;
 }
 
@@ -556,7 +548,7 @@ void Configuration::clearCells()
  * gridReference coordinates is greater than or equal to the cellExtent in any direction, again minimum image must
  * be performed.
  */
-bool Configuration::imagesNeeded(Cell* a, Cell* b) const
+bool Configuration::minimumImageRequired(Cell* a, Cell* b) const
 {
 #ifdef CHECKS
 	// Check for NULL cell pointers
@@ -681,6 +673,7 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 	// Summarise
 	cellSize_.set(1.0 / divisions_.x, 1.0 / divisions_.y, 1.0 / divisions_.z);
 	msg.print("--> Final cell partitioning is (x,y,z) = (%i,%i,%i), giving %i cells in total.\n", divisions_.x, divisions_.y, divisions_.z, divisions_.x*divisions_.y*divisions_.z);
+	msg.print("--> Fractional cell size is (%f,%f,%f).\n", cellSize_.x, cellSize_.y, cellSize_.z);
 
 	// Construct Cell arrays
 	clearCells();
@@ -688,20 +681,27 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 	maxAtomsPerCell_ = (box_->volume() / nCells_) * atomicDensity * cellDensityMultiplier;
 	if (maxAtomsPerCell_ == 0) maxAtomsPerCell_ = 1;
 	cellFlag_ = new bool[nCells_];
-	msg.print("--> Constructing array of %i cells containing maximum of %i atoms (volume*rho = %i, multiplied by %f)...\n", nCells_, maxAtomsPerCell_, int((box_->volume() / nCells_) * atomicDensity), cellDensityMultiplier);
+	msg.print("--> Constructing array of %i cells...\n", nCells_);
 	cells_ = new Cell[nCells_];
+	Vec3<double> fracCentre_(cellSize_.x*0.5, 0.0, 0.0);
 	int count = 0;
 	for (x = 0; x<divisions_.x; ++x)
 	{
+		fracCentre_.y = cellSize_.y*0.5;
 		for (y = 0; y<divisions_.y; ++y)
 		{
-			for (z = 0; z < divisions_.z; ++z)
+			fracCentre_.z = cellSize_.z*0.5;
+			for (z = 0; z<divisions_.z; ++z)
 			{
 				cells_[count].setIndex(count);
 				cells_[count].setGridReference(x,y,z);
+				cells_[count].setCentre(box_->fracToReal(fracCentre_));
+				fracCentre_.z += cellSize_.z;
 				++count;
 			}
+			fracCentre_.y += cellSize_.y;
 		}
+		fracCentre_.x += cellSize_.x;
 	}
 
 	// Construct Cell neighbour lists
@@ -731,7 +731,8 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 		if ((cellExtents_[n]*2+1) > divisions_[n])
 		{
 			msg.warn("--> Cells required along axis %i is %i (2*%i + 1) exceeds number of available cells (%i). Parallelism will be affected!\n", n, cellExtents_[n]*2+1, cellExtents_[n], divisions_[n]);
-			cellExtents_[n] = (divisions_[n]-1)/2;
+			// We do not decrease the value of cellExtents_, even though there are not enough cells along one or more sides of the box to satisfy that required for the pairPotentialRange.
+			// When constructing, the loops below check the negative cellExtents_ indices for overlap which would cause the same cell to be added to the list twice.
 		}
 	}
 
@@ -743,17 +744,17 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 	for (x=-cellExtents_.x; x<=cellExtents_.x; ++x)
 	{
 		// Check for extent exceeding available cells across box in x-direction
-		if ((x < 0) && (-2*x >= divisions_.x)) continue;
+		if ((x < 0) && (x+divisions_[0] <=cellExtents_.x)) continue;
 
 		for (y=-cellExtents_.y; y<=cellExtents_.y; ++y)
 		{
 			// Check for extent exceeding available cells across box in y-direction
-			if ((y < 0) && (-2*y >= divisions_.y)) continue;
+			if ((y < 0) && (y+divisions_[1] <= cellExtents_.y)) continue;
 
 			for (z=-cellExtents_.z; z<=cellExtents_.z; ++z)
 			{
 				// Check for extent exceeding available cells across box in z-direction
-				if ((z < 0) && (-2*z >= divisions_.z)) continue;
+				if ((z < 0) && (z+divisions_[2] <=cellExtents_.z)) continue;
 
 				if ((x == 0) && (y == 0) && (z == 0)) continue;
 				// Set the grid reference of the cell to check, but reduce the extent by one
@@ -770,26 +771,27 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 	// Finally, loop over Cells and set neighbours, and construct neighbour matrix
 	msg.print("--> Constructing neighbour lists for individual Cells...\n");
 	Cell* nbr;
-	bool isImage;
+	bool mimRequired;
 	Vec3<int> gridRef;
+	OrderedList<Cell> neighbours, mimNeighbours;
 	for (n=0; n<nCells_; ++n)
 	{
 		// Grab grid reference of central cell
 		gridRef = cells_[n].gridReference();
+		
+		neighbours.clear();
+		mimNeighbours.clear();
 
 		// Loop over list of (relative) neighbour cell indices
 		for (ListVec3<int>* item = nbrs.first(); item != NULL; item = item->next)
 		{
 			// Retrieve Cell pointers
 			nbr = cell(gridRef.x+item->x, gridRef.y+item->y, gridRef.z+item->z);
-			isImage = box_->type() == Box::NonPeriodicBox ? false : imagesNeeded(&cells_[n], nbr);
-			cells_[n].addNeighbour(nbr, isImage);
+			mimRequired = box_->type() == Box::NonPeriodicBox ? false : minimumImageRequired(&cells_[n], nbr);
+			if (mimRequired) mimNeighbours.add(nbr);
+			else neighbours.add(nbr);
+			cells_[n].addNeighbour(nbr, mimRequired);
 		}
-	}
-	imageMatrix_.initialise(nCells_, nCells_);
-	for (n=0; n<nCells_; ++n)
-	{
-		for (m=0; m<nCells_; ++m) imageMatrix_.ref(n,m) = imagesNeeded(&cells_[n], &cells_[m]);
 	}
 
 	// Send Cell info to Comm so suitable parallel strategy can be deduced
@@ -886,7 +888,7 @@ bool Configuration::useMim(Cell* a, Cell* b) const
 		return false;
 	}
 #endif
-	return imageMatrix_.value(a->index(), b->index());
+	return minimumImageRequired(a, b);
 }
 
 /*!
@@ -1107,13 +1109,7 @@ bool Configuration::updateAtomInCell(int id)
 	targetCell = cell(foldedR);
 
 	// Need to move?
-	if (targetCell != currentCell)
-	{
-		// Need to update cell neighbour lists here
-		// -- First, loop over all neighbour cells for the old atom location, and remove it from any neighbour 
-		currentCell->moveAtom(i, targetCell);
-		i->setCell(targetCell);
-	}
+	if (targetCell != currentCell) currentCell->moveAtom(i, targetCell);
 
 	return true;
 }

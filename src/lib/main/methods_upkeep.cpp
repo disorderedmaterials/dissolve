@@ -52,41 +52,35 @@ void DUQ::updateGrains(Configuration& cfg)
 /*!
  * \brief Upkeep - Recalculate cell atom neighbour lists
  */
-void DUQ::updateCellAtomNeighbourLists(Configuration& cfg)
+void DUQ::createCellAtomNeighbourLists(Configuration& cfg)
 {
 	// Clear all existing atoms in cell neighbour lists
 	for (int n=0; n<cfg.nCells(); ++n) cfg.cell(n)->clearAtomNeighbourList();
 
-	Vec3<double> r;
+	Vec3<double> r, atomR;
 	double distSq, cutoffSq = pairPotentialRange_ + sqrt(cfg.realCellSize().dp(cfg.realCellSize()))*0.5;
-	msg.print("Cutoff for atom cell neighbours is %f\n", cutoffSq);
+	msg.print("--> Cutoff for atom cell neighbours is %f\n", cutoffSq);
 	cutoffSq *= cutoffSq;
 	Atom** otherAtoms;
+	Atom* i, *atoms = cfg.atoms();
+	Cell* centralCell, *otherCell;
+	const Box* box = cfg.box();
 
-	// Loop over cells
-	for (int n=0; n<cfg.nCells(); ++n)
+	// Loop over atoms
+	for (int n=0; n<cfg.nAtoms(); ++n)
 	{
-		Cell* cell = cfg.cell(n);
-		
-		// Calculate centre coordinate of this cell   TODO only for cubic systems
-		Vec3<double> cellCentre = cfg.realCellSize()*0.5 + Vec3<double>(cfg.realCellSize().x*cell->gridReference().x,cfg.realCellSize().y*cell->gridReference().y,cfg.realCellSize().z*cell->gridReference().z); 
+		// Grab reference to atom and pointer to its current cell location
+		i = &atoms[n];
+		centralCell = i->cell();
+		atomR = i->r();
 
-		// Loop over cell neighbours, and then over atoms, checking distance with the central cell
-		for (RefListItem<Cell,bool>* ri = cell->neighbours().first(); ri != NULL; ri = ri->next)
+		// Check distance of the current atom from the centres of each of the neighbouring cells
+		for (RefListItem<Cell,bool>* ri = centralCell->neighbours().first(); ri != NULL; ri = ri->next)
 		{
-			Cell* otherCell = ri->item;
-			otherAtoms = otherCell->atoms().objects();
-
-			for (int m=0; m<otherCell->atoms().nItems(); ++m)
-			{
-				Atom* i = otherAtoms[m];
-
-				// Get minimum image vector w.r.t. cell centre
-				r = cfg.box()->minimumVector(cellCentre, i->r());
-				distSq = r.magnitudeSq();
-				if (distSq > cutoffSq) continue;
-				cell->addAtomToNeighbourList(i, cfg.useMim(cell, i->cell()));
-			}
+			otherCell = ri->item;
+			r = box->minimumVector(otherCell->centre(), atomR);
+			distSq = r.magnitudeSq();
+			if (distSq <= cutoffSq) otherCell->addAtomToNeighbourList(i, ri->data, true);
 		}
 	}
 }

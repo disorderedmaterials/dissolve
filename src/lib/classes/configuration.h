@@ -124,8 +124,6 @@ class Configuration : public ListItem<Configuration>
 	int maxAtomsPerCell_;
 	// Cell array (one-dimensional)
 	Cell* cells_;
-	// Cell image matrix
-	Array2D<bool> imageMatrix_;
 	// Cell modified/completed/calculated flag
 	bool* cellFlag_;
 	// Counter for distributed Cells
@@ -137,7 +135,7 @@ class Configuration : public ListItem<Configuration>
 	// Clear Cell arrays
 	void clearCells();
 	// Return whether the contents of two Cells should be mim'd in calculations
-	bool imagesNeeded(Cell* a, Cell* b) const;
+	bool minimumImageRequired(Cell* a, Cell* b) const;
 
 	public:
 	// Return Box
@@ -170,7 +168,6 @@ class Configuration : public ListItem<Configuration>
 	bool updateAtomsInCells();
 	// Update cell locations of specified atom index, and update neighbour
 	bool updateAtomInCell(int id);
-	// Update neighbour 
 	///@}
 
 

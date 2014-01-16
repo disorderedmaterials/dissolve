@@ -78,8 +78,9 @@ bool DUQ::registerCommands()
 	// -- Temperature
 	if (!registerCommand("temperature", "temp,t", &DUQ::commandTemperature)) return false;
 	if (!addCommandArgument("temperature", "value", "New temperature to use in simulation methods", "")) return false;
-	// -- Test
+	// -- Test Commands
 	if (!registerCommand("test", "", &DUQ::commandTest)) return false;
+	if (!registerCommand("testenergy", "", &DUQ::commandTestEnergy)) return false;
 
 	// AtomShake
 	if (!registerCommand("atomshake", "as", &DUQ::atomShake)) return false;

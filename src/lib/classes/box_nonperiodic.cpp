@@ -213,3 +213,12 @@ Vec3<double> NonPeriodicBox::foldFrac(const Vec3<double>& r) const
 	frac.z -= floor(frac.z);
 	return frac;
 }
+
+/*!
+ * \brief Convert supplied fractional coordinates to real space
+ */
+Vec3<double> NonPeriodicBox::fracToReal(const Vec3<double>& r) const
+{
+	// Multiply by box length
+	return r * a_;
+}

@@ -274,8 +274,8 @@ bool DUQ::setupConfiguration()
 	if (!configuration_.updateAtomsInCells()) return false;
 	updateGrains(configuration_);
 	
-	// TEST
-	updateCellAtomNeighbourLists(configuration_);
+	// Initialise cell atom neighbour lists
+	createCellAtomNeighbourLists(configuration_);
 
 	return true;
 }

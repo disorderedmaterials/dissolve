@@ -100,6 +100,10 @@ Simulation
   1 gs 1 15.0
 
 @Strategy
+   e
+   e
+   e
+   q
 #  ptb
 #  saverdfs
 #  savesq

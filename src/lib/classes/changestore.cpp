@@ -1,5 +1,5 @@
 /*
-	*** WatchTarget
+	*** ChangeStore
 	*** src/lib/classes/changestore.cpp
 	Copyright T. Youngs 2012-2013
 

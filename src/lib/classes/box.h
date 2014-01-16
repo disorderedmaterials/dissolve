@@ -92,7 +92,7 @@ class Box
 	// Return axis angle specified
 	double axisAngle(int n) const;
 	// Return axis matrix
-	Matrix3 axes() const;
+	const Matrix3& axes() const;
 	///@}
 
 
@@ -153,6 +153,8 @@ class Box
 	virtual Vec3<double> fold(const Vec3<double>& i) const = 0;
 	// Return folded fractional coordinate (i.e. inside current Box)
 	virtual Vec3<double> foldFrac(const Vec3<double>& i) const = 0;
+	// Convert supplied fractional coordinates to real space
+	virtual Vec3<double> fracToReal(const Vec3<double>& r) const = 0;
 	///@}
 
 
@@ -227,6 +229,8 @@ class NonPeriodicBox : public Box
 	Vec3<double> fold(const Vec3<double>& i) const;
 	// Return folded fractional coordinate (i.e. inside current Box)
 	Vec3<double> foldFrac(const Vec3<double>& i) const;
+	// Convert supplied fractional coordinates to real space
+	Vec3<double> fracToReal(const Vec3<double>& r) const;
 	///@}
 };
 
@@ -287,6 +291,8 @@ class CubicBox : public Box
 	Vec3<double> fold(const Vec3<double>& i) const;
 	// Return folded fractional coordinate (i.e. inside current Box)
 	Vec3<double> foldFrac(const Vec3<double>& i) const;
+	// Convert supplied fractional coordinates to real space
+Vec3<double> fracToReal(const Vec3<double>& r) const;
 	///@}
 };
 
@@ -347,6 +353,8 @@ class OrthorhombicBox : public Box
 	Vec3<double> fold(const Vec3<double>& i) const;
 	// Return folded fractional coordinate (i.e. inside current Box)
 	Vec3<double> foldFrac(const Vec3<double>& i) const;
+	// Convert supplied fractional coordinates to real space
+Vec3<double> fracToReal(const Vec3<double>& r) const;
 	///@}
 };
 
@@ -407,6 +415,8 @@ class MonoclinicBox : public Box
 	Vec3<double> fold(const Vec3<double>& i) const;
 	// Return folded fractional coordinate (i.e. inside current Box)
 	Vec3<double> foldFrac(const Vec3<double>& i) const;
+	// Convert supplied fractional coordinates to real space
+Vec3<double> fracToReal(const Vec3<double>& r) const;
 	///@}
 };
 
@@ -467,6 +477,8 @@ class TriclinicBox : public Box
 	Vec3<double> fold(const Vec3<double>& i) const;
 	// Return folded fractional coordinate (i.e. inside current Box)
 	Vec3<double> foldFrac(const Vec3<double>& i) const;
+	// Convert supplied fractional coordinates to real space
+Vec3<double> fracToReal(const Vec3<double>& r) const;
 	///@}
 };
 

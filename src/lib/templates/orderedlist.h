@@ -22,6 +22,7 @@
 #ifndef DUQ_ORDEREDLIST_H
 #define DUQ_ORDEREDLIST_H
 
+#include "templates/factory.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -33,18 +34,20 @@ template <class T> class OrderedListItem
 {
 	public:
 	// Constructor
-	OrderedListItem<T>(T* object);
+	OrderedListItem<T>(T* object = NULL);
 	// List pointers
 	OrderedListItem<T>* prev, *next;
 
 	private:
-	// Reference to object
+	// Pointer to object
 	T* object_;
 
 	public:
-	// Return reference to object
+	// Set pointer to object
+	void setObject(T* object);
+	// Return pointer to object
 	T* object();
-	// Return object index
+	// Return pointer index
 	int objectIndex();
 };
 
@@ -56,6 +59,12 @@ template <class T> OrderedListItem<T>::OrderedListItem(T* object) : object_(obje
 {
 	prev = NULL;
 	next = NULL;
+}
+
+// Set pointer to object
+template <class T> void OrderedListItem<T>::setObject(T* object)
+{
+	object_ = object;
 }
 
 /*!
@@ -99,6 +108,8 @@ template <class T> class OrderedList
 	 */
 	///@{
 	private:
+	// Object factory
+	ObjectFactory< OrderedListItem<T> > factory_;
 	// Pointers to head and tail of list
 	OrderedListItem<T>* listHead_, *listTail_;
 	// Number of items in list
@@ -139,6 +150,8 @@ template <class T> class OrderedList
 	int nItems() const;
 	// Add a new item reference to the list
 	void add(T* object);
+	// Add a new item reference to the end of the list
+	void addAtEnd(T* object);
 	// Move specified item to target list
 	void move(int objectIndex, OrderedList<T>& targetList);
 	// Returns the list head
@@ -147,6 +160,8 @@ template <class T> class OrderedList
 	OrderedListItem<T>** items();
 	// Generate (if necessary) and return object array
 	T** objects();
+	// Invalidate current item and object arrays, forcing them to be recreated
+	void invalidateLists();
 
 
 	/*!
@@ -192,8 +207,9 @@ template <class T> OrderedList<T>::~OrderedList()
  */
 template <class T> OrderedListItem<T>* OrderedList<T>::insertAfter(T* object, OrderedListItem<T>* afterThis)
 {
-	// Create new list item
-	OrderedListItem<T>* newItem = new OrderedListItem<T>(object);
+	// Create new list item (from the ObjectFactory)
+	OrderedListItem<T>* newItem = factory_.produce();
+	newItem->setObject(object);
 	
 	// Get pointer to next item in list, after the list item 'afterThis'
 	// If 'afterThis' is NULL, then we insert at the start of the list (and make listHead_ point to the new item)
@@ -233,8 +249,9 @@ template <class T> OrderedListItem<T>* OrderedList<T>::insertAfter(T* object, Or
  */
 template <class T> OrderedListItem<T>* OrderedList<T>::insertBefore(T* object, OrderedListItem<T>* beforeThis)
 {
-	// Create new list item
-	OrderedListItem<T>* newItem = new OrderedListItem<T>(object);
+	// Create new list item (from the ObjectFactory)
+	OrderedListItem<T>* newItem = factory_.produce();
+	newItem->setObject(object);
 	insertBefore(newItem, beforeThis);
 	return newItem;
 }
@@ -288,7 +305,7 @@ template <class T> void OrderedList<T>::remove(T *xitem)
 	// Delete a specific item from the list
 	xitem->prev == NULL ? listHead_ = xitem->next : xitem->prev->next = xitem->next;
 	xitem->next == NULL ? listTail_ = xitem->prev : xitem->next->prev = xitem->prev;
-	delete xitem;
+	factory_.returnObject(xitem);
 	--nItems_;
 	regenerateItemArray_ = 1;
 	regenerateObjectArray_ = 1;
@@ -407,22 +424,30 @@ template <class T> T** OrderedList<T>::objects()
 	return objects_;
 }
 
+/*!
+ * \brief Invalidate current item and object arrays, forcing them to be recreated
+ */
+template <class T> void OrderedList<T>::invalidateLists()
+{
+	regenerateItemArray_ = 1;
+	regenerateObjectArray_ = 1;
+}
 
 /*!
  * \brief Remove all items in the list
  */
 template <class T> void OrderedList<T>::clear()
 {
-	OrderedListItem<T>* nextItem;
-	for (OrderedListItem<T>* item = listHead_; item != NULL; item = item->next)
-	{
-		nextItem = item->next;
-		delete item;
-	}
+	for (OrderedListItem<T>* item = listHead_; item != NULL; item = item->next) factory_.returnObject(item);
+	nItems_ = 0;
+	listHead_ = NULL;
+	listTail_ = NULL;
 
-	// Delete static items array if its there
+	// Delete static item anb objects array if they exist
 	if (items_ != NULL) delete[] items_;
 	items_ = NULL;
+	if (objects_ != NULL) delete[] objects_;
+	objects_ = NULL;
 	regenerateItemArray_ = 1;
 	regenerateObjectArray_ = 1;
 }
@@ -450,6 +475,25 @@ template <class T> void OrderedList<T>::add(T* object)
 	// Add it in the correct place in the list
 	OrderedListItem<T>* nextLargest = nextHighestIndex(object->index());
 	insertBefore(object, nextLargest);
+}
+
+/*!
+ * \brief Add a new item reference to the end of the list
+ */
+template <class T> void OrderedList<T>::addAtEnd(T* object)
+{
+#ifdef CHECKS
+	if (object == NULL)
+	{
+		printf("NULL_POINTER - NULL object passed to OrderedList<T>::addAtEnd().\n");
+		return;
+	}
+#endif
+	// Add it directly to the end of the list, provided this adheres to the current order
+	// Check object index of last item in list
+	if (listTail_ == NULL) insertAfter(object, NULL);
+	else if (listTail_->objectIndex() < object->index()) insertAfter(object, listTail_);
+	else printf("BAD_USAGE - Attempted to add object with index %i to end of OrderedList, but last item in list has index %i\n", object->index(), listTail_->objectIndex());
 }
 
 // Move specified item to target list

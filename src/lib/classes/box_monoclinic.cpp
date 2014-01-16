@@ -274,3 +274,13 @@ Vec3<double> MonoclinicBox::foldFrac(const Vec3<double>& r) const
 	
 	return frac;
 }
+
+/*!
+ * \brief Convert supplied fractional coordinates to real space
+ */
+Vec3<double> MonoclinicBox::fracToReal(const Vec3<double>& r) const
+{
+	// Multiply by axes matrix
+	// TODO Can speedup this part since we know which matrix elements are zero
+	return axes_*r;
+}
