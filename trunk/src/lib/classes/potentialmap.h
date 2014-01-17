@@ -61,7 +61,7 @@ class PotentialMap
 
 	public:
 	// Initialise maps
-	bool initialise(const AtomTypeIndex& typeIndex, const List< PairPotential >& pairPotentials, double pairPotentialRange);
+	bool initialise(const AtomTypeIndex& typeIndex, const List<PairPotential>& pairPotentials, double pairPotentialRange);
 	// Return PairPotential range
 	double range() const;
 	// Return PairPotential range squared

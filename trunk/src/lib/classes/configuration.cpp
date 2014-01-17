@@ -768,7 +768,6 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 					// Check that the cell is not already in the list by querying the cellNbrs RefList
 					nbr = cell(x, y, z);
 					if (cellNbrs.contains(nbr)) continue;
-					printf("Adding cell %i %i %i to representative neighbour list (dist = %f).\n", x, y, z, r.magnitude());
 					nbrs.add()->set(x, y, z);
 					cellNbrs.add(nbr);
 				}
