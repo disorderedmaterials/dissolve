@@ -243,7 +243,7 @@ void ForceKernel::forces(const Atom* i, const Grain* grain, bool applyMim, bool 
 /*!
  * \brief Calculate PairPotential forces between Grains provided
  */
-void ForceKernel::forces(const Grain* grainI, const Grain* grainJ, double cutoffSq, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz)
+void ForceKernel::forces(const Grain* grainI, const Grain* grainJ, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz)
 {
 #ifdef CHECKS
 	if (grainI == NULL)
@@ -264,11 +264,11 @@ void ForceKernel::forces(const Grain* grainI, const Grain* grainJ, double cutoff
 	}
 #endif
 	// Check Grain-Grain distance
-	double rSq;
-	if (applyMim) rSq = box_->minimumDistanceSquared(grainI->centre(), grainJ->centre());
-	else rSq = (grainI->centre() - grainJ->centre()).magnitudeSq();
-// 	msg.print("GG %3i %3i MIM=%i EXC=%i rSq=%f (%f,%f,%f) (%f,%f,%f)\n", grainI->index(), grainJ->index(), applyMim, excludeIgtJ, rSq, grainI->centre().x, grainI->centre().y, grainI->centre().z, grainJ->centre().x, grainJ->centre().y, grainJ->centre().z);
-	if (rSq > cutoffSq) return;
+// 	double rSq;
+// 	if (applyMim) rSq = box_->minimumDistanceSquared(grainI->centre(), grainJ->centre());
+// 	else rSq = (grainI->centre() - grainJ->centre()).magnitudeSq();
+// // 	msg.print("GG %3i %3i MIM=%i EXC=%i rSq=%f (%f,%f,%f) (%f,%f,%f)\n", grainI->index(), grainJ->index(), applyMim, excludeIgtJ, rSq, grainI->centre().x, grainI->centre().y, grainI->centre().z, grainJ->centre().x, grainJ->centre().y, grainJ->centre().z);
+// 	if (rSq > cutoffSq) return;
 	
 	// Check exclusion of I > J
 	if (excludeIgtJ && (grainI->index() > grainJ->index())) return;
@@ -304,7 +304,7 @@ void ForceKernel::forces(const Atom* i, const Cell* cell, bool applyMim, bool ex
 /*!
  * \brief Calculate PairPotential forces between Grain and Cell contents
  */
-void ForceKernel::forces(const Grain* grain, const Cell* cell, double cutoffSq, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz)
+void ForceKernel::forces(const Grain* grain, const Cell* cell, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz)
 {
 #ifdef CHECKS
 	if (grain == NULL)
@@ -319,10 +319,7 @@ void ForceKernel::forces(const Grain* grain, const Cell* cell, double cutoffSq, 
 	}
 #endif
 	// Loop over Cell Grains
-	for (RefListItem<Grain,int>* grainRef = cell->grains(); grainRef != NULL; grainRef = grainRef->next)
-	{
-		forces(grain, grainRef->item, cutoffSq, applyMim, excludeIgtJ, fx, fy, fz);
-	}
+	for (RefListItem<Grain,int>* grainRef = cell->grains(); grainRef != NULL; grainRef = grainRef->next) forces(grain, grainRef->item, applyMim, excludeIgtJ, fx, fy, fz);
 }
 
 /*!
@@ -332,7 +329,7 @@ void ForceKernel::forces(const Grain* grain, const Cell* cell, double cutoffSq, 
  * elsewhere, no parallel summation of the calculated data is performed by this routine, and must be handled externally by
  * the calling function.
  */
-void ForceKernel::forces(const Atom* i, RefList<Cell,bool>& neighbours, bool excludeIgtJ, double* fx, double* fy, double* fz, DUQComm::CommGroup group)
+void ForceKernel::forces(const Atom* i, OrderedList<Cell>& neighbours, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz, DUQComm::CommGroup group)
 {
 #ifdef CHECKS
 	if (i == NULL)
@@ -345,34 +342,20 @@ void ForceKernel::forces(const Atom* i, RefList<Cell,bool>& neighbours, bool exc
 	if (group == DUQComm::Solo)
 	{
 		// Straight loop over Cell neighbours
-		for (RefListItem<Cell,bool>* cellRef = neighbours.first(); cellRef != NULL; cellRef = cellRef->next)
-		{
-			forces(i, cellRef->item, cellRef->data, excludeIgtJ, fx, fy, fz);
-		}
+		Cell** cells = neighbours.objects();
+		for (int n=0; n<neighbours.nItems(); ++n) forces(i, cells[n], applyMim, excludeIgtJ, fx, fy, fz);
 	}
 	else if (group == DUQComm::Group)
 	{
 		// Striped loop over Cell neighbours (Process Groups)
-		Cell* cell;
-		bool applyMim;
-		for (int n=Comm.localGroupRank(); n<neighbours.nItems(); n += Comm.localGroupSize())
-		{
-			cell = neighbours[n]->item;
-			applyMim = neighbours[n]->data;
-			forces(i, cell, applyMim, excludeIgtJ, fx, fy, fz);
-		}
+		Cell** cells = neighbours.objects();
+		for (int n=Comm.localGroupRank(); n<neighbours.nItems(); n += Comm.localGroupSize()) forces(i, cells[n], applyMim, excludeIgtJ, fx, fy, fz);
 	}
 	else
 	{
 		// Striped loop over Cell neighbours (individual processes)
-		Cell* cell;
-		bool applyMim;
-		for (int n=Comm.rank(); n<neighbours.nItems(); n += Comm.nProcesses())
-		{
-			cell = neighbours[n]->item;
-			applyMim = neighbours[n]->data;
-			forces(i, cell, applyMim, excludeIgtJ, fx, fy, fz);
-		}
+		Cell** cells = neighbours.objects();
+		for (int n=Comm.rank(); n<neighbours.nItems(); n += Comm.nProcesses()) forces(i, cells[n], applyMim, excludeIgtJ, fx, fy, fz);
 	}
 }
 
@@ -383,7 +366,7 @@ void ForceKernel::forces(const Atom* i, RefList<Cell,bool>& neighbours, bool exc
  * elsewhere, no parallel summation of the calculated data is performed by this routine, and must be handled externally by
  * the calling function.
  */
-void ForceKernel::forces(const Grain* grain, RefList<Cell,bool>& neighbours, double cutoffSq, bool excludeIgtJ, double* fx, double* fy, double* fz, DUQComm::CommGroup group)
+void ForceKernel::forces(const Grain* grain, OrderedList<Cell>& neighbours, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz, DUQComm::CommGroup group)
 {
 #ifdef CHECKS
 	if (grain == NULL)
@@ -396,33 +379,19 @@ void ForceKernel::forces(const Grain* grain, RefList<Cell,bool>& neighbours, dou
 	if (group == DUQComm::Solo)
 	{
 		// Straight loop over Cell neighbours
-		for (RefListItem<Cell,bool>* cellRef = neighbours.first(); cellRef != NULL; cellRef = cellRef->next)
-		{
-			forces(grain, cellRef->item, cutoffSq, cellRef->data, excludeIgtJ, fx, fy, fz);
-		}
+		Cell** cells = neighbours.objects();
+		for (int n=0; n<neighbours.nItems(); ++n) forces(grain, cells[n], applyMim, excludeIgtJ, fx, fy, fz);
 	}
 	else if (group == DUQComm::Group)
 	{
 		// Striped loop over Cell neighbours (Process Groups)
-		Cell* cell;
-		bool applyMim;
-		for (int n=Comm.localGroupRank(); n<neighbours.nItems(); n += Comm.localGroupSize())
-		{
-			cell = neighbours[n]->item;
-			applyMim = neighbours[n]->data;
-			forces(grain, cell, cutoffSq, applyMim, excludeIgtJ, fx, fy, fz);
-		}
+		Cell** cells = neighbours.objects();
+		for (int n=Comm.localGroupRank(); n<neighbours.nItems(); n += Comm.localGroupSize()) forces(grain, cells[n], applyMim, excludeIgtJ, fx, fy, fz);
 	}
 	else
 	{
 		// Striped loop over Cell neighbours (individual processes)
-		Cell* cell;
-		bool applyMim;
-		for (int n=Comm.rank(); n<neighbours.nItems(); n += Comm.nProcesses())
-		{
-			cell = neighbours[n]->item;
-			applyMim = neighbours[n]->data;
-			forces(grain, cell, cutoffSq, applyMim, excludeIgtJ, fx, fy, fz);
-		}
+		Cell** cells = neighbours.objects();
+		for (int n=Comm.rank(); n<neighbours.nItems(); n += Comm.nProcesses()) forces(grain, cells[n], applyMim, excludeIgtJ, fx, fy, fz);
 	}
 }

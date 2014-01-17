@@ -125,22 +125,28 @@ class Cell
 	 */
 	///@{
 	private:
-	// List of neighbouring Cells, and whether they are images
-	RefList<Cell,bool> neighbours_;
+	// Arrays of neighbouring cells, within the defined potential cutoff (from anywhere in the cell)
+	OrderedList<Cell> cellNeighbours_, mimCellNeighbours_;
 	// Lists of neighbouring atoms, within the defined potential cutoff (from anywhere in the cell)
 	OrderedList<Atom> atomNeighbours_, mimAtomNeighbours_;
 
 	public:
 	// Add Cell neighbour
-	void addNeighbour(Cell* cell, bool mimRequired);
-	// Return number of neighbours in list
-	int nNeighbours();
-	// Return neighbour list
-	RefList<Cell,bool>& neighbours();
+	void addCellNeighbour(Cell* cell, bool mimRequired);
+	// Return total number of cell neighbours
+	int nTotalCellNeighbours();
+	// Return cell neighbour list
+	OrderedList<Cell>& cellNeighbours();
+	// Return cell neighbour list requiring mim
+	OrderedList<Cell>& mimCellNeighbours();
 	// Clear atom neighbour list
 	void clearAtomNeighbourList();
 	// Add atom to neighbour list
 	void addAtomToNeighbourList(Atom* i, bool useMim, bool atEnd = false);
+	// Remove atom from neighbour list
+	void removeAtomFromNeighbourList(Atom* i, bool useMim);
+	// Return total number of atom neighbours
+	int nTotalAtomNeighbours();
 	// Return atom neighbour list
 	OrderedList<Atom>& atomNeighbours();
 	// Return atom neighbour list requiring mim

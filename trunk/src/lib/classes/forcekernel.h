@@ -24,6 +24,7 @@
 
 #include "classes/atom.h"
 #include "classes/grain.h"
+#include "templates/orderedlist.h"
 #include "base/comms.h"
 
 // Forward Declarations
@@ -88,15 +89,15 @@ class ForceKernel
 	// Calculate inter-particle forces between Atom and Grain provided
 	void forces(const Atom* i, const Grain* grain, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz);
 	// Calculate inter-particle forces between Grains provided
-	void forces(const Grain* grainI, const Grain* grainJ, double cutoffSq, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz);
+	void forces(const Grain* grainI, const Grain* grainJ, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz);
 	// Calculate inter-particle forces between Atom and Cell contents
 	void forces(const Atom* i, const Cell* cell, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz);
 	// Calculate inter-particle forces between Grain and Cell contents
-	void forces(const Grain* grain, const Cell* cell, double cutoffSq, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz);
+	void forces(const Grain* grain, const Cell* cell, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz);
 	// Calculate inter-particle forces between Atom and list of Cells
-	void forces(const Atom* i, RefList<Cell,bool>& neighbours, bool excludeIgtJ, double* fx, double* fy, double* fz, DUQComm::CommGroup group = DUQComm::Solo);
+	void forces(const Atom* i, OrderedList<Cell>& neighbours, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz, DUQComm::CommGroup group = DUQComm::Solo);
 	// Calculate inter-particle forces between Grain and list of Cells
-	void forces(const Grain* grain, RefList<Cell,bool>& neighbours, double cutoffSq, bool excludeIgtJ, double* fx, double* fy, double* fz, DUQComm::CommGroup group = DUQComm::Solo);
+	void forces(const Grain* grain, OrderedList<Cell>& neighbours, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz, DUQComm::CommGroup group = DUQComm::Solo);
 	///@}
 };
 

@@ -63,10 +63,13 @@ void DUQ::createCellAtomNeighbourLists(Configuration& cfg)
 	cutoffSq *= cutoffSq;
 	Atom** otherAtoms;
 	Atom* i, *atoms = cfg.atoms();
-	Cell* centralCell, *otherCell;
+	Cell* centralCell;
+	Cell** neighbours, **mimNeighbours;
+	int nNeighbours, nMimNeighbours, c;
 	const Box* box = cfg.box();
 
 	// Loop over atoms
+	Timer timer;
 	for (int n=0; n<cfg.nAtoms(); ++n)
 	{
 		// Grab reference to atom and pointer to its current cell location
@@ -75,12 +78,24 @@ void DUQ::createCellAtomNeighbourLists(Configuration& cfg)
 		atomR = i->r();
 
 		// Check distance of the current atom from the centres of each of the neighbouring cells
-		for (RefListItem<Cell,bool>* ri = centralCell->neighbours().first(); ri != NULL; ri = ri->next)
+		neighbours = centralCell->cellNeighbours().objects(); 
+		nNeighbours = centralCell->cellNeighbours().nItems();
+		for (c=0; c<nNeighbours; ++c)
 		{
-			otherCell = ri->item;
-			r = box->minimumVector(otherCell->centre(), atomR);
+			r = box->minimumVector(neighbours[c]->centre(), atomR);
 			distSq = r.magnitudeSq();
-			if (distSq <= cutoffSq) otherCell->addAtomToNeighbourList(i, ri->data, true);
+			if (distSq <= cutoffSq) neighbours[c]->addAtomToNeighbourList(i, false, true);
+		}
+
+		mimNeighbours = centralCell->mimCellNeighbours().objects();
+		nMimNeighbours = centralCell->mimCellNeighbours().nItems();
+		for (c=0; c<nMimNeighbours; ++c)
+		{
+			r = box->minimumVector(mimNeighbours[c]->centre(), atomR);
+			distSq = r.magnitudeSq();
+			if (distSq <= cutoffSq) mimNeighbours[c]->addAtomToNeighbourList(i, true, true);
 		}
 	}
+	timer.stop();
+	msg.print("--> Cell atom neighbour lists generated (%s).\n", timer.timeString());
 }

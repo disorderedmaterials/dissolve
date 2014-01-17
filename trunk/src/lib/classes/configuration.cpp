@@ -67,116 +67,116 @@ Configuration::~Configuration()
  */
 void Configuration::operator=(Configuration &source)
 {
-	clear();
-
-	// Create arrays
-	nAtoms_ = source.nAtoms_;
-	nGrains_ = source.nGrains_;
-	grains_ = new Grain[nGrains_];
-
-	// Set Grain indices
-	int n;
-	for (n=0; n<nGrains_; ++n) grains_[n].setIndex(n);
-
-// // 	// Copy basic Molecule information, and assign Atom/Grains	
-// // 	int atomCount = 0, grainCount = 0, startAtom = 0;
-// // 	Molecule* newMol;
-// // 	for (Molecule* mol = source.molecules_.first(); mol != NULL; mol = mol->next)
-// // 	{
-// // 		// Create Molecule copy
-// // 		newMol = molecules_.add();
-// // 		newMol->initialise(mol->species(), molecules_.nItems()-1);
-// // 
-// // 		// Assign Atoms
-// // 		for (n = 0; n<newMol->nAtoms(); ++n)
-// // 		{
-// // 			if (atomCount >= nAtoms_)
-// // 			{
-// // 				msg.error("Mismatch between size of Atom array in Configuration, and number of Atoms needed by Molecules (in assignment operator).\n");
-// // 				return;
-// // 			}
-// // 			newMol->setAtom(n, &atoms_[atomCount++]);
-// // 		}
-// // 		
-// // 		// Assign Grains
-// // 		for (n = 0; n<newMol->nGrains(); ++n)
-// // 		{
-// // 			if (grainCount >= nGrains_)
-// // 			{
-// // 				msg.error("Mismatch between size of Grain array in Configuration, and number of Grains needed by Molecules (in assignment operator).\n");
-// // 				return;
-// // 			}
-// // 			newMol->setGrain(n, &grains_[grainCount]);
-// // 			grains_[grainCount].setParent(newMol);
-// // 			++grainCount;
-// // 		}
-// // 		
-// // 		// Instantiate (without setting Atom properties)
-// // 		newMol->instantiate(false);
-// // 
-// // 		// Increase startAtom
-// // 		startAtom += newMol->nAtoms();
-// // 	}
-// // 
-
-	// Copy Box
-	if (source.box_ != NULL)
-	{
-		// Create a new Box of the correct class, sending dummy parameters to the constructor
-		if (source.box_->type() == Box::NonPeriodicBox) box_ = new NonPeriodicBox(1.0);
-		else if (source.box_->type() == Box::CubicBox) box_ = new CubicBox(1.0);
-		else if (source.box_->type() == Box::OrthorhombicBox) box_ = new OrthorhombicBox(1.0, Vec3<double>(1.0,1.0,1.0));
-		else if (source.box_->type() == Box::MonoclinicBox) box_ = new MonoclinicBox(1.0, Vec3<double>(1.0,1.0,1.0), 90.0);
-		else if (source.box_->type() == Box::TriclinicBox) box_ = new TriclinicBox(1.0, Vec3<double>(1.0,1.0,1.0), Vec3<double>(90,90,90));
-		
-		// Now copy proper Box information
-		(*box_) = (*source.box_);
-	}
-
-	// Cell data
-	divisions_ = source.divisions_;
-	cellSize_ = source.cellSize_;
-	realCellSize_ = source.realCellSize_;
-	cellExtents_ = source.cellExtents_;
-	clearCells();
-	nCells_ = source.nCells_;
-	cells_ = new Cell[nCells_];
-	Cell* oldCell;
-	int m, x, y, z, count = 0;
-	for (x = 0; x<divisions_.x; ++x)
-	{
-		for (y = 0; y<divisions_.y; ++y)
-		{
-			for (z = 0; z < divisions_.z; ++z)
-			{
-				cells_[count].setIndex(count);
-				cells_[count].setGridReference(x,y,z);
-				++count;
-			}
-		}
-	}
-
-	// Copy cellFlag_
-	cellFlag_ = new bool[nCells_];
-	for (n=0; n<nCells_; ++n) cellFlag_[n] = source.cellFlag_[n];
-
-	// Copy neighbour information from source...
-	RefListItem<Cell,bool>* ri;
-	for (n=0; n<nCells_; ++n)
-	{
-		for (ri = source.cells_[n].neighbours().first(); ri != NULL; ri = ri->next) cells_[n].addNeighbour(&cells_[ri->item->index()], ri->data);
-	}
-
-	nCellsDistributed_ = source.nCellsDistributed_;
-	lastCellDistributed_ = source.lastCellDistributed_;
-
-	// Reconstruct Atom reference array
-	// TODO
-
-
-	changeCount_ = source.changeCount_;
-
-	return;
+// 	clear();
+// 
+// 	// Create arrays
+// 	nAtoms_ = source.nAtoms_;
+// 	nGrains_ = source.nGrains_;
+// 	grains_ = new Grain[nGrains_];
+// 
+// 	// Set Grain indices
+// 	int n;
+// 	for (n=0; n<nGrains_; ++n) grains_[n].setIndex(n);
+// 
+// // // 	// Copy basic Molecule information, and assign Atom/Grains	
+// // // 	int atomCount = 0, grainCount = 0, startAtom = 0;
+// // // 	Molecule* newMol;
+// // // 	for (Molecule* mol = source.molecules_.first(); mol != NULL; mol = mol->next)
+// // // 	{
+// // // 		// Create Molecule copy
+// // // 		newMol = molecules_.add();
+// // // 		newMol->initialise(mol->species(), molecules_.nItems()-1);
+// // // 
+// // // 		// Assign Atoms
+// // // 		for (n = 0; n<newMol->nAtoms(); ++n)
+// // // 		{
+// // // 			if (atomCount >= nAtoms_)
+// // // 			{
+// // // 				msg.error("Mismatch between size of Atom array in Configuration, and number of Atoms needed by Molecules (in assignment operator).\n");
+// // // 				return;
+// // // 			}
+// // // 			newMol->setAtom(n, &atoms_[atomCount++]);
+// // // 		}
+// // // 		
+// // // 		// Assign Grains
+// // // 		for (n = 0; n<newMol->nGrains(); ++n)
+// // // 		{
+// // // 			if (grainCount >= nGrains_)
+// // // 			{
+// // // 				msg.error("Mismatch between size of Grain array in Configuration, and number of Grains needed by Molecules (in assignment operator).\n");
+// // // 				return;
+// // // 			}
+// // // 			newMol->setGrain(n, &grains_[grainCount]);
+// // // 			grains_[grainCount].setParent(newMol);
+// // // 			++grainCount;
+// // // 		}
+// // // 		
+// // // 		// Instantiate (without setting Atom properties)
+// // // 		newMol->instantiate(false);
+// // // 
+// // // 		// Increase startAtom
+// // // 		startAtom += newMol->nAtoms();
+// // // 	}
+// // // 
+// 
+// 	// Copy Box
+// 	if (source.box_ != NULL)
+// 	{
+// 		// Create a new Box of the correct class, sending dummy parameters to the constructor
+// 		if (source.box_->type() == Box::NonPeriodicBox) box_ = new NonPeriodicBox(1.0);
+// 		else if (source.box_->type() == Box::CubicBox) box_ = new CubicBox(1.0);
+// 		else if (source.box_->type() == Box::OrthorhombicBox) box_ = new OrthorhombicBox(1.0, Vec3<double>(1.0,1.0,1.0));
+// 		else if (source.box_->type() == Box::MonoclinicBox) box_ = new MonoclinicBox(1.0, Vec3<double>(1.0,1.0,1.0), 90.0);
+// 		else if (source.box_->type() == Box::TriclinicBox) box_ = new TriclinicBox(1.0, Vec3<double>(1.0,1.0,1.0), Vec3<double>(90,90,90));
+// 		
+// 		// Now copy proper Box information
+// 		(*box_) = (*source.box_);
+// 	}
+// 
+// 	// Cell data
+// 	divisions_ = source.divisions_;
+// 	cellSize_ = source.cellSize_;
+// 	realCellSize_ = source.realCellSize_;
+// 	cellExtents_ = source.cellExtents_;
+// 	clearCells();
+// 	nCells_ = source.nCells_;
+// 	cells_ = new Cell[nCells_];
+// 	Cell* oldCell;
+// 	int m, x, y, z, count = 0;
+// 	for (x = 0; x<divisions_.x; ++x)
+// 	{
+// 		for (y = 0; y<divisions_.y; ++y)
+// 		{
+// 			for (z = 0; z < divisions_.z; ++z)
+// 			{
+// 				cells_[count].setIndex(count);
+// 				cells_[count].setGridReference(x,y,z);
+// 				++count;
+// 			}
+// 		}
+// 	}
+// 
+// 	// Copy cellFlag_
+// 	cellFlag_ = new bool[nCells_];
+// 	for (n=0; n<nCells_; ++n) cellFlag_[n] = source.cellFlag_[n];
+// 
+// 	// Copy neighbour information from source...
+// 	RefListItem<Cell,bool>* ri;
+// 	for (n=0; n<nCells_; ++n)
+// 	{
+// 		for (ri = source.cells_[n].neighbours().first(); ri != NULL; ri = ri->next) cells_[n].addNeighbour(&cells_[ri->item->index()], ri->data);
+// 	}
+// 
+// 	nCellsDistributed_ = source.nCellsDistributed_;
+// 	lastCellDistributed_ = source.lastCellDistributed_;
+// 
+// 	// Reconstruct Atom reference array
+// 	// TODO
+// 
+// 
+// 	changeCount_ = source.changeCount_;
+// 
+// 	return;
 }
 
 /*!
@@ -373,7 +373,7 @@ bool Configuration::setupMolecules(Species& sourceCoordinates)
 	SpeciesAtom* sourceI = sourceCoordinates.atoms();
 
 	// Initialise a shared random number pool - this will ensure all processes generate the same coordinates
-	Comm.initialiseRandomBuffer(DUQComm::Solo);
+	Comm.initialiseRandomBuffer(DUQComm::World);
 
 	// Loop over defined molecules
 	for (Molecule* mol = molecules_.first(); mol != NULL; mol = mol->next)
@@ -740,21 +740,22 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 	// In case the number of cells required to cover the pairpotential range exceeds the number across the box, we need to check
 	// for and trim off negative indices which would in reality be equivalent to a folded, positive index.
 	List< ListVec3<int> > nbrs;
-	ListVec3<int> item;
+	RefList<Cell,int> cellNbrs;
+	Cell* nbr;
 	for (x=-cellExtents_.x; x<=cellExtents_.x; ++x)
 	{
 		// Check for extent exceeding available cells across box in x-direction
-		if ((x < 0) && (x+divisions_[0] <=cellExtents_.x)) continue;
+// 		if ((x < 0) && (x+divisions_[0] <=cellExtents_.x)) continue;
 
 		for (y=-cellExtents_.y; y<=cellExtents_.y; ++y)
 		{
 			// Check for extent exceeding available cells across box in y-direction
-			if ((y < 0) && (y+divisions_[1] <= cellExtents_.y)) continue;
+// 			if ((y < 0) && (y+divisions_[1] <= cellExtents_.y)) continue;
 
 			for (z=-cellExtents_.z; z<=cellExtents_.z; ++z)
 			{
 				// Check for extent exceeding available cells across box in z-direction
-				if ((z < 0) && (z+divisions_[2] <=cellExtents_.z)) continue;
+// 				if ((z < 0) && (z+divisions_[2] <=cellExtents_.z)) continue;
 
 				if ((x == 0) && (y == 0) && (z == 0)) continue;
 				// Set the grid reference of the cell to check, but reduce the extent by one
@@ -762,7 +763,15 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 				// edge to this central Cell.
 				r.set(x - DUQMath::sgn(x), y - DUQMath::sgn(y), z - DUQMath::sgn(z));
 				r = cellAxes * r;
-				if (r.magnitude() < pairPotentialRange) nbrs.add()->set(x, y, z);
+				if (r.magnitude() < pairPotentialRange)
+				{
+					// Check that the cell is not already in the list by querying the cellNbrs RefList
+					nbr = cell(x, y, z);
+					if (cellNbrs.contains(nbr)) continue;
+					printf("Adding cell %i %i %i to representative neighbour list (dist = %f).\n", x, y, z, r.magnitude());
+					nbrs.add()->set(x, y, z);
+					cellNbrs.add(nbr);
+				}
 			}
 		}
 	}
@@ -770,17 +779,12 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 
 	// Finally, loop over Cells and set neighbours, and construct neighbour matrix
 	msg.print("--> Constructing neighbour lists for individual Cells...\n");
-	Cell* nbr;
 	bool mimRequired;
 	Vec3<int> gridRef;
-	OrderedList<Cell> neighbours, mimNeighbours;
 	for (n=0; n<nCells_; ++n)
 	{
 		// Grab grid reference of central cell
 		gridRef = cells_[n].gridReference();
-		
-		neighbours.clear();
-		mimNeighbours.clear();
 
 		// Loop over list of (relative) neighbour cell indices
 		for (ListVec3<int>* item = nbrs.first(); item != NULL; item = item->next)
@@ -788,10 +792,12 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 			// Retrieve Cell pointers
 			nbr = cell(gridRef.x+item->x, gridRef.y+item->y, gridRef.z+item->z);
 			mimRequired = box_->type() == Box::NonPeriodicBox ? false : minimumImageRequired(&cells_[n], nbr);
-			if (mimRequired) mimNeighbours.add(nbr);
-			else neighbours.add(nbr);
-			cells_[n].addNeighbour(nbr, mimRequired);
+			cells_[n].addCellNeighbour(nbr, mimRequired);
 		}
+
+		// Access the objects() arrays of the cell's neighbour list so they get generated (they will never change)
+		cells_[n].cellNeighbours().objects();
+		cells_[n].mimCellNeighbours().objects();
 	}
 
 	// Send Cell info to Comm so suitable parallel strategy can be deduced

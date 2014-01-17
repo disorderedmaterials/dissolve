@@ -152,7 +152,10 @@ void Cell::clearLocks()
 bool Cell::canLock()
 {
 	if (lockCount_ != 0) return false;
-	for (RefListItem<Cell,bool>* ri = neighbours_.first(); ri != NULL; ri = ri->next) if (ri->item->lockCount() == -1) return false;
+	Cell** neighbours = cellNeighbours_.objects();
+	for (int n=0; n<cellNeighbours_.nItems(); ++n) if (neighbours[n]->lockCount() == -1) return false;
+	Cell** mimNeighbours = mimCellNeighbours_.objects();
+	for (int n=0; n<mimCellNeighbours_.nItems(); ++n) if (mimNeighbours[n]->lockCount() == -1) return false;
 	return true;
 }
 
@@ -166,8 +169,15 @@ bool Cell::lock(bool willBeModified)
 		msg.print("BAD_USAGE - Can't lock Cell %i (%i,%i,%i) for modification since lockCount_ != 0 (%i).\n", index_, gridReference_.x, gridReference_.y, gridReference_.z, lockCount_);
 		return false;
 	}
+
 	// Lock surrounding Cells if we are modifying the central one
-	if (willBeModified) for (RefListItem<Cell,bool>* ri = neighbours_.first(); ri != NULL; ri = ri->next) ri->item->addLock();
+	if (willBeModified)
+	{
+		Cell** neighbours = cellNeighbours_.objects();
+		for (int n=0; n<cellNeighbours_.nItems(); ++n) neighbours[n]->addLock();
+		Cell** mimNeighbours = mimCellNeighbours_.objects();
+		for (int n=0; n<mimCellNeighbours_.nItems(); ++n) mimNeighbours[n]->addLock();
+	}
 	lockCount_ = -1;
 	return true;
 }
@@ -182,7 +192,15 @@ bool Cell::unlock(bool willBeModified)
 		msg.print("BAD_USAGE - Can't unlock Cell %i (%i,%i,%i) since lockCount_ != -1 (%i).\n", index_, gridReference_.x, gridReference_.y, gridReference_.z, lockCount_);
 		return false;
 	}
-	if (willBeModified) for (RefListItem<Cell,bool>* ri = neighbours_.first(); ri != NULL; ri = ri->next) ri->item->removeLock();
+
+	// Unlock surrounding cells if we were modifying the central one
+	if (willBeModified)
+	{
+		Cell** neighbours = cellNeighbours_.objects();
+		for (int n=0; n<cellNeighbours_.nItems(); ++n) neighbours[n]->removeLock();
+		Cell** mimNeighbours = mimCellNeighbours_.objects();
+		for (int n=0; n<mimCellNeighbours_.nItems(); ++n) mimNeighbours[n]->removeLock();
+	}
 	lockCount_ = 0;
 	return true;
 }
@@ -217,19 +235,19 @@ bool Cell::moveAtom(Atom* i, Cell* targetCell)
 		return false;
 	}
 #endif
-	// Check target atom
-	if (i == NULL)
-	{
-		msg.print("Error - NULL Atom pointer passed to Cell::moveAtom().\n");
-		return false;
-	}
+	// Need to first remove atom from all surrounding neighbour cells
+	// TODO Speedup - Really lazy way of doing this...
+	for (int n=0; n<cellNeighbours_.nItems(); ++n) cellNeighbours_.objects()[n]->removeAtomFromNeighbourList(i, false);
+	for (int n=0; n<mimCellNeighbours_.nItems(); ++n) mimCellNeighbours_.objects()[n]->removeAtomFromNeighbourList(i, true);
 
-	// Need to first remove atom
-// 	for (int n=0; n<cell->nNeighbours(); ++n)
-		
 	// Move atom from this cell to target cell
 	atoms_.move(i->index(), targetCell->atoms_);
 	i->setCell(targetCell);
+
+	// Now must add atom to neighbouring atom lists of new cell
+	for (int n=0; n<targetCell->cellNeighbours_.nItems(); ++n) targetCell->cellNeighbours_.objects()[n]->addAtomToNeighbourList(i, false);
+	for (int n=0; n<targetCell->mimCellNeighbours_.nItems(); ++n) targetCell->mimCellNeighbours_.objects()[n]->addAtomToNeighbourList(i, true);
+	// TODO This really needs to check whether the atom is in range or not...?? Is it worth it when using a small cell size?
 
 	return true;
 }
@@ -336,25 +354,34 @@ Grain* Cell::grain(int n)
 /*!
  * \brief Add Cell neighbour
  */
-void Cell::addNeighbour(Cell* cell, bool mimRequired)
+void Cell::addCellNeighbour(Cell* cell, bool mimRequired)
 {
-	neighbours_.add(cell, mimRequired);
+	if (mimRequired) mimCellNeighbours_.add(cell);
+	else cellNeighbours_.add(cell);
 }
 
 /*!
- * \brief Return number of neighbours in list
+ * \brief Return total number of cell neighbours
  */
-int Cell::nNeighbours()
+int Cell::nTotalCellNeighbours()
 {
-	return neighbours_.nItems();
+	return cellNeighbours_.nItems() + mimCellNeighbours_.nItems();
 }
 
 /*!
- * \brief Return first neighbour in list
+ * \brief Return cell neighbour list
  */
-RefList<Cell,bool>& Cell::neighbours()
+OrderedList<Cell>& Cell::cellNeighbours()
 {
-	return neighbours_;
+	return cellNeighbours_;
+}
+
+/*!
+ * \brief Return cell neighbour list requiring mim
+ */
+OrderedList<Cell>& Cell::mimCellNeighbours()
+{
+	return mimCellNeighbours_;
 }
 
 /*!
@@ -381,6 +408,23 @@ void Cell::addAtomToNeighbourList(Atom* i, bool useMim, bool atEnd)
 		if (atEnd) atomNeighbours_.addAtEnd(i);
 		else atomNeighbours_.add(i);
 	}
+}
+
+/*!
+ * \brief Remove atom from neighbour list
+ */
+void Cell::removeAtomFromNeighbourList(Atom* i, bool useMim)
+{
+	if (useMim) mimAtomNeighbours_.removeIfPresent(i->index());
+	else atomNeighbours_.removeIfPresent(i->index());
+}
+
+/*!
+ * \brief Return total number of atom neighbours
+ */
+int Cell::nTotalAtomNeighbours()
+{
+	return atomNeighbours_.nItems() + mimAtomNeighbours_.nItems();
 }
 
 /*!

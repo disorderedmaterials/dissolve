@@ -24,6 +24,7 @@
 
 #include "classes/atom.h"
 #include "classes/grain.h"
+#include "templates/orderedlist.h"
 #include "base/comms.h"
 
 // Forward Declarations
@@ -114,17 +115,19 @@ class EnergyKernel
 	// Return PairPotential energy between atom (reference) and grain provided
 	double energy(const Atom& i, const Grain* grain, bool applyMim, bool excludeIgeJ = false);
 	// Return PairPotential energy between grains provided
-	double energy(const Grain* grainI, const Grain* grainJ, double cutoffSq, bool applyMim, bool excludeIgeJ = false);
+	double energy(const Grain* grainI, const Grain* grainJ, bool applyMim, bool excludeIgeJ = false);
 	// Return PairPotential energy between two cells
 	double energy(Cell* centralCell, Cell* otherCell, bool applyMim, bool excludeIgeJ = false, DUQComm::CommGroup group = DUQComm::Solo);
 	// Return PairPotential energy between cell and atomic neighbours
 	double energy(Cell* centralCell, bool excludeIgeJ = false, DUQComm::CommGroup group = DUQComm::Solo);
 	// Return PairPotential energy between atom and cell
 	double energy(const Atom* i, Cell* cell, bool applyMim, DUQComm::CommGroup group = DUQComm::Solo);
+	// Return PairPotential energy between atom and atom neighbour list
+	double energy(const Atom* i, OrderedList<Atom>& neighbours, bool applyMim, DUQComm::CommGroup group = DUQComm::Solo);
 	// Return PairPotential energy between grain and cell contents
-	double energy(const Grain* grain, Cell* cell, double cutoffSq, bool applyMim, bool excludeIgeJ = false, DUQComm::CommGroup group = DUQComm::Solo);
-	// Return PairPotential energy between Grain and list of cells
-	double energy(const Grain* grain, RefList<Cell,bool>& neighbours, double cutoffSq, bool excludeIgeJ = false, DUQComm::CommGroup group = DUQComm::Solo);
+	double energy(const Grain* grain, Cell* cell, bool applyMim, bool excludeIgeJ = false, DUQComm::CommGroup group = DUQComm::Solo);
+	// Return PairPotential energy between Grain and list of neighbouring cells
+	double energy(const Grain* grain, OrderedList<Cell>& neighbours, bool applyMim, bool excludeIgeJ = false, DUQComm::CommGroup group = DUQComm::Solo);
 	///@}
 
 
@@ -148,7 +151,7 @@ class EnergyKernel
 	///@{
 	public:
 	// Return total Molecule energy
-	double energy(Molecule* mol, double cutoffSq, DUQComm::CommGroup group = DUQComm::Solo, bool halfPP = false, double ppFactorIntra = 1.0, double termFactor = 1.0);
+	double energy(Molecule* mol, DUQComm::CommGroup group = DUQComm::Solo, bool halfPP = false, double ppFactorIntra = 1.0, double termFactor = 1.0);
 	///@}
 };
 
