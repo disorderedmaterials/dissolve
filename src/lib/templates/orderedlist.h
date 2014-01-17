@@ -135,7 +135,7 @@ template <class T> class OrderedList
 	// Insert specified item, before specified item
 	void insertBefore(OrderedListItem<T>* item, OrderedListItem<T>* beforeThis);
 	// Remove an item from the list
-	void remove(T *item);
+	void remove(OrderedListItem< T >* xitem);
 	// Return whether the item is owned by the list
 	OrderedListItem<T>* contains(int objectIndex) const;
 	// Cut item from list
@@ -152,6 +152,10 @@ template <class T> class OrderedList
 	void add(T* object);
 	// Add a new item reference to the end of the list
 	void addAtEnd(T* object);
+	// Remove item reference from list
+	void remove(int objectIndex);
+	// Remove item reference from the list (but don't complain if it isn't there)
+	void removeIfPresent(int objectIndex);
 	// Move specified item to target list
 	void move(int objectIndex, OrderedList<T>& targetList);
 	// Returns the list head
@@ -295,7 +299,7 @@ template <class T> void OrderedList<T>::insertBefore(OrderedListItem<T>* item, O
 /*!
  * \brief Remove the specified item from the list
  */
-template <class T> void OrderedList<T>::remove(T *xitem)
+template <class T> void OrderedList<T>::remove(OrderedListItem<T> *xitem)
 {
 	if (xitem == NULL)
 	{
@@ -496,7 +500,37 @@ template <class T> void OrderedList<T>::addAtEnd(T* object)
 	else printf("BAD_USAGE - Attempted to add object with index %i to end of OrderedList, but last item in list has index %i\n", object->index(), listTail_->objectIndex());
 }
 
-// Move specified item to target list
+/*!
+ * \brief Remove item reference from list
+ */
+template <class T> void OrderedList<T>::remove(int objectIndex)
+{
+	// Get item for specified objectIndex
+	OrderedListItem<T>* item = contains(objectIndex);
+#ifdef CHECKS
+	if (item == NULL)
+	{
+		printf("Internal Error: Specified objectIndex (%i) does not exist in this OrderedList.\n", objectIndex);
+		return;
+	}
+#endif
+	remove(item);
+}
+
+/*!
+ * \brief Remove item reference from the list (but don't complain if it isn't there)
+ */
+template <class T> void OrderedList<T>::removeIfPresent(int objectIndex)
+{
+	// Get item for specified objectIndex
+	OrderedListItem<T>* item = contains(objectIndex);
+	if (item == NULL) return;
+	remove(item);
+}
+
+/*!
+ * \brief Move specified item to target list
+ */
 template <class T> void OrderedList<T>::move(int objectIndex, OrderedList<T>& targetList)
 {
 	// Get item for specified objectIndex
@@ -508,12 +542,9 @@ template <class T> void OrderedList<T>::move(int objectIndex, OrderedList<T>& ta
 		return;
 	}
 #endif
-	// Remove the item from this list
-	cut(item);
-
-	// Find next highest index item in targetList
-	OrderedListItem<T>* nextHighest = targetList.nextHighestIndex(objectIndex);
-	targetList.insertBefore(item, nextHighest);
+	// Add to target list, then delete from this list
+	targetList.add(item->object());
+	remove(item);
 }
 
 /*!

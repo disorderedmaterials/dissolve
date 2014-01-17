@@ -75,7 +75,7 @@ CommandReturnValue DUQ::atomShake(Configuration& cfg)
 	Comm.initialiseRandomBuffer(DUQComm::Group);
 
 	// Enter calculation loop until no more Cells are available
-	int cellId, shake, n;
+	int cellId, shake, n, nbr;
 	int nTries = 0, nAccepted = 0;
 	bool accept;
 	double currentEnergy, intraEnergy, newEnergy, newIntraEnergy, delta, totalDelta = 0.0;
@@ -97,7 +97,7 @@ CommandReturnValue DUQ::atomShake(Configuration& cfg)
 			continue;
 		}
 		cell = cfg.cell(cellId);
-		msg.printVerbose("Cell %i now the target, containing %i Grains interacting with %i neighbours.\n", cellId, cell->nGrains(), cell->nNeighbours());
+		msg.printVerbose("Cell %i now the target, containing %i Grains interacting with %i neighbours.\n", cellId, cell->nGrains(), cell->nTotalCellNeighbours());
 
 		/*
 		 * Calculation Begins
@@ -118,7 +118,8 @@ CommandReturnValue DUQ::atomShake(Configuration& cfg)
 
 			// Calculate reference intramolecular energy for atom, including intramolecular terms through the atom's grain
 			currentEnergy = kernel.energy(i, cell, false, DUQComm::Group);
-			for (RefListItem<Cell,bool>* ri = cell->neighbours().first(); ri != NULL; ri = ri->next) currentEnergy += kernel.energy(i, ri->item, ri->data, DUQComm::Group);
+			currentEnergy += kernel.energy(i, cell->atomNeighbours(), false, DUQComm::Group);
+			currentEnergy += kernel.energy(i, cell->mimAtomNeighbours(), true, DUQComm::Group);
 			intraEnergy = kernel.fullIntraEnergy(grainI, termScale);
 
 			// Loop over number of shakes per atom
@@ -130,7 +131,8 @@ CommandReturnValue DUQ::atomShake(Configuration& cfg)
 				// Translate atom and calculate new energy
 				i->translateCoordinates(rDelta);
 				newEnergy = kernel.energy(i, cell, false, DUQComm::Group);
-				for (RefListItem<Cell,bool>* ri = cell->neighbours().first(); ri != NULL; ri = ri->next) newEnergy += kernel.energy(i, ri->item, ri->data, DUQComm::Group);
+				newEnergy += kernel.energy(i, cell->atomNeighbours(), false, DUQComm::Group);
+				newEnergy += kernel.energy(i, cell->mimAtomNeighbours(), true, DUQComm::Group);
 				newIntraEnergy = kernel.fullIntraEnergy(grainI, termScale);
 				
 				// Trial the transformed atom position

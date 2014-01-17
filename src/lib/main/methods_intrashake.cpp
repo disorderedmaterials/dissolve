@@ -250,7 +250,7 @@ CommandReturnValue DUQ::interShake(Configuration& cfg)
 			continue;
 		}
 		cell = cfg.cell(cellId);
-		msg.printVerbose("Cell %i now the target, containing %i Grains interacting with %i neighbours.\n", cellId, cell->nGrains(), cell->nNeighbours());
+		msg.printVerbose("Cell %i now the target, containing %i Grains interacting with %i neighbours.\n", cellId, cell->nGrains(), cell->nTotalCellNeighbours());
 
 		/*
 		 * Calculation Begins
@@ -261,8 +261,9 @@ CommandReturnValue DUQ::interShake(Configuration& cfg)
 			// Get current Grain and calculate base energy (inter-Grain energy with NO inter-Grain corrections)
 			grainI = cell->grain(n);
 			mol = grainI->parent();
-			currentGrainEnergy = kernel.energy(grainI, cell->neighbours(), false, DUQComm::Group);
-			currentGrainEnergy += kernel.energy(grainI, cell, false, false, DUQComm::Group);
+			currentGrainEnergy = kernel.energy(grainI, cell, false, false, DUQComm::Group);
+			currentGrainEnergy += kernel.energy(grainI, cell->cellNeighbours(), false, false, DUQComm::Group);
+			currentGrainEnergy += kernel.energy(grainI, cell->mimCellNeighbours(), true, false, DUQComm::Group);
 
 			// Set current Grain as target in ChangeStore
 			changeStore.add(grainI);
@@ -298,14 +299,15 @@ CommandReturnValue DUQ::interShake(Configuration& cfg)
 				delta = b->equilibrium() - distance;
 				
 				// The delta now reflects the distance and direction we should try to travel.
-				// TODO To avoid constant sending of single values because of randomness, implement DUQMath::randomBuffer() which stores a chunk of random numbers
+				// TODO Implement DUQComm random buffer here!
 				currentBondEnergy = kernel.energy(mol, b);
 				vec *= delta * DUQMath::random();
 				grainI->translate(vec);
 
 				// Calculate new energy
-				newGrainEnergy = kernel.energy(grainI, cell->neighbours(), false, DUQComm::Group);
-				newGrainEnergy += kernel.energy(grainI, cell, false, false, DUQComm::Group);
+				newGrainEnergy = kernel.energy(grainI, cell, false, false, DUQComm::Group);
+				newGrainEnergy += kernel.energy(grainI, cell->cellNeighbours(), false, false, DUQComm::Group);
+				newGrainEnergy += kernel.energy(grainI, cell->mimCellNeighbours(), true, false, DUQComm::Group);
 				newBondEnergy = kernel.energy(mol, b);
 
 				// Trial the transformed Grain position (the Master is in charge of this)
@@ -406,7 +408,7 @@ CommandReturnValue DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 		changeStore.add(mol);
 
 		// Calculate reference energy for the Molecule
-		currentEnergy = kernel.energy(mol, pairPotentialRangeSquared_);
+		currentEnergy = kernel.energy(mol);
 
 		// Grab the index of the first Atom in this Molecule
 		rootIndex = mol->atom(0)->index();
@@ -446,7 +448,7 @@ CommandReturnValue DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 // 				if (count == 9) printf("Changing Bond %i-%i from %f to %f\n", b->i()->index(), b->j()->index(), distance, cfg.box()->minimumDistance(b->i(), b->j()));
 		
 				// Test energy again
-				newEnergy = kernel.energy(mol, pairPotentialRangeSquared_);
+				newEnergy = kernel.energy(mol);
 				delta = newEnergy - currentEnergy;
 				
 				if ((delta < 0) || (DUQMath::random() < exp(-delta/(.008314472*temperature_))))
@@ -514,7 +516,7 @@ CommandReturnValue DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 // 				if (count == 9) printf("Changed Angle %i-%i-%i from %f to %f.\n", a->i()->index(), a->j()->index(), a->k()->index(), angle, Box::angle(vecji, vecjk));
 
 				// Test energy again
-				newEnergy = kernel.energy(mol, pairPotentialRangeSquared_);
+				newEnergy = kernel.energy(mol);
 				delta = newEnergy - currentEnergy;
 				
 				if ((delta < 0) || (DUQMath::random() < exp(-delta/(.008314472*temperature_))))
