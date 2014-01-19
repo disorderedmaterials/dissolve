@@ -101,6 +101,8 @@ template <class T> class OrderedList
 	OrderedList<T>();
 	// Destructor
 	~OrderedList();
+	// Copy constructor
+	OrderedList<T>(const OrderedList<T>& source);
 
 
 	/*!
@@ -166,12 +168,16 @@ template <class T> class OrderedList
 	T** objects();
 	// Invalidate current item and object arrays, forcing them to be recreated
 	void invalidateLists();
+	// Given a second list, generate new lists containing unique items to each list, and those that appear in both
+	void difference(OrderedList<T>& listB, OrderedList<T>& uniqueToA, OrderedList<T>& uniqueToB, OrderedList<T>& commonItems);
 
 
 	/*!
 	 * \name Operators
 	*/
 	public:
+	// Assignment operator
+	void operator=(const OrderedList<T>& other);
 	// Element access operator
 	OrderedListItem<T>* operator[](int);
 };
@@ -200,6 +206,14 @@ template <class T> OrderedList<T>::OrderedList()
 template <class T> OrderedList<T>::~OrderedList()
 {
 	clear();
+}
+
+/*! 
+ * \brief Copy constructor
+ */
+template <class T> OrderedList<T>::OrderedList(const OrderedList<T>& source)
+{
+	(*this) = source;
 }
 
 /*
@@ -379,65 +393,6 @@ template <class T> OrderedListItem<T>* OrderedList<T>::nextHighestIndex(int obje
 }
 
 /*!
- * \brief Create (or just return) the item array
- */
-template <class T> OrderedListItem<T>** OrderedList<T>::items()
-{
-	if (regenerateItemArray_ == 0) return items_;
-	
-	// Recreate item array if it is NULL or too small
-	if ((items_ == NULL) || (nItems_ > itemArraySize_))
-	{
-		// Delete old list if necessary
-		if (items_ != NULL) delete[] items_;
-		
-		// Create new list
-		itemArraySize_ = nItems_;
-		items_ = new OrderedListItem<T>*[itemArraySize_];
-	}
-
-	// Fill in pointers
-	int count = 0;
-	for (OrderedListItem<T>* item = listHead_; item != NULL; item = item->next) items_[count++] = item;
-	regenerateItemArray_ = 0;
-	return items_;
-}
-
-/*!
- * \brief Create (or just return) the object array
- */
-template <class T> T** OrderedList<T>::objects()
-{
-	if (regenerateObjectArray_ == 0) return objects_;
-	
-	// Recreate object array if it is NULL or too small
-	if ((objects_ == NULL) || (nItems_ > objectArraySize_))
-	{
-		// Delete old list if necessary
-		if (objects_ != NULL) delete[] objects_;
-		
-		// Create new list
-		objectArraySize_ = nItems_;
-		objects_ = new T*[objectArraySize_];
-	}
-
-	// Fill in pointers
-	int count = 0;
-	for (OrderedListItem<T>* item = listHead_; item != NULL; item = item->next) objects_[count++] = item->object();
-	regenerateObjectArray_ = 0;
-	return objects_;
-}
-
-/*!
- * \brief Invalidate current item and object arrays, forcing them to be recreated
- */
-template <class T> void OrderedList<T>::invalidateLists()
-{
-	regenerateItemArray_ = 1;
-	regenerateObjectArray_ = 1;
-}
-
-/*!
  * \brief Remove all items in the list
  */
 template <class T> void OrderedList<T>::clear()
@@ -555,9 +510,138 @@ template <class T> OrderedListItem<T>* OrderedList<T>::first() const
 	return listHead_;
 }
 
+/*!
+ * \brief Create (or just return) the item array
+ */
+template <class T> OrderedListItem<T>** OrderedList<T>::items()
+{
+	if (regenerateItemArray_ == 0) return items_;
+	
+	// Recreate item array if it is NULL or too small
+	if ((items_ == NULL) || (nItems_ > itemArraySize_))
+	{
+		// Delete old list if necessary
+		if (items_ != NULL) delete[] items_;
+		
+		// Create new list
+		itemArraySize_ = nItems_;
+		items_ = new OrderedListItem<T>*[itemArraySize_];
+	}
+
+	// Fill in pointers
+	int count = 0;
+	for (OrderedListItem<T>* item = listHead_; item != NULL; item = item->next) items_[count++] = item;
+	regenerateItemArray_ = 0;
+	return items_;
+}
+
+/*!
+ * \brief Create (or just return) the object array
+ */
+template <class T> T** OrderedList<T>::objects()
+{
+	if (regenerateObjectArray_ == 0) return objects_;
+	
+	// Recreate object array if it is NULL or too small
+	if ((objects_ == NULL) || (nItems_ > objectArraySize_))
+	{
+		// Delete old list if necessary
+		if (objects_ != NULL) delete[] objects_;
+		
+		// Create new list
+		objectArraySize_ = nItems_;
+		objects_ = new T*[objectArraySize_];
+	}
+
+	// Fill in pointers
+	int count = 0;
+	for (OrderedListItem<T>* item = listHead_; item != NULL; item = item->next) objects_[count++] = item->object();
+	regenerateObjectArray_ = 0;
+	return objects_;
+}
+
+/*!
+ * \brief Invalidate current item and object arrays, forcing them to be recreated
+ */
+template <class T> void OrderedList<T>::invalidateLists()
+{
+	regenerateItemArray_ = 1;
+	regenerateObjectArray_ = 1;
+}
+
+/*!
+ * \brief Given a second list, generate new lists containing unique items to each list, and those that appear in both
+ */
+template <class T> void OrderedList<T>::difference(OrderedList<T>& listB, OrderedList<T>& uniqueToA, OrderedList<T>& uniqueToB, OrderedList<T>& commonItems)
+{
+	// Clear supplied results lists
+	uniqueToA.clear();
+	uniqueToB.clear();
+	commonItems.clear();
+
+	// Check here for either list being empty
+	if (nItems_ == 0)
+	{
+		// Add all items in listB to uniqueToB, and we're done
+		uniqueToB = listB;
+		return;
+	}
+	if (listB.nItems_ == 0)
+	{
+		// Add all items in this_ list to uniqueToA, and we're done
+		uniqueToA = (*this);
+		return;
+	}
+
+	// Traverse the lists simultaneously, comparing indices at each turn
+	int indexA = 0, indexB = 0;
+	T** itemsA = objects(), **itemsB = listB.objects();
+	int objectIndexA = itemsA[indexA]->objectIndex(), objectIndexB = itemsB[indexB]->objectIndex();
+	while ((indexA < nItems_) && (indexB < listB.nItems_))
+	{
+		// If objectAndexA is less than objectIndexB, then the item in this_ list at indexA is unique
+		if (objectIndexA < objectIndexB)
+		{
+			uniqueToA.addAtEnd(itemsA[indexA]);
+			++indexA;
+			objectIndexA = itemsA[indexA]->objectIndex();
+			continue;
+		}
+
+		// If indexB is less than indexA, then the item in listB at indexB is unique
+		if (objectIndexB < objectIndexA)
+		{
+			uniqueToB.addAtEnd(itemsB[indexB]);
+			++indexB;
+			objectIndexB = itemsB[indexB]->objectIndex();
+			continue;
+		}
+
+		// The indices are the same, so this is common element to both lists
+		commonItems.addAtEnd(itemsA[indexA]);
+		++indexA;
+		objectIndexA = itemsA[indexA]->objectIndex();
+		++indexB;
+		objectIndexB = itemsB[indexB]->objectIndex();
+	}
+
+	// If we have not yet gone through all the items in either list, add them to the relevant unique results list
+	for (int n = indexA; n<nItems_; ++n) uniqueToA.addAtEnd(itemsA[n]);
+	for (int n = indexB; n<listB.nItems_; ++n) uniqueToB.addAtEnd(itemsB[n]);
+}
+
 /*
 // Operators
 */
+
+/*!
+ * \brief Assignment operator
+ */
+template <class T> void OrderedList<T>::operator=(const OrderedList<T>& other)
+{
+	clear();
+	for (OrderedListItem<T>* item = other.listHead_; item != NULL; item = item->next) addAtEnd(item->object());
+}
 
 /*!
  * \brief Element access operator

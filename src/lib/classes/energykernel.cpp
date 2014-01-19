@@ -408,8 +408,10 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 	double totalEnergy = 0.0;
 	Atom** centralAtoms = centralCell->atoms().objects(), **otherAtoms = otherCell->atoms().objects();
 	Atom* ii, *jj;
-	int i, j, start = 0, stride = 1;
-	double scale;
+	Vec3<double> rI;
+	Molecule* molI;
+	int i, typeI, indexI, j, start = 0, stride = 1;
+	double rSq, scale;
 
 	// Communication group determines loop/summation style
 	start = Comm.interleavedLoopStart(group);
@@ -421,23 +423,30 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 		for (i = start; i < centralCell->atoms().nItems(); i += stride)
 		{
 			ii = centralAtoms[i];
+			molI = ii->molecule();
+			indexI = ii->index();
+			typeI = ii->atomTypeIndex();
+			rI = ii->r();
 
 			// Straight loop over other cell atoms
 			for (j = 0; j < otherCell->atoms().nItems(); ++j)
 			{
 				jj = otherAtoms[j];
-				
+
 				// Check exclusion of I > J
-				if (excludeIgeJ && (ii->index() >= jj->index())) continue;
+				if (excludeIgeJ && (indexI >= jj->index())) continue;
+
+				// Calculate rSquared distance betwenn atoms, and check it against the stored cutoff distance
+				rSq = box_->minimumDistanceSquared(rI, jj->r());
+				if (rSq > cutoffDistanceSquared_) continue;
 
 				// Check for atoms in the same species
-				if (ii->molecule() == jj->molecule())
+				if (molI != jj->molecule()) totalEnergy += potentialMap_.energy(typeI, jj->atomTypeIndex(), rSq);
+				else
 				{
-					scale = ii->molecule()->species()->scaling(ii->moleculeAtomIndex(), jj->moleculeAtomIndex());
-					if (scale < 1.0e-3) continue;
-					totalEnergy += energyWithMim(ii, jj) * scale;
+					scale = molI->species()->scaling(ii->moleculeAtomIndex(), jj->moleculeAtomIndex());
+					if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(typeI, jj->atomTypeIndex(), rSq) * scale;
 				}
-				else totalEnergy += energyWithMim(ii, jj);
 			}
 		}
 	}
@@ -446,6 +455,10 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 		for (i = start; i < centralCell->atoms().nItems(); i += stride)
 		{
 			ii = centralAtoms[i];
+			molI = ii->molecule();
+			indexI = ii->index();
+			typeI = ii->atomTypeIndex();
+			rI = ii->r();
 
 			// Straight loop over other cell atoms
 			for (j = 0; j < otherCell->atoms().nItems(); ++j)
@@ -455,14 +468,17 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 				// Check exclusion of I > J
 				if (excludeIgeJ && (ii->index() >= jj->index())) continue;
 
+				// Calculate rSquared distance betwenn atoms, and check it against the stored cutoff distance
+				rSq = (rI - jj->r()).magnitudeSq();
+				if (rSq > cutoffDistanceSquared_) continue;
+
 				// Check for atoms in the same molecule
-				if (ii->molecule() == jj->molecule())
+				if (molI != jj->molecule()) totalEnergy += potentialMap_.energy(typeI, jj->atomTypeIndex(), rSq);
+				else
 				{
-					scale = ii->molecule()->species()->scaling(ii->moleculeAtomIndex(), jj->moleculeAtomIndex());
-					if (scale < 1.0e-3) continue;
-					totalEnergy += energyWithoutMim(ii, jj) * scale;
+					scale = molI->species()->scaling(ii->moleculeAtomIndex(), jj->moleculeAtomIndex());
+					if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(typeI, jj->atomTypeIndex(), rSq) * scale;
 				}
-				else totalEnergy += energyWithoutMim(ii, jj);
 			}
 		}
 	}

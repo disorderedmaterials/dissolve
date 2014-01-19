@@ -237,18 +237,59 @@ bool Cell::moveAtom(Atom* i, Cell* targetCell)
 #endif
 	// Need to first remove atom from all surrounding neighbour cells
 	// TODO Speedup - Really lazy way of doing this...
-	for (int n=0; n<cellNeighbours_.nItems(); ++n) cellNeighbours_.objects()[n]->removeAtomFromNeighbourList(i, false);
-	for (int n=0; n<mimCellNeighbours_.nItems(); ++n) mimCellNeighbours_.objects()[n]->removeAtomFromNeighbourList(i, true);
+// 	for (int n=0; n<cellNeighbours_.nItems(); ++n) cellNeighbours_.objects()[n]->removeAtomFromNeighbourList(i, false);
+// 	for (int n=0; n<mimCellNeighbours_.nItems(); ++n) mimCellNeighbours_.objects()[n]->removeAtomFromNeighbourList(i, true);
+
 
 	// Move atom from this cell to target cell
 	atoms_.move(i->index(), targetCell->atoms_);
 	i->setCell(targetCell);
 
 	// Now must add atom to neighbouring atom lists of new cell
-	for (int n=0; n<targetCell->cellNeighbours_.nItems(); ++n) targetCell->cellNeighbours_.objects()[n]->addAtomToNeighbourList(i, false);
-	for (int n=0; n<targetCell->mimCellNeighbours_.nItems(); ++n) targetCell->mimCellNeighbours_.objects()[n]->addAtomToNeighbourList(i, true);
+// 	for (int n=0; n<targetCell->cellNeighbours_.nItems(); ++n) targetCell->cellNeighbours_.objects()[n]->addAtomToNeighbourList(i, false);
+// 	for (int n=0; n<targetCell->mimCellNeighbours_.nItems(); ++n) targetCell->mimCellNeighbours_.objects()[n]->addAtomToNeighbourList(i, true);
 	// TODO This really needs to check whether the atom is in range or not...?? Is it worth it when using a small cell size?
 
+	XXX Need a general list of all neighbour cells (regardless of near/mimd) on each cell
+	XXX Then do comparison between this list on the current and targetCells
+	XXX If 
+	// Traverse the cell neighbour arrays from this cell and the target cell, comparing indices
+	int indexA = 0, indexB = 0;
+	Cell** oldNeighbours = cellNeighbours_.objects(), **newNeighbours = targetCell->cellNeighbours_.objects();
+	int objectIndexA = oldNeighbours[indexA]->index(), objectIndexB = newNeighbours[indexB]->index();
+	int nNeighbours = cellNeighbours_.nItems();
+	while ((indexA < nItems_) && (indexB < targetCell->cellNeighbours_.nItems()))
+	{
+		// If objectAndexA is less than objectIndexB, then the item in this_ list at indexA is unique
+		if (objectIndexA < objectIndexB)
+		{
+			uniqueToA.addAtEnd(oldNeighbours[indexA]);
+			++indexA;
+			objectIndexA = oldNeighbours[indexA]->objectIndex();
+			continue;
+		}
+
+		// If indexB is less than indexA, then the item in listB at indexB is unique
+		if (objectIndexB < objectIndexA)
+		{
+			uniqueToB.addAtEnd(newNeighbours[indexB]);
+			++indexB;
+			objectIndexB = newNeighbours[indexB]->objectIndex();
+			continue;
+		}
+
+		// The indices are the same, so this is common element to both lists
+		commonItems.addAtEnd(oldNeighbours[indexA]);
+		++indexA;
+		objectIndexA = oldNeighbours[indexA]->objectIndex();
+		++indexB;
+		objectIndexB = newNeighbours[indexB]->objectIndex();
+	}
+
+	// If we have not yet gone through all the items in either list, add them to the relevant unique results list
+	for (int n = indexA; n<nItems_; ++n) uniqueToA.addAtEnd(oldNeighbours[n]);
+	for (int n = indexB; n<listB.nItems_; ++n) uniqueToB.addAtEnd(newNeighbours[n]);
+	
 	return true;
 }
 
