@@ -22,9 +22,9 @@
 #ifndef DUQ_VERSION_H
 #define DUQ_VERSION_H
 
-#define DUQREVISION "21"
-#define DUQVERSION "0.21"
-#define DUQDATE "Mon 20 Jan - 14:19"
+#define DUQREVISION "22"
+#define DUQVERSION "0.22"
+#define DUQDATE "Mon 20 Jan - 17:23"
 #define DUQURL "http://duq.googlecode.com/svn/trunk"
 
 #endif

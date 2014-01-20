@@ -191,7 +191,7 @@ void Atom::setCell(Cell* cell)
 /*!
  * \brief Return cell in which the atom exists
  */
-Cell* Atom::cell()
+Cell* Atom::cell() const
 {
 	return cell_;
 }

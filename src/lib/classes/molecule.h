@@ -78,6 +78,8 @@ class Molecule : public ListItem<Molecule>
 	int nAtoms();
 	// Set nth pointer to Atom pointer
 	bool setupAtom(int n, Atom* i, SpeciesAtom* source);
+	// Return atoms array
+	Atom** atoms();
 	// Return nth Atom pointer
 	Atom* atom(int n) const;
 	// Return size of Grain array

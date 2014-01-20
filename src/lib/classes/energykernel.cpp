@@ -579,92 +579,11 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, DUQComm::CommGr
 }
 
 /*!
- * \brief Return PairPotential energy between atom and cell
- * \details Calculate the energy between the atom and the supplied cell, applying minimum image calculations if necessary.
- */
-double EnergyKernel::energy(const Atom* i, Cell* cell, bool applyMim, DUQComm::CommGroup group)
-{
-#ifdef CHECKS
-	if (cell == NULL)
-	{
-		msg.error("NULL_POINTER - NULL cell pointer passed to EnergyKernel::energy(Atom,Cell,bool,bool).\n");
-		return 0.0;
-	}
-#endif
-	double totalEnergy = 0.0;
-	Atom** cellAtoms = cell->atoms().objects();
-	Atom* jj;
-	int j, start = 0, stride = 1;
-	double rSq, scale;
-	
-	// Grab some information on the supplied atom
-	int indexI = i->index(), typeI = i->atomTypeIndex();
-	Molecule* moleculeI = i->molecule();
-	const Vec3<double> rI = i->r();
-
-	// Communication group determines loop/summation style
-	start = Comm.interleavedLoopStart(group);
-	stride = Comm.interleavedLoopStride(group);
-
-	// Loop over cell atoms
-	if (applyMim)
-	{
-		for (j = start; j < cell->atoms().nItems(); j += stride)
-		{
-			jj = cellAtoms[j];
-
-			// Check exclusion of I == J
-			if (i == jj) continue;
-
-			// Calculate rSquared distance betwenn atoms, and check it against the stored cutoff distance
-			rSq = box_->minimumDistanceSquared(rI, jj->r());
-			if (rSq > cutoffDistanceSquared_) continue;
-
-			// Check for atoms in the same species
-			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(typeI, jj->atomTypeIndex(), rSq);
-			else
-			{
-				scale = moleculeI->species()->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
-				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(typeI, jj->atomTypeIndex(), rSq) * scale;
-			}
-		}
-	}
-	else
-	{
-		for (j = start; j < cell->atoms().nItems(); j += stride)
-		{
-			jj = cellAtoms[j];
-
-			// Check exclusion of I == J
-			if (i == jj) continue;
-
-			// Calculate rSquared distance betwenn atoms, and check it against the stored cutoff distance
-			rSq = (rI - jj->r()).magnitudeSq();
-			if (rSq > cutoffDistanceSquared_) continue;
-
-			// Check for atoms in the same species
-			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(typeI, jj->atomTypeIndex(), rSq);
-			else
-			{
-				scale = moleculeI->species()->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
-				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(typeI, jj->atomTypeIndex(), rSq) * scale;
-			}
-		}
-	}
-	
-	// Sum over processes if necessary
-	if (group == DUQComm::Group) Comm.allSum(&totalEnergy, 1, DUQComm::Group);
-	else if (group == DUQComm::World) Comm.allSum(&totalEnergy, 1);
-
-	return totalEnergy;
-}
-
-/*!
  * \brief Return PairPotential energy between atom and list of neighbouring cells
  * \details Calculate the energy between the supplied atom and list of neighbouring cells. Note that it is assumed that the supplied atom
  * is in a cell which does *not* appear in the list.
  */
-double EnergyKernel::energy(const Atom* i, OrderedList<Atom>& neighbours, bool applyMim, DUQComm::CommGroup group)
+double EnergyKernel::energy(const Atom* i, OrderedList<Atom>& neighbours, EnergyKernel::Flags flags, DUQComm::CommGroup group)
 {
 #ifdef CHECKS
 	if (cell == NULL)
@@ -682,23 +601,57 @@ double EnergyKernel::energy(const Atom* i, OrderedList<Atom>& neighbours, bool a
 	int nNeighbourAtoms = neighbours.nItems();
 	
 	// Grab some information on the supplied atom
-	int indexI = i->index(), typeI = i->atomTypeIndex();
+	const int indexI = i->index(), typeI = i->atomTypeIndex();
 	Molecule* moleculeI = i->molecule();
-	Vec3<double> rI = i->r();
+	const Vec3<double> rI = i->r();
 
 	// Communication group determines loop/summation style
 	start = Comm.interleavedLoopStart(group);
 	stride = Comm.interleavedLoopStride(group);
 
 	// Loop over cell atoms
-	if (applyMim)
+	if (flags&EnergyKernel::ApplyMinimumImage)
 	{
 		// Loop over atom neighbours
-		for (j=start; j<nNeighbourAtoms; j += stride)
+		if (flags&EnergyKernel::ExcludeSelfFlag) for (j=start; j<nNeighbourAtoms; j += stride)
+		{
+			jj = neighbourAtoms[j];
+			if (i == jj) continue;
+
+			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
+			rSq = box_->minimumDistanceSquared(rI, jj->r());
+			if (rSq > cutoffDistanceSquared_) continue;
+
+			// Check for atoms in the same species
+			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(typeI, jj->atomTypeIndex(), rSq);
+			else
+			{
+				scale = moleculeI->species()->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
+				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(typeI, jj->atomTypeIndex(), rSq) * scale;
+			}
+		}
+		else if (flags&EnergyKernel::ExcludeGreaterThanEqualTo) for (j=start; j<nNeighbourAtoms; j += stride)
+		{
+			jj = neighbourAtoms[j];
+			if (indexI >= jj->index()) continue;
+
+			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
+			rSq = box_->minimumDistanceSquared(rI, jj->r());
+			if (rSq > cutoffDistanceSquared_) continue;
+
+			// Check for atoms in the same species
+			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(typeI, jj->atomTypeIndex(), rSq);
+			else
+			{
+				scale = moleculeI->species()->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
+				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(typeI, jj->atomTypeIndex(), rSq) * scale;
+			}
+		}
+		else for (j=start; j<nNeighbourAtoms; j += stride)
 		{
 			jj = neighbourAtoms[j];
 
-			// Calculate rSquared distance betwenn atoms, and check it against the stored cutoff distance
+			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
 			rSq = box_->minimumDistanceSquared(rI, jj->r());
 			if (rSq > cutoffDistanceSquared_) continue;
 
@@ -714,11 +667,45 @@ double EnergyKernel::energy(const Atom* i, OrderedList<Atom>& neighbours, bool a
 	else
 	{
 		// Loop over atom neighbours
-		for (j = start; j < nNeighbourAtoms; j += stride)
+		if (flags&EnergyKernel::ExcludeSelfFlag) for (j=start; j<nNeighbourAtoms; j += stride)
+		{
+			jj = neighbourAtoms[j];
+			if (i == jj) continue;
+
+			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
+			rSq = (rI - jj->r()).magnitudeSq();
+			if (rSq > cutoffDistanceSquared_) continue;
+
+			// Check for atoms in the same species
+			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(typeI, jj->atomTypeIndex(), rSq);
+			else
+			{
+				scale = moleculeI->species()->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
+				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(typeI, jj->atomTypeIndex(), rSq) * scale;
+			}
+		}
+		else if (flags&EnergyKernel::ExcludeGreaterThanEqualTo) for (j=start; j<nNeighbourAtoms; j += stride)
+		{
+			jj = neighbourAtoms[j];
+			if (indexI >= jj->index()) continue;
+
+			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
+			rSq = (rI - jj->r()).magnitudeSq();
+			if (rSq > cutoffDistanceSquared_) continue;
+
+			// Check for atoms in the same species
+			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(typeI, jj->atomTypeIndex(), rSq);
+			else
+			{
+				scale = moleculeI->species()->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
+				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(typeI, jj->atomTypeIndex(), rSq) * scale;
+			}
+		}
+		else for (j=start; j<nNeighbourAtoms; j += stride)
 		{
 			jj = neighbourAtoms[j];
 
-			// Calculate rSquared distance betwenn atoms, and check it against the stored cutoff distance
+			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
 			rSq = (rI - jj->r()).magnitudeSq();
 			if (rSq > cutoffDistanceSquared_) continue;
 
@@ -740,109 +727,9 @@ double EnergyKernel::energy(const Atom* i, OrderedList<Atom>& neighbours, bool a
 }
 
 /*!
- * \brief Return PairPotential energy between Grain and Cell contents
- * \details Calculate the energy between the Grain specified and the entire (Grain) contents of the given Cell,
- * applying minimum image calculations if necessary.
- */
-double EnergyKernel::energy(const Grain* grain, Cell* cell, bool applyMim, bool excludeIgeJ, DUQComm::CommGroup group)
-{
-#ifdef CHECKS
-	if (grain == NULL)
-	{
-		msg.error("NULL_POINTER - NULL Grain pointer passed to EnergyKernel::energy(Grain,Cell,bool).\n");
-		return 0.0;
-	}
-	if (cell == NULL)
-	{
-		msg.error("NULL_POINTER - NULL Cell pointer passed to EnergyKernel::energy(Grain,Cell,bool).\n");
-		return 0.0;
-	}
-#endif
-	double totalEnergy = 0.0;
-	Atom** cellAtoms = cell->atoms().objects();
-	int i, j, start, stride, typeI, indexI;
-	Vec3<double> rI;
-	Molecule* moleculeI;
-	Atom* atomI;
-	double scale;
-
-	// Communication group determines loop/summation style
-	start = Comm.interleavedLoopStart(group);
-	stride = Comm.interleavedLoopStride(group);
-	
-	// Interleaved loop over grains in target cell
-	if (applyMim)
-	{
-		// Loop over grain atoms
-		for (i = 0; i<grain->nAtoms(); ++i)
-		{
-			atomI = grain->atom(i);
-			indexI = atomI->index();
-			rI = atomI->r();
-			typeI = atomI->atomTypeIndex();
-			moleculeI = atomI->molecule();
-
-			// Loop over cell atoms
-			for (j = start; j < cell->atoms().nItems(); j += stride)
-			{
-				Atom* atomJ = cellAtoms[j];
-
-				// Check exclusion of I == J
-				if (indexI == atomJ->index()) continue;
-
-				// Check for atoms in the same species
-				if (moleculeI == atomJ->molecule())
-				{
-					scale = moleculeI->species()->scaling(atomI->moleculeAtomIndex(), atomJ->moleculeAtomIndex());
-					if (scale < 1.0e-3) continue;
-					totalEnergy += energyWithMim(typeI, rI, atomJ) * scale;
-				}
-				else totalEnergy += energyWithMim(typeI, rI, atomJ);
-			}
-		}
-	}
-	else
-	{
-		// Loop over grain atoms
-		for (i = 0; i<grain->nAtoms(); ++i)
-		{
-			atomI = grain->atom(i);
-			indexI = atomI->index();
-			rI = atomI->r();
-			typeI = atomI->atomTypeIndex();
-			moleculeI = atomI->molecule();
-
-			// Loop over cell atoms
-			for (j = start; j < cell->atoms().nItems(); j += stride)
-			{
-				Atom* atomJ = cellAtoms[j];
-
-				// Check exclusion of I == J
-				if (indexI == atomJ->index()) continue;
-
-				// Check for atoms in the same species
-				if (moleculeI == atomJ->molecule())
-				{
-					scale = moleculeI->species()->scaling(atomI->moleculeAtomIndex(), atomJ->moleculeAtomIndex());
-					if (scale < 1.0e-3) continue;
-					totalEnergy += energyWithoutMim(typeI, rI, atomJ) * scale;
-				}
-				else totalEnergy += energyWithoutMim(typeI, rI, atomJ);
-			}
-		}
-	}
-
-	// Sum over processes if necessary
-	if (group == DUQComm::Group) Comm.allSum(&totalEnergy, 1, DUQComm::Group);
-	else if (group == DUQComm::World) Comm.allSum(&totalEnergy, 1);
-	
-	return totalEnergy;
-}
-
-/*!
  * \brief Return intermolecular energy between Grain and list of Cells
  */
-double EnergyKernel::energy(const Grain* grain, int nNeighbours, Cell** neighbours, bool applyMim, bool excludeIgeJ, DUQComm::CommGroup group)
+double EnergyKernel::energy(const Grain* grain, OrderedList<Atom>& neighbours, bool applyMim, bool excludeIgeJ, DUQComm::CommGroup group)
 {
 #ifdef CHECKS
 	if (grain == NULL)
@@ -852,29 +739,208 @@ double EnergyKernel::energy(const Grain* grain, int nNeighbours, Cell** neighbou
 	}
 #endif
 	double totalEnergy = 0.0;
+	Atom* ii, *jj;
+	int i, j, start = 0, stride = 1;
+	int indexI, typeI;
+	double scale, rSq;
+	Molecule* grainMol = grain->parent();
+	Atom** neighbourAtoms = neighbours.objects();
+	int nNeighbourAtoms = neighbours.nItems();
+	Vec3<double> rI;
 
 	// Communication group determines loop/summation style
-	if (group == DUQComm::Solo)
+	start = Comm.interleavedLoopStart(group);
+	stride = Comm.interleavedLoopStride(group);
+
+	if (applyMim)
 	{
-		// Straight loop over Cell neighbours
-		for (int n=0; n<nNeighbours; ++n) totalEnergy += energy(grain, neighbours[n], applyMim, excludeIgeJ);
-	}
-	else if (group == DUQComm::Group)
-	{
-		// Striped loop over Cell neighbours (Process Groups)
-		for (int n=Comm.localGroupRank(); n<nNeighbours; n += Comm.localGroupSize()) totalEnergy += energy(grain, neighbours[n], applyMim, excludeIgeJ);
-		// Reduce energy to all processes within group
-		Comm.allSum(&totalEnergy, 1, DUQComm::Group);
+		// Loop over grain atoms
+		for (i = 0; i<grain->nAtoms(); ++i)
+		{
+			ii = grain->atom(i);
+			indexI = ii->index();
+			rI = ii->r();
+			typeI = ii->atomTypeIndex();
+
+			// Loop over atom neighbours
+			if (excludeIgeJ) for (j=start; j<nNeighbourAtoms; j += stride)
+			{
+				jj = neighbourAtoms[j];
+				if (indexI >= jj->index()) continue;
+
+				// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
+				rSq = box_->minimumDistanceSquared(rI, jj->r());
+				if (rSq > cutoffDistanceSquared_) continue;
+
+				// Check for atoms in the same species
+				if (grainMol != jj->molecule()) totalEnergy += potentialMap_.energy(typeI, jj->atomTypeIndex(), rSq);
+				else
+				{
+					scale = grainMol->species()->scaling(ii->moleculeAtomIndex(), jj->moleculeAtomIndex());
+					if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(typeI, jj->atomTypeIndex(), rSq) * scale;
+				}
+			}
+			else for (j=start; j<nNeighbourAtoms; j += stride)
+			{
+				jj = neighbourAtoms[j];
+				if (indexI == jj->index()) continue;
+
+				// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
+				rSq = box_->minimumDistanceSquared(rI, jj->r());
+				if (rSq > cutoffDistanceSquared_) continue;
+
+				// Check for atoms in the same species
+				if (grainMol != jj->molecule()) totalEnergy += potentialMap_.energy(typeI, jj->atomTypeIndex(), rSq);
+				else
+				{
+					scale = grainMol->species()->scaling(ii->moleculeAtomIndex(), jj->moleculeAtomIndex());
+					if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(typeI, jj->atomTypeIndex(), rSq) * scale;
+				}
+			}
+		}
 	}
 	else
 	{
-		// Striped loop over Cell neighbours (individual processes)
-		for (int n=Comm.rank(); n<nNeighbours; n += Comm.nProcesses()) totalEnergy += energy(grain, neighbours[n], applyMim, excludeIgeJ);
-		// Reduce energy to all processes within group
-		Comm.allSum(&totalEnergy, 1);
+		// Loop over grain atoms
+		for (i = 0; i<grain->nAtoms(); ++i)
+		{
+			ii = grain->atom(i);
+			indexI = ii->index();
+			rI = ii->r();
+			typeI = ii->atomTypeIndex();
+
+			// Loop over atom neighbours
+			if (excludeIgeJ) for (j=start; j<nNeighbourAtoms; j += stride)
+			{
+				jj = neighbourAtoms[j];
+				if (indexI >= jj->index()) continue;
+
+				// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
+				rSq = (rI - jj->r()).magnitudeSq();
+				if (rSq > cutoffDistanceSquared_) continue;
+
+				// Check for atoms in the same species
+				if (grainMol != jj->molecule()) totalEnergy += potentialMap_.energy(typeI, jj->atomTypeIndex(), rSq);
+				else
+				{
+					scale = grainMol->species()->scaling(ii->moleculeAtomIndex(), jj->moleculeAtomIndex());
+					if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(typeI, jj->atomTypeIndex(), rSq) * scale;
+				}
+			}
+			else for (j=start; j<nNeighbourAtoms; j += stride)
+			{
+				jj = neighbourAtoms[j];
+				if (indexI == jj->index()) continue;
+
+				// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
+				rSq = (rI - jj->r()).magnitudeSq();
+				if (rSq > cutoffDistanceSquared_) continue;
+
+				// Check for atoms in the same species
+				if (grainMol != jj->molecule()) totalEnergy += potentialMap_.energy(typeI, jj->atomTypeIndex(), rSq);
+				else
+				{
+					scale = grainMol->species()->scaling(ii->moleculeAtomIndex(), jj->moleculeAtomIndex());
+					if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(typeI, jj->atomTypeIndex(), rSq) * scale;
+				}
+			}
+		}
 	}
-// 	msg.print("totalEnergy = %f\n", totalEnergy);
+
+	// Sum over processes if necessary
+	if (group == DUQComm::Group) Comm.allSum(&totalEnergy, 1, DUQComm::Group);
+	else if (group == DUQComm::World) Comm.allSum(&totalEnergy, 1);
+
 	return totalEnergy;
+}
+
+/*!
+ * \brief Return PairPotential energy of atom with world
+ */
+double EnergyKernel::energy(const Atom* i, DUQComm::CommGroup group)
+{
+#ifdef CHECKS
+	if (i == NULL)
+	{
+		msg.error("NULL_POINTER - NULL Atom pointer passed to EnergyKernel::energy(Atom,ParallelStyle).\n");
+		return 0.0;
+	}
+#endif
+	double totalEnergy = 0.0;
+	Cell* cellI = i->cell();
+	totalEnergy = energy(i, cellI->atoms(), EnergyKernel::ExcludeSelfFlag, group);
+	totalEnergy += energy(i, cellI->atomNeighbours(), EnergyKernel::NoFlags, group);
+	totalEnergy += energy(i, cellI->mimAtomNeighbours(), EnergyKernel::ApplyMinimumImage, group);
+	return totalEnergy;
+}
+
+/*!
+ * \brief Return PairPotential energy of grain with world
+ */
+double EnergyKernel::energy(const Grain* grain, DUQComm::CommGroup group)
+{
+#ifdef CHECKS
+	if (grain == NULL)
+	{
+		msg.error("NULL_POINTER - NULL Grain pointer passed to EnergyKernel::energy(Grain,ParallelStyle).\n");
+		return 0.0;
+	}
+#endif
+
+	double totalEnergy = 0.0;
+	int i, j, nAtoms = grain->nAtoms();
+	Vec3<double> rI;
+	Molecule* grainMol = grain->parent();
+	Species* grainSp = grainMol->species();
+	Atom* ii, **atoms = grain->atoms();
+	Cell* cellI;
+	double scale;
+
+	// Loop over grain atoms
+	for (i = 0; i<grain->nAtoms(); ++i)
+	{
+		ii = grain->atom(i);
+		cellI = ii->cell();
+		totalEnergy += energy(ii, cellI->atoms(), EnergyKernel::ExcludeSelfFlag, group);
+		totalEnergy += energy(ii, cellI->atomNeighbours(), EnergyKernel::NoFlags, group);
+		totalEnergy += energy(ii, cellI->mimAtomNeighbours(), EnergyKernel::ApplyMinimumImage, group);
+
+		// Correct energy - USE A FLAG!!!  all scale interactions over intramolecular terms between the grain atoms will be added twice since the
+		// loops in the energy() routines used above do not exclude 
+		
+	}
+	
+	return totalEnergy;
+}
+
+/*!
+ * \brief Return molecular correction energy related to intramolecular terms involving supplied atom
+ */
+double EnergyKernel::correct(const Atom* i)
+{
+	// Loop over atoms in molecule
+	int j;
+	int nMolAtoms = i->molecule()->nAtoms();
+	int indexI = i->moleculeAtomIndex();
+	int typeI = i->atomTypeIndex();
+	Atom* jj, **atoms = i->molecule()->atoms();
+	Species* sp = i->molecule()->species();
+	double scale, rSq, correctionEnergy = 0.0;
+	Vec3<double> rI = i->r();
+
+	for (j = 0; j < nMolAtoms; ++j)
+	{
+		if (indexI == j) continue;
+		scale = (1.0 - sp->scaling(indexI, j));
+		if (scale > 1.0e-3)
+		{
+			jj = atoms[j];
+			rSq = box_->minimumDistanceSquared(rI, jj->r());
+			correctionEnergy += potentialMap_.energy(typeI, jj->atomTypeIndex(), rSq) * scale;
+		}
+	}
+
+	return -correctionEnergy;
 }
 
 /*
@@ -964,7 +1030,7 @@ double EnergyKernel::energy(Molecule* mol, DUQComm::CommGroup group, bool halfPP
 	for (int n=0; n<mol->nGrains(); ++n)
 	{
 		grain = mol->grain(n);
-		grainEnergy += energy(grain, grain->cell(), false, false, group);
+// 		grainEnergy += energy(grain, grain->cell(), false, false, group);
 // 		grainEnergy += energy(grain, grain->cell()->neighbours(), cutoffSq, false, group);
 		printf("EnergyKernel::energy(Molecule*) is horribly broken......\n");
 		
