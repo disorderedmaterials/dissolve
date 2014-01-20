@@ -114,8 +114,8 @@ CommandReturnValue DUQ::grainShake(Configuration& cfg)
 			// Get current Grain and  
 			grainI = cell->grain(n);
 			currentEnergy = kernel.energy(grainI, cell, false, false, DUQComm::Group);
-			currentEnergy += kernel.energy(grainI, cell->cellNeighbours(), false, false, DUQComm::Group);
-			currentEnergy += kernel.energy(grainI, cell->mimCellNeighbours(), true, false, DUQComm::Group);
+			currentEnergy += kernel.energy(grainI, cell->nCellNeighbours(), cell->cellNeighbours(), false, false, DUQComm::Group);
+			currentEnergy += kernel.energy(grainI, cell->nMimCellNeighbours(), cell->mimCellNeighbours(), true, false, DUQComm::Group);
 			currentEnergy += kernel.fullIntraEnergy(grainI, termScale);
 
 			// Set current Grain as target in ChangeStore
@@ -139,8 +139,8 @@ CommandReturnValue DUQ::grainShake(Configuration& cfg)
 
 				// Calculate new energy
 				newEnergy = kernel.energy(grainI, cell, false, false, DUQComm::Group);
-				newEnergy += kernel.energy(grainI, cell->cellNeighbours(), false, false, DUQComm::Group);
-				newEnergy += kernel.energy(grainI, cell->mimCellNeighbours(), true, false, DUQComm::Group);
+				newEnergy += kernel.energy(grainI, cell->nCellNeighbours(), cell->cellNeighbours(), false, false, DUQComm::Group);
+				newEnergy += kernel.energy(grainI, cell->nMimCellNeighbours(), cell->mimCellNeighbours(), true, false, DUQComm::Group);
 				newEnergy += kernel.fullIntraEnergy(grainI, termScale);
 
 				// Trial the transformed Grain position

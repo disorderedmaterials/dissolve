@@ -78,8 +78,8 @@ void DUQ::createCellAtomNeighbourLists(Configuration& cfg)
 		atomR = i->r();
 
 		// Check distance of the current atom from the centres of each of the neighbouring cells
-		neighbours = centralCell->cellNeighbours().objects(); 
-		nNeighbours = centralCell->cellNeighbours().nItems();
+		neighbours = centralCell->cellNeighbours();
+		nNeighbours = centralCell->nCellNeighbours();
 		for (c=0; c<nNeighbours; ++c)
 		{
 			r = box->minimumVector(neighbours[c]->centre(), atomR);
@@ -87,8 +87,8 @@ void DUQ::createCellAtomNeighbourLists(Configuration& cfg)
 			if (distSq <= cutoffSq) neighbours[c]->addAtomToNeighbourList(i, false, true);
 		}
 
-		mimNeighbours = centralCell->mimCellNeighbours().objects();
-		nMimNeighbours = centralCell->mimCellNeighbours().nItems();
+		mimNeighbours = centralCell->mimCellNeighbours();
+		nMimNeighbours = centralCell->nMimCellNeighbours();
 		for (c=0; c<nMimNeighbours; ++c)
 		{
 			r = box->minimumVector(mimNeighbours[c]->centre(), atomR);

@@ -779,11 +779,16 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 	// Finally, loop over Cells and set neighbours, and construct neighbour matrix
 	msg.print("--> Constructing neighbour lists for individual Cells...\n");
 	bool mimRequired;
+	OrderedList<Cell> neighbours, mimNeighbours;
 	Vec3<int> gridRef;
 	for (n=0; n<nCells_; ++n)
 	{
 		// Grab grid reference of central cell
 		gridRef = cells_[n].gridReference();
+
+		// Clear neighbour lists
+		neighbours.clear();
+		mimNeighbours.clear();
 
 		// Loop over list of (relative) neighbour cell indices
 		for (ListVec3<int>* item = nbrs.first(); item != NULL; item = item->next)
@@ -791,12 +796,12 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 			// Retrieve Cell pointers
 			nbr = cell(gridRef.x+item->x, gridRef.y+item->y, gridRef.z+item->z);
 			mimRequired = box_->type() == Box::NonPeriodicBox ? false : minimumImageRequired(&cells_[n], nbr);
-			cells_[n].addCellNeighbour(nbr, mimRequired);
+			if (mimRequired) mimNeighbours.add(nbr);
+			else neighbours.add(nbr);
 		}
 
-		// Access the objects() arrays of the cell's neighbour list so they get generated (they will never change)
-		cells_[n].cellNeighbours().objects();
-		cells_[n].mimCellNeighbours().objects();
+		// Setup lists in the cell
+		cells_[n].addCellNeighbours(neighbours, mimNeighbours);
 	}
 
 	// Send Cell info to Comm so suitable parallel strategy can be deduced

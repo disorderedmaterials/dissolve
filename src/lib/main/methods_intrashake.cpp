@@ -262,8 +262,8 @@ CommandReturnValue DUQ::interShake(Configuration& cfg)
 			grainI = cell->grain(n);
 			mol = grainI->parent();
 			currentGrainEnergy = kernel.energy(grainI, cell, false, false, DUQComm::Group);
-			currentGrainEnergy += kernel.energy(grainI, cell->cellNeighbours(), false, false, DUQComm::Group);
-			currentGrainEnergy += kernel.energy(grainI, cell->mimCellNeighbours(), true, false, DUQComm::Group);
+			currentGrainEnergy += kernel.energy(grainI, cell->nCellNeighbours(), cell->cellNeighbours(), false, false, DUQComm::Group);
+			currentGrainEnergy += kernel.energy(grainI, cell->nMimCellNeighbours(), cell->mimCellNeighbours(), true, false, DUQComm::Group);
 
 			// Set current Grain as target in ChangeStore
 			changeStore.add(grainI);
@@ -306,8 +306,8 @@ CommandReturnValue DUQ::interShake(Configuration& cfg)
 
 				// Calculate new energy
 				newGrainEnergy = kernel.energy(grainI, cell, false, false, DUQComm::Group);
-				newGrainEnergy += kernel.energy(grainI, cell->cellNeighbours(), false, false, DUQComm::Group);
-				newGrainEnergy += kernel.energy(grainI, cell->mimCellNeighbours(), true, false, DUQComm::Group);
+				newGrainEnergy += kernel.energy(grainI, cell->nCellNeighbours(), cell->cellNeighbours(), false, false, DUQComm::Group);
+				newGrainEnergy += kernel.energy(grainI, cell->nMimCellNeighbours(), cell->mimCellNeighbours(), true, false, DUQComm::Group);
 				newBondEnergy = kernel.energy(mol, b);
 
 				// Trial the transformed Grain position (the Master is in charge of this)

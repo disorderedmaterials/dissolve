@@ -842,7 +842,7 @@ double EnergyKernel::energy(const Grain* grain, Cell* cell, bool applyMim, bool 
 /*!
  * \brief Return intermolecular energy between Grain and list of Cells
  */
-double EnergyKernel::energy(const Grain* grain, OrderedList<Cell>& neighbours, bool applyMim, bool excludeIgeJ, DUQComm::CommGroup group)
+double EnergyKernel::energy(const Grain* grain, int nNeighbours, Cell** neighbours, bool applyMim, bool excludeIgeJ, DUQComm::CommGroup group)
 {
 #ifdef CHECKS
 	if (grain == NULL)
@@ -857,22 +857,19 @@ double EnergyKernel::energy(const Grain* grain, OrderedList<Cell>& neighbours, b
 	if (group == DUQComm::Solo)
 	{
 		// Straight loop over Cell neighbours
-		Cell** cells = neighbours.objects();
-		for (int n=0; n<neighbours.nItems(); ++n) totalEnergy += energy(grain, cells[n], applyMim, excludeIgeJ);
+		for (int n=0; n<nNeighbours; ++n) totalEnergy += energy(grain, neighbours[n], applyMim, excludeIgeJ);
 	}
 	else if (group == DUQComm::Group)
 	{
 		// Striped loop over Cell neighbours (Process Groups)
-		Cell** cells = neighbours.objects();
-		for (int n=Comm.localGroupRank(); n<neighbours.nItems(); n += Comm.localGroupSize()) totalEnergy += energy(grain, cells[n], applyMim, excludeIgeJ);
+		for (int n=Comm.localGroupRank(); n<nNeighbours; n += Comm.localGroupSize()) totalEnergy += energy(grain, neighbours[n], applyMim, excludeIgeJ);
 		// Reduce energy to all processes within group
 		Comm.allSum(&totalEnergy, 1, DUQComm::Group);
 	}
 	else
 	{
 		// Striped loop over Cell neighbours (individual processes)
-		Cell** cells = neighbours.objects();
-		for (int n=Comm.rank(); n<neighbours.nItems(); n += Comm.nProcesses()) totalEnergy += energy(grain, cells[n], applyMim, excludeIgeJ);
+		for (int n=Comm.rank(); n<nNeighbours; n += Comm.nProcesses()) totalEnergy += energy(grain, neighbours[n], applyMim, excludeIgeJ);
 		// Reduce energy to all processes within group
 		Comm.allSum(&totalEnergy, 1);
 	}

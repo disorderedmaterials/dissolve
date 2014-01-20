@@ -129,7 +129,7 @@ class EnergyKernel
 	// Return PairPotential energy between grain and cell contents
 	double energy(const Grain* grain, Cell* cell, bool applyMim, bool excludeIgeJ = false, DUQComm::CommGroup group = DUQComm::Solo);
 	// Return PairPotential energy between Grain and list of neighbouring cells
-	double energy(const Grain* grain, OrderedList<Cell>& neighbours, bool applyMim, bool excludeIgeJ = false, DUQComm::CommGroup group = DUQComm::Solo);
+	double energy(const Grain* grain, int nNeighbours, Cell** neighbours, bool applyMim, bool excludeIgeJ = (0), DUQComm::CommGroup group = DUQComm::Solo);
 	///@}
 
 
