@@ -99,7 +99,7 @@ class Atom
 	// Set cell in which the atom exists
 	void setCell(Cell* cell);
 	// Return cell in which the atom exists
-	Cell* cell();
+	Cell* cell() const;
 	// Copy properties from supplied Atom
 	void copyProperties(const Atom* source);
 	///@}

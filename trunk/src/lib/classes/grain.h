@@ -85,6 +85,8 @@ class Grain
 	bool addAtom(Atom* i);
 	// Return number of atoms in grain
 	int nAtoms() const;
+	// Return atoms array
+	Atom** atoms() const;
 	// Return nth atom in grain
 	Atom* atom(int n) const;
 	// Set index of grain

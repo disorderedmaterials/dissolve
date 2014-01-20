@@ -138,6 +138,14 @@ bool Molecule::setupAtom(int n, Atom* i, SpeciesAtom* source)
 }
 
 /*!
+ * \brief Return atoms array
+ */
+Atom** Molecule::atoms()
+{
+	return atoms_;
+}
+
+/*!
  * \brief Return nth Atom pointer
  */
 Atom* Molecule::atom(int n) const

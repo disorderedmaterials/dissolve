@@ -158,6 +158,14 @@ int Grain::nAtoms() const
 }
 
 /*!
+ * \brief Return atoms array
+ */
+Atom** Grain::atoms() const
+{
+	return atoms_;
+}
+
+/*!
  * \brief Return nth Atom in Grain
  */
 Atom* Grain::atom(int n) const

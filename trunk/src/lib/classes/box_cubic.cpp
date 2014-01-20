@@ -250,14 +250,22 @@ double CubicBox::minimumDistanceSquared(const Atom* i, const Vec3<double>& j) co
  */
 double CubicBox::minimumDistanceSquared(const Vec3<double>& i, const Vec3<double>& j) const
 {
-	Vec3<double> mimVec = j;
-	mimVec -= i;
+// 	Vec3<double> mimVec = j;
+// 	mimVec -= i;
+// 
+// 	mimVec.x -= int(mimVec.x*ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5))*a_;
+// 	mimVec.y -= int(mimVec.y*ra_ + (mimVec.y < 0.0 ? -0.5 : 0.5))*a_;
+// 	mimVec.z -= int(mimVec.z*ra_ + (mimVec.z < 0.0 ? -0.5 : 0.5))*a_;
+// 
+// 	return mimVec.magnitudeSq();
+	double x = j.x-i.x, y = j.y-i.y, z = j.z-i.z;
 
-	mimVec.x -= int(mimVec.x*ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5))*a_;
-	mimVec.y -= int(mimVec.y*ra_ + (mimVec.y < 0.0 ? -0.5 : 0.5))*a_;
-	mimVec.z -= int(mimVec.z*ra_ + (mimVec.z < 0.0 ? -0.5 : 0.5))*a_;
+	x -= int(x*ra_ + (x < 0.0 ? -0.5 : 0.5))*a_;
+	y -= int(y*ra_ + (y < 0.0 ? -0.5 : 0.5))*a_;
+	z -= int(z*ra_ + (z < 0.0 ? -0.5 : 0.5))*a_;
 
-	return mimVec.magnitudeSq();
+	return (x*x + y*y + z*z);
+
 }
 
 /*

@@ -432,8 +432,8 @@ void Cell::addCellNeighbours(OrderedList<Cell>& neighbours, OrderedList<Cell>& m
 		if (indexM < indexN)
 		{
 			allCellNeighbours_[count++].set(mimCellNeighbours_[m++], true);
-			if (m == nCellNeighbours_) indexM = 1e24;
-			else indexM = cellNeighbours_[m]->index();
+			if (m == nMimCellNeighbours_) indexM = 1e24;
+			else indexM = mimCellNeighbours_[m]->index();
 			continue;
 		}
 		if (indexN == indexM)

@@ -191,8 +191,8 @@ double DUQ::intergrainEnergy(Configuration& cfg)
 			}
 			
 			// Inter-Grain interactions between this Grain and those in Cell neighbours
-			totalEnergy += kernel.energy(grainI, cell->nCellNeighbours(), cell->cellNeighbours(), false, true, DUQComm::Solo);
-			totalEnergy += kernel.energy(grainI, cell->nMimCellNeighbours(), cell->mimCellNeighbours(), true, true, DUQComm::Solo);
+			totalEnergy += kernel.energy(grainI, cell->atomNeighbours(), false, true, DUQComm::Solo);
+			totalEnergy += kernel.energy(grainI, cell->mimAtomNeighbours(), true, true, DUQComm::Solo);
 		}
 
 		/*
@@ -386,8 +386,8 @@ double DUQ::totalEnergyTestCells(Configuration& cfg)
 			}
 			
 			// Inter-Grain interactions between this Grain and those in Cell neighbours
-			totalEnergy += kernel.energy(grainI, cell->nCellNeighbours(), cell->cellNeighbours(), false, true);
-			totalEnergy += kernel.energy(grainI, cell->nMimCellNeighbours(), cell->mimCellNeighbours(), true, true);
+			totalEnergy += kernel.energy(grainI, cell->atomNeighbours(), false, true);
+			totalEnergy += kernel.energy(grainI, cell->mimAtomNeighbours(), true, true);
 		}
 
 		/*

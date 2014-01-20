@@ -49,6 +49,14 @@ class EnergyKernel
 	~EnergyKernel();
 	// Clear all data
 	void clear();
+	// Flags
+	enum Flags
+	{
+		NoFlags = 0,
+		ExcludeSelfFlag = 1,
+		ExcludeGreaterThanEqualTo = 2,
+		ApplyMinimumImage = 4
+	};
 
 
 	/*!
@@ -118,18 +126,23 @@ class EnergyKernel
 	double energy(const Atom& i, const Grain* grain, bool applyMim, bool excludeIgeJ = false);
 	// Return PairPotential energy between grains provided
 	double energy(const Grain* grainI, const Grain* grainJ, bool applyMim, bool excludeIgeJ = false);
+	// UPDATED ROUTINES START HERE
 	// Return PairPotential energy between two cells
 	double energy(Cell* centralCell, Cell* otherCell, bool applyMim, bool excludeIgeJ = false, DUQComm::CommGroup group = DUQComm::Solo);
 	// Return PairPotential energy between cell and atomic neighbours
 	double energy(Cell* centralCell, bool excludeIgeJ = false, DUQComm::CommGroup group = DUQComm::Solo);
 	// Return PairPotential energy between atom and cell
-	double energy(const Atom* i, Cell* cell, bool applyMim, DUQComm::CommGroup group = DUQComm::Solo);
-	// Return PairPotential energy between atom and atom neighbour list
-	double energy(const Atom* i, OrderedList<Atom>& neighbours, bool applyMim, DUQComm::CommGroup group = DUQComm::Solo);
-	// Return PairPotential energy between grain and cell contents
-	double energy(const Grain* grain, Cell* cell, bool applyMim, bool excludeIgeJ = false, DUQComm::CommGroup group = DUQComm::Solo);
+	double energy(const Atom* i, OrderedList<Atom>& neighbours, EnergyKernel::Flags flags = EnergyKernel::NoFlags, DUQComm::CommGroup group = DUQComm::Solo);
 	// Return PairPotential energy between Grain and list of neighbouring cells
-	double energy(const Grain* grain, int nNeighbours, Cell** neighbours, bool applyMim, bool excludeIgeJ = (0), DUQComm::CommGroup group = DUQComm::Solo);
+	double energy(const Grain* grain, OrderedList<Atom>& neighbours, bool applyMim, bool excludeIgeJ = false, DUQComm::CommGroup group = DUQComm::Solo);
+	// Return PairPotential energy of atom with world
+	double energy(const Atom* i, DUQComm::CommGroup group = DUQComm::Solo);
+	// Return PairPotential energy of grain with world
+	double energy(const Grain* grain, DUQComm::CommGroup group = DUQComm::Solo);
+	// Return molecular correction energy related to intramolecular terms involving supplied atom
+	double correct(const Atom* i);
+	// Return molecular correction energy related to intramolecular terms involving atoms in supplied grain
+	double correct(const Grain* i);
 	///@}
 
 

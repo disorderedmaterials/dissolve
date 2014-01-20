@@ -117,9 +117,7 @@ CommandReturnValue DUQ::atomShake(Configuration& cfg)
 			grainI = i->grain();
 
 			// Calculate reference intramolecular energy for atom, including intramolecular terms through the atom's grain
-			currentEnergy = kernel.energy(i, cell, false, DUQComm::Group);
-			currentEnergy += kernel.energy(i, cell->atomNeighbours(), false, DUQComm::Group);
-			currentEnergy += kernel.energy(i, cell->mimAtomNeighbours(), true, DUQComm::Group);
+			currentEnergy = kernel.energy(i, DUQComm::Group);
 			intraEnergy = kernel.fullIntraEnergy(grainI, termScale);
 
 			// Loop over number of shakes per atom
@@ -130,9 +128,7 @@ CommandReturnValue DUQ::atomShake(Configuration& cfg)
 
 				// Translate atom and calculate new energy
 				i->translateCoordinates(rDelta);
-				newEnergy = kernel.energy(i, cell, false, DUQComm::Group);
-				newEnergy += kernel.energy(i, cell->atomNeighbours(), false, DUQComm::Group);
-				newEnergy += kernel.energy(i, cell->mimAtomNeighbours(), true, DUQComm::Group);
+				newEnergy = kernel.energy(i, DUQComm::Group);
 				newIntraEnergy = kernel.fullIntraEnergy(grainI, termScale);
 				
 				// Trial the transformed atom position
