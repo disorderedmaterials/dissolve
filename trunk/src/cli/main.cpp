@@ -1,7 +1,7 @@
 /*
 	*** dUQ CLI Main
 	*** src/cli/main.cpp
-	Copyright T. Youngs 2012-2013
+	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
 
@@ -119,9 +119,9 @@ int main(int argc, char **argv)
 
 	// Print GPL license information
 #ifdef PARALLEL
-	msg.print("dUQ PARALLEL version %s, Copyright (C) 2012-2013 T. Youngs.\n", DUQREVISION);
+	msg.print("dUQ PARALLEL version %s, Copyright (C) 2012-2014 T. Youngs.\n", DUQREVISION);
 #else
-	msg.print("dUQ SERIAL version %s, Copyright (C) 2012-2013  T. Youngs.\n", DUQREVISION);
+	msg.print("dUQ SERIAL version %s, Copyright (C) 2012-2014  T. Youngs.\n", DUQREVISION);
 #endif
 	msg.print("Built from %s@%s.\n", DUQURL, DUQREVISION);
 	msg.print("dUQ comes with ABSOLUTELY NO WARRANTY.\n");

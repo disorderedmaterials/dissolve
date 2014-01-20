@@ -391,7 +391,7 @@ void Species::createScalingMatrix()
 /*!
  * \brief Return scaling factor for supplied indices
  */
-double Species::scaling(int indexI, int indexJ)
+double Species::scaling(int indexI, int indexJ) const
 {
 #ifdef CHECKS
 	if ((indexI < 0) || (indexI >= atoms_.nItems()))

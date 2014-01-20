@@ -1,7 +1,7 @@
 /*
 	*** Mutex Routines
 	*** src/lib/base/mutex.cpp
-	Copyright T. Youngs 2012-2013
+	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
 

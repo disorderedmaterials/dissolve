@@ -1,7 +1,7 @@
 /*
 	*** dUQ Methods - Energy
 	*** src/lib/main/methods_energy.cpp
-	Copyright T. Youngs 2012-2013
+	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
 
@@ -110,17 +110,9 @@ double DUQ::interatomicEnergy(Configuration& cfg)
 		 */
 
 		// This cell with itself
-// 		printf("Cell index %i:\n", cell->index());
-// 		for (n=0; n<cell->maxAtoms(); ++n) if (cell->atom(n)->index() != Atom::UnusedAtom) printf("   %3i  %s  %3i  %3i %f  %f  %f\n", n, typeIndex_[cell->atom(n)->atomTypeIndex()]->name(), cell->atom(n)->index(), cell->atom(n)->moleculeAtomIndex(), cell->atom(n)->r().x, cell->atom(n)->r().y, cell->atom(n)->r().z);
 		totalEnergy += kernel.energy(cell, cell, false, true, DUQComm::Solo);
 
 		// Interatomic interactions between atoms in this cell and its neighbours
-// 		for (RefListItem<Cell,bool>* ri = cell->neighbours().first(); ri != NULL; ri = ri->next)
-// 		{
-// 			// Perform i >= j exclusion here by comparing cell indices rather than atom indices, since for the i-j and j-i pairs will both be trialled at some point
-// 			if (cell->index() >= ri->item->index()) continue;
-// 			totalEnergy += kernel.energy(cell, ri->item, ri->data, false, DUQComm::Solo);
-// 		}
 		totalEnergy += kernel.energy(cell, true, DUQComm::Solo);
 
 		/*
@@ -182,17 +174,18 @@ double DUQ::intergrainEnergy(Configuration& cfg)
 		for (n=start; n<cell->nGrains(); n += stride)
 		{
 			grainI = cell->grain(n);
+			totalEnergy += kernel.energy(grainI, true, DUQComm::Solo);
 
-			// Inter-Grain interactions in this Cell...
-			for (m=n+1; m<cell->nGrains(); ++m)
-			{
-				grainJ = cell->grain(m);
-				totalEnergy += kernel.energy(grainI, grainJ, true, false);
-			}
-			
-			// Inter-Grain interactions between this Grain and those in Cell neighbours
-			totalEnergy += kernel.energy(grainI, cell->atomNeighbours(), false, true, DUQComm::Solo);
-			totalEnergy += kernel.energy(grainI, cell->mimAtomNeighbours(), true, true, DUQComm::Solo);
+// 			// Inter-Grain interactions in this Cell...
+// 			for (m=n+1; m<cell->nGrains(); ++m)
+// 			{
+// 				grainJ = cell->grain(m);
+// 				totalEnergy += kernel.energy(grainI, grainJ, true, false);
+// 			}
+// 			
+// 			// Inter-Grain interactions between this Grain and those in Cell neighbours
+// 			totalEnergy += kernel.energy(grainI, cell->atomNeighbours(), false, true, DUQComm::Solo);
+// 			totalEnergy += kernel.energy(grainI, cell->mimAtomNeighbours(), true, true, DUQComm::Solo);
 		}
 
 		/*
@@ -223,16 +216,16 @@ double DUQ::totalEnergy(Configuration& cfg)
 	double atomEnergy, intraEnergy;
 
 	// Calculate Grain energy
-	Timer grainTimer;
+	Timer interTimer;
 	atomEnergy = interatomicEnergy(cfg);
-	grainTimer.stop();
+	interTimer.stop();
 
 	// Calculate intramolecular and interGrain correction energy
 	Timer intraTimer;
 	intraEnergy = intramolecularEnergy(cfg);
 	intraTimer.stop();
 
-	msg.print("Time to do atom energy was %s, intramolecular energy was %s.\n", grainTimer.timeString(), intraTimer.timeString());
+	msg.print("Time to do atom energy was %s, intramolecular energy was %s.\n", interTimer.timeString(), intraTimer.timeString());
 	msg.print("Total Energy (World) is %15.9e (%15.9e Grain + %15.9e Intramolecular)\n", atomEnergy + intraEnergy, atomEnergy, intraEnergy);
 
 	return atomEnergy + intraEnergy;
@@ -292,7 +285,7 @@ double DUQ::intramolecularEnergyTest(Configuration& cfg)
 
 /*!
  * \brief Test - Return total energy of the system
- * \details Calculate the total energy of the system using a basic loops, with each
+ * \details Calculate the total energy of the system using a basic loop, with each
  * process calculating its own value.
  * 
  * This is a serial routine, with all processes independently calculating their own value.
@@ -344,63 +337,10 @@ double DUQ::totalEnergyTest(Configuration& cfg)
 	 * Calculation End
 	 */
 	
-	msg.print("Total Atom Energy (TEST) is %15.9e\n", atomEnergy);
-	msg.print("Total Intramolecular Energy (TEST) is %15.9e\n", intraEnergy);
-	msg.print("Total Energy (TEST) is %15.9e\n", atomEnergy + intraEnergy);
+	msg.print("Correct particle energy is %15.9e kJ/mol\n", atomEnergy);
+	msg.print("Correct intramolecular energy is %15.9e kJ/mol\n", intraEnergy);
+	msg.print("Correct total energy is %15.9e kJ/mol\n", atomEnergy + intraEnergy);
 	return atomEnergy + intraEnergy;
-}
-
-/*!
- * \brief Test - Return total energy of the system
- * \details Calculate the total energy of the system in the Cell-based manner used by the main
- * total energy routine.
- * 
- * This is a serial routine, with all processes independently calculating their own value.
- */
-double DUQ::totalEnergyTestCells(Configuration& cfg)
-{
-	// Create an EnergyKernel
-	EnergyKernel kernel(cfg, potentialMap_);
-
-	int cellId, n, m;
-	Cell* cell;
-	Grain* grainI, *grainJ;
-	double totalEnergy = 0.0;
-	for (cellId=0; cellId<cfg.nCells(); ++cellId)
-	{
-		cell = cfg.cell(cellId);
-
-		/*
-		 * Calculation Begins
-		 */
-		
-		// Inter-Grain interactions in this Cell...
-		for (n=0; n<cell->nGrains(); ++n)
-		{
-			grainI = cell->grain(n);
-			for (m=n+1; m<cell->nGrains(); ++m)
-			{
-				grainJ = cell->grain(m);
-				
-				totalEnergy += kernel.energy(grainI, grainJ, false, false);
-			}
-			
-			// Inter-Grain interactions between this Grain and those in Cell neighbours
-			totalEnergy += kernel.energy(grainI, cell->atomNeighbours(), false, true);
-			totalEnergy += kernel.energy(grainI, cell->mimAtomNeighbours(), true, true);
-		}
-
-		/*
-		 * Calculation End
-		 */
-	}
-
-	// Calculate intramolecular energy and correction to inter-Grain energy
-	double intraEnergy = intramolecularEnergyTest(cfg);
-
-	msg.print("Total Grain Energy (TESTCELL) is %15.9e\n", totalEnergy);
-	msg.print("Total Intramolecular Energy (TESTCELL) is %15.9e\n", intraEnergy);
-	return totalEnergy + intraEnergy;
 }
 
 /*!

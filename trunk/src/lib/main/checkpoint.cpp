@@ -1,7 +1,7 @@
 /*
 	*** dUQ - CheckPoint
 	*** src/lib/main/checkpoint.cpp
-	Copyright T. Youngs 2012-2013
+	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
 

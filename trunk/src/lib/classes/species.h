@@ -1,7 +1,7 @@
 /*
 	*** Species Definition
 	*** src/lib/classes/species.h
-	Copyright T. Youngs 2012-2013
+	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
 
@@ -168,7 +168,7 @@ class Species : public ListItem<Species>
 	// Create scaling matrix
 	void createScalingMatrix();
 	// Return scaling factor for supplied indices
-	double scaling(int indexI, int indexJ);
+	double scaling(int indexI, int indexJ) const;
 	// Identify inter-Grain terms
 	void identifyInterGrainTerms();
 	///@}

@@ -1,7 +1,7 @@
 /*
 	*** dUQ - Commands
 	*** src/lib/main/commands.cpp
-	Copyright T. Youngs 2012-2013
+	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
 
@@ -116,7 +116,14 @@ bool DUQ::registerCommands()
 	if (!addCommandParameter("md", "trajectory", "Name of xyz trajectory file to write", "")) return false;
 	if (!addCommandParameter("md", "energy", "Whether to calculate total energy at each step", "0")) return false;
 	if (!addCommandParameter("md", "freq", "Frequency to write step summary", "1")) return false;
-	
+
+	// WorldAtomShake
+	if (!registerCommand("worldatomshake", "was", &DUQ::worldAtomShake)) return false;
+	if (!addCommandArgument("worldatomshake", "n", "Number of times to attempt shake", "1")) return false;
+	if (!addCommandArgument("worldatomshake", "cut", "Cutoff radius to use in energy calculation (-1.0 to use PairPotential cutoff)", "-1.0")) return false;
+	if (!addCommandParameter("worldatomshake", "rate", "Target acceptance rate for moves", "0.333")) return false;
+	if (!addCommandParameter("worldatomshake", "maxtrans", "Size of maximum allowed translation in move (updated automatically)", "0.1")) return false;
+
 	return true;
 }
 
