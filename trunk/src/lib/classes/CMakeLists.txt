@@ -9,8 +9,9 @@ box_nonperiodic.cpp
 box_orthorhombic.cpp 
 box_triclinic.cpp 
 cell.cpp
+cellneighbour.cpp
+changedata.cpp
 changestore.cpp
-changestore_changedata.cpp
 configuration.cpp
 energykernel.cpp
 forcekernel.cpp
@@ -39,6 +40,9 @@ atomtype.h
 atomtypeindex.h
 box.h
 cell.h
+cellneighbour.h
+changedata.h
+changestore.h
 configuration.h
 energykernel.h
 forcekernel.h

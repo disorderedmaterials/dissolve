@@ -20,6 +20,7 @@
 */
 
 #include "classes/cell.h"
+#include "classes/cellneighbour.h"
 #include "classes/box.h"
 
 /*!
@@ -30,6 +31,11 @@ Cell::Cell()
 {
 	index_ = -1;
 	lockCount_ = 0;
+	cellNeighbours_ = NULL;
+	mimCellNeighbours_ = NULL;
+	allCellNeighbours_ = NULL;
+	nCellNeighbours_ = 0;
+	nMimCellNeighbours_ = 0;
 }
 
 /*!
@@ -152,10 +158,8 @@ void Cell::clearLocks()
 bool Cell::canLock()
 {
 	if (lockCount_ != 0) return false;
-	Cell** neighbours = cellNeighbours_.objects();
-	for (int n=0; n<cellNeighbours_.nItems(); ++n) if (neighbours[n]->lockCount() == -1) return false;
-	Cell** mimNeighbours = mimCellNeighbours_.objects();
-	for (int n=0; n<mimCellNeighbours_.nItems(); ++n) if (mimNeighbours[n]->lockCount() == -1) return false;
+	for (int n=0; n<nCellNeighbours_; ++n) if (cellNeighbours_[n]->lockCount() == -1) return false;
+	for (int n=0; n<nMimCellNeighbours_; ++n) if (mimCellNeighbours_[n]->lockCount() == -1) return false;
 	return true;
 }
 
@@ -173,10 +177,8 @@ bool Cell::lock(bool willBeModified)
 	// Lock surrounding Cells if we are modifying the central one
 	if (willBeModified)
 	{
-		Cell** neighbours = cellNeighbours_.objects();
-		for (int n=0; n<cellNeighbours_.nItems(); ++n) neighbours[n]->addLock();
-		Cell** mimNeighbours = mimCellNeighbours_.objects();
-		for (int n=0; n<mimCellNeighbours_.nItems(); ++n) mimNeighbours[n]->addLock();
+		for (int n=0; n<nCellNeighbours_; ++n) cellNeighbours_[n]->addLock();
+		for (int n=0; n<nMimCellNeighbours_; ++n) mimCellNeighbours_[n]->addLock();
 	}
 	lockCount_ = -1;
 	return true;
@@ -196,10 +198,8 @@ bool Cell::unlock(bool willBeModified)
 	// Unlock surrounding cells if we were modifying the central one
 	if (willBeModified)
 	{
-		Cell** neighbours = cellNeighbours_.objects();
-		for (int n=0; n<cellNeighbours_.nItems(); ++n) neighbours[n]->removeLock();
-		Cell** mimNeighbours = mimCellNeighbours_.objects();
-		for (int n=0; n<mimCellNeighbours_.nItems(); ++n) mimNeighbours[n]->removeLock();
+		for (int n=0; n<nCellNeighbours_; ++n) cellNeighbours_[n]->removeLock();
+		for (int n=0; n<nMimCellNeighbours_; ++n) mimCellNeighbours_[n]->removeLock();
 	}
 	lockCount_ = 0;
 	return true;
@@ -235,61 +235,65 @@ bool Cell::moveAtom(Atom* i, Cell* targetCell)
 		return false;
 	}
 #endif
-	// Need to first remove atom from all surrounding neighbour cells
-	// TODO Speedup - Really lazy way of doing this...
-// 	for (int n=0; n<cellNeighbours_.nItems(); ++n) cellNeighbours_.objects()[n]->removeAtomFromNeighbourList(i, false);
-// 	for (int n=0; n<mimCellNeighbours_.nItems(); ++n) mimCellNeighbours_.objects()[n]->removeAtomFromNeighbourList(i, true);
-
-
 	// Move atom from this cell to target cell
 	atoms_.move(i->index(), targetCell->atoms_);
 	i->setCell(targetCell);
 
-	// Now must add atom to neighbouring atom lists of new cell
-// 	for (int n=0; n<targetCell->cellNeighbours_.nItems(); ++n) targetCell->cellNeighbours_.objects()[n]->addAtomToNeighbourList(i, false);
-// 	for (int n=0; n<targetCell->mimCellNeighbours_.nItems(); ++n) targetCell->mimCellNeighbours_.objects()[n]->addAtomToNeighbourList(i, true);
-	// TODO This really needs to check whether the atom is in range or not...?? Is it worth it when using a small cell size?
-
-	XXX Need a general list of all neighbour cells (regardless of near/mimd) on each cell
-	XXX Then do comparison between this list on the current and targetCells
-	XXX If 
+	// Now need to update atom neighbour lists on cells affected by this move
 	// Traverse the cell neighbour arrays from this cell and the target cell, comparing indices
-	int indexA = 0, indexB = 0;
-	Cell** oldNeighbours = cellNeighbours_.objects(), **newNeighbours = targetCell->cellNeighbours_.objects();
-	int objectIndexA = oldNeighbours[indexA]->index(), objectIndexB = newNeighbours[indexB]->index();
-	int nNeighbours = cellNeighbours_.nItems();
-	while ((indexA < nItems_) && (indexB < targetCell->cellNeighbours_.nItems()))
+	int n = 0, m = 0;
+	CellNeighbour* oldNeighbours = allCellNeighbours_, *newNeighbours = targetCell->allCellNeighbours_;
+	Cell* oldNeighbour = oldNeighbours[0].cell(), *newNeighbour = newNeighbours[0].cell();
+	int oldIndex = oldNeighbour->index(), newIndex = newNeighbour->index();
+	int nNeighbours = nTotalCellNeighbours();
+	while (true)
 	{
-		// If objectAndexA is less than objectIndexB, then the item in this_ list at indexA is unique
-		if (objectIndexA < objectIndexB)
+		// If the cell neighbour appears only in the current list (oldIndex < newIndex) then the atom should just be removed from this cell's atom list,
+		// since it has moved out of range.
+		if (oldIndex < newIndex)
 		{
-			uniqueToA.addAtEnd(oldNeighbours[indexA]);
-			++indexA;
-			objectIndexA = oldNeighbours[indexA]->objectIndex();
+			oldNeighbour->removeAtomFromNeighbourList(i, oldNeighbours[n].useMim());
+			++n;
+			if (n == nNeighbours) break;
+			oldNeighbour = oldNeighbours[n].cell();
+			oldIndex = oldNeighbour->index();
 			continue;
 		}
 
-		// If indexB is less than indexA, then the item in listB at indexB is unique
-		if (objectIndexB < objectIndexA)
+		// If the cell neighbour appears only in the new list (newIndex < oldIndex) then the atom should just be added to this cell's atom list,
+		// since is has moved within range
+		if (newIndex < oldIndex)
 		{
-			uniqueToB.addAtEnd(newNeighbours[indexB]);
-			++indexB;
-			objectIndexB = newNeighbours[indexB]->objectIndex();
+			newNeighbour->addAtomToNeighbourList(i, newNeighbours[m].useMim());
+			++m;
+			if (m == nNeighbours) break;
+			newNeighbour = newNeighbours[m].cell();
+			newIndex = newNeighbour->index();
 			continue;
 		}
 
-		// The indices are the same, so this is common element to both lists
-		commonItems.addAtEnd(oldNeighbours[indexA]);
-		++indexA;
-		objectIndexA = oldNeighbours[indexA]->objectIndex();
-		++indexB;
-		objectIndexB = newNeighbours[indexB]->objectIndex();
+		// If the cell reference appears in both lists, we must check the mim flag of the cell reference
+		// If the atom has moved into a cell with the same mim state, then there is nothing to do. Otherwise, must move atom to correct list
+		if (oldNeighbours[n].useMim() != newNeighbours[m].useMim())
+		{
+			oldNeighbour->removeAtomFromNeighbourList(i, oldNeighbours[n].useMim());
+			oldNeighbour->addAtomToNeighbourList(i, !oldNeighbours[n].useMim());
+		}
+
+		++n;
+		++m;
+		if (n == nNeighbours) break;
+		if (m == nNeighbours) break;
+		oldNeighbour = oldNeighbours[n].cell();
+		oldIndex = oldNeighbour->index();
+		newNeighbour = newNeighbours[m].cell();
+		newIndex = newNeighbour->index();
 	}
 
 	// If we have not yet gone through all the items in either list, add them to the relevant unique results list
-	for (int n = indexA; n<nItems_; ++n) uniqueToA.addAtEnd(oldNeighbours[n]);
-	for (int n = indexB; n<listB.nItems_; ++n) uniqueToB.addAtEnd(newNeighbours[n]);
-	
+	for (int o = n; o<nNeighbours; ++o) oldNeighbours[o].cell()->removeAtomFromNeighbourList(i, oldNeighbours[o].useMim());
+	for (int o = m; o<nNeighbours; ++o) newNeighbours[o].cell()->addAtomToNeighbourList(i, newNeighbours[o].useMim());
+
 	return true;
 }
 
@@ -393,12 +397,67 @@ Grain* Cell::grain(int n)
 */
 
 /*!
- * \brief Add Cell neighbour
+ * \brief Add Cell neighbours
  */
-void Cell::addCellNeighbour(Cell* cell, bool mimRequired)
+void Cell::addCellNeighbours(OrderedList<Cell>& neighbours, OrderedList<Cell>& mimNeighbours)
 {
-	if (mimRequired) mimCellNeighbours_.add(cell);
-	else cellNeighbours_.add(cell);
+	int n, m, count, indexN, indexM;
+
+	// Create normal (non-mim) neighbour array
+	nCellNeighbours_ = neighbours.nItems();
+	cellNeighbours_ = new Cell*[nCellNeighbours_];
+	for (n=0; n<nCellNeighbours_; ++n) cellNeighbours_[n] = neighbours.objects()[n];
+
+	// Create mim'd neighbour array
+	nMimCellNeighbours_ = mimNeighbours.nItems();
+	mimCellNeighbours_ = new Cell*[nMimCellNeighbours_];
+	for (n=0; n<nMimCellNeighbours_; ++n) mimCellNeighbours_[n] = mimNeighbours.objects()[n];
+
+	// Create ordered list of CellNeighbours (including cells from both lists)
+	allCellNeighbours_ = new CellNeighbour[nCellNeighbours_+nMimCellNeighbours_];
+	n = 0;
+	m = 0;
+	count = 0;
+	while (count < nCellNeighbours_+nMimCellNeighbours_)
+	{
+		indexN = (n < nCellNeighbours_ ? cellNeighbours_[n]->index() : 1e24);
+		indexM = (m < nMimCellNeighbours_ ? mimCellNeighbours_[m]->index() : 1e24);
+		if (indexN < indexM)
+		{
+			allCellNeighbours_[count++].set(cellNeighbours_[n++], false);
+			if (n == nCellNeighbours_) indexN = 1e24;
+			else indexN = cellNeighbours_[n]->index();
+			continue;
+		}
+		if (indexM < indexN)
+		{
+			allCellNeighbours_[count++].set(mimCellNeighbours_[m++], true);
+			if (m == nCellNeighbours_) indexM = 1e24;
+			else indexM = cellNeighbours_[m]->index();
+			continue;
+		}
+		if (indexN == indexM)
+		{
+			msg.error("Cell neighbour lists are corrupt - same cell found in both near and mim lists.\n");
+			return;
+		}
+	}
+}
+
+/*!
+ * \brief Return number of adjacent cell neighbours
+ */
+int Cell::nCellNeighbours()
+{
+	return nCellNeighbours_;
+}
+
+/*!
+ * \brief Return total number of cell neighbours
+ */
+int Cell::nMimCellNeighbours()
+{
+	return nMimCellNeighbours_;
 }
 
 /*!
@@ -406,13 +465,13 @@ void Cell::addCellNeighbour(Cell* cell, bool mimRequired)
  */
 int Cell::nTotalCellNeighbours()
 {
-	return cellNeighbours_.nItems() + mimCellNeighbours_.nItems();
+	return nCellNeighbours_ + nMimCellNeighbours_;
 }
 
 /*!
  * \brief Return cell neighbour list
  */
-OrderedList<Cell>& Cell::cellNeighbours()
+Cell** Cell::cellNeighbours()
 {
 	return cellNeighbours_;
 }
@@ -420,9 +479,17 @@ OrderedList<Cell>& Cell::cellNeighbours()
 /*!
  * \brief Return cell neighbour list requiring mim
  */
-OrderedList<Cell>& Cell::mimCellNeighbours()
+Cell** Cell::mimCellNeighbours()
 {
 	return mimCellNeighbours_;
+}
+
+/*!
+ * \brief Return list of all cell neighbours
+ */
+CellNeighbour* Cell::allCellNeighbours()
+{
+	return allCellNeighbours_;
 }
 
 /*!
@@ -454,10 +521,10 @@ void Cell::addAtomToNeighbourList(Atom* i, bool useMim, bool atEnd)
 /*!
  * \brief Remove atom from neighbour list
  */
-void Cell::removeAtomFromNeighbourList(Atom* i, bool useMim)
+bool Cell::removeAtomFromNeighbourList(Atom* i, bool useMim)
 {
-	if (useMim) mimAtomNeighbours_.removeIfPresent(i->index());
-	else atomNeighbours_.removeIfPresent(i->index());
+	if (useMim) return mimAtomNeighbours_.removeIfPresent(i->index());
+	else return atomNeighbours_.removeIfPresent(i->index());
 }
 
 /*!

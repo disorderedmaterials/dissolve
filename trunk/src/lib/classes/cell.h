@@ -24,12 +24,12 @@
 
 #include "classes/grain.h"
 #include "templates/vector3.h"
-#include "templates/orderedlist.h"
 #include "templates/reflist.h"
 #include "templates/orderedlist.h"
 
 // Forward Declarations
 class Box;
+class CellNeighbour;
 
 /*!
  * \brief Cell Definition
@@ -126,25 +126,35 @@ class Cell
 	///@{
 	private:
 	// Arrays of neighbouring cells, within the defined potential cutoff (from anywhere in the cell)
-	OrderedList<Cell> cellNeighbours_, mimCellNeighbours_;
+	Cell** cellNeighbours_, **mimCellNeighbours_;
+	// Array of all neighbouring cells
+	CellNeighbour* allCellNeighbours_;
+	// Number of cells in cell arrays
+	int nCellNeighbours_, nMimCellNeighbours_;
 	// Lists of neighbouring atoms, within the defined potential cutoff (from anywhere in the cell)
 	OrderedList<Atom> atomNeighbours_, mimAtomNeighbours_;
 
 	public:
-	// Add Cell neighbour
-	void addCellNeighbour(Cell* cell, bool mimRequired);
+	// Add Cell neighbours
+	void addCellNeighbours(OrderedList<Cell>& neighbours, OrderedList<Cell>& mimNeighbours);
+	// Return number of normal cell neighbours
+	int nCellNeighbours();
+	// Return number of mim cell neighbours
+	int nMimCellNeighbours();
 	// Return total number of cell neighbours
 	int nTotalCellNeighbours();
-	// Return cell neighbour list
-	OrderedList<Cell>& cellNeighbours();
+	// Return cell neighbour list, not requiring mim
+		Cell** cellNeighbours();
 	// Return cell neighbour list requiring mim
-	OrderedList<Cell>& mimCellNeighbours();
+		Cell** mimCellNeighbours();
+	// Return list of all cell neighbours
+		CellNeighbour* allCellNeighbours();
 	// Clear atom neighbour list
 	void clearAtomNeighbourList();
 	// Add atom to neighbour list
 	void addAtomToNeighbourList(Atom* i, bool useMim, bool atEnd = false);
 	// Remove atom from neighbour list
-	void removeAtomFromNeighbourList(Atom* i, bool useMim);
+	bool removeAtomFromNeighbourList(Atom* i, bool useMim);
 	// Return total number of atom neighbours
 	int nTotalAtomNeighbours();
 	// Return atom neighbour list

@@ -157,7 +157,7 @@ template <class T> class OrderedList
 	// Remove item reference from list
 	void remove(int objectIndex);
 	// Remove item reference from the list (but don't complain if it isn't there)
-	void removeIfPresent(int objectIndex);
+	bool removeIfPresent(int objectIndex);
 	// Move specified item to target list
 	void move(int objectIndex, OrderedList<T>& targetList);
 	// Returns the list head
@@ -475,12 +475,13 @@ template <class T> void OrderedList<T>::remove(int objectIndex)
 /*!
  * \brief Remove item reference from the list (but don't complain if it isn't there)
  */
-template <class T> void OrderedList<T>::removeIfPresent(int objectIndex)
+template <class T> bool OrderedList<T>::removeIfPresent(int objectIndex)
 {
 	// Get item for specified objectIndex
 	OrderedListItem<T>* item = contains(objectIndex);
-	if (item == NULL) return;
+	if (item == NULL) return false;
 	remove(item);
+	return true;
 }
 
 /*!

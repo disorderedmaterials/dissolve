@@ -156,7 +156,7 @@ void DUQ::grainForces(Configuration& cfg, double* fx, double* fy, double* fz, do
 			continue;
 		}
 		cell = cfg.cell(cellId);
-		msg.printVerbose("Cell %i now the target, containing %i Grains interacting with %i neighbours.\n", cellId, cell->nGrains(), cell->cellNeighbours().nItems()+cell->mimCellNeighbours().nItems());
+		msg.printVerbose("Cell %i now the target, containing %i Grains interacting with %i neighbours.\n", cellId, cell->nGrains(), cell->nTotalCellNeighbours());
 
 		/*
 		 * Calculation Begins
@@ -174,8 +174,8 @@ void DUQ::grainForces(Configuration& cfg, double* fx, double* fy, double* fz, do
 			}
 			
 			// Inter-Grain interactions between this Grain and those in Cell neighbours
-			kernel.forces(grainI, cell->cellNeighbours(), false, true, fx, fy, fz, DUQComm::Solo);
-			kernel.forces(grainI, cell->mimCellNeighbours(), true, true, fx, fy, fz, DUQComm::Solo);
+			kernel.forces(grainI, cell->nCellNeighbours(), cell->cellNeighbours(), false, true, fx, fy, fz, DUQComm::Solo);
+			kernel.forces(grainI, cell->nMimCellNeighbours(), cell->mimCellNeighbours(), true, true, fx, fy, fz, DUQComm::Solo);
 		}
 
 		/*

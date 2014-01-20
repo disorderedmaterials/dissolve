@@ -1,6 +1,6 @@
 /*
-	*** ChangeStore ChangeData
-	*** src/lib/classes/changestore_changedata.cpp
+	*** ChangeData
+	*** src/lib/classes/changedata.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -19,7 +19,7 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "classes/changestore.h"
+#include "classes/changedata.h"
 #include "classes/atom.h"
 
 /*!
