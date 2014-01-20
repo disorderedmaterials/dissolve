@@ -1,7 +1,7 @@
 /*
 	*** dUQ Methods - GrainShake
 	*** src/lib/main/methods_grainshake.cpp
-	Copyright T. Youngs 2012-2013
+	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
 
@@ -113,10 +113,7 @@ CommandReturnValue DUQ::grainShake(Configuration& cfg)
 		{
 			// Get current Grain and  
 			grainI = cell->grain(n);
-			currentEnergy = kernel.energy(grainI, cell->atoms(), false, false, DUQComm::Group);
-			currentEnergy += kernel.energy(grainI, cell->atomNeighbours(), false, false, DUQComm::Group);
-			currentEnergy += kernel.energy(grainI, cell->mimAtomNeighbours(), true, false, DUQComm::Group);
-// 			currentEnergy = kernel.energy(grainI, DUQComm::Group);
+			currentEnergy = kernel.energy(grainI, false, DUQComm::Group);
 			currentEnergy += kernel.fullIntraEnergy(grainI, termScale);
 
 			// Set current Grain as target in ChangeStore
@@ -139,10 +136,7 @@ CommandReturnValue DUQ::grainShake(Configuration& cfg)
 				}
 
 				// Calculate new energy
-				newEnergy = kernel.energy(grainI, cell->atoms(), false, false, DUQComm::Group);
-				newEnergy += kernel.energy(grainI, cell->atomNeighbours(), false, false, DUQComm::Group);
-				newEnergy += kernel.energy(grainI, cell->mimAtomNeighbours(), true, false, DUQComm::Group);
-// 				newEnergy = kernel.energy(grainI, DUQComm::Group);
+				newEnergy = kernel.energy(grainI, false, DUQComm::Group);
 				newEnergy += kernel.fullIntraEnergy(grainI, termScale);
 
 				// Trial the transformed Grain position

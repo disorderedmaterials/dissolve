@@ -1,7 +1,7 @@
 /*
 	*** Column-Major 4x4 Matrix4 class
 	*** src/lib/math/matrix4.cpp
-	Copyright T. Youngs 2012-2013
+	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
 

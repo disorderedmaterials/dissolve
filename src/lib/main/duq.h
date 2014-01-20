@@ -1,7 +1,7 @@
 /*
 	*** dUQ Main Structure
 	*** src/lib/main/duq.h
-	Copyright T. Youngs 2012-2013
+	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
 
@@ -421,8 +421,6 @@ class DUQ
 	double intramolecularEnergyTest(Configuration& cfg);
 	// Test - Return total energy of the system
 	double totalEnergyTest(Configuration& cfg);
-	// Test - Return total energy of the system using Cells
-	double totalEnergyTestCells(Configuration& cfg);
 	// Test - Return total energy of the system using Molecules
 	double totalEnergyTestMolecules(Configuration& cfg);
 	///@}
@@ -548,6 +546,8 @@ class DUQ
 	CommandReturnValue twist(Configuration& cfg);
 	// Perform some MD
 	CommandReturnValue md(Configuration& cfg);
+	// Perform a world atom shake
+	CommandReturnValue worldAtomShake(Configuration& cfg);
 	///@}
 
 

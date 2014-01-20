@@ -1,7 +1,7 @@
 /*
 	*** EnergyKernel
 	*** src/lib/classes/energykernel.cpp
-	Copyright T. Youngs 2012-2013
+	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
 
@@ -35,7 +35,7 @@
 EnergyKernel::EnergyKernel(const Configuration& config, const PotentialMap& potentialMap, double energyCutoff) : configuration_(config), potentialMap_(potentialMap)
 {
 	box_ = config.box();
-	cutoffDistanceSquared_ = (energyCutoff < 0.0 ? potentialMap_.rangeSquared() : energyCutoff);
+	cutoffDistanceSquared_ = (energyCutoff < 0.0 ? potentialMap_.rangeSquared() : energyCutoff*energyCutoff);
 }
 
 /*!
@@ -298,96 +298,6 @@ double EnergyKernel::energy(const Atom* i, const Atom* j, bool applyMim, bool ex
 }
 
 /*!
- * \brief Return PairPotential energy between atoms (provided as references)
- */
-double EnergyKernel::energy(const Atom& i, const Atom& j, bool applyMim, bool excludeIgeJ)
-{
-	// If Atoms are the same, we refuse to calculate
-	if (i.index() == j.index())
-	{
-// 		printf("Warning: Refusing to calculate self-energy in EnergyKernel::energy(Atom,Atom,bool,bool).\n");
-		return 0.0;
-	}
-	
-	// Check indices of Atoms if required
-	if (excludeIgeJ && (i.index() >= j.index())) return 0.0;
-
-	if (applyMim) return energyWithMim(i, j);
-	else return energyWithoutMim(i, j);
-}
-
-/*!
- * \brief Return PairPotential energy between atom (pointer) and grain provided
- */
-double EnergyKernel::energy(const Atom* i, const Grain* grain, bool applyMim, bool excludeIgeJ)
-{
-#ifdef CHECKS
-	if (i == NULL)
-	{
-		msg.error("NULL_POINTER - NULL Atom pointer passed to EnergyKernel::energy(Atom,Grain,bool,bool).\n");
-		return 0.0;
-	}
-	if (grain == NULL)
-	{
-		msg.error("NULL_POINTER - NULL Grain pointer passed to EnergyKernel::energy(Atom,Grain,bool,bool).\n");
-		return 0.0;
-	}
-#endif
-	if (applyMim) return energyWithMim(i, grain, excludeIgeJ);
-	else return energyWithoutMim(i, grain, excludeIgeJ);
-}
-
-/*!
- * \brief Return PairPotential energy between atom (reference) and grain provided
- */
-double EnergyKernel::energy(const Atom& i, const Grain* grain, bool applyMim, bool excludeIgeJ)
-{
-#ifdef CHECKS
-	if (grain == NULL)
-	{
-		msg.error("NULL_POINTER - NULL Grain pointer passed to EnergyKernel::energy(Atom,Grain,bool,bool).\n");
-		return 0.0;
-	}
-#endif
-	if (applyMim) return energyWithMim(i, grain, excludeIgeJ);
-	else return energyWithoutMim(i, grain, excludeIgeJ);
-}
-
-/*!
- * \brief Return PairPotential energy between Grains provided
- */
-double EnergyKernel::energy(const Grain* grainI, const Grain* grainJ, bool applyMim, bool excludeIgeJ)
-{
-#ifdef CHECKS
-	if (grainI == NULL)
-	{
-		msg.error("NULL_POINTER - NULL Grain pointer (grainI) passed to EnergyKernel::energy(Grain,Grain,bool,bool).\n");
-		return 0.0;
-	}
-	if (grainJ == NULL)
-	{
-		msg.error("NULL_POINTER - NULL Grain pointer (grainJ) passed to EnergyKernel::energy(Grain,Grain,bool,bool).\n");
-		return 0.0;
-	}
-#endif
-	// If Grains are the same, we refuse to calculate
-	if (grainI == grainJ) return 0.0;
-
-	// Check Grain-Grain distance
-// 	double rSq;
-// 	if (applyMim) rSq = box_->minimumDistanceSquared(grainI->centre(), grainJ->centre());
-// 	else rSq = (grainI->centre() - grainJ->centre()).magnitudeSq();
-// 	msg.print("GG %3i %3i MIM=%i EXC=%i rSq=%f (%f,%f,%f) (%f,%f,%f)\n", grainI->index(), grainJ->index(), applyMim, excludeIgtJ, rSq, grainI->centre().x, grainI->centre().y, grainI->centre().z, grainJ->centre().x, grainJ->centre().y, grainJ->centre().z);
-// 	if (rSq > cutoffSq) return 0.0;
-	
-	// Check exclusion of I > J
-	if (excludeIgeJ && (grainI->index() >= grainJ->index())) return 0.0;
-
-	if (applyMim) return energyWithMim(grainI, grainJ);
-	else return energyWithoutMim(grainI, grainJ);
-}
-
-/*!
  * \brief Return PairPotential energy between atoms in supplied cells
  * \details Calculate the energy between the atoms in the specified cells, applying minimum image calculations if necessary.
  */
@@ -583,7 +493,7 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, DUQComm::CommGr
  * \details Calculate the energy between the supplied atom and list of neighbouring cells. Note that it is assumed that the supplied atom
  * is in a cell which does *not* appear in the list.
  */
-double EnergyKernel::energy(const Atom* i, OrderedList<Atom>& neighbours, EnergyKernel::Flags flags, DUQComm::CommGroup group)
+double EnergyKernel::energy(const Atom* i, OrderedList<Atom>& neighbours, int flags, DUQComm::CommGroup group)
 {
 #ifdef CHECKS
 	if (cell == NULL)
@@ -603,6 +513,7 @@ double EnergyKernel::energy(const Atom* i, OrderedList<Atom>& neighbours, Energy
 	// Grab some information on the supplied atom
 	const int indexI = i->index(), typeI = i->atomTypeIndex();
 	Molecule* moleculeI = i->molecule();
+	const Species* spI = moleculeI->species();
 	const Vec3<double> rI = i->r();
 
 	// Communication group determines loop/summation style
@@ -626,7 +537,8 @@ double EnergyKernel::energy(const Atom* i, OrderedList<Atom>& neighbours, Energy
 			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(typeI, jj->atomTypeIndex(), rSq);
 			else
 			{
-				scale = moleculeI->species()->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
+				if ((flags&EnergyKernel::ExcludeIntraGreaterThan) && (i->moleculeAtomIndex() > jj->moleculeAtomIndex())) continue;
+				scale = spI->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
 				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(typeI, jj->atomTypeIndex(), rSq) * scale;
 			}
 		}
@@ -643,7 +555,8 @@ double EnergyKernel::energy(const Atom* i, OrderedList<Atom>& neighbours, Energy
 			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(typeI, jj->atomTypeIndex(), rSq);
 			else
 			{
-				scale = moleculeI->species()->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
+				if ((flags&EnergyKernel::ExcludeIntraGreaterThan) && (i->moleculeAtomIndex() > jj->moleculeAtomIndex())) continue;
+				scale = spI->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
 				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(typeI, jj->atomTypeIndex(), rSq) * scale;
 			}
 		}
@@ -659,7 +572,8 @@ double EnergyKernel::energy(const Atom* i, OrderedList<Atom>& neighbours, Energy
 			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(typeI, jj->atomTypeIndex(), rSq);
 			else
 			{
-				scale = moleculeI->species()->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
+				if ((flags&EnergyKernel::ExcludeIntraGreaterThan) && (i->moleculeAtomIndex() > jj->moleculeAtomIndex())) continue;
+				scale = spI->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
 				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(typeI, jj->atomTypeIndex(), rSq) * scale;
 			}
 		}
@@ -877,7 +791,7 @@ double EnergyKernel::energy(const Atom* i, DUQComm::CommGroup group)
 /*!
  * \brief Return PairPotential energy of grain with world
  */
-double EnergyKernel::energy(const Grain* grain, DUQComm::CommGroup group)
+double EnergyKernel::energy(const Grain* grain, bool excludeIgtJ, DUQComm::CommGroup group)
 {
 #ifdef CHECKS
 	if (grain == NULL)
@@ -897,19 +811,23 @@ double EnergyKernel::energy(const Grain* grain, DUQComm::CommGroup group)
 	double scale;
 
 	// Loop over grain atoms
-	for (i = 0; i<grain->nAtoms(); ++i)
+	if (excludeIgtJ) for (i = 0; i<grain->nAtoms(); ++i)
 	{
 		ii = grain->atom(i);
 		cellI = ii->cell();
-		totalEnergy += energy(ii, cellI->atoms(), EnergyKernel::ExcludeSelfFlag, group);
-		totalEnergy += energy(ii, cellI->atomNeighbours(), EnergyKernel::NoFlags, group);
-		totalEnergy += energy(ii, cellI->mimAtomNeighbours(), EnergyKernel::ApplyMinimumImage, group);
-
-		// Correct energy - USE A FLAG!!!  all scale interactions over intramolecular terms between the grain atoms will be added twice since the
-		// loops in the energy() routines used above do not exclude 
-		
+		totalEnergy += energy(ii, cellI->atoms(), EnergyKernel::ExcludeGreaterThanEqualTo | EnergyKernel::ExcludeIntraGreaterThan, group);
+		totalEnergy += energy(ii, cellI->atomNeighbours(), EnergyKernel::ExcludeGreaterThanEqualTo, group);
+		totalEnergy += energy(ii, cellI->mimAtomNeighbours(), EnergyKernel::ApplyMinimumImage | EnergyKernel::ExcludeGreaterThanEqualTo, group);
 	}
-	
+	else for (i = 0; i<grain->nAtoms(); ++i)
+	{
+		ii = grain->atom(i);
+		cellI = ii->cell();
+		totalEnergy += energy(ii, cellI->atoms(), EnergyKernel::ExcludeSelfFlag | EnergyKernel::ExcludeIntraGreaterThan, group);
+		totalEnergy += energy(ii, cellI->atomNeighbours(), EnergyKernel::ExcludeIntraGreaterThan, group);
+		totalEnergy += energy(ii, cellI->mimAtomNeighbours(), EnergyKernel::ApplyMinimumImage | EnergyKernel::ExcludeIntraGreaterThan, group);
+	}
+
 	return totalEnergy;
 }
 
@@ -1034,7 +952,7 @@ double EnergyKernel::energy(Molecule* mol, DUQComm::CommGroup group, bool halfPP
 // 		grainEnergy += energy(grain, grain->cell()->neighbours(), cutoffSq, false, group);
 		printf("EnergyKernel::energy(Molecule*) is horribly broken......\n");
 		
-		if (!halfPP) for (int m=n+1; m<mol->nGrains(); ++m) interMolGrainCorrect -= energy(grain, mol->grain(m), false, false);
+// 		if (!halfPP) for (int m=n+1; m<mol->nGrains(); ++m) interMolGrainCorrect -= energy(grain, mol->grain(m), false, false);
 	}
 	totalEnergy += (halfPP ? 0.5 : 1.0)*grainEnergy + interMolGrainCorrect;
 
