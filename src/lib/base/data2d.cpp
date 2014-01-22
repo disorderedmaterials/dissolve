@@ -829,7 +829,7 @@ bool Data2D::transformBroadenedRDF(double atomicDensity, double qStep, double fw
 
 	// Create working arrays
 	Array<double> real;
-	Q = qStep*0.5;
+	Q = qStep*0.1;
 	qMax = (nR-0.5)*k;
 
 	// Perform Fourier sine transform, including instrument broadening of RDF
@@ -893,13 +893,11 @@ bool Data2D::transformSQ(double atomicDensity, Data2D::WindowFunction wf)
 		{
 			windowPos = double(m) / double(nPoints-1);
 			
-// 			real[n] += x_[m]*x_[m]*y_[m] * sin(x_[m]*Q) * deltaX / (Q * x_[m]);
 			real[n] += sin(x_[m]*r) * x_[m] * window(wf, windowPos) * y_[m] * deltaQ;
 		}
 
 		// Normalise
 		factor = 1.0 / (2.0 * PI * PI * atomicDensity * r);
-// 		factor = 0.5*deltaQ/PI/PI/atomicDensity;
 		real[n] *= factor;
 	}
 
@@ -1135,7 +1133,15 @@ void Data2D::interpolate(bool constrained)
 		
 		// Calculate first derivatives at each point
 		Array<double> fp(nPoints);
-		for (i=1; i<nPoints-1; ++i) fp[i] = 2.0 / ((x_[i+1] - x_[i])/(y_[i+1] - y_[i]) + (x_[i] - x_[i-1])/(y_[i] - y_[i-1]));
+		double gradA, gradB;
+		for (i=1; i<nPoints-1; ++i)
+		{
+			gradA = (x_[i+1] - x_[i])/(y_[i+1] - y_[i]);
+			gradB = (x_[i] - x_[i-1])/(y_[i] - y_[i-1]);
+			if (DUQMath::sgn(gradA) != DUQMath::sgn(gradB)) fp[i] = 0.0;
+			else fp[i] = 2.0 / (gradA + gradB);
+			
+		}
 // 		fp[0] = (3.0*(y_[1] - y_[0])) / (2.0*x_[1]-x_[0]) - 0.5*fp[1];
 // 		fp[nPoints-1] = (3.0*(y_[nPoints-1] - y_[nPoints-2])) / (2.0*x_[nPoints-1]-x_[nPoints-2]) - 0.5*fp[nPoints-2];
 		fp[0] = 0.0;
@@ -1439,6 +1445,37 @@ void Data2D::trim(double minX, double maxX)
 	}
 }
 
+/*!
+ * \brief Rebin data onto uniform x axis
+ */
+void Data2D::rebin(double deltaX)
+{
+	// If deltaX is negative, work out a deltaX to use
+	if (deltaX < 0.0)
+	{
+		deltaX = 0.0;
+		for (int n=1; n<x_.nItems(); ++n) deltaX += x_[n]-x_[n-1];
+		deltaX /= x_.nItems()-1;
+		deltaX *= 0.5;
+		printf("Deltax = %f\n", deltaX);
+	}
+
+	// Interpolate the existing data
+	interpolate(true);
+
+	// Generate new data
+	Data2D rebinnedData;
+	double x = 0.0, xLimit = xMax();
+	while (x < xLimit)
+	{
+		rebinnedData.addPoint(x, interpolated(x));
+		x += deltaX;
+	}
+
+	// Overwrite old data
+	(*this) = rebinnedData;
+}
+	
 /*
 // File I/O
 */

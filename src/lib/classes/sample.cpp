@@ -365,7 +365,7 @@ double Sample::boundCoherentSquaredAverage()
 /*!
  * \brief Setup pair correlations
  */
-bool Sample::setupPairCorrelations(double volume, double range, double binWidth, double extensionLimit, Data2D& boxNormalisation, double rho)
+bool Sample::setupPairCorrelations(double volume, double range, double binWidth, Data2D& boxNormalisation, double rho)
 {
 	// Get a nice sample name (i.e. no spaces, slashes etc.)
 	Dnchar otherName, niceSampleName = name_;
@@ -415,6 +415,7 @@ bool Sample::setupPairCorrelations(double volume, double range, double binWidth,
 	if (referenceFQ_.nPoints() > 0)
 	{
 		referenceDataFT_ = referenceFQ_;
+		referenceDataFT_.rebin();
 		referenceDataFT_.transformSQ(rho);
 	}
 
@@ -786,13 +787,6 @@ bool Sample::finaliseReferenceData()
 		msg.print("--> No maximum Q value given for fit - assuming maximum available (Q = %10.4e).\n", referenceFitQMax_);
 	}
 	msg.print("--> Q range over which to fit empirical potential: %10.4e to %10.4e Angstroms-1.\n", referenceFitQMin_, referenceFitQMax_);
-
-	// Create spline interpolation of data
-	referenceFQ_.interpolate();
-
-	Data2D ft = referenceFQ_;
-	ft.transformSQ(0.0213, Data2D::BartlettWindow);
-	ft.save("ft.txt");
 
 	return true;
 }

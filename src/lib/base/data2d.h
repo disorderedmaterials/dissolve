@@ -220,6 +220,8 @@ class Data2D : public ListItem<Data2D>
 	bool convoluteProduct(Data2D& data);
 	// Trim data to X-range specified
 	void trim(double minX, double maxX);
+	// Rebin data onto uniform x axis
+	void rebin(double deltaX = -1.0);
 	///@}
 
 

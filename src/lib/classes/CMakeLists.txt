@@ -22,7 +22,6 @@ isotopologuemix.cpp
 molecule.cpp
 pairpotential.cpp
 sample.cpp
-sdf.cpp
 species.cpp
 species_atomic.cpp
 species_grains.cpp
@@ -54,7 +53,6 @@ molecule.h
 pairpotential.h
 potentialmap.h
 sample.h
-sdf.h
 species.h
 speciesangle.h
 speciesatom.h

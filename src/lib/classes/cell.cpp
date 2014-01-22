@@ -399,7 +399,7 @@ Grain* Cell::grain(int n)
 /*!
  * \brief Add Cell neighbours
  */
-void Cell::addCellNeighbours(OrderedList<Cell>& neighbours, OrderedList<Cell>& mimNeighbours)
+void Cell::addCellNeighbours(OrderedList<Cell>& neighbours, OrderedList<Cell>& mimNeighbours, int allCells)
 {
 	int n, m, count, indexN, indexM;
 
@@ -417,23 +417,21 @@ void Cell::addCellNeighbours(OrderedList<Cell>& neighbours, OrderedList<Cell>& m
 	allCellNeighbours_ = new CellNeighbour[nCellNeighbours_+nMimCellNeighbours_];
 	n = 0;
 	m = 0;
+	indexN = (nCellNeighbours_ > 0 ? cellNeighbours_[0]->index() : allCells);
+	indexM = (nMimCellNeighbours_ > 0 ? mimCellNeighbours_[0]->index() : allCells);
 	count = 0;
 	while (count < nCellNeighbours_+nMimCellNeighbours_)
 	{
-		indexN = (n < nCellNeighbours_ ? cellNeighbours_[n]->index() : 1e24);
-		indexM = (m < nMimCellNeighbours_ ? mimCellNeighbours_[m]->index() : 1e24);
 		if (indexN < indexM)
 		{
 			allCellNeighbours_[count++].set(cellNeighbours_[n++], false);
-			if (n == nCellNeighbours_) indexN = 1e24;
-			else indexN = cellNeighbours_[n]->index();
+			indexN = (n == nCellNeighbours_ ? allCells : cellNeighbours_[n]->index());
 			continue;
 		}
 		if (indexM < indexN)
 		{
 			allCellNeighbours_[count++].set(mimCellNeighbours_[m++], true);
-			if (m == nMimCellNeighbours_) indexM = 1e24;
-			else indexM = mimCellNeighbours_[m]->index();
+			indexM = (m == nMimCellNeighbours_ ? allCells : mimCellNeighbours_[m]->index());
 			continue;
 		}
 		if (indexN == indexM)

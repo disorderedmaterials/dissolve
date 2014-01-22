@@ -1,6 +1,5 @@
 add_library(main
 atomtypes.cpp
-checkpoint.cpp
 composition.cpp
 command.cpp
 comms.cpp
@@ -10,6 +9,7 @@ keywords.cpp
 notepsr.cpp
 pairpotentials.cpp
 partials.cpp
+partials_bragg.cpp
 partials_intra.cpp
 partials_simple.cpp
 samples.cpp

@@ -654,12 +654,15 @@ bool DUQ::loadInput(const char* fileName)
 						case (Keywords::BoxNormalisationPointsKeyword):
 							boxNormalisationPoints_ = parser.argi(1);
 							break;
+						case (Keywords::BraggKeyword):
+							braggCalculationOn_ = parser.argb(1);
+							break;
+						case (Keywords::BraggMaximumQKeyword):
+							braggMaximumQ_ = parser.argd(1);
+							break;
 						case (Keywords::BroadeningKeyword):
 							qDependentFWHM_ = parser.argd(1);
 							qIndependentFWHM_ = parser.argd(2);
-							break;
-						case (Keywords::CellDensityMultiplierKeyword):
-							cellDensityMultiplier_ = parser.argd(1);
 							break;
 						case (Keywords::EndSetupKeyword):
 							msg.print("Found end of %s block.\n", Keywords::inputBlock(block));
@@ -667,9 +670,6 @@ bool DUQ::loadInput(const char* fileName)
 							break;
 						case (Keywords::RDFBinWidthKeyword):
 							rdfBinWidth_ = parser.argd(1);
-							break;
-						case (Keywords::RDFExtensionLimitKeyword):
-							rdfExtensionLimit_ = parser.argd(1);
 							break;
 						case (Keywords::RDFMethodKeyword):
 							if (rdfMethod(parser.argc(1)) == DUQ::nRDFMethods)
@@ -964,10 +964,12 @@ bool DUQ::saveInput(const char* fileName)
 
 	// Write Setup block
 	parser.writeLineF("# Setup\n");
-	parser.writeLineF("%s\n", Keywords::inputBlock(Keywords::SetupBlock));
+	//parser.writeLineF("  %s  '%s'\n", Keywords::setupKeyword(Keywords::BoxNormalisationFileKeyword), boxNormalisationFile_);
+	parser.writeLineF("  %s  %i\n", Keywords::setupKeyword(Keywords::BoxNormalisationPointsKeyword), boxNormalisationPoints_);
+	parser.writeLineF("  %s  %s\n", Keywords::setupKeyword(Keywords::BraggKeyword), braggCalculationOn_ ? "on" : "off");
+	parser.writeLineF("  %s  %f\n", Keywords::setupKeyword(Keywords::BraggMaximumQKeyword), braggMaximumQ_);
 	parser.writeLineF("  %s  %f  %f\n", Keywords::setupKeyword(Keywords::BroadeningKeyword), qDependentFWHM_, qIndependentFWHM_);
 	parser.writeLineF("  %s  %f\n", Keywords::setupKeyword(Keywords::RDFBinWidthKeyword), rdfBinWidth_);
-	parser.writeLineF("  %s  %f\n", Keywords::setupKeyword(Keywords::RDFExtensionLimitKeyword), rdfExtensionLimit_);
 	parser.writeLineF("  %s  %s\n", Keywords::setupKeyword(Keywords::RDFMethodKeyword), rdfMethod(rdfMethod_));
 	parser.writeLineF("  %s  %f\n", Keywords::setupKeyword(Keywords::RDFRangeKeyword), rdfRange_);
 	parser.writeLineF("  %s  %i\n", Keywords::setupKeyword(Keywords::RDFSmoothingKeyword), rdfSmoothing_);

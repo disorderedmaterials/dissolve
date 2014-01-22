@@ -36,16 +36,12 @@ CubicBox::CubicBox(double volume) : Box()
 	axes_.setColumn(1, 0.0, 1.0, 0.0);
 	axes_.setColumn(2, 0.0, 0.0, 1.0);
 	
-	// Rescale to desired volume
-	setVolume(volume);
+	// Setup box, rescaling to desired volume
+	setup(volume);
 
 	// Grab new cell length
 	a_ = axes_.columnMagnitude(0);
 	ra_ = 1.0/a_;
-	
-	// Calculate inverse
-	inverseAxes_ = axes_;
-	inverseAxes_.invert();
 }
 
 /*!

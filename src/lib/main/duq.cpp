@@ -57,18 +57,18 @@ DUQ::DUQ()
 
 	// Setup
 	boxNormalisationPoints_ = 50000000;
-	cellDensityMultiplier_ = 1.5;
 	qDependentFWHM_ = 0.0;
 	qIndependentFWHM_ = 0.02;
 	rdfBinWidth_ = 0.025;
 	rdfRange_ = -1.0;
-	rdfExtensionLimit_ = 0.0;
 	rdfSmoothing_ = 0;
 	requestedRDFRange_ = -1.0;
 	rmseDeltaQ_ = 0.05;
 	seed_ = -1;
 	temperature_ = 300.0;
 	windowFunction_ = Data2D::GaussianWindow;
+	braggCalculationOn_ = false;
+	braggMaximumQ_ = 1.0;
 
 	// Perturbation
 	simplexNMoves_ = 25;
@@ -103,116 +103,4 @@ void DUQ::clear()
 	species_.clear();
 	clearModel();
 	fileName_.clear();
-}
-
-/*
- * Signalling
- */
-
-/*!
- * \brief Act on signal provided
- */
-CommandReturnValue DUQ::processSignal(DUQ::Signal signal, int data)
-{
-	CommandReturnValue result = CommandSuccess;
-	switch (signal)
-	{
-		case (DUQ::TerminateSignal):
-			msg.print("Received terminate signal...\n");
-			result = CommandQuit;
-			break;
-		default:
-			break;
-	}
-	return result;
-}
-
-/*!
- * \brief Process any received signals
- */
-CommandReturnValue DUQ::processSignals()
-{
-	CommandReturnValue result = CommandSuccess;
-	if (Comm.master())
-	{
-		// Loop over received signals
-		for (Pair<DUQ::Signal, int>* sig = receivedSignals_.first(); sig != NULL; sig = sig->next)
-		{
-			// Something to do, so signal slaves that they are about to receive something
-			Comm.decide(true);
-			
-			// Send Signal data to slaves
-			int signal = sig->a;
-			Comm.broadcast(&signal, 1);
-			Comm.broadcast(&sig->b, 1);
-			
-			// Act on signal
-			result = processSignal(sig->a, sig->b);
-
-			// Send initial decision whether to continue to slaves
-			if (result != CommandSuccess)
-			{
-				msg.print("Master is terminating signal processing - reason = %i.\n", result);
-				Comm.decide(false);
-				int r = result;
-				Comm.broadcast(&r, 1);
-				break;
-			}
-		}
-		
-		// End of list
-		Comm.decide(false);
-	}
-	else
-	{
-		// Anything to do?
-		while (Comm.decision())
-		{
-			// Receive signal data
-			int signal, data;
-			Comm.broadcast(&signal, 1);
-			Comm.broadcast(&data, 1);
-
-			// Act on signal
-			result = processSignal( (DUQ::Signal) signal, data);
-			
-			// Receive initial continuation decision from master process
-			if (!Comm.decision())
-			{
-				// Receive integer return code (CommandReturnValue)
-				int reason;
-				Comm.broadcast(&reason, 1);
-				msg.print("Slave %i received decision not to continue processing signals - will return %i instead.\n", Comm.rank(), reason);
-				return (CommandReturnValue) reason;
-			}
-		}
-	}
-	
-	return result;
-}
-
-/*!
- * \brief Send signal
- * \details Send a signal to somewhere - the default implementation of this virtual function does nothing.
- */
-void DUQ::sendSignal(DUQ::Signal signal, int data)
-{
-	return;
-}
-
-/*!
- * \brief Receive signal
- * \details Receive a signal from somewhere, adding the signal and its data to a list for processing at 
- * an appropriate time.
- */
-void DUQ::receiveSignal(DUQ::Signal signal, int data)
-{
-	receivedSignalsMutex_.lock();
-	if (Comm.master())
-	{
-		Pair<DUQ::Signal, int>* sig = receivedSignals_.add();
-		sig->a = signal;
-		sig->b = data;
-	}
-	receivedSignalsMutex_.unlock();
 }

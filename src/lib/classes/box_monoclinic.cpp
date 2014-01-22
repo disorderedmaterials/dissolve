@@ -47,18 +47,14 @@ MonoclinicBox::MonoclinicBox(double volume, const Vec3<double> relativeLengths, 
 	axes_.columnMultiply(1, relativeLengths.y);
 	axes_.columnMultiply(2, relativeLengths.z);
 
-	// Rescale to desired volume
-	setVolume(volume);
+	// Setup box, rescaling to desired volume
+	setup(volume);
 
 	// Grab new cell lengths
 	a_ = axes_.columnMagnitude(0);
 	b_ = axes_.columnMagnitude(1);
 	c_ = axes_.columnMagnitude(2);
-	
-	// Calculate inverse
-	inverseAxes_ = axes_;
-	inverseAxes_.invert();
-	
+
 	axes_.print();
 }
 

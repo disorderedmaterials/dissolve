@@ -281,7 +281,6 @@ class DUQ
 	/// Partial RDF Calculation Style
 	enum RDFMethod
 	{
-		NoMethod,		/**> 'None' - No calculation of partial RDFs */
 		SimpleMethod,		/**> 'Simple' - Use a simple double-loop to calculate atomic partials */
 		nRDFMethods		/**> Number of RDFMethods */
 	};
@@ -305,8 +304,8 @@ class DUQ
 	Array2D<Data2D> unboundSQMatrix_;
 	// Bound S(Q) matrix
 	Array2D<Data2D> boundSQMatrix_;
-	// Working S(Q) matrices
-	Array2D<Data2D> workingSQMatrixA_, workingSQMatrixB_;
+	// Bragg S(Q) matrix
+	Array2D<Data2D> braggSQMatrix_;
 	// Configuration change count at which partials were last calculated
 	int partialsChangeCount_;
 	// Total RDF (unweighted)
@@ -317,6 +316,10 @@ class DUQ
 	RDFMethod rdfMethod_;
 	// Total RMSE between calculated and reference F(Q) over all Samples
 	double totalRMSE_;
+	// Bragg S(Q) k-vector array
+	Array< Vec3<int> > braggKVectors_;
+	// Working S(Q) matrices
+	Array2D<Data2D> workingSQMatrixA_, workingSQMatrixB_;
 
 	private:
 	// Calculate partials using simple double Atom loop
@@ -325,6 +328,8 @@ class DUQ
 	bool calculatePartialRDFs(Configuration& cfg);
 	// Calculate intramolecular RDFs
 	bool calculateIntramolecularRDFs(Configuration& cfg);
+	// Calculate Bragg S(Q)
+	bool calculateBraggSQ(Configuration& cfg);
 
 	public:
 	// Setup RDF and S(Q) storage
@@ -355,8 +360,6 @@ class DUQ
 	Dnchar boxNormalisationFileName_;
 	// Number of test points to use when calculating Box normalisation array
 	int boxNormalisationPoints_;
-	// Density multiplier for cells when creating local atom arrays
-	double cellDensityMultiplier_;
 	// FWHM of Gaussian for Q-dependent instrument broadening function
 	double qDependentFWHM_;
 	// FWHM of Gaussian for Q-independent instrument broadening function
@@ -365,8 +368,6 @@ class DUQ
 	double rdfBinWidth_;
 	// Working RDF extent
 	double rdfRange_;
-	// X value to extend RDF up to (filling with zeroes)
-	double rdfExtensionLimit_;
 	// Degree of smoothing to apply to calculated RDF data
 	int rdfSmoothing_;
 	// Requested RDF extent
@@ -379,6 +380,10 @@ class DUQ
 	double temperature_;
 	// Window function to use for Fourier transforms
 	Data2D::WindowFunction windowFunction_;
+	// Whether Bragg calculation is currently activated
+	bool braggCalculationOn_;
+	// Maximum Q value for Bragg calculation
+	double braggMaximumQ_;
 
 	private:
 	// Clear all model data
@@ -647,83 +652,6 @@ class DUQ
 	bool saveConfigurationXYZ(Configuration& cfg, const char* fileName);
 	// Save Configuration as DL_POLY CONFIG
 	bool saveConfigurationDLPOLY(Configuration& cfg, const char* fileName);
-	///@}
-
-
-	/*!
-	 * \name CheckPoint / RealTime Access Data
-	 */
-	///@{
-	public:
-	/// CheckPoint Data2D types
-	enum CheckPointData2D
-	{
-		CheckPointUnweightedSQ,		/**> Simulated, unweighted S(Q) data */
-		CheckPointOriginalU,		/**> Original, unmodified PairPotentials */
-		CheckPointU,			/**> Current PairPotentials, including modifications */
-		CheckPointDU,			/**> Current PairPotential forces, including modifications */
-		CheckPointV,			/**> Current modifications to PairPotentials */
-		CheckPointFQ,			/**> Total F(Q) data, simulated and reference */
-		CheckPointUnweightedGR,		/**> Partial g(r), unweighted, simulated */
-		CheckPointTotalGR,		/**> Total g(r) data, neutron weighted, simulated */
-		CheckPointEnergy,		/**> System energy data */
-		nCheckPointData2DTypes
-	};
-	private:
-	// General CheckPoint access mutex
-	dUQMutex checkPointMutex_;
-	// List of Data2D CheckPoint references
-	List< CheckPoint<Data2D> > checkPointData2D_[nCheckPointData2DTypes];
-	// Configuration CheckPoint data
-	CheckPoint<Configuration> checkPointConfiguration_;
-	
-	public:
-	// Setup CheckPoint data/lists
-	void setupCheckPointData();
-	// Update CheckPoint data for specified type
-	void updateCheckPointData2D(DUQ::CheckPointData2D type);
-	// Return number of CheckPoint<Data2D> items in specified list
-	int nCheckPointData2D(DUQ::CheckPointData2D type);
-	// Return pointer to nth CheckPoint<Data2D> of specified type
-	CheckPoint<Data2D>* checkPointData2D(DUQ::CheckPointData2D type, int n);
-	// Return pointer to Configuration CheckPoint data
-	CheckPoint<Configuration>* checkPointConfiguration();
-	///@}
-
-
-	/*!
-	 * \name Signalling
-	 */
-	///@{
-	public:
-	/// Signal List
-	enum Signal
-	{
-		ConfigurationUpdatedSignal,	/**> Configuration data has been updated and stored in CheckPoint area */
-		EnergyUpdatedSignal,		/**> Total energy data has been updated and stored in CheckPoing area */
-		PairPotentialsUpdatedSignal,	/**> PairPotentials have been updated and stored in CheckPoint area */
-		PairCorrelationsUpdatedSignal,	/**> Pair correlation data (g(r), S(Q) etc.) has been updated and stored in CheckPoint area */
-		TerminateSignal,		/**> Simulation should be terminated as soon as possible */
-		nSignals
-	};
-
-	private:
-	// List of signals received
-	List< Pair<DUQ::Signal,int> > receivedSignals_;
-	// Received signals mutex
-	dUQMutex receivedSignalsMutex_;
-	
-	private:
-	// Act on signal provided
-	CommandReturnValue processSignal(DUQ::Signal signal, int data);
-	// Process any received signals
-	CommandReturnValue processSignals();
-
-	public:
-	// Send signal
-	virtual void sendSignal(DUQ::Signal signal, int data = 0);
-	// Receive signal
-	virtual void receiveSignal(DUQ::Signal signal, int data);
 	///@}
 
 

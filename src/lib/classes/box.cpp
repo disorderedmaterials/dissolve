@@ -98,9 +98,10 @@ Box::BoxType Box::type() const
 }
 
 /*!
- * \brief Set box volume (in cubic Angstroms)
+ * \brief Setup box, scaling to specified volume (in cubic Angstroms)
+ * Scale the box axes to provide the specified volume (in cubic Angstroms)
  */
-void Box::setVolume(double volume)
+void Box::setup(double volume)
 {
 	msg.print("--> Current box volume is %f cubic Angstroms, requested = %f\n", axes_.determinant(), volume);
 
@@ -109,6 +110,21 @@ void Box::setVolume(double volume)
 	axes_.applyScaling(factor, factor, factor);
 	volume_ = axes_.determinant();
 	
+	// Calculate inverse axes
+	inverseAxes_ = axes_;
+	inverseAxes_.invert();
+
+	// Calculate reciprocal axes and volume
+	// Reciprocal cell vectors are perpendicular to normal cell axes.
+	// Calculate from cross products of normal cell vectors
+	reciprocalAxes_.setColumn(0, axes_.columnAsVec3(1) * axes_.columnAsVec3(2));
+	reciprocalAxes_.setColumn(1, axes_.columnAsVec3(0) * axes_.columnAsVec3(2));
+	reciprocalAxes_.setColumn(2, axes_.columnAsVec3(0) * axes_.columnAsVec3(1));
+	reciprocalVolume_ = TWOPI / fabs( axes_[0]*reciprocalAxes_[0] + axes_[4]*reciprocalAxes_[4] + axes_[8]*reciprocalAxes_[8]);
+	reciprocalAxes_.columnMultiply(0, reciprocalVolume_);
+	reciprocalAxes_.columnMultiply(1, reciprocalVolume_);
+	reciprocalAxes_.columnMultiply(2, reciprocalVolume_);;
+
 	msg.print("--> Final box volume is %f cubic Angstroms\n", volume_);
 }
 
@@ -162,6 +178,38 @@ double Box::axisAngle(int n) const
 const Matrix3& Box::axes() const
 {
 	return axes_;
+}
+
+/*!
+ * \brief Return inverse axes matrix
+ */
+const Matrix3& Box::inverseAxes() const
+{
+	return inverseAxes_;
+}
+
+/*!
+ * \brief Return reciprocal box volume
+ */
+double Box::reciprocalVolume() const
+{
+	return reciprocalVolume_;
+}
+
+/*!
+ * \brief Return reciprocal axis lengths
+ */
+Vec3<double> Box::reciprocalAxisLengths() const
+{
+	return Vec3<double>(reciprocalAxes_.columnMagnitude(0), reciprocalAxes_.columnMagnitude(1), reciprocalAxes_.columnMagnitude(2));
+}
+
+/*!
+ * \brief Return reciprocal axes matrix
+ */
+const Matrix3& Box::reciprocalAxes() const
+{
+	return reciprocalAxes_;
 }
 
 /*

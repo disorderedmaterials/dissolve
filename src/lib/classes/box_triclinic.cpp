@@ -53,12 +53,8 @@ TriclinicBox::TriclinicBox(double volume, const Vec3<double> relativeLengths, co
 	axes_.columnMultiply(1, relativeLengths.y);
 	axes_.columnMultiply(2, relativeLengths.z);
 	
-	// Rescale to desired volume
-	setVolume(volume);
-	
-	// Calculate inverse
-	inverseAxes_ = axes_;
-	inverseAxes_.invert();
+	// Setup box, rescaling to desired volume
+	setup(volume);
 }
 
 /*!

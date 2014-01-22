@@ -164,23 +164,6 @@ CommandReturnValue DUQ::executeSteps(Step* firstStep)
 		}
 		else return CommandFail;
 
-		// Signal Configuration updated (if something in it has changed...)
-		if (Comm.master())
-		{
-			Configuration& chkcfg = checkPointConfiguration_.checkOut();
-			int lastUpdate = chkcfg.changeCount();
-			checkPointConfiguration_.checkIn();
-			if (configuration_.changeCount() != lastUpdate)
-			{
-				checkPointConfiguration_.update();
-				sendSignal(DUQ::ConfigurationUpdatedSignal);
-			}
-		}
-
-		// Any signals to process?
-		CommandReturnValue signalResult = processSignals();
-		if (signalResult != CommandSuccess) return signalResult;
-
 		// Next step...
 		step = step->next;
 	}
@@ -215,8 +198,6 @@ void DUQ::accumulateEnergyChange()
 	energyData_.addPoint(x, y);
 	energyChange_ = 0.0;
 	energyChanged_ = false;
-	updateCheckPointData2D(DUQ::CheckPointEnergy);
-	sendSignal(DUQ::EnergyUpdatedSignal);
 }
 
 /*!
@@ -236,9 +217,6 @@ void DUQ::setAbsoluteEnergy(double energy)
 	
 	double delta = energy - y;
 	energyData_.arrayY() += delta;
-	
-	updateCheckPointData2D(DUQ::CheckPointEnergy);
-	sendSignal(DUQ::EnergyUpdatedSignal);
 }
 
 /*!

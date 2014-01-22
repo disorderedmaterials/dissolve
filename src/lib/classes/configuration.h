@@ -120,8 +120,6 @@ class Configuration : public ListItem<Configuration>
 	Vec3<int> cellExtents_;
 	// Total number of Cells in Box
 	int nCells_;
-	// Maximum number of Atoms per Cell
-	int maxAtomsPerCell_;
 	// Cell array (one-dimensional)
 	Cell* cells_;
 	// Cell modified/completed/calculated flag
@@ -141,9 +139,9 @@ class Configuration : public ListItem<Configuration>
 	// Return Box
 	const Box* box() const;
 	// Setup periodic Box
-	bool setupBox(double ppRange, Vec3<double> relativeLengths, Vec3<double> angles, double atomicDensity, double cellDensityMultiplier, bool nonPeriodic = false);
+	bool setupBox(double ppRange, Vec3<double> relativeLengths, Vec3<double> angles, double atomicDensity, bool nonPeriodic = false);
 	// Generate Cells for Box
-	bool generateCells(double cellSize, double pairPotentialRange, double atomicDensity, double cellDensityMultiplier);
+	bool generateCells(double cellSize, double pairPotentialRange, double atomicDensity);
 	// Return number of Cells for box
 	int nCells() const;
 	// Return real Cell dimensions

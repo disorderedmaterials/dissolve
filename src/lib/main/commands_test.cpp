@@ -32,6 +32,8 @@
  */
 CommandReturnValue DUQ::commandTest(Configuration& cfg)
 {
+	calculateBraggSQ(cfg);
+	return CommandFail;
 	// Test FT
 // 	Data2D test;
 // 	int npoints = 1000;

@@ -240,7 +240,7 @@ bool DUQ::setupConfiguration()
 {
 	// Create a Box (all processes)
 	msg.print("--> Creating periodic box...\n");
-	if (!configuration_.setupBox(pairPotentialRange_, relativeBoxLengths_, boxAngles_, atomicDensity(), cellDensityMultiplier_, nonPeriodic_))
+	if (!configuration_.setupBox(pairPotentialRange_, relativeBoxLengths_, boxAngles_, atomicDensity(), nonPeriodic_))
 	{
 		msg.error("Failed to set-up Box/Cells for Configuration.\n");
 		return false;
@@ -419,8 +419,6 @@ bool DUQ::setupSimulation()
 	msg.print("\n");
 	msg.print("Simulation variables:\n");
 	if (!printSetup()) return false;
-	
-	setupCheckPointData();
 	
 	msg.print("\n");
 	msg.print("Simulation setup is complete.\n");
