@@ -25,6 +25,7 @@
 #include "main/command.h"
 #include "base/ptable.h"
 #include "classes/configuration.h"
+#include "classes/kvector.h"
 #include "classes/pairpotential.h"
 #include "classes/potentialmap.h"
 #include "classes/sample.h"
@@ -316,8 +317,13 @@ class DUQ
 	RDFMethod rdfMethod_;
 	// Total RMSE between calculated and reference F(Q) over all Samples
 	double totalRMSE_;
-	// Bragg S(Q) k-vector array
-	Array< Vec3<int> > braggKVectors_;
+	// Maximal extent of hlk for Bragg calculation
+	Vec3<int> braggMaximumHKL_;
+	// Bragg S(Q) k-vector list
+	List<KVector> braggKVectors_;
+	// Bragg S(Q) working arrays
+	Array2D<double> braggAtomVectorXCos_, braggAtomVectorYCos_, braggAtomVectorZCos_;
+	Array2D<double> braggAtomVectorXSin_, braggAtomVectorYSin_, braggAtomVectorZSin_;
 	// Working S(Q) matrices
 	Array2D<Data2D> workingSQMatrixA_, workingSQMatrixB_;
 

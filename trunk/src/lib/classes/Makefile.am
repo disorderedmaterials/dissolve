@@ -7,10 +7,11 @@ libclasses_a_SOURCES += forcekernel.cpp
 libclasses_a_SOURCES += grain.cpp
 libclasses_a_SOURCES += histogram.cpp
 libclasses_a_SOURCES += isotopologue.cpp isotopologuemix.cpp
+libclasses_a_SOURCES += kvector.cpp
 libclasses_a_SOURCES += molecule.cpp
 libclasses_a_SOURCES += pairpotential.cpp potentialmap.cpp
 libclasses_a_SOURCES += sample.cpp species.cpp species_atomic.cpp species_grains.cpp species_intra.cpp species_io.cpp species_isotopologues.cpp species_transform.cpp speciesangle.cpp speciesatom.cpp speciesbond.cpp speciesgrain.cpp species_io.cpp
 
-noinst_HEADERS = atom.h atomtype.h atomtypeindex.h box.h cell.h cellneighbour.h changedata.h changestore.h configuration.cpp energykernel.h forcekernel.h grain.h histogram.h isotopologue.h isotopologuemix.h molecule.h pairpotential.h potentialmap.h sample.h species.h speciesangle.h speciesatom.h speciesbond.h speciesgrain.h
+noinst_HEADERS = atom.h atomtype.h atomtypeindex.h box.h cell.h cellneighbour.h changedata.h changestore.h configuration.cpp energykernel.h forcekernel.h grain.h histogram.h isotopologue.h isotopologuemix.h kvector.h molecule.h pairpotential.h potentialmap.h sample.h species.h speciesangle.h speciesatom.h speciesbond.h speciesgrain.h
 
 INCLUDES = -I../ @DUQ_CFLAGS@
