@@ -32,7 +32,13 @@
  */
 bool DUQ::calculateBraggSQ(Configuration& cfg)
 {
+	// Grab some values from the source configuration
 	const Box* box = cfg.box();
+	Matrix3 rAxes = box->reciprocalAxes();
+	int nAtoms = cfg.nAtoms();
+	Atom* atoms = cfg.atoms();
+	Vec3<double> rLengths = box->reciprocalAxisLengths();
+	int n, h, k, l;
 
 	// Set start/skip for parallel loop
 	int start, stride;
@@ -41,40 +47,65 @@ bool DUQ::calculateBraggSQ(Configuration& cfg)
 
 	cfg.box()->reciprocalAxes().print();
 
-	// Determine extents of hkl indices to use
-	Vec3<double> rLengths = box->reciprocalAxisLengths();
-	int h, k, l, hMax, kMax, lMax;
-	hMax = braggMaximumQ_ / rLengths.x;
-	kMax = braggMaximumQ_ / rLengths.y;
-	lMax = braggMaximumQ_ / rLengths.z;
-	msg.print("Max HKL = %i %i %i\n", hMax, kMax, lMax);
-
 	// Calculate number of k-vectors within cutoff range
 	Vec3<double> kVec;
+	double mag;
 	if (braggKVectors_.nItems() == 0)
 	{
 		msg.print("--> Performing initial setup of Bragg calculation...");
+
+		// Determine extents of hkl indices to use
+		
+		braggMaximumHKL_.x = braggMaximumQ_ / rLengths.x;
+		braggMaximumHKL_.y = braggMaximumQ_ / rLengths.y;
+		braggMaximumHKL_.z = braggMaximumQ_ / rLengths.z;
+		msg.print("Max HKL = %i %i %i\n", braggMaximumHKL_.x, braggMaximumHKL_.y, braggMaximumHKL_.z);
+
 		braggKVectors_.clear();
-		for (h = 0; h <= hMax; ++h)
+		for (h = 0; h <= braggMaximumHKL_.x; ++h)
 		{
 			kVec.x = h * rLengths.x;
-			for (k = -kMax; k <= kMax; ++k)
+			for (k = -braggMaximumHKL_.y; k <= braggMaximumHKL_.y; ++k)
 			{
 				kVec.y = k * rLengths.y;
-				for (l = -lMax; l <= lMax; ++l)
+				for (l = -braggMaximumHKL_.z; l <= braggMaximumHKL_.z; ++l)
 				{
 					kVec.z = l * rLengths.z;
 					
 					// Calculate magnitude of this k vector
-					if (kVec.magnitude() <= braggMaximumQ_) braggKVectors_.add( Vec3<int>(h, k, l) );
+					mag = kVec.magnitude();
+					if (mag <= braggMaximumQ_) braggKVectors_.add()->set(h, k, l, mag);
 				}
 			}
 		}
 		msg.print("--> Bragg calculation spans %i k-vectors within cutoff of Q = %f.\n", braggKVectors_.nItems(), braggMaximumQ_);
 
-		// Create 
+		// Create atom working arrays
+		braggAtomVectorXCos_.initialise(braggMaximumHKL_.x+1, nAtoms);
+		braggAtomVectorYCos_.initialise(braggMaximumHKL_.y+1, nAtoms);
+		braggAtomVectorZCos_.initialise(braggMaximumHKL_.z+1, nAtoms);
+		braggAtomVectorXSin_.initialise(2*braggMaximumHKL_.x+1, nAtoms);
+		braggAtomVectorYSin_.initialise(2*braggMaximumHKL_.y+1, nAtoms);
+		braggAtomVectorZSin_.initialise(2*braggMaximumHKL_.z+1, nAtoms);
 	}
 
+	// Create atom vectors
+	Vec3<double> r;
+	for (int n=0; n<nAtoms; ++n)
+	{
+		// Calculate (local) reciprocal atom position
+// 		r.x = rAxes.columnAsVec3(0) * atoms[n].r().x;
+// 		r.y = rAxes.columnAsVec3(1) * atoms[n].r().y;
+// 		r.z = rAxes.columnAsVec3(2) * atoms[n].r().z;
+
+		// Set central k vector values for the atom to cmplx(1.0,0.0)
+		braggAtomVectorXCos_.ref(0, n) = 1.0;
+		braggAtomVectorYCos_.ref(0, n) = 1.0;
+		braggAtomVectorZCos_.ref(0, n) = 1.0;
+		braggAtomVectorXSin_.ref(braggMaximumHKL_.x, n) = 0.0;
+		braggAtomVectorYSin_.ref(braggMaximumHKL_.y, n) = 0.0;
+		braggAtomVectorZSin_.ref(braggMaximumHKL_.z, n) = 0.0;
+	}
 
 	return true;
 }

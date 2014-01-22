@@ -19,6 +19,7 @@ grain.cpp
 histogram.cpp
 isotopologue.cpp
 isotopologuemix.cpp
+kvector.cpp
 molecule.cpp
 pairpotential.cpp
 sample.cpp
@@ -49,6 +50,7 @@ grain.h
 histogram.h
 isotopologue.h
 isotopologuemix.h
+kvector.h
 molecule.h
 pairpotential.h
 potentialmap.h

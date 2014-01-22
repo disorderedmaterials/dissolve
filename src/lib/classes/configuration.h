@@ -88,7 +88,7 @@ class Configuration : public ListItem<Configuration>
 	Grain& grain(int n);
 	// Return number of atoms
 	int nAtoms() const;
-	// Return atom reference array
+	// Return atom array
 	Atom* atoms();
 	// Return nth atom
 	Atom* atom(int n);
