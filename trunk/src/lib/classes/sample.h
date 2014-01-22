@@ -113,7 +113,7 @@ class Sample : public ListItem<Sample>
 	// Return <b**2>
 	double boundCoherentSquaredAverage();
 	// Setup pair correlations
-	bool setupPairCorrelations(double volume, double range, double binWidth, double extensionLimit, Data2D& boxNormalisation, double rho);
+	bool setupPairCorrelations(double volume, double range, double binWidth, Data2D& boxNormalisation, double rho);
 	// Calculate weighted pair correlations
 	bool calculatePairCorrelations(Array2D<Histogram>& masterRDFs, Array2D<Data2D>& masterSQ);
 	// Return reference to array of partials

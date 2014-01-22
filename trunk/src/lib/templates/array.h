@@ -255,6 +255,22 @@ template <class A> class Array : public ListItem< Array<A> >
 		return array_[nItems_-1];
 	}
 	///@}
+
+
+	/*!
+	 * \name Functions
+	 */
+	///@{
+	public:
+	// Return sum of elements in array
+	A sum()
+	{
+		A result = 0.0;
+		for (int n=0; n<nItems_; ++n) result += array_[n];
+		return result;
+	}
+	///@}
+	
 };
 
 /*!

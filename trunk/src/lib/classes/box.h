@@ -75,16 +75,20 @@ class Box
 	Vec3<bool> periodic_;
 	// Axes
 	Matrix3 axes_;
-	// Inverse Axes
+	// Inverse axes
 	Matrix3 inverseAxes_;
+	// Reciprocal axes
+	Matrix3 reciprocalAxes_;
 	// Volume
 	double volume_;
+	// Reciprocal volume
+	double reciprocalVolume_;
 
 	public:
 	// Return Box type
 	BoxType type() const;
-	// Set box volume (in cubic Angstroms)
-	void setVolume(double volume);
+	// Setup box, scaling to volume specified (in cubic Angstroms)
+	void setup(double volume);
 	// Return volume
 	double volume() const;
 	// Return axis length specified
@@ -93,6 +97,14 @@ class Box
 	double axisAngle(int n) const;
 	// Return axis matrix
 	const Matrix3& axes() const;
+	// Return inverse axes matrix
+	const Matrix3& inverseAxes() const;
+	// Return reciprocal box volume
+	double reciprocalVolume() const;
+	// Return reciprocal axis lengths
+	Vec3<double> reciprocalAxisLengths() const;
+	// Return reciprocal axes matrix
+	const Matrix3& reciprocalAxes() const;
 	///@}
 
 

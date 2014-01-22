@@ -193,11 +193,11 @@ class Keywords
 	{
 		BoxNormalisationFileKeyword,	/**> 'BoxNormalisationFile' - Specifies a file from which to load the RDF normalisation array */
 		BoxNormalisationPointsKeyword,	/**> 'BoxNormalisationPoints' - Specifies how many random insertions to use when generating the normalisation array */
+		BraggKeyword,			/**> 'Bragg' - Turns on (or explicitly off) calculation of Bragg scattering */
+		BraggMaximumQKeyword,		/**> 'BraggMaximumQ' - Sets the maximum Q value for Bragg calculation */
 		BroadeningKeyword,		/**> 'Broadening' - Specifies the Q-independent and Q-dependent (in that order) Gaussian broadening function FWHM to apply when transforming simulated RDF data to Q-space */
-		CellDensityMultiplierKeyword,	/**> 'CellDensityMultiplier' - Multiplier to apply to system atomic density when calculating size of atom arrays in cells */
 		EndSetupKeyword,		/**> 'EndSetup' - Signals the end of the Setup block */
 		RDFBinWidthKeyword,		/**> 'RDFBinWidth' - Specified bin width for all RDF generation */
-		RDFExtensionLimitKeyword,	/**> 'RDFExtensionLimit' - X value up to which to 'zero-extend' calculated RDFs */
 		RDFMethodKeyword,		/**> 'RDFMethod' - Chooses the RDF calculation method to use */
 		RDFRangeKeyword,		/**> 'RDFRange' - Requested extent for RDF (and subsequent S(Q)) calculation */
 		RDFSmoothingKeyword,		/**> 'RDFSmoothing' - Specifies the degree of smoothing 'n' to apply to calculated RDFs, where 2n+1 controls the length in the applied Spline smooth */

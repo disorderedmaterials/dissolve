@@ -143,7 +143,7 @@ bool DUQ::setupSamples()
 		if (!sam->finaliseReferenceData()) return false;
 
 		// Setup pair correlation arrays
-		if (!sam->setupPairCorrelations(configuration_.box()->volume(), rdfRange_, rdfBinWidth_, rdfExtensionLimit_, boxNormalisation_, rho)) return false;
+		if (!sam->setupPairCorrelations(configuration_.box()->volume(), rdfRange_, rdfBinWidth_, boxNormalisation_, rho)) return false;
 
 		msg.print("\n");
 	}

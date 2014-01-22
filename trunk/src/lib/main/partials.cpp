@@ -59,8 +59,6 @@ bool DUQ::calculatePartialRDFs(Configuration& cfg)
 {
 	switch (rdfMethod_)
 	{
-		case (DUQ::NoMethod):
-			break;
 		case (DUQ::SimpleMethod):
 			if (!calculatePartialsSimple(cfg)) return false;
 			break;
@@ -92,6 +90,7 @@ bool DUQ::setupPartials()
 	unboundRDFMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
 	partialSQMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
 	boundSQMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
+	braggSQMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
 	unboundSQMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
 	workingSQMatrixA_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
 	workingSQMatrixB_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
@@ -123,6 +122,7 @@ bool DUQ::setupPartials()
 			partialSQMatrix_.ref(n,m).setName(title.get());
 			boundSQMatrix_.ref(n,m).setName(title.get());
 			unboundSQMatrix_.ref(n,m).setName(title.get());
+			braggSQMatrix_.ref(n,m).setName(title.get());
 		}
 	}
 
@@ -153,6 +153,7 @@ void DUQ::resetPairCorrelations()
 			partialSQMatrix_.ref(n,m).clear();
 			boundSQMatrix_.ref(n,m).clear();
 			unboundSQMatrix_.ref(n,m).clear();
+			boundSQMatrix_.ref(n,m).clear();
 		}
 	}
 	totalRDF_.arrayY() = 0.0;
@@ -179,7 +180,7 @@ CommandReturnValue DUQ::calculatePairCorrelations(Configuration& cfg)
 	if (!calculatePartialRDFs(cfg)) return CommandFail;
 	timer.stop();
 	msg.print("--> Finished calculation of partials (%s elapsed, %s comms).\n", timer.timeString(), Comm.accumulatedTimeString());
-	
+
 	// Calculate intramolecular partials
 	timer.start();
 	if (!calculateIntramolecularRDFs(cfg)) return CommandFail;
@@ -188,12 +189,12 @@ CommandReturnValue DUQ::calculatePairCorrelations(Configuration& cfg)
 
 	// Perform summation of partial data
 	// Note that merging/summation of cross-term data (i.e. [n][m] with [m][n]) is not necessary since the partials matrix knows
-	// that (i,j) == (j,i) as it is stored as a half-matrix in an Array2D.
+	// that (i,j) == (j,i) as it is stored as a half-matrix in an Array2D object.
 	int typeI, typeJ;
 	Comm.resetAccumulatedTime();
 	timer.start();
 	double rho = atomicDensity();
-	double delta = totalRDF_.x(1) - totalRDF_.x(0), limit = max(rdfExtensionLimit_, rdfRange_);
+	double delta = totalRDF_.x(1) - totalRDF_.x(0);
 	for (typeI=0; typeI<typeIndex_.nItems(); ++typeI)
 	{
 		for (typeJ=typeI; typeJ<typeIndex_.nItems(); ++typeJ)
@@ -219,29 +220,43 @@ CommandReturnValue DUQ::calculatePairCorrelations(Configuration& cfg)
 				unboundRDFMatrix_.ref(typeI,typeJ).normalisedData().smooth(rdfSmoothing_*2+1);
 			}
 
-			// Calculate unweighted S(Q)
+			// Copy RDF data ready for Fourier transform
+			// -- Copy RDF data
 			partialSQMatrix_.ref(typeI,typeJ) = partialRDFMatrix_.ref(typeI,typeJ).normalisedData();
 			partialSQMatrix_.ref(typeI,typeJ).arrayY() -= 1.0;
 			boundSQMatrix_.ref(typeI,typeJ) = boundRDFMatrix_.ref(typeI,typeJ).normalisedData();
 // 			boundSQMatrix_.ref(typeI,typeJ).arrayY() -= 1.0;
 			unboundSQMatrix_.ref(typeI,typeJ) = unboundRDFMatrix_.ref(typeI,typeJ).normalisedData();
 			unboundSQMatrix_.ref(typeI,typeJ).arrayY() -= 1.0;
+		}
+	}
+	timer.stop();
+	msg.print("--> Finished summation and normalisation of partial RDF data (%s elapsed, %s comms).\n", timer.timeString(), Comm.accumulatedTimeString());
 
-			// Extend partials?
-			double x = partialSQMatrix_.ref(typeI,typeJ).arrayX().last() + delta;
-			while (x < limit)
-			{
-				partialSQMatrix_.ref(typeI,typeJ).addPoint(x, 0.0);
-				boundSQMatrix_.ref(typeI,typeJ).addPoint(x, 0.0);
-				unboundSQMatrix_.ref(typeI,typeJ).addPoint(x, 0.0);
-				x += delta;
-			}
-
-			// Fourier transform partial RDF into S(Q)
+	// Perform FT of partial g(r) into S(Q)
+	// TODO Parallelise this
+	Comm.resetAccumulatedTime();
+	timer.start();
+	for (typeI=0; typeI<typeIndex_.nItems(); ++typeI)
+	{
+		for (typeJ=typeI; typeJ<typeIndex_.nItems(); ++typeJ)
+		{
 			if (!partialSQMatrix_.ref(typeI,typeJ).transformBroadenedRDF(rho, 0.05, qDependentFWHM_, qIndependentFWHM_, windowFunction_)) return CommandFail;
 			if (!boundSQMatrix_.ref(typeI,typeJ).transformBroadenedRDF(rho, 0.05, qDependentFWHM_, qIndependentFWHM_, windowFunction_)) return CommandFail;
 			if (!unboundSQMatrix_.ref(typeI,typeJ).transformBroadenedRDF(rho, 0.05, qDependentFWHM_, qIndependentFWHM_, windowFunction_)) return CommandFail;
 		}
+	}
+	timer.stop();
+	msg.print("--> Finished Fourier transform of partial g(r) into partial S(Q) (%s elapsed, %s comms).\n", timer.timeString(), Comm.accumulatedTimeString());
+
+	// Calculate Bragg partials (if requested)
+	if (braggCalculationOn_)
+	{
+		Comm.resetAccumulatedTime();
+		timer.start();
+		if (!calculateBraggSQ(cfg)) return CommandFail;
+		timer.stop();
+		msg.print("--> Finished calculation of partial Bragg S(Q) (%s elapsed, %s comms).\n", timer.timeString(), Comm.accumulatedTimeString());
 	}
 
 	// Calculate total g(r) and F(Q)
@@ -276,13 +291,6 @@ CommandReturnValue DUQ::calculatePairCorrelations(Configuration& cfg)
 	msg.print("--> Finished generation of Sample partials (%s elapsed, %s comms).\n", timer.timeString(), Comm.accumulatedTimeString());
 
 	msg.print("--> Current RMSE over all Samples = %f barns/sr/atom\n", totalRMSE_);
-	
-	// Update CheckPoint data
-	updateCheckPointData2D(DUQ::CheckPointUnweightedSQ);
-	updateCheckPointData2D(DUQ::CheckPointFQ);
-	updateCheckPointData2D(DUQ::CheckPointUnweightedGR);
-	updateCheckPointData2D(DUQ::CheckPointTotalGR);
-	sendSignal(DUQ::PairCorrelationsUpdatedSignal);
 
 	return CommandSuccess;
 }

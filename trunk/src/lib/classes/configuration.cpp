@@ -49,7 +49,6 @@ Configuration::Configuration() : ListItem<Configuration>()
 	cells_ = NULL;
 	cellFlag_ = NULL;
 	nCells_ = 0;
-	maxAtomsPerCell_ = 0;
 	changeCount_ = 0;
 }
 
@@ -471,7 +470,7 @@ const Box* Configuration::box() const
 /*!
  * \brief Setup periodic Box
  */
-bool Configuration::setupBox(double ppRange, Vec3<double> relativeLengths, Vec3<double> angles, double atomicDensity, double cellDensityMultiplier, bool nonPeriodic)
+bool Configuration::setupBox(double ppRange, Vec3<double> relativeLengths, Vec3<double> angles, double atomicDensity, bool nonPeriodic)
 {
 	// Remove old box if present
 	if (box_ != NULL)
@@ -521,7 +520,7 @@ bool Configuration::setupBox(double ppRange, Vec3<double> relativeLengths, Vec3<
 		return false;
 	}
 
-	generateCells(5.0, ppRange, atomicDensity, cellDensityMultiplier);
+	generateCells(5.0, ppRange, atomicDensity);
 	 
 	return true;
 }
@@ -583,7 +582,7 @@ bool Configuration::minimumImageRequired(Cell* a, Cell* b) const
 }
 
 // Generate Cells for Box
-bool Configuration::generateCells(double cellSize, double pairPotentialRange, double atomicDensity, double cellDensityMultiplier)
+bool Configuration::generateCells(double cellSize, double pairPotentialRange, double atomicDensity)
 {
 	// There are some conditions to the partitioning:
 	// 1) We require a minimum number of cells (minCellsPerSide) per box side
@@ -678,8 +677,6 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 	// Construct Cell arrays
 	clearCells();
 	nCells_ = divisions_.x*divisions_.y*divisions_.z;
-	maxAtomsPerCell_ = (box_->volume() / nCells_) * atomicDensity * cellDensityMultiplier;
-	if (maxAtomsPerCell_ == 0) maxAtomsPerCell_ = 1;
 	cellFlag_ = new bool[nCells_];
 	msg.print("--> Constructing array of %i cells...\n", nCells_);
 	cells_ = new Cell[nCells_];
@@ -801,7 +798,7 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 		}
 
 		// Setup lists in the cell
-		cells_[n].addCellNeighbours(neighbours, mimNeighbours);
+		cells_[n].addCellNeighbours(neighbours, mimNeighbours, nCells_);
 	}
 
 	// Send Cell info to Comm so suitable parallel strategy can be deduced
@@ -870,14 +867,6 @@ Cell* Configuration::cell(const Vec3<double> r) const
 	indices.z %= divisions_.z;
 	
 	return &cells_[indices.x*divisions_.y*divisions_.z + indices.y*divisions_.z + indices.z];
-}
-
-/*!
- * \brief Return maximum number of atoms per cell
- */
-int Configuration::maxAtomsPerCell()
-{
-	return maxAtomsPerCell_;
 }
 
 /*!

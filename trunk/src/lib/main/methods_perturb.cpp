@@ -304,12 +304,5 @@ CommandReturnValue DUQ::perturb(Configuration& cfg)
 		modFQ.save(Dnchar::string("duq-%s-estimated.fq", sam->name()));
 	}
 
-	// Signal that PairPotentials have changed
-	updateCheckPointData2D(DUQ::CheckPointOriginalU);
-	updateCheckPointData2D(DUQ::CheckPointU);
-	updateCheckPointData2D(DUQ::CheckPointDU);
-	updateCheckPointData2D(DUQ::CheckPointV);
-	sendSignal(DUQ::PairPotentialsUpdatedSignal);
-
 	return CommandSuccess;
 }

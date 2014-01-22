@@ -136,7 +136,7 @@ class Cell
 
 	public:
 	// Add Cell neighbours
-	void addCellNeighbours(OrderedList<Cell>& neighbours, OrderedList<Cell>& mimNeighbours);
+	void addCellNeighbours(OrderedList< Cell >& neighbours, OrderedList< Cell >& mimNeighbours, int allCells);
 	// Return number of normal cell neighbours
 	int nCellNeighbours();
 	// Return number of mim cell neighbours

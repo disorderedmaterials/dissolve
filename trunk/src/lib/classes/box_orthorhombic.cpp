@@ -36,8 +36,8 @@ OrthorhombicBox::OrthorhombicBox(double volume, const Vec3<double> relativeLengt
 	axes_.setColumn(1, 0.0, relativeLengths.y, 0.0);
 	axes_.setColumn(2, 0.0, 0.0, relativeLengths.z);
 	
-	// Rescale to desired volume
-	setVolume(volume);
+	// Setup box, rescaling to desired volume
+	setup(volume);
 	
 	// Grab new cell lengths
 	a_ = axes_.columnMagnitude(0);
@@ -46,10 +46,6 @@ OrthorhombicBox::OrthorhombicBox(double volume, const Vec3<double> relativeLengt
 	ra_ = 1.0/a_;
 	rb_ = 1.0/b_;
 	rc_ = 1.0/c_;
-	
-	// Calculate inverse
-	inverseAxes_ = axes_;
-	inverseAxes_.invert();
 }
 
 /*!
