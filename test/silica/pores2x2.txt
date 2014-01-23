@@ -31,9 +31,9 @@ EndSpecies
 # System Composition
 
 System
-  Multiplier  4700
-  Density  1.784457  g/cm3
-  CellLengths 66.8 66.8 68
+  Multiplier  5111
+  Density  1.818732  g/cm3
+  CellLengths 69 69 68
   CellAngles 90 90 120 
   Component  'Silicon'  1
   Component  'Oxygen'  2
@@ -63,7 +63,7 @@ Setup
   Seed  943723867
   Temperature  298.000000
   Bragg on
-  BraggMaximumQ 1.0
+  BraggMaximumQ 0.5
   #RDFRange  20.0
   #BoxNormalisationFile 'test/water/water1000.norm'
 EndSetup
@@ -82,11 +82,12 @@ Simulation
   1 gs 1 15.0
 
 @Strategy
-p
 #  ptb
 #  saverdfs
 #  savesq
 #  q
+  test
+  q
   temperature 298.0
   savepp 'original'
   loop

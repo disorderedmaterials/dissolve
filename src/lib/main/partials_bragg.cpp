@@ -23,8 +23,6 @@
 #include "classes/atom.h"
 #include "classes/atomtype.h"
 #include "classes/box.h"
-#include "classes/cell.h"
-#include "classes/species.h"
 #include "base/comms.h"
 
 /*!
@@ -37,74 +35,101 @@ bool DUQ::calculateBraggSQ(Configuration& cfg)
 	Matrix3 rAxes = box->reciprocalAxes();
 	int nAtoms = cfg.nAtoms();
 	Atom* atoms = cfg.atoms();
-	Vec3<double> rLengths = box->reciprocalAxisLengths();
-	int n, h, k, l;
+	Vec3<double> r, rLengths = box->reciprocalAxisLengths();
+	int n, m, h, k, l, hAbs, kAbs, lAbs;
+	double* cosTermsH, *sinTermsH, *cosTermsK, *sinTermsK, *cosTermsL, *sinTermsL; 
+	double xyCos, xySin, xyzCos, xyzSin;
 
 	// Set start/skip for parallel loop
 	int start, stride;
 	start = Comm.interleavedLoopStart(DUQComm::World);
 	stride = Comm.interleavedLoopStride(DUQComm::World);
 
+	// Create a timer
+	Timer timer;
+
+	rAxes[1] = -rAxes[1];
 	cfg.box()->reciprocalAxes().print();
 
 	// Calculate number of k-vectors within cutoff range
-	Vec3<double> kVec;
 	double mag;
 	if (braggKVectors_.nItems() == 0)
 	{
-		msg.print("--> Performing initial setup of Bragg calculation...");
+		msg.print("--> Performing initial setup of Bragg calculation...\n");
+		
+		int nTypes = typeIndex_.nItems();
 
 		// Determine extents of hkl indices to use
-		
 		braggMaximumHKL_.x = braggMaximumQ_ / rLengths.x;
 		braggMaximumHKL_.y = braggMaximumQ_ / rLengths.y;
 		braggMaximumHKL_.z = braggMaximumQ_ / rLengths.z;
-		msg.print("Max HKL = %i %i %i\n", braggMaximumHKL_.x, braggMaximumHKL_.y, braggMaximumHKL_.z);
 
 		braggKVectors_.clear();
+		Vec3<double> kVec;
 		for (h = 0; h <= braggMaximumHKL_.x; ++h)
 		{
-			kVec.x = h * rLengths.x;
+			kVec.x = h;// * rLengths.x;
 			for (k = -braggMaximumHKL_.y; k <= braggMaximumHKL_.y; ++k)
 			{
-				kVec.y = k * rLengths.y;
+				kVec.y = k;// * rLengths.y;
 				for (l = -braggMaximumHKL_.z; l <= braggMaximumHKL_.z; ++l)
 				{
-					kVec.z = l * rLengths.z;
-					
+// 					if ((h == 0) && (k == 0) && (l == 0)) continue;
+
+					kVec.z = l;// * rLengths.z;
+					r = rAxes * kVec;
+
 					// Calculate magnitude of this k vector
-					mag = kVec.magnitude();
-					if (mag <= braggMaximumQ_) braggKVectors_.add()->set(h, k, l, mag);
+					mag = r.magnitude();
+					if (mag <= braggMaximumQ_) braggKVectors_.add(KVector(h, k, l, mag, nTypes));
 				}
 			}
 		}
-		msg.print("--> Bragg calculation spans %i k-vectors within cutoff of Q = %f.\n", braggKVectors_.nItems(), braggMaximumQ_);
-
-		// Create atom working arrays
-		braggAtomVectorXCos_.initialise(braggMaximumHKL_.x+1, nAtoms);
-		braggAtomVectorYCos_.initialise(braggMaximumHKL_.y+1, nAtoms);
-		braggAtomVectorZCos_.initialise(braggMaximumHKL_.z+1, nAtoms);
-		braggAtomVectorXSin_.initialise(2*braggMaximumHKL_.x+1, nAtoms);
-		braggAtomVectorYSin_.initialise(2*braggMaximumHKL_.y+1, nAtoms);
-		braggAtomVectorZSin_.initialise(2*braggMaximumHKL_.z+1, nAtoms);
+		msg.print("--> Bragg calculation spans %i hkl indices (%i x %i x %i) within cutoff of Q = %f.\n", braggKVectors_.nItems(), braggMaximumHKL_.x, braggMaximumHKL_.y, braggMaximumHKL_.z, braggMaximumQ_);
 	}
 
-	// Create atom vectors
-	Vec3<double> r;
-	for (int n=0; n<nAtoms; ++n)
-	{
-		// Calculate (local) reciprocal atom position
-// 		r.x = rAxes.columnAsVec3(0) * atoms[n].r().x;
-// 		r.y = rAxes.columnAsVec3(1) * atoms[n].r().y;
-// 		r.z = rAxes.columnAsVec3(2) * atoms[n].r().z;
+	// Calculate k-vector contributions
+	KVector** kVectors = braggKVectors_.objects();
+	KVector* kVector;
+	const int nKVectors = braggKVectors_.nItems();
+	int atomTypeIndex;
+	double multiplier;
 
-		// Set central k vector values for the atom to cmplx(1.0,0.0)
-		braggAtomVectorXCos_.ref(0, n) = 1.0;
-		braggAtomVectorYCos_.ref(0, n) = 1.0;
-		braggAtomVectorZCos_.ref(0, n) = 1.0;
-		braggAtomVectorXSin_.ref(braggMaximumHKL_.x, n) = 0.0;
-		braggAtomVectorYSin_.ref(braggMaximumHKL_.y, n) = 0.0;
-		braggAtomVectorZSin_.ref(braggMaximumHKL_.z, n) = 0.0;
+	// Zero kvector cos/sin contributions
+	for (m = 0; m < nKVectors; ++m) kVectors[m]->zeroCosSinTerms();
+
+	// Loop over atoms
+	Comm.resetAccumulatedTime();
+	timer.stop();
+	for (n = 0; n<nAtoms; ++n)
+	{
+		// Grab atomtypeindex for current atom
+		atomTypeIndex = atoms[n].atomTypeIndex();
+
+		// Loop over k-vectors
+		for (m = 0; m < nKVectors; ++m)
+		{
+			kVector = kVectors[m];
+			// Grab h, k, and l indices from KVector
+			h = kVector->h();
+			k = kVector->k();
+			l = kVector->l();
+			
+			r = rAxes * atoms[n].r();
+			double arg = r.x * kVectors[m]->h() + r.y * kVectors[m]->k() + r.z * kVectors[m]->l();
+
+			// Sum contribution into the k-vector's cos/sin arrays
+			kVector->addCosTerm(atomTypeIndex, cos(arg));
+			kVector->addSinTerm(atomTypeIndex, -sin(arg));
+		}
+	}
+	msg.print("--> Calculated atomic contributions to k-vectors (%s elapsed, %s comms)\n", timer.timeString(), Comm.accumulatedTimeString());
+
+	for (m = 0; m < nKVectors; ++m)
+	{
+		double rAmpTot = kVectors[m]->cosTerms().sum();
+		double iAmpTot = kVectors[m]->sinTerms().sum();
+		msg.print(" %2i  %2i  %2i    %f   %f   %f   %f   %f\n", kVectors[m]->h(), kVectors[m]->k(), kVectors[m]->l(), kVectors[m]->magnitude(), kVectors[m]->cosTerms().value(0)/nAtoms, kVectors[m]->sinTerms().value(0)/nAtoms, kVectors[m]->cosTerms().value(1)/nAtoms, kVectors[m]->sinTerms().value(1)/nAtoms);
 	}
 
 	return true;

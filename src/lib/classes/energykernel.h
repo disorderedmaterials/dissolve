@@ -24,7 +24,7 @@
 
 #include "classes/atom.h"
 #include "classes/grain.h"
-#include "templates/orderedlist.h"
+#include "templates/orderedpointerlist.h"
 #include "base/comms.h"
 
 // Forward Declarations
@@ -124,11 +124,11 @@ class EnergyKernel
 	// Return PairPotential energy between cell and atomic neighbours
 	double energy(Cell* centralCell, bool excludeIgeJ = false, DUQComm::CommGroup group = DUQComm::Solo);
 	// Return PairPotential energy between atom and cell
-	double energy(const Atom* i, OrderedList<Atom>& neighbours, int flags = EnergyKernel::NoFlags, DUQComm::CommGroup group = DUQComm::Solo);
+	double energy(const Atom* i, OrderedPointerList<Atom>& neighbours, int flags = EnergyKernel::NoFlags, DUQComm::CommGroup group = DUQComm::Solo);
 	// Return PairPotential energy of atom with world
 	double energy(const Atom* i, DUQComm::CommGroup group = DUQComm::Solo);
 	// Return PairPotential energy between Grain and list of neighbouring cells
-	double energy(const Grain* grain, OrderedList<Atom>& neighbours, bool applyMim, bool excludeIgeJ = false, DUQComm::CommGroup group = DUQComm::Solo);
+	double energy(const Grain* grain, OrderedPointerList<Atom>& neighbours, bool applyMim, bool excludeIgeJ = false, DUQComm::CommGroup group = DUQComm::Solo);
 	// Return PairPotential energy of grain with world
 	double energy(const Grain* grain, bool excludeIgtJ, DUQComm::CommGroup group = DUQComm::Solo);
 	// Return molecular correction energy related to intramolecular terms involving supplied atom

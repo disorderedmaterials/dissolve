@@ -776,7 +776,7 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 	// Finally, loop over Cells and set neighbours, and construct neighbour matrix
 	msg.print("--> Constructing neighbour lists for individual Cells...\n");
 	bool mimRequired;
-	OrderedList<Cell> neighbours, mimNeighbours;
+	OrderedPointerList<Cell> neighbours, mimNeighbours;
 	Vec3<int> gridRef;
 	for (n=0; n<nCells_; ++n)
 	{
@@ -1069,7 +1069,7 @@ bool Configuration::updateAtomsInCells()
 		currentCell = &cells_[c];
 
 		// TODO Overload cell() to take a pointer to a Vec3<> in which the folded r can be returned
-		for (OrderedListItem<Atom>* item = currentCell->atoms().first(); item != NULL; item = item->next)
+		for (OrderedPointerListItem<Atom>* item = currentCell->atoms().first(); item != NULL; item = item->next)
 		{
 			i = item->object();
 			foldedR = box_->fold(i->r());

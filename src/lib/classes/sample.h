@@ -115,7 +115,7 @@ class Sample : public ListItem<Sample>
 	// Setup pair correlations
 	bool setupPairCorrelations(double volume, double range, double binWidth, Data2D& boxNormalisation, double rho);
 	// Calculate weighted pair correlations
-	bool calculatePairCorrelations(Array2D<Histogram>& masterRDFs, Array2D<Data2D>& masterSQ);
+	bool calculatePairCorrelations(Array2D<Histogram>& masterRDFs, Array2D<Data2D>& masterSQ, Array2D<Data2D>& braggSQ);
 	// Return reference to array of partials
 	Array2D<Data2D>& partialSQMatrix();
 	// Return reference to weights matrix

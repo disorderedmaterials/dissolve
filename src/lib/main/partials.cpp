@@ -154,6 +154,7 @@ void DUQ::resetPairCorrelations()
 			boundSQMatrix_.ref(n,m).clear();
 			unboundSQMatrix_.ref(n,m).clear();
 			boundSQMatrix_.ref(n,m).clear();
+			braggSQMatrix_.ref(n,m).clear();
 		}
 	}
 	totalRDF_.arrayY() = 0.0;
@@ -284,7 +285,7 @@ CommandReturnValue DUQ::calculatePairCorrelations(Configuration& cfg)
 	totalRMSE_ = 0.0;
 	for (Sample* sam = samples_.first(); sam != NULL; sam = sam->next)
 	{
-		if (!sam->calculatePairCorrelations(partialRDFMatrix_, partialSQMatrix_)) return CommandFail;
+		if (!sam->calculatePairCorrelations(partialRDFMatrix_, partialSQMatrix_, braggSQMatrix_)) return CommandFail;
 		if (sam->hasReferenceData()) totalRMSE_ += sam->referenceRMSE(rmseDeltaQ_);
 	}
 	timer.stop();

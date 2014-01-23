@@ -493,12 +493,12 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, DUQComm::CommGr
  * \details Calculate the energy between the supplied atom and list of neighbouring cells. Note that it is assumed that the supplied atom
  * is in a cell which does *not* appear in the list.
  */
-double EnergyKernel::energy(const Atom* i, OrderedList<Atom>& neighbours, int flags, DUQComm::CommGroup group)
+double EnergyKernel::energy(const Atom* i, OrderedPointerList<Atom>& neighbours, int flags, DUQComm::CommGroup group)
 {
 #ifdef CHECKS
-	if (cell == NULL)
+	if (i == NULL)
 	{
-		msg.error("NULL_POINTER - NULL cell pointer passed to EnergyKernel::energy(Atom,Cell,bool,bool).\n");
+		msg.error("NULL_POINTER - NULL atom pointer passed to EnergyKernel::energy(Atom,OrderedPointerList,int,CommGroup).\n");
 		return 0.0;
 	}
 #endif
@@ -643,7 +643,7 @@ double EnergyKernel::energy(const Atom* i, OrderedList<Atom>& neighbours, int fl
 /*!
  * \brief Return intermolecular energy between Grain and list of Cells
  */
-double EnergyKernel::energy(const Grain* grain, OrderedList<Atom>& neighbours, bool applyMim, bool excludeIgeJ, DUQComm::CommGroup group)
+double EnergyKernel::energy(const Grain* grain, OrderedPointerList<Atom>& neighbours, bool applyMim, bool excludeIgeJ, DUQComm::CommGroup group)
 {
 #ifdef CHECKS
 	if (grain == NULL)

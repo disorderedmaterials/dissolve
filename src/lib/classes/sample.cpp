@@ -426,7 +426,7 @@ bool Sample::setupPairCorrelations(double volume, double range, double binWidth,
  * \brief Calculate weighted pair correlations
  * \details Calculate the neutron-weighted pair correlations, including S(Q), F(Q), and total RDF, from the supplied unweighted data.
  */
-bool Sample::calculatePairCorrelations(Array2D<Histogram>& masterRDFs, Array2D<Data2D>& masterSQ)
+bool Sample::calculatePairCorrelations(Array2D< Histogram >& masterRDFs, Array2D< Data2D >& masterSQ, Array2D< Data2D >& braggSQ)
 {
 	AtomTypeData* at1 = typeIndex_.first(), *at2;
 	double factor, sumFactor = 0.0;

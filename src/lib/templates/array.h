@@ -405,12 +405,12 @@ template <class A> class Array2D
 		static A dummy;
 		if ((row < 0) || (row >= nRows_))
 		{
-			msg.print("OUT_OF_RANGE - Row number is out of range in Array2D::ref().\n", row);
+			msg.print("OUT_OF_RANGE - Row number (%i) is out of range in Array2D::ref() (nRows = %i).\n", row, nRows_);
 			return dummy;
 		}
 		if ((column < 0) || (column >= nColumns_))
 		{
-			msg.print("OUT_OF_RANGE - Row number is out of range in Array2D::ref().\n", column);
+			msg.print("OUT_OF_RANGE - Column number (%i) is out of range in Array2D::ref() (nColumns = %i).\n", column, nColumns_);
 			return dummy;
 		}
 #endif
@@ -428,12 +428,12 @@ template <class A> class Array2D
 		static A dummy;
 		if ((row < 0) || (row >= nRows_))
 		{
-			msg.print("OUT_OF_RANGE - Row number is out of range in Array2D::ref().\n", row);
+			msg.print("OUT_OF_RANGE - Row number (%i) is out of range in Array2D::value() (nRows = %i).\n", row, nRows_);
 			return dummy;
 		}
 		if ((column < 0) || (column >= nColumns_))
 		{
-			msg.print("OUT_OF_RANGE - Row number is out of range in Array2D::ref().\n", column);
+			msg.print("OUT_OF_RANGE - Column number (%i) is out of range in Array2D::value() (nColumns = %i).\n", column, nColumns_);
 			return dummy;
 		}
 #endif
@@ -451,12 +451,12 @@ template <class A> class Array2D
 		static A dummy;
 		if ((row < 0) || (row >= nRows_))
 		{
-			msg.print("OUT_OF_RANGE - Row number is out of range in Array2D::ptr().\n", row);
+			msg.print("OUT_OF_RANGE - Row number (%i) is out of range in Array2D::ptr() (nRows = %i).\n", row, nRows_);
 			return &dummy;
 		}
 		if ((column < 0) || (column >= nColumns_))
 		{
-			msg.print("OUT_OF_RANGE - Row number is out of range in Array2D::ptr().\n", column);
+			msg.print("OUT_OF_RANGE - Column number (%i) is out of range in Array2D::ptr() (nColumns = %i).\n", column, nColumns_);
 			return &dummy;
 		}
 #endif

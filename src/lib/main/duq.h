@@ -33,7 +33,8 @@
 #include "base/mutex.h"
 #include "templates/vector3.h"
 #include "templates/list.h"
-#include "templates/checkpoint.h"
+#include "templates/orderedlist.h"
+#include "templates/orderedpointerlist.h"
 
 // Forward Declarations
 class Atom;
@@ -317,13 +318,12 @@ class DUQ
 	RDFMethod rdfMethod_;
 	// Total RMSE between calculated and reference F(Q) over all Samples
 	double totalRMSE_;
-	// Maximal extent of hlk for Bragg calculation
+	// Maximal extent of hkl for Bragg calculation
 	Vec3<int> braggMaximumHKL_;
 	// Bragg S(Q) k-vector list
-	List<KVector> braggKVectors_;
+	OrderedList<KVector> braggKVectors_;
 	// Bragg S(Q) working arrays
-	Array2D<double> braggAtomVectorXCos_, braggAtomVectorYCos_, braggAtomVectorZCos_;
-	Array2D<double> braggAtomVectorXSin_, braggAtomVectorYSin_, braggAtomVectorZSin_;
+// 	Array2D<double> 
 	// Working S(Q) matrices
 	Array2D<Data2D> workingSQMatrixA_, workingSQMatrixB_;
 
