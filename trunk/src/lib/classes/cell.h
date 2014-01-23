@@ -25,7 +25,7 @@
 #include "classes/grain.h"
 #include "templates/vector3.h"
 #include "templates/reflist.h"
-#include "templates/orderedlist.h"
+#include "templates/orderedpointerlist.h"
 
 // Forward Declarations
 class Box;
@@ -96,13 +96,13 @@ class Cell
 	///@{
 	private:
 	// List of atoms contained in this cell
-	OrderedList<Atom> atoms_;
+	OrderedPointerList<Atom> atoms_;
 	// List of Grains in Cell
 	RefList<Grain,int> grains_;
 
 	public:
 	// Return list of contained atoms
-	OrderedList<Atom>& atoms();
+	OrderedPointerList<Atom>& atoms();
 	// Move specified atom to specified Cell
 	bool moveAtom(Atom* i, Cell* targetCell);
 	// Add atom to Cell
@@ -132,11 +132,11 @@ class Cell
 	// Number of cells in cell arrays
 	int nCellNeighbours_, nMimCellNeighbours_;
 	// Lists of neighbouring atoms, within the defined potential cutoff (from anywhere in the cell)
-	OrderedList<Atom> atomNeighbours_, mimAtomNeighbours_;
+	OrderedPointerList<Atom> atomNeighbours_, mimAtomNeighbours_;
 
 	public:
 	// Add Cell neighbours
-	void addCellNeighbours(OrderedList< Cell >& neighbours, OrderedList< Cell >& mimNeighbours, int allCells);
+	void addCellNeighbours(OrderedPointerList< Cell >& neighbours, OrderedPointerList< Cell >& mimNeighbours, int allCells);
 	// Return number of normal cell neighbours
 	int nCellNeighbours();
 	// Return number of mim cell neighbours
@@ -158,9 +158,9 @@ class Cell
 	// Return total number of atom neighbours
 	int nTotalAtomNeighbours();
 	// Return atom neighbour list
-	OrderedList<Atom>& atomNeighbours();
+	OrderedPointerList<Atom>& atomNeighbours();
 	// Return atom neighbour list requiring mim
-	OrderedList<Atom>& mimAtomNeighbours();
+	OrderedPointerList<Atom>& mimAtomNeighbours();
 	///@}
 };
 

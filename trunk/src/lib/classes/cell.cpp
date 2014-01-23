@@ -212,7 +212,7 @@ bool Cell::unlock(bool willBeModified)
 /*!
  * \brief Return Atom list
  */
-OrderedList<Atom>& Cell::atoms()
+OrderedPointerList<Atom>& Cell::atoms()
 {
 	return atoms_;
 }
@@ -399,7 +399,7 @@ Grain* Cell::grain(int n)
 /*!
  * \brief Add Cell neighbours
  */
-void Cell::addCellNeighbours(OrderedList<Cell>& neighbours, OrderedList<Cell>& mimNeighbours, int allCells)
+void Cell::addCellNeighbours(OrderedPointerList<Cell>& neighbours, OrderedPointerList<Cell>& mimNeighbours, int allCells)
 {
 	int n, m, count, indexN, indexM;
 
@@ -536,7 +536,7 @@ int Cell::nTotalAtomNeighbours()
 /*!
  * \brief Return atom neighbour list
  */
-OrderedList<Atom>& Cell::atomNeighbours()
+OrderedPointerList<Atom>& Cell::atomNeighbours()
 {
 	return atomNeighbours_;
 }
@@ -544,7 +544,7 @@ OrderedList<Atom>& Cell::atomNeighbours()
 /*!
  * \brief Return atom neighbour list requiring mim
  */
-OrderedList<Atom>& Cell::mimAtomNeighbours()
+OrderedPointerList<Atom>& Cell::mimAtomNeighbours()
 {
 	return mimAtomNeighbours_;
 }

@@ -24,7 +24,7 @@
 
 #include "classes/atom.h"
 #include "classes/grain.h"
-#include "templates/orderedlist.h"
+#include "templates/orderedpointerlist.h"
 #include "base/comms.h"
 
 // Forward Declarations

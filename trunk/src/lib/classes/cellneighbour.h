@@ -28,7 +28,7 @@ class Cell;
 /*!
  * \brief Cell Neighbour
  * \details Simple class encapsulating a pointer to a Cell, and a flag indicating whether or not mimimum image calculations should be applied when 
- * considering the contents of this cell with the cell which owns the OrderedList in which it appears.
+ * considering the contents of this cell with the cell which owns the OrderedPointerList in which it appears.
  */
 class CellNeighbour
 {

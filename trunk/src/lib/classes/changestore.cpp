@@ -25,7 +25,7 @@
 #include "classes/configuration.h"
 #include "classes/grain.h"
 #include "classes/molecule.h"
-#include "templates/orderedlist.h"
+#include "templates/orderedpointerlist.h"
 
 /*!
  * \brief Constructor
@@ -78,7 +78,7 @@ void ChangeStore::add(Molecule* mol)
  */
 void ChangeStore::add(Cell* cell)
 {
-	for (OrderedListItem<Atom>* item = cell->atoms().first(); item != NULL; item = item->next) add(item->object());
+	for (OrderedPointerListItem<Atom>* item = cell->atoms().first(); item != NULL; item = item->next) add(item->object());
 }
 
 /*
