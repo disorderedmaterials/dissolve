@@ -137,7 +137,7 @@ template <class T> class OrderedList
 	// Returns the number of items referenced in the list
 	int nItems() const;
 	// Add a new item reference to the list
-	void add(T object);
+	T* add(T object);
 	// Add a new item reference to the end of the list
 	void addAtEnd(T object);
 	// Remove item reference from list
@@ -146,6 +146,8 @@ template <class T> class OrderedList
 	bool removeIfPresent(int objectIndex);
 	// Move specified item to target list
 	void move(int objectIndex, OrderedList<T>& targetList);
+	// Return object with index specified (if it exists)
+	T* objectWithIndex(int objectIndex);
 	// Returns the list head
 	OrderedListItem<T>* first() const;
 	// Generate (if necessary) and return item array
@@ -408,11 +410,12 @@ template <class T> int OrderedList<T>::nItems() const
 /*!
  * \brief Add item to list
  */
-template <class T> void OrderedList<T>::add(T object)
+template <class T> T* OrderedList<T>::add(T object)
 {
 	// Add it in the correct place in the list
 	OrderedListItem<T>* nextLargest = nextHighestIndex(object.index());
-	insertBefore(object, nextLargest);
+	OrderedListItem<T>* newObject = insertBefore(object, nextLargest);
+	return &newObject->object();
 }
 
 /*!
@@ -473,6 +476,15 @@ template <class T> void OrderedList<T>::move(int objectIndex, OrderedList<T>& ta
 	// Add to target list, then delete from this list
 	targetList.add(item->object());
 	remove(item);
+}
+
+/*!
+ * \brief Return object with index specified (if it exists)
+ */
+template <class T> T* OrderedList<T>::objectWithIndex(int objectIndex)
+{
+	OrderedListItem<T>* item = contains(objectIndex);
+	return (item == NULL ? NULL : &item->object());
 }
 
 /*!

@@ -32,7 +32,7 @@
 */
 
 // RDFMethod keywords
-const char* RDFMethodKeywords[] = { "None", "Simple" };
+const char* RDFMethodKeywords[] = { "Simple" };
 
 /*!
  * \brief Convert text string to RDFMethod
@@ -195,7 +195,6 @@ CommandReturnValue DUQ::calculatePairCorrelations(Configuration& cfg)
 	Comm.resetAccumulatedTime();
 	timer.start();
 	double rho = atomicDensity();
-	double delta = totalRDF_.x(1) - totalRDF_.x(0);
 	for (typeI=0; typeI<typeIndex_.nItems(); ++typeI)
 	{
 		for (typeJ=typeI; typeJ<typeIndex_.nItems(); ++typeJ)
@@ -242,9 +241,9 @@ CommandReturnValue DUQ::calculatePairCorrelations(Configuration& cfg)
 	{
 		for (typeJ=typeI; typeJ<typeIndex_.nItems(); ++typeJ)
 		{
-			if (!partialSQMatrix_.ref(typeI,typeJ).transformBroadenedRDF(rho, 0.05, qDependentFWHM_, qIndependentFWHM_, windowFunction_)) return CommandFail;
-			if (!boundSQMatrix_.ref(typeI,typeJ).transformBroadenedRDF(rho, 0.05, qDependentFWHM_, qIndependentFWHM_, windowFunction_)) return CommandFail;
-			if (!unboundSQMatrix_.ref(typeI,typeJ).transformBroadenedRDF(rho, 0.05, qDependentFWHM_, qIndependentFWHM_, windowFunction_)) return CommandFail;
+			if (!partialSQMatrix_.ref(typeI,typeJ).transformBroadenedRDF(rho, qDelta_, qMax_, qDependentFWHM_, qIndependentFWHM_, windowFunction_)) return CommandFail;
+			if (!boundSQMatrix_.ref(typeI,typeJ).transformBroadenedRDF(rho, qDelta_, qMax_, qDependentFWHM_, qIndependentFWHM_, windowFunction_)) return CommandFail;
+			if (!unboundSQMatrix_.ref(typeI,typeJ).transformBroadenedRDF(rho, qDelta_, qMax_, qDependentFWHM_, qIndependentFWHM_, windowFunction_)) return CommandFail;
 		}
 	}
 	timer.stop();
@@ -260,20 +259,28 @@ CommandReturnValue DUQ::calculatePairCorrelations(Configuration& cfg)
 		msg.print("--> Finished calculation of partial Bragg S(Q) (%s elapsed, %s comms).\n", timer.timeString(), Comm.accumulatedTimeString());
 	}
 
-	// Calculate total g(r) and F(Q)
+	// Calculate total unweighted g(r) and F(Q)
 	totalFQ_ = partialSQMatrix_.ref(0,0);
 	totalFQ_.arrayY() = 0.0;
-	double factor;
+	double factor, braggMax;
 	for (typeI=0; typeI<typeIndex_.nItems(); ++typeI)
 	{
 		for (typeJ=typeI; typeJ<typeIndex_.nItems(); ++typeJ)
 		{
-			// Total RDF
 			factor = typeIndex_[typeI]->fraction() * typeIndex_[typeJ]->fraction() * (typeI == typeJ ? 1.0 : 2.0);
+
+			// Total RDF
 			totalRDF_.addY(partialRDFMatrix_.ref(typeI,typeJ).normalisedData().arrayY(), factor);
 			
 			// F(Q)
-			totalFQ_.addY(partialSQMatrix_.ref(typeI,typeJ).arrayY(), factor);
+			// -- Check for no bragg calculation data
+			if (braggSQMatrix_.ref(typeI,typeJ).nPoints() == 0) braggMax = -1.0;
+			else braggMax = braggSQMatrix_.ref(typeI,typeJ).xMax();
+			for (int n=0; n<totalFQ_.nPoints(); ++n)
+			{
+				if (totalFQ_.x(n) <= braggMax) totalFQ_.addY(n, braggSQMatrix_.ref(typeI,typeJ).y(n) * factor);
+				else totalFQ_.addY(n, partialSQMatrix_.ref(typeI,typeJ).y(n) * factor);
+			}
 		}
 	}
 	timer.stop();
@@ -364,8 +371,15 @@ void DUQ::saveSQ(const char* baseName)
 			Data2D& sq = partialSQMatrix_.ref(typeI,typeJ);
 			Data2D& bound = boundSQMatrix_.ref(typeI,typeJ);
 			Data2D& unbound = unboundSQMatrix_.ref(typeI,typeJ);
-			parser.writeLineF("# %-14s  %-16s  %-16s  %-16s\n", "Q, 1/Angstroms", "S(Q)", "bound(Q)", "unbound(Q)"); 
-			for (n = 0; n<sq.nPoints(); ++n) parser.writeLineF("%16.10e  %16.10e  %16.10e  %16.10e\n", sq.x(n), sq.y(n), bound.y(n), unbound.y(n));
+			Data2D& bragg = braggSQMatrix_.ref(typeI,typeJ);
+			parser.writeLineF("# Unweighted partial S(Q) for types %s and %s calculated on TODO\n", typeIndex_[typeI]->name(), typeIndex_[typeJ]->name());
+			parser.writeLine("# S(Q) values listed below include bound and unbound contributions, but not Bragg scattering\n");
+			parser.writeLineF("# %-14s  %-16s  %-16s  %-16s  %-16s\n", "Q, 1/Angstroms", "S(Q)", "bound(Q)", "unbound(Q)", "bragg(Q)");
+			for (n = 0; n<sq.nPoints(); ++n)
+			{
+				if (n <= bragg.nPoints()) parser.writeLineF("%16.10e  %16.10e  %16.10e  %16.10e  %16.10e\n", sq.x(n), sq.y(n), bound.y(n), unbound.y(n), bragg.y(n));
+				else parser.writeLineF("%16.10e  %16.10e  %16.10e  %16.10e\n", sq.x(n), sq.y(n), bound.y(n), unbound.y(n));
+			}
 			parser.closeFiles();
 		}
 	}

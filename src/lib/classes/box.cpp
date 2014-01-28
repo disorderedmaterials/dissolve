@@ -118,9 +118,9 @@ void Box::setup(double volume)
 	// Reciprocal cell vectors are perpendicular to normal cell axes.
 	// Calculate from cross products of normal cell vectors
 	reciprocalAxes_.setColumn(0, axes_.columnAsVec3(1) * axes_.columnAsVec3(2));
-	reciprocalAxes_.setColumn(1, axes_.columnAsVec3(0) * axes_.columnAsVec3(2));
+	reciprocalAxes_.setColumn(1, axes_.columnAsVec3(2) * axes_.columnAsVec3(0));
 	reciprocalAxes_.setColumn(2, axes_.columnAsVec3(0) * axes_.columnAsVec3(1));
-	reciprocalVolume_ = TWOPI / fabs( axes_[0]*reciprocalAxes_[0] + axes_[4]*reciprocalAxes_[4] + axes_[8]*reciprocalAxes_[8]);
+	reciprocalVolume_ = TWOPI / volume_;
 	reciprocalAxes_.columnMultiply(0, reciprocalVolume_);
 	reciprocalAxes_.columnMultiply(1, reciprocalVolume_);
 	reciprocalAxes_.columnMultiply(2, reciprocalVolume_);;

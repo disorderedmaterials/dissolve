@@ -197,6 +197,8 @@ class Keywords
 		BraggMaximumQKeyword,		/**> 'BraggMaximumQ' - Sets the maximum Q value for Bragg calculation */
 		BroadeningKeyword,		/**> 'Broadening' - Specifies the Q-independent and Q-dependent (in that order) Gaussian broadening function FWHM to apply when transforming simulated RDF data to Q-space */
 		EndSetupKeyword,		/**> 'EndSetup' - Signals the end of the Setup block */
+		QDeltaKeyword,			/**> 'QDelta' - Q delta to use in S(Q) calculation */
+		QMaxKeyword,			/**> 'QMax' - Maximum Q up to which S(Q) calculation will be performed */
 		RDFBinWidthKeyword,		/**> 'RDFBinWidth' - Specified bin width for all RDF generation */
 		RDFMethodKeyword,		/**> 'RDFMethod' - Chooses the RDF calculation method to use */
 		RDFRangeKeyword,		/**> 'RDFRange' - Requested extent for RDF (and subsequent S(Q)) calculation */

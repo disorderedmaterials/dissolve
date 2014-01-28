@@ -26,7 +26,7 @@
 #include "templates/array.h"
 
 // Forward Declarations
-/* none */
+class BraggPeak;
 
 /*!
  * \brief K-Vector
@@ -35,13 +35,15 @@ class KVector
 {
 	public:
 	// Constructor
-	KVector(int h = 0, int k = 0, int l = 0, double magnitude = 0.0, int nAtomTypes = 0);
+	KVector(int h = 0, int k = 0, int l = 0, BraggPeak* braggPeak_ = 0, int nAtomTypes = 0);
 	// Destructor
 	~KVector();
 	// Copy constructor
 	KVector(const KVector& source);
 	// Operator=
 	void operator=(const KVector& source);
+	// List pointers
+	KVector* prev, *next;
 
 
 	/*!
@@ -50,10 +52,8 @@ class KVector
 	private:
 	// Integer hkl indices of vector
 	Vec3<int> hkl_;
-	// Real magnitude of k-vector
-	double magnitude_;
-	// Squared integer magnitude of k-vector
-	int squaredIntegerMagnitude_;
+	// Associated BraggPeak
+	BraggPeak* braggPeak_;
 	// Contributions to this kvector from individual atom types
 	Array<double> cosTerms_, sinTerms_;
 
@@ -66,20 +66,16 @@ class KVector
 	const int k() const;
 	// Return l index
 	const int l() const;
-	// Return magnitude
-	const double magnitude() const;
-	// Return index (squaredIntegerMagnitude_)
-	const int index() const;
+	// Return associated BraggPeak
+	const BraggPeak* braggPeak() const;
 	// Zero cos/sin term arrays
 	void zeroCosSinTerms();
 	// Add value to cosTerm index specified
 	void addCosTerm(int atomTypeIndex, double value);
 	// Add value to sinTerm index specified
 	void addSinTerm(int atomTypeIndex, double value);
-	// Return cosTerm array
-	Array<double>& cosTerms();
-	// Return sinTerm array
-	Array<double>& sinTerms();
+	// Calculate intensities and sum into associated BraggPeak
+	void calculateIntensities(int nAtoms);
 };
 
 #endif

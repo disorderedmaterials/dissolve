@@ -88,8 +88,8 @@ void Data2D::clear()
 void Data2D::resize(int size)
 {
 	clear();
-	x_.createEmpty(size);
-	y_.createEmpty(size);
+	x_.initialise(size);
+	y_.initialise(size);
 }
 
 /*!
@@ -378,7 +378,7 @@ void Data2D::operator+=(const Data2D& source)
 	if (x_.nItems() == 0)
 	{
 		x_ = source.x_;
-		y_.createEmpty(x_.nItems(), 0.0);
+		y_.initialise(x_.nItems(), 0.0);
 	}
 
 	// Check array sizes
@@ -453,7 +453,7 @@ void Data2D::operator-=(const Data2D& source)
 	if (x_.nItems() == 0)
 	{
 		x_ = source.x_;
-		y_.createEmpty(x_.nItems(), 0.0);
+		y_.initialise(x_.nItems(), 0.0);
 	}
 
 	// Check array sizes
@@ -810,7 +810,7 @@ bool Data2D::transformRDF(double atomicDensity, Data2D::WindowFunction wf)
 /*!
  * \brief Transform g(r) to S(Q), applying instrumental broadening functions
  */
-bool Data2D::transformBroadenedRDF(double atomicDensity, double qStep, double fwhm, double fwhmq, Data2D::WindowFunction wf)
+bool Data2D::transformBroadenedRDF(double atomicDensity, double qStep, double qMax, double fwhm, double fwhmq, Data2D::WindowFunction wf)
 {
 	// Okay to continue with transform?
 	if (!checkBeforeTransform()) return false;
@@ -820,7 +820,7 @@ bool Data2D::transformBroadenedRDF(double atomicDensity, double qStep, double fw
 	double lambda = x_.last() - x_.first() + 2.0*x_.first();
 	double k = TWOPI / lambda;
 	double deltaX = x_[1] - x_[0];
-	double windowPos, broaden, sigma, sigmaq, sigr, Q, factor, qMax, fq;
+	double windowPos, broaden, sigma, sigmaq, sigr, Q, factor, fq;
 	int n, m, nR = x_.nItems();
 	msg.printVerbose("In Data2D::transformBroadenedRDF(), period of function is %f, real deltaX is %f, and wavenumber is %f\n", lambda, deltaX, k);
 
@@ -830,7 +830,6 @@ bool Data2D::transformBroadenedRDF(double atomicDensity, double qStep, double fw
 	// Create working arrays
 	Array<double> real;
 	Q = qStep*0.1;
-	qMax = (nR-0.5)*k;
 
 	// Perform Fourier sine transform, including instrument broadening of RDF
 	while (Q <= qMax)
@@ -1069,14 +1068,14 @@ void Data2D::interpolate(bool constrained)
 	int i, nPoints = x_.nItems();
 	
 	// Calculate interval array 'h'
-	splineH_.createEmpty(nPoints);
+	splineH_.initialise(nPoints);
 	for (i=0; i<nPoints-1; ++i) splineH_[i] = x_[i+1] - x_[i];
 
 	// Initialise parameter arrays and working array
-	splineA_.createEmpty(nPoints-1);
-	splineB_.createEmpty(nPoints-1);
-	splineC_.createEmpty(nPoints-1);
-	splineD_.createEmpty(nPoints-1);
+	splineA_.initialise(nPoints-1);
+	splineB_.initialise(nPoints-1);
+	splineC_.initialise(nPoints-1);
+	splineD_.initialise(nPoints-1);
 
 	constrainedSpline_ = constrained;
 	

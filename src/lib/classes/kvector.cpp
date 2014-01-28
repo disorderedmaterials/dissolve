@@ -20,20 +20,23 @@
 */
 
 #include "classes/kvector.h"
+#include "braggpeak.h"
 
 /*!
  * \brief Constructor
  * \details Constructor for KVector. 
  */
-KVector::KVector(int h, int k, int l, double magnitude, int nAtomTypes)
+KVector::KVector(int h, int k, int l, BraggPeak* bp, int nAtomTypes)
 {
 	hkl_.set(h, k, l);
-	magnitude_ = magnitude;
-	squaredIntegerMagnitude_ = h*h + k*k + l*l;
+	braggPeak_ = bp;
 
 	// Create atomtype contribution arrays
-	cosTerms_.createEmpty(nAtomTypes);
-	sinTerms_.createEmpty(nAtomTypes);
+	cosTerms_.initialise(nAtomTypes);
+	sinTerms_.initialise(nAtomTypes);
+
+	prev = NULL;
+	next = NULL;
 }
 
 /*!
@@ -58,8 +61,7 @@ KVector::KVector(const KVector& source)
 void KVector::operator=(const KVector& source)
 {
 	hkl_ = source.hkl_;
-	magnitude_ = source.magnitude_;
-	squaredIntegerMagnitude_ = source.squaredIntegerMagnitude_;
+	braggPeak_ = source.braggPeak_;
 	cosTerms_ = source.cosTerms_;
 	sinTerms_ = source.sinTerms_;
 }
@@ -101,20 +103,11 @@ const int KVector::l() const
 }
 
 /*!
- * \brief Return magnitude
+ * \brief Return associated BraggPeak
  */
-const double KVector::magnitude() const
+const BraggPeak* KVector::braggPeak() const
 {
-	return magnitude_;
-}
-
-/*!
- * \brief Return index (squaredIntegerMagnitude_)
- * \details Return the squaredIntegerMagnitude_ of the k-vector, so that they can be stored usefully in an OrderedPointerList.
- */
-const int KVector::index() const
-{
-	return squaredIntegerMagnitude_;
+	return braggPeak_;
 }
 
 /*!
@@ -157,17 +150,31 @@ void KVector::addSinTerm(int atomTypeIndex, double value)
 }
 
 /*!
- * \brief Return cosTerm array
+ * \brief Calculate intensities from stored cos and sin term arrays
+ * \details Calculate the intensities, per atom type pair, from the accumulated cos and sin arrays, and sum the results into the associated BraggPeak.
  */
-Array<double>& KVector::cosTerms()
+void KVector::calculateIntensities(int nAtoms)
 {
-	return cosTerms_;
+#ifdef CHECKS
+	if (braggPeak_ == NULL)
+	{
+		msg.print("NULL_POINTER - NULL braggPeak_ found in KVector::calculateIntensities().\n");
+		return;
+	}
+#endif
+	// Calculate final intensities from stored cos/sin terms
+	// Take account of the half-sphere, doubling intensities of all k-vectors not on h == 0
+	int i, j, nTypes = cosTerms_.nItems();
+	double intensity, norm = (hkl_.x == 0 ? 1.0 : 2.0) / double(nAtoms);
+	for (i = 0; i<nTypes; ++i)
+	{
+		for (j = i; j < nTypes; ++j)
+		{
+			intensity = (cosTerms_[i]*cosTerms_[j] + sinTerms_[i]*sinTerms_[j]) * norm;
+			braggPeak_->addIntensity(i, j, intensity);
+// 			msg.print("%f   ", (i == j ? intensity : 2.0*intensity));
+		}
+	}
+// 	msg.print("\n");
 }
 
-/*!
- * \brief Return sinTerm array
- */
-Array<double>& KVector::sinTerms()
-{
-	return sinTerms_;
-}

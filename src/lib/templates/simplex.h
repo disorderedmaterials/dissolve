@@ -265,8 +265,8 @@ template<class T> class Simplex
 		initVariation_ = fracVariation;
 		parameterOffset_ = paramOffset;
 
-		vertices_.createEmpty(nVertices_);
-		costs_.createEmpty(nVertices_);
+		vertices_.initialise(nVertices_);
+		costs_.initialise(nVertices_);
 		
 		// Set initial vertex and starting best cost
 		vertices_[0] = initVertex;

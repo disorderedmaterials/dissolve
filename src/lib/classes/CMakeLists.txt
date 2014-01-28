@@ -8,6 +8,7 @@ box_monoclinic.cpp
 box_nonperiodic.cpp 
 box_orthorhombic.cpp 
 box_triclinic.cpp 
+braggpeak.cpp
 cell.cpp
 cellneighbour.cpp
 changedata.cpp
@@ -39,6 +40,7 @@ atom.h
 atomtype.h
 atomtypeindex.h
 box.h
+braggpeak.h
 cell.h
 cellneighbour.h
 changedata.h

@@ -98,8 +98,12 @@ class Sample : public ListItem<Sample>
 	double boundCoherentAverageSquared_, boundCoherentSquaredAverage_;
 	// Partial S(Q) matrix
 	Array2D<Data2D> partialSQMatrix_;
+	// Bragg S(Q) matrix
+	Array2D<Data2D> braggSQMatrix_;
 	// Partial weights matrix
 	Array2D<double> weightsMatrix_;
+	// Self scattering array
+	Array<double> selfScattering_;
 	// Total neutron-weighted g(r)
 	Data2D totalGR_;
 	// Total neutron-weighted F(Q)
@@ -115,9 +119,11 @@ class Sample : public ListItem<Sample>
 	// Setup pair correlations
 	bool setupPairCorrelations(double volume, double range, double binWidth, Data2D& boxNormalisation, double rho);
 	// Calculate weighted pair correlations
-	bool calculatePairCorrelations(Array2D<Histogram>& masterRDFs, Array2D<Data2D>& masterSQ, Array2D<Data2D>& braggSQ);
+	bool calculatePairCorrelations(Array2D< Histogram >& masterRDFs, Array2D< Data2D >& masterPartialSQ, Array2D< Data2D >& masterBraggSQ);
 	// Return reference to array of partials
 	Array2D<Data2D>& partialSQMatrix();
+	// Return reference to array of Bragg partials
+	Array2D<Data2D>& braggSQMatrix();
 	// Return reference to weights matrix
 	Array2D<double>& weightsMatrix();
 	// Return total F(Q)

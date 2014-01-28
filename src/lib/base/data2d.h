@@ -163,7 +163,7 @@ class Data2D : public ListItem<Data2D>
 	// Transform g(r) to S(Q)
 	bool transformRDF(double atomicDensity, Data2D::WindowFunction wf = Data2D::NoWindow);
 	// Transform g(r) to S(Q), applying instrumental broadening functions
-	bool transformBroadenedRDF(double atomicDensity, double qStep, double fwhm, double fwhmq, Data2D::WindowFunction wf = Data2D::NoWindow);
+	bool transformBroadenedRDF(double atomicDensity, double qStep, double qMax, double fwhm, double fwhmq, Data2D::WindowFunction wf = Data2D::NoWindow);
 	// Transform S(Q) to g(r)
 	bool transformSQ(double atomicDensity, Data2D::WindowFunction wf = Data2D::NoWindow);
 	// Calculate S(Q) correlation function

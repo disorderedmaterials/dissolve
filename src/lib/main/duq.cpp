@@ -63,6 +63,8 @@ DUQ::DUQ()
 	rdfRange_ = -1.0;
 	rdfSmoothing_ = 0;
 	requestedRDFRange_ = -1.0;
+	qDelta_ = 0.05;
+	qMax_ = 50.0;
 	rmseDeltaQ_ = 0.05;
 	seed_ = -1;
 	temperature_ = 300.0;
