@@ -265,10 +265,10 @@ int Keywords::pairPotentialsBlockNArguments(Keywords::PairPotentialsKeyword id)
 */
 
 // Setup Block Keywords
-const char *SetupBlockKeywords[] = { "BoxNormalisationFile", "BoxNormalisationPoints", "Bragg", "BraggMaximumQ", "Broadening", "EndSetup", "RDFBinWidth", "RDFMethod", "RDFRange", "RDFSmoothing", "RMSEDeltaQ", "Seed", "SimplexNCycles", "SimplexNMoves", "SimplexTemperature", "SimplexTolerance", "Temperature", "WindowFunction" };
+const char *SetupBlockKeywords[] = { "BoxNormalisationFile", "BoxNormalisationPoints", "Bragg", "BraggMaximumQ", "Broadening", "EndSetup", "QDelta", "QMax", "RDFBinWidth", "RDFMethod", "RDFRange", "RDFSmoothing", "RMSEDeltaQ", "Seed", "SimplexNCycles", "SimplexNMoves", "SimplexTemperature", "SimplexTolerance", "Temperature", "WindowFunction" };
 
 // Setup Block NArguments
-int SetupBlockNArguments[] = { 1, 1, 1, 1, 2, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+int SetupBlockNArguments[] = { 1, 1, 1, 1, 2, 0, 1, 11, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
 
 /*!
  * \brief Convert text string to SetupKeyword

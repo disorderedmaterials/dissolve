@@ -668,6 +668,12 @@ bool DUQ::loadInput(const char* fileName)
 							msg.print("Found end of %s block.\n", Keywords::inputBlock(block));
 							blockDone = true;
 							break;
+						case (Keywords::QDeltaKeyword):
+							qDelta_ = parser.argd(1);
+							break;
+						case (Keywords::QMaxKeyword):
+							qMax_ = parser.argd(1);
+							break;
 						case (Keywords::RDFBinWidthKeyword):
 							rdfBinWidth_ = parser.argd(1);
 							break;
@@ -969,6 +975,8 @@ bool DUQ::saveInput(const char* fileName)
 	parser.writeLineF("  %s  %s\n", Keywords::setupKeyword(Keywords::BraggKeyword), braggCalculationOn_ ? "on" : "off");
 	parser.writeLineF("  %s  %f\n", Keywords::setupKeyword(Keywords::BraggMaximumQKeyword), braggMaximumQ_);
 	parser.writeLineF("  %s  %f  %f\n", Keywords::setupKeyword(Keywords::BroadeningKeyword), qDependentFWHM_, qIndependentFWHM_);
+	parser.writeLineF("  %s  %f\n", Keywords::setupKeyword(Keywords::QDeltaKeyword), qDelta_);
+	parser.writeLineF("  %s  %f\n", Keywords::setupKeyword(Keywords::QMaxKeyword), qMax_);
 	parser.writeLineF("  %s  %f\n", Keywords::setupKeyword(Keywords::RDFBinWidthKeyword), rdfBinWidth_);
 	parser.writeLineF("  %s  %s\n", Keywords::setupKeyword(Keywords::RDFMethodKeyword), rdfMethod(rdfMethod_));
 	parser.writeLineF("  %s  %f\n", Keywords::setupKeyword(Keywords::RDFRangeKeyword), rdfRange_);

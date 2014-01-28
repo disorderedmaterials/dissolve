@@ -41,7 +41,7 @@ template <class A> class Array : public ListItem< Array<A> >
 		array_ = NULL;
 		size_ = 0;
 		nItems_ = 0;
-		if (initialSize > 0) createEmpty(initialSize);
+		if (initialSize > 0) initialise(initialSize);
 	}
 	// Destructor
 	~Array()
@@ -135,7 +135,7 @@ template <class A> class Array : public ListItem< Array<A> >
 		nItems_ = 0;
 	}
 	// Create empty array of specified size
-	void createEmpty(int size, double value = 0.0)
+	void initialise(int size, double value = 0.0)
 	{
 		// First, resize array...
 		resize(size);
@@ -396,7 +396,7 @@ template <class A> class Array2D
 	{
 		half_ = half;
 		if ((nrows > 0) && (ncolumns > 0)) resize(nrows, ncolumns);
-		else printf("BAD_USAGE - Zero or negative row/column size(s) given to Array2D::initialise() (r=%i, c=%i)\n", nrows, ncolumns);
+// 		else printf("BAD_USAGE - Zero or negative row/column size(s) given to Array2D::initialise() (r=%i, c=%i)\n", nrows, ncolumns);
 	}
 	// Return specified element as reference
 	A& ref(int row, int column)

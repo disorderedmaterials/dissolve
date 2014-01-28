@@ -100,10 +100,13 @@ bool DUQ::printSetup()
 {
 	msg.print("\n");
 	msg.print("Simulation Setup:\n");
+	msg.print("%-40s = %s\n", "Bragg calculation", braggCalculationOn_ ? "On" : "Off");
+	msg.print("%-40s = %9.3e (%s)\n", "Bragg calculation Q(max)", braggMaximumQ_, "1/Angstroms");
+	msg.print("%-40s = %9.3e (%s)\n", "Delta(Q) to use in S(Q) calculation", qDelta_, "1/Angstroms");
+	msg.print("%-40s = %9.3e (%s)\n", "Q(max) to use in S(Q) calculation", qMax_, "1/Angstroms");
 	msg.print("%-40s = %9.3e\n", "Q-Dependent Broadening FWHM", qDependentFWHM_);
 	msg.print("%-40s = %9.3e\n", "Q-Independent Broadening FWHM", qIndependentFWHM_);
 	msg.print("%-40s = %9i\n", "Random Seed", seed_);
-	msg.print("%-40s = %9.3e (%s)\n", "Simulation Temperature", temperature_, "K");
 	msg.print("%-40s = %9.3e (%s)\n", "RDF Bin Width", rdfBinWidth_, "Angstroms");
 	msg.print("%-40s = %9.3e (%s)\n", "RDF Range", rdfRange_, "Angstroms");
 	msg.print("%-40s = %s\n", "RDF Calculation Method", rdfMethod(rdfMethod_));
@@ -111,6 +114,7 @@ bool DUQ::printSetup()
 	msg.print("%-40s = %9i\n", "Simplex NMoves", simplexNMoves_);
 	msg.print("%-40s = %9.3e (%s)\n", "Simplex Temperature", simplexTemperature_, "barns/sr/atom");
 	msg.print("%-40s = %9.3e (%s)\n", "Simplex Tolerance", simplexTolerance_, "barns/sr/atom");
+	msg.print("%-40s = %9.3e (%s)\n", "Simulation Temperature", temperature_, "K");
 
 	return true;
 }

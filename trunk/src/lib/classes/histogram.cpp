@@ -119,7 +119,7 @@ void Histogram::initialise(double minValue, double maxValue, double binWidth)
 
 	// Create arrays
 	histogram_ = new int[nBins_];
-	normalisation_.createEmpty(nBins_);
+	normalisation_.initialise(nBins_);
 	normalisation_ = 1.0;
 	normalisationType_ = Histogram::NoNormalisation;
 	normalisedData_.initialise(nBins_);

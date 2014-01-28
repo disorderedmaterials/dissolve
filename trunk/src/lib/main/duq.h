@@ -25,6 +25,7 @@
 #include "main/command.h"
 #include "base/ptable.h"
 #include "classes/configuration.h"
+#include "classes/braggpeak.h"
 #include "classes/kvector.h"
 #include "classes/pairpotential.h"
 #include "classes/potentialmap.h"
@@ -320,10 +321,13 @@ class DUQ
 	double totalRMSE_;
 	// Maximal extent of hkl for Bragg calculation
 	Vec3<int> braggMaximumHKL_;
-	// Bragg S(Q) k-vector list
-	OrderedList<KVector> braggKVectors_;
+	// Bragg calculation k-vector list
+	List<KVector> braggKVectors_;
+	// Bragg calculation peak list
+	OrderedList<BraggPeak> braggPeaks_;
 	// Bragg S(Q) working arrays
-// 	Array2D<double> 
+        Array2D<double> braggAtomVectorXCos_, braggAtomVectorYCos_, braggAtomVectorZCos_;
+        Array2D<double> braggAtomVectorXSin_, braggAtomVectorYSin_, braggAtomVectorZSin_;
 	// Working S(Q) matrices
 	Array2D<Data2D> workingSQMatrixA_, workingSQMatrixB_;
 
@@ -378,6 +382,10 @@ class DUQ
 	int rdfSmoothing_;
 	// Requested RDF extent
 	double requestedRDFRange_;
+	// Q delta to use in generated S(Q)
+	double qDelta_;
+	// Maximum Q to calculate S(Q) to
+	double qMax_;
 	// Bin width to use when calculating RMSE between Sample F(Q) and reference data
 	double rmseDeltaQ_;
 	// Random seed
