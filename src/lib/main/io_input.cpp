@@ -657,6 +657,9 @@ bool DUQ::loadInput(const char* fileName)
 						case (Keywords::BraggKeyword):
 							braggCalculationOn_ = parser.argb(1);
 							break;
+						case (Keywords::BraggBroadeningKeyword):
+							braggBroadening_ = parser.argd(1);
+							break;
 						case (Keywords::BraggMaximumQKeyword):
 							braggMaximumQ_ = parser.argd(1);
 							break;
@@ -973,6 +976,7 @@ bool DUQ::saveInput(const char* fileName)
 	//parser.writeLineF("  %s  '%s'\n", Keywords::setupKeyword(Keywords::BoxNormalisationFileKeyword), boxNormalisationFile_);
 	parser.writeLineF("  %s  %i\n", Keywords::setupKeyword(Keywords::BoxNormalisationPointsKeyword), boxNormalisationPoints_);
 	parser.writeLineF("  %s  %s\n", Keywords::setupKeyword(Keywords::BraggKeyword), braggCalculationOn_ ? "on" : "off");
+	parser.writeLineF("  %s  %f\n", Keywords::setupKeyword(Keywords::BraggBroadeningKeyword), braggBroadening_);
 	parser.writeLineF("  %s  %f\n", Keywords::setupKeyword(Keywords::BraggMaximumQKeyword), braggMaximumQ_);
 	parser.writeLineF("  %s  %f  %f\n", Keywords::setupKeyword(Keywords::BroadeningKeyword), qDependentFWHM_, qIndependentFWHM_);
 	parser.writeLineF("  %s  %f\n", Keywords::setupKeyword(Keywords::QDeltaKeyword), qDelta_);

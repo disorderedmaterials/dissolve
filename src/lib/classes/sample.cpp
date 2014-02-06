@@ -376,10 +376,10 @@ bool Sample::setupPairCorrelations(double volume, double range, double binWidth,
 	// Construct S(Q) and weights matrices based on the typeIndex_ population
 	int typeI, typeJ;
 	msg.print("--> Creating S(Q) matrices (%ix%i)...\n", typeIndex_.nItems(), typeIndex_.nItems());
-	partialSQMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
+	pairSQMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
 	braggSQMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
 	weightsMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
-	selfScattering_.initialise(typeIndex_.nItems());
+	scatteringMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
 
 	// Set names of elements in the S(Q) arrays, and calculate weights and self-scattering values
 	Dnchar title;
@@ -391,7 +391,7 @@ bool Sample::setupPairCorrelations(double volume, double range, double binWidth,
 		{
 			// Partial S(Q) and Bragg S(Q)
 			title.sprintf("%s[%i]-%s[%i] (%s)", at1->name(), at1->isotope()->A(), at2->name(), at2->isotope()->A(), niceSampleName.get());
-			partialSQMatrix_.ref(typeI,typeJ).setName(title.get());
+			pairSQMatrix_.ref(typeI,typeJ).setName(title.get());
 			braggSQMatrix_.ref(typeI,typeJ).setName(title.get());
 			
 			// Store weighting factor for this partial
@@ -399,11 +399,8 @@ bool Sample::setupPairCorrelations(double volume, double range, double binWidth,
 			cc = at1->fraction() * at2->fraction();
 			bb = at1->isotope()->boundCoherent() * at2->isotope()->boundCoherent() * 0.01;
 			weightsMatrix_.ref(typeI,typeJ) = (typeI == typeJ ? 1.0 : 2.0) * cc * bb;
+			scatteringMatrix_.ref(typeI,typeJ) = bb;
 		}
-
-		// Calculate self-scattering level for this atomtype
-		// Note: Divisor of 100.0 converts from units of fm (1e-11 m) to barn (1e-12 m) squared
-		selfScattering_[typeI] = at1->isotope()->boundCoherent() * at1->isotope()->boundCoherent() * at1->fraction() * 0.01;
 	}
 
 	// Total g(r)
@@ -423,8 +420,8 @@ bool Sample::setupPairCorrelations(double volume, double range, double binWidth,
 	if (referenceFQ_.nPoints() > 0)
 	{
 		referenceDataFT_ = referenceFQ_;
-		referenceDataFT_.rebin();
-		referenceDataFT_.transformSQ(rho);
+// 		referenceDataFT_.rebin();
+		referenceDataFT_.transformLorch(rho, 0.025, 50.0, 0.5, 0.08, true);
 	}
 
 	return true;
@@ -434,7 +431,7 @@ bool Sample::setupPairCorrelations(double volume, double range, double binWidth,
  * \brief Calculate weighted pair correlations
  * \details Calculate the neutron-weighted pair correlations, including S(Q), F(Q), and total RDF, from the supplied unweighted data.
  */
-bool Sample::calculatePairCorrelations(Array2D<Histogram>& masterRDFs, Array2D<Data2D>& masterPartialSQ, Array2D<Data2D>& masterBraggSQ)
+bool Sample::calculatePairCorrelations(Array2D<Histogram>& masterRDFs, Array2D<Data2D>& masterPairSQ, Array2D<Data2D>& masterBraggSQ, Array2D<Data2D>& masterPartialSQ)
 {
 	AtomTypeData* at1 = typeIndex_.first(), *at2;
 	double factor, sumFactor = 0.0, braggMax;
@@ -446,8 +443,8 @@ bool Sample::calculatePairCorrelations(Array2D<Histogram>& masterRDFs, Array2D<D
 	totalGR_.arrayY() = 0.0;
 	if (totalFQ_.nPoints() == 0)
 	{
-		totalFQ_.arrayX() = masterPartialSQ.ref(0,0).arrayX();
-		totalFQ_.arrayY() = masterPartialSQ.ref(0,0).arrayY();
+		totalFQ_.arrayX() = masterPairSQ.ref(0,0).arrayX();
+		totalFQ_.arrayY() = masterPairSQ.ref(0,0).arrayY();
 	}
 	totalFQ_.arrayY() = 0.0;
 	
@@ -469,8 +466,9 @@ bool Sample::calculatePairCorrelations(Array2D<Histogram>& masterRDFs, Array2D<D
 		{
 			// Grab master index of AtomType at2 and references to partial and bragg S(Q) matrix items
 			masterJ = at2->masterIndex();
-			Data2D& partialSQ = partialSQMatrix_.ref(typeI, typeJ);
+			Data2D& pairSQ = pairSQMatrix_.ref(typeI, typeJ);
 			Data2D& braggSQ = braggSQMatrix_.ref(typeI, typeJ);
+			Data2D& partialSQ = partialSQMatrix().ref(typeI, typeJ);
 #ifdef CHECKS
 			if (masterJ == -1)
 			{
@@ -479,28 +477,22 @@ bool Sample::calculatePairCorrelations(Array2D<Histogram>& masterRDFs, Array2D<D
 			}
 #endif
 			// Copy unweighted S(Q) and Bragg data
-			partialSQ  = masterPartialSQ.ref(masterI, masterJ);
+			pairSQ  = masterPairSQ.ref(masterI, masterJ);
 			braggSQ = masterBraggSQ.ref(masterI, masterJ);
+			partialSQ = masterPartialSQ.ref(masterI, masterJ);
 
-			// Weight S(Q) and Bragg S(Q), subtracting self-scattering from the latter if (typeI == typeJ)
+			// Weight S(Q), Bragg S(Q) and full partial S(Q)
 			factor = weightsMatrix_.ref(typeI,typeJ);
-			partialSQ.arrayY() *= factor;
+			pairSQ.arrayY() *= factor;
 			braggSQ.arrayY() *= factor;
-			if (typeI == typeJ) braggSQ.arrayY() -= selfScattering_[typeI];
+			partialSQ.arrayY() *= factor;
 
 			// Sum G(r) into totals
 			totalGR_.addY(masterRDFs.ref(masterI,masterJ).normalisedData().arrayY(), factor);
 			sumFactor += factor;
 
-			// Sum partialSQMatrix_ and braggSQMatrix_ into totalFQ_
-			// -- Check for no bragg calculation data
-			if (braggSQ.nPoints() == 0) braggMax = -1.0;
-			else braggMax = braggSQ.xMax();
-			for (int n=0; n<totalFQ_.nPoints(); ++n)
-			{
-				if (totalFQ_.x(n) <= braggMax) totalFQ_.addY(n, braggSQ.y(n));
-				else totalFQ_.addY(n, partialSQ.y(n));
-			}
+			// Sum partialSQ into totalFQ_
+			totalFQ_.addY(partialSQ.arrayY(), 1.0);
 		}
 	}
 
@@ -528,7 +520,7 @@ bool Sample::calculatePairCorrelations(Array2D<Histogram>& masterRDFs, Array2D<D
  */
 Array2D<Data2D>& Sample::partialSQMatrix()
 {
-	return partialSQMatrix_;
+	return pairSQMatrix_;
 }
 
 /*!
@@ -595,7 +587,7 @@ void Sample::saveSQ(const char* baseName)
 		for (int m=0; m<typeIndex_.nItems(); ++m)
 		{
 			fileName.sprintf("%s-%s-%s%i-%s%i.sq", baseName, niceSampleName.get(), typeIndex_[n]->name(), typeIndex_[n]->isotope()->A(), typeIndex_[m]->name(), typeIndex_[m]->isotope()->A());
-			partialSQMatrix_.ref(n,m).save(fileName);
+			pairSQMatrix_.ref(n,m).save(fileName);
 		}
 	}
 

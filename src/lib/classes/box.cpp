@@ -120,12 +120,12 @@ void Box::setup(double volume)
 	reciprocalAxes_.setColumn(0, axes_.columnAsVec3(1) * axes_.columnAsVec3(2));
 	reciprocalAxes_.setColumn(1, axes_.columnAsVec3(2) * axes_.columnAsVec3(0));
 	reciprocalAxes_.setColumn(2, axes_.columnAsVec3(0) * axes_.columnAsVec3(1));
-	reciprocalVolume_ = TWOPI / volume_;
-	reciprocalAxes_.columnMultiply(0, reciprocalVolume_);
-	reciprocalAxes_.columnMultiply(1, reciprocalVolume_);
-	reciprocalAxes_.columnMultiply(2, reciprocalVolume_);;
+	reciprocalAxes_.columnMultiply(0, TWOPI / volume_);
+	reciprocalAxes_.columnMultiply(1, TWOPI / volume_);
+	reciprocalAxes_.columnMultiply(2, TWOPI / volume_);
+	reciprocalVolume_ = (reciprocalAxes_.columnAsVec3(1) * reciprocalAxes_.columnAsVec3(2)).dp(reciprocalAxes_.columnAsVec3(0));
 
-	msg.print("--> Final box volume is %f cubic Angstroms\n", volume_);
+	msg.print("--> Final box volume is %f cubic Angstroms (reciprocal volume = %f)\n", volume_, reciprocalVolume_);
 }
 
 /*!

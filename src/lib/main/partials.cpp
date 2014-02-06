@@ -85,12 +85,13 @@ bool DUQ::setupPartials()
 	int n, m;
 	msg.print("--> Creating matrices (%ix%i)...\n", typeIndex_.nItems(), typeIndex_.nItems());
 
-	partialRDFMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
+	pairRDFMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
 	boundRDFMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
 	unboundRDFMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
-	partialSQMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
+	pairSQMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
 	boundSQMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
 	braggSQMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
+	partialSQMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
 	unboundSQMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
 	workingSQMatrixA_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
 	workingSQMatrixB_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
@@ -106,28 +107,30 @@ bool DUQ::setupPartials()
 		{
 			// Partial g(r)
 			title.sprintf("%s-%s", at1->name(), at2->name());
-			partialRDFMatrix_.ref(n,m).initialise(0.0, rdfRange_, rdfBinWidth_);
-			partialRDFMatrix_.ref(n,m).normalisedData().setName(title.get());
+			pairRDFMatrix_.ref(n,m).initialise(0.0, rdfRange_, rdfBinWidth_);
+			pairRDFMatrix_.ref(n,m).normalisedData().setName(title.get());
 			boundRDFMatrix_.ref(n,m).initialise(0.0, rdfRange_, rdfBinWidth_);
 			boundRDFMatrix_.ref(n,m).normalisedData().setName(title.get());
 			unboundRDFMatrix_.ref(n,m).initialise(0.0, rdfRange_, rdfBinWidth_);
 			unboundRDFMatrix_.ref(n,m).normalisedData().setName(title.get());
 
 			// -- For normalisation, self-terms must be multiplied by 2.0
-			partialRDFMatrix_.ref(n,m).setRadialNumberDensityNormalisation(configuration_.box()->volume(), at1->population(), at2->population(), at1 == at2 ? 2.0 : 1.0, boxNormalisation_);
+			pairRDFMatrix_.ref(n,m).setRadialNumberDensityNormalisation(configuration_.box()->volume(), at1->population(), at2->population(), at1 == at2 ? 2.0 : 1.0, boxNormalisation_);
 			boundRDFMatrix_.ref(n,m).setRadialNumberDensityNormalisation(configuration_.box()->volume(), at1->population(), at2->population(), at1 == at2 ? 2.0 : 1.0, boxNormalisation_);
 			unboundRDFMatrix_.ref(n,m).setRadialNumberDensityNormalisation(configuration_.box()->volume(), at1->population(), at2->population(), at1 == at2 ? 2.0 : 1.0, boxNormalisation_);
 
 			// Partial S(Q)
-			partialSQMatrix_.ref(n,m).setName(title.get());
+			pairSQMatrix_.ref(n,m).setName(title.get());
 			boundSQMatrix_.ref(n,m).setName(title.get());
 			unboundSQMatrix_.ref(n,m).setName(title.get());
+			partialSQMatrix_.ref(n,m).setName(title.get());
 			braggSQMatrix_.ref(n,m).setName(title.get());
+			braggSQMatrix_.ref(n,m).createEmpty(qDelta_, braggMaximumQ_);
 		}
 	}
 
 	// Total g(r)
-	int nBins = partialRDFMatrix_.ref(0,0).nBins();
+	int nBins = pairRDFMatrix_.ref(0,0).nBins();
 	totalRDF_.initialise(nBins);
 	for (n=0; n<nBins; ++n) totalRDF_.setX(n, (n+0.5)*rdfBinWidth_);
 	totalRDF_.setName("Unweighted");
@@ -147,14 +150,15 @@ void DUQ::resetPairCorrelations()
 	{
 		for (int m=n; m<typeIndex_.nItems(); ++m)
 		{
-			partialRDFMatrix_.ref(n,m).reset();
+			pairRDFMatrix_.ref(n,m).reset();
 			boundRDFMatrix_.ref(n,m).reset();
 			unboundRDFMatrix_.ref(n,m).reset();
-			partialSQMatrix_.ref(n,m).clear();
+			pairSQMatrix_.ref(n,m).clear();
 			boundSQMatrix_.ref(n,m).clear();
 			unboundSQMatrix_.ref(n,m).clear();
 			boundSQMatrix_.ref(n,m).clear();
-			braggSQMatrix_.ref(n,m).clear();
+			partialSQMatrix_.ref(n,m).clear();
+			braggSQMatrix_.ref(n,m).arrayY() = 0.0;
 		}
 	}
 	totalRDF_.arrayY() = 0.0;
@@ -200,30 +204,30 @@ CommandReturnValue DUQ::calculatePairCorrelations(Configuration& cfg)
 		for (typeJ=typeI; typeJ<typeIndex_.nItems(); ++typeJ)
 		{
 			// Sum histogram data from all processes
-			if (!partialRDFMatrix_.ref(typeI,typeJ).allSum()) return CommandFail;
+			if (!pairRDFMatrix_.ref(typeI,typeJ).allSum()) return CommandFail;
 			if (!boundRDFMatrix_.ref(typeI,typeJ).allSum()) return CommandFail;
 
 			// Create unbound histogram from total and bound data
-			unboundRDFMatrix_.ref(typeI, typeJ) = partialRDFMatrix_.ref(typeI,typeJ);
+			unboundRDFMatrix_.ref(typeI, typeJ) = pairRDFMatrix_.ref(typeI,typeJ);
 			unboundRDFMatrix_.ref(typeI, typeJ).addHistogramData(boundRDFMatrix_.ref(typeI,typeJ), -1.0);
 
 			// Finalise (normalise) partials
-			partialRDFMatrix_.ref(typeI,typeJ).finalise();
+			pairRDFMatrix_.ref(typeI,typeJ).finalise();
 			boundRDFMatrix_.ref(typeI,typeJ).finalise();
 			unboundRDFMatrix_.ref(typeI,typeJ).finalise();
 
 			// Smooth partials if requested
 			if (rdfSmoothing_ > 0)
 			{
-				partialRDFMatrix_.ref(typeI,typeJ).normalisedData().smooth(rdfSmoothing_*2+1);
+				pairRDFMatrix_.ref(typeI,typeJ).normalisedData().smooth(rdfSmoothing_*2+1);
 				boundRDFMatrix_.ref(typeI,typeJ).normalisedData().smooth(rdfSmoothing_*2+1);
 				unboundRDFMatrix_.ref(typeI,typeJ).normalisedData().smooth(rdfSmoothing_*2+1);
 			}
 
 			// Copy RDF data ready for Fourier transform
 			// -- Copy RDF data
-			partialSQMatrix_.ref(typeI,typeJ) = partialRDFMatrix_.ref(typeI,typeJ).normalisedData();
-			partialSQMatrix_.ref(typeI,typeJ).arrayY() -= 1.0;
+			pairSQMatrix_.ref(typeI,typeJ) = pairRDFMatrix_.ref(typeI,typeJ).normalisedData();
+			pairSQMatrix_.ref(typeI,typeJ).arrayY() -= 1.0;
 			boundSQMatrix_.ref(typeI,typeJ) = boundRDFMatrix_.ref(typeI,typeJ).normalisedData();
 // 			boundSQMatrix_.ref(typeI,typeJ).arrayY() -= 1.0;
 			unboundSQMatrix_.ref(typeI,typeJ) = unboundRDFMatrix_.ref(typeI,typeJ).normalisedData();
@@ -241,7 +245,7 @@ CommandReturnValue DUQ::calculatePairCorrelations(Configuration& cfg)
 	{
 		for (typeJ=typeI; typeJ<typeIndex_.nItems(); ++typeJ)
 		{
-			if (!partialSQMatrix_.ref(typeI,typeJ).transformBroadenedRDF(rho, qDelta_, qMax_, qDependentFWHM_, qIndependentFWHM_, windowFunction_)) return CommandFail;
+			if (!pairSQMatrix_.ref(typeI,typeJ).transformBroadenedRDF(rho, qDelta_, qMax_, qDependentFWHM_, qIndependentFWHM_, windowFunction_)) return CommandFail;
 			if (!boundSQMatrix_.ref(typeI,typeJ).transformBroadenedRDF(rho, qDelta_, qMax_, qDependentFWHM_, qIndependentFWHM_, windowFunction_)) return CommandFail;
 			if (!unboundSQMatrix_.ref(typeI,typeJ).transformBroadenedRDF(rho, qDelta_, qMax_, qDependentFWHM_, qIndependentFWHM_, windowFunction_)) return CommandFail;
 		}
@@ -259,8 +263,37 @@ CommandReturnValue DUQ::calculatePairCorrelations(Configuration& cfg)
 		msg.print("--> Finished calculation of partial Bragg S(Q) (%s elapsed, %s comms).\n", timer.timeString(), Comm.accumulatedTimeString());
 	}
 
+	// Generate final partial S(Q) combining X and Bragg partials
+	for (typeI=0; typeI<typeIndex_.nItems(); ++typeI)
+	{
+		for (typeJ=typeI; typeJ<typeIndex_.nItems(); ++typeJ)
+		{
+			// Grab references
+			Data2D& pairSQ = pairSQMatrix_.ref(typeI,typeJ);
+			Data2D& braggSQ = braggSQMatrix_.ref(typeI,typeJ);
+			Data2D& partialSQ = partialSQMatrix_.ref(typeI,typeJ);
+
+			// Copy atomic pair S(Q) information
+			partialSQ = pairSQ;
+
+			// Combine Bragg(Q) data if it was calculated
+			if (braggCalculationOn_)
+			{
+				double xRange = 0.0, x;
+				double xMin = braggMaximumQ_ - xRange - qDelta_*0.5;
+				for (int n=0; n<braggSQ.nPoints(); ++n)
+				{
+					x = (braggSQ.x(n) <= xMin ? 0.0 : (braggSQ.x(n) - xMin) / xRange);
+					partialSQ.setY(n, pairSQ.y(n)*x + braggSQ.y(n)*(1.0-x));
+					// TEST - Straight replacement of original pair data
+// 					partialSQ.setY(n, braggSQ.y(n));
+				}
+			}
+		}
+	}
+
 	// Calculate total unweighted g(r) and F(Q)
-	totalFQ_ = partialSQMatrix_.ref(0,0);
+	totalFQ_ = pairSQMatrix_.ref(0,0);
 	totalFQ_.arrayY() = 0.0;
 	double factor, braggMax;
 	for (typeI=0; typeI<typeIndex_.nItems(); ++typeI)
@@ -270,7 +303,7 @@ CommandReturnValue DUQ::calculatePairCorrelations(Configuration& cfg)
 			factor = typeIndex_[typeI]->fraction() * typeIndex_[typeJ]->fraction() * (typeI == typeJ ? 1.0 : 2.0);
 
 			// Total RDF
-			totalRDF_.addY(partialRDFMatrix_.ref(typeI,typeJ).normalisedData().arrayY(), factor);
+			totalRDF_.addY(pairRDFMatrix_.ref(typeI,typeJ).normalisedData().arrayY(), factor);
 			
 			// F(Q)
 			// -- Check for no bragg calculation data
@@ -279,7 +312,7 @@ CommandReturnValue DUQ::calculatePairCorrelations(Configuration& cfg)
 			for (int n=0; n<totalFQ_.nPoints(); ++n)
 			{
 				if (totalFQ_.x(n) <= braggMax) totalFQ_.addY(n, braggSQMatrix_.ref(typeI,typeJ).y(n) * factor);
-				else totalFQ_.addY(n, partialSQMatrix_.ref(typeI,typeJ).y(n) * factor);
+				else totalFQ_.addY(n, pairSQMatrix_.ref(typeI,typeJ).y(n) * factor);
 			}
 		}
 	}
@@ -292,7 +325,7 @@ CommandReturnValue DUQ::calculatePairCorrelations(Configuration& cfg)
 	totalRMSE_ = 0.0;
 	for (Sample* sam = samples_.first(); sam != NULL; sam = sam->next)
 	{
-		if (!sam->calculatePairCorrelations(partialRDFMatrix_, partialSQMatrix_, braggSQMatrix_)) return CommandFail;
+		if (!sam->calculatePairCorrelations(pairRDFMatrix_, pairSQMatrix_, braggSQMatrix_, partialSQMatrix_)) return CommandFail;
 		if (sam->hasReferenceData()) totalRMSE_ += sam->referenceRMSE(rmseDeltaQ_);
 	}
 	timer.stop();
@@ -329,7 +362,7 @@ void DUQ::saveRDFs(const char* baseName)
 				continue;
 			}
 			
-			Data2D& rdf = partialRDFMatrix_.ref(typeI,typeJ).normalisedData();
+			Data2D& rdf = pairRDFMatrix_.ref(typeI,typeJ).normalisedData();
 			Data2D& bound = boundRDFMatrix_.ref(typeI,typeJ).normalisedData();
 			Data2D& unbound = unboundRDFMatrix_.ref(typeI,typeJ).normalisedData();
 			parser.writeLineF("# %-14s  %-16s  %-16s  %-16s\n", "r, Angstroms", "g(r)", "bound(r)", "unbound(r)"); 
@@ -368,17 +401,22 @@ void DUQ::saveSQ(const char* baseName)
 				continue;
 			}
 			
-			Data2D& sq = partialSQMatrix_.ref(typeI,typeJ);
+			Data2D& pair = pairSQMatrix_.ref(typeI,typeJ);
 			Data2D& bound = boundSQMatrix_.ref(typeI,typeJ);
 			Data2D& unbound = unboundSQMatrix_.ref(typeI,typeJ);
 			Data2D& bragg = braggSQMatrix_.ref(typeI,typeJ);
+			Data2D& partial = partialSQMatrix_.ref(typeI,typeJ);
 			parser.writeLineF("# Unweighted partial S(Q) for types %s and %s calculated on TODO\n", typeIndex_[typeI]->name(), typeIndex_[typeJ]->name());
-			parser.writeLine("# S(Q) values listed below include bound and unbound contributions, but not Bragg scattering\n");
-			parser.writeLineF("# %-14s  %-16s  %-16s  %-16s  %-16s\n", "Q, 1/Angstroms", "S(Q)", "bound(Q)", "unbound(Q)", "bragg(Q)");
-			for (n = 0; n<sq.nPoints(); ++n)
+			parser.writeLine("#       S(Q) contains full pair correlation (bound + unbound) and Bragg scattering (if calculated)\n");
+			parser.writeLine("#   Bound(Q) contains only pair correlations between atoms joined by intramolecular bonds or angles\n");
+			parser.writeLine("# Unbound(Q) contains only pair correlations between atoms *not* joined by intramolecular bonds or angles\n");
+			parser.writeLine("#    Pair(Q) contains full pair correlations\n");
+			parser.writeLine("#   Bragg(Q) contains correlations calculated from HKL indices\n");
+			parser.writeLineF("# %-16s  %-16s  %-16s  %-16s  %-16s  %-16s\n", "Q, 1/Angstroms", "S(Q)", "Bound(Q)", "Unbound(Q)", "Pair(Q)", "Bragg(Q)");
+			for (n = 0; n< pair.nPoints(); ++n)
 			{
-				if (n <= bragg.nPoints()) parser.writeLineF("%16.10e  %16.10e  %16.10e  %16.10e  %16.10e\n", sq.x(n), sq.y(n), bound.y(n), unbound.y(n), bragg.y(n));
-				else parser.writeLineF("%16.10e  %16.10e  %16.10e  %16.10e\n", sq.x(n), sq.y(n), bound.y(n), unbound.y(n));
+				if (n < bragg.nPoints()) parser.writeLineF("%16.10e  %16.10e  %16.10e  %16.10e  %16.10e  %16.10e\n", partial.x(n), partial.y(n), bound.y(n), unbound.y(n), pair.y(n), bragg.y(n));
+				else parser.writeLineF("%16.10e  %16.10e  %16.10e  %16.10e  %16.10e\n", partial.x(n), partial.y(n), bound.y(n), unbound.y(n), pair.y(n));
 			}
 			parser.closeFiles();
 		}

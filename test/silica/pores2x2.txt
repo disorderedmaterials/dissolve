@@ -63,7 +63,9 @@ Setup
   Seed  943723867
   Temperature  298.000000
   Bragg on
-  BraggMaximumQ 10.0
+  BraggMaximumQ 0.5
+  BraggBroadening 0.0063
+  QDelta 0.01
   #RDFRange  20.0
   #BoxNormalisationFile 'test/water/water1000.norm'
 EndSetup
@@ -87,6 +89,8 @@ Simulation
 #  savesq
 #  q
   p
+  saverdfs
+  savesq
   q
   temperature 298.0
   savepp 'original'

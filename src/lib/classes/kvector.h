@@ -75,7 +75,9 @@ class KVector
 	// Add value to sinTerm index specified
 	void addSinTerm(int atomTypeIndex, double value);
 	// Calculate intensities and sum into associated BraggPeak
-	void calculateIntensities(int nAtoms);
+	void calculateIntensities();
+	// Return specified intensity
+	double intensity(int typeI, int typeJ);
 };
 
 #endif

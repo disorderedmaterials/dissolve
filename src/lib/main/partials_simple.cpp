@@ -76,9 +76,9 @@ bool DUQ::calculatePartialsSimple(Configuration& cfg)
 	for (typeI = 0; typeI<nTypes; ++typeI)
 	{
 		ri = r[typeI];
-		histogram = partialRDFMatrix_.ref(typeI,typeI).histogram();
+		histogram = pairRDFMatrix_.ref(typeI,typeI).histogram();
 		bins = binss[typeI];
-		nPoints = partialRDFMatrix_.ref(typeI,typeI).nBins();
+		nPoints = pairRDFMatrix_.ref(typeI,typeI).nBins();
 		for (i=start; i < maxr[typeI]; i += stride)
 		{
 			centre = ri[i];
@@ -107,9 +107,9 @@ bool DUQ::calculatePartialsSimple(Configuration& cfg)
 			if ((nr[typeI] == nr[typeJ]) && (typeI > typeJ)) continue;
 
 			rj = r[typeJ];
-			histogram = partialRDFMatrix_.ref(typeI,typeJ).histogram();
+			histogram = pairRDFMatrix_.ref(typeI,typeJ).histogram();
 			bins = binss[typeJ];
-			nPoints = partialRDFMatrix_.ref(typeI,typeJ).nBins();
+			nPoints = pairRDFMatrix_.ref(typeI,typeJ).nBins();
 			for (i=start; i < maxr[typeI]; i += stride)
 			{
 				centre = ri[i];

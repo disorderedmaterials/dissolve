@@ -194,6 +194,7 @@ class Keywords
 		BoxNormalisationFileKeyword,	/**> 'BoxNormalisationFile' - Specifies a file from which to load the RDF normalisation array */
 		BoxNormalisationPointsKeyword,	/**> 'BoxNormalisationPoints' - Specifies how many random insertions to use when generating the normalisation array */
 		BraggKeyword,			/**> 'Bragg' - Turns on (or explicitly off) calculation of Bragg scattering */
+		BraggBroadeningKeyword,		/**> 'BraggBroadening' - Specifies the degree of broadening applied to calculated Bragg features */
 		BraggMaximumQKeyword,		/**> 'BraggMaximumQ' - Sets the maximum Q value for Bragg calculation */
 		BroadeningKeyword,		/**> 'Broadening' - Specifies the Q-independent and Q-dependent (in that order) Gaussian broadening function FWHM to apply when transforming simulated RDF data to Q-space */
 		EndSetupKeyword,		/**> 'EndSetup' - Signals the end of the Setup block */

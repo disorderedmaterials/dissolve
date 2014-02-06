@@ -153,7 +153,7 @@ void KVector::addSinTerm(int atomTypeIndex, double value)
  * \brief Calculate intensities from stored cos and sin term arrays
  * \details Calculate the intensities, per atom type pair, from the accumulated cos and sin arrays, and sum the results into the associated BraggPeak.
  */
-void KVector::calculateIntensities(int nAtoms)
+void KVector::calculateIntensities()
 {
 #ifdef CHECKS
 	if (braggPeak_ == NULL)
@@ -164,17 +164,27 @@ void KVector::calculateIntensities(int nAtoms)
 #endif
 	// Calculate final intensities from stored cos/sin terms
 	// Take account of the half-sphere, doubling intensities of all k-vectors not on h == 0
-	int i, j, nTypes = cosTerms_.nItems();
-	double intensity, norm = (hkl_.x == 0 ? 1.0 : 2.0) / double(nAtoms);
+	// Take account of the half-matrix of atom types, doubling contributions from dissimilar types
+	int i, j, nTypes = cosTerms_.nItems(), halfSphereNorm = (hkl_.x == 0 ? 1 : 2);
+	double intensity;
+	msg.print("KVector %3i %3i %3i  %f  ", hkl_.x, hkl_.y, hkl_.z, braggPeak_->q());
+	braggPeak_->addKVectors(halfSphereNorm);
 	for (i = 0; i<nTypes; ++i)
 	{
 		for (j = i; j < nTypes; ++j)
 		{
-			intensity = (cosTerms_[i]*cosTerms_[j] + sinTerms_[i]*sinTerms_[j]) * norm;
+			intensity = (cosTerms_[i]*cosTerms_[j] + sinTerms_[i]*sinTerms_[j]) * halfSphereNorm;
 			braggPeak_->addIntensity(i, j, intensity);
-// 			msg.print("%f   ", (i == j ? intensity : 2.0*intensity));
+// 			msg.print("%f   ", (i == j ? intensity : 2.0*intensity) / 9.0);
 		}
 	}
-// 	msg.print("\n");
+	msg.print("\n");
 }
 
+/*!
+ * \brief Return specified intensity
+ */
+double KVector::intensity(int typeI, int typeJ)
+{
+	return (cosTerms_[typeI]*cosTerms_[typeJ] + sinTerms_[typeI]*sinTerms_[typeJ]) * (hkl_.x == 0 ? 1 : 2);
+}
