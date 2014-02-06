@@ -111,6 +111,20 @@ void Data2D::initialise(int size)
 }
 
 /*!
+ * \brief Create new X axis and empty Y axis
+ */
+void Data2D::createEmpty(double xDelta, double xMax, bool halfBins)
+{
+	clear();
+	double x = (halfBins ? 0.5*xDelta : 0.0);
+	while (x <= xMax)
+	{
+		addPoint(x, 0.0);
+		x += xDelta;
+	}
+}
+
+/*!
  * \brief Return current array size
  */
 int Data2D::arraySize()
@@ -829,7 +843,7 @@ bool Data2D::transformBroadenedRDF(double atomicDensity, double qStep, double qM
 
 	// Create working arrays
 	Array<double> real;
-	Q = qStep*0.1;
+	Q = qStep*0.5;
 
 	// Perform Fourier sine transform, including instrument broadening of RDF
 	while (Q <= qMax)
@@ -904,6 +918,73 @@ bool Data2D::transformSQ(double atomicDensity, Data2D::WindowFunction wf)
 	for (n=0; n<nPoints; ++n) x_[n] = (n+0.5)*k;
 	y_ = real;
 
+	splineInterval_ = -1;
+	return true;
+}
+
+/*!
+ * \brief Fourier transform current data, applying line-width broadening in real-space using the modified Lorch function
+ * \details Fourier transforms from Q to r-space, or r to Q-space, employing the modified Lorch function as described by Soper in
+ * XXX TODO.
+ * XXX TODO Only valid when input x_[] values are bin boundaries, not centre-bin values.
+ */
+bool Data2D::transformLorch(double atomicDensity, double step, double rMax, double beta, double delta0, bool qToR)
+{
+	// Okay to continue with transform?
+	if (!checkBeforeTransform()) return false;
+
+	double deltaIn = x_[1] - x_[0];
+	double deltar, width, r, factor, norm, ftx, qr, j1qr, j2qr;
+	int n, m, nPts = x_.nItems();
+
+	// Create working arrays
+	Array<double> result;
+	r = step * 0.5;
+
+	// Setup correct factor, depending on whether we are going from Q -> r or r -> Q
+	if (qToR) factor = 1.0 / (2.0 * PI * PI * atomicDensity);
+	else factor = 4.0 * PI * atomicDensity;
+	
+	// Perform Fourier sine transform, including line-broadening of RDF
+	while (r <= rMax)
+	{
+		// Reset sum, and calculate r-dependent values
+		ftx = 0.0;
+		norm = factor / (r*r*r);
+		deltar = delta0 * (1.0 + pow(r, beta));
+
+		// Calculate first argument to Lorch function (at x_[0])
+		qr = r * x_[0];
+		j1qr = sin(qr) - qr * cos(qr);
+
+		for (m=0; m<nPts-1; ++m)
+		{
+			// Calculate second argument to Lorch function (at x_[m+1])
+			qr = r * x_[m+1];
+			j2qr = sin(qr) - qr * cos(qr);
+
+			// Calculate 'width' at centre of bin
+			width = 0.5 * (x_[m]+x_[m+1]) * deltar;
+            
+			// Form integral of (Q sin Qr)/r from r1 to r2 (as detailed in equation 3.86 in reference above)
+			// Modified Lorch function is constructed and applied if the width is non-zero and positive
+			if (width < 0.0) ftx += y_[m] * (j2qr - j1qr);
+			else ftx += y_[m] * (j2qr - j1qr) * (3.0/(width*width*width)) * (sin(width) - width*cos(width));
+
+			// Overwrite first Lorch argument
+			j1qr = j2qr;
+		}
+
+		// Sum
+		result.add(ftx * norm);
+		
+		r += step;
+	}
+
+	// Copy transform data over initial data
+	y_ = result;
+	x_.clear();
+	for (n=0; n<y_.nItems(); ++n) x_.add((n+0.5)*step);
 	splineInterval_ = -1;
 	return true;
 }
@@ -1456,7 +1537,6 @@ void Data2D::rebin(double deltaX)
 		for (int n=1; n<x_.nItems(); ++n) deltaX += x_[n]-x_[n-1];
 		deltaX /= x_.nItems()-1;
 		deltaX *= 0.5;
-		printf("Deltax = %f\n", deltaX);
 	}
 
 	// Interpolate the existing data

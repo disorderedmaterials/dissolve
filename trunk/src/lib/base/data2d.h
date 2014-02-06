@@ -69,6 +69,8 @@ class Data2D : public ListItem<Data2D>
 	public:
 	// Initialise arrays to specified size
 	void initialise(int size);
+	// Create new X axis and empty Y axis
+	void createEmpty(double xDelta, double xMax, bool halfBins = true);
 	// Return current array size
 	int arraySize();
 	// Set data point 
@@ -166,6 +168,8 @@ class Data2D : public ListItem<Data2D>
 	bool transformBroadenedRDF(double atomicDensity, double qStep, double qMax, double fwhm, double fwhmq, Data2D::WindowFunction wf = Data2D::NoWindow);
 	// Transform S(Q) to g(r)
 	bool transformSQ(double atomicDensity, Data2D::WindowFunction wf = Data2D::NoWindow);
+	// Fourier transform current data, applying line-width broadening in real-space using the modified Lorch function
+	bool transformLorch(double atomicDensity, double step, double rMax, double beta, double delta0, bool qToR);
 	// Calculate S(Q) correlation function
 	bool correlateSQ(double atomicDensity);
 	///@}

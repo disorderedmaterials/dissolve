@@ -54,7 +54,7 @@ bool DUQ::calculateBraggSQ(Configuration& cfg)
 	rAxes.print();
 
 	// Calculate number of k-vectors within cutoff range
-	double mag;
+	double mag, magSq, braggMaxSq = braggMaximumQ_*braggMaximumQ_;
 	int braggIndex;
 	if (braggKVectors_.nItems() == 0)
 	{
@@ -75,15 +75,17 @@ bool DUQ::calculateBraggSQ(Configuration& cfg)
 				kVec.y = k;
 				for (l = -braggMaximumHKL_.z; l <= braggMaximumHKL_.z; ++l)
 				{
-// 					if ((h == 0) && (k == 0) && (l == 0)) continue;
+					if ((h == 0) && (k == 0) && (l == 0)) continue;
 
 					kVec.z = l;
 					v = rAxes * kVec;
 
 					// Calculate magnitude of this k vector
-					mag = v.magnitude();
-					if (mag <= braggMaximumQ_)
+					magSq = v.magnitudeSq();
+					if (magSq <= braggMaxSq)
 					{
+						mag = sqrt(magSq);
+
 						// Calculate integer BraggPeak index and see if a BraggPeak already exists at this position
 						braggIndex = int(mag*10000);
 						BraggPeak* peak = braggPeaks_.objectWithIndex(braggIndex);
@@ -175,7 +177,7 @@ bool DUQ::calculateBraggSQ(Configuration& cfg)
 
 	// Loop over atoms
 	Comm.resetAccumulatedTime();
-	timer.stop();
+	timer.start();
 	for (n = 0; n<nAtoms; ++n)
 	{
 		// Grab atomTypeIndex and array pointers for this atom
@@ -219,44 +221,53 @@ bool DUQ::calculateBraggSQ(Configuration& cfg)
 	for (m=0; m<nPeaks; ++m) peaks[m]->resetIntensities();
 
 	// Calculate intensities for individual KVectors - this will be automatically summed into the corresponding BraggPeak
-	for (m = 0; m < nKVectors; ++m)
-	{
-		kVector = kVectors[m];
-
-// 		msg.print(" %2i  %2i  %2i    %f   ", kVectors[m]->h(), kVectors[m]->k(), kVectors[m]->l(), kVectors[m]->braggPeak()->q());
-		kVector->calculateIntensities(nAtoms);
-	}
+	for (m = 0; m < nKVectors; ++m) kVectors[m]->calculateIntensities();
 
 	// Create individual functions in braggSQMatrix_
-	double factor, q, inten;
+	double factor, qCentre, q, inten, qSub, qAdd, broaden, lFactor, lambda, lambdaCubed;
+
+	lFactor = box->reciprocalVolume() / (PI*PI);
+
 	for (typeI = 0; typeI < nTypes; ++typeI)
 	{
 		for (typeJ = typeI; typeJ < nTypes; ++typeJ)
 		{
 			Data2D& braggSQ = braggSQMatrix_.ref(typeI, typeJ);
-			Array<double>& y = braggSQ.arrayY();
 
-			// Calculate atomic fraction and scattering multiplier
-			factor = typeIndex_[typeI]->fraction() * typeIndex_[typeJ]->fraction() * (typeI == typeJ ? 1.0 : 2.0);
+			// Calculate prefactor
+			factor = (typeI == typeJ ? 1.0 : 2.0);
 
-			// Starting Q value will be half bin-width
-			q = 0.5*qDelta_;
-			while (q <= braggMaximumQ_)
+			// Loop over defined Bragg peaks
+			for (n=0; n<nPeaks; ++n)
 			{
-				// Zero the intensity accumulator
-				inten = 0.0;
+				// Get q value and intensity of peak
+				qCentre = peaks[n]->q();
+				inten = peaks[n]->intensity(typeI, typeJ) * factor;
+				lambda = braggBroadening_ + qCentre * qDependentFWHM_;
+				lambdaCubed = lambda * lambda * lambda;
 
-				// Loop over Bragg peaks and sum contributions at this value of Q
-				for (n=0; n<nPeaks; ++n) inten += peaks[n]->intensity(typeI, typeJ, q);
+				// Loop over points in braggSQ Data2D (which will provide our x-values)
+				for (m=0; m<braggSQ.nPoints(); ++m)
+				{
+					// Get q value from array
+					q = braggSQ.x(m);
 
-				// Add point to braggSQ
-				braggSQ.addPoint(q, inten);
-				q += qDelta_;
+					// Set up Lorentzian parameters
+					qSub = (qCentre - q) / lambda;
+					qAdd = (qCentre + q) / lambda;
+					broaden = lFactor / ((1.0 + qSub*qSub) * (1.0 + qAdd*qAdd) * lambdaCubed);
+					braggSQ.addY(m, inten * broaden);
+				}
 			}
+
+			// Normalise to total number of atoms, subtract single atom scattering, and normalise to atomic fractions
+			braggSQ.arrayY() /= nAtoms;
+			if (typeI == typeJ) braggSQ.arrayY() -= typeIndex_[typeI]->fraction();
+			braggSQ.arrayY() /= typeIndex_[typeI]->fraction() * typeIndex_[typeJ]->fraction();
 		}
 	}
 
-// 	for (m=0; m<nPeaks; ++m) msg.print("  %f   %f\n", peaks[m]->q(), peaks[m]->intensity(0,0));
+	for (m=0; m<nPeaks; ++m) msg.print("  %f   %f\n", peaks[m]->q(), peaks[m]->intensity(0,0));
 
 	return true;
 }

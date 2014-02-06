@@ -234,7 +234,7 @@ CommandReturnValue DUQ::perturb(Configuration& cfg)
 			if (Comm.master())
 			{
 				LineParser parser;
-				parser.openOutput(Dnchar::string("duq-%s.fit", partialSQMatrix_.ref(typeI, typeJ).name()), true);
+				parser.openOutput(Dnchar::string("duq-%s.fit", pairSQMatrix_.ref(typeI, typeJ).name()), true);
 				parser.writeLineF("#%-15s  %-16s  %-16s  %-16s\n", "Q, 1/Angstroms", "S(Q)", "bound(Q)", "unbound(Q)");
 				for (n=0; n<modUnboundSQ.nPoints(); ++n) parser.writeLineF("%16.10e  %16.10e  %16.10e  %16.10e\n", modUnboundSQ.x(n), modUnboundSQ.y(n) + modBoundSQ.interpolated(modUnboundSQ.x(n)),   modBoundSQ.interpolated(modUnboundSQ.x(n)), modUnboundSQ.y(n));
 				parser.closeFiles();
@@ -253,7 +253,7 @@ CommandReturnValue DUQ::perturb(Configuration& cfg)
 	// 		gr.medianFilter(5);
 			gr.smooth(5);
 			gr += 1.0;
-			gr.save(Dnchar::string("duq-%s.gr", partialSQMatrix_.ref(typeI, typeJ).name()));
+			gr.save(Dnchar::string("duq-%s.gr", pairSQMatrix_.ref(typeI, typeJ).name()));
 
 			// Construct potential of mean force
 			Data2D pmf;
@@ -267,7 +267,7 @@ CommandReturnValue DUQ::perturb(Configuration& cfg)
 // 				if (gr.x(n) < 3.00) y += pow(3.0/gr.x(n), 12)-1.0;
 				pmf.addPoint(gr.x(n), y);
 			}
-			pmf.save(Dnchar::string("duq-%s.pmf", partialSQMatrix_.ref(typeI, typeJ).name()));
+			pmf.save(Dnchar::string("duq-%s.pmf", pairSQMatrix_.ref(typeI, typeJ).name()));
 			pp->updatePerturbation(pmf, uscaley, 0.5);
 			
 			// Increase offset and continue

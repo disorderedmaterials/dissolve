@@ -67,12 +67,14 @@ class BraggPeak
 	const int index() const;
 	// Reset stored intensities
 	void resetIntensities();
-	// Add intensity from k-vector
+	// Add intensity between specified atomtypes from k-vector
 	void addIntensity(int typeI, int typeJ, double intensity);
 	// Return literal intensity between specified atom types for this peak
 	double intensity(int typeI, int typeJ);
-	// Return broadened intensity between specified atom types for this peak, at the Q value specified
-	double intensity(int typeI, int typeJ, double qValue);
+	// Increment number of k-vectors by specified amount
+	void addKVectors(int count);
+	// Return number of k-vectors contributing to this peak
+	int nKVectors();
 };
 
 #endif

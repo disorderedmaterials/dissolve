@@ -293,22 +293,24 @@ class DUQ
 	static const char* rdfMethod(RDFMethod rm);
 
 	private:
-	// Partial RDF matrix
-	Array2D<Histogram> partialRDFMatrix_;
-	// Unbound RDF matrix
+	// Pair RDF matrix, containing full atom-atom RDFs
+	Array2D<Histogram> pairRDFMatrix_;
+	// Unbound RDF matrix, containing atom-atom RDFs of pairs not joined by bonds or angles
 	Array2D<Histogram> unboundRDFMatrix_;
-	// Bound RDF matrix
+	// Bound RDF matrix, containing atom-atom RDFs of pairs joined by bonds or angles
 	Array2D<Histogram> boundRDFMatrix_;
 	// RDF Normalisation for Box shape/extent
 	Data2D boxNormalisation_;
-	// Partial S(Q) matrix
-	Array2D<Data2D> partialSQMatrix_;
-	// Unbound S(Q) matrix
+	// Pair correlation S(Q) matrix, derived from pairRDFMatrix_
+	Array2D<Data2D> pairSQMatrix_;
+	// Unbound S(Q) matrix, derived from unboundRDFMatrix_
 	Array2D<Data2D> unboundSQMatrix_;
-	// Bound S(Q) matrix
+	// Bound S(Q) matrix, derived from boundRDFMatrix_
 	Array2D<Data2D> boundSQMatrix_;
-	// Bragg S(Q) matrix
+	// Bragg S(Q) matrix, derived from summation of HKL terms
 	Array2D<Data2D> braggSQMatrix_;
+	// Partial S(Q) matrix, containing full (pair + Bragg) contributions
+	Array2D<Data2D> partialSQMatrix_;
 	// Configuration change count at which partials were last calculated
 	int partialsChangeCount_;
 	// Total RDF (unweighted)
@@ -398,6 +400,8 @@ class DUQ
 	bool braggCalculationOn_;
 	// Maximum Q value for Bragg calculation
 	double braggMaximumQ_;
+	// Broadening for Bragg features
+	double braggBroadening_;
 
 	private:
 	// Clear all model data
@@ -688,3 +692,4 @@ class DUQ
 };
 
 #endif
+

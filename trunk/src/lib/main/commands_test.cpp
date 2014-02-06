@@ -75,11 +75,11 @@ CommandReturnValue DUQ::commandTest(Configuration& cfg)
 			// Grab references to original and modified data
 			Data2D& sq = workingSQMatrixA_.ref(typeI, typeJ);
 
-			sq.save(Dnchar::string("mod%s.txt", partialSQMatrix_.ref(typeI, typeJ).name()));
+			sq.save(Dnchar::string("mod%s.txt", pairSQMatrix_.ref(typeI, typeJ).name()));
 			Data2D gr = sq;
 			gr.transformSQ(atomicDensity(), windowFunction_);
 			gr.arrayY() += 1.0;
-			gr.save(Dnchar::string("mod%sft.txt", partialSQMatrix_.ref(typeI, typeJ).name()));
+			gr.save(Dnchar::string("mod%sft.txt", pairSQMatrix_.ref(typeI, typeJ).name()));
 			
 			// Calculate correlation function for S(Q)
 			Data2D cr = sq;
@@ -103,9 +103,9 @@ CommandReturnValue DUQ::commandTest(Configuration& cfg)
 				y = AVOGADRO * -1.3806488e-23 * temperature_ * log(gr.y(n)) / 1000.0;
 				pmf.addPoint(gr.x(n), y);
 			}
-			hnc.save(Dnchar::string("mod%s-hnc.txt", partialSQMatrix_.ref(typeI, typeJ).name()));
-			py.save(Dnchar::string("mod%s-py.txt", partialSQMatrix_.ref(typeI, typeJ).name()));
-			pmf.save(Dnchar::string("mod%s-pmf.txt", partialSQMatrix_.ref(typeI, typeJ).name()));
+			hnc.save(Dnchar::string("mod%s-hnc.txt", pairSQMatrix_.ref(typeI, typeJ).name()));
+			py.save(Dnchar::string("mod%s-py.txt", pairSQMatrix_.ref(typeI, typeJ).name()));
+			pmf.save(Dnchar::string("mod%s-pmf.txt", pairSQMatrix_.ref(typeI, typeJ).name()));
 		}
 	}
 	

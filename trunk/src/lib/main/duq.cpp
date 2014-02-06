@@ -71,6 +71,7 @@ DUQ::DUQ()
 	windowFunction_ = Data2D::GaussianWindow;
 	braggCalculationOn_ = false;
 	braggMaximumQ_ = 1.0;
+	braggBroadening_ = 0.0063;
 
 	// Perturbation
 	simplexNMoves_ = 25;

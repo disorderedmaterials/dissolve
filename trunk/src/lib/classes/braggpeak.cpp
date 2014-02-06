@@ -99,12 +99,11 @@ void BraggPeak::resetIntensities()
 }
 
 /*!
- * \brief Add intensity
+ * \brief Add intensity between specified atomtypes
  */
 void BraggPeak::addIntensity(int typeI, int typeJ, double intensity)
 {
-	intensities_.ref(typeI, typeJ) += (typeI == typeJ ? intensity : 2.0*intensity);
-	++nKVectors_;
+	intensities_.ref(typeI, typeJ) += intensity;
 }
 
 /*!
@@ -112,15 +111,21 @@ void BraggPeak::addIntensity(int typeI, int typeJ, double intensity)
  */
 double BraggPeak::intensity(int typeI, int typeJ)
 {
-	return intensities_.value(typeI, typeJ) / nKVectors_;
+	return intensities_.value(typeI, typeJ);
 }
 
 /*!
- * \brief Return broadened intensity between specified atom types for this peak, at the Q value specified
+ * \brief Increment number of k-vectors by specified amount
  */
-double BraggPeak::intensity(int typeI, int typeJ, double qValue)
+void BraggPeak::addKVectors(int count)
 {
-	// Calculate difference of q with the peak position
-	double diff = q_ - qValue;
-	return intensities_.value(typeI, typeJ) * exp(-200*diff*diff) / nKVectors_;
+	nKVectors_ += count;
+}
+
+/*!
+ * \brief Return number of k-vectors contributing to this peak
+ */
+int BraggPeak::nKVectors()
+{
+	return nKVectors_;
 }
