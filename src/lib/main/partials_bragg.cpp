@@ -116,8 +116,13 @@ bool DUQ::calculateBraggSQ(Configuration& cfg)
 	timer.stop();
 	for (n = 0; n<nAtoms; ++n)
 	{
-		rI = rAxes * atoms[n].r();
+		// Calculate reciprocal lattice atom coordinates
+		v = atoms[n].r();
+		rI.x = v.x*rAxes[0] + v.y*rAxes[1] + v.z*rAxes[2];
+		rI.y = v.x*rAxes[3] + v.y*rAxes[4] + v.z*rAxes[5];
+		rI.z = v.x*rAxes[6] + v.y*rAxes[7] + v.z*rAxes[8];
 
+		// Grab pointers to cos/sin arrays for atom
 		cosTermsH = braggAtomVectorXCos_.ptr(n, 0);
 		cosTermsK = braggAtomVectorYCos_.ptr(n, 0);
 		cosTermsL = braggAtomVectorZCos_.ptr(n, 0);
@@ -242,7 +247,7 @@ bool DUQ::calculateBraggSQ(Configuration& cfg)
 			{
 				// Get q value and intensity of peak
 				qCentre = peaks[n]->q();
-				inten = peaks[n]->intensity(typeI, typeJ) * factor;
+				inten = peaks[n]->intensity(typeI, typeJ);
 				lambda = braggBroadening_ + qCentre * qDependentFWHM_;
 				lambdaCubed = lambda * lambda * lambda;
 
@@ -267,7 +272,7 @@ bool DUQ::calculateBraggSQ(Configuration& cfg)
 		}
 	}
 
-	for (m=0; m<nPeaks; ++m) msg.print("  %f   %f\n", peaks[m]->q(), peaks[m]->intensity(0,0));
+// 	for (m=0; m<nPeaks; ++m) msg.print("  %f   %f\n", peaks[m]->q(), peaks[m]->intensity(0,0));
 
 	return true;
 }

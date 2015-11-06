@@ -279,7 +279,7 @@ CommandReturnValue DUQ::calculatePairCorrelations(Configuration& cfg)
 			// Combine Bragg(Q) data if it was calculated
 			if (braggCalculationOn_)
 			{
-				double xRange = 0.0, x;
+				double xRange = 0.1, x;
 				double xMin = braggMaximumQ_ - xRange - qDelta_*0.5;
 				for (int n=0; n<braggSQ.nPoints(); ++n)
 				{
@@ -304,16 +304,10 @@ CommandReturnValue DUQ::calculatePairCorrelations(Configuration& cfg)
 
 			// Total RDF
 			totalRDF_.addY(pairRDFMatrix_.ref(typeI,typeJ).normalisedData().arrayY(), factor);
-			
+			// TODO Does not include contributions from Bragg partials
+
 			// F(Q)
-			// -- Check for no bragg calculation data
-			if (braggSQMatrix_.ref(typeI,typeJ).nPoints() == 0) braggMax = -1.0;
-			else braggMax = braggSQMatrix_.ref(typeI,typeJ).xMax();
-			for (int n=0; n<totalFQ_.nPoints(); ++n)
-			{
-				if (totalFQ_.x(n) <= braggMax) totalFQ_.addY(n, braggSQMatrix_.ref(typeI,typeJ).y(n) * factor);
-				else totalFQ_.addY(n, pairSQMatrix_.ref(typeI,typeJ).y(n) * factor);
-			}
+			totalFQ_.addY(partialSQMatrix_.ref(typeI,typeJ).arrayY(), factor);
 		}
 	}
 	timer.stop();

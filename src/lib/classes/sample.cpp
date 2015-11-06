@@ -398,7 +398,7 @@ bool Sample::setupPairCorrelations(double volume, double range, double binWidth,
 			// Note: Divisor of 100.0 in calculation of bb converts from units of fm (1e-11 m) to barn (1e-12 m) squared
 			cc = at1->fraction() * at2->fraction();
 			bb = at1->isotope()->boundCoherent() * at2->isotope()->boundCoherent() * 0.01;
-			weightsMatrix_.ref(typeI,typeJ) = (typeI == typeJ ? 1.0 : 2.0) * cc * bb;
+			weightsMatrix_.ref(typeI,typeJ) = cc * bb;
 			scatteringMatrix_.ref(typeI,typeJ) = bb;
 		}
 	}
@@ -491,8 +491,8 @@ bool Sample::calculatePairCorrelations(Array2D<Histogram>& masterRDFs, Array2D<D
 			totalGR_.addY(masterRDFs.ref(masterI,masterJ).normalisedData().arrayY(), factor);
 			sumFactor += factor;
 
-			// Sum partialSQ into totalFQ_
-			totalFQ_.addY(partialSQ.arrayY(), 1.0);
+			// Sum partialSQ into totalFQ_, weighting dissimilar partials accordingly
+			totalFQ_.addY(partialSQ.arrayY(), typeI == typeJ ? 1.0 : 2.0);
 		}
 	}
 

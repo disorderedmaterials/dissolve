@@ -173,9 +173,9 @@ void KVector::calculateIntensities()
 	{
 		for (j = i; j < nTypes; ++j)
 		{
-			intensity = (cosTerms_[i]*cosTerms_[j] + sinTerms_[i]*sinTerms_[j]) * halfSphereNorm;
-			braggPeak_->addIntensity(i, j, intensity);
-// 			msg.print("%f   ", (i == j ? intensity : 2.0*intensity) / 9.0);
+			intensity = (cosTerms_[i]*cosTerms_[j] + sinTerms_[i]*sinTerms_[j]);
+			msg.print("%f  ", intensity / 1000.0 );
+			braggPeak_->addIntensity(i, j, intensity * halfSphereNorm);
 		}
 	}
 	msg.print("\n");

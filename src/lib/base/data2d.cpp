@@ -953,13 +953,13 @@ bool Data2D::transformLorch(double atomicDensity, double step, double rMax, doub
 		norm = factor / (r*r*r);
 		deltar = delta0 * (1.0 + pow(r, beta));
 
-		// Calculate first argument to Lorch function (at x_[0])
+		// Calculate first argument at left-hand bin boundary
 		qr = r * x_[0];
 		j1qr = sin(qr) - qr * cos(qr);
 
 		for (m=0; m<nPts-1; ++m)
 		{
-			// Calculate second argument to Lorch function (at x_[m+1])
+			// Calculate second argument at right-hand bin boundary
 			qr = r * x_[m+1];
 			j2qr = sin(qr) - qr * cos(qr);
 
