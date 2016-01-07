@@ -1,17 +1,18 @@
 #!/bin/bash
 
-# Script to 'wrap' around svn and update version info before commit.
+# Script to 'wrap' around git and update ChangeLog and version / date in file.
 
 COMMITFILE="none"
 COMMITMSG="none"
 COMMITTYPE="none"
-TEST="false"
-UPDATE="false"
+BUMP="false"
+PUSH="false"
+ALL="false"
 
 # Parse CLI arguments / options
-USAGE1="commit [-F <filename>] [-m <text>] [-t]"
+USAGE1="commit [-F <filename>] [-m <text>] [-p] [-b]"
 
-while getopts "F:m:tu" options; do
+while getopts "F:m:bp" options; do
   case $options in
     F ) COMMITFILE=$OPTARG
 	COMMITTYPE="file"
@@ -19,10 +20,10 @@ while getopts "F:m:tu" options; do
     m ) COMMITMSG=$OPTARG
 	COMMITTYPE="msg"
         echo "Using supplied text for commit message.";;
-    t ) TEST="true"
-	echo "Test only - no file changes will be made.";;
-    u ) UPDATE="true"
-	echo "Local source will be updated before commit.";;
+    b ) BUMP="true"
+	echo "Version (patch) number will be bumped.";;
+    p ) PUSH="true"
+	echo "Files will be committed and local changes pushed to server.";;
     \? ) echo -e $USAGE1
          exit 1;;
     * ) echo -e $USAGE1
@@ -31,67 +32,34 @@ while getopts "F:m:tu" options; do
 done
 
 # Check that a commit type was given
-if [ "$COMMITTYPE" = "none" ] && [ "$TEST" = "false" ]
+if [ "$COMMITTYPE" = "none" ]
 then
   echo "No commit message/file was given."
   exit 0
 fi
 
-# Update if requested
-if [ "$UPDATE" = "true" ]
+# Bump version if requested
+if [ "$BUMP" = "true" ]
 then
-  svn update
-fi
-
-# Determine current svn version number and increase it by one.
-OLDREV=`svn info -r HEAD | grep Revision | sed "s/Revision: \([0-9]*\)/\1/g"`
-let REVISION=OLDREV+1
-# Check for failed svn command
-if [ "$REVISION" = "1" ]
-then
-  echo "Failed."
-  exit 1
-fi
-echo "Current version is revision $OLDREV - committed version will be revision $REVISION..."
-
-# Determine svn URL
-URL=`svn info | grep URL | sed -e "s/URL: \(.*\)/\1/g" -e "s/https/http/g"`
-echo "Subversion repository is: "$URL
-
-# Get current date and time
-DATE=`date "+%a %d %b - %H:%M"`
-
-# Change URL revision information
-echo "Setting revision information..."
-MAJOR=$(( REVISION/100 ))
-MINOR=`printf "%02i" $(( REVISION%100 ))`
-
-if [ "$TEST" = "false" ]
-then
-  sed -i -e "s/#define DUQREVISION \"[0-9\.]\+\(.*\)\"/#define DUQREVISION \"$REVISION\"/g" -e "s/#define DUQDATE \".\+\"/#define DUQDATE \"$DATE\"/g" src/version.h
-  sed -i -e "s/#define DUQVERSION \"[0-9\.]\+\(.*\)\"/#define DUQVERSION \"$MAJOR.$MINOR\"/g" src/version.h
-  sed -i -e "s/m4_define(\[DUQ_VERSION\],\[.\+\])/m4_define([DUQ_VERSION],[$MAJOR.$MINOR])/g" configure.ac
+  ./changeversion bump
 else
-  sed -e "s/#define DUQREVISION \"[0-9\.]\+\(.*\)\"/#define DUQREVISION \"$REVISION\"/g" src/version.h | grep DUQREVISION
-  sed -e "s/#define DUQDATE \".\+\"/#define DUQDATE \"$DATE\"/g" src/version.h | grep DUQDATE
-  sed -e "s/#define DUQVERSION \"[0-9\.]\+\(.*\)\"/#define DUQVERSION \"$MAJOR.$MINOR\"/g" src/version.h | grep DUQVERSION
-  sed -e "s/m4_define(\[DUQ_VERSION\],\[.\+\])/m4_define([DUQ_VERSION],[$MAJOR.$MINOR])/g" configure.ac | grep DUQ_VERSION
-fi
-
-# If this was just a test we're done at this point
-if [ "$TEST" = "true" ]
-then
-  exit 0
+  ./changeversion
 fi
 
 # Commit changes
 if [ "$COMMITTYPE" = "file" ]
 then
-  svn commit -F $COMMITFILE
+  git commit -a -F $COMMITFILE
 fi
 if [ "$COMMITTYPE" = "msg" ]
 then
-  svn commit -m "$COMMITMSG"
+  git commit -a -m "$COMMITMSG"
+fi
+
+# Push changes to server?
+if [ "$PUSH" = "true" ]
+then
+  git push origin master --tags
 fi
 
 exit 0

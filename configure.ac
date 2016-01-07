@@ -3,7 +3,7 @@
 AC_PREREQ(2.60)
 
 # Set program name, version, bug-address and source directory
-m4_define([DUQ_VERSION],[0.31])
+m4_define([DUQ_VERSION],[0.32.0])
 AC_INIT(duq,DUQ_VERSION,tris@duq.net)
 AC_CONFIG_SRCDIR([src/])
 
@@ -107,36 +107,16 @@ if test "$with_install_dir" != "/usr/local"; then
 fi
 
 
-# QT-FRAMEWORK  (Mac only)
-AC_ARG_WITH([qt],[AC_HELP_STRING([--with-qt=framework|fink|<none>],
-    [Determines which installation of Qt4 to use on OS X (should not be set for Linux)[default=<none>]])], ,
-    [with_qt=])
+# Pre-initialise pkg-config
+PKG_PROG_PKG_CONFIG
 
+# Always need QtCore
+PKG_CHECK_MODULES(QTCORE, QtCore >= 4.1.0)
 
-# Pre-initialise pkg-config  (unless using Qt framework on the Mac)
-if test "$with_qt" != "framework"; then
-  PKG_PROG_PKG_CONFIG
-fi
-
-
-# Find Qt (if building GUI)
+# Find other Qt libs (if building GUI)
 if test "$with_gui" = "yes"; then
-  if test "$with_qt" = "framework"; then
-    QTGUI_LIBS="-framework QtGui -framework QtOpenGL -framework QtCore"
-    QTGUI_INCLUDES="-F QtGui -F QtOpenGl -F QtCore"
-  fi
-  if test "$with_qt" = "fink"; then
-    QTGUI_LIBS="-L/sw/lib/qt4-x11/lib -lQtGui -lQtCore -lQtOpenGL"
-    QTGUI_INCLUDES="-I/sw/lib/qt4-x11/include -I/usr/X11R6/include"
-    QTOPENGL_CFLAGS="-I/sw/lib/qt4-x11/include"
-    QTOPENGL_LIBS="-I/sw/lib/qt4-x11/lib"
-    PKG_CHECK_MODULES(QTGUI, QtGui >= 4.1.0)
-    PKG_CHECK_MODULES(QTOPENGL, QtOpenGL >= 4.1.0)
-  fi
-  if test "x$with_qt" = "x"; then
-    PKG_CHECK_MODULES(QTGUI, QtGui >= 4.1.0)
-    PKG_CHECK_MODULES(QTOPENGL, QtOpenGL >= 4.1.0)
-  fi
+  PKG_CHECK_MODULES(QTGUI, QtGui >= 4.1.0)
+  PKG_CHECK_MODULES(QTOPENGL, QtOpenGL >= 4.1.0)
 
   # Perform Makefile substitutions
   GUI_LDLIBS="$QTGUI_LIBS $QTOPENGL_LIBS -lncurses -lGL"
@@ -155,7 +135,7 @@ AC_SUBST(BUILDDIR)
 AC_SUBST(INSTALLDIR)
 VERSION=DUQ_VERSION
 AC_SUBST(VERSION)
-DUQ_CFLAGS="$PARALLEL_CFLAGS $CHECK_CFLAGS"
+DUQ_CFLAGS="$PARALLEL_CFLAGS $CHECK_CFLAGS $QTCORE_CFLAGS"
 AC_SUBST(DUQ_CFLAGS)
 AC_SUBST(GUI_SUBDIR)
 DUQ_READLINE="-L$RLINCDIR"
