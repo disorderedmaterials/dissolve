@@ -5,7 +5,7 @@
 COMMITFILE="none"
 COMMITMSG="none"
 COMMITTYPE="none"
-BUMP="true"
+BUMP="false"
 PUSH="false"
 ALL="false"
 

@@ -19,8 +19,7 @@ stamp-h1
 *.hh
 ui_*
 moc_*
-src/cli/duq
-src/gui/duqgui
+src/duq
 Aten.desktop
 .kdev4/
 build/
