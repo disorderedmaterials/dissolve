@@ -5,7 +5,7 @@ set(DESCRIPTION "dUQ")
 set(AUTHOR "Tristan Youngs")
 set(VERSION_MAJOR "0")
 set(VERSION_MINOR "32")
-set(VERSION_PATCH "1")
+set(VERSION_PATCH "2")
 
 set(CMAKE_BUILD_TYPE "Release")
 
