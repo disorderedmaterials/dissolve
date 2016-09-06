@@ -578,7 +578,7 @@ bool Data2D::checkBeforeTransform()
 /*!
  * \brief Return value of window function at specified position (in range 0.0 - 1.0)
  * \details Calculates the value of the specified window function at the given value of 'x', where the range
- * of 'x' is between 0.0 and 1.0 inclusive, and represents the positive half of the waveform / window function.
+ * of 'x' is between 0.0 and 1.0 inclusive.
  */
 double Data2D::window(Data2D::WindowFunction wf, double x)
 {
@@ -591,13 +591,13 @@ double Data2D::window(Data2D::WindowFunction wf, double x)
 			return 1.0;
 			break;
 		case (Data2D::BartlettWindow):
-			return (1.0 - fabs( (x*0.5)/0.5 ));
+			return (1.0 - fabs( (x-0.5)/0.5 ));
 			break;
 		case (Data2D::GaussianWindow):
-			return exp(-10.0*x*x);
+// 			return exp(-10.0*x*x);
 			break;
 		case (Data2D::LanczosWindow):
-			return sin(PI*x)/(PI*x);
+			return sin(PI*(2*x-1.0))/(PI*(2*x-1.0));
 			break;
 		case (Data2D::NuttallWindow):
 			return (0.355768 - 0.487396*cos(2.0*PI*x) + 0.144232*cos(4.0*PI*x) - 0.012604*cos(6.0*PI*x));

@@ -82,15 +82,8 @@ bool DUQ::calculatePartialsSimple(Configuration& cfg)
 		for (i=start; i < maxr[typeI]; i += stride)
 		{
 			centre = ri[i];
-			for (j = i+1; j < maxr[typeI]; ++j)
-			{
-				bins[j] = box->minimumDistance(centre, ri[j]) * rbin;
-// 					++count;
-			}
-			for (j = i+1; j < maxr[typeI]; ++j)
-			{
-				if (bins[j] < nPoints) ++histogram[bins[j]];
-			}
+			for (j = i+1; j < maxr[typeI]; ++j) bins[j] = box->minimumDistance(centre, ri[j]) * rbin;
+			for (j = i+1; j < maxr[typeI]; ++j) if (bins[j] < nPoints) ++histogram[bins[j]];
 		}
 // 		printf("For types %i-%i, count = %i\n", typeI, typeI, count);
 	}
@@ -113,7 +106,6 @@ bool DUQ::calculatePartialsSimple(Configuration& cfg)
 			for (i=start; i < maxr[typeI]; i += stride)
 			{
 				centre = ri[i];
-				// TODO Are two separate loops really faster here (and above?)
 				for (j = 0; j < maxr[typeJ]; ++j) bins[j] = box->minimumDistance(centre, rj[j]) * rbin;
 				for (j = 0; j < maxr[typeJ]; ++j) if (bins[j] < nPoints) ++histogram[bins[j]];
 			}

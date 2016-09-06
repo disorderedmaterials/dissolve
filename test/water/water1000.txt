@@ -38,12 +38,12 @@ System
 EndSystem
 
 # Samples
-#Sample  'Protiated'
-#  Isotopologue  'Water'  'Natural'  1.000000  1.000000
-#  #ReferenceData 'test/water/H2O.mint01'
-#  FitQMin  1.5
-#  FitQMax  30.0
-#EndSample
+Sample  'Protiated'
+  Isotopologue  'Water'  'Natural'  1.000000  1.000000
+  #ReferenceData 'test/water/H2O.mint01'
+  FitQMin  1.5
+  FitQMax  30.0
+EndSample
 
 Sample  'Deuteriated'
   Isotopologue  'Water'  'Deuteriated'  1.000000  1.000000

@@ -60,13 +60,13 @@ Sample  '50/50 Mix'
   FitQMax  30.0
 EndSample
 
-#Sample  'Null Mix (1:0.561 H:D)'
-#  Isotopologue  'Water'  'Natural'  1.0
-#  Isotopologue  'Water'  'Deuteriated'  0.561000
-#  #ReferenceData 'test/water/Null.mint01'
-#  FitQMin  0.5
-#  FitQMax  30.0
-#EndSample
+Sample  'Null Mix (1:0.561 H:D)'
+  Isotopologue  'Water'  'Natural'  1.0
+  Isotopologue  'Water'  'Deuteriated'  0.561000
+  #ReferenceData 'test/water/Null.mint01'
+  FitQMin  0.5
+  FitQMax  30.0
+EndSample
 
 # Pair Potentials
 PairPotentials
