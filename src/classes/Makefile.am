@@ -15,4 +15,4 @@ libclasses_a_SOURCES += sample.cpp species.cpp species_atomic.cpp species_grains
 
 noinst_HEADERS = atom.h atomtype.h atomtypeindex.h box.h braggpeak.h cell.h cellneighbour.h changedata.h changestore.h configuration.cpp energykernel.h forcekernel.h grain.h histogram.h isotopologue.h isotopologuemix.h kvector.h molecule.h pairpotential.h potentialmap.h sample.h species.h speciesangle.h speciesatom.h speciesbond.h speciesgrain.h
 
-INCLUDES = -I../ @DUQ_CFLAGS@
+AM_CPPFLAGS = -I../ @DUQ_CFLAGS@

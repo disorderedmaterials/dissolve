@@ -41,5 +41,5 @@ duqgui_SOURCES = main.cpp ../lib/base/mutex.cpp
 
 duqgui_LDADD = libgui.a ../lib/main/libmain.a ../lib/classes/libclasses.a ../lib/base/libbase.a ../lib/math/libmath.a @MPI_LDLIBS@ @GUI_LDLIBS@ -lreadline
 
-INCLUDES = -I../ -I../lib @DUQ_CFLAGS@ @GUI_INCLUDES@ -DWITHGUI
+AM_CPPFLAGS = -I../ -I../lib @DUQ_CFLAGS@ AM_CPPFLAGS@ -DWITHGUI
 

@@ -7,5 +7,5 @@ duq_SOURCES = main.cpp
 
 duq_LDADD = main/libmain.a classes/libclasses.a base/libbase.a math/libmath.a -lreadline @MPI_LDLIBS@
 
-INCLUDES = -I../ @DUQ_CFLAGS@
+AM_CPPFLAGS = -I../ @DUQ_CFLAGS@
 

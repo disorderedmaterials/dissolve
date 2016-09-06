@@ -6,4 +6,4 @@ libmain_a_SOURCES += methods_atomshake.cpp methods_energy.cpp methods_forces.cpp
 
 noinst_HEADERS = command.h duq.h flags.h keywords.h
 
-INCLUDES = -I../ -I../../ @DUQ_CFLAGS@ @DUQ_READLINE@
+AM_CPPFLAGS = -I../ -I../../ @DUQ_CFLAGS@ @DUQ_READLINE@

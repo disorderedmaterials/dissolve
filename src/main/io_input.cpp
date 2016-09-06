@@ -29,7 +29,6 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include <string.h>
-#include <QtCore/QDate>
 
 /*!
  * \brief Load datafiles
