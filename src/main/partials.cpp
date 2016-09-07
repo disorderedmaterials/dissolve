@@ -263,14 +263,17 @@ CommandReturnValue DUQ::calculatePairCorrelations(Configuration& cfg)
 		msg.print("--> Finished calculation of partial Bragg S(Q) (%s elapsed, %s comms).\n", timer.timeString(), Comm.accumulatedTimeString());
 	}
 
-	// Generate final partial S(Q) combining X and Bragg partials
+	// Generate final partial S(Q) combining pair correlations and Bragg partials
 	for (typeI=0; typeI<typeIndex_.nItems(); ++typeI)
 	{
 		for (typeJ=typeI; typeJ<typeIndex_.nItems(); ++typeJ)
 		{
-			// Grab references
+			// Grab references:
+			// -- Full atom pair-pair structure factors (bound + unbound)
 			Data2D& pairSQ = pairSQMatrix_.ref(typeI,typeJ);
+			// -- Bragg partial structure factors
 			Data2D& braggSQ = braggSQMatrix_.ref(typeI,typeJ);
+			// -- Full partial structure factors (destination)
 			Data2D& partialSQ = partialSQMatrix_.ref(typeI,typeJ);
 
 			// Copy atomic pair S(Q) information

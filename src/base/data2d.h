@@ -142,9 +142,9 @@ class Data2D : public ListItem<Data2D>
 	{
 		NoWindow,		/**> Don't use any window */
 		BartlettWindow,		/**> Bartlett (triangular) window */
-		GaussianWindow,		/**> Gaussian window */
+		HannWindow,		/**> von Hann (Hanning) window */
 		LanczosWindow,		/**> Lanczos window */
-		NuttallWindow,		/**> Nuttall window (continuous first derivatives over range */
+		NuttallWindow,		/**> Nuttall window (continuous first derivatives over range) */
 		SineWindow,		/**> Sine Window */
 		nWindowFunctions	/**> Number of defined WindowFunctions */
 	};

@@ -57,8 +57,8 @@ DUQ::DUQ()
 
 	// Setup
 	boxNormalisationPoints_ = 50000000;
-	qDependentFWHM_ = 0.0;
-	qIndependentFWHM_ = 0.02;
+	qDependentFWHM_ = 0.02;
+	qIndependentFWHM_ = 0.0;
 	rdfBinWidth_ = 0.025;
 	rdfRange_ = -1.0;
 	rdfSmoothing_ = 0;
@@ -68,7 +68,7 @@ DUQ::DUQ()
 	rmseDeltaQ_ = 0.05;
 	seed_ = -1;
 	temperature_ = 300.0;
-	windowFunction_ = Data2D::GaussianWindow;
+	windowFunction_ = Data2D::HannWindow;
 	braggCalculationOn_ = false;
 	braggMaximumQ_ = 1.0;
 	braggBroadening_ = 0.0063;

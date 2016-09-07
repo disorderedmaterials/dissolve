@@ -526,7 +526,7 @@ void Data2D::operator/=(const double factor)
 */
 
 // Window Function keywords
-const char *WindowFunctionKeywords[] = { "None", "Bartlett", "Gaussian", "Lanczos", "Nuttall", "Sine" };
+const char *WindowFunctionKeywords[] = { "None", "Bartlett", "Hann", "Lanczos", "Nuttall", "Sine" };
 
 /*!
  * \brief Convert text string to WindowFunction
@@ -593,8 +593,8 @@ double Data2D::window(Data2D::WindowFunction wf, double x)
 		case (Data2D::BartlettWindow):
 			return (1.0 - fabs( (x-0.5)/0.5 ));
 			break;
-		case (Data2D::GaussianWindow):
-// 			return exp(-10.0*x*x);
+		case (Data2D::HannWindow):
+			return 0.5*(1.0-cos(2*PI*x));
 			break;
 		case (Data2D::LanczosWindow):
 			return sin(PI*(2*x-1.0))/(PI*(2*x-1.0));
@@ -842,7 +842,8 @@ bool Data2D::transformBroadenedRDF(double atomicDensity, double qStep, double qM
 	sigmaq = 0.5*fwhmq/sqrt(2.0*log(2.0));
 
 	// Create working arrays
-	Array<double> real;
+	Array<double> oldy = y_;
+	y_.clear();
 	Q = qStep*0.5;
 
 	// Perform Fourier sine transform, including instrument broadening of RDF
@@ -858,21 +859,22 @@ bool Data2D::transformBroadenedRDF(double atomicDensity, double qStep, double qM
 			sigr = (sigma + sigmaq*Q) * x_[m];
 			broaden = exp(-0.5*sigr*sigr);
 
-			fq += sin(x_[m]*Q) * x_[m] * broaden * window(wf, windowPos) * y_[m] * deltaX;
+			fq += sin(x_[m]*Q) * x_[m] * broaden * window(wf, windowPos) * oldy[m] * deltaX;
 		}
 
 		// Normalise
 		factor = 4.0 * PI * atomicDensity / Q;
-		real.add(fq*factor);
+		y_.add(fq*factor);
 		
 		Q += qStep;
 	}
 
 	// Copy transform data over initial data
-	y_ = real;
 	x_.clear();
 	for (n=0; n<y_.nItems(); ++n) x_.add((n+0.5)*qStep);
+
 	splineInterval_ = -1;
+
 	return true;
 }
 
