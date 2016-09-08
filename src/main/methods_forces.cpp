@@ -1,6 +1,6 @@
 /*
 	*** dUQ Methods - Forces
-	*** src/lib/main/methods_forces.cpp
+	*** src/main/methods_forces.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -57,7 +57,7 @@ void DUQ::intramolecularForces(Configuration& cfg, double* fx, double* fy, doubl
 			j = mol->atom(b->indexJ());
 
 			// Determine whether we need to apply minimum image to the vector calculation
-			if (configuration_.useMim(i->grain()->cell(), j->grain()->cell())) vecji = cfg.box()->minimumVector(i, j);
+			if (cfg.useMim(i->grain()->cell(), j->grain()->cell())) vecji = cfg.box()->minimumVector(i, j);
 			else vecji = j->r() - i->r();
 			
 			// Get distance and normalise vector ready for force calculation
@@ -86,9 +86,9 @@ void DUQ::intramolecularForces(Configuration& cfg, double* fx, double* fy, doubl
 			k = mol->atom(a->indexK());
 
 			// Determine whether we need to apply minimum image between 'j-i' and 'j-k'
-			if (configuration_.useMim(j->grain()->cell(), i->grain()->cell())) vecji = cfg.box()->minimumVector(j, i);
+			if (cfg.useMim(j->grain()->cell(), i->grain()->cell())) vecji = cfg.box()->minimumVector(j, i);
 			else vecji = i->r() - j->r();
-			if (configuration_.useMim(j->grain()->cell(), k->grain()->cell())) vecjk = cfg.box()->minimumVector(j, k);
+			if (cfg.useMim(j->grain()->cell(), k->grain()->cell())) vecjk = cfg.box()->minimumVector(j, k);
 			else vecjk = k->r() - j->r();
 			
 			// Calculate angle

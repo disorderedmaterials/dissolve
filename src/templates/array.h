@@ -1,6 +1,6 @@
 /*
 	*** Array Classes
-	*** src/lib/templates/array.h
+	*** src/templates/array.h
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.

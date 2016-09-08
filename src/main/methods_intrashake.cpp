@@ -1,6 +1,6 @@
 /*
 	*** dUQ Methods - IntraShake
-	*** src/lib/main/methods_intrashake.cpp
+	*** src/main/methods_intrashake.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -32,7 +32,7 @@
 /*!
  * \brief Perform an Intramolecular Shake
  */
-CommandReturnValue DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
+bool DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 {
 	// Start a Timer
 	Timer timer;
@@ -43,6 +43,7 @@ CommandReturnValue DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 	Atom* i, *j, *k, *l;
 	Matrix3 rotation;
 	int* attachedIndices;
+	const double rRT = 1.0/(.008314472*cfg.temperature());
 
 	// Create a local ChangeStore and EnergyKernel
 	ChangeStore changeStore;
@@ -102,7 +103,7 @@ CommandReturnValue DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 		newEnergy = kernel.energy(mol, DUQComm::World);
 		delta = newEnergy - currentEnergy;
 		
-		if ((delta < 0) || (Comm.random() < exp(-delta/(.008314472*temperature_))))
+		if ((delta < 0) || (Comm.random() < exp(-delta*rRT)))
 		{
 			changeStore.updateAll();
 			currentEnergy = newEnergy;
@@ -164,7 +165,7 @@ CommandReturnValue DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 			newEnergy = kernel.energy(mol, DUQComm::World);
 			delta = newEnergy - currentEnergy;
 			
-			if ((delta < 0) || (Comm.random() < exp(-delta/(.008314472*temperature_))))
+			if ((delta < 0) || (Comm.random() < exp(-delta*rRT)))
 			{
 				changeStore.updateAll();
 				currentEnergy = newEnergy;
@@ -180,16 +181,16 @@ CommandReturnValue DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 	timer.stop();
 
 // 	// Distribute coordinate changes to all processes
-// 	changeStore.distribute(cfg.nAtoms(), cfg.atoms());
+// 	changeStore.distributeAndApply(cfg.nAtoms(), cfg.atoms());
 // 	changeStore.reset();
 
 	// Grains have moved, so refold and update locations
-	updateGrains(cfg);
+	cfg.updateGrains();
 
 	// Collect statistics from process group leaders
-	if (!Comm.allSum(&nAccepted, 1, DUQComm::Leaders)) return CommandCommFail;
-	if (!Comm.allSum(&nTries, 1, DUQComm::Leaders)) return CommandCommFail;
-	if (!Comm.allSum(&totalDelta, 1, DUQComm::Leaders)) return CommandCommFail;
+	if (!Comm.allSum(&nAccepted, 1, DUQComm::Leaders)) return false;
+	if (!Comm.allSum(&nTries, 1, DUQComm::Leaders)) return false;
+	if (!Comm.allSum(&totalDelta, 1, DUQComm::Leaders)) return false;
 	if (Comm.processGroupLeader())
 	{
 		msg.print("IntraShake: Overall acceptance rate was %6.1f%% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*nAccepted / nTries, nAccepted, nTries, timer.timeString(), Comm.accumulatedTimeString());
@@ -207,15 +208,15 @@ CommandReturnValue DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 	accumulateEnergyChange();
 
 	// Increment configuration changeCount_
-	if (nAccepted > 0) cfg.incrementChangeCount();
+	if (nAccepted > 0) cfg.incrementCoordinateIndex();
 
-	return CommandSuccess;
+	return true;
 }
 
 /*!
  * \brief Shake intermolecular terms between Grains
  */
-CommandReturnValue DUQ::interShake(Configuration& cfg)
+bool DUQ::interShake(Configuration& cfg)
 {
 	// Initialise the Cell distributor
 	const bool willBeModified = true, allowRepeats = false;
@@ -236,6 +237,7 @@ CommandReturnValue DUQ::interShake(Configuration& cfg)
 	Grain* grainI;
 	Molecule* mol;
 	Vec3<double> vec;
+	const double rRT = 1.0/(.008314472*cfg.temperature());
 
 	Timer timer;
 	Comm.resetAccumulatedTime();
@@ -245,7 +247,7 @@ CommandReturnValue DUQ::interShake(Configuration& cfg)
 		if (cellId == Cell::NoCellsAvailable)
 		{
 			// No valid cell, but still need to enter into change distribution with other processes
-			changeStore.distribute(cfg);
+			changeStore.distributeAndApply(cfg);
 			cfg.finishedWithCell(willBeModified, cellId);
 			continue;
 		}
@@ -312,10 +314,10 @@ CommandReturnValue DUQ::interShake(Configuration& cfg)
 
 				// Trial the transformed Grain position (the Master is in charge of this)
 				delta = (newGrainEnergy + newBondEnergy) - (currentGrainEnergy + currentBondEnergy);
-				accept = delta < 0 ? true : (DUQMath::random() < exp(-delta/(.008314472*temperature_)));
+				accept = delta < 0 ? true : (DUQMath::random() < exp(-delta*rRT));
 
 				// Broadcast result to process group
-				if (!Comm.broadcast(&accept, 1, 0, DUQComm::Group)) return CommandCommFail;
+				if (!Comm.broadcast(&accept, 1, 0, DUQComm::Group)) return false;
 				if (accept)
 				{
 // 					msg.print("Accepts move with delta %f\n", delta);
@@ -336,7 +338,7 @@ CommandReturnValue DUQ::interShake(Configuration& cfg)
 		 */
 
 		// Distribute coordinate changes to all processes
-		changeStore.distribute(cfg);
+		changeStore.distributeAndApply(cfg);
 		changeStore.reset();
 
 		// Must unlock the Cell when we are done with it!
@@ -345,11 +347,11 @@ CommandReturnValue DUQ::interShake(Configuration& cfg)
 	timer.stop();
 
 	// Grains have moved, so refold and update locations
-	updateGrains(cfg);
+	cfg.updateGrains();
 
 	// Collect statistics from process group leaders
-	if (!Comm.allSum(&nAccepted, 1, DUQComm::Leaders)) return CommandCommFail;
-	if (!Comm.allSum(&nTries, 1, DUQComm::Leaders)) return CommandCommFail;
+	if (!Comm.allSum(&nAccepted, 1, DUQComm::Leaders)) return false;
+	if (!Comm.allSum(&nTries, 1, DUQComm::Leaders)) return false;
 	if (Comm.processGroupLeader())
 	{
 		msg.print("InterShake: Overall acceptance rate was %6.1f%% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*nAccepted / nTries, nAccepted, nTries, timer.timeString(), Comm.accumulatedTimeString());
@@ -373,15 +375,15 @@ CommandReturnValue DUQ::interShake(Configuration& cfg)
 	}
 
 	// Increment configuration changeCount_
-	if (nAccepted > 0) cfg.incrementChangeCount();
+	if (nAccepted > 0) cfg.incrementCoordinateIndex();
 
-	return CommandSuccess;
+	return true;
 }
 
 /*!
  * \brief Individually Shake all Intramolecular Terms
  */
-CommandReturnValue DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
+bool DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 {
 	// Start a Timer
 	Timer timer;
@@ -392,6 +394,7 @@ CommandReturnValue DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 	Matrix3 rotation;
 	int* attachedIndices;
 	Atom* i, *j, *k, *l;
+	const double rRT = 1.0/(.008314472*cfg.temperature());
 
 	// Create an EnergyKernel
 	EnergyKernel kernel(cfg, potentialMap_);
@@ -430,7 +433,7 @@ CommandReturnValue DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 				j = mol->atom(b->indexJ());
 
 				// Get current distance of this Bond, and compare it to the equilibrium distance
-				if (configuration_.useMim(i->grain()->cell(), j->grain()->cell())) vec = cfg.box()->minimumVector(i, j);
+				if (cfg.useMim(i->grain()->cell(), j->grain()->cell())) vec = cfg.box()->minimumVector(i, j);
 				else vec = j->r() - i->r();
 				distance = vec.magAndNormalise();
 				delta = b->equilibrium() - distance;
@@ -451,7 +454,7 @@ CommandReturnValue DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 				newEnergy = kernel.energy(mol);
 				delta = newEnergy - currentEnergy;
 				
-				if ((delta < 0) || (DUQMath::random() < exp(-delta/(.008314472*temperature_))))
+				if ((delta < 0) || (DUQMath::random() < exp(-delta*rRT)))
 				{
 					changeStore.updateAtomsLocal(nAttachedAtoms, attachedIndices);
 					currentEnergy = newEnergy;
@@ -481,9 +484,9 @@ CommandReturnValue DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 
 				// Get current angle and compare it to the equilibrium value
 				// Determine whether we need to apply minimum image between 'j-i' and 'j-k'
-				if (configuration_.useMim(j->grain()->cell(), i->grain()->cell())) vecji = cfg.box()->minimumVector(j, i);
+				if (cfg.useMim(j->grain()->cell(), i->grain()->cell())) vecji = cfg.box()->minimumVector(j, i);
 				else vecji = i->r() - j->r();
-				if (configuration_.useMim(j->grain()->cell(), k->grain()->cell())) vecjk = cfg.box()->minimumVector(j, k);
+				if (cfg.useMim(j->grain()->cell(), k->grain()->cell())) vecjk = cfg.box()->minimumVector(j, k);
 				else vecjk = k->r() - j->r();
 				angle = Box::angle(vecji, vecjk);
 				delta = a->equilibrium() - angle;
@@ -502,24 +505,24 @@ CommandReturnValue DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 				{
 					l = mol->atom(attachedIndices[n]);
 					// Apply MIM to coordinates?
-					if (configuration_.useMim(j->grain()->cell(), l->grain()->cell())) centre = cfg.box()->minimumImage(j, l);
+					if (cfg.useMim(j->grain()->cell(), l->grain()->cell())) centre = cfg.box()->minimumImage(j, l);
 					else centre = j->r();
 					l->setCoordinates(rotation * (l->r() - centre) + centre);
 				}
 				// TEST
-				if (configuration_.useMim(j->grain()->cell(), i->grain()->cell())) vecji = cfg.box()->minimumVector(j, i);
-				else vecji = i->r() - j->r();
-				if (configuration_.useMim(j->grain()->cell(), k->grain()->cell())) vecjk = cfg.box()->minimumVector(j, k);
-				else vecjk = k->r() - j->r();
-				vecji.normalise();
-				vecjk.normalise();
+// 				if (cfg.useMim(j->grain()->cell(), i->grain()->cell())) vecji = cfg.box()->minimumVector(j, i);
+// 				else vecji = i->r() - j->r();
+// 				if (cfg.useMim(j->grain()->cell(), k->grain()->cell())) vecjk = cfg.box()->minimumVector(j, k);
+// 				else vecjk = k->r() - j->r();
+// 				vecji.normalise();
+// 				vecjk.normalise();
 // 				if (count == 9) printf("Changed Angle %i-%i-%i from %f to %f.\n", a->i()->index(), a->j()->index(), a->k()->index(), angle, Box::angle(vecji, vecjk));
 
 				// Test energy again
 				newEnergy = kernel.energy(mol);
 				delta = newEnergy - currentEnergy;
 				
-				if ((delta < 0) || (DUQMath::random() < exp(-delta/(.008314472*temperature_))))
+				if ((delta < 0) || (DUQMath::random() < exp(-delta*rRT)))
 				{
 					changeStore.updateAtomsLocal(nAttachedAtoms, attachedIndices);
 					currentEnergy = newEnergy;
@@ -539,16 +542,16 @@ CommandReturnValue DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 	changeStore.storeAndReset();
 
 	// Distribute coordinate changes to all processes
-	changeStore.distribute(cfg);
+	changeStore.distributeAndApply(cfg);
 	changeStore.reset();
 
 	// Grains have moved, so refold and update locations
-	updateGrains(cfg);
+	cfg.updateGrains();
 
 	// Collect statistics from process group leaders
-	if (!Comm.allSum(&nAccepted, 1, DUQComm::Leaders)) return CommandCommFail;
-	if (!Comm.allSum(&nTries, 1, DUQComm::Leaders)) return CommandCommFail;
-	if (!Comm.allSum(&totalDelta, 1, DUQComm::Leaders)) return CommandCommFail;
+	if (!Comm.allSum(&nAccepted, 1, DUQComm::Leaders)) return false;
+	if (!Comm.allSum(&nTries, 1, DUQComm::Leaders)) return false;
+	if (!Comm.allSum(&totalDelta, 1, DUQComm::Leaders)) return false;
 	if (Comm.processGroupLeader())
 	{
 		msg.print("TermShake: Overall acceptance rate was %6.1f%% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*nAccepted / nTries, nAccepted, nTries, timer.timeString(), Comm.accumulatedTimeString());
@@ -566,7 +569,7 @@ CommandReturnValue DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 	accumulateEnergyChange();
 
 	// Increment configuration changeCount_
-	if (nAccepted > 0) cfg.incrementChangeCount();
+	if (nAccepted > 0) cfg.incrementCoordinateIndex();
 
-	return CommandSuccess;
+	return true;
 }

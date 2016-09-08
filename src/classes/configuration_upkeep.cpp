@@ -1,6 +1,6 @@
 /*
 	*** dUQ Methods - Upkeep
-	*** src/lib/main/methods_upkeep.cpp
+	*** src/main/methods_upkeep.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -26,54 +26,55 @@
 #include "classes/changestore.h"
 
 /*!
- * \brief Upkeep - Update Grains
+ * \brief Update Grains
  */
-void DUQ::updateGrains(Configuration& cfg)
+void Configuration::updateGrains()
 {
 	// Loop over Grains, folding them into the Box and reassigning Cell locations
-	Cell* cell;
+	Cell* inCell;
 	Vec3<double> newCentre;
-	Grain* grains = cfg.grains();
-	for (int n=0; n<cfg.nGrains(); ++n)
+	for (int n=0; n<nGrains_; ++n)
 	{
-		newCentre = cfg.box()->fold(grains[n].centre());
-		grains[n].moveTo(newCentre);
-		cell = cfg.cell(newCentre);
+		newCentre = box_->fold(grains_[n].centre());
+		grains_[n].moveTo(newCentre);
+		inCell = cell(newCentre);
 		
 		// Is the Grain now in a different Cell?
-		if (cell != grains[n].cell())
+		if (inCell != grains_[n].cell())
 		{
-			if (grains[n].cell() != NULL) grains[n].removeFromCell(NULL);
-			cell->addGrain(&grains[n]);
+			if (grains_[n].cell() != NULL) grains_[n].removeFromCell(NULL);
+			inCell->addGrain(&grains_[n]);
 		}
 	}
 }
 
 /*!
- * \brief Upkeep - Recalculate cell atom neighbour lists
+ * \brief Recalculate cell atom neighbour lists
  */
-void DUQ::createCellAtomNeighbourLists(Configuration& cfg)
+void Configuration::recreateCellAtomNeighbourLists(double pairPotentialRange)
 {
 	// Clear all existing atoms in cell neighbour lists
-	for (int n=0; n<cfg.nCells(); ++n) cfg.cell(n)->clearAtomNeighbourList();
+	for (int n=0; n<nCells_; ++n) cell(n)->clearAtomNeighbourList();
 
 	Vec3<double> r, atomR;
-	double distSq, cutoffSq = pairPotentialRange_ + sqrt(cfg.realCellSize().dp(cfg.realCellSize()))*0.5;
-	msg.print("--> Cutoff for atom cell neighbours is %f\n", cutoffSq);
-	cutoffSq *= cutoffSq;
+	double distSq, cutoffSq;
 	Atom** otherAtoms;
-	Atom* i, *atoms = cfg.atoms();
+	Atom* i;
 	Cell* centralCell;
 	Cell** neighbours, **mimNeighbours;
 	int nNeighbours, nMimNeighbours, c;
-	const Box* box = cfg.box();
+
+	// Calculate cutoff distance squared
+	cutoffSq = pairPotentialRange + sqrt(realCellSize_.dp(realCellSize_))*0.5;
+	msg.print("--> Cutoff for atom cell neighbours is %f\n", cutoffSq);
+	cutoffSq *= cutoffSq;
 
 	// Loop over atoms
 	Timer timer;
-	for (int n=0; n<cfg.nAtoms(); ++n)
+	for (int n=0; n<nAtoms_; ++n)
 	{
 		// Grab reference to atom and pointer to its current cell location
-		i = &atoms[n];
+		i = &atoms_[n];
 		centralCell = i->cell();
 		atomR = i->r();
 
@@ -82,7 +83,7 @@ void DUQ::createCellAtomNeighbourLists(Configuration& cfg)
 		nNeighbours = centralCell->nCellNeighbours();
 		for (c=0; c<nNeighbours; ++c)
 		{
-			r = box->minimumVector(neighbours[c]->centre(), atomR);
+			r = box_->minimumVector(neighbours[c]->centre(), atomR);
 			distSq = r.magnitudeSq();
 			if (distSq <= cutoffSq) neighbours[c]->addAtomToNeighbourList(i, false, true);
 		}
@@ -91,7 +92,7 @@ void DUQ::createCellAtomNeighbourLists(Configuration& cfg)
 		nMimNeighbours = centralCell->nMimCellNeighbours();
 		for (c=0; c<nMimNeighbours; ++c)
 		{
-			r = box->minimumVector(mimNeighbours[c]->centre(), atomR);
+			r = box_->minimumVector(mimNeighbours[c]->centre(), atomR);
 			distSq = r.magnitudeSq();
 			if (distSq <= cutoffSq) mimNeighbours[c]->addAtomToNeighbourList(i, true, true);
 		}

@@ -1,6 +1,6 @@
 /*
 	*** Keyword Definitions
-	*** src/lib/main/keywords.cpp
+	*** src/main/keywords.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -42,11 +42,8 @@ void Keywords::printValidKeywords(Keywords::InputBlock block)
 		case (Keywords::SampleBlock):
 			for (n=0; n<Keywords::nSampleKeywords; ++n) msg.print("%s%s", n == 0 ? "" : ", ", sampleKeyword( (SampleKeyword) n ));
 			break;
-		case (Keywords::SetupBlock):
-			for (n=0; n<Keywords::nSetupKeywords; ++n) msg.print("%s%s", n == 0 ? "" : ", ", setupKeyword( (SetupKeyword) n ));
-			break;
-		case (Keywords::SimulationBlock):
-			for (n=0; n<Keywords::nSimulationKeywords; ++n) msg.print("%s%s", n == 0 ? "" : ", ", simulationKeyword( (SimulationKeyword) n ));
+		case (Keywords::ConfigurationBlock):
+			for (n=0; n<Keywords::nConfigurationKeywords; ++n) msg.print("%s%s", n == 0 ? "" : ", ", configurationKeyword( (ConfigurationKeyword) n ));
 			break;
 		case (Keywords::SpeciesBlock):
 			for (n=0; n<Keywords::nSpeciesKeywords; ++n) msg.print("%s%s", n == 0 ? "" : ", ", speciesKeyword( (SpeciesKeyword) n ));
@@ -66,7 +63,7 @@ void Keywords::printValidKeywords(Keywords::InputBlock block)
 */
 
 // Input File Block Keywords
-const char *InputBlockKeywords[] = { "AtomTypes", "PairPotentials", "Sample", "Setup", "Simulation", "Species", "System" };
+const char* InputBlockKeywords[] = { "AtomTypes", "Configuration", "PairPotentials", "Sample", "Species", "System" };
 
 /*!
  * \brief Convert text string to InputBlock
@@ -80,7 +77,7 @@ Keywords::InputBlock Keywords::inputBlock(const char* s)
 /*!
  * \brief Convert InputBlock to text string
  */
-const char *Keywords::inputBlock(Keywords::InputBlock id)
+const char* Keywords::inputBlock(Keywords::InputBlock id)
 {
 	return InputBlockKeywords[id];
 }
@@ -90,7 +87,7 @@ const char *Keywords::inputBlock(Keywords::InputBlock id)
 */
 
 // AtomTypes Block Keywords
-const char *AtomTypesBlockKeywords[] = { "AtomType", "EndAtomTypes" };
+const char* AtomTypesBlockKeywords[] = { "AtomType", "EndAtomTypes" };
 
 // AtomTypes Block NArguments
 int AtomTypesBlockNArguments[] = { 3, 0 };
@@ -107,7 +104,7 @@ Keywords::AtomTypesKeyword Keywords::atomTypesKeyword(const char* s)
 /*!
  * \brief Convert AtomTypesKeyword to text string
  */
-const char *Keywords::atomTypesKeyword(Keywords::AtomTypesKeyword id)
+const char* Keywords::atomTypesKeyword(Keywords::AtomTypesKeyword id)
 {
 	return AtomTypesBlockKeywords[id];
 }
@@ -121,116 +118,71 @@ int Keywords::atomTypesBlockNArguments(Keywords::AtomTypesKeyword id)
 }
 
 /*
-// Species Keywords
+// Configuration Block Keywords
 */
 
-// Species Block Keywords
-const char *SpeciesBlockKeywords[] = { "Angle", "Atom", "Bond", "EndSpecies", "Grain", "Isotopologue" };
-
-// Species Block NArguments
-int SpeciesBlockNArguments[] = { 5, 7, 4, 0, 1, 1 };
+// Configuration Block Keywords
+const char* ConfigurationBlockKeywords[] = {
+	"BoxNormalisationFile", "Bragg", "BraggBroadening", "BraggMaximumQ",
+	"CellAngles", "CellLengths", "Component",
+	"Density",
+	"EndConfiguration",
+	"File",
+	"Multiplier",
+	"NonPeriodic",
+	"QDelta", "QMax", 
+	"RDFBinWidth", "RDFMethod", "RDFRange", "RDFSmoothing", "RMSEDeltaQ",
+	"Temperature",
+	"WindowFunction"
+};
+ 
+// Configuration Block NArguments
+int ConfigurationBlockNArguments[] = {
+	1, 1, 1, 1, 
+	3, 3, 2,
+	1,
+	0,
+	1,
+	1, 
+	0, 
+	1, 1,
+	1, 1, 1, 1, 1,
+	1,
+	1
+	};
 
 /*!
- * \brief Convert text string to SpeciesKeyword
+ * \brief Convert text string to ConfigurationKeyword
  */
-Keywords::SpeciesKeyword Keywords::speciesKeyword(const char* s)
+Keywords::ConfigurationKeyword Keywords::configurationKeyword(const char* s)
 {
-	for (int n=0; n<nSpeciesKeywords; ++n) if (strcmp(s,SpeciesBlockKeywords[n]) == 0) return (Keywords::SpeciesKeyword) n;
-	return nSpeciesKeywords;
+	for (int n=0; n<Keywords::nConfigurationKeywords; ++n) if (strcmp(s,ConfigurationBlockKeywords[n]) == 0) return (Keywords::ConfigurationKeyword) n;
+	return Keywords::nConfigurationKeywords;
 }
 
 /*!
- * \brief Convert SpeciesKeyword to text string
+ * \brief Convert ConfigurationKeyword to text string
  */
-const char *Keywords::speciesKeyword(Keywords::SpeciesKeyword id)
+const char* Keywords::configurationKeyword(Keywords::ConfigurationKeyword id)
 {
-	return SpeciesBlockKeywords[id];
+	return ConfigurationBlockKeywords[id];
 }
 
 /*!
  * \brief Return minimum number of expected arguments
  */
-int Keywords::speciesBlockNArguments(Keywords::SpeciesKeyword id)
+int Keywords::configurationBlockNArguments(Keywords::ConfigurationKeyword id)
 {
-	return SpeciesBlockNArguments[id];
+	return ConfigurationBlockNArguments[id];
 }
 
-/*
-// System Block Keywords
-*/
-
-// System Block Keywords
-const char *SystemBlockKeywords[] = { "CellAngles", "CellLengths", "Component", "Density", "EndSystem", "File", "Multiplier", "NonPeriodic" };
-
-// System Block NArguments
-int SystemBlockNArguments[] = { 3, 3, 2, 1, 0, 1, 1, 0 };
-
-/*!
- * \brief Convert text string to SystemKeyword
- */
-Keywords::SystemKeyword Keywords::systemKeyword(const char* s)
-{
-	for (int n=0; n<Keywords::nSystemKeywords; ++n) if (strcmp(s,SystemBlockKeywords[n]) == 0) return (Keywords::SystemKeyword) n;
-	return Keywords::nSystemKeywords;
-}
-
-/*!
- * \brief Convert SystemKeyword to text string
- */
-const char *Keywords::systemKeyword(Keywords::SystemKeyword id)
-{
-	return SystemBlockKeywords[id];
-}
-
-/*!
- * \brief Return minimum number of expected arguments
- */
-int Keywords::systemBlockNArguments(Keywords::SystemKeyword id)
-{
-	return SystemBlockNArguments[id];
-}
-
-/*
-// Sample Block Keywords
-*/
-
-// Sample Block Keywords
-const char *SampleBlockKeywords[] = { "EndSample", "FitQMax", "FitQMin", "Isotopologue", "NormalisedToAvSq", "NormalisedToSqAv", "ReferenceData", "SubtractSelf" };
-
-// Sample Block NArguments
-int SampleBlockNArguments[] = { 0, 1, 1, 3, 0, 0, 1, 0 };
-
-/*!
- * \brief Convert text string to SampleKeyword
- */
-Keywords::SampleKeyword Keywords::sampleKeyword(const char* s)
-{
-	for (int n=0; n<Keywords::nSampleKeywords; ++n) if (strcmp(s,SampleBlockKeywords[n]) == 0) return (Keywords::SampleKeyword) n;
-	return Keywords::nSampleKeywords;
-}
-
-/*!
- * \brief Convert SampleKeyword to text string
- */
-const char *Keywords::sampleKeyword(Keywords::SampleKeyword id)
-{
-	return SampleBlockKeywords[id];
-}
-
-/*!
- * \brief Return minimum number of expected arguments
- */
-int Keywords::sampleBlockNArguments(Keywords::SampleKeyword id)
-{
-	return SampleBlockNArguments[id];
-}
 
 /*
 // PairPotentials Block Keywords
 */
 
 // PairPotentials Block Keywords
-const char *PairPotentialsBlockKeywords[] = { "Coulomb", "Delta", "Dispersion", "EndPairPotentials", "Full", "Range", "TruncationWidth" };
+const char* PairPotentialsBlockKeywords[] = { "Coulomb", "Delta", "Dispersion", "EndPairPotentials", "Full", "Range", "TruncationWidth" };
 
 // PairPotentials Block NArguments
 int PairPotentialsBlockNArguments[] = { 4, 1, 4, 0, 6, 1, 1 };
@@ -247,7 +199,7 @@ Keywords::PairPotentialsKeyword Keywords::pairPotentialsKeyword(const char* s)
 /*!
  * \brief Convert PairPotentialsKeyword to text string
  */
-const char *Keywords::pairPotentialsKeyword(Keywords::PairPotentialsKeyword id)
+const char* Keywords::pairPotentialsKeyword(Keywords::PairPotentialsKeyword id)
 {
 	return PairPotentialsBlockKeywords[id];
 }
@@ -260,73 +212,108 @@ int Keywords::pairPotentialsBlockNArguments(Keywords::PairPotentialsKeyword id)
 	return PairPotentialsBlockNArguments[id];
 }
 
+
 /*
-// Setup Block Keywords
+// Species Keywords
 */
 
-// Setup Block Keywords
-const char *SetupBlockKeywords[] = { "BoxNormalisationFile", "BoxNormalisationPoints", "Bragg", "BraggBroadening", "BraggMaximumQ", "Broadening", "EndSetup", "QDelta", "QMax", "RDFBinWidth", "RDFMethod", "RDFRange", "RDFSmoothing", "RMSEDeltaQ", "Seed", "SimplexNCycles", "SimplexNMoves", "SimplexTemperature", "SimplexTolerance", "Temperature", "WindowFunction" };
+// Species Block Keywords
+const char* SpeciesBlockKeywords[] = { "Angle", "Atom", "Bond", "EndSpecies", "Grain", "Isotopologue" };
 
-// Setup Block NArguments
-int SetupBlockNArguments[] = { 1, 1, 1, 1, 1, 2, 0, 1, 11, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+// Species Block NArguments
+int SpeciesBlockNArguments[] = { 5, 7, 4, 0, 1, 1 };
 
 /*!
- * \brief Convert text string to SetupKeyword
+ * \brief Convert text string to SpeciesKeyword
  */
-Keywords::SetupKeyword Keywords::setupKeyword(const char* s)
+Keywords::SpeciesKeyword Keywords::speciesKeyword(const char* s)
 {
-	for (int n=0; n<Keywords::nSetupKeywords; ++n) if (strcmp(s,SetupBlockKeywords[n]) == 0) return (Keywords::SetupKeyword) n;
-	return Keywords::nSetupKeywords;
+	for (int n=0; n<nSpeciesKeywords; ++n) if (strcmp(s,SpeciesBlockKeywords[n]) == 0) return (Keywords::SpeciesKeyword) n;
+	return nSpeciesKeywords;
 }
 
 /*!
- * \brief Convert SetupKeyword to text string
+ * \brief Convert SpeciesKeyword to text string
  */
-const char *Keywords::setupKeyword(Keywords::SetupKeyword id)
+const char* Keywords::speciesKeyword(Keywords::SpeciesKeyword id)
 {
-	return SetupBlockKeywords[id];
+	return SpeciesBlockKeywords[id];
 }
 
 /*!
  * \brief Return minimum number of expected arguments
  */
-int Keywords::setupBlockNArguments(Keywords::SetupKeyword id)
+int Keywords::speciesBlockNArguments(Keywords::SpeciesKeyword id)
 {
-	return SetupBlockNArguments[id];
+	return SpeciesBlockNArguments[id];
 }
 
 /*
-// Simulation Block Keywords
+// Sample Block Keywords
 */
 
-// Simulation Block Keywords
-const char *SimulationBlockKeywords[] = { "EndSimulation", "@Equilibration", "@Shake", "@Strategy" };
+// Sample Block Keywords
+const char* SampleBlockKeywords[] = {  "Broadening", "EndSample", "FitMax", "FitMin", "Isotopologue", "NormalisedToAvSq", "NormalisedToSqAv", "ReferenceData", "SubtractSelf" };
 
-// Simulation Block NArguments
-int SimulationBlockNArguments[] = { 0, 0, 0, 0 };
+// Sample Block NArguments
+int SampleBlockNArguments[] = { 2, 0, 1, 1, 3, 0, 0, 1, 0 };
 
 /*!
- * \brief Convert text string to SimulationKeyword
+ * \brief Convert text string to SampleKeyword
  */
-Keywords::SimulationKeyword Keywords::simulationKeyword(const char* s)
+Keywords::SampleKeyword Keywords::sampleKeyword(const char* s)
 {
-	for (int n=0; n<Keywords::nSimulationKeywords; ++n) if (strcmp(s,SimulationBlockKeywords[n]) == 0) return (Keywords::SimulationKeyword) n;
-	return Keywords::nSimulationKeywords;
+	for (int n=0; n<Keywords::nSampleKeywords; ++n) if (strcmp(s,SampleBlockKeywords[n]) == 0) return (Keywords::SampleKeyword) n;
+	return Keywords::nSampleKeywords;
 }
 
 /*!
- * \brief Convert SimulationKeyword to text string
+ * \brief Convert SampleKeyword to text string
  */
-const char *Keywords::simulationKeyword(Keywords::SimulationKeyword id)
+const char* Keywords::sampleKeyword(Keywords::SampleKeyword id)
 {
-	return SimulationBlockKeywords[id];
+	return SampleBlockKeywords[id];
 }
 
 /*!
  * \brief Return minimum number of expected arguments
  */
-int Keywords::simulationBlockNArguments(Keywords::SimulationKeyword id)
+int Keywords::sampleBlockNArguments(Keywords::SampleKeyword id)
 {
-	return SimulationBlockNArguments[id];
+	return SampleBlockNArguments[id];
 }
 
+/*
+// System Block Keywords
+*/
+
+// System Block Keywords
+const char* SystemBlockKeywords[] = { "BoxNormalisationPoints", "EndSystem", "Seed", "SimplexNCycles", "SimplexNMoves", "SimplexTemperature", "SimplexTolerance" };
+
+// System Block NArguments
+int SystemBlockNArguments[] = { 1, 0, 1, 1, 1, 1, 1 };
+
+/*!
+ * \brief Convert text string to SystemKeyword
+ */
+Keywords::SystemKeyword Keywords::systemKeyword(const char* s)
+{
+	for (int n=0; n<Keywords::nSystemKeywords; ++n) if (strcmp(s,SystemBlockKeywords[n]) == 0) return (Keywords::SystemKeyword) n;
+	return Keywords::nSystemKeywords;
+}
+
+/*!
+ * \brief Convert SystemKeyword to text string
+ */
+const char* Keywords::systemKeyword(Keywords::SystemKeyword id)
+{
+	return SystemBlockKeywords[id];
+}
+
+/*!
+ * \brief Return minimum number of expected arguments
+ */
+int Keywords::systemBlockNArguments(Keywords::SystemKeyword id)
+{
+	return SystemBlockNArguments[id];
+}

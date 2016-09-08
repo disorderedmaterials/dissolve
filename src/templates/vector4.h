@@ -1,6 +1,6 @@
 /*
 	*** 4-component vector class
-	*** src/lib/templates/vector4.h
+	*** src/templates/vector4.h
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.

@@ -1,6 +1,6 @@
 /*
 	*** Line Parsing Routines
-	*** src/lib/base/lineparser.cpp
+	*** src/base/lineparser.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -69,7 +69,7 @@ void LineParser::reset()
 /*!
  * \brief Return filename of current input file (if any)
  */
-const char *LineParser::inputFilename() const
+const char* LineParser::inputFilename() const
 {
 	return inputFilename_.get();
 }
@@ -77,7 +77,7 @@ const char *LineParser::inputFilename() const
 /*!
  * \brief Return filename of current output file (if any)
  */
-const char *LineParser::outputFilename() const
+const char* LineParser::outputFilename() const
 {
 	return outputFilename_.get();
 }
@@ -85,7 +85,7 @@ const char *LineParser::outputFilename() const
 /*!
  * \brief Return pointer to current line
  */
-const char *LineParser::line() const
+const char* LineParser::line() const
 {
 	return line_;
 }
@@ -789,7 +789,7 @@ bool LineParser::getCharsDelim(int optionMask, Dnchar* source, Dnchar* destarg)
 /*!
  * \brief Return a number of characters from the input stream
  */
-const char *LineParser::getChars(int nchars, bool skipeol)
+const char* LineParser::getChars(int nchars, bool skipeol)
 {
 	char c;
 	// Check number of characters requested
@@ -1057,7 +1057,7 @@ int LineParser::nArgs() const
 /*!
  * \brief Returns the specified argument as a character string
  */
-const char *LineParser::argc(int i)
+const char* LineParser::argc(int i)
 {
 	if ((i < 0) || (i >= nArgs()))
 	{

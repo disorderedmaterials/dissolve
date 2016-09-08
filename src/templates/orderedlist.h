@@ -1,6 +1,6 @@
 /*
 	*** Ordered List Class
-	*** src/lib/templates/orderedlist.h
+	*** src/templates/orderedlist.h
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.

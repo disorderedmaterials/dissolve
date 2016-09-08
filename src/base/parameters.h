@@ -1,6 +1,6 @@
 /*
 	*** Parameters Definition
-	*** src/lib/base/parameters.h
+	*** src/base/parameters.h
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.

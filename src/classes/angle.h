@@ -1,6 +1,6 @@
 /*
 	*** Angle Definition
-	*** src/lib/classes/angle.h
+	*** src/classes/angle.h
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.

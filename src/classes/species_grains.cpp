@@ -1,6 +1,6 @@
 /*
 	*** Species Definition - Grains
-	*** src/lib/classes/species_grains.cpp
+	*** src/classes/species_grains.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.

@@ -1,6 +1,6 @@
 /*
 	*** Pair Potential Definition
-	*** src/lib/classes/pairpotential.cpp
+	*** src/classes/pairpotential.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -47,7 +47,7 @@ PairPotential::PairPotential() : ListItem<PairPotential>()
 }
 
 // Input File Block Keywords
-const char *PairPotentialTypeKeywords[] = { "Coulomb", "Dispersion", "Full" };
+const char* PairPotentialTypeKeywords[] = { "Coulomb", "Dispersion", "Full" };
 
 /*!
  * \brief Convert text string to PairPotentialType
@@ -61,7 +61,7 @@ PairPotential::PairPotentialType PairPotential::pairPotentialType(const char* s)
 /*!
  * \brief Convert PairPotentialType to text string
  */
-const char *PairPotential::pairPotentialType(PairPotential::PairPotentialType id)
+const char* PairPotential::pairPotentialType(PairPotential::PairPotentialType id)
 {
 	return PairPotentialTypeKeywords[id];
 }

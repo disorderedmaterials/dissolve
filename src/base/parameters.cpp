@@ -1,6 +1,6 @@
 /*
 	*** Parameters Definition
-	*** src/lib/base/parameters.cpp
+	*** src/base/parameters.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.

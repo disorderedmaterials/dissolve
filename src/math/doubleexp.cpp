@@ -1,6 +1,6 @@
 /*
 	*** Double/Exponent value
-	*** src/lib/math/doubleexp.cpp
+	*** src/math/doubleexp.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.

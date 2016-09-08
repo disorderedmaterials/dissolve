@@ -1,6 +1,6 @@
 /*
 	*** dUQ - Samples
-	*** src/lib/main/samples.cpp
+	*** src/main/samples.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -91,61 +91,10 @@ Sample *DUQ::sample(int n)
 }
 
 /*!
- * \brief Generate unique Sample name with base name provided
+ * \brief Search for Sample by name
  */
-const char* DUQ::uniqueSampleName(const char* base, Sample* exclude) const
+Sample* DUQ::findSample(const char* name) const
 {
-	static Dnchar uniqueName;
-	Dnchar baseName = base;
-	Sample* s;
-	int highest = -1;
-	
-	if (baseName.isEmpty()) baseName = "Unnamed";
-	
-	// Find all existing names which are the same as 'baseName' up to the first '_', and get the highest appended number
-	for (s = samples_.first(); s != NULL; s = s->next)
-	{
-		if (s == exclude) continue;
-		if (strcmp(baseName, s->name()) == 0) highest = 0;
-		else if (strcmp(baseName,beforeLastChar(s->name(),'_')) == 0) highest = atoi(afterLastChar(s->name(), '_'));
-	}
-	if (highest > -1) uniqueName.sprintf("%s_%i", baseName.get(), ++highest);
-	else uniqueName = baseName;
-	
-	return uniqueName;
-}
-
-/*!
- * \brief Set up Sample data
- */
-bool DUQ::setupSamples()
-{
-	// Loop over Samples and initialise as necessary
-	double rho = atomicDensity();
-	for (Sample* sam = samples_.first(); sam != NULL; sam = sam->next)
-	{
-		// Print out some useful info
-		msg.print("--> Sample: '%s'\n", sam->name());
-		for (IsotopologueMix* mix = sam->isotopologueMixtures(); mix != NULL; mix = mix->next)
-		{
-			double totalRelative = mix->totalRelative();
-			for (RefListItem<Isotopologue,double>* tope = mix->isotopologues(); tope != NULL; tope = tope->next)
-			{
-				if (tope == mix->isotopologues()) msg.print("       %-15s  %-15s  %8.3f\n", mix->species()->name(), tope->item->name(), tope->data / totalRelative);
-				else msg.print("                        %-15s  %8.3f\n", tope->item->name(), tope->data / totalRelative);
-			}
-		}
-		
-		// Create AtomType index for Sample
-		if (!sam->createTypeIndex(species_, multiplier_, configuration_.nAtoms(), typeIndex_)) return false;
-
-		// Finalise reference data
-		if (!sam->finaliseReferenceData()) return false;
-
-		// Setup pair correlation arrays
-		if (!sam->setupPairCorrelations(configuration_.box()->volume(), rdfRange_, rdfBinWidth_, boxNormalisation_, rho)) return false;
-
-		msg.print("\n");
-	}
-	return true;
+	for (Sample* sam = samples_.first(); sam != NULL; sam = sam->next) if (strcmp(name, sam->name()) == 0) return sam;
+	return NULL;
 }

@@ -1,17 +1,11 @@
 add_library(main
 atomtypes.cpp
-composition.cpp
-command.cpp
 comms.cpp
 io_configuration.cpp 
 io_input.cpp
 keywords.cpp
 notepsr.cpp
 pairpotentials.cpp
-partials.cpp
-partials_bragg.cpp
-partials_intra.cpp
-partials_simple.cpp
 samples.cpp
 setup.cpp
 simulation.cpp
@@ -20,9 +14,6 @@ control.h
 keywords.h
 notepsr.h
 
-commands.cpp
-commands_basic.cpp
-commands_test.cpp
 methods_atomshake.cpp
 methods_energy.cpp
 methods_forces.cpp
@@ -31,7 +22,6 @@ methods_intrashake.cpp
 methods_md.cpp
 methods_perturb.cpp
 methods_twist.cpp
-methods_upkeep.cpp
 }
 
 include_directories(

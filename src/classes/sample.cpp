@@ -1,6 +1,6 @@
 /*
 	*** Sample Definition
-	*** src/lib/classes/sample.cpp
+	*** src/classes/sample.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -34,8 +34,10 @@ Sample::Sample() : ListItem<Sample>()
 	hasReferenceData_ = false;
 	referenceDataNormalisation_ = Sample::NoNormalisation;
 	referenceDataSubtractSelf_ = false;
-	referenceFitQMax_ = -1.0;
-	referenceFitQMin_ = -1.0;
+	referenceFitMax_ = -1.0;
+	referenceFitMin_ = -1.0;
+	qDependentFWHM_ = 0.02;
+	qIndependentFWHM_ = 0.0;
 }
 
 /*
@@ -53,7 +55,7 @@ void Sample::setName(const char* name)
 /*!
  * \brief Return name of Sample
  */
-const char *Sample::name() const
+const char* Sample::name() const
 {
 	return name_.get();
 }
@@ -152,44 +154,6 @@ bool Sample::addIsotopologueToMixture(Species* sp, Isotopologue *iso, double rel
 }
 
 /*!
- * \brief Set Isotopologue data
- */
-bool Sample::setIsotopologueInMixture(Species* sp, Isotopologue* iso, double relPop, Isotopologue* newTope)
-{
-	// Find the requested Species in the list
-	IsotopologueMix* mix = hasSpeciesIsotopologueMixture(sp);
-	if (!mix)
-	{
-		msg.error("Species not found in Sample...\n");
-		return false;
-	}
-	
-	// Now find Isotopologue in mixture
-	RefListItem<Isotopologue,double>* ri = mix->hasIsotopologue(iso);
-	if (!ri)
-	{
-		msg.error("Isotopologue not found in mixture for Species '%s', Sample '%s'...\n", sp->name(), name_.get());
-		return false;
-	}
-	
-	// Set new data - was a new relative population given?
-	if (relPop > 0.0) ri->data = relPop;
-	
-	// Was a new Isotopologue given?
-	if (newTope != NULL)
-	{
-		// Must first check that the new Isotopologue isn't already present in the list
-		if (mix->hasIsotopologue(newTope))
-		{
-			msg.error("Can't change Isotopologue '%s' into '%s' since '%s' is already present in the mix.\n", iso->name(), newTope->name(), newTope->name());
-			return false;
-		}
-		ri->item = newTope;
-	}
-	return true;
-}
-
-/*!
  * \brief Return first IsotopologueMix
  */
 IsotopologueMix *Sample::isotopologueMixtures() const
@@ -225,7 +189,7 @@ void Sample::assignDefaultIsotopes()
 /*!
  * \brief Create type index and RDF / S(Q) storage
  */
-bool Sample::createTypeIndex(const List<Species>& species, int multiplier, int nExpectedAtoms, const AtomTypeIndex& masterIndex)
+bool Sample::createTypeIndex(const RefList<Species,double>& usedSpecies, int multiplier, int nExpectedAtoms, const AtomTypeIndex& masterIndex)
 {
 	// Loop over Samples and go through Isotopologues in each mixture
 	typeIndex_.clear();
@@ -236,18 +200,18 @@ bool Sample::createTypeIndex(const List<Species>& species, int multiplier, int n
 
 	msg.print("--> Generating AtomType/Isotope index...\n");
 	// Simultaneous loop over defined Species and IsotopologueMixtures (which are directly related)
-	Species* sp = species.first();
-	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next, sp = sp->next)
+	RefListItem<Species,double>* refSp = usedSpecies.first();
+	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next, refSp = refSp->next)
 	{
 		// Sanity check
-		if (mix->species() != sp)
+		if (mix->species() != refSp->item)
 		{
 			msg.error("Species referred to in mixture in Sample '%s' does not correspond to that in the main Species list.\n", mix->species()->name());
 			return false;
 		}
 
 		// For safety, only the master process will determine the *total* number of molecules of each component
-		if (Comm.master()) molCount = sp->relativePopulation()*multiplier;
+		if (Comm.master()) molCount = refSp->data*multiplier;
 		if (!Comm.broadcast(&molCount, 1)) return false;
 		
 		double totalRelative = mix->totalRelative();
@@ -256,9 +220,16 @@ bool Sample::createTypeIndex(const List<Species>& species, int multiplier, int n
 		for (RefListItem<Isotopologue,double>* tope = mix->isotopologues(); tope != NULL; tope = tope->next)
 		{
 			// Again, for safety only the master process will calculate the number of molecules
-			if (Comm.master()) count = sp->relativePopulation() * (tope->data / totalRelative) * multiplier;
+			if (Comm.master()) count = refSp->data * (tope->data / totalRelative) * multiplier;
 			if (!Comm.broadcast(&count, 1)) return false;
-			
+
+			// Check for zero count
+			if (count == 0)
+			{
+				msg.error("Relative population for Isotopologue '%s' of Species '%s' in Sample '%s' is too low (%e) to provide any Molecules.\n", tope->item->name(), refSp->item->name(), name(), tope->data);
+				return false;
+			}
+
 			// Check count against the remaining molCount
 			// -- Too many?
 			if (count > molCount)
@@ -292,7 +263,7 @@ bool Sample::createTypeIndex(const List<Species>& species, int multiplier, int n
 			}
 
 			// Loop over Atoms in the Species, searching for the AtomType/Isotope entry in the isotopes list of the Isotopologue
-			for (SpeciesAtom* i = sp->atoms(); i != NULL; i = i->next)
+			for (SpeciesAtom* i = refSp->item->atoms(); i != NULL; i = i->next)
 			{
 				iso = tope->item->atomTypeIsotope(i->atomType());
 				typeIndex_.add(i->atomType(), iso, count);
@@ -409,17 +380,17 @@ bool Sample::setupPairCorrelations(double volume, double range, double binWidth,
 	for (int n=0; n<nBins; ++n) totalGR_.setX(n, (n+0.5)*binWidth);
 	totalGR_.setName(niceSampleName.get());
 
-	// Total, reference and difference F(Q) (set names only)
+	// Total, reference and difference data (set names only)
 	totalFQ_.setName(niceSampleName.get());
 	otherName.sprintf("%s (Ref)", niceSampleName.get());
-	referenceFQ_.setName(otherName.get());
+	referenceData_.setName(otherName.get());
 	otherName.sprintf("%s (Diff)", niceSampleName.get());
-	differenceFQ_.setName(otherName.get());
+	differenceData_.setName(otherName.get());
 	
 	// Perform FT of reference data (if present)
-	if (referenceFQ_.nPoints() > 0)
+	if (referenceData_.nPoints() > 0)
 	{
-		referenceDataFT_ = referenceFQ_;
+		referenceDataFT_ = referenceData_;
 // 		referenceDataFT_.rebin();
 		referenceDataFT_.transformLorch(rho, 0.025, 50.0, 0.5, 0.08, true);
 	}
@@ -500,15 +471,15 @@ bool Sample::calculatePairCorrelations(Array2D<Histogram>& masterRDFs, Array2D<D
 	totalFQ_.interpolate();
 
 	// Calculate difference F(Q)
-	differenceFQ_.clear();
+	differenceData_.clear();
 	if (hasReferenceData_)
 	{
 		double Q;
-		for (int n=0; n<referenceFQ_.nPoints(); ++n)
+		for (int n=0; n<referenceData_.nPoints(); ++n)
 		{
-			Q = referenceFQ_.x(n);
+			Q = referenceData_.x(n);
 			if (Q > totalFQ_.arrayX().last()) break;
-			differenceFQ_.addPoint(Q, totalFQ_.interpolated(Q) - referenceFQ_.y(n));
+			differenceData_.addPoint(Q, totalFQ_.interpolated(Q) - referenceData_.y(n));
 		}
 	}
 
@@ -595,10 +566,10 @@ void Sample::saveSQ(const char* baseName)
 	totalFQ_.save(fileName);
 	
 	// If we have reference data, save that as well, along with its interpolated values
-	if (referenceFQ_.arrayX().nItems() > 0)
+	if (referenceData_.arrayX().nItems() > 0)
 	{
 		fileName.sprintf("%s-%s-reference.fq", baseName, niceSampleName.get());
-		referenceFQ_.saveWithInterpolation(fileName);
+		referenceData_.saveWithInterpolation(fileName);
 	}
 }
 
@@ -627,7 +598,7 @@ bool Sample::loadReferenceData(const char* fileName)
 	}
 
 	referenceDataFileName_ = fileName;
-	referenceFQ_.clear();
+	referenceData_.clear();
 
 	// Open file first...
 	LineParser parser;
@@ -650,7 +621,7 @@ bool Sample::loadReferenceData(const char* fileName)
 			result = false;
 			break;
 		}
-		referenceFQ_.addPoint(parser.argd(0), parser.argd(1));
+		referenceData_.addPoint(parser.argd(0), parser.argd(1));
 	}
 
 	// Tidy up
@@ -671,9 +642,33 @@ Dnchar& Sample::referenceDataFileName()
 /*!
  * \brief Return reference data
  */
-Data2D& Sample::referenceFQ()
+Data2D& Sample::referenceData()
 {
-	return referenceFQ_;
+	return referenceData_;
+}
+
+// Set FWHM of Gaussian for Q-dependent instrument broadening function (if required)
+void Sample::setQDependentFWHM(double fwhm)
+{
+	qDependentFWHM_ = fwhm;
+}
+
+// Return FWHM of Gaussian for Q-dependent instrument broadening function (if required)
+double Sample::qDependentFWHM()
+{
+	return qDependentFWHM_;
+}
+
+// Set FWHM of Gaussian for Q-independent instrument broadening function (if required)
+void Sample::setQIndependentFWHM(double fwhm)
+{
+	qIndependentFWHM_ = fwhm;
+}
+
+// Return FWHM of Gaussian for Q-independent instrument broadening function (if required)
+double Sample::qIndependentFWHM()
+{
+	return qIndependentFWHM_;
 }
 
 /*!
@@ -709,43 +704,43 @@ bool Sample::referenceSubtractSelf()
 }
 
 /*!
- * \brief Set minimum Q-value for empirical fitting
+ * \brief Set minimum abscissa for empirical fitting
  */
-void Sample::setReferenceFitQMin(double q)
+void Sample::setReferenceFitMin(double value)
 {
-	referenceFitQMin_ = q;
+	referenceFitMin_ = value;
 }
 
 /*!
- * \brief Return minimum Q-value for empirical fitting
+ * \brief Return minimum abscissa for empirical fitting
  */
-double Sample::referenceFitQMin()
+double Sample::referenceFitMin()
 {
-	return referenceFitQMin_;
+	return referenceFitMin_;
 }
 
 /*!
- * \brief Set maximum Q-value for empirical fitting
+ * \brief Set maximum abscissa for empirical fitting
  */
-void Sample::setReferenceFitQMax(double q)
+void Sample::setReferenceFitMax(double value)
 {
-	referenceFitQMax_ = q;
+	referenceFitMax_ = value;
 }
 
 /*!
- * \brief Return maximum Q-value for empirical fitting
+ * \brief Return maximum abscissa for empirical fitting
  */
-double Sample::referenceFitQMax()
+double Sample::referenceFitMax()
 {
-	return referenceFitQMax_;
+	return referenceFitMax_;
 }
 
 /*!
- * \brief Return difference FQ
+ * \brief Return difference data
  */
-Data2D& Sample::differenceFQ()
+Data2D& Sample::differenceData()
 {
-	return differenceFQ_;
+	return differenceData_;
 }
 
 /*!
@@ -754,13 +749,13 @@ Data2D& Sample::differenceFQ()
 bool Sample::finaliseReferenceData()
 {
 	// Do we actually have some reference data?
-	if (referenceFQ_.nPoints() == 0) return true;
+	if (referenceData_.nPoints() == 0) return true;
 
 	// Set name to be same as Sample (for PlotWidget)
 	Dnchar niceSampleName = name_;
 	niceSampleName.replace(' ', '_');
 	niceSampleName.replace('/', '_');
-	referenceFQ_.setName(niceSampleName);
+	referenceData_.setName(niceSampleName);
 	
 	// Subtract self-scattering background, calculated from high-Q region
 	if (referenceDataSubtractSelf_)
@@ -768,36 +763,36 @@ bool Sample::finaliseReferenceData()
 		msg.print("--> Subtracting self-scattering background from reference data...\n");
 		double highQLevel = 0.0;
 		// Take last 10% of points to calculate average
-		for (int n=referenceFQ_.nPoints()*0.9; n<referenceFQ_.nPoints(); ++n) highQLevel += referenceFQ_.y(n);
-		highQLevel /= (referenceFQ_.nPoints()*0.1);
+		for (int n=referenceData_.nPoints()*0.9; n<referenceData_.nPoints(); ++n) highQLevel += referenceData_.y(n);
+		highQLevel /= (referenceData_.nPoints()*0.1);
 		msg.print("--> High-Q average level is %f.\n", highQLevel);
-		referenceFQ_.arrayY() -= highQLevel;
+		referenceData_.arrayY() -= highQLevel;
 	}
 
 	// Is data normalised?
 	if (referenceDataNormalisation_ == Sample::AverageSquaredNormalisation)
 	{
 		msg.print("--> Removing normalisation (multiplying by <b>**2 = %f).\n", boundCoherentAverageSquared_);
-		referenceFQ_.arrayY() *= boundCoherentAverageSquared_;
+		referenceData_.arrayY() *= boundCoherentAverageSquared_;
 	}
 	else if (referenceDataNormalisation_ == Sample::SquaredAverageNormalisation)
 	{
 		msg.print("--> Removing normalisation (multiplying by <b**2> = %f).\n", boundCoherentSquaredAverage_);
-		referenceFQ_.arrayY() *= boundCoherentSquaredAverage_;
+		referenceData_.arrayY() *= boundCoherentSquaredAverage_;
 	}
 
 	// Check min/max Q ranges for fit
-	if (referenceFitQMin_ < -0.5)
+	if (referenceFitMin_ < -0.5)
 	{
-		referenceFitQMin_ = referenceFQ_.arrayX().first();
-		msg.print("--> No minimum Q value given for fit - assuming minimum available (Q = %10.4e).\n", referenceFitQMin_);
+		referenceFitMin_ = referenceData_.arrayX().first();
+		msg.print("--> No minimum Q value given for fit - assuming minimum available (Q = %10.4e).\n", referenceFitMin_);
 	}
-	if (referenceFitQMax_ < -0.5)
+	if (referenceFitMax_ < -0.5)
 	{
-		referenceFitQMax_ = referenceFQ_.arrayX().last();
-		msg.print("--> No maximum Q value given for fit - assuming maximum available (Q = %10.4e).\n", referenceFitQMax_);
+		referenceFitMax_ = referenceData_.arrayX().last();
+		msg.print("--> No maximum Q value given for fit - assuming maximum available (Q = %10.4e).\n", referenceFitMax_);
 	}
-	msg.print("--> Q range over which to fit empirical potential: %10.4e to %10.4e Angstroms-1.\n", referenceFitQMin_, referenceFitQMax_);
+	msg.print("--> Q range over which to fit empirical potential: %10.4e to %10.4e Angstroms-1.\n", referenceFitMin_, referenceFitMax_);
 
 	return true;
 }
@@ -815,17 +810,17 @@ double Sample::referenceRMSE(double deltaQ)
 	int typeI, typeJ, masterI, masterJ, count = 0;
 
 	q = 0.0;
-	while (q <= referenceFitQMax_)
+	while (q <= referenceFitMax_)
 	{
 		// Check that current Q value is within fit limits for this sample
-		if (q < referenceFitQMin_)
+		if (q < referenceFitMin_)
 		{
 			q += deltaQ;
 			continue;
 		}
 
 		// Increment RMSE
-		deltafq = referenceFQ_.interpolated(q) - totalFQ_.interpolated(q);
+		deltafq = referenceData_.interpolated(q) - totalFQ_.interpolated(q);
 		rmse += deltafq*deltafq;
 		
 		// Increment count and q
@@ -852,10 +847,9 @@ bool Sample::broadcast(const List<Species>& species)
 
 	// Send name
 	if (!Comm.broadcast(name_)) return false;
-	
+
 	// Mixture information
 	// Component/Species RefList will have already been constructed in DUQ::addSample(), so just update constituent Isotopologue
-	
 	for (iso = isotopologueMixtures_.first(); iso != NULL; iso = iso->next)
 	{
 		// Master needs to determine Species index
@@ -890,14 +884,16 @@ bool Sample::broadcast(const List<Species>& species)
 		}
 	}
 
-	// Reference F(Q) data
+	// Reference data
 	if (!Comm.broadcast(&hasReferenceData_, 1)) return false;
-	if (!referenceFQ_.broadcast()) return false;
+	if (!referenceData_.broadcast()) return false;
 	if (!Comm.broadcast(referenceDataFileName_)) return false;
 	if (!Comm.broadcast((int*)&referenceDataNormalisation_, 1)) return false;
 	if (!Comm.broadcast(&referenceDataSubtractSelf_, 1)) return false;
-	if (!Comm.broadcast(&referenceFitQMin_, 1)) return false;
-	if (!Comm.broadcast(&referenceFitQMax_, 1)) return false;
+	if (!Comm.broadcast(&referenceFitMin_, 1)) return false;
+	if (!Comm.broadcast(&referenceFitMax_, 1)) return false;
+	if (!Comm.broadcast(&qDependentFWHM_, 1)) return false;
+	if (!Comm.broadcast(&qIndependentFWHM_, 1)) return false;
 #endif
 	return true;
 }

@@ -1,6 +1,6 @@
 /*
 	*** SpeciesGrain Definition
-	*** src/lib/classes/speciesgrain.h
+	*** src/classes/speciesgrain.h
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -33,10 +33,8 @@ class SpeciesAtom;
 class SpeciesBond;
 class SpeciesAngle;
 
-/*!
- * \brief SpeciesGrain Definition
- * \details A SpeciesGrain contains a list of indices of SpeciesAtoms which should be treated as a 'group' of atoms
- * when calculating neighbour lists, low-Q scattering etc. TODO
+/*
+ * SpeciesGrain Definition
  */
 class SpeciesGrain : public ListItem<SpeciesGrain>
 {

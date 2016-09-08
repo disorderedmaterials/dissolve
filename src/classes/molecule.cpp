@@ -1,6 +1,6 @@
 /*
 	*** Molecule Definition
-	*** src/lib/classes/molecule.cpp
+	*** src/classes/molecule.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -131,7 +131,6 @@ bool Molecule::setupAtom(int n, Atom* i, SpeciesAtom* source)
 	// Copy information from supplied SpeciesAtom
 	atoms_[n]->setElement(source->element());
 	atoms_[n]->setCharge(source->charge());
-	atoms_[n]->setAtomTypeIndex(source->atomType()->index());
 	atoms_[n]->setMolecule(this, source->index());
 
 	return true;

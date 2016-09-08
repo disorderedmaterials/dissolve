@@ -1,6 +1,6 @@
 /*
 	*** IsotopologueMix Definition
-	*** src/lib/classes/isotopologuemix.h
+	*** src/classes/isotopologuemix.h
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -29,11 +29,8 @@
 class Species;
 class Isotopologue;
 
-/*!
- * \brief IsotopologueMix Definition
- * \details The IsotopologueMix class contains a list of one or more Isotopologues to use for a Species, and which are then used to
- * determine scattering lengths when calculating F(Q). If more than one Isotopologue is defined for a given Species this indicates that
- * a mixture should be used, with the relative proportions specified.
+/*
+ * IsotopologueMix Definition
  */
 class IsotopologueMix : public ListItem<IsotopologueMix>
 {

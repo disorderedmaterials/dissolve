@@ -1,6 +1,6 @@
 /*
 	*** Cell Definition
-	*** src/lib/classes/cell.h
+	*** src/classes/cell.h
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -31,9 +31,8 @@
 class Box;
 class CellNeighbour;
 
-/*!
- * \brief Cell Definition
- * \details XXX TODO
+/*
+ * Cell Definition
  */
 class Cell
 {
@@ -136,7 +135,7 @@ class Cell
 
 	public:
 	// Add Cell neighbours
-	void addCellNeighbours(OrderedPointerList< Cell >& neighbours, OrderedPointerList< Cell >& mimNeighbours, int allCells);
+	void addCellNeighbours(OrderedPointerList<Cell>& neighbours, OrderedPointerList<Cell>& mimNeighbours, int allCells);
 	// Return number of normal cell neighbours
 	int nCellNeighbours();
 	// Return number of mim cell neighbours
@@ -144,11 +143,11 @@ class Cell
 	// Return total number of cell neighbours
 	int nTotalCellNeighbours();
 	// Return cell neighbour list, not requiring mim
-		Cell** cellNeighbours();
+	Cell** cellNeighbours();
 	// Return cell neighbour list requiring mim
-		Cell** mimCellNeighbours();
+	Cell** mimCellNeighbours();
 	// Return list of all cell neighbours
-		CellNeighbour* allCellNeighbours();
+	CellNeighbour* allCellNeighbours();
 	// Clear atom neighbour list
 	void clearAtomNeighbourList();
 	// Add atom to neighbour list

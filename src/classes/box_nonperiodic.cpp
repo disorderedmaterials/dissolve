@@ -1,6 +1,6 @@
 /*
 	*** Non-Periodic (Cubic) Box
-	*** src/lib/classes/box_nonperiodic.cpp
+	*** src/classes/box_nonperiodic.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.

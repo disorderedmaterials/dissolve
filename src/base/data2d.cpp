@@ -1,6 +1,6 @@
 /*
 	*** Two-dimensional data
-	*** src/lib/base/data2d.cpp
+	*** src/base/data2d.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -526,7 +526,7 @@ void Data2D::operator/=(const double factor)
 */
 
 // Window Function keywords
-const char *WindowFunctionKeywords[] = { "None", "Bartlett", "Hann", "Lanczos", "Nuttall", "Sine" };
+const char* WindowFunctionKeywords[] = { "None", "Bartlett", "Hann", "Lanczos", "Nuttall", "Sine" };
 
 /*!
  * \brief Convert text string to WindowFunction

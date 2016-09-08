@@ -1,6 +1,6 @@
 /*
 	*** AtomType Definition
-	*** src/lib/classes/atomtype.cpp
+	*** src/classes/atomtype.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.

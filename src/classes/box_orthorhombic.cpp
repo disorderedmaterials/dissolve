@@ -1,6 +1,6 @@
 /*
 	*** Orthorhombic Box
-	*** src/lib/classes/box_orthorhombic.cpp
+	*** src/classes/box_orthorhombic.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.

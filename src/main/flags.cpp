@@ -1,6 +1,6 @@
 /*
 	*** dUQ Flags
-	*** src/lib/main/flags.cpp
+	*** src/main/flags.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.

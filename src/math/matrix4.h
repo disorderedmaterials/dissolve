@@ -1,6 +1,6 @@
 /*
 	*** Column-Major (OpenGL-friendly) 4x4 Matrix class
-	*** src/lib/math/matrix4.h
+	*** src/math/matrix4.h
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.

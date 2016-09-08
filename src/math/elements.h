@@ -1,6 +1,6 @@
 /*
 	*** Element definitions
-	*** src/lib/base/elements.h
+	*** src/base/elements.h
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.

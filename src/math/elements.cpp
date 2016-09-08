@@ -1,6 +1,6 @@
 /*
 	*** Element definitions
-	*** src/lib/base/elements.cpp
+	*** src/base/elements.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -38,14 +38,14 @@ ElementMap &elements()
 #define ACTINIDES 99
 
 // ZMapping types
-const char *ZMapTypeKeywords[ElementMap::nZMapTypes] = { "Alpha", "FirstAlpha", "SingleAlpha", "Name", "Numeric", "FF", "Auto" };
+const char* ZMapTypeKeywords[ElementMap::nZMapTypes] = { "Alpha", "FirstAlpha", "SingleAlpha", "Name", "Numeric", "FF", "Auto" };
 ElementMap::ZMapType ElementMap::zMapType(const char* s, bool reportError)
 {
 	ElementMap::ZMapType zm = (ElementMap::ZMapType) enumSearch("element mapping style", ElementMap::nZMapTypes, ZMapTypeKeywords, s);
 	if ((zm == nZMapTypes) && reportError) enumPrintValid(ElementMap::nZMapTypes, ZMapTypeKeywords);
 	return zm;
 }
-const char *ElementMap::zMapType(ElementMap::ZMapType zm)
+const char* ElementMap::zMapType(ElementMap::ZMapType zm)
 {
 	return ZMapTypeKeywords[zm];
 }
@@ -391,13 +391,13 @@ double ElementMap::atomicMass(Atom* i)
 }
 
 // Return name of atomic number 'i'
-const char *ElementMap::name(Atom* i)
+const char* ElementMap::name(Atom* i)
 {
 	return name(i->element());
 }
 
 // Return symbol of atomic number 'i'
-const char *ElementMap::symbol(Atom* i)
+const char* ElementMap::symbol(Atom* i)
 {
 	return symbol(i->element());
 }
@@ -439,13 +439,13 @@ double ElementMap::atomicMass(int i) const
 }
 
 // Return name of atomic number 'i'
-const char *ElementMap::name(int i) const
+const char* ElementMap::name(int i) const
 {
 	return el[i].name;
 }
 
 // Return symbol of atomic number 'i'
-const char *ElementMap::symbol(int i) const
+const char* ElementMap::symbol(int i) const
 {
 	return el[i].symbol;
 }

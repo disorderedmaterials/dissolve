@@ -1,6 +1,6 @@
 /*
 	*** Cell Neighbour
-	*** src/lib/classes/cellneighbour.cpp
+	*** src/classes/cellneighbour.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.

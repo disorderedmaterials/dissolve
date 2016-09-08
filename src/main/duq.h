@@ -1,6 +1,6 @@
 /*
 	*** dUQ Main Structure
-	*** src/lib/main/duq.h
+	*** src/main/duq.h
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -22,7 +22,6 @@
 #ifndef DUQ_DUQ_H
 #define DUQ_DUQ_H
 
-#include "main/command.h"
 #include "base/ptable.h"
 #include "classes/configuration.h"
 #include "classes/braggpeak.h"
@@ -116,8 +115,8 @@ class DUQ
 	///@}
 
 
-	/*!
-	 * \name Species Definitions
+	/*
+	 * Species Definitions
 	 */
 	///@{
 	private:
@@ -135,8 +134,6 @@ class DUQ
 	Species* species() const;
 	// Return nth Species in the list
 	Species* species(int n);
-	// Generate unique Species name with base name provided
-	const char* uniqueSpeciesName(const char* baseName, Species* exclude = NULL) const;
 	// Search for Species by name
 	Species* findSpecies(const char* name) const;
 	// Update Species (or all) Isotopologues (or specified)
@@ -146,58 +143,8 @@ class DUQ
 	///@}
 
 
-	/*!
-	 * \name System Composition
-	 */
-	///@{
-	private:
-	// Integer multiplier of relative populations
-	int multiplier_;
-	// Density of the system
-	double density_;
-	// Whether the density is in atomic units (atoms/A3) or chemistry units (g/cm3)
-	bool densityIsAtomic_;
-	// Relative Box lengths
-	Vec3<double> relativeBoxLengths_;
-	// Box angles
-	Vec3<double> boxAngles_;
-	// Flag to request a non-periodic box
-	bool nonPeriodic_;
-	// Flag specifying that a random config should be generated (as opposed to loading from a file)
-	bool randomConfiguration_;
-	// File containing initial coordinates
-	Dnchar initialCoordinatesFile_;
-
-	public:
-	// Return total relative population of Species
-	double totalRelative() const;
-	// Set multiplier for System components
-	void setMultiplier(int mult);
-	// Return multiplier for System components
-	int multiplier() const;
-	// Set the atomic density of the system (atoms/A3)
-	void setAtomicDensity(double density);
-	// Set the chemical density of the system (g/cm3)
-	void setChemicalDensity(double density);
-	// Return the density of the system
-	double density() const;
-	// Return whether the density is in atomic units (atoms/A3) or chemistry units (g/cm3)
-	bool densityIsAtomic() const;
-	// Return the atomic density of the system
-	double atomicDensity() const;
-	// Set relative box lengths
-	void setRelativeBoxLengths(const Vec3<double> lengths);
-	// Return relative box lengths
-	Vec3<double> relativeBoxLengths() const;
-	// Set box angles
-	void setBoxAngles(const Vec3<double> angles);
-	// Return box angles
-	Vec3<double> boxAngles() const;
-	///@}
-
-
-	/*!
-	 * \name Samples
+	/*
+	 * Sample Definitions
 	 */
 	///@{
 	private:
@@ -208,25 +155,25 @@ class DUQ
 	// Update current Samples
 	void updateSamples();
 	// Add Sample
-	Sample* addSample(const char *baseName = "NewSample");
+	Sample* addSample(const char* baseName = "NewSample");
 	// Remove Sample
 	void removeSample(Sample* sample);
 	// Return first Sample
 	Sample* samples() const;
 	// Return nth Sample
 	Sample* sample(int n);
-	// Generate unique Sample name with base name provided
-	const char* uniqueSampleName(const char* baseName, Sample* exclude = NULL) const;
-	// Set up Sample data
-	bool setupSamples();
+	// Search for Sample by name
+	Sample* findSample(const char* name) const;
 	///@}
 
 
-	/*!
-	 * \name Pair Potentials
+	/*
+	 * Pair Potentials
 	 */
 	///@{
 	private:
+	// All distinct AtomTypes (non-isotopic) in all Configurations for which we need PairPotentials
+	AtomTypeIndex pairPotentialAtomTypeIndex_;
 	// Maximum distance for tabulated PairPotentials
 	double pairPotentialRange_;
 	// Maximum squared distance for tabulated PairPotentials
@@ -277,154 +224,58 @@ class DUQ
 
 
 	/*!
-	 * \name Master RDF / S(Q) Data
-	 */
-	///@{
-	public:
-	/// Partial RDF Calculation Style
-	enum RDFMethod
-	{
-		SimpleMethod,		/**> 'Simple' - Use a simple double-loop to calculate atomic partials */
-		nRDFMethods		/**> Number of RDFMethods */
-	};
-	// Convert text string to RDFMethod
-	static RDFMethod rdfMethod(const char* s);
-	// Convert RDFMethod to text string
-	static const char* rdfMethod(RDFMethod rm);
-
-	private:
-	// Pair RDF matrix, containing full atom-atom RDFs
-	Array2D<Histogram> pairRDFMatrix_;
-	// Unbound RDF matrix, containing atom-atom RDFs of pairs not joined by bonds or angles
-	Array2D<Histogram> unboundRDFMatrix_;
-	// Bound RDF matrix, containing atom-atom RDFs of pairs joined by bonds or angles
-	Array2D<Histogram> boundRDFMatrix_;
-	// RDF Normalisation for Box shape/extent
-	Data2D boxNormalisation_;
-	// Pair correlation S(Q) matrix, derived from pairRDFMatrix_
-	Array2D<Data2D> pairSQMatrix_;
-	// Unbound S(Q) matrix, derived from unboundRDFMatrix_
-	Array2D<Data2D> unboundSQMatrix_;
-	// Bound S(Q) matrix, derived from boundRDFMatrix_
-	Array2D<Data2D> boundSQMatrix_;
-	// Bragg S(Q) matrix, derived from summation of HKL terms
-	Array2D<Data2D> braggSQMatrix_;
-	// Partial S(Q) matrix, containing full (pair + Bragg) contributions
-	Array2D<Data2D> partialSQMatrix_;
-	// Configuration change count at which partials were last calculated
-	int partialsChangeCount_;
-	// Total RDF (unweighted)
-	Data2D totalRDF_;
-	// Total S(Q) (unweighted)
-	Data2D totalFQ_;
-	// Partial RDF calculation style
-	RDFMethod rdfMethod_;
-	// Total RMSE between calculated and reference F(Q) over all Samples
-	double totalRMSE_;
-	// Maximal extent of hkl for Bragg calculation
-	Vec3<int> braggMaximumHKL_;
-	// Bragg calculation k-vector list
-	List<KVector> braggKVectors_;
-	// Bragg calculation peak list
-	OrderedList<BraggPeak> braggPeaks_;
-	// Bragg S(Q) working arrays
-        Array2D<double> braggAtomVectorXCos_, braggAtomVectorYCos_, braggAtomVectorZCos_;
-        Array2D<double> braggAtomVectorXSin_, braggAtomVectorYSin_, braggAtomVectorZSin_;
-	// Working S(Q) matrices
-	Array2D<Data2D> workingSQMatrixA_, workingSQMatrixB_;
-
-	private:
-	// Calculate partials using simple double Atom loop
-	bool calculatePartialsSimple(Configuration& cfg);
-	// Calculate partial RDFs (main routine)
-	bool calculatePartialRDFs(Configuration& cfg);
-	// Calculate intramolecular RDFs
-	bool calculateIntramolecularRDFs(Configuration& cfg);
-	// Calculate Bragg S(Q)
-	bool calculateBraggSQ(Configuration& cfg);
-
-	public:
-	// Setup RDF and S(Q) storage
-	bool setupPartials();
-	// Reset partials
-	void resetPairCorrelations();
-	// Calculate all partial RDFs and S(Q)
-	CommandReturnValue calculatePairCorrelations(Configuration& cfg);
-	// Save RDFs
-	void saveRDFs(const char* baseName);
-	// Save S(Q)
-	void saveSQ(const char* baseName);
-	///@}
-
-
-	/*!
 	 * \name Setup
 	 */
-	///@{
 	private:
-	// Molecule/Grain/Atom Configuration
-	Configuration configuration_;
-	// Master AtomType index, containing unique (non-isotopic) atom types
-	AtomTypeIndex typeIndex_;
+	// Atomic configurations
+	List<Configuration> configurations_;
 	// Map for PairPotentials
 	PotentialMap potentialMap_;
-	// Box normalisation array to load (otherwise calculate it)
-	Dnchar boxNormalisationFileName_;
-	// Number of test points to use when calculating Box normalisation array
+	// Number of test points to use when calculating Box normalisation arrays
 	int boxNormalisationPoints_;
-	// FWHM of Gaussian for Q-dependent instrument broadening function
-	double qDependentFWHM_;
-	// FWHM of Gaussian for Q-independent instrument broadening function
-	double qIndependentFWHM_;
-	// RDF bin width
-	double rdfBinWidth_;
-	// Working RDF extent
-	double rdfRange_;
-	// Degree of smoothing to apply to calculated RDF data
-	int rdfSmoothing_;
-	// Requested RDF extent
-	double requestedRDFRange_;
-	// Q delta to use in generated S(Q)
-	double qDelta_;
-	// Maximum Q to calculate S(Q) to
-	double qMax_;
 	// Bin width to use when calculating RMSE between Sample F(Q) and reference data
 	double rmseDeltaQ_;
 	// Random seed
 	int seed_;
-	// Simulation temperature (K)
-	double temperature_;
 	// Window function to use for Fourier transforms
 	Data2D::WindowFunction windowFunction_;
-	// Whether Bragg calculation is currently activated
-	bool braggCalculationOn_;
-	// Maximum Q value for Bragg calculation
-	double braggMaximumQ_;
-	// Broadening for Bragg features
-	double braggBroadening_;
+	// Working S(Q) matrices
+	Array2D<Data2D> workingSQMatrixA_, workingSQMatrixB_;
 
 	private:
-	// Clear all model data
-	void clearModel();
-	// Load Box normalisation array
-	bool loadBoxNormalisationFile(const char *fileName);
-	// Setup atomic configuration
-	bool setupConfiguration();
-	// Setup pairpotentials
-	bool setupPotentials();
-	// Finalise and print setup variables
-	bool printSetup();
+	// Find configuration by name
+	Configuration* findConfiguration(const char* name) const;
 
 	public:
-	// Check current setup
-	bool checkSetup();
-	// Setup simulation
-	bool setupSimulation();
 	// Return random seed
 	int seed();
-	// Return configuration pointer
-	Configuration* configuration();
-	///@}
+	// Setup all data, checking it as we go
+	bool setup();
+	// Print full system setup
+	bool printSetup();
+
+	/*
+	 * Simulation
+	 */
+	private:
+	// System energy data
+	Data2D energyData_;
+	// Energy change since last point added to energyData_
+	double energyChange_;
+	// Whether energy has changed since the last point was added
+	bool energyChanged_;
+
+	private:
+	// Register a change in the total energy of the system
+	void registerEnergyChange(double deltaE);
+	// Accumulate current energy change into energyData_
+	void accumulateEnergyChange();
+	// Set absolute energy of system, after total energy calculation
+	void setAbsoluteEnergy(double energy);
+
+	public:
+	// Run Simulation
+	bool go();
 
 
 	/*!
@@ -464,158 +315,31 @@ class DUQ
 
 
 	/*!
-	 * \name Command Definitions
-	 */
-	///@{
-	private:
-	// List of registered Commands
-	List<Command> commands_;
-	// Register a new Command in the library
-	Command* registerCommand(const char* name, const char* shortNames, CommandPointer ptr);
-	// Add an argument to a Command
-	Argument* addCommandArgument(const char* commandName, const char* argumentName, const char* description, const char* defaultValue);
-	// Add a parameter to a Command
-	Argument* addCommandParameter(const char* commandName, const char* parameterName, const char* description, const char* startingValue);
-	// Return first Command in list
-	Command* commands();
-	// Find and return named Command
-	Command* command(const char* name);
-	// Return specified Command argument
-	Argument* commandArgument(const char* commandName, const char* argumentName);
-	// Return Command argument specified as const char*
-	const char* commandArgumentAsConstChar(const char* commandName, const char* argumentName, bool& result);
-	// Return Command argument specified as integer
-	int commandArgumentAsInteger(const char* commandName, const char* argumentName, bool& result);
-	// Return Command argument specified as double
-	double commandArgumentAsDouble(const char* commandName, const char* argumentName, bool& result);
-	// Return parameter for specified Command
-	Argument* commandParameter(const char* commandName, const char* parameterName);
-	// Return Command parameter specified as const char*
-	const char* commandParameterAsConstChar(const char* commandName, const char* parameterName, bool& result);
-	// Return Command parameter specified as integer
-	int commandParameterAsInteger(const char* commandName, const char* parameterName, bool& result);
-	// Return Command parameter specified as double
-	double commandParameterAsDouble(const char* commandName, const char* parameterName, bool& result);
-
-	public:
-	// Register basic/method commands
-	bool registerCommands();
-
-
-	/*!
-	 * \name Basic Commands
+	 * \name Simulation Methods
 	 */
 	///@{
 	public:
-	// Mark END of loop in simulation steps
-	CommandReturnValue commandEndLoop(Configuration& cfg);
-	// Calculate and display total energy
-	CommandReturnValue commandEnergy(Configuration& cfg);
-	// Display help
-	CommandReturnValue commandHelp(Configuration& cfg);
-	// Load configuration from file
-	CommandReturnValue commandLoadConfig(Configuration& cfg);
-	// Mark start of loop in simulation steps
-	CommandReturnValue commandLoop(Configuration& cfg);
-	// Adjust system multiplier
-	CommandReturnValue commandMultiplier(Configuration& cfg);
-	// Quit program
-	CommandReturnValue commandQuit(Configuration& cfg);
-	// Calculate current RMSE
-	CommandReturnValue commandRMSE(Configuration& cfg);
-	// Save DLPOLY config of configuration
-	CommandReturnValue commandSaveDLPOLY(Configuration& cfg);
-	// Save RDF data
-	CommandReturnValue commandSaveRDFs(Configuration& cfg);
-	// Save current PairPotentials
-	CommandReturnValue commandSavePairPotentials(Configuration& cfg);
-	// Save current partial S(Q)
-	CommandReturnValue commandSaveSQ(Configuration& cfg);
-	// Save XYZ of configuration
-	CommandReturnValue commandSaveXYZ(Configuration& cfg);
-	// Set command parameter
-	CommandReturnValue commandSet(Configuration& cfg);
-	// Shake system, with optional loop
-	CommandReturnValue commandShake(Configuration& cfg);
-	// Set temperature
-	CommandReturnValue commandTemperature(Configuration& cfg);
-	// Test Routine
-	CommandReturnValue commandTest(Configuration& cfg);
-	// Test Energy Calculation Routines
-	CommandReturnValue commandTestEnergy(Configuration& cfg);
-	///@}
-
-
-	/*!
-	 * \name Simulation Commands (Methods)
-	 */
-	///@{
-	public:
-	// Upkeep - Update Grains
-	void updateGrains(Configuration& cfg);
-	// Upkeep - Create cell atom neighbour lists
-	void createCellAtomNeighbourLists(Configuration& cfg);
 	// Perform an Atom shake
-	CommandReturnValue atomShake(Configuration& cfg);
+	bool atomShake(Configuration& cfg, double cutoffDistance = -1.0, int nShakesPerAtom = 1, double targetAcceptanceRate = 0.33, double translationStepSize = 0.1);
 	// Perform a Grain shake
-	CommandReturnValue grainShake(Configuration& cfg);
+	bool grainShake(Configuration& cfg, double cutoffDistance = -1.0, int nShakesPerGrain = 1, double targetAcceptanceRate = 0.33, double translationStepSize = 0.1, double rotationStepSize = 10.0);
 	// Shake intramolecular terms within Grains
-	CommandReturnValue intraShake(Configuration& cfg, int nShakesPerTerm);
+	bool intraShake(Configuration& cfg, int nShakesPerTerm = 1);
 	// Shake intermolecular terms between Grains
-	CommandReturnValue interShake(Configuration& cfg);
+	bool interShake(Configuration& cfg);
 	// Individually Shake all Intramolecular Terms
-	CommandReturnValue termShake(Configuration& cfg, int nShakesPerTerm);
+	bool termShake(Configuration& cfg, int nShakesPerTerm = 1);
 	// Twist molecules around bonds
-	CommandReturnValue twist(Configuration& cfg);
+	bool twist(Configuration& cfg, double cutoffDistance = -1.0, int nTwistsPerTerm = 1);
 	// Perform some MD
-	CommandReturnValue md(Configuration& cfg);
+	bool md(Configuration& cfg, double cutoffDistance = -1.0, int nSteps = 1, double deltaT = 0.0001);
 	// Perform a world atom shake
-	CommandReturnValue worldAtomShake(Configuration& cfg);
+	bool worldAtomShake(Configuration& cfg, double cutoffDistance = -1.0, int nShakes = 1, double targetAcceptanceRate = 0.33, double translationStepSize = 0.1);
 	///@}
 
 
-	/*!
-	 * \name Simulation
-	 */
-	///@{
-	private:
-	// Equilibration steps to perform before running main simulation
-	List<Step> equilibrationSteps_;
-	// Shake steps to perform (when requested)
-	List<Step> shakeSteps_;
-	// Main simulation procedure
-	List<Step> strategySteps_;
-	// System energy data
-	Data2D energyData_;
-	// Energy change since last point added to energyData_
-	double energyChange_;
-	// Whether energy has changed since the last point was added
-	bool energyChanged_;
-
-	private:
-	// Attempt to parse supplied line into a Step
-	bool parseStep(Step* step, const char* line);
-	// Execute Step list
-	CommandReturnValue executeSteps(Step* firstStep);
-	// Register a change in the total energy of the system
-	void registerEnergyChange(double deltaE);
-	// Accumulate current energy change into energyData_
-	void accumulateEnergyChange();
-	// Set absolute energy of system, after total energy calculation
-	void setAbsoluteEnergy(double energy);
-
-	public:
-	// Execute provided simulation steps
-	bool runSimulation();
-	// Enter interactive mode
-	bool goInteractive();
-	// Execute single command
-	bool runCommand(const char* commandString);
-	///@}
-
-
-	/*!
-	 * \name Potential Perturbation Routines
+	/*
+	 * Potential Perturbation Routines TODO
 	 */
 	///@{
 	private:
@@ -634,7 +358,7 @@ class DUQ
 	// Cost function callback (passed to Simplex on construction)
 	double simplexCost(Array<double>& alpha);
 	// Perturb potential
-	CommandReturnValue perturb(Configuration& cfg);
+	bool perturb(Configuration& cfg);
 	///@}
 
 
@@ -678,15 +402,7 @@ class DUQ
 	 */
 	///@{
 	public:
-	// Messages
-	enum Message { BroadcastSetupMessage, SetupSimulationMessage, nMessages };
-	// Enter message loop (slaves only)
-	void enterMessageLoop();
-	// Pass message to slaves, forcing them to perform an action
-	void sendMessage(DUQ::Message message);
-	// Check on success of last message
-	bool messageResult(bool rootResult);
-	// Broadcast system setup data
+	// Broadcast complete system setup data
 	bool broadcastSetup();
 	///@}
 };

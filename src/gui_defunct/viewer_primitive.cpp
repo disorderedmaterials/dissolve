@@ -144,7 +144,7 @@ void Primitive::setName(const char* s)
 }
 
 // Return name of primitive
-const char *Primitive::name()
+const char* Primitive::name()
 {
 	return name_.get();
 }

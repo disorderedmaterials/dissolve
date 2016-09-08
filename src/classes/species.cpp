@@ -1,6 +1,6 @@
 /*
 	*** Species Definition
-	*** src/lib/classes/species.cpp
+	*** src/classes/species.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -36,7 +36,6 @@ Species::Species() : ListItem<Species>()
 {
 	highlightedIsotopologue_ = NULL;
 	highlightedGrain_ = NULL;
-	relativePopulation_ = -1.0;
 }
 
 /*!
@@ -81,36 +80,23 @@ void Species::setName(const char* name)
 /*!
  * \brief Return the name of the Species
  */
-const char *Species::name() const
+const char* Species::name() const
 {
 	return name_.get();
 }
 
-/*!
- * \brief Set relative population in the system
+/*
+ * Check setup
  */
-void Species::setRelativePopulation(double relPop)
-{
-	relativePopulation_ = relPop;
-}
-
-/*!
- * \brief Return relative population in the system
- */
-double Species::relativePopulation()
-{
-	return relativePopulation_;
-}
-
-/*!
- * \brief Check setup
- * \details Check Species for obvious things (such as having no atoms) doen to the validity of its GrainDefinitions.
- */
-int Species::checkSetup(const List<AtomType>& atomTypes)
+bool Species::checkSetup(const List<AtomType>& atomTypes)
 {
 	int nErrors = 0;
-	
-	if (atoms_.nItems() == 0) msg.print("[[[ WARNING ]]]	Species contains no Atoms.\n");
+	// Must have at least one atom...
+	if (atoms_.nItems() == 0)
+	{
+		msg.error("Species contains no Atoms.\n");
+		return false;
+	}
 	
 	/* Check AtomTypes */
 	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next)
@@ -126,7 +112,8 @@ int Species::checkSetup(const List<AtomType>& atomTypes)
 			++nErrors;
 		}
 	}
-	
+	if (nErrors > 0) return false;
+
 	/* GrainDefinitions */
 	/* Each Atom must be in exactly one GrainDefinition */
 	RefList<SpeciesAtom,int> grainCount(atoms_, 0);
@@ -156,7 +143,8 @@ int Species::checkSetup(const List<AtomType>& atomTypes)
 			++nErrors;
 		}
 	}
-	
+	if (nErrors > 0) return false;
+
 	/* Check IntraMolecular Data */
 	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next)
 	{
@@ -177,7 +165,8 @@ int Species::checkSetup(const List<AtomType>& atomTypes)
 			}
 		}
 	}
-	
+	if (nErrors > 0) return false;
+
 	/* Check Isotopologues */
 	if (isotopologues_.nItems() == 0)
 	{
@@ -206,7 +195,7 @@ int Species::checkSetup(const List<AtomType>& atomTypes)
 		}
 	}
 
-	return nErrors;
+	return (nErrors == 0);
 }
 
 /*

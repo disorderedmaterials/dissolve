@@ -1,6 +1,6 @@
 /*
 	*** ChangeStore
-	*** src/lib/classes/changestore.h
+	*** src/classes/changestore.h
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -140,7 +140,7 @@ class ChangeStore
 	///@{
 	public:
 	// Distribute and apply change data to all processes
-	bool distribute(Configuration& cfg);
+	bool distributeAndApply(Configuration& cfg);
 	///@}
 };
 

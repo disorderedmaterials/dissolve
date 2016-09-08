@@ -1,6 +1,6 @@
 /*
 	*** dUQ Methods - Molecular Dynamics
-	*** src/lib/main/methods_md.cpp
+	*** src/main/methods_md.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -32,36 +32,21 @@
  * 
  * This is a parallel routine, with processes operating in process groups.
  */
-CommandReturnValue DUQ::md(Configuration& cfg)
+bool DUQ::md(Configuration& cfg, double cutoffDistance, int nSteps, double deltaT)
 {
-	// Get method arguments and parameters from Command
-	bool result;
-	// -- Number of MD steps to perform
-	int nSteps = commandArgumentAsInteger("md", "n", result);
-	if (!result) return CommandFail;
-	// -- Energy cutoff to employ
-	double cutoffSq = commandArgumentAsDouble("md", "cut", result);
-	if (!result) return CommandFail;
-	if (cutoffSq < 0.0) cutoffSq = pairPotentialRange_;
-	// -- Timestep to use
-	double deltaT = commandArgumentAsDouble("md", "deltat", result);
-	if (!result) return CommandFail;
-	// -- Trajectory file
-	Dnchar trajFile = commandParameterAsConstChar("md", "trajectory", result);
-	if (!result) return CommandFail;
-	bool writeTraj = !trajFile.isEmpty();
-	// -- Energy calculation at each step
-	bool calcEnergy = commandParameterAsInteger("md", "energy", result);
-	if (!result) return CommandFail;
-	// -- Energy calculation at each step
-	int writeFreq = commandParameterAsInteger("md", "freq", result);
-	if (!result) return CommandFail;
+	// Check input values if necessary
+	if (cutoffDistance < 0.0) cutoffDistance = pairPotentialRange_;
+	const double cutoffSq = cutoffDistance * cutoffDistance;
+	const double temperature = cfg.temperature();
+	bool writeTraj = false;
+	bool calcEnergy = true;
+	int writeFreq = 10;
 
 	// Print summary of parameters
 	msg.print("MD: Number of steps = %i\n", nSteps);
-	msg.print("MD: Cutoff distance is %f\n", cutoffSq);
+	msg.print("MD: Cutoff distance is %f\n", cutoffDistance);
 	msg.print("MD: Timestep = %10.3e ps\n", deltaT);
-	if (writeTraj) msg.print("MD: Trajectory file '%s' will be written.\n", trajFile.get());
+	if (writeTraj) msg.print("MD: Trajectory file '%s' will be appended.\n");
 	else msg.print("MD: Trajectory file off.\n");
 	msg.print("MD: Energy %s be calculated at each step.\n", calcEnergy ? "will" : "will not");
 	msg.print("MD: Summary will be written every %i step(s).\n", writeFreq);
@@ -112,24 +97,26 @@ CommandReturnValue DUQ::md(Configuration& cfg)
 	tInstant = ke * 2.0 / (3.0 * cfg.nAtoms() * kb);
 	
 	// Rescale velocities for desired temperature
-	tScale = sqrt(temperature_ / tInstant);
+	tScale = sqrt(temperature / tInstant);
 	for (n=0; n<cfg.nAtoms(); ++n) v[n] *= tScale;
 
 	// Open trajectory file (if requested)
 	LineParser trajParser;
 	if (writeTraj)
 	{
+		Dnchar trajectoryFile = cfg.name();
+		trajectoryFile.strcat(".md.xyz");
 		if (Comm.master())
 		{
-			if ((!trajParser.openOutput(trajFile, true)) || (!trajParser.isFileGoodForWriting()))
+			if ((!trajParser.openOutput(trajectoryFile, true)) || (!trajParser.isFileGoodForWriting()))
 			{
-				msg.error("Failed to open MD trajectory output file '%s'.\n", trajFile.get());
+				msg.error("Failed to open MD trajectory output file '%s'.\n", trajectoryFile.get());
 				Comm.decide(false);
-				return CommandFail;
+				return false;
 			}
 			Comm.decide(true);
 		}
-		else if (!Comm.decision()) return CommandFail;
+		else if (!Comm.decision()) return false;
 	}
 
 	// Write header to screen
@@ -212,7 +199,7 @@ CommandReturnValue DUQ::md(Configuration& cfg)
 		}
 
 		// Grain coordinates will have changed...
-		updateGrains(cfg);
+		cfg.updateGrains();
 
 		// Calculate forces - must multiply by 100.0 to convert from kJ/mol to 10J/mol (internal MD units)
 		totalForces(cfg, fx, fy, fz, cutoffSq);
@@ -252,7 +239,7 @@ CommandReturnValue DUQ::md(Configuration& cfg)
 
 		// Rescale velocities for desired temperature
 		tInstant = ke * 2.0 / (3.0 * cfg.nAtoms() * kb);
-		tScale = sqrt(temperature_ / tInstant);
+		tScale = sqrt(temperature / tInstant);
 		v *= tScale;
 		
 		// Convert ke from 10J mol-1 to kJ/mol
@@ -287,7 +274,7 @@ CommandReturnValue DUQ::md(Configuration& cfg)
 					trajParser.writeLineF("%-3s   %10.3f  %10.3f  %10.3f\n", PeriodicTable::element(i->element()).symbol(), i->r().x, i->r().y, i->r().z);
 				}
 			}
-			else if (!Comm.decision()) return CommandFail;
+			else if (!Comm.decision()) return false;
 		}
         }
         timer.stop();
@@ -298,11 +285,11 @@ CommandReturnValue DUQ::md(Configuration& cfg)
         msg.print("%i molecular dynamics steps performed (%s work, %s comms)\n", nSteps, timer.timeString(), Comm.accumulatedTimeString());
 
 	// Increment configuration changeCount_
-	cfg.incrementChangeCount();
+	cfg.incrementCoordinateIndex();
 
 	/*
 	 * Calculation End
 	 */
 	
-	return CommandSuccess;
+	return true;
 }

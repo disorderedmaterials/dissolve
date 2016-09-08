@@ -1,6 +1,6 @@
 /*
 	*** dUQ - Commands
-	*** src/lib/main/commands.cpp
+	*** src/main/commands.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -106,7 +106,7 @@ bool DUQ::registerCommands()
 	if (!registerCommand("perturb", "ptb", &DUQ::perturb)) return false;
 
 	// Pair Correlations
-	if (!registerCommand("pair", "p", &DUQ::calculatePairCorrelations)) return false;
+// 	if (!registerCommand("pair", "p", &DUQ::calculatePairCorrelations)) return false;
 
 	// MD
 	if (!registerCommand("md", "", &DUQ::md)) return false;

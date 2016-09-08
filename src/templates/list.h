@@ -1,6 +1,6 @@
 /*
 	*** Linked List Class
-	*** src/lib/templates/list.h
+	*** src/templates/list.h
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.

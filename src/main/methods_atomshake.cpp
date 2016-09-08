@@ -1,6 +1,6 @@
 /*
 	*** dUQ Methods - AtomShake
-	*** src/lib/main/methods_atomshake.cpp
+	*** src/main/methods_atomshake.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -34,33 +34,17 @@
  * 
  * This is a parallel routine, with processes operating in groups.
  */
-CommandReturnValue DUQ::atomShake(Configuration& cfg)
+bool DUQ::atomShake(Configuration& cfg, double cutoffDistance, int nShakesPerAtom, double targetAcceptanceRate, double translationStepSize)
 {
 	// Control Parameters
 	const double termScale = 1.0;
-	
-	// Get method arguments and parameters from Command
-	bool result;
-	// -- Number of shakes per Atom
-	int nShakesPerAtom = commandArgumentAsInteger("atomshake", "n", result);
-	if (!result) return CommandFail;
-	// -- Energy cutoff 
-	double cutoffDistance = commandArgumentAsDouble("atomshake", "cut", result);
-	if (!result) return CommandFail;
 	if (cutoffDistance < 0.0) cutoffDistance = pairPotentialRange_;
-	// -- Translation step size
-	Argument* translationStepParam = commandParameter("atomshake", "maxtrans");
-	if (!translationStepParam) return CommandFail;
-	double translationStep = translationStepParam->asDouble();
-	// -- Target acceptance rate
-	Argument* rateParam = commandParameter("atomshake", "rate");
-	if (!rateParam) return CommandFail;
-	double acceptanceRate = rateParam->asDouble();
+	const double rRT = 1.0/(.008314472*cfg.temperature());
 
 	// Print argument/parameter summary
 	msg.print("AtomShake: Cutoff distance is %f\n", cutoffDistance);
 	msg.print("AtomShake: Performing %i shake(s) per Atom\n", nShakesPerAtom);
-	msg.print("AtomShake: Translation step is %f Angstroms, target acceptance rate is %f.\n", translationStep, acceptanceRate);
+	msg.print("AtomShake: Translation step is %f Angstroms, target acceptance rate is %f.\n", translationStepSize, targetAcceptanceRate);
 
 	// Initialise the Cell distributor
 	const bool willBeModified = true, allowRepeats = false;
@@ -91,7 +75,7 @@ CommandReturnValue DUQ::atomShake(Configuration& cfg)
 		if (cellId == Cell::NoCellsAvailable)
 		{
 			// No valid cell, but still need to enter into change distribution with other processes
-			changeStore.distribute(cfg);
+			changeStore.distributeAndApply(cfg);
 			cfg.finishedWithCell(willBeModified, cellId);
 			continue;
 		}
@@ -123,7 +107,7 @@ CommandReturnValue DUQ::atomShake(Configuration& cfg)
 			for (shake=0; shake<nShakesPerAtom; ++shake)
 			{
 				// Create a random translation vector
-				rDelta.set(Comm.randomPlusMinusOne()*translationStep, Comm.randomPlusMinusOne()*translationStep, Comm.randomPlusMinusOne()*translationStep);
+				rDelta.set(Comm.randomPlusMinusOne()*translationStepSize, Comm.randomPlusMinusOne()*translationStepSize, Comm.randomPlusMinusOne()*translationStepSize);
 
 				// Translate atom and calculate new energy
 				i->translateCoordinates(rDelta);
@@ -133,12 +117,12 @@ CommandReturnValue DUQ::atomShake(Configuration& cfg)
 				// Trial the transformed atom position
 				delta = (newEnergy + newIntraEnergy) - (currentEnergy + intraEnergy);
 // 				printf("delta = %f\n", delta);
-				accept = delta < 0 ? true : (Comm.random() < exp(-delta/(.008314472*temperature_)));
+				accept = delta < 0 ? true : (Comm.random() < exp(-delta*rRT));
 
 				if (accept)
 				{
 // 					msg.print("Accepts move with delta %f\n", delta);
-					// Accept new (current) position of target Grain
+					// Accept new (current) position of target Atom
 					changeStore.updateAtom(n);
 					currentEnergy = newEnergy;
 					intraEnergy = newIntraEnergy;
@@ -160,7 +144,7 @@ CommandReturnValue DUQ::atomShake(Configuration& cfg)
 		 */
 
 		// Distribute coordinate changes to all processes
-		changeStore.distribute(cfg);
+		changeStore.distributeAndApply(cfg);
 		changeStore.reset();
 
 		// Must unlock the Cell when we are done with it!
@@ -169,12 +153,12 @@ CommandReturnValue DUQ::atomShake(Configuration& cfg)
 	timer.stop();
 
 	// Grains have moved, so refold and update locations
-	updateGrains(cfg);
+	cfg.updateGrains();
 
 	// Collect statistics from process group leaders
-	if (!Comm.allSum(&nAccepted, 1, DUQComm::Leaders)) return CommandCommFail;
-	if (!Comm.allSum(&nTries, 1, DUQComm::Leaders)) return CommandCommFail;
-	if (!Comm.allSum(&totalDelta, 1, DUQComm::Leaders)) return CommandCommFail;
+	if (!Comm.allSum(&nAccepted, 1, DUQComm::Leaders)) return false;
+	if (!Comm.allSum(&nTries, 1, DUQComm::Leaders)) return false;
+	if (!Comm.allSum(&totalDelta, 1, DUQComm::Leaders)) return false;
 	if (Comm.processGroupLeader())
 	{
 		double rate = double(nAccepted)/nTries;
@@ -183,54 +167,38 @@ CommandReturnValue DUQ::atomShake(Configuration& cfg)
 		msg.print("AtomShake: Total energy delta was %10.4e kJ/mol.\n", totalDelta);
 
 		// Adjust step size
-		translationStep *= rate/acceptanceRate;
-// 		if (translationStep_ < 0.05) translationStep_ = 0.05;
-// 		else if (translationStep_ > maxTranslationStep_) translationStep_ = maxTranslationStep_;
+		translationStepSize *= rate/targetAcceptanceRate;
+// 		if (translationStepSize_ < 0.05) translationStepSize_ = 0.05;
+// 		else if (translationStepSize_ > maxTranslationStep_) translationStepSize_ = maxTranslationStep_;
 // 		if (rotationStep_ < 3.0) rotationStep_ = 3.0;
 	}
 
 	// Store updated parameter values
-	if (!Comm.broadcast(&translationStep, 1, 0, DUQComm::Group)) return CommandCommFail;
-	translationStepParam->setValue(translationStep);
-	msg.print("AtomShake: Updated translation step is %f Angstroms.\n", translationStep);
+	if (!Comm.broadcast(&translationStepSize, 1, 0, DUQComm::Group)) return false;
+// 	translationStepSizeParam->setValue(translationStepSize); TODO
+	msg.print("AtomShake: Updated translation step is %f Angstroms.\n", translationStepSize);
 	
 	// Increment configuration changeCount_
-	if (nAccepted > 0) cfg.incrementChangeCount();
+	if (nAccepted > 0) cfg.incrementCoordinateIndex();
 
 	// Update total energy
 	registerEnergyChange(totalDelta);
 	accumulateEnergyChange();
 
-	return CommandSuccess;
+	return true;
 }
 
 // Perform a world atom shake
-CommandReturnValue DUQ::worldAtomShake(Configuration& cfg)
+bool DUQ::worldAtomShake(Configuration& cfg, double cutoffDistance, int nShakes, double targetAcceptanceRate, double translationStepSize)
 {
 	// Control Parameters
-	const double termScale = 1.0;
-	
-	// Get method arguments and parameters from Command
-	bool result;
-	// -- Energy cutoff 
-	double cutoffDistance = commandArgumentAsDouble("worldatomshake", "cut", result);
-	if (!result) return CommandFail;
+	const double termScale = 1.0;	
 	if (cutoffDistance < 0.0) cutoffDistance = pairPotentialRange_;
-	// -- Number of shakes to attempt
-	int nShakes = commandArgumentAsInteger("worldatomshake", "n", result);
-	if (!result) return CommandFail;
-	// -- Translation step size
-	Argument* translationStepParam = commandParameter("worldatomshake", "maxtrans");
-	if (!translationStepParam) return CommandFail;
-	double translationStep = translationStepParam->asDouble();
-	// -- Target acceptance rate
-	Argument* rateParam = commandParameter("worldatomshake", "rate");
-	if (!rateParam) return CommandFail;
-	double acceptanceRate = rateParam->asDouble();
-
+	const double rRT = 1.0/(.008314472*cfg.temperature());
+	
 	// Print argument/parameter summary
 	msg.print("WorldAtomShake: Cutoff distance is %f\n", cutoffDistance);
-	msg.print("WorldAtomShake: Translation step is %f Angstroms, target acceptance rate is %f.\n", translationStep, acceptanceRate);
+	msg.print("WorldAtomShake: Translation step is %f Angstroms, target acceptance rate is %f.\n", translationStepSize, targetAcceptanceRate);
 
 	// Initialise the Cell distributor
 	const bool willBeModified = true, allowRepeats = false;
@@ -269,21 +237,21 @@ CommandReturnValue DUQ::worldAtomShake(Configuration& cfg)
 		for (i=0; i<nAtoms; ++i)
 		{
 			// Create a random translation vector
-			rDelta.set(Comm.randomPlusMinusOne()*translationStep, Comm.randomPlusMinusOne()*translationStep, Comm.randomPlusMinusOne()*translationStep);
+			rDelta.set(Comm.randomPlusMinusOne()*translationStepSize, Comm.randomPlusMinusOne()*translationStepSize, Comm.randomPlusMinusOne()*translationStepSize);
 
 			// Translate atom
 			atoms[i].translateCoordinates(rDelta);
 		}
 
 		// Update neighbour lists
-		createCellAtomNeighbourLists(cfg);
+		cfg.recreateCellAtomNeighbourLists(pairPotentialRange_);
 
 		// Calculate new energy
 		newEnergy = interatomicEnergy(cfg) + intramolecularEnergy(cfg);
 
 		delta = newEnergy - currentEnergy;
 		printf("delta = %f\n", delta);
-		accept = delta < 0 ? true : (Comm.random() < exp(-delta/(.008314472*temperature_)));
+		accept = delta < 0 ? true : (Comm.random() < exp(-delta*rRT));
 
 		if (accept)
 		{
@@ -297,16 +265,14 @@ CommandReturnValue DUQ::worldAtomShake(Configuration& cfg)
 		else
 		{
 			changeStore.revertAll();
-					createCellAtomNeighbourLists(cfg);
-
+			cfg.recreateCellAtomNeighbourLists(pairPotentialRange_);
 		}
-
 	}
 
 	// Collect statistics from process group leaders
-	if (!Comm.allSum(&nAccepted, 1, DUQComm::Leaders)) return CommandCommFail;
-	if (!Comm.allSum(&nTries, 1, DUQComm::Leaders)) return CommandCommFail;
-	if (!Comm.allSum(&totalDelta, 1, DUQComm::Leaders)) return CommandCommFail;
+	if (!Comm.allSum(&nAccepted, 1, DUQComm::Leaders)) return false;
+	if (!Comm.allSum(&nTries, 1, DUQComm::Leaders)) return false;
+	if (!Comm.allSum(&totalDelta, 1, DUQComm::Leaders)) return false;
 	if (Comm.processGroupLeader())
 	{
 		double rate = double(nAccepted)/nTries;
@@ -315,19 +281,19 @@ CommandReturnValue DUQ::worldAtomShake(Configuration& cfg)
 		msg.print("WorldAtomShake: Total energy delta was %10.4e kJ/mol.\n", totalDelta);
 
 		// Adjust step size
-		translationStep *= rate/acceptanceRate;
-// 		if (translationStep_ < 0.05) translationStep_ = 0.05;
-// 		else if (translationStep_ > maxTranslationStep_) translationStep_ = maxTranslationStep_;
+		translationStepSize *= rate/targetAcceptanceRate;
+// 		if (translationStepSize_ < 0.05) translationStepSize_ = 0.05;
+// 		else if (translationStepSize_ > maxTranslationStep_) translationStepSize_ = maxTranslationStep_;
 // 		if (rotationStep_ < 3.0) rotationStep_ = 3.0;
 	}
 
 	// Store updated parameter values
-	if (!Comm.broadcast(&translationStep, 1, 0, DUQComm::Group)) return CommandCommFail;
-	translationStepParam->setValue(translationStep);
-	msg.print("WorldAtomShake: Updated translation step is %f Angstroms.\n", translationStep);
+	if (!Comm.broadcast(&translationStepSize, 1, 0, DUQComm::Group)) return false;
+// 	translationStepSizeParam->setValue(translationStepSize); TODO
+	msg.print("WorldAtomShake: Updated translation step is %f Angstroms.\n", translationStepSize);
 	
 	// Increment configuration changeCount_
-	if (nAccepted > 0) cfg.incrementChangeCount();
+	if (nAccepted > 0) cfg.incrementCoordinateIndex();
 
 	// Update total energy
 	registerEnergyChange(totalDelta);

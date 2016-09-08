@@ -1,6 +1,6 @@
 /*
 	*** System functions
-	*** src/lib/base/sysfunc.h
+	*** src/base/sysfunc.h
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -44,8 +44,8 @@ void removeComments(char* s);
 bool isEmpty(const char* s);
 
 // Enum search and print
-int enumSearch(const char* name, int nitems, const char **list, const char* query, bool reportError = 1);
-void enumPrintValid(int nitems, const char **list);
+int enumSearch(const char* name, int nitems, const char**list, const char* query, bool reportError = 1);
+void enumPrintValid(int nitems, const char**list);
 
 // Files
 bool fileExists(const char* filename);

@@ -1,6 +1,6 @@
 /*
 	*** Species Grain
-	*** src/lib/classes/speciesgrain.cpp
+	*** src/classes/speciesgrain.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -74,7 +74,7 @@ void SpeciesGrain::setName(const char* s)
 /*!
  * \brief Return name of SpeciesGrain
  */
-const char *SpeciesGrain::name() const
+const char* SpeciesGrain::name() const
 {
 	return name_.get();
 }

@@ -1,6 +1,6 @@
 /*
 	*** ForceKernel
-	*** src/lib/classes/forcekernel.cpp
+	*** src/classes/forcekernel.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -54,7 +54,7 @@ void ForceKernel::forcesWithoutMim(const Atom* i, const Atom* j, double* fx, dou
 {
 	Vec3<double> force = j->r() - i->r();
 	double distanceSq = force.magSqAndNormalise();
-	force *= potentialMap_.force(i->atomTypeIndex(), j->atomTypeIndex(), distanceSq) * scale;
+	force *= potentialMap_.force(i->globalTypeIndex(), j->globalTypeIndex(), distanceSq) * scale;
 	int index = i->index();
 	fx[index] += force.x;
 	fy[index] += force.y;
@@ -123,7 +123,7 @@ void ForceKernel::forcesWithMim(const Atom* i, const Atom* j, double* fx, double
 {
 	Vec3<double> force = box_->minimumVector(i, j);
 	double distanceSq = force.magSqAndNormalise();
-	force *= potentialMap_.force(i->atomTypeIndex(), j->atomTypeIndex(), distanceSq) * scale;
+	force *= potentialMap_.force(i->globalTypeIndex(), j->globalTypeIndex(), distanceSq) * scale;
 	int index = i->index();
 	fx[index] += force.x;
 	fy[index] += force.y;

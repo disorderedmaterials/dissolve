@@ -1,6 +1,6 @@
 /*
 	*** Dynamic character array
-	*** src/lib/base/dnchar.cpp
+	*** src/base/dnchar.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -129,7 +129,7 @@ void Dnchar::set(const char* s)
 }
 
 // Get
-const char *Dnchar::get() const
+const char* Dnchar::get() const
 {
 	return (data_ != NULL ? data_ : "");
 }
@@ -381,14 +381,14 @@ bool Dnchar::isNumeric() const
 }
 
 // Return the lowercase conversion of the string
-const char *Dnchar::lower() const
+const char* Dnchar::lower() const
 {
 	if (data_ == NULL) return "\0";
 	return lowerCase(data_);
 }
 
 // Return the uppercase conversion of the string
-const char *Dnchar::upper() const
+const char* Dnchar::upper() const
 {
 	if (data_ == NULL) return "\0";
 	return upperCase(data_);

@@ -1,6 +1,6 @@
 /*
 	*** Grain Definition
-	*** src/lib/classes/graindefinition.h
+	*** src/classes/graindefinition.h
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.

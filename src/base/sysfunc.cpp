@@ -1,6 +1,6 @@
 /*
 	*** System functions
-	*** src/lib/base/sysfunc.cpp
+	*** src/base/sysfunc.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -93,7 +93,7 @@ const char* beforeLastChar(const char* s, char delim)
 	
 	// First, find last occurrence of specified character
 	int lastPos = 0, count = 0;
-	const char *c;
+	const char* c;
 	for (c = &s[0]; *c != '\0'; ++c, ++count) if (*c == delim) lastPos = count;
 	
 	// Now, grab 'lastPos' characters from the string
@@ -182,7 +182,7 @@ bool isEmpty(const char* s)
 }
 
 // Search enum list for text
-int enumSearch(const char* name, int maxn, const char **itemlist, const char* query, bool reportError)
+int enumSearch(const char* name, int maxn, const char**itemlist, const char* query, bool reportError)
 {
 	static Dnchar lowerq, lowers;
 	int result = maxn, i;
@@ -201,7 +201,7 @@ int enumSearch(const char* name, int maxn, const char **itemlist, const char* qu
 }
 
 // Print valid enum values
-void enumPrintValid(int nitems, const char **list)
+void enumPrintValid(int nitems, const char**list)
 {
 	msg.print("Valid values are:\n    ");
 	for (int i=0; i < nitems; i++)

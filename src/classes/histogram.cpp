@@ -1,6 +1,6 @@
 /*
 	*** Histogram Definition
-	*** src/lib/classes/histogram.cpp
+	*** src/classes/histogram.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.

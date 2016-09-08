@@ -1,6 +1,6 @@
 /*
 	*** Species Definition
-	*** src/lib/classes/species.h
+	*** src/classes/species.h
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -34,20 +34,8 @@
 // Forward Declarations
 class Box;
 
-/*!
- * \brief Species Definition
- * \details A Species is a distinct molecule type, ion, or fragment present in the real system. For instance, a water molecule, solute molecule,
- * a protein, or a single atom species such as Si (as might be used, e.g. for simulations of solid frameworks). The underlying Model for
- * the system is constructed from these species, mixed in the correct proportion (i.e. molar ratios). The basic Species does not define
- * the isotopic make-up of its atoms - these are added as Isotopologues within the Species.
- * 
- * <b>Granularity</b>
- * 
- * At its simplest, the Species can  be treated as a single Grain - that is, dUQ considers it is a single collection of atoms
- * when performing the main calculation. However, in many circumstances it is desirable to define separate parts of the molecule as
- * distinct Grains, since this allows many aspects of the calculation to be optimised.  For instance, a water molecule should be 
- * treated as a single Grain (since it contains only three atoms as well as being pseudospherical), but a larger, more flexible
- * species (e.g. a long alkane, drug molecule, or protein chain) will benefit from being split up into smaller Grains.
+/*
+ * Species Definition
  */
 class Species : public ListItem<Species>
 {
@@ -67,20 +55,14 @@ class Species : public ListItem<Species>
 	private:
 	// Name of the Species
 	Dnchar name_;
-	// Relative population in the system
-	double relativePopulation_;
 
 	public:
 	// Set name of the Species
 	void setName(const char* name);
 	// Return the name of the Species
 	const char* name() const;
-	// Set relative population in the system
-	void setRelativePopulation(double relPop);
-	// Return relative population in the system
-	double relativePopulation();
 	// Check setup
-	int checkSetup(const List<AtomType>& atomTypes);
+	bool checkSetup(const List<AtomType>& atomTypes);
 	///@}
 
 
@@ -91,7 +73,7 @@ class Species : public ListItem<Species>
 	private:
 	// List of Atoms in the Species
 	List<SpeciesAtom> atoms_;
-	// Selected Atoms (for GUI-based manipulation)
+	// List of selected Atoms
 	RefList<SpeciesAtom,int> selectedAtoms_;
 	
 	public:

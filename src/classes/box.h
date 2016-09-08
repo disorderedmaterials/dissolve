@@ -1,6 +1,6 @@
 /*
 	*** Box Definition
-	*** src/lib/classes/box.h
+	*** src/classes/box.h
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -30,9 +30,8 @@ class Atom;
 class Cell;
 class Data2D;
 
-/*!
- * \brief Basic Box Definition
- * \details XXX TODO
+/*
+ * Basic Box Definition
  */
 class Box
 {
@@ -304,7 +303,7 @@ class CubicBox : public Box
 	// Return folded fractional coordinate (i.e. inside current Box)
 	Vec3<double> foldFrac(const Vec3<double>& i) const;
 	// Convert supplied fractional coordinates to real space
-Vec3<double> fracToReal(const Vec3<double>& r) const;
+	Vec3<double> fracToReal(const Vec3<double>& r) const;
 	///@}
 };
 
@@ -428,7 +427,7 @@ class MonoclinicBox : public Box
 	// Return folded fractional coordinate (i.e. inside current Box)
 	Vec3<double> foldFrac(const Vec3<double>& i) const;
 	// Convert supplied fractional coordinates to real space
-Vec3<double> fracToReal(const Vec3<double>& r) const;
+	Vec3<double> fracToReal(const Vec3<double>& r) const;
 	///@}
 };
 
@@ -490,7 +489,7 @@ class TriclinicBox : public Box
 	// Return folded fractional coordinate (i.e. inside current Box)
 	Vec3<double> foldFrac(const Vec3<double>& i) const;
 	// Convert supplied fractional coordinates to real space
-Vec3<double> fracToReal(const Vec3<double>& r) const;
+	Vec3<double> fracToReal(const Vec3<double>& r) const;
 	///@}
 };
 

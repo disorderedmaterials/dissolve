@@ -1,6 +1,6 @@
 /*
 	*** Species Atom Definition
-	*** src/lib/classes/speciesatom.h
+	*** src/classes/speciesatom.h
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -32,9 +32,8 @@ class Species;
 class SpeciesBond;
 class SpeciesGrain;
 
-/*!
- * \brief SpeciesAtom Definition
- * \details Defines an atom present in a Species
+/*
+ * SpeciesAtom Definition
  */
 class SpeciesAtom : public ListItem<SpeciesAtom>
 {

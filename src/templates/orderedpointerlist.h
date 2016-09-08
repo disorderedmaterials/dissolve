@@ -1,6 +1,6 @@
 /*
 	*** Ordered Pointer List Class
-	*** src/lib/templates/orderedpointerlist.h
+	*** src/templates/orderedpointerlist.h
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.

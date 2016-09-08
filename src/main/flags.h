@@ -1,6 +1,6 @@
 /*
 	*** dUQ Flags
-	*** src/lib/main/flags.h
+	*** src/main/flags.h
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.

@@ -1,6 +1,6 @@
 /*
 	*** dUQ - Species Functions
-	*** src/lib/main/species.cpp
+	*** src/main/species.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -81,31 +81,6 @@ Species *DUQ::species() const
 Species *DUQ::species(int n)
 {
 	return species_[n];
-}
-
-/*!
- * \brief Generate unique Species name with base name provided
- */
-const char* DUQ::uniqueSpeciesName(const char* base, Species* exclude) const
-{
-	static Dnchar uniqueName;
-	Dnchar baseName = base;
-	Species* sp;
-	int highest = -1;
-	
-	if (baseName.isEmpty()) baseName = "Unnamed";
-	
-	// Find all existing names which are the same as 'baseName' up to the first '_', and get the highest appended number
-	for (sp = species_.first(); sp != NULL; sp = sp->next)
-	{
-		if (sp == exclude) continue;
-		if (strcmp(baseName, sp->name()) == 0) highest = 0;
-		else if (strcmp(baseName,beforeLastChar(sp->name(),'_')) == 0) highest = atoi(afterLastChar(sp->name(), '_'));
-	}
-	if (highest > -1) uniqueName.sprintf("%s_%i", baseName.get(), ++highest);
-	else uniqueName = baseName;
-	
-	return uniqueName;
 }
 
 /*!

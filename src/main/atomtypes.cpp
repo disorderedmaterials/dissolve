@@ -1,6 +1,6 @@
 /*
 	*** dUQ - AtomTypes
-	*** src/lib/main/atomtypes.cpp
+	*** src/main/atomtypes.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.

@@ -1,6 +1,6 @@
 /*
 	*** Double/Exponent class
-	*** src/lib/base/doubleexp.h
+	*** src/base/doubleexp.h
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.

@@ -1,6 +1,6 @@
 /*
 	*** ChangeStore
-	*** src/lib/classes/changestore.cpp
+	*** src/classes/changestore.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -193,7 +193,7 @@ void ChangeStore::storeAndReset()
 /*!
  * \brief Distribute and apply changes
  */
-bool ChangeStore::distribute(Configuration& cfg)
+bool ChangeStore::distributeAndApply(Configuration& cfg)
 {
 #ifdef PARALLEL
 	// First, get total number of changes across all processes
@@ -247,7 +247,6 @@ bool ChangeStore::distribute(Configuration& cfg)
 		cfg.updateAtomInCell(atoms[indices_[n]);
 	}
 #else
-
 	// Apply atom changes
 	for (ChangeData* data = changes_.first(); data != NULL; data = data->next)
 	{
@@ -256,5 +255,6 @@ bool ChangeStore::distribute(Configuration& cfg)
 		cfg.updateAtomInCell(data->atomIndex());
 	}
 #endif
+
 	return true;
 }

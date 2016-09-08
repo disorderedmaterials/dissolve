@@ -1,6 +1,6 @@
 /*
 	*** SpeciesBond Definition
-	*** src/lib/classes/speciesbond.cpp
+	*** src/classes/speciesbond.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.

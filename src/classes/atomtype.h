@@ -1,6 +1,6 @@
 /*
 	*** AtomType Definition
-	*** src/lib/classes/atomtype.h
+	*** src/classes/atomtype.h
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -29,11 +29,8 @@
 class Parameters;
 class Isotope;
 
-/*!
- * \brief AtomType Definition
- * \details An AtomType specifies a particular class or 'type' of Atom present within a Species. They are similar to forcefield atom types
- * since they also have a set of Parameters associated to them, which are used to generate the initial potential for the system.
- * The generation of Isotopologues for a given Species proceeds through assigning isotopes to each AtomType present in the Species.
+/*
+ * AtomType Definition
  */
 class AtomType : public MPIListItem<AtomType>
 {

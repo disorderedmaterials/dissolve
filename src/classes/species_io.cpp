@@ -1,6 +1,6 @@
 /*
 	*** Species XYZ Import
-	*** src/lib/classes/species_xyz.cpp
+	*** src/classes/species_xyz.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.

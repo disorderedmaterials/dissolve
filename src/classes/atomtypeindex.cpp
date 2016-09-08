@@ -1,6 +1,6 @@
 /*
 	*** AtomTypeIndexIndex Definition
-	*** src/lib/classes/atomtypeindex.cpp
+	*** src/classes/atomtypeindex.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -58,14 +58,10 @@ bool AtomTypeData::initialise(AtomType* atomType, Isotope* tope)
 		msg.error("NULL_POINTER - NULL AtomType pointer passed to AtomTypeData::initialise().\n");
 		return false;
 	}
-	if (tope == NULL)
-	{
-		msg.error("NULL_POINTER - NULL Isotope pointer passed to AtomTypeData::initialise().\n");
-		return false;
-	}
+
 	population_ = 0;
 	fraction_ = 0.0;
-	msg.print("--> Initialised AtomType index entry with AtomType '%s', Isotope %i (bc = %7.3f)\n", atomType->name(), tope->A(), tope->boundCoherent());
+// 	msg.print("--> Initialised AtomType index entry with AtomType '%s', Isotope %i (bc = %7.3f)\n", atomType->name(), tope->A(), tope->boundCoherent());
 	return true;
 }
 
@@ -176,12 +172,13 @@ void AtomTypeIndex::clear()
 /*!
  * \brief Add/increase this AtomType/Isotope pair
  */
-void AtomTypeIndex::add(AtomType* atomType, Isotope* tope, int popAdd)
+int AtomTypeIndex::add(AtomType* atomType, Isotope* tope, int popAdd)
 {
 	// Search the list for the AtomType provided.
 	// If present, we will check the isotope already stored
 	AtomTypeData* atd = NULL;
-	for (atd = types_.first(); atd != NULL; atd = atd->next)
+	int index = 0;
+	for (atd = types_.first(); atd != NULL; atd = atd->next, ++index)
 	{
 		if (atd->atomType() != atomType) continue;
 		if (atd->isotope() != tope) continue;
@@ -197,6 +194,8 @@ void AtomTypeIndex::add(AtomType* atomType, Isotope* tope, int popAdd)
 	
 	// Increase population
 	atd->add(popAdd);
+
+	return index;
 }
 
 /*!

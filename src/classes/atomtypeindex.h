@@ -1,6 +1,6 @@
 /*
 	*** AtomTypeIndex Definition
-	*** src/lib/classes/atomtypeindex.h
+	*** src/classes/atomtypeindex.h
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -29,10 +29,8 @@
 class AtomType;
 class Isotope;
 
-/*!
- * \brief AtomTypeData Definition
- * \details AtomTypeData is a simple class which stores a pointer to a reference AtomType along with other related data such as
- * its (fractional) population within the system.
+/*
+ * AtomTypeData Definition
  */
 class AtomTypeData : public ListItem<AtomTypeData>
 {
@@ -41,12 +39,8 @@ class AtomTypeData : public ListItem<AtomTypeData>
 	AtomTypeData();
 
 
-	/*!
-	 * \name Properties
-	 * \details The stored AtomType has associated with at least one Isotopes, depending on whether 
-	 * a mixture of isotopically-substituted AtomTypes exists in the Sample. Individual populations of each Isotope
-	 * are maintained, and fractional world populations are calculated by AtomTypeIndex::finalise() once the list is 
-	 * complete.
+	/*
+	 * Properties
 	 */
 	///@{
 	private:
@@ -85,10 +79,8 @@ class AtomTypeData : public ListItem<AtomTypeData>
 	///@}
 };
 
-/*!
- * \brief AtomTypeIndex Definition
- * \details AtomTypeIndex stores and maintains a unique list of AtomType/Isotope combinations, and is used, for example, to
- * generate an array of partial RDF / S(Q) data in a Model or SampleData.
+/*
+ * AtomTypeIndex Definition
  */
 class AtomTypeIndex
 {
@@ -110,8 +102,8 @@ class AtomTypeIndex
 	public:
 	// Clear all data
 	void clear();
-	// Add/increase this AtomType/Isotope pair
-	void add(AtomType* atomType, Isotope* tope, int popAdd = 0);
+	// Add/increase this AtomType/Isotope pair, returning the index of the AtomType in the list
+	int add(AtomType* atomType, Isotope* tope, int popAdd = 0);
 	// Return number of AtomType/Isotopes in list
 	int nItems() const;
 	// Return first item in list

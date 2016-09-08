@@ -1,6 +1,6 @@
 /*
 	*** dUQ Methods - GrainShake
-	*** src/lib/main/methods_grainshake.cpp
+	*** src/main/methods_grainshake.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -34,37 +34,18 @@
  * 
  * This is a parallel routine, operating in process groups.
  */
-CommandReturnValue DUQ::grainShake(Configuration& cfg)
+bool DUQ::grainShake(Configuration& cfg, double cutoffDistance, int nShakesPerGrain, double targetAcceptanceRate, double translationStepSize, double rotationStepSize)
 {
 	// Control Parameters
 	const double termScale = 1.0;
-
-	// Get method arguments and parameters from Command
-	bool result;
-	// -- Number of shakes per Grain
-	int nShakesPerGrain = commandArgumentAsInteger("grainshake", "n", result);
-	if (!result) return CommandFail;
-	// -- Energy cutoff 
-	double cutoffSq = commandArgumentAsDouble("grainshake", "cut", result);
-	if (!result) return CommandFail;
-	if (cutoffSq < 0.0) cutoffSq = pairPotentialRange_;
-	// -- Rotation step size
-	Argument* rotationStepParam = commandParameter("grainshake", "maxrot");
-	if (!rotationStepParam) return CommandFail;
-	double rotationStep = rotationStepParam->asDouble();
-	// -- Translation step size
-	Argument* translationStepParam = commandParameter("grainshake", "maxtrans");
-	if (!translationStepParam) return CommandFail;
-	double translationStep = translationStepParam->asDouble();
-	// -- Target acceptance rate
-	Argument* rateParam = commandParameter("grainshake", "rate");
-	if (!rateParam) return CommandFail;
-	double acceptanceRate = rateParam->asDouble();
+	if (cutoffDistance < 0.0) cutoffDistance = pairPotentialRange_;
+	const double rRT = 1.0/(.008314472*cfg.temperature());
+	double cutoffSq = cutoffDistance*cutoffDistance;
 
 	// Print argument/parameter summary
-	msg.print("GrainShake: Cutoff distance is %f\n", cutoffSq);
+	msg.print("GrainShake: Cutoff distance is %f\n", cutoffDistance);
 	msg.print("GrainShake: Performing %i shake(s) per Grain\n", nShakesPerGrain);
-	msg.print("GrainShake: Translation step is %f Angstroms, rotation step is %f degrees, target acceptance rate is %f.\n", translationStep, rotationStep, acceptanceRate);
+	msg.print("GrainShake: Translation step is %f Angstroms, rotation step is %f degrees, target acceptance rate is %f.\n", translationStepSize, rotationStepSize, targetAcceptanceRate);
 	cutoffSq *= cutoffSq;
 
 	// Initialise the Cell distributor
@@ -97,7 +78,7 @@ CommandReturnValue DUQ::grainShake(Configuration& cfg)
 		if (cellId == Cell::NoCellsAvailable)
 		{
 			// No valid cell, but still need to enter into change distribution with other processes
-			changeStore.distribute(cfg);
+			changeStore.distributeAndApply(cfg);
 			cfg.finishedWithCell(willBeModified, cellId);
 			continue;
 		}
@@ -123,8 +104,8 @@ CommandReturnValue DUQ::grainShake(Configuration& cfg)
 			for (shake=0; shake<nShakesPerGrain; ++shake)
 			{
 				// Create a random transformation matrix
-				transform.createRotationXY(Comm.randomPlusMinusOne()*rotationStep, Comm.randomPlusMinusOne()*rotationStep);
-				transform.setTranslation(Comm.randomPlusMinusOne()*translationStep, Comm.randomPlusMinusOne()*translationStep, Comm.randomPlusMinusOne()*translationStep);
+				transform.createRotationXY(Comm.randomPlusMinusOne()*rotationStepSize, Comm.randomPlusMinusOne()*rotationStepSize);
+				transform.setTranslation(Comm.randomPlusMinusOne()*translationStepSize, Comm.randomPlusMinusOne()*translationStepSize, Comm.randomPlusMinusOne()*translationStepSize);
 				
 				// Generate new Atom coordinates - must store the original Grain centre, since it will change as soon
 				// as an Atom coordinate gets modified.
@@ -141,7 +122,7 @@ CommandReturnValue DUQ::grainShake(Configuration& cfg)
 
 				// Trial the transformed Grain position
 				delta = newEnergy - currentEnergy;
-				accept = delta < 0 ? true : (Comm.random() < exp(-delta/(.008314472*temperature_)));
+				accept = delta < 0 ? true : (Comm.random() < exp(-delta*rRT));
 
 				if (accept)
 				{
@@ -164,7 +145,7 @@ CommandReturnValue DUQ::grainShake(Configuration& cfg)
 		 */
 
 		// Distribute coordinate changes to all processes
-		changeStore.distribute(cfg);
+		changeStore.distributeAndApply(cfg);
 		changeStore.reset();
 
 		// Must unlock the Cell when we are done with it!
@@ -173,12 +154,12 @@ CommandReturnValue DUQ::grainShake(Configuration& cfg)
 	timer.stop();
 
 	// Grains have moved, so refold and update locations
-	updateGrains(cfg);
+	cfg.updateGrains();
 
 	// Collect statistics from process group leaders
-	if (!Comm.allSum(&nAccepted, 1, DUQComm::Leaders)) return CommandCommFail;
-	if (!Comm.allSum(&nTries, 1, DUQComm::Leaders)) return CommandCommFail;
-	if (!Comm.allSum(&totalDelta, 1, DUQComm::Leaders)) return CommandCommFail;
+	if (!Comm.allSum(&nAccepted, 1, DUQComm::Leaders)) return false;
+	if (!Comm.allSum(&nTries, 1, DUQComm::Leaders)) return false;
+	if (!Comm.allSum(&totalDelta, 1, DUQComm::Leaders)) return false;
 	if (Comm.processGroupLeader())
 	{
 		double rate = double(nAccepted)/nTries;
@@ -187,27 +168,27 @@ CommandReturnValue DUQ::grainShake(Configuration& cfg)
 		msg.print("GrainShake: Total energy delta was %10.4e kJ/mol.\n", totalDelta);
 
 		// Adjust step size
-		translationStep *= rate/acceptanceRate;
-		rotationStep *= rate/acceptanceRate;
+		translationStepSize *= rate/targetAcceptanceRate;
+		rotationStepSize *= rate/targetAcceptanceRate;
 
-// 		if (translationStep < 0.05) translationStep = 0.05;
-// 		else if (translationStep > maxTranslationStep_) translationStep = maxTranslationStep_;
-// 		if (rotationStep < 3.0) rotationStep = 3.0;
+// 		if (translationStepSize < 0.05) translationStepSize = 0.05;
+// 		else if (translationStepSize > maxTranslationStep_) translationStepSize = maxTranslationStep_;
+// 		if (rotationStepSize < 3.0) rotationStepSize = 3.0;
 	}
 
 	// Store updated parameter values
-	if (!Comm.broadcast(&translationStep, 1, 0, DUQComm::Group)) return CommandCommFail;
-	if (!Comm.broadcast(&rotationStep, 1, 0, DUQComm::Group)) return CommandCommFail;
-	rotationStepParam->setValue(rotationStep);
-	translationStepParam->setValue(translationStep);
-	msg.print("GrainShake: Updated translation step is %f Angstroms, rotation step is %f degrees.\n", translationStep, rotationStep);
+	if (!Comm.broadcast(&translationStepSize, 1, 0, DUQComm::Group)) return false;
+	if (!Comm.broadcast(&rotationStepSize, 1, 0, DUQComm::Group)) return false;
+// 	rotationStepSizeParam->setValue(rotationStepSize); TODO
+// 	translationStepSizeParam->setValue(translationStepSize);
+	msg.print("GrainShake: Updated translation step is %f Angstroms, rotation step is %f degrees.\n", translationStepSize, rotationStepSize);
 
 	// Update total energy
 	registerEnergyChange(totalDelta);
 	accumulateEnergyChange();
 
 	// Increment configuration changeCount_
-	if (nAccepted > 0) cfg.incrementChangeCount();
+	if (nAccepted > 0) cfg.incrementCoordinateIndex();
 
-	return CommandSuccess;
+	return true;
 }

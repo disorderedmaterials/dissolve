@@ -1,6 +1,6 @@
 /*
 	*** Atom Definition
-	*** src/lib/classes/atom.h
+	*** src/classes/atom.h
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -50,8 +50,10 @@ class Atom
 	private:
 	// Coordinates
 	Vec3<double> r_;
-	// Assigned AtomType index
-	int atomTypeIndex_;
+	// Assigned AtomType index, local to Configuration (for partial indexing etc.)
+	int localTypeIndex_;
+	// Assigned global AtomType index (for pair potential indexing)
+	int globalTypeIndex_;
 	// Index of Atom
 	int index_;
 	// Molecule which this atom is in
@@ -80,10 +82,14 @@ class Atom
 	void setCharge(double charge);
 	// Return charge of atom
 	double charge() const;
-	// Set AtomType index of atom
-	void setAtomTypeIndex(int id);
-	// Return AtomType of atom
-	int atomTypeIndex() const;
+	// Set local AtomType index
+	void setLocalTypeIndex(int id);
+	// Return local AtomType index
+	int localTypeIndex() const;
+	// Set global AtomType index 
+	void setGlobalTypeIndex(int id);
+	// Return global AtomType index 
+	int globalTypeIndex() const;
 	// Set index (0->[N-1])
 	void setIndex(int id);
 	// Return index (0->[N-1])

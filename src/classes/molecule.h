@@ -1,6 +1,6 @@
 /*
 	*** Species Molecule Definition
-	*** src/lib/classes/molecule.h
+	*** src/classes/molecule.h
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.

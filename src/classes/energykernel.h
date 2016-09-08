@@ -1,6 +1,6 @@
 /*
 	*** EnergyKernel
-	*** src/lib/classes/energykernel.h
+	*** src/classes/energykernel.h
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.

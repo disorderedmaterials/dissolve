@@ -1,6 +1,6 @@
 /*
 	*** Sample Definition
-	*** src/lib/classes/sample.h
+	*** src/classes/sample.h
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -30,13 +30,9 @@
 
 // Forward Declarations
 class Species;
-class System;
 
-/*!
- * \brief Sample Definition
- * \details The Sample class describes the component Species in terms of their isotopic
- * substitutions, i.e. through association with an Isotopologue defined for the Species.
- * TODO Experimental Data. Calculation of F(Q) for every defined Sample etc.
+/*
+ * Sample Definition
  */
 class Sample : public ListItem<Sample>
 {
@@ -66,7 +62,7 @@ class Sample : public ListItem<Sample>
 	 */
 	///@{
 	private:
-	// List of IsotopologueMix-tures for each Species
+	// List of IsotopologueMix-tures for Species in this Sample
 	List<IsotopologueMix> isotopologueMixtures_;
 	
 	public:
@@ -76,8 +72,6 @@ class Sample : public ListItem<Sample>
 	IsotopologueMix* hasSpeciesIsotopologueMixture(Species* sp) const;
 	// Add Isotopologue to mixture
 	bool addIsotopologueToMixture(Species* sp, Isotopologue* iso, double relPop);
-	// Set Isotopologue data
-	bool setIsotopologueInMixture(Species* sp, Isotopologue* iso, double frac = -1.0, Isotopologue* newTope = NULL);
 	// Return first IsotopologueMix
 	IsotopologueMix* isotopologueMixtures() const;
 	// Return nth IsotopologueMix
@@ -111,7 +105,7 @@ class Sample : public ListItem<Sample>
 
 	public:
 	// Create type index and RDF / S(Q) storage
-	bool createTypeIndex(const List<Species>& species, int multiplier, int nExpectedAtoms, const AtomTypeIndex& masterIndex);
+	bool createTypeIndex(const RefList<Species,double>& species, int multiplier, int nExpectedAtoms, const AtomTypeIndex& masterIndex);
 	// Return <b>**2
 	double boundCoherentAverageSquared();
 	// Return <b**2>
@@ -155,30 +149,42 @@ class Sample : public ListItem<Sample>
 	bool hasReferenceData_;
 	// Filename of reference F(Q) (if present)
 	Dnchar referenceDataFileName_;
-	// Reference data (fit target)
-	Data2D referenceFQ_;
-	// Reference data normalisation style
+	// Reference data
+	Data2D referenceData_;
+	// FWHM of Gaussian for Q-dependent instrument broadening function (if required)
+	double qDependentFWHM_;
+	// FWHM of Gaussian for Q-independent instrument broadening function (if required)
+	double qIndependentFWHM_;
+	// Reference data normalisation style (if required)
 	NormalisationType referenceDataNormalisation_;
-	// Whether self-scattering should be subtracted
+	// Whether self-scattering should be subtracted (and is necessary)
 	bool referenceDataSubtractSelf_;
 	// Fourier transform of reference data
 	Data2D referenceDataFT_;
-	// Minimum Q-limit for empirical fitting
-	double referenceFitQMin_;
-	// Maximum Q-limit for empirical fitting
-	double referenceFitQMax_;
-	// Difference between reference and calculated F(Q)
-	Data2D differenceFQ_;
+	// Minimum abscissa limit for empirical fitting
+	double referenceFitMin_;
+	// Maximum abscissa limit for empirical fitting
+	double referenceFitMax_;
+	// Difference between reference and calculated data
+	Data2D differenceData_;
 
 	public:
 	// Return whether reference data exists
 	bool hasReferenceData();
-	// Load reference F(Q) data
+	// Load reference data
 	bool loadReferenceData(const char* fileName);
 	// Return reference data filename (if any)
 	Dnchar& referenceDataFileName();
-	// Return reference F(Q)
-	Data2D& referenceFQ();
+	// Return reference data
+	Data2D& referenceData();
+	// Set FWHM of Gaussian for Q-dependent instrument broadening function (if required)
+	void setQDependentFWHM(double fwhm);
+	// Return FWHM of Gaussian for Q-dependent instrument broadening function (if required)
+	double qDependentFWHM();
+	// Set FWHM of Gaussian for Q-independent instrument broadening function (if required)
+	void setQIndependentFWHM(double fwhm);
+	// Return FWHM of Gaussian for Q-independent instrument broadening function (if required)
+	double qIndependentFWHM();
 	// Set reference data normalisation flag
 	void setReferenceDataNormalisation(NormalisationType norm);
 	// Return whether reference data are normalised
@@ -187,19 +193,19 @@ class Sample : public ListItem<Sample>
 	void setReferenceSubtractSelf(bool b);
 	// Return whether reference data should have self-scattering subtracted
 	bool referenceSubtractSelf();
-	// Set minimum Q-value for empirical fitting
-	void setReferenceFitQMin(double q);
-	// Return minimum Q-value for empirical fitting
-	double referenceFitQMin();
-	// Set maximum Q-value for empirical fitting
-	void setReferenceFitQMax(double q);
-	// Return maximum Q-value for empirical fitting
-	double referenceFitQMax();
-	// Return difference F(Q)
-	Data2D& differenceFQ();
+	// Set minimum abscissa for empirical fitting
+	void setReferenceFitMin(double value);
+	// Return minimum abscissa value for fitting
+	double referenceFitMin();
+	// Set maximum abscissa for empirical fitting
+	void setReferenceFitMax(double value);
+	// Return maximum abscissa for empirical fitting
+	double referenceFitMax();
+	// Return difference data
+	Data2D& differenceData();
 	// Finalise reference data
 	bool finaliseReferenceData();
-	// Calculate RMSE error between calculated S(Q)s and reference data
+	// Calculate RMSE error between calculated and reference data
 	double referenceRMSE(double deltaQ);
 	///@}
 

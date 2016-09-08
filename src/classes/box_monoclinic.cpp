@@ -1,6 +1,6 @@
 /*
 	*** Monoclinic Box
-	*** src/lib/classes/box_monoclinic.cpp
+	*** src/classes/box_monoclinic.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.

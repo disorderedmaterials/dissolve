@@ -1,6 +1,6 @@
 /*
 	*** SpeciesAngle Definition
-	*** src/lib/classes/speciesangle.h
+	*** src/classes/speciesangle.h
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -29,9 +29,8 @@
 class SpeciesAtom;
 class Species;
 
-/*!
- * \brief Angle Definition
- * \details XXX TODO
+/*
+ * Angle Definition
  */
 class SpeciesAngle : public ListItem<SpeciesAngle>
 {

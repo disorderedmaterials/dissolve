@@ -1,6 +1,6 @@
 /*
 	*** Isotopologue Definition
-	*** src/lib/classes/isotopologue.cpp
+	*** src/classes/isotopologue.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -73,7 +73,7 @@ void Isotopologue::setName(const char* name)
 /*!
  * \brief Return name of Isotopologue
  */
-const char *Isotopologue::name() const
+const char* Isotopologue::name() const
 {
 	return name_.get();
 }

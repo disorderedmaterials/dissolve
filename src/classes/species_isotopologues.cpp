@@ -1,6 +1,6 @@
 /*
 	*** Species Definition - Isotopologues
-	*** src/lib/classes/species_isotopologues.cpp
+	*** src/classes/species_isotopologues.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -35,7 +35,7 @@ void Species::updateIsotopologues(const List<AtomType>& atomTypes)
 /*!
  * \brief Add a new Isotopologue to this species
  */
-Isotopologue *Species::addIsotopologue(const char *baseName)
+Isotopologue *Species::addIsotopologue(const char* baseName)
 {
 	Isotopologue* itp = isotopologues_.add();
 	itp->setParent(this);

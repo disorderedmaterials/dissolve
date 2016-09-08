@@ -1,6 +1,6 @@
 /*
 	*** Isotope Definition
-	*** src/lib/base/isotope.cpp
+	*** src/base/isotope.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.

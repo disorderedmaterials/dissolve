@@ -1,6 +1,6 @@
 /*
 	*** Element Definition
-	*** src/lib/base/element.cpp
+	*** src/base/element.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -68,7 +68,7 @@ int Element::z()
 /*!
  * \brief Return name of element
  */
-const char *Element::name() const
+const char* Element::name() const
 {
 	return name_.get();
 }
@@ -76,7 +76,7 @@ const char *Element::name() const
 /*!
  * \brief Return symbol of element
  */
-const char *Element::symbol() const
+const char* Element::symbol() const
 {
 	return symbol_.get();
 }

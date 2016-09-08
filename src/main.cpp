@@ -32,17 +32,6 @@ int main(int argc, char **argv)
 	// Instantiate main class
 	DUQ dUQ;
 
-// 	Data2D test, orig;
-// 	orig.load("2048.rdf");
-// 	test = orig;
-// 	test.fourierTransformReal(true, Data2D::NoWindow);
-// 	test.save("dft.txt");
-// 
-// 	test = orig;
-// 	test.transformRDF(0.0, Data2D::NoWindow);
-// 	test.save("fft.txt");
-// 	return 0;
-	
 #ifdef PARALLEL
 	// Initialise parallel communication
 	Comm.initialise(&argc, &argv);
@@ -61,7 +50,7 @@ int main(int argc, char **argv)
 			{
 				case ('h'):
 					printf("dUQ version %s\n\nAvailable CLI options are:\n\n", DUQVERSION);
-					printf("\t-i\t\tStart in interactive mode\n");
+// 					printf("\t-i\t\tStart in interactive mode\n");
 					printf("\t-m\t\tRestrict output to be from the master process alone (parallel code only)\n");
 					printf("\t-q\t\tQuiet mode - print no output\n");
 					printf("\t-r <file>\tRedirect output from all process to 'file.N', where N is the process rank\n");
@@ -69,10 +58,10 @@ int main(int argc, char **argv)
 					Comm.finalise();
 					return 1;
 					break;
-				case ('i'):
-					interactive = true;
-					msg.print("Will start in interactive mode.\n");
-					break;
+// 				case ('i'):
+// 					interactive = true;
+// 					msg.print("Will start in interactive mode.\n");
+// 					break;
 				case ('m'):
 					msg.setMasterOnly(true);
 					break;
@@ -142,14 +131,6 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	// Register commands
-	msg.print("Registering commands...\n");
-	if (!dUQ.registerCommands())
-	{
-		Comm.finalise();
-		return 1;
-	}
-
 	// Load input file
 	msg.print("Loading input file...\n");
 	if (!MPIRunMaster(dUQ.loadInput(inputFile)))
@@ -158,13 +139,13 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	// Check system setup
-	if (!MPIRunMaster(dUQ.checkSetup()))
-	{
-		msg.print("Errors were encountered while checking the system setup.\nYou must resolve these errors before any calculation can proceed.\n");
-		Comm.finalise();
-		return 1;
-	}
+// 	// Check system setup
+// 	if (!MPIRunMaster(dUQ.checkSetup()))
+// 	{
+// 		msg.print("Errors were encountered while checking the system setup.\nYou must resolve these errors before any calculation can proceed.\n");
+// 		Comm.finalise();
+// 		return 1;
+// 	}
 
 	// Broadcast System Setup to slaves
 	if (!dUQ.broadcastSetup())
@@ -177,11 +158,10 @@ int main(int argc, char **argv)
 	if (dUQ.seed() == -1) srand( (unsigned)time( NULL ) );
 	else srand(dUQ.seed());
 	
-	// Set up Configuration (all processes)
-	msg.print("Setting up simulation...\n");
-	if (!dUQ.setupSimulation())
+	// Perform system setup (all processes)
+	if (!dUQ.setup())
 	{
-		msg.print("Failed to setup simulation.\n");
+		msg.print("Failed to setup Configurations.\n");
 		return 1;
 	}
 
@@ -190,9 +170,7 @@ int main(int argc, char **argv)
 #endif
 	
 	// Enter interactive mode, or perform steps provided in input file
-	int result = 0;
-	if (interactive) result = dUQ.goInteractive();
-	else result = dUQ.runSimulation();
+	int result = dUQ.go();
 
 	// End parallel communication
 	Comm.finalise();

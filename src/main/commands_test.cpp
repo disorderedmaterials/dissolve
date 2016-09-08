@@ -1,6 +1,6 @@
 /*
 	*** dUQ - Test Commands
-	*** src/lib/main/commands_test.cpp
+	*** src/main/commands_test.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -30,10 +30,10 @@
  * \brief Test Routine
  * \details Developers only - Performs some kind of test code
  */
-CommandReturnValue DUQ::commandTest(Configuration& cfg)
+bool DUQ::commandTest(Configuration& cfg)
 {
 	calculateBraggSQ(cfg);
-	return CommandFail;
+	return false;
 	// Test FT
 // 	Data2D test;
 // 	int npoints = 1000;
@@ -161,14 +161,14 @@ CommandReturnValue DUQ::commandTest(Configuration& cfg)
 // 	}
 // 	hnc.save("hnc.txt");
 // 	py.save("py.txt");
-	return CommandSuccess;
+	return true;
 }
 
 /*!
  * \brief Test Energy Calculation Routines
  * \details Calculate the energy of the system using the simplest (and slowest) method possible on each process
  */
-CommandReturnValue DUQ::commandTestEnergy(Configuration& cfg)
+bool DUQ::commandTestEnergy(Configuration& cfg)
 {
 	msg.print("Testing total energy calculation...\n");
 
@@ -187,5 +187,5 @@ CommandReturnValue DUQ::commandTestEnergy(Configuration& cfg)
 	// Calculate 'correct' energies
 	totalEnergyTest(cfg);
 	
-	return CommandSuccess;
+	return true;
 }

@@ -1,6 +1,6 @@
 /*
 	*** Angle Definition
-	*** src/lib/classes/angle.cpp
+	*** src/classes/angle.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.

@@ -1,6 +1,6 @@
 /*
 	*** Histogram
-	*** src/lib/classes/histogram.h
+	*** src/classes/histogram.h
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.

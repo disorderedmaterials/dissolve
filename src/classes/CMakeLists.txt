@@ -14,6 +14,12 @@ cellneighbour.cpp
 changedata.cpp
 changestore.cpp
 configuration.cpp
+configuration_box.cpp
+configuration_composition.cpp
+configuration_contents.cpp
+configuration_data.cpp
+configuration_partials.cpp
+configuration_upkeep.cpp
 energykernel.cpp
 forcekernel.cpp
 grain.cpp

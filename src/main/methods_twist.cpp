@@ -1,6 +1,6 @@
 /*
 	*** dUQ Methods - Twist
-	*** src/lib/main/methods_twist.cpp
+	*** src/main/methods_twist.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -32,18 +32,15 @@
 /*!
  * \brief Perform Torsional Twists
  */
-CommandReturnValue DUQ::twist(Configuration& cfg)
+bool DUQ::twist(Configuration& cfg, double cutoffDistance, int nTwistsPerTerm)
 {
-	// Get method arguments from Command
-	bool result;
-	int nAttemptsPerBond = commandArgumentAsInteger("twist", "n", result);
-	if (!result) return CommandFail;
-	double cutoffSq = commandArgumentAsDouble("twist", "cut", result);
-	if (!result) return CommandFail;
-	if (cutoffSq < 0.0) cutoffSq = pairPotentialRange_;
-	msg.print("Twist: Cutoff distance is %f\n", cutoffSq);
-	msg.print("Twist: Performing %i twists per Bond\n", nAttemptsPerBond);
-	cutoffSq *= cutoffSq;
+	// Check method arguments if necessary
+	if (cutoffDistance < 0.0) cutoffDistance = pairPotentialRange_;
+	const double cutoffSq = cutoffDistance * cutoffDistance;
+	const double rRT = 1.0/(.008314472*cfg.temperature());
+
+	msg.print("Twist: Cutoff distance is %f\n", cutoffDistance);
+	msg.print("Twist: Performing %i twists per Bond\n", nTwistsPerTerm);
 
 	// Start a Timer
 	Timer timer;
@@ -95,7 +92,7 @@ CommandReturnValue DUQ::twist(Configuration& cfg)
 			++nTries;
 			
 			// Get bond vector
-			if (configuration_.useMim(i->grain()->cell(), j->grain()->cell())) vec = cfg.box()->minimumVector(i, j);
+			if (cfg.useMim(i->grain()->cell(), j->grain()->cell())) vec = cfg.box()->minimumVector(i, j);
 			else vec = j->r() - i->r();
 			vec.normalise();
 
@@ -105,7 +102,7 @@ CommandReturnValue DUQ::twist(Configuration& cfg)
 				l = mol->atom(attachedIndices[n]);
 
 				// Apply MIM to coordinates?
-				if (configuration_.useMim(j->grain()->cell(), l->grain()->cell())) centre = cfg.box()->minimumImage(j, l);
+				if (cfg.useMim(j->grain()->cell(), l->grain()->cell())) centre = cfg.box()->minimumImage(j, l);
 				else centre = j->r();
 				l->setCoordinates(rotation * (l->r() - centre) + centre);
 			}
@@ -114,7 +111,7 @@ CommandReturnValue DUQ::twist(Configuration& cfg)
 			newEnergy = kernel.energy(mol, DUQComm::World);
 			delta = newEnergy - currentEnergy;
 			
-			if ((delta < 0) || (Comm.random() < exp(-delta/(.008314472*temperature_))))
+			if ((delta < 0) || (Comm.random() < exp(-delta*rRT)))
 			{
 // 				printf("Accepted move with current = %f, new = %f, delta = %f\n", currentEnergy, newEnergy, delta);
 				changeStore.updateAtomsLocal(nAttachedAtoms, attachedIndices);
@@ -130,15 +127,15 @@ CommandReturnValue DUQ::twist(Configuration& cfg)
 	timer.stop();
 
 	// Distribute coordinate changes to all processes
-// 	changeStore.distribute(cfg.nAtoms(), cfg.atoms());
+// 	changeStore.distributeAndApply(cfg.nAtoms(), cfg.atoms());
 // 	changeStore.reset();
 
 	// Grains have moved, so refold and update locations
-	updateGrains(cfg);
+	cfg.updateGrains();
 
 	// Collect statistics from process group leaders
-	if (!Comm.allSum(&nAccepted, 1, DUQComm::Leaders)) return CommandCommFail;
-	if (!Comm.allSum(&nTries, 1, DUQComm::Leaders)) return CommandCommFail;
+	if (!Comm.allSum(&nAccepted, 1, DUQComm::Leaders)) return false;
+	if (!Comm.allSum(&nTries, 1, DUQComm::Leaders)) return false;
 	if (Comm.processGroupLeader())
 	{
 		double rate = double(nTries) / nAccepted;
@@ -154,7 +151,7 @@ CommandReturnValue DUQ::twist(Configuration& cfg)
 	}
 
 	// Increment configuration changeCount_
-	if (nAccepted > 0) cfg.incrementChangeCount();
+	if (nAccepted > 0) cfg.incrementCoordinateIndex();
 
-	return CommandSuccess;
+	return true;
 }

@@ -1,6 +1,6 @@
 /*
 	*** dUQ Main Structure
-	*** src/lib/main/duq.cpp
+	*** src/main/duq.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -37,41 +37,16 @@
  */
 DUQ::DUQ()
 {
-	// System Composition
-	multiplier_ = 1;
-	density_ = 0.1;
-	densityIsAtomic_ = true;
-	boxAngles_.set(90.0, 90.0, 90.0);
-	relativeBoxLengths_.set(1.0, 1.0, 1.0);
-	nonPeriodic_ = false;
-	randomConfiguration_ = true;
-
 	// PairPotentials
 	pairPotentialDelta_ = 0.01;
 	pairPotentialRange_ = 15.0;
 	pairPotentialTruncationWidth_ = 2.0;
 
-	// Partials
-	partialsChangeCount_ = -1;
-	rdfMethod_ = DUQ::SimpleMethod;
-
 	// Setup
 	boxNormalisationPoints_ = 50000000;
-	qDependentFWHM_ = 0.02;
-	qIndependentFWHM_ = 0.0;
-	rdfBinWidth_ = 0.025;
-	rdfRange_ = -1.0;
-	rdfSmoothing_ = 0;
-	requestedRDFRange_ = -1.0;
-	qDelta_ = 0.05;
-	qMax_ = 50.0;
 	rmseDeltaQ_ = 0.05;
 	seed_ = -1;
-	temperature_ = 300.0;
-	windowFunction_ = Data2D::HannWindow;
-	braggCalculationOn_ = false;
-	braggMaximumQ_ = 1.0;
-	braggBroadening_ = 0.0063;
+	windowFunction_ = Data2D::NoWindow;
 
 	// Perturbation
 	simplexNMoves_ = 25;
@@ -79,10 +54,6 @@ DUQ::DUQ()
 	simplexTemperature_ = 0.01;
 	simplexTolerance_ = 1.0e-3;
 	simplexParameterOffset_ = 100.0;
-	
-	// Simulation
-	energyChange_ = 0.0;
-	energyChanged_ = false;
 }
 
 /*!
@@ -103,7 +74,9 @@ DUQ::~DUQ()
  */
 void DUQ::clear()
 {
+	configurations_.clear();
+	samples_.clear();
 	species_.clear();
-	clearModel();
+	potentialMap_.clear();
 	fileName_.clear();
 }

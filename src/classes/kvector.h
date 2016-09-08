@@ -1,6 +1,6 @@
 /*
 	*** KVector
-	*** src/lib/classes/kvector.h
+	*** src/classes/kvector.h
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.

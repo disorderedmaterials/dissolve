@@ -1,6 +1,6 @@
 /*
 	*** Species Definition - Transforms
-	*** src/lib/classes/species_transform.cpp
+	*** src/classes/species_transform.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.

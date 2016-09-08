@@ -1,6 +1,6 @@
 /*
 	*** Atom Definition
-	*** src/lib/classes/atom.cpp
+	*** src/classes/atom.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -32,7 +32,8 @@ Atom::Atom()
 {
 	element_ = 0;
 	charge_ = 0.0;
-	atomTypeIndex_ = -1;
+	localTypeIndex_ = -1;
+	globalTypeIndex_ = -1;
 	index_ = -1;
 	molecule_ = NULL;
 	moleculeAtomIndex_ = 0;
@@ -115,20 +116,34 @@ double Atom::charge() const
 	return charge_;
 }
 
-/*!
- * \brief Set AtomType index for atom
- */
-void Atom::setAtomTypeIndex(int id)
+// Set local AtomType index
+void Atom::setLocalTypeIndex(int id)
 {
-	atomTypeIndex_ = id;
+	localTypeIndex_ = id;
 }
 
-/*!
- * \brief Return AtomType index for atom
- */
-int Atom::atomTypeIndex() const
+// Return local AtomType index
+int Atom::localTypeIndex() const
 {
-	return atomTypeIndex_;
+#ifdef CHECKS
+	if (localTypeIndex_ == -1) msg.print("Warning: Local AtomType index has not yet been set for atom '%i'.\n", index_);
+#endif
+	return localTypeIndex_;
+}
+
+// Set global AtomType index 
+void Atom::setGlobalTypeIndex(int id)
+{
+	globalTypeIndex_ = id;
+}
+
+// Return global AtomType index 
+int Atom::globalTypeIndex() const
+{
+#ifdef CHECKS
+	if (globalTypeIndex_ == -1) msg.print("Warning: Global AtomType index has not yet been set for atom '%i'.\n", index_);
+#endif
+	return globalTypeIndex_;
 }
 
 /*!
@@ -201,7 +216,8 @@ void Atom::copyProperties(const Atom* source)
 {
 	r_ = source->r_;
 	element_ = source->element_;
-	atomTypeIndex_ = source->atomTypeIndex_;
+	localTypeIndex_ = source->localTypeIndex_;
+	globalTypeIndex_ = source->globalTypeIndex_;
 	charge_ = source->charge_;
 	index_ = source->index_;
 	molecule_ = source->molecule_;

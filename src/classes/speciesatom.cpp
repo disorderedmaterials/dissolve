@@ -1,6 +1,6 @@
 /*
 	*** SpeciesAtom Definition
-	*** src/lib/classes/speciesatom.cpp
+	*** src/classes/speciesatom.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.

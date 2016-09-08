@@ -1,6 +1,6 @@
 /*
 	*** Grain Definition
-	*** src/lib/classes/graindefinition.cpp
+	*** src/classes/graindefinition.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -71,7 +71,7 @@ void GrainDefinition::setName(const char* s)
 /*!
  * \brief Return name of GrainDefinition
  */
-const char *GrainDefinition::name() const
+const char* GrainDefinition::name() const
 {
 	return name_.get();
 }

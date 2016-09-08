@@ -1,6 +1,6 @@
 /*
 	*** Isotopologue Definition
-	*** src/lib/classes/isotopologue.h
+	*** src/classes/isotopologue.h
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -30,9 +30,8 @@
 class AtomType;
 class Species;
 
-/*!
- * \brief Isotopologue Definition
- * \details The Isotopologue class specifies a complete set of isotopes for the AtomTypes defined in a Spec
+/*
+ * Isotopologue Definition
  */
 class Isotopologue : public ListItem<Isotopologue>
 {

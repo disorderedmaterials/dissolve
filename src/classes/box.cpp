@@ -1,6 +1,6 @@
 /*
 	*** Box Definition
-	*** src/lib/classes/box.cpp
+	*** src/classes/box.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -45,7 +45,7 @@ Box::~Box()
 }
 
 // Box Type Keywords
-const char *BoxTypeKeywords[] = { "Non-Periodic", "Cubic", "Orthorhombic", "Monoclinic", "Triclinic" };
+const char* BoxTypeKeywords[] = { "Non-Periodic", "Cubic", "Orthorhombic", "Monoclinic", "Triclinic" };
 
 /*!
  * \brief Convert text string to BoxType
@@ -59,7 +59,7 @@ Box::BoxType Box::boxType(const char* s)
 /*!
  * \brief Convert BoxType to text string
  */
-const char *Box::boxType(Box::BoxType id)
+const char* Box::boxType(Box::BoxType id)
 {
 	return BoxTypeKeywords[id];
 }

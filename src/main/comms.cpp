@@ -1,6 +1,6 @@
 /*
 	*** dUQ - Communications
-	*** src/lib/main/comms.cpp
+	*** src/main/comms.cpp
 	Copyright T. Youngs 2012-2014
 
 	This file is part of dUQ.
@@ -23,61 +23,6 @@
 #include "classes/species.h"
 #include "classes/atomtype.h"
 #include "base/comms.h"
-
-/*!
- * \brief Enter message loop (slaves only)
- * \details TODO
- */
-void DUQ::enterMessageLoop()
-{
-	if (Comm.master()) return;
-	int message, result;
-	while (1)
-	{
-		// Wait for message
-		Comm.broadcast(&message, 1);
-
-		// Act on message, store result, and then sum 
-		switch (message)
-		{
-			case (DUQ::BroadcastSetupMessage):
-				result = broadcastSetup();
-				break;
-			case (DUQ::SetupSimulationMessage):
-				result = setupSimulation();
-				break;
-		}
-		
-		// Send (sum) message result
-		Comm.sum(&result, 1);
-
-		// Do we continue?
-		if (!Comm.decision()) break;
-	}
-}
-
-/*!
- * \brief Pass message to slaves, forcing them to perform an action
- * \details TODO
- */
-void DUQ::sendMessage(DUQ::Message message)
-{
-	int m = (int) message;
-	Comm.broadcast(&m, 1);
-}
-
-/*!
- * \brief Check on success of last message
- * \details TODO
- */
-bool DUQ::messageResult(bool rootResult)
-{
-	// Sum result from all processes
-	// TODO Check in each process individually?
-	int result = rootResult;
-	Comm.sum(&result, 1);
-	return (result == Comm.nProcesses());
-}
 
 /*!
  * \brief Broadcast system setup data
