@@ -39,6 +39,16 @@ class Sample : public ListItem<Sample>
 	public:
 	// Constructor
 	Sample();
+	// Copy Constructor
+	Sample(const Sample& source);
+	// Assignment Operator
+	void operator=(const Sample& source);
+	// Sample Types
+	enum SampleType { NeutronFQ, nSampleTypes };
+	// Convert text string to InputBlock
+	static SampleType sampleType(const char* s);
+	// Convert InputBlock to text string
+	static const char* sampleType(SampleType st);
 
 
 	/*!
@@ -48,12 +58,18 @@ class Sample : public ListItem<Sample>
 	private:
 	// Descriptive name
 	Dnchar name_;
+	// Data type
+	SampleType type_;
 	
 	public:
 	// Set name of Sample
 	void setName(const char* name);
 	// Return name of Sample
 	const char* name() const;
+	// Set data type
+	void setType(SampleType type);
+	// Return data type
+	SampleType type();
 	///@}
 	
 	

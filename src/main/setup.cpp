@@ -43,7 +43,7 @@ int DUQ::seed()
 bool DUQ::setup()
 {
 	msg.print("\n");
-	msg.print("*** SYSTEM SETUP BEGINS ***n");
+	msg.print("*** SYSTEM SETUP BEGINS ***\n");
 
 	/* Check each defined Species */
 	msg.print("\n");
@@ -51,7 +51,7 @@ bool DUQ::setup()
 	for (Species* sp = species_.first(); sp != NULL; sp = sp->next)
 	{
 		msg.print("--- Species '%s'...\n", sp->name());
-		if (sp->checkSetup(atomTypes_)) return false;
+		if (!sp->checkSetup(atomTypes_)) return false;
 	}
 
 	msg.print("\n");

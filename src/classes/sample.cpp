@@ -23,6 +23,7 @@
 #include "classes/species.h"
 #include "base/comms.h"
 #include "base/sysfunc.h"
+#include <string.h>
 
 /*!
  * \brief Constructor
@@ -38,6 +39,63 @@ Sample::Sample() : ListItem<Sample>()
 	referenceFitMin_ = -1.0;
 	qDependentFWHM_ = 0.02;
 	qIndependentFWHM_ = 0.0;
+}
+
+// Copy Constructor
+Sample::Sample(const Sample& source)
+{
+	(*this) = source;
+}
+
+// Assignment Operator
+void Sample::operator=(const Sample& source)
+{
+	// Basic Information
+	name_ = source.name_;
+	type_ = source.type_;
+
+	// Isotopologue Mix
+	isotopologueMixtures_ = source.isotopologueMixtures_;
+
+	// RDF / S(Q) Data
+	typeIndex_ = source.typeIndex_;
+	boundCoherentAverageSquared_ = source.boundCoherentAverageSquared_;
+	boundCoherentSquaredAverage_ = source.boundCoherentSquaredAverage_;
+	pairSQMatrix_ = source.pairSQMatrix_;
+	braggSQMatrix_ = source.braggSQMatrix_;
+	weightsMatrix_ = source.weightsMatrix_;
+	scatteringMatrix_ = source.scatteringMatrix_;
+	totalGR_ = source.totalGR_;
+	totalFQ_ = source.totalFQ_;
+
+	// Reference Data
+	hasReferenceData_ = source.hasReferenceData_;
+	referenceDataFileName_ = source.referenceDataFileName_;
+	referenceData_ = source.referenceData_;
+	qDependentFWHM_ = source.qDependentFWHM_;
+	qIndependentFWHM_ = source.qIndependentFWHM_;
+	referenceDataNormalisation_ = source.referenceDataNormalisation_;
+	referenceDataSubtractSelf_ = source.referenceDataSubtractSelf_;
+	referenceDataFT_ = source.referenceDataFT_;
+	referenceFitMin_ = source.referenceFitMin_;
+	referenceFitMax_ = source.referenceFitMax_;
+	differenceData_ = source.differenceData_;
+}
+
+// Sample Type Keywords
+const char* SampleTypeKeywords[] = { "NeutronFQ" };
+
+// Convert text string to InputBlock
+Sample::SampleType Sample::sampleType(const char* s)
+{
+	for (int n=0; n<Sample::nSampleTypes; ++n) if (strcmp(s,SampleTypeKeywords[n]) == 0) return (Sample::SampleType) n;
+	return Sample::nSampleTypes;
+}
+
+// Convert InputBlock to text string
+const char* Sample::sampleType(SampleType st)
+{
+	return SampleTypeKeywords[st];
 }
 
 /*
@@ -58,6 +116,18 @@ void Sample::setName(const char* name)
 const char* Sample::name() const
 {
 	return name_.get();
+}
+
+// Set data type
+void Sample::setType(Sample::SampleType type)
+{
+	type_ = type;
+}
+
+// Return data type
+Sample::SampleType Sample::type()
+{
+	return type_;
 }
 
 /*
@@ -762,8 +832,8 @@ bool Sample::finaliseReferenceData()
 	{
 		msg.print("--> Subtracting self-scattering background from reference data...\n");
 		double highQLevel = 0.0;
-		// Take last 10% of points to calculate average
-		for (int n=referenceData_.nPoints()*0.9; n<referenceData_.nPoints(); ++n) highQLevel += referenceData_.y(n);
+		// Take last 50% of points to calculate average
+		for (int n=referenceData_.nPoints()*0.5; n<referenceData_.nPoints(); ++n) highQLevel += referenceData_.y(n);
 		highQLevel /= (referenceData_.nPoints()*0.1);
 		msg.print("--> High-Q average level is %f.\n", highQLevel);
 		referenceData_.arrayY() -= highQLevel;

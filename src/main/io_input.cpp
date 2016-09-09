@@ -132,8 +132,9 @@ bool DUQ::loadInput(const char* fileName)
 	Keywords::ConfigurationKeyword conKeyword;
 	Keywords::SampleKeyword samKeyword;
 	Keywords::SpeciesKeyword spKeyword;
-	Keywords::SystemKeyword sysKeyword;
+	Keywords::SimulationKeyword simKeyword;
 	Keywords::PairPotentialsKeyword ppKeyword;
+	Sample::SampleType sampleType;
 	Dnchar arg1, arg2;
 	bool error = false, blockDone;
 
@@ -246,24 +247,6 @@ bool DUQ::loadInput(const char* fileName)
 						case (Keywords::CellLengthsKeyword):
 							cfg->setRelativeBoxLengths(Vec3<double>(parser.argd(1), parser.argd(2), parser.argd(3)));
 							break;
-						case (Keywords::ComponentKeyword):
-							sp = findSpecies(parser.argc(1));
-							if (sp == NULL)
-							{
-								msg.error("Configuration refers to Species '%s', but no such Species is defined.\n", parser.argc(1));
-								error = true;
-							}
-							else
-							{
-								// Add this species to the list of those used by the Configuration
-								if (!cfg->addUsedSpecies(sp, parser.argd(2)))
-								{
-									msg.error("Configuration already uses Species '%s' - cannot add it a second time.\n", sp->name());
-									error = true;
-								}
-								else msg.print("--> Set composition for Species '%s' (%f relative population).\n", sp->name(), parser.argd(2));
-							}
-							break;
 						case (Keywords::DensityKeyword):
 							// Determine units given
 							if (strcmp(parser.argc(2),"atoms/A3") == 0) cfg->setAtomicDensity(parser.argd(1));
@@ -314,6 +297,42 @@ bool DUQ::loadInput(const char* fileName)
 							break;
 						case (Keywords::RDFSmoothingKeyword):
 							cfg->setRDFSmoothing(parser.argi(1));
+							break;
+						case (Keywords::SampleAddKeyword):
+							sam = findSample(parser.argc(1));
+							if (sam == NULL)
+							{
+								msg.error("Configuration refers to Sample '%s', but no such Sample is defined.\n", parser.argc(1));
+								error = true;
+							}
+							else
+							{
+								// Add this species to the list of those used by the Configuration
+								if (!cfg->addReferenceSample(sam))
+								{
+									msg.error("Configuration already references Sample '%s' - cannot add it a second time.\n", sam->name());
+									error = true;
+								}
+								else msg.print("--> Added Sample '%s' as calculation target for Configuration.\n", sam->name());
+							}
+							break;
+						case (Keywords::SpeciesAddKeyword):
+							sp = findSpecies(parser.argc(1));
+							if (sp == NULL)
+							{
+								msg.error("Configuration refers to Species '%s', but no such Species is defined.\n", parser.argc(1));
+								error = true;
+							}
+							else
+							{
+								// Add this species to the list of those used by the Configuration
+								if (!cfg->addUsedSpecies(sp, parser.argd(2)))
+								{
+									msg.error("Configuration already uses Species '%s' - cannot add it a second time.\n", sp->name());
+									error = true;
+								}
+								else msg.print("--> Set composition for Species '%s' (%f relative population).\n", sp->name(), parser.argd(2));
+							}
 							break;
 						case (Keywords::TemperatureKeyword):
 							cfg->setTemperature(parser.argd(1));
@@ -473,6 +492,10 @@ bool DUQ::loadInput(const char* fileName)
 							sam->setQDependentFWHM(parser.argd(1));
 							sam->setQIndependentFWHM(parser.argd(2));
 							break;
+						case (Keywords::EndSampleKeyword):
+							msg.print("Found end of %s block '%s'.\n", Keywords::inputBlock(block), sam->name());
+							blockDone = true;
+							break;
 						case (Keywords::FitMaxKeyword):
 							sam->setReferenceFitMax(parser.argd(1));
 							break;
@@ -528,9 +551,14 @@ bool DUQ::loadInput(const char* fileName)
 						case (Keywords::SubtractSelfKeyword):
 							sam->setReferenceSubtractSelf(true);
 							break;
-						case (Keywords::EndSampleKeyword):
-							msg.print("Found end of %s block '%s'.\n", Keywords::inputBlock(block), sam->name());
-							blockDone = true;
+						case (Keywords::SampleTypeKeyword):
+							sampleType = Sample::sampleType(parser.argc(1));
+							if (sampleType == Sample::nSampleTypes)
+							{
+								msg.error("Invalid Sample type provided - '%s'.\n", parser.argc(1));
+								error = true;
+							}
+							else sam->setType(sampleType);
 							break;
 						case (Keywords::nSampleKeywords):
 							msg.error("Unrecognised %s block keyword found - '%s'\n", Keywords::inputBlock(block), parser.argc(0));
@@ -539,6 +567,64 @@ bool DUQ::loadInput(const char* fileName)
 							break;
 						default:
 							printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", Keywords::inputBlock(block), Keywords::sampleKeyword(samKeyword));
+							error = true;
+							break;
+					}
+					
+					// Error encountered?
+					if (error) break;
+					
+					// End of block?
+					if (blockDone) break;
+				}
+				break;
+			case (Keywords::SimulationBlock):
+				msg.print("Found %s block\n", Keywords::inputBlock(block));
+				blockDone = false;
+				while (!parser.eofOrBlank())
+				{
+					// Read in a line, which should contain a keyword and a minimum number of arguments
+					parser.getArgsDelim(LineParser::SkipBlanks+LineParser::UseQuotes);
+					simKeyword = Keywords::simulationKeyword(parser.argc(0));
+					if ((simKeyword != Keywords::nSimulationKeywords) && ((parser.nArgs()-1) < Keywords::simulationBlockNArguments(simKeyword)))
+					{
+						msg.error("Not enough arguments given to '%s' keyword.\n", Keywords::simulationKeyword(simKeyword));
+						error = true;
+						break;
+					}
+					switch (simKeyword)
+					{
+						case (Keywords::BoxNormalisationPointsKeyword):
+							boxNormalisationPoints_ = parser.argi(1);
+							break;
+						case (Keywords::EndSimulationKeyword):
+							msg.print("Found end of %s block.\n", Keywords::inputBlock(block));
+							blockDone = true;
+							break;
+						case (Keywords::SeedKeyword):
+							seed_ = parser.argi(1);
+							break;
+						case (Keywords::SimplexNCyclesKeyword):
+							simplexNCycles_ = parser.argi(1);
+							msg.print("--> Maximum number of cycles in Simplex minimiser set to %i\n", simplexNCycles_);
+							break;
+						case (Keywords::SimplexNMovesKeyword):
+							simplexNMoves_ = parser.argi(1);
+							msg.print("--> Maximum number of moves per cycle in Simplex minimiser set to %i\n", simplexNMoves_);
+							break;
+						case (Keywords::SimplexTemperatureKeyword):
+							simplexTemperature_ = parser.argd(1);
+							break;
+						case (Keywords::SimplexToleranceKeyword):
+							simplexTolerance_ = parser.argd(1);
+							break;
+						case (Keywords::nSimulationKeywords):
+							msg.print("Unrecognised %s block keyword found - '%s'\n", Keywords::inputBlock(block), parser.argc(0));
+							Keywords::printValidKeywords(block);
+							error = true;
+							break;
+						default:
+							printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", Keywords::inputBlock(block), Keywords::simulationKeyword(simKeyword));
 							error = true;
 							break;
 					}
@@ -695,64 +781,6 @@ bool DUQ::loadInput(const char* fileName)
 					if (blockDone) break;
 				}
 				break;
-			case (Keywords::SystemBlock):
-				msg.print("Found %s block\n", Keywords::inputBlock(block));
-				blockDone = false;
-				while (!parser.eofOrBlank())
-				{
-					// Read in a line, which should contain a keyword and a minimum number of arguments
-					parser.getArgsDelim(LineParser::SkipBlanks+LineParser::UseQuotes);
-					sysKeyword = Keywords::systemKeyword(parser.argc(0));
-					if ((sysKeyword != Keywords::nSystemKeywords) && ((parser.nArgs()-1) < Keywords::systemBlockNArguments(sysKeyword)))
-					{
-						msg.error("Not enough arguments given to '%s' keyword.\n", Keywords::systemKeyword(sysKeyword));
-						error = true;
-						break;
-					}
-					switch (sysKeyword)
-					{
-						case (Keywords::BoxNormalisationPointsKeyword):
-							boxNormalisationPoints_ = parser.argi(1);
-							break;
-						case (Keywords::EndSystemKeyword):
-							msg.print("Found end of %s block.\n", Keywords::inputBlock(block));
-							blockDone = true;
-							break;
-						case (Keywords::SeedKeyword):
-							seed_ = parser.argi(1);
-							break;
-						case (Keywords::SimplexNCyclesKeyword):
-							simplexNCycles_ = parser.argi(1);
-							msg.print("--> Maximum number of cycles in Simplex minimiser set to %i\n", simplexNCycles_);
-							break;
-						case (Keywords::SimplexNMovesKeyword):
-							simplexNMoves_ = parser.argi(1);
-							msg.print("--> Maximum number of moves per cycle in Simplex minimiser set to %i\n", simplexNMoves_);
-							break;
-						case (Keywords::SimplexTemperatureKeyword):
-							simplexTemperature_ = parser.argd(1);
-							break;
-						case (Keywords::SimplexToleranceKeyword):
-							simplexTolerance_ = parser.argd(1);
-							break;
-						case (Keywords::nSystemKeywords):
-							msg.print("Unrecognised %s block keyword found - '%s'\n", Keywords::inputBlock(block), parser.argc(0));
-							Keywords::printValidKeywords(block);
-							error = true;
-							break;
-						default:
-							printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", Keywords::inputBlock(block), Keywords::systemKeyword(sysKeyword));
-							error = true;
-							break;
-					}
-					
-					// Error encountered?
-					if (error) break;
-					
-					// End of block?
-					if (blockDone) break;
-				}
-				break;
 			case (Keywords::nInputBlocks):
 				msg.error("Unrecognised input block found - '%s'\n", parser.argc(0));
 				error = true;
@@ -872,18 +900,18 @@ bool DUQ::saveInput(const char* fileName)
 // 	// Write System block
 // 	parser.writeLineF("# System Composition\n");
 // 	parser.writeLineF("%s\n", Keywords::inputBlock(Keywords::SystemBlock));
-// 	parser.writeLineF("  %s  %i\n", Keywords::systemKeyword(Keywords::MultiplierKeyword), multiplier_);
-// 	parser.writeLineF("  %s  %f  %s\n", Keywords::systemKeyword(Keywords::DensityKeyword), density_, densityIsAtomic_ ? "atoms/A3" : "g/cm3");
-// 	parser.writeLineF("  %s  %f  %f  %f\n", Keywords::systemKeyword(Keywords::CellLengthsKeyword), relativeBoxLengths_.x, relativeBoxLengths_.y, relativeBoxLengths_.z);
-// 	parser.writeLineF("  %s  %f  %f  %f\n", Keywords::systemKeyword(Keywords::CellAnglesKeyword), boxAngles_.x, boxAngles_.y, boxAngles_.z);
-// 	if (nonPeriodic_) parser.writeLineF("  %s\n", Keywords::systemKeyword(Keywords::NonPeriodicKeyword));
+// 	parser.writeLineF("  %s  %i\n", Keywords::simulationKeyword(Keywords::MultiplierKeyword), multiplier_);
+// 	parser.writeLineF("  %s  %f  %s\n", Keywords::simulationKeyword(Keywords::DensityKeyword), density_, densityIsAtomic_ ? "atoms/A3" : "g/cm3");
+// 	parser.writeLineF("  %s  %f  %f  %f\n", Keywords::simulationKeyword(Keywords::CellLengthsKeyword), relativeBoxLengths_.x, relativeBoxLengths_.y, relativeBoxLengths_.z);
+// 	parser.writeLineF("  %s  %f  %f  %f\n", Keywords::simulationKeyword(Keywords::CellAnglesKeyword), boxAngles_.x, boxAngles_.y, boxAngles_.z);
+// 	if (nonPeriodic_) parser.writeLineF("  %s\n", Keywords::simulationKeyword(Keywords::NonPeriodicKeyword));
 // 	double sum = totalRelative();
 // 	for (Species* sp = species_.first(); sp != NULL; sp = sp->next)
 // 	{
-// // 		parser.writeLineF("  %s  '%s'  %f  %f  %i\n", Keywords::systemKeyword(Keywords::ComponentKeyword), sp->name(), sp->relativePopulation(), sp->relativePopulation()/sum, sp->relativePopulation()*multiplier_);
-// 		parser.writeLineF("  %s  '%s'  %f\n", Keywords::systemKeyword(Keywords::ComponentKeyword), sp->name(), sp->relativePopulation());
+// // 		parser.writeLineF("  %s  '%s'  %f  %f  %i\n", Keywords::simulationKeyword(Keywords::ComponentKeyword), sp->name(), sp->relativePopulation(), sp->relativePopulation()/sum, sp->relativePopulation()*multiplier_);
+// 		parser.writeLineF("  %s  '%s'  %f\n", Keywords::simulationKeyword(Keywords::ComponentKeyword), sp->name(), sp->relativePopulation());
 // 	}
-// 	parser.writeLineF("%s\n\n", Keywords::systemKeyword(Keywords::EndSystemKeyword));
+// 	parser.writeLineF("%s\n\n", Keywords::simulationKeyword(Keywords::EndSystemKeyword));
 // 
 // 	// Write Samples blocks
 // 	parser.writeLineF("# Samples\n");

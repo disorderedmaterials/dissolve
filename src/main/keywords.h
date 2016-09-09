@@ -41,10 +41,10 @@ class Keywords
 	{
 		AtomTypesBlock,			/**> 'AtomTypes' - Contains definitions of AtomTypes over all Species */
 		ConfigurationBlock,		/**> 'Configuration' - Defines a single configuration for use in the simulation */
-		PairPotentialsBlock,		/**> 'PairPotentials' - Contains definitions of the PairPotentials for the system */
+		PairPotentialsBlock,		/**> 'PairPotentials' - Contains definitions of the PairPotentials for the simulation */
 		SampleBlock,			/**> 'Sample' - Begins a definition of a Sample */
 		SpeciesBlock,			/**> 'Species' - Begins a definition of a Species */
-		SystemBlock,			/**> 'System' - Setting of system variables affecting the calculation */
+		SimulationBlock,			/**> 'Simulation' - Setting of simulation variables affecting the calculation */
 		nInputBlocks			/**> Number of defined InputBlock keywords */
 	};
 	// Convert text string to InputBlock
@@ -91,12 +91,11 @@ class Keywords
 		BraggMaximumQKeyword,		/**> 'BraggMaximumQ' - Sets the maximum Q value for Bragg calculation */
 		CellAnglesKeyword,		/**> 'CellAngles' - Gives the angles of the unit cell */
 		CellLengthsKeyword,		/**> 'CellLengths' - Gives the relative lengths of the unit cell */
-		ComponentKeyword,		/**> 'Component' - Specifies a Species and its relative population in the System */
-		DensityKeyword,			/**> 'Density' - Specifies the density of the system, along with its units */
+		DensityKeyword,			/**> 'Density' - Specifies the density of the simulation, along with its units */
 		EndConfigurationKeyword,	/**> 'EndConfiguration' - Signals the end of the Configuration block */
 		FileModelKeyword,		/**> 'File' - Specifies the file which contains the starting/current coordinates */
 		MultiplierKeyword,		/**> 'Multiplier' - Specifies the factor by which relative populations are multiplied when generating the Model */
-		NonPeriodicKeyword,		/**> 'NonPeriodic' - States that the system should be treated as non-periodic */
+		NonPeriodicKeyword,		/**> 'NonPeriodic' - States that the simulation should be treated as non-periodic */
 		QDeltaKeyword,			/**> 'QDelta' - Q delta to use in S(Q) calculation */
 		QMaxKeyword,			/**> 'QMax' - Maximum Q up to which S(Q) calculation will be performed */
 		RDFBinWidthKeyword,		/**> 'RDFBinWidth' - Specified bin width for all RDF generation */
@@ -104,9 +103,11 @@ class Keywords
 		RDFRangeKeyword,		/**> 'RDFRange' - Requested extent for RDF (and subsequent S(Q)) calculation */
 		RDFSmoothingKeyword,		/**> 'RDFSmoothing' - Specifies the degree of smoothing 'n' to apply to calculated RDFs, where 2n+1 controls the length in the applied Spline smooth */
 		RMSEDeltaQKeyword,		/**> 'RMSEDeltaQ' - Controls bin width used in Sample/reference data RMSE calculation */
+		SampleAddKeyword,		/**> 'Sample' - Specifies that the Sample data is relevant to this Configuration, and should be calculated / compared */
+		SpeciesAddKeyword,		/**> 'Species' - Specifies a Species and its relative population to add to this Configuration */
 		TemperatureKeyword,		/**> 'Temperature' - Defines the temperature of the simulation */
 		WindowFunctionKeyword,		/**> 'WindowFunction' - Specifies the windowing function to use in all Fourier transforms */
-		nConfigurationKeywords			/**> Number of keywords defined for this block */
+		nConfigurationKeywords		/**> Number of keywords defined for this block */
 	};
 	// Convert text string to ConfigurationKeyword
 	static ConfigurationKeyword configurationKeyword(const char* s);
@@ -144,6 +145,61 @@ class Keywords
 
 
 	/*!
+	 * \name Sample Block Keywords
+	 */
+	///@{
+	public:
+	/// Sample Block Keyword Enum
+	enum SampleKeyword
+	{
+		BroadeningKeyword,		/**> 'Broadening' - Specifies the Q-independent and Q-dependent (in that order) Gaussian broadening function FWHM to apply when transforming simulated RDF data to Q-space */
+		EndSampleKeyword,			/**> 'EndSample' - Signals the end of the Sample block */
+		FitMaxKeyword,				/**> 'FitMax' - Upper limit for empirical fitting procedure for this Sample */
+		FitMinKeyword,				/**> 'FitMin' - Lower limit for empirical fitting procedure for this Sample */
+		IsotopologueSampleKeyword,		/**> 'Isotopologue' - Specifies a Species, Isotopologue, and relative population in this Sample */
+		NormalisedToAverageSquaredKeyword,	/**> 'NormalisedToAvSq' - States that the reference F(Q) has been normalised to < b >**2 */
+		NormalisedToSquaredAverageKeyword,	/**> 'NormalisedToSqAv' - States that the reference F(Q) has been normalised to < b**2 > */
+		ReferenceDataKeyword,			/**> 'ReferenceData' - Specifies an F(Q) datafile which represents this Sample */
+		SubtractSelfKeyword,			/**> 'SubtractSelf' - States that the self scattering (determined from the high-Q region) should be subtracted from the reference data */
+		SampleTypeKeyword,			/**> 'Type' - Specifies the type of sample data */
+		nSampleKeywords				/**> Number of keywords defined for this block */
+	};
+	// Convert text string to SampleKeyword
+	static SampleKeyword sampleKeyword(const char* s);
+	// Convert SampleKeyword to text string
+	static const char* sampleKeyword(SampleKeyword id);
+	// Return minimum number of expected arguments
+	static int sampleBlockNArguments(SampleKeyword id);
+	///@}
+
+
+	/*!
+	 * \name Simulation Block Keywords
+	 */
+	///@{
+	public:
+	/// Simulation Block Keyword Enum
+	enum SimulationKeyword
+	{
+		BoxNormalisationPointsKeyword,	/**> 'BoxNormalisationPoints' - Specifies how many random insertions to use when generating the normalisation array */
+		EndSimulationKeyword,		/**> 'EndSimulation' - Signals the end of the Simulation block */
+		SeedKeyword,			/**> 'Seed' - Sets the random seed to use */
+		SimplexNCyclesKeyword,		/**> 'SimplexNCycles' - Sets the maximum number of cycles allowed by the Simplex minimiser when fitting potential coefficients */
+		SimplexNMovesKeyword,		/**> 'SimplexNMoves' - Sets the maximum number of moves per cycle allowed by the Simplex minimiser when fitting potential coefficients */
+		SimplexTemperatureKeyword,	/**> 'SimplexTemperature' - Sets the temperature used in the Simplex minimiser when fitting potential coefficients */
+		SimplexToleranceKeyword,	/**> 'SimplexTolerance' - Sets the convergence tolerance used in the Simplex minimiser when fitting potential coefficients */
+		nSimulationKeywords			/**> Number of keywords defined for this block */
+	};
+	// Convert text string to SimulationKeyword
+	static SimulationKeyword simulationKeyword(const char* s);
+	// Convert SimulationKeyword to text string
+	static const char* simulationKeyword(SimulationKeyword id);
+	// Return minimum number of expected arguments
+	static int simulationBlockNArguments(SimulationKeyword id);
+	///@}
+
+
+	/*!
 	 * \name Species Block Keywords
 	 */
 	///@{
@@ -165,60 +221,6 @@ class Keywords
 	static const char* speciesKeyword(SpeciesKeyword id);
 	// Return minimum number of expected arguments
 	static int speciesBlockNArguments(SpeciesKeyword id);
-	///@}
-
-
-	/*!
-	 * \name Sample Block Keywords
-	 */
-	///@{
-	public:
-	/// Sample Block Keyword Enum
-	enum SampleKeyword
-	{
-		BroadeningKeyword,		/**> 'Broadening' - Specifies the Q-independent and Q-dependent (in that order) Gaussian broadening function FWHM to apply when transforming simulated RDF data to Q-space */
-		EndSampleKeyword,			/**> 'EndSample' - Signals the end of the Sample block */
-		FitMaxKeyword,				/**> 'FitMax' - Upper limit for empirical fitting procedure for this Sample */
-		FitMinKeyword,				/**> 'FitMin' - Lower limit for empirical fitting procedure for this Sample */
-		IsotopologueSampleKeyword,		/**> 'Isotopologue' - Specifies a Species, Isotopologue, and relative population in this Sample */
-		NormalisedToAverageSquaredKeyword,	/**> 'NormalisedToAvSq' - States that the reference F(Q) has been normalised to < b >**2 */
-		NormalisedToSquaredAverageKeyword,	/**> 'NormalisedToSqAv' - States that the reference F(Q) has been normalised to < b**2 > */
-		ReferenceDataKeyword,			/**> 'ReferenceData' - Specifies an F(Q) datafile which represents this Sample */
-		SubtractSelfKeyword,			/**> 'SubtractSelf' - States that the self scattering (determined from the high-Q region) should be subtracted from the reference data */
-		nSampleKeywords				/**> Number of keywords defined for this block */
-	};
-	// Convert text string to SampleKeyword
-	static SampleKeyword sampleKeyword(const char* s);
-	// Convert SampleKeyword to text string
-	static const char* sampleKeyword(SampleKeyword id);
-	// Return minimum number of expected arguments
-	static int sampleBlockNArguments(SampleKeyword id);
-	///@}
-
-
-	/*!
-	 * \name System Block Keywords
-	 */
-	///@{
-	public:
-	/// System Block Keyword Enum
-	enum SystemKeyword
-	{
-		BoxNormalisationPointsKeyword,	/**> 'BoxNormalisationPoints' - Specifies how many random insertions to use when generating the normalisation array */
-		EndSystemKeyword,		/**> 'EndSystem' - Signals the end of the System block */
-		SeedKeyword,			/**> 'Seed' - Sets the random seed to use */
-		SimplexNCyclesKeyword,		/**> 'SimplexNCycles' - Sets the maximum number of cycles allowed by the Simplex minimiser when fitting potential coefficients */
-		SimplexNMovesKeyword,		/**> 'SimplexNMoves' - Sets the maximum number of moves per cycle allowed by the Simplex minimiser when fitting potential coefficients */
-		SimplexTemperatureKeyword,	/**> 'SimplexTemperature' - Sets the temperature used in the Simplex minimiser when fitting potential coefficients */
-		SimplexToleranceKeyword,	/**> 'SimplexTolerance' - Sets the convergence tolerance used in the Simplex minimiser when fitting potential coefficients */
-		nSystemKeywords			/**> Number of keywords defined for this block */
-	};
-	// Convert text string to SystemKeyword
-	static SystemKeyword systemKeyword(const char* s);
-	// Convert SystemKeyword to text string
-	static const char* systemKeyword(SystemKeyword id);
-	// Return minimum number of expected arguments
-	static int systemBlockNArguments(SystemKeyword id);
 	///@}
 };
 

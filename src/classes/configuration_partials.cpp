@@ -358,6 +358,7 @@ bool Configuration::calculateBraggSQ()
 
 	lFactor = box_->reciprocalVolume() / (PI*PI);
 
+	printf("TODO Use of instrumental Q-dependent broadening needs to be re-implemented per Sample in Bragg calculation\n");
 	for (typeI = 0; typeI < nTypes; ++typeI)
 	{
 		for (typeJ = typeI; typeJ < nTypes; ++typeJ)
@@ -373,7 +374,7 @@ bool Configuration::calculateBraggSQ()
 				// Get q value and intensity of peak
 				qCentre = peaks[n]->q();
 				inten = peaks[n]->intensity(typeI, typeJ);
-				lambda = braggBroadening_ + qCentre * qDependentFWHM_;
+				lambda = braggBroadening_ + qCentre * 0.02; //qDependentFWHM_;
 				lambdaCubed = lambda * lambda * lambda;
 
 				// Loop over points in braggSQ Data2D (which will provide our x-values)

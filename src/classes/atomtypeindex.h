@@ -22,62 +22,13 @@
 #ifndef DUQ_ATOMTYPEINDEX_H
 #define DUQ_ATOMTYPEINDEX_H
 
+#include "classes/atomtypedata.h"
 #include "templates/list.h"
 #include "templates/array.h"
 
 // Forward Declarations
 class AtomType;
 class Isotope;
-
-/*
- * AtomTypeData Definition
- */
-class AtomTypeData : public ListItem<AtomTypeData>
-{
-	public:
-	// Constructor
-	AtomTypeData();
-
-
-	/*
-	 * Properties
-	 */
-	///@{
-	private:
-	// Reference AtomType
-	AtomType* atomType_;
-	// Isotopes
-	Isotope* isotope_;
-	// Integer populations of isotopes
-	int population_;
-	// Fractional populations of isotopes
-	double fraction_;
-	// Index of non-isotopic master type
-	int masterIndex_;
-
-	public:
-	// Initialise
-	bool initialise(AtomType* atomType, Isotope* topeA);
-	// Add to population of Isotope
-	void add(int nAdd);
-	// Return reference AtomType
-	AtomType* atomType() const;
-	// Finalise, calculating fractional populations etc.
-	void finalise(int totalAtoms);
-	// Return Isotope
-	Isotope* isotope() const;
-	// Return population
-	int population() const;
-	// Return fractional population
-	double fraction() const;
-	// Return referenced AtomType name
-	const char* name();
-	// Set index of non-isotopic master type
-	void setMasterIndex(int id);
-	// Return index of non-isotopic master type
-	int masterIndex();
-	///@}
-};
 
 /*
  * AtomTypeIndex Definition
@@ -89,6 +40,10 @@ class AtomTypeIndex
 	AtomTypeIndex();
 	// Destructor
 	~AtomTypeIndex();
+	// Copy Constructor
+	AtomTypeIndex(const AtomTypeIndex& source);
+	// Assignment Operator
+	void operator=(const AtomTypeIndex& source);
 
 
 	/*!

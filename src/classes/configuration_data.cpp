@@ -38,7 +38,7 @@ bool Configuration::addReferenceSample(Sample* source)
 	// Search for the sample (by name) to see if we have added it already
 	if (findReferenceSample(source->name()))
 	{
-		msg.error("Configuration '%s' already references Sample '%s'.\n", source->name());
+		msg.error("Configuration '%s' already references Sample '%s'.\n", name(), source->name());
 		return false;
 	}
 
@@ -86,6 +86,7 @@ bool Configuration::setupReferenceSamples()
 
 		msg.print("\n");
 	}
+
 	return true;
 }
 

@@ -48,8 +48,8 @@ void Keywords::printValidKeywords(Keywords::InputBlock block)
 		case (Keywords::SpeciesBlock):
 			for (n=0; n<Keywords::nSpeciesKeywords; ++n) msg.print("%s%s", n == 0 ? "" : ", ", speciesKeyword( (SpeciesKeyword) n ));
 			break;
-		case (Keywords::SystemBlock):
-			for (n=0; n<Keywords::nSystemKeywords; ++n) msg.print("%s%s", n == 0 ? "" : ", ", systemKeyword( (SystemKeyword) n ));
+		case (Keywords::SimulationBlock):
+			for (n=0; n<Keywords::nSimulationKeywords; ++n) msg.print("%s%s", n == 0 ? "" : ", ", simulationKeyword( (SimulationKeyword) n ));
 			break;
 		default:
 			printf("Unrecognised block given to Keywords::printValidKeywords.\n");
@@ -63,7 +63,7 @@ void Keywords::printValidKeywords(Keywords::InputBlock block)
 */
 
 // Input File Block Keywords
-const char* InputBlockKeywords[] = { "AtomTypes", "Configuration", "PairPotentials", "Sample", "Species", "System" };
+const char* InputBlockKeywords[] = { "AtomTypes", "Configuration", "PairPotentials", "Sample", "Species", "Simulation" };
 
 /*!
  * \brief Convert text string to InputBlock
@@ -124,7 +124,7 @@ int Keywords::atomTypesBlockNArguments(Keywords::AtomTypesKeyword id)
 // Configuration Block Keywords
 const char* ConfigurationBlockKeywords[] = {
 	"BoxNormalisationFile", "Bragg", "BraggBroadening", "BraggMaximumQ",
-	"CellAngles", "CellLengths", "Component",
+	"CellAngles", "CellLengths",
 	"Density",
 	"EndConfiguration",
 	"File",
@@ -132,6 +132,7 @@ const char* ConfigurationBlockKeywords[] = {
 	"NonPeriodic",
 	"QDelta", "QMax", 
 	"RDFBinWidth", "RDFMethod", "RDFRange", "RDFSmoothing", "RMSEDeltaQ",
+	"Sample", "Species",
 	"Temperature",
 	"WindowFunction"
 };
@@ -139,7 +140,7 @@ const char* ConfigurationBlockKeywords[] = {
 // Configuration Block NArguments
 int ConfigurationBlockNArguments[] = {
 	1, 1, 1, 1, 
-	3, 3, 2,
+	3, 3,
 	1,
 	0,
 	1,
@@ -147,6 +148,7 @@ int ConfigurationBlockNArguments[] = {
 	0, 
 	1, 1,
 	1, 1, 1, 1, 1,
+	1, 2,
 	1,
 	1
 	};
@@ -214,6 +216,76 @@ int Keywords::pairPotentialsBlockNArguments(Keywords::PairPotentialsKeyword id)
 
 
 /*
+// Sample Block Keywords
+*/
+
+// Sample Block Keywords
+const char* SampleBlockKeywords[] = {  "Broadening", "EndSample", "FitMax", "FitMin", "Isotopologue", "NormalisedToAvSq", "NormalisedToSqAv", "ReferenceData", "SubtractSelf", "Type" };
+
+// Sample Block NArguments
+int SampleBlockNArguments[] = { 2, 0, 1, 1, 3, 0, 0, 1, 0, 1 };
+
+/*!
+ * \brief Convert text string to SampleKeyword
+ */
+Keywords::SampleKeyword Keywords::sampleKeyword(const char* s)
+{
+	for (int n=0; n<Keywords::nSampleKeywords; ++n) if (strcmp(s,SampleBlockKeywords[n]) == 0) return (Keywords::SampleKeyword) n;
+	return Keywords::nSampleKeywords;
+}
+
+/*!
+ * \brief Convert SampleKeyword to text string
+ */
+const char* Keywords::sampleKeyword(Keywords::SampleKeyword id)
+{
+	return SampleBlockKeywords[id];
+}
+
+/*!
+ * \brief Return minimum number of expected arguments
+ */
+int Keywords::sampleBlockNArguments(Keywords::SampleKeyword id)
+{
+	return SampleBlockNArguments[id];
+}
+
+/*
+// Simulation Block Keywords
+*/
+
+// Simulation Block Keywords
+const char* SimulationBlockKeywords[] = { "BoxNormalisationPoints", "EndSimulation", "Seed", "SimplexNCycles", "SimplexNMoves", "SimplexTemperature", "SimplexTolerance" };
+
+// Simulation Block NArguments
+int SimulationBlockNArguments[] = { 1, 0, 1, 1, 1, 1, 1 };
+
+/*!
+ * \brief Convert text string to SimulationKeyword
+ */
+Keywords::SimulationKeyword Keywords::simulationKeyword(const char* s)
+{
+	for (int n=0; n<Keywords::nSimulationKeywords; ++n) if (strcmp(s,SimulationBlockKeywords[n]) == 0) return (Keywords::SimulationKeyword) n;
+	return Keywords::nSimulationKeywords;
+}
+
+/*!
+ * \brief Convert SimulationKeyword to text string
+ */
+const char* Keywords::simulationKeyword(Keywords::SimulationKeyword id)
+{
+	return SimulationBlockKeywords[id];
+}
+
+/*!
+ * \brief Return minimum number of expected arguments
+ */
+int Keywords::simulationBlockNArguments(Keywords::SimulationKeyword id)
+{
+	return SimulationBlockNArguments[id];
+}
+
+/*
 // Species Keywords
 */
 
@@ -246,74 +318,4 @@ const char* Keywords::speciesKeyword(Keywords::SpeciesKeyword id)
 int Keywords::speciesBlockNArguments(Keywords::SpeciesKeyword id)
 {
 	return SpeciesBlockNArguments[id];
-}
-
-/*
-// Sample Block Keywords
-*/
-
-// Sample Block Keywords
-const char* SampleBlockKeywords[] = {  "Broadening", "EndSample", "FitMax", "FitMin", "Isotopologue", "NormalisedToAvSq", "NormalisedToSqAv", "ReferenceData", "SubtractSelf" };
-
-// Sample Block NArguments
-int SampleBlockNArguments[] = { 2, 0, 1, 1, 3, 0, 0, 1, 0 };
-
-/*!
- * \brief Convert text string to SampleKeyword
- */
-Keywords::SampleKeyword Keywords::sampleKeyword(const char* s)
-{
-	for (int n=0; n<Keywords::nSampleKeywords; ++n) if (strcmp(s,SampleBlockKeywords[n]) == 0) return (Keywords::SampleKeyword) n;
-	return Keywords::nSampleKeywords;
-}
-
-/*!
- * \brief Convert SampleKeyword to text string
- */
-const char* Keywords::sampleKeyword(Keywords::SampleKeyword id)
-{
-	return SampleBlockKeywords[id];
-}
-
-/*!
- * \brief Return minimum number of expected arguments
- */
-int Keywords::sampleBlockNArguments(Keywords::SampleKeyword id)
-{
-	return SampleBlockNArguments[id];
-}
-
-/*
-// System Block Keywords
-*/
-
-// System Block Keywords
-const char* SystemBlockKeywords[] = { "BoxNormalisationPoints", "EndSystem", "Seed", "SimplexNCycles", "SimplexNMoves", "SimplexTemperature", "SimplexTolerance" };
-
-// System Block NArguments
-int SystemBlockNArguments[] = { 1, 0, 1, 1, 1, 1, 1 };
-
-/*!
- * \brief Convert text string to SystemKeyword
- */
-Keywords::SystemKeyword Keywords::systemKeyword(const char* s)
-{
-	for (int n=0; n<Keywords::nSystemKeywords; ++n) if (strcmp(s,SystemBlockKeywords[n]) == 0) return (Keywords::SystemKeyword) n;
-	return Keywords::nSystemKeywords;
-}
-
-/*!
- * \brief Convert SystemKeyword to text string
- */
-const char* Keywords::systemKeyword(Keywords::SystemKeyword id)
-{
-	return SystemBlockKeywords[id];
-}
-
-/*!
- * \brief Return minimum number of expected arguments
- */
-int Keywords::systemBlockNArguments(Keywords::SystemKeyword id)
-{
-	return SystemBlockNArguments[id];
 }

@@ -1,6 +1,7 @@
 add_library(classes
 atom.cpp
 atomtype.cpp
+atomtypedata.cpp
 atomtypeindex.cpp
 box.cpp 
 box_cubic.cpp 
@@ -44,6 +45,7 @@ speciesgrain.h
 species_io.cpp
 atom.h
 atomtype.h
+atomtypedata.h
 atomtypeindex.h
 box.h
 braggpeak.h

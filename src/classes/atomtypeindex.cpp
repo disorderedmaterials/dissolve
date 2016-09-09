@@ -1,5 +1,5 @@
 /*
-	*** AtomTypeIndexIndex Definition
+	*** AtomTypeIndex Definition
 	*** src/classes/atomtypeindex.cpp
 	Copyright T. Youngs 2012-2014
 
@@ -21,125 +21,9 @@
 
 #include "classes/atomtypeindex.h"
 #include "classes/atomtype.h"
-#include "base/constants.h"
 #include "base/isotope.h"
-#include "base/messenger.h"
-#include <base/ptable.h>
+#include "base/ptable.h"
 #include <string.h>
-
-/*
-// AtomTypeData
-*/
-
-/*!
- * \brief Constructor
- * \details Constructor for AtomTypeData. 
- */
-AtomTypeData::AtomTypeData() : ListItem<AtomTypeData>()
-{
-	atomType_ = NULL;
-	masterIndex_ = -1;
-}
-
-/*
-// Properties
-*/
-
-/*!
- * \brief Initialise
- * \details Set the AtomType pointer and first Isotope. The population of the Isotope is set to zero.
- */
-bool AtomTypeData::initialise(AtomType* atomType, Isotope* tope)
-{
-	atomType_ = atomType;
-	isotope_ = tope;
-	if (atomType == NULL)
-	{
-		msg.error("NULL_POINTER - NULL AtomType pointer passed to AtomTypeData::initialise().\n");
-		return false;
-	}
-
-	population_ = 0;
-	fraction_ = 0.0;
-// 	msg.print("--> Initialised AtomType index entry with AtomType '%s', Isotope %i (bc = %7.3f)\n", atomType->name(), tope->A(), tope->boundCoherent());
-	return true;
-}
-
-/*!
- * \brief Add to population of Isotope
- */
-void AtomTypeData::add(int nAdd)
-{
-	population_ += nAdd;
-}
-
-/*!
- * \brief Return reference AtomType
- */
-AtomType* AtomTypeData::atomType() const
-{
-	return atomType_;
-}
-
-/*!
- * \brief // Finalise, calculating fractional populations etc.
- */
-void AtomTypeData::finalise(int totalAtoms)
-{
-	fraction_ = double(population_) / totalAtoms;
-}
-
-/*!
- * \brief Return Isotope
- */
-Isotope* AtomTypeData::isotope() const
-{
-	return isotope_;
-}
-
-/*!
- * \brief Return population
- */
-int AtomTypeData::population() const
-{
-	return population_;
-}
-
-/*!
- * \brief Return fractional population
- */
-double AtomTypeData::fraction() const
-{
-	return fraction_;
-}
-
-/*!
- * \brief Return referenced AtomType name
- */
-const char* AtomTypeData::name()
-{
-	return atomType_->name();
-}
-
-/*!
- * \brief Set index of non-isotopic master type
- */
-void AtomTypeData::setMasterIndex(int id)
-{
-	masterIndex_ = id;
-}
-
-/*!
- * \brief Return index of non-isotopic master type
- */
-int AtomTypeData::masterIndex()
-{
-	return masterIndex_;
-}
-
-/*
-// AtomTypeIndex
-*/
 
 /*!
  * \brief Constructor
@@ -155,6 +39,18 @@ AtomTypeIndex::AtomTypeIndex()
  */
 AtomTypeIndex::~AtomTypeIndex()
 {
+}
+
+// Copy Constructor
+AtomTypeIndex::AtomTypeIndex(const AtomTypeIndex& source)
+{
+	(*this) = source;
+}
+
+// Assignment Operator
+void AtomTypeIndex::operator=(const AtomTypeIndex& source)
+{
+	types_ = source.types_;
 }
 
 /*
@@ -220,11 +116,15 @@ AtomTypeData* AtomTypeIndex::first() const
 void AtomTypeIndex::print()
 {
 	int count = 0;
+	Dnchar indexData;
 	msg.print("--> Populations : AtomType    El   Population  AtomFrac  Isotope  bc (fm)\n");
 	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next)
 	{
-		if (atd->masterIndex() == -1) msg.print("              %2i  %-10s  %-3s  %-10i  %8.6f    %-3i   %8.3f  (M)\n", count++, atd->name(), PeriodicTable::element(atd->atomType()->element()).symbol(), atd->population(), atd->fraction(), atd->isotope()->A(), atd->isotope()->boundCoherent());
-		else msg.print("              %2i  %-10s  %-3s  %-10i  %8.6f    %-3i   %8.3f  (index=%i)\n", count++, atd->name(), PeriodicTable::element(atd->atomType()->element()).symbol(), atd->population(), atd->fraction(), atd->isotope()->A(), atd->isotope()->boundCoherent(), atd->masterIndex());
+		if (atd->masterIndex() == -1) indexData = "M";
+		else indexData.sprintf("index=%i", atd->masterIndex());
+		
+		if (atd->isotope()) msg.print("              %2i  %-10s  %-3s  %-10i  %8.6f    %-3i   %8.3f  (%s)\n", count++, atd->name(), PeriodicTable::element(atd->atomType()->element()).symbol(), atd->population(), atd->fraction(), atd->isotope()->A(), atd->isotope()->boundCoherent(), indexData.get());
+		else msg.print("              %2i  %-10s  %-3s  %-10i  %8.6f     --- N/A ---    (%s)\n", count++, atd->name(), PeriodicTable::element(atd->atomType()->element()).symbol(), atd->population(), atd->fraction(), indexData.get());
 	}
 }
 

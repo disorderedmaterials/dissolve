@@ -236,13 +236,14 @@ void Configuration::clear()
 // Setup configuration
 bool Configuration::setup(const List<AtomType>& atomTypes, double pairPotentialRange, int boxNormalisationNPoints)
 {
-	// Create a Box
-	msg.print("--> Creating periodic box...\n");
-	if (!setupBox(pairPotentialRange))
-	{
-		msg.error("Failed to set-up Box/Cells for Configuration.\n");
-		return false;
-	}
+	/*
+	 * Order of business:
+	 * 1) Check for a sensible multiplier for the system
+	 * 2) Create all molecules in the system, based on the defined multiplier and Species
+	 * 3) Add a periodic box (since we now know the total number of atoms in the system, and hence can work out the number density)
+	 * 4) Create atom/grain arrays
+	 * 5) Everything else...
+	 */
 
 	// Check Configuration multiplier
 	if (multiplier_ < 1)
@@ -251,7 +252,7 @@ bool Configuration::setup(const List<AtomType>& atomTypes, double pairPotentialR
 		return false;
 	}
 
-	// First stage is always to create 'empty' molecules in the main Configuration
+	// Create 'empty' molecules in the main Configuration
 	msg.print("--> Creating space for molecules...\n");
 	int count;
 	for (RefListItem<Species,double>* refSp = usedSpecies_.first(); refSp != NULL; refSp = refSp->next)
@@ -268,6 +269,14 @@ bool Configuration::setup(const List<AtomType>& atomTypes, double pairPotentialR
 		}
 		
 		for (int n = 0; n < count; ++n) addMolecule(refSp->item);
+	}
+
+	// Create a Box
+	msg.print("--> Creating periodic box...\n");
+	if (!setupBox(pairPotentialRange))
+	{
+		msg.error("Failed to set-up Box/Cells for Configuration.\n");
+		return false;
 	}
 
 	// Setup arrays for atoms and grains, based on the local molecules list
@@ -404,6 +413,8 @@ bool Configuration::setup(const List<AtomType>& atomTypes, double pairPotentialR
 		msg.error("Failed to setup reference Samples.\n");
 		return false;
 	}
+
+	return true;
 }
 
 /*

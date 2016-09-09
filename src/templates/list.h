@@ -163,7 +163,7 @@ template <class T> class List
 	*/
 	public:
 	// Assignment operator
-	void operator=(List<T> &source);
+	void operator=(const List<T> &source);
 	// Element access operator
 	T *operator[](int);
 
@@ -737,7 +737,7 @@ template <class T> void List<T>::moveAfter(T *item, T *reference)
 /*!
  * \brief Assignment operator =
  */
-template <class T> void List<T>::operator=(List<T> &source)
+template <class T> void List<T>::operator=(const List<T> &source)
 {
 	// Clear any current data in the list...
 	clear();
