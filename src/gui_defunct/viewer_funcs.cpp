@@ -343,7 +343,7 @@ void Viewer::resetView()
 }
 
 // Project given model coordinates into world coordinates
-Vec3<double> Viewer::modelToWorld(const Vec3<double> &modelr)
+Vec3<double> Viewer::modelToWorld(const Vec3<double>& modelr)
 {
 	Vec3<double> worldr;
 	Matrix4 vmat;
@@ -359,7 +359,7 @@ Vec3<double> Viewer::modelToWorld(const Vec3<double> &modelr)
 }
 
 // Project given model coordinates into screen coordinates
-Vec4<double> Viewer::modelToScreen(const Vec3<double> &modelr, double screenradius)
+Vec4<double> Viewer::modelToScreen(const Vec3<double>& modelr, double screenradius)
 {
 	Vec4<double> screenr, tempscreen;
 	Vec4<double> worldr;

@@ -181,6 +181,8 @@ class Configuration : public ListItem<Configuration>
 	AtomType* type(int index);
 	// Return first AtomTypeData for this configuration
 	AtomTypeData* usedAtomTypes();
+	// Set global AtomType indices in Atoms from the map provided
+	bool setGlobalAtomTypeIndices(const AtomTypeIndex& masterIndex);
 	// Return current coordinate index
 	int coordinateIndex();
 	// Increment current coordinate index

@@ -76,7 +76,7 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	// Return atomic element
 	int element() const;
 	// Return coordinates (read-only)
-	const Vec3<double> &r() const;
+	const Vec3<double>& r() const;
 	// Set charge of Atom
 	void setCharge(double charge);
 	// Return charge of Atom

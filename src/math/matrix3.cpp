@@ -77,7 +77,7 @@ Matrix3 Matrix3::operator-(const Matrix3& B) const
 	return A;
 }
 
-Vec3<double> Matrix3::operator*(const Vec3<double> &v) const
+Vec3<double> Matrix3::operator*(const Vec3<double>& v) const
 {
 	Vec3<double> result;
 	result.x = v.x*matrix_[0] + v.y*matrix_[3] + v.z*matrix_[6];

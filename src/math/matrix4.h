@@ -53,7 +53,7 @@ class Matrix4
 	Matrix4 operator*(const double a) const;
 	Matrix4 operator+(const Matrix4& B) const;
 	Matrix4 operator-(const Matrix4& B) const;
-	Vec3<double> operator*(const Vec3<double> &v) const;
+	Vec3<double> operator*(const Vec3<double>& v) const;
 	Vec4<double> operator*(const Vec4<double> &v) const;
 	Matrix4& operator*=(const Matrix4& B);
 	double &operator[](int);

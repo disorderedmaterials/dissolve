@@ -109,7 +109,7 @@ bool Configuration::setupBox(double ppRange)
 		box_ = new TriclinicBox(volume, relativeBoxLengths_, boxAngles_);
 	}
 	
-	msg.print("--> %s xox created for system.\n", Box::boxType(box_->type()));
+	msg.print("--> %s box created for system.\n", Box::boxType(box_->type()));
 	Matrix3 axes = box_->axes();
 	msg.print("--> Axes Matrix : A = %10.4e %10.4e %10.4e, length = %10.4e Angstroms\n", axes[0], axes[1], axes[2], box_->axisLength(0));
 	msg.print("-->               B = %10.4e %10.4e %10.4e, length = %10.4e Angstroms\n", axes[3], axes[4], axes[5], box_->axisLength(1));

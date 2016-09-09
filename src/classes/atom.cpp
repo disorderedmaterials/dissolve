@@ -94,7 +94,7 @@ int Atom::element() const
  * \brief Return coordinates
  * \details Return the current coordinates of the Atom, be they absolute or Grain-local
  */
-const Vec3<double> &Atom::r() const
+const Vec3<double>& Atom::r() const
 {
 	return r_;
 }
@@ -119,6 +119,9 @@ double Atom::charge() const
 // Set local AtomType index
 void Atom::setLocalTypeIndex(int id)
 {
+#ifdef CHECKS
+	if (localTypeIndex_ != -1) msg.print("Warning: Overwriting local AtomType index for atom '%i'.\n", index_);
+#endif
 	localTypeIndex_ = id;
 }
 
@@ -134,6 +137,9 @@ int Atom::localTypeIndex() const
 // Set global AtomType index 
 void Atom::setGlobalTypeIndex(int id)
 {
+#ifdef CHECKS
+	if (globalTypeIndex_ != -1) msg.print("Warning: Overwriting global AtomType index for atom '%i'.\n", index_);
+#endif
 	globalTypeIndex_ = id;
 }
 
@@ -335,7 +341,8 @@ bool Atom::broadcast()
 	if (!Comm.broadcast(&element_, 1)) return false;
 	if (!Comm.broadcast(r_)) return false;
 	if (!Comm.broadcast(&charge_, 1)) return false;
-	if (!Comm.broadcast(&atomTypeIndex_, 1)) return false;
+	if (!Comm.broadcast(&localTypeIndex_, 1)) return false;
+	if (!Comm.broadcast(&globalTypeIndex_, 1)) return false;
 #endif
 	return true;
 }

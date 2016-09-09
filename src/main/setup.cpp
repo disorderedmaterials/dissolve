@@ -87,12 +87,15 @@ bool DUQ::setup()
 // 	}
 
 	// We will construct a complete list of all AtomTypes used over all Samples used in all Configuration.
-	// So, loop over Configurations and go through Isotopologues in each used Sample mixture
+	// So, loop over Configurations and go through Isotopologues in each used Sample mixture, and set global AtomType indices in each Configuration
 	pairPotentialAtomTypeIndex_.clear();
 	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
 	{
-		// Loop over the atomtypes used in this Configuration
+		// Loop over the atomtypes used in this Configuration, adding them to the master list
 		for (AtomTypeData* atd = cfg->usedAtomTypes(); atd != NULL; atd = atd->next) pairPotentialAtomTypeIndex_.add(atd->atomType(), NULL, atd->population());
+
+		// Set global AtomType indices in the Configuration
+		cfg->setGlobalAtomTypeIndices(pairPotentialAtomTypeIndex_);
 	}
 
 	msg.print("--> %i unique AtomTypes (disregarding isotopic substitutions) used over all configurations:\n", pairPotentialAtomTypeIndex_.nItems());
@@ -122,7 +125,7 @@ bool DUQ::setup()
 	// Create PairPotential matrix
 	msg.print("--> Creating matrix (%ix%i)...\n", pairPotentialAtomTypeIndex_.nItems(), pairPotentialAtomTypeIndex_.nItems());
 	if (!potentialMap_.initialise(pairPotentialAtomTypeIndex_, pairPotentials_, pairPotentialRange_)) return false;
-	
+
 	return true;
 }
 

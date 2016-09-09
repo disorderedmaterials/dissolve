@@ -102,7 +102,7 @@ int SpeciesAtom::element() const
  * \brief Return coordinates
  * \details Return the current coordinates of the SpeciesAtom, be they absolute or Grain-local
  */
-const Vec3<double> &SpeciesAtom::r() const
+const Vec3<double>& SpeciesAtom::r() const
 {
 	return r_;
 }

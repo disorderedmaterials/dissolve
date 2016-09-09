@@ -77,7 +77,7 @@ class Atom
 	// Return atomic element
 	int element() const;
 	// Return coordinates (read-only)
-	const Vec3<double> &r() const;
+	const Vec3<double>& r() const;
 	// Set charge of atom
 	void setCharge(double charge);
 	// Return charge of atom

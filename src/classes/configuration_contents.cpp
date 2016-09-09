@@ -284,6 +284,42 @@ AtomTypeData* Configuration::usedAtomTypes()
 	return usedAtomTypes_.first();
 }
 
+// Set global AtomType indices in Atoms from the map provided
+bool Configuration::setGlobalAtomTypeIndices(const AtomTypeIndex& masterIndex)
+{
+	// Loop over AtomTypes in index, then over Atoms in Configuration
+	int nAssigned = 0, globalIndex = 0;
+	for (AtomTypeData* atd = masterIndex.first(); atd != NULL; atd = atd->next, ++globalIndex)
+	{
+		// Grab AtomType pointer
+		AtomType* at = atd->atomType();
+
+		// Loop over Molecules (need the original Species pointer to look up original AtomType pointer)
+		int localIndex = 0;
+		for (Molecule* mol = molecules_.first(); mol != NULL; mol = mol->next)
+		{
+			Species* sp = mol->species();
+			for (int i=0; i<sp->nAtoms(); ++i, ++localIndex)
+			{
+				if (at == sp->atom(i)->atomType())
+				{
+					atoms_[localIndex].setGlobalTypeIndex(globalIndex);
+					++nAssigned;
+				}
+			}
+		}
+	}
+
+	// Did we successfully assign AtomTypes to all Atoms?
+	if (nAssigned != nAtoms_)
+	{
+		msg.error("Failed to assign global AtomType indices to all Atoms in Configuration '%s'.\n", name());
+		return false;
+	}
+
+	return true;
+}
+
 /*!
  * \brief Return current coordinate index
  */

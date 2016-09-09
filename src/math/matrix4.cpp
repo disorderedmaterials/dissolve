@@ -83,7 +83,7 @@ Matrix4 Matrix4::operator-(const Matrix4& B) const
 	return A;
 }
 
-Vec3<double> Matrix4::operator*(const Vec3<double> &v) const
+Vec3<double> Matrix4::operator*(const Vec3<double>& v) const
 {
 	Vec3<double> result;
 	result.x = v.x*matrix_[0] + v.y*matrix_[4] + v.z*matrix_[8] + matrix_[12];
