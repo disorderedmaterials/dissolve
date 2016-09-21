@@ -41,10 +41,9 @@ class IsotopologueMix : public ListItem<IsotopologueMix>
 	~IsotopologueMix();
 
 
-	/*!
-	 * \name Isotopologue Mix
+	/*
+	 * Isotopologue Mix
 	 */
-	///@{
 	private:
 	// Associated Species
 	Species* species_;
@@ -76,17 +75,14 @@ class IsotopologueMix : public ListItem<IsotopologueMix>
 	RefListItem<Isotopologue,double>* hasIsotopologue(Isotopologue* iso) const;
 	// Return total relative population
 	double totalRelative() const;
-	///@}
 
 
-	/*!
-	 * \name Parallel Comms
+	/*
+	 * Parallel Comms
 	 */
-	///@{
 	public:
 	// Broadcast data from Master to all Slaves
 	bool broadcast();
-	///@}
 };
 
 #endif

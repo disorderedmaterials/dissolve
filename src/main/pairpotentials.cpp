@@ -20,77 +20,52 @@
 */
 
 #include "main/duq.h"
-#include "main/flags.h"
 #include "classes/atomtype.h"
 
-/*
-// Pair Potentials
-*/
-
-/*!
- * \brief Set maximum distance for tabulated PairPotentials
- */
+// Set maximum distance for tabulated PairPotentials
 void DUQ::setPairPotentialRange(double range)
 {
 	pairPotentialRange_ = range;
 	pairPotentialRangeSquared_ = range*range;
-	
-	Flags::wave(Flags::PairPotentialChanged);
 }
 
-/*!
- * \brief Return maximum distance for tabulated PairPotentials
- */
+// Return maximum distance for tabulated PairPotentials
 double DUQ::pairPotentialRange() const
 {
 	return pairPotentialRange_;
 }
 
-/*!
- * \brief Return maximum squared distance for tabulated PairPotentials
- */
+// Return maximum squared distance for tabulated PairPotentials
 double DUQ::pairPotentialRangeSquared() const
 {
 	return pairPotentialRangeSquared_;
 }
 
-/*!
- * \brief Set width of PairPotential tail over which to truncate
- */
+// Set width of PairPotential tail over which to truncate
 void DUQ::setPairPotentialTruncationWidth(double width)
 {
 	pairPotentialTruncationWidth_ = width;
-	
-	Flags::wave(Flags::PairPotentialChanged);
 }
 
-/*!
- * .\brief Return width of PairPotential tail over which to truncate
- */
+// Return width of PairPotential tail over which to truncate
 double DUQ::pairPotentialTruncationWidth() const
 {
 	return pairPotentialTruncationWidth_;
 }
 
-/*!
- * \brief Set delta to use in tabulations
- */
+// Set delta to use in tabulations
 void DUQ::setPairPotentialDelta(double delta)
 {
 	pairPotentialDelta_ = delta;
 }
 
-/*!
- * \brief Return delta to use in tabulations
- */
+// Return delta to use in tabulations
 double DUQ::pairPotentialDelta() const
 {
 	return pairPotentialDelta_;
 }
 
-/*!
- * \brief Add missing pair potentials to lists
- */
+// Add missing pair potentials to lists
 bool DUQ::addMissingPairPotentials()
 {
 	// Double loop over defined AtomTypes - search for these potentials in the list
@@ -123,51 +98,37 @@ bool DUQ::addMissingPairPotentials()
 	return true;
 }
 
-/*!
- * \brief Remove specified PairPotential from the list
- */
+// Remove specified PairPotential from the list
 void DUQ::removePairPotential(PairPotential* pot)
 {
 	pairPotentials_.remove(pot);
-	
-	Flags::wave(Flags::PairPotentialChanged);
 }
 
-/*!
- * \brief Return index of specified PairPotential
- */
+// Return index of specified PairPotential
 int DUQ::indexOf(PairPotential* pp)
 {
 	return pairPotentials_.indexOf(pp);
 }
 
-/*!
- * \brief Return number of defined PairPotentials
- */
+// Return number of defined PairPotentials
 int DUQ::nPairPotentials() const
 {
 	return pairPotentials_.nItems();
 }
 
-/*!
- * \brief Return first PaiPotential in list
- */
+// Return first PaiPotential in list
 PairPotential* DUQ::pairPotentials() const
 {
 	return pairPotentials_.first();
 }
 
-/*!
- * \brief Return nth PairPotential in list
- */
+// Return nth PairPotential in list
 PairPotential* DUQ::pairPotential(int n)
 {
 	return pairPotentials_[n];
 }
 
-/*!
- * \brief Return whether specified PairPotential is defined
- */
+// Return whether specified PairPotential is defined
 PairPotential* DUQ::hasPairPotential(AtomType* at1, AtomType* at2) const
 {
 	for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next)
@@ -178,26 +139,19 @@ PairPotential* DUQ::hasPairPotential(AtomType* at1, AtomType* at2) const
 	return NULL;
 }
 
-/*!
- * \brief Regenerate all currently-defined PairPotentials
- * \details Recalculate all current tabulated potentials, after changing their range, delta, or truncation width.
- */
+// Regenerate all currently-defined PairPotentials
 void DUQ::regeneratePairPotentials()
 {
 	for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next) pot->generate(pairPotentialRange_, pairPotentialTruncationWidth_, pairPotentialDelta_);
 }
 
-/*!
- * \brief Regenerate specific PairPotential
- */
+// Regenerate specific PairPotential
 void DUQ::regeneratePairPotential(PairPotential* pp)
 {
 	pp->generate(pairPotentialRange_, pairPotentialTruncationWidth_, pairPotentialDelta_);
 }
 
-/*!
- * \brief Save all PairPotentials
- */
+// Save all PairPotentials
 bool DUQ::savePairPotentials(const char* baseName) const
 {
 	// I/O Operation so Master only.

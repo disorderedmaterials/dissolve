@@ -312,8 +312,8 @@ void DUQSamplesDockWidget::on_CopySampleButton_clicked(bool checked)
 }
 
 /*
-// Mixture Group
-*/
+ * Mixture Group
+ */
 
 // Something changed in the mixtures tree
 void DUQSamplesDockWidget::on_AssignedIsotopologuesTree_itemChanged(QTreeWidgetItem* item, int column)
@@ -429,8 +429,8 @@ void DUQSamplesDockWidget::mixtureIsotopologueChanged(int index)
 }
 
 /*
-// Reference Data Group
-*/
+ * Reference Data Group
+ */
 
 // Raise a file-selector and choose a new reference data filename
 void DUQSamplesDockWidget::on_ReferenceDataFileSelectButton_clicked(bool checked)

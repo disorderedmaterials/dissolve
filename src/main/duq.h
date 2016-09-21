@@ -44,7 +44,7 @@ class Grain;
 class Molecule;
 class ChangeStore;
 
-/*!
+/*
  * \short dUQ
  * \details The main dUQ class contains several sets of data, from which the system to refine is constructed.
  * 
@@ -77,18 +77,17 @@ class DUQ
 	~DUQ();
 
 
-	/*!
-	 * \name Data
+	/*
+	 * Data
 	 */
 	public:
 	// Clear all data
 	void clear();
 
 
-	/*!
-	 * \name Atom Types
+	/*
+	 * Atom Types
 	 */
-	///@{
 	private:
 	// List of allowed AtomTypes for all Species
 	List<AtomType> atomTypes_;
@@ -112,13 +111,11 @@ class DUQ
 	const char* uniqueAtomTypeName(const char* base, AtomType* exclude = 0) const;
 	// Search for AtomType by name
 	AtomType* findAtomType(const char* name) const;
-	///@}
 
 
 	/*
 	 * Species Definitions
 	 */
-	///@{
 	private:
 	// List of defined Species
 	List<Species> species_;
@@ -140,13 +137,11 @@ class DUQ
 	void updateIsotopologues(Species* species = NULL, Isotopologue* iso = NULL);
 	// Remove Isotopologue from Species
 	void removeSpeciesIsotopologue(Species* species, Isotopologue* iso);
-	///@}
 
 
 	/*
 	 * Sample Definitions
 	 */
-	///@{
 	private:
 	// List of Samples
 	List<Sample> samples_;
@@ -164,13 +159,11 @@ class DUQ
 	Sample* sample(int n);
 	// Search for Sample by name
 	Sample* findSample(const char* name) const;
-	///@}
 
 
 	/*
 	 * Pair Potentials
 	 */
-	///@{
 	private:
 	// All distinct AtomTypes (non-isotopic) in all Configurations for which we need PairPotentials
 	AtomTypeIndex pairPotentialAtomTypeIndex_;
@@ -220,11 +213,10 @@ class DUQ
 	void regeneratePairPotential(PairPotential* pp);
 	// Save all PairPotentials
 	bool savePairPotentials(const char* baseName) const;
-	///@}
 
 
-	/*!
-	 * \name Setup
+	/*
+	 * Setup
 	 */
 	private:
 	// Atomic configurations
@@ -278,10 +270,9 @@ class DUQ
 	bool go();
 
 
-	/*!
-	 * \name Energy Methods
+	/*
+	 * Energy Methods
 	 */
-	///@{
 	private:
 	// Return total intramolecular energy
 	double intramolecularEnergy(Configuration& cfg);
@@ -297,13 +288,11 @@ class DUQ
 	double totalEnergyTest(Configuration& cfg);
 	// Test - Return total energy of the system using Molecules
 	double totalEnergyTestMolecules(Configuration& cfg);
-	///@}
 
 
-	/*!
-	 * \name Force Methods
+	/*
+	 * Force Methods
 	 */
-	///@{
 	private:
 	// Calculate total intramolecular forces
 	void intramolecularForces(Configuration& cfg, double* fx, double* fy, double* fz, DUQComm::CommGroup group = DUQComm::World);
@@ -311,13 +300,11 @@ class DUQ
 	void grainForces(Configuration& cfg, double* fx, double* fy, double* fz, double cutoffSq, DUQComm::CommGroup group);
 	// Calculate total forces within the system
 	void totalForces(Configuration& cfg, double* fx, double* fy, double* fz, double cutoffSq, DUQComm::CommGroup group = DUQComm::World);
-	///@}
 
 
-	/*!
-	 * \name Simulation Methods
+	/*
+	 * Simulation Methods
 	 */
-	///@{
 	public:
 	// Perform an Atom shake
 	bool atomShake(Configuration& cfg, double cutoffDistance = -1.0, int nShakesPerAtom = 1, double targetAcceptanceRate = 0.33, double translationStepSize = 0.1);
@@ -335,13 +322,11 @@ class DUQ
 	bool md(Configuration& cfg, double cutoffDistance = -1.0, int nSteps = 1, double deltaT = 0.0001);
 	// Perform a world atom shake
 	bool worldAtomShake(Configuration& cfg, double cutoffDistance = -1.0, int nShakes = 1, double targetAcceptanceRate = 0.33, double translationStepSize = 0.1);
-	///@}
 
 
 	/*
 	 * Potential Perturbation Routines TODO
 	 */
-	///@{
 	private:
 	// Maximum moves in Simplex minimisation (per cycle per Q bin)
 	int simplexNMoves_;
@@ -359,13 +344,11 @@ class DUQ
 	double simplexCost(Array<double>& alpha);
 	// Perturb potential
 	bool perturb(Configuration& cfg);
-	///@}
 
 
-	/*!
-	 * \name Input File I/O
+	/*
+	 * Input File I/O
 	 */
-	///@{
 	private:
 	// Filename of current input file
 	Dnchar fileName_;
@@ -383,28 +366,23 @@ class DUQ
 	bool hasFileName() const;
 	// Return filename of current input file
 	const char* fileName() const;
-	///@}
 
 
-	/*!
-	 * \name Configuration File I/O
+	/*
+	 * Configuration File I/O
 	 */
-	///@{
 	// Save Configuration as XYZ
 	bool saveConfigurationXYZ(Configuration& cfg, const char* fileName);
 	// Save Configuration as DL_POLY CONFIG
 	bool saveConfigurationDLPOLY(Configuration& cfg, const char* fileName);
-	///@}
 
 
-	/*!
-	 * \name Parallel Comms
+	/*
+	 * Parallel Comms
 	 */
-	///@{
 	public:
 	// Broadcast complete system setup data
 	bool broadcastSetup();
-	///@}
 };
 
 #endif

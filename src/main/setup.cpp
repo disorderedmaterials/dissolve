@@ -129,9 +129,7 @@ bool DUQ::setup()
 	return true;
 }
 
-/*
- * Print Full System Setup
- */
+// Print Full System Setup
 bool DUQ::printSetup()
 {
 	msg.print("\n");

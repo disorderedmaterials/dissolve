@@ -26,117 +26,88 @@
 #include "base/ptable.h"
 #include "base/comms.h"
 
-/*!
- * \brief Constructor
- * \details Constructor for SpeciesGrain. 
- */
+// Constructor
 SpeciesGrain::SpeciesGrain() : ListItem<SpeciesGrain>()
 {
 	parent_ = NULL;
 }
 
-/*!
- * \brief Destructor
- * \details Destructor for SpeciesGrain. 
- */
+// Destructor
 SpeciesGrain::~SpeciesGrain()
 {
 }
 
 /*
-// Basic Character
-*/
-
-/*!
- * \brief Set parent Species
+ * Basic Character
  */
+
+// Set parent Species
 void SpeciesGrain::setParent(Species* parent)
 {
 	parent_ = parent;
 }
 
-/*!
- * \brief Return parent Species
- */
+// Return parent Species
 Species *SpeciesGrain::parent() const
 {
 	return parent_;
 }
 
-/*!
- * \brief Set name of SpeciesGrain
- */
+// Set name of SpeciesGrain
 void SpeciesGrain::setName(const char* s)
 {
 	name_ = s;
 }
 
-/*!
- * \brief Return name of SpeciesGrain
- */
+// Return name of SpeciesGrain
 const char* SpeciesGrain::name() const
 {
 	return name_.get();
 }
 
 /*
-// Atoms
-*/
-
-/*!
- * \brief Search current list for Atom
+ * Atoms
  */
+
+// Search current list for Atom
 bool SpeciesGrain::containsAtom(SpeciesAtom* i) const
 {
 	return atoms_.contains(i);
 }
 
-/*!
- * \brief Add specified Atom to list
- */
+// Add specified Atom to list
 void SpeciesGrain::addAtom(SpeciesAtom* i)
 {
 	atoms_.add(i);
 	i->setGrain(this);
 }
 
-/*!
- * \brief Remove specified Atom from list
- */
+// Remove specified Atom from list
 void SpeciesGrain::removeAtom(SpeciesAtom* i)
 {
 	atoms_.remove(i);
 	i->setGrain(NULL);
 }
 
-/*!
- * \brief Return number of Atoms in the list
- */
+// Return number of Atoms in the list
 int SpeciesGrain::nAtoms() const
 {
 	return atoms_.nItems();
 }
 
-/*!
- * \brief Return first Atom reference in list
- */
+// Return first Atom reference in list
 RefListItem<SpeciesAtom,int>* SpeciesGrain::atoms() const
 {
 	return atoms_.first();
 }
 
-/*!
- * \brief Return nth Atom reference in list
- */
+// Return nth Atom reference in list
 RefListItem<SpeciesAtom,int>* SpeciesGrain::atom(int n)
 {
 	return atoms_[n];
 }
 
-/*!
- * \brief Return empirical name of SpeciesGrain from constituent Atoms
- * \details Creates and returns a name for the SpeciesGrain which corresponds to the empirical formula of its Atoms
- */
+// Return empirical name of SpeciesGrain from constituent Atoms
 const char* SpeciesGrain::nameFromAtoms()
 {
 	PeriodicTable::resetEmpiricalFormula();
@@ -148,9 +119,7 @@ const char* SpeciesGrain::nameFromAtoms()
  * Connections
  */
 
-/*!
- * \brief Clear all intra- and inter-Grain terms
- */
+// Clear all intra- and inter-Grain terms
 void SpeciesGrain::clearConnections()
 {
 	internalBonds_.clear();
@@ -159,77 +128,59 @@ void SpeciesGrain::clearConnections()
 	angleConnections_.clear();
 }
 
-/*!
- * \brief Add intra-Grain Bond
- */
+// Add intra-Grain Bond
 void SpeciesGrain::addInternalBond(SpeciesBond* b)
 {
 	internalBonds_.add(b);
 }
 
-/*!
- * \brief Return first local intra-Grain Bond
- */
+// Return first local intra-Grain Bond
 RefListItem<SpeciesBond, int>* SpeciesGrain::internalBonds() const
 {
 	return internalBonds_.first();
 }
 
-/*!
- * \brief Add intra-Grain Angle
- */
+// Add intra-Grain Angle
 void SpeciesGrain::addInternalAngle(SpeciesAngle* a)
 {
 	internalAngles_.add(a);
 }
 
-/*!
- * \brief Return first local intra-Grain Angle
- */
+// Return first local intra-Grain Angle
 RefListItem<SpeciesAngle, int>* SpeciesGrain::internalAngles() const
 {
 	return internalAngles_.first();
 }
 
-/*!
- * \brief Add Bond connection
- */
+// Add Bond connection
 void SpeciesGrain::addBondConnection(SpeciesBond* b)
 {
 	bondConnections_.add(b);
 }
 
-/*!
- * \brief Return first Bond connection
- */
+// Return first Bond connection
 RefListItem<SpeciesBond, int>* SpeciesGrain::bondConnections() const
 {
 	return bondConnections_.first();
 }
 
-/*!
- * \brief Add Angle connection
- */
+// Add Angle connection
 void SpeciesGrain::addAngleConnection(SpeciesAngle* a)
 {
 	angleConnections_.add(a);
 }
 
-/*!
- * \brief Return first Angle connection
- */
+// Return first Angle connection
 RefListItem<SpeciesAngle, int>* SpeciesGrain::angleConnections() const
 {
 	return angleConnections_.first();
 }
 
 /*
-// Parallel Comms
-*/
-
-/*!
- * \brief Broadcast data from Master to all Slaves
+ * Parallel Comms
  */
+
+// Broadcast data from Master to all Slaves
 bool SpeciesGrain::broadcast(const List<SpeciesAtom>& atoms, const List<SpeciesBond>& bonds, const List<SpeciesAngle>& angles)
 {
 #ifdef PARALLEL

@@ -22,10 +22,7 @@
 #include "base/parameters.h"
 #include "base/comms.h"
 
-/*!
- * \brief Constructor
- * \details Constructor for Parameters. 
- */
+// Constructor
 Parameters::Parameters() : MPIListItem<Parameters>()
 {
 	sigma_ = 0.0;
@@ -33,57 +30,44 @@ Parameters::Parameters() : MPIListItem<Parameters>()
 	charge_ = 0.0;
 }
 
-/*!
- * \brief Destructor
- * \details Destructor for Parameters. 
- */
+// Destructor
 Parameters::~Parameters()
 {
 }
 
 /*
-// Name / Description
-*/
-
-/*!
- * \brief Set name of Parameters
+ * Name / Description
  */
+
+// Set name of Parameters
 void Parameters::setName(const char* name)
 {
 	name_ = name;
 }
 
-/*!
- * \brief Return short name of Parameters
- */
+// Return short name of Parameters
 const char* Parameters::name() const
 {
 	return name_.get();
 }
 
-/*!
- * \brief Set description of Parameters
- */
+// Set description of Parameters
 void Parameters::setDescription(const char* desc)
 {
 	description_ = desc;
 }
 
-/*!
- * \brief Return description of element
- */
+// Return description of element
 const char* Parameters::description() const
 {
 	return description_.get();
 }
 
 /*
-// Potential Parameters
-*/
-
-/*!
- * \brief Set all parameters simultaneously
+ * Potential Parameters
  */
+
+// Set all parameters simultaneously
 void Parameters::set(double sigma, double epsilon, double charge)
 {
 	sigma_ = sigma;
@@ -91,61 +75,47 @@ void Parameters::set(double sigma, double epsilon, double charge)
 	charge_ = charge;
 }
 
-/*!
- * \brief Set Lennard-Jones Sigma
- */
+// Set Lennard-Jones Sigma
 void Parameters::setSigma(double value)
 {
 	sigma_ = value;
 }
 
-/*!
- * \brief Return Lennard-Jones Sigma
- */
+// Return Lennard-Jones Sigma
 double Parameters::sigma()
 {
 	return sigma_;
 }
 
-/*!
- * \brief Set Lennard-Jones Epsilon
- */
+// Set Lennard-Jones Epsilon
 void Parameters::setEpsilon(double epsilon)
 {
 	epsilon_ = epsilon;
 }
 
-/*!
- * \brief Return Lennard-Jones Epsilon
- */
+// Return Lennard-Jones Epsilon
 double Parameters::epsilon()
 {
 	return epsilon_;
 }
 
-/*!
- * \brief Set atomic charge
- */
+// Set atomic charge
 void Parameters::setCharge(double charge)
 {
 	charge_ = charge;
 }
 
-/*!
- * \brief Return atomic charge
- */
+// Return atomic charge
 double Parameters::charge()
 {
 	return charge_;
 }
 
 /*
-// Parallel Comms
-*/
-
-/*!
- * \brief Broadcast data from Master to all Slaves
+ * Parallel Comms
  */
+
+// Broadcast data from Master to all Slaves
 bool Parameters::broadcast()
 {
 #ifdef PARALLEL

@@ -24,19 +24,7 @@
 
 #include "base/lineparser.h"
 
-/*!
- * \brief Messaging Output Handler
- */
-class OutputHandler
-{
-	public:
-	// Master print routine
-	virtual void printText(char* text);
-};
- 
-/*!
- * \brief Global messaging handler
- */
+// Global messaging handler
 class Messenger
 {
 	public:
@@ -54,10 +42,6 @@ class Messenger
 	bool verbose_;
 	// Master-only mode
 	bool masterOnly_;
-	// Basic OutputHandler
-	OutputHandler basicOutputHandler_;
-	// Target Output handler
-	OutputHandler* targetOutputHandler_;
 
 	private:
 	// Storage for text to print
@@ -72,8 +56,6 @@ class Messenger
 	void setVerbose(bool b);
 	// Set status of master-only mode
 	void setMasterOnly(bool b);
-	// Set OutputHandler
-	void setTargetOutputHandler(OutputHandler* handler);
 	// Print normal message
 	void print(const char*, ...);
 	// Print verbose message

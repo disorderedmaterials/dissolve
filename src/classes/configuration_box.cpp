@@ -61,17 +61,13 @@ bool Configuration::nonPeriodic()
 	return nonPeriodic_;
 }
 
-/*!
- * \brief Return Box
- */
+// Return Box
 const Box* Configuration::box() const
 {
 	return box_;
 }
 
-/*!
- * \brief Setup periodic Box
- */
+// Setup periodic Box
 bool Configuration::setupBox(double ppRange)
 {
 	// Remove old box if present
@@ -127,9 +123,7 @@ bool Configuration::setupBox(double ppRange)
 	return true;
 }
 
-/*!
- * \brief Clear Cell arrays
- */
+// Clear Cell arrays
 void Configuration::clearCells()
 {
 	if (cells_ != NULL) delete[] cells_;
@@ -139,7 +133,7 @@ void Configuration::clearCells()
 	nCells_ = 0;
 }
 
-/*!
+/*
  * \brief Return whether the two Cells should be mimd in calculations
  * \details Since we partition the simulation Box up into subcells, for speed we can determine and store whether any
  * minimum image operations are required between the contents of the two cells. If *twice* the difference between any 
@@ -409,25 +403,19 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 	return true;
 }
 
-/*!
- * \brief Return number of Cells for box
- */
+// Return number of Cells for box
 int Configuration::nCells() const
 {
 	return nCells_;
 }
 
-/*!
- * \brief Return real Cell dimensions
- */
+// Return real Cell dimensions
 Vec3<double> Configuration::realCellSize() const
 {
 	return realCellSize_;
 }
 
-/*!
- * \brief Retrieve Cell with (wrapped) grid reference specified
- */
+// Retrieve Cell with (wrapped) grid reference specified
 Cell* Configuration::cell(int x, int y, int z) const
 {
 	x = x%divisions_.x;
@@ -439,9 +427,7 @@ Cell* Configuration::cell(int x, int y, int z) const
 	return &cells_[x*divisions_.y*divisions_.z + y*divisions_.z + z];
 }
 
-/*!
- * \brief Retrieve Cell with id specified
- */
+// Retrieve Cell with id specified
 Cell* Configuration::cell(int id) const
 {
 #ifdef CHECKS
@@ -454,9 +440,7 @@ Cell* Configuration::cell(int id) const
 	return &cells_[id];
 }
 
-/*!
- * \brief Return Cell which contains specified coordinate
- */
+// Return Cell which contains specified coordinate
 Cell* Configuration::cell(const Vec3<double> r) const
 {
 	Vec3<double> foldFracR = box_->foldFrac(r);
@@ -471,9 +455,7 @@ Cell* Configuration::cell(const Vec3<double> r) const
 	return &cells_[indices.x*divisions_.y*divisions_.z + indices.y*divisions_.z + indices.z];
 }
 
-/*!
- * \brief Return whether two Cells need minimum image calculation
- */
+// Return whether two Cells need minimum image calculation
 bool Configuration::useMim(Cell* a, Cell* b) const
 {
 #ifdef CHECKS
@@ -492,9 +474,7 @@ bool Configuration::useMim(Cell* a, Cell* b) const
 	return minimumImageRequired(a, b);
 }
 
-/*!
- * \brief Initialise Cells for distribution
- */
+// Initialise Cells for distribution
 void Configuration::initialiseCellDistribution()
 {
 	nCellsDistributed_ = 0;
@@ -507,7 +487,7 @@ void Configuration::initialiseCellDistribution()
 	}
 }
 
-/*!
+/*
  * \brief Return next available Cell for calculation
  * \details All processes should call here together. The master process will distribute the index of the next available Cell to each process.
  * If all Cells have been distributed once then Cell::AllCellsComplete is returned to all processes. Otherwise, the next available 'unused' Cell index
@@ -616,7 +596,7 @@ int Configuration::nextAvailableCell(bool willBeModified, bool allowRepeats)
 #endif
 }
 
-/*!
+/*
  * \brief Unlock Cell specified, once calculation is complete
  * \details All processes should call this routine once they have finished performing manipulations of the Cell they were given from
  * Configuration::nextAvailableCell(), passing the cellId as the single argument.
@@ -654,9 +634,7 @@ bool Configuration::finishedWithCell(bool willBeModified, int cellId)
 	return true;
 }
 
-/*!
- * \brief Update cell locations of all atoms
- */
+// Update cell locations of all atoms
 bool Configuration::updateAtomsInCells()
 {
 	// Fold the coordinates of each atom into the box, and then check its cell location, moving if necessary.
@@ -690,9 +668,7 @@ bool Configuration::updateAtomsInCells()
 	return true;
 }
 
-/*!
- * \brief Update cell locations of specified atom index
- */
+// Update cell locations of specified atom index
 bool Configuration::updateAtomInCell(int id)
 {
 	// Fold the coordinates of specified atom into the box, and then check its cell location, moving if necessary.

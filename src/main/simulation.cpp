@@ -28,18 +28,14 @@
 #include <readline/history.h>
 #include <csignal>
 
-/*!
- * \brief Register a change in the total energy of the system
- */
+// Register a change in the total energy of the system
 void DUQ::registerEnergyChange(double deltaE)
 {
 	energyChange_ += deltaE;
 	energyChanged_ = true;
 }
 
-/*!
- * \brief Accumulate current energy change into energyData_
- */
+// Accumulate current energy change into energyData_
 void DUQ::accumulateEnergyChange()
 {
 	// If energy hasn't changed, don't do anything
@@ -57,9 +53,7 @@ void DUQ::accumulateEnergyChange()
 	energyChanged_ = false;
 }
 
-/*!
- * \brief Set absolute energy of system, after total energy calculation
- */
+// Set absolute energy of system, after total energy calculation
 void DUQ::setAbsoluteEnergy(double energy)
 {
 	// Shift existing energy data so that the last point equals the supplied energy

@@ -33,10 +33,7 @@ int PeriodicTable::nElements_;
 Element *PeriodicTable::elements_;
 int *PeriodicTable::elementCount_;
 
-/*!
- * \brief Constructor
- * \details Constructor for PeriodicTable. 
- */
+// Constructor
 PeriodicTable::PeriodicTable()
 {
 	nElements_ = 0;
@@ -44,19 +41,13 @@ PeriodicTable::PeriodicTable()
 	elementCount_ = NULL;
 }
 
-/*!
- * \brief Destructor
- * \details Destructor for PeriodicTable. 
- */
+// Destructor
 PeriodicTable::~PeriodicTable()
 {
 	clear();
 }
 
-/*!
- * \brief Clear
- * \details Clear all data
- */
+// Clear
 void PeriodicTable::clear()
 {
 	if (elements_ != NULL) delete[] elements_;
@@ -67,12 +58,10 @@ void PeriodicTable::clear()
 }
 
 /*
-// Element Data
-*/
-
-/*!
- * \brief Load basic element information from file specified
+ * Element Data
  */
+
+// Load basic element information from file specified
 bool PeriodicTable::loadElements(const char* fileName)
 {
 	msg.print("Loading elements from file '%s'\n", fileName);
@@ -115,9 +104,7 @@ bool PeriodicTable::loadElements(const char* fileName)
 	return true;
 }
 
-/*!
- * \brief Load isotope information from file specified
- */
+// Load isotope information from file specified
 bool PeriodicTable::loadIsotopes(const char* fileName)
 {
 	msg.print("Loading isotopes from file '%s'\n", fileName);
@@ -228,9 +215,7 @@ bool PeriodicTable::loadIsotopes(const char* fileName)
 	return true;
 }
 
-/*!
- * \brief Load atomtype information from file specified
- */
+// Load atomtype information from file specified
 bool PeriodicTable::loadParameters(const char* fileName)
 {
 	msg.print("Loading atomtypes from file '%s'\n", fileName);
@@ -303,9 +288,7 @@ bool PeriodicTable::loadParameters(const char* fileName)
 	return true;
 }
 
-/*!
- * \brief Return atomic number of element in string
- */
+// Return atomic number of element in string
 int PeriodicTable::find(const char* query)
 {
 	static Dnchar cleaned;
@@ -326,17 +309,13 @@ int PeriodicTable::find(const char* query)
 	return -1;
 }
 
-/*!
- * \brief Return number of defined elements
- */
+// Return number of defined elements
 int PeriodicTable::nElements()
 {
 	return nElements_;
 }
 
-/*!
- * \brief Return element specified
- */
+// Return element specified
 Element &PeriodicTable::element(int z)
 {
 #ifdef CHECKS
@@ -350,28 +329,23 @@ Element &PeriodicTable::element(int z)
 }
 
 /*
-// Empirical Formula Generation
-*/
-
-/*!
- * \brief Clear counts array
- * \details Clear the element counts array, ready for generation of a new empirical formula.
+ * Empirical Formula Generation
  */
+
+// Clear counts array
 void PeriodicTable::resetEmpiricalFormula()
 {
 	for (int n=0; n<nElements_; ++n) elementCount_[n] = 0;
 }
 
-/*!
- * \brief Add Atom (element) to empirical formula
- */
+// Add Atom (element) to empirical formula
 void PeriodicTable::addToEmpirical(int z, int count)
 {
 	if ((z < 0) || (z >= nElements_)) msg.print("OUT_OF_RANGE - Element index %i is out of range.\n", z);
 	else elementCount_[z] += count;
 }
 
-/*!
+/*
  * \brief Return current empirical formula
  * \details Generate (and return) an empirical formula based on the current element counts.
  */
@@ -391,12 +365,10 @@ const char* PeriodicTable::empiricalFormula()
 }
 
 /*
-// Parallel Comms
-*/
-
-/*!
- * \brief Broadcast data from Master to all Slaves
+ * Parallel Comms
  */
+
+// Broadcast data from Master to all Slaves
 bool PeriodicTable::broadcast()
 {
 #ifdef PARALLEL

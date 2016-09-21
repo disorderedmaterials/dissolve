@@ -25,19 +25,13 @@
 #include <string.h>
 #include <stdarg.h>
 
-/*!
- * \brief Constructor
- * \details Constructor for LineParser.
- */
+// Constructor
 LineParser::LineParser()
 {
 	reset();
 }
 
-/*!
- * \brief Destructor
- * \details Destructor for LineParser.
- */
+// Destructor
 LineParser::~LineParser()
 {
 	if (inputFile_ != NULL) delete inputFile_;
@@ -45,9 +39,7 @@ LineParser::~LineParser()
 	if (cachedFile_ != NULL) delete cachedFile_;
 }
 
-/*!
- * \brief Reset data
- */
+// Reset data
 void LineParser::reset()
 {
 	inputFilename_.clear();
@@ -66,33 +58,25 @@ void LineParser::reset()
 // Source line/file and read options
 //
 
-/*!
- * \brief Return filename of current input file (if any)
- */
+// Return filename of current input file (if any)
 const char* LineParser::inputFilename() const
 {
 	return inputFilename_.get();
 }
 
-/*!
- * \brief Return filename of current output file (if any)
- */
+// Return filename of current output file (if any)
 const char* LineParser::outputFilename() const
 {
 	return outputFilename_.get();
 }
 
-/*!
- * \brief Return pointer to current line
- */
+// Return pointer to current line
 const char* LineParser::line() const
 {
 	return line_;
 }
 
-/*!
- * \brief Set line target
- */
+// Set line target
 void LineParser::setLine(const char* s)
 {
 	strncpy(line_, s, MAXLINELENGTH);
@@ -100,17 +84,13 @@ void LineParser::setLine(const char* s)
 	linePos_ = 0;
 }
 
-/*!
- * \brief Return integer line number of last read line
- */
+// Return integer line number of last read line
 int LineParser::lastLineNo() const
 {
 	return lastLineNo_;
 }
 
-/*!
- * \brief Open new file for reading
- */
+// Open new file for reading
 bool LineParser::openInput(const char* filename)
 {
 	// Check existing input file
@@ -135,9 +115,7 @@ bool LineParser::openInput(const char* filename)
 	return true;
 }
 
-/*!
- * \brief Open new stream for writing
- */
+// Open new stream for writing
 bool LineParser::openOutput(const char* filename, bool directOutput)
 {
 	// Check existing input file
@@ -174,9 +152,7 @@ bool LineParser::openOutput(const char* filename, bool directOutput)
 	return true;
 }
 
-/*!
- * \brief Close file 
- */
+// Close file 
 void LineParser::closeFiles()
 {
 	if (inputFile_ != NULL)
@@ -192,9 +168,7 @@ void LineParser::closeFiles()
 	reset();
 }
 
-/*!
- * \brief Return whether current file source is good for reading
- */
+// Return whether current file source is good for reading
 bool LineParser::isFileGoodForReading() const
 {
 	if (inputFile_ == NULL) return false;
@@ -202,9 +176,7 @@ bool LineParser::isFileGoodForReading() const
 	return true;
 }
 
-/*!
- * \brief Return whether current file source is good for writing
- */
+// Return whether current file source is good for writing
 bool LineParser::isFileGoodForWriting() const
 {
 	if (directOutput_)
@@ -216,18 +188,14 @@ bool LineParser::isFileGoodForWriting() const
 	else return true;
 }
 
-/*!
- * \brief Peek next character in input stream
- */
+// Peek next character in input stream
 char LineParser::peek() const
 {
 	if (inputFile_ == NULL) return '\0';
 	return inputFile_->peek();
 }
 
-/*!
- * \brief Tell current position of input stream
- */
+// Tell current position of input stream
 streampos LineParser::tellg() const
 {
 	streampos result = 0;
@@ -236,9 +204,7 @@ streampos LineParser::tellg() const
 	return result;
 }
 
-/*!
- * \brief Seek position in input stream
- */
+// Seek position in input stream
 void LineParser::seekg(streampos pos)
 {
 	if (inputFile_ != NULL)
@@ -249,27 +215,21 @@ void LineParser::seekg(streampos pos)
 	else printf("Warning: LineParser tried to seekg() on a non-existent input file.\n");
 }
 
-/*!
- * \brief Seek n bytes in specified direction in input stream
- */
+// Seek n bytes in specified direction in input stream
 void LineParser::seekg(streamoff off, ios_base::seekdir dir)
 {
 	if (inputFile_ != NULL) inputFile_->seekg(off, dir);
 	else printf("Warning: LineParser tried to seekg() on a non-existent input file.\n");
 }
 
-/*!
- * \brief Rewind input stream to start
- */
+// Rewind input stream to start
 void LineParser::rewind()
 {
 	if (inputFile_ != NULL) inputFile_->seekg(0, ios::beg);
 	else msg.print("No file currently open to rewind.\n");
 }
 
-/*!
- * \brief Return whether the end of the input stream has been reached (or only whitespace remains)
- */
+// Return whether the end of the input stream has been reached (or only whitespace remains)
 bool LineParser::eofOrBlank() const
 {
 	if (inputFile_ == NULL) return true;
@@ -303,9 +263,7 @@ bool LineParser::eofOrBlank() const
 // Read/Write Routines
 //
 
-/*!
- * \brief Read single line from internal file source
- */
+// Read single line from internal file source
 int LineParser::readNextLine(int optionMask)
 {
 	// Returns : 0=ok, 1=error, -1=eof
@@ -383,9 +341,7 @@ int LineParser::readNextLine(int optionMask)
 	return result;
 }
 
-/*!
- * \brief Gets next delimited arg from internal line
- */
+// Gets next delimited arg from internal line
 bool LineParser::getNextArg(int optionMask, Dnchar* destarg)
 {
 	// Get the next input chunk from the internal string and put into argument specified.
@@ -490,9 +446,7 @@ bool LineParser::getNextArg(int optionMask, Dnchar* destarg)
 	return (arglen == 0 ? (hadquotes ? true : false) : true);
 }
 
-/*!
- * \brief Rip next n characters
- */
+// Rip next n characters
 bool LineParser::getNextN(int optionMask, int length, Dnchar* destarg)
 {
 	// Put the next 'length' characters from line_ into temparg (and put into supplied arg if supplied)
@@ -534,7 +488,7 @@ bool LineParser::getNextN(int optionMask, int length, Dnchar* destarg)
 	return true;
 }
 
-/*!
+/*
  * \brief Get all arguments (delimited) from LineParser::line_
  */
 void LineParser::getAllArgsDelim(int optionMask)
@@ -562,9 +516,7 @@ void LineParser::getAllArgsDelim(int optionMask)
 // Delimited Parsing Routines
 //
 
-/*!
- * \brief Parse delimited (from file)
- */
+// Parse delimited (from file)
 int LineParser::getArgsDelim(int optionMask)
 {
 	bool done = false;
@@ -585,9 +537,7 @@ int LineParser::getArgsDelim(int optionMask)
 	return 0;
 }
 
-/*!
- * \brief Get rest of current line starting at next delimited part (and put into destination argument if supplied)
- */
+// Get rest of current line starting at next delimited part (and put into destination argument if supplied)
 bool LineParser::getRestDelim(Dnchar* destarg)
 {
 	int arglen = 0, n, length;
@@ -621,9 +571,7 @@ bool LineParser::getRestDelim(Dnchar* destarg)
 	return true;
 }
 
-/*!
- * \brief Get next argument (delimited) from file stream
- */
+// Get next argument (delimited) from file stream
 bool LineParser::getArgDelim(int optionMask, Dnchar* destarg)
 {
 	bool result = getNextArg(optionMask, destarg);
@@ -631,9 +579,7 @@ bool LineParser::getArgDelim(int optionMask, Dnchar* destarg)
 	return result;
 }
 
-/*!
- * \brief Parse all arguments (delimited) from string
- */
+// Parse all arguments (delimited) from string
 void LineParser::getArgsDelim(int optionMask, const char* s)
 {
 	strcpy(line_,s);
@@ -642,9 +588,7 @@ void LineParser::getArgsDelim(int optionMask, const char* s)
 	getAllArgsDelim(optionMask);
 }
 
-/*!
- * \brief Get next delimited chunk from input stream (not line)
- */
+// Get next delimited chunk from input stream (not line)
 bool LineParser::getCharsDelim(Dnchar* destarg)
 {
 	int length = 0;
@@ -673,9 +617,7 @@ bool LineParser::getCharsDelim(Dnchar* destarg)
 	return result;
 }
 
-/*!
- * \brief Get next delimited chunk from string, removing grabbed part
- */
+// Get next delimited chunk from string, removing grabbed part
 bool LineParser::getCharsDelim(int optionMask, Dnchar* source, Dnchar* destarg)
 {
 	// Get the next input chunk from the internal string and put into argument specified.
@@ -786,9 +728,7 @@ bool LineParser::getCharsDelim(int optionMask, Dnchar* source, Dnchar* destarg)
 	return (arglen == 0 ? (hadquotes ? true : false) : true);
 }
 
-/*!
- * \brief Return a number of characters from the input stream
- */
+// Return a number of characters from the input stream
 const char* LineParser::getChars(int nchars, bool skipeol)
 {
 	char c;
@@ -826,21 +766,14 @@ const char* LineParser::getChars(int nchars, bool skipeol)
 	return tempArg_;
 }
 
-/*!
- * \brief Skip a number of characters from the input stream
- */
+// Skip a number of characters from the input stream
 void LineParser::skipChars(int nchars)
 {
 	if (nchars == 0) return;
 	inputFile_->ignore(nchars);
-/*!
- * \brief 	if (file_->eof() || file_->fail()) closeFile();
- */
 }
 
-/*!
- * \brief Return an integer value from reading 'n' chars of an (unformatted) input stream
- */
+// Return an integer value from reading 'n' chars of an (unformatted) input stream
 int LineParser::getInteger(int nbytes)
 {
 	// Use default size if none specified
@@ -873,32 +806,22 @@ int LineParser::getInteger(int nbytes)
 	return 0;
 }
 
-/*!
- * \brief Read an array of integer values from an (unformatted) input file
- */
+// Read an array of integer values from an (unformatted) input file
 int LineParser::getIntegerArray(int* array, int count)
 {
 	inputFile_->read((char*) array, count*sizeof(int));
 	if (inputFile_->eof())
 	{
-/*!
- * \brief 		closeFile();
- */
 		return -1;
 	}
 	if (inputFile_->fail())
 	{
-/*!
- * \brief 		closeFile();
- */
 		return 0;
 	}
 	return 1;
 }
 
-/*!
- * \brief Return a double value from reading 'n' chars of an (unformatted) input file
- */
+// Return a double value from reading 'n' chars of an (unformatted) input file
 double LineParser::getDouble(int nbytes)
 {
 	// Use default size if none specified
@@ -925,32 +848,22 @@ double LineParser::getDouble(int nbytes)
 	return 0.0;
 }
 
-/*!
- * \brief Read an array of double values from an (unformatted) input file
- */
+// Read an array of double values from an (unformatted) input file
 int LineParser::getDoubleArray(double* array, int count)
 {
 	inputFile_->read((char*) array, count*sizeof(double));
 	if (inputFile_->eof())
 	{
-/*!
- * \brief 		closeFile();
- */
 		return -1;
 	}
 	if (inputFile_->fail())
 	{
-/*!
- * \brief 		closeFile();
- */
 		return 0;
 	}
 	return 1;
 }
 
-/*!
- * \brief Write line to file
- */
+// Write line to file
 bool LineParser::writeLine(const char* s) const
 {
 	if (!directOutput_)
@@ -971,9 +884,7 @@ bool LineParser::writeLine(const char* s) const
 	return true;
 }
 
-/*!
- * \brief Write formatted line to file
- */
+// Write formatted line to file
 bool LineParser::writeLineF(const char* fmt, ...) const
 {
 	if (!directOutput_)
@@ -994,6 +905,7 @@ bool LineParser::writeLineF(const char* fmt, ...) const
 	va_list arguments;
 	static char s[8096];
 	s[0] = '\0';
+
 	// Parse the argument list (...) and internally write the output string into s[]
 	va_start(arguments,fmt);
 	vsprintf(s,fmt,arguments);
@@ -1003,9 +915,7 @@ bool LineParser::writeLineF(const char* fmt, ...) const
 	return true;
 }
 
-/*!
- * \brief Commit cached output stream to actual output file
- */
+// Commit cached output stream to actual output file
 bool LineParser::commitCache()
 {
 	// Were we using cached writing?
@@ -1028,9 +938,7 @@ bool LineParser::commitCache()
 	return true;
 }
 
-/*!
- * \brief Skip lines from file
- */
+// Skip lines from file
 int LineParser::skipLines(int nlines)
 {
 	int result;
@@ -1042,21 +950,17 @@ int LineParser::skipLines(int nlines)
 	return 0;
 }
 
-//
-// Argument Data
-//
-
-/*!
- * \brief Returns number of arguments grabbed from last parse
+/*
+ * Argument Data
  */
+
+// Returns number of arguments grabbed from last parse
 int LineParser::nArgs() const
 {
 	return arguments_.nItems();
 }
 
-/*!
- * \brief Returns the specified argument as a character string
- */
+// Returns the specified argument as a character string
 const char* LineParser::argc(int i)
 {
 	if ((i < 0) || (i >= nArgs()))
@@ -1067,9 +971,7 @@ const char* LineParser::argc(int i)
 	return arguments_[i]->get();
 }
 
-/*!
- * \brief Returns the specified argument as an integer
- */
+// Returns the specified argument as an integer
 int LineParser::argi(int i)
 {
 	if ((i < 0) || (i >= nArgs()))
@@ -1080,9 +982,7 @@ int LineParser::argi(int i)
 	return arguments_[i]->asInteger();
 }
 
-/*!
- * \brief Returns the specified argument as a double
- */
+// Returns the specified argument as a double
 double LineParser::argd(int i)
 {
 	if ((i < 0) || (i >= nArgs()))
@@ -1093,9 +993,7 @@ double LineParser::argd(int i)
 	return arguments_[i]->asDouble();
 }
 
-/*!
- * \brief Returns the specified argument as a bool
- */
+// Returns the specified argument as a bool
 bool LineParser::argb(int i)
 {
 	if ((i < 0) || (i >= nArgs()))
@@ -1106,9 +1004,7 @@ bool LineParser::argb(int i)
 	return arguments_[i]->asBool();
 }
 
-/*!
- * \brief Returns the specified argument as a float
- */
+// Returns the specified argument as a float
 float LineParser::argf(int i)
 {
 	if ((i < 0) || (i >= nArgs()))
@@ -1119,9 +1015,7 @@ float LineParser::argf(int i)
 	return (float) argd(i);
 }
 
-/*!
- * \brief Returns whether the specified argument exists (has been provided)
- */
+// Returns whether the specified argument exists (has been provided)
 bool LineParser::hasArg(int i) const
 {
 	if ((i < 0) || (i >= nArgs())) return false;

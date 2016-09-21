@@ -23,7 +23,7 @@
 #include "base/comms.h"
 #include <string.h>
 
-/*!
+/*
  * \brief Register method functions
  * \details All simulation methods defined in dUQ must be registered as a Command in the CommandLibrary so that they may be used
  * within the Simulation block of input files, and through the interactive shell mode. Any variable arguments for the method must also be added
@@ -127,9 +127,7 @@ bool DUQ::registerCommands()
 	return true;
 }
 
-/*!
- * \brief Register a new Command in the library
- */
+// Register a new Command in the library
 Command* DUQ::registerCommand(const char* name, const char* shortNames, CommandPointer ptr)
 {
 	Command* func = command(name);
@@ -151,9 +149,7 @@ Command* DUQ::registerCommand(const char* name, const char* shortNames, CommandP
 	return func;
 }
 
-/*!
- * \brief Add an argument to a Command
- */
+// Add an argument to a Command
 Argument* DUQ::addCommandArgument(const char* commandName, const char* argumentName, const char* description, const char* defaultValue)
 {
 	Command* func = command(commandName);
@@ -166,9 +162,7 @@ Argument* DUQ::addCommandArgument(const char* commandName, const char* argumentN
 	return func->addArgument(argumentName, description, defaultValue);
 }
 
-/*!
- * \brief Add a parameter to a Command
- */
+// Add a parameter to a Command
 Argument* DUQ::addCommandParameter(const char* commandName, const char* parameterName, const char* description, const char* startingValue)
 {
 	Command* func = command(commandName);
@@ -181,17 +175,13 @@ Argument* DUQ::addCommandParameter(const char* commandName, const char* paramete
 	return func->addParameter(parameterName, description, startingValue);
 }
 
-/*!
- * \brief Return first Command in list
- */
+// Return first Command in list
 Command* DUQ::commands()
 {
 	return commands_.first();
 }
 
-/*!
- * \brief Find and return named Command
- */
+// Find and return named Command
 Command* DUQ::command(const char* name)
 {
 	LineParser parser;
@@ -208,9 +198,7 @@ Command* DUQ::command(const char* name)
 	return NULL;
 }
 
-/*!
- * \brief Return specified Command Argument
- */
+// Return specified Command Argument
 Argument* DUQ::commandArgument(const char* commandName, const char* argumentName)
 {
 	Command* cmd = command(commandName);
@@ -230,7 +218,7 @@ Argument* DUQ::commandArgument(const char* commandName, const char* argumentName
 	return arg;
 }
 
-/*!
+/*
  * \brief Return Command Argument specified as const char*
  */
 const char* DUQ::commandArgumentAsConstChar(const char* commandName, const char* argumentName, bool& result)
@@ -247,9 +235,7 @@ const char* DUQ::commandArgumentAsConstChar(const char* commandName, const char*
 	return arg->asConstChar();
 }
 
-/*!
- * \brief Return Command Argument specified as integer
- */
+// Return Command Argument specified as integer
 int DUQ::commandArgumentAsInteger(const char* commandName, const char* argumentName, bool& result)
 {
 	Argument* arg = commandArgument(commandName, argumentName);
@@ -263,9 +249,7 @@ int DUQ::commandArgumentAsInteger(const char* commandName, const char* argumentN
 	return arg->asInteger();
 }
 
-/*!
- * \brief Return Command Argument specified as double
- */
+// Return Command Argument specified as double
 double DUQ::commandArgumentAsDouble(const char* commandName, const char* argumentName, bool& result)
 {
 	Argument* arg = commandArgument(commandName, argumentName);
@@ -279,9 +263,7 @@ double DUQ::commandArgumentAsDouble(const char* commandName, const char* argumen
 	return arg->asDouble();
 }
 
-/*!
- * \brief Return parameter for specified command
- */
+// Return parameter for specified command
 Argument* DUQ::commandParameter(const char* commandName, const char* parameterName)
 {
 	Command* cmd = command(commandName);
@@ -300,7 +282,7 @@ Argument* DUQ::commandParameter(const char* commandName, const char* parameterNa
 	return arg;
 }
 
-/*!
+/*
  * \brief Return Command parameter specified as const char*
  */
 const char* DUQ::commandParameterAsConstChar(const char* commandName, const char* parameterName, bool& result)
@@ -317,9 +299,7 @@ const char* DUQ::commandParameterAsConstChar(const char* commandName, const char
 	return arg->asConstChar();
 }
 
-/*!
- * \brief Return Command parameter specified as integer
- */
+// Return Command parameter specified as integer
 int DUQ::commandParameterAsInteger(const char* commandName, const char* parameterName, bool& result)
 {
 	Argument* arg = commandParameter(commandName, parameterName);
@@ -333,9 +313,7 @@ int DUQ::commandParameterAsInteger(const char* commandName, const char* paramete
 	return arg->asInteger();
 }
 
-/*!
- * \brief Return Command parameter specified as double
- */
+// Return Command parameter specified as double
 double DUQ::commandParameterAsDouble(const char* commandName, const char* parameterName, bool& result)
 {
 	Argument* arg = commandParameter(commandName, parameterName);

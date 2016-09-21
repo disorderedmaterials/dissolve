@@ -23,10 +23,7 @@
 #include "classes/cellneighbour.h"
 #include "classes/box.h"
 
-/*!
- * \brief Constructor
- * \details Constructor for Cell. 
- */
+// Constructor
 Cell::Cell()
 {
 	index_ = -1;
@@ -38,35 +35,28 @@ Cell::Cell()
 	nMimCellNeighbours_ = 0;
 }
 
-/*!
- * \brief Destructor
- * \details Constructor for Cell. 
- */
+// Destructor
 Cell::~Cell()
 {
 }
 
 /*
-// Identity
-*/
-
-/*!
- * \brief Set grid reference
+ * Identity
  */
+
+// Set grid reference
 void Cell::setGridReference(int x, int y, int z)
 {
 	gridReference_.set(x,y,z);
 }
 
-/*!
- * \brief Return grid reference
- */
+// Return grid reference
 const Vec3<int>& Cell::gridReference() const
 {
 	return gridReference_;
 }
 
-/*!
+/*
  * \brief Set unique index
  * \details To prevent misuse, the identity of a Cell can be changed from its starting value of
  * -1 only once.
@@ -77,23 +67,19 @@ void Cell::setIndex(int id)
 	else index_ = id;
 }
 
-/*!
- * \brief Return unique index
- */
+// Return unique index
 int Cell::index() const
 {
 	return index_;
 }
 
-/*!
- * \brief Set real-space cell centre
- */
+// Set real-space cell centre
 void Cell::setCentre(Vec3<double> r)
 {
 	centre_ = r;
 }
 
-/*! 
+/* 
  * \brief Return real-space cell centre
  */
 const Vec3< double >& Cell::centre() const
@@ -101,9 +87,7 @@ const Vec3< double >& Cell::centre() const
 	return centre_;
 }
 
-/*!
- * \brief Add lock
- */
+// Add lock
 bool Cell::addLock()
 {
 	if (lockCount_ == -1)
@@ -115,9 +99,7 @@ bool Cell::addLock()
 	return true;
 }
 
-/*!
- * \brief Remove lock
- */
+// Remove lock
 bool Cell::removeLock()
 {
 	if (lockCount_ == -1)
@@ -134,27 +116,20 @@ bool Cell::removeLock()
 	return true;
 }
 
-/*!
- * \brief Return lock count
- */
+// Return lock count
 int Cell::lockCount()
 {
 	return lockCount_;
 }
 
-/*!
- * \brief Clear locks
- */
+// Clear locks
 void Cell::clearLocks()
 {
 	if (lockCount_ != 0) msg.print("Warning: Cleared existing locks (%i) from Cell id %i (%i,%i,%i).\n", lockCount_, index_, gridReference_.x, gridReference_.y, gridReference_.z);
 	lockCount_ = 0;
 }
 
-/*!
- * \brief Check lock possibility
- * \details Check this Cell and the status of its neighbours to see if a lock is possible.
- */
+// Check lock possibility
 bool Cell::canLock()
 {
 	if (lockCount_ != 0) return false;
@@ -163,9 +138,7 @@ bool Cell::canLock()
 	return true;
 }
 
-/*!
- * \brief Lock self and neighbouring cells
- */
+// Lock self and neighbouring cells
 bool Cell::lock(bool willBeModified)
 {
 	if (lockCount_ != 0)
@@ -184,9 +157,7 @@ bool Cell::lock(bool willBeModified)
 	return true;
 }
 
-/*!
- * \brief Unlock self and neighbouring cells
- */
+// Unlock self and neighbouring cells
 bool Cell::unlock(bool willBeModified)
 {
 	if (lockCount_ != -1)
@@ -206,18 +177,16 @@ bool Cell::unlock(bool willBeModified)
 }
 
 /*
-// Contents
-*/
-
-/*!
- * \brief Return Atom list
+ * Contents
  */
+
+// Return Atom list
 OrderedPointerList<Atom>& Cell::atoms()
 {
 	return atoms_;
 }
 
-/*!
+/*
  * \brief Add specified atom to this Cell
  * \details Add (copy) data from the supplied atom into a free space in the cell's atom array. The original atom is not 
  */
@@ -314,9 +283,7 @@ bool Cell::addAtom(Atom* atom)
 	return true;
 }
 
-/*!
- * \brief Add Grain to Cell
- */
+// Add Grain to Cell
 void Cell::addGrain(Grain* grain)
 {
 	// Has the Grain already had its Cell pointer set?
@@ -330,9 +297,7 @@ void Cell::addGrain(Grain* grain)
 	grains_.addUnique(grain);
 }
 
-/*!
- * \brief Remove Grain from Cell
- */
+// Remove Grain from Cell
 void Cell::removeGrain(Grain* grain)
 {
 #ifdef CHECKS
@@ -361,25 +326,19 @@ void Cell::removeGrain(Grain* grain)
 	for (RefListItem<Grain,int>* ri = grains_.first(); ri != NULL; ri = ri->next) ri->item->setCell(this, index++);
 }
 
-/*!
- * \brief Return number of Grains in Cell
- */
+// Return number of Grains in Cell
 int Cell::nGrains() const
 {
 	return grains_.nItems();
 }
 
-/*!
- * \brief Return first Grain in list
- */
+// Return first Grain in list
 RefListItem<Grain,int>* Cell::grains() const
 {
 	return grains_.first();
 }
 
-/*!
- * \brief Return nth Grain in list
- */
+// Return nth Grain in list
 Grain* Cell::grain(int n)
 {
 #ifdef CHECKS
@@ -393,12 +352,10 @@ Grain* Cell::grain(int n)
 }
 
 /*
-// Neighbours
-*/
-
-/*!
- * \brief Add Cell neighbours
+ * Neighbours
  */
+
+// Add Cell neighbours
 void Cell::addCellNeighbours(OrderedPointerList<Cell>& neighbours, OrderedPointerList<Cell>& mimNeighbours, int allCells)
 {
 	int n, m, count, indexN, indexM;
@@ -442,66 +399,50 @@ void Cell::addCellNeighbours(OrderedPointerList<Cell>& neighbours, OrderedPointe
 	}
 }
 
-/*!
- * \brief Return number of adjacent cell neighbours
- */
+// Return number of adjacent cell neighbours
 int Cell::nCellNeighbours()
 {
 	return nCellNeighbours_;
 }
 
-/*!
- * \brief Return total number of cell neighbours
- */
+// Return total number of cell neighbours
 int Cell::nMimCellNeighbours()
 {
 	return nMimCellNeighbours_;
 }
 
-/*!
- * \brief Return total number of cell neighbours
- */
+// Return total number of cell neighbours
 int Cell::nTotalCellNeighbours()
 {
 	return nCellNeighbours_ + nMimCellNeighbours_;
 }
 
-/*!
- * \brief Return cell neighbour list
- */
+// Return cell neighbour list
 Cell** Cell::cellNeighbours()
 {
 	return cellNeighbours_;
 }
 
-/*!
- * \brief Return cell neighbour list requiring mim
- */
+// Return cell neighbour list requiring mim
 Cell** Cell::mimCellNeighbours()
 {
 	return mimCellNeighbours_;
 }
 
-/*!
- * \brief Return list of all cell neighbours
- */
+// Return list of all cell neighbours
 CellNeighbour* Cell::allCellNeighbours()
 {
 	return allCellNeighbours_;
 }
 
-/*!
- * \brief Clear atom neighbour list
- */
+// Clear atom neighbour list
 void Cell::clearAtomNeighbourList()
 {
 	atomNeighbours_.clear();
 	mimAtomNeighbours_.clear();
 }
 
-/*!
- * \brief Add atom to neighbour list
- */
+// Add atom to neighbour list
 void Cell::addAtomToNeighbourList(Atom* i, bool useMim, bool atEnd)
 {
 	if (useMim)
@@ -516,34 +457,26 @@ void Cell::addAtomToNeighbourList(Atom* i, bool useMim, bool atEnd)
 	}
 }
 
-/*!
- * \brief Remove atom from neighbour list
- */
+// Remove atom from neighbour list
 bool Cell::removeAtomFromNeighbourList(Atom* i, bool useMim)
 {
 	if (useMim) return mimAtomNeighbours_.removeIfPresent(i->index());
 	else return atomNeighbours_.removeIfPresent(i->index());
 }
 
-/*!
- * \brief Return total number of atom neighbours
- */
+// Return total number of atom neighbours
 int Cell::nTotalAtomNeighbours()
 {
 	return atomNeighbours_.nItems() + mimAtomNeighbours_.nItems();
 }
 
-/*!
- * \brief Return atom neighbour list
- */
+// Return atom neighbour list
 OrderedPointerList<Atom>& Cell::atomNeighbours()
 {
 	return atomNeighbours_;
 }
 
-/*!
- * \brief Return atom neighbour list requiring mim
- */
+// Return atom neighbour list requiring mim
 OrderedPointerList<Atom>& Cell::mimAtomNeighbours()
 {
 	return mimAtomNeighbours_;

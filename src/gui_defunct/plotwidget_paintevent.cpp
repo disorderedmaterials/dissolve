@@ -25,7 +25,7 @@
 #include "gui/plotwidget.uih"
 #include "base/sysfunc.h"
 
-/*!
+/*
  * \brief Widget PaintEvent
  */
 void PlotWidget::paintEvent(QPaintEvent* event)

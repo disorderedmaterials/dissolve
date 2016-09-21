@@ -19,16 +19,12 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "main/flags.h"
 #include "classes/atomtype.h"
 #include "base/ptable.h"
 #include "base/comms.h"
 #include <string.h>
 
-/*!
- * \brief Constructor
- * \details Constructor for AtomType. 
- */
+// Constructor
 AtomType::AtomType() : MPIListItem<AtomType>()
 {
 	element_ = 0;
@@ -36,95 +32,68 @@ AtomType::AtomType() : MPIListItem<AtomType>()
 	name_ = "XX";
 }
 
-/*!
- * \brief Destructor
- * \details Constructor for AtomType. 
- */
+// Destructor
 AtomType::~AtomType()
 {
 }
 
 /*
-// Properties
-*/
-
-/*!
- * \brief Set name of AtomType
+ * Properties
  */
+
+// Set name of AtomType
 void AtomType::setName(const char* name)
 {
 	name_ = name;
-	
-	Flags::wave(Flags::AtomTypeChanged);
 }
 
-/*!
- * \brief Return name of AtomType
- */
+// Return name of AtomType
 const char* AtomType::name() const
 {
 	return name_.get();
 }
 
-/*!
- * \brief Set atomic element
- */
+// Set atomic element
 void AtomType::setElement(int el)
 {
 	element_ = el;
-	
-	Flags::wave(Flags::AtomTypeChanged);
 }
 
-/*!
- * \brief Return atomic element
- */
+// Return atomic element
 int AtomType::element() const
 {
 	return element_;
 }
 
-/*!
- * \brief Set associated Parameters
- */
+// Set associated Parameters
 void AtomType::setParameters(Parameters* params)
 {
 	parameters_ = params;
-	
-	Flags::wave(Flags::AtomTypeChanged);
 }
 
-/*!
- * \brief Return associated Parameters
- */
+// Return associated Parameters
 Parameters* AtomType::parameters() const
 {
 	return parameters_;
 }
 
-/*!
- * \brief Set index of this type in the main type index
- */
+// Set index of this type in the main type index
 void AtomType::setIndex(int id)
 {
 	index_ = id;
 }
 
-/*!
- * \brief Return index of this type in the main type index
- */
+// Return index of this type in the main type index
 int AtomType::index() const
 {
 	return index_;
 }
 
 /*
-// Parallel Comms
-*/
-
-/*!
- * \brief Broadcast data from Master to all Slaves
+ * Parallel Comms
  */
+
+// Broadcast data from Master to all Slaves
 bool AtomType::broadcast()
 {
 #ifdef PARALLEL

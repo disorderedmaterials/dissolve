@@ -26,8 +26,8 @@
 #include <QtGui/QMouseEvent>
 
 /*
-// Mouse Input
-*/
+ * Mouse Input
+ */
 
 // Qt Signal (mouse press event)
 void Viewer::mousePressEvent(QMouseEvent* event)
@@ -133,8 +133,8 @@ Vec3<double> Viewer::rMouseLast()
 }
 
 /*
-// Key Input
-*/
+ * Key Input
+ */
 
 // Qt Slot (key press event)
 void Viewer::keyPressEvent(QKeyEvent* event)

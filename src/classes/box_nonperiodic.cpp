@@ -24,10 +24,7 @@
 #include "classes/cell.h"
 #include "templates/array.h"
 
-/*!
- * \brief Constructor
- * \details Constructor for Cubic Box. 
- */
+// Constructor
 NonPeriodicBox::NonPeriodicBox(double volume) : Box()
 {
 	type_ = Box::NonPeriodicBox;
@@ -46,10 +43,7 @@ NonPeriodicBox::NonPeriodicBox(double volume) : Box()
 	ra_ = 1.0/a_;
 }
 
-/*!
- * \brief Destructor
- * \details Constructor for NonPeriodicBox.
- */
+// Destructor
 NonPeriodicBox::~NonPeriodicBox()
 {
 }
@@ -58,7 +52,7 @@ NonPeriodicBox::~NonPeriodicBox()
 // Minimum Image Routines (virtual implementations)
 */
 
-/*!
+/*
  * \brief Return minimum image coordinates of 'i' with respect to 'ref'
  */
 Vec3<double> NonPeriodicBox::minimumImage(const Atom* i, const Atom* ref) const
@@ -66,7 +60,7 @@ Vec3<double> NonPeriodicBox::minimumImage(const Atom* i, const Atom* ref) const
 	return i->r();
 }
 
-/*!
+/*
  * \brief Return minimum image coordinates of 'i' with respect to 'ref'
  */
 Vec3<double> NonPeriodicBox::minimumImage(const Atom* i, const Vec3<double>& ref) const
@@ -74,7 +68,7 @@ Vec3<double> NonPeriodicBox::minimumImage(const Atom* i, const Vec3<double>& ref
 	return i->r();
 }
 
-/*!
+/*
  * \brief Return minimum image coordinates of 'i' with respect to 'ref'
  */
 Vec3<double> NonPeriodicBox::minimumImage(const Vec3<double>& i, const Vec3<double>& ref) const
@@ -82,7 +76,7 @@ Vec3<double> NonPeriodicBox::minimumImage(const Vec3<double>& i, const Vec3<doub
 	return i;
 }
 
-/*!
+/*
  * \brief Return minimum image vector from 'i' to 'j'
  */
 Vec3<double> NonPeriodicBox::minimumVector(const Atom* i, const Atom* j) const
@@ -90,7 +84,7 @@ Vec3<double> NonPeriodicBox::minimumVector(const Atom* i, const Atom* j) const
 	return j->r() - i->r();
 }
 
-/*!
+/*
  * \brief Return minimum image vector from 'i' to 'j'
  */
 Vec3<double> NonPeriodicBox::minimumVector(const Atom* i, const Vec3<double>& j) const
@@ -98,7 +92,7 @@ Vec3<double> NonPeriodicBox::minimumVector(const Atom* i, const Vec3<double>& j)
 	return j - i->r();
 }
 
-/*!
+/*
  * \brief Return minimum image vector from 'i' to 'j'
  */
 Vec3<double> NonPeriodicBox::minimumVector(const Vec3<double>& i, const Vec3<double>& j) const
@@ -106,7 +100,7 @@ Vec3<double> NonPeriodicBox::minimumVector(const Vec3<double>& i, const Vec3<dou
 	return j - i;
 }
 
-/*!
+/*
  * \brief Return minimum image distance from 'i' to 'j'
  */
 double NonPeriodicBox::minimumDistance(const Atom* i, const Atom* j) const
@@ -114,7 +108,7 @@ double NonPeriodicBox::minimumDistance(const Atom* i, const Atom* j) const
 	return (j->r() - i->r()).magnitude();
 }
 
-/*!
+/*
  * \brief Return minimum image distance from 'i' to 'j'
  */
 double NonPeriodicBox::minimumDistance(const Atom* i, const Vec3<double>& j) const
@@ -122,7 +116,7 @@ double NonPeriodicBox::minimumDistance(const Atom* i, const Vec3<double>& j) con
 	return (j - i->r()).magnitude();
 }
 
-/*!
+/*
  * \brief Return minimum image distance from 'i' to 'j'
  */
 double NonPeriodicBox::minimumDistance(const Vec3<double>& i, const Vec3<double>& j) const
@@ -130,7 +124,7 @@ double NonPeriodicBox::minimumDistance(const Vec3<double>& i, const Vec3<double>
 	return (j - i).magnitude();
 }
 
-/*!
+/*
  * \brief Return minimum image squared distance from 'i' to 'j' (pointers)
  */
 double NonPeriodicBox::minimumDistanceSquared(const Atom* i, const Atom* j) const
@@ -138,7 +132,7 @@ double NonPeriodicBox::minimumDistanceSquared(const Atom* i, const Atom* j) cons
 	return (j->r() - i->r()).magnitudeSq();
 }
 
-/*!
+/*
  * \brief Return minimum image squared distance from 'i' to 'j' (references)
  */
 double NonPeriodicBox::minimumDistanceSquared(const Atom& i, const Atom& j) const
@@ -146,7 +140,7 @@ double NonPeriodicBox::minimumDistanceSquared(const Atom& i, const Atom& j) cons
 	return (j.r() - i.r()).magnitudeSq();
 }
 
-/*!
+/*
  * \brief Return minimum image squared distance from 'i' to 'j'
  */
 double NonPeriodicBox::minimumDistanceSquared(const Atom* i, const Vec3<double>& j) const
@@ -154,7 +148,7 @@ double NonPeriodicBox::minimumDistanceSquared(const Atom* i, const Vec3<double>&
 	return (j - i->r()).magnitudeSq();
 }
 
-/*!
+/*
  * \brief Return minimum image squared distance from 'i' to 'j'
  */
 double NonPeriodicBox::minimumDistanceSquared(const Vec3<double>& i, const Vec3<double>& j) const
@@ -166,9 +160,7 @@ double NonPeriodicBox::minimumDistanceSquared(const Vec3<double>& i, const Vec3<
 // Utility Routines (Virtual Implementations)
 */
 
-/*!
- * \brief Return random coordinate inside Box
- */
+// Return random coordinate inside Box
 Vec3<double> NonPeriodicBox::randomCoordinate() const
 {
 	static Vec3<double> pos;
@@ -178,7 +170,7 @@ Vec3<double> NonPeriodicBox::randomCoordinate() const
 	return pos;
 }
 
-/*!
+/*
  * \brief Return folded coordinate (i.e. inside current Box)
  */
 Vec3<double> NonPeriodicBox::fold(const Vec3<double>& r) const
@@ -194,7 +186,7 @@ Vec3<double> NonPeriodicBox::fold(const Vec3<double>& r) const
 	return frac*a_;
 }
 
-/*!
+/*
  * \brief Return folded coordinate (i.e. inside current Box)
  */
 Vec3<double> NonPeriodicBox::foldFrac(const Vec3<double>& r) const
@@ -210,9 +202,7 @@ Vec3<double> NonPeriodicBox::foldFrac(const Vec3<double>& r) const
 	return frac;
 }
 
-/*!
- * \brief Convert supplied fractional coordinates to real space
- */
+// Convert supplied fractional coordinates to real space
 Vec3<double> NonPeriodicBox::fracToReal(const Vec3<double>& r) const
 {
 	// Multiply by box length

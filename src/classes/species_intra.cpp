@@ -19,14 +19,10 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "main/flags.h"
 #include "classes/species.h"
 #include "classes/box.h"
 
-/*!
- * \brief Add new Bond definition (from Atoms*)
- * \details Add a new Bond definition to the Species, between the Atoms specified.
- */
+// Add new Bond definition (from Atoms*)
 SpeciesBond* Species::addBond(SpeciesAtom* i, SpeciesAtom* j)
 {
 	// Check ownership of these Atoms
@@ -55,15 +51,10 @@ SpeciesBond* Species::addBond(SpeciesAtom* i, SpeciesAtom* j)
 	i->addBond(b);
 	j->addBond(b);
 
-	Flags::wave(Flags::SpeciesChanged);
-	
 	return b;
 }
 
-/*!
- * \brief Add new Bond definition
- * \details Add a new Bond definition to the Species, between the Atoms with indices specified.
- */
+// Add new Bond definition
 SpeciesBond* Species::addBond(int i, int j)
 {
 	if ((i < 0) || (i >= atoms_.nItems()))
@@ -80,43 +71,32 @@ SpeciesBond* Species::addBond(int i, int j)
 	return addBond(atoms_[i], atoms_[j]);
 }
 
-/*!
- * \brief Return number of bonds in list
- */
+// Return number of bonds in list
 int Species::nBonds() const
 {
 	return bonds_.nItems();
 }
 
-/*!
- * \brief Return list of bonds
- */
+// Return list of bonds
 SpeciesBond *Species::bonds() const
 {
 	return bonds_.first();
 }
 
-/*!
- * \brief Return nth bond
- */
+// Return nth bond
 SpeciesBond *Species::bond(int n)
 {
 	return bonds_[n];
 }
 
-/*!
- * \brief Return whether bond between atoms exists
- */
+// Return whether bond between atoms exists
 SpeciesBond* Species::hasBond(SpeciesAtom* i, SpeciesAtom* j) const
 {
 	for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next) if (b->matches(i, j)) return b;
 	return NULL;
 }
 
-/*!
- * \brief Add new angle definition (from supplied atom pointers)
- * \details Add a new angle definition to the species, between the atoms specified.
- */
+// Add new angle definition (from supplied atom pointers)
 SpeciesAngle* Species::addAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k)
 {
 	// Check ownership of these Atoms
@@ -147,16 +127,11 @@ SpeciesAngle* Species::addAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k)
 	SpeciesAngle* a = angles_.add();
 	a->setParent(this);
 	a->setAtoms(i, j, k);
-	
-	Flags::wave(Flags::SpeciesChanged);
-	
+
 	return a;
 }
 
-/*!
- * \brief Add new angle definition
- * \details Add a new angle definition to the species, between the atoms with indices specified.
- */
+// Add new angle definition
 SpeciesAngle* Species::addAngle(int i, int j, int k)
 {
 	if ((i < 0) || (i >= atoms_.nItems()))
@@ -177,44 +152,32 @@ SpeciesAngle* Species::addAngle(int i, int j, int k)
 	return addAngle(atoms_[i], atoms_[j], atoms_[k]);
 }
 
-/*!
- * \brief Return number of angles in list
- */
+// Return number of angles in list
 int Species::nAngles() const
 {
 	return angles_.nItems();
 }
 
-/*!
- * \brief Return list of angles
- */
+// Return list of angles
 SpeciesAngle *Species::angles() const
 {
 	return angles_.first();
 }
 
-/*!
- * \brief Return nth angle
- */
+// Return nth angle
 SpeciesAngle *Species::angle(int n)
 {
 	return angles_[n];
 }
 
-/*!
- * \brief Return whether angle between atoms exists
- */
+// Return whether angle between atoms exists
 bool Species::hasAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const
 {
 	for (SpeciesAngle* a = angles_.first(); a != NULL; a = a->next) if (a->matches(i, j, k)) return true;
 	return false;
 }
 
-/*!
- * \brief Recalculate intramolecular terms between Atoms in the Species
- * \details Determines chemical Bonds within the Species, based on the distances between defined Atoms and a table of
- * representative atomic radii. Once bonds have been determined, angle terms are automatically generated.
- */
+// Recalculate intramolecular terms between Atoms in the Species
 void Species::recalculateIntramolecular()
 {
 	SpeciesAtom* i, *j;
@@ -263,19 +226,18 @@ void Species::recalculateIntramolecular()
 			}
 		}
 	}
-	
-	Flags::wave(Flags::SpeciesChanged);
 }
 
-/*!
- * \brief Calculate local Atom index lists for interactions
- * \details For each Bond and Angle defined within the Species, all directly or indirectly attached Atoms at each terminus of the
- * interaction are selected and the indices added to the relevant local lists for the interaction. If, in the process, we find that
- * when selecting from Atom 'i' (of a Bond) we end up selecting Atom 'j', then the two Atoms are present in a cycle and we must explicitly
- * deal with such cases. But how!!! XXX TODO
- */
+// Calculate local Atom index lists for interactions
 bool Species::calculateIndexLists()
 {
+	/*
+	 * For each Bond and Angle defined within the Species, all directly or indirectly attached Atoms at each terminus of the
+	 * interaction are selected and the indices added to the relevant local lists for the interaction. If, in the process, we find that
+	 * when selecting from Atom 'i' (of a Bond) we end up selecting Atom 'j', then the two Atoms are present in a cycle and we must explicitly
+	 * deal with such cases. But how!!! XXX TODO
+	 */
+
 	// Bonds
 	for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next)
 	{
@@ -351,9 +313,7 @@ bool Species::calculateIndexLists()
 	}
 }
 
-/*!
- * \brief Create scaling matrix
- */
+// Create scaling matrix
 void Species::createScalingMatrix()
 {
 	int n, m, rootIndex = atoms_[0]->index();
@@ -388,9 +348,7 @@ void Species::createScalingMatrix()
 	}
 }
 
-/*!
- * \brief Return scaling factor for supplied indices
- */
+// Return scaling factor for supplied indices
 double Species::scaling(int indexI, int indexJ) const
 {
 #ifdef CHECKS
@@ -408,9 +366,7 @@ double Species::scaling(int indexI, int indexJ) const
 	return scalingMatrix_.value(indexI, indexJ);
 }
 
-/*!
- * \brief Identify inter-Grain terms
- */
+// Identify inter-Grain terms
 void Species::identifyInterGrainTerms()
 {
 	// Clear existing connections in grains

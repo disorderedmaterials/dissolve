@@ -23,7 +23,7 @@
 #include <QtGui/QPainter>
 #include "gui/led.uih"
 
-/*!
+/*
  * \brief Constructor
  */
 LED::LED(QWidget* parent) : QWidget(parent)
@@ -31,14 +31,14 @@ LED::LED(QWidget* parent) : QWidget(parent)
 	resize(10,10);
 }
 
-/*!
+/*
  * \brief Destructor
  */
 LED::~LED()
 {
 }
 
-/*!
+/*
  * \brief Widget PaintEvent
  */
 void LED::paintEvent(QPaintEvent* event)

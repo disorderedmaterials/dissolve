@@ -26,10 +26,10 @@
 #include "gui/guiduq.uih"
 
 /** \addtogroup GUI
- *  @{
+ * @{
  */
 
-/*!
+/*
  * \brief S(Q) DockWidget
  * \details TODO
  */

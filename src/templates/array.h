@@ -28,7 +28,7 @@
 #include "templates/list.h"
 #include "templates/vector3.h"
 
-/*!
+/*
  * \short Array
  * \details A simple dynamic Array-style class.
  */
@@ -72,10 +72,9 @@ template <class A> class Array : public ListItem< Array<A> >
 	}
 
 
-	/*!
-	 * \name Array Data
+	/*
+	 * Array Data
 	 */
-	///@{
 	private:
 	// Current size of Array
 	int size_;
@@ -155,13 +154,11 @@ template <class A> class Array : public ListItem< Array<A> >
 		// ... then set number of items to zero
 		nItems_ = 0;
 	}
-	///@}
 
 
-	/*!
+	/*
 	 * \brief Set/Get
 	 */
-	///@{
 	public:
 	// Add new element to array
 	void add(A data)
@@ -249,13 +246,11 @@ template <class A> class Array : public ListItem< Array<A> >
 		}
 		return array_[nItems_-1];
 	}
-	///@}
 
 
-	/*!
-	 * \name Functions
+	/*
+	 * Functions
 	 */
-	///@{
 	public:
 	// Return sum of elements in array
 	A sum()
@@ -264,11 +259,10 @@ template <class A> class Array : public ListItem< Array<A> >
 		for (int n=0; n<nItems_; ++n) result += array_[n];
 		return result;
 	}
-	///@}
 	
 };
 
-/*!
+/*
  * \short Array2D
  * \details A simple two-dimensional array class
  */
@@ -332,10 +326,9 @@ template <class A> class Array2D
 	}
 
 
-	/*!
-	 * \name Data
+	/*
+	 * Data
 	 */
-	///@{
 	private:
 	// Linear array of objects
 	A* array_;
@@ -472,7 +465,6 @@ template <class A> class Array2D
 	{
 		return array_;
 	}
-	///@}
 };
 	
 #endif

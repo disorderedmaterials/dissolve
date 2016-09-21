@@ -25,8 +25,8 @@
 #include "classes/species.h"
 
 /*
-// File Menu
-*/
+ * File Menu
+ */
 
 // Start new input file
 void MainWindow::on_actionFileNew_triggered(bool checked)

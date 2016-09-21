@@ -38,8 +38,8 @@ PFNGLDELETEBUFFERSPROC Primitive::glDeleteBuffers = NULL;
 
 
 /*
-// Primitive Instance
-*/
+ * Primitive Instance
+ */
 
 // Constructor
 PrimitiveInstance::PrimitiveInstance()
@@ -81,8 +81,8 @@ int PrimitiveInstance::id()
 }
 
 /*
-// Primitive
-*/
+ * Primitive
+ */
 
 // Constructor
 Primitive::Primitive()
@@ -150,8 +150,8 @@ const char* Primitive::name()
 }
 
 /*
-// Primitive Generation
-*/
+ * Primitive Generation
+ */
 
 // Create wireframe cube centred at zero
 void Primitive::createWireCube(double size)

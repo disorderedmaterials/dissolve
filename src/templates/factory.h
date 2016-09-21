@@ -29,7 +29,7 @@
 
 #define FACTORYCHUNKSIZE 512
 
-/*!
+/*
  * \brief Object Chunk
  * \details Chunk of objects, maintained by an ObjectFactory
  */
@@ -44,8 +44,8 @@ template <class T> class ObjectChunk
 	ObjectChunk<T>* prev, *next;
 
 
-	/*!
-	 * \name Chunk Data
+	/*
+	 * Chunk Data
 	 */
 	private:
 	// Size of individual object
@@ -74,7 +74,7 @@ template <class T> class ObjectChunk
 	bool hasUnusedObjects();
 };
 
-/*!
+/*
  * \brief Constructor
  * \details Constructor for ObjectChunk
  */
@@ -91,7 +91,7 @@ template <class T> ObjectChunk<T>::ObjectChunk()
 	next = NULL;
 }
 
-/*!
+/*
  * \brief Destructor
  * \details Destructor for ObjectChunk. 
  */
@@ -100,7 +100,7 @@ template <class T> ObjectChunk<T>::~ObjectChunk()
 	delete[] objectArray_;
 }
 
-/*!
+/*
  * \brief Determine array offset of object
  */
 template <class T> int ObjectChunk<T>::objectOffset(T* object)
@@ -113,7 +113,7 @@ template <class T> int ObjectChunk<T>::objectOffset(T* object)
 	return (index < FACTORYCHUNKSIZE ? index : -1);
 }
 
-/*!
+/*
  * \brief Return next available object
  */
 template <class T> T* ObjectChunk<T>::nextAvailable()
@@ -159,7 +159,7 @@ template <class T> T* ObjectChunk<T>::nextAvailable()
 	return object;
 }
 
-/*!
+/*
  * \brief Return specified object to pool
  */
 template <class T> bool ObjectChunk<T>::returnObject(T* object)
@@ -176,7 +176,7 @@ template <class T> bool ObjectChunk<T>::returnObject(T* object)
 	return true;
 }
 
-/*!
+/*
  * \brief Return whether object is part of this chunk
  */
 template <class T> bool ObjectChunk<T>::ownsObject(T* object)
@@ -185,7 +185,7 @@ template <class T> bool ObjectChunk<T>::ownsObject(T* object)
 	return (objectOffset(object) != -1);
 }
 
-/*!
+/*
  * \brief Return whether there are unused objects in the chunk
  */
 template <class T> bool ObjectChunk<T>::hasUnusedObjects()
@@ -193,7 +193,7 @@ template <class T> bool ObjectChunk<T>::hasUnusedObjects()
 	return (nUnusedObjects_ != 0);
 }
 
-/*!
+/*
  * \brief Object Factory Class
  * \details 
  */
@@ -206,31 +206,27 @@ template <class T> class ObjectFactory
 	~ObjectFactory();
 
 
-	/*!
-	 * \name Object Store
+	/*
+	 * Object Store
 	 */
-	///@{
 	private:
 	// List of object chunks maintained by this factory
 	List< ObjectChunk<T> > objectChunks_;
 	// Current chunk from which objects are being taken
 	ObjectChunk<T>* currentChunk_;
-	///@}
 
 
-	/*!
-	 * \name Object Access
+	/*
+	 * Object Access
 	 */
-	///@{
 	public:
 	// Produce a new object
 	T* produce();
 	// Return specified object to factory
 	void returnObject(T* object);
-	///@}
 };
 
-/*!
+/*
  * \brief Constructor
  * \details Constructor for ObjectFactory
  */
@@ -239,7 +235,7 @@ template <class T> ObjectFactory<T>::ObjectFactory()
 	currentChunk_ = NULL;
 }
 
-/*!
+/*
  * \brief Destructor
  * \details Destructor for ObjectFactory. 
  */
@@ -251,7 +247,7 @@ template <class T> ObjectFactory<T>::~ObjectFactory()
  * Object Access
  */
 
-/*!
+/*
  * \brief Produce a new object
  */
 template <class T> T* ObjectFactory<T>::produce()
@@ -285,7 +281,7 @@ template <class T> T* ObjectFactory<T>::produce()
 	return NULL;
 }
 
-/*!
+/*
  * \brief Return specified object to factory
  */
 template <class T> void ObjectFactory<T>::returnObject(T* object)

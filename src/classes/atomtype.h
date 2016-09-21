@@ -41,10 +41,9 @@ class AtomType : public MPIListItem<AtomType>
 	~AtomType();
 
 
-	/*!
-	 * \name Properties
+	/*
+	 * Properties
 	 */
-	///@{
 	private:
 	// Name
 	Dnchar name_;
@@ -72,17 +71,14 @@ class AtomType : public MPIListItem<AtomType>
 	void setIndex(int id);
 	// Return index of this type in the main type index
 	int index() const;
-	///@}
 
 
-	/*!
-	 * \name Parallel Comms
+	/*
+	 * Parallel Comms
 	 */
-	///@{
 	public:
 	// Broadcast data from Master to all Slaves
 	bool broadcast();
-	///@}
 };
 
 #endif

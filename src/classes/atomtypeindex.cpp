@@ -25,18 +25,12 @@
 #include "base/ptable.h"
 #include <string.h>
 
-/*!
- * \brief Constructor
- * \details Constructor for AtomTypeIndex. 
- */
+// Constructor
 AtomTypeIndex::AtomTypeIndex()
 {
 }
 
-/*!
- * \brief Destructor
- * \details Constructor for AtomTypeIndex. 
- */
+// Destructor
 AtomTypeIndex::~AtomTypeIndex()
 {
 }
@@ -54,18 +48,16 @@ void AtomTypeIndex::operator=(const AtomTypeIndex& source)
 }
 
 /*
-// List
-*/
-
-/*!
- * \brief Clear all data
+ * List
  */
+
+// Clear all data
 void AtomTypeIndex::clear()
 {
 	types_.clear();
 }
 
-/*!
+/*
  * \brief Add/increase this AtomType/Isotope pair
  */
 int AtomTypeIndex::add(AtomType* atomType, Isotope* tope, int popAdd)
@@ -94,7 +86,7 @@ int AtomTypeIndex::add(AtomType* atomType, Isotope* tope, int popAdd)
 	return index;
 }
 
-/*!
+/*
  * \brief Return number of AtomType/Isotopes in list
  */
 int AtomTypeIndex::nItems() const
@@ -102,17 +94,13 @@ int AtomTypeIndex::nItems() const
 	return types_.nItems();
 }
 
-/*!
- * \brief Return first item in list
- */
+// Return first item in list
 AtomTypeData* AtomTypeIndex::first() const
 {
 	return types_.first();
 }
 
-/*!
- * \brief Print AtomType populations
- */
+// Print AtomType populations
 void AtomTypeIndex::print()
 {
 	int count = 0;
@@ -129,10 +117,10 @@ void AtomTypeIndex::print()
 }
 
 /*
-// Access
-*/
+ * Access
+ */
 
-/*!
+/*
  * \brief Return index of AtomType/Isotope in list
  */
 int AtomTypeIndex::indexOf(AtomType* atomtype) const
@@ -146,9 +134,7 @@ int AtomTypeIndex::indexOf(AtomType* atomtype) const
 	return -1;
 }
 
-/*!
- * \brief Return total population of all types in list
- */
+// Return total population of all types in list
 int AtomTypeIndex::totalPopulation() const
 {
 	int total = 0;
@@ -156,7 +142,7 @@ int AtomTypeIndex::totalPopulation() const
 	return total;
 }
 
-/*!
+/*
  * \brief Finalise list, calculating fractional populations etc.
  */
 void AtomTypeIndex::finalise()
@@ -165,9 +151,7 @@ void AtomTypeIndex::finalise()
 	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next) atd->finalise(total);
 }
 
-/*!
- * \brief Return nth referenced AtomType
- */
+// Return nth referenced AtomType
 AtomType* AtomTypeIndex::atomType(int n)
 {
 #ifdef CHECKS
@@ -180,9 +164,7 @@ AtomType* AtomTypeIndex::atomType(int n)
 	return types_[n]->atomType();
 }
 
-/*!
- * \brief Array access operator
- */
+// Array access operator
 AtomTypeData* AtomTypeIndex::operator[](int n)
 {
 #ifdef CHECKS

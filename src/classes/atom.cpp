@@ -24,10 +24,7 @@
 #include "classes/grain.h"
 #include "base/comms.h"
 
-/*!
- * \brief Constructor
- * \details Constructor for Atom. 
- */
+// Constructor
 Atom::Atom()
 {
 	element_ = 0;
@@ -42,55 +39,42 @@ Atom::Atom()
 	cell_ = NULL;
 }
 
-/*!
- * \brief Destructor
- * \details Constructor for Atom. 
- */
+// Destructor
 Atom::~Atom()
 {
 }
 
 /*
-// Properties
-*/
-
-/*!
- * \brief Set basic Atom properties
- * \details Set the element and Cartesian coordinates of the Atom
+ * Properties
  */
+
+// Set basic Atom properties
 void Atom::set(int element, double rx, double ry, double rz)
 {
 	element_ = element;
 	r_.set(rx, ry, rz);
 }
 
-/*!
- * \brief Set basic Atom properties
- * \details Set the element and Cartesian coordinates of the atom. This is an overloaded function, provided for convenience.
- */
+// Set basic Atom properties
 void Atom::set(int element, const Vec3<double> r)
 {
 	element_ = element;
 	r_ = r;
 }
 
-/*!
- * \brief Set atomic element
- */
+// Set atomic element
 void Atom::setElement(int el)
 {
 	element_ = el;
 }
 
-/*!
- * \brief Return atomic element
- */
+// Return atomic element
 int Atom::element() const
 {
 	return element_;
 }
 
-/*!
+/*
  * \brief Return coordinates
  * \details Return the current coordinates of the Atom, be they absolute or Grain-local
  */
@@ -99,18 +83,13 @@ const Vec3<double>& Atom::r() const
 	return r_;
 }
 
-/*!
- * \brief Set charge of atom
- * \details Store a charge associated to this atom. Such charges can then be used in the generation of suitable pair potentials.
- */
+// Set charge of atom
 void Atom::setCharge(double charge)
 {
 	charge_ = charge;
 }
 
-/*!
- * \brief Return charge of atom
- */
+// Return charge of atom
 double Atom::charge() const
 {
 	return charge_;
@@ -152,23 +131,19 @@ int Atom::globalTypeIndex() const
 	return globalTypeIndex_;
 }
 
-/*!
- * \brief Set List index (0->[N-1])
- */
+// Set List index (0->[N-1])
 void Atom::setIndex(int id)
 {
 	index_ = id;
 }
 
-/*!
- * \brief Return List index (0->[N-1])
- */
+// Return List index (0->[N-1])
 int Atom::index() const
 {
 	return index_;
 }
 
-/*!
+/*
  * \brief Return 'user' index (1->N)
  */
 int Atom::userIndex() const
@@ -176,42 +151,32 @@ int Atom::userIndex() const
 	return index_+1;
 }
 
-/*!
- * \brief Set molecule and local atom index (0->[N-1])
- */
+// Set molecule and local atom index (0->[N-1])
 void Atom::setMolecule(Molecule* mol, int atomIndex)
 {
 	molecule_ = mol;
 	moleculeAtomIndex_ = atomIndex;
 }
 
-/*!
- * \brief Return associated molecule (0->[N-1])
- */
+// Return associated molecule (0->[N-1])
 Molecule* Atom::molecule() const
 {
 	return molecule_;
 }
 
-/*!
- * \brief Return local atom index in molecule (0->[N-1])
- */
+// Return local atom index in molecule (0->[N-1])
 int Atom::moleculeAtomIndex() const
 {
 	return moleculeAtomIndex_;
 }
 
-/*!
- * \brief Set cell in which the atom exists
- */
+// Set cell in which the atom exists
 void Atom::setCell(Cell* cell)
 {
 	cell_ = cell;
 }
 
-/*!
- * \brief Return cell in which the atom exists
- */
+// Return cell in which the atom exists
 Cell* Atom::cell() const
 {
 	return cell_;
@@ -233,12 +198,10 @@ void Atom::copyProperties(const Atom* source)
 }
 
 /*
-// Coordinate Manipulation
-*/
-
-/*!
- * \brief Set associated Grain
+ * Coordinate Manipulation
  */
+
+// Set associated Grain
 void Atom::setGrain(Grain* grain)
 {
 	// Check for double-set of Grain
@@ -250,15 +213,13 @@ void Atom::setGrain(Grain* grain)
 	grain_ = grain;
 }
 
-/*!
- * \brief Return associated Grain
- */
+// Return associated Grain
 Grain* Atom::grain() const
 {
 	return grain_;
 }
 
-/*!
+/*
  * \brief Set coordinates
  * \details Set the coordinates of the Atom to those specified, automatically updating the centre-of-geometry
  * of the Atom's Grain at the same time.
@@ -278,7 +239,7 @@ void Atom::setCoordinates(const Vec3<double>& newr)
 	r_ = newr;
 }
 
-/*!
+/*
  * \brief Set coordinates
  * \details Set the coordinates of the Atom to those specified, automatically updating the centre-of-geometry
  * of the Atom's Grain at the same time. This is an overloaded version of the Vec3<double> function.
@@ -288,7 +249,7 @@ void Atom::setCoordinates(double dx, double dy, double dz)
 	setCoordinates(Vec3<double>(dx,dy,dz));
 }
 
-/*!
+/*
  * \brief Translate coordinates
  * \details Translate the coordinates of the Atom by the delta provided, automatically updating the centre-of-geometry
  * of the Atom's Grain at the same time.
@@ -298,7 +259,7 @@ void Atom::translateCoordinates(const Vec3<double>& delta)
 	setCoordinates(r_+delta);
 }
 
-/*!
+/*
  * \brief Translate coordinates
  * \details Translate the coordinates of the Atom by the delta provided, automatically updating the centre-of-geometry
  * of the Atom's Grain at the same time. This is an overloaded version of the Vec3<double> function.
@@ -308,7 +269,7 @@ void Atom::translateCoordinates(double dx, double dy, double dz)
 	setCoordinates(r_+Vec3<double>(dx,dy,dz));
 }
 
-/*!
+/*
  * \brief Set coordinates with no Grain update
  * \details Set the coordinates of the Atom, but do nothing else (i.e. do not update the associated Grain centre).
  */
@@ -317,7 +278,7 @@ void Atom::setCoordinatesNasty(const Vec3<double>& newr)
 	r_ = newr;
 }
 
-/*!
+/*
  * \brief Translate coordinates with no Grain update
  * \details Set the coordinates of the Atom, but do nothing else (i.e. do not update the associated Grain centre).
  */
@@ -327,12 +288,10 @@ void Atom::translateCoordinatesNasty(const Vec3<double>& delta)
 }
 
 /*
-// Parallel Comms
-*/
-
-/*!
- * \brief Broadcast data from Master to all Slaves
+ * Parallel Comms
  */
+
+// Broadcast data from Master to all Slaves
 bool Atom::broadcast()
 {
 #ifdef PARALLEL

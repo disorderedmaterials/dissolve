@@ -21,7 +21,7 @@
 
 #include "gui/mainwindow.h"
 
-/*!
+/*
  * \brief Signal receiver from GuidUQ
  * \details This signal handler is set up to receive important updates from dUQ as it is running,
  * and update the GUI accordingly.

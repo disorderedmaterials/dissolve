@@ -28,7 +28,7 @@
 #include "base/timer.h"
 #include "math/matrix4.h"
 
-/*!
+/*
  * \brief Perform an Atom shake
  * \details
  * 

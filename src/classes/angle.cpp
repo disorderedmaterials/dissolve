@@ -24,10 +24,7 @@
 #include "classes/species.h"
 #include "base/comms.h"
 
-/*!
- * \brief Constructor
- * \details Constructor for Angle. 
- */
+// Constructor
 Angle::Angle() : ListItem<Angle>()
 {
 	parent_ = NULL;
@@ -44,57 +41,44 @@ Angle::Angle() : ListItem<Angle>()
 	forceConstant_ = 418.4;
 }
 
-/*!
- * \brief Destructor
- * \details Constructor for Angle. 
- */
+// Destructor
 Angle::~Angle()
 {
 }
 
 /*
-// Basic Data
-*/
-
-/*!
- * \brief Set parent Species
+ * Basic Data
  */
+
+// Set parent Species
 void Angle::setParent(Species* parent)
 {
 	parent_ = parent;
 }
 
-/*!
- * \brief Return parent Species
- */
+// Return parent Species
 Species *Angle::parent() const
 {
 	return parent_;
 }
 
-/*!
- * \brief Set parent Molecule
- */
+// Set parent Molecule
 void Angle::setMolecule(Molecule* parent)
 {
 	molecule_ = parent;
 }
 
-/*!
- * \brief Return parent Molecule
- */
+// Return parent Molecule
 Molecule* Angle::molecule() const
 {
 	return molecule_;
 }
 
 /*
-// Atom Information
-*/
-
-/*!
- * \brief Set Atoms involved in Angle
+ * Atom Information
  */
+
+// Set Atoms involved in Angle
 void Angle::setAtoms(Atom* i, Atom* j, Atom* k)
 {
 	i_ = i;
@@ -107,33 +91,25 @@ void Angle::setAtoms(Atom* i, Atom* j, Atom* k)
 #endif
 }
 
-/*!
- * \brief Return first Atom involved in Angle
- */
+// Return first Atom involved in Angle
 Atom *Angle::i() const
 {
 	return i_;
 }
 
-/*!
- * \brief Return second (central) Atom involved in Angle
- */
+// Return second (central) Atom involved in Angle
 Atom *Angle::j() const
 {
 	return j_;
 }
 
-/*!
- * \brief Return third Atom involved in Angle
- */
+// Return third Atom involved in Angle
 Atom *Angle::k() const
 {
 	return k_;
 }
 
-/*!
- * \brief Return index (in parent Species) of first Atom
- */
+// Return index (in parent Species) of first Atom
 int Angle::indexI() const
 {
 #ifdef CHECKS
@@ -146,9 +122,7 @@ int Angle::indexI() const
 	return i_->index();
 }
 
-/*!
- * \brief Return index (in parent Species) of second (central) Atom
- */
+// Return index (in parent Species) of second (central) Atom
 int Angle::indexJ() const
 {
 #ifdef CHECKS
@@ -161,9 +135,7 @@ int Angle::indexJ() const
 	return j_->index();
 }
 
-/*!
- * \brief Return index (in parent Species) of third Atom
- */
+// Return index (in parent Species) of third Atom
 int Angle::indexK() const
 {
 #ifdef CHECKS
@@ -176,9 +148,7 @@ int Angle::indexK() const
 	return k_->index();
 }
 
-/*!
- * \brief Return whether Atoms in Angle match those specified
- */
+// Return whether Atoms in Angle match those specified
 bool Angle::matches(Atom* i, Atom* j, Atom* k) const
 {
 	if (j_ != j) return FALSE;
@@ -188,45 +158,34 @@ bool Angle::matches(Atom* i, Atom* j, Atom* k) const
 }
 
 /*
-// Interaction Parameters
-*/
-
-/*!
- * \brief Set equilibrium angle
+ * Interaction Parameters
  */
+
+// Set equilibrium angle
 void Angle::setEquilibrium(double rEq)
 {
 	equilibrium_ = rEq;
 }
 
-/*!
- * \brief Return equilibrium angle
- */
+// Return equilibrium angle
 double Angle::equilibrium() const
 {
 	return equilibrium_;
 }
 
-/*!
- * \brief Set force constant
- */
+// Set force constant
 void Angle::setForceConstant(double k)
 {
 	forceConstant_ = k;
 }
 
-/*!
- * \brief Return force constant
- */
+// Return force constant
 double Angle::forceConstant() const
 {
 	return forceConstant_;
 }
 
-/*!
- * \brief Create attached Atom array
- * \details Creates and NULLifies the attached atom array for the terminus specified.
- */
+// Create attached Atom array
 void Angle::createAttachedAtomArray(int terminus, int size)
 {
 	if (attached_[terminus] != NULL) delete[] attached_[terminus];
@@ -240,9 +199,7 @@ void Angle::createAttachedAtomArray(int terminus, int size)
 	}
 }
 
-/*!
- * \brief Set attached Atoms for terminus specified
- */
+// Set attached Atoms for terminus specified
 void Angle::setAttachedAtoms(int terminus, const RefList<Atom,int>& atoms)
 {
 	createAttachedAtomArray(terminus, atoms.nItems());
@@ -254,50 +211,38 @@ void Angle::setAttachedAtoms(int terminus, const RefList<Atom,int>& atoms)
 	msg.print("%s\n", s.get());
 }
 
-/*!
- * \brief Return number of attached Atoms for terminus specified
- */
+// Return number of attached Atoms for terminus specified
 int Angle::nAttached(int terminus) const
 {
 	return nAttached_[terminus];
 }
 
-/*!
- * \brief Return array of attached Atoms for terminus specified
- */
+// Return array of attached Atoms for terminus specified
 Atom** Angle::attached(int terminus) const
 {
 	return attached_[terminus];
 }
 
-/*!
- * \brief Set whether this Angle is interGrain
- */
+// Set whether this Angle is interGrain
 void Angle::setInterGrain(bool b)
 {
 	interGrain_ = b;
 }
 
-/*!
- * \brief Return whether this Angle is interGrain
- */
+// Return whether this Angle is interGrain
 bool Angle::interGrain() const
 {
 	return interGrain_;
 }
 
-/*!
- * \brief Return energy for specified angle
- */
+// Return energy for specified angle
 double Angle::energy(double angleInDegrees) const
 {
 	double delta = (angleInDegrees - equilibrium_)/DEGRAD;
 	return 0.5*forceConstant_*delta*delta;
 }
 
-/*!
- * \brief Return force multiplier for specified angle
- */
+// Return force multiplier for specified angle
 double Angle::force(double angleInDegrees) const
 {
 	// Set initial derivative of angle w.r.t. cos(angle)
@@ -310,12 +255,10 @@ double Angle::force(double angleInDegrees) const
 }
 
 /*
-// Parallel Comms
-*/
-
-/*!
- * \brief Broadcast data from Master to all Slaves
+ * Parallel Comms
  */
+
+// Broadcast data from Master to all Slaves
 bool Angle::broadcast(const List<Atom>& atoms)
 {
 #ifdef PARALLEL

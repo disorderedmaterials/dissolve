@@ -45,10 +45,9 @@ class Cell
 	enum SpecialCellIndices { AllCellsComplete = -1, NoCellsAvailable = -2 };
 
 
-	/*!
-	 * \name Identity
+	/*
+	 * Identity
 	 */
-	///@{
 	private:
 	// Grid reference
 	Vec3<int> gridReference_;
@@ -86,13 +85,11 @@ class Cell
 	bool lock(bool willBeModified);
 	// Unlock self and neighbouring cells
 	bool unlock(bool willBeModified);
-	///@}
 
 
-	/*!
-	 * \name Contents
+	/*
+	 * Contents
 	 */
-	///@{
 	private:
 	// List of atoms contained in this cell
 	OrderedPointerList<Atom> atoms_;
@@ -116,13 +113,11 @@ class Cell
 	RefListItem<Grain,int>* grains() const;
 	// Return nth Grain in list
 	Grain* grain(int n);
-	///@}
 
 
-	/*!
-	 * \name Neighbours
+	/*
+	 * Neighbours
 	 */
-	///@{
 	private:
 	// Arrays of neighbouring cells, within the defined potential cutoff (from anywhere in the cell)
 	Cell** cellNeighbours_, **mimCellNeighbours_;
@@ -160,7 +155,6 @@ class Cell
 	OrderedPointerList<Atom>& atomNeighbours();
 	// Return atom neighbour list requiring mim
 	OrderedPointerList<Atom>& mimAtomNeighbours();
-	///@}
 };
 
 #endif

@@ -33,7 +33,7 @@ class Box;
 class PotentialMap;
 class ChangeStore;
 
-/*!
+/*
  * \brief Energy Kernel
  * \details An ForceKernel provides force calculation routines between Atoms, Grains, and Cells, and any combination thereof.
  */
@@ -48,22 +48,19 @@ class ForceKernel
 	void clear();
 
 
-	/*!
-	 * \name Source Data
+	/*
+	 * Source Data
 	 */
-	///@{
 	protected:
 	// Source Box
 	const Box* box_;
 	// Potential map to use
 	const PotentialMap& potentialMap_;
-	///@}
 
 
-	/*!
-	 * \name Internal Force Calculation
+	/*
+	 * Internal Force Calculation
 	 */
-	///@{
 	private:
 	// Calculate inter-particle forces between Atoms provided (no minimum image calculation)
 	void forcesWithoutMim(const Atom* i, const Atom* j, double* fx, double* fy, double* fz, double scale = 1.0);
@@ -77,10 +74,9 @@ class ForceKernel
 	void forcesWithMim(const Atom* i, const Grain* grain, bool excludeIgtJ, double* fx, double* fy, double* fz);
 	// Calculate inter-particle forces between Grains provided (minimum image calculation)
 	void forcesWithMim(const Grain* grainI, const Grain* grainJ, double* fx, double* fy, double* fz);
-	///@}
 
 
-	/*!
+	/*
 	 * \brief Force Calculation
 	 */
 	public:
@@ -98,7 +94,6 @@ class ForceKernel
 	void forces(const Atom* i, int nNeighbours, Cell** neighbours, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz, DUQComm::CommGroup group = DUQComm::Solo);
 	// Calculate inter-particle forces between Grain and list of Cells
 	void forces(const Grain* grain, int nNeighbours, Cell** neighbours, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz, DUQComm::CommGroup group = DUQComm::Solo);
-	///@}
 };
 
 #endif

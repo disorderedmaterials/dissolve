@@ -26,7 +26,7 @@
  * Simulation Control Group
  */
 
-/*!
+/*
  * \brief Setup Simulation
  */
 void MainWindow::on_SimulationSetupButton_clicked(bool checked)
@@ -78,7 +78,7 @@ void MainWindow::on_SimulationSetupButton_clicked(bool checked)
 	ui.SimulationStopButton->setEnabled(false);
 }
 
-/*!
+/*
  * \brief Start simulation from within GUI
  */
 void MainWindow::on_SimulationStartButton_clicked(bool checked)

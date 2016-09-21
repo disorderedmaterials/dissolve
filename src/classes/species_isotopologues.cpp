@@ -19,36 +19,27 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "main/flags.h"
 #include "classes/species.h"
+#include "base/sysfunc.h"
 #include <string.h>
-#include <base/sysfunc.h>
 
-/*!
- * \brief Update current Isotopologues
- */
+// Update current Isotopologues
 void Species::updateIsotopologues(const List<AtomType>& atomTypes)
 {
 	for (Isotopologue* iso = isotopologues_.first(); iso != NULL; iso = iso->next) iso->update(atomTypes);
 }
 
-/*!
- * \brief Add a new Isotopologue to this species
- */
+// Add a new Isotopologue to this species
 Isotopologue *Species::addIsotopologue(const char* baseName)
 {
 	Isotopologue* itp = isotopologues_.add();
 	itp->setParent(this);
 	itp->setName(uniqueIsotopologueName(baseName));
 
-	Flags::wave(Flags::IsotopologuesChanged);
-
 	return itp;
 }
 
-/*!
- * \brief Remove specified Isotopologue from this Species
- */
+// Remove specified Isotopologue from this Species
 void Species::removeIsotopologue(Isotopologue* iso)
 {
 	if (iso == NULL) msg.error("NULL_POINTER - NULL Isotopologue passed to Species::removeIsotopologue().\n");
@@ -58,8 +49,6 @@ void Species::removeIsotopologue(Isotopologue* iso)
 		Dnchar tempName = iso->name();
 		isotopologues_.remove(iso);
 		msg.print("Removed Isotopologue '%s' from Species '%s'.\n", tempName.get(), name_.get());
-		
-		Flags::wave(Flags::IsotopologuesChanged);
 	}
 	else
 	{
@@ -69,41 +58,31 @@ void Species::removeIsotopologue(Isotopologue* iso)
 	}
 }
 
-/*!
- * \brief Return number of defined Isotopologues
- */
+// Return number of defined Isotopologues
 int Species::nIsotopologues() const
 {
 	return isotopologues_.nItems();
 }
 
-/*!
- * \brief Return first Isotopologue defined
- */
+// Return first Isotopologue defined
 Isotopologue *Species::isotopologues() const
 {
 	return isotopologues_.first();
 }
 
-/*!
- * \brief Return nth Isotopologue defined
- */
+// Return nth Isotopologue defined
 Isotopologue *Species::isotopologue(int n)
 {
 	return isotopologues_[n];
 }
 
-/*!
- * \brief Return whether the specified Isotopologue exists
- */
+// Return whether the specified Isotopologue exists
 bool Species::hasIsotopologue(Isotopologue* iso) const
 {
 	return isotopologues_.contains(iso);
 }
 
-/*!
- * \brief Generate unique Isotopologue name with base name provided
- */
+// Generate unique Isotopologue name with base name provided
 const char* Species::uniqueIsotopologueName(const char* base, Isotopologue* exclude) const
 {
 	static Dnchar uniqueName;
@@ -126,34 +105,26 @@ const char* Species::uniqueIsotopologueName(const char* base, Isotopologue* excl
 	return uniqueName;
 }
 
-/*!
- * \brief Search for Isotopologue by name
- */
+// Search for Isotopologue by name
 Isotopologue *Species::findIsotopologue(const char* name) const
 {
 	for (Isotopologue *iso = isotopologues_.first(); iso != NULL; iso = iso->next) if (strcmp(name,iso->name()) == 0) return iso;
 	return NULL;
 }
 
-/*!
- * \brief Return index of specified Isotopologue
- */
+// Return index of specified Isotopologue
 int Species::indexOfIsotopologue(Isotopologue* iso) const
 {
 	return isotopologues_.indexOf(iso);
 }
 
-/*!
- * \brief Set highlighted Isotopologue
- */
+// Set highlighted Isotopologue
 void Species::setHighlightedIsotopologue(Isotopologue* iso)
 {
 	highlightedIsotopologue_ = iso;
 }
 
-/*!
- * \brief Return highlighted Isotopologue
- */
+// Return highlighted Isotopologue
 Isotopologue* Species::highlightedIsotopologue()
 {
 	return highlightedIsotopologue_;

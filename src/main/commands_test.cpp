@@ -26,7 +26,7 @@
 #include "classes/box.h"
 #include <string.h>
 
-/*!
+/*
  * \brief Test Routine
  * \details Developers only - Performs some kind of test code
  */
@@ -164,7 +164,7 @@ bool DUQ::commandTest(Configuration& cfg)
 	return true;
 }
 
-/*!
+/*
  * \brief Test Energy Calculation Routines
  * \details Calculate the energy of the system using the simplest (and slowest) method possible on each process
  */

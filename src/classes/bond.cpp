@@ -24,10 +24,7 @@
 #include "classes/species.h"
 #include "base/comms.h"
 
-/*!
- * \brief Constructor
- * \details Constructor for Bond. 
- */
+// Constructor
 Bond::Bond() : ListItem<Bond>()
 {
 	parent_ = NULL;
@@ -43,18 +40,13 @@ Bond::Bond() : ListItem<Bond>()
 	forceConstant_ = 4184.0;
 }
 
-/*!
- * \brief Destructor
- * \details Constructor for Bond. 
- */
+// Destructor
 Bond::~Bond()
 {
 	clear();
 }
 
-/*!
- * \brief Clear all data
- */
+// Clear all data
 void Bond::clear()
 {
 	for (int n=0; n<2; ++n)
@@ -66,48 +58,38 @@ void Bond::clear()
 }
 
 /*
-// Basic Data
-*/
-
-/*!
- * \brief Set parent Species
+ * Basic Data
  */
+
+// Set parent Species
 void Bond::setParent(Species* parent)
 {
 	parent_ = parent;
 }
 
-/*!
- * \brief Return parent Species
- */
+// Return parent Species
 Species *Bond::parent() const
 {
 	return parent_;
 }
 
-/*!
- * \brief Set parent Molecule
- */
+// Set parent Molecule
 void Bond::setMolecule(Molecule* parent)
 {
 	molecule_ = parent;
 }
 
-/*!
- * \brief Return parent Molecule
- */
+// Return parent Molecule
 Molecule* Bond::molecule() const
 {
 	return molecule_;
 }
 
 /*
-// Atom Information
-*/
-
-/*!
- * \brief Set Atoms involved in Bond
+ * Atom Information
  */
+
+// Set Atoms involved in Bond
 void Bond::setAtoms(Atom* i, Atom* j)
 {
 	i_ = i;
@@ -118,23 +100,19 @@ void Bond::setAtoms(Atom* i, Atom* j)
 #endif
 }
 
-/*!
- * \brief Return first Atom involved in Bond
- */
+// Return first Atom involved in Bond
 Atom *Bond::i() const
 {
 	return i_;
 }
 
-/*!
- * \brief Return second Atom involved in Bond
- */
+// Return second Atom involved in Bond
 Atom *Bond::j() const
 {
 	return j_;
 }
 
-/*!
+/*
  * \brief Return the 'other' Atom in the Bond
  */
 Atom *Bond::partner(Atom* i) const
@@ -142,9 +120,7 @@ Atom *Bond::partner(Atom* i) const
 	return (i == i_ ? j_ : i_);
 }
 
-/*!
- * \brief Return index (in parent Species) of first Atom
- */
+// Return index (in parent Species) of first Atom
 int Bond::indexI() const
 {
 #ifdef CHECKS
@@ -157,9 +133,7 @@ int Bond::indexI() const
 	return i_->index();
 }
 
-/*!
- * \brief Return index (in parent Species) of second Atom
- */
+// Return index (in parent Species) of second Atom
 int Bond::indexJ() const
 {
 #ifdef CHECKS
@@ -172,9 +146,7 @@ int Bond::indexJ() const
 	return j_->index();
 }
 
-/*!
- * \brief Return whether Atoms in Angle match those specified
- */
+// Return whether Atoms in Angle match those specified
 bool Bond::matches(Atom* i, Atom* j) const
 {
 	if ((i_ == i) && (j_ == j)) return TRUE;
@@ -183,45 +155,34 @@ bool Bond::matches(Atom* i, Atom* j) const
 }
 
 /*
-// Interaction Parameters
-*/
-
-/*!
- * \brief Set nominal equilibrium Bond length
+ * Interaction Parameters
  */
+
+// Set nominal equilibrium Bond length
 void Bond::setEquilibrium(double rEq)
 {
 	equilibrium_ = rEq;
 }
 
-/*!
- * \brief Return nominal equilibrium Bond length
- */
+// Return nominal equilibrium Bond length
 double Bond::equilibrium() const
 {
 	return equilibrium_;
 }
 
-/*!
- * \brief Set force constant
- */
+// Set force constant
 void Bond::setForceConstant(double k)
 {
 	forceConstant_ = k;
 }
 
-/*!
- * \brief Return force constant
- */
+// Return force constant
 double Bond::forceConstant() const
 {
 	return forceConstant_;
 }
 
-/*!
- * \brief Create attached Atom array
- * \details Creates and NULLifies the attached atom array for the terminus specified.
- */
+// Create attached Atom array
 void Bond::createAttachedAtomArray(int terminus, int size)
 {
 	if (attached_[terminus] != NULL) delete[] attached_[terminus];
@@ -235,9 +196,7 @@ void Bond::createAttachedAtomArray(int terminus, int size)
 	}
 }
 
-/*!
- * \brief Set attached Atoms for terminus specified
- */
+// Set attached Atoms for terminus specified
 void Bond::setAttachedAtoms(int terminus, const RefList<Atom,int>& atoms)
 {
 	createAttachedAtomArray(terminus, atoms.nItems());
@@ -249,62 +208,48 @@ void Bond::setAttachedAtoms(int terminus, const RefList<Atom,int>& atoms)
 	msg.print("%s\n", s.get());
 }
 
-/*!
- * \brief Return number of attached Atoms for terminus specified
- */
+// Return number of attached Atoms for terminus specified
 int Bond::nAttached(int terminus) const
 {
 	return nAttached_[terminus];
 }
 
-/*!
- * \brief Return array of attached Atoms for terminus specified
- */
+// Return array of attached Atoms for terminus specified
 Atom** Bond::attached(int terminus) const
 {
 	return attached_[terminus];
 }
 
-/*!
- * \brief Set whether this Bond is interGrain
- */
+// Set whether this Bond is interGrain
 void Bond::setInterGrain(bool b)
 {
 	interGrain_ = b;
 }
 
-/*!
- * \brief Return whether this Bond is interGrain
- */
+// Return whether this Bond is interGrain
 bool Bond::interGrain() const
 {
 	return interGrain_;
 }
 
-/*!
- * \brief Return energy for specified distance
- */
+// Return energy for specified distance
 double Bond::energy(double distance) const
 {
 	double delta = distance - equilibrium_;
 	return 0.5*forceConstant_*delta*delta;
 }
 
-/*!
- * \brief Return force multiplier for specified distance
- */
+// Return force multiplier for specified distance
 double Bond::force(double distance) const
 {
 	return -forceConstant_*(distance-equilibrium_);
 }
 
 /*
-// Parallel Comms
-*/
-
-/*!
- * \brief Broadcast data from Master to all Slaves
+ * Parallel Comms
  */
+
+// Broadcast data from Master to all Slaves
 bool Bond::broadcast(const List<Atom>& atoms)
 {
 #ifdef PARALLEL

@@ -19,77 +19,65 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "main/flags.h"
 #include "classes/isotopologue.h"
 #include "classes/species.h"
 #include "classes/atomtype.h"
 #include "base/comms.h"
 
-/*!
- * \brief Constructor
- * \details Constructor for Isotopologue. 
- */
+// Constructor
 Isotopologue::Isotopologue() : ListItem<Isotopologue>()
 {
 	parent_ = NULL;
 }
 
-/*!
- * \brief Destructor
- * \details Constructor for Isotopologue. 
- */
+// Destructor
 Isotopologue::~Isotopologue()
 {
 }
 
 /*
-// Basic Information
-*/
-
-/*!
- * \brief Set parent Species
+ * Basic Information
  */
+
+// Set parent Species
 void Isotopologue::setParent(Species* parent)
 {
 	parent_ = parent;
 }
 
-/*!
- * \brief Return parent Species
- */
+// Return parent Species
 Species *Isotopologue::parent() const
 {
 	return parent_;
 }
 
-/*!
- * \brief Set name of Isotopologue
- */
+// Set name of Isotopologue
 void Isotopologue::setName(const char* name)
 {
 	name_ = name;
 }
 
-/*!
- * \brief Return name of Isotopologue
- */
+// Return name of Isotopologue
 const char* Isotopologue::name() const
 {
 	return name_.get();
 }
 
 /*
-// Isotope Definition
-*/
+ * Isotope Definition
+ */
 
-/*!
- * \brief Update AtomType/Isotope RefList
- * \details This function reconstructs the current RefList of AtomType/Isotope pairs and ensures that
- * it contains the same Atom ordering (and Atom contents) as the parent Species.  It can (and should) be
- * called after any change to Atom ordering or creation/deletion in the Species.
+/*
+ * Update AtomType/Isotope RefList
  */
 void Isotopologue::update(const List<AtomType>& atomTypes)
 {
+	/*
+	 * This function reconstructs the current RefList of AtomType/Isotope pairs and ensures that
+	 * it contains the same Atom ordering (and Atom contents) as the parent Species.  It can (and should) be
+	 * called after any change to Atom ordering or creation/deletion in the Species.
+	 */
+
 	// Check for valid parent_
 	if (parent_ == NULL)
 	{
@@ -137,9 +125,7 @@ void Isotopologue::update(const List<AtomType>& atomTypes)
 	}
 }
 
-/*!
- * \brief Set Isotope associated to AtomType
- */
+// Set Isotope associated to AtomType
 bool Isotopologue::setAtomTypeIsotope(AtomType* at, Isotope* isotope)
 {
 	// Check for NULL pointer
@@ -158,15 +144,11 @@ bool Isotopologue::setAtomTypeIsotope(AtomType* at, Isotope* isotope)
 	}
 	
 	rli->data = isotope;
-	
-	Flags::wave(Flags::IsotopologuesChanged);
 
 	return true;
 }
 
-/*!
- * \brief Return Isotope for specified AtomType
- */
+// Return Isotope for specified AtomType
 Isotope* Isotopologue::atomTypeIsotope(AtomType* at) const
 {
 	RefListItem<AtomType,Isotope*>* rli = isotopes_.contains(at);
@@ -178,7 +160,7 @@ Isotope* Isotopologue::atomTypeIsotope(AtomType* at) const
 	return rli->data;
 }
 
-/*!
+/*
  * \brief Return first AtomType/Isotope pair
  */
 RefListItem<AtomType,Isotope*>* Isotopologue::isotopes() const
@@ -186,7 +168,7 @@ RefListItem<AtomType,Isotope*>* Isotopologue::isotopes() const
 	return isotopes_.first();
 }
 
-/*!
+/*
  * \brief Return nth AtomType/Isotope pair
  */
 RefListItem<AtomType,Isotope*>* Isotopologue::isotope(int n)
@@ -195,12 +177,10 @@ RefListItem<AtomType,Isotope*>* Isotopologue::isotope(int n)
 }
 
 /*
-// Parallel Comms
-*/
-
-/*!
- * \brief Broadcast data from Master to all Slaves
+ * Parallel Comms
  */
+
+// Broadcast data from Master to all Slaves
 bool Isotopologue::broadcast(const List<AtomType>& atomTypes)
 {
 #ifdef PARALLEL

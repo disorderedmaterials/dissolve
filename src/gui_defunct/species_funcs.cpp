@@ -231,8 +231,8 @@ void DUQSpeciesDockWidget::refresh(int targets)
 }
 
 /*
-// Private Functions
-*/
+ * Private Functions
+ */
 
 // Return current selected Species, if any
 Species* DUQSpeciesDockWidget::selectedSpecies()
@@ -277,8 +277,8 @@ Isotopologue* DUQSpeciesDockWidget::selectedIsotopologue()
 }
 
 /*
-// Selection Menu
-*/
+ * Selection Menu
+ */
 
 // // Transmute selection
 // void DUQSpeciesDockWidget::transmuteSelection(int el)
@@ -569,8 +569,8 @@ void DUQSpeciesDockWidget::on_ViewIndexCheck_clicked(bool checked)
 }
 
 /*
-// Grains Group
-*/
+ * Grains Group
+ */
 
 // Different grain selected in table
 void DUQSpeciesDockWidget::on_GrainsTable_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)
@@ -647,8 +647,8 @@ void DUQSpeciesDockWidget::on_AutoGrainButton_clicked(bool checked)
 }
 
 /*
-// Isotopologues Group
-*/
+ * Isotopologues Group
+ */
 
 // Determine Isotopologue and AtomType from QVariant data
 bool DUQSpeciesDockWidget::getIsotopologueAndAtomType(QStringList data, Isotopologue*& iso, AtomType*& at)

@@ -28,7 +28,7 @@
 // Forward Declarations
 class AtomType;
 
-/*!
+/*
  * \brief PairPotential Definition
  * \details TODO
  */
@@ -37,13 +37,13 @@ class PairPotential : public ListItem<PairPotential>
 	public:
 	// Constructor
 	PairPotential();
-	/// PairPotentialType enum
+	// PairPotentialType enum
 	enum PairPotentialType
 	{
-		CoulombType,		/**> PairPotential which has only Coulomb interactions */
-		DispersionType,		/**> PairPotential which has only dispersive Lennard-Jones interactions */
-		FullType,		/**> PairPotential including both dispersive Lennard-Jones and Coulomb interactions */
-		nPairPotentialTypes	/**> Number of PairPotential types */
+		CoulombType,		/* PairPotential which has only Coulomb interactions */
+		DispersionType,		/* PairPotential which has only dispersive Lennard-Jones interactions */
+		FullType,		/* PairPotential including both dispersive Lennard-Jones and Coulomb interactions */
+		nPairPotentialTypes	/* Number of PairPotential types */
 	};
 	// Convert text string to PairPotentialType
 	static PairPotentialType pairPotentialType(const char* s);
@@ -51,10 +51,9 @@ class PairPotential : public ListItem<PairPotential>
 	static const char* pairPotentialType(PairPotentialType id);
 
 
-	/*!
-	 * \name Potential Type
+	/*
+	 * Potential Type
 	 */
-	///@{
 	private:
 	// PairPotential type
 	PairPotentialType type_;
@@ -64,13 +63,11 @@ class PairPotential : public ListItem<PairPotential>
 	void setType(PairPotentialType type);
 	// Return PairPotential type
 	PairPotentialType type() const;
-	///@}
 
 
-	/*!
-	 * \name Source Parameters
+	/*
+	 * Source Parameters
 	 */
-	///@{
 	private:
 	// Original source AtomTypes
 	AtomType* atomTypeI_, *atomTypeJ_;
@@ -116,13 +113,11 @@ class PairPotential : public ListItem<PairPotential>
 	void setChargeJ(double value);
 	// Return charge J
 	double chargeJ() const;
-	///@}
 
 
-	/*!
-	 * \name Tabulated Potential
+	/*
+	 * Tabulated Potential
 	 */
-	///@{
 	private:
 	// Number of points to tabulate
 	int nPoints_;
@@ -154,13 +149,11 @@ class PairPotential : public ListItem<PairPotential>
 	Data2D& dU();
 	// Return original potential (without modifications)
 	Data2D& originalU();
-	///@}
 
 
-	/*!
-	 * \name Perturbation
+	/*
+	 * Perturbation
 	 */
-	///@{
 	private:
 	// Additional potential
 	Data2D v_;
@@ -178,27 +171,22 @@ class PairPotential : public ListItem<PairPotential>
 	double potentialFitCost(Array<double>& alpha);
 	// Return modification to PairPotential
 	Data2D& v();
-	///@}
 
 
-	/*!
-	 * \name File I/O
+	/*
+	 * File I/O
 	 */
-	///@{
 	public:
 	// Save PairPotential data to specified file
 	bool save(const char* fileName);
-	///@}
 
 
-	/*!
-	 * \name Parallel Comms
+	/*
+	 * Parallel Comms
 	 */
-	///@{
 	public:
 	// Broadcast data from Master to all Slaves
 	bool broadcast(const List<AtomType>& atomTypes);
-	///@}
 };
 
 #endif

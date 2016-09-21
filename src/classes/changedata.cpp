@@ -22,10 +22,7 @@
 #include "classes/changedata.h"
 #include "classes/atom.h"
 
-/*!
- * \brief Constructor
- * \details Constructor for ChangeData. 
- */
+// Constructor
 ChangeData::ChangeData()
 {
 	atom_ = NULL;
@@ -34,21 +31,16 @@ ChangeData::ChangeData()
 	next = NULL;
 }
 
-/*!
- * \brief Destructor
- * \details Destructor for ChangeData. 
- */
+// Destructor
 ChangeData::~ChangeData()
 {
 }
 
 /*
-// Target Data
-*/
-
-/*!
- * \brief Set target atom
+ * Target Data
  */
+
+// Set target atom
 
 void ChangeData::setAtom(Atom* i)
 {
@@ -64,34 +56,26 @@ void ChangeData::setAtom(Atom* i)
 	r_ = atom_->r();
 }
 
-/*!
- * \brief Return index of stored atom
- */
+// Return index of stored atom
 int ChangeData::atomIndex()
 {
 	return atom_->index();
 }
 
-/*!
- * \brief Update local position, and flag as moved
- */
+// Update local position, and flag as moved
 void ChangeData::updatePosition()
 {
 	r_ = atom_->r();
 	moved_ = true;
 }
 
-/*!
- * \brief Revert atom to stored position
- */
+// Revert atom to stored position
 void ChangeData::revertPosition()
 {
 	atom_->setCoordinates(r_);
 }
 
-/*!
- * \brief Return whether atom has moved
- */
+// Return whether atom has moved
 bool ChangeData::hasMoved()
 {
 	return moved_;

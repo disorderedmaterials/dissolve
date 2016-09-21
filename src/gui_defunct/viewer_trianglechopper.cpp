@@ -27,8 +27,8 @@
 using namespace std;
 
 /*
-// Triangle Chopper
-*/
+ * Triangle Chopper
+ */
 
 // Constructor
 TriangleChopper::TriangleChopper()

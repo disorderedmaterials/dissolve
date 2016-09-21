@@ -19,7 +19,6 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "main/flags.h"
 #include "classes/pairpotential.h"
 #include "classes/atomtype.h"
 #include "base/messenger.h"
@@ -30,10 +29,7 @@
 #include <math.h>
 #include <string.h>
 
-/*!
- * \brief Constructor
- * \details Constructor for PairPotential. 
- */
+// Constructor
 PairPotential::PairPotential() : ListItem<PairPotential>()
 {
 	sigmaIJ_ = 0.0;
@@ -49,51 +45,40 @@ PairPotential::PairPotential() : ListItem<PairPotential>()
 // Input File Block Keywords
 const char* PairPotentialTypeKeywords[] = { "Coulomb", "Dispersion", "Full" };
 
-/*!
- * \brief Convert text string to PairPotentialType
- */
+// Convert text string to PairPotentialType
 PairPotential::PairPotentialType PairPotential::pairPotentialType(const char* s)
 {
 	for (int n=0; n<PairPotential::nPairPotentialTypes; ++n) if (strcmp(s,PairPotentialTypeKeywords[n]) == 0) return (PairPotential::PairPotentialType) n;
 	return PairPotential::nPairPotentialTypes;
 }
 
-/*!
- * \brief Convert PairPotentialType to text string
- */
+// Convert PairPotentialType to text string
 const char* PairPotential::pairPotentialType(PairPotential::PairPotentialType id)
 {
 	return PairPotentialTypeKeywords[id];
 }
 
 /*
-// Potential Type
-*/
-
-/*!
- * \brief Set PairPotential type
+ * Potential Type
  */
+
+// Set PairPotential type
 void PairPotential::setType(PairPotential::PairPotentialType type)
 {
-	Flags::wave(Flags::PairPotentialChanged);
 	type_ = type;
 }
 
-/*!
- * \brief Return PairPotential type
- */
+// Return PairPotential type
 PairPotential::PairPotentialType PairPotential::type() const
 {
 	return type_;
 }
 
 /*
-// Source Parameters
-*/
-
-/*!
- * \brief Set Data2D names from source AtomTypes
+ * Source Parameters
  */
+
+// Set Data2D names from source AtomTypes
 void PairPotential::setData2DNames()
 {
 	// Check for NULL pointers
@@ -118,9 +103,7 @@ void PairPotential::setData2DNames()
 	dU_.setName(otherName);
 }
 
-/*!
- * \brief Set source parameters from AtomTypes
- */
+// Set source parameters from AtomTypes
 void PairPotential::setParameters(AtomType* typeI, AtomType* typeJ)
 {
 	// Check for NULL pointers
@@ -158,9 +141,7 @@ void PairPotential::setParameters(AtomType* typeI, AtomType* typeJ)
 	}
 }
 
-/*!
- * \brief Set source AtomType pointers only
- */
+// Set source AtomType pointers only
 void PairPotential::setAtomTypes(AtomType* typeI, AtomType* typeJ)
 {
 	// Check for NULL pointers
@@ -180,9 +161,7 @@ void PairPotential::setAtomTypes(AtomType* typeI, AtomType* typeJ)
 	setData2DNames();
 }
 
-/*!
- * \brief Return first AtomType name
- */
+// Return first AtomType name
 const char* PairPotential::atomTypeNameI() const
 {
 	// Check for NULL pointers
@@ -194,9 +173,7 @@ const char* PairPotential::atomTypeNameI() const
 	return atomTypeI_->name();
 }
 
-/*!
- * \brief Return second AtomType name
- */
+// Return second AtomType name
 const char* PairPotential::atomTypeNameJ() const
 {
 	// Check for NULL pointers
@@ -208,97 +185,71 @@ const char* PairPotential::atomTypeNameJ() const
 	return atomTypeJ_->name();
 }
 
-/*!
- * \brief Return first source AtomType
- */
+// Return first source AtomType
 AtomType* PairPotential::atomTypeI() const
 {
 	return atomTypeI_;
 }
 
-/*!
- * \brief Return second source AtomType
- */
+// Return second source AtomType
 AtomType* PairPotential::atomTypeJ() const
 {
 	return atomTypeJ_;
 }
 
-/*!
- * \brief Set sigma
- */
+// Set sigma
 void PairPotential::setSigmaIJ(double value)
 {
 	sigmaIJ_ = value;
-	Flags::wave(Flags::PairPotentialChanged);
 }
 
-/*!
- * \brief Return sigma
- */
+// Return sigma
 double PairPotential::sigmaIJ() const
 {
 	return sigmaIJ_;
 }
 
-/*!
- * \brief Set epsilon
- */
+// Set epsilon
 void PairPotential::setEpsilonIJ(double value)
 {
 	epsilonIJ_ = value;
-	Flags::wave(Flags::PairPotentialChanged);
 }
 
-/*!
- * \brief Return epsilon
- */
+// Return epsilon
 double PairPotential::epsilonIJ() const
 {
 	return epsilonIJ_;
 }
 
-/*!
- * \brief Set charge I
- */
+// Set charge I
 void PairPotential::setChargeI(double value)
 {
 	chargeI_ = value;
-	Flags::wave(Flags::PairPotentialChanged);
 }
 
-/*!
- * \brief Return charge I
- */
+// Return charge I
 double PairPotential::chargeI() const
 {
 	return chargeI_;
 }
 
-/*!
- * \brief Set charge J
- */
+// Set charge J
 void PairPotential::setChargeJ(double value)
 {
 	chargeJ_ = value;
-	Flags::wave(Flags::PairPotentialChanged);
 }
 
-/*!
- * \brief Return charge J
- */
+// Return charge J
 double PairPotential::chargeJ() const
 {
 	return chargeJ_;
 }
 
 /*
-// Tabulated PairPotential
-*/
-
-/*!
- * \brief Regenerate derivative data
+ * Tabulated PairPotential
  */
+
+// Regenerate derivative data
 void PairPotential::calculateDerivative()
 {
 	if (nPoints_ < 2) return;
@@ -316,9 +267,7 @@ void PairPotential::calculateDerivative()
 	dU_.setY(nPoints_-1, 0.0);
 }
 
-/*!
- * \name Generate potential
- */
+// Generate potential
 bool PairPotential::generate(double maxR, double truncationWidth, double delta)
 {
 	// Check that AtomType pointers were set at some pointer
@@ -398,9 +347,7 @@ bool PairPotential::generate(double maxR, double truncationWidth, double delta)
 	return true;
 }
 
-/*!
- * \brief Return potential at specified r-squared
- */
+// Return potential at specified r-squared
 double PairPotential::energyAtRSquared(double distanceSq) const
 {
 	// Perform some checks
@@ -419,9 +366,7 @@ double PairPotential::energyAtRSquared(double distanceSq) const
 	return u_.y(distanceSq*rDelta_);
 }
 
-/*!
- * \brief Return derivative at specified r-squared
- */
+// Return derivative at specified r-squared
 double PairPotential::forceAtRSquared(double distanceSq) const
 {
 	// Perform some checks
@@ -437,25 +382,19 @@ double PairPotential::forceAtRSquared(double distanceSq) const
 	return (bin >= nPoints_ ? 0.0 : dU_.y(bin));
 }
 
-/*!
- * \brief Return tabulated potential
- */
+// Return tabulated potential
 Data2D& PairPotential::u()
 {
 	return u_;
 }
 
-/*!
- * \brief Return tabulated derivative
- */
+// Return tabulated derivative
 Data2D& PairPotential::dU()
 {
 	return dU_;
 }
 
-/*!
- * \brief Return original potential (without modifications)
- */
+// Return original potential (without modifications)
 Data2D& PairPotential::originalU()
 {
 	return originalU_;
@@ -465,9 +404,7 @@ Data2D& PairPotential::originalU()
  * Perturbation
  */
 
-/*!
- * \brief Update perturbation to potential, recreating tabulated data
- */
+// Update perturbation to potential, recreating tabulated data
 bool PairPotential::updatePerturbation(Data2D& perturbation, double yScale, double blendFactor)
 {
 	// Add new perturbation 
@@ -519,9 +456,7 @@ bool PairPotential::updatePerturbation(Data2D& perturbation, double yScale, doub
 	return true;
 }
 
-/*!
- * \brief Cost function callback (passed to Simplex on construction)
- */
+// Cost function callback (passed to Simplex on construction)
 double PairPotential::potentialFitCost(Array<double>& alpha)
 {
 	double r, cost = 0.0;
@@ -537,26 +472,22 @@ double PairPotential::potentialFitCost(Array<double>& alpha)
 	return cost;
 }
 
-/*!
- * \brief Clear perturbation to potential, reverting to original
- */
+// Clear perturbation to potential, reverting to original
 void PairPotential::clearPerturbation()
 {
 	u_ = originalU_;
 	calculateDerivative();
 }
 
-/*!
- * \brief Return modification to PairPotential
- */
+// Return modification to PairPotential
 Data2D& PairPotential::v()
 {
 	return v_;
 }
 
 /*
-// File I/O
-*/
+ * File I/O
+ */
 
 // Save PairPotential data to specified file
 bool PairPotential::save(const char* fileName)
@@ -583,12 +514,10 @@ bool PairPotential::save(const char* fileName)
 }
 
 /*
-// Parallel Comms
-*/
-
-/*!
- * \brief Broadcast data from Master to all Slaves
+ * Parallel Comms
  */
+
+// Broadcast data from Master to all Slaves
 bool PairPotential::broadcast(const List<AtomType>& atomTypes)
 {
 #ifdef PARALLEL

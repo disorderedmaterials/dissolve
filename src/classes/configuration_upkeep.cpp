@@ -25,9 +25,7 @@
 #include "classes/grain.h"
 #include "classes/changestore.h"
 
-/*!
- * \brief Update Grains
- */
+// Update Grains
 void Configuration::updateGrains()
 {
 	// Loop over Grains, folding them into the Box and reassigning Cell locations
@@ -48,9 +46,7 @@ void Configuration::updateGrains()
 	}
 }
 
-/*!
- * \brief Recalculate cell atom neighbour lists
- */
+// Recalculate cell atom neighbour lists
 void Configuration::recreateCellAtomNeighbourLists(double pairPotentialRange)
 {
 	// Clear all existing atoms in cell neighbour lists

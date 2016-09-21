@@ -35,10 +35,7 @@ using namespace std;
 // Forward Declarations
 class Format;
 
-/*!
- * \brief Line Parser
- * \details The LineParser class provides custom methods to read to / write from formatted and unformatted files with ease, offering automatic delimited parsing (for formatted files).
- */
+// Line Parser
 class LineParser
 {
 	public:
@@ -46,26 +43,25 @@ class LineParser
 	LineParser();
 	// Destructor
 	~LineParser();
-	/// Parse Options Enum
+	// Parse Options Enum
 	enum ParseOption
 	{
-		Defaults = 0,		/**< Default parsing behaviour */
-		StripComments = 1,	/**< Automatically strip comments (beginning # or //) from files */
-		UseQuotes = 2,		/**< Quoted text in files is retained as a single delimited argument */
-		SkipBlanks = 4,		/**< Skip blank lines (those containing nothing or only whitespace) */
-		StripBrackets = 8,	/**< Remove parentheses during parsing */
-		NoEscapes = 16,		/**< Don't convert excaped characters */
-		UseBraces = 32,		/**< Text inside curly brackets is retaind as a single argument */
-		NormalCommas = 64,	/**< Don't treat commas as delimiting marks in files */
+		Defaults = 0,		/* Default parsing behaviour */
+		StripComments = 1,	/* Automatically strip comments (beginning # or //) from files */
+		UseQuotes = 2,		/* Quoted text in files is retained as a single delimited argument */
+		SkipBlanks = 4,		/* Skip blank lines (those containing nothing or only whitespace) */
+		StripBrackets = 8,	/* Remove parentheses during parsing */
+		NoEscapes = 16,		/* Don't convert excaped characters */
+		UseBraces = 32,		/* Text inside curly brackets is retaind as a single argument */
+		NormalCommas = 64,	/* Don't treat commas as delimiting marks in files */
 		DummyOption = 128,
 		nParseOptions = 9
 	};
 
 
-	/*!
-	 * \name Source line/file and read options
+	/*
+	 * Source line/file and read options
 	 */
-	///@{
 	private:
 	// Current input filename (if any)
 	Dnchar inputFilename_;
@@ -123,13 +119,11 @@ class LineParser
 	void rewind();
 	// Return whether the end of the input stream has been reached (or only whitespace remains)
 	bool eofOrBlank() const;
-	///@}
 
 
-	/*!
-	 * \name Read/Write Routines
+	/*
+	 * Read/Write Routines
 	 */
-	///@{
 	private:
 	// Whether output is cached or direct
 	bool directOutput_;
@@ -175,13 +169,11 @@ class LineParser
 	bool writeLineF(const char* fmt, ...) const;
 	// Commit cached output stream to actual output file
 	bool commitCache();
-	///@}
 
 
-	/*!
-	 * \name Argument Data
+	/*
+	 * Argument Data
 	 */
-	///@{
 	private:
 	// Temporary string variable
 	char tempArg_[MAXLINELENGTH];
@@ -205,7 +197,6 @@ class LineParser
 	float argf(int i);
 	// Returns whether the specified argument exists
 	bool hasArg(int i) const;
-	///@}
 };
 
 #endif

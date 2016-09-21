@@ -30,7 +30,7 @@ class Atom;
 class Molecule;
 class Species;
 
-/*!
+/*
  * \brief Angle Definition
  * \details XXX TODO
  */
@@ -43,10 +43,9 @@ class Angle : public ListItem<Angle>
 	~Angle();
 
 
-	/*!
-	 * \name Basic Data
+	/*
+	 * Basic Data
 	 */
-	///@{
 	private:
 	// Parent Species (in setup)
 	Species* parent_;
@@ -62,13 +61,11 @@ class Angle : public ListItem<Angle>
 	void setMolecule(Molecule* parent);
 	// Return parent Molecule
 	Molecule* molecule() const;
-	///@}
 
 
-	/*!
-	 * \name Atom Information
+	/*
+	 * Atom Information
 	 */
-	///@{
 	private:
 	// First Atom in Angle
 	Atom* i_;
@@ -94,13 +91,11 @@ class Angle : public ListItem<Angle>
 	int indexK() const;
 	// Return whether Atoms in Angle match those specified
 	bool matches(Atom* i, Atom* j, Atom* k) const;
-	///@}
 
 
-	/*!
-	 * \name Interaction Parameters
+	/*
+	 * Interaction Parameters
 	 */
-	///@{
 	private:
 	// Nominal equilibrium Bond angle
 	double equilibrium_;
@@ -138,17 +133,14 @@ class Angle : public ListItem<Angle>
 	double energy(double angleInDegrees) const;
 	// Return force multiplier for specified angle
 	double force(double angleInDegrees) const;
-	///@}
 
 
-	/*!
-	 * \name Parallel Comms
+	/*
+	 * Parallel Comms
 	 */
-	///@{
 	public:
 	// Broadcast data from Master to all Slaves
 	bool broadcast(const List<Atom>& atoms);
-	///@}
 };
 
 #endif

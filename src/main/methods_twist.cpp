@@ -29,9 +29,7 @@
 #include "base/comms.h"
 #include "base/timer.h"
 
-/*!
- * \brief Perform Torsional Twists
- */
+// Perform Torsional Twists
 bool DUQ::twist(Configuration& cfg, double cutoffDistance, int nTwistsPerTerm)
 {
 	// Check method arguments if necessary

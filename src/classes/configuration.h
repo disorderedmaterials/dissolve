@@ -39,10 +39,8 @@ class Grain;
 class Cell;
 class Species;
 
-/*!
- * \short Configuration
- * \details A Configuration stores a List of Molecules, coupled with Atom and Grain arrays which fulful the requirements
- * of each Molecule.
+/*
+ * Configuration
  */
 class Configuration : public ListItem<Configuration>
 {
@@ -53,11 +51,11 @@ class Configuration : public ListItem<Configuration>
 	~Configuration();
 	// Assignment operator
 	void operator=(Configuration& source);
-	/// RDF Calculation Style
+	// RDF Calculation Style
 	enum RDFMethod
 	{
-		SimpleMethod,		/**> 'Simple' - Use a simple double-loop to calculate atomic partials */
-		nRDFMethods		/**> Number of RDFMethods */
+		SimpleMethod,		/* 'Simple' - Use a simple double-loop to calculate atomic partials */
+		nRDFMethods		/* Number of RDFMethods */
 	};
 	// Convert text string to RDFMethod
 	static RDFMethod rdfMethod(const char* s);
@@ -65,10 +63,9 @@ class Configuration : public ListItem<Configuration>
 	static const char* rdfMethod(RDFMethod rm);
 
 
-	/*!
-	 * \name Composition
+	/*
+	 * Composition
 	 */
-	///@{
 	private:
 	// Name of the configuration
 	Dnchar name_;
@@ -132,10 +129,9 @@ class Configuration : public ListItem<Configuration>
 	bool setup(const List<AtomType>& atomTypes, double pairPotentialRange, int boxNormalisationNPoints);
 
 
-	/*!
-	 * \name Content
+	/*
+	 * Content
 	 */
-	///@{
 	private:
 	// Molecule list
 	List<Molecule> molecules_;
@@ -187,13 +183,11 @@ class Configuration : public ListItem<Configuration>
 	int coordinateIndex();
 	// Increment current coordinate index
 	void incrementCoordinateIndex();
-	///@}
 
 
-	/*!
-	 * \name Periodic Box and Cells
+	/*
+	 * Periodic Box and Cells
 	 */
-	///@{
 	private:
 	// Relative Box lengths
 	Vec3<double> relativeBoxLengths_;
@@ -277,13 +271,11 @@ class Configuration : public ListItem<Configuration>
 	void setBoxNormalisationFile(const char* fileName);
 	// Load Box normalisation array from specified file
 	bool loadBoxNormalisationFile();
-	///@}
 
 
-	/*!
-	 * \name RDF / S(Q) Data
+	/*
+	 * RDF / S(Q) Data
 	 */
-	///@{
 	private:
 	// RDF bin width
 	double rdfBinWidth_;
@@ -400,7 +392,6 @@ class Configuration : public ListItem<Configuration>
 	void saveRDFs(const char* baseName);
 	// Save S(Q)
 	void saveSQ(const char* baseName);
-	///@}
 
 
 	/*
@@ -437,11 +428,9 @@ class Configuration : public ListItem<Configuration>
 	/*
 	 * Parallel Comms
 	 */
-	///@{
 	public:
 	// Broadcast coordinate data
 	bool broadcastCoordinates();
-	///@}
 };
 
 #endif

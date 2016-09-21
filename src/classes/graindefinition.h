@@ -31,7 +31,7 @@
 class GrainDefinition;
 class Species;
 
-/*!
+/*
  * \brief Grain Definition
  * \details A GrainDefinition contains a list of indices of Atoms in a Species which should be treated as a 'group' of atoms
  * when calculating neighbour lists, low-Q scattering etc. TODO
@@ -45,10 +45,9 @@ class GrainDefinition : public ListItem<GrainDefinition>
 	~GrainDefinition();
 
 
-	/*!
-	 * \name Basic Character
+	/*
+	 * Basic Character
 	 */
-	///@{
 	private:
 	// Parent Species
 	Species* parent_;
@@ -64,13 +63,11 @@ class GrainDefinition : public ListItem<GrainDefinition>
 	void setName(const char* s);
 	// Return name of GrainDefinition
 	const char* name() const;
-	///@}
 	
 
-	/*!
-	 * \name Atoms
+	/*
+	 * Atoms
 	 */
-	///@{
 	private:
 	// List of Atoms (in parent Species)
 	RefList<Atom,int> atoms_;
@@ -90,17 +87,14 @@ class GrainDefinition : public ListItem<GrainDefinition>
 	RefListItem<Atom,int>* atom(int n);
 	// Create name for GrainDefinition from constituent Atoms
 	const char* nameFromAtoms();
-	///@}
 
 
-	/*!
-	 * \name Parallel Comms
+	/*
+	 * Parallel Comms
 	 */
-	///@{
 	public:
 	// Broadcast data from Master to all Slaves
 	bool broadcast(const List<Atom>& atoms);
-	///@}
 };
 
 #endif

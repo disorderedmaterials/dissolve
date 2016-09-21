@@ -20,19 +20,16 @@
 */
 
 #include "main/duq.h"
-#include "main/flags.h"
 #include "classes/species.h"
 #include "classes/atomtype.h"
 #include "base/sysfunc.h"
 #include <string.h>
 
 /*
-// Atom Types
-*/
-
-/*!
- * \brief Add AtomType definition
+ * Atom Types
  */
+
+// Add AtomType definition
 AtomType* DUQ::addAtomType(int el)
 {
 	AtomType* at = atomTypes_.add();
@@ -40,15 +37,11 @@ AtomType* DUQ::addAtomType(int el)
 	// Create a suitable name...
 	at->setName(uniqueAtomTypeName(PeriodicTable::element(el).symbol()));
 	at->setElement(el);
-	
-	Flags::wave(Flags::AtomTypeChanged);
-	
+
 	return at;
 }
 
-/*!
- * \brief Remove AtomType definition
- */
+// Remove AtomType definition
 void DUQ::removeAtomType(AtomType* at)
 {
 	// Nullify all Atoms using this AtomType
@@ -59,46 +52,34 @@ void DUQ::removeAtomType(AtomType* at)
 	atomTypes_.remove(at);
 
 	updateAtomTypes();
-
-	Flags::wave(Flags::AtomTypeChanged);
 }
 
-/*!
- * \brief Return number of AtomTypes in list
- */
+// Return number of AtomTypes in list
 int DUQ::nAtomTypes() const
 {
 	return atomTypes_.nItems();
 }
 
-/*!
- * \brief Return first AtomType in list
- */
+// Return first AtomType in list
 AtomType* DUQ::atomTypes() const
 {
 	return atomTypes_.first();
 }
 
-/*!
- * \brief Return nth AtomType in list
- */
+// Return nth AtomType in list
 AtomType* DUQ::atomType(int n)
 {
 	return atomTypes_[n];
 }
 
-/*!
- * \brief Return first AtomType for element specified
- */
+// Return first AtomType for element specified
 AtomType* DUQ::atomTypeForElement(int el) const
 {
 	for (AtomType* at = atomTypes_.first(); at != NULL; at = at->next) if (at->element() == el) return at;
 	return NULL;
 }
 
-/*!
- * \brief Update AtomTypes definitions
- */
+// Update AtomTypes definitions
 void DUQ::updateAtomTypes()
 {
 	// Loop over Atoms in all Species - check AtomType availability and validity for each
@@ -132,26 +113,17 @@ void DUQ::updateAtomTypes()
 				at->setName(uniqueAtomTypeName(PeriodicTable::element(i->element()).symbol(), at));
 			}
 			i->setAtomType(at);
-			
-			Flags::wave(Flags::AtomTypeChanged);
 		}
 	}
 	
 	// Step through AtomType definitions and make sure all have a valid set of Parameters
 	for (AtomType* at = atomTypes_.first(); at != NULL; at = at->next)
 	{
-		if (!at->parameters())
-		{
-			at->setParameters(PeriodicTable::element(at->element()).parameters());
-			
-			Flags::wave(Flags::AtomTypeChanged);
-		}
+		if (!at->parameters()) at->setParameters(PeriodicTable::element(at->element()).parameters());
 	}
 }
 
-/*!
- * \brief Generate unique AtomType name with base name provided
- */
+// Generate unique AtomType name with base name provided
 const char* DUQ::uniqueAtomTypeName(const char* base, AtomType* exclude) const
 {
 	static Dnchar uniqueName;
@@ -174,9 +146,7 @@ const char* DUQ::uniqueAtomTypeName(const char* base, AtomType* exclude) const
 	return uniqueName;
 }
 
-/*!
- * \brief Search for AtomType by name
- */
+// Search for AtomType by name
 AtomType* DUQ::findAtomType(const char* name) const
 {
 	for (AtomType* at = atomTypes_.first(); at != NULL; at = at->next) if (strcmp(at->name(),name) == 0) return at;

@@ -23,30 +23,22 @@
 #include "classes/species.h"
 #include "base/comms.h"
 
-/*!
- * \brief Constructor
- * \details Constructor for IsotopologueMix.
- */
+// Constructor
 IsotopologueMix::IsotopologueMix() : ListItem<IsotopologueMix>()
 {
 	species_ = NULL;
 }
 
-/*!
- * \brief Destructor
- * \details Constructor for IsotopologueMix.
- */
+// Destructor
 IsotopologueMix::~IsotopologueMix()
 {
 }
 
 /*
-// Isotopologue Mix
-*/
-
-/*!
- * \brief Set associated Species
+ * Isotopologue Mix
  */
+
+// Set associated Species
 void IsotopologueMix::setSpecies(Species* sp)
 {
 	species_ = sp;
@@ -58,9 +50,7 @@ Species* IsotopologueMix::species() const
 	return species_;
 }
 
-/*!
- * \brief Update Isotopologue RefList
- */
+// Update Isotopologue RefList
 void IsotopologueMix::update()
 {
 	// Go through list of Isotopologues present in this mix, removing any that no longer exist
@@ -78,9 +68,7 @@ void IsotopologueMix::update()
 	}
 }
 
-/*!
- * \brief Add next available Isotopologue to list
- */
+// Add next available Isotopologue to list
 bool IsotopologueMix::addNextIsotopologue()
 {
 	// NULL Pointer?
@@ -112,9 +100,7 @@ bool IsotopologueMix::addNextIsotopologue()
 	return true;
 }
 
-/*!
- * \brief Add specific Isotopologue to list
- */
+// Add specific Isotopologue to list
 bool IsotopologueMix::addIsotopologue(Isotopologue* iso, double relPop)
 {
 	// Search current list to see if the specified Isotopologue already exists
@@ -128,9 +114,7 @@ bool IsotopologueMix::addIsotopologue(Isotopologue* iso, double relPop)
 	return true;
 }
 
-/*!
- * \brief Set Isotopologue component in list
- */
+// Set Isotopologue component in list
 bool IsotopologueMix::setIsotopologue(Isotopologue* iso, double relPop)
 {
 	// NULL Pointer?
@@ -151,41 +135,31 @@ bool IsotopologueMix::setIsotopologue(Isotopologue* iso, double relPop)
 	return true;
 }
 
-/*!
- * \brief Return first Isotopologue component
- */
+// Return first Isotopologue component
 RefListItem<Isotopologue,double>* IsotopologueMix::isotopologues() const
 {
 	return mix_.first();
 }
 
-/*!
- * \brief Return nth Isotopologue component
- */
+// Return nth Isotopologue component
 RefListItem<Isotopologue,double>* IsotopologueMix::isotopologue(int n)
 {
 	return mix_[n];
 }
 
-/*!
- * \brief Return number of Isotopologues in list
- */
+// Return number of Isotopologues in list
 int IsotopologueMix::nIsotopologues() const
 {
 	return mix_.nItems();
 }
 
-/*!
- * \brief Return whether the mix contains the specified Isotopologue
- */
+// Return whether the mix contains the specified Isotopologue
 RefListItem<Isotopologue,double>* IsotopologueMix::hasIsotopologue(Isotopologue* iso) const
 {
 	return mix_.contains(iso);
 }
 
-/*!
- * \brief Return total relative population
- */
+// Return total relative population
 double IsotopologueMix::totalRelative() const
 {
 	double total = 0.0;

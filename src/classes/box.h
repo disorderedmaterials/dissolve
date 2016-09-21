@@ -40,14 +40,14 @@ class Box
 	Box();
 	// Virtual Destructor
 	virtual ~Box();
-	/// Box Type Enum
+	// Box Type Enum
 	enum BoxType {
-		NonPeriodicBox,		/**> Non-periodic system - cubic box, but no minimum image calculation */
-		CubicBox,		/**> Cubic box with equivalent cell lengths, and right-angles */
-		OrthorhombicBox,	/**> Orthorhombic box with inequivalent cell lengths, and right-angles */
-		MonoclinicBox,		/**> Monoclinic box with cell angles a != 90, and b == c == 90 */
-		TriclinicBox,		/**> Triclinic box with cell angles a != b != c != 90 */
-		nBoxTypes		/**> Number of Box types */
+		NonPeriodicBox,		/* Non-periodic system - cubic box, but no minimum image calculation */
+		CubicBox,		/* Cubic box with equivalent cell lengths, and right-angles */
+		OrthorhombicBox,	/* Orthorhombic box with inequivalent cell lengths, and right-angles */
+		MonoclinicBox,		/* Monoclinic box with cell angles a != 90, and b == c == 90 */
+		TriclinicBox,		/* Triclinic box with cell angles a != b != c != 90 */
+		nBoxTypes		/* Number of Box types */
 	};
 	// Convert text string to BoxType
 	static BoxType boxType(const char* s);
@@ -57,10 +57,9 @@ class Box
 	void operator=(const Box& source);
 
 
-	/*!
-	 * \name Basic Definition
+	/*
+	 * Basic Definition
 	 */
-	///@{
 	protected:
 	// Box type
 	BoxType type_;
@@ -104,13 +103,11 @@ class Box
 	Vec3<double> reciprocalAxisLengths() const;
 	// Return reciprocal axes matrix
 	const Matrix3& reciprocalAxes() const;
-	///@}
 
 
-	/*!
-	 * \name Minimum Image Routines (Pure Virtual)
+	/*
+	 * Minimum Image Routines (Pure Virtual)
 	*/
-	///@{
 	public:
 	// Return minimum image coordinates of 'i' with respect to 'ref'
 	virtual Vec3<double> minimumImage(const Atom* i, const Atom* ref) const = 0;
@@ -138,25 +135,21 @@ class Box
 	virtual double minimumDistanceSquared(const Atom* i, const Vec3<double>& j) const = 0;
 	// Return minimum image squared distance from 'i' to 'j'
 	virtual double minimumDistanceSquared(const Vec3<double>& i, const Vec3<double>& j) const = 0;
-	///@}
 
 
-	/*!
-	 * \name Utility Routines
+	/*
+	 * Utility Routines
 	 */
-	///@{
 	public:
 	// Return radius of largest possible inscribed sphere for box
 	double inscribedSphereRadius() const;
 	// Calculate the RDF normalisation for the Box
 	bool calculateRDFNormalisation(Data2D& boxNorm, double rdfRange, double rdfBinWidth, int nPoints) const;
-	///@}
 
 
-	/*!
-	 * \name Utility Routines (Pure Virtual)
+	/*
+	 * Utility Routines (Pure Virtual)
 	 */
-	///@{
 	public:
 	// Return random coordinate inside Box
 	virtual Vec3<double> randomCoordinate() const = 0;
@@ -166,13 +159,11 @@ class Box
 	virtual Vec3<double> foldFrac(const Vec3<double>& i) const = 0;
 	// Convert supplied fractional coordinates to real space
 	virtual Vec3<double> fracToReal(const Vec3<double>& r) const = 0;
-	///@}
 
 
-	/*!
-	 * \name Utility Routines (Static)
+	/*
+	 * Utility Routines (Static)
 	 */
-	///@{
 	public:
 	// Return angle (in degrees, no MIM) between coordinates
 	static double angle(const Vec3<double>& i, const Vec3<double>& j, const Vec3<double>& k);
@@ -180,10 +171,9 @@ class Box
 	static double angle(const Vec3<double>& normji, const Vec3<double>& normjk);
 	// Return angle (in degrees) between supplied normalised vectors (storing dot product)
 	static double angle(const Vec3<double>& normji, const Vec3<double>& normjk, double& dotProduct);
-	///@}
 };
 
-/*!
+/*
  * \brief Non-Periodic Box Definition
  */
 class NonPeriodicBox : public Box
@@ -195,10 +185,9 @@ class NonPeriodicBox : public Box
 	~NonPeriodicBox();
 
 
-	/*!
-	 * \name Minimum Image Routines (Virtual Implementations)
+	/*
+	 * Minimum Image Routines (Virtual Implementations)
 	*/
-	///@{
 	public:
 	// Return minimum image coordinates of 'i' with respect to 'ref'
 	Vec3<double> minimumImage(const Atom* i, const Atom* ref) const;
@@ -226,13 +215,11 @@ class NonPeriodicBox : public Box
 	double minimumDistanceSquared(const Atom* i, const Vec3<double>& j) const;
 	// Return minimum image squared distance from 'i' to 'j'
 	double minimumDistanceSquared(const Vec3<double>& i, const Vec3<double>& j) const;
-	///@}
 
 
-	/*!
-	 * \name Utility Routines (Virtual Implementations)
+	/*
+	 * Utility Routines (Virtual Implementations)
 	 */
-	///@{
 	public:
 	// Return random coordinate inside Box
 	Vec3<double> randomCoordinate() const;
@@ -242,10 +229,9 @@ class NonPeriodicBox : public Box
 	Vec3<double> foldFrac(const Vec3<double>& i) const;
 	// Convert supplied fractional coordinates to real space
 	Vec3<double> fracToReal(const Vec3<double>& r) const;
-	///@}
 };
 
-/*!
+/*
  * \brief Cubic Box Definition
  */
 class CubicBox : public Box
@@ -257,10 +243,9 @@ class CubicBox : public Box
 	~CubicBox();
 
 
-	/*!
-	 * \name Minimum Image Routines (Virtual Implementations)
+	/*
+	 * Minimum Image Routines (Virtual Implementations)
 	*/
-	///@{
 	public:
 	// Return minimum image coordinates of 'i' with respect to 'ref'
 	Vec3<double> minimumImage(const Atom* i, const Atom* ref) const;
@@ -288,13 +273,11 @@ class CubicBox : public Box
 	double minimumDistanceSquared(const Atom* i, const Vec3<double>& j) const;
 	// Return minimum image squared distance from 'i' to 'j'
 	double minimumDistanceSquared(const Vec3<double>& i, const Vec3<double>& j) const;
-	///@}
 
 
-	/*!
-	 * \name Utility Routines (Virtual Implementations)
+	/*
+	 * Utility Routines (Virtual Implementations)
 	 */
-	///@{
 	public:
 	// Return random coordinate inside Box
 	Vec3<double> randomCoordinate() const;
@@ -304,10 +287,9 @@ class CubicBox : public Box
 	Vec3<double> foldFrac(const Vec3<double>& i) const;
 	// Convert supplied fractional coordinates to real space
 	Vec3<double> fracToReal(const Vec3<double>& r) const;
-	///@}
 };
 
-/*!
+/*
  * \brief Orthorhombic Box Definition
  */
 class OrthorhombicBox : public Box
@@ -319,10 +301,9 @@ class OrthorhombicBox : public Box
 	~OrthorhombicBox();
 
 
-	/*!
-	 * \name Minimum Image Routines (Virtual Implementations)
+	/*
+	 * Minimum Image Routines (Virtual Implementations)
 	*/
-	///@{
 	public:
 	// Return minimum image coordinates of 'i' with respect to 'ref'
 	Vec3<double> minimumImage(const Atom* i, const Atom* ref) const;
@@ -350,13 +331,11 @@ class OrthorhombicBox : public Box
 	double minimumDistanceSquared(const Atom* i, const Vec3<double>& j) const;
 	// Return minimum image squared distance from 'i' to 'j'
 	double minimumDistanceSquared(const Vec3<double>& i, const Vec3<double>& j) const;
-	///@}
 
 
-	/*!
-	 * \name Utility Routines (Virtual Implementations)
+	/*
+	 * Utility Routines (Virtual Implementations)
 	 */
-	///@{
 	public:
 	// Return random coordinate inside Box
 	Vec3<double> randomCoordinate() const;
@@ -366,10 +345,9 @@ class OrthorhombicBox : public Box
 	Vec3<double> foldFrac(const Vec3<double>& i) const;
 	// Convert supplied fractional coordinates to real space
 Vec3<double> fracToReal(const Vec3<double>& r) const;
-	///@}
 };
 
-/*!
+/*
  * \brief Monoclinic Box Definition
  */
 class MonoclinicBox : public Box
@@ -381,10 +359,9 @@ class MonoclinicBox : public Box
 	~MonoclinicBox();
 
 
-	/*!
-	 * \name Minimum Image Routines (Virtual Implementations)
+	/*
+	 * Minimum Image Routines (Virtual Implementations)
 	*/
-	///@{
 	public:
 	// Return minimum image coordinates of 'i' with respect to 'ref'
 	Vec3<double> minimumImage(const Atom* i, const Atom* ref) const;
@@ -412,13 +389,11 @@ class MonoclinicBox : public Box
 	double minimumDistanceSquared(const Atom* i, const Vec3<double>& j) const;
 	// Return minimum image squared distance from 'i' to 'j'
 	double minimumDistanceSquared(const Vec3<double>& i, const Vec3<double>& j) const;
-	///@}
 
 
-	/*!
-	 * \name Utility Routines (Virtual Implementations)
+	/*
+	 * Utility Routines (Virtual Implementations)
 	 */
-	///@{
 	public:
 	// Return random coordinate inside Box
 	Vec3<double> randomCoordinate() const;
@@ -428,10 +403,9 @@ class MonoclinicBox : public Box
 	Vec3<double> foldFrac(const Vec3<double>& i) const;
 	// Convert supplied fractional coordinates to real space
 	Vec3<double> fracToReal(const Vec3<double>& r) const;
-	///@}
 };
 
-/*!
+/*
  * \brief Triclinic Box Definition
  */
 class TriclinicBox : public Box
@@ -443,10 +417,9 @@ class TriclinicBox : public Box
 	~TriclinicBox();
 
 
-	/*!
-	 * \name Minimum Image Routines (Virtual Implementations)
+	/*
+	 * Minimum Image Routines (Virtual Implementations)
 	*/
-	///@{
 	public:
 	// Return minimum image coordinates of 'i' with respect to 'ref'
 	Vec3<double> minimumImage(const Atom* i, const Atom* ref) const;
@@ -474,13 +447,11 @@ class TriclinicBox : public Box
 	double minimumDistanceSquared(const Atom* i, const Vec3<double>& j) const;
 	// Return minimum image squared distance from 'i' to 'j'
 	double minimumDistanceSquared(const Vec3<double>& i, const Vec3<double>& j) const;
-	///@}
 
 
-	/*!
-	 * \name Utility Routines (Virtual Implementations)
+	/*
+	 * Utility Routines (Virtual Implementations)
 	 */
-	///@{
 	public:
 	// Return random coordinate inside Box
 	Vec3<double> randomCoordinate() const;
@@ -490,7 +461,6 @@ class TriclinicBox : public Box
 	Vec3<double> foldFrac(const Vec3<double>& i) const;
 	// Convert supplied fractional coordinates to real space
 	Vec3<double> fracToReal(const Vec3<double>& r) const;
-	///@}
 };
 
 #endif

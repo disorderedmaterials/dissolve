@@ -30,10 +30,10 @@
 /* none */
 
 /** \addtogroup GUI
- *  @{
+ * @{
  */
 
-/*!
+/*
  * \brief AtomTypes DockWidget
  * \details TODO
  */

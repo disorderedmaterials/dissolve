@@ -25,10 +25,7 @@
 #include "templates/list.h"
 #include "base/dnchar.h"
 
-/*!
- * \brief Isotope Definition
- * \details Scattering length and mass data for a single isotope of an element.
- */
+// Isotope Definition
 class Isotope : public MPIListItem<Isotope>
 {
 	public:
@@ -38,10 +35,9 @@ class Isotope : public MPIListItem<Isotope>
 	~Isotope();
 
 
-	/*!
+	/*
 	 * \short Isotope Information
 	 */
-	///@{
 	private:
 	// Mass number (A) of isotope
 	int A_;
@@ -79,17 +75,14 @@ class Isotope : public MPIListItem<Isotope>
 	double totalXS() const;
 	// Return absorption cross section for thermal (2200 m/s) neutron (barn)
 	double absorptionXS() const;
-	///@}
 
 
-	/*!
-	 * \name Parallel Comms
+	/*
+	 * Parallel Comms
 	 */
-	///@{
 	public:
 	// Broadcast data from Master to all Slaves
 	bool broadcast();
-	///@}
 };
 
 #endif

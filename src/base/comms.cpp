@@ -30,10 +30,7 @@ int DUQComm::FAILED = 0;
 int DUQComm::SUCCEEDED = 1;
 int DUQComm::RESULT;
 
-/*!
- * \brief Constructor
- * \details Constructor for DUQComm.
- */
+// Constructor
 DUQComm::DUQComm()
 {
 	nProcesses_ = 1;
@@ -43,10 +40,7 @@ DUQComm::DUQComm()
 }
 
 #ifdef PARALLEL
-/*!
- * \brief Return communicator specified
- * \details Return the MPI Communicator requested
- */
+// Return communicator specified
 MPI_Comm DUQComm::communicator(DUQComm::CommGroup group)
 {
 	if (group == DUQComm::Group) return localCommunicator_;
@@ -59,12 +53,10 @@ MPI_Comm DUQComm::communicator(DUQComm::CommGroup group)
 
 
 /*
-// World Comms
-*/
-
-/*!
- * \brief Initialise parallel communications
+ * World Comms
  */
+
+// Initialise parallel communications
 bool DUQComm::initialise(int* argn, char*** argv)
 {
 	// Initialise MPI
@@ -95,9 +87,7 @@ bool DUQComm::initialise(int* argn, char*** argv)
 	return true;
 }
 
-/*!
- * \brief End parallel communications
- */
+// End parallel communications
 bool DUQComm::finalise()
 {
 #ifdef PARALLEL
@@ -106,69 +96,53 @@ bool DUQComm::finalise()
 	return true;
 }
 
-/*!
- * \brief Return number of processes
- */
+// Return number of processes
 int DUQComm::nProcesses()
 {
 	return nProcesses_;
 }
 
-/*!
- * \brief Return rank of this process
- */
+// Return rank of this process
 int DUQComm::rank()
 {
 	return rank_;
 }
 
-/*!
- * \brief Return whether this process is the master
- */
+// Return whether this process is the master
 bool DUQComm::master()
 {
 	return (rank_ == 0);
 }
 
-/*!
- * \brief Return whether this process is a slave
- */
+// Return whether this process is a slave
 bool DUQComm::slave()
 {
 	return (rank_ != 0);
 }
 
-/*!
- * \brief Reset accumulated Comm time
- */
+// Reset accumulated Comm time
 void DUQComm::resetAccumulatedTime()
 {
 	accumTime_.zero();
 }
 
-/*!
- * \brief Return accumulated time string
- */
+// Return accumulated time string
 const char* DUQComm::accumulatedTimeString()
 {
 	return accumTime_.timeString();
 }
 
-/*!
- * \brief Return total time string
- */
+// Return total time string
 const char* DUQComm::totalTimeString()
 {
 	return totalTime_.timeString();
 }
 
 /*
-// Parallel Strategy
-*/
-
-/*!
- * \brief Setup strategy
+ * Parallel Strategy
  */
+
+// Setup strategy
 bool DUQComm::setupStrategy(const Vec3<int>& divisions, const Vec3<int>& cellExtents, const List< ListVec3<int> >& neighbours)
 {
 #ifdef PARALLEL
@@ -322,17 +296,13 @@ bool DUQComm::setupStrategy(const Vec3<int>& divisions, const Vec3<int>& cellExt
 	return true;
 }
 
-/*!
- * \brief Return number of process groups
- */
+// Return number of process groups
 int DUQComm::nProcessGroups() const
 {
 	return processGroups_.nItems();
 }
 
-/*!
- * \brief Return number of processes in nth group
- */
+// Return number of processes in nth group
 int DUQComm::nProcesses(int groupId)
 {
 #ifdef CHECKS
@@ -345,9 +315,7 @@ int DUQComm::nProcesses(int groupId)
 	return processGroups_[groupId]->nItems();
 }
 
-/*!
- * \brief Return process array of nth group
- */
+// Return process array of nth group
 int* DUQComm::processes( int groupId )
 {
 #ifdef CHECKS
@@ -360,17 +328,13 @@ int* DUQComm::processes( int groupId )
 	return processGroups_[groupId]->array();
 }
 
-/*!
- * \brief Return group index for this process
- */
+// Return group index for this process
 int DUQComm::localGroupIndex()
 {
 	return localGroupIndex_;
 }
 
-/*!
- * \brief Return group size for this process
- */
+// Return group size for this process
 int DUQComm::localGroupSize()
 {
 #ifdef CHECKS
@@ -383,29 +347,23 @@ int DUQComm::localGroupSize()
 	return processGroups_[localGroupIndex_]->nItems();
 }
 
-/*!
- * \brief Return group rank of this process
- */
+// Return group rank of this process
 int DUQComm::localGroupRank()
 {
 	return localGroupRank_;
 }
 
-/*!
- * \brief Return whether this process is a group leader
- */
+// Return whether this process is a group leader
 bool DUQComm::processGroupLeader()
 {
 	return (localGroupRank_ == 0);
 }
 
 /*
-// Process Limits
-*/
-
-/*!
- * \brief Setup limits base on total nAtoms and nGrains
+ * Process Limits
  */
+
+// Setup limits base on total nAtoms and nGrains
 bool DUQComm::calculateLimits(int nAtoms, int nGrains)
 {
 	long int baseAlloc, remainder;
@@ -470,57 +428,43 @@ bool DUQComm::calculateLimits(int nAtoms, int nGrains)
 	return true;
 }
 
-/*!
- * \brief Return linear first Atom index
- */
+// Return linear first Atom index
 int DUQComm::linearFirstAtom()
 {
 	return linearFirstAtom_;
 }
 
-/*!
- * \brief Return linear last Atom index
- */
+// Return linear last Atom index
 int DUQComm::linearLastAtom()
 {
 	return linearLastAtom_;
 }
 
-/*!
- * \brief Return linear first Grain index
- */
+// Return linear first Grain index
 int DUQComm::linearFirstGrain()
 {
 	return linearFirstGrain_;
 }
 
-/*!
- * \brief Return linear last Grain index
- */
+// Return linear last Grain index
 int DUQComm::linearLastGrain()
 {
 	return linearLastGrain_;
 }
 
-/*!
- * \brief Return diagonal first Atom index
- */
+// Return diagonal first Atom index
 int DUQComm::diagonalFirstAtom()
 {
 	return diagonalFirstAtom_;
 }
 
-/*!
- * \brief Return diagonal last Atom index
- */
+// Return diagonal last Atom index
 int DUQComm::diagonalLastAtom()
 {
 	return diagonalLastAtom_;
 }
 
-/*!
- * \brief Return starting index for general loop
- */
+// Return starting index for general loop
 int DUQComm::interleavedLoopStart(DUQComm::CommGroup group)
 {
 	if (group == DUQComm::Group) return localGroupRank_;
@@ -528,9 +472,7 @@ int DUQComm::interleavedLoopStart(DUQComm::CommGroup group)
 	return 0;
 }
 
-/*!
- * \brief Return stride for general loop
- */
+// Return stride for general loop
 int DUQComm::interleavedLoopStride(DUQComm::CommGroup group)
 {
 	if (group == DUQComm::Group) return localGroupSize();
@@ -539,12 +481,10 @@ int DUQComm::interleavedLoopStride(DUQComm::CommGroup group)
 }
 
 /*
-// Send/Receive Functions
-*/
-
-/*!
- * \brief Wait for all processes
+ * Send/Receive Functions
  */
+
+// Wait for all processes
 bool DUQComm::wait(DUQComm::CommGroup group)
 {
 #ifdef PARALLEL
@@ -553,9 +493,7 @@ bool DUQComm::wait(DUQComm::CommGroup group)
 	return true;
 }
 
-/*!
- * \brief Send single integer value to target process
- */
+// Send single integer value to target process
 bool DUQComm::send(int value, int targetProcess)
 {
 #ifdef PARALLEL
@@ -568,9 +506,7 @@ bool DUQComm::send(int value, int targetProcess)
 	return true;
 }
 
-/*!
- * \brief Receive single integer value from source process
- */
+// Receive single integer value from source process
 bool DUQComm::receive(int& value, int sourceProcess)
 {
 #ifdef PARALLEL
@@ -584,9 +520,7 @@ bool DUQComm::receive(int& value, int sourceProcess)
 	return true;
 }
 
-/*!
- * \brief Send single double value to target process
- */
+// Send single double value to target process
 bool DUQComm::send(double value, int targetProcess)
 {
 #ifdef PARALLEL
@@ -599,9 +533,7 @@ bool DUQComm::send(double value, int targetProcess)
 	return true;
 }
 
-/*!
- * \brief Receive single double value from source process
- */
+// Receive single double value from source process
 bool DUQComm::receive(double& value, int sourceProcess)
 {
 #ifdef PARALLEL
@@ -615,9 +547,7 @@ bool DUQComm::receive(double& value, int sourceProcess)
 	return true;
 }
 
-/*!
- * \brief Send single bool value to target process
- */
+// Send single bool value to target process
 bool DUQComm::send(bool value, int targetProcess)
 {
 #ifdef PARALLEL
@@ -630,9 +560,7 @@ bool DUQComm::send(bool value, int targetProcess)
 	return true;
 }
 
-/*!
- * \brief Receive single bool value from source process
- */
+// Receive single bool value from source process
 bool DUQComm::receive(bool& value, int sourceProcess)
 {
 #ifdef PARALLEL
@@ -646,9 +574,7 @@ bool DUQComm::receive(bool& value, int sourceProcess)
 	return true;
 }
 
-/*!
- * \brief Send integer array data to target process
- */
+// Send integer array data to target process
 bool DUQComm::send(int* source, int nData, int targetProcess)
 {
 #ifdef PARALLEL
@@ -661,9 +587,7 @@ bool DUQComm::send(int* source, int nData, int targetProcess)
 	return true;
 }
 
-/*!
- * \brief Receive integer array data from target process
- */
+// Receive integer array data from target process
 bool DUQComm::receive(int* source, int nData, int sourceProcess)
 {
 #ifdef PARALLEL
@@ -677,9 +601,7 @@ bool DUQComm::receive(int* source, int nData, int sourceProcess)
 	return true;
 }
 
-/*!
- * \brief Send double array data to target process
- */
+// Send double array data to target process
 bool DUQComm::send(double* source, int nData, int targetProcess)
 {
 #ifdef PARALLEL
@@ -692,9 +614,7 @@ bool DUQComm::send(double* source, int nData, int targetProcess)
 	return true;
 }
 
-/*!
- * \brief Receive double array data from target process
- */
+// Receive double array data from target process
 bool DUQComm::receive(double* source, int nData, int sourceProcess)
 {
 #ifdef PARALLEL
@@ -709,12 +629,10 @@ bool DUQComm::receive(double* source, int nData, int sourceProcess)
 }
 
 /*
-// Broadcast Functions
-*/
-
-/*!
- * \brief Broadcast Dnchar to all Processes
+ * Broadcast Functions
  */
+
+// Broadcast Dnchar to all Processes
 bool DUQComm::broadcast(Dnchar& source, int rootProcess, DUQComm::CommGroup group)
 {
 #ifdef PARALLEL
@@ -735,9 +653,7 @@ bool DUQComm::broadcast(Dnchar& source, int rootProcess, DUQComm::CommGroup grou
 	return true;
 }
 
-/*!
- * \brief Broadcast char data to all Processes
- */
+// Broadcast char data to all Processes
 bool DUQComm::broadcast(char* source, int rootProcess, DUQComm::CommGroup group)
 {
 #ifdef PARALLEL
@@ -783,9 +699,7 @@ bool DUQComm::broadcast(char* source, int rootProcess, DUQComm::CommGroup group)
 	return true;
 }
 
-/*!
- * \brief Broadcast Vec3<double> to all Processes
- */
+// Broadcast Vec3<double> to all Processes
 bool DUQComm::broadcast(Vec3<double>& source, int rootProcess, DUQComm::CommGroup group)
 {
 #ifdef PARALLEL
@@ -822,9 +736,7 @@ bool DUQComm::broadcast(Vec3<double>& source, int rootProcess, DUQComm::CommGrou
 	return true;
 }
 
-/*!
- * \brief Broadcast integer(s) to all Processes
- */
+// Broadcast integer(s) to all Processes
 bool DUQComm::broadcast(int* source, int count, int rootProcess, DUQComm::CommGroup group)
 {
 #ifdef PARALLEL
@@ -841,9 +753,7 @@ bool DUQComm::broadcast(int* source, int count, int rootProcess, DUQComm::CommGr
 	return true;
 }
 
-/*!
- * \brief Broadcast double(s) to all Processes
- */
+// Broadcast double(s) to all Processes
 bool DUQComm::broadcast(double* source, int count, int rootProcess, DUQComm::CommGroup group)
 {
 #ifdef PARALLEL
@@ -860,9 +770,7 @@ bool DUQComm::broadcast(double* source, int count, int rootProcess, DUQComm::Com
 	return true;
 }
 
-/*!
- * \brief Broadcast float(s) to all Processes
- */
+// Broadcast float(s) to all Processes
 bool DUQComm::broadcast(float* source, int count, int rootProcess, DUQComm::CommGroup group)
 {
 #ifdef PARALLEL
@@ -879,9 +787,7 @@ bool DUQComm::broadcast(float* source, int count, int rootProcess, DUQComm::Comm
 	return true;
 }
 
-/*!
- * \brief Broadcast bool(s) to all Processes
- */
+// Broadcast bool(s) to all Processes
 bool DUQComm::broadcast(bool* source, int count, int rootProcess, DUQComm::CommGroup group)
 {
 #ifdef PARALLEL
@@ -899,12 +805,10 @@ bool DUQComm::broadcast(bool* source, int count, int rootProcess, DUQComm::CommG
 }
 
 /*
-// Special Array Functions
-*/
-
-/*!
- * \brief Reduce (sum) double data to root process
+ * Special Array Functions
  */
+
+// Reduce (sum) double data to root process
 bool DUQComm::sum(double* source, int count, int rootProcess, DUQComm::CommGroup group)
 {
 #ifdef PARALLEL
@@ -930,9 +834,7 @@ bool DUQComm::sum(double* source, int count, int rootProcess, DUQComm::CommGroup
 	return true;
 }
 
-/*!
- * \brief Reduce (sum) int data to root process
- */
+// Reduce (sum) int data to root process
 bool DUQComm::sum(int* source, int count, int rootProcess, DUQComm::CommGroup group)
 {
 #ifdef PARALLEL
@@ -958,9 +860,7 @@ bool DUQComm::sum(int* source, int count, int rootProcess, DUQComm::CommGroup gr
 	return true;
 }
 
-/*!
- * \brief Reduce (sum) double data to all processes
- */
+// Reduce (sum) double data to all processes
 bool DUQComm::allSum(double* source, int count, DUQComm::CommGroup group)
 {
 #ifdef PARALLEL
@@ -977,9 +877,7 @@ bool DUQComm::allSum(double* source, int count, DUQComm::CommGroup group)
 	return true;
 }
 
-/*!
- * \brief Reduce (sum) int data to all processes
- */
+// Reduce (sum) int data to all processes
 bool DUQComm::allSum(int* source, int count, DUQComm::CommGroup group)
 {
 #ifdef PARALLEL
@@ -996,14 +894,14 @@ bool DUQComm::allSum(int* source, int count, DUQComm::CommGroup group)
 	return true;
 }
 
-/*!
- * \brief Assemble integer array on target process
- * \details Given that the integer 'array' exists on all processes, and each process has stored nData at the
- * beginning of this array, this function will assemble the data into a complete, continuous array (up to
- * maxData elements in the new array rootDest) on the rootProcess.
- */
+// Assemble integer array on target process
 bool DUQComm::assemble(int* array, int nData, int* rootDest, int rootMaxData, int rootProcess)
 {
+	/*
+	 * Given that the integer 'array' exists on all processes, and each process has stored nData at the
+	 * beginning of this array, this function will assemble the data into a complete, continuous array (up to
+	 * maxData elements in the new array rootDest) on the rootProcess.
+	 */
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
@@ -1045,14 +943,14 @@ bool DUQComm::assemble(int* array, int nData, int* rootDest, int rootMaxData, in
 	return true;
 }
 
-/*!
- * \brief Assemble double array on target process
- * \details Given that the double 'array' exists on all processes, and each process has stored nData at the
- * beginning of this array, this function will assemble the data into a complete, continuous array (up to
- * maxData elements in the new array rootDest) on the rootProcess.
- */
+// Assemble double array on target process
 bool DUQComm::assemble(double* array, int nLocalData, double* rootDest, int rootMaxData, int rootProcess)
 {
+	/*
+	 * Given that the double 'array' exists on all processes, and each process has stored nData at the
+	 * beginning of this array, this function will assemble the data into a complete, continuous array (up to
+	 * maxData elements in the new array rootDest) on the rootProcess.
+	 */
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
@@ -1098,9 +996,7 @@ bool DUQComm::assemble(double* array, int nLocalData, double* rootDest, int root
 * Decisions
 */
 
-/*!
- * \brief Broadcast logical decision to all processes (Master only)
- */
+// Broadcast logical decision to all processes (Master only)
 void DUQComm::decide(bool decision)
 {
 #ifdef PARALLEL
@@ -1113,9 +1009,7 @@ void DUQComm::decide(bool decision)
 #endif
 }
 
-/*!
- * \brief Receive logical decision from master (Slaves only)
- */
+// Receive logical decision from master (Slaves only)
 bool DUQComm::decision()
 {
 #ifdef PARALLEL
@@ -1131,12 +1025,10 @@ bool DUQComm::decision()
 }
 
 /*
-// Buffered Random Numbers
-*/
-
-/*!
- * \brief Refill random number buffer
+ * Buffered Random Numbers
  */
+
+// Refill random number buffer
 void DUQComm::refillRandomBuffer()
 {
 #ifdef PARALLEL
@@ -1175,19 +1067,14 @@ void DUQComm::refillRandomBuffer()
 #endif
 }
 
-/*!
- * \brief Initialise random number buffer
- * \details Reinitialise the random buffer, setting the communicator to use and refilling the array with new randomness.
- */
+// Initialise random number buffer
 void DUQComm::initialiseRandomBuffer(DUQComm::CommGroup group)
 {
 	randomBufferCommGroup_ = group;
 	refillRandomBuffer();
 }
 
-/*!
- * \brief Get next buffered random number
- */
+// Get next buffered random number
 double DUQComm::random()
 {
 #ifdef PARALLEL
@@ -1199,9 +1086,7 @@ double DUQComm::random()
 #endif
 }
 
-/*!
- * \brief Get next buffered random number (-1 to +1 inclusive)
- */
+// Get next buffered random number (-1 to +1 inclusive)
 double DUQComm::randomPlusMinusOne()
 {
 #ifdef PARALLEL

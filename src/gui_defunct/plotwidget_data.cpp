@@ -22,10 +22,7 @@
 #include "gui/plotwidget.uih"
 #include "base/messenger.h"
 
-/*!
- * \brief Constructor
- * \details Constructor for PlotData
- */
+// Constructor
 PlotData::PlotData() : ListItem<PlotData>()
 {
 	externalSourceData_ = NULL;
@@ -35,19 +32,16 @@ PlotData::PlotData() : ListItem<PlotData>()
 	yDataModifier_ = PlotData::NoModifier;
 }
 
-/*!
- * \brief Destructor
- * \details Destructor for PlotData
- */
+// Destructor
 PlotData::~PlotData()
 {
 }
 
 /*
-// Plot Data
-*/
+ * Plot Data
+ */
 
-/*!
+/*
  * \brief Return modified value
  */
 double PlotData::modifiedValue(double value, PlotData::DataModifier modifier)
@@ -67,7 +61,7 @@ double PlotData::modifiedValue(double value, PlotData::DataModifier modifier)
 	}
 }
 
-/*!
+/*
  * \brief Set internal source data
  */
 void PlotData::setSourceData(Data2D& source, PlotData::DataModifier xModifier, PlotData::DataModifier yModifier)
@@ -78,7 +72,7 @@ void PlotData::setSourceData(Data2D& source, PlotData::DataModifier xModifier, P
 	yDataModifier_ = yModifier;
 }
 
-/*!
+/*
  * \brief Set source data (external CheckPoint<Data2D>)
  */
 void PlotData::setSourceData(CheckPoint< Data2D >* source, PlotData::DataModifier xModifier, PlotData::DataModifier yModifier)
@@ -88,7 +82,7 @@ void PlotData::setSourceData(CheckPoint< Data2D >* source, PlotData::DataModifie
 	yDataModifier_ = yModifier;
 }
 
-/*!
+/*
  * \brief Return external source data 
  */
 CheckPoint<Data2D>* PlotData::externalSourceData()
@@ -96,7 +90,7 @@ CheckPoint<Data2D>* PlotData::externalSourceData()
 	return externalSourceData_;
 }
 
-/*!
+/*
  * \brief (Re)Generate display list
  */
 void PlotData::generate()
@@ -141,7 +135,7 @@ void PlotData::generate()
 	if (externalSourceData_) externalSourceData_->checkIn();
 }
 
-/*!
+/*
  * \brief Set group index
  */
 void PlotData::setGroupIndex(int index)
@@ -149,7 +143,7 @@ void PlotData::setGroupIndex(int index)
 	groupIndex_ = index;
 }
 
-/*!
+/*
  * \brief Return group index
  */
 int PlotData::groupIndex()
@@ -157,7 +151,7 @@ int PlotData::groupIndex()
 	return groupIndex_;
 }
 
-/*!
+/*
  * \brief Return QPainterPath
  */
 QPainterPath& PlotData::painterPath()
@@ -165,7 +159,7 @@ QPainterPath& PlotData::painterPath()
 	return painterPath_;
 }
 
-/*!
+/*
  * \brief Set whether this data is visible
  */
 void PlotData::setVisible(bool v)
@@ -173,7 +167,7 @@ void PlotData::setVisible(bool v)
 	visible_ = v;
 }
 
-/*!
+/*
  * \brief Return whether this data is visible
  */
 bool PlotData::visible()
@@ -181,7 +175,7 @@ bool PlotData::visible()
 	return visible_;
 }
 
-/*!
+/*
  * \brief Set vertical offset to apply to data
  */
 void PlotData::setVerticalOffset(int offset)
@@ -189,7 +183,7 @@ void PlotData::setVerticalOffset(int offset)
 	verticalOffset_ = offset;
 }
 
-/*!
+/*
  * \brief Return vertical offset to apply to data
  */
 int PlotData::verticalOffset()
@@ -197,7 +191,7 @@ int PlotData::verticalOffset()
 	return verticalOffset_;
 }
 
-/*!
+/*
  * \brief Return minimum x value for data
  */
 double PlotData::xMin()
@@ -205,7 +199,7 @@ double PlotData::xMin()
 	return xMin_;
 }
 
-/*!
+/*
  * \brief Return maximum x value for data
  */
 double PlotData::xMax()
@@ -213,7 +207,7 @@ double PlotData::xMax()
 	return xMax_;
 }
 
-/*!
+/*
  * \brief Return minimum y value for data
  */
 double PlotData::yMin()
@@ -221,7 +215,7 @@ double PlotData::yMin()
 	return yMin_;
 }
 
-/*!
+/*
  * \brief Return maximum y value for data
  */
 double PlotData::yMax()
@@ -229,7 +223,7 @@ double PlotData::yMax()
 	return yMax_;
 }
 
-/*!
+/*
  * \brief Return name
  */
 QString PlotData::name()
@@ -238,10 +232,10 @@ QString PlotData::name()
 }
 
 /*
-// Style
-*/
+ * Style
+ */
 
-/*!
+/*
  * \brief Set line colour
  */
 void PlotData::setLineColour(QColor color)
@@ -249,7 +243,7 @@ void PlotData::setLineColour(QColor color)
 	lineColour_ = color;
 }
 
-/*!
+/*
  * \brief Return line colour
  */
 QColor PlotData::lineColour()
@@ -257,7 +251,7 @@ QColor PlotData::lineColour()
 	return lineColour_;
 }
 
-/*!
+/*
  * \brief Set line style
  */
 void PlotData::setLineStyle(Qt::PenStyle style)
@@ -265,7 +259,7 @@ void PlotData::setLineStyle(Qt::PenStyle style)
 	lineStyle_ = style;
 }
 
-/*!
+/*
  * \brief Return line style
  */
 Qt::PenStyle PlotData::lineStyle()

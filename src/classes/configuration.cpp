@@ -29,27 +29,20 @@
 // RDFMethod keywords
 const char* RDFMethodKeywords[] = { "Simple" };
 
-/*!
- * \brief Convert text string to RDFMethod
- */
+// Convert text string to RDFMethod
 Configuration::RDFMethod Configuration::rdfMethod(const char* s)
 {
 	for (int n=0; n<Configuration::nRDFMethods; ++n) if (strcmp(s,RDFMethodKeywords[n]) == 0) return (Configuration::RDFMethod) n;
 	return Configuration::nRDFMethods;
 }
 
-/*!
- * \brief Convert RDFMethod to text string
- */
+// Convert RDFMethod to text string
 const char* Configuration::rdfMethod(Configuration::RDFMethod rm)
 {
 	return RDFMethodKeywords[rm];
 }
 
-/*!
- * \brief Constructor
- * \details Constructor for Configuration. 
- */
+// Constructor
 Configuration::Configuration() : ListItem<Configuration>()
 {
 	// Contents
@@ -91,18 +84,13 @@ Configuration::Configuration() : ListItem<Configuration>()
 	braggBroadening_ = 0.0063;
 }
 
-/*!
- * \brief Destructor
- * \details Destructor for Configuration. 
- */
+// Destructor
 Configuration::~Configuration()
 {
 	clear();
 }
 
-/*!
- * \brief Assignment operator
- */
+// Assignment operator
 void Configuration::operator=(Configuration &source)
 {
 	msg.error("XXX CONFIGURATION COPY (via ASSIGNMENT OPERATOR) IS NOT YET IMPLEMENTED.\n");
@@ -218,9 +206,7 @@ void Configuration::operator=(Configuration &source)
 // 	return;
 }
 
-/*!
- * \brief Clear data
- */
+// Clear data
 void Configuration::clear()
 {
 	molecules_.clear();
@@ -421,9 +407,7 @@ bool Configuration::setup(const List<AtomType>& atomTypes, double pairPotentialR
  * Parallel Comms
  */
 
-/*!
- * \brief Broadcast coordinates
- */
+// Broadcast coordinates
 bool Configuration::broadcastCoordinates()
 {
 #ifdef PARALLEL

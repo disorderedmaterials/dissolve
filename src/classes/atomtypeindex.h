@@ -46,10 +46,9 @@ class AtomTypeIndex
 	void operator=(const AtomTypeIndex& source);
 
 
-	/*!
-	 * \name Type List
+	/*
+	 * Type List
 	 */
-	///@{
 	private:
 	// List of AtomTypeData
 	List<AtomTypeData> types_;
@@ -65,13 +64,11 @@ class AtomTypeIndex
 	AtomTypeData* first() const;
 	// Print AtomType populations
 	void print();
-	///@}
 
 
-	/*!
-	 * \name Access
+	/*
+	 * Access
 	 */
-	///@{
 	public:
 	// Return index of AtomType/Isotope in list
 	int indexOf(AtomType* atomtype) const;
@@ -83,7 +80,6 @@ class AtomTypeIndex
 	AtomType* atomType(int n);
 	// Array access operator
 	AtomTypeData* operator[](int n);
-	///@}
 };
 
 #endif

@@ -268,8 +268,8 @@ void MainWindow::refreshSpeciesTab(bool listGroup, bool atomTypesGroup, bool vie
 }
 
 /*
-// General Functions
-*/
+ * General Functions
+ */
 
 // Return current selected Species, if any
 Species* MainWindow::selectedSpecies()
@@ -327,8 +327,8 @@ AtomType* MainWindow::selectedAtomType()
 }
 
 /*
-// Species Group
-*/
+ * Species Group
+ */
 
 // Different Species selected in list
 void MainWindow::on_DefinedSpeciesList_currentRowChanged(int row)
@@ -404,8 +404,8 @@ void MainWindow::on_SaveSpeciesButton_clicked(bool checked)
 }
 
 /*
-// Species Viewer
-*/
+ * Species Viewer
+ */
 
 // Add Bond from current Atom selection
 void MainWindow::on_AddBondFromSelectionButton_clicked(bool checked)
@@ -492,8 +492,8 @@ void MainWindow::on_ViewIndexCheck_clicked(bool checked)
 }
 
 /*
-// Atom Types Group
-*/
+ * Atom Types Group
+ */
 
 // Combo slot
 void MainWindow::atomTypeParametersChanged(int index)
@@ -602,8 +602,8 @@ void MainWindow::on_RemoveAtomTypeButton_clicked(bool checked)
 }
 
 /*
-// Grains Group
-*/
+ * Grains Group
+ */
 
 // Different grain selected in table
 void MainWindow::on_GrainsTable_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)
@@ -680,8 +680,8 @@ void MainWindow::on_AutoGrainButton_clicked(bool checked)
 }
 
 /*
-// Isotopologues Group
-*/
+ * Isotopologues Group
+ */
 
 // Determine Isotopologue and AtomType from QVariant data
 bool MainWindow::getIsotopologueAndAtomType(QStringList data, Isotopologue*& iso, AtomType*& at)

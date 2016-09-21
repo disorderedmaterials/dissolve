@@ -29,23 +29,6 @@
 // Singleton
 Messenger msg;
 
-/*
- * Messaging Output Handler
- */
-
-/*!
- * \brief Master print routine
- * \details Basic text output handler
- */
-void OutputHandler::printText(char* text)
-{
-	printf("%s", text);
-}
-
-/*
- * Messenger
- */
-
 // Constructor
 Messenger::Messenger()
 {
@@ -54,9 +37,6 @@ Messenger::Messenger()
 	verbose_ = false;
 	redirect_ = false;
 	masterOnly_ = false;
-
-	// Set basicOutputHandler_ as default target
-	targetOutputHandler_ = &basicOutputHandler_;
 }
 
 // Set status of quiet mode
@@ -75,12 +55,6 @@ void Messenger::setVerbose(bool b)
 void Messenger::setMasterOnly(bool b)
 {
 	masterOnly_ = b;
-}
-
-// Set target OutputHandler
-void Messenger::setTargetOutputHandler(OutputHandler* handler)
-{
-	targetOutputHandler_ = handler;
 }
 
 // Master text creation / formatting routine
@@ -107,7 +81,7 @@ void Messenger::createAndPrintText(const char* indentText, const char* format, v
 	// Print the text
 	if (masterOnly_ && Comm.slave()) return;
 	if (redirect_) parser_.writeLineF("%s", text_);
-	else targetOutputHandler_->printText(text_);
+	else printf("%s", text_);
 }
 
 // Print standard message
@@ -151,14 +125,10 @@ void Messenger::warn(const char* fmt, ...)
 }
 
 /*
-// File Redirection
-*/
-
-/*!
- * \brief Enable redirection of all messaging to specified file
- * \details If called with a valid fileName, all calls to Messenger::print() and Messenger::printVerbose() will be redirected
- * to the file rather than printed to stdout. This is useful for separating the output of parallel processes.
+ * File Redirection
  */
+
+// Enable redirection of all messaging to specified file
 bool Messenger::enableRedirect(const char* fileName)
 {
 	parser_.openOutput(fileName, true);

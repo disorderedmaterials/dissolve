@@ -33,10 +33,10 @@ class Species;
 class SpeciesGrain;
 
 /** \addtogroup GUI
- *  @{
+ * @{
  */
 
-/*!
+/*
  * \brief Species DockWidget
  * \details TODO
  */

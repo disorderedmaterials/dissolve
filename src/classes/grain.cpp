@@ -25,10 +25,7 @@
 #include "classes/cell.h"
 #include "classes/potentialmap.h"
 
-/*!
- * \brief Constructor
- * \details Constructor for Grain. 
- */
+// Constructor
 Grain::Grain()
 {
 	atoms_ = NULL;
@@ -40,18 +37,13 @@ Grain::Grain()
 	source_ = NULL;
 }
 
-/*!
- * \brief Destructor
- * \details Destructor for Grain. 
- */
+// Destructor
 Grain::~Grain()
 {
 	clear();
 }
 
-/*!
- * \brief Clear all data
- */
+// Clear all data
 void Grain::clear()
 {
 	if (atoms_ != NULL) delete[] atoms_;
@@ -62,10 +54,10 @@ void Grain::clear()
 }
 
 /*
-// Atoms
-*/
+ * Atoms
+ */
 
-/*!
+/*
  * \brief Initialise
  * \details Initialise the Grain structure based on the GrainDefinition supplied. The resulting Grain will have enough
  * storage to reference the number of Atoms contained in the original GrainDefinition.
@@ -93,33 +85,25 @@ bool Grain::initialise(SpeciesGrain* sg)
 	return true;
 }
 
-/*!
- * \brief Set parent Molecule
- */
+// Set parent Molecule
 void Grain::setParent(Molecule* mol)
 {
 	parent_ = mol;
 }
 
-/*!
- * \brief Return parent Molecule
- */
+// Return parent Molecule
 Molecule* Grain::parent() const
 {
 	return parent_;
 }
 
-/*!
- * \brief Return source SpeciesGrain
- */
+// Return source SpeciesGrain
 const SpeciesGrain* Grain::source() const
 {
 	return source_;
 }
 
-/*!
- * \brief Add atom pointer pointer to list
- */
+// Add atom pointer pointer to list
 bool Grain::addAtom(Atom* i)
 {
 #ifdef CHECKS
@@ -149,25 +133,19 @@ bool Grain::addAtom(Atom* i)
 	return true;
 }
 
-/*!
- * \brief Return number of Atoms in Grain
- */
+// Return number of Atoms in Grain
 int Grain::nAtoms() const
 {
 	return nAtoms_;
 }
 
-/*!
- * \brief Return atoms array
- */
+// Return atoms array
 Atom** Grain::atoms() const
 {
 	return atoms_;
 }
 
-/*!
- * \brief Return nth Atom in Grain
- */
+// Return nth Atom in Grain
 Atom* Grain::atom(int n) const
 {
 #ifdef CHECKS
@@ -186,9 +164,7 @@ Atom* Grain::atom(int n) const
 	return atoms_[n];
 }
 
-/*!
- * \brief Set index of Grain
- */
+// Set index of Grain
 void Grain::setIndex(int index)
 {
 #ifdef CHECKS
@@ -201,9 +177,7 @@ void Grain::setIndex(int index)
 	index_ = index;
 }
 
-/*!
- * \brief Return index of Grain
- */
+// Return index of Grain
 int Grain::index() const
 {
 	return index_;
@@ -213,10 +187,7 @@ int Grain::index() const
  * Coordinates / Manipulation
  */
 
-/*!
- * \brief Adjust centre
- * \details Update the centre of geometry of the Grain, following the shift of a single Atom by amount given
- */
+// Adjust centre
 void Grain::updateCentre(const Vec3<double>& atomDeltaR)
 {
 	// Multiply old coordinates by nAtoms_ and add deltaR
@@ -224,17 +195,13 @@ void Grain::updateCentre(const Vec3<double>& atomDeltaR)
 	centre_ = newCentre / nAtoms_;
 }
 
-/*!
- * \brief Return centre of geometry of Grain
- */
+// Return centre of geometry of Grain
 const Vec3<double>& Grain::centre() const
 {
 	return centre_;
 }
 
-/*!
- * \brief Set Cell location
- */
+// Set Cell location
 void Grain::setCell(Cell* cell, int index)
 {
 #ifdef CHECKS
@@ -254,9 +221,7 @@ void Grain::setCell(Cell* cell, int index)
 	localIndex_ = index;
 }
 
-/*!
- * \brief Remove Grain from its current Cell
- */
+// Remove Grain from its current Cell
 void Grain::removeFromCell(Cell* caller)
 {
 #ifdef CHECKS
@@ -271,15 +236,13 @@ void Grain::removeFromCell(Cell* caller)
 	localIndex_ = -1;
 }
 
-/*!
- * \brief Return Cell location
- */
+// Return Cell location
 Cell* Grain::cell() const
 {
 	return cell_;
 }
 
-/*!
+/*
  * \brief Return local index of Grain in Cell's list
  */
 int Grain::cellListIndex() const
@@ -287,9 +250,7 @@ int Grain::cellListIndex() const
 	return localIndex_;
 }
 
-/*!
- * \brief Move Grain centre
- */
+// Move Grain centre
 void Grain::moveTo(const Vec3<double>& target)
 {
 	Vec3<double> delta = target - centre_;
@@ -297,9 +258,7 @@ void Grain::moveTo(const Vec3<double>& target)
 	centre_ = target;
 }
 
-/*!
- * \brief Translate Grain centre
- */
+// Translate Grain centre
 void Grain::translate(const Vec3<double>& delta)
 {
 	for (int n=0; n<nAtoms_; ++n) atom(n)->translateCoordinatesNasty(delta);

@@ -27,7 +27,7 @@
 #include <QtGui/QListWidget>
 #include <QtGui/QVBoxLayout>
 
-/*!
+/*
  * \brief Qt Pointer Dialog Class
  * \details This class can be used to easily set-up a list of pointers and associated display strings, display them, and return
  * the pointer of the selected item (unless cancelled).
@@ -43,8 +43,8 @@ template <class A> class PointerDialog : public QObject
 	~PointerDialog();
 
 
-	/*!
-	 * \name Data
+	/*
+	 * Data
 	 */
 	///@{
 	private:
@@ -65,15 +65,15 @@ template <class A> class PointerDialog : public QObject
 	int nItems();
 
 
-	/*!
-	 * \name Execution
+	/*
+	 * Execution
 	 */
 	public:
 	// Show dialog
 	A* execute(A* defaultItem = NULL);
 };
 
-/*!
+/*
  * \brief Constructor
  * \details Constructor for PointerDialog. 
  */
@@ -82,7 +82,7 @@ template <class A> PointerDialog<A>::PointerDialog(const char* title)
 	title_ = title;
 }
 
-/*!
+/*
  * \brief Destructor
  * \details Destructor for PointerDialog. 
  */
@@ -90,7 +90,7 @@ template <class A> PointerDialog<A>::~PointerDialog()
 {
 }
 
-/*!
+/*
  * \brief Add item to list
  */
 template <class A> void PointerDialog<A>::addItem(A* pointer, const char* text)
@@ -98,7 +98,7 @@ template <class A> void PointerDialog<A>::addItem(A* pointer, const char* text)
 	items_.add(pointer, text);
 }
 
-/*!
+/*
  * \brief Return number of items in the list
  */
 template <class A> int PointerDialog<A>::nItems()
@@ -106,7 +106,7 @@ template <class A> int PointerDialog<A>::nItems()
 	return items_.nItems();
 }
 
-/*!
+/*
  * \brief List Widget double-clicked
  */
 template <class A> void PointerDialog<A>::listWidgetDoubleClicked(QListWidgetItem* item)
@@ -115,7 +115,7 @@ template <class A> void PointerDialog<A>::listWidgetDoubleClicked(QListWidgetIte
 	dialog_.accept();
 }
 
-/*!
+/*
  * \brief Show dialog
  */
 template <class A> A* PointerDialog<A>::execute(A* defaultItem)

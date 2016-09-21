@@ -23,10 +23,7 @@
 #include "classes/species.h"
 #include "base/comms.h"
 
-/*!
- * \brief Constructor
- * \details Constructor for Angle. 
- */
+// Constructor
 SpeciesAngle::SpeciesAngle() : ListItem<SpeciesAngle>()
 {
 	parent_ = NULL;
@@ -43,10 +40,7 @@ SpeciesAngle::SpeciesAngle() : ListItem<SpeciesAngle>()
 	forceConstant_ = 418.4;
 }
 
-/*!
- * \brief Destructor
- * \details Constructor for Angle. 
- */
+// Destructor
 SpeciesAngle::~SpeciesAngle()
 {
 	for (int n=0; n<2; ++n)
@@ -60,32 +54,26 @@ SpeciesAngle::~SpeciesAngle()
 }
 
 /*
-// Basic Data
-*/
-
-/*!
- * \brief Set parent Species
+ * Basic Data
  */
+
+// Set parent Species
 void SpeciesAngle::setParent(Species* parent)
 {
 	parent_ = parent;
 }
 
-/*!
- * \brief Return parent Species
- */
+// Return parent Species
 Species *SpeciesAngle::parent() const
 {
 	return parent_;
 }
 
 /*
-// Atom Information
-*/
-
-/*!
- * \brief Set Atoms involved in Angle
+ * Atom Information
  */
+
+// Set Atoms involved in Angle
 void SpeciesAngle::setAtoms(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k)
 {
 	i_ = i;
@@ -98,33 +86,25 @@ void SpeciesAngle::setAtoms(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k)
 #endif
 }
 
-/*!
- * \brief Return first SpeciesAtom involved in Angle
- */
+// Return first SpeciesAtom involved in Angle
 SpeciesAtom *SpeciesAngle::i() const
 {
 	return i_;
 }
 
-/*!
- * \brief Return second (central) SpeciesAtom involved in Angle
- */
+// Return second (central) SpeciesAtom involved in Angle
 SpeciesAtom *SpeciesAngle::j() const
 {
 	return j_;
 }
 
-/*!
- * \brief Return third SpeciesAtom involved in Angle
- */
+// Return third SpeciesAtom involved in Angle
 SpeciesAtom *SpeciesAngle::k() const
 {
 	return k_;
 }
 
-/*!
- * \brief Return index (in parent Species) of first SpeciesAtom
- */
+// Return index (in parent Species) of first SpeciesAtom
 int SpeciesAngle::indexI() const
 {
 #ifdef CHECKS
@@ -137,9 +117,7 @@ int SpeciesAngle::indexI() const
 	return i_->index();
 }
 
-/*!
- * \brief Return index (in parent Species) of second (central) SpeciesAtom
- */
+// Return index (in parent Species) of second (central) SpeciesAtom
 int SpeciesAngle::indexJ() const
 {
 #ifdef CHECKS
@@ -152,9 +130,7 @@ int SpeciesAngle::indexJ() const
 	return j_->index();
 }
 
-/*!
- * \brief Return index (in parent Species) of third SpeciesAtom
- */
+// Return index (in parent Species) of third SpeciesAtom
 int SpeciesAngle::indexK() const
 {
 #ifdef CHECKS
@@ -167,9 +143,7 @@ int SpeciesAngle::indexK() const
 	return k_->index();
 }
 
-/*!
- * \brief Return whether Atoms in Angle match those specified
- */
+// Return whether Atoms in Angle match those specified
 bool SpeciesAngle::matches(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const
 {
 	if (j_ != j) return false;
@@ -179,45 +153,34 @@ bool SpeciesAngle::matches(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const
 }
 
 /*
-// Interaction Parameters
-*/
-
-/*!
- * \brief Set equilibrium angle
+ * Interaction Parameters
  */
+
+// Set equilibrium angle
 void SpeciesAngle::setEquilibrium(double rEq)
 {
 	equilibrium_ = rEq;
 }
 
-/*!
- * \brief Return equilibrium angle
- */
+// Return equilibrium angle
 double SpeciesAngle::equilibrium() const
 {
 	return equilibrium_;
 }
 
-/*!
- * \brief Set force constant
- */
+// Set force constant
 void SpeciesAngle::setForceConstant(double k)
 {
 	forceConstant_ = k;
 }
 
-/*!
- * \brief Return force constant
- */
+// Return force constant
 double SpeciesAngle::forceConstant() const
 {
 	return forceConstant_;
 }
 
-/*!
- * \brief Create attached Atom array
- * \details Creates and NULLifies the attached atom array for the terminus specified.
- */
+// Create attached Atom array
 void SpeciesAngle::createAttachedAtomArrays(int terminus, int size)
 {
 	if (attachedAtoms_[terminus] != NULL) delete[] attachedAtoms_[terminus];
@@ -238,9 +201,7 @@ void SpeciesAngle::createAttachedAtomArrays(int terminus, int size)
 	}
 }
 
-/*!
- * \brief Set attached Atoms for terminus specified
- */
+// Set attached Atoms for terminus specified
 void SpeciesAngle::setAttachedAtoms(int terminus, const RefList<SpeciesAtom,int>& atoms)
 {
 	createAttachedAtomArrays(terminus, atoms.nItems());
@@ -258,58 +219,44 @@ void SpeciesAngle::setAttachedAtoms(int terminus, const RefList<SpeciesAtom,int>
 	msg.print("%s\n", s.get());
 }
 
-/*!
- * \brief Return number of attached Atoms for terminus specified
- */
+// Return number of attached Atoms for terminus specified
 int SpeciesAngle::nAttached(int terminus) const
 {
 	return nAttached_[terminus];
 }
 
-/*!
- * \brief Return array of attached Atoms for terminus specified
- */
+// Return array of attached Atoms for terminus specified
 SpeciesAtom** SpeciesAngle::attachedAtoms(int terminus) const
 {
 	return attachedAtoms_[terminus];
 }
 
-/*!
- * \brief Return array of attached indices for terminus specified
- */
+// Return array of attached indices for terminus specified
 int* SpeciesAngle::attachedIndices(int terminus) const
 {
 	return attachedAtomIndices_[terminus];
 }
 
-/*!
- * \brief Set whether this Angle is interGrain
- */
+// Set whether this Angle is interGrain
 void SpeciesAngle::setInterGrain(bool b)
 {
 	interGrain_ = b;
 }
 
-/*!
- * \brief Return whether this Angle is interGrain
- */
+// Return whether this Angle is interGrain
 bool SpeciesAngle::interGrain() const
 {
 	return interGrain_;
 }
 
-/*!
- * \brief Return energy for specified angle
- */
+// Return energy for specified angle
 double SpeciesAngle::energy(double angleInDegrees) const
 {
 	double delta = (angleInDegrees - equilibrium_)/DEGRAD;
 	return 0.5*forceConstant_*delta*delta;
 }
 
-/*!
- * \brief Return force multiplier for specified angle
- */
+// Return force multiplier for specified angle
 double SpeciesAngle::force(double angleInDegrees) const
 {
 	// Set initial derivative of angle w.r.t. cos(angle)
@@ -322,12 +269,10 @@ double SpeciesAngle::force(double angleInDegrees) const
 }
 
 /*
-// Parallel Comms
-*/
-
-/*!
- * \brief Broadcast data from Master to all Slaves
+ * Parallel Comms
  */
+
+// Broadcast data from Master to all Slaves
 bool SpeciesAngle::broadcast(const List<SpeciesAtom>& atoms)
 {
 #ifdef PARALLEL

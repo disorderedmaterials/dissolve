@@ -115,7 +115,7 @@ void ConfigViewer::setupGL()
 // 	glEnable(GL_CULL_FACE);
 }
 
-/*!
+/*
  * \brief Draw scene
  */
 void ConfigViewer::drawScene()
@@ -222,7 +222,7 @@ void ConfigViewer::drawScene()
 	}
 }
 
-/*!
+/*
  * \brief Set source (Configuration)
  */
 void ConfigViewer::setSource(Configuration* cfg)
@@ -230,7 +230,7 @@ void ConfigViewer::setSource(Configuration* cfg)
 	sourceConfiguration_ = cfg;
 }
 
-/*!
+/*
  * \brief Set draw style
  */
 void ConfigViewer::setDrawStyle(ConfigViewer::DrawStyle style)
@@ -239,7 +239,7 @@ void ConfigViewer::setDrawStyle(ConfigViewer::DrawStyle style)
 	update();
 }
 
-/*!
+/*
  * \brief Change draw style
  */
 void ConfigViewer::changeDrawStyle(int style)

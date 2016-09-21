@@ -115,7 +115,7 @@ void SpeciesViewer::setupGL()
 // 	glEnable(GL_CULL_FACE);
 }
 
-/*!
+/*
  * \brief Draw scene
  */
 void SpeciesViewer::drawScene()
@@ -210,7 +210,7 @@ void SpeciesViewer::drawScene()
 	}
 }
 
-/*!
+/*
  * \brief Set source (Species)
  */
 void SpeciesViewer::setSource(Species *sp)
@@ -218,7 +218,7 @@ void SpeciesViewer::setSource(Species *sp)
 	sourceSpecies_ = sp;
 }
 
-/*!
+/*
  * \brief Set draw style
  */
 void SpeciesViewer::setDrawStyle(SpeciesViewer::DrawStyle style)
@@ -227,7 +227,7 @@ void SpeciesViewer::setDrawStyle(SpeciesViewer::DrawStyle style)
 	update();
 }
 
-/*!
+/*
  * \brief Change draw style
  */
 void SpeciesViewer::changeDrawStyle(int style)

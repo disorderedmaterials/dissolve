@@ -31,10 +31,7 @@
 #include "version.h"
 #include <string.h>
 
-/*!
- * \brief Constructor
- * \details Constructor for dUQ. 
- */
+// Constructor
 DUQ::DUQ()
 {
 	// PairPotentials
@@ -56,10 +53,7 @@ DUQ::DUQ()
 	simplexParameterOffset_ = 100.0;
 }
 
-/*!
- * \brief Destructor
- * \details Destructor for dUQ. 
- */
+// Destructor
 DUQ::~DUQ()
 {
 	clear();
@@ -69,9 +63,7 @@ DUQ::~DUQ()
  * Data
  */
 
-/*!
- * \brief Clear all data
- */
+// Clear all data
 void DUQ::clear()
 {
 	configurations_.clear();

@@ -26,33 +26,25 @@
 
 #include <QtCore/QMutex>
 
-/*!
- * \brief Constructor (GUI version)
- */
+// Constructor (GUI version)
 dUQMutex::dUQMutex()
 {
 	mutex_ = new QMutex();
 }
 
-/*!
- * \brief Destructor (GUI version)
- */
+// Destructor (GUI version)
 dUQMutex::~dUQMutex()
 {
 	delete mutex_;
 }
 
-/*!
- * \brief Lock mutex
- */
+// Lock mutex
 void dUQMutex::lock()
 {
 	mutex_->lock();
 }
 
-/*!
- * \brief Unlock mutex
- */
+// Unlock mutex
 void dUQMutex::unlock()
 {
 	mutex_->unlock();
@@ -60,30 +52,22 @@ void dUQMutex::unlock()
 
 #else
 
-/*!
- * \brief Constructor (non-GUI version)
- */
+// Constructor (non-GUI version)
 dUQMutex::dUQMutex()
 {
 }
 
-/*!
- * \brief Destructor (GUI version)
- */
+// Destructor (GUI version)
 dUQMutex::~dUQMutex()
 {
 }
 
-/*!
- * \brief Lock mutex
- */
+// Lock mutex
 void dUQMutex::lock()
 {
 }
 
-/*!
- * \brief Unlock mutex
- */
+// Unlock mutex
 void dUQMutex::unlock()
 {
 }

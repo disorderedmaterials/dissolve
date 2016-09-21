@@ -25,10 +25,7 @@
 #include "math/constants.h"
 #include <math.h>
 
-/*!
- * \brief Constructor
- * \details Constructor for Histogram. 
- */
+// Constructor
 Histogram::Histogram() : ListItem<Histogram>()
 {
 	nBins_ = 0;
@@ -40,44 +37,33 @@ Histogram::Histogram() : ListItem<Histogram>()
 	normalisationType_ = Histogram::NoNormalisation;
 }
 
-/*!
- * \brief Destructor
- * \details Destructor for Histogram. 
- */
+// Destructor
 Histogram::~Histogram()
 {
 	clear();
 }
 
-/*!
- * \brief Copy Constructor
- */
+// Copy Constructor
 Histogram::Histogram(const Histogram& source)
 {
 	histogram_ = NULL;
 	copy(source);
 }
 
-/*!
- * \brief Assignment Operator
- */
+// Assignment Operator
 void Histogram::operator=(const Histogram& source)
 {
 	copy(source);
 }
 
-/*!
- * \brief Clear data
- */
+// Clear data
 void Histogram::clear()
 {
 	if (histogram_ != NULL) delete[] histogram_;
 	histogram_ = NULL;
 }
 
-/*!
- * \brief Copy data
- */
+// Copy data
 void Histogram::copy(const Histogram& source)
 {
 	clear();
@@ -94,10 +80,10 @@ void Histogram::copy(const Histogram& source)
 }
 
 /*
-// Data
-*/
+ * Data
+ */
 
-/*!
+/*
  * \brief Initialise arrays
  * \details Initialise all values and arrays, ready for histogram calculation. Note that the normalisationType_ is reset to NoNormalisation by
  * this routine, and so the correct normalisation type must be set manually afterwards.
@@ -130,17 +116,13 @@ void Histogram::initialise(double minValue, double maxValue, double binWidth)
 	for (int n=0; n<nBins_; ++n) normalisedData_.setX(n, (n+0.5)*delta_);
 }
 
-/*!
- * \brief Set relative normalisation
- */
+// Set relative normalisation
 void Histogram::setRelativeNormalisation()
 {
 	normalisationType_ = Histogram::RelativeNormalisation;
 }
 
-/*!
- * \brief Set radial number density normalisation
- */
+// Set radial number density normalisation
 void Histogram::setRadialNumberDensityNormalisation(double boxVolume, int nCentres, int nSurrounding, double factor, Data2D& boxNormalisation)
 {
 	normalisationType_ = Histogram::RadialNumberDensityNormalisation;
@@ -154,33 +136,25 @@ void Histogram::setRadialNumberDensityNormalisation(double boxVolume, int nCentr
 	}
 }
 
-/*!
- * \brief Return number of bins
- */
+// Return number of bins
 int Histogram::nBins() const
 {
 	return nBins_;
 }
 
-/*!
- * \brief Return histogram data
- */
+// Return histogram data
 int* Histogram::histogram()
 {
 	return histogram_;
 }
 
-/*!
- * \brief Return normalised data
- */
+// Return normalised data
 Data2D& Histogram::normalisedData()
 {
 	return normalisedData_;
 }
 
-/*!
- * \brief Add source histogram data into local array
- */
+// Add source histogram data into local array
 void Histogram::addHistogramData(Histogram& otherHistogram, int factor)
 {
 	if (nBins_ != otherHistogram.nBins_)
@@ -192,12 +166,10 @@ void Histogram::addHistogramData(Histogram& otherHistogram, int factor)
 }
 
 /*
-// Calculation
-*/
-
-/*!
- * \brief Reset arrays ready for new calculation
+ * Calculation
  */
+
+// Reset arrays ready for new calculation
 void Histogram::reset()
 {
 	for (int n=0; n<nBins_; ++n)
@@ -209,9 +181,7 @@ void Histogram::reset()
 	nMissed_ = 0;
 }
 
-/*!
- * \brief Add distance specified to histogram
- */
+// Add distance specified to histogram
 void Histogram::add(double x)
 {
 	int bin = x * rDelta_ - binOffset_;
@@ -230,9 +200,7 @@ void Histogram::add(double x)
 	else ++nMissed_;
 }
 
-/*!
- * \brief Merge histogram data with other RDF
- */
+// Merge histogram data with other RDF
 void Histogram::merge(Histogram& otherHistogram)
 {
 	if (nBins_ != otherHistogram.nBins_)
@@ -247,7 +215,7 @@ void Histogram::merge(Histogram& otherHistogram)
 	}
 }
 
-/*!
+/*
  * \brief Finalise data
  * \details Finalise the data by normalising according to the previously-selected method, creating the normalisedData_ array 
  * in the process. If not called, the normalisedData_ array will contain either garbage or old data.
@@ -271,12 +239,10 @@ void Histogram::finalise()
 }
 
 /*
-// Parallel Comms
-*/
-
-/*!
- * \brief Sum histogram data onto all processes
+ * Parallel Comms
  */
+
+// Sum histogram data onto all processes
 bool Histogram::allSum()
 {
 	if (!Comm.allSum(histogram_, nBins_)) return false;

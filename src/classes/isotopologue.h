@@ -42,10 +42,9 @@ class Isotopologue : public ListItem<Isotopologue>
 	~Isotopologue();
 
 
-	/*!
-	 * \name Basic Information
+	/*
+	 * Basic Information
 	 */
-	///@{
 	private:
 	// Parent Species
 	Species* parent_;
@@ -61,13 +60,11 @@ class Isotopologue : public ListItem<Isotopologue>
 	void setName(const char* name);
 	// Return name of Isotopologue
 	const char* name() const;
-	///@}
 	
 	
-	/*!
-	 * \name Isotope Definition
+	/*
+	 * Isotope Definition
 	 */
-	///@{
 	private:
 	// List of AtomType references and their assigned Isotopes
 	RefList<AtomType,Isotope*> isotopes_;
@@ -83,17 +80,14 @@ class Isotopologue : public ListItem<Isotopologue>
 	RefListItem<AtomType,Isotope*>* isotopes() const;
 	// Return nth Atom/Isotope pair
 	RefListItem<AtomType,Isotope*>* isotope(int n);
-	///@}
 
 
-	/*!
-	 * \name Parallel Comms
+	/*
+	 * Parallel Comms
 	 */
-	///@{
 	public:
 	// Broadcast data from Master to all Slaves
 	bool broadcast(const List<AtomType>& atomTypes);
-	///@}
 };
 
 #endif

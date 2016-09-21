@@ -22,10 +22,7 @@
 #include "classes/kvector.h"
 #include "braggpeak.h"
 
-/*!
- * \brief Constructor
- * \details Constructor for KVector. 
- */
+// Constructor
 KVector::KVector(int h, int k, int l, BraggPeak* bp, int nAtomTypes)
 {
 	hkl_.set(h, k, l);
@@ -39,23 +36,18 @@ KVector::KVector(int h, int k, int l, BraggPeak* bp, int nAtomTypes)
 	next = NULL;
 }
 
-/*!
- * \brief Destructor
- * \details Destructor for KVector. 
- */
+// Destructor
 KVector::~KVector()
 {
 }
 
-/*!
- * \brief Copy constructor
- */
+// Copy constructor
 KVector::KVector(const KVector& source)
 {
 	(*this) = source;
 }
 
-/*!
+/*
  * \brief Operator=
  */
 void KVector::operator=(const KVector& source)
@@ -67,18 +59,16 @@ void KVector::operator=(const KVector& source)
 }
 
 /*
-// KVector Data
-*/
-
-/*!
- * \brief Return integer hkl indices
+ * KVector Data
  */
+
+// Return integer hkl indices
 const Vec3<int>& KVector::hkl() const
 {
 	return hkl_;
 }
 
-/*!
+/*
  *\brief Return h index
  */
 const int KVector::h() const
@@ -86,31 +76,25 @@ const int KVector::h() const
 	return hkl_.x;
 }
 
-/*!
- * \brief Return k index
- */
+// Return k index
 const int KVector::k() const
 {
 	return hkl_.y;
 }
 
-/*!
- * \brief Return l index
- */
+// Return l index
 const int KVector::l() const
 {
 	return hkl_.z;
 }
 
-/*!
- * \brief Return associated BraggPeak
- */
+// Return associated BraggPeak
 const BraggPeak* KVector::braggPeak() const
 {
 	return braggPeak_;
 }
 
-/*!
+/*
  * \brief Zero cos/sin term arrays
  */
 void KVector::zeroCosSinTerms()
@@ -119,9 +103,7 @@ void KVector::zeroCosSinTerms()
 	sinTerms_ = 0.0;
 }
 
-/*!
- * \brief Add value to cosTerm index specified
- */
+// Add value to cosTerm index specified
 void KVector::addCosTerm(int atomTypeIndex, double value)
 {
 #ifdef CHECKS
@@ -134,9 +116,7 @@ void KVector::addCosTerm(int atomTypeIndex, double value)
 	cosTerms_[atomTypeIndex] += value;
 }
 
-/*!
- * \brief Add value to sinTerm index specified
- */
+// Add value to sinTerm index specified
 void KVector::addSinTerm(int atomTypeIndex, double value)
 {
 #ifdef CHECKS
@@ -149,10 +129,7 @@ void KVector::addSinTerm(int atomTypeIndex, double value)
 	sinTerms_[atomTypeIndex] += value;
 }
 
-/*!
- * \brief Calculate intensities from stored cos and sin term arrays
- * \details Calculate the intensities, per atom type pair, from the accumulated cos and sin arrays, and sum the results into the associated BraggPeak.
- */
+// Calculate intensities from stored cos and sin term arrays
 void KVector::calculateIntensities()
 {
 #ifdef CHECKS
@@ -181,9 +158,7 @@ void KVector::calculateIntensities()
 	msg.print("\n");
 }
 
-/*!
- * \brief Return specified intensity
- */
+// Return specified intensity
 double KVector::intensity(int typeI, int typeJ)
 {
 	return (cosTerms_[typeI]*cosTerms_[typeJ] + sinTerms_[typeI]*sinTerms_[typeJ]) * (hkl_.x == 0 ? 1 : 2);

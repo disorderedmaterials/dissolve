@@ -24,10 +24,7 @@
 #include "classes/speciesbond.h"
 #include "base/comms.h"
 
-/*!
- * \brief Constructor
- * \details Constructor for SpeciesAtom. 
- */
+// Constructor
 SpeciesAtom::SpeciesAtom()
 {
 	element_ = 0;
@@ -38,67 +35,50 @@ SpeciesAtom::SpeciesAtom()
 	index_= -1;
 }
 
-/*!
- * \brief Destructor
- * \details Constructor for SpeciesAtom. 
- */
+// Destructor
 SpeciesAtom::~SpeciesAtom()
 {
 }
 
-/*!
- * \brief Set Species parent
- */
+// Set Species parent
 void SpeciesAtom::setParent(Species* sp)
 {
 	parent_ = sp;
 }
 
-/*!
- * \brief Return species parent
- */
+// Return species parent
 Species* SpeciesAtom::parent()
 {
 	return parent_;
 }
 
-/*!
- * \brief Set basic SpeciesAtom properties
- * \details Set the element and Cartesian coordinates of the SpeciesAtom
- */
+// Set basic SpeciesAtom properties
 void SpeciesAtom::set(int element, double rx, double ry, double rz)
 {
 	element_ = element;
 	r_.set(rx, ry, rz);
 }
 
-/*!
- * \brief Set basic SpeciesAtom properties
- * \details Set the element and Cartesian coordinates of the atom. This is an overloaded function, provided for convenience.
- */
+// Set basic SpeciesAtom properties
 void SpeciesAtom::set(int element, const Vec3<double> r)
 {
 	element_ = element;
 	r_ = r;
 }
 
-/*!
- * \brief Set atomic element
- */
+// Set atomic element
 void SpeciesAtom::setElement(int el)
 {
 	element_ = el;
 }
 
-/*!
- * \brief Return atomic element
- */
+// Return atomic element
 int SpeciesAtom::element() const
 {
 	return element_;
 }
 
-/*!
+/*
  * \brief Return coordinates
  * \details Return the current coordinates of the SpeciesAtom, be they absolute or Grain-local
  */
@@ -107,26 +87,19 @@ const Vec3<double>& SpeciesAtom::r() const
 	return r_;
 }
 
-/*!
- * \brief Set charge of SpeciesAtom
- * \details Store a charge associated to this SpeciesAtom. Such charges can then be used in the generation of suitable pair potentials.
- */
+// Set charge of SpeciesAtom
 void SpeciesAtom::setCharge(double charge)
 {
 	charge_ = charge;
 }
 
-/*!
- * \brief Return charge of SpeciesAtom
- */
+// Return charge of SpeciesAtom
 double SpeciesAtom::charge() const
 {
 	return charge_;
 }
 
-/*!
- * \brief Set AtomType of SpeciesAtom
- */
+// Set AtomType of SpeciesAtom
 void SpeciesAtom::setAtomType(AtomType* at)
 {
 	// Check elements
@@ -137,15 +110,13 @@ void SpeciesAtom::setAtomType(AtomType* at)
 	else atomType_ = at;
 }
 
-/*!
- * \brief Return SpeciesAtomType of SpeciesAtom
- */
+// Return SpeciesAtomType of SpeciesAtom
 AtomType* SpeciesAtom::atomType() const
 {
 	return atomType_;
 }
 
-/*!
+/*
  * \brief Set List index (0->[N-1])
  */
 void SpeciesAtom::setIndex(int id)
@@ -153,7 +124,7 @@ void SpeciesAtom::setIndex(int id)
 	index_ = id;
 }
 
-/*!
+/*
  * \brief Return List index (0->[N-1])
  */
 int SpeciesAtom::index() const
@@ -161,7 +132,7 @@ int SpeciesAtom::index() const
 	return index_;
 }
 
-/*!
+/*
  * \brief Return 'user' index (1->N)
  */
 int SpeciesAtom::userIndex() const
@@ -173,69 +144,53 @@ int SpeciesAtom::userIndex() const
  * Containing Grain
  */
 
-/*!
- * \brief Set grain to which this atom belongs
- */
+// Set grain to which this atom belongs
 void SpeciesAtom::setGrain(SpeciesGrain* grain)
 {
 	grain_ = grain;
 }
 
-/*!
- * \brief Return grain to which this atom belongs
- */
+// Return grain to which this atom belongs
 SpeciesGrain* SpeciesAtom::grain()
 {
 	return grain_;
 }
 
 /*
-// Bond Information
-*/
-
-/*!
- * \brief Add Bond reference
+ * Bond Information
  */
+
+// Add Bond reference
 void SpeciesAtom::addBond(SpeciesBond* b)
 {
 	bonds_.addUnique(b);
 }
 
-/*!
- * \brief Remove Bond reference
- */
+// Remove Bond reference
 void SpeciesAtom::removeBond(SpeciesBond* b)
 {
 	bonds_.remove(b);
 }
 
-/*!
- * \brief Clear all Bond references
- */
+// Clear all Bond references
 void SpeciesAtom::clearBonds()
 {
 	bonds_.clear();
 }
 
-/*!
- * \brief Return number of Bond references
- */
+// Return number of Bond references
 int SpeciesAtom::nBonds() const
 {
 	return bonds_.nItems();
 }
 
-/*!
- * \brief Return first Bond reference
- */
+// Return first Bond reference
 RefListItem<SpeciesBond,int>* SpeciesAtom::bonds()
 {
 	return bonds_.first();
 }
 
-/*!
- * \brief Return whether Bond to specified Atom exists
- */
+// Return whether Bond to specified Atom exists
 SpeciesBond* SpeciesAtom::hasBond(SpeciesAtom* j)
 {
 	for (RefListItem<SpeciesBond,int>* ri = bonds_.first(); ri != NULL; ri = ri->next) if (ri->item->partner(this) == j) return ri->item;
@@ -246,31 +201,23 @@ SpeciesBond* SpeciesAtom::hasBond(SpeciesAtom* j)
  * Coordinate Manipulation
  */
 
-/*!
- * \brief Set coordinates of atom
- * \details Set the coordinates of the atom
- */
+// Set coordinates of atom
 void SpeciesAtom::setCoordinates(const Vec3<double>& newr)
 {
 	r_ = newr;
 }
 
-/*!
- * \brief Translate coordinates of atom
- * \details Set the coordinates of the atom
- */
+// Translate coordinates of atom
 void SpeciesAtom::translateCoordinates(const Vec3<double>& delta)
 {
 	r_ += delta;
 }
 
 /*
-// Parallel Comms
-*/
-
-/*!
- * \brief Broadcast data from Master to all Slaves
+ * Parallel Comms
  */
+
+// Broadcast data from Master to all Slaves
 bool SpeciesAtom::broadcast(const List<AtomType>& atomTypes)
 {
 #ifdef PARALLEL

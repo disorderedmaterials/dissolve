@@ -24,9 +24,7 @@
 #include "base/sysfunc.h"
 #include <string.h>
 
-/*!
- * \brief Load Species from file
- */
+// Load Species from file
 bool Species::load(const char* fileName)
 {
 	// Grab extension from fileName
@@ -38,10 +36,7 @@ bool Species::load(const char* fileName)
 	return false;
 }
 
-/*!
- * \brief Load Species information from XYZ file
- * \details Load atomic data from specified XYZ file.
- */
+// Load Species information from XYZ file
 bool Species::loadFromXYZ(const char* fileName)
 {
 	msg.print("Loading XYZ data from file '%s'\n", fileName);

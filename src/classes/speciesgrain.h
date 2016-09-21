@@ -45,10 +45,9 @@ class SpeciesGrain : public ListItem<SpeciesGrain>
 	~SpeciesGrain();
 
 
-	/*!
-	 * \name Basic Character
+	/*
+	 * Basic Character
 	 */
-	///@{
 	private:
 	// Parent Species
 	Species* parent_;
@@ -64,13 +63,11 @@ class SpeciesGrain : public ListItem<SpeciesGrain>
 	void setName(const char* s);
 	// Return name of SpeciesGrain
 	const char* name() const;
-	///@}
 	
 
-	/*!
-	 * \name Atoms
+	/*
+	 * Atoms
 	 */
-	///@{
 	private:
 	// List of Atoms (in parent Species)
 	RefList<SpeciesAtom,int> atoms_;
@@ -90,17 +87,15 @@ class SpeciesGrain : public ListItem<SpeciesGrain>
 	RefListItem<SpeciesAtom,int>* atom(int n);
 	// Create name for SpeciesGrain from constituent SpeciesAtoms
 	const char* nameFromAtoms();
-	///@}
 
 
-	/*!
-	 * \name Connections
+	/*
+	 * Connections
 	 * \details Each grain maintains a list of connections it has with other grain, which arise because of intramolecular atomic terms.
 	 * In this way, once a grain has been moved the resulting effect on the intramolecular terms present in the encompassing Molecule
 	 * can be immediately evaluated, and the inter-grain energy corrected for PairPotential interactions which should not have been added
 	 * into the total inter-grain energy in the first place (because two Atoms are bound, for example).
 	 */
-	///@{
 	private:
 	// Pointers to local intra-Grain bonds
 	RefList<SpeciesBond,int> internalBonds_;
@@ -130,17 +125,14 @@ class SpeciesGrain : public ListItem<SpeciesGrain>
 	void addAngleConnection(SpeciesAngle* a);
 	// Return first angle connection
 	RefListItem<SpeciesAngle,int>* angleConnections() const;
-	///@}
 
 
-	/*!
-	 * \name Parallel Comms
+	/*
+	 * Parallel Comms
 	 */
-	///@{
 	public:
 	// Broadcast data from Master to all Slaves
 	bool broadcast(const List<SpeciesAtom>& atoms, const List<SpeciesBond>& bonds, const List<SpeciesAngle>& angles);
-	///@}
 };
 
 #endif

@@ -23,10 +23,7 @@
 #include "classes/species.h"
 #include "base/comms.h"
 
-/*!
- * \brief Constructor
- * \details Constructor for SpeciesBond. 
- */
+// Constructor
 SpeciesBond::SpeciesBond() : ListItem<SpeciesBond>()
 {
 	parent_ = NULL;
@@ -42,10 +39,7 @@ SpeciesBond::SpeciesBond() : ListItem<SpeciesBond>()
 	forceConstant_ = 4184.0;
 }
 
-/*!
- * \brief Destructor
- * \details Constructor for SpeciesBond. 
- */
+// Destructor
 SpeciesBond::~SpeciesBond()
 {
 	for (int n=0; n<2; ++n)
@@ -59,32 +53,26 @@ SpeciesBond::~SpeciesBond()
 }
 
 /*
-// Basic Data
-*/
-
-/*!
- * \brief Set parent Species
+ * Basic Data
  */
+
+// Set parent Species
 void SpeciesBond::setParent(Species* parent)
 {
 	parent_ = parent;
 }
 
-/*!
- * \brief Return parent Species
- */
+// Return parent Species
 Species *SpeciesBond::parent() const
 {
 	return parent_;
 }
 
 /*
-// SpeciesAtom Information
-*/
-
-/*!
- * \brief Set SpeciesAtoms involved in SpeciesBond
+ * SpeciesAtom Information
  */
+
+// Set SpeciesAtoms involved in SpeciesBond
 void SpeciesBond::setAtoms(SpeciesAtom* i, SpeciesAtom* j)
 {
 	i_ = i;
@@ -95,23 +83,19 @@ void SpeciesBond::setAtoms(SpeciesAtom* i, SpeciesAtom* j)
 #endif
 }
 
-/*!
- * \brief Return first SpeciesAtom involved in SpeciesBond
- */
+// Return first SpeciesAtom involved in SpeciesBond
 SpeciesAtom *SpeciesBond::i() const
 {
 	return i_;
 }
 
-/*!
- * \brief Return second SpeciesAtom involved in SpeciesBond
- */
+// Return second SpeciesAtom involved in SpeciesBond
 SpeciesAtom *SpeciesBond::j() const
 {
 	return j_;
 }
 
-/*!
+/*
  * \brief Return the 'other' SpeciesAtom in the SpeciesBond
  */
 SpeciesAtom *SpeciesBond::partner(SpeciesAtom* i) const
@@ -119,9 +103,7 @@ SpeciesAtom *SpeciesBond::partner(SpeciesAtom* i) const
 	return (i == i_ ? j_ : i_);
 }
 
-/*!
- * \brief Return index (in parent Species) of first SpeciesAtom
- */
+// Return index (in parent Species) of first SpeciesAtom
 int SpeciesBond::indexI() const
 {
 #ifdef CHECKS
@@ -134,9 +116,7 @@ int SpeciesBond::indexI() const
 	return i_->index();
 }
 
-/*!
- * \brief Return index (in parent Species) of second SpeciesAtom
- */
+// Return index (in parent Species) of second SpeciesAtom
 int SpeciesBond::indexJ() const
 {
 #ifdef CHECKS
@@ -149,9 +129,7 @@ int SpeciesBond::indexJ() const
 	return j_->index();
 }
 
-/*!
- * \brief Return whether SpeciesAtoms in Angle match those specified
- */
+// Return whether SpeciesAtoms in Angle match those specified
 bool SpeciesBond::matches(SpeciesAtom* i, SpeciesAtom* j) const
 {
 	if ((i_ == i) && (j_ == j)) return true;
@@ -160,45 +138,34 @@ bool SpeciesBond::matches(SpeciesAtom* i, SpeciesAtom* j) const
 }
 
 /*
-// Interaction Parameters
-*/
-
-/*!
- * \brief Set nominal equilibrium SpeciesBond length
+ * Interaction Parameters
  */
+
+// Set nominal equilibrium SpeciesBond length
 void SpeciesBond::setEquilibrium(double rEq)
 {
 	equilibrium_ = rEq;
 }
 
-/*!
- * \brief Return nominal equilibrium SpeciesBond length
- */
+// Return nominal equilibrium SpeciesBond length
 double SpeciesBond::equilibrium() const
 {
 	return equilibrium_;
 }
 
-/*!
- * \brief Set force constant
- */
+// Set force constant
 void SpeciesBond::setForceConstant(double k)
 {
 	forceConstant_ = k;
 }
 
-/*!
- * \brief Return force constant
- */
+// Return force constant
 double SpeciesBond::forceConstant() const
 {
 	return forceConstant_;
 }
 
-/*!
- * \brief Create attached SpeciesAtom array
- * \details Creates and NULLifies the attached atom array for the terminus specified.
- */
+// Create attached SpeciesAtom array
 void SpeciesBond::createAttachedAtomArrays(int terminus, int size)
 {
 	if (attachedAtoms_[terminus] != NULL) delete[] attachedAtoms_[terminus];
@@ -219,9 +186,7 @@ void SpeciesBond::createAttachedAtomArrays(int terminus, int size)
 	}
 }
 
-/*!
- * \brief Set attached SpeciesAtoms for terminus specified
- */
+// Set attached SpeciesAtoms for terminus specified
 void SpeciesBond::setAttachedAtoms(int terminus, const RefList<SpeciesAtom,int>& atoms)
 {
 	createAttachedAtomArrays(terminus, atoms.nItems());
@@ -238,17 +203,13 @@ void SpeciesBond::setAttachedAtoms(int terminus, const RefList<SpeciesAtom,int>&
 	msg.print("%s\n", s.get());
 }
 
-/*!
- * \brief Return number of attached SpeciesAtoms for terminus specified
- */
+// Return number of attached SpeciesAtoms for terminus specified
 int SpeciesBond::nAttached(int terminus) const
 {
 	return nAttached_[terminus];
 }
 
-/*!
- * \brief Return array of attached SpeciesAtoms for terminus specified
- */
+// Return array of attached SpeciesAtoms for terminus specified
 SpeciesAtom** SpeciesBond::attachedAtoms(int terminus) const
 {
 	return attachedAtoms_[terminus];
@@ -260,46 +221,36 @@ int* SpeciesBond::attachedIndices(int terminus) const
 	return attachedAtomIndices_[terminus];
 }
 
-/*!
- * \brief Set whether this Bond is interGrain
- */
+// Set whether this Bond is interGrain
 void SpeciesBond::setInterGrain(bool b)
 {
 	interGrain_ = b;
 }
 
-/*!
- * \brief Return whether this Bond is interGrain
- */
+// Return whether this Bond is interGrain
 bool SpeciesBond::interGrain() const
 {
 	return interGrain_;
 }
 
-/*!
- * \brief Return energy for specified distance
- */
+// Return energy for specified distance
 double SpeciesBond::energy(double distance) const
 {
 	double delta = distance - equilibrium_;
 	return 0.5*forceConstant_*delta*delta;
 }
 
-/*!
- * \brief Return force multiplier for specified distance
- */
+// Return force multiplier for specified distance
 double SpeciesBond::force(double distance) const
 {
 	return -forceConstant_*(distance-equilibrium_);
 }
 
 /*
-// Parallel Comms
-*/
-
-/*!
- * \brief Broadcast data from Master to all Slaves
+ * Parallel Comms
  */
+
+// Broadcast data from Master to all Slaves
 bool SpeciesBond::broadcast(const List<SpeciesAtom>& atoms)
 {
 #ifdef PARALLEL

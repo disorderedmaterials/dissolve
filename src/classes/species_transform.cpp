@@ -22,9 +22,7 @@
 #include "classes/species.h"
 #include "classes/box.h"
 
-/*!
- * \brief Calculate and return centre of geometry
- */
+// Calculate and return centre of geometry
 Vec3<double> Species::centreOfGeometry(const Box* box) const
 {
 	if (atoms_.nItems() == 0) return Vec3<double>();
@@ -36,9 +34,7 @@ Vec3<double> Species::centreOfGeometry(const Box* box) const
 	return (cog / atoms_.nItems());
 }
 
-/*!
- * \brief Set centre of geometry of species
- */
+// Set centre of geometry of species
 void Species::setCentre(const Box* box, const Vec3<double> newCentre)
 {
 	// Calculate Molecule centre of geometry
@@ -53,9 +49,7 @@ void Species::setCentre(const Box* box, const Vec3<double> newCentre)
 	}
 }
 
-/*!
- * \brief Centre coordinates at origin
- */
+// Centre coordinates at origin
 void Species::centreAtOrigin()
 {
 	Vec3<double> centre;

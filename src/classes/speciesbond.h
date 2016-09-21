@@ -29,7 +29,7 @@
 class SpeciesAtom;
 class Species;
 
-/*!
+/*
  * \brief SpeciesBond Definition
  * \details XXX TODO
  */
@@ -42,10 +42,9 @@ class SpeciesBond : public ListItem<SpeciesBond>
 	~SpeciesBond();
 
 
-	/*!
-	 * \name Parent Data
+	/*
+	 * Parent Data
 	 */
-	///@{
 	private:
 	// Parent Species
 	Species* parent_;
@@ -56,13 +55,11 @@ class SpeciesBond : public ListItem<SpeciesBond>
 	void setParent(Species* parent);
 	// Return parent Species
 	Species* parent() const;
-	///@}
 
 
-	/*!
-	 * \name SpeciesAtom Information
+	/*
+	 * SpeciesAtom Information
 	*/
-	///@{
 	private:
 	// First SpeciesAtom in SpeciesBond
 	SpeciesAtom* i_;
@@ -84,13 +81,11 @@ class SpeciesBond : public ListItem<SpeciesBond>
 	int indexJ() const;
 	// Return whether SpeciesAtoms in SpeciesBond match those specified
 	bool matches(SpeciesAtom* i, SpeciesAtom* j) const;
-	///@}
 
 
-	/*!
-	 * \name Interaction Parameters
+	/*
+	 * Interaction Parameters
 	 */
-	///@{
 	private:
 	// Nominal equilibrium SpeciesBond length
 	double equilibrium_;
@@ -132,17 +127,14 @@ class SpeciesBond : public ListItem<SpeciesBond>
 	double energy(double distance) const;
 	// Return force multiplier for specified distance
 	double force(double distance) const;
-	///@}
 
 
-	/*!
-	 * \name Parallel Comms
+	/*
+	 * Parallel Comms
 	 */
-	///@{
 	public:
 	// Broadcast data from Master to all Slaves
 	bool broadcast(const List<SpeciesAtom>& atoms);
-	///@}
 };
 
 #endif

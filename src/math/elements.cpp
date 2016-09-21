@@ -328,8 +328,8 @@ void Element::copyColour(GLfloat* v)
 }
 
 /*
-// Element Map
-*/
+ * Element Map
+ */
 
 // Constructor
 ElementMap::ElementMap()

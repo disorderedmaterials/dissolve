@@ -20,7 +20,6 @@
 */
 
 #include "main/duq.h"
-#include "main/flags.h"
 #include "classes/species.h"
 
 // Set name of the configuration
@@ -56,10 +55,7 @@ RefListItem<Species,double>* Configuration::usedSpecies()
 	return usedSpecies_.first();
 }
 
-/*!
- * \brief Return total relative population of Species
- * \details Returns the total sum of all relative populations for all component Species
- */
+// Return total relative population of Species
 double Configuration::totalRelative() const
 {
 	double total = 0.0;
@@ -67,55 +63,43 @@ double Configuration::totalRelative() const
 	return total;
 }
 
-/*!
- * \brief Set multiplier for System components
- */
+// Set multiplier for System components
 void Configuration::setMultiplier(int mult)
 {
 	multiplier_ = mult;
-	
-	Flags::wave(Flags::SystemChanged);
 }
 
-/*!
- * \brief Return multiplier for System components
- */
+// Return multiplier for System components
 int Configuration::multiplier() const
 {
 	return multiplier_;
 }
 
-/*!
+/*
  * \brief Set the atomic density of the system (atoms/A3)
  */
 void Configuration::setAtomicDensity(double density)
 {
 	density_ = density;
 	densityIsAtomic_ = true;
-	
-	Flags::wave(Flags::SystemChanged);
 }
 
-/*!
+/*
  * \brief Set the chemical density of the system (g/cm3)
  */
 void Configuration::setChemicalDensity(double density)
 {
 	density_ = density;
 	densityIsAtomic_ = false;
-
-	Flags::wave(Flags::SystemChanged);
 }
 
-/*!
- * \brief Return the density of the system
- */
+// Return the density of the system
 double Configuration::density() const
 {
 	return density_;
 }
 
-/*!
+/*
  * \brief Return whether the density is in atomic units (atoms/A3) or chemistry units (g/cm3)
  */
 bool Configuration::densityIsAtomic() const
@@ -123,9 +107,7 @@ bool Configuration::densityIsAtomic() const
 	return densityIsAtomic_;
 }
 
-/*!
- * \brief Return the atomic density of the system
- */
+// Return the atomic density of the system
 double Configuration::atomicDensity() const
 {
 	// Calculate atomic density from chemical density?

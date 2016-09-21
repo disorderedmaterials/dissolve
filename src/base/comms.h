@@ -36,9 +36,9 @@
 #include <mpi.h>
 #endif
 
-/*!
- * \brief DUQComm
- * \details Basic class to define process-global variables useful to control parallel execution,
+/*
+ * DUQComm
+ * Basic class to define process-global variables useful to control parallel execution,
  * and provide macros to simplify coding and aid readability.
  */
 class DUQComm
@@ -46,13 +46,13 @@ class DUQComm
 	public:
 	// Constructor
 	DUQComm();
-	/// Communications Group (for subroutines)
+	// Communications Group (for subroutines)
 	enum CommGroup
 	{
-		Solo,		/**> No group (process is flying solo) (communicator == NONE) */
-		Group,		/**> Process groups (communicator == localCommunicator_) */
-		Leaders,	/**> A group containing all process group leaders (communicator == leaderCommunicator_) */
-		World		/**> A group containing all processes (communicator == MPI_COMM_WORLD) */
+		Solo,		/* No group (process is flying solo) (communicator == NONE) */
+		Group,		/* Process groups (communicator == localCommunicator_) */
+		Leaders,	/* A group containing all process group leaders (communicator == leaderCommunicator_) */
+		World		/* A group containing all processes (communicator == MPI_COMM_WORLD) */
 	};
 #ifdef PARALLEL
 	// Return communicator for group specified
@@ -60,10 +60,9 @@ class DUQComm
 #endif
 
 
-	/*!
-	 * \name World Comms
+	/*
+	 * World Comms
 	 */
-	///@{
 	private:
 	// Number of processes
 	int nProcesses_;
@@ -91,13 +90,11 @@ class DUQComm
 	const char* accumulatedTimeString();
 	// Return total time string
 	const char* totalTimeString();
-	///@}
 
 
-	/*!
-	 * \name Parallel Strategy
+	/*
+	 * Parallel Strategy
 	 */
-	///@}
 	private:
 	// List of process groups
 	List< Array<int> > processGroups_;
@@ -139,13 +136,11 @@ class DUQComm
 	// Local group communicator
 	MPI_Comm localCommunicator();
 #endif
-	///@}
 
 
-	/*!
-	 * \name Process Limits
+	/*
+	 * Process Limits
 	 */
-	///@{
 	private:
 	// Linear Atom index limits for this process
 	int linearFirstAtom_, linearLastAtom_;
@@ -173,13 +168,11 @@ class DUQComm
 	int interleavedLoopStart(DUQComm::CommGroup group);
 	// Return stride for general interleaved loop
 	int interleavedLoopStride(DUQComm::CommGroup group);
-	///@}
 
 
-	/*!
-	 * \name Send/Receive Functions
+	/*
+	 * Send/Receive Functions
 	 */
-	///@{
 	public:
 	// Wait for all processes
 	bool wait(DUQComm::CommGroup group);
@@ -203,13 +196,11 @@ class DUQComm
 	bool send(double* source, int nData, int targetProcess);
 	// Receive double array data from target process
 	bool receive(double* source, int nData, int sourceProcess);
-	///@}
 
 
-	/*!
-	 * \name Broadcast Functions
+	/*
+	 * Broadcast Functions
 	 */
-	///@{
 	public:
 	// Broadcast Dnchar
 	bool broadcast(Dnchar& source, int rootProcess = 0, DUQComm::CommGroup group = DUQComm::World);
@@ -225,13 +216,11 @@ class DUQComm
 	bool broadcast(float* source, int count, int rootProcess = 0, DUQComm::CommGroup group = DUQComm::World);
 	// Broadcast bool(s)
 	bool broadcast(bool* source, int count, int rootProcess = 0, DUQComm::CommGroup group = DUQComm::World);
-	///@}
 
 
-	/*!
-	 * \name Special Array Functions
+	/*
+	 * Special Array Functions
 	 */
-	///@{
 	public:
 	// Reduce (sum) double data to root process
 	bool sum(double* source, int count, int rootProcess = 0, DUQComm::CommGroup group = DUQComm::World);
@@ -245,25 +234,21 @@ class DUQComm
 	bool assemble(int* array, int nData, int* rootDest, int rootMaxData, int rootProcess = 0);
 	// Assemble double array on target process
 	bool assemble(double* array, int nData, double* rootDest, int rootMaxData, int rootProcess = 0);
-	///@}
 
 
-	/*!
-	 * \name Decisions
+	/*
+	 * Decisions
 	 */
-	///@{
 	public:
 	// Broadcast logical decision to all processes (Master only)
 	void decide(bool decision);
 	// Receive logical decision from master (Slaves only)
 	bool decision();
-	///@}
 
 
-	/*!
-	 * \name Buffered Random Numbers
+	/*
+	 * Buffered Random Numbers
 	 */
-	///@{
 	private:
 	// Random number buffer
 	double randomBuffer_[RANDBUFFERSIZE];
@@ -283,13 +268,11 @@ class DUQComm
 	double random();
 	// Get next buffered random number (-1 to +1 inclusive)
 	double randomPlusMinusOne();
-	///@}
 
 
-	/*!
-	 * \name Macro Variables
+	/*
+	 * Macro Variables
 	 */
-	///@{
 	public:
 	// Failure return result buffer
 	static int FAILED;
@@ -297,15 +280,14 @@ class DUQComm
 	static int SUCCEEDED;
 	// Accessible return result buffer for slave processes
 	static int RESULT;
-	///@}
 };
 
 // External Declarations
 extern DUQComm Comm;
 
-/*!
- * \brief BroadcastList
- * \details Constructor-only template class which iterates over a supplied list, broadcasting the object from master
+/*
+ * BroadcastList
+ * Constructor-only template class which iterates over a supplied list, broadcasting the object from master
  * to slave processes. The List must contain items which subclass MPIListItem, in order to provide the 'broadcast()' virtual.
  */
 template <class T> class BroadcastList
@@ -339,9 +321,9 @@ template <class T> class BroadcastList
 	};
 };
 
-/*!
- * \brief BroadcastRefList
- * \details Constructor-only template class which iterates over a supplied RefList, recreating the reference list of the master
+/*
+ * BroadcastRefList
+ * Constructor-only template class which iterates over a supplied RefList, recreating the reference list of the master
  * on the slave processes.
  */
 template <class T, class D> class BroadcastRefList
@@ -407,15 +389,15 @@ template <class T, class D> class BroadcastRefList
 };
 
 /*
-// Macro Definitions
-*/
+ * Macro Definitions
+ */
 
 /*
  * MPIRunMaster(x)
  * Effectively performs the following code:
  * if (Comm.master()) then
  * {
- *      // Test supplied code/condition 'x', and broadcast result to all processes
+ *     // Test supplied code/condition 'x', and broadcast result to all processes
  *	if (x) then
  * 	{
  * 		MPI_Bcast(&DUQComm::SUCCEEDED,1,MPI_INTEGER,0,MPI_COMM_WORLD);
@@ -429,7 +411,7 @@ template <class T, class D> class BroadcastRefList
  * }
  * else
  * {
- *      // Slaves don't evaluate 'x' - they just receive the result
+ *     // Slaves don't evaluate 'x' - they just receive the result
  * 	MPI_Bcast(&DUQComm::RESULT,1,MPI_INTEGER,0,MPI_COMM_WORLD);
  * 	return DUQComm::RESULT;
  * }
@@ -443,6 +425,5 @@ template <class T, class D> class BroadcastRefList
 #else
 #define MPIRunMaster(x) x
 #endif
-
 
 #endif

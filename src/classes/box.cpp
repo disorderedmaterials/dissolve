@@ -25,10 +25,7 @@
 #include <base/data2d.h>
 #include <string.h>
 
-/*!
- * \brief Constructor
- * \details Constructor for Box. 
- */
+// Constructor
 Box::Box()
 {
 	type_ = Box::nBoxTypes;
@@ -36,10 +33,7 @@ Box::Box()
 	volume_ = 0.0;
 }
 
-/*!
- * \brief Virtual Destructor
- * \details Virtual destructor for Box. 
- */
+// Virtual Destructor
 Box::~Box()
 {
 }
@@ -47,26 +41,20 @@ Box::~Box()
 // Box Type Keywords
 const char* BoxTypeKeywords[] = { "Non-Periodic", "Cubic", "Orthorhombic", "Monoclinic", "Triclinic" };
 
-/*!
- * \brief Convert text string to BoxType
- */
+// Convert text string to BoxType
 Box::BoxType Box::boxType(const char* s)
 {
 	for (int n=0; n<Box::nBoxTypes; ++n) if (strcmp(s,BoxTypeKeywords[n]) == 0) return (Box::BoxType) n;
 	return Box::nBoxTypes;
 }
 
-/*!
- * \brief Convert BoxType to text string
- */
+// Convert BoxType to text string
 const char* Box::boxType(Box::BoxType id)
 {
 	return BoxTypeKeywords[id];
 }
 
-/*!
- * \brief Assignment operator
- */
+// Assignment operator
 void Box::operator=(const Box& source)
 {
 	// Basic Definition
@@ -86,21 +74,16 @@ void Box::operator=(const Box& source)
 }
 
 /*
-// Basic Definition
-*/
-
-/*!
- * \brief Return Box type
+ * Basic Definition
  */
+
+// Return Box type
 Box::BoxType Box::type() const
 {
 	return type_;
 }
 
-/*!
- * \brief Setup box, scaling to specified volume (in cubic Angstroms)
- * Scale the box axes to provide the specified volume (in cubic Angstroms)
- */
+// Setup box, scaling to specified volume (in cubic Angstroms)
 void Box::setup(double volume)
 {
 	msg.print("--> Current box volume is %f cubic Angstroms, requested = %f\n", axes_.determinant(), volume);
@@ -128,17 +111,13 @@ void Box::setup(double volume)
 	msg.print("--> Final box volume is %f cubic Angstroms (reciprocal volume = %f)\n", volume_, reciprocalVolume_);
 }
 
-/*!
- * \brief Return volume
- */
+// Return volume
 double Box::volume() const
 {
 	return volume_;
 }
 
-/*!
- * \brief Return axis length specified
- */
+// Return axis length specified
 double Box::axisLength(int n) const
 {
 #ifdef CHECKS
@@ -151,9 +130,7 @@ double Box::axisLength(int n) const
 	return axes_.columnMagnitude(n);
 }
 
-/*!
- * \brief Return axis angle specified
- */
+// Return axis angle specified
 double Box::axisAngle(int n) const
 {
 #ifdef CHECKS
@@ -172,53 +149,41 @@ double Box::axisAngle(int n) const
 	return acos(dp)*DEGRAD;
 }
 
-/*!
- * \brief Return axes matrix
- */
+// Return axes matrix
 const Matrix3& Box::axes() const
 {
 	return axes_;
 }
 
-/*!
- * \brief Return inverse axes matrix
- */
+// Return inverse axes matrix
 const Matrix3& Box::inverseAxes() const
 {
 	return inverseAxes_;
 }
 
-/*!
- * \brief Return reciprocal box volume
- */
+// Return reciprocal box volume
 double Box::reciprocalVolume() const
 {
 	return reciprocalVolume_;
 }
 
-/*!
- * \brief Return reciprocal axis lengths
- */
+// Return reciprocal axis lengths
 Vec3<double> Box::reciprocalAxisLengths() const
 {
 	return Vec3<double>(reciprocalAxes_.columnMagnitude(0), reciprocalAxes_.columnMagnitude(1), reciprocalAxes_.columnMagnitude(2));
 }
 
-/*!
- * \brief Return reciprocal axes matrix
- */
+// Return reciprocal axes matrix
 const Matrix3& Box::reciprocalAxes() const
 {
 	return reciprocalAxes_;
 }
 
 /*
-// Utility Routines
-*/
-
-/*!
- * \brief Return radius of largest possible inscribed sphere for box
+ * Utility Routines
  */
+
+// Return radius of largest possible inscribed sphere for box
 double Box::inscribedSphereRadius() const
 {
 	// Radius of largest inscribed sphere is the smallest of the three calculated values....
@@ -238,9 +203,7 @@ double Box::inscribedSphereRadius() const
 	return result*0.5;
 }
 
-/*!
- * \brief Calculate the RDF normalisation for the Box
- */
+// Calculate the RDF normalisation for the Box
 bool Box::calculateRDFNormalisation(Data2D& boxNorm, double rdfRange, double rdfBinWidth, int nPoints) const
 {
 	// Setup array - we will use a nominal bin width of 0.1 Angstroms and then interpolate to the rdfBinWidth afterwards
@@ -303,12 +266,10 @@ bool Box::calculateRDFNormalisation(Data2D& boxNorm, double rdfRange, double rdf
 }
 
 /*
-// Utility Routines (Static)
-*/
-
-/*!
- * \brief Return angle (in degrees, no MIM) between coordinates
+ * Utility Routines (Static)
  */
+
+// Return angle (in degrees, no MIM) between coordinates
 double Box::angle(const Vec3<double>& i, const Vec3<double>& j, const Vec3<double>& k)
 {
 	static Vec3<double> vecji, vecjk;
@@ -319,17 +280,13 @@ double Box::angle(const Vec3<double>& i, const Vec3<double>& j, const Vec3<doubl
 	return acos(vecji.dp(vecjk)) * DEGRAD;
 }
 
-/*!
- * \brief Return angle (in degrees) between supplied normalised vectors
- */
+// Return angle (in degrees) between supplied normalised vectors
 double Box::angle(const Vec3<double>& normji, const Vec3<double>& normjk)
 {
 	return acos(normji.dp(normjk)) * DEGRAD;
 }
 
-/*!
- * \brief Return angle (in degrees) between supplied normalised vectors
- */
+// Return angle (in degrees) between supplied normalised vectors
 double Box::angle(const Vec3<double>& normji, const Vec3<double>& normjk, double& dotProduct)
 {
 	dotProduct = normji.dp(normjk);

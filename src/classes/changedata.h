@@ -27,7 +27,7 @@
 // Forward Declarations
 class Atom;
 
-/*!
+/*
  * \brief Change Data
  */
 class ChangeData
@@ -41,8 +41,8 @@ class ChangeData
 	ChangeData* next, *prev;
 
 
-	/*!
-	 * \name Target Data
+	/*
+	 * Target Data
 	 */
 	private:
 	// Atom

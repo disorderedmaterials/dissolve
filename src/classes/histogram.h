@@ -27,7 +27,7 @@
 // Forward Declarations
 class Box;
 
-/*!
+/*
  * \brief Histogram
  * \details XXX TODO
  */
@@ -44,19 +44,18 @@ class Histogram : public ListItem<Histogram>
 	void operator=(const Histogram& source);
 	// Clear data
 	void clear();
-	/// Normalisation Method
+	// Normalisation Method
 	enum NormalisationType
 	{
-		NoNormalisation,			/**> No normalisation of histogram - just copy bin values (no params) */
-		RelativeNormalisation,			/**> Divide through by total number of counts (no params) */
-		RadialNumberDensityNormalisation,	/**> Divide through by radial number density (boxVolume, nCentres, nSurrounding, factor) */
+		NoNormalisation,			/* No normalisation of histogram - just copy bin values (no params) */
+		RelativeNormalisation,			/* Divide through by total number of counts (no params) */
+		RadialNumberDensityNormalisation,	/* Divide through by radial number density (boxVolume, nCentres, nSurrounding, factor) */
 	};
 
 
-	/*!
-	 * \name Data
+	/*
+	 * Data
 	 */
-	///@{
 	protected:
 	// Histogram value range
 	double minimum_, maximum_, range_;
@@ -98,13 +97,11 @@ class Histogram : public ListItem<Histogram>
 	Data2D& normalisedData();
 	// Add source histogram data into local array
 	void addHistogramData(Histogram& otherHistogram, int factor = 1);
-	///@}
 
 
-	/*!
-	 * \name Calculation
+	/*
+	 * Calculation
 	 */
-	///@{
 	public:
 	// Reset arrays ready for new calculation
 	void reset();
@@ -114,17 +111,14 @@ class Histogram : public ListItem<Histogram>
 	void merge(Histogram& otherHistogram);
 	// Finalise data
 	void finalise();
-	///@}
 
 
-	/*!
-	 * \name Parallel Comms
+	/*
+	 * Parallel Comms
 	 */
-	///@{
 	public:
 	// Gather all data to target process
 	bool allSum();
-	///@}
 };
 
 #endif

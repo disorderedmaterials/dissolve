@@ -25,9 +25,7 @@
 #include "classes/atomtype.h"
 #include "base/lineparser.h"
 
-/*!
- * \brief Save Configuration as xyz
- */
+// Save Configuration as xyz
 bool DUQ::saveConfigurationXYZ(Configuration& cfg, const char* fileName)
 {
 	// I/O operation, so Master only...
@@ -63,9 +61,7 @@ bool DUQ::saveConfigurationXYZ(Configuration& cfg, const char* fileName)
 	return true;
 }
 
-/*!
- * \brief Save Configuration as CONFIG
- */
+// Save Configuration as CONFIG
 bool DUQ::saveConfigurationDLPOLY(Configuration& cfg, const char* fileName)
 {
 	// I/O operation, so Master only...

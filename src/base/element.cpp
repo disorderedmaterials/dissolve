@@ -24,10 +24,7 @@
 #include "base/comms.h"
 #include <string.h>
 
-/*!
- * \brief Constructor
- * \details Constructor for Element. 
- */
+// Constructor
 Element::Element()
 {
 	z_ = 0;
@@ -39,12 +36,10 @@ Element::Element()
 }
 
 /*
-// Element Information
-*/
-
-/*!
- * \brief Set element information
+ * Element Information
  */
+
+// Set element information
 void Element::set(int z, const char* name, const char* symbol, double radius, double r, double g, double b, double a)
 {
 	z_ = z;
@@ -57,85 +52,65 @@ void Element::set(int z, const char* name, const char* symbol, double radius, do
 	colour_[3] = (float) a;
 }
 
-/*!
- * \brief Return atomic number (Z)
- */
+// Return atomic number (Z)
 int Element::z()
 {
 	return z_;
 }
 
-/*!
- * \brief Return name of element
- */
+// Return name of element
 const char* Element::name() const
 {
 	return name_.get();
 }
 
-/*!
- * \brief Return symbol of element
- */
+// Return symbol of element
 const char* Element::symbol() const
 {
 	return symbol_.get();
 }
 
-/*!
- * \brief Return atomic radius of element
- */
+// Return atomic radius of element
 double Element::atomicRadius() const
 {
 	return atomicRadius_;
 }
 
-/*!
- * \brief Return element colour
- */
+// Return element colour
 const float *Element::colour() const
 {
 	return colour_;
 }
 
 /*
-// Isotopes
-*/
-
-/*!
- * \brief Add new Isotope to this element
+ * Isotopes
  */
+
+// Add new Isotope to this element
 Isotope *Element::addIsotope()
 {
 	return isotopes_.add();
 }
 
-/*!
- * \brief Return first Isotope
- */
+// Return first Isotope
 Isotope *Element::isotopes() const
 {
 	return isotopes_.first();
 }
 
-/*!
- * \brief Return nth Isotope
- */
+// Return nth Isotope
 Isotope *Element::isotope(int n)
 {
 	return isotopes_[n];
 }
 
-/*!
- * \brief Return number of Isotopes in list
- */
+// Return number of Isotopes in list
 int Element::nIsotopes() const
 {
 	return isotopes_.nItems();
 }
 
-/*!
- * \brief Return Isotope with specified A (if it exists)
- */
+// Return Isotope with specified A (if it exists)
 Isotope* Element::hasIsotope(int A) const
 {
 	for (Isotope* tope = isotopes_.first(); tope != NULL; tope = tope->next) if (tope->A() == A) return tope;
@@ -143,65 +118,51 @@ Isotope* Element::hasIsotope(int A) const
 }
 
 /*
-// Parameters
-*/
-
-/*!
- * \brief Add new Parameters to this element
+ * Parameters
  */
+
+// Add new Parameters to this element
 Parameters *Element::addParameters()
 {
 	return parameters_.add();
 }
 
-/*!
- * \brief Return first Parameters
- */
+// Return first Parameters
 Parameters *Element::parameters() const
 {
 	return parameters_.first();
 }
 
-/*!
- * \brief Return nth Parameters
- */
+// Return nth Parameters
 Parameters *Element::parameters(int n)
 {
 	return parameters_[n];
 }
 
-/*!
- * \brief Return number of Parameters in list
- */
+// Return number of Parameters in list
 int Element::nParameters() const
 {
 	return parameters_.nItems();
 }
 
-/*!
- * \brief Find Parameters with name specified
- */
+// Find Parameters with name specified
 Parameters* Element::findParameters(const char* name) const
 {
 	for (Parameters* params = parameters_.first(); params != NULL; params = params->next) if (strcmp(params->name(),name) == 0) return params;
 	return NULL;
 }
 
-/*!
- * \brief Return index of specified parameters
- */
+// Return index of specified parameters
 int Element::indexOfParameters(Parameters* p) const
 {
 	return parameters_.indexOf(p);
 }
 
 /*
-// Parallel Comms
-*/
-
-/*!
- * \brief Broadcast data from Master to all Slaves
+ * Parallel Comms
  */
+
+// Broadcast data from Master to all Slaves
 bool Element::broadcast()
 {
 #ifdef PARALLEL

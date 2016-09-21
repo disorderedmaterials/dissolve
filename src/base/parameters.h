@@ -25,7 +25,7 @@
 #include "templates/list.h"
 #include "base/dnchar.h"
 
-/*!
+/*
  * \brief Parameters Definition
  * \details Basic interaction information for a specific type of chemical atom.
  */
@@ -38,10 +38,9 @@ class Parameters : public MPIListItem<Parameters>
 	~Parameters();
 
 
-	/*!
-	 * \name Name / Description
+	/*
+	 * Name / Description
 	 */
-	///@{
 	private:
 	// Short Name
 	Dnchar name_;
@@ -57,13 +56,11 @@ class Parameters : public MPIListItem<Parameters>
 	void setDescription(const char* desc);
 	// Return description of element
 	const char* description() const;
-	///@}
 
 
-	/*!
-	 * \name Potential Parameters
+	/*
+	 * Potential Parameters
 	 */
-	///@{
 	private:
 	// Lennard-Jones Sigma
 	double sigma_;
@@ -87,17 +84,14 @@ class Parameters : public MPIListItem<Parameters>
 	void setCharge(double charge);
 	// Return atomic charge
 	double charge();
-	///@}
 
 
-	/*!
-	 * \name Parallel Comms
+	/*
+	 * Parallel Comms
 	 */
-	///@{
 	public:
 	// Broadcast data from Master to all Slaves
 	bool broadcast();
-	///@}
 };
 
 #endif

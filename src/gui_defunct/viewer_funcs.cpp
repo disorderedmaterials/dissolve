@@ -60,8 +60,8 @@ Viewer::~Viewer()
 }
 
 /*
-// Protected Qt Virtuals
-*/
+ * Protected Qt Virtuals
+ */
 
 // Initialise context widget (when created by Qt)
 void Viewer::initializeGL()
@@ -191,8 +191,8 @@ void Viewer::resizeGL(int newwidth, int newheight)
 }
 
 /*
-// Character / Setup
-*/
+ * Character / Setup
+ */
 
 // Return the current height of the drawing area
 GLsizei Viewer::contextHeight() const

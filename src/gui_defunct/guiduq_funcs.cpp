@@ -50,7 +50,7 @@ void DUQObject::setMainWindow(MainWindow* mainWindow)
  * GuiOutputHandler
  */
 
-/*!
+/*
  * \brief Constructor
  */
 GuiOutputHandler::GuiOutputHandler()
@@ -58,7 +58,7 @@ GuiOutputHandler::GuiOutputHandler()
 	printToConsole_ = false;
 }
 
-/*!
+/*
  * \brief Set whether to print to screen
  */
 void GuiOutputHandler::setPrintToConsole(bool b)
@@ -66,10 +66,7 @@ void GuiOutputHandler::setPrintToConsole(bool b)
 	printToConsole_ = b;
 }
 
-/*!
- * \brief Master print routine
- * \details Basic text output printing, to either console or GUI
- */
+// Master print routine
 void GuiOutputHandler::printText(char* source)
 {
 	if (printToConsole_) printf("%s", source);

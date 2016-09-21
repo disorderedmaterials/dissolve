@@ -30,7 +30,7 @@ class Atom;
 class Molecule;
 class Species;
 
-/*!
+/*
  * \brief Bond Definition
  * \details XXX TODO
  */
@@ -45,10 +45,9 @@ class Bond : public ListItem<Bond>
 	void clear();
 
 
-	/*!
-	 * \name Parent Data
+	/*
+	 * Parent Data
 	 */
-	///@{
 	private:
 	// Parent Species (in setup)
 	Species* parent_;
@@ -65,13 +64,11 @@ class Bond : public ListItem<Bond>
 	void setMolecule(Molecule* parent);
 	// Return parent Molecule
 	Molecule* molecule() const;
-	///@}
 
 
-	/*!
-	 * \name Atom Information
+	/*
+	 * Atom Information
 	*/
-	///@{
 	private:
 	// First Atom in Bond
 	Atom* i_;
@@ -93,13 +90,11 @@ class Bond : public ListItem<Bond>
 	int indexJ() const;
 	// Return whether Atoms in Bond match those specified
 	bool matches(Atom* i, Atom* j) const;
-	///@}
 
 
-	/*!
-	 * \name Interaction Parameters
+	/*
+	 * Interaction Parameters
 	 */
-	///@{
 	private:
 	// Nominal equilibrium Bond length
 	double equilibrium_;
@@ -137,17 +132,14 @@ class Bond : public ListItem<Bond>
 	double energy(double distance) const;
 	// Return force multiplier for specified distance
 	double force(double distance) const;
-	///@}
 
 
-	/*!
-	 * \name Parallel Comms
+	/*
+	 * Parallel Comms
 	 */
-	///@{
 	public:
 	// Broadcast data from Master to all Slaves
 	bool broadcast(const List<Atom>& atoms);
-	///@}
 };
 
 #endif

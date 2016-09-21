@@ -25,7 +25,7 @@
 #include "base/dnchar.h"
 #include <ctime>
 
-/*!
+/*
  * \brief Timer
  * \details Simple class to store and manipulate time information in order to provide timings for routines etc.
  */
@@ -36,10 +36,9 @@ class Timer
 	Timer();
 
 
-	/*!
-	 * \name Timing Routines
+	/*
+	 * Timing Routines
 	 */
-	///@{
 	private:
 	// Start time
 	clock_t startTime_;
@@ -59,7 +58,6 @@ class Timer
 	void accumulate();
 	// Return time string
 	const char* timeString();
-	///@}
 };
 
 #endif

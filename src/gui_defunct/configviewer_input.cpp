@@ -24,8 +24,8 @@
 #include <QtGui/QMouseEvent>
 
 /*
-// Mouse Input
-*/
+ * Mouse Input
+ */
 
 // Qt Signal (mouse press event)
 void ConfigViewer::mousePressEvent(QMouseEvent* event)

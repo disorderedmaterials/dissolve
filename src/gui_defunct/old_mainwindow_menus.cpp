@@ -24,8 +24,8 @@
 #include "classes/species.h"
 
 /*
-// File Menu
-*/
+ * File Menu
+ */
 
 // Load new input file
 void MainWindow::on_actionFileLoad_triggered(bool checked)
@@ -96,8 +96,8 @@ void MainWindow::on_actionFileQuit_triggered(bool checked)
 }
 
 /*
-// Help Menu
-*/
+ * Help Menu
+ */
 
 // Show/Hide help frames
 void MainWindow::setHelpFramesVisible(bool visible)
@@ -120,16 +120,16 @@ void MainWindow::on_actionHelpShow_triggered(bool checked)
 }
 
 /*
-// Tools Menu
-*/
+ * Tools Menu
+ */
 
 // void MainWindow::on_actionToolsCheckSetup_triggered(bool checked)
 // {
 // }
 
 /*
-// Selection Menu
-*/
+ * Selection Menu
+ */
 
 // Transmute selection
 void MainWindow::transmuteSelection(int el)

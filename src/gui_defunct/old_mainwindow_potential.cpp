@@ -163,8 +163,8 @@ void MainWindow::updatePairPotentialGraph()
 }
 
 /*
-// Pair Potentials Group
-*/
+ * Pair Potentials Group
+ */
 
 // Potential range changed
 void MainWindow::on_PairPotentialRangeSpin_valueChanged(double value)
@@ -279,8 +279,8 @@ void MainWindow::on_AddMissingPairPotentialsButton_clicked(bool changed)
 }
 
 /*
-// Intramolecular Group
-*/
+ * Intramolecular Group
+ */
 
 // Add Bond definition to Species
 void MainWindow::on_AddBondButton_clicked(bool checked)

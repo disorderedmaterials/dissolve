@@ -29,7 +29,7 @@
 #include "base/comms.h"
 #include "base/timer.h"
 
-/*!
+/*
  * \brief Return total intramolecular energy of the system
  * \details Calculate the total intramolecular energy of the system, arising from Bond, Angle, and Torsion
  * terms in all molecules.
@@ -69,7 +69,7 @@ double DUQ::intramolecularEnergy(Configuration& cfg)
 	return energy;
 }
 
-/*!
+/*
  * \brief Return atom energy of the system
  * \details Calculates the total atom energy of the system, i.e. the energy contributions from PairPotential
  * interactions between individual atoms.
@@ -128,7 +128,7 @@ double DUQ::interatomicEnergy(Configuration& cfg)
 	return totalEnergy;
 }
 
-/*!
+/*
  * \brief Return Grain energy of the system
  * \details Calculates the total Grain energy of the system, i.e. the energy contributions from PairPotential
  * interactions between Grains.
@@ -203,7 +203,7 @@ double DUQ::intergrainEnergy(Configuration& cfg)
 	return totalEnergy;
 }
 
-/*!
+/*
  * \brief Return total energy of the system
  * \details Calculates the total energy of the entire system.
  * 
@@ -231,7 +231,7 @@ double DUQ::totalEnergy(Configuration& cfg)
 	return atomEnergy + intraEnergy;
 }
 
-/*!
+/*
  * \brief Test - Return total intramolecular (+correction) energy
  * \details Calculate the total intramolecular energy of the system.
  * 
@@ -283,7 +283,7 @@ double DUQ::intramolecularEnergyTest(Configuration& cfg)
 	return intraEnergy;
 }
 
-/*!
+/*
  * \brief Test - Return total energy of the system
  * \details Calculate the total energy of the system using a basic loop, with each
  * process calculating its own value.
@@ -343,7 +343,7 @@ double DUQ::totalEnergyTest(Configuration& cfg)
 	return atomEnergy + intraEnergy;
 }
 
-/*!
+/*
  * \brief Test - Return total energy of the system using Molecules
  * \details Calculate the total energy of the system using a loop over Molecules.
  * 

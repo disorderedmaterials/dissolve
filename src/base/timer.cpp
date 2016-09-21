@@ -22,9 +22,7 @@
 #include "base/dnchar.h"
 #include "base/timer.h"
 
-/*!
- * \brief Constructor
- */
+// Constructor
 Timer::Timer()
 {
 	totalTime_ = 0;
@@ -32,44 +30,34 @@ Timer::Timer()
 }
 
 /*
-// Timing Routines
-*/
-
-/*!
- * \brief Start timer
+ * Timing Routines
  */
+
+// Start timer
 void Timer::start()
 {
 	startTime_ = clock();
 }
 
-/*!
- * \brief Set total time
- */
+// Set total time
 void Timer::stop()
 {
 	totalTime_ = clock() - startTime_;
 }
 
-/*!
- * \brief Zero total time
- */
+// Zero total time
 void Timer::zero()
 {
 	totalTime_ = 0;
 }
 
-/*!
- * \brief Accumulate partial time since last start
- */
+// Accumulate partial time since last start
 void Timer::accumulate()
 {
 	totalTime_ += clock() - startTime_;
 }
 
-/*!
- * \brief Return time string
- */
+// Return time string
 const char* Timer::timeString()
 {
 	int n = totalTime_ / CLOCKS_PER_SEC;

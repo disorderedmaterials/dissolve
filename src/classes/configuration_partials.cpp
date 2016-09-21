@@ -528,7 +528,7 @@ Vec3<int> Configuration::braggMaximumHKL()
 	return braggMaximumHKL_;
 }
 
-/*!
+/*
  * \brief Setup RDF / F(Q) storage
  */
 bool Configuration::setupPartials()
@@ -593,9 +593,7 @@ bool Configuration::setupPartials()
 	return true;
 }
 
-/*!
- * \brief Reset pair correlations
- */
+// Reset pair correlations
 void Configuration::resetPairCorrelations()
 {
 	for (int n=0; n<usedAtomTypes_.nItems(); ++n)
@@ -617,9 +615,7 @@ void Configuration::resetPairCorrelations()
 	totalFQ_.arrayY() = 0.0;
 }
 
-/*!
- * \brief Calculate pair correlations
- */
+// Calculate pair correlations
 bool Configuration::calculatePairCorrelations(Data2D::WindowFunction windowFunction)
 {
 	// Check that we actually need to calculate new partials
@@ -802,9 +798,7 @@ bool Configuration::calculatePairCorrelations(Data2D::WindowFunction windowFunct
 	return true;
 }
 
-/*!
- * \brief Save all unweighted RDFs
- */
+// Save all unweighted RDFs
 void Configuration::saveRDFs(const char* baseName)
 {
 	// Only the Master process can do this
@@ -841,9 +835,7 @@ void Configuration::saveRDFs(const char* baseName)
 	totalRDF_.save(filename);
 }
 
-/*!
- * \brief Save all partial S(Q)
- */
+// Save all partial S(Q)
 void Configuration::saveSQ(const char* baseName)
 {
 	// Only the Master process can do this

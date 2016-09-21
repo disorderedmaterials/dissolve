@@ -54,9 +54,7 @@ Sample* Configuration::referenceSamples()
 	return referenceSamples_.first();
 }
 
-/*!
- * \brief Set up Sample data for Configuration
- */
+// Set up Sample data for Configuration
 bool Configuration::setupReferenceSamples()
 {
 	// Loop over Samples and initialise as necessary
@@ -90,7 +88,7 @@ bool Configuration::setupReferenceSamples()
 	return true;
 }
 
-/*!
+/*
  * Calculate the current RMSE between reference and calculated data.
  */
 double Configuration::rmse()

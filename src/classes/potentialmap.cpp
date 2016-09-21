@@ -31,37 +31,27 @@
 #include <new>
 using namespace std;
 
-/*!
- * \brief Constructor
- * \details Constructor for PotentialMap. 
- */
+// Constructor
 PotentialMap::PotentialMap()
 {
 }
 
-/*!
- * \brief Destructor
- * \details Destructor for PotentialMap. 
- */
+// Destructor
 PotentialMap::~PotentialMap()
 {
 }
 
-/*!
- * \brief Clear all data
- */
+// Clear all data
 void PotentialMap::clear()
 {
 	potentialMatrix_.clear();
 }
 
 /*
-// Data
-*/
-
-/*!
- * \brief Initialise maps
+ * Data
  */
+
+// Initialise maps
 bool PotentialMap::initialise(const AtomTypeIndex& typeIndex, const List<PairPotential>& pairPotentials, double pairPotentialRange)
 {
 	// Clear old data first
@@ -109,29 +99,23 @@ bool PotentialMap::initialise(const AtomTypeIndex& typeIndex, const List<PairPot
 	return true;
 }
 
-/*!
- * \brief Return PairPotential range
- */
+// Return PairPotential range
 double PotentialMap::range() const
 {
 	return range_;
 }
 
-/*!
- * \brief Return PairPotential range squared
- */
+// Return PairPotential range squared
 double PotentialMap::rangeSquared() const
 {
 	return rangeSquared_;
 }
 
 /*
-// Energy / Force
-*/
-
-/*!
- * \brief Return energy between Atom types at squared distance specified
+ * Energy / Force
  */
+
+// Return energy between Atom types at squared distance specified
 double PotentialMap::energy(int typeI, int typeJ, double distanceSquared) const
 {
 #ifdef CHECKS
@@ -149,9 +133,7 @@ double PotentialMap::energy(int typeI, int typeJ, double distanceSquared) const
 	return potentialMatrix_.value(typeI,typeJ)->energyAtRSquared(distanceSquared);
 }
 
-/*!
- * \brief Return force between Atom types at squared distance specified
- */
+// Return force between Atom types at squared distance specified
 double PotentialMap::force(int typeI, int typeJ, double distanceSquared) const
 {
 #ifdef CHECKS

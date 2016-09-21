@@ -24,7 +24,7 @@
 #include "classes/atomtype.h"
 #include "base/comms.h"
 
-/*!
+/*
  * \brief Broadcast system setup data
  * \details Send all data regarding system setup (Species, Samples, composition etc.) out to slave processes.
  */

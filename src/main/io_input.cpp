@@ -20,7 +20,6 @@
 */
 
 #include "main/duq.h"
-#include "main/flags.h"
 #include "main/keywords.h"
 #include "classes/atomtype.h"
 #include "classes/species.h"
@@ -29,9 +28,7 @@
 #include "base/sysfunc.h"
 #include <string.h>
 
-/*!
- * \brief Load datafiles
- */
+// Load datafiles
 bool DUQ::loadDataFiles()
 {
 	// Get basic path for data files
@@ -58,9 +55,7 @@ bool DUQ::loadDataFiles()
 	return true;
 }
 
-/*!
- * \brief Load Species from specified file
- */
+// Load Species from specified file
 bool DUQ::loadSpecies(const char* fileName)
 {
 	Species* newSpecies = addSpecies();
@@ -96,9 +91,7 @@ bool DUQ::loadSpecies(const char* fileName)
 	return true;
 }
 
-/*!
- * \brief Load input file
- */
+// Load input file
 bool DUQ::loadInput(const char* fileName)
 {
 	// Open file and check that we're OK to proceed reading from it
@@ -813,9 +806,7 @@ bool DUQ::loadInput(const char* fileName)
 	return (!error);
 }
 
-/*!
- * \brief Save input file
- */
+// Save input file
 bool DUQ::saveInput(const char* fileName)
 {
 // 	// Open file and check that we're OK to proceed writing to it
@@ -1037,17 +1028,13 @@ bool DUQ::saveInput(const char* fileName)
 	return true;
 }
 
-/*!
- * \brief Return whether a fileName has been set
- */
+// Return whether a fileName has been set
 bool DUQ::hasFileName() const
 {
 	return (!fileName_.isEmpty());
 }
 
-/*!
- * \brief Return filename of current input file
- */
+// Return filename of current input file
 const char* DUQ::fileName() const
 {
 	return fileName_.get();

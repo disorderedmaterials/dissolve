@@ -25,10 +25,7 @@
 #include "base/sysfunc.h"
 #include <string.h>
 
-/*!
- * \brief Constructor
- * \details Constructor for Sample.
- */
+// Constructor
 Sample::Sample() : ListItem<Sample>()
 {
 	// Reference F(Q)
@@ -99,20 +96,16 @@ const char* Sample::sampleType(SampleType st)
 }
 
 /*
-// Basic Information
-*/
-
-/*!
- * \brief Set name of Sample
+ * Basic Information
  */
+
+// Set name of Sample
 void Sample::setName(const char* name)
 {
 	 name_ = name;
 }
 
-/*!
- * \brief Return name of Sample
- */
+// Return name of Sample
 const char* Sample::name() const
 {
 	return name_.get();
@@ -131,10 +124,10 @@ Sample::SampleType Sample::type()
 }
 
 /*
-// Species/Isotopologue Definition
-*/
+ * Species/Isotopologue Definition
+ */
 
-/*!
+/*
  * \brief Return whether the Sample contains a mixtures definition for the provided Species
  * \details This function reconstructs the current RefList of Species/Isotopologue pairs and ensures that
  * it contains only valid Species and Isotopologue pointers.
@@ -145,7 +138,7 @@ IsotopologueMix* Sample::hasSpeciesIsotopologueMixture(Species* sp) const
 	return NULL;
 }
 
-/*!
+/*
  * \brief Update IsotopologueMix List
  * \details This function reconstructs the current List of IsotopologueMix items and ensures that
  * it contains all valid component Species and Isotopologue pointers.
@@ -188,9 +181,7 @@ void Sample::updateIsotopologueMixtures(const List<Species>& species)
 	}
 }
 
-/*!
- * \brief Add Isotopologue for Species
- */
+// Add Isotopologue for Species
 bool Sample::addIsotopologueToMixture(Species* sp, Isotopologue *iso, double relPop)
 {
 	// Check that the Species is in the list...
@@ -223,25 +214,19 @@ bool Sample::addIsotopologueToMixture(Species* sp, Isotopologue *iso, double rel
 	return true;
 }
 
-/*!
- * \brief Return first IsotopologueMix
- */
+// Return first IsotopologueMix
 IsotopologueMix *Sample::isotopologueMixtures() const
 {
 	return isotopologueMixtures_.first();
 }
 
-/*!
- * \brief Return nth IsotopologueMix
- */
+// Return nth IsotopologueMix
 IsotopologueMix *Sample::isotopologueMixture(int n)
 {
 	return isotopologueMixtures_[n];
 }
 
-/*!
- * \brief Assign default (first) Isotopologues for all Species
- */
+// Assign default (first) Isotopologues for all Species
 void Sample::assignDefaultIsotopes()
 {
 	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next)
@@ -256,7 +241,7 @@ void Sample::assignDefaultIsotopes()
 // RDF / S(Q) Data
 */
 
-/*!
+/*
  * \brief Create type index and RDF / S(Q) storage
  */
 bool Sample::createTypeIndex(const RefList<Species,double>& usedSpecies, int multiplier, int nExpectedAtoms, const AtomTypeIndex& masterIndex)
@@ -387,7 +372,7 @@ bool Sample::createTypeIndex(const RefList<Species,double>& usedSpecies, int mul
 	return true;
 }
 
-/*!
+/*
  * \brief Return < b >**2
  */
 double Sample::boundCoherentAverageSquared()
@@ -395,7 +380,7 @@ double Sample::boundCoherentAverageSquared()
 	return boundCoherentAverageSquared_;
 }
 
-/*!
+/*
  * \brief Return < b**2 >
  */
 double Sample::boundCoherentSquaredAverage()
@@ -403,9 +388,7 @@ double Sample::boundCoherentSquaredAverage()
 	return boundCoherentSquaredAverage_;
 }
 
-/*!
- * \brief Setup pair correlations
- */
+// Setup pair correlations
 bool Sample::setupPairCorrelations(double volume, double range, double binWidth, Data2D& boxNormalisation, double rho)
 {
 	// Get a nice sample name (i.e. no spaces, slashes etc.)
@@ -468,7 +451,7 @@ bool Sample::setupPairCorrelations(double volume, double range, double binWidth,
 	return true;
 }
 
-/*!
+/*
  * \brief Calculate weighted pair correlations
  * \details Calculate the neutron-weighted pair correlations, including S(Q), F(Q), and total RDF, from the supplied unweighted data.
  */
@@ -556,41 +539,31 @@ bool Sample::calculatePairCorrelations(Array2D<Histogram>& masterRDFs, Array2D<D
 	return true;
 }
 
-/*!
- * \brief Return reference to array of partials
- */
+// Return reference to array of partials
 Array2D<Data2D>& Sample::partialSQMatrix()
 {
 	return pairSQMatrix_;
 }
 
-/*!
- * \brief Return reference to weights matrix
- */
+// Return reference to weights matrix
 Array2D<double>& Sample::weightsMatrix()
 {
 	return weightsMatrix_;
 }
 
-/*!
- * \brief Return total F(Q)
- */
+// Return total F(Q)
 Data2D& Sample::totalFQ()
 {
 	return totalFQ_;
 }
 
-/*!
- * \brief Return total G(R)
- */
+// Return total G(R)
 Data2D& Sample::totalGR()
 {
 	return totalGR_;
 }
 
-/*!
- * \brief Save all neutron-weighted RDFs
- */
+// Save all neutron-weighted RDFs
 void Sample::saveRDFs(const char* baseName)
 {
 	if (!Comm.master()) return;
@@ -611,9 +584,7 @@ void Sample::saveRDFs(const char* baseName)
 	}
 }
 
-/*!
- * \brief Save all partial S(Q)
- */
+// Save all partial S(Q)
 void Sample::saveSQ(const char* baseName)
 {
 	if (!Comm.master()) return;
@@ -647,17 +618,13 @@ void Sample::saveSQ(const char* baseName)
  * Reference Data
  */
 
-/*!
- * \brief Return whether reference data exists
- */
+// Return whether reference data exists
 bool Sample::hasReferenceData()
 {
 	return hasReferenceData_;
 }
 
-/*!
- * \brief Load reference F(Q) data
- */
+// Load reference F(Q) data
 bool Sample::loadReferenceData(const char* fileName)
 {
 	// Check that the specified file actually exists...
@@ -701,17 +668,13 @@ bool Sample::loadReferenceData(const char* fileName)
 	return result;
 }
 
-/*!
- * \brief Return reference data filename (if any)
- */
+// Return reference data filename (if any)
 Dnchar& Sample::referenceDataFileName()
 {
 	return referenceDataFileName_;
 }
 
-/*!
- * \brief Return reference data
- */
+// Return reference data
 Data2D& Sample::referenceData()
 {
 	return referenceData_;
@@ -741,81 +704,61 @@ double Sample::qIndependentFWHM()
 	return qIndependentFWHM_;
 }
 
-/*!
- * \brief Set reference data normalisation type
- */
+// Set reference data normalisation type
 void Sample::setReferenceDataNormalisation(NormalisationType norm)
 {
 	referenceDataNormalisation_ = norm;
 }
 
-/*!
- * \brief Return normalisation type for reference data
- */
+// Return normalisation type for reference data
 Sample::NormalisationType Sample::referenceDataNormalisation()
 {
 	return referenceDataNormalisation_;
 }
 
-/*!
- * \brief Set reference data self-scattering subtraction flag
- */
+// Set reference data self-scattering subtraction flag
 void Sample::setReferenceSubtractSelf(bool b)
 {
 	referenceDataSubtractSelf_ = true;
 }
 
-/*!
- * \brief Return whether reference data should have self-scattering subtracted
- */
+// Return whether reference data should have self-scattering subtracted
 bool Sample::referenceSubtractSelf()
 {
 	return referenceDataSubtractSelf_;
 }
 
-/*!
- * \brief Set minimum abscissa for empirical fitting
- */
+// Set minimum abscissa for empirical fitting
 void Sample::setReferenceFitMin(double value)
 {
 	referenceFitMin_ = value;
 }
 
-/*!
- * \brief Return minimum abscissa for empirical fitting
- */
+// Return minimum abscissa for empirical fitting
 double Sample::referenceFitMin()
 {
 	return referenceFitMin_;
 }
 
-/*!
- * \brief Set maximum abscissa for empirical fitting
- */
+// Set maximum abscissa for empirical fitting
 void Sample::setReferenceFitMax(double value)
 {
 	referenceFitMax_ = value;
 }
 
-/*!
- * \brief Return maximum abscissa for empirical fitting
- */
+// Return maximum abscissa for empirical fitting
 double Sample::referenceFitMax()
 {
 	return referenceFitMax_;
 }
 
-/*!
- * \brief Return difference data
- */
+// Return difference data
 Data2D& Sample::differenceData()
 {
 	return differenceData_;
 }
 
-/*!
- * \brief Finalise reference data
- */
+// Finalise reference data
 bool Sample::finaliseReferenceData()
 {
 	// Do we actually have some reference data?
@@ -867,9 +810,7 @@ bool Sample::finaliseReferenceData()
 	return true;
 }
 
-/*!
- * \brief Calculate RMSE error between corrected S(Q)s and reference data
- */
+// Calculate RMSE error between corrected S(Q)s and reference data
 double Sample::referenceRMSE(double deltaQ)
 {
 	// Do we have actual reference data to compare?
@@ -902,12 +843,10 @@ double Sample::referenceRMSE(double deltaQ)
 }
 
 /*
-// Parallel Comms
-*/
-
-/*!
- * \brief Broadcast data from Master to all Slaves
+ * Parallel Comms
  */
+
+// Broadcast data from Master to all Slaves
 bool Sample::broadcast(const List<Species>& species)
 {
 #ifdef PARALLEL

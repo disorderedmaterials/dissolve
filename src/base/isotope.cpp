@@ -22,10 +22,7 @@
 #include "base/isotope.h"
 #include "base/comms.h"
 
-/*!
- * \brief Constructor
- * \details Constructor for Isotope. 
- */
+// Constructor
 Isotope::Isotope() : MPIListItem<Isotope>()
 {
 	A_ = 0;
@@ -38,21 +35,16 @@ Isotope::Isotope() : MPIListItem<Isotope>()
 	absorptionXS_ = 0.0;
 }
 
-/*!
- * \brief Destructor
- * \details Destructor for Isotope. 
- */
+// Destructor
 Isotope::~Isotope()
 {
 }
 
 /*
-// Isotope Definition
-*/
-
-/*!
- * \brief Set isotope information
+ * Isotope Definition
  */
+
+// Set isotope information
 void Isotope::set(int A, double weight, double bc, double bi, double sc, double si, double totalxs, double absxs)
 {
 	A_ = A;
@@ -65,77 +57,59 @@ void Isotope::set(int A, double weight, double bc, double bi, double sc, double 
 	absorptionXS_ = absxs;
 }
 
-/*!
- * \brief Mass number (A) of isotope
- */
+// Mass number (A) of isotope
 int Isotope::A() const
 {
 	return A_;
 }
 
-/*!
- * \brief Return atomic weight (given C = 12)
- */
+// Return atomic weight (given C = 12)
 double Isotope::atomicWeight() const
 {
 	return atomicWeight_;
 }
 
-/*!
- * \brief Return bound coherent scattering length (fm)
- */
+// Return bound coherent scattering length (fm)
 double Isotope::boundCoherent() const
 {
 	return boundCoherent_;
 }
 
-/*!
- * \brief Return bound incoherent scattering length (fm)
- */
+// Return bound incoherent scattering length (fm)
 double Isotope::boundIncoherent() const
 {
 	return boundIncoherent_;
 }
 
-/*!
- * \brief Return bound coherent scattering cross section (barn)
- */
+// Return bound coherent scattering cross section (barn)
 double Isotope::boundCoherentXS() const
 {
 	return boundCoherentXS_;
 }
 
-/*!
- * \brief Return bound incoherent scattering cross section (barn)
- */
+// Return bound incoherent scattering cross section (barn)
 double Isotope::boundIncoherentXS() const
 {
 	return boundIncoherentXS_;
 }
 
-/*!
- * \brief Return total bound scattering cross section (barn)
- */
+// Return total bound scattering cross section (barn)
 double Isotope::totalXS() const
 {
 	return totalXS_;
 }
 
-/*!
- * \brief Return absorption cross section for thermal (2200 m/s) neutron (barn)
- */
+// Return absorption cross section for thermal (2200 m/s) neutron (barn)
 double Isotope::absorptionXS() const
 {
 	return absorptionXS_;
 }
 
 /*
-// Parallel Comms
-*/
-
-/*!
- * \brief Broadcast data from Master to all Slaves
+ * Parallel Comms
  */
+
+// Broadcast data from Master to all Slaves
 bool Isotope::broadcast()
 {
 #ifdef PARALLEL

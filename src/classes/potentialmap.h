@@ -30,7 +30,7 @@ class PairPotential;
 class Atom;
 class Molecule;
 
-/*!
+/*
  * \brief PotentialMap Definition
  * \details TODO
  */
@@ -45,10 +45,9 @@ class PotentialMap
 	void clear();
 
 
-	/*!
-	 * \name Source Parameters
+	/*
+	 * Source Parameters
 	 */
-	///@{
 	private:
 	// Number of unique types forming potentialMatrix_
 	int nTypes_;
@@ -66,19 +65,16 @@ class PotentialMap
 	double range() const;
 	// Return PairPotential range squared
 	double rangeSquared() const;
-	///@}
 
 
-	/*!
-	 * \name Energy / Force
+	/*
+	 * Energy / Force
 	 */
-	///@{
 	public:
 	// Return energy between Atom types at squared distance specified
 	double energy(int typeI, int typeJ, double distanceSquared) const;
 	// Return force between Atom types at squared distance specified
 	double force(int typeI, int typeJ, double distanceSquared) const;
-	///@}
 };
 
 #endif

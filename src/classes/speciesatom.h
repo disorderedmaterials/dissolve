@@ -44,10 +44,9 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	~SpeciesAtom();
 
 
-	/*!
-	 * \name Properties
+	/*
+	 * Properties
 	 */
-	///@{
 	private:
 	// Parent Species
 	Species* parent_;
@@ -93,13 +92,11 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	int userIndex() const;
 	// Copy properties from supplied Atom
 	void copyProperties(const SpeciesAtom* source);
-	///@}
 
 
-	/*!
-	 * \name Containing Grain
+	/*
+	 * Containing Grain
 	 */
-	///@{
 	private:
 	// Grain to which this atom belongs
 	SpeciesGrain* grain_;
@@ -109,13 +106,11 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	void setGrain(SpeciesGrain* grain);
 	// Return grain to which this atom belongs
 	SpeciesGrain* grain();
-	///@}
 	
 	
-	/*!
-	 * \name Bond Information
+	/*
+	 * Bond Information
 	 */
-	///@{
 	private:
 	// List of bonds which this atom participates in
 	RefList<SpeciesBond,int> bonds_;
@@ -133,29 +128,24 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	RefListItem<SpeciesBond,int>* bonds();
 	// Return whether bond to specified atom exists
 	SpeciesBond* hasBond(SpeciesAtom* j);
-	///@}
 
 
-	/*!
-	 * \name Coordinate Manipulation
+	/*
+	 * Coordinate Manipulation
 	 */
-	///@{
 	public:
 	// Set coordinates
 	void setCoordinates(const Vec3<double>& newr);
 	// Translate coordinates
 	void translateCoordinates(const Vec3<double>& delta);
-	///@}
 
 
-	/*!
-	 * \name Parallel Comms
+	/*
+	 * Parallel Comms
 	 */
-	///@{
 	public:
 	// Broadcast data from Master to all Slaves
 	bool broadcast(const List<AtomType>& atomTypes);
-	///@}
 };
 
 #endif

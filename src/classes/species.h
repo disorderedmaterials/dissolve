@@ -48,10 +48,9 @@ class Species : public ListItem<Species>
 	void clear();
 
 
-	/*!
-	 * \name Basic Information
+	/*
+	 * Basic Information
 	 */
-	///@{
 	private:
 	// Name of the Species
 	Dnchar name_;
@@ -63,13 +62,11 @@ class Species : public ListItem<Species>
 	const char* name() const;
 	// Check setup
 	bool checkSetup(const List<AtomType>& atomTypes);
-	///@}
 
 
-	/*!
-	 * \name Atomic Information
+	/*
+	 * Atomic Information
 	*/
-	///@{
 	private:
 	// List of Atoms in the Species
 	List<SpeciesAtom> atoms_;
@@ -103,13 +100,11 @@ class Species : public ListItem<Species>
 	void changeAtomElement(SpeciesAtom* i, int el, AtomType* at);
 	// Return total atomic mass of Species
 	double mass() const;
-	///@}
 
 
-	/*!
-	 * \name Intramolecular Data
+	/*
+	 * Intramolecular Data
 	 */
-	///@{
 	private:
 	// List of Bonds between Atoms in the Species
 	List<SpeciesBond> bonds_;
@@ -153,13 +148,11 @@ class Species : public ListItem<Species>
 	double scaling(int indexI, int indexJ) const;
 	// Identify inter-Grain terms
 	void identifyInterGrainTerms();
-	///@}
 
 
-	/*!
-	 * \name Grains
+	/*
+	 * Grains
 	 */
-	///@{
 	private:
 	// List of grain, dividing the Atoms of this Species into individual groups
 	List<SpeciesGrain> grains_;
@@ -193,13 +186,11 @@ class Species : public ListItem<Species>
 	void setHighlightedGrain(SpeciesGrain* gd);
 	// Return highlighted grain
 	SpeciesGrain* highlightedGrain();
-	///@}
 
 
-	/*!
-	 * \name Isotopologues
+	/*
+	 * Isotopologues
 	 */
-	///@{
 	private:
 	// List of isotopic variants defined for this species
 	List<Isotopologue> isotopologues_;
@@ -231,13 +222,11 @@ class Species : public ListItem<Species>
 	void setHighlightedIsotopologue(Isotopologue* iso);
 	// Return highlighted Isotopologue
 	Isotopologue* highlightedIsotopologue();
-	///@}
 
 
-	/*!
-	 * \name Transforms
+	/*
+	 * Transforms
 	 */
-	///@{
 	public:
 	// Calculate and return centre of geometry
 	Vec3<double> centreOfGeometry(const Box* box) const;
@@ -245,29 +234,24 @@ class Species : public ListItem<Species>
 	void setCentre(const Box* box, const Vec3<double> newCentre);
 	// Centre coordinates at origin
 	void centreAtOrigin();
-	///@}
 
 
-	/*!
-	 * \name File Input / Output
+	/*
+	 * File Input / Output
 	 */
-	///@{
 	public:
 	// Load Species information from XYZ file
 	bool loadFromXYZ(const char* fileName);
 	// Load Species from file
 	bool load(const char* fileName);
-	///@}
 
 
-	/*!
-	 * \name Parallel Comms
+	/*
+	 * Parallel Comms
 	 */
-	///@{
 	public:
 	// Broadcast data from Master to all Slaves
 	bool broadcast(const List<AtomType>& atomTypes);
-	///@}
 };
 
 #endif

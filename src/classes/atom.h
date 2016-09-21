@@ -30,7 +30,7 @@ class Cell;
 class Grain;
 class Molecule;
 
-/*!
+/*
  * \brief Atom Definition
  * \details 
  */
@@ -43,10 +43,9 @@ class Atom
 	~Atom();
 
 
-	/*!
-	 * \name Properties
+	/*
+	 * Properties
 	 */
-	///@{
 	private:
 	// Coordinates
 	Vec3<double> r_;
@@ -108,13 +107,11 @@ class Atom
 	Cell* cell() const;
 	// Copy properties from supplied Atom
 	void copyProperties(const Atom* source);
-	///@}
 
 
-	/*!
-	 * \name Coordinate Manipulation
+	/*
+	 * Coordinate Manipulation
 	 */
-	///@{
 	private:
 	// Grain to which this Atom belongs
 	Grain* grain_;
@@ -136,17 +133,14 @@ class Atom
 	void setCoordinatesNasty(const Vec3<double>& newr);
 	// Translate coordinates with no Grain update
 	void translateCoordinatesNasty(const Vec3<double>& delta);
-	///@}
 
 
-	/*!
-	 * \name Parallel Comms
+	/*
+	 * Parallel Comms
 	 */
-	///@{
 	public:
 	// Broadcast data from Master to all Slaves
 	bool broadcast();
-	///@}
 };
 
 #endif

@@ -32,10 +32,10 @@ class Species;
 class Isotopologue;
 
 /** \addtogroup GUI
- *  @{
+ * @{
  */
 
-/*!
+/*
  * \brief Samples DockWidget
  * \details TODO
  */

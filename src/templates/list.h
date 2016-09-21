@@ -25,7 +25,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-/*!
+/*
  * \brief ListItem Class
  * \details Basic class providing linked list pointers. Any class which is required to be contained in a linked list must
  * subclass ListItem.
@@ -39,7 +39,7 @@ template <class T> class ListItem
 	T *prev, *next;
 };
 
-/*!
+/*
  * \brief Constructor
  * \details Constructor for ListItem
  */
@@ -49,7 +49,7 @@ template <class T> ListItem<T>::ListItem()
 	next = NULL;
 }
 
-/*!
+/*
  * \brief MPIListItem Class
  * \details Basic class providing linked list pointers. Any class which is required to be contained in a linked list, and be 
  * broadcastable with the general broadcast routines must subclass MPIListItem.
@@ -69,7 +69,7 @@ template <class T> class MPIListItem
 	virtual bool broadcast() = 0;
 };
 
-/*!
+/*
  * \brief Constructor
  * \details Constructor for MPIListItem
  */
@@ -79,7 +79,7 @@ template <class T> MPIListItem<T>::MPIListItem()
 	next = NULL;
 }
 
-/*!
+/*
  * \brief Destructor
  * \details Destructor for MPIListItem
  */
@@ -87,7 +87,7 @@ template <class T> MPIListItem<T>::~MPIListItem()
 {
 }
 
-/*!
+/*
  * \brief List Class
  * \details Linked list for user-defined classes. Any class which is required to be contained in a List must subclass ListItem or MPIListItem.
 */
@@ -100,10 +100,9 @@ template <class T> class List
 	~List();
 
 
-	/*!
-	 * \name Item List
+	/*
+	 * Item List
 	 */
-	///@{
 	private:
 	// Pointers to head and tail of list
 	T *listHead_, *listTail_;
@@ -190,7 +189,7 @@ template <class T> class List
 	void moveAfter(T *item, T *reference);
 };
 
-/*!
+/*
  * \brief Constructor
  * \details Constructor for List. 
  */
@@ -203,7 +202,7 @@ template <class T> List<T>::List()
 	items_ = NULL;
 }
 
-/*!
+/*
  * \brief Destructor
  * \details Destructor for List. 
  */
@@ -212,7 +211,7 @@ template <class T> List<T>::~List()
 	clear();
 }
 
-/*!
+/*
  * \brief Return the number of items in the list
  */
 template <class T> int List<T>::nItems() const
@@ -220,7 +219,7 @@ template <class T> int List<T>::nItems() const
 	return nItems_;
 }
 
-/*!
+/*
  * \brief Return the list head
  */
 template <class T> T *List<T>::first() const
@@ -228,7 +227,7 @@ template <class T> T *List<T>::first() const
 	return listHead_;
 }
 
-/*!
+/*
  * \brief Return second item in the list
  */
 template <class T> T *List<T>::second() const
@@ -236,7 +235,7 @@ template <class T> T *List<T>::second() const
 	return (listHead_ == NULL ? NULL : listHead_->next);
 }
 
-/*!
+/*
  * \brief Returns the list tail
  */
 template <class T> T *List<T>::last() const
@@ -244,7 +243,7 @@ template <class T> T *List<T>::last() const
 	return listTail_;
 }
 
-/*!
+/*
  * \brief Add item to list
  */
 template <class T> T* List<T>::add()
@@ -259,7 +258,7 @@ template <class T> T* List<T>::add()
 	return newitem;
 }
 
-/*!
+/*
  * \brief Insert new item after supplied item
  */
 template <class T> T *List<T>::insert(T* newprev)
@@ -280,7 +279,7 @@ template <class T> T *List<T>::insert(T* newprev)
 	return newitem;
 }
 
-/*!
+/*
  * \brief Own an existing item
  */
 template <class T> void List<T>::own(T* olditem)
@@ -304,7 +303,7 @@ template <class T> void List<T>::own(T* olditem)
 	regenerate_ = 1;
 }
 
-/*!
+/*
  * \brief Disown the item, but do not delete it
  */
 template <class T> void List<T>::disown(T* xitem)
@@ -322,7 +321,7 @@ template <class T> void List<T>::disown(T* xitem)
 	regenerate_ = 1;
 }
 
-/*!
+/*
  * \brief Remove the specified item from the list
  */
 template <class T> void List<T>::remove(T *xitem)
@@ -340,7 +339,7 @@ template <class T> void List<T>::remove(T *xitem)
 	regenerate_ = 1;
 }
 
-/*!
+/*
  * \brief Remove first item from the list
  */
 template <class T> void List<T>::removeFirst()
@@ -360,7 +359,7 @@ template <class T> void List<T>::removeFirst()
 	regenerate_ = 1;
 }
 
-/*!
+/*
  * \brief Remove last item from the list
  */
 template <class T> void List<T>::removeLast()
@@ -379,7 +378,7 @@ template <class T> void List<T>::removeLast()
 	regenerate_ = 1;
 }
 
-/*!
+/*
  * \brief Return whether the item is owned by the list
  */
 template <class T> bool List<T>::contains(T *searchitem) const
@@ -389,7 +388,7 @@ template <class T> bool List<T>::contains(T *searchitem) const
 	return (item != NULL);
 }
 
-/*!
+/*
  * \brief Remove the specified item from the list, returning the next
  */
 template <class T> T* List<T>::removeAndGetNext(T *xitem)
@@ -409,7 +408,7 @@ template <class T> T* List<T>::removeAndGetNext(T *xitem)
 	return result;
 }
 
-/*!
+/*
  * \brief Cut - Bridge items over specified item
  */
 template <class T> void List<T>::cut(T *item)
@@ -432,7 +431,7 @@ template <class T> void List<T>::cut(T *item)
 	regenerate_ = 1;
 }
 
-/*!
+/*
  * \brief Fill array
  */
 template <class T> void List<T>::fillArray(int nItems, T **data)
@@ -449,7 +448,7 @@ template <class T> void List<T>::fillArray(int nItems, T **data)
 	}
 }
 
-/*!
+/*
  * \brief Remove all items in the list
  */
 template <class T> void List<T>::clear()
@@ -466,7 +465,7 @@ template <class T> void List<T>::clear()
 	regenerate_ = 1;
 }
 
-/*!
+/*
  * \brief Find index of supplied item
  */
 template <class T> int List<T>::indexOf(T *item) const
@@ -485,7 +484,7 @@ template <class T> int List<T>::indexOf(T *item) const
 	return result;
 }
 
-/*!
+/*
  * \brief Return item at given position (slow)
  */
 template <class T> T *List<T>::item(int n) const
@@ -500,7 +499,7 @@ template <class T> T *List<T>::item(int n) const
 	return NULL;
 }
 
-/*!
+/*
  * \brief Create empty list
  */
 template <class T> void List<T>::createEmpty(int size)
@@ -510,7 +509,7 @@ template <class T> void List<T>::createEmpty(int size)
 	regenerate_ = 1;
 }
 
-/*!
+/*
  * \brief Create (or just return) the item array
  */
 template <class T> T **List<T>::array()
@@ -534,7 +533,7 @@ template <class T> T **List<T>::array()
 // Item Moves
 */
 
-/*!
+/*
  * \brief Swap items
  */
 template <class T> void List<T>::swapItems(T* item1, T* item2)
@@ -599,7 +598,7 @@ template <class T> void List<T>::swapItems(T* item1, T* item2)
 	regenerate_ = 1;
 }
 
-/*!
+/*
  * \brief Shift item towards head
  */
 template <class T> void List<T>::shiftUp(T *item)
@@ -615,7 +614,7 @@ template <class T> void List<T>::shiftUp(T *item)
 	regenerate_ = 1;
 }
 
-/*!
+/*
  * \brief Shift item towards tail
  */
 template <class T> void List<T>::shiftDown(T *item)
@@ -631,7 +630,7 @@ template <class T> void List<T>::shiftDown(T *item)
 	regenerate_ = 1;
 }
 
-/*!
+/*
  * \brief Move item at position 'target' the specified number of places up (+ve) or down (-ve)
  */
 template <class T> void List<T>::move(int target, int delta)
@@ -655,7 +654,7 @@ template <class T> void List<T>::move(int target, int delta)
 	regenerate_ = 1;
 }
 
-/*!
+/*
  * \brief Move item to end
  */
 template <class T> void List<T>::moveToEnd(T *item)
@@ -675,7 +674,7 @@ template <class T> void List<T>::moveToEnd(T *item)
 	regenerate_ = 1;
 }
 
-/*!
+/*
  * \brief Move item to start
  */
 template <class T> void List<T>::moveToStart(T *item)
@@ -695,7 +694,7 @@ template <class T> void List<T>::moveToStart(T *item)
 	regenerate_ = 1;
 }
 
-/*!
+/*
  * \brief Move item so it is after specified item
  */
 template <class T> void List<T>::moveAfter(T *item, T *reference)
@@ -734,7 +733,7 @@ template <class T> void List<T>::moveAfter(T *item, T *reference)
 // Operators
 */
 
-/*!
+/*
  * \brief Assignment operator =
  */
 template <class T> void List<T>::operator=(const List<T> &source)
@@ -755,7 +754,7 @@ template <class T> void List<T>::operator=(const List<T> &source)
 	regenerate_ = 1;
 }
 
-/*!
+/*
  * \brief Element access operator
  */
 template <class T> T *List<T>::operator[](int index)

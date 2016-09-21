@@ -28,7 +28,7 @@
 // Forward Declarations
 class BraggPeak;
 
-/*!
+/*
  * \brief K-Vector
  */
 class KVector
@@ -46,8 +46,8 @@ class KVector
 	KVector* prev, *next;
 
 
-	/*!
-	 * \name KVector Data
+	/*
+	 * KVector Data
 	 */
 	private:
 	// Integer hkl indices of vector

@@ -28,7 +28,7 @@
 #include "base/comms.h"
 #include "base/timer.h"
 
-/*!
+/*
  * \brief Calculate the total intramolecular forces within the system
  * \details Calculate the total intramolecular forces within the system, arising from Bond, Angle, and Torsion
  * terms in all molecules.
@@ -121,7 +121,7 @@ void DUQ::intramolecularForces(Configuration& cfg, double* fx, double* fy, doubl
 	}
 }
 
-/*!
+/*
  * \brief Calculate Grain forces within the system
  * \details Calculates the total Grain forces within the system, i.e. the energy contributions from PairPotential
  * interactions between Grains. Any connections between Grains (which in reality correspond to proper chemical bonds
@@ -187,7 +187,7 @@ void DUQ::grainForces(Configuration& cfg, double* fx, double* fy, double* fz, do
 	}
 }
 
-/*!
+/*
  * \brief Calculate total forces within the system
  * \details Calculates the total forces within the system, arising from inter-Grain PairPotential interactions
  * and intramolecular contributions.

@@ -28,7 +28,7 @@
 // Forward Declarations
 /* none */
 
-/*!
+/*
  * \brief BraggPeak Class
  * \details BraggPeak acts as a 'bin' for collecting contributions arising from a set of KVectors which occur at the same Q value.
  */
@@ -45,8 +45,8 @@ class BraggPeak
 	void operator=(const BraggPeak& source);
 
 
-	/*!
-	 * \name BraggPeak Data
+	/*
+	 * BraggPeak Data
 	 */
 	private:
 	// Q-position of peak

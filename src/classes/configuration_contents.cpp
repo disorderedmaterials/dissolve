@@ -26,7 +26,7 @@
 #include "classes/species.h"
 #include "base/comms.h"
 
-/*!
+/*
  * \brief Add space for a Molecule of the Species provided
  * Add an empty Molecule to the Configuration. The Molecule will contain array space for referencing the number of Atoms and Grains
  * defined in the supplied Species. No actual Atom or Grain information is created in this function (this is done by Molecule::instantiate()).
@@ -47,25 +47,19 @@ void Configuration::addMolecule(Species* sp)
 	nAtoms_ += mol->nAtoms();
 }
 
-/*!
- * \brief Return number of Molecules
- */
+// Return number of Molecules
 int Configuration::nMolecules() const
 {
 	return molecules_.nItems();
 }
 
-/*!
- * \brief Return first Molecule
- */
+// Return first Molecule
 Molecule* Configuration::molecules()
 {
 	return molecules_.first();
 }
 
-/*!
- * \brief Return specified molecule
- */
+// Return specified molecule
 Molecule* Configuration::molecule(int id)
 {
 #ifdef CHECKS
@@ -79,25 +73,19 @@ Molecule* Configuration::molecule(int id)
 	return molecules_[id];
 }
 
-/*!
- * \brief Return number of grains
- */
+// Return number of grains
 int Configuration::nGrains() const
 {
 	return nGrains_;
 }
 
-/*!
- * \brief Return grain array
- */
+// Return grain array
 Grain* Configuration::grains()
 {
 	return grains_;
 }
 
-/*!
- *  \brief Return nth grain
- */
+// Return nth grain
 Grain& Configuration::grain(int n)
 {
 #ifdef CHECKS
@@ -111,25 +99,19 @@ Grain& Configuration::grain(int n)
 	return grains_[n];
 }
 
-/*!
- * \brief Return number of atoms
- */
+// Return number of atoms
 int Configuration::nAtoms() const
 {
 	return nAtoms_;
 }
 
-/*!
- * \brief Return atom array
- */
+// Return atom array
 Atom* Configuration::atoms()
 {
 	return atoms_;
 }
 
-/*!
- * \brief Return nth atom
- */
+// Return nth atom
 Atom* Configuration::atom(int n)
 {
 #ifdef CHECKS
@@ -142,10 +124,7 @@ Atom* Configuration::atom(int n)
 	return &atoms_[n];
 }
 
-/*!
- * \brief Setup Arrays
- * \details Allocates atom and grain arrays
- */
+// Setup Arrays
 bool Configuration::setupArrays()
 {
 	if (molecules_.nItems() == 0)
@@ -182,7 +161,7 @@ bool Configuration::setupArrays()
 	return true;
 }
 
-/*!
+/*
  * \brief Setup Molecules
  * \details Once molecules have been added to the Configuration with addMolecule(), and the master arrays of atoms and grains have
  * been allocated by setupArrays(), the coordinates of the individual atoms can be set. If atoms are present in the supplied Species, setupMolecules()
@@ -320,17 +299,13 @@ bool Configuration::setGlobalAtomTypeIndices(const AtomTypeIndex& masterIndex)
 	return true;
 }
 
-/*!
- * \brief Return current coordinate index
- */
+// Return current coordinate index
 int Configuration::coordinateIndex()
 {
 	return coordinateIndex_;
 }
 
-/*!
- * \brief Increment current coordinate index
- */
+// Increment current coordinate index
 void Configuration::incrementCoordinateIndex()
 {
 	++coordinateIndex_;

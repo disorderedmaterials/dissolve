@@ -27,10 +27,7 @@
 
 #define OPTOLERANCE 1.0e-6
 
-/*!
- * \brief Data2D
- * \details Provides a class containing XY-style data and various methods to perform manipulations, operations, and transforms.
- */
+// Data2D
 class Data2D : public ListItem<Data2D>
 {
 	public:
@@ -48,10 +45,9 @@ class Data2D : public ListItem<Data2D>
 	static bool useFFT_;
 
 
-	/*!
-	 * \name Data
+	/*
+	 * Data
 	 */
-	///@{
 	private:
 	// Array of x values
 	Array<double> x_;
@@ -103,13 +99,11 @@ class Data2D : public ListItem<Data2D>
 	void setName(const char* name);
 	// Return name of data
 	const char* name() const;
-	///@}
 
 
-	/*!
-	 * \name Operators
+	/*
+	 * Operators
 	 */
-	///@{
 	public:
 	// Assignment Operator
 	void operator=(const Data2D& source);
@@ -129,24 +123,22 @@ class Data2D : public ListItem<Data2D>
 	void operator*=(const double factor);
 	// Operator /=
 	void operator/=(const double factor);
-	///@}
 
 
-	/*!
-	 * \name Fourier Transforms
+	/*
+	 * Fourier Transforms
 	 */
-	///@{
 	public:
-	/// Window Functions
+	// Window Functions
 	enum WindowFunction
 	{
-		NoWindow,		/**> Don't use any window */
-		BartlettWindow,		/**> Bartlett (triangular) window */
-		HannWindow,		/**> von Hann (Hanning) window */
-		LanczosWindow,		/**> Lanczos window */
-		NuttallWindow,		/**> Nuttall window (continuous first derivatives over range) */
-		SineWindow,		/**> Sine Window */
-		nWindowFunctions	/**> Number of defined WindowFunctions */
+		NoWindow,		/* Don't use any window */
+		BartlettWindow,		/* Bartlett (triangular) window */
+		HannWindow,		/* von Hann (Hanning) window */
+		LanczosWindow,		/* Lanczos window */
+		NuttallWindow,		/* Nuttall window (continuous first derivatives over range) */
+		SineWindow,		/* Sine Window */
+		nWindowFunctions	/* Number of defined WindowFunctions */
 	};
 	// Convert text string to WindowFunction
 	static WindowFunction windowFunction(const char* s);
@@ -172,13 +164,11 @@ class Data2D : public ListItem<Data2D>
 	bool transformLorch(double atomicDensity, double step, double rMax, double beta, double delta0, bool qToR);
 	// Calculate S(Q) correlation function
 	bool correlateSQ(double atomicDensity);
-	///@}
 
 
-	/*!
-	 * \name Spline Interpolation
+	/*
+	 * Spline Interpolation
 	 */
-	///@{
 	private:
 	// Array of parameters for spline fit (if created)
 	Array<double> splineA_, splineB_, splineC_, splineD_, splineH_;
@@ -198,13 +188,11 @@ class Data2D : public ListItem<Data2D>
 	void addInterpolated(Data2D& source);
 	// Subtract interpolated data
 	void subtractInterpolated(Data2D& source);
-	///@}
 
 
-	/*!
-	 * \name General Functions
+	/*
+	 * General Functions
 	 */
-	///@{
 	public:
 	// Return minumum x value in data
 	double xMin();
@@ -226,13 +214,11 @@ class Data2D : public ListItem<Data2D>
 	void trim(double minX, double maxX);
 	// Rebin data onto uniform x axis
 	void rebin(double deltaX = -1.0);
-	///@}
 
 
-	/*!
-	 * \name File I/O
+	/*
+	 * File I/O
 	 */
-	///@{
 	public:
 	// Load data from specified file
 	bool load(const char* fileName);
@@ -240,17 +226,14 @@ class Data2D : public ListItem<Data2D>
 	bool save(const char* fileName) const;
 	// Save data and interpolation to specified file
 	bool saveWithInterpolation(const char* fileName);
-	///@}
 
 
-	/*!
-	 * \name Parallel Comms
+	/*
+	 * Parallel Comms
 	 */
-	///@{
 	public:
 	// Broadcast data
 	bool broadcast();
-	///@}
 };
 
 #endif

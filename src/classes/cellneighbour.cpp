@@ -22,27 +22,19 @@
 #include "classes/cellneighbour.h"
 #include <cstdlib>
 
-/*!
- * \brief Constructor
- * \details Constructor for CellNeighbour. 
- */
+// Constructor
 CellNeighbour::CellNeighbour()
 {
 	cell_ = NULL;
 	useMim_ = false;
 }
 
-/*!
- * \brief Destructor
- * \details Constructor for CellNeighbour. 
- */
+// Destructor
 CellNeighbour::~CellNeighbour()
 {
 }
 
-/*!
- * \brief Set cell and mim flag
- */
+// Set cell and mim flag
 void CellNeighbour::set(Cell* cell, bool useMim)
 {
 	cell_ = cell;
@@ -55,9 +47,7 @@ Cell* CellNeighbour::cell()
 	return cell_;
 }
 
-/*!
- * \brief Return whether mim should be applied
- */
+// Return whether mim should be applied
 bool CellNeighbour::useMim()
 {
 	return useMim_;

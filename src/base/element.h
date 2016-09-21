@@ -27,10 +27,7 @@
 #include "base/isotope.h"
 #include "base/parameters.h"
 
-/*!
- * \brief Element Definition
- * \details Element definition, including names and representative colour for a single element.
- */
+// Element Definition
 class Element
 {
 	public:
@@ -38,10 +35,9 @@ class Element
 	Element();
 
 
-	/*!
-	 * \name Element Information
+	/*
+	 * Element Information
 	 */
-	///@{
 	private:
 	// Atomic number (Z)
 	int z_;
@@ -67,13 +63,11 @@ class Element
 	double atomicRadius() const;
 	// Return element colour
 	const float* colour() const;
-	///@}
 
 
-	/*!
-	 * \name Isotopes
+	/*
+	 * Isotopes
 	 */
-	///@{
 	private:
 	// Isotope list
 	List<Isotope> isotopes_;
@@ -89,13 +83,11 @@ class Element
 	int nIsotopes() const;
 	// Return Isotope with specified A (if it exists)
 	Isotope* hasIsotope(int A) const;
-	///@}
 
 
-	/*!
-	 * \name Parameters
+	/*
+	 * Parameters
 	 */
-	///@{
 	private:
 	// Basic Parameters
 	List<Parameters> parameters_;
@@ -113,17 +105,14 @@ class Element
 	Parameters* findParameters(const char* name) const;
 	// Return index of specified parameters
 	int indexOfParameters(Parameters* p) const;
-	///@}
 
 
-	/*!
-	 * \name Parallel Comms
+	/*
+	 * Parallel Comms
 	 */
-	///@{
 	public:
 	// Broadcast data from Master to all Slaves
 	bool broadcast();
-	///@}
 };
 
 #endif

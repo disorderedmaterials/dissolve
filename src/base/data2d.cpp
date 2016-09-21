@@ -31,27 +31,19 @@
 // Static Members
 bool Data2D::useFFT_ = false;
 
-/*!
- * \brief Constructor
- * \details Constructor for Data2D.
- */
+// Constructor
 Data2D::Data2D() : ListItem<Data2D>()
 {
 	name_ = "Untitled";
 	splineInterval_ = -1;
 }
 
-/*!
- * \brief Destructor
- * \details Destructor for Data2D. 
- */
+// Destructor
 Data2D::~Data2D()
 {
 }
 
-/*!
- * \brief Copy Constructor
- */
+// Copy Constructor
 Data2D::Data2D(const Data2D& source)
 {
 	x_ = source.x_;
@@ -64,9 +56,7 @@ Data2D::Data2D(const Data2D& source)
 	name_ = source.name_;
 }
 
-/*!
- * \brief Clear Data
- */
+// Clear Data
 void Data2D::clear()
 {
 	x_.clear();
@@ -79,12 +69,10 @@ void Data2D::clear()
 }
 
 /*
-// Data
-*/
-
-/*!
- * \brief Resize arrays
+ * Data
  */
+
+// Resize arrays
 void Data2D::resize(int size)
 {
 	clear();
@@ -92,9 +80,7 @@ void Data2D::resize(int size)
 	y_.initialise(size);
 }
 
-/*!
- * \brief Reset arrays to zero
- */
+// Reset arrays to zero
 void Data2D::reset()
 {
 	for (int n=0; n<x_.nItems(); ++n) x_[n] = 0.0;
@@ -102,17 +88,13 @@ void Data2D::reset()
 	splineInterval_ = -1;
 }
 
-/*!
- * \brief Initialise arrays to specified size
- */
+// Initialise arrays to specified size
 void Data2D::initialise(int size)
 {
 	resize(size);
 }
 
-/*!
- * \brief Create new X axis and empty Y axis
- */
+// Create new X axis and empty Y axis
 void Data2D::createEmpty(double xDelta, double xMax, bool halfBins)
 {
 	clear();
@@ -124,17 +106,13 @@ void Data2D::createEmpty(double xDelta, double xMax, bool halfBins)
 	}
 }
 
-/*!
- * \brief Return current array size
- */
+// Return current array size
 int Data2D::arraySize()
 {
 	return x_.nItems();
 }
 
-/*!
- * \brief Set specified data point
- */
+// Set specified data point
 void Data2D::setPoint(int index, double x, double y)
 {
 #ifdef CHECKS
@@ -154,17 +132,13 @@ void Data2D::setPoint(int index, double x, double y)
 	splineInterval_ = -1;
 }
 
-/*!
- * \brief Return number of defined datapoints
- */
+// Return number of defined datapoints
 int Data2D::nPoints() const
 {
 	return x_.nItems();
 }
 
-/*!
- * \brief Set x value
- */
+// Set x value
 void Data2D::setX(int index, double x)
 {
 #ifdef CHECKS
@@ -178,9 +152,7 @@ void Data2D::setX(int index, double x)
 	splineInterval_ = -1;
 }
 
-/*!
- * \brief Add to x value
- */
+// Add to x value
 void Data2D::addX(int index, double delta)
 {
 #ifdef CHECKS
@@ -194,9 +166,7 @@ void Data2D::addX(int index, double delta)
 	splineInterval_ = -1;
 }
 
-/*!
- * \brief Return x value specified
- */
+// Return x value specified
 double Data2D::x(int index) const
 {
 #ifdef CHECKS
@@ -209,18 +179,14 @@ double Data2D::x(int index) const
 	return x_.value(index);
 }
 
-/*!
- * \brief Return x Array
- */
+// Return x Array
 Array<double>& Data2D::arrayX()
 {
 	splineInterval_ = -1;
 	return x_;
 }
 
-/*!
- * \brief Set y value
- */
+// Set y value
 void Data2D::setY(int index, double y)
 {
 #ifdef CHECKS
@@ -234,9 +200,7 @@ void Data2D::setY(int index, double y)
 	splineInterval_ = -1;
 }
 
-/*!
- * \brief Add to y value
- */
+// Add to y value
 void Data2D::addY(int index, double delta)
 {
 #ifdef CHECKS
@@ -250,9 +214,7 @@ void Data2D::addY(int index, double delta)
 	splineInterval_ = -1;
 }
 
-/*!
- * \brief Add to y array
- */
+// Add to y array
 bool Data2D::addY(const Array<double>& source, double factor)
 {
 	if (y_.nItems() != source.nItems())
@@ -266,9 +228,7 @@ bool Data2D::addY(const Array<double>& source, double factor)
 	return true;
 }
 
-/*!
- * \brief Multiply y value
- */
+// Multiply y value
 void Data2D::multiplyY(int index, double factor)
 {
 #ifdef CHECKS
@@ -282,9 +242,7 @@ void Data2D::multiplyY(int index, double factor)
 	splineInterval_ = -1;
 }
 
-/*!
- * \brief Return y value specified
- */
+// Return y value specified
 double Data2D::y(int index) const
 {
 #ifdef CHECKS
@@ -297,18 +255,14 @@ double Data2D::y(int index) const
 	return y_.value(index);
 }
 
-/*!
- * \brief Return y Array
- */
+// Return y Array
 Array<double>& Data2D::arrayY()
 {
 	splineInterval_ = -1;
 	return y_;
 }
 
-/*!
- * \brief Add new data point
- */
+// Add new data point
 void Data2D::addPoint(double x, double y)
 {
 	x_.add(x);
@@ -316,29 +270,23 @@ void Data2D::addPoint(double x, double y)
 	splineInterval_ = -1;
 }
 
-/*!
- * \brief Set name of data
- */
+// Set name of data
 void Data2D::setName(const char* name)
 {
 	name_ = name;
 }
 
-/*!
- * \brief Return name of data
- */
+// Return name of data
 const char* Data2D::name() const
 {
 	return name_.get();
 }
 
 /*
-// Operators
-*/
-
-/*!
- * \brief Operator =
+ * Operators
  */
+
+// Operator =
 void Data2D::operator=(const Data2D& source)
 {
 	x_ = source.x_;
@@ -351,9 +299,7 @@ void Data2D::operator=(const Data2D& source)
 	name_ = source.name_;
 }
 
-/*!
- * \brief Operator +
- */
+// Operator +
 Data2D Data2D::operator+(const Data2D& source) const
 {
 	// Construct copy of current data
@@ -383,9 +329,7 @@ Data2D Data2D::operator+(const Data2D& source) const
 	return newData;
 }
 
-/*!
- * \brief Operator +=
- */
+// Operator +=
 void Data2D::operator+=(const Data2D& source)
 {
 	// Initialise current arrays?
@@ -417,18 +361,14 @@ void Data2D::operator+=(const Data2D& source)
 	splineInterval_ = -1;
 }
 
-/*!
- * \brief Operator +=
- */
+// Operator +=
 void Data2D::operator+=(const double dy)
 {
 	for (int n=0; n<x_.nItems(); ++n) y_[n] += dy;
 	splineInterval_ = -1;
 }
 
-/*!
- * \brief Operator -
- */
+// Operator -
 Data2D Data2D::operator-(const Data2D& source) const
 {
 	// Construct copy of current data
@@ -458,9 +398,7 @@ Data2D Data2D::operator-(const Data2D& source) const
 	return newData;
 }
 
-/*!
- * \brief Operator -=
- */
+// Operator -=
 void Data2D::operator-=(const Data2D& source)
 {
 	// Initialise current arrays?
@@ -492,18 +430,14 @@ void Data2D::operator-=(const Data2D& source)
 	splineInterval_ = -1;
 }
 
-/*!
- * \brief Operator -=
- */
+// Operator -=
 void Data2D::operator-=(const double dy)
 {
 	for (int n=0; n<x_.nItems(); ++n) y_[n] -= dy;
 	splineInterval_ = -1;
 }
 
-/*!
- * \brief Operator *=
- */
+// Operator *=
 void Data2D::operator*=(const double factor)
 {
 	// Multiply current data
@@ -511,9 +445,7 @@ void Data2D::operator*=(const double factor)
 	splineInterval_ = -1;
 }
 
-/*!
- * \brief Operator /=
- */
+// Operator /=
 void Data2D::operator/=(const double factor)
 {
 	// Divide current data
@@ -522,32 +454,26 @@ void Data2D::operator/=(const double factor)
 }
 
 /*
-// Fourier Transforms
-*/
+ * Fourier Transforms
+ */
 
 // Window Function keywords
 const char* WindowFunctionKeywords[] = { "None", "Bartlett", "Hann", "Lanczos", "Nuttall", "Sine" };
 
-/*!
- * \brief Convert text string to WindowFunction
- */
+// Convert text string to WindowFunction
 Data2D::WindowFunction Data2D::windowFunction(const char* s)
 {
 	for (int n=0; n<Data2D::nWindowFunctions; ++n) if (strcmp(s,WindowFunctionKeywords[n]) == 0) return (Data2D::WindowFunction) n;
 	return Data2D::nWindowFunctions;
 }
 
-/*!
- * \brief Convert WindowFunction to text string
- */
+// Convert WindowFunction to text string
 const char* Data2D::windowFunction(Data2D::WindowFunction wf)
 {
 	return WindowFunctionKeywords[wf];
 }
 
-/*!
- * \brief Make some checks before doing transform
- */
+// Make some checks before doing transform
 bool Data2D::checkBeforeTransform()
 {
 	// Enough data to do transform?
@@ -575,11 +501,7 @@ bool Data2D::checkBeforeTransform()
 	return true;
 }
 
-/*!
- * \brief Return value of window function at specified position (in range 0.0 - 1.0)
- * \details Calculates the value of the specified window function at the given value of 'x', where the range
- * of 'x' is between 0.0 and 1.0 inclusive.
- */
+// Return value of window function at specified position (in range 0.0 - 1.0 inclusive)
 double Data2D::window(Data2D::WindowFunction wf, double x)
 {
 #ifdef CHECKS
@@ -611,10 +533,7 @@ double Data2D::window(Data2D::WindowFunction wf, double x)
 	return 0.0;
 }
 
-/*!
- * \brief Perform plain Fourier transform of real data
- * \details Forward or backward Fourier transform the current data.
- */
+// Perform plain Fourier transform of real data
 bool Data2D::fourierTransformReal(bool forwardTransform, Data2D::WindowFunction wf)
 {
 	// Okay to continue with transform?
@@ -669,9 +588,7 @@ bool Data2D::fourierTransformReal(bool forwardTransform, Data2D::WindowFunction 
 	return true;
 }
 
-/*!
- * \brief Transform g(r) to S(Q)
- */
+// Transform g(r) to S(Q)
 bool Data2D::transformRDF(double atomicDensity, Data2D::WindowFunction wf)
 {
 	// Okay to continue with transform?
@@ -821,9 +738,7 @@ bool Data2D::transformRDF(double atomicDensity, Data2D::WindowFunction wf)
 	return true;
 }
 
-/*!
- * \brief Transform g(r) to S(Q), applying instrumental broadening functions
- */
+// Transform g(r) to S(Q), applying instrumental broadening functions
 bool Data2D::transformBroadenedRDF(double atomicDensity, double qStep, double qMax, double fwhm, double fwhmq, Data2D::WindowFunction wf)
 {
 	// Okay to continue with transform?
@@ -878,9 +793,7 @@ bool Data2D::transformBroadenedRDF(double atomicDensity, double qStep, double qM
 	return true;
 }
 
-/*!
- * \brief Transform S(Q) to g(r)
- */
+// Transform S(Q) to g(r)
 bool Data2D::transformSQ(double atomicDensity, Data2D::WindowFunction wf)
 {
 	// Okay to continue with transform?
@@ -924,7 +837,7 @@ bool Data2D::transformSQ(double atomicDensity, Data2D::WindowFunction wf)
 	return true;
 }
 
-/*!
+/*
  * \brief Fourier transform current data, applying line-width broadening in real-space using the modified Lorch function
  * \details Fourier transforms from Q to r-space, or r to Q-space, employing the modified Lorch function as described by Soper in
  * XXX TODO.
@@ -991,9 +904,7 @@ bool Data2D::transformLorch(double atomicDensity, double step, double rMax, doub
 	return true;
 }
 
-/*!
- * \brief Calculate S(Q) correlation function
- */
+// Calculate S(Q) correlation function
 bool Data2D::correlateSQ(double atomicDensity)
 {
 	// Okay to continue with transform?
@@ -1030,12 +941,10 @@ bool Data2D::correlateSQ(double atomicDensity)
 }
 
 /*
-// Spline Interpolation
-*/
-
-/*!
- * \brief Calculate natural spline interpolation of current data
+ * Spline Interpolation
  */
+
+// Calculate natural spline interpolation of current data
 void Data2D::interpolate(bool constrained)
 {
 	/* For a set of N points {x(i),y(i)} for i = 0 - (N-1), the i'th interval can be represented by a cubic spline
@@ -1247,9 +1156,7 @@ void Data2D::interpolate(bool constrained)
 	splineInterval_ = 0;
 }
 
-/*!
- * \brief Return spline interpolated y value for supplied x
- */
+// Return spline interpolated y value for supplied x
 double Data2D::interpolated(double xvalue)
 {
 	// Do we need to (re)generate the interpolation?
@@ -1310,9 +1217,7 @@ double Data2D::interpolated(double xvalue)
 	return result;
 }
 
-/*!
- * \brief Smooth data
- */
+// Smooth data
 void Data2D::smooth(int avgSize, int skip)
 {
 	// First, create a new dataset using Y-averages of the current data
@@ -1334,29 +1239,23 @@ void Data2D::smooth(int avgSize, int skip)
 	for (n=0; n<x_.nItems(); ++n) y_[n] = avg.interpolated(x_[n]);
 }
 
-/*!
- * \brief Add interpolated data
- */
+// Add interpolated data
 void Data2D::addInterpolated(Data2D& source)
 {
 	for (int n=0; n<x_.nItems(); ++n) addY(n, source.interpolated(x_.value(n)));
 }
 
-/*!
- * \brief Subtract interpolated data
- */
+// Subtract interpolated data
 void Data2D::subtractInterpolated(Data2D& source)
 {
 	for (int n=0; n<x_.nItems(); ++n) addY(n, -source.interpolated(x_.value(n)));
 }
 
 /*
-// General Functions
-*/
-
-/*!
- * \brief Return minumum x value in data
+ * General Functions
  */
+
+// Return minumum x value in data
 double Data2D::xMin()
 {
 	if (x_.nItems() == 0) return 0.0;
@@ -1365,9 +1264,7 @@ double Data2D::xMin()
 	return result;
 }
 
-/*!
- * \brief Return maxumum x value in data
- */
+// Return maxumum x value in data
 double Data2D::xMax()
 {
 	if (x_.nItems() == 0) return 0.0;
@@ -1376,9 +1273,7 @@ double Data2D::xMax()
 	return result;
 }
 
-/*!
- * \brief Return minumum y value in data
- */
+// Return minumum y value in data
 double Data2D::yMin()
 {
 	if (y_.nItems() == 0) return 0.0;
@@ -1387,9 +1282,7 @@ double Data2D::yMin()
 	return result;
 }
 
-/*!
- * \brief Return maxumum y value in data
- */
+// Return maxumum y value in data
 double Data2D::yMax()
 {
 	if (y_.nItems() == 0) return 0.0;
@@ -1398,10 +1291,7 @@ double Data2D::yMax()
 	return result;
 }
 
-/*!
- * \brief Compute integral of the data
- * \details Compute the integral of the current data using the Trapezium method
- */
+// Compute integral of the data
 double Data2D::integral()
 {
 	double total = 0.0, y0 = y_.first(), y1, x0 = x_.first(), x1;
@@ -1416,10 +1306,7 @@ double Data2D::integral()
 	return total;
 }
 
-/*!
- * \brief Compute absolute integral of the data
- * \details Compute the absolute integral of the current data using the Trapezium method
- */
+// Compute absolute integral of the data
 double Data2D::absIntegral()
 {
 	if (nPoints() < 2) return 0.0;
@@ -1435,9 +1322,7 @@ double Data2D::absIntegral()
 	return total;
 }
 
-/*!
- * \brief Apply median filter to data
- */
+// Apply median filter to data
 void Data2D::medianFilter(int length)
 {
 	double data[length], avg, result;
@@ -1483,9 +1368,7 @@ void Data2D::medianFilter(int length)
 	y_ = newY;
 }
 
-/*!
- * \brief Convolute this data with the supplied data, by products
- */
+// Convolute this data with the supplied data, by products
 bool Data2D::convoluteProduct(Data2D& data)
 {
 	// Check compatibility of datasets
@@ -1509,9 +1392,7 @@ bool Data2D::convoluteProduct(Data2D& data)
 	return true;
 }
 
-/*!
- * \brief Trim data to X-range specified
- */
+// Trim data to X-range specified
 void Data2D::trim(double minX, double maxX)
 {
 	// Copy old data first...
@@ -1527,9 +1408,7 @@ void Data2D::trim(double minX, double maxX)
 	}
 }
 
-/*!
- * \brief Rebin data onto uniform x axis
- */
+// Rebin data onto uniform x axis
 void Data2D::rebin(double deltaX)
 {
 	// If deltaX is negative, work out a deltaX to use
@@ -1558,12 +1437,10 @@ void Data2D::rebin(double deltaX)
 }
 	
 /*
-// File I/O
-*/
-
-/*!
- * \brief Load data from specified file
+ * File I/O
  */
+
+// Load data from specified file
 bool Data2D::load(const char* fileName)
 {
 	// Only the Master process can do this
@@ -1601,9 +1478,7 @@ bool Data2D::load(const char* fileName)
 	return true;
 }
 
-/*!
- * \brief Save data to specified file
- */
+// Save data to specified file
 bool Data2D::save(const char* fileName) const
 {
 	// Only the Master process can do this
@@ -1625,9 +1500,7 @@ bool Data2D::save(const char* fileName) const
 	return true;
 }
 
-/*!
- * \brief Save data and interpolation to specified file
- */
+// Save data and interpolation to specified file
 bool Data2D::saveWithInterpolation(const char* fileName)
 {
 	// Only the Master process can do this
@@ -1650,12 +1523,10 @@ bool Data2D::saveWithInterpolation(const char* fileName)
 }
 
 /*
-// Parallel Comms
-*/
-
-/*!
- * \brief Broadcast data
+ * Parallel Comms
  */
+
+// Broadcast data
 bool Data2D::broadcast()
 {
 #ifdef PARALLEL

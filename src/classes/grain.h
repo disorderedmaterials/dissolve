@@ -50,10 +50,9 @@ class Grain
 	void clear();
 
 
-	/*!
-	 * \name Atoms / Character
+	/*
+	 * Atoms / Character
 	 */
-	///@{
 	private:
 	// Parent molecule
 	Molecule* parent_;
@@ -89,13 +88,11 @@ class Grain
 	void setIndex(int index);
 	// Return index of grain
 	int index() const;
-	///@}
 
 
-	/*!
-	 * \name Coordinates / Manipulation
+	/*
+	 * Coordinates / Manipulation
 	 */
-	///@{
 	private:
 	// Centre of geometry of grain
 	Vec3<double> centre_;
@@ -121,7 +118,6 @@ class Grain
 	void moveTo(const Vec3<double>& delta);
 	// Translate grain centre
 	void translate(const Vec3<double>& delta);
-	///@}
 };
 
 #endif

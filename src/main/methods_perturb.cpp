@@ -105,7 +105,7 @@ double DUQ::simplexCost(Array<double>& alpha)
 // 	return sos;
 }
 
-/*!
+/*
  * \brief Generate/update perturbation to potential
  */
 bool DUQ::perturb(Configuration& cfg)

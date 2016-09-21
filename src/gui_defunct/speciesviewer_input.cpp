@@ -26,8 +26,8 @@
 #include <QtGui/QMouseEvent>
 
 /*
-// Mouse Input
-*/
+ * Mouse Input
+ */
 
 // Qt Signal (mouse press event)
 void SpeciesViewer::mousePressEvent(QMouseEvent* event)

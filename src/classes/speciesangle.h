@@ -41,10 +41,9 @@ class SpeciesAngle : public ListItem<SpeciesAngle>
 	~SpeciesAngle();
 
 
-	/*!
-	 * \name Basic Data
+	/*
+	 * Basic Data
 	 */
-	///@{
 	private:
 	// Parent Species
 	Species* parent_;
@@ -54,13 +53,11 @@ class SpeciesAngle : public ListItem<SpeciesAngle>
 	void setParent(Species* parent);
 	// Return parent Species
 	Species* parent() const;
-	///@}
 
 
-	/*!
-	 * \name Atom Information
+	/*
+	 * Atom Information
 	 */
-	///@{
 	private:
 	// First Atom in Angle
 	SpeciesAtom* i_;
@@ -86,13 +83,11 @@ class SpeciesAngle : public ListItem<SpeciesAngle>
 	int indexK() const;
 	// Return whether Atoms in Angle match those specified
 	bool matches(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const;
-	///@}
 
 
-	/*!
-	 * \name Interaction Parameters
+	/*
+	 * Interaction Parameters
 	 */
-	///@{
 	private:
 	// Nominal equilibrium Bond angle
 	double equilibrium_;
@@ -134,17 +129,14 @@ class SpeciesAngle : public ListItem<SpeciesAngle>
 	double energy(double angleInDegrees) const;
 	// Return force multiplier for specified angle
 	double force(double angleInDegrees) const;
-	///@}
 
 
-	/*!
-	 * \name Parallel Comms
+	/*
+	 * Parallel Comms
 	 */
-	///@{
 	public:
 	// Broadcast data from Master to all Slaves
 	bool broadcast(const List<SpeciesAtom>& atoms);
-	///@}
 };
 
 #endif

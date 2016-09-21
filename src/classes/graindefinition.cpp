@@ -23,115 +23,86 @@
 #include "base/ptable.h"
 #include "base/comms.h"
 
-/*!
- * \brief Constructor
- * \details Constructor for GrainDefinition. 
- */
+// Constructor
 GrainDefinition::GrainDefinition() : ListItem<GrainDefinition>()
 {
 	parent_ = NULL;
 }
 
-/*!
- * \brief Destructor
- * \details Destructor for GrainDefinition. 
- */
+// Destructor
 GrainDefinition::~GrainDefinition()
 {
 }
 
 /*
-// Basic Character
-*/
-
-/*!
- * \brief Set parent Species
+ * Basic Character
  */
+
+// Set parent Species
 void GrainDefinition::setParent(Species* parent)
 {
 	parent_ = parent;
 }
 
-/*!
- * \brief Return parent Species
- */
+// Return parent Species
 Species *GrainDefinition::parent() const
 {
 	return parent_;
 }
 
-/*!
- * \brief Set name of GrainDefinition
- */
+// Set name of GrainDefinition
 void GrainDefinition::setName(const char* s)
 {
 	name_ = s;
 }
 
-/*!
- * \brief Return name of GrainDefinition
- */
+// Return name of GrainDefinition
 const char* GrainDefinition::name() const
 {
 	return name_.get();
 }
 
 /*
-// Atoms
-*/
-
-/*!
- * \brief Search current list for Atom
+ * Atoms
  */
+
+// Search current list for Atom
 bool GrainDefinition::containsAtom(Atom* i) const
 {
 	return atoms_.contains(i);
 }
 
-/*!
- * \brief Add specified Atom to list
- */
+// Add specified Atom to list
 void GrainDefinition::addAtom(Atom* i)
 {
 	atoms_.add(i);
 }
 
-/*!
- * \brief Remove specified Atom from list
- */
+// Remove specified Atom from list
 void GrainDefinition::removeAtom(Atom* i)
 {
 	atoms_.remove(i);
 }
 
-/*!
- * \brief Return number of Atoms in the list
- */
+// Return number of Atoms in the list
 int GrainDefinition::nAtoms() const
 {
 	return atoms_.nItems();
 }
 
-/*!
- * \brief Return first Atom reference in list
- */
+// Return first Atom reference in list
 RefListItem<Atom,int>* GrainDefinition::atoms() const
 {
 	return atoms_.first();
 }
 
-/*!
- * \brief Return nth Atom reference in list
- */
+// Return nth Atom reference in list
 RefListItem<Atom,int>* GrainDefinition::atom(int n)
 {
 	return atoms_[n];
 }
 
-/*!
- * \brief Return empirical name of GrainDefinition from constituent Atoms
- * \details Creates and returns a name for the GrainDefinition which corresponds to the empirical formula of its Atoms
- */
+// Return empirical name of GrainDefinition from constituent Atoms
 const char* GrainDefinition::nameFromAtoms()
 {
 	PeriodicTable::resetEmpiricalFormula();
@@ -140,12 +111,10 @@ const char* GrainDefinition::nameFromAtoms()
 }
 
 /*
-// Parallel Comms
-*/
-
-/*!
- * \brief Broadcast data from Master to all Slaves
+ * Parallel Comms
  */
+
+// Broadcast data from Master to all Slaves
 bool GrainDefinition::broadcast(const List<Atom>& atoms)
 {
 #ifdef PARALLEL

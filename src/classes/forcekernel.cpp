@@ -27,29 +27,21 @@
 #include "classes/species.h"
 #include "base/comms.h"
 
-/*!
- * \brief Constructor
- * \details Constructor for ForceKernel.
- */
+// Constructor
 ForceKernel::ForceKernel(const Box* box, const PotentialMap& potentialMap) : box_(box), potentialMap_(potentialMap)
 {
 }
 
-/*!
- * \brief Destructor
- * \details Destructor for ForceKernel. 
- */
+// Destructor
 ForceKernel::~ForceKernel()
 {
 }
 
 /*
-// Internal Force Calculation
-*/
-
-/*!
- * \brief Calculate PairPotential forces between Atoms provided (no minimum image calculation)
+ * Internal Force Calculation
  */
+
+// Calculate PairPotential forces between Atoms provided (no minimum image calculation)
 void ForceKernel::forcesWithoutMim(const Atom* i, const Atom* j, double* fx, double* fy, double* fz, double scale)
 {
 	Vec3<double> force = j->r() - i->r();
@@ -65,9 +57,7 @@ void ForceKernel::forcesWithoutMim(const Atom* i, const Atom* j, double* fx, dou
 	fz[index] -= force.z;
 }
 
-/*!
- * \brief Calculate PairPotential forces between Atom and Grain provided (no minimum image calculation)
- */
+// Calculate PairPotential forces between Atom and Grain provided (no minimum image calculation)
 void ForceKernel::forcesWithoutMim(const Atom* i, const Grain* grain, bool excludeIgtJ, double* fx, double* fy, double* fz)
 {
 	int m, nAtomsJ = grain->nAtoms();
@@ -81,7 +71,7 @@ void ForceKernel::forcesWithoutMim(const Atom* i, const Grain* grain, bool exclu
 	}
 }
 
-/*!
+/*
  * \brief Calculate PairPotential forces between Grains provided (no minimum image calculation)
  * \details This calculates the forces between the individual Atoms of the two Grains provided, adding contributions into the three
  * force arrays supplied. A check is made as to whether the two Grains have the same parent Molecule. If so, then force contributions
@@ -116,9 +106,7 @@ void ForceKernel::forcesWithoutMim(const Grain* grainI, const Grain* grainJ, dou
 	}
 }
 
-/*!
- * \brief Calculate PairPotential forces between Atoms provided (minimum image calculation)
- */
+// Calculate PairPotential forces between Atoms provided (minimum image calculation)
 void ForceKernel::forcesWithMim(const Atom* i, const Atom* j, double* fx, double* fy, double* fz, double scale)
 {
 	Vec3<double> force = box_->minimumVector(i, j);
@@ -134,9 +122,7 @@ void ForceKernel::forcesWithMim(const Atom* i, const Atom* j, double* fx, double
 	fz[index] -= force.z;
 }
 
-/*!
- * \brief Calculate PairPotential forces between Atom and Grain provided (minimum image calculation)
- */
+// Calculate PairPotential forces between Atom and Grain provided (minimum image calculation)
 void ForceKernel::forcesWithMim(const Atom* i, const Grain* grain, bool excludeIgtJ, double* fx, double* fy, double* fz)
 {
 	int m, nAtomsJ = grain->nAtoms();
@@ -150,7 +136,7 @@ void ForceKernel::forcesWithMim(const Atom* i, const Grain* grain, bool excludeI
 	}
 }
 
-/*!
+/*
  * \brief Calculate PairPotential forces between Grains provided (minimum image calculation)
  * \details This calculates the forces between the individual Atoms of the two Grains provided, applying minimum image convention, adding
  * contributions into the three force arrays supplied. A check is made as to whether the two Grains have the same parent Molecule. If so,
@@ -186,12 +172,10 @@ void ForceKernel::forcesWithMim(const Grain* grainI, const Grain* grainJ, double
 }
 
 /*
-// Force Calculation
-*/
-
-/*!
- * \brief Calculate PairPotential forces between Atoms provided
+ * Force Calculation
  */
+
+// Calculate PairPotential forces between Atoms provided
 void ForceKernel::forces(const Atom* i, const Atom* j, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz)
 {
 #ifdef CHECKS
@@ -219,9 +203,7 @@ void ForceKernel::forces(const Atom* i, const Atom* j, bool applyMim, bool exclu
 	else forcesWithoutMim(i, j, fx, fy, fz);
 }
 
-/*!
- * \brief Calculate PairPotential forces between Atom and Grain provided
- */
+// Calculate PairPotential forces between Atom and Grain provided
 void ForceKernel::forces(const Atom* i, const Grain* grain, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz)
 {
 #ifdef CHECKS
@@ -240,9 +222,7 @@ void ForceKernel::forces(const Atom* i, const Grain* grain, bool applyMim, bool 
 	else forcesWithoutMim(i, grain, excludeIgtJ, fx, fy, fz);
 }
 
-/*!
- * \brief Calculate PairPotential forces between Grains provided
- */
+// Calculate PairPotential forces between Grains provided
 void ForceKernel::forces(const Grain* grainI, const Grain* grainJ, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz)
 {
 #ifdef CHECKS
@@ -277,9 +257,7 @@ void ForceKernel::forces(const Grain* grainI, const Grain* grainJ, bool applyMim
 	else forcesWithoutMim(grainI, grainJ, fx, fy, fz);
 }
 
-/*!
- * \brief Calculate PairPotential forces between Atom and Cell contents
- */
+// Calculate PairPotential forces between Atom and Cell contents
 void ForceKernel::forces(const Atom* i, const Cell* cell, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz)
 {
 #ifdef CHECKS
@@ -301,9 +279,7 @@ void ForceKernel::forces(const Atom* i, const Cell* cell, bool applyMim, bool ex
 	}
 }
 
-/*!
- * \brief Calculate PairPotential forces between Grain and Cell contents
- */
+// Calculate PairPotential forces between Grain and Cell contents
 void ForceKernel::forces(const Grain* grain, const Cell* cell, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz)
 {
 #ifdef CHECKS
@@ -322,7 +298,7 @@ void ForceKernel::forces(const Grain* grain, const Cell* cell, bool applyMim, bo
 	for (RefListItem<Grain,int>* grainRef = cell->grains(); grainRef != NULL; grainRef = grainRef->next) forces(grain, grainRef->item, applyMim, excludeIgtJ, fx, fy, fz);
 }
 
-/*!
+/*
  * \brief Calculate PairPotential forces between Atom and list of Cells
  * \details Calculate the PairPotential forces between the supplied Atom and a list of Cells, storing (adding) the results to
  * the three force component arrays provided. Because partial forces are added to the supplied arrays which are defined
@@ -356,7 +332,7 @@ void ForceKernel::forces(const Atom* i, int nNeighbours, Cell** neighbours, bool
 	}
 }
 
-/*!
+/*
  * \brief Calculate PairPotential forces between Grain and list of Cells
  * \details Calculate the PairPotential forces between the supplied Grain and a list of Cells, storing (adding) the results to
  * the three force component arrays provided. Because partial forces are added to the supplied arrays which are defined

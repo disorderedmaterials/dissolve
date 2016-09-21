@@ -19,7 +19,6 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "main/flags.h"
 #include "classes/species.h"
 #include "classes/atomtype.h"
 #include "classes/box.h"
@@ -28,28 +27,19 @@
 #include <string.h>
 #include <base/sysfunc.h>
 
-/*!
- * \brief Constructor
- * \details Constructor for Species. 
- */
+// Constructor
 Species::Species() : ListItem<Species>()
 {
 	highlightedIsotopologue_ = NULL;
 	highlightedGrain_ = NULL;
 }
 
-/*!
- * \brief Destructor
- * \details Constructor for Species. 
- */
+// Destructor
 Species::~Species()
 {
 }
 
-/*!
- * \brief Clear Data
- * \details Empty all lists and remove all Atom, GrainDefinition, and Isotopologue data from this Species
- */
+// Clear Data
 void Species::clear()
 {
 	highlightedIsotopologue_ = NULL;
@@ -59,27 +49,19 @@ void Species::clear()
 	angles_.clear();
 	bonds_.clear();
 	atoms_.clear();
-
-	Flags::wave(Flags::SpeciesChanged);
 }
 
 /*
-// Basic Information
-*/
-
-/*!
- * \brief Set name of the Species
+ * Basic Information
  */
+
+// Set name of the Species
 void Species::setName(const char* name)
 {
 	name_ = name;
-	
-	Flags::wave(Flags::SpeciesChanged);
 }
 
-/*!
- * \brief Return the name of the Species
- */
+// Return the name of the Species
 const char* Species::name() const
 {
 	return name_.get();
@@ -199,12 +181,10 @@ bool Species::checkSetup(const List<AtomType>& atomTypes)
 }
 
 /*
-// Parallel Comms
-*/
-
-/*!
- * \brief Broadcast data from Master to all Slaves
+ * Parallel Comms
  */
+
+// Broadcast data from Master to all Slaves
 bool Species::broadcast(const List<AtomType>& atomTypes)
 {
 #ifdef PARALLEL

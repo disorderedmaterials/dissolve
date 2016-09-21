@@ -26,7 +26,7 @@
 #include "classes/forcekernel.h"
 #include "base/timer.h"
 
-/*!
+/*
  * \brief Perform some MD
  * \details Evolve the current Configuration using a simple molecular dynamics algorithm.
  * 

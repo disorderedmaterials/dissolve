@@ -254,8 +254,8 @@ Sample* MainWindow::selectedSample()
 }
 
 /*
-// System Component Group
-*/
+ * System Component Group
+ */
 
 // Different Component selected in list
 void MainWindow::on_SystemCompositionTable_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)
@@ -369,8 +369,8 @@ void MainWindow::on_SystemBoxGammaSpin_valueChanged(double value)
 }
 
 /*
-// Samples Group
-*/
+ * Samples Group
+ */
 
 // Different Sample selected in list
 void MainWindow::on_SamplesList_currentRowChanged(int row)
@@ -435,8 +435,8 @@ void MainWindow::on_CopySampleButton_clicked(bool checked)
 }
 
 /*
-// Mixture Group
-*/
+ * Mixture Group
+ */
 
 // Determine Species and Isotopologue from QVariant data
 bool MainWindow::getSpeciesAndIsotopologue(QStringList data, Species*& species, Isotopologue*& iso)
@@ -580,8 +580,8 @@ void MainWindow::mixtureIsotopologueChanged(int index)
 }
 
 /*
-// Reference Data Group
-*/
+ * Reference Data Group
+ */
 
 // Raise a file-selector and choose a new reference data filename
 void MainWindow::on_ReferenceDataFileSelectButton_clicked(bool checked)

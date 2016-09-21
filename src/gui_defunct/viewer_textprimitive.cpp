@@ -23,8 +23,8 @@
 #include "gui/viewer.uih"
 
 /*
-// Text Primitive
-*/
+ * Text Primitive
+ */
 
 // Set data
 void TextPrimitive::set(Vec3<double> pos, QString text, bool rightAlign)
@@ -53,8 +53,8 @@ bool TextPrimitive::rightAlign()
 }
 
 /*
-// Text Primitive Chunk
-*/
+ * Text Primitive Chunk
+ */
 
 // Constructor
 TextPrimitiveChunk::TextPrimitiveChunk()
@@ -135,8 +135,8 @@ void TextPrimitiveChunk::renderAll(QPainter &painter, Viewer* viewer, bool isIso
 }
 
 /*
-// Text Primitive List
-*/
+ * Text Primitive List
+ */
 
 // Constructor
 TextPrimitiveList::TextPrimitiveList()

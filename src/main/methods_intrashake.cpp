@@ -29,9 +29,7 @@
 #include "base/comms.h"
 #include "base/timer.h"
 
-/*!
- * \brief Perform an Intramolecular Shake
- */
+// Perform an Intramolecular Shake
 bool DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 {
 	// Start a Timer
@@ -213,9 +211,7 @@ bool DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 	return true;
 }
 
-/*!
- * \brief Shake intermolecular terms between Grains
- */
+// Shake intermolecular terms between Grains
 bool DUQ::interShake(Configuration& cfg)
 {
 	// Initialise the Cell distributor
@@ -380,9 +376,7 @@ bool DUQ::interShake(Configuration& cfg)
 	return true;
 }
 
-/*!
- * \brief Individually Shake all Intramolecular Terms
- */
+// Individually Shake all Intramolecular Terms
 bool DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 {
 	// Start a Timer

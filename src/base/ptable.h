@@ -28,7 +28,7 @@
 // Forward Declarations
 /* none */
 
-/*!
+/*
  * \short Periodic Table
  * \details Periodic table-style structure containing information on all elements and their isotopes, along with neutron scattering length information.
  */
@@ -43,10 +43,9 @@ class PeriodicTable
 	void clear();
 
 
-	/*!
-	 * \name Element Data
+	/*
+	 * Element Data
 	 */
-	///@{
 	private:
 	// Element array
 	static Element* elements_;
@@ -66,13 +65,11 @@ class PeriodicTable
 	static int nElements();
 	// Return element specified
 	static Element &element(int z);
-	///@}
 	
 	
-	/*!
-	 * \name Empirical Formula Generation
+	/*
+	 * Empirical Formula Generation
 	 */
-	///@{
 	private:
 	// Element counts array
 	static int *elementCount_;
@@ -84,17 +81,14 @@ class PeriodicTable
 	static void addToEmpirical(int z, int count = 1);
 	// Return current empirical formula
 	static const char* empiricalFormula();
-	///@}
 
 
-	/*!
-	 * \name Parallel Comms
+	/*
+	 * Parallel Comms
 	 */
-	///@{
 	public:
 	// Broadcast data from Master to all Slaves
 	bool broadcast();
-	///@}
 };
 
 // Periodic table data

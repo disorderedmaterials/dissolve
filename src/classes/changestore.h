@@ -34,7 +34,7 @@ class Grain;
 class Molecule;
 class Configuration;
 
-/*!
+/*
  * \brief Change Data
  */
 class ChangeData
@@ -48,8 +48,8 @@ class ChangeData
 	ChangeData* next, *prev;
 
 
-	/*!
-	 * \name Target Data
+	/*
+	 * Target Data
 	 */
 	private:
 	// Atom
@@ -72,7 +72,7 @@ class ChangeData
 	bool hasMoved();
 };
 
-/*!
+/*
  * \brief ChangeStore
  */
 class ChangeStore
@@ -84,10 +84,9 @@ class ChangeStore
 	~ChangeStore();
 
 
-	/*!
-	 * \name Watch Targets
+	/*
+	 * Watch Targets
 	 */
-	///@{
 	private:
 	// List of target atoms (and modification data)
 	List<ChangeData> targetAtoms_;
@@ -101,13 +100,11 @@ class ChangeStore
 	void add(Molecule* mol);
 	// Add cell to watch
 	void add(Cell* cell);
-	///@}
 
 
-	/*!
-	 * \name Change Data
+	/*
+	 * Change Data
 	 */
-	///@{
 	private:
 	// List of local changes
 	List<ChangeData> changes_;
@@ -131,17 +128,14 @@ class ChangeStore
 	void revert(int id);
 	// Save Atom changes for broadcast, and reset arrays for new data
 	void storeAndReset();
-	///@}
 
 
-	/*!
-	 * \name Parallel Comms
+	/*
+	 * Parallel Comms
 	 */
-	///@{
 	public:
 	// Distribute and apply change data to all processes
 	bool distributeAndApply(Configuration& cfg);
-	///@}
 };
 
 #endif

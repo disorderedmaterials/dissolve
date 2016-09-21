@@ -31,7 +31,7 @@
 // Static Singletons
 QColor PlotWidget::lineColours_[PlotWidget::nLineColours];
 
-/*!
+/*
  * \brief Constructor
  */
 PlotWidget::PlotWidget(QWidget* parent) : QWidget(parent)
@@ -84,7 +84,7 @@ PlotWidget::PlotWidget(QWidget* parent) : QWidget(parent)
 	yAxisTitle_ = "YAxis";
 }
 
-/*!
+/*
  * \brief Destructor
  */
 PlotWidget::~PlotWidget()
@@ -92,10 +92,10 @@ PlotWidget::~PlotWidget()
 }
 
 /*
-// Widgets / Slots / Reimplementations
-*/
+ * Widgets / Slots / Reimplementations
+ */
 
-/*!
+/*
  * \brief Recreate context menu
  */
 void PlotWidget::recreateContextMenu()
@@ -145,7 +145,7 @@ void PlotWidget::recreateContextMenu()
 	contextMenuValid_ = true;
 }
 
-/*!
+/*
  * \brief Mouse press event
  */
 void PlotWidget::mousePressEvent(QMouseEvent* event)
@@ -175,7 +175,7 @@ void PlotWidget::mousePressEvent(QMouseEvent* event)
 // 	printf("Clicked graph coords = %f,%f\n", clickedGraphPosition_.x(), clickedGraphPosition_.y());
 }
 
-/*!
+/*
  * \brief Mouse release event
  */
 void PlotWidget::mouseReleaseEvent(QMouseEvent* event)
@@ -216,7 +216,7 @@ void PlotWidget::mouseReleaseEvent(QMouseEvent* event)
 	clickedWidgetPosition_ = QPoint();
 }
 
-/*!
+/*
  * \brief Mouse move event
  */
 void PlotWidget::mouseMoveEvent(QMouseEvent* event)
@@ -248,7 +248,7 @@ void PlotWidget::mouseMoveEvent(QMouseEvent* event)
 	}
 }
 
-/*!
+/*
  * \brief Mouse wheel event
  */
 void PlotWidget::wheelEvent(QWheelEvent* event)
@@ -267,7 +267,7 @@ void PlotWidget::wheelEvent(QWheelEvent* event)
 	repaint();
 }
 
-/*!
+/*
  * \brief Key press event
  */
 void PlotWidget::keyPressEvent(QKeyEvent* event)
@@ -311,7 +311,7 @@ void PlotWidget::keyPressEvent(QKeyEvent* event)
 	else event->ignore();
 }
 
-/*!
+/*
  * \brief Key release event
  */
 void PlotWidget::keyReleaseEvent(QKeyEvent* event)
@@ -319,7 +319,7 @@ void PlotWidget::keyReleaseEvent(QKeyEvent* event)
 	event->ignore();
 }
 
-/*!
+/*
  * \brief Context Menu DataSet entry clicked
  */
 void PlotWidget::contextMenuDataSetClicked(bool checked)
@@ -341,7 +341,7 @@ void PlotWidget::contextMenuDataSetClicked(bool checked)
 	update();
 }
 
-/*!
+/*
  * \brief Context Menu Group ShowAll entry clicked
  */
 void PlotWidget::contextMenuGroupShowAllClicked(bool checked)
@@ -361,7 +361,7 @@ void PlotWidget::contextMenuGroupShowAllClicked(bool checked)
 	update();
 }
 
-/*!
+/*
  * \brief Context Menu Group HideAll entry clicked
  */
 void PlotWidget::contextMenuGroupHideAllClicked(bool checked)
@@ -385,7 +385,7 @@ void PlotWidget::contextMenuGroupHideAllClicked(bool checked)
  * Toolbar (if specified)
  */
 
-/*!
+/*
  * \brief Update toolbar to reflect internal state
  */
 void PlotWidget::updateToolBarWidget()
@@ -398,7 +398,7 @@ void PlotWidget::updateToolBarWidget()
 	toolBarButtons_[PlotWidget::LimitYMaxButton]->setDown(limitYMax_);
 }
 
-/*!
+/*
  * \brief Set toolbar for PlotWidget
  */
 void PlotWidget::setToolBarWidget(QWidget* widget)
@@ -466,7 +466,7 @@ void PlotWidget::setToolBarWidget(QWidget* widget)
  * Style
  */
 
-/*!
+/*
  * \brief Return nth pre-defined colour
  */
 QColor PlotWidget::lineColour(int n)
@@ -478,7 +478,7 @@ QColor PlotWidget::lineColour(int n)
  * Plot Area
  */
 
-/*!
+/*
  * \brief Determine suitable tick deltas based on current graph limits
  * \details Given the current min and max values of the x and y axes, determine a 'best-fit' tick delta, given the constraints that it must
  * be exactly one of several basic values, multiplied by some power of 10.
@@ -549,7 +549,7 @@ void PlotWidget::calculateTickDeltas(int maxTicks)
 	}
 }
 
-/*!
+/*
  * \brief Set main title
  */
 void PlotWidget::setMainTitle(QString title)
@@ -558,7 +558,7 @@ void PlotWidget::setMainTitle(QString title)
 	repaint();
 }
 
-/*!
+/*
  * \brief Set x-axis title
  */
 void PlotWidget::setXAxisTitle(QString title)
@@ -567,7 +567,7 @@ void PlotWidget::setXAxisTitle(QString title)
 	repaint();
 }
 
-/*!
+/*
  * \brief Set y-axis title
  */
 void PlotWidget::setYAxisTitle(QString title)
@@ -576,7 +576,7 @@ void PlotWidget::setYAxisTitle(QString title)
 	repaint();
 }
 
-/*!
+/*
  * \brief Set x and y axis titles
  */
 void PlotWidget::setTitles(QString mainTitle, QString xTitle, QString yTitle)
@@ -587,7 +587,7 @@ void PlotWidget::setTitles(QString mainTitle, QString xTitle, QString yTitle)
 	update();
 }
 
-/*!
+/*
  * \brief Set soft X limits for plot area
  */
 void PlotWidget::setXLimits(bool setMinLimit, bool applyMinLimit, double minLimit, bool setMaxLimit, bool applyMaxLimit, double maxLimit)
@@ -605,7 +605,7 @@ void PlotWidget::setXLimits(bool setMinLimit, bool applyMinLimit, double minLimi
 	fitData(true);
 }
 
-/*!
+/*
  * \brief Set soft Y limits for plot area
  */
 void PlotWidget::setYLimits(bool setMinLimit, bool applyMinLimit, double minLimit, bool setMaxLimit, bool applyMaxLimit, double maxLimit)
@@ -623,7 +623,7 @@ void PlotWidget::setYLimits(bool setMinLimit, bool applyMinLimit, double minLimi
 	fitData(true);
 }
 
-/*!
+/*
  * \brief Enable/disable autoscaling
  */
 void PlotWidget::setAutoScale(bool enabled)
@@ -632,7 +632,7 @@ void PlotWidget::setAutoScale(bool enabled)
 	update();
 }
 
-/*!
+/*
  * \brief Enable/disable soft x minimum limit
  */
 void PlotWidget::setXMinLimit(bool enabled)
@@ -641,7 +641,7 @@ void PlotWidget::setXMinLimit(bool enabled)
 	fitData(true);
 }
 
-/*!
+/*
  * \brief Enable/disable soft x maxiimum limit
  */
 void PlotWidget::setXMaxLimit(bool enabled)
@@ -650,7 +650,7 @@ void PlotWidget::setXMaxLimit(bool enabled)
 	fitData(true);
 }
 
-/*!
+/*
  * \brief Enable/disable soft y minimum limit
  */
 void PlotWidget::setYMinLimit(bool enabled)
@@ -659,7 +659,7 @@ void PlotWidget::setYMinLimit(bool enabled)
 	fitData(true);
 }
 
-/*!
+/*
  * \brief Enable/disable soft y maxiimum limit
  */
 void PlotWidget::setYMaxLimit(bool enabled)
@@ -669,10 +669,10 @@ void PlotWidget::setYMaxLimit(bool enabled)
 }
 
 /*
-// Source Data
-*/
+ * Source Data
+ */
 
-/*!
+/*
  * \brief Add data to Plot (CheckPoint<Data2D>)
  */
 PlotData* PlotWidget::addDataSet(CheckPoint<Data2D>* data, bool visible, int yOffset, QColor color, Qt::PenStyle style, PlotData::DataModifier xModifier, PlotData::DataModifier yModifier)
@@ -703,7 +703,7 @@ PlotData* PlotWidget::addDataSet(CheckPoint<Data2D>* data, bool visible, int yOf
 	return pd;
 }
 
-/*!
+/*
  * \brief Add data to Plot (local Data2D)
  */
 PlotData* PlotWidget::addDataSet(Data2D& data, const char* groupName, bool visible, int yOffset, QColor color, Qt::PenStyle style, PlotData::DataModifier xModifier, PlotData::DataModifier yModifier)
@@ -734,7 +734,7 @@ PlotData* PlotWidget::addDataSet(Data2D& data, const char* groupName, bool visib
 	return pd;
 }
 
-/*!
+/*
  * \brief Remove specified data from Plot
  */
 void PlotWidget::removeDataSet(CheckPoint<Data2D>* data)
@@ -755,7 +755,7 @@ void PlotWidget::removeDataSet(CheckPoint<Data2D>* data)
 	repaint();
 }
 
-/*!
+/*
  * \brief Remove all data from plot
  */
 void PlotWidget::removeAllDataSets()
@@ -768,7 +768,7 @@ void PlotWidget::removeAllDataSets()
 	repaint();
 }
 
-/*!
+/*
  * \brief Refresh displayData_, recreating lists etc.
  */
 void PlotWidget::refreshData()
@@ -779,10 +779,10 @@ void PlotWidget::refreshData()
 }
 
 /*
-// Functions
-*/
+ * Functions
+ */
 
-/*!
+/*
  * \brief Convert widget coordinates to graph coordinates
  */
 QPointF PlotWidget::widgetToGraph(QPoint pos)
@@ -790,7 +790,7 @@ QPointF PlotWidget::widgetToGraph(QPoint pos)
 	return QPointF((pos.x() - graphArea_.left()) / xScale_ + xMin_, (graphArea_.bottom() - pos.y()) / yScale_ + yMin_ );
 }
 
-/*!
+/*
  * \brief Zoom to specified graph coordinates
  */
 void PlotWidget::zoomToGraph(double x1, double y1, double x2, double y2)
@@ -823,7 +823,7 @@ void PlotWidget::zoomToGraph(double x1, double y1, double x2, double y2)
 	repaint();
 }
 
-/*!
+/*
  * \brief Rescale axes to fit all current data
  */
 void PlotWidget::fitData(bool obeySoftLimits)

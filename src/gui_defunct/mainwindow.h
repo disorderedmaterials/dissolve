@@ -36,10 +36,10 @@
 class GrainDefinition;
 
 /** \addtogroup GUI
- *  @{
+ * @{
  */
 
-/*!
+/*
  * \brief dUQ Main Window
  * \details TODO
  */
@@ -159,7 +159,7 @@ class MainWindow : public QMainWindow
 	/** @} */ // End of GUI_Potential
 
 	/** \defgroup GUI_Simulation Simulation Execution / Check
-	 *  \ingroup GUI
+	 * \ingroup GUI
 	 * The *Simulation* tab defines  TODO
 	 * @{
 	 */

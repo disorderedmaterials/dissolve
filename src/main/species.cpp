@@ -20,18 +20,11 @@
 */
 
 #include "main/duq.h"
-#include "main/flags.h"
 #include "classes/species.h"
 #include "base/sysfunc.h"
 #include <string.h>
 
-/*
-// Species Definition
-*/
-
-/*!
- * \brief Add a new Species to the list
- */
+// Add a new Species to the list
 Species *DUQ::addSpecies()
 {
 	// Create a new Species
@@ -40,14 +33,10 @@ Species *DUQ::addSpecies()
 	// Must update Samples...
 	updateSamples();
 
-	Flags::wave(Flags::SpeciesChanged);
-	
 	return sp;
 }
 
-/*!
- * \brief Remove the specified Species from the list
- */
+// Remove the specified Species from the list
 void DUQ::removeSpecies(Species* sp)
 {
 	// Remove Species
@@ -55,49 +44,34 @@ void DUQ::removeSpecies(Species* sp)
 	
 	// Update Samples
 	updateSamples();
-
-	Flags::wave(Flags::SpeciesChanged);
 }
 
-/*!
- * \brief Return number of defined Species
- */
+// Return number of defined Species
 int DUQ::nSpecies() const
 {
 	return species_.nItems();
 }
 
-/*!
- * \brief Return first Species in the list
- */
+// Return first Species in the list
 Species *DUQ::species() const
 {
 	return species_.first();
 }
 
-/*!
- * \brief Return nth Species in the list
- */
+// Return nth Species in the list
 Species *DUQ::species(int n)
 {
 	return species_[n];
 }
 
-/*!
- * \brief Search for Species by name
- */
+// Search for Species by name
 Species* DUQ::findSpecies(const char* name) const
 {
 	for (Species* sp = species_.first(); sp != NULL; sp = sp->next) if (strcmp(name,sp->name()) == 0) return sp;
 	return NULL;
 }
 
-/*!
- * \brief Update Species (or all) Isotopologues (or specified)
- * \details Update all Isotopologues contained by all (or a specified) Species. Should be called after, for example
- * transmuting an Atom's element through the GUI. If a Species and an Isotopologue are provided, then only this
- * Isotopologue will be updated.
- */
+// Update Species (or all) Isotopologues (or specified)
 void DUQ::updateIsotopologues(Species* species, Isotopologue* iso)
 {
 	if (iso) iso->update(atomTypes_);
@@ -105,10 +79,7 @@ void DUQ::updateIsotopologues(Species* species, Isotopologue* iso)
 	else for (species = species_.first(); species != NULL; species = species->next) species->updateIsotopologues(atomTypes_);
 }
 
-/*!
- * \brief Remove Isotopologue from Species
- * \details Removes the specified Isotopologue from the specified Species, and updates all dependent data.
- */
+// Remove Isotopologue from Species
 void DUQ::removeSpeciesIsotopologue(Species* species, Isotopologue* iso)
 {
 	// NULL pointer check
@@ -125,6 +96,4 @@ void DUQ::removeSpeciesIsotopologue(Species* species, Isotopologue* iso)
 	
 	species->removeIsotopologue(iso);
 	updateSamples();
-	
-	Flags::wave(Flags::IsotopologuesChanged);
 }

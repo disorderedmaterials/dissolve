@@ -51,10 +51,9 @@ class Sample : public ListItem<Sample>
 	static const char* sampleType(SampleType st);
 
 
-	/*!
-	 * \name Basic Information
+	/*
+	 * Basic Information
 	 */
-	///@{
 	private:
 	// Descriptive name
 	Dnchar name_;
@@ -70,13 +69,11 @@ class Sample : public ListItem<Sample>
 	void setType(SampleType type);
 	// Return data type
 	SampleType type();
-	///@}
 	
 	
-	/*!
-	 * \name Isotopologue Definition
+	/*
+	 * Isotopologue Definition
 	 */
-	///@{
 	private:
 	// List of IsotopologueMix-tures for Species in this Sample
 	List<IsotopologueMix> isotopologueMixtures_;
@@ -94,13 +91,11 @@ class Sample : public ListItem<Sample>
 	IsotopologueMix* isotopologueMixture(int n);
 	// Assign default (first) Isotopologues for all Species
 	void assignDefaultIsotopes();
-	///@}
 
 
-	/*!
-	 * \name RDF / S(Q) Data
+	/*
+	 * RDF / S(Q) Data
 	 */
-	///@{
 	private:
 	// Type index for this Sample
 	AtomTypeIndex typeIndex_;
@@ -144,20 +139,18 @@ class Sample : public ListItem<Sample>
 	void saveRDFs(const char* baseName);
 	// Save S(Q)
 	void saveSQ(const char* baseName);
-	///@}
 
 
-	/*!
-	 * \name Reference Data
+	/*
+	 * Reference Data
 	 */
-	///@{
 	public:
-	/// Reference data normalisation types
+	// Reference data normalisation types
 	enum NormalisationType
 	{
-		NoNormalisation,		/**> Data has not been normalised */
-		AverageSquaredNormalisation,	/**> Data has been normalised to < b >**2 */
-		SquaredAverageNormalisation	/**> Data has been normalised to < b**2 > */
+		NoNormalisation,		/* Data has not been normalised */
+		AverageSquaredNormalisation,	/* Data has been normalised to < b >**2 */
+		SquaredAverageNormalisation	/* Data has been normalised to < b**2 > */
 	};
 
 	private:
@@ -223,17 +216,14 @@ class Sample : public ListItem<Sample>
 	bool finaliseReferenceData();
 	// Calculate RMSE error between calculated and reference data
 	double referenceRMSE(double deltaQ);
-	///@}
 
 
-	/*!
-	 * \name Parallel Comms
+	/*
+	 * Parallel Comms
 	 */
-	///@{
 	public:
 	// Broadcast data from Master to all Slaves
 	bool broadcast(const List<Species>& species);
-	///@}
 };
 
 #endif

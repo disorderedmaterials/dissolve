@@ -36,7 +36,7 @@ class SpeciesAtom;
 class SpeciesGrain;
 class Matrix3;
 
-/*!
+/*
  * \brief Molecule Definition
  * \details A Molecule can be thought of as an instance of a Species which has a physical presence in the Model.
  * A Molecule does not itself own its Atoms or Grains. Instead, pointers to the relevant Atoms/Grains in the parent
@@ -51,10 +51,9 @@ class Molecule : public ListItem<Molecule>
 	~Molecule();
 
 
-	/*!
-	 * \name Atoms / Grains
+	/*
+	 * Atoms / Grains
 	 */
-	///@{
 	private:
 	// Source Species
 	Species* species_;
@@ -90,13 +89,11 @@ class Molecule : public ListItem<Molecule>
 	Grain* grain(int n);
 	// Return index of Molecule
 	int index();
-	///@}
 
 
-	/*!
-	 * \name Manipulations
+	/*
+	 * Manipulations
 	 */
-	///@{
 	public:
 	// Calculate and return centre of geometry
 	Vec3<double> centreOfGeometry(const Box* box) const;
@@ -110,7 +107,6 @@ class Molecule : public ListItem<Molecule>
 	void randomiseGeometry(const Box* box);
 	// Shake geometry
 	void shakeGeometry();
-	///@}
 };
 
 #endif

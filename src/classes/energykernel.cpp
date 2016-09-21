@@ -28,55 +28,43 @@
 #include "classes/species.h"
 #include "base/comms.h"
 
-/*!
- * \brief Constructor
- * \details Constructor for EnergyKernel.
- */
+// Constructor
 EnergyKernel::EnergyKernel(const Configuration& config, const PotentialMap& potentialMap, double energyCutoff) : configuration_(config), potentialMap_(potentialMap)
 {
 	box_ = config.box();
 	cutoffDistanceSquared_ = (energyCutoff < 0.0 ? potentialMap_.rangeSquared() : energyCutoff*energyCutoff);
 }
 
-/*!
- * \brief Destructor
- * \details Destructor for EnergyKernel. 
- */
+// Destructor
 EnergyKernel::~EnergyKernel()
 {
 }
 
 /*
-// Internal Routines
-*/
-
-/*!
- * \brief Return PairPotential energy between atoms provided as pointers (no minimum image calculation)
+ * Internal Routines
  */
+
+// Return PairPotential energy between atoms provided as pointers (no minimum image calculation)
 double EnergyKernel::energyWithoutMim(const Atom* i, const Atom* j)
 {
 // 	printf("EnergyKernel:;atoms(*,*) - energy %i-%i is %f at %f lit\n", min(i->index(),j->index()), max(i->index(),j->index()), potentialMap_.energy(i->globalTypeIndex(), j->globalTypeIndex(), (i->r() - j->r()).magnitudeSq()), (i->r() - j->r()).magnitudeSq());
 	return potentialMap_.energy(i->globalTypeIndex(), j->globalTypeIndex(), (i->r() - j->r()).magnitudeSq());
 }
 
-/*!
- * \brief Return PairPotential energy between atoms provided as info and reference (minimum image calculation)
- */
+// Return PairPotential energy between atoms provided as info and reference (minimum image calculation)
 double EnergyKernel::energyWithoutMim(const int typeI, const Vec3<double>& rI, const Atom* j)
 {
 	return potentialMap_.energy(typeI, j->globalTypeIndex(), (rI - j->r()).magnitudeSq());
 }
 
-/*!
- * \brief Return PairPotential energy between atoms provided as references (no minimum image calculation)
- */
+// Return PairPotential energy between atoms provided as references (no minimum image calculation)
 double EnergyKernel::energyWithoutMim(const Atom& i, const Atom& j)
 {
 // 	printf("EnergyKernel::atoms(&,&) - energy %i-%i is %f at %f lit\n", min(i.index(),j.index()), max(i.index(),j.index()), potentialMap_.energy(i.globalTypeIndex(), j.globalTypeIndex(), (i.r() - j.r()).magnitudeSq()), (i.r() - j.r()).magnitudeSq());
 	return potentialMap_.energy(i.globalTypeIndex(), j.globalTypeIndex(), (i.r() - j.r()).magnitudeSq());
 }
 
-/*!
+/*
  * \brief Return PairPotential energy between atoms provided as reference/pointer (no minimum image calculation)
  */
 double EnergyKernel::energyWithoutMim(const Atom& i, const Atom* j)
@@ -85,9 +73,7 @@ double EnergyKernel::energyWithoutMim(const Atom& i, const Atom* j)
 	return potentialMap_.energy(i.globalTypeIndex(), j->globalTypeIndex(), (i.r() - j->r()).magnitudeSq());
 }
 
-/*!
- * \brief Return PairPotential energy between atom (pointer) and grain provided (no minimum image calculation)
- */
+// Return PairPotential energy between atom (pointer) and grain provided (no minimum image calculation)
 double EnergyKernel::energyWithoutMim(const Atom* i, const Grain* grain, bool excludeIgeJ)
 {
 	double totalEnergy = 0.0;
@@ -103,9 +89,7 @@ double EnergyKernel::energyWithoutMim(const Atom* i, const Grain* grain, bool ex
 	return totalEnergy;
 }
 
-/*!
- * \brief Return PairPotential energy between atom (reference) and grain provided (no minimum image calculation)
- */
+// Return PairPotential energy between atom (reference) and grain provided (no minimum image calculation)
 double EnergyKernel::energyWithoutMim(const Atom& i, const Grain* grain, bool excludeIgeJ)
 {
 	double totalEnergy = 0.0;
@@ -121,9 +105,7 @@ double EnergyKernel::energyWithoutMim(const Atom& i, const Grain* grain, bool ex
 	return totalEnergy;
 }
 
-/*!
- * \brief Return PairPotential energy between Grains provided (no minimum image calculation)
- */
+// Return PairPotential energy between Grains provided (no minimum image calculation)
 double EnergyKernel::energyWithoutMim(const Grain* grainI, const Grain* grainJ)
 {
 	int n, m, nAtomsI = grainI->nAtoms(), nAtomsJ = grainJ->nAtoms();
@@ -155,33 +137,27 @@ double EnergyKernel::energyWithoutMim(const Grain* grainI, const Grain* grainJ)
 	return totalEnergy;
 }
 
-/*!
- * \brief Return PairPotential energy between atoms provided as pointers (minimum image calculation)
- */
+// Return PairPotential energy between atoms provided as pointers (minimum image calculation)
 double EnergyKernel::energyWithMim(const Atom* i, const Atom* j)
 {
 // 	msg.print("EnergyKernel::atoms(*,*) - energy %i-%i is %f at %f mim\n", min(i->index(),j->index()), max(i->index(),j->index()), potentialMap_.energy(i->globalTypeIndex(), j->globalTypeIndex(), box_->minimumDistanceSquared(j, i)), box_->minimumDistanceSquared(j, i));
 	return potentialMap_.energy(i->globalTypeIndex(), j->globalTypeIndex(), box_->minimumDistanceSquared(j, i));
 }
 
-/*!
- * \brief Return PairPotential energy between atoms provided as info and reference (minimum image calculation)
- */
+// Return PairPotential energy between atoms provided as info and reference (minimum image calculation)
 double EnergyKernel::energyWithMim(const int typeI, const Vec3<double>& rI, const Atom* j)
 {
 	return potentialMap_.energy(typeI, j->globalTypeIndex(), box_->minimumDistanceSquared(j->r(), rI));
 }
 
-/*!
- * \brief Return PairPotential energy between atoms provided as references (minimum image calculation)
- */
+// Return PairPotential energy between atoms provided as references (minimum image calculation)
 double EnergyKernel::energyWithMim(const Atom& i, const Atom& j)
 {
 // 	msg.print("EnergyKernel::atoms(&,&) - energy %i-%i is %f at %f mim\n", min(i.index(),j.index()), max(i.index(), j.index()), potentialMap_.energy(i.globalTypeIndex(), j.globalTypeIndex(), box_->minimumDistanceSquared(j, i)), box_->minimumDistanceSquared(j, i));
 	return potentialMap_.energy(i.globalTypeIndex(), j.globalTypeIndex(), box_->minimumDistanceSquared(j, i));
 }
 
-/*!
+/*
  * \brief Return PairPotential energy between atoms provided as reference/pointer (minimum image calculation)
  */
 double EnergyKernel::energyWithMim(const Atom& i, const Atom* j)
@@ -190,9 +166,7 @@ double EnergyKernel::energyWithMim(const Atom& i, const Atom* j)
 	return potentialMap_.energy(i.globalTypeIndex(), j->globalTypeIndex(), box_->minimumDistanceSquared(j, i.r()));
 }
 
-/*!
- * \brief Return PairPotential energy between atom (pointer) and grain provided (minimum image calculation)
- */
+// Return PairPotential energy between atom (pointer) and grain provided (minimum image calculation)
 double EnergyKernel::energyWithMim(const Atom* i, const Grain* grain, bool excludeIgeJ)
 {
 	double totalEnergy = 0.0;
@@ -209,9 +183,7 @@ double EnergyKernel::energyWithMim(const Atom* i, const Grain* grain, bool exclu
 	return totalEnergy;
 }
 
-/*!
- * \brief Return PairPotential energy between atom (reference) and grain provided (minimum image calculation)
- */
+// Return PairPotential energy between atom (reference) and grain provided (minimum image calculation)
 double EnergyKernel::energyWithMim(const Atom& i, const Grain* grain, bool excludeIgeJ)
 {
 	double totalEnergy = 0.0;
@@ -228,9 +200,7 @@ double EnergyKernel::energyWithMim(const Atom& i, const Grain* grain, bool exclu
 	return totalEnergy;
 }
 
-/*!
- * \brief Return PairPotential energy between Grains provided (minimum image calculation)
- */
+// Return PairPotential energy between Grains provided (minimum image calculation)
 double EnergyKernel::energyWithMim(const Grain* grainI, const Grain* grainJ)
 {
 	int n, m, nAtomsI = grainI->nAtoms(), nAtomsJ = grainJ->nAtoms();
@@ -263,12 +233,10 @@ double EnergyKernel::energyWithMim(const Grain* grainI, const Grain* grainJ)
 }
 
 /*
-// PairPotential Terms
-*/
-
-/*!
- * \brief Return PairPotential energy between atoms (provided as pointers)
+ * PairPotential Terms
  */
+
+// Return PairPotential energy between atoms (provided as pointers)
 double EnergyKernel::energy(const Atom* i, const Atom* j, bool applyMim, bool excludeIgeJ)
 {
 #ifdef CHECKS
@@ -297,10 +265,7 @@ double EnergyKernel::energy(const Atom* i, const Atom* j, bool applyMim, bool ex
 	else return energyWithoutMim(i, j);
 }
 
-/*!
- * \brief Return PairPotential energy between atoms in supplied cells
- * \details Calculate the energy between the atoms in the specified cells, applying minimum image calculations if necessary.
- */
+// Return PairPotential energy between atoms in supplied cells
 double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, bool excludeIgeJ, DUQComm::CommGroup group)
 {
 #ifdef CHECKS
@@ -400,9 +365,7 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 	return totalEnergy;
 }
 
-/*!
- * \brief Return PairPotential energy between cell and atomic neighbours
- */
+// Return PairPotential energy between cell and atomic neighbours
 double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, DUQComm::CommGroup group)
 {
 	double totalEnergy = 0.0;
@@ -488,7 +451,7 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, DUQComm::CommGr
 	return totalEnergy;
 }
 
-/*!
+/*
  * \brief Return PairPotential energy between atom and list of neighbouring cells
  * \details Calculate the energy between the supplied atom and list of neighbouring cells. Note that it is assumed that the supplied atom
  * is in a cell which does *not* appear in the list.
@@ -640,9 +603,7 @@ double EnergyKernel::energy(const Atom* i, OrderedPointerList<Atom>& neighbours,
 	return totalEnergy;
 }
 
-/*!
- * \brief Return intermolecular energy between Grain and list of Cells
- */
+// Return intermolecular energy between Grain and list of Cells
 double EnergyKernel::energy(const Grain* grain, OrderedPointerList<Atom>& neighbours, bool applyMim, bool excludeIgeJ, DUQComm::CommGroup group)
 {
 #ifdef CHECKS
@@ -768,9 +729,7 @@ double EnergyKernel::energy(const Grain* grain, OrderedPointerList<Atom>& neighb
 	return totalEnergy;
 }
 
-/*!
- * \brief Return PairPotential energy of atom with world
- */
+// Return PairPotential energy of atom with world
 double EnergyKernel::energy(const Atom* i, DUQComm::CommGroup group)
 {
 #ifdef CHECKS
@@ -788,9 +747,7 @@ double EnergyKernel::energy(const Atom* i, DUQComm::CommGroup group)
 	return totalEnergy;
 }
 
-/*!
- * \brief Return PairPotential energy of grain with world
- */
+// Return PairPotential energy of grain with world
 double EnergyKernel::energy(const Grain* grain, bool excludeIgtJ, DUQComm::CommGroup group)
 {
 #ifdef CHECKS
@@ -831,9 +788,7 @@ double EnergyKernel::energy(const Grain* grain, bool excludeIgtJ, DUQComm::CommG
 	return totalEnergy;
 }
 
-/*!
- * \brief Return molecular correction energy related to intramolecular terms involving supplied atom
- */
+// Return molecular correction energy related to intramolecular terms involving supplied atom
 double EnergyKernel::correct(const Atom* i)
 {
 	// Loop over atoms in molecule
@@ -862,12 +817,10 @@ double EnergyKernel::correct(const Atom* i)
 }
 
 /*
-// Intramolecular Terms
-*/
-
-/*!
- * \brief Return Bond energy
+ * Intramolecular Terms
  */
+
+// Return Bond energy
 double EnergyKernel::energy(const Molecule* mol, const SpeciesBond* b)
 {
 	// Determine whether we need to apply minimum image to the distance calculation
@@ -878,9 +831,7 @@ double EnergyKernel::energy(const Molecule* mol, const SpeciesBond* b)
 	else return b->energy((i->r() - j->r()).magnitude());
 }
 
-/*!
- * \brief Return Angle energy
- */
+// Return Angle energy
 double EnergyKernel::energy(const Molecule* mol, const SpeciesAngle* a)
 {
 	Vec3<double> vecji, vecjk;
@@ -903,10 +854,7 @@ double EnergyKernel::energy(const Molecule* mol, const SpeciesAngle* a)
 	return a->energy(Box::angle(vecji, vecjk));
 }
 
-/*!
- * \brief Return full intramolecular energy
- * \details Calculates the full intramolecular energy of the Grain, including internal and connection terms.
- */
+// Return full intramolecular energy
 double EnergyKernel::fullIntraEnergy(const Grain* grain, double termFactor)
 {
 	double intraEnergy = 0.0;
@@ -928,10 +876,10 @@ double EnergyKernel::fullIntraEnergy(const Grain* grain, double termFactor)
 }
 
 /*
-// Molecule Terms
-*/
+ * Molecule Terms
+ */
 
-/*!
+/*
  * \brief Return total Molecule energy
  * \details Calculates the total interaction energy of a Molecule with the rest of the system, and includes PairPotential and corrected intramolecular terms.
  * The argument 'halfPP' controls whether the total energy returned is suitable for summation into a total system energy (halfPP = true) or whether a single

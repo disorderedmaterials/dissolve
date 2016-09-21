@@ -20,22 +20,12 @@
 */
 
 #include "main/duq.h"
-#include "main/flags.h"
 #include "classes/box.h"
 #include "classes/species.h"
 #include "base/sysfunc.h"
 #include <string.h>
 
-/*
-// Samples
-*/
-
-/*!
- * \brief Update current Samples
- * \details After removal of a Species or removal/addition of an Isotopologue, any existing Samples must be updated to
- * reflect those changes. In particular, if a Sample becomes empty through the removal of all Species, the
- * Sample itself is deleted.
- */
+// Update current Samples
 void DUQ::updateSamples()
 {
 	// Easy check - are there any Species defined?
@@ -45,54 +35,39 @@ void DUQ::updateSamples()
 	for (Sample* sam = samples_.first(); sam != NULL; sam = sam->next) sam->updateIsotopologueMixtures(species_);
 }
 
-/*!
- * \brief Add Sample
- * \details Add a new Sample to the current System.
- */
+// Add new Sample
 Sample *DUQ::addSample(const char* baseName)
 {
 	Sample* sample = samples_.add();
 	sample->setName(baseName);
 	sample->updateIsotopologueMixtures(species_);
-	
-	Flags::wave(Flags::SamplesChanged);
-	
+
 	return sample;
 }
 
-/*!
- * \brief Remove Sample
- */
+// Remove Sample
 void DUQ::removeSample(Sample* sample)
 {
 	if (samples_.contains(sample))
 	{
 		samples_.remove(sample);
-		
-		Flags::wave(Flags::SamplesChanged);
 	}
 	else msg.print("Warning: Can't remove Sample '%s' from the list, since it isn't in this list.\n", sample->name());
 }
 
-/*!
- * \brief Return first Sample
- */
+// Return first Sample
 Sample *DUQ::samples() const
 {
 	return samples_.first();
 }
 
-/*!
- * \brief Return nth Sample
- */
+// Return nth Sample
 Sample *DUQ::sample(int n)
 {
 	return samples_[n];
 }
 
-/*!
- * \brief Search for Sample by name
- */
+// Search for Sample by name
 Sample* DUQ::findSample(const char* name) const
 {
 	for (Sample* sam = samples_.first(); sam != NULL; sam = sam->next) if (strcmp(name, sam->name()) == 0) return sam;

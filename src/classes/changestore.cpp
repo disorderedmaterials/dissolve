@@ -27,85 +27,63 @@
 #include "classes/molecule.h"
 #include "templates/orderedpointerlist.h"
 
-/*!
- * \brief Constructor
- * \details Constructor for ChangeStore. 
- */
+// Constructor
 ChangeStore::ChangeStore()
 {
 }
 
-/*!
- * \brief Destructor
- * \details Destructor for ChangeStore. 
- */
+// Destructor
 ChangeStore::~ChangeStore()
 {
 }
 
 /*
-// Watch Targets
-*/
-
-/*!
- * \brief Add atom to watch
+ * Watch Targets
  */
+
+// Add atom to watch
 void ChangeStore::add(Atom* i)
 {
 	ChangeData* item = targetAtoms_.add();
 	item->setAtom(i);
 }
 
-/*!
- * \brief Add Grain to watch
- */
+// Add Grain to watch
 void ChangeStore::add(Grain* grain)
 {
 	for (int n=0; n<grain->nAtoms(); ++n) add(grain->atom(n));
 }
 
-/*!
- * \brief Add Molecule to watch
- */
+// Add Molecule to watch
 void ChangeStore::add(Molecule* mol)
 {
 	for (int n=0; n<mol->nAtoms(); ++n) add(mol->atom(n));
 }
 
-/*!
- * \brief Add Cell to watch
- * \details Add all the atoms in the specified cell to the watch list
- */
+// Add Cell to watch
 void ChangeStore::add(Cell* cell)
 {
 	for (OrderedPointerListItem<Atom>* item = cell->atoms().first(); item != NULL; item = item->next) add(item->object());
 }
 
 /*
-// Change Array
-*/
-
-/*!
- * \brief Reset ChangeStore
- * \details Reset the ChangeStore, forgetting all targets and change data
+ * Change Array
  */
+
+// Reset ChangeStore
 void ChangeStore::reset()
 {
 	targetAtoms_.clear();
 	changes_.clear();
 }
 
-/*!
- * \brief Update all Atom positions
- */
+// Update all Atom positions
 void ChangeStore::updateAll()
 {
 	for (ChangeData* item = targetAtoms_.first(); item != NULL; item = item->next) item->updatePosition();
 }
 
-/*!
- * \brief Update Atom positions using list indices
- */
+// Update Atom positions using list indices
 void ChangeStore::updateAtomsLocal(int nAtoms, int* indices)
 {
 	for (int n=0; n<nAtoms; ++n)
@@ -122,9 +100,7 @@ void ChangeStore::updateAtomsLocal(int nAtoms, int* indices)
 	}
 }
 
-/*!
- * \brief Update single atom position
- */
+// Update single atom position
 void ChangeStore::updateAtom(int id)
 {
 #ifdef CHECKS
@@ -138,9 +114,7 @@ void ChangeStore::updateAtom(int id)
 	item->updatePosition();
 }
 
-/*!
- * \brief Revert all atoms to their previous positions
- */
+// Revert all atoms to their previous positions
 void ChangeStore::revertAll()
 {
 // 	printf("In Revert...\n");
@@ -148,9 +122,7 @@ void ChangeStore::revertAll()
 // 	printf("Done Revert.\n");
 }
 
-/*!
- * \brief Revert specified index to stored position
- */
+// Revert specified index to stored position
 void ChangeStore::revert(int id)
 {
 #ifdef CHECKS
@@ -164,9 +136,7 @@ void ChangeStore::revert(int id)
 	item->revertPosition();
 }
 
-/*!
- * \brief Save Atom changes for broadcast, and reset arrays for new data
- */
+// Save Atom changes for broadcast, and reset arrays for new data
 void ChangeStore::storeAndReset()
 {
 	ChangeData* item = targetAtoms_.first();
@@ -190,9 +160,7 @@ void ChangeStore::storeAndReset()
 	targetAtoms_.clear();
 }
 
-/*!
- * \brief Distribute and apply changes
- */
+// Distribute and apply changes
 bool ChangeStore::distributeAndApply(Configuration& cfg)
 {
 #ifdef PARALLEL

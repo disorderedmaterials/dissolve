@@ -171,8 +171,8 @@ char Dnchar::lastChar() const
 }
 
 /*
-// Erase / Cut
-*/
+ * Erase / Cut
+ */
 
 // Erase range
 void Dnchar::erase(int start, int end)
@@ -234,8 +234,8 @@ void Dnchar::replace(char from, char to)
 }
 
 /*
-// Operators
-*/
+ * Operators
+ */
 
 // Assignment operator (const char*)
 void Dnchar::operator=(const char* s)
@@ -321,8 +321,8 @@ void Dnchar::operator+=(char c)
 }
 
 /*
-// Conversion
-*/
+ * Conversion
+ */
 
 // Return as double
 double Dnchar::asDouble() const
@@ -395,8 +395,8 @@ const char* Dnchar::upper() const
 }
 
 /*
-// Search
-*/
+ * Search
+ */
 
 // Find character
 int Dnchar::find(char search) const

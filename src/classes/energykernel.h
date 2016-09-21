@@ -36,7 +36,7 @@ class Molecule;
 class SpeciesBond;
 class SpeciesAngle;
 
-/*!
+/*
  * \brief Energy Kernel
  * \details An EnergyKernel provides PairPotential energy calculation routines between Atoms, Grains, and Cells, and any combination thereof.
  */
@@ -60,10 +60,9 @@ class EnergyKernel
 	};
 
 
-	/*!
-	 * \name Source Data
+	/*
+	 * Source Data
 	 */
-	///@{
 	private:
 	// Source Configuration
 	const Configuration& configuration_;
@@ -73,13 +72,11 @@ class EnergyKernel
 	const PotentialMap& potentialMap_;
 	// Squared cutoff distance to use in calculation
 	double cutoffDistanceSquared_;
-	///@}
 
 
-	/*!
-	 * \name Internal Routines
+	/*
+	 * Internal Routines
 	 */
-	///@{
 	private:
 	// Return PairPotential energy between atoms provided as pointers (no minimum image calculation)
 	double energyWithoutMim(const Atom* i, const Atom* j);
@@ -109,13 +106,11 @@ class EnergyKernel
 	double energyWithMim(const Atom& i, const Grain* grain, bool excludeIgeJ = false);
 	// Return PairPotential energy between Grains provided (minimum image calculation)
 	double energyWithMim(const Grain* grainI, const Grain* grainJ);
-	///@}
 
 
-	/*!
+	/*
 	 * \brief PairPotential Terms
 	 */
-	///@{
 	public:
 	// Return PairPotential energy between atoms provided (as pointers)
 	double energy(const Atom* i, const Atom* j, bool applyMim, bool excludeIgeJ = false);
@@ -135,13 +130,11 @@ class EnergyKernel
 	double correct(const Atom* i);
 	// Return molecular correction energy related to intramolecular terms involving atoms in supplied grain
 	double correct(const Grain* i);
-	///@}
 
 
-	/*!
+	/*
 	 * \brief Intramolecular Terms
 	 */
-	///@{
 	public:
 	// Return Bond energy
 	double energy(const Molecule* mol, const SpeciesBond* b);
@@ -149,17 +142,14 @@ class EnergyKernel
 	double energy(const Molecule* mol, const SpeciesAngle* a);
 	// Return full intramolecular energy
 	double fullIntraEnergy(const Grain* grain, double termFactor = 1.0);
-	///@}
 
 
-	/*!
+	/*
 	 * \brief Molecule Terms
 	 */
-	///@{
 	public:
 	// Return total Molecule energy
 	double energy(Molecule* mol, DUQComm::CommGroup group = DUQComm::Solo, bool halfPP = false, double ppFactorIntra = 1.0, double termFactor = 1.0);
-	///@}
 };
 
 #endif

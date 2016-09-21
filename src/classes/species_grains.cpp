@@ -19,16 +19,12 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "main/flags.h"
 #include "classes/species.h"
 #include "classes/atomtype.h"
 #include <string.h>
 #include <base/sysfunc.h>
 
-/*!
- * \brief Update grains after change
- * \details Update the current list of grains, checking for duplicate Atoms and empty definitions
- */
+// Update grains after change
 void Species::updateGrains()
 {
 	// Construct a list of Atom references as we go along, so we can check for duplicates
@@ -46,11 +42,9 @@ void Species::updateGrains()
 			{
 				sg->removeAtom(rj->item);
 				msg.print("Removed Atom %i from GrainDefinition '%s' since it already exists in '%s'.\n", rj->item->userIndex(), sg->name(), rj->data->name());
-				
-				Flags::wave(Flags::GrainsChanged);
 			}
 			else refAtoms.add(ri->item, sg);
-					  
+
 			ri = next;
 		}
 	}
@@ -64,16 +58,12 @@ void Species::updateGrains()
 		{
 			msg.print("Removing grain '%s' since it no longer contains any atoms.\n", sg->name());
 			removeGrain(sg);
-
-			Flags::wave(Flags::GrainsChanged);
 		}
 		sg = next;
 	}
 }
 
-/*!
- * \brief Add default GrainDefinition (i.e. one which contains all atoms) for this Species 
- */
+// Add default GrainDefinition (i.e. one which contains all atoms) for this Species 
 void Species::addDefaultGrain()
 {
 	SpeciesGrain* sg = grains_.add();
@@ -84,13 +74,9 @@ void Species::addDefaultGrain()
 
 	// Locate inter/intra-grain terms
 	identifyInterGrainTerms();
-
-	Flags::wave(Flags::GrainsChanged);
 }
 
-/*!
- * \brief Automatically determine Grains based on chemical connectivity
- */
+// Automatically determine Grains based on chemical connectivity
 void Species::autoAddGrains()
 {
 	grains_.clear();
@@ -139,25 +125,17 @@ void Species::autoAddGrains()
 
 	// Locate inter/intra-grain terms
 	identifyInterGrainTerms();
-
-	Flags::wave(Flags::GrainsChanged);
 }
 
-/*!
- * \brief Add new GrainDefinition for this Species
- */
+// Add new GrainDefinition for this Species
 SpeciesGrain* Species::addGrain()
 {
 	SpeciesGrain* sg = grains_.add();
-	
-	Flags::wave(Flags::GrainsChanged);
 
 	return sg;
 }
 
-/*!
- * \brief Remove GrainDefinition specified
- */
+// Remove GrainDefinition specified
 void Species::removeGrain(SpeciesGrain* sg)
 {
 	if (sg == NULL) msg.error("NULL_POINTER - NULL GrainDefinition passed to Species::removeGrainDefinition().\n");
@@ -166,39 +144,29 @@ void Species::removeGrain(SpeciesGrain* sg)
 		if (highlightedGrain_ == sg) highlightedGrain_ = NULL;
 		grains_.remove(sg);
 		msg.print("Removed grain from Species '%s'.\n", name_.get());
-		
-		Flags::wave(Flags::GrainsChanged);
 	}
 	else msg.print("BAD_REMOVE - Can't remove specified grain from Species '%s' since it doesn't exist.\n", name_.get());
 }
 
-/*!
- * \brief Return number of GrainDefinitions present for this Species
- */
+// Return number of GrainDefinitions present for this Species
 int Species::nGrains() const
 {
 	return grains_.nItems();
 }
 
-/*!
- * \brief Return first GrainDefinition in list
- */
+// Return first GrainDefinition in list
 SpeciesGrain* Species::grains() const
 {
 	return grains_.first();
 }
 
-/*!
- * \brief Return nth GrainDefinition in list
- */
+// Return nth GrainDefinition in list
 SpeciesGrain* Species::grain(int n)
 {
 	return grains_[n];
 }
 
-/*!
- * \brief Add Atom to GrainDefinition
- */
+// Add Atom to GrainDefinition
 void Species::addAtomToGrain(SpeciesAtom* i, SpeciesGrain* gd)
 {
 	// Check for presence of Atom in another definition - if it exists there, remove it...
@@ -218,13 +186,9 @@ void Species::addAtomToGrain(SpeciesAtom* i, SpeciesGrain* gd)
 		}
 	}
 	gd->addAtom(i);
-	
-	Flags::wave(Flags::GrainsChanged);
 }
 
-/*!
- * \brief Generate unique GrainDefinition name with base name provided
- */
+// Generate unique GrainDefinition name with base name provided
 const char* Species::uniqueGrainName(const char* base, SpeciesGrain* exclude) const
 {
 	static Dnchar uniqueName;
@@ -247,13 +211,14 @@ const char* Species::uniqueGrainName(const char* base, SpeciesGrain* exclude) co
 	return uniqueName;
 }
 
-/*!
- * \brief Order atoms within grains
- * \details Reorders atoms within the Species such that all grains contain a consecutive set of atom indices, and that indices
- * present within one grain are *higher* than those in preceeding Grains in the list.
- */
+// Order atoms within grains
 void Species::orderAtomsWithinGrains()
 {
+	/*
+	 * Reorders atoms within the Species such that all grains contain a consecutive set of atom indices, and that indices
+	 * present within one grain are *higher* than those in preceeding Grains in the list.
+	 */
+
 	// Loop over Grains.
 	// The variable 'index' will represent the target position in the Atom list of the next Atom to be considered within a grain.
 	int n, index = 0, oldIndex;
@@ -272,17 +237,13 @@ void Species::orderAtomsWithinGrains()
 	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next) i->setIndex(index++);
 }
 
-/*!
- * \brief Set highlighted grain
- */
+// Set highlighted grain
 void Species::setHighlightedGrain(SpeciesGrain* sg)
 {
 	highlightedGrain_ = sg;
 }
 
-/*!
- * \brief Return highlighted grain
- */
+// Return highlighted grain
 SpeciesGrain* Species::highlightedGrain()
 {
 	return highlightedGrain_;

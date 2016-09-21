@@ -21,10 +21,7 @@
 
 #include "classes/braggpeak.h"
 
-/*!
- * \brief Constructor
- * \details Constructor for BraggPeak. 
- */
+// Constructor
 BraggPeak::BraggPeak(double Q, int index)
 {
 	q_ = Q;
@@ -32,23 +29,18 @@ BraggPeak::BraggPeak(double Q, int index)
 	nKVectors_ = 0;
 }
 
-/*!
- * \brief Destructor
- * \details Destructor for BraggPeak. 
- */
+// Destructor
 BraggPeak::~BraggPeak()
 {
 }
 
-/*!
- * \brief Copy constructor
- */
+// Copy constructor
 BraggPeak::BraggPeak(const BraggPeak& source)
 {
 	(*this) = source;
 }
 
-/*!
+/*
  * \brief Operator=
  */
 void BraggPeak::operator=(const BraggPeak& source)
@@ -60,71 +52,54 @@ void BraggPeak::operator=(const BraggPeak& source)
 }
 
 /*
-// BraggPeak Data
-*/
-
-/*!
- * \brief Initialise arrays
+ * BraggPeak Data
  */
+
+// Initialise arrays
 void BraggPeak::initialise(int nTypes)
 {
 	intensities_.initialise(nTypes, nTypes, true);
 	nKVectors_ = 0;
 }
 
-/*!
- * \brief Return Q value
- */
+// Return Q value
 const double BraggPeak::q() const
 {
 	return q_;
 }
 
-/*!
- * \brief Return index
- * \details Return the index of the BraggPeak, so that they can be stored usefully in an OrderedPointerList.
- */
+// Return index
 const int BraggPeak::index() const
 {
 	return index_;
 }
 
-/*!
- * \brief Reset stored intensities
- */
+// Reset stored intensities
 void BraggPeak::resetIntensities()
 {
 	intensities_ = 0.0;
 	nKVectors_ = 0;
 }
 
-/*!
- * \brief Add intensity between specified atomtypes
- */
+// Add intensity between specified atomtypes
 void BraggPeak::addIntensity(int typeI, int typeJ, double intensity)
 {
 	intensities_.ref(typeI, typeJ) += intensity;
 }
 
-/*!
- * \brief Return literal intensity between specified atom types for this peak
- */
+// Return literal intensity between specified atom types for this peak
 double BraggPeak::intensity(int typeI, int typeJ)
 {
 	return intensities_.value(typeI, typeJ);
 }
 
-/*!
- * \brief Increment number of k-vectors by specified amount
- */
+// Increment number of k-vectors by specified amount
 void BraggPeak::addKVectors(int count)
 {
 	nKVectors_ += count;
 }
 
-/*!
- * \brief Return number of k-vectors contributing to this peak
- */
+// Return number of k-vectors contributing to this peak
 int BraggPeak::nKVectors()
 {
 	return nKVectors_;
