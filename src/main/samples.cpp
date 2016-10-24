@@ -36,7 +36,7 @@ void DUQ::updateSamples()
 }
 
 // Add new Sample
-Sample *DUQ::addSample(const char* baseName)
+Sample* DUQ::addSample(const char* baseName)
 {
 	Sample* sample = samples_.add();
 	sample->setName(baseName);
@@ -56,13 +56,13 @@ void DUQ::removeSample(Sample* sample)
 }
 
 // Return first Sample
-Sample *DUQ::samples() const
+Sample* DUQ::samples() const
 {
 	return samples_.first();
 }
 
 // Return nth Sample
-Sample *DUQ::sample(int n)
+Sample* DUQ::sample(int n)
 {
 	return samples_[n];
 }

@@ -289,7 +289,7 @@ void DUQSamplesDockWidget::on_AddSampleButton_clicked(bool checked)
 // Remove Sample from system
 void DUQSamplesDockWidget::on_RemoveSampleButton_clicked(bool checked)
 {
-	Sample *currentSample = selectedSample();
+	Sample* currentSample = selectedSample();
 	if (currentSample == NULL) return;
 	
 	dUQ_.removeSample(currentSample);
@@ -302,7 +302,7 @@ void DUQSamplesDockWidget::on_RemoveSampleButton_clicked(bool checked)
 void DUQSamplesDockWidget::on_CopySampleButton_clicked(bool checked)
 {
 	int currentRow = ui.SamplesList->currentRow();
-	Sample *currentSample = (currentRow == -1 ? NULL : dUQ_.sample(currentRow));
+	Sample* currentSample = (currentRow == -1 ? NULL : dUQ_.sample(currentRow));
 	if (currentSample == NULL) return;
 	
 	// TODO
