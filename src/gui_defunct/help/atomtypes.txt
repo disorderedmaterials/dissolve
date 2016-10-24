@@ -1,2 +1,0 @@
-<b>Atom Type Assignment</b><br/>
-Some Text

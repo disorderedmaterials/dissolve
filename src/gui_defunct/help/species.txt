@@ -1,2 +1,0 @@
-<b>Species Definition</b><br/>
-A Species is a description of a molecule, ion, or atomic moiety which exists in the system under study. Each Species contains a description of its basic geometry (coordinates) and connectivity (bonds/angles) as determined from the model file loaded in, and is used as the basic data in the subsequent refinement process. Additionally, a number of Grains are defined which partition the Species into atomic fragments, and at least one description of the Isotopes within the Species is given.

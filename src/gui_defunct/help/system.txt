@@ -1,2 +1,0 @@
-<b>System</b><br/>
-Here the actual composition of the experimental system is defined, as well as its size (in terms of number of Atoms) when instantiated as an atomic Model. It is defined from a list of involved Species, and a relative population of each. An integer multiplier is used to transform these values into the actual (whole) numbers of Molecules that will be used as the Model system. Note that Isotopologue data is not specified here - this is defined in one or more Samples added subsequently, and based on the Species present here.

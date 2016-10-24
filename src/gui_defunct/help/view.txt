@@ -1,2 +1,0 @@
-<b>Species Viewer</b><br/>
-Some Text

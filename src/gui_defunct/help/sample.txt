@@ -1,2 +1,0 @@
-<b>Samples</b><br/>
-Some Text

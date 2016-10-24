@@ -1,2 +1,0 @@
-<b>Pair Potentials</b><br/>
-Some Text
