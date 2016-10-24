@@ -1,7 +1,7 @@
 /*
 	*** Configuration - Periodic Box Functions
 	*** src/classes/configuration_box.cpp
-	Copyright T. Youngs 2012-2014
+	Copyright T. Youngs 2012-2016
 
 	This file is part of dUQ.
 

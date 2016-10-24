@@ -1,7 +1,7 @@
 /*
 	*** Keyword Definitions
 	*** src/main/keywords.h
-	Copyright T. Youngs 2012-2014
+	Copyright T. Youngs 2012-2016
 
 	This file is part of dUQ.
 
@@ -41,9 +41,9 @@ class Keywords
 		AtomTypesBlock,			/* 'AtomTypes' - Contains definitions of AtomTypes over all Species */
 		ConfigurationBlock,		/* 'Configuration' - Defines a single configuration for use in the simulation */
 		PairPotentialsBlock,		/* 'PairPotentials' - Contains definitions of the PairPotentials for the simulation */
-		SampleBlock,			/* 'Sample' - Begins a definition of a Sample* /
+		SampleBlock,			/* 'Sample' - Begins a definition of a Sample */
 		SpeciesBlock,			/* 'Species' - Begins a definition of a Species */
-		SimulationBlock,			/* 'Simulation' - Setting of simulation variables affecting the calculation */
+		SimulationBlock,		/* 'Simulation' - Setting of simulation variables affecting the calculation */
 		nInputBlocks			/* Number of defined InputBlock keywords */
 	};
 	// Convert text string to InputBlock
@@ -145,12 +145,12 @@ class Keywords
 	{
 		BroadeningKeyword,		/* 'Broadening' - Specifies the Q-independent and Q-dependent (in that order) Gaussian broadening function FWHM to apply when transforming simulated RDF data to Q-space */
 		EndSampleKeyword,			/* 'EndSample' - Signals the end of the Sample block */
-		FitMaxKeyword,				/* 'FitMax' - Upper limit for empirical fitting procedure for this Sample* /
-		FitMinKeyword,				/* 'FitMin' - Lower limit for empirical fitting procedure for this Sample* /
-		IsotopologueSampleKeyword,		/* 'Isotopologue' - Specifies a Species, Isotopologue, and relative population in this Sample* /
+		FitMaxKeyword,				/* 'FitMax' - Upper limit for empirical fitting procedure for this Sample */
+		FitMinKeyword,				/* 'FitMin' - Lower limit for empirical fitting procedure for this Sample */
+		IsotopologueSampleKeyword,		/* 'Isotopologue' - Specifies a Species, Isotopologue, and relative population in this Sample */
 		NormalisedToAverageSquaredKeyword,	/* 'NormalisedToAvSq' - States that the reference F(Q) has been normalised to < b >**2 */
 		NormalisedToSquaredAverageKeyword,	/* 'NormalisedToSqAv' - States that the reference F(Q) has been normalised to < b**2 > */
-		ReferenceDataKeyword,			/* 'ReferenceData' - Specifies an F(Q) datafile which represents this Sample* /
+		ReferenceDataKeyword,			/* 'ReferenceData' - Specifies an F(Q) datafile which represents this Sample */
 		SubtractSelfKeyword,			/* 'SubtractSelf' - States that the self scattering (determined from the high-Q region) should be subtracted from the reference data */
 		SampleTypeKeyword,			/* 'Type' - Specifies the type of sample data */
 		nSampleKeywords				/* Number of keywords defined for this block */

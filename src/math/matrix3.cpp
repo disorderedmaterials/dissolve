@@ -1,7 +1,7 @@
 /*
 	*** Column-Major 3x3 Matrix class
 	*** src/math/matrix3.cpp
-	Copyright T. Youngs 2012-2014
+	Copyright T. Youngs 2012-2016
 
 	This file is part of dUQ.
 

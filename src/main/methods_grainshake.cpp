@@ -1,7 +1,7 @@
 /*
 	*** dUQ Methods - GrainShake
 	*** src/main/methods_grainshake.cpp
-	Copyright T. Youngs 2012-2014
+	Copyright T. Youngs 2012-2016
 
 	This file is part of dUQ.
 
