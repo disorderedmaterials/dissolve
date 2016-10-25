@@ -21,22 +21,21 @@
 
 #include "base/messenger.h"
 #include "base/sysfunc.h"
-#include "math/constants.h"
 #include "base/comms.h"
 #include <stdarg.h>
 #include <stdio.h>
 
-// Singleton
-Messenger msg;
+// Static Members
+bool Messenger::quiet_ = false;
+bool Messenger::verbose_ = false;
+bool Messenger::redirect_ = false;
+bool Messenger::masterOnly_ = false;
+LineParser Messenger::parser_;
+char Messenger::text_[8096];
 
 // Constructor
 Messenger::Messenger()
 {
-	// Private variables
-	quiet_ = false;
-	verbose_ = false;
-	redirect_ = false;
-	masterOnly_ = false;
 }
 
 // Set status of quiet mode
@@ -134,7 +133,7 @@ bool Messenger::enableRedirect(const char* fileName)
 	parser_.openOutput(fileName, true);
 	if (!parser_.isFileGoodForWriting())
 	{
-		msg.print("Couldn't open output file '%s' for writing.\n", fileName);
+		Messenger::print("Couldn't open output file '%s' for writing.\n", fileName);
 		return false;
 	}
 	

@@ -33,53 +33,51 @@ class Messenger
 
 
 	/*
-	// Messaging
-	*/
+	 * Print Routines
+	 */
 	private:
 	// Quiet mode
-	bool quiet_;
+	static bool quiet_;
 	// Verbose mode
-	bool verbose_;
+	static bool verbose_;
 	// Master-only mode
-	bool masterOnly_;
+	static bool masterOnly_;
 
 	private:
 	// Storage for text to print
-	char text_[8096];
+	static char text_[8096];
 	// Master text creation / formatting routine
-	void createAndPrintText(const char* indentText, const char* format, va_list arguments);
+	static void createAndPrintText(const char* indentText, const char* format, va_list arguments);
 
 	public:
 	// Set status of quiet mode
-	void setQuiet(bool b);
+	static void setQuiet(bool b);
 	// Set status of verbose mode
-	void setVerbose(bool b);
+	static void setVerbose(bool b);
 	// Set status of master-only mode
-	void setMasterOnly(bool b);
+	static void setMasterOnly(bool b);
 	// Print normal message
-	void print(const char*, ...);
+	static void print(const char*, ...);
 	// Print verbose message
-	void printVerbose(const char*, ...);
+	static void printVerbose(const char*, ...);
 	// Print error message
-	void error(const char*, ...);
+	static void error(const char*, ...);
 	// Print warn message
-	void warn(const char*, ...);
+	static void warn(const char*, ...);
 
 
 	/*
-	// File Redirection
-	*/
+	 * File Redirection
+	 */
 	private:
 	// Whether file redirection is enabled
-	bool redirect_;
+	static bool redirect_;
 	// Local LineParser for file redirection
-	LineParser parser_;
+	static LineParser parser_;
 	
 	public:
 	// Enable redirection of all messaging to specified file
-	bool enableRedirect(const char* fileName);
+	static bool enableRedirect(const char* fileName);
 };
-
-extern Messenger msg;
 
 #endif

@@ -89,7 +89,7 @@ class Module : public ListItem<Module>, public VariableList
 		Variable* var = cfg.variable(name(), varName);
 
 		// If it is not there, raise a warning and return zero
-		if (!var) msg.error("Variable '%s' for module '%s' not found in Configuration '%s'.\n", varName, name(), cfg.name());
+		if (!var) Messenger::error("Variable '%s' for module '%s' not found in Configuration '%s'.\n", varName, name(), cfg.name());
 
 		return var;
 	}
@@ -131,7 +131,7 @@ class Module : public ListItem<Module>, public VariableList
 		// Check number of configs supplied and required by the module
 		if (nConfigurationsRequired() != 1)
 		{
-			msg.error("Number of configurations passed to module (1) is not the required number (%i).\n", nConfigurationsRequired());
+			Messenger::error("Number of configurations passed to module (1) is not the required number (%i).\n", nConfigurationsRequired());
 			return false;
 		}
 

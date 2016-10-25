@@ -78,8 +78,8 @@ void SpeciesBond::setAtoms(SpeciesAtom* i, SpeciesAtom* j)
 	i_ = i;
 	j_ = j;
 #ifdef CHECKS
-	if (i_ == NULL) msg.error("NULL_POINTER - NULL pointer passed for SpeciesAtom i in SpeciesBond::set().\n");
-	if (j_ == NULL) msg.error("NULL_POINTER - NULL pointer passed for SpeciesAtom j in SpeciesBond::set().\n");
+	if (i_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom i in SpeciesBond::set().\n");
+	if (j_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom j in SpeciesBond::set().\n");
 #endif
 }
 
@@ -109,7 +109,7 @@ int SpeciesBond::indexI() const
 #ifdef CHECKS
 	if (i_ == NULL)
 	{
-		msg.error("NULL_POINTER - NULL SpeciesAtom pointer 'i' found in SpeciesBond::indexI(). Returning 0...\n");
+		Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'i' found in SpeciesBond::indexI(). Returning 0...\n");
 		return 0;
 	}
 #endif
@@ -122,7 +122,7 @@ int SpeciesBond::indexJ() const
 #ifdef CHECKS
 	if (j_ == NULL)
 	{
-		msg.error("NULL_POINTER - NULL SpeciesAtom pointer 'j' found in SpeciesBond::indexJ(). Returning 0...\n");
+		Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'j' found in SpeciesBond::indexJ(). Returning 0...\n");
 		return 0;
 	}
 #endif
@@ -200,7 +200,7 @@ void SpeciesBond::setAttachedAtoms(int terminus, const RefList<SpeciesAtom,int>&
 
 	Dnchar s(-1, "--> For bond between atoms %i-%i, terminus %i moves %i other atoms:", indexI()+1, indexJ()+1, terminus+1, nAttached_[terminus]);
 	for (int n=0; n<nAttached_[terminus]; ++n) s.strcatf(" %i", attachedAtoms_[terminus][n]->userIndex());
-	msg.print("%s\n", s.get());
+	Messenger::print("%s\n", s.get());
 }
 
 // Return number of attached SpeciesAtoms for terminus specified

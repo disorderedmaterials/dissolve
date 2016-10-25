@@ -509,7 +509,7 @@ int ElementMap::numberToZ(const char* s) const
 		int i = atoi(s);
 		if ((i < 0) || (i > nElements_))
 		{
-			msg.print("Warning: Converted element number is out of range (%i)\n", i);
+			Messenger::print("Warning: Converted element number is out of range (%i)\n", i);
 			i = 0;
 		}
 		return i;
@@ -609,12 +609,12 @@ int ElementMap::ffToZ(const char* s) const
 int ElementMap::find(const char* query, ElementMap::ZMapType zmt) const
 {
 	// Get the element number from the element name provided.
-	msg.enter("ElementMap::find");
+	Messenger::enter("ElementMap::find");
 	int result = -1;
 	if (query[0] == '\0')
 	{
-		msg.print("Warning: Element search requested on blank string.\n");
-		msg.exit("ElementMap::find");
+		Messenger::print("Warning: Element search requested on blank string.\n");
+		Messenger::exit("ElementMap::find");
 		return 0;
 	}
 	// Convert the query string according to the specified rule
@@ -663,6 +663,6 @@ int ElementMap::find(const char* query, ElementMap::ZMapType zmt) const
 		default:
 			break;
 	}
-	msg.exit("ElementMap::find");
+	Messenger::exit("ElementMap::find");
 	return ((result == -1) ? 0 : result);
 }

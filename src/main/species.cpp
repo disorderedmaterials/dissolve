@@ -85,12 +85,12 @@ void DUQ::removeSpeciesIsotopologue(Species* species, Isotopologue* iso)
 	// NULL pointer check
 	if (species == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Species passed to DUQ::removeSpeciesIsotopologue.\n");
+		Messenger::error("NULL_POINTER - NULL Species passed to DUQ::removeSpeciesIsotopologue.\n");
 		return;
 	}
 	if (iso == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Isotopologue passed to DUQ::removeSpeciesIsotopologue.\n");
+		Messenger::error("NULL_POINTER - NULL Isotopologue passed to DUQ::removeSpeciesIsotopologue.\n");
 		return;
 	}
 	

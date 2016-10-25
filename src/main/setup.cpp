@@ -42,32 +42,32 @@ int DUQ::seed()
 // Setup all data, checking it as we go
 bool DUQ::setup()
 {
-	msg.print("\n");
-	msg.print("*** SYSTEM SETUP BEGINS ***\n");
+	Messenger::print("\n");
+	Messenger::print("*** SYSTEM SETUP BEGINS ***\n");
 
 	/* Check each defined Species */
-	msg.print("\n");
-	msg.print("*** Checking Species definitions...\n");
+	Messenger::print("\n");
+	Messenger::print("*** Checking Species definitions...\n");
 	for (Species* sp = species_.first(); sp != NULL; sp = sp->next)
 	{
-		msg.print("--- Species '%s'...\n", sp->name());
+		Messenger::print("--- Species '%s'...\n", sp->name());
 		if (!sp->checkSetup(atomTypes_)) return false;
 	}
 
-	msg.print("\n");
-	msg.print("*** Setting up Configurations...\n");
+	Messenger::print("\n");
+	Messenger::print("*** Setting up Configurations...\n");
 	int index = 0;
 	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next, ++index)
 	{
-		msg.print("*** Configuration %2i: '%s'\n", index, cfg->name());
+		Messenger::print("*** Configuration %2i: '%s'\n", index, cfg->name());
 
 		if (!cfg->setup(atomTypes_, pairPotentialRange_, boxNormalisationPoints_)) return false;
 	}
 
 	/* Pair Potentials */
 	/* We expect a PairPotential to have been defined for every combination of AtomType used in the system */
-	msg.print("\n");
-	msg.print("Checking PairPotential definitions....TODO!!!!\n");
+	Messenger::print("\n");
+	Messenger::print("Checking PairPotential definitions....TODO!!!!\n");
 // 	for (RefListItem<AtomType,int>* ri = typeCount.first(); ri != NULL; ri = ri->next)
 // 	{
 // 		for (RefListItem<AtomType,int>* rj = ri; rj != NULL; rj = rj->next)
@@ -75,12 +75,12 @@ bool DUQ::setup()
 // 			PairPotential* pot = hasPairPotential(ri->item, rj->item);
 // 			if (pot == NULL)
 // 			{
-// 				msg.error("A PairPotential between AtomTypes '%s' and '%s' is required, but has not been defined.\n", ri->item->name(), rj->item->name());
+// 				Messenger::error("A PairPotential between AtomTypes '%s' and '%s' is required, but has not been defined.\n", ri->item->name(), rj->item->name());
 // 				++nErrors;
 // 			}
 // 			else if ((ri->data == 0) || (rj->data == 0))
 // 			{
-// 				msg.error("A PairPotential between AtomTypes '%s' and '%s' has been defined, but is not required.\n", ri->item->name(), rj->item->name());
+// 				Messenger::error("A PairPotential between AtomTypes '%s' and '%s' has been defined, but is not required.\n", ri->item->name(), rj->item->name());
 // 				++nErrors;
 // 			}
 // 		}
@@ -98,7 +98,7 @@ bool DUQ::setup()
 		cfg->setGlobalAtomTypeIndices(pairPotentialAtomTypeIndex_);
 	}
 
-	msg.print("--> %i unique AtomTypes (disregarding isotopic substitutions) used over all configurations:\n", pairPotentialAtomTypeIndex_.nItems());
+	Messenger::print("--> %i unique AtomTypes (disregarding isotopic substitutions) used over all configurations:\n", pairPotentialAtomTypeIndex_.nItems());
 
 	// Complain about unused AtomTypes
 	int nErrors = 0;
@@ -107,7 +107,7 @@ bool DUQ::setup()
 		// If this AtomType is not in pairPotentialAtomTypeIndex_, then it is never used
 		if (pairPotentialAtomTypeIndex_.indexOf(at) == -1)
 		{
-			msg.error("AtomType '%s' is defined but is not present in the system as it stands.\n", at->name());
+			Messenger::error("AtomType '%s' is defined but is not present in the system as it stands.\n", at->name());
 			++nErrors;
 		}
 	}
@@ -123,7 +123,7 @@ bool DUQ::setup()
 	for (AtomType* at = atomTypes_.first(); at != NULL; at = at->next) at->setIndex(pairPotentialAtomTypeIndex_.indexOf(at));
 
 	// Create PairPotential matrix
-	msg.print("--> Creating matrix (%ix%i)...\n", pairPotentialAtomTypeIndex_.nItems(), pairPotentialAtomTypeIndex_.nItems());
+	Messenger::print("--> Creating matrix (%ix%i)...\n", pairPotentialAtomTypeIndex_.nItems(), pairPotentialAtomTypeIndex_.nItems());
 	if (!potentialMap_.initialise(pairPotentialAtomTypeIndex_, pairPotentials_, pairPotentialRange_)) return false;
 
 	return true;
@@ -132,29 +132,29 @@ bool DUQ::setup()
 // Print Full System Setup
 bool DUQ::printSetup()
 {
-	msg.print("\n");
-	msg.print("*** AtomTypes\n");
+	Messenger::print("\n");
+	Messenger::print("*** AtomTypes\n");
 
-	msg.print("*** Species\n");
+	Messenger::print("*** Species\n");
 // 	for (Species* sp = species_.first(); sp != NULL; sp = sp->next) sp->print();
 // 
-// 	msg.print("*** S
-// 	msg.print("Simulation Setup:\n");
-// 	msg.print("%-40s = %s\n", "Bragg calculation", braggCalculationOn_ ? "On" : "Off");
-// 	msg.print("%-40s = %9.3e (%s)\n", "Bragg calculation Q(max)", braggMaximumQ_, "1/Angstroms");
-// 	msg.print("%-40s = %9.3e (%s)\n", "Delta(Q) to use in S(Q) calculation", qDelta_, "1/Angstroms");
-// 	msg.print("%-40s = %9.3e (%s)\n", "Q(max) to use in S(Q) calculation", qMax_, "1/Angstroms");
-// 	msg.print("%-40s = %9.3e\n", "Q-Dependent Broadening FWHM", qDependentFWHM_);
-// 	msg.print("%-40s = %9.3e\n", "Q-Independent Broadening FWHM", qIndependentFWHM_);
-// 	msg.print("%-40s = %9i\n", "Random Seed", seed_);
-// 	msg.print("%-40s = %9.3e (%s)\n", "RDF Bin Width", rdfBinWidth_, "Angstroms");
-// 	msg.print("%-40s = %9.3e (%s)\n", "RDF Range", rdfRange_, "Angstroms");
-// 	msg.print("%-40s = %s\n", "RDF Calculation Method", rdfMethod(rdfMethod_));
-// 	msg.print("%-40s = %9i\n", "Simplex NCycles", simplexNCycles_);
-// 	msg.print("%-40s = %9i\n", "Simplex NMoves", simplexNMoves_);
-// 	msg.print("%-40s = %9.3e (%s)\n", "Simplex Temperature", simplexTemperature_, "barns/sr/atom");
-// 	msg.print("%-40s = %9.3e (%s)\n", "Simplex Tolerance", simplexTolerance_, "barns/sr/atom");
-// 	msg.print("%-40s = %9.3e (%s)\n", "Simulation Temperature", temperature_, "K");
+// 	Messenger::print("*** S
+// 	Messenger::print("Simulation Setup:\n");
+// 	Messenger::print("%-40s = %s\n", "Bragg calculation", braggCalculationOn_ ? "On" : "Off");
+// 	Messenger::print("%-40s = %9.3e (%s)\n", "Bragg calculation Q(max)", braggMaximumQ_, "1/Angstroms");
+// 	Messenger::print("%-40s = %9.3e (%s)\n", "Delta(Q) to use in S(Q) calculation", qDelta_, "1/Angstroms");
+// 	Messenger::print("%-40s = %9.3e (%s)\n", "Q(max) to use in S(Q) calculation", qMax_, "1/Angstroms");
+// 	Messenger::print("%-40s = %9.3e\n", "Q-Dependent Broadening FWHM", qDependentFWHM_);
+// 	Messenger::print("%-40s = %9.3e\n", "Q-Independent Broadening FWHM", qIndependentFWHM_);
+// 	Messenger::print("%-40s = %9i\n", "Random Seed", seed_);
+// 	Messenger::print("%-40s = %9.3e (%s)\n", "RDF Bin Width", rdfBinWidth_, "Angstroms");
+// 	Messenger::print("%-40s = %9.3e (%s)\n", "RDF Range", rdfRange_, "Angstroms");
+// 	Messenger::print("%-40s = %s\n", "RDF Calculation Method", rdfMethod(rdfMethod_));
+// 	Messenger::print("%-40s = %9i\n", "Simplex NCycles", simplexNCycles_);
+// 	Messenger::print("%-40s = %9i\n", "Simplex NMoves", simplexNMoves_);
+// 	Messenger::print("%-40s = %9.3e (%s)\n", "Simplex Temperature", simplexTemperature_, "barns/sr/atom");
+// 	Messenger::print("%-40s = %9.3e (%s)\n", "Simplex Tolerance", simplexTolerance_, "barns/sr/atom");
+// 	Messenger::print("%-40s = %9.3e (%s)\n", "Simulation Temperature", temperature_, "K");
 
 	return true;
 }

@@ -93,7 +93,7 @@ Configuration::~Configuration()
 // Assignment operator
 void Configuration::operator=(Configuration &source)
 {
-	msg.error("XXX CONFIGURATION COPY (via ASSIGNMENT OPERATOR) IS NOT YET IMPLEMENTED.\n");
+	Messenger::error("XXX CONFIGURATION COPY (via ASSIGNMENT OPERATOR) IS NOT YET IMPLEMENTED.\n");
 // 	clear();
 // 
 // 	// Create arrays
@@ -119,7 +119,7 @@ void Configuration::operator=(Configuration &source)
 // // // 		{
 // // // 			if (atomCount >= nAtoms_)
 // // // 			{
-// // // 				msg.error("Mismatch between size of Atom array in Configuration, and number of Atoms needed by Molecules (in assignment operator).\n");
+// // // 				Messenger::error("Mismatch between size of Atom array in Configuration, and number of Atoms needed by Molecules (in assignment operator).\n");
 // // // 				return;
 // // // 			}
 // // // 			newMol->setAtom(n, &atoms_[atomCount++]);
@@ -130,7 +130,7 @@ void Configuration::operator=(Configuration &source)
 // // // 		{
 // // // 			if (grainCount >= nGrains_)
 // // // 			{
-// // // 				msg.error("Mismatch between size of Grain array in Configuration, and number of Grains needed by Molecules (in assignment operator).\n");
+// // // 				Messenger::error("Mismatch between size of Grain array in Configuration, and number of Grains needed by Molecules (in assignment operator).\n");
 // // // 				return;
 // // // 			}
 // // // 			newMol->setGrain(n, &grains_[grainCount]);
@@ -234,12 +234,12 @@ bool Configuration::setup(const List<AtomType>& atomTypes, double pairPotentialR
 	// Check Configuration multiplier
 	if (multiplier_ < 1)
 	{
-		msg.error("Configuration multiplier is zero or negative (%i).\n", multiplier_);
+		Messenger::error("Configuration multiplier is zero or negative (%i).\n", multiplier_);
 		return false;
 	}
 
 	// Create 'empty' molecules in the main Configuration
-	msg.print("--> Creating space for molecules...\n");
+	Messenger::print("--> Creating space for molecules...\n");
 	int count;
 	for (RefListItem<Species,double>* refSp = usedSpecies_.first(); refSp != NULL; refSp = refSp->next)
 	{
@@ -250,7 +250,7 @@ bool Configuration::setup(const List<AtomType>& atomTypes, double pairPotentialR
 		// Check for zero count
 		if (count == 0)
 		{
-			msg.error("Relative population for Species '%s' is too low (%e) to provide any Molecules in this Configuration.\n", refSp->item->name(), refSp->data);
+			Messenger::error("Relative population for Species '%s' is too low (%e) to provide any Molecules in this Configuration.\n", refSp->item->name(), refSp->data);
 			return false;
 		}
 		
@@ -258,18 +258,18 @@ bool Configuration::setup(const List<AtomType>& atomTypes, double pairPotentialR
 	}
 
 	// Create a Box
-	msg.print("--> Creating periodic box...\n");
+	Messenger::print("--> Creating periodic box...\n");
 	if (!setupBox(pairPotentialRange))
 	{
-		msg.error("Failed to set-up Box/Cells for Configuration.\n");
+		Messenger::error("Failed to set-up Box/Cells for Configuration.\n");
 		return false;
 	}
 
 	// Setup arrays for atoms and grains, based on the local molecules list
-	msg.print("--> Setting up Atom/Grain arrays...\n");
+	Messenger::print("--> Setting up Atom/Grain arrays...\n");
 	if (!setupArrays())
 	{
-		msg.error("Failed to set-up arrays in Configuration.\n");
+		Messenger::error("Failed to set-up arrays in Configuration.\n");
 		return false;
 	}
 
@@ -277,7 +277,7 @@ bool Configuration::setup(const List<AtomType>& atomTypes, double pairPotentialR
 	Species sourceCoordinates;
 	if (!randomConfiguration())
 	{
-		msg.print("--> Loading initial coordinates from file '%s'...\n", initialCoordinatesFile_.get());
+		Messenger::print("--> Loading initial coordinates from file '%s'...\n", initialCoordinatesFile_.get());
 		// Construct a temporary Species to load the source coordinates into
 		if (!MPIRunMaster(sourceCoordinates.load(initialCoordinatesFile_.get()))) return false;
 		sourceCoordinates.broadcast(atomTypes);
@@ -285,21 +285,21 @@ bool Configuration::setup(const List<AtomType>& atomTypes, double pairPotentialR
 		// Species now contains some number of atoms - does it match the number in the configuration's molecules?
 		if (nAtoms() != sourceCoordinates.nAtoms())
 		{
-			msg.error("Number of atoms in initial coordinates file (%i) does not match that in configuration (%i).\n", sourceCoordinates.nAtoms(), nAtoms());
+			Messenger::error("Number of atoms in initial coordinates file (%i) does not match that in configuration (%i).\n", sourceCoordinates.nAtoms(), nAtoms());
 			return false;
 		}
 	}
 
 	// Create Atom and Grain arrays, and Molecule copies
-	msg.print("--> Setting up Molecules, Atoms, and Grains...\n");
+	Messenger::print("--> Setting up Molecules, Atoms, and Grains...\n");
 	if (!setupMolecules(sourceCoordinates))
 	{
-		msg.error("Failed to setup molecules.\n");
+		Messenger::error("Failed to setup molecules.\n");
 		return false;
 	}
 
 	// Initialise neighbour lists and update grains
-	msg.print("--> Initialising Cell neighbour lists and Grains\n");
+	Messenger::print("--> Initialising Cell neighbour lists and Grains\n");
 	if (!updateAtomsInCells()) return false;
 	updateGrains();
 	
@@ -307,49 +307,49 @@ bool Configuration::setup(const List<AtomType>& atomTypes, double pairPotentialR
 	recreateCellAtomNeighbourLists(pairPotentialRange);
 
 	// Setup parallel comms / limits etc.
-	msg.print("\n");
-	msg.print("Setting up parallel comms...\n");
+	Messenger::print("\n");
+	Messenger::print("Setting up parallel comms...\n");
 
 	// -- Assign Atom/Grain limits to processes
 	if (!Comm.calculateLimits(nAtoms(), nGrains())) return false;
 
 	// Construct RDF/S(Q) arrays
 	// -- Determine maximal extent of RDF (from origin to centre of box)
-	msg.print("\n");
-	msg.print("Setting up RDF/S(Q) data...\n");
+	Messenger::print("\n");
+	Messenger::print("Setting up RDF/S(Q) data...\n");
 	Vec3<double> half = box()->axes() * Vec3<double>(0.5,0.5,0.5);
 	double maxR = half.magnitude(), inscribedSphereRadius = box()->inscribedSphereRadius();
-	msg.print("--> Maximal extent for RDFs is %f Angstrom (half cell diagonal distance).\n", maxR);
-	msg.print("--> Inscribed sphere radius (maximum RDF range avoiding periodic images) is %f Angstroms.\n", inscribedSphereRadius);
+	Messenger::print("--> Maximal extent for RDFs is %f Angstrom (half cell diagonal distance).\n", maxR);
+	Messenger::print("--> Inscribed sphere radius (maximum RDF range avoiding periodic images) is %f Angstroms.\n", inscribedSphereRadius);
 	if (requestedRDFRange_ < -1.5)
 	{
-		msg.print("--> Using maximal non-minimum image range for RDF/S(Q).\n");
+		Messenger::print("--> Using maximal non-minimum image range for RDF/S(Q).\n");
 		rdfRange_ = inscribedSphereRadius;
 	}
 	else if (requestedRDFRange_ < -0.5)
 	{
-		msg.print("--> Using 90%% of maximal extent for RDF/S(Q).\n");
+		Messenger::print("--> Using 90%% of maximal extent for RDF/S(Q).\n");
 		rdfRange_ = 0.90*maxR;
 	}
 	else
 	{
-		msg.print("--> Specific RDF range supplied (%f Angstroms).\n", requestedRDFRange_);
+		Messenger::print("--> Specific RDF range supplied (%f Angstroms).\n", requestedRDFRange_);
 		rdfRange_ = requestedRDFRange_;
 		if (rdfRange_ < 0.0)
 		{
-			msg.error("Negative RDF range requested.\n");
+			Messenger::error("Negative RDF range requested.\n");
 			return false;
 		}
 		else if (rdfRange_ > maxR)
 		{
-			msg.error("Requested RDF range is greater then the maximum possible extent for the Box.\n");
+			Messenger::error("Requested RDF range is greater then the maximum possible extent for the Box.\n");
 			return false;
 		}
-		else if (rdfRange_ > (0.90*maxR)) msg.warn("Requested RDF range is greater than 90%% of the maximum possible extent for the Box. FT may be suspect!\n");
+		else if (rdfRange_ > (0.90*maxR)) Messenger::warn("Requested RDF range is greater than 90%% of the maximum possible extent for the Box. FT may be suspect!\n");
 	}
 	// 'Snap' rdfRange_ to nearest bin width...
 	rdfRange_ = int(rdfRange_/rdfBinWidth_) * rdfBinWidth_;
-	msg.print("--> RDF range (snapped to bin width) is %f Angstroms.\n", rdfRange_);
+	Messenger::print("--> RDF range (snapped to bin width) is %f Angstroms.\n", rdfRange_);
 
 	// Does a box normalisation already exist (i.e. has been loaded)
 	// Create/load Box normalisation array
@@ -357,17 +357,17 @@ bool Configuration::setup(const List<AtomType>& atomTypes, double pairPotentialR
 	{
 		if (boxNormalisation_.load(boxNormalisationFileName_))
 		{
-			msg.print("--> Successfully loaded box normalisation data from file '%s'.\n", boxNormalisationFileName_.get());
+			Messenger::print("--> Successfully loaded box normalisation data from file '%s'.\n", boxNormalisationFileName_.get());
 			boxNormalisation_.interpolate();
 		}
-		else msg.print("--> Couldn't load Box normalisation data - it will be calculated.\n");
+		else Messenger::print("--> Couldn't load Box normalisation data - it will be calculated.\n");
 	}
 	if (boxNormalisation_.nPoints() <= 1)
 	{
 		// Only calculate if RDF range is greater than the inscribed sphere radius
 		if (rdfRange_ <= inscribedSphereRadius)
 		{
-			msg.print("--> No need to calculate Box normalisation array since rdfRange is within periodic range.\n");
+			Messenger::print("--> No need to calculate Box normalisation array since rdfRange is within periodic range.\n");
 			boxNormalisation_.clear();
 			double x = rdfBinWidth_*0.5;
 			while (x < rdfRange_)
@@ -379,24 +379,24 @@ bool Configuration::setup(const List<AtomType>& atomTypes, double pairPotentialR
 		}
 		else
 		{
-			msg.print("--> Calculating box normalisation array for RDFs...\n");
+			Messenger::print("--> Calculating box normalisation array for RDFs...\n");
 			if (!box()->calculateRDFNormalisation(boxNormalisation_, rdfRange_, rdfBinWidth_, boxNormalisationNPoints)) return false;
 		}
 	}
-	msg.print("\n");
-	msg.print("--> Constructing RDF/F(Q) lists and matrices...\n");
+	Messenger::print("\n");
+	Messenger::print("--> Constructing RDF/F(Q) lists and matrices...\n");
 	if (!setupPartials())
 	{
-		msg.error("Failed to create RDF/F(Q) lists/matrices.\n");
+		Messenger::error("Failed to create RDF/F(Q) lists/matrices.\n");
 		return false;
 	}
 
 	// Prepare Samples
-	msg.print("\n");
-	msg.print("Preparing Samples...\n");
+	Messenger::print("\n");
+	Messenger::print("Preparing Samples...\n");
 	if (!setupReferenceSamples())
 	{
-		msg.error("Failed to setup reference Samples.\n");
+		Messenger::error("Failed to setup reference Samples.\n");
 		return false;
 	}
 
@@ -419,7 +419,7 @@ bool Configuration::broadcastCoordinates()
 	// Master assembles Atom coordinate arrays...
 	if (Comm.master())
 	{
-		msg.print("--> Sending Configuration to slaves...\n");
+		Messenger::print("--> Sending Configuration to slaves...\n");
 		for (int n=0; n<nAtoms_; ++n)
 		{
 			x[n] = atomReferences_[n]->r().x;
@@ -427,7 +427,7 @@ bool Configuration::broadcastCoordinates()
 			z[n] = atomReferences_[n]->r().z;
 		}
 	}
-	else msg.print("--> Waiting for Master to send Configuration.\n");
+	else Messenger::print("--> Waiting for Master to send Configuration.\n");
 
 	if (!Comm.broadcast(x, nAtoms_)) return false;
 	if (!Comm.broadcast(y, nAtoms_)) return false;

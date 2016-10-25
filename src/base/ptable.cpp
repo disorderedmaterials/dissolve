@@ -64,21 +64,21 @@ void PeriodicTable::clear()
 // Load basic element information from file specified
 bool PeriodicTable::loadElements(const char* fileName)
 {
-	msg.print("Loading elements from file '%s'\n", fileName);
+	Messenger::print("Loading elements from file '%s'\n", fileName);
 	
 	// Open the specified file...
 	LineParser parser;
 	parser.openInput(fileName);
 	if (!parser.isFileGoodForReading())
 	{
-		msg.error("Couldn't open elements file.\n");
+		Messenger::error("Couldn't open elements file.\n");
 		return false;
 	}
 	
 	// First line contains number of comment lines to follow
 	parser.getArgsDelim(LineParser::Defaults);
 	int nSkip = parser.argi(0);
-	msg.printVerbose("Skipping %i lines at start of elements definitions file...\n", nSkip);
+	Messenger::printVerbose("Skipping %i lines at start of elements definitions file...\n", nSkip);
 	parser.skipLines(nSkip);
 	
 	// Next line will contain number of elements to read in
@@ -92,7 +92,7 @@ bool PeriodicTable::loadElements(const char* fileName)
 		success = parser.getArgsDelim(LineParser::Defaults);
 		if (success != 0)
 		{
-			msg.error("Error reading element %i from elements file.\n", n+1);
+			Messenger::error("Error reading element %i from elements file.\n", n+1);
 			parser.closeFiles();
 			return false;
 		}
@@ -100,28 +100,28 @@ bool PeriodicTable::loadElements(const char* fileName)
 	}
 	parser.closeFiles();
 	
-	msg.print("Loaded %i elements from file.\n", nElements_);
+	Messenger::print("Loaded %i elements from file.\n", nElements_);
 	return true;
 }
 
 // Load isotope information from file specified
 bool PeriodicTable::loadIsotopes(const char* fileName)
 {
-	msg.print("Loading isotopes from file '%s'\n", fileName);
+	Messenger::print("Loading isotopes from file '%s'\n", fileName);
 	
 	// Open the specified file...
 	LineParser parser;
 	parser.openInput(fileName);
 	if (!parser.isFileGoodForReading())
 	{
-		msg.error("Couldn't open isotopes file.\n");
+		Messenger::error("Couldn't open isotopes file.\n");
 		return false;
 	}
 	
 	// First line contains number of comment lines to follow
 	parser.getArgsDelim(LineParser::Defaults);
 	int nSkip = parser.argi(0);
-	msg.printVerbose("Skipping %i lines at start of isotopes definitions file...\n", nSkip);
+	Messenger::printVerbose("Skipping %i lines at start of isotopes definitions file...\n", nSkip);
 	parser.skipLines(nSkip);
 	
 	// Read data until EOF
@@ -147,7 +147,7 @@ bool PeriodicTable::loadIsotopes(const char* fileName)
 			// Check that el and Z match...
 			if (find(el.get()) != Z)
 			{
-				msg.error("Element symbol for isotope (%s) doesn't match Z number (%i)\n", el.get(), Z);
+				Messenger::error("Element symbol for isotope (%s) doesn't match Z number (%i)\n", el.get(), Z);
 				parser.closeFiles();
 				return false;
 			}
@@ -182,7 +182,7 @@ bool PeriodicTable::loadIsotopes(const char* fileName)
 		// Did we succeed?
 		if (failed)
 		{
-			msg.error("Error reading isotope data from file, line = '%s'.\n", parser.line());
+			Messenger::error("Error reading isotope data from file, line = '%s'.\n", parser.line());
 			parser.closeFiles();
 			return false;
 		}
@@ -197,17 +197,17 @@ bool PeriodicTable::loadIsotopes(const char* fileName)
 	}
 	parser.closeFiles();
 	
-	msg.print("Loaded %i isotope definitions from file.\n", count);
+	Messenger::print("Loaded %i isotope definitions from file.\n", count);
 	
 	// Go through Elements and check for no natural isotope defined (and add it if necessary)
 	for (int n=0; n<nElements_; ++n)
 	{
 		// Search defined isotopes for natural definition (A = 0)
 		for (isotope = elements_[n].isotopes(); isotope != NULL; isotope = isotope->next) if (isotope->A() == 0) break;
-		if (isotope != NULL) msg.printVerbose("Found natural isotope for element %i (%s) - bc = %f\n", n, elements_[n].name(), isotope->boundCoherent());
+		if (isotope != NULL) Messenger::printVerbose("Found natural isotope for element %i (%s) - bc = %f\n", n, elements_[n].name(), isotope->boundCoherent());
 		else
 		{
-			msg.print("Creating natural isotope for element %i (%s) with bc = 0.0.\n", n, elements_[n].name());
+			Messenger::print("Creating natural isotope for element %i (%s) with bc = 0.0.\n", n, elements_[n].name());
 			isotope = elements_->addIsotope();
 		}
 	}
@@ -218,21 +218,21 @@ bool PeriodicTable::loadIsotopes(const char* fileName)
 // Load atomtype information from file specified
 bool PeriodicTable::loadParameters(const char* fileName)
 {
-	msg.print("Loading atomtypes from file '%s'\n", fileName);
+	Messenger::print("Loading atomtypes from file '%s'\n", fileName);
 	
 	// Open the specified file...
 	LineParser parser;
 	parser.openInput(fileName);
 	if (!parser.isFileGoodForReading())
 	{
-		msg.print("Couldn't open atomtypes file.\n");
+		Messenger::print("Couldn't open atomtypes file.\n");
 		return false;
 	}
 	
 	// First line contains number of comment lines to follow
 	parser.getArgsDelim(LineParser::Defaults);
 	int nSkip = parser.argi(0);
-	msg.printVerbose("Skipping %i lines at start of atomtypes definitions file...\n", nSkip);
+	Messenger::printVerbose("Skipping %i lines at start of atomtypes definitions file...\n", nSkip);
 	parser.skipLines(nSkip);
 	
 	// Read data until EOF
@@ -245,7 +245,7 @@ bool PeriodicTable::loadParameters(const char* fileName)
 		Z = find(parser.argc(0));
 		if (Z == 0)
 		{
-			msg.error("Element '%s' unrecognised in atomtype definitions file.\n", parser.argc(0));
+			Messenger::error("Element '%s' unrecognised in atomtype definitions file.\n", parser.argc(0));
 			parser.closeFiles();
 			return false;
 		}
@@ -253,7 +253,7 @@ bool PeriodicTable::loadParameters(const char* fileName)
 		// Did we succeed?
 		if (failed)
 		{
-			msg.error("Error reading atomtype data from file, line = '%s'.\n", parser.line());
+			Messenger::error("Error reading atomtype data from file, line = '%s'.\n", parser.line());
 			parser.closeFiles();
 			return false;
 		}
@@ -270,7 +270,7 @@ bool PeriodicTable::loadParameters(const char* fileName)
 	}
 	parser.closeFiles();
 	
-	msg.print("Loaded %i atomtype definitions from file.\n", count);
+	Messenger::print("Loaded %i atomtype definitions from file.\n", count);
 	
 	// Go through Elements and check for no atomtype definigions, adding a basic one if necessary
 	for (Z=0; Z<nElements_; ++Z)
@@ -278,7 +278,7 @@ bool PeriodicTable::loadParameters(const char* fileName)
 		// Search defined isotopes for natural definition (A = 0)
 		if (elements_[Z].nParameters() != 0) continue;
 
-		msg.print("Creating generic atomtype for element %i (%s).\n", Z, elements_[Z].name());
+		Messenger::print("Creating generic atomtype for element %i (%s).\n", Z, elements_[Z].name());
 		params = elements_[Z].addParameters();
 		params->setName(elements_[Z].symbol());
 		params->setDescription(elements_[Z].name());
@@ -321,7 +321,7 @@ Element &PeriodicTable::element(int z)
 #ifdef CHECKS
 	if ((z < 0) || (z > nElements_))
 	{
-		msg.print("OUT_OF_RANGE - Bad element ID requested (%i) in PeriodicTable::element().\n", z);
+		Messenger::print("OUT_OF_RANGE - Bad element ID requested (%i) in PeriodicTable::element().\n", z);
 		return elements_[0];
 	}
 #endif
@@ -341,7 +341,7 @@ void PeriodicTable::resetEmpiricalFormula()
 // Add Atom (element) to empirical formula
 void PeriodicTable::addToEmpirical(int z, int count)
 {
-	if ((z < 0) || (z >= nElements_)) msg.print("OUT_OF_RANGE - Element index %i is out of range.\n", z);
+	if ((z < 0) || (z >= nElements_)) Messenger::print("OUT_OF_RANGE - Element index %i is out of range.\n", z);
 	else elementCount_[z] += count;
 }
 

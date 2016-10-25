@@ -43,13 +43,13 @@ bool DUQ::md(Configuration& cfg, double cutoffDistance, int nSteps, double delta
 	int writeFreq = 10;
 
 	// Print summary of parameters
-	msg.print("MD: Number of steps = %i\n", nSteps);
-	msg.print("MD: Cutoff distance is %f\n", cutoffDistance);
-	msg.print("MD: Timestep = %10.3e ps\n", deltaT);
-	if (writeTraj) msg.print("MD: Trajectory file '%s' will be appended.\n");
-	else msg.print("MD: Trajectory file off.\n");
-	msg.print("MD: Energy %s be calculated at each step.\n", calcEnergy ? "will" : "will not");
-	msg.print("MD: Summary will be written every %i step(s).\n", writeFreq);
+	Messenger::print("MD: Number of steps = %i\n", nSteps);
+	Messenger::print("MD: Cutoff distance is %f\n", cutoffDistance);
+	Messenger::print("MD: Timestep = %10.3e ps\n", deltaT);
+	if (writeTraj) Messenger::print("MD: Trajectory file '%s' will be appended.\n");
+	else Messenger::print("MD: Trajectory file off.\n");
+	Messenger::print("MD: Energy %s be calculated at each step.\n", calcEnergy ? "will" : "will not");
+	Messenger::print("MD: Summary will be written every %i step(s).\n", writeFreq);
 
 	// Create force arrays as simple double arrays (easier to sum with MPI) - others are Vec3<double> arrays
 	Array<double> mass(cfg.nAtoms()), fx(cfg.nAtoms()), fy(cfg.nAtoms()), fz(cfg.nAtoms());
@@ -69,7 +69,7 @@ bool DUQ::md(Configuration& cfg, double cutoffDistance, int nSteps, double delta
 	 */
 	
 	// Assign random velocities to start... (grab atomic masses at the same time...)
-	msg.print("Assigning random velocities...\n");
+	Messenger::print("Assigning random velocities...\n");
 	vCom.zero();
 	massSum = 0.0;
 	for (n=0; n<cfg.nAtoms(); ++n)
@@ -110,7 +110,7 @@ bool DUQ::md(Configuration& cfg, double cutoffDistance, int nSteps, double delta
 		{
 			if ((!trajParser.openOutput(trajectoryFile, true)) || (!trajParser.isFileGoodForWriting()))
 			{
-				msg.error("Failed to open MD trajectory output file '%s'.\n", trajectoryFile.get());
+				Messenger::error("Failed to open MD trajectory output file '%s'.\n", trajectoryFile.get());
 				Comm.decide(false);
 				return false;
 			}
@@ -120,8 +120,8 @@ bool DUQ::md(Configuration& cfg, double cutoffDistance, int nSteps, double delta
 	}
 
 	// Write header to screen
-	if (calcEnergy) msg.print("  Step             T(K)      K.E.(kJ/mol) P.E.(kJ/mol) Etot(kJ/mol)\n");
-	else msg.print("  Step             T(K)      K.E.(kj/mol)\n");
+	if (calcEnergy) Messenger::print("  Step             T(K)      K.E.(kJ/mol) P.E.(kJ/mol) Etot(kJ/mol)\n");
+	else Messenger::print("  Step             T(K)      K.E.(kj/mol)\n");
 
 	// Start a timer
 	Timer timer;
@@ -152,7 +152,7 @@ bool DUQ::md(Configuration& cfg, double cutoffDistance, int nSteps, double delta
 // 			}
 // 		}
 // 		maxDelta = sqrt(maxDelta);
-// 		msg.print("Current timestep (%e) will give a maximum displacement of %f Angstroms\n", deltaT, maxDelta);
+// 		Messenger::print("Current timestep (%e) will give a maximum displacement of %f Angstroms\n", deltaT, maxDelta);
 // 		if (step > 0)
 // 		{
 // 			do
@@ -251,8 +251,8 @@ bool DUQ::md(Configuration& cfg, double cutoffDistance, int nSteps, double delta
 		// Write step summary?
 		if (step%writeFreq == 0)
 		{
-			if (calcEnergy) msg.print("  %-10i    %10.3e   %10.3e   %10.3e   %10.3e\n", step+1, tInstant, ke, pe, ke+pe);
-			else msg.print("  %-10i    %10.3e   %10.3e\n", step+1, tInstant, ke);
+			if (calcEnergy) Messenger::print("  %-10i    %10.3e   %10.3e   %10.3e   %10.3e\n", step+1, tInstant, ke, pe, ke+pe);
+			else Messenger::print("  %-10i    %10.3e   %10.3e\n", step+1, tInstant, ke);
 		}
 
 		// Save trajectory frame
@@ -282,7 +282,7 @@ bool DUQ::md(Configuration& cfg, double cutoffDistance, int nSteps, double delta
 	// Close trajectory file
 	if (writeTraj && Comm.master()) trajParser.closeFiles();
 
-        msg.print("%i molecular dynamics steps performed (%s work, %s comms)\n", nSteps, timer.timeString(), Comm.accumulatedTimeString());
+        Messenger::print("%i molecular dynamics steps performed (%s work, %s comms)\n", nSteps, timer.timeString(), Comm.accumulatedTimeString());
 
 	// Increment configuration changeCount_
 	cfg.incrementCoordinateIndex();

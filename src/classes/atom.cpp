@@ -99,7 +99,7 @@ double Atom::charge() const
 void Atom::setLocalTypeIndex(int id)
 {
 #ifdef CHECKS
-	if (localTypeIndex_ != -1) msg.print("Warning: Overwriting local AtomType index for atom '%i'.\n", index_);
+	if (localTypeIndex_ != -1) Messenger::print("Warning: Overwriting local AtomType index for atom '%i'.\n", index_);
 #endif
 	localTypeIndex_ = id;
 }
@@ -108,7 +108,7 @@ void Atom::setLocalTypeIndex(int id)
 int Atom::localTypeIndex() const
 {
 #ifdef CHECKS
-	if (localTypeIndex_ == -1) msg.print("Warning: Local AtomType index has not yet been set for atom '%i'.\n", index_);
+	if (localTypeIndex_ == -1) Messenger::print("Warning: Local AtomType index has not yet been set for atom '%i'.\n", index_);
 #endif
 	return localTypeIndex_;
 }
@@ -117,7 +117,7 @@ int Atom::localTypeIndex() const
 void Atom::setGlobalTypeIndex(int id)
 {
 #ifdef CHECKS
-	if (globalTypeIndex_ != -1) msg.print("Warning: Overwriting global AtomType index for atom '%i'.\n", index_);
+	if (globalTypeIndex_ != -1) Messenger::print("Warning: Overwriting global AtomType index for atom '%i'.\n", index_);
 #endif
 	globalTypeIndex_ = id;
 }
@@ -126,7 +126,7 @@ void Atom::setGlobalTypeIndex(int id)
 int Atom::globalTypeIndex() const
 {
 #ifdef CHECKS
-	if (globalTypeIndex_ == -1) msg.print("Warning: Global AtomType index has not yet been set for atom '%i'.\n", index_);
+	if (globalTypeIndex_ == -1) Messenger::print("Warning: Global AtomType index has not yet been set for atom '%i'.\n", index_);
 #endif
 	return globalTypeIndex_;
 }
@@ -207,7 +207,7 @@ void Atom::setGrain(Grain* grain)
 	// Check for double-set of Grain
 	if (grain_ != NULL)
 	{
-		msg.print("BAD_USAGE - Tried to set atom %i's grain for a second time.\n", index_);
+		Messenger::print("BAD_USAGE - Tried to set atom %i's grain for a second time.\n", index_);
 		return;
 	}
 	grain_ = grain;
@@ -229,7 +229,7 @@ void Atom::setCoordinates(const Vec3<double>& newr)
 #ifdef CHECKS
 	if (grain_ == NULL)
 	{
-		msg.error("NULL_POINTER - NULL grain pointer found in Atom::setCoordinates() (atom id = %i).\n", index_);
+		Messenger::error("NULL_POINTER - NULL grain pointer found in Atom::setCoordinates() (atom id = %i).\n", index_);
 		return;
 	}
 #endif

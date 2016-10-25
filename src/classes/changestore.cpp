@@ -91,7 +91,7 @@ void ChangeStore::updateAtomsLocal(int nAtoms, int* indices)
 #ifdef CHECKS
 		if ((indices[n] < 0) || (indices[n] >= targetAtoms_.nItems()))
 		{
-			msg.print("OUT_OF_RANGE - Supplied indices_[n] (%i) is out of range in ChangeStore::updateAtomsLocal() (nTargetAtoms = %i)\n", n, indices_[n], targetAtoms_.nItems());
+			Messenger::print("OUT_OF_RANGE - Supplied indices_[n] (%i) is out of range in ChangeStore::updateAtomsLocal() (nTargetAtoms = %i)\n", n, indices_[n], targetAtoms_.nItems());
 			continue;
 		}
 #endif
@@ -106,7 +106,7 @@ void ChangeStore::updateAtom(int id)
 #ifdef CHECKS
 	if ((id < 0) || (id >= targetAtoms_.nItems()))
 	{
-		msg.print("OUT_OF_RANGE - Specified index %i is out of range in ChangeStore::updateAtom() (nTargetAtoms = %i)\n", id, targetAtoms_.nItems());
+		Messenger::print("OUT_OF_RANGE - Specified index %i is out of range in ChangeStore::updateAtom() (nTargetAtoms = %i)\n", id, targetAtoms_.nItems());
 		return;
 	}
 #endif
@@ -128,7 +128,7 @@ void ChangeStore::revert(int id)
 #ifdef CHECKS
 	if ((id < 0) || (id >= targetAtoms_.nItems()))
 	{
-		msg.print("OUT_OF_RANGE - Index of Atom (%i) is out of range in ChangeStore::revert() (nAtoms = %i).\n", id, targetAtoms_.nItems());
+		Messenger::print("OUT_OF_RANGE - Index of Atom (%i) is out of range in ChangeStore::revert() (nAtoms = %i).\n", id, targetAtoms_.nItems());
 		return;
 	}
 #endif
@@ -168,7 +168,7 @@ bool ChangeStore::distributeAndApply(Configuration& cfg)
 	int nTotalChanges = changes_.nItems();
 	if (!Comm.allSum(&nTotalChanges, 1)) return false;
 
-// 	msg.print("We think there are %i changes in total to distribute.\n", nTotalChanges);
+// 	Messenger::print("We think there are %i changes in total to distribute.\n", nTotalChanges);
 
 	// All processes now resize their arrays so they are large enough to hold the total number of changes
 	if (nTotalChanges == 0) return true;
@@ -205,7 +205,7 @@ bool ChangeStore::distributeAndApply(Configuration& cfg)
 #ifdef CHECKS
 		if ((indices_[n] < 0) || (indices_[n] >= cfg.nAtoms()))
 		{
-			msg.print("OUT_OF_RANGE - Index of Atom change (%i) is out of range in ChangeStore::distribute() (nAtoms = %i).\n", indices_[n], cfg.nAtoms());
+			Messenger::print("OUT_OF_RANGE - Index of Atom change (%i) is out of range in ChangeStore::distribute() (nAtoms = %i).\n", indices_[n], cfg.nAtoms());
 			continue;
 		}
 #endif

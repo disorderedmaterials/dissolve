@@ -188,14 +188,14 @@ bool Sample::addIsotopologueToMixture(Species* sp, Isotopologue *iso, double rel
 	IsotopologueMix* mix = hasSpeciesIsotopologueMixture(sp);
 	if (mix == NULL)
 	{
-		msg.print("Warning: Sample '%s' contains no IsotopologueMix definition for Species '%s'.\n", name_.get(), sp->name());
+		Messenger::print("Warning: Sample '%s' contains no IsotopologueMix definition for Species '%s'.\n", name_.get(), sp->name());
 		return false;
 	}
 
 	// Check current number of Isotopologues defined against total available
 	if (sp->nIsotopologues() == mix->nIsotopologues())
 	{
-		msg.print("Can't add a new Isotopologue definition for Species '%s' in Sample '%s' since there are no unused Isotopologue definitions left.\n", sp->name(), name_.get());
+		Messenger::print("Can't add a new Isotopologue definition for Species '%s' in Sample '%s' since there are no unused Isotopologue definitions left.\n", sp->name(), name_.get());
 		return false;
 	}
 
@@ -207,7 +207,7 @@ bool Sample::addIsotopologueToMixture(Species* sp, Isotopologue *iso, double rel
 	}
 	else if (!mix->addIsotopologue(iso, relPop))
 	{
-		msg.error("Failed to add Isotopologue to Sample '%s'.\n", name_.get());
+		Messenger::error("Failed to add Isotopologue to Sample '%s'.\n", name_.get());
 		return false;
 	}
 	
@@ -253,7 +253,7 @@ bool Sample::createTypeIndex(const RefList<Species,double>& usedSpecies, int mul
 	AtomTypeData* at1;
 	double bb, cc;
 
-	msg.print("--> Generating AtomType/Isotope index...\n");
+	Messenger::print("--> Generating AtomType/Isotope index...\n");
 	// Simultaneous loop over defined Species and IsotopologueMixtures (which are directly related)
 	RefListItem<Species,double>* refSp = usedSpecies.first();
 	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next, refSp = refSp->next)
@@ -261,7 +261,7 @@ bool Sample::createTypeIndex(const RefList<Species,double>& usedSpecies, int mul
 		// Sanity check
 		if (mix->species() != refSp->item)
 		{
-			msg.error("Species referred to in mixture in Sample '%s' does not correspond to that in the main Species list.\n", mix->species()->name());
+			Messenger::error("Species referred to in mixture in Sample '%s' does not correspond to that in the main Species list.\n", mix->species()->name());
 			return false;
 		}
 
@@ -281,7 +281,7 @@ bool Sample::createTypeIndex(const RefList<Species,double>& usedSpecies, int mul
 			// Check for zero count
 			if (count == 0)
 			{
-				msg.error("Relative population for Isotopologue '%s' of Species '%s' in Sample '%s' is too low (%e) to provide any Molecules.\n", tope->item->name(), refSp->item->name(), name(), tope->data);
+				Messenger::error("Relative population for Isotopologue '%s' of Species '%s' in Sample '%s' is too low (%e) to provide any Molecules.\n", tope->item->name(), refSp->item->name(), name(), tope->data);
 				return false;
 			}
 
@@ -289,30 +289,30 @@ bool Sample::createTypeIndex(const RefList<Species,double>& usedSpecies, int mul
 			// -- Too many?
 			if (count > molCount)
 			{
-				msg.print("Warning: Molecule count (%i) for Species '%s', Isotopologue '%s' exceeds remaining number to add (%i).\n", count, mix->species()->name(), tope->item->name(), molCount);
+				Messenger::print("Warning: Molecule count (%i) for Species '%s', Isotopologue '%s' exceeds remaining number to add (%i).\n", count, mix->species()->name(), tope->item->name(), molCount);
 				if ((count - molCount) == 1)
 				{
 					count = molCount;
-					msg.print("Molecule count reduced to %i.\n", count);
+					Messenger::print("Molecule count reduced to %i.\n", count);
 				}
 				else
 				{
-					msg.error("Count exceeds remaining number by too many molecules.\n");
+					Messenger::error("Count exceeds remaining number by too many molecules.\n");
 					return false;
 				}
 			}
 			else if ((tope->next == NULL) && (molCount > count))
 			{
 				// Too few, and last Isotopologue in list
-				msg.print("Warning: Molecule count (%i) for Species '%s', Isotopologue '%s' is less than the remaining number to add (%i).\n", count, mix->species()->name(), tope->item->name(), molCount);
+				Messenger::print("Warning: Molecule count (%i) for Species '%s', Isotopologue '%s' is less than the remaining number to add (%i).\n", count, mix->species()->name(), tope->item->name(), molCount);
 				if ((molCount - count) == 1)
 				{
 					count = molCount;
-					msg.print("Molecule count increased to %i.\n", count);
+					Messenger::print("Molecule count increased to %i.\n", count);
 				}
 				else
 				{
-					msg.error("Count is less than remaining number by too many molecules.\n");
+					Messenger::error("Count is less than remaining number by too many molecules.\n");
 					return false;
 				}
 			}
@@ -345,7 +345,7 @@ bool Sample::createTypeIndex(const RefList<Species,double>& usedSpecies, int mul
 		int id = masterIndex.indexOf(at1->atomType());
 		if (id < 0)
 		{
-			msg.print("INTERNAL_ERROR - Couldn't find entry for first AtomType '%s' in masterIndex.\n", at1->name());
+			Messenger::print("INTERNAL_ERROR - Couldn't find entry for first AtomType '%s' in masterIndex.\n", at1->name());
 			return false;
 		}
 		at1->setMasterIndex(id);
@@ -367,7 +367,7 @@ bool Sample::createTypeIndex(const RefList<Species,double>& usedSpecies, int mul
 	}
 	boundCoherentAverageSquared_ *= boundCoherentAverageSquared_;
 	
-	msg.print("--> Calculated average scattering lengths: <b>**2 = %f, <b**2> = %f\n", boundCoherentAverageSquared_, boundCoherentSquaredAverage_);
+	Messenger::print("--> Calculated average scattering lengths: <b>**2 = %f, <b**2> = %f\n", boundCoherentAverageSquared_, boundCoherentSquaredAverage_);
 
 	return true;
 }
@@ -399,7 +399,7 @@ bool Sample::setupPairCorrelations(double volume, double range, double binWidth,
 
 	// Construct S(Q) and weights matrices based on the typeIndex_ population
 	int typeI, typeJ;
-	msg.print("--> Creating S(Q) matrices (%ix%i)...\n", typeIndex_.nItems(), typeIndex_.nItems());
+	Messenger::print("--> Creating S(Q) matrices (%ix%i)...\n", typeIndex_.nItems(), typeIndex_.nItems());
 	pairSQMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
 	braggSQMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
 	weightsMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
@@ -461,7 +461,7 @@ bool Sample::calculatePairCorrelations(Array2D<Histogram>& masterRDFs, Array2D<D
 	double factor, sumFactor = 0.0, braggMax;
 	int typeI, typeJ, masterI, masterJ;
 	
-	msg.print("--> Calculating RDFs/S(Q)/F(Q) for Sample '%s'...\n", name_.get());
+	Messenger::print("--> Calculating RDFs/S(Q)/F(Q) for Sample '%s'...\n", name_.get());
 	
 	// Setup totalGR_ and totalFQ_ arrays...
 	totalGR_.arrayY() = 0.0;
@@ -480,7 +480,7 @@ bool Sample::calculatePairCorrelations(Array2D<Histogram>& masterRDFs, Array2D<D
 #ifdef CHECKS
 		if (masterI == -1)
 		{
-			msg.print("INTERNAL_ERROR - Master index for AtomType '%s' has not been set.\n", at1->name());
+			Messenger::print("INTERNAL_ERROR - Master index for AtomType '%s' has not been set.\n", at1->name());
 			return false;
 		}
 #endif
@@ -496,7 +496,7 @@ bool Sample::calculatePairCorrelations(Array2D<Histogram>& masterRDFs, Array2D<D
 #ifdef CHECKS
 			if (masterJ == -1)
 			{
-				msg.print("INTERNAL_ERROR - Master index for AtomType '%s' has not been set.\n", at2->name());
+				Messenger::print("INTERNAL_ERROR - Master index for AtomType '%s' has not been set.\n", at2->name());
 				return false;
 			}
 #endif
@@ -630,7 +630,7 @@ bool Sample::loadReferenceData(const char* fileName)
 	// Check that the specified file actually exists...
 	if (!fileExists(fileName))
 	{
-		msg.error("Sample reference data '%s' not found.\n", fileName);
+		Messenger::error("Sample reference data '%s' not found.\n", fileName);
 		return false;
 	}
 
@@ -642,11 +642,11 @@ bool Sample::loadReferenceData(const char* fileName)
 	parser.openInput(fileName);
 	if (!parser.isFileGoodForReading())
 	{
-		msg.error("Couldn't open datafile '%s'.\n", fileName);
+		Messenger::error("Couldn't open datafile '%s'.\n", fileName);
 		return false;
 	}
 
-	msg.print("--> Loading reference F(Q) data from '%s'...\n", referenceDataFileName_.get());
+	Messenger::print("--> Loading reference F(Q) data from '%s'...\n", referenceDataFileName_.get());
 
 	// Read data, assuming that column 0 = Q and column 1 = F(Q)...
 	bool result = true;
@@ -654,7 +654,7 @@ bool Sample::loadReferenceData(const char* fileName)
 	{
 		if (parser.getArgsDelim(LineParser::SkipBlanks+LineParser::StripComments) == 1)
 		{
-			msg.error("File error while reading '%s'.\n", referenceDataFileName_.get());
+			Messenger::error("File error while reading '%s'.\n", referenceDataFileName_.get());
 			result = false;
 			break;
 		}
@@ -773,24 +773,24 @@ bool Sample::finaliseReferenceData()
 	// Subtract self-scattering background, calculated from high-Q region
 	if (referenceDataSubtractSelf_)
 	{
-		msg.print("--> Subtracting self-scattering background from reference data...\n");
+		Messenger::print("--> Subtracting self-scattering background from reference data...\n");
 		double highQLevel = 0.0;
 		// Take last 50% of points to calculate average
 		for (int n=referenceData_.nPoints()*0.5; n<referenceData_.nPoints(); ++n) highQLevel += referenceData_.y(n);
 		highQLevel /= (referenceData_.nPoints()*0.1);
-		msg.print("--> High-Q average level is %f.\n", highQLevel);
+		Messenger::print("--> High-Q average level is %f.\n", highQLevel);
 		referenceData_.arrayY() -= highQLevel;
 	}
 
 	// Is data normalised?
 	if (referenceDataNormalisation_ == Sample::AverageSquaredNormalisation)
 	{
-		msg.print("--> Removing normalisation (multiplying by <b>**2 = %f).\n", boundCoherentAverageSquared_);
+		Messenger::print("--> Removing normalisation (multiplying by <b>**2 = %f).\n", boundCoherentAverageSquared_);
 		referenceData_.arrayY() *= boundCoherentAverageSquared_;
 	}
 	else if (referenceDataNormalisation_ == Sample::SquaredAverageNormalisation)
 	{
-		msg.print("--> Removing normalisation (multiplying by <b**2> = %f).\n", boundCoherentSquaredAverage_);
+		Messenger::print("--> Removing normalisation (multiplying by <b**2> = %f).\n", boundCoherentSquaredAverage_);
 		referenceData_.arrayY() *= boundCoherentSquaredAverage_;
 	}
 
@@ -798,14 +798,14 @@ bool Sample::finaliseReferenceData()
 	if (referenceFitMin_ < -0.5)
 	{
 		referenceFitMin_ = referenceData_.arrayX().first();
-		msg.print("--> No minimum Q value given for fit - assuming minimum available (Q = %10.4e).\n", referenceFitMin_);
+		Messenger::print("--> No minimum Q value given for fit - assuming minimum available (Q = %10.4e).\n", referenceFitMin_);
 	}
 	if (referenceFitMax_ < -0.5)
 	{
 		referenceFitMax_ = referenceData_.arrayX().last();
-		msg.print("--> No maximum Q value given for fit - assuming maximum available (Q = %10.4e).\n", referenceFitMax_);
+		Messenger::print("--> No maximum Q value given for fit - assuming maximum available (Q = %10.4e).\n", referenceFitMax_);
 	}
-	msg.print("--> Q range over which to fit empirical potential: %10.4e to %10.4e Angstroms-1.\n", referenceFitMin_, referenceFitMax_);
+	Messenger::print("--> Q range over which to fit empirical potential: %10.4e to %10.4e Angstroms-1.\n", referenceFitMin_, referenceFitMax_);
 
 	return true;
 }

@@ -33,14 +33,14 @@ bool DUQ::broadcastSetup()
 #ifdef PARALLEL
 	bool result;
 	int n, count;
-	msg.print("\n");
-	msg.print("*** Broadcasting System Setup ***\n");
+	Messenger::print("\n");
+	Messenger::print("*** Broadcasting System Setup ***\n");
 
 	// AtomTypes
-	msg.printVerbose("[MPI] Broadcasting AtomTypes...\n");
+	Messenger::printVerbose("[MPI] Broadcasting AtomTypes...\n");
 	count = atomTypes_.nItems();
 	if (!Comm.broadcast(&count, 1)) return false;
-	msg.printVerbose("[MPI] Expecting %i items...\n", count);
+	Messenger::printVerbose("[MPI] Expecting %i items...\n", count);
 	for (n=0; n<count; ++n)
 	{
 		if (Comm.slave()) addAtomType(0);
@@ -48,10 +48,10 @@ bool DUQ::broadcastSetup()
 	}
 
 	// Species
-	msg.printVerbose("[MPI] Broadcasting Species...\n");
+	Messenger::printVerbose("[MPI] Broadcasting Species...\n");
 	count = species_.nItems();
 	if (!Comm.broadcast(&count, 1)) return false;
-	msg.printVerbose("[MPI] Expecting %i items...\n", count);
+	Messenger::printVerbose("[MPI] Expecting %i items...\n", count);
 	for (n=0; n<count; ++n)
 	{
 		if (Comm.slave()) addSpecies();
@@ -59,7 +59,7 @@ bool DUQ::broadcastSetup()
 	}
 
 	// System Composition
-	msg.printVerbose("[MPI] Broadcasting Composition...\n");
+	Messenger::printVerbose("[MPI] Broadcasting Composition...\n");
 	if (!Comm.broadcast(&multiplier_, 1)) return false;
 	if (!Comm.broadcast(&density_, 1)) return false;
 	if (!Comm.broadcast(&densityIsAtomic_, 1)) return false;
@@ -69,10 +69,10 @@ bool DUQ::broadcastSetup()
 	if (!Comm.broadcast(&randomConfiguration_, 1)) return false;
 
 	// Samples
-	msg.printVerbose("Broadcasting Samples...\n");
+	Messenger::printVerbose("Broadcasting Samples...\n");
 	count = samples_.nItems();
 	if (!Comm.broadcast(&count, 1)) return false;
-	msg.printVerbose("Expecting %i items...\n", count);
+	Messenger::printVerbose("Expecting %i items...\n", count);
 	for (n=0; n<count; ++n)
 	{
 		if (Comm.slave()) addSample();
@@ -80,10 +80,10 @@ bool DUQ::broadcastSetup()
 	}
 
 	// PairPotentials
-	msg.printVerbose("Broadcasting PairPotentials...\n");
+	Messenger::printVerbose("Broadcasting PairPotentials...\n");
 	count = pairPotentials_.nItems();
 	if (!Comm.broadcast(&count, 1)) return false;
-	msg.printVerbose("Expecting %i items...\n", count);
+	Messenger::printVerbose("Expecting %i items...\n", count);
 	for (n=0; n<count; ++n)
 	{
 		if (Comm.slave()) pairPotentials_.add();
@@ -95,7 +95,7 @@ bool DUQ::broadcastSetup()
 	if (!Comm.broadcast(&pairPotentialDelta_, 1)) return false;
 
 	// Setup Variables
-	msg.printVerbose("Broadcasting Setup Variables...\n");
+	Messenger::printVerbose("Broadcasting Setup Variables...\n");
 	if (!Comm.broadcast(&boxNormalisationPoints_, 1)) return false;
 	if (!Comm.broadcast(boxNormalisationFileName_)) return false;
 	if (!boxNormalisation_.broadcast()) return false;
@@ -117,7 +117,7 @@ bool DUQ::broadcastSetup()
 	if (!Comm.broadcast((int*)&rdfMethod_, 1)) return false;
 
 	// Simulation Steps
-	msg.printVerbose("Broadcasting Simulation Steps...\n");
+	Messenger::printVerbose("Broadcasting Simulation Steps...\n");
 	// -- Equilibration Stage
 	count = equilibrationSteps_.nItems();
 	if (!Comm.broadcast(&count, 1)) return false;

@@ -191,14 +191,14 @@ bool DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 	if (!Comm.allSum(&totalDelta, 1, DUQComm::Leaders)) return false;
 	if (Comm.processGroupLeader())
 	{
-		msg.print("IntraShake: Overall acceptance rate was %6.1f%% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*nAccepted / nTries, nAccepted, nTries, timer.timeString(), Comm.accumulatedTimeString());
+		Messenger::print("IntraShake: Overall acceptance rate was %6.1f%% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*nAccepted / nTries, nAccepted, nTries, timer.timeString(), Comm.accumulatedTimeString());
 
 		// Adjust step size??
 // 		double ratio = 0.3 / (double(nAccepted)/nTries);
 // 		translationStep_ /= ratio;
 // 		rotationStep_ /= ratio;
 // 		if (translationStep_ > maxTranslationStep_) translationStep_ = maxTranslationStep_;
-// 		msg.print("New steps = %f %f\n", translationStep_, rotationStep_);
+// 		Messenger::print("New steps = %f %f\n", translationStep_, rotationStep_);
 	}
 
 	// Update total energy
@@ -248,7 +248,7 @@ bool DUQ::interShake(Configuration& cfg)
 			continue;
 		}
 		cell = cfg.cell(cellId);
-		msg.printVerbose("Cell %i now the target, containing %i Grains interacting with %i neighbours.\n", cellId, cell->nGrains(), cell->nTotalCellNeighbours());
+		Messenger::printVerbose("Cell %i now the target, containing %i Grains interacting with %i neighbours.\n", cellId, cell->nGrains(), cell->nTotalCellNeighbours());
 
 		/*
 		 * Calculation Begins
@@ -316,7 +316,7 @@ bool DUQ::interShake(Configuration& cfg)
 				if (!Comm.broadcast(&accept, 1, 0, DUQComm::Group)) return false;
 				if (accept)
 				{
-// 					msg.print("Accepts move with delta %f\n", delta);
+// 					Messenger::print("Accepts move with delta %f\n", delta);
 					// Accept new (current) position of target Grain
 					changeStore.updateAll();
 					currentGrainEnergy = newGrainEnergy;
@@ -350,7 +350,7 @@ bool DUQ::interShake(Configuration& cfg)
 	if (!Comm.allSum(&nTries, 1, DUQComm::Leaders)) return false;
 	if (Comm.processGroupLeader())
 	{
-		msg.print("InterShake: Overall acceptance rate was %6.1f%% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*nAccepted / nTries, nAccepted, nTries, timer.timeString(), Comm.accumulatedTimeString());
+		Messenger::print("InterShake: Overall acceptance rate was %6.1f%% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*nAccepted / nTries, nAccepted, nTries, timer.timeString(), Comm.accumulatedTimeString());
 
 // 		// Adjust step size?
 // 		double acceptanceRate = double(nAccepted)/nTries;
@@ -367,7 +367,7 @@ bool DUQ::interShake(Configuration& cfg)
 // 		if (translationStep_ < 0.05) translationStep_ = 0.05;
 // 		else if (translationStep_ > maxTranslationStep_) translationStep_ = maxTranslationStep_;
 // 		if (rotationStep_ < 3.0) rotationStep_ = 3.0;
-// 		msg.print("New steps = %f %f\n", translationStep_, rotationStep_);
+// 		Messenger::print("New steps = %f %f\n", translationStep_, rotationStep_);
 	}
 
 	// Increment configuration changeCount_
@@ -548,14 +548,14 @@ bool DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 	if (!Comm.allSum(&totalDelta, 1, DUQComm::Leaders)) return false;
 	if (Comm.processGroupLeader())
 	{
-		msg.print("TermShake: Overall acceptance rate was %6.1f%% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*nAccepted / nTries, nAccepted, nTries, timer.timeString(), Comm.accumulatedTimeString());
+		Messenger::print("TermShake: Overall acceptance rate was %6.1f%% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*nAccepted / nTries, nAccepted, nTries, timer.timeString(), Comm.accumulatedTimeString());
 
 		// Adjust step size??
 // 		double ratio = 0.3 / (double(nAccepted)/nTries);
 // 		translationStep_ /= ratio;
 // 		rotationStep_ /= ratio;
 // 		if (translationStep_ > maxTranslationStep_) translationStep_ = maxTranslationStep_;
-// 		msg.print("New steps = %f %f\n", translationStep_, rotationStep_);
+// 		Messenger::print("New steps = %f %f\n", translationStep_, rotationStep_);
 	}
 
 	// Update total energy

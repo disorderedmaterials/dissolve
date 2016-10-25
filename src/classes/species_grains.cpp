@@ -41,7 +41,7 @@ void Species::updateGrains()
 			if (rj)
 			{
 				sg->removeAtom(rj->item);
-				msg.print("Removed Atom %i from GrainDefinition '%s' since it already exists in '%s'.\n", rj->item->userIndex(), sg->name(), rj->data->name());
+				Messenger::print("Removed Atom %i from GrainDefinition '%s' since it already exists in '%s'.\n", rj->item->userIndex(), sg->name(), rj->data->name());
 			}
 			else refAtoms.add(ri->item, sg);
 
@@ -56,7 +56,7 @@ void Species::updateGrains()
 		next = sg->next;
 		if (sg->nAtoms() == 0)
 		{
-			msg.print("Removing grain '%s' since it no longer contains any atoms.\n", sg->name());
+			Messenger::print("Removing grain '%s' since it no longer contains any atoms.\n", sg->name());
 			removeGrain(sg);
 		}
 		sg = next;
@@ -138,14 +138,14 @@ SpeciesGrain* Species::addGrain()
 // Remove GrainDefinition specified
 void Species::removeGrain(SpeciesGrain* sg)
 {
-	if (sg == NULL) msg.error("NULL_POINTER - NULL GrainDefinition passed to Species::removeGrainDefinition().\n");
+	if (sg == NULL) Messenger::error("NULL_POINTER - NULL GrainDefinition passed to Species::removeGrainDefinition().\n");
 	else if (grains_.contains(sg))
 	{
 		if (highlightedGrain_ == sg) highlightedGrain_ = NULL;
 		grains_.remove(sg);
-		msg.print("Removed grain from Species '%s'.\n", name_.get());
+		Messenger::print("Removed grain from Species '%s'.\n", name_.get());
 	}
-	else msg.print("BAD_REMOVE - Can't remove specified grain from Species '%s' since it doesn't exist.\n", name_.get());
+	else Messenger::print("BAD_REMOVE - Can't remove specified grain from Species '%s' since it doesn't exist.\n", name_.get());
 }
 
 // Return number of GrainDefinitions present for this Species
@@ -177,11 +177,11 @@ void Species::addAtomToGrain(SpeciesAtom* i, SpeciesGrain* gd)
 			// Is this the target GrainDefinition?
 			if (def == gd)
 			{
-				msg.print("Warning: Won't add duplicate of atom %i to grain '%s' in Species '%s'.\n", i->userIndex(), gd->name(), name());
+				Messenger::print("Warning: Won't add duplicate of atom %i to grain '%s' in Species '%s'.\n", i->userIndex(), gd->name(), name());
 				return;
 			}
 			def->removeAtom(i);
-			msg.print("Removed atom %i from grain '%s' so it can be added to '%s'.\n", i->userIndex(), def->name(), gd->name());
+			Messenger::print("Removed atom %i from grain '%s' so it can be added to '%s'.\n", i->userIndex(), def->name(), gd->name());
 			break;
 		}
 	}

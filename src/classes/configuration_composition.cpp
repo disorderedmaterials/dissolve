@@ -40,7 +40,7 @@ bool Configuration::addUsedSpecies(Species* sp, double relativePopulation)
 	// Check that we have not already added it to this Configuration
 	if (usedSpecies_.contains(sp))
 	{
-		msg.error("Configuration '%s' already references Species '%s'.", name(), sp->name());
+		Messenger::error("Configuration '%s' already references Species '%s'.", name(), sp->name());
 		return false;
 	}
 
@@ -124,7 +124,7 @@ double Configuration::atomicDensity() const
 	// Convert density from g/cm3 to g/A3
 	double rho = nAtoms  / ((mass / AVOGADRO) / (density_ / 1.0E24));
 	
-	msg.printVerbose("Converting %f atoms (mass = %f, density = %f) to atomic density = %f\n", nAtoms, mass, density_, rho);
+	Messenger::printVerbose("Converting %f atoms (mass = %f, density = %f) to atomic density = %f\n", nAtoms, mass, density_, rho);
 
 	return rho;
 }

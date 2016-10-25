@@ -69,14 +69,14 @@ bool Grain::initialise(SpeciesGrain* sg)
 	// Check for NULL pointer
 	if (sg == NULL)
 	{
-		msg.error("NULL_POINTER - NULL GrainDefinition pointer passed to Grain::initialise().\n");
+		Messenger::error("NULL_POINTER - NULL GrainDefinition pointer passed to Grain::initialise().\n");
 		return false;
 	}
 #endif
 	source_ = sg;
 	if (source_->nAtoms() < 1)
 	{
-		msg.print("BAD_ARRAY - Tried to initialise an array of size %i in Grain::initialise().\n", source_->nAtoms());
+		Messenger::print("BAD_ARRAY - Tried to initialise an array of size %i in Grain::initialise().\n", source_->nAtoms());
 		return false;
 	}
 	atomsArraySize_ = source_->nAtoms();
@@ -110,7 +110,7 @@ bool Grain::addAtom(Atom* i)
 	// Check for NULL pointer
 	if (i == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Atom pointer pointer passed to Grain::addAtom().\n");
+		Messenger::error("NULL_POINTER - NULL Atom pointer pointer passed to Grain::addAtom().\n");
 		return false;
 	}
 #endif
@@ -127,7 +127,7 @@ bool Grain::addAtom(Atom* i)
 	}
 	else
 	{
-		msg.error("Tried to add too many Atoms to Grain.\n");
+		Messenger::error("Tried to add too many Atoms to Grain.\n");
 		return false;
 	}
 	return true;
@@ -152,12 +152,12 @@ Atom* Grain::atom(int n) const
 	static Atom dummy;
 	if ((n < 0) || (n >= nAtoms_))
 	{
-		msg.print("OUT_OF_RANGE - Atom index (%i) given to Grain::atom() is out of range (nAtoms_ = %i).\n", n, nAtoms_);
+		Messenger::print("OUT_OF_RANGE - Atom index (%i) given to Grain::atom() is out of range (nAtoms_ = %i).\n", n, nAtoms_);
 		return NULL;
 	}
 	if (atoms_[n] == NULL)
 	{
-		msg.print("NULL_POINTER - Atom pointer pointer for index %i in Grain::atom() is NULL.\n", n);
+		Messenger::print("NULL_POINTER - Atom pointer pointer for index %i in Grain::atom() is NULL.\n", n);
 		return &dummy;
 	}
 #endif
@@ -170,7 +170,7 @@ void Grain::setIndex(int index)
 #ifdef CHECKS
 	if (index_ != -1)
 	{
-		msg.print("BAD_USAGE - Tried to set the index of a Grain twice.\n");
+		Messenger::print("BAD_USAGE - Tried to set the index of a Grain twice.\n");
 		return;
 	}
 #endif
@@ -207,13 +207,13 @@ void Grain::setCell(Cell* cell, int index)
 #ifdef CHECKS
 	if (cell == NULL)
 	{
-		msg.print("BAD_USAGE - Don't pass a NULL cell to Grain::setCell() - call Grain::removeFromCell() instead.\n");
+		Messenger::print("BAD_USAGE - Don't pass a NULL cell to Grain::setCell() - call Grain::removeFromCell() instead.\n");
 		return;
 	}
 	// Check for a different Cell assignment (ok to pass same cell, since we allow index to be updated)
 	if ((cell_ != NULL) && (cell_ != cell))
 	{
-		msg.print("BAD_USAGE - Refused to set Cell within Grain %i since it is still associated to a Cell.\n", index_);
+		Messenger::print("BAD_USAGE - Refused to set Cell within Grain %i since it is still associated to a Cell.\n", index_);
 		return;
 	}
 #endif
@@ -227,7 +227,7 @@ void Grain::removeFromCell(Cell* caller)
 #ifdef CHECKS
 	if (cell_ == NULL)
 	{
-		msg.error("NULL_POINTER - Tried to remove Grain %i from its Cell, but Cell is NULL.\n", index_);
+		Messenger::error("NULL_POINTER - Tried to remove Grain %i from its Cell, but Cell is NULL.\n", index_);
 		return;
 	}
 #endif

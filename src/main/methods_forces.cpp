@@ -151,12 +151,12 @@ void DUQ::grainForces(Configuration& cfg, double* fx, double* fy, double* fz, do
 		// Check for valid cell
 		if (cellId == Cell::NoCellsAvailable)
 		{
-			msg.printVerbose("Nothing for this process to do.\n");
+			Messenger::printVerbose("Nothing for this process to do.\n");
 			cfg.finishedWithCell(willBeModified, cellId);
 			continue;
 		}
 		cell = cfg.cell(cellId);
-		msg.printVerbose("Cell %i now the target, containing %i Grains interacting with %i neighbours.\n", cellId, cell->nGrains(), cell->nTotalCellNeighbours());
+		Messenger::printVerbose("Cell %i now the target, containing %i Grains interacting with %i neighbours.\n", cellId, cell->nGrains(), cell->nTotalCellNeighbours());
 
 		/*
 		 * Calculation Begins
@@ -203,13 +203,13 @@ void DUQ::totalForces(Configuration& cfg, double* fx, double* fy, double* fz, do
 	timer.start();
 	grainForces(cfg, fx, fy, fz, cutoffSq, group);
 	timer.stop();
-	msg.printVerbose("Time to do Grain forces was %s.\n", timer.timeString());
+	Messenger::printVerbose("Time to do Grain forces was %s.\n", timer.timeString());
 	
 	// Calculate intramolecular forces
 	timer.start();
 	intramolecularForces(cfg, fx, fy, fz, group);
 	timer.stop();
-	msg.printVerbose("Time to do intramolecular forces was %s.\n", timer.timeString());
+	Messenger::printVerbose("Time to do intramolecular forces was %s.\n", timer.timeString());
 	
 	// Gather forces together
 	if (group != DUQComm::Solo)

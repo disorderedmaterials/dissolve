@@ -106,7 +106,7 @@ bool LineParser::openInput(const char* filename)
 	if (!inputFile_->is_open())
 	{
 		closeFiles();
-		msg.error("Failed to open file '%s' for reading.\n", filename);
+		Messenger::error("Failed to open file '%s' for reading.\n", filename);
 		return false;
 	}
 	// Reset variables
@@ -142,7 +142,7 @@ bool LineParser::openOutput(const char* filename, bool directOutput)
 		if (!outputFile_->is_open())
 		{
 			closeFiles();
-			msg.error("Failed to open file '%s' for writing.\n", filename);
+			Messenger::error("Failed to open file '%s' for writing.\n", filename);
 			return false;
 		}
 	}
@@ -226,7 +226,7 @@ void LineParser::seekg(streamoff off, ios_base::seekdir dir)
 void LineParser::rewind()
 {
 	if (inputFile_ != NULL) inputFile_->seekg(0, ios::beg);
-	else msg.print("No file currently open to rewind.\n");
+	else Messenger::print("No file currently open to rewind.\n");
 }
 
 // Return whether the end of the input stream has been reached (or only whitespace remains)
@@ -299,7 +299,7 @@ int LineParser::readNextLine(int optionMask)
 			}
 		}
 		line_[lineLength_] = '\0';
-//		msg.print(Messenger::Parse, "Line from file is: [%s]\n", line_);
+//		Messenger::print(Messenger::Parse, "Line from file is: [%s]\n", line_);
 
 		// Remove comments from line
 		if (optionMask&LineParser::StripComments) removeComments(line_);
@@ -737,7 +737,7 @@ const char* LineParser::getChars(int nchars, bool skipeol)
 	if (nchars == 0) return NULL;
 	else if (nchars > MAXLINELENGTH)
 	{
-		msg.error("The maximum number of characters read at once from a file is currently %i.\n", MAXLINELENGTH);
+		Messenger::error("The maximum number of characters read at once from a file is currently %i.\n", MAXLINELENGTH);
 		return NULL;
 	}
 	else if (nchars < 0)
@@ -802,7 +802,7 @@ int LineParser::getInteger(int nbytes)
 		inputFile_->read((char*) &readi, nbytes);
 		return (int) readi;
 	}
-	else msg.error("Integer of size %i bytes does not correspond to any internal type.\n", nbytes);
+	else Messenger::error("Integer of size %i bytes does not correspond to any internal type.\n", nbytes);
 	return 0;
 }
 
@@ -844,7 +844,7 @@ double LineParser::getDouble(int nbytes)
 		inputFile_->read((char*) &readd, nbytes);
 		return (double) readd;
 	}
-	else msg.error("Double of size %i bytes does not correspond to any internal type.\n", nbytes);
+	else Messenger::error("Double of size %i bytes does not correspond to any internal type.\n", nbytes);
 	return 0.0;
 }
 
@@ -870,14 +870,14 @@ bool LineParser::writeLine(const char* s) const
 	{
 		if (cachedFile_ == NULL)
 		{
-			msg.print("Unable to delayed-writeLine - destination cache is not open.\n");
+			Messenger::print("Unable to delayed-writeLine - destination cache is not open.\n");
 			return false;
 		}
 		else* cachedFile_ << s;
 	}
 	else if (outputFile_ == NULL)
 	{
-		msg.print("Unable to direct-writeLine - destination file is not open.\n");
+		Messenger::print("Unable to direct-writeLine - destination file is not open.\n");
 		return false;
 	}
 	else* outputFile_ << s;
@@ -891,13 +891,13 @@ bool LineParser::writeLineF(const char* fmt, ...) const
 	{
 		if (cachedFile_ == NULL)
 		{
-			msg.print("Unable to delayed-writeLineF - destination cache is not open.\n");
+			Messenger::print("Unable to delayed-writeLineF - destination cache is not open.\n");
 			return false;
 		}
 	}
 	else if (outputFile_ == NULL)
 	{
-		msg.print("Unable to direct-writeLineF - destination file is not open.\n");
+		Messenger::print("Unable to direct-writeLineF - destination file is not open.\n");
 		return false;
 	}
 	
@@ -932,7 +932,7 @@ bool LineParser::commitCache()
 	}
 	else
 	{
-		msg.error("Couldn't open output file '%s' for writing.\n", outputFilename_.get());
+		Messenger::error("Couldn't open output file '%s' for writing.\n", outputFilename_.get());
 		return false;
 	}
 	return true;

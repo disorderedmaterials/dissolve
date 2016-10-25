@@ -44,13 +44,13 @@ void VariableList::setVariable(const char* name, int value)
 	Variable* var = variable(name);
 	if (!var)
 	{
-		msg.printVerbose("Added new integer variable '%s' with value '%i'.\n", name, value);
+		Messenger::printVerbose("Added new integer variable '%s' with value '%i'.\n", name, value);
 		var = variables_.add();
 		var->setup(name, value);
 	}
 	else
 	{
-		msg.printVerbose("Set existing integer variable '%s' to value '%i' (previous value was '%i').\n", name, value, var->asInt());
+		Messenger::printVerbose("Set existing integer variable '%s' to value '%i' (previous value was '%i').\n", name, value, var->asInt());
 		var->set(value);
 	}
 }
@@ -62,13 +62,13 @@ void VariableList::setVariable(const char* name, double value)
 	Variable* var= variable(name);
 	if (!var)
 	{
-		msg.printVerbose("Added new double variable '%s' with value '%i'.\n", name, value);
+		Messenger::printVerbose("Added new double variable '%s' with value '%i'.\n", name, value);
 		var = variables_.add();
 		var->setup(name, value);
 	}
 	else
 	{
-		msg.printVerbose("Set existing double variable '%s' to value '%d' (previous value was '%d').\n", name, value, var->asDouble());
+		Messenger::printVerbose("Set existing double variable '%s' to value '%d' (previous value was '%d').\n", name, value, var->asDouble());
 		var->set(value);
 	}
 }
@@ -80,13 +80,13 @@ void VariableList::setVariable(const char* name, const char* value)
 	Variable* var= variable(name);
 	if (!var)
 	{
-		msg.printVerbose("Added new string variable '%s' with value '%i'.\n", name, value);
+		Messenger::printVerbose("Added new string variable '%s' with value '%i'.\n", name, value);
 		var = variables_.add();
 		var->setup(name, value);
 	}
 	else
 	{
-		msg.printVerbose("Set existing string variable '%s' to value '%s' (previous value was '%s').\n", name, value, var->asChar());
+		Messenger::printVerbose("Set existing string variable '%s' to value '%s' (previous value was '%s').\n", name, value, var->asChar());
 		var->set(value);
 	}
 }
@@ -102,13 +102,13 @@ void VariableList::setVariable(const char* prefix, const char* name, int value)
 	Variable* var= variable(varName);
 	if (!var)
 	{
-		msg.printVerbose("Added new integer variable '%s' with value '%i'.\n", name, value);
+		Messenger::printVerbose("Added new integer variable '%s' with value '%i'.\n", name, value);
 		var = variables_.add();
 		var->setup(varName, value);
 	}
 	else
 	{
-		msg.printVerbose("Set existing integer variable '%s' to value '%i' (previous value was '%i').\n", name, value, var->asInt());
+		Messenger::printVerbose("Set existing integer variable '%s' to value '%i' (previous value was '%i').\n", name, value, var->asInt());
 		var->set(value);
 	}
 }
@@ -124,13 +124,13 @@ void VariableList::setVariable(const char* prefix, const char* name, double valu
 	Variable* var= variable(varName);
 	if (!var)
 	{
-		msg.printVerbose("Added new double variable '%s' with value '%d'.\n", name, value);
+		Messenger::printVerbose("Added new double variable '%s' with value '%d'.\n", name, value);
 		var = variables_.add();
 		var->setup(varName, value);
 	}
 	else
 	{
-		msg.printVerbose("Set existing double variable '%s' to value '%d' (previous value was '%i').\n", name, value, var->asDouble());
+		Messenger::printVerbose("Set existing double variable '%s' to value '%d' (previous value was '%i').\n", name, value, var->asDouble());
 		var->set(value);
 	}
 }
@@ -146,13 +146,13 @@ void VariableList::setVariable(const char* prefix, const char* name, const char*
 	Variable* var= variable(varName);
 	if (!var)
 	{
-		msg.printVerbose("Added new string variable '%s' with value '%s'.\n", name, value);
+		Messenger::printVerbose("Added new string variable '%s' with value '%s'.\n", name, value);
 		var = variables_.add();
 		var->setup(varName, value);
 	}
 	else
 	{
-		msg.printVerbose("Set existing string variable '%s' to value '%s' (previous value was '%s').\n", name, value, var->asChar());
+		Messenger::printVerbose("Set existing string variable '%s' to value '%s' (previous value was '%s').\n", name, value, var->asChar());
 		var->set(value);
 	}
 }

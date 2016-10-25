@@ -109,7 +109,7 @@ void Species::changeAtomElement(SpeciesAtom* i, int el, AtomType* at)
 	// Check for NULL pointer
 	if (i == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Atom pointer passed to Species::changeAtomElement.\n");
+		Messenger::error("NULL_POINTER - NULL Atom pointer passed to Species::changeAtomElement.\n");
 		return;
 	}
 	

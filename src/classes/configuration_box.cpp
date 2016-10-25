@@ -73,7 +73,7 @@ bool Configuration::setupBox(double ppRange)
 	// Remove old box if present
 	if (box_ != NULL)
 	{
-		msg.print("Removing existing box definition...\n");
+		Messenger::print("Removing existing box definition...\n");
 		delete box_;
 	}
 
@@ -105,16 +105,16 @@ bool Configuration::setupBox(double ppRange)
 		box_ = new TriclinicBox(volume, relativeBoxLengths_, boxAngles_);
 	}
 	
-	msg.print("--> %s box created for system.\n", Box::boxType(box_->type()));
+	Messenger::print("--> %s box created for system.\n", Box::boxType(box_->type()));
 	Matrix3 axes = box_->axes();
-	msg.print("--> Axes Matrix : A = %10.4e %10.4e %10.4e, length = %10.4e Angstroms\n", axes[0], axes[1], axes[2], box_->axisLength(0));
-	msg.print("-->               B = %10.4e %10.4e %10.4e, length = %10.4e Angstroms\n", axes[3], axes[4], axes[5], box_->axisLength(1));
-	msg.print("-->               C = %10.4e %10.4e %10.4e, length = %10.4e Angstroms\n", axes[6], axes[7], axes[8], box_->axisLength(2));
+	Messenger::print("--> Axes Matrix : A = %10.4e %10.4e %10.4e, length = %10.4e Angstroms\n", axes[0], axes[1], axes[2], box_->axisLength(0));
+	Messenger::print("-->               B = %10.4e %10.4e %10.4e, length = %10.4e Angstroms\n", axes[3], axes[4], axes[5], box_->axisLength(1));
+	Messenger::print("-->               C = %10.4e %10.4e %10.4e, length = %10.4e Angstroms\n", axes[6], axes[7], axes[8], box_->axisLength(2));
 	
 	// Check cell lengths against pair potential range
 	if (ppRange > box_->inscribedSphereRadius())
 	{
-		msg.error("PairPotential range (%f) is longer than the shortest non-minimum image distance (%f).\n", ppRange, box_->inscribedSphereRadius());
+		Messenger::error("PairPotential range (%f) is longer than the shortest non-minimum image distance (%f).\n", ppRange, box_->inscribedSphereRadius());
 		return false;
 	}
 
@@ -149,12 +149,12 @@ bool Configuration::minimumImageRequired(Cell* a, Cell* b) const
 	// Check for NULL cell pointers
 	if (a == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Cell pointer 'a' given to Configuration::imagesNeeded().\n");
+		Messenger::error("NULL_POINTER - NULL Cell pointer 'a' given to Configuration::imagesNeeded().\n");
 		return false;
 	}
 	if (b == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Cell pointer 'b' given to Configuration::imagesNeeded().\n");
+		Messenger::error("NULL_POINTER - NULL Cell pointer 'b' given to Configuration::imagesNeeded().\n");
 		return false;
 	}
 #endif
@@ -189,7 +189,7 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 	const double tolerance = 0.01;
 	int n, m, x, y, z;
 
-	msg.print("--> Generating cells for box - minimum cells per side is %i, cell size is %f...\n", minCellsPerSide, cellSize);
+	Messenger::print("--> Generating cells for box - minimum cells per side is %i, cell size is %f...\n", minCellsPerSide, cellSize);
 
 	// Get Box axis lengths and divide through by cellSize
 	Vec3<double> boxLengths(box_->axisLength(0), box_->axisLength(1),  box_->axisLength(2));
@@ -198,12 +198,12 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 	divisions_.zero();
 	realCellSize_.zero();
 
-	msg.print("--> Initial divisions based on cell size are (x,y,z) = (%i,%i,%i)\n", divisions.x, divisions.y, divisions.z);
+	Messenger::print("--> Initial divisions based on cell size are (x,y,z) = (%i,%i,%i)\n", divisions.x, divisions.y, divisions.z);
 	
 	// How does the smalles length compare with the PairPotential range?
 	if (divisions.min() < minCellsPerSide)
 	{
-		msg.print("Warning: Box size only allows for %i whole divisions of the cell size (%f) along one or more axes, while we require at least %i.\n", divisions.min(), cellSize, minCellsPerSide);
+		Messenger::print("Warning: Box size only allows for %i whole divisions of the cell size (%f) along one or more axes, while we require at least %i.\n", divisions.min(), cellSize, minCellsPerSide);
 		
 		// We must now take the shortest box length and divide by 3 to get the absolute maximum length to use on that side
 		minEl = boxLengths.minElement();
@@ -219,7 +219,7 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 		divisions_[minEl] = divisions[minEl];
 	}
 	
-	msg.print("--> Shortest side (axis %i) will have cell length of %f Angstroms.\n", minEl, realCellSize_[minEl]);
+	Messenger::print("--> Shortest side (axis %i) will have cell length of %f Angstroms.\n", minEl, realCellSize_[minEl]);
 
 	// Now, set our other cellLengths_ based on the minimum value we have just set
 	// We try to get all lengths as similar as possible
@@ -235,20 +235,20 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 		{
 			divisions_[el] = int(x) + 1;
 			realCellSize_[el] = boxLengths[el] / divisions_[el];
-			msg.print("--> Accepted cell length of %f Angstroms (%i divisions) for axis %i, since it was within tolerance (-%e).\n", realCellSize_[minEl], divisions_[el], el, remainder);
+			Messenger::print("--> Accepted cell length of %f Angstroms (%i divisions) for axis %i, since it was within tolerance (-%e).\n", realCellSize_[minEl], divisions_[el], el, remainder);
 		}
 		else if (remainder < tolerance)
 		{
 			divisions_[el] = int(x);
 			realCellSize_[el] = boxLengths[el] / divisions_[el];
-			msg.print("--> Accepted cell length of %f Angstroms (%i divisions) for axis %i, since it was within tolerance (+%e).\n", realCellSize_[minEl], divisions_[el], el, remainder);
+			Messenger::print("--> Accepted cell length of %f Angstroms (%i divisions) for axis %i, since it was within tolerance (+%e).\n", realCellSize_[minEl], divisions_[el], el, remainder);
 		}
 		else if (remainder < 0.5)
 		{
 			// Can't fit more than half another cell in, so reduce number of divisions...
 			divisions_[el] = int(x);
 			realCellSize_[el] = boxLengths[el] / divisions_[el];
-			msg.print("--> Decreased cell length for axis %i to %f Angstroms (%i divisions).\n", el, realCellSize_[el], divisions_[el]);
+			Messenger::print("--> Decreased cell length for axis %i to %f Angstroms (%i divisions).\n", el, realCellSize_[el], divisions_[el]);
 		}
 		else
 		{
@@ -259,22 +259,22 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 			{
 				--divisions_[el];
 				realCellSize_[el] = boxLengths[el] / divisions_[el];
-				msg.print("--> Forced decrease of cell length for axis %i to %f Angstroms (%i divisions) since increasing it gave a length larger than the cell size.\n", el, realCellSize_[el], divisions_[el]);
+				Messenger::print("--> Forced decrease of cell length for axis %i to %f Angstroms (%i divisions) since increasing it gave a length larger than the cell size.\n", el, realCellSize_[el], divisions_[el]);
 			}
-			else msg.print("--> Increased cell length for axis %i to %f Angstroms (%i divisions).\n", el, realCellSize_[el], divisions_[el]);
+			else Messenger::print("--> Increased cell length for axis %i to %f Angstroms (%i divisions).\n", el, realCellSize_[el], divisions_[el]);
 		}
 	}
 
 	// Summarise
 	cellSize_.set(1.0 / divisions_.x, 1.0 / divisions_.y, 1.0 / divisions_.z);
-	msg.print("--> Final cell partitioning is (x,y,z) = (%i,%i,%i), giving %i cells in total.\n", divisions_.x, divisions_.y, divisions_.z, divisions_.x*divisions_.y*divisions_.z);
-	msg.print("--> Fractional cell size is (%f,%f,%f).\n", cellSize_.x, cellSize_.y, cellSize_.z);
+	Messenger::print("--> Final cell partitioning is (x,y,z) = (%i,%i,%i), giving %i cells in total.\n", divisions_.x, divisions_.y, divisions_.z, divisions_.x*divisions_.y*divisions_.z);
+	Messenger::print("--> Fractional cell size is (%f,%f,%f).\n", cellSize_.x, cellSize_.y, cellSize_.z);
 
 	// Construct Cell arrays
 	clearCells();
 	nCells_ = divisions_.x*divisions_.y*divisions_.z;
 	cellFlag_ = new bool[nCells_];
-	msg.print("--> Constructing array of %i cells...\n", nCells_);
+	Messenger::print("--> Constructing array of %i cells...\n", nCells_);
 	cells_ = new Cell[nCells_];
 	Vec3<double> fracCentre_(cellSize_.x*0.5, 0.0, 0.0);
 	int count = 0;
@@ -298,7 +298,7 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 	}
 
 	// Construct Cell neighbour lists
-	msg.print("--> Creating cell neighbour lists...\n");
+	Messenger::print("--> Creating cell neighbour lists...\n");
 	// Make a list of integer vectors which we'll then use to pick Cells for the neighbour lists
 	Vec3<double> r;
 	Matrix3 cellAxes = box_->axes();
@@ -316,14 +316,14 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 			r = cellAxes * r;
 		} while (r[n] < pairPotentialRange);
 	}
-	msg.print("--> Cell extents required to cover PairPotential range are (x,y,z) = (%i,%i,%i).\n", cellExtents_.x, cellExtents_.y, cellExtents_.z);
+	Messenger::print("--> Cell extents required to cover PairPotential range are (x,y,z) = (%i,%i,%i).\n", cellExtents_.x, cellExtents_.y, cellExtents_.z);
 	
 	// Check Cell extents, comparing with the actual number of Cells available in each direction.
 	for (n=0; n<3; ++n)
 	{
 		if ((cellExtents_[n]*2+1) > divisions_[n])
 		{
-			msg.warn("--> Cells required along axis %i is %i (2*%i + 1) exceeds number of available cells (%i). Parallelism will be affected!\n", n, cellExtents_[n]*2+1, cellExtents_[n], divisions_[n]);
+			Messenger::warn("--> Cells required along axis %i is %i (2*%i + 1) exceeds number of available cells (%i). Parallelism will be affected!\n", n, cellExtents_[n]*2+1, cellExtents_[n], divisions_[n]);
 			// We do not decrease the value of cellExtents_, even though there are not enough cells along one or more sides of the box to satisfy that required for the pairPotentialRange.
 			// When constructing, the loops below check the negative cellExtents_ indices for overlap which would cause the same cell to be added to the list twice.
 		}
@@ -367,10 +367,10 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 			}
 		}
 	}
-	msg.print("--> Added %i Cells to representative neighbour list.\n", nbrs.nItems());
+	Messenger::print("--> Added %i Cells to representative neighbour list.\n", nbrs.nItems());
 
 	// Finally, loop over Cells and set neighbours, and construct neighbour matrix
-	msg.print("--> Constructing neighbour lists for individual Cells...\n");
+	Messenger::print("--> Constructing neighbour lists for individual Cells...\n");
 	bool mimRequired;
 	OrderedPointerList<Cell> neighbours, mimNeighbours;
 	Vec3<int> gridRef;
@@ -433,7 +433,7 @@ Cell* Configuration::cell(int id) const
 #ifdef CHECKS
 	if ((id < 0) || (id >= nCells_))
 	{
-		msg.print("OUT_OF_RANGE - Cell ID %i is out of range (nCells = %i)\n.", id, nCells_);
+		Messenger::print("OUT_OF_RANGE - Cell ID %i is out of range (nCells = %i)\n.", id, nCells_);
 		return 0;
 	}
 #endif
@@ -462,12 +462,12 @@ bool Configuration::useMim(Cell* a, Cell* b) const
 	// Check for NULL pointers
 	if (a == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Cell pointer 'a' passed to Configuration::useMim().\n");
+		Messenger::error("NULL_POINTER - NULL Cell pointer 'a' passed to Configuration::useMim().\n");
 		return false;
 	}
 	if (b == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Cell pointer 'b' passed to Configuration::useMim().\n");
+		Messenger::error("NULL_POINTER - NULL Cell pointer 'b' passed to Configuration::useMim().\n");
 		return false;
 	}
 #endif
@@ -505,7 +505,7 @@ int Configuration::nextAvailableCell(bool willBeModified, bool allowRepeats)
 	int* procList;
 	if (Comm.master())
 	{
-		msg.printVerbose("NextAvailableCell: nCellsDistributed_ = %i\n", nCellsDistributed_);
+		Messenger::printVerbose("NextAvailableCell: nCellsDistributed_ = %i\n", nCellsDistributed_);
 		// All cells already distributed?
 		if (nCellsDistributed_ == nCells_)
 		{
@@ -516,7 +516,7 @@ int Configuration::nextAvailableCell(bool willBeModified, bool allowRepeats)
 		// There are still Cells which haven't been worked on yet, so find and distribute them.
 		for (group = 0; group<Comm.nProcessGroups(); ++group)
 		{
-			msg.printVerbose("Finding next Cell for process group %i\n", group);
+			Messenger::printVerbose("Finding next Cell for process group %i\n", group);
 
 			// Loop from 1 to nCells_
 			for (m=1; m<=nCells_; ++m)
@@ -536,7 +536,7 @@ int Configuration::nextAvailableCell(bool willBeModified, bool allowRepeats)
 					// ... then we want one we've not yet used, and which isn't currently locked by another process
 					if (cellFlag_[cellId]) continue;
 					
-					msg.printVerbose("Cell id %i will be sent to process group %i.\n", cellId, group);
+					Messenger::printVerbose("Cell id %i will be sent to process group %i.\n", cellId, group);
 					++nCellsDistributed_;
 					lastCellDistributed_ = cellId;
 					break;
@@ -544,7 +544,7 @@ int Configuration::nextAvailableCell(bool willBeModified, bool allowRepeats)
 				else if (allowRepeats)
 				{
 					// ... otherwise if 'allowRepeats' we're allowed to send an unlocked one which has already been used
-					msg.printVerbose("Cell id %i will be sent to process group %i (although it has already been used).\n", cellId, group);
+					Messenger::printVerbose("Cell id %i will be sent to process group %i (although it has already been used).\n", cellId, group);
 					break;
 				}
 				
@@ -555,7 +555,7 @@ int Configuration::nextAvailableCell(bool willBeModified, bool allowRepeats)
 			// Did we find a suitable Cell?
 			if (cellId == Cell::NoCellsAvailable)
 			{
-				msg.printVerbose("Warning: Couldn't find valid Cell to send to process group %i. Probably an odd number of Cells and an even number of process groups.\n", group);
+				Messenger::printVerbose("Warning: Couldn't find valid Cell to send to process group %i. Probably an odd number of Cells and an even number of process groups.\n", group);
 			}
 			else
 			{
@@ -580,7 +580,7 @@ int Configuration::nextAvailableCell(bool willBeModified, bool allowRepeats)
 	{
 		// Slaves just receive the next Cell index
 		if (!Comm.receive(cellId, 0)) printf("MPI error in Configuration::nextAvailableCell() when all cells were distributed.\n");
-		msg.printVerbose("Slave with rank %i received Cell id %i\n", Comm.rank(), cellId);
+		Messenger::printVerbose("Slave with rank %i received Cell id %i\n", Comm.rank(), cellId);
 		return cellId;
 	}
 #else
@@ -612,7 +612,7 @@ bool Configuration::finishedWithCell(bool willBeModified, int cellId)
 			// If this is *not* the masters group, receive data from the slave process leader
 			if (group != Comm.localGroupIndex())
 			{
-				if (!Comm.receive(cellId, Comm.processes(group)[0])) msg.print("MPI error in Configuration::finishedWithCell() receiving from process with rank %i.\n", group);
+				if (!Comm.receive(cellId, Comm.processes(group)[0])) Messenger::print("MPI error in Configuration::finishedWithCell() receiving from process with rank %i.\n", group);
 			}
 			if (cellId >= 0) cells_[cellId].unlock(willBeModified);
 		}
@@ -622,7 +622,7 @@ bool Configuration::finishedWithCell(bool willBeModified, int cellId)
 		// Slaves just send their id to the master, provided they are process group leader
 		if (Comm.processGroupLeader())
 		{
-			if (!Comm.send(cellId, 0)) msg.print("MPI error in Configuration::finishedWithCell().\n");
+			if (!Comm.send(cellId, 0)) Messenger::print("MPI error in Configuration::finishedWithCell().\n");
 		}
 	}
 	

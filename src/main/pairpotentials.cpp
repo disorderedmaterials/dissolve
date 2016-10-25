@@ -91,7 +91,7 @@ bool DUQ::addMissingPairPotentials()
 	{
 		if ((!atomTypes_.contains(pot->atomTypeI())) || (!atomTypes_.contains(pot->atomTypeJ())))
 		{ 
-			msg.print("An existing Potential has been removed, since one (or both) of its original AtomTypes no longer exists.\n");
+			Messenger::print("An existing Potential has been removed, since one (or both) of its original AtomTypes no longer exists.\n");
 		}
 	}
 	

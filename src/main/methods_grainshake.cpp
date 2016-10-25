@@ -43,9 +43,9 @@ bool DUQ::grainShake(Configuration& cfg, double cutoffDistance, int nShakesPerGr
 	double cutoffSq = cutoffDistance*cutoffDistance;
 
 	// Print argument/parameter summary
-	msg.print("GrainShake: Cutoff distance is %f\n", cutoffDistance);
-	msg.print("GrainShake: Performing %i shake(s) per Grain\n", nShakesPerGrain);
-	msg.print("GrainShake: Translation step is %f Angstroms, rotation step is %f degrees, target acceptance rate is %f.\n", translationStepSize, rotationStepSize, targetAcceptanceRate);
+	Messenger::print("GrainShake: Cutoff distance is %f\n", cutoffDistance);
+	Messenger::print("GrainShake: Performing %i shake(s) per Grain\n", nShakesPerGrain);
+	Messenger::print("GrainShake: Translation step is %f Angstroms, rotation step is %f degrees, target acceptance rate is %f.\n", translationStepSize, rotationStepSize, targetAcceptanceRate);
 	cutoffSq *= cutoffSq;
 
 	// Initialise the Cell distributor
@@ -83,7 +83,7 @@ bool DUQ::grainShake(Configuration& cfg, double cutoffDistance, int nShakesPerGr
 			continue;
 		}
 		cell = cfg.cell(cellId);
-		msg.printVerbose("Cell %i now the target, containing %i Grains interacting with %i neighbours.\n", cellId, cell->nGrains(), cell->nTotalCellNeighbours());
+		Messenger::printVerbose("Cell %i now the target, containing %i Grains interacting with %i neighbours.\n", cellId, cell->nGrains(), cell->nTotalCellNeighbours());
 
 		/*
 		 * Calculation Begin
@@ -126,7 +126,7 @@ bool DUQ::grainShake(Configuration& cfg, double cutoffDistance, int nShakesPerGr
 
 				if (accept)
 				{
-// 					msg.print("Accepts move with delta %f\n", delta);
+// 					Messenger::print("Accepts move with delta %f\n", delta);
 					// Accept new (current) position of target Grain
 					changeStore.updateAll();
 					currentEnergy = newEnergy;
@@ -164,8 +164,8 @@ bool DUQ::grainShake(Configuration& cfg, double cutoffDistance, int nShakesPerGr
 	{
 		double rate = double(nAccepted)/nTries;
 
-		msg.print("GrainShake: Overall acceptance rate was %4.2f (%i of %i attempted moves) (%s work, %s comms)\n", rate, nAccepted, nTries, timer.timeString(), Comm.accumulatedTimeString());
-		msg.print("GrainShake: Total energy delta was %10.4e kJ/mol.\n", totalDelta);
+		Messenger::print("GrainShake: Overall acceptance rate was %4.2f (%i of %i attempted moves) (%s work, %s comms)\n", rate, nAccepted, nTries, timer.timeString(), Comm.accumulatedTimeString());
+		Messenger::print("GrainShake: Total energy delta was %10.4e kJ/mol.\n", totalDelta);
 
 		// Adjust step size
 		translationStepSize *= rate/targetAcceptanceRate;
@@ -181,7 +181,7 @@ bool DUQ::grainShake(Configuration& cfg, double cutoffDistance, int nShakesPerGr
 	if (!Comm.broadcast(&rotationStepSize, 1, 0, DUQComm::Group)) return false;
 // 	rotationStepSizeParam->setValue(rotationStepSize); TODO
 // 	translationStepSizeParam->setValue(translationStepSize);
-	msg.print("GrainShake: Updated translation step is %f Angstroms, rotation step is %f degrees.\n", translationStepSize, rotationStepSize);
+	Messenger::print("GrainShake: Updated translation step is %f Angstroms, rotation step is %f degrees.\n", translationStepSize, rotationStepSize);
 
 	// Update total energy
 	cfg.registerEnergyChange(totalDelta);

@@ -176,7 +176,7 @@ template <class A> class Array : public ListItem< Array<A> >
 		if ((n < 0) || (n >= nItems_))
 		{
 			static A dummy;
-			msg.print("OUT_OF_RANGE - Array index %i is out of range in Array::operator[] (nItems = %i).\n", n, nItems_);
+			Messenger::print("OUT_OF_RANGE - Array index %i is out of range in Array::operator[] (nItems = %i).\n", n, nItems_);
 			return dummy;
 		}
 #endif
@@ -188,7 +188,7 @@ template <class A> class Array : public ListItem< Array<A> >
 #ifdef CHECKS
 		if ((n < 0) || (n >= nItems_))
 		{
-			msg.print("OUT_OF_RANGE - Array index %i is out of range in Array::value() (nItems = %i).\n", n, nItems_);
+			Messenger::print("OUT_OF_RANGE - Array index %i is out of range in Array::value() (nItems = %i).\n", n, nItems_);
 			return A();
 		}
 #endif
@@ -231,7 +231,7 @@ template <class A> class Array : public ListItem< Array<A> >
 	{
 		if (nItems_ == 0)
 		{
-			msg.print("OUT_OF_RANGE - No first item to return in Array.\n");
+			Messenger::print("OUT_OF_RANGE - No first item to return in Array.\n");
 			return A();
 		}
 		return array_[0];
@@ -241,7 +241,7 @@ template <class A> class Array : public ListItem< Array<A> >
 	{
 		if (nItems_ == 0)
 		{
-			msg.print("OUT_OF_RANGE - No last item to return in Array.\n");
+			Messenger::print("OUT_OF_RANGE - No last item to return in Array.\n");
 			return A();
 		}
 		return array_[nItems_-1];
@@ -351,7 +351,7 @@ template <class A> class Array2D
 		// If we're only interested in half the matrix then it must be square
 		if (half_ && (nrows != ncolumns))
 		{
-			msg.print("BAD_USAGE - Requested half-matrix mode on a non-square matrix in Array2D::resize().\n");
+			Messenger::print("BAD_USAGE - Requested half-matrix mode on a non-square matrix in Array2D::resize().\n");
 		}
 
 		// Create new array
@@ -393,12 +393,12 @@ template <class A> class Array2D
 		static A dummy;
 		if ((row < 0) || (row >= nRows_))
 		{
-			msg.print("OUT_OF_RANGE - Row number (%i) is out of range in Array2D::ref() (nRows = %i).\n", row, nRows_);
+			Messenger::print("OUT_OF_RANGE - Row number (%i) is out of range in Array2D::ref() (nRows = %i).\n", row, nRows_);
 			return dummy;
 		}
 		if ((column < 0) || (column >= nColumns_))
 		{
-			msg.print("OUT_OF_RANGE - Column number (%i) is out of range in Array2D::ref() (nColumns = %i).\n", column, nColumns_);
+			Messenger::print("OUT_OF_RANGE - Column number (%i) is out of range in Array2D::ref() (nColumns = %i).\n", column, nColumns_);
 			return dummy;
 		}
 #endif
@@ -416,12 +416,12 @@ template <class A> class Array2D
 		static A dummy;
 		if ((row < 0) || (row >= nRows_))
 		{
-			msg.print("OUT_OF_RANGE - Row number (%i) is out of range in Array2D::value() (nRows = %i).\n", row, nRows_);
+			Messenger::print("OUT_OF_RANGE - Row number (%i) is out of range in Array2D::value() (nRows = %i).\n", row, nRows_);
 			return dummy;
 		}
 		if ((column < 0) || (column >= nColumns_))
 		{
-			msg.print("OUT_OF_RANGE - Column number (%i) is out of range in Array2D::value() (nColumns = %i).\n", column, nColumns_);
+			Messenger::print("OUT_OF_RANGE - Column number (%i) is out of range in Array2D::value() (nColumns = %i).\n", column, nColumns_);
 			return dummy;
 		}
 #endif
@@ -439,12 +439,12 @@ template <class A> class Array2D
 		static A dummy;
 		if ((row < 0) || (row >= nRows_))
 		{
-			msg.print("OUT_OF_RANGE - Row number (%i) is out of range in Array2D::ptr() (nRows = %i).\n", row, nRows_);
+			Messenger::print("OUT_OF_RANGE - Row number (%i) is out of range in Array2D::ptr() (nRows = %i).\n", row, nRows_);
 			return &dummy;
 		}
 		if ((column < 0) || (column >= nColumns_))
 		{
-			msg.print("OUT_OF_RANGE - Column number (%i) is out of range in Array2D::ptr() (nColumns = %i).\n", column, nColumns_);
+			Messenger::print("OUT_OF_RANGE - Column number (%i) is out of range in Array2D::ptr() (nColumns = %i).\n", column, nColumns_);
 			return &dummy;
 		}
 #endif

@@ -203,13 +203,13 @@ int enumSearch(const char* name, int maxn, const char**itemlist, const char* que
 // Print valid enum values
 void enumPrintValid(int nitems, const char**list)
 {
-	msg.print("Valid values are:\n    ");
+	Messenger::print("Valid values are:\n    ");
 	for (int i=0; i < nitems; i++)
 	{
 		if ((strcmp(list[i],"_NULL_") == 0) || (list[i][0] == '_')) continue;
-		msg.print("%s ", lowerCase(list[i]));
+		Messenger::print("%s ", lowerCase(list[i]));
 	}
-	msg.print("\n");
+	Messenger::print("\n");
 }
 
 // Convert the number 'n' to a string representation.

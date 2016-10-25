@@ -85,9 +85,9 @@ void Angle::setAtoms(Atom* i, Atom* j, Atom* k)
 	j_ = j;
 	k_ = k;
 #ifdef CHECKS
-	if (i_ == NULL) msg.error("NULL_POINTER - NULL pointer passed for Atom* i in Angle::set().\n");
-	if (j_ == NULL) msg.error("NULL_POINTER - NULL pointer passed for Atom* j in Angle::set().\n");
-	if (k_ == NULL) msg.error("NULL_POINTER - NULL pointer passed for Atom* k in Angle::set().\n");
+	if (i_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for Atom* i in Angle::set().\n");
+	if (j_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for Atom* j in Angle::set().\n");
+	if (k_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for Atom* k in Angle::set().\n");
 #endif
 }
 
@@ -115,7 +115,7 @@ int Angle::indexI() const
 #ifdef CHECKS
 	if (i_ == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Atom pointer 'i' found in Angle::indexI(). Returning 0...\n");
+		Messenger::error("NULL_POINTER - NULL Atom pointer 'i' found in Angle::indexI(). Returning 0...\n");
 		return 0;
 	}
 #endif
@@ -128,7 +128,7 @@ int Angle::indexJ() const
 #ifdef CHECKS
 	if (j_ == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Atom pointer 'j' found in Angle::indexJ(). Returning 0...\n");
+		Messenger::error("NULL_POINTER - NULL Atom pointer 'j' found in Angle::indexJ(). Returning 0...\n");
 		return 0;
 	}
 #endif
@@ -141,7 +141,7 @@ int Angle::indexK() const
 #ifdef CHECKS
 	if (k_ == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Atom pointer 'k' found in Angle::indexK(). Returning 0...\n");
+		Messenger::error("NULL_POINTER - NULL Atom pointer 'k' found in Angle::indexK(). Returning 0...\n");
 		return 0;
 	}
 #endif
@@ -208,7 +208,7 @@ void Angle::setAttachedAtoms(int terminus, const RefList<Atom,int>& atoms)
 
 	Dnchar s(-1, "--> For Angle between Atoms %i-%i-%i, terminus %i moves %i Atoms :", indexI()+1, indexJ()+1, indexK()+1, terminus+1, nAttached_[terminus]);
 	for (int n=0; n<nAttached_[terminus]; ++n) s.strcatf(" %i", attached_[terminus][n]->userIndex());
-	msg.print("%s\n", s.get());
+	Messenger::print("%s\n", s.get());
 }
 
 // Return number of attached Atoms for terminus specified

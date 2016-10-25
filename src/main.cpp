@@ -60,28 +60,28 @@ int main(int argc, char **argv)
 					break;
 // 				case ('i'):
 // 					interactive = true;
-// 					msg.print("Will start in interactive mode.\n");
+// 					Messenger::print("Will start in interactive mode.\n");
 // 					break;
 				case ('m'):
-					msg.setMasterOnly(true);
+					Messenger::setMasterOnly(true);
 					break;
 				case ('q'):
-					msg.setQuiet(true);
+					Messenger::setQuiet(true);
 					break;
 				case ('r'):
 					// Next argument is filename
 					++n;
 					if (n == argc)
 					{
-						msg.error("Expected redirection filename.\n");
+						Messenger::error("Expected redirection filename.\n");
 						return 1;
 					}
 					redirectFileName.sprintf("%s.%i", argv[n], Comm.rank());
-					msg.enableRedirect(redirectFileName.get());
+					Messenger::enableRedirect(redirectFileName.get());
 					break;
 				case ('v'):
-					msg.setVerbose(true);
-					msg.printVerbose("Verbose mode enabled.\n");
+					Messenger::setVerbose(true);
+					Messenger::printVerbose("Verbose mode enabled.\n");
 					break;
 				default:
 					printf("Unrecognised command-line switch '%s'.\n", argv[n]);
@@ -108,14 +108,14 @@ int main(int argc, char **argv)
 
 	// Print GPL license information
 #ifdef PARALLEL
-	msg.print("dUQ PARALLEL version %s, Copyright (C) 2012-2014 T. Youngs.\n", DUQVERSION);
+	Messenger::print("dUQ PARALLEL version %s, Copyright (C) 2012-2014 T. Youngs.\n", DUQVERSION);
 #else
-	msg.print("dUQ SERIAL version %s, Copyright (C) 2012-2014  T. Youngs.\n", DUQVERSION);
+	Messenger::print("dUQ SERIAL version %s, Copyright (C) 2012-2014  T. Youngs.\n", DUQVERSION);
 #endif
-	msg.print("Source repository: %s.\n", DUQREPO);
-	msg.print("dUQ comes with ABSOLUTELY NO WARRANTY.\n");
-	msg.print("This is free software, and you are welcome to redistribute it under certain conditions.\n");
-	msg.print("For more details read the GPL at <http://www.gnu.org/copyleft/gpl.html>.\n\n");
+	Messenger::print("Source repository: %s.\n", DUQREPO);
+	Messenger::print("dUQ comes with ABSOLUTELY NO WARRANTY.\n");
+	Messenger::print("This is free software, and you are welcome to redistribute it under certain conditions.\n");
+	Messenger::print("For more details read the GPL at <http://www.gnu.org/copyleft/gpl.html>.\n\n");
 
 	// Load external datafiles
 	if (!MPIRunMaster(dUQ.loadDataFiles()))
@@ -132,7 +132,7 @@ int main(int argc, char **argv)
 	}
 
 	// Load input file
-	msg.print("Loading input file...\n");
+	Messenger::print("Loading input file...\n");
 	if (!MPIRunMaster(dUQ.loadInput(inputFile)))
 	{
 		Comm.finalise();
@@ -142,7 +142,7 @@ int main(int argc, char **argv)
 // 	// Check system setup
 // 	if (!MPIRunMaster(dUQ.checkSetup()))
 // 	{
-// 		msg.print("Errors were encountered while checking the system setup.\nYou must resolve these errors before any calculation can proceed.\n");
+// 		Messenger::print("Errors were encountered while checking the system setup.\nYou must resolve these errors before any calculation can proceed.\n");
 // 		Comm.finalise();
 // 		return 1;
 // 	}
@@ -161,12 +161,12 @@ int main(int argc, char **argv)
 	// Perform system setup (all processes)
 	if (!dUQ.setup())
 	{
-		msg.print("Failed to setup Configurations.\n");
+		Messenger::print("Failed to setup Configurations.\n");
 		return 1;
 	}
 
 #ifdef PARALLEL
-	msg.print("This is process %i of %i total, and exists in process group %i in which it is rank %i of %i processes.\n", Comm.rank(), Comm.nProcesses(), Comm.localGroupIndex(), Comm.localGroupRank(), Comm.localGroupSize());
+	Messenger::print("This is process %i of %i total, and exists in process group %i in which it is rank %i of %i processes.\n", Comm.rank(), Comm.nProcesses(), Comm.localGroupIndex(), Comm.localGroupRank(), Comm.localGroupSize());
 #endif
 	
 	// Enter interactive mode, or perform steps provided in input file

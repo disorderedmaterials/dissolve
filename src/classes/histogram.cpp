@@ -159,7 +159,7 @@ void Histogram::addHistogramData(Histogram& otherHistogram, int factor)
 {
 	if (nBins_ != otherHistogram.nBins_)
 	{
-		msg.print("BAD_USAGE - Can't add histogram data since arrays are not the same size (%i vs %i).\n", nBins_, otherHistogram.nBins_);
+		Messenger::print("BAD_USAGE - Can't add histogram data since arrays are not the same size (%i vs %i).\n", nBins_, otherHistogram.nBins_);
 		return;
 	}
 	for (int n=0; n<nBins_; ++n) histogram_[n] += otherHistogram.histogram_[n] * factor;
@@ -188,7 +188,7 @@ void Histogram::add(double x)
 #ifdef CHECKS
 	if (bin < 0)
 	{
-		msg.print("BAD_NUMBER - Negative bin calculated in Histogram::add().\n");
+		Messenger::print("BAD_NUMBER - Negative bin calculated in Histogram::add().\n");
 		return;
 	}
 #endif
@@ -205,7 +205,7 @@ void Histogram::merge(Histogram& otherHistogram)
 {
 	if (nBins_ != otherHistogram.nBins_)
 	{
-		msg.print("BAD_USAGE - Can't merge RDF data since arrays are not the same size.\n");
+		Messenger::print("BAD_USAGE - Can't merge RDF data since arrays are not the same size.\n");
 		return;
 	}
 	for (int n=0; n<nBins_; ++n)

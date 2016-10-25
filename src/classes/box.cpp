@@ -86,10 +86,10 @@ Box::BoxType Box::type() const
 // Setup box, scaling to specified volume (in cubic Angstroms)
 void Box::setup(double volume)
 {
-	msg.print("--> Current box volume is %f cubic Angstroms, requested = %f\n", axes_.determinant(), volume);
+	Messenger::print("--> Current box volume is %f cubic Angstroms, requested = %f\n", axes_.determinant(), volume);
 
 	double factor = pow(volume,1.0/3.0) / pow(axes_.determinant(),1.0/3.0);
-	msg.print("--> Scaling factor = %f\n", factor);
+	Messenger::print("--> Scaling factor = %f\n", factor);
 	axes_.applyScaling(factor, factor, factor);
 	volume_ = axes_.determinant();
 	
@@ -108,7 +108,7 @@ void Box::setup(double volume)
 	reciprocalAxes_.columnMultiply(2, TWOPI / volume_);
 	reciprocalVolume_ = (reciprocalAxes_.columnAsVec3(1) * reciprocalAxes_.columnAsVec3(2)).dp(reciprocalAxes_.columnAsVec3(0));
 
-	msg.print("--> Final box volume is %f cubic Angstroms (reciprocal volume = %f)\n", volume_, reciprocalVolume_);
+	Messenger::print("--> Final box volume is %f cubic Angstroms (reciprocal volume = %f)\n", volume_, reciprocalVolume_);
 }
 
 // Return volume
@@ -123,7 +123,7 @@ double Box::axisLength(int n) const
 #ifdef CHECKS
 	if ((n < 0) || (n > 2))
 	{
-		msg.print("OUT_OF_RANGE - Requested length for a bad axis (%i) in Box::axisLength().\n", n);
+		Messenger::print("OUT_OF_RANGE - Requested length for a bad axis (%i) in Box::axisLength().\n", n);
 		return 0.0;
 	}
 #endif
@@ -136,7 +136,7 @@ double Box::axisAngle(int n) const
 #ifdef CHECKS
 	if ((n < 0) || (n > 2))
 	{
-		msg.print("OUT_OF_RANGE - Requested angle for a bad axis (%i) in Box::axisAngle().\n", n);
+		Messenger::print("OUT_OF_RANGE - Requested angle for a bad axis (%i) in Box::axisAngle().\n", n);
 		return 0.0;
 	}
 #endif
@@ -219,7 +219,7 @@ bool Box::calculateRDFNormalisation(Data2D& boxNorm, double rdfRange, double rdf
 
 	// Insert enough points to give decent statistics - approx. 50,000,000
 	const int nPointsPerProcess = nPoints / Comm.nProcesses();
-	msg.print("--> Number of insertion points (per process) is %i\n", nPointsPerProcess);
+	Messenger::print("--> Number of insertion points (per process) is %i\n", nPointsPerProcess);
 	y = 0.0;
 	for (int n=0; n<nPointsPerProcess; ++n)
 	{

@@ -37,7 +37,7 @@ void Configuration::addMolecule(Species* sp)
 	// Check for NULL pointer
 	if (sp == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Species pointer given to Configuration::addMolecule().\n");
+		Messenger::error("NULL_POINTER - NULL Species pointer given to Configuration::addMolecule().\n");
 		return;
 	}
 #endif
@@ -66,7 +66,7 @@ Molecule* Configuration::molecule(int id)
 	static Molecule dummy;
 	if ((id < 0) || (id >= molecules_.nItems()))
 	{
-		msg.print("OUT_OF_RANGE - Molecule index %i passed to Configuration::molecule() is out of range (nMolecules = %i).\n", id, molecules_.nItems());
+		Messenger::print("OUT_OF_RANGE - Molecule index %i passed to Configuration::molecule() is out of range (nMolecules = %i).\n", id, molecules_.nItems());
 		return &dummy;
 	}
 #endif	
@@ -92,7 +92,7 @@ Grain& Configuration::grain(int n)
 	static Grain dummy;
 	if ((n < 0) || (n >= nGrains_))
 	{
-		msg.print("OUT_OF_RANGE - Grain index %i passed to Configuration::grain() is out of range (nGrains_ = %i).\n", n, nGrains_);
+		Messenger::print("OUT_OF_RANGE - Grain index %i passed to Configuration::grain() is out of range (nGrains_ = %i).\n", n, nGrains_);
 		return dummy;
 	}
 #endif
@@ -117,7 +117,7 @@ Atom* Configuration::atom(int n)
 #ifdef CHECKS
 	if ((n < 0) || (n >= nAtoms_))
 	{
-		msg.print("OUT_OF_RANGE - Atom index %i passed to Configuration::atom() is out of range (nAtoms_ = %i).\n", n, nAtoms_);
+		Messenger::print("OUT_OF_RANGE - Atom index %i passed to Configuration::atom() is out of range (nAtoms_ = %i).\n", n, nAtoms_);
 		return NULL;
 	}
 #endif
@@ -129,21 +129,21 @@ bool Configuration::setupArrays()
 {
 	if (molecules_.nItems() == 0)
 	{
-		msg.error("Configuration::setupArrays - No Molecules have been added to the Configuration - no arrays to be created.\n");
+		Messenger::error("Configuration::setupArrays - No Molecules have been added to the Configuration - no arrays to be created.\n");
 		return false;
 	}
 	if (nAtoms_== 0)
 	{
-		msg.error("Configuration::setupArrays - Molecules have been added to the Configuration, but no Atoms were counted.\n");
+		Messenger::error("Configuration::setupArrays - Molecules have been added to the Configuration, but no Atoms were counted.\n");
 		return false;
 	}
 	if (nGrains_ == 0)
 	{
-		msg.error("Configuration::setupArrays - Molecules have been added to the Configuration, but no Grains were counted.\n");
+		Messenger::error("Configuration::setupArrays - Molecules have been added to the Configuration, but no Grains were counted.\n");
 		return false;
 	}
 	
-	msg.print("--> Creating arrays for %i atoms and %i grains...\n", nAtoms_, nGrains_);
+	Messenger::print("--> Creating arrays for %i atoms and %i grains...\n", nAtoms_, nGrains_);
 	try
 	{
 		atoms_ = new Atom[nAtoms_];
@@ -151,7 +151,7 @@ bool Configuration::setupArrays()
 	}
 	catch (bad_alloc& alloc)
 	{
-		msg.error("Configuration::setupArrays - Failed to allocate sufficient memory. Exception was : %s\n", alloc.what());
+		Messenger::error("Configuration::setupArrays - Failed to allocate sufficient memory. Exception was : %s\n", alloc.what());
 		return false;
 	}
 
@@ -238,7 +238,7 @@ bool Configuration::setupMolecules(Species& sourceCoordinates)
 		{
 			if (grainCount >= nGrains_)
 			{
-				msg.error("Mismatch between size of grain array in configuration, and number of grains needed by molecules.\n");
+				Messenger::error("Mismatch between size of grain array in configuration, and number of grains needed by molecules.\n");
 				return false;
 			}
 			if (!mol->setupGrain(n, &grains_[grainCount], sp->grain(n))) return false;
@@ -292,7 +292,7 @@ bool Configuration::setGlobalAtomTypeIndices(const AtomTypeIndex& masterIndex)
 	// Did we successfully assign AtomTypes to all Atoms?
 	if (nAssigned != nAtoms_)
 	{
-		msg.error("Failed to assign global AtomType indices to all Atoms in Configuration '%s'.\n", name());
+		Messenger::error("Failed to assign global AtomType indices to all Atoms in Configuration '%s'.\n", name());
 		return false;
 	}
 

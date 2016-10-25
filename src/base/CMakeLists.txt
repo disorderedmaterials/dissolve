@@ -19,7 +19,6 @@ element.h
 isotope.h
 lineparser.h
 messenger.h
-mutex.h
 parameters.h
 ptable.h
 sysfunc.h

@@ -58,7 +58,7 @@ bool Molecule::initialise(Species* sp, int index)
 	species_ = sp;
 	if (species_ == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Species pointer passed to Molecule::initialise().\n");
+		Messenger::error("NULL_POINTER - NULL Species pointer passed to Molecule::initialise().\n");
 		return false;
 	}
 	
@@ -102,17 +102,17 @@ bool Molecule::setupAtom(int n, Atom* i, SpeciesAtom* source)
 #ifdef CHECKS
 	if (i == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Atom pointer passed to Molecule::setupAtom().\n");
+		Messenger::error("NULL_POINTER - NULL Atom pointer passed to Molecule::setupAtom().\n");
 		return false;
 	}
 	if (source == NULL)
 	{
-		msg.error("NULL_POINTER - NULL SpeciesAtom pointer passed to Molecule::setupAtom().\n");
+		Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer passed to Molecule::setupAtom().\n");
 		return false;
 	}
 	if ((n < 0) || (n >= nAtoms_))
 	{
-		msg.print("OUT_OF_RANGE - Atom index %i is out of range in Molecule::setupAtom().\n", n);
+		Messenger::print("OUT_OF_RANGE - Atom index %i is out of range in Molecule::setupAtom().\n", n);
 		return false;
 	}
 #endif
@@ -139,12 +139,12 @@ Atom* Molecule::atom(int n) const
 	static Atom dummy;
 	if ((n < 0) || (n >= nAtoms_))
 	{
-		msg.print("OUT_OF_RANGE - Atom index %i is out of range in Molecule::atom().\n", n);
+		Messenger::print("OUT_OF_RANGE - Atom index %i is out of range in Molecule::atom().\n", n);
 		return &dummy;
 	}
 	if (atoms_[n] == NULL)
 	{
-		msg.print("NULL_POINTER - The pointer to Atom %i in Molecule::atom() is NULL.\n", n);
+		Messenger::print("NULL_POINTER - The pointer to Atom %i in Molecule::atom() is NULL.\n", n);
 		return &dummy;
 	}
 #endif
@@ -163,17 +163,17 @@ bool Molecule::setupGrain(int n, Grain* grain, SpeciesGrain* source)
 #ifdef CHECKS
 	if (grain == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Grain pointer passed to Molecule::setupGrain().\n");
+		Messenger::error("NULL_POINTER - NULL Grain pointer passed to Molecule::setupGrain().\n");
 		return false;
 	}
 	if (source == NULL)
 	{
-		msg.error("NULL_POINTER - NULL SpeciesGrain pointer passed to Molecule::setupGrain().\n");
+		Messenger::error("NULL_POINTER - NULL SpeciesGrain pointer passed to Molecule::setupGrain().\n");
 		return false;
 	}
 	if ((n < 0) || (n >= nGrains_))
 	{
-		msg.print("OUT_OF_RANGE - Grain index %i is out of range in Molecule::setupGrain().\n", n);
+		Messenger::print("OUT_OF_RANGE - Grain index %i is out of range in Molecule::setupGrain().\n", n);
 		return false;
 	}
 #endif
@@ -193,7 +193,7 @@ Grain* Molecule::grain(int n)
 #ifdef CHECKS
 	if ((n < 0) || (n >= nGrains_))
 	{
-		msg.print("OUT_OF_RANGE - Grain index %i is out of range in Molecule::grain().\n", n);
+		Messenger::print("OUT_OF_RANGE - Grain index %i is out of range in Molecule::grain().\n", n);
 		return NULL;
 	}
 #endif
@@ -277,7 +277,7 @@ void Molecule::randomiseGeometry(const Box* box)
 	// Check for NULL Species pointer
 	if (species_ == NULL)
 	{
-		msg.error("NULL_POINTER - Found NULL species_ pointer in Molecule::randomiseGeometry().\n");
+		Messenger::error("NULL_POINTER - Found NULL species_ pointer in Molecule::randomiseGeometry().\n");
 		return;
 	}
 #endif
@@ -296,12 +296,12 @@ void Molecule::randomiseGeometry(const Box* box)
 #ifdef CHECKS
 		if (b->i() == NULL)
 		{
-			msg.error("NULL_POINTER - NULL Atom pointer 'i' found in Molecule::randomiseGeometry().\n");
+			Messenger::error("NULL_POINTER - NULL Atom pointer 'i' found in Molecule::randomiseGeometry().\n");
 			return;
 		}
 		if (b->j() == NULL)
 		{
-			msg.error("NULL_POINTER - NULL Atom pointer 'j' found in Molecule::randomiseGeometry().\n");
+			Messenger::error("NULL_POINTER - NULL Atom pointer 'j' found in Molecule::randomiseGeometry().\n");
 			return;
 		}
 #endif

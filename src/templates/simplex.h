@@ -353,7 +353,7 @@ template<class T> class Simplex
 			costs_[0] = bestAlphaCost_;
 			
 			double r;
-// 			msg.print("Generating initial vertices.\n");
+// 			Messenger::print("Generating initial vertices.\n");
 			for (n=1; n<nVertices_; ++n)
 			{
 				vertices_[n] = vertices_[0];
@@ -362,11 +362,11 @@ template<class T> class Simplex
 				costs_[n] = cost(vertices_[n]);
 			}
 			
-// 			for (n=0; n<nVertices_; ++n) msg.printVerbose("Vertex %i : %f %f %f ... = %15.8e\n", n, vertices_[n][0], vertices_[n][1], vertices_[n][2], costs_[n]);
+// 			for (n=0; n<nVertices_; ++n) Messenger::printVerbose("Vertex %i : %f %f %f ... = %15.8e\n", n, vertices_[n][0], vertices_[n][1], vertices_[n][2], costs_[n]);
 			
 			for (move=1; move<=nMoves_; ++move)
 			{
-// 				msg.print("Move = %i : best = %f %f %f\n", move, bestAlpha_[0], bestAlpha_[1], bestAlpha_[2]);
+// 				Messenger::print("Move = %i : best = %f %f %f\n", move, bestAlpha_[0], bestAlpha_[1], bestAlpha_[2]);
 				++moveCount_[Simplex::AllMoves];
 
 		// 		printf("Simplex Move no. %i\n", move);

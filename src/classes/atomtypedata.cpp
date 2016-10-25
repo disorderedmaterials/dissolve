@@ -61,13 +61,13 @@ bool AtomTypeData::initialise(AtomType* atomType, Isotope* tope)
 	isotope_ = tope;
 	if (atomType == NULL)
 	{
-		msg.error("NULL_POINTER - NULL AtomType pointer passed to AtomTypeData::initialise().\n");
+		Messenger::error("NULL_POINTER - NULL AtomType pointer passed to AtomTypeData::initialise().\n");
 		return false;
 	}
 
 	population_ = 0;
 	fraction_ = 0.0;
-// 	msg.print("--> Initialised AtomType index entry with AtomType '%s', Isotope %i (bc = %7.3f)\n", atomType->name(), tope->A(), tope->boundCoherent());
+// 	Messenger::print("--> Initialised AtomType index entry with AtomType '%s', Isotope %i (bc = %7.3f)\n", atomType->name(), tope->A(), tope->boundCoherent());
 	return true;
 }
 

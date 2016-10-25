@@ -97,9 +97,9 @@ bool AtomShake::execute(DUQ& duq, Configuration& cfg)
 	const double rRT = 1.0/(.008314472*cfg.temperature());
 
 	// Print argument/parameter summary
-	msg.print("AtomShake: Cutoff distance is %f\n", cutoffDistance);
-	msg.print("AtomShake: Performing %i shake(s) per Atom\n", nShakesPerAtom);
-	msg.print("AtomShake: Translation step is %f Angstroms, target acceptance rate is %f.\n", stepSize, targetAcceptanceRate);
+	Messenger::print("AtomShake: Cutoff distance is %f\n", cutoffDistance);
+	Messenger::print("AtomShake: Performing %i shake(s) per Atom\n", nShakesPerAtom);
+	Messenger::print("AtomShake: Translation step is %f Angstroms, target acceptance rate is %f.\n", stepSize, targetAcceptanceRate);
 
 	// Initialise the Cell distributor
 	const bool willBeModified = true, allowRepeats = false;
@@ -135,7 +135,7 @@ bool AtomShake::execute(DUQ& duq, Configuration& cfg)
 			continue;
 		}
 		cell = cfg.cell(cellId);
-		msg.printVerbose("Cell %i now the target, containing %i Grains interacting with %i neighbours.\n", cellId, cell->nGrains(), cell->nTotalCellNeighbours());
+		Messenger::printVerbose("Cell %i now the target, containing %i Grains interacting with %i neighbours.\n", cellId, cell->nGrains(), cell->nTotalCellNeighbours());
 
 		/*
 		 * Calculation Begins
@@ -176,7 +176,7 @@ bool AtomShake::execute(DUQ& duq, Configuration& cfg)
 
 				if (accept)
 				{
-// 					msg.print("Accepts move with delta %f\n", delta);
+// 					Messenger::print("Accepts move with delta %f\n", delta);
 					// Accept new (current) position of target Atom
 					changeStore.updateAtom(n);
 					currentEnergy = newEnergy;
@@ -218,8 +218,8 @@ bool AtomShake::execute(DUQ& duq, Configuration& cfg)
 	{
 		double rate = double(nAccepted)/nTries;
 
-		msg.print("AtomShake: Overall acceptance rate was %4.2f% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*rate, nAccepted, nTries, timer.timeString(), Comm.accumulatedTimeString());
-		msg.print("AtomShake: Total energy delta was %10.4e kJ/mol.\n", totalDelta);
+		Messenger::print("AtomShake: Overall acceptance rate was %4.2f% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*rate, nAccepted, nTries, timer.timeString(), Comm.accumulatedTimeString());
+		Messenger::print("AtomShake: Total energy delta was %10.4e kJ/mol.\n", totalDelta);
 
 		// Adjust step size
 		stepSize *= rate/targetAcceptanceRate;
@@ -231,7 +231,7 @@ bool AtomShake::execute(DUQ& duq, Configuration& cfg)
 	// Store updated parameter values
 	if (!Comm.broadcast(&stepSize, 1, 0, DUQComm::Group)) return false;
 // 	stepSizeParam->setValue(stepSize); TODO
-	msg.print("AtomShake: Updated translation step is %f Angstroms.\n", stepSize);
+	Messenger::print("AtomShake: Updated translation step is %f Angstroms.\n", stepSize);
 	
 	// Increment configuration changeCount_
 	if (nAccepted > 0) cfg.incrementCoordinateIndex();
@@ -252,8 +252,8 @@ bool DUQ::worldAtomShake(Configuration& cfg, double cutoffDistance, int nShakes,
 	const double rRT = 1.0/(.008314472*cfg.temperature());
 	
 	// Print argument/parameter summary
-	msg.print("WorldAtomShake: Cutoff distance is %f\n", cutoffDistance);
-	msg.print("WorldAtomShake: Translation step is %f Angstroms, target acceptance rate is %f.\n", stepSize, targetAcceptanceRate);
+	Messenger::print("WorldAtomShake: Cutoff distance is %f\n", cutoffDistance);
+	Messenger::print("WorldAtomShake: Translation step is %f Angstroms, target acceptance rate is %f.\n", stepSize, targetAcceptanceRate);
 
 	// Initialise the Cell distributor
 	const bool willBeModified = true, allowRepeats = false;
@@ -310,7 +310,7 @@ bool DUQ::worldAtomShake(Configuration& cfg, double cutoffDistance, int nShakes,
 
 		if (accept)
 		{
-// 			msg.print("Accepts move with delta %f\n", delta);
+// 			Messenger::print("Accepts move with delta %f\n", delta);
 			// Accept new (current) positions of atoms
 			changeStore.updateAll();
 			currentEnergy = newEnergy;
@@ -332,8 +332,8 @@ bool DUQ::worldAtomShake(Configuration& cfg, double cutoffDistance, int nShakes,
 	{
 		double rate = double(nAccepted)/nTries;
 
-		msg.print("WorldAtomShake: Overall acceptance rate was %4.2f% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*rate, nAccepted, nTries, timer.timeString(), Comm.accumulatedTimeString());
-		msg.print("WorldAtomShake: Total energy delta was %10.4e kJ/mol.\n", totalDelta);
+		Messenger::print("WorldAtomShake: Overall acceptance rate was %4.2f% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*rate, nAccepted, nTries, timer.timeString(), Comm.accumulatedTimeString());
+		Messenger::print("WorldAtomShake: Total energy delta was %10.4e kJ/mol.\n", totalDelta);
 
 		// Adjust step size
 		stepSize *= rate/targetAcceptanceRate;
@@ -345,7 +345,7 @@ bool DUQ::worldAtomShake(Configuration& cfg, double cutoffDistance, int nShakes,
 	// Store updated parameter values
 	if (!Comm.broadcast(&stepSize, 1, 0, DUQComm::Group)) return false;
 // 	stepSizeParam->setValue(stepSize); TODO
-	msg.print("WorldAtomShake: Updated translation step is %f Angstroms.\n", stepSize);
+	Messenger::print("WorldAtomShake: Updated translation step is %f Angstroms.\n", stepSize);
 	
 	// Increment configuration changeCount_
 	if (nAccepted > 0) cfg.incrementCoordinateIndex();

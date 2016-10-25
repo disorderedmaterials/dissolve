@@ -52,7 +52,7 @@ void DUQ::removeSample(Sample* sample)
 	{
 		samples_.remove(sample);
 	}
-	else msg.print("Warning: Can't remove Sample '%s' from the list, since it isn't in this list.\n", sample->name());
+	else Messenger::print("Warning: Can't remove Sample '%s' from the list, since it isn't in this list.\n", sample->name());
 }
 
 // Return first Sample

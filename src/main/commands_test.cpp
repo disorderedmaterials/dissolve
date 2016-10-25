@@ -170,19 +170,19 @@ bool DUQ::commandTest(Configuration& cfg)
  */
 bool DUQ::commandTestEnergy(Configuration& cfg)
 {
-	msg.print("Testing total energy calculation...\n");
+	Messenger::print("Testing total energy calculation...\n");
 
 	double energy;
 	Timer timer;
 	timer.start();
 	energy = interatomicEnergy(cfg);
 	timer.stop();
-	msg.print("Particle (atom-atom) energy is %f kJ/mol (%s).\n", energy, timer.timeString());
+	Messenger::print("Particle (atom-atom) energy is %f kJ/mol (%s).\n", energy, timer.timeString());
 
 	timer.start();
 	energy = intergrainEnergy(cfg);
 	timer.stop();
-	msg.print("Particle (grain-grain) energy is %f kJ/mol (%s).\n", energy, timer.timeString());
+	Messenger::print("Particle (grain-grain) energy is %f kJ/mol (%s).\n", energy, timer.timeString());
 
 	// Calculate 'correct' energies
 	totalEnergyTest(cfg);

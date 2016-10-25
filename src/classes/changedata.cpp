@@ -47,7 +47,7 @@ void ChangeData::setAtom(Atom* i)
 #ifdef CHECKS
 	if (i == NULL)
 	{
-		msg.print("NULL_POINTER - NULL Atom pointer passed to ChangeData::setAtom().\n");
+		Messenger::print("NULL_POINTER - NULL Atom pointer passed to ChangeData::setAtom().\n");
 		return;
 	}
 #endif

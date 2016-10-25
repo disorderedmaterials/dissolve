@@ -105,14 +105,14 @@ void AtomTypeIndex::print()
 {
 	int count = 0;
 	Dnchar indexData;
-	msg.print("--> Populations : AtomType    El   Population  AtomFrac  Isotope  bc (fm)\n");
+	Messenger::print("--> Populations : AtomType    El   Population  AtomFrac  Isotope  bc (fm)\n");
 	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next)
 	{
 		if (atd->masterIndex() == -1) indexData = "M";
 		else indexData.sprintf("index=%i", atd->masterIndex());
 		
-		if (atd->isotope()) msg.print("              %2i  %-10s  %-3s  %-10i  %8.6f    %-3i   %8.3f  (%s)\n", count++, atd->name(), PeriodicTable::element(atd->atomType()->element()).symbol(), atd->population(), atd->fraction(), atd->isotope()->A(), atd->isotope()->boundCoherent(), indexData.get());
-		else msg.print("              %2i  %-10s  %-3s  %-10i  %8.6f     --- N/A ---    (%s)\n", count++, atd->name(), PeriodicTable::element(atd->atomType()->element()).symbol(), atd->population(), atd->fraction(), indexData.get());
+		if (atd->isotope()) Messenger::print("              %2i  %-10s  %-3s  %-10i  %8.6f    %-3i   %8.3f  (%s)\n", count++, atd->name(), PeriodicTable::element(atd->atomType()->element()).symbol(), atd->population(), atd->fraction(), atd->isotope()->A(), atd->isotope()->boundCoherent(), indexData.get());
+		else Messenger::print("              %2i  %-10s  %-3s  %-10i  %8.6f     --- N/A ---    (%s)\n", count++, atd->name(), PeriodicTable::element(atd->atomType()->element()).symbol(), atd->population(), atd->fraction(), indexData.get());
 	}
 }
 
@@ -157,7 +157,7 @@ AtomType* AtomTypeIndex::atomType(int n)
 #ifdef CHECKS
 	if ((n < 0) || (n >= types_.nItems()))
 	{
-		msg.print("OUT_OF_RANGE - Specified index %i out of range in AtomTypeIndex::atomType().\n");
+		Messenger::print("OUT_OF_RANGE - Specified index %i out of range in AtomTypeIndex::atomType().\n");
 		return NULL;
 	}
 #endif
@@ -170,7 +170,7 @@ AtomTypeData* AtomTypeIndex::operator[](int n)
 #ifdef CHECKS
 	if ((n < 0) || (n >= types_.nItems()))
 	{
-		msg.print("OUT_OF_RANGE - Specified index %i out of range in AtomTypeIndex::atomType().\n");
+		Messenger::print("OUT_OF_RANGE - Specified index %i out of range in AtomTypeIndex::atomType().\n");
 		return NULL;
 	}
 #endif

@@ -109,7 +109,7 @@ void KVector::addCosTerm(int atomTypeIndex, double value)
 #ifdef CHECKS
 	if (atomTypeIndex >= cosTerms_.nItems())
 	{
-		msg.print("BAD_USAGE - KVector::cosTerms_ index supplied (%i) is greated than the size of the array (%i).\n", atomTypeIndex, cosTerms_.nItems());
+		Messenger::print("BAD_USAGE - KVector::cosTerms_ index supplied (%i) is greated than the size of the array (%i).\n", atomTypeIndex, cosTerms_.nItems());
 		return;
 	}
 #endif
@@ -122,7 +122,7 @@ void KVector::addSinTerm(int atomTypeIndex, double value)
 #ifdef CHECKS
 	if (atomTypeIndex >= sinTerms_.nItems())
 	{
-		msg.print("BAD_USAGE - KVector::sinTerms_ index supplied (%i) is greated than the size of the array (%i).\n", atomTypeIndex, sinTerms_.nItems());
+		Messenger::print("BAD_USAGE - KVector::sinTerms_ index supplied (%i) is greated than the size of the array (%i).\n", atomTypeIndex, sinTerms_.nItems());
 		return;
 	}
 #endif
@@ -135,7 +135,7 @@ void KVector::calculateIntensities()
 #ifdef CHECKS
 	if (braggPeak_ == NULL)
 	{
-		msg.print("NULL_POINTER - NULL braggPeak_ found in KVector::calculateIntensities().\n");
+		Messenger::print("NULL_POINTER - NULL braggPeak_ found in KVector::calculateIntensities().\n");
 		return;
 	}
 #endif
@@ -144,18 +144,18 @@ void KVector::calculateIntensities()
 	// Take account of the half-matrix of atom types, doubling contributions from dissimilar types
 	int i, j, nTypes = cosTerms_.nItems(), halfSphereNorm = (hkl_.x == 0 ? 1 : 2);
 	double intensity;
-	msg.print("KVector %3i %3i %3i  %f  ", hkl_.x, hkl_.y, hkl_.z, braggPeak_->q());
+	Messenger::print("KVector %3i %3i %3i  %f  ", hkl_.x, hkl_.y, hkl_.z, braggPeak_->q());
 	braggPeak_->addKVectors(halfSphereNorm);
 	for (i = 0; i<nTypes; ++i)
 	{
 		for (j = i; j < nTypes; ++j)
 		{
 			intensity = (cosTerms_[i]*cosTerms_[j] + sinTerms_[i]*sinTerms_[j]);
-			msg.print("%f  ", intensity / 1000.0 );
+			Messenger::print("%f  ", intensity / 1000.0 );
 			braggPeak_->addIntensity(i, j, intensity * halfSphereNorm);
 		}
 	}
-	msg.print("\n");
+	Messenger::print("\n");
 }
 
 // Return specified intensity

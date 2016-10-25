@@ -28,13 +28,13 @@
 // Calculate full partial RDFs using simple double-loop over atoms
 bool Configuration::calculatePartialsSimple()
 {
-	msg.print("Calculating partial RDFs (simple double-loop)...\n");
+	Messenger::print("Calculating partial RDFs (simple double-loop)...\n");
 
 	// Variables
 	int n, m, nTypes, typeI, typeJ, i, j, nPoints;
 
 	// Construct local arrays of atom type positions
-	msg.printVerbose("Constructing local arrays.\n");
+	Messenger::printVerbose("Constructing local arrays.\n");
 	nTypes = usedAtomTypes_.nItems();
 	Vec3<double>* r[nTypes];
 	int maxr[nTypes], nr[nTypes];
@@ -56,7 +56,7 @@ bool Configuration::calculatePartialsSimple()
 		r[m][nr[m]++] = atoms_[n].r();
 	}
 
-	msg.printVerbose("Ready..\n");
+	Messenger::printVerbose("Ready..\n");
 
 	// Loop over assigned Atoms
 	Vec3<double> centre, *ri, *rj, mim;
@@ -183,7 +183,7 @@ bool Configuration::calculateBraggSQ()
 	int braggIndex;
 	if (braggKVectors_.nItems() == 0)
 	{
-		msg.print("--> Performing initial setup of Bragg calculation...\n");
+		Messenger::print("--> Performing initial setup of Bragg calculation...\n");
 
 		// Determine extents of hkl indices to use
 		braggMaximumHKL_.x = braggMaximumQ_ / rLengths.x;
@@ -225,7 +225,7 @@ bool Configuration::calculateBraggSQ()
 				}
 			}
 		}
-		msg.print("--> Bragg calculation spans %i hkl indices (max HKL = %i x %i x %i) within cutoff of Q = %f.\n", braggKVectors_.nItems(), braggMaximumHKL_.x, braggMaximumHKL_.y, braggMaximumHKL_.z, braggMaximumQ_);
+		Messenger::print("--> Bragg calculation spans %i hkl indices (max HKL = %i x %i x %i) within cutoff of Q = %f.\n", braggKVectors_.nItems(), braggMaximumHKL_.x, braggMaximumHKL_.y, braggMaximumHKL_.z, braggMaximumQ_);
 
                 // Create atom working arrays
 		braggAtomVectorXCos_.initialise(nAtoms_, braggMaximumHKL_.x+1);
@@ -295,7 +295,7 @@ bool Configuration::calculateBraggSQ()
 		}
 	}
 	timer.stop();
-	msg.print("--> Calculated atomic cos/sin terms (%s elapsed, %s comms)\n", timer.timeString(), Comm.accumulatedTimeString());
+	Messenger::print("--> Calculated atomic cos/sin terms (%s elapsed, %s comms)\n", timer.timeString(), Comm.accumulatedTimeString());
 
 	// Calculate k-vector contributions
 	KVector** kVectors = braggKVectors_.array();
@@ -343,7 +343,7 @@ bool Configuration::calculateBraggSQ()
 		}
 	}
 	timer.stop();
-	msg.print("--> Calculated atomic contributions to k-vectors (%s elapsed, %s comms)\n", timer.timeString(), Comm.accumulatedTimeString());
+	Messenger::print("--> Calculated atomic contributions to k-vectors (%s elapsed, %s comms)\n", timer.timeString(), Comm.accumulatedTimeString());
 
 	// Zero Bragg peak intensities
 	BraggPeak** peaks = braggPeaks_.objects();
@@ -398,7 +398,7 @@ bool Configuration::calculateBraggSQ()
 		}
 	}
 
-// 	for (m=0; m<nPeaks; ++m) msg.print("  %f   %f\n", peaks[m]->q(), peaks[m]->intensity(0,0));
+// 	for (m=0; m<nPeaks; ++m) Messenger::print("  %f   %f\n", peaks[m]->q(), peaks[m]->intensity(0,0));
 
 	return true;
 }
@@ -537,7 +537,7 @@ bool Configuration::setupPartials()
 	int n, m;
 	int nTypes = usedAtomTypes_.nItems();
 
-	msg.print("--> Creating matrices (%ix%i)...\n", nTypes, nTypes);
+	Messenger::print("--> Creating matrices (%ix%i)...\n", nTypes, nTypes);
 
 	pairRDFMatrix_.initialise(nTypes, nTypes, true);
 	boundRDFMatrix_.initialise(nTypes, nTypes, true);
@@ -550,8 +550,8 @@ bool Configuration::setupPartials()
 
 	Dnchar title;
 	AtomTypeData* at1 = usedAtomTypes_.first(), *at2;
-	msg.print("--> Creating Lists of partials and linking into matrices...\n");
-	msg.printVerbose("Range/binWidth/Volume = %f/%f/%f\n", rdfRange_, rdfBinWidth_, box_->volume());
+	Messenger::print("--> Creating Lists of partials and linking into matrices...\n");
+	Messenger::printVerbose("Range/binWidth/Volume = %f/%f/%f\n", rdfRange_, rdfBinWidth_, box_->volume());
 	for (n=0; n<nTypes; ++n, at1 = at1->next)
 	{
 		at2 = at1;
@@ -621,7 +621,7 @@ bool Configuration::calculatePairCorrelations(Data2D::WindowFunction windowFunct
 	// Check that we actually need to calculate new partials
 	if (coordinateIndex_ == partialsIndex_)
 	{
-		msg.printVerbose("Refused to calculate partials for configuration - nothing has changed since the last calculation.\n");
+		Messenger::printVerbose("Refused to calculate partials for configuration - nothing has changed since the last calculation.\n");
 		return true;
 	}
 
@@ -636,7 +636,7 @@ bool Configuration::calculatePairCorrelations(Data2D::WindowFunction windowFunct
 			if (!calculatePartialsSimple()) return false;
 			break;
 		default:
-			msg.error("Partial calculation style unrecognised!\n");
+			Messenger::error("Partial calculation style unrecognised!\n");
 			return false;
 	}
 
@@ -647,13 +647,13 @@ bool Configuration::calculatePairCorrelations(Data2D::WindowFunction windowFunct
 	if (!Comm.wait(DUQComm::World)) return false;
 
 	timer.stop();
-	msg.print("--> Finished calculation of partials (%s elapsed, %s comms).\n", timer.timeString(), Comm.accumulatedTimeString());
+	Messenger::print("--> Finished calculation of partials (%s elapsed, %s comms).\n", timer.timeString(), Comm.accumulatedTimeString());
 
 	// Calculate intramolecular partials
 	timer.start();
 	if (!calculateIntramolecularRDFs()) return false;
 	timer.stop();
-	msg.print("--> Finished calculation of intramolecular partials (%s elapsed, %s comms).\n", timer.timeString(), Comm.accumulatedTimeString());
+	Messenger::print("--> Finished calculation of intramolecular partials (%s elapsed, %s comms).\n", timer.timeString(), Comm.accumulatedTimeString());
 
 	// Perform summation of partial data
 	// Note that merging/summation of cross-term data (i.e. [n][m] with [m][n]) is not necessary since the partials matrix knows
@@ -698,7 +698,7 @@ bool Configuration::calculatePairCorrelations(Data2D::WindowFunction windowFunct
 		}
 	}
 	timer.stop();
-	msg.print("--> Finished summation and normalisation of partial RDF data (%s elapsed, %s comms).\n", timer.timeString(), Comm.accumulatedTimeString());
+	Messenger::print("--> Finished summation and normalisation of partial RDF data (%s elapsed, %s comms).\n", timer.timeString(), Comm.accumulatedTimeString());
 
 	// Perform FT of partial g(r) into S(Q)
 	// No instrumental broadening is applied in this case - the Configuration-based S(Q) are 'pure' in that sense
@@ -715,7 +715,7 @@ bool Configuration::calculatePairCorrelations(Data2D::WindowFunction windowFunct
 		}
 	}
 	timer.stop();
-	msg.print("--> Finished Fourier transform of partial g(r) into partial S(Q) (%s elapsed, %s comms).\n", timer.timeString(), Comm.accumulatedTimeString());
+	Messenger::print("--> Finished Fourier transform of partial g(r) into partial S(Q) (%s elapsed, %s comms).\n", timer.timeString(), Comm.accumulatedTimeString());
 
 	// Calculate Bragg partials (if requested)
 	if (braggCalculationOn_)
@@ -724,7 +724,7 @@ bool Configuration::calculatePairCorrelations(Data2D::WindowFunction windowFunct
 		timer.start();
 		if (!calculateBraggSQ()) return false;
 		timer.stop();
-		msg.print("--> Finished calculation of partial Bragg S(Q) (%s elapsed, %s comms).\n", timer.timeString(), Comm.accumulatedTimeString());
+		Messenger::print("--> Finished calculation of partial Bragg S(Q) (%s elapsed, %s comms).\n", timer.timeString(), Comm.accumulatedTimeString());
 	}
 
 	// Generate final partial S(Q) combining pair correlations and Bragg partials
@@ -778,22 +778,22 @@ bool Configuration::calculatePairCorrelations(Data2D::WindowFunction windowFunct
 		}
 	}
 	timer.stop();
-	msg.print("--> Finished summation and FT of partials, and generation of total unweighted RDF/F(Q) (%s elapsed, %s comms).\n", timer.timeString(), Comm.accumulatedTimeString());
+	Messenger::print("--> Finished summation and FT of partials, and generation of total unweighted RDF/F(Q) (%s elapsed, %s comms).\n", timer.timeString(), Comm.accumulatedTimeString());
 
 	// Calculate weighted partials for each Sample, along with current RMSE
 	Comm.resetAccumulatedTime();
 	timer.start();
 	totalRMSE_ = 0.0;
-	msg.print("XXXX TODO Implement calculation of ReferenceData/Sample RDF/SQ calculation.\n");
+	Messenger::print("XXXX TODO Implement calculation of ReferenceData/Sample RDF/SQ calculation.\n");
 // 	for (Sample* sam = samples_.first(); sam != NULL; sam = sam->next)
 // 	{
 // 		if (!sam->calculatePairCorrelations(pairRDFMatrix_, pairSQMatrix_, braggSQMatrix_, partialSQMatrix_)) return false;
 // 		if (sam->hasReferenceData()) totalRMSE_ += sam->referenceRMSE(rmseDeltaQ_);
 // 	}
 	timer.stop();
-	msg.print("--> Finished generation of Sample partials (%s elapsed, %s comms).\n", timer.timeString(), Comm.accumulatedTimeString());
+	Messenger::print("--> Finished generation of Sample partials (%s elapsed, %s comms).\n", timer.timeString(), Comm.accumulatedTimeString());
 
-	msg.print("--> Current RMSE over all Samples = %f barns/sr/atom\n", totalRMSE_);
+	Messenger::print("--> Current RMSE over all Samples = %f barns/sr/atom\n", totalRMSE_);
 
 	return true;
 }
@@ -813,12 +813,12 @@ void Configuration::saveRDFs(const char* baseName)
 			Dnchar filename(-1, "%s-unweighted-%s-%s.rdf", baseName, usedAtomTypes_[typeI]->name(), usedAtomTypes_[typeJ]->name());
 
 			// Open file and check that we're OK to proceed writing to it
-			msg.print("Writing RDF file '%s'...\n", filename.get());
+			Messenger::print("Writing RDF file '%s'...\n", filename.get());
 
 			parser.openOutput(filename, true);
 			if (!parser.isFileGoodForWriting())
 			{
-				msg.error("Couldn't open file '%s' for writing.\n", filename.get());
+				Messenger::error("Couldn't open file '%s' for writing.\n", filename.get());
 				continue;
 			}
 			
@@ -850,12 +850,12 @@ void Configuration::saveSQ(const char* baseName)
 			Dnchar filename(-1, "%s-unweighted-%s-%s.sq", baseName, usedAtomTypes_[typeI]->name(), usedAtomTypes_[typeJ]->name());
 
 			// Open file and check that we're OK to proceed writing to it
-			msg.print("Writing S(Q) file '%s'...\n", filename.get());
+			Messenger::print("Writing S(Q) file '%s'...\n", filename.get());
 
 			parser.openOutput(filename, true);
 			if (!parser.isFileGoodForWriting())
 			{
-				msg.error("Couldn't open file '%s' for writing.\n", filename.get());
+				Messenger::error("Couldn't open file '%s' for writing.\n", filename.get());
 				continue;
 			}
 			

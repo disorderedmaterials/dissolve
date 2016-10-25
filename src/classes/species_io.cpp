@@ -31,7 +31,7 @@ bool Species::load(const char* fileName)
 	Dnchar ext = lowerCase(afterLastChar(fileName, '.'));
 
 	if (ext == "xyz") return loadFromXYZ(fileName);
-	else msg.print("Can't load - unknown extension for file '%s'.\n", fileName);
+	else Messenger::print("Can't load - unknown extension for file '%s'.\n", fileName);
 
 	return false;
 }
@@ -39,14 +39,14 @@ bool Species::load(const char* fileName)
 // Load Species information from XYZ file
 bool Species::loadFromXYZ(const char* fileName)
 {
-	msg.print("Loading XYZ data from file '%s'\n", fileName);
+	Messenger::print("Loading XYZ data from file '%s'\n", fileName);
 	
 	// Open the specified file...
 	LineParser parser;
 	parser.openInput(fileName);
 	if (!parser.isFileGoodForReading())
 	{
-		msg.error("Couldn't open XYZ file '%s'.\n", fileName);
+		Messenger::error("Couldn't open XYZ file '%s'.\n", fileName);
 		return false;
 	}
 
@@ -65,7 +65,7 @@ bool Species::loadFromXYZ(const char* fileName)
 		if (success != 0)
 		{
 			parser.closeFiles();
-			msg.error("Couldn't read Atom %i from file '%s'\n", n+1, fileName);
+			Messenger::error("Couldn't read Atom %i from file '%s'\n", n+1, fileName);
 			return false;
 		}
 		el = PeriodicTable::find(parser.argc(0));
@@ -74,7 +74,7 @@ bool Species::loadFromXYZ(const char* fileName)
 		if (parser.hasArg(4)) i->setCharge(parser.argd(4));
 	}
 
-	msg.print("Succesfully loaded XYZ data from file '%s'.\n", fileName);
+	Messenger::print("Succesfully loaded XYZ data from file '%s'.\n", fileName);
 	parser.closeFiles();
 	return true;
 }

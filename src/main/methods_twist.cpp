@@ -37,8 +37,8 @@ bool DUQ::twist(Configuration& cfg, double cutoffDistance, int nTwistsPerTerm)
 	const double cutoffSq = cutoffDistance * cutoffDistance;
 	const double rRT = 1.0/(.008314472*cfg.temperature());
 
-	msg.print("Twist: Cutoff distance is %f\n", cutoffDistance);
-	msg.print("Twist: Performing %i twists per Bond\n", nTwistsPerTerm);
+	Messenger::print("Twist: Cutoff distance is %f\n", cutoffDistance);
+	Messenger::print("Twist: Performing %i twists per Bond\n", nTwistsPerTerm);
 
 	// Start a Timer
 	Timer timer;
@@ -138,14 +138,14 @@ bool DUQ::twist(Configuration& cfg, double cutoffDistance, int nTwistsPerTerm)
 	{
 		double rate = double(nTries) / nAccepted;
 
-		msg.print("Twist: Overall acceptance rate was %4.2f (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*rate, nAccepted, nTries, timer.timeString(), Comm.accumulatedTimeString());
+		Messenger::print("Twist: Overall acceptance rate was %4.2f (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*rate, nAccepted, nTries, timer.timeString(), Comm.accumulatedTimeString());
 
 		// Adjust step size??
 
 // 		translationStep_ /= ratio;
 // 		rotationStep_ /= ratio;
 // 		if (translationStep_ > maxTranslationStep_) translationStep_ = maxTranslationStep_;
-// 		msg.print("New steps = %f %f\n", translationStep_, rotationStep_);
+// 		Messenger::print("New steps = %f %f\n", translationStep_, rotationStep_);
 	}
 
 	// Increment configuration changeCount_

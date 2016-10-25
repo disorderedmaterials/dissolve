@@ -38,7 +38,7 @@ bool Configuration::addReferenceSample(Sample* source)
 	// Search for the sample (by name) to see if we have added it already
 	if (findReferenceSample(source->name()))
 	{
-		msg.error("Configuration '%s' already references Sample '%s'.\n", name(), source->name());
+		Messenger::error("Configuration '%s' already references Sample '%s'.\n", name(), source->name());
 		return false;
 	}
 
@@ -62,14 +62,14 @@ bool Configuration::setupReferenceSamples()
 	for (Sample* sam = referenceSamples_.first(); sam != NULL; sam = sam->next)
 	{
 		// Print out some useful info
-		msg.print("--> Reference Sample: '%s' (in Configuration '%s')\n", sam->name(), name());
+		Messenger::print("--> Reference Sample: '%s' (in Configuration '%s')\n", sam->name(), name());
 		for (IsotopologueMix* mix = sam->isotopologueMixtures(); mix != NULL; mix = mix->next)
 		{
 			double totalRelative = mix->totalRelative();
 			for (RefListItem<Isotopologue,double>* tope = mix->isotopologues(); tope != NULL; tope = tope->next)
 			{
-				if (tope == mix->isotopologues()) msg.print("       %-15s  %-15s  %8.3f\n", mix->species()->name(), tope->item->name(), tope->data / totalRelative);
-				else msg.print("                        %-15s  %8.3f\n", tope->item->name(), tope->data / totalRelative);
+				if (tope == mix->isotopologues()) Messenger::print("       %-15s  %-15s  %8.3f\n", mix->species()->name(), tope->item->name(), tope->data / totalRelative);
+				else Messenger::print("                        %-15s  %8.3f\n", tope->item->name(), tope->data / totalRelative);
 			}
 		}
 		
@@ -82,7 +82,7 @@ bool Configuration::setupReferenceSamples()
 		// Setup pair correlation arrays
 		if (!sam->setupPairCorrelations(box_->volume(), rdfRange_, rdfBinWidth_, boxNormalisation_, rho)) return false;
 
-		msg.print("\n");
+		Messenger::print("\n");
 	}
 
 	return true;
@@ -96,7 +96,7 @@ double Configuration::rmse()
 	// Calculate partials
 	if (coordinateIndex_ != partialsIndex_)
 	{
-		msg.error("Partials data is out of date - rmse() returning zero...\n");
+		Messenger::error("Partials data is out of date - rmse() returning zero...\n");
 		return 0.0;
 	}
 
@@ -107,10 +107,10 @@ double Configuration::rmse()
 // 		if (!sam->hasReferenceData()) continue;
 // 		
 // 		sampleRMSE = sam->referenceRMSE(rmseDeltaQ_);
-// 		msg.print("--> Sample '%s' has RMSE %12.5e barns/sr/atom.\n", sam->name(), sampleRMSE);
+// 		Messenger::print("--> Sample '%s' has RMSE %12.5e barns/sr/atom.\n", sam->name(), sampleRMSE);
 // 		rmse += sampleRMSE;
 // 	}
 
-	msg.print("--> Total RMSE over all Samples is %12.5e barns/sr/atom.\n", rmse);
+	Messenger::print("--> Total RMSE over all Samples is %12.5e barns/sr/atom.\n", rmse);
 // 	return true;
 }

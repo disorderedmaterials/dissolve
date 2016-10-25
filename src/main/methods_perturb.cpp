@@ -119,14 +119,14 @@ bool DUQ::perturb(Configuration& cfg)
 // 	for (Sample* sam = samples_.first(); sam != NULL; sam = sam->next) if (sam->hasReferenceData()) haveData = true;
 // 	if (!haveData)
 // 	{
-// 		msg.error("Potential perturbation requested, but no reference data exists in any Sample.\n");
+// 		Messenger::error("Potential perturbation requested, but no reference data exists in any Sample.\n");
 // 		return false;
 // 	}
 // 
 // 	// First thing - calculate partials if they are out of date...
 // 	if (cfg.changeCount() != partialsChangeCount_)
 // 	{
-// 		msg.print("--> Configuration has changed - recalculating partials...\n");
+// 		Messenger::print("--> Configuration has changed - recalculating partials...\n");
 // 		bool rv = calculatePairCorrelations(cfg);
 // 		if (rv != CommandSuccess) return rv;
 // 	}
@@ -140,7 +140,7 @@ bool DUQ::perturb(Configuration& cfg)
 // 		if (sam->referenceFitQMin() < fitQMin) fitQMin = sam->referenceFitQMin();
 // 		if (sam->referenceFitQMax() > fitQMax) fitQMax = sam->referenceFitQMax();
 // 	}
-// 	msg.print("--> Fit range is %f to %f Angstroms-1 over all reference datasets.\n", fitQMin, fitQMax);
+// 	Messenger::print("--> Fit range is %f to %f Angstroms-1 over all reference datasets.\n", fitQMin, fitQMax);
 // 
 // 	// Initialiase arrays for storage of estimated partials and simulated contribution weights
 // 	Array2D<Data2D> workingSQMatrix, estimatedSQMatrix, contributions;

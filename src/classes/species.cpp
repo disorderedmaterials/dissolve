@@ -76,7 +76,7 @@ bool Species::checkSetup(const List<AtomType>& atomTypes)
 	// Must have at least one atom...
 	if (atoms_.nItems() == 0)
 	{
-		msg.error("Species contains no Atoms.\n");
+		Messenger::error("Species contains no Atoms.\n");
 		return false;
 	}
 	
@@ -85,12 +85,12 @@ bool Species::checkSetup(const List<AtomType>& atomTypes)
 	{
 		if (i->atomType() == NULL)
 		{
-			msg.error("Atom %i (%s) has no associated AtomType.\n", i->userIndex(), PeriodicTable::element(i->element()).symbol());
+			Messenger::error("Atom %i (%s) has no associated AtomType.\n", i->userIndex(), PeriodicTable::element(i->element()).symbol());
 			++nErrors;
 		}
 		else if (!atomTypes.contains(i->atomType()))
 		{
-			msg.error("Atom %i (%s) references a non-existent AtomType.\n", i->userIndex(), PeriodicTable::element(i->element()).symbol());
+			Messenger::error("Atom %i (%s) references a non-existent AtomType.\n", i->userIndex(), PeriodicTable::element(i->element()).symbol());
 			++nErrors;
 		}
 	}
@@ -106,7 +106,7 @@ bool Species::checkSetup(const List<AtomType>& atomTypes)
 			RefListItem<SpeciesAtom,int>* rj = grainCount.contains(ri->item);
 			if (rj == NULL)
 			{
-				msg.error("GrainDefinition '%s' references a non-existent Atom.\n", sg->name());
+				Messenger::error("GrainDefinition '%s' references a non-existent Atom.\n", sg->name());
 				++nErrors;
 			}
 			else ++rj->data;
@@ -116,12 +116,12 @@ bool Species::checkSetup(const List<AtomType>& atomTypes)
 	{
 		if (ri->data == 0)
 		{
-			msg.error("SpeciesAtom %i (%s) is not present in any GrainDefinition.\n", ri->item->userIndex(), PeriodicTable::element(ri->item->element()).symbol());
+			Messenger::error("SpeciesAtom %i (%s) is not present in any GrainDefinition.\n", ri->item->userIndex(), PeriodicTable::element(ri->item->element()).symbol());
 			++nErrors;
 		}
 		else if (ri->data > 1)
 		{
-			msg.error("SpeciesAtom %i (%s) is present in more than one (%i) GrainDefinition.\n", ri->item->userIndex(), PeriodicTable::element(ri->item->element()).symbol(), ri->data);
+			Messenger::error("SpeciesAtom %i (%s) is present in more than one (%i) GrainDefinition.\n", ri->item->userIndex(), PeriodicTable::element(ri->item->element()).symbol(), ri->data);
 			++nErrors;
 		}
 	}
@@ -132,7 +132,7 @@ bool Species::checkSetup(const List<AtomType>& atomTypes)
 	{
 		if ((i->nBonds() == 0) && (atoms_.nItems() > 1))
 		{
-			msg.error("SpeciesAtom %i (%s) participates in no Bonds, but is part of a multi-atom Species.\n", i->userIndex(), PeriodicTable::element(i->element()).symbol());
+			Messenger::error("SpeciesAtom %i (%s) participates in no Bonds, but is part of a multi-atom Species.\n", i->userIndex(), PeriodicTable::element(i->element()).symbol());
 			++nErrors;
 		}
 		
@@ -142,7 +142,7 @@ bool Species::checkSetup(const List<AtomType>& atomTypes)
 			SpeciesAtom* j = ri->item->partner(i);
 			if (!j->hasBond(i))
 			{
-				msg.error("SpeciesAtom %i references a Bond to SpeciesAtom %i, but SpeciesAtom %i does not.\n", i->userIndex(), j->userIndex(), j->userIndex());
+				Messenger::error("SpeciesAtom %i references a Bond to SpeciesAtom %i, but SpeciesAtom %i does not.\n", i->userIndex(), j->userIndex(), j->userIndex());
 				++nErrors;
 			}
 		}
@@ -152,7 +152,7 @@ bool Species::checkSetup(const List<AtomType>& atomTypes)
 	/* Check Isotopologues */
 	if (isotopologues_.nItems() == 0)
 	{
-		msg.error("No Isotopologues defined in Species.\n");
+		Messenger::error("No Isotopologues defined in Species.\n");
 		++nErrors;
 	}
 	else for (Isotopologue* iso = isotopologues_.first(); iso != NULL; iso = iso->next)
@@ -161,17 +161,17 @@ bool Species::checkSetup(const List<AtomType>& atomTypes)
 		{
 			if (!atomTypes.contains(ri->item))
 			{
-				msg.error("Isotopologue '%s' refers to an unknown AtomType.\n", iso->name());
+				Messenger::error("Isotopologue '%s' refers to an unknown AtomType.\n", iso->name());
 				++nErrors;
 			}
 			else if (ri->data == NULL)
 			{
-				msg.error("Isotopologue '%s' does not refer to an elemental Isotope for AtomType '%s'.\n", iso->name(), ri->item->name());
+				Messenger::error("Isotopologue '%s' does not refer to an elemental Isotope for AtomType '%s'.\n", iso->name(), ri->item->name());
 				++nErrors;
 			}
 			else if (!PeriodicTable::element(ri->item->element()).hasIsotope(ri->data->A()))
 			{
-				msg.error("Isotopologue '%s' does not refer to a suitable Isotope for AtomType '%s'.\n", iso->name(), ri->item->name());
+				Messenger::error("Isotopologue '%s' does not refer to a suitable Isotope for AtomType '%s'.\n", iso->name(), ri->item->name());
 				++nErrors;
 			}
 		}
@@ -195,10 +195,10 @@ bool Species::broadcast(const List<AtomType>& atomTypes)
 	Comm.broadcast(&relativePopulation_, 1);
 
 	// Atoms
-	msg.printVerbose("[MPI] Broadcasting Atoms...\n");
+	Messenger::printVerbose("[MPI] Broadcasting Atoms...\n");
 	count = atoms_.nItems();
 	if (!Comm.broadcast(&count, 1)) return false;
-	msg.printVerbose("[MPI] Expecting %i items...\n", count);
+	Messenger::printVerbose("[MPI] Expecting %i items...\n", count);
 	for (n=0; n<count; ++n)
 	{
 		if (Comm.slave()) addAtom();
@@ -206,10 +206,10 @@ bool Species::broadcast(const List<AtomType>& atomTypes)
 	}
 	
 	// Bonds
-	msg.printVerbose("[MPI] Broadcasting bonds...\n");
+	Messenger::printVerbose("[MPI] Broadcasting bonds...\n");
 	count = bonds_.nItems();
 	if (!Comm.broadcast(&count, 1)) return false;
-	msg.printVerbose("[MPI] Expecting %i items...\n", count);
+	Messenger::printVerbose("[MPI] Expecting %i items...\n", count);
 	for (n=0; n<count; ++n)
 	{
 		// This is not ideal, since we are not using the safer addBond() function
@@ -223,10 +223,10 @@ bool Species::broadcast(const List<AtomType>& atomTypes)
 	}
 
 	// Angles
-	msg.printVerbose("[MPI] Broadcasting angles...\n");
+	Messenger::printVerbose("[MPI] Broadcasting angles...\n");
 	count = angles_.nItems();
 	if (!Comm.broadcast(&count, 1)) return false;
-	msg.printVerbose("[MPI] Expecting %i items...\n", count);
+	Messenger::printVerbose("[MPI] Expecting %i items...\n", count);
 	for (n=0; n<count; ++n)
 	{
 		// This is not ideal, since we are not using the safer addAngle() function
@@ -240,10 +240,10 @@ bool Species::broadcast(const List<AtomType>& atomTypes)
 	}
 	
 	// Grains
-	msg.printVerbose("[MPI] Broadcasting grains...\n");
+	Messenger::printVerbose("[MPI] Broadcasting grains...\n");
 	count = grains_.nItems();
 	if (!Comm.broadcast(&count, 1)) return false;
-	msg.printVerbose("[MPI] Expecting %i items...\n", count);
+	Messenger::printVerbose("[MPI] Expecting %i items...\n", count);
 	for (n=0; n<count; ++n)
 	{
 		if (Comm.slave()) addGrain();
@@ -251,10 +251,10 @@ bool Species::broadcast(const List<AtomType>& atomTypes)
 	}
 
 	// Isotopologues
-	msg.printVerbose("[MPI] Broadcasting isotopologues...\n");
+	Messenger::printVerbose("[MPI] Broadcasting isotopologues...\n");
 	count = isotopologues_.nItems();
 	if (!Comm.broadcast(&count, 1)) return false;
-	msg.printVerbose("[MPI] Expecting %i items...\n", count);
+	Messenger::printVerbose("[MPI] Expecting %i items...\n", count);
 	for (n=0; n<count; ++n)
 	{
 		if (Comm.slave()) addIsotopologue();

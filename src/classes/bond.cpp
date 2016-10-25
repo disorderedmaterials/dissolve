@@ -95,8 +95,8 @@ void Bond::setAtoms(Atom* i, Atom* j)
 	i_ = i;
 	j_ = j;
 #ifdef CHECKS
-	if (i_ == NULL) msg.error("NULL_POINTER - NULL pointer passed for Atom i in Bond::set().\n");
-	if (j_ == NULL) msg.error("NULL_POINTER - NULL pointer passed for Atom j in Bond::set().\n");
+	if (i_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for Atom i in Bond::set().\n");
+	if (j_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for Atom j in Bond::set().\n");
 #endif
 }
 
@@ -126,7 +126,7 @@ int Bond::indexI() const
 #ifdef CHECKS
 	if (i_ == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Atom pointer 'i' found in Bond::indexI(). Returning 0...\n");
+		Messenger::error("NULL_POINTER - NULL Atom pointer 'i' found in Bond::indexI(). Returning 0...\n");
 		return 0;
 	}
 #endif
@@ -139,7 +139,7 @@ int Bond::indexJ() const
 #ifdef CHECKS
 	if (j_ == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Atom pointer 'j' found in Bond::indexJ(). Returning 0...\n");
+		Messenger::error("NULL_POINTER - NULL Atom pointer 'j' found in Bond::indexJ(). Returning 0...\n");
 		return 0;
 	}
 #endif
@@ -205,7 +205,7 @@ void Bond::setAttachedAtoms(int terminus, const RefList<Atom,int>& atoms)
 
 	Dnchar s(-1, "--> For Bond between Atoms %i-%i, terminus %i moves %i Atoms :", indexI()+1, indexJ()+1, terminus+1, nAttached_[terminus]);
 	for (int n=0; n<nAttached_[terminus]; ++n) s.strcatf(" %i", attached_[terminus][n]->userIndex());
-	msg.print("%s\n", s.get());
+	Messenger::print("%s\n", s.get());
 }
 
 // Return number of attached Atoms for terminus specified

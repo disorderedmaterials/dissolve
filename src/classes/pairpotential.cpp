@@ -84,12 +84,12 @@ void PairPotential::setData2DNames()
 	// Check for NULL pointers
 	if (atomTypeI_ == NULL)
 	{
-		msg.error("NULL_POINTER - NULL AtomType pointer (atomTypeI_) found in PairPotential::setData2DNames().\n");
+		Messenger::error("NULL_POINTER - NULL AtomType pointer (atomTypeI_) found in PairPotential::setData2DNames().\n");
 		return;
 	}
 	if (atomTypeJ_ == NULL)
 	{
-		msg.error("NULL_POINTER - NULL AtomType pointer (atomTypeJ_) found in PairPotential::setData2DNames().\n");
+		Messenger::error("NULL_POINTER - NULL AtomType pointer (atomTypeJ_) found in PairPotential::setData2DNames().\n");
 		return;
 	}
 
@@ -109,12 +109,12 @@ void PairPotential::setParameters(AtomType* typeI, AtomType* typeJ)
 	// Check for NULL pointers
 	if (typeI == NULL)
 	{
-		msg.error("NULL_POINTER - NULL AtomType pointer (typeI) given to PairPotential::setParameters().\n");
+		Messenger::error("NULL_POINTER - NULL AtomType pointer (typeI) given to PairPotential::setParameters().\n");
 		return;
 	}
 	if (typeJ == NULL)
 	{
-		msg.error("NULL_POINTER - NULL AtomType pointer (typeJ) given to PairPotential::setParameters().\n");
+		Messenger::error("NULL_POINTER - NULL AtomType pointer (typeJ) given to PairPotential::setParameters().\n");
 		return;
 	}
 	
@@ -125,7 +125,7 @@ void PairPotential::setParameters(AtomType* typeI, AtomType* typeJ)
 	Parameters* paramsJ = atomTypeJ_->parameters();
 	if ((paramsI == NULL) || (paramsJ == NULL))
 	{
-		msg.error("NULL_POINTER - One or both AtomTypes ('%s' and '%s') given to PairPotential::setParameters() contain a NULL Parameters pointer.\n", atomTypeI_->name(), atomTypeJ_->name());
+		Messenger::error("NULL_POINTER - One or both AtomTypes ('%s' and '%s') given to PairPotential::setParameters() contain a NULL Parameters pointer.\n", atomTypeI_->name(), atomTypeJ_->name());
 		sigmaIJ_ = 0.0;
 		epsilonIJ_ = 0.0;
 		chargeI_ = 0.0;
@@ -147,12 +147,12 @@ void PairPotential::setAtomTypes(AtomType* typeI, AtomType* typeJ)
 	// Check for NULL pointers
 	if (typeI == NULL)
 	{
-		msg.error("NULL_POINTER - NULL AtomType pointer (typeI) given to PairPotential::setAtomTypes().\n");
+		Messenger::error("NULL_POINTER - NULL AtomType pointer (typeI) given to PairPotential::setAtomTypes().\n");
 		return;
 	}
 	if (typeJ == NULL)
 	{
-		msg.error("NULL_POINTER - NULL AtomType pointer (typeJ) given to PairPotential::setAtomTypes().\n");
+		Messenger::error("NULL_POINTER - NULL AtomType pointer (typeJ) given to PairPotential::setAtomTypes().\n");
 		return;
 	}
 
@@ -167,7 +167,7 @@ const char* PairPotential::atomTypeNameI() const
 	// Check for NULL pointers
 	if (atomTypeI_ == NULL)
 	{
-		msg.error("NULL_POINTER - NULL AtomType pointer found in PairPotential::atomTypeNameI().\n");
+		Messenger::error("NULL_POINTER - NULL AtomType pointer found in PairPotential::atomTypeNameI().\n");
 		return "NULL";
 	}
 	return atomTypeI_->name();
@@ -179,7 +179,7 @@ const char* PairPotential::atomTypeNameJ() const
 	// Check for NULL pointers
 	if (atomTypeJ_ == NULL)
 	{
-		msg.error("NULL_POINTER - NULL AtomType pointer found in PairPotential::atomTypeNameJ().\n");
+		Messenger::error("NULL_POINTER - NULL AtomType pointer found in PairPotential::atomTypeNameJ().\n");
 		return "NULL";
 	}
 	return atomTypeJ_->name();
@@ -273,7 +273,7 @@ bool PairPotential::generate(double maxR, double truncationWidth, double delta)
 	// Check that AtomType pointers were set at some pointer
 	if ((atomTypeI_ == NULL) || (atomTypeJ_ == NULL))
 	{
-		msg.error("NULL_POINTER - One or both AtomTypes in PairPotential are NULL.\n");
+		Messenger::error("NULL_POINTER - One or both AtomTypes in PairPotential are NULL.\n");
 		return false;
 	}
 
@@ -354,7 +354,7 @@ double PairPotential::energyAtRSquared(double distanceSq) const
 #ifdef CHECKS
 	if (int(distanceSq*rDelta_) < 0)
 	{
-		msg.print("BAD_VALUE - Bin value of rSq is negative (%i) in PairPotential::energyAtRSquared.\n", int(distanceSq*rDelta_));
+		Messenger::print("BAD_VALUE - Bin value of rSq is negative (%i) in PairPotential::energyAtRSquared.\n", int(distanceSq*rDelta_));
 		return 0.0;
 	}
 #endif
@@ -373,7 +373,7 @@ double PairPotential::forceAtRSquared(double distanceSq) const
 #ifdef CHECKS
 	if (int(distanceSq*rDelta_) < 0)
 	{
-		msg.print("BAD_VALUE - Bin value of rSq is negative (%i) in PairPotential::forceAtRSquared.\n", int(distanceSq*rDelta_));
+		Messenger::print("BAD_VALUE - Bin value of rSq is negative (%i) in PairPotential::forceAtRSquared.\n", int(distanceSq*rDelta_));
 		return 0.0;
 	}
 #endif
@@ -419,7 +419,7 @@ bool PairPotential::updatePerturbation(Data2D& perturbation, double yScale, doub
 // 		ljFitMinimum_ = v_.x(n);
 // 		if (v_.y(n) < 0.0) break;
 // 	}
-// 	msg.print("LJ fit range is %f to %f Angstroms.\n", ljFitMinimum_, ljFitMaximum_);
+// 	Messenger::print("LJ fit range is %f to %f Angstroms.\n", ljFitMinimum_, ljFitMaximum_);
 // 	
 // 	// Fit LJ potential to first minimum well in perturbation
 // 	Simplex<PairPotential> ljFitSimplex(this, &PairPotential::potentialFitCost);
@@ -497,12 +497,12 @@ bool PairPotential::save(const char* fileName)
 
 	// Open file and check that we're OK to proceed writing to it
 	LineParser parser;
-	msg.print("Writing PairPotential file '%s'...\n", fileName);
+	Messenger::print("Writing PairPotential file '%s'...\n", fileName);
 
 	parser.openOutput(fileName, true);
 	if (!parser.isFileGoodForWriting())
 	{
-		msg.error("Couldn't open file '%s' for writing.\n", fileName);
+		Messenger::error("Couldn't open file '%s' for writing.\n", fileName);
 		return false;
 	}
 	

@@ -63,7 +63,7 @@ const Vec3<int>& Cell::gridReference() const
  */
 void Cell::setIndex(int id)
 {
-	if (id == -1) msg.print("BAD_USAGE - Refused to set the ID of a Cell more than once.\n");
+	if (id == -1) Messenger::print("BAD_USAGE - Refused to set the ID of a Cell more than once.\n");
 	else index_ = id;
 }
 
@@ -92,7 +92,7 @@ bool Cell::addLock()
 {
 	if (lockCount_ == -1)
 	{
-		msg.print("BAD_USAGE - Can't add a lock to a Cell which is being modified (lockCount_ = %i).\n", lockCount_);
+		Messenger::print("BAD_USAGE - Can't add a lock to a Cell which is being modified (lockCount_ = %i).\n", lockCount_);
 		return false;
 	}
 	++lockCount_;
@@ -104,12 +104,12 @@ bool Cell::removeLock()
 {
 	if (lockCount_ == -1)
 	{
-		msg.print("BAD_USAGE - Can't remove a lock from a Cell which is being modified (lockCount_ = %i).\n", lockCount_);
+		Messenger::print("BAD_USAGE - Can't remove a lock from a Cell which is being modified (lockCount_ = %i).\n", lockCount_);
 		return false;
 	}
 	if (lockCount_ == 0)
 	{
-		msg.print("BAD_USAGE - Can't remove a lock from a Cell which is not locked (lockCount_ = %i).\n", lockCount_);
+		Messenger::print("BAD_USAGE - Can't remove a lock from a Cell which is not locked (lockCount_ = %i).\n", lockCount_);
 		return false;
 	}
 	--lockCount_;
@@ -125,7 +125,7 @@ int Cell::lockCount()
 // Clear locks
 void Cell::clearLocks()
 {
-	if (lockCount_ != 0) msg.print("Warning: Cleared existing locks (%i) from Cell id %i (%i,%i,%i).\n", lockCount_, index_, gridReference_.x, gridReference_.y, gridReference_.z);
+	if (lockCount_ != 0) Messenger::print("Warning: Cleared existing locks (%i) from Cell id %i (%i,%i,%i).\n", lockCount_, index_, gridReference_.x, gridReference_.y, gridReference_.z);
 	lockCount_ = 0;
 }
 
@@ -143,7 +143,7 @@ bool Cell::lock(bool willBeModified)
 {
 	if (lockCount_ != 0)
 	{
-		msg.print("BAD_USAGE - Can't lock Cell %i (%i,%i,%i) for modification since lockCount_ != 0 (%i).\n", index_, gridReference_.x, gridReference_.y, gridReference_.z, lockCount_);
+		Messenger::print("BAD_USAGE - Can't lock Cell %i (%i,%i,%i) for modification since lockCount_ != 0 (%i).\n", index_, gridReference_.x, gridReference_.y, gridReference_.z, lockCount_);
 		return false;
 	}
 
@@ -162,7 +162,7 @@ bool Cell::unlock(bool willBeModified)
 {
 	if (lockCount_ != -1)
 	{
-		msg.print("BAD_USAGE - Can't unlock Cell %i (%i,%i,%i) since lockCount_ != -1 (%i).\n", index_, gridReference_.x, gridReference_.y, gridReference_.z, lockCount_);
+		Messenger::print("BAD_USAGE - Can't unlock Cell %i (%i,%i,%i) since lockCount_ != -1 (%i).\n", index_, gridReference_.x, gridReference_.y, gridReference_.z, lockCount_);
 		return false;
 	}
 
@@ -195,12 +195,12 @@ bool Cell::moveAtom(Atom* i, Cell* targetCell)
 #ifdef CHECKS
 	if (i == NULL)
 	{
-		msg.print("NULL_POINTER - NULL Atom pointer given to Cell::moveAtom().\n");
+		Messenger::print("NULL_POINTER - NULL Atom pointer given to Cell::moveAtom().\n");
 		return false;
 	}
 	if (targetCell == NULL)
 	{
-		msg.print("NULL_POINTER - NULL Cell pointer given to Cell::moveAtom().\n");
+		Messenger::print("NULL_POINTER - NULL Cell pointer given to Cell::moveAtom().\n");
 		return false;
 	}
 #endif
@@ -272,7 +272,7 @@ bool Cell::addAtom(Atom* atom)
 #ifdef CHECKS
 	if (atom == NULL)
 	{
-		msg.print("NULL_POINTER - NULL Atom pointer given to Cell::addAtom().\n");
+		Messenger::print("NULL_POINTER - NULL Atom pointer given to Cell::addAtom().\n");
 		return false;
 	}
 #endif
@@ -290,7 +290,7 @@ void Cell::addGrain(Grain* grain)
 	if (grain->cell() == NULL) grain->setCell(this, grains_.nItems());
 	else if (grain->cell() != this)
 	{
-		msg.print("BAD_USAGE - Grain should have been removed from its Cell before calling Cell::addGrain() with it.\n");
+		Messenger::print("BAD_USAGE - Grain should have been removed from its Cell before calling Cell::addGrain() with it.\n");
 		return;
 	}
 
@@ -303,12 +303,12 @@ void Cell::removeGrain(Grain* grain)
 #ifdef CHECKS
 	if (grain == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Grain pointer passed to Cell::removeGrain().\n");
+		Messenger::error("NULL_POINTER - NULL Grain pointer passed to Cell::removeGrain().\n");
 		return;
 	}
 	if (!grains_.contains(grain))
 	{
-		msg.print("BAD_USAGE - Cell %i does not contain the supplied Grain (index %i).\n", index_, grain->index());
+		Messenger::print("BAD_USAGE - Cell %i does not contain the supplied Grain (index %i).\n", index_, grain->index());
 		return;
 	}
 #endif
@@ -316,7 +316,7 @@ void Cell::removeGrain(Grain* grain)
 	if (grain->cell() == this) grain->removeFromCell(this);
 	else if (grain->cell() && (grain->cell() != this))
 	{
-		msg.print("BAD_USAGE - Trying to remove a Grain from a Cell which it doesn't think its in.\n");
+		Messenger::print("BAD_USAGE - Trying to remove a Grain from a Cell which it doesn't think its in.\n");
 		return;
 	}
 	grains_.remove(grain);
@@ -344,7 +344,7 @@ Grain* Cell::grain(int n)
 #ifdef CHECKS
 	if ((n < 0) || (n >= grains_.nItems()))
 	{
-		msg.print("OUT_OF_RANGE - Grain index (%i) passed to Cell::grain() is out of range (nGrains_ = %i).\n", n, grains_.nItems());
+		Messenger::print("OUT_OF_RANGE - Grain index (%i) passed to Cell::grain() is out of range (nGrains_ = %i).\n", n, grains_.nItems());
 		return NULL;
 	}
 #endif
@@ -393,7 +393,7 @@ void Cell::addCellNeighbours(OrderedPointerList<Cell>& neighbours, OrderedPointe
 		}
 		if (indexN == indexM)
 		{
-			msg.error("Cell neighbour lists are corrupt - same cell found in both near and mim lists.\n");
+			Messenger::error("Cell neighbour lists are corrupt - same cell found in both near and mim lists.\n");
 			return;
 		}
 	}

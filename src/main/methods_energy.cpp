@@ -60,11 +60,11 @@ double DUQ::intramolecularEnergy(Configuration& cfg)
 		for (SpeciesAngle* a = mol->species()->angles(); a != NULL; a = a->next) energy += kernel.energy(mol, a);
 	}
 
-	msg.printVerbose("Intramolecular Energy (Local) is %15.9e\n", energy);
+	Messenger::printVerbose("Intramolecular Energy (Local) is %15.9e\n", energy);
 	
 	// Sum energy and print
 	Comm.allSum(&energy, 1);
-	msg.printVerbose("Intramolecular Energy (World) is %15.9e\n", energy);
+	Messenger::printVerbose("Intramolecular Energy (World) is %15.9e\n", energy);
 
 	return energy;
 }
@@ -119,11 +119,11 @@ double DUQ::interatomicEnergy(Configuration& cfg)
 		 * Calculation End
 		 */
 	}
-	msg.printVerbose("Atom Energy (Local) is %15.9e\n", totalEnergy);
+	Messenger::printVerbose("Atom Energy (Local) is %15.9e\n", totalEnergy);
 
 	// Sum energy and print
 	Comm.allSum(&totalEnergy, 1);
-	msg.printVerbose("Atom Energy (World) is %15.9e\n", totalEnergy);
+	Messenger::printVerbose("Atom Energy (World) is %15.9e\n", totalEnergy);
 
 	return totalEnergy;
 }
@@ -158,12 +158,12 @@ double DUQ::intergrainEnergy(Configuration& cfg)
 		// Check for valid cell
 		if (cellId == Cell::NoCellsAvailable)
 		{
-			msg.printVerbose("Nothing for this process to do.\n");
+			Messenger::printVerbose("Nothing for this process to do.\n");
 			cfg.finishedWithCell(willBeModified, cellId);
 			continue;
 		}
 		cell = cfg.cell(cellId);
-		msg.printVerbose("Cell %i now the target, containing %i Grains interacting with %i neighbours.\n", cellId, cell->nGrains(), cell->nTotalCellNeighbours());
+		Messenger::printVerbose("Cell %i now the target, containing %i Grains interacting with %i neighbours.\n", cellId, cell->nGrains(), cell->nTotalCellNeighbours());
 
 		/*
 		 * Calculation Begins
@@ -194,11 +194,11 @@ double DUQ::intergrainEnergy(Configuration& cfg)
 		// Must unlock the Cell when we are done with it!
 		cfg.finishedWithCell(willBeModified, cellId);
 	}
-	msg.printVerbose("Grain Energy (Local) is %15.9e\n", totalEnergy);
+	Messenger::printVerbose("Grain Energy (Local) is %15.9e\n", totalEnergy);
 	
 	// Sum energy and print
 	Comm.allSum(&totalEnergy, 1);
-	msg.printVerbose("Grain Energy (World) is %15.9e\n", totalEnergy);
+	Messenger::printVerbose("Grain Energy (World) is %15.9e\n", totalEnergy);
 
 	return totalEnergy;
 }
@@ -211,7 +211,7 @@ double DUQ::intergrainEnergy(Configuration& cfg)
  */
 double DUQ::totalEnergy(Configuration& cfg)
 {
-	msg.print("Calculating total energy...\n");
+	Messenger::print("Calculating total energy...\n");
 
 	double atomEnergy, intraEnergy;
 
@@ -225,8 +225,8 @@ double DUQ::totalEnergy(Configuration& cfg)
 	intraEnergy = intramolecularEnergy(cfg);
 	intraTimer.stop();
 
-	msg.print("Time to do atom energy was %s, intramolecular energy was %s.\n", interTimer.timeString(), intraTimer.timeString());
-	msg.print("Total Energy (World) is %15.9e (%15.9e Grain + %15.9e Intramolecular)\n", atomEnergy + intraEnergy, atomEnergy, intraEnergy);
+	Messenger::print("Time to do atom energy was %s, intramolecular energy was %s.\n", interTimer.timeString(), intraTimer.timeString());
+	Messenger::print("Total Energy (World) is %15.9e (%15.9e Grain + %15.9e Intramolecular)\n", atomEnergy + intraEnergy, atomEnergy, intraEnergy);
 
 	return atomEnergy + intraEnergy;
 }
@@ -337,9 +337,9 @@ double DUQ::totalEnergyTest(Configuration& cfg)
 	 * Calculation End
 	 */
 	
-	msg.print("Correct particle energy is %15.9e kJ/mol\n", atomEnergy);
-	msg.print("Correct intramolecular energy is %15.9e kJ/mol\n", intraEnergy);
-	msg.print("Correct total energy is %15.9e kJ/mol\n", atomEnergy + intraEnergy);
+	Messenger::print("Correct particle energy is %15.9e kJ/mol\n", atomEnergy);
+	Messenger::print("Correct intramolecular energy is %15.9e kJ/mol\n", intraEnergy);
+	Messenger::print("Correct total energy is %15.9e kJ/mol\n", atomEnergy + intraEnergy);
 	return atomEnergy + intraEnergy;
 }
 

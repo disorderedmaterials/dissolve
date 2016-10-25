@@ -167,37 +167,37 @@ bool Element::broadcast()
 {
 #ifdef PARALLEL
 	// Send basic info
-	msg.printVerbose("[MPI] Element ");
+	Messenger::printVerbose("[MPI] Element ");
 	if (!Comm.broadcast(name_)) return false;
-	msg.printVerbose("%s...", name_.get());
+	Messenger::printVerbose("%s...", name_.get());
 	if (!Comm.broadcast(&z_, 1)) return false;
-	msg.printVerbose("%i...", z_);
+	Messenger::printVerbose("%i...", z_);
 	if (!Comm.broadcast(symbol_)) return false;
-	msg.printVerbose("%s...", symbol_.get());
+	Messenger::printVerbose("%s...", symbol_.get());
 	if (!Comm.broadcast(&atomicRadius_, 1)) return false;
-	msg.printVerbose("%f...", atomicRadius_);
+	Messenger::printVerbose("%f...", atomicRadius_);
 	if (!Comm.broadcast(colour_, 4)) return false;
-	msg.printVerbose("%f %f %f %f...", colour_[0], colour_[1], colour_[2], colour_[3]);
+	Messenger::printVerbose("%f %f %f %f...", colour_[0], colour_[1], colour_[2], colour_[3]);
 
 	// Add isotopes
 	bool result;
-	msg.printVerbose("Isotopes...");
+	Messenger::printVerbose("Isotopes...");
 	BroadcastList<Isotope>(isotopes_, result);
 	if (!result)
 	{
-		msg.print("Failed to broadcast Isotope data for element '%s'.\n", name_.get());
+		Messenger::print("Failed to broadcast Isotope data for element '%s'.\n", name_.get());
 		return false;
 	}
 	
 	// Add parameters
-	msg.printVerbose("Parameters...");
+	Messenger::printVerbose("Parameters...");
 	BroadcastList<Parameters>(parameters_, result);
 	if (!result)
 	{
-		msg.print("Failed to broadcast Parameter data for element '%s'.\n", name_.get());
+		Messenger::print("Failed to broadcast Parameter data for element '%s'.\n", name_.get());
 		return false;
 	}
-	msg.printVerbose("Success.\n");
+	Messenger::printVerbose("Success.\n");
 #endif
 	return true;
 }

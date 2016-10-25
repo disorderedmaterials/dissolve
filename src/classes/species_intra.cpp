@@ -28,19 +28,19 @@ SpeciesBond* Species::addBond(SpeciesAtom* i, SpeciesAtom* j)
 	// Check ownership of these Atoms
 	if (!atoms_.contains(i))
 	{
-		msg.print("BAD_OWNERSHIP - Atom 'i' is not owned by Species '%s' in Species::addBond.\n", name_.get());
+		Messenger::print("BAD_OWNERSHIP - Atom 'i' is not owned by Species '%s' in Species::addBond.\n", name_.get());
 		return NULL;
 	}
 	if (!atoms_.contains(j))
 	{
-		msg.print("BAD_OWNERSHIP - Atom 'j' is not owned by Species '%s' in Species::addBond.\n", name_.get());
+		Messenger::print("BAD_OWNERSHIP - Atom 'j' is not owned by Species '%s' in Species::addBond.\n", name_.get());
 		return NULL;
 	}
 
 	// Check for existence of Bond already
 	if (hasBond(i, j))
 	{
-		msg.print("Warning: Refused to add a new Bond between atoms %i and %i in Species '%s' since it already exists.\n", i->userIndex(), j->userIndex(), name_.get());
+		Messenger::print("Warning: Refused to add a new Bond between atoms %i and %i in Species '%s' since it already exists.\n", i->userIndex(), j->userIndex(), name_.get());
 		return NULL;
 	}
 	
@@ -59,12 +59,12 @@ SpeciesBond* Species::addBond(int i, int j)
 {
 	if ((i < 0) || (i >= atoms_.nItems()))
 	{
-		msg.print("OUT_OF_RANGE - Internal index 'i' supplied to Species::addBond() is out of range (%i) for Species '%s'\n", i, name_.get());
+		Messenger::print("OUT_OF_RANGE - Internal index 'i' supplied to Species::addBond() is out of range (%i) for Species '%s'\n", i, name_.get());
 		return false;
 	}
 	if ((j < 0) || (j >= atoms_.nItems()))
 	{
-		msg.print("OUT_OF_RANGE - Internal index 'j' supplied to Species::addBond() is out of range (%i) for Species '%s'\n", j, name_.get());
+		Messenger::print("OUT_OF_RANGE - Internal index 'j' supplied to Species::addBond() is out of range (%i) for Species '%s'\n", j, name_.get());
 		return false;
 	}
 
@@ -102,24 +102,24 @@ SpeciesAngle* Species::addAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k)
 	// Check ownership of these Atoms
 	if (!atoms_.contains(i))
 	{
-		msg.print("BAD_OWNERSHIP - Atom 'i' is not owned by Species '%s' in Species::addAngle.\n", name_.get());
+		Messenger::print("BAD_OWNERSHIP - Atom 'i' is not owned by Species '%s' in Species::addAngle.\n", name_.get());
 		return NULL;
 	}
 	if (!atoms_.contains(j))
 	{
-		msg.print("BAD_OWNERSHIP - Atom 'j' is not owned by Species '%s' in Species::addAngle.\n", name_.get());
+		Messenger::print("BAD_OWNERSHIP - Atom 'j' is not owned by Species '%s' in Species::addAngle.\n", name_.get());
 		return NULL;
 	}
 	if (!atoms_.contains(k))
 	{
-		msg.print("BAD_OWNERSHIP - Atom 'k' is not owned by Species '%s' in Species::addAngle.\n", name_.get());
+		Messenger::print("BAD_OWNERSHIP - Atom 'k' is not owned by Species '%s' in Species::addAngle.\n", name_.get());
 		return NULL;
 	}
 
 	// Check for existence of Angle already
 	if (hasAngle(i, j, k))
 	{
-		msg.print("Warning: Refused to add a new Angle between atoms %i, %i and %i in Species '%s' since it already exists.\n", i->userIndex()+1, j->userIndex()+1, k->userIndex()+1, name_.get());
+		Messenger::print("Warning: Refused to add a new Angle between atoms %i, %i and %i in Species '%s' since it already exists.\n", i->userIndex()+1, j->userIndex()+1, k->userIndex()+1, name_.get());
 		return NULL;
 	}
 
@@ -136,17 +136,17 @@ SpeciesAngle* Species::addAngle(int i, int j, int k)
 {
 	if ((i < 0) || (i >= atoms_.nItems()))
 	{
-		msg.print("OUT_OF_RANGE - Internal index 'i' supplied to Species::addAngle() is out of range (%i) for Species '%s'\n", i, name_.get());
+		Messenger::print("OUT_OF_RANGE - Internal index 'i' supplied to Species::addAngle() is out of range (%i) for Species '%s'\n", i, name_.get());
 		return false;
 	}
 	if ((j < 0) || (j >= atoms_.nItems()))
 	{
-		msg.print("OUT_OF_RANGE - Internal index 'j' supplied to Species::addAngle() is out of range (%i) for Species '%s'\n", j, name_.get());
+		Messenger::print("OUT_OF_RANGE - Internal index 'j' supplied to Species::addAngle() is out of range (%i) for Species '%s'\n", j, name_.get());
 		return false;
 	}
 	if ((k < 0) || (k >= atoms_.nItems()))
 	{
-		msg.print("OUT_OF_RANGE - Internal index 'k' supplied to Species::addAngle() is out of range (%i) for Species '%s'\n", k, name_.get());
+		Messenger::print("OUT_OF_RANGE - Internal index 'k' supplied to Species::addAngle() is out of range (%i) for Species '%s'\n", k, name_.get());
 		return false;
 	}
 	return addAngle(atoms_[i], atoms_[j], atoms_[k]);
@@ -208,7 +208,7 @@ void Species::recalculateIntramolecular()
 		}
 		++n;
 	}
-	msg.print("Found %i Bonds in Species '%s'.\n", bonds_.nItems(), name_.get());
+	Messenger::print("Found %i Bonds in Species '%s'.\n", bonds_.nItems(), name_.get());
 
 	// Construct Angles list, looping over central Atom
 	for (j = atoms_.first(); j != NULL; j = j->next)
@@ -246,9 +246,9 @@ bool Species::calculateIndexLists()
 		selectFromAtom(b->i(), b);
 		if (selectedAtoms_.contains(b->j()))
 		{
-// 			msg.error("Species '%s' contains one or more cycles, and these cannot be dealt with at present.\n", name_.get());
+// 			Messenger::error("Species '%s' contains one or more cycles, and these cannot be dealt with at present.\n", name_.get());
 // 			return false;
-			msg.print("Bond between Atoms %i and %i in Species '%s' exists in a cycle, so a minimal set of attached atoms will be used.\n", b->indexI()+1, b->indexJ()+1, name_.get());
+			Messenger::print("Bond between Atoms %i and %i in Species '%s' exists in a cycle, so a minimal set of attached atoms will be used.\n", b->indexI()+1, b->indexJ()+1, name_.get());
 			clearAtomSelection();
 // 			for (RefListItem<Bond,int>* ri = b->i()->bonds(); ri != NULL; ri = ri->next) if (ri->item->partner(b->i()) != b->j()) selectedAtoms_.add(ri->item->partner(b->i()));
 			selectedAtoms_.add(b->j());
@@ -260,9 +260,9 @@ bool Species::calculateIndexLists()
 		selectFromAtom(b->j(), b);
 		if (selectedAtoms_.contains(b->i()))
 		{
-// 			msg.error("Species '%s' contains one or more cycles, and these cannot be dealt with at present.\n", name_.get());
+// 			Messenger::error("Species '%s' contains one or more cycles, and these cannot be dealt with at present.\n", name_.get());
 // 			return false;
-			msg.print("Bond between Atoms %i and %i in Species '%s' exists in a cycle, so a minimal set of attached atoms will be used.\n", b->indexI()+1, b->indexJ()+1, name_.get());
+			Messenger::print("Bond between Atoms %i and %i in Species '%s' exists in a cycle, so a minimal set of attached atoms will be used.\n", b->indexI()+1, b->indexJ()+1, name_.get());
 			clearAtomSelection();
 // 			for (RefListItem<Bond,int>* ri = b->j()->bonds(); ri != NULL; ri = ri->next) if (ri->item->partner(b->j()) != b->i()) selectedAtoms_.add(ri->item->partner(b->j()));
 			selectedAtoms_.add(b->j());
@@ -278,15 +278,15 @@ bool Species::calculateIndexLists()
 		SpeciesBond* b = hasBond(a->i(), a->j());
 		if (b == NULL)
 		{
-			msg.error("Species '%s' contains an angle %i-%i-%i, but a bond %i-%i is not defined.\n", name_.get(), a->indexI()+1, a->indexJ()+1, a->indexK()+1, a->indexI()+1, a->indexJ()+1 );
+			Messenger::error("Species '%s' contains an angle %i-%i-%i, but a bond %i-%i is not defined.\n", name_.get(), a->indexI()+1, a->indexJ()+1, a->indexK()+1, a->indexI()+1, a->indexJ()+1 );
 			return false;
 		}
 		selectFromAtom(a->i(), b);
 		if (selectedAtoms_.contains(a->j()))
 		{
-// 			msg.error("Species '%s' contains one or more cycles, and these cannot be dealt with at present.\n", name_.get());
+// 			Messenger::error("Species '%s' contains one or more cycles, and these cannot be dealt with at present.\n", name_.get());
 // 			return false;
-			msg.print("Angle between atoms %i-%i-%i in species '%s' exists in a cycle, so a minimal set of attached atoms will be used.\n", a->indexI()+1, a->indexJ()+1, a->indexK()+1, name_.get());
+			Messenger::print("Angle between atoms %i-%i-%i in species '%s' exists in a cycle, so a minimal set of attached atoms will be used.\n", a->indexI()+1, a->indexJ()+1, a->indexK()+1, name_.get());
 			clearAtomSelection();
 			selectedAtoms_.add(a->i());
 		}
@@ -297,15 +297,15 @@ bool Species::calculateIndexLists()
 		b = hasBond(a->j(), a->k());
 		if (b == NULL)
 		{
-			msg.error("Species '%s' contains an angle %i-%i-%i, but a bond %i-%i is not defined.\n", name_.get(), a->indexI()+1, a->indexJ()+1, a->indexK()+1, a->indexJ()+1, a->indexK()+1 );
+			Messenger::error("Species '%s' contains an angle %i-%i-%i, but a bond %i-%i is not defined.\n", name_.get(), a->indexI()+1, a->indexJ()+1, a->indexK()+1, a->indexJ()+1, a->indexK()+1 );
 			return false;
 		}
 		selectFromAtom(a->k(), b);
 		if (selectedAtoms_.contains(a->j()))
 		{
-// 			msg.error("Species '%s' contains one or more cycles, and these cannot be dealt with at present.\n", name_.get());
+// 			Messenger::error("Species '%s' contains one or more cycles, and these cannot be dealt with at present.\n", name_.get());
 // 			return false;
-			msg.print("Angle between atoms %i-%i-%i in species '%s' exists in a cycle, so a minimal set of attached atoms will be used.\n", a->indexI()+1, a->indexJ()+1, a->indexK()+1, name_.get());
+			Messenger::print("Angle between atoms %i-%i-%i in species '%s' exists in a cycle, so a minimal set of attached atoms will be used.\n", a->indexI()+1, a->indexJ()+1, a->indexK()+1, name_.get());
 			clearAtomSelection();
 			selectedAtoms_.add(a->k());
 		}
@@ -354,12 +354,12 @@ double Species::scaling(int indexI, int indexJ) const
 #ifdef CHECKS
 	if ((indexI < 0) || (indexI >= atoms_.nItems()))
 	{
-		msg.print("OUT_OF_RANGE - After rooting, supplied Atom indexI is out of range (%i) (nAtoms = %i).\n", indexI, atoms_.nItems());
+		Messenger::print("OUT_OF_RANGE - After rooting, supplied Atom indexI is out of range (%i) (nAtoms = %i).\n", indexI, atoms_.nItems());
 		return 0.0;
 	}
 	if ((indexJ < 0) || (indexJ >= atoms_.nItems()))
 	{
-		msg.print("OUT_OF_RANGE - After rooting, supplied Atom indexJ is out of range (%i) (nAtoms = %i).\n", indexJ, atoms_.nItems());
+		Messenger::print("OUT_OF_RANGE - After rooting, supplied Atom indexJ is out of range (%i) (nAtoms = %i).\n", indexJ, atoms_.nItems());
 		return 0.0;
 	}
 #endif
@@ -378,12 +378,12 @@ void Species::identifyInterGrainTerms()
 #ifdef CHECKS
 		if ((b->i() == NULL) || (b->j() == NULL))
 		{
-			msg.error("NULL_POINTER - One or both Atom pointers in a Bond are NULL (%p, %p)\n", b->i(), b->j());
+			Messenger::error("NULL_POINTER - One or both Atom pointers in a Bond are NULL (%p, %p)\n", b->i(), b->j());
 			continue;
 		}
 		if ((b->i()->grain() == NULL) || (b->j()->grain() == NULL))
 		{
-			msg.error("NULL_POINTER - One or both Grain pointers in a Bond are NULL (%p, %p)\n", b->i()->grain(), b->j()->grain());
+			Messenger::error("NULL_POINTER - One or both Grain pointers in a Bond are NULL (%p, %p)\n", b->i()->grain(), b->j()->grain());
 			continue;
 		}
 #endif
@@ -407,12 +407,12 @@ void Species::identifyInterGrainTerms()
 #ifdef CHECKS
 		if ((a->i() == NULL) || (a->j() == NULL) || (a->k() == NULL))
 		{
-			msg.error("NULL_POINTER - One or more Atom pointers in an Angle are NULL (%p, %p, %p)\n", a->i(), a->j(), a->k());
+			Messenger::error("NULL_POINTER - One or more Atom pointers in an Angle are NULL (%p, %p, %p)\n", a->i(), a->j(), a->k());
 			continue;
 		}
 		if ((a->i()->grain() == NULL) || (a->j()->grain() == NULL) || (a->k()->grain() == NULL))
 		{
-			msg.error("NULL_POINTER - One or more Grain pointers in an Angle are NULL (%p, %p, %p)\n", a->i()->grain(), a->j()->grain(), a->k()->grain());
+			Messenger::error("NULL_POINTER - One or more Grain pointers in an Angle are NULL (%p, %p, %p)\n", a->i()->grain(), a->j()->grain(), a->k()->grain());
 			continue;
 		}
 #endif

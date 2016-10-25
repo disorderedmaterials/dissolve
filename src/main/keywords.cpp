@@ -27,33 +27,33 @@
 // Print list of valid keywords for InputBlock specified
 void Keywords::printValidKeywords(Keywords::InputBlock block)
 {
-	msg.print("Valid Keywords for '%s' block are:\n", inputBlock(block));
+	Messenger::print("Valid Keywords for '%s' block are:\n", inputBlock(block));
 	int n;
 	switch (block)
 	{
 		case (Keywords::AtomTypesBlock):
-			for (n=0; n<Keywords::nAtomTypesKeywords; ++n) msg.print("%s%s", n == 0 ? "" : ", ", atomTypesKeyword( (AtomTypesKeyword) n ));
+			for (n=0; n<Keywords::nAtomTypesKeywords; ++n) Messenger::print("%s%s", n == 0 ? "" : ", ", atomTypesKeyword( (AtomTypesKeyword) n ));
 			break;
 		case (Keywords::PairPotentialsBlock):
-			for (n=0; n<Keywords::nPairPotentialsKeywords; ++n) msg.print("%s%s", n == 0 ? "" : ", ", pairPotentialsKeyword( (PairPotentialsKeyword) n ));
+			for (n=0; n<Keywords::nPairPotentialsKeywords; ++n) Messenger::print("%s%s", n == 0 ? "" : ", ", pairPotentialsKeyword( (PairPotentialsKeyword) n ));
 			break;
 		case (Keywords::SampleBlock):
-			for (n=0; n<Keywords::nSampleKeywords; ++n) msg.print("%s%s", n == 0 ? "" : ", ", sampleKeyword( (SampleKeyword) n ));
+			for (n=0; n<Keywords::nSampleKeywords; ++n) Messenger::print("%s%s", n == 0 ? "" : ", ", sampleKeyword( (SampleKeyword) n ));
 			break;
 		case (Keywords::ConfigurationBlock):
-			for (n=0; n<Keywords::nConfigurationKeywords; ++n) msg.print("%s%s", n == 0 ? "" : ", ", configurationKeyword( (ConfigurationKeyword) n ));
+			for (n=0; n<Keywords::nConfigurationKeywords; ++n) Messenger::print("%s%s", n == 0 ? "" : ", ", configurationKeyword( (ConfigurationKeyword) n ));
 			break;
 		case (Keywords::SpeciesBlock):
-			for (n=0; n<Keywords::nSpeciesKeywords; ++n) msg.print("%s%s", n == 0 ? "" : ", ", speciesKeyword( (SpeciesKeyword) n ));
+			for (n=0; n<Keywords::nSpeciesKeywords; ++n) Messenger::print("%s%s", n == 0 ? "" : ", ", speciesKeyword( (SpeciesKeyword) n ));
 			break;
 		case (Keywords::SimulationBlock):
-			for (n=0; n<Keywords::nSimulationKeywords; ++n) msg.print("%s%s", n == 0 ? "" : ", ", simulationKeyword( (SimulationKeyword) n ));
+			for (n=0; n<Keywords::nSimulationKeywords; ++n) Messenger::print("%s%s", n == 0 ? "" : ", ", simulationKeyword( (SimulationKeyword) n ));
 			break;
 		default:
 			printf("Unrecognised block given to Keywords::printValidKeywords.\n");
 			break;
 	}
-	msg.print("\n");
+	Messenger::print("\n");
 }
 
 /*

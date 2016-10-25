@@ -181,12 +181,12 @@ void ForceKernel::forces(const Atom* i, const Atom* j, bool applyMim, bool exclu
 #ifdef CHECKS
 	if (i == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Atom pointer (i) passed to ForceKernel::force(Atom,Atom,bool,bool).\n");
+		Messenger::error("NULL_POINTER - NULL Atom pointer (i) passed to ForceKernel::force(Atom,Atom,bool,bool).\n");
 		return;
 	}
 	if (j == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Atom pointer (j) passed to ForceKernel::force(Atom,Atom,bool,bool).\n");
+		Messenger::error("NULL_POINTER - NULL Atom pointer (j) passed to ForceKernel::force(Atom,Atom,bool,bool).\n");
 		return;
 	}
 	// If Atoms are the same, we refuse to calculate
@@ -209,12 +209,12 @@ void ForceKernel::forces(const Atom* i, const Grain* grain, bool applyMim, bool 
 #ifdef CHECKS
 	if (i == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Atom pointer passed to ForceKernel::force(Atom,Grain,bool,bool).\n");
+		Messenger::error("NULL_POINTER - NULL Atom pointer passed to ForceKernel::force(Atom,Grain,bool,bool).\n");
 		return;
 	}
 	if (grain == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Grain pointer passed to ForceKernel::force(Atom,Grain,bool,bool).\n");
+		Messenger::error("NULL_POINTER - NULL Grain pointer passed to ForceKernel::force(Atom,Grain,bool,bool).\n");
 		return;
 	}
 #endif
@@ -228,12 +228,12 @@ void ForceKernel::forces(const Grain* grainI, const Grain* grainJ, bool applyMim
 #ifdef CHECKS
 	if (grainI == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Grain pointer (grainI) passed to ForceKernel::force(Grain,Grain,bool,bool).\n");
+		Messenger::error("NULL_POINTER - NULL Grain pointer (grainI) passed to ForceKernel::force(Grain,Grain,bool,bool).\n");
 		return;
 	}
 	if (grainJ == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Grain pointer (grainJ) passed to ForceKernel::force(Grain,Grain,bool,bool).\n");
+		Messenger::error("NULL_POINTER - NULL Grain pointer (grainJ) passed to ForceKernel::force(Grain,Grain,bool,bool).\n");
 		return;
 	}
 	// If Grains are the same, we refuse to calculate
@@ -247,7 +247,7 @@ void ForceKernel::forces(const Grain* grainI, const Grain* grainJ, bool applyMim
 // 	double rSq;
 // 	if (applyMim) rSq = box_->minimumDistanceSquared(grainI->centre(), grainJ->centre());
 // 	else rSq = (grainI->centre() - grainJ->centre()).magnitudeSq();
-// // 	msg.print("GG %3i %3i MIM=%i EXC=%i rSq=%f (%f,%f,%f) (%f,%f,%f)\n", grainI->index(), grainJ->index(), applyMim, excludeIgtJ, rSq, grainI->centre().x, grainI->centre().y, grainI->centre().z, grainJ->centre().x, grainJ->centre().y, grainJ->centre().z);
+// // 	Messenger::print("GG %3i %3i MIM=%i EXC=%i rSq=%f (%f,%f,%f) (%f,%f,%f)\n", grainI->index(), grainJ->index(), applyMim, excludeIgtJ, rSq, grainI->centre().x, grainI->centre().y, grainI->centre().z, grainJ->centre().x, grainJ->centre().y, grainJ->centre().z);
 // 	if (rSq > cutoffSq) return;
 	
 	// Check exclusion of I > J
@@ -263,12 +263,12 @@ void ForceKernel::forces(const Atom* i, const Cell* cell, bool applyMim, bool ex
 #ifdef CHECKS
 	if (i == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Atom pointer passed to ForceKernel::force(Atom,Cell,bool,bool).\n");
+		Messenger::error("NULL_POINTER - NULL Atom pointer passed to ForceKernel::force(Atom,Cell,bool,bool).\n");
 		return;
 	}
 	if (cell == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Cell pointer passed to ForceKernel::force(Atom,Cell,bool,bool).\n");
+		Messenger::error("NULL_POINTER - NULL Cell pointer passed to ForceKernel::force(Atom,Cell,bool,bool).\n");
 		return;
 	}
 #endif
@@ -285,12 +285,12 @@ void ForceKernel::forces(const Grain* grain, const Cell* cell, bool applyMim, bo
 #ifdef CHECKS
 	if (grain == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Grain pointer passed to ForceKernel::force(Grain,Cell,bool).\n");
+		Messenger::error("NULL_POINTER - NULL Grain pointer passed to ForceKernel::force(Grain,Cell,bool).\n");
 		return;
 	}
 	if (cell == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Cell pointer passed to ForceKernel::force(Grain,Cell,bool).\n");
+		Messenger::error("NULL_POINTER - NULL Cell pointer passed to ForceKernel::force(Grain,Cell,bool).\n");
 		return;
 	}
 #endif
@@ -310,7 +310,7 @@ void ForceKernel::forces(const Atom* i, int nNeighbours, Cell** neighbours, bool
 #ifdef CHECKS
 	if (i == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Atom pointer passed to ForceKernel::force(Atom,RefList<Cell>,bool,ParallelStyle).\n");
+		Messenger::error("NULL_POINTER - NULL Atom pointer passed to ForceKernel::force(Atom,RefList<Cell>,bool,ParallelStyle).\n");
 		return;
 	}
 #endif
@@ -344,7 +344,7 @@ void ForceKernel::forces(const Grain* grain, int nNeighbours, Cell** neighbours,
 #ifdef CHECKS
 	if (grain == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Grain pointer passed to ForceKernel::force(Grain,RefList<Cell>,bool,ParallelStyle).\n");
+		Messenger::error("NULL_POINTER - NULL Grain pointer passed to ForceKernel::force(Grain,RefList<Cell>,bool,ParallelStyle).\n");
 		return;
 	}
 #endif

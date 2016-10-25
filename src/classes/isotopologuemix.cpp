@@ -62,7 +62,7 @@ void IsotopologueMix::update()
 		if (!species_->hasIsotopologue(ri->item))
 		{
 			mix_.remove(ri);
-			msg.print("Removed Isotopologue from mixture for Species '%s' since it no longer existed.\n", species_->name());
+			Messenger::print("Removed Isotopologue from mixture for Species '%s' since it no longer existed.\n", species_->name());
 		}
 		ri = next;
 	}
@@ -74,14 +74,14 @@ bool IsotopologueMix::addNextIsotopologue()
 	// NULL Pointer?
 	if (species_ == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Species pointer in IsotopologueMix::addNextIsotopologue().\n");
+		Messenger::error("NULL_POINTER - NULL Species pointer in IsotopologueMix::addNextIsotopologue().\n");
 		return false;
 	}
 	
 	// Check to see if the are any Isotopologues available to add
 	if (mix_.nItems() == species_->nIsotopologues())
 	{
-		msg.print("Warning: Can't add another Isotopologue to the mixture since there are none left for Species '%s'.\n", species_->name());
+		Messenger::print("Warning: Can't add another Isotopologue to the mixture since there are none left for Species '%s'.\n", species_->name());
 		return false;
 	}
 	
@@ -91,7 +91,7 @@ bool IsotopologueMix::addNextIsotopologue()
 
 	if (iso == NULL)
 	{
-		msg.error("Couldn't find an unused Isotopologue in Species '%s'.\n", species_->name());
+		Messenger::error("Couldn't find an unused Isotopologue in Species '%s'.\n", species_->name());
 		return false;
 	}
 	
@@ -106,7 +106,7 @@ bool IsotopologueMix::addIsotopologue(Isotopologue* iso, double relPop)
 	// Search current list to see if the specified Isotopologue already exists
 	if (hasIsotopologue(iso))
 	{
-		msg.error("Can't add Isotopologue '%s' (of Species '%s') to Sample since it is already there.\n", iso->name(), species_->name());
+		Messenger::error("Can't add Isotopologue '%s' (of Species '%s') to Sample since it is already there.\n", iso->name(), species_->name());
 		return false;
 	}
 
@@ -120,7 +120,7 @@ bool IsotopologueMix::setIsotopologue(Isotopologue* iso, double relPop)
 	// NULL Pointer?
 	if (iso == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Isotopologue passed to IsotopologueMix::setIsotopologue().\n");
+		Messenger::error("NULL_POINTER - NULL Isotopologue passed to IsotopologueMix::setIsotopologue().\n");
 		return false;
 	}
 	
@@ -128,7 +128,7 @@ bool IsotopologueMix::setIsotopologue(Isotopologue* iso, double relPop)
 	RefListItem<Isotopologue,double>* tope = mix_.contains(iso);
 	if (tope == NULL)
 	{
-		msg.warn("Warning: IsotopologueMix doest not contain the Isotopologue '%s', so its fraction can't be set.\n", iso->name());
+		Messenger::warn("Warning: IsotopologueMix doest not contain the Isotopologue '%s', so its fraction can't be set.\n", iso->name());
 		return false;
 	}
 	tope->data = relPop;

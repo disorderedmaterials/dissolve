@@ -80,9 +80,9 @@ void SpeciesAngle::setAtoms(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k)
 	j_ = j;
 	k_ = k;
 #ifdef CHECKS
-	if (i_ == NULL) msg.error("NULL_POINTER - NULL pointer passed for SpeciesAtom* i in SpeciesAngle::set().\n");
-	if (j_ == NULL) msg.error("NULL_POINTER - NULL pointer passed for SpeciesAtom* j in SpeciesAngle::set().\n");
-	if (k_ == NULL) msg.error("NULL_POINTER - NULL pointer passed for SpeciesAtom* k in SpeciesAngle::set().\n");
+	if (i_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* i in SpeciesAngle::set().\n");
+	if (j_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* j in SpeciesAngle::set().\n");
+	if (k_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* k in SpeciesAngle::set().\n");
 #endif
 }
 
@@ -110,7 +110,7 @@ int SpeciesAngle::indexI() const
 #ifdef CHECKS
 	if (i_ == NULL)
 	{
-		msg.error("NULL_POINTER - NULL SpeciesAtom pointer 'i' found in SpeciesAngle::indexI(). Returning 0...\n");
+		Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'i' found in SpeciesAngle::indexI(). Returning 0...\n");
 		return 0;
 	}
 #endif
@@ -123,7 +123,7 @@ int SpeciesAngle::indexJ() const
 #ifdef CHECKS
 	if (j_ == NULL)
 	{
-		msg.error("NULL_POINTER - NULL SpeciesAtom pointer 'j' found in SpeciesAngle::indexJ(). Returning 0...\n");
+		Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'j' found in SpeciesAngle::indexJ(). Returning 0...\n");
 		return 0;
 	}
 #endif
@@ -136,7 +136,7 @@ int SpeciesAngle::indexK() const
 #ifdef CHECKS
 	if (k_ == NULL)
 	{
-		msg.error("NULL_POINTER - NULL SpeciesAtom pointer 'k' found in SpeciesAngle::indexK(). Returning 0...\n");
+		Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'k' found in SpeciesAngle::indexK(). Returning 0...\n");
 		return 0;
 	}
 #endif
@@ -216,7 +216,7 @@ void SpeciesAngle::setAttachedAtoms(int terminus, const RefList<SpeciesAtom,int>
 	printf("Terminus = %i, this = %p\n", terminus, this);
 	Dnchar s(-1, "--> For angle between atoms %i-%i-%i, terminus %i moves %i other atoms :", indexI()+1, indexJ()+1, indexK()+1, terminus+1, nAttached_[terminus]);
 	for (int n=0; n<nAttached_[terminus]; ++n) s.strcatf(" %i", attachedAtoms_[terminus][n]->userIndex());
-	msg.print("%s\n", s.get());
+	Messenger::print("%s\n", s.get());
 }
 
 // Return number of attached Atoms for terminus specified

@@ -62,7 +62,7 @@ void Configuration::recreateCellAtomNeighbourLists(double pairPotentialRange)
 
 	// Calculate cutoff distance squared
 	cutoffSq = pairPotentialRange + sqrt(realCellSize_.dp(realCellSize_))*0.5;
-	msg.print("--> Cutoff for atom cell neighbours is %f\n", cutoffSq);
+	Messenger::print("--> Cutoff for atom cell neighbours is %f\n", cutoffSq);
 	cutoffSq *= cutoffSq;
 
 	// Loop over atoms
@@ -94,5 +94,5 @@ void Configuration::recreateCellAtomNeighbourLists(double pairPotentialRange)
 		}
 	}
 	timer.stop();
-	msg.print("--> Cell atom neighbour lists generated (%s).\n", timer.timeString());
+	Messenger::print("--> Cell atom neighbour lists generated (%s).\n", timer.timeString());
 }

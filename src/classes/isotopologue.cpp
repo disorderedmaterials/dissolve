@@ -81,7 +81,7 @@ void Isotopologue::update(const List<AtomType>& atomTypes)
 	// Check for valid parent_
 	if (parent_ == NULL)
 	{
-		msg.error("NULL_POINTER - Found NULL parent_ pointer in Isotopologue::update().\n");
+		Messenger::error("NULL_POINTER - Found NULL parent_ pointer in Isotopologue::update().\n");
 		return;
 	}
 
@@ -101,12 +101,12 @@ void Isotopologue::update(const List<AtomType>& atomTypes)
 		AtomType* at = i->atomType();
 		if (at == NULL)
 		{
-			msg.error("NULL_POINTER - Found NULL AtomType pointer for Atom %i in Isotopologue::update().\n", i->userIndex());
+			Messenger::error("NULL_POINTER - Found NULL AtomType pointer for Atom %i in Isotopologue::update().\n", i->userIndex());
 			continue;
 		}
 		if (!atomTypes.contains(at))
 		{
-			msg.print("BAD_POINTER - Atom %i references a non-existent AtomType.\n", i->userIndex());
+			Messenger::print("BAD_POINTER - Atom %i references a non-existent AtomType.\n", i->userIndex());
 			continue;
 		}
 
@@ -131,7 +131,7 @@ bool Isotopologue::setAtomTypeIsotope(AtomType* at, Isotope* isotope)
 	// Check for NULL pointer
 	if (at == NULL)
 	{
-		msg.error("NULL_POINTER - NULL AtomType pointer passed to Isotopologue::setAtomTypeIsotope().\n");
+		Messenger::error("NULL_POINTER - NULL AtomType pointer passed to Isotopologue::setAtomTypeIsotope().\n");
 		return false;
 	}
 
@@ -139,7 +139,7 @@ bool Isotopologue::setAtomTypeIsotope(AtomType* at, Isotope* isotope)
 	RefListItem<AtomType,Isotope*>* rli = isotopes_.contains(at);
 	if (!rli)
 	{
-		msg.error("AtomType not found in Isotopologue...\n");
+		Messenger::error("AtomType not found in Isotopologue...\n");
 		return false;
 	}
 	
@@ -154,7 +154,7 @@ Isotope* Isotopologue::atomTypeIsotope(AtomType* at) const
 	RefListItem<AtomType,Isotope*>* rli = isotopes_.contains(at);
 	if (!rli)
 	{
-		msg.error("AtomType not found in Isotopologue...\n");
+		Messenger::error("AtomType not found in Isotopologue...\n");
 		return NULL;
 	}
 	return rli->data;

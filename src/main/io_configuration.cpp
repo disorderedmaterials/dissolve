@@ -33,12 +33,12 @@ bool DUQ::saveConfigurationXYZ(Configuration& cfg, const char* fileName)
 
 	// Open file and check that we're OK to proceed writing to it
 	LineParser parser;
-	msg.print("Writing model as XYZ file '%s'...\n", fileName);
+	Messenger::print("Writing model as XYZ file '%s'...\n", fileName);
 
 	parser.openOutput(fileName, true);
 	if (!parser.isFileGoodForWriting())
 	{
-		msg.error("Couldn't open file '%s' for writing.\n", fileName);
+		Messenger::error("Couldn't open file '%s' for writing.\n", fileName);
 		return false;
 	}
 
@@ -53,7 +53,7 @@ bool DUQ::saveConfigurationXYZ(Configuration& cfg, const char* fileName)
 		parser.writeLineF("%-3s   %10.4f  %10.4f  %10.4f\n", PeriodicTable::element(i->element()).symbol(), i->r().x, i->r().y, i->r().z);
 	}
 
-	msg.print("Finished writing model XYZ file.\n");
+	Messenger::print("Finished writing model XYZ file.\n");
 
 	// Close file
 	parser.closeFiles();
@@ -69,12 +69,12 @@ bool DUQ::saveConfigurationDLPOLY(Configuration& cfg, const char* fileName)
 
 	// Open file and check that we're OK to proceed writing to it
 	LineParser parser;
-	msg.print("Writing model as CONFIG file '%s'...\n", fileName);
+	Messenger::print("Writing model as CONFIG file '%s'...\n", fileName);
 
 	parser.openOutput(fileName, true);
 	if (!parser.isFileGoodForWriting())
 	{
-		msg.error("Couldn't open file '%s' for writing.\n", fileName);
+		Messenger::error("Couldn't open file '%s' for writing.\n", fileName);
 		return false;
 	}
 
@@ -103,7 +103,7 @@ bool DUQ::saveConfigurationDLPOLY(Configuration& cfg, const char* fileName)
 		parser.writeLineF("%-6s%10i%20.10f\n%20.12f%20.12f%20.12f\n", cfg.type(i->localTypeIndex())->name(), n+1, PeriodicTable::element(i->element()).isotope(0)->atomicWeight(), i->r().x, i->r().y, i->r().z);
 	}
 
-	msg.print("Finished writing model CONFIG file.\n");
+	Messenger::print("Finished writing model CONFIG file.\n");
 
 	// Close file
 	parser.closeFiles();

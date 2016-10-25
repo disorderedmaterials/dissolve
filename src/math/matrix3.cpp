@@ -143,10 +143,10 @@ void Matrix3::setIdentity()
  */
 void Matrix3::print() const
 {
-	msg.print("CMaj   [012]     [345]     [678]\n");
-	msg.print("        %8.4f %8.4f %8.4f\n", matrix_[0], matrix_[3], matrix_[6]);
-	msg.print("        %8.4f %8.4f %8.4f\n", matrix_[1], matrix_[4], matrix_[7]);
-	msg.print("        %8.4f %8.4f %8.4f\n", matrix_[2], matrix_[5], matrix_[8]);
+	Messenger::print("CMaj   [012]     [345]     [678]\n");
+	Messenger::print("        %8.4f %8.4f %8.4f\n", matrix_[0], matrix_[3], matrix_[6]);
+	Messenger::print("        %8.4f %8.4f %8.4f\n", matrix_[1], matrix_[4], matrix_[7]);
+	Messenger::print("        %8.4f %8.4f %8.4f\n", matrix_[2], matrix_[5], matrix_[8]);
 }
 
 /*

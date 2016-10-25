@@ -81,12 +81,12 @@ bool PotentialMap::initialise(const AtomTypeIndex& typeIndex, const List<PairPot
 		// Store PairPotential pointer
 		if (indexI == indexJ)
 		{
-			msg.print("--> Linking self-interaction PairPotential for '%s' (index %i,%i in matrix).\n", pot->atomTypeI()->name(), indexI, indexJ);
+			Messenger::print("--> Linking self-interaction PairPotential for '%s' (index %i,%i in matrix).\n", pot->atomTypeI()->name(), indexI, indexJ);
 			potentialMatrix_.ref(indexI,indexI) = pot;
 		}
 		else
 		{
-			msg.print("--> Linking PairPotential between '%s' and '%s' (indices %i,%i and %i,%i in matrix).\n", pot->atomTypeI()->name(), pot->atomTypeJ()->name(), indexI, indexJ, indexJ, indexI);
+			Messenger::print("--> Linking PairPotential between '%s' and '%s' (indices %i,%i and %i,%i in matrix).\n", pot->atomTypeI()->name(), pot->atomTypeJ()->name(), indexI, indexJ, indexJ, indexI);
 			potentialMatrix_.ref(indexI, indexJ) = pot;
 			potentialMatrix_.ref(indexJ, indexI) = pot;
 		}
@@ -121,12 +121,12 @@ double PotentialMap::energy(int typeI, int typeJ, double distanceSquared) const
 #ifdef CHECKS
 	if ((typeI < 0) || (typeI >= nTypes_))
 	{
-		msg.print("OUT_OF_RANGE - Type index typeI (%i) passed to PotentialMap::energy() is out of range (nTypes_ = %i).\n", typeI, nTypes_);
+		Messenger::print("OUT_OF_RANGE - Type index typeI (%i) passed to PotentialMap::energy() is out of range (nTypes_ = %i).\n", typeI, nTypes_);
 		return 0.0;
 	}
 	if ((typeJ < 0) || (typeJ >= nTypes_))
 	{
-		msg.print("OUT_OF_RANGE - Type index typeJ (%i) passed to PotentialMap::energy() is out of range (nTypes_ = %i).\n", typeJ, nTypes_);
+		Messenger::print("OUT_OF_RANGE - Type index typeJ (%i) passed to PotentialMap::energy() is out of range (nTypes_ = %i).\n", typeJ, nTypes_);
 		return 0.0;
 	}
 #endif
@@ -139,12 +139,12 @@ double PotentialMap::force(int typeI, int typeJ, double distanceSquared) const
 #ifdef CHECKS
 	if ((typeI < 0) || (typeI >= nTypes_))
 	{
-		msg.print("OUT_OF_RANGE - Type index typeI (%i) passed to PotentialMap::force() is out of range (nTypes_ = %i).\n", typeI, nTypes_);
+		Messenger::print("OUT_OF_RANGE - Type index typeI (%i) passed to PotentialMap::force() is out of range (nTypes_ = %i).\n", typeI, nTypes_);
 		return 0.0;
 	}
 	if ((typeJ < 0) || (typeJ >= nTypes_))
 	{
-		msg.print("OUT_OF_RANGE - Type index typeJ (%i) passed to PotentialMap::force() is out of range (nTypes_ = %i).\n", typeJ, nTypes_);
+		Messenger::print("OUT_OF_RANGE - Type index typeJ (%i) passed to PotentialMap::force() is out of range (nTypes_ = %i).\n", typeJ, nTypes_);
 		return 0.0;
 	}
 #endif

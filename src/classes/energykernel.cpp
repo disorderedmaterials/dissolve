@@ -140,7 +140,7 @@ double EnergyKernel::energyWithoutMim(const Grain* grainI, const Grain* grainJ)
 // Return PairPotential energy between atoms provided as pointers (minimum image calculation)
 double EnergyKernel::energyWithMim(const Atom* i, const Atom* j)
 {
-// 	msg.print("EnergyKernel::atoms(*,*) - energy %i-%i is %f at %f mim\n", min(i->index(),j->index()), max(i->index(),j->index()), potentialMap_.energy(i->globalTypeIndex(), j->globalTypeIndex(), box_->minimumDistanceSquared(j, i)), box_->minimumDistanceSquared(j, i));
+// 	Messenger::print("EnergyKernel::atoms(*,*) - energy %i-%i is %f at %f mim\n", min(i->index(),j->index()), max(i->index(),j->index()), potentialMap_.energy(i->globalTypeIndex(), j->globalTypeIndex(), box_->minimumDistanceSquared(j, i)), box_->minimumDistanceSquared(j, i));
 	return potentialMap_.energy(i->globalTypeIndex(), j->globalTypeIndex(), box_->minimumDistanceSquared(j, i));
 }
 
@@ -153,7 +153,7 @@ double EnergyKernel::energyWithMim(const int typeI, const Vec3<double>& rI, cons
 // Return PairPotential energy between atoms provided as references (minimum image calculation)
 double EnergyKernel::energyWithMim(const Atom& i, const Atom& j)
 {
-// 	msg.print("EnergyKernel::atoms(&,&) - energy %i-%i is %f at %f mim\n", min(i.index(),j.index()), max(i.index(), j.index()), potentialMap_.energy(i.globalTypeIndex(), j.globalTypeIndex(), box_->minimumDistanceSquared(j, i)), box_->minimumDistanceSquared(j, i));
+// 	Messenger::print("EnergyKernel::atoms(&,&) - energy %i-%i is %f at %f mim\n", min(i.index(),j.index()), max(i.index(), j.index()), potentialMap_.energy(i.globalTypeIndex(), j.globalTypeIndex(), box_->minimumDistanceSquared(j, i)), box_->minimumDistanceSquared(j, i));
 	return potentialMap_.energy(i.globalTypeIndex(), j.globalTypeIndex(), box_->minimumDistanceSquared(j, i));
 }
 
@@ -162,7 +162,7 @@ double EnergyKernel::energyWithMim(const Atom& i, const Atom& j)
  */
 double EnergyKernel::energyWithMim(const Atom& i, const Atom* j)
 {
-// 	msg.print("EnergyKernel - energy %i-%i is %f at %f\n", i->index(), j->index(), potentialMap_.energy(i, j, box_->minimumDistanceSquared(j, i)), box_->minimumDistanceSquared(j, i));
+// 	Messenger::print("EnergyKernel - energy %i-%i is %f at %f\n", i->index(), j->index(), potentialMap_.energy(i, j, box_->minimumDistanceSquared(j, i)), box_->minimumDistanceSquared(j, i));
 	return potentialMap_.energy(i.globalTypeIndex(), j->globalTypeIndex(), box_->minimumDistanceSquared(j, i.r()));
 }
 
@@ -242,12 +242,12 @@ double EnergyKernel::energy(const Atom* i, const Atom* j, bool applyMim, bool ex
 #ifdef CHECKS
 	if (i == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Atom pointer (i) passed to EnergyKernel::energy(Atom,Atom,bool,bool).\n");
+		Messenger::error("NULL_POINTER - NULL Atom pointer (i) passed to EnergyKernel::energy(Atom,Atom,bool,bool).\n");
 		return 0.0;
 	}
 	if (j == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Atom pointer (j) passed to EnergyKernel::energy(Atom,Atom,bool,bool).\n");
+		Messenger::error("NULL_POINTER - NULL Atom pointer (j) passed to EnergyKernel::energy(Atom,Atom,bool,bool).\n");
 		return 0.0;
 	}
 #endif
@@ -271,12 +271,12 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 #ifdef CHECKS
 	if (centralCell == NULL)
 	{
-		msg.error("NULL_POINTER - NULL central Cell pointer passed to EnergyKernel::energy(Cell,Cell,bool,bool).\n");
+		Messenger::error("NULL_POINTER - NULL central Cell pointer passed to EnergyKernel::energy(Cell,Cell,bool,bool).\n");
 		return 0.0;
 	}
 	if (otherCell == NULL)
 	{
-		msg.error("NULL_POINTER - NULL other Cell pointer passed to EnergyKernel::energy(Cell,Cell,bool,bool).\n");
+		Messenger::error("NULL_POINTER - NULL other Cell pointer passed to EnergyKernel::energy(Cell,Cell,bool,bool).\n");
 		return 0.0;
 	}
 #endif
@@ -461,7 +461,7 @@ double EnergyKernel::energy(const Atom* i, OrderedPointerList<Atom>& neighbours,
 #ifdef CHECKS
 	if (i == NULL)
 	{
-		msg.error("NULL_POINTER - NULL atom pointer passed to EnergyKernel::energy(Atom,OrderedPointerList,int,CommGroup).\n");
+		Messenger::error("NULL_POINTER - NULL atom pointer passed to EnergyKernel::energy(Atom,OrderedPointerList,int,CommGroup).\n");
 		return 0.0;
 	}
 #endif
@@ -609,7 +609,7 @@ double EnergyKernel::energy(const Grain* grain, OrderedPointerList<Atom>& neighb
 #ifdef CHECKS
 	if (grain == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Grain pointer passed to EnergyKernel::energy(Grain,RefList<Cell>,bool,bool,ParallelStyle).\n");
+		Messenger::error("NULL_POINTER - NULL Grain pointer passed to EnergyKernel::energy(Grain,RefList<Cell>,bool,bool,ParallelStyle).\n");
 		return 0.0;
 	}
 #endif
@@ -735,7 +735,7 @@ double EnergyKernel::energy(const Atom* i, DUQComm::CommGroup group)
 #ifdef CHECKS
 	if (i == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Atom pointer passed to EnergyKernel::energy(Atom,ParallelStyle).\n");
+		Messenger::error("NULL_POINTER - NULL Atom pointer passed to EnergyKernel::energy(Atom,ParallelStyle).\n");
 		return 0.0;
 	}
 #endif
@@ -753,7 +753,7 @@ double EnergyKernel::energy(const Grain* grain, bool excludeIgtJ, DUQComm::CommG
 #ifdef CHECKS
 	if (grain == NULL)
 	{
-		msg.error("NULL_POINTER - NULL Grain pointer passed to EnergyKernel::energy(Grain,ParallelStyle).\n");
+		Messenger::error("NULL_POINTER - NULL Grain pointer passed to EnergyKernel::energy(Grain,ParallelStyle).\n");
 		return 0.0;
 	}
 #endif

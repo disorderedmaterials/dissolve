@@ -347,12 +347,12 @@ template <class T, class D> class BroadcastRefList
 				index = itemSource.indexOf(ri->item);
 				if (!Comm.broadcast(&index, 1))
 				{
-					msg.error("Master failed to broadcast item index in BroadcastRefList.\n");
+					Messenger::error("Master failed to broadcast item index in BroadcastRefList.\n");
 					return;
 				}
 				if (!Comm.broadcast(&ri->data, 1))
 				{
-					msg.error("Master failed to broadcast item data in BroadcastRefList.\n");
+					Messenger::error("Master failed to broadcast item data in BroadcastRefList.\n");
 					return;
 				}
 			}
@@ -366,18 +366,18 @@ template <class T, class D> class BroadcastRefList
 				// Master will send the index of the item in the itemSource list to reference
 				if (!Comm.broadcast(&index, 1))
 				{
-					msg.error("Slave %i failed to broadcast item index in BroadcastRefList.\n", Comm.rank());
+					Messenger::error("Slave %i failed to broadcast item index in BroadcastRefList.\n", Comm.rank());
 					return;
 				}
 				if (!Comm.broadcast(&data, 1))
 				{
-					msg.error("Slave %i failed to broadcast item data in BroadcastRefList.\n", Comm.rank());
+					Messenger::error("Slave %i failed to broadcast item data in BroadcastRefList.\n", Comm.rank());
 					return;
 				}
 				item = itemSource.item(index);
 				if (item == NULL)
 				{
-					msg.error("BroadcastRefList couldn't find index %i in source list.\n", index);
+					Messenger::error("BroadcastRefList couldn't find index %i in source list.\n", index);
 					return;
 				}
 				items.add(item, data);

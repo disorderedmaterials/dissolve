@@ -30,7 +30,6 @@
 #include "classes/potentialmap.h"
 #include "classes/sample.h"
 #include "base/comms.h"
-#include "base/mutex.h"
 #include "templates/vector3.h"
 #include "templates/list.h"
 #include "templates/orderedlist.h"

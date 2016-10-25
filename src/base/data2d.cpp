@@ -118,12 +118,12 @@ void Data2D::setPoint(int index, double x, double y)
 #ifdef CHECKS
 	if ((index < 0) || (index >= x_.nItems()))
 	{
-		msg.print("OUT_OF_RANGE - Index %i is out of range for x_ array in Data2D::setPoint().\n", index);
+		Messenger::print("OUT_OF_RANGE - Index %i is out of range for x_ array in Data2D::setPoint().\n", index);
 		return;
 	}
 	if ((index < 0) || (index >= y_.nItems()))
 	{
-		msg.print("OUT_OF_RANGE - Index %i is out of range for y_ array in Data2D::setPoint().\n", index);
+		Messenger::print("OUT_OF_RANGE - Index %i is out of range for y_ array in Data2D::setPoint().\n", index);
 		return;
 	}
 #endif
@@ -144,7 +144,7 @@ void Data2D::setX(int index, double x)
 #ifdef CHECKS
 	if ((index < 0) || (index >= x_.nItems()))
 	{
-		msg.print("OUT_OF_RANGE - Index %i is out of range for x_ array in Data2D::setX().\n", index);
+		Messenger::print("OUT_OF_RANGE - Index %i is out of range for x_ array in Data2D::setX().\n", index);
 		return;
 	}
 #endif
@@ -158,7 +158,7 @@ void Data2D::addX(int index, double delta)
 #ifdef CHECKS
 	if ((index < 0) || (index >= x_.nItems()))
 	{
-		msg.print("OUT_OF_RANGE - Index %i is out of range for x_ array in Data2D::addX().\n", index);
+		Messenger::print("OUT_OF_RANGE - Index %i is out of range for x_ array in Data2D::addX().\n", index);
 		return;
 	}
 #endif
@@ -172,7 +172,7 @@ double Data2D::x(int index) const
 #ifdef CHECKS
 	if ((index < 0) || (index >= x_.nItems()))
 	{
-		msg.print("OUT_OF_RANGE - Index %i is out of range for x_ array in Data2D::x().\n", index);
+		Messenger::print("OUT_OF_RANGE - Index %i is out of range for x_ array in Data2D::x().\n", index);
 		return 0.0;
 	}
 #endif
@@ -192,7 +192,7 @@ void Data2D::setY(int index, double y)
 #ifdef CHECKS
 	if ((index < 0) || (index >= y_.nItems()))
 	{
-		msg.print("OUT_OF_RANGE - Index %i is out of range for y_ array in Data2D::setY().\n", index);
+		Messenger::print("OUT_OF_RANGE - Index %i is out of range for y_ array in Data2D::setY().\n", index);
 		return;
 	}
 #endif
@@ -206,7 +206,7 @@ void Data2D::addY(int index, double delta)
 #ifdef CHECKS
 	if ((index < 0) || (index >= y_.nItems()))
 	{
-		msg.print("OUT_OF_RANGE - Index %i is out of range for y_ array in Data2D::addY().\n", index);
+		Messenger::print("OUT_OF_RANGE - Index %i is out of range for y_ array in Data2D::addY().\n", index);
 		return;
 	}
 #endif
@@ -219,7 +219,7 @@ bool Data2D::addY(const Array<double>& source, double factor)
 {
 	if (y_.nItems() != source.nItems())
 	{
-		msg.print("BAD_USAGE - Can't add Y values from source array, since the number of items differs (%i vs %i).\n", y_.nItems(), source.nItems());
+		Messenger::print("BAD_USAGE - Can't add Y values from source array, since the number of items differs (%i vs %i).\n", y_.nItems(), source.nItems());
 		return false;
 	}
 
@@ -234,7 +234,7 @@ void Data2D::multiplyY(int index, double factor)
 #ifdef CHECKS
 	if ((index < 0) || (index >= y_.nItems()))
 	{
-		msg.print("OUT_OF_RANGE - Index %i is out of range for y_ array in Data2D::multiplyY().\n", index);
+		Messenger::print("OUT_OF_RANGE - Index %i is out of range for y_ array in Data2D::multiplyY().\n", index);
 		return;
 	}
 #endif
@@ -248,7 +248,7 @@ double Data2D::y(int index) const
 #ifdef CHECKS
 	if ((index < 0) || (index >= y_.nItems()))
 	{
-		msg.print("OUT_OF_RANGE - Index %i is out of range for y_ array in Data2D::y().\n", index);
+		Messenger::print("OUT_OF_RANGE - Index %i is out of range for y_ array in Data2D::y().\n", index);
 		return 0.0;
 	}
 #endif
@@ -308,7 +308,7 @@ Data2D Data2D::operator+(const Data2D& source) const
 	// Check array sizes
 	if (x_.nItems() != source.x_.nItems())
 	{
-		msg.error("Can't + these Data2D together, since they are of differing sizes (%i vs %i).\n", x_.nItems(), source.x_.nItems());
+		Messenger::error("Can't + these Data2D together, since they are of differing sizes (%i vs %i).\n", x_.nItems(), source.x_.nItems());
 		return newData;
 	}
 
@@ -318,7 +318,7 @@ Data2D Data2D::operator+(const Data2D& source) const
 		// Check x values
 		if (fabs(x_.value(n) - source.x_.value(n)) > OPTOLERANCE)
 		{
-			msg.error("Can't + these Data2D, since the x axes are different.\n");
+			Messenger::error("Can't + these Data2D, since the x axes are different.\n");
 			return newData;
 		}
 		newData.y_[n] += source.y_.value(n);
@@ -342,7 +342,7 @@ void Data2D::operator+=(const Data2D& source)
 	// Check array sizes
 	if (x_.nItems() != source.x_.nItems())
 	{
-		msg.error("Can't += these Data2D together, since they are of differing sizes (%i vs %i).\n", x_.nItems(), source.x_.nItems());
+		Messenger::error("Can't += these Data2D together, since they are of differing sizes (%i vs %i).\n", x_.nItems(), source.x_.nItems());
 		return;
 	}
 
@@ -352,7 +352,7 @@ void Data2D::operator+=(const Data2D& source)
 		// Check x values
 		if (fabs(x_.value(n) - source.x_.value(n)) > OPTOLERANCE)
 		{
-			msg.error("Can't += these Data2D, since the x axes are different.\n");
+			Messenger::error("Can't += these Data2D, since the x axes are different.\n");
 			return;
 		}
 		y_[n] += source.y_.value(n);
@@ -377,7 +377,7 @@ Data2D Data2D::operator-(const Data2D& source) const
 	// Check array sizes
 	if (x_.nItems() != source.x_.nItems())
 	{
-		msg.error("Can't - these Data2D together, since they are of differing sizes (%i vs %i).\n", x_.nItems(), source.x_.nItems());
+		Messenger::error("Can't - these Data2D together, since they are of differing sizes (%i vs %i).\n", x_.nItems(), source.x_.nItems());
 		return newData;
 	}
 
@@ -387,7 +387,7 @@ Data2D Data2D::operator-(const Data2D& source) const
 		// Check x values
 		if (fabs(x_.value(n) - source.x_.value(n)) > OPTOLERANCE)
 		{
-			msg.error("Can't - these Data2D, since the x axes are different.\n");
+			Messenger::error("Can't - these Data2D, since the x axes are different.\n");
 			return newData;
 		}
 		newData.y_[n] -= source.y_.value(n);
@@ -411,7 +411,7 @@ void Data2D::operator-=(const Data2D& source)
 	// Check array sizes
 	if (x_.nItems() != source.x_.nItems())
 	{
-		msg.error("Can't -= these Data2D together, since they are of differing sizes (%i vs %i).\n", x_.nItems(), source.x_.nItems());
+		Messenger::error("Can't -= these Data2D together, since they are of differing sizes (%i vs %i).\n", x_.nItems(), source.x_.nItems());
 		return;
 	}
 
@@ -421,7 +421,7 @@ void Data2D::operator-=(const Data2D& source)
 		// Check x values
 		if (fabs(x_.value(n) - source.x_.value(n)) > OPTOLERANCE)
 		{
-			msg.error("Can't -= these Data2D, since the x axes are different.\n");
+			Messenger::error("Can't -= these Data2D, since the x axes are different.\n");
 			return;
 		}
 		y_[n] -= source.y_.value(n);
@@ -479,14 +479,14 @@ bool Data2D::checkBeforeTransform()
 	// Enough data to do transform?
 	if (x_.nItems() < 5)
 	{
-		msg.error("Not enough X data points (%i) in Data2D. Can't do transform.\n", x_.nItems());
+		Messenger::error("Not enough X data points (%i) in Data2D. Can't do transform.\n", x_.nItems());
 		return false;
 	}
 	
 	// X and Y arrays match?
 	if (x_.nItems() != y_.nItems())
 	{
-		msg.error("X and Y array sizes do not match (%i vs %i) in Data2D. Can't do transform.\n", x_.nItems(), y_.nItems());
+		Messenger::error("X and Y array sizes do not match (%i vs %i) in Data2D. Can't do transform.\n", x_.nItems(), y_.nItems());
 		return false;
 	}
 
@@ -494,7 +494,7 @@ bool Data2D::checkBeforeTransform()
 	double deltaX = x_[1] - x_[0], tolerance = 0.001;
 	for (int n=2; n<x_.nItems(); ++n) if (fabs((x_[n] - x_[n-1])-deltaX) > tolerance)
 	{
-		msg.error("Data are unevenly spaced in Data2D. Can't do transform.\n");
+		Messenger::error("Data are unevenly spaced in Data2D. Can't do transform.\n");
 		return false;
 	}
 	
@@ -505,7 +505,7 @@ bool Data2D::checkBeforeTransform()
 double Data2D::window(Data2D::WindowFunction wf, double x)
 {
 #ifdef CHECKS
-	if ((x < 0.0) || (x > 1.0)) msg.warn("Position for window function is out of range (%f).\n", x);
+	if ((x < 0.0) || (x > 1.0)) Messenger::warn("Position for window function is out of range (%f).\n", x);
 #endif
 	switch (wf)
 	{
@@ -528,7 +528,7 @@ double Data2D::window(Data2D::WindowFunction wf, double x)
 			return sin(PI*x);
 			break;
 		default:
-			msg.error("Window function %i not implemented.\n", wf);
+			Messenger::error("Window function %i not implemented.\n", wf);
 	}
 	return 0.0;
 }
@@ -544,7 +544,7 @@ bool Data2D::fourierTransformReal(bool forwardTransform, Data2D::WindowFunction 
 	double lambda = x_.last() - x_.first();
 	double k = TWOPI / lambda;
 	double deltaX = x_[1] - x_[0];
-	msg.printVerbose("In Data2D::fourierTransformReal(), period of function is %f, real deltaX is %f, and wavenumber is %f\n", lambda, deltaX, k);
+	Messenger::printVerbose("In Data2D::fourierTransformReal(), period of function is %f, real deltaX is %f, and wavenumber is %f\n", lambda, deltaX, k);
 
 	// Create working arrays
 	Array<double> real(x_.nItems()), imaginary(x_.nItems());
@@ -600,7 +600,7 @@ bool Data2D::transformRDF(double atomicDensity, Data2D::WindowFunction wf)
 	double lambda = x_.last() - x_.first() + deltaR;
 	double k = TWOPI / lambda;
 	double windowPos;
-	msg.printVerbose("In Data2D::transformRDF(), period of function is %f, real deltaX is %f, and wavenumber is %f\n", lambda, deltaR, k);
+	Messenger::printVerbose("In Data2D::transformRDF(), period of function is %f, real deltaX is %f, and wavenumber is %f\n", lambda, deltaR, k);
 
 	if (Data2D::useFFT_)
 	{
@@ -751,7 +751,7 @@ bool Data2D::transformBroadenedRDF(double atomicDensity, double qStep, double qM
 	double deltaX = x_[1] - x_[0];
 	double windowPos, broaden, sigma, sigmaq, sigr, Q, factor, fq;
 	int n, m, nR = x_.nItems();
-	msg.printVerbose("In Data2D::transformBroadenedRDF(), period of function is %f, real deltaX is %f, and wavenumber is %f\n", lambda, deltaX, k);
+	Messenger::printVerbose("In Data2D::transformBroadenedRDF(), period of function is %f, real deltaX is %f, and wavenumber is %f\n", lambda, deltaX, k);
 
 	sigma = 0.5*fwhm/sqrt(2.0*log(2.0));
 	sigmaq = 0.5*fwhmq/sqrt(2.0*log(2.0));
@@ -805,7 +805,7 @@ bool Data2D::transformSQ(double atomicDensity, Data2D::WindowFunction wf)
 	double lambda = x_.last() - x_.first() + lambda;
 	double k = TWOPI / lambda;
 	double windowPos;
-	msg.printVerbose("In Data2D::transformSQ(), period of function is %f, real deltaX is %f, and wavenumber is %f\n", lambda, deltaQ, k);
+	Messenger::printVerbose("In Data2D::transformSQ(), period of function is %f, real deltaX is %f, and wavenumber is %f\n", lambda, deltaQ, k);
 
 	// Create working arrays
 	Array<double> real(x_.nItems());
@@ -914,7 +914,7 @@ bool Data2D::correlateSQ(double atomicDensity)
 	double lambda = x_.last() - x_.first();
 	double k = TWOPI / lambda;
 	double deltaQ = x_[1] - x_[0];
-	msg.printVerbose("In Data2D::correlateSQ(), period of function is %f, real deltaX is %f, and wavenumber is %f\n", lambda, deltaQ, k);
+	Messenger::printVerbose("In Data2D::correlateSQ(), period of function is %f, real deltaX is %f, and wavenumber is %f\n", lambda, deltaQ, k);
 
 	// Create working arrays
 	Array<double> real(x_.nItems());
@@ -1165,7 +1165,7 @@ double Data2D::interpolated(double xvalue)
 // 	// X and ddy arrays match?
 // 	if (x_.nItems() != splineB_.nItems())
 // 	{
-// 		msg.error("X and spline coefficient array sizes do not match (%i vs %i) in Data2D::interpolated().\n", x_.nItems(), splineB_.nItems());
+// 		Messenger::error("X and spline coefficient array sizes do not match (%i vs %i) in Data2D::interpolated().\n", x_.nItems(), splineB_.nItems());
 // 		return 0.0;
 // 	}
 
@@ -1374,14 +1374,14 @@ bool Data2D::convoluteProduct(Data2D& data)
 	// Check compatibility of datasets
 	if (data.nPoints() != nPoints())
 	{
-		msg.error("Refusing to convolute by product two datasets of different sizes.\n");
+		Messenger::error("Refusing to convolute by product two datasets of different sizes.\n");
 		return false;
 	}
 	for (int n=0; n<nPoints(); ++n)
 	{
 		if (fabs(data.x(n) - x_[n]) > 1.0e-5)
 		{
-			msg.error("Refusing to convolute by product two datasets with different x-values.\n");
+			Messenger::error("Refusing to convolute by product two datasets with different x-values.\n");
 			return false;
 		}
 	}
@@ -1451,7 +1451,7 @@ bool Data2D::load(const char* fileName)
 
 	if ((!parser.openInput(fileName)) || (!parser.isFileGoodForReading()))
 	{
-		msg.error("Couldn't open file '%s' for reading.\n", fileName);
+		Messenger::error("Couldn't open file '%s' for reading.\n", fileName);
 		return false;
 	}
 
@@ -1463,7 +1463,7 @@ bool Data2D::load(const char* fileName)
 		if (success != 0)
 		{
 			parser.closeFiles();
-			msg.error("Error reading from file '%s'.\n", fileName);
+			Messenger::error("Error reading from file '%s'.\n", fileName);
 			return false;
 		}
 
@@ -1472,8 +1472,8 @@ bool Data2D::load(const char* fileName)
 	
 	parser.closeFiles();
 	
-	if (nCols == 3) msg.print("Loaded %i points from file '%s' (including spline coefficients).\n", nPoints(), fileName);
-	else msg.print("Loaded %i points from file '%s'.\n", nPoints(), fileName);
+	if (nCols == 3) Messenger::print("Loaded %i points from file '%s' (including spline coefficients).\n", nPoints(), fileName);
+	else Messenger::print("Loaded %i points from file '%s'.\n", nPoints(), fileName);
 	
 	return true;
 }
@@ -1486,12 +1486,12 @@ bool Data2D::save(const char* fileName) const
 
 	// Open file and check that we're OK to proceed writing to it
 	LineParser parser;
-	msg.print("Writing datafile '%s'...\n", fileName);
+	Messenger::print("Writing datafile '%s'...\n", fileName);
 
 	parser.openOutput(fileName, true);
 	if (!parser.isFileGoodForWriting())
 	{
-		msg.error("Couldn't open file '%s' for writing.\n", fileName);
+		Messenger::error("Couldn't open file '%s' for writing.\n", fileName);
 		return false;
 	}
 	
@@ -1508,12 +1508,12 @@ bool Data2D::saveWithInterpolation(const char* fileName)
 
 	// Open file and check that we're OK to proceed writing to it
 	LineParser parser;
-	msg.print("Writing datafile '%s'...\n", fileName);
+	Messenger::print("Writing datafile '%s'...\n", fileName);
 
 	parser.openOutput(fileName, true);
 	if (!parser.isFileGoodForWriting())
 	{
-		msg.error("Couldn't open file '%s' for writing.\n", fileName);
+		Messenger::error("Couldn't open file '%s' for writing.\n", fileName);
 		return false;
 	}
 	

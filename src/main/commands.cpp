@@ -133,7 +133,7 @@ Command* DUQ::registerCommand(const char* name, const char* shortNames, CommandP
 	Command* func = command(name);
 	if (func != NULL)
 	{
-		msg.error("Tried to register a command '%s', but one with the same name already exists.\n", name);
+		Messenger::error("Tried to register a command '%s', but one with the same name already exists.\n", name);
 		return false;
 	}
 
@@ -143,8 +143,8 @@ Command* DUQ::registerCommand(const char* name, const char* shortNames, CommandP
 	func->setShortNames(shortNames);
 	func->setPointer(ptr);
 
-	if (strlen(shortNames) < 2) msg.print("Successfully registered '%s' command\n", name);
-	else msg.print("Successfully registered '%s' command (also known as %s)\n", name, shortNames);
+	if (strlen(shortNames) < 2) Messenger::print("Successfully registered '%s' command\n", name);
+	else Messenger::print("Successfully registered '%s' command (also known as %s)\n", name, shortNames);
 
 	return func;
 }
@@ -155,7 +155,7 @@ Argument* DUQ::addCommandArgument(const char* commandName, const char* argumentN
 	Command* func = command(commandName);
 	if (func == NULL)
 	{
-		msg.error("Tried to add an argument to the unknown Command '%s'.\n", commandName);
+		Messenger::error("Tried to add an argument to the unknown Command '%s'.\n", commandName);
 		return false;
 	}
 
@@ -168,7 +168,7 @@ Argument* DUQ::addCommandParameter(const char* commandName, const char* paramete
 	Command* func = command(commandName);
 	if (func == NULL)
 	{
-		msg.error("Tried to add an argument to the unknown Command '%s'.\n", commandName);
+		Messenger::error("Tried to add an argument to the unknown Command '%s'.\n", commandName);
 		return false;
 	}
 
@@ -204,14 +204,14 @@ Argument* DUQ::commandArgument(const char* commandName, const char* argumentName
 	Command* cmd = command(commandName);
 	if (cmd == NULL)
 	{
-		msg.error("Couldn't find named Command '%s' in DUQ::commandArgument().\n", commandName);
+		Messenger::error("Couldn't find named Command '%s' in DUQ::commandArgument().\n", commandName);
 		return NULL;
 	}
 
 	Argument* arg = cmd->argument(argumentName);
 	if (arg == NULL)
 	{
-		msg.error("Couldn't find named argument '%s' in Command '%s' in DUQ::commandArgument().\n", argumentName, commandName);
+		Messenger::error("Couldn't find named argument '%s' in Command '%s' in DUQ::commandArgument().\n", argumentName, commandName);
 		return NULL;
 	}
 	
@@ -227,7 +227,7 @@ const char* DUQ::commandArgumentAsConstChar(const char* commandName, const char*
 	Argument* arg = commandArgument(commandName, argumentName);
 	if (arg == NULL)
 	{
-		msg.error("Couldn't find named Argument '%s' in Command '%s' in DUQ::argumentAsConstChar().\n", argumentName, commandName);
+		Messenger::error("Couldn't find named Argument '%s' in Command '%s' in DUQ::argumentAsConstChar().\n", argumentName, commandName);
 		result = false;
 		return dummy;
 	}
@@ -241,7 +241,7 @@ int DUQ::commandArgumentAsInteger(const char* commandName, const char* argumentN
 	Argument* arg = commandArgument(commandName, argumentName);
 	if (arg == NULL)
 	{
-		msg.error("Couldn't find named Argument '%s' in Command '%s' in DUQ::argumentAsInteger().\n", argumentName, commandName);
+		Messenger::error("Couldn't find named Argument '%s' in Command '%s' in DUQ::argumentAsInteger().\n", argumentName, commandName);
 		result = false;
 		return 0;
 	}
@@ -255,7 +255,7 @@ double DUQ::commandArgumentAsDouble(const char* commandName, const char* argumen
 	Argument* arg = commandArgument(commandName, argumentName);
 	if (arg == NULL)
 	{
-		msg.error("Couldn't find named Argument '%s' in Command '%s' in DUQ::argumentAsDouble().\n", argumentName, commandName);
+		Messenger::error("Couldn't find named Argument '%s' in Command '%s' in DUQ::argumentAsDouble().\n", argumentName, commandName);
 		result = false;
 		return 0.0;
 	}
@@ -269,14 +269,14 @@ Argument* DUQ::commandParameter(const char* commandName, const char* parameterNa
 	Command* cmd = command(commandName);
 	if (cmd == NULL)
 	{
-		msg.error("Couldn't find named Command '%s' in DUQ::commandParameter().\n", commandName);
+		Messenger::error("Couldn't find named Command '%s' in DUQ::commandParameter().\n", commandName);
 		return NULL;
 	}
 	
 	Argument* arg = cmd->parameter(parameterName);
 	if (arg == NULL)
 	{
-		msg.error("Couldn't find named parameter '%s' in Command '%s' in DUQ::commandParameter().\n", parameterName, commandName);
+		Messenger::error("Couldn't find named parameter '%s' in Command '%s' in DUQ::commandParameter().\n", parameterName, commandName);
 		return NULL;
 	}
 	return arg;
@@ -291,7 +291,7 @@ const char* DUQ::commandParameterAsConstChar(const char* commandName, const char
 	Argument* arg = commandParameter(commandName, parameterName);
 	if (arg == NULL)
 	{
-		msg.error("Couldn't find named parameter '%s' in Command '%s' in DUQ::argumentAsConstChar().\n", parameterName, commandName);
+		Messenger::error("Couldn't find named parameter '%s' in Command '%s' in DUQ::argumentAsConstChar().\n", parameterName, commandName);
 		result = false;
 		return dummy;
 	}
@@ -305,7 +305,7 @@ int DUQ::commandParameterAsInteger(const char* commandName, const char* paramete
 	Argument* arg = commandParameter(commandName, parameterName);
 	if (arg == NULL)
 	{
-		msg.error("Couldn't find named parameter '%s' in Command '%s' in DUQ::argumentAsInteger().\n", parameterName, commandName);
+		Messenger::error("Couldn't find named parameter '%s' in Command '%s' in DUQ::argumentAsInteger().\n", parameterName, commandName);
 		result = false;
 		return 0;
 	}
@@ -319,7 +319,7 @@ double DUQ::commandParameterAsDouble(const char* commandName, const char* parame
 	Argument* arg = commandParameter(commandName, parameterName);
 	if (arg == NULL)
 	{
-		msg.error("Couldn't find named parameter '%s' in Command '%s' in DUQ::argumentAsDouble().\n", parameterName, commandName);
+		Messenger::error("Couldn't find named parameter '%s' in Command '%s' in DUQ::argumentAsDouble().\n", parameterName, commandName);
 		result = false;
 		return 0.0;
 	}
