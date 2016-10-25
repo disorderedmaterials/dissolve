@@ -207,7 +207,7 @@ bool PeriodicTable::loadIsotopes(const char* fileName)
 		if (isotope != NULL) Messenger::printVerbose("Found natural isotope for element %i (%s) - bc = %f\n", n, elements_[n].name(), isotope->boundCoherent());
 		else
 		{
-			Messenger::print("Creating natural isotope for element %i (%s) with bc = 0.0.\n", n, elements_[n].name());
+			Messenger::printVerbose("Creating natural isotope for element %i (%s) with bc = 0.0.\n", n, elements_[n].name());
 			isotope = elements_->addIsotope();
 		}
 	}
@@ -278,7 +278,7 @@ bool PeriodicTable::loadParameters(const char* fileName)
 		// Search defined isotopes for natural definition (A = 0)
 		if (elements_[Z].nParameters() != 0) continue;
 
-		Messenger::print("Creating generic atomtype for element %i (%s).\n", Z, elements_[Z].name());
+		Messenger::printVerbose("Creating generic atomtype for element %i (%s).\n", Z, elements_[Z].name());
 		params = elements_[Z].addParameters();
 		params->setName(elements_[Z].symbol());
 		params->setDescription(elements_[Z].name());
