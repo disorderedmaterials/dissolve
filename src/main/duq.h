@@ -44,30 +44,7 @@ class Grain;
 class Molecule;
 class ChangeStore;
 
-/*
- * \short dUQ
- * \details The main dUQ class contains several sets of data, from which the system to refine is constructed.
- * 
- * <b>AtomTypes</b>
- * TODO
- * 
- * <b>Species</b>
- * A list of Species (which may be of any atomic/molecular/ionic type) is first defined, including basic coordinates, bond and
- * angle information, sets of Grain definitions (which split the constituent Atoms into collective fragments), and lists
- * of isotopologues (i.e. isotopic substitutions) for each.
- * 
- * <b>System Composition</b>
- * The System defines the actual composition of the experimental system, as well as its size when instantiated as a Model.
- * It is defined from a list of involved Species, and a relative population of each. An integer multiplier is used to transform
- * these values into the actual (whole) numbers of Molecules that will be used as the Model system.
- * 
- * <b>Samples</b>
- * 
- *
- * 
- * TODO The System usually contains external experimental data which are tied to a specific set of isotopologues of the component
- * Species.
- */
+// dUQ Main Class
 class DUQ
 {
 	public:
@@ -177,6 +154,8 @@ class DUQ
 	double pairPotentialDelta_;
 	// Simulation PairPotentials
 	List<PairPotential> pairPotentials_;
+	// Map for PairPotentials
+	PotentialMap potentialMap_;
 
 	public:
 	// Set maximum distance for tabulated PairPotentials
@@ -213,16 +192,17 @@ class DUQ
 	void regeneratePairPotential(PairPotential* pp);
 	// Save all PairPotentials
 	bool savePairPotentials(const char* baseName) const;
+	// Return map for PairPotentials
+	const PotentialMap& potentialMap();
 
 
 	/*
 	 * Setup
 	 */
 	private:
-	// Atomic configurations
+	// List of all atomic configurations
 	List<Configuration> configurations_;
-	// Map for PairPotentials
-	PotentialMap potentialMap_;
+
 	// Number of test points to use when calculating Box normalisation arrays
 	int boxNormalisationPoints_;
 	// Bin width to use when calculating RMSE between Sample F(Q) and reference data
@@ -246,24 +226,11 @@ class DUQ
 	// Print full system setup
 	bool printSetup();
 
+
 	/*
 	 * Simulation
 	 */
-	private:
-	// System energy data
-	Data2D energyData_;
-	// Energy change since last point added to energyData_
-	double energyChange_;
-	// Whether energy has changed since the last point was added
-	bool energyChanged_;
 
-	private:
-	// Register a change in the total energy of the system
-	void registerEnergyChange(double deltaE);
-	// Accumulate current energy change into energyData_
-	void accumulateEnergyChange();
-	// Set absolute energy of system, after total energy calculation
-	void setAbsoluteEnergy(double energy);
 
 	public:
 	// Run Simulation
@@ -371,6 +338,7 @@ class DUQ
 	/*
 	 * Configuration File I/O
 	 */
+	public:
 	// Save Configuration as XYZ
 	bool saveConfigurationXYZ(Configuration& cfg, const char* fileName);
 	// Save Configuration as DL_POLY CONFIG

@@ -21,58 +21,18 @@
 
 #include "main/duq.h"
 #include "base/comms.h"
-#include "base/sysfunc.h"
-#include "version.h"
-#include <string.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-#include <csignal>
-
-// Register a change in the total energy of the system
-void DUQ::registerEnergyChange(double deltaE)
-{
-	energyChange_ += deltaE;
-	energyChanged_ = true;
-}
-
-// Accumulate current energy change into energyData_
-void DUQ::accumulateEnergyChange()
-{
-	// If energy hasn't changed, don't do anything
-	if (!energyChanged_) return;
-
-	// Get index of new point to add
-	double x = energyData_.nPoints()+1.0;
-
-	// Determine y value of new point...
-	double y = energyData_.nPoints() == 0 ? energyChange_ : energyData_.y(energyData_.nPoints()-1) + energyChange_;
-
-	// Add point and signal change
-	energyData_.addPoint(x, y);
-	energyChange_ = 0.0;
-	energyChanged_ = false;
-}
-
-// Set absolute energy of system, after total energy calculation
-void DUQ::setAbsoluteEnergy(double energy)
-{
-	// Shift existing energy data so that the last point equals the supplied energy
-	if (energyData_.nPoints() == 0) return;
-	
-	double y = energyData_.arrayY().last();
-	if (energyChanged_)
-	{
-		y += energyChange_;
-		energyChange_ = 0.0;
-	}
-	
-	double delta = energy - y;
-	energyData_.arrayY() += delta;
-}
 
 // Run Simulation
 bool DUQ::go()
 {
+	/*
+	 * This is the main program loop. We perform the following steps:
+	 *
+	 *  1)	For all configurations, run all Evolution modules
+	 *  2)	For all configurations, run all Analysis modules
+	 *  3)	RDF calculation?
+	 */
+
 	// TEST - Calculate energy of current system, partial data, write, and quit
 	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
 	{

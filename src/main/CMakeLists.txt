@@ -14,7 +14,6 @@ control.h
 keywords.h
 notepsr.h
 
-methods_atomshake.cpp
 methods_energy.cpp
 methods_forces.cpp
 methods_grainshake.cpp

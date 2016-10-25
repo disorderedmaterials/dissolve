@@ -80,15 +80,17 @@ template <class T, class D> class RefList
 	// Number of items in list
 	int nItems_;
 	// Static array of items
-	RefListItem<T,D>* *items_;
+	RefListItem<T,D>** items_;
 	// Array regeneration flag
 	bool regenerate_;
 
 	public:
-	// Returns the head of the atom list
+	// Returns the head of the item list
 	RefListItem<T,D>* first() const;
 	// Returns the last item in the list
 	RefListItem<T,D>* last() const;
+	// Returns the T referenced by the head of the item list
+	T* firstItem() const;
 	// Returns the number of atoms in the list
 	int nItems() const;
 	// Add reference to the list
@@ -106,7 +108,7 @@ template <class T, class D> class RefList
 	// Add reference to list, unless already there
 	RefListItem<T,D>* addUnique(T* item);
 	// Add reference to list, unless already there
-	RefListItem<T,D>* addUnique(T* , D extradata);
+	RefListItem<T,D>* addUnique(T* item, D extradata);
 	// Cut item from list (orphan it)
 	void cut(RefListItem<T,D>* item);
 	// Add an orphaned item into this list
@@ -144,7 +146,7 @@ template <class T, class D> class RefList
 	// Swap the two items specified
 	void swap(T* item1, T* item2);
 	// Return array of items
-	RefListItem<T,D>* *array();
+	RefListItem<T,D>** array();
 };
 
 /*
@@ -207,7 +209,7 @@ template <class T, class D> void RefList<T,D>::operator=(RefList<T,D> &source)
 }
 
 /*
- * \brief Returns the head of the atom list
+ * \brief Returns the head of the item list
  */
 template <class T, class D> RefListItem<T,D>* RefList<T,D>::first() const
 {
@@ -220,6 +222,15 @@ template <class T, class D> RefListItem<T,D>* RefList<T,D>::first() const
 template <class T, class D> RefListItem<T,D>* RefList<T,D>::last() const
 {
 	return listTail_;
+}
+
+/*
+ * \brief Returns the T associated to the head of the item list
+ */
+template <class T, class D> T* RefList<T,D>::firstItem() const
+{
+	if (listHead_) return listHead_->item;
+	else return NULL;
 }
 
 /*
@@ -623,7 +634,7 @@ template <class T, class D> void RefList<T,D>::swap(T* item1, T* item2)
 /*
  * \brief Create (or just return) the item array
  */
-template <class T, class D> RefListItem<T,D>* *RefList<T,D>::array()
+template <class T, class D> RefListItem<T,D>** RefList<T,D>::array()
 {
 	if (regenerate_ == 0) return items_;
 	// Delete old atom list (if there is one)

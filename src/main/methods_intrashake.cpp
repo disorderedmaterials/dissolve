@@ -202,8 +202,8 @@ bool DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 	}
 
 	// Update total energy
-	registerEnergyChange(totalDelta);
-	accumulateEnergyChange();
+	cfg.registerEnergyChange(totalDelta);
+	cfg.accumulateEnergyChange();
 
 	// Increment configuration changeCount_
 	if (nAccepted > 0) cfg.incrementCoordinateIndex();
@@ -559,8 +559,8 @@ bool DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 	}
 
 	// Update total energy
-	registerEnergyChange(totalDelta);
-	accumulateEnergyChange();
+	cfg.registerEnergyChange(totalDelta);
+	cfg.accumulateEnergyChange();
 
 	// Increment configuration changeCount_
 	if (nAccepted > 0) cfg.incrementCoordinateIndex();

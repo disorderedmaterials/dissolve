@@ -114,6 +114,7 @@ AC_CONFIG_FILES(src/base/Makefile)
 AC_CONFIG_FILES(src/classes/Makefile)
 AC_CONFIG_FILES(src/main/Makefile)
 AC_CONFIG_FILES(src/math/Makefile)
+AC_CONFIG_FILES(src/modules/Makefile)
 AC_CONFIG_FILES(src/templates/Makefile)
 AC_OUTPUT
 

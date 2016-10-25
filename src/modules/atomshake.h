@@ -1,0 +1,79 @@
+/*
+	*** AtomShake Module
+	*** src/modules/atomshake.h
+	Copyright T. Youngs 2012-2016
+
+	This file is part of dUQ.
+
+	dUQ is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	dUQ is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#ifndef DUQ_ATOMSHAKE_H
+#define DUQ_ATOMSHAKE_H
+
+#include "modules/module.h"
+
+// Forward Declarations
+/* none */
+
+/*
+ * AtomShake Module
+ * ----------------
+ *
+ * Performs a traditional atom-by-atom Monte Carlo cycle over all atoms in the system
+ */
+class AtomShake : public Module
+{
+	public:
+	// Constructor
+	AtomShake();
+	// Destructor
+	~AtomShake();
+
+
+	/*
+	 * Internal Accounting
+	 */
+	private:
+	// List of all existing modules
+	static List<Module> modules_;
+
+	public:
+	// Return list of all existing modules
+	const List<Module>& modules();
+
+
+	/*
+	 * Definition
+	 */
+	public:
+	// Return name of module
+	const char* name();
+	// Return brief description of module
+	const char* brief();
+	// Return type of module
+	ModuleType type();
+	// Number of Configurations that this module requires to run
+	int nConfigurationsRequired();
+
+	/*
+	 * Method
+	 */
+	protected:
+	// Execute method on the specified config
+	bool execute(DUQ& duq, Configuration& config);
+};
+
+#endif
+

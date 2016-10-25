@@ -19,6 +19,7 @@ configuration_box.cpp
 configuration_composition.cpp
 configuration_contents.cpp
 configuration_data.cpp
+configuration_energy.cpp
 configuration_partials.cpp
 configuration_upkeep.cpp
 energykernel.cpp

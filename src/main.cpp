@@ -108,11 +108,11 @@ int main(int argc, char **argv)
 
 	// Print GPL license information
 #ifdef PARALLEL
-	msg.print("dUQ PARALLEL version %s, Copyright (C) 2012-2014 T. Youngs.\n", DUQREVISION);
+	msg.print("dUQ PARALLEL version %s, Copyright (C) 2012-2014 T. Youngs.\n", DUQVERSION);
 #else
-	msg.print("dUQ SERIAL version %s, Copyright (C) 2012-2014  T. Youngs.\n", DUQREVISION);
+	msg.print("dUQ SERIAL version %s, Copyright (C) 2012-2014  T. Youngs.\n", DUQVERSION);
 #endif
-	msg.print("Built from %s@%s.\n", DUQURL, DUQREVISION);
+	msg.print("Source repository: %s.\n", DUQREPO);
 	msg.print("dUQ comes with ABSOLUTELY NO WARRANTY.\n");
 	msg.print("This is free software, and you are welcome to redistribute it under certain conditions.\n");
 	msg.print("For more details read the GPL at <http://www.gnu.org/copyleft/gpl.html>.\n\n");

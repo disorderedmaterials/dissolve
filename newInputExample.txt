@@ -1,0 +1,96 @@
+# File: 'test/water.not'
+# AtomType Definitions
+AtomTypes
+  AtomType  'OW'    O  'OW'
+  AtomType  'HW'    H  'HW'
+EndAtomTypes
+
+# Species Definitions
+Species 'Water'
+  # Atoms
+  Atom    1    O     0.015   -0.009   -0.373   -0.848 'OW'
+  Atom    2    H     0.757    0.013    0.217    0.424 'HW'
+  Atom    3    H    -0.771   -0.003    0.157    0.424 'HW'
+
+  # Bonds
+  Bond    1    2     0.995 3000.000
+  Bond    1    3     0.995 3000.000
+
+  # Angles
+  Angle    2    1    3   109.500  400.000
+
+  # Grain Definitions
+  Grain  'OH2'  1  2  3
+
+  # Isotopologues
+  Isotopologue  'Natural'  OW=0  HW=0
+  Isotopologue  'Deuteriated'  OW=0  HW=2
+EndSpecies
+
+# Reference Data
+Sample 'NIMROD-Protiated'
+  # Define the isotopologues of any species relevant to this dataset
+  Isotopologue  'Water'  'Natural'  1.000000  1.000000
+  # Type of data (e.g. neutron-weighted S(Q), neutron-weighted g(r), x-ray etc.
+  Type  NeutronFQ
+  # Provide reference data if available / required
+  #ReferenceData 'test/water/H2O.mint01'
+  # Minimum and maximum fit values along abscissa
+  FitMin  1.5
+  FitMax  30.0
+EndSample
+
+Sample 'NIMROD-Deuteriated'
+  Isotopologue  'Water'  'Deuteriated'  1.000000  1.000000
+  ReferenceData 'test/water/D2O.mint01'
+  Type  NeutronFQ
+  FitMin  1.5
+  FitMax  30.0
+EndSample
+
+# Define Configuration(s)
+Configuration  'Bulk'
+  RDFRange  15.0
+  Temperature  298.000000
+
+  # Define density of system, relative cell lengths / angles, and multiplier (if necessary)
+  Density  9.99999642E-02 atoms/A3
+  CellLengths  1.000000  1.000000  1.000000
+  CellAngles  90.000000  90.000000  90.000000
+  Multiplier  1000
+  BoxNormalisationFile 'test/water/water1000.norm'
+
+  # Define species in the system, and their relative populations
+  Species 'Water'  1.0
+
+  # Define initial coordinates file XXX OR ALLOW RANDOM GENERATION XXX
+  File '/home/tris/work/water/epsr/waterbox.xyz'
+
+  # Specify which reference data are associated with this configuration
+  # XXX Could also options of whether to fit or just calculate, weightings etc.
+  Sample 'NIMROD-Protiated'
+  Sample 'NIMROD-Deuteriated'
+  # Sample 'I Dont Exist'
+
+  # Enable modules and set associated variables
+  Module AtomShake
+    # Disabled
+    Set nShakesPerAtom 3
+  EndModule
+EndConfiguration
+
+# Pair Potentials
+PairPotentials
+  Range  15.000000
+  Delta  0.050000
+  TruncationWidth  2.000000
+  Full  'OW'  'OW'  3.166000  0.650000  -0.820000  -0.820000
+  Full  'OW'  'HW'  2.783000  0.286182  -0.820000  0.410000
+  Full  'HW'  'HW'  2.400000  0.126000  0.410000  0.410000
+EndPairPotentials
+
+# Simulation Setup / Definition
+Simulation
+  Seed  943723867
+EndSimulation
+

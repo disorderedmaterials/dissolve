@@ -70,13 +70,13 @@ ${SRCS}/main.cpp
 link_directories (${LIBRARY_OUTPUT_PATH})
 IF(WIN32 OR APPLE)
 target_link_libraries(${target_name} 
-base classes gui main math templates
+base classes gui main math modules templates
 ${QT_QTOPENGL_LIBRARY} ${OPENGL_LIBRARIES} ${QT_QTGUI_LIBRARY} ${QT_QTCORE_LIBRARY}
 ${READLINE_LIBRARY}
 )
 ELSE(WIN32 OR APPLE)
 target_link_libraries(${target_name} 
-base classes gui main math templates
+base classes gui main math modules templates
 ${QT_QTOPENGL_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTCORE_LIBRARY}
 ${READLINE_LIBRARY}
 )

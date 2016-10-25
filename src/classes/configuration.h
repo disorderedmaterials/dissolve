@@ -28,6 +28,7 @@
 #include "classes/kvector.h"
 #include "classes/braggpeak.h"
 #include "classes/sample.h"
+#include "base/variablelist.h"
 #include "templates/vector3.h"
 #include "templates/orderedlist.h"
 #include "templates/array.h"
@@ -42,7 +43,7 @@ class Species;
 /*
  * Configuration
  */
-class Configuration : public ListItem<Configuration>
+class Configuration : public ListItem<Configuration>, public VariableList
 {
 	public:
 	// Constructor
@@ -413,6 +414,26 @@ class Configuration : public ListItem<Configuration>
 	bool setupReferenceSamples();
 	// Return current RMSE associated with reference/calculated data
 	double rmse();
+
+
+	/*
+	 * Total Energy
+	 */
+	private:
+	// Configuration energy data
+	Data2D energyData_;
+	// Energy change since last point added to energyData_
+	double energyChange_;
+	// Whether energy has changed since the last point was added
+	bool energyChanged_;
+
+	public:
+	// Register a change in the total energy of the configuration
+	void registerEnergyChange(double deltaE);
+	// Accumulate current energy change into energyData_
+	void accumulateEnergyChange();
+	// Set absolute energy of system, after total energy calculation
+	void setAbsoluteEnergy(double energy);
 
 
 	/*

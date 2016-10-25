@@ -168,3 +168,9 @@ bool DUQ::savePairPotentials(const char* baseName) const
 	
 	return result;
 }
+
+// Return map for PairPotentials
+const PotentialMap& DUQ::potentialMap()
+{
+	return potentialMap_;
+}

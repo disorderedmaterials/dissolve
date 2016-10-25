@@ -184,8 +184,8 @@ bool DUQ::grainShake(Configuration& cfg, double cutoffDistance, int nShakesPerGr
 	msg.print("GrainShake: Updated translation step is %f Angstroms, rotation step is %f degrees.\n", translationStepSize, rotationStepSize);
 
 	// Update total energy
-	registerEnergyChange(totalDelta);
-	accumulateEnergyChange();
+	cfg.registerEnergyChange(totalDelta);
+	cfg.accumulateEnergyChange();
 
 	// Increment configuration changeCount_
 	if (nAccepted > 0) cfg.incrementCoordinateIndex();

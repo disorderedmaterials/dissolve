@@ -1,4 +1,4 @@
-SUBDIRS = base classes main math templates
+SUBDIRS = base classes main math modules templates
 
 bin_PROGRAMS = duq
 

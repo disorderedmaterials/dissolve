@@ -10,6 +10,8 @@ parameters.cpp
 ptable.cpp
 sysfunc.cpp
 timer.cpp
+variable.cpp
+variablelist.cpp
 atomtype.h
 constants.h
 data2d.h
@@ -22,6 +24,8 @@ parameters.h
 ptable.h
 sysfunc.h
 timer.h
+variable.h
+variablelist.h
 )
 
 include_directories(
