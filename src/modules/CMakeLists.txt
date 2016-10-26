@@ -8,7 +8,6 @@ forces.h
 grainshake.h
 intrashake.h
 md.h
-perturb.h
 twist.h
 
 atomshake.cpp
@@ -17,7 +16,6 @@ forces.cpp
 grainshake.cpp
 intrashake.cpp
 md.cpp
-perturb.cpp
 twist.cpp
 }
 

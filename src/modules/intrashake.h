@@ -31,7 +31,7 @@
  * AtomShake Module
  * ----------------
  *
- * Performs a traditional atom-by-atom Monte Carlo cycle over all atoms in a configuration
+ * Performs a traditional atom-by-atom Monte Carlo cycle over all atoms in the system
  */
 class AtomShake : public Module
 {

@@ -1,6 +1,6 @@
 /*
-	*** AtomShake Module
-	*** src/modules/atomshake.h
+	*** GrainShake Module
+	*** src/modules/grainshake.h
 	Copyright T. Youngs 2012-2016
 
 	This file is part of dUQ.
@@ -19,8 +19,8 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_ATOMSHAKE_H
-#define DUQ_ATOMSHAKE_H
+#ifndef DUQ_GRAINSHAKE_H
+#define DUQ_GRAINSHAKE_H
 
 #include "modules/module.h"
 
@@ -28,18 +28,18 @@
 /* none */
 
 /*
- * AtomShake Module
+ * GrainShake Module
  * ----------------
  *
- * Performs a traditional atom-by-atom Monte Carlo cycle over all atoms in a configuration
+ * Performs a grain-by-grain Monte Carlo cycle over all grains in a configuration
  */
-class AtomShake : public Module
+class GrainShake : public Module
 {
 	public:
 	// Constructor
-	AtomShake();
+	GrainShake();
 	// Destructor
-	~AtomShake();
+	~GrainShake();
 	// Create instance of this module
 	Module* createInstance();
 

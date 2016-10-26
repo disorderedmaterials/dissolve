@@ -20,6 +20,7 @@
 */
 
 #include "main/duq.h"
+#include "modules/grainshake.h"
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/changestore.h"
@@ -29,32 +30,98 @@
 #include "math/matrix4.h"
 
 /*
- * \brief Perform a Grain shake
- * \details
- * 
- * This is a parallel routine, operating in process groups.
+ * Constructor / Destructor
  */
-bool DUQ::grainShake(Configuration& cfg, double cutoffDistance, int nShakesPerGrain, double targetAcceptanceRate, double translationStepSize, double rotationStepSize)
+
+// Constructor
+GrainShake::GrainShake() : Module()
 {
-	// Control Parameters
+	// Setup variables / control parameters
+	setVariable("cutoffDistance", -1.0);
+	setVariable("nShakesPerGrain", 1);
+	setVariable("targetAcceptanceRate", 0.33);
+	setVariable("translationStepSize", 0.05);
+	setVariable("rotationStepSize", 2.0);
+}
+
+// Destructor
+GrainShake::~GrainShake()
+{
+}
+
+// Create instance of this module
+Module* GrainShake::createInstance()
+{
+	return new GrainShake;
+}
+
+/*
+ * Definition
+ */
+
+// Return name of module
+const char* GrainShake::name()
+{
+	return "GrainShake";
+}
+
+// Return brief description of module
+const char* GrainShake::brief()
+{
+	return "Perform Monte Carlo on all grains";
+}
+
+// Return type of module
+Module::ModuleType GrainShake::type()
+{
+	return Module::EvolutionModule;
+}
+
+// Number of Configurations that this module requires to run
+int GrainShake::nConfigurationsRequired()
+{
+	return 1;
+}
+
+/*
+ * Method
+ */
+
+// Execute Method
+
+bool GrainShake::execute(DUQ& duq)
+{
+	/*
+	* Perform a Grain shake
+	* 
+	* This is a parallel routine, operating in process groups.
+	*/
+
+	// Get target Configuration
+	Configuration* cfg = targetConfigurations_.firstItem();
+
+	// Retrieve control parameters from Configuration
+	const double cutoffDistance = variableAsDouble("cutoffDistance") < 0.0 ? duq.pairPotentialRange() : variableAsDouble("cutoffDistance");
+	const int nShakesPerGrain = variableAsInt("nShakesPerGrain");
+	const double targetAcceptanceRate = variableAsDouble("targetAcceptanceRate");
+	double rotationStepSize = variableAsDouble("rotationStepSize");
+	double translationStepSize = variableAsDouble("translationStepSize");
 	const double termScale = 1.0;
-	if (cutoffDistance < 0.0) cutoffDistance = pairPotentialRange_;
-	const double rRT = 1.0/(.008314472*cfg.temperature());
-	double cutoffSq = cutoffDistance*cutoffDistance;
+	const double rRT = 1.0/(.008314472*cfg->temperature());
+	const double cutoffSq = cutoffDistance*cutoffDistance;
 
 	// Print argument/parameter summary
 	Messenger::print("GrainShake: Cutoff distance is %f\n", cutoffDistance);
 	Messenger::print("GrainShake: Performing %i shake(s) per Grain\n", nShakesPerGrain);
 	Messenger::print("GrainShake: Translation step is %f Angstroms, rotation step is %f degrees, target acceptance rate is %f.\n", translationStepSize, rotationStepSize, targetAcceptanceRate);
-	cutoffSq *= cutoffSq;
 
 	// Initialise the Cell distributor
 	const bool willBeModified = true, allowRepeats = false;
-	cfg.initialiseCellDistribution();
+	cfg->initialiseCellDistribution();
 
 	// Create a local ChangeStore and EnergyKernel
 	ChangeStore changeStore;
-	EnergyKernel kernel(cfg, potentialMap_);
+	EnergyKernel kernel(cfg, duq.potentialMap());
 
 	// Initialise the random number buffer
 	Comm.initialiseRandomBuffer(DUQComm::Group);
@@ -72,17 +139,17 @@ bool DUQ::grainShake(Configuration& cfg, double cutoffDistance, int nShakesPerGr
 
 	Timer timer;
 	Comm.resetAccumulatedTime();
-	while (cellId = cfg.nextAvailableCell(willBeModified, allowRepeats), cellId != Cell::AllCellsComplete)
+	while (cellId = cfg->nextAvailableCell(willBeModified, allowRepeats), cellId != Cell::AllCellsComplete)
 	{
 		// Check for valid cell
 		if (cellId == Cell::NoCellsAvailable)
 		{
 			// No valid cell, but still need to enter into change distribution with other processes
 			changeStore.distributeAndApply(cfg);
-			cfg.finishedWithCell(willBeModified, cellId);
+			cfg->finishedWithCell(willBeModified, cellId);
 			continue;
 		}
-		cell = cfg.cell(cellId);
+		cell = cfg->cell(cellId);
 		Messenger::printVerbose("Cell %i now the target, containing %i Grains interacting with %i neighbours.\n", cellId, cell->nGrains(), cell->nTotalCellNeighbours());
 
 		/*
@@ -149,12 +216,12 @@ bool DUQ::grainShake(Configuration& cfg, double cutoffDistance, int nShakesPerGr
 		changeStore.reset();
 
 		// Must unlock the Cell when we are done with it!
-		cfg.finishedWithCell(willBeModified, cellId);
+		cfg->finishedWithCell(willBeModified, cellId);
 	}
 	timer.stop();
 
 	// Grains have moved, so refold and update locations
-	cfg.updateGrains();
+	cfg->updateGrains();
 
 	// Collect statistics from process group leaders
 	if (!Comm.allSum(&nAccepted, 1, DUQComm::Leaders)) return false;
@@ -184,11 +251,11 @@ bool DUQ::grainShake(Configuration& cfg, double cutoffDistance, int nShakesPerGr
 	Messenger::print("GrainShake: Updated translation step is %f Angstroms, rotation step is %f degrees.\n", translationStepSize, rotationStepSize);
 
 	// Update total energy
-	cfg.registerEnergyChange(totalDelta);
-	cfg.accumulateEnergyChange();
+	cfg->registerEnergyChange(totalDelta);
+	cfg->accumulateEnergyChange();
 
 	// Increment configuration changeCount_
-	if (nAccepted > 0) cfg.incrementCoordinateIndex();
+	if (nAccepted > 0) cfg->incrementCoordinateIndex();
 
 	return true;
 }

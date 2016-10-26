@@ -1,6 +1,6 @@
 /*
-	*** dUQ Methods - Forces
-	*** src/main/methods_forces.cpp
+	*** dUQ - Forces
+	*** src/main/forces.cpp
 	Copyright T. Youngs 2012-2016
 
 	This file is part of dUQ.
@@ -29,13 +29,12 @@
 #include "base/timer.h"
 
 /*
- * \brief Calculate the total intramolecular forces within the system
- * \details Calculate the total intramolecular forces within the system, arising from Bond, Angle, and Torsion
+ * Calculate the total intramolecular forces within the system, arising from Bond, Angle, and Torsion
  * terms in all molecules.
  * 
  * This is a parallel routine.
  */
-void DUQ::intramolecularForces(Configuration& cfg, double* fx, double* fy, double* fz, DUQComm::CommGroup group)
+void DUQ::intramolecularForces(Configuration* cfg, double* fx, double* fy, double* fz, DUQComm::CommGroup group)
 {
 	double distance, angle, force, dp, magji, magjk;
 	int index, start, stride;
@@ -47,7 +46,7 @@ void DUQ::intramolecularForces(Configuration& cfg, double* fx, double* fy, doubl
 	stride = Comm.interleavedLoopStride(group);
 
 	// Main loop over molecules
-	for (Molecule* mol = cfg.molecules(); mol != NULL; mol = mol->next)
+	for (Molecule* mol = cfg->molecules(); mol != NULL; mol = mol->next)
 	{
 		// Bonds
 		for (SpeciesBond* b = mol->species()->bonds(); b != NULL; b = b->next)
@@ -57,7 +56,7 @@ void DUQ::intramolecularForces(Configuration& cfg, double* fx, double* fy, doubl
 			j = mol->atom(b->indexJ());
 
 			// Determine whether we need to apply minimum image to the vector calculation
-			if (cfg.useMim(i->grain()->cell(), j->grain()->cell())) vecji = cfg.box()->minimumVector(i, j);
+			if (cfg->useMim(i->grain()->cell(), j->grain()->cell())) vecji = cfg->box()->minimumVector(i, j);
 			else vecji = j->r() - i->r();
 			
 			// Get distance and normalise vector ready for force calculation
@@ -86,9 +85,9 @@ void DUQ::intramolecularForces(Configuration& cfg, double* fx, double* fy, doubl
 			k = mol->atom(a->indexK());
 
 			// Determine whether we need to apply minimum image between 'j-i' and 'j-k'
-			if (cfg.useMim(j->grain()->cell(), i->grain()->cell())) vecji = cfg.box()->minimumVector(j, i);
+			if (cfg->useMim(j->grain()->cell(), i->grain()->cell())) vecji = cfg->box()->minimumVector(j, i);
 			else vecji = i->r() - j->r();
-			if (cfg.useMim(j->grain()->cell(), k->grain()->cell())) vecjk = cfg.box()->minimumVector(j, k);
+			if (cfg->useMim(j->grain()->cell(), k->grain()->cell())) vecjk = cfg->box()->minimumVector(j, k);
 			else vecjk = k->r() - j->r();
 			
 			// Calculate angle
@@ -129,14 +128,14 @@ void DUQ::intramolecularForces(Configuration& cfg, double* fx, double* fy, doubl
  * 
  * This is a parallel routine.
  */
-void DUQ::grainForces(Configuration& cfg, double* fx, double* fy, double* fz, double cutoffSq, DUQComm::CommGroup group)
+void DUQ::grainForces(Configuration* cfg, double* fx, double* fy, double* fz, double cutoffSq, DUQComm::CommGroup group)
 {
 	// Initialise the Cell distributor
 	const bool willBeModified = false, allowRepeats = false;
-	cfg.initialiseCellDistribution();
+	cfg->initialiseCellDistribution();
 
 	// Create a ForcesKernel
-	ForceKernel kernel(cfg.box(), potentialMap_);
+	ForceKernel kernel(cfg->box(), potentialMap_);
 
 	int cellId, n, m, start, stride;
 	Cell* cell;
@@ -146,16 +145,16 @@ void DUQ::grainForces(Configuration& cfg, double* fx, double* fy, double* fz, do
 	start = Comm.interleavedLoopStart(group);
 	stride = Comm.interleavedLoopStride(group);
 
-	while (cellId = cfg.nextAvailableCell(willBeModified, allowRepeats), cellId != Cell::AllCellsComplete)
+	while (cellId = cfg->nextAvailableCell(willBeModified, allowRepeats), cellId != Cell::AllCellsComplete)
 	{
 		// Check for valid cell
 		if (cellId == Cell::NoCellsAvailable)
 		{
 			Messenger::printVerbose("Nothing for this process to do.\n");
-			cfg.finishedWithCell(willBeModified, cellId);
+			cfg->finishedWithCell(willBeModified, cellId);
 			continue;
 		}
-		cell = cfg.cell(cellId);
+		cell = cfg->cell(cellId);
 		Messenger::printVerbose("Cell %i now the target, containing %i Grains interacting with %i neighbours.\n", cellId, cell->nGrains(), cell->nTotalCellNeighbours());
 
 		/*
@@ -183,7 +182,7 @@ void DUQ::grainForces(Configuration& cfg, double* fx, double* fy, double* fz, do
 		 */
 		
 		// Must unlock the Cell when we are done with it!
-		cfg.finishedWithCell(willBeModified, cellId);
+		cfg->finishedWithCell(willBeModified, cellId);
 	}
 }
 
@@ -194,7 +193,7 @@ void DUQ::grainForces(Configuration& cfg, double* fx, double* fy, double* fz, do
  * 
  * This is a serial routine (subroutines called from within are parallel).
  */
-void DUQ::totalForces(Configuration& cfg, double* fx, double* fy, double* fz, double cutoffSq, DUQComm::CommGroup group)
+void DUQ::totalForces(Configuration* cfg, double* fx, double* fy, double* fz, double cutoffSq, DUQComm::CommGroup group)
 {
 	// Create a Timer
 	Timer timer;
@@ -214,8 +213,8 @@ void DUQ::totalForces(Configuration& cfg, double* fx, double* fy, double* fz, do
 	// Gather forces together
 	if (group != DUQComm::Solo)
 	{
-		if (!Comm.allSum(fx, cfg.nAtoms())) return;
-		if (!Comm.allSum(fy, cfg.nAtoms())) return;
-		if (!Comm.allSum(fz, cfg.nAtoms())) return;
+		if (!Comm.allSum(fx, cfg->nAtoms())) return;
+		if (!Comm.allSum(fy, cfg->nAtoms())) return;
+		if (!Comm.allSum(fz, cfg->nAtoms())) return;
 	}
 }

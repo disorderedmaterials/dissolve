@@ -44,7 +44,7 @@ class EnergyKernel
 {
 	public:
 	// Constructor
-	EnergyKernel(const Configuration& config, const PotentialMap& potentialMap, double cutoffDistanceSquared = -1.0);
+	EnergyKernel(const Configuration* config, const PotentialMap& potentialMap, double cutoffDistanceSquared = -1.0);
 	// Destructor
 	~EnergyKernel();
 	// Clear all data
@@ -65,7 +65,7 @@ class EnergyKernel
 	 */
 	private:
 	// Source Configuration
-	const Configuration& configuration_;
+	const Configuration* configuration_;
 	// Source Box (from Configuration)
 	const Box* box_;
 	// Potential map to use

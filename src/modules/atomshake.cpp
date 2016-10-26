@@ -48,6 +48,12 @@ AtomShake::~AtomShake()
 {
 }
 
+// Create instance of this module
+Module* AtomShake::createInstance()
+{
+	return new AtomShake;
+}
+
 /*
  * Definition
  */
@@ -80,22 +86,25 @@ int AtomShake::nConfigurationsRequired()
  * Method
  */
 
-/*
- * Perform an Atom shake
- * 
- * This is a parallel routine, with processes operating in groups.
- */
-bool AtomShake::execute(DUQ& duq, Configuration& cfg)
+// Execute Method
+bool AtomShake::execute(DUQ& duq)
 {
-// 	bool AtomShake::run(DUQ& duq) //Configuration& cfg, double cutoffDistance, int nShakesPerAtom, double targetAcceptanceRate, double stepSize)
+	/*
+	* Perform an Atom shake
+	* 
+	* This is a parallel routine, with processes operating in groups.
+	*/
+
+	// Get target Configuration
+	Configuration* cfg = targetConfigurations_.firstItem();
 
 	// Retrieve control parameters from Configuration
-	const double cutoffDistance = configurationVariableAsDouble(cfg, "cutoffDistance") < 0.0 ? duq.pairPotentialRange() : configurationVariableAsDouble(cfg, "cutoffDistance");
-	const int nShakesPerAtom = configurationVariableAsInt(cfg, "nShakesPerAtom");
-	const double targetAcceptanceRate = configurationVariableAsDouble(cfg, "targetAcceptanceRate");
-	double stepSize = configurationVariableAsDouble(cfg, "stepSize");
+	const double cutoffDistance = variableAsDouble("cutoffDistance") < 0.0 ? duq.pairPotentialRange() : variableAsDouble("cutoffDistance");
+	const int nShakesPerAtom = variableAsInt("nShakesPerAtom");
+	const double targetAcceptanceRate = variableAsDouble("targetAcceptanceRate");
+	double stepSize = variableAsDouble("stepSize");
 	const double termScale = 1.0;
-	const double rRT = 1.0/(.008314472*cfg.temperature());
+	const double rRT = 1.0/(.008314472*cfg->temperature());
 
 	// Print argument/parameter summary
 	Messenger::print("AtomShake: Cutoff distance is %f\n", cutoffDistance);
@@ -104,7 +113,7 @@ bool AtomShake::execute(DUQ& duq, Configuration& cfg)
 
 	// Initialise the Cell distributor
 	const bool willBeModified = true, allowRepeats = false;
-	cfg.initialiseCellDistribution();
+	cfg->initialiseCellDistribution();
 
 	// Create a local ChangeStore and EnergyKernel
 	ChangeStore changeStore;
@@ -125,17 +134,17 @@ bool AtomShake::execute(DUQ& duq, Configuration& cfg)
 
 	Timer timer;
 	Comm.resetAccumulatedTime();
-	while (cellId = cfg.nextAvailableCell(willBeModified, allowRepeats), cellId != Cell::AllCellsComplete)
+	while (cellId = cfg->nextAvailableCell(willBeModified, allowRepeats), cellId != Cell::AllCellsComplete)
 	{
 		// Check for valid cell
 		if (cellId == Cell::NoCellsAvailable)
 		{
 			// No valid cell, but still need to enter into change distribution with other processes
 			changeStore.distributeAndApply(cfg);
-			cfg.finishedWithCell(willBeModified, cellId);
+			cfg->finishedWithCell(willBeModified, cellId);
 			continue;
 		}
-		cell = cfg.cell(cellId);
+		cell = cfg->cell(cellId);
 		Messenger::printVerbose("Cell %i now the target, containing %i Grains interacting with %i neighbours.\n", cellId, cell->nGrains(), cell->nTotalCellNeighbours());
 
 		/*
@@ -204,12 +213,12 @@ bool AtomShake::execute(DUQ& duq, Configuration& cfg)
 		changeStore.reset();
 
 		// Must unlock the Cell when we are done with it!
-		cfg.finishedWithCell(willBeModified, cellId);
+		cfg->finishedWithCell(willBeModified, cellId);
 	}
 	timer.stop();
 
 	// Grains have moved, so refold and update locations
-	cfg.updateGrains();
+	cfg->updateGrains();
 
 	// Collect statistics from process group leaders
 	if (!Comm.allSum(&nAccepted, 1, DUQComm::Leaders)) return false;
@@ -235,124 +244,124 @@ bool AtomShake::execute(DUQ& duq, Configuration& cfg)
 	Messenger::print("AtomShake: Updated translation step is %f Angstroms.\n", stepSize);
 	
 	// Increment configuration changeCount_
-	if (nAccepted > 0) cfg.incrementCoordinateIndex();
+	if (nAccepted > 0) cfg->incrementCoordinateIndex();
 
 	// Update total energy
-	cfg.registerEnergyChange(totalDelta);
-	cfg.accumulateEnergyChange();
+	cfg->registerEnergyChange(totalDelta);
+	cfg->accumulateEnergyChange();
 
 	return true;
 }
 
-// Perform a world atom shake
-bool DUQ::worldAtomShake(Configuration& cfg, double cutoffDistance, int nShakes, double targetAcceptanceRate, double stepSize)
-{
-	// Control Parameters
-	const double termScale = 1.0;	
-	if (cutoffDistance < 0.0) cutoffDistance = pairPotentialRange_;
-	const double rRT = 1.0/(.008314472*cfg.temperature());
-	
-	// Print argument/parameter summary
-	Messenger::print("WorldAtomShake: Cutoff distance is %f\n", cutoffDistance);
-	Messenger::print("WorldAtomShake: Translation step is %f Angstroms, target acceptance rate is %f.\n", stepSize, targetAcceptanceRate);
-
-	// Initialise the Cell distributor
-	const bool willBeModified = true, allowRepeats = false;
-	cfg.initialiseCellDistribution();
-
-	// Create a local ChangeStore and EnergyKernel
-	ChangeStore changeStore;
-	EnergyKernel kernel(cfg, potentialMap_, cutoffDistance);
-
-	// Initialise the random number buffer
-	Comm.initialiseRandomBuffer(DUQComm::World);
-
-	// Enter calculation loop until no more Cells are available
-	int cellId, shake, n, i;
-	int nTries = 0, nAccepted = 0;
-	bool accept;
-	double currentEnergy, newEnergy, delta, totalDelta = 0.0;
-	Cell* cell;
-	Vec3<double> rDelta;
-	int nAtoms = cfg.nAtoms();
-	Atom* atoms = cfg.atoms();
-
-	Timer timer;
-	Comm.resetAccumulatedTime();
-
-	// Add entire cell contents to a ChangeStore
-	for (n=0; n<nAtoms; ++n) changeStore.add(&atoms[n]);
-
-	// Calculate reference energy
-	currentEnergy = interatomicEnergy(cfg) + intramolecularEnergy(cfg);
-
-	// Loop over nShakes
-	for (int n=0; n<nShakes; ++n)
-	{
-		// Randomly displace each atom in the system
-		for (i=0; i<nAtoms; ++i)
-		{
-			// Create a random translation vector
-			rDelta.set(Comm.randomPlusMinusOne()*stepSize, Comm.randomPlusMinusOne()*stepSize, Comm.randomPlusMinusOne()*stepSize);
-
-			// Translate atom
-			atoms[i].translateCoordinates(rDelta);
-		}
-
-		// Update neighbour lists
-		cfg.recreateCellAtomNeighbourLists(pairPotentialRange_);
-
-		// Calculate new energy
-		newEnergy = interatomicEnergy(cfg) + intramolecularEnergy(cfg);
-
-		delta = newEnergy - currentEnergy;
-		printf("delta = %f\n", delta);
-		accept = delta < 0 ? true : (Comm.random() < exp(-delta*rRT));
-
-		if (accept)
-		{
-// 			Messenger::print("Accepts move with delta %f\n", delta);
-			// Accept new (current) positions of atoms
-			changeStore.updateAll();
-			currentEnergy = newEnergy;
-			totalDelta += delta;
-			++nAccepted;
-		}
-		else
-		{
-			changeStore.revertAll();
-			cfg.recreateCellAtomNeighbourLists(pairPotentialRange_);
-		}
-	}
-
-	// Collect statistics from process group leaders
-	if (!Comm.allSum(&nAccepted, 1, DUQComm::Leaders)) return false;
-	if (!Comm.allSum(&nTries, 1, DUQComm::Leaders)) return false;
-	if (!Comm.allSum(&totalDelta, 1, DUQComm::Leaders)) return false;
-	if (Comm.processGroupLeader())
-	{
-		double rate = double(nAccepted)/nTries;
-
-		Messenger::print("WorldAtomShake: Overall acceptance rate was %4.2f% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*rate, nAccepted, nTries, timer.timeString(), Comm.accumulatedTimeString());
-		Messenger::print("WorldAtomShake: Total energy delta was %10.4e kJ/mol.\n", totalDelta);
-
-		// Adjust step size
-		stepSize *= rate/targetAcceptanceRate;
-// 		if (stepSize_ < 0.05) stepSize_ = 0.05;
-// 		else if (stepSize_ > maxTranslationStep_) stepSize_ = maxTranslationStep_;
-// 		if (rotationStep_ < 3.0) rotationStep_ = 3.0;
-	}
-
-	// Store updated parameter values
-	if (!Comm.broadcast(&stepSize, 1, 0, DUQComm::Group)) return false;
-// 	stepSizeParam->setValue(stepSize); TODO
-	Messenger::print("WorldAtomShake: Updated translation step is %f Angstroms.\n", stepSize);
-	
-	// Increment configuration changeCount_
-	if (nAccepted > 0) cfg.incrementCoordinateIndex();
-
-	// Update total energy
-	cfg.registerEnergyChange(totalDelta);
-	cfg.accumulateEnergyChange();
-}
+// // Perform a world atom shake
+// bool DUQ::worldAtomShake(Configuration& cfg, double cutoffDistance, int nShakes, double targetAcceptanceRate, double stepSize)
+// {
+// 	// Control Parameters
+// 	const double termScale = 1.0;	
+// 	if (cutoffDistance < 0.0) cutoffDistance = pairPotentialRange_;
+// 	const double rRT = 1.0/(.008314472*cfg->temperature());
+// 	
+// 	// Print argument/parameter summary
+// 	Messenger::print("WorldAtomShake: Cutoff distance is %f\n", cutoffDistance);
+// 	Messenger::print("WorldAtomShake: Translation step is %f Angstroms, target acceptance rate is %f.\n", stepSize, targetAcceptanceRate);
+// 
+// 	// Initialise the Cell distributor
+// 	const bool willBeModified = true, allowRepeats = false;
+// 	cfg->initialiseCellDistribution();
+// 
+// 	// Create a local ChangeStore and EnergyKernel
+// 	ChangeStore changeStore;
+// 	EnergyKernel kernel(cfg, potentialMap_, cutoffDistance);
+// 
+// 	// Initialise the random number buffer
+// 	Comm.initialiseRandomBuffer(DUQComm::World);
+// 
+// 	// Enter calculation loop until no more Cells are available
+// 	int cellId, shake, n, i;
+// 	int nTries = 0, nAccepted = 0;
+// 	bool accept;
+// 	double currentEnergy, newEnergy, delta, totalDelta = 0.0;
+// 	Cell* cell;
+// 	Vec3<double> rDelta;
+// 	int nAtoms = cfg->nAtoms();
+// 	Atom* atoms = cfg->atoms();
+// 
+// 	Timer timer;
+// 	Comm.resetAccumulatedTime();
+// 
+// 	// Add entire cell contents to a ChangeStore
+// 	for (n=0; n<nAtoms; ++n) changeStore.add(&atoms[n]);
+// 
+// 	// Calculate reference energy
+// 	currentEnergy = interatomicEnergy(cfg) + intramolecularEnergy(cfg);
+// 
+// 	// Loop over nShakes
+// 	for (int n=0; n<nShakes; ++n)
+// 	{
+// 		// Randomly displace each atom in the system
+// 		for (i=0; i<nAtoms; ++i)
+// 		{
+// 			// Create a random translation vector
+// 			rDelta.set(Comm.randomPlusMinusOne()*stepSize, Comm.randomPlusMinusOne()*stepSize, Comm.randomPlusMinusOne()*stepSize);
+// 
+// 			// Translate atom
+// 			atoms[i].translateCoordinates(rDelta);
+// 		}
+// 
+// 		// Update neighbour lists
+// 		cfg->recreateCellAtomNeighbourLists(pairPotentialRange_);
+// 
+// 		// Calculate new energy
+// 		newEnergy = interatomicEnergy(cfg) + intramolecularEnergy(cfg);
+// 
+// 		delta = newEnergy - currentEnergy;
+// 		printf("delta = %f\n", delta);
+// 		accept = delta < 0 ? true : (Comm.random() < exp(-delta*rRT));
+// 
+// 		if (accept)
+// 		{
+// // 			Messenger::print("Accepts move with delta %f\n", delta);
+// 			// Accept new (current) positions of atoms
+// 			changeStore.updateAll();
+// 			currentEnergy = newEnergy;
+// 			totalDelta += delta;
+// 			++nAccepted;
+// 		}
+// 		else
+// 		{
+// 			changeStore.revertAll();
+// 			cfg->recreateCellAtomNeighbourLists(pairPotentialRange_);
+// 		}
+// 	}
+// 
+// 	// Collect statistics from process group leaders
+// 	if (!Comm.allSum(&nAccepted, 1, DUQComm::Leaders)) return false;
+// 	if (!Comm.allSum(&nTries, 1, DUQComm::Leaders)) return false;
+// 	if (!Comm.allSum(&totalDelta, 1, DUQComm::Leaders)) return false;
+// 	if (Comm.processGroupLeader())
+// 	{
+// 		double rate = double(nAccepted)/nTries;
+// 
+// 		Messenger::print("WorldAtomShake: Overall acceptance rate was %4.2f% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*rate, nAccepted, nTries, timer.timeString(), Comm.accumulatedTimeString());
+// 		Messenger::print("WorldAtomShake: Total energy delta was %10.4e kJ/mol.\n", totalDelta);
+// 
+// 		// Adjust step size
+// 		stepSize *= rate/targetAcceptanceRate;
+// // 		if (stepSize_ < 0.05) stepSize_ = 0.05;
+// // 		else if (stepSize_ > maxTranslationStep_) stepSize_ = maxTranslationStep_;
+// // 		if (rotationStep_ < 3.0) rotationStep_ = 3.0;
+// 	}
+// 
+// 	// Store updated parameter values
+// 	if (!Comm.broadcast(&stepSize, 1, 0, DUQComm::Group)) return false;
+// // 	stepSizeParam->setValue(stepSize); TODO
+// 	Messenger::print("WorldAtomShake: Updated translation step is %f Angstroms.\n", stepSize);
+// 	
+// 	// Increment configuration changeCount_
+// 	if (nAccepted > 0) cfg->incrementCoordinateIndex();
+// 
+// 	// Update total energy
+// 	cfg->registerEnergyChange(totalDelta);
+// 	cfg->accumulateEnergyChange();
+// }
 

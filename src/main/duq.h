@@ -253,33 +253,33 @@ class DUQ
 	/*
 	 * Energy Methods
 	 */
-	private:
+	public:
 	// Return total intramolecular energy
-	double intramolecularEnergy(Configuration& cfg);
+	double intramolecularEnergy(Configuration* cfg);
 	// Return total atom energy
-	double interatomicEnergy(Configuration& cfg);
+	double interatomicEnergy(Configuration* cfg);
 	// Return total grain energy
-	double intergrainEnergy(Configuration& cfg);
+	double intergrainEnergy(Configuration* cfg);
 	// Return total energy of the system
-	double totalEnergy(Configuration& cfg);
+	double totalEnergy(Configuration* cfg);
 	// Test - Return total intramolecular (+correction) energy
-	double intramolecularEnergyTest(Configuration& cfg);
+	double intramolecularEnergyTest(Configuration* cfg);
 	// Test - Return total energy of the system
-	double totalEnergyTest(Configuration& cfg);
+	double totalEnergyTest(Configuration* cfg);
 	// Test - Return total energy of the system using Molecules
-	double totalEnergyTestMolecules(Configuration& cfg);
+	double totalEnergyTestMolecules(Configuration* cfg);
 
 
 	/*
 	 * Force Methods
 	 */
-	private:
+	public:
 	// Calculate total intramolecular forces
-	void intramolecularForces(Configuration& cfg, double* fx, double* fy, double* fz, DUQComm::CommGroup group = DUQComm::World);
+	void intramolecularForces(Configuration* cfg, double* fx, double* fy, double* fz, DUQComm::CommGroup group = DUQComm::World);
 	// Calculate total Grain forces
-	void grainForces(Configuration& cfg, double* fx, double* fy, double* fz, double cutoffSq, DUQComm::CommGroup group);
+	void grainForces(Configuration* cfg, double* fx, double* fy, double* fz, double cutoffSq, DUQComm::CommGroup group);
 	// Calculate total forces within the system
-	void totalForces(Configuration& cfg, double* fx, double* fy, double* fz, double cutoffSq, DUQComm::CommGroup group = DUQComm::World);
+	void totalForces(Configuration* cfg, double* fx, double* fy, double* fz, double cutoffSq, DUQComm::CommGroup group = DUQComm::World);
 
 
 	/*
@@ -289,19 +289,19 @@ class DUQ
 	// Perform an Atom shake
 // 	bool atomShake(Configuration& cfg, double cutoffDistance = -1.0, int nShakesPerAtom = 1, double targetAcceptanceRate = 0.33, double translationStepSize = 0.1);
 	// Perform a Grain shake
-	bool grainShake(Configuration& cfg, double cutoffDistance = -1.0, int nShakesPerGrain = 1, double targetAcceptanceRate = 0.33, double translationStepSize = 0.1, double rotationStepSize = 10.0);
-	// Shake intramolecular terms within Grains
-	bool intraShake(Configuration& cfg, int nShakesPerTerm = 1);
-	// Shake intermolecular terms between Grains
-	bool interShake(Configuration& cfg);
-	// Individually Shake all Intramolecular Terms
-	bool termShake(Configuration& cfg, int nShakesPerTerm = 1);
-	// Twist molecules around bonds
-	bool twist(Configuration& cfg, double cutoffDistance = -1.0, int nTwistsPerTerm = 1);
-	// Perform some MD
-	bool md(Configuration& cfg, double cutoffDistance = -1.0, int nSteps = 1, double deltaT = 0.0001);
-	// Perform a world atom shake
-	bool worldAtomShake(Configuration& cfg, double cutoffDistance = -1.0, int nShakes = 1, double targetAcceptanceRate = 0.33, double translationStepSize = 0.1);
+// 	bool grainShake(Configuration& cfg, double cutoffDistance = -1.0, int nShakesPerGrain = 1, double targetAcceptanceRate = 0.33, double translationStepSize = 0.1, double rotationStepSize = 10.0);
+// 	// Shake intramolecular terms within Grains
+// 	bool intraShake(Configuration& cfg, int nShakesPerTerm = 1);
+// 	// Shake intermolecular terms between Grains
+// 	bool interShake(Configuration& cfg);
+// 	// Individually Shake all Intramolecular Terms
+// 	bool termShake(Configuration& cfg, int nShakesPerTerm = 1);
+// 	// Twist molecules around bonds
+// 	bool twist(Configuration& cfg, double cutoffDistance = -1.0, int nTwistsPerTerm = 1);
+// 	// Perform some MD
+// 	bool md(Configuration& cfg, double cutoffDistance = -1.0, int nSteps = 1, double deltaT = 0.0001);
+// 	// Perform a world atom shake
+// 	bool worldAtomShake(Configuration& cfg, double cutoffDistance = -1.0, int nShakes = 1, double targetAcceptanceRate = 0.33, double translationStepSize = 0.1);
 
 
 	/*

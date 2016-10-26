@@ -135,7 +135,7 @@ class ChangeStore
 	 */
 	public:
 	// Distribute and apply change data to all processes
-	bool distributeAndApply(Configuration& cfg);
+	bool distributeAndApply(Configuration* cfg);
 };
 
 #endif

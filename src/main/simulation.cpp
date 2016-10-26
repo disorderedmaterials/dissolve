@@ -197,9 +197,9 @@ bool DUQ::go()
 	// TEST - Calculate energy of current system, partial data, write, and quit
 	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
 	{
-		totalEnergyTest(*cfg);
-		totalEnergy(*cfg);
-		intramolecularEnergy(*cfg);
+		totalEnergyTest(cfg);
+		totalEnergy(cfg);
+		intramolecularEnergy(cfg);
 	}
 	return true;
 }

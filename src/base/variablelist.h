@@ -51,12 +51,12 @@ class VariableList
 	void setVariable(const char* name, double value);
 	// Add/set variable (string)
 	void setVariable(const char* name, const char* value);
-	// Add/set variable with prefix on name (adding underscore inbetween) (int)
-	void setVariable(const char* prefix, const char* name, int value);
-	// Add/set variable with prefix on name (adding underscore inbetween) (double)
-	void setVariable(const char* prefix, const char* name, double value);
-	// Add/set variable with prefix on name (adding underscore inbetween) (string)
-	void setVariable(const char* prefix, const char* name, const char* value);
+	// Retrieve named variable (int)
+	int variableAsInt(const char* name);
+	// Retrieve named variable (double)
+	double variableAsDouble(const char* name);
+	// Retrieve named variable (string)
+	const char* variableAsChar(const char* name);
 
 
 	/*

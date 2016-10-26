@@ -161,7 +161,7 @@ void ChangeStore::storeAndReset()
 }
 
 // Distribute and apply changes
-bool ChangeStore::distributeAndApply(Configuration& cfg)
+bool ChangeStore::distributeAndApply(Configuration* cfg)
 {
 #ifdef PARALLEL
 	// First, get total number of changes across all processes
@@ -220,7 +220,7 @@ bool ChangeStore::distributeAndApply(Configuration& cfg)
 	{
 		// Set new coordinates and check cell position (Configuration::updateAtomInCell() will do all this)
 		data->revertPosition();
-		cfg.updateAtomInCell(data->atomIndex());
+		cfg->updateAtomInCell(data->atomIndex());
 	}
 #endif
 

@@ -310,7 +310,7 @@ class Configuration : public ListItem<Configuration>, public VariableList
 	Array2D<Data2D> partialSQMatrix_;
 	// Configuration index at which partials were last calculated
 	int partialsIndex_;
-	// Total RDF (unweighted)
+	// Total RDF (unweighted)7
 	Data2D totalRDF_;
 	// Total S(Q) (unweighted)
 	Data2D totalFQ_;

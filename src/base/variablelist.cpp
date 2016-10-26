@@ -41,7 +41,7 @@ VariableList::~VariableList()
 void VariableList::setVariable(const char* name, int value)
 {
 	// Does the variable already exist?
-	Variable* var = variable(name);
+	Variable* var  = variable(name);
 	if (!var)
 	{
 		Messenger::printVerbose("Added new integer variable '%s' with value '%i'.\n", name, value);
@@ -59,7 +59,7 @@ void VariableList::setVariable(const char* name, int value)
 void VariableList::setVariable(const char* name, double value)
 {
 	// Does the variable already exist?
-	Variable* var= variable(name);
+	Variable* var = variable(name);
 	if (!var)
 	{
 		Messenger::printVerbose("Added new double variable '%s' with value '%i'.\n", name, value);
@@ -77,7 +77,7 @@ void VariableList::setVariable(const char* name, double value)
 void VariableList::setVariable(const char* name, const char* value)
 {
 	// Does the variable already exist?
-	Variable* var= variable(name);
+	Variable* var = variable(name);
 	if (!var)
 	{
 		Messenger::printVerbose("Added new string variable '%s' with value '%i'.\n", name, value);
@@ -91,70 +91,46 @@ void VariableList::setVariable(const char* name, const char* value)
 	}
 }
 
-// Add/set variable with prefix on name (adding underscore inbetween) (int)
-void VariableList::setVariable(const char* prefix, const char* name, int value)
+// Retrieve named variable (int)
+int VariableList::variableAsInt(const char* name)
 {
-	// Construct variable name
-	Dnchar varName;
-	varName.sprintf("%s_%s", prefix, name);
-
 	// Does the variable already exist?
-	Variable* var= variable(varName);
+	Variable* var = variable(name);
 	if (!var)
 	{
-		Messenger::printVerbose("Added new integer variable '%s' with value '%i'.\n", name, value);
-		var = variables_.add();
-		var->setup(varName, value);
+		Messenger::error("Can't find integer variable '%s'.\n", name);
+		return 0;
 	}
-	else
-	{
-		Messenger::printVerbose("Set existing integer variable '%s' to value '%i' (previous value was '%i').\n", name, value, var->asInt());
-		var->set(value);
-	}
+
+	return var->asInt();
 }
 
-// Add/set variable with prefix on name (adding underscore inbetween) (double)
-void VariableList::setVariable(const char* prefix, const char* name, double value)
+// Retrieve named variable (double)
+double VariableList::variableAsDouble(const char* name)
 {
-	// Construct variable name
-	Dnchar varName;
-	varName.sprintf("%s_%s", prefix, name);
-
 	// Does the variable already exist?
-	Variable* var= variable(varName);
+	Variable* var = variable(name);
 	if (!var)
 	{
-		Messenger::printVerbose("Added new double variable '%s' with value '%d'.\n", name, value);
-		var = variables_.add();
-		var->setup(varName, value);
+		Messenger::error("Can't find double variable '%s'.\n", name);
+		return 0.0;
 	}
-	else
-	{
-		Messenger::printVerbose("Set existing double variable '%s' to value '%d' (previous value was '%i').\n", name, value, var->asDouble());
-		var->set(value);
-	}
+
+	return var->asDouble();
 }
 
-// Add/set variable with prefix on name (adding underscore inbetween) (string)
-void VariableList::setVariable(const char* prefix, const char* name, const char* value)
+// Retrieve named variable (string)
+const char* VariableList::variableAsChar(const char* name)
 {
-	// Construct variable name
-	Dnchar varName;
-	varName.sprintf("%s_%s", prefix, name);
-
 	// Does the variable already exist?
-	Variable* var= variable(varName);
+	Variable* var = variable(name);
 	if (!var)
 	{
-		Messenger::printVerbose("Added new string variable '%s' with value '%s'.\n", name, value);
-		var = variables_.add();
-		var->setup(varName, value);
+		Messenger::error("Can't find string variable '%s'.\n", name);
+		return "NULL";
 	}
-	else
-	{
-		Messenger::printVerbose("Set existing string variable '%s' to value '%s' (previous value was '%s').\n", name, value, var->asChar());
-		var->set(value);
-	}
+
+	return var->asChar();
 }
 
 /*

@@ -2,6 +2,8 @@ add_library(main
 atomtypes.cpp
 comms.cpp
 duq.cpp
+energy.cpp
+forces.cpp
 io_configuration.cpp 
 io_input.cpp
 keywords.cpp
@@ -20,14 +22,6 @@ species.cpp
 control.h
 duq.h
 keywords.h
-
-methods_energy.cpp
-methods_forces.cpp
-methods_grainshake.cpp
-methods_intrashake.cpp
-methods_md.cpp
-methods_perturb.cpp
-methods_twist.cpp
 }
 
 include_directories(
