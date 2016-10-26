@@ -1,6 +1,6 @@
 /*
-	*** dUQ Version Information
-	*** src/version.h
+	*** dUQ Module Interface
+	*** src/modules/module.cpp
 	Copyright T. Youngs 2012-2016
 
 	This file is part of dUQ.
@@ -19,10 +19,17 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_VERSION_H
-#define DUQ_VERSION_H
+#include "modules/module.h"
+#include <cstring>
 
-#define DUQVERSION "0.32.5"
-#define DUQREPO "https://github.com/trisyoungs/duq.git"
-
-#endif
+// Module Types
+const char* ModuleTypeKeywords[Module::nModuleTypes] = { "Analysis", "Correlation", "Evolution", "Fit" };
+Module::ModuleType Module::moduleType(const char* s)
+{
+	for (int n=0; n<Module::nModuleTypes; ++n) if (strcmp(s, ModuleTypeKeywords[n]) == 0) return (Module::ModuleType) n;
+	return Module::nModuleTypes;
+}
+const char* Module::moduleType(Module::ModuleType mt)
+{
+	return ModuleTypeKeywords[mt];
+}

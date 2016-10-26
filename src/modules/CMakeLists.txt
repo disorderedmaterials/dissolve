@@ -1,5 +1,7 @@
 add_library(modules
 module.h
+module.cpp
+
 atomshake.h
 energy.h
 forces.h

@@ -75,5 +75,11 @@ class AtomShake : public Module
 	bool execute(DUQ& duq, Configuration& config);
 };
 
+/*
+ * Module Registration
+ */
+
+extern AtomShake atomShake;
+
 #endif
 

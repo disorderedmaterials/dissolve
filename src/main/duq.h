@@ -23,6 +23,8 @@
 #define DUQ_DUQ_H
 
 #include "base/ptable.h"
+// #include "modules/moduleproxy.h"
+#include "modules/module.h"
 #include "classes/configuration.h"
 #include "classes/braggpeak.h"
 #include "classes/kvector.h"
@@ -42,6 +44,7 @@ class Cell;
 class Grain;
 class Molecule;
 class ChangeStore;
+class ModuleProxyBase;
 
 // dUQ Main Class
 class DUQ
@@ -227,12 +230,22 @@ class DUQ
 
 
 	/*
-	 * Simulation
+	 * Modules
 	 */
-
+	private:
+	// Lists of modules, sorted by type
+	List<Module> modules_[Module::nModuleTypes];
 
 	public:
-	// Run Simulation
+	// Check module registrations
+	void registerModules();
+
+
+	/*
+	 * Simulation
+	 */
+	public:
+	// Run main simulation
 	bool go();
 
 
@@ -273,7 +286,7 @@ class DUQ
 	 */
 	public:
 	// Perform an Atom shake
-	bool atomShake(Configuration& cfg, double cutoffDistance = -1.0, int nShakesPerAtom = 1, double targetAcceptanceRate = 0.33, double translationStepSize = 0.1);
+// 	bool atomShake(Configuration& cfg, double cutoffDistance = -1.0, int nShakesPerAtom = 1, double targetAcceptanceRate = 0.33, double translationStepSize = 0.1);
 	// Perform a Grain shake
 	bool grainShake(Configuration& cfg, double cutoffDistance = -1.0, int nShakesPerGrain = 1, double targetAcceptanceRate = 0.33, double translationStepSize = 0.1, double rotationStepSize = 10.0);
 	// Shake intramolecular terms within Grains
@@ -353,4 +366,3 @@ class DUQ
 };
 
 #endif
-

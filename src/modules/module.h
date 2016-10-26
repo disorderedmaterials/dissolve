@@ -22,12 +22,13 @@
 #ifndef DUQ_MODULE_H
 #define DUQ_MODULE_H
 
-#include "main/duq.h"
+#include "classes/configuration.h"
 #include "base/variablelist.h"
+#include "base/messenger.h"
 #include "templates/list.h"
 
 // Forward Declarations
-/* none */
+class DUQ;
 
 // Module
 class Module : public ListItem<Module>, public VariableList
@@ -36,28 +37,17 @@ class Module : public ListItem<Module>, public VariableList
 	// Constructor
 	Module()
 	{
-		// Add this module to the internal list
-		modules_.own(this);
-
 		// Standard variables for all modules
 		setVariable("frequency", 1);
 	}
 	// Destructor
-	virtual ~Module() {}
+	virtual ~Module()
+	{
+	}
 	// Module Types
 	enum ModuleType { AnalysisModule, CorrelationModule, EvolutionModule, FitModule, nModuleTypes };
-
-
-	/*
-	 * Internal Accounting
-	 */
-	private:
-	// List of all existing modules
-	static List<Module> modules_;
-
-	public:
-	// Return list of all existing modules
-	const List<Module>& modules();
+	static ModuleType moduleType(const char* s);
+	static const char* moduleType(ModuleType mt);
 
 
 	/*

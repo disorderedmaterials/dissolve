@@ -27,6 +27,7 @@
 #include <ctime>
 #include <stdlib.h>
 
+
 int main(int argc, char **argv)
 {
 	// Instantiate main class
@@ -108,9 +109,9 @@ int main(int argc, char **argv)
 
 	// Print GPL license information
 #ifdef PARALLEL
-	Messenger::print("dUQ PARALLEL version %s, Copyright (C) 2012-2014 T. Youngs.\n", DUQVERSION);
+	Messenger::print("dUQ PARALLEL version %s, Copyright (C) 2012-2016 T. Youngs.\n", DUQVERSION);
 #else
-	Messenger::print("dUQ SERIAL version %s, Copyright (C) 2012-2014  T. Youngs.\n", DUQVERSION);
+	Messenger::print("dUQ SERIAL version %s, Copyright (C) 2012-2016 T. Youngs.\n", DUQVERSION);
 #endif
 	Messenger::print("Source repository: %s.\n", DUQREPO);
 	Messenger::print("dUQ comes with ABSOLUTELY NO WARRANTY.\n");
@@ -123,7 +124,7 @@ int main(int argc, char **argv)
 		Comm.finalise();
 		return 1;
 	}
-	
+
 	// Broadcast periodic table (including isotope and parameter data)
 	if (!periodicTable.broadcast())
 	{
@@ -131,21 +132,21 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	// Load input file
+	// Check module registration
+	dUQ.registerModules();
+
+	// Load input file (if one was provided
+	if (inputFile.isEmpty())
+	{
+		Messenger::print("No input file provided. Nothing more to do.\n");
+		return 0;
+	}
 	Messenger::print("Loading input file...\n");
 	if (!MPIRunMaster(dUQ.loadInput(inputFile)))
 	{
 		Comm.finalise();
 		return 1;
 	}
-
-// 	// Check system setup
-// 	if (!MPIRunMaster(dUQ.checkSetup()))
-// 	{
-// 		Messenger::print("Errors were encountered while checking the system setup.\nYou must resolve these errors before any calculation can proceed.\n");
-// 		Comm.finalise();
-// 		return 1;
-// 	}
 
 	// Broadcast System Setup to slaves
 	if (!dUQ.broadcastSetup())

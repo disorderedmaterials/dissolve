@@ -19,6 +19,7 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "main/duq.h"
 #include "modules/atomshake.h"
 #include "classes/box.h"
 #include "classes/cell.h"

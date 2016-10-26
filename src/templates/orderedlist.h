@@ -27,8 +27,8 @@
 #include <stdio.h>
 
 /*
- * \brief OrderedListItem Class
- * \details OrderedList maintains a list of OrderedListItems, which contain an object of the template class type.
+ * OrderedListItem Class
+ * OrderedList maintains a list of OrderedListItems, which contain an object of the template class type.
  */
 template <class T> class OrderedListItem
 {
@@ -76,8 +76,8 @@ template <class T> int OrderedListItem<T>::objectIndex() const
 }
 
 /*
- * \brief OrderedList Class
- * \details Ordered, linked list of OrderedListItems, which contain an instance of the template class T.  The class T must provide an 'int T::index() const' function, as well
+ * \rderedList Class
+ * Ordered, linked list of OrderedListItems, which contain an instance of the template class T.  The class T must provide an 'int T::index() const' function, as well
  * as operator=.
 */
 template <class T> class OrderedList

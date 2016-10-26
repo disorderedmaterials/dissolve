@@ -5,6 +5,7 @@ io_configuration.cpp
 io_input.cpp
 keywords.cpp
 notepsr.cpp
+modules.cpp
 pairpotentials.cpp
 samples.cpp
 setup.cpp
