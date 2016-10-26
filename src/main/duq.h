@@ -204,12 +204,16 @@ class DUQ
 	 * Modules
 	 */
 	private:
+	// Reference list of all modules
+	RefList<Module,int> allModules_;
 	// Lists of modules, sorted by type
 	List<Module> modules_[Module::nModuleTypes];
 
 	public:
-	// Register all modules
+	// Register all Modules
 	void registerModules();
+	// Find Module by name
+	Module* findModule(const char* name);
 
 
 	/*

@@ -19,10 +19,8 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "base/dnchar.h"
+#include "base/sysfunc.h"
 #include "base/messenger.h"
-#include "base/constants.h"
-#include <readline/readline.h>
 #include <fstream>
 #include <iostream>
 #include <string.h>
@@ -30,7 +28,7 @@
 using namespace std;
 
 // Convert string to uppercase
-const char* upperCase(const char* s)
+const char* DUQSys::upperCase(const char* s)
 {
 	static Dnchar result(1024);
 	result.clear();
@@ -39,7 +37,7 @@ const char* upperCase(const char* s)
 }
 
 // Convert string to lowercase
-const char* lowerCase(const char* s)
+const char* DUQSys::lowerCase(const char* s)
 {
 	static Dnchar result(1024);
 	result.clear();
@@ -47,8 +45,22 @@ const char* lowerCase(const char* s)
 	return result;
 }
 
+// Perform case-insensitive string comparison
+bool insensitiveStrCmp(const char* s1, const char* s2)
+{
+	int len1 = strlen(s1), len2 = strlen(s2);
+	if (len1 != len2) return false;
+
+	for (int n=0; n<len1; ++n)
+	{
+		if (tolower(s1[n]) != tolower(s2[n])) return false;
+	}
+
+	return true;
+}
+
 // Get characters before first occurrence of designated character
-const char* beforeChar(const char* s, char delim)
+const char* DUQSys::beforeChar(const char* s, char delim)
 {
 	static Dnchar result(1024);
 	result.clear();
@@ -61,7 +73,7 @@ const char* beforeChar(const char* s, char delim)
 }
 
 // Get characters after first occurrence of designated character
-const char* afterChar(const char* s, char delim)
+const char* DUQSys::afterChar(const char* s, char delim)
 {
 	static Dnchar result(1024);
 	result.clear();
@@ -75,7 +87,7 @@ const char* afterChar(const char* s, char delim)
 }
 
 // Get characters after last occurrence of designated character
-const char* afterLastChar(const char* s, char delim)
+const char* DUQSys::afterLastChar(const char* s, char delim)
 {
 	static Dnchar result;
 	result.clear();
@@ -86,7 +98,7 @@ const char* afterLastChar(const char* s, char delim)
 }
 
 // Get characters before last occurrence of designated character
-const char* beforeLastChar(const char* s, char delim)
+const char* DUQSys::beforeLastChar(const char* s, char delim)
 {
 	static Dnchar result;
 	result.clear();
@@ -102,7 +114,7 @@ const char* beforeLastChar(const char* s, char delim)
 }
 
 // Get characters before first occurrence of designated string
-const char* beforeStr(const char* s, const char* search)
+const char* DUQSys::beforeStr(const char* s, const char* search)
 {
 	// Search for first occurrence of string
 	static char result[8096];
@@ -114,7 +126,7 @@ const char* beforeStr(const char* s, const char* search)
 }
 
 // Get characters after first occurrence of designated character
-const char* afterStr(const char* s, const char* search)
+const char* DUQSys::afterStr(const char* s, const char* search)
 {
 	const char* c = strstr(s, search);
 	if (c == NULL) return "";
@@ -123,7 +135,7 @@ const char* afterStr(const char* s, const char* search)
 }
 
 // Remove comments from line
-void removeComments(char* s)
+void DUQSys::removeComments(char* s)
 {
 	char* c, quotechar = '\0';
 	bool escaped = false;
@@ -160,7 +172,7 @@ void removeComments(char* s)
 }
 
 // Return whether string consists of empty whitespace characters only
-bool isEmpty(const char* s)
+bool DUQSys::isEmpty(const char* s)
 {
 	if (s == NULL) return true;
 	for (const char* c = s; *c != '\0'; ++c)
@@ -182,7 +194,7 @@ bool isEmpty(const char* s)
 }
 
 // Search enum list for text
-int enumSearch(const char* name, int maxn, const char**itemlist, const char* query, bool reportError)
+int DUQSys::enumSearch(const char* name, int maxn, const char**itemlist, const char* query, bool reportError)
 {
 	static Dnchar lowerq, lowers;
 	int result = maxn, i;
@@ -201,7 +213,7 @@ int enumSearch(const char* name, int maxn, const char**itemlist, const char* que
 }
 
 // Print valid enum values
-void enumPrintValid(int nitems, const char**list)
+void DUQSys::enumPrintValid(int nitems, const char**list)
 {
 	Messenger::print("Valid values are:\n    ");
 	for (int i=0; i < nitems; i++)
@@ -213,7 +225,7 @@ void enumPrintValid(int nitems, const char**list)
 }
 
 // Convert the number 'n' to a string representation.
-const char* itoa(int n)
+const char* DUQSys::itoa(int n)
 {
 	static Dnchar result;
 	result.sprintf("%i",n);
@@ -221,7 +233,7 @@ const char* itoa(int n)
 }
 
 // Convert the real number 'f' to a string representation
-const char* ftoa(double f)
+const char* DUQSys::ftoa(double f)
 {
 	static Dnchar result;
 	result.sprintf("%f",f);
@@ -229,7 +241,7 @@ const char* ftoa(double f)
 }
 
 // Convert the real number 'f' to a string representation with supplied format
-const char* ftoa(double f,const char* fmt)
+const char* DUQSys::ftoa(double f,const char* fmt)
 {
 	static Dnchar result;
 	result.sprintf(fmt,f);
@@ -237,7 +249,7 @@ const char* ftoa(double f,const char* fmt)
 }
 
 // Strip trailing whitespace from string
-const char* stripTrailing(const char* s)
+const char* DUQSys::stripTrailing(const char* s)
 {
 	int n;
 	static char result[1024];
@@ -249,7 +261,7 @@ const char* stripTrailing(const char* s)
 }
 
 // Replace all of the supplied characters in the source string
-const char* replaceChars(const char* s, const char* charstoreplace, char r)
+const char* DUQSys::replaceChars(const char* s, const char* charstoreplace, char r)
 {
 	static Dnchar result;
 	bool found;
@@ -273,7 +285,7 @@ const char* replaceChars(const char* s, const char* charstoreplace, char r)
 }
 
 // Strip all of the supplied characters from the source string
-const char* stripChars(const char* s, const char* charstostrip)
+const char* DUQSys::stripChars(const char* s, const char* charstostrip)
 {
 	static Dnchar result;
 	char const* c1, *c2;
@@ -296,7 +308,7 @@ const char* stripChars(const char* s, const char* charstostrip)
 }
 
 // Count number of times that supplied characters occur in supplied string
-int countChars(const char* s, const char* chars, int offset)
+int DUQSys::countChars(const char* s, const char* chars, int offset)
 {
 	int total = 0, n, count = 0;
 	while (*s != '\0')
@@ -312,7 +324,7 @@ int countChars(const char* s, const char* chars, int offset)
 }
 
 // Return whether file exists
-bool fileExists(const char* filename)
+bool DUQSys::fileExists(const char* filename)
 {
 	fstream f(filename,ios::in);
 	if (f.is_open())
@@ -321,21 +333,4 @@ bool fileExists(const char* filename)
 		return true;
 	}
 	else return false;
-}
-
-// Get boolean response from the user
-bool getBooleanResponse(const char* promptText, bool hasDefaultResponse, bool defaultResponse)
-{
-	// Get string from user and parse it
-	int response = -1;
-	while (response == -1)
-	{
-		char* line = readline(promptText);
-		if (strcmp(lowerCase(line),"yes") == 0) response = 1;
-		else if (strcmp(lowerCase(line),"no") == 0) response = 0;
-		else if (strcmp(lowerCase(line),"y") == 0) response = 1;
-		else if (strcmp(lowerCase(line),"n") == 0) response = 0;
-		else if ((strlen(line) == 0) && hasDefaultResponse) response = (defaultResponse ? 1 : 0);
-	}
-	return (response == 1 ? true : false);
 }

@@ -31,6 +31,8 @@ void DUQ::registerModules()
 	// -- Evolution Modules
 	modules_[Module::EvolutionModule].own(new AtomShake);
 
+	// Construct master list of modules, and do sanity check on names
+
 	Messenger::printVerbose("\n");
 	Messenger::printVerbose("Module Information:\n\n");
 
@@ -51,4 +53,10 @@ void DUQ::registerModules()
 
 		Messenger::printVerbose("\n");
 	}
+}
+
+// Find Module by name
+Module* DUQ::findModule(const char* name)
+{
+	
 }

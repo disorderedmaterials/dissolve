@@ -28,7 +28,7 @@
 bool Species::load(const char* fileName)
 {
 	// Grab extension from fileName
-	Dnchar ext = lowerCase(afterLastChar(fileName, '.'));
+	Dnchar ext = DUQSys::lowerCase(DUQSys::afterLastChar(fileName, '.'));
 
 	if (ext == "xyz") return loadFromXYZ(fileName);
 	else Messenger::print("Can't load - unknown extension for file '%s'.\n", fileName);

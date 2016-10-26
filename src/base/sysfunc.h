@@ -22,35 +22,37 @@
 #ifndef DUQ_SYSFUNC_H
 #define DUQ_SYSFUNC_H
 
-// Number/string conversion
-const char* itoa(int);
-const char* ftoa(double);
-const char* ftoa(double, const char*);
+// System Functions
+class DUQSys
+{
+	public:
+	// Number/string conversion
+	static const char* itoa(int);
+	static const char* ftoa(double);
+	static const char* ftoa(double, const char*);
 
-// String functions
-const char* upperCase(const char*);
-const char* lowerCase(const char*);
-const char* beforeChar(const char*, char);
-const char* afterChar(const char*, char);
-const char* afterLastChar(const char*, char);
-const char* beforeLastChar(const char*, char);
-const char* beforeStr(const char*, const char*);
-const char* afterStr(const char*, const char*);
-const char* stripTrailing(const char*);
-const char* replaceChars(const char* s, const char* charstoreplace, char r);
-const char* stripChars(const char* s, const char* charstostrip);
-int countChars(const char* string, const char* searchchars, int offset = 0);
-void removeComments(char* s);
-bool isEmpty(const char* s);
+	// String functions
+	static const char* upperCase(const char*);
+	static const char* lowerCase(const char*);
+	static const char* beforeChar(const char*, char);
+	static const char* afterChar(const char*, char);
+	static const char* afterLastChar(const char*, char);
+	static const char* beforeLastChar(const char*, char);
+	static const char* beforeStr(const char*, const char*);
+	static const char* afterStr(const char*, const char*);
+	static const char* stripTrailing(const char*);
+	static const char* replaceChars(const char* s, const char* charstoreplace, char r);
+	static const char* stripChars(const char* s, const char* charstostrip);
+	static int countChars(const char* string, const char* searchchars, int offset = 0);
+	static void removeComments(char* s);
+	static bool isEmpty(const char* s);
 
-// Enum search and print
-int enumSearch(const char* name, int nitems, const char**list, const char* query, bool reportError = 1);
-void enumPrintValid(int nitems, const char**list);
+	// Enum search and print
+	static int enumSearch(const char* name, int nitems, const char**list, const char* query, bool reportError = 1);
+	static void enumPrintValid(int nitems, const char**list);
 
-// Files
-bool fileExists(const char* filename);
-
-// Responses
-bool getBooleanResponse(const char* promptText, bool hasDefaultValue, bool defaultValue);
+	// Files
+	static bool fileExists(const char* filename);
+};
 
 #endif

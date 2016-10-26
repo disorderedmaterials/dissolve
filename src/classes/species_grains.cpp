@@ -203,7 +203,7 @@ const char* Species::uniqueGrainName(const char* base, SpeciesGrain* exclude) co
 	{
 		if (sg == exclude) continue;
 		if (strcmp(baseName, sg->name()) == 0) highest = 0;
-		else if (strcmp(baseName,beforeLastChar(sg->name(),'_')) == 0) highest = atoi(afterLastChar(sg->name(), '_'));
+		else if (strcmp(baseName, DUQSys::beforeLastChar(sg->name(),'_')) == 0) highest = atoi(DUQSys::afterLastChar(sg->name(), '_'));
 	}
 	if (highest > -1) uniqueName.sprintf("%s_%i", baseName.get(), ++highest);
 	else uniqueName = baseName;

@@ -97,7 +97,7 @@ const char* Species::uniqueIsotopologueName(const char* base, Isotopologue* excl
 	{
 		if (iso == exclude) continue;
 		if (strcmp(baseName, iso->name()) == 0) highest = 0;
-		else if (strcmp(baseName,beforeLastChar(iso->name(),'_')) == 0) highest = atoi(afterLastChar(iso->name(), '_'));
+		else if (strcmp(baseName,DUQSys::beforeLastChar(iso->name(),'_')) == 0) highest = atoi(DUQSys::afterLastChar(iso->name(), '_'));
 	}
 	if (highest > -1) uniqueName.sprintf("%s_%i", baseName.get(), ++highest);
 	else uniqueName = baseName;

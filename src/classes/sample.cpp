@@ -628,7 +628,7 @@ bool Sample::hasReferenceData()
 bool Sample::loadReferenceData(const char* fileName)
 {
 	// Check that the specified file actually exists...
-	if (!fileExists(fileName))
+	if (!DUQSys::fileExists(fileName))
 	{
 		Messenger::error("Sample reference data '%s' not found.\n", fileName);
 		return false;

@@ -161,8 +161,8 @@ bool Keywords::parseSpeciesBlock(LineParser& parser, DUQ* duq, Species* species)
 				for (int n=2; n<parser.nArgs(); ++n)
 				{
 					// Split argument into parts before and after '='
-					arg1 = beforeChar(parser.argc(n),'=');
-					arg2 = afterChar(parser.argc(n),'=');
+					arg1 = DUQSys::beforeChar(parser.argc(n),'=');
+					arg2 = DUQSys::afterChar(parser.argc(n),'=');
 					
 					at = duq->findAtomType(arg1.get());
 					if (at == NULL)

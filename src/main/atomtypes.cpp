@@ -138,7 +138,7 @@ const char* DUQ::uniqueAtomTypeName(const char* base, AtomType* exclude) const
 	{
 		if ( at == exclude) continue;
 		if (strcmp(baseName, at->name()) == 0) highest = 0;
-		else if (strcmp(baseName,beforeLastChar( at->name(),'_')) == 0) highest = atoi(afterLastChar( at->name(), '_'));
+		else if (strcmp(baseName,DUQSys::beforeLastChar(at->name(),'_')) == 0) highest = atoi(DUQSys::afterLastChar(at->name(), '_'));
 	}
 	if (highest > -1) uniqueName.sprintf("%s_%i", baseName.get(), ++highest);
 	else uniqueName = baseName;

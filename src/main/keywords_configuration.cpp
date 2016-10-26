@@ -77,6 +77,7 @@ bool Keywords::parseConfigurationBlock(LineParser& parser, DUQ* duq, Configurati
 
 	Sample* sam;
 	Species* sp;
+	Module* module;
 	bool blockDone = false, error = false;
 
 	while (!parser.eofOrBlank())
@@ -120,11 +121,22 @@ bool Keywords::parseConfigurationBlock(LineParser& parser, DUQ* duq, Configurati
 					error = true;
 				}
 				break;
-
+			case (Keywords::EndConfigurationKeyword):
+				Messenger::print("Found end of %s block.\n", Keywords::inputBlock(Keywords::ConfigurationBlock));
+				blockDone = true;
+				break;
 			case (Keywords::FileModelKeyword):
 				cfg->setInitialCoordinatesFile(parser.argc(1));
 				cfg->setRandomConfiguration(false);
 				Messenger::print("--> Initial coordinates will be loaded from file '%s'\n", parser.argc(1));
+				break;
+			case (Keywords::ModuleSetupKeyword):
+				// The argument following the keyword is the module name
+				module = duq->findModule(parser.argc(1));
+				if (!module)
+				{
+					
+				}
 				break;
 			case (Keywords::MultiplierKeyword):
 				cfg->setMultiplier(parser.argd(1));
@@ -133,10 +145,6 @@ bool Keywords::parseConfigurationBlock(LineParser& parser, DUQ* duq, Configurati
 			case (Keywords::NonPeriodicKeyword):
 				cfg->setNonPeriodic(true);
 				Messenger::print("--> Flag set for a non-periodic calculation.\n");
-				break;
-			case (Keywords::EndConfigurationKeyword):
-				Messenger::print("Found end of %s block.\n", Keywords::inputBlock(Keywords::ConfigurationBlock));
-				blockDone = true;
 				break;
 			case (Keywords::QDeltaKeyword):
 				cfg->setQDelta(parser.argd(1));

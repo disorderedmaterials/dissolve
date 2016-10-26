@@ -302,7 +302,7 @@ int LineParser::readNextLine(int optionMask)
 //		Messenger::print(Messenger::Parse, "Line from file is: [%s]\n", line_);
 
 		// Remove comments from line
-		if (optionMask&LineParser::StripComments) removeComments(line_);
+		if (optionMask&LineParser::StripComments) DUQSys::removeComments(line_);
 		
 		// If we are skipping blank lines, check for a blank line here
 		if (optionMask&LineParser::SkipBlanks)

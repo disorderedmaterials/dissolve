@@ -341,7 +341,7 @@ bool Dnchar::asBool() const
 {
 	// Convert string to boolean
 	bool result = false;
-	Dnchar lcase(lowerCase(data_));
+	Dnchar lcase(DUQSys::lowerCase(data_));
 	if (lcase == "off") result = false;
 	else if (lcase == "on") result = true;
 	else if (lcase == "no") result = false;
@@ -384,14 +384,14 @@ bool Dnchar::isNumeric() const
 const char* Dnchar::lower() const
 {
 	if (data_ == NULL) return "\0";
-	return lowerCase(data_);
+	return DUQSys::lowerCase(data_);
 }
 
 // Return the uppercase conversion of the string
 const char* Dnchar::upper() const
 {
 	if (data_ == NULL) return "\0";
-	return upperCase(data_);
+	return DUQSys::upperCase(data_);
 }
 
 /*
