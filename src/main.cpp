@@ -160,7 +160,7 @@ int main(int argc, char **argv)
 	else srand(dUQ.seed());
 	
 	// Perform system setup (all processes)
-	if (!dUQ.setup())
+	if (!dUQ.setupSimulation())
 	{
 		Messenger::print("Failed to setup Configurations.\n");
 		return 1;

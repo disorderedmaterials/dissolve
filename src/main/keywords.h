@@ -23,12 +23,25 @@
 #define DUQ_KEYWORDS_H
 
 // Forward Declarations
-/* None */
+class LineParser;
+class DUQ;
+class Sample;
+class Configuration;
+class Species;
 
-/*
- * \brief Keyword Definition
- * \details All allowable block keywords for the main dUQ input file.
- */
+// Keyword Data
+class KeywordData
+{
+	public:
+	// Keyword name
+	const char* name;
+	// Number of arguments expected by keyword
+	int nArguments;
+	// Argument description
+	const char* argumentDescription;
+};
+
+// Keyword Definitions
 class Keywords
 {
 	/*
@@ -39,11 +52,12 @@ class Keywords
 	enum InputBlock
 	{
 		AtomTypesBlock,			/* 'AtomTypes' - Contains definitions of AtomTypes over all Species */
-		ConfigurationBlock,		/* 'Configuration' - Defines a single configuration for use in the simulation */
+		ConfigurationBlock,		/* 'Configuration' - Defines a single Configuration for use in the simulation */
+		ModuleBlock,			/* 'Module' - Sets up a Module within a Configuration */
 		PairPotentialsBlock,		/* 'PairPotentials' - Contains definitions of the PairPotentials for the simulation */
 		SampleBlock,			/* 'Sample' - Begins a definition of a Sample */
-		SpeciesBlock,			/* 'Species' - Begins a definition of a Species */
 		SimulationBlock,		/* 'Simulation' - Setting of simulation variables affecting the calculation */
+		SpeciesBlock,			/* 'Species' - Begins a definition of a Species */
 		nInputBlocks			/* Number of defined InputBlock keywords */
 	};
 	// Convert text string to InputBlock
@@ -69,8 +83,10 @@ class Keywords
 	static AtomTypesKeyword atomTypesKeyword(const char* s);
 	// Convert AtomTypesKeyword to text string
 	static const char* atomTypesKeyword(AtomTypesKeyword id);
-	// Return minimum number of expected arguments
+	// Return expected number of expected arguments
 	static int atomTypesBlockNArguments(AtomTypesKeyword id);
+	// Parse AtomTypes block
+	static bool parseAtomTypesBlock(LineParser& parser, DUQ* duq);
 
 
 	/*
@@ -89,6 +105,7 @@ class Keywords
 		DensityKeyword,			/* 'Density' - Specifies the density of the simulation, along with its units */
 		EndConfigurationKeyword,	/* 'EndConfiguration' - Signals the end of the Configuration block */
 		FileModelKeyword,		/* 'File' - Specifies the file which contains the starting/current coordinates */
+		ModuleSetupKeyword,		/* 'Module' - Starts the setup of a Module for this configuration */
 		MultiplierKeyword,		/* 'Multiplier' - Specifies the factor by which relative populations are multiplied when generating the Model */
 		NonPeriodicKeyword,		/* 'NonPeriodic' - States that the simulation should be treated as non-periodic */
 		QDeltaKeyword,			/* 'QDelta' - Q delta to use in S(Q) calculation */
@@ -101,15 +118,38 @@ class Keywords
 		SampleAddKeyword,		/* 'Sample' - Specifies that the Sample data is relevant to this Configuration, and should be calculated / compared */
 		SpeciesAddKeyword,		/* 'Species' - Specifies a Species and its relative population to add to this Configuration */
 		TemperatureKeyword,		/* 'Temperature' - Defines the temperature of the simulation */
-		WindowFunctionKeyword,		/* 'WindowFunction' - Specifies the windowing function to use in all Fourier transforms */
 		nConfigurationKeywords		/* Number of keywords defined for this block */
 	};
 	// Convert text string to ConfigurationKeyword
 	static ConfigurationKeyword configurationKeyword(const char* s);
 	// Convert ConfigurationKeyword to text string
 	static const char* configurationKeyword(ConfigurationKeyword id);
-	// Return minimum number of expected arguments
+	// Return expected number of expected arguments
 	static int configurationBlockNArguments(ConfigurationKeyword id);
+	// Parse Configuration block
+	static bool parseConfigurationBlock(LineParser& parser, DUQ* duq, Configuration* cfg);
+
+
+	/*
+	 * Module Block Keywords
+	 */
+	public:
+	// Module Block Keyword Enum
+	enum ModuleKeyword
+	{
+		DisabledModuleKeyword,		/* 'Disable' - Disables the module from running */
+		EndModuleKeyword,		/* 'EndModule' - Signals the end of the Module block */
+		SetModuleVariableKeyword,	/* 'Set' - Set a named variable relevant to the module */
+		nModuleKeywords			/* Number of keywords defined for this block */
+	};
+	// Convert text string to ModuleKeyword
+	static ModuleKeyword moduleKeyword(const char* s);
+	// Convert ModuleKeyword to text string
+	static const char* moduleKeyword(ModuleKeyword id);
+	// Return expected number of expected arguments
+	static int moduleBlockNArguments(ModuleKeyword id);
+	// Parse Module block
+	static bool parseModuleBlock(LineParser& parser, DUQ* duq, Configuration* cfg);
 
 
 	/*
@@ -132,8 +172,10 @@ class Keywords
 	static PairPotentialsKeyword pairPotentialsKeyword(const char* s);
 	// Convert PairPotentialsKeyword to text string
 	static const char* pairPotentialsKeyword(PairPotentialsKeyword id);
-	// Return minimum number of expected arguments
+	// Return expected number of expected arguments
 	static int pairPotentialsBlockNArguments(PairPotentialsKeyword id);
+	// Parse PairPotentials block
+	static bool parsePairPotentialsBlock(LineParser& parser, DUQ* duq);
 
 
 	/*
@@ -159,8 +201,10 @@ class Keywords
 	static SampleKeyword sampleKeyword(const char* s);
 	// Convert SampleKeyword to text string
 	static const char* sampleKeyword(SampleKeyword id);
-	// Return minimum number of expected arguments
+	// Return expected number of expected arguments
 	static int sampleBlockNArguments(SampleKeyword id);
+	// Parse Sample block
+	static bool parseSampleBlock(LineParser& parser, DUQ* duq, Sample* sample);
 
 
 	/*
@@ -173,18 +217,17 @@ class Keywords
 		BoxNormalisationPointsKeyword,	/* 'BoxNormalisationPoints' - Specifies how many random insertions to use when generating the normalisation array */
 		EndSimulationKeyword,		/* 'EndSimulation' - Signals the end of the Simulation block */
 		SeedKeyword,			/* 'Seed' - Sets the random seed to use */
-		SimplexNCyclesKeyword,		/* 'SimplexNCycles' - Sets the maximum number of cycles allowed by the Simplex minimiser when fitting potential coefficients */
-		SimplexNMovesKeyword,		/* 'SimplexNMoves' - Sets the maximum number of moves per cycle allowed by the Simplex minimiser when fitting potential coefficients */
-		SimplexTemperatureKeyword,	/* 'SimplexTemperature' - Sets the temperature used in the Simplex minimiser when fitting potential coefficients */
-		SimplexToleranceKeyword,	/* 'SimplexTolerance' - Sets the convergence tolerance used in the Simplex minimiser when fitting potential coefficients */
+		WindowFunctionKeyword,		/* 'WindowFunction' - Specifies the windowing function to use in all Fourier transforms */
 		nSimulationKeywords			/* Number of keywords defined for this block */
 	};
 	// Convert text string to SimulationKeyword
 	static SimulationKeyword simulationKeyword(const char* s);
 	// Convert SimulationKeyword to text string
 	static const char* simulationKeyword(SimulationKeyword id);
-	// Return minimum number of expected arguments
+	// Return expected number of expected arguments
 	static int simulationBlockNArguments(SimulationKeyword id);
+	// Parse Simulation block
+	static bool parseSimulationBlock(LineParser& parser, DUQ* duq);
 
 
 	/*
@@ -206,8 +249,10 @@ class Keywords
 	static SpeciesKeyword speciesKeyword(const char* s);
 	// Convert SpeciesKeyword to text string
 	static const char* speciesKeyword(SpeciesKeyword id);
-	// Return minimum number of expected arguments
+	// Return expected number of expected arguments
 	static int speciesBlockNArguments(SpeciesKeyword id);
+	// Parse Species block
+	static bool parseSpeciesBlock(LineParser& parser, DUQ* duq, Species* species);
 };
 
 #endif

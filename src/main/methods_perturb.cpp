@@ -26,8 +26,8 @@
 #include "math/constants.h"
 
 // Public cost function callback
-double DUQ::simplexCost(Array<double>& alpha)
-{
+// double DUQ::simplexCost(Array<double>& alpha)
+// {
 // 	// Loop over Samples...
 // 	const double deltaQ = 0.05;
 // 	double Q, sos = 0.0, ushift, uscalex, uscaley, bshift, bscale, newQ, maxQ, FQ, delta;
@@ -103,13 +103,13 @@ double DUQ::simplexCost(Array<double>& alpha)
 // 	}
 
 // 	return sos;
-}
+// }
 
 /*
  * \brief Generate/update perturbation to potential
  */
-bool DUQ::perturb(Configuration& cfg)
-{
+// bool DUQ::perturb(Configuration& cfg)
+// {
 // 	int n, m, typeI, typeJ;
 // 	static double oldVectorMag = 0.0;
 // 	double q, diffSpacing = 0.1, rho = atomicDensity();
@@ -304,5 +304,5 @@ bool DUQ::perturb(Configuration& cfg)
 // 		modFQ.save(Dnchar::string("duq-%s-estimated.fq", sam->name()));
 // 	}
 
-	return true;
-}
+// 	return true;
+// }

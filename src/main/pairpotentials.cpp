@@ -116,6 +116,12 @@ int DUQ::nPairPotentials() const
 	return pairPotentials_.nItems();
 }
 
+// Add new pair potential to list
+PairPotential* DUQ::addPairPotential()
+{
+	return pairPotentials_.add();
+}
+
 // Return first PaiPotential in list
 PairPotential* DUQ::pairPotentials() const
 {

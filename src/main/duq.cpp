@@ -44,13 +44,6 @@ DUQ::DUQ()
 	rmseDeltaQ_ = 0.05;
 	seed_ = -1;
 	windowFunction_ = Data2D::NoWindow;
-
-	// Perturbation
-	simplexNMoves_ = 25;
-	simplexNCycles_ = 100;
-	simplexTemperature_ = 0.01;
-	simplexTolerance_ = 1.0e-3;
-	simplexParameterOffset_ = 100.0;
 }
 
 // Destructor

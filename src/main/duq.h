@@ -182,6 +182,8 @@ class DUQ
 	int indexOf(PairPotential* pp);
 	// Return number of defined PairPotentials
 	int nPairPotentials() const;
+	// Add new pair potential to list
+	PairPotential* addPairPotential();
 	// Return first PairPotential in list
 	PairPotential* pairPotentials() const;
 	// Return nth PairPotential in list
@@ -199,37 +201,6 @@ class DUQ
 
 
 	/*
-	 * Setup
-	 */
-	private:
-	// List of all atomic configurations
-	List<Configuration> configurations_;
-
-	// Number of test points to use when calculating Box normalisation arrays
-	int boxNormalisationPoints_;
-	// Bin width to use when calculating RMSE between Sample F(Q) and reference data
-	double rmseDeltaQ_;
-	// Random seed
-	int seed_;
-	// Window function to use for Fourier transforms
-	Data2D::WindowFunction windowFunction_;
-	// Working S(Q) matrices
-	Array2D<Data2D> workingSQMatrixA_, workingSQMatrixB_;
-
-	private:
-	// Find configuration by name
-	Configuration* findConfiguration(const char* name) const;
-
-	public:
-	// Return random seed
-	int seed();
-	// Setup all data, checking it as we go
-	bool setup();
-	// Print full system setup
-	bool printSetup();
-
-
-	/*
 	 * Modules
 	 */
 	private:
@@ -237,14 +208,44 @@ class DUQ
 	List<Module> modules_[Module::nModuleTypes];
 
 	public:
-	// Check module registrations
+	// Register all modules
 	void registerModules();
 
 
 	/*
 	 * Simulation
 	 */
+	private:
+	// List of all atomic configurations
+	List<Configuration> configurations_;
+	// Number of test points to use when calculating Box normalisation arrays
+	int boxNormalisationPoints_;
+	// Bin width to use when calculating RMSE between Sample F(Q) and reference data
+	double rmseDeltaQ_;
+	// Random seed
+	int seed_;
+	// Window function to use for all Fourier transforms
+	Data2D::WindowFunction windowFunction_;
+
+	private:
+	// Find configuration by name
+	Configuration* findConfiguration(const char* name) const;
+
 	public:
+	// Set number of test points to use when calculating Box normalisation arrays
+	void setBoxNormalisationPoints(int nPoints);
+	// Bin width to use when calculating RMSE between Sample F(Q) and reference data
+	void setRMSEDeltaQ(double dq);
+	// Set random seed
+	void setSeed(int seed);
+	// Return random seed
+	int seed();
+	// Set window function to use for all Fourier transforms
+	void setWindowFunction(Data2D::WindowFunction wf);
+	// Setup all simulation data, checking it as we go
+	bool setupSimulation();
+	// Print full system setup
+	bool printSetup();
 	// Run main simulation
 	bool go();
 
@@ -301,28 +302,6 @@ class DUQ
 	bool md(Configuration& cfg, double cutoffDistance = -1.0, int nSteps = 1, double deltaT = 0.0001);
 	// Perform a world atom shake
 	bool worldAtomShake(Configuration& cfg, double cutoffDistance = -1.0, int nShakes = 1, double targetAcceptanceRate = 0.33, double translationStepSize = 0.1);
-
-
-	/*
-	 * Potential Perturbation Routines TODO
-	 */
-	private:
-	// Maximum moves in Simplex minimisation (per cycle per Q bin)
-	int simplexNMoves_;
-	// Number of cycles in Simplex minimisation (per Q bin)
-	int simplexNCycles_;
-	// Temperature in Simplex minimisation (arbitrary units)
-	double simplexTemperature_;
-	// Convergence tolerance in Simplex minimisation
-	double simplexTolerance_;
-	// Parameter value offset to use in Simplex fitting procedure
-	double simplexParameterOffset_;
-
-	private:
-	// Cost function callback (passed to Simplex on construction)
-	double simplexCost(Array<double>& alpha);
-	// Perturb potential
-	bool perturb(Configuration& cfg);
 
 
 	/*

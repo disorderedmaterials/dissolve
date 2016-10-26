@@ -26,6 +26,8 @@
 void DUQ::registerModules()
 {
 	// Manually register all modules here (annoying, but easier than trying to work out a self-initialising class that doesn't get gazumped by the linker removing all references to things we want...)
+	// -- Analysis Modules
+	// modules_[Module::AnalysisModule].own(new XXX);
 	// -- Evolution Modules
 	modules_[Module::EvolutionModule].own(new AtomShake);
 
@@ -38,7 +40,7 @@ void DUQ::registerModules()
 		Module::ModuleType mt = (Module::ModuleType) n;
 
 		// Print header
-		Messenger::printVerbose("%s Modules:\n", Module::moduleType(mt));
+		Messenger::printVerbose("%s Modules (%i):\n", Module::moduleType(mt), modules_[mt].nItems());
 
 		if (modules_[mt].nItems() == 0) Messenger::printVerbose(" --> No modules of this type registered.\n");
 		else for (Module* module = modules_[mt].first(); module != NULL; module = module->next)
