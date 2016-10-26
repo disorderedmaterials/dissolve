@@ -27,6 +27,7 @@
 Module* Configuration::addModule(Module* module)
 {
 	Module* moduleToAdd = NULL;
+
 	// Check the module instance type before adding it to the relevant list
 	if (module->instanceType() == Module::UniqueInstance)
 	{

@@ -62,7 +62,7 @@ bool Keywords::parsePairPotentialsBlock(LineParser& parser, DUQ* duq)
 
 	AtomType* at, *at2;
 	PairPotential* pot;
-	bool blockDone = false, error = true;
+	bool blockDone = false, error = false;
 
 	while (!parser.eofOrBlank())
 	{

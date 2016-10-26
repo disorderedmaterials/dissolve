@@ -201,5 +201,6 @@ bool DUQ::go()
 		totalEnergy(cfg);
 		intramolecularEnergy(cfg);
 	}
+
 	return true;
 }
