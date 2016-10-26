@@ -42,7 +42,6 @@ KeywordData ConfigurationBlockData[] = {
 	{ "QDelta",			1,	"" },
 	{ "QMax",			1,	"" },
 	{ "RDFBinWidth",		1,	"" },
-	{ "RDFMethod",			1,	"" },
 	{ "RDFRange",			1,	"" },
 	{ "RDFSmoothing",		1,	"" },
 	{ "RMSEDeltaQ",			1,	"" },
@@ -135,8 +134,22 @@ bool Keywords::parseConfigurationBlock(LineParser& parser, DUQ* duq, Configurati
 				module = duq->findModule(parser.argc(1));
 				if (!module)
 				{
-					
+					Messenger::error("No Module named '%s' exists.\n", parser.argc(1));
+					error = true;
+					break;
 				}
+
+				// Try to add this module (or an instance of it) to the current Configuration
+				module = cfg->addModule(module);
+				if (!module)
+				{
+					Messenger::error("Failed to add module '%s' to configuration.\n", parser.argc(1));
+					error = true;
+					break;
+				}
+
+				// Parse rest of Module block
+				if (!parseModuleBlock(parser, duq, module)) error = true;
 				break;
 			case (Keywords::MultiplierKeyword):
 				cfg->setMultiplier(parser.argd(1));
@@ -154,14 +167,6 @@ bool Keywords::parseConfigurationBlock(LineParser& parser, DUQ* duq, Configurati
 				break;
 			case (Keywords::RDFBinWidthKeyword):
 				cfg->setRDFBinWidth(parser.argd(1));
-				break;
-			case (Keywords::RDFMethodKeyword):
-				if (Configuration::rdfMethod(parser.argc(1)) == Configuration::nRDFMethods)
-				{
-					Messenger::error("'%s' is not a valid calculation method.\n", parser.argc(1));
-					error = true;
-				}
-				else cfg->setRDFMethod(Configuration::rdfMethod(parser.argc(1)));
 				break;
 			case (Keywords::RDFRangeKeyword):
 				cfg->setRequestedRDFRange(parser.argd(1));

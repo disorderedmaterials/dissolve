@@ -7,6 +7,12 @@ EndAtomTypes
 
 # Species Definitions
 Species 'Water'
+
+  # Option to load Species definition from a file containing atom, bond, angle and isotopologue information
+  # Import 'species/benzene'
+
+  # Option to specify mutiple-xyz file containing suitable starting coordinates for species (when creating random configs).
+
   # Atoms
   Atom    1    O     0.015   -0.009   -0.373   -0.848 'OW'
   Atom    2    H     0.757    0.013    0.217    0.424 'HW'

@@ -22,7 +22,7 @@
 #include "main/keywords.h"
 #include "main/duq.h"
 #include "classes/species.h"
-#include <string.h>
+#include "base/sysfunc.h"
 
 // Sample Block Keywords
 KeywordData SampleBlockData[] = {
@@ -41,7 +41,7 @@ KeywordData SampleBlockData[] = {
 // Convert text string to SampleKeyword
 Keywords::SampleKeyword Keywords::sampleKeyword(const char* s)
 {
-	for (int n=0; n<Keywords::nSampleKeywords; ++n) if (strcmp(s,SampleBlockData[n].name) == 0) return (Keywords::SampleKeyword) n;
+	for (int n=0; n<Keywords::nSampleKeywords; ++n) if (DUQSys::sameString(s,SampleBlockData[n].name)) return (Keywords::SampleKeyword) n;
 	return Keywords::nSampleKeywords;
 }
 

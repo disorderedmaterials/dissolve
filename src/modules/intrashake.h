@@ -40,6 +40,12 @@ class AtomShake : public Module
 	AtomShake();
 	// Destructor
 	~AtomShake();
+
+
+	/*
+	 * Instances
+	 */
+	public:
 	// Create instance of this module
 	Module* createInstance();
 

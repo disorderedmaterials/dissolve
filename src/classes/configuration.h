@@ -28,6 +28,7 @@
 #include "classes/kvector.h"
 #include "classes/braggpeak.h"
 #include "classes/sample.h"
+#include "modules/module.h"
 #include "base/variablelist.h"
 #include "templates/vector3.h"
 #include "templates/orderedlist.h"
@@ -52,16 +53,6 @@ class Configuration : public ListItem<Configuration>, public VariableList
 	~Configuration();
 	// Assignment operator
 	void operator=(Configuration& source);
-	// RDF Calculation Style
-	enum RDFMethod
-	{
-		SimpleMethod,		/* 'Simple' - Use a simple double-loop to calculate atomic partials */
-		nRDFMethods		/* Number of RDFMethods */
-	};
-	// Convert text string to RDFMethod
-	static RDFMethod rdfMethod(const char* s);
-	// Convert RDFMethod to text string
-	static const char* rdfMethod(RDFMethod rm);
 
 
 	/*
@@ -286,8 +277,6 @@ class Configuration : public ListItem<Configuration>, public VariableList
 	int rdfSmoothing_;
 	// Requested RDF extent
 	double requestedRDFRange_;
-	// RDF calculation style
-	Configuration::RDFMethod rdfMethod_;
 	// Pair RDF matrix, containing full atom-atom RDFs
 	Array2D<Histogram> pairRDFMatrix_;
 	// Unbound RDF matrix, containing atom-atom RDFs of pairs not joined by bonds or angles
@@ -355,10 +344,6 @@ class Configuration : public ListItem<Configuration>, public VariableList
 	void setRequestedRDFRange(double range);
 	// Return requested RDF extent
 	double requestedRDFRange();
-	// Set RDF calculation style
-	void setRDFMethod(Configuration::RDFMethod method);
-	// Return RDF calculation style
-	Configuration::RDFMethod rdfMethod();
 	// Set Q delta to use in generated S(Q)
 	void setQDelta(double delta);
 	// Return Q delta to use in generated S(Q)
@@ -417,7 +402,21 @@ class Configuration : public ListItem<Configuration>, public VariableList
 
 
 	/*
-	 * Total Energy
+	 * Modules
+	 */
+	private:
+	// Modules associated to this Configuration
+	RefList<Module,bool> modules_[Module::nModuleTypes];
+
+	public:
+	// Add module to Configuration
+	Module* addModule(Module* module);
+	// Find associated module by name
+	Module* findModule(const char* name, Module::ModuleType type);
+
+
+	/*
+	 * Total Energy  (TO ENERGY MODULE????)
 	 */
 	private:
 	// Configuration energy data

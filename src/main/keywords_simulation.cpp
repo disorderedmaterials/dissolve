@@ -21,7 +21,7 @@
 
 #include "main/keywords.h"
 #include "main/duq.h"
-#include <string.h>
+#include "base/sysfunc.h"
 
 // Simulation Block Keywords
 KeywordData SimulationBlockData[] = {
@@ -34,7 +34,7 @@ KeywordData SimulationBlockData[] = {
 // Convert text string to SimulationKeyword
 Keywords::SimulationKeyword Keywords::simulationKeyword(const char* s)
 {
-	for (int n=0; n<Keywords::nSimulationKeywords; ++n) if (strcmp(s,SimulationBlockData[n].name) == 0) return (Keywords::SimulationKeyword) n;
+	for (int n=0; n<Keywords::nSimulationKeywords; ++n) if (DUQSys::sameString(s,SimulationBlockData[n].name)) return (Keywords::SimulationKeyword) n;
 	return Keywords::nSimulationKeywords;
 }
 

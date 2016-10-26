@@ -34,6 +34,7 @@ class DUQSys
 	// String functions
 	static const char* upperCase(const char*);
 	static const char* lowerCase(const char*);
+	static bool sameString(const char* s1, const char* s2, bool caseSensitive = false);
 	static const char* beforeChar(const char*, char);
 	static const char* afterChar(const char*, char);
 	static const char* afterLastChar(const char*, char);

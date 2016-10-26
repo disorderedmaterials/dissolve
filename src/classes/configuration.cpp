@@ -26,22 +26,6 @@
 #include "base/comms.h"
 #include <string.h>
 
-// RDFMethod keywords
-const char* RDFMethodKeywords[] = { "Simple" };
-
-// Convert text string to RDFMethod
-Configuration::RDFMethod Configuration::rdfMethod(const char* s)
-{
-	for (int n=0; n<Configuration::nRDFMethods; ++n) if (strcmp(s,RDFMethodKeywords[n]) == 0) return (Configuration::RDFMethod) n;
-	return Configuration::nRDFMethods;
-}
-
-// Convert RDFMethod to text string
-const char* Configuration::rdfMethod(Configuration::RDFMethod rm)
-{
-	return RDFMethodKeywords[rm];
-}
-
 // Constructor
 Configuration::Configuration() : ListItem<Configuration>()
 {
@@ -69,7 +53,6 @@ Configuration::Configuration() : ListItem<Configuration>()
 
 	// Partials
 	partialsIndex_ = -1;
-	rdfMethod_ = Configuration::SimpleMethod;
 
 	// Setup
 	rdfBinWidth_ = 0.025;

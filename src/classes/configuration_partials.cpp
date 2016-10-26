@@ -445,18 +445,6 @@ double Configuration::requestedRDFRange()
 	return requestedRDFRange_;
 }
 
-// Set RDF calculation style
-void Configuration::setRDFMethod(Configuration::RDFMethod method)
-{
-	rdfMethod_ = method;
-}
-
-// Return RDF calculation style
-Configuration::RDFMethod Configuration::rdfMethod()
-{
-	return rdfMethod_;
-}
-
 // Set Q delta to use in generated S(Q)
 void Configuration::setQDelta(double delta)
 {
@@ -630,15 +618,7 @@ bool Configuration::calculatePairCorrelations(Data2D::WindowFunction windowFunct
 	
 	// Calculate full partials
 	Timer timer;
-	switch (rdfMethod_)
-	{
-		case (Configuration::SimpleMethod):
-			if (!calculatePartialsSimple()) return false;
-			break;
-		default:
-			Messenger::error("Partial calculation style unrecognised!\n");
-			return false;
-	}
+	if (!calculatePartialsSimple()) return false;
 
 	// Update partials index
 	partialsIndex_ = coordinateIndex_;

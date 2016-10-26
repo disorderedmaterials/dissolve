@@ -24,7 +24,6 @@
 #include "classes/atomtype.h"
 #include "classes/species.h"
 #include "base/sysfunc.h"
-#include <string.h>
 
 // Species Block Keywords
 KeywordData SpeciesBlockData[] = {
@@ -39,7 +38,7 @@ KeywordData SpeciesBlockData[] = {
 // Convert text string to SpeciesKeyword
 Keywords::SpeciesKeyword Keywords::speciesKeyword(const char* s)
 {
-	for (int n=0; n<nSpeciesKeywords; ++n) if (strcmp(s,SpeciesBlockData[n].name) == 0) return (Keywords::SpeciesKeyword) n;
+	for (int n=0; n<nSpeciesKeywords; ++n) if (DUQSys::sameString(s,SpeciesBlockData[n].name)) return (Keywords::SpeciesKeyword) n;
 	return nSpeciesKeywords;
 }
 

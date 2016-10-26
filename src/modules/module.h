@@ -22,13 +22,13 @@
 #ifndef DUQ_MODULE_H
 #define DUQ_MODULE_H
 
-#include "classes/configuration.h"
 #include "base/variablelist.h"
 #include "base/messenger.h"
-#include "templates/list.h"
+#include "templates/reflist.h"
 
 // Forward Declarations
 class DUQ;
+class Configuration;
 
 // Module
 class Module : public ListItem<Module>, public VariableList
@@ -37,8 +37,7 @@ class Module : public ListItem<Module>, public VariableList
 	// Constructor
 	Module()
 	{
-		// Accessible variables for all modules
-		setVariable("frequency", 1);
+		instances_.own(this);
 	}
 	// Destructor
 	virtual ~Module()
@@ -48,8 +47,25 @@ class Module : public ListItem<Module>, public VariableList
 	enum ModuleType { AnalysisModule, CorrelationModule, EvolutionModule, FitModule, nModuleTypes };
 	static ModuleType moduleType(const char* s);
 	static const char* moduleType(ModuleType mt);
+	// Module Instance Styles
+	enum InstanceType { UniqueInstance, SingleInstance, MultipleInstance };
+
+
+	/*
+	 * Instances
+	 */
+	private:
+	// All created instances of this module
+	List<Module> instances_;
+
+	public:
 	// Create instance of this module
 	virtual Module* createInstance() = 0;
+	// Delete all instances of this Module
+	void deleteInstances()
+	{
+		while (instances_.first()) instances_.removeFirst();
+	}
 
 
 	/*
@@ -62,8 +78,42 @@ class Module : public ListItem<Module>, public VariableList
 	virtual const char* brief() = 0;
 	// Return type of module
 	virtual ModuleType type() = 0;
-	// Number of Configurations that this module requires to run
+	// Return instance type for module
+	virtual InstanceType instanceType() = 0;
+	// Number of Configurations that this module requires to run (-1 for "one or more")
 	virtual int nConfigurationsRequired() = 0;
+
+
+	/*
+	 * Basic Control
+	 */
+	private:
+	// Frequency with which to run Module (relative to master simulation loop counter)
+	int frequency_;
+	// Whether the Module is enabled
+	bool enabled_;
+
+	public:
+	// Frequency with which to run Module (relative to master simulation loop counter)
+	void setFrequency(int freq)
+	{
+		frequency_ = freq;
+	}
+	// Frequency with which to run Module (relative to master simulation loop counter)
+	int frequency()
+	{
+		return frequency_;
+	}
+	// Set whether the Module is enabled
+	void setEnabled(bool b)
+	{
+		enabled_ = b;
+	}
+	// Return whether the Module is enabled
+	bool enabled()
+	{
+		return enabled_;
+	}
 
 
 	/*

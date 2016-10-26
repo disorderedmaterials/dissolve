@@ -21,7 +21,7 @@
 
 #include "base/variablelist.h"
 #include "base/messenger.h"
-#include <string.h>
+#include "base/sysfunc.h"
 
 // Constructor
 VariableList::VariableList()
@@ -62,13 +62,13 @@ void VariableList::setVariable(const char* name, double value)
 	Variable* var = variable(name);
 	if (!var)
 	{
-		Messenger::printVerbose("Added new double variable '%s' with value '%i'.\n", name, value);
+		Messenger::printVerbose("Added new double variable '%s' with value '%f'.\n", name, value);
 		var = variables_.add();
 		var->setup(name, value);
 	}
 	else
 	{
-		Messenger::printVerbose("Set existing double variable '%s' to value '%d' (previous value was '%d').\n", name, value, var->asDouble());
+		Messenger::printVerbose("Set existing double variable '%s' to value '%f' (previous value was '%f').\n", name, value, var->asDouble());
 		var->set(value);
 	}
 }
@@ -80,7 +80,7 @@ void VariableList::setVariable(const char* name, const char* value)
 	Variable* var = variable(name);
 	if (!var)
 	{
-		Messenger::printVerbose("Added new string variable '%s' with value '%i'.\n", name, value);
+		Messenger::printVerbose("Added new string variable '%s' with value '%s'.\n", name, value);
 		var = variables_.add();
 		var->setup(name, value);
 	}
@@ -140,7 +140,7 @@ const char* VariableList::variableAsChar(const char* name)
 // Return named variable
 Variable* VariableList::variable(const char* name)
 {
-	for (Variable* var = variables_.first(); var != NULL; var = var->next) if (strcmp(name, var->name()) == 0) return var;
+	for (Variable* var = variables_.first(); var != NULL; var = var->next) if (DUQSys::sameString(name, var->name())) return var;
 	return NULL;
 }
 
@@ -151,6 +151,6 @@ Variable* VariableList::variable(const char* prefix, const char* name)
 	Dnchar varName;
 	varName.sprintf("%s_%s", prefix, name);
 
-	for (Variable* var = variables_.first(); var != NULL; var = var->next) if (strcmp(varName, var->name()) == 0) return var;
+	for (Variable* var = variables_.first(); var != NULL; var = var->next) if (DUQSys::sameString(varName, var->name())) return var;
 	return NULL;
 }

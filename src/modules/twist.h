@@ -1,6 +1,6 @@
 /*
-	*** AtomShake Module
-	*** src/modules/atomshake.h
+	*** Twist Module
+	*** src/modules/twist.h
 	Copyright T. Youngs 2012-2016
 
 	This file is part of dUQ.
@@ -19,8 +19,8 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_ATOMSHAKE_H
-#define DUQ_ATOMSHAKE_H
+#ifndef DUQ_TWIST_H
+#define DUQ_TWIST_H
 
 #include "modules/module.h"
 
@@ -28,18 +28,24 @@
 /* none */
 
 /*
- * AtomShake Module
+ * Twist Module
  * ----------------
  *
  * Performs a traditional atom-by-atom Monte Carlo cycle over all atoms in the system
  */
-class AtomShake : public Module
+class Twist : public Module
 {
 	public:
 	// Constructor
-	AtomShake();
+	Twist();
 	// Destructor
-	~AtomShake();
+	~Twist();
+
+
+	/*
+	 * Instances
+	 */
+	public:
 	// Create instance of this module
 	Module* createInstance();
 

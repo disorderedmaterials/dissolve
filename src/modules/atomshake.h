@@ -40,6 +40,12 @@ class AtomShake : public Module
 	AtomShake();
 	// Destructor
 	~AtomShake();
+
+
+	/*
+	 * Instances
+	 */
+	public:
 	// Create instance of this module
 	Module* createInstance();
 
@@ -56,6 +62,8 @@ class AtomShake : public Module
 	ModuleType type();
 	// Number of Configurations that this module requires to run
 	int nConfigurationsRequired();
+	// Return instance type for module
+	InstanceType instanceType();
 
 
 	/*

@@ -21,7 +21,7 @@
 
 #include "main/keywords.h"
 #include "main/duq.h"
-#include <string.h>
+#include "base/sysfunc.h"
 
 // PairPotentials Block Keywords
 KeywordData PairPotentialsBlockData[] = {
@@ -40,7 +40,7 @@ int PairPotentialsBlockNArguments[] = { 4, 1, 4, 0, 6, 1, 1 };
 // Convert text string to PairPotentialsKeyword
 Keywords::PairPotentialsKeyword Keywords::pairPotentialsKeyword(const char* s)
 {
-	for (int n=0; n<Keywords::nPairPotentialsKeywords; ++n) if (strcmp(s,PairPotentialsBlockData[n].name) == 0) return (Keywords::PairPotentialsKeyword) n;
+	for (int n=0; n<Keywords::nPairPotentialsKeywords; ++n) if (DUQSys::sameString(s,PairPotentialsBlockData[n].name)) return (Keywords::PairPotentialsKeyword) n;
 	return Keywords::nPairPotentialsKeywords;
 }
 

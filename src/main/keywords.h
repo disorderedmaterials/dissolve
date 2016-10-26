@@ -28,6 +28,7 @@ class DUQ;
 class Sample;
 class Configuration;
 class Species;
+class Module;
 
 // Keyword Data
 class KeywordData
@@ -111,7 +112,6 @@ class Keywords
 		QDeltaKeyword,			/* 'QDelta' - Q delta to use in S(Q) calculation */
 		QMaxKeyword,			/* 'QMax' - Maximum Q up to which S(Q) calculation will be performed */
 		RDFBinWidthKeyword,		/* 'RDFBinWidth' - Specified bin width for all RDF generation */
-		RDFMethodKeyword,		/* 'RDFMethod' - Chooses the RDF calculation method to use */
 		RDFRangeKeyword,		/* 'RDFRange' - Requested extent for RDF (and subsequent S(Q)) calculation */
 		RDFSmoothingKeyword,		/* 'RDFSmoothing' - Specifies the degree of smoothing 'n' to apply to calculated RDFs, where 2n+1 controls the length in the applied Spline smooth */
 		RMSEDeltaQKeyword,		/* 'RMSEDeltaQ' - Controls bin width used in Sample/reference data RMSE calculation */
@@ -149,7 +149,7 @@ class Keywords
 	// Return expected number of expected arguments
 	static int moduleBlockNArguments(ModuleKeyword id);
 	// Parse Module block
-	static bool parseModuleBlock(LineParser& parser, DUQ* duq, Configuration* cfg);
+	static bool parseModuleBlock(LineParser& parser, DUQ* duq, Module* module);
 
 
 	/*

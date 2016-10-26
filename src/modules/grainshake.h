@@ -40,6 +40,12 @@ class GrainShake : public Module
 	GrainShake();
 	// Destructor
 	~GrainShake();
+
+
+	/*
+	 * Instances
+	 */
+	public:
 	// Create instance of this module
 	Module* createInstance();
 

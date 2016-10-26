@@ -133,12 +133,17 @@ int main(int argc, char **argv)
 	}
 
 	// Check module registration
-	dUQ.registerModules();
+	if (!dUQ.registerModules())
+	{
+		Comm.finalise();
+		return 1;
+	}
 
 	// Load input file (if one was provided
 	if (inputFile.isEmpty())
 	{
 		Messenger::print("No input file provided. Nothing more to do.\n");
+		Comm.finalise();
 		return 0;
 	}
 	Messenger::print("Loading input file...\n");

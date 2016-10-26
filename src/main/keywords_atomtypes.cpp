@@ -22,7 +22,7 @@
 #include "main/keywords.h"
 #include "main/duq.h"
 #include "classes/atomtype.h"
-#include <string.h>
+#include "base/sysfunc.h"
 
 // AtomTypes Block Keywords
 KeywordData AtomTypesBlockData[] = {
@@ -33,7 +33,7 @@ KeywordData AtomTypesBlockData[] = {
 // Convert text string to AtomTypesKeyword
 Keywords::AtomTypesKeyword Keywords::atomTypesKeyword(const char* s)
 {
-	for (int n=0; n<nAtomTypesKeywords; ++n) if (strcmp(s,AtomTypesBlockData[n].name) == 0) return (Keywords::AtomTypesKeyword) n;
+	for (int n=0; n<nAtomTypesKeywords; ++n) if (DUQSys::sameString(s,AtomTypesBlockData[n].name)) return (Keywords::AtomTypesKeyword) n;
 	return nAtomTypesKeywords;
 }
 

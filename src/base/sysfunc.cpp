@@ -46,14 +46,18 @@ const char* DUQSys::lowerCase(const char* s)
 }
 
 // Perform case-insensitive string comparison
-bool insensitiveStrCmp(const char* s1, const char* s2)
+bool DUQSys::sameString(const char* s1, const char* s2, bool caseSensitive)
 {
 	int len1 = strlen(s1), len2 = strlen(s2);
 	if (len1 != len2) return false;
 
-	for (int n=0; n<len1; ++n)
+	if (caseSensitive)
 	{
-		if (tolower(s1[n]) != tolower(s2[n])) return false;
+		for (int n=0; n<len1; ++n) if (s1[n] != s2[n]) return false;
+	}
+	else
+	{
+		for (int n=0; n<len1; ++n) if (tolower(s1[n]) != tolower(s2[n])) return false;
 	}
 
 	return true;

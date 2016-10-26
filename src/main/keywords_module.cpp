@@ -21,7 +21,7 @@
 
 #include "main/keywords.h"
 #include "main/duq.h"
-#include <string.h>
+#include "base/sysfunc.h"
 
 // Module Block Keywords
 KeywordData ModuleBlockData[] = {
@@ -33,7 +33,7 @@ KeywordData ModuleBlockData[] = {
 // Convert text string to ModuleKeyword
 Keywords::ModuleKeyword Keywords::moduleKeyword(const char* s)
 {
-	for (int n=0; n<Keywords::nModuleKeywords; ++n) if (strcmp(s,ModuleBlockData[n].name) == 0) return (Keywords::ModuleKeyword) n;
+	for (int n=0; n<Keywords::nModuleKeywords; ++n) if (DUQSys::sameString(s,ModuleBlockData[n].name)) return (Keywords::ModuleKeyword) n;
 	return Keywords::nModuleKeywords;
 }
 
@@ -50,39 +50,53 @@ int Keywords::moduleBlockNArguments(Keywords::ModuleKeyword id)
 }
 
 // Parse Module block
-bool Keywords::parseModuleBlock(LineParser& parser, DUQ* duq, Configuration* cfg)
+bool Keywords::parseModuleBlock(LineParser& parser, DUQ* duq, Module* module)
 {
 	Messenger::print("Parsing %s block\n", Keywords::inputBlock(Keywords::AtomTypesBlock));
-	
+
 	int el;
 	AtomType* at;
 	Parameters* params;
+	Variable* var;
 	bool blockDone = false, error = false;
 	
 	while (!parser.eofOrBlank())
 	{
 		// Read in a line, which should contain a keyword and a minimum number of arguments
 		parser.getArgsDelim(LineParser::SkipBlanks+LineParser::UseQuotes);
-		Keywords::AtomTypesKeyword atKeyword = Keywords::atomTypesKeyword(parser.argc(0));
-		if ((atKeyword != Keywords::nAtomTypesKeywords) && ((parser.nArgs()-1) < Keywords::atomTypesBlockNArguments(atKeyword)))
+		Keywords::ModuleKeyword modKeyword = Keywords::moduleKeyword(parser.argc(0));
+		if ((modKeyword != Keywords::nModuleKeywords) && ((parser.nArgs()-1) < Keywords::moduleBlockNArguments(modKeyword)))
 		{
-			Messenger::error("Not enough arguments given to '%s' keyword.\n", Keywords::atomTypesKeyword(atKeyword));
+			Messenger::error("Not enough arguments given to '%s' keyword.\n", Keywords::moduleKeyword(modKeyword));
 			error = true;
 			break;
 		}
-		switch (atKeyword)
+		switch (modKeyword)
 		{
-
-			case (Keywords::EndAtomTypesKeyword):
+			case (Keywords::DisabledModuleKeyword):
+				module->setEnabled(false);
+				break;
+			case (Keywords::EndModuleKeyword):
 				blockDone = true;
 				break;
-			case (Keywords::nAtomTypesKeywords):
+			case (Keywords::SetModuleVariableKeyword):
+				// First of all, does the named variable exist?
+				var = module->variable(parser.argc(1));
+				if (!var)
+				{
+					Messenger::error("Module '%s' does not contain a variable '%s'.\n", module->name(), parser.argc(1));
+					error = true;
+					break;
+				}
+				var->set(parser.argc(2));
+				break;
+			case (Keywords::nModuleKeywords):
 				Messenger::error("Unrecognised %s block keyword found - '%s'\n", Keywords::inputBlock(Keywords::ModuleBlock), parser.argc(0));
 				Keywords::printValidKeywords(Keywords::ModuleBlock);
 				error = true;
 				break;
 			default:
-				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", Keywords::inputBlock(Keywords::ModuleBlock), Keywords::atomTypesKeyword(atKeyword));
+				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", Keywords::inputBlock(Keywords::ModuleBlock), Keywords::moduleKeyword(modKeyword));
 				error = true;
 				break;
 		}

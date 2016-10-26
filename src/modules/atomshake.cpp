@@ -82,6 +82,12 @@ int AtomShake::nConfigurationsRequired()
 	return 1;
 }
 
+// Return instance type for module
+Module::InstanceType AtomShake::instanceType()
+{
+	return Module::MultipleInstance;
+}
+
 /*
  * Method
  */
