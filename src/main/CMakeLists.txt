@@ -6,11 +6,11 @@ dump.cpp
 duq.cpp
 energy.cpp
 forces.cpp
-io_configuration.cpp 
+io_configuration.cpp
 io_input.cpp
-keywords.cpp
 keywords_atomtypes.cpp
 keywords_configuration.cpp
+keywords.cpp
 keywords_module.cpp
 keywords_pairpotentials.cpp
 keywords_sample.cpp
@@ -21,10 +21,10 @@ pairpotentials.cpp
 samples.cpp
 simulation.cpp
 species.cpp
-control.h
+
 duq.h
 keywords.h
-}
+)
 
 include_directories(
 ../

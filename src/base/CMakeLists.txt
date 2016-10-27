@@ -12,9 +12,11 @@ sysfunc.cpp
 timer.cpp
 variable.cpp
 variablelist.cpp
-atomtype.h
+
+comms.h
 constants.h
 data2d.h
+dnchar.h
 element.h
 isotope.h
 lineparser.h

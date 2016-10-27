@@ -20,6 +20,7 @@
 */
 
 #include "main/duq.h"
+#include <string.h>
 
 // Add new Configuration
 Configuration* DUQ::addConfiguration()

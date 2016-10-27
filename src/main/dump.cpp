@@ -23,15 +23,7 @@
 #include "main/keywords.h"
 #include "classes/species.h"
 #include "classes/atomtype.h"
-#include <classes/box.h>
-// #include "classes/box.h"
-// #include "classes/molecule.h"
-// #include "base/lineparser.h"
-// #include "base/sysfunc.h"
-// #include "base/comms.h"
-// #include "math/constants.h"
-// #include "version.h"
-// #include <string.h>
+#include "classes/box.h"
 
 // Dump full system setup
 void DUQ::dumpSystemSetup(bool includeData)
@@ -158,7 +150,17 @@ void DUQ::dumpSystemSetup(bool includeData)
 		}
 
 		// Modules
-		XXX
+		Messenger::print("  # Modules\n");
+		if (!cfg->nModules() == 0) Messenger::print("  # -- None\n");
+		for (int n=0; n<Module::nModuleTypes; ++n)
+		{
+			Module::ModuleType mt = (Module::ModuleType) n;
+			
+			for (RefListItem<Module,bool>* ri = cfg->modules(mt); ri != NULL; ri = ri->next)
+			{
+				
+			}
+		}
 
 		Messenger::print("  %s  '%s'\n", Keywords::configurationKeyword(Keywords::BoxNormalisationFileKeyword), cfg->boxNormalisationFileName());
 		Messenger::print("  %s  %s\n", Keywords::configurationKeyword(Keywords::BraggKeyword), cfg->braggCalculationOn() ? "on" : "off");

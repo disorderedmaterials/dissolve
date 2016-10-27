@@ -70,7 +70,7 @@ Configuration  'Bulk'
   Species 'Water'  1.0
 
   # Define initial coordinates file XXX OR ALLOW RANDOM GENERATION XXX
-  File '/home/tris/work/water/epsr/waterbox.xyz'
+  #File '/home/tris/work/water/epsr/waterbox.xyz'
 
   # Specify which reference data are associated with this configuration
   # XXX Could also options of whether to fit or just calculate, weightings etc.

@@ -36,7 +36,7 @@ Angle::Angle() : ListItem<Angle>()
 	nAttached_[1] = 0;
 	attached_[0] = NULL;
 	attached_[1] = NULL;
-	interGrain_ = FALSE;
+	interGrain_ = false;
 	equilibrium_ = 109.5;
 	forceConstant_ = 418.4;
 }
@@ -151,10 +151,10 @@ int Angle::indexK() const
 // Return whether Atoms in Angle match those specified
 bool Angle::matches(Atom* i, Atom* j, Atom* k) const
 {
-	if (j_ != j) return FALSE;
-	if ((i_ == i) && (k_ == k)) return TRUE;
-	if ((i_ == k) && (k_ == i)) return TRUE;
-	return FALSE;
+	if (j_ != j) return false;
+	if ((i_ == i) && (k_ == k)) return true;
+	if ((i_ == k) && (k_ == i)) return true;
+	return false;
 }
 
 /*
@@ -271,7 +271,7 @@ bool Angle::broadcast(const List<Atom>& atoms)
 		buffer[1] = indexJ();
 		buffer[2] = indexK();
 	}
-	if (!Comm.broadcast(buffer, 3)) return FALSE;
+	if (!Comm.broadcast(buffer, 3)) return false;
 	
 	// Slaves now take Atom pointers from supplied List
 	if (Comm.slave())
@@ -282,8 +282,8 @@ bool Angle::broadcast(const List<Atom>& atoms)
 	}
 	
 	// Send parameter info
-	if (!Comm.broadcast(&equilibrium_, 1)) return FALSE;
-	if (!Comm.broadcast(&forceConstant_, 1)) return FALSE;
+	if (!Comm.broadcast(&equilibrium_, 1)) return false;
+	if (!Comm.broadcast(&forceConstant_, 1)) return false;
 #endif
-	return TRUE;
+	return true;
 }

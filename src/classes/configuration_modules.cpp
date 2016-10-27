@@ -64,3 +64,23 @@ Module* Configuration::findModule(const char* name, Module::ModuleType type)
 
 	return NULL;
 }
+
+// Return total number of Modules associated
+int Configuration::nModules()
+{
+	int total = 0;
+	for (int n=0; n<Module::nModuleTypes; ++n) total += modules_[n].nItems();
+	return total;
+}
+
+// Return number of associated Modules of specified type
+int Configuration::nModules(Module::ModuleType mt)
+{
+	return modules_[mt].nItems();
+}
+
+// Return first Module of specified type
+RefListItem<Module,bool>* Configuration::modules(Module::ModuleType mt)
+{
+	return modules_[mt].first();
+}

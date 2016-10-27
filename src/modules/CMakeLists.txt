@@ -1,23 +1,25 @@
 add_library(modules
-module.h
 module.cpp
 
-atomshake.h
-energy.h
-forces.h
-grainshake.h
-intrashake.h
-md.h
-twist.h
+module.h
+
 
 atomshake.cpp
-energy.cpp
-forces.cpp
-grainshake.cpp
-intrashake.cpp
-md.cpp
-twist.cpp
-}
+#energy.cpp
+#forces.cpp
+#grainshake.cpp
+#intrashake.cpp
+#md.cpp
+#twist.cpp
+
+atomshake.h
+#energy.h
+#forces.h
+#grainshake.h
+#intrashake.h
+#md.h
+#twist.h
+)
 
 include_directories(
 ../

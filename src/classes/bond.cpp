@@ -35,7 +35,7 @@ Bond::Bond() : ListItem<Bond>()
 	nAttached_[1] = 0;
 	attached_[0] = NULL;
 	attached_[1] = NULL;
-	interGrain_ = FALSE;
+	interGrain_ = false;
 	equilibrium_ = 1.0;
 	forceConstant_ = 4184.0;
 }
@@ -149,9 +149,9 @@ int Bond::indexJ() const
 // Return whether Atoms in Angle match those specified
 bool Bond::matches(Atom* i, Atom* j) const
 {
-	if ((i_ == i) && (j_ == j)) return TRUE;
-	if ((i_ == j) && (j_ == i)) return TRUE;
-	return FALSE;
+	if ((i_ == i) && (j_ == j)) return true;
+	if ((i_ == j) && (j_ == i)) return true;
+	return false;
 }
 
 /*
@@ -261,7 +261,7 @@ bool Bond::broadcast(const List<Atom>& atoms)
 		buffer[0] = indexI();
 		buffer[1] = indexJ();
 	}
-	if (!Comm.broadcast(buffer, 2)) return FALSE;
+	if (!Comm.broadcast(buffer, 2)) return false;
 	
 	// Slaves now take Atom pointers from supplied List
 	if (Comm.slave())
@@ -272,8 +272,8 @@ bool Bond::broadcast(const List<Atom>& atoms)
 	}
 	
 	// Send parameter info
-	if (!Comm.broadcast(&equilibrium_, 1)) return FALSE;
-	if (!Comm.broadcast(&forceConstant_, 1)) return FALSE;
+	if (!Comm.broadcast(&equilibrium_, 1)) return false;
+	if (!Comm.broadcast(&forceConstant_, 1)) return false;
 #endif
-	return TRUE;
+	return true;
 }

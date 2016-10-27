@@ -417,10 +417,16 @@ class Configuration : public ListItem<Configuration>, public VariableList
 	RefList<Module,bool> modules_[Module::nModuleTypes];
 
 	public:
-	// Add module to Configuration
+	// Associate Module to Configuration
 	Module* addModule(Module* module);
-	// Find associated module by name
+	// Find associated Module by name
 	Module* findModule(const char* name, Module::ModuleType type);
+	// Return total number of Modules associated
+	int nModules();
+	// Return number of associated Modules of specified type
+	int nModules(Module::ModuleType mt);
+	// Return first Module of specified type
+	RefListItem<Module,bool>* modules(Module::ModuleType mt);
 
 
 	/*
