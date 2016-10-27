@@ -1,6 +1,6 @@
 /*
-	*** dUQ CLI Main
-	*** src/cli/main.cpp
+	*** dUQ Main
+	*** src/main.cpp
 	Copyright T. Youngs 2012-2016
 
 	This file is part of dUQ.
@@ -26,7 +26,6 @@
 #include <time.h>
 #include <ctime>
 #include <stdlib.h>
-
 
 int main(int argc, char **argv)
 {

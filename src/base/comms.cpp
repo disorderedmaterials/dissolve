@@ -238,6 +238,10 @@ bool DUQComm::setupStrategy(const Vec3<int>& divisions, const Vec3<int>& cellExt
 	}
 
 	// Create MPI groups and communicators
+	XXX Comms setup is broken because we arrive at this routine while running MPIRunMaster(setupSimulation()).
+	XXX Need to move this to somewhere in main() (or a special routine to setup all MPI stuff) and think about how multiple configs will partition processors,
+	XXX AND make Comm a member of Configuration, except for a global world Comm structure that encompasses all available processors.
+
 	MPI_Group origGroup;
 	MPI_Comm_group(MPI_COMM_WORLD, &origGroup);
 	if (MPI_Group_incl(origGroup, localGroupSize(), processes(localGroupIndex_), &localGroup_) != MPI_SUCCESS) return false;
@@ -276,7 +280,7 @@ bool DUQComm::setupStrategy(const Vec3<int>& divisions, const Vec3<int>& cellExt
 		}
 	}
 	else if (!Comm.send(processGroupLeader(), 0)) return false;
-	
+
 	// Broadcast group leader list
 	if (!Comm.broadcast(groupLeaders_.array(), processGroups_.nItems())) return false;
 	Messenger::print("Group leader processes are :\n");

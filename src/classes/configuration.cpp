@@ -223,12 +223,10 @@ bool Configuration::setup(const List<AtomType>& atomTypes, double pairPotentialR
 
 	// Create 'empty' molecules in the main Configuration
 	Messenger::print("--> Creating space for molecules...\n");
-	int count;
 	for (RefListItem<Species,double>* refSp = usedSpecies_.first(); refSp != NULL; refSp = refSp->next)
 	{
-		// For safety, only the master will determine the number of molecules of each component
-		if (Comm.master()) count = refSp->data * multiplier_;
-		if (!Comm.broadcast(&count, 1)) return false;
+		// Determine the number of molecules of this component
+		int count = refSp->data * multiplier_;
 
 		// Check for zero count
 		if (count == 0)
@@ -236,7 +234,8 @@ bool Configuration::setup(const List<AtomType>& atomTypes, double pairPotentialR
 			Messenger::error("Relative population for Species '%s' is too low (%e) to provide any Molecules in this Configuration.\n", refSp->item->name(), refSp->data);
 			return false;
 		}
-		
+
+		// Add Molecule instances for this Species
 		for (int n = 0; n < count; ++n) addMolecule(refSp->item);
 	}
 
