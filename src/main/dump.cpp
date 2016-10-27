@@ -142,6 +142,7 @@ void DUQ::dumpSystemSetup(bool includeData)
 		if (cfg->nonPeriodic()) Messenger::print("  %s\n", Keywords::configurationKeyword(Keywords::NonPeriodicKeyword));
 
 		// Species
+		Messenger::print("  # Species\n");
 		for (RefListItem<Species,double>* ri = cfg->usedSpecies(); ri != NULL; ri = ri->next)
 		{
 			Species* sp = ri->item;
@@ -149,11 +150,16 @@ void DUQ::dumpSystemSetup(bool includeData)
 		}
 
 		// Reference Data (Samples)
+		Messenger::print("  # Reference Sample Data\n");
+		if (!cfg->referenceSamples()) Messenger::print("  # -- None\n");
 		for (Sample* sam = cfg->referenceSamples(); sam != NULL; sam = sam->next)
 		{
 			Messenger::print("  %s  '%s'\n", Keywords::configurationKeyword(Keywords::SampleAddKeyword), sam->name());
 		}
-		
+
+		// Modules
+		XXX
+
 		Messenger::print("  %s  '%s'\n", Keywords::configurationKeyword(Keywords::BoxNormalisationFileKeyword), cfg->boxNormalisationFileName());
 		Messenger::print("  %s  %s\n", Keywords::configurationKeyword(Keywords::BraggKeyword), cfg->braggCalculationOn() ? "on" : "off");
 		Messenger::print("  %s  %f\n", Keywords::configurationKeyword(Keywords::BraggBroadeningKeyword), cfg->braggBroadening());
@@ -164,6 +170,7 @@ void DUQ::dumpSystemSetup(bool includeData)
 		Messenger::print("  %s  %f\n", Keywords::configurationKeyword(Keywords::RDFRangeKeyword), cfg->rdfRange());
 		Messenger::print("  %s  %i\n", Keywords::configurationKeyword(Keywords::RDFSmoothingKeyword), cfg->rdfSmoothing());
 		Messenger::print("  %s  %f\n", Keywords::configurationKeyword(Keywords::TemperatureKeyword), cfg->temperature());
+
 		Messenger::print("%s\n\n", Keywords::configurationKeyword(Keywords::EndConfigurationKeyword));
 	}
 
