@@ -32,7 +32,7 @@ void DUQ::dumpSystemSetup(bool includeData)
 	// Can optionally include data (i.e. datasets, coordinates, box normalisation etc.) for extra checks
 
 	// Write title comment
-	Messenger::print("# SYSTEM DUMP\n\n");
+	Messenger::print("\n\n# SYSTEM DUMP\n\n");
 	
 	// Write AtomTypes block
 	Messenger::print("# AtomType Definitions\n");
@@ -126,7 +126,7 @@ void DUQ::dumpSystemSetup(bool includeData)
 	Messenger::print("# Configurations\n");
 	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
 	{
-		Messenger::print("%s\n\n", Keywords::inputBlock(Keywords::ConfigurationBlock));
+		Messenger::print("%s  '%s'\n", Keywords::inputBlock(Keywords::ConfigurationBlock), cfg->name());
 		Messenger::print("  %s  %i\n", Keywords::configurationKeyword(Keywords::MultiplierKeyword), cfg->multiplier());
 		Messenger::print("  %s  %f  %s\n", Keywords::configurationKeyword(Keywords::DensityKeyword), cfg->density(), cfg->densityIsAtomic() ? "atoms/A3" : "g/cm3");
 		Messenger::print("  %s  %f  %f  %f\n", Keywords::configurationKeyword(Keywords::CellLengthsKeyword), cfg->relativeBoxLengths().x, cfg->relativeBoxLengths().y, cfg->relativeBoxLengths().z);
@@ -134,7 +134,7 @@ void DUQ::dumpSystemSetup(bool includeData)
 		if (cfg->nonPeriodic()) Messenger::print("  %s\n", Keywords::configurationKeyword(Keywords::NonPeriodicKeyword));
 
 		// Species
-		Messenger::print("  # Species\n");
+		Messenger::print("\n  # Species\n");
 		for (RefListItem<Species,double>* ri = cfg->usedSpecies(); ri != NULL; ri = ri->next)
 		{
 			Species* sp = ri->item;
@@ -142,7 +142,7 @@ void DUQ::dumpSystemSetup(bool includeData)
 		}
 
 		// Reference Data (Samples)
-		Messenger::print("  # Reference Sample Data\n");
+		Messenger::print("\n  # Reference Sample Data\n");
 		if (!cfg->referenceSamples()) Messenger::print("  # -- None\n");
 		for (Sample* sam = cfg->referenceSamples(); sam != NULL; sam = sam->next)
 		{
@@ -150,18 +150,30 @@ void DUQ::dumpSystemSetup(bool includeData)
 		}
 
 		// Modules
-		Messenger::print("  # Modules\n");
-		if (!cfg->nModules() == 0) Messenger::print("  # -- None\n");
+		Messenger::print("\n  # Modules\n");
+		if (cfg->nModules() == 0) Messenger::print("  # -- None\n");
 		for (int n=0; n<Module::nModuleTypes; ++n)
 		{
 			Module::ModuleType mt = (Module::ModuleType) n;
 			
 			for (RefListItem<Module,bool>* ri = cfg->modules(mt); ri != NULL; ri = ri->next)
 			{
-				
+				Module* module = ri->item;
+
+				Messenger::print("  %s  %s\n", Keywords::configurationKeyword(Keywords::ModuleAddKeyword), module->name());
+
+				// For each Module, print all available variables
+				for (Variable* var = module->variables(); var != NULL; var = var->next)
+				{
+					if (var->type() == Variable::StringType) Messenger::print("    %s  %s  '%s'\n", Keywords::moduleKeyword(Keywords::SetModuleVariableKeyword), var->name(), var->asChar());
+					else Messenger::print("    %s  %s  %s\n", Keywords::moduleKeyword(Keywords::SetModuleVariableKeyword), var->name(), var->asChar());
+				}
+
+				Messenger::print("  %s\n", Keywords::moduleKeyword(Keywords::EndModuleKeyword));
 			}
 		}
 
+		Messenger::print("\n");
 		Messenger::print("  %s  '%s'\n", Keywords::configurationKeyword(Keywords::BoxNormalisationFileKeyword), cfg->boxNormalisationFileName());
 		Messenger::print("  %s  %s\n", Keywords::configurationKeyword(Keywords::BraggKeyword), cfg->braggCalculationOn() ? "on" : "off");
 		Messenger::print("  %s  %f\n", Keywords::configurationKeyword(Keywords::BraggBroadeningKeyword), cfg->braggBroadening());

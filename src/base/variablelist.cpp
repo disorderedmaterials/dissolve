@@ -38,6 +38,12 @@ VariableList::~VariableList()
  * Variables
  */
 
+// Return first Variable in list
+Variable* VariableList::variables()
+{
+	return variables_.first();
+}
+
 // Add/set variable (int)
 void VariableList::setVariable(const char* name, int value)
 {

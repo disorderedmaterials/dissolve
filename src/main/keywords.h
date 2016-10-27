@@ -106,7 +106,7 @@ class Keywords
 		DensityKeyword,			/* 'Density' - Specifies the density of the simulation, along with its units */
 		EndConfigurationKeyword,	/* 'EndConfiguration' - Signals the end of the Configuration block */
 		FileModelKeyword,		/* 'File' - Specifies the file which contains the starting/current coordinates */
-		ModuleSetupKeyword,		/* 'Module' - Starts the setup of a Module for this configuration */
+		ModuleAddKeyword,		/* 'Module' - Starts the setup of a Module for this configuration */
 		MultiplierKeyword,		/* 'Multiplier' - Specifies the factor by which relative populations are multiplied when generating the Model */
 		NonPeriodicKeyword,		/* 'NonPeriodic' - States that the simulation should be treated as non-periodic */
 		QDeltaKeyword,			/* 'QDelta' - Q delta to use in S(Q) calculation */

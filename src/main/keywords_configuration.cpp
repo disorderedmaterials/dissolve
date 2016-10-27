@@ -129,7 +129,7 @@ bool Keywords::parseConfigurationBlock(LineParser& parser, DUQ* duq, Configurati
 				cfg->setRandomConfiguration(false);
 				Messenger::print("--> Initial coordinates will be loaded from file '%s'\n", parser.argc(1));
 				break;
-			case (Keywords::ModuleSetupKeyword):
+			case (Keywords::ModuleAddKeyword):
 				// The argument following the keyword is the module name
 				module = duq->findModule(parser.argc(1));
 				if (!module)

@@ -41,21 +41,23 @@ class VariableList
 	 * Variables
 	 */
 	private:
-	// List of contained variables
+	// List of contained Variables
 	List<Variable> variables_;
 
 	public:
-	// Add/set variable (int)
+	// Return first Variable in list
+	Variable* variables();
+	// Add/set Variable (int)
 	void setVariable(const char* name, int value);
-	// Add/set variable (double)
+	// Add/set Variable (double)
 	void setVariable(const char* name, double value);
-	// Add/set variable (string)
+	// Add/set Variable (string)
 	void setVariable(const char* name, const char* value);
-	// Retrieve named variable (int)
+	// Retrieve named Variable (int)
 	int variableAsInt(const char* name);
-	// Retrieve named variable (double)
+	// Retrieve named Variable (double)
 	double variableAsDouble(const char* name);
-	// Retrieve named variable (string)
+	// Retrieve named Variable (string)
 	const char* variableAsChar(const char* name);
 
 
@@ -63,9 +65,9 @@ class VariableList
 	 * Search
 	 */
 	public:
-	// Return named variable
+	// Return named Variable
 	Variable* variable(const char* name);
-	// Return named variable (with prefix)
+	// Return named Variable (with prefix)
 	Variable* variable(const char* prefix, const char* name);
 
 
@@ -78,4 +80,3 @@ class VariableList
 };
 
 #endif
-

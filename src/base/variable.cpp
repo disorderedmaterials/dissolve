@@ -90,7 +90,7 @@ bool Variable::set(double value)
 {
 	if (type_ == Variable::IntegerType) valueI_ = int(value);
 	else if (type_ == Variable::DoubleType) valueD_ = value;
-	else if (type_ == Variable::StringType) valueC_.sprintf("%d", value);
+	else if (type_ == Variable::StringType) valueC_.sprintf("%f", value);
 }
 
 // Set variable value (string)
@@ -127,7 +127,7 @@ const char* Variable::asChar()
 	}
 	else if (type_ == Variable::DoubleType)
 	{
-		conversionStringTemp_.sprintf("%d", valueD_);
+		conversionStringTemp_.sprintf("%f", valueD_);
 		return conversionStringTemp_.get();
 	}
 	else if (type_ == Variable::StringType) return valueC_.get();
