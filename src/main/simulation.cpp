@@ -23,15 +23,6 @@
 #include "classes/species.h"
 #include "classes/atomtype.h"
 #include "base/comms.h"
-#include <string.h>
-
-// Find configuration by name
-Configuration* DUQ::findConfiguration(const char* name) const
-{
-	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next) if (strcmp(name, cfg->name()) == 0) return cfg;
-
-	return NULL;
-}
 
 // Set number of test points to use when calculating Box normalisation arrays
 void DUQ::setBoxNormalisationPoints(int nPoints)
@@ -149,36 +140,6 @@ bool DUQ::setupSimulation()
 	// Create PairPotential matrix
 	Messenger::print("--> Creating matrix (%ix%i)...\n", pairPotentialAtomTypeIndex_.nItems(), pairPotentialAtomTypeIndex_.nItems());
 	if (!potentialMap_.initialise(pairPotentialAtomTypeIndex_, pairPotentials_, pairPotentialRange_)) return false;
-
-	return true;
-}
-
-// Print Full System Setup
-bool DUQ::printSetup()
-{
-	Messenger::print("\n");
-	Messenger::print("*** AtomTypes\n");
-
-	Messenger::print("*** Species\n");
-// 	for (Species* sp = species_.first(); sp != NULL; sp = sp->next) sp->print();
-// 
-// 	Messenger::print("*** S
-// 	Messenger::print("Simulation Setup:\n");
-// 	Messenger::print("%-40s = %s\n", "Bragg calculation", braggCalculationOn_ ? "On" : "Off");
-// 	Messenger::print("%-40s = %9.3e (%s)\n", "Bragg calculation Q(max)", braggMaximumQ_, "1/Angstroms");
-// 	Messenger::print("%-40s = %9.3e (%s)\n", "Delta(Q) to use in S(Q) calculation", qDelta_, "1/Angstroms");
-// 	Messenger::print("%-40s = %9.3e (%s)\n", "Q(max) to use in S(Q) calculation", qMax_, "1/Angstroms");
-// 	Messenger::print("%-40s = %9.3e\n", "Q-Dependent Broadening FWHM", qDependentFWHM_);
-// 	Messenger::print("%-40s = %9.3e\n", "Q-Independent Broadening FWHM", qIndependentFWHM_);
-// 	Messenger::print("%-40s = %9i\n", "Random Seed", seed_);
-// 	Messenger::print("%-40s = %9.3e (%s)\n", "RDF Bin Width", rdfBinWidth_, "Angstroms");
-// 	Messenger::print("%-40s = %9.3e (%s)\n", "RDF Range", rdfRange_, "Angstroms");
-// 	Messenger::print("%-40s = %s\n", "RDF Calculation Method", rdfMethod(rdfMethod_));
-// 	Messenger::print("%-40s = %9i\n", "Simplex NCycles", simplexNCycles_);
-// 	Messenger::print("%-40s = %9i\n", "Simplex NMoves", simplexNMoves_);
-// 	Messenger::print("%-40s = %9.3e (%s)\n", "Simplex Temperature", simplexTemperature_, "barns/sr/atom");
-// 	Messenger::print("%-40s = %9.3e (%s)\n", "Simplex Tolerance", simplexTolerance_, "barns/sr/atom");
-// 	Messenger::print("%-40s = %9.3e (%s)\n", "Simulation Temperature", temperature_, "K");
 
 	return true;
 }

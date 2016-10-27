@@ -20,6 +20,7 @@
 */
 
 #include "base/variable.h"
+#include "base/comms.h"
 
 // Constructor
 Variable::Variable()
@@ -132,3 +133,33 @@ const char* Variable::asChar()
 	else if (type_ == Variable::StringType) return valueC_.get();
 }
 
+/*
+ * Parallel Comms
+ */
+
+// Broadcast data to all processes
+bool Variable::broadcast()
+{
+#ifdef PARALLEL
+	if (!Comm.broadcast(name_)) return false;
+	int tempType = type_;
+	if (!Comm.broadcast(&tempType, 1)) return false;
+	type_ = (Variable::VariableType) tempType;
+	switch (type_)
+	{
+		case (Variable::IntegerType):
+			if (!Comm.broadcast(&valueI_, 1)) return false;
+			break;
+		case (Variable::DoubleType):
+			if (!Comm.broadcast(&valueD_, 1)) return false;
+			break;
+		case (Variable::StringType):
+			if (!Comm.broadcast(valueC_)) return false;
+			break;
+		default:
+			Messenger::error("Broadcast of Variable failed - type_ not accounted for.\n");
+			return false;
+	}
+#endif
+	return true;
+}

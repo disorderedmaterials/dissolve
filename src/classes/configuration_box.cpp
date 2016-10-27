@@ -56,7 +56,7 @@ void Configuration::setNonPeriodic(bool b)
 }
 
 // Return whether the configuration is non-periodic
-bool Configuration::nonPeriodic()
+bool Configuration::nonPeriodic() const
 {
 	return nonPeriodic_;
 }
@@ -697,4 +697,16 @@ bool Configuration::updateAtomInCell(int id)
 void Configuration::setBoxNormalisationFile(const char* fileName)
 {
 	boxNormalisationFileName_ = fileName;
+}
+
+// Return box normalisation file to load/save for this configuration
+const char* Configuration::boxNormalisationFileName() const
+{
+	return boxNormalisationFileName_.get();
+}
+
+// Return current Box normalisation array
+const Data2D& Configuration::boxNormalisation() const
+{
+	return boxNormalisation_;
 }

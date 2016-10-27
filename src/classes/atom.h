@@ -30,10 +30,7 @@ class Cell;
 class Grain;
 class Molecule;
 
-/*
- * \brief Atom Definition
- * \details 
- */
+// Atom Definition
 class Atom
 {
 	public:
@@ -131,6 +128,8 @@ class Atom
 	void translateCoordinates(double dx, double dy, double dz);
 	// Set coordinates with no Grain update
 	void setCoordinatesNasty(const Vec3<double>& newr);
+	// Set coordinates with no Grain update
+	void setCoordinatesNasty(double x, double y, double z);
 	// Translate coordinates with no Grain update
 	void translateCoordinatesNasty(const Vec3<double>& delta);
 

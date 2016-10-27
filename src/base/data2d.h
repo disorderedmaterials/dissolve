@@ -80,7 +80,7 @@ class Data2D : public ListItem<Data2D>
 	// Return x value specified
 	double x(int index) const;
 	// Return x Array
-	Array< double >& arrayX();
+	Array<double>& arrayX();
 	// Set y value
 	void setY(int index, double y);
 	// Add to y value
@@ -226,6 +226,8 @@ class Data2D : public ListItem<Data2D>
 	bool save(const char* fileName) const;
 	// Save data and interpolation to specified file
 	bool saveWithInterpolation(const char* fileName);
+	// Dump contents
+	void dump();
 
 
 	/*

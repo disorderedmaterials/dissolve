@@ -28,10 +28,7 @@
 #include "templates/list.h"
 #include "templates/vector3.h"
 
-/*
- * \short Array
- * \details A simple dynamic Array-style class.
- */
+// Array
 template <class A> class Array : public ListItem< Array<A> >
 {
 	public:
@@ -157,7 +154,7 @@ template <class A> class Array : public ListItem< Array<A> >
 
 
 	/*
-	 * \brief Set/Get
+	 * Set/Get
 	 */
 	public:
 	// Add new element to array

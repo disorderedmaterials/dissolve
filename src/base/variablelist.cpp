@@ -22,6 +22,7 @@
 #include "base/variablelist.h"
 #include "base/messenger.h"
 #include "base/sysfunc.h"
+#include "base/comms.h"
 
 // Constructor
 VariableList::VariableList()
@@ -153,4 +154,29 @@ Variable* VariableList::variable(const char* prefix, const char* name)
 
 	for (Variable* var = variables_.first(); var != NULL; var = var->next) if (DUQSys::sameString(varName, var->name())) return var;
 	return NULL;
+}
+
+/*
+ * Parallel Comms
+ */
+
+// Broadcast data to all processes
+bool VariableList::broadcastVariables()
+{
+#ifdef PARALLEL
+	// Clear list on slaves
+	if (Comm.slave()) variables_.clear();
+
+	// Broadcast number of variables to expect
+	int varCount = variables_.nItems();
+	if (!Comm.broadcast(&varCount, 1)) return false;
+	for (int n=0; n<varCount; ++n)
+	{
+		Variable* var;
+		if (Comm.master()) var = variables_[n];
+		else var = variables_.add();
+		var->broadcast();
+	}
+#endif
+	return true;
 }

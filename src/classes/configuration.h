@@ -69,8 +69,6 @@ class Configuration : public ListItem<Configuration>, public VariableList
 	double density_;
 	// Whether the density is in atomic units (atoms/A3) or chemistry units (g/cm3)
 	bool densityIsAtomic_;
-	// Whether the configuration is non-periodic
-	bool nonPeriodic_;
 	// Whether a random config should be generated (as opposed to loading one from a file)
 	bool randomConfiguration_;
 	// File containing initial coordinates
@@ -161,10 +159,10 @@ class Configuration : public ListItem<Configuration>, public VariableList
 	Atom* atoms();
 	// Return nth atom
 	Atom* atom(int n);
-	// Setup arrays
-	bool setupArrays();
-	// Setup molecules
-	bool setupMolecules(Species& sourceCoordinates);
+	// Create Atom and Grain arrays
+	bool createArrays();
+	// Setup Molecule information
+	bool setupMolecules();
 	// Return specified type
 	AtomType* type(int index);
 	// Return first AtomTypeData for this configuration
@@ -175,6 +173,10 @@ class Configuration : public ListItem<Configuration>, public VariableList
 	int coordinateIndex();
 	// Increment current coordinate index
 	void incrementCoordinateIndex();
+	// Load coordinates from specified file
+	bool loadCoordinates(const char* filename);
+	// Create random configuration
+	bool createRandom();
 
 
 	/*
@@ -185,6 +187,8 @@ class Configuration : public ListItem<Configuration>, public VariableList
 	Vec3<double> relativeBoxLengths_;
 	// Box angles
 	Vec3<double> boxAngles_;
+	// Whether the configuration is non-periodic
+	bool nonPeriodic_;
 	// Periodic Box definition for the Model
 	Box* box_;
 	// Cell divisions along each axis
@@ -228,7 +232,7 @@ class Configuration : public ListItem<Configuration>, public VariableList
 	// Set whether the box is non-periodic
 	void setNonPeriodic(bool b);
 	// Return whether the box is non-periodic
-	bool nonPeriodic();
+	bool nonPeriodic() const;
 	// Return Box
 	const Box* box() const;
 	// Setup periodic Box
@@ -246,7 +250,7 @@ class Configuration : public ListItem<Configuration>, public VariableList
 	// Return Cell which contains specified coordinate
 	Cell* cell(const Vec3<double> r) const;
 	// Return maximum number of atoms per cell
-	int maxAtomsPerCell();
+	int maxAtomsPerCell() const;
 	// Return whether two Cells need minimum image calculation
 	bool useMim(Cell* a, Cell* b) const;
 	// Initialise Cells for distribution
@@ -261,8 +265,12 @@ class Configuration : public ListItem<Configuration>, public VariableList
 	bool updateAtomInCell(int id);
 	// Set box normalisation array to load/save for this configuration
 	void setBoxNormalisationFile(const char* fileName);
+	// Return box normalisation file to load/save for this configuration
+	const char* boxNormalisationFileName() const;
 	// Load Box normalisation array from specified file
 	bool loadBoxNormalisationFile();
+	// Return current Box normalisation array
+	const Data2D& boxNormalisation() const;
 
 
 	/*
@@ -299,7 +307,7 @@ class Configuration : public ListItem<Configuration>, public VariableList
 	Array2D<Data2D> partialSQMatrix_;
 	// Configuration index at which partials were last calculated
 	int partialsIndex_;
-	// Total RDF (unweighted)7
+	// Total RDF (unweighted)
 	Data2D totalRDF_;
 	// Total S(Q) (unweighted)
 	Data2D totalFQ_;
@@ -449,8 +457,8 @@ class Configuration : public ListItem<Configuration>, public VariableList
 	 * Parallel Comms
 	 */
 	public:
-	// Broadcast coordinate data
-	bool broadcastCoordinates();
+	// Broadcast data to all processes
+	bool broadcast(const List<Species>& species, double pairPotentialRange, const RefList<Module,bool>& allModules);
 };
 
 #endif

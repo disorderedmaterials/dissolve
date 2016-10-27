@@ -22,6 +22,7 @@
 #ifndef DUQ_CHANGESTORE_H
 #define DUQ_CHANGESTORE_H
 
+#include "classes/changedata.h"
 #include "templates/vector3.h"
 #include "templates/pair.h"
 #include "templates/array.h"
@@ -34,47 +35,7 @@ class Grain;
 class Molecule;
 class Configuration;
 
-/*
- * \brief Change Data
- */
-class ChangeData
-{
-	public:
-	// Constructor
-	ChangeData();
-	// Destructor
-	~ChangeData();
-	// List pointers
-	ChangeData* next, *prev;
-
-
-	/*
-	 * Target Data
-	 */
-	private:
-	// Atom
-	Atom* atom_;
-	// Flag indicating that atom has moved
-	bool moved_;
-	// Current coordinates of Atom (either original or newly-accepted)
-	Vec3<double> r_;
-
-	public:
-	// Set target atom
-	void setAtom(Atom* i);
-	// Return index of stored atom
-	int atomIndex();
-	// Update stored position, and flag as moved
-	void updatePosition();
-	// Revert atom to stored position
-	void revertPosition();
-	// Return whether atom has moved
-	bool hasMoved();
-};
-
-/*
- * \brief ChangeStore
- */
+// ChangeStore
 class ChangeStore
 {
 	public:

@@ -23,7 +23,6 @@
 #define DUQ_DUQ_H
 
 #include "base/ptable.h"
-// #include "modules/moduleproxy.h"
 #include "modules/module.h"
 #include "classes/configuration.h"
 #include "classes/braggpeak.h"
@@ -217,11 +216,23 @@ class DUQ
 
 
 	/*
-	 * Simulation
+	 * Configurations
 	 */
 	private:
 	// List of all atomic configurations
 	List<Configuration> configurations_;
+
+	public:
+	// Add new Configuration
+	Configuration* addConfiguration();
+	// Find configuration by name
+	Configuration* findConfiguration(const char* name) const;
+
+
+	/*
+	 * Simulation
+	 */
+	private:
 	// Number of test points to use when calculating Box normalisation arrays
 	int boxNormalisationPoints_;
 	// Bin width to use when calculating RMSE between Sample F(Q) and reference data
@@ -230,10 +241,6 @@ class DUQ
 	int seed_;
 	// Window function to use for all Fourier transforms
 	Data2D::WindowFunction windowFunction_;
-
-	private:
-	// Find configuration by name
-	Configuration* findConfiguration(const char* name) const;
 
 	public:
 	// Set number of test points to use when calculating Box normalisation arrays
@@ -248,10 +255,16 @@ class DUQ
 	void setWindowFunction(Data2D::WindowFunction wf);
 	// Setup all simulation data, checking it as we go
 	bool setupSimulation();
-	// Print full system setup
-	bool printSetup();
 	// Run main simulation
 	bool go();
+
+
+	/*
+	 * Setup Dump
+	 */
+	public:
+	// Dump full system setup
+	void dumpSystemSetup(bool includeData);
 
 
 	/*

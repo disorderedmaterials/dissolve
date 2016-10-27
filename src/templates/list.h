@@ -192,7 +192,6 @@ template <class T> class List
 	}
 
 
-
 	/*
 	 * Item Addition
 	 */

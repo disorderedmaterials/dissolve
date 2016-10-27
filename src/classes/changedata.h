@@ -23,22 +23,19 @@
 #define DUQ_CHANGEDATA_H
 
 #include "templates/vector3.h"
+#include "templates/list.h"
 
 // Forward Declarations
 class Atom;
 
-/*
- * \brief Change Data
- */
-class ChangeData
+// Change Data
+class ChangeData : public ListItem<ChangeData>
 {
 	public:
 	// Constructor
 	ChangeData();
 	// Destructor
 	~ChangeData();
-	// List pointers
-	ChangeData* next, *prev;
 
 
 	/*
@@ -56,13 +53,15 @@ class ChangeData
 	// Set target atom
 	void setAtom(Atom* i);
 	// Return index of stored atom
-	int atomIndex();
+	int atomIndex() const;
 	// Update stored position, and flag as moved
 	void updatePosition();
 	// Revert atom to stored position
 	void revertPosition();
 	// Return whether atom has moved
 	bool hasMoved();
+	// Return position vector
+	Vec3<double> r() const;
 };
 
 #endif

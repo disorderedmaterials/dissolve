@@ -24,7 +24,7 @@
 #include "classes/grain.h"
 #include "classes/species.h"
 #include "base/comms.h"
-#include <string.h>
+#include "base/sysfunc.h"
 
 // Constructor
 Configuration::Configuration() : ListItem<Configuration>()
@@ -226,7 +226,7 @@ bool Configuration::setup(const List<AtomType>& atomTypes, double pairPotentialR
 	int count;
 	for (RefListItem<Species,double>* refSp = usedSpecies_.first(); refSp != NULL; refSp = refSp->next)
 	{
-		// For safety, only one process will determine the number of molecules of each component
+		// For safety, only the master will determine the number of molecules of each component
 		if (Comm.master()) count = refSp->data * multiplier_;
 		if (!Comm.broadcast(&count, 1)) return false;
 
@@ -249,33 +249,28 @@ bool Configuration::setup(const List<AtomType>& atomTypes, double pairPotentialR
 	}
 
 	// Setup arrays for atoms and grains, based on the local molecules list
-	Messenger::print("--> Setting up Atom/Grain arrays...\n");
-	if (!setupArrays())
+	Messenger::print("--> Creating Atom/Grain arrays...\n");
+	if (!createArrays())
 	{
-		Messenger::error("Failed to set-up arrays in Configuration.\n");
+		Messenger::error("Failed to create arrays for Configuration.\n");
 		return false;
 	}
 
 	// Now, we need some coordinates - either we are creating a random configuration of molecules, or we are loading in a set of coordinates from a file
-	Species sourceCoordinates;
-	if (!randomConfiguration())
+	if (randomConfiguration())
+	{
+		Messenger::print("--> Generating random initial configuration...\n");
+		if (!createRandom()) return false;
+	}
+	else
 	{
 		Messenger::print("--> Loading initial coordinates from file '%s'...\n", initialCoordinatesFile_.get());
-		// Construct a temporary Species to load the source coordinates into
-		if (!MPIRunMaster(sourceCoordinates.load(initialCoordinatesFile_.get()))) return false;
-		sourceCoordinates.broadcast(atomTypes);
-
-		// Species now contains some number of atoms - does it match the number in the configuration's molecules?
-		if (nAtoms() != sourceCoordinates.nAtoms())
-		{
-			Messenger::error("Number of atoms in initial coordinates file (%i) does not match that in configuration (%i).\n", sourceCoordinates.nAtoms(), nAtoms());
-			return false;
-		}
+		if (!loadCoordinates(initialCoordinatesFile_)) return false;
 	}
 
-	// Create Atom and Grain arrays, and Molecule copies
+	// Populate Atom and Grain arrays from Molecule copies
 	Messenger::print("--> Setting up Molecules, Atoms, and Grains...\n");
-	if (!setupMolecules(sourceCoordinates))
+	if (!setupMolecules())
 	{
 		Messenger::error("Failed to setup molecules.\n");
 		return false;
@@ -390,10 +385,49 @@ bool Configuration::setup(const List<AtomType>& atomTypes, double pairPotentialR
  * Parallel Comms
  */
 
-// Broadcast coordinates
-bool Configuration::broadcastCoordinates()
+// Broadcast data to all processes
+bool Configuration::broadcast(const List<Species>& species, double pairPotentialRange, const RefList<Module,bool>& allModules)
 {
 #ifdef PARALLEL
+	// Composition
+	if (!Comm.broadcast(name_)) return false;
+	bool result;
+	BroadcastRefList<Species,double>(usedSpecies_, species, result);
+	if (!result) return false;
+	if (!Comm.broadcast(&multiplier_, 1)) return false;
+	if (!Comm.broadcast(&density_, 1)) return false;
+	if (!Comm.broadcast(&densityIsAtomic_, 1)) return false;
+	if (!Comm.broadcast(&nonPeriodic_, 1)) return false;
+	if (!Comm.broadcast(&randomConfiguration_, 1)) return false;
+	if (!Comm.broadcast(initialCoordinatesFile_)) return false;
+	if (!Comm.broadcast(&temperature_, 1)) return false;
+
+	// Content
+	// -- Broadcast size of molecule list
+	int count = molecules_.nItems(), spIndex;
+	if (!Comm.broadcast(&count, 1)) return false;
+	// Create molecules, which will also create the atom and grain space for us
+	for (int n=0; n<count; ++n)
+	{
+		// Broadcast index of Species
+		if (Comm.master()) spIndex = species.indexOf(molecules_[n]->species());
+		if (!Comm.broadcast(&spIndex, 1)) return false;
+
+		// Add Molecule to Configuration
+		if (Comm.slave()) addMolecule(species.item(spIndex));
+	}
+	// Create Atom / Grain arrays
+	if (Comm.slave() && (!createArrays())) return false;
+
+	// Box
+	if (!Comm.broadcast(relativeBoxLengths_)) return false;
+	if (!Comm.broadcast(boxAngles_)) return false;
+	if (!Comm.broadcast(&nonPeriodic_, 1)) return false;
+	if (Comm.slave() && (!setupBox(pairPotentialRange))) return false;
+	if (!Comm.broadcast(boxNormalisationFileName_)) return false;
+	if (!boxNormalisation_.broadcast()) return false;
+
+	// Coordinates
 	double* x, *y, *z;
 	x = new double[nAtoms_];
 	y = new double[nAtoms_];
@@ -405,9 +439,9 @@ bool Configuration::broadcastCoordinates()
 		Messenger::print("--> Sending Configuration to slaves...\n");
 		for (int n=0; n<nAtoms_; ++n)
 		{
-			x[n] = atomReferences_[n]->r().x;
-			y[n] = atomReferences_[n]->r().y;
-			z[n] = atomReferences_[n]->r().z;
+			x[n] = atoms_[n].r().x;
+			y[n] = atoms_[n].r().y;
+			z[n] = atoms_[n].r().z;
 		}
 	}
 	else Messenger::print("--> Waiting for Master to send Configuration.\n");
@@ -417,15 +451,78 @@ bool Configuration::broadcastCoordinates()
 	if (!Comm.broadcast(z, nAtoms_)) return false;
 	
 	// Slaves then store values into Atoms...
-	if (Comm.slave()) for (int n=0; n<nAtoms_; ++n) atomReferences_[n]->setCoordinates(x[n], y[n], z[n]);
+	if (Comm.slave()) for (int n=0; n<nAtoms_; ++n) atoms_[n].setCoordinatesNasty(x[n], y[n], z[n]);
 
 	delete[] x;
 	delete[] y;
 	delete[] z;
-	
-	// Broadcast coordinateIndex_
+
 	if (!Comm.broadcast(&coordinateIndex_, 1)) return false;
+
+	// Molecule Setup
+	if (Comm.slave() && !(setupMolecules())) return false;
+
+	// RDF Range (TO MOVE TO MODULE???)
+	if (!Comm.broadcast(&requestedRDFRange_, 1)) return false;
+	if (!Comm.broadcast(&rdfRange_, 1)) return false;
+	if (!Comm.broadcast(&rdfBinWidth_, 1)) return false;
+
+	// Modules
+	for (int n=0; n<Module::nModuleTypes; ++n)
+	{
+		Module::ModuleType mt = (Module::ModuleType) n;
+
+		// Master send number of modules of this type to expect
+		int moduleCount;
+		if (Comm.master()) moduleCount = modules_[mt].nItems();
+		if (!Comm.broadcast(&moduleCount, 1)) return false;
+
+		// Loop over associated modules of this type
+		for (int m = 0; m<moduleCount; ++m)
+		{
+			// Grab existing module pointer
+			Module* moduleOnMaster;
+			if (Comm.master()) moduleOnMaster = modules_[mt].item(m)->item;
+
+			// Master will broadcast module name to slaves
+			Dnchar moduleName;
+			if (Comm.master()) moduleName = moduleOnMaster->name();
+			if (!Comm.broadcast(moduleName)) return false;
+
+			// Find pointer to master module instance
+			Module* masterInstance = NULL;
+			for (RefListItem<Module,bool>* ri = allModules.first(); ri != NULL; ri = ri->next)
+			{
+				if (DUQSys::sameString(ri->item->name(), moduleName.get()))
+				{
+					masterInstance = ri->item;
+					break;
+				}
+			}
+
+			// Check pointer
+			if (!masterInstance)
+			{
+				Messenger::print("Failed to find master instance of module '%s'.\n", moduleName.get());
+				return false;
+			}
+
+			// Add this module to the current Configuration
+			if (Comm.slave())
+			{
+				// Add module
+				Module* newModule = addModule(masterInstance);
+
+				// Receive VariableList associated to module
+				newModule->broadcastVariables();
+			}
+			else
+			{
+				// Just broadcast existing VariableList
+				moduleOnMaster->broadcastVariables();
+			}
+		}
+	}
 #endif
 	return true;
 }
-

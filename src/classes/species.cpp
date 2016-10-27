@@ -30,8 +30,6 @@
 // Constructor
 Species::Species() : ListItem<Species>()
 {
-	highlightedIsotopologue_ = NULL;
-	highlightedGrain_ = NULL;
 }
 
 // Destructor
@@ -42,9 +40,7 @@ Species::~Species()
 // Clear Data
 void Species::clear()
 {
-	highlightedIsotopologue_ = NULL;
 	isotopologues_.clear();
-	highlightedGrain_ = NULL;
 	grains_.clear();
 	angles_.clear();
 	bonds_.clear();
@@ -192,7 +188,6 @@ bool Species::broadcast(const List<AtomType>& atomTypes)
 
 	// Send basic information
 	Comm.broadcast(name_);
-	Comm.broadcast(&relativePopulation_, 1);
 
 	// Atoms
 	Messenger::printVerbose("[MPI] Broadcasting Atoms...\n");

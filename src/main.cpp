@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 	// Parse CLI options...
 	int n = 1;
 	Dnchar inputFile, redirectFileName;
-	bool interactive = false;
+	bool fullDump = false;
 	while (n < argc)
 	{
 		if (argv[n][0] == '-')
@@ -55,6 +55,7 @@ int main(int argc, char **argv)
 					printf("\t-m\t\tRestrict output to be from the master process alone (parallel code only)\n");
 					printf("\t-q\t\tQuiet mode - print no output\n");
 					printf("\t-r <file>\tRedirect output from all process to 'file.N', where N is the process rank\n");
+					printf("\t-s\t\tPerform full dump of system setup from all processes and quit\n");
 					printf("\t-v\t\tVerbose mode - be a little more descriptive throughout\n");
 					Comm.finalise();
 					return 1;
@@ -79,6 +80,10 @@ int main(int argc, char **argv)
 					}
 					redirectFileName.sprintf("%s.%i", argv[n], Comm.rank());
 					Messenger::enableRedirect(redirectFileName.get());
+					break;
+				case ('s'):
+					Messenger::print("Full dump of system setup across all processes enabled.\n");
+					fullDump = true;
 					break;
 				case ('v'):
 					Messenger::setVerbose(true);
@@ -118,7 +123,7 @@ int main(int argc, char **argv)
 	Messenger::print("This is free software, and you are welcome to redistribute it under certain conditions.\n");
 	Messenger::print("For more details read the GPL at <http://www.gnu.org/copyleft/gpl.html>.\n\n");
 
-	// Load external datafiles
+	// Load external datafiles (master only)
 	if (!MPIRunMaster(dUQ.loadDataFiles()))
 	{
 		Comm.finalise();
@@ -132,28 +137,39 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	// Check module registration
+	// Check module registration (all processes)
 	if (!dUQ.registerModules())
 	{
 		Comm.finalise();
 		return 1;
 	}
 
-	// Load input file (if one was provided
+	// If no input file was provided, exit here
 	if (inputFile.isEmpty())
 	{
 		Messenger::print("No input file provided. Nothing more to do.\n");
 		Comm.finalise();
 		return 0;
 	}
+
+	// Load input file (master only)
 	Messenger::print("Loading input file...\n");
 	if (!MPIRunMaster(dUQ.loadInput(inputFile)))
 	{
+		Messenger::print("Error loading input file.\n");
 		Comm.finalise();
 		return 1;
 	}
 
-	// Broadcast System Setup to slaves
+	// Perform system setup (master only)
+	if (!MPIRunMaster(dUQ.setupSimulation()))
+	{
+		Messenger::print("Failed to setup Configurations.\n");
+		Comm.finalise();
+		return 1;
+	}
+
+	// Broadcast system data to all slaves
 	if (!dUQ.broadcastSetup())
 	{
 		Comm.finalise();
@@ -163,19 +179,15 @@ int main(int argc, char **argv)
 	// Initialise random seed
 	if (dUQ.seed() == -1) srand( (unsigned)time( NULL ) );
 	else srand(dUQ.seed());
-	
-	// Perform system setup (all processes)
-	if (!dUQ.setupSimulation())
-	{
-		Messenger::print("Failed to setup Configurations.\n");
-		return 1;
-	}
+
+	// Full system dump?
+	if (fullDump) dUQ.dumpSystemSetup(true);
 
 #ifdef PARALLEL
 	Messenger::print("This is process %i of %i total, and exists in process group %i in which it is rank %i of %i processes.\n", Comm.rank(), Comm.nProcesses(), Comm.localGroupIndex(), Comm.localGroupRank(), Comm.localGroupSize());
 #endif
 	
-	// Enter interactive mode, or perform steps provided in input file
+	// Run main simulation
 	int result = dUQ.go();
 
 	// End parallel communication

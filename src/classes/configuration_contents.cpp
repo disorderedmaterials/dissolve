@@ -1,5 +1,5 @@
 /*
-	*** Configuration - Species Contents Functions
+	*** Configuration - Contents
 	*** src/classes/configuration_contents.cpp
 	Copyright T. Youngs 2012-2016
 
@@ -26,11 +26,7 @@
 #include "classes/species.h"
 #include "base/comms.h"
 
-/*
- * \brief Add space for a Molecule of the Species provided
- * Add an empty Molecule to the Configuration. The Molecule will contain array space for referencing the number of Atoms and Grains
- * defined in the supplied Species. No actual Atom or Grain information is created in this function (this is done by Molecule::instantiate()).
- */
+// Add Atom/Grain space for a Molecule of the Species provided
 void Configuration::addMolecule(Species* sp)
 {
 #ifdef CHECKS
@@ -124,8 +120,8 @@ Atom* Configuration::atom(int n)
 	return &atoms_[n];
 }
 
-// Setup Arrays
-bool Configuration::setupArrays()
+// Create Atom and Grain Arrays
+bool Configuration::createArrays()
 {
 	if (molecules_.nItems() == 0)
 	{
@@ -161,26 +157,21 @@ bool Configuration::setupArrays()
 	return true;
 }
 
-/*
- * \brief Setup Molecules
- * \details Once molecules have been added to the Configuration with addMolecule(), and the master arrays of atoms and grains have
- * been allocated by setupArrays(), the coordinates of the individual atoms can be set. If atoms are present in the supplied Species, setupMolecules()
- * takes coordinates from there and copies them to the molecules defined in the configuration. Otherwise, a random centre of geometry and orientation is
- * generated for each molecule.
- */
-bool Configuration::setupMolecules(Species& sourceCoordinates)
+// Setup Molecule information
+bool Configuration::setupMolecules()
 {
+	/*
+	 * Once molecules have been added to the Configuration with addMolecule(), the master arrays of atoms and grains have
+	 * been allocated by setupArrays(), and the coordinates of the individual atoms have been set, setupMolecules() makes all links between
+	 * atoms, species, and atomTypes.
+	 * 
+	 * This routine must be called *after* atom coordinates have been set / loaded.
+	 */
+
 	// If there are no atoms in the sourceCoordinates species, assume that we are creating a random configuration.
 	int atomCount = 0, grainCount = 0, localTypeIndex;
 	Cell* c;
-	Matrix3 transform;
-	Vec3<double> r, cog, newCentre;
-	bool randomising = sourceCoordinates.nAtoms() == 0;
 	Species* sp;
-	SpeciesAtom* sourceI = sourceCoordinates.atoms();
-
-	// Initialise a shared random number pool - this will ensure all processes generate the same coordinates
-	Comm.initialiseRandomBuffer(DUQComm::World);
 
 	// Loop over defined molecules
 	for (Molecule* mol = molecules_.first(); mol != NULL; mol = mol->next)
@@ -188,37 +179,15 @@ bool Configuration::setupMolecules(Species& sourceCoordinates)
 		// Grab pointer to parent species
 		sp = mol->species();
 
-		// If we are randomising the configuration, get the centre of geometry for the species and generate a random centre and rotation matrix
-		if (randomising)
-		{
-			// Calculate the centre of geometry of the molecule's source species
-			cog = mol->species()->centreOfGeometry(box_);
-
-			// Generate a new random centre of geometry for the molecule
-			newCentre = box_->randomCoordinate();
-			
-			// Generate a random rotation matrix
-			transform.createRotationXY(Comm.randomPlusMinusOne()*180.0, Comm.randomPlusMinusOne()*180.0);
-		}
-
 		// Atoms
 		SpeciesAtom* i = mol->species()->atoms();
 		for (int n = 0; n<sp->nAtoms(); ++n)
 		{
-			// Get / generate atom coordinate
-			if (randomising) r = (transform * (i->r() - cog)) + newCentre;
-			else
-			{
-				r = sourceI->r();
-				sourceI = sourceI->next;
-			}
-
 			// Get cell location of atom, and find an empty atom slot in that cell
-			c = cell(r);
+			c = cell(atoms_[atomCount].r());
 
 			// Set the master atom reference
 			atoms_[atomCount].setIndex(atomCount);
-			atoms_[atomCount].setCoordinatesNasty(r);
 			atoms_[atomCount].setCell(c);
 			if (!c->addAtom(&atoms_[atomCount])) return false;
 
@@ -309,4 +278,60 @@ int Configuration::coordinateIndex()
 void Configuration::incrementCoordinateIndex()
 {
 	++coordinateIndex_;
+}
+
+// Load coordinates from file
+bool Configuration::loadCoordinates(const char* filename)
+{
+	// Construct a temporary Species to load the source coordinates into
+	Species sourceCoordinates;
+	if (!sourceCoordinates.load(filename)) return false;
+
+	// Temporary Species now contains some number of atoms - does it match the number in the configuration's molecules?
+	if (nAtoms_ != sourceCoordinates.nAtoms())
+	{
+		Messenger::error("Number of atoms in initial coordinates file (%i) does not match that in configuration (%i).\n", sourceCoordinates.nAtoms(), nAtoms_);
+		return false;
+	}
+
+	// All good, so copy atom coordinates over into our arrays
+	SpeciesAtom* i = sourceCoordinates.atoms();
+	for (int n=0; n<nAtoms_; ++n, i = i->next) atoms_[n].setCoordinatesNasty(i->r());
+
+	return true;
+}
+
+// Create random configuration
+bool Configuration::createRandom()
+{
+	Vec3<double> r, cog, newCentre;
+	Matrix3 transform;
+
+	// Loop over defined molecules
+	int index = 0;
+	for (Molecule* mol = molecules_.first(); mol != NULL; mol = mol->next)
+	{
+		// Grab pointer to parent species
+		Species* sp = mol->species();
+
+		// Calculate the centre of geometry of the molecule's source species
+		cog = mol->species()->centreOfGeometry(box_);
+
+		// Generate a new random centre of geometry for the molecule
+		newCentre = box_->randomCoordinate();
+			
+		// Generate a random rotation matrix
+		transform.createRotationXY(Comm.randomPlusMinusOne()*180.0, Comm.randomPlusMinusOne()*180.0);
+
+		// Generate and  transformed Species coordinates
+		for (SpeciesAtom* i = mol->species()->atoms(); i != NULL; i = i->next, ++index)
+		{
+			// Get / generate atom coordinate
+			r = (transform * (i->r() - cog)) + newCentre;
+
+			atoms_[index].setCoordinatesNasty(r);
+		}
+	}
+
+	return true;
 }

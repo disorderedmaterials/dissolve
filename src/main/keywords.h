@@ -185,7 +185,7 @@ class Keywords
 	// Sample Block Keyword Enum
 	enum SampleKeyword
 	{
-		BroadeningKeyword,		/* 'Broadening' - Specifies the Q-independent and Q-dependent (in that order) Gaussian broadening function FWHM to apply when transforming simulated RDF data to Q-space */
+		BroadeningKeyword,			/* 'Broadening' - Specifies the Q-independent and Q-dependent (in that order) Gaussian broadening function FWHM to apply when transforming simulated RDF data to Q-space */
 		EndSampleKeyword,			/* 'EndSample' - Signals the end of the Sample block */
 		FitMaxKeyword,				/* 'FitMax' - Upper limit for empirical fitting procedure for this Sample */
 		FitMinKeyword,				/* 'FitMin' - Lower limit for empirical fitting procedure for this Sample */

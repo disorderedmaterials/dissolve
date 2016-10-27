@@ -23,12 +23,10 @@
 #include "classes/atom.h"
 
 // Constructor
-ChangeData::ChangeData()
+ChangeData::ChangeData() : ListItem<ChangeData>()
 {
 	atom_ = NULL;
 	moved_ = false;
-	prev = NULL;
-	next = NULL;
 }
 
 // Destructor
@@ -41,7 +39,6 @@ ChangeData::~ChangeData()
  */
 
 // Set target atom
-
 void ChangeData::setAtom(Atom* i)
 {
 #ifdef CHECKS
@@ -57,7 +54,7 @@ void ChangeData::setAtom(Atom* i)
 }
 
 // Return index of stored atom
-int ChangeData::atomIndex()
+int ChangeData::atomIndex() const
 {
 	return atom_->index();
 }
@@ -79,4 +76,10 @@ void ChangeData::revertPosition()
 bool ChangeData::hasMoved()
 {
 	return moved_;
+}
+
+// Return position vector
+Vec3<double> ChangeData::r() const
+{
+	return r_;
 }

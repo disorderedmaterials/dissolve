@@ -219,11 +219,7 @@ Grain* Atom::grain() const
 	return grain_;
 }
 
-/*
- * \brief Set coordinates
- * \details Set the coordinates of the Atom to those specified, automatically updating the centre-of-geometry
- * of the Atom's Grain at the same time.
- */
+// Set coordinates
 void Atom::setCoordinates(const Vec3<double>& newr)
 {
 #ifdef CHECKS
@@ -234,54 +230,41 @@ void Atom::setCoordinates(const Vec3<double>& newr)
 	}
 #endif
 	// Update Grain centre before we store the new position
-// 	if (index_ == 3955) printf("Atom %i moving - old = %f %f %f, new = %f %f %f\n", index_, r_.x, r_.y, r_.z, newr.x, newr.y, newr.z);
 	grain_->updateCentre(newr-r_);
 	r_ = newr;
 }
 
-/*
- * \brief Set coordinates
- * \details Set the coordinates of the Atom to those specified, automatically updating the centre-of-geometry
- * of the Atom's Grain at the same time. This is an overloaded version of the Vec3<double> function.
- */
+// Set coordinates
 void Atom::setCoordinates(double dx, double dy, double dz)
 {
 	setCoordinates(Vec3<double>(dx,dy,dz));
 }
 
-/*
- * \brief Translate coordinates
- * \details Translate the coordinates of the Atom by the delta provided, automatically updating the centre-of-geometry
- * of the Atom's Grain at the same time.
- */
+// Translate coordinates
 void Atom::translateCoordinates(const Vec3<double>& delta)
 {
 	setCoordinates(r_+delta);
 }
 
-/*
- * \brief Translate coordinates
- * \details Translate the coordinates of the Atom by the delta provided, automatically updating the centre-of-geometry
- * of the Atom's Grain at the same time. This is an overloaded version of the Vec3<double> function.
- */
+// Translate coordinates
 void Atom::translateCoordinates(double dx, double dy, double dz)
 {
 	setCoordinates(r_+Vec3<double>(dx,dy,dz));
 }
 
-/*
- * \brief Set coordinates with no Grain update
- * \details Set the coordinates of the Atom, but do nothing else (i.e. do not update the associated Grain centre).
- */
+// Set coordinates with no Grain update
 void Atom::setCoordinatesNasty(const Vec3<double>& newr)
 {
 	r_ = newr;
 }
 
-/*
- * \brief Translate coordinates with no Grain update
- * \details Set the coordinates of the Atom, but do nothing else (i.e. do not update the associated Grain centre).
- */
+// Set coordinates with no Grain update
+void Atom::setCoordinatesNasty(double x, double y, double z)
+{
+	r_.set(x, y, z);
+}
+
+// Translate coordinates with no Grain update
 void Atom::translateCoordinatesNasty(const Vec3<double>& delta)
 {
 	r_ += delta;

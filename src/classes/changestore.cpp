@@ -26,6 +26,7 @@
 #include "classes/grain.h"
 #include "classes/molecule.h"
 #include "templates/orderedpointerlist.h"
+#include "base/comms.h"
 
 // Constructor
 ChangeStore::ChangeStore()
@@ -172,18 +173,18 @@ bool ChangeStore::distributeAndApply(Configuration* cfg)
 
 	// All processes now resize their arrays so they are large enough to hold the total number of changes
 	if (nTotalChanges == 0) return true;
-	x_.createEmpty(nTotalChanges);
-	y_.createEmpty(nTotalChanges);
-	z_.createEmpty(nTotalChanges);
-	indices_.createEmpty(nTotalChanges);
+	x_.reserve(nTotalChanges);
+	y_.reserve(nTotalChanges);
+	z_.reserve(nTotalChanges);
+	indices_.reserve(nTotalChanges);
 	
 	// Copy local change data into arrays
 	for (int n=0; n<changes_.nItems(); ++n)
 	{
-		indices_[n] = changes_[n]->a;
-		x_[n] = changes_[n]->b.x;
-		y_[n] = changes_[n]->b.y;
-		z_[n] = changes_[n]->b.z;
+		indices_[n] = changes_[n]->atomIndex();
+		x_[n] = changes_[n]->r().x;
+		y_[n] = changes_[n]->r().y;
+		z_[n] = changes_[n]->r().z;
 	}
 
 	// Now, assemble full array of the change data on the master...
@@ -199,20 +200,20 @@ bool ChangeStore::distributeAndApply(Configuration* cfg)
 	if (!Comm.broadcast(z_, nTotalChanges)) return false;
 
 	// Apply atom changes
-	Atom** atoms = cfg.atomReferences();
+	Atom* atoms = cfg->atoms();
 	for (int n=0; n<nTotalChanges; ++n)
 	{
 #ifdef CHECKS
-		if ((indices_[n] < 0) || (indices_[n] >= cfg.nAtoms()))
+		if ((indices_[n] < 0) || (indices_[n] >= cfg->nAtoms()))
 		{
-			Messenger::print("OUT_OF_RANGE - Index of Atom change (%i) is out of range in ChangeStore::distribute() (nAtoms = %i).\n", indices_[n], cfg.nAtoms());
+			Messenger::print("OUT_OF_RANGE - Index of Atom change (%i) is out of range in ChangeStore::distribute() (nAtoms = %i).\n", indices_[n], cfg->nAtoms());
 			continue;
 		}
 #endif
 		// Set new coordinates and check cell position
-		if (atoms[indices_[n]]->index() == Atom::UnusedAtom) continue;
-		atoms[indices_[n]]->setCoordinates(x_[n], y_[n], z_[n]);
-		cfg.updateAtomInCell(atoms[indices_[n]);
+		if (atoms[indices_[n]].index() < 0) continue;
+		atoms[indices_[n]].setCoordinates(x_[n], y_[n], z_[n]);
+		cfg->updateAtomInCell(indices_[n]);
 	}
 #else
 	// Apply atom changes

@@ -1,6 +1,8 @@
 add_library(main
 atomtypes.cpp
 comms.cpp
+configurations.cpp
+dump.cpp
 duq.cpp
 energy.cpp
 forces.cpp

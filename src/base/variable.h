@@ -89,6 +89,14 @@ class Variable : public ListItem<Variable>
 	double asDouble();
 	// Return variable (as string)
 	const char* asChar();
+
+
+	/*
+	 * Parallel Comms
+	 */
+	public:
+	// Broadcast data to all processes
+	bool broadcast();
 };
 
 #endif

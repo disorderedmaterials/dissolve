@@ -48,6 +48,7 @@ Data2D::Data2D(const Data2D& source)
 {
 	x_ = source.x_;
 	y_ = source.y_;
+	splineA_ = source.splineA_;
 	splineB_ = source.splineB_;
 	splineC_ = source.splineC_;
 	splineD_ = source.splineD_;
@@ -61,6 +62,7 @@ void Data2D::clear()
 {
 	x_.clear();
 	y_.clear();
+	splineA_.clear();
 	splineB_.clear();
 	splineC_.clear();
 	splineD_.clear();
@@ -291,6 +293,7 @@ void Data2D::operator=(const Data2D& source)
 {
 	x_ = source.x_;
 	y_ = source.y_;
+	splineA_ = source.splineA_;
 	splineB_ = source.splineB_;
 	splineC_ = source.splineC_;
 	splineD_ = source.splineD_;
@@ -1517,9 +1520,15 @@ bool Data2D::saveWithInterpolation(const char* fileName)
 		return false;
 	}
 	
-	for (int n = 0; n<x_.nItems(); ++n) parser.writeLineF("%16.10e  %16.10e  %16.10e\n", x_.value(n), y_.value(n), interpolated(x_.value(n)));
+	for (int n=0; n<x_.nItems(); ++n) parser.writeLineF("%16.10e  %16.10e  %16.10e\n", x_.value(n), y_.value(n), interpolated(x_.value(n)));
 	parser.closeFiles();
 	return true;
+}
+
+// Dump contents
+void Data2D::dump()
+{
+	for (int n=0; n<x_.nItems(); ++n) Messenger::print("%16.10e  %16.10e  %16.10e\n", x_.value(n), y_.value(n), interpolated(x_.value(n)));
 }
 
 /*
@@ -1530,41 +1539,15 @@ bool Data2D::saveWithInterpolation(const char* fileName)
 bool Data2D::broadcast()
 {
 #ifdef PARALLEL
-	// X data
-	int nItems = x_.nItems();
-	if (!Comm.broadcast(&nItems, 1)) return false;
-	if (nItems > 0)
-	{
-		if (Comm.slave()) x_.createEmpty(nItems);
-		if (!Comm.broadcast(x_.array(), nItems)) return false;
-	}
-
-	// Y data
-	nItems = y_.nItems();
-	if (!Comm.broadcast(&nItems, 1)) return false;
-	if (nItems > 0)
-	{
-		if (Comm.slave()) y_.createEmpty(nItems);
-		if (!Comm.broadcast(y_.array(), nItems)) return false;
-	}
+	// XY data
+	if (!Comm.broadcast(x_)) return false;
+	if (!Comm.broadcast(y_)) return false;
 
 	// Spline data
-	nItems = splineB_.nItems();
-	if (!Comm.broadcast(&nItems, 1)) return false;
-	if (nItems > 0)
-	{
-		if (Comm.slave())
-		{
-			splineA_.createEmpty(nItems);
-			splineB_.createEmpty(nItems);
-			splineC_.createEmpty(nItems);
-			splineD_.createEmpty(nItems);
-		}
-		if (!Comm.broadcast(splineA_.array(), nItems)) return false;
-		if (!Comm.broadcast(splineB_.array(), nItems)) return false;
-		if (!Comm.broadcast(splineC_.array(), nItems)) return false;
-		if (!Comm.broadcast(splineD_.array(), nItems)) return false;
-	}
+	if (!Comm.broadcast(splineA_)) return false;
+	if (!Comm.broadcast(splineB_)) return false;
+	if (!Comm.broadcast(splineC_)) return false;
+	if (!Comm.broadcast(splineD_)) return false;
 	if (!Comm.broadcast(&splineInterval_, 1)) return false;
 
 	// Axis/title information

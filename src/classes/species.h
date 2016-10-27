@@ -156,8 +156,6 @@ class Species : public ListItem<Species>
 	private:
 	// List of grain, dividing the Atoms of this Species into individual groups
 	List<SpeciesGrain> grains_;
-	// Highlighted grain (in Viewer)
-	SpeciesGrain* highlightedGrain_;
 	
 	public:
 	// Update SpeciesGrains after change
@@ -182,10 +180,6 @@ class Species : public ListItem<Species>
 	const char* uniqueGrainName(const char* baseName, SpeciesGrain* exclude = NULL) const;
 	// Order atoms within grains
 	void orderAtomsWithinGrains();
-	// Set highlighted grain
-	void setHighlightedGrain(SpeciesGrain* gd);
-	// Return highlighted grain
-	SpeciesGrain* highlightedGrain();
 
 
 	/*
@@ -194,8 +188,6 @@ class Species : public ListItem<Species>
 	private:
 	// List of isotopic variants defined for this species
 	List<Isotopologue> isotopologues_;
-	// Highlighted Isotopologue (in Viewer)
-	Isotopologue* highlightedIsotopologue_;
 
 	public:
 	// Update current Isotopologues
@@ -218,10 +210,6 @@ class Species : public ListItem<Species>
 	Isotopologue* findIsotopologue(const char* name) const;
 	// Return index of specified Isotopologue
 	int indexOfIsotopologue(Isotopologue* iso) const;
-	// Set highlighted Isotopologue
-	void setHighlightedIsotopologue(Isotopologue* iso);
-	// Return highlighted Isotopologue
-	Isotopologue* highlightedIsotopologue();
 
 
 	/*

@@ -216,6 +216,8 @@ class DUQComm
 	bool broadcast(float* source, int count, int rootProcess = 0, DUQComm::CommGroup group = DUQComm::World);
 	// Broadcast bool(s)
 	bool broadcast(bool* source, int count, int rootProcess = 0, DUQComm::CommGroup group = DUQComm::World);
+	// Broadcast Array<double>
+	bool broadcast(Array<double>& array, int rootProcess = 0, DUQComm::CommGroup group = DUQComm::World);
 
 
 	/*

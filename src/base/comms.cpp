@@ -804,6 +804,64 @@ bool DUQComm::broadcast(bool* source, int count, int rootProcess, DUQComm::CommG
 	return true;
 }
 
+// Broadcast Array<double>
+bool DUQComm::broadcast(Array<double>& array, int rootProcess, DUQComm::CommGroup group)
+{
+#ifdef PARALLEL
+	totalTime_.start();
+	accumTime_.start();
+
+	int length;
+	if (rank_ == rootProcess)
+	{
+		// Broadcast string length first...
+		length = array.nItems();
+		if (MPI_Bcast(&length, 1, MPI_INTEGER, rootProcess, communicator(group)) != MPI_SUCCESS)
+		{
+			Messenger::print("Failed to broadcast Array size from rootProcess %i.\n", rootProcess);
+			return false;
+		}
+
+		// Now broadcast Arrah data
+		if (length > 0)
+		{
+			if (MPI_Bcast(array.array(), length, MPI_CHARACTER, rootProcess, communicator(group)) != MPI_SUCCESS)
+			{
+				Messenger::print("Failed to broadcast Array data from rootProcess %i.\n", rootProcess);
+				return false;
+			}
+		}
+	}
+	else
+	{
+		// Slaves receive the data into the buffer, and then set the source string.
+		// Length first...
+		if (MPI_Bcast(&length, 1, MPI_INTEGER, rootProcess, communicator(group)) != MPI_SUCCESS)
+		{
+			Messenger::print("Slave %i failed to receive Array size from rootProcess %i.\n", rank_, rootProcess);
+			return false;
+		}
+
+		if (length > 0)
+		{
+			// Create array of specified size
+			array.reserve(length);
+
+			if (MPI_Bcast(array.array(), length, MPI_CHARACTER, rootProcess, communicator(group)) != MPI_SUCCESS)
+			{
+				Messenger::print("Slave %i failed to receive Array data from rootProcess %i.\n", rank_, rootProcess);
+				return false;
+			}
+		}
+		else array.clear();
+	}
+
+	totalTime_.accumulate();
+	accumTime_.accumulate();
+#endif
+	return true;
+}
+
 /*
  * Special Array Functions
  */
@@ -1042,7 +1100,7 @@ void DUQComm::refillRandomBuffer()
 		Messenger::printVerbose("Random Buffer - World parallel, so master (%s) will create and send array.\n", master() ? "me" : "not me");
 		if (master())
 		{
-			for (int n=0; n<RANDBUFFERSIZE; ++n) randomBuffer_[n] = dUQMath::random();
+			for (int n=0; n<RANDBUFFERSIZE; ++n) randomBuffer_[n] = DUQMath::random();
 			Comm.broadcast(randomBuffer_, RANDBUFFERSIZE, 0, randomBufferCommGroup_);
 		}
 		else Comm.broadcast(randomBuffer_, RANDBUFFERSIZE, 0, randomBufferCommGroup_);
@@ -1053,7 +1111,7 @@ void DUQComm::refillRandomBuffer()
 		Messenger::printVerbose("Random Buffer - Group parallel, so process leader (%s) will create and send array.\n", processGroupLeader() ? "me" : "not me");
 		if (processGroupLeader())
 		{
-			for (int n=0; n<RANDBUFFERSIZE; ++n) randomBuffer_[n] = dUQMath::random();
+			for (int n=0; n<RANDBUFFERSIZE; ++n) randomBuffer_[n] = DUQMath::random();
 			Comm.broadcast(randomBuffer_, RANDBUFFERSIZE, 0, randomBufferCommGroup_);
 		}
 		else Comm.broadcast(randomBuffer_, RANDBUFFERSIZE, 0, randomBufferCommGroup_);
@@ -1062,7 +1120,7 @@ void DUQComm::refillRandomBuffer()
 	{
 		// Create own random buffer
 		Messenger::printVerbose("Random Buffer - Solo parallel, so will create own array.\n");
-		for (int n=0; n<RANDBUFFERSIZE; ++n) randomBuffer_[n] = dUQMath::random();
+		for (int n=0; n<RANDBUFFERSIZE; ++n) randomBuffer_[n] = DUQMath::random();
 	}
 #endif
 }

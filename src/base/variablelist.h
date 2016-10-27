@@ -67,6 +67,14 @@ class VariableList
 	Variable* variable(const char* name);
 	// Return named variable (with prefix)
 	Variable* variable(const char* prefix, const char* name);
+
+
+	/*
+	 * Parallel Comms
+	 */
+	public:
+	// Broadcast data to all processes
+	bool broadcastVariables();
 };
 
 #endif

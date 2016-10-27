@@ -24,10 +24,7 @@
 #include "classes/atomtype.h"
 #include "base/comms.h"
 
-/*
- * \brief Broadcast system setup data
- * \details Send all data regarding system setup (Species, Samples, composition etc.) out to slave processes.
- */
+// Broadcast system setup data
 bool DUQ::broadcastSetup()
 {
 #ifdef PARALLEL
@@ -58,15 +55,8 @@ bool DUQ::broadcastSetup()
 		species_[n]->broadcast(atomTypes_);
 	}
 
-	// System Composition
-	Messenger::printVerbose("[MPI] Broadcasting Composition...\n");
-	if (!Comm.broadcast(&multiplier_, 1)) return false;
-	if (!Comm.broadcast(&density_, 1)) return false;
-	if (!Comm.broadcast(&densityIsAtomic_, 1)) return false;
-	if (!Comm.broadcast(relativeBoxLengths_)) return false;
-	if (!Comm.broadcast(boxAngles_)) return false;
-	if (!Comm.broadcast(&nonPeriodic_, 1)) return false;
-	if (!Comm.broadcast(&randomConfiguration_, 1)) return false;
+	// Reference Data
+	// TODO
 
 	// Samples
 	Messenger::printVerbose("Broadcasting Samples...\n");
@@ -79,8 +69,19 @@ bool DUQ::broadcastSetup()
 		samples_[n]->broadcast(species_);
 	}
 
+	// Configurations
+	Messenger::printVerbose("[MPI] Broadcasting Configurations...\n");
+	count = configurations_.nItems();
+	if (!Comm.broadcast(&count, 1)) return false;
+	Messenger::printVerbose("Expecting %i items...\n", count);
+	for (n=0; n<count; ++n)
+	{
+		if (Comm.slave()) addConfiguration();
+		configurations_[n]->broadcast(species_, pairPotentialRange_, allModules_);
+	}
+
 	// PairPotentials
-	Messenger::printVerbose("Broadcasting PairPotentials...\n");
+	Messenger::printVerbose("[MPI] Broadcasting PairPotentials...\n");
 	count = pairPotentials_.nItems();
 	if (!Comm.broadcast(&count, 1)) return false;
 	Messenger::printVerbose("Expecting %i items...\n", count);
@@ -94,54 +95,10 @@ bool DUQ::broadcastSetup()
 	if (!Comm.broadcast(&pairPotentialTruncationWidth_, 1)) return false;
 	if (!Comm.broadcast(&pairPotentialDelta_, 1)) return false;
 
-	// Setup Variables
-	Messenger::printVerbose("Broadcasting Setup Variables...\n");
+	// Simulation Variables
+	Messenger::printVerbose("Broadcasting Simulation Variables...\n");
 	if (!Comm.broadcast(&boxNormalisationPoints_, 1)) return false;
-	if (!Comm.broadcast(boxNormalisationFileName_)) return false;
-	if (!boxNormalisation_.broadcast()) return false;
-	if (!Comm.broadcast(&qDependentFWHM_, 1)) return false;
-	if (!Comm.broadcast(&qIndependentFWHM_, 1)) return false;
-	if (!Comm.broadcast(&requestedRDFRange_, 1)) return false;
-	if (!Comm.broadcast(&rdfRange_, 1)) return false;
-	if (!Comm.broadcast(&rdfBinWidth_, 1)) return false;
 	if (!Comm.broadcast(&seed_, 1)) return false;
-	if (!Comm.broadcast(&temperature_, 1)) return false;
-
-	// Perturbation variables
-	if (!Comm.broadcast(&simplexNMoves_, 1)) return false;
-	if (!Comm.broadcast(&simplexNCycles_, 1)) return false;
-	if (!Comm.broadcast(&simplexTemperature_, 1)) return false;
-	if (!Comm.broadcast(&simplexTolerance_, 1)) return false;
-
-	// Partials
-	if (!Comm.broadcast((int*)&rdfMethod_, 1)) return false;
-
-	// Simulation Steps
-	Messenger::printVerbose("Broadcasting Simulation Steps...\n");
-	// -- Equilibration Stage
-	count = equilibrationSteps_.nItems();
-	if (!Comm.broadcast(&count, 1)) return false;
-	for (n=0; n<count; ++n)
-	{
-		if (Comm.slave()) equilibrationSteps_.add();
-		equilibrationSteps_[n]->broadcast(commands_);
-	}
-	// -- Shake Stage
-	count = shakeSteps_.nItems();
-	if (!Comm.broadcast(&count, 1)) return false;
-	for (n=0; n<count; ++n)
-	{
-		if (Comm.slave()) shakeSteps_.add();
-		shakeSteps_[n]->broadcast(commands_);
-	}
-	// -- Strategy Stage
-	count = strategySteps_.nItems();
-	if (!Comm.broadcast(&count, 1)) return false;
-	for (n=0; n<count; ++n)
-	{
-		if (Comm.slave()) strategySteps_.add();
-		strategySteps_[n]->broadcast(commands_);
-	}
 #endif
 	return true;
 }

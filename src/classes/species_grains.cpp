@@ -141,7 +141,6 @@ void Species::removeGrain(SpeciesGrain* sg)
 	if (sg == NULL) Messenger::error("NULL_POINTER - NULL GrainDefinition passed to Species::removeGrainDefinition().\n");
 	else if (grains_.contains(sg))
 	{
-		if (highlightedGrain_ == sg) highlightedGrain_ = NULL;
 		grains_.remove(sg);
 		Messenger::print("Removed grain from Species '%s'.\n", name_.get());
 	}
@@ -235,16 +234,4 @@ void Species::orderAtomsWithinGrains()
 	// Now need to renumber Atoms
 	index = 0;
 	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next) i->setIndex(index++);
-}
-
-// Set highlighted grain
-void Species::setHighlightedGrain(SpeciesGrain* sg)
-{
-	highlightedGrain_ = sg;
-}
-
-// Return highlighted grain
-SpeciesGrain* Species::highlightedGrain()
-{
-	return highlightedGrain_;
 }

@@ -45,7 +45,6 @@ void Species::removeIsotopologue(Isotopologue* iso)
 	if (iso == NULL) Messenger::error("NULL_POINTER - NULL Isotopologue passed to Species::removeIsotopologue().\n");
 	else if (isotopologues_.contains(iso))
 	{
-		if (highlightedIsotopologue_ == iso) highlightedIsotopologue_ = NULL;
 		Dnchar tempName = iso->name();
 		isotopologues_.remove(iso);
 		Messenger::print("Removed Isotopologue '%s' from Species '%s'.\n", tempName.get(), name_.get());
@@ -116,16 +115,4 @@ Isotopologue *Species::findIsotopologue(const char* name) const
 int Species::indexOfIsotopologue(Isotopologue* iso) const
 {
 	return isotopologues_.indexOf(iso);
-}
-
-// Set highlighted Isotopologue
-void Species::setHighlightedIsotopologue(Isotopologue* iso)
-{
-	highlightedIsotopologue_ = iso;
-}
-
-// Return highlighted Isotopologue
-Isotopologue* Species::highlightedIsotopologue()
-{
-	return highlightedIsotopologue_;
 }
