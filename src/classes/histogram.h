@@ -117,8 +117,8 @@ class Histogram : public ListItem<Histogram>
 	 * Parallel Comms
 	 */
 	public:
-	// Gather all data to target process
-	bool allSum();
+	// Sum all data over processes
+	bool allSum(ProcessPool& procPool);
 };
 
 #endif

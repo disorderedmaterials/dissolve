@@ -95,8 +95,8 @@ class Variable : public ListItem<Variable>
 	 * Parallel Comms
 	 */
 	public:
-	// Broadcast data to all processes
-	bool broadcast();
+	// Broadcast data
+	bool broadcast(ProcessPool& procPool);
 };
 
 #endif

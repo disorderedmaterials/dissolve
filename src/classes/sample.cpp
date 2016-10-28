@@ -21,7 +21,7 @@
 
 #include "classes/sample.h"
 #include "classes/species.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 #include "base/sysfunc.h"
 #include <string.h>
 
@@ -265,18 +265,16 @@ bool Sample::createTypeIndex(const RefList<Species,double>& usedSpecies, int mul
 			return false;
 		}
 
-		// For safety, only the master process will determine the *total* number of molecules of each component
-		if (Comm.master()) molCount = refSp->data*multiplier;
-		if (!Comm.broadcast(&molCount, 1)) return false;
+		// Determine the *total* number of molecules of each component
+		molCount = refSp->data*multiplier;
 		
 		double totalRelative = mix->totalRelative();
 
 		// We must now loop over the Isotopologues in the mixture, bearing in mind molCount...
 		for (RefListItem<Isotopologue,double>* tope = mix->isotopologues(); tope != NULL; tope = tope->next)
 		{
-			// Again, for safety only the master process will calculate the number of molecules
-			if (Comm.master()) count = refSp->data * (tope->data / totalRelative) * multiplier;
-			if (!Comm.broadcast(&count, 1)) return false;
+			// Calculate the number of molecules
+			 count = refSp->data * (tope->data / totalRelative) * multiplier;
 
 			// Check for zero count
 			if (count == 0)
@@ -566,8 +564,6 @@ Data2D& Sample::totalGR()
 // Save all neutron-weighted RDFs
 void Sample::saveRDFs(const char* baseName)
 {
-	if (!Comm.master()) return;
-
 	// Get a nice sample name (i.e. no spaces, slashes etc.)
 	Dnchar niceSampleName = name_;
 	niceSampleName.replace(' ', '_');
@@ -587,8 +583,6 @@ void Sample::saveRDFs(const char* baseName)
 // Save all partial S(Q)
 void Sample::saveSQ(const char* baseName)
 {
-	if (!Comm.master()) return;
-
 	// Get a nice sample name (i.e. no spaces, slashes etc.)
 	Dnchar fileName, niceSampleName = name_;
 	niceSampleName.replace(' ', '_');
@@ -847,7 +841,7 @@ double Sample::referenceRMSE(double deltaQ)
  */
 
 // Broadcast data from Master to all Slaves
-bool Sample::broadcast(const List<Species>& species)
+bool Sample::broadcast(ProcessPool& procPool, const List<Species>& species)
 {
 #ifdef PARALLEL
 	int index, topeCount;
@@ -855,38 +849,38 @@ bool Sample::broadcast(const List<Species>& species)
 	IsotopologueMix* iso;
 
 	// Send name
-	if (!Comm.broadcast(name_)) return false;
+	if (!procPool.broadcast(name_)) return false;
 
 	// Mixture information
 	// Component/Species RefList will have already been constructed in DUQ::addSample(), so just update constituent Isotopologue
 	for (iso = isotopologueMixtures_.first(); iso != NULL; iso = iso->next)
 	{
 		// Master needs to determine Species index
-		if (Comm.master()) index = species.indexOf(iso->species());
-		if (!Comm.broadcast(&index, 1)) return false;
+		if (procPool.isMaster()) index = species.indexOf(iso->species());
+		if (!procPool.broadcast(&index, 1)) return false;
 		iso->setSpecies(species.item(index));
 
 		// Now sent number of isotopes in mixture
 		topeCount = iso->nIsotopologues();
-		if (!Comm.broadcast(&topeCount, 1)) return false;
+		if (!procPool.broadcast(&topeCount, 1)) return false;
 		
-		if (Comm.master()) for (RefListItem<Isotopologue,double>* ri = iso->isotopologues(); ri != NULL; ri = ri->next)
+		if (procPool.isMaster()) for (RefListItem<Isotopologue,double>* ri = iso->isotopologues(); ri != NULL; ri = ri->next)
 		{
 			// Get Isotopologue index from Species
 			index = iso->species()->indexOfIsotopologue(ri->item);
-			if (!Comm.broadcast(&index, 1)) return false;
+			if (!procPool.broadcast(&index, 1)) return false;
 			// Send relative population
 			relPop = ri->data;
-			if (!Comm.broadcast(&relPop, 1)) return false;
+			if (!procPool.broadcast(&relPop, 1)) return false;
 		}
 		else
 		{
 			for (int m = 0; m<topeCount; ++m)
 			{
 				// Receive Isotopologue index in associated Species
-				if (!Comm.broadcast(&index, 1)) return false;
+				if (!procPool.broadcast(&index, 1)) return false;
 				// Receive relative population
-				if (!Comm.broadcast(&relPop, 1)) return false;
+				if (!procPool.broadcast(&relPop, 1)) return false;
 				// Add new mixture component
 				iso->addIsotopologue(iso->species()->isotopologue(index), relPop);
 			}
@@ -894,15 +888,15 @@ bool Sample::broadcast(const List<Species>& species)
 	}
 
 	// Reference data
-	if (!Comm.broadcast(&hasReferenceData_, 1)) return false;
-	if (!referenceData_.broadcast()) return false;
-	if (!Comm.broadcast(referenceDataFileName_)) return false;
-	if (!Comm.broadcast((int*)&referenceDataNormalisation_, 1)) return false;
-	if (!Comm.broadcast(&referenceDataSubtractSelf_, 1)) return false;
-	if (!Comm.broadcast(&referenceFitMin_, 1)) return false;
-	if (!Comm.broadcast(&referenceFitMax_, 1)) return false;
-	if (!Comm.broadcast(&qDependentFWHM_, 1)) return false;
-	if (!Comm.broadcast(&qIndependentFWHM_, 1)) return false;
+	if (!procPool.broadcast(&hasReferenceData_, 1)) return false;
+	if (!referenceData_.broadcast(procPool)) return false;
+	if (!procPool.broadcast(referenceDataFileName_)) return false;
+	if (!procPool.broadcast((int*)&referenceDataNormalisation_, 1)) return false;
+	if (!procPool.broadcast(&referenceDataSubtractSelf_, 1)) return false;
+	if (!procPool.broadcast(&referenceFitMin_, 1)) return false;
+	if (!procPool.broadcast(&referenceFitMax_, 1)) return false;
+	if (!procPool.broadcast(&qDependentFWHM_, 1)) return false;
+	if (!procPool.broadcast(&qIndependentFWHM_, 1)) return false;
 #endif
 	return true;
 }

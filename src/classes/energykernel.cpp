@@ -26,10 +26,10 @@
 #include "classes/potentialmap.h"
 #include "classes/molecule.h"
 #include "classes/species.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 
 // Constructor
-EnergyKernel::EnergyKernel(const Configuration* config, const PotentialMap& potentialMap, double energyCutoff) : configuration_(config), potentialMap_(potentialMap)
+EnergyKernel::EnergyKernel(ProcessPool& procPool, const Configuration* config, const PotentialMap& potentialMap, double energyCutoff) : processPool_(procPool), configuration_(config), potentialMap_(potentialMap)
 {
 	box_ = configuration_->box();
 	cutoffDistanceSquared_ = (energyCutoff < 0.0 ? potentialMap_.rangeSquared() : energyCutoff*energyCutoff);
@@ -64,9 +64,7 @@ double EnergyKernel::energyWithoutMim(const Atom& i, const Atom& j)
 	return potentialMap_.energy(i.globalTypeIndex(), j.globalTypeIndex(), (i.r() - j.r()).magnitudeSq());
 }
 
-/*
- * \brief Return PairPotential energy between atoms provided as reference/pointer (no minimum image calculation)
- */
+// Return PairPotential energy between atoms provided as reference/pointer (no minimum image calculation)
 double EnergyKernel::energyWithoutMim(const Atom& i, const Atom* j)
 {
 // 	printf("EnergyKernel - energy %i-%i is %f at %f\n", i.index(), j.index(), potentialMap_.energy(i, j, (i.r() - j->r()).magnitudeSq()), (i.r() - j->r()).magnitudeSq());
@@ -157,9 +155,7 @@ double EnergyKernel::energyWithMim(const Atom& i, const Atom& j)
 	return potentialMap_.energy(i.globalTypeIndex(), j.globalTypeIndex(), box_->minimumDistanceSquared(j, i));
 }
 
-/*
- * \brief Return PairPotential energy between atoms provided as reference/pointer (minimum image calculation)
- */
+// eturn PairPotential energy between atoms provided as reference/pointer (minimum image calculation)
 double EnergyKernel::energyWithMim(const Atom& i, const Atom* j)
 {
 // 	Messenger::print("EnergyKernel - energy %i-%i is %f at %f\n", i->index(), j->index(), potentialMap_.energy(i, j, box_->minimumDistanceSquared(j, i)), box_->minimumDistanceSquared(j, i));
@@ -266,7 +262,7 @@ double EnergyKernel::energy(const Atom* i, const Atom* j, bool applyMim, bool ex
 }
 
 // Return PairPotential energy between atoms in supplied cells
-double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, bool excludeIgeJ, DUQComm::CommGroup group)
+double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, bool excludeIgeJ, ProcessPool::CommGroup group)
 {
 #ifdef CHECKS
 	if (centralCell == NULL)
@@ -289,8 +285,8 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 	double rSq, scale;
 
 	// Communication group determines loop/summation style
-	start = Comm.interleavedLoopStart(group);
-	stride = Comm.interleavedLoopStride(group);
+	start = processPool_.interleavedLoopStart(group);
+	stride = processPool_.interleavedLoopStride(group);
 
 	// Loop over central cell atoms
 	if (applyMim)
@@ -359,14 +355,14 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 	}
 	
 	// Sum over processes if necessary
-	if (group == DUQComm::Group) Comm.allSum(&totalEnergy, 1, DUQComm::Group);
-	else if (group == DUQComm::World) Comm.allSum(&totalEnergy, 1);
+	if (group == ProcessPool::Group) processPool_.allSum(&totalEnergy, 1, ProcessPool::Group);
+	else if (group == ProcessPool::Pool) processPool_.allSum(&totalEnergy, 1);
 
 	return totalEnergy;
 }
 
 // Return PairPotential energy between cell and atomic neighbours
-double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, DUQComm::CommGroup group)
+double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::CommGroup group)
 {
 	double totalEnergy = 0.0;
 	Atom** centralAtoms = centralCell->atoms().objects();
@@ -379,8 +375,8 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, DUQComm::CommGr
 	double rSq, scale;
 
 	// Communication group determines loop/summation style
-	start = Comm.interleavedLoopStart(group);
-	stride = Comm.interleavedLoopStride(group);
+	start = processPool_.interleavedLoopStart(group);
+	stride = processPool_.interleavedLoopStride(group);
 
 	// Straight loop over atoms *not* requiring mim
 	for (j = 0; j < centralCell->atomNeighbours().nItems(); ++j)
@@ -445,19 +441,19 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, DUQComm::CommGr
 	}
 
 	// Sum over processes if necessary
-	if (group == DUQComm::Group) Comm.allSum(&totalEnergy, 1, DUQComm::Group);
-	else if (group == DUQComm::World) Comm.allSum(&totalEnergy, 1);
+	if (group == ProcessPool::Group) processPool_.allSum(&totalEnergy, 1, ProcessPool::Group);
+	else if (group == ProcessPool::Pool) processPool_.allSum(&totalEnergy, 1);
 
 	return totalEnergy;
 }
 
-/*
- * \brief Return PairPotential energy between atom and list of neighbouring cells
- * \details Calculate the energy between the supplied atom and list of neighbouring cells. Note that it is assumed that the supplied atom
- * is in a cell which does *not* appear in the list.
- */
-double EnergyKernel::energy(const Atom* i, OrderedPointerList<Atom>& neighbours, int flags, DUQComm::CommGroup group)
+// Return PairPotential energy between atom and list of neighbouring cells
+double EnergyKernel::energy(const Atom* i, OrderedPointerList<Atom>& neighbours, int flags, ProcessPool::CommGroup group)
 {
+	/*
+	 * Calculate the energy between the supplied atom and list of neighbouring cells. Note that it is assumed that the supplied atom
+	 * is in a cell which does *not* appear in the list.
+	 */
 #ifdef CHECKS
 	if (i == NULL)
 	{
@@ -480,8 +476,8 @@ double EnergyKernel::energy(const Atom* i, OrderedPointerList<Atom>& neighbours,
 	const Vec3<double> rI = i->r();
 
 	// Communication group determines loop/summation style
-	start = Comm.interleavedLoopStart(group);
-	stride = Comm.interleavedLoopStride(group);
+	start = processPool_.interleavedLoopStart(group);
+	stride = processPool_.interleavedLoopStride(group);
 
 	// Loop over cell atoms
 	if (flags&EnergyKernel::ApplyMinimumImage)
@@ -597,14 +593,14 @@ double EnergyKernel::energy(const Atom* i, OrderedPointerList<Atom>& neighbours,
 	}
 
 	// Sum over processes if necessary
-	if (group == DUQComm::Group) Comm.allSum(&totalEnergy, 1, DUQComm::Group);
-	else if (group == DUQComm::World) Comm.allSum(&totalEnergy, 1);
+	if (group == ProcessPool::Group) processPool_.allSum(&totalEnergy, 1, ProcessPool::Group);
+	else if (group == ProcessPool::Pool) processPool_.allSum(&totalEnergy, 1);
 
 	return totalEnergy;
 }
 
 // Return intermolecular energy between Grain and list of Cells
-double EnergyKernel::energy(const Grain* grain, OrderedPointerList<Atom>& neighbours, bool applyMim, bool excludeIgeJ, DUQComm::CommGroup group)
+double EnergyKernel::energy(const Grain* grain, OrderedPointerList< Atom >& neighbours, bool applyMim, bool excludeIgeJ, ProcessPool::CommGroup group)
 {
 #ifdef CHECKS
 	if (grain == NULL)
@@ -624,8 +620,8 @@ double EnergyKernel::energy(const Grain* grain, OrderedPointerList<Atom>& neighb
 	Vec3<double> rI;
 
 	// Communication group determines loop/summation style
-	start = Comm.interleavedLoopStart(group);
-	stride = Comm.interleavedLoopStride(group);
+	start = processPool_.interleavedLoopStart(group);
+	stride = processPool_.interleavedLoopStride(group);
 
 	if (applyMim)
 	{
@@ -723,14 +719,14 @@ double EnergyKernel::energy(const Grain* grain, OrderedPointerList<Atom>& neighb
 	}
 
 	// Sum over processes if necessary
-	if (group == DUQComm::Group) Comm.allSum(&totalEnergy, 1, DUQComm::Group);
-	else if (group == DUQComm::World) Comm.allSum(&totalEnergy, 1);
+	if (group == ProcessPool::Group) processPool_.allSum(&totalEnergy, 1, ProcessPool::Group);
+	else if (group == ProcessPool::Pool) processPool_.allSum(&totalEnergy, 1);
 
 	return totalEnergy;
 }
 
 // Return PairPotential energy of atom with world
-double EnergyKernel::energy(const Atom* i, DUQComm::CommGroup group)
+double EnergyKernel::energy(const Atom* i, ProcessPool::CommGroup group)
 {
 #ifdef CHECKS
 	if (i == NULL)
@@ -748,7 +744,7 @@ double EnergyKernel::energy(const Atom* i, DUQComm::CommGroup group)
 }
 
 // Return PairPotential energy of grain with world
-double EnergyKernel::energy(const Grain* grain, bool excludeIgtJ, DUQComm::CommGroup group)
+double EnergyKernel::energy(const Grain* grain, bool excludeIgtJ, ProcessPool::CommGroup group)
 {
 #ifdef CHECKS
 	if (grain == NULL)
@@ -879,16 +875,17 @@ double EnergyKernel::fullIntraEnergy(const Grain* grain, double termFactor)
  * Molecule Terms
  */
 
-/*
- * \brief Return total Molecule energy
- * \details Calculates the total interaction energy of a Molecule with the rest of the system, and includes PairPotential and corrected intramolecular terms.
- * The argument 'halfPP' controls whether the total energy returned is suitable for summation into a total system energy (halfPP = true) or whether a single
- * Molecule energy is required (halfPP = false) and controls whether intermolecular Grain corrections are performed, as well as halving the total Grain energy.
- */
-double EnergyKernel::energy(Molecule* mol, DUQComm::CommGroup group, bool halfPP, double ppFactorIntra, double termFactor)
+// Return total Molecule energy
+double EnergyKernel::energy(Molecule* mol, ProcessPool::CommGroup group, bool halfPP, double ppFactorIntra, double termFactor)
 {
+	/*
+	 * Calculates the total interaction energy of a Molecule with the rest of the system, and includes PairPotential and corrected intramolecular terms.
+	 * The argument 'halfPP' controls whether the total energy returned is suitable for summation into a total system energy (halfPP = true) or whether a single
+	 * Molecule energy is required (halfPP = false) and controls whether intermolecular Grain corrections are performed, as well as halving the total Grain energy.
+	 */
+
 	double totalEnergy = 0.0, grainEnergy = 0.0, intraEnergy = 0.0, interMolGrainCorrect = 0.0;
-	
+
 	// Accumulate total Grain energy with Cells.
 	// This will double-count all Grain-Grain interactions within the Molecule, so we accumulate interMolGrainCorrect
 	// to correct for this as we go along. Note that this part of the Grain energy is *not* multiplied by ppFactorGrain.

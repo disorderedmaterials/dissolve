@@ -94,7 +94,7 @@ class GrainDefinition : public ListItem<GrainDefinition>
 	 */
 	public:
 	// Broadcast data from Master to all Slaves
-	bool broadcast(const List<Atom>& atoms);
+	bool broadcast(ProcessPool& procPool, const List<Atom>& atoms);
 };
 
 #endif

@@ -75,8 +75,8 @@ class VariableList
 	 * Parallel Comms
 	 */
 	public:
-	// Broadcast data to all processes
-	bool broadcastVariables();
+	// Broadcast data
+	bool broadcastVariables(ProcessPool& procPool);
 };
 
 #endif

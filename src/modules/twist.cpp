@@ -26,7 +26,7 @@
 #include "classes/energykernel.h"
 #include "classes/molecule.h"
 #include "classes/species.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 #include "base/timer.h"
 
 // Perform Torsional Twists
@@ -55,7 +55,7 @@ bool DUQ::twist(Configuration& cfg, double cutoffDistance, int nTwistsPerTerm)
 	EnergyKernel kernel(cfg, potentialMap_);
 
 	// Initialise the random number buffer
-	Comm.initialiseRandomBuffer(DUQComm::World);
+	Comm.initialiseRandomBuffer(ProcessPool::Pool);
 
 	// TODO This can be rewritten to calculate a local reference energy for each Grain in the Molecule and a Molecular inter-Grain energy.
 	// Then, as atoms are selected and twisted all we need to calculate is the difference in energy for the Grains that have moved, and the
@@ -70,7 +70,7 @@ bool DUQ::twist(Configuration& cfg, double cutoffDistance, int nTwistsPerTerm)
 		changeStore.add(mol);
 
 		// Calculate reference energy for the Molecule
-		currentEnergy = kernel.energy(mol, DUQComm::World);
+		currentEnergy = kernel.energy(mol, ProcessPool::Pool);
 
 		// Grab the index of the first Atom in this Molecule
 		rootIndex = mol->atom(0)->index();
@@ -106,7 +106,7 @@ bool DUQ::twist(Configuration& cfg, double cutoffDistance, int nTwistsPerTerm)
 			}
 
 			// Test energy again
-			newEnergy = kernel.energy(mol, DUQComm::World);
+			newEnergy = kernel.energy(mol, ProcessPool::Pool);
 			delta = newEnergy - currentEnergy;
 			
 			if ((delta < 0) || (Comm.random() < exp(-delta*rRT)))
@@ -132,9 +132,9 @@ bool DUQ::twist(Configuration& cfg, double cutoffDistance, int nTwistsPerTerm)
 	cfg.updateGrains();
 
 	// Collect statistics from process group leaders
-	if (!Comm.allSum(&nAccepted, 1, DUQComm::Leaders)) return false;
-	if (!Comm.allSum(&nTries, 1, DUQComm::Leaders)) return false;
-	if (Comm.processGroupLeader())
+	if (!Comm.allSum(&nAccepted, 1, ProcessPool::Leaders)) return false;
+	if (!Comm.allSum(&nTries, 1, ProcessPool::Leaders)) return false;
+	if (Comm.groupLeader())
 	{
 		double rate = double(nTries) / nAccepted;
 

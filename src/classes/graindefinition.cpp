@@ -21,7 +21,7 @@
 
 #include "classes/graindefinition.h"
 #include "base/ptable.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 
 // Constructor
 GrainDefinition::GrainDefinition() : ListItem<GrainDefinition>()
@@ -121,15 +121,15 @@ bool GrainDefinition::broadcast(const List<Atom>& atoms)
 	int n, count, index;
 
 	// Name
-	if (!Comm.broadcast(name_)) return false;
+	if (!procPool.broadcast(name_)) return false;
 	
 	// Atoms
 	count = atoms_.nItems();
-	if (!Comm.broadcast(&count, 1)) return false;
+	if (!procPool.broadcast(&count, 1)) return false;
 	for (n=0; n<count; ++n)
 	{
 		if (Comm.master()) index = atoms_.item(n)->item->index();
-		if (!Comm.broadcast(&index, 1)) return false;
+		if (!procPool.broadcast(&index, 1)) return false;
 		if (Comm.slave()) addAtom(atoms.item(index));
 	}
 #endif

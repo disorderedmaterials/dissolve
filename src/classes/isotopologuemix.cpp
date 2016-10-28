@@ -21,7 +21,7 @@
 
 #include "classes/isotopologuemix.h"
 #include "classes/species.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 
 // Constructor
 IsotopologueMix::IsotopologueMix() : ListItem<IsotopologueMix>()

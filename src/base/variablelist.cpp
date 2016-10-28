@@ -22,7 +22,7 @@
 #include "base/variablelist.h"
 #include "base/messenger.h"
 #include "base/sysfunc.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 
 // Constructor
 VariableList::VariableList()
@@ -166,22 +166,22 @@ Variable* VariableList::variable(const char* prefix, const char* name)
  * Parallel Comms
  */
 
-// Broadcast data to all processes
-bool VariableList::broadcastVariables()
+// Broadcast data
+bool VariableList::broadcastVariables(ProcessPool& procPool)
 {
 #ifdef PARALLEL
 	// Clear list on slaves
-	if (Comm.slave()) variables_.clear();
+	if (procPool.isSlave()) variables_.clear();
 
 	// Broadcast number of variables to expect
 	int varCount = variables_.nItems();
-	if (!Comm.broadcast(&varCount, 1)) return false;
+	if (!procPool.broadcast(&varCount, 1)) return false;
 	for (int n=0; n<varCount; ++n)
 	{
 		Variable* var;
-		if (Comm.master()) var = variables_[n];
+		if (procPool.isMaster()) var = variables_[n];
 		else var = variables_.add();
-		var->broadcast();
+		var->broadcast(procPool);
 	}
 #endif
 	return true;

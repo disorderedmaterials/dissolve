@@ -145,7 +145,7 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	 */
 	public:
 	// Broadcast data from Master to all Slaves
-	bool broadcast(const List<AtomType>& atomTypes);
+	bool broadcast(ProcessPool& procPool, const List<AtomType>& atomTypes);
 };
 
 #endif

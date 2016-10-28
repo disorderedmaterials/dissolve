@@ -27,6 +27,7 @@
 
 // Forward Declarations
 template <class T> class List;
+class ProcessPool;
 
 /*
  * MPIListItem Class
@@ -51,7 +52,7 @@ template <class T> class MPIListItem
 
 	public:
 	// Broadcast data from Master to all Slaves
-	virtual bool broadcast() = 0;
+	virtual bool broadcast(ProcessPool& procPool) = 0;
 };
 
 /*

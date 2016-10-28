@@ -21,7 +21,7 @@
 
 #include "classes/box.h"
 #include "classes/cell.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 #include <base/data2d.h>
 #include <string.h>
 
@@ -204,7 +204,7 @@ double Box::inscribedSphereRadius() const
 }
 
 // Calculate the RDF normalisation for the Box
-bool Box::calculateRDFNormalisation(Data2D& boxNorm, double rdfRange, double rdfBinWidth, int nPoints) const
+bool Box::calculateRDFNormalisation(Data2D& boxNorm, double rdfRange, double rdfBinWidth, int nPoints, ProcessPool& procPool) const
 {
 	// Setup array - we will use a nominal bin width of 0.1 Angstroms and then interpolate to the rdfBinWidth afterwards
 	const double binWidth = 0.1;
@@ -218,7 +218,7 @@ bool Box::calculateRDFNormalisation(Data2D& boxNorm, double rdfRange, double rdf
 	Vec3<double> centre = axes_*Vec3<double>(0.5,0.5,0.5);
 
 	// Insert enough points to give decent statistics - approx. 50,000,000
-	const int nPointsPerProcess = nPoints / Comm.nProcesses();
+	const int nPointsPerProcess = nPoints / procPool.nProcesses();
 	Messenger::print("--> Number of insertion points (per process) is %i\n", nPointsPerProcess);
 	y = 0.0;
 	for (int n=0; n<nPointsPerProcess; ++n)
@@ -226,15 +226,15 @@ bool Box::calculateRDFNormalisation(Data2D& boxNorm, double rdfRange, double rdf
 		bin = (randomCoordinate() - centre).magnitude() * rBinWidth;
 		if (bin < nBins) y[bin] += 1.0;
 	}
-	if (!Comm.allSum(y.array(), nBins)) return false;
+	if (!procPool.allSum(y.array(), nBins)) return false;
 
 	// Normalise histogram data, and scale by volume and binWidth ratio
-	y /= double(nPointsPerProcess*Comm.nProcesses());
+	y /= double(nPointsPerProcess*procPool.nProcesses());
 	y *= volume_ * (rdfBinWidth / binWidth);
 	normData.interpolate();
 
 	// Write histogram data for random distribution
-	if (Comm.master()) normData.save("duq.box.random");
+	if (procPool.isMaster()) normData.save("duq.box.random");
 	
 	// Now we have the interpolated data, create the proper interpolated data
 	nBins = rdfRange/rdfBinWidth;
@@ -260,7 +260,7 @@ bool Box::calculateRDFNormalisation(Data2D& boxNorm, double rdfRange, double rdf
 	boxNorm.interpolate();
 
 	// Write final box normalisation file
-	if (Comm.master()) boxNorm.save("duq.box.norm");
+	if (procPool.isMaster()) boxNorm.save("duq.box.norm");
 
 	return true;
 }

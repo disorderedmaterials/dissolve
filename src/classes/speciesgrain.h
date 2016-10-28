@@ -132,7 +132,7 @@ class SpeciesGrain : public ListItem<SpeciesGrain>
 	 */
 	public:
 	// Broadcast data from Master to all Slaves
-	bool broadcast(const List<SpeciesAtom>& atoms, const List<SpeciesBond>& bonds, const List<SpeciesAngle>& angles);
+	bool broadcast(ProcessPool& procPool, const List<SpeciesAtom>& atoms, const List<SpeciesBond>& bonds, const List<SpeciesAngle>& angles);
 };
 
 #endif

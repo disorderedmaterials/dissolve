@@ -24,7 +24,7 @@
 #include "classes/speciesatom.h"
 #include "classes/speciesbond.h"
 #include "base/ptable.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 
 // Constructor
 SpeciesGrain::SpeciesGrain() : ListItem<SpeciesGrain>()
@@ -181,58 +181,58 @@ RefListItem<SpeciesAngle, int>* SpeciesGrain::angleConnections() const
  */
 
 // Broadcast data from Master to all Slaves
-bool SpeciesGrain::broadcast(const List<SpeciesAtom>& atoms, const List<SpeciesBond>& bonds, const List<SpeciesAngle>& angles)
+bool SpeciesGrain::broadcast(ProcessPool& procPool, const List<SpeciesAtom>& atoms, const List<SpeciesBond>& bonds, const List<SpeciesAngle>& angles)
 {
 #ifdef PARALLEL
 	int n, count, index;
 
 	// Name
-	if (!Comm.broadcast(name_)) return false;
+	if (!procPool.broadcast(name_)) return false;
 	
 	// Atoms
 	count = atoms_.nItems();
-	if (!Comm.broadcast(&count, 1)) return false;
+	if (!procPool.broadcast(&count, 1)) return false;
 	for (n=0; n<count; ++n)
 	{
-		if (Comm.master()) index = atoms_.item(n)->item->index();
-		if (!Comm.broadcast(&index, 1)) return false;
-		if (Comm.slave()) addAtom(atoms.item(index));
+		if (procPool.isMaster()) index = atoms_.item(n)->item->index();
+		if (!procPool.broadcast(&index, 1)) return false;
+		if (procPool.isSlave()) addAtom(atoms.item(index));
 	}
 
 	// Intra-grain bonds / angles
 	count = internalBonds_.nItems();
-	if (!Comm.broadcast(&count, 1)) return false;
+	if (!procPool.broadcast(&count, 1)) return false;
 	for (n=0; n<count; ++n)
 	{
-		if (Comm.master()) index = bonds.indexOf(internalBonds_.item(n)->item);
-		if (!Comm.broadcast(&index, 1)) return false;
-		if (Comm.slave()) addInternalBond(bonds.item(index));
+		if (procPool.isMaster()) index = bonds.indexOf(internalBonds_.item(n)->item);
+		if (!procPool.broadcast(&index, 1)) return false;
+		if (procPool.isSlave()) addInternalBond(bonds.item(index));
 	}
 	count = internalAngles_.nItems();
-	if (!Comm.broadcast(&count, 1)) return false;
+	if (!procPool.broadcast(&count, 1)) return false;
 	for (n=0; n<count; ++n)
 	{
-		if (Comm.master()) index = angles.indexOf(internalAngles_.item(n)->item);
-		if (!Comm.broadcast(&index, 1)) return false;
-		if (Comm.slave()) addInternalAngle(angles.item(index));
+		if (procPool.isMaster()) index = angles.indexOf(internalAngles_.item(n)->item);
+		if (!procPool.broadcast(&index, 1)) return false;
+		if (procPool.isSlave()) addInternalAngle(angles.item(index));
 	}
 
 	// Inter-grain (connective) bonds / angles
 	count = bondConnections_.nItems();
-	if (!Comm.broadcast(&count, 1)) return false;
+	if (!procPool.broadcast(&count, 1)) return false;
 	for (n=0; n<count; ++n)
 	{
-		if (Comm.master()) index = bonds.indexOf(bondConnections_.item(n)->item);
-		if (!Comm.broadcast(&index, 1)) return false;
-		if (Comm.slave()) addBondConnection(bonds.item(index));
+		if (procPool.isMaster()) index = bonds.indexOf(bondConnections_.item(n)->item);
+		if (!procPool.broadcast(&index, 1)) return false;
+		if (procPool.isSlave()) addBondConnection(bonds.item(index));
 	}
 	count = angleConnections_.nItems();
-	if (!Comm.broadcast(&count, 1)) return false;
+	if (!procPool.broadcast(&count, 1)) return false;
 	for (n=0; n<count; ++n)
 	{
-		if (Comm.master()) index = angles.indexOf(angleConnections_.item(n)->item);
-		if (!Comm.broadcast(&index, 1)) return false;
-		if (Comm.slave()) addAngleConnection(angles.item(index));
+		if (procPool.isMaster()) index = angles.indexOf(angleConnections_.item(n)->item);
+		if (!procPool.broadcast(&index, 1)) return false;
+		if (procPool.isSlave()) addAngleConnection(angles.item(index));
 	}
 #endif
 	return true;

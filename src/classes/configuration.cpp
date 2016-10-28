@@ -23,7 +23,7 @@
 #include "classes/box.h"
 #include "classes/grain.h"
 #include "classes/species.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 #include "base/sysfunc.h"
 
 // Constructor
@@ -283,91 +283,6 @@ bool Configuration::setup(const List<AtomType>& atomTypes, double pairPotentialR
 	// Initialise cell atom neighbour lists
 	recreateCellAtomNeighbourLists(pairPotentialRange);
 
-	// Setup parallel comms / limits etc.
-	Messenger::print("\n");
-	Messenger::print("Setting up parallel comms...\n");
-
-	// -- Assign Atom/Grain limits to processes
-	if (!Comm.calculateLimits(nAtoms(), nGrains())) return false;
-
-	// Construct RDF/S(Q) arrays
-	// -- Determine maximal extent of RDF (from origin to centre of box)
-	Messenger::print("\n");
-	Messenger::print("Setting up RDF/S(Q) data...\n");
-	Vec3<double> half = box()->axes() * Vec3<double>(0.5,0.5,0.5);
-	double maxR = half.magnitude(), inscribedSphereRadius = box()->inscribedSphereRadius();
-	Messenger::print("--> Maximal extent for RDFs is %f Angstrom (half cell diagonal distance).\n", maxR);
-	Messenger::print("--> Inscribed sphere radius (maximum RDF range avoiding periodic images) is %f Angstroms.\n", inscribedSphereRadius);
-	if (requestedRDFRange_ < -1.5)
-	{
-		Messenger::print("--> Using maximal non-minimum image range for RDF/S(Q).\n");
-		rdfRange_ = inscribedSphereRadius;
-	}
-	else if (requestedRDFRange_ < -0.5)
-	{
-		Messenger::print("--> Using 90%% of maximal extent for RDF/S(Q).\n");
-		rdfRange_ = 0.90*maxR;
-	}
-	else
-	{
-		Messenger::print("--> Specific RDF range supplied (%f Angstroms).\n", requestedRDFRange_);
-		rdfRange_ = requestedRDFRange_;
-		if (rdfRange_ < 0.0)
-		{
-			Messenger::error("Negative RDF range requested.\n");
-			return false;
-		}
-		else if (rdfRange_ > maxR)
-		{
-			Messenger::error("Requested RDF range is greater then the maximum possible extent for the Box.\n");
-			return false;
-		}
-		else if (rdfRange_ > (0.90*maxR)) Messenger::warn("Requested RDF range is greater than 90%% of the maximum possible extent for the Box. FT may be suspect!\n");
-	}
-	// 'Snap' rdfRange_ to nearest bin width...
-	rdfRange_ = int(rdfRange_/rdfBinWidth_) * rdfBinWidth_;
-	Messenger::print("--> RDF range (snapped to bin width) is %f Angstroms.\n", rdfRange_);
-
-	// Does a box normalisation already exist (i.e. has been loaded)
-	// Create/load Box normalisation array
-	if (!boxNormalisationFileName_.isEmpty())
-	{
-		if (boxNormalisation_.load(boxNormalisationFileName_))
-		{
-			Messenger::print("--> Successfully loaded box normalisation data from file '%s'.\n", boxNormalisationFileName_.get());
-			boxNormalisation_.interpolate();
-		}
-		else Messenger::print("--> Couldn't load Box normalisation data - it will be calculated.\n");
-	}
-	if (boxNormalisation_.nPoints() <= 1)
-	{
-		// Only calculate if RDF range is greater than the inscribed sphere radius
-		if (rdfRange_ <= inscribedSphereRadius)
-		{
-			Messenger::print("--> No need to calculate Box normalisation array since rdfRange is within periodic range.\n");
-			boxNormalisation_.clear();
-			double x = rdfBinWidth_*0.5;
-			while (x < rdfRange_)
-			{
-				boxNormalisation_.addPoint(x, 1.0);
-				x += rdfBinWidth_;
-			}
-			boxNormalisation_.interpolate();
-		}
-		else
-		{
-			Messenger::print("--> Calculating box normalisation array for RDFs...\n");
-			if (!box()->calculateRDFNormalisation(boxNormalisation_, rdfRange_, rdfBinWidth_, boxNormalisationNPoints)) return false;
-		}
-	}
-	Messenger::print("\n");
-	Messenger::print("--> Constructing RDF/F(Q) lists and matrices...\n");
-	if (!setupPartials())
-	{
-		Messenger::error("Failed to create RDF/F(Q) lists/matrices.\n");
-		return false;
-	}
-
 	// Prepare Samples
 	Messenger::print("\n");
 	Messenger::print("Preparing Samples...\n");
@@ -384,47 +299,59 @@ bool Configuration::setup(const List<AtomType>& atomTypes, double pairPotentialR
  * Parallel Comms
  */
 
-// Broadcast data to all processes
-bool Configuration::broadcast(const List<Species>& species, double pairPotentialRange, const RefList<Module,bool>& allModules)
+// Set process pool for this Configuration
+void Configuration::setProcessPool(ProcessPool processPool)
+{
+	processPool_ = processPool;
+}
+
+// Return process pool for this Configuration
+ProcessPool& Configuration::processPool()
+{
+	return processPool_;
+}
+
+// Broadcast data
+bool Configuration::broadcast(ProcessPool& procPool, const List<Species>& species, double pairPotentialRange, const RefList<Module,bool>& allModules)
 {
 #ifdef PARALLEL
 	// Composition
-	if (!Comm.broadcast(name_)) return false;
+	if (!procPool.broadcast(name_)) return false;
 	bool result;
-	BroadcastRefList<Species,double>(usedSpecies_, species, result);
+	BroadcastRefList<Species,double>(procPool, usedSpecies_, species, result);
 	if (!result) return false;
-	if (!Comm.broadcast(&multiplier_, 1)) return false;
-	if (!Comm.broadcast(&density_, 1)) return false;
-	if (!Comm.broadcast(&densityIsAtomic_, 1)) return false;
-	if (!Comm.broadcast(&nonPeriodic_, 1)) return false;
-	if (!Comm.broadcast(&randomConfiguration_, 1)) return false;
-	if (!Comm.broadcast(initialCoordinatesFile_)) return false;
-	if (!Comm.broadcast(&temperature_, 1)) return false;
+	if (!procPool.broadcast(&multiplier_, 1)) return false;
+	if (!procPool.broadcast(&density_, 1)) return false;
+	if (!procPool.broadcast(&densityIsAtomic_, 1)) return false;
+	if (!procPool.broadcast(&nonPeriodic_, 1)) return false;
+	if (!procPool.broadcast(&randomConfiguration_, 1)) return false;
+	if (!procPool.broadcast(initialCoordinatesFile_)) return false;
+	if (!procPool.broadcast(&temperature_, 1)) return false;
 
 	// Content
 	// -- Broadcast size of molecule list
 	int count = molecules_.nItems(), spIndex;
-	if (!Comm.broadcast(&count, 1)) return false;
+	if (!procPool.broadcast(&count, 1)) return false;
 	// Create molecules, which will also create the atom and grain space for us
 	for (int n=0; n<count; ++n)
 	{
 		// Broadcast index of Species
-		if (Comm.master()) spIndex = species.indexOf(molecules_[n]->species());
-		if (!Comm.broadcast(&spIndex, 1)) return false;
+		if (procPool.isMaster()) spIndex = species.indexOf(molecules_[n]->species());
+		if (!procPool.broadcast(&spIndex, 1)) return false;
 
 		// Add Molecule to Configuration
-		if (Comm.slave()) addMolecule(species.item(spIndex));
+		if (procPool.isSlave()) addMolecule(species.item(spIndex));
 	}
 	// Create Atom / Grain arrays
-	if (Comm.slave() && (!createArrays())) return false;
+	if (procPool.isSlave() && (!createArrays())) return false;
 
 	// Box
-	if (!Comm.broadcast(relativeBoxLengths_)) return false;
-	if (!Comm.broadcast(boxAngles_)) return false;
-	if (!Comm.broadcast(&nonPeriodic_, 1)) return false;
-	if (Comm.slave() && (!setupBox(pairPotentialRange))) return false;
-	if (!Comm.broadcast(boxNormalisationFileName_)) return false;
-	if (!boxNormalisation_.broadcast()) return false;
+	if (!procPool.broadcast(relativeBoxLengths_)) return false;
+	if (!procPool.broadcast(boxAngles_)) return false;
+	if (!procPool.broadcast(&nonPeriodic_, 1)) return false;
+	if (procPool.isSlave() && (!setupBox(pairPotentialRange))) return false;
+	if (!procPool.broadcast(boxNormalisationFileName_)) return false;
+	if (!boxNormalisation_.broadcast(procPool)) return false;
 
 	// Coordinates
 	double* x, *y, *z;
@@ -433,7 +360,7 @@ bool Configuration::broadcast(const List<Species>& species, double pairPotential
 	z = new double[nAtoms_];
 	
 	// Master assembles Atom coordinate arrays...
-	if (Comm.master())
+	if (procPool.isMaster())
 	{
 		Messenger::print("--> Sending Configuration to slaves...\n");
 		for (int n=0; n<nAtoms_; ++n)
@@ -445,26 +372,26 @@ bool Configuration::broadcast(const List<Species>& species, double pairPotential
 	}
 	else Messenger::print("--> Waiting for Master to send Configuration.\n");
 
-	if (!Comm.broadcast(x, nAtoms_)) return false;
-	if (!Comm.broadcast(y, nAtoms_)) return false;
-	if (!Comm.broadcast(z, nAtoms_)) return false;
+	if (!procPool.broadcast(x, nAtoms_)) return false;
+	if (!procPool.broadcast(y, nAtoms_)) return false;
+	if (!procPool.broadcast(z, nAtoms_)) return false;
 	
 	// Slaves then store values into Atoms...
-	if (Comm.slave()) for (int n=0; n<nAtoms_; ++n) atoms_[n].setCoordinatesNasty(x[n], y[n], z[n]);
+	if (procPool.isSlave()) for (int n=0; n<nAtoms_; ++n) atoms_[n].setCoordinatesNasty(x[n], y[n], z[n]);
 
 	delete[] x;
 	delete[] y;
 	delete[] z;
 
-	if (!Comm.broadcast(&coordinateIndex_, 1)) return false;
+	if (!procPool.broadcast(&coordinateIndex_, 1)) return false;
 
 	// Molecule Setup
-	if (Comm.slave() && !(setupMolecules())) return false;
+	if (procPool.isSlave() && !(setupMolecules())) return false;
 
 	// RDF Range (TO MOVE TO MODULE???)
-	if (!Comm.broadcast(&requestedRDFRange_, 1)) return false;
-	if (!Comm.broadcast(&rdfRange_, 1)) return false;
-	if (!Comm.broadcast(&rdfBinWidth_, 1)) return false;
+	if (!procPool.broadcast(&requestedRDFRange_, 1)) return false;
+	if (!procPool.broadcast(&rdfRange_, 1)) return false;
+	if (!procPool.broadcast(&rdfBinWidth_, 1)) return false;
 
 	// Modules
 	for (int n=0; n<Module::nModuleTypes; ++n)
@@ -473,20 +400,20 @@ bool Configuration::broadcast(const List<Species>& species, double pairPotential
 
 		// Master send number of modules of this type to expect
 		int moduleCount;
-		if (Comm.master()) moduleCount = modules_[mt].nItems();
-		if (!Comm.broadcast(&moduleCount, 1)) return false;
+		if (procPool.isMaster()) moduleCount = modules_[mt].nItems();
+		if (!procPool.broadcast(&moduleCount, 1)) return false;
 
 		// Loop over associated modules of this type
 		for (int m = 0; m<moduleCount; ++m)
 		{
 			// Grab existing module pointer
 			Module* moduleOnMaster;
-			if (Comm.master()) moduleOnMaster = modules_[mt].item(m)->item;
+			if (procPool.isMaster()) moduleOnMaster = modules_[mt].item(m)->item;
 
 			// Master will broadcast module name to slaves
 			Dnchar moduleName;
-			if (Comm.master()) moduleName = moduleOnMaster->name();
-			if (!Comm.broadcast(moduleName)) return false;
+			if (procPool.isMaster()) moduleName = moduleOnMaster->name();
+			if (!procPool.broadcast(moduleName)) return false;
 
 			// Find pointer to master module instance
 			Module* masterInstance = NULL;
@@ -507,18 +434,18 @@ bool Configuration::broadcast(const List<Species>& species, double pairPotential
 			}
 
 			// Add this module to the current Configuration
-			if (Comm.slave())
+			if (procPool.isSlave())
 			{
 				// Add module
 				Module* newModule = addModule(masterInstance);
 
 				// Receive VariableList associated to module
-				newModule->broadcastVariables();
+				newModule->broadcastVariables(procPool);
 			}
 			else
 			{
 				// Just broadcast existing VariableList
-				moduleOnMaster->broadcastVariables();
+				moduleOnMaster->broadcastVariables(procPool);
 			}
 		}
 	}

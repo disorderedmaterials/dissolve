@@ -88,7 +88,7 @@ class PeriodicTable
 	 */
 	public:
 	// Broadcast data from Master to all Slaves
-	bool broadcast();
+	bool broadcast(ProcessPool& procPool);
 };
 
 // Periodic table data

@@ -22,7 +22,25 @@
 #include "main/duq.h"
 #include "classes/species.h"
 #include "classes/atomtype.h"
-#include "base/comms.h"
+#include "base/processpool.h"
+
+// Return a world process pool
+ProcessPool& DUQ::worldPool()
+{
+	static bool firstRun = true;
+
+	// If this is the first time we've been called, construct the pool
+	if (firstRun)
+	{
+		// Assemble list of (world) process ranks for the pool
+		Array<int> ranks;
+		for (int n=0; n<ProcessPool::nWorldProcesses(); ++n) ranks.add(n);
+		worldPool_.setup("World", ranks);
+		firstRun = false;
+	}
+
+	return worldPool_;
+}
 
 // Broadcast system setup data
 bool DUQ::broadcastSetup()
@@ -36,23 +54,23 @@ bool DUQ::broadcastSetup()
 	// AtomTypes
 	Messenger::printVerbose("[MPI] Broadcasting AtomTypes...\n");
 	count = atomTypes_.nItems();
-	if (!Comm.broadcast(&count, 1)) return false;
+	if (!worldPool_.broadcast(&count, 1)) return false;
 	Messenger::printVerbose("[MPI] Expecting %i items...\n", count);
 	for (n=0; n<count; ++n)
 	{
-		if (Comm.slave()) addAtomType(0);
-		atomTypes_[n]->broadcast();
+		if (worldPool_.isSlave()) addAtomType(0);
+		atomTypes_[n]->broadcast(worldPool_);
 	}
 
 	// Species
 	Messenger::printVerbose("[MPI] Broadcasting Species...\n");
 	count = species_.nItems();
-	if (!Comm.broadcast(&count, 1)) return false;
+	if (!worldPool_.broadcast(&count, 1)) return false;
 	Messenger::printVerbose("[MPI] Expecting %i items...\n", count);
 	for (n=0; n<count; ++n)
 	{
-		if (Comm.slave()) addSpecies();
-		species_[n]->broadcast(atomTypes_);
+		if (worldPool_.isSlave()) addSpecies();
+		species_[n]->broadcast(worldPool_, atomTypes_);
 	}
 
 	// Reference Data
@@ -61,44 +79,44 @@ bool DUQ::broadcastSetup()
 	// Samples
 	Messenger::printVerbose("Broadcasting Samples...\n");
 	count = samples_.nItems();
-	if (!Comm.broadcast(&count, 1)) return false;
+	if (!worldPool_.broadcast(&count, 1)) return false;
 	Messenger::printVerbose("Expecting %i items...\n", count);
 	for (n=0; n<count; ++n)
 	{
-		if (Comm.slave()) addSample();
-		samples_[n]->broadcast(species_);
+		if (worldPool_.isSlave()) addSample();
+		samples_[n]->broadcast(worldPool_, species_);
 	}
 
 	// Configurations
 	Messenger::printVerbose("[MPI] Broadcasting Configurations...\n");
 	count = configurations_.nItems();
-	if (!Comm.broadcast(&count, 1)) return false;
+	if (!worldPool_.broadcast(&count, 1)) return false;
 	Messenger::printVerbose("Expecting %i items...\n", count);
 	for (n=0; n<count; ++n)
 	{
-		if (Comm.slave()) addConfiguration();
-		configurations_[n]->broadcast(species_, pairPotentialRange_, allModules_);
+		if (worldPool_.isSlave()) addConfiguration();
+		configurations_[n]->broadcast(worldPool_, species_, pairPotentialRange_, allModules_);
 	}
 
 	// PairPotentials
 	Messenger::printVerbose("[MPI] Broadcasting PairPotentials...\n");
 	count = pairPotentials_.nItems();
-	if (!Comm.broadcast(&count, 1)) return false;
+	if (!worldPool_.broadcast(&count, 1)) return false;
 	Messenger::printVerbose("Expecting %i items...\n", count);
 	for (n=0; n<count; ++n)
 	{
-		if (Comm.slave()) pairPotentials_.add();
-		pairPotentials_[n]->broadcast(atomTypes_);
+		if (worldPool_.isSlave()) pairPotentials_.add();
+		pairPotentials_[n]->broadcast(worldPool_, atomTypes_);
 	}
-	if (!Comm.broadcast(&pairPotentialRange_, 1)) return false;
-	if (!Comm.broadcast(&pairPotentialRangeSquared_, 1)) return false;
-	if (!Comm.broadcast(&pairPotentialTruncationWidth_, 1)) return false;
-	if (!Comm.broadcast(&pairPotentialDelta_, 1)) return false;
+	if (!worldPool_.broadcast(&pairPotentialRange_, 1)) return false;
+	if (!worldPool_.broadcast(&pairPotentialRangeSquared_, 1)) return false;
+	if (!worldPool_.broadcast(&pairPotentialTruncationWidth_, 1)) return false;
+	if (!worldPool_.broadcast(&pairPotentialDelta_, 1)) return false;
 
 	// Simulation Variables
 	Messenger::printVerbose("Broadcasting Simulation Variables...\n");
-	if (!Comm.broadcast(&boxNormalisationPoints_, 1)) return false;
-	if (!Comm.broadcast(&seed_, 1)) return false;
+	if (!worldPool_.broadcast(&boxNormalisationPoints_, 1)) return false;
+	if (!worldPool_.broadcast(&seed_, 1)) return false;
 #endif
 	return true;
 }

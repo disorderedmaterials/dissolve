@@ -26,7 +26,7 @@
 #include "classes/molecule.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 #include "math/constants.h"
 #include "version.h"
 #include <string.h>

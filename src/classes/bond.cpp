@@ -22,7 +22,7 @@
 #include "classes/bond.h"
 #include "classes/atom.h"
 #include "classes/species.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 
 // Constructor
 Bond::Bond() : ListItem<Bond>()
@@ -261,7 +261,7 @@ bool Bond::broadcast(const List<Atom>& atoms)
 		buffer[0] = indexI();
 		buffer[1] = indexJ();
 	}
-	if (!Comm.broadcast(buffer, 2)) return false;
+	if (!procPool.broadcast(buffer, 2)) return false;
 	
 	// Slaves now take Atom pointers from supplied List
 	if (Comm.slave())
@@ -272,8 +272,8 @@ bool Bond::broadcast(const List<Atom>& atoms)
 	}
 	
 	// Send parameter info
-	if (!Comm.broadcast(&equilibrium_, 1)) return false;
-	if (!Comm.broadcast(&forceConstant_, 1)) return false;
+	if (!procPool.broadcast(&equilibrium_, 1)) return false;
+	if (!procPool.broadcast(&forceConstant_, 1)) return false;
 #endif
 	return true;
 }

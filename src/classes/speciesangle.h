@@ -136,7 +136,7 @@ class SpeciesAngle : public ListItem<SpeciesAngle>
 	 */
 	public:
 	// Broadcast data from Master to all Slaves
-	bool broadcast(const List<SpeciesAtom>& atoms);
+	bool broadcast(ProcessPool& procPool, const List<SpeciesAtom>& atoms);
 };
 
 #endif

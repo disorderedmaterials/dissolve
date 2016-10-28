@@ -78,7 +78,7 @@ class AtomType : public MPIListItem<AtomType>
 	 */
 	public:
 	// Broadcast data from Master to all Slaves
-	bool broadcast();
+	bool broadcast(ProcessPool& procPool);
 };
 
 #endif

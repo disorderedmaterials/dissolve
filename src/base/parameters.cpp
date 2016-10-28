@@ -20,7 +20,7 @@
 */
 
 #include "base/parameters.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 
 // Constructor
 Parameters::Parameters() : MPIListItem<Parameters>()
@@ -116,14 +116,14 @@ double Parameters::charge()
  */
 
 // Broadcast data from Master to all Slaves
-bool Parameters::broadcast()
+bool Parameters::broadcast(ProcessPool& procPool)
 {
 #ifdef PARALLEL
-	if (!Comm.broadcast(name_)) return false;
-	if (!Comm.broadcast(description_)) return false;
-	if (!Comm.broadcast(&sigma_, 1)) return false;
-	if (!Comm.broadcast(&epsilon_, 1)) return false;
-	if (!Comm.broadcast(&charge_, 1)) return false;
+	if (!procPool.broadcast(name_)) return false;
+	if (!procPool.broadcast(description_)) return false;
+	if (!procPool.broadcast(&sigma_, 1)) return false;
+	if (!procPool.broadcast(&epsilon_, 1)) return false;
+	if (!procPool.broadcast(&charge_, 1)) return false;
 #endif
 	return true;
 }

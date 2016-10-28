@@ -22,7 +22,7 @@
 #include "base/ptable.h"
 #include "base/lineparser.h"
 #include "base/messenger.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 #include <string.h>
 
 // Static singleton
@@ -369,22 +369,22 @@ const char* PeriodicTable::empiricalFormula()
  */
 
 // Broadcast data from Master to all Slaves
-bool PeriodicTable::broadcast()
+bool PeriodicTable::broadcast(ProcessPool& procPool)
 {
 #ifdef PARALLEL
 	// Clear slave data
-	if (Comm.slave()) clear();
+	if (procPool.isSlave()) clear();
 
 	// Send number of elements
-	Comm.broadcast(&nElements_, 1);
-	if (Comm.slave())
+	procPool.broadcast(&nElements_, 1);
+	if (procPool.isSlave())
 	{
 		elements_ = new Element[nElements_];
 		elementCount_ = new int[nElements_];
 	}
 
 	// Send elements
-	for (int n = 0; n<nElements_; ++n) elements_[n].broadcast();
+	for (int n = 0; n<nElements_; ++n) elements_[n].broadcast(procPool);
 #endif
 	return true;
 }

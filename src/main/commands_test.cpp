@@ -20,7 +20,7 @@
 */
 
 #include "main/duq.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 #include "base/sysfunc.h"
 #include "classes/atom.h"
 #include "classes/box.h"

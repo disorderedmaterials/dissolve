@@ -25,10 +25,10 @@
 #include "classes/potentialmap.h"
 #include "classes/molecule.h"
 #include "classes/species.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 
 // Constructor
-ForceKernel::ForceKernel(const Box* box, const PotentialMap& potentialMap) : box_(box), potentialMap_(potentialMap)
+ForceKernel::ForceKernel(ProcessPool& procPool, const Box* box, const PotentialMap& potentialMap) : processPool_(procPool), box_(box), potentialMap_(potentialMap)
 {
 }
 
@@ -305,7 +305,7 @@ void ForceKernel::forces(const Grain* grain, const Cell* cell, bool applyMim, bo
  * elsewhere, no parallel summation of the calculated data is performed by this routine, and must be handled externally by
  * the calling function.
  */
-void ForceKernel::forces(const Atom* i, int nNeighbours, Cell** neighbours, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz, DUQComm::CommGroup group)
+void ForceKernel::forces(const Atom* i, int nNeighbours, Cell** neighbours, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz, ProcessPool::CommGroup group)
 {
 #ifdef CHECKS
 	if (i == NULL)
@@ -315,20 +315,20 @@ void ForceKernel::forces(const Atom* i, int nNeighbours, Cell** neighbours, bool
 	}
 #endif
 	// Communication group determines loop/summation style
-	if (group == DUQComm::Solo)
+	if (group == ProcessPool::Solo)
 	{
 		// Straight loop over Cell neighbours
 		for (int n=0; n<nNeighbours; ++n) forces(i, neighbours[n], applyMim, excludeIgtJ, fx, fy, fz);
 	}
-	else if (group == DUQComm::Group)
+	else if (group == ProcessPool::Group)
 	{
 		// Striped loop over Cell neighbours (Process Groups)
-		for (int n=Comm.localGroupRank(); n<nNeighbours; n += Comm.localGroupSize()) forces(i, neighbours[n], applyMim, excludeIgtJ, fx, fy, fz);
+		for (int n=processPool_.groupRank(); n<nNeighbours; n += processPool_.groupSize()) forces(i, neighbours[n], applyMim, excludeIgtJ, fx, fy, fz);
 	}
 	else
 	{
 		// Striped loop over Cell neighbours (individual processes)
-		for (int n=Comm.rank(); n<nNeighbours; n += Comm.nProcesses()) forces(i, neighbours[n], applyMim, excludeIgtJ, fx, fy, fz);
+		for (int n=processPool_.poolRank(); n<nNeighbours; n += processPool_.nProcesses()) forces(i, neighbours[n], applyMim, excludeIgtJ, fx, fy, fz);
 	}
 }
 
@@ -339,7 +339,7 @@ void ForceKernel::forces(const Atom* i, int nNeighbours, Cell** neighbours, bool
  * elsewhere, no parallel summation of the calculated data is performed by this routine, and must be handled externally by
  * the calling function.
  */
-void ForceKernel::forces(const Grain* grain, int nNeighbours, Cell** neighbours, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz, DUQComm::CommGroup group)
+void ForceKernel::forces(const Grain* grain, int nNeighbours, Cell** neighbours, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz, ProcessPool::CommGroup group)
 {
 #ifdef CHECKS
 	if (grain == NULL)
@@ -349,19 +349,19 @@ void ForceKernel::forces(const Grain* grain, int nNeighbours, Cell** neighbours,
 	}
 #endif
 	// Communication group determines loop/summation style
-	if (group == DUQComm::Solo)
+	if (group == ProcessPool::Solo)
 	{
 		// Straight loop over Cell neighbours
 		for (int n=0; n<nNeighbours; ++n) forces(grain, neighbours[n], applyMim, excludeIgtJ, fx, fy, fz);
 	}
-	else if (group == DUQComm::Group)
+	else if (group == ProcessPool::Group)
 	{
 		// Striped loop over Cell neighbours (Process Groups)
-		for (int n=Comm.localGroupRank(); n<nNeighbours; n += Comm.localGroupSize()) forces(grain, neighbours[n], applyMim, excludeIgtJ, fx, fy, fz);
+		for (int n=processPool_.groupRank(); n<nNeighbours; n += processPool_.groupSize()) forces(grain, neighbours[n], applyMim, excludeIgtJ, fx, fy, fz);
 	}
 	else
 	{
 		// Striped loop over Cell neighbours (individual processes)
-		for (int n=Comm.rank(); n<nNeighbours; n += Comm.nProcesses()) forces(grain, neighbours[n], applyMim, excludeIgtJ, fx, fy, fz);
+		for (int n=processPool_.poolRank(); n<nNeighbours; n += processPool_.nProcesses()) forces(grain, neighbours[n], applyMim, excludeIgtJ, fx, fy, fz);
 	}
 }

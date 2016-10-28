@@ -34,13 +34,14 @@ class Cell;
 class Grain;
 class Molecule;
 class Configuration;
+class ProcessPool;
 
 // ChangeStore
 class ChangeStore
 {
 	public:
 	// Constructor
-	ChangeStore();
+	ChangeStore(ProcessPool& procPool);
 	// Destructor
 	~ChangeStore();
 
@@ -94,6 +95,10 @@ class ChangeStore
 	/*
 	 * Parallel Comms
 	 */
+	private:
+	// ProcessPool over which this ChangeStore should broadcast
+	ProcessPool& processPool_;
+
 	public:
 	// Distribute and apply change data to all processes
 	bool distributeAndApply(Configuration* cfg);

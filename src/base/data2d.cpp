@@ -19,7 +19,7 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "base/comms.h"
+#include "base/processpool.h"
 #include "base/data2d.h"
 #include "base/messenger.h"
 #include "math/constants.h"
@@ -1446,9 +1446,6 @@ void Data2D::rebin(double deltaX)
 // Load data from specified file
 bool Data2D::load(const char* fileName)
 {
-	// Only the Master process can do this
-	if (Comm.slave()) return true;
-
 	// Open file and check that we're OK to proceed reading from it
 	LineParser parser;
 
@@ -1484,9 +1481,6 @@ bool Data2D::load(const char* fileName)
 // Save data to specified file
 bool Data2D::save(const char* fileName) const
 {
-	// Only the Master process can do this
-	if (Comm.slave()) return true;
-
 	// Open file and check that we're OK to proceed writing to it
 	LineParser parser;
 	Messenger::print("Writing datafile '%s'...\n", fileName);
@@ -1506,9 +1500,6 @@ bool Data2D::save(const char* fileName) const
 // Save data and interpolation to specified file
 bool Data2D::saveWithInterpolation(const char* fileName)
 {
-	// Only the Master process can do this
-	if (Comm.slave()) return true;
-
 	// Open file and check that we're OK to proceed writing to it
 	LineParser parser;
 	Messenger::print("Writing datafile '%s'...\n", fileName);
@@ -1536,22 +1527,22 @@ void Data2D::dump()
  */
 
 // Broadcast data
-bool Data2D::broadcast()
+bool Data2D::broadcast(ProcessPool& procPool)
 {
 #ifdef PARALLEL
 	// XY data
-	if (!Comm.broadcast(x_)) return false;
-	if (!Comm.broadcast(y_)) return false;
+	if (!procPool.broadcast(x_)) return false;
+	if (!procPool.broadcast(y_)) return false;
 
 	// Spline data
-	if (!Comm.broadcast(splineA_)) return false;
-	if (!Comm.broadcast(splineB_)) return false;
-	if (!Comm.broadcast(splineC_)) return false;
-	if (!Comm.broadcast(splineD_)) return false;
-	if (!Comm.broadcast(&splineInterval_, 1)) return false;
+	if (!procPool.broadcast(splineA_)) return false;
+	if (!procPool.broadcast(splineB_)) return false;
+	if (!procPool.broadcast(splineC_)) return false;
+	if (!procPool.broadcast(splineD_)) return false;
+	if (!procPool.broadcast(&splineInterval_, 1)) return false;
 
 	// Axis/title information
-	if (!Comm.broadcast(name_)) return false;
+	if (!procPool.broadcast(name_)) return false;
 #endif
 	return true;
 }

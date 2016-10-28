@@ -28,9 +28,6 @@
 // Save Configuration as xyz
 bool DUQ::saveConfigurationXYZ(Configuration& cfg, const char* fileName)
 {
-	// I/O operation, so Master only...
-	if (Comm.slave()) return true;
-
 	// Open file and check that we're OK to proceed writing to it
 	LineParser parser;
 	Messenger::print("Writing model as XYZ file '%s'...\n", fileName);
@@ -64,9 +61,6 @@ bool DUQ::saveConfigurationXYZ(Configuration& cfg, const char* fileName)
 // Save Configuration as CONFIG
 bool DUQ::saveConfigurationDLPOLY(Configuration& cfg, const char* fileName)
 {
-	// I/O operation, so Master only...
-	if (Comm.slave()) return true;
-
 	// Open file and check that we're OK to proceed writing to it
 	LineParser parser;
 	Messenger::print("Writing model as CONFIG file '%s'...\n", fileName);

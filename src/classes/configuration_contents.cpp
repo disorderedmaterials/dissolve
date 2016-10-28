@@ -24,7 +24,7 @@
 #include "classes/cell.h"
 #include "classes/grain.h"
 #include "classes/species.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 
 // Add Atom/Grain space for a Molecule of the Species provided
 void Configuration::addMolecule(Species* sp)
@@ -321,7 +321,7 @@ bool Configuration::createRandom()
 		newCentre = box_->randomCoordinate();
 			
 		// Generate a random rotation matrix
-		transform.createRotationXY(Comm.randomPlusMinusOne()*180.0, Comm.randomPlusMinusOne()*180.0);
+		transform.createRotationXY(DUQMath::randomPlusMinusOne()*180.0, DUQMath::randomPlusMinusOne()*180.0);
 
 		// Generate and  transformed Species coordinates
 		for (SpeciesAtom* i = mol->species()->atoms(); i != NULL; i = i->next, ++index)

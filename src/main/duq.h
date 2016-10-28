@@ -30,7 +30,7 @@
 #include "classes/pairpotential.h"
 #include "classes/potentialmap.h"
 #include "classes/sample.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 #include "templates/vector3.h"
 #include "templates/list.h"
 #include "templates/orderedlist.h"
@@ -272,13 +272,13 @@ class DUQ
 	 */
 	public:
 	// Return total intramolecular energy
-	double intramolecularEnergy(Configuration* cfg);
+	double intramolecularEnergy(ProcessPool& procPool, Configuration* cfg);
 	// Return total atom energy
-	double interatomicEnergy(Configuration* cfg);
+	double interatomicEnergy(ProcessPool& procPool, Configuration* cfg);
 	// Return total grain energy
-	double intergrainEnergy(Configuration* cfg);
+	double intergrainEnergy(ProcessPool& procPool, Configuration* cfg);
 	// Return total energy of the system
-	double totalEnergy(Configuration* cfg);
+	double totalEnergy(ProcessPool& procPool, Configuration* cfg);
 	// Test - Return total intramolecular (+correction) energy
 	double intramolecularEnergyTest(Configuration* cfg);
 	// Test - Return total energy of the system
@@ -292,11 +292,11 @@ class DUQ
 	 */
 	public:
 	// Calculate total intramolecular forces
-	void intramolecularForces(Configuration* cfg, double* fx, double* fy, double* fz, DUQComm::CommGroup group = DUQComm::World);
+	void intramolecularForces(ProcessPool& procPool, Configuration* cfg, double* fx, double* fy, double* fz, ProcessPool::CommGroup group = ProcessPool::Pool);
 	// Calculate total Grain forces
-	void grainForces(Configuration* cfg, double* fx, double* fy, double* fz, double cutoffSq, DUQComm::CommGroup group);
+	void grainForces(ProcessPool& procPool, Configuration* cfg, double* fx, double* fy, double* fz, double cutoffSq, ProcessPool::CommGroup group);
 	// Calculate total forces within the system
-	void totalForces(Configuration* cfg, double* fx, double* fy, double* fz, double cutoffSq, DUQComm::CommGroup group = DUQComm::World);
+	void totalForces(ProcessPool& procPool, Configuration* cfg, double* fx, double* fy, double* fz, double cutoffSq, ProcessPool::CommGroup group = ProcessPool::Pool);
 
 
 	/*
@@ -356,7 +356,17 @@ class DUQ
 	/*
 	 * Parallel Comms
 	 */
+	private:
+	// Pool containing all available processes
+	ProcessPool worldPool_;
+
 	public:
+	// Setup world parallelism
+	void setupWorldPool();
+	// Return world process pool
+	ProcessPool& worldPool();
+	// Setup local MPI pools
+	bool setupMPIPools();
 	// Broadcast complete system setup data
 	bool broadcastSetup();
 };

@@ -22,7 +22,7 @@
 #include "classes/atom.h"
 #include "classes/atomtype.h"
 #include "classes/grain.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 
 // Constructor
 Atom::Atom()
@@ -275,16 +275,14 @@ void Atom::translateCoordinatesNasty(const Vec3<double>& delta)
  */
 
 // Broadcast data from Master to all Slaves
-bool Atom::broadcast()
+bool Atom::broadcast(ProcessPool& procPool)
 {
 #ifdef PARALLEL
-	int index;
-
-	if (!Comm.broadcast(&element_, 1)) return false;
-	if (!Comm.broadcast(r_)) return false;
-	if (!Comm.broadcast(&charge_, 1)) return false;
-	if (!Comm.broadcast(&localTypeIndex_, 1)) return false;
-	if (!Comm.broadcast(&globalTypeIndex_, 1)) return false;
+	if (!procPool.broadcast(&element_, 1)) return false;
+	if (!procPool.broadcast(r_)) return false;
+	if (!procPool.broadcast(&charge_, 1)) return false;
+	if (!procPool.broadcast(&localTypeIndex_, 1)) return false;
+	if (!procPool.broadcast(&globalTypeIndex_, 1)) return false;
 #endif
 	return true;
 }

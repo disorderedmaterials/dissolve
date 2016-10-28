@@ -20,7 +20,7 @@
 */
 
 #include "base/variable.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 
 // Constructor
 Variable::Variable()
@@ -137,24 +137,24 @@ const char* Variable::asChar()
  * Parallel Comms
  */
 
-// Broadcast data to all processes
-bool Variable::broadcast()
+// Broadcast data
+bool Variable::broadcast(ProcessPool& procPool)
 {
 #ifdef PARALLEL
-	if (!Comm.broadcast(name_)) return false;
+	if (!procPool.broadcast(name_)) return false;
 	int tempType = type_;
-	if (!Comm.broadcast(&tempType, 1)) return false;
+	if (!procPool.broadcast(&tempType, 1)) return false;
 	type_ = (Variable::VariableType) tempType;
 	switch (type_)
 	{
 		case (Variable::IntegerType):
-			if (!Comm.broadcast(&valueI_, 1)) return false;
+			if (!procPool.broadcast(&valueI_, 1)) return false;
 			break;
 		case (Variable::DoubleType):
-			if (!Comm.broadcast(&valueD_, 1)) return false;
+			if (!procPool.broadcast(&valueD_, 1)) return false;
 			break;
 		case (Variable::StringType):
-			if (!Comm.broadcast(valueC_)) return false;
+			if (!procPool.broadcast(valueC_)) return false;
 			break;
 		default:
 			Messenger::error("Broadcast of Variable failed - type_ not accounted for.\n");

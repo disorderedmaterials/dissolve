@@ -22,7 +22,7 @@
 #include "classes/speciesatom.h"
 #include "classes/atomtype.h"
 #include "classes/speciesbond.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 
 // Constructor
 SpeciesAtom::SpeciesAtom()
@@ -218,18 +218,18 @@ void SpeciesAtom::translateCoordinates(const Vec3<double>& delta)
  */
 
 // Broadcast data from Master to all Slaves
-bool SpeciesAtom::broadcast(const List<AtomType>& atomTypes)
+bool SpeciesAtom::broadcast(ProcessPool& procPool, const List<AtomType>& atomTypes)
 {
 #ifdef PARALLEL
 	int index;
 
-	if (!Comm.broadcast(&element_, 1)) return false;
-	if (!Comm.broadcast(r_)) return false;
-	if (!Comm.broadcast(&charge_, 1)) return false;
+	if (!procPool.broadcast(&element_, 1)) return false;
+	if (!procPool.broadcast(r_)) return false;
+	if (!procPool.broadcast(&charge_, 1)) return false;
 	
 	// Must get index of AtomType...
-	if (Comm.master()) index = atomTypes.indexOf(atomType_);
-	if (!Comm.broadcast(&index, 1)) return false;
+	if (procPool.isMaster()) index = atomTypes.indexOf(atomType_);
+	if (!procPool.broadcast(&index, 1)) return false;
 	atomType_ = atomTypes.item(index);
 	
 	// Bond information - added in Species::broadcast().

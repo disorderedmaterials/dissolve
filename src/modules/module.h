@@ -29,6 +29,7 @@
 // Forward Declarations
 class DUQ;
 class Configuration;
+class ProcessPool;
 
 // Module
 class Module : public ListItem<Module>, public VariableList
@@ -135,8 +136,14 @@ class Module : public ListItem<Module>, public VariableList
 	 * Method
 	 */
 	private:
-	// Perform setup tasks before executing main method
-	bool setup(DUQ& duq)
+	// Execute method on the specified config
+	virtual bool execute(DUQ& duq, ProcessPool& procPool) = 0;
+
+	public:
+	// Perform setup tasks for module
+	virtual bool setup() = 0;
+	// Run main module method
+	bool run(DUQ& duq, ProcessPool& procPool)
 	{
 		// Check number of configs supplied and required by the module
 		if (nConfigurationsRequired() != targetConfigurations_.nItems())
@@ -145,30 +152,8 @@ class Module : public ListItem<Module>, public VariableList
 			return false;
 		}
 
-		return true;
-	}
-	// Execute method on the specified config
-	virtual bool execute(DUQ& duq) = 0;
-	// Perform finalisation tasks after executing main method
-	bool finalise(DUQ& duq)
-	{
-		return true;
-	}
-
-	public:
-	// Run main module method
-	bool run(DUQ& duq)
-	{
-		// Setup module for calculation
-		if (!setup(duq)) return false;
-
 		// Run main method
-		if (!execute(duq)) return false;
-
-		// Finalise module after calculation
-		if (!finalise(duq)) return false;
-
-		return true;
+		return execute(duq, procPool);
 	}
 };
 

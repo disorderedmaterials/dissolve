@@ -25,7 +25,7 @@
 #include "classes/cell.h"
 #include "classes/changestore.h"
 #include "classes/energykernel.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 #include "base/timer.h"
 #include "math/matrix4.h"
 
@@ -124,7 +124,7 @@ bool GrainShake::execute(DUQ& duq)
 	EnergyKernel kernel(cfg, duq.potentialMap());
 
 	// Initialise the random number buffer
-	Comm.initialiseRandomBuffer(DUQComm::Group);
+	Comm.initialiseRandomBuffer(ProcessPool::Group);
 
 	// Enter calculation loop until no more Cells are available
 	int cellId, n, shake, m;
@@ -161,7 +161,7 @@ bool GrainShake::execute(DUQ& duq)
 		{
 			// Get current Grain and  
 			grainI = cell->grain(n);
-			currentEnergy = kernel.energy(grainI, false, DUQComm::Group);
+			currentEnergy = kernel.energy(grainI, false, ProcessPool::Group);
 			currentEnergy += kernel.fullIntraEnergy(grainI, termScale);
 
 			// Set current Grain as target in ChangeStore
@@ -184,7 +184,7 @@ bool GrainShake::execute(DUQ& duq)
 				}
 
 				// Calculate new energy
-				newEnergy = kernel.energy(grainI, false, DUQComm::Group);
+				newEnergy = kernel.energy(grainI, false, ProcessPool::Group);
 				newEnergy += kernel.fullIntraEnergy(grainI, termScale);
 
 				// Trial the transformed Grain position
@@ -224,10 +224,10 @@ bool GrainShake::execute(DUQ& duq)
 	cfg->updateGrains();
 
 	// Collect statistics from process group leaders
-	if (!Comm.allSum(&nAccepted, 1, DUQComm::Leaders)) return false;
-	if (!Comm.allSum(&nTries, 1, DUQComm::Leaders)) return false;
-	if (!Comm.allSum(&totalDelta, 1, DUQComm::Leaders)) return false;
-	if (Comm.processGroupLeader())
+	if (!Comm.allSum(&nAccepted, 1, ProcessPool::Leaders)) return false;
+	if (!Comm.allSum(&nTries, 1, ProcessPool::Leaders)) return false;
+	if (!Comm.allSum(&totalDelta, 1, ProcessPool::Leaders)) return false;
+	if (Comm.groupLeader())
 	{
 		double rate = double(nAccepted)/nTries;
 
@@ -244,8 +244,8 @@ bool GrainShake::execute(DUQ& duq)
 	}
 
 	// Store updated parameter values
-	if (!Comm.broadcast(&translationStepSize, 1, 0, DUQComm::Group)) return false;
-	if (!Comm.broadcast(&rotationStepSize, 1, 0, DUQComm::Group)) return false;
+	if (!procPool.broadcast(&translationStepSize, 1, 0, ProcessPool::Group)) return false;
+	if (!procPool.broadcast(&rotationStepSize, 1, 0, ProcessPool::Group)) return false;
 // 	rotationStepSizeParam->setValue(rotationStepSize); TODO
 // 	translationStepSizeParam->setValue(translationStepSize);
 	Messenger::print("GrainShake: Updated translation step is %f Angstroms, rotation step is %f degrees.\n", translationStepSize, rotationStepSize);

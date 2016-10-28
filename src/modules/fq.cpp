@@ -1,6 +1,6 @@
 /*
-	*** Configuration - Partials Data
-	*** src/classes/configuration_partials.cpp
+	*** dUQ Methods - Twist
+	*** src/main/methods_twist.cpp
 	Copyright T. Youngs 2012-2016
 
 	This file is part of dUQ.
@@ -19,11 +19,15 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "classes/configuration.h"
+#include "main/duq.h"
 #include "classes/box.h"
-#include "classes/grain.h"
+#include "classes/cell.h"
+#include "classes/changestore.h"
+#include "classes/energykernel.h"
+#include "classes/molecule.h"
 #include "classes/species.h"
-#include "base/comms.h"
+#include "base/processpool.h"
+#include "base/timer.h"
 
 // Calculate full partial RDFs using simple double-loop over atoms
 bool Configuration::calculatePartialsSimple()
@@ -63,8 +67,8 @@ bool Configuration::calculatePartialsSimple()
 	int* histogram;
 	double rbin = 1.0 / rdfBinWidth_;
 
-	int start = Comm.interleavedLoopStart(DUQComm::World);
-	int stride = Comm.interleavedLoopStride(DUQComm::World);
+	int start = Comm.interleavedLoopStart(ProcessPool::Pool);
+	int stride = Comm.interleavedLoopStride(ProcessPool::Pool);
 	
 	// Self terms
 	for (typeI = 0; typeI<nTypes; ++typeI)
@@ -118,8 +122,8 @@ bool Configuration::calculateIntramolecularRDFs()
 	int start, stride;
 
 	// Set start/skip for parallel loop
-	start = Comm.interleavedLoopStart(DUQComm::World);
-	stride = Comm.interleavedLoopStride(DUQComm::World);
+	start = Comm.interleavedLoopStart(ProcessPool::Pool);
+	stride = Comm.interleavedLoopStride(ProcessPool::Pool);
 
 	// Loop over molecules...
 	int n;
@@ -170,8 +174,8 @@ bool Configuration::calculateBraggSQ()
 
 	// Set start/skip for parallel loop
 	int start, stride;
-	start = Comm.interleavedLoopStart(DUQComm::World);
-	stride = Comm.interleavedLoopStride(DUQComm::World);
+	start = Comm.interleavedLoopStart(ProcessPool::Pool);
+	stride = Comm.interleavedLoopStride(ProcessPool::Pool);
 
 	// Create a timer
 	Timer timer;
@@ -516,9 +520,7 @@ Vec3<int> Configuration::braggMaximumHKL()
 	return braggMaximumHKL_;
 }
 
-/*
- * \brief Setup RDF / F(Q) storage
- */
+// Setup RDF / F(Q) storage
 bool Configuration::setupPartials()
 {
 	// Construct a matrix based on the local usedAtomTypes_ list, since this reflects all our possible partials
@@ -624,7 +626,7 @@ bool Configuration::calculatePairCorrelations(Data2D::WindowFunction windowFunct
 	partialsIndex_ = coordinateIndex_;
 
 	// Collect all processes together
-	if (!Comm.wait(DUQComm::World)) return false;
+	if (!Comm.wait(ProcessPool::Pool)) return false;
 
 	timer.stop();
 	Messenger::print("--> Finished calculation of partials (%s elapsed, %s comms).\n", timer.timeString(), Comm.accumulatedTimeString());
@@ -863,3 +865,83 @@ void Configuration::saveSQ(const char* baseName)
 	Dnchar filename(-1, "%s-unweighted-total.fq", baseName);
 	totalFQ_.save(filename);
 }
+
+
+/// FROM Configuration::setup()
+	// Construct RDF/S(Q) arrays
+	// -- Determine maximal extent of RDF (from origin to centre of box)
+	Messenger::print("\n");
+	Messenger::print("Setting up RDF/S(Q) data...\n");
+	Vec3<double> half = box()->axes() * Vec3<double>(0.5,0.5,0.5);
+	double maxR = half.magnitude(), inscribedSphereRadius = box()->inscribedSphereRadius();
+	Messenger::print("--> Maximal extent for RDFs is %f Angstrom (half cell diagonal distance).\n", maxR);
+	Messenger::print("--> Inscribed sphere radius (maximum RDF range avoiding periodic images) is %f Angstroms.\n", inscribedSphereRadius);
+	if (requestedRDFRange_ < -1.5)
+	{
+		Messenger::print("--> Using maximal non-minimum image range for RDF/S(Q).\n");
+		rdfRange_ = inscribedSphereRadius;
+	}
+	else if (requestedRDFRange_ < -0.5)
+	{
+		Messenger::print("--> Using 90%% of maximal extent for RDF/S(Q).\n");
+		rdfRange_ = 0.90*maxR;
+	}
+	else
+	{
+		Messenger::print("--> Specific RDF range supplied (%f Angstroms).\n", requestedRDFRange_);
+		rdfRange_ = requestedRDFRange_;
+		if (rdfRange_ < 0.0)
+		{
+			Messenger::error("Negative RDF range requested.\n");
+			return false;
+		}
+		else if (rdfRange_ > maxR)
+		{
+			Messenger::error("Requested RDF range is greater then the maximum possible extent for the Box.\n");
+			return false;
+		}
+		else if (rdfRange_ > (0.90*maxR)) Messenger::warn("Requested RDF range is greater than 90%% of the maximum possible extent for the Box. FT may be suspect!\n");
+	}
+	// 'Snap' rdfRange_ to nearest bin width...
+	rdfRange_ = int(rdfRange_/rdfBinWidth_) * rdfBinWidth_;
+	Messenger::print("--> RDF range (snapped to bin width) is %f Angstroms.\n", rdfRange_);
+
+	// Does a box normalisation already exist (i.e. has been loaded)
+	// Create/load Box normalisation array
+	if (!boxNormalisationFileName_.isEmpty())
+	{
+		if (boxNormalisation_.load(boxNormalisationFileName_))
+		{
+			Messenger::print("--> Successfully loaded box normalisation data from file '%s'.\n", boxNormalisationFileName_.get());
+			boxNormalisation_.interpolate();
+		}
+		else Messenger::print("--> Couldn't load Box normalisation data - it will be calculated.\n");
+	}
+	if (boxNormalisation_.nPoints() <= 1)
+	{
+		// Only calculate if RDF range is greater than the inscribed sphere radius
+		if (rdfRange_ <= inscribedSphereRadius)
+		{
+			Messenger::print("--> No need to calculate Box normalisation array since rdfRange is within periodic range.\n");
+			boxNormalisation_.clear();
+			double x = rdfBinWidth_*0.5;
+			while (x < rdfRange_)
+			{
+				boxNormalisation_.addPoint(x, 1.0);
+				x += rdfBinWidth_;
+			}
+			boxNormalisation_.interpolate();
+		}
+		else
+		{
+			Messenger::print("--> Calculating box normalisation array for RDFs...\n");
+			if (!box()->calculateRDFNormalisation(boxNormalisation_, rdfRange_, rdfBinWidth_, boxNormalisationNPoints)) return false;
+		}
+	}
+	Messenger::print("\n");
+	Messenger::print("--> Constructing RDF/F(Q) lists and matrices...\n");
+	if (!setupPartials())
+	{
+		Messenger::error("Failed to create RDF/F(Q) lists/matrices.\n");
+		return false;
+	}

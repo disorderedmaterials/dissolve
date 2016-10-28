@@ -22,7 +22,7 @@
 #include "classes/angle.h"
 #include "classes/atom.h"
 #include "classes/species.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 
 // Constructor
 Angle::Angle() : ListItem<Angle>()
@@ -271,7 +271,7 @@ bool Angle::broadcast(const List<Atom>& atoms)
 		buffer[1] = indexJ();
 		buffer[2] = indexK();
 	}
-	if (!Comm.broadcast(buffer, 3)) return false;
+	if (!procPool.broadcast(buffer, 3)) return false;
 	
 	// Slaves now take Atom pointers from supplied List
 	if (Comm.slave())
@@ -282,8 +282,8 @@ bool Angle::broadcast(const List<Atom>& atoms)
 	}
 	
 	// Send parameter info
-	if (!Comm.broadcast(&equilibrium_, 1)) return false;
-	if (!Comm.broadcast(&forceConstant_, 1)) return false;
+	if (!procPool.broadcast(&equilibrium_, 1)) return false;
+	if (!procPool.broadcast(&forceConstant_, 1)) return false;
 #endif
 	return true;
 }

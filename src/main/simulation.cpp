@@ -22,7 +22,7 @@
 #include "main/duq.h"
 #include "classes/species.h"
 #include "classes/atomtype.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 
 // Set number of test points to use when calculating Box normalisation arrays
 void DUQ::setBoxNormalisationPoints(int nPoints)
@@ -159,8 +159,8 @@ bool DUQ::go()
 	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
 	{
 		totalEnergyTest(cfg);
-		totalEnergy(cfg);
-		intramolecularEnergy(cfg);
+		totalEnergy(worldPool_, cfg);
+		intramolecularEnergy(worldPool_, cfg);
 	}
 
 	return true;

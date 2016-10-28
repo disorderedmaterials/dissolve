@@ -1,6 +1,6 @@
 /*
-	*** AtomShake Module
-	*** src/modules/atomshake.h
+	*** Structure Factor Module
+	*** src/modules/fq.h
 	Copyright T. Youngs 2012-2016
 
 	This file is part of dUQ.
@@ -19,26 +19,28 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_ATOMSHAKE_H
-#define DUQ_ATOMSHAKE_H
+#ifndef DUQ_STRUCTUREFACTOR_H
+#define DUQ_STRUCTUREFACTOR_H
 
 #include "modules/module.h"
 
 // Forward Declarations
 /* none */
 
-// AtomShake Module
-class AtomShake : public Module
+// Structure Factor Module
+class StructureFactor : public Module
 {
 	/*
-	 * Performs a traditional atom-by-atom Monte Carlo cycle over all atoms in a configuration
+	 * Calculates partial and full structure factors for all Samples associated to the Configuration.
+	 * Partial RDFs according to atomtype isotopes are constructed, and combined into total F(Q).
+	 * This module also handles calculation of Bragg scattering.
 	 */
 
 	public:
 	// Constructor
-	AtomShake();
+	StructureFactor();
 	// Destructor
-	~AtomShake();
+	~StructureFactor();
 
 
 	/*
@@ -69,10 +71,8 @@ class AtomShake : public Module
 	 * Method
 	 */
 	protected:
-	// Perform setup tasks for module
-	bool setup();
 	// Execute method
-	bool execute(DUQ& duq, ProcessPool& procPool);
+	bool execute(DUQ& duq);
 };
 
 #endif

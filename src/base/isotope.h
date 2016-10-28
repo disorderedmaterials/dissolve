@@ -82,7 +82,7 @@ class Isotope : public MPIListItem<Isotope>
 	 */
 	public:
 	// Broadcast data from Master to all Slaves
-	bool broadcast();
+	bool broadcast(ProcessPool& procPool);
 };
 
 #endif

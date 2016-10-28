@@ -29,6 +29,7 @@
 #include "classes/braggpeak.h"
 #include "classes/sample.h"
 #include "modules/module.h"
+#include "base/processpool.h"
 #include "base/variablelist.h"
 #include "templates/vector3.h"
 #include "templates/orderedlist.h"
@@ -256,9 +257,9 @@ class Configuration : public ListItem<Configuration>, public VariableList
 	// Initialise Cells for distribution
 	void initialiseCellDistribution();
 	// Return next available Cell for calculation
-	int nextAvailableCell(bool willBeModified, bool allowRepeats);
+	int nextAvailableCell(ProcessPool& procPool, bool willBeModified, bool allowRepeats);
 	// Unlock Cell specified, once calculation is complete
-	bool finishedWithCell(bool willBeModified, int cellId);
+	bool finishedWithCell(ProcessPool& procPool, bool willBeModified, int cellId);
 	// Update cell locations of all atoms
 	bool updateAtomsInCells();
 	// Update cell locations of specified atom index, and update neighbour
@@ -462,9 +463,17 @@ class Configuration : public ListItem<Configuration>, public VariableList
 	/*
 	 * Parallel Comms
 	 */
+	private:
+	// Process pool for this Configuration
+	ProcessPool processPool_;
+
 	public:
-	// Broadcast data to all processes
-	bool broadcast(const List<Species>& species, double pairPotentialRange, const RefList<Module,bool>& allModules);
+	// Set process pool for this Configuration
+	void setProcessPool(ProcessPool processPool);
+	// Return process pool for this Configuration
+	ProcessPool& processPool();
+	// Broadcast data
+	bool broadcast(ProcessPool& procPool, const List<Species>& species, double pairPotentialRange, const RefList<Module,bool>& allModules);
 };
 
 #endif

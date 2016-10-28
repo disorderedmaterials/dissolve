@@ -23,7 +23,7 @@
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/grain.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 
 // Set relative box lengths
 void Configuration::setRelativeBoxLengths(const Vec3<double> lengths)
@@ -397,9 +397,6 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 		cells_[n].addCellNeighbours(neighbours, mimNeighbours, nCells_);
 	}
 
-	// Send Cell info to Comm so suitable parallel strategy can be deduced
-	if (!Comm.setupStrategy(divisions_, cellExtents_, nbrs)) return false;   // TODO Move to setupComms()?
-
 	return true;
 }
 
@@ -487,34 +484,34 @@ void Configuration::initialiseCellDistribution()
 	}
 }
 
-/*
- * \brief Return next available Cell for calculation
- * \details All processes should call here together. The master process will distribute the index of the next available Cell to each process.
- * If all Cells have been distributed once then Cell::AllCellsComplete is returned to all processes. Otherwise, the next available 'unused' Cell index
- * is returned. If the routine runs out of available cells during a distribution cycle, then what is returned is determined by the value of
- * 'allowRepeats'. If 'allowRepeats' is true then Cells which have already been sent once will be sent again, in order for all processes to be
- * doing useful work at all times. If 'allowRepeats' is false, then repeat calculations on Cells are not allowed, and NoCellsAvailable is returned
- * instead. The latter is relevant when property calculation is being performed, and each Cell must be subjected to calculation once and once only.
- * 
- * Any routine which employs Cell distribution in this way implicitly operates in parallel with process groups.
- */
-int Configuration::nextAvailableCell(bool willBeModified, bool allowRepeats)
+// Return next available Cell for calculation
+int Configuration::nextAvailableCell(ProcessPool& procPool, bool willBeModified, bool allowRepeats)
 {
+	/*
+	 * All processes should call here together. The local master process will distribute the index of the next available Cell to each process.
+	 * If all Cells have been distributed once then Cell::AllCellsComplete is returned to all processes. Otherwise, the next available 'unused' Cell index
+	 * is returned. If the routine runs out of available cells during a distribution cycle, then what is returned is determined by the value of
+	 * 'allowRepeats'. If 'allowRepeats' is true then Cells which have already been sent once will be sent again, in order for all processes to be
+	 * doing useful work at all times. If 'allowRepeats' is false, then repeat calculations on Cells are not allowed, and NoCellsAvailable is returned
+	 * instead. The latter is relevant when property calculation is being performed, and each Cell must be subjected to calculation once and once only.
+	 * 
+	 * Any routine which employs Cell distribution in this way implicitly operates in parallel with process groups.
+	 */
 #ifdef PARALLEL
 	int proc, group,m, cellId, rootCellId = -1;
 	int* procList;
-	if (Comm.master())
+	if (procPool.isMaster())
 	{
 		Messenger::printVerbose("NextAvailableCell: nCellsDistributed_ = %i\n", nCellsDistributed_);
 		// All cells already distributed?
 		if (nCellsDistributed_ == nCells_)
 		{
-			for (int n=1; n<Comm.nProcesses(); ++n) if (!Comm.send(Cell::AllCellsComplete, n)) printf("MPI error in Configuration::nextAvailableCell() when all cells were distributed.\n");
+			for (int n=1; n<procPool.nProcesses(); ++n) if (!procPool.send(Cell::AllCellsComplete, n)) printf("MPI error in Configuration::nextAvailableCell() when all cells were distributed.\n");
 			return Cell::AllCellsComplete;
 		}
 		
 		// There are still Cells which haven't been worked on yet, so find and distribute them.
-		for (group = 0; group<Comm.nProcessGroups(); ++group)
+		for (group = 0; group<procPool.nProcessGroups(); ++group)
 		{
 			Messenger::printVerbose("Finding next Cell for process group %i\n", group);
 
@@ -565,11 +562,11 @@ int Configuration::nextAvailableCell(bool willBeModified, bool allowRepeats)
 			}
 			
 			// Broadcast Cell index to all processes in current ProcessGroup
-			procList = Comm.processes(group);
-			for (proc=0; proc<Comm.nProcesses(group); ++proc)
+			procList = procPool.processesInGroup(group);
+			for (proc=0; proc<procPool.nProcessesInGroup(group); ++proc)
 			{
 				if (procList[proc] == 0) rootCellId = cellId;
-				else if (!Comm.send(cellId, procList[proc])) printf("MPI error in Configuration::nextAvailableCell() sending next cell to process %i.\n", procList[proc]);
+				else if (!procPool.send(cellId, procList[proc])) printf("MPI error in Configuration::nextAvailableCell() sending next cell to process %i.\n", procList[proc]);
 			}
 		}
 
@@ -579,8 +576,8 @@ int Configuration::nextAvailableCell(bool willBeModified, bool allowRepeats)
 	else
 	{
 		// Slaves just receive the next Cell index
-		if (!Comm.receive(cellId, 0)) printf("MPI error in Configuration::nextAvailableCell() when all cells were distributed.\n");
-		Messenger::printVerbose("Slave with rank %i received Cell id %i\n", Comm.rank(), cellId);
+		if (!procPool.receive(cellId, 0)) printf("MPI error in Configuration::nextAvailableCell() when all cells were distributed.\n");
+		Messenger::printVerbose("Slave with rank %i (world rank %i) received Cell id %i\n", procPool.poolRank(), procPool.worldRank(), cellId);
 		return cellId;
 	}
 #else
@@ -596,23 +593,24 @@ int Configuration::nextAvailableCell(bool willBeModified, bool allowRepeats)
 #endif
 }
 
-/*
- * \brief Unlock Cell specified, once calculation is complete
- * \details All processes should call this routine once they have finished performing manipulations of the Cell they were given from
- * Configuration::nextAvailableCell(), passing the cellId as the single argument.
- */
-bool Configuration::finishedWithCell(bool willBeModified, int cellId)
+// Unlock Cell specified, once calculation is complete
+ 
+bool Configuration::finishedWithCell(ProcessPool& procPool, bool willBeModified, int cellId)
 {
+	/*
+	 * All processes should call this routine once they have finished performing manipulations of the Cell they were given from
+	 * Configuration::nextAvailableCell(), passing the cellId as the single argument.
+	 */
 #ifdef PARALLEL
-	if (Comm.master())
+	if (procPool.isMaster())
 	{
 		// Receive all used cellId's from process group leaders
-		for (int group=0; group<Comm.nProcessGroups(); ++group)
+		for (int group=0; group<procPool.nProcessGroups(); ++group)
 		{
 			// If this is *not* the masters group, receive data from the slave process leader
-			if (group != Comm.localGroupIndex())
+			if (group != procPool.groupIndex())
 			{
-				if (!Comm.receive(cellId, Comm.processes(group)[0])) Messenger::print("MPI error in Configuration::finishedWithCell() receiving from process with rank %i.\n", group);
+				if (!procPool.receive(cellId, procPool.processesInGroup(group)[0])) Messenger::print("MPI error in Configuration::finishedWithCell() receiving from process with rank %i.\n", group);
 			}
 			if (cellId >= 0) cells_[cellId].unlock(willBeModified);
 		}
@@ -620,14 +618,14 @@ bool Configuration::finishedWithCell(bool willBeModified, int cellId)
 	else
 	{
 		// Slaves just send their id to the master, provided they are process group leader
-		if (Comm.processGroupLeader())
+		if (procPool.groupLeader())
 		{
-			if (!Comm.send(cellId, 0)) Messenger::print("MPI error in Configuration::finishedWithCell().\n");
+			if (!procPool.send(cellId, 0)) Messenger::print("MPI error in Configuration::finishedWithCell().\n");
 		}
 	}
 	
-	// Collect all processes together
-	if (!Comm.wait(DUQComm::World)) return false;
+	// Collect all processes in the pool together
+	if (!procPool.wait(ProcessPool::Pool)) return false;
 #else
 	if (cellId >= 0) cells_[cellId].unlock(willBeModified);
 #endif

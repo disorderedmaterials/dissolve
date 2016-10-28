@@ -1,6 +1,6 @@
 /*
-	*** Parallel Communications
-	*** src/base/comms.h
+	*** Process Pool
+	*** src/base/processpool.h
 	Copyright T. Youngs 2012-2016
 
 	This file is part of dUQ.
@@ -19,8 +19,8 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_COMMS_H
-#define DUQ_COMMS_H
+#ifndef DUQ_PROCESSPOOL_H
+#define DUQ_PROCESSPOOL_H
 
 // Random number buffer size
 #define RANDBUFFERSIZE 16172
@@ -37,53 +37,63 @@
 #endif
 
 /*
- * DUQComm
+ * ProcessPool
  * Basic class to define process-global variables useful to control parallel execution,
  * and provide macros to simplify coding and aid readability.
  */
-class DUQComm
-{
+class ProcessPool
+{	
 	public:
 	// Constructor
-	DUQComm();
+	ProcessPool();
+	// Copy Constructor
+	ProcessPool(const ProcessPool& source);
+	// Assignment Operator
+	void operator=(const ProcessPool& source);
 	// Communications Group (for subroutines)
 	enum CommGroup
 	{
 		Solo,		/* No group (process is flying solo) (communicator == NONE) */
 		Group,		/* Process groups (communicator == localCommunicator_) */
-		Leaders,	/* A group containing all process group leaders (communicator == leaderCommunicator_) */
-		World		/* A group containing all processes (communicator == MPI_COMM_WORLD) */
+		Leaders,	/* A group containing all process group leaders in the local pool (communicator == leaderCommunicator_) */
+		Pool		/* A group containing all processes in the local pool (communicator == poolCommunicator_) */
 	};
 #ifdef PARALLEL
 	// Return communicator for group specified
-	MPI_Comm communicator(DUQComm::CommGroup group);
+	MPI_Comm communicator(ProcessPool::CommGroup group);
 #endif
 
 
 	/*
-	 * World Comms
+	 * Global Information
 	 */
 	private:
-	// Number of processes
-	int nProcesses_;
+	// Number of processes in total
+	static int nWorldProcesses_;
 	// World rank of this process
-	int rank_;
+	static int worldRank_;
+
+	public:
+	// Initialise parallel communications, setting world ranks / nProcesses
+	static bool initialiseMPI(int* argn, char ***argv);
+	// End parallel communications
+	static bool finalise();
+	// Return number of world processes
+	static int nWorldProcesses();
+	// Return world rank of this process
+	static int worldRank();
+	// Return if this is the world master process
+	static bool isWorldMaster();
+
+
+	/*
+	 * Timers
+	 */
+	private:
 	// Communication Timers
 	Timer accumTime_, totalTime_;
 
 	public:
-	// Initialise parallel communications
-	bool initialise(int* argn, char ***argv);
-	// End parallel communications
-	bool finalise();
-	// Return number of processes
-	int nProcesses();
-	// Return rank of this process
-	int rank();
-	// Return whether this process is the master
-	bool master();
-	// Return whether this process is a slave
-	bool slave();
 	// Reset accumulated Comm time
 	void resetAccumulatedTime();
 	// Return accumulated time string
@@ -93,22 +103,32 @@ class DUQComm
 
 
 	/*
-	 * Parallel Strategy
+	 * Local Process Pool
 	 */
 	private:
+	// Name of this pool
+	Dnchar name_;
+	// List of local processes in this pool
+	Array<int> processes_;
+	// Local rank of this process in the pool
+	int poolRank_;
 	// List of process groups
 	List< Array<int> > processGroups_;
 	// World ranks of process group leaders
 	Array<int> groupLeaders_;
-	// Index of local group for this process
-	int localGroupIndex_;
-	// Group rank of this process
-	int localGroupRank_;
+	// Index of local group in which this process exists
+	int groupIndex_;
+	// Rank of this process in its local group
+	int groupRank_;
 #ifdef PARALLEL
-	// Local Group of this process
-	MPI_Group localGroup_;
-	// Local communicator for this process
-	MPI_Comm localCommunicator_;
+	// Group of all processes in this pool
+	MPI_Group poolGroup_;
+	// Communicator for all processes in this pool
+	MPI_Comm poolCommunicator_;
+	// Group group of this process
+	MPI_Group groupGroup_;
+	// Group communicator for this process
+	MPI_Comm groupCommunicator_;
 	// Process leaders group
 	MPI_Group leaderGroup_;
 	// Process leaders communicator
@@ -116,22 +136,34 @@ class DUQComm
 #endif
 
 	public:
-	// Setup strategy
-	bool setupStrategy(const Vec3<int>& divisions, const Vec3<int>& cellExtents, const List< ListVec3<int> >& neighbours);
+	// Setup pool with processes specified
+	bool setup(const char* name, Array<int> worldRanks);
+	// Return name of pool
+	const char* name();
+	// Return total number of processes in pool
+	int nProcesses();
+	// Return rank of this process in the pool
+	int poolRank();
+	// Return whether this process is the master for this channel
+	bool isMaster();
+	// Return whether this process is a local slave in this channel
+	bool isSlave();
+	// Setup strategy for Configuration, based on local process pool size
+	bool setupConfigurationStrategy(const Vec3<int>& divisions, const Vec3<int>& cellExtents, const List< ListVec3<int> >& neighbours);
 	// Return number of process groups
 	int nProcessGroups() const;
 	// Return number of processes in nth group
-	int nProcesses(int groupId);
+	int nProcessesInGroup(int groupId);
 	// Return process array of nth group
-	int* processes(int groupId);
-	// Return group index for this process
-	int localGroupIndex();
-	// Return group size for this process
-	int localGroupSize();
-	// Return group rank of this process
-	int localGroupRank();
+	int* processesInGroup(int groupId);
+	// Return group index in which this process exists
+	int groupIndex();
+	// Return size of local group in which this process exists
+	int groupSize();
+	// Return rank of this process in its local group
+	int groupRank();
 	// Return whether this process is a group leader
-	bool processGroupLeader();
+	bool groupLeader();
 #ifdef PARALLEL
 	// Local group communicator
 	MPI_Comm localCommunicator();
@@ -139,7 +171,7 @@ class DUQComm
 
 
 	/*
-	 * Process Limits
+	 * Local Process Limits
 	 */
 	private:
 	// Linear Atom index limits for this process
@@ -165,9 +197,9 @@ class DUQComm
 	// Return diagonal last Atom index
 	int diagonalLastAtom();
 	// Return starting index for general interleaved loop
-	int interleavedLoopStart(DUQComm::CommGroup group);
+	int interleavedLoopStart(ProcessPool::CommGroup group);
 	// Return stride for general interleaved loop
-	int interleavedLoopStride(DUQComm::CommGroup group);
+	int interleavedLoopStride(ProcessPool::CommGroup group);
 
 
 	/*
@@ -175,7 +207,7 @@ class DUQComm
 	 */
 	public:
 	// Wait for all processes
-	bool wait(DUQComm::CommGroup group);
+	bool wait(ProcessPool::CommGroup group);
 	// Send single integer value to target process
 	bool send(int value, int targetProcess);
 	// Receive single integer from source process
@@ -203,21 +235,21 @@ class DUQComm
 	 */
 	public:
 	// Broadcast Dnchar
-	bool broadcast(Dnchar& source, int rootProcess = 0, DUQComm::CommGroup group = DUQComm::World);
+	bool broadcast(Dnchar& source, int rootProcess = 0, ProcessPool::CommGroup group = ProcessPool::Pool);
 	// Broadcast char data
-	bool broadcast(char* source, int rootProcess = 0, DUQComm::CommGroup group = DUQComm::World);
+	bool broadcast(char* source, int rootProcess = 0, ProcessPool::CommGroup group = ProcessPool::Pool);
 	// Broadcast Vec3<double>
-	bool broadcast(Vec3<double>& source, int rootProcess = 0, DUQComm::CommGroup group = DUQComm::World);
+	bool broadcast(Vec3<double>& source, int rootProcess = 0, ProcessPool::CommGroup group = ProcessPool::Pool);
 	// Broadcast integer(s)
-	bool broadcast(int* source, int count, int rootProcess = 0, DUQComm::CommGroup group = DUQComm::World);
+	bool broadcast(int* source, int count, int rootProcess = 0, ProcessPool::CommGroup group = ProcessPool::Pool);
 	// Broadcast double(s)
-	bool broadcast(double* source, int count, int rootProcess = 0, DUQComm::CommGroup group = DUQComm::World);
+	bool broadcast(double* source, int count, int rootProcess = 0, ProcessPool::CommGroup group = ProcessPool::Pool);
 	// Broadcast float(s)
-	bool broadcast(float* source, int count, int rootProcess = 0, DUQComm::CommGroup group = DUQComm::World);
+	bool broadcast(float* source, int count, int rootProcess = 0, ProcessPool::CommGroup group = ProcessPool::Pool);
 	// Broadcast bool(s)
-	bool broadcast(bool* source, int count, int rootProcess = 0, DUQComm::CommGroup group = DUQComm::World);
+	bool broadcast(bool* source, int count, int rootProcess = 0, ProcessPool::CommGroup group = ProcessPool::Pool);
 	// Broadcast Array<double>
-	bool broadcast(Array<double>& array, int rootProcess = 0, DUQComm::CommGroup group = DUQComm::World);
+	bool broadcast(Array<double>& array, int rootProcess = 0, ProcessPool::CommGroup group = ProcessPool::Pool);
 
 
 	/*
@@ -225,13 +257,13 @@ class DUQComm
 	 */
 	public:
 	// Reduce (sum) double data to root process
-	bool sum(double* source, int count, int rootProcess = 0, DUQComm::CommGroup group = DUQComm::World);
+	bool sum(double* source, int count, int rootProcess = 0, ProcessPool::CommGroup group = ProcessPool::Pool);
 	// Reduce (sum) int data to root process
-	bool sum(int* source, int count, int rootProcess = 0, DUQComm::CommGroup group = DUQComm::World);
+	bool sum(int* source, int count, int rootProcess = 0, ProcessPool::CommGroup group = ProcessPool::Pool);
 	// Reduce (sum) double data to all processes
-	bool allSum(double* source, int count, DUQComm::CommGroup group = DUQComm::World);
+	bool allSum(double* source, int count, ProcessPool::CommGroup group = ProcessPool::Pool);
 	// Reduce (sum) int data to all processes
-	bool allSum(int* source, int count, DUQComm::CommGroup group = DUQComm::World);
+	bool allSum(int* source, int count, ProcessPool::CommGroup group = ProcessPool::Pool);
 	// Assemble integer array on target process
 	bool assemble(int* array, int nData, int* rootDest, int rootMaxData, int rootProcess = 0);
 	// Assemble double array on target process
@@ -257,7 +289,7 @@ class DUQComm
 	// Index of next buffered number
 	int randomBufferIndex_;
 	// Communicator for random number buffer
-	DUQComm::CommGroup randomBufferCommGroup_;
+	ProcessPool::CommGroup randomBufferCommGroup_;
 
 	private:
 	// Refill random number buffer
@@ -265,7 +297,7 @@ class DUQComm
 
 	public:
 	// Initialise random number buffer for processes
-	void initialiseRandomBuffer(DUQComm::CommGroup group);
+	void initialiseRandomBuffer(ProcessPool::CommGroup group);
 	// Get next buffered random number (0-1 inclusive)
 	double random();
 	// Get next buffered random number (-1 to +1 inclusive)
@@ -284,9 +316,6 @@ class DUQComm
 	static int RESULT;
 };
 
-// External Declarations
-extern DUQComm Comm;
-
 /*
  * BroadcastList
  * Constructor-only template class which iterates over a supplied list, broadcasting the object from master
@@ -296,28 +325,29 @@ template <class T> class BroadcastList
 {
 	public:
 	// Constructor
-	BroadcastList(List<T>& items, bool& result)
+	BroadcastList(ProcessPool procPool, List<T>& items, bool& result)
 	{
 		result = false;
 		int count;
-		if (Comm.master())
+		if (procPool.isMaster())
 		{
 			// Broadcast number of items in list...
 			count = items.nItems();
-			if (!Comm.broadcast(&count, 1)) return;
-			for (MPIListItem<T>* item = items.first(); item != NULL; item = item->next) if (!item->broadcast()) return;
+			if (!procPool.broadcast(&count, 1)) return;
+			for (MPIListItem<T>* item = items.first(); item != NULL; item = item->next) if (!item->broadcast(procPool)) return;
 		}
 		else
 		{
 			// Get number of list items to expect
-			if (!Comm.broadcast(&count, 1)) return;
+			if (!procPool.broadcast(&count, 1)) return;
 			for (int n=0; n<count; ++n)
 			{
 				// Slaves must create a suitable structure first, and then join the broadcast
 				T* item = items.add();
-				if (!item->broadcast()) return;
+				if (!item->broadcast(procPool)) return;
 			}
 		}
+
 		// All OK - success!
 		result = true;
 	};
@@ -332,27 +362,27 @@ template <class T, class D> class BroadcastRefList
 {
 	public:
 	// Constructor
-	BroadcastRefList(RefList<T,D>& items, const List<T>& itemSource, bool& result)
+	BroadcastRefList(ProcessPool procPool, RefList<T,D>& items, const List<T>& itemSource, bool& result)
 	{
 		result = false;
 		int nItems, index;
 		T* item;
 		D data;
-		if (Comm.master())
+		if (procPool.isMaster())
 		{
 			// Send number of items in list
 			nItems = items.nItems();
-			if (!Comm.broadcast(&nItems, 1)) return;
+			if (!procPool.broadcast(&nItems, 1)) return;
 			// Loop over items - send index of referenced item in its original list, and then associated data
 			for (RefListItem<T,D>* ri = items.first(); ri != NULL; ri = ri->next)
 			{
 				index = itemSource.indexOf(ri->item);
-				if (!Comm.broadcast(&index, 1))
+				if (!procPool.broadcast(&index, 1))
 				{
 					Messenger::error("Master failed to broadcast item index in BroadcastRefList.\n");
 					return;
 				}
-				if (!Comm.broadcast(&ri->data, 1))
+				if (!procPool.broadcast(&ri->data, 1))
 				{
 					Messenger::error("Master failed to broadcast item data in BroadcastRefList.\n");
 					return;
@@ -362,18 +392,18 @@ template <class T, class D> class BroadcastRefList
 		else
 		{
 			// Receive number of items to create
-			if (!Comm.broadcast(&nItems, 1)) return;
+			if (!procPool.broadcast(&nItems, 1)) return;
 			for (int n=0; n<nItems; ++n)
 			{
 				// Master will send the index of the item in the itemSource list to reference
-				if (!Comm.broadcast(&index, 1))
+				if (!procPool.broadcast(&index, 1))
 				{
-					Messenger::error("Slave %i failed to broadcast item index in BroadcastRefList.\n", Comm.rank());
+					Messenger::error("Slave %i in pool '%s' failed to broadcast item index in BroadcastRefList.\n", procPool.poolRank(), procPool.name());
 					return;
 				}
-				if (!Comm.broadcast(&data, 1))
+				if (!procPool.broadcast(&data, 1))
 				{
-					Messenger::error("Slave %i failed to broadcast item data in BroadcastRefList.\n", Comm.rank());
+					Messenger::error("Slave %i in pool '%s' failed to broadcast item data in BroadcastRefList.\n", procPool.poolRank(), procPool.name());
 					return;
 				}
 				item = itemSource.item(index);
@@ -397,33 +427,33 @@ template <class T, class D> class BroadcastRefList
 /*
  * MPIRunMaster(x)
  * Effectively performs the following code:
- * if (Comm.master()) then
+ * if (ProcessPool::isWorldMaster()) then
  * {
- *     // Test supplied code/condition 'x', and broadcast result to all processes
+ *	// Test supplied code/condition 'x', and broadcast result to all processes
  *	if (x) then
  * 	{
- * 		MPI_Bcast(&DUQComm::SUCCEEDED,1,MPI_INTEGER,0,MPI_COMM_WORLD);
+ * 		MPI_Bcast(&ProcessPool::SUCCEEDED,1,MPI_INTEGER,0,MPI_COMM_WORLD);
  * 		return true;
  * 	}
  * 	else
  * 	{
- * 		MPI_Bcast(&DUQComm::FAILED,1,MPI_INTEGER,0,MPI_COMM_WORLD);
+ * 		MPI_Bcast(&ProcessPool::FAILED,1,MPI_INTEGER,0,MPI_COMM_WORLD);
  *		return false;
  * 	}
  * }
  * else
  * {
- *     // Slaves don't evaluate 'x' - they just receive the result
- * 	MPI_Bcast(&DUQComm::RESULT,1,MPI_INTEGER,0,MPI_COMM_WORLD);
- * 	return DUQComm::RESULT;
+ *	// Slaves don't evaluate 'x' - they just receive the result
+ * 	MPI_Bcast(&ProcessPool::RESULT,1,MPI_INTEGER,0,MPI_COMM_WORLD);
+ * 	return ProcessPool::RESULT;
  * }
  */
 #ifdef PARALLEL
 #define MPIRunMaster(x)\
-(Comm.master() ?\
-   (x ? (Comm.wait(DUQComm::World),MPI_Bcast(&DUQComm::SUCCEEDED,1,MPI_INTEGER,0,MPI_COMM_WORLD),true)\
-      : (Comm.wait(DUQComm::World), MPI_Bcast(&DUQComm::FAILED,1,MPI_INTEGER,0,MPI_COMM_WORLD),false))\
-: (Comm.wait(DUQComm::World), MPI_Bcast(&DUQComm::RESULT,1,MPI_INTEGER,0,MPI_COMM_WORLD),DUQComm::RESULT ? true : false))
+(ProcessPool::isWorldMaster() ?\
+   (x ? (MPI_Bcast(&ProcessPool::SUCCEEDED,1,MPI_INTEGER,0,MPI_COMM_WORLD),true)\
+      : (MPI_Bcast(&ProcessPool::FAILED,1,MPI_INTEGER,0,MPI_COMM_WORLD),false))\
+: (MPI_Bcast(&ProcessPool::RESULT,1,MPI_INTEGER,0,MPI_COMM_WORLD),ProcessPool::RESULT ? true : false))
 #else
 #define MPIRunMaster(x) x
 #endif

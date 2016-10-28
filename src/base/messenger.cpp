@@ -21,7 +21,7 @@
 
 #include "base/messenger.h"
 #include "base/sysfunc.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 #include <stdarg.h>
 #include <stdio.h>
 
@@ -65,20 +65,20 @@ void Messenger::createAndPrintText(const char* indentText, const char* format, v
 	Dnchar newFormat;
 	if (indentText != NULL)
 	{
-		if (redirect_ || (Comm.nProcesses() == 1)) newFormat.sprintf("%s\n%s %s%s\n", indentText, indentText, format, indentText);
-		else newFormat.sprintf("[%i] %s\n[%i]%s %s[%i]%s\n", Comm.rank(), indentText, Comm.rank(), indentText, format, Comm.rank(), indentText);
+		if (redirect_ || (ProcessPool::nWorldProcesses() == 1)) newFormat.sprintf("%s\n%s %s%s\n", indentText, indentText, format, indentText);
+		else newFormat.sprintf("[%i] %s\n[%i]%s %s[%i]%s\n", ProcessPool::worldRank(), indentText, ProcessPool::worldRank(), indentText, format, ProcessPool::worldRank(), indentText);
 	}
 	else
 	{
-		if (redirect_ || (Comm.nProcesses() == 1)) newFormat = format;
-		else newFormat.sprintf("[%i] %s", Comm.rank(), format);
+		if (redirect_ || (ProcessPool::nWorldProcesses() == 1)) newFormat = format;
+		else newFormat.sprintf("[%i] %s", ProcessPool::worldRank(), format);
 	}
 
 	// Parse the argument list (...) and internally write the output string into text[]
 	vsprintf(text_, newFormat.get(), arguments);
 
 	// Print the text
-	if (masterOnly_ && Comm.slave()) return;
+	if (masterOnly_ && (!ProcessPool::isWorldMaster())) return;
 	if (redirect_) parser_.writeLineF("%s", text_);
 	else printf("%s", text_);
 }

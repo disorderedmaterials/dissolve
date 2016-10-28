@@ -20,7 +20,7 @@
 */
 
 #include "classes/histogram.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 #include "base/lineparser.h"
 #include "math/constants.h"
 #include <math.h>
@@ -243,8 +243,8 @@ void Histogram::finalise()
  */
 
 // Sum histogram data onto all processes
-bool Histogram::allSum()
+bool Histogram::allSum(ProcessPool& procPool)
 {
-	if (!Comm.allSum(histogram_, nBins_)) return false;
+	if (!procPool.allSum(histogram_, nBins_)) return false;
 	return true;
 }

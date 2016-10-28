@@ -20,7 +20,7 @@
 */
 
 #include "base/isotope.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 
 // Constructor
 Isotope::Isotope() : MPIListItem<Isotope>()
@@ -110,18 +110,18 @@ double Isotope::absorptionXS() const
  */
 
 // Broadcast data from Master to all Slaves
-bool Isotope::broadcast()
+bool Isotope::broadcast(ProcessPool& procPool)
 {
 #ifdef PARALLEL
 	// Send isotope info
-	if (!Comm.broadcast(&A_, 1)) return false;
-	if (!Comm.broadcast(&atomicWeight_, 1)) return false;
-	if (!Comm.broadcast(&boundCoherent_, 1)) return false;
-	if (!Comm.broadcast(&boundIncoherent_, 1)) return false;
-	if (!Comm.broadcast(&boundCoherentXS_, 1)) return false;
-	if (!Comm.broadcast(&boundIncoherentXS_, 1)) return false;
-	if (!Comm.broadcast(&totalXS_, 1)) return false;
-	if (!Comm.broadcast(&absorptionXS_, 1)) return false;
+	if (!procPool.broadcast(&A_, 1)) return false;
+	if (!procPool.broadcast(&atomicWeight_, 1)) return false;
+	if (!procPool.broadcast(&boundCoherent_, 1)) return false;
+	if (!procPool.broadcast(&boundIncoherent_, 1)) return false;
+	if (!procPool.broadcast(&boundCoherentXS_, 1)) return false;
+	if (!procPool.broadcast(&boundIncoherentXS_, 1)) return false;
+	if (!procPool.broadcast(&totalXS_, 1)) return false;
+	if (!procPool.broadcast(&absorptionXS_, 1)) return false;
 #endif
 	return true;
 }

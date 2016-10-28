@@ -26,7 +26,7 @@
 #include "classes/energykernel.h"
 #include "classes/molecule.h"
 #include "classes/species.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 #include "base/timer.h"
 
 // Perform an Intramolecular Shake
@@ -48,7 +48,7 @@ bool DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 	EnergyKernel kernel(cfg, potentialMap_);
 
 	// Initialise the random number buffer
-	Comm.initialiseRandomBuffer(DUQComm::World);
+	Comm.initialiseRandomBuffer(ProcessPool::Pool);
 
 	// Loop over Molecules
 	Comm.resetAccumulatedTime();
@@ -59,7 +59,7 @@ bool DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 		changeStore.add(mol);
 
 		// Calculate reference energy for the Molecule
-		currentEnergy = kernel.energy(mol, DUQComm::World);
+		currentEnergy = kernel.energy(mol, ProcessPool::Pool);
 
 		/*
 		// Bonds
@@ -98,7 +98,7 @@ bool DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 		}
 		
 		// Test energy again
-		newEnergy = kernel.energy(mol, DUQComm::World);
+		newEnergy = kernel.energy(mol, ProcessPool::Pool);
 		delta = newEnergy - currentEnergy;
 		
 		if ((delta < 0) || (Comm.random() < exp(-delta*rRT)))
@@ -160,7 +160,7 @@ bool DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 			}
 
 			// Test energy again
-			newEnergy = kernel.energy(mol, DUQComm::World);
+			newEnergy = kernel.energy(mol, ProcessPool::Pool);
 			delta = newEnergy - currentEnergy;
 			
 			if ((delta < 0) || (Comm.random() < exp(-delta*rRT)))
@@ -186,10 +186,10 @@ bool DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 	cfg.updateGrains();
 
 	// Collect statistics from process group leaders
-	if (!Comm.allSum(&nAccepted, 1, DUQComm::Leaders)) return false;
-	if (!Comm.allSum(&nTries, 1, DUQComm::Leaders)) return false;
-	if (!Comm.allSum(&totalDelta, 1, DUQComm::Leaders)) return false;
-	if (Comm.processGroupLeader())
+	if (!Comm.allSum(&nAccepted, 1, ProcessPool::Leaders)) return false;
+	if (!Comm.allSum(&nTries, 1, ProcessPool::Leaders)) return false;
+	if (!Comm.allSum(&totalDelta, 1, ProcessPool::Leaders)) return false;
+	if (Comm.groupLeader())
 	{
 		Messenger::print("IntraShake: Overall acceptance rate was %6.1f%% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*nAccepted / nTries, nAccepted, nTries, timer.timeString(), Comm.accumulatedTimeString());
 
@@ -259,9 +259,9 @@ bool DUQ::interShake(Configuration& cfg)
 			// Get current Grain and calculate base energy (inter-Grain energy with NO inter-Grain corrections)
 			grainI = cell->grain(n);
 			mol = grainI->parent();
-			currentGrainEnergy = kernel.energy(grainI, cell->atoms(), EnergyKernel::ExcludeSelfFlag, DUQComm::Group);
-			currentGrainEnergy += kernel.energy(grainI, cell->atomNeighbours(), EnergyKernel::NoFlags, DUQComm::Group);
-			currentGrainEnergy += kernel.energy(grainI, cell->mimAtomNeighbours(), EnergyKernel::ApplyMinimumImage, DUQComm::Group);
+			currentGrainEnergy = kernel.energy(grainI, cell->atoms(), EnergyKernel::ExcludeSelfFlag, ProcessPool::Group);
+			currentGrainEnergy += kernel.energy(grainI, cell->atomNeighbours(), EnergyKernel::NoFlags, ProcessPool::Group);
+			currentGrainEnergy += kernel.energy(grainI, cell->mimAtomNeighbours(), EnergyKernel::ApplyMinimumImage, ProcessPool::Group);
 
 			// Set current Grain as target in ChangeStore
 			changeStore.add(grainI);
@@ -297,15 +297,15 @@ bool DUQ::interShake(Configuration& cfg)
 				delta = b->equilibrium() - distance;
 				
 				// The delta now reflects the distance and direction we should try to travel.
-				// TODO Implement DUQComm random buffer here!
+				// TODO Implement ProcessPool random buffer here!
 				currentBondEnergy = kernel.energy(mol, b);
 				vec *= delta * DUQMath::random();
 				grainI->translate(vec);
 
 				// Calculate new energy
-				newGrainEnergy = kernel.energy(grainI, cell->atoms(), EnergyKernel::ExcludeSelfFlag, DUQComm::Group);
-				newGrainEnergy += kernel.energy(grainI, cell->atomNeighbours(), EnergyKernel::NoFlags, DUQComm::Group);
-				newGrainEnergy += kernel.energy(grainI, cell->mimAtomNeighbours(), EnergyKernel::ApplyMinimumImage, DUQComm::Group);
+				newGrainEnergy = kernel.energy(grainI, cell->atoms(), EnergyKernel::ExcludeSelfFlag, ProcessPool::Group);
+				newGrainEnergy += kernel.energy(grainI, cell->atomNeighbours(), EnergyKernel::NoFlags, ProcessPool::Group);
+				newGrainEnergy += kernel.energy(grainI, cell->mimAtomNeighbours(), EnergyKernel::ApplyMinimumImage, ProcessPool::Group);
 				newBondEnergy = kernel.energy(mol, b);
 
 				// Trial the transformed Grain position (the Master is in charge of this)
@@ -313,7 +313,7 @@ bool DUQ::interShake(Configuration& cfg)
 				accept = delta < 0 ? true : (DUQMath::random() < exp(-delta*rRT));
 
 				// Broadcast result to process group
-				if (!Comm.broadcast(&accept, 1, 0, DUQComm::Group)) return false;
+				if (!procPool.broadcast(&accept, 1, 0, ProcessPool::Group)) return false;
 				if (accept)
 				{
 // 					Messenger::print("Accepts move with delta %f\n", delta);
@@ -346,9 +346,9 @@ bool DUQ::interShake(Configuration& cfg)
 	cfg.updateGrains();
 
 	// Collect statistics from process group leaders
-	if (!Comm.allSum(&nAccepted, 1, DUQComm::Leaders)) return false;
-	if (!Comm.allSum(&nTries, 1, DUQComm::Leaders)) return false;
-	if (Comm.processGroupLeader())
+	if (!Comm.allSum(&nAccepted, 1, ProcessPool::Leaders)) return false;
+	if (!Comm.allSum(&nTries, 1, ProcessPool::Leaders)) return false;
+	if (Comm.groupLeader())
 	{
 		Messenger::print("InterShake: Overall acceptance rate was %6.1f%% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*nAccepted / nTries, nAccepted, nTries, timer.timeString(), Comm.accumulatedTimeString());
 
@@ -543,10 +543,10 @@ bool DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 	cfg.updateGrains();
 
 	// Collect statistics from process group leaders
-	if (!Comm.allSum(&nAccepted, 1, DUQComm::Leaders)) return false;
-	if (!Comm.allSum(&nTries, 1, DUQComm::Leaders)) return false;
-	if (!Comm.allSum(&totalDelta, 1, DUQComm::Leaders)) return false;
-	if (Comm.processGroupLeader())
+	if (!Comm.allSum(&nAccepted, 1, ProcessPool::Leaders)) return false;
+	if (!Comm.allSum(&nTries, 1, ProcessPool::Leaders)) return false;
+	if (!Comm.allSum(&totalDelta, 1, ProcessPool::Leaders)) return false;
+	if (Comm.groupLeader())
 	{
 		Messenger::print("TermShake: Overall acceptance rate was %6.1f%% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*nAccepted / nTries, nAccepted, nTries, timer.timeString(), Comm.accumulatedTimeString());
 

@@ -26,26 +26,28 @@
 #include "classes/energykernel.h"
 #include "classes/molecule.h"
 #include "classes/species.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 #include "base/timer.h"
 
-/*
- * Calculate the total intramolecular energy of the system, arising from Bond, Angle, and Torsion
- * terms in all molecules.
- * 
- * This is a parallel routine, with processes operating as a standard world group.
- */
-double DUQ::intramolecularEnergy(Configuration* cfg)
+// Return total intramolecular energy
+double DUQ::intramolecularEnergy(ProcessPool& procPool, Configuration* cfg)
 {
+	/*
+	 * Calculate the total intramolecular energy of the system, arising from Bond, Angle, and Torsion
+	 * terms in all molecules.
+	 * 
+	 * This is a parallel routine, with processes operating as a standard world group.
+	 */
+
 	// Create an EnergyKernel
-	EnergyKernel kernel(cfg, potentialMap_);
+	EnergyKernel kernel(procPool, cfg, potentialMap_);
 
 	double energy = 0.0;
 	int start, stride;
 
 	// Set start/skip for parallel loop
-	start = Comm.interleavedLoopStart(DUQComm::World);
-	stride = Comm.interleavedLoopStride(DUQComm::World);
+	start = procPool.interleavedLoopStart(ProcessPool::Pool);
+	stride = procPool.interleavedLoopStride(ProcessPool::Pool);
 
 	// Main loop over molecules
 	for (int m=start; m<cfg->nMolecules(); m += stride)
@@ -62,27 +64,28 @@ double DUQ::intramolecularEnergy(Configuration* cfg)
 	Messenger::printVerbose("Intramolecular Energy (Local) is %15.9e\n", energy);
 	
 	// Sum energy and print
-	Comm.allSum(&energy, 1);
+	procPool.allSum(&energy, 1);
 	Messenger::printVerbose("Intramolecular Energy (World) is %15.9e\n", energy);
 
 	return energy;
 }
 
-/*
- * \brief Return atom energy of the system
- * \details Calculates the total atom energy of the system, i.e. the energy contributions from PairPotential
- * interactions between individual atoms.
- * 
- * This is a parallel routine, with processes operating as process groups.
- */
-double DUQ::interatomicEnergy(Configuration* cfg)
+// Return total atom energy
+double DUQ::interatomicEnergy(ProcessPool& procPool, Configuration* cfg)
 {
+	/*
+	 * Calculates the total atom energy of the system, i.e. the energy contributions from PairPotential
+	 * interactions between individual atoms.
+	 * 
+	 * This is a parallel routine, with processes operating as process groups.
+	 */
+
 	// Initialise the Cell distributor
 	const bool willBeModified = false, allowRepeats = false;
 	cfg->initialiseCellDistribution();
 
 	// Create an EnergyKernel
-	EnergyKernel kernel(cfg, potentialMap_);
+	EnergyKernel kernel(procPool, cfg, potentialMap_);
 
 	int cellId, n, m, start, stride;
 	Cell* cell, *otherCell;
@@ -97,8 +100,8 @@ double DUQ::interatomicEnergy(Configuration* cfg)
 	}
 
 	// Set start/skip for parallel loop
-	start = Comm.interleavedLoopStart(DUQComm::Group);
-	stride = Comm.interleavedLoopStride(DUQComm::Group);
+	start = procPool.interleavedLoopStart(ProcessPool::Group);
+	stride = procPool.interleavedLoopStride(ProcessPool::Group);
 
 	for (cellId = start; cellId<cfg->nCells(); cellId += stride)
 	{
@@ -109,10 +112,10 @@ double DUQ::interatomicEnergy(Configuration* cfg)
 		 */
 
 		// This cell with itself
-		totalEnergy += kernel.energy(cell, cell, false, true, DUQComm::Solo);
+		totalEnergy += kernel.energy(cell, cell, false, true, ProcessPool::Solo);
 
 		// Interatomic interactions between atoms in this cell and its neighbours
-		totalEnergy += kernel.energy(cell, true, DUQComm::Solo);
+		totalEnergy += kernel.energy(cell, true, ProcessPool::Solo);
 
 		/*
 		 * Calculation End
@@ -121,27 +124,28 @@ double DUQ::interatomicEnergy(Configuration* cfg)
 	Messenger::printVerbose("Atom Energy (Local) is %15.9e\n", totalEnergy);
 
 	// Sum energy and print
-	Comm.allSum(&totalEnergy, 1);
+	procPool.allSum(&totalEnergy, 1);
 	Messenger::printVerbose("Atom Energy (World) is %15.9e\n", totalEnergy);
 
 	return totalEnergy;
 }
 
-/*
- * \brief Return Grain energy of the system
- * \details Calculates the total Grain energy of the system, i.e. the energy contributions from PairPotential
- * interactions between Grains.
- * 
- * This is a parallel routine, with processes operating as process groups.
- */
-double DUQ::intergrainEnergy(Configuration* cfg)
+//Return Grain energy of the system
+double DUQ::intergrainEnergy(ProcessPool& procPool, Configuration* cfg)
 {
+	/*
+	 * Calculates the total Grain energy of the system, i.e. the energy contributions from PairPotential
+	 * interactions between Grains.
+	 * 
+	 * This is a parallel routine, with processes operating as process groups.
+	 */
+
 	// Initialise the Cell distributor
 	const bool willBeModified = false, allowRepeats = false;
 	cfg->initialiseCellDistribution();
 
 	// Create an EnergyKernel
-	EnergyKernel kernel(cfg, potentialMap_);
+	EnergyKernel kernel(procPool, cfg, potentialMap_);
 
 	int cellId, n, m, start, stride;
 	Cell* cell;
@@ -149,16 +153,16 @@ double DUQ::intergrainEnergy(Configuration* cfg)
 	double totalEnergy = 0.0;
 
 	// Set start/skip for parallel loop
-	start = Comm.interleavedLoopStart(DUQComm::Group);
-	stride = Comm.interleavedLoopStride(DUQComm::Group);
+	start = procPool.interleavedLoopStart(ProcessPool::Group);
+	stride = procPool.interleavedLoopStride(ProcessPool::Group);
 
-	while (cellId = cfg->nextAvailableCell(willBeModified, allowRepeats), cellId != Cell::AllCellsComplete)
+	while (cellId = cfg->nextAvailableCell(procPool, willBeModified, allowRepeats), cellId != Cell::AllCellsComplete)
 	{
 		// Check for valid cell
 		if (cellId == Cell::NoCellsAvailable)
 		{
 			Messenger::printVerbose("Nothing for this process to do.\n");
-			cfg->finishedWithCell(willBeModified, cellId);
+			cfg->finishedWithCell(procPool, willBeModified, cellId);
 			continue;
 		}
 		cell = cfg->cell(cellId);
@@ -169,11 +173,11 @@ double DUQ::intergrainEnergy(Configuration* cfg)
 		 */
 		
 		// Loop over Grains
-		// Parallelism employed in the outer loop - as such, DUQComm::Solo is passed to the Grain/Cell method.
+		// Parallelism employed in the outer loop - as such, ProcessPool::Solo is passed to the Grain/Cell method.
 		for (n=start; n<cell->nGrains(); n += stride)
 		{
 			grainI = cell->grain(n);
-			totalEnergy += kernel.energy(grainI, true, DUQComm::Solo);
+			totalEnergy += kernel.energy(grainI, true, ProcessPool::Solo);
 
 // 			// Inter-Grain interactions in this Cell...
 // 			for (m=n+1; m<cell->nGrains(); ++m)
@@ -183,45 +187,46 @@ double DUQ::intergrainEnergy(Configuration* cfg)
 // 			}
 // 			
 // 			// Inter-Grain interactions between this Grain and those in Cell neighbours
-// 			totalEnergy += kernel.energy(grainI, cell->atomNeighbours(), false, true, DUQComm::Solo);
-// 			totalEnergy += kernel.energy(grainI, cell->mimAtomNeighbours(), true, true, DUQComm::Solo);
+// 			totalEnergy += kernel.energy(grainI, cell->atomNeighbours(), false, true, ProcessPool::Solo);
+// 			totalEnergy += kernel.energy(grainI, cell->mimAtomNeighbours(), true, true, ProcessPool::Solo);
 		}
 
 		/*
 		 * Calculation End
 		 */
 		// Must unlock the Cell when we are done with it!
-		cfg->finishedWithCell(willBeModified, cellId);
+		cfg->finishedWithCell(procPool, willBeModified, cellId);
 	}
 	Messenger::printVerbose("Grain Energy (Local) is %15.9e\n", totalEnergy);
 	
 	// Sum energy and print
-	Comm.allSum(&totalEnergy, 1);
+	procPool.allSum(&totalEnergy, 1);
 	Messenger::printVerbose("Grain Energy (World) is %15.9e\n", totalEnergy);
 
 	return totalEnergy;
 }
 
-/*
- * \brief Return total energy of the system
- * \details Calculates the total energy of the entire system.
- * 
- * This is a serial routine (subroutines called from within are parallel).
- */
-double DUQ::totalEnergy(Configuration* cfg)
+// Return total energy of the system
+double DUQ::totalEnergy(ProcessPool& procPool, Configuration* cfg)
 {
+	/*
+	 * Calculates the total energy of the entire system.
+	 * 
+	 * This is a serial routine (subroutines called from within are parallel).
+	 */
+
 	Messenger::print("Calculating total energy...\n");
 
 	double atomEnergy, intraEnergy;
 
 	// Calculate Grain energy
 	Timer interTimer;
-	atomEnergy = interatomicEnergy(cfg);
+	atomEnergy = interatomicEnergy(procPool, cfg);
 	interTimer.stop();
 
 	// Calculate intramolecular and interGrain correction energy
 	Timer intraTimer;
-	intraEnergy = intramolecularEnergy(cfg);
+	intraEnergy = intramolecularEnergy(procPool, cfg);
 	intraTimer.stop();
 
 	Messenger::print("Time to do atom energy was %s, intramolecular energy was %s.\n", interTimer.timeString(), intraTimer.timeString());
@@ -230,14 +235,15 @@ double DUQ::totalEnergy(Configuration* cfg)
 	return atomEnergy + intraEnergy;
 }
 
-/*
- * \brief Test - Return total intramolecular (+correction) energy
- * \details Calculate the total intramolecular energy of the system.
- * 
- * This is a serial routine, with all processes independently calculating their own value.
- */
+// Test - Return total intramolecular (+correction) energy
 double DUQ::intramolecularEnergyTest(Configuration* cfg)
 {
+	/*
+	 * Calculate the total intramolecular energy of the system.
+	 * 
+	 * This is a serial routine, with all processes independently calculating their own value.
+	 */
+
 	double distanceSq, angle;
 	double intraEnergy = 0.0;
 	Atom* i, *j, *k;
@@ -282,17 +288,15 @@ double DUQ::intramolecularEnergyTest(Configuration* cfg)
 	return intraEnergy;
 }
 
-/*
- * \brief Test - Return total energy of the system
- * \details Calculate the total energy of the system using a basic loop, with each
- * process calculating its own value.
- * 
- * This is a serial routine, with all processes independently calculating their own value.
- */
+// Test - Return total energy of the system
 double DUQ::totalEnergyTest(Configuration* cfg)
 {
-	// Create an EnergyKernel
-	EnergyKernel kernel(cfg, potentialMap_);
+	/*
+	 * Calculate the total energy of the system using a basic loop, with each
+	 * process calculating its own value.
+	 * 
+	 * This is a serial routine, with all processes independently calculating their own value.
+	 */
 
 	/*
 	 * Calculation Begins
@@ -300,11 +304,12 @@ double DUQ::totalEnergyTest(Configuration* cfg)
 
 	double atomEnergy = 0.0, intraEnergy = 0.0;
 	Molecule* molN, *molM;
+	const Box* box = cfg->box();
 	double scale;
 	for (int n=0; n<cfg->nMolecules(); ++n)
 	{
 		molN = cfg->molecule(n);
-		
+
 		// Molecule-molecule energy
 		for (int i = 0; i<molN->nAtoms()-1; ++i)
 		{
@@ -313,7 +318,8 @@ double DUQ::totalEnergyTest(Configuration* cfg)
 				// Get intramolecular scaling of atom pair
 				scale = molN->species()->scaling(i, j);
 				if (scale < 1.0e-3) continue;
-				atomEnergy += kernel.energy(molN->atom(i), molN->atom(j), true) * scale;
+
+				atomEnergy += potentialMap_.energy(molN->atom(i)->globalTypeIndex(), molN->atom(j)->globalTypeIndex(), box->minimumDistanceSquared(molN->atom(i), molN->atom(j)));
 			}
 		}
 
@@ -324,7 +330,8 @@ double DUQ::totalEnergyTest(Configuration* cfg)
 			// Double loop over atoms
 			for (int i = 0; i<molN->nAtoms(); ++i)
 			{
-				for (int j = 0; j<molM->nAtoms(); ++j) atomEnergy += kernel.energy(molN->atom(i), molM->atom(j), true);
+				for (int j = 0; j<molM->nAtoms(); ++j) atomEnergy += potentialMap_.energy(molN->atom(i)->globalTypeIndex(), molM->atom(j)->globalTypeIndex(), box->minimumDistanceSquared(molN->atom(i), molM->atom(j)));
+
 			}
 		}
 	}
@@ -342,21 +349,20 @@ double DUQ::totalEnergyTest(Configuration* cfg)
 	return atomEnergy + intraEnergy;
 }
 
-/*
- * \brief Test - Return total energy of the system using Molecules
- * \details Calculate the total energy of the system using a loop over Molecules.
- * 
- * This is a serial routine, with each process calculating its own value.
- */
+// Test - Return total energy of the system using Molecules
 double DUQ::totalEnergyTestMolecules(Configuration* cfg)
 {
-	// Create an EnergyKernel
-	EnergyKernel kernel(cfg, potentialMap_);
+	/*
+	 * Calculate the total energy of the system using a loop over Molecules.
+	 * 
+	 * This is a serial routine, with each process calculating its own value.
+	 */
 
 	// Loop over Molecules
 	// We will end up double-counting all Molecule-Molecule interactions, but only single-counting intramolecular terms.
 	// So, scale PairPotential contributions to the Grain energy, but leave inter-Grain correction energies as-is.
 	double totalEnergy = 0.0;
-	for (Molecule* mol = cfg->molecules(); mol != NULL; mol = mol->next) totalEnergy += kernel.energy(mol, DUQComm::Solo, 0.5, 1.0, 1.0);
+// 	for (Molecule* mol = cfg->molecules(); mol != NULL; mol = mol->next) totalEnergy += kernel.energy(mol, ProcessPool::Solo, 0.5, 1.0, 1.0);
+	Messenger::print("DUQ::totalEnergyTestMolecules IS HORRIBLY BROKEN.\n");
 	return totalEnergy;
 }

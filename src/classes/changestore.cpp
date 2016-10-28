@@ -26,10 +26,10 @@
 #include "classes/grain.h"
 #include "classes/molecule.h"
 #include "templates/orderedpointerlist.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 
 // Constructor
-ChangeStore::ChangeStore()
+ChangeStore::ChangeStore(ProcessPool& procPool) : processPool_(procPool)
 {
 }
 
@@ -167,7 +167,7 @@ bool ChangeStore::distributeAndApply(Configuration* cfg)
 #ifdef PARALLEL
 	// First, get total number of changes across all processes
 	int nTotalChanges = changes_.nItems();
-	if (!Comm.allSum(&nTotalChanges, 1)) return false;
+	if (!processPool_.allSum(&nTotalChanges, 1)) return false;
 
 // 	Messenger::print("We think there are %i changes in total to distribute.\n", nTotalChanges);
 
@@ -188,16 +188,16 @@ bool ChangeStore::distributeAndApply(Configuration* cfg)
 	}
 
 	// Now, assemble full array of the change data on the master...
-	if (!Comm.assemble(indices_, changes_.nItems(), indices_, nTotalChanges)) return false;
-	if (!Comm.assemble(x_, changes_.nItems(), x_, nTotalChanges)) return false;
-	if (!Comm.assemble(y_, changes_.nItems(), y_, nTotalChanges)) return false;
-	if (!Comm.assemble(z_, changes_.nItems(), z_, nTotalChanges)) return false;
+	if (!processPool_.assemble(indices_, changes_.nItems(), indices_, nTotalChanges)) return false;
+	if (!processPool_.assemble(x_, changes_.nItems(), x_, nTotalChanges)) return false;
+	if (!processPool_.assemble(y_, changes_.nItems(), y_, nTotalChanges)) return false;
+	if (!processPool_.assemble(z_, changes_.nItems(), z_, nTotalChanges)) return false;
 	
 	// ... then broadcast it to the slaves
-	if (!Comm.broadcast(indices_, nTotalChanges)) return false;
-	if (!Comm.broadcast(x_, nTotalChanges)) return false;
-	if (!Comm.broadcast(y_, nTotalChanges)) return false;
-	if (!Comm.broadcast(z_, nTotalChanges)) return false;
+	if (!processPool_.broadcast(indices_, nTotalChanges)) return false;
+	if (!processPool_.broadcast(x_, nTotalChanges)) return false;
+	if (!processPool_.broadcast(y_, nTotalChanges)) return false;
+	if (!processPool_.broadcast(z_, nTotalChanges)) return false;
 
 	// Apply atom changes
 	Atom* atoms = cfg->atoms();

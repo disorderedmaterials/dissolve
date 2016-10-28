@@ -25,7 +25,7 @@
 #include "classes/atom.h"
 #include "classes/grain.h"
 #include "templates/orderedpointerlist.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 
 // Forward Declarations
 class Cell;
@@ -33,15 +33,12 @@ class Box;
 class PotentialMap;
 class ChangeStore;
 
-/*
- * \brief Energy Kernel
- * \details An ForceKernel provides force calculation routines between Atoms, Grains, and Cells, and any combination thereof.
- */
+// ForceKernel
 class ForceKernel
 {
 	public:
 	// Constructor
-	ForceKernel(const Box* box, const PotentialMap& potentialMap);
+	ForceKernel(ProcessPool& procPool, const Box* box, const PotentialMap& potentialMap);
 	// Destructor
 	~ForceKernel();
 	// Clear all data
@@ -91,9 +88,17 @@ class ForceKernel
 	// Calculate inter-particle forces between Grain and Cell contents
 	void forces(const Grain* grain, const Cell* cell, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz);
 	// Calculate inter-particle forces between Atom and list of Cells
-	void forces(const Atom* i, int nNeighbours, Cell** neighbours, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz, DUQComm::CommGroup group = DUQComm::Solo);
+	void forces(const Atom* i, int nNeighbours, Cell** neighbours, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz, ProcessPool::CommGroup group = ProcessPool::Solo);
 	// Calculate inter-particle forces between Grain and list of Cells
-	void forces(const Grain* grain, int nNeighbours, Cell** neighbours, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz, DUQComm::CommGroup group = DUQComm::Solo);
+	void forces(const Grain* grain, int nNeighbours, Cell** neighbours, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz, ProcessPool::CommGroup group = ProcessPool::Solo);
+
+
+	/*
+	 * Parallel Comms
+	 */
+	private:
+	// Process pool over which this kernel operates
+	ProcessPool& processPool_;
 };
 
 #endif

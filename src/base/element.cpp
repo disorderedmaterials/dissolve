@@ -21,7 +21,7 @@
 
 #include "base/element.h"
 #include "base/isotope.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 #include <string.h>
 
 // Constructor
@@ -163,26 +163,26 @@ int Element::indexOfParameters(Parameters* p) const
  */
 
 // Broadcast data from Master to all Slaves
-bool Element::broadcast()
+bool Element::broadcast(ProcessPool& procPool)
 {
 #ifdef PARALLEL
 	// Send basic info
 	Messenger::printVerbose("[MPI] Element ");
-	if (!Comm.broadcast(name_)) return false;
+	if (!procPool.broadcast(name_)) return false;
 	Messenger::printVerbose("%s...", name_.get());
-	if (!Comm.broadcast(&z_, 1)) return false;
+	if (!procPool.broadcast(&z_, 1)) return false;
 	Messenger::printVerbose("%i...", z_);
-	if (!Comm.broadcast(symbol_)) return false;
+	if (!procPool.broadcast(symbol_)) return false;
 	Messenger::printVerbose("%s...", symbol_.get());
-	if (!Comm.broadcast(&atomicRadius_, 1)) return false;
+	if (!procPool.broadcast(&atomicRadius_, 1)) return false;
 	Messenger::printVerbose("%f...", atomicRadius_);
-	if (!Comm.broadcast(colour_, 4)) return false;
+	if (!procPool.broadcast(colour_, 4)) return false;
 	Messenger::printVerbose("%f %f %f %f...", colour_[0], colour_[1], colour_[2], colour_[3]);
 
 	// Add isotopes
 	bool result;
 	Messenger::printVerbose("Isotopes...");
-	BroadcastList<Isotope>(isotopes_, result);
+	BroadcastList<Isotope>(procPool, isotopes_, result);
 	if (!result)
 	{
 		Messenger::print("Failed to broadcast Isotope data for element '%s'.\n", name_.get());
@@ -191,7 +191,7 @@ bool Element::broadcast()
 	
 	// Add parameters
 	Messenger::printVerbose("Parameters...");
-	BroadcastList<Parameters>(parameters_, result);
+	BroadcastList<Parameters>(procPool, parameters_, result);
 	if (!result)
 	{
 		Messenger::print("Failed to broadcast Parameter data for element '%s'.\n", name_.get());

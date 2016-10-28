@@ -25,25 +25,27 @@
 #include "classes/forcekernel.h"
 #include "classes/grain.h"
 #include "classes/species.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 #include "base/timer.h"
 
-/*
- * Calculate the total intramolecular forces within the system, arising from Bond, Angle, and Torsion
- * terms in all molecules.
- * 
- * This is a parallel routine.
- */
-void DUQ::intramolecularForces(Configuration* cfg, double* fx, double* fy, double* fz, DUQComm::CommGroup group)
+// Calculate total intramolecular forces
+void DUQ::intramolecularForces(ProcessPool& procPool, Configuration* cfg, double* fx, double* fy, double* fz, ProcessPool::CommGroup group)
 {
+	/*
+	 * Calculate the total intramolecular forces within the system, arising from Bond, Angle, and Torsion
+	 * terms in all molecules.
+	 * 
+	 * This is a parallel routine.
+	 */
+
 	double distance, angle, force, dp, magji, magjk;
 	int index, start, stride;
 	Atom* i, *j, *k;
 	Vec3<double> vecji, vecjk, forcei, forcek;
 
 	// Set start/skip for parallel loop
-	start = Comm.interleavedLoopStart(group);
-	stride = Comm.interleavedLoopStride(group);
+	start = procPool.interleavedLoopStart(group);
+	stride = procPool.interleavedLoopStride(group);
 
 	// Main loop over molecules
 	for (Molecule* mol = cfg->molecules(); mol != NULL; mol = mol->next)
@@ -120,38 +122,39 @@ void DUQ::intramolecularForces(Configuration* cfg, double* fx, double* fy, doubl
 	}
 }
 
-/*
- * \brief Calculate Grain forces within the system
- * \details Calculates the total Grain forces within the system, i.e. the energy contributions from PairPotential
- * interactions between Grains. Any connections between Grains (which in reality correspond to proper chemical bonds
- * between Atoms) are automatically excluded.
- * 
- * This is a parallel routine.
- */
-void DUQ::grainForces(Configuration* cfg, double* fx, double* fy, double* fz, double cutoffSq, DUQComm::CommGroup group)
+// Calculate Grain forces within the system
+void DUQ::grainForces(ProcessPool& procPool, Configuration* cfg, double* fx, double* fy, double* fz, double cutoffSq, ProcessPool::CommGroup group)
 {
+	/*
+	 * Calculates the total Grain forces within the system, i.e. the energy contributions from PairPotential
+	 * interactions between Grains. Any connections between Grains (which in reality correspond to proper chemical bonds
+	 * between Atoms) are automatically excluded.
+	 * 
+	 * This is a parallel routine.
+	 */
+
 	// Initialise the Cell distributor
 	const bool willBeModified = false, allowRepeats = false;
 	cfg->initialiseCellDistribution();
 
 	// Create a ForcesKernel
-	ForceKernel kernel(cfg->box(), potentialMap_);
+	ForceKernel kernel(procPool, cfg->box(), potentialMap_);
 
 	int cellId, n, m, start, stride;
 	Cell* cell;
 	Grain* grainI, *grainJ;
 
 	// Set start/skip for parallel loop
-	start = Comm.interleavedLoopStart(group);
-	stride = Comm.interleavedLoopStride(group);
+	start = procPool.interleavedLoopStart(group);
+	stride = procPool.interleavedLoopStride(group);
 
-	while (cellId = cfg->nextAvailableCell(willBeModified, allowRepeats), cellId != Cell::AllCellsComplete)
+	while (cellId = cfg->nextAvailableCell(procPool, willBeModified, allowRepeats), cellId != Cell::AllCellsComplete)
 	{
 		// Check for valid cell
 		if (cellId == Cell::NoCellsAvailable)
 		{
 			Messenger::printVerbose("Nothing for this process to do.\n");
-			cfg->finishedWithCell(willBeModified, cellId);
+			cfg->finishedWithCell(procPool, willBeModified, cellId);
 			continue;
 		}
 		cell = cfg->cell(cellId);
@@ -173,8 +176,8 @@ void DUQ::grainForces(Configuration* cfg, double* fx, double* fy, double* fz, do
 			}
 			
 			// Inter-Grain interactions between this Grain and those in Cell neighbours
-			kernel.forces(grainI, cell->nCellNeighbours(), cell->cellNeighbours(), false, true, fx, fy, fz, DUQComm::Solo);
-			kernel.forces(grainI, cell->nMimCellNeighbours(), cell->mimCellNeighbours(), true, true, fx, fy, fz, DUQComm::Solo);
+			kernel.forces(grainI, cell->nCellNeighbours(), cell->cellNeighbours(), false, true, fx, fy, fz, ProcessPool::Solo);
+			kernel.forces(grainI, cell->nMimCellNeighbours(), cell->mimCellNeighbours(), true, true, fx, fy, fz, ProcessPool::Solo);
 		}
 
 		/*
@@ -182,7 +185,7 @@ void DUQ::grainForces(Configuration* cfg, double* fx, double* fy, double* fz, do
 		 */
 		
 		// Must unlock the Cell when we are done with it!
-		cfg->finishedWithCell(willBeModified, cellId);
+		cfg->finishedWithCell(procPool, willBeModified, cellId);
 	}
 }
 
@@ -193,28 +196,28 @@ void DUQ::grainForces(Configuration* cfg, double* fx, double* fy, double* fz, do
  * 
  * This is a serial routine (subroutines called from within are parallel).
  */
-void DUQ::totalForces(Configuration* cfg, double* fx, double* fy, double* fz, double cutoffSq, DUQComm::CommGroup group)
+void DUQ::totalForces(ProcessPool& procPool, Configuration* cfg, double* fx, double* fy, double* fz, double cutoffSq, ProcessPool::CommGroup group)
 {
 	// Create a Timer
 	Timer timer;
 	
 	// Calculate Grain forces
 	timer.start();
-	grainForces(cfg, fx, fy, fz, cutoffSq, group);
+	grainForces(procPool, cfg, fx, fy, fz, cutoffSq, group);
 	timer.stop();
 	Messenger::printVerbose("Time to do Grain forces was %s.\n", timer.timeString());
 	
 	// Calculate intramolecular forces
 	timer.start();
-	intramolecularForces(cfg, fx, fy, fz, group);
+	intramolecularForces(procPool, cfg, fx, fy, fz, group);
 	timer.stop();
 	Messenger::printVerbose("Time to do intramolecular forces was %s.\n", timer.timeString());
 	
 	// Gather forces together
-	if (group != DUQComm::Solo)
+	if (group != ProcessPool::Solo)
 	{
-		if (!Comm.allSum(fx, cfg->nAtoms())) return;
-		if (!Comm.allSum(fy, cfg->nAtoms())) return;
-		if (!Comm.allSum(fz, cfg->nAtoms())) return;
+		if (!procPool.allSum(fx, cfg->nAtoms())) return;
+		if (!procPool.allSum(fy, cfg->nAtoms())) return;
+		if (!procPool.allSum(fz, cfg->nAtoms())) return;
 	}
 }

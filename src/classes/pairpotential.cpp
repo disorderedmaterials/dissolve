@@ -24,7 +24,7 @@
 #include "base/messenger.h"
 #include "base/parameters.h"
 #include "math/constants.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 #include "templates/simplex.h"
 #include <math.h>
 #include <string.h>
@@ -492,9 +492,6 @@ Data2D& PairPotential::v()
 // Save PairPotential data to specified file
 bool PairPotential::save(const char* fileName)
 {
-	// Only the Master process can do this
-	if (!Comm.master()) return true;
-
 	// Open file and check that we're OK to proceed writing to it
 	LineParser parser;
 	Messenger::print("Writing PairPotential file '%s'...\n", fileName);
@@ -518,34 +515,34 @@ bool PairPotential::save(const char* fileName)
  */
 
 // Broadcast data from Master to all Slaves
-bool PairPotential::broadcast(const List<AtomType>& atomTypes)
+bool PairPotential::broadcast(ProcessPool& procPool, const List<AtomType>& atomTypes)
 {
 #ifdef PARALLEL
 	// PairPotential type
 	int n = type_;
-	Comm.broadcast(&n, 1);
+	procPool.broadcast(&n, 1);
 	type_ = (PairPotential::PairPotentialType) n;
 
 	// Source Parameters - Master needs to determine AtomType indices
 	int index;
-	if (Comm.master()) index = atomTypes.indexOf(atomTypeI_);
-	if (!Comm.broadcast(&index, 1)) return false;
+	if (procPool.isMaster()) index = atomTypes.indexOf(atomTypeI_);
+	if (!procPool.broadcast(&index, 1)) return false;
 	atomTypeI_ = atomTypes.item(index);
-	if (Comm.master()) index = atomTypes.indexOf(atomTypeJ_);
-	if (!Comm.broadcast(&index, 1)) return false;
+	if (procPool.isMaster()) index = atomTypes.indexOf(atomTypeJ_);
+	if (!procPool.broadcast(&index, 1)) return false;
 	atomTypeJ_ = atomTypes.item(index);
-	if (!Comm.broadcast(&sigmaIJ_, 1)) return false;
-	if (!Comm.broadcast(&epsilonIJ_, 1)) return false;
-	if (!Comm.broadcast(&chargeI_, 1)) return false;
-	if (!Comm.broadcast(&chargeJ_, 1)) return false;
+	if (!procPool.broadcast(&sigmaIJ_, 1)) return false;
+	if (!procPool.broadcast(&epsilonIJ_, 1)) return false;
+	if (!procPool.broadcast(&chargeI_, 1)) return false;
+	if (!procPool.broadcast(&chargeJ_, 1)) return false;
 
 	// Tabulated Potential
-	if (!Comm.broadcast(&nPoints_, 1)) return false;
-	if (!Comm.broadcast(&delta_, 1)) return false;
-	if (!Comm.broadcast(&rDelta_, 1)) return false;
-	u_.broadcast();
-	originalU_.broadcast();
-	dU_.broadcast();
+	if (!procPool.broadcast(&nPoints_, 1)) return false;
+	if (!procPool.broadcast(&delta_, 1)) return false;
+	if (!procPool.broadcast(&rDelta_, 1)) return false;
+	u_.broadcast(procPool);
+	originalU_.broadcast(procPool);
+	dU_.broadcast(procPool);
 #endif
 	return true;
 }

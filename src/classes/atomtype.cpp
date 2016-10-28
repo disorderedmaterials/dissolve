@@ -21,7 +21,7 @@
 
 #include "classes/atomtype.h"
 #include "base/ptable.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 #include <string.h>
 
 // Constructor
@@ -94,20 +94,20 @@ int AtomType::index() const
  */
 
 // Broadcast data from Master to all Slaves
-bool AtomType::broadcast()
+bool AtomType::broadcast(ProcessPool& procPool)
 {
 #ifdef PARALLEL
 	int index;
 
 	// Send name
-	Comm.broadcast(name_);
+	procPool.broadcast(name_);
 	
 	// Send element
-	Comm.broadcast(&element_, 1);
+	procPool.broadcast(&element_, 1);
 	
 	// Get index of Parameters, 
-	if (Comm.master()) index = PeriodicTable::element(element_).indexOfParameters(parameters_);
-	Comm.broadcast(&index, 1);
+	if (procPool.isMaster()) index = PeriodicTable::element(element_).indexOfParameters(parameters_);
+	procPool.broadcast(&index, 1);
 	parameters_ = PeriodicTable::element(element_).parameters(index);
 #endif
 	return true;

@@ -1,6 +1,6 @@
 /*
-	*** Parallel Communications
-	*** src/base/comms.cpp
+	*** Process Pool
+	*** src/base/processpool.cpp
 	Copyright T. Youngs 2012-2016
 
 	This file is part of dUQ.
@@ -19,45 +19,83 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "base/comms.h"
+#include "base/processpool.h"
 #include "base/messenger.h"
 #include "base/constants.h"
 #include <string.h>
 
+// Static Members
+int ProcessPool::nWorldProcesses_ = 1;
+int ProcessPool::worldRank_ = 0;
+	
 // External Declarations
-DUQComm Comm;
-int DUQComm::FAILED = 0;
-int DUQComm::SUCCEEDED = 1;
-int DUQComm::RESULT;
+int ProcessPool::FAILED = 0;
+int ProcessPool::SUCCEEDED = 1;
+int ProcessPool::RESULT;
 
 // Constructor
-DUQComm::DUQComm()
+ProcessPool::ProcessPool()
 {
-	nProcesses_ = 1;
-	rank_ = 0;
-	localGroupIndex_ = -1;
-	localGroupRank_ = -1;
+	poolRank_ = -1;
+	groupIndex_ = -1;
+	groupRank_ = -1;
 }
 
 #ifdef PARALLEL
 // Return communicator specified
-MPI_Comm DUQComm::communicator(DUQComm::CommGroup group)
+MPI_Comm ProcessPool::communicator(ProcessPool::CommGroup group)
 {
-	if (group == DUQComm::Group) return localCommunicator_;
-	else if (group == DUQComm::Leaders) return leaderCommunicator_;
-	else if (group == DUQComm::World) return MPI_COMM_WORLD;
-	Messenger::print("BAD_USAGE - Communicator %i is not valid in DUQComm::communicator().\n", group);
+	if (group == ProcessPool::Group) return groupCommunicator_;
+	else if (group == ProcessPool::Leaders) return leaderCommunicator_;
+	else if (group == ProcessPool::Pool) return poolCommunicator_;
+	Messenger::print("BAD_USAGE - Communicator %i is not valid in ProcessPool::communicator().\n", group);
 	return MPI_COMM_WORLD;
 }
 #endif
 
+// Copy Constructor
+ProcessPool::ProcessPool(const ProcessPool& source)
+{
+	(*this) = source;
+}
+
+// Assignment Operator
+void ProcessPool::operator=(const ProcessPool& source)
+{
+	// Process Identification
+	name_ = source.name_;
+	poolRank_ = source.poolRank_;
+	processes_ = source.processes_;
+
+	// Local groups
+	groupIndex_ = source.groupIndex_;
+	groupRank_ = source.groupRank_;
+	processGroups_ = source.processGroups_;
+#ifdef PARALLEL
+	groupGroup_ = source.groupGroup_;
+	groupCommunicator_ = source.groupCommunicator_;
+	leaderGroup_ = source.leaderGroup_;
+	leaderCommunicator_ = source.leaderCommunicator_;
+#endif
+
+	// Local process limits
+	linearFirstAtom_ = source.linearFirstAtom_;
+	linearLastAtom_ = source.linearLastAtom_;
+	linearFirstGrain_ = source.linearFirstGrain_;
+	linearLastGrain_ = source.linearLastGrain_;
+	diagonalFirstAtom_ = source.diagonalFirstAtom_;
+	diagonalLastAtom_ = source.diagonalLastAtom_;
+
+	// Random number buffer
+	// ???
+}
 
 /*
- * World Comms
+ * Global Information
  */
 
-// Initialise parallel communications
-bool DUQComm::initialise(int* argn, char*** argv)
+// Initialise parallel communications, setting world ranks / nProcesses
+bool ProcessPool::initialiseMPI(int* argn, char*** argv)
 {
 	// Initialise MPI
 #ifdef PARALLEL
@@ -65,14 +103,14 @@ bool DUQComm::initialise(int* argn, char*** argv)
 	if (MPI_Init(argn, argv) == MPI_SUCCESS)
 	{
 		Messenger::print("Initialised MPI.\n");
-		if (MPI_Comm_size(MPI_COMM_WORLD, &nProcesses_))
+		if (MPI_Comm_size(MPI_COMM_WORLD, &nWorldProcesses_))
 		{
 			Messenger::error("Failed to get world size.\n");
 			return false;
 		}
-		Messenger::print("Number of processes = %i\n", nProcesses_);
+		Messenger::print("Number of processes = %i\n", nWorldProcesses_);
 
-		if (MPI_Comm_rank(MPI_COMM_WORLD, &rank_))
+		if (MPI_Comm_rank(MPI_COMM_WORLD, &worldRank_))
 		{
 			Messenger::error("Failed to get process rank.\n");
 			return false;
@@ -88,7 +126,7 @@ bool DUQComm::initialise(int* argn, char*** argv)
 }
 
 // End parallel communications
-bool DUQComm::finalise()
+bool ProcessPool::finalise()
 {
 #ifdef PARALLEL
 	MPI_Finalize();
@@ -96,54 +134,108 @@ bool DUQComm::finalise()
 	return true;
 }
 
-// Return number of processes
-int DUQComm::nProcesses()
+// Return number of world processes
+int ProcessPool::nWorldProcesses()
 {
-	return nProcesses_;
+	return nWorldProcesses_;
 }
 
-// Return rank of this process
-int DUQComm::rank()
+// Return world rank of this process
+int ProcessPool::worldRank()
 {
-	return rank_;
+	return worldRank_;
 }
 
-// Return whether this process is the master
-bool DUQComm::master()
+// Return if this is the world master process
+bool ProcessPool::isWorldMaster()
 {
-	return (rank_ == 0);
+	return (worldRank_ == 0);
 }
 
-// Return whether this process is a slave
-bool DUQComm::slave()
-{
-	return (rank_ != 0);
-}
+/*
+ * Timing
+ */
 
 // Reset accumulated Comm time
-void DUQComm::resetAccumulatedTime()
+void ProcessPool::resetAccumulatedTime()
 {
 	accumTime_.zero();
 }
 
 // Return accumulated time string
-const char* DUQComm::accumulatedTimeString()
+const char* ProcessPool::accumulatedTimeString()
 {
 	return accumTime_.timeString();
 }
 
 // Return total time string
-const char* DUQComm::totalTimeString()
+const char* ProcessPool::totalTimeString()
 {
 	return totalTime_.timeString();
 }
 
 /*
- * Parallel Strategy
+ * Local Process Pool
  */
 
-// Setup strategy
-bool DUQComm::setupStrategy(const Vec3<int>& divisions, const Vec3<int>& cellExtents, const List< ListVec3<int> >& neighbours)
+// Setup pool with world ranks specified
+bool ProcessPool::setup(const char* name, Array<int> worldRanks)
+{
+	name_ = name;
+
+	// Set rank list
+	processes_ = worldRanks;
+
+	// See if our rank is in the list
+	for (int n=0; n<processes_.nItems(); ++n)
+	{
+		if (worldRank_ == processes_[n])
+		{
+			poolRank_ = n;
+			Messenger::printVerbose("Process with world rank %i added to pool '%s' with local rank %i.\n", processes_[n], name_.get(), n);
+			break;
+		}
+	}
+
+	// Create pool group and communicator
+	MPI_Group origGroup;
+	MPI_Comm_group(MPI_COMM_WORLD, &origGroup);
+	if (MPI_Group_incl(origGroup, processes_.nItems(), processes_.array(), &poolGroup_) != MPI_SUCCESS) return false;
+	if (MPI_Comm_create(MPI_COMM_WORLD, poolGroup_, &poolCommunicator_) != MPI_SUCCESS) return false;
+}
+
+// Return name of pool
+const char* ProcessPool::name()
+{
+	return name_.get();
+}
+
+// Return total number of processes in pool
+int ProcessPool::nProcesses()
+{
+	return processes_.nItems();
+}
+
+// Return local rank of this process in the pool
+int ProcessPool::poolRank()
+{
+	return poolRank_;
+}
+
+// Return whether this process is the master for this channel
+bool ProcessPool::isMaster()
+{
+	return (poolRank_ == 0);
+}
+
+// Return whether this process is a local slave in this channel
+bool ProcessPool::isSlave()
+{
+	return (poolRank_ != 0);
+}
+
+// Setup strategy for Configuration, based on local process pool size
+bool ProcessPool::setupConfigurationStrategy(const Vec3<int>& divisions, const Vec3<int>& cellExtents, const List< ListVec3<int> >& neighbours)
 {
 #ifdef PARALLEL
 	// Construct a temporary array of 'Cells'
@@ -207,13 +299,13 @@ bool DUQComm::setupStrategy(const Vec3<int>& divisions, const Vec3<int>& cellExt
 	Messenger::print("For the current Cell division and extent values, %i simultaneous Cell-modifying processes are possible.\n", nGroups);
 	// Maximum number of groups possible is the number of processes available, but we want all groups to contain the same number
 	// of processes...
-	while (nProcesses_%nGroups != 0) --nGroups;
+	while (processes_.nItems()%nGroups != 0) --nGroups;
 	
 	Messenger::print("Processes will be divided into %i groups.\n", nGroups);
 
 	// Create process groups
-	int baseAlloc = nProcesses_ / nGroups;
-	int remainder = nProcesses_ % nGroups;
+	int baseAlloc = processes_.nItems() / nGroups;
+	int remainder = processes_.nItems() % nGroups;
 	int rank, firstRank, lastRank;
 	Array<int>* group;
 	Dnchar s;
@@ -228,40 +320,36 @@ bool DUQComm::setupStrategy(const Vec3<int>& divisions, const Vec3<int>& cellExt
 		firstRank = baseAlloc * n + (n < remainder ? n : remainder);
 		lastRank = firstRank + baseAlloc - (n >= remainder ? 1 : 0);
 		s.clear();
-		for (rank = firstRank; rank <=lastRank; ++rank)
+		for (rank=firstRank; rank<=lastRank; ++rank)
 		{
 			group->add(rank);
-			if (rank_ == rank) localGroupIndex_ = n;
+			if (poolRank_ == rank) groupIndex_ = n;
 			s.strcatf(" %i", rank);
 		}
 		Messenger::print("--> Group will contain %i processes :%s\n", group->nItems(), s.get());
 	}
 
-	// Create MPI groups and communicators
-	XXX Comms setup is broken because we arrive at this routine while running MPIRunMaster(setupSimulation()).
-	XXX Need to move this to somewhere in main() (or a special routine to setup all MPI stuff) and think about how multiple configs will partition processors,
-	XXX AND make Comm a member of Configuration, except for a global world Comm structure that encompasses all available processors.
-
+	// Create local groups and communicators
 	MPI_Group origGroup;
 	MPI_Comm_group(MPI_COMM_WORLD, &origGroup);
-	if (MPI_Group_incl(origGroup, localGroupSize(), processes(localGroupIndex_), &localGroup_) != MPI_SUCCESS) return false;
-	if (MPI_Comm_create(MPI_COMM_WORLD, localGroup_, &localCommunicator_) != MPI_SUCCESS) return false;
-	MPI_Group_rank(localGroup_, &localGroupRank_);
-	Messenger::printVerbose("Process with world rank %i has local group (%i) rank %i, pgl? = %i\n", rank_, localGroupIndex_, localGroupRank_, processGroupLeader());
+	if (MPI_Group_incl(origGroup, groupSize(), processesInGroup(groupIndex_), &groupGroup_) != MPI_SUCCESS) return false;
+	if (MPI_Comm_create(MPI_COMM_WORLD, groupGroup_, &groupCommunicator_) != MPI_SUCCESS) return false;
+	MPI_Group_rank(groupGroup_, &groupRank_);
+	Messenger::printVerbose("Process with local rank %i (world rank %i) has local group (%i) rank %i, and process group leader %i\n", poolRank_, worldRank_, groupIndex_, groupRank_, groupLeader());
 
 	// Master now assembles list of group leaders
 	bool leader;
-	if (Comm.master())
+	if (isMaster())
 	{
 		// Loop over process groups
 		for (int group=0; group<processGroups_.nItems(); ++group)
 		{
 			// Query each process in the group to see if it is the leader...
-			for (int n=0; n<nProcesses(group); ++n)
+			for (int n=0; n<nProcessesInGroup(group); ++n)
 			{
 				// Is this us?
-				if (processes(group)[n] == rank_) leader = processGroupLeader();
-				else if (!Comm.receive(leader, processes(group)[n])) return false;
+				if (processesInGroup(group)[n] == poolRank_) leader = groupLeader();
+				else if (!receive(leader, processesInGroup(group)[n])) return false;
 				
 // 				printf("Group %i, process el %i : leader = %i\n", group, n, leader);
 				
@@ -269,7 +357,7 @@ bool DUQComm::setupStrategy(const Vec3<int>& divisions, const Vec3<int>& cellExt
 				if (leader)
 				{
 					// Check for existing value
-					if (groupLeaders_[group] == -1) groupLeaders_[group] = processes(group)[n];
+					if (groupLeaders_[group] == -1) groupLeaders_[group] = processesInGroup(group)[n];
 					else
 					{
 						Messenger::print("MPI Error: More than one process group leader for group %i.\n", group);
@@ -279,10 +367,10 @@ bool DUQComm::setupStrategy(const Vec3<int>& divisions, const Vec3<int>& cellExt
 			}
 		}
 	}
-	else if (!Comm.send(processGroupLeader(), 0)) return false;
+	else if (!send(groupLeader(), 0)) return false;
 
 	// Broadcast group leader list
-	if (!Comm.broadcast(groupLeaders_.array(), processGroups_.nItems())) return false;
+	if (!broadcast(groupLeaders_.array(), processGroups_.nItems())) return false;
 	Messenger::print("Group leader processes are :\n");
 	for (int group=0; group<processGroups_.nItems(); ++group) Messenger::print("--> Group %3i : process rank %i\n", group, groupLeaders_[group]);
 
@@ -294,25 +382,25 @@ bool DUQComm::setupStrategy(const Vec3<int>& divisions, const Vec3<int>& cellExt
 	// No MPI, but must still setup a dummy process group
 	Array<int>* procList = processGroups_.add();
 	procList->add(0);
-	localGroupIndex_ = 0;
-	localGroupRank_ = 0;
+	groupIndex_ = 0;
+	groupRank_ = 0;
 #endif
 	return true;
 }
 
 // Return number of process groups
-int DUQComm::nProcessGroups() const
+int ProcessPool::nProcessGroups() const
 {
 	return processGroups_.nItems();
 }
 
 // Return number of processes in nth group
-int DUQComm::nProcesses(int groupId)
+int ProcessPool::nProcessesInGroup(int groupId)
 {
 #ifdef CHECKS
 	if ((groupId < 0) || (groupId >= processGroups_.nItems()))
 	{
-		Messenger::print("OUT_OF_RANGE - Specified groupId (%i) is out of range in DUQComm::nProcesses() (nProcessGroups = %i).\n", groupId, processGroups_.nItems());
+		Messenger::print("OUT_OF_RANGE - Specified groupId (%i) is out of range in ProcessPool::nProcesses() (nProcessGroups = %i).\n", groupId, processGroups_.nItems());
 		return 0;
 	}
 #endif
@@ -320,167 +408,146 @@ int DUQComm::nProcesses(int groupId)
 }
 
 // Return process array of nth group
-int* DUQComm::processes( int groupId )
+int* ProcessPool::processesInGroup(int groupId)
 {
 #ifdef CHECKS
 	if ((groupId < 0) || (groupId >= processGroups_.nItems()))
 	{
-		Messenger::print("OUT_OF_RANGE - Specified groupId (%i) is out of range in DUQComm::processes() (nProcessGroups = %i).\n", groupId, processGroups_.nItems());
+		Messenger::print("OUT_OF_RANGE - Specified groupId (%i) is out of range in ProcessPool::processes() (nProcessGroups = %i).\n", groupId, processGroups_.nItems());
 		return 0;
 	}
 #endif
 	return processGroups_[groupId]->array();
 }
 
-// Return group index for this process
-int DUQComm::localGroupIndex()
+// Return group index in which this process exists
+int ProcessPool::groupIndex()
 {
-	return localGroupIndex_;
+	return groupIndex_;
 }
-
-// Return group size for this process
-int DUQComm::localGroupSize()
+// Return size of local group in which this process exists
+int ProcessPool::groupSize()
 {
 #ifdef CHECKS
-	if ((localGroupIndex_ < 0) || (localGroupIndex_ >= processGroups_.nItems()))
+	if ((groupIndex_ < 0) || (groupIndex_ >= processGroups_.nItems()))
 	{
-		Messenger::print("OUT_OF_RANGE - Local group index for this process (%i) is out of range in DUQComm::localGroupSize() (nProcessGroups = %i).\n", localGroupIndex_, processGroups_.nItems());
+		Messenger::print("OUT_OF_RANGE - Local group index for this process (%i) is out of range in ProcessPool::localGroupSize() (nProcessGroups = %i).\n", groupIndex_, processGroups_.nItems());
 		return 0;
 	}
 #endif
-	return processGroups_[localGroupIndex_]->nItems();
+	return processGroups_[groupIndex_]->nItems();
 }
-
-// Return group rank of this process
-int DUQComm::localGroupRank()
+// Return rank of this process in its local group
+int ProcessPool::groupRank()
 {
-	return localGroupRank_;
+	return groupRank_;
 }
 
 // Return whether this process is a group leader
-bool DUQComm::processGroupLeader()
+bool ProcessPool::groupLeader()
 {
-	return (localGroupRank_ == 0);
+	return (groupRank_ == 0);
 }
 
 /*
  * Process Limits
  */
 
-// Setup limits base on total nAtoms and nGrains
-bool DUQComm::calculateLimits(int nAtoms, int nGrains)
+// Setup limits based on total nAtoms and nGrains
+bool ProcessPool::calculateLimits(int nAtoms, int nGrains)
 {
 	long int baseAlloc, remainder;
 	// Linear Atoms - Do straight division by number of processes to get basic allocation
-	baseAlloc = nAtoms / nProcesses_;
-	remainder = nAtoms % nProcesses_;
-	linearFirstAtom_ = baseAlloc * rank_ + (rank_ < remainder ?  rank_: remainder);
-	linearLastAtom_ = linearFirstAtom_ + baseAlloc - (rank_ >= remainder ? 1 : 0);
-	Messenger::print("--> Nominally assigned Atoms %i to %i (%i total) to process with rank %i.\n", linearFirstAtom_, linearLastAtom_, 1+linearLastAtom_-linearFirstAtom_, rank_);
+	baseAlloc = nAtoms / processes_.nItems();
+	remainder = nAtoms % processes_.nItems();
+	linearFirstAtom_ = baseAlloc * poolRank_ + (poolRank_ < remainder ?  poolRank_: remainder);
+	linearLastAtom_ = linearFirstAtom_ + baseAlloc - (poolRank_ >= remainder ? 1 : 0);
+	Messenger::print("--> Nominally assigned Atoms %i to %i (%i total) to process with rank %i.\n", linearFirstAtom_, linearLastAtom_, 1+linearLastAtom_-linearFirstAtom_, poolRank_);
 
 	// Linear Grains - Do straight division by number of processes to get basic allocation
-	baseAlloc = nGrains / nProcesses_;
-	remainder = nGrains % nProcesses_;
-	linearFirstGrain_ = baseAlloc * rank_ + (rank_ < remainder ?  rank_: remainder);
-	linearLastGrain_ = linearFirstGrain_ + baseAlloc - (rank_ >= remainder ? 1 : 0);
-	Messenger::print("--> Nominally assigned Grains %i to %i (%i total) to process with rank %i.\n", linearFirstGrain_, linearLastGrain_, 1+linearLastGrain_-linearFirstGrain_, rank_);
+	baseAlloc = nGrains / processes_.nItems();
+	remainder = nGrains % processes_.nItems();
+	linearFirstGrain_ = baseAlloc * poolRank_ + (poolRank_ < remainder ?  poolRank_: remainder);
+	linearLastGrain_ = linearFirstGrain_ + baseAlloc - (poolRank_ >= remainder ? 1 : 0);
+	Messenger::print("--> Nominally assigned Grains %i to %i (%i total) to process with rank %i.\n", linearFirstGrain_, linearLastGrain_, 1+linearLastGrain_-linearFirstGrain_, poolRank_);
 	
 	// Diagonal Atoms - For calculation of upper-diagonal half of any two-body interaction matrix
-	if (master())
-	{
-		double rnproc = 1.0 / nProcesses_, area = 1.0;
-		int startAtom = 0, finishAtom;
+	double rnproc = 1.0 / processes_.nItems(), area = 1.0;
+	int startAtom = 0, finishAtom;
 
-		// Loop over processes
-		for (int process = 0; process<nProcesses_; ++process)
+	// Loop over processes
+	for (int process = 0; process<processes_.nItems(); ++process)
+	{
+		// If this is the last process, make sure we avoid doing sqrt of zero or delta-neg value
+		if (process == (processes_.nItems()-1)) finishAtom = nAtoms - 1;
+		else finishAtom = (1.0 - sqrt(area - rnproc)) * nAtoms - 1;
+		area -= rnproc;
+
+		// Store limits for this process (if it is us)
+		if (process == poolRank_)
 		{
-			// If this is the last process, make sure we avoid doing sqrt of zero or delta-neg value
-			if (process == (nProcesses_-1)) finishAtom = nAtoms - 1;
-			else finishAtom = (1.0 - sqrt(area - rnproc)) * nAtoms - 1;
-			area -= rnproc;
-
-			// Store / send data
-			if (process == 0)
-			{
-				diagonalFirstAtom_ = startAtom;
-				diagonalLastAtom_ = finishAtom;
-			}
-			else
-			{
-#ifdef PARALLEL
-				if (MPI_Send(&startAtom, 1, MPI_INTEGER, process, 0, MPI_COMM_WORLD) != MPI_SUCCESS) return false;
-				if (MPI_Send(&finishAtom, 1, MPI_INTEGER, process, 1, MPI_COMM_WORLD) != MPI_SUCCESS) return false;
-#endif
-			}
-
-			Messenger::print("--> Assigned diagonal Atom calculation limits of %i -> %i for process with rank %i.\n", startAtom, finishAtom, process);
-
-			// Update startAtom
-			startAtom = finishAtom+1;
+			diagonalFirstAtom_ = startAtom;
+			diagonalLastAtom_ = finishAtom;
 		}
-	}
-	else
-	{
-		// Slaves just wait to receive their limits
-#ifdef PARALLEL
-		MPI_Status mpiStatus;
-		if (MPI_Recv(&diagonalFirstAtom_, 1, MPI_INTEGER, 0, 0, MPI_COMM_WORLD, &mpiStatus) != MPI_SUCCESS) return false;
-		if (MPI_Recv(&diagonalLastAtom_, 1, MPI_INTEGER, 0, 1, MPI_COMM_WORLD, &mpiStatus) != MPI_SUCCESS) return false;
-#endif
+
+		Messenger::print("--> Assigned diagonal Atom calculation limits of %i -> %i for process with rank %i.\n", startAtom, finishAtom, process);
+
+		// Update startAtom
+		startAtom = finishAtom+1;
 	}
 	
 	return true;
 }
 
 // Return linear first Atom index
-int DUQComm::linearFirstAtom()
+int ProcessPool::linearFirstAtom()
 {
 	return linearFirstAtom_;
 }
 
 // Return linear last Atom index
-int DUQComm::linearLastAtom()
+int ProcessPool::linearLastAtom()
 {
 	return linearLastAtom_;
 }
 
 // Return linear first Grain index
-int DUQComm::linearFirstGrain()
+int ProcessPool::linearFirstGrain()
 {
 	return linearFirstGrain_;
 }
 
 // Return linear last Grain index
-int DUQComm::linearLastGrain()
+int ProcessPool::linearLastGrain()
 {
 	return linearLastGrain_;
 }
 
 // Return diagonal first Atom index
-int DUQComm::diagonalFirstAtom()
+int ProcessPool::diagonalFirstAtom()
 {
 	return diagonalFirstAtom_;
 }
 
 // Return diagonal last Atom index
-int DUQComm::diagonalLastAtom()
+int ProcessPool::diagonalLastAtom()
 {
 	return diagonalLastAtom_;
 }
 
 // Return starting index for general loop
-int DUQComm::interleavedLoopStart(DUQComm::CommGroup group)
+int ProcessPool::interleavedLoopStart(ProcessPool::CommGroup group)
 {
-	if (group == DUQComm::Group) return localGroupRank_;
-	else if (group == DUQComm::World) return rank_;
+	if (group == ProcessPool::Group) return groupRank_;
+	else if (group == ProcessPool::Pool) return poolRank_;
 	return 0;
 }
 
 // Return stride for general loop
-int DUQComm::interleavedLoopStride(DUQComm::CommGroup group)
+int ProcessPool::interleavedLoopStride(ProcessPool::CommGroup group)
 {
-	if (group == DUQComm::Group) return localGroupSize();
-	else if (group == DUQComm::World) return nProcesses_;
+	if (group == ProcessPool::Group) return groupSize();
+	else if (group == ProcessPool::Pool) return processes_.nItems();
 	return 1;
 }
 
@@ -489,7 +556,7 @@ int DUQComm::interleavedLoopStride(DUQComm::CommGroup group)
  */
 
 // Wait for all processes
-bool DUQComm::wait(DUQComm::CommGroup group)
+bool ProcessPool::wait(ProcessPool::CommGroup group)
 {
 #ifdef PARALLEL
 	if (MPI_Barrier(communicator(group)) != MPI_SUCCESS) return false;
@@ -498,7 +565,7 @@ bool DUQComm::wait(DUQComm::CommGroup group)
 }
 
 // Send single integer value to target process
-bool DUQComm::send(int value, int targetProcess)
+bool ProcessPool::send(int value, int targetProcess)
 {
 #ifdef PARALLEL
 	totalTime_.start();
@@ -511,7 +578,7 @@ bool DUQComm::send(int value, int targetProcess)
 }
 
 // Receive single integer value from source process
-bool DUQComm::receive(int& value, int sourceProcess)
+bool ProcessPool::receive(int& value, int sourceProcess)
 {
 #ifdef PARALLEL
 	totalTime_.start();
@@ -525,7 +592,7 @@ bool DUQComm::receive(int& value, int sourceProcess)
 }
 
 // Send single double value to target process
-bool DUQComm::send(double value, int targetProcess)
+bool ProcessPool::send(double value, int targetProcess)
 {
 #ifdef PARALLEL
 	totalTime_.start();
@@ -538,7 +605,7 @@ bool DUQComm::send(double value, int targetProcess)
 }
 
 // Receive single double value from source process
-bool DUQComm::receive(double& value, int sourceProcess)
+bool ProcessPool::receive(double& value, int sourceProcess)
 {
 #ifdef PARALLEL
 	totalTime_.start();
@@ -552,7 +619,7 @@ bool DUQComm::receive(double& value, int sourceProcess)
 }
 
 // Send single bool value to target process
-bool DUQComm::send(bool value, int targetProcess)
+bool ProcessPool::send(bool value, int targetProcess)
 {
 #ifdef PARALLEL
 	totalTime_.start();
@@ -565,7 +632,7 @@ bool DUQComm::send(bool value, int targetProcess)
 }
 
 // Receive single bool value from source process
-bool DUQComm::receive(bool& value, int sourceProcess)
+bool ProcessPool::receive(bool& value, int sourceProcess)
 {
 #ifdef PARALLEL
 	totalTime_.start();
@@ -579,7 +646,7 @@ bool DUQComm::receive(bool& value, int sourceProcess)
 }
 
 // Send integer array data to target process
-bool DUQComm::send(int* source, int nData, int targetProcess)
+bool ProcessPool::send(int* source, int nData, int targetProcess)
 {
 #ifdef PARALLEL
 	totalTime_.start();
@@ -592,7 +659,7 @@ bool DUQComm::send(int* source, int nData, int targetProcess)
 }
 
 // Receive integer array data from target process
-bool DUQComm::receive(int* source, int nData, int sourceProcess)
+bool ProcessPool::receive(int* source, int nData, int sourceProcess)
 {
 #ifdef PARALLEL
 	totalTime_.start();
@@ -606,7 +673,7 @@ bool DUQComm::receive(int* source, int nData, int sourceProcess)
 }
 
 // Send double array data to target process
-bool DUQComm::send(double* source, int nData, int targetProcess)
+bool ProcessPool::send(double* source, int nData, int targetProcess)
 {
 #ifdef PARALLEL
 	totalTime_.start();
@@ -619,7 +686,7 @@ bool DUQComm::send(double* source, int nData, int targetProcess)
 }
 
 // Receive double array data from target process
-bool DUQComm::receive(double* source, int nData, int sourceProcess)
+bool ProcessPool::receive(double* source, int nData, int sourceProcess)
 {
 #ifdef PARALLEL
 	totalTime_.start();
@@ -637,7 +704,7 @@ bool DUQComm::receive(double* source, int nData, int sourceProcess)
  */
 
 // Broadcast Dnchar to all Processes
-bool DUQComm::broadcast(Dnchar& source, int rootProcess, DUQComm::CommGroup group)
+bool ProcessPool::broadcast(Dnchar& source, int rootProcess, ProcessPool::CommGroup group)
 {
 #ifdef PARALLEL
 	totalTime_.start();
@@ -645,12 +712,12 @@ bool DUQComm::broadcast(Dnchar& source, int rootProcess, DUQComm::CommGroup grou
 	static char buffer[4096];
 	
 	// Get length of string, and make a local copy to avoid the const-ness of Dnchar.get().
-	if (rank_ == rootProcess) strcpy(buffer, source.get());
+	if (poolRank_ == rootProcess) strcpy(buffer, source.get());
 
 	// Broadcast data
-	if (!broadcast(buffer, rootProcess, group)) return false;
+	if (!broadcast(buffer, processes_[rootProcess], group)) return false;
 	
-	if (slave()) source = buffer;
+	if (isSlave()) source = buffer;
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
@@ -658,26 +725,26 @@ bool DUQComm::broadcast(Dnchar& source, int rootProcess, DUQComm::CommGroup grou
 }
 
 // Broadcast char data to all Processes
-bool DUQComm::broadcast(char* source, int rootProcess, DUQComm::CommGroup group)
+bool ProcessPool::broadcast(char* source, int rootProcess, ProcessPool::CommGroup group)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
 	int length;
-	if (rank_ == rootProcess)
+	if (poolRank_ == rootProcess)
 	{
 		// Broadcast string length first...
 		length = strlen(source) + 1;
-		if (MPI_Bcast(&length, 1, MPI_INTEGER, rootProcess, communicator(group)) != MPI_SUCCESS)
+		if (MPI_Bcast(&length, 1, MPI_INTEGER, processes_[rootProcess], communicator(group)) != MPI_SUCCESS)
 		{
-			Messenger::print("Failed to broadcast char length data from rootProcess %i.\n", rootProcess);
+			Messenger::print("Failed to broadcast char length data from root process %i (world rank %i).\n", rootProcess, processes_[rootProcess]);
 			return false;
 		}
 		
 		// Now broadcast character data. We need to make a local copy of the string, to avoid the const-ness of Dnchar.get().
-		if (MPI_Bcast(source, length, MPI_CHARACTER, rootProcess, communicator(group)) != MPI_SUCCESS)
+		if (MPI_Bcast(source, length, MPI_CHARACTER, processes_[rootProcess], communicator(group)) != MPI_SUCCESS)
 		{
-			Messenger::print("Failed to broadcast char data from rootProcess %i.\n", rootProcess);
+			Messenger::print("Failed to broadcast char data from root process %i (world rank %i) (world rank %i).\n", rootProcess, processes_[rootProcess]);
 			return false;
 		}
 	}
@@ -685,15 +752,15 @@ bool DUQComm::broadcast(char* source, int rootProcess, DUQComm::CommGroup group)
 	{
 		// Slaves receive the data into the buffer, and then set the source string.
 		// Length first...
-		if (MPI_Bcast(&length, 1, MPI_INTEGER, rootProcess, communicator(group)) != MPI_SUCCESS)
+		if (MPI_Bcast(&length, 1, MPI_INTEGER, processes_[rootProcess], communicator(group)) != MPI_SUCCESS)
 		{
-			Messenger::print("Slave %i failed to receive char length data from rootProcess %i.\n", rank_, rootProcess);
+			Messenger::print("Slave %i (world rank %i) failed to receive char length data from root process %i (world rank %i) (world rank %i).\n", poolRank_, processes_[poolRank_], rootProcess, processes_[rootProcess]);
 			return false;
 		}
 		
-		if (MPI_Bcast(source, length, MPI_CHARACTER, rootProcess, communicator(group)) != MPI_SUCCESS)
+		if (MPI_Bcast(source, length, MPI_CHARACTER, processes_[rootProcess], communicator(group)) != MPI_SUCCESS)
 		{
-			Messenger::print("Slave %i failed to receive char data from rootProcess %i.\n", rank_, rootProcess);
+			Messenger::print("Slave %i (world rank %i) failed to receive char data from root process %i (world rank %i) (world rank %i).\n", poolRank_, processes_[poolRank_], rootProcess, processes_[rootProcess]);
 			return false;
 		}
 	}
@@ -704,30 +771,30 @@ bool DUQComm::broadcast(char* source, int rootProcess, DUQComm::CommGroup group)
 }
 
 // Broadcast Vec3<double> to all Processes
-bool DUQComm::broadcast(Vec3<double>& source, int rootProcess, DUQComm::CommGroup group)
+bool ProcessPool::broadcast(Vec3<double>& source, int rootProcess, ProcessPool::CommGroup group)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
 	double buffer[3];
-	if (rank_ == rootProcess)
+	if (poolRank_ == rootProcess)
 	{
 		// Construct an array from the data...
 		buffer[0] = source.x;
 		buffer[1] = source.y;
 		buffer[2] = source.z;
-		if (MPI_Bcast(buffer, 3, MPI_DOUBLE, rootProcess, communicator(group)) != MPI_SUCCESS)
+		if (MPI_Bcast(buffer, 3, MPI_DOUBLE, processes_[rootProcess], communicator(group)) != MPI_SUCCESS)
 		{
-			Messenger::print("Failed to broadcast Vec3<double> data from rootProcess %i.\n", rootProcess);
+			Messenger::print("Failed to broadcast Vec3<double> data from root process %i (world rank %i).\n", rootProcess, processes_[rootProcess]);
 			return false;
 		}
 	}
 	else
 	{
 		// Slaves receive the data into the buffer, and then set the source variable.
-		if (MPI_Bcast(buffer, 3, MPI_DOUBLE, rootProcess, communicator(group)) != MPI_SUCCESS)
+		if (MPI_Bcast(buffer, 3, MPI_DOUBLE, processes_[rootProcess], communicator(group)) != MPI_SUCCESS)
 		{
-			Messenger::print("Slave %i failed to receive Vec3<double> data from rootProcess %i.\n", rank_, rootProcess);
+			Messenger::print("Slave %i (world rank %i) failed to receive Vec3<double> data from root process %i (world rank %i).\n", poolRank_, processes_[poolRank_], rootProcess, processes_[rootProcess]);
 			return false;
 		}
 		source.x = buffer[0];
@@ -741,14 +808,14 @@ bool DUQComm::broadcast(Vec3<double>& source, int rootProcess, DUQComm::CommGrou
 }
 
 // Broadcast integer(s) to all Processes
-bool DUQComm::broadcast(int* source, int count, int rootProcess, DUQComm::CommGroup group)
+bool ProcessPool::broadcast(int* source, int count, int rootProcess, ProcessPool::CommGroup group)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
 	if (MPI_Bcast(source, count, MPI_INTEGER, rootProcess, communicator(group)) != MPI_SUCCESS)
 	{
-		Messenger::print("Failed to broadcast int data from rootProcess %i.\n", rootProcess);
+		Messenger::print("Failed to broadcast int data from root process %i (world rank %i).\n", rootProcess, processes_[rootProcess]);
 		return false;
 	}
 	totalTime_.accumulate();
@@ -758,14 +825,14 @@ bool DUQComm::broadcast(int* source, int count, int rootProcess, DUQComm::CommGr
 }
 
 // Broadcast double(s) to all Processes
-bool DUQComm::broadcast(double* source, int count, int rootProcess, DUQComm::CommGroup group)
+bool ProcessPool::broadcast(double* source, int count, int rootProcess, ProcessPool::CommGroup group)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
 	if (MPI_Bcast(source, count, MPI_DOUBLE, rootProcess, communicator(group)) != MPI_SUCCESS)
 	{
-		Messenger::print("Failed to broadcast int data from rootProcess %i.\n", rootProcess);
+		Messenger::print("Failed to broadcast int data from root process %i (world rank %i).\n", rootProcess, processes_[rootProcess]);
 		return false;
 	}
 	totalTime_.accumulate();
@@ -775,14 +842,14 @@ bool DUQComm::broadcast(double* source, int count, int rootProcess, DUQComm::Com
 }
 
 // Broadcast float(s) to all Processes
-bool DUQComm::broadcast(float* source, int count, int rootProcess, DUQComm::CommGroup group)
+bool ProcessPool::broadcast(float* source, int count, int rootProcess, ProcessPool::CommGroup group)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
 	if (MPI_Bcast(source, count, MPI_FLOAT, rootProcess, communicator(group)) != MPI_SUCCESS)
 	{
-		Messenger::print("Failed to broadcast int data from rootProcess %i.\n", rootProcess);
+		Messenger::print("Failed to broadcast int data from root process %i (world rank %i).\n", rootProcess, processes_[rootProcess]);
 		return false;
 	}
 	totalTime_.accumulate();
@@ -792,14 +859,14 @@ bool DUQComm::broadcast(float* source, int count, int rootProcess, DUQComm::Comm
 }
 
 // Broadcast bool(s) to all Processes
-bool DUQComm::broadcast(bool* source, int count, int rootProcess, DUQComm::CommGroup group)
+bool ProcessPool::broadcast(bool* source, int count, int rootProcess, ProcessPool::CommGroup group)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
 	if (MPI_Bcast(source, count, MPI_INTEGER, rootProcess, communicator(group)) != MPI_SUCCESS)
 	{
-		Messenger::print("Failed to broadcast int data from rootProcess %i.\n", rootProcess);
+		Messenger::print("Failed to broadcast int data from root process %i (world rank %i).\n", rootProcess, processes_[rootProcess]);
 		return false;
 	}
 	totalTime_.accumulate();
@@ -809,20 +876,20 @@ bool DUQComm::broadcast(bool* source, int count, int rootProcess, DUQComm::CommG
 }
 
 // Broadcast Array<double>
-bool DUQComm::broadcast(Array<double>& array, int rootProcess, DUQComm::CommGroup group)
+bool ProcessPool::broadcast(Array<double>& array, int rootProcess, ProcessPool::CommGroup group)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
 
 	int length;
-	if (rank_ == rootProcess)
+	if (poolRank_ == rootProcess)
 	{
 		// Broadcast string length first...
 		length = array.nItems();
 		if (MPI_Bcast(&length, 1, MPI_INTEGER, rootProcess, communicator(group)) != MPI_SUCCESS)
 		{
-			Messenger::print("Failed to broadcast Array size from rootProcess %i.\n", rootProcess);
+			Messenger::print("Failed to broadcast Array size from root process %i (world rank %i).\n", rootProcess, processes_[rootProcess]);
 			return false;
 		}
 
@@ -831,7 +898,7 @@ bool DUQComm::broadcast(Array<double>& array, int rootProcess, DUQComm::CommGrou
 		{
 			if (MPI_Bcast(array.array(), length, MPI_CHARACTER, rootProcess, communicator(group)) != MPI_SUCCESS)
 			{
-				Messenger::print("Failed to broadcast Array data from rootProcess %i.\n", rootProcess);
+				Messenger::print("Failed to broadcast Array data from root process %i (world rank %i).\n", rootProcess, processes_[rootProcess]);
 				return false;
 			}
 		}
@@ -842,7 +909,7 @@ bool DUQComm::broadcast(Array<double>& array, int rootProcess, DUQComm::CommGrou
 		// Length first...
 		if (MPI_Bcast(&length, 1, MPI_INTEGER, rootProcess, communicator(group)) != MPI_SUCCESS)
 		{
-			Messenger::print("Slave %i failed to receive Array size from rootProcess %i.\n", rank_, rootProcess);
+			Messenger::print("Slave %i (world rank %i) failed to receive Array size from rootProcess %i.\n", poolRank_, processes_[poolRank_], rootProcess);
 			return false;
 		}
 
@@ -853,7 +920,7 @@ bool DUQComm::broadcast(Array<double>& array, int rootProcess, DUQComm::CommGrou
 
 			if (MPI_Bcast(array.array(), length, MPI_CHARACTER, rootProcess, communicator(group)) != MPI_SUCCESS)
 			{
-				Messenger::print("Slave %i failed to receive Array data from rootProcess %i.\n", rank_, rootProcess);
+				Messenger::print("Slave %i (world rank %i) failed to receive Array data from root process %i (world rank %i).\n", poolRank_, processes_[poolRank_], rootProcess, processes_[rootProcess]);
 				return false;
 			}
 		}
@@ -871,14 +938,14 @@ bool DUQComm::broadcast(Array<double>& array, int rootProcess, DUQComm::CommGrou
  */
 
 // Reduce (sum) double data to root process
-bool DUQComm::sum(double* source, int count, int rootProcess, DUQComm::CommGroup group)
+bool ProcessPool::sum(double* source, int count, int rootProcess, ProcessPool::CommGroup group)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
 	// If we are the target process then we need to construct a temporary buffer to store the received data in.
-	if ((group == DUQComm::Leaders) && (!processGroupLeader())) return true;
-	if (rank_ == rootProcess)
+	if ((group == ProcessPool::Leaders) && (!groupLeader())) return true;
+	if (poolRank_ == rootProcess)
 	{
 		double buffer[count];
 		if (MPI_Reduce(source, buffer, count, MPI_DOUBLE, MPI_SUM, rootProcess, communicator(group)) != MPI_SUCCESS) return false;
@@ -897,14 +964,14 @@ bool DUQComm::sum(double* source, int count, int rootProcess, DUQComm::CommGroup
 }
 
 // Reduce (sum) int data to root process
-bool DUQComm::sum(int* source, int count, int rootProcess, DUQComm::CommGroup group)
+bool ProcessPool::sum(int* source, int count, int rootProcess, ProcessPool::CommGroup group)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
 	// If we are the target process then we need to construct a temporary buffer to store the received data in.
-	if ((group == DUQComm::Leaders) && (!processGroupLeader())) return true;
-	if (rank_ == rootProcess)
+	if ((group == ProcessPool::Leaders) && (!groupLeader())) return true;
+	if (poolRank_ == rootProcess)
 	{
 		int buffer[count];
 		if (MPI_Reduce(source, buffer, count, MPI_INTEGER, MPI_SUM, rootProcess, communicator(group)) != MPI_SUCCESS) return false;
@@ -923,13 +990,13 @@ bool DUQComm::sum(int* source, int count, int rootProcess, DUQComm::CommGroup gr
 }
 
 // Reduce (sum) double data to all processes
-bool DUQComm::allSum(double* source, int count, DUQComm::CommGroup group)
+bool ProcessPool::allSum(double* source, int count, ProcessPool::CommGroup group)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
 	double buffer[count];
-	if ((group == DUQComm::Leaders) && (!processGroupLeader())) return true;
+	if ((group == ProcessPool::Leaders) && (!groupLeader())) return true;
 	if (MPI_Allreduce(source, &buffer, count, MPI_DOUBLE, MPI_SUM, communicator(group)) != MPI_SUCCESS) return false;
 	// Put reduced data back into original buffer
 	for (int n=0; n<count; ++n) source[n] = buffer[n];
@@ -940,13 +1007,13 @@ bool DUQComm::allSum(double* source, int count, DUQComm::CommGroup group)
 }
 
 // Reduce (sum) int data to all processes
-bool DUQComm::allSum(int* source, int count, DUQComm::CommGroup group)
+bool ProcessPool::allSum(int* source, int count, ProcessPool::CommGroup group)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
 	int buffer[count];
-	if ((group == DUQComm::Leaders) && (!processGroupLeader())) return true;
+	if ((group == ProcessPool::Leaders) && (!groupLeader())) return true;
 	if (MPI_Allreduce(source, &buffer, count, MPI_INTEGER, MPI_SUM, communicator(group)) != MPI_SUCCESS) return false;
 	// Put reduced data back into original buffer
 	for (int n=0; n<count; ++n) source[n] = buffer[n];
@@ -957,7 +1024,7 @@ bool DUQComm::allSum(int* source, int count, DUQComm::CommGroup group)
 }
 
 // Assemble integer array on target process
-bool DUQComm::assemble(int* array, int nData, int* rootDest, int rootMaxData, int rootProcess)
+bool ProcessPool::assemble(int* array, int nData, int* rootDest, int rootMaxData, int rootProcess)
 {
 	/*
 	 * Given that the integer 'array' exists on all processes, and each process has stored nData at the
@@ -967,7 +1034,7 @@ bool DUQComm::assemble(int* array, int nData, int* rootDest, int rootMaxData, in
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
-	if (rank_ == rootProcess)
+	if (poolRank_ == rootProcess)
 	{
 		int n;
 		// The rootProcess' data must be copied into the local array
@@ -975,9 +1042,9 @@ bool DUQComm::assemble(int* array, int nData, int* rootDest, int rootMaxData, in
 
 		// Now get data from other processes, appending each chunk to the rootDest array
 		int slaveNData;
-		for (int n=0; n<nProcesses_; ++n)
+		for (int n=0; n<processes_.nItems(); ++n)
 		{
-			if (rank_ == n) continue;
+			if (poolRank_ == n) continue;
 
 			// Get length of data to receive
 			if (!receive(slaveNData, n)) return false;
@@ -1006,7 +1073,7 @@ bool DUQComm::assemble(int* array, int nData, int* rootDest, int rootMaxData, in
 }
 
 // Assemble double array on target process
-bool DUQComm::assemble(double* array, int nLocalData, double* rootDest, int rootMaxData, int rootProcess)
+bool ProcessPool::assemble(double* array, int nLocalData, double* rootDest, int rootMaxData, int rootProcess)
 {
 	/*
 	 * Given that the double 'array' exists on all processes, and each process has stored nData at the
@@ -1016,7 +1083,7 @@ bool DUQComm::assemble(double* array, int nLocalData, double* rootDest, int root
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
-	if (rank_ == rootProcess)
+	if (poolRank_ == rootProcess)
 	{
 		int n;
 		// The rootProcess' data must be copied into the local array
@@ -1024,9 +1091,9 @@ bool DUQComm::assemble(double* array, int nLocalData, double* rootDest, int root
 
 		// Now get data from other processes, appending each chunk to the rootDest array
 		int slaveNData;
-		for (int n=0; n<nProcesses_; ++n)
+		for (int n=0; n<processes_.nItems(); ++n)
 		{
-			if (rank_ == n) continue;
+			if (poolRank_ == n) continue;
 			
 			// Get length of data to receive
 			if (!receive(slaveNData, n)) return false;
@@ -1059,29 +1126,29 @@ bool DUQComm::assemble(double* array, int nLocalData, double* rootDest, int root
 */
 
 // Broadcast logical decision to all processes (Master only)
-void DUQComm::decide(bool decision)
+void ProcessPool::decide(bool decision)
 {
 #ifdef PARALLEL
-	if (!Comm.master())
+	if (!isMaster())
 	{
 		Messenger::print("BAD_USAGE - Slave tried to make a decision,\n");
 		return;
 	}
-	if (!Comm.broadcast(&decision, 1)) Messenger::print("Error broadcasting decision (%i).\n", decision);
+	if (!broadcast(&decision, 1)) Messenger::print("Error broadcasting decision (%i).\n", decision);
 #endif
 }
 
 // Receive logical decision from master (Slaves only)
-bool DUQComm::decision()
+bool ProcessPool::decision()
 {
 #ifdef PARALLEL
-	if (!Comm.slave())
+	if (!isSlave())
 	{
 		Messenger::print("BAD_USAGE - Master tried to receive a decision.\n");
 		return false;
 	}
 	bool data;
-	if (!Comm.broadcast(&data, 1)) Messenger::print("Error receiving decision.\n");
+	if (!broadcast(&data, 1)) Messenger::print("Error receiving decision.\n");
 	return data;
 #endif
 }
@@ -1091,34 +1158,34 @@ bool DUQComm::decision()
  */
 
 // Refill random number buffer
-void DUQComm::refillRandomBuffer()
+void ProcessPool::refillRandomBuffer()
 {
 #ifdef PARALLEL
 	// Reset index
 	randomBufferIndex_ = 0;
 	
 	// Generate new random numbers in array
-	if (randomBufferCommGroup_ == DUQComm::World)
+	if (randomBufferCommGroup_ == ProcessPool::Pool)
 	{
 		// Master creates buffer and sends to slaves
-		Messenger::printVerbose("Random Buffer - World parallel, so master (%s) will create and send array.\n", master() ? "me" : "not me");
-		if (master())
+		Messenger::printVerbose("Random Buffer - Pool parallel, so master (%s) will create and send array.\n", isMaster() ? "me" : "not me");
+		if (isMaster())
 		{
 			for (int n=0; n<RANDBUFFERSIZE; ++n) randomBuffer_[n] = DUQMath::random();
-			Comm.broadcast(randomBuffer_, RANDBUFFERSIZE, 0, randomBufferCommGroup_);
+			broadcast(randomBuffer_, RANDBUFFERSIZE, 0, randomBufferCommGroup_);
 		}
-		else Comm.broadcast(randomBuffer_, RANDBUFFERSIZE, 0, randomBufferCommGroup_);
+		else broadcast(randomBuffer_, RANDBUFFERSIZE, 0, randomBufferCommGroup_);
 	}
-	else if (randomBufferCommGroup_ == DUQComm::Group)
+	else if (randomBufferCommGroup_ == ProcessPool::Group)
 	{
 		// Group leader creates buffer and sends to slaves
-		Messenger::printVerbose("Random Buffer - Group parallel, so process leader (%s) will create and send array.\n", processGroupLeader() ? "me" : "not me");
-		if (processGroupLeader())
+		Messenger::printVerbose("Random Buffer - Group parallel, so process leader (%s) will create and send array.\n", groupLeader() ? "me" : "not me");
+		if (groupLeader())
 		{
 			for (int n=0; n<RANDBUFFERSIZE; ++n) randomBuffer_[n] = DUQMath::random();
-			Comm.broadcast(randomBuffer_, RANDBUFFERSIZE, 0, randomBufferCommGroup_);
+			broadcast(randomBuffer_, RANDBUFFERSIZE, 0, randomBufferCommGroup_);
 		}
-		else Comm.broadcast(randomBuffer_, RANDBUFFERSIZE, 0, randomBufferCommGroup_);
+		else broadcast(randomBuffer_, RANDBUFFERSIZE, 0, randomBufferCommGroup_);
 	}
 	else
 	{
@@ -1130,14 +1197,14 @@ void DUQComm::refillRandomBuffer()
 }
 
 // Initialise random number buffer
-void DUQComm::initialiseRandomBuffer(DUQComm::CommGroup group)
+void ProcessPool::initialiseRandomBuffer(ProcessPool::CommGroup group)
 {
 	randomBufferCommGroup_ = group;
 	refillRandomBuffer();
 }
 
 // Get next buffered random number
-double DUQComm::random()
+double ProcessPool::random()
 {
 #ifdef PARALLEL
 	// Have we exhausted the buffer?
@@ -1149,7 +1216,7 @@ double DUQComm::random()
 }
 
 // Get next buffered random number (-1 to +1 inclusive)
-double DUQComm::randomPlusMinusOne()
+double ProcessPool::randomPlusMinusOne()
 {
 #ifdef PARALLEL
 	// Have we exhausted the buffer?

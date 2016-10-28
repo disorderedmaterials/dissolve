@@ -21,7 +21,7 @@
 
 #include "classes/speciesbond.h"
 #include "classes/species.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 
 // Constructor
 SpeciesBond::SpeciesBond() : ListItem<SpeciesBond>()
@@ -251,21 +251,21 @@ double SpeciesBond::force(double distance) const
  */
 
 // Broadcast data from Master to all Slaves
-bool SpeciesBond::broadcast(const List<SpeciesAtom>& atoms)
+bool SpeciesBond::broadcast(ProcessPool& procPool, const List<SpeciesAtom>& atoms)
 {
 #ifdef PARALLEL
 	int buffer[2];
 
 	// Put atom indices into buffer and send
-	if (Comm.master())
+	if (procPool.isMaster())
 	{
 		buffer[0] = indexI();
 		buffer[1] = indexJ();
 	}
-	if (!Comm.broadcast(buffer, 2)) return false;
+	if (!procPool.broadcast(buffer, 2)) return false;
 	
 	// Slaves now take SpeciesAtom pointers from supplied List
-	if (Comm.slave())
+	if (procPool.isSlave())
 	{
 		setAtoms(atoms.item(buffer[0]), atoms.item(buffer[1]));
 		if (i_ != NULL) i_->addBond(this);
@@ -273,8 +273,8 @@ bool SpeciesBond::broadcast(const List<SpeciesAtom>& atoms)
 	}
 	
 	// Send parameter info
-	if (!Comm.broadcast(&equilibrium_, 1)) return false;
-	if (!Comm.broadcast(&forceConstant_, 1)) return false;
+	if (!procPool.broadcast(&equilibrium_, 1)) return false;
+	if (!procPool.broadcast(&forceConstant_, 1)) return false;
 #endif
 	return true;
 }

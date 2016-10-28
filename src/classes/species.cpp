@@ -23,7 +23,7 @@
 #include "classes/atomtype.h"
 #include "classes/box.h"
 #include "base/lineparser.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 #include <string.h>
 #include <base/sysfunc.h>
 
@@ -181,79 +181,79 @@ bool Species::checkSetup(const List<AtomType>& atomTypes)
  */
 
 // Broadcast data from Master to all Slaves
-bool Species::broadcast(const List<AtomType>& atomTypes)
+bool Species::broadcast(ProcessPool& procPool, const List<AtomType>& atomTypes)
 {
 #ifdef PARALLEL
 	int n, count;
 
 	// Send basic information
-	Comm.broadcast(name_);
+	procPool.broadcast(name_);
 
 	// Atoms
 	Messenger::printVerbose("[MPI] Broadcasting Atoms...\n");
 	count = atoms_.nItems();
-	if (!Comm.broadcast(&count, 1)) return false;
+	if (!procPool.broadcast(&count, 1)) return false;
 	Messenger::printVerbose("[MPI] Expecting %i items...\n", count);
 	for (n=0; n<count; ++n)
 	{
-		if (Comm.slave()) addAtom();
-		atoms_[n]->broadcast(atomTypes);
+		if (procPool.isSlave()) addAtom();
+		atoms_[n]->broadcast(procPool, atomTypes);
 	}
 	
 	// Bonds
 	Messenger::printVerbose("[MPI] Broadcasting bonds...\n");
 	count = bonds_.nItems();
-	if (!Comm.broadcast(&count, 1)) return false;
+	if (!procPool.broadcast(&count, 1)) return false;
 	Messenger::printVerbose("[MPI] Expecting %i items...\n", count);
 	for (n=0; n<count; ++n)
 	{
 		// This is not ideal, since we are not using the safer addBond() function
-		if (Comm.slave())
+		if (procPool.isSlave())
 		{
 			SpeciesBond* b = bonds_.add();
 			b->setParent(this);
-			b->broadcast(atoms_);
+			b->broadcast(procPool, atoms_);
 		}
-		else bonds_[n]->broadcast(atoms_);
+		else bonds_[n]->broadcast(procPool, atoms_);
 	}
 
 	// Angles
 	Messenger::printVerbose("[MPI] Broadcasting angles...\n");
 	count = angles_.nItems();
-	if (!Comm.broadcast(&count, 1)) return false;
+	if (!procPool.broadcast(&count, 1)) return false;
 	Messenger::printVerbose("[MPI] Expecting %i items...\n", count);
 	for (n=0; n<count; ++n)
 	{
 		// This is not ideal, since we are not using the safer addAngle() function
-		if (Comm.slave())
+		if (procPool.isSlave())
 		{
 			SpeciesAngle* a = angles_.add();
 			a->setParent(this);
-			a->broadcast(atoms_);
+			a->broadcast(procPool, atoms_);
 		}
-		else angles_[n]->broadcast(atoms_);
+		else angles_[n]->broadcast(procPool, atoms_);
 	}
 	
 	// Grains
 	Messenger::printVerbose("[MPI] Broadcasting grains...\n");
 	count = grains_.nItems();
-	if (!Comm.broadcast(&count, 1)) return false;
+	if (!procPool.broadcast(&count, 1)) return false;
 	Messenger::printVerbose("[MPI] Expecting %i items...\n", count);
 	for (n=0; n<count; ++n)
 	{
-		if (Comm.slave()) addGrain();
-		grains_[n]->broadcast(atoms_, bonds_, angles_);
+		if (procPool.isSlave()) addGrain();
+		grains_[n]->broadcast(procPool, atoms_, bonds_, angles_);
 	}
 
 	// Isotopologues
 	Messenger::printVerbose("[MPI] Broadcasting isotopologues...\n");
 	count = isotopologues_.nItems();
-	if (!Comm.broadcast(&count, 1)) return false;
+	if (!procPool.broadcast(&count, 1)) return false;
 	Messenger::printVerbose("[MPI] Expecting %i items...\n", count);
 	for (n=0; n<count; ++n)
 	{
-		if (Comm.slave()) addIsotopologue();
-		isotopologues_[n]->broadcast(atomTypes);
+		if (procPool.isSlave()) addIsotopologue();
+		isotopologues_[n]->broadcast(procPool, atomTypes);
 	}
 #endif
 	return true;

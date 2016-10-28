@@ -24,7 +24,7 @@
 #include "classes/cell.h"
 #include "classes/grain.h"
 #include "classes/species.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 
 // Register a change in the total energy of the system
 void Configuration::registerEnergyChange(double deltaE)

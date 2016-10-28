@@ -25,7 +25,7 @@
 #include "classes/atom.h"
 #include "classes/grain.h"
 #include "templates/orderedpointerlist.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 
 // Forward Declarations
 class Cell;
@@ -36,15 +36,12 @@ class Molecule;
 class SpeciesBond;
 class SpeciesAngle;
 
-/*
- * \brief Energy Kernel
- * \details An EnergyKernel provides PairPotential energy calculation routines between Atoms, Grains, and Cells, and any combination thereof.
- */
+// Energy Kernel
 class EnergyKernel
 {
 	public:
 	// Constructor
-	EnergyKernel(const Configuration* config, const PotentialMap& potentialMap, double cutoffDistanceSquared = -1.0);
+	EnergyKernel(ProcessPool& procPool, const Configuration* config, const PotentialMap& potentialMap, double energyCutoff = -1.0);
 	// Destructor
 	~EnergyKernel();
 	// Clear all data
@@ -109,23 +106,23 @@ class EnergyKernel
 
 
 	/*
-	 * \brief PairPotential Terms
+	 * PairPotential Terms
 	 */
 	public:
 	// Return PairPotential energy between atoms provided (as pointers)
 	double energy(const Atom* i, const Atom* j, bool applyMim, bool excludeIgeJ = false);
 	// Return PairPotential energy between two cells
-	double energy(Cell* centralCell, Cell* otherCell, bool applyMim, bool excludeIgeJ = false, DUQComm::CommGroup group = DUQComm::Solo);
+	double energy(Cell* centralCell, Cell* otherCell, bool applyMim, bool excludeIgeJ = false, ProcessPool::CommGroup group = ProcessPool::Solo);
 	// Return PairPotential energy between cell and atomic neighbours
-	double energy(Cell* centralCell, bool excludeIgeJ = false, DUQComm::CommGroup group = DUQComm::Solo);
+	double energy(Cell* centralCell, bool excludeIgeJ = false, ProcessPool::CommGroup group = ProcessPool::Solo);
 	// Return PairPotential energy between atom and cell
-	double energy(const Atom* i, OrderedPointerList<Atom>& neighbours, int flags = EnergyKernel::NoFlags, DUQComm::CommGroup group = DUQComm::Solo);
+	double energy(const Atom* i, OrderedPointerList<Atom>& neighbours, int flags = EnergyKernel::NoFlags, ProcessPool::CommGroup group = ProcessPool::Solo);
 	// Return PairPotential energy of atom with world
-	double energy(const Atom* i, DUQComm::CommGroup group = DUQComm::Solo);
+	double energy(const Atom* i, ProcessPool::CommGroup group = ProcessPool::Solo);
 	// Return PairPotential energy between Grain and list of neighbouring cells
-	double energy(const Grain* grain, OrderedPointerList<Atom>& neighbours, bool applyMim, bool excludeIgeJ = false, DUQComm::CommGroup group = DUQComm::Solo);
+	double energy(const Grain* grain, OrderedPointerList<Atom>& neighbours, bool applyMim, bool excludeIgeJ = false, ProcessPool::CommGroup group = ProcessPool::Solo);
 	// Return PairPotential energy of grain with world
-	double energy(const Grain* grain, bool excludeIgtJ, DUQComm::CommGroup group = DUQComm::Solo);
+	double energy(const Grain* grain, bool excludeIgtJ, ProcessPool::CommGroup group = ProcessPool::Solo);
 	// Return molecular correction energy related to intramolecular terms involving supplied atom
 	double correct(const Atom* i);
 	// Return molecular correction energy related to intramolecular terms involving atoms in supplied grain
@@ -133,7 +130,7 @@ class EnergyKernel
 
 
 	/*
-	 * \brief Intramolecular Terms
+	 * Intramolecular Terms
 	 */
 	public:
 	// Return Bond energy
@@ -145,11 +142,19 @@ class EnergyKernel
 
 
 	/*
-	 * \brief Molecule Terms
+	 * Molecule Terms
 	 */
 	public:
 	// Return total Molecule energy
-	double energy(Molecule* mol, DUQComm::CommGroup group = DUQComm::Solo, bool halfPP = false, double ppFactorIntra = 1.0, double termFactor = 1.0);
+	double energy(Molecule* mol, ProcessPool::CommGroup group = ProcessPool::Solo, bool halfPP = false, double ppFactorIntra = 1.0, double termFactor = 1.0);
+
+
+	/*
+	 * Parallel Comms
+	 */
+	private:
+	// Process pool over which this kernel operates
+	ProcessPool& processPool_;
 };
 
 #endif

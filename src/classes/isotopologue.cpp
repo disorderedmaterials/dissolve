@@ -22,7 +22,7 @@
 #include "classes/isotopologue.h"
 #include "classes/species.h"
 #include "classes/atomtype.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 
 // Constructor
 Isotopologue::Isotopologue() : ListItem<Isotopologue>()
@@ -181,28 +181,28 @@ RefListItem<AtomType,Isotope*>* Isotopologue::isotope(int n)
  */
 
 // Broadcast data from Master to all Slaves
-bool Isotopologue::broadcast(const List<AtomType>& atomTypes)
+bool Isotopologue::broadcast(ProcessPool& procPool, const List<AtomType>& atomTypes)
 {
 #ifdef PARALLEL
 	int n, count, index, A;
 	RefListItem<AtomType,Isotope*>* ri;
 
 	// Send name
-	if (!Comm.broadcast(name_)) return false;
+	if (!procPool.broadcast(name_)) return false;
 	
 	// Isotope information
 	count = isotopes_.nItems();
-	if (!Comm.broadcast(&count, 1)) return false;
-	if (Comm.master())
+	if (!procPool.broadcast(&count, 1)) return false;
+	if (procPool.isMaster())
 	{
 		for (ri = isotopes_.first(); ri != NULL; ri = ri->next)
 		{
 			// Master needs to determine AtomType index - Isotope can be sent as the A_ value
 			index = atomTypes.indexOf(ri->item);
-			if (!Comm.broadcast(&index, 1)) return false;
+			if (!procPool.broadcast(&index, 1)) return false;
 			Isotope* tope = atomTypeIsotope(ri->item);
 			A = tope->A();
-			if (!Comm.broadcast(&A, 1)) return false;
+			if (!procPool.broadcast(&A, 1)) return false;
 		}
 	}
 	else
@@ -210,8 +210,8 @@ bool Isotopologue::broadcast(const List<AtomType>& atomTypes)
 		update(atomTypes);
 		for (n = 0; n < count; ++n)
 		{
-			if (!Comm.broadcast(&index, 1)) return false;
-			if (!Comm.broadcast(&A, 1)) return false;
+			if (!procPool.broadcast(&index, 1)) return false;
+			if (!procPool.broadcast(&A, 1)) return false;
 			AtomType* at = atomTypes.item(index);
 			Isotope* tope = PeriodicTable::element(at->element()).hasIsotope(A);
 			setAtomTypeIsotope(at, tope);

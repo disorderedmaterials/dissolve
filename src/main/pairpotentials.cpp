@@ -160,8 +160,6 @@ void DUQ::regeneratePairPotential(PairPotential* pp)
 // Save all PairPotentials
 bool DUQ::savePairPotentials(const char* baseName) const
 {
-	// I/O Operation so Master only.
-	if (Comm.slave()) return true;
 	bool result = true;
 
 	for (PairPotential* pp = pairPotentials_.first(); pp != NULL; pp = pp->next)

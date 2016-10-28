@@ -25,7 +25,7 @@
 #include "classes/cell.h"
 #include "classes/changestore.h"
 #include "classes/energykernel.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 #include "base/timer.h"
 #include "math/matrix4.h"
 
@@ -93,7 +93,7 @@ Module::InstanceType AtomShake::instanceType()
  */
 
 // Execute Method
-bool AtomShake::execute(DUQ& duq)
+bool AtomShake::execute(DUQ& duq, ProcessPool& procPool)
 {
 	/*
 	* Perform an Atom shake
@@ -122,11 +122,11 @@ bool AtomShake::execute(DUQ& duq)
 	cfg->initialiseCellDistribution();
 
 	// Create a local ChangeStore and EnergyKernel
-	ChangeStore changeStore;
-	EnergyKernel kernel(cfg, duq.potentialMap(), cutoffDistance);
+	ChangeStore changeStore(procPool);
+	EnergyKernel kernel(procPool, cfg, duq.potentialMap(), cutoffDistance);
 
 	// Initialise the random number buffer
-	Comm.initialiseRandomBuffer(DUQComm::Group);
+	procPool.initialiseRandomBuffer(ProcessPool::Group);
 
 	// Enter calculation loop until no more Cells are available
 	int cellId, shake, n, nbr;
@@ -139,15 +139,15 @@ bool AtomShake::execute(DUQ& duq)
 	Atom** cellAtoms;
 
 	Timer timer;
-	Comm.resetAccumulatedTime();
-	while (cellId = cfg->nextAvailableCell(willBeModified, allowRepeats), cellId != Cell::AllCellsComplete)
+	procPool.resetAccumulatedTime();
+	while (cellId = cfg->nextAvailableCell(procPool, willBeModified, allowRepeats), cellId != Cell::AllCellsComplete)
 	{
 		// Check for valid cell
 		if (cellId == Cell::NoCellsAvailable)
 		{
 			// No valid cell, but still need to enter into change distribution with other processes
 			changeStore.distributeAndApply(cfg);
-			cfg->finishedWithCell(willBeModified, cellId);
+			cfg->finishedWithCell(procPool, willBeModified, cellId);
 			continue;
 		}
 		cell = cfg->cell(cellId);
@@ -171,24 +171,24 @@ bool AtomShake::execute(DUQ& duq)
 			grainI = i->grain();
 
 			// Calculate reference intramolecular energy for atom, including intramolecular terms through the atom's grain
-			currentEnergy = kernel.energy(i, DUQComm::Group);
+			currentEnergy = kernel.energy(i, ProcessPool::Group);
 			intraEnergy = kernel.fullIntraEnergy(grainI, termScale);
 
 			// Loop over number of shakes per atom
 			for (shake=0; shake<nShakesPerAtom; ++shake)
 			{
 				// Create a random translation vector
-				rDelta.set(Comm.randomPlusMinusOne()*stepSize, Comm.randomPlusMinusOne()*stepSize, Comm.randomPlusMinusOne()*stepSize);
+				rDelta.set(procPool.randomPlusMinusOne()*stepSize, procPool.randomPlusMinusOne()*stepSize, procPool.randomPlusMinusOne()*stepSize);
 
 				// Translate atom and calculate new energy
 				i->translateCoordinates(rDelta);
-				newEnergy = kernel.energy(i, DUQComm::Group);
+				newEnergy = kernel.energy(i, ProcessPool::Group);
 				newIntraEnergy = kernel.fullIntraEnergy(grainI, termScale);
 				
 				// Trial the transformed atom position
 				delta = (newEnergy + newIntraEnergy) - (currentEnergy + intraEnergy);
 // 				printf("delta = %f\n", delta);
-				accept = delta < 0 ? true : (Comm.random() < exp(-delta*rRT));
+				accept = delta < 0 ? true : (procPool.random() < exp(-delta*rRT));
 
 				if (accept)
 				{
@@ -219,7 +219,7 @@ bool AtomShake::execute(DUQ& duq)
 		changeStore.reset();
 
 		// Must unlock the Cell when we are done with it!
-		cfg->finishedWithCell(willBeModified, cellId);
+		cfg->finishedWithCell(procPool, willBeModified, cellId);
 	}
 	timer.stop();
 
@@ -227,14 +227,14 @@ bool AtomShake::execute(DUQ& duq)
 	cfg->updateGrains();
 
 	// Collect statistics from process group leaders
-	if (!Comm.allSum(&nAccepted, 1, DUQComm::Leaders)) return false;
-	if (!Comm.allSum(&nTries, 1, DUQComm::Leaders)) return false;
-	if (!Comm.allSum(&totalDelta, 1, DUQComm::Leaders)) return false;
-	if (Comm.processGroupLeader())
+	if (!procPool.allSum(&nAccepted, 1, ProcessPool::Leaders)) return false;
+	if (!procPool.allSum(&nTries, 1, ProcessPool::Leaders)) return false;
+	if (!procPool.allSum(&totalDelta, 1, ProcessPool::Leaders)) return false;
+	if (procPool.groupLeader())
 	{
 		double rate = double(nAccepted)/nTries;
 
-		Messenger::print("AtomShake: Overall acceptance rate was %4.2f% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*rate, nAccepted, nTries, timer.timeString(), Comm.accumulatedTimeString());
+		Messenger::print("AtomShake: Overall acceptance rate was %4.2f% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*rate, nAccepted, nTries, timer.timeString(), procPool.accumulatedTimeString());
 		Messenger::print("AtomShake: Total energy delta was %10.4e kJ/mol.\n", totalDelta);
 
 		// Adjust step size
@@ -245,7 +245,7 @@ bool AtomShake::execute(DUQ& duq)
 	}
 
 	// Store updated parameter values
-	if (!Comm.broadcast(&stepSize, 1, 0, DUQComm::Group)) return false;
+	if (!procPool.broadcast(&stepSize, 1, 0, ProcessPool::Group)) return false;
 // 	stepSizeParam->setValue(stepSize); TODO
 	Messenger::print("AtomShake: Updated translation step is %f Angstroms.\n", stepSize);
 	
@@ -280,7 +280,7 @@ bool AtomShake::execute(DUQ& duq)
 // 	EnergyKernel kernel(cfg, potentialMap_, cutoffDistance);
 // 
 // 	// Initialise the random number buffer
-// 	Comm.initialiseRandomBuffer(DUQComm::World);
+// 	procPool.initialiseRandomBuffer(ProcessPool::Pool);
 // 
 // 	// Enter calculation loop until no more Cells are available
 // 	int cellId, shake, n, i;
@@ -293,7 +293,7 @@ bool AtomShake::execute(DUQ& duq)
 // 	Atom* atoms = cfg->atoms();
 // 
 // 	Timer timer;
-// 	Comm.resetAccumulatedTime();
+// 	procPool.resetAccumulatedTime();
 // 
 // 	// Add entire cell contents to a ChangeStore
 // 	for (n=0; n<nAtoms; ++n) changeStore.add(&atoms[n]);
@@ -308,7 +308,7 @@ bool AtomShake::execute(DUQ& duq)
 // 		for (i=0; i<nAtoms; ++i)
 // 		{
 // 			// Create a random translation vector
-// 			rDelta.set(Comm.randomPlusMinusOne()*stepSize, Comm.randomPlusMinusOne()*stepSize, Comm.randomPlusMinusOne()*stepSize);
+// 			rDelta.set(procPool.randomPlusMinusOne()*stepSize, procPool.randomPlusMinusOne()*stepSize, procPool.randomPlusMinusOne()*stepSize);
 // 
 // 			// Translate atom
 // 			atoms[i].translateCoordinates(rDelta);
@@ -322,7 +322,7 @@ bool AtomShake::execute(DUQ& duq)
 // 
 // 		delta = newEnergy - currentEnergy;
 // 		printf("delta = %f\n", delta);
-// 		accept = delta < 0 ? true : (Comm.random() < exp(-delta*rRT));
+// 		accept = delta < 0 ? true : (procPool.random() < exp(-delta*rRT));
 // 
 // 		if (accept)
 // 		{
@@ -341,14 +341,14 @@ bool AtomShake::execute(DUQ& duq)
 // 	}
 // 
 // 	// Collect statistics from process group leaders
-// 	if (!Comm.allSum(&nAccepted, 1, DUQComm::Leaders)) return false;
-// 	if (!Comm.allSum(&nTries, 1, DUQComm::Leaders)) return false;
-// 	if (!Comm.allSum(&totalDelta, 1, DUQComm::Leaders)) return false;
-// 	if (Comm.processGroupLeader())
+// 	if (!procPool.allSum(&nAccepted, 1, ProcessPool::Leaders)) return false;
+// 	if (!procPool.allSum(&nTries, 1, ProcessPool::Leaders)) return false;
+// 	if (!procPool.allSum(&totalDelta, 1, ProcessPool::Leaders)) return false;
+// 	if (procPool.groupLeader())
 // 	{
 // 		double rate = double(nAccepted)/nTries;
 // 
-// 		Messenger::print("WorldAtomShake: Overall acceptance rate was %4.2f% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*rate, nAccepted, nTries, timer.timeString(), Comm.accumulatedTimeString());
+// 		Messenger::print("WorldAtomShake: Overall acceptance rate was %4.2f% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*rate, nAccepted, nTries, timer.timeString(), procPool.accumulatedTimeString());
 // 		Messenger::print("WorldAtomShake: Total energy delta was %10.4e kJ/mol.\n", totalDelta);
 // 
 // 		// Adjust step size
@@ -359,7 +359,7 @@ bool AtomShake::execute(DUQ& duq)
 // 	}
 // 
 // 	// Store updated parameter values
-// 	if (!Comm.broadcast(&stepSize, 1, 0, DUQComm::Group)) return false;
+// 	if (!procPool.broadcast(&stepSize, 1, 0, ProcessPool::Group)) return false;
 // // 	stepSizeParam->setValue(stepSize); TODO
 // 	Messenger::print("WorldAtomShake: Updated translation step is %f Angstroms.\n", stepSize);
 // 	

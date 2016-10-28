@@ -22,7 +22,7 @@
 #include "version.h"
 #include "base/messenger.h"
 #include "main/duq.h"
-#include "base/comms.h"
+#include "base/processpool.h"
 #include <time.h>
 #include <ctime>
 #include <stdlib.h>
@@ -34,7 +34,7 @@ int main(int argc, char **argv)
 
 #ifdef PARALLEL
 	// Initialise parallel communication
-	Comm.initialise(&argc, &argv);
+	ProcessPool::initialiseMPI(&argc, &argv);
 #endif
 
 	// Parse CLI options...
@@ -56,7 +56,7 @@ int main(int argc, char **argv)
 					printf("\t-r <file>\tRedirect output from all process to 'file.N', where N is the process rank\n");
 					printf("\t-s\t\tPerform full dump of system setup from all processes and quit\n");
 					printf("\t-v\t\tVerbose mode - be a little more descriptive throughout\n");
-					Comm.finalise();
+					ProcessPool::finalise();
 					return 1;
 					break;
 // 				case ('i'):
@@ -77,7 +77,7 @@ int main(int argc, char **argv)
 						Messenger::error("Expected redirection filename.\n");
 						return 1;
 					}
-					redirectFileName.sprintf("%s.%i", argv[n], Comm.rank());
+					redirectFileName.sprintf("%s.%i", argv[n], ProcessPool::worldRank());
 					Messenger::enableRedirect(redirectFileName.get());
 					break;
 				case ('s'):
@@ -91,7 +91,7 @@ int main(int argc, char **argv)
 				default:
 					printf("Unrecognised command-line switch '%s'.\n", argv[n]);
 					printf("Run with -h to see available switches.\n");
-					Comm.finalise();
+					ProcessPool::finalise();
 					return 1;
 					break;
 			}
@@ -103,7 +103,7 @@ int main(int argc, char **argv)
 			else
 			{
 				printf("Error: More than one input file specified?\n");
-				Comm.finalise();
+				ProcessPool::finalise();
 				return 1;
 			}
 		}
@@ -125,21 +125,21 @@ int main(int argc, char **argv)
 	// Load external datafiles (master only)
 	if (!MPIRunMaster(dUQ.loadDataFiles()))
 	{
-		Comm.finalise();
+		ProcessPool::finalise();
 		return 1;
 	}
 
 	// Broadcast periodic table (including isotope and parameter data)
-	if (!periodicTable.broadcast())
+	if (!periodicTable.broadcast(dUQ.worldPool()))
 	{
-		Comm.finalise();
+		ProcessPool::finalise();
 		return 1;
 	}
 
 	// Check module registration (all processes)
 	if (!dUQ.registerModules())
 	{
-		Comm.finalise();
+		ProcessPool::finalise();
 		return 1;
 	}
 
@@ -147,7 +147,7 @@ int main(int argc, char **argv)
 	if (inputFile.isEmpty())
 	{
 		Messenger::print("No input file provided. Nothing more to do.\n");
-		Comm.finalise();
+		ProcessPool::finalise();
 		return 0;
 	}
 
@@ -156,7 +156,7 @@ int main(int argc, char **argv)
 	if (!MPIRunMaster(dUQ.loadInput(inputFile)))
 	{
 		Messenger::print("Error loading input file.\n");
-		Comm.finalise();
+		ProcessPool::finalise();
 		return 1;
 	}
 
@@ -164,17 +164,27 @@ int main(int argc, char **argv)
 	if (!MPIRunMaster(dUQ.setupSimulation()))
 	{
 		Messenger::print("Failed to setup Configurations.\n");
-		Comm.finalise();
+		ProcessPool::finalise();
 		return 1;
 	}
 
 	// Broadcast system data to all slaves
 	if (!dUQ.broadcastSetup())
 	{
-		Comm.finalise();
+		ProcessPool::finalise();
 		return 1;
 	}
 
+	// Setup parallel comms / limits etc.
+	Messenger::print("\n");
+	Messenger::print("Setting up parallel comms...\n");
+
+	// -- Assign Atom/Grain limits to processes
+	// FROM CONFIGURATION::setup() if (!Comm.calculateLimits(nAtoms(), nGrains())) return false;
+	
+// 		// Send Cell info to Comm so suitable parallel strategy can be deduced
+// 	if (!Comm.setupStrategy(divisions_, cellExtents_, nbrs)) return false;   // TODO Move to setupComms()?
+	
 	// Initialise random seed
 	if (dUQ.seed() == -1) srand( (unsigned)time( NULL ) );
 	else srand(dUQ.seed());
@@ -183,14 +193,15 @@ int main(int argc, char **argv)
 	if (fullDump) dUQ.dumpSystemSetup(true);
 
 #ifdef PARALLEL
-	Messenger::print("This is process %i of %i total, and exists in process group %i in which it is rank %i of %i processes.\n", Comm.rank(), Comm.nProcesses(), Comm.localGroupIndex(), Comm.localGroupRank(), Comm.localGroupSize());
+	Messenger::print("This is process %i of %i total (world).\n", ProcessPool::worldRank(), ProcessPool::nWorldProcesses());
+	//and exists in process group %i in which it is rank %i of %i processes.\n", Comm.rank(), Comm.nProcesses(), Comm.localGroupIndex(), Comm.localGroupRank(), Comm.localGroupSize());
 #endif
 	
 	// Run main simulation
 	int result = dUQ.go();
 
 	// End parallel communication
-	Comm.finalise();
+	ProcessPool::finalise();
 	
 	// Done.
 	return result;

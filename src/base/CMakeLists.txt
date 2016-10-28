@@ -1,5 +1,4 @@
 add_library(base
-comms.cpp
 data2d.cpp
 dnchar.cpp
 element.cpp
@@ -7,13 +6,13 @@ isotope.cpp
 lineparser.cpp
 messenger.cpp
 parameters.cpp
+processpool.cpp
 ptable.cpp
 sysfunc.cpp
 timer.cpp
 variable.cpp
 variablelist.cpp
 
-comms.h
 constants.h
 data2d.h
 dnchar.h
@@ -22,6 +21,7 @@ isotope.h
 lineparser.h
 messenger.h
 parameters.h
+processpool.h
 ptable.h
 sysfunc.h
 timer.h
