@@ -144,15 +144,6 @@ class Sample : public ListItem<Sample>
 	/*
 	 * Reference Data
 	 */
-	public:
-	// Reference data normalisation types
-	enum NormalisationType
-	{
-		NoNormalisation,		/* Data has not been normalised */
-		AverageSquaredNormalisation,	/* Data has been normalised to < b >**2 */
-		SquaredAverageNormalisation	/* Data has been normalised to < b**2 > */
-	};
-
 	private:
 	// Whether reference data exists
 	bool hasReferenceData_;
@@ -160,12 +151,6 @@ class Sample : public ListItem<Sample>
 	Dnchar referenceDataFileName_;
 	// Reference data
 	Data2D referenceData_;
-	// FWHM of Gaussian for Q-dependent instrument broadening function (if required)
-	double qDependentFWHM_;
-	// FWHM of Gaussian for Q-independent instrument broadening function (if required)
-	double qIndependentFWHM_;
-	// Reference data normalisation style (if required)
-	NormalisationType referenceDataNormalisation_;
 	// Whether self-scattering should be subtracted (and is necessary)
 	bool referenceDataSubtractSelf_;
 	// Fourier transform of reference data
@@ -186,18 +171,6 @@ class Sample : public ListItem<Sample>
 	Dnchar& referenceDataFileName();
 	// Return reference data
 	Data2D& referenceData();
-	// Set FWHM of Gaussian for Q-dependent instrument broadening function (if required)
-	void setQDependentFWHM(double fwhm);
-	// Return FWHM of Gaussian for Q-dependent instrument broadening function (if required)
-	double qDependentFWHM();
-	// Set FWHM of Gaussian for Q-independent instrument broadening function (if required)
-	void setQIndependentFWHM(double fwhm);
-	// Return FWHM of Gaussian for Q-independent instrument broadening function (if required)
-	double qIndependentFWHM();
-	// Set reference data normalisation flag
-	void setReferenceDataNormalisation(NormalisationType norm);
-	// Return whether reference data are normalised
-	NormalisationType referenceDataNormalisation();
 	// Set reference data self-scattering subtraction flag
 	void setReferenceSubtractSelf(bool b);
 	// Return whether reference data should have self-scattering subtracted

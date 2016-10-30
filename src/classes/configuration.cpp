@@ -59,12 +59,9 @@ Configuration::Configuration() : ListItem<Configuration>()
 	rdfRange_ = -1.0;
 	rdfSmoothing_ = 0;
 	requestedRDFRange_ = -1.0;
-	qDelta_ = 0.05;
-	qMax_ = 50.0;
 	temperature_ = 300.0;
 	braggCalculationOn_ = false;
 	braggMaximumQ_ = 1.0;
-	braggBroadening_ = 0.0063;
 }
 
 // Destructor

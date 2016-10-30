@@ -30,12 +30,9 @@ Sample::Sample() : ListItem<Sample>()
 {
 	// Reference F(Q)
 	hasReferenceData_ = false;
-	referenceDataNormalisation_ = Sample::NoNormalisation;
 	referenceDataSubtractSelf_ = false;
 	referenceFitMax_ = -1.0;
 	referenceFitMin_ = -1.0;
-	qDependentFWHM_ = 0.02;
-	qIndependentFWHM_ = 0.0;
 }
 
 // Copy Constructor
@@ -69,9 +66,6 @@ void Sample::operator=(const Sample& source)
 	hasReferenceData_ = source.hasReferenceData_;
 	referenceDataFileName_ = source.referenceDataFileName_;
 	referenceData_ = source.referenceData_;
-	qDependentFWHM_ = source.qDependentFWHM_;
-	qIndependentFWHM_ = source.qIndependentFWHM_;
-	referenceDataNormalisation_ = source.referenceDataNormalisation_;
 	referenceDataSubtractSelf_ = source.referenceDataSubtractSelf_;
 	referenceDataFT_ = source.referenceDataFT_;
 	referenceFitMin_ = source.referenceFitMin_;
@@ -127,24 +121,25 @@ Sample::SampleType Sample::type()
  * Species/Isotopologue Definition
  */
 
-/*
- * \brief Return whether the Sample contains a mixtures definition for the provided Species
- * \details This function reconstructs the current RefList of Species/Isotopologue pairs and ensures that
- * it contains only valid Species and Isotopologue pointers.
- */
+// Return whether the Sample contains a mixtures definition for the provided Species
 IsotopologueMix* Sample::hasSpeciesIsotopologueMixture(Species* sp) const
 {
+	/*
+	 * This function reconstructs the current RefList of Species/Isotopologue pairs and ensures that
+	 * it contains only valid Species and Isotopologue pointers.
+	 */
 	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next) if (mix->species() == sp) return mix;
 	return NULL;
 }
 
-/*
- * \brief Update IsotopologueMix List
- * \details This function reconstructs the current List of IsotopologueMix items and ensures that
- * it contains all valid component Species and Isotopologue pointers.
- */
+// Update IsotopologueMix List
 void Sample::updateIsotopologueMixtures(const List<Species>& species)
 {
+	/*
+	 * This function reconstructs the current List of IsotopologueMix items and ensures that
+	 * it contains all valid component Species and Isotopologue pointers.
+	 */
+
 	// Construct a temporary RefList, and move all existing RefListItems to it
 	List<IsotopologueMix> oldItems;
 	IsotopologueMix* mix;
@@ -238,12 +233,10 @@ void Sample::assignDefaultIsotopes()
 }
 
 /*
-// RDF / S(Q) Data
-*/
-
-/*
- * \brief Create type index and RDF / S(Q) storage
+ * RDF / S(Q) Data
  */
+
+// Create type index and RDF / S(Q) storage
 bool Sample::createTypeIndex(const RefList<Species,double>& usedSpecies, int multiplier, int nExpectedAtoms, const AtomTypeIndex& masterIndex)
 {
 	// Loop over Samples and go through Isotopologues in each mixture
@@ -370,17 +363,13 @@ bool Sample::createTypeIndex(const RefList<Species,double>& usedSpecies, int mul
 	return true;
 }
 
-/*
- * \brief Return < b >**2
- */
+// Return < b >**2
 double Sample::boundCoherentAverageSquared()
 {
 	return boundCoherentAverageSquared_;
 }
 
-/*
- * \brief Return < b**2 >
- */
+// Return < b**2 >
 double Sample::boundCoherentSquaredAverage()
 {
 	return boundCoherentSquaredAverage_;
@@ -449,10 +438,7 @@ bool Sample::setupPairCorrelations(double volume, double range, double binWidth,
 	return true;
 }
 
-/*
- * \brief Calculate weighted pair correlations
- * \details Calculate the neutron-weighted pair correlations, including S(Q), F(Q), and total RDF, from the supplied unweighted data.
- */
+// Calculate weighted pair correlations from supplied unweighted data
 bool Sample::calculatePairCorrelations(Array2D<Histogram>& masterRDFs, Array2D<Data2D>& masterPairSQ, Array2D<Data2D>& masterBraggSQ, Array2D<Data2D>& masterPartialSQ)
 {
 	AtomTypeData* at1 = typeIndex_.first(), *at2;
@@ -674,42 +660,6 @@ Data2D& Sample::referenceData()
 	return referenceData_;
 }
 
-// Set FWHM of Gaussian for Q-dependent instrument broadening function (if required)
-void Sample::setQDependentFWHM(double fwhm)
-{
-	qDependentFWHM_ = fwhm;
-}
-
-// Return FWHM of Gaussian for Q-dependent instrument broadening function (if required)
-double Sample::qDependentFWHM()
-{
-	return qDependentFWHM_;
-}
-
-// Set FWHM of Gaussian for Q-independent instrument broadening function (if required)
-void Sample::setQIndependentFWHM(double fwhm)
-{
-	qIndependentFWHM_ = fwhm;
-}
-
-// Return FWHM of Gaussian for Q-independent instrument broadening function (if required)
-double Sample::qIndependentFWHM()
-{
-	return qIndependentFWHM_;
-}
-
-// Set reference data normalisation type
-void Sample::setReferenceDataNormalisation(NormalisationType norm)
-{
-	referenceDataNormalisation_ = norm;
-}
-
-// Return normalisation type for reference data
-Sample::NormalisationType Sample::referenceDataNormalisation()
-{
-	return referenceDataNormalisation_;
-}
-
 // Set reference data self-scattering subtraction flag
 void Sample::setReferenceSubtractSelf(bool b)
 {
@@ -774,18 +724,6 @@ bool Sample::finaliseReferenceData()
 		highQLevel /= (referenceData_.nPoints()*0.1);
 		Messenger::print("--> High-Q average level is %f.\n", highQLevel);
 		referenceData_.arrayY() -= highQLevel;
-	}
-
-	// Is data normalised?
-	if (referenceDataNormalisation_ == Sample::AverageSquaredNormalisation)
-	{
-		Messenger::print("--> Removing normalisation (multiplying by <b>**2 = %f).\n", boundCoherentAverageSquared_);
-		referenceData_.arrayY() *= boundCoherentAverageSquared_;
-	}
-	else if (referenceDataNormalisation_ == Sample::SquaredAverageNormalisation)
-	{
-		Messenger::print("--> Removing normalisation (multiplying by <b**2> = %f).\n", boundCoherentSquaredAverage_);
-		referenceData_.arrayY() *= boundCoherentSquaredAverage_;
 	}
 
 	// Check min/max Q ranges for fit
@@ -891,12 +829,9 @@ bool Sample::broadcast(ProcessPool& procPool, const List<Species>& species)
 	if (!procPool.broadcast(&hasReferenceData_, 1)) return false;
 	if (!referenceData_.broadcast(procPool)) return false;
 	if (!procPool.broadcast(referenceDataFileName_)) return false;
-	if (!procPool.broadcast((int*)&referenceDataNormalisation_, 1)) return false;
 	if (!procPool.broadcast(&referenceDataSubtractSelf_, 1)) return false;
 	if (!procPool.broadcast(&referenceFitMin_, 1)) return false;
 	if (!procPool.broadcast(&referenceFitMax_, 1)) return false;
-	if (!procPool.broadcast(&qDependentFWHM_, 1)) return false;
-	if (!procPool.broadcast(&qIndependentFWHM_, 1)) return false;
 #endif
 	return true;
 }

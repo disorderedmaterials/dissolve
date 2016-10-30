@@ -45,7 +45,7 @@ class Module : public ListItem<Module>, public VariableList
 	{
 	}
 	// Module Types
-	enum ModuleType { AnalysisModule, CorrelationModule, EvolutionModule, FitModule, nModuleTypes };
+	enum ModuleType { AnalysisModule, CalculationModule, EvolutionModule, FitModule, nModuleTypes };
 	static ModuleType moduleType(const char* s);
 	static const char* moduleType(ModuleType mt);
 	// Module Instance Styles

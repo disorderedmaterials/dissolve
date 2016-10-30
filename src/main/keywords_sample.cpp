@@ -26,13 +26,10 @@
 
 // Sample Block Keywords
 KeywordData SampleBlockData[] = {
-	{ "Broadening",			2,	"" },
 	{ "EndSample",			0,	"" },
 	{ "FitMax",			1,	"" },
 	{ "FitMin",			1,	"" },
 	{ "Isotopologue",		3,	"" },
-	{ "NormalisedToAvSq",		0,	"" },
-	{ "NormalisedToSqAv",		0,	"" },
 	{ "ReferenceData",		1,	"" },
 	{ "SubtractSelf",		0,	"" },
 	{ "Type",			1,	"" }

@@ -16,13 +16,14 @@ cell.cpp
 cellneighbour.cpp
 changedata.cpp
 changestore.cpp
+configuration.cpp
 configuration_box.cpp
 configuration_composition.cpp
 configuration_contents.cpp
-configuration.cpp
 configuration_data.cpp
 configuration_energy.cpp
 configuration_modules.cpp
+configuration_rdfs.cpp
 configuration_upkeep.cpp
 energykernel.cpp
 forcekernel.cpp
