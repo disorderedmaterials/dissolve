@@ -37,7 +37,7 @@ Module* Configuration::addModule(Module* module)
 	else if (module->instanceType() == Module::SingleInstance)
 	{
 		// Single instance modules are one-per-Configuration, so must see if it is already in the relevant list...
-		Module* existingModule = findModule(module->name(), module->type());
+		Module* existingModule = findModule(module->name());
 		if (existingModule) moduleToAdd = existingModule;
 		else moduleToAdd = module->createInstance();
 	}
@@ -47,16 +47,16 @@ Module* Configuration::addModule(Module* module)
 		moduleToAdd = module->createInstance();
 	}
 
-	// Add the module pointer to the relevant list
-	modules_[module->type()].add(moduleToAdd);
+	// Add the module pointer to the list
+	modules_.add(moduleToAdd);
 
 	return moduleToAdd;
 }
 
 // Find associated module by name
-Module* Configuration::findModule(const char* name, Module::ModuleType type)
+Module* Configuration::findModule(const char* name)
 {
-	for (RefListItem<Module,bool>* existingItem = modules_[type].first(); existingItem != NULL; existingItem = existingItem->next)
+	for (RefListItem<Module,bool>* existingItem = modules_.first(); existingItem != NULL; existingItem = existingItem->next)
 	{
 		Module* module = existingItem->item;
 		if (strcmp(module->name(),name) == 0) return module;
@@ -68,19 +68,11 @@ Module* Configuration::findModule(const char* name, Module::ModuleType type)
 // Return total number of Modules associated
 int Configuration::nModules()
 {
-	int total = 0;
-	for (int n=0; n<Module::nModuleTypes; ++n) total += modules_[n].nItems();
-	return total;
+	return modules_.nItems();
 }
 
-// Return number of associated Modules of specified type
-int Configuration::nModules(Module::ModuleType mt)
+// Return first Module defined
+RefListItem<Module,bool>* Configuration::modules()
 {
-	return modules_[mt].nItems();
-}
-
-// Return first Module of specified type
-RefListItem<Module,bool>* Configuration::modules(Module::ModuleType mt)
-{
-	return modules_[mt].first();
+	return modules_.first();
 }

@@ -60,8 +60,6 @@ class GrainShake : public Module
 	const char* brief();
 	// Return type of module
 	ModuleType type();
-	// Number of Configurations that this module requires to run
-	int nConfigurationsRequired();
 
 
 	/*

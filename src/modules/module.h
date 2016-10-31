@@ -73,16 +73,20 @@ class Module : public ListItem<Module>, public VariableList
 	 * Definition
 	 */
 	public:
-	// Return name of module
+	// Return name of Module
 	virtual const char* name() = 0;
-	// Return brief description of module
+	// Return brief description of Module
 	virtual const char* brief() = 0;
-	// Return type of module
+	// Return type of Module
 	virtual ModuleType type() = 0;
-	// Return instance type for module
+	// Return instance type for Module
 	virtual InstanceType instanceType() = 0;
-	// Number of Configurations that this module requires to run (-1 for "one or more")
-	virtual int nConfigurationsRequired() = 0;
+	// Whether the Module has a pre-processing stage
+	virtual bool hasPreProcessing() = 0;
+	// Whether the Module has a processing stage
+	virtual bool hasProcessing() = 0;
+	// Whether the Module has a post-processing stage
+	virtual bool hasPostProcessing() = 0;
 
 
 	/*
@@ -135,26 +139,15 @@ class Module : public ListItem<Module>, public VariableList
 	/*
 	 * Method
 	 */
-	private:
-	// Execute method on the specified config
-	virtual bool execute(DUQ& duq, ProcessPool& procPool) = 0;
-
 	public:
 	// Perform setup tasks for module
 	virtual bool setup(ProcessPool& procPool) = 0;
-	// Run main module method
-	bool run(DUQ& duq, ProcessPool& procPool)
-	{
-		// Check number of configs supplied and required by the module
-		if (nConfigurationsRequired() != targetConfigurations_.nItems())
-		{
-			Messenger::error("Number of configurations targeted by module (%i) is not the required number (%i).\n", targetConfigurations_.nItems(), nConfigurationsRequired());
-			return false;
-		}
-
-		// Run main method
-		return execute(duq, procPool);
-	}
+	// Execute pre-processing stage
+	virtual bool preProcess(DUQ& duq, ProcessPool& procPool) = 0;
+	// Execute method on the specified config
+	virtual bool process(DUQ& duq, ProcessPool& procPool) = 0;
+	// Execute post-processing stage
+	virtual bool postProcess(DUQ& duq, ProcessPool& procPool) = 0;
 };
 
 #endif

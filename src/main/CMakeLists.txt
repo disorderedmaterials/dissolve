@@ -19,6 +19,7 @@ keywords_species.cpp
 modules.cpp
 pairpotentials.cpp
 samples.cpp
+setup.cpp
 simulation.cpp
 species.cpp
 

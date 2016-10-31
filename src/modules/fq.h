@@ -60,20 +60,28 @@ class StructureFactor : public Module
 	const char* brief();
 	// Return type of module
 	ModuleType type();
-	// Number of Configurations that this module requires to run
-	int nConfigurationsRequired();
 	// Return instance type for module
 	InstanceType instanceType();
+	// Whether the Module has a pre-processing stage
+	bool hasPreProcessing();
+	// Whether the Module has a processing stage
+	bool hasProcessing();
+	// Whether the Module has a post-processing stage
+	bool hasPostProcessing();
 
 
 	/*
 	 * Method
 	 */
-	protected:
+	public:
 	// Perform setup tasks for module
 	bool setup(ProcessPool& procPool);
-	// Execute method
-	bool execute(DUQ& duq, ProcessPool& procPool);
+	// Execute pre-processing stage
+	bool preProcess(DUQ& duq, ProcessPool& procPool);
+	// Execute method on the specified config
+	bool process(DUQ& duq, ProcessPool& procPool);
+	// Execute post-processing stage
+	bool postProcess(DUQ& duq, ProcessPool& procPool);
 };
 
 #endif

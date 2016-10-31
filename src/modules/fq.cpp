@@ -82,16 +82,28 @@ Module::ModuleType StructureFactor::type()
 	return Module::CalculationModule;
 }
 
-// Number of Configurations that this module requires to run
-int StructureFactor::nConfigurationsRequired()
-{
-	return 1;
-}
-
 // Return instance type for module
 Module::InstanceType StructureFactor::instanceType()
 {
 	return Module::MultipleInstance;
+}
+
+// Whether the Module has a pre-processing stage
+bool StructureFactor::hasPreProcessing()
+{
+	return false;
+}
+
+// Whether the Module has a processing stage
+bool StructureFactor::hasProcessing()
+{
+	return true;
+}
+
+// Whether the Module has a post-processing stage
+bool StructureFactor::hasPostProcessing()
+{
+	return true;
 }
 
 /*
@@ -104,8 +116,14 @@ bool StructureFactor::setup(ProcessPool& procPool)
 	return true;
 }
 
+// Execute pre-processing stage
+bool StructureFactor::preProcess(DUQ& duq, ProcessPool& procPool)
+{
+	return false;
+}
+
 // Execute Method
-bool StructureFactor::execute(DUQ& duq, ProcessPool& procPool)
+bool StructureFactor::process(DUQ& duq, ProcessPool& procPool)
 {
 	/*
 	 * Calculate weighted or unweighted structure factors for the Sample or Configuration
@@ -325,3 +343,10 @@ bool StructureFactor::execute(DUQ& duq, ProcessPool& procPool)
 // 
 // 	return true;
 // }
+
+// Execute post-processing stage
+bool StructureFactor::postProcess(DUQ& duq, ProcessPool& procPool)
+{
+	// TODO Save stuff here
+	return false;
+}

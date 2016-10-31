@@ -140,25 +140,20 @@ void DUQ::dumpSystemSetup(bool includeData)
 		// Modules
 		Messenger::print("\n  # Modules\n");
 		if (cfg->nModules() == 0) Messenger::print("  # -- None\n");
-		for (int n=0; n<Module::nModuleTypes; ++n)
+		for (RefListItem<Module,bool>* ri = cfg->modules(); ri != NULL; ri = ri->next)
 		{
-			Module::ModuleType mt = (Module::ModuleType) n;
-			
-			for (RefListItem<Module,bool>* ri = cfg->modules(mt); ri != NULL; ri = ri->next)
+			Module* module = ri->item;
+
+			Messenger::print("  %s  %s\n", Keywords::configurationKeyword(Keywords::ModuleAddKeyword), module->name());
+
+			// For each Module, print all available variables
+			for (Variable* var = module->variables(); var != NULL; var = var->next)
 			{
-				Module* module = ri->item;
-
-				Messenger::print("  %s  %s\n", Keywords::configurationKeyword(Keywords::ModuleAddKeyword), module->name());
-
-				// For each Module, print all available variables
-				for (Variable* var = module->variables(); var != NULL; var = var->next)
-				{
-					if (var->type() == Variable::StringType) Messenger::print("    %s  %s  '%s'\n", Keywords::moduleKeyword(Keywords::SetModuleVariableKeyword), var->name(), var->asChar());
-					else Messenger::print("    %s  %s  %s\n", Keywords::moduleKeyword(Keywords::SetModuleVariableKeyword), var->name(), var->asChar());
-				}
-
-				Messenger::print("  %s\n", Keywords::moduleKeyword(Keywords::EndModuleKeyword));
+				if (var->type() == Variable::StringType) Messenger::print("    %s  %s  '%s'\n", Keywords::moduleKeyword(Keywords::SetModuleVariableKeyword), var->name(), var->asChar());
+				else Messenger::print("    %s  %s  %s\n", Keywords::moduleKeyword(Keywords::SetModuleVariableKeyword), var->name(), var->asChar());
 			}
+
+			Messenger::print("  %s\n", Keywords::moduleKeyword(Keywords::EndModuleKeyword));
 		}
 
 		Messenger::print("\n");

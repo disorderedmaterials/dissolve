@@ -30,10 +30,7 @@ class PairPotential;
 class Atom;
 class Molecule;
 
-/*
- * \brief PotentialMap Definition
- * \details TODO
- */
+// PotentialMap Definition
 class PotentialMap
 {
 	public:

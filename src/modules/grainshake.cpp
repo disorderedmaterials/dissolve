@@ -77,12 +77,6 @@ Module::ModuleType GrainShake::type()
 	return Module::EvolutionModule;
 }
 
-// Number of Configurations that this module requires to run
-int GrainShake::nConfigurationsRequired()
-{
-	return 1;
-}
-
 /*
  * Method
  */

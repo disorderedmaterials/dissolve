@@ -48,7 +48,7 @@ void PotentialMap::clear()
 }
 
 /*
- * Data
+ * Source Parameters
  */
 
 // Initialise maps

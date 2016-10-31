@@ -465,59 +465,54 @@ bool Configuration::broadcast(ProcessPool& procPool, const List<Species>& specie
 	if (!procPool.broadcast(&rdfBinWidth_, 1)) return false;
 
 	// Modules
-	for (int n=0; n<Module::nModuleTypes; ++n)
+	// Master sends number of modules of to expect
+	int moduleCount;
+	if (procPool.isMaster()) moduleCount = modules_.nItems();
+	if (!procPool.broadcast(&moduleCount, 1)) return false;
+
+	// Loop over associated modules of this type
+	for (int m = 0; m<moduleCount; ++m)
 	{
-		Module::ModuleType mt = (Module::ModuleType) n;
+		// Grab existing module pointer
+		Module* moduleOnMaster;
+		if (procPool.isMaster()) moduleOnMaster = modules_.item(m)->item;
 
-		// Master send number of modules of this type to expect
-		int moduleCount;
-		if (procPool.isMaster()) moduleCount = modules_[mt].nItems();
-		if (!procPool.broadcast(&moduleCount, 1)) return false;
+		// Master will broadcast module name to slaves
+		Dnchar moduleName;
+		if (procPool.isMaster()) moduleName = moduleOnMaster->name();
+		if (!procPool.broadcast(moduleName)) return false;
 
-		// Loop over associated modules of this type
-		for (int m = 0; m<moduleCount; ++m)
+		// Find pointer to master module instance
+		Module* masterInstance = NULL;
+		for (RefListItem<Module,bool>* ri = allModules.first(); ri != NULL; ri = ri->next)
 		{
-			// Grab existing module pointer
-			Module* moduleOnMaster;
-			if (procPool.isMaster()) moduleOnMaster = modules_[mt].item(m)->item;
-
-			// Master will broadcast module name to slaves
-			Dnchar moduleName;
-			if (procPool.isMaster()) moduleName = moduleOnMaster->name();
-			if (!procPool.broadcast(moduleName)) return false;
-
-			// Find pointer to master module instance
-			Module* masterInstance = NULL;
-			for (RefListItem<Module,bool>* ri = allModules.first(); ri != NULL; ri = ri->next)
+			if (DUQSys::sameString(ri->item->name(), moduleName.get()))
 			{
-				if (DUQSys::sameString(ri->item->name(), moduleName.get()))
-				{
-					masterInstance = ri->item;
-					break;
-				}
+				masterInstance = ri->item;
+				break;
 			}
+		}
 
-			// Check pointer
-			if (!masterInstance)
-			{
-				Messenger::print("Failed to find master instance of module '%s'.\n", moduleName.get());
-				return false;
-			}
+		// Check pointer
+		if (!masterInstance)
+		{
+			Messenger::print("Failed to find master instance of module '%s'.\n", moduleName.get());
+			return false;
+		}
 
-			// Add this module to the current Configuration
-			if (procPool.isSlave())
-			{
-				// Add module
-				Module* newModule = addModule(masterInstance);
+		// Add this module to the current Configuration
+		if (procPool.isSlave())
+		{
+			// Add module
+			Module* newModule = addModule(masterInstance);
 
-				// Receive VariableList associated to module
-				newModule->broadcastVariables(procPool);
-			}
-			else
-			{
-				// Just broadcast existing VariableList
-				moduleOnMaster->broadcastVariables(procPool);
-			}
+			// Receive VariableList associated to module
+			newModule->broadcastVariables(procPool);
+		}
+		else
+		{
+			// Just broadcast existing VariableList
+			moduleOnMaster->broadcastVariables(procPool);
 		}
 	}
 #endif

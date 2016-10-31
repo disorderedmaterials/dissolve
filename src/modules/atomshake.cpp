@@ -76,16 +76,28 @@ Module::ModuleType AtomShake::type()
 	return Module::EvolutionModule;
 }
 
-// Number of Configurations that this module requires to run
-int AtomShake::nConfigurationsRequired()
-{
-	return 1;
-}
-
 // Return instance type for module
 Module::InstanceType AtomShake::instanceType()
 {
 	return Module::MultipleInstance;
+}
+
+// Whether the Module has a pre-processing stage
+bool AtomShake::hasPreProcessing()
+{
+	return false;
+}
+
+// Whether the Module has a processing stage
+bool AtomShake::hasProcessing()
+{
+	return true;
+}
+
+// Whether the Module has a post-processing stage
+bool AtomShake::hasPostProcessing()
+{
+	return true;
 }
 
 /*
@@ -98,8 +110,14 @@ bool AtomShake::setup(ProcessPool& procPool)
 	return true;
 }
 
+// Execute pre-processing stage
+bool AtomShake::preProcess(DUQ& duq, ProcessPool& procPool)
+{
+	return false;
+}
+
 // Execute Method
-bool AtomShake::execute(DUQ& duq, ProcessPool& procPool)
+bool AtomShake::process(DUQ& duq, ProcessPool& procPool)
 {
 	/*
 	* Perform an Atom shake
@@ -377,3 +395,8 @@ bool AtomShake::execute(DUQ& duq, ProcessPool& procPool)
 // 	cfg->accumulateEnergyChange();
 // }
 
+// Execute post-processing stage
+bool AtomShake::postProcess(DUQ& duq, ProcessPool& procPool)
+{
+	return false;
+}

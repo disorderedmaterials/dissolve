@@ -233,6 +233,26 @@ class DUQ
 	 * Simulation
 	 */
 	private:
+	// List of pre-processing stages to perform
+	RefList<Module,bool> preProcessingStages_;
+	// List of post-processing stages to perform
+	RefList<Module,bool> postProcessingStages_;
+
+	private:
+	// Find first occurrence of named Module in pre-processing stages
+	Module* findPreProcessingStage(const char* name);
+	// Find first occurrence of named Module in post-processing stages
+	Module* findPostProcessingStage(const char* name);
+
+	public:
+	// Run main simulation
+	bool go();
+
+
+	/*
+	 * Simulation Setup
+	 */
+	private:
 	// Number of test points to use when calculating Box normalisation arrays
 	int boxNormalisationPoints_;
 	// Bin width to use when calculating RMSE between Sample F(Q) and reference data
@@ -255,14 +275,6 @@ class DUQ
 	void setWindowFunction(Data2D::WindowFunction wf);
 	// Setup all simulation data, checking it as we go
 	bool setupSimulation();
-	// Run main simulation
-	bool go();
-
-
-	/*
-	 * Setup Dump
-	 */
-	public:
 	// Dump full system setup
 	void dumpSystemSetup(bool includeData);
 

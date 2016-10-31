@@ -3,7 +3,7 @@
 AC_PREREQ(2.60)
 
 # Set program name, version and source directory
-m4_define([DUQ_VERSION],[0.32.5])
+m4_define([DUQ_VERSION],[0.32.6])
 AC_INIT([duq], DUQ_VERSION)
 AC_CONFIG_AUX_DIR(config)
 AC_CANONICAL_TARGET
