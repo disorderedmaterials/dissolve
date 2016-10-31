@@ -57,10 +57,10 @@ bool Keywords::parseSimulationBlock(LineParser& parser, DUQ* duq)
 
 	bool blockDone = false, error = false;
 
-	while (!parser.eofOrBlank())
+	while (!parser.eofOrBlank(duq->worldPool()))
 	{
 		// Read in a line, which should contain a keyword and a minimum number of arguments
-		parser.getArgsDelim(LineParser::SkipBlanks+LineParser::UseQuotes);
+		parser.getArgsDelim(duq->worldPool(), LineParser::SkipBlanks+LineParser::UseQuotes);
 		Keywords::SimulationKeyword simKeyword = Keywords::simulationKeyword(parser.argc(0));
 		if ((simKeyword != Keywords::nSimulationKeywords) && ((parser.nArgs()-1) < Keywords::simulationBlockNArguments(simKeyword)))
 		{

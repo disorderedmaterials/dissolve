@@ -98,6 +98,12 @@ Module::InstanceType StructureFactor::instanceType()
  * Method
  */
 
+// Perform setup tasks for module
+bool StructureFactor::setup(ProcessPool& procPool)
+{
+	return true;
+}
+
 // Execute Method
 bool StructureFactor::execute(DUQ& duq, ProcessPool& procPool)
 {
@@ -120,9 +126,9 @@ bool StructureFactor::execute(DUQ& duq, ProcessPool& procPool)
 	const double rRT = 1.0/(.008314472*cfg->temperature());
 
 	// Print argument/parameter summary
-	Messenger::print("StructureFactor: Cutoff distance is %f\n", cutoffDistance);
-	Messenger::print("StructureFactor: Performing %i shake(s) per Atom\n", nShakesPerAtom);
-	Messenger::print("StructureFactor: Translation step is %f Angstroms, target acceptance rate is %f.\n", stepSize, targetAcceptanceRate);
+// 	Messenger::print("StructureFactor: Cutoff distance is %f\n", cutoffDistance);
+// 	Messenger::print("StructureFactor: Performing %i shake(s) per Atom\n", nShakesPerAtom);
+// 	Messenger::print("StructureFactor: Translation step is %f Angstroms, target acceptance rate is %f.\n", stepSize, targetAcceptanceRate);
 
 	// If there is a Sample target, then we calculate the weighted structure factors for it (using the supplied Configurations)
 	// Otherwise takt eh Configuration target and calculate unweighted structure factors for it.

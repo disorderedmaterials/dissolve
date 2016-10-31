@@ -20,6 +20,7 @@
 */
 
 #include "classes/configuration.h"
+#include "classes/atomtype.h"
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/grain.h"
@@ -233,15 +234,12 @@ AtomTypeData* Configuration::usedAtomTypes()
 }
 
 // Set global AtomType indices in Atoms from the list provided
-bool Configuration::setGlobalAtomTypeIndices(const AtomTypeList& masterIndex)
+bool Configuration::setGlobalAtomTypeIndices(const List<AtomType>& masterList)
 {
 	// Loop over AtomTypes in index, then over Atoms in Configuration
 	int nAssigned = 0, globalIndex = 0;
-	for (AtomTypeData* atd = masterIndex.first(); atd != NULL; atd = atd->next, ++globalIndex)
+	for (AtomType* at = masterList.first(); at != NULL; at = at->next, ++globalIndex)
 	{
-		// Grab AtomType pointer
-		AtomType* at = atd->atomType();
-
 		// Loop over Molecules (need the original Species pointer to look up original AtomType pointer)
 		int localIndex = 0;
 		for (Molecule* mol = molecules_.first(); mol != NULL; mol = mol->next)

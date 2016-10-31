@@ -22,6 +22,7 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "base/messenger.h"
+#include "base/processpool.h"
 #include <string.h>
 #include <stdarg.h>
 
@@ -54,9 +55,9 @@ void LineParser::reset()
 	directOutput_ = false;
 }
 
-//
-// Source line/file and read options
-//
+/*
+ * Source line/file and read options
+ */
 
 // Return filename of current input file (if any)
 const char* LineParser::inputFilename() const
@@ -259,9 +260,9 @@ bool LineParser::eofOrBlank() const
 	return result;
 }
 
-//
-// Read/Write Routines
-//
+/*
+ * Read/Write Routines
+ */
 
 // Read single line from internal file source
 int LineParser::readNextLine(int optionMask)
@@ -488,9 +489,7 @@ bool LineParser::getNextN(int optionMask, int length, Dnchar* destarg)
 	return true;
 }
 
-/*
- * \brief Get all arguments (delimited) from LineParser::line_
- */
+// Get all arguments (delimited) from LineParser::line_
 void LineParser::getAllArgsDelim(int optionMask)
 {
 	// Parse the string in 'line_' into arguments in 'args'
@@ -511,10 +510,6 @@ void LineParser::getAllArgsDelim(int optionMask)
 		else delete arg;
 	}
 }
-
-//
-// Delimited Parsing Routines
-//
 
 // Parse delimited (from file)
 int LineParser::getArgsDelim(int optionMask)
@@ -948,6 +943,39 @@ int LineParser::skipLines(int nlines)
 		if (result != 0) return result;
 	}
 	return 0;
+}
+
+/*
+ * Parallel Read/Write
+ */
+
+// Return whether the end of the input stream has been reached (or only whitespace remains)
+bool LineParser::eofOrBlank(ProcessPool& worldPool) const
+{
+	// Run command on master and broadcast result
+	bool result;
+	if (worldPool.isMaster()) result = eofOrBlank();
+	if (!worldPool.broadcast(&result, 1)) return false;
+
+	return result;
+}
+
+// Read line from file and do delimited parse
+int LineParser::getArgsDelim(ProcessPool& worldPool, int optionMask)
+{
+	// Master will read the next line from the file, and broadcast it to slaves (who will then parse it)
+	int result;
+	if (worldPool.isMaster()) result = getArgsDelim(optionMask);
+	if (!worldPool.broadcast(&result, 1)) return -1;
+
+	// Everybody now has the result of the read/parse, so transfer line
+	if (!worldPool.broadcast(line_)) return false;
+	if (worldPool.isSlave()) setLine(line_);
+
+	// If we are a slave, parse the line before returning the result of the initial line read
+	if (worldPool.isSlave()) getAllArgsDelim(optionMask);
+
+	return result;
 }
 
 /*

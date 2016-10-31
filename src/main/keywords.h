@@ -98,8 +98,6 @@ class Keywords
 	enum ConfigurationKeyword
 	{
 		BoxNormalisationFileKeyword,	/* 'BoxNormalisationFile' - Specifies a file from which to load the RDF normalisation array */
-		BraggKeyword,			/* 'Bragg' - Turns on (or explicitly off) calculation of Bragg scattering */
-		BraggBroadeningKeyword,		/* 'BraggBroadening' - Specifies the degree of broadening applied to calculated Bragg features */
 		BraggMaximumQKeyword,		/* 'BraggMaximumQ' - Sets the maximum Q value for Bragg calculation */
 		CellAnglesKeyword,		/* 'CellAngles' - Gives the angles of the unit cell */
 		CellLengthsKeyword,		/* 'CellLengths' - Gives the relative lengths of the unit cell */
@@ -109,13 +107,10 @@ class Keywords
 		ModuleAddKeyword,		/* 'Module' - Starts the setup of a Module for this configuration */
 		MultiplierKeyword,		/* 'Multiplier' - Specifies the factor by which relative populations are multiplied when generating the Model */
 		NonPeriodicKeyword,		/* 'NonPeriodic' - States that the simulation should be treated as non-periodic */
-		QDeltaKeyword,			/* 'QDelta' - Q delta to use in S(Q) calculation */
-		QMaxKeyword,			/* 'QMax' - Maximum Q up to which S(Q) calculation will be performed */
 		RDFBinWidthKeyword,		/* 'RDFBinWidth' - Specified bin width for all RDF generation */
 		RDFRangeKeyword,		/* 'RDFRange' - Requested extent for RDF (and subsequent S(Q)) calculation */
 		RDFSmoothingKeyword,		/* 'RDFSmoothing' - Specifies the degree of smoothing 'n' to apply to calculated RDFs, where 2n+1 controls the length in the applied Spline smooth */
 		RMSEDeltaQKeyword,		/* 'RMSEDeltaQ' - Controls bin width used in Sample/reference data RMSE calculation */
-		SampleAddKeyword,		/* 'Sample' - Specifies that the Sample data is relevant to this Configuration, and should be calculated / compared */
 		SpeciesAddKeyword,		/* 'Species' - Specifies a Species and its relative population to add to this Configuration */
 		TemperatureKeyword,		/* 'Temperature' - Defines the temperature of the simulation */
 		nConfigurationKeywords		/* Number of keywords defined for this block */

@@ -332,7 +332,7 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 	// Now, loop over cubic matrix of cellExtents_ and construct list of gridReferences within range
 	// In case the number of cells required to cover the pairpotential range exceeds the number across the box, we need to check
 	// for and trim off negative indices which would in reality be equivalent to a folded, positive index.
-	List< ListVec3<int> > nbrs;
+	cellNeighbourIndices_.clear();
 	RefList<Cell,int> cellNbrs;
 	Cell* nbr;
 	for (x=-cellExtents_.x; x<=cellExtents_.x; ++x)
@@ -361,13 +361,13 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 					// Check that the cell is not already in the list by querying the cellNbrs RefList
 					nbr = cell(x, y, z);
 					if (cellNbrs.contains(nbr)) continue;
-					nbrs.add()->set(x, y, z);
+					cellNeighbourIndices_.add()->set(x, y, z);
 					cellNbrs.add(nbr);
 				}
 			}
 		}
 	}
-	Messenger::print("--> Added %i Cells to representative neighbour list.\n", nbrs.nItems());
+	Messenger::print("--> Added %i Cells to representative neighbour list.\n", cellNeighbourIndices_.nItems());
 
 	// Finally, loop over Cells and set neighbours, and construct neighbour matrix
 	Messenger::print("--> Constructing neighbour lists for individual Cells...\n");
@@ -384,7 +384,7 @@ bool Configuration::generateCells(double cellSize, double pairPotentialRange, do
 		mimNeighbours.clear();
 
 		// Loop over list of (relative) neighbour cell indices
-		for (ListVec3<int>* item = nbrs.first(); item != NULL; item = item->next)
+		for (ListVec3<int>* item = cellNeighbourIndices_.first(); item != NULL; item = item->next)
 		{
 			// Retrieve Cell pointers
 			nbr = cell(gridRef.x+item->x, gridRef.y+item->y, gridRef.z+item->z);

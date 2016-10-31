@@ -60,10 +60,10 @@ bool Keywords::parseModuleBlock(LineParser& parser, DUQ* duq, Module* module)
 	Variable* var;
 	bool blockDone = false, error = false;
 	
-	while (!parser.eofOrBlank())
+	while (!parser.eofOrBlank(duq->worldPool()))
 	{
 		// Read in a line, which should contain a keyword and a minimum number of arguments
-		parser.getArgsDelim(LineParser::SkipBlanks+LineParser::UseQuotes);
+		parser.getArgsDelim(duq->worldPool(), LineParser::SkipBlanks+LineParser::UseQuotes);
 		Keywords::ModuleKeyword modKeyword = Keywords::moduleKeyword(parser.argc(0));
 		if ((modKeyword != Keywords::nModuleKeywords) && ((parser.nArgs()-1) < Keywords::moduleBlockNArguments(modKeyword)))
 		{

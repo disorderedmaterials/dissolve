@@ -141,7 +141,7 @@ class Module : public ListItem<Module>, public VariableList
 
 	public:
 	// Perform setup tasks for module
-	virtual bool setup() = 0;
+	virtual bool setup(ProcessPool& procPool) = 0;
 	// Run main module method
 	bool run(DUQ& duq, ProcessPool& procPool)
 	{

@@ -76,7 +76,7 @@ bool DUQ::setupSimulation()
 	{
 		Messenger::print("*** Configuration %2i: '%s'\n", index, cfg->name());
 
-		if (!cfg->setup(atomTypes_, pairPotentialRange_, boxNormalisationPoints_)) return false;
+		if (!cfg->setup(worldPool_, atomTypes_, pairPotentialRange_, boxNormalisationPoints_)) return false;
 	}
 
 	/* Pair Potentials */
@@ -101,7 +101,7 @@ bool DUQ::setupSimulation()
 // 		}
 // 	}
 
-	// Prepare Samples
+	/* Prepare Samples */
 	Messenger::print("\n");
 	Messenger::print("*** Preparing Samples...\n");
 	if (!setupSamples())
@@ -110,45 +110,19 @@ bool DUQ::setupSimulation()
 		return false;
 	}
 
-	// We will construct a complete list of all AtomTypes used over all Samples used in all Configuration.
-	// So, loop over Configurations and go through Isotopologues in each used Sample mixture, and set global AtomType indices in each Configuration
-	pairPotentialAtomTypeIndex_.clear();
-	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
-	{
-		// Loop over the atomtypes used in this Configuration, adding them to the master list
-		for (AtomTypeData* atd = cfg->usedAtomTypes(); atd != NULL; atd = atd->next) pairPotentialAtomTypeIndex_.add(atd->atomType(), NULL, atd->population());
-
-		// Set global AtomType indices in the Configuration
-		cfg->setGlobalAtomTypeIndices(pairPotentialAtomTypeIndex_);
-	}
-
-	Messenger::print("--> %i unique AtomTypes (disregarding isotopic substitutions) used over all configurations:\n", pairPotentialAtomTypeIndex_.nItems());
-
-	// Complain about unused AtomTypes
-	int nErrors = 0;
-	for (AtomType* at = atomTypes_.first(); at != NULL; at = at->next)
-	{
-		// If this AtomType is not in pairPotentialAtomTypeIndex_, then it is never used
-		if (pairPotentialAtomTypeIndex_.indexOf(at) == -1)
-		{
-			Messenger::error("AtomType '%s' is defined but is not present in any Configuration as it stands.\n", at->name());
-			++nErrors;
-		}
-	}
-	if (nErrors > 0) return false;
-
-	// Calculate fractional populations
-	pairPotentialAtomTypeIndex_.finalise();
-	
-	// Print AtomType information (excluding isotope information)
-	pairPotentialAtomTypeIndex_.print();
-
+	/* Finalise AtomTypes */
 	// Assign indices to atom types
-	for (AtomType* at = atomTypes_.first(); at != NULL; at = at->next) at->setIndex(pairPotentialAtomTypeIndex_.indexOf(at));
+	Messenger::print("--> Assigning indices to master AtomTypes...\n");
+	int id = 0;
+	for (AtomType* at = atomTypes_.first(); at != NULL; at = at->next) at->setIndex(id++);
+
+	// Set global AtomType indices in all Configurations
+	Messenger::print("--> Setting global AtomType indices in Configurations...\n");
+	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next) cfg->setGlobalAtomTypeIndices(atomTypes_);
 
 	// Create PairPotential matrix
-	Messenger::print("--> Creating matrix (%ix%i)...\n", pairPotentialAtomTypeIndex_.nItems(), pairPotentialAtomTypeIndex_.nItems());
-	if (!potentialMap_.initialise(pairPotentialAtomTypeIndex_, pairPotentials_, pairPotentialRange_)) return false;
+	Messenger::print("--> Creating PairPotential matrix (%ix%i)...\n", atomTypes_.nItems(), atomTypes_.nItems());
+	if (!potentialMap_.initialise(atomTypes_, pairPotentials_, pairPotentialRange_)) return false;
 
 	return true;
 }
@@ -159,18 +133,50 @@ bool DUQ::go()
 	/*
 	 * This is the main program loop. We perform the following steps:
 	 *
-	 *  1)	For all configurations, run all Evolution modules
-	 *  2)	For all configurations, run all Analysis modules
-	 *  3)	RDF calculation?
+	 *  1)	Run Modules in all Configurations according to the defined ParallelStrategy
+	 *  2)	Run Calculations in all Samples
+	 *  3)	Run any remaining global Modules
 	 */
 
-	// TEST - Calculate energy of current system, partial data, write, and quit
-	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
+	/*
+	 * Start of Main Loop
+	 */
+	int iteration = 1;
+	bool keepGoing = true;
+
+	do
 	{
-		totalEnergyTest(cfg);
-		totalEnergy(worldPool_, cfg);
-		intramolecularEnergy(worldPool_, cfg);
+		Messenger::print("\n");
+		Messenger::print("==================================\n");
+		Messenger::print("  MAIN LOOP ITERATION %10i\n", iteration);
+		Messenger::print("==================================\n");
+		Messenger::print("\n");
+
+		// Loop over Configurations, running their modules in the sequence they are defined
+		// If a process is not involved in the Configurations ProcessPool, it can move on
+		for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
+		{
+			// Check involvement of this process
+			if (!cfg->processPool().involvesMe()) continue;
+
+			// Loop over Modules defined in the Configuration
+			for (Module* module = cfg->modules(); module != NULL; module = module->next)
+			{
+// 				
+			}
+			// TEST - Calculate energy of current system, partial data, write, and quit
+			totalEnergyTest(cfg);
+			totalEnergy(worldPool_, cfg);
+			intramolecularEnergy(worldPool_, cfg);
+		}
+
+		// Sync up all processes
+		worldPool_.wait(ProcessPool::Pool);
+
+		// TEST - Exit after one iteration
+		keepGoing = false;
 	}
+	while (keepGoing);
 
 	return true;
 }

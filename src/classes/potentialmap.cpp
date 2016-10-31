@@ -52,21 +52,21 @@ void PotentialMap::clear()
  */
 
 // Initialise maps
-bool PotentialMap::initialise(const AtomTypeList& typeIndex, const List<PairPotential>& pairPotentials, double pairPotentialRange)
+bool PotentialMap::initialise(const List<AtomType>& masterAtomTypes, const List<PairPotential>& pairPotentials, double pairPotentialRange)
 {
 	// Clear old data first
 	clear();
 
 	// Create PairPotential matrix
-	nTypes_ = typeIndex.nItems();
+	nTypes_ = masterAtomTypes.nItems();
 	potentialMatrix_.initialise(nTypes_, nTypes_);
 
 	// Loop over defined PairPotentials
 	int indexI, indexJ;
 	for (PairPotential* pot = pairPotentials.first(); pot != NULL; pot = pot->next)
 	{
-		indexI = typeIndex.indexOf(pot->atomTypeI());
-		indexJ = typeIndex.indexOf(pot->atomTypeJ());
+		indexI = pot->atomTypeI()->index();
+		indexJ = pot->atomTypeJ()->index();
 		if (indexI == -1)
 		{
 			printf("INTERNAL_ERROR - Couldn't find AtomType '%s' in typeIndex.\n", pot->atomTypeI()->name());

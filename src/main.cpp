@@ -151,46 +151,30 @@ int main(int argc, char **argv)
 		return 0;
 	}
 
-	// Load input file (master only)
+	// Load input file
 	Messenger::print("Loading input file...\n");
-	if (!MPIRunMaster(dUQ.loadInput(inputFile)))
+	if (!dUQ.loadInput(inputFile))
 	{
 		Messenger::print("Error loading input file.\n");
 		ProcessPool::finalise();
 		return 1;
 	}
 
-	// Perform system setup (master only)
-	if (!MPIRunMaster(dUQ.setupSimulation()))
+	// Perform simulation setup (all processes)
+	if (!dUQ.setupSimulation())
 	{
-		Messenger::print("Failed to setup Configurations.\n");
-		ProcessPool::finalise();
-		return 1;
-	}
-
-	// Broadcast system data to all slaves
-	if (!dUQ.broadcastSetup())
-	{
-		ProcessPool::finalise();
-		return 1;
-	}
-
-	// Calculate Box normalisation for those Configurations that need it
-	if (!dUQ.calculateBoxNormalisations())
-	{
+		Messenger::print("Failed to setup simulation.\n");
 		ProcessPool::finalise();
 		return 1;
 	}
 
 	// Setup parallel comms / limits etc.
-	Messenger::print("\n");
-	Messenger::print("Setting up parallel comms...\n");
-
-	// -- Assign Atom/Grain limits to processes
-	// FROM CONFIGURATION::setup() if (!Comm.calculateLimits(nAtoms(), nGrains())) return false;
-	
-// 		// Send Cell info to Comm so suitable parallel strategy can be deduced
-// 	if (!Comm.setupStrategy(divisions_, cellExtents_, nbrs)) return false;   // TODO Move to setupComms()?
+	if (!dUQ.setupMPIPools())
+	{
+		Messenger::print("Failed to setup parallel communications.\n");
+		ProcessPool::finalise();
+		return 1;
+	}
 	
 	// Initialise random seed
 	if (dUQ.seed() == -1) srand( (unsigned)time( NULL ) );

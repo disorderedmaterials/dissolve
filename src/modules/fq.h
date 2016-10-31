@@ -31,9 +31,8 @@
 class StructureFactor : public Module
 {
 	/*
-	 * Calculates partial and full structure factors for all Samples associated to the Configuration.
+	 * Calculates partial and full structure factors for the Sample or Configuration in which the Module is placed.
 	 * Partial RDFs according to atomtype isotopes are constructed, and combined into total F(Q).
-	 * This module also handles calculation of Bragg scattering.
 	 */
 
 	public:
@@ -71,8 +70,10 @@ class StructureFactor : public Module
 	 * Method
 	 */
 	protected:
+	// Perform setup tasks for module
+	bool setup(ProcessPool& procPool);
 	// Execute method
-	bool execute(DUQ& duq);
+	bool execute(DUQ& duq, ProcessPool& procPool);
 };
 
 #endif

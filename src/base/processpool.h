@@ -108,8 +108,8 @@ class ProcessPool
 	private:
 	// Name of this pool
 	Dnchar name_;
-	// List of local processes in this pool
-	Array<int> processes_;
+	// List of world ranks in this pool
+	Array<int> worldRanks_;
 	// Local rank of this process in the pool
 	int poolRank_;
 	// List of process groups
@@ -144,12 +144,14 @@ class ProcessPool
 	int nProcesses();
 	// Return rank of this process in the pool
 	int poolRank();
-	// Return whether this process is the master for this channel
+	// Return whether this process is the master for this pool
 	bool isMaster();
-	// Return whether this process is a local slave in this channel
+	// Return whether this process is a local slave in this pool
 	bool isSlave();
-	// Setup strategy for Configuration, based on local process pool size
-	bool setupConfigurationStrategy(const Vec3<int>& divisions, const Vec3<int>& cellExtents, const List< ListVec3<int> >& neighbours);
+	// Return whether this pool involves this process
+	bool involvesMe();
+	// Setup strategy for Cells, based on local process pool size
+	bool setupCellStrategy(const Vec3<int>& divisions, const Vec3<int>& cellExtents, const List< ListVec3<int> >& neighbours);
 	// Return number of process groups
 	int nProcessGroups() const;
 	// Return number of processes in nth group
@@ -274,8 +276,10 @@ class ProcessPool
 	 * Decisions
 	 */
 	public:
-	// Broadcast logical decision to all processes (Master only)
-	void decide(bool decision);
+	// Broadcast logical decision to proceed to all processes (Master only)
+	void proceed();
+	// Broadcast logical decision to stop to all processes (Master only)
+	void stop();
 	// Receive logical decision from master (Slaves only)
 	bool decision();
 
@@ -325,7 +329,7 @@ template <class T> class BroadcastList
 {
 	public:
 	// Constructor
-	BroadcastList(ProcessPool procPool, List<T>& items, bool& result)
+	BroadcastList(ProcessPool& procPool, List<T>& items, bool& result)
 	{
 		result = false;
 		int count;
@@ -362,7 +366,7 @@ template <class T, class D> class BroadcastRefList
 {
 	public:
 	// Constructor
-	BroadcastRefList(ProcessPool procPool, RefList<T,D>& items, const List<T>& itemSource, bool& result)
+	BroadcastRefList(ProcessPool& procPool, RefList<T,D>& items, const List<T>& itemSource, bool& result)
 	{
 		result = false;
 		int nItems, index;

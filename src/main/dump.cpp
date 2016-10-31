@@ -114,11 +114,7 @@ void DUQ::dumpSystemSetup(bool includeData)
 		if (!sam->referenceDataFileName().isEmpty())
 		{
 			Messenger::print("  %s '%s'\n", Keywords::sampleKeyword(Keywords::ReferenceDataKeyword), sam->referenceDataFileName().get());
-			if (sam->referenceDataNormalisation() == Sample::AverageSquaredNormalisation) Messenger::print("  %s\n", Keywords::sampleKeyword(Keywords::NormalisedToAverageSquaredKeyword));
-			else if (sam->referenceDataNormalisation() == Sample::SquaredAverageNormalisation) Messenger::print("  %s\n", Keywords::sampleKeyword(Keywords::NormalisedToSquaredAverageKeyword));
-			if (sam->referenceSubtractSelf()) Messenger::print("  %s\n", Keywords::sampleKeyword(Keywords::SubtractSelfKeyword));
 		}
-		Messenger::print("  %s  %f  %f\n", Keywords::sampleKeyword(Keywords::BroadeningKeyword), sam->qDependentFWHM(), sam->qIndependentFWHM());
 		Messenger::print("%s\n\n", Keywords::sampleKeyword(Keywords::EndSampleKeyword));
 	}
 
@@ -139,14 +135,6 @@ void DUQ::dumpSystemSetup(bool includeData)
 		{
 			Species* sp = ri->item;
 			Messenger::print("  %s  '%s'  %f\n", Keywords::configurationKeyword(Keywords::SpeciesAddKeyword), sp->name(), ri->data);
-		}
-
-		// Reference Data (Samples)
-		Messenger::print("\n  # Reference Sample Data\n");
-		if (!cfg->referenceSamples()) Messenger::print("  # -- None\n");
-		for (Sample* sam = cfg->referenceSamples(); sam != NULL; sam = sam->next)
-		{
-			Messenger::print("  %s  '%s'\n", Keywords::configurationKeyword(Keywords::SampleAddKeyword), sam->name());
 		}
 
 		// Modules
@@ -175,11 +163,7 @@ void DUQ::dumpSystemSetup(bool includeData)
 
 		Messenger::print("\n");
 		Messenger::print("  %s  '%s'\n", Keywords::configurationKeyword(Keywords::BoxNormalisationFileKeyword), cfg->boxNormalisationFileName());
-		Messenger::print("  %s  %s\n", Keywords::configurationKeyword(Keywords::BraggKeyword), cfg->braggCalculationOn() ? "on" : "off");
-		Messenger::print("  %s  %f\n", Keywords::configurationKeyword(Keywords::BraggBroadeningKeyword), cfg->braggBroadening());
 		Messenger::print("  %s  %f\n", Keywords::configurationKeyword(Keywords::BraggMaximumQKeyword), cfg->braggMaximumQ());
-		Messenger::print("  %s  %f\n", Keywords::configurationKeyword(Keywords::QDeltaKeyword), cfg->qDelta());
-		Messenger::print("  %s  %f\n", Keywords::configurationKeyword(Keywords::QMaxKeyword), cfg->qMax());
 		Messenger::print("  %s  %f\n", Keywords::configurationKeyword(Keywords::RDFBinWidthKeyword), cfg->rdfBinWidth());
 		Messenger::print("  %s  %f\n", Keywords::configurationKeyword(Keywords::RDFRangeKeyword), cfg->rdfRange());
 		Messenger::print("  %s  %i\n", Keywords::configurationKeyword(Keywords::RDFSmoothingKeyword), cfg->rdfSmoothing());

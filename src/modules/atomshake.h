@@ -70,7 +70,7 @@ class AtomShake : public Module
 	 */
 	protected:
 	// Perform setup tasks for module
-	bool setup();
+	bool setup(ProcessPool& procPool);
 	// Execute method
 	bool execute(DUQ& duq, ProcessPool& procPool);
 };

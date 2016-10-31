@@ -28,8 +28,7 @@
 KeywordData SampleBlockData[] = {
 	{ "EndSample",			0,	"" },
 	{ "Isotopologue",		3,	"" },
-	{ "ReferenceData",		1,	"" },
-	{ "Type",			1,	"" }
+	{ "ReferenceData",		1,	"" }
 };
 
 // Convert text string to SampleKeyword
@@ -57,14 +56,13 @@ bool Keywords::parseSampleBlock(LineParser& parser, DUQ* duq, Sample* sample)
 	Messenger::print("Parsing %s '%s'\n", Keywords::inputBlock(Keywords::SampleBlock), sample->name());
 
 	Species* sp;
-	Sample::SampleType sampleType;
 	Isotopologue* iso;
 	bool blockDone = false, error = false;
 
-	while (!parser.eofOrBlank())
+	while (!parser.eofOrBlank(duq->worldPool()))
 	{
 		// Read in a line, which should contain a keyword and a minimum number of arguments
-		parser.getArgsDelim(LineParser::SkipBlanks+LineParser::UseQuotes);
+		parser.getArgsDelim(duq->worldPool(), LineParser::SkipBlanks+LineParser::UseQuotes);
 		Keywords::SampleKeyword samKeyword = Keywords::sampleKeyword(parser.argc(0));
 		if ((samKeyword != Keywords::nSampleKeywords) && ((parser.nArgs()-1) < Keywords::sampleBlockNArguments(samKeyword)))
 		{
@@ -74,19 +72,9 @@ bool Keywords::parseSampleBlock(LineParser& parser, DUQ* duq, Sample* sample)
 		}
 		switch (samKeyword)
 		{
-			case (Keywords::BroadeningKeyword):
-				sample->setQDependentFWHM(parser.argd(1));
-				sample->setQIndependentFWHM(parser.argd(2));
-				break;
 			case (Keywords::EndSampleKeyword):
 				Messenger::print("Found end of %s block '%s'.\n", Keywords::inputBlock(Keywords::SampleBlock), sample->name());
 				blockDone = true;
-				break;
-			case (Keywords::FitMaxKeyword):
-				sample->setReferenceFitMax(parser.argd(1));
-				break;
-			case (Keywords::FitMinKeyword):
-				sample->setReferenceFitMin(parser.argd(1));
 				break;
 			case (Keywords::IsotopologueSampleKeyword):
 				// Locate Species first...
@@ -111,40 +99,12 @@ bool Keywords::parseSampleBlock(LineParser& parser, DUQ* duq, Sample* sample)
 				if (!sample->addIsotopologueToMixture(sp, iso, parser.argd(3))) error = true;
 				else Messenger::print("--> Added Isotopologue '%s' (Species '%s') to Sample '%s' (%f relative population).\n", iso->name(), sp->name(), sample->name(), parser.argd(3));
 				break;
-			case (Keywords::NormalisedToAverageSquaredKeyword):
-				if (sample->referenceDataNormalisation() != Sample::NoNormalisation)
-				{
-					Messenger::error("Normalisation has already been set for Sample '%s'.\n", sample->name());
-					error = true;
-				}
-				else sample->setReferenceDataNormalisation(Sample::AverageSquaredNormalisation);
-				break;
-			case (Keywords::NormalisedToSquaredAverageKeyword):
-				if (sample->referenceDataNormalisation() != Sample::NoNormalisation)
-				{
-					Messenger::error("Normalisation has already been set for Sample '%s'.\n", sample->name());
-					error = true;
-				}
-				else sample->setReferenceDataNormalisation(Sample::SquaredAverageNormalisation);
-				break;
 			case (Keywords::ReferenceDataKeyword):
 				if (!sample->loadReferenceData(parser.argc(1)))
 				{
 					error = true;
 					break;
 				}
-				break;
-			case (Keywords::SubtractSelfKeyword):
-				sample->setReferenceSubtractSelf(true);
-				break;
-			case (Keywords::SampleTypeKeyword):
-				sampleType = Sample::sampleType(parser.argc(1));
-				if (sampleType == Sample::nSampleTypes)
-				{
-					Messenger::error("Invalid Sample type provided - '%s'.\n", parser.argc(1));
-					error = true;
-				}
-				else sample->setType(sampleType);
 				break;
 			case (Keywords::nSampleKeywords):
 				Messenger::error("Unrecognised %s block keyword found - '%s'\n", Keywords::inputBlock(Keywords::SampleBlock), parser.argc(0));

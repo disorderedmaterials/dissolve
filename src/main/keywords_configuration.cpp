@@ -28,8 +28,6 @@
 // Configuration Block Keywords
 KeywordData ConfigurationBlockData[] = {
 	{ "BoxNormalisationFile", 	1,	"" },
-	{ "Bragg", 			1, 	"" },
-	{ "BraggBroadening", 		1,	"" },
 	{ "BraggMaximumQ",		1,	"" },
 	{ "CellAngles", 		3,	"" },
 	{ "CellLengths",		3,	"" },
@@ -39,13 +37,10 @@ KeywordData ConfigurationBlockData[] = {
 	{ "Module",			1,	"" },
 	{ "Multiplier",			1,	"" },
 	{ "NonPeriodic",		0,	"" },
-	{ "QDelta",			1,	"" },
-	{ "QMax",			1,	"" },
 	{ "RDFBinWidth",		1,	"" },
 	{ "RDFRange",			1,	"" },
 	{ "RDFSmoothing",		1,	"" },
 	{ "RMSEDeltaQ",			1,	"" },
-	{ "Sample",			1,	"" },
 	{ "Species",			2,	"" },
 	{ "Temperature",		1,	"" }
 };
@@ -79,10 +74,10 @@ bool Keywords::parseConfigurationBlock(LineParser& parser, DUQ* duq, Configurati
 	Module* module;
 	bool blockDone = false, error = false;
 
-	while (!parser.eofOrBlank())
+	while (!parser.eofOrBlank(duq->worldPool()))
 	{
 		// Read in a line, which should contain a keyword and a minimum number of arguments
-		parser.getArgsDelim(LineParser::SkipBlanks+LineParser::UseQuotes);
+		parser.getArgsDelim(duq->worldPool(), LineParser::SkipBlanks+LineParser::UseQuotes);
 		Keywords::ConfigurationKeyword conKeyword = Keywords::configurationKeyword(parser.argc(0));
 		if ((conKeyword != Keywords::nConfigurationKeywords) && ((parser.nArgs()-1) < Keywords::configurationBlockNArguments(conKeyword)))
 		{
@@ -94,12 +89,6 @@ bool Keywords::parseConfigurationBlock(LineParser& parser, DUQ* duq, Configurati
 		{
 			case (Keywords::BoxNormalisationFileKeyword):
 				cfg->setBoxNormalisationFile(parser.argc(1));
-				break;
-			case (Keywords::BraggKeyword):
-				cfg->setBraggCalculationOn(parser.argb(1));
-				break;
-			case (Keywords::BraggBroadeningKeyword):
-				cfg->setBraggBroadening(parser.argd(1));
 				break;
 			case (Keywords::BraggMaximumQKeyword):
 				cfg->setBraggMaximumQ(parser.argd(1));
@@ -159,12 +148,6 @@ bool Keywords::parseConfigurationBlock(LineParser& parser, DUQ* duq, Configurati
 				cfg->setNonPeriodic(true);
 				Messenger::print("--> Flag set for a non-periodic calculation.\n");
 				break;
-			case (Keywords::QDeltaKeyword):
-				cfg->setQDelta(parser.argd(1));
-				break;
-			case (Keywords::QMaxKeyword):
-				cfg->setQMax(parser.argd(1));
-				break;
 			case (Keywords::RDFBinWidthKeyword):
 				cfg->setRDFBinWidth(parser.argd(1));
 				break;
@@ -173,24 +156,6 @@ bool Keywords::parseConfigurationBlock(LineParser& parser, DUQ* duq, Configurati
 				break;
 			case (Keywords::RDFSmoothingKeyword):
 				cfg->setRDFSmoothing(parser.argi(1));
-				break;
-			case (Keywords::SampleAddKeyword):
-				sam = duq->findSample(parser.argc(1));
-				if (sam == NULL)
-				{
-					Messenger::error("Configuration refers to Sample '%s', but no such Sample is defined.\n", parser.argc(1));
-					error = true;
-				}
-				else
-				{
-					// Add this species to the list of those used by the Configuration
-					if (!cfg->addReferenceSample(sam))
-					{
-						Messenger::error("Configuration already references Sample '%s' - cannot add it a second time.\n", sam->name());
-						error = true;
-					}
-					else Messenger::print("--> Added Sample '%s' as calculation target for Configuration.\n", sam->name());
-				}
 				break;
 			case (Keywords::SpeciesAddKeyword):
 				sp = duq->findSpecies(parser.argc(1));

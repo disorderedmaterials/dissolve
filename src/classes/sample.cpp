@@ -21,6 +21,7 @@
 
 #include "classes/sample.h"
 #include "classes/species.h"
+#include "classes/atomtype.h"
 #include "base/processpool.h"
 #include "base/sysfunc.h"
 #include <string.h>
@@ -48,7 +49,7 @@ void Sample::operator=(const Sample& source)
 	isotopologueMixtures_ = source.isotopologueMixtures_;
 
 	// RDF / S(Q) Data
-	typeIndex_ = source.typeIndex_;
+	atomTypes_ = source.atomTypes_;
 
 	// Reference Data
 	hasReferenceData_ = source.hasReferenceData_;
@@ -188,20 +189,19 @@ void Sample::assignDefaultIsotopes()
 }
 
 // Create type list
-bool Sample::createTypeList(const RefList<Species,double>& allSpecies, const AtomTypeList& masterIndex)
+bool Sample::createTypeList(const List<Species>& allSpecies, const List<AtomType>& masterIndex)
 {
 	// Loop over Samples and go through Isotopologues in each mixture
-	typeIndex_.clear();
+	atomTypes_.clear();
 	Isotope* iso;
-	AtomTypeData* at1;
 
 	Messenger::print("--> Generating AtomType/Isotope index...\n");
 	// Simultaneous loop over defined Species and IsotopologueMixtures (which are directly related)
-	RefListItem<Species,double>* refSp = allSpecies.first();
+	Species* refSp = allSpecies.first();
 	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next, refSp = refSp->next)
 	{
 		// Sanity check
-		if (mix->species() != refSp->item)
+		if (mix->species() != refSp)
 		{
 			Messenger::error("Species referred to in mixture in Sample '%s' does not correspond to that in the main Species list.\n", mix->species()->name());
 			return false;
@@ -211,32 +211,32 @@ bool Sample::createTypeList(const RefList<Species,double>& allSpecies, const Ato
 		for (RefListItem<Isotopologue,double>* tope = mix->isotopologues(); tope != NULL; tope = tope->next)
 		{
 			// Loop over Atoms in the Species, searching for the AtomType/Isotope entry in the isotopes list of the Isotopologue
-			for (SpeciesAtom* i = refSp->item->atoms(); i != NULL; i = i->next)
+			for (SpeciesAtom* i = refSp->atoms(); i != NULL; i = i->next)
 			{
 				iso = tope->item->atomTypeIsotope(i->atomType());
-				typeIndex_.add(i->atomType(), iso);
+				atomTypes_.add(i->atomType(), iso);
 			}
 		}
 	}
 
 	// Calculate fractional populations
-	typeIndex_.finalise();
+	atomTypes_.finalise();
 
 	// Set master type indices
-	for (at1 = typeIndex_.first(); at1 != NULL; at1 = at1->next)
+	for (AtomTypeData* atd = atomTypes_.first(); atd != NULL; atd = atd->next)
 	{
 		// Find entry in the master index which contains the AtomType of 'at1'
-		int id = masterIndex.indexOf(at1->atomType());
+		int id = masterIndex.indexOf(atd->atomType());
 		if (id < 0)
 		{
-			Messenger::print("INTERNAL_ERROR - Couldn't find entry for first AtomType '%s' in masterIndex.\n", at1->name());
+			Messenger::print("INTERNAL_ERROR - Couldn't find entry for first AtomType '%s' in masterIndex.\n", atd->name());
 			return false;
 		}
-		at1->setMasterIndex(id);
+		atd->setMasterIndex(id);
 	}
 
 	// Print AtomType populations (including isotopes)
-	typeIndex_.print();
+	atomTypes_.print();
 
 	return true;
 }

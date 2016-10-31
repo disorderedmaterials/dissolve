@@ -117,7 +117,7 @@ class Configuration : public ListItem<Configuration>, public VariableList
 	// Clear all data
 	void clear();
 	// Setup configuration
-	bool setup(const List<AtomType>& atomTypes, double pairPotentialRange, int boxNormalisationNPoints);
+	bool setup(ProcessPool& procPool, const List< AtomType >& atomTypes, double pairPotentialRange, int boxNormalisationNPoints);
 
 
 	/*
@@ -169,7 +169,7 @@ class Configuration : public ListItem<Configuration>, public VariableList
 	// Return first AtomTypeData for this configuration
 	AtomTypeData* usedAtomTypes();
 	// Set global AtomType indices in Atoms from the map provided
-	bool setGlobalAtomTypeIndices(const AtomTypeList& masterIndex);
+	bool setGlobalAtomTypeIndices(const List<AtomType>& masterList);
 	// Return current coordinate index
 	int coordinateIndex();
 	// Increment current coordinate index
@@ -200,6 +200,8 @@ class Configuration : public ListItem<Configuration>, public VariableList
 	Vec3<double> realCellSize_;
 	// Cell extents out from given central cell
 	Vec3<int> cellExtents_;
+	// List of Cell neighbour indices
+	List< ListVec3<int> > cellNeighbourIndices_;
 	// Total number of Cells in Box
 	int nCells_;
 	// Cell array (one-dimensional)
@@ -423,8 +425,8 @@ class Configuration : public ListItem<Configuration>, public VariableList
 	ProcessPool processPool_;
 
 	public:
-	// Set process pool for this Configuration
-	void setProcessPool(ProcessPool processPool);
+	// Setup process pool for this Configuration
+		bool setupProcessPool(Array< int > worldRanks);
 	// Return process pool for this Configuration
 	ProcessPool& processPool();
 	// Broadcast data

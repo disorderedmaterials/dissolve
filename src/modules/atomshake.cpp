@@ -92,6 +92,12 @@ Module::InstanceType AtomShake::instanceType()
  * Method
  */
 
+// Perform setup tasks for module
+bool AtomShake::setup(ProcessPool& procPool)
+{
+	return true;
+}
+
 // Execute Method
 bool AtomShake::execute(DUQ& duq, ProcessPool& procPool)
 {

@@ -37,21 +37,13 @@ EndSpecies
 Sample 'NIMROD-Protiated'
   # Define the isotopologues of any species relevant to this dataset
   Isotopologue  'Water'  'Natural'  1.000000  1.000000
-  # Type of data (e.g. neutron-weighted S(Q), neutron-weighted g(r), x-ray etc.
-  Type  NeutronFQ
   # Provide reference data if available / required
   #ReferenceData 'test/water/H2O.mint01'
-  # Minimum and maximum fit values along abscissa
-  FitMin  1.5
-  FitMax  30.0
 EndSample
 
 Sample 'NIMROD-Deuteriated'
   Isotopologue  'Water'  'Deuteriated'  1.000000  1.000000
   ReferenceData 'test/water/D2O.mint01'
-  Type  NeutronFQ
-  FitMin  1.5
-  FitMax  30.0
 EndSample
 
 # Define Configuration(s)
@@ -70,13 +62,7 @@ Configuration  'Bulk'
   Species 'Water'  1.0
 
   # Define initial coordinates file XXX OR ALLOW RANDOM GENERATION XXX
-  #File '/home/tris/work/water/epsr/waterbox.xyz'
-
-  # Specify which reference data are associated with this configuration
-  # XXX Could also options of whether to fit or just calculate, weightings etc.
-  Sample 'NIMROD-Protiated'
-  Sample 'NIMROD-Deuteriated'
-  # Sample 'I Dont Exist'
+  File '/home/tris/work/water/epsr/waterbox.xyz'
 
   # Enable modules and set associated variables
   Module AtomShake

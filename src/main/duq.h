@@ -227,8 +227,6 @@ class DUQ
 	Configuration* addConfiguration();
 	// Find configuration by name
 	Configuration* findConfiguration(const char* name) const;
-	// Calculate Box normalisations
-	bool calculateBoxNormalisations();
 
 
 	/*
@@ -336,13 +334,17 @@ class DUQ
 	/*
 	 * Parallel Comms
 	 */
+	public:
+	// Parallel Strategy
+	enum ParallelStrategy { SequentialConfigStrategy };
+
 	private:
+	// Parallel strategy for Configuration work
+	ParallelStrategy parallelStrategy_;
 	// Pool containing all available processes
 	ProcessPool worldPool_;
 
 	public:
-	// Setup world parallelism
-	void setupWorldPool();
 	// Return world process pool
 	ProcessPool& worldPool();
 	// Setup local MPI pools

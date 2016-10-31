@@ -34,6 +34,7 @@ using namespace std;
 
 // Forward Declarations
 class Format;
+class ProcessPool;
 
 // Line Parser
 class LineParser
@@ -169,6 +170,16 @@ class LineParser
 	bool writeLineF(const char* fmt, ...) const;
 	// Commit cached output stream to actual output file
 	bool commitCache();
+
+
+	/*
+	 * Parallel Read/Write Routines
+	 */
+	public:
+	// Return whether the end of the input stream has been reached (or only whitespace remains)
+	bool eofOrBlank(ProcessPool& worldPool) const;
+	// Read line from file and do delimited parse
+	int getArgsDelim(ProcessPool& worldPool, int optionMask);
 
 
 	/*

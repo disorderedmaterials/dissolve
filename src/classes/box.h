@@ -145,7 +145,7 @@ class Box
 	// Return radius of largest possible inscribed sphere for box
 	double inscribedSphereRadius() const;
 	// Calculate the RDF normalisation for the Box
-	bool calculateRDFNormalisation(Data2D& boxNorm, double rdfRange, double rdfBinWidth, int nPoints, ProcessPool& procPool) const;
+	bool calculateRDFNormalisation( ProcessPool& procPool, Data2D& boxNorm, double rdfRange, double rdfBinWidth, int nPoints) const;
 
 
 	/*

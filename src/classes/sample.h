@@ -80,11 +80,11 @@ class Sample : public ListItem<Sample>
 	// Assign default (first) Isotopologues for all Species
 	void assignDefaultIsotopes();
 	// Type list for this Sample
-	AtomTypeList typeIndex_;
+	AtomTypeList atomTypes_;
 
 	public:
 	// Create type list
-	bool createTypeList(const RefList<Species,double>& species, const AtomTypeList& masterIndex);
+	bool createTypeList(const List<Species>& allSpecies, const List<AtomType>& masterIndex);
 
 
 	/*

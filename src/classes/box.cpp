@@ -204,7 +204,7 @@ double Box::inscribedSphereRadius() const
 }
 
 // Calculate the RDF normalisation for the Box
-bool Box::calculateRDFNormalisation(Data2D& boxNorm, double rdfRange, double rdfBinWidth, int nPoints, ProcessPool& procPool) const
+bool Box::calculateRDFNormalisation(ProcessPool& procPool, Data2D& boxNorm, double rdfRange, double rdfBinWidth, int nPoints) const
 {
 	// Setup array - we will use a nominal bin width of 0.1 Angstroms and then interpolate to the rdfBinWidth afterwards
 	const double binWidth = 0.1;
@@ -217,7 +217,7 @@ bool Box::calculateRDFNormalisation(Data2D& boxNorm, double rdfRange, double rdf
 	
 	Vec3<double> centre = axes_*Vec3<double>(0.5,0.5,0.5);
 
-	// Insert enough points to give decent statistics - approx. 50,000,000
+	// Divide points over processes
 	const int nPointsPerProcess = nPoints / procPool.nProcesses();
 	Messenger::print("--> Number of insertion points (per process) is %i\n", nPointsPerProcess);
 	y = 0.0;

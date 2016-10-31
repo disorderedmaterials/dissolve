@@ -199,7 +199,7 @@ void Configuration::clear()
 }
 
 // Setup configuration
-bool Configuration::setup(const List<AtomType>& atomTypes, double pairPotentialRange, int boxNormalisationNPoints)
+bool Configuration::setup(ProcessPool& procPool, const List<AtomType>& atomTypes, double pairPotentialRange, int boxNormalisationNPoints)
 {
 	/*
 	 * Order of business:
@@ -208,6 +208,7 @@ bool Configuration::setup(const List<AtomType>& atomTypes, double pairPotentialR
 	 * 3) Add a periodic box (since we now know the total number of atoms in the system, and hence can work out the number density)
  	 * 4) Check RDF range
 	 * 5) Create atom/grain arrays
+	 * 6) Calculate/load Box normalisation if necessary
 	 */
 
 	// Check Configuration multiplier
@@ -315,6 +316,46 @@ bool Configuration::setup(const List<AtomType>& atomTypes, double pairPotentialR
 	// Initialise cell atom neighbour lists
 	recreateCellAtomNeighbourLists(pairPotentialRange);
 
+	// Create/load Box normalisation array
+	if (!boxNormalisationFileName_.isEmpty())
+	{
+		// Master will open file and attempt to read it...
+		bool loadResult;
+		if (procPool.isMaster()) loadResult = boxNormalisation_.load(boxNormalisationFileName_);
+		if (!procPool.broadcast(&loadResult, 1)) return false;
+
+		// Did we successfully load the file?
+		if (loadResult)
+		{
+			Messenger::print("--> Successfully loaded box normalisation data from file '%s'.\n", boxNormalisationFileName_.get());
+			if (!boxNormalisation_.broadcast(procPool)) return false;
+		}
+		else Messenger::print("--> Couldn't load Box normalisation data - it will be calculated.\n");
+	}
+	if (boxNormalisation_.nPoints() <= 1)
+	{
+		// Only calculate if RDF range is greater than the inscribed sphere radius
+		if (rdfRange_ <= inscribedSphereRadius)
+		{
+			Messenger::print("--> No need to calculate Box normalisation array since rdfRange is within periodic range.\n");
+			boxNormalisation_.clear();
+			double x = rdfBinWidth_*0.5;
+			while (x < rdfRange_)
+			{
+				boxNormalisation_.addPoint(x, 1.0);
+				x += rdfBinWidth_;
+			}
+		}
+		else
+		{
+			Messenger::print("--> Calculating box normalisation array for RDFs...\n");
+			if (!box()->calculateRDFNormalisation(procPool, boxNormalisation_, rdfRange_, rdfBinWidth_, boxNormalisationNPoints)) return false;
+		}
+	}
+
+	// Interpolate the Box normalisation array
+	boxNormalisation_.interpolate();
+	
 	return true;
 }
 
@@ -322,10 +363,17 @@ bool Configuration::setup(const List<AtomType>& atomTypes, double pairPotentialR
  * Parallel Comms
  */
 
-// Set process pool for this Configuration
-void Configuration::setProcessPool(ProcessPool processPool)
+// Setup process pool for this Configuration
+bool Configuration::setupProcessPool(Array<int> worldRanks)
 {
-	processPool_ = processPool;
+	// Create pool
+	processPool_.setup(name_, worldRanks);
+
+	// Assign Atom/Grain limits to processes
+	if (!processPool_.calculateLimits(nAtoms(), nGrains())) return false;
+	
+	// Send Cell info to Comm so suitable parallel strategy over cells can be deduced
+	if (!processPool_.setupCellStrategy(divisions_, cellExtents_, cellNeighbourIndices_)) return false;
 }
 
 // Return process pool for this Configuration

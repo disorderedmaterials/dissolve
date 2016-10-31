@@ -42,6 +42,30 @@ ProcessPool& DUQ::worldPool()
 	return worldPool_;
 }
 
+// Setup communications
+bool DUQ::setupMPIPools()
+{
+	Messenger::print("\n");
+	Messenger::print("*** Setting up MPI pools...\n");
+
+	// Get relative atom counts between each configuration
+	Array<int> configSizes;
+	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next) configSizes.add(cfg->nAtoms());
+// 	configSizes /= configSizes.min();
+
+	// Setup pools based on selected strategy
+	if (parallelStrategy_ == DUQ::SequentialConfigStrategy)
+	{
+		// Simple, sequential strategy - all processes assigned to all Configurations
+		Array<int> processes;
+		for (int n=0; n<ProcessPool::nWorldProcesses(); ++n) processes.add(n);
+
+		for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next) if (!cfg->setupProcessPool(processes)) return false;
+	}
+
+	return true;
+}
+
 // Broadcast system setup data
 bool DUQ::broadcastSetup()
 {
