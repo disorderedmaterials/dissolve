@@ -245,11 +245,17 @@ const char* DUQSys::ftoa(double f)
 }
 
 // Convert the real number 'f' to a string representation with supplied format
-const char* DUQSys::ftoa(double f,const char* fmt)
+const char* DUQSys::ftoa(double f, const char* fmt)
 {
 	static Dnchar result;
 	result.sprintf(fmt,f);
 	return result;
+}
+
+bool DUQSys::atob(const char* s)
+{
+	if (sameString(s, "true") || sameString(s, "on")) return true;
+	return false;
 }
 
 // Strip trailing whitespace from string

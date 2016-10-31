@@ -37,7 +37,7 @@ class Variable : public ListItem<Variable>
 	// Destructor
 	~Variable();
 	// Variable Type
-	enum VariableType { IntegerType, DoubleType, StringType };
+	enum VariableType { BooleanType, IntegerType, DoubleType, StringType };
 
 
 	/*
@@ -48,19 +48,24 @@ class Variable : public ListItem<Variable>
 	Dnchar name_;
 	// Type of variable
 	VariableType type_;
-	// Integer value of variable (if integer type)
+	// Description
+	Dnchar description_;
 
 	public:
+	// Setup variable (bool)
+	void setup(const char* name, bool defaultValue, const char* description);
 	// Setup variable (int)
-	void setup(const char* name, int defaultValue);
+	void setup(const char* name, int defaultValue, const char* description);
 	// Setup variable (double)
-	void setup(const char* name, double defaultValue);
+	void setup(const char* name, double defaultValue, const char* description);
 	// Setup variable (string)
-	void setup(const char* name, const char* defaultValue);
+	void setup(const char* name, const char* defaultValue, const char* description);
 	// Return name of variable
 	const char* name();
 	// Return type of variable
 	VariableType type();
+	// Return description
+	const char* description();
 
 
 	/*
@@ -69,6 +74,8 @@ class Variable : public ListItem<Variable>
 	private:
 	// Temporary working string
 	Dnchar conversionStringTemp_;
+	// Value (bool)
+	bool valueB_;
 	// Value (integer)
 	int valueI_;
 	// Value (double)
@@ -77,12 +84,16 @@ class Variable : public ListItem<Variable>
 	Dnchar valueC_;
 
 	public:
+	// Set variable value (bool)
+	bool set(bool value);
 	// Set variable value (int)
 	bool set(int value);
 	// Set variable value (double)
 	bool set(double value);
 	// Set variable value (string)
 	bool set(const char* value);
+	// Return variable (as bool)
+	bool asBool();
 	// Return variable (as int)
 	int asInt();
 	// Return variable (as double)

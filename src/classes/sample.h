@@ -43,12 +43,6 @@ class Sample : public ListItem<Sample>
 	Sample(const Sample& source);
 	// Assignment Operator
 	void operator=(const Sample& source);
-	// Sample Types
-	enum SampleType { NeutronFQ, nSampleTypes };
-	// Convert text string to InputBlock
-	static SampleType sampleType(const char* s);
-	// Convert InputBlock to text string
-	static const char* sampleType(SampleType st);
 
 
 	/*
@@ -57,18 +51,12 @@ class Sample : public ListItem<Sample>
 	private:
 	// Descriptive name
 	Dnchar name_;
-	// Data type
-	SampleType type_;
 	
 	public:
 	// Set name of Sample
 	void setName(const char* name);
 	// Return name of Sample
 	const char* name() const;
-	// Set data type
-	void setType(SampleType type);
-	// Return data type
-	SampleType type();
 	
 	
 	/*
@@ -116,7 +104,7 @@ class Sample : public ListItem<Sample>
 
 	public:
 	// Create type index and RDF / S(Q) storage
-	bool createTypeIndex(const RefList<Species,double>& species, int multiplier, int nExpectedAtoms, const AtomTypeIndex& masterIndex);
+	bool createTypeIndex(const RefList<Species,double>& species, const AtomTypeIndex& masterIndex);
 	// Return <b>**2
 	double boundCoherentAverageSquared();
 	// Return <b**2>
@@ -147,20 +135,12 @@ class Sample : public ListItem<Sample>
 	private:
 	// Whether reference data exists
 	bool hasReferenceData_;
-	// Filename of reference F(Q) (if present)
+	// Filename of reference data (if present)
 	Dnchar referenceDataFileName_;
 	// Reference data
 	Data2D referenceData_;
-	// Whether self-scattering should be subtracted (and is necessary)
-	bool referenceDataSubtractSelf_;
-	// Fourier transform of reference data
-	Data2D referenceDataFT_;
-	// Minimum abscissa limit for empirical fitting
-	double referenceFitMin_;
-	// Maximum abscissa limit for empirical fitting
-	double referenceFitMax_;
-	// Difference between reference and calculated data
-	Data2D differenceData_;
+	// Calculated data
+	Data2D calculatedData_;
 
 	public:
 	// Return whether reference data exists
@@ -171,24 +151,8 @@ class Sample : public ListItem<Sample>
 	Dnchar& referenceDataFileName();
 	// Return reference data
 	Data2D& referenceData();
-	// Set reference data self-scattering subtraction flag
-	void setReferenceSubtractSelf(bool b);
-	// Return whether reference data should have self-scattering subtracted
-	bool referenceSubtractSelf();
-	// Set minimum abscissa for empirical fitting
-	void setReferenceFitMin(double value);
-	// Return minimum abscissa value for fitting
-	double referenceFitMin();
-	// Set maximum abscissa for empirical fitting
-	void setReferenceFitMax(double value);
-	// Return maximum abscissa for empirical fitting
-	double referenceFitMax();
-	// Return difference data
-	Data2D& differenceData();
-	// Finalise reference data
-	bool finaliseReferenceData();
-	// Calculate RMSE error between calculated and reference data
-	double referenceRMSE(double deltaQ);
+	// Return calculated data
+	Data2D& calculatedData();
 
 
 	/*

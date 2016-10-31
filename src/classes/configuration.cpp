@@ -280,15 +280,6 @@ bool Configuration::setup(const List<AtomType>& atomTypes, double pairPotentialR
 	// Initialise cell atom neighbour lists
 	recreateCellAtomNeighbourLists(pairPotentialRange);
 
-	// Prepare Samples
-	Messenger::print("\n");
-	Messenger::print("Preparing Samples...\n");
-	if (!setupReferenceSamples())
-	{
-		Messenger::error("Failed to setup reference Samples.\n");
-		return false;
-	}
-
 	return true;
 }
 

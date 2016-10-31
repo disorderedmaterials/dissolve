@@ -42,10 +42,11 @@ StructureFactor::StructureFactor() : Module()
 	setVariable("Bragg", "off");
 	setVariable("BraggQDepBroadening", 0.0063);
 	setVariable("BraggQIndepBroadening", 0.0);
-	setVariable("QDepBroadening", 0.02); // FWHM of Gaussian for Q-dependent instrument broadening function (if required)
-	setVariable("QIndepepBroadening", 0.0); // FWHM of Gaussian for Q-independent instrument broadening function (if required)
-	setVariable("NormalisedToAvSq", false);
-	setVariable("NormalisedToSqAv", false);
+	setVariable("QDepBroadening", 0.02, "FWHM of Gaussian for Q-dependent instrument broadening function (if required)");
+	setVariable("QIndepepBroadening", 0.0, "FWHM of Gaussian for Q-independent instrument broadening function (if required)");
+	setVariable("NormalisedToAvSq", false, "States that the reference F(Q) has been normalised to < b >**2");
+	setVariable("NormalisedToSqAv", false, "States that the reference F(Q) has been normalised to < b**2 >");
+	setVariable("SubtractSelf", false, "States that the self scattering (determined from the high-Q average) should be subtracted from the reference data");
 }	
 	
 // Destructor
@@ -113,7 +114,7 @@ bool StructureFactor::execute(DUQ& duq, ProcessPool& procPool)
 	// Retrieve control parameters from Configuration
 	const double cutoffDistance = variableAsDouble("cutoffDistance") < 0.0 ? duq.pairPotentialRange() : variableAsDouble("cutoffDistance");
 	const int nShakesPerAtom = variableAsInt("nShakesPerAtom");
-	const double targetAcceptanceRate = variableAsDouble("targetAcceptanceRate");
+	const bool braggOn = variableAsBool("Bragg");
 	double stepSize = variableAsDouble("stepSize");
 	const double termScale = 1.0;
 	const double rRT = 1.0/(.008314472*cfg->temperature());
@@ -126,6 +127,19 @@ bool StructureFactor::execute(DUQ& duq, ProcessPool& procPool)
 	// If there is a Sample target, then we calculate the weighted structure factors for it (using the supplied Configurations)
 	// Otherwise takt eh Configuration target and calculate unweighted structure factors for it.
 
+// From Sample::finaliseReferenceData(). => Should be 'Add Self SCattering, since we're trying to reproduce the reference data.
+		// Subtract self-scattering background, calculated from high-Q region
+// 	if (referenceDataSubtractSelf_)
+// 	{
+// 		Messenger::print("--> Subtracting self-scattering background from reference data...\n");
+// 		double highQLevel = 0.0;
+// 		// Take last 50% of points to calculate average
+// 		for (int n=referenceData_.nPoints()*0.5; n<referenceData_.nPoints(); ++n) highQLevel += referenceData_.y(n);
+// 		highQLevel /= (referenceData_.nPoints()*0.5);
+// 		Messenger::print("--> High-Q average level is %f.\n", highQLevel);
+// 		referenceData_.arrayY() -= highQLevel;
+// 	}
+// 	
 // From Sample::finaliseReferenceData().	
 // 		// Is data normalised?
 // 	if (referenceDataNormalisation_ == Sample::AverageSquaredNormalisation)

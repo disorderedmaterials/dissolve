@@ -44,8 +44,26 @@ Variable* VariableList::variables()
 	return variables_.first();
 }
 
+// Add/set variable (bool)
+void VariableList::setVariable(const char* name, bool value, const char* description)
+{
+	// Does the variable already exist?
+	Variable* var  = variable(name);
+	if (!var)
+	{
+		Messenger::printVerbose("Added new boolean variable '%s' with value '%s'.\n", name, value ? "True" : "False");
+		var = variables_.add();
+		var->setup(name, value, description);
+	}
+	else
+	{
+		Messenger::printVerbose("Set existing boolean variable '%s' to value '%s' (previous value was '%s').\n", name, value ? "True" : "False", var->asBool() ? "True" : "False");
+		var->set(value);
+	}
+}
+
 // Add/set variable (int)
-void VariableList::setVariable(const char* name, int value)
+void VariableList::setVariable(const char* name, int value, const char* description)
 {
 	// Does the variable already exist?
 	Variable* var  = variable(name);
@@ -53,7 +71,7 @@ void VariableList::setVariable(const char* name, int value)
 	{
 		Messenger::printVerbose("Added new integer variable '%s' with value '%i'.\n", name, value);
 		var = variables_.add();
-		var->setup(name, value);
+		var->setup(name, value, description);
 	}
 	else
 	{
@@ -63,7 +81,7 @@ void VariableList::setVariable(const char* name, int value)
 }
 
 // Add/set variable (double)
-void VariableList::setVariable(const char* name, double value)
+void VariableList::setVariable(const char* name, double value, const char* description)
 {
 	// Does the variable already exist?
 	Variable* var = variable(name);
@@ -71,7 +89,7 @@ void VariableList::setVariable(const char* name, double value)
 	{
 		Messenger::printVerbose("Added new double variable '%s' with value '%f'.\n", name, value);
 		var = variables_.add();
-		var->setup(name, value);
+		var->setup(name, value, description);
 	}
 	else
 	{
@@ -81,7 +99,7 @@ void VariableList::setVariable(const char* name, double value)
 }
 
 // Add/set variable (string)
-void VariableList::setVariable(const char* name, const char* value)
+void VariableList::setVariable(const char* name, const char* value, const char* description)
 {
 	// Does the variable already exist?
 	Variable* var = variable(name);
@@ -89,13 +107,27 @@ void VariableList::setVariable(const char* name, const char* value)
 	{
 		Messenger::printVerbose("Added new string variable '%s' with value '%s'.\n", name, value);
 		var = variables_.add();
-		var->setup(name, value);
+		var->setup(name, value, description);
 	}
 	else
 	{
 		Messenger::printVerbose("Set existing string variable '%s' to value '%s' (previous value was '%s').\n", name, value, var->asChar());
 		var->set(value);
 	}
+}
+
+// Retrieve named variable (bool)
+bool VariableList::variableAsBool(const char* name)
+{
+	// Does the variable already exist?
+	Variable* var = variable(name);
+	if (!var)
+	{
+		Messenger::error("Can't find boolean variable '%s'.\n", name);
+		return 0;
+	}
+
+	return var->asBool();
 }
 
 // Retrieve named variable (int)

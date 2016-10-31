@@ -27,9 +27,10 @@ class DUQSys
 {
 	public:
 	// Number/string conversion
-	static const char* itoa(int);
-	static const char* ftoa(double);
-	static const char* ftoa(double, const char*);
+	static const char* itoa(int i);
+	static const char* ftoa(double d);
+	static const char* ftoa(double d, const char* fmt);
+	static bool atob(const char* s);
 
 	// String functions
 	static const char* upperCase(const char*);

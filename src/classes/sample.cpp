@@ -237,7 +237,7 @@ void Sample::assignDefaultIsotopes()
  */
 
 // Create type index and RDF / S(Q) storage
-bool Sample::createTypeIndex(const RefList<Species,double>& usedSpecies, int multiplier, int nExpectedAtoms, const AtomTypeIndex& masterIndex)
+bool Sample::createTypeIndex(const RefList<Species,double>& allSpecies, int multiplier, int nExpectedAtoms, const AtomTypeIndex& masterIndex)
 {
 	// Loop over Samples and go through Isotopologues in each mixture
 	typeIndex_.clear();
@@ -660,87 +660,12 @@ Data2D& Sample::referenceData()
 	return referenceData_;
 }
 
-// Set reference data self-scattering subtraction flag
-void Sample::setReferenceSubtractSelf(bool b)
+// Return calculated data
+Data2D& Sample::calculatedData()
 {
-	referenceDataSubtractSelf_ = true;
+	return calculatedData_;
 }
 
-// Return whether reference data should have self-scattering subtracted
-bool Sample::referenceSubtractSelf()
-{
-	return referenceDataSubtractSelf_;
-}
-
-// Set minimum abscissa for empirical fitting
-void Sample::setReferenceFitMin(double value)
-{
-	referenceFitMin_ = value;
-}
-
-// Return minimum abscissa for empirical fitting
-double Sample::referenceFitMin()
-{
-	return referenceFitMin_;
-}
-
-// Set maximum abscissa for empirical fitting
-void Sample::setReferenceFitMax(double value)
-{
-	referenceFitMax_ = value;
-}
-
-// Return maximum abscissa for empirical fitting
-double Sample::referenceFitMax()
-{
-	return referenceFitMax_;
-}
-
-// Return difference data
-Data2D& Sample::differenceData()
-{
-	return differenceData_;
-}
-
-// Finalise reference data
-bool Sample::finaliseReferenceData()
-{
-	// Do we actually have some reference data?
-	if (referenceData_.nPoints() == 0) return true;
-
-	// Set name to be same as Sample (for PlotWidget)
-	Dnchar niceSampleName = name_;
-	niceSampleName.replace(' ', '_');
-	niceSampleName.replace('/', '_');
-	referenceData_.setName(niceSampleName);
-	
-	// Subtract self-scattering background, calculated from high-Q region
-	if (referenceDataSubtractSelf_)
-	{
-		Messenger::print("--> Subtracting self-scattering background from reference data...\n");
-		double highQLevel = 0.0;
-		// Take last 50% of points to calculate average
-		for (int n=referenceData_.nPoints()*0.5; n<referenceData_.nPoints(); ++n) highQLevel += referenceData_.y(n);
-		highQLevel /= (referenceData_.nPoints()*0.1);
-		Messenger::print("--> High-Q average level is %f.\n", highQLevel);
-		referenceData_.arrayY() -= highQLevel;
-	}
-
-	// Check min/max Q ranges for fit
-	if (referenceFitMin_ < -0.5)
-	{
-		referenceFitMin_ = referenceData_.arrayX().first();
-		Messenger::print("--> No minimum Q value given for fit - assuming minimum available (Q = %10.4e).\n", referenceFitMin_);
-	}
-	if (referenceFitMax_ < -0.5)
-	{
-		referenceFitMax_ = referenceData_.arrayX().last();
-		Messenger::print("--> No maximum Q value given for fit - assuming maximum available (Q = %10.4e).\n", referenceFitMax_);
-	}
-	Messenger::print("--> Q range over which to fit empirical potential: %10.4e to %10.4e Angstroms-1.\n", referenceFitMin_, referenceFitMax_);
-
-	return true;
-}
 
 // Calculate RMSE error between corrected S(Q)s and reference data
 double Sample::referenceRMSE(double deltaQ)

@@ -21,6 +21,7 @@
 
 #include "base/variable.h"
 #include "base/processpool.h"
+#include "sysfunc.h"
 
 // Constructor
 Variable::Variable()
@@ -37,26 +38,38 @@ Variable::~Variable()
  * Definition
  */
 
-// Setup variable (int)
-void Variable::setup(const char* name, int defaultValue)
+// Setup variable (bool)
+void Variable::setup(const char* name, bool defaultValue, const char* description)
 {
 	name_ = name;
+	description_ = description;
+	valueB_ = defaultValue;
+	type_ = Variable::BooleanType;
+}
+
+// Setup variable (int)
+void Variable::setup(const char* name, int defaultValue, const char* description)
+{
+	name_ = name;
+	description_ = description;
 	valueI_ = defaultValue;
 	type_ = Variable::IntegerType;
 }
 
 // Setup variable (double)
-void Variable::setup(const char* name, double defaultValue)
+void Variable::setup(const char* name, double defaultValue, const char* description)
 {
 	name_ = name;
+	description_ = description;
 	valueD_ = defaultValue;
 	type_ = Variable::DoubleType;
 }
 
 // Setup variable (string)
-void Variable::setup(const char* name, const char* defaultValue)
+void Variable::setup(const char* name, const char* defaultValue, const char* description)
 {
 	name_ = name;
+	description_ = description;
 	valueC_ = defaultValue;
 	type_ = Variable::StringType;
 }
@@ -77,10 +90,20 @@ Variable::VariableType Variable::type()
  * Value
  */
 
+// Set variable value (bool)
+bool Variable::set(bool value)
+{
+	if (type_ == Variable::BooleanType) valueB_ = value;
+	else if (type_ == Variable::IntegerType) valueI_ = value;
+	else if (type_ == Variable::DoubleType) valueD_ = double(value);
+	else if (type_ == Variable::StringType) valueC_ = (value ? "True" : "False");
+}
+
 // Set variable value (int)
 bool Variable::set(int value)
 {
-	if (type_ == Variable::IntegerType) valueI_ = value;
+	if (type_ == Variable::BooleanType) valueB_ = value;
+	else if (type_ == Variable::IntegerType) valueI_ = value;
 	else if (type_ == Variable::DoubleType) valueD_ = double(value);
 	else if (type_ == Variable::StringType) valueC_.sprintf("%i", value);
 }
@@ -88,7 +111,8 @@ bool Variable::set(int value)
 // Set variable value (double)
 bool Variable::set(double value)
 {
-	if (type_ == Variable::IntegerType) valueI_ = int(value);
+	if (type_ == Variable::BooleanType) valueB_ = (value > 0.0);
+	else if (type_ == Variable::IntegerType) valueI_ = int(value);
 	else if (type_ == Variable::DoubleType) valueD_ = value;
 	else if (type_ == Variable::StringType) valueC_.sprintf("%f", value);
 }
@@ -96,15 +120,26 @@ bool Variable::set(double value)
 // Set variable value (string)
 bool Variable::set(const char* value)
 {
-	if (type_ == Variable::IntegerType) valueI_ = atoi(value);
+	if (type_ == Variable::BooleanType) valueB_ = DUQSys::atob(value);
+	else if (type_ == Variable::IntegerType) valueI_ = atoi(value);
 	else if (type_ == Variable::DoubleType) valueD_ = atof(value);
 	else if (type_ == Variable::StringType) valueC_ = value;
+}
+
+// Return variable (as bool)
+bool Variable::asBool()
+{
+	if (type_ == Variable::BooleanType) return valueB_;
+	else if (type_ == Variable::IntegerType) return valueI_;
+	else if (type_ == Variable::DoubleType) return (valueD_ > 0.0);
+	else if (type_ == Variable::StringType) return DUQSys::atob(valueC_.get());
 }
 
 // Return variable (as int)
 int Variable::asInt()
 {
-	if (type_ == Variable::IntegerType) return valueI_;
+	if (type_ == Variable::BooleanType) return int(valueB_);
+	else if (type_ == Variable::IntegerType) return valueI_;
 	else if (type_ == Variable::DoubleType) return int(valueD_);
 	else if (type_ == Variable::StringType) return atoi(valueC_.get());
 }
@@ -112,7 +147,8 @@ int Variable::asInt()
 // Return variable (as double)
 double Variable::asDouble()
 {
-	if (type_ == Variable::IntegerType) return double(valueI_);
+	if (type_ == Variable::BooleanType) return (valueB_ ? 1.0 : 0.0);
+	else if (type_ == Variable::IntegerType) return double(valueI_);
 	else if (type_ == Variable::DoubleType) return valueD_;
 	else if (type_ == Variable::StringType) return atof(valueC_.get());
 }
@@ -120,7 +156,11 @@ double Variable::asDouble()
 // Return variable (as string)
 const char* Variable::asChar()
 {
-	if (type_ == Variable::IntegerType)
+	if (type_ == Variable::BooleanType)
+	{
+		return (valueB_ ? "True" : "False");
+	}
+	else if (type_ == Variable::IntegerType)
 	{
 		conversionStringTemp_.sprintf("%i", valueI_);
 		return conversionStringTemp_.get();
@@ -147,6 +187,9 @@ bool Variable::broadcast(ProcessPool& procPool)
 	type_ = (Variable::VariableType) tempType;
 	switch (type_)
 	{
+		case (Variable::BooleanType):
+			if (!procPool.broadcast(&valueB_, 1)) return false;
+			break;
 		case (Variable::IntegerType):
 			if (!procPool.broadcast(&valueI_, 1)) return false;
 			break;

@@ -73,3 +73,48 @@ Sample* DUQ::findSample(const char* name) const
 	for (Sample* sam = samples_.first(); sam != NULL; sam = sam->next) if (strcmp(name, sam->name()) == 0) return sam;
 	return NULL;
 }
+
+// Setup Samples
+bool DUQ::setupSamples()
+{
+	/*
+	 * Functions performed by this routine:
+	 *  1)	Construct list of AtomTypes used by the Isotopologues referenced in this sample
+	 *  2)	Finalise any reference data
+	 *  3)	Initialise Modules assigned to this Sample
+	 * 
+	 * The AtomTypeList will contain a list of all AtomTypes used by the Isotopologues referenced by the sample, but will *not* contain
+	 * any population information (since this is determined only by a Configuration).  The Sample is therefore a simple reference
+	 * container that holds some kind of data with which to compare against. The AtomTypeList is used by various Modules (e.g. StructureFactor)
+	 * in order to calculate, from reference Configurations, the correctly-weighted partials / F(Q).
+	 */
+
+	// Loop over Samples
+	for (Sample* sam = samples_.first(); sam != NULL; sam = sam->next)
+	{
+		// Print out some useful info
+		Messenger::print("--> Sample: '%s'\n", sam->name());
+		for (IsotopologueMix* mix = sam->isotopologueMixtures(); mix != NULL; mix = mix->next)
+		{
+			double totalRelative = mix->totalRelative();
+			for (RefListItem<Isotopologue,double>* tope = mix->isotopologues(); tope != NULL; tope = tope->next)
+			{
+				if (tope == mix->isotopologues()) Messenger::print("       %-15s  %-15s  %8.3f\n", mix->species()->name(), tope->item->name(), tope->data / totalRelative);
+				else Messenger::print("                        %-15s  %8.3f\n", tope->item->name(), tope->data / totalRelative);
+			}
+		}
+
+		// Create AtomType index for Sample
+		if (!sam->createTypeIndex(species_, atomTypes_)) return false;
+
+		// Finalise reference data
+		if (!sam->finaliseReferenceData()) return false;
+
+		// MODULES
+		// TODO
+
+		Messenger::print("\n");
+	}
+
+	return true;
+}

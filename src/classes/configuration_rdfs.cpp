@@ -360,11 +360,11 @@ bool Configuration::calculateBraggContributions(ProcessPool& procPool)
 	return true;
 }
 
-// Calculate Bragg S(Q) into supplied matrix, using specifiied broadening
-bool Configuration::calculateBraggSQ(Data2D braggSQ, double broadening)
+// Calculate Bragg S(Q) into supplied matrix, using specified broadening
+bool Configuration::calculateBraggSQ(AtomTypeList Data2D braggSQ, double broadening)
 {
 	double factor, qCentre, q, inten, qSub, qAdd, broaden, lFactor, lambda, lambdaCubed;
-	int typeI, typeJ, nTypes = PotentialMap_;
+	int typeI, typeJ, nTypes;
 
 	XXX Since each Configuration (and Sample) maintains its own AtomTypeIndex (which may contain only a subset of the AtomTypes in the Master AtomTypeIndex)
 	XXX we need to check the types used in the Sample against those in the Configuration. If there are less AtomTypes in the Configuration than in the Sample we don't mind

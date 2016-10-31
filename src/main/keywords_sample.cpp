@@ -27,11 +27,8 @@
 // Sample Block Keywords
 KeywordData SampleBlockData[] = {
 	{ "EndSample",			0,	"" },
-	{ "FitMax",			1,	"" },
-	{ "FitMin",			1,	"" },
 	{ "Isotopologue",		3,	"" },
 	{ "ReferenceData",		1,	"" },
-	{ "SubtractSelf",		0,	"" },
 	{ "Type",			1,	"" }
 };
 

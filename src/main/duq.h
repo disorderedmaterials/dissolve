@@ -137,6 +137,8 @@ class DUQ
 	Sample* sample(int n);
 	// Search for Sample by name
 	Sample* findSample(const char* name) const;
+	// Setup Samples
+	bool setupSamples();
 
 
 	/*

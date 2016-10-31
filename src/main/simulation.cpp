@@ -101,6 +101,15 @@ bool DUQ::setupSimulation()
 // 		}
 // 	}
 
+	// Prepare Samples
+	Messenger::print("\n");
+	Messenger::print("*** Preparing Samples...\n");
+	if (!setupSamples())
+	{
+		Messenger::error("Failed to setup Samples.\n");
+		return false;
+	}
+
 	// We will construct a complete list of all AtomTypes used over all Samples used in all Configuration.
 	// So, loop over Configurations and go through Isotopologues in each used Sample mixture, and set global AtomType indices in each Configuration
 	pairPotentialAtomTypeIndex_.clear();
@@ -122,7 +131,7 @@ bool DUQ::setupSimulation()
 		// If this AtomType is not in pairPotentialAtomTypeIndex_, then it is never used
 		if (pairPotentialAtomTypeIndex_.indexOf(at) == -1)
 		{
-			Messenger::error("AtomType '%s' is defined but is not present in the system as it stands.\n", at->name());
+			Messenger::error("AtomType '%s' is defined but is not present in any Configuration as it stands.\n", at->name());
 			++nErrors;
 		}
 	}

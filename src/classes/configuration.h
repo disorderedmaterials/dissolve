@@ -380,27 +380,6 @@ class Configuration : public ListItem<Configuration>, public VariableList
 
 
 	/*
-	 * Reference Sample Data
-	 */
-	private:
-	List<Sample> referenceSamples_;
-
-	private:
-	// Search for reference Sample data by name
-	Sample* findReferenceSample(const char* name) const;
-
-	public:
-	// Add (copy) Sample as a reference
-	bool addReferenceSample(Sample* sample);
-	// Return first referenced Sample
-	Sample* referenceSamples();
-	// Set up reference Sample data for Configuration
-	bool setupReferenceSamples();
-	// Return current RMSE associated with reference/calculated data
-	double rmse();
-
-
-	/*
 	 * Modules
 	 */
 	private:

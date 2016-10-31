@@ -47,12 +47,16 @@ class VariableList
 	public:
 	// Return first Variable in list
 	Variable* variables();
+	// Add/set Variable (bool)
+	void setVariable(const char* name, bool value, const char* description = "");
 	// Add/set Variable (int)
-	void setVariable(const char* name, int value);
+	void setVariable(const char* name, int value, const char* description = "");
 	// Add/set Variable (double)
-	void setVariable(const char* name, double value);
+	void setVariable(const char* name, double value, const char* description = "");
 	// Add/set Variable (string)
-	void setVariable(const char* name, const char* value);
+	void setVariable(const char* name, const char* value, const char* description = "");
+	// Retrieve named Variable (bool)
+	bool variableAsBool(const char* name);
 	// Retrieve named Variable (int)
 	int variableAsInt(const char* name);
 	// Retrieve named Variable (double)

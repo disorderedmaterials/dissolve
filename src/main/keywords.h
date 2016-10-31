@@ -185,16 +185,9 @@ class Keywords
 	// Sample Block Keyword Enum
 	enum SampleKeyword
 	{
-		BroadeningKeyword,			/* 'Broadening' - Specifies the Q-independent and Q-dependent (in that order) Gaussian broadening function FWHM to apply when transforming simulated RDF data to Q-space */
 		EndSampleKeyword,			/* 'EndSample' - Signals the end of the Sample block */
-		FitMaxKeyword,				/* 'FitMax' - Upper limit for empirical fitting procedure for this Sample */
-		FitMinKeyword,				/* 'FitMin' - Lower limit for empirical fitting procedure for this Sample */
 		IsotopologueSampleKeyword,		/* 'Isotopologue' - Specifies a Species, Isotopologue, and relative population in this Sample */
-		NormalisedToAverageSquaredKeyword,	/* 'NormalisedToAvSq' - States that the reference F(Q) has been normalised to < b >**2 */
-		NormalisedToSquaredAverageKeyword,	/* 'NormalisedToSqAv' - States that the reference F(Q) has been normalised to < b**2 > */
-		ReferenceDataKeyword,			/* 'ReferenceData' - Specifies an F(Q) datafile which represents this Sample */
-		SubtractSelfKeyword,			/* 'SubtractSelf' - States that the self scattering (determined from the high-Q region) should be subtracted from the reference data */
-		SampleTypeKeyword,			/* 'Type' - Specifies the type of sample data */
+		ReferenceDataKeyword,			/* 'ReferenceData' - Specifies a datafile which represents this Sample */
 		nSampleKeywords				/* Number of keywords defined for this block */
 	};
 	// Convert text string to SampleKeyword
