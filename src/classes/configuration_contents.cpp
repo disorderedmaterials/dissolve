@@ -232,8 +232,8 @@ AtomTypeData* Configuration::usedAtomTypes()
 	return usedAtomTypes_.first();
 }
 
-// Set global AtomType indices in Atoms from the map provided
-bool Configuration::setGlobalAtomTypeIndices(const AtomTypeIndex& masterIndex)
+// Set global AtomType indices in Atoms from the list provided
+bool Configuration::setGlobalAtomTypeIndices(const AtomTypeList& masterIndex)
 {
 	// Loop over AtomTypes in index, then over Atoms in Configuration
 	int nAssigned = 0, globalIndex = 0;

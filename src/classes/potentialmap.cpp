@@ -52,7 +52,7 @@ void PotentialMap::clear()
  */
 
 // Initialise maps
-bool PotentialMap::initialise(const AtomTypeIndex& typeIndex, const List<PairPotential>& pairPotentials, double pairPotentialRange)
+bool PotentialMap::initialise(const AtomTypeList& typeIndex, const List<PairPotential>& pairPotentials, double pairPotentialRange)
 {
 	// Clear old data first
 	clear();

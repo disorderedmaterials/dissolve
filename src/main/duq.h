@@ -145,8 +145,6 @@ class DUQ
 	 * Pair Potentials
 	 */
 	private:
-	// All distinct AtomTypes (non-isotopic) in all Configurations for which we need PairPotentials
-	AtomTypeIndex pairPotentialAtomTypeIndex_;
 	// Maximum distance for tabulated PairPotentials
 	double pairPotentialRange_;
 	// Maximum squared distance for tabulated PairPotentials
@@ -229,6 +227,8 @@ class DUQ
 	Configuration* addConfiguration();
 	// Find configuration by name
 	Configuration* findConfiguration(const char* name) const;
+	// Calculate Box normalisations
+	bool calculateBoxNormalisations();
 
 
 	/*
@@ -299,28 +299,6 @@ class DUQ
 	void grainForces(ProcessPool& procPool, Configuration* cfg, double* fx, double* fy, double* fz, double cutoffSq, ProcessPool::CommGroup group);
 	// Calculate total forces within the system
 	void totalForces(ProcessPool& procPool, Configuration* cfg, double* fx, double* fy, double* fz, double cutoffSq, ProcessPool::CommGroup group = ProcessPool::Pool);
-
-
-	/*
-	 * Simulation Methods
-	 */
-	public:
-	// Perform an Atom shake
-// 	bool atomShake(Configuration& cfg, double cutoffDistance = -1.0, int nShakesPerAtom = 1, double targetAcceptanceRate = 0.33, double translationStepSize = 0.1);
-	// Perform a Grain shake
-// 	bool grainShake(Configuration& cfg, double cutoffDistance = -1.0, int nShakesPerGrain = 1, double targetAcceptanceRate = 0.33, double translationStepSize = 0.1, double rotationStepSize = 10.0);
-// 	// Shake intramolecular terms within Grains
-// 	bool intraShake(Configuration& cfg, int nShakesPerTerm = 1);
-// 	// Shake intermolecular terms between Grains
-// 	bool interShake(Configuration& cfg);
-// 	// Individually Shake all Intramolecular Terms
-// 	bool termShake(Configuration& cfg, int nShakesPerTerm = 1);
-// 	// Twist molecules around bonds
-// 	bool twist(Configuration& cfg, double cutoffDistance = -1.0, int nTwistsPerTerm = 1);
-// 	// Perform some MD
-// 	bool md(Configuration& cfg, double cutoffDistance = -1.0, int nSteps = 1, double deltaT = 0.0001);
-// 	// Perform a world atom shake
-// 	bool worldAtomShake(Configuration& cfg, double cutoffDistance = -1.0, int nShakes = 1, double targetAcceptanceRate = 0.33, double translationStepSize = 0.1);
 
 
 	/*

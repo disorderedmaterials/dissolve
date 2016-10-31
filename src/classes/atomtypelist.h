@@ -1,6 +1,6 @@
 /*
-	*** AtomTypeIndex Definition
-	*** src/classes/atomtypeindex.h
+	*** AtomTypeList Definition
+	*** src/classes/atomtypelist.h
 	Copyright T. Youngs 2012-2016
 
 	This file is part of dUQ.
@@ -19,8 +19,8 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_ATOMTYPEINDEX_H
-#define DUQ_ATOMTYPEINDEX_H
+#ifndef DUQ_ATOMTYPELIST_H
+#define DUQ_ATOMTYPELIST_H
 
 #include "classes/atomtypedata.h"
 #include "templates/list.h"
@@ -31,19 +31,19 @@ class AtomType;
 class Isotope;
 
 /*
- * AtomTypeIndex Definition
+ * AtomTypeList Definition
  */
-class AtomTypeIndex
+class AtomTypeList
 {
 	public:
 	// Constructor
-	AtomTypeIndex();
+	AtomTypeList();
 	// Destructor
-	~AtomTypeIndex();
+	~AtomTypeList();
 	// Copy Constructor
-	AtomTypeIndex(const AtomTypeIndex& source);
+	AtomTypeList(const AtomTypeList& source);
 	// Assignment Operator
-	void operator=(const AtomTypeIndex& source);
+	void operator=(const AtomTypeList& source);
 
 
 	/*

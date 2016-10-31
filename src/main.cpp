@@ -175,6 +175,13 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
+	// Calculate Box normalisation for those Configurations that need it
+	if (!dUQ.calculateBoxNormalisations())
+	{
+		ProcessPool::finalise();
+		return 1;
+	}
+
 	// Setup parallel comms / limits etc.
 	Messenger::print("\n");
 	Messenger::print("Setting up parallel comms...\n");

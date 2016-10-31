@@ -153,4 +153,169 @@ bool StructureFactor::execute(DUQ& duq, ProcessPool& procPool)
 // 		referenceData_.arrayY() *= boundCoherentSquaredAverage_;
 // 	}
 
+
 }
+
+// // Calculate weighted pair correlations from supplied unweighted data
+// bool Sample::calculatePairCorrelations(Array2D<Histogram>& masterRDFs, Array2D<Data2D>& masterPairSQ, Array2D<Data2D>& masterBraggSQ, Array2D<Data2D>& masterPartialSQ)
+// {
+// 	AtomTypeData* at1 = typeIndex_.first(), *at2;
+// 	double factor, sumFactor = 0.0, braggMax;
+// 	int typeI, typeJ, masterI, masterJ;
+// 	
+// 	Messenger::print("--> Calculating RDFs/S(Q)/F(Q) for Sample '%s'...\n", name_.get());
+// 	
+// 	// Setup totalGR_ and totalFQ_ arrays...
+// 	totalGR_.arrayY() = 0.0;
+// 	if (totalFQ_.nPoints() == 0)
+// 	{
+// 		totalFQ_.arrayX() = masterPairSQ.ref(0,0).arrayX();
+// 		totalFQ_.arrayY() = masterPairSQ.ref(0,0).arrayY();
+// 	}
+// 	totalFQ_.arrayY() = 0.0;
+// 	
+// 	// Loop over atom types and sum data
+// 	for (typeI=0; typeI<typeIndex_.nItems(); ++typeI, at1 = at1->next)
+// 	{
+// 		// Grab master index of AtomType at1
+// 		masterI = at1->masterIndex();
+// #ifdef CHECKS
+// 		if (masterI == -1)
+// 		{
+// 			Messenger::print("INTERNAL_ERROR - Master index for AtomType '%s' has not been set.\n", at1->name());
+// 			return false;
+// 		}
+// #endif
+// 
+// 		at2 = at1;
+// 		for (typeJ=typeI; typeJ<typeIndex_.nItems(); ++typeJ, at2 = at2->next)
+// 		{
+// 			// Grab master index of AtomType at2 and references to partial and bragg S(Q) matrix items
+// 			masterJ = at2->masterIndex();
+// 			Data2D& pairSQ = pairSQMatrix_.ref(typeI, typeJ);
+// 			Data2D& braggSQ = braggSQMatrix_.ref(typeI, typeJ);
+// 			Data2D& partialSQ = partialSQMatrix().ref(typeI, typeJ);
+// #ifdef CHECKS
+// 			if (masterJ == -1)
+// 			{
+// 				Messenger::print("INTERNAL_ERROR - Master index for AtomType '%s' has not been set.\n", at2->name());
+// 				return false;
+// 			}
+// #endif
+// 			// Copy unweighted S(Q) and Bragg data
+// 			pairSQ  = masterPairSQ.ref(masterI, masterJ);
+// 			braggSQ = masterBraggSQ.ref(masterI, masterJ);
+// 			partialSQ = masterPartialSQ.ref(masterI, masterJ);
+// 
+// 			// Weight S(Q), Bragg S(Q) and full partial S(Q)
+// 			factor = weightsMatrix_.ref(typeI,typeJ);
+// 			pairSQ.arrayY() *= factor;
+// 			braggSQ.arrayY() *= factor;
+// 			partialSQ.arrayY() *= factor;
+// 
+// 			// Sum G(r) into totals
+// 			totalGR_.addY(masterRDFs.ref(masterI,masterJ).normalisedData().arrayY(), factor);
+// 			sumFactor += factor;
+// 
+// 			// Sum partialSQ into totalFQ_, weighting dissimilar partials accordingly
+// 			totalFQ_.addY(partialSQ.arrayY(), typeI == typeJ ? 1.0 : 2.0);
+// 		}
+// 	}
+// 
+// 	// Finally, interpolate F(Q)
+// 	totalFQ_.interpolate();
+// 
+// 	// Calculate difference F(Q)
+// 	differenceData_.clear();
+// 	if (hasReferenceData_)
+// 	{
+// 		double Q;
+// 		for (int n=0; n<referenceData_.nPoints(); ++n)
+// 		{
+// 			Q = referenceData_.x(n);
+// 			if (Q > totalFQ_.arrayX().last()) break;
+// 			differenceData_.addPoint(Q, totalFQ_.interpolated(Q) - referenceData_.y(n));
+// 		}
+// 	}
+// 
+// 	return true;
+// }
+
+// From Sample::createTypeList()
+// 	// Calculate average scattering lengths for sample
+// 	boundCoherentAverageSquared_ = 0.0;
+// 	boundCoherentSquaredAverage_ = 0.0;
+// 	for (at1 = typeIndex_.first(); at1 != NULL; at1 = at1->next)
+// 	{
+// 		// Note: Divisor of 10.0 in calculation of bb converts from units of fm (1e-11 m) to barn (1e-12 m)
+// 		cc = at1->fraction();
+// 		bb = at1->isotope()->boundCoherent() * 0.1;
+// 		boundCoherentAverageSquared_ += cc*bb;
+// 		boundCoherentSquaredAverage_ += cc*bb*bb;
+// 	}
+// 	boundCoherentAverageSquared_ *= boundCoherentAverageSquared_;
+// 	
+// 	Messenger::print("--> Calculated average scattering lengths: <b>**2 = %f, <b**2> = %f\n", boundCoherentAverageSquared_, boundCoherentSquaredAverage_);
+
+// // Setup pair correlations
+// bool Sample::setupPairCorrelations(double volume, double range, double binWidth, Data2D& boxNormalisation, double rho)
+// {
+// 	// Get a nice sample name (i.e. no spaces, slashes etc.)
+// 	Dnchar otherName, niceSampleName = name_;
+// 	niceSampleName.replace(' ', '_');
+// 	niceSampleName.replace('/', '_');
+// 	double cc, bb;
+// 
+// 	// Construct S(Q) and weights matrices based on the typeIndex_ population
+// 	int typeI, typeJ;
+// 	Messenger::print("--> Creating S(Q) matrices (%ix%i)...\n", typeIndex_.nItems(), typeIndex_.nItems());
+// 	pairSQMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
+// 	braggSQMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
+// 	weightsMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
+// 	scatteringMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
+// 
+// 	// Set names of elements in the S(Q) arrays, and calculate weights and self-scattering values
+// 	Dnchar title;
+// 	AtomTypeData* at1 = typeIndex_.first(), *at2;
+// 	for (typeI=0; typeI<typeIndex_.nItems(); ++typeI, at1 = at1->next)
+// 	{
+// 		at2 = at1;
+// 		for (typeJ=typeI; typeJ<typeIndex_.nItems(); ++typeJ, at2 = at2->next)
+// 		{
+// 			// Partial S(Q) and Bragg S(Q)
+// 			title.sprintf("%s[%i]-%s[%i] (%s)", at1->name(), at1->isotope()->A(), at2->name(), at2->isotope()->A(), niceSampleName.get());
+// 			pairSQMatrix_.ref(typeI,typeJ).setName(title.get());
+// 			braggSQMatrix_.ref(typeI,typeJ).setName(title.get());
+// 			
+// 			// Store weighting factor for this partial
+// 			// Note: Divisor of 100.0 in calculation of bb converts from units of fm (1e-11 m) to barn (1e-12 m) squared
+// 			cc = at1->fraction() * at2->fraction();
+// 			bb = at1->isotope()->boundCoherent() * at2->isotope()->boundCoherent() * 0.01;
+// 			weightsMatrix_.ref(typeI,typeJ) = cc * bb;
+// 			scatteringMatrix_.ref(typeI,typeJ) = bb;
+// 		}
+// 	}
+// 
+// 	// Total g(r)
+// 	int nBins = range / binWidth;
+// 	totalGR_.initialise(nBins);
+// 	for (int n=0; n<nBins; ++n) totalGR_.setX(n, (n+0.5)*binWidth);
+// 	totalGR_.setName(niceSampleName.get());
+// 
+// 	// Total, reference and difference data (set names only)
+// 	totalFQ_.setName(niceSampleName.get());
+// 	otherName.sprintf("%s (Ref)", niceSampleName.get());
+// 	referenceData_.setName(otherName.get());
+// 	otherName.sprintf("%s (Diff)", niceSampleName.get());
+// 	differenceData_.setName(otherName.get());
+// 	
+// 	// Perform FT of reference data (if present)
+// 	if (referenceData_.nPoints() > 0)
+// 	{
+// 		referenceDataFT_ = referenceData_;
+// // 		referenceDataFT_.rebin();
+// 		referenceDataFT_.transformLorch(rho, 0.025, 50.0, 0.5, 0.08, true);
+// 	}
+// 
+// 	return true;
+// }

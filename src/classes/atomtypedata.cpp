@@ -19,7 +19,7 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "classes/atomtypeindex.h"
+#include "classes/atomtypelist.h"
 #include "classes/atomtype.h"
 #include "base/constants.h"
 #include "base/isotope.h"

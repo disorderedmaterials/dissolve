@@ -22,7 +22,7 @@
 #ifndef DUQ_POTENTIALMAP_H
 #define DUQ_POTENTIALMAP_H
 
-#include "classes/atomtypeindex.h"
+#include "classes/atomtypelist.h"
 #include "base/constants.h"
 
 // Forward Declarations
@@ -60,7 +60,7 @@ class PotentialMap
 
 	public:
 	// Initialise maps
-	bool initialise(const AtomTypeIndex& typeIndex, const List<PairPotential>& pairPotentials, double pairPotentialRange);
+	bool initialise(const AtomTypeList& typeIndex, const List<PairPotential>& pairPotentials, double pairPotentialRange);
 	// Return PairPotential range
 	double range() const;
 	// Return PairPotential range squared

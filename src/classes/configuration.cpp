@@ -60,7 +60,6 @@ Configuration::Configuration() : ListItem<Configuration>()
 	rdfSmoothing_ = 0;
 	requestedRDFRange_ = -1.0;
 	temperature_ = 300.0;
-	braggCalculationOn_ = false;
 	braggMaximumQ_ = 1.0;
 }
 
@@ -207,8 +206,8 @@ bool Configuration::setup(const List<AtomType>& atomTypes, double pairPotentialR
 	 * 1) Check for a sensible multiplier for the system
 	 * 2) Create all molecules in the system, based on the defined multiplier and Species
 	 * 3) Add a periodic box (since we now know the total number of atoms in the system, and hence can work out the number density)
-	 * 4) Create atom/grain arrays
-	 * 5) Everything else...
+ 	 * 4) Check RDF range
+	 * 5) Create atom/grain arrays
 	 */
 
 	// Check Configuration multiplier
@@ -243,6 +242,42 @@ bool Configuration::setup(const List<AtomType>& atomTypes, double pairPotentialR
 		Messenger::error("Failed to set-up Box/Cells for Configuration.\n");
 		return false;
 	}
+
+	// Determine maximal extent of RDF (from origin to centre of box)
+	Vec3<double> half = box()->axes() * Vec3<double>(0.5,0.5,0.5);
+	double maxR = half.magnitude(), inscribedSphereRadius = box()->inscribedSphereRadius();
+	Messenger::print("\n");
+	Messenger::print("--> Maximal extent for RDFs is %f Angstrom (half cell diagonal distance).\n", maxR);
+	Messenger::print("--> Inscribed sphere radius (maximum RDF range avoiding periodic images) is %f Angstroms.\n", inscribedSphereRadius);
+	if (requestedRDFRange_ < -1.5)
+	{
+		Messenger::print("--> Using maximal non-minimum image range for RDFs.\n");
+		rdfRange_ = inscribedSphereRadius;
+	}
+	else if (requestedRDFRange_ < -0.5)
+	{
+		Messenger::print("--> Using 90%% of maximal extent for RDFs.\n");
+		rdfRange_ = 0.90*maxR;
+	}
+	else
+	{
+		Messenger::print("--> Specific RDF range supplied (%f Angstroms).\n", requestedRDFRange_);
+		rdfRange_ = requestedRDFRange_;
+		if (rdfRange_ < 0.0)
+		{
+			Messenger::error("Negative RDF range requested.\n");
+			return false;
+		}
+		else if (rdfRange_ > maxR)
+		{
+			Messenger::error("Requested RDF range is greater then the maximum possible extent for the Box.\n");
+			return false;
+		}
+		else if (rdfRange_ > (0.90*maxR)) Messenger::warn("Requested RDF range is greater than 90%% of the maximum possible extent for the Box. FT may be suspect!\n");
+	}
+	// 'Snap' rdfRange_ to nearest bin width...
+	rdfRange_ = int(rdfRange_/rdfBinWidth_) * rdfBinWidth_;
+	Messenger::print("--> RDF range (snapped to bin width) is %f Angstroms.\n", rdfRange_);
 
 	// Setup arrays for atoms and grains, based on the local molecules list
 	Messenger::print("--> Creating Atom/Grain arrays...\n");

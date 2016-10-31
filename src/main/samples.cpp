@@ -104,11 +104,8 @@ bool DUQ::setupSamples()
 			}
 		}
 
-		// Create AtomType index for Sample
-		if (!sam->createTypeIndex(species_, atomTypes_)) return false;
-
-		// Finalise reference data
-		if (!sam->finaliseReferenceData()) return false;
+		// Create AtomType list for Sample
+		if (!sam->createTypeList(species_, atomTypes_)) return false;
 
 		// MODULES
 		// TODO

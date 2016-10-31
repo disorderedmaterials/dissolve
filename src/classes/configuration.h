@@ -22,7 +22,7 @@
 #ifndef DUQ_CONFIGURATION_H
 #define DUQ_CONFIGURATION_H
 
-#include "classes/atomtypeindex.h"
+#include "classes/atomtypelist.h"
 #include "classes/molecule.h"
 #include "classes/histogram.h"
 #include "classes/kvector.h"
@@ -134,8 +134,8 @@ class Configuration : public ListItem<Configuration>, public VariableList
 	int nAtoms_;
 	// Array of atoms
 	Atom* atoms_;
-	// AtomType index, containing unique (non-isotopic) atom types over all Species used in this configuration
-	AtomTypeIndex usedAtomTypes_;
+	// AtomType list, containing unique (non-isotopic) atom types over all Species used in this configuration
+	AtomTypeList usedAtomTypes_;
 	// Coordinate index, incremented whenever Atom positions change
 	int coordinateIndex_;
 
@@ -169,7 +169,7 @@ class Configuration : public ListItem<Configuration>, public VariableList
 	// Return first AtomTypeData for this configuration
 	AtomTypeData* usedAtomTypes();
 	// Set global AtomType indices in Atoms from the map provided
-	bool setGlobalAtomTypeIndices(const AtomTypeIndex& masterIndex);
+	bool setGlobalAtomTypeIndices(const AtomTypeList& masterIndex);
 	// Return current coordinate index
 	int coordinateIndex();
 	// Increment current coordinate index
@@ -306,8 +306,6 @@ class Configuration : public ListItem<Configuration>, public VariableList
 	Data2D totalRDF_;
 	// Total S(Q) (unweighted)
 	Data2D totalFQ_;
-	// Whether Bragg calculation is activated for this configuration
-	bool braggCalculationOn_;
 	// Maximum Q value for Bragg calculation
 	double braggMaximumQ_;
 	// Maximal extent of hkl for Bragg calculation, based on braggMaximumQ_
@@ -324,6 +322,16 @@ class Configuration : public ListItem<Configuration>, public VariableList
 	// Configuration index at which Bragg peaks were last calculated
 	int braggIndex_;
 
+	private:
+	// Calculate unweighted partials
+	bool calculatePartialRDFs(ProcessPool& procPool);
+	// Calculate unweighted intramolecular RDFs
+	bool calculateIntramolecularRDFs(ProcessPool& procPool);
+	// Calculate Bragg peak contributions
+	bool calculateBraggContributions(ProcessPool& procPool);
+	// Calculate weighted Bragg S(Q)
+	bool calculateBraggSQ(const AtomTypeList& sampleAtomTypes, Array2D<Data2D>& braggMatrix, double broadening);
+	
 	public:
 	// Set RDF bin width
 	void setRDFBinWidth(double width);
@@ -339,26 +347,10 @@ class Configuration : public ListItem<Configuration>, public VariableList
 	void setRequestedRDFRange(double range);
 	// Return requested RDF extent
 	double requestedRDFRange();
-	// Set Q delta to use in generated S(Q)
-	void setQDelta(double delta);
-	// Return Q delta to use in generated S(Q)
-	double qDelta();
-	// Set maximum Q to calculate S(Q) to
-	void setQMax(double qMax);
-	// Return maximum Q to calculate S(Q) to
-	double qMax();
-	// Set whether Bragg calculation is activated for this configuration
-	void setBraggCalculationOn(bool on);
-	// Return whether Bragg calculation is activated for this configuration
-	bool braggCalculationOn();
 	// Set maximum Q value for Bragg calculation
 	void setBraggMaximumQ(double qMax);
 	// Return maximum Q value for Bragg calculation
 	double braggMaximumQ();
-	// Set broadening for Bragg features
-	void setBraggBroadening(double broadening);
-	// Return broadening for Bragg features
-	double braggBroadening();
 	// Return maximal extent of hkl for Bragg calculation
 	Vec3<int> braggMaximumHKL();
 	// Setup RDF and S(Q) storage
@@ -366,13 +358,7 @@ class Configuration : public ListItem<Configuration>, public VariableList
 	// Reset partials
 	void resetPartials();
 	// Calculate unweighted partials
-	bool calculatePartials(ProcessPool& procPool);
-	// Calculate intramolecular RDFs
-	bool calculateIntramolecularRDFs(ProcessPool& procPool);
-	// Calculate Bragg contributions
-	bool calculateBraggContributions(ProcessPool& procPool);
-	// Calculate unweighted Bragg S(Q)
-	bool calculateBraggSQ(Array2D<Data2D>& braggMatrix, double broadening);
+	bool calculatePartials(ProcessPool& procPool, double qDelta, double qMax, Data2D::WindowFunction windowFunction, bool braggOn);
 	// Save RDFs
 	void saveRDFs(const char* baseName);
 	// Save S(Q)

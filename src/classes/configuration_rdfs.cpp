@@ -30,7 +30,7 @@
 #include "base/timer.h"
 
 // Calculate full partial RDFs using simple double-loop over atoms
-bool Configuration::calculatePartials(ProcessPool& procPool)
+bool Configuration::calculatePartialRDFs(ProcessPool& procPool)
 {
 	Messenger::print("Calculating partial RDFs...\n");
 
@@ -114,7 +114,7 @@ bool Configuration::calculatePartials(ProcessPool& procPool)
 	return true;
 }
 
-// Calculate intramolecular RDFs
+// Calculate unweighted intramolecular RDFs
 bool Configuration::calculateIntramolecularRDFs(ProcessPool& procPool)
 {
 	// Calculate intramolecular RDFs
@@ -159,7 +159,7 @@ bool Configuration::calculateIntramolecularRDFs(ProcessPool& procPool)
 	return true;
 }
 
-// Calculate Bragg contributions
+// Calculate Bragg peak contributions
 bool Configuration::calculateBraggContributions(ProcessPool& procPool)
 {
 	// Grab some useful values
@@ -361,57 +361,57 @@ bool Configuration::calculateBraggContributions(ProcessPool& procPool)
 }
 
 // Calculate Bragg S(Q) into supplied matrix, using specified broadening
-bool Configuration::calculateBraggSQ(AtomTypeList Data2D braggSQ, double broadening)
+bool Configuration::calculateBraggSQ(const AtomTypeList& sampleAtomTypes, Array2D<Data2D>& braggMatrix, double broadening)
 {
 	double factor, qCentre, q, inten, qSub, qAdd, broaden, lFactor, lambda, lambdaCubed;
 	int typeI, typeJ, nTypes;
 
-	XXX Since each Configuration (and Sample) maintains its own AtomTypeIndex (which may contain only a subset of the AtomTypes in the Master AtomTypeIndex)
-	XXX we need to check the types used in the Sample against those in the Configuration. If there are less AtomTypes in the Configuration than in the Sample we don't mind
-	XXX (it might be that we are mixing Configurations in order to get the Sample F(Q)) but if there are more we must object since they will have no Isotopologue information
-	XXX in the Sample, and we will not know how to weight them.
+// 	XXX Since each Configuration (and Sample) maintains its own AtomTypeIndex (which may contain only a subset of the AtomTypes in the Master AtomTypeIndex)
+// 	XXX we need to check the types used in the Sample against those in the Configuration. If there are less AtomTypes in the Configuration than in the Sample we don't mind
+// 	XXX (it might be that we are mixing Configurations in order to get the Sample F(Q)) but if there are more we must object since they will have no Isotopologue information
+// 	XXX in the Sample, and we will not know how to weight them.
 
-	lFactor = box_->reciprocalVolume() / (PI*PI);
-
-	printf("TODO Use of instrumental Q-dependent broadening needs to be re-implemented per Sample in Bragg calculation\n");
-	for (typeI = 0; typeI < nTypes; ++typeI)
-	{
-		for (typeJ = typeI; typeJ < nTypes; ++typeJ)
-		{
-			Data2D& braggSQ = braggSQMatrix_.ref(typeI, typeJ);
-
-			// Calculate prefactor
-			factor = (typeI == typeJ ? 1.0 : 2.0);
-
-			// Loop over defined Bragg peaks
-			for (n=0; n<nPeaks; ++n)
-			{
-				// Get q value and intensity of peak
-				qCentre = peaks[n]->q();
-				inten = peaks[n]->intensity(typeI, typeJ);
-				lambda = braggBroadening_ + qCentre * 0.02; //qDependentFWHM_;
-				lambdaCubed = lambda * lambda * lambda;
-
-				// Loop over points in braggSQ Data2D (which will provide our x-values)
-				for (m=0; m<braggSQ.nPoints(); ++m)
-				{
-					// Get q value from array
-					q = braggSQ.x(m);
-
-					// Set up Lorentzian parameters
-					qSub = (qCentre - q) / lambda;
-					qAdd = (qCentre + q) / lambda;
-					broaden = lFactor / ((1.0 + qSub*qSub) * (1.0 + qAdd*qAdd) * lambdaCubed);
-					braggSQ.addY(m, inten * broaden);
-				}
-			}
-
-			// Normalise to total number of atoms, subtract single atom scattering, and normalise to atomic fractions
-			braggSQ.arrayY() /= nAtoms_;
-			if (typeI == typeJ) braggSQ.arrayY() -= usedAtomTypes_[typeI]->fraction();
-			braggSQ.arrayY() /= usedAtomTypes_[typeI]->fraction() * usedAtomTypes_[typeJ]->fraction();
-		}
-	}
+// 	lFactor = box_->reciprocalVolume() / (PI*PI);
+// 
+// 	printf("TODO Use of instrumental Q-dependent broadening needs to be re-implemented per Sample in Bragg calculation\n");
+// 	for (typeI = 0; typeI < nTypes; ++typeI)
+// 	{
+// 		for (typeJ = typeI; typeJ < nTypes; ++typeJ)
+// 		{
+// 			Data2D& braggSQ = braggSQMatrix_.ref(typeI, typeJ);
+// 
+// 			// Calculate prefactor
+// 			factor = (typeI == typeJ ? 1.0 : 2.0);
+// 
+// 			// Loop over defined Bragg peaks
+// 			for (n=0; n<nPeaks; ++n)
+// 			{
+// 				// Get q value and intensity of peak
+// 				qCentre = peaks[n]->q();
+// 				inten = peaks[n]->intensity(typeI, typeJ);
+// 				lambda = braggBroadening_ + qCentre * 0.02; //qDependentFWHM_;
+// 				lambdaCubed = lambda * lambda * lambda;
+// 
+// 				// Loop over points in braggSQ Data2D (which will provide our x-values)
+// 				for (m=0; m<braggSQ.nPoints(); ++m)
+// 				{
+// 					// Get q value from array
+// 					q = braggSQ.x(m);
+// 
+// 					// Set up Lorentzian parameters
+// 					qSub = (qCentre - q) / lambda;
+// 					qAdd = (qCentre + q) / lambda;
+// 					broaden = lFactor / ((1.0 + qSub*qSub) * (1.0 + qAdd*qAdd) * lambdaCubed);
+// 					braggSQ.addY(m, inten * broaden);
+// 				}
+// 			}
+// 
+// 			// Normalise to total number of atoms, subtract single atom scattering, and normalise to atomic fractions
+// 			braggSQ.arrayY() /= nAtoms_;
+// 			if (typeI == typeJ) braggSQ.arrayY() -= usedAtomTypes_[typeI]->fraction();
+// 			braggSQ.arrayY() /= usedAtomTypes_[typeI]->fraction() * usedAtomTypes_[typeJ]->fraction();
+// 		}
+// 	}
 
 // 	for (m=0; m<nPeaks; ++m) Messenger::print("  %f   %f\n", peaks[m]->q(), peaks[m]->intensity(0,0));
 
@@ -460,18 +460,6 @@ double Configuration::requestedRDFRange()
 	return requestedRDFRange_;
 }
 
-// Set whether Bragg calculation is activated for this configuration
-void Configuration::setBraggCalculationOn(bool on)
-{
-	braggCalculationOn_ = on;
-}
-
-// Return whether Bragg calculation is activated for this configuration
-bool Configuration::braggCalculationOn()
-{
-	return braggCalculationOn_;
-}
-
 // Set maximum Q value for Bragg calculation
 void Configuration::setBraggMaximumQ(double qMax)
 {
@@ -484,23 +472,6 @@ double Configuration::braggMaximumQ()
 	return braggMaximumQ_;
 }
 
-// Set broadening for Bragg features
-void Configuration::setBraggBroadening(double broadening)
-{
-	braggBroadening_ = broadening;
-}
-
-// Return broadening for Bragg features
-double Configuration::braggBroadening()
-{
-	return braggBroadening_;
-}
-
-// Set maximal extent of hkl for Bragg calculation
-void Configuration::setBraggMaximumHKL(Vec3<int> hklMax)
-{
-}
-
 // Return maximal extent of hkl for Bragg calculation
 Vec3<int> Configuration::braggMaximumHKL()
 {
@@ -510,10 +481,20 @@ Vec3<int> Configuration::braggMaximumHKL()
 // Setup RDF / F(Q) storage
 bool Configuration::setupPartials()
 {
+	// Check - do we need to create arrays/matrices?
+	if (pairRDFMatrix_.linearArraySize() != 0)
+	{
+		Messenger::print("--> RDF/S(Q) lists and matrices already present.\n");
+		return true;
+	}
+
 	// Construct a matrix based on the local usedAtomTypes_ list, since this reflects all our possible partials
 	int n, m;
 	int nTypes = usedAtomTypes_.nItems();
+	Messenger::print("\n");
 
+	Messenger::print("--> RDF/S(Q) lists and matrices have not yet been initialised...\n");
+	
 	Messenger::print("--> Creating matrices (%ix%i)...\n", nTypes, nTypes);
 
 	pairRDFMatrix_.initialise(nTypes, nTypes, true);
@@ -554,7 +535,6 @@ bool Configuration::setupPartials()
 			unboundSQMatrix_.ref(n,m).setName(title.get());
 			partialSQMatrix_.ref(n,m).setName(title.get());
 			braggSQMatrix_.ref(n,m).setName(title.get());
-			braggSQMatrix_.ref(n,m).createEmpty(qDelta_, braggMaximumQ_);
 		}
 	}
 
@@ -571,7 +551,7 @@ bool Configuration::setupPartials()
 }
 
 // Reset pair correlations
-void Configuration::resetPairCorrelations()
+void Configuration::resetPartials()
 {
 	for (int n=0; n<usedAtomTypes_.nItems(); ++n)
 	{
@@ -593,7 +573,7 @@ void Configuration::resetPairCorrelations()
 }
 
 // Calculate pair correlations
-bool Configuration::calculatePairCorrelations(Data2D::WindowFunction windowFunction)
+bool Configuration::calculatePartials(ProcessPool& procPool, double qDelta, double qMax, Data2D::WindowFunction windowFunction, bool braggOn)
 {
 	// Check that we actually need to calculate new partials
 	if (coordinateIndex_ == partialsIndex_)
@@ -602,33 +582,40 @@ bool Configuration::calculatePairCorrelations(Data2D::WindowFunction windowFunct
 		return true;
 	}
 
+	// Setup partial RDF/S(Q) arrays if necessary
+	if (!setupPartials())
+	{
+		Messenger::error("Failed to create RDF/F(Q) lists/matrices.\n");
+		return false;
+	}
+
 	// Clear old RDF/S(Q) data
-	resetPairCorrelations();
+	resetPartials();
 	
 	// Calculate full partials
 	Timer timer;
-	if (!calculatePartialsSimple()) return false;
+	if (!calculatePartialRDFs(procPool)) return false;
 
 	// Update partials index
 	partialsIndex_ = coordinateIndex_;
 
 	// Collect all processes together
-	if (!Comm.wait(ProcessPool::Pool)) return false;
+	if (!procPool.wait(ProcessPool::Pool)) return false;
 
 	timer.stop();
-	Messenger::print("--> Finished calculation of partials (%s elapsed, %s comms).\n", timer.timeString(), Comm.accumulatedTimeString());
+	Messenger::print("--> Finished calculation of partials (%s elapsed, %s comms).\n", timer.timeString(), procPool.accumulatedTimeString());
 
 	// Calculate intramolecular partials
 	timer.start();
-	if (!calculateIntramolecularRDFs()) return false;
+	if (!calculateIntramolecularRDFs(procPool)) return false;
 	timer.stop();
-	Messenger::print("--> Finished calculation of intramolecular partials (%s elapsed, %s comms).\n", timer.timeString(), Comm.accumulatedTimeString());
+	Messenger::print("--> Finished calculation of intramolecular partials (%s elapsed, %s comms).\n", timer.timeString(), procPool.accumulatedTimeString());
 
 	// Perform summation of partial data
 	// Note that merging/summation of cross-term data (i.e. [n][m] with [m][n]) is not necessary since the partials matrix knows
 	// that (i,j) == (j,i) as it is stored as a half-matrix in an Array2D object.
 	int typeI, typeJ;
-	Comm.resetAccumulatedTime();
+	procPool.resetAccumulatedTime();
 	timer.start();
 	double rho = atomicDensity();
 	for (typeI=0; typeI<usedAtomTypes_.nItems(); ++typeI)
@@ -636,8 +623,8 @@ bool Configuration::calculatePairCorrelations(Data2D::WindowFunction windowFunct
 		for (typeJ=typeI; typeJ<usedAtomTypes_.nItems(); ++typeJ)
 		{
 			// Sum histogram data from all processes
-			if (!pairRDFMatrix_.ref(typeI,typeJ).allSum()) return false;
-			if (!boundRDFMatrix_.ref(typeI,typeJ).allSum()) return false;
+			if (!pairRDFMatrix_.ref(typeI,typeJ).allSum(procPool)) return false;
+			if (!boundRDFMatrix_.ref(typeI,typeJ).allSum(procPool)) return false;
 
 			// Create unbound histogram from total and bound data
 			unboundRDFMatrix_.ref(typeI, typeJ) = pairRDFMatrix_.ref(typeI,typeJ);
@@ -667,33 +654,34 @@ bool Configuration::calculatePairCorrelations(Data2D::WindowFunction windowFunct
 		}
 	}
 	timer.stop();
-	Messenger::print("--> Finished summation and normalisation of partial RDF data (%s elapsed, %s comms).\n", timer.timeString(), Comm.accumulatedTimeString());
+	Messenger::print("--> Finished summation and normalisation of partial RDF data (%s elapsed, %s comms).\n", timer.timeString(), procPool.accumulatedTimeString());
 
 	// Perform FT of partial g(r) into S(Q)
 	// No instrumental broadening is applied in this case - the Configuration-based S(Q) are 'pure' in that sense
 	// TODO Parallelise this
-	Comm.resetAccumulatedTime();
+	procPool.resetAccumulatedTime();
 	timer.start();
 	for (typeI=0; typeI<usedAtomTypes_.nItems(); ++typeI)
 	{
 		for (typeJ=typeI; typeJ<usedAtomTypes_.nItems(); ++typeJ)
 		{
-			if (!pairSQMatrix_.ref(typeI,typeJ).transformBroadenedRDF(rho, qDelta_, qMax_, 0.0, 0.0, windowFunction)) return false;
-			if (!boundSQMatrix_.ref(typeI,typeJ).transformBroadenedRDF(rho, qDelta_, qMax_, 0.0, 0.0, windowFunction)) return false;
-			if (!unboundSQMatrix_.ref(typeI,typeJ).transformBroadenedRDF(rho, qDelta_, qMax_, 0.0, 0.0, windowFunction)) return false;
+			if (!pairSQMatrix_.ref(typeI,typeJ).transformBroadenedRDF(rho, qDelta, qMax, 0.0, 0.0, windowFunction)) return false;
+			if (!boundSQMatrix_.ref(typeI,typeJ).transformBroadenedRDF(rho, qDelta, qMax, 0.0, 0.0, windowFunction)) return false;
+			if (!unboundSQMatrix_.ref(typeI,typeJ).transformBroadenedRDF(rho, qDelta, qMax, 0.0, 0.0, windowFunction)) return false;
 		}
 	}
 	timer.stop();
-	Messenger::print("--> Finished Fourier transform of partial g(r) into partial S(Q) (%s elapsed, %s comms).\n", timer.timeString(), Comm.accumulatedTimeString());
+	Messenger::print("--> Finished Fourier transform of partial g(r) into partial S(Q) (%s elapsed, %s comms).\n", timer.timeString(), procPool.accumulatedTimeString());
 
 	// Calculate Bragg partials (if requested)
-	if (braggCalculationOn_)
+	if (braggOn)
 	{
-		Comm.resetAccumulatedTime();
+		procPool.resetAccumulatedTime();
 		timer.start();
-		if (!calculateBraggSQ()) return false;
+		if (!calculateBraggContributions(procPool)) return false;
+// 		if (!calculateBraggSQ(procPool)) return false;
 		timer.stop();
-		Messenger::print("--> Finished calculation of partial Bragg S(Q) (%s elapsed, %s comms).\n", timer.timeString(), Comm.accumulatedTimeString());
+		Messenger::print("--> Finished calculation of partial Bragg S(Q) (%s elapsed, %s comms).\n", timer.timeString(), procPool.accumulatedTimeString());
 	}
 
 	// Generate final partial S(Q) combining pair correlations and Bragg partials
@@ -713,10 +701,10 @@ bool Configuration::calculatePairCorrelations(Data2D::WindowFunction windowFunct
 			partialSQ = pairSQ;
 
 			// Combine Bragg(Q) data if it was calculated
-			if (braggCalculationOn_)
+			if (braggOn)
 			{
 				double xRange = 0.1, x;
-				double xMin = braggMaximumQ_ - xRange - qDelta_*0.5;
+				double xMin = braggMaximumQ_ - xRange - qDelta*0.5;
 				for (int n=0; n<braggSQ.nPoints(); ++n)
 				{
 					x = (braggSQ.x(n) <= xMin ? 0.0 : (braggSQ.x(n) - xMin) / xRange);
@@ -747,22 +735,7 @@ bool Configuration::calculatePairCorrelations(Data2D::WindowFunction windowFunct
 		}
 	}
 	timer.stop();
-	Messenger::print("--> Finished summation and FT of partials, and generation of total unweighted RDF/F(Q) (%s elapsed, %s comms).\n", timer.timeString(), Comm.accumulatedTimeString());
-
-	// Calculate weighted partials for each Sample, along with current RMSE
-	Comm.resetAccumulatedTime();
-	timer.start();
-	totalRMSE_ = 0.0;
-	Messenger::print("XXXX TODO Implement calculation of ReferenceData/Sample RDF/SQ calculation.\n");
-// 	for (Sample* sam = samples_.first(); sam != NULL; sam = sam->next)
-// 	{
-// 		if (!sam->calculatePairCorrelations(pairRDFMatrix_, pairSQMatrix_, braggSQMatrix_, partialSQMatrix_)) return false;
-// 		if (sam->hasReferenceData()) totalRMSE_ += sam->referenceRMSE(rmseDeltaQ_);
-// 	}
-	timer.stop();
-	Messenger::print("--> Finished generation of Sample partials (%s elapsed, %s comms).\n", timer.timeString(), Comm.accumulatedTimeString());
-
-	Messenger::print("--> Current RMSE over all Samples = %f barns/sr/atom\n", totalRMSE_);
+	Messenger::print("--> Finished summation and FT of partials, and generation of total unweighted RDF/F(Q) (%s elapsed, %s comms).\n", timer.timeString(), procPool.accumulatedTimeString());
 
 	return true;
 }
@@ -770,8 +743,6 @@ bool Configuration::calculatePairCorrelations(Data2D::WindowFunction windowFunct
 // Save all unweighted RDFs
 void Configuration::saveRDFs(const char* baseName)
 {
-	// Only the Master process can do this
-	if (!Comm.master()) return;
 	LineParser parser;
 	int typeI, typeJ, n;
 
@@ -807,8 +778,6 @@ void Configuration::saveRDFs(const char* baseName)
 // Save all partial S(Q)
 void Configuration::saveSQ(const char* baseName)
 {
-	// Only the Master process can do this
-	if (!Comm.master()) return;
 	LineParser parser;
 	int typeI, typeJ, n;
 
@@ -852,83 +821,3 @@ void Configuration::saveSQ(const char* baseName)
 	Dnchar filename(-1, "%s-unweighted-total.fq", baseName);
 	totalFQ_.save(filename);
 }
-
-
-/// FROM Configuration::setup()
-	// Construct RDF/S(Q) arrays
-	// -- Determine maximal extent of RDF (from origin to centre of box)
-	Messenger::print("\n");
-	Messenger::print("Setting up RDF/S(Q) data...\n");
-	Vec3<double> half = box()->axes() * Vec3<double>(0.5,0.5,0.5);
-	double maxR = half.magnitude(), inscribedSphereRadius = box()->inscribedSphereRadius();
-	Messenger::print("--> Maximal extent for RDFs is %f Angstrom (half cell diagonal distance).\n", maxR);
-	Messenger::print("--> Inscribed sphere radius (maximum RDF range avoiding periodic images) is %f Angstroms.\n", inscribedSphereRadius);
-	if (requestedRDFRange_ < -1.5)
-	{
-		Messenger::print("--> Using maximal non-minimum image range for RDF/S(Q).\n");
-		rdfRange_ = inscribedSphereRadius;
-	}
-	else if (requestedRDFRange_ < -0.5)
-	{
-		Messenger::print("--> Using 90%% of maximal extent for RDF/S(Q).\n");
-		rdfRange_ = 0.90*maxR;
-	}
-	else
-	{
-		Messenger::print("--> Specific RDF range supplied (%f Angstroms).\n", requestedRDFRange_);
-		rdfRange_ = requestedRDFRange_;
-		if (rdfRange_ < 0.0)
-		{
-			Messenger::error("Negative RDF range requested.\n");
-			return false;
-		}
-		else if (rdfRange_ > maxR)
-		{
-			Messenger::error("Requested RDF range is greater then the maximum possible extent for the Box.\n");
-			return false;
-		}
-		else if (rdfRange_ > (0.90*maxR)) Messenger::warn("Requested RDF range is greater than 90%% of the maximum possible extent for the Box. FT may be suspect!\n");
-	}
-	// 'Snap' rdfRange_ to nearest bin width...
-	rdfRange_ = int(rdfRange_/rdfBinWidth_) * rdfBinWidth_;
-	Messenger::print("--> RDF range (snapped to bin width) is %f Angstroms.\n", rdfRange_);
-
-	// Does a box normalisation already exist (i.e. has been loaded)
-	// Create/load Box normalisation array
-	if (!boxNormalisationFileName_.isEmpty())
-	{
-		if (boxNormalisation_.load(boxNormalisationFileName_))
-		{
-			Messenger::print("--> Successfully loaded box normalisation data from file '%s'.\n", boxNormalisationFileName_.get());
-			boxNormalisation_.interpolate();
-		}
-		else Messenger::print("--> Couldn't load Box normalisation data - it will be calculated.\n");
-	}
-	if (boxNormalisation_.nPoints() <= 1)
-	{
-		// Only calculate if RDF range is greater than the inscribed sphere radius
-		if (rdfRange_ <= inscribedSphereRadius)
-		{
-			Messenger::print("--> No need to calculate Box normalisation array since rdfRange is within periodic range.\n");
-			boxNormalisation_.clear();
-			double x = rdfBinWidth_*0.5;
-			while (x < rdfRange_)
-			{
-				boxNormalisation_.addPoint(x, 1.0);
-				x += rdfBinWidth_;
-			}
-			boxNormalisation_.interpolate();
-		}
-		else
-		{
-			Messenger::print("--> Calculating box normalisation array for RDFs...\n");
-			if (!box()->calculateRDFNormalisation(boxNormalisation_, rdfRange_, rdfBinWidth_, boxNormalisationNPoints)) return false;
-		}
-	}
-	Messenger::print("\n");
-	Messenger::print("--> Constructing RDF/F(Q) lists and matrices...\n");
-	if (!setupPartials())
-	{
-		Messenger::error("Failed to create RDF/F(Q) lists/matrices.\n");
-		return false;
-	}

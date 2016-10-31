@@ -3,7 +3,7 @@ angle.cpp
 atom.cpp
 atomtype.cpp
 atomtypedata.cpp
-atomtypeindex.cpp
+atomtypelist.cpp
 bond.cpp
 box.cpp
 box_cubic.cpp
@@ -52,7 +52,7 @@ angle.h
 atom.h
 atomtypedata.h
 atomtype.h
-atomtypeindex.h
+atomtypelist.h
 bond.h
 box.h
 braggpeak.h

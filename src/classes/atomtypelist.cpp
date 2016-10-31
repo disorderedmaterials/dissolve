@@ -1,6 +1,6 @@
 /*
-	*** AtomTypeIndex Definition
-	*** src/classes/atomtypeindex.cpp
+	*** AtomTypeList Definition
+	*** src/classes/atomtypelist.cpp
 	Copyright T. Youngs 2012-2016
 
 	This file is part of dUQ.
@@ -19,30 +19,30 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "classes/atomtypeindex.h"
+#include "classes/atomtypelist.h"
 #include "classes/atomtype.h"
 #include "base/isotope.h"
 #include "base/ptable.h"
 #include <string.h>
 
 // Constructor
-AtomTypeIndex::AtomTypeIndex()
+AtomTypeList::AtomTypeList()
 {
 }
 
 // Destructor
-AtomTypeIndex::~AtomTypeIndex()
+AtomTypeList::~AtomTypeList()
 {
 }
 
 // Copy Constructor
-AtomTypeIndex::AtomTypeIndex(const AtomTypeIndex& source)
+AtomTypeList::AtomTypeList(const AtomTypeList& source)
 {
 	(*this) = source;
 }
 
 // Assignment Operator
-void AtomTypeIndex::operator=(const AtomTypeIndex& source)
+void AtomTypeList::operator=(const AtomTypeList& source)
 {
 	types_ = source.types_;
 }
@@ -52,7 +52,7 @@ void AtomTypeIndex::operator=(const AtomTypeIndex& source)
  */
 
 // Clear all data
-void AtomTypeIndex::clear()
+void AtomTypeList::clear()
 {
 	types_.clear();
 }
@@ -60,7 +60,7 @@ void AtomTypeIndex::clear()
 /*
  * \brief Add/increase this AtomType/Isotope pair
  */
-int AtomTypeIndex::add(AtomType* atomType, Isotope* tope, int popAdd)
+int AtomTypeList::add(AtomType* atomType, Isotope* tope, int popAdd)
 {
 	// Search the list for the AtomType provided.
 	// If present, we will check the isotope already stored
@@ -86,22 +86,20 @@ int AtomTypeIndex::add(AtomType* atomType, Isotope* tope, int popAdd)
 	return index;
 }
 
-/*
- * \brief Return number of AtomType/Isotopes in list
- */
-int AtomTypeIndex::nItems() const
+// Return number of AtomType/Isotopes in list
+int AtomTypeList::nItems() const
 {
 	return types_.nItems();
 }
 
 // Return first item in list
-AtomTypeData* AtomTypeIndex::first() const
+AtomTypeData* AtomTypeList::first() const
 {
 	return types_.first();
 }
 
 // Print AtomType populations
-void AtomTypeIndex::print()
+void AtomTypeList::print()
 {
 	int count = 0;
 	Dnchar indexData;
@@ -123,7 +121,7 @@ void AtomTypeIndex::print()
 /*
  * \brief Return index of AtomType/Isotope in list
  */
-int AtomTypeIndex::indexOf(AtomType* atomtype) const
+int AtomTypeList::indexOf(AtomType* atomtype) const
 {
 	int count = 0;
 	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next)
@@ -135,29 +133,27 @@ int AtomTypeIndex::indexOf(AtomType* atomtype) const
 }
 
 // Return total population of all types in list
-int AtomTypeIndex::totalPopulation() const
+int AtomTypeList::totalPopulation() const
 {
 	int total = 0;
 	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next) total += atd->population();
 	return total;
 }
 
-/*
- * \brief Finalise list, calculating fractional populations etc.
- */
-void AtomTypeIndex::finalise()
+// Finalise list, calculating fractional populations etc.
+void AtomTypeList::finalise()
 {
 	int total = totalPopulation();
 	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next) atd->finalise(total);
 }
 
 // Return nth referenced AtomType
-AtomType* AtomTypeIndex::atomType(int n)
+AtomType* AtomTypeList::atomType(int n)
 {
 #ifdef CHECKS
 	if ((n < 0) || (n >= types_.nItems()))
 	{
-		Messenger::print("OUT_OF_RANGE - Specified index %i out of range in AtomTypeIndex::atomType().\n");
+		Messenger::print("OUT_OF_RANGE - Specified index %i out of range in AtomTypeList::atomType().\n");
 		return NULL;
 	}
 #endif
@@ -165,12 +161,12 @@ AtomType* AtomTypeIndex::atomType(int n)
 }
 
 // Array access operator
-AtomTypeData* AtomTypeIndex::operator[](int n)
+AtomTypeData* AtomTypeList::operator[](int n)
 {
 #ifdef CHECKS
 	if ((n < 0) || (n >= types_.nItems()))
 	{
-		Messenger::print("OUT_OF_RANGE - Specified index %i out of range in AtomTypeIndex::atomType().\n");
+		Messenger::print("OUT_OF_RANGE - Specified index %i out of range in AtomTypeList::atomType().\n");
 		return NULL;
 	}
 #endif

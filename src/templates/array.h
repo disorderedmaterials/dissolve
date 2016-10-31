@@ -289,6 +289,7 @@ template <class A> class Array2D
 		if (rowOffsets_ != NULL) delete[] rowOffsets_;
 		rowOffsets_ = NULL;
 		array_ = NULL;
+		linearSize_ = 0;
 		nRows_ = 0;
 		nColumns_ = 0;
 	}

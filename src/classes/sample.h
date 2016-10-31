@@ -23,7 +23,7 @@
 #define DUQ_SAMPLE_H
 
 #include "classes/isotopologuemix.h"
-#include "classes/atomtypeindex.h"
+#include "classes/atomtypelist.h"
 #include "classes/histogram.h"
 #include "base/dnchar.h"
 #include "templates/reflist.h"
@@ -79,54 +79,12 @@ class Sample : public ListItem<Sample>
 	IsotopologueMix* isotopologueMixture(int n);
 	// Assign default (first) Isotopologues for all Species
 	void assignDefaultIsotopes();
-
-
-	/*
-	 * RDF / S(Q) Data
-	 */
-	private:
-	// Type index for this Sample
-	AtomTypeIndex typeIndex_;
-	// Average scattering lengths of sample
-	double boundCoherentAverageSquared_, boundCoherentSquaredAverage_;
-	// Partial S(Q) matrix
-	Array2D<Data2D> pairSQMatrix_;
-	// Bragg S(Q) matrix
-	Array2D<Data2D> braggSQMatrix_;
-	// Weights matrix (bb * cc)
-	Array2D<double> weightsMatrix_;
-	// Scattering weights matrix (bb)
-	Array2D<double> scatteringMatrix_;
-	// Total neutron-weighted g(r)
-	Data2D totalGR_;
-	// Total neutron-weighted F(Q)
-	Data2D totalFQ_;
+	// Type list for this Sample
+	AtomTypeList typeIndex_;
 
 	public:
-	// Create type index and RDF / S(Q) storage
-	bool createTypeIndex(const RefList<Species,double>& species, const AtomTypeIndex& masterIndex);
-	// Return <b>**2
-	double boundCoherentAverageSquared();
-	// Return <b**2>
-	double boundCoherentSquaredAverage();
-	// Setup pair correlations
-	bool setupPairCorrelations(double volume, double range, double binWidth, Data2D& boxNormalisation, double rho);
-	// Calculate weighted pair correlations
-	bool calculatePairCorrelations(Array2D< Histogram >& masterRDFs, Array2D< Data2D >& masterPairSQ, Array2D< Data2D >& masterBraggSQ, Array2D< Data2D >& masterPartialSQ);
-	// Return reference to array of partials
-	Array2D<Data2D>& partialSQMatrix();
-	// Return reference to array of Bragg partials
-	Array2D<Data2D>& braggSQMatrix();
-	// Return reference to weights matrix
-	Array2D<double>& weightsMatrix();
-	// Return total F(Q)
-	Data2D& totalFQ();
-	// Return total G(R)
-	Data2D& totalGR();
-	// Save RDFs
-	void saveRDFs(const char* baseName);
-	// Save S(Q)
-	void saveSQ(const char* baseName);
+	// Create type list
+	bool createTypeList(const RefList<Species,double>& species, const AtomTypeList& masterIndex);
 
 
 	/*

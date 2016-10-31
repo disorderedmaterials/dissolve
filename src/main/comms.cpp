@@ -73,9 +73,6 @@ bool DUQ::broadcastSetup()
 		species_[n]->broadcast(worldPool_, atomTypes_);
 	}
 
-	// Reference Data
-	// TODO
-
 	// Samples
 	Messenger::printVerbose("Broadcasting Samples...\n");
 	count = samples_.nItems();
