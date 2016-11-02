@@ -79,3 +79,16 @@ RefListItem<Module,bool>* Configuration::modules()
 {
 	return modules_.first();
 }
+
+// Set Module variable
+void Configuration::setModuleVariable(const char* name, VariableValue value, const char* description, const char* source)
+{
+	moduleVariables_.setVariable(name, value, description, source);
+}
+
+// Return named Module variable
+Variable* Configuration::moduleVariable(const char* name, const char* source)
+{
+	return moduleVariables_.variable(name, source);
+}
+

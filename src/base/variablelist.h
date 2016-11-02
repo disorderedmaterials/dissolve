@@ -72,7 +72,7 @@ class VariableList
 	 */
 	public:
 	// Broadcast data
-	bool broadcastVariables(ProcessPool& procPool);
+	bool broadcast(ProcessPool& procPool);
 };
 
 #endif

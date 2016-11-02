@@ -172,6 +172,13 @@ class Module : public ListItem<Module>
 	virtual bool process(DUQ& duq, ProcessPool& procPool) = 0;
 	// Execute post-processing stage
 	virtual bool postProcess(DUQ& duq, ProcessPool& procPool) = 0;
+
+
+	/*
+	 * Parallel Comms
+	 */
+	public:
+	bool broadcastVariables(ProcessPool& procPool);
 };
 
 #endif

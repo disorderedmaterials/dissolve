@@ -160,35 +160,35 @@ const char* Module::variableAsChar(const char* varName)
 // Retrieve Module variable from supplied Configuration, or get default value (bool)
 bool Module::variableAsBool(Configuration* cfg, const char* varName)
 {
-	Variable* var = cfg->variable(varName, name());
+	Variable* var = cfg->moduleVariable(varName, name());
 	return (var ? var->asBool() : variableAsBool(varName));
 }
 
 // Retrieve Module variable from supplied Configuration, or get default value (int)
 int Module::variableAsInt(Configuration* cfg, const char* varName)
 {
-	Variable* var = cfg->variable(varName, name());
+	Variable* var = cfg->moduleVariable(varName, name());
 	return (var ? var->asInt() : variableAsInt(varName));
 }
 
 // Retrieve Module variable from supplied Configuration, or get default value (double)
 double Module::variableAsDouble(Configuration* cfg, const char* varName)
 {
-	Variable* var = cfg->variable(varName, name());
+	Variable* var = cfg->moduleVariable(varName, name());
 	return (var ? var->asDouble() : variableAsDouble(varName));
 }
 
 // Retrieve Module variable from supplied Configuration, or get default value (char)
 const char* Module::variableAsChar(Configuration* cfg, const char* varName)
 {
-	Variable* var = cfg->variable(varName, name());
+	Variable* var = cfg->moduleVariable(varName, name());
 	return (var ? var->asChar() : variableAsChar(varName));
 }
 
 // Retrieve Module variable from supplied Configuration, or get default value
 void Module::setVariable(Configuration* cfg, const char* varName, VariableValue value)
 {
-	cfg->setVariable(varName, value, "", name());
+	cfg->setModuleVariable(varName, value, "", name());
 }
 
 // Search for named variable in Module
@@ -201,4 +201,13 @@ Variable* Module::findVariable(const char* varName)
 Variable* Module::variables()
 {
 	return variables_.variables();
+}
+
+/*
+ * Parallel Comms
+ */
+
+bool Module::broadcastVariables(ProcessPool& procPool)
+{
+	return variables_.broadcast(procPool);
 }

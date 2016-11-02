@@ -45,7 +45,7 @@ class Species;
 /*
  * Configuration
  */
-class Configuration : public ListItem<Configuration>, public VariableList
+class Configuration : public ListItem<Configuration>
 {
 	public:
 	// Constructor
@@ -373,6 +373,8 @@ class Configuration : public ListItem<Configuration>, public VariableList
 	private:
 	// Modules associated to this Configuration
 	RefList<Module,bool> modules_;
+	// Variables set by Modules
+	VariableList moduleVariables_;
 
 	public:
 	// Associate Module to Configuration
@@ -383,6 +385,10 @@ class Configuration : public ListItem<Configuration>, public VariableList
 	int nModules();
 	// Return first Module of specified type
 	RefListItem<Module,bool>* modules();
+	// Set Module variable
+	void setModuleVariable(const char* name, VariableValue value, const char* description, const char* source);
+	// Return named Module variable
+	Variable* moduleVariable(const char* name, const char* source);
 
 
 	/*

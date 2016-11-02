@@ -144,7 +144,7 @@ Variable* VariableList::variable(const char* name, const char* source)
  */
 
 // Broadcast data
-bool VariableList::broadcastVariables(ProcessPool& procPool)
+bool VariableList::broadcast(ProcessPool& procPool)
 {
 #ifdef PARALLEL
 	// Clear list on slaves

@@ -129,9 +129,9 @@ bool AtomShake::process(DUQ& duq, ProcessPool& procPool)
 	Configuration* cfg = targetConfigurations_.firstItem();
 
 	// Retrieve control parameters from Configuration
-	const double cutoffDistance = variableAsDouble("CutoffDistance") < 0.0 ? duq.pairPotentialRange() : variableAsDouble("CutoffDistance");
-	const int nShakesPerAtom = variableAsInt("ShakesPerAtom");
-	const double targetAcceptanceRate = variableAsDouble("TargetAcceptanceRate");
+	const double cutoffDistance = variableAsDouble(cfg, "CutoffDistance") < 0.0 ? duq.pairPotentialRange() : variableAsDouble(cfg, "CutoffDistance");
+	const int nShakesPerAtom = variableAsInt(cfg, "ShakesPerAtom");
+	const double targetAcceptanceRate = variableAsDouble(cfg, "TargetAcceptanceRate");
 	double stepSize = variableAsDouble(cfg, "StepSize");
 	const double termScale = 1.0;
 	const double rRT = 1.0/(.008314472*cfg->temperature());

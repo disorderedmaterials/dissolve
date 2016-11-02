@@ -61,13 +61,14 @@ Configuration  'Bulk'
   # Define species in the system, and their relative populations
   Species 'Water'  1.0
 
-  # Define initial coordinates file XXX OR ALLOW RANDOM GENERATION XXX
+  # Define initial coordinates file
+  # If no file is specified a random configuration will be generated
   File '/home/tris/work/water/epsr/waterbox.xyz'
 
   # Enable modules and set associated variables
   Module AtomShake
     # Disabled
-    ShakesPerAtom  3
+    ShakesPerAtom  1
   EndModule
 EndConfiguration
 

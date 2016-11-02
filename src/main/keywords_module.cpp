@@ -99,7 +99,7 @@ bool Keywords::parseModuleBlock(LineParser& parser, DUQ* duq, Module* module, Co
 				break;
 			}
 			// Set variable in Configuration / Sample as appropriate
-			if (cfg) cfg->setVariable(var->name(), parser.argc(1), var->description(), module->name());
+			if (cfg) cfg->setModuleVariable(var->name(), parser.argc(1), var->description(), module->name());
 // 			if (sam) sam->setVariable(var->name(), parser.argc(1), var->description(), module->name());
 		}
 

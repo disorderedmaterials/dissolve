@@ -20,6 +20,7 @@
 */
 
 #include "base/variablevalue.h"
+#include "base/processpool.h"
 #include "base/sysfunc.h"
 
 // Constructor
@@ -165,12 +166,10 @@ const char* VariableValue::asChar()
 bool VariableValue::broadcast(ProcessPool& procPool)
 {
 #ifdef PARALLEL
-	if (!procPool.broadcast(name_)) return false;
-	if (!procPool.broadcast(description_)) return false;
-	if (!procPool.broadcast(source_)) return false;
+	// Broadcast type first, then value
 	int tempType = type_;
 	if (!procPool.broadcast(&tempType, 1)) return false;
-	type_ = (VariableValue::VariableType) tempType;
+	type_ = (VariableValue::ValueType) tempType;
 	switch (type_)
 	{
 		case (VariableValue::BooleanType):
@@ -186,7 +185,7 @@ bool VariableValue::broadcast(ProcessPool& procPool)
 			if (!procPool.broadcast(valueC_)) return false;
 			break;
 		default:
-			Messenger::error("Broadcast of Variable failed - type_ not accounted for.\n");
+			Messenger::error("Broadcast of VariableValue failed - type_ %s not accounted for.\n", VariableValue::valueType(type_));
 			return false;
 	}
 #endif

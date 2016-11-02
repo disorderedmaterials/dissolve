@@ -115,7 +115,7 @@ bool Variable::broadcast(ProcessPool& procPool)
 	if (!procPool.broadcast(name_)) return false;
 	if (!procPool.broadcast(description_)) return false;
 	if (!procPool.broadcast(source_)) return false;
-	if (!procPool.broadcast(value_)) return false;
+	if (!value_.broadcast(procPool)) return false;
 #endif
 	return true;
 }
