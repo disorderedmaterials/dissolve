@@ -135,6 +135,7 @@ bool DUQ::setupSimulation()
 
 	/* Construct Pre/Post-Process Lists */
 
+	Messenger::print("--> Creating Pre/Post-Processing task list...\n");
 	// Loop over configurations
 	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
 	{
@@ -150,10 +151,10 @@ bool DUQ::setupSimulation()
 				// If the Module's instance type is UniqueInstance, check that it is not already in the list
 				if (module->instanceType() == Module::UniqueInstance)
 				{
-					Module* oldModule = findPreProcessingStage(module->name());
-					if (!oldModule) preProcessingStages_.add(module);
+					Module* oldModule = findPreProcessingTask(module->name());
+					if (!oldModule) preProcessingTasks_.add(module);
 				}
-				else preProcessingStages_.add(module);
+				else preProcessingTasks_.add(module);
 			}
 
 			// Post-Processing
@@ -162,13 +163,36 @@ bool DUQ::setupSimulation()
 				// If the Module's instance type is UniqueInstance, check that it is not already in the list
 				if (module->instanceType() == Module::UniqueInstance)
 				{
-					Module* oldModule = findPostProcessingStage(module->name());
-					if (!oldModule) postProcessingStages_.add(module);
+					Module* oldModule = findPostProcessingTask(module->name());
+					if (!oldModule) postProcessingTasks_.add(module);
 				}
-				else postProcessingStages_.add(module);
+				else postProcessingTasks_.add(module);
 			}
 		}
 	}
+	if (preProcessingTasks_.nItems() == 0) Messenger::print("--> No pre-processing tasks found.\n");
+	else Messenger::print("--> %i pre-processing %s found.\n", preProcessingTasks_.nItems(), preProcessingTasks_.nItems() == 1 ? "task" : "tasks");
+	for (RefListItem<Module,bool>* ri = preProcessingTasks_.first(); ri != NULL; ri = ri->next)
+	{
+		// Grab Module pointer
+		Module* module = ri->item;
+
+		Messenger::print("    %s:\n", module->name());
+		if (module->nConfigurationTargets() == 0) Messenger::print("      No Configuration targets.\n");
+		else
+		{
+			Messenger::print("      %i Configuration %s:\n", module->nConfigurationTargets(), module->nConfigurationTargets() == 1 ? "target" : "targets");
+			for (RefListItem<Configuration,bool>* refCfg = module->targetConfigurations(); refCfg != NULL; refCfg = refCfg->next)
+			{
+				// Get Configuration pointer
+				Configuration* cfg = refCfg->item;
+
+				// Print name, and all associated variables with the module from the Configuration
+				Messenger::print("      --> %s\n", cfg->name());
+			}
+		}
+	}
+		
 
 	return true;
 }

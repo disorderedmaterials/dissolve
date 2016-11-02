@@ -30,20 +30,16 @@
 class DUQ;
 class Configuration;
 class ProcessPool;
+class Sample;
 
 // Module
-class Module : public ListItem<Module>, public VariableList
+class Module : public ListItem<Module>
 {
 	public:
 	// Constructor
-	Module()
-	{
-		instances_.own(this);
-	}
+	Module();
 	// Destructor
-	virtual ~Module()
-	{
-	}
+	virtual ~Module();
 	// Module Types
 	enum ModuleType { AnalysisModule, CalculationModule, EvolutionModule, FitModule, nModuleTypes };
 	static ModuleType moduleType(const char* s);
@@ -63,10 +59,7 @@ class Module : public ListItem<Module>, public VariableList
 	// Create instance of this module
 	virtual Module* createInstance() = 0;
 	// Delete all instances of this Module
-	void deleteInstances()
-	{
-		while (instances_.first()) instances_.removeFirst();
-	}
+	void deleteInstances();
 
 
 	/*
@@ -100,25 +93,13 @@ class Module : public ListItem<Module>, public VariableList
 
 	public:
 	// Frequency with which to run Module (relative to master simulation loop counter)
-	void setFrequency(int freq)
-	{
-		frequency_ = freq;
-	}
+	void setFrequency(int freq);
 	// Frequency with which to run Module (relative to master simulation loop counter)
-	int frequency()
-	{
-		return frequency_;
-	}
+	int frequency();
 	// Set whether the Module is enabled
-	void setEnabled(bool b)
-	{
-		enabled_ = b;
-	}
+	void setEnabled(bool b);
 	// Return whether the Module is enabled
-	bool enabled()
-	{
-		return enabled_;
-	}
+	bool enabled();
 
 
 	/*
@@ -127,13 +108,56 @@ class Module : public ListItem<Module>, public VariableList
 	protected:
 	// Configurations that are targeted by this module
 	RefList<Configuration,bool> targetConfigurations_;
+	// Samples that are targeted by this module
+	RefList<Sample,bool> targetSamples_;
 
 	public:
 	// Add Configuration target
-	void addConfigurationTarget(Configuration* cfg)
-	{
-		targetConfigurations_.add(cfg);
-	}
+	void addConfigurationTarget(Configuration* cfg);
+	// Return number of targeted Configurations
+	int nConfigurationTargets();
+	// Return first targeted Configuration
+	RefListItem<Configuration,bool>* targetConfigurations();
+	// Add Sample target
+	void addSampleTarget(Sample* sam);
+	// Return number of targeted Samples
+	int nSampleTargets();
+	// Return first targeted Sample
+	RefListItem<Sample,bool>* targetSamples();
+
+
+	/*
+	 * Variables
+	 */
+	private:
+	// Module variables list
+	VariableList variables_;
+
+	public:
+	// Add Variable to Module
+	void addVariable(const char* varName, VariableValue defaultValue, const char* description = "");
+	// Retrieve variable from Module (bool)
+	bool variableAsBool(const char* varName);
+	// Retrieve variable from Module (int)
+	int variableAsInt(const char* varName);
+	// Retrieve variable from Module (double)
+	double variableAsDouble(const char* varName);
+	// Retrieve variable from Module (char)
+	const char* variableAsChar(const char* varName);
+	// Set Module variable in supplied Configuration (bool)
+	bool variableAsBool(Configuration* cfg, const char* varName);
+	// Set Module variable in supplied Configuration (int)
+	int variableAsInt(Configuration* cfg, const char* varName);
+	// Set Module variable in supplied Configuration (double)
+	double variableAsDouble(Configuration* cfg, const char* varName);
+	// Set Module variable in supplied Configuration (char)
+	const char* variableAsChar(Configuration* cfg, const char* varName);
+	// Retrieve Module variable from supplied Configuration, or get default value
+	void setVariable(Configuration* cfg, const char* varName, VariableValue value);
+	// Search for named variable in Module
+	Variable* findVariable(const char* varName);
+	// Return first defined Variable
+	Variable* variables();
 
 
 	/*

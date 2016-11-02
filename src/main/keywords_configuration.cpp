@@ -138,7 +138,7 @@ bool Keywords::parseConfigurationBlock(LineParser& parser, DUQ* duq, Configurati
 				}
 
 				// Parse rest of Module block
-				if (!parseModuleBlock(parser, duq, module)) error = true;
+				if (!parseModuleBlock(parser, duq, module, cfg, NULL)) error = true;
 				break;
 			case (Keywords::MultiplierKeyword):
 				cfg->setMultiplier(parser.argd(1));

@@ -12,6 +12,7 @@ sysfunc.cpp
 timer.cpp
 variable.cpp
 variablelist.cpp
+variablevalue.cpp
 
 constants.h
 data2d.h
@@ -27,6 +28,7 @@ sysfunc.h
 timer.h
 variable.h
 variablelist.h
+variablevalue.h
 )
 
 include_directories(

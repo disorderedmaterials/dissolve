@@ -22,6 +22,7 @@
 #ifndef DUQ_VARIABLE_H
 #define DUQ_VARIABLE_H
 
+#include "base/variablevalue.h"
 #include "base/dnchar.h"
 #include "templates/list.h"
 
@@ -36,8 +37,6 @@ class Variable : public ListItem<Variable>
 	Variable();
 	// Destructor
 	~Variable();
-	// Variable Type
-	enum VariableType { BooleanType, IntegerType, DoubleType, StringType };
 
 
 	/*
@@ -46,59 +45,43 @@ class Variable : public ListItem<Variable>
 	private:
 	// Name of variable
 	Dnchar name_;
-	// Type of variable
-	VariableType type_;
+	// Source of variable
+	Dnchar source_;
+	// Value
+	VariableValue value_;
 	// Description
 	Dnchar description_;
 
 	public:
-	// Setup variable (bool)
-	void setup(const char* name, bool defaultValue, const char* description);
-	// Setup variable (int)
-	void setup(const char* name, int defaultValue, const char* description);
-	// Setup variable (double)
-	void setup(const char* name, double defaultValue, const char* description);
-	// Setup variable (string)
-	void setup(const char* name, const char* defaultValue, const char* description);
+	// Setup variable
+	void setup(const char* name, VariableValue defaultValue, const char* description, const char* source = "");
 	// Return name of variable
 	const char* name();
-	// Return type of variable
-	VariableType type();
+	// Return source of variable
+	const char* source();
+	// Return type of data currently stored in variable
+	VariableValue::ValueType type();
 	// Return description
 	const char* description();
 
 
 	/*
-	 * Value
+	 * Conversion / Retrieval
 	 */
 	private:
 	// Temporary working string
 	Dnchar conversionStringTemp_;
-	// Value (bool)
-	bool valueB_;
-	// Value (integer)
-	int valueI_;
-	// Value (double)
-	double valueD_;
-	// Value (string)
-	Dnchar valueC_;
 
 	public:
-	// Set variable value (bool)
-	bool set(bool value);
-	// Set variable value (int)
-	bool set(int value);
-	// Set variable value (double)
-	bool set(double value);
-	// Set variable value (string)
-	bool set(const char* value);
-	// Return variable (as bool)
+	// Set variable value
+	void set(VariableValue newValue);
+	// Return value (as bool)
 	bool asBool();
-	// Return variable (as int)
+	// Return value (as int)
 	int asInt();
-	// Return variable (as double)
+	// Return value (as double)
 	double asDouble();
-	// Return variable (as string)
+	// Return value (as string)
 	const char* asChar();
 
 

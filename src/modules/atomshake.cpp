@@ -37,10 +37,10 @@
 AtomShake::AtomShake() : Module()
 {
 	// Setup variables / control parameters
-	setVariable("CutoffDistance", -1.0);
-	setVariable("ShakesPerAtom", 1);
-	setVariable("TargetAcceptanceRate", 0.33);
-	setVariable("StepSize", 0.05);
+	addVariable("CutoffDistance", -1.0);
+	addVariable("ShakesPerAtom", 1);
+	addVariable("TargetAcceptanceRate", 0.33);
+	addVariable("StepSize", 0.05);
 }
 
 // Destructor
@@ -97,7 +97,7 @@ bool AtomShake::hasProcessing()
 // Whether the Module has a post-processing stage
 bool AtomShake::hasPostProcessing()
 {
-	return true;
+	return false;
 }
 
 /*
@@ -132,7 +132,7 @@ bool AtomShake::process(DUQ& duq, ProcessPool& procPool)
 	const double cutoffDistance = variableAsDouble("CutoffDistance") < 0.0 ? duq.pairPotentialRange() : variableAsDouble("CutoffDistance");
 	const int nShakesPerAtom = variableAsInt("ShakesPerAtom");
 	const double targetAcceptanceRate = variableAsDouble("TargetAcceptanceRate");
-	double stepSize = variableAsDouble("StepSize");
+	double stepSize = variableAsDouble(cfg, "StepSize");
 	const double termScale = 1.0;
 	const double rRT = 1.0/(.008314472*cfg->temperature());
 
@@ -175,7 +175,7 @@ bool AtomShake::process(DUQ& duq, ProcessPool& procPool)
 			continue;
 		}
 		cell = cfg->cell(cellId);
-		Messenger::printVerbose("Cell %i now the target, containing %i Grains interacting with %i neighbours.\n", cellId, cell->nGrains(), cell->nTotalCellNeighbours());
+		Messenger::printVerbose("AtomShake: Cell %i now the target, containing %i Grains interacting with %i neighbours.\n", cellId, cell->nGrains(), cell->nTotalCellNeighbours());
 
 		/*
 		 * Calculation Begins
@@ -270,7 +270,7 @@ bool AtomShake::process(DUQ& duq, ProcessPool& procPool)
 
 	// Store updated parameter values
 	if (!procPool.broadcast(&stepSize, 1, 0, ProcessPool::Group)) return false;
-// 	stepSizeParam->setValue(stepSize); TODO
+	setVariable(cfg, "StepSize", stepSize);
 	Messenger::print("AtomShake: Updated translation step is %f Angstroms.\n", stepSize);
 	
 	// Increment configuration changeCount_
@@ -398,5 +398,5 @@ bool AtomShake::process(DUQ& duq, ProcessPool& procPool)
 // Execute post-processing stage
 bool AtomShake::postProcess(DUQ& duq, ProcessPool& procPool)
 {
-	return false;
+	return true;
 }

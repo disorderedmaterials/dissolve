@@ -47,22 +47,16 @@ class VariableList
 	public:
 	// Return first Variable in list
 	Variable* variables();
-	// Add/set Variable (bool)
-	void setVariable(const char* name, bool value, const char* description = "");
-	// Add/set Variable (int)
-	void setVariable(const char* name, int value, const char* description = "");
-	// Add/set Variable (double)
-	void setVariable(const char* name, double value, const char* description = "");
-	// Add/set Variable (string)
-	void setVariable(const char* name, const char* value, const char* description = "");
+	// Add/set Variable
+	void setVariable(const char* name, VariableValue value, const char* description = "", const char* source = "");
 	// Retrieve named Variable (bool)
-	bool variableAsBool(const char* name);
+	bool variableAsBool(const char* name, const char* source = "");
 	// Retrieve named Variable (int)
-	int variableAsInt(const char* name);
+	int variableAsInt(const char* name, const char* source = "");
 	// Retrieve named Variable (double)
-	double variableAsDouble(const char* name);
+	double variableAsDouble(const char* name, const char* source = "");
 	// Retrieve named Variable (string)
-	const char* variableAsChar(const char* name);
+	const char* variableAsChar(const char* name, const char* source = "");
 
 
 	/*
@@ -70,9 +64,7 @@ class VariableList
 	 */
 	public:
 	// Return named Variable
-	Variable* variable(const char* name);
-	// Return named Variable (with prefix)
-	Variable* variable(const char* prefix, const char* name);
+	Variable* variable(const char* name, const char* source = "");
 
 
 	/*

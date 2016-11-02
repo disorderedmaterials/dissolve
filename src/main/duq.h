@@ -233,16 +233,16 @@ class DUQ
 	 * Simulation
 	 */
 	private:
-	// List of pre-processing stages to perform
-	RefList<Module,bool> preProcessingStages_;
+	// List of pre-processing tasks to perform
+	RefList<Module,bool> preProcessingTasks_;
 	// List of post-processing stages to perform
-	RefList<Module,bool> postProcessingStages_;
+	RefList<Module,bool> postProcessingTasks_;
 
 	private:
-	// Find first occurrence of named Module in pre-processing stages
-	Module* findPreProcessingStage(const char* name);
-	// Find first occurrence of named Module in post-processing stages
-	Module* findPostProcessingStage(const char* name);
+	// Find first occurrence of named Module in pre-processing tasks
+	Module* findPreProcessingTask(const char* name);
+	// Find first occurrence of named Module in post-processing tasks
+	Module* findPostProcessingTask(const char* name);
 
 	public:
 	// Run main simulation

@@ -44,86 +44,32 @@ Variable* VariableList::variables()
 	return variables_.first();
 }
 
-// Add/set variable (bool)
-void VariableList::setVariable(const char* name, bool value, const char* description)
+// Add/set variable
+void VariableList::setVariable(const char* name, VariableValue value, const char* description, const char* source)
 {
 	// Does the variable already exist?
-	Variable* var  = variable(name);
+	Variable* var  = variable(name, source);
 	if (!var)
 	{
-		Messenger::printVerbose("Added new boolean variable '%s' with value '%s'.\n", name, value ? "True" : "False");
 		var = variables_.add();
-		var->setup(name, value, description);
+		var->setup(name, value, description, source);
+		Messenger::printVerbose("Added new %s variable '%s' with value '%s'.\n", VariableValue::valueType(var->type()), name, value.asChar());
 	}
 	else
 	{
-		Messenger::printVerbose("Set existing boolean variable '%s' to value '%s' (previous value was '%s').\n", name, value ? "True" : "False", var->asBool() ? "True" : "False");
-		var->set(value);
-	}
-}
-
-// Add/set variable (int)
-void VariableList::setVariable(const char* name, int value, const char* description)
-{
-	// Does the variable already exist?
-	Variable* var  = variable(name);
-	if (!var)
-	{
-		Messenger::printVerbose("Added new integer variable '%s' with value '%i'.\n", name, value);
-		var = variables_.add();
-		var->setup(name, value, description);
-	}
-	else
-	{
-		Messenger::printVerbose("Set existing integer variable '%s' to value '%i' (previous value was '%i').\n", name, value, var->asInt());
-		var->set(value);
-	}
-}
-
-// Add/set variable (double)
-void VariableList::setVariable(const char* name, double value, const char* description)
-{
-	// Does the variable already exist?
-	Variable* var = variable(name);
-	if (!var)
-	{
-		Messenger::printVerbose("Added new double variable '%s' with value '%f'.\n", name, value);
-		var = variables_.add();
-		var->setup(name, value, description);
-	}
-	else
-	{
-		Messenger::printVerbose("Set existing double variable '%s' to value '%f' (previous value was '%f').\n", name, value, var->asDouble());
-		var->set(value);
-	}
-}
-
-// Add/set variable (string)
-void VariableList::setVariable(const char* name, const char* value, const char* description)
-{
-	// Does the variable already exist?
-	Variable* var = variable(name);
-	if (!var)
-	{
-		Messenger::printVerbose("Added new string variable '%s' with value '%s'.\n", name, value);
-		var = variables_.add();
-		var->setup(name, value, description);
-	}
-	else
-	{
-		Messenger::printVerbose("Set existing string variable '%s' to value '%s' (previous value was '%s').\n", name, value, var->asChar());
+		Messenger::printVerbose("Set existing %s variable '%s' to value '%s' (previous value was '%s').\n", VariableValue::valueType(var->type()), name, value.asChar(), var->asChar());
 		var->set(value);
 	}
 }
 
 // Retrieve named variable (bool)
-bool VariableList::variableAsBool(const char* name)
+bool VariableList::variableAsBool(const char* name, const char* source)
 {
 	// Does the variable already exist?
-	Variable* var = variable(name);
+	Variable* var = variable(name, source);
 	if (!var)
 	{
-		Messenger::error("Can't find boolean variable '%s'.\n", name);
+		Messenger::error("Can't find boolean variable '%s' (source = '%s').\n", name, source);
 		return 0;
 	}
 
@@ -131,13 +77,13 @@ bool VariableList::variableAsBool(const char* name)
 }
 
 // Retrieve named variable (int)
-int VariableList::variableAsInt(const char* name)
+int VariableList::variableAsInt(const char* name, const char* source)
 {
 	// Does the variable already exist?
-	Variable* var = variable(name);
+	Variable* var = variable(name, source);
 	if (!var)
 	{
-		Messenger::error("Can't find integer variable '%s'.\n", name);
+		Messenger::error("Can't find integer variable '%s' (source = '%s').\n", name, source);
 		return 0;
 	}
 
@@ -145,13 +91,13 @@ int VariableList::variableAsInt(const char* name)
 }
 
 // Retrieve named variable (double)
-double VariableList::variableAsDouble(const char* name)
+double VariableList::variableAsDouble(const char* name, const char* source)
 {
 	// Does the variable already exist?
-	Variable* var = variable(name);
+	Variable* var = variable(name, source);
 	if (!var)
 	{
-		Messenger::error("Can't find double variable '%s'.\n", name);
+		Messenger::error("Can't find double variable '%s' (source = '%s').\n", name, source);
 		return 0.0;
 	}
 
@@ -159,13 +105,13 @@ double VariableList::variableAsDouble(const char* name)
 }
 
 // Retrieve named variable (string)
-const char* VariableList::variableAsChar(const char* name)
+const char* VariableList::variableAsChar(const char* name, const char* source)
 {
 	// Does the variable already exist?
-	Variable* var = variable(name);
+	Variable* var = variable(name, source);
 	if (!var)
 	{
-		Messenger::error("Can't find string variable '%s'.\n", name);
+		Messenger::error("Can't find string variable '%s' (source = '%s').\n", name, source);
 		return "NULL";
 	}
 
@@ -177,20 +123,19 @@ const char* VariableList::variableAsChar(const char* name)
  */
 
 // Return named variable
-Variable* VariableList::variable(const char* name)
+Variable* VariableList::variable(const char* name, const char* source)
 {
-	for (Variable* var = variables_.first(); var != NULL; var = var->next) if (DUQSys::sameString(name, var->name())) return var;
-	return NULL;
-}
-
-// Return named variable (with prefix)
-Variable* VariableList::variable(const char* prefix, const char* name)
-{
-	// Construct variable name
-	Dnchar varName;
-	varName.sprintf("%s_%s", prefix, name);
-
-	for (Variable* var = variables_.first(); var != NULL; var = var->next) if (DUQSys::sameString(varName, var->name())) return var;
+	if (DUQSys::isEmpty(source))
+	{
+		for (Variable* var = variables_.first(); var != NULL; var = var->next) if (DUQSys::sameString(name, var->name())) return var;
+	}
+	else
+	{
+		for (Variable* var = variables_.first(); var != NULL; var = var->next)
+		{
+			if ((DUQSys::sameString(name, var->name())) && (DUQSys::sameString(source, var->source()))) return var;
+		}
+	}
 	return NULL;
 }
 

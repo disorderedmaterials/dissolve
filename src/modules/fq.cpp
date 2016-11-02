@@ -37,16 +37,16 @@
 StructureFactor::StructureFactor() : Module()
 {
 	// Setup variables / control parameters
-	setVariable("QDelta", 0.05);
-	setVariable("QMax", -1.0);
-	setVariable("Bragg", "off");
-	setVariable("BraggQDepBroadening", 0.0063);
-	setVariable("BraggQIndepBroadening", 0.0);
-	setVariable("QDepBroadening", 0.02, "FWHM of Gaussian for Q-dependent instrument broadening function (if required)");
-	setVariable("QIndepepBroadening", 0.0, "FWHM of Gaussian for Q-independent instrument broadening function (if required)");
-	setVariable("NormalisedToAvSq", false, "States that the reference F(Q) has been normalised to < b >**2");
-	setVariable("NormalisedToSqAv", false, "States that the reference F(Q) has been normalised to < b**2 >");
-	setVariable("SubtractSelf", false, "States that the self scattering (determined from the high-Q average) should be subtracted from the reference data");
+	addVariable("QDelta", 0.05);
+	addVariable("QMax", -1.0);
+	addVariable("Bragg", "off");
+	addVariable("BraggQDepBroadening", 0.0063);
+	addVariable("BraggQIndepBroadening", 0.0);
+	addVariable("QDepBroadening", 0.02, "FWHM of Gaussian for Q-dependent instrument broadening function (if required)");
+	addVariable("QIndepepBroadening", 0.0, "FWHM of Gaussian for Q-independent instrument broadening function (if required)");
+	addVariable("NormalisedToAvSq", false, "States that the reference F(Q) has been normalised to < b >**2");
+	addVariable("NormalisedToSqAv", false, "States that the reference F(Q) has been normalised to < b**2 >");
+	addVariable("SubtractSelf", false, "States that the self scattering (determined from the high-Q average) should be subtracted from the reference data");
 }	
 	
 // Destructor

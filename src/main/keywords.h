@@ -143,7 +143,7 @@ class Keywords
 	// Return expected number of expected arguments
 	static int moduleBlockNArguments(ModuleKeyword id);
 	// Parse Module block
-	static bool parseModuleBlock(LineParser& parser, DUQ* duq, Module* module);
+	static bool parseModuleBlock(LineParser& parser, DUQ* duq, Module* module, Configuration* cfg, Sample* sam);
 
 
 	/*

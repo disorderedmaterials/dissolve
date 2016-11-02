@@ -181,8 +181,6 @@ bool DUQSys::isEmpty(const char* s)
 	if (s == NULL) return true;
 	for (const char* c = s; *c != '\0'; ++c)
 	{
-		printf("%p\n", c);
-		printf("%c\n", *c);
 		switch (*c)
 		{
 			case (' '):

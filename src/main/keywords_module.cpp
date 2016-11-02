@@ -49,7 +49,7 @@ int Keywords::moduleBlockNArguments(Keywords::ModuleKeyword id)
 }
 
 // Parse Module block
-bool Keywords::parseModuleBlock(LineParser& parser, DUQ* duq, Module* module)
+bool Keywords::parseModuleBlock(LineParser& parser, DUQ* duq, Module* module, Configuration* cfg, Sample* sam)
 {
 	Messenger::print("Parsing %s block\n", Keywords::inputBlock(Keywords::AtomTypesBlock));
 
@@ -91,14 +91,16 @@ bool Keywords::parseModuleBlock(LineParser& parser, DUQ* duq, Module* module)
 		{
 			// Might be a Module variable?
 			// First of all, does the named variable exist?
-			Variable* var = module->variable(parser.argc(0));
+			Variable* var = module->findVariable(parser.argc(0));
 			if (!var)
 			{
 				Messenger::error("Unrecognised %s block keyword found - '%s', and the Module '%s' contains no variable of this name.\n", Keywords::inputBlock(Keywords::ModuleBlock), parser.argc(0), module->name());
 				error = true;
 				break;
 			}
-			var->set(parser.argc(1));
+			// Set variable in Configuration / Sample as appropriate
+			if (cfg) cfg->setVariable(var->name(), parser.argc(1), var->description(), module->name());
+// 			if (sam) sam->setVariable(var->name(), parser.argc(1), var->description(), module->name());
 		}
 
 		// Error encountered?

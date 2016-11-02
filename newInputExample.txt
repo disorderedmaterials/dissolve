@@ -84,6 +84,6 @@ EndPairPotentials
 # Simulation Setup / Definition
 Simulation
   Seed  943723867
-  MaxIterations  1
+  MaxIterations  2
 EndSimulation
 
