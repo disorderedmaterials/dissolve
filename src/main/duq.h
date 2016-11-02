@@ -259,6 +259,8 @@ class DUQ
 	double rmseDeltaQ_;
 	// Random seed
 	int seed_;
+	// Maximum number of main loop iterations to perform
+	int maxIterations_;
 	// Window function to use for all Fourier transforms
 	Data2D::WindowFunction windowFunction_;
 
@@ -271,6 +273,10 @@ class DUQ
 	void setSeed(int seed);
 	// Return random seed
 	int seed();
+	// Set maximum number of main loop iterations to perform
+	void setMaxIterations(int nIterations);
+	// Return maximum number of main loop iterations to perform
+	int maxIterations();
 	// Set window function to use for all Fourier transforms
 	void setWindowFunction(Data2D::WindowFunction wf);
 	// Setup all simulation data, checking it as we go

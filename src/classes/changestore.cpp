@@ -169,7 +169,7 @@ bool ChangeStore::distributeAndApply(Configuration* cfg)
 	int nTotalChanges = changes_.nItems();
 	if (!processPool_.allSum(&nTotalChanges, 1)) return false;
 
-// 	Messenger::print("We think there are %i changes in total to distribute.\n", nTotalChanges);
+	Messenger::printVerbose("We think there are %i changes in total to distribute.\n", nTotalChanges);
 
 	// All processes now resize their arrays so they are large enough to hold the total number of changes
 	if (nTotalChanges == 0) return true;
@@ -194,10 +194,10 @@ bool ChangeStore::distributeAndApply(Configuration* cfg)
 	if (!processPool_.assemble(z_, changes_.nItems(), z_, nTotalChanges)) return false;
 	
 	// ... then broadcast it to the slaves
-	if (!processPool_.broadcast(indices_, nTotalChanges)) return false;
-	if (!processPool_.broadcast(x_, nTotalChanges)) return false;
-	if (!processPool_.broadcast(y_, nTotalChanges)) return false;
-	if (!processPool_.broadcast(z_, nTotalChanges)) return false;
+	if (!processPool_.broadcast(indices_)) return false;
+	if (!processPool_.broadcast(x_)) return false;
+	if (!processPool_.broadcast(y_)) return false;
+	if (!processPool_.broadcast(z_)) return false;
 
 	// Apply atom changes
 	Atom* atoms = cfg->atoms();

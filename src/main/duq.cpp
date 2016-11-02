@@ -43,6 +43,7 @@ DUQ::DUQ()
 	boxNormalisationPoints_ = 50000000;
 	rmseDeltaQ_ = 0.05;
 	seed_ = -1;
+	maxIterations_ = -1;
 	windowFunction_ = Data2D::NoWindow;
 
 	// Parallel

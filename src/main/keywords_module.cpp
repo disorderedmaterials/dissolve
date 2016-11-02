@@ -26,8 +26,7 @@
 // Module Block Keywords
 KeywordData ModuleBlockData[] = {
 	{ "Disabled",			0,	"" },
-	{ "EndModule",			0,	"" },
-	{ "Set",			2,	"string variable, int|double|string value" }
+	{ "EndModule",			0,	"" }
 };
 
 // Convert text string to ModuleKeyword
@@ -57,7 +56,6 @@ bool Keywords::parseModuleBlock(LineParser& parser, DUQ* duq, Module* module)
 	int el;
 	AtomType* at;
 	Parameters* params;
-	Variable* var;
 	bool blockDone = false, error = false;
 	
 	while (!parser.eofOrBlank(duq->worldPool()))
@@ -71,24 +69,13 @@ bool Keywords::parseModuleBlock(LineParser& parser, DUQ* duq, Module* module)
 			error = true;
 			break;
 		}
-		switch (modKeyword)
+		else if (modKeyword != Keywords::nModuleKeywords) switch (modKeyword)
 		{
 			case (Keywords::DisabledModuleKeyword):
 				module->setEnabled(false);
 				break;
 			case (Keywords::EndModuleKeyword):
 				blockDone = true;
-				break;
-			case (Keywords::SetModuleVariableKeyword):
-				// First of all, does the named variable exist?
-				var = module->variable(parser.argc(1));
-				if (!var)
-				{
-					Messenger::error("Module '%s' does not contain a variable '%s'.\n", module->name(), parser.argc(1));
-					error = true;
-					break;
-				}
-				var->set(parser.argc(2));
 				break;
 			case (Keywords::nModuleKeywords):
 				Messenger::error("Unrecognised %s block keyword found - '%s'\n", Keywords::inputBlock(Keywords::ModuleBlock), parser.argc(0));
@@ -99,6 +86,19 @@ bool Keywords::parseModuleBlock(LineParser& parser, DUQ* duq, Module* module)
 				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", Keywords::inputBlock(Keywords::ModuleBlock), Keywords::moduleKeyword(modKeyword));
 				error = true;
 				break;
+		}
+		else
+		{
+			// Might be a Module variable?
+			// First of all, does the named variable exist?
+			Variable* var = module->variable(parser.argc(0));
+			if (!var)
+			{
+				Messenger::error("Unrecognised %s block keyword found - '%s', and the Module '%s' contains no variable of this name.\n", Keywords::inputBlock(Keywords::ModuleBlock), parser.argc(0), module->name());
+				error = true;
+				break;
+			}
+			var->set(parser.argc(1));
 		}
 
 		// Error encountered?

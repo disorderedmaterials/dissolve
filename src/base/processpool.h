@@ -250,6 +250,8 @@ class ProcessPool
 	bool broadcast(float* source, int count, int rootProcess = 0, ProcessPool::CommGroup group = ProcessPool::Pool);
 	// Broadcast bool(s)
 	bool broadcast(bool* source, int count, int rootProcess = 0, ProcessPool::CommGroup group = ProcessPool::Pool);
+	// Broadcast Array<int>
+	bool broadcast(Array<int>& array, int rootProcess = 0, ProcessPool::CommGroup group = ProcessPool::Pool);
 	// Broadcast Array<double>
 	bool broadcast(Array<double>& array, int rootProcess = 0, ProcessPool::CommGroup group = ProcessPool::Pool);
 
@@ -270,6 +272,8 @@ class ProcessPool
 	bool assemble(int* array, int nData, int* rootDest, int rootMaxData, int rootProcess = 0);
 	// Assemble double array on target process
 	bool assemble(double* array, int nData, double* rootDest, int rootMaxData, int rootProcess = 0);
+	// Assemble double array on target process
+	bool assemble(Array<double>& array, int nData, Array<double>& rootDest, int rootMaxData, int rootProcess = 0);
 
 
 	/*
@@ -282,6 +286,8 @@ class ProcessPool
 	void stop();
 	// Receive logical decision from master (Slaves only)
 	bool decision();
+	// Return if one or more processes have failed (based on supplied boo)
+	bool ok(bool isOK);
 
 
 	/*

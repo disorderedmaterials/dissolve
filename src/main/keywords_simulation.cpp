@@ -25,10 +25,11 @@
 
 // Simulation Block Keywords
 KeywordData SimulationBlockData[] = {
-	{ "BoxNormalisationPoints",		1,	"" },
-	{ "EndSimulation",			0,	"" },
-	{ "Seed",				1,	"" },
-	{ "WindowFunction",			1,	"" }
+	{ "BoxNormalisationPoints",		1,	"Number of random insertions to use when generating the normalisation array" },
+	{ "EndSimulation",			0,	"Signals the end of the Simulation block" },
+	{ "MaxIterations",			1,	"Maximum number of main loop iterations to perform, or -1 for no limit" },
+	{ "Seed",				1,	"Random seed to use" },
+	{ "WindowFunction",			1,	"Window function to use in all Fourier transforms" }
 };
 
 // Convert text string to SimulationKeyword
@@ -77,13 +78,11 @@ bool Keywords::parseSimulationBlock(LineParser& parser, DUQ* duq)
 				Messenger::print("Found end of %s block.\n", Keywords::inputBlock(Keywords::SimulationBlock));
 				blockDone = true;
 				break;
+			case (Keywords::MaxIterationsKeyword):
+				duq->setMaxIterations(parser.argi(1));
+				break;
 			case (Keywords::SeedKeyword):
 				duq->setSeed(parser.argi(1));
-				break;
-			case (Keywords::nSimulationKeywords):
-				Messenger::print("Unrecognised %s block keyword found - '%s'\n", Keywords::inputBlock(Keywords::SimulationBlock), parser.argc(0));
-				Keywords::printValidKeywords(Keywords::SimulationBlock);
-				error = true;
 				break;
 			case (Keywords::WindowFunctionKeyword):
 				if (Data2D::windowFunction(parser.argc(1)) == Data2D::nWindowFunctions)
@@ -92,6 +91,11 @@ bool Keywords::parseSimulationBlock(LineParser& parser, DUQ* duq)
 					error = true;
 				}
 				else duq->setWindowFunction(Data2D::windowFunction(parser.argc(1)));
+				break;
+			case (Keywords::nSimulationKeywords):
+				Messenger::print("Unrecognised %s block keyword found - '%s'\n", Keywords::inputBlock(Keywords::SimulationBlock), parser.argc(0));
+				Keywords::printValidKeywords(Keywords::SimulationBlock);
+				error = true;
 				break;
 			default:
 				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", Keywords::inputBlock(Keywords::SimulationBlock), Keywords::simulationKeyword(simKeyword));

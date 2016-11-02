@@ -47,6 +47,18 @@ int DUQ::seed()
 	return seed_;
 }
 
+// Set maximum number of main loop iterations to perform
+void DUQ::setMaxIterations(int nIterations)
+{
+	maxIterations_ = nIterations;
+}
+
+// Return maximum number of main loop iterations to perform
+int DUQ::maxIterations()
+{
+	return maxIterations_;
+}
+
 // Set window function to use for all Fourier transforms
 void DUQ::setWindowFunction(Data2D::WindowFunction wf)
 {

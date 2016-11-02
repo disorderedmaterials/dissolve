@@ -53,14 +53,20 @@ bool DUQ::setupMPIPools()
 	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next) configSizes.add(cfg->nAtoms());
 // 	configSizes /= configSizes.min();
 
-	// Setup pools based on selected strategy
-	if (parallelStrategy_ == DUQ::SequentialConfigStrategy)
-	{
-		// Simple, sequential strategy - all processes assigned to all Configurations
-		Array<int> processes;
-		for (int n=0; n<ProcessPool::nWorldProcesses(); ++n) processes.add(n);
+	// Default pool - all world ranks
+	Array<int> allProcesses;
+	for (int n=0; n<ProcessPool::nWorldProcesses(); ++n) allProcesses.add(n);
 
-		for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next) if (!cfg->setupProcessPool(processes)) return false;
+	// Setup pool based on selected strategy
+	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
+	{
+		Messenger::print("--> Configuration '%s':\n", cfg->name());
+
+		if (parallelStrategy_ == DUQ::SequentialConfigStrategy)
+		{
+			// Simple, sequential strategy - all processes assigned to all Configurations
+			if (!cfg->setupProcessPool(allProcesses)) return false;
+		}
 	}
 
 	return true;

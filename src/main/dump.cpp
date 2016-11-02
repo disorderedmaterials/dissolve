@@ -149,8 +149,8 @@ void DUQ::dumpSystemSetup(bool includeData)
 			// For each Module, print all available variables
 			for (Variable* var = module->variables(); var != NULL; var = var->next)
 			{
-				if (var->type() == Variable::StringType) Messenger::print("    %s  %s  '%s'\n", Keywords::moduleKeyword(Keywords::SetModuleVariableKeyword), var->name(), var->asChar());
-				else Messenger::print("    %s  %s  %s\n", Keywords::moduleKeyword(Keywords::SetModuleVariableKeyword), var->name(), var->asChar());
+				if (var->type() == Variable::StringType) Messenger::print("    %s  '%s'\n", var->name(), var->asChar());
+				else Messenger::print("    %s  %s\n", var->name(), var->asChar());
 			}
 
 			Messenger::print("  %s\n", Keywords::moduleKeyword(Keywords::EndModuleKeyword));

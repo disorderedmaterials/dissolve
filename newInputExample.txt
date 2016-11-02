@@ -67,7 +67,7 @@ Configuration  'Bulk'
   # Enable modules and set associated variables
   Module AtomShake
     # Disabled
-    Set nShakesPerAtom 3
+    ShakesPerAtom  3
   EndModule
 EndConfiguration
 
@@ -84,5 +84,6 @@ EndPairPotentials
 # Simulation Setup / Definition
 Simulation
   Seed  943723867
+  MaxIterations  1
 EndSimulation
 

@@ -68,9 +68,10 @@ void ProcessPool::operator=(const ProcessPool& source)
 	worldRanks_ = source.worldRanks_;
 
 	// Local groups
+	processGroups_ = source.processGroups_;
 	groupIndex_ = source.groupIndex_;
 	groupRank_ = source.groupRank_;
-	processGroups_ = source.processGroups_;
+	groupLeaders_ = source.groupLeaders_;
 #ifdef PARALLEL
 	groupGroup_ = source.groupGroup_;
 	groupCommunicator_ = source.groupCommunicator_;
@@ -199,11 +200,13 @@ bool ProcessPool::setup(const char* name, Array<int> worldRanks)
 		}
 	}
 
+#ifdef PARALLEL
 	// Create pool group and communicator
 	MPI_Group origGroup;
 	MPI_Comm_group(MPI_COMM_WORLD, &origGroup);
 	if (MPI_Group_incl(origGroup, worldRanks_.nItems(), worldRanks_.array(), &poolGroup_) != MPI_SUCCESS) return false;
 	if (MPI_Comm_create(MPI_COMM_WORLD, poolGroup_, &poolCommunicator_) != MPI_SUCCESS) return false;
+#endif
 
 	return true;
 }
@@ -886,6 +889,64 @@ bool ProcessPool::broadcast(bool* source, int count, int rootProcess, ProcessPoo
 	return true;
 }
 
+// Broadcast Array<int>
+bool ProcessPool::broadcast(Array<int>& array, int rootProcess, ProcessPool::CommGroup group)
+{
+#ifdef PARALLEL
+	totalTime_.start();
+	accumTime_.start();
+
+	int length;
+	if (poolRank_ == rootProcess)
+	{
+		// Broadcast string length first...
+		length = array.nItems();
+		if (MPI_Bcast(&length, 1, MPI_INTEGER, rootProcess, communicator(group)) != MPI_SUCCESS)
+		{
+			Messenger::print("Failed to broadcast Array<int> size from root process %i (world rank %i).\n", rootProcess, worldRanks_[rootProcess]);
+			return false;
+		}
+
+		// Now broadcast Array data
+		if (length > 0)
+		{
+			if (MPI_Bcast(array.array(), length, MPI_INTEGER, rootProcess, communicator(group)) != MPI_SUCCESS)
+			{
+				Messenger::print("Failed to broadcast Array<int> data from root process %i (world rank %i).\n", rootProcess, worldRanks_[rootProcess]);
+				return false;
+			}
+		}
+	}
+	else
+	{
+		// Slaves receive the data into the buffer, and then set the source string.
+		// Length first...
+		if (MPI_Bcast(&length, 1, MPI_INTEGER, rootProcess, communicator(group)) != MPI_SUCCESS)
+		{
+			Messenger::print("Slave %i (world rank %i) failed to receive Array<int> size from rootProcess %i.\n", poolRank_, worldRanks_[poolRank_], rootProcess);
+			return false;
+		}
+
+		if (length > 0)
+		{
+			// Create array of specified size
+			array.reserve(length);
+
+			if (MPI_Bcast(array.array(), length, MPI_INTEGER, rootProcess, communicator(group)) != MPI_SUCCESS)
+			{
+				Messenger::print("Slave %i (world rank %i) failed to receive Array<int> data from root process %i (world rank %i).\n", poolRank_, worldRanks_[poolRank_], rootProcess, worldRanks_[rootProcess]);
+				return false;
+			}
+		}
+		else array.clear();
+	}
+
+	totalTime_.accumulate();
+	accumTime_.accumulate();
+#endif
+	return true;
+}
+
 // Broadcast Array<double>
 bool ProcessPool::broadcast(Array<double>& array, int rootProcess, ProcessPool::CommGroup group)
 {
@@ -900,16 +961,16 @@ bool ProcessPool::broadcast(Array<double>& array, int rootProcess, ProcessPool::
 		length = array.nItems();
 		if (MPI_Bcast(&length, 1, MPI_INTEGER, rootProcess, communicator(group)) != MPI_SUCCESS)
 		{
-			Messenger::print("Failed to broadcast Array size from root process %i (world rank %i).\n", rootProcess, worldRanks_[rootProcess]);
+			Messenger::print("Failed to broadcast Array<double> size from root process %i (world rank %i).\n", rootProcess, worldRanks_[rootProcess]);
 			return false;
 		}
 
 		// Now broadcast Arrah data
 		if (length > 0)
 		{
-			if (MPI_Bcast(array.array(), length, MPI_CHARACTER, rootProcess, communicator(group)) != MPI_SUCCESS)
+			if (MPI_Bcast(array.array(), length, MPI_DOUBLE, rootProcess, communicator(group)) != MPI_SUCCESS)
 			{
-				Messenger::print("Failed to broadcast Array data from root process %i (world rank %i).\n", rootProcess, worldRanks_[rootProcess]);
+				Messenger::print("Failed to broadcast Array<double> data from root process %i (world rank %i).\n", rootProcess, worldRanks_[rootProcess]);
 				return false;
 			}
 		}
@@ -920,7 +981,7 @@ bool ProcessPool::broadcast(Array<double>& array, int rootProcess, ProcessPool::
 		// Length first...
 		if (MPI_Bcast(&length, 1, MPI_INTEGER, rootProcess, communicator(group)) != MPI_SUCCESS)
 		{
-			Messenger::print("Slave %i (world rank %i) failed to receive Array size from rootProcess %i.\n", poolRank_, worldRanks_[poolRank_], rootProcess);
+			Messenger::print("Slave %i (world rank %i) failed to receive Array<double> size from rootProcess %i.\n", poolRank_, worldRanks_[poolRank_], rootProcess);
 			return false;
 		}
 
@@ -929,9 +990,9 @@ bool ProcessPool::broadcast(Array<double>& array, int rootProcess, ProcessPool::
 			// Create array of specified size
 			array.reserve(length);
 
-			if (MPI_Bcast(array.array(), length, MPI_CHARACTER, rootProcess, communicator(group)) != MPI_SUCCESS)
+			if (MPI_Bcast(array.array(), length, MPI_DOUBLE, rootProcess, communicator(group)) != MPI_SUCCESS)
 			{
-				Messenger::print("Slave %i (world rank %i) failed to receive Array data from root process %i (world rank %i).\n", poolRank_, worldRanks_[poolRank_], rootProcess, worldRanks_[rootProcess]);
+				Messenger::print("Slave %i (world rank %i) failed to receive Array<double> data from root process %i (world rank %i).\n", poolRank_, worldRanks_[poolRank_], rootProcess, worldRanks_[rootProcess]);
 				return false;
 			}
 		}
@@ -1132,6 +1193,25 @@ bool ProcessPool::assemble(double* array, int nLocalData, double* rootDest, int 
 	return true;
 }
 
+// Assemble double array on target process
+bool ProcessPool::assemble(Array<double>& array, int nData, Array<double>& rootDest, int rootMaxData, int rootProcess)
+{
+	if (poolRank_ == rootProcess)
+	{
+		if (rootDest.size() < rootMaxData)
+		{
+			Messenger::error("Destination Array<double> in ProcessPool::assemble() is not large enough.");
+			stop();
+			return false;
+		}
+		else proceed();
+	}
+	else if (!decision()) return false;
+
+	// Call double* version of routine...
+	return assemble(array.array(), nData, rootDest.array(), rootMaxData, rootProcess);
+}
+
 /*
  * Decisions
  */
@@ -1178,6 +1258,19 @@ bool ProcessPool::decision()
 	return data;
 #endif
 	return true;
+}
+
+// Return if one or more processes have failed (based on supplied bool)
+bool ProcessPool::ok(bool isOK)
+{
+#ifdef PARALLEL
+	// First, sum all bool values of the processes in the pool
+	int summedResult = (isOK ? 1 : 0);
+	if (!allSum(&summedResult, 1)) return false;
+	printf("ALLSUM = %i\n", summedResult);
+	return (summedResult == nProcesses());
+#endif
+	return isOK;
 }
 
 /*

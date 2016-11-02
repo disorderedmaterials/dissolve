@@ -594,7 +594,6 @@ int Configuration::nextAvailableCell(ProcessPool& procPool, bool willBeModified,
 }
 
 // Unlock Cell specified, once calculation is complete
- 
 bool Configuration::finishedWithCell(ProcessPool& procPool, bool willBeModified, int cellId)
 {
 	/*
@@ -685,8 +684,6 @@ bool Configuration::updateAtomInCell(int id)
 
 	// Need to move?
 	if (targetCell != currentCell) currentCell->moveAtom(i, targetCell);
-
-	
 
 	return true;
 }

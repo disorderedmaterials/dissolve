@@ -134,7 +134,6 @@ class Keywords
 	{
 		DisabledModuleKeyword,		/* 'Disable' - Disables the module from running */
 		EndModuleKeyword,		/* 'EndModule' - Signals the end of the Module block */
-		SetModuleVariableKeyword,	/* 'Set' - Set a named variable relevant to the module */
 		nModuleKeywords			/* Number of keywords defined for this block */
 	};
 	// Convert text string to ModuleKeyword
@@ -202,11 +201,12 @@ class Keywords
 	// Simulation Block Keyword Enum
 	enum SimulationKeyword
 	{
-		BoxNormalisationPointsKeyword,	/* 'BoxNormalisationPoints' - Specifies how many random insertions to use when generating the normalisation array */
-		EndSimulationKeyword,		/* 'EndSimulation' - Signals the end of the Simulation block */
-		SeedKeyword,			/* 'Seed' - Sets the random seed to use */
-		WindowFunctionKeyword,		/* 'WindowFunction' - Specifies the windowing function to use in all Fourier transforms */
-		nSimulationKeywords			/* Number of keywords defined for this block */
+		BoxNormalisationPointsKeyword,
+		EndSimulationKeyword,
+		MaxIterationsKeyword,
+		SeedKeyword,
+		WindowFunctionKeyword,
+		nSimulationKeywords
 	};
 	// Convert text string to SimulationKeyword
 	static SimulationKeyword simulationKeyword(const char* s);

@@ -115,9 +115,6 @@ template <class T> class List
 			own(newitem);
 		}
 
-		// Don't deep-copy the static list, just flag that it must be regenerated if required.
-		regenerate_ = true;
-
 		return *this;
 	}
 	// Element access operator
@@ -125,7 +122,7 @@ template <class T> class List
 	{
 		if ((index < 0) || (index >= nItems_))
 		{
-			printf("LIST_OPERATOR[] - Array index (%i) out of bounds (%i items in List) >>>>\n", index, nItems_);
+			printf("LIST_OPERATOR[] - Array index (%i) out of bounds (%i items in List).\n", index, nItems_);
 			return NULL;
 		}
 		return array()[index];
@@ -149,12 +146,7 @@ template <class T> class List
 	// Clear the list
 	void clear()
 	{
-		// Grab the item array, to make sure that it is up to date.
-		array();
-
-		// We will go through this array backwards, deleting the items here rather than using the remove() method.
-		// In this way, any calls to find the item's index in destructors will succeed.
-		for (int n=nItems_-1; n >= 0; --n) delete items_[n];
+		while (listTail_) remove(listTail_);
 
 		// Delete static items array and reset all quantities
 		if (items_) delete[] items_;

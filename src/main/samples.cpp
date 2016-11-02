@@ -96,11 +96,10 @@ bool DUQ::setupSamples()
 		Messenger::print("--> Sample: '%s'\n", sam->name());
 		for (IsotopologueMix* mix = sam->isotopologueMixtures(); mix != NULL; mix = mix->next)
 		{
-			double totalRelative = mix->totalRelative();
 			for (RefListItem<Isotopologue,double>* tope = mix->isotopologues(); tope != NULL; tope = tope->next)
 			{
-				if (tope == mix->isotopologues()) Messenger::print("       %-15s  %-15s  %8.3f\n", mix->species()->name(), tope->item->name(), tope->data / totalRelative);
-				else Messenger::print("                        %-15s  %8.3f\n", tope->item->name(), tope->data / totalRelative);
+				if (tope == mix->isotopologues()) Messenger::print("       %-15s  %-15s\n", mix->species()->name(), tope->item->name());
+				else Messenger::print("                        %-15s\n", tope->item->name());
 			}
 		}
 

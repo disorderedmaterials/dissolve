@@ -37,10 +37,10 @@
 AtomShake::AtomShake() : Module()
 {
 	// Setup variables / control parameters
-	setVariable("cutoffDistance", -1.0);
-	setVariable("nShakesPerAtom", 1);
-	setVariable("targetAcceptanceRate", 0.33);
-	setVariable("stepSize", 0.05);
+	setVariable("CutoffDistance", -1.0);
+	setVariable("ShakesPerAtom", 1);
+	setVariable("TargetAcceptanceRate", 0.33);
+	setVariable("StepSize", 0.05);
 }
 
 // Destructor
@@ -129,10 +129,10 @@ bool AtomShake::process(DUQ& duq, ProcessPool& procPool)
 	Configuration* cfg = targetConfigurations_.firstItem();
 
 	// Retrieve control parameters from Configuration
-	const double cutoffDistance = variableAsDouble("cutoffDistance") < 0.0 ? duq.pairPotentialRange() : variableAsDouble("cutoffDistance");
-	const int nShakesPerAtom = variableAsInt("nShakesPerAtom");
-	const double targetAcceptanceRate = variableAsDouble("targetAcceptanceRate");
-	double stepSize = variableAsDouble("stepSize");
+	const double cutoffDistance = variableAsDouble("CutoffDistance") < 0.0 ? duq.pairPotentialRange() : variableAsDouble("CutoffDistance");
+	const int nShakesPerAtom = variableAsInt("ShakesPerAtom");
+	const double targetAcceptanceRate = variableAsDouble("TargetAcceptanceRate");
+	double stepSize = variableAsDouble("StepSize");
 	const double termScale = 1.0;
 	const double rRT = 1.0/(.008314472*cfg->temperature());
 

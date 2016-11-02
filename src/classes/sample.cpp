@@ -235,9 +235,6 @@ bool Sample::createTypeList(const List<Species>& allSpecies, const List<AtomType
 		atd->setMasterIndex(id);
 	}
 
-	// Print AtomType populations (including isotopes)
-	atomTypes_.print();
-
 	return true;
 }
 

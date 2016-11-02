@@ -68,9 +68,9 @@ bool DUQ::go()
 	do
 	{
 		Messenger::print("\n");
-		Messenger::print("==================================\n");
-		Messenger::print("  MAIN LOOP ITERATION %10i\n", iteration);
-		Messenger::print("==================================\n");
+		Messenger::print("===============================================\n");
+		Messenger::print("  MAIN LOOP ITERATION %10i / %-10s\n", iteration, maxIterations_ == -1 ? "(no limit)" : DUQSys::itoa(maxIterations_));
+		Messenger::print("===============================================\n");
 		Messenger::print("\n");
 
 		// Perform pre-processing tasks (using worldPool_)
@@ -88,14 +88,24 @@ bool DUQ::go()
 
 		// Loop over Configurations, running their modules in the sequence they are defined
 		// If a process is not involved in the Configurations ProcessPool, it can move on
+		bool result = true;
 		for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
 		{
+			// Check for failure of one or more processes / processing tasks
+			if (!worldPool_.ok(result)) 
+
 			// Check involvement of this process
 			if (!cfg->processPool().involvesMe()) continue;
 
 			// Loop over Modules defined in the Configuration
 			for (RefListItem<Module,bool>* ri = cfg->modules(); ri != NULL; ri = ri->next)
 			{
+				// Grab Module pointer
+				Module* module = ri->item;
+
+				result = module->process(*this, cfg->processPool());
+
+				if (!result) break;
 			}
 			// TEST - Calculate energy of current system, partial data, write, and quit
 			//totalEnergyTest(cfg);
@@ -119,10 +129,15 @@ bool DUQ::go()
 		// Sync up all processes
 		worldPool_.wait(ProcessPool::Pool);
 
-		// TEST - Exit after one iteration
-		keepGoing = false;
+		// TODO GLOBAL MODULES HERE - Fitting etc.
+
+		Messenger::print("\n");
+		Messenger::print("========================================\n");
+		Messenger::print("  END OF MAIN LOOP ITERATION %10i\n", iteration);
+		Messenger::print("========================================\n");
+		Messenger::print("\n");
 	}
-	while (keepGoing);
+	while (iteration < maxIterations_);
 
 	return true;
 }
