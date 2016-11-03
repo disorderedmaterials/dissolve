@@ -74,14 +74,6 @@ void Data2D::clear()
  * Data
  */
 
-// Resize arrays
-void Data2D::resize(int size)
-{
-	clear();
-	x_.initialise(size);
-	y_.initialise(size);
-}
-
 // Reset arrays to zero
 void Data2D::reset()
 {
@@ -93,7 +85,9 @@ void Data2D::reset()
 // Initialise arrays to specified size
 void Data2D::initialise(int size)
 {
-	resize(size);
+	clear();
+	x_.initialise(size);
+	y_.initialise(size);
 }
 
 // Create new X axis and empty Y axis
@@ -761,7 +755,7 @@ bool Data2D::transformBroadenedRDF(double atomicDensity, double qStep, double qM
 
 	// Create working arrays
 	Array<double> oldy = y_;
-	y_.clear();
+	y_.forgetData();
 	Q = qStep*0.5;
 
 	// Perform Fourier sine transform, including instrument broadening of RDF
@@ -788,7 +782,7 @@ bool Data2D::transformBroadenedRDF(double atomicDensity, double qStep, double qM
 	}
 
 	// Copy transform data over initial data
-	x_.clear();
+	x_.forgetData();
 	for (n=0; n<y_.nItems(); ++n) x_.add((n+0.5)*qStep);
 
 	splineInterval_ = -1;
@@ -901,7 +895,7 @@ bool Data2D::transformLorch(double atomicDensity, double step, double rMax, doub
 
 	// Copy transform data over initial data
 	y_ = result;
-	x_.clear();
+	x_.forgetData();
 	for (n=0; n<y_.nItems(); ++n) x_.add((n+0.5)*step);
 	splineInterval_ = -1;
 	return true;
@@ -1401,8 +1395,8 @@ void Data2D::trim(double minX, double maxX)
 	// Copy old data first...
 	Array<double> oldX = x_;
 	Array<double> oldY = y_;
-	x_.clear();
-	y_.clear();
+	x_.forgetData();
+	y_.forgetData();
 	for (int n=0; n<oldX.nItems(); ++n)
 	{
 		if (oldX[n] < minX) continue;

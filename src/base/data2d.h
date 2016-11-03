@@ -57,8 +57,6 @@ class Data2D : public ListItem<Data2D>
 	Dnchar name_;
 	
 	private:
-	// Resize arrays
-	void resize(int size);
 	// Reset arrays to zero
 	void reset();
 	

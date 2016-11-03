@@ -173,10 +173,10 @@ bool ChangeStore::distributeAndApply(Configuration* cfg)
 
 	// All processes now resize their arrays so they are large enough to hold the total number of changes
 	if (nTotalChanges == 0) return true;
-	x_.reserve(nTotalChanges);
-	y_.reserve(nTotalChanges);
-	z_.reserve(nTotalChanges);
-	indices_.reserve(nTotalChanges);
+	x_.initialise(nTotalChanges);
+	y_.initialise(nTotalChanges);
+	z_.initialise(nTotalChanges);
+	indices_.initialise(nTotalChanges);
 	
 	// Copy local change data into arrays
 	for (int n=0; n<changes_.nItems(); ++n)

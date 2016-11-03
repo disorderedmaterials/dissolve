@@ -25,16 +25,8 @@
 #include "base/ptable.h"
 #include "modules/module.h"
 #include "classes/configuration.h"
-#include "classes/braggpeak.h"
-#include "classes/kvector.h"
 #include "classes/pairpotential.h"
 #include "classes/potentialmap.h"
-#include "classes/sample.h"
-#include "base/processpool.h"
-#include "templates/vector3.h"
-#include "templates/list.h"
-#include "templates/orderedlist.h"
-#include "templates/orderedpointerlist.h"
 
 // Forward Declarations
 class Atom;

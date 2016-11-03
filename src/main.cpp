@@ -189,7 +189,10 @@ int main(int argc, char **argv)
 #endif
 	
 	// Run main simulation
-	int result = dUQ.go();
+	bool result = dUQ.go();
+
+	// Clear all data
+	dUQ.clear();
 
 	// End parallel communication
 	ProcessPool::finalise();

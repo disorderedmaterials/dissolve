@@ -50,7 +50,8 @@ template <class A> class Array : public ListItem< Array<A> >
 	{
 		array_ = NULL;
 		size_ = 0;
-		resize(source.size_);
+		nItems_ = 0;
+		initialise(source.size_);
 		nItems_ = source.nItems_;
 		for (int n=0; n<nItems_; ++n) array_[n] = source.array_[n];
 	}
@@ -88,12 +89,11 @@ template <class A> class Array : public ListItem< Array<A> >
 		if ((newSize-size_) <= 0) return;
 
 		// Copy old data to temporary array
-		int oldSize = size_;
-		A* oldData = NULL;
-		if (oldSize > 0)
+		A* oldItems = NULL;
+		if (nItems_ > 0)
 		{
-			oldData = new A[oldSize];
-			for (int n=0; n<nItems_; ++n) oldData[n] = array_[n];
+			oldItems = new A[nItems_];
+			for (int n=0; n<nItems_; ++n) oldItems[n] = array_[n];
 		}
 
 		// Delete old, and create new array
@@ -102,10 +102,10 @@ template <class A> class Array : public ListItem< Array<A> >
 		array_ = new A[size_];
 
 		// Copy old data into new array
-		if (oldSize > 0)
+		if (nItems_ > 0)
 		{
-			for (int n=0; n<nItems_; ++n) array_[n] = oldData[n];
-			delete[] oldData;
+			for (int n=0; n<nItems_; ++n) array_[n] = oldItems[n];
+			delete[] oldItems;
 		}
 	}
 
@@ -125,13 +125,21 @@ template <class A> class Array : public ListItem< Array<A> >
 	{
 		return array_;
 	}
-	// Clear array (set nItems to zero)
-	void clear()
+	// Forget data (set nItems to zero) leaving array intact
+	void forgetData()
 	{
 		nItems_ = 0;
 	}
+	// Clear array
+	void clear()
+	{
+		nItems_ = 0;
+		if (array_ != NULL) delete[] array_;
+		array_ = NULL;
+		size_ = 0;
+	}
 	// Create empty array of specified size
-	void initialise(int size, double value = 0.0)
+	void initialise(int size, int value = 0)
 	{
 		// First, resize array...
 		resize(size);
@@ -141,15 +149,6 @@ template <class A> class Array : public ListItem< Array<A> >
 		
 		// ...and finally set all elements to specified value
 		for (int n=0; n<nItems_; ++n) array_[n] = value;
-	}
-	// Reserve array of specified size (with no content)
-	void reserve(int size)
-	{
-		// First, resize array...
-		resize(size);
-		
-		// ... then set number of items to zero
-		nItems_ = 0;
 	}
 
 

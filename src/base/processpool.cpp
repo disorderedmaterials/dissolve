@@ -930,7 +930,7 @@ bool ProcessPool::broadcast(Array<int>& array, int rootProcess, ProcessPool::Com
 		if (length > 0)
 		{
 			// Create array of specified size
-			array.reserve(length);
+			array.initialise(length);
 
 			if (MPI_Bcast(array.array(), length, MPI_INTEGER, rootProcess, communicator(group)) != MPI_SUCCESS)
 			{
@@ -988,7 +988,7 @@ bool ProcessPool::broadcast(Array<double>& array, int rootProcess, ProcessPool::
 		if (length > 0)
 		{
 			// Create array of specified size
-			array.reserve(length);
+			array.initialise(length);
 
 			if (MPI_Bcast(array.array(), length, MPI_DOUBLE, rootProcess, communicator(group)) != MPI_SUCCESS)
 			{
@@ -1157,9 +1157,8 @@ bool ProcessPool::assemble(double* array, int nLocalData, double* rootDest, int 
 	accumTime_.start();
 	if (poolRank_ == rootProcess)
 	{
-		int n;
 		// The rootProcess' data must be copied into the local array
-		for (n=0; n<nLocalData; ++n) rootDest[n] = array[n];
+		for (int n=0; n<nLocalData; ++n) rootDest[n] = array[n];
 
 		// Now get data from other processes, appending each chunk to the rootDest array
 		int slaveNData;
@@ -1267,7 +1266,6 @@ bool ProcessPool::ok(bool isOK)
 	// First, sum all bool values of the processes in the pool
 	int summedResult = (isOK ? 1 : 0);
 	if (!allSum(&summedResult, 1)) return false;
-	printf("ALLSUM = %i\n", summedResult);
 	return (summedResult == nProcesses());
 #endif
 	return isOK;
