@@ -51,7 +51,7 @@ Module* Configuration::addModule(Module* module)
 	modules_.add(moduleToAdd);
 
 	// Add our pointer to the Module's list of associated Configurations
-	moduleToAdd->addConfigurationTarget(this);
+	if (!moduleToAdd->addConfigurationTarget(this)) return NULL;
 
 	return moduleToAdd;
 }

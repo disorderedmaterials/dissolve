@@ -430,11 +430,13 @@ class Configuration : public ListItem<Configuration>
 
 	public:
 	// Setup process pool for this Configuration
-		bool setupProcessPool(Array< int > worldRanks);
+	bool setupProcessPool(Array<int> worldRanks);
 	// Return process pool for this Configuration
 	ProcessPool& processPool();
 	// Broadcast data
 	bool broadcast(ProcessPool& procPool, const List<Species>& species, double pairPotentialRange, const RefList<Module,bool>& allModules);
+	// Broadcast coordinate from specified root process
+	bool broadcastCoordinates(ProcessPool& procPool, int rootRank);
 };
 
 #endif

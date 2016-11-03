@@ -1,0 +1,282 @@
+/*
+	*** Energy Module
+	*** src/modules/energy.cpp
+	Copyright T. Youngs 2012-2016
+
+	This file is part of dUQ.
+
+	dUQ is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	dUQ is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+// #include "main/duq.h"
+#include "modules/energy.h"
+#include <main/duq.h>
+#include "classes/species.h"
+#include "classes/box.h"
+
+/*
+ * Constructor / Destructor
+ */
+
+// Constructor
+Energy::Energy() : Module()
+{
+	// Setup variables / control parameters
+	addVariable("Test", false);
+}
+
+// Destructor
+Energy::~Energy()
+{
+}
+
+// Create instance of this module
+Module* Energy::createInstance()
+{
+	return new Energy;
+}
+
+/*
+ * Definition
+ */
+
+// Return name of module
+const char* Energy::name()
+{
+	return "Energy";
+}
+
+// Return brief description of module
+const char* Energy::brief()
+{
+	return "Calculate the total energy of a Configuration";
+}
+
+// Return instance type for module
+Module::InstanceType Energy::instanceType()
+{
+	return Module::MultipleInstance;
+}
+
+// Whether the Module has a pre-processing stage
+bool Energy::hasPreProcessing()
+{
+	return false;
+}
+
+// Whether the Module has a processing stage
+bool Energy::hasProcessing()
+{
+	return true;
+}
+
+// Whether the Module has a post-processing stage
+bool Energy::hasPostProcessing()
+{
+	return false;
+}
+
+/*
+ * Targets
+ */
+
+// Return the maximum number of Configurations the Module can target (or -1 for any number)
+int Energy::nTargetableConfigurations()
+{
+	return -1;
+}
+
+// Return the maximum number of Samples the Module can target (or -1 for any number)
+int Energy::nTargetableSamples()
+{
+	return 0;
+}
+
+/*
+ * Method
+ */
+
+// Perform setup tasks for module
+bool Energy::setup(ProcessPool& procPool)
+{
+	return true;
+}
+
+// Execute pre-processing stage
+bool Energy::preProcess(DUQ& duq, ProcessPool& procPool)
+{
+	return false;
+}
+
+// Execute Method
+bool Energy::process(DUQ& duq, ProcessPool& procPool)
+{
+	/*
+	* Calculate Energy for the target Configuration(s)
+	* 
+	* This is a parallel routine, with processes operating in groups, unless in TEST mode.
+	*/
+
+	// Retrieve control parameters from Configuration
+	const bool testMode = variableAsBool("Test");
+
+	// Print argument/parameter summary
+	if (testMode) Messenger::print("Energy: Calculating energy in serial test mode.\n");
+	else Messenger::print("Energy: Performing %i shake(s) per Atom\n", 2);
+
+	double atomEnergy = 0.0, intraEnergy = 0.0;
+
+	// Loop over target Configurations
+	for (RefListItem<Configuration,bool>* ri = targetConfigurations_.first(); ri != NULL; ri = ri->next)
+	{
+		// Grab Configuration pointer
+		Configuration* cfg = ri->item;
+
+		// Calculate the total energy
+		if (testMode)
+		{
+		
+			/*
+			* Calculate the total energy of the system using a basic loop, with each
+			* process calculating its own value.
+			* 
+			* This is a serial routine, with all processes independently calculating their own value.
+			*/
+
+			/*
+			* Calculation Begins
+			*/
+
+			const PotentialMap& potentialMap = duq.potentialMap();
+
+			double distanceSq, angle;
+			Atom* i, *j, *k;
+			Vec3<double> vecji, vecjk;
+			Molecule* molN, *molM;
+			const Box* box = cfg->box();
+			double scale;
+
+			Timer timer;
+			// Calculate interatomic and intramlecular energy in a loop over defined Molecules
+			for (int n=0; n<cfg->nMolecules(); ++n)
+			{
+				molN = cfg->molecule(n);
+
+				// Molecule-molecule energy
+				for (int ii = 0; ii <molN->nAtoms()-1; ++ii)
+				{
+					for (int jj = ii +1; jj <molN->nAtoms(); ++jj)
+					{
+						// Get intramolecular scaling of atom pair
+						scale = molN->species()->scaling(ii, jj);
+						if (scale < 1.0e-3) continue;
+
+						atomEnergy += potentialMap.energy(molN->atom(ii)->globalTypeIndex(), molN->atom(jj)->globalTypeIndex(), box->minimumDistanceSquared(molN->atom(ii), molN->atom(jj)));
+					}
+				}
+
+				for (int m=n+1; m<cfg->nMolecules(); ++m)
+				{
+					molM = cfg->molecule(m);
+
+					// Double loop over atoms
+					for (int ii = 0; ii <molN->nAtoms(); ++ii)
+					{
+						for (int jj = 0; jj <molM->nAtoms(); ++jj) atomEnergy += potentialMap.energy(molN->atom(ii)->globalTypeIndex(), molM->atom(jj)->globalTypeIndex(), box->minimumDistanceSquared(molN->atom(ii), molM->atom(jj)));
+
+					}
+				}
+
+				// Bond energy
+				Species* sp = molN->species();
+				for (SpeciesBond* b = sp->bonds(); b != NULL; b = b->next)
+				{
+					// Grab pointers to atoms involved in bond
+					i = molN->atom(b->indexI());
+					j = molN->atom(b->indexJ());
+
+					distanceSq = cfg->box()->minimumDistanceSquared(i, j);
+					intraEnergy += b->energy(sqrt(distanceSq));
+				}
+
+				// Angles
+				for (SpeciesAngle* a = sp->angles(); a != NULL; a = a->next)
+				{
+					// Grab pointers to atoms involved in angle
+					i = molN->atom(a->indexI());
+					j = molN->atom(a->indexJ());
+					k = molN->atom(a->indexK());
+
+					// Get vectors 'j-i' and 'j-k'
+					vecji = cfg->box()->minimumVector(j, i);
+					vecjk = cfg->box()->minimumVector(j, k);
+					
+					// Calculate angle
+					vecji.normalise();
+					vecjk.normalise();
+					angle = Box::angle(vecji, vecjk);
+
+					// Determine Angle energy
+					intraEnergy += a->energy(angle);
+				}
+			}
+			timer.stop();
+
+			/*
+			* Calculation End
+			*/
+			
+			Messenger::print("Correct (test) particle energy is %15.9e kJ/mol\n", atomEnergy);
+			Messenger::print("Correct (test) intramolecular energy is %15.9e kJ/mol\n", intraEnergy);
+			Messenger::print("Correct (test) total energy is %15.9e kJ/mol\n", atomEnergy + intraEnergy);
+			Messenger::print("Time to do total (test) energy was %s.\n", timer.timeString());
+		}
+		else
+		{
+			/*
+			* Calculates the total energy of the entire system.
+			* 
+			* This is a serial routine (subroutines called from within are parallel).
+			*/
+
+			Messenger::print("Calculating total energy...\n");
+
+			// Calculate Grain energy
+			Timer interTimer;
+			atomEnergy = duq.interatomicEnergy(procPool, cfg);
+			interTimer.stop();
+
+			// Calculate intramolecular and interGrain correction energy
+			Timer intraTimer;
+			intraEnergy = duq.intramolecularEnergy(procPool, cfg);
+			intraTimer.stop();
+
+			Messenger::print("Time to do atom energy was %s, intramolecular energy was %s.\n", interTimer.timeString(), intraTimer.timeString());
+			Messenger::print("Total Energy (World) is %15.9e (%15.9e Atom + %15.9e Intramolecular)\n", atomEnergy + intraEnergy, atomEnergy, intraEnergy);
+		}
+
+		// Store energies in the Configuration in case somebody else needs them
+		setVariable(cfg, "Particle", atomEnergy);
+		setVariable(cfg, "Intramolecular", intraEnergy);
+		setVariable(cfg, "Total", atomEnergy+intraEnergy);
+	}
+
+	return true;
+}
+
+// Execute post-processing stage
+bool Energy::postProcess(DUQ& duq, ProcessPool& procPool)
+{
+	return false;
+}

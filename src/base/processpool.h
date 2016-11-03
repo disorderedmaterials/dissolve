@@ -144,6 +144,8 @@ class ProcessPool
 	int nProcesses();
 	// Return rank of this process in the pool
 	int poolRank();
+	// Return root (first) world rank of this pool
+	int rootWorldRank();
 	// Return whether this process is the master for this pool
 	bool isMaster();
 	// Return whether this process is a local slave in this pool

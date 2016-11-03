@@ -122,7 +122,7 @@ bool DUQ::loadInput(const char* fileName)
 	while (!parser.eofOrBlank(worldPool_))
 	{
 		// Master will read the next line from the file, and broadcast it to slaves (who will then parse it)
-		parser.getArgsDelim(worldPool_, LineParser::SkipBlanks+LineParser::StripComments+LineParser::UseQuotes);
+		if (parser.getArgsDelim(worldPool_, LineParser::SkipBlanks+LineParser::StripComments+LineParser::UseQuotes) != 0) break;
 
 		block = Keywords::inputBlock(parser.argc(0));
 		switch (block)

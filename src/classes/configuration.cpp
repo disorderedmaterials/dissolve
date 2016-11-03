@@ -459,7 +459,7 @@ bool Configuration::broadcast(ProcessPool& procPool, const List<Species>& specie
 	// Molecule Setup
 	if (procPool.isSlave() && !(setupMolecules())) return false;
 
-	// RDF Range (TO MOVE TO MODULE???)
+	// RDF Range
 	if (!procPool.broadcast(&requestedRDFRange_, 1)) return false;
 	if (!procPool.broadcast(&rdfRange_, 1)) return false;
 	if (!procPool.broadcast(&rdfBinWidth_, 1)) return false;
@@ -515,6 +515,41 @@ bool Configuration::broadcast(ProcessPool& procPool, const List<Species>& specie
 			moduleOnMaster->broadcastVariables(procPool);
 		}
 	}
+#endif
+	return true;
+}
+
+// Broadcast coordinate from specified root process
+bool Configuration::broadcastCoordinates(ProcessPool& procPool, int rootRank)
+{
+#ifdef PARALLEL
+	double* x, *y, *z;
+	x = new double[nAtoms_];
+	y = new double[nAtoms_];
+	z = new double[nAtoms_];
+	
+	// Master assembles Atom coordinate arrays...
+	if (procPool.poolRank() == rootRank)
+	{
+		Messenger::printVerbose("--> Process rank %i is assembling coordinate data...\n", procPool.poolRank());
+		for (int n=0; n<nAtoms_; ++n)
+		{
+			x[n] = atoms_[n].r().x;
+			y[n] = atoms_[n].r().y;
+			z[n] = atoms_[n].r().z;
+		}
+	}
+
+	if (!procPool.broadcast(x, nAtoms_, rootRank)) return false;
+	if (!procPool.broadcast(y, nAtoms_, rootRank)) return false;
+	if (!procPool.broadcast(z, nAtoms_, rootRank)) return false;
+	
+	// Slaves then store values into Atoms, updating related info as we go
+	if (procPool.isSlave()) for (int n=0; n<nAtoms_; ++n) atoms_[n].setCoordinates(x[n], y[n], z[n]);
+
+	delete[] x;
+	delete[] y;
+	delete[] z;
 #endif
 	return true;
 }

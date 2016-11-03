@@ -122,7 +122,7 @@ bool DUQ::broadcastSetup()
 	for (n=0; n<count; ++n)
 	{
 		if (worldPool_.isSlave()) addConfiguration();
-		configurations_[n]->broadcast(worldPool_, species_, pairPotentialRange_, allModules_);
+		configurations_[n]->broadcast(worldPool_, species_, pairPotentialRange_, modules_);
 	}
 
 	// PairPotentials

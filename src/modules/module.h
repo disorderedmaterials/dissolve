@@ -40,10 +40,6 @@ class Module : public ListItem<Module>
 	Module();
 	// Destructor
 	virtual ~Module();
-	// Module Types
-	enum ModuleType { AnalysisModule, CalculationModule, EvolutionModule, FitModule, nModuleTypes };
-	static ModuleType moduleType(const char* s);
-	static const char* moduleType(ModuleType mt);
 	// Module Instance Styles
 	enum InstanceType { UniqueInstance, SingleInstance, MultipleInstance };
 
@@ -70,8 +66,6 @@ class Module : public ListItem<Module>
 	virtual const char* name() = 0;
 	// Return brief description of Module
 	virtual const char* brief() = 0;
-	// Return type of Module
-	virtual ModuleType type() = 0;
 	// Return instance type for Module
 	virtual InstanceType instanceType() = 0;
 	// Whether the Module has a pre-processing stage
@@ -112,14 +106,18 @@ class Module : public ListItem<Module>
 	RefList<Sample,bool> targetSamples_;
 
 	public:
+	// Return the maximum number of Configurations the Module can target (or -1 for any number)
+	virtual int nTargetableConfigurations() = 0;
 	// Add Configuration target
-	void addConfigurationTarget(Configuration* cfg);
+	bool addConfigurationTarget(Configuration* cfg);
 	// Return number of targeted Configurations
 	int nConfigurationTargets();
 	// Return first targeted Configuration
 	RefListItem<Configuration,bool>* targetConfigurations();
+	// Return the maximum number of Samples the Module can target (or -1 for any number)
+	virtual int nTargetableSamples() = 0;
 	// Add Sample target
-	void addSampleTarget(Sample* sam);
+	bool addSampleTarget(Sample* sam);
 	// Return number of targeted Samples
 	int nSampleTargets();
 	// Return first targeted Sample

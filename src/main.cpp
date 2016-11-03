@@ -184,7 +184,7 @@ int main(int argc, char **argv)
 	if (fullDump) dUQ.dumpSystemSetup(true);
 
 #ifdef PARALLEL
-	Messenger::print("This is process %i of %i total (world).\n", ProcessPool::worldRank(), ProcessPool::nWorldProcesses());
+	Messenger::print("This is process rank %i, of %i processes total.\n", ProcessPool::worldRank(), ProcessPool::nWorldProcesses());
 	//and exists in process group %i in which it is rank %i of %i processes.\n", Comm.rank(), Comm.nProcesses(), Comm.localGroupIndex(), Comm.localGroupRank(), Comm.localGroupSize());
 #endif
 	

@@ -139,10 +139,6 @@ bool DUQ::go()
 
 				if (!result) break;
 			}
-			// TEST - Calculate energy of current system, partial data, write, and quit
-			//totalEnergyTest(cfg);
-			//totalEnergy(worldPool_, cfg);
-			//intramolecularEnergy(worldPool_, cfg);
 		}
 
 		// Sync up all processes
@@ -154,8 +150,11 @@ bool DUQ::go()
 		Messenger::print("\n");
 		Messenger::print("===== Reassemble Data\n");
 		Messenger::print("\n");
-		// TODO
-
+		// Loop over Configurations
+		for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
+		{
+			if (!cfg->broadcastCoordinates(worldPool_, cfg->processPool().rootWorldRank())) return false;
+		}
 
 		// Sync up all processes
 		worldPool_.wait(ProcessPool::Pool);
@@ -195,9 +194,9 @@ bool DUQ::go()
 		worldPool_.wait(ProcessPool::Pool);
 
 		Messenger::print("\n");
-		Messenger::print("========================================\n");
+		Messenger::print("===============================================\n");
 		Messenger::print("  END OF MAIN LOOP ITERATION %10i\n", iteration);
-		Messenger::print("========================================\n");
+		Messenger::print("===============================================\n");
 		Messenger::print("\n");
 	}
 	while (iteration < maxIterations_);

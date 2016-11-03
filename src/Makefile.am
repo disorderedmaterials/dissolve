@@ -1,11 +1,16 @@
-SUBDIRS = base classes main math modules templates
-
+# Target 'duq'
 bin_PROGRAMS = duq
 
-# Target 'duq'
 duq_SOURCES = main.cpp
 
-duq_LDADD = main/libmain.a modules/libmodules.a classes/libclasses.a base/libbase.a math/libmath.a -lreadline @MPI_LDLIBS@
+SUBDIRS = base classes main math modules templates
+
+noinst_LTLIBRARIES = libduq.la
+libduq_la_SOURCES = 
+libduq_la_LIBADD = main/libmain.la modules/libmodules.la classes/libclasses.la base/libbase.la math/libmath.la @MPI_LDLIBS@
+libduq_la_LDFLAGS = -static
+
+duq_LDADD = libduq.la @DUQ_CFLAGS@
 
 AM_CPPFLAGS = -I../ @DUQ_CFLAGS@
 

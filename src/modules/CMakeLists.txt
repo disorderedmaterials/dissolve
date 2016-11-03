@@ -4,7 +4,7 @@ module.cpp
 module.h
 
 atomshake.cpp
-#energy.cpp
+energy.cpp
 fq.cpp
 #forces.cpp
 #grainshake.cpp
@@ -13,7 +13,7 @@ fq.cpp
 #twist.cpp
 
 atomshake.h
-#energy.h
+energy.h
 fq.h
 #forces.h
 #grainshake.h

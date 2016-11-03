@@ -70,12 +70,6 @@ const char* AtomShake::brief()
 	return "Perform atomic Monte Carlo on all atoms";
 }
 
-// Return type of module
-Module::ModuleType AtomShake::type()
-{
-	return Module::EvolutionModule;
-}
-
 // Return instance type for module
 Module::InstanceType AtomShake::instanceType()
 {
@@ -98,6 +92,22 @@ bool AtomShake::hasProcessing()
 bool AtomShake::hasPostProcessing()
 {
 	return false;
+}
+
+/*
+ * Targets
+ */
+
+// Return the maximum number of Configurations the Module can target (or -1 for any number)
+int AtomShake::nTargetableConfigurations()
+{
+	return 1;
+}
+
+// Return the maximum number of Samples the Module can target (or -1 for any number)
+int AtomShake::nTargetableSamples()
+{
+	return 0;
 }
 
 /*

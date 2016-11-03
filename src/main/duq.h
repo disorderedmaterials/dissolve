@@ -196,9 +196,7 @@ class DUQ
 	 */
 	private:
 	// Reference list of all unique modules
-	RefList<Module,bool> allModules_;
-	// RefLists of unique modules, sorted by type
-	RefList<Module,bool> modules_[Module::nModuleTypes];
+	RefList<Module,bool> modules_;
 
 	public:
 	// Register all Modules
@@ -287,12 +285,6 @@ class DUQ
 	double interatomicEnergy(ProcessPool& procPool, Configuration* cfg);
 	// Return total grain energy
 	double intergrainEnergy(ProcessPool& procPool, Configuration* cfg);
-	// Return total energy of the system
-	double totalEnergy(ProcessPool& procPool, Configuration* cfg);
-	// Test - Return total intramolecular (+correction) energy
-	double intramolecularEnergyTest(Configuration* cfg);
-	// Test - Return total energy of the system
-	double totalEnergyTest(Configuration* cfg);
 	// Test - Return total energy of the system using Molecules
 	double totalEnergyTestMolecules(Configuration* cfg);
 

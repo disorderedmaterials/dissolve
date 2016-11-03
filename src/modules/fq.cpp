@@ -76,12 +76,6 @@ const char* StructureFactor::brief()
 	return "Calculate total and partial structure factors";
 }
 
-// Return type of module
-Module::ModuleType StructureFactor::type()
-{
-	return Module::CalculationModule;
-}
-
 // Return instance type for module
 Module::InstanceType StructureFactor::instanceType()
 {
@@ -104,6 +98,22 @@ bool StructureFactor::hasProcessing()
 bool StructureFactor::hasPostProcessing()
 {
 	return true;
+}
+
+/*
+ * Targets
+ */
+
+// Return the maximum number of Configurations the Module can target (or -1 for any number)
+int StructureFactor::nTargetableConfigurations()
+{
+	return 1;
+}
+
+// Return the maximum number of Samples the Module can target (or -1 for any number)
+int StructureFactor::nTargetableSamples()
+{
+	return 0;
 }
 
 /*

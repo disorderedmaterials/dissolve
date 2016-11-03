@@ -1,6 +1,6 @@
 /*
-	*** Structure Factor Module
-	*** src/modules/fq.h
+	*** Energy Module
+	*** src/modules/energy.h
 	Copyright T. Youngs 2012-2016
 
 	This file is part of dUQ.
@@ -19,27 +19,26 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_STRUCTUREFACTOR_H
-#define DUQ_STRUCTUREFACTOR_H
+#ifndef DUQ_ENERGYMODULE_H
+#define DUQ_ENERGYMODULE_H
 
 #include "modules/module.h"
 
 // Forward Declarations
 /* none */
 
-// Structure Factor Module
-class StructureFactor : public Module
+// Energy Module
+class Energy : public Module
 {
 	/*
-	 * Calculates partial and full structure factors for the Sample or Configuration in which the Module is placed.
-	 * Partial RDFs according to atomtype isotopes are constructed, and combined into total F(Q).
+	 * Calculates the total energy of the system by one of several methods
 	 */
 
 	public:
 	// Constructor
-	StructureFactor();
+	Energy();
 	// Destructor
-	~StructureFactor();
+	~Energy();
 
 
 	/*

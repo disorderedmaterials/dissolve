@@ -19,8 +19,8 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_GRAINSHAKE_H
-#define DUQ_GRAINSHAKE_H
+#ifndef DUQ_GRAINSHAKEMODULE_H
+#define DUQ_GRAINSHAKEMODULE_H
 
 #include "modules/module.h"
 

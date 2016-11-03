@@ -229,6 +229,12 @@ int ProcessPool::poolRank()
 	return poolRank_;
 }
 
+// Return root (first) world rank of this pool
+int ProcessPool::rootWorldRank()
+{
+	return worldRanks_.first();
+}
+
 // Return whether this process is the master for this pool
 bool ProcessPool::isMaster()
 {

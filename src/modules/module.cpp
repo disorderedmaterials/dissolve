@@ -21,19 +21,6 @@
 
 #include "modules/module.h"
 #include "classes/configuration.h"
-#include <cstring>
-
-// Module Types
-const char* ModuleTypeKeywords[Module::nModuleTypes] = { "Analysis", "Correlation", "Evolution", "Fit" };
-Module::ModuleType Module::moduleType(const char* s)
-{
-	for (int n=0; n<Module::nModuleTypes; ++n) if (strcmp(s, ModuleTypeKeywords[n]) == 0) return (Module::ModuleType) n;
-	return Module::nModuleTypes;
-}
-const char* Module::moduleType(Module::ModuleType mt)
-{
-	return ModuleTypeKeywords[mt];
-}
 
 // Constructor
 Module::Module()
@@ -88,9 +75,21 @@ bool Module::enabled()
  */
 
 // Add Configuration target
-void Module::addConfigurationTarget(Configuration* cfg)
+bool Module::addConfigurationTarget(Configuration* cfg)
 {
-	targetConfigurations_.add(cfg);
+	// Check how many Configurations we accept before we do anything else
+	if ((nTargetableConfigurations() == -1) || (targetConfigurations_.nItems() < nTargetableConfigurations()))
+	{
+		targetConfigurations_.add(cfg);
+		return true;
+	}
+	else
+	{
+		if (nTargetableConfigurations() == 0) Messenger::error("Can't add Configuration '%s' as a target to Module '%s' since it doesn't accept any such targets.\n", cfg->name(), name());
+		else Messenger::error("Can't add Configuration '%s' as a target to Module '%s' since the maximum number (%i) has already been reached.\n", cfg->name(), name(), nTargetableConfigurations());
+	}
+
+	return false;
 }
 
 // Return number of targeted Configurations
@@ -106,9 +105,21 @@ RefListItem<Configuration,bool>* Module::targetConfigurations()
 }
 
 // Add Sample target
-void Module::addSampleTarget(Sample* sam)
+bool Module::addSampleTarget(Sample* sam)
 {
-	targetSamples_.add(sam);
+	// Check how many Samples we accept before we do anything else
+	if ((nTargetableSamples() == -1) || (targetSamples_.nItems() < nTargetableSamples()))
+	{
+		targetSamples_.add(sam);
+		return true;
+	}
+	else
+	{
+		if (nTargetableSamples() == 0) Messenger::error("Can't add Sample '%s' as a target to Module '%s' since it doesn't accept any such targets.\n", sam->name(), name());
+		else Messenger::error("Can't add Sample '%s' as a target to Module '%s' since the maximum number (%i) has already been reached.\n", sam->name(), name(), nTargetableSamples());
+	}
+
+	return false;
 }
 
 // Return number of targeted Samples

@@ -19,8 +19,8 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_ATOMSHAKE_H
-#define DUQ_ATOMSHAKE_H
+#ifndef DUQ_ATOMSHAKEMODULE_H
+#define DUQ_ATOMSHAKEMODULE_H
 
 #include "modules/module.h"
 
@@ -57,8 +57,6 @@ class AtomShake : public Module
 	const char* name();
 	// Return brief description of module
 	const char* brief();
-	// Return type of module
-	ModuleType type();
 	// Return instance type for module
 	InstanceType instanceType();
 	// Whether the Module has a pre-processing stage
@@ -67,6 +65,16 @@ class AtomShake : public Module
 	bool hasProcessing();
 	// Whether the Module has a post-processing stage
 	bool hasPostProcessing();
+
+
+	/*
+	 * Targets
+	 */
+	public:
+	// Return the maximum number of Configurations the Module can target (or -1 for any number)
+	int nTargetableConfigurations();
+	// Return the maximum number of Samples the Module can target (or -1 for any number)
+	int nTargetableSamples();
 
 
 	/*

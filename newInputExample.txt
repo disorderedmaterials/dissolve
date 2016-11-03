@@ -88,3 +88,8 @@ Simulation
   MaxIterations  2
 EndSimulation
 
+# Run a Module's main processing as a post-processing task
+#PostProcess  Energy
+#  Configuration 'Bulk'
+#EndPostProcess
+
