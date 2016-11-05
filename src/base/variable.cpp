@@ -55,7 +55,7 @@ const char* Variable::name()
 // Return source of variable
 const char* Variable::source()
 {
-	return source_.get();
+	return source_;
 }
 
 // Return type of variable

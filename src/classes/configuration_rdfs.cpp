@@ -67,8 +67,9 @@ bool Configuration::calculatePartialRDFs(ProcessPool& procPool)
 	int* histogram;
 	double rbin = 1.0 / rdfBinWidth_;
 
-	int start = procPool.interleavedLoopStart(ProcessPool::Pool);
-	int stride = procPool.interleavedLoopStride(ProcessPool::Pool);
+	// Loop context is PoolSolo
+	int start = procPool.interleavedLoopStart(ProcessPool::OverPoolProcesses);
+	int stride = procPool.interleavedLoopStride(ProcessPool::OverPoolProcesses);
 	
 	// Self terms
 	for (typeI = 0; typeI<nTypes; ++typeI)
@@ -121,9 +122,9 @@ bool Configuration::calculateIntramolecularRDFs(ProcessPool& procPool)
 	double distance;
 	int start, stride;
 
-	// Set start/skip for parallel loop
-	start = procPool.interleavedLoopStart(ProcessPool::Pool);
-	stride = procPool.interleavedLoopStride(ProcessPool::Pool);
+	// Set start/skip for parallel loop (pool solo)
+	start = procPool.interleavedLoopStart(ProcessPool::OverPoolProcesses);
+	stride = procPool.interleavedLoopStride(ProcessPool::OverPoolProcesses);
 
 	// Loop over molecules...
 	int n;
@@ -173,9 +174,8 @@ bool Configuration::calculateBraggContributions(ProcessPool& procPool)
 	KVector* kVector;
 
 	// Set start/skip for parallel loop
-	int start, stride;
-	start = procPool.interleavedLoopStart(ProcessPool::Pool);
-	stride = procPool.interleavedLoopStride(ProcessPool::Pool);
+	int start = procPool.interleavedLoopStart(ProcessPool::OverPoolProcesses);
+	int stride = procPool.interleavedLoopStride(ProcessPool::OverPoolProcesses);
 
 	// Create a timer
 	Timer timer;

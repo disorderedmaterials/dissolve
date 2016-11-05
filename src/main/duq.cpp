@@ -63,21 +63,21 @@ DUQ::~DUQ()
 // Clear all data
 void DUQ::clear()
 {
-	Messenger::printVerbose("Clearing configurations...");
+	Messenger::printVerbose("Clearing Configurations...\n");
 	configurations_.clear();
 
-	Messenger::printVerbose("Clearing Samples...");
+	Messenger::printVerbose("Clearing Samples...\n");
 	samples_.clear();
 
-	Messenger::printVerbose("Clearing Species...");
+	Messenger::printVerbose("Clearing Species...\n");
 	species_.clear();
 
-	Messenger::printVerbose("Clearing PotentialMap...");
+	Messenger::printVerbose("Clearing PotentialMap...\n");
 	potentialMap_.clear();
 
-	Messenger::printVerbose("Clearing AtomTypes...");
+	Messenger::printVerbose("Clearing AtomTypes...\n");
 	atomTypes_.clear();
 
-	Messenger::printVerbose("Clearing misc...");
+	Messenger::printVerbose("Clearing misc...\n");
 	fileName_.clear();
 }

@@ -294,11 +294,11 @@ class DUQ
 	 */
 	public:
 	// Calculate total intramolecular forces
-	void intramolecularForces(ProcessPool& procPool, Configuration* cfg, double* fx, double* fy, double* fz, ProcessPool::CommGroup group = ProcessPool::Pool);
+	void intramolecularForces(ProcessPool& procPool, Configuration* cfg, double* fx, double* fy, double* fz);
 	// Calculate total Grain forces
-	void grainForces(ProcessPool& procPool, Configuration* cfg, double* fx, double* fy, double* fz, double cutoffSq, ProcessPool::CommGroup group);
+	void grainForces(ProcessPool& procPool, Configuration* cfg, double* fx, double* fy, double* fz, double cutoffSq);
 	// Calculate total forces within the system
-	void totalForces(ProcessPool& procPool, Configuration* cfg, double* fx, double* fy, double* fz, double cutoffSq, ProcessPool::CommGroup group = ProcessPool::Pool);
+	void totalForces(ProcessPool& procPool, Configuration* cfg, double* fx, double* fy, double* fz, double cutoffSq);
 
 
 	/*

@@ -45,7 +45,13 @@ class StructureFactor : public Module
 	/*
 	 * Instances
 	 */
+	protected:
+	// List of all instances of this Module type
+	List<Module> instances_;
+
 	public:
+	// Return list of all created instances of this Module
+	List<Module>& instances();
 	// Create instance of this module
 	Module* createInstance();
 

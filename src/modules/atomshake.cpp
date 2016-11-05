@@ -29,6 +29,9 @@
 #include "base/timer.h"
 #include "math/matrix4.h"
 
+// Static Members
+List<Module> AtomShake::instances_;
+
 /*
  * Constructor / Destructor
  */
@@ -36,6 +39,10 @@
 // Constructor
 AtomShake::AtomShake() : Module()
 {
+	// Add to instances list and set unique name for this instance
+	instances_.own(this);
+	uniqueName_.sprintf("%s_%02i", name(), instances_.nItems()-1);
+
 	// Setup variables / control parameters
 	addVariable("CutoffDistance", -1.0);
 	addVariable("ShakesPerAtom", 1);
@@ -46,6 +53,16 @@ AtomShake::AtomShake() : Module()
 // Destructor
 AtomShake::~AtomShake()
 {
+}
+
+/*
+ * Instances
+ */
+
+// Create instance of this module
+List<Module>& AtomShake::instances()
+{
+	return instances_;
 }
 
 // Create instance of this module
@@ -185,7 +202,7 @@ bool AtomShake::process(DUQ& duq, ProcessPool& procPool)
 			continue;
 		}
 		cell = cfg->cell(cellId);
-		Messenger::printVerbose("AtomShake: Cell %i now the target, containing %i Grains interacting with %i neighbours.\n", cellId, cell->nGrains(), cell->nTotalCellNeighbours());
+		Messenger::printVerbose("AtomShake: Cell %i now the target on process %s, containing %i Grains interacting with %i neighbours.\n", cellId, procPool.processInfo(), cell->nGrains(), cell->nTotalCellNeighbours());
 
 		/*
 		 * Calculation Begins
@@ -205,7 +222,7 @@ bool AtomShake::process(DUQ& duq, ProcessPool& procPool)
 			grainI = i->grain();
 
 			// Calculate reference intramolecular energy for atom, including intramolecular terms through the atom's grain
-			currentEnergy = kernel.energy(i, ProcessPool::Group);
+			currentEnergy = kernel.energy(i, ProcessPool::OverGroupProcesses);
 			intraEnergy = kernel.fullIntraEnergy(grainI, termScale);
 
 			// Loop over number of shakes per atom
@@ -216,7 +233,7 @@ bool AtomShake::process(DUQ& duq, ProcessPool& procPool)
 
 				// Translate atom and calculate new energy
 				i->translateCoordinates(rDelta);
-				newEnergy = kernel.energy(i, ProcessPool::Group);
+				newEnergy = kernel.energy(i, ProcessPool::OverGroupProcesses);
 				newIntraEnergy = kernel.fullIntraEnergy(grainI, termScale);
 				
 				// Trial the transformed atom position

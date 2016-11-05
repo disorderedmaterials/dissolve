@@ -298,15 +298,16 @@ void ForceKernel::forces(const Grain* grain, const Cell* cell, bool applyMim, bo
 	for (RefListItem<Grain,int>* grainRef = cell->grains(); grainRef != NULL; grainRef = grainRef->next) forces(grain, grainRef->item, applyMim, excludeIgtJ, fx, fy, fz);
 }
 
-/*
- * \brief Calculate PairPotential forces between Atom and list of Cells
- * \details Calculate the PairPotential forces between the supplied Atom and a list of Cells, storing (adding) the results to
- * the three force component arrays provided. Because partial forces are added to the supplied arrays which are defined
- * elsewhere, no parallel summation of the calculated data is performed by this routine, and must be handled externally by
- * the calling function.
- */
-void ForceKernel::forces(const Atom* i, int nNeighbours, Cell** neighbours, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz, ProcessPool::CommGroup group)
+// Calculate PairPotential forces between Atom and list of Cells
+void ForceKernel::forces(const Atom* i, int nNeighbours, Cell** neighbours, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz, ProcessPool::LoopContext loopContext)
 {
+	/*
+	 * Calculate the PairPotential forces between the supplied Atom and a list of Cells, storing (adding) the results to
+	 * the three force component arrays provided. Because partial forces are added to the supplied arrays which are defined
+	 * elsewhere, no parallel summation of the calculated data is performed by this routine, and must be handled externally by
+	 * the calling function.
+	 */
+
 #ifdef CHECKS
 	if (i == NULL)
 	{
@@ -314,33 +315,33 @@ void ForceKernel::forces(const Atom* i, int nNeighbours, Cell** neighbours, bool
 		return;
 	}
 #endif
-	// Communication group determines loop/summation style
-	if (group == ProcessPool::Solo)
+	// Check loop style
+	if (loopContext == ProcessPool::Individual)
 	{
 		// Straight loop over Cell neighbours
 		for (int n=0; n<nNeighbours; ++n) forces(i, neighbours[n], applyMim, excludeIgtJ, fx, fy, fz);
 	}
-	else if (group == ProcessPool::Group)
+	else if (loopContext == ProcessPool::OverGroupProcesses)
 	{
 		// Striped loop over Cell neighbours (Process Groups)
 		for (int n=processPool_.groupRank(); n<nNeighbours; n += processPool_.groupSize()) forces(i, neighbours[n], applyMim, excludeIgtJ, fx, fy, fz);
 	}
-	else
+	else if (loopContext == ProcessPool::OverPoolProcesses)
 	{
 		// Striped loop over Cell neighbours (individual processes)
 		for (int n=processPool_.poolRank(); n<nNeighbours; n += processPool_.nProcesses()) forces(i, neighbours[n], applyMim, excludeIgtJ, fx, fy, fz);
 	}
 }
 
-/*
- * \brief Calculate PairPotential forces between Grain and list of Cells
- * \details Calculate the PairPotential forces between the supplied Grain and a list of Cells, storing (adding) the results to
- * the three force component arrays provided. Because partial forces are added to the supplied arrays which are defined
- * elsewhere, no parallel summation of the calculated data is performed by this routine, and must be handled externally by
- * the calling function.
- */
-void ForceKernel::forces(const Grain* grain, int nNeighbours, Cell** neighbours, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz, ProcessPool::CommGroup group)
+// Calculate PairPotential forces between Grain and list of Cells
+void ForceKernel::forces(const Grain* grain, int nNeighbours, Cell** neighbours, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz, ProcessPool::LoopContext loopContext)
 {
+	/*
+	 * Calculate the PairPotential forces between the supplied Grain and a list of Cells, storing (adding) the results to
+	 * the three force component arrays provided. Because partial forces are added to the supplied arrays which are defined
+	 * elsewhere, no parallel summation of the calculated data is performed by this routine, and must be handled externally by
+	 * the calling function.
+	 */
 #ifdef CHECKS
 	if (grain == NULL)
 	{
@@ -348,18 +349,18 @@ void ForceKernel::forces(const Grain* grain, int nNeighbours, Cell** neighbours,
 		return;
 	}
 #endif
-	// Communication group determines loop/summation style
-	if (group == ProcessPool::Solo)
+	// Check loop style
+	if (loopContext == ProcessPool::Individual)
 	{
 		// Straight loop over Cell neighbours
 		for (int n=0; n<nNeighbours; ++n) forces(grain, neighbours[n], applyMim, excludeIgtJ, fx, fy, fz);
 	}
-	else if (group == ProcessPool::Group)
+	else if (loopContext == ProcessPool::OverGroupProcesses)
 	{
 		// Striped loop over Cell neighbours (Process Groups)
 		for (int n=processPool_.groupRank(); n<nNeighbours; n += processPool_.groupSize()) forces(grain, neighbours[n], applyMim, excludeIgtJ, fx, fy, fz);
 	}
-	else
+	else if (loopContext == ProcessPool::OverPoolProcesses)
 	{
 		// Striped loop over Cell neighbours (individual processes)
 		for (int n=processPool_.poolRank(); n<nNeighbours; n += processPool_.nProcesses()) forces(grain, neighbours[n], applyMim, excludeIgtJ, fx, fy, fz);

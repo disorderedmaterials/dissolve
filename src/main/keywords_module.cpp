@@ -51,7 +51,7 @@ int Keywords::moduleBlockNArguments(Keywords::ModuleKeyword id)
 // Parse Module block
 bool Keywords::parseModuleBlock(LineParser& parser, DUQ* duq, Module* module, Configuration* cfg, Sample* sam)
 {
-	Messenger::print("Parsing %s block\n", Keywords::inputBlock(Keywords::AtomTypesBlock));
+	Messenger::print("Parsing %s block\n", Keywords::inputBlock(Keywords::ModuleBlock));
 
 	int el;
 	AtomType* at;
@@ -99,7 +99,7 @@ bool Keywords::parseModuleBlock(LineParser& parser, DUQ* duq, Module* module, Co
 				break;
 			}
 			// Set variable in Configuration / Sample as appropriate
-			if (cfg) cfg->setModuleVariable(var->name(), parser.argc(1), var->description(), module->name());
+			if (cfg) cfg->setModuleVariable(var->name(), parser.argc(1), var->description(), module->uniqueName());
 // 			if (sam) sam->setVariable(var->name(), parser.argc(1), var->description(), module->name());
 		}
 

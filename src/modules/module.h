@@ -48,8 +48,8 @@ class Module : public ListItem<Module>
 	 * Instances
 	 */
 	private:
-	// All created instances of this module
-	List<Module> instances_;
+	// Return list of all created instances of this Module
+	virtual List<Module>& instances() = 0;
 
 	public:
 	// Create instance of this module
@@ -61,9 +61,15 @@ class Module : public ListItem<Module>
 	/*
 	 * Definition
 	 */
+	protected:
+	// Unique name of Module
+	Dnchar uniqueName_;
+
 	public:
 	// Return name of Module
 	virtual const char* name() = 0;
+	// Return unique name of Module
+	const char* uniqueName();
 	// Return brief description of Module
 	virtual const char* brief() = 0;
 	// Return instance type for Module

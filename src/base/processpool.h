@@ -53,11 +53,19 @@ class ProcessPool
 	// Communications Group (for subroutines)
 	enum CommGroup
 	{
-		Solo,		/* No group (process is flying solo) (communicator == NONE) */
 		Group,		/* Process groups (communicator == localCommunicator_) */
 		Leaders,	/* A group containing all process group leaders in the local pool (communicator == leaderCommunicator_) */
 		Pool		/* A group containing all processes in the local pool (communicator == poolCommunicator_) */
 	};
+	// Interleaved Loop Contexts
+	enum LoopContext
+	{
+		Individual,
+		OverGroups,
+		OverGroupProcesses,
+		OverPoolProcesses
+	};
+	
 #ifdef PARALLEL
 	// Return communicator for group specified
 	MPI_Comm communicator(ProcessPool::CommGroup group);
@@ -168,10 +176,8 @@ class ProcessPool
 	int groupRank();
 	// Return whether this process is a group leader
 	bool groupLeader();
-#ifdef PARALLEL
-	// Local group communicator
-	MPI_Comm localCommunicator();
-#endif
+	// Return process info string
+	const char* processInfo();
 
 
 	/*
@@ -201,9 +207,9 @@ class ProcessPool
 	// Return diagonal last Atom index
 	int diagonalLastAtom();
 	// Return starting index for general interleaved loop
-	int interleavedLoopStart(ProcessPool::CommGroup group);
+	int interleavedLoopStart(ProcessPool::LoopContext loopContext);
 	// Return stride for general interleaved loop
-	int interleavedLoopStride(ProcessPool::CommGroup group);
+	int interleavedLoopStride(ProcessPool::LoopContext loopContext);
 
 
 	/*

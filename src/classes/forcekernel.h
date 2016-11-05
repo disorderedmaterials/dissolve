@@ -88,9 +88,9 @@ class ForceKernel
 	// Calculate inter-particle forces between Grain and Cell contents
 	void forces(const Grain* grain, const Cell* cell, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz);
 	// Calculate inter-particle forces between Atom and list of Cells
-	void forces(const Atom* i, int nNeighbours, Cell** neighbours, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz, ProcessPool::CommGroup group = ProcessPool::Solo);
+	void forces(const Atom* i, int nNeighbours, Cell** neighbours, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
 	// Calculate inter-particle forces between Grain and list of Cells
-	void forces(const Grain* grain, int nNeighbours, Cell** neighbours, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz, ProcessPool::CommGroup group = ProcessPool::Solo);
+	void forces(const Grain* grain, int nNeighbours, Cell** neighbours, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
 
 
 	/*

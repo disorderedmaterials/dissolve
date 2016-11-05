@@ -66,9 +66,19 @@ Configuration  'Bulk'
   File '/home/tris/work/water/epsr/waterbox.xyz'
 
   # Enable modules and set associated variables
+  Module Energy
+    Test true
+  EndModule
+  Module Energy
+  EndModule
   Module AtomShake
     # Disabled
     ShakesPerAtom  1
+  EndModule
+  Module Energy
+    Test true
+  EndModule
+  Module Energy
   EndModule
 EndConfiguration
 
@@ -85,7 +95,7 @@ EndPairPotentials
 # Simulation Setup / Definition
 Simulation
   Seed  943723867
-  MaxIterations  2
+  MaxIterations  1
 EndSimulation
 
 # Run a Module's main processing as a post-processing task

@@ -46,8 +46,8 @@ double DUQ::intramolecularEnergy(ProcessPool& procPool, Configuration* cfg)
 	int start, stride;
 
 	// Set start/skip for parallel loop
-	start = procPool.interleavedLoopStart(ProcessPool::Pool);
-	stride = procPool.interleavedLoopStride(ProcessPool::Pool);
+	start = procPool.interleavedLoopStart(ProcessPool::OverPoolProcesses);
+	stride = procPool.interleavedLoopStride(ProcessPool::OverPoolProcesses);
 
 	// Main loop over molecules
 	for (int m=start; m<cfg->nMolecules(); m += stride)
@@ -90,18 +90,19 @@ double DUQ::interatomicEnergy(ProcessPool& procPool, Configuration* cfg)
 	int cellId, n, m, start, stride;
 	Cell* cell, *otherCell;
 	double totalEnergy = 0.0;
-	
+/*	
 	// TEST Invalidate all cell atom lists
 	for (int n=0; n<cfg->nCells(); ++n)
 	{
 		cfg->cell(n)->atoms().invalidateLists();
 		cfg->cell(n)->atomNeighbours().invalidateLists();
 		cfg->cell(n)->mimAtomNeighbours().invalidateLists();
-	}
+	}*/
 
 	// Set start/skip for parallel loop
-	start = procPool.interleavedLoopStart(ProcessPool::Group);
-	stride = procPool.interleavedLoopStride(ProcessPool::Group);
+	start = procPool.interleavedLoopStart(ProcessPool::OverGroups);
+	stride = procPool.interleavedLoopStride(ProcessPool::OverGroups);
+	Messenger::print("BIG START AND STRIDE are %i and %i\n", start, stride);
 
 	for (cellId = start; cellId<cfg->nCells(); cellId += stride)
 	{
@@ -112,10 +113,10 @@ double DUQ::interatomicEnergy(ProcessPool& procPool, Configuration* cfg)
 		 */
 
 		// This cell with itself
-		totalEnergy += kernel.energy(cell, cell, false, true, ProcessPool::Solo);
+		totalEnergy += kernel.energy(cell, cell, false, true, ProcessPool::OverGroupProcesses);
 
 		// Interatomic interactions between atoms in this cell and its neighbours
-		totalEnergy += kernel.energy(cell, true, ProcessPool::Solo);
+		totalEnergy += kernel.energy(cell, true, ProcessPool::OverGroupProcesses);
 
 		/*
 		 * Calculation End
@@ -153,8 +154,8 @@ double DUQ::intergrainEnergy(ProcessPool& procPool, Configuration* cfg)
 	double totalEnergy = 0.0;
 
 	// Set start/skip for parallel loop
-	start = procPool.interleavedLoopStart(ProcessPool::Group);
-	stride = procPool.interleavedLoopStride(ProcessPool::Group);
+	start = procPool.interleavedLoopStart(ProcessPool::OverGroups);
+	stride = procPool.interleavedLoopStride(ProcessPool::OverGroups);
 
 	while (cellId = cfg->nextAvailableCell(procPool, willBeModified, allowRepeats), cellId != Cell::AllCellsComplete)
 	{
@@ -173,11 +174,11 @@ double DUQ::intergrainEnergy(ProcessPool& procPool, Configuration* cfg)
 		 */
 		
 		// Loop over Grains
-		// Parallelism employed in the outer loop - as such, ProcessPool::Solo is passed to the Grain/Cell method.
+		// Parallelism employed in the outer loop - as such, ProcessPool::Individual is passed to the Grain/Cell method.
 		for (n=start; n<cell->nGrains(); n += stride)
 		{
 			grainI = cell->grain(n);
-			totalEnergy += kernel.energy(grainI, true, ProcessPool::Solo);
+			totalEnergy += kernel.energy(grainI, true, ProcessPool::Individual);
 
 // 			// Inter-Grain interactions in this Cell...
 			// TODO??

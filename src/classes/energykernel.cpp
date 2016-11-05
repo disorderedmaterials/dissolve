@@ -262,7 +262,7 @@ double EnergyKernel::energy(const Atom* i, const Atom* j, bool applyMim, bool ex
 }
 
 // Return PairPotential energy between atoms in supplied cells
-double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, bool excludeIgeJ, ProcessPool::CommGroup group)
+double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, bool excludeIgeJ, ProcessPool::LoopContext loopContext)
 {
 #ifdef CHECKS
 	if (centralCell == NULL)
@@ -284,9 +284,9 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 	int i, typeI, indexI, j, start = 0, stride = 1;
 	double rSq, scale;
 
-	// Communication group determines loop/summation style
-	start = processPool_.interleavedLoopStart(group);
-	stride = processPool_.interleavedLoopStride(group);
+	// Get start/stride for specified loop context
+	start = processPool_.interleavedLoopStart(loopContext);
+	stride = processPool_.interleavedLoopStride(loopContext);
 
 	// Loop over central cell atoms
 	if (applyMim)
@@ -355,14 +355,14 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 	}
 	
 	// Sum over processes if necessary
-	if (group == ProcessPool::Group) processPool_.allSum(&totalEnergy, 1, ProcessPool::Group);
-	else if (group == ProcessPool::Pool) processPool_.allSum(&totalEnergy, 1);
+	if (loopContext == ProcessPool::OverGroupProcesses) processPool_.allSum(&totalEnergy, 1, ProcessPool::Group);
+	else if (loopContext == ProcessPool::OverPoolProcesses) processPool_.allSum(&totalEnergy, 1);
 
 	return totalEnergy;
 }
 
 // Return PairPotential energy between cell and atomic neighbours
-double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::CommGroup group)
+double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::LoopContext loopContext)
 {
 	double totalEnergy = 0.0;
 	Atom** centralAtoms = centralCell->atoms().objects();
@@ -374,9 +374,9 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::Co
 	Molecule* molJ;
 	double rSq, scale;
 
-	// Communication group determines loop/summation style
-	start = processPool_.interleavedLoopStart(group);
-	stride = processPool_.interleavedLoopStride(group);
+	// Get start/stride for specified loop context
+	start = processPool_.interleavedLoopStart(loopContext);
+	stride = processPool_.interleavedLoopStride(loopContext);
 
 	// Straight loop over atoms *not* requiring mim
 	for (j = 0; j < centralCell->atomNeighbours().nItems(); ++j)
@@ -441,14 +441,14 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::Co
 	}
 
 	// Sum over processes if necessary
-	if (group == ProcessPool::Group) processPool_.allSum(&totalEnergy, 1, ProcessPool::Group);
-	else if (group == ProcessPool::Pool) processPool_.allSum(&totalEnergy, 1);
+	if (loopContext == ProcessPool::OverGroupProcesses) processPool_.allSum(&totalEnergy, 1, ProcessPool::Group);
+	else if (loopContext == ProcessPool::OverPoolProcesses) processPool_.allSum(&totalEnergy, 1);
 
 	return totalEnergy;
 }
 
 // Return PairPotential energy between atom and list of neighbouring cells
-double EnergyKernel::energy(const Atom* i, OrderedPointerList<Atom>& neighbours, int flags, ProcessPool::CommGroup group)
+double EnergyKernel::energy(const Atom* i, OrderedPointerList<Atom>& neighbours, int flags, ProcessPool::LoopContext loopContext)
 {
 	/*
 	 * Calculate the energy between the supplied atom and list of neighbouring cells. Note that it is assumed that the supplied atom
@@ -475,9 +475,9 @@ double EnergyKernel::energy(const Atom* i, OrderedPointerList<Atom>& neighbours,
 	const Species* spI = moleculeI->species();
 	const Vec3<double> rI = i->r();
 
-	// Communication group determines loop/summation style
-	start = processPool_.interleavedLoopStart(group);
-	stride = processPool_.interleavedLoopStride(group);
+	// Get start/stride for specified loop context
+	start = processPool_.interleavedLoopStart(loopContext);
+	stride = processPool_.interleavedLoopStride(loopContext);
 
 	// Loop over cell atoms
 	if (flags&EnergyKernel::ApplyMinimumImage)
@@ -593,14 +593,14 @@ double EnergyKernel::energy(const Atom* i, OrderedPointerList<Atom>& neighbours,
 	}
 
 	// Sum over processes if necessary
-	if (group == ProcessPool::Group) processPool_.allSum(&totalEnergy, 1, ProcessPool::Group);
-	else if (group == ProcessPool::Pool) processPool_.allSum(&totalEnergy, 1);
+	if (loopContext == ProcessPool::OverGroupProcesses) processPool_.allSum(&totalEnergy, 1, ProcessPool::Group);
+	else if (loopContext == ProcessPool::OverPoolProcesses) processPool_.allSum(&totalEnergy, 1);
 
 	return totalEnergy;
 }
 
 // Return intermolecular energy between Grain and list of Cells
-double EnergyKernel::energy(const Grain* grain, OrderedPointerList< Atom >& neighbours, bool applyMim, bool excludeIgeJ, ProcessPool::CommGroup group)
+double EnergyKernel::energy(const Grain* grain, OrderedPointerList< Atom >& neighbours, bool applyMim, bool excludeIgeJ, ProcessPool::LoopContext loopContext)
 {
 #ifdef CHECKS
 	if (grain == NULL)
@@ -619,9 +619,9 @@ double EnergyKernel::energy(const Grain* grain, OrderedPointerList< Atom >& neig
 	int nNeighbourAtoms = neighbours.nItems();
 	Vec3<double> rI;
 
-	// Communication group determines loop/summation style
-	start = processPool_.interleavedLoopStart(group);
-	stride = processPool_.interleavedLoopStride(group);
+	// Get start/stride for specified loop context
+	start = processPool_.interleavedLoopStart(loopContext);
+	stride = processPool_.interleavedLoopStride(loopContext);
 
 	if (applyMim)
 	{
@@ -719,14 +719,14 @@ double EnergyKernel::energy(const Grain* grain, OrderedPointerList< Atom >& neig
 	}
 
 	// Sum over processes if necessary
-	if (group == ProcessPool::Group) processPool_.allSum(&totalEnergy, 1, ProcessPool::Group);
-	else if (group == ProcessPool::Pool) processPool_.allSum(&totalEnergy, 1);
+	if (loopContext == ProcessPool::OverGroupProcesses) processPool_.allSum(&totalEnergy, 1, ProcessPool::Group);
+	else if (loopContext == ProcessPool::OverPoolProcesses) processPool_.allSum(&totalEnergy, 1);
 
 	return totalEnergy;
 }
 
 // Return PairPotential energy of atom with world
-double EnergyKernel::energy(const Atom* i, ProcessPool::CommGroup group)
+double EnergyKernel::energy(const Atom* i, ProcessPool::LoopContext loopContext)
 {
 #ifdef CHECKS
 	if (i == NULL)
@@ -737,14 +737,14 @@ double EnergyKernel::energy(const Atom* i, ProcessPool::CommGroup group)
 #endif
 	double totalEnergy = 0.0;
 	Cell* cellI = i->cell();
-	totalEnergy = energy(i, cellI->atoms(), EnergyKernel::ExcludeSelfFlag, group);
-	totalEnergy += energy(i, cellI->atomNeighbours(), EnergyKernel::NoFlags, group);
-	totalEnergy += energy(i, cellI->mimAtomNeighbours(), EnergyKernel::ApplyMinimumImage, group);
+	totalEnergy = energy(i, cellI->atoms(), EnergyKernel::ExcludeSelfFlag, loopContext);
+	totalEnergy += energy(i, cellI->atomNeighbours(), EnergyKernel::NoFlags, loopContext);
+	totalEnergy += energy(i, cellI->mimAtomNeighbours(), EnergyKernel::ApplyMinimumImage, loopContext);
 	return totalEnergy;
 }
 
 // Return PairPotential energy of grain with world
-double EnergyKernel::energy(const Grain* grain, bool excludeIgtJ, ProcessPool::CommGroup group)
+double EnergyKernel::energy(const Grain* grain, bool excludeIgtJ, ProcessPool::LoopContext loopContext)
 {
 #ifdef CHECKS
 	if (grain == NULL)
@@ -768,17 +768,17 @@ double EnergyKernel::energy(const Grain* grain, bool excludeIgtJ, ProcessPool::C
 	{
 		ii = grain->atom(i);
 		cellI = ii->cell();
-		totalEnergy += energy(ii, cellI->atoms(), EnergyKernel::ExcludeGreaterThanEqualTo | EnergyKernel::ExcludeIntraGreaterThan, group);
-		totalEnergy += energy(ii, cellI->atomNeighbours(), EnergyKernel::ExcludeGreaterThanEqualTo, group);
-		totalEnergy += energy(ii, cellI->mimAtomNeighbours(), EnergyKernel::ApplyMinimumImage | EnergyKernel::ExcludeGreaterThanEqualTo, group);
+		totalEnergy += energy(ii, cellI->atoms(), EnergyKernel::ExcludeGreaterThanEqualTo | EnergyKernel::ExcludeIntraGreaterThan, loopContext);
+		totalEnergy += energy(ii, cellI->atomNeighbours(), EnergyKernel::ExcludeGreaterThanEqualTo, loopContext);
+		totalEnergy += energy(ii, cellI->mimAtomNeighbours(), EnergyKernel::ApplyMinimumImage | EnergyKernel::ExcludeGreaterThanEqualTo, loopContext);
 	}
 	else for (i = 0; i<grain->nAtoms(); ++i)
 	{
 		ii = grain->atom(i);
 		cellI = ii->cell();
-		totalEnergy += energy(ii, cellI->atoms(), EnergyKernel::ExcludeSelfFlag | EnergyKernel::ExcludeIntraGreaterThan, group);
-		totalEnergy += energy(ii, cellI->atomNeighbours(), EnergyKernel::ExcludeIntraGreaterThan, group);
-		totalEnergy += energy(ii, cellI->mimAtomNeighbours(), EnergyKernel::ApplyMinimumImage | EnergyKernel::ExcludeIntraGreaterThan, group);
+		totalEnergy += energy(ii, cellI->atoms(), EnergyKernel::ExcludeSelfFlag | EnergyKernel::ExcludeIntraGreaterThan, loopContext);
+		totalEnergy += energy(ii, cellI->atomNeighbours(), EnergyKernel::ExcludeIntraGreaterThan, loopContext);
+		totalEnergy += energy(ii, cellI->mimAtomNeighbours(), EnergyKernel::ApplyMinimumImage | EnergyKernel::ExcludeIntraGreaterThan, loopContext);
 	}
 
 	return totalEnergy;
@@ -876,7 +876,7 @@ double EnergyKernel::fullIntraEnergy(const Grain* grain, double termFactor)
  */
 
 // Return total Molecule energy
-double EnergyKernel::energy(Molecule* mol, ProcessPool::CommGroup group, bool halfPP, double ppFactorIntra, double termFactor)
+double EnergyKernel::energy(Molecule* mol, ProcessPool::LoopContext loopContext, bool halfPP, double ppFactorIntra, double termFactor)
 {
 	/*
 	 * Calculates the total interaction energy of a Molecule with the rest of the system, and includes PairPotential and corrected intramolecular terms.
@@ -893,8 +893,8 @@ double EnergyKernel::energy(Molecule* mol, ProcessPool::CommGroup group, bool ha
 	for (int n=0; n<mol->nGrains(); ++n)
 	{
 		grain = mol->grain(n);
-// 		grainEnergy += energy(grain, grain->cell(), false, false, group);
-// 		grainEnergy += energy(grain, grain->cell()->neighbours(), cutoffSq, false, group);
+// 		grainEnergy += energy(grain, grain->cell(), false, false, loopContext);
+// 		grainEnergy += energy(grain, grain->cell()->neighbours(), cutoffSq, false, loopContext);
 		printf("EnergyKernel::energy(Molecule*) is horribly broken......\n");
 		
 // 		if (!halfPP) for (int m=n+1; m<mol->nGrains(); ++m) interMolGrainCorrect -= energy(grain, mol->grain(m), false, false);

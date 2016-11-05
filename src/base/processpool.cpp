@@ -355,7 +355,7 @@ bool ProcessPool::setupCellStrategy(const Vec3<int>& divisions, const Vec3<int>&
 	if (MPI_Group_incl(origGroup, groupSize(), processesInGroup(groupIndex_), &groupGroup_) != MPI_SUCCESS) return false;
 	if (MPI_Comm_create(MPI_COMM_WORLD, groupGroup_, &groupCommunicator_) != MPI_SUCCESS) return false;
 	MPI_Group_rank(groupGroup_, &groupRank_);
-	Messenger::printVerbose("Process with local rank %i (world rank %i) has local group (%i) rank %i, and process group leader %i\n", poolRank_, worldRank_, groupIndex_, groupRank_, groupLeader());
+	Messenger::printVerbose("Process with pool rank %i (world rank %i) has local group %i, group rank %i, and is a process group %s %i\n", poolRank_, worldRank_, groupIndex_, groupRank_, groupLeader() ? "leader" : "slave");
 
 	// Master now assembles list of group leaders
 	bool leader;
@@ -469,6 +469,15 @@ bool ProcessPool::groupLeader()
 	return (groupRank_ == 0);
 }
 
+// Return process info string
+const char* ProcessPool::processInfo()
+{
+	static Dnchar info;
+	// World Rank / Pool Rank, Group Rank @ Group Index
+	info.sprintf("%iw/%ip,%ig@%ii", worldRank_, poolRank_, groupRank_, groupIndex_);
+	return info.get();
+}
+
 /*
  * Process Limits
  */
@@ -556,19 +565,21 @@ int ProcessPool::diagonalLastAtom()
 }
 
 // Return starting index for general loop
-int ProcessPool::interleavedLoopStart(ProcessPool::CommGroup group)
+int ProcessPool::interleavedLoopStart(ProcessPool::LoopContext loopContext)
 {
-	if (group == ProcessPool::Group) return groupRank_;
-	else if (group == ProcessPool::Pool) return poolRank_;
-	return 0;
+	if (loopContext == ProcessPool::OverPoolProcesses) return poolRank_;
+	else if (loopContext == ProcessPool::OverGroupProcesses) return groupRank_;
+	else if (loopContext == ProcessPool::OverGroups) return groupIndex_;
+	else return 0;
 }
 
 // Return stride for general loop
-int ProcessPool::interleavedLoopStride(ProcessPool::CommGroup group)
+int ProcessPool::interleavedLoopStride(ProcessPool::LoopContext loopContext)
 {
-	if (group == ProcessPool::Group) return groupSize();
-	else if (group == ProcessPool::Pool) return worldRanks_.nItems();
-	return 1;
+	if (loopContext == ProcessPool::OverPoolProcesses) return worldRanks_.nItems();
+	else if (loopContext == ProcessPool::OverGroupProcesses) return processGroups_.nItems();
+	else if (loopContext == ProcessPool::OverGroups) return nProcessesInGroup(groupIndex_);
+	else return 1;
 }
 
 /*

@@ -21,9 +21,12 @@
 
 // #include "main/duq.h"
 #include "modules/energy.h"
-#include <main/duq.h>
+#include "main/duq.h"
 #include "classes/species.h"
 #include "classes/box.h"
+
+// Static Members
+List<Module> Energy::instances_;
 
 /*
  * Constructor / Destructor
@@ -32,6 +35,10 @@
 // Constructor
 Energy::Energy() : Module()
 {
+	// Add to instances list and set unique name for this instance
+	instances_.own(this);
+	uniqueName_.sprintf("%s_%02i", name(), instances_.nItems()-1);
+
 	// Setup variables / control parameters
 	addVariable("Test", false);
 }
@@ -39,6 +46,16 @@ Energy::Energy() : Module()
 // Destructor
 Energy::~Energy()
 {
+}
+
+/*
+ * Instances
+ */
+
+// Create instance of this module
+List<Module>& Energy::instances()
+{
+	return instances_;
 }
 
 // Create instance of this module
@@ -128,20 +145,20 @@ bool Energy::process(DUQ& duq, ProcessPool& procPool)
 	* This is a parallel routine, with processes operating in groups, unless in TEST mode.
 	*/
 
-	// Retrieve control parameters from Configuration
-	const bool testMode = variableAsBool("Test");
-
-	// Print argument/parameter summary
-	if (testMode) Messenger::print("Energy: Calculating energy in serial test mode.\n");
-	else Messenger::print("Energy: Performing %i shake(s) per Atom\n", 2);
-
-	double atomEnergy = 0.0, intraEnergy = 0.0;
-
 	// Loop over target Configurations
 	for (RefListItem<Configuration,bool>* ri = targetConfigurations_.first(); ri != NULL; ri = ri->next)
 	{
 		// Grab Configuration pointer
 		Configuration* cfg = ri->item;
+
+		// Retrieve control parameters from Configuration
+		const bool testMode = variableAsBool(cfg, "Test");
+
+		// Print argument/parameter summary
+		if (testMode) Messenger::print("Energy: Calculating energy for Configuration '%s' in serial test mode...\n", cfg->name());
+		else Messenger::print("Energy: Calculating total energy for Configuration '%s'...\n", cfg->name());
+
+		double atomEnergy = 0.0, intraEnergy = 0.0;
 
 		// Calculate the total energy
 		if (testMode)
@@ -237,10 +254,10 @@ bool Energy::process(DUQ& duq, ProcessPool& procPool)
 			* Calculation End
 			*/
 			
-			Messenger::print("Correct (test) particle energy is %15.9e kJ/mol\n", atomEnergy);
-			Messenger::print("Correct (test) intramolecular energy is %15.9e kJ/mol\n", intraEnergy);
-			Messenger::print("Correct (test) total energy is %15.9e kJ/mol\n", atomEnergy + intraEnergy);
-			Messenger::print("Time to do total (test) energy was %s.\n", timer.timeString());
+			Messenger::print("Energy: Correct (test) particle energy is %15.9e kJ/mol\n", atomEnergy);
+			Messenger::print("Energy: Correct (test) intramolecular energy is %15.9e kJ/mol\n", intraEnergy);
+			Messenger::print("Energy: Correct (test) total energy is %15.9e kJ/mol\n", atomEnergy + intraEnergy);
+			Messenger::print("Energy: Time to do total (test) energy was %s.\n", timer.timeString());
 		}
 		else
 		{
@@ -249,8 +266,6 @@ bool Energy::process(DUQ& duq, ProcessPool& procPool)
 			* 
 			* This is a serial routine (subroutines called from within are parallel).
 			*/
-
-			Messenger::print("Calculating total energy...\n");
 
 			// Calculate Grain energy
 			Timer interTimer;
@@ -262,8 +277,8 @@ bool Energy::process(DUQ& duq, ProcessPool& procPool)
 			intraEnergy = duq.intramolecularEnergy(procPool, cfg);
 			intraTimer.stop();
 
-			Messenger::print("Time to do atom energy was %s, intramolecular energy was %s.\n", interTimer.timeString(), intraTimer.timeString());
-			Messenger::print("Total Energy (World) is %15.9e (%15.9e Atom + %15.9e Intramolecular)\n", atomEnergy + intraEnergy, atomEnergy, intraEnergy);
+			Messenger::print("Energy: Time to do atom energy was %s, intramolecular energy was %s.\n", interTimer.timeString(), intraTimer.timeString());
+			Messenger::print("Energy: Total Energy (World) is %15.9e (%15.9e Atom + %15.9e Intramolecular)\n", atomEnergy + intraEnergy, atomEnergy, intraEnergy);
 		}
 
 		// Store energies in the Configuration in case somebody else needs them
