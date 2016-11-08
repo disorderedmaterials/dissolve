@@ -29,6 +29,9 @@
 #include "base/timer.h"
 #include "math/matrix4.h"
 
+// Static Members
+List<Module> StructureFactor::instances_;
+
 /*
  * Constructor / Destructor
  */
@@ -52,6 +55,16 @@ StructureFactor::StructureFactor() : Module()
 // Destructor
 StructureFactor::~StructureFactor()
 {
+}
+
+/*
+ * Instances
+ */
+
+// Create instance of this module
+List<Module>& StructureFactor::instances()
+{
+	return instances_;
 }
 
 // Create instance of this module
@@ -97,7 +110,7 @@ bool StructureFactor::hasProcessing()
 // Whether the Module has a post-processing stage
 bool StructureFactor::hasPostProcessing()
 {
-	return true;
+	return false;
 }
 
 /*

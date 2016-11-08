@@ -71,6 +71,8 @@ Configuration  'Bulk'
   EndModule
   Module Energy
   EndModule
+  Module StructureFactor
+  ENDMODULE
   #Module AtomShake
   #  # Disabled
   #  ShakesPerAtom  1

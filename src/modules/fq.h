@@ -47,7 +47,7 @@ class StructureFactor : public Module
 	 */
 	protected:
 	// List of all instances of this Module type
-	List<Module> instances_;
+	static List<Module> instances_;
 
 	public:
 	// Return list of all created instances of this Module

@@ -19,7 +19,6 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// #include "main/duq.h"
 #include "modules/energy.h"
 #include "main/duq.h"
 #include "classes/species.h"

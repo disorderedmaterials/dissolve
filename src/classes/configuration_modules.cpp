@@ -59,11 +59,8 @@ Module* Configuration::addModule(Module* module)
 // Find associated module by name
 Module* Configuration::findModule(const char* name)
 {
-	for (RefListItem<Module,bool>* existingItem = modules_.first(); existingItem != NULL; existingItem = existingItem->next)
-	{
-		Module* module = existingItem->item;
-		if (strcmp(module->name(),name) == 0) return module;
-	}
+	RefListIterator<Module,bool> moduleIterator(modules_);
+	while (Module* module = moduleIterator.iterate()) if (strcmp(module->name(),name) == 0) return module;
 
 	return NULL;
 }
@@ -74,10 +71,10 @@ int Configuration::nModules()
 	return modules_.nItems();
 }
 
-// Return first Module defined
-RefListItem<Module,bool>* Configuration::modules()
+// Return list of defined Modules
+RefList<Module,bool>& Configuration::modules()
 {
-	return modules_.first();
+	return modules_;
 }
 
 // Set Module variable

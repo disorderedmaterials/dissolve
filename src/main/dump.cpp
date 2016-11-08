@@ -140,10 +140,9 @@ void DUQ::dumpSystemSetup(bool includeData)
 		// Modules
 		Messenger::print("\n  # Modules\n");
 		if (cfg->nModules() == 0) Messenger::print("  # -- None\n");
-		for (RefListItem<Module,bool>* ri = cfg->modules(); ri != NULL; ri = ri->next)
+		RefListIterator<Module,bool> moduleIterator(cfg->modules());
+		while (Module* module = moduleIterator.iterate())
 		{
-			Module* module = ri->item;
-
 			Messenger::print("  %s  %s\n", Keywords::configurationKeyword(Keywords::ModuleAddKeyword), module->name());
 
 			// For each Module, print all available variables

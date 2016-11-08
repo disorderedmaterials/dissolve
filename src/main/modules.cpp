@@ -22,6 +22,7 @@
 #include "main/duq.h"
 #include "modules/atomshake.h"
 #include "modules/energy.h"
+#include "modules/fq.h"
 #include "base/sysfunc.h"
 
 // Register modules
@@ -31,6 +32,7 @@ bool DUQ::registerModules()
 	// modules_[Module::AnalysisModule].own(new XXX);
 	modules_.add(new AtomShake);
 	modules_.add(new Energy);
+	modules_.add(new StructureFactor);
 
 	// Construct master list of modules, and do sanity check on names
 	for (RefListItem<Module,bool>* ri = modules_.first(); ri != NULL; ri = ri->next)

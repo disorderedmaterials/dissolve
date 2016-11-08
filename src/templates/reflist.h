@@ -1,6 +1,6 @@
 /*
 	*** Linked List Reference Class
-	*** src/templates/RefList.h
+	*** src/templates/reflist.h
 	Copyright T. Youngs 2012-2016
 
 	This file is part of dUQ.
@@ -27,9 +27,10 @@
 #include <stdio.h>
 
 /*
- * \brief Linked List Reference Item Class
- * \details Linked list reference item, allowing storage of pointers to user-defined classes without disrupting their internal ListItem pointers. Subclassing ListItem is not necessary in order to place objects in a RefList.
-*/
+ * RefListItem
+ */
+
+// Linked List Reference Item Class
 template <class T, class D> class RefListItem
 {
 	public:
@@ -44,10 +45,7 @@ template <class T, class D> class RefListItem
 	D data;
 };
 
-/*
- * \brief Constructor
- * \details Constructor for RefListItem.
- */
+// Constructor
 template <class T, class D> RefListItem<T,D>::RefListItem()
 {
 	item = NULL;
@@ -56,9 +54,10 @@ template <class T, class D> RefListItem<T,D>::RefListItem()
 }
 
 /*
- * \brief Linked List Reference Class
- * \details Linked list of references for/to user-defined classes. Subclassing ListItem or RefListItem is not necessary in order to place objects in a RefList.
-*/
+ * RefList
+ */
+
+// Linked List Reference Class
 template <class T, class D> class RefList
 {
 	public:
@@ -72,8 +71,8 @@ template <class T, class D> class RefList
 	RefList<T,D>(const RefList<T,D>& source);
 
 	/*
-	// Reference List of Items
-	*/
+	 * Reference List of Items
+	 */
 	private:
 	// Head and tail of reference items
 	RefListItem<T,D>* listHead_, *listTail_;
@@ -149,10 +148,7 @@ template <class T, class D> class RefList
 	RefListItem<T,D>** array();
 };
 
-/*
- * \brief Constructor
- * \details Constructor for RefList.
- */
+// Constructor
 template <class T, class D> RefList<T,D>::RefList()
 {
 	listHead_ = NULL;
@@ -162,9 +158,7 @@ template <class T, class D> RefList<T,D>::RefList()
 	nItems_ = 0;
 }
 
-/*
- * \brief List Constructor
- */
+// List Constructor
 template <class T, class D> RefList<T,D>::RefList(const List<T>& source, D startData)
 {
 	listHead_ = NULL;
@@ -175,19 +169,13 @@ template <class T, class D> RefList<T,D>::RefList(const List<T>& source, D start
 	createFromList(source.first(), startData);
 }
 
-/*
- * \brief Destructor
- * \details Destructor for RefList.
- */
+// Destructor
 template <class T, class D> RefList<T,D>::~RefList()
 {
 	clear();
 }
 
-/*
- * \brief Copy Constructur
- * \details Copy Constructor for RefList.
- */
+// Copy Constructur
 template <class T, class D> RefList<T,D>::RefList(const RefList<T,D> &source)
 {
 	listHead_ = NULL;
@@ -198,9 +186,7 @@ template <class T, class D> RefList<T,D>::RefList(const RefList<T,D> &source)
 	for (RefListItem<T,D>* ri = source.first(); ri != NULL; ri = ri->next) add(ri->item, ri->data);
 }
 
-/*
- * \brief Assignment operator =
- */
+// Assignment operator =
 template <class T, class D> void RefList<T,D>::operator=(RefList<T,D> &source)
 {
 	// Clear any current data...
@@ -208,42 +194,32 @@ template <class T, class D> void RefList<T,D>::operator=(RefList<T,D> &source)
 	for (RefListItem<T,D>* ri = source.first(); ri != NULL; ri = ri->next) add(ri->item, ri->data);
 }
 
-/*
- * \brief Returns the head of the item list
- */
+// Returns the head of the item list
 template <class T, class D> RefListItem<T,D>* RefList<T,D>::first() const
 {
 	return listHead_;
 }
 
-/*
- * \brief Returns the last item in the list
- */
+// Returns the last item in the list
 template <class T, class D> RefListItem<T,D>* RefList<T,D>::last() const
 {
 	return listTail_;
 }
 
-/*
- * \brief Returns the T associated to the head of the item list
- */
+// Returns the T associated to the head of the item list
 template <class T, class D> T* RefList<T,D>::firstItem() const
 {
 	if (listHead_) return listHead_->item;
 	else return NULL;
 }
 
-/*
- * \brief Returns the number of atoms in the list
- */
+// Returns the number of atoms in the list
 template <class T, class D> int RefList<T,D>::nItems() const
 {
 	return nItems_;
 }
 
-/*
- * \brief Add item to list
- */
+// Add item to list
 template <class T, class D> RefListItem<T,D>* RefList<T,D>::add(T* item)
 {
 	RefListItem<T,D>* newitem = new RefListItem<T,D>;
@@ -257,9 +233,7 @@ template <class T, class D> RefListItem<T,D>* RefList<T,D>::add(T* item)
 	return newitem;
 }
 
-/*
- * \brief Add item to list with extra data
- */
+// Add item to list with extra data
 template <class T, class D> RefListItem<T,D>* RefList<T,D>::add(T* item, D extradata)
 {
 	RefListItem<T,D>* newitem = new RefListItem<T,D>;
@@ -274,9 +248,7 @@ template <class T, class D> RefListItem<T,D>* RefList<T,D>::add(T* item, D extra
 	return newitem;
 }
 
-/*
- * \brief Add item to start of list
- */
+// Add item to start of list
 template <class T, class D> RefListItem<T,D>* RefList<T,D>::addStart(T* item)
 {
 	RefListItem<T,D>* newitem = new RefListItem<T,D>;
@@ -291,9 +263,7 @@ template <class T, class D> RefListItem<T,D>* RefList<T,D>::addStart(T* item)
 	return newitem;
 }
 
-/*
- * \brief Add reference after the specified item
- */
+// Add reference after the specified item
 template <class T, class D> RefListItem<T,D>* RefList<T,D>::addAfter(RefListItem<T,D>* target, T* item)
 {
 	if (target == NULL) return add(item);
@@ -312,9 +282,7 @@ template <class T, class D> RefListItem<T,D>* RefList<T,D>::addAfter(RefListItem
 	}
 }
 
-/*
- * \brief Add reference before the specified item
- */
+// Add reference before the specified item
 template <class T, class D> RefListItem<T,D>* RefList<T,D>::addBefore(RefListItem<T,D>* target, T* item)
 {
 	if (target == NULL) return add(item);
@@ -333,9 +301,7 @@ template <class T, class D> RefListItem<T,D>* RefList<T,D>::addBefore(RefListIte
 	}
 }
 
-/*
- * \brief Add item to start of list with extra data
- */
+// Add item to start of list with extra data
 template <class T, class D> RefListItem<T,D>* RefList<T,D>::addStart(T* item, D extradata)
 {
 	RefListItem<T,D>* newitem = new RefListItem<T,D>;
@@ -350,9 +316,7 @@ template <class T, class D> RefListItem<T,D>* RefList<T,D>::addStart(T* item, D 
 	return newitem;
 }
 
-/*
- * \brief Add unique item to list
- */
+// Add unique item to list
 template <class T, class D> RefListItem<T,D>* RefList<T,D>::addUnique(T* item)
 {
 	RefListItem<T,D>* srch = contains(item);
@@ -360,9 +324,7 @@ template <class T, class D> RefListItem<T,D>* RefList<T,D>::addUnique(T* item)
 	else return srch;
 }
 
-/*
- * \brief Add unique item to list
- */
+// Add unique item to list
 template <class T, class D> RefListItem<T,D>* RefList<T,D>::addUnique(T* item, D extradata)
 {
 	RefListItem<T,D>* srch = contains(item);
@@ -370,9 +332,7 @@ template <class T, class D> RefListItem<T,D>* RefList<T,D>::addUnique(T* item, D
 	else return srch;
 }
 
-/*
- * \brief Cut item from list
- */
+// Cut item from list
 template <class T, class D> void RefList<T,D>::cut(RefListItem<T,D>* item)
 {
 	if (item == NULL)
@@ -393,9 +353,7 @@ template <class T, class D> void RefList<T,D>::cut(RefListItem<T,D>* item)
 	regenerate_ = 1;
 }
 
-/*
- * \brief Own an existing item
- */
+// Own an existing item
 template <class T, class D> void RefList<T,D>::own(RefListItem<T,D>* olditem)
 {
 	// In the interests of 'pointer cleanliness, refuse to own the item if its pointers are not NULL
@@ -412,9 +370,7 @@ template <class T, class D> void RefList<T,D>::own(RefListItem<T,D>* olditem)
 	regenerate_ = 1;
 }
 
-/*
- * \brief Remove RefListItem from list
- */
+// Remove RefListItem from list
 template <class T, class D> void RefList<T,D>::remove(RefListItem<T,D>* xitem)
 {
 	if (xitem == NULL)
@@ -430,9 +386,7 @@ template <class T, class D> void RefList<T,D>::remove(RefListItem<T,D>* xitem)
 	regenerate_ = 1;
 }
 
-/*
- * \brief Remove first item from list
- */
+// Remove first item from list
 template <class T, class D> void RefList<T,D>::removeFirst()
 {
 	if (listHead_ == NULL)
@@ -444,9 +398,7 @@ template <class T, class D> void RefList<T,D>::removeFirst()
 	regenerate_ = 1;
 }
 
-/*
- * \brief Remove last item from list
- */
+// Remove last item from list
 template <class T, class D> void RefList<T,D>::removeLast()
 {
 	if (listTail_ == NULL)
@@ -458,9 +410,7 @@ template <class T, class D> void RefList<T,D>::removeLast()
 	regenerate_ = 1;
 }
 
-/*
- * \brief Remove item from list
- */
+// Remove item from list
 template <class T, class D> void RefList<T,D>::remove(T* xitem)
 {
 	// Delete a specific item from the list
@@ -468,9 +418,7 @@ template <class T, class D> void RefList<T,D>::remove(T* xitem)
 	if (r != NULL) remove(r);
 }
 
-/*
- * \brief Element access operator
- */
+// Element access operator
 template <class T, class D> RefListItem<T,D>* RefList<T,D>::operator[](int index)
 {
 #ifdef CHECKS
@@ -484,9 +432,7 @@ template <class T, class D> RefListItem<T,D>* RefList<T,D>::operator[](int index
 	return array()[index];
 }
 
-/*
- * \brief Item access operator
- */
+// Item access operator
 template <class T, class D> RefListItem<T,D>* RefList<T,D>::item(int n) const
 {
 #ifdef CHECKS
@@ -501,9 +447,7 @@ template <class T, class D> RefListItem<T,D>* RefList<T,D>::item(int n) const
 	return NULL;
 }
 
-/*
- * \brief Search for item
- */
+// Search for item
 template <class T, class D> RefListItem<T,D>* RefList<T,D>::contains(T* xitem) const
 {
 	// Search references for specified item
@@ -512,9 +456,7 @@ template <class T, class D> RefListItem<T,D>* RefList<T,D>::contains(T* xitem) c
 	return r;
 }
 
-/*
- * \brief Search for data
- */
+// Search for data
 template <class T, class D> RefListItem<T,D>* RefList<T,D>::containsData(D data) const
 {
 	// Search references for specified data
@@ -523,9 +465,7 @@ template <class T, class D> RefListItem<T,D>* RefList<T,D>::containsData(D data)
 	return r;
 }
 
-/*
- * \brief Clear atoms from list
- */
+// Clear atoms from list
 template <class T, class D> void RefList<T,D>::clear()
 {
 	// Clear the list 
@@ -544,9 +484,7 @@ template <class T, class D> void RefList<T,D>::clear()
 	regenerate_ = 1;
 }
 
-/*
- * \brief Prune items from list
- */
+// Prune items from list
 template <class T, class D> void RefList<T,D>::prune(D data)
 {
 	RefListItem<T,D>* xitem = listHead_, *next;
@@ -558,9 +496,7 @@ template <class T, class D> void RefList<T,D>::prune(D data)
 	}
 }
 
-/*
- * \brief Move head to tail
- */
+// Move head to tail
 template <class T, class D> void RefList<T,D>::moveHeadToTail()
 {
 	// Add a new item to the list (a copy of the current head)
@@ -569,9 +505,7 @@ template <class T, class D> void RefList<T,D>::moveHeadToTail()
 	remove(listHead_);
 }
 
-/*
- * \brief Create from List
- */
+// Create from List
 template <class T, class D> void RefList<T,D>::createFromList(T* xitem, D startData)
 {
 	clear();
@@ -582,9 +516,7 @@ template <class T, class D> void RefList<T,D>::createFromList(T* xitem, D startD
 	}
 }
 
-/*
- * \brief Create from RefList
- */
+// Create from RefList
 template <class T, class D> void RefList<T,D>::createFromRefList(RefListItem<T,D>* xitem)
 {
 	clear();
@@ -595,9 +527,7 @@ template <class T, class D> void RefList<T,D>::createFromRefList(RefListItem<T,D
 	}
 }
 
-/*
- * \brief Fill array
- */
+// Fill array
 template <class T, class D> void RefList<T,D>::fillArray(int n, T* data)
 {
 	int count = 0;
@@ -613,9 +543,7 @@ template <class T, class D> void RefList<T,D>::fillArray(int n, T* data)
 	regenerate_ = 1;
 }
 
-/*
- * \brief Swap the two items specified
- */
+// Swap the two items specified
 template <class T, class D> void RefList<T,D>::swap(T* item1, T* item2)
 {
 	if ((item1 == NULL) || (item2 == NULL))
@@ -631,9 +559,7 @@ template <class T, class D> void RefList<T,D>::swap(T* item1, T* item2)
 	regenerate_ = 1;
 }
 
-/*
- * \brief Create (or just return) the item array
- */
+// Create (or just return) the item array
 template <class T, class D> RefListItem<T,D>** RefList<T,D>::array()
 {
 	if (regenerate_ == 0) return items_;
@@ -647,5 +573,47 @@ template <class T, class D> RefListItem<T,D>** RefList<T,D>::array()
 	regenerate_ = 0;
 	return items_;
 }
+
+
+/*
+ * RefListIterator
+ */
+
+// Linked List Reference Item Class
+template <class T, class D> class RefListIterator
+{
+	public:
+	// Constructor
+	RefListIterator<T,D>(RefList<T,D>& source) : targetRefList_(source)
+	{
+		finished_ = false;
+		currentItem_ = NULL;
+	}
+
+	private:
+	// Whether the iterator has reached the end of the list
+	bool finished_;
+	// Target list
+	RefList<T,D>& targetRefList_;
+	// Current item
+	RefListItem<T,D>* currentItem_;
+
+	public:
+	// Iterate
+	T* iterate()
+	{
+		if (finished_) return NULL;
+
+		// Go to first / next item
+		if (currentItem_ == NULL) currentItem_ = targetRefList_.first();
+		else currentItem_ = currentItem_->next;
+
+		// Check for end of list
+		if (currentItem_ == NULL) finished_ = true;
+
+		return (currentItem_ ? currentItem_->item : NULL);
+	}
+
+};
 
 #endif

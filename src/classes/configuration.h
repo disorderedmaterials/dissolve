@@ -384,7 +384,7 @@ class Configuration : public ListItem<Configuration>
 	// Return number of Modules associated
 	int nModules();
 	// Return first Module of specified type
-	RefListItem<Module,bool>* modules();
+	RefList<Module,bool>& modules();
 	// Set Module variable
 	void setModuleVariable(const char* name, VariableValue value, const char* description, const char* source);
 	// Return named Module variable

@@ -76,7 +76,34 @@ bool DUQ::go()
 		Messenger::print("===============================================\n");
 		Messenger::print("  MAIN LOOP ITERATION %10i / %-10s\n", iteration, maxIterations_ == -1 ? "(no limit)" : DUQSys::itoa(maxIterations_));
 		Messenger::print("===============================================\n");
-		Messenger::print("\n");
+
+		/*
+		 *  0)	Print schedule of tasks to run
+		 */
+		Messenger::print("Schedule for Iteration %10i\n", iteration);
+		Messenger::print("-----------------------------------------------\n");
+
+		Messenger::print("--> Pre-Processing\n");
+		if (preProcessingTasks_.nItems() == 0) Messenger::print("  (( No Tasks ))\n");
+		RefListIterator<Module,bool> preIterator(preProcessingTasks_);
+		while (Module* module = preIterator.iterate()) Messenger::print("      --> %-20s  (%s)\n", module->name(), module->frequencyDetails(iteration));
+		Messenger::print("-----------------------------------------------\n");
+
+		Messenger::print("--> Configuration Processing\n");
+		for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
+		{
+			Messenger::print("   * '%s'\n", cfg->name());
+			if (cfg->nModules() == 0) Messenger::print("  (( No Tasks ))\n");
+			RefListIterator<Module,bool> modIterator(cfg->modules());
+			while (Module* module = modIterator.iterate()) Messenger::print("      --> %20s  (%s)\n", module->name(), module->frequencyDetails(iteration));
+		}
+		Messenger::print("-----------------------------------------------\n");
+
+		Messenger::print("--> Post-Processing\n");
+		if (postProcessingTasks_.nItems() == 0) Messenger::print("  (( No Tasks ))\n");
+		RefListIterator<Module,bool> postIterator(postProcessingTasks_);
+		while (Module* module = postIterator.iterate()) Messenger::print("      --> %-20s  (%s)\n", module->name(), module->frequencyDetails(iteration));
+		Messenger::print("===============================================\n");
 
 		/*
 		 *  1) 	Perform pre-processing tasks (using worldPool_)
@@ -130,11 +157,9 @@ bool DUQ::go()
 			}
 
 			// Loop over Modules defined in the Configuration
-			for (RefListItem<Module,bool>* ri = cfg->modules(); ri != NULL; ri = ri->next)
+			RefListIterator<Module,bool> moduleIterator(cfg->modules());
+			while (Module* module = moduleIterator.iterate())
 			{
-				// Grab Module pointer
-				Module* module = ri->item;
-
 				result = module->process(*this, cfg->processPool());
 
 				if (!result) break;

@@ -25,6 +25,7 @@
 // Constructor
 Module::Module()
 {
+	frequency_ = 1;
 }
 
 // Destructor
@@ -66,6 +67,21 @@ void Module::setFrequency(int freq)
 int Module::frequency()
 {
 	return frequency_;
+}
+
+// Return short descriptive text relating frequency to supplied iteration number
+const char* Module::frequencyDetails(int iteration)
+{
+	if (frequency_ < 0) return "NEGATIVE?";
+	else if (frequency_ == 0) return "disabled";
+	else if (frequency_ == 1) return "every time";
+	else if ((frequency_%iteration) == 1) return "next iteration";
+	else
+	{
+		static Dnchar result;
+		result.sprintf("in %i steps", frequency_%iteration);
+		return result.get();
+	}
 }
 
 // Set whether the Module is enabled
