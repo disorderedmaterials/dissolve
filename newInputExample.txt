@@ -63,7 +63,7 @@ Configuration  'Bulk'
 
   # Define initial coordinates file
   # If no file is specified a random configuration will be generated
-  File '/home/tris/work/water/epsr/waterbox.xyz'
+  # File '/home/tris/work/water/epsr/waterbox.xyz'
 
   # Enable modules and set associated variables
   Module Energy
@@ -71,15 +71,15 @@ Configuration  'Bulk'
   EndModule
   Module Energy
   EndModule
-  Module AtomShake
-    # Disabled
-    ShakesPerAtom  1
-  EndModule
-  Module Energy
-    Test true
-  EndModule
-  Module Energy
-  EndModule
+  #Module AtomShake
+  #  # Disabled
+  #  ShakesPerAtom  1
+  #EndModule
+  #Module Energy
+  #  Test true
+  #EndModule
+  #Module Energy
+  #EndModule
 EndConfiguration
 
 # Pair Potentials

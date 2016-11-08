@@ -577,8 +577,8 @@ int ProcessPool::interleavedLoopStart(ProcessPool::LoopContext loopContext)
 int ProcessPool::interleavedLoopStride(ProcessPool::LoopContext loopContext)
 {
 	if (loopContext == ProcessPool::OverPoolProcesses) return worldRanks_.nItems();
-	else if (loopContext == ProcessPool::OverGroupProcesses) return processGroups_.nItems();
-	else if (loopContext == ProcessPool::OverGroups) return nProcessesInGroup(groupIndex_);
+	else if (loopContext == ProcessPool::OverGroupProcesses) return nProcessesInGroup(groupIndex_);
+	else if (loopContext == ProcessPool::OverGroups) return processGroups_.nItems();
 	else return 1;
 }
 

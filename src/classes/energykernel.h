@@ -112,15 +112,15 @@ class EnergyKernel
 	// Return PairPotential energy between atoms provided (as pointers)
 	double energy(const Atom* i, const Atom* j, bool applyMim, bool excludeIgeJ = false);
 	// Return PairPotential energy between two cells
-	double energy(Cell* centralCell, Cell* otherCell, bool applyMim, bool excludeIgeJ = false, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
+	double energy(Cell* centralCell, Cell* otherCell, bool applyMim, bool excludeIgeJ = false, ProcessPool::LoopContext loopContext = ProcessPool::Individual, bool sumOverProcesses = false);
 	// Return PairPotential energy between cell and atomic neighbours
-	double energy(Cell* centralCell, bool excludeIgeJ = false, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
+	double energy(Cell* centralCell, bool excludeIgeJ = false, ProcessPool::LoopContext loopContext = ProcessPool::Individual, bool sumOverProcesses = false);
 	// Return PairPotential energy between atom and cell
-	double energy(const Atom* i, OrderedPointerList<Atom>& neighbours, int flags = EnergyKernel::NoFlags, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
+	double energy(const Atom* i, OrderedPointerList<Atom>& neighbours, int flags = EnergyKernel::NoFlags, ProcessPool::LoopContext loopContext = ProcessPool::Individual, bool sumOverProcesses = false);
 	// Return PairPotential energy of atom with world
 	double energy(const Atom* i, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
 	// Return PairPotential energy between Grain and list of neighbouring cells
-	double energy(const Grain* grain, OrderedPointerList<Atom>& neighbours, bool applyMim, bool excludeIgeJ = false, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
+	double energy(const Grain* grain, OrderedPointerList<Atom>& neighbours, bool applyMim, bool excludeIgeJ = false, ProcessPool::LoopContext loopContext = ProcessPool::Individual, bool sumOverProcesses = false);
 	// Return PairPotential energy of grain with world
 	double energy(const Grain* grain, bool excludeIgtJ, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
 	// Return molecular correction energy related to intramolecular terms involving supplied atom

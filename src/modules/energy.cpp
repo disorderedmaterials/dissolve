@@ -154,22 +154,19 @@ bool Energy::process(DUQ& duq, ProcessPool& procPool)
 		// Retrieve control parameters from Configuration
 		const bool testMode = variableAsBool(cfg, "Test");
 
-		// Print argument/parameter summary
-		if (testMode) Messenger::print("Energy: Calculating energy for Configuration '%s' in serial test mode...\n", cfg->name());
-		else Messenger::print("Energy: Calculating total energy for Configuration '%s'...\n", cfg->name());
-
 		double atomEnergy = 0.0, intraEnergy = 0.0;
 
 		// Calculate the total energy
 		if (testMode)
 		{
-		
 			/*
 			* Calculate the total energy of the system using a basic loop, with each
 			* process calculating its own value.
 			* 
 			* This is a serial routine, with all processes independently calculating their own value.
 			*/
+
+			Messenger::print("Energy: Calculating energy for Configuration '%s' in serial test mode...\n", cfg->name());
 
 			/*
 			* Calculation Begins
@@ -193,7 +190,8 @@ bool Energy::process(DUQ& duq, ProcessPool& procPool)
 				// Molecule-molecule energy
 				for (int ii = 0; ii <molN->nAtoms()-1; ++ii)
 				{
-					for (int jj = ii +1; jj <molN->nAtoms(); ++jj)
+// 					Messenger::print("Atom %i r = %f %f %f\n", ii, molN->atom(ii)->r().x, molN->atom(ii)->r().y, molN->atom(ii)->r().z);
+					for (int jj = ii+1; jj <molN->nAtoms(); ++jj)
 					{
 						// Get intramolecular scaling of atom pair
 						scale = molN->species()->scaling(ii, jj);
@@ -266,6 +264,8 @@ bool Energy::process(DUQ& duq, ProcessPool& procPool)
 			* 
 			* This is a serial routine (subroutines called from within are parallel).
 			*/
+
+			Messenger::print("Energy: Calculating total energy for Configuration '%s'...\n", cfg->name());
 
 			// Calculate Grain energy
 			Timer interTimer;

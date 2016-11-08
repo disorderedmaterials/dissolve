@@ -292,7 +292,7 @@ bool Configuration::setup(ProcessPool& procPool, const List<AtomType>& atomTypes
 	if (randomConfiguration())
 	{
 		Messenger::print("--> Generating random initial configuration...\n");
-		if (!createRandom()) return false;
+		if (!createRandom(procPool)) return false;
 	}
 	else
 	{

@@ -177,7 +177,7 @@ class Configuration : public ListItem<Configuration>
 	// Load coordinates from specified file
 	bool loadCoordinates(const char* filename);
 	// Create random configuration
-	bool createRandom();
+	bool createRandom(ProcessPool& procPool);
 
 
 	/*

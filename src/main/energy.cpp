@@ -102,7 +102,6 @@ double DUQ::interatomicEnergy(ProcessPool& procPool, Configuration* cfg)
 	// Set start/skip for parallel loop
 	start = procPool.interleavedLoopStart(ProcessPool::OverGroups);
 	stride = procPool.interleavedLoopStride(ProcessPool::OverGroups);
-	Messenger::print("BIG START AND STRIDE are %i and %i\n", start, stride);
 
 	for (cellId = start; cellId<cfg->nCells(); cellId += stride)
 	{
@@ -122,9 +121,11 @@ double DUQ::interatomicEnergy(ProcessPool& procPool, Configuration* cfg)
 		 * Calculation End
 		 */
 	}
+
+	// Print process-local energy
 	Messenger::printVerbose("Atom Energy (Local) is %15.9e\n", totalEnergy);
 
-	// Sum energy and print
+	// Sum energy over all processes in the pool and print
 	procPool.allSum(&totalEnergy, 1);
 	Messenger::printVerbose("Atom Energy (World) is %15.9e\n", totalEnergy);
 

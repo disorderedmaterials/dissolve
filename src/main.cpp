@@ -160,6 +160,11 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
+	// Initialise random seed
+	if (dUQ.seed() == -1) srand( (unsigned)time( NULL ) );
+	else srand(dUQ.seed());
+
+
 	// Perform simulation setup (all processes)
 	if (!dUQ.setupSimulation())
 	{
@@ -176,10 +181,6 @@ int main(int argc, char **argv)
 		return 1;
 	}
 	
-	// Initialise random seed
-	if (dUQ.seed() == -1) srand( (unsigned)time( NULL ) );
-	else srand(dUQ.seed());
-
 	// Full system dump?
 	if (fullDump) dUQ.dumpSystemSetup(true);
 

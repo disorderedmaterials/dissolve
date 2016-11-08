@@ -300,12 +300,16 @@ bool Configuration::loadCoordinates(const char* filename)
 }
 
 // Create random configuration
-bool Configuration::createRandom()
+bool Configuration::createRandom(ProcessPool& procPool)
 {
 	Vec3<double> r, cog, newCentre;
 	Matrix3 transform;
 
+	// Setup random buffer between all processes so our generated coordinates are the same
+	procPool.initialiseRandomBuffer(ProcessPool::Pool);
+
 	// Loop over defined molecules
+	Vec3<double> fr;
 	int index = 0;
 	for (Molecule* mol = molecules_.first(); mol != NULL; mol = mol->next)
 	{
@@ -316,10 +320,11 @@ bool Configuration::createRandom()
 		cog = mol->species()->centreOfGeometry(box_);
 
 		// Generate a new random centre of geometry for the molecule
-		newCentre = box_->randomCoordinate();
-			
+		fr.set(procPool.random(), procPool.random(), procPool.random()); 
+		newCentre = box_->fracToReal(fr);
+
 		// Generate a random rotation matrix
-		transform.createRotationXY(DUQMath::randomPlusMinusOne()*180.0, DUQMath::randomPlusMinusOne()*180.0);
+		transform.createRotationXY(procPool.randomPlusMinusOne()*180.0, procPool.randomPlusMinusOne()*180.0);
 
 		// Generate and  transformed Species coordinates
 		for (SpeciesAtom* i = mol->species()->atoms(); i != NULL; i = i->next, ++index)
