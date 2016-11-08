@@ -384,10 +384,6 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::Lo
 	// Straight loop over atoms *not* requiring mim
 	for (j = 0; j < centralCell->atomNeighbours().nItems(); ++j)
 	{
-		if (centralCell->index() == 12)
-		{
-			Messenger::print("NOT MIM j = %i\n", j);
-		}
 		jj = neighbours[j];
 		molJ = jj->molecule();
 		indexJ = jj->index();
@@ -425,11 +421,6 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::Lo
 		typeJ = jj->globalTypeIndex();
 		rJ = jj->r();
 
-		if (centralCell->index() == 12)
-		{
-			Messenger::print("NEED MIM j = %i, jj = %p, molJ = %p, indexJ = %i, typeJ = %i\n", j, jj, molJ, indexJ, typeJ);
-		}
-
 		// Loop over central cell atoms
 		for (i = start; i < centralCell->atoms().nItems(); i += stride)
 		{
@@ -440,10 +431,6 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::Lo
 
 			// Calculate rSquared distance betwenn atoms, and check it against the stored cutoff distance
 			rSq = box_->minimumDistanceSquared(ii->r(), rJ);
-			if (centralCell->index() == 12)
-			{
-				Messenger::print("  i = %i, ii = %p, rSq = %f\n", i, ii, rSq);
-			}
 			if (rSq > cutoffDistanceSquared_) continue;
 
 			// Check for atoms in the same species

@@ -277,13 +277,13 @@ bool Energy::process(DUQ& duq, ProcessPool& procPool)
 			intraEnergy = duq.intramolecularEnergy(procPool, cfg);
 			intraTimer.stop();
 
-			Messenger::print("Energy: Time to do atom energy was %s, intramolecular energy was %s.\n", interTimer.timeString(), intraTimer.timeString());
-			Messenger::print("Energy: Total Energy (World) is %15.9e (%15.9e Atom + %15.9e Intramolecular)\n", atomEnergy + intraEnergy, atomEnergy, intraEnergy);
+			Messenger::print("Energy: Time to do interatomic energy was %s, intramolecular energy was %s.\n", interTimer.timeString(), intraTimer.timeString());
+			Messenger::print("Energy: Total Energy (World) is %15.9e (%15.9e interatomic + %15.9e intramolecular)\n", atomEnergy + intraEnergy, atomEnergy, intraEnergy);
 		}
 
 		// Store energies in the Configuration in case somebody else needs them
-		setVariable(cfg, "Particle", atomEnergy);
-		setVariable(cfg, "Intramolecular", intraEnergy);
+		setVariable(cfg, "Inter", atomEnergy);
+		setVariable(cfg, "Intra", intraEnergy);
 		setVariable(cfg, "Total", atomEnergy+intraEnergy);
 	}
 

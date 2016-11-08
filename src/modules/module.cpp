@@ -181,7 +181,6 @@ const char* Module::variableAsChar(const char* varName)
 // Retrieve Module variable from supplied Configuration, or get default value (bool)
 bool Module::variableAsBool(Configuration* cfg, const char* varName)
 {
-	printf("MODULE %p IS SEARCHING CFG %p FOR VAR %s, UNIQUENAME = %s\n", this, cfg, varName, uniqueName());
 	Variable* var = cfg->moduleVariable(varName, uniqueName());
 	return (var ? var->asBool() : variableAsBool(varName));
 }

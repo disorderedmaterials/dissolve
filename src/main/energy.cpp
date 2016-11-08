@@ -70,12 +70,12 @@ double DUQ::intramolecularEnergy(ProcessPool& procPool, Configuration* cfg)
 	return energy;
 }
 
-// Return total atom energy
+// Return total interatomic energy
 double DUQ::interatomicEnergy(ProcessPool& procPool, Configuration* cfg)
 {
 	/*
-	 * Calculates the total atom energy of the system, i.e. the energy contributions from PairPotential
-	 * interactions between individual atoms.
+	 * Calculates the total interatomic energy of the system, i.e. the energy contributions from PairPotential
+	 * interactions between individual atoms, accounting for intramolecular terms
 	 * 
 	 * This is a parallel routine, with processes operating as process groups.
 	 */
@@ -123,11 +123,11 @@ double DUQ::interatomicEnergy(ProcessPool& procPool, Configuration* cfg)
 	}
 
 	// Print process-local energy
-	Messenger::printVerbose("Atom Energy (Local) is %15.9e\n", totalEnergy);
+	Messenger::printVerbose("Interatomic Energy (Local) is %15.9e\n", totalEnergy);
 
 	// Sum energy over all processes in the pool and print
 	procPool.allSum(&totalEnergy, 1);
-	Messenger::printVerbose("Atom Energy (World) is %15.9e\n", totalEnergy);
+	Messenger::printVerbose("Interatomic Energy (World) is %15.9e\n", totalEnergy);
 
 	return totalEnergy;
 }
