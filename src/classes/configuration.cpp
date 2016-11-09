@@ -51,9 +51,6 @@ Configuration::Configuration() : ListItem<Configuration>()
 	nCells_ = 0;
 	coordinateIndex_ = 0;
 
-	// Partials
-	partialsIndex_ = -1;
-
 	// Setup
 	rdfBinWidth_ = 0.025;
 	rdfRange_ = -1.0;

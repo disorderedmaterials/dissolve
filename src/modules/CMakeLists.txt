@@ -6,6 +6,7 @@ module.h
 atomshake.cpp
 energy.cpp
 fq.cpp
+partials.cpp
 #forces.cpp
 #grainshake.cpp
 #intrashake.cpp
@@ -15,6 +16,7 @@ fq.cpp
 atomshake.h
 energy.h
 fq.h
+partials.h
 #forces.h
 #grainshake.h
 #intrashake.h

@@ -72,14 +72,19 @@ int Module::frequency()
 // Return short descriptive text relating frequency to supplied iteration number
 const char* Module::frequencyDetails(int iteration)
 {
+	static Dnchar result;
+
 	if (frequency_ < 0) return "NEGATIVE?";
 	else if (frequency_ == 0) return "disabled";
 	else if (frequency_ == 1) return "every time";
-	else if ((frequency_%iteration) == 1) return "next iteration";
+	else if ((iteration%frequency_) == 0) return "this iteration";
 	else
 	{
-		static Dnchar result;
-		result.sprintf("in %i steps", frequency_%iteration);
+		// Calculate number of steps necessary to get to next multiple of the frequency_
+		int nToGo = frequency_ - (iteration - frequency_*(iteration/frequency_));
+		if (nToGo == 1) return "next iteration";
+
+		result.sprintf("in %i steps time", nToGo);
 		return result.get();
 	}
 }

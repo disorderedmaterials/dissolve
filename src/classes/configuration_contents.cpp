@@ -233,6 +233,12 @@ AtomTypeData* Configuration::usedAtomTypes()
 	return usedAtomTypes_.first();
 }
 
+// Return number of atom types used in this Configuration
+int Configuration::nUsedAtomTypes()
+{
+	return usedAtomTypes_.nItems();
+}
+
 // Set global AtomType indices in Atoms from the list provided
 bool Configuration::setGlobalAtomTypeIndices(const List<AtomType>& masterList)
 {

@@ -25,8 +25,9 @@
 
 // Module Block Keywords
 KeywordData ModuleBlockData[] = {
-	{ "Disabled",			0,	"" },
-	{ "EndModule",			0,	"" }
+	{ "Disabled",			0,	"Specifies that the Module should never be run" },
+	{ "EndModule",			0,	"Marks the end of a Module block" },
+	{ "Frequency",			1,	"Frequency, relative to the main loop, at which this Module is run" }
 };
 
 // Convert text string to ModuleKeyword
@@ -76,6 +77,9 @@ bool Keywords::parseModuleBlock(LineParser& parser, DUQ* duq, Module* module, Co
 				break;
 			case (Keywords::EndModuleKeyword):
 				blockDone = true;
+				break;
+			case (Keywords::FrequencyKeyword):
+				module->setFrequency(parser.argi(1));
 				break;
 			case (Keywords::nModuleKeywords):
 				Messenger::error("Unrecognised %s block keyword found - '%s'\n", Keywords::inputBlock(Keywords::ModuleBlock), parser.argc(0));

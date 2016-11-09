@@ -1,6 +1,6 @@
 /*
-	*** Structure Factor Module
-	*** src/modules/fq.h
+	*** Partials Module
+	*** src/modules/partials.h
 	Copyright T. Youngs 2012-2016
 
 	This file is part of dUQ.
@@ -19,27 +19,28 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_STRUCTUREFACTOR_H
-#define DUQ_STRUCTUREFACTOR_H
+#ifndef DUQ_PARTIALS_H
+#define DUQ_PARTIALS_H
 
 #include "modules/module.h"
+#include "classes/partialset.h"
 
 // Forward Declarations
 /* none */
 
-// Structure Factor Module
-class StructureFactor : public Module
+// Partials Module
+class Partials : public Module
 {
 	/*
-	 * Calculates partial and full structure factors for the Sample or Configuration in which the Module is placed.
-	 * Partial RDFs according to atomtype isotopes are constructed, and combined into total F(Q).
+	 * Calculates partial radial distribution functions for the Sample or Configuration in which the Module is placed.
+	 * Partial RDFs according to atomtype isotopes are constructed individually, including separate bound/unbound terms.
 	 */
 
 	public:
 	// Constructor
-	StructureFactor();
+	Partials();
 	// Destructor
-	~StructureFactor();
+	~Partials();
 
 
 	/*
@@ -99,11 +100,21 @@ class StructureFactor : public Module
 
 
 	/*
-	 * Local Functions
+	 * Static Members / Functions
 	 */
+	private:
+	// List of PartialSets for specific Configuration
+	static List<PartialSet> partialSets_;
+
+	private:
+	// Calculate partial RDFs with simple double-loop
+	static bool calculateSimple(PartialSet* partialSet, ProcessPool& procPool);
+
 	public:
-	// Calculate unweighted partials for the specified Configuration
-	bool calculateUnweightedPartials(Configuration* cfg, ProcessPool& procPool);
+	// Add or return new PartialSet for specified Configuration
+	static PartialSet* partialSet(Configuration* cfg);
+	// (Re)calculate unweighted partials for the specified Configuration
+	static bool calculateUnweighted(Configuration* cfg, ProcessPool& procPool, int method = 0);
 };
 
 #endif

@@ -134,6 +134,7 @@ class Keywords
 	{
 		DisabledModuleKeyword,		/* 'Disable' - Disables the module from running */
 		EndModuleKeyword,		/* 'EndModule' - Signals the end of the Module block */
+		FrequencyKeyword,		/* 'Frequency' - Frequency at which the Module is run */
 		nModuleKeywords			/* Number of keywords defined for this block */
 	};
 	// Convert text string to ModuleKeyword

@@ -36,7 +36,7 @@ class Isotope : public MPIListItem<Isotope>
 
 
 	/*
-	 * \short Isotope Information
+	 * Isotope Information
 	 */
 	private:
 	// Mass number (A) of isotope

@@ -31,6 +31,8 @@ class DUQSys
 	static const char* ftoa(double d);
 	static const char* ftoa(double d, const char* fmt);
 	static bool atob(const char* s);
+	static const char* onOff(bool b);
+	static const char* btoa(bool b);
 
 	// String functions
 	static const char* upperCase(const char*);

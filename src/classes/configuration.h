@@ -166,8 +166,10 @@ class Configuration : public ListItem<Configuration>
 	bool setupMolecules();
 	// Return specified type
 	AtomType* type(int index);
-	// Return first AtomTypeData for this configuration
+	// Return first AtomTypeData for this Configuration
 	AtomTypeData* usedAtomTypes();
+	// Return number of atom types used in this Configuration
+	int nUsedAtomTypes();
 	// Set global AtomType indices in Atoms from the map provided
 	bool setGlobalAtomTypeIndices(const List<AtomType>& masterList);
 	// Return current coordinate index
@@ -277,7 +279,7 @@ class Configuration : public ListItem<Configuration>
 
 
 	/*
-	 * RDF / S(Q) Data
+	 * Calculation Limits
 	 */
 	private:
 	// RDF bin width
@@ -288,47 +290,21 @@ class Configuration : public ListItem<Configuration>
 	int rdfSmoothing_;
 	// Maximum extent (requested) of calculated RDFs
 	double requestedRDFRange_;
-	// Pair RDF matrix, containing full atom-atom RDFs
-	Array2D<Histogram> pairRDFMatrix_;
-	// Unbound RDF matrix, containing atom-atom RDFs of pairs not joined by bonds or angles
-	Array2D<Histogram> unboundRDFMatrix_;
-	// Bound RDF matrix, containing atom-atom RDFs of pairs joined by bonds or angles
-	Array2D<Histogram> boundRDFMatrix_;
-	// Pair correlation S(Q) matrix, derived from pairRDFMatrix_
-	Array2D<Data2D> pairSQMatrix_;
-	// Unbound S(Q) matrix, derived from unboundRDFMatrix_
-	Array2D<Data2D> unboundSQMatrix_;
-	// Bound S(Q) matrix, derived from boundRDFMatrix_
-	Array2D<Data2D> boundSQMatrix_;
-	// Bragg S(Q) matrix, derived from summation of HKL terms
-	Array2D<Data2D> braggSQMatrix_;
-	// Partial S(Q) matrix, containing full (pair + Bragg) contributions
-	Array2D<Data2D> partialSQMatrix_;
-	// Total RDF (unweighted)
-	Data2D totalRDF_;
-	// Total S(Q) (unweighted)
-	Data2D totalFQ_;
 	// Maximum Q value for Bragg calculation
 	double braggMaximumQ_;
 	// Maximal extent of hkl for Bragg calculation, based on braggMaximumQ_
 	Vec3<int> braggMaximumHKL_;
 	// Bragg calculation k-vector list
-	List<KVector> braggKVectors_;
+// 	List<KVector> braggKVectors_;
 	// Bragg calculation peak list
-	OrderedList<BraggPeak> braggPeaks_;
+// 	OrderedList<BraggPeak> braggPeaks_;
 	// Bragg S(Q) working arrays
-        Array2D<double> braggAtomVectorXCos_, braggAtomVectorYCos_, braggAtomVectorZCos_;
-        Array2D<double> braggAtomVectorXSin_, braggAtomVectorYSin_, braggAtomVectorZSin_;
-	// Configuration index at which partials were last calculated
-	int partialsIndex_;
+//         Array2D<double> braggAtomVectorXCos_, braggAtomVectorYCos_, braggAtomVectorZCos_;
+//         Array2D<double> braggAtomVectorXSin_, braggAtomVectorYSin_, braggAtomVectorZSin_;
 	// Configuration index at which Bragg peaks were last calculated
-	int braggIndex_;
+// 	int braggIndex_;
 
 	private:
-	// Calculate unweighted partials
-	bool calculatePartialRDFs(ProcessPool& procPool);
-	// Calculate unweighted intramolecular RDFs
-	bool calculateIntramolecularRDFs(ProcessPool& procPool);
 	// Calculate Bragg peak contributions
 	bool calculateBraggContributions(ProcessPool& procPool);
 	// Calculate weighted Bragg S(Q)
@@ -355,16 +331,6 @@ class Configuration : public ListItem<Configuration>
 	double braggMaximumQ();
 	// Return maximal extent of hkl for Bragg calculation
 	Vec3<int> braggMaximumHKL();
-	// Setup RDF and S(Q) storage
-	bool setupPartials();
-	// Reset partials
-	void resetPartials();
-	// Calculate unweighted partials
-	bool calculatePartials(ProcessPool& procPool, double qDelta, double qMax, Data2D::WindowFunction windowFunction, bool braggOn);
-	// Save RDFs
-	void saveRDFs(const char* baseName);
-	// Save S(Q)
-	void saveSQ(const char* baseName);
 
 
 	/*

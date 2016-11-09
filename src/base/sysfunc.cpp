@@ -250,10 +250,23 @@ const char* DUQSys::ftoa(double f, const char* fmt)
 	return result;
 }
 
+// Convert text string to boolean
 bool DUQSys::atob(const char* s)
 {
 	if (sameString(s, "true") || sameString(s, "on")) return true;
 	return false;
+}
+
+// Convert boolean to text string (true/false)
+const char* DUQSys::btoa(bool b)
+{
+	return (b ? "True" : "False");
+}
+
+// Convert boolean to text string (on/off)
+const char* DUQSys::onOff(bool b)
+{
+	return (b ? "On" : "Off");
 }
 
 // Strip trailing whitespace from string

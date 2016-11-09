@@ -71,8 +71,11 @@ Configuration  'Bulk'
   EndModule
   Module Energy
   EndModule
-  Module StructureFactor
-  ENDMODULE
+  Module Partials
+    Frequency 5
+  EndModule
+  #Module StructureFactor
+  #ENDMODULE
   #Module AtomShake
   #  # Disabled
   #  ShakesPerAtom  1
@@ -97,7 +100,7 @@ EndPairPotentials
 # Simulation Setup / Definition
 Simulation
   Seed  943723867
-  MaxIterations  1
+  MaxIterations  5
 EndSimulation
 
 # Run a Module's main processing as a post-processing task

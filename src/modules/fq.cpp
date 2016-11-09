@@ -25,6 +25,7 @@
 #include "classes/cell.h"
 #include "classes/changestore.h"
 #include "classes/energykernel.h"
+#include "base/sysfunc.h"
 #include "base/processpool.h"
 #include "base/timer.h"
 #include "math/matrix4.h"
@@ -40,18 +41,17 @@ List<Module> StructureFactor::instances_;
 StructureFactor::StructureFactor() : Module()
 {
 	// Setup variables / control parameters
-	addVariable("QDelta", 0.05);
-	addVariable("QMax", -1.0);
-	addVariable("Bragg", "off");
-	addVariable("BraggQDepBroadening", 0.0063);
-	addVariable("BraggQIndepBroadening", 0.0);
-	addVariable("QDepBroadening", 0.02, "FWHM of Gaussian for Q-dependent instrument broadening function (if required)");
-	addVariable("QIndepepBroadening", 0.0, "FWHM of Gaussian for Q-independent instrument broadening function (if required)");
-	addVariable("NormalisedToAvSq", false, "States that the reference F(Q) has been normalised to < b >**2");
-	addVariable("NormalisedToSqAv", false, "States that the reference F(Q) has been normalised to < b**2 >");
-	addVariable("SubtractSelf", false, "States that the self scattering (determined from the high-Q average) should be subtracted from the reference data");
+	addVariable("QDelta", 0.05, "Step size in Q");
+	addVariable("QMax", -1.0, "Maximum Q in calculated F(Q)");
+	addVariable("Bragg", "off", "Enable calculation of Bragg scattering");
+	addVariable("BraggQDepBroadening", 0.0063, "FWHM of Gaussian for Q-dependent Bragg broadening function");
+	addVariable("BraggQIndepBroadening", 0.0, "FWHM of Gaussian for Q-dependent Bragg broadening function");
+	addVariable("QDepBroadening", 0.02, "FWHM of Gaussian for Q-dependent instrument broadening function");
+	addVariable("QIndepBroadening", 0.0, "FWHM of Gaussian for Q-independent instrument broadening function");
+	addVariable("NormaliseToAvSq", false, "Normalise calculated F(Q) to < b >**2");
+	addVariable("NormaliseToSqAv", false, "Normalise calculated F(Q) to < b**2 >");
 }	
-	
+
 // Destructor
 StructureFactor::~StructureFactor()
 {
@@ -159,48 +159,38 @@ bool StructureFactor::process(DUQ& duq, ProcessPool& procPool)
 	Configuration* cfg = targetConfigurations_.firstItem();
 
 	// Retrieve control parameters from Configuration
-	const double cutoffDistance = variableAsDouble("cutoffDistance") < 0.0 ? duq.pairPotentialRange() : variableAsDouble("cutoffDistance");
-	const int nShakesPerAtom = variableAsInt("nShakesPerAtom");
+	const double qDelta = variableAsDouble("QDelta");
+	double qMax = variableAsDouble("QMax");
+	if (qMax < 0.0)
+	{
+		// If a Sample is defined, use its maximum Q as the limit - otherwise, use 30.0 A**-1
+		if ((nSampleTargets() == 1) && (targetSamples_.first()->item->hasReferenceData())) qMax = targetSamples_.first()->item->referenceData().xMax();
+		else qMax = 30.0;
+	}
 	const bool braggOn = variableAsBool("Bragg");
-	double stepSize = variableAsDouble("stepSize");
-	const double termScale = 1.0;
-	const double rRT = 1.0/(.008314472*cfg->temperature());
+	const double braggQDepBroadening = variableAsDouble("BraggQDepBroadening");
+	const double braggQIndepBroadening = variableAsDouble("BraggQIndepBroadening");
+	const double qDepBroadening = variableAsDouble("QDepBroadening");
+	const double qIndepBroadening = variableAsDouble("QIndepBroadening");
+	const bool normaliseToAvSq = variableAsBool("NormaliseToAvSq");
+	const bool normaliseToSqAv = variableAsBool("NormaliseToSqAv");
 
 	// Print argument/parameter summary
-// 	Messenger::print("StructureFactor: Cutoff distance is %f\n", cutoffDistance);
-// 	Messenger::print("StructureFactor: Performing %i shake(s) per Atom\n", nShakesPerAtom);
-// 	Messenger::print("StructureFactor: Translation step is %f Angstroms, target acceptance rate is %f.\n", stepSize, targetAcceptanceRate);
+	Messenger::print("StructureFactor: Calculating S(Q)/F(Q) out to %f Angstroms**-1 using step size of %f Angstroms**-1.\n", qMax, qDelta);
+	Messenger::print("StructureFactor: Q-dependent FWHM broadening to use is %f, Q-independent FWHM broadening to use is %f.\n", qDepBroadening, qIndepBroadening);
+	Messenger::print("StructureFactor: Calculation of Bragg features is %s.\n", DUQSys::onOff(braggOn));
 
 	// If there is a Sample target, then we calculate the weighted structure factors for it (using the supplied Configurations)
-	// Otherwise takt eh Configuration target and calculate unweighted structure factors for it.
-
-// From Sample::finaliseReferenceData(). => Should be 'Add Self SCattering, since we're trying to reproduce the reference data.
-		// Subtract self-scattering background, calculated from high-Q region
-// 	if (referenceDataSubtractSelf_)
-// 	{
-// 		Messenger::print("--> Subtracting self-scattering background from reference data...\n");
-// 		double highQLevel = 0.0;
-// 		// Take last 50% of points to calculate average
-// 		for (int n=referenceData_.nPoints()*0.5; n<referenceData_.nPoints(); ++n) highQLevel += referenceData_.y(n);
-// 		highQLevel /= (referenceData_.nPoints()*0.5);
-// 		Messenger::print("--> High-Q average level is %f.\n", highQLevel);
-// 		referenceData_.arrayY() -= highQLevel;
-// 	}
-// 	
-// From Sample::finaliseReferenceData().	
-// 		// Is data normalised?
-// 	if (referenceDataNormalisation_ == Sample::AverageSquaredNormalisation)
-// 	{
-// 		Messenger::print("--> Removing normalisation (multiplying by <b>**2 = %f).\n", boundCoherentAverageSquared_);
-// 		referenceData_.arrayY() *= boundCoherentAverageSquared_;
-// 	}
-// 	else if (referenceDataNormalisation_ == Sample::SquaredAverageNormalisation)
-// 	{
-// 		Messenger::print("--> Removing normalisation (multiplying by <b**2> = %f).\n", boundCoherentSquaredAverage_);
-// 		referenceData_.arrayY() *= boundCoherentSquaredAverage_;
-// 	}
+	// Otherwise take the Configuration targets and calculate unweighted structure factors for them.
 
 
+}
+
+// Calculate unweighted partials for the specified Configuration
+bool StructureFactor::calculateUnweightedPartials(Configuration* cfg, ProcessPool& procPool)
+{
+	// First, make sure that the radial distribution functions are up-to-date
+// 	cfg->calculatePartials();
 }
 
 // // Calculate weighted pair correlations from supplied unweighted data
@@ -367,9 +357,73 @@ bool StructureFactor::process(DUQ& duq, ProcessPool& procPool)
 // 	return true;
 // }
 
+
+// From Sample::finaliseReferenceData().	
+// 		// Is data normalised?
+// 	if (referenceDataNormalisation_ == Sample::AverageSquaredNormalisation)
+// 	{
+// 		Messenger::print("--> Removing normalisation (multiplying by <b>**2 = %f).\n", boundCoherentAverageSquared_);
+// 		referenceData_.arrayY() *= boundCoherentAverageSquared_;
+// 	}
+// 	else if (referenceDataNormalisation_ == Sample::SquaredAverageNormalisation)
+// 	{
+// 		Messenger::print("--> Removing normalisation (multiplying by <b**2> = %f).\n", boundCoherentSquaredAverage_);
+// 		referenceData_.arrayY() *= boundCoherentSquaredAverage_;
+// 	}
+
+
 // Execute post-processing stage
 bool StructureFactor::postProcess(DUQ& duq, ProcessPool& procPool)
 {
 	// TODO Save stuff here
 	return false;
 }
+
+
+
+// // Save all partial S(Q)
+// void Configuration::saveSQ(const char* baseName)
+// {
+// 	LineParser parser;
+// 	int typeI, typeJ, n;
+// 
+// 	for (typeI=0; typeI<usedAtomTypes_.nItems(); ++typeI)
+// 	{
+// 		for (typeJ=typeI; typeJ<usedAtomTypes_.nItems(); ++typeJ)
+// 		{
+// 			Dnchar filename(-1, "%s-unweighted-%s-%s.sq", baseName, usedAtomTypes_[typeI]->name(), usedAtomTypes_[typeJ]->name());
+// 
+// 			// Open file and check that we're OK to proceed writing to it
+// 			Messenger::print("Writing S(Q) file '%s'...\n", filename.get());
+// 
+// 			parser.openOutput(filename, true);
+// 			if (!parser.isFileGoodForWriting())
+// 			{
+// 				Messenger::error("Couldn't open file '%s' for writing.\n", filename.get());
+// 				continue;
+// 			}
+// 			
+// 			Data2D& pair = pairSQMatrix_.ref(typeI,typeJ);
+// 			Data2D& bound = boundSQMatrix_.ref(typeI,typeJ);
+// 			Data2D& unbound = unboundSQMatrix_.ref(typeI,typeJ);
+// 			Data2D& bragg = braggSQMatrix_.ref(typeI,typeJ);
+// 			Data2D& partial = partialSQMatrix_.ref(typeI,typeJ);
+// 			parser.writeLineF("# Unweighted partial S(Q) for types %s and %s calculated on TODO\n", usedAtomTypes_[typeI]->name(), usedAtomTypes_[typeJ]->name());
+// 			parser.writeLine("#       S(Q) contains full pair correlation (bound + unbound) and Bragg scattering (if calculated)\n");
+// 			parser.writeLine("#   Bound(Q) contains only pair correlations between atoms joined by intramolecular bonds or angles\n");
+// 			parser.writeLine("# Unbound(Q) contains only pair correlations between atoms *not* joined by intramolecular bonds or angles\n");
+// 			parser.writeLine("#    Pair(Q) contains full pair correlations\n");
+// 			parser.writeLine("#   Bragg(Q) contains correlations calculated from HKL indices\n");
+// 			parser.writeLineF("# %-16s  %-16s  %-16s  %-16s  %-16s  %-16s\n", "Q, 1/Angstroms", "S(Q)", "Bound(Q)", "Unbound(Q)", "Pair(Q)", "Bragg(Q)");
+// 			for (n = 0; n< pair.nPoints(); ++n)
+// 			{
+// 				if (n < bragg.nPoints()) parser.writeLineF("%16.10e  %16.10e  %16.10e  %16.10e  %16.10e  %16.10e\n", partial.x(n), partial.y(n), bound.y(n), unbound.y(n), pair.y(n), bragg.y(n));
+// 				else parser.writeLineF("%16.10e  %16.10e  %16.10e  %16.10e  %16.10e\n", partial.x(n), partial.y(n), bound.y(n), unbound.y(n), pair.y(n));
+// 			}
+// 			parser.closeFiles();
+// 		}
+// 	}
+// 
+// 	Dnchar filename(-1, "%s-unweighted-total.fq", baseName);
+// 	totalFQ_.save(filename);
+// }
