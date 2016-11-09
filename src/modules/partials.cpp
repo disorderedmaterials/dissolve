@@ -158,7 +158,7 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 		while (Configuration* cfg = configIterator.iterate())
 		{
 			// Retrieve control parameters from Configuration
-			const bool saveData = variableAsBool("Save");
+			const bool saveData = variableAsBool(cfg, "Save");
 
 			// Print argument/parameter summary
 			Messenger::print("Partials: Save data is %s.\n", DUQSys::onOff(saveData));
@@ -339,6 +339,8 @@ bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, in
 
 	// if (method == 0) ...
 	Timer timer;
+	timer.start();
+	procPool.resetAccumulatedTime();
 	calculateSimple(partialSet, procPool);
 	timer.stop();
 	Messenger::print("--> Finished calculation of partials (%s elapsed, %s comms).\n", timer.timeString(), procPool.accumulatedTimeString());
@@ -355,6 +357,7 @@ bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, in
 	start = procPool.interleavedLoopStart(ProcessPool::OverPoolProcesses);
 	stride = procPool.interleavedLoopStride(ProcessPool::OverPoolProcesses);
 
+	timer.start();
 	// Loop over molecules...
 	Atom* i, *j, *k;
 	for (int m=start; m<cfg->nMolecules(); m += stride)
@@ -384,9 +387,60 @@ bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, in
 			partialSet->boundPartial(i->localTypeIndex(), k->localTypeIndex()).add(distance);
 		}
 	}
+	timer.stop();
+	Messenger::print("--> Finished calculation of intramolecular partials (%s elapsed, %s comms).\n", timer.timeString(), procPool.accumulatedTimeString());
 
 	/*
-	 * Partials are up-to-date
+	 * Sum partials
+	 */
+
+	// Note that merging/summation of cross-term data (i.e. [n][m] with [m][n]) is not necessary since the partials matrix knows
+	// that (i,j) == (j,i) as it is stored as a half-matrix in an Array2D object.
+
+	int typeI, typeJ;
+	procPool.resetAccumulatedTime();
+	timer.start();
+	double rho = cfg->atomicDensity();
+	for (typeI=0; typeI<partialSet->nTypes(); ++typeI)
+	{
+		for (typeJ=typeI; typeJ<partialSet->nTypes(); ++typeJ)
+		{
+			// Sum histogram data from all processes
+			if (!partialSet->partial(typeI,typeJ).allSum(procPool)) return false;
+			if (!partialSet->boundPartial(typeI,typeJ).allSum(procPool)) return false;
+
+			// Create unbound histogram from total and bound data
+			partialSet->unboundPartial(typeI, typeJ) = partialSet->partial(typeI,typeJ);
+			partialSet->unboundPartial(typeI, typeJ).addHistogramData(partialSet->boundPartial(typeI,typeJ), -1.0);
+
+			// Finalise (normalise) partials
+			partialSet->partial(typeI,typeJ).finalise();
+			partialSet->boundPartial(typeI,typeJ).finalise();
+			partialSet->unboundPartial(typeI,typeJ).finalise();
+
+			// Smooth partials if requested
+// 			if (rdfSmoothing_ > 0)
+// 			{
+// 				pairRDFMatrix_.ref(typeI,typeJ).normalisedData().smooth(rdfSmoothing_*2+1);
+// 				boundRDFMatrix_.ref(typeI,typeJ).normalisedData().smooth(rdfSmoothing_*2+1);
+// 				unboundRDFMatrix_.ref(typeI,typeJ).normalisedData().smooth(rdfSmoothing_*2+1);
+// 			}
+
+// 			// Copy RDF data ready for Fourier transform
+// 			// -- Copy RDF data
+// 			pairSQMatrix_.ref(typeI,typeJ) = pairRDFMatrix_.ref(typeI,typeJ).normalisedData();
+// 			pairSQMatrix_.ref(typeI,typeJ).arrayY() -= 1.0;
+// 			boundSQMatrix_.ref(typeI,typeJ) = boundRDFMatrix_.ref(typeI,typeJ).normalisedData();
+// // 			boundSQMatrix_.ref(typeI,typeJ).arrayY() -= 1.0;
+// 			unboundSQMatrix_.ref(typeI,typeJ) = unboundRDFMatrix_.ref(typeI,typeJ).normalisedData();
+// 			unboundSQMatrix_.ref(typeI,typeJ).arrayY() -= 1.0;
+		}
+	}
+	timer.stop();
+	Messenger::print("--> Finished summation and normalisation of partial RDF data (%s elapsed, %s comms).\n", timer.timeString(), procPool.accumulatedTimeString());
+
+	/*
+	 * Partials are now up-to-date
 	 */
 
 	partialSet->setUpToDate();
@@ -397,74 +451,6 @@ bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, in
 
 
 
-/*
- * From Configuration::calcualtePartails()
- */
-
-// 	
-// 	// Calculate full partials
-// 	Timer timer;
-// 	if (!calculatePartialRDFs(procPool)) return false;
-// 
-// 	// Update partials index
-// 	partialsIndex_ = coordinateIndex_;
-// 
-// 	// Collect all processes together
-// 	if (!procPool.wait(ProcessPool::Pool)) return false;
-// 
-// 	timer.stop();
-
-// 
-// 	// Calculate intramolecular partials
-// 	timer.start();
-// 	if (!calculateIntramolecularRDFs(procPool)) return false;
-// 	timer.stop();
-// 	Messenger::print("--> Finished calculation of intramolecular partials (%s elapsed, %s comms).\n", timer.timeString(), procPool.accumulatedTimeString());
-// 
-// 	// Perform summation of partial data
-// 	// Note that merging/summation of cross-term data (i.e. [n][m] with [m][n]) is not necessary since the partials matrix knows
-// 	// that (i,j) == (j,i) as it is stored as a half-matrix in an Array2D object.
-// 	int typeI, typeJ;
-// 	procPool.resetAccumulatedTime();
-// 	timer.start();
-// 	double rho = atomicDensity();
-// 	for (typeI=0; typeI<usedAtomTypes_.nItems(); ++typeI)
-// 	{
-// 		for (typeJ=typeI; typeJ<usedAtomTypes_.nItems(); ++typeJ)
-// 		{
-// 			// Sum histogram data from all processes
-// 			if (!pairRDFMatrix_.ref(typeI,typeJ).allSum(procPool)) return false;
-// 			if (!boundRDFMatrix_.ref(typeI,typeJ).allSum(procPool)) return false;
-// 
-// 			// Create unbound histogram from total and bound data
-// 			unboundRDFMatrix_.ref(typeI, typeJ) = pairRDFMatrix_.ref(typeI,typeJ);
-// 			unboundRDFMatrix_.ref(typeI, typeJ).addHistogramData(boundRDFMatrix_.ref(typeI,typeJ), -1.0);
-// 
-// 			// Finalise (normalise) partials
-// 			pairRDFMatrix_.ref(typeI,typeJ).finalise();
-// 			boundRDFMatrix_.ref(typeI,typeJ).finalise();
-// 			unboundRDFMatrix_.ref(typeI,typeJ).finalise();
-// 
-// 			// Smooth partials if requested
-// 			if (rdfSmoothing_ > 0)
-// 			{
-// 				pairRDFMatrix_.ref(typeI,typeJ).normalisedData().smooth(rdfSmoothing_*2+1);
-// 				boundRDFMatrix_.ref(typeI,typeJ).normalisedData().smooth(rdfSmoothing_*2+1);
-// 				unboundRDFMatrix_.ref(typeI,typeJ).normalisedData().smooth(rdfSmoothing_*2+1);
-// 			}
-// 
-// 			// Copy RDF data ready for Fourier transform
-// 			// -- Copy RDF data
-// 			pairSQMatrix_.ref(typeI,typeJ) = pairRDFMatrix_.ref(typeI,typeJ).normalisedData();
-// 			pairSQMatrix_.ref(typeI,typeJ).arrayY() -= 1.0;
-// 			boundSQMatrix_.ref(typeI,typeJ) = boundRDFMatrix_.ref(typeI,typeJ).normalisedData();
-// // 			boundSQMatrix_.ref(typeI,typeJ).arrayY() -= 1.0;
-// 			unboundSQMatrix_.ref(typeI,typeJ) = unboundRDFMatrix_.ref(typeI,typeJ).normalisedData();
-// 			unboundSQMatrix_.ref(typeI,typeJ).arrayY() -= 1.0;
-// 		}
-// 	}
-// 	timer.stop();
-// 	Messenger::print("--> Finished summation and normalisation of partial RDF data (%s elapsed, %s comms).\n", timer.timeString(), procPool.accumulatedTimeString());
 // 	// Perform FT of partial g(r) into S(Q)
 // 	// No instrumental broadening is applied in this case - the Configuration-based S(Q) are 'pure' in that sense
 // 	// TODO Parallelise this

@@ -96,6 +96,8 @@ class Module : public ListItem<Module>
 	void setFrequency(int freq);
 	// Frequency with which to run Module (relative to master simulation loop counter)
 	int frequency();
+	// Return whether the Module should run this iteration
+	bool runThisIteration(int iteration);
 	// Return short descriptive text relating frequency to supplied iteration number
 	const char* frequencyDetails(int iteration);
 	// Set whether the Module is enabled

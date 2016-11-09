@@ -110,10 +110,10 @@ bool DUQ::go()
 		 */
 		Messenger::print("\n");
 		Messenger::print("===== Pre-Processing\n");
-		for (RefListItem<Module,bool>* ri = preProcessingTasks_.first(); ri != NULL; ri = ri->next)
+		preIterator.restart();
+		while (Module* module = preIterator.iterate())
 		{
-			// Grab Module pointer
-			Module* module = ri->item;
+			if (!module->runThisIteration(iteration)) continue;
 
 			Messenger::print("\n");
 			Messenger::print("--> Module '%s'\n", module->name());
@@ -160,6 +160,8 @@ bool DUQ::go()
 			RefListIterator<Module,bool> moduleIterator(cfg->modules());
 			while (Module* module = moduleIterator.iterate())
 			{
+				if (!module->runThisIteration(iteration)) continue;
+
 				result = module->process(*this, cfg->processPool());
 
 				if (!result) break;
@@ -199,10 +201,10 @@ bool DUQ::go()
 		 */
 		Messenger::print("\n");
 		Messenger::print("===== Post-Processing\n");
-		for (RefListItem<Module,bool>* ri = postProcessingTasks_.first(); ri != NULL; ri = ri->next)
+		postIterator.restart();
+		while (Module* module = postIterator.iterate())
 		{
-			// Grab Module pointer
-			Module* module = ri->item;
+			if (!module->runThisIteration(iteration)) continue;
 
 			Messenger::print("\n");
 			Messenger::print("--> Module '%s'\n", module->name());
@@ -224,7 +226,7 @@ bool DUQ::go()
 		Messenger::print("===============================================\n");
 		Messenger::print("\n");
 	}
-	while (iteration < maxIterations_);
+	while ((maxIterations_ < 0) || (iteration < maxIterations_));
 
 	return true;
 }

@@ -22,14 +22,6 @@
 #include "main/duq.h"
 #include "classes/species.h"
 #include "classes/atomtype.h"
-#include "classes/box.h"
-#include "classes/molecule.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
-#include "base/processpool.h"
-#include "math/constants.h"
-#include "version.h"
-#include <string.h>
 
 // Constructor
 DUQ::DUQ()

@@ -69,6 +69,14 @@ int Module::frequency()
 	return frequency_;
 }
 
+// Return whether the Module should run this iteration
+bool Module::runThisIteration(int iteration)
+{
+	if ((frequency_ < 1) || (!enabled_)) return false;
+	else if ((iteration%frequency_) == 0) return true;
+	else return false;
+}
+
 // Return short descriptive text relating frequency to supplied iteration number
 const char* Module::frequencyDetails(int iteration)
 {
