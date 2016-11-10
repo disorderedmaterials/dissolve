@@ -152,14 +152,22 @@ class Module : public ListItem<Module>
 	double variableAsDouble(const char* varName);
 	// Retrieve variable from Module (char)
 	const char* variableAsChar(const char* varName);
-	// Set Module variable in supplied Configuration (bool)
+	// Retrieve variable from Module (Array<int>)
+	Array<int>& variableAsIntArray(const char* varName);
+	// Retrieve variable from Module (Array<double>)
+	Array<double>& variableAsDoubleArray(const char* varName);
+	// Retrieve Module variable in supplied Configuration (bool)
 	bool variableAsBool(Configuration* cfg, const char* varName);
-	// Set Module variable in supplied Configuration (int)
+	// Retrieve Module variable in supplied Configuration (int)
 	int variableAsInt(Configuration* cfg, const char* varName);
-	// Set Module variable in supplied Configuration (double)
+	// Retrieve Module variable in supplied Configuration (double)
 	double variableAsDouble(Configuration* cfg, const char* varName);
-	// Set Module variable in supplied Configuration (char)
+	// Retrieve Module variable in supplied Configuration (char)
 	const char* variableAsChar(Configuration* cfg, const char* varName);
+	// Retrieve Module variable in supplied Configuration (Array<int>)
+	Array<int>& variableAsIntArray(Configuration* cfg, const char* varName);
+	// Retrieve Module variable in supplied Configuration (Array<double>)
+	Array<double>& variableAsDoubleArray(Configuration* cfg, const char* varName);
 	// Retrieve Module variable from supplied Configuration, or get default value
 	void setVariable(Configuration* cfg, const char* varName, VariableValue value);
 	// Append value to Module array variable in supplied Configuration

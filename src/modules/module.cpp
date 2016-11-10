@@ -208,6 +208,18 @@ const char* Module::variableAsChar(const char* varName)
 	return variables_.variableAsChar(varName);
 }
 
+// Retrieve variable from Module (Array<int>)
+Array<int>& Module::variableAsIntArray(const char* varName)
+{
+	return variables_.variableAsIntArray(varName);
+}
+
+// Retrieve variable from Module (Array<double>)
+Array<double>& Module::variableAsDoubleArray(const char* varName)
+{
+	return variables_.variableAsDoubleArray(varName);
+}
+
 // Retrieve Module variable from supplied Configuration, or get default value (bool)
 bool Module::variableAsBool(Configuration* cfg, const char* varName)
 {
@@ -234,6 +246,20 @@ const char* Module::variableAsChar(Configuration* cfg, const char* varName)
 {
 	Variable* var = cfg->moduleVariable(varName, uniqueName());
 	return (var ? var->asChar() : variableAsChar(varName));
+}
+
+// Retrieve Module variable in supplied Configuration (Array<int>)
+Array<int>& Module::variableAsIntArray(Configuration* cfg, const char* varName)
+{
+	Variable* var = cfg->moduleVariable(varName, uniqueName());
+	return (var ? var->asIntArray() : variableAsIntArray(varName));
+}
+
+// Retrieve Module variable in supplied Configuration (Array<double>)
+Array<double>& Module::variableAsDoubleArray(Configuration* cfg, const char* varName)
+{
+	Variable* var = cfg->moduleVariable(varName, uniqueName());
+	return (var ? var->asDoubleArray() : variableAsDoubleArray(varName));
 }
 
 // Retrieve Module variable from supplied Configuration, or get default value

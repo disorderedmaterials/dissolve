@@ -41,8 +41,8 @@ class Dnchar : public ListItem<Dnchar>
 
 
 	/*
-	// Data / Access
-	*/
+	 * Data / Access
+	 */
 	private:
 	// Current size
 	int size_;
@@ -73,8 +73,8 @@ class Dnchar : public ListItem<Dnchar>
 
 	
 	/*
-	// Erase / Cut
-	*/
+	 * Erase / Cut
+	 */
 	public:
 	// Erase range of characters from the string
 	void erase(int, int);
@@ -87,12 +87,14 @@ class Dnchar : public ListItem<Dnchar>
 	// Cut n characters from start of string and place in other
 	void cutStart(int, Dnchar&);
 	// Replace characters
-	void replace(char from, char to);
+	void replace(char fromChar, char toChar);
+	// Replace multiple characters
+	void replace(const char* fromChars, char toChar);
 
 
 	/*
-	// Operators
-	*/
+	 * Operators
+	 */
 	public:
 	// Assignment operator
 	void operator=(const char*);
@@ -113,8 +115,8 @@ class Dnchar : public ListItem<Dnchar>
 
 
 	/*
-	// Conversion
-	*/
+	 * Conversion
+	 */
 	public:
 	// Returns contents as double
 	double asDouble() const;
@@ -131,8 +133,8 @@ class Dnchar : public ListItem<Dnchar>
 
 
 	/*
-	// Search (Returning integer index)
-	*/
+	 * Search (Returning integer index)
+	 */
 	public:
 	// Find position of first occurrence of character 'c'
 	int find(char c) const;
@@ -141,8 +143,8 @@ class Dnchar : public ListItem<Dnchar>
 
 
 	/*
-	// C-String Routines
-	*/
+	 * C-String Routines
+	 */
 	public:
 	// Concatenate supplied string on to end of this string
 	void strcat(const char* s, int charcount = -1);

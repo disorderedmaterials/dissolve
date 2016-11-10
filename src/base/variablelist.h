@@ -59,6 +59,10 @@ class VariableList
 	double variableAsDouble(const char* name, const char* source = "");
 	// Retrieve named Variable (string)
 	const char* variableAsChar(const char* name, const char* source = "");
+	// Retrieve named Variable (Array<int>)
+	Array<int>& variableAsIntArray(const char* name, const char* source = "");
+	// Retrieve named Variable (Array<double>)
+	Array<double>& variableAsDoubleArray(const char* name, const char* source = "");
 
 
 	/*

@@ -153,6 +153,36 @@ const char* VariableList::variableAsChar(const char* name, const char* source)
 	return var->asChar();
 }
 
+// Retrieve named Variable (Array<int>)
+Array<int>& VariableList::variableAsIntArray(const char* name, const char* source)
+{
+	// Does the variable already exist?
+	Variable* var = variable(name, source);
+	if (!var)
+	{
+		static Array<int> dummyResult;
+		Messenger::error("Can't find Array<int> variable '%s' (source = '%s').\n", name, source);
+		return dummyResult;
+	}
+
+	return var->asIntArray();
+}
+
+// Retrieve named Variable (Array<double>)
+Array<double>& VariableList::variableAsDoubleArray(const char* name, const char* source)
+{
+	// Does the variable already exist?
+	Variable* var = variable(name, source);
+	if (!var)
+	{
+		static Array<double> dummyResult;
+		Messenger::error("Can't find Array<double> variable '%s' (source = '%s').\n", name, source);
+		return dummyResult;
+	}
+
+	return var->asDoubleArray();
+}
+
 /*
  * Search
  */

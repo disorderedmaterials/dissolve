@@ -42,6 +42,8 @@ Energy::Energy() : Module()
 	// Setup variables / control parameters
 	addVariable("Test", false);
 	addVariable("Save", true);
+	addVariable("StabilityWindow", 10);
+	addVariable("StabilityThreshold", 0.01);
 }
 
 // Destructor
@@ -155,6 +157,8 @@ bool Energy::process(DUQ& duq, ProcessPool& procPool)
 		// Retrieve control parameters from Configuration
 		const bool testMode = variableAsBool(cfg, "Test");
 		const bool saveData = variableAsBool(cfg, "Save");
+		const int stabilityWindow = variableAsInt(cfg, "StabilityWindow");
+		const double stabilityThreshold = variableAsDouble(cfg, "StabilityThreshold");
 
 		double interEnergy = 0.0, intraEnergy = 0.0;
 
@@ -280,12 +284,47 @@ bool Energy::process(DUQ& duq, ProcessPool& procPool)
 			intraTimer.stop();
 
 			Messenger::print("Energy: Time to do interatomic energy was %s, intramolecular energy was %s.\n", interTimer.timeString(), intraTimer.timeString());
-			Messenger::print("Energy: Total Energy (World) is %15.9e (%15.9e interatomic + %15.9e intramolecular)\n", interEnergy + intraEnergy, interEnergy, intraEnergy);
+			Messenger::print("Energy: Total Energy (World) is %15.9e kJ/mol (%15.9e kJ/mol interatomic + %15.9e kJ/mol intramolecular)\n", interEnergy + intraEnergy, interEnergy, intraEnergy);
 
 			// Store energies in the Configuration in case somebody else needs them
 			appendVariable(cfg, "Inter", interEnergy);
 			appendVariable(cfg, "Intra", intraEnergy);
 			appendVariable(cfg, "Total", interEnergy+intraEnergy);
+
+			// Determine stability of energy
+			// Check nuymber of points already stored for the Configuration
+			Array<double>& totalEnergy = variableAsDoubleArray(cfg, "Total");
+			double grad = 0.0;
+			bool stable = false;
+			if (stabilityWindow > totalEnergy.nItems()) Messenger::print("Energy: Too few points to assess stability.\n");
+			else
+			{
+				// Work out standard deviation of energy points
+				double Sx = 0.0, Sy = 0.0, Sxy = 0.0;
+				double xBar = 0.0, yBar = 0.0;
+				// -- Calculate mean values
+				for (int n=totalEnergy.nItems()-stabilityWindow; n<totalEnergy.nItems(); ++n)
+				{
+					xBar += n;
+					yBar += totalEnergy.value(n);
+				}
+				xBar /= stabilityWindow;
+				yBar /= stabilityWindow;
+				// -- Determine Sx, Sy, and Sxy
+				for (int n=totalEnergy.nItems()-stabilityWindow; n<totalEnergy.nItems(); ++n)
+				{
+					Sx += (n - xBar)*(n - xBar);
+					Sy += (totalEnergy.value(n) - yBar)*(totalEnergy.value(n) - yBar);
+					Sxy += (n - xBar) * (totalEnergy.value(n) - yBar);
+				}
+				grad = Sxy / Sx;
+				double thresholdValue = fabs(stabilityThreshold*yBar);
+				stable = fabs(grad) < thresholdValue;
+
+				// Set variable in Configuration and print output
+				cfg->setModuleVariable("EnergyStable", stable, "Whether the energy of the Configuration is stable", "");
+				Messenger::print("Energy: Gradient of last %i points is %f kJ/mol/step (absolute threshold value is %e, stable = %s).\n", stabilityWindow, grad, thresholdValue, DUQSys::btoa(stable));
+			}
 
 			// If writing to a file, append it here
 			if (saveData)
@@ -298,10 +337,10 @@ bool Energy::process(DUQ& duq, ProcessPool& procPool)
 					parser.openOutput(filename);
 					parser.writeLineF("# Energies for Configuration '%s'.\n", cfg->name());
 					parser.writeLine("# All values in kJ/mol.\n");
-					parser.writeLine("# Iteration   Total         Inter         Intra\n");
+					parser.writeLine("# Iteration   Total         Inter         Intra         Gradient      S?\n");
 				}
 				else parser.appendOutput(filename);
-				parser.writeLineF("  %10i  %12.6e  %12.6e  %12.6e\n", duq.iteration(), interEnergy+intraEnergy, interEnergy, intraEnergy);
+				parser.writeLineF("  %10i  %12.6e  %12.6e  %12.6e  %12.6e  %i\n", duq.iteration(), interEnergy+intraEnergy, interEnergy, intraEnergy, grad, stable);
 				parser.closeFiles();
 			}
 		}

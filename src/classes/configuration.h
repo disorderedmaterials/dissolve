@@ -42,9 +42,7 @@ class Grain;
 class Cell;
 class Species;
 
-/*
- * Configuration
- */
+// Configuration
 class Configuration : public ListItem<Configuration>
 {
 	public:
@@ -62,6 +60,8 @@ class Configuration : public ListItem<Configuration>
 	private:
 	// Name of the configuration
 	Dnchar name_;
+	// Nice name (generated from name_) used for output files
+	Dnchar niceName_;
 	// Reference list of Species used by the Configuration and their relative populations
 	RefList<Species,double> usedSpecies_;
 	// Integer multiplier of used relative species populations

@@ -228,9 +228,15 @@ void Dnchar::cutStart(int len, Dnchar &target)
 }
 
 // Replace characters
-void Dnchar::replace(char from, char to)
+void Dnchar::replace(char fromChar, char toChar)
 {
-	for (int n=0; n<endPosition_; ++n) if (data_[n] == from) data_[n] = to;
+	for (int n=0; n<endPosition_; ++n) if (data_[n] == fromChar) data_[n] = toChar;
+}
+
+// Replace multiple characters
+void Dnchar::replace(const char* fromChars, char toChar)
+{
+	for (int n=0; n<endPosition_; ++n) if (std::strchr(fromChars, data_[n])) data_[n] = toChar;
 }
 
 /*
