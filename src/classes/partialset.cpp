@@ -67,7 +67,7 @@ bool PartialSet::setup(Configuration* cfg, const char* tag, const char* suffix)
 		for (m=n; m<nTypes_; ++m, at2 = at2->next)
 		{
 			// Partial g(r)
-			title.sprintf("%s-%s-%s-%s.%s", cfg->name(), tag, at1->name(), at2->name(), suffix);
+			title.sprintf("%s-%s-%s-%s.%s", cfg->niceName(), tag, at1->name(), at2->name(), suffix);
 			partials_.ref(n,m).initialise(0.0, rdfRange, binWidth);
 			partials_.ref(n,m).normalisedData().setName(title.get());
 			boundPartials_.ref(n,m).initialise(0.0, rdfRange, binWidth);

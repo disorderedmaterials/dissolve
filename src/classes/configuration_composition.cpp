@@ -29,8 +29,7 @@ void Configuration::setName(const char* name)
 	
 	// Generate a nice name (i.e. no spaces, slashes etc.)
 	niceName_ = name_;
-	niceName_.replace(' ', '_');
-	niceName_.replace('/', '_');
+	niceName_.replace(' /\\#*', '_');
 }
 
 // Return name of the configuration
@@ -39,7 +38,11 @@ const char* Configuration::name()
 	return name_.get();
 }
 
-
+// Return nice name of the configuration
+const char* Configuration::niceName()
+{
+	return niceName_.get();
+}
 
 // Add Species to list of those used by the Configuration
 bool Configuration::addUsedSpecies(Species* sp, double relativePopulation)

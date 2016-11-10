@@ -82,6 +82,8 @@ class Configuration : public ListItem<Configuration>
 	void setName(const char* name);
 	// Return name of the configuration
 	const char* name();
+	// Return nice name of the configuration
+	const char* niceName();
 	// Add Species to list of those used by the Configuration
 	bool addUsedSpecies(Species* sp, double relativePopulation);
 	// Return reference list of Species used by the Configuration and their relative populations
