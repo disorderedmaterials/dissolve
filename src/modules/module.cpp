@@ -26,6 +26,7 @@
 Module::Module()
 {
 	frequency_ = 1;
+	enabled_ = true;
 }
 
 // Destructor
@@ -239,6 +240,12 @@ const char* Module::variableAsChar(Configuration* cfg, const char* varName)
 void Module::setVariable(Configuration* cfg, const char* varName, VariableValue value)
 {
 	cfg->setModuleVariable(varName, value, "", uniqueName());
+}
+
+// Append value to Module array variable in supplied Configuration
+bool Module::appendVariable(Configuration* cfg, const char* varName, VariableValue value)
+{
+	cfg->appendModuleVariable(varName, value, "", uniqueName());
 }
 
 // Search for named variable in Module

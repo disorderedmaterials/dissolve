@@ -66,7 +66,7 @@ class LineParser
 	private:
 	// Current input filename (if any)
 	Dnchar inputFilename_;
-	// CUrrent output filename (if any)
+	// Current output filename (if any)
 	Dnchar outputFilename_;
 	// Line to parse
 	char line_[MAXLINELENGTH];
@@ -101,7 +101,9 @@ class LineParser
 	// Open new file for reading
 	bool openInput(const char* filename);
 	// Open new stream for writing
-	bool openOutput(const char* filename, bool directOutput);
+	bool openOutput(const char* filename, bool directOutput = true);
+	// Open existing stream for writing
+	bool appendOutput(const char* filename);
 	// Close file(s)
 	void closeFiles();
 	// Return whether current file source is good for reading

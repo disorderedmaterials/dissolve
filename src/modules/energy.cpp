@@ -23,6 +23,7 @@
 #include "main/duq.h"
 #include "classes/species.h"
 #include "classes/box.h"
+#include <base/sysfunc.h>
 
 // Static Members
 List<Module> Energy::instances_;
@@ -40,6 +41,7 @@ Energy::Energy() : Module()
 
 	// Setup variables / control parameters
 	addVariable("Test", false);
+	addVariable("Save", true);
 }
 
 // Destructor
@@ -152,8 +154,9 @@ bool Energy::process(DUQ& duq, ProcessPool& procPool)
 
 		// Retrieve control parameters from Configuration
 		const bool testMode = variableAsBool(cfg, "Test");
+		const bool saveData = variableAsBool(cfg, "Save");
 
-		double atomEnergy = 0.0, intraEnergy = 0.0;
+		double interEnergy = 0.0, intraEnergy = 0.0;
 
 		// Calculate the total energy
 		if (testMode)
@@ -196,7 +199,7 @@ bool Energy::process(DUQ& duq, ProcessPool& procPool)
 						scale = molN->species()->scaling(ii, jj);
 						if (scale < 1.0e-3) continue;
 
-						atomEnergy += potentialMap.energy(molN->atom(ii)->globalTypeIndex(), molN->atom(jj)->globalTypeIndex(), box->minimumDistanceSquared(molN->atom(ii), molN->atom(jj)));
+						interEnergy += potentialMap.energy(molN->atom(ii)->globalTypeIndex(), molN->atom(jj)->globalTypeIndex(), box->minimumDistanceSquared(molN->atom(ii), molN->atom(jj)));
 					}
 				}
 
@@ -207,7 +210,7 @@ bool Energy::process(DUQ& duq, ProcessPool& procPool)
 					// Double loop over atoms
 					for (int ii = 0; ii <molN->nAtoms(); ++ii)
 					{
-						for (int jj = 0; jj <molM->nAtoms(); ++jj) atomEnergy += potentialMap.energy(molN->atom(ii)->globalTypeIndex(), molM->atom(jj)->globalTypeIndex(), box->minimumDistanceSquared(molN->atom(ii), molM->atom(jj)));
+						for (int jj = 0; jj <molM->nAtoms(); ++jj) interEnergy += potentialMap.energy(molN->atom(ii)->globalTypeIndex(), molM->atom(jj)->globalTypeIndex(), box->minimumDistanceSquared(molN->atom(ii), molM->atom(jj)));
 
 					}
 				}
@@ -251,9 +254,9 @@ bool Energy::process(DUQ& duq, ProcessPool& procPool)
 			* Calculation End
 			*/
 			
-			Messenger::print("Energy: Correct (test) particle energy is %15.9e kJ/mol\n", atomEnergy);
+			Messenger::print("Energy: Correct (test) particle energy is %15.9e kJ/mol\n", interEnergy);
 			Messenger::print("Energy: Correct (test) intramolecular energy is %15.9e kJ/mol\n", intraEnergy);
-			Messenger::print("Energy: Correct (test) total energy is %15.9e kJ/mol\n", atomEnergy + intraEnergy);
+			Messenger::print("Energy: Correct (test) total energy is %15.9e kJ/mol\n", interEnergy + intraEnergy);
 			Messenger::print("Energy: Time to do total (test) energy was %s.\n", timer.timeString());
 		}
 		else
@@ -268,7 +271,7 @@ bool Energy::process(DUQ& duq, ProcessPool& procPool)
 
 			// Calculate Grain energy
 			Timer interTimer;
-			atomEnergy = duq.interatomicEnergy(procPool, cfg);
+			interEnergy = duq.interatomicEnergy(procPool, cfg);
 			interTimer.stop();
 
 			// Calculate intramolecular and interGrain correction energy
@@ -277,13 +280,31 @@ bool Energy::process(DUQ& duq, ProcessPool& procPool)
 			intraTimer.stop();
 
 			Messenger::print("Energy: Time to do interatomic energy was %s, intramolecular energy was %s.\n", interTimer.timeString(), intraTimer.timeString());
-			Messenger::print("Energy: Total Energy (World) is %15.9e (%15.9e interatomic + %15.9e intramolecular)\n", atomEnergy + intraEnergy, atomEnergy, intraEnergy);
-		}
+			Messenger::print("Energy: Total Energy (World) is %15.9e (%15.9e interatomic + %15.9e intramolecular)\n", interEnergy + intraEnergy, interEnergy, intraEnergy);
 
-		// Store energies in the Configuration in case somebody else needs them
-		setVariable(cfg, "Inter", atomEnergy);
-		setVariable(cfg, "Intra", intraEnergy);
-		setVariable(cfg, "Total", atomEnergy+intraEnergy);
+			// Store energies in the Configuration in case somebody else needs them
+			appendVariable(cfg, "Inter", interEnergy);
+			appendVariable(cfg, "Intra", intraEnergy);
+			appendVariable(cfg, "Total", interEnergy+intraEnergy);
+
+			// If writing to a file, append it here
+			if (saveData)
+			{
+				LineParser parser;
+				Dnchar filename(-1, "%s-energy.txt", cfg->name());
+
+				if (!DUQSys::fileExists(filename))
+				{
+					parser.openOutput(filename);
+					parser.writeLineF("# Energies for Configuration '%s'.\n", cfg->name());
+					parser.writeLine("# All values in kJ/mol.\n");
+					parser.writeLine("# Iteration   Total         Inter         Intra\n");
+				}
+				else parser.appendOutput(filename);
+				parser.writeLineF("  %10i  %12.6e  %12.6e  %12.6e\n", duq.iteration(), interEnergy+intraEnergy, interEnergy, intraEnergy);
+				parser.closeFiles();
+			}
+		}
 	}
 
 	return true;

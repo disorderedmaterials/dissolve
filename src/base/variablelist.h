@@ -49,6 +49,8 @@ class VariableList
 	Variable* variables();
 	// Add/set Variable
 	void setVariable(const char* name, VariableValue value, const char* description = "", const char* source = "");
+	// Add/Append Variable
+	void appendVariable(const char* name, VariableValue value, const char* description = "", const char* source = "");
 	// Retrieve named Variable (bool)
 	bool variableAsBool(const char* name, const char* source = "");
 	// Retrieve named Variable (int)

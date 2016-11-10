@@ -353,6 +353,8 @@ class Configuration : public ListItem<Configuration>
 	RefList<Module,bool>& modules();
 	// Set Module variable
 	void setModuleVariable(const char* name, VariableValue value, const char* description, const char* source);
+	// Append Module variable
+	void appendModuleVariable(const char* name, VariableValue value, const char* description, const char* source);
 	// Return named Module variable
 	Variable* moduleVariable(const char* name, const char* source);
 

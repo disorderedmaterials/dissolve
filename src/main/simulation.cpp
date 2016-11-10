@@ -64,29 +64,28 @@ bool DUQ::go()
 	/*
 	 * Start of Main Loop
 	 */
-	int iteration = 0;
 	bool keepGoing = true;
 
 	do
 	{
 		// Increase iteration counter
-		++iteration;
+		++iteration_;
 
 		Messenger::print("\n");
 		Messenger::print("===============================================\n");
-		Messenger::print("  MAIN LOOP ITERATION %10i / %-10s\n", iteration, maxIterations_ == -1 ? "(no limit)" : DUQSys::itoa(maxIterations_));
+		Messenger::print("  MAIN LOOP ITERATION %10i / %-10s\n", iteration_, maxIterations_ == -1 ? "(no limit)" : DUQSys::itoa(maxIterations_));
 		Messenger::print("===============================================\n");
 
 		/*
 		 *  0)	Print schedule of tasks to run
 		 */
-		Messenger::print("Schedule for Iteration %10i\n", iteration);
+		Messenger::print("Schedule for Iteration %10i\n", iteration_);
 		Messenger::print("-----------------------------------------------\n");
 
 		Messenger::print("--> Pre-Processing\n");
 		if (preProcessingTasks_.nItems() == 0) Messenger::print("  (( No Tasks ))\n");
 		RefListIterator<Module,bool> preIterator(preProcessingTasks_);
-		while (Module* module = preIterator.iterate()) Messenger::print("      --> %-20s  (%s)\n", module->name(), module->frequencyDetails(iteration));
+		while (Module* module = preIterator.iterate()) Messenger::print("      --> %-20s  (%s)\n", module->name(), module->frequencyDetails(iteration_));
 		Messenger::print("-----------------------------------------------\n");
 
 		Messenger::print("--> Configuration Processing\n");
@@ -95,14 +94,14 @@ bool DUQ::go()
 			Messenger::print("   * '%s'\n", cfg->name());
 			if (cfg->nModules() == 0) Messenger::print("  (( No Tasks ))\n");
 			RefListIterator<Module,bool> modIterator(cfg->modules());
-			while (Module* module = modIterator.iterate()) Messenger::print("      --> %20s  (%s)\n", module->name(), module->frequencyDetails(iteration));
+			while (Module* module = modIterator.iterate()) Messenger::print("      --> %20s  (%s)\n", module->name(), module->frequencyDetails(iteration_));
 		}
 		Messenger::print("-----------------------------------------------\n");
 
 		Messenger::print("--> Post-Processing\n");
 		if (postProcessingTasks_.nItems() == 0) Messenger::print("  (( No Tasks ))\n");
 		RefListIterator<Module,bool> postIterator(postProcessingTasks_);
-		while (Module* module = postIterator.iterate()) Messenger::print("      --> %-20s  (%s)\n", module->name(), module->frequencyDetails(iteration));
+		while (Module* module = postIterator.iterate()) Messenger::print("      --> %-20s  (%s)\n", module->name(), module->frequencyDetails(iteration_));
 		Messenger::print("===============================================\n");
 
 		/*
@@ -113,7 +112,7 @@ bool DUQ::go()
 		preIterator.restart();
 		while (Module* module = preIterator.iterate())
 		{
-			if (!module->runThisIteration(iteration)) continue;
+			if (!module->runThisIteration(iteration_)) continue;
 
 			Messenger::print("\n");
 			Messenger::print("--> Module '%s'\n", module->name());
@@ -160,7 +159,7 @@ bool DUQ::go()
 			RefListIterator<Module,bool> moduleIterator(cfg->modules());
 			while (Module* module = moduleIterator.iterate())
 			{
-				if (!module->runThisIteration(iteration)) continue;
+				if (!module->runThisIteration(iteration_)) continue;
 
 				result = module->process(*this, cfg->processPool());
 
@@ -204,7 +203,7 @@ bool DUQ::go()
 		postIterator.restart();
 		while (Module* module = postIterator.iterate())
 		{
-			if (!module->runThisIteration(iteration)) continue;
+			if (!module->runThisIteration(iteration_)) continue;
 
 			Messenger::print("\n");
 			Messenger::print("--> Module '%s'\n", module->name());
@@ -222,12 +221,17 @@ bool DUQ::go()
 
 		Messenger::print("\n");
 		Messenger::print("===============================================\n");
-		Messenger::print("  END OF MAIN LOOP ITERATION %10i\n", iteration);
+		Messenger::print("  END OF MAIN LOOP ITERATION %10i\n", iteration_);
 		Messenger::print("===============================================\n");
 		Messenger::print("\n");
 	}
-	while ((maxIterations_ < 0) || (iteration < maxIterations_));
+	while ((maxIterations_ < 0) || (iteration_ < maxIterations_));
 
 	return true;
 }
 
+// Return current simulation step
+int DUQ::iteration()
+{
+	return iteration_;
+}

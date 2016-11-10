@@ -62,6 +62,41 @@ void VariableList::setVariable(const char* name, VariableValue value, const char
 	}
 }
 
+// Add/Append Variable
+void VariableList::appendVariable(const char* name, VariableValue value, const char* description, const char* source)
+{
+	// Does the variable already exist?
+	Variable* var  = variable(name, source);
+	if (!var)
+	{
+		var = variables_.add();
+		if (value.type() == VariableValue::IntegerType)
+		{
+			var->setup(name, Array<int>(), description, source);
+			var->asIntArray().add(value.asInt());
+		}
+		else if (value.type() == VariableValue::DoubleType)
+		{
+			var->setup(name, Array<double>(), description, source);
+			var->asDoubleArray().add(value.asDouble());
+		}
+// 		var->setup(name, value, description, source);
+		Messenger::printVerbose("Added new %s variable '%s' with first value '%s'.\n", VariableValue::valueType(var->type()), name, value.asChar());
+	}
+	else
+	{
+		// Check existing array type
+		if (var->type() == VariableValue::IntegerArrayType) var->asIntArray().add(value.asInt());
+		else if (var->type() == VariableValue::DoubleArrayType) var->asDoubleArray().add(value.asDouble());
+		else
+		{
+			Messenger::error("Can't append a value to a non-array Variable.\n");
+			return;
+		}
+		Messenger::printVerbose("Appended value %s to existing %s variable '%s'.\n", value.asChar(), VariableValue::valueType(var->type()), name);
+	}
+}
+
 // Retrieve named variable (bool)
 bool VariableList::variableAsBool(const char* name, const char* source)
 {

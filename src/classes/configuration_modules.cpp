@@ -83,6 +83,12 @@ void Configuration::setModuleVariable(const char* name, VariableValue value, con
 	moduleVariables_.setVariable(name, value, description, source);
 }
 
+// Append Module variable
+void Configuration::appendModuleVariable(const char* name, VariableValue value, const char* description, const char* source)
+{
+	moduleVariables_.appendVariable(name, value, description, source);
+}
+
 // Return named Module variable
 Variable* Configuration::moduleVariable(const char* name, const char* source)
 {

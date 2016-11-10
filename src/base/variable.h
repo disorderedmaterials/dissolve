@@ -83,6 +83,10 @@ class Variable : public ListItem<Variable>
 	double asDouble();
 	// Return value (as string)
 	const char* asChar();
+	// Return value (as Array<int>)
+	Array<int>& asIntArray();
+	// Return value (as Array<double>)
+	Array<double>& asDoubleArray();
 
 
 	/*

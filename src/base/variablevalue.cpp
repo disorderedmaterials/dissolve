@@ -58,6 +58,20 @@ VariableValue::VariableValue(const char* value)
 	valueC_ = value;
 }
 
+// Constructor (Array<int>)
+VariableValue::VariableValue(const Array<int>& value)
+{
+	type_ = VariableValue::IntegerArrayType;
+	arrayI_ = value;
+}
+
+// Constructor (Array<double>)
+VariableValue::VariableValue(const Array<double>& value)
+{
+	type_ = VariableValue::DoubleArrayType;
+	arrayD_ = value;
+}
+
 // Constructor (VariableValue)
 VariableValue::VariableValue(const VariableValue& value)
 {
@@ -72,6 +86,8 @@ void VariableValue::operator=(const VariableValue& value)
 	valueI_ = value.valueI_;
 	valueD_ = value.valueD_;
 	valueC_ = value.valueC_;
+	arrayI_ = value.arrayI_;
+	arrayD_ = value.arrayD_;
 }
 
 // Destructor
@@ -80,7 +96,7 @@ VariableValue::~VariableValue()
 }
 
 // VariableType names
-const char* ValueTypeNames[] = { "Boolean", "Integer", "Double", "Character" };
+const char* ValueTypeNames[] = { "Boolean", "Integer", "Double", "Character", "IntegerArray", "DoubleArray" };
 
 // Return VariableType name
 const char* VariableValue::valueType(ValueType vt)
@@ -109,6 +125,8 @@ bool VariableValue::set(VariableValue newValue)
 	else if (type_ == VariableValue::IntegerType) valueI_ = newValue.asInt();
 	else if (type_ == VariableValue::DoubleType) valueD_ = newValue.asDouble();
 	else if (type_ == VariableValue::CharType) valueC_ = newValue.asChar();
+	else if (type_ == VariableValue::IntegerArrayType) arrayI_ = newValue.asIntArray();
+	else if (type_ == VariableValue::DoubleArrayType) arrayD_ = newValue.asDoubleArray();
 }
 
 // Return variable (as bool)
@@ -118,6 +136,11 @@ bool VariableValue::asBool()
 	else if (type_ == VariableValue::IntegerType) return valueI_;
 	else if (type_ == VariableValue::DoubleType) return (valueD_ > 0.0);
 	else if (type_ == VariableValue::CharType) return DUQSys::atob(valueC_.get());
+	else
+	{
+		Messenger::error("Can't return a whole Array as a bool.\n");
+		return false;
+	}
 }
 
 // Return variable (as int)
@@ -127,6 +150,11 @@ int VariableValue::asInt()
 	else if (type_ == VariableValue::IntegerType) return valueI_;
 	else if (type_ == VariableValue::DoubleType) return int(valueD_);
 	else if (type_ == VariableValue::CharType) return atoi(valueC_.get());
+	else
+	{
+		Messenger::error("Can't return a whole Array as an int.\n");
+		return 0;
+	}
 }
 
 // Return variable (as double)
@@ -136,6 +164,11 @@ double VariableValue::asDouble()
 	else if (type_ == VariableValue::IntegerType) return double(valueI_);
 	else if (type_ == VariableValue::DoubleType) return valueD_;
 	else if (type_ == VariableValue::CharType) return atof(valueC_.get());
+	else
+	{
+		Messenger::error("Can't return a whole Array as a double.\n");
+		return 0.0;
+	}
 }
 
 // Return variable (as string)
@@ -156,6 +189,31 @@ const char* VariableValue::asChar()
 		return conversionStringTemp_.get();
 	}
 	else if (type_ == VariableValue::CharType) return valueC_.get();
+	else
+	{
+		Messenger::error("Can't return a whole Array as a const char*.\n");
+		return "[ARRAY]";
+	}
+}
+
+// Return variable (as integer array)
+Array<int>& VariableValue::asIntArray()
+{
+	if (type_ == VariableValue::IntegerArrayType) return arrayI_;
+
+	Messenger::error("Can't convert single values (or Array<double>) into an Array<int> in VariableValue::asIntArray().\n");
+	static Array<int> dummyResult;
+	return dummyResult;
+}
+
+// Return variable (as double array)
+Array<double>& VariableValue::asDoubleArray()
+{
+	if (type_ == VariableValue::DoubleArrayType) return arrayD_;
+
+	Messenger::error("Can't convert single values (or Array<int>) into an Array<double> in VariableValue::asDoubleArray().\n");
+	static Array<double> dummyResult;
+	return dummyResult;
 }
 
 /*
@@ -183,6 +241,12 @@ bool VariableValue::broadcast(ProcessPool& procPool)
 			break;
 		case (VariableValue::CharType):
 			if (!procPool.broadcast(valueC_)) return false;
+			break;
+		case (VariableValue::IntegerArrayType):
+			if (!procPool.broadcast(arrayI_)) return false;
+			break;
+		case (VariableValue::DoubleArrayType):
+			if (!procPool.broadcast(arrayD_)) return false;
 			break;
 		default:
 			Messenger::error("Broadcast of VariableValue failed - type_ %s not accounted for.\n", VariableValue::valueType(type_));

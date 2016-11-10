@@ -153,6 +153,40 @@ bool LineParser::openOutput(const char* filename, bool directOutput)
 	return true;
 }
 
+// Open existing stream for writing
+bool LineParser::appendOutput(const char* filename)
+{
+	// Check existing input file
+	if ((outputFile_ != NULL) || (cachedFile_ != NULL))
+	{
+		printf("Warning - LineParser already appears to have an open file/cache...\n");
+		if (outputFile_ != NULL)
+		{
+			outputFile_->close();
+			delete outputFile_;
+			outputFile_ = NULL;
+		}
+		if (cachedFile_ != NULL)
+		{
+			delete cachedFile_;
+			cachedFile_ = NULL;
+		}
+	}
+
+	// Open new file
+	directOutput_ = true;
+	outputFile_ = new ofstream(filename, ios::app);
+	if (!outputFile_->is_open())
+	{
+		closeFiles();
+		Messenger::error("Failed to open file '%s' for writing.\n", filename);
+		return false;
+	}
+
+	outputFilename_ = filename;
+	return true;
+}
+
 // Close file 
 void LineParser::closeFiles()
 {

@@ -23,6 +23,7 @@
 #define DUQ_VARIABLEVALUE_H
 
 #include "base/dnchar.h"
+#include "templates/array.h"
 #include "templates/list.h"
 
 // Forward Declarations
@@ -44,12 +45,16 @@ class VariableValue
 	VariableValue(double value);
 	// Constructor (int)
 	VariableValue(const char* value);
+	// Constructor (Array<int>)
+	VariableValue(const Array<int>& value);
+	// Constructor (Array<double>)
+	VariableValue(const Array<double>& value);
 	// Constructor (VariableValue)
 	VariableValue(const VariableValue& value);
 	// Assignment Operator
 	void operator=(const VariableValue& value);
 	// Value Type
-	enum ValueType { BooleanType, IntegerType, DoubleType, CharType };
+	enum ValueType { BooleanType, IntegerType, DoubleType, CharType, IntegerArrayType, DoubleArrayType };
 	// Return ValueType name
 	static const char* valueType(ValueType vt);
 
@@ -68,6 +73,10 @@ class VariableValue
 	double valueD_;
 	// Value (string)
 	Dnchar valueC_;
+	// Value (integer array)
+	Array<int> arrayI_;
+	// Value (double array)
+	Array<double> arrayD_;
 
 	public:
 	// Return type of variable
@@ -92,6 +101,10 @@ class VariableValue
 	double asDouble();
 	// Return variable (as string)
 	const char* asChar();
+	// Return variable (as integer array)
+	Array<int>& asIntArray();
+	// Return variable (as double array)
+	Array<double>& asDoubleArray();
 
 
 	/*

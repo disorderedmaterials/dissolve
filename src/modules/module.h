@@ -162,6 +162,8 @@ class Module : public ListItem<Module>
 	const char* variableAsChar(Configuration* cfg, const char* varName);
 	// Retrieve Module variable from supplied Configuration, or get default value
 	void setVariable(Configuration* cfg, const char* varName, VariableValue value);
+	// Append value to Module array variable in supplied Configuration
+	bool appendVariable(Configuration* cfg, const char* varName, VariableValue value);
 	// Search for named variable in Module
 	Variable* findVariable(const char* varName);
 	// Return first defined Variable

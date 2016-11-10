@@ -104,6 +104,18 @@ const char* Variable::asChar()
 	return value_.asChar();
 }
 
+// Return value (as Array<int>)
+Array<int>& Variable::asIntArray()
+{
+	return value_.asIntArray();
+}
+
+// Return value (as Array<double>)
+Array<double>& Variable::asDoubleArray()
+{
+	return value_.asDoubleArray();
+}
+
 /*
  * Parallel Comms
  */

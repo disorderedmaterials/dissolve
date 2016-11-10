@@ -227,6 +227,8 @@ class DUQ
 	RefList<Module,bool> preProcessingTasks_;
 	// List of post-processing stages to perform
 	RefList<Module,bool> postProcessingTasks_;
+	// Current simulation step
+	int iteration_;
 
 	private:
 	// Find first occurrence of named Module in pre-processing tasks
@@ -237,6 +239,8 @@ class DUQ
 	public:
 	// Run main simulation
 	bool go();
+	// Return current simulation step
+	int iteration();
 
 
 	/*
