@@ -21,6 +21,7 @@
 
 #include "main/duq.h"
 #include "modules/fq.h"
+#include "modules/partials.h"
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/changestore.h"
@@ -32,6 +33,7 @@
 
 // Static Members
 List<Module> StructureFactor::instances_;
+List<PartialQSet> StructureFactor::partialSets_;
 
 /*
  * Constructor / Destructor
@@ -41,16 +43,17 @@ List<Module> StructureFactor::instances_;
 StructureFactor::StructureFactor() : Module()
 {
 	// Setup variables / control parameters
-	addVariable("QDelta", 0.05, "Step size in Q");
-	addVariable("QMax", -1.0, "Maximum Q in calculated F(Q)");
 	addVariable("Bragg", "off", "Enable calculation of Bragg scattering");
 	addVariable("BraggQDepBroadening", 0.0063, "FWHM of Gaussian for Q-dependent Bragg broadening function");
 	addVariable("BraggQIndepBroadening", 0.0, "FWHM of Gaussian for Q-dependent Bragg broadening function");
-	addVariable("QDepBroadening", 0.02, "FWHM of Gaussian for Q-dependent instrument broadening function");
-	addVariable("QIndepBroadening", 0.0, "FWHM of Gaussian for Q-independent instrument broadening function");
 	addVariable("NormaliseToAvSq", false, "Normalise calculated F(Q) to < b >**2");
 	addVariable("NormaliseToSqAv", false, "Normalise calculated F(Q) to < b**2 >");
-}	
+	addVariable("QDelta", 0.05, "Step size in Q");
+	addVariable("QDepBroadening", 0.0, "FWHM of Gaussian for Q-dependent instrument broadening function");
+	addVariable("QIndepBroadening", 0.0, "FWHM of Gaussian for Q-independent instrument broadening function");
+	addVariable("QMax", -1.0, "Maximum Q in calculated F(Q)");
+	addVariable("Save", false, "Whether to save partials to disk after calculation");
+}
 
 // Destructor
 StructureFactor::~StructureFactor()
@@ -155,42 +158,164 @@ bool StructureFactor::process(DUQ& duq, ProcessPool& procPool)
 	 * Partial calculation routines called by this routine are parallel.
 	 */
 
-	// Get target Configuration
-	Configuration* cfg = targetConfigurations_.firstItem();
-
-	// Retrieve control parameters from Configuration
-	const double qDelta = variableAsDouble("QDelta");
-	double qMax = variableAsDouble("QMax");
-	if (qMax < 0.0)
-	{
-		// If a Sample is defined, use its maximum Q as the limit - otherwise, use 30.0 A**-1
-		if ((nSampleTargets() == 1) && (targetSamples_.first()->item->hasReferenceData())) qMax = targetSamples_.first()->item->referenceData().xMax();
-		else qMax = 30.0;
-	}
-	const bool braggOn = variableAsBool("Bragg");
-	const double braggQDepBroadening = variableAsDouble("BraggQDepBroadening");
-	const double braggQIndepBroadening = variableAsDouble("BraggQIndepBroadening");
-	const double qDepBroadening = variableAsDouble("QDepBroadening");
-	const double qIndepBroadening = variableAsDouble("QIndepBroadening");
-	const bool normaliseToAvSq = variableAsBool("NormaliseToAvSq");
-	const bool normaliseToSqAv = variableAsBool("NormaliseToSqAv");
-
-	// Print argument/parameter summary
-	Messenger::print("StructureFactor: Calculating S(Q)/F(Q) out to %f Angstroms**-1 using step size of %f Angstroms**-1.\n", qMax, qDelta);
-	Messenger::print("StructureFactor: Q-dependent FWHM broadening to use is %f, Q-independent FWHM broadening to use is %f.\n", qDepBroadening, qIndepBroadening);
-	Messenger::print("StructureFactor: Calculation of Bragg features is %s.\n", DUQSys::onOff(braggOn));
-
 	// If there is a Sample target, then we calculate the weighted structure factors for it (using the supplied Configurations)
 	// Otherwise take the Configuration targets and calculate unweighted structure factors for them.
 
+	if (targetSamples_.nItems() > 0)
+	{
+		// TODO Assemble partials from all Configurations specified, weighting them accordingly
+// 		if ((nSampleTargets() == 1) && (targetSamples_.first()->item->hasReferenceData())) qMax = targetSamples_.first()->item->referenceData().xMax();
+	}
+	else
+	{
+		RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
+		while (Configuration* cfg = configIterator.iterate())
+		{
+			// Retrieve control parameters from Configuration
+			const double qDelta = variableAsDouble(cfg, "QDelta");
+			const double qMax = variableAsDouble(cfg, "QMax") < 0.0 ? 30.0 : variableAsDouble(cfg, "QMax");
+			const bool braggOn = variableAsBool(cfg, "Bragg");
+			const double braggQDepBroadening = variableAsDouble(cfg, "BraggQDepBroadening");
+			const double braggQIndepBroadening = variableAsDouble(cfg, "BraggQIndepBroadening");
+			const double qDepBroadening = variableAsDouble(cfg, "QDepBroadening");
+			const double qIndepBroadening = variableAsDouble(cfg, "QIndepBroadening");
+			const bool normaliseToAvSq = variableAsBool(cfg, "NormaliseToAvSq");
+			const bool normaliseToSqAv = variableAsBool(cfg, "NormaliseToSqAv");
+			const bool saveData = variableAsBool(cfg, "Save");
 
+			// Print argument/parameter summary
+			Messenger::print("StructureFactor: Calculating S(Q)/F(Q) out to %f Angstroms**-1 using step size of %f Angstroms**-1.\n", qMax, qDelta);
+			Messenger::print("StructureFactor: Q-dependent FWHM broadening to use is %f, Q-independent FWHM broadening to use is %f.\n", qDepBroadening, qIndepBroadening);
+			Messenger::print("StructureFactor: Calculation of Bragg features is %s.\n", DUQSys::onOff(braggOn));
+			if (braggOn) Messenger::print("StructureFactor: Q-dependent FWHM Bragg broadening to use is %f, Q-independent FWHM Bragg broadening to use is %f.\n", braggQDepBroadening, braggQIndepBroadening);
+
+			// Calculate structure factors for this Configuration
+			StructureFactor::calculateUnweighted(cfg, this, duq.windowFunction(), procPool);
+
+			// Save data?
+			if (saveData)
+			{
+				// Only the pool master saves the data
+				if (procPool.isMaster())
+				{
+					// Find PartialSet for this Configuration
+					PartialQSet* partials = partialSet(cfg);
+					if (partials->save()) procPool.proceed();
+					else
+					{
+						procPool.stop();
+						return false;
+					}
+				}
+				else if (!procPool.decision()) return false;
+			}
+		}
+	}
 }
 
-// Calculate unweighted partials for the specified Configuration
-bool StructureFactor::calculateUnweightedPartials(Configuration* cfg, ProcessPool& procPool)
+// Return PartialSet for specified Configuration (if it exists)
+PartialQSet* StructureFactor::partialSet(Configuration* cfg)
 {
-	// First, make sure that the radial distribution functions are up-to-date
-// 	cfg->calculatePartials();
+	// Search existing list
+	for (PartialQSet* ps = partialSets_.first(); ps != NULL; ps = ps->next) if (ps->targetConfiguration() == cfg) return ps;
+
+	return NULL;
+}
+
+// Calculate unweighted S(Q) for the specified Configuration
+bool StructureFactor::calculateUnweighted(Configuration* cfg, StructureFactor* sourceModule, Data2D::WindowFunction windowFunction, ProcessPool& procPool)
+{
+	// Retrieve control parameters from Configuration
+	const double qDelta = sourceModule->variableAsDouble(cfg, "QDelta");
+	const double qMax = sourceModule->variableAsDouble(cfg, "QMax") < 0.0 ? 30.0 : sourceModule->variableAsDouble(cfg, "QMax");
+	const bool braggOn = sourceModule->variableAsBool(cfg, "Bragg");
+	const double braggQDepBroadening = sourceModule->variableAsDouble(cfg, "BraggQDepBroadening");
+	const double braggQIndepBroadening = sourceModule->variableAsDouble(cfg, "BraggQIndepBroadening");
+	const double qDepBroadening = sourceModule->variableAsDouble(cfg, "QDepBroadening");
+	const double qIndepBroadening = sourceModule->variableAsDouble(cfg, "QIndepBroadening");
+	const bool normaliseToAvSq = sourceModule->variableAsBool(cfg, "NormaliseToAvSq");
+	const bool normaliseToSqAv = sourceModule->variableAsBool(cfg, "NormaliseToSqAv");
+
+	// Ensure that partials are up-to-date for the Configuration, and grab the PartialSet
+	Partials::calculateUnweighted(cfg, procPool);
+	PartialRSet* partialRDFs = Partials::partialSet(cfg);
+
+	// Create / grab PartialSet for structure factors
+	PartialQSet* partialSQ = StructureFactor::partialSet(cfg);
+	if (partialSQ == NULL)
+	{
+		// No match, so create new
+		partialSQ = partialSets_.add();
+		partialSQ->setup(cfg, "unweighted", "sq");
+	}
+
+	// Is the PartialSet already up-to-date?
+	if (partialSQ->upToDate())
+	{
+		Messenger::print("No need to calculate S(Q) for Configuration '%s' - nothing has changed since the last calculation.\n", cfg->name());
+		return true;
+	}
+
+	Messenger::print("Calculating partial S(Q) for Configuration '%s'...\n", cfg->name());
+
+	/*
+	 * Reset any existing data
+	 */
+
+	partialSQ->reset();
+
+	/*
+	 * Copy g(r) data into our S(Q) arrays
+	 */
+
+	// Copy partial data into our own PartialSet
+	int typeI, typeJ;
+	procPool.resetAccumulatedTime();
+	for (typeI=0; typeI<partialSQ->nTypes(); ++typeI)
+	{
+		for (typeJ=typeI; typeJ<partialSQ->nTypes(); ++typeJ)
+		{
+			// All data except that for bound interactions must have 1.0 subtracted in order to ??????
+			partialSQ->partial(typeI,typeJ).copyData(partialRDFs->partial(typeI,typeJ).normalisedData());
+			partialSQ->partial(typeI,typeJ).arrayY() -= 1.0;
+			partialSQ->boundPartial(typeI,typeJ).copyData(partialRDFs->boundPartial(typeI,typeJ).normalisedData());
+// 			partialSQ->boundPartial(typeI,typeJ).arrayY() -= 1.0;
+			partialSQ->unboundPartial(typeI,typeJ).copyData(partialRDFs->unboundPartial(typeI,typeJ).normalisedData());
+			partialSQ->unboundPartial(typeI,typeJ).arrayY() -= 1.0;
+		}
+	}
+
+	/*
+	 * Perform FT of partial g(r) into S(Q)
+	 */
+	// TODO Parallelise this
+	procPool.resetAccumulatedTime();
+	Timer timer;
+	timer.start();
+	double rho = cfg->atomicDensity();
+	for (typeI=0; typeI<partialSQ->nTypes(); ++typeI)
+	{
+		for (typeJ=typeI; typeJ<partialSQ->nTypes(); ++typeJ)
+		{
+			if (!partialSQ->partial(typeI,typeJ).transformBroadenedRDF(rho, qDelta, qMax, qDepBroadening, qIndepBroadening, windowFunction)) return false;
+			if (!partialSQ->boundPartial(typeI,typeJ).transformBroadenedRDF(rho, qDelta, qMax, qDepBroadening, qIndepBroadening, windowFunction)) return false;
+			if (!partialSQ->unboundPartial(typeI,typeJ).transformBroadenedRDF(rho, qDelta, qMax, qDepBroadening, qIndepBroadening, windowFunction)) return false;
+		}
+	}
+
+	// Sum into total
+	partialSQ->formTotal();
+
+	timer.stop();
+	Messenger::print("--> Finished Fourier transform and summation of partial g(r) into partial S(Q) (%s elapsed, %s comms).\n", timer.timeString(), procPool.accumulatedTimeString());
+
+	/*
+	 * Partials are now up-to-date
+	 */
+
+	partialSQ->setUpToDate();
+
+	return true;
 }
 
 // // Calculate weighted pair correlations from supplied unweighted data

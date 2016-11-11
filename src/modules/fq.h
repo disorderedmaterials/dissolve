@@ -23,6 +23,7 @@
 #define DUQ_STRUCTUREFACTOR_H
 
 #include "modules/module.h"
+#include "classes/partialqset.h"
 
 // Forward Declarations
 /* none */
@@ -99,11 +100,17 @@ class StructureFactor : public Module
 
 
 	/*
-	 * Local Functions
+	 * Static Members / Functions
 	 */
+	private:
+	// List of S(Q) PartialSets for specific Configuration
+	static List<PartialQSet> partialSets_;
+
 	public:
-	// Calculate unweighted partials for the specified Configuration
-	bool calculateUnweightedPartials(Configuration* cfg, ProcessPool& procPool);
+	// Add or return new PartialSet for specified Configuration
+	static PartialQSet* partialSet(Configuration* cfg);
+	// Calculate unweighted S(Q) for the specified Configuration
+	static bool calculateUnweighted(Configuration* cfg, StructureFactor* sourceModule, Data2D::WindowFunction windowFunction, ProcessPool& procPool);
 };
 
 #endif

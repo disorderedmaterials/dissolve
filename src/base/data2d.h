@@ -63,8 +63,12 @@ class Data2D : public ListItem<Data2D>
 	public:
 	// Initialise arrays to specified size
 	void initialise(int size);
-	// Create new X axis and empty Y axis
+	// Create new X data and empty Y data
 	void createEmpty(double xDelta, double xMax, bool halfBins = true);
+	// Copy existing X and Y data
+	void copyData(Data2D& source);
+	// Copy existing X data and generate empty Y
+	void templateFrom(Data2D& source);
 	// Return current array size
 	int arraySize();
 	// Set data point 
@@ -155,7 +159,7 @@ class Data2D : public ListItem<Data2D>
 	// Transform g(r) to S(Q)
 	bool transformRDF(double atomicDensity, Data2D::WindowFunction wf = Data2D::NoWindow);
 	// Transform g(r) to S(Q), applying instrumental broadening functions
-	bool transformBroadenedRDF(double atomicDensity, double qStep, double qMax, double fwhm, double fwhmq, Data2D::WindowFunction wf = Data2D::NoWindow);
+	bool transformBroadenedRDF(double atomicDensity, double qStep, double qMax, double qDepFWHM, double qIndepFWHM, Data2D::WindowFunction wf = Data2D::NoWindow);
 	// Transform S(Q) to g(r)
 	bool transformSQ(double atomicDensity, Data2D::WindowFunction wf = Data2D::NoWindow);
 	// Fourier transform current data, applying line-width broadening in real-space using the modified Lorch function

@@ -273,6 +273,8 @@ class DUQ
 	int maxIterations();
 	// Set window function to use for all Fourier transforms
 	void setWindowFunction(Data2D::WindowFunction wf);
+	// Return window function to use for all Fourier transforms
+	Data2D::WindowFunction windowFunction();
 	// Setup all simulation data, checking it as we go
 	bool setupSimulation();
 	// Dump full system setup

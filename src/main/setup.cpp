@@ -65,6 +65,12 @@ void DUQ::setWindowFunction(Data2D::WindowFunction wf)
 	windowFunction_ = wf;
 }
 
+// Return window function to use for all Fourier transforms
+Data2D::WindowFunction DUQ::windowFunction()
+{
+	return windowFunction_;
+}
+
 // Setup all simulation data, checking it as we go
 bool DUQ::setupSimulation()
 {

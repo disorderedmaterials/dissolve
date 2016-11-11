@@ -233,6 +233,13 @@ AtomTypeData* Configuration::usedAtomTypes()
 	return usedAtomTypes_.first();
 }
 
+// Return fraction of specified AtomTypeData in Configuration
+double Configuration::usedAtomTypeFraction(int index)
+{
+	AtomTypeData* atd = usedAtomTypes_[index];
+	return (atd ? atd->fraction() : 0.0);
+}
+
 // Return number of atom types used in this Configuration
 int Configuration::nUsedAtomTypes()
 {

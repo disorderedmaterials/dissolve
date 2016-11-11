@@ -35,7 +35,8 @@ kvector.cpp
 molecule.cpp
 pairpotential.cpp
 potentialmap.cpp
-partialset.cpp
+partialqset.cpp
+partialrset.cpp
 sample.cpp
 speciesangle.cpp
 speciesatom.cpp
@@ -73,7 +74,8 @@ kvector.h
 molecule.h
 pairpotential.h
 potentialmap.h
-partialset.h
+partialqset.h
+partialrset.h
 sample.h
 speciesangle.h
 speciesatom.h

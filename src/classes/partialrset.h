@@ -1,6 +1,6 @@
 /*
-	*** Set of Partials
-	*** src/classes/partialset.h
+	*** Set of Partials in r (g(r))
+	*** src/classes/partialrset.h
 	Copyright T. Youngs 2012-2016
 
 	This file is part of dUQ.
@@ -19,8 +19,8 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_PARTIALSET_H
-#define DUQ_PARTIALSET_H
+#ifndef DUQ_PARTIALRSET_H
+#define DUQ_PARTIALRSET_H
 
 #include "classes/histogram.h"
 #include "templates/list.h"
@@ -29,14 +29,14 @@
 // Forward Declarations
 class Configuration;
 
-// Set of Partials
-class PartialSet : public MPIListItem<PartialSet>
+// Set of Partials in r (g(r))
+class PartialRSet : public MPIListItem<PartialRSet>
 {
 	public:
 	// Constructor
-	PartialSet();
+	PartialRSet();
 	// Destructor
-	~PartialSet();
+	~PartialRSet();
 
 
 	/*
@@ -57,7 +57,7 @@ class PartialSet : public MPIListItem<PartialSet>
 	Array2D<Histogram> boundPartials_;
 	// Bragg S(Q) matrix, derived from summation of HKL terms
 // 	Array2D<Data2D> braggSQMatrix_;
-	// Total RDF (unweighted)
+	// Total function
 	Data2D total_;
 
 	public:
@@ -79,6 +79,10 @@ class PartialSet : public MPIListItem<PartialSet>
 	Histogram& unboundPartial(int i, int j);
 	// Return atom-atom partial for pairs joined by bonds or angles
 	Histogram& boundPartial(int i, int j);
+	// Sum partials into total
+	void formTotal();
+	// Return total function
+	Data2D& total();
 	// Save partials information to disk
 	bool save();
 

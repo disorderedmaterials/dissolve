@@ -323,7 +323,7 @@ bool Energy::process(DUQ& duq, ProcessPool& procPool)
 
 				// Set variable in Configuration and print output
 				cfg->setModuleVariable("EnergyStable", stable, "Whether the energy of the Configuration is stable", "");
-				Messenger::print("Energy: Gradient of last %i points is %f kJ/mol/step (absolute threshold value is %e, stable = %s).\n", stabilityWindow, grad, thresholdValue, DUQSys::btoa(stable));
+				Messenger::print("Energy: Gradient of last %i points is %e kJ/mol/step (absolute threshold value is %e, stable = %s).\n", stabilityWindow, grad, thresholdValue, DUQSys::btoa(stable));
 			}
 
 			// If writing to a file, append it here

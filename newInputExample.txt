@@ -44,6 +44,9 @@ EndSample
 Sample 'NIMROD-Deuteriated'
   Isotopologue  'Water'  'Deuteriated'  1.000000  1.000000
   ReferenceData 'test/water/D2O.mint01'
+  #Module StructureFactor
+  #  QDepBroadening 0.02    # For SLS
+  #EndModule
 EndSample
 
 # Define Configuration(s)
@@ -78,8 +81,9 @@ Configuration  'Bulk'
     Frequency 5
     Save on
   EndModule
-  #Module StructureFactor
-  #ENDMODULE
+  Module StructureFactor
+    Frequency 5
+  ENDMODULE
 EndConfiguration
 
 # Pair Potentials

@@ -90,7 +90,7 @@ void Data2D::initialise(int size)
 	y_.initialise(size);
 }
 
-// Create new X axis and empty Y axis
+// Create new X data and empty Y data
 void Data2D::createEmpty(double xDelta, double xMax, bool halfBins)
 {
 	clear();
@@ -100,6 +100,27 @@ void Data2D::createEmpty(double xDelta, double xMax, bool halfBins)
 		addPoint(x, 0.0);
 		x += xDelta;
 	}
+}
+
+// Copy existing X and Y data
+void Data2D::copyData(Data2D& source)
+{
+	x_ = source.x_;
+	y_ = source.y_;
+	splineA_ = source.splineA_;
+	splineB_ = source.splineB_;
+	splineC_ = source.splineC_;
+	splineD_ = source.splineD_;
+	splineH_ = source.splineH_;
+	splineInterval_ = source.splineInterval_;
+}
+
+// Copy existing X data and generate empty Y
+void Data2D::templateFrom(Data2D& source)
+{
+	x_ = source.x_;
+	y_.initialise(x_.nItems(), 0.0);
+	splineInterval_ = -1;
 }
 
 // Return current array size
@@ -736,7 +757,7 @@ bool Data2D::transformRDF(double atomicDensity, Data2D::WindowFunction wf)
 }
 
 // Transform g(r) to S(Q), applying instrumental broadening functions
-bool Data2D::transformBroadenedRDF(double atomicDensity, double qStep, double qMax, double fwhm, double fwhmq, Data2D::WindowFunction wf)
+bool Data2D::transformBroadenedRDF(double atomicDensity, double qStep, double qMax, double qDepFWHM, double qIndepFWHM, Data2D::WindowFunction wf)
 {
 	// Okay to continue with transform?
 	if (!checkBeforeTransform()) return false;
@@ -750,8 +771,8 @@ bool Data2D::transformBroadenedRDF(double atomicDensity, double qStep, double qM
 	int n, m, nR = x_.nItems();
 	Messenger::printVerbose("In Data2D::transformBroadenedRDF(), period of function is %f, real deltaX is %f, and wavenumber is %f\n", lambda, deltaX, k);
 
-	sigma = 0.5*fwhm/sqrt(2.0*log(2.0));
-	sigmaq = 0.5*fwhmq/sqrt(2.0*log(2.0));
+	sigma = 0.5*qIndepFWHM/sqrt(2.0*log(2.0));
+	sigmaq = 0.5*qDepFWHM/sqrt(2.0*log(2.0));
 
 	// Create working arrays
 	Array<double> oldy = y_;
@@ -1477,7 +1498,7 @@ bool Data2D::save(const char* fileName) const
 {
 	// Open file and check that we're OK to proceed writing to it
 	LineParser parser;
-	Messenger::print("Writing datafile '%s'...\n", fileName);
+// 	Messenger::print("Writing datafile '%s'...\n", fileName);
 
 	parser.openOutput(fileName, true);
 	if (!parser.isFileGoodForWriting())
@@ -1496,7 +1517,7 @@ bool Data2D::saveWithInterpolation(const char* fileName)
 {
 	// Open file and check that we're OK to proceed writing to it
 	LineParser parser;
-	Messenger::print("Writing datafile '%s'...\n", fileName);
+// 	Messenger::print("Writing datafile '%s'...\n", fileName);
 
 	parser.openOutput(fileName, true);
 	if (!parser.isFileGoodForWriting())

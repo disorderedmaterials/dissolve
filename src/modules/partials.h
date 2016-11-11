@@ -23,7 +23,7 @@
 #define DUQ_PARTIALS_H
 
 #include "modules/module.h"
-#include "classes/partialset.h"
+#include "classes/partialrset.h"
 
 // Forward Declarations
 /* none */
@@ -103,16 +103,16 @@ class Partials : public Module
 	 * Static Members / Functions
 	 */
 	private:
-	// List of PartialSets for specific Configuration
-	static List<PartialSet> partialSets_;
+	// List of RDF PartialSets for specific Configuration
+	static List<PartialRSet> partialSets_;
 
 	private:
 	// Calculate partial RDFs with simple double-loop
-	static bool calculateSimple(PartialSet* partialSet, ProcessPool& procPool);
+	static bool calculateSimple(PartialRSet* partialSet, ProcessPool& procPool);
 
 	public:
 	// Add or return new PartialSet for specified Configuration
-	static PartialSet* partialSet(Configuration* cfg);
+	static PartialRSet* partialSet(Configuration* cfg);
 	// (Re)calculate unweighted partials for the specified Configuration
 	static bool calculateUnweighted(Configuration* cfg, ProcessPool& procPool, int method = 0);
 };
