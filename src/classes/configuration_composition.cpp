@@ -30,6 +30,10 @@ void Configuration::setName(const char* name)
 	// Generate a nice name (i.e. no spaces, slashes etc.)
 	niceName_ = name_;
 	niceName_.replace(" /\\#*$", '_');
+
+	// Set initial output coordinates filename based on configuration name
+	outputCoordinatesFile_ = niceName_;
+	outputCoordinatesFile_.strcat(".xyz");
 }
 
 // Return name of the configuration
@@ -85,18 +89,14 @@ int Configuration::multiplier() const
 	return multiplier_;
 }
 
-/*
- * \brief Set the atomic density of the system (atoms/A3)
- */
+// Set the atomic density of the system (atoms/A3)
 void Configuration::setAtomicDensity(double density)
 {
 	density_ = density;
 	densityIsAtomic_ = true;
 }
 
-/*
- * \brief Set the chemical density of the system (g/cm3)
- */
+// Set the chemical density of the system (g/cm3)
 void Configuration::setChemicalDensity(double density)
 {
 	density_ = density;
@@ -109,9 +109,7 @@ double Configuration::density() const
 	return density_;
 }
 
-/*
- * \brief Return whether the density is in atomic units (atoms/A3) or chemistry units (g/cm3)
- */
+// Return whether the density is in atomic units (atoms/A3) or chemistry units (g/cm3)
 bool Configuration::densityIsAtomic() const
 {
 	return densityIsAtomic_;
@@ -151,16 +149,40 @@ bool Configuration::randomConfiguration()
 	return randomConfiguration_;
 }
 
-// Set file containing initial coordinates
-void Configuration::setInitialCoordinatesFile(const char* fileName)
+// Set file containing input coordinates
+void Configuration::setInputCoordinatesFile(const char* filename)
 {
-	initialCoordinatesFile_ = fileName;
+	inputCoordinatesFile_ = filename;
 }
 
-// Return file containing initial coordinates
-const char* Configuration::initialCoordinatesFile()
+// Return file containing input coordinates
+const char* Configuration::inputCoordinatesFile()
 {
-	return initialCoordinatesFile_.get();
+	return inputCoordinatesFile_.get();
+}
+
+// Set file containing output coordinates
+void Configuration::setOutputCoordinatesFile(const char* filename)
+{
+	outputCoordinatesFile_ = filename;
+}
+
+// Return file containing output coordinates
+const char* Configuration::outputCoordinatesFile()
+{
+	return outputCoordinatesFile_.get();
+}
+
+// Set whether to use output coordinates file as input coordinates (if it exists)
+void Configuration::setUseOutputCoordinatesAsInput(bool b)
+{
+	useOutputCoordinatesAsInput_ = b;
+}
+
+// Return whether to use output coordinates file as input coordinates (if it exists)
+bool Configuration::useOutputCoordinatesAsInput()
+{
+	return useOutputCoordinatesAsInput_;
 }
 
 // Set configuration temperature

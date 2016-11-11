@@ -71,5 +71,5 @@ void DUQ::clear()
 	atomTypes_.clear();
 
 	Messenger::printVerbose("Clearing misc...\n");
-	fileName_.clear();
+	filename_.clear();
 }

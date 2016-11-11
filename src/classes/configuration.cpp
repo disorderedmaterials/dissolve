@@ -43,6 +43,7 @@ Configuration::Configuration() : ListItem<Configuration>()
 	relativeBoxLengths_.set(1.0, 1.0, 1.0);
 	nonPeriodic_ = false;
 	randomConfiguration_ = true;
+	useOutputCoordinatesAsInput_ = true;
 
 	// Box / Cells
 	box_ = NULL;
@@ -285,16 +286,29 @@ bool Configuration::setup(ProcessPool& procPool, const List<AtomType>& atomTypes
 		return false;
 	}
 
-	// Now, we need some coordinates - either we are creating a random configuration of molecules, or we are loading in a set of coordinates from a file
-	if (randomConfiguration())
+	// Now, we need some coordinates:
+	// 1) If useOutputCoordinatesAsInput_ is true and that file exists, this overrides everything else
+	// 2) If randomConfiguration_ is true, generate some random coordinates
+	// 3) Load the inputCoordinatesFile_
+	if (useOutputCoordinatesAsInput_ && (!outputCoordinatesFile_.isEmpty()) && DUQSys::fileExists(outputCoordinatesFile_))
+	{
+		Messenger::print("--> Loading initial coordinates from output coordinates file '%s'...\n", outputCoordinatesFile_.get());
+		if (!loadCoordinates(outputCoordinatesFile_)) return false;
+	}
+	else if (randomConfiguration_)
 	{
 		Messenger::print("--> Generating random initial configuration...\n");
 		if (!createRandom(procPool)) return false;
 	}
+	else if (inputCoordinatesFile_.isEmpty())
+	{
+		Messenger::error("Random configuration generation is off, and no input coordinates file has been provided.\n");
+		return false;
+	}
 	else
 	{
-		Messenger::print("--> Loading initial coordinates from file '%s'...\n", initialCoordinatesFile_.get());
-		if (!loadCoordinates(initialCoordinatesFile_)) return false;
+		Messenger::print("--> Loading initial coordinates from file '%s'...\n", inputCoordinatesFile_.get());
+		if (!loadCoordinates(inputCoordinatesFile_)) return false;
 	}
 
 	// Populate Atom and Grain arrays from Molecule copies
@@ -393,7 +407,9 @@ bool Configuration::broadcast(ProcessPool& procPool, const List<Species>& specie
 	if (!procPool.broadcast(&densityIsAtomic_, 1)) return false;
 	if (!procPool.broadcast(&nonPeriodic_, 1)) return false;
 	if (!procPool.broadcast(&randomConfiguration_, 1)) return false;
-	if (!procPool.broadcast(initialCoordinatesFile_)) return false;
+	if (!procPool.broadcast(inputCoordinatesFile_)) return false;
+	if (!procPool.broadcast(outputCoordinatesFile_)) return false;
+	if (!procPool.broadcast(&useOutputCoordinatesAsInput_, 1)) return false;
 	if (!procPool.broadcast(&temperature_, 1)) return false;
 
 	// Content

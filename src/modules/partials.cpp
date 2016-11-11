@@ -41,6 +41,7 @@ Partials::Partials() : Module()
 {
 	// Setup variables / control parameters
 	addVariable("Save", false, "Whether to save partials to disk after calculation");
+	addVariable("Smoothing", 0, "Specifies the degree of smoothing 'n' to apply to calculated RDFs, where 2n+1 controls the length in the applied Spline smooth");
 }	
 
 // Destructor
@@ -308,8 +309,11 @@ PartialRSet* Partials::partialSet(Configuration* cfg)
 }
 
 // Calculate unweighted partials for the specified Configuration
-bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, int method)
+bool Partials::calculateUnweighted(Configuration* cfg, Module* sourceModule, ProcessPool& procPool, int method)
 {
+	// Retrieve control parameters from Configuration
+	const int smoothing = sourceModule->variableAsInt(cfg, "Smoothing");
+
 	// Does a PartialSet already exist for this Configuration?
 	PartialRSet* partialgr = Partials::partialSet(cfg);
 	if (partialgr == NULL)
@@ -372,7 +376,7 @@ bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, in
 			j = mol->atom(b->indexJ());
 			if (cfg->useMim(i->cell(), j->cell())) distance = box->minimumDistance(i, j);
 			else distance = (i->r() - j->r()).magnitude();
-			partialgr->boundPartial(i->localTypeIndex(), j->localTypeIndex()).add(distance);
+			partialgr->boundPartial(i->localTypeIndex(smoothing), j->localTypeIndex()).add(distance);
 		}
 
 		// Angles
@@ -419,12 +423,12 @@ bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, in
 			partialgr->unboundPartial(typeI, typeJ).finalise();
 
 			// Smooth partials if requested
-// 			if (rdfSmoothing_ > 0)
-// 			{
-// 				pairRDFMatrix_.ref(typeI,typeJ).normalisedData().smooth(rdfSmoothing_*2+1);
-// 				boundRDFMatrix_.ref(typeI,typeJ).normalisedData().smooth(rdfSmoothing_*2+1);
-// 				unboundRDFMatrix_.ref(typeI,typeJ).normalisedData().smooth(rdfSmoothing_*2+1);
-// 			}
+			if (smoothing > 0)
+			{
+				partialgr->partial(typeI,typeJ).normalisedData().smooth(smoothing*2+1);
+				partialgr->boundPartial(typeI,typeJ).normalisedData().smooth(smoothing*2+1);
+				partialgr->unboundPartial(typeI,typeJ).normalisedData().smooth(smoothing*2+1);
+			}
 		}
 	}
 

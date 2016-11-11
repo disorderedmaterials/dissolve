@@ -6,8 +6,7 @@ dump.cpp
 duq.cpp
 energy.cpp
 forces.cpp
-io_configuration.cpp
-io_input.cpp
+io.cpp
 keywords_atomtypes.cpp
 keywords_configuration.cpp
 keywords.cpp

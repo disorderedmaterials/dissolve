@@ -22,6 +22,7 @@
 #include "main/duq.h"
 #include "modules/atomshake.h"
 #include "modules/energy.h"
+#include "modules/export.h"
 #include "modules/fq.h"
 #include "modules/partials.h"
 #include "base/sysfunc.h"
@@ -30,9 +31,9 @@
 bool DUQ::registerModules()
 {
 	// Manually register all modules here (annoying, but easier than trying to work out a self-initialising class that doesn't get gazumped by the linker removing all references to things we want...)
-	// modules_[Module::AnalysisModule].own(new XXX);
 	modules_.add(new AtomShake);
 	modules_.add(new Energy);
+	modules_.add(new Export);
 	modules_.add(new Partials);
 	modules_.add(new StructureFactor);
 

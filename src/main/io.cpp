@@ -32,7 +32,7 @@
 bool DUQ::loadDataFiles()
 {
 	// Get basic path for data files
-	Dnchar fileName, dataPath = getenv("DUQ_DATA");
+	Dnchar filename, dataPath = getenv("DUQ_DATA");
 	if (dataPath.isEmpty())
 	{
 		Messenger::print("Environment variable DUQ_DATA not set - using './data' as the default.\n");
@@ -41,25 +41,25 @@ bool DUQ::loadDataFiles()
 	else Messenger::print("Looking for datafiles in '%s'...\n", dataPath.get());
 	
 	// Load elements data
-	fileName.sprintf("%s/elements.dat", dataPath.get());
-	if (!periodicTable.loadElements(fileName)) return false;
+	filename.sprintf("%s/elements.dat", dataPath.get());
+	if (!periodicTable.loadElements(filename)) return false;
 	
 	// Load isotope data
-	fileName.sprintf("%s/sears91_gudrun.dat", dataPath.get());
-	if (!periodicTable.loadIsotopes(fileName)) return false;
+	filename.sprintf("%s/sears91_gudrun.dat", dataPath.get());
+	if (!periodicTable.loadIsotopes(filename)) return false;
 	
 	// Load parameter data
-	fileName.sprintf("%s/atomtypes.dat", dataPath.get());
-	if (!periodicTable.loadParameters(fileName)) return false;
+	filename.sprintf("%s/atomtypes.dat", dataPath.get());
+	if (!periodicTable.loadParameters(filename)) return false;
 	
 	return true;
 }
 
 // Load Species from specified file
-bool DUQ::loadSpecies(const char* fileName)
+bool DUQ::loadSpecies(const char* filename)
 {
 	Species* newSpecies = addSpecies();
-	if (!newSpecies->loadFromXYZ(fileName))
+	if (!newSpecies->loadFromXYZ(filename))
 	{
 		Messenger::print("Error loading from XYZ file.\n");
 		removeSpecies(newSpecies);
@@ -92,16 +92,16 @@ bool DUQ::loadSpecies(const char* fileName)
 }
 
 // Load input file
-bool DUQ::loadInput(const char* fileName)
+bool DUQ::loadInput(const char* filename)
 {
 	// Open file and check that we're OK to proceed reading from it (master only...)
 	LineParser parser;
 	if (worldPool_.isMaster())
 	{
-		parser.openInput(fileName);
+		parser.openInput(filename);
 		if (!parser.isFileGoodForReading())
 		{
-			Messenger::error("Couldn't open file '%s' for reading.\n", fileName);
+			Messenger::error("Couldn't open file '%s' for reading.\n", filename);
 			worldPool_.stop();
 			return false;
 		}
@@ -189,7 +189,7 @@ bool DUQ::loadInput(const char* fileName)
 	if (!error) Messenger::print("Finished reading input file.\n");
 
 	// Update necessary objects
-	fileName_ = fileName;
+	filename_ = filename;
 	regeneratePairPotentials();
 
 	// Error encountered?
@@ -205,23 +205,23 @@ bool DUQ::loadInput(const char* fileName)
 }
 
 // Save input file
-bool DUQ::saveInput(const char* fileName)
+bool DUQ::saveInput(const char* filename)
 {
 // 	// Open file and check that we're OK to proceed writing to it
 // 	LineParser parser;
-// 	Messenger::print("Writing input file '%s'...\n", fileName);
+// 	Messenger::print("Writing input file '%s'...\n", filename);
 // 
-// 	parser.openOutput(fileName, true);
+// 	parser.openOutput(filename, true);
 // 	if (!parser.isFileGoodForWriting())
 // 	{
-// 		Messenger::error("Couldn't open file '%s' for writing.\n", fileName);
+// 		Messenger::error("Couldn't open file '%s' for writing.\n", filename);
 // 		return false;
 // 	}
 // 	
 // 	int count;
 // 
 // 	// Write title comment
-// 	parser.writeLineF("# File: '%s'\n", fileName);
+// 	parser.writeLineF("# File: '%s'\n", filename);
 // 	
 // 	// Write AtomTypes block
 // 	parser.writeLineF("# AtomType Definitions\n");
@@ -420,20 +420,20 @@ bool DUQ::saveInput(const char* fileName)
 // 	parser.closeFiles();
 // 
 // 	// Update logpoint
-// 	fileName_ = fileName;
+// 	filename_ = filename;
 // 	Flags::clearAll();
 // 
 	return true;
 }
 
-// Return whether a fileName has been set
+// Return whether a filename has been set
 bool DUQ::hasFileName() const
 {
-	return (!fileName_.isEmpty());
+	return (!filename_.isEmpty());
 }
 
 // Return filename of current input file
-const char* DUQ::fileName() const
+const char* DUQ::filename() const
 {
-	return fileName_.get();
+	return filename_.get();
 }

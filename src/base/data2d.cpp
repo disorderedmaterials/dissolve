@@ -855,14 +855,15 @@ bool Data2D::transformSQ(double atomicDensity, Data2D::WindowFunction wf)
 	return true;
 }
 
-/*
- * \brief Fourier transform current data, applying line-width broadening in real-space using the modified Lorch function
- * \details Fourier transforms from Q to r-space, or r to Q-space, employing the modified Lorch function as described by Soper in
- * XXX TODO.
- * XXX TODO Only valid when input x_[] values are bin boundaries, not centre-bin values.
- */
+// Fourier transform current data, applying line-width broadening in real-space using the modified Lorch function
 bool Data2D::transformLorch(double atomicDensity, double step, double rMax, double beta, double delta0, bool qToR)
 {
+	/*
+	 * Fourier transforms from Q to r-space, or r to Q-space, employing the modified Lorch function as described by Soper in
+	 * XXX TODO.
+	 * XXX TODO Only valid when input x_[] values are bin boundaries, not centre-bin values.
+	 */
+
 	// Okay to continue with transform?
 	if (!checkBeforeTransform()) return false;
 
@@ -1459,14 +1460,14 @@ void Data2D::rebin(double deltaX)
  */
 
 // Load data from specified file
-bool Data2D::load(const char* fileName)
+bool Data2D::load(const char* filename)
 {
 	// Open file and check that we're OK to proceed reading from it
 	LineParser parser;
 
-	if ((!parser.openInput(fileName)) || (!parser.isFileGoodForReading()))
+	if ((!parser.openInput(filename)) || (!parser.isFileGoodForReading()))
 	{
-		Messenger::error("Couldn't open file '%s' for reading.\n", fileName);
+		Messenger::error("Couldn't open file '%s' for reading.\n", filename);
 		return false;
 	}
 
@@ -1478,7 +1479,7 @@ bool Data2D::load(const char* fileName)
 		if (success != 0)
 		{
 			parser.closeFiles();
-			Messenger::error("Error reading from file '%s'.\n", fileName);
+			Messenger::error("Error reading from file '%s'.\n", filename);
 			return false;
 		}
 
@@ -1487,23 +1488,23 @@ bool Data2D::load(const char* fileName)
 	
 	parser.closeFiles();
 	
-	if (nCols == 3) Messenger::print("Loaded %i points from file '%s' (including spline coefficients).\n", nPoints(), fileName);
-	else Messenger::print("Loaded %i points from file '%s'.\n", nPoints(), fileName);
+	if (nCols == 3) Messenger::print("Loaded %i points from file '%s' (including spline coefficients).\n", nPoints(), filename);
+	else Messenger::print("Loaded %i points from file '%s'.\n", nPoints(), filename);
 	
 	return true;
 }
 
 // Save data to specified file
-bool Data2D::save(const char* fileName) const
+bool Data2D::save(const char* filename) const
 {
 	// Open file and check that we're OK to proceed writing to it
 	LineParser parser;
-// 	Messenger::print("Writing datafile '%s'...\n", fileName);
+// 	Messenger::print("Writing datafile '%s'...\n", filename);
 
-	parser.openOutput(fileName, true);
+	parser.openOutput(filename, true);
 	if (!parser.isFileGoodForWriting())
 	{
-		Messenger::error("Couldn't open file '%s' for writing.\n", fileName);
+		Messenger::error("Couldn't open file '%s' for writing.\n", filename);
 		return false;
 	}
 	
@@ -1513,16 +1514,16 @@ bool Data2D::save(const char* fileName) const
 }
 
 // Save data and interpolation to specified file
-bool Data2D::saveWithInterpolation(const char* fileName)
+bool Data2D::saveWithInterpolation(const char* filename)
 {
 	// Open file and check that we're OK to proceed writing to it
 	LineParser parser;
-// 	Messenger::print("Writing datafile '%s'...\n", fileName);
+// 	Messenger::print("Writing datafile '%s'...\n", filename);
 
-	parser.openOutput(fileName, true);
+	parser.openOutput(filename, true);
 	if (!parser.isFileGoodForWriting())
 	{
-		Messenger::error("Couldn't open file '%s' for writing.\n", fileName);
+		Messenger::error("Couldn't open file '%s' for writing.\n", filename);
 		return false;
 	}
 	

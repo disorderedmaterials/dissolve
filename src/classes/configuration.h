@@ -72,8 +72,12 @@ class Configuration : public ListItem<Configuration>
 	bool densityIsAtomic_;
 	// Whether a random config should be generated (as opposed to loading one from a file)
 	bool randomConfiguration_;
-	// File containing initial coordinates
-	Dnchar initialCoordinatesFile_;
+	// File containing input coordinates
+	Dnchar inputCoordinatesFile_;
+	// File containing output coordinates
+	Dnchar outputCoordinatesFile_;
+	// Flag specifying to use output coordinates file as input coordinates (if it exists)
+	bool useOutputCoordinatesAsInput_;
 	// Temperature of this configuration (K)
 	double temperature_;
 
@@ -108,10 +112,18 @@ class Configuration : public ListItem<Configuration>
 	void setRandomConfiguration(bool b);
 	// Return whether a random config should be generated (as opposed to loading one from a file)
 	bool randomConfiguration();
-	// Set file containing initial coordinates
-	void setInitialCoordinatesFile(const char* fileName);
-	// Return file containing initial coordinates
-	const char* initialCoordinatesFile();
+	// Set file containing input coordinates
+	void setInputCoordinatesFile(const char* filename);
+	// Return file containing input coordinates
+	const char* inputCoordinatesFile();
+	// Set file containing output coordinates
+	void setOutputCoordinatesFile(const char* filename);
+	// Return file containing output coordinates
+	const char* outputCoordinatesFile();
+	// Set whether to use output coordinates file as input coordinates (if it exists)
+	void setUseOutputCoordinatesAsInput(bool b);
+	// Return whether to use output coordinates file as input coordinates (if it exists)
+	bool useOutputCoordinatesAsInput();
 	// Set configuration temperature
 	void setTemperature(double t);
 	// Return configuration temperature
@@ -273,7 +285,7 @@ class Configuration : public ListItem<Configuration>
 	// Update cell locations of specified atom index, and update neighbour
 	bool updateAtomInCell(int id);
 	// Set box normalisation array to load/save for this configuration
-	void setBoxNormalisationFile(const char* fileName);
+	void setBoxNormalisationFile(const char* filename);
 	// Return box normalisation file to load/save for this configuration
 	const char* boxNormalisationFileName() const;
 	// Load Box normalisation array from specified file

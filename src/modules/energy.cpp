@@ -23,7 +23,7 @@
 #include "main/duq.h"
 #include "classes/species.h"
 #include "classes/box.h"
-#include <base/sysfunc.h>
+#include "base/sysfunc.h"
 
 // Static Members
 List<Module> Energy::instances_;

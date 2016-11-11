@@ -223,7 +223,7 @@ PartialQSet* StructureFactor::partialSet(Configuration* cfg)
 }
 
 // Calculate unweighted S(Q) for the specified Configuration
-bool StructureFactor::calculateUnweighted(Configuration* cfg, StructureFactor* sourceModule, Data2D::WindowFunction windowFunction, ProcessPool& procPool)
+bool StructureFactor::calculateUnweighted(Configuration* cfg, Module* sourceModule, Data2D::WindowFunction windowFunction, ProcessPool& procPool)
 {
 	// Retrieve control parameters from Configuration
 	const double qDelta = sourceModule->variableAsDouble(cfg, "QDelta");
@@ -237,7 +237,7 @@ bool StructureFactor::calculateUnweighted(Configuration* cfg, StructureFactor* s
 	const bool normaliseToSqAv = sourceModule->variableAsBool(cfg, "NormaliseToSqAv");
 
 	// Ensure that partials are up-to-date for the Configuration, and grab the PartialSet
-	Partials::calculateUnweighted(cfg, procPool);
+	Partials::calculateUnweighted(cfg, this, procPool);
 	PartialRSet* partialRDFs = Partials::partialSet(cfg);
 
 	// Create / grab PartialSet for structure factors

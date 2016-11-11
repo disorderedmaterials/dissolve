@@ -223,11 +223,11 @@ class Data2D : public ListItem<Data2D>
 	 */
 	public:
 	// Load data from specified file
-	bool load(const char* fileName);
+	bool load(const char* filename);
 	// Save data to specified file
-	bool save(const char* fileName) const;
+	bool save(const char* filename) const;
 	// Save data and interpolation to specified file
-	bool saveWithInterpolation(const char* fileName);
+	bool saveWithInterpolation(const char* filename);
 	// Dump contents
 	void dump();
 

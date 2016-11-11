@@ -65,7 +65,6 @@ bool DUQ::go()
 	 * Start of Main Loop
 	 */
 	bool keepGoing = true;
-
 	do
 	{
 		// Increase iteration counter
@@ -79,9 +78,6 @@ bool DUQ::go()
 		/*
 		 *  0)	Print schedule of tasks to run
 		 */
-		Messenger::print("Schedule for Iteration %10i\n", iteration_);
-		Messenger::print("-----------------------------------------------\n");
-
 		Messenger::print("--> Pre-Processing\n");
 		if (preProcessingTasks_.nItems() == 0) Messenger::print("  (( No Tasks ))\n");
 		RefListIterator<Module,bool> preIterator(preProcessingTasks_);
@@ -161,6 +157,7 @@ bool DUQ::go()
 			{
 				if (!module->runThisIteration(iteration_)) continue;
 
+				Messenger::print("\n");
 				result = module->process(*this, cfg->processPool());
 
 				if (!result) break;

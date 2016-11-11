@@ -25,28 +25,28 @@
 #include <string.h>
 
 // Load Species from file
-bool Species::load(const char* fileName)
+bool Species::load(const char* filename)
 {
-	// Grab extension from fileName
-	Dnchar ext = DUQSys::lowerCase(DUQSys::afterLastChar(fileName, '.'));
+	// Grab extension from filename
+	Dnchar ext = DUQSys::lowerCase(DUQSys::afterLastChar(filename, '.'));
 
-	if (ext == "xyz") return loadFromXYZ(fileName);
-	else Messenger::print("Can't load - unknown extension for file '%s'.\n", fileName);
+	if (ext == "xyz") return loadFromXYZ(filename);
+	else Messenger::print("Can't load - unknown extension for file '%s'.\n", filename);
 
 	return false;
 }
 
 // Load Species information from XYZ file
-bool Species::loadFromXYZ(const char* fileName)
+bool Species::loadFromXYZ(const char* filename)
 {
-	Messenger::print("Loading XYZ data from file '%s'\n", fileName);
+	Messenger::print("Loading XYZ data from file '%s'\n", filename);
 	
 	// Open the specified file...
 	LineParser parser;
-	parser.openInput(fileName);
+	parser.openInput(filename);
 	if (!parser.isFileGoodForReading())
 	{
-		Messenger::error("Couldn't open XYZ file '%s'.\n", fileName);
+		Messenger::error("Couldn't open XYZ file '%s'.\n", filename);
 		return false;
 	}
 
@@ -65,7 +65,7 @@ bool Species::loadFromXYZ(const char* fileName)
 		if (success != 0)
 		{
 			parser.closeFiles();
-			Messenger::error("Couldn't read Atom %i from file '%s'\n", n+1, fileName);
+			Messenger::error("Couldn't read Atom %i from file '%s'\n", n+1, filename);
 			return false;
 		}
 		el = PeriodicTable::find(parser.argc(0));
@@ -74,7 +74,7 @@ bool Species::loadFromXYZ(const char* fileName)
 		if (parser.hasArg(4)) i->setCharge(parser.argd(4));
 	}
 
-	Messenger::print("Succesfully loaded XYZ data from file '%s'.\n", fileName);
+	Messenger::print("Succesfully loaded XYZ data from file '%s'.\n", filename);
 	parser.closeFiles();
 	return true;
 }

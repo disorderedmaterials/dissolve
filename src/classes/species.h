@@ -229,9 +229,9 @@ class Species : public ListItem<Species>
 	 */
 	public:
 	// Load Species information from XYZ file
-	bool loadFromXYZ(const char* fileName);
+	bool loadFromXYZ(const char* filename);
 	// Load Species from file
-	bool load(const char* fileName);
+	bool load(const char* filename);
 
 
 	/*

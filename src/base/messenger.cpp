@@ -128,12 +128,12 @@ void Messenger::warn(const char* fmt, ...)
  */
 
 // Enable redirection of all messaging to specified file
-bool Messenger::enableRedirect(const char* fileName)
+bool Messenger::enableRedirect(const char* filename)
 {
-	parser_.openOutput(fileName, true);
+	parser_.openOutput(filename, true);
 	if (!parser_.isFileGoodForWriting())
 	{
-		Messenger::print("Couldn't open output file '%s' for writing.\n", fileName);
+		Messenger::print("Couldn't open output file '%s' for writing.\n", filename);
 		return false;
 	}
 	

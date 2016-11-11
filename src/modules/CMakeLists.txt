@@ -5,6 +5,7 @@ module.h
 
 atomshake.cpp
 energy.cpp
+export.cpp
 fq.cpp
 partials.cpp
 #forces.cpp
@@ -15,6 +16,7 @@ partials.cpp
 
 atomshake.h
 energy.h
+export.h
 fq.h
 partials.h
 #forces.h

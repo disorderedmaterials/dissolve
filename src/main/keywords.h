@@ -103,16 +103,16 @@ class Keywords
 		CellLengthsKeyword,		/* 'CellLengths' - Gives the relative lengths of the unit cell */
 		DensityKeyword,			/* 'Density' - Specifies the density of the simulation, along with its units */
 		EndConfigurationKeyword,	/* 'EndConfiguration' - Signals the end of the Configuration block */
-		FileModelKeyword,		/* 'File' - Specifies the file which contains the starting/current coordinates */
+		InputCoordinatesKeyword,	/* 'InputCoordinates' - Specifies the file which contains the starting coordinates */
 		ModuleAddKeyword,		/* 'Module' - Starts the setup of a Module for this configuration */
-		MultiplierKeyword,		/* 'Multiplier' - Specifies the factor by which relative populations are multiplied when generating the Model */
+		MultiplierKeyword,		/* 'Multiplier' - Specifies the factor by which relative populations are multiplied when generating the Configuration data */
 		NonPeriodicKeyword,		/* 'NonPeriodic' - States that the simulation should be treated as non-periodic */
+		OutputCoordinatesKeyword,	/* 'OutputCoordinates' - Specifies the file which should contain output coordinates */
 		RDFBinWidthKeyword,		/* 'RDFBinWidth' - Specified bin width for all RDF generation */
 		RDFRangeKeyword,		/* 'RDFRange' - Requested extent for RDF (and subsequent S(Q)) calculation */
-		RDFSmoothingKeyword,		/* 'RDFSmoothing' - Specifies the degree of smoothing 'n' to apply to calculated RDFs, where 2n+1 controls the length in the applied Spline smooth */
-		RMSEDeltaQKeyword,		/* 'RMSEDeltaQ' - Controls bin width used in Sample/reference data RMSE calculation */
 		SpeciesAddKeyword,		/* 'Species' - Specifies a Species and its relative population to add to this Configuration */
 		TemperatureKeyword,		/* 'Temperature' - Defines the temperature of the simulation */
+		UseOutputAsInputKeyword,	/* 'UseOutputAsInput' - "Use output coordinates file as input (if it exists) */
 		nConfigurationKeywords		/* Number of keywords defined for this block */
 	};
 	// Convert text string to ConfigurationKeyword

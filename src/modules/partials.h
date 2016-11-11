@@ -114,7 +114,7 @@ class Partials : public Module
 	// Add or return new PartialSet for specified Configuration
 	static PartialRSet* partialSet(Configuration* cfg);
 	// (Re)calculate unweighted partials for the specified Configuration
-	static bool calculateUnweighted(Configuration* cfg, ProcessPool& procPool, int method = 0);
+	static bool calculateUnweighted(Configuration* cfg, Module* sourceModule, ProcessPool& procPool, int method = 0);
 };
 
 #endif

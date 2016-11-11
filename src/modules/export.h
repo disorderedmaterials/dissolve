@@ -1,6 +1,6 @@
 /*
-	*** Structure Factor Module
-	*** src/modules/fq.h
+	*** Export Module
+	*** src/modules/export.h
 	Copyright T. Youngs 2012-2016
 
 	This file is part of dUQ.
@@ -19,28 +19,26 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_STRUCTUREFACTOR_H
-#define DUQ_STRUCTUREFACTOR_H
+#ifndef DUQ_EXPORTMODULE_H
+#define DUQ_EXPORTMODULE_H
 
 #include "modules/module.h"
-#include "classes/partialqset.h"
 
 // Forward Declarations
 /* none */
 
-// Structure Factor Module
-class StructureFactor : public Module
+// Export Module
+class Export : public Module
 {
 	/*
-	 * Calculates partial and full structure factors for the Sample or Configuration in which the Module is placed.
-	 * Partial RDFs according to atomtype isotopes are constructed, and combined into total F(Q).
+	 * Calculates the total energy of the system by one of several methods
 	 */
 
 	public:
 	// Constructor
-	StructureFactor();
+	Export();
 	// Destructor
-	~StructureFactor();
+	~Export();
 
 
 	/*
@@ -100,17 +98,13 @@ class StructureFactor : public Module
 
 
 	/*
-	 * Static Members / Functions
+	 * Static Functions
 	 */
-	private:
-	// List of S(Q) PartialSets for specific Configuration
-	static List<PartialQSet> partialSets_;
-
 	public:
-	// Add or return new PartialSet for specified Configuration
-	static PartialQSet* partialSet(Configuration* cfg);
-	// Calculate unweighted S(Q) for the specified Configuration
-	static bool calculateUnweighted(Configuration* cfg, Module* sourceModule, Data2D::WindowFunction windowFunction, ProcessPool& procPool);
+	// Write Configuration as XYZ
+	static bool writeConfigurationXYZ(LineParser& parser, Configuration* cfg, const char* header);
+	// Write Configuration as DL_POLY CONFIG
+	static bool writeConfigurationDLPOLY(LineParser& parser, Configuration* cfg, const char* header);
 };
 
 #endif

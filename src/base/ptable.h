@@ -54,11 +54,11 @@ class PeriodicTable
 	
 	public:
 	// Load basic element information from file specified
-	static bool loadElements(const char* fileName);
+	static bool loadElements(const char* filename);
 	// Load Isotope information from file specified
-	static bool loadIsotopes(const char* fileName);
+	static bool loadIsotopes(const char* filename);
 	// Load Parameters from file specified
-	static bool loadParameters(const char* fileName);
+	static bool loadParameters(const char* filename);
 	// Return atomic number of element in string
 	static int find(const char* query);
 	// Return number of defined elements

@@ -27,22 +27,22 @@
 
 // Configuration Block Keywords
 KeywordData ConfigurationBlockData[] = {
-	{ "BoxNormalisationFile", 	1,	"" },
-	{ "BraggMaximumQ",		1,	"" },
-	{ "CellAngles", 		3,	"" },
-	{ "CellLengths",		3,	"" },
-	{ "Density",			1,	"" },
-	{ "EndConfiguration",		0,	"" },
-	{ "File",			1,	"" },
-	{ "Module",			1,	"" },
-	{ "Multiplier",			1,	"" },
-	{ "NonPeriodic",		0,	"" },
-	{ "RDFBinWidth",		1,	"" },
-	{ "RDFRange",			1,	"" },
-	{ "RDFSmoothing",		1,	"" },
-	{ "RMSEDeltaQ",			1,	"" },
-	{ "Species",			2,	"" },
-	{ "Temperature",		1,	"" }
+	{ "BoxNormalisationFile", 	1,	"Specifies a file from which to load the RDF normalisation array" },
+	{ "BraggMaximumQ",		1,	"Sets the maximum Q value for Bragg calculation" },
+	{ "CellAngles", 		3,	"Gives the angles of the unit cell" },
+	{ "CellLengths",		3,	"Gives the relative lengths of the unit cell" },
+	{ "Density",			2,	"Specifies the density of the Configuration, along with its units" },
+	{ "EndConfiguration",		0,	"Signals the end of the Configuration block" },
+	{ "InputCoordinates",		1,	"Specifies the file which contains the starting coordinates" },
+	{ "Module",			1,	"Starts the setup of a Module for this configuration" },
+	{ "Multiplier",			1,	"Specifies the factor by which relative populations are multiplied when generating the Configuration data" },
+	{ "NonPeriodic",		0,	"States that the simulation should be treated as non-periodic" },
+	{ "OutputCoordinates",		1,	"Specifies the file which should contain output coordinates" },
+	{ "RDFBinWidth",		1,	"Specified bin width for all radial distribution functions" },
+	{ "RDFRange",			1,	"Requested extent for calculated radial distribution functions" },
+	{ "Species",			2,	"Specifies a Species and its relative population to add to this Configuration" },
+	{ "Temperature",		1,	"Defines the temperature of the Configuration" },
+	{ "UseOutputAsInput",		0,	"Use output coordinates file as input (if it exists)" }
 };
 
 // Convert text string to ConfigurationKeyword
@@ -113,8 +113,8 @@ bool Keywords::parseConfigurationBlock(LineParser& parser, DUQ* duq, Configurati
 				Messenger::print("Found end of %s block.\n", Keywords::inputBlock(Keywords::ConfigurationBlock));
 				blockDone = true;
 				break;
-			case (Keywords::FileModelKeyword):
-				cfg->setInitialCoordinatesFile(parser.argc(1));
+			case (Keywords::InputCoordinatesKeyword):
+				cfg->setInputCoordinatesFile(parser.argc(1));
 				cfg->setRandomConfiguration(false);
 				Messenger::print("--> Initial coordinates will be loaded from file '%s'\n", parser.argc(1));
 				break;
@@ -142,20 +142,21 @@ bool Keywords::parseConfigurationBlock(LineParser& parser, DUQ* duq, Configurati
 				break;
 			case (Keywords::MultiplierKeyword):
 				cfg->setMultiplier(parser.argd(1));
-				Messenger::print("--> Set configuration contents multiplier to %i\n", cfg->multiplier());
+				Messenger::print("--> Set Configuration contents multiplier to %i\n", cfg->multiplier());
 				break;
 			case (Keywords::NonPeriodicKeyword):
 				cfg->setNonPeriodic(true);
 				Messenger::print("--> Flag set for a non-periodic calculation.\n");
+				break;
+			case (Keywords::OutputCoordinatesKeyword):
+				cfg->setOutputCoordinatesFile(parser.argc(1));
+				Messenger::print("--> Output coordinates will be save to file '%s'\n", parser.argc(1));
 				break;
 			case (Keywords::RDFBinWidthKeyword):
 				cfg->setRDFBinWidth(parser.argd(1));
 				break;
 			case (Keywords::RDFRangeKeyword):
 				cfg->setRequestedRDFRange(parser.argd(1));
-				break;
-			case (Keywords::RDFSmoothingKeyword):
-				cfg->setRDFSmoothing(parser.argi(1));
 				break;
 			case (Keywords::SpeciesAddKeyword):
 				sp = duq->findSpecies(parser.argc(1));
@@ -177,6 +178,9 @@ bool Keywords::parseConfigurationBlock(LineParser& parser, DUQ* duq, Configurati
 				break;
 			case (Keywords::TemperatureKeyword):
 				cfg->setTemperature(parser.argd(1));
+				break;
+			case (Keywords::UseOutputAsInputKeyword):
+				cfg->setUseOutputCoordinatesAsInput(true);
 				break;
 			case (Keywords::nConfigurationKeywords):
 				Messenger::error("Unrecognised %s block keyword found - '%s'\n", Keywords::inputBlock(Keywords::ConfigurationBlock), parser.argc(0));

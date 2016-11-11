@@ -104,7 +104,7 @@ class Sample : public ListItem<Sample>
 	// Return whether reference data exists
 	bool hasReferenceData();
 	// Load reference data
-	bool loadReferenceData(const char* fileName);
+	bool loadReferenceData(const char* filename);
 	// Return reference data filename (if any)
 	Dnchar& referenceDataFileName();
 	// Return reference data

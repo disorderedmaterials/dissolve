@@ -490,16 +490,16 @@ Data2D& PairPotential::v()
  */
 
 // Save PairPotential data to specified file
-bool PairPotential::save(const char* fileName)
+bool PairPotential::save(const char* filename)
 {
 	// Open file and check that we're OK to proceed writing to it
 	LineParser parser;
-	Messenger::print("Writing PairPotential file '%s'...\n", fileName);
+	Messenger::print("Writing PairPotential file '%s'...\n", filename);
 
-	parser.openOutput(fileName, true);
+	parser.openOutput(filename, true);
 	if (!parser.isFileGoodForWriting())
 	{
-		Messenger::error("Couldn't open file '%s' for writing.\n", fileName);
+		Messenger::error("Couldn't open file '%s' for writing.\n", filename);
 		return false;
 	}
 	

@@ -66,7 +66,9 @@ Configuration  'Bulk'
 
   # Define initial coordinates file
   # If no file is specified a random configuration will be generated
-  # File '/home/tris/work/water/epsr/waterbox.xyz'
+  # InputCoordinates '/home/tris/work/water/epsr/waterbox.xyz'
+  OutputCoordinates 'Bulk.xyz'
+  UseOutputAsInput
 
   # Enable modules and set associated variables
   Module AtomShake
@@ -84,6 +86,9 @@ Configuration  'Bulk'
   Module StructureFactor
     Frequency 5
   ENDMODULE
+  Module Export
+    OutputCoordinates On
+  EndModule
 EndConfiguration
 
 # Pair Potentials

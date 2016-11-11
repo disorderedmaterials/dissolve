@@ -62,13 +62,13 @@ void PeriodicTable::clear()
  */
 
 // Load basic element information from file specified
-bool PeriodicTable::loadElements(const char* fileName)
+bool PeriodicTable::loadElements(const char* filename)
 {
-	Messenger::print("Loading elements from file '%s'\n", fileName);
+	Messenger::print("Loading elements from file '%s'\n", filename);
 	
 	// Open the specified file...
 	LineParser parser;
-	parser.openInput(fileName);
+	parser.openInput(filename);
 	if (!parser.isFileGoodForReading())
 	{
 		Messenger::error("Couldn't open elements file.\n");
@@ -105,13 +105,13 @@ bool PeriodicTable::loadElements(const char* fileName)
 }
 
 // Load isotope information from file specified
-bool PeriodicTable::loadIsotopes(const char* fileName)
+bool PeriodicTable::loadIsotopes(const char* filename)
 {
-	Messenger::print("Loading isotopes from file '%s'\n", fileName);
+	Messenger::print("Loading isotopes from file '%s'\n", filename);
 	
 	// Open the specified file...
 	LineParser parser;
-	parser.openInput(fileName);
+	parser.openInput(filename);
 	if (!parser.isFileGoodForReading())
 	{
 		Messenger::error("Couldn't open isotopes file.\n");
@@ -216,13 +216,13 @@ bool PeriodicTable::loadIsotopes(const char* fileName)
 }
 
 // Load atomtype information from file specified
-bool PeriodicTable::loadParameters(const char* fileName)
+bool PeriodicTable::loadParameters(const char* filename)
 {
-	Messenger::print("Loading atomtypes from file '%s'\n", fileName);
+	Messenger::print("Loading atomtypes from file '%s'\n", filename);
 	
 	// Open the specified file...
 	LineParser parser;
-	parser.openInput(fileName);
+	parser.openInput(filename);
 	if (!parser.isFileGoodForReading())
 	{
 		Messenger::print("Couldn't open atomtypes file.\n");

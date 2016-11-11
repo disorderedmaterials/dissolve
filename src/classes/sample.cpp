@@ -249,24 +249,24 @@ bool Sample::hasReferenceData()
 }
 
 // Load reference F(Q) data
-bool Sample::loadReferenceData(const char* fileName)
+bool Sample::loadReferenceData(const char* filename)
 {
 	// Check that the specified file actually exists...
-	if (!DUQSys::fileExists(fileName))
+	if (!DUQSys::fileExists(filename))
 	{
-		Messenger::error("Sample reference data '%s' not found.\n", fileName);
+		Messenger::error("Sample reference data '%s' not found.\n", filename);
 		return false;
 	}
 
-	referenceDataFileName_ = fileName;
+	referenceDataFileName_ = filename;
 	referenceData_.clear();
 
 	// Open file first...
 	LineParser parser;
-	parser.openInput(fileName);
+	parser.openInput(filename);
 	if (!parser.isFileGoodForReading())
 	{
-		Messenger::error("Couldn't open datafile '%s'.\n", fileName);
+		Messenger::error("Couldn't open datafile '%s'.\n", filename);
 		return false;
 	}
 

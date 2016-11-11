@@ -178,7 +178,7 @@ class PairPotential : public ListItem<PairPotential>
 	 */
 	public:
 	// Save PairPotential data to specified file
-	bool save(const char* fileName);
+	bool save(const char* filename);
 
 
 	/*

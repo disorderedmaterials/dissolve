@@ -689,9 +689,9 @@ bool Configuration::updateAtomInCell(int id)
 }
 
 // Set box normalisation array to load/save for this configuration
-void Configuration::setBoxNormalisationFile(const char* fileName)
+void Configuration::setBoxNormalisationFile(const char* filename)
 {
-	boxNormalisationFileName_ = fileName;
+	boxNormalisationFileName_ = filename;
 }
 
 // Return box normalisation file to load/save for this configuration

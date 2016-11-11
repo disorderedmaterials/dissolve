@@ -24,6 +24,7 @@
 #include "classes/species.h"
 #include "classes/atomtype.h"
 #include "classes/box.h"
+#include "base/sysfunc.h"
 
 // Dump full system setup
 void DUQ::dumpSystemSetup(bool includeData)
@@ -128,6 +129,9 @@ void DUQ::dumpSystemSetup(bool includeData)
 		Messenger::print("  %s  %f  %f  %f\n", Keywords::configurationKeyword(Keywords::CellLengthsKeyword), cfg->relativeBoxLengths().x, cfg->relativeBoxLengths().y, cfg->relativeBoxLengths().z);
 		Messenger::print("  %s  %f  %f  %f\n", Keywords::configurationKeyword(Keywords::CellAnglesKeyword), cfg->boxAngles().x, cfg->boxAngles().y, cfg->boxAngles().z);
 		if (cfg->nonPeriodic()) Messenger::print("  %s\n", Keywords::configurationKeyword(Keywords::NonPeriodicKeyword));
+		if (!DUQSys::isEmpty(cfg->inputCoordinatesFile())) Messenger::print("  %s  '%s'\n", Keywords::configurationKeyword(Keywords::InputCoordinatesKeyword), cfg->inputCoordinatesFile());
+		if (!DUQSys::isEmpty(cfg->outputCoordinatesFile())) Messenger::print("  %s  '%s'\n", Keywords::configurationKeyword(Keywords::OutputCoordinatesKeyword), cfg->outputCoordinatesFile());
+		if (cfg->useOutputCoordinatesAsInput()) Messenger::print("  %s  '%s'\n", Keywords::configurationKeyword(Keywords::UseOutputAsInputKeyword), DUQSys::btoa(true));
 
 		// Species
 		Messenger::print("\n  # Species\n");
@@ -160,7 +164,6 @@ void DUQ::dumpSystemSetup(bool includeData)
 		Messenger::print("  %s  %f\n", Keywords::configurationKeyword(Keywords::BraggMaximumQKeyword), cfg->braggMaximumQ());
 		Messenger::print("  %s  %f\n", Keywords::configurationKeyword(Keywords::RDFBinWidthKeyword), cfg->rdfBinWidth());
 		Messenger::print("  %s  %f\n", Keywords::configurationKeyword(Keywords::RDFRangeKeyword), cfg->rdfRange());
-		Messenger::print("  %s  %i\n", Keywords::configurationKeyword(Keywords::RDFSmoothingKeyword), cfg->rdfSmoothing());
 		Messenger::print("  %s  %f\n", Keywords::configurationKeyword(Keywords::TemperatureKeyword), cfg->temperature());
 
 		Messenger::print("%s\n\n", Keywords::configurationKeyword(Keywords::EndConfigurationKeyword));

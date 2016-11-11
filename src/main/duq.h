@@ -308,35 +308,25 @@ class DUQ
 
 
 	/*
-	 * Input File I/O
+	 * I/O
 	 */
 	private:
 	// Filename of current input file
-	Dnchar fileName_;
+	Dnchar filename_;
 
 	public:
 	// Load datafiles
 	bool loadDataFiles();
 	// Load Species from specified file
-	bool loadSpecies(const char* fileName);
+	bool loadSpecies(const char* filename);
 	// Load input file
-	bool loadInput(const char* fileName);
+	bool loadInput(const char* filename);
 	// Save input file
-	bool saveInput(const char* fileName);
-	// Return whether a fileName has been set
+	bool saveInput(const char* filename);
+	// Return whether a filename has been set
 	bool hasFileName() const;
 	// Return filename of current input file
-	const char* fileName() const;
-
-
-	/*
-	 * Configuration File I/O
-	 */
-	public:
-	// Save Configuration as XYZ
-	bool saveConfigurationXYZ(Configuration& cfg, const char* fileName);
-	// Save Configuration as DL_POLY CONFIG
-	bool saveConfigurationDLPOLY(Configuration& cfg, const char* fileName);
+	const char* filename() const;
 
 
 	/*

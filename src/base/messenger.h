@@ -77,7 +77,7 @@ class Messenger
 	
 	public:
 	// Enable redirection of all messaging to specified file
-	static bool enableRedirect(const char* fileName);
+	static bool enableRedirect(const char* filename);
 };
 
 #endif
