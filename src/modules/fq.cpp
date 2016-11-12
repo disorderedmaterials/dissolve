@@ -116,6 +116,12 @@ bool StructureFactor::hasPostProcessing()
 	return false;
 }
 
+// Modules upon which this Module depends to have run first
+const char* StructureFactor::dependentModules()
+{
+	return "Partials";
+}
+
 /*
  * Targets
  */
@@ -190,7 +196,7 @@ bool StructureFactor::process(DUQ& duq, ProcessPool& procPool)
 			if (braggOn) Messenger::print("StructureFactor: Q-dependent FWHM Bragg broadening to use is %f, Q-independent FWHM Bragg broadening to use is %f.\n", braggQDepBroadening, braggQIndepBroadening);
 
 			// Calculate structure factors for this Configuration
-			StructureFactor::calculateUnweighted(cfg, this, duq.windowFunction(), procPool);
+			calculateUnweighted(cfg, duq.windowFunction(), procPool);
 
 			// Save data?
 			if (saveData)
@@ -223,21 +229,29 @@ PartialQSet* StructureFactor::partialSet(Configuration* cfg)
 }
 
 // Calculate unweighted S(Q) for the specified Configuration
-bool StructureFactor::calculateUnweighted(Configuration* cfg, Module* sourceModule, Data2D::WindowFunction windowFunction, ProcessPool& procPool)
+bool StructureFactor::calculateUnweighted(Configuration* cfg, Data2D::WindowFunction windowFunction, ProcessPool& procPool)
 {
 	// Retrieve control parameters from Configuration
-	const double qDelta = sourceModule->variableAsDouble(cfg, "QDelta");
-	const double qMax = sourceModule->variableAsDouble(cfg, "QMax") < 0.0 ? 30.0 : sourceModule->variableAsDouble(cfg, "QMax");
-	const bool braggOn = sourceModule->variableAsBool(cfg, "Bragg");
-	const double braggQDepBroadening = sourceModule->variableAsDouble(cfg, "BraggQDepBroadening");
-	const double braggQIndepBroadening = sourceModule->variableAsDouble(cfg, "BraggQIndepBroadening");
-	const double qDepBroadening = sourceModule->variableAsDouble(cfg, "QDepBroadening");
-	const double qIndepBroadening = sourceModule->variableAsDouble(cfg, "QIndepBroadening");
-	const bool normaliseToAvSq = sourceModule->variableAsBool(cfg, "NormaliseToAvSq");
-	const bool normaliseToSqAv = sourceModule->variableAsBool(cfg, "NormaliseToSqAv");
+	const double qDelta = variableAsDouble(cfg, "QDelta");
+	const double qMax = variableAsDouble(cfg, "QMax") < 0.0 ? 30.0 : variableAsDouble(cfg, "QMax");
+	const bool braggOn = variableAsBool(cfg, "Bragg");
+	const double braggQDepBroadening = variableAsDouble(cfg, "BraggQDepBroadening");
+	const double braggQIndepBroadening = variableAsDouble(cfg, "BraggQIndepBroadening");
+	const double qDepBroadening = variableAsDouble(cfg, "QDepBroadening");
+	const double qIndepBroadening = variableAsDouble(cfg, "QIndepBroadening");
+	const bool normaliseToAvSq = variableAsBool(cfg, "NormaliseToAvSq");
+	const bool normaliseToSqAv = variableAsBool(cfg, "NormaliseToSqAv");
+
+	// Get the associated Partials module pointer so we can utilise it
+	Partials* partialsModule = (Partials*) dependentModule("Partials");
+	if (!partialsModule)
+	{
+		Messenger::error("No Partials module was associated to this instance of StructureFactor.\n");
+		return false;
+	}
 
 	// Ensure that partials are up-to-date for the Configuration, and grab the PartialSet
-	Partials::calculateUnweighted(cfg, this, procPool);
+	partialsModule->calculateUnweighted(cfg, procPool);
 	PartialRSet* partialRDFs = Partials::partialSet(cfg);
 
 	// Create / grab PartialSet for structure factors

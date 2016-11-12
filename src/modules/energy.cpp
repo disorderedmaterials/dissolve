@@ -107,6 +107,12 @@ bool Energy::hasPostProcessing()
 	return false;
 }
 
+// Modules upon which this Module depends to have run first
+const char* Energy::dependentModules()
+{
+	return "";
+}
+
 /*
  * Targets
  */

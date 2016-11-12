@@ -64,6 +64,8 @@ class Module : public ListItem<Module>
 	protected:
 	// Unique name of Module
 	Dnchar uniqueName_;
+	// RefList of dependent Modules
+	RefList<Module,bool> dependentModules_;
 
 	public:
 	// Return name of Module
@@ -80,6 +82,10 @@ class Module : public ListItem<Module>
 	virtual bool hasProcessing() = 0;
 	// Whether the Module has a post-processing stage
 	virtual bool hasPostProcessing() = 0;
+	// Return pointer for specified dependent Module
+	Module* dependentModule(const char* name);
+	// Modules upon which this Module depends to have run first
+	virtual const char* dependentModules() = 0;
 
 
 	/*

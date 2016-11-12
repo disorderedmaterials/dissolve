@@ -105,6 +105,12 @@ bool Partials::hasPostProcessing()
 	return false;
 }
 
+// Modules upon which this Module depends to have run first
+const char* Partials::dependentModules()
+{
+	return "";
+}
+
 /*
  * Targets
  */
@@ -165,7 +171,7 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 			// Print argument/parameter summary
 			Messenger::print("Partials: Save data is %s.\n", DUQSys::onOff(saveData));
 
-			Partials::calculateUnweighted(cfg, procPool);
+			calculateUnweighted(cfg, procPool);
 
 			// Save data?
 			if (saveData)
@@ -309,10 +315,10 @@ PartialRSet* Partials::partialSet(Configuration* cfg)
 }
 
 // Calculate unweighted partials for the specified Configuration
-bool Partials::calculateUnweighted(Configuration* cfg, Module* sourceModule, ProcessPool& procPool, int method)
+bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, int method)
 {
 	// Retrieve control parameters from Configuration
-	const int smoothing = sourceModule->variableAsInt(cfg, "Smoothing");
+	const int smoothing = variableAsInt(cfg, "Smoothing");
 
 	// Does a PartialSet already exist for this Configuration?
 	PartialRSet* partialgr = Partials::partialSet(cfg);
@@ -376,7 +382,7 @@ bool Partials::calculateUnweighted(Configuration* cfg, Module* sourceModule, Pro
 			j = mol->atom(b->indexJ());
 			if (cfg->useMim(i->cell(), j->cell())) distance = box->minimumDistance(i, j);
 			else distance = (i->r() - j->r()).magnitude();
-			partialgr->boundPartial(i->localTypeIndex(smoothing), j->localTypeIndex()).add(distance);
+			partialgr->boundPartial(i->localTypeIndex(), j->localTypeIndex()).add(distance);
 		}
 
 		// Angles

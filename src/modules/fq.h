@@ -73,6 +73,8 @@ class StructureFactor : public Module
 	bool hasProcessing();
 	// Whether the Module has a post-processing stage
 	bool hasPostProcessing();
+	// Modules upon which this Module depends to have run first
+	const char* dependentModules();
 
 
 	/*
@@ -110,7 +112,7 @@ class StructureFactor : public Module
 	// Add or return new PartialSet for specified Configuration
 	static PartialQSet* partialSet(Configuration* cfg);
 	// Calculate unweighted S(Q) for the specified Configuration
-	static bool calculateUnweighted(Configuration* cfg, Module* sourceModule, Data2D::WindowFunction windowFunction, ProcessPool& procPool);
+	bool calculateUnweighted(Configuration* cfg, Data2D::WindowFunction windowFunction, ProcessPool& procPool);
 };
 
 #endif

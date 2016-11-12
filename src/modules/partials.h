@@ -73,6 +73,8 @@ class Partials : public Module
 	bool hasProcessing();
 	// Whether the Module has a post-processing stage
 	bool hasPostProcessing();
+	// Modules upon which this Module depends to have run first
+	const char* dependentModules();
 
 
 	/*
@@ -100,7 +102,7 @@ class Partials : public Module
 
 
 	/*
-	 * Static Members / Functions
+	 * Members / Functions
 	 */
 	private:
 	// List of RDF PartialSets for specific Configuration
@@ -114,7 +116,7 @@ class Partials : public Module
 	// Add or return new PartialSet for specified Configuration
 	static PartialRSet* partialSet(Configuration* cfg);
 	// (Re)calculate unweighted partials for the specified Configuration
-	static bool calculateUnweighted(Configuration* cfg, Module* sourceModule, ProcessPool& procPool, int method = 0);
+	bool calculateUnweighted(Configuration* cfg, ProcessPool& procPool, int method = 0);
 };
 
 #endif

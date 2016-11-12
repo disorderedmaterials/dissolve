@@ -21,6 +21,7 @@
 
 #include "modules/module.h"
 #include "classes/configuration.h"
+#include <base/sysfunc.h>
 
 // Constructor
 Module::Module()
@@ -52,6 +53,15 @@ void Module::deleteInstances()
 const char* Module::uniqueName()
 {
 	return uniqueName_.get();
+}
+
+// Return pointer for specified dependent Module
+Module* Module::dependentModule(const char* name)
+{
+	RefListIterator<Module,bool> iterator(dependentModules_);
+	while (Module* module = iterator.iterate()) if (DUQSys::sameString(name, module->name())) return module;
+
+	return NULL;
 }
 
 /*

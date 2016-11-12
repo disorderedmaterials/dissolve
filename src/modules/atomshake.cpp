@@ -111,6 +111,12 @@ bool AtomShake::hasPostProcessing()
 	return false;
 }
 
+// Modules upon which this Module depends to have run first
+const char* AtomShake::dependentModules()
+{
+	return "";
+}
+
 /*
  * Targets
  */

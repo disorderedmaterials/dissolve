@@ -71,6 +71,8 @@ class AtomShake : public Module
 	bool hasProcessing();
 	// Whether the Module has a post-processing stage
 	bool hasPostProcessing();
+	// Modules upon which this Module depends to have run first
+	const char* dependentModules();
 
 
 	/*
