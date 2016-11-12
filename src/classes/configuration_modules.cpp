@@ -71,7 +71,7 @@ int Configuration::nModules()
 	return modules_.nItems();
 }
 
-// Return list of defined Modules
+// Return Modules associated to Configuration
 RefList<Module,bool>& Configuration::modules()
 {
 	return modules_;

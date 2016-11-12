@@ -55,6 +55,12 @@ const char* Module::uniqueName()
 	return uniqueName_.get();
 }
 
+// Add dependent Module to this Module
+void Module::addDependentModule(Module* module)
+{
+	dependentModules_.add(module);
+}
+
 // Return pointer for specified dependent Module
 Module* Module::dependentModule(const char* name)
 {

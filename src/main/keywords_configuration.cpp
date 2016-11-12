@@ -23,7 +23,7 @@
 #include "main/duq.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
-#include <string.h>
+#include "base/sysfunc.h"
 
 // Configuration Block Keywords
 KeywordData ConfigurationBlockData[] = {
@@ -136,6 +136,41 @@ bool Keywords::parseConfigurationBlock(LineParser& parser, DUQ* duq, Configurati
 					error = true;
 					break;
 				}
+				else
+				{
+					// Check dependencies of the new Module - loop over dependent Module names
+					LineParser moduleParser;
+					moduleParser.getArgsDelim(LineParser::Defaults, module->dependentModules());
+					for (int n=0; n<moduleParser.nArgs(); ++n)
+					{
+						// First, make sure this is an actual Module name
+						Module* dependentModule = duq->findModule(moduleParser.argc(n));
+						if (!dependentModule)
+						{
+							Messenger::error("Module lists a dependent module '%s', but this Module doesn't exist.\n", moduleParser.argc(n));
+							error = true;
+							break;
+						}
+
+						// Find dependentModule in the previously-defined list of Modules for this Configuration
+						Module* existingModule;
+						RefListIterator<Module,bool> moduleIterator(cfg->modules());
+						while (existingModule = moduleIterator.iterate()) if (DUQSys::sameString(existingModule->name(),dependentModule->name())) break;
+						if (existingModule)
+						{
+							module->addDependentModule(existingModule);
+							Messenger::print("Added dependent Module '%s' to Module '%s'.\n", existingModule->uniqueName(), module->uniqueName());
+						}
+						else
+						{
+							// No Module exists in the Configuration already
+							Messenger::error("The Module '%s' requires the Module '%s' to run prior to it, but the '%s' Module has not been associated to the Configuration.\n", module->name(), dependentModule->name(), dependentModule->name());
+							error = true;
+							break;
+						}
+					}
+				}
+				if (error) break;
 
 				// Parse rest of Module block
 				if (!parseModuleBlock(parser, duq, module, cfg, NULL)) error = true;
