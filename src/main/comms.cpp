@@ -23,6 +23,29 @@
 #include "classes/species.h"
 #include "classes/atomtype.h"
 #include "base/processpool.h"
+#include "base/sysfunc.h"
+
+// Parallel Strategy Keywords
+const char* ParallelStrategyKeywords[] = { "Sequential", "Even" };
+
+// Convert string to ParallelStrategy
+DUQ::ParallelStrategy DUQ::parallelStrategy(const char* s)
+{
+	for (int n=0; n<DUQ::nParallelStrategies; ++n) if (DUQSys::sameString(ParallelStrategyKeywords[n], s)) return (DUQ::ParallelStrategy) n;
+	return DUQ::nParallelStrategies;
+}
+
+// Set parallel strategy for Configuration work
+void DUQ::setParallelStrategy(DUQ::ParallelStrategy ps)
+{
+	parallelStrategy_ = ps;
+}
+
+// Return parallel strategy for Configuration work
+DUQ::ParallelStrategy DUQ::parallelStrategy()
+{
+	return parallelStrategy_;
+}
 
 // Return a world process pool
 ProcessPool& DUQ::worldPool()
@@ -58,6 +81,7 @@ bool DUQ::setupMPIPools()
 	for (int n=0; n<ProcessPool::nWorldProcesses(); ++n) allProcesses.add(n);
 
 	// Setup pool based on selected strategy
+	int cfgIndex = 0;
 	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
 	{
 		Messenger::print("--> Configuration '%s':\n", cfg->name());
@@ -67,83 +91,30 @@ bool DUQ::setupMPIPools()
 			// Simple, sequential strategy - all processes assigned to all Configurations
 			if (!cfg->setupProcessPool(allProcesses)) return false;
 		}
+		else if (parallelStrategy_ == DUQ::EvenStrategy)
+		{
+			// All processes divided equally amongst Configurations - do we have enough?
+			if (ProcessPool::nWorldProcesses() < configurations_.nItems())
+			{
+				Messenger::error("Number of processes (%i) is less than the number of Configurations (%i) so Even strategy can't be employed.\n", ProcessPool::nWorldProcesses(), configurations_.nItems());
+				return false;
+			}
+			else if (ProcessPool::nWorldProcesses()%configurations_.nItems() != 0)
+			{
+				Messenger::error("Number of processes (%i) does not divide equally amongst the number of Configurations (%i) so Even strategy can't be employed.\n", ProcessPool::nWorldProcesses(), configurations_.nItems());
+				return false;
+			}
+
+			// Create new pool
+			int procsPerConfig = ProcessPool::nWorldProcesses() / configurations_.nItems();
+			Array<int> poolProcesses;
+			for (int n=0; n<procsPerConfig; ++n) poolProcesses.add(procsPerConfig*cfgIndex + n);
+			if (!cfg->setupProcessPool(poolProcesses)) return false;
+		}
+
+		// Increase Configuration index
+		++cfgIndex;
 	}
 
-	return true;
-}
-
-// Broadcast system setup data
-bool DUQ::broadcastSetup()
-{
-#ifdef PARALLEL
-	bool result;
-	int n, count;
-	Messenger::print("\n");
-	Messenger::print("*** Broadcasting System Setup ***\n");
-
-	// AtomTypes
-	Messenger::printVerbose("[MPI] Broadcasting AtomTypes...\n");
-	count = atomTypes_.nItems();
-	if (!worldPool_.broadcast(&count, 1)) return false;
-	Messenger::printVerbose("[MPI] Expecting %i items...\n", count);
-	for (n=0; n<count; ++n)
-	{
-		if (worldPool_.isSlave()) addAtomType(0);
-		atomTypes_[n]->broadcast(worldPool_);
-	}
-
-	// Species
-	Messenger::printVerbose("[MPI] Broadcasting Species...\n");
-	count = species_.nItems();
-	if (!worldPool_.broadcast(&count, 1)) return false;
-	Messenger::printVerbose("[MPI] Expecting %i items...\n", count);
-	for (n=0; n<count; ++n)
-	{
-		if (worldPool_.isSlave()) addSpecies();
-		species_[n]->broadcast(worldPool_, atomTypes_);
-	}
-
-	// Samples
-	Messenger::printVerbose("Broadcasting Samples...\n");
-	count = samples_.nItems();
-	if (!worldPool_.broadcast(&count, 1)) return false;
-	Messenger::printVerbose("Expecting %i items...\n", count);
-	for (n=0; n<count; ++n)
-	{
-		if (worldPool_.isSlave()) addSample();
-		samples_[n]->broadcast(worldPool_, species_);
-	}
-
-	// Configurations
-	Messenger::printVerbose("[MPI] Broadcasting Configurations...\n");
-	count = configurations_.nItems();
-	if (!worldPool_.broadcast(&count, 1)) return false;
-	Messenger::printVerbose("Expecting %i items...\n", count);
-	for (n=0; n<count; ++n)
-	{
-		if (worldPool_.isSlave()) addConfiguration();
-		configurations_[n]->broadcast(worldPool_, species_, pairPotentialRange_, modules_);
-	}
-
-	// PairPotentials
-	Messenger::printVerbose("[MPI] Broadcasting PairPotentials...\n");
-	count = pairPotentials_.nItems();
-	if (!worldPool_.broadcast(&count, 1)) return false;
-	Messenger::printVerbose("Expecting %i items...\n", count);
-	for (n=0; n<count; ++n)
-	{
-		if (worldPool_.isSlave()) pairPotentials_.add();
-		pairPotentials_[n]->broadcast(worldPool_, atomTypes_);
-	}
-	if (!worldPool_.broadcast(&pairPotentialRange_, 1)) return false;
-	if (!worldPool_.broadcast(&pairPotentialRangeSquared_, 1)) return false;
-	if (!worldPool_.broadcast(&pairPotentialTruncationWidth_, 1)) return false;
-	if (!worldPool_.broadcast(&pairPotentialDelta_, 1)) return false;
-
-	// Simulation Variables
-	Messenger::printVerbose("Broadcasting Simulation Variables...\n");
-	if (!worldPool_.broadcast(&boxNormalisationPoints_, 1)) return false;
-	if (!worldPool_.broadcast(&seed_, 1)) return false;
-#endif
 	return true;
 }

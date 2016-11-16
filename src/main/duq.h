@@ -334,7 +334,9 @@ class DUQ
 	 */
 	public:
 	// Parallel Strategy
-	enum ParallelStrategy { SequentialConfigStrategy };
+	enum ParallelStrategy { SequentialConfigStrategy, EvenStrategy, nParallelStrategies };
+	// Convert string to ParallelStrategy
+	static ParallelStrategy parallelStrategy(const char* s);
 
 	private:
 	// Parallel strategy for Configuration work
@@ -343,12 +345,14 @@ class DUQ
 	ProcessPool worldPool_;
 
 	public:
+	// Set parallel strategy for Configuration work
+	void setParallelStrategy(ParallelStrategy ps);
+	// Return parallel strategy for Configuration work
+	ParallelStrategy parallelStrategy();
 	// Return world process pool
 	ProcessPool& worldPool();
 	// Setup local MPI pools
 	bool setupMPIPools();
-	// Broadcast complete system setup data
-	bool broadcastSetup();
 };
 
 #endif

@@ -86,9 +86,50 @@ Configuration  'Bulk'
   Module StructureFactor
     Frequency 5
   ENDMODULE
-  Module Export
-    OutputCoordinates On
+  #Module Export
+  #  OutputCoordinates On
+  #EndModule
+EndConfiguration
+
+Configuration  'Bulk2'
+  RDFRange  15.0
+  Temperature  298.000000
+
+  # Define density of system, relative cell lengths / angles, and multiplier (if necessary)
+  Density  9.99999642E-02 atoms/A3
+  CellLengths  1.000000  1.000000  1.000000
+  CellAngles  90.000000  90.000000  90.000000
+  Multiplier  1000
+  BoxNormalisationFile 'test/water/water1000.norm'
+
+  # Define species in the system, and their relative populations
+  Species 'Water'  1.0
+
+  # Define initial coordinates file
+  # If no file is specified a random configuration will be generated
+  # InputCoordinates '/home/tris/work/water/epsr/waterbox.xyz'
+  OutputCoordinates 'Bulk.xyz'
+  UseOutputAsInput
+
+  # Enable modules and set associated variables
+  Module AtomShake
+    # Disabled
+    ShakesPerAtom  1
   EndModule
+  Module Energy
+  #  Test true
+    Save true
+  EndModule
+  Module Partials
+    Frequency 5
+    Save on
+  EndModule
+  Module StructureFactor
+    Frequency 5
+  ENDMODULE
+  #Module Export
+  #  OutputCoordinates On
+  #EndModule
 EndConfiguration
 
 # Pair Potentials
@@ -104,7 +145,8 @@ EndPairPotentials
 # Simulation Setup / Definition
 Simulation
   Seed  943723867
-  #MaxIterations  2
+  MaxIterations  2
+  ParallelStrategy  Even
 EndSimulation
 
 # Run a Module's main processing as a post-processing task

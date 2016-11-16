@@ -180,10 +180,10 @@ class Keywords
 	// Sample Block Keyword Enum
 	enum SampleKeyword
 	{
-		EndSampleKeyword,			/* 'EndSample' - Signals the end of the Sample block */
-		IsotopologueSampleKeyword,		/* 'Isotopologue' - Specifies a Species, Isotopologue, and relative population in this Sample */
-		ReferenceDataKeyword,			/* 'ReferenceData' - Specifies a datafile which represents this Sample */
-		nSampleKeywords				/* Number of keywords defined for this block */
+		EndSampleKeyword,		/* 'EndSample' - Signals the end of the Sample block */
+		IsotopologueSampleKeyword,	/* 'Isotopologue' - Specifies a Species, Isotopologue, and relative population in this Sample */
+		ReferenceDataKeyword,		/* 'ReferenceData' - Specifies a datafile which represents this Sample */
+		nSampleKeywords			/* Number of keywords defined for this block */
 	};
 	// Convert text string to SampleKeyword
 	static SampleKeyword sampleKeyword(const char* s);
@@ -202,12 +202,13 @@ class Keywords
 	// Simulation Block Keyword Enum
 	enum SimulationKeyword
 	{
-		BoxNormalisationPointsKeyword,
-		EndSimulationKeyword,
-		MaxIterationsKeyword,
-		SeedKeyword,
-		WindowFunctionKeyword,
-		nSimulationKeywords
+		BoxNormalisationPointsKeyword,	/* 'BoxNormalisationPoints' - Number of random insertions to use when generating the normalisation array */
+		EndSimulationKeyword,		/* 'EndSimulation' - Signals the end of the Simulation block */
+		MaxIterationsKeyword,		/* 'MaxIterations' - Maximum number of main loop iterations to perform, or -1 for no limit */
+		ParallelStrategyKeyword,	/* 'ParallelStrategy' - Determines the distribution of processes across Configurations */
+		SeedKeyword,			/* 'Seed' - Random seed to use */
+		WindowFunctionKeyword,		/* 'WindowFunction' - Window function to use in all Fourier transforms */
+		nSimulationKeywords		/* '' -  */
 	};
 	// Convert text string to SimulationKeyword
 	static SimulationKeyword simulationKeyword(const char* s);

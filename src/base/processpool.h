@@ -25,7 +25,6 @@
 // Random number buffer size
 #define RANDBUFFERSIZE 16172
 
-#include "base/constants.h"
 #include "base/dnchar.h"
 #include "base/timer.h"
 #include "templates/vector3.h"
@@ -36,13 +35,13 @@
 #include <mpi.h>
 #endif
 
-/*
- * ProcessPool
- * Basic class to define process-global variables useful to control parallel execution,
- * and provide macros to simplify coding and aid readability.
- */
+// ProcessPool
 class ProcessPool
-{	
+{
+	/*
+	 * Class to define a 'pool' of processes that should work together in parallel tasks, providing limits per process,
+	 * and macros to simplify coding and aid readability.
+	*/
 	public:
 	// Constructor
 	ProcessPool();
@@ -120,7 +119,7 @@ class ProcessPool
 	Array<int> worldRanks_;
 	// Local rank of this process in the pool
 	int poolRank_;
-	// List of process groups
+	// List of process groups (world ranks)
 	List< Array<int> > processGroups_;
 	// World ranks of process group leaders
 	Array<int> groupLeaders_;
@@ -164,14 +163,16 @@ class ProcessPool
 	bool setupCellStrategy(const Vec3<int>& divisions, const Vec3<int>& cellExtents, const List< ListVec3<int> >& neighbours);
 	// Return number of process groups
 	int nProcessGroups() const;
-	// Return number of processes in nth group
+	// Return number of processes in specified group
 	int nProcessesInGroup(int groupId);
-	// Return process array of nth group
-	int* processesInGroup(int groupId);
+	// Return array of world ranks in specified group
+	int* worldRanksInGroup(int groupId);
+	// Return array of world ranks in the group in which this process exists
+	int* worldRanksInMyGroup();
 	// Return group index in which this process exists
 	int groupIndex();
 	// Return size of local group in which this process exists
-	int groupSize();
+	int myGroupSize();
 	// Return rank of this process in its local group
 	int groupRank();
 	// Return whether this process is a group leader

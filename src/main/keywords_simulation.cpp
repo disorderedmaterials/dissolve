@@ -28,6 +28,7 @@ KeywordData SimulationBlockData[] = {
 	{ "BoxNormalisationPoints",		1,	"Number of random insertions to use when generating the normalisation array" },
 	{ "EndSimulation",			0,	"Signals the end of the Simulation block" },
 	{ "MaxIterations",			1,	"Maximum number of main loop iterations to perform, or -1 for no limit" },
+	{ "ParallelStrategy",			1, 	"Determines the distribution of processes across Configurations" },
 	{ "Seed",				1,	"Random seed to use" },
 	{ "WindowFunction",			1,	"Window function to use in all Fourier transforms" }
 };
@@ -81,13 +82,21 @@ bool Keywords::parseSimulationBlock(LineParser& parser, DUQ* duq)
 			case (Keywords::MaxIterationsKeyword):
 				duq->setMaxIterations(parser.argi(1));
 				break;
+			case (Keywords::ParallelStrategyKeyword):
+				if (DUQ::parallelStrategy(parser.argc(1)) == DUQ::nParallelStrategies)
+				{
+					Messenger::error("Unrecognised parallel strategy '%s'.\n", parser.argc(1));
+					error = true;
+				}
+				else duq->setParallelStrategy(DUQ::parallelStrategy(parser.argc(1)));
+				break;
 			case (Keywords::SeedKeyword):
 				duq->setSeed(parser.argi(1));
 				break;
 			case (Keywords::WindowFunctionKeyword):
 				if (Data2D::windowFunction(parser.argc(1)) == Data2D::nWindowFunctions)
 				{
-					Messenger::error("Unrecognised window function = '%s'.\n", parser.argc(1));
+					Messenger::error("Unrecognised window function '%s'.\n", parser.argc(1));
 					error = true;
 				}
 				else duq->setWindowFunction(Data2D::windowFunction(parser.argc(1)));

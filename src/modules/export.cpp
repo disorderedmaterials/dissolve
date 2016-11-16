@@ -186,6 +186,8 @@ bool Export::process(DUQ& duq, ProcessPool& procPool)
 					procPool.stop();
 					return false;
 				}
+
+				procPool.proceed();
 			}
 			else if (!procPool.decision()) return false;
 
@@ -217,6 +219,8 @@ bool Export::process(DUQ& duq, ProcessPool& procPool)
 					procPool.stop();
 					return false;
 				}
+
+				procPool.proceed();
 			}
 			else if (!procPool.decision()) return false;
 

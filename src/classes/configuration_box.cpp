@@ -133,18 +133,18 @@ void Configuration::clearCells()
 	nCells_ = 0;
 }
 
-/*
- * \brief Return whether the two Cells should be mimd in calculations
- * \details Since we partition the simulation Box up into subcells, for speed we can determine and store whether any
- * minimum image operations are required between the contents of the two cells. If *twice* the difference between any 
- * component of any grid reference is greater than or equal to the value of the number of Cells along the relevant side
- * then minimum image calculations should be performed. A secondary check is made to account for small systems, in which
- * the Cell 'b' is mirrored onto the opposite side of the Cell 'a' - if the resulting difference, minus one, between
- * gridReference coordinates is greater than or equal to the cellExtent in any direction, again minimum image must
- * be performed.
- */
+// Return whether the two Cells should be mimd in calculations
 bool Configuration::minimumImageRequired(Cell* a, Cell* b) const
 {
+	/*
+	 * Since we partition the simulation Box up into subcells, for speed we can determine and store whether any
+	 * minimum image operations are required between the contents of the two cells. If *twice* the difference between any 
+	 * component of any grid reference is greater than or equal to the value of the number of Cells along the relevant side
+	 * then minimum image calculations should be performed. A secondary check is made to account for small systems, in which
+	 * the Cell 'b' is mirrored onto the opposite side of the Cell 'a' - if the resulting difference, minus one, between
+	 * gridReference coordinates is greater than or equal to the cellExtent in any direction, again minimum image must
+	 * be performed.
+	 */
 #ifdef CHECKS
 	// Check for NULL cell pointers
 	if (a == NULL)
@@ -476,6 +476,7 @@ void Configuration::initialiseCellDistribution()
 {
 	nCellsDistributed_ = 0;
 	lastCellDistributed_ = -1;
+
 	for (int n=0; n<nCells_; ++n)
 	{
 		// Clear usage flag, and remove any remaining locks
@@ -562,10 +563,11 @@ int Configuration::nextAvailableCell(ProcessPool& procPool, bool willBeModified,
 			}
 			
 			// Broadcast Cell index to all processes in current ProcessGroup
-			procList = procPool.processesInGroup(group);
+			procList = procPool.worldRanksInGroup(group);
 			for (proc=0; proc<procPool.nProcessesInGroup(group); ++proc)
 			{
-				if (procList[proc] == 0) rootCellId = cellId;
+				// If this world rank is our own, no need to send it - just store it for later return below
+				if (procList[proc] == ProcessPool::worldRank()) rootCellId = cellId;
 				else if (!procPool.send(cellId, procList[proc])) printf("MPI error in Configuration::nextAvailableCell() sending next cell to process %i.\n", procList[proc]);
 			}
 		}
@@ -609,7 +611,7 @@ bool Configuration::finishedWithCell(ProcessPool& procPool, bool willBeModified,
 			// If this is *not* the masters group, receive data from the slave process leader
 			if (group != procPool.groupIndex())
 			{
-				if (!procPool.receive(cellId, procPool.processesInGroup(group)[0])) Messenger::print("MPI error in Configuration::finishedWithCell() receiving from process with rank %i.\n", group);
+				if (!procPool.receive(cellId, procPool.worldRanksInGroup(group)[0])) Messenger::print("MPI error in Configuration::finishedWithCell() receiving from process with rank %i.\n", group);
 			}
 			if (cellId >= 0) cells_[cellId].unlock(willBeModified);
 		}
