@@ -122,19 +122,19 @@ Isotope* Element::hasIsotope(int A) const
  */
 
 // Add new Parameters to this element
-Parameters *Element::addParameters()
+Parameters* Element::addParameters()
 {
 	return parameters_.add();
 }
 
 // Return first Parameters
-Parameters *Element::parameters() const
+Parameters* Element::parameters() const
 {
 	return parameters_.first();
 }
 
 // Return nth Parameters
-Parameters *Element::parameters(int n)
+Parameters* Element::parameters(int n)
 {
 	return parameters_[n];
 }
@@ -167,37 +167,28 @@ bool Element::broadcast(ProcessPool& procPool)
 {
 #ifdef PARALLEL
 	// Send basic info
-	Messenger::printVerbose("[MPI] Element ");
 	if (!procPool.broadcast(name_)) return false;
-	Messenger::printVerbose("%s...", name_.get());
 	if (!procPool.broadcast(&z_, 1)) return false;
-	Messenger::printVerbose("%i...", z_);
 	if (!procPool.broadcast(symbol_)) return false;
-	Messenger::printVerbose("%s...", symbol_.get());
 	if (!procPool.broadcast(&atomicRadius_, 1)) return false;
-	Messenger::printVerbose("%f...", atomicRadius_);
 	if (!procPool.broadcast(colour_, 4)) return false;
-	Messenger::printVerbose("%f %f %f %f...", colour_[0], colour_[1], colour_[2], colour_[3]);
 
 	// Add isotopes
 	bool result;
-	Messenger::printVerbose("Isotopes...");
 	BroadcastList<Isotope>(procPool, isotopes_, result);
 	if (!result)
 	{
 		Messenger::print("Failed to broadcast Isotope data for element '%s'.\n", name_.get());
 		return false;
 	}
-	
+
 	// Add parameters
-	Messenger::printVerbose("Parameters...");
 	BroadcastList<Parameters>(procPool, parameters_, result);
 	if (!result)
 	{
 		Messenger::print("Failed to broadcast Parameter data for element '%s'.\n", name_.get());
 		return false;
 	}
-	Messenger::printVerbose("Success.\n");
 #endif
 	return true;
 }

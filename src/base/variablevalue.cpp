@@ -231,7 +231,7 @@ bool VariableValue::broadcast(ProcessPool& procPool)
 	switch (type_)
 	{
 		case (VariableValue::BooleanType):
-			if (!procPool.broadcast(&valueB_, 1)) return false;
+			if (!procPool.broadcast(valueB_)) return false;
 			break;
 		case (VariableValue::IntegerType):
 			if (!procPool.broadcast(&valueI_, 1)) return false;

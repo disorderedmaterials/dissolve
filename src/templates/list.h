@@ -97,6 +97,11 @@ template <class T> class List
 	// Copy Constructor
 	List<T>(const List<T>& source)
 	{
+		listHead_ = NULL;
+		listTail_ = NULL;
+		nItems_ = 0;
+		regenerate_ = true;
+		items_ = NULL;
 		(*this) = source;
 	}
 	// Assignment operator

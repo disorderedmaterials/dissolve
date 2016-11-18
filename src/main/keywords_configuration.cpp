@@ -185,7 +185,7 @@ bool Keywords::parseConfigurationBlock(LineParser& parser, DUQ* duq, Configurati
 				break;
 			case (Keywords::OutputCoordinatesKeyword):
 				cfg->setOutputCoordinatesFile(parser.argc(1));
-				Messenger::print("--> Output coordinates will be save to file '%s'\n", parser.argc(1));
+				Messenger::print("--> Output coordinates will be saved to file '%s'\n", parser.argc(1));
 				break;
 			case (Keywords::RDFBinWidthKeyword):
 				cfg->setRDFBinWidth(parser.argd(1));

@@ -71,6 +71,13 @@ bool DUQ::setupMPIPools()
 	Messenger::print("\n");
 	Messenger::print("*** Setting up MPI pools...\n");
 
+	// If there is only one process, make sure we revert to SequentialConfigStrategy
+	if ((ProcessPool::nWorldProcesses() == 1) && (parallelStrategy_ != DUQ::SequentialConfigStrategy))
+	{
+		Messenger::warn("Parallel strategies make no sense with only one processor, so reverting to sequential strategy default.\n");
+		parallelStrategy_ = DUQ::SequentialConfigStrategy;
+	}
+
 	// Get relative atom counts between each configuration
 	Array<int> configSizes;
 	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next) configSizes.add(cfg->nAtoms());

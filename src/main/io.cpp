@@ -96,18 +96,18 @@ bool DUQ::loadInput(const char* filename)
 {
 	// Open file and check that we're OK to proceed reading from it (master only...)
 	LineParser parser;
-	if (worldPool_.isMaster())
+	if (worldPool().isWorldMaster())
 	{
 		parser.openInput(filename);
 		if (!parser.isFileGoodForReading())
 		{
 			Messenger::error("Couldn't open file '%s' for reading.\n", filename);
-			worldPool_.stop();
+			worldPool().stop();
 			return false;
 		}
-		worldPool_.proceed();
+		worldPool().proceed();
 	}
-	else if (!worldPool_.decision()) return false;
+	else if (!worldPool().decision()) return false;
 
 	// Clear all existing data before we begin
 	clear();
@@ -119,10 +119,10 @@ bool DUQ::loadInput(const char* filename)
 	Keywords::InputBlock block;
 	bool error = false;
 
-	while (!parser.eofOrBlank(worldPool_))
+	while (!parser.eofOrBlank(worldPool()))
 	{
 		// Master will read the next line from the file, and broadcast it to slaves (who will then parse it)
-		if (parser.getArgsDelim(worldPool_, LineParser::SkipBlanks+LineParser::StripComments+LineParser::UseQuotes) != 0) break;
+		if (parser.getArgsDelim(worldPool(), LineParser::SkipBlanks+LineParser::StripComments+LineParser::UseQuotes) != 0) break;
 
 		block = Keywords::inputBlock(parser.argc(0));
 		switch (block)
@@ -200,7 +200,8 @@ bool DUQ::loadInput(const char* filename)
 	}
 	
 	// Done
-	parser.closeFiles();
+	if (worldPool_.isWorldMaster()) parser.closeFiles();
+
 	return (!error);
 }
 

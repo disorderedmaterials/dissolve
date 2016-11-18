@@ -41,18 +41,6 @@ ProcessPool::ProcessPool()
 	groupRank_ = -1;
 }
 
-#ifdef PARALLEL
-// Return communicator specified
-MPI_Comm ProcessPool::communicator(ProcessPool::CommGroup group)
-{
-	if (group == ProcessPool::Group) return groupCommunicator_;
-	else if (group == ProcessPool::Leaders) return leaderCommunicator_;
-	else if (group == ProcessPool::Pool) return poolCommunicator_;
-	Messenger::print("BAD_USAGE - Communicator %i is not valid in ProcessPool::communicator().\n", group);
-	return MPI_COMM_WORLD;
-}
-#endif
-
 // Copy Constructor
 ProcessPool::ProcessPool(const ProcessPool& source)
 {
@@ -95,6 +83,19 @@ void ProcessPool::operator=(const ProcessPool& source)
 	// Random number buffer
 	// ???
 }
+
+
+#ifdef PARALLEL
+// Return communicator specified
+MPI_Comm ProcessPool::communicator(ProcessPool::CommunicatorType commType)
+{
+	if (commType == ProcessPool::Group) return groupCommunicator_;
+	else if (commType == ProcessPool::Leaders) return leaderCommunicator_;
+	else if (commType == ProcessPool::Pool) return poolCommunicator_;
+	Messenger::print("BAD_USAGE - CommunicatorType %i is not valid in ProcessPool::communicator().\n", commType);
+	return MPI_COMM_WORLD;
+}
+#endif
 
 /*
  * Global Information
@@ -181,7 +182,85 @@ const char* ProcessPool::totalTimeString()
 }
 
 /*
- * Local Process Pool
+ * Process Identification
+ */
+
+// Return local rank of this process in the pool
+int ProcessPool::poolRank()
+{
+	return poolRank_;
+}
+
+// Return whether this process is the master for the specified communicator
+bool ProcessPool::isMaster(ProcessPool::CommunicatorType commType)
+{
+	if (commType == ProcessPool::Pool) return (poolRank_ == 0);
+	else if (commType == ProcessPool::Group) return (groupLeaders_[groupIndex_] == poolRank_);
+	else if (commType == ProcessPool::Leaders) return (groupLeaders_[0] == poolRank_);
+
+	return false;
+}
+
+// Return whether this process is a local slave for the specified communicatyr
+bool ProcessPool::isSlave(ProcessPool::CommunicatorType commType)
+{
+	if (commType == ProcessPool::Pool) return (poolRank_ != 0);
+	else if (commType == ProcessPool::Group) return (groupLeaders_[groupIndex_] != poolRank_);
+	else if (commType == ProcessPool::Leaders) return (groupLeaders_[0] != poolRank_);
+
+	return true;
+}
+
+// Return whether this pool involves this process
+bool ProcessPool::involvesMe()
+{
+	for (int n=0; n<worldRanks_.nItems(); ++n) if (worldRanks_.value(n) == worldRank_) return true;
+	return false;
+}
+
+// Return group index in which this process exists
+int ProcessPool::groupIndex()
+{
+	return groupIndex_;
+}
+
+// Return local group in which this process exists
+ProcessGroup* ProcessPool::myGroup()
+{
+#ifdef CHECKS
+	if ((groupIndex_ < 0) || (groupIndex_ >= processGroups_.nItems()))
+	{
+		Messenger::print("OUT_OF_RANGE - Local group index for this process (%i) is out of range in ProcessPool::localGroupSize() (nProcessGroups = %i).\n", groupIndex_, processGroups_.nItems());
+		return NULL;
+	}
+#endif
+	return processGroups_[groupIndex_];
+}
+
+// Return rank of this process in its local group
+int ProcessPool::groupRank()
+{
+	return groupRank_;
+}
+
+// Return whether this process is a group leader
+bool ProcessPool::groupLeader()
+{
+	return (groupRank_ == 0);
+}
+
+// Return process info string
+const char* ProcessPool::processInfo()
+{
+	static Dnchar info;
+	// World Rank / Pool Rank, Group Rank @ Group Index
+	info.sprintf("W%i/P%i,G%i@GI%i", worldRank_, poolRank_, groupRank_, groupIndex_);
+	return info.get();
+}
+
+	
+/*
+ * Pool Contents
  */
 
 // Setup pool with world ranks specified
@@ -230,35 +309,10 @@ int ProcessPool::nProcesses()
 	return worldRanks_.nItems();
 }
 
-// Return local rank of this process in the pool
-int ProcessPool::poolRank()
-{
-	return poolRank_;
-}
-
 // Return root (first) world rank of this pool
 int ProcessPool::rootWorldRank()
 {
 	return worldRanks_.first();
-}
-
-// Return whether this process is the master for this pool
-bool ProcessPool::isMaster()
-{
-	return (poolRank_ == 0);
-}
-
-// Return whether this process is a local slave in this pool
-bool ProcessPool::isSlave()
-{
-	return (poolRank_ != 0);
-}
-
-// Return whether this pool involves this process
-bool ProcessPool::involvesMe()
-{
-	for (int n=0; n<worldRanks_.nItems(); ++n) if (worldRanks_.value(n) == worldRank_) return true;
-	return false;
 }
 
 // Setup strategy for Cells, based on local process pool size
@@ -345,7 +399,7 @@ bool ProcessPool::setupCellStrategy(const Vec3<int>& divisions, const Vec3<int>&
 	 */
 	int baseAlloc = worldRanks_.nItems() / nGroups;
 	int remainder = worldRanks_.nItems() % nGroups;
-	Array<int>* group;
+	ProcessGroup* group;
 	Dnchar rankString;
 	for (int n=0; n<nGroups; ++n)
 	{
@@ -361,19 +415,19 @@ bool ProcessPool::setupCellStrategy(const Vec3<int>& divisions, const Vec3<int>&
 		for (int localRank=firstRank; localRank<=lastRank; ++localRank)
 		{
 			int wr = worldRanks_[localRank];
-			group->add(wr);
+			group->addProcess(localRank, wr);
 			rankString.strcatf(" %i", wr);
 
 			// If this process is the current worldRank_ we are considering, set its group membership
 			if (wr == worldRank_) groupIndex_ = n;
 		}
-		Messenger::print("--> Group will contain %i processes (world ranks:%s).\n", group->nItems(), rankString.get());
+		Messenger::print("--> Group will contain %i processes (world ranks:%s).\n", group->nProcesses(), rankString.get());
 	}
 
-	// Create local groups and communicators - each process will only create and be involved in one group communicator (groupGroup_)
+	// Create local group and communicator - each process will only create and be involved in one group communicator (groupGroup_)
 	MPI_Group origGroup;
 	MPI_Comm_group(MPI_COMM_WORLD, &origGroup);
-	if (MPI_Group_incl(origGroup, myGroupSize(), worldRanksInMyGroup(), &groupGroup_) != MPI_SUCCESS) return false;
+	if (MPI_Group_incl(origGroup, myGroup()->nProcesses(), myGroup()->worldRanks().array(), &groupGroup_) != MPI_SUCCESS) return false;
 	if (MPI_Comm_create(MPI_COMM_WORLD, groupGroup_, &groupCommunicator_) != MPI_SUCCESS) return false;
 	MPI_Group_rank(groupGroup_, &groupRank_);
 	Messenger::print("--> ... Process with pool rank %i (world rank %i) has local group %i, group rank %i, and is a process group %s\n", poolRank_, worldRank_, groupIndex_, groupRank_, groupLeader() ? "leader" : "slave");
@@ -382,26 +436,31 @@ bool ProcessPool::setupCellStrategy(const Vec3<int>& divisions, const Vec3<int>&
 	bool leader;
 	if (isMaster())
 	{
+		Messenger::printVerbose("Process world rank %i is the master of pool '%s', and will assemble group leaders...\n", worldRank_, name_.get());
 		// Loop over process groups
 		for (int group=0; group<processGroups_.nItems(); ++group)
 		{
 			// Query each process in the group to see if it is the leader...
-			for (int n=0; n<nProcessesInGroup(group); ++n)
+			for (int n=0; n<nProcessesInGroup(n); ++n)
 			{
-				// Is this the master process rank?
-				if (worldRanksInMyGroup()[n] == worldRank_) leader = groupLeader();
-				else if (!receive(leader, worldRanksInGroup(group)[n])) return false;
+				int prank = processGroups_[group]->poolRank(n);
+
+				// Is this us, the master process?
+				if (prank == poolRank_) leader = groupLeader();
+				else if (!receive(leader, prank)) return false;
 				
 				// Is this process the leader?
 				if (leader)
 				{
 					// Check for existing value
-					if (groupLeaders_[group] == -1) groupLeaders_[group] = worldRanksInGroup(group)[n];
+					if (groupLeaders_[group] == -1) groupLeaders_[group] = prank;
 					else
 					{
 						Messenger::error("MPI Error: More than one process group leader for group %i.\n", group);
 						return false;
 					}
+
+					Messenger::print("Process with pool rank %i (world rank %i) added to group leaders list for pool '%s'.\n", prank, worldRanks_[prank], name_.get());
 				}
 			}
 		}
@@ -409,13 +468,16 @@ bool ProcessPool::setupCellStrategy(const Vec3<int>& divisions, const Vec3<int>&
 	else if (!send(groupLeader(), 0)) return false;
 
 	// Broadcast group leader list
-	if (!broadcast(groupLeaders_.array(), processGroups_.nItems())) return false;
+	if (!broadcast(groupLeaders_)) return false;
 	Messenger::print("--> Group leader processes are :\n");
 	for (int group=0; group<processGroups_.nItems(); ++group) Messenger::print("-->    Group %3i : process rank %i\n", group, groupLeaders_[group]);
 
 	// Create group leader communicator
+	// Must first convert local pool ranks of the group leaders into world ranks, before passing this to MPI_Group_incl
+	Array<int> groupLeadersW;
+	for (int n=0; n<groupLeaders_.nItems(); ++n) groupLeadersW.add(worldRanks_[groupLeaders_[n]]);
 	MPI_Comm_group(MPI_COMM_WORLD, &origGroup);
-	if (MPI_Group_incl(origGroup, processGroups_.nItems(), groupLeaders_.array(), &leaderGroup_) != MPI_SUCCESS) return false;
+	if (MPI_Group_incl(origGroup, groupLeadersW.nItems(), groupLeadersW.array(), &leaderGroup_) != MPI_SUCCESS) return false;
 	if (MPI_Comm_create(MPI_COMM_WORLD, leaderGroup_, &leaderCommunicator_) != MPI_SUCCESS) return false;
 #else
 	// No MPI, but must still setup a dummy process group
@@ -434,6 +496,19 @@ int ProcessPool::nProcessGroups() const
 	return processGroups_.nItems();
 }
 
+// Return nth process group
+ProcessGroup* ProcessPool::processGroup(int n)
+{
+#ifdef CHECKS
+	if ((n < 0) || (n >= processGroups_.nItems()))
+	{
+		Messenger::print("OUT_OF_RANGE - Specified groupId (%i) is out of range in ProcessPool::processGroup() (nProcessGroups = %i).\n", n, processGroups_.nItems());
+		return 0;
+	}
+#endif
+	return processGroups_[n];
+}
+
 // Return number of processes in specified group
 int ProcessPool::nProcessesInGroup(int groupId)
 {
@@ -444,11 +519,11 @@ int ProcessPool::nProcessesInGroup(int groupId)
 		return 0;
 	}
 #endif
-	return processGroups_[groupId]->nItems();
+	return processGroups_[groupId]->nProcesses();
 }
 
-// Return array of world ranks in specified group
-int* ProcessPool::worldRanksInGroup(int groupId)
+// Return array of pool ranks in specified group
+int* ProcessPool::poolRanksInGroup(int groupId)
 {
 #ifdef CHECKS
 	if ((groupId < 0) || (groupId >= processGroups_.nItems()))
@@ -457,60 +532,7 @@ int* ProcessPool::worldRanksInGroup(int groupId)
 		return 0;
 	}
 #endif
-	return processGroups_[groupId]->array();
-}
-
-// Return array of world ranks in the group in which this process exists
-int* ProcessPool::worldRanksInMyGroup()
-{
-#ifdef CHECKS
-	if ((groupIndex_ < 0) || (groupIndex_ >= processGroups_.nItems()))
-	{
-		Messenger::print("OUT_OF_RANGE - groupIndex_ %i is out of range in ProcessPool::worldRanksInMyGroup() (nProcessGroups = %i, this world rank = %i).\n", groupIndex_, processGroups_.nItems(), worldRank_);
-		return 0;
-	}
-#endif
-	return processGroups_[groupIndex_]->array();
-}
-
-// Return group index in which this process exists
-int ProcessPool::groupIndex()
-{
-	return groupIndex_;
-}
-
-// Return size of local group in which this process exists
-int ProcessPool::myGroupSize()
-{
-#ifdef CHECKS
-	if ((groupIndex_ < 0) || (groupIndex_ >= processGroups_.nItems()))
-	{
-		Messenger::print("OUT_OF_RANGE - Local group index for this process (%i) is out of range in ProcessPool::localGroupSize() (nProcessGroups = %i).\n", groupIndex_, processGroups_.nItems());
-		return 0;
-	}
-#endif
-	return processGroups_[groupIndex_]->nItems();
-}
-
-// Return rank of this process in its local group
-int ProcessPool::groupRank()
-{
-	return groupRank_;
-}
-
-// Return whether this process is a group leader
-bool ProcessPool::groupLeader()
-{
-	return (groupRank_ == 0);
-}
-
-// Return process info string
-const char* ProcessPool::processInfo()
-{
-	static Dnchar info;
-	// World Rank / Pool Rank, Group Rank @ Group Index
-	info.sprintf("%iw/%ip,%ig@%ii", worldRank_, poolRank_, groupRank_, groupIndex_);
-	return info.get();
+	return processGroups_[groupId]->poolRanks().array();
 }
 
 /*
@@ -626,21 +648,21 @@ int ProcessPool::interleavedLoopStride(ProcessPool::LoopContext loopContext)
  */
 
 // Wait for all processes
-bool ProcessPool::wait(ProcessPool::CommGroup group)
+bool ProcessPool::wait(ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-	if (MPI_Barrier(communicator(group)) != MPI_SUCCESS) return false;
+	if (MPI_Barrier(communicator(commType)) != MPI_SUCCESS) return false;
 #endif
 	return true;
 }
 
 // Send single integer value to target process
-bool ProcessPool::send(int value, int targetProcess)
+bool ProcessPool::send(int value, int targetWorldRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
-	if (MPI_Send(&value, 1, MPI_INTEGER, targetProcess, 0, MPI_COMM_WORLD) != MPI_SUCCESS) return false;
+	if (MPI_Send(&value, 1, MPI_INTEGER, targetWorldRank, 0, communicator(commType)) != MPI_SUCCESS) return false;
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
@@ -648,13 +670,13 @@ bool ProcessPool::send(int value, int targetProcess)
 }
 
 // Receive single integer value from source process
-bool ProcessPool::receive(int& value, int sourceProcess)
+bool ProcessPool::receive(int& value, int sourceWorldRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
 	MPI_Status status;
-	if (MPI_Recv(&value, 1, MPI_INTEGER, sourceProcess, 0, MPI_COMM_WORLD, &status) != MPI_SUCCESS) return false;
+	if (MPI_Recv(&value, 1, MPI_INTEGER, sourceWorldRank, 0, communicator(commType), &status) != MPI_SUCCESS) return false;
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
@@ -662,12 +684,12 @@ bool ProcessPool::receive(int& value, int sourceProcess)
 }
 
 // Send single double value to target process
-bool ProcessPool::send(double value, int targetProcess)
+bool ProcessPool::send(double value, int targetWorldRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
-	if (MPI_Send(&value, 1, MPI_DOUBLE, targetProcess, 0, MPI_COMM_WORLD) != MPI_SUCCESS) return false;
+	if (MPI_Send(&value, 1, MPI_DOUBLE, targetWorldRank, 0, communicator(commType)) != MPI_SUCCESS) return false;
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
@@ -675,13 +697,13 @@ bool ProcessPool::send(double value, int targetProcess)
 }
 
 // Receive single double value from source process
-bool ProcessPool::receive(double& value, int sourceProcess)
+bool ProcessPool::receive(double& value, int sourceWorldRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
 	MPI_Status status;
-	if (MPI_Recv(&value, 1, MPI_DOUBLE, sourceProcess, 0, MPI_COMM_WORLD, &status) != MPI_SUCCESS) return false;
+	if (MPI_Recv(&value, 1, MPI_DOUBLE, sourceWorldRank, 0, communicator(commType), &status) != MPI_SUCCESS) return false;
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
@@ -689,12 +711,13 @@ bool ProcessPool::receive(double& value, int sourceProcess)
 }
 
 // Send single bool value to target process
-bool ProcessPool::send(bool value, int targetProcess)
+bool ProcessPool::send(bool value, int targetWorldRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
-	if (MPI_Send(&value, 1, MPI_INTEGER, targetProcess, 0, MPI_COMM_WORLD) != MPI_SUCCESS) return false;
+	int data = value;
+	if (MPI_Send(&data, 1, MPI_INTEGER, targetWorldRank, 0, communicator(commType)) != MPI_SUCCESS) return false;
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
@@ -702,13 +725,15 @@ bool ProcessPool::send(bool value, int targetProcess)
 }
 
 // Receive single bool value from source process
-bool ProcessPool::receive(bool& value, int sourceProcess)
+bool ProcessPool::receive(bool& value, int sourceWorldRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
 	MPI_Status status;
-	if (MPI_Recv(&value, 1, MPI_INTEGER, sourceProcess, 0, MPI_COMM_WORLD, &status) != MPI_SUCCESS) return false;
+	int result;
+	if (MPI_Recv(&result, 1, MPI_INTEGER, sourceWorldRank, 0, communicator(commType), &status) != MPI_SUCCESS) return false;
+	value = result;
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
@@ -716,12 +741,12 @@ bool ProcessPool::receive(bool& value, int sourceProcess)
 }
 
 // Send integer array data to target process
-bool ProcessPool::send(int* source, int nData, int targetProcess)
+bool ProcessPool::send(int* source, int nData, int targetWorldRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
-	if (MPI_Send(source, nData, MPI_INTEGER, targetProcess, 0, MPI_COMM_WORLD) != MPI_SUCCESS) return false;
+	if (MPI_Send(source, nData, MPI_INTEGER, targetWorldRank, 0, communicator(commType)) != MPI_SUCCESS) return false;
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
@@ -729,13 +754,13 @@ bool ProcessPool::send(int* source, int nData, int targetProcess)
 }
 
 // Receive integer array data from target process
-bool ProcessPool::receive(int* source, int nData, int sourceProcess)
+bool ProcessPool::receive(int* source, int nData, int sourceWorldRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
 	MPI_Status status;
-	if (MPI_Recv(source, nData, MPI_INTEGER, sourceProcess, 0, MPI_COMM_WORLD, &status) != MPI_SUCCESS) return false;
+	if (MPI_Recv(source, nData, MPI_INTEGER, sourceWorldRank, 0, communicator(commType), &status) != MPI_SUCCESS) return false;
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
@@ -743,12 +768,12 @@ bool ProcessPool::receive(int* source, int nData, int sourceProcess)
 }
 
 // Send double array data to target process
-bool ProcessPool::send(double* source, int nData, int targetProcess)
+bool ProcessPool::send(double* source, int nData, int targetWorldRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
-	if (MPI_Send(source, nData, MPI_DOUBLE, targetProcess, 0, MPI_COMM_WORLD) != MPI_SUCCESS) return false;
+	if (MPI_Send(source, nData, MPI_DOUBLE, targetWorldRank, 0, communicator(commType)) != MPI_SUCCESS) return false;
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
@@ -756,13 +781,13 @@ bool ProcessPool::send(double* source, int nData, int targetProcess)
 }
 
 // Receive double array data from target process
-bool ProcessPool::receive(double* source, int nData, int sourceProcess)
+bool ProcessPool::receive(double* source, int nData, int sourceWorldRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
 	MPI_Status status;
-	if (MPI_Recv(source, nData, MPI_DOUBLE, sourceProcess, 0, MPI_COMM_WORLD, &status) != MPI_SUCCESS) return false;
+	if (MPI_Recv(source, nData, MPI_DOUBLE, sourceWorldRank, 0, communicator(commType), &status) != MPI_SUCCESS) return false;
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
@@ -774,7 +799,7 @@ bool ProcessPool::receive(double* source, int nData, int sourceProcess)
  */
 
 // Broadcast Dnchar to all Processes
-bool ProcessPool::broadcast(Dnchar& source, int rootProcess, ProcessPool::CommGroup group)
+bool ProcessPool::broadcast(Dnchar& source, int root, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
@@ -782,10 +807,10 @@ bool ProcessPool::broadcast(Dnchar& source, int rootProcess, ProcessPool::CommGr
 	static char buffer[4096];
 	
 	// Get length of string, and make a local copy to avoid the const-ness of Dnchar.get().
-	if (poolRank_ == rootProcess) strcpy(buffer, source.get());
+	if (poolRank_ == root) strcpy(buffer, source.get());
 
 	// Broadcast data
-	if (!broadcast(buffer, worldRanks_[rootProcess], group)) return false;
+	if (!broadcast(buffer, root, commType)) return false;
 	
 	if (isSlave()) source = buffer;
 	totalTime_.accumulate();
@@ -795,26 +820,26 @@ bool ProcessPool::broadcast(Dnchar& source, int rootProcess, ProcessPool::CommGr
 }
 
 // Broadcast char data to all Processes
-bool ProcessPool::broadcast(char* source, int rootProcess, ProcessPool::CommGroup group)
+bool ProcessPool::broadcast(char* source, int root, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
 	int length;
-	if (poolRank_ == rootProcess)
+	if (poolRank_ == root)
 	{
 		// Broadcast string length first...
 		length = strlen(source) + 1;
-		if (MPI_Bcast(&length, 1, MPI_INTEGER, worldRanks_[rootProcess], communicator(group)) != MPI_SUCCESS)
+		if (MPI_Bcast(&length, 1, MPI_INTEGER, root, communicator(commType)) != MPI_SUCCESS)
 		{
-			Messenger::print("Failed to broadcast char length data from root process %i (world rank %i).\n", rootProcess, worldRanks_[rootProcess]);
+			Messenger::print("Failed to broadcast char length data from root process %i.\n", root);
 			return false;
 		}
 		
-		// Now broadcast character data. We need to make a local copy of the string, to avoid the const-ness of Dnchar.get().
-		if (MPI_Bcast(source, length, MPI_CHARACTER, worldRanks_[rootProcess], communicator(group)) != MPI_SUCCESS)
+		// Now broadcast character data
+		if (MPI_Bcast(source, length, MPI_CHARACTER, root, communicator(commType)) != MPI_SUCCESS)
 		{
-			Messenger::print("Failed to broadcast char data from root process %i (world rank %i) (world rank %i).\n", rootProcess, worldRanks_[rootProcess]);
+			Messenger::print("Failed to broadcast char data from root process %i.\n", root);
 			return false;
 		}
 	}
@@ -822,15 +847,15 @@ bool ProcessPool::broadcast(char* source, int rootProcess, ProcessPool::CommGrou
 	{
 		// Slaves receive the data into the buffer, and then set the source string.
 		// Length first...
-		if (MPI_Bcast(&length, 1, MPI_INTEGER, worldRanks_[rootProcess], communicator(group)) != MPI_SUCCESS)
+		if (MPI_Bcast(&length, 1, MPI_INTEGER, root, communicator(commType)) != MPI_SUCCESS)
 		{
-			Messenger::print("Slave %i (world rank %i) failed to receive char length data from root process %i (world rank %i) (world rank %i).\n", poolRank_, worldRanks_[poolRank_], rootProcess, worldRanks_[rootProcess]);
+			Messenger::print("Slave %i (world rank %i) failed to receive char length data from root process %i.\n", poolRank_, worldRank_, root);
 			return false;
 		}
 		
-		if (MPI_Bcast(source, length, MPI_CHARACTER, worldRanks_[rootProcess], communicator(group)) != MPI_SUCCESS)
+		if (MPI_Bcast(source, length, MPI_CHARACTER, root, communicator(commType)) != MPI_SUCCESS)
 		{
-			Messenger::print("Slave %i (world rank %i) failed to receive char data from root process %i (world rank %i) (world rank %i).\n", poolRank_, worldRanks_[poolRank_], rootProcess, worldRanks_[rootProcess]);
+			Messenger::print("Slave %i (world rank %i) failed to receive char data from root process %i.\n", poolRank_, worldRank_, root);
 			return false;
 		}
 	}
@@ -841,30 +866,30 @@ bool ProcessPool::broadcast(char* source, int rootProcess, ProcessPool::CommGrou
 }
 
 // Broadcast Vec3<double> to all Processes
-bool ProcessPool::broadcast(Vec3<double>& source, int rootProcess, ProcessPool::CommGroup group)
+bool ProcessPool::broadcast(Vec3<double>& source, int root, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
 	double buffer[3];
-	if (poolRank_ == rootProcess)
+	if (poolRank_ == root)
 	{
 		// Construct an array from the data...
 		buffer[0] = source.x;
 		buffer[1] = source.y;
 		buffer[2] = source.z;
-		if (MPI_Bcast(buffer, 3, MPI_DOUBLE, worldRanks_[rootProcess], communicator(group)) != MPI_SUCCESS)
+		if (MPI_Bcast(buffer, 3, MPI_DOUBLE, root, communicator(commType)) != MPI_SUCCESS)
 		{
-			Messenger::print("Failed to broadcast Vec3<double> data from root process %i (world rank %i).\n", rootProcess, worldRanks_[rootProcess]);
+			Messenger::print("Failed to broadcast Vec3<double> data from root process %i.\n", root);
 			return false;
 		}
 	}
 	else
 	{
 		// Slaves receive the data into the buffer, and then set the source variable.
-		if (MPI_Bcast(buffer, 3, MPI_DOUBLE, worldRanks_[rootProcess], communicator(group)) != MPI_SUCCESS)
+		if (MPI_Bcast(buffer, 3, MPI_DOUBLE, root, communicator(commType)) != MPI_SUCCESS)
 		{
-			Messenger::print("Slave %i (world rank %i) failed to receive Vec3<double> data from root process %i (world rank %i).\n", poolRank_, worldRanks_[poolRank_], rootProcess, worldRanks_[rootProcess]);
+			Messenger::print("Slave %i (world rank %i) failed to receive Vec3<double> data from root process %i (world rank %i).\n", poolRank_, worldRank_, root);
 			return false;
 		}
 		source.x = buffer[0];
@@ -878,14 +903,14 @@ bool ProcessPool::broadcast(Vec3<double>& source, int rootProcess, ProcessPool::
 }
 
 // Broadcast integer(s) to all Processes
-bool ProcessPool::broadcast(int* source, int count, int rootProcess, ProcessPool::CommGroup group)
+bool ProcessPool::broadcast(int* source, int count, int root, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
-	if (MPI_Bcast(source, count, MPI_INTEGER, rootProcess, communicator(group)) != MPI_SUCCESS)
+	if (MPI_Bcast(source, count, MPI_INTEGER, root, communicator(commType)) != MPI_SUCCESS)
 	{
-		Messenger::print("Failed to broadcast int data from root process %i (world rank %i).\n", rootProcess, worldRanks_[rootProcess]);
+		Messenger::print("Failed to broadcast int data from root process %i.\n", root);
 		return false;
 	}
 	totalTime_.accumulate();
@@ -895,14 +920,14 @@ bool ProcessPool::broadcast(int* source, int count, int rootProcess, ProcessPool
 }
 
 // Broadcast double(s) to all Processes
-bool ProcessPool::broadcast(double* source, int count, int rootProcess, ProcessPool::CommGroup group)
+bool ProcessPool::broadcast(double* source, int count, int root, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
-	if (MPI_Bcast(source, count, MPI_DOUBLE, rootProcess, communicator(group)) != MPI_SUCCESS)
+	if (MPI_Bcast(source, count, MPI_DOUBLE, root, communicator(commType)) != MPI_SUCCESS)
 	{
-		Messenger::print("Failed to broadcast int data from root process %i (world rank %i).\n", rootProcess, worldRanks_[rootProcess]);
+		Messenger::print("Failed to broadcast int data from root process %i.\n", root);
 		return false;
 	}
 	totalTime_.accumulate();
@@ -912,33 +937,36 @@ bool ProcessPool::broadcast(double* source, int count, int rootProcess, ProcessP
 }
 
 // Broadcast float(s) to all Processes
-bool ProcessPool::broadcast(float* source, int count, int rootProcess, ProcessPool::CommGroup group)
+bool ProcessPool::broadcast(float* source, int count, int root, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
-	if (MPI_Bcast(source, count, MPI_FLOAT, rootProcess, communicator(group)) != MPI_SUCCESS)
+	if (MPI_Bcast(source, count, MPI_FLOAT, root, communicator(commType)) != MPI_SUCCESS)
 	{
-		Messenger::print("Failed to broadcast int data from root process %i (world rank %i).\n", rootProcess, worldRanks_[rootProcess]);
+		Messenger::print("Failed to broadcast float data from root process %i.\n", root);
 		return false;
 	}
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
+
 	return true;
 }
 
-// Broadcast bool(s) to all Processes
-bool ProcessPool::broadcast(bool* source, int count, int rootProcess, ProcessPool::CommGroup group)
+// Broadcast bool to all Processes
+bool ProcessPool::broadcast(bool& source, int root, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
-	if (MPI_Bcast(source, count, MPI_INTEGER, rootProcess, communicator(group)) != MPI_SUCCESS)
+	int result = source;
+	if (MPI_Bcast(&result, 1, MPI_INTEGER, root, communicator(commType)) != MPI_SUCCESS)
 	{
-		Messenger::print("Failed to broadcast int data from root process %i (world rank %i).\n", rootProcess, worldRanks_[rootProcess]);
+		Messenger::print("Failed to broadcast int data from root process %i.\n", root);
 		return false;
 	}
+	source = result;
 	totalTime_.accumulate();
 	accumTime_.accumulate();
 #endif
@@ -946,29 +974,29 @@ bool ProcessPool::broadcast(bool* source, int count, int rootProcess, ProcessPoo
 }
 
 // Broadcast Array<int>
-bool ProcessPool::broadcast(Array<int>& array, int rootProcess, ProcessPool::CommGroup group)
+bool ProcessPool::broadcast(Array<int>& array, int root, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
 
 	int length;
-	if (poolRank_ == rootProcess)
+	if (poolRank_ == root)
 	{
 		// Broadcast string length first...
 		length = array.nItems();
-		if (MPI_Bcast(&length, 1, MPI_INTEGER, rootProcess, communicator(group)) != MPI_SUCCESS)
+		if (MPI_Bcast(&length, 1, MPI_INTEGER, root, communicator(commType)) != MPI_SUCCESS)
 		{
-			Messenger::print("Failed to broadcast Array<int> size from root process %i (world rank %i).\n", rootProcess, worldRanks_[rootProcess]);
+			Messenger::print("Failed to broadcast Array<int> size from root process %i (world rank %i).\n", root, worldRanks_[root]);
 			return false;
 		}
 
 		// Now broadcast Array data
 		if (length > 0)
 		{
-			if (MPI_Bcast(array.array(), length, MPI_INTEGER, rootProcess, communicator(group)) != MPI_SUCCESS)
+			if (MPI_Bcast(array.array(), length, MPI_INTEGER, root, communicator(commType)) != MPI_SUCCESS)
 			{
-				Messenger::print("Failed to broadcast Array<int> data from root process %i (world rank %i).\n", rootProcess, worldRanks_[rootProcess]);
+				Messenger::print("Failed to broadcast Array<int> data from root process %i (world rank %i).\n", root, worldRanks_[root]);
 				return false;
 			}
 		}
@@ -977,9 +1005,9 @@ bool ProcessPool::broadcast(Array<int>& array, int rootProcess, ProcessPool::Com
 	{
 		// Slaves receive the data into the buffer, and then set the source string.
 		// Length first...
-		if (MPI_Bcast(&length, 1, MPI_INTEGER, rootProcess, communicator(group)) != MPI_SUCCESS)
+		if (MPI_Bcast(&length, 1, MPI_INTEGER, root, communicator(commType)) != MPI_SUCCESS)
 		{
-			Messenger::print("Slave %i (world rank %i) failed to receive Array<int> size from rootProcess %i.\n", poolRank_, worldRanks_[poolRank_], rootProcess);
+			Messenger::print("Slave %i (world rank %i) failed to receive Array<int> size from root %i.\n", poolRank_, worldRank_, root);
 			return false;
 		}
 
@@ -988,9 +1016,9 @@ bool ProcessPool::broadcast(Array<int>& array, int rootProcess, ProcessPool::Com
 			// Create array of specified size
 			array.initialise(length);
 
-			if (MPI_Bcast(array.array(), length, MPI_INTEGER, rootProcess, communicator(group)) != MPI_SUCCESS)
+			if (MPI_Bcast(array.array(), length, MPI_INTEGER, root, communicator(commType)) != MPI_SUCCESS)
 			{
-				Messenger::print("Slave %i (world rank %i) failed to receive Array<int> data from root process %i (world rank %i).\n", poolRank_, worldRanks_[poolRank_], rootProcess, worldRanks_[rootProcess]);
+				Messenger::print("Slave %i (world rank %i) failed to receive Array<int> data from root process %i.\n", poolRank_, worldRank_, root);
 				return false;
 			}
 		}
@@ -1004,29 +1032,29 @@ bool ProcessPool::broadcast(Array<int>& array, int rootProcess, ProcessPool::Com
 }
 
 // Broadcast Array<double>
-bool ProcessPool::broadcast(Array<double>& array, int rootProcess, ProcessPool::CommGroup group)
+bool ProcessPool::broadcast(Array<double>& array, int root, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
 
 	int length;
-	if (poolRank_ == rootProcess)
+	if (poolRank_ == root)
 	{
 		// Broadcast string length first...
 		length = array.nItems();
-		if (MPI_Bcast(&length, 1, MPI_INTEGER, rootProcess, communicator(group)) != MPI_SUCCESS)
+		if (MPI_Bcast(&length, 1, MPI_INTEGER, root, communicator(commType)) != MPI_SUCCESS)
 		{
-			Messenger::print("Failed to broadcast Array<double> size from root process %i (world rank %i).\n", rootProcess, worldRanks_[rootProcess]);
+			Messenger::print("Failed to broadcast Array<double> size from root process %i.\n", root);
 			return false;
 		}
 
 		// Now broadcast Arrah data
 		if (length > 0)
 		{
-			if (MPI_Bcast(array.array(), length, MPI_DOUBLE, rootProcess, communicator(group)) != MPI_SUCCESS)
+			if (MPI_Bcast(array.array(), length, MPI_DOUBLE, root, communicator(commType)) != MPI_SUCCESS)
 			{
-				Messenger::print("Failed to broadcast Array<double> data from root process %i (world rank %i).\n", rootProcess, worldRanks_[rootProcess]);
+				Messenger::print("Failed to broadcast Array<double> data from root process %i.\n", root);
 				return false;
 			}
 		}
@@ -1035,9 +1063,9 @@ bool ProcessPool::broadcast(Array<double>& array, int rootProcess, ProcessPool::
 	{
 		// Slaves receive the data into the buffer, and then set the source string.
 		// Length first...
-		if (MPI_Bcast(&length, 1, MPI_INTEGER, rootProcess, communicator(group)) != MPI_SUCCESS)
+		if (MPI_Bcast(&length, 1, MPI_INTEGER, root, communicator(commType)) != MPI_SUCCESS)
 		{
-			Messenger::print("Slave %i (world rank %i) failed to receive Array<double> size from rootProcess %i.\n", poolRank_, worldRanks_[poolRank_], rootProcess);
+			Messenger::print("Slave %i (world rank %i) failed to receive Array<double> size from root %i.\n", poolRank_, worldRank_, root);
 			return false;
 		}
 
@@ -1046,9 +1074,9 @@ bool ProcessPool::broadcast(Array<double>& array, int rootProcess, ProcessPool::
 			// Create array of specified size
 			array.initialise(length);
 
-			if (MPI_Bcast(array.array(), length, MPI_DOUBLE, rootProcess, communicator(group)) != MPI_SUCCESS)
+			if (MPI_Bcast(array.array(), length, MPI_DOUBLE, root, communicator(commType)) != MPI_SUCCESS)
 			{
-				Messenger::print("Slave %i (world rank %i) failed to receive Array<double> data from root process %i (world rank %i).\n", poolRank_, worldRanks_[poolRank_], rootProcess, worldRanks_[rootProcess]);
+				Messenger::print("Slave %i (world rank %i) failed to receive Array<double> data from root process %i.\n", poolRank_, worldRank_, root);
 				return false;
 			}
 		}
@@ -1066,24 +1094,24 @@ bool ProcessPool::broadcast(Array<double>& array, int rootProcess, ProcessPool::
  */
 
 // Reduce (sum) double data to root process
-bool ProcessPool::sum(double* source, int count, int rootProcess, ProcessPool::CommGroup group)
+bool ProcessPool::sum(double* source, int count, int root, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
 	// If we are the target process then we need to construct a temporary buffer to store the received data in.
-	if ((group == ProcessPool::Leaders) && (!groupLeader())) return true;
-	if (poolRank_ == rootProcess)
+	if ((commType == ProcessPool::Leaders) && (!groupLeader())) return true;
+	if (poolRank_ == root)
 	{
 		double buffer[count];
-		if (MPI_Reduce(source, buffer, count, MPI_DOUBLE, MPI_SUM, rootProcess, communicator(group)) != MPI_SUCCESS) return false;
+		if (MPI_Reduce(source, buffer, count, MPI_DOUBLE, MPI_SUM, root, communicator(commType)) != MPI_SUCCESS) return false;
 		// Put reduced data back into original buffer
 		for (int n=0; n<count; ++n) source[n] = buffer[n];
 	}
 	else
 	{
 		// Not the target process, so just send data
-		if (MPI_Reduce(source, NULL, count, MPI_DOUBLE, MPI_SUM, rootProcess, MPI_COMM_WORLD) != MPI_SUCCESS) return false;
+		if (MPI_Reduce(source, NULL, count, MPI_DOUBLE, MPI_SUM, root, communicator(commType)) != MPI_SUCCESS) return false;
 	}
 	totalTime_.accumulate();
 	accumTime_.accumulate();
@@ -1092,24 +1120,24 @@ bool ProcessPool::sum(double* source, int count, int rootProcess, ProcessPool::C
 }
 
 // Reduce (sum) int data to root process
-bool ProcessPool::sum(int* source, int count, int rootProcess, ProcessPool::CommGroup group)
+bool ProcessPool::sum(int* source, int count, int root, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
 	// If we are the target process then we need to construct a temporary buffer to store the received data in.
-	if ((group == ProcessPool::Leaders) && (!groupLeader())) return true;
-	if (poolRank_ == rootProcess)
+	if ((commType == ProcessPool::Leaders) && (!groupLeader())) return true;
+	if (poolRank_ == root)
 	{
 		int buffer[count];
-		if (MPI_Reduce(source, buffer, count, MPI_INTEGER, MPI_SUM, rootProcess, communicator(group)) != MPI_SUCCESS) return false;
+		if (MPI_Reduce(source, buffer, count, MPI_INTEGER, MPI_SUM, root, communicator(commType)) != MPI_SUCCESS) return false;
 		// Put reduced data back into original buffer
 		for (int n=0; n<count; ++n) source[n] = buffer[n];
 	}
 	else
 	{
 		// Not the target process, so just send data
-		if (MPI_Reduce(source, NULL, count, MPI_INTEGER, MPI_SUM, rootProcess, MPI_COMM_WORLD) != MPI_SUCCESS) return false;
+		if (MPI_Reduce(source, NULL, count, MPI_INTEGER, MPI_SUM, root, communicator(commType)) != MPI_SUCCESS) return false;
 	}
 	totalTime_.accumulate();
 	accumTime_.accumulate();
@@ -1118,14 +1146,14 @@ bool ProcessPool::sum(int* source, int count, int rootProcess, ProcessPool::Comm
 }
 
 // Reduce (sum) double data to all processes
-bool ProcessPool::allSum(double* source, int count, ProcessPool::CommGroup group)
+bool ProcessPool::allSum(double* source, int count, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
 	double buffer[count];
-	if ((group == ProcessPool::Leaders) && (!groupLeader())) return true;
-	if (MPI_Allreduce(source, &buffer, count, MPI_DOUBLE, MPI_SUM, communicator(group)) != MPI_SUCCESS) return false;
+	if ((commType == ProcessPool::Leaders) && (!groupLeader())) return true;
+	if (MPI_Allreduce(source, &buffer, count, MPI_DOUBLE, MPI_SUM, communicator(commType)) != MPI_SUCCESS) return false;
 	// Put reduced data back into original buffer
 	for (int n=0; n<count; ++n) source[n] = buffer[n];
 	totalTime_.accumulate();
@@ -1135,14 +1163,14 @@ bool ProcessPool::allSum(double* source, int count, ProcessPool::CommGroup group
 }
 
 // Reduce (sum) int data to all processes
-bool ProcessPool::allSum(int* source, int count, ProcessPool::CommGroup group)
+bool ProcessPool::allSum(int* source, int count, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
 	int buffer[count];
-	if ((group == ProcessPool::Leaders) && (!groupLeader())) return true;
-	if (MPI_Allreduce(source, &buffer, count, MPI_INTEGER, MPI_SUM, communicator(group)) != MPI_SUCCESS) return false;
+	if ((commType == ProcessPool::Leaders) && (!groupLeader())) return true;
+	if (MPI_Allreduce(source, &buffer, count, MPI_INTEGER, MPI_SUM, communicator(commType)) != MPI_SUCCESS) return false;
 	// Put reduced data back into original buffer
 	for (int n=0; n<count; ++n) source[n] = buffer[n];
 	totalTime_.accumulate();
@@ -1151,21 +1179,21 @@ bool ProcessPool::allSum(int* source, int count, ProcessPool::CommGroup group)
 	return true;
 }
 
-// Assemble integer array on target process
-bool ProcessPool::assemble(int* array, int nData, int* rootDest, int rootMaxData, int rootProcess)
+// Assemble integer array for entire pool on target process
+bool ProcessPool::assemble(int* array, int nData, int* rootDest, int rootMaxData, int root, ProcessPool::CommunicatorType commType)
 {
 	/*
 	 * Given that the integer 'array' exists on all processes, and each process has stored nData at the
 	 * beginning of this array, this function will assemble the data into a complete, continuous array (up to
-	 * maxData elements in the new array rootDest) on the rootProcess.
+	 * maxData elements in the new array rootDest) on the root.
 	 */
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
-	if (poolRank_ == rootProcess)
+	if (poolRank_ == root)
 	{
 		int n;
-		// The rootProcess' data must be copied into the local array
+		// The root' data must be copied into the local array
 		for (n=0; n<nData; ++n) rootDest[n] = array[n];
 
 		// Now get data from other processes, appending each chunk to the rootDest array
@@ -1175,24 +1203,24 @@ bool ProcessPool::assemble(int* array, int nData, int* rootDest, int rootMaxData
 			if (poolRank_ == n) continue;
 
 			// Get length of data to receive
-			if (!receive(slaveNData, n)) return false;
+			if (!receive(slaveNData, n, commType)) return false;
 
 			// Check buffer length
 			if ((nData + slaveNData) > rootMaxData)
 			{
-				printf("MPI ERROR: Tried to assemble more data on process '%i' than the array allows for (maxData = %i).\n", rootProcess, rootMaxData);
+				printf("MPI ERROR: Tried to assemble more data on process '%i' than the array allows for (maxData = %i).\n", root, rootMaxData);
 				return false;
 			}
 			// Receive data
-			if (!receive(&rootDest[nData], slaveNData, n)) return false;
+			if (!receive(&rootDest[nData], slaveNData, n, commType)) return false;
 			nData += slaveNData;
 		}
 	}
 	else
 	{
 		// Slaves send array size and then the data to the master...
-		if (!send(nData, rootProcess)) return false;
-		if (!send(array, nData, rootProcess)) return false;
+		if (!send(nData, root, commType)) return false;
+		if (!send(array, nData, root, commType)) return false;
 	}
 	totalTime_.accumulate();
 	accumTime_.accumulate();
@@ -1200,20 +1228,20 @@ bool ProcessPool::assemble(int* array, int nData, int* rootDest, int rootMaxData
 	return true;
 }
 
-// Assemble double array on target process
-bool ProcessPool::assemble(double* array, int nLocalData, double* rootDest, int rootMaxData, int rootProcess)
+// Assemble double array for entire pool on target process
+bool ProcessPool::assemble(double* array, int nLocalData, double* rootDest, int rootMaxData, int root, ProcessPool::CommunicatorType commType)
 {
 	/*
 	 * Given that the double 'array' exists on all processes, and each process has stored nData at the
 	 * beginning of this array, this function will assemble the data into a complete, continuous array (up to
-	 * maxData elements in the new array rootDest) on the rootProcess.
+	 * maxData elements in the new array rootDest) on the root.
 	 */
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
-	if (poolRank_ == rootProcess)
+	if (poolRank_ == root)
 	{
-		// The rootProcess' data must be copied into the local array
+		// The root' data must be copied into the local array
 		for (int n=0; n<nLocalData; ++n) rootDest[n] = array[n];
 
 		// Now get data from other processes, appending each chunk to the rootDest array
@@ -1223,24 +1251,24 @@ bool ProcessPool::assemble(double* array, int nLocalData, double* rootDest, int 
 			if (poolRank_ == n) continue;
 			
 			// Get length of data to receive
-			if (!receive(slaveNData, n)) return false;
+			if (!receive(slaveNData, n, commType)) return false;
 			
 			// Check buffer length
 			if ((nLocalData + slaveNData) > rootMaxData)
 			{
-				printf("MPI ERROR: Tried to assemble more data on process '%i' than the array allows for (maxData = %i).\n", rootProcess, rootMaxData);
+				printf("MPI ERROR: Tried to assemble more data on process '%i' than the array allows for (maxData = %i).\n", root, rootMaxData);
 				return false;
 			}
 			// Receive data
-			if (!receive(&rootDest[nLocalData], slaveNData, n)) return false;
+			if (!receive(&rootDest[nLocalData], slaveNData, n, commType)) return false;
 			nLocalData += slaveNData;
 		}
 	}
 	else
 	{
 		// Slaves send array size and then the data to the master...
-		if (!send(nLocalData, rootProcess)) return false;
-		if (!send(array, nLocalData, rootProcess)) return false;
+		if (!send(nLocalData, root, commType)) return false;
+		if (!send(array, nLocalData, root, commType)) return false;
 	}
 	totalTime_.accumulate();
 	accumTime_.accumulate();
@@ -1248,23 +1276,23 @@ bool ProcessPool::assemble(double* array, int nLocalData, double* rootDest, int 
 	return true;
 }
 
-// Assemble double array on target process
-bool ProcessPool::assemble(Array<double>& array, int nData, Array<double>& rootDest, int rootMaxData, int rootProcess)
+// Assemble Array<double> for entire pool on target process
+bool ProcessPool::assemble(Array<double>& array, int nData, Array<double>& rootDest, int rootMaxData, int root, ProcessPool::CommunicatorType commType)
 {
-	if (poolRank_ == rootProcess)
+	if (poolRank_ == root)
 	{
 		if (rootDest.size() < rootMaxData)
 		{
 			Messenger::error("Destination Array<double> in ProcessPool::assemble() is not large enough.");
-			stop();
+			stop(commType);
 			return false;
 		}
-		else proceed();
+		else proceed(commType);
 	}
-	else if (!decision()) return false;
+	else if (!decision(commType)) return false;
 
 	// Call double* version of routine...
-	return assemble(array.array(), nData, rootDest.array(), rootMaxData, rootProcess);
+	return assemble(array.array(), nData, rootDest.array(), rootMaxData, root, commType);
 }
 
 /*
@@ -1272,56 +1300,56 @@ bool ProcessPool::assemble(Array<double>& array, int nData, Array<double>& rootD
  */
 
 // Broadcast logical decision to proceed to all processes (Master only)
-void ProcessPool::proceed()
+void ProcessPool::proceed(ProcessPool::CommunicatorType commType)
 {
 	bool decision = true;
 #ifdef PARALLEL
-	if (!isMaster())
+	if (!isMaster(commType))
 	{
 		Messenger::print("BAD_USAGE - Slave tried to make a decision.\n");
 		return;
 	}
-	if (!broadcast(&decision, 1)) Messenger::print("Error telling slaves to proceed.\n");
+	if (!broadcast(decision, 0, commType)) Messenger::print("Error telling slaves to proceed.\n");
 #endif
 }
 
 // Broadcast logical decision to stop to all processes (Master only)
-void ProcessPool::stop()
+void ProcessPool::stop(ProcessPool::CommunicatorType commType)
 {
 	bool decision = false;
 #ifdef PARALLEL
-	if (!isMaster())
+	if (!isMaster(commType))
 	{
 		Messenger::print("BAD_USAGE - Slave tried to make a decision.\n");
 		return;
 	}
-	if (!broadcast(&decision, 1)) Messenger::print("Error telling slaves to stop.\n");
+	if (!broadcast(decision, 0, commType)) Messenger::print("Error telling slaves to stop.\n");
 #endif
 }
 
 // Receive logical decision from master (Slaves only)
-bool ProcessPool::decision()
+bool ProcessPool::decision(ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-	if (!isSlave())
+	if (!isSlave(commType))
 	{
 		Messenger::print("BAD_USAGE - Master tried to receive a decision.\n");
 		return false;
 	}
 	bool data;
-	if (!broadcast(&data, 1)) Messenger::print("Error receiving decision.\n");
+	if (!broadcast(data, 0, commType)) Messenger::print("Error receiving decision.\n");
 	return data;
 #endif
 	return true;
 }
 
 // Return if one or more processes have failed (based on supplied bool)
-bool ProcessPool::ok(bool isOK)
+bool ProcessPool::ok(bool isOK, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	// First, sum all bool values of the processes in the pool
 	int summedResult = (isOK ? 1 : 0);
-	if (!allSum(&summedResult, 1)) return false;
+	if (!allSum(&summedResult, 1, commType)) return false;
 	return (summedResult == nProcesses());
 #endif
 	return isOK;
@@ -1371,9 +1399,9 @@ void ProcessPool::refillRandomBuffer()
 }
 
 // Initialise random number buffer
-void ProcessPool::initialiseRandomBuffer(ProcessPool::CommGroup group)
+void ProcessPool::initialiseRandomBuffer(ProcessPool::CommunicatorType commType)
 {
-	randomBufferCommGroup_ = group;
+	randomBufferCommGroup_ = commType;
 	refillRandomBuffer();
 }
 

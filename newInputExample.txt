@@ -85,10 +85,10 @@ Configuration  'Bulk'
   EndModule
   Module StructureFactor
     Frequency 5
-  ENDMODULE
-  #Module Export
-  #  OutputCoordinates On
-  #EndModule
+  EndModule
+  Module Export
+    OutputCoordinates On
+  EndModule
 EndConfiguration
 
 Configuration  'Bulk2'
@@ -126,10 +126,10 @@ Configuration  'Bulk2'
   EndModule
   Module StructureFactor
     Frequency 5
-  ENDMODULE
-  #Module Export
-  #  OutputCoordinates On
-  #EndModule
+  EndModule
+  Module Export
+    OutputCoordinates On
+  EndModule
 EndConfiguration
 
 # Pair Potentials
@@ -145,7 +145,7 @@ EndPairPotentials
 # Simulation Setup / Definition
 Simulation
   Seed  943723867
-  MaxIterations  2
+  MaxIterations  5
   ParallelStrategy  Even
 EndSimulation
 

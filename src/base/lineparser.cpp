@@ -29,6 +29,7 @@
 // Constructor
 LineParser::LineParser()
 {
+	arguments_.clear();
 	reset();
 }
 
@@ -53,6 +54,7 @@ void LineParser::reset()
 	outputFile_ = NULL;
 	cachedFile_ = NULL;
 	directOutput_ = false;
+	arguments_.clear();
 }
 
 /*
@@ -887,30 +889,34 @@ int LineParser::skipLines(int nlines)
  */
 
 // Return whether the end of the input stream has been reached (or only whitespace remains)
-bool LineParser::eofOrBlank(ProcessPool& worldPool) const
+bool LineParser::eofOrBlank(ProcessPool& procPool) const
 {
 	// Run command on master and broadcast result
 	bool result;
-	if (worldPool.isMaster()) result = eofOrBlank();
-	if (!worldPool.broadcast(&result, 1)) return false;
+	if (procPool.isMaster()) result = eofOrBlank();
+	if (!procPool.broadcast(result)) return false;
 
 	return result;
 }
 
 // Read line from file and do delimited parse
-int LineParser::getArgsDelim(ProcessPool& worldPool, int optionMask)
+int LineParser::getArgsDelim(ProcessPool& procPool, int optionMask)
 {
 	// Master will read the next line from the file, and broadcast it to slaves (who will then parse it)
 	int result;
-	if (worldPool.isMaster()) result = getArgsDelim(optionMask);
-	if (!worldPool.broadcast(&result, 1)) return -1;
+	if (procPool.isMaster()) result = getArgsDelim(optionMask);
+	if (!procPool.broadcast(&result, 1)) return -1;
 
 	// Everybody now has the result of the read/parse, so transfer line
-	if (!worldPool.broadcast(line_)) return false;
-	if (worldPool.isSlave()) setLine(line_);
+	if (!procPool.broadcast(line_)) return false;
+	if (procPool.isSlave())
+	{
+		lineLength_ = strlen(line_);
+		linePos_ = 0;
 
-	// If we are a slave, parse the line before returning the result of the initial line read
-	if (worldPool.isSlave()) getAllArgsDelim(optionMask);
+		// Parse the line before returning the result of the initial line read
+		getAllArgsDelim(optionMask);
+	}
 
 	return result;
 }

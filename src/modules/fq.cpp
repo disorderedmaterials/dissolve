@@ -42,6 +42,10 @@ List<PartialQSet> StructureFactor::partialSets_;
 // Constructor
 StructureFactor::StructureFactor() : Module()
 {
+	// Add to instances list and set unique name for this instance
+	uniqueName_.sprintf("%s_%02i", name(), instances_.nItems());
+	instances_.own(this);
+
 	// Setup variables / control parameters
 	addVariable("Bragg", "off", "Enable calculation of Bragg scattering");
 	addVariable("BraggQDepBroadening", 0.0063, "FWHM of Gaussian for Q-dependent Bragg broadening function");

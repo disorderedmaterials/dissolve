@@ -45,7 +45,7 @@ void GrainDefinition::setParent(Species* parent)
 }
 
 // Return parent Species
-Species *GrainDefinition::parent() const
+Species* GrainDefinition::parent() const
 {
 	return parent_;
 }

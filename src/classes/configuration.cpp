@@ -290,6 +290,7 @@ bool Configuration::setup(ProcessPool& procPool, const List<AtomType>& atomTypes
 	// 1) If useOutputCoordinatesAsInput_ is true and that file exists, this overrides everything else
 	// 2) If randomConfiguration_ is true, generate some random coordinates
 	// 3) Load the inputCoordinatesFile_
+	printf("RANDOMCONFIG = %i\n", randomConfiguration_);
 	if (useOutputCoordinatesAsInput_ && (!outputCoordinatesFile_.isEmpty()) && DUQSys::fileExists(outputCoordinatesFile_))
 	{
 		Messenger::print("--> Loading initial coordinates from output coordinates file '%s'...\n", outputCoordinatesFile_.get());
@@ -333,7 +334,7 @@ bool Configuration::setup(ProcessPool& procPool, const List<AtomType>& atomTypes
 		// Master will open file and attempt to read it...
 		bool loadResult;
 		if (procPool.isMaster()) loadResult = boxNormalisation_.load(boxNormalisationFileName_);
-		if (!procPool.broadcast(&loadResult, 1)) return false;
+		if (!procPool.broadcast(loadResult)) return false;
 
 		// Did we successfully load the file?
 		if (loadResult)
@@ -404,12 +405,12 @@ bool Configuration::broadcast(ProcessPool& procPool, const List<Species>& specie
 	if (!result) return false;
 	if (!procPool.broadcast(&multiplier_, 1)) return false;
 	if (!procPool.broadcast(&density_, 1)) return false;
-	if (!procPool.broadcast(&densityIsAtomic_, 1)) return false;
-	if (!procPool.broadcast(&nonPeriodic_, 1)) return false;
-	if (!procPool.broadcast(&randomConfiguration_, 1)) return false;
+	if (!procPool.broadcast(densityIsAtomic_)) return false;
+	if (!procPool.broadcast(nonPeriodic_)) return false;
+	if (!procPool.broadcast(randomConfiguration_)) return false;
 	if (!procPool.broadcast(inputCoordinatesFile_)) return false;
 	if (!procPool.broadcast(outputCoordinatesFile_)) return false;
-	if (!procPool.broadcast(&useOutputCoordinatesAsInput_, 1)) return false;
+	if (!procPool.broadcast(useOutputCoordinatesAsInput_)) return false;
 	if (!procPool.broadcast(&temperature_, 1)) return false;
 
 	// Content
@@ -432,7 +433,7 @@ bool Configuration::broadcast(ProcessPool& procPool, const List<Species>& specie
 	// Box
 	if (!procPool.broadcast(relativeBoxLengths_)) return false;
 	if (!procPool.broadcast(boxAngles_)) return false;
-	if (!procPool.broadcast(&nonPeriodic_, 1)) return false;
+	if (!procPool.broadcast(nonPeriodic_)) return false;
 	if (procPool.isSlave() && (!setupBox(pairPotentialRange))) return false;
 	if (!procPool.broadcast(boxNormalisationFileName_)) return false;
 	if (!boxNormalisation_.broadcast(procPool)) return false;

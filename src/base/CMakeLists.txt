@@ -6,6 +6,7 @@ isotope.cpp
 lineparser.cpp
 messenger.cpp
 parameters.cpp
+processgroup.cpp
 processpool.cpp
 ptable.cpp
 sysfunc.cpp
@@ -22,6 +23,7 @@ isotope.h
 lineparser.h
 messenger.h
 parameters.h
+processgroup.h
 processpool.h
 ptable.h
 sysfunc.h

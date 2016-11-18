@@ -29,13 +29,13 @@
 
 int main(int argc, char **argv)
 {
-	// Instantiate main class
-	DUQ dUQ;
-
 #ifdef PARALLEL
 	// Initialise parallel communication
 	ProcessPool::initialiseMPI(&argc, &argv);
 #endif
+
+	// Instantiate main class
+	DUQ dUQ;
 
 	// Parse CLI options...
 	int n = 1;
@@ -164,7 +164,6 @@ int main(int argc, char **argv)
 	if (dUQ.seed() == -1) srand( (unsigned)time( NULL ) );
 	else srand(dUQ.seed());
 
-
 	// Perform simulation setup (all processes)
 	if (!dUQ.setupSimulation())
 	{
@@ -197,8 +196,10 @@ int main(int argc, char **argv)
 
 	// End parallel communication
 	ProcessPool::finalise();
-	
+
+	Messenger::print("dUQ is done.\n");
+
 	// Done.
-	return result;
+	return (result ? 0 : 1);
 }
 

@@ -25,7 +25,7 @@
 #include <string.h>
 
 // Add a new Species to the list
-Species *DUQ::addSpecies()
+Species* DUQ::addSpecies()
 {
 	// Create a new Species
 	Species* sp = species_.add();
@@ -53,13 +53,13 @@ int DUQ::nSpecies() const
 }
 
 // Return first Species in the list
-Species *DUQ::species() const
+Species* DUQ::species() const
 {
 	return species_.first();
 }
 
 // Return nth Species in the list
-Species *DUQ::species(int n)
+Species* DUQ::species(int n)
 {
 	return species_[n];
 }

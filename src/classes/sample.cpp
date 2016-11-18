@@ -362,7 +362,7 @@ bool Sample::broadcast(ProcessPool& procPool, const List<Species>& species)
 	}
 
 	// Reference data
-	if (!procPool.broadcast(&hasReferenceData_, 1)) return false;
+	if (!procPool.broadcast(hasReferenceData_)) return false;
 	if (!referenceData_.broadcast(procPool)) return false;
 	if (!procPool.broadcast(referenceDataFileName_)) return false;
 #endif

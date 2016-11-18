@@ -39,6 +39,10 @@ List<PartialRSet> Partials::partialSets_;
 // Constructor
 Partials::Partials() : Module()
 {
+	// Add to instances list and set unique name for this instance
+	uniqueName_.sprintf("%s_%02i", name(), instances_.nItems());
+	instances_.own(this);
+
 	// Setup variables / control parameters
 	addVariable("Save", false, "Whether to save partials to disk after calculation");
 	addVariable("Smoothing", 0, "Specifies the degree of smoothing 'n' to apply to calculated RDFs, where 2n+1 controls the length in the applied Spline smooth");

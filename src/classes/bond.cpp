@@ -68,7 +68,7 @@ void Bond::setParent(Species* parent)
 }
 
 // Return parent Species
-Species *Bond::parent() const
+Species* Bond::parent() const
 {
 	return parent_;
 }

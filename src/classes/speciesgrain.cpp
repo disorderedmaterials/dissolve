@@ -48,7 +48,7 @@ void SpeciesGrain::setParent(Species* parent)
 }
 
 // Return parent Species
-Species *SpeciesGrain::parent() const
+Species* SpeciesGrain::parent() const
 {
 	return parent_;
 }

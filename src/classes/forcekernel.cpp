@@ -324,7 +324,7 @@ void ForceKernel::forces(const Atom* i, int nNeighbours, Cell** neighbours, bool
 	else if (loopContext == ProcessPool::OverGroupProcesses)
 	{
 		// Striped loop over Cell neighbours (Process Groups)
-		for (int n=processPool_.groupRank(); n<nNeighbours; n += processPool_.myGroupSize()) forces(i, neighbours[n], applyMim, excludeIgtJ, fx, fy, fz);
+		for (int n=processPool_.groupRank(); n<nNeighbours; n += processPool_.myGroup()->nProcesses()) forces(i, neighbours[n], applyMim, excludeIgtJ, fx, fy, fz);
 	}
 	else if (loopContext == ProcessPool::OverPoolProcesses)
 	{
@@ -358,7 +358,7 @@ void ForceKernel::forces(const Grain* grain, int nNeighbours, Cell** neighbours,
 	else if (loopContext == ProcessPool::OverGroupProcesses)
 	{
 		// Striped loop over Cell neighbours (Process Groups)
-		for (int n=processPool_.groupRank(); n<nNeighbours; n += processPool_.myGroupSize()) forces(grain, neighbours[n], applyMim, excludeIgtJ, fx, fy, fz);
+		for (int n=processPool_.groupRank(); n<nNeighbours; n += processPool_.myGroup()->nProcesses()) forces(grain, neighbours[n], applyMim, excludeIgtJ, fx, fy, fz);
 	}
 	else if (loopContext == ProcessPool::OverPoolProcesses)
 	{

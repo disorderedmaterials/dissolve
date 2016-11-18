@@ -40,8 +40,8 @@ List<Module> AtomShake::instances_;
 AtomShake::AtomShake() : Module()
 {
 	// Add to instances list and set unique name for this instance
+	uniqueName_.sprintf("%s_%02i", name(), instances_.nItems());
 	instances_.own(this);
-	uniqueName_.sprintf("%s_%02i", name(), instances_.nItems()-1);
 
 	// Setup variables / control parameters
 	addVariable("CutoffDistance", -1.0);

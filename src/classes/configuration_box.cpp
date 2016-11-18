@@ -563,12 +563,12 @@ int Configuration::nextAvailableCell(ProcessPool& procPool, bool willBeModified,
 			}
 			
 			// Broadcast Cell index to all processes in current ProcessGroup
-			procList = procPool.worldRanksInGroup(group);
 			for (proc=0; proc<procPool.nProcessesInGroup(group); ++proc)
 			{
+				int poolRank = procPool.processGroup(group)->poolRank(proc);
 				// If this world rank is our own, no need to send it - just store it for later return below
-				if (procList[proc] == ProcessPool::worldRank()) rootCellId = cellId;
-				else if (!procPool.send(cellId, procList[proc])) printf("MPI error in Configuration::nextAvailableCell() sending next cell to process %i.\n", procList[proc]);
+				if (poolRank == procPool.poolRank()) rootCellId = cellId;
+				else if (!procPool.send(cellId, poolRank)) printf("MPI error in Configuration::nextAvailableCell() sending next cell to pool rank %i.\n", poolRank);
 			}
 		}
 
@@ -611,7 +611,7 @@ bool Configuration::finishedWithCell(ProcessPool& procPool, bool willBeModified,
 			// If this is *not* the masters group, receive data from the slave process leader
 			if (group != procPool.groupIndex())
 			{
-				if (!procPool.receive(cellId, procPool.worldRanksInGroup(group)[0])) Messenger::print("MPI error in Configuration::finishedWithCell() receiving from process with rank %i.\n", group);
+				if (!procPool.receive(cellId, procPool.processGroup(group)->poolRank(0))) Messenger::print("MPI error in Configuration::finishedWithCell() receiving from process with rank %i.\n", group);
 			}
 			if (cellId >= 0) cells_[cellId].unlock(willBeModified);
 		}

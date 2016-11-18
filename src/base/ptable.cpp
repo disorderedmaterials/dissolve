@@ -178,7 +178,7 @@ bool PeriodicTable::loadIsotopes(const char* filename)
 		// sa (characters 74-83) (e10.4)
 		if (!parser.getNextN(LineParser::Defaults, 10, &arg)) failed = true;
 		sa = arg.asDouble();
-		
+
 		// Did we succeed?
 		if (failed)
 		{
@@ -186,19 +186,19 @@ bool PeriodicTable::loadIsotopes(const char* filename)
 			parser.closeFiles();
 			return false;
 		}
-		
+
 		// Create new isotope definition for target element
 		isotope = elements_[Z].addIsotope();
 		isotope->set(A, weight, bc, bi, sc, si, ss, sa);
-		
+
 		++count;
-		
+
 		if (parser.eofOrBlank()) break;;
 	}
 	parser.closeFiles();
 	
 	Messenger::print("Loaded %i isotope definitions from file.\n", count);
-	
+
 	// Go through Elements and check for no natural isotope defined (and add it if necessary)
 	for (int n=0; n<nElements_; ++n)
 	{
@@ -208,7 +208,7 @@ bool PeriodicTable::loadIsotopes(const char* filename)
 		else
 		{
 			Messenger::printVerbose("Creating natural isotope for element %i (%s) with bc = 0.0.\n", n, elements_[n].name());
-			isotope = elements_->addIsotope();
+			isotope = elements_[n].addIsotope();
 		}
 	}
 
@@ -272,7 +272,7 @@ bool PeriodicTable::loadParameters(const char* filename)
 	
 	Messenger::print("Loaded %i atomtype definitions from file.\n", count);
 	
-	// Go through Elements and check for no atomtype definigions, adding a basic one if necessary
+	// Go through Elements and check for no atomtype definitions, adding a basic one if necessary
 	for (Z=0; Z<nElements_; ++Z)
 	{
 		// Search defined isotopes for natural definition (A = 0)
@@ -345,10 +345,7 @@ void PeriodicTable::addToEmpirical(int z, int count)
 	else elementCount_[z] += count;
 }
 
-/*
- * \brief Return current empirical formula
- * \details Generate (and return) an empirical formula based on the current element counts.
- */
+// Return current empirical formula
 const char* PeriodicTable::empiricalFormula()
 {
 	static Dnchar formula(1024);

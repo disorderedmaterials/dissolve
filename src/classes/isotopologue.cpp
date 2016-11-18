@@ -46,7 +46,7 @@ void Isotopologue::setParent(Species* parent)
 }
 
 // Return parent Species
-Species *Isotopologue::parent() const
+Species* Isotopologue::parent() const
 {
 	return parent_;
 }

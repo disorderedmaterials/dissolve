@@ -64,7 +64,7 @@ void SpeciesAngle::setParent(Species* parent)
 }
 
 // Return parent Species
-Species *SpeciesAngle::parent() const
+Species* SpeciesAngle::parent() const
 {
 	return parent_;
 }

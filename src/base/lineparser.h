@@ -33,7 +33,6 @@ using namespace std;
 #define MAXLINELENGTH 1024
 
 // Forward Declarations
-class Format;
 class ProcessPool;
 
 // Line Parser
@@ -169,9 +168,9 @@ class LineParser
 	 */
 	public:
 	// Return whether the end of the input stream has been reached (or only whitespace remains)
-	bool eofOrBlank(ProcessPool& worldPool) const;
+	bool eofOrBlank(ProcessPool& procPool) const;
 	// Read line from file and do delimited parse
-	int getArgsDelim(ProcessPool& worldPool, int optionMask);
+	int getArgsDelim(ProcessPool& procPool, int optionMask);
 
 
 	/*
