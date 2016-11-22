@@ -38,7 +38,7 @@ class Matrix3
 
 	/*
 	// Operators
-	*/
+	 */
 	public:
 	Matrix3 operator*(const Matrix3& B) const;
 	Matrix3 operator*(const double a) const;
@@ -51,7 +51,7 @@ class Matrix3
 
 	/*
 	// General Routines
-	*/
+	 */
 	public:
 	// Reset the matrix to the identity
 	void setIdentity();
@@ -73,7 +73,7 @@ class Matrix3
 
 	/*
 	// Column Operations
-	*/
+	 */
 	public:
 	// Copy column contents to supplied Vec3
 	Vec3<double> columnAsVec3(int col) const;
@@ -101,7 +101,7 @@ class Matrix3
 
 	/*
 	// Rotations
-	*/
+	 */
 	public:
 	// Create rotation matrix about X
 	void createRotationX(double angle);
@@ -121,7 +121,7 @@ class Matrix3
 
 	/*
 	// Scaling
-	*/
+	 */
 	public:
 	// Apply a general scaling to the matrix (as glScaled would to)
 	void applyScaling(double scalex, double scaley, double scalez);
@@ -139,7 +139,7 @@ class Matrix3
 
 	/*
 	// Transforms
-	*/
+	 */
 	public:
 	// Transform coordinates supplied and return as Vec3<double>
 	Vec3<double> transform(double x, double y, double z) const;

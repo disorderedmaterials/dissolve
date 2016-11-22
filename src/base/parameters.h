@@ -25,10 +25,7 @@
 #include "templates/list.h"
 #include "base/dnchar.h"
 
-/*
- * \brief Parameters Definition
- * \details Basic interaction information for a specific type of chemical atom.
- */
+// Parameters Definition
 class Parameters : public MPIListItem<Parameters>
 {
 	public:

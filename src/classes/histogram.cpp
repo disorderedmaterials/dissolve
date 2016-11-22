@@ -83,13 +83,13 @@ void Histogram::copy(const Histogram& source)
  * Data
  */
 
-/*
- * \brief Initialise arrays
- * \details Initialise all values and arrays, ready for histogram calculation. Note that the normalisationType_ is reset to NoNormalisation by
- * this routine, and so the correct normalisation type must be set manually afterwards.
- */
+// Initialise arrays
 void Histogram::initialise(double minValue, double maxValue, double binWidth)
 {
+	/*
+	 * Initialise all values and arrays, ready for histogram calculation. Note that the normalisationType_ is reset to NoNormalisation by
+	 * this routine, and so the correct normalisation type must be set manually afterwards.
+	 */
 	clear();
 	
 	// Determine number of points from range and binwidth
@@ -215,13 +215,14 @@ void Histogram::merge(Histogram& otherHistogram)
 	}
 }
 
-/*
- * \brief Finalise data
- * \details Finalise the data by normalising according to the previously-selected method, creating the normalisedData_ array 
- * in the process. If not called, the normalisedData_ array will contain either garbage or old data.
- */
+// Finalise data
 void Histogram::finalise()
 {
+	/*
+	 * Finalise the data by normalising according to the previously-selected method, creating the normalisedData_ array 
+	 * in the process. If not called, the normalisedData_ array will contain either garbage or old data.
+	 */
+
 	// Normalise according to specified method
 	int n;
 	switch (normalisationType_)

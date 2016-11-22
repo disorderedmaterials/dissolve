@@ -49,115 +49,89 @@ NonPeriodicBox::~NonPeriodicBox()
 }
 
 /*
-// Minimum Image Routines (virtual implementations)
+ * Minimum Image Routines (virtual implementations)
 */
 
-/*
- * \brief Return minimum image coordinates of 'i' with respect to 'ref'
- */
+// Return minimum image coordinates of 'i' with respect to 'ref'
 Vec3<double> NonPeriodicBox::minimumImage(const Atom* i, const Atom* ref) const
 {
 	return i->r();
 }
 
-/*
- * \brief Return minimum image coordinates of 'i' with respect to 'ref'
- */
+// Return minimum image coordinates of 'i' with respect to 'ref'
 Vec3<double> NonPeriodicBox::minimumImage(const Atom* i, const Vec3<double>& ref) const
 {
 	return i->r();
 }
 
-/*
- * \brief Return minimum image coordinates of 'i' with respect to 'ref'
- */
+// Return minimum image coordinates of 'i' with respect to 'ref'
 Vec3<double> NonPeriodicBox::minimumImage(const Vec3<double>& i, const Vec3<double>& ref) const
 {
 	return i;
 }
 
-/*
- * \brief Return minimum image vector from 'i' to 'j'
- */
+// Return minimum image vector from 'i' to 'j'
 Vec3<double> NonPeriodicBox::minimumVector(const Atom* i, const Atom* j) const
 {
 	return j->r() - i->r();
 }
 
-/*
- * \brief Return minimum image vector from 'i' to 'j'
- */
+// Return minimum image vector from 'i' to 'j'
 Vec3<double> NonPeriodicBox::minimumVector(const Atom* i, const Vec3<double>& j) const
 {
 	return j - i->r();
 }
 
-/*
- * \brief Return minimum image vector from 'i' to 'j'
- */
+// Return minimum image vector from 'i' to 'j'
 Vec3<double> NonPeriodicBox::minimumVector(const Vec3<double>& i, const Vec3<double>& j) const
 {
 	return j - i;
 }
 
-/*
- * \brief Return minimum image distance from 'i' to 'j'
- */
+// Return minimum image distance from 'i' to 'j'
 double NonPeriodicBox::minimumDistance(const Atom* i, const Atom* j) const
 {
 	return (j->r() - i->r()).magnitude();
 }
 
-/*
- * \brief Return minimum image distance from 'i' to 'j'
- */
+// Return minimum image distance from 'i' to 'j'
 double NonPeriodicBox::minimumDistance(const Atom* i, const Vec3<double>& j) const
 {
 	return (j - i->r()).magnitude();
 }
 
-/*
- * \brief Return minimum image distance from 'i' to 'j'
- */
+// Return minimum image distance from 'i' to 'j'
 double NonPeriodicBox::minimumDistance(const Vec3<double>& i, const Vec3<double>& j) const
 {
 	return (j - i).magnitude();
 }
 
-/*
- * \brief Return minimum image squared distance from 'i' to 'j' (pointers)
- */
+// Return minimum image squared distance from 'i' to 'j' (pointers)
 double NonPeriodicBox::minimumDistanceSquared(const Atom* i, const Atom* j) const
 {
 	return (j->r() - i->r()).magnitudeSq();
 }
 
-/*
- * \brief Return minimum image squared distance from 'i' to 'j' (references)
- */
+// Return minimum image squared distance from 'i' to 'j' (references)
 double NonPeriodicBox::minimumDistanceSquared(const Atom& i, const Atom& j) const
 {
 	return (j.r() - i.r()).magnitudeSq();
 }
 
-/*
- * \brief Return minimum image squared distance from 'i' to 'j'
- */
+// Return minimum image squared distance from 'i' to 'j'
 double NonPeriodicBox::minimumDistanceSquared(const Atom* i, const Vec3<double>& j) const
 {
 	return (j - i->r()).magnitudeSq();
 }
 
-/*
- * \brief Return minimum image squared distance from 'i' to 'j'
- */
+// Return minimum image squared distance from 'i' to 'j'
 double NonPeriodicBox::minimumDistanceSquared(const Vec3<double>& i, const Vec3<double>& j) const
 {
 	return (j - i).magnitudeSq();
 }
 
 /*
-// Utility Routines (Virtual Implementations)
+ * Utility Routines (Virtual Implementations)
 */
 
 // Return random coordinate inside Box
@@ -170,9 +144,7 @@ Vec3<double> NonPeriodicBox::randomCoordinate() const
 	return pos;
 }
 
-/*
- * \brief Return folded coordinate (i.e. inside current Box)
- */
+// Return folded coordinate (i.e. inside current Box)
 Vec3<double> NonPeriodicBox::fold(const Vec3<double>& r) const
 {
 	// Convert coordinate to fractional coords
@@ -186,9 +158,7 @@ Vec3<double> NonPeriodicBox::fold(const Vec3<double>& r) const
 	return frac*a_;
 }
 
-/*
- * \brief Return folded coordinate (i.e. inside current Box)
- */
+// Return folded coordinate (i.e. inside current Box)
 Vec3<double> NonPeriodicBox::foldFrac(const Vec3<double>& r) const
 {
 	// Convert coordinate to fractional coords

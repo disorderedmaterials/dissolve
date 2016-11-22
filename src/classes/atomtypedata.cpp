@@ -83,9 +83,7 @@ AtomType* AtomTypeData::atomType() const
 	return atomType_;
 }
 
-/*
- * \brief // Finalise, calculating fractional populations etc.
- */
+// Finalise, calculating fractional populations etc.
 void AtomTypeData::finalise(int totalAtoms)
 {
 	fraction_ = double(population_) / totalAtoms;

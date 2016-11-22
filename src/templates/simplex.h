@@ -25,9 +25,7 @@
 #include "templates/array.h"
 #include "templates/list.h"
 
-/*
- * \brief Simplex Definition
- */
+// Simplex Algorithm
 template<class T> class Simplex
 {
 	public:
@@ -38,8 +36,8 @@ template<class T> class Simplex
 
 
 	/*
-	// Basic Data
-	*/
+	 * Basic Data
+	 */
 	private:
 	// Simplex move parameters
 	double rho_, chi_, gamma_, sigma_;
@@ -77,9 +75,7 @@ template<class T> class Simplex
 	int betterPointsFound_;
 	
 	private:
-	/*
-	* \brief Return (calculating if necessary) cost of supplied vertex
-	*/
+	// Return (calculating if necessary) cost of supplied vertex
 	double cost(Array<double>& vertex)
 	{
 		// Compute cold cost of vertex first, to compare against bestAlpha
@@ -98,9 +94,7 @@ template<class T> class Simplex
 		return coldCost;
 	}
 
-	/*
-	* \brief Return whether to accept move based on supplied cost value, vertex, and temperature
-	*/
+	// Return whether to accept move based on supplied cost value, vertex, and temperature
 	bool accept(double trialCost, int vertexId, double temperature)
 	{
 		// First, get cost of comparison vertex
@@ -117,9 +111,7 @@ template<class T> class Simplex
 		return false;
 	}
 
-	/*
-	* \brief Find extreme cost values in current Simplex at specified vertex temperature
-	*/
+	// Find extreme cost values in current Simplex at specified vertex temperature
 	void findExtremes(double temperature)
 	{
 		// Set initial values
@@ -176,9 +168,7 @@ template<class T> class Simplex
 		}
 	}
 
-	/*
-	* \brief Reflect specified vertex through specified centroid
-	*/
+	// Reflect specified vertex through specified centroid
 	Array<double> reflect(Array<double>& centroid)
 	{
 		// Reflect specified point : x(new) = (1 + rho) * y - rho * x(worst)    where y = sum x(i) / n, i != worst
@@ -187,9 +177,7 @@ template<class T> class Simplex
 		return newVertex;
 	}
 
-	/*
-	* \brief Expand Simplex about worst point
-	*/
+	// Expand Simplex about worst point
 	Array<double> expand(Array<double>& centroid)
 	{
 		// Expand around highest point : x(new) = (1 + rho * chi) * xbar - rho * chi * x(n+1)    where xbar = sum(i=1,n) x(i) / n
@@ -198,9 +186,7 @@ template<class T> class Simplex
 		return newVertex;
 	}
 
-	/*
-	* \brief Contract Simplex, giving new vertex outside current polytope
-	*/
+	// Contract Simplex, giving new vertex outside current polytope
 	Array<double> contractOutside(Array<double>& centroid)
 	{
 		// Contract simplex (new point outside current polytope) : x(new) = (1 + rho * gamma) * xbar - rho * gamma * vertex(nalpha+1)
@@ -209,9 +195,7 @@ template<class T> class Simplex
 		return newVertex;
 	}
 
-	/*
-	* \brief Contract Simplex, giving new vertex inside current polytope
-	*/
+	// Contract Simplex, giving new vertex inside current polytope
 	Array<double> contractInside(Array<double>& centroid)
 	{
 		// Contract simplex (new point inside current polytope) : x(new) = (1 - gamma) * xbar + gamma * vertex(nalpha+1)
@@ -220,9 +204,7 @@ template<class T> class Simplex
 		return newVertex;
 	}
 
-	/*
-	* \brief Shrink Simplex, contracting around best point (and leaving it as-is)
-	*/
+	// Shrink Simplex, contracting around best point (and leaving it as-is)
 	void shrink()
 	{
 		// Shrink vertices of current simplex, leaving only the first (x(1)) as-is: x(n) = x(1) + sigma(x(n) - x(1)),   n=2,nalpha+1
@@ -234,9 +216,7 @@ template<class T> class Simplex
 	}
 
 	public:
-	/*
-	 * \brief Constructor
-	*/
+	// Constructor
 	Simplex(T* classPtr, CostFunction costFunc)
 	{
 		// Private variables
@@ -253,9 +233,7 @@ template<class T> class Simplex
 		sigma_ = 0.5;
 	}
 
-	/*
-	 * \brief Initialise starting Simplex
-	*/
+	// Initialise starting Simplex
 	void initialise(Array<double>& initVertex, double paramOffset, double fracVariation = 0.1)
 	{
 		nAlpha_ = initVertex.nItems();
@@ -275,9 +253,7 @@ template<class T> class Simplex
 		bestAlphaCost_ = costs_[0];
 	}
 
-	/*
-	* \brief Return MSD of cost values in current Simplex
-	*/
+	// MSD of cost values in current Simplex
 	double costMSD()
 	{
 		// Get average cost of all vertices
@@ -291,33 +267,25 @@ template<class T> class Simplex
 		return sqrt(serror/nVertices_);
 	}
 
-	/*
-	* \brief Return whether Simplex has converged
-	*/
+	// Return whether Simplex has converged
 	bool converged()
 	{
 		return (costMSD() < tolerance_);
 	}
 
-	/*
-	* \brief Print vertex information
-	*/
+	// Print vertex information
 	void printVertexInformation()
 	{
 		for (int n=0; n<nVertices_; ++n) printf("[SMPLX]\t\tVertex %i has cold cost value = %12.6e\n", n, costs_[n]);
 	}
 
-	/*
-	* \brief Print Simplex move information
-	*/
+	// Print Simplex move information
 	void printMoveInformation()
 	{
 		printf("[SMPLX]\tIn %i moves %i reflections, %i expansions, %i contractions (%i inner, %i outer) and %i shrinks were performed.\n", moveCount_[Simplex::AllMoves], moveCount_[Simplex::ReflectionMove], moveCount_[Simplex::ExpansionMove], moveCount_[Simplex::OuterContractionMove]+moveCount_[Simplex::InnerContractionMove], moveCount_[Simplex::InnerContractionMove], moveCount_[Simplex::OuterContractionMove], moveCount_[Simplex::ShrinkMove]);
 	}
 
-	/*
-	* \brief // Perform standard Simplex minimisation (at temperature specified)
-	*/
+	// Perform standard Simplex minimisation (at temperature specified)
 	Array<double> minimise(int nCycles, int maxMoves, double tolerance, double simplexTemperature)
 	{
 		// Simplex Simulated Annealing following original Nelder-Mead simplex algorithm
@@ -486,9 +454,7 @@ template<class T> class Simplex
 
 		return bestAlpha_;
 	}
-	/*
-	* \brief Return whether a better point was found by the Simplex
-	*/
+	// Return whether a better point was found by the Simplex
 	bool betterPointFound()
 	{
 		return (betterPointsFound_ > 0);

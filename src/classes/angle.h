@@ -30,10 +30,7 @@ class Atom;
 class Molecule;
 class Species;
 
-/*
- * \brief Angle Definition
- * \details XXX TODO
- */
+// Angle Definition
 class Angle : public ListItem<Angle>
 {
 	public:

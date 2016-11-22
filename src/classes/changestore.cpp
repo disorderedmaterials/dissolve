@@ -188,24 +188,15 @@ bool ChangeStore::distributeAndApply(Configuration* cfg)
 	}
 
 	// Now, assemble full array of the change data on the master...
-// 	Messenger::print("NOW HERE.\n");
 	if (!processPool_.assemble(indices_, changes_.nItems(), indices_, nTotalChanges)) return false;
-// 	Messenger::print("NOW HERE.\n");
 	if (!processPool_.assemble(x_, changes_.nItems(), x_, nTotalChanges)) return false;
-// 	Messenger::print("NOW HERE.\n");
 	if (!processPool_.assemble(y_, changes_.nItems(), y_, nTotalChanges)) return false;
-// 	Messenger::print("NOW HERE.\n");
 	if (!processPool_.assemble(z_, changes_.nItems(), z_, nTotalChanges)) return false;
-// 	Messenger::print("NOW HERE.\n");
 	
 	// ... then broadcast it to the slaves
-// 	Messenger::print("NOW HERE.\n");
 	if (!processPool_.broadcast(indices_)) return false;
-// 	Messenger::print("NOW HERE.\n");
 	if (!processPool_.broadcast(x_)) return false;
-// 	Messenger::print("NOW HERE.\n");
 	if (!processPool_.broadcast(y_)) return false;
-// 	Messenger::print("NOW HERE.\n");
 	if (!processPool_.broadcast(z_)) return false;
 
 	// Apply atom changes

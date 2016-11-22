@@ -89,7 +89,7 @@ bool GrainShake::execute(DUQ& duq)
 	* Perform a Grain shake
 	* 
 	* This is a parallel routine, operating in process groups.
-	*/
+	 */
 
 	// Get target Configuration
 	Configuration* cfg = targetConfigurations_.firstItem();

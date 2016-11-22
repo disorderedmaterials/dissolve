@@ -26,10 +26,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-/*
- * OrderedListItem Class
- * OrderedList maintains a list of OrderedListItems, which contain an object of the template class type.
- */
+// OrderedListItem Class
 template <class T> class OrderedListItem
 {
 	public:
@@ -49,39 +46,32 @@ template <class T> class OrderedListItem
 	int objectIndex() const;
 };
 
-/*
- * \brief Constructor
- * \details Constructor for OrderedListItem
- */
+// Constructor
 template <class T> OrderedListItem<T>::OrderedListItem()
 {
 	prev = NULL;
 	next = NULL;
 }
 
-/*
- * \brief Return reference to object
- */
+// Return reference to object
 template <class T> T& OrderedListItem<T>::object()
 {
 	return object_;
 }
 
-/*
- * \brief Return object index
- */
+// Return object index
 template <class T> int OrderedListItem<T>::objectIndex() const
 {
 	return object_.index();
 }
 
-/*
- * \rderedList Class
- * Ordered, linked list of OrderedListItems, which contain an instance of the template class T.  The class T must provide an 'int T::index() const' function, as well
- * as operator=.
-*/
+// OrderedList Class
 template <class T> class OrderedList
 {
+	/*
+	 * Ordered, linked list of OrderedListItems, which contain an instance of the template class T.
+	 * The class T must provide an 'int T::index() const' function, as well as operator=.
+	 */
 	public:
 	// Constructor
 	OrderedList<T>();
@@ -161,7 +151,7 @@ template <class T> class OrderedList
 
 	/*
 	 * Operators
-	*/
+	 */
 	public:
 	// Assignment operator
 	void operator=(const OrderedList<T>& other);
@@ -169,10 +159,7 @@ template <class T> class OrderedList
 	OrderedListItem<T>* operator[](int);
 };
 
-/*
- * \brief Constructor
- * \details Constructor for List. 
- */
+// Constructor
 template <class T> OrderedList<T>::OrderedList()
 {
 	listHead_ = NULL;
@@ -186,18 +173,13 @@ template <class T> OrderedList<T>::OrderedList()
 	objects_ = NULL;
 }
 
-/*
- * \brief Destructor
- * \details Destructor for List. 
- */
+// Destructor
 template <class T> OrderedList<T>::~OrderedList()
 {
 	clear();
 }
 
-/* 
- * \brief Copy constructor
- */
+// Copy constructor
 template <class T> OrderedList<T>::OrderedList(const OrderedList<T>& source)
 {
 	(*this) = source;
@@ -207,9 +189,7 @@ template <class T> OrderedList<T>::OrderedList(const OrderedList<T>& source)
  * Access / Manipulation
  */
 
-/*
- * \brief Insert reference to specifed object after supplied item
- */
+// Insert reference to specifed object after supplied item
 template <class T> OrderedListItem<T>* OrderedList<T>::insertAfter(T& object, OrderedListItem<T>* afterThis)
 {
 	// Create new list item (from the ObjectFactory)
@@ -249,9 +229,7 @@ template <class T> OrderedListItem<T>* OrderedList<T>::insertAfter(T& object, Or
 	return newItem;
 }
 
-/*
- * \brief Insert reference to specifed object after supplied item
- */
+// Insert reference to specifed object after supplied item
 template <class T> OrderedListItem<T>* OrderedList<T>::insertBefore(T& object, OrderedListItem< T >* beforeThis)
 {
 	// Create new list item (from the ObjectFactory)
@@ -261,9 +239,7 @@ template <class T> OrderedListItem<T>* OrderedList<T>::insertBefore(T& object, O
 	return newItem;
 }
 
-/*
- * \brief Insert specified item, before specified item
- */
+// Insert specified item, before specified item
 template <class T> void OrderedList<T>::insertBefore(OrderedListItem<T>* item, OrderedListItem<T>* beforeThis)
 {
 	// Get pointer to prev item in list, after the list item 'beforeThis'
@@ -297,9 +273,7 @@ template <class T> void OrderedList<T>::insertBefore(OrderedListItem<T>* item, O
 	regenerateObjectArray_ = 1;
 }
 
-/*
- * \brief Remove the specified item from the list
- */
+// Remove the specified item from the list
 template <class T> void OrderedList<T>::remove(OrderedListItem<T> *xitem)
 {
 	if (xitem == NULL)
@@ -316,9 +290,7 @@ template <class T> void OrderedList<T>::remove(OrderedListItem<T> *xitem)
 	regenerateObjectArray_ = 1;
 }
 
-/*
- * \brief Return whether item index is in the list
- */
+// Return whether item index is in the list
 template <class T> OrderedListItem<T>* OrderedList<T>::contains(int objectIndex) const
 {
 	// TODO This can probably be made much faster - bisection?
@@ -332,9 +304,7 @@ template <class T> OrderedListItem<T>* OrderedList<T>::contains(int objectIndex)
 	return NULL;
 }
 
-/*
- * \brief Cut - Bridge items over specified item
- */
+// Cut - Bridge items over specified item
 template <class T> void OrderedList<T>::cut(OrderedListItem<T>* item)
 {
 	if (item == NULL)
@@ -364,9 +334,7 @@ template <class T> void OrderedList<T>::cut(OrderedListItem<T>* item)
 	regenerateObjectArray_ = 1;
 }
 
-/*
- * \brief Find and return the item with the next highest index to the index specified
- */
+// Find and return the item with the next highest index to the index specified
 template <class T> OrderedListItem<T>* OrderedList<T>::nextHighestIndex(int objectIndex)
 {
 	// TODO This can probably be made much faster - bisection?
@@ -379,9 +347,7 @@ template <class T> OrderedListItem<T>* OrderedList<T>::nextHighestIndex(int obje
 	return NULL;
 }
 
-/*
- * \brief Remove all items in the list
- */
+// Remove all items in the list
 template <class T> void OrderedList<T>::clear()
 {
 	for (OrderedListItem<T>* item = listHead_; item != NULL; item = item->next) factory_.returnObject(item);
@@ -398,17 +364,13 @@ template <class T> void OrderedList<T>::clear()
 	regenerateObjectArray_ = 1;
 }
 
-/*
- * \brief Return the number of items in the list
- */
+// Return the number of items in the list
 template <class T> int OrderedList<T>::nItems() const
 {
 	return nItems_;
 }
 
-/*
- * \brief Add item to list
- */
+// Add item to list
 template <class T> T* OrderedList<T>::add(T object)
 {
 	// Add it in the correct place in the list
@@ -417,9 +379,7 @@ template <class T> T* OrderedList<T>::add(T object)
 	return &newObject->object();
 }
 
-/*
- * \brief Add a new item reference to the end of the list
- */
+// Add a new item reference to the end of the list
 template <class T> void OrderedList<T>::addAtEnd(T object)
 {
 	// Add it directly to the end of the list, provided this adheres to the current order
@@ -429,9 +389,7 @@ template <class T> void OrderedList<T>::addAtEnd(T object)
 	else printf("BAD_USAGE - Attempted to add object with index %i to end of OrderedList, but last item in list has index %i\n", object->index(), listTail_->objectIndex());
 }
 
-/*
- * \brief Remove item reference from list
- */
+// Remove item reference from list
 template <class T> void OrderedList<T>::remove(int objectIndex)
 {
 	// Get item for specified objectIndex
@@ -446,9 +404,7 @@ template <class T> void OrderedList<T>::remove(int objectIndex)
 	remove(item);
 }
 
-/*
- * \brief Remove item reference from the list (but don't complain if it isn't there)
- */
+// Remove item reference from the list (but don't complain if it isn't there)
 template <class T> bool OrderedList<T>::removeIfPresent(int objectIndex)
 {
 	// Get item for specified objectIndex
@@ -458,9 +414,7 @@ template <class T> bool OrderedList<T>::removeIfPresent(int objectIndex)
 	return true;
 }
 
-/*
- * \brief Move specified item to target list
- */
+// Move specified item to target list
 template <class T> void OrderedList<T>::move(int objectIndex, OrderedList<T>& targetList)
 {
 	// Get item for specified objectIndex
@@ -477,26 +431,20 @@ template <class T> void OrderedList<T>::move(int objectIndex, OrderedList<T>& ta
 	remove(item);
 }
 
-/*
- * \brief Return object with index specified (if it exists)
- */
+// Return object with index specified (if it exists)
 template <class T> T* OrderedList<T>::objectWithIndex(int objectIndex)
 {
 	OrderedListItem<T>* item = contains(objectIndex);
 	return (item == NULL ? NULL : &item->object());
 }
 
-/*
- * \brief Return the list head
- */
+// Return the list head
 template <class T> OrderedListItem<T>* OrderedList<T>::first() const
 {
 	return listHead_;
 }
 
-/*
- * \brief Create (or just return) the item array
- */
+// Create (or just return) the item array
 template <class T> OrderedListItem<T>** OrderedList<T>::items()
 {
 	if (regenerateItemArray_ == 0) return items_;
@@ -519,9 +467,7 @@ template <class T> OrderedListItem<T>** OrderedList<T>::items()
 	return items_;
 }
 
-/*
- * \brief Create (or just return) the object array
- */
+// Create (or just return) the object array
 template <class T> T** OrderedList<T>::objects()
 {
 	if (regenerateObjectArray_ == 0) return objects_;
@@ -544,18 +490,14 @@ template <class T> T** OrderedList<T>::objects()
 	return objects_;
 }
 
-/*
- * \brief Invalidate current item and object arrays, forcing them to be recreated
- */
+// Invalidate current item and object arrays, forcing them to be recreated
 template <class T> void OrderedList<T>::invalidateLists()
 {
 	regenerateItemArray_ = 1;
 	regenerateObjectArray_ = 1;
 }
 
-/*
- * \brief Given a second list, generate new lists containing unique items to each list, and those that appear in both
- */
+// Given a second list, generate new lists containing unique items to each list, and those that appear in both
 template <class T> void OrderedList<T>::difference(OrderedList<T>& listB, OrderedList<T>& uniqueToA, OrderedList<T>& uniqueToB, OrderedList<T>& commonItems)
 {
 	// Clear supplied results lists
@@ -618,18 +560,14 @@ template <class T> void OrderedList<T>::difference(OrderedList<T>& listB, Ordere
 // Operators
 */
 
-/*
- * \brief Assignment operator
- */
+// Assignment operator
 template <class T> void OrderedList<T>::operator=(const OrderedList<T>& other)
 {
 	clear();
 	for (OrderedListItem<T>* item = other.listHead_; item != NULL; item = item->next) addAtEnd(item->object());
 }
 
-/*
- * \brief Element access operator
- */
+// Element access operator
 template <class T> OrderedListItem<T> *OrderedList<T>::operator[](int index)
 {
 #ifdef CHECKS

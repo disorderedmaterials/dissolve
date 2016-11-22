@@ -57,9 +57,7 @@ void AtomTypeList::clear()
 	types_.clear();
 }
 
-/*
- * \brief Add/increase this AtomType/Isotope pair
- */
+// Add/increase this AtomType/Isotope pair
 int AtomTypeList::add(AtomType* atomType, Isotope* tope, int popAdd)
 {
 	// Search the list for the AtomType provided.
@@ -118,9 +116,7 @@ void AtomTypeList::print()
  * Access
  */
 
-/*
- * \brief Return index of AtomType/Isotope in list
- */
+// Return index of AtomType/Isotope in list
 int AtomTypeList::indexOf(AtomType* atomtype) const
 {
 	int count = 0;

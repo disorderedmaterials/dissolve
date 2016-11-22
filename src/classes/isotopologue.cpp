@@ -160,17 +160,13 @@ Isotope* Isotopologue::atomTypeIsotope(AtomType* at) const
 	return rli->data;
 }
 
-/*
- * \brief Return first AtomType/Isotope pair
- */
+// Return first AtomType/Isotope pair
 RefListItem<AtomType,Isotope*>* Isotopologue::isotopes() const
 {
 	return isotopes_.first();
 }
 
-/*
- * \brief Return nth AtomType/Isotope pair
- */
+// Return nth AtomType/Isotope pair
 RefListItem<AtomType,Isotope*>* Isotopologue::isotope(int n)
 {
 	return isotopes_[n];

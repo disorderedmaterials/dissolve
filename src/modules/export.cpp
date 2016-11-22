@@ -149,7 +149,7 @@ bool Export::process(DUQ& duq, ProcessPool& procPool)
 {
 	/*
 	* Export data from the target Configuration(s)
-	*/
+	 */
 
 	// Loop over target Configurations
 	for (RefListItem<Configuration,bool>* ri = targetConfigurations_.first(); ri != NULL; ri = ri->next)

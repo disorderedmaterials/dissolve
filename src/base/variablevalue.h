@@ -108,8 +108,8 @@ class VariableValue
 
 
 	/*
-	* Parallel Comms
-	*/
+	 * Parallel Comms
+	 */
 	public:
 	// Broadcast data
 	bool broadcast(ProcessPool& procPool);

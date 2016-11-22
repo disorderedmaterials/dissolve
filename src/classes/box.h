@@ -31,9 +31,7 @@ class Cell;
 class Data2D;
 class ProcessPool;
 
-/*
- * Basic Box Definition
- */
+// Basic Box Definition
 class Box
 {
 	public:
@@ -108,7 +106,7 @@ class Box
 
 	/*
 	 * Minimum Image Routines (Pure Virtual)
-	*/
+	 */
 	public:
 	// Return minimum image coordinates of 'i' with respect to 'ref'
 	virtual Vec3<double> minimumImage(const Atom* i, const Atom* ref) const = 0;
@@ -175,7 +173,7 @@ class Box
 };
 
 /*
- * \brief Non-Periodic Box Definition
+ * Non-Periodic Box Definition
  */
 class NonPeriodicBox : public Box
 {
@@ -188,7 +186,7 @@ class NonPeriodicBox : public Box
 
 	/*
 	 * Minimum Image Routines (Virtual Implementations)
-	*/
+	 */
 	public:
 	// Return minimum image coordinates of 'i' with respect to 'ref'
 	Vec3<double> minimumImage(const Atom* i, const Atom* ref) const;
@@ -232,9 +230,7 @@ class NonPeriodicBox : public Box
 	Vec3<double> fracToReal(const Vec3<double>& r) const;
 };
 
-/*
- * \brief Cubic Box Definition
- */
+// Cubic Box Definition
 class CubicBox : public Box
 {
 	public:
@@ -246,7 +242,7 @@ class CubicBox : public Box
 
 	/*
 	 * Minimum Image Routines (Virtual Implementations)
-	*/
+	 */
 	public:
 	// Return minimum image coordinates of 'i' with respect to 'ref'
 	Vec3<double> minimumImage(const Atom* i, const Atom* ref) const;
@@ -290,9 +286,7 @@ class CubicBox : public Box
 	Vec3<double> fracToReal(const Vec3<double>& r) const;
 };
 
-/*
- * \brief Orthorhombic Box Definition
- */
+// Orthorhombic Box Definition
 class OrthorhombicBox : public Box
 {
 	public:
@@ -304,65 +298,7 @@ class OrthorhombicBox : public Box
 
 	/*
 	 * Minimum Image Routines (Virtual Implementations)
-	*/
-	public:
-	// Return minimum image coordinates of 'i' with respect to 'ref'
-	Vec3<double> minimumImage(const Atom* i, const Atom* ref) const;
-	// Return minimum image coordinates of 'i' with respect to 'ref'
-	Vec3<double> minimumImage(const Atom* i, const Vec3<double>& ref) const;
-	// Return minimum image coordinates of 'i' with respect to 'ref'
-	Vec3<double> minimumImage(const Vec3<double>& i, const Vec3<double>& ref) const;
-	// Return minimum image vector from 'i' to 'j'
-	Vec3<double> minimumVector(const Atom* i, const Atom* j) const;
-	// Return minimum image vector from 'i' to 'j'
-	Vec3<double> minimumVector(const Atom* i, const Vec3<double>& j) const;
-	// Return minimum image vector from 'i' to 'j'
-	Vec3<double> minimumVector(const Vec3<double>& i, const Vec3<double>& j) const;
-	// Return minimum image distance from 'i' to 'j'
-	double minimumDistance(const Atom* i, const Atom* j) const;
-	// Return minimum image distance from 'i' to 'j'
-	double minimumDistance(const Atom* i, const Vec3<double>& j) const;
-	// Return minimum image distance from 'i' to 'j'
-	double minimumDistance(const Vec3<double>& i, const Vec3<double>& j) const;
-	// Return minimum image squared distance from 'i' to 'j' (pointers)
-	double minimumDistanceSquared(const Atom* i, const Atom* j) const;
-	// Return minimum image squared distance from 'i' to 'j' (references)
-	double minimumDistanceSquared(const Atom& i, const Atom& j) const;
-	// Return minimum image squared distance from 'i' to 'j'
-	double minimumDistanceSquared(const Atom* i, const Vec3<double>& j) const;
-	// Return minimum image squared distance from 'i' to 'j'
-	double minimumDistanceSquared(const Vec3<double>& i, const Vec3<double>& j) const;
-
-
-	/*
-	 * Utility Routines (Virtual Implementations)
 	 */
-	public:
-	// Return random coordinate inside Box
-	Vec3<double> randomCoordinate() const;
-	// Return folded coordinate (i.e. inside current Box)
-	Vec3<double> fold(const Vec3<double>& i) const;
-	// Return folded fractional coordinate (i.e. inside current Box)
-	Vec3<double> foldFrac(const Vec3<double>& i) const;
-	// Convert supplied fractional coordinates to real space
-Vec3<double> fracToReal(const Vec3<double>& r) const;
-};
-
-/*
- * \brief Monoclinic Box Definition
- */
-class MonoclinicBox : public Box
-{
-	public:
-	// Constructor
-	MonoclinicBox(double volume, const Vec3<double> relativeLengths, double alpha);
-	// Destructor
-	~MonoclinicBox();
-
-
-	/*
-	 * Minimum Image Routines (Virtual Implementations)
-	*/
 	public:
 	// Return minimum image coordinates of 'i' with respect to 'ref'
 	Vec3<double> minimumImage(const Atom* i, const Atom* ref) const;
@@ -406,9 +342,63 @@ class MonoclinicBox : public Box
 	Vec3<double> fracToReal(const Vec3<double>& r) const;
 };
 
-/*
- * \brief Triclinic Box Definition
- */
+// Monoclinic Box Definition
+class MonoclinicBox : public Box
+{
+	public:
+	// Constructor
+	MonoclinicBox(double volume, const Vec3<double> relativeLengths, double alpha);
+	// Destructor
+	~MonoclinicBox();
+
+
+	/*
+	 * Minimum Image Routines (Virtual Implementations)
+	 */
+	public:
+	// Return minimum image coordinates of 'i' with respect to 'ref'
+	Vec3<double> minimumImage(const Atom* i, const Atom* ref) const;
+	// Return minimum image coordinates of 'i' with respect to 'ref'
+	Vec3<double> minimumImage(const Atom* i, const Vec3<double>& ref) const;
+	// Return minimum image coordinates of 'i' with respect to 'ref'
+	Vec3<double> minimumImage(const Vec3<double>& i, const Vec3<double>& ref) const;
+	// Return minimum image vector from 'i' to 'j'
+	Vec3<double> minimumVector(const Atom* i, const Atom* j) const;
+	// Return minimum image vector from 'i' to 'j'
+	Vec3<double> minimumVector(const Atom* i, const Vec3<double>& j) const;
+	// Return minimum image vector from 'i' to 'j'
+	Vec3<double> minimumVector(const Vec3<double>& i, const Vec3<double>& j) const;
+	// Return minimum image distance from 'i' to 'j'
+	double minimumDistance(const Atom* i, const Atom* j) const;
+	// Return minimum image distance from 'i' to 'j'
+	double minimumDistance(const Atom* i, const Vec3<double>& j) const;
+	// Return minimum image distance from 'i' to 'j'
+	double minimumDistance(const Vec3<double>& i, const Vec3<double>& j) const;
+	// Return minimum image squared distance from 'i' to 'j' (pointers)
+	double minimumDistanceSquared(const Atom* i, const Atom* j) const;
+	// Return minimum image squared distance from 'i' to 'j' (references)
+	double minimumDistanceSquared(const Atom& i, const Atom& j) const;
+	// Return minimum image squared distance from 'i' to 'j'
+	double minimumDistanceSquared(const Atom* i, const Vec3<double>& j) const;
+	// Return minimum image squared distance from 'i' to 'j'
+	double minimumDistanceSquared(const Vec3<double>& i, const Vec3<double>& j) const;
+
+
+	/*
+	 * Utility Routines (Virtual Implementations)
+	 */
+	public:
+	// Return random coordinate inside Box
+	Vec3<double> randomCoordinate() const;
+	// Return folded coordinate (i.e. inside current Box)
+	Vec3<double> fold(const Vec3<double>& i) const;
+	// Return folded fractional coordinate (i.e. inside current Box)
+	Vec3<double> foldFrac(const Vec3<double>& i) const;
+	// Convert supplied fractional coordinates to real space
+	Vec3<double> fracToReal(const Vec3<double>& r) const;
+};
+
+// Triclinic Box Definition
 class TriclinicBox : public Box
 {
 	public:
@@ -420,7 +410,7 @@ class TriclinicBox : public Box
 
 	/*
 	 * Minimum Image Routines (Virtual Implementations)
-	*/
+	 */
 	public:
 	// Return minimum image coordinates of 'i' with respect to 'ref'
 	Vec3<double> minimumImage(const Atom* i, const Atom* ref) const;

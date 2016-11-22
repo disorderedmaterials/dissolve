@@ -112,9 +112,7 @@ Atom *Bond::j() const
 	return j_;
 }
 
-/*
- * \brief Return the 'other' Atom in the Bond
- */
+// Return the 'other' Atom in the Bond
 Atom *Bond::partner(Atom* i) const
 {
 	return (i == i_ ? j_ : i_);

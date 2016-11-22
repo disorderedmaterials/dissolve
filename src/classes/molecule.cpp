@@ -47,13 +47,14 @@ Molecule::~Molecule()
  * Atoms / Grains
  */
 
-/*
- * \brief Initialise Molecule arrays suitable for Species provided
- * \details Constructs the necessary Atom and Grain arrays to hold the contents of a copy of the specified Species.
- * No coordinate information is set at this point - this is done by a future call to instantiate().
- */
+// Initialise Molecule arrays suitable for Species provided
 bool Molecule::initialise(Species* sp, int index)
 {
+	/*
+	 * Constructs the necessary Atom and Grain arrays to hold the contents of a copy of the specified Species.
+	 * No coordinate information is set at this point - this is done by a future call to instantiate().
+	 */
+
 	// Check for NULL pointer
 	species_ = sp;
 	if (species_ == NULL)
@@ -92,13 +93,13 @@ int Molecule::nAtoms()
 	return nAtoms_;
 }
 
-/*
- * \brief Set nth pointer to Atom pointer
- * \details Sets the n'th atom pointer location in the molecule, and copies characteristic atom data (e.g. element, charge, atomtype) from the 
- * source SpeciesAtom. Note that the coordinates of the original SpeciesAtom are *not* copied over.
- */
+// Set nth pointer to Atom pointer
 bool Molecule::setupAtom(int n, Atom* i, SpeciesAtom* source)
 {
+	/*
+	 * Sets the n'th atom pointer location in the molecule, and copies characteristic atom data (e.g. element, charge, atomtype) from the 
+	 * source SpeciesAtom. Note that the coordinates of the original SpeciesAtom are *not* copied over.
+	 */
 #ifdef CHECKS
 	if (i == NULL)
 	{
@@ -265,14 +266,14 @@ void Molecule::setCentre(const Box* box, const Vec3<double> newCentre)
 	}
 }
 
-/*
- * \brief Randomise geometry
- * \details Randomise the geometry of the Molecule, exploring conformation space as best we can. This routine should be used when
- * instantiating the initial ensemble of Molecules such that a variety of conformations exist in the starting system. Each defined
- * Bond is taken in turn, and the connect Atoms at one end (chosen randomly) are rotated about the Bond axis.
- */ 
+// Randomise geometry
 void Molecule::randomiseGeometry(const Box* box)
 {
+	/*
+	 * Randomise the geometry of the Molecule, exploring conformation space as best we can. This routine should be used when
+	 * instantiating the initial ensemble of Molecules such that a variety of conformations exist in the starting system. Each defined
+	 * Bond is taken in turn, and the connect Atoms at one end (chosen randomly) are rotated about the Bond axis.
+	 */ 
 #ifdef CHECKS
 	// Check for NULL Species pointer
 	if (species_ == NULL)

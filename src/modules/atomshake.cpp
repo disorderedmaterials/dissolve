@@ -156,7 +156,7 @@ bool AtomShake::process(DUQ& duq, ProcessPool& procPool)
 	* Perform an Atom shake
 	* 
 	* This is a parallel routine, with processes operating in groups.
-	*/
+	 */
 
 	// Get target Configuration
 	Configuration* cfg = targetConfigurations_.firstItem();

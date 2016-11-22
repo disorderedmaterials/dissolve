@@ -37,7 +37,7 @@ template <class T> class Vec4
 
 	/*
 	// Set / adjust / retrieve
-	*/
+	 */
 	public:
 	// Set the vector to 0,0,0
 	void zero();
@@ -54,7 +54,7 @@ template <class T> class Vec4
 
 	/*
 	// Operators
-	*/
+	 */
 	public:
 	// Operators + and +=
 	Vec4<T>& operator+=(Vec4<T>);
@@ -74,7 +74,7 @@ template <class T> class Vec4
 
 	/*
 	// Methods
-	*/
+	 */
 	public:
 	// Normalise to unity
 	void normalise();

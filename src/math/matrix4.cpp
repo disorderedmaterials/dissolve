@@ -21,9 +21,7 @@
 
 #include "math/matrix4.h"
 
-/*
- * \brief Constructor
- */
+// Constructor
 Matrix4::Matrix4()
 {
 	setIdentity();
@@ -33,9 +31,7 @@ Matrix4::Matrix4()
 // Operators
 //
 
-/*
- * \brief Matrix4 multiply (operator *) (return new matrix)
- */
+// Matrix4 multiply (operator *) (return new matrix)
 Matrix4 Matrix4::operator*(const Matrix4& B) const
 {
 	// [ row(A|this).column(B) ]
@@ -102,9 +98,7 @@ Vec4<double> Matrix4::operator*(const Vec4<double> &v) const
 	return result;
 }
 
-/*
- * \brief Matrix4 multiply (operator *=)
- */
+// Matrix4 multiply (operator *=)
 Matrix4& Matrix4::operator*=(const Matrix4& B)
 {
 	// [ row(A|this).column(B) ]
@@ -132,9 +126,7 @@ Matrix4& Matrix4::operator*=(const Matrix4& B)
 	return* this;
 }
 
-/*
- * \brief Array access (operator [])
- */
+// Array access (operator [])
 double &Matrix4::operator[](int index)
 {
 	return matrix_[index];
@@ -144,9 +136,7 @@ double &Matrix4::operator[](int index)
 // Basic Set/Get
 //
 
-/*
- * \brief Reset to the identity matrix
- */
+// Reset to the identity matrix
 void Matrix4::setIdentity()
 {
 	matrix_[0] = 1.0;
@@ -167,9 +157,7 @@ void Matrix4::setIdentity()
 	matrix_[15] = 1.0;
 }
 
-/*
- * \brief Print matrix
- */
+// Print matrix
 void Matrix4::print() const
 {
 	Messenger::print("CMaj   [0123]    [4567]    [8901] Translate\n");
@@ -179,9 +167,7 @@ void Matrix4::print() const
 	Messenger::print("Scale   %8.4f %8.4f %8.4f %8.4f\n", matrix_[3], matrix_[7], matrix_[11], matrix_[15]);
 }
 
-/*
- * \brief Set zero matrix
- */
+// Set zero matrix
 void Matrix4::zero()
 {
 	matrix_[0] = 0.0;
@@ -203,17 +189,13 @@ void Matrix4::zero()
 }
 
 
-/*
- * \brief Return matrix array
- */
+// Return matrix array
 double *Matrix4::matrix()
 {
 	return matrix_;
 }
 
-/*
- * \brief Return transpose of current matrix
- */
+// Return transpose of current matrix
 Matrix4& Matrix4::transpose()
 {
 	static Matrix4 A;
@@ -236,9 +218,7 @@ Matrix4& Matrix4::transpose()
 	return A;
 }
 
-/*
- * \brief Calculate determinant
- */
+// Calculate determinant
 double Matrix4::determinant()
 {
 
@@ -249,9 +229,7 @@ double Matrix4::determinant()
 	return (a-b+c-d);
 }
 
-/*
- * \brief Invert matrix
- */
+// Invert matrix
 void Matrix4::invert()
 {
 	// Gauss-Jordan Inversion
@@ -336,27 +314,21 @@ void Matrix4::invert()
 // Column Operations
 //
 
-/*
- * \brief Copy column contents to supplied Vec3
- */
+// Copy column contents to supplied Vec3
 Vec3<double> Matrix4::columnAsVec3(int col)
 {
 	Vec3<double> vec(matrix_[col*4], matrix_[col*4+1], matrix_[col*4+2]);
 	return vec;
 }
 
-/*
- * \brief Copy column contents to supplied Vec4
- */
+// Copy column contents to supplied Vec4
 Vec4<double> Matrix4::columnAsVec4(int col)
 {
 	Vec4<double> vec(matrix_[col*4], matrix_[col*4+1], matrix_[col*4+2], matrix_[col*4+3]);
 	return vec;
 }
 
-/*
- * \brief Set specified row from supplied triplet of values
- */
+// Set specified row from supplied triplet of values
 void Matrix4::setRow(int row, double x, double y, double z)
 {
 	matrix_[row] = x;
@@ -364,9 +336,7 @@ void Matrix4::setRow(int row, double x, double y, double z)
 	matrix_[8+row] = z;
 }
 
-/*
- * \brief Set specified row from supplied values
- */
+// Set specified row from supplied values
 void Matrix4::setRow(int row, double x, double y, double z, double w)
 {
 	matrix_[row] = x;
@@ -375,9 +345,7 @@ void Matrix4::setRow(int row, double x, double y, double z, double w)
 	matrix_[12+row] = w;
 }
 
-/*
- * \brief Set specified column from supplied values
- */
+// Set specified column from supplied values
 void Matrix4::setColumn(int col, double a, double b, double c, double d)
 {
 	matrix_[col*4] = a;
@@ -386,9 +354,7 @@ void Matrix4::setColumn(int col, double a, double b, double c, double d)
 	matrix_[col*4+3] = d;
 }
 
-/*
- * \brief Set specified column from supplied Vec3
- */
+// Set specified column from supplied Vec3
 void Matrix4::setColumn(int col, Vec3<double> vec, double w)
 {
 	matrix_[col*4] = vec.x;
@@ -397,9 +363,7 @@ void Matrix4::setColumn(int col, Vec3<double> vec, double w)
 	matrix_[col*4+3] = w;
 }
 
-/*
- * \brief Set specified column from supplied Vec4
- */
+// Set specified column from supplied Vec4
 void Matrix4::setColumn(int col, Vec4<double> vec)
 {
 	matrix_[col*4] = vec.x;
@@ -408,9 +372,7 @@ void Matrix4::setColumn(int col, Vec4<double> vec)
 	matrix_[col*4+3] = vec.w;
 }
 
-/*
- * \brief Adjust specified column from supplied values
- */
+// Adjust specified column from supplied values
 void Matrix4::adjustColumn(int col, double a, double b, double c, double d)
 {
 	matrix_[col*4] += a;
@@ -419,9 +381,7 @@ void Matrix4::adjustColumn(int col, double a, double b, double c, double d)
 	matrix_[col*4+3] += d;
 }
 
-/*
- * \brief Adjust specified column from supplied Vec3
- */
+// Adjust specified column from supplied Vec3
 void Matrix4::adjustColumn(int col, Vec3<double> vec, double w)
 {
 	matrix_[col*4] += vec.x;
@@ -430,9 +390,7 @@ void Matrix4::adjustColumn(int col, Vec3<double> vec, double w)
 	matrix_[col*4+3] += w;
 }
 
-/*
- * \brief Adjust specified column from supplied Vec4
- */
+// Adjust specified column from supplied Vec4
 void Matrix4::adjustColumn(int col, Vec4<double> vec)
 {
 	matrix_[col*4] += vec.x;
@@ -441,9 +399,7 @@ void Matrix4::adjustColumn(int col, Vec4<double> vec)
 	matrix_[col*4+3] += vec.w;
 }
 
-/*
- * \brief Calculate column magnitude
- */
+// Calculate column magnitude
 double Matrix4::columnMagnitude(int column)
 {
 	double mag = 0.0;
@@ -451,9 +407,7 @@ double Matrix4::columnMagnitude(int column)
 	return sqrt(mag);
 }
 
-/*
- * \brief Multiply column by single value
- */
+// Multiply column by single value
 void Matrix4::columnMultiply(int col, double d)
 {
 	matrix_[col*4] *= d;
@@ -462,9 +416,7 @@ void Matrix4::columnMultiply(int col, double d)
 	matrix_[col*4+3] *= d;
 }
 
-/*
- * \brief Multiply first three columns by values in supplied vector
- */
+// Multiply first three columns by values in supplied vector
 void Matrix4::columnMultiply(Vec3<double> vec)
 {
 	columnMultiply(0, vec.x);
@@ -472,9 +424,7 @@ void Matrix4::columnMultiply(Vec3<double> vec)
 	columnMultiply(2, vec.z);
 }
 
-/*
- * \brief Normalise specified column to 1
- */
+// Normalise specified column to 1
 void Matrix4::columnNormalise(int col)
 {
 	double mag = 1.0/sqrt(matrix_[col*4]*matrix_[col*4] + matrix_[col*4+1]*matrix_[col*4+1] + matrix_[col*4+2]*matrix_[col*4+2] + matrix_[col*4+3]*matrix_[col*4+3]);
@@ -484,9 +434,7 @@ void Matrix4::columnNormalise(int col)
 	matrix_[col*4+3] *= mag;
 }
 
-/*
- * \brief Orthogonalise rotation matrix column w.r.t. one (or two) other columns)
- */
+// Orthogonalise rotation matrix column w.r.t. one (or two) other columns)
 void Matrix4::orthogonaliseColumn(int targetcol, int orthocol1, int orthocol2)
 {
 	// Grab target column
@@ -519,9 +467,7 @@ void Matrix4::orthogonaliseColumn(int targetcol, int orthocol1, int orthocol2)
 // Rotations
 //
 
-/*
- * \brief Create rotation matrix about X
- */
+// Create rotation matrix about X
 void Matrix4::createRotationX(double angle)
 {
 	double cosx, sinx, theta = angle/DEGRAD;
@@ -545,9 +491,7 @@ void Matrix4::createRotationX(double angle)
 	matrix_[15] = 1.0;
 }
 
-/*
- * \brief Create XY rotation matrix
- */
+// Create XY rotation matrix
 void Matrix4::createRotationXY(double anglex, double angley)
 {
 	double cosx, sinx, cosy, siny, thetax = anglex/DEGRAD, thetay = angley/DEGRAD;
@@ -573,9 +517,7 @@ void Matrix4::createRotationXY(double anglex, double angley)
 	matrix_[15] = 1.0;
 }
 
-/*
- * \brief Create rotation matrix about Y
- */
+// Create rotation matrix about Y
 void Matrix4::createRotationY(double angle)
 {
 	double cosx, sinx, theta = angle/DEGRAD;
@@ -599,9 +541,7 @@ void Matrix4::createRotationY(double angle)
 	matrix_[15] = 1.0;
 }
 
-/*
- * \brief Create rotation matrix about Z
- */
+// Create rotation matrix about Z
 void Matrix4::createRotationZ(double angle)
 {
 	double cosx, sinx, theta = angle/DEGRAD;
@@ -625,9 +565,7 @@ void Matrix4::createRotationZ(double angle)
 	matrix_[15] = 1.0;
 }
 
-/*
- * \brief Create axis rotation quaternion
- */
+// Create axis rotation quaternion
 void Matrix4::createRotationAxis(double ax, double ay, double az, double angle, bool normalise)
 {
 	double cosx, sinx, theta = angle/DEGRAD;
@@ -658,9 +596,7 @@ void Matrix4::createRotationAxis(double ax, double ay, double az, double angle, 
 	matrix_[15] = 1.0;
 }
 
-/*
- * \brief Apply rotation about X axis
- */
+// Apply rotation about X axis
 void Matrix4::applyRotationX(double angle)
 {
 	double cosx, sinx, theta = angle/DEGRAD, temp[4];
@@ -684,9 +620,7 @@ void Matrix4::applyRotationX(double angle)
 	matrix_[7] = temp[3];
 }
 
-/*
- * \brief Apply axis rotation quaternion
- */
+// Apply axis rotation quaternion
 void Matrix4::applyRotationAxis(double ax, double ay, double az, double angle, bool normalise)
 {
 	double cosx, sinx, theta = angle/DEGRAD, temp[8], multipliers[16];
@@ -738,9 +672,7 @@ void Matrix4::applyRotationAxis(double ax, double ay, double az, double angle, b
 // Translations
 //
 
-/*
- * \brief Apply a translation to the matrix (as glTranslated would do)
- */
+// Apply a translation to the matrix (as glTranslated would do)
 void Matrix4::createTranslation(double dx, double dy, double dz)
 {
 	matrix_[0] = 1.0;
@@ -761,9 +693,7 @@ void Matrix4::createTranslation(double dx, double dy, double dz)
 	matrix_[15] = 1.0;
 }
 
-/*
- * \brief Apply a translation to the matrix (as glTranslated would do)
- */
+// Apply a translation to the matrix (as glTranslated would do)
 void Matrix4::applyTranslation(double dx, double dy, double dz)
 {
 	matrix_[12] += matrix_[0]*dx + matrix_[4]*dy + matrix_[8]*dz;
@@ -771,9 +701,7 @@ void Matrix4::applyTranslation(double dx, double dy, double dz)
 	matrix_[14] += matrix_[2]*dx + matrix_[6]*dy + matrix_[10]*dz;
 }
 
-/*
- * \brief Apply a translation to the matrix (as glTranslated would to)
- */
+// Apply a translation to the matrix (as glTranslated would to)
 void Matrix4::applyTranslation(Vec3<double> vec)
 {
 	matrix_[12] += matrix_[0]*vec.x + matrix_[4]*vec.y + matrix_[8]*vec.z;
@@ -781,9 +709,7 @@ void Matrix4::applyTranslation(Vec3<double> vec)
 	matrix_[14] += matrix_[2]*vec.x + matrix_[6]*vec.y + matrix_[10]*vec.z;
 }
 
-/*
- * \brief Apply an X-translation to the matrix (as glTranslated would do)
- */
+// Apply an X-translation to the matrix (as glTranslated would do)
 void Matrix4::applyTranslationX(double dx)
 {
 	matrix_[12] += matrix_[0]*dx;
@@ -791,9 +717,7 @@ void Matrix4::applyTranslationX(double dx)
 	matrix_[14] += matrix_[2]*dx;
 }
 
-/*
- * \brief Apply an Y-translation to the matrix (as glTranslated would do)
- */
+// Apply an Y-translation to the matrix (as glTranslated would do)
 void Matrix4::applyTranslationY(double dy)
 {
 	matrix_[12] += matrix_[4]*dy;
@@ -801,9 +725,7 @@ void Matrix4::applyTranslationY(double dy)
 	matrix_[14] += matrix_[6]*dy;
 }
 
-/*
- * \brief Apply an Z-translation to the matrix (as glTranslated would do)
- */
+// Apply an Z-translation to the matrix (as glTranslated would do)
 void Matrix4::applyTranslationZ(double dz)
 {
 	matrix_[12] += matrix_[8]*dz;
@@ -811,9 +733,7 @@ void Matrix4::applyTranslationZ(double dz)
 	matrix_[14] += matrix_[10]*dz;
 }
 
-/*
- * \brief Add a translation to the matrix
- */
+// Add a translation to the matrix
 void Matrix4::addTranslation(Vec3<double> v)
 {
 	matrix_[12] += v.x;
@@ -821,9 +741,7 @@ void Matrix4::addTranslation(Vec3<double> v)
 	matrix_[14] += v.z;
 }
 
-/*
- * \brief Add a translation to the matrix
- */
+// Add a translation to the matrix
 void Matrix4::addTranslation(double dx, double dy, double dz)
 {
 	matrix_[12] += dx;
@@ -831,9 +749,7 @@ void Matrix4::addTranslation(double dx, double dy, double dz)
 	matrix_[14] += dz;
 }
 
-/*
- * \brief Set translation in the matrix
- */
+// Set translation in the matrix
 void Matrix4::setTranslation(Vec3<double> v)
 {
 	matrix_[12] = v.x;
@@ -841,9 +757,7 @@ void Matrix4::setTranslation(Vec3<double> v)
 	matrix_[14] = v.z;
 }
 
-/*
- * \brief Set translation in the matrix
- */
+// Set translation in the matrix
 void Matrix4::setTranslation(double x, double y, double z)
 {
 	matrix_[12] = x;
@@ -855,9 +769,7 @@ void Matrix4::setTranslation(double x, double y, double z)
  * Scaling
  */
 
-/*
- * \brief Apply a general scaling to the matrix (as glScaled would do)
- */
+// Apply a general scaling to the matrix (as glScaled would do)
 void Matrix4::applyScaling(double scalex, double scaley, double scalez)
 {
 	applyScalingX(scalex);
@@ -865,9 +777,7 @@ void Matrix4::applyScaling(double scalex, double scaley, double scalez)
 	applyScalingZ(scalez);
 }
 
-/*
- * \brief Apply a general scaling to the matrix (as glScaled would to)
- */
+// Apply a general scaling to the matrix (as glScaled would to)
 void Matrix4::applyScaling(Vec3<double> scaling)
 {
 	applyScalingX(scaling.x);
@@ -875,18 +785,14 @@ void Matrix4::applyScaling(Vec3<double> scaling)
 	applyScalingZ(scaling.z);
 }
 
-/*
- * \brief Apply an xy-scaling to the matrix
- */
+// Apply an xy-scaling to the matrix
 void Matrix4::applyScalingXY(double scalex, double scaley)
 {
 	applyScalingX(scalex);
 	applyScalingY(scaley);
 }
 
-/*
- * \brief Apply an x scaling to the matrix
- */
+// Apply an x scaling to the matrix
 void Matrix4::applyScalingX(double scale)
 {
 	matrix_[0] *= scale;
@@ -895,9 +801,7 @@ void Matrix4::applyScalingX(double scale)
 	matrix_[3] *= scale;
 }
 
-/*
- * \brief Apply a y scaling to the matrix
- */
+// Apply a y scaling to the matrix
 void Matrix4::applyScalingY(double scale)
 {
 	matrix_[4] *= scale;
@@ -906,9 +810,7 @@ void Matrix4::applyScalingY(double scale)
 	matrix_[7] *= scale;
 }
 
-/*
- * \brief Apply a z scaling to the matrix
- */
+// Apply a z scaling to the matrix
 void Matrix4::applyScalingZ(double scale)
 {
 	matrix_[8] *= scale;
@@ -921,9 +823,7 @@ void Matrix4::applyScalingZ(double scale)
  * Transforms
  */
 
-/*
- * \brief Transform coordinates supplied and return as Vec3<double>
- */
+// Transform coordinates supplied and return as Vec3<double>
 Vec3<double> Matrix4::transform(double x, double y, double z) const
 {
 	Vec3<double> result;
@@ -933,9 +833,7 @@ Vec3<double> Matrix4::transform(double x, double y, double z) const
 	return result;
 }
 
-/*
- * \brief Transform coordinates supplied and return as Vec3<double>
- */
+// Transform coordinates supplied and return as Vec3<double>
 Vec4<double> Matrix4::transform(double x, double y, double z, double w) const
 {
 	Vec4<double> result;
@@ -946,9 +844,7 @@ Vec4<double> Matrix4::transform(double x, double y, double z, double w) const
 	return result;
 }
 
-/*
- * \brief Transform coordinates supplied and return as Vec3<double>
- */
+// Transform coordinates supplied and return as Vec3<double>
 Vec3<double> Matrix4::transform(Vec3<double> vec) const
 {
 	Vec3<double> result;
@@ -958,9 +854,7 @@ Vec3<double> Matrix4::transform(Vec3<double> vec) const
 	return result;
 }
 
-/*
- * \brief Multiply against coordinates provided
- */
+// Multiply against coordinates provided
 void Matrix4::multiply(GLfloat* r, GLfloat* transformed) const
 {
 	transformed[0] = r[0]*matrix_[0] + r[1]*matrix_[4] + r[2]*matrix_[8] + matrix_[12];
@@ -968,9 +862,7 @@ void Matrix4::multiply(GLfloat* r, GLfloat* transformed) const
 	transformed[2] = r[0]*matrix_[2] + r[1]*matrix_[6] + r[2]*matrix_[10] + matrix_[14];
 }
 
-/*
- * \brief Multiply against other matrix, but only rotational part, keeping translation/scaling intact
- */
+// Multiply against other matrix, but only rotational part, keeping translation/scaling intact
 void Matrix4::multiplyRotation(Matrix4 B)
 {
 	Matrix4 AB;
@@ -997,9 +889,7 @@ void Matrix4::multiplyRotation(Matrix4 B)
 	matrix_[10] = AB.matrix_[10];
 }
 
-/*
- * \brief Apply rotational part of matrix to supplied vector
- */
+// Apply rotational part of matrix to supplied vector
 Vec3<double> Matrix4::rotateVector(Vec3<double> &v) const
 {
 	Vec3<double> result;
@@ -1009,9 +899,7 @@ Vec3<double> Matrix4::rotateVector(Vec3<double> &v) const
 	return result;
 }
 
-/*
- * \brief Apply rotational part of matrix to supplied vector coordinates
- */
+// Apply rotational part of matrix to supplied vector coordinates
 Vec3<double> Matrix4::rotateVector(double x, double y, double z) const
 {
 	Vec3<double> result;
@@ -1021,9 +909,7 @@ Vec3<double> Matrix4::rotateVector(double x, double y, double z) const
 	return result;
 }
 
-/*
- * \brief Remove translation and scaling parts, leaving rotation only
- */
+// Remove translation and scaling parts, leaving rotation only
 void Matrix4::removeTranslationAndScaling()
 {
 	matrix_[3] = 0.0;
@@ -1035,9 +921,7 @@ void Matrix4::removeTranslationAndScaling()
 	matrix_[14] = 0.0;
 }
 
-/*
- * \brief Copy translation and scaling parts from specified matrix
- */
+// Copy translation and scaling parts from specified matrix
 void Matrix4::copyTranslationAndScaling(Matrix4& source)
 {
 	matrix_[3] = source.matrix_[3];

@@ -27,10 +27,7 @@
 // Forward Declarations
 class Box;
 
-/*
- * \brief Histogram
- * \details XXX TODO
- */
+// Histogram
 class Histogram : public ListItem<Histogram>
 {
 	public:

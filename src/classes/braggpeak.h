@@ -28,12 +28,12 @@
 // Forward Declarations
 /* none */
 
-/*
- * \brief BraggPeak Class
- * \details BraggPeak acts as a 'bin' for collecting contributions arising from a set of KVectors which occur at the same Q value.
- */
+// BraggPeak Class
 class BraggPeak
 {
+	/*
+	 *  BraggPeak acts as a 'bin' for collecting contributions arising from a set of KVectors which occur at the same Q value.
+	 */
 	public:
 	// Constructor
 	BraggPeak(double Q = 0.0, int index = 0);

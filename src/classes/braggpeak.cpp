@@ -40,9 +40,7 @@ BraggPeak::BraggPeak(const BraggPeak& source)
 	(*this) = source;
 }
 
-/*
- * \brief Operator=
- */
+// Operator=
 void BraggPeak::operator=(const BraggPeak& source)
 {
 	q_ = source.q_;

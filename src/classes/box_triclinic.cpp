@@ -60,12 +60,10 @@ TriclinicBox::~TriclinicBox()
 }
 
 /*
-// Minimum Image Routines (virtual implementations)
+ * Minimum Image Routines (virtual implementations)
 */
 
-/*
- * \brief Return minimum image coordinates of 'i' with respect to 'ref'
- */
+// Return minimum image coordinates of 'i' with respect to 'ref'
 Vec3<double> TriclinicBox::minimumImage(const Atom* i, const Atom* ref) const
 {
 	Vec3<double> mim = inverseAxes_*(ref->r() - i->r());
@@ -78,9 +76,7 @@ Vec3<double> TriclinicBox::minimumImage(const Atom* i, const Atom* ref) const
 	return axes_*mim + ref->r();
 }
 
-/*
- * \brief Return minimum image coordinates of 'i' with respect to 'ref'
- */
+// Return minimum image coordinates of 'i' with respect to 'ref'
 Vec3<double> TriclinicBox::minimumImage(const Atom* i, const Vec3<double>& ref) const
 {
 	Vec3<double> mim = inverseAxes_*(ref - i->r());
@@ -93,9 +89,7 @@ Vec3<double> TriclinicBox::minimumImage(const Atom* i, const Vec3<double>& ref) 
 	return axes_*mim + ref;
 }
 
-/*
- * \brief Return minimum image coordinates of 'i' with respect to 'ref'
- */
+// Return minimum image coordinates of 'i' with respect to 'ref'
 Vec3<double> TriclinicBox::minimumImage(const Vec3<double>& i, const Vec3<double>& ref) const
 {
 	Vec3<double> mim = inverseAxes_*(ref - i);
@@ -108,9 +102,7 @@ Vec3<double> TriclinicBox::minimumImage(const Vec3<double>& i, const Vec3<double
 	return axes_*mim + ref;
 }
 
-/*
- * \brief Return minimum image vector from 'i' to 'j'
- */
+// Return minimum image vector from 'i' to 'j'
 Vec3<double> TriclinicBox::minimumVector(const Atom* i, const Atom* j) const
 {
 	Vec3<double> mim = inverseAxes_*(j->r() - i->r());
@@ -123,9 +115,7 @@ Vec3<double> TriclinicBox::minimumVector(const Atom* i, const Atom* j) const
 	return axes_*mim;
 }
 
-/*
- * \brief Return minimum image vector from 'i' to 'j'
- */
+// Return minimum image vector from 'i' to 'j'
 Vec3<double> TriclinicBox::minimumVector(const Atom* i, const Vec3<double>& j) const
 {
 	Vec3<double> mim = inverseAxes_*(j - i->r());
@@ -139,9 +129,7 @@ Vec3<double> TriclinicBox::minimumVector(const Atom* i, const Vec3<double>& j) c
 	return axes_*mim;
 }
 
-/*
- * \brief Return minimum image vector from 'i' to 'j'
- */
+// Return minimum image vector from 'i' to 'j'
 Vec3<double> TriclinicBox::minimumVector(const Vec3<double>& i, const Vec3<double>& j) const
 {
 	Vec3<double> mim = inverseAxes_*(j-i);
@@ -154,64 +142,50 @@ Vec3<double> TriclinicBox::minimumVector(const Vec3<double>& i, const Vec3<doubl
 	return axes_*mim;
 }
 
-/*
- * \brief Return minimum image distance from 'i' to 'j'
- */
+// Return minimum image distance from 'i' to 'j'
 double TriclinicBox::minimumDistance(const Atom* i, const Atom* j) const
 {
 	return minimumVector(i, j).magnitude();
 }
 
-/*
- * \brief Return minimum image distance from 'i' to 'j'
- */
+// Return minimum image distance from 'i' to 'j'
 double TriclinicBox::minimumDistance(const Atom* i, const Vec3<double>& j) const
 {
 	return minimumVector(i, j).magnitude();
 }
 
-/*
- * \brief Return minimum image distance from 'i' to 'j'
- */
+// Return minimum image distance from 'i' to 'j'
 double TriclinicBox::minimumDistance(const Vec3<double>& i, const Vec3<double>& j) const
 {
 	return minimumVector(i, j).magnitude();
 }
 
-/*
- * \brief Return minimum image squared distance from 'i' to 'j' (pointers)
- */
+// Return minimum image squared distance from 'i' to 'j' (pointers)
 double TriclinicBox::minimumDistanceSquared(const Atom* i, const Atom* j) const
 {
 	return minimumVector(i, j).magnitudeSq();
 }
 
-/*
- * \brief Return minimum image squared distance from 'i' to 'j' (references)
- */
+// Return minimum image squared distance from 'i' to 'j' (references)
 double TriclinicBox::minimumDistanceSquared(const Atom& i, const Atom& j) const
 {
 	return minimumVector(i.r(), j.r()).magnitudeSq();
 }
 
-/*
- * \brief Return minimum image squared distance from 'i' to 'j'
- */
+// Return minimum image squared distance from 'i' to 'j'
 double TriclinicBox::minimumDistanceSquared(const Atom* i, const Vec3<double>& j) const
 {
 	return minimumVector(i, j).magnitudeSq();
 }
 
-/*
- * \brief Return minimum image squared distance from 'i' to 'j'
- */
+// Return minimum image squared distance from 'i' to 'j'
 double TriclinicBox::minimumDistanceSquared(const Vec3<double>& i, const Vec3<double>& j) const
 {
 	return minimumVector(i, j).magnitudeSq();
 }
 
 /*
-// Utility Routines (Virtual Implementations)
+ * Utility Routines (Virtual Implementations)
 */
 
 // Return random coordinate inside Box
@@ -221,9 +195,7 @@ Vec3<double> TriclinicBox::randomCoordinate() const
 	return axes_*pos;
 }
 
-/*
- * \brief Return folded coordinate (i.e. inside current Box)
- */
+// Return folded coordinate (i.e. inside current Box)
 Vec3<double> TriclinicBox::fold(const Vec3<double>& r) const
 {
 	// Convert coordinate to fractional coords
@@ -237,9 +209,7 @@ Vec3<double> TriclinicBox::fold(const Vec3<double>& r) const
 	return axes_*frac;
 }
 
-/*
- * \brief Return folded fractional coordinate (i.e. inside current Box)
- */
+// Return folded fractional coordinate (i.e. inside current Box)
 Vec3<double> TriclinicBox::foldFrac(const Vec3<double>& r) const
 {
 	// Convert coordinate to fractional coords

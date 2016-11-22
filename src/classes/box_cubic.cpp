@@ -47,16 +47,16 @@ CubicBox::~CubicBox()
 }
 
 /*
-// Minimum Image Routines (virtual implementations)
-*/
-
-/*
- * \brief Return minimum image coordinates of 'i' with respect to 'ref'
- * \details This, and all other routines, use an ternary if/else test and an int() cast in order to calculate minimum image vectors, distances, and coordinates,
- * since this is about 25-30% faster than using floor().
+ * Minimum Image Routines (virtual implementations)
  */
+
+// Return minimum image coordinates of 'i' with respect to 'ref'
 Vec3<double> CubicBox::minimumImage(const Atom* i, const Atom* ref) const
 {
+	/*
+	 * This, and all other routines, use an ternary if/else test and an int() cast in order to calculate minimum image vectors, distances, and coordinates,
+	 * since this is about 25-30% faster than using floor().
+	 */
 	Vec3<double> mimVec = i->r();
 	mimVec -= ref->r();
 
@@ -68,9 +68,7 @@ Vec3<double> CubicBox::minimumImage(const Atom* i, const Atom* ref) const
 	return mimVec;
 }
 
-/*
- * \brief Return minimum image coordinates of 'i' with respect to 'ref'
- */
+// Return minimum image coordinates of 'i' with respect to 'ref'
 Vec3<double> CubicBox::minimumImage(const Atom* i, const Vec3<double>& ref) const
 {
 	Vec3<double> mimVec = i->r();
@@ -84,9 +82,7 @@ Vec3<double> CubicBox::minimumImage(const Atom* i, const Vec3<double>& ref) cons
 	return mimVec;
 }
 
-/*
- * \brief Return minimum image coordinates of 'i' with respect to 'ref'
- */
+// Return minimum image coordinates of 'i' with respect to 'ref'
 Vec3<double> CubicBox::minimumImage(const Vec3<double>& i, const Vec3<double>& ref) const
 {
 	Vec3<double> mimVec = i;
@@ -100,9 +96,7 @@ Vec3<double> CubicBox::minimumImage(const Vec3<double>& i, const Vec3<double>& r
 	return mimVec;
 }
 
-/*
- * \brief Return minimum image vector from 'i' to 'j'
- */
+// Return minimum image vector from 'i' to 'j'
 Vec3<double> CubicBox::minimumVector(const Atom* i, const Atom* j) const
 {
 	Vec3<double> mimVec = j->r();
@@ -115,9 +109,7 @@ Vec3<double> CubicBox::minimumVector(const Atom* i, const Atom* j) const
 	return mimVec;
 }
 
-/*
- * \brief Return minimum image vector from 'i' to 'j'
- */
+// Return minimum image vector from 'i' to 'j'
 Vec3<double> CubicBox::minimumVector(const Atom* i, const Vec3<double>& j) const
 {
 	Vec3<double> mimVec = j;
@@ -130,9 +122,7 @@ Vec3<double> CubicBox::minimumVector(const Atom* i, const Vec3<double>& j) const
 	return mimVec;
 }
 
-/*
- * \brief Return minimum image vector from 'i' to 'j'
- */
+// Return minimum image vector from 'i' to 'j'
 Vec3<double> CubicBox::minimumVector(const Vec3<double>& i, const Vec3<double>& j) const
 {
 	Vec3<double> mimVec = j;
@@ -145,9 +135,7 @@ Vec3<double> CubicBox::minimumVector(const Vec3<double>& i, const Vec3<double>& 
 	return mimVec;
 }
 
-/*
- * \brief Return minimum image distance from 'i' to 'j'
- */
+// Return minimum image distance from 'i' to 'j'
 double CubicBox::minimumDistance(const Atom* i, const Atom* j) const
 {
 	Vec3<double> mimVec = j->r();
@@ -160,9 +148,7 @@ double CubicBox::minimumDistance(const Atom* i, const Atom* j) const
 	return mimVec.magnitude();
 }
 
-/*
- * \brief Return minimum image distance from 'i' to 'j'
- */
+// Return minimum image distance from 'i' to 'j'
 double CubicBox::minimumDistance(const Atom* i, const Vec3<double>& j) const
 {
 	Vec3<double> mimVec = j;
@@ -175,9 +161,7 @@ double CubicBox::minimumDistance(const Atom* i, const Vec3<double>& j) const
 	return mimVec.magnitude();
 }
 
-/*
- * \brief Return minimum image distance from 'i' to 'j'
- */
+// Return minimum image distance from 'i' to 'j'
 double CubicBox::minimumDistance(const Vec3<double>& i, const Vec3<double>& j) const
 {
 	Vec3<double> mimVec = j;
@@ -190,9 +174,7 @@ double CubicBox::minimumDistance(const Vec3<double>& i, const Vec3<double>& j) c
 	return mimVec.magnitude();
 }
 
-/*
- * \brief Return minimum image squared distance from 'i' to 'j' (pointers)
- */
+// Return minimum image squared distance from 'i' to 'j' (pointers)
 double CubicBox::minimumDistanceSquared(const Atom* i, const Atom* j) const
 {
 	Vec3<double> mimVec = j->r();
@@ -205,9 +187,7 @@ double CubicBox::minimumDistanceSquared(const Atom* i, const Atom* j) const
 	return mimVec.magnitudeSq();
 }
 
-/*
- * \brief Return minimum image squared distance from 'i' to 'j' (references)
- */
+// Return minimum image squared distance from 'i' to 'j' (references)
 double CubicBox::minimumDistanceSquared(const Atom& i, const Atom& j) const
 {
 	Vec3<double> mimVec = j.r();
@@ -220,9 +200,7 @@ double CubicBox::minimumDistanceSquared(const Atom& i, const Atom& j) const
 	return mimVec.magnitudeSq();
 }
 
-/*
- * \brief Return minimum image squared distance from 'i' to 'j'
- */
+// Return minimum image squared distance from 'i' to 'j'
 double CubicBox::minimumDistanceSquared(const Atom* i, const Vec3<double>& j) const
 {
 	Vec3<double> mimVec = j;
@@ -235,9 +213,7 @@ double CubicBox::minimumDistanceSquared(const Atom* i, const Vec3<double>& j) co
 	return mimVec.magnitudeSq();
 }
 
-/*
- * \brief Return minimum image distance from 'i' to 'j'
- */
+// Return minimum image distance from 'i' to 'j'
 double CubicBox::minimumDistanceSquared(const Vec3<double>& i, const Vec3<double>& j) const
 {
 // 	Vec3<double> mimVec = j;
@@ -259,8 +235,8 @@ double CubicBox::minimumDistanceSquared(const Vec3<double>& i, const Vec3<double
 }
 
 /*
-// Utility Routines (Virtual Implementations)
-*/
+ * Utility Routines (Virtual Implementations)
+ */
 
 // Return random coordinate inside Box
 Vec3<double> CubicBox::randomCoordinate() const
@@ -272,9 +248,7 @@ Vec3<double> CubicBox::randomCoordinate() const
 	return pos;
 }
 
-/*
- * \brief Return folded coordinate (i.e. inside current Box)
- */
+// Return folded coordinate (i.e. inside current Box)
 Vec3<double> CubicBox::fold(const Vec3<double>& r) const
 {
 	// Convert coordinate to fractional coords
@@ -289,9 +263,7 @@ Vec3<double> CubicBox::fold(const Vec3<double>& r) const
 	return frac*a_;
 }
 
-/*
- * \brief Return folded fractional coordinate (i.e. inside current Box)
- */
+// Return folded fractional coordinate (i.e. inside current Box)
 Vec3<double> CubicBox::foldFrac(const Vec3<double>& r) const
 {
 	// Convert coordinate to fractional coords

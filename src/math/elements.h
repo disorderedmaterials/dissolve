@@ -57,7 +57,7 @@ class Element
 
 	/*
 	// Data by Z
-	*/
+	 */
 	public:
 	// Copy the ambient colour of the element into the array provided
 	void copyColour(GLfloat* v);
@@ -113,7 +113,7 @@ class ElementMap
 
 	/*
 	// Data by Z
-	*/
+	 */
 	public:
 	// Return periodic table group number
 	int group(int i) const;
@@ -140,7 +140,7 @@ class ElementMap
 
 	/*
 	// Data by atom*
-	*/
+	 */
 	public:
 	// Return periodic table group number
 	int group(Atom* i);

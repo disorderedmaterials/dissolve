@@ -31,11 +31,7 @@
 class GrainDefinition;
 class Species;
 
-/*
- * \brief Grain Definition
- * \details A GrainDefinition contains a list of indices of Atoms in a Species which should be treated as a 'group' of atoms
- * when calculating neighbour lists, low-Q scattering etc. TODO
- */
+// Grain Definition
 class GrainDefinition : public ListItem<GrainDefinition>
 {
 	public:

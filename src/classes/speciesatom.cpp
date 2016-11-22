@@ -78,10 +78,7 @@ int SpeciesAtom::element() const
 	return element_;
 }
 
-/*
- * \brief Return coordinates
- * \details Return the current coordinates of the SpeciesAtom, be they absolute or Grain-local
- */
+// Return coordinates
 const Vec3<double>& SpeciesAtom::r() const
 {
 	return r_;
@@ -116,25 +113,19 @@ AtomType* SpeciesAtom::atomType() const
 	return atomType_;
 }
 
-/*
- * \brief Set List index (0->[N-1])
- */
+// Set List index (0->[N-1])
 void SpeciesAtom::setIndex(int id)
 {
 	index_ = id;
 }
 
-/*
- * \brief Return List index (0->[N-1])
- */
+// Return List index (0->[N-1])
 int SpeciesAtom::index() const
 {
 	return index_;
 }
 
-/*
- * \brief Return 'user' index (1->N)
- */
+// Return 'user' index (1->N)
 int SpeciesAtom::userIndex() const
 {
 	return index_+1;

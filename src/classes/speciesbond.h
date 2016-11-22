@@ -29,10 +29,7 @@
 class SpeciesAtom;
 class Species;
 
-/*
- * \brief SpeciesBond Definition
- * \details XXX TODO
- */
+// SpeciesBond Definition
 class SpeciesBond : public ListItem<SpeciesBond>
 {
 	public:
@@ -59,7 +56,7 @@ class SpeciesBond : public ListItem<SpeciesBond>
 
 	/*
 	 * SpeciesAtom Information
-	*/
+	 */
 	private:
 	// First SpeciesAtom in SpeciesBond
 	SpeciesAtom* i_;

@@ -47,7 +47,7 @@ class Matrix4
 
 	/*
 	// Operators
-	*/
+	 */
 	public:
 	Matrix4 operator*(const Matrix4& B) const;
 	Matrix4 operator*(const double a) const;
@@ -61,7 +61,7 @@ class Matrix4
 
 	/*
 	// Basic Set/Get
-	*/
+	 */
 	public:
 	// Reset the matrix to the identity
 	void setIdentity();
@@ -81,7 +81,7 @@ class Matrix4
 
 	/*
 	// Column Operations
-	*/
+	 */
 	public:
 	// Copy column contents to supplied Vec3
 	Vec3<double> columnAsVec3(int col);
@@ -117,7 +117,7 @@ class Matrix4
 
 	/*
 	// Rotations
-	*/
+	 */
 	public:
 	// Create rotation matrix about X
 	void createRotationX(double angle);
@@ -137,7 +137,7 @@ class Matrix4
 
 	/*
 	// Translations
-	*/
+	 */
 	public:
 	// Create a translation to the matrix (as glTranslated would do)
 	void createTranslation(double dx, double dy, double dz);
@@ -163,7 +163,7 @@ class Matrix4
 
 	/*
 	// Scaling
-	*/
+	 */
 	public:
 	// Apply a general scaling to the matrix (as glScaled would to)
 	void applyScaling(double scalex, double scaley, double scalez);
@@ -181,7 +181,7 @@ class Matrix4
 
 	/*
 	// Transforms
-	*/
+	 */
 	public:
 	// Transform coordinates supplied and return as Vec3<double>
 	Vec3<double> transform(double x, double y, double z) const;

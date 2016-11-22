@@ -63,7 +63,7 @@ bool DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 
 		/*
 		// Bonds
-		*/
+		 */
 
 		// Loop over nShakesPerMol
 		for (shake = 0; shake<nShakesPerMol; ++shake)
@@ -112,7 +112,7 @@ bool DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 
 		/*
 		// Angles
-		*/
+		 */
 
 		// Loop over nShakesPerMol
 		for (shake = 0; shake<nShakesPerMol; ++shake)
@@ -412,7 +412,7 @@ bool DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 
 		/*
 		// Bonds
-		*/
+		 */
 
 		// Loop over nShakesPerMol
 		for (shake = 0; shake<nShakesPerTerm; ++shake)
@@ -461,7 +461,7 @@ bool DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 
 		/*
 		// Angles
-		*/
+		 */
 
 		// Loop over nShakesPerMol
 		for (shake = 0; shake<nShakesPerTerm; ++shake)

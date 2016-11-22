@@ -26,10 +26,7 @@
 #include "classes/box.h"
 #include <string.h>
 
-/*
- * \brief Test Routine
- * \details Developers only - Performs some kind of test code
- */
+// Test Routine
 bool DUQ::commandTest(Configuration& cfg)
 {
 	calculateBraggSQ(cfg);
@@ -161,31 +158,5 @@ bool DUQ::commandTest(Configuration& cfg)
 // 	}
 // 	hnc.save("hnc.txt");
 // 	py.save("py.txt");
-	return true;
-}
-
-/*
- * \brief Test Energy Calculation Routines
- * \details Calculate the energy of the system using the simplest (and slowest) method possible on each process
- */
-bool DUQ::commandTestEnergy(Configuration& cfg)
-{
-	Messenger::print("Testing total energy calculation...\n");
-
-	double energy;
-	Timer timer;
-	timer.start();
-	energy = interatomicEnergy(cfg);
-	timer.stop();
-	Messenger::print("Particle (atom-atom) energy is %f kJ/mol (%s).\n", energy, timer.timeString());
-
-	timer.start();
-	energy = intergrainEnergy(cfg);
-	timer.stop();
-	Messenger::print("Particle (grain-grain) energy is %f kJ/mol (%s).\n", energy, timer.timeString());
-
-	// Calculate 'correct' energies
-	totalEnergyTest(cfg);
-	
 	return true;
 }

@@ -30,10 +30,7 @@ class Atom;
 class Molecule;
 class Species;
 
-/*
- * \brief Bond Definition
- * \details XXX TODO
- */
+// Bond Definition
 class Bond : public ListItem<Bond>
 {
 	public:
@@ -68,7 +65,7 @@ class Bond : public ListItem<Bond>
 
 	/*
 	 * Atom Information
-	*/
+	 */
 	private:
 	// First Atom in Bond
 	Atom* i_;

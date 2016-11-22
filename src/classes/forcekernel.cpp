@@ -71,14 +71,14 @@ void ForceKernel::forcesWithoutMim(const Atom* i, const Grain* grain, bool exclu
 	}
 }
 
-/*
- * \brief Calculate PairPotential forces between Grains provided (no minimum image calculation)
- * \details This calculates the forces between the individual Atoms of the two Grains provided, adding contributions into the three
- * force arrays supplied. A check is made as to whether the two Grains have the same parent Molecule. If so, then force contributions
- * are scaled such that intramolecular interactions are excluded.
- */
+// Calculate PairPotential forces between Grains provided (no minimum image calculation)
 void ForceKernel::forcesWithoutMim(const Grain* grainI, const Grain* grainJ, double* fx, double* fy, double* fz)
 {
+	/*
+	 * This calculates the forces between the individual Atoms of the two Grains provided, adding contributions into the three
+	 * force arrays supplied. A check is made as to whether the two Grains have the same parent Molecule. If so, then force contributions
+	 * are scaled such that intramolecular interactions are excluded.
+	 */
 	int n, m, nAtomsI = grainI->nAtoms(), nAtomsJ = grainJ->nAtoms();
 	Atom* i, *j;
 	if (grainI->parent() != grainJ->parent())
@@ -136,14 +136,14 @@ void ForceKernel::forcesWithMim(const Atom* i, const Grain* grain, bool excludeI
 	}
 }
 
-/*
- * \brief Calculate PairPotential forces between Grains provided (minimum image calculation)
- * \details This calculates the forces between the individual Atoms of the two Grains provided, applying minimum image convention, adding
- * contributions into the three force arrays supplied. A check is made as to whether the two Grains have the same parent Molecule. If so,
- * then force contributions are scaled such that intramolecular interactions are excluded.
- */
+// Calculate PairPotential forces between Grains provided (minimum image calculation)
 void ForceKernel::forcesWithMim(const Grain* grainI, const Grain* grainJ, double* fx, double* fy, double* fz)
 {
+	/*
+	 * This calculates the forces between the individual Atoms of the two Grains provided, applying minimum image convention, adding
+	 * contributions into the three force arrays supplied. A check is made as to whether the two Grains have the same parent Molecule. If so,
+	 * then force contributions are scaled such that intramolecular interactions are excluded.
+	 */
 	int n, m, nAtomsI = grainI->nAtoms(), nAtomsJ = grainJ->nAtoms();
 	Atom* i, *j;
 	if (grainI->parent() != grainJ->parent())

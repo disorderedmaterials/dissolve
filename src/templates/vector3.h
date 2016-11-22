@@ -41,7 +41,7 @@ template <class T> class Vec3
 
 	/*
 	// Set / adjust / retrieve
-	*/
+	 */
 	public:
 	// Set the vector to 0,0,0
 	void zero();
@@ -61,7 +61,7 @@ template <class T> class Vec3
 
 	/*
 	// Operators
-	*/
+	 */
 	public:
 	// Operator =
 	void operator=(const T value);
@@ -91,7 +91,7 @@ template <class T> class Vec3
 
 	/*
 	// Methods
-	*/
+	 */
 	public:
 	// Return vector of absolute elements
 	Vec3<T> abs() const;

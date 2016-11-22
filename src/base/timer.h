@@ -25,12 +25,12 @@
 #include "base/dnchar.h"
 #include <ctime>
 
-/*
- * \brief Timer
- * \details Simple class to store and manipulate time information in order to provide timings for routines etc.
- */
+// Timer
 class Timer
 {
+	/*
+	 * Simple class to store and manipulate time information in order to provide timings for routines etc.
+	 */
 	public:
 	// Constructor
 	Timer();

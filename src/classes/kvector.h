@@ -28,9 +28,7 @@
 // Forward Declarations
 class BraggPeak;
 
-/*
- * \brief K-Vector
- */
+// K-Vector
 class KVector
 {
 	public:

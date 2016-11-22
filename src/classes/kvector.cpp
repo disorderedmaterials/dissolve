@@ -47,9 +47,7 @@ KVector::KVector(const KVector& source)
 	(*this) = source;
 }
 
-/*
- * \brief Operator=
- */
+// Operator=
 void KVector::operator=(const KVector& source)
 {
 	hkl_ = source.hkl_;
@@ -68,9 +66,7 @@ const Vec3<int>& KVector::hkl() const
 	return hkl_;
 }
 
-/*
- *\brief Return h index
- */
+// Return h index
 const int KVector::h() const
 {
 	return hkl_.x;
@@ -94,9 +90,7 @@ const BraggPeak* KVector::braggPeak() const
 	return braggPeak_;
 }
 
-/*
- * \brief Zero cos/sin term arrays
- */
+// Zero cos/sin term arrays
 void KVector::zeroCosSinTerms()
 {
 	cosTerms_ = 0.0;

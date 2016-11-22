@@ -61,12 +61,10 @@ MonoclinicBox::~MonoclinicBox()
 }
 
 /*
-// Minimum Image Routines (virtual implementations)
+ * Minimum Image Routines (virtual implementations)
 */
 
-/*
- * \brief Return minimum image coordinates of 'i' with respect to 'j'
- */
+// Return minimum image coordinates of 'i' with respect to 'j'
 Vec3<double> MonoclinicBox::minimumImage(const Atom* i, const Atom* ref) const
 {
 	// TODO Can speedup this since we know which matrix elements are zero
@@ -80,9 +78,7 @@ Vec3<double> MonoclinicBox::minimumImage(const Atom* i, const Atom* ref) const
 	return axes_*mim + ref->r();
 }
 
-/*
- * \brief Return minimum image coordinates of 'i' with respect to 'j'
- */
+// Return minimum image coordinates of 'i' with respect to 'j'
 Vec3<double> MonoclinicBox::minimumImage(const Atom* i, const Vec3<double>& ref) const
 {
 	// TODO Can speedup this since we know which matrix elements are zero
@@ -96,9 +92,7 @@ Vec3<double> MonoclinicBox::minimumImage(const Atom* i, const Vec3<double>& ref)
 	return axes_*mim + ref;
 }
 
-/*
- * \brief Return minimum image coordinates of 'i' with respect to 'j'
- */
+// Return minimum image coordinates of 'i' with respect to 'j'
 Vec3<double> MonoclinicBox::minimumImage(const Vec3<double>& i, const Vec3<double>& ref) const
 {
 	// TODO Can speedup this since we know which matrix elements are zero
@@ -112,9 +106,7 @@ Vec3<double> MonoclinicBox::minimumImage(const Vec3<double>& i, const Vec3<doubl
 	return axes_*mim + ref;
 }
 
-/*
- * \brief Return minimum image vector from 'i' to 'j'
- */
+// Return minimum image vector from 'i' to 'j'
 Vec3<double> MonoclinicBox::minimumVector(const Atom* i, const Atom* j) const
 {
 	// TODO Can speedup this since we know which matrix elements are zero
@@ -128,9 +120,7 @@ Vec3<double> MonoclinicBox::minimumVector(const Atom* i, const Atom* j) const
 	return axes_*mim;
 }
 
-/*
- * \brief Return minimum image vector from 'i' to 'j'
- */
+// Return minimum image vector from 'i' to 'j'
 Vec3<double> MonoclinicBox::minimumVector(const Atom* i, const Vec3<double>& j) const
 {
 	// TODO Can speedup this since we know which matrix elements are zero
@@ -144,9 +134,7 @@ Vec3<double> MonoclinicBox::minimumVector(const Atom* i, const Vec3<double>& j) 
 	return axes_*mim;
 }
 
-/*
- * \brief Return minimum image vector from 'i' to 'j'
- */
+// Return minimum image vector from 'i' to 'j'
 Vec3<double> MonoclinicBox::minimumVector(const Vec3<double>& i, const Vec3<double>& j) const
 {
 	// TODO Can speedup this since we know which matrix elements are zero
@@ -160,64 +148,50 @@ Vec3<double> MonoclinicBox::minimumVector(const Vec3<double>& i, const Vec3<doub
 	return axes_*mim;
 }
 
-/*
- * \brief Return minimum image distance from 'i' to 'j'
- */
+// Return minimum image distance from 'i' to 'j'
 double MonoclinicBox::minimumDistance(const Atom* i, const Atom* j) const
 {
 	return minimumVector(i, j).magnitude();
 }
 
-/*
- * \brief Return minimum image distance from 'i' to 'j'
- */
+// Return minimum image distance from 'i' to 'j'
 double MonoclinicBox::minimumDistance(const Atom* i, const Vec3<double>& j) const
 {
 	return minimumVector(i, j).magnitude();
 }
 
-/*
- * \brief Return minimum image distance from 'i' to 'j'
- */
+// Return minimum image distance from 'i' to 'j'
 double MonoclinicBox::minimumDistance(const Vec3<double>& i, const Vec3<double>& j) const
 {
 	return minimumVector(i, j).magnitude();
 }
 
-/*
- * \brief Return minimum image squared distance from 'i' to 'j' (pointers)
- */
+// Return minimum image squared distance from 'i' to 'j' (pointers)
 double MonoclinicBox::minimumDistanceSquared(const Atom* i, const Atom* j) const
 {
 	return minimumVector(i, j).magnitudeSq();
 }
 
-/*
- * \brief Return minimum image squared distance from 'i' to 'j' (references)
- */
+// Return minimum image squared distance from 'i' to 'j' (references)
 double MonoclinicBox::minimumDistanceSquared(const Atom& i, const Atom& j) const
 {
 	return minimumVector(i.r(), j.r()).magnitudeSq();
 }
 
-/*
- * \brief Return minimum image squared distance from 'i' to 'j'
- */
+// Return minimum image squared distance from 'i' to 'j'
 double MonoclinicBox::minimumDistanceSquared(const Atom* i, const Vec3<double>& j) const
 {
 	return minimumVector(i, j).magnitudeSq();
 }
 
-/*
- * \brief Return minimum image squared distance from 'i' to 'j'
- */
+// Return minimum image squared distance from 'i' to 'j'
 double MonoclinicBox::minimumDistanceSquared(const Vec3<double>& i, const Vec3<double>& j) const
 {
 	return minimumVector(i, j).magnitudeSq();
 }
 
 /*
-// Utility Routines (Virtual Implementations)
+ * Utility Routines (Virtual Implementations)
 */
 
 // Return random coordinate inside Box
@@ -227,9 +201,7 @@ Vec3<double> MonoclinicBox::randomCoordinate() const
 	return axes_*pos;
 }
 
-/*
- * \brief Return folded coordinate (i.e. inside current Box)
- */
+// Return folded coordinate (i.e. inside current Box)
 Vec3<double> MonoclinicBox::fold(const Vec3<double>& r) const
 {
 	// TODO Can speedup this part since we know which matrix elements are zero
@@ -245,9 +217,7 @@ Vec3<double> MonoclinicBox::fold(const Vec3<double>& r) const
 	return axes_*frac;
 }
 
-/*
- * \brief Return folded fractional coordinate (i.e. inside current Box)
- */
+// Return folded fractional coordinate (i.e. inside current Box)
 Vec3<double> MonoclinicBox::foldFrac(const Vec3<double>& r) const
 {
 	// TODO Can speedup this part since we know which matrix elements are zero

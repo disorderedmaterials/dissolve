@@ -28,10 +28,7 @@
 // Forward Declarations
 class AtomType;
 
-/*
- * \brief PairPotential Definition
- * \details TODO
- */
+// PairPotential Definition
 class PairPotential : public ListItem<PairPotential>
 {
 	public:

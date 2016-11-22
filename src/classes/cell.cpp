@@ -56,13 +56,10 @@ const Vec3<int>& Cell::gridReference() const
 	return gridReference_;
 }
 
-/*
- * \brief Set unique index
- * \details To prevent misuse, the identity of a Cell can be changed from its starting value of
- * -1 only once.
- */
+// Set unique index
 void Cell::setIndex(int id)
 {
+	// To prevent misuse, the identity of a Cell can be changed from its starting value of -1 only once.
 	if (id == -1) Messenger::print("BAD_USAGE - Refused to set the ID of a Cell more than once.\n");
 	else index_ = id;
 }
@@ -79,9 +76,7 @@ void Cell::setCentre(Vec3<double> r)
 	centre_ = r;
 }
 
-/* 
- * \brief Return real-space cell centre
- */
+// Return real-space cell centre
 const Vec3< double >& Cell::centre() const
 {
 	return centre_;
@@ -186,10 +181,7 @@ OrderedPointerList<Atom>& Cell::atoms()
 	return atoms_;
 }
 
-/*
- * \brief Add specified atom to this Cell
- * \details Add (copy) data from the supplied atom into a free space in the cell's atom array. The original atom is not 
- */
+// Add specified atom to this Cell
 bool Cell::moveAtom(Atom* i, Cell* targetCell)
 {
 #ifdef CHECKS

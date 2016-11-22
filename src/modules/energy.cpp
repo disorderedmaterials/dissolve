@@ -152,7 +152,7 @@ bool Energy::process(DUQ& duq, ProcessPool& procPool)
 	* Calculate Energy for the target Configuration(s)
 	* 
 	* This is a parallel routine, with processes operating in groups, unless in TEST mode.
-	*/
+	 */
 
 	// Loop over target Configurations
 	for (RefListItem<Configuration,bool>* ri = targetConfigurations_.first(); ri != NULL; ri = ri->next)
@@ -176,13 +176,13 @@ bool Energy::process(DUQ& duq, ProcessPool& procPool)
 			* process calculating its own value.
 			* 
 			* This is a serial routine, with all processes independently calculating their own value.
-			*/
+			 */
 
 			Messenger::print("Energy: Calculating energy for Configuration '%s' in serial test mode...\n", cfg->name());
 
 			/*
 			* Calculation Begins
-			*/
+			 */
 
 			const PotentialMap& potentialMap = duq.potentialMap();
 
@@ -262,7 +262,7 @@ bool Energy::process(DUQ& duq, ProcessPool& procPool)
 
 			/*
 			* Calculation End
-			*/
+			 */
 			
 			Messenger::print("Energy: Correct (test) particle energy is %15.9e kJ/mol\n", interEnergy);
 			Messenger::print("Energy: Correct (test) intramolecular energy is %15.9e kJ/mol\n", intraEnergy);
@@ -275,7 +275,7 @@ bool Energy::process(DUQ& duq, ProcessPool& procPool)
 			* Calculates the total energy of the entire system.
 			* 
 			* This is a serial routine (subroutines called from within are parallel).
-			*/
+			 */
 
 			Messenger::print("Energy: Calculating total energy for Configuration '%s'...\n", cfg->name());
 

@@ -21,9 +21,7 @@
 
 #include "math/matrix3.h"
 
-/*
- * \brief Constructor
- */
+// Constructor
 Matrix3::Matrix3()
 {
 	setIdentity();
@@ -33,9 +31,7 @@ Matrix3::Matrix3()
  * Operators
  */
 
-/*
- * \brief Matrix3 multiply (operator *) (return new matrix)
- */
+// Matrix3 multiply (operator *) (return new matrix)
 Matrix3 Matrix3::operator*(const Matrix3& B) const
 {
 	// [ row(A|this).column(B) ]
@@ -86,9 +82,7 @@ Vec3<double> Matrix3::operator*(const Vec3<double>& v) const
 	return result;
 }
 
-/*
- * \brief Matrix3 multiply (operator *=)
- */
+// Matrix3 multiply (operator *=)
 Matrix3& Matrix3::operator*=(const Matrix3& B)
 {
 	// [ row(A|this).column(B) ]
@@ -110,9 +104,7 @@ Matrix3& Matrix3::operator*=(const Matrix3& B)
 	return* this;
 }
 
-/*
- * \brief Array access (operator [])
- */
+// Array access (operator [])
 double &Matrix3::operator[](int index)
 {
 	return matrix_[index];
@@ -122,9 +114,7 @@ double &Matrix3::operator[](int index)
 // General Routines
 //
 
-/*
- * \brief Reset to the identity matrix
- */
+// Reset to the identity matrix
 void Matrix3::setIdentity()
 {
 	matrix_[0] = 1.0;
@@ -138,9 +128,7 @@ void Matrix3::setIdentity()
 	matrix_[8] = 1.0;
 }
 
-/*
- * \brief Print matrix
- */
+// Print matrix
 void Matrix3::print() const
 {
 	Messenger::print("CMaj   [012]     [345]     [678]\n");
@@ -149,9 +137,7 @@ void Matrix3::print() const
 	Messenger::print("        %8.4f %8.4f %8.4f\n", matrix_[2], matrix_[5], matrix_[8]);
 }
 
-/*
- * \brief Set zero matrix
- */
+// Set zero matrix
 void Matrix3::zero()
 {
 	matrix_[0] = 0.0;
@@ -165,17 +151,13 @@ void Matrix3::zero()
 	matrix_[8] = 0.0;
 }
 
-/*
- * \brief Return matrix array
- */
+// Return matrix array
 double *Matrix3::matrix()
 {
 	return matrix_;
 }
 
-/*
- * \brief Return transpose of current matrix
- */
+// Return transpose of current matrix
 Matrix3& Matrix3::transpose()
 {
 	static Matrix3 A;
@@ -191,9 +173,7 @@ Matrix3& Matrix3::transpose()
 	return A;
 }
 
-/*
- * \brief Calculate determinant
- */
+// Calculate determinant
 double Matrix3::determinant() const
 {
 	double det = matrix_[0]*matrix_[4]*matrix_[8] + matrix_[1]*matrix_[5]*matrix_[6] + matrix_[2]*matrix_[3]*matrix_[7];
@@ -201,9 +181,7 @@ double Matrix3::determinant() const
 	return det;
 }
 
-/*
- * \brief Invert matrix
- */
+// Invert matrix
 void Matrix3::invert()
 {
 	// Gauss-Jordan Inversion
@@ -284,9 +262,7 @@ void Matrix3::invert()
 	}
 }
 
-/*
- * \brief Return maximal element
- */
+// Return maximal element
 double Matrix3::max() const
 {
 	int maxId = 0;
@@ -298,18 +274,14 @@ double Matrix3::max() const
  * Column Operations
  */
 
-/*
- * \brief Copy column contents to supplied Vec3
- */
+// Copy column contents to supplied Vec3
 Vec3<double> Matrix3::columnAsVec3(int col) const
 {
 	Vec3<double> vec(matrix_[col*3], matrix_[col*3+1], matrix_[col*3+2]);
 	return vec;
 }
 
-/*
- * \brief Set specified row from supplied triplet of values
- */
+// Set specified row from supplied triplet of values
 void Matrix3::setRow(int row, double x, double y, double z)
 {
 	matrix_[row] = x;
@@ -317,9 +289,7 @@ void Matrix3::setRow(int row, double x, double y, double z)
 	matrix_[6+row] = z;
 }
 
-/*
- * \brief Set specified column from supplied values
- */
+// Set specified column from supplied values
 void Matrix3::setColumn(int col, double a, double b, double c)
 {
 	matrix_[col*3] = a;
@@ -327,9 +297,7 @@ void Matrix3::setColumn(int col, double a, double b, double c)
 	matrix_[col*3+2] = c;
 }
 
-/*
- * \brief Set specified column from supplied Vec3
- */
+// Set specified column from supplied Vec3
 void Matrix3::setColumn(int col, const Vec3<double> vec)
 {
 	matrix_[col*3] = vec.x;
@@ -337,9 +305,7 @@ void Matrix3::setColumn(int col, const Vec3<double> vec)
 	matrix_[col*3+2] = vec.z;
 }
 
-/*
- * \brief Adjust specified column from supplied values
- */
+// Adjust specified column from supplied values
 void Matrix3::adjustColumn(int col, double a, double b, double c)
 {
 	matrix_[col*3] += a;
@@ -347,9 +313,7 @@ void Matrix3::adjustColumn(int col, double a, double b, double c)
 	matrix_[col*3+2] += c;
 }
 
-/*
- * \brief Adjust specified column from supplied Vec3
- */
+// Adjust specified column from supplied Vec3
 void Matrix3::adjustColumn(int col, const Vec3<double> vec)
 {
 	matrix_[col*3] += vec.x;
@@ -357,9 +321,7 @@ void Matrix3::adjustColumn(int col, const Vec3<double> vec)
 	matrix_[col*3+2] += vec.z;
 }
 
-/*
- * \brief Calculate column magnitude
- */
+// Calculate column magnitude
 double Matrix3::columnMagnitude(int column) const
 {
 	double mag = 0.0;
@@ -367,9 +329,7 @@ double Matrix3::columnMagnitude(int column) const
 	return sqrt(mag);
 }
 
-/*
- * \brief Multiply column by single value
- */
+// Multiply column by single value
 void Matrix3::columnMultiply(int col, double d)
 {
 	matrix_[col*3] *= d;
@@ -377,9 +337,7 @@ void Matrix3::columnMultiply(int col, double d)
 	matrix_[col*3+2] *= d;
 }
 
-/*
- * \brief Multiply first three columns by values in supplied vector
- */
+// Multiply first three columns by values in supplied vector
 void Matrix3::columnMultiply(Vec3<double> vec)
 {
 	columnMultiply(0, vec.x);
@@ -387,9 +345,7 @@ void Matrix3::columnMultiply(Vec3<double> vec)
 	columnMultiply(2, vec.z);
 }
 
-/*
- * \brief Normalise specified column to 1
- */
+// Normalise specified column to 1
 void Matrix3::columnNormalise(int col)
 {
 	double mag = 1.0/sqrt(matrix_[col*3]*matrix_[col*3] + matrix_[col*3+1]*matrix_[col*3+1] + matrix_[col*3+2]*matrix_[col*3+2]);
@@ -398,9 +354,7 @@ void Matrix3::columnNormalise(int col)
 	matrix_[col*3+2] *= mag;
 }
 
-/*
- * \brief Orthogonalise rotation matrix column w.r.t. one (or two) other columns)
- */
+// Orthogonalise rotation matrix column w.r.t. one (or two) other columns)
 void Matrix3::orthogonaliseColumn(int targetcol, int orthocol1, int orthocol2)
 {
 	// Grab target column
@@ -433,9 +387,7 @@ void Matrix3::orthogonaliseColumn(int targetcol, int orthocol1, int orthocol2)
  * Rotations
  */
 
-/*
- * \brief Create rotation matrix about X
- */
+// Create rotation matrix about X
 void Matrix3::createRotationX(double angle)
 {
 	double cosx, sinx, theta = angle/DEGRAD;
@@ -454,9 +406,7 @@ void Matrix3::createRotationX(double angle)
 	matrix_[8] = cosx;
 }
 
-/*
- * \brief Create XY rotation matrix
- */
+// Create XY rotation matrix
 void Matrix3::createRotationXY(double anglex, double angley)
 {
 	double cosx, sinx, cosy, siny, thetax = anglex/DEGRAD, thetay = angley/DEGRAD;
@@ -477,9 +427,7 @@ void Matrix3::createRotationXY(double anglex, double angley)
 	matrix_[8] = cosx*cosy;
 }
 
-/*
- * \brief Create rotation matrix about Y
- */
+// Create rotation matrix about Y
 void Matrix3::createRotationY(double angle)
 {
 	double cosx, sinx, theta = angle/DEGRAD;
@@ -498,9 +446,7 @@ void Matrix3::createRotationY(double angle)
 	matrix_[8] = cosx;
 }
 
-/*
- * \brief Create rotation matrix about Z
- */
+// Create rotation matrix about Z
 void Matrix3::createRotationZ(double angle)
 {
 	double cosx, sinx, theta = angle/DEGRAD;
@@ -519,9 +465,7 @@ void Matrix3::createRotationZ(double angle)
 	matrix_[8] = 1.0;
 }
 
-/*
- * \brief Create axis rotation quaternion
- */
+// Create axis rotation quaternion
 void Matrix3::createRotationAxis(double ax, double ay, double az, double angle, bool normalise)
 {
 	double cosx, sinx, theta = angle/DEGRAD, oneMcosx;
@@ -548,9 +492,7 @@ void Matrix3::createRotationAxis(double ax, double ay, double az, double angle, 
 	matrix_[8] = az*az*oneMcosx + cosx;
 }
 
-/*
- * \brief Apply rotation about X axis
- */
+// Apply rotation about X axis
 void Matrix3::applyRotationX(double angle)
 {
 	double cosx, sinx, theta = angle/DEGRAD, temp[3];
@@ -571,9 +513,7 @@ void Matrix3::applyRotationX(double angle)
 	matrix_[5] = temp[2];
 }
 
-/*
- * \brief Apply axis rotation quaternion
- */
+// Apply axis rotation quaternion
 void Matrix3::applyRotationAxis(double ax, double ay, double az, double angle, bool normalise)
 {
 	double cosx, sinx, theta = angle/DEGRAD, temp[6], multipliers[9];
@@ -620,9 +560,7 @@ void Matrix3::applyRotationAxis(double ax, double ay, double az, double angle, b
  * Scaling
  */
 
-/*
- * \brief Apply a general scaling to the matrix (as glScaled would do)
- */
+// Apply a general scaling to the matrix (as glScaled would do)
 void Matrix3::applyScaling(double scalex, double scaley, double scalez)
 {
 	applyScalingX(scalex);
@@ -630,9 +568,7 @@ void Matrix3::applyScaling(double scalex, double scaley, double scalez)
 	applyScalingZ(scalez);
 }
 
-/*
- * \brief Apply a general scaling to the matrix (as glScaled would to)
- */
+// Apply a general scaling to the matrix (as glScaled would to)
 void Matrix3::applyScaling(Vec3<double> scaling)
 {
 	applyScalingX(scaling.x);
@@ -640,18 +576,14 @@ void Matrix3::applyScaling(Vec3<double> scaling)
 	applyScalingZ(scaling.z);
 }
 
-/*
- * \brief Apply an xy-scaling to the matrix
- */
+// Apply an xy-scaling to the matrix
 void Matrix3::applyScalingXY(double scalex, double scaley)
 {
 	applyScalingX(scalex);
 	applyScalingY(scaley);
 }
 
-/*
- * \brief Apply an x scaling to the matrix
- */
+// Apply an x scaling to the matrix
 void Matrix3::applyScalingX(double scale)
 {
 	matrix_[0] *= scale;
@@ -659,9 +591,7 @@ void Matrix3::applyScalingX(double scale)
 	matrix_[2] *= scale;
 }
 
-/*
- * \brief Apply a y scaling to the matrix
- */
+// Apply a y scaling to the matrix
 void Matrix3::applyScalingY(double scale)
 {
 	matrix_[3] *= scale;
@@ -669,9 +599,7 @@ void Matrix3::applyScalingY(double scale)
 	matrix_[5] *= scale;
 }
 
-/*
- * \brief Apply a z scaling to the matrix
- */
+// Apply a z scaling to the matrix
 void Matrix3::applyScalingZ(double scale)
 {
 	matrix_[6] *= scale;
@@ -683,9 +611,7 @@ void Matrix3::applyScalingZ(double scale)
  * Transforms
  */
 
-/*
- * \brief Transform coordinates supplied and return as Vec3<double>
- */
+// Transform coordinates supplied and return as Vec3<double>
 Vec3<double> Matrix3::transform(double x, double y, double z) const
 {
 	Vec3<double> result;
@@ -695,9 +621,7 @@ Vec3<double> Matrix3::transform(double x, double y, double z) const
 	return result;
 }
 
-/*
- * \brief Transform coordinates supplied and return as Vec3<double>
- */
+// Transform coordinates supplied and return as Vec3<double>
 Vec3<double> Matrix3::transform(Vec3<double> vec) const
 {
 	Vec3<double> result;

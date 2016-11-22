@@ -66,7 +66,7 @@ class Species : public ListItem<Species>
 
 	/*
 	 * Atomic Information
-	*/
+	 */
 	private:
 	// List of Atoms in the Species
 	List<SpeciesAtom> atoms_;

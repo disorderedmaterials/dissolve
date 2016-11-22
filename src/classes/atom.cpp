@@ -74,10 +74,7 @@ int Atom::element() const
 	return element_;
 }
 
-/*
- * \brief Return coordinates
- * \details Return the current coordinates of the Atom, be they absolute or Grain-local
- */
+// Return coordinates
 const Vec3<double>& Atom::r() const
 {
 	return r_;
@@ -143,9 +140,7 @@ int Atom::index() const
 	return index_;
 }
 
-/*
- * \brief Return 'user' index (1->N)
- */
+// Return 'user' index (1->N)
 int Atom::userIndex() const
 {
 	return index_+1;

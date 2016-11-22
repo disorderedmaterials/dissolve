@@ -1,0 +1,44 @@
+----
+TODO
+----
+
+o Modify EnergyKernel to add in Coulomb term to PairPotential if it does not include it (may have to re-write PairPotential class slightly to make this clear).
+o Allow for Fixed atoms:
+	- Checks for fixed Atoms with GrainDefinitions - this should not be allowed since a Grain will be mobile.
+	- Provision for pre-calculation of RDF/F(Q) data between fixed atoms, and introduction of this into final RDF/F(Q) data for speed?
+o Different bond types - e.g. replicate those used in EPSR for reference?
+
+
+-------------------------------------------
+Ideas / Notes / Weird Algorithm Suggestions
+-------------------------------------------
+
+** Monte Carlo 'Velocity'
+Keep track of last successful rotation / translation for each Grain, allowing similar moves to be attempted on next round? Reset if move fails.
+
+** RDF Calculation for Large Systems
+Can Grains be treated as a single scattering body (with average scattering length of the constituent Atoms) at far-enough distance? Might offer a speed-up for larger systems since all atoms within the Grain can be treated as being at (approximately) the same distance (that of the Grain).
+
+** Empirical Potential Generation / RDFs
+If the empirical potential only depends on the partial RDFs up to the potential cutoff distance (as it states in the EPSR manual) then we can use the Cell neighbour lists to calculate the RDFs extremely quickly up to this range. In order to calculate the full RDFs for comparison with the experimental S(Q), all Atoms must be considered *unless* each Cell has a second neighbour list which includes all Cells within the maximal distance (root 3 of the cell diagonal for a cubic cell, or whatever it may be). We may then take advantage of know which Cells do/do not need minimum image calculation, and can speed up things considerably.
+
+** Configuration Branching
+Above a certain threshold of r-squared, or at certain time intervals, 'big events' could occur which radically change the structure of the system. For instance, large molecule flips / rotations / exchanges. Standard energetic criteria would normally disallow such moves, but a 'big event' could unequivocally accept all such moves and progress the system back to an equilibrium, at which point the goodness of fit would be recalculated and compared against those previously stored.  We would maintain a history of branch points, storing the model coordinates at these points so that we can revert back to the previous best if necessary. Perhaps it is possible to track the r-squared value and predict its value at some future point if we keep progressing down a particular branch.
+
+** Zero-Point Disorder
+For fixed atoms, can zero-point disorded be modelled effectively by introducing a random fluctuation to the particle's coordinates each time they are retrieved (a la Simplex SA)?
+
+** Cycles
+Can store whether a Bond is involved in a cycle in the actual Bond structure, meaning randomisation / shake moves can be made accordingly. If such flags are present, can we just ignore bonds in the cycle when it comes to shakes and invent a 'ring' potential, which defines the maximum deviation of atoms from the general plane of the ring? 
+
+** Dynamic Bonding
+Could dynamic bonding be implemented? If a simple master list of Bonds / Angles is employed as suggested above then we can create / destroy them at will.
+
+** Cache Misses
+At the start of a Cell-based loop calculation, is it worthwhile copying all neighbouring cell data to a local Grain array, and trying to avoid cache misses? AKS mentioned before that this seemed to be beneficial. Worth trying. May work better with, for instance, larger nShakesPerGrain in GrainShake. Adapt ChangeStore to automatically create list of Grains in Cell neighbours ready for calculation? Would also work well for Molecule-based loops.
+
+** Atom Type 'Applicability'
+For an alkane, for instance, the pairpotential for the terminal H may be different from the methylene H - to what extent does this affect the possible fit?  WOuld be nice to refine a system with one potential for all H, then split into CH3 and CH2 potentials to find out.
+
+** Potential Library
+Keep standard (i.e. already perturbed) potentials available for things like water?

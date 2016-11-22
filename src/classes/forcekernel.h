@@ -74,7 +74,7 @@ class ForceKernel
 
 
 	/*
-	 * \brief Force Calculation
+	 * Force Calculation
 	 */
 	public:
 	// Calculate inter-particle forces between Atoms provided

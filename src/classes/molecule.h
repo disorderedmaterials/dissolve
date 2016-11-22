@@ -36,14 +36,14 @@ class SpeciesAtom;
 class SpeciesGrain;
 class Matrix3;
 
-/*
- * \brief Molecule Definition
- * \details A Molecule can be thought of as an instance of a Species which has a physical presence in the Model.
- * A Molecule does not itself own its Atoms or Grains. Instead, pointers to the relevant Atoms/Grains in the parent
- * Configuration are stored.
- */
+// Molecule Definition
 class Molecule : public ListItem<Molecule>
 {
+	/*
+	 * A Molecule can be thought of as an instance of a Species which has a physical presence in a Configuration.
+	 * A Molecule does not itself own its Atoms or Grains. Instead, pointers to the relevant Atoms/Grains in the parent
+	 * Configuration are stored.
+	 */
 	public:
 	// Constructor
 	Molecule();

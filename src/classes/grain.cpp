@@ -57,13 +57,13 @@ void Grain::clear()
  * Atoms
  */
 
-/*
- * \brief Initialise
- * \details Initialise the Grain structure based on the GrainDefinition supplied. The resulting Grain will have enough
- * storage to reference the number of Atoms contained in the original GrainDefinition.
- */
+// Initialise
 bool Grain::initialise(SpeciesGrain* sg)
 {
+	/*
+	 * Initialise the Grain structure based on the GrainDefinition supplied. The resulting Grain will have enough
+	 * storage to reference the number of Atoms contained in the original GrainDefinition.
+	 */
 	clear();
 #ifdef CHECKS
 	// Check for NULL pointer
@@ -242,9 +242,7 @@ Cell* Grain::cell() const
 	return cell_;
 }
 
-/*
- * \brief Return local index of Grain in Cell's list
- */
+// Return local index of Grain in Cell's list
 int Grain::cellListIndex() const
 {
 	return localIndex_;
