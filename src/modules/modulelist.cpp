@@ -21,26 +21,7 @@
 
 #include "modules/modulelist.h"
 #include "modules/module.h"
-
 #include "base/sysfunc.h"
-
-/*
- * Module Registration
- * ===================
- * All modules to be registered for use in the code must be placed here.
- */
-// #include "modules/atomshake.h"
-// ModuleRegistrar<AtomShake> atomShakeRegistrar;
-// #include "modules/energy.h"
-// ModuleRegistrar<Energy> energyRegistrar;
-// #include "modules/export.h"
-// ModuleRegistrar<Export> exportRegistrar;
-// #include "modules/partials.h"
-// ModuleRegistrar<Partials> partailsRegistrar;
-// #include "modules/structurefactor.h"
-// ModuleRegistrar<StructureFactor> structureFactorRegistrar;
-// #include "modules/test.h"
-// ModuleRegistrar<Test> testRegistrar;
 
 // Static Members
 RefList<Module,bool> ModuleList::masterInstances_;
@@ -74,7 +55,7 @@ Module* ModuleList::addModule(Module* module)
 	else if (module->instanceType() == Module::SingleInstance)
 	{
 		// Single instance modules are one-per-parent, so must see if it is already in the relevant list...
-		Module* existingModule = findMasterInstance(module->name());
+		Module* existingModule = findModule(module->name());
 		if (existingModule) moduleToAdd = existingModule;
 		else moduleToAdd = module->createInstance();
 	}
@@ -86,6 +67,7 @@ Module* ModuleList::addModule(Module* module)
 
 	// Add the module pointer to the list
 	modules_.add(moduleToAdd);
+	printf("ADDED MODULE %s\n", moduleToAdd->uniqueName());
 
 	// Check dependencies of the new Module - loop over dependent Module names
 	LineParser moduleParser;
@@ -100,14 +82,12 @@ Module* ModuleList::addModule(Module* module)
 			return NULL;
 		}
 
-		// Find dependentModule in the previously-defined list of Modules for this Configuration
-		Module* existingModule;
-		RefListIterator<Module,bool> moduleIterator(modules_);
-		while (existingModule = moduleIterator.iterate()) if (DUQSys::sameString(existingModule->name(),dependentModule->name())) break;
+		// Find the named dependentModule in the current list
+		Module* existingModule = findModule(dependentModule->name());
 		if (existingModule)
 		{
-			module->addDependentModule(existingModule);
-			Messenger::print("Added dependent Module '%s' to Module '%s'.\n", existingModule->uniqueName(), module->uniqueName());
+			moduleToAdd->addDependentModule(existingModule);
+			Messenger::print("Added dependent Module '%s' to Module '%s'.\n", existingModule->uniqueName(), moduleToAdd->uniqueName());
 		}
 		else
 		{
