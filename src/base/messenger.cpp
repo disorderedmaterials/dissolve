@@ -57,7 +57,7 @@ void Messenger::setMasterOnly(bool b)
 }
 
 // Master text creation / formatting routine
-void Messenger::createAndPrintText(const char* indentText, const char* format, va_list arguments)
+void Messenger::createText(const char* indentText, const char* format, va_list arguments)
 {
 	text_[0] = '\0';
 	
@@ -76,9 +76,16 @@ void Messenger::createAndPrintText(const char* indentText, const char* format, v
 
 	// Parse the argument list (...) and internally write the output string into text[]
 	vsprintf(text_, newFormat.get(), arguments);
+}
+
+// Master text creation / formatting routine
+void Messenger::createAndPrintText(const char* indentText, const char* format, va_list arguments)
+{
+	if (masterOnly_ && (!ProcessPool::isWorldMaster())) return;
+
+	createText(indentText, format, arguments);
 
 	// Print the text
-	if (masterOnly_ && (!ProcessPool::isWorldMaster())) return;
 	if (redirect_) parser_.writeLineF("%s", text_);
 	else printf("%s", text_);
 }
@@ -110,7 +117,9 @@ void Messenger::error(const char* fmt, ...)
 {
 	va_list arguments;
 	va_start(arguments,fmt);
+	print("\n");
 	createAndPrintText("[[[ ERROR ]]]", fmt, arguments);
+	print("\n");
 	va_end(arguments);
 }
 
@@ -119,8 +128,36 @@ void Messenger::warn(const char* fmt, ...)
 {
 	va_list arguments;
 	va_start(arguments, fmt);
+	print("\n");
 	createAndPrintText("[[[ WARNING ]]]", fmt, arguments);
+	print("\n");
 	va_end(arguments);
+}
+
+// Print banner message of specified width
+void Messenger::banner(const char* fmt, ...)
+{
+	const int width = 80;
+
+	// First, create the text as normal (but don't print it yet) and assess its length
+	va_list arguments;
+	va_start(arguments, fmt);
+	createText(NULL, fmt, arguments);
+	Dnchar bannerText = text_;
+	va_end(arguments);
+
+	int bannerLength = strlen(text_);
+	int leftPad = (width - bannerLength) / 2 - 1;
+	int rightPad = width - bannerLength - leftPad - 2;
+	char bannerFormat[64];
+	sprintf(bannerFormat, "\n%c%%%is%s%%%is%c\n", '*', leftPad, bannerText.get(), rightPad, '*');
+
+	// Finally, print the banner
+	print("\n");
+	for (int n=0; n<width; ++n) printf("%c", '=');
+	print(bannerFormat, " ", " ");
+	for (int n=0; n<width; ++n) printf("%c", '=');
+	print("\n\n");
 }
 
 /*

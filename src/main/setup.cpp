@@ -74,11 +74,7 @@ Data2D::WindowFunction DUQ::windowFunction()
 // Setup all simulation data, checking it as we go
 bool DUQ::setupSimulation()
 {
-	Messenger::print("\n");
-	Messenger::print("*** SYSTEM SETUP BEGINS ***\n");
-
 	/* Check each defined Species */
-	Messenger::print("\n");
 	Messenger::print("*** Checking Species definitions...\n");
 	for (Species* sp = species_.first(); sp != NULL; sp = sp->next)
 	{

@@ -41,7 +41,6 @@ Export::Export() : Module()
 	uniqueName_.sprintf("%s_%02i", name(), instances_.nItems()-1);
 
 	// Setup variables / control parameters
-	addVariable("OutputCoordinates", true);
 	addVariable("SaveTrajectory", "");
 }
 
@@ -158,41 +157,7 @@ bool Export::process(DUQ& duq, ProcessPool& procPool)
 		Configuration* cfg = ri->item;
 
 		// Retrieve control parameters from Configuration
-		const bool outputCoordinates = variableAsBool(cfg, "OutputCoordinates");
 		const char* saveTrajectory = variableAsChar(cfg, "SaveTrajectory");
-
-		/*
-		 * Save Coordinates to Output File Name
-		 */
-		if (outputCoordinates)
-		{
-			Messenger::print("Export: Writing Configuration output file '%s'...\n", cfg->outputCoordinatesFile());
-
-			// Only the pool master saves the data
-			if (procPool.isMaster())
-			{
-				// Open the file
-				LineParser parser;
-				if (!parser.openOutput(cfg->outputCoordinatesFile(), true))
-				{
-					parser.closeFiles();
-					procPool.stop();
-					return false;
-				}
-				else if (!writeConfigurationXYZ(parser, cfg, cfg->name()))
-				{
-					Messenger::print("Export: Failed to write Configuration output file.\n");
-					parser.closeFiles();
-					procPool.stop();
-					return false;
-				}
-
-				procPool.proceed();
-			}
-			else if (!procPool.decision()) return false;
-
-			Messenger::print("Export: Finished writing Configuration output file.\n");
-		}
 
 		/*
 		 * Save XYZ Trajectory

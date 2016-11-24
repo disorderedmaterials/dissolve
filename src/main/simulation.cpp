@@ -21,6 +21,7 @@
 
 #include "main/duq.h"
 #include "base/sysfunc.h"
+#include "modules/export.h"
 
 // Find first occurrence of named Module in pre-processing tasks
 Module* DUQ::findPreProcessingTask(const char* name)
@@ -59,6 +60,7 @@ bool DUQ::go()
 	 *  3)	Reassemble Configuration data on all processes
 	 *  4)	Run all Modules assigned to Samples using all processes available (worldPool_)
 	 *  5)	Run any Module post-processing tasks using all processes available (worldPool_)
+	 *  6)	Write Configuration coordinates (master process only)
 	 */
 
 	/*
@@ -70,10 +72,7 @@ bool DUQ::go()
 		// Increase iteration counter
 		++iteration_;
 
-		Messenger::print("\n");
-		Messenger::print("===============================================\n");
-		Messenger::print("  MAIN LOOP ITERATION %10i / %-10s\n", iteration_, maxIterations_ == -1 ? "(no limit)" : DUQSys::itoa(maxIterations_));
-		Messenger::print("===============================================\n");
+		Messenger::banner("MAIN LOOP ITERATION %10i / %-10s", iteration_, maxIterations_ == -1 ? "(no limit)" : DUQSys::itoa(maxIterations_));
 
 		/*
 		 *  0)	Print schedule of tasks to run
@@ -82,7 +81,7 @@ bool DUQ::go()
 		if (preProcessingTasks_.nItems() == 0) Messenger::print("  (( No Tasks ))\n");
 		RefListIterator<Module,bool> preIterator(preProcessingTasks_);
 		while (Module* module = preIterator.iterate()) Messenger::print("      --> %-20s  (%s)\n", module->name(), module->frequencyDetails(iteration_));
-		Messenger::print("-----------------------------------------------\n");
+		Messenger::print("\n");
 
 		Messenger::print("--> Configuration Processing\n");
 		for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
@@ -92,19 +91,18 @@ bool DUQ::go()
 			RefListIterator<Module,bool> modIterator(cfg->modules());
 			while (Module* module = modIterator.iterate()) Messenger::print("      --> %20s  (%s)\n", module->name(), module->frequencyDetails(iteration_));
 		}
-		Messenger::print("-----------------------------------------------\n");
+		Messenger::print("\n");
 
 		Messenger::print("--> Post-Processing\n");
 		if (postProcessingTasks_.nItems() == 0) Messenger::print("  (( No Tasks ))\n");
 		RefListIterator<Module,bool> postIterator(postProcessingTasks_);
 		while (Module* module = postIterator.iterate()) Messenger::print("      --> %-20s  (%s)\n", module->name(), module->frequencyDetails(iteration_));
-		Messenger::print("===============================================\n");
+
 
 		/*
 		 *  1) 	Perform pre-processing tasks (using worldPool_)
 		 */
-		Messenger::print("\n");
-		Messenger::print("===== Pre-Processing\n");
+		if (preProcessingTasks_.nItems() > 0) Messenger::banner("Pre-Processing");
 		preIterator.restart();
 		while (Module* module = preIterator.iterate())
 		{
@@ -124,12 +122,12 @@ bool DUQ::go()
 		// Sync up all processes
 		worldPool_.wait(ProcessPool::Pool);
 
+
 		/*
 		 *  2)	Loop over Configurations, running their modules in the sequence they are defined
 		 * 	If a process is not involved in the Configuration's ProcessPool, it can move on
 		 */
-		Messenger::print("\n");
-		Messenger::print("===== Configuration Processing\n");
+		Messenger::banner("Configuration Processing");
 
 		bool result = true;
 		for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
@@ -167,30 +165,28 @@ bool DUQ::go()
 		// Sync up all processes
 		worldPool_.wait(ProcessPool::Pool);
 
+
 		/*
 		 *  3)	Reassemble data on all nodes
 		 */
-		Messenger::print("\n");
-		Messenger::print("===== Reassemble Data\n");
-		Messenger::print("\n");
+		Messenger::banner("Reassemble Data");
 		// Loop over Configurations
 		for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
 		{
 			if (!cfg->broadcastCoordinates(worldPool_, cfg->processPool().rootWorldRank())) return false;
 		}
 		// Module-centred data
-		RefListIterator<Module,bool> moduleIterator(modules_);
+		RefListIterator<Module,bool> moduleIterator(ModuleList::masterInstances());
 		while (Module* module = moduleIterator.iterate()) if (!module->broadcastData(*this, worldPool_)) return false;
 		
 		// Sync up all processes
 		worldPool_.wait(ProcessPool::Pool);
 
+	
 		/*
 		 *  4)	Run Modules for all Samples (using worldPool_)
 		 */
-		Messenger::print("\n");
-		Messenger::print("===== Sample Processing\n");
-		Messenger::print("\n");
+		Messenger::banner("Sample Processing");
 
 		// TODO
 
@@ -198,8 +194,7 @@ bool DUQ::go()
 		/*
 		 *  5)	Perform post-processing tasks (using worldPool_)
 		 */
-		Messenger::print("\n");
-		Messenger::print("===== Post-Processing\n");
+		if (postProcessingTasks_.nItems() > 0) Messenger::print("Post-Processing");
 		postIterator.restart();
 		while (Module* module = postIterator.iterate())
 		{
@@ -219,11 +214,42 @@ bool DUQ::go()
 		// Sync up all processes
 		worldPool_.wait(ProcessPool::Pool);
 
-		Messenger::print("\n");
-		Messenger::print("===============================================\n");
-		Messenger::print("  END OF MAIN LOOP ITERATION %10i\n", iteration_);
-		Messenger::print("===============================================\n");
-		Messenger::print("\n");
+
+		/*
+		 *  6)	Write Configuration data
+		 */
+		if (worldPool_.isMaster())
+		{
+			Messenger::print("\n");
+			Messenger::print("===== Write Configuration Data\n");
+			Messenger::print("\n");
+			for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
+			{
+				if (iteration_%cfg->coordinatesOutputFrequency() != 0) continue;
+
+				Messenger::print("Writing Configuration output file '%s'...\n", cfg->outputCoordinatesFile());
+
+				// Open the file and use the Export module to write the Configuration data as xyz
+				LineParser parser;
+				if (!parser.openOutput(cfg->outputCoordinatesFile(), true))
+				{
+					parser.closeFiles();
+					worldPool_.stop();
+					return false;
+				}
+				else if (!Export::writeConfigurationXYZ(parser, cfg, cfg->name()))
+				{
+					Messenger::print("Export: Failed to write Configuration output file.\n");
+					parser.closeFiles();
+					worldPool_.stop();
+					return false;
+				}
+
+			}
+		}
+		else if (!worldPool_.decision()) return false;
+
+		Messenger::banner("END OF MAIN LOOP ITERATION %10i", iteration_);
 	}
 	while ((maxIterations_ < 0) || (iteration_ < maxIterations_));
 

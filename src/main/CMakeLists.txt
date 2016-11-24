@@ -15,7 +15,6 @@ keywords_pairpotentials.cpp
 keywords_sample.cpp
 keywords_simulation.cpp
 keywords_species.cpp
-modules.cpp
 pairpotentials.cpp
 samples.cpp
 setup.cpp

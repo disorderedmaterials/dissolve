@@ -192,20 +192,6 @@ class DUQ
 
 
 	/*
-	 * Modules
-	 */
-	private:
-	// Reference list of all unique modules
-	RefList<Module,bool> modules_;
-
-	public:
-	// Register all Modules
-	bool registerModules();
-	// Find Module by name
-	Module* findModule(const char* name);
-
-
-	/*
 	 * Configurations
 	 */
 	private:

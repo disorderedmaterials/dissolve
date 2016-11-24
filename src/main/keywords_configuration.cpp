@@ -34,10 +34,10 @@ KeywordData ConfigurationBlockData[] = {
 	{ "Density",			2,	"Specifies the density of the Configuration, along with its units" },
 	{ "EndConfiguration",		0,	"Signals the end of the Configuration block" },
 	{ "InputCoordinates",		1,	"Specifies the file which contains the starting coordinates" },
-	{ "Module",			1,	"Starts the setup of a Module for this configuration" },
+	{ "Module",			1,	"Starts the setup of a Module for this Configuration" },
 	{ "Multiplier",			1,	"Specifies the factor by which relative populations are multiplied when generating the Configuration data" },
 	{ "NonPeriodic",		0,	"States that the simulation should be treated as non-periodic" },
-	{ "OutputCoordinates",		1,	"Specifies the file which should contain output coordinates" },
+	{ "OutputCoordinates",		1,	"Specifies the file which should contain output coordinates, and optionally the output frequency" },
 	{ "RDFBinWidth",		1,	"Specified bin width for all radial distribution functions" },
 	{ "RDFRange",			1,	"Requested extent for calculated radial distribution functions" },
 	{ "Species",			2,	"Specifies a Species and its relative population to add to this Configuration" },
@@ -118,9 +118,9 @@ bool Keywords::parseConfigurationBlock(LineParser& parser, DUQ* duq, Configurati
 				cfg->setRandomConfiguration(false);
 				Messenger::print("--> Initial coordinates will be loaded from file '%s'\n", parser.argc(1));
 				break;
-			case (Keywords::ModuleAddKeyword):
+			case (Keywords::ConfigurationModuleKeyword):
 				// The argument following the keyword is the module name
-				module = duq->findModule(parser.argc(1));
+				module = ModuleList::findMasterInstance(parser.argc(1));
 				if (!module)
 				{
 					Messenger::error("No Module named '%s' exists.\n", parser.argc(1));
@@ -130,45 +130,19 @@ bool Keywords::parseConfigurationBlock(LineParser& parser, DUQ* duq, Configurati
 
 				// Try to add this module (or an instance of it) to the current Configuration
 				module = cfg->addModule(module);
-				if (!module)
+				if (module)
 				{
-					Messenger::error("Failed to add module '%s' to configuration.\n", parser.argc(1));
-					error = true;
-					break;
+					// Add our pointer to the Module's list of associated Configurations
+					if (!module->addConfigurationTarget(cfg))
+					{
+						Messenger::error("Failed to add Configuration '%s' to Module '%s' as a target.\n", cfg->name(), module->name());
+						error = true;
+					}
 				}
 				else
 				{
-					// Check dependencies of the new Module - loop over dependent Module names
-					LineParser moduleParser;
-					moduleParser.getArgsDelim(LineParser::Defaults, module->dependentModules());
-					for (int n=0; n<moduleParser.nArgs(); ++n)
-					{
-						// First, make sure this is an actual Module name
-						Module* dependentModule = duq->findModule(moduleParser.argc(n));
-						if (!dependentModule)
-						{
-							Messenger::error("Module lists a dependent module '%s', but this Module doesn't exist.\n", moduleParser.argc(n));
-							error = true;
-							break;
-						}
-
-						// Find dependentModule in the previously-defined list of Modules for this Configuration
-						Module* existingModule;
-						RefListIterator<Module,bool> moduleIterator(cfg->modules());
-						while (existingModule = moduleIterator.iterate()) if (DUQSys::sameString(existingModule->name(),dependentModule->name())) break;
-						if (existingModule)
-						{
-							module->addDependentModule(existingModule);
-							Messenger::print("Added dependent Module '%s' to Module '%s'.\n", existingModule->uniqueName(), module->uniqueName());
-						}
-						else
-						{
-							// No Module exists in the Configuration already
-							Messenger::error("The Module '%s' requires the Module '%s' to run prior to it, but the '%s' Module has not been associated to the Configuration.\n", module->name(), dependentModule->name(), dependentModule->name());
-							error = true;
-							break;
-						}
-					}
+					Messenger::error("Failed to add Module '%s' to Configuration.\n", parser.argc(1));
+					error = true;
 				}
 				if (error) break;
 
@@ -177,7 +151,7 @@ bool Keywords::parseConfigurationBlock(LineParser& parser, DUQ* duq, Configurati
 				break;
 			case (Keywords::MultiplierKeyword):
 				cfg->setMultiplier(parser.argd(1));
-				Messenger::print("--> Set Configuration contents multiplier to %i\n", cfg->multiplier());
+				Messenger::print("--> Set Configuration contents multiplier to %i.\n", cfg->multiplier());
 				break;
 			case (Keywords::NonPeriodicKeyword):
 				cfg->setNonPeriodic(true);
@@ -185,7 +159,9 @@ bool Keywords::parseConfigurationBlock(LineParser& parser, DUQ* duq, Configurati
 				break;
 			case (Keywords::OutputCoordinatesKeyword):
 				cfg->setOutputCoordinatesFile(parser.argc(1));
-				Messenger::print("--> Output coordinates will be saved to file '%s'\n", parser.argc(1));
+				if (parser.hasArg(2)) cfg->setCoordinatesOutputFrequency(parser.argi(2));
+				if (cfg->coordinatesOutputFrequency() == 1) Messenger::print("--> Output coordinates will be saved to file '%s' every iteration.\n", parser.argc(1));
+				else Messenger::print("--> Output coordinates will be saved to file '%s' every %i iterations.\n", parser.argc(1), cfg->coordinatesOutputFrequency());
 				break;
 			case (Keywords::RDFBinWidthKeyword):
 				cfg->setRDFBinWidth(parser.argd(1));

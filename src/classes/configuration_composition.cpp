@@ -185,6 +185,18 @@ bool Configuration::useOutputCoordinatesAsInput()
 	return useOutputCoordinatesAsInput_;
 }
 
+// Set frequency with which to write output coordinates
+void Configuration::setCoordinatesOutputFrequency(int freq)
+{
+	coordinatesOutputFrequency_ = freq;
+}
+
+// Return frequency with which to write output coordinates
+int Configuration::coordinatesOutputFrequency()
+{
+	return coordinatesOutputFrequency_;
+}
+
 // Set configuration temperature
 void Configuration::setTemperature(double t)
 {

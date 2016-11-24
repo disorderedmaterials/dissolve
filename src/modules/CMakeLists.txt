@@ -1,7 +1,11 @@
 add_library(modules
 module.cpp
+modulelist.cpp
+moduleregistry.cpp
 
 module.h
+modulelist.h
+moduleregistry.h
 
 atomshake.cpp
 energy.cpp

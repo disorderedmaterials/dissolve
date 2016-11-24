@@ -28,7 +28,7 @@
 #include "classes/kvector.h"
 #include "classes/braggpeak.h"
 #include "classes/sample.h"
-#include "modules/module.h"
+#include "modules/modulelist.h"
 #include "base/processpool.h"
 #include "base/variablelist.h"
 #include "templates/vector3.h"
@@ -43,7 +43,7 @@ class Cell;
 class Species;
 
 // Configuration
-class Configuration : public ListItem<Configuration>
+class Configuration : public ModuleList, public ListItem<Configuration>
 {
 	public:
 	// Constructor
@@ -78,6 +78,8 @@ class Configuration : public ListItem<Configuration>
 	Dnchar outputCoordinatesFile_;
 	// Flag specifying to use output coordinates file as input coordinates (if it exists)
 	bool useOutputCoordinatesAsInput_;
+	// Frequency with which to write output coordinates
+	int coordinatesOutputFrequency_;
 	// Temperature of this configuration (K)
 	double temperature_;
 
@@ -124,6 +126,10 @@ class Configuration : public ListItem<Configuration>
 	void setUseOutputCoordinatesAsInput(bool b);
 	// Return whether to use output coordinates file as input coordinates (if it exists)
 	bool useOutputCoordinatesAsInput();
+	// Set frequency with which to write output coordinates
+	void setCoordinatesOutputFrequency(int freq);
+	// Return frequency with which to write output coordinates
+	int coordinatesOutputFrequency();
 	// Set configuration temperature
 	void setTemperature(double t);
 	// Return configuration temperature
@@ -350,32 +356,6 @@ class Configuration : public ListItem<Configuration>
 
 
 	/*
-	 * Modules
-	 */
-	private:
-	// Modules associated to this Configuration
-	RefList<Module,bool> modules_;
-	// Variables set by Modules
-	VariableList moduleVariables_;
-
-	public:
-	// Associate Module to Configuration
-	Module* addModule(Module* module);
-	// Find associated Module by name
-	Module* findModule(const char* name);
-	// Return number of Modules associated
-	int nModules();
-	// Return Modules associated to Configuration
-	RefList<Module,bool>& modules();
-	// Set Module variable
-	void setModuleVariable(const char* name, VariableValue value, const char* description, const char* source);
-	// Append Module variable
-	void appendModuleVariable(const char* name, VariableValue value, const char* description, const char* source);
-	// Return named Module variable
-	Variable* moduleVariable(const char* name, const char* source);
-
-
-	/*
 	 * Total Energy  (TO ENERGY MODULE????)
 	 */
 	private:
@@ -417,8 +397,6 @@ class Configuration : public ListItem<Configuration>
 	bool setupProcessPool(Array<int> worldRanks);
 	// Return process pool for this Configuration
 	ProcessPool& processPool();
-	// Broadcast data
-	bool broadcast(ProcessPool& procPool, const List<Species>& species, double pairPotentialRange, const RefList<Module,bool>& allModules);
 	// Broadcast coordinate from specified root process
 	bool broadcastCoordinates(ProcessPool& procPool, int rootRank);
 };

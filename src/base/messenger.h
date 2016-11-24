@@ -47,6 +47,8 @@ class Messenger
 	// Storage for text to print
 	static char text_[8096];
 	// Master text creation / formatting routine
+	static void createText(const char* indentText, const char* format, va_list arguments);
+	// Create and print text
 	static void createAndPrintText(const char* indentText, const char* format, va_list arguments);
 
 	public:
@@ -57,13 +59,15 @@ class Messenger
 	// Set status of master-only mode
 	static void setMasterOnly(bool b);
 	// Print normal message
-	static void print(const char*, ...);
+	static void print(const char* fmt, ...);
 	// Print verbose message
-	static void printVerbose(const char*, ...);
+	static void printVerbose(const char* fmt, ...);
 	// Print error message
-	static void error(const char*, ...);
+	static void error(const char* fmt, ...);
 	// Print warn message
-	static void warn(const char*, ...);
+	static void warn(const char* fmt, ...);
+	// Print banner message of specified width
+	static void banner(const char* fmt, ...);
 
 
 	/*

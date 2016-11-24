@@ -26,9 +26,10 @@
 
 // Sample Block Keywords
 KeywordData SampleBlockData[] = {
-	{ "EndSample",			0,	"" },
-	{ "Isotopologue",		3,	"" },
-	{ "ReferenceData",		1,	"" }
+	{ "EndSample",			0,	"Signals the end of the Sample block" },
+	{ "Isotopologue",		3,	"Specifies a Species, Isotopologue, and relative population in this Sample" },
+	{ "Module",			1,	"Starts the setup of a Module for this Sample" },
+	{ "ReferenceData",		1,	"Datafile which represents this Sample" }
 };
 
 // Convert text string to SampleKeyword
@@ -57,6 +58,7 @@ bool Keywords::parseSampleBlock(LineParser& parser, DUQ* duq, Sample* sample)
 
 	Species* sp;
 	Isotopologue* iso;
+	Module* module;
 	bool blockDone = false, error = false;
 
 	while (!parser.eofOrBlank(duq->worldPool()))
@@ -98,6 +100,37 @@ bool Keywords::parseSampleBlock(LineParser& parser, DUQ* duq, Sample* sample)
 				// OK to add 
 				if (!sample->addIsotopologueToMixture(sp, iso, parser.argd(3))) error = true;
 				else Messenger::print("--> Added Isotopologue '%s' (Species '%s') to Sample '%s' (%f relative population).\n", iso->name(), sp->name(), sample->name(), parser.argd(3));
+				break;
+			case (Keywords::SampleModuleKeyword):
+				// The argument following the keyword is the module name
+				module = ModuleList::findMasterInstance(parser.argc(1));
+				if (!module)
+				{
+					Messenger::error("No Module named '%s' exists.\n", parser.argc(1));
+					error = true;
+					break;
+				}
+
+				// Try to add this module (or an instance of it) to the current Configuration
+				module = sample->addModule(module);
+				if (module)
+				{
+					// Add our pointer to the Module's list of associated Configurations
+					if (!module->addSampleTarget(sample))
+					{
+						Messenger::error("Failed to add Sample '%s' to Module '%s' as a target.\n", sample->name(), module->name());
+						error = true;
+					}
+				}
+				else
+				{
+					Messenger::error("Failed to add Module '%s' to Sample.\n", parser.argc(1));
+					error = true;
+				}
+				if (error) break;
+
+				// Parse rest of Module block
+				if (!parseModuleBlock(parser, duq, module, NULL, sample)) error = true;
 				break;
 			case (Keywords::ReferenceDataKeyword):
 				if (!sample->loadReferenceData(parser.argc(1)))

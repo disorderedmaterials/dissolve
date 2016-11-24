@@ -22,6 +22,7 @@
 #include "version.h"
 #include "base/messenger.h"
 #include "main/duq.h"
+#include "modules/moduleregistry.h"
 #include "base/processpool.h"
 #include <time.h>
 #include <ctime>
@@ -120,9 +121,10 @@ int main(int argc, char **argv)
 	Messenger::print("Source repository: %s.\n", DUQREPO);
 	Messenger::print("dUQ comes with ABSOLUTELY NO WARRANTY.\n");
 	Messenger::print("This is free software, and you are welcome to redistribute it under certain conditions.\n");
-	Messenger::print("For more details read the GPL at <http://www.gnu.org/copyleft/gpl.html>.\n\n");
+	Messenger::print("For more details read the GPL at <http://www.gnu.org/copyleft/gpl.html>.\n");
 
 	// Load external datafiles (master only)
+	Messenger::banner("External Data");
 	if (!MPIRunMaster(dUQ.loadDataFiles()))
 	{
 		ProcessPool::finalise();
@@ -136,23 +138,24 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	// Check module registration (all processes)
-	if (!dUQ.registerModules())
+	// Register modules and print info
+	Messenger::banner("Modules");
+	ModuleRegistry moduleRegistry;
+	if (!ModuleList::printMasterModuleInformation())
 	{
 		ProcessPool::finalise();
 		return 1;
 	}
 
+	// Load input file
 	// If no input file was provided, exit here
+	Messenger::banner("Parsing Input File");
 	if (inputFile.isEmpty())
 	{
 		Messenger::print("No input file provided. Nothing more to do.\n");
 		ProcessPool::finalise();
 		return 0;
 	}
-
-	// Load input file
-	Messenger::print("Loading input file...\n");
 	if (!dUQ.loadInput(inputFile))
 	{
 		Messenger::print("Error loading input file.\n");
@@ -165,6 +168,7 @@ int main(int argc, char **argv)
 	else srand(dUQ.seed());
 
 	// Perform simulation setup (all processes)
+	Messenger::banner("Setting Up Simulation");
 	if (!dUQ.setupSimulation())
 	{
 		Messenger::print("Failed to setup simulation.\n");
@@ -173,6 +177,7 @@ int main(int argc, char **argv)
 	}
 
 	// Setup parallel comms / limits etc.
+	Messenger::banner("Setting Up Parallelism");
 	if (!dUQ.setupMPIPools())
 	{
 		Messenger::print("Failed to setup parallel communications.\n");
@@ -185,7 +190,6 @@ int main(int argc, char **argv)
 
 #ifdef PARALLEL
 	Messenger::print("This is process rank %i of %i processes total.\n", ProcessPool::worldRank(), ProcessPool::nWorldProcesses());
-	//and exists in process group %i in which it is rank %i of %i processes.\n", Comm.rank(), Comm.nProcesses(), Comm.localGroupIndex(), Comm.localGroupRank(), Comm.localGroupSize());
 #endif
 	
 	// Run main simulation

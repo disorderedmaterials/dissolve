@@ -21,7 +21,7 @@
 
 #include "modules/module.h"
 #include "classes/configuration.h"
-#include <base/sysfunc.h>
+#include "base/sysfunc.h"
 
 // Static Members
 int Module::staticLogPoint_ = 0;

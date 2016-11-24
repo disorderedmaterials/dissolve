@@ -68,7 +68,6 @@ ProcessPool& DUQ::worldPool()
 // Setup communications
 bool DUQ::setupMPIPools()
 {
-	Messenger::print("\n");
 	Messenger::print("*** Setting up MPI pools...\n");
 
 	// If there is only one process, make sure we revert to SequentialConfigStrategy

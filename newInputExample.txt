@@ -87,9 +87,6 @@ Configuration  'Bulk'
     Frequency 5
     Save true
   EndModule
-  Module Export
-    OutputCoordinates On
-  EndModule
 EndConfiguration
 
 Configuration  'Bulk2'
@@ -127,9 +124,6 @@ Configuration  'Bulk2'
   EndModule
   Module StructureFactor
     Frequency 5
-  EndModule
-  Module Export
-    OutputCoordinates On
   EndModule
 EndConfiguration
 

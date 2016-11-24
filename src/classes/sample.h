@@ -25,6 +25,7 @@
 #include "classes/isotopologuemix.h"
 #include "classes/atomtypelist.h"
 #include "classes/histogram.h"
+#include "modules/modulelist.h"
 #include "base/dnchar.h"
 #include "templates/reflist.h"
 
@@ -34,7 +35,7 @@ class Species;
 /*
  * Sample Definition
  */
-class Sample : public ListItem<Sample>
+class Sample : public ModuleList, public ListItem<Sample>
 {
 	public:
 	// Constructor

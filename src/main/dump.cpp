@@ -111,11 +111,31 @@ void DUQ::dumpSystemSetup(bool includeData)
 				Messenger::print("  %s  '%s'  '%s'  %f\n", Keywords::sampleKeyword(Keywords::IsotopologueSampleKeyword), iso->species()->name(), ri->item->name(), ri->data);
 			}
 		}
+
 		// Reference data present?
 		if (!sam->referenceDataFileName().isEmpty())
 		{
 			Messenger::print("  %s '%s'\n", Keywords::sampleKeyword(Keywords::ReferenceDataKeyword), sam->referenceDataFileName().get());
 		}
+
+		// Modules
+		Messenger::print("\n  # Modules\n");
+		if (sam->nModules() == 0) Messenger::print("  # -- None\n");
+		RefListIterator<Module,bool> moduleIterator(sam->modules());
+		while (Module* module = moduleIterator.iterate())
+		{
+			Messenger::print("  %s  %s  # %s\n", Keywords::configurationKeyword(Keywords::ConfigurationModuleKeyword), module->name(), module->uniqueName());
+
+			// For each Module, print all available variables
+			for (Variable* var = module->variables(); var != NULL; var = var->next)
+			{
+				if (var->type() == VariableValue::CharType) Messenger::print("    %s  '%s'\n", var->name(), var->asChar());
+				else Messenger::print("    %s  %s\n", var->name(), var->asChar());
+			}
+
+			Messenger::print("  %s\n", Keywords::moduleKeyword(Keywords::EndModuleKeyword));
+		}
+
 		Messenger::print("%s\n\n", Keywords::sampleKeyword(Keywords::EndSampleKeyword));
 	}
 
@@ -130,7 +150,7 @@ void DUQ::dumpSystemSetup(bool includeData)
 		Messenger::print("  %s  %f  %f  %f\n", Keywords::configurationKeyword(Keywords::CellAnglesKeyword), cfg->boxAngles().x, cfg->boxAngles().y, cfg->boxAngles().z);
 		if (cfg->nonPeriodic()) Messenger::print("  %s\n", Keywords::configurationKeyword(Keywords::NonPeriodicKeyword));
 		if (!DUQSys::isEmpty(cfg->inputCoordinatesFile())) Messenger::print("  %s  '%s'\n", Keywords::configurationKeyword(Keywords::InputCoordinatesKeyword), cfg->inputCoordinatesFile());
-		if (!DUQSys::isEmpty(cfg->outputCoordinatesFile())) Messenger::print("  %s  '%s'\n", Keywords::configurationKeyword(Keywords::OutputCoordinatesKeyword), cfg->outputCoordinatesFile());
+		if (!DUQSys::isEmpty(cfg->outputCoordinatesFile())) Messenger::print("  %s  '%s'  %i\n", Keywords::configurationKeyword(Keywords::OutputCoordinatesKeyword), cfg->outputCoordinatesFile(), cfg->coordinatesOutputFrequency());
 		if (cfg->useOutputCoordinatesAsInput()) Messenger::print("  %s  '%s'\n", Keywords::configurationKeyword(Keywords::UseOutputAsInputKeyword), DUQSys::btoa(true));
 
 		// Species
@@ -147,7 +167,7 @@ void DUQ::dumpSystemSetup(bool includeData)
 		RefListIterator<Module,bool> moduleIterator(cfg->modules());
 		while (Module* module = moduleIterator.iterate())
 		{
-			Messenger::print("  %s  %s  # %s\n", Keywords::configurationKeyword(Keywords::ModuleAddKeyword), module->name(), module->uniqueName());
+			Messenger::print("  %s  %s  # %s\n", Keywords::configurationKeyword(Keywords::ConfigurationModuleKeyword), module->name(), module->uniqueName());
 
 			// For each Module, print all available variables
 			for (Variable* var = module->variables(); var != NULL; var = var->next)

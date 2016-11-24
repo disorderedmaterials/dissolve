@@ -104,7 +104,7 @@ class Keywords
 		DensityKeyword,			/* 'Density' - Specifies the density of the simulation, along with its units */
 		EndConfigurationKeyword,	/* 'EndConfiguration' - Signals the end of the Configuration block */
 		InputCoordinatesKeyword,	/* 'InputCoordinates' - Specifies the file which contains the starting coordinates */
-		ModuleAddKeyword,		/* 'Module' - Starts the setup of a Module for this configuration */
+		ConfigurationModuleKeyword,	/* 'Module' - Starts the setup of a Module for this configuration */
 		MultiplierKeyword,		/* 'Multiplier' - Specifies the factor by which relative populations are multiplied when generating the Configuration data */
 		NonPeriodicKeyword,		/* 'NonPeriodic' - States that the simulation should be treated as non-periodic */
 		OutputCoordinatesKeyword,	/* 'OutputCoordinates' - Specifies the file which should contain output coordinates */
@@ -182,6 +182,7 @@ class Keywords
 	{
 		EndSampleKeyword,		/* 'EndSample' - Signals the end of the Sample block */
 		IsotopologueSampleKeyword,	/* 'Isotopologue' - Specifies a Species, Isotopologue, and relative population in this Sample */
+		SampleModuleKeyword,		/* 'Module' - Begins a Module associated to this Sample */
 		ReferenceDataKeyword,		/* 'ReferenceData' - Specifies a datafile which represents this Sample */
 		nSampleKeywords			/* Number of keywords defined for this block */
 	};
