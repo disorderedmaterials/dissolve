@@ -85,6 +85,7 @@ Configuration  'Bulk'
   EndModule
   Module StructureFactor
     Frequency 5
+    Save true
   EndModule
   Module Export
     OutputCoordinates On
@@ -108,7 +109,7 @@ Configuration  'Bulk2'
   # Define initial coordinates file
   # If no file is specified a random configuration will be generated
   # InputCoordinates '/home/tris/work/water/epsr/waterbox.xyz'
-  OutputCoordinates 'Bulk.xyz'
+  OutputCoordinates 'Bulk2.xyz'
   UseOutputAsInput
 
   # Enable modules and set associated variables

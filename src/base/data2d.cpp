@@ -1543,22 +1543,22 @@ void Data2D::dump()
  */
 
 // Broadcast data
-bool Data2D::broadcast(ProcessPool& procPool)
+bool Data2D::broadcast(ProcessPool& procPool, int rootRank)
 {
 #ifdef PARALLEL
 	// XY data
-	if (!procPool.broadcast(x_)) return false;
-	if (!procPool.broadcast(y_)) return false;
+	if (!procPool.broadcast(x_, rootRank)) return false;
+	if (!procPool.broadcast(y_, rootRank)) return false;
 
 	// Spline data
-	if (!procPool.broadcast(splineA_)) return false;
-	if (!procPool.broadcast(splineB_)) return false;
-	if (!procPool.broadcast(splineC_)) return false;
-	if (!procPool.broadcast(splineD_)) return false;
-	if (!procPool.broadcast(&splineInterval_, 1)) return false;
+	if (!procPool.broadcast(splineA_, rootRank)) return false;
+	if (!procPool.broadcast(splineB_, rootRank)) return false;
+	if (!procPool.broadcast(splineC_, rootRank)) return false;
+	if (!procPool.broadcast(splineD_, rootRank)) return false;
+	if (!procPool.broadcast(splineInterval_, rootRank)) return false;
 
 	// Axis/title information
-	if (!procPool.broadcast(name_)) return false;
+	if (!procPool.broadcast(name_, rootRank)) return false;
 #endif
 	return true;
 }

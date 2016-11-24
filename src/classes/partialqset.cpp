@@ -23,7 +23,7 @@
 #include "classes/configuration.h"
 
 // Constructor
-PartialQSet::PartialQSet() : MPIListItem<PartialQSet>()
+PartialQSet::PartialQSet() : ListItem<PartialQSet>()
 {
 	partialsIndex_ = -1;
 	nTypes_ = 0;
@@ -155,6 +155,7 @@ void PartialQSet::formTotal()
 	{
 		for (typeJ=typeI; typeJ<nTypes_; ++typeJ)
 		{
+			
 			// Calculate weighting factor
 			double ci = targetConfiguration_->usedAtomTypeFraction(typeI);
 			double cj = targetConfiguration_->usedAtomTypeFraction(typeJ);
@@ -211,12 +212,22 @@ bool PartialQSet::save()
  * Parallel Comms
  */
 
-// Broadcast data from Master to all Slaves
-bool PartialQSet::broadcast(ProcessPool& procPool)
+// Broadcast data from root to all other processes
+bool PartialQSet::broadcast(ProcessPool& procPool, int rootRank)
 {
 #ifdef PARALLEL
-	Messenger::print("BROADCAST OF PartialQSet NOT IMPLEMENTED.\n");
-	return false;
+	// The structure should have already been setup(), so arrays should be ready to copy
+	for (int typeI=0; typeI<nTypes_; ++typeI)
+	{
+		for (int typeJ=typeI; typeJ<nTypes_; ++typeJ)
+		{
+			partials_.ref(typeI, typeJ).broadcast(procPool, rootRank);
+			boundPartials_.ref(typeI, typeJ).broadcast(procPool, rootRank);
+			unboundPartials_.ref(typeI, typeJ).broadcast(procPool, rootRank);
+		}
+	}
+	total_.broadcast(procPool, rootRank);
 #endif
 	return true;
 }
+

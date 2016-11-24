@@ -23,8 +23,9 @@
 #include "modules/atomshake.h"
 #include "modules/energy.h"
 #include "modules/export.h"
-#include "modules/fq.h"
+#include "modules/structurefactor.h"
 #include "modules/partials.h"
+#include "modules/test.h"
 #include "base/sysfunc.h"
 
 // Register modules
@@ -36,6 +37,7 @@ bool DUQ::registerModules()
 	modules_.add(new Export);
 	modules_.add(new Partials);
 	modules_.add(new StructureFactor);
+	modules_.add(new Test);
 
 	// Construct master list of modules, and do sanity check on names
 	for (RefListItem<Module,bool>* ri = modules_.first(); ri != NULL; ri = ri->next)

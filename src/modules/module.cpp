@@ -23,11 +23,19 @@
 #include "classes/configuration.h"
 #include <base/sysfunc.h>
 
+// Static Members
+int Module::staticLogPoint_ = 0;
+int Module::staticBroadcastPoint_ = 0;
+
 // Constructor
 Module::Module()
 {
 	frequency_ = 1;
 	enabled_ = true;
+
+	// LogPoints
+	logPoint_ = 0;
+	broadcastPoint_ = 0;
 }
 
 // Destructor
@@ -306,8 +314,14 @@ Variable* Module::variables()
  * Parallel Comms
  */
 
+// Broadcast module variables
 bool Module::broadcastVariables(ProcessPool& procPool)
 {
 	return variables_.broadcast(procPool);
 }
 
+// Broadcast data associated to module
+bool Module::broadcastData(DUQ& duq, ProcessPool& procPool)
+{
+	return true;
+}

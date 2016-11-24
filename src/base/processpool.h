@@ -128,6 +128,8 @@ class ProcessPool
 	bool isMaster(ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Return whether this process is a local slave for the specified communicator
 	bool isSlave(ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	// Return whether this process is the pool index specified
+	bool isMe(int poolIndex);
 	// Return whether this pool involves this process
 	bool involvesMe();
 	// Return group index in which this process exists
@@ -255,23 +257,29 @@ class ProcessPool
 	 */
 	public:
 	// Broadcast Dnchar
-	bool broadcast(Dnchar& source, int root = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	bool broadcast(Dnchar& source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Broadcast char data
-	bool broadcast(char* source, int root = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	bool broadcast(char* source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Broadcast Vec3<double>
-	bool broadcast(Vec3<double>& source, int root = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
-	// Broadcast integer(s)
-	bool broadcast(int* source, int count, int root = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	bool broadcast(Vec3<double>& source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	// Broadcast single integer
+	bool broadcast(int& source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	// Broadcast integers
+	bool broadcast(int* source, int count, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	// Broadcast single long integer
+	bool broadcast(long int& source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	// Broadcast single double
+	bool broadcast(double& source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Broadcast double(s)
-	bool broadcast(double* source, int count, int root = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	bool broadcast(double* source, int count, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Broadcast float(s)
-	bool broadcast(float* source, int count, int root = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	bool broadcast(float* source, int count, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Broadcast bool
-	bool broadcast(bool& source, int root = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	bool broadcast(bool& source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Broadcast Array<int>
-	bool broadcast(Array<int>& array, int root = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	bool broadcast(Array<int>& array, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Broadcast Array<double>
-	bool broadcast(Array<double>& array, int root = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	bool broadcast(Array<double>& array, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 
 
 	/*
@@ -279,19 +287,19 @@ class ProcessPool
 	 */
 	public:
 	// Reduce (sum) double data to root process
-	bool sum(double* source, int count, int root = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	bool sum(double* source, int count, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Reduce (sum) int data to root process
-	bool sum(int* source, int count, int root = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	bool sum(int* source, int count, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Reduce (sum) double data to all processes
 	bool allSum(double* source, int count, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Reduce (sum) int data to all processes
 	bool allSum(int* source, int count, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Assemble integer array on target rank within the specified communicator
-	bool assemble(int* array, int nData, int* rootDest, int rootMaxData, int root = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	bool assemble(int* array, int nData, int* rootDest, int rootMaxData, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Assemble double array on target rank within the specified communicator
-	bool assemble(double* array, int nData, double* rootDest, int rootMaxData, int root = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	bool assemble(double* array, int nLocalData, double* rootDest, int rootMaxData, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Assemble Array<double> on target rank within the specified communicator
-	bool assemble(Array<double>& array, int nData, Array<double>& rootDest, int rootMaxData, int root = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	bool assemble(Array<double>& array, int nData, Array<double>& rootDest, int rootMaxData, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 
 
 	/*
@@ -299,13 +307,13 @@ class ProcessPool
 	 */
 	public:
 	// Broadcast logical decision to proceed to processes (Master only)
-	void proceed(ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	void proceed(int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Broadcast logical decision to stop to processes (Master only)
-	void stop(ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	void stop(int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Receive logical decision from master (Slaves only)
-	bool decision(ProcessPool::CommunicatorType commType = ProcessPool::Pool);
-	// Return if one or more processes have failed (based on supplied bool)
-	bool ok(bool isOK, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	bool decision(int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	// Test the supplied condition over all processes, returning true only if they all report truth
+	bool allTrue(bool isOK, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 
 
 	/*
@@ -449,6 +457,38 @@ template <class T, class D> class BroadcastRefList
 		// Success!
 		result = true;
 	};
+};
+
+// Enum Broadcast Vessel
+template <class E> class EnumCast
+{
+	/*
+	 * Template-only class that takes reference to an enum and allows the integer conversion to be passed by reference to the
+	 * broadcast routines. Before destruction, the integerValue_ that was subject to broadcast is cast back into the original enum ref.
+	 */
+	public:
+	// Constructor
+	EnumCast(E& originalEnum) : originalEnum_(originalEnum)
+	{
+		integerValue_ = originalEnum_;
+	}
+	// Destructor
+	~EnumCast()
+	{
+		// Cast integer variable back into enum
+		originalEnum_ = (E) integerValue_;
+	}
+	// Conversion Operator (to int&)
+	operator int&()
+	{
+		return integerValue_;
+	}
+
+	private:
+	// Original enum object
+	E& originalEnum_;
+	// Integer conversion of enum 
+	int integerValue_;
 };
 
 /*

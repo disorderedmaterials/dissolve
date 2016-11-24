@@ -30,7 +30,7 @@
 class Configuration;
 
 // Set of Partials in Q (S(Q))
-class PartialQSet : public MPIListItem<PartialQSet>
+class PartialQSet : public ListItem<PartialQSet>
 {
 	public:
 	// Constructor
@@ -92,7 +92,7 @@ class PartialQSet : public MPIListItem<PartialQSet>
 	 */
 	public:
 	// Broadcast data from Master to all Slaves
-	bool broadcast(ProcessPool& procPool);
+	bool broadcast(ProcessPool& procPool, int rootRank);
 };
 
 #endif

@@ -1,6 +1,6 @@
 /*
 	*** Structure Factor Module
-	*** src/modules/fq.h
+	*** src/modules/structurefactor.h
 	Copyright T. Youngs 2012-2016
 
 	This file is part of dUQ.
@@ -113,7 +113,14 @@ class StructureFactor : public Module
 	static PartialQSet* partialSet(Configuration* cfg);
 	// Calculate unweighted S(Q) for the specified Configuration
 	bool calculateUnweighted(Configuration* cfg, Data2D::WindowFunction windowFunction, ProcessPool& procPool);
+
+
+	/*
+	 * Parallel Comms
+	 */
+	public:
+	// Broadcast data associated to module
+	bool broadcastData(DUQ& duq, ProcessPool& procPool);
 };
 
 #endif
-

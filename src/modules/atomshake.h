@@ -97,6 +97,14 @@ class AtomShake : public Module
 	bool process(DUQ& duq, ProcessPool& procPool);
 	// Execute post-processing stage
 	bool postProcess(DUQ& duq, ProcessPool& procPool);
+
+
+	/*
+	 * Parallel Comms
+	 */
+	public:
+	// Broadcast data associated to module
+	bool broadcastData(ProcessPool& procPool, int rootRank);
 };
 
 #endif

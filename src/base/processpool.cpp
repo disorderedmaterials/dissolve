@@ -211,6 +211,12 @@ bool ProcessPool::isSlave(ProcessPool::CommunicatorType commType)
 	return true;
 }
 
+// Return whether this process is the pool index specified
+bool ProcessPool::isMe(int poolIndex)
+{
+	return (poolRank_ == poolIndex);
+}
+
 // Return whether this pool involves this process
 bool ProcessPool::involvesMe()
 {
@@ -441,7 +447,7 @@ bool ProcessPool::setupCellStrategy(const Vec3<int>& divisions, const Vec3<int>&
 		for (int group=0; group<processGroups_.nItems(); ++group)
 		{
 			// Query each process in the group to see if it is the leader...
-			for (int n=0; n<nProcessesInGroup(n); ++n)
+			for (int n=0; n<nProcessesInGroup(group); ++n)
 			{
 				int prank = processGroups_[group]->poolRank(n);
 
@@ -799,7 +805,7 @@ bool ProcessPool::receive(double* source, int nData, int sourceWorldRank, Proces
  */
 
 // Broadcast Dnchar to all Processes
-bool ProcessPool::broadcast(Dnchar& source, int root, ProcessPool::CommunicatorType commType)
+bool ProcessPool::broadcast(Dnchar& source, int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
@@ -807,10 +813,10 @@ bool ProcessPool::broadcast(Dnchar& source, int root, ProcessPool::CommunicatorT
 	static char buffer[4096];
 	
 	// Get length of string, and make a local copy to avoid the const-ness of Dnchar.get().
-	if (poolRank_ == root) strcpy(buffer, source.get());
+	if (poolRank_ == rootRank) strcpy(buffer, source.get());
 
 	// Broadcast data
-	if (!broadcast(buffer, root, commType)) return false;
+	if (!broadcast(buffer, rootRank, commType)) return false;
 	
 	if (isSlave()) source = buffer;
 	totalTime_.accumulate();
@@ -820,26 +826,26 @@ bool ProcessPool::broadcast(Dnchar& source, int root, ProcessPool::CommunicatorT
 }
 
 // Broadcast char data to all Processes
-bool ProcessPool::broadcast(char* source, int root, ProcessPool::CommunicatorType commType)
+bool ProcessPool::broadcast(char* source, int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
 	int length;
-	if (poolRank_ == root)
+	if (poolRank_ == rootRank)
 	{
 		// Broadcast string length first...
 		length = strlen(source) + 1;
-		if (MPI_Bcast(&length, 1, MPI_INTEGER, root, communicator(commType)) != MPI_SUCCESS)
+		if (MPI_Bcast(&length, 1, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
 		{
-			Messenger::print("Failed to broadcast char length data from root process %i.\n", root);
+			Messenger::print("Failed to broadcast char length data from root rank %i.\n", rootRank);
 			return false;
 		}
 		
 		// Now broadcast character data
-		if (MPI_Bcast(source, length, MPI_CHARACTER, root, communicator(commType)) != MPI_SUCCESS)
+		if (MPI_Bcast(source, length, MPI_CHARACTER, rootRank, communicator(commType)) != MPI_SUCCESS)
 		{
-			Messenger::print("Failed to broadcast char data from root process %i.\n", root);
+			Messenger::print("Failed to broadcast char data from root rank %i.\n", rootRank);
 			return false;
 		}
 	}
@@ -847,15 +853,15 @@ bool ProcessPool::broadcast(char* source, int root, ProcessPool::CommunicatorTyp
 	{
 		// Slaves receive the data into the buffer, and then set the source string.
 		// Length first...
-		if (MPI_Bcast(&length, 1, MPI_INTEGER, root, communicator(commType)) != MPI_SUCCESS)
+		if (MPI_Bcast(&length, 1, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
 		{
-			Messenger::print("Slave %i (world rank %i) failed to receive char length data from root process %i.\n", poolRank_, worldRank_, root);
+			Messenger::print("Slave %i (world rank %i) failed to receive char length data from root rank %i.\n", poolRank_, worldRank_, rootRank);
 			return false;
 		}
 		
-		if (MPI_Bcast(source, length, MPI_CHARACTER, root, communicator(commType)) != MPI_SUCCESS)
+		if (MPI_Bcast(source, length, MPI_CHARACTER, rootRank, communicator(commType)) != MPI_SUCCESS)
 		{
-			Messenger::print("Slave %i (world rank %i) failed to receive char data from root process %i.\n", poolRank_, worldRank_, root);
+			Messenger::print("Slave %i (world rank %i) failed to receive char data from root rank %i.\n", poolRank_, worldRank_, rootRank);
 			return false;
 		}
 	}
@@ -866,30 +872,30 @@ bool ProcessPool::broadcast(char* source, int root, ProcessPool::CommunicatorTyp
 }
 
 // Broadcast Vec3<double> to all Processes
-bool ProcessPool::broadcast(Vec3<double>& source, int root, ProcessPool::CommunicatorType commType)
+bool ProcessPool::broadcast(Vec3<double>& source, int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
 	double buffer[3];
-	if (poolRank_ == root)
+	if (poolRank_ == rootRank)
 	{
 		// Construct an array from the data...
 		buffer[0] = source.x;
 		buffer[1] = source.y;
 		buffer[2] = source.z;
-		if (MPI_Bcast(buffer, 3, MPI_DOUBLE, root, communicator(commType)) != MPI_SUCCESS)
+		if (MPI_Bcast(buffer, 3, MPI_DOUBLE, rootRank, communicator(commType)) != MPI_SUCCESS)
 		{
-			Messenger::print("Failed to broadcast Vec3<double> data from root process %i.\n", root);
+			Messenger::print("Failed to broadcast Vec3<double> data from root rank %i.\n", rootRank);
 			return false;
 		}
 	}
 	else
 	{
 		// Slaves receive the data into the buffer, and then set the source variable.
-		if (MPI_Bcast(buffer, 3, MPI_DOUBLE, root, communicator(commType)) != MPI_SUCCESS)
+		if (MPI_Bcast(buffer, 3, MPI_DOUBLE, rootRank, communicator(commType)) != MPI_SUCCESS)
 		{
-			Messenger::print("Slave %i (world rank %i) failed to receive Vec3<double> data from root process %i (world rank %i).\n", poolRank_, worldRank_, root);
+			Messenger::print("Slave %i (world rank %i) failed to receive Vec3<double> data from root rank %i (world rank %i).\n", poolRank_, worldRank_, rootRank);
 			return false;
 		}
 		source.x = buffer[0];
@@ -902,15 +908,21 @@ bool ProcessPool::broadcast(Vec3<double>& source, int root, ProcessPool::Communi
 	return true;
 }
 
+// Broadcast single integer
+bool ProcessPool::broadcast(int& source, int rootRank, ProcessPool::CommunicatorType commType)
+{
+	return broadcast(&source, 1, rootRank, commType);
+}
+
 // Broadcast integer(s) to all Processes
-bool ProcessPool::broadcast(int* source, int count, int root, ProcessPool::CommunicatorType commType)
+bool ProcessPool::broadcast(int* source, int count, int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
-	if (MPI_Bcast(source, count, MPI_INTEGER, root, communicator(commType)) != MPI_SUCCESS)
+	if (MPI_Bcast(source, count, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
 	{
-		Messenger::print("Failed to broadcast int data from root process %i.\n", root);
+		Messenger::print("Failed to broadcast int data from root rank %i.\n", rootRank);
 		return false;
 	}
 	totalTime_.accumulate();
@@ -919,15 +931,38 @@ bool ProcessPool::broadcast(int* source, int count, int root, ProcessPool::Commu
 	return true;
 }
 
-// Broadcast double(s) to all Processes
-bool ProcessPool::broadcast(double* source, int count, int root, ProcessPool::CommunicatorType commType)
+// Broadcast long integer to all Processes
+bool ProcessPool::broadcast(long int& source, int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
-	if (MPI_Bcast(source, count, MPI_DOUBLE, root, communicator(commType)) != MPI_SUCCESS)
+	if (MPI_Bcast(&source, 1, MPI_LONG, rootRank, communicator(commType)) != MPI_SUCCESS)
 	{
-		Messenger::print("Failed to broadcast int data from root process %i.\n", root);
+		Messenger::print("Failed to broadcast long int data from root rank %i.\n", rootRank);
+		return false;
+	}
+	totalTime_.accumulate();
+	accumTime_.accumulate();
+#endif
+	return true;
+}
+
+// Broadcast single double
+bool ProcessPool::broadcast(double& source, int rootRank, ProcessPool::CommunicatorType commType)
+{
+	return broadcast(&source, 1, rootRank, commType);
+}
+
+// Broadcast double(s) to all Processes
+bool ProcessPool::broadcast(double* source, int count, int rootRank, ProcessPool::CommunicatorType commType)
+{
+#ifdef PARALLEL
+	totalTime_.start();
+	accumTime_.start();
+	if (MPI_Bcast(source, count, MPI_DOUBLE, rootRank, communicator(commType)) != MPI_SUCCESS)
+	{
+		Messenger::print("Failed to broadcast int data from root rank %i.\n", rootRank);
 		return false;
 	}
 	totalTime_.accumulate();
@@ -937,14 +972,14 @@ bool ProcessPool::broadcast(double* source, int count, int root, ProcessPool::Co
 }
 
 // Broadcast float(s) to all Processes
-bool ProcessPool::broadcast(float* source, int count, int root, ProcessPool::CommunicatorType commType)
+bool ProcessPool::broadcast(float* source, int count, int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
-	if (MPI_Bcast(source, count, MPI_FLOAT, root, communicator(commType)) != MPI_SUCCESS)
+	if (MPI_Bcast(source, count, MPI_FLOAT, rootRank, communicator(commType)) != MPI_SUCCESS)
 	{
-		Messenger::print("Failed to broadcast float data from root process %i.\n", root);
+		Messenger::print("Failed to broadcast float data from root rank %i.\n", rootRank);
 		return false;
 	}
 	totalTime_.accumulate();
@@ -955,15 +990,15 @@ bool ProcessPool::broadcast(float* source, int count, int root, ProcessPool::Com
 }
 
 // Broadcast bool to all Processes
-bool ProcessPool::broadcast(bool& source, int root, ProcessPool::CommunicatorType commType)
+bool ProcessPool::broadcast(bool& source, int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
 	int result = source;
-	if (MPI_Bcast(&result, 1, MPI_INTEGER, root, communicator(commType)) != MPI_SUCCESS)
+	if (MPI_Bcast(&result, 1, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
 	{
-		Messenger::print("Failed to broadcast int data from root process %i.\n", root);
+		Messenger::print("Failed to broadcast int data from root rank %i.\n", rootRank);
 		return false;
 	}
 	source = result;
@@ -974,29 +1009,29 @@ bool ProcessPool::broadcast(bool& source, int root, ProcessPool::CommunicatorTyp
 }
 
 // Broadcast Array<int>
-bool ProcessPool::broadcast(Array<int>& array, int root, ProcessPool::CommunicatorType commType)
+bool ProcessPool::broadcast(Array<int>& array, int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
 
 	int length;
-	if (poolRank_ == root)
+	if (poolRank_ == rootRank)
 	{
 		// Broadcast string length first...
 		length = array.nItems();
-		if (MPI_Bcast(&length, 1, MPI_INTEGER, root, communicator(commType)) != MPI_SUCCESS)
+		if (MPI_Bcast(&length, 1, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
 		{
-			Messenger::print("Failed to broadcast Array<int> size from root process %i (world rank %i).\n", root, worldRanks_[root]);
+			Messenger::print("Failed to broadcast Array<int> size from root rank %i (world rank %i).\n", rootRank, worldRanks_[rootRank]);
 			return false;
 		}
 
 		// Now broadcast Array data
 		if (length > 0)
 		{
-			if (MPI_Bcast(array.array(), length, MPI_INTEGER, root, communicator(commType)) != MPI_SUCCESS)
+			if (MPI_Bcast(array.array(), length, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
 			{
-				Messenger::print("Failed to broadcast Array<int> data from root process %i (world rank %i).\n", root, worldRanks_[root]);
+				Messenger::print("Failed to broadcast Array<int> data from root rank %i (world rank %i).\n", rootRank, worldRanks_[rootRank]);
 				return false;
 			}
 		}
@@ -1005,9 +1040,9 @@ bool ProcessPool::broadcast(Array<int>& array, int root, ProcessPool::Communicat
 	{
 		// Slaves receive the data into the buffer, and then set the source string.
 		// Length first...
-		if (MPI_Bcast(&length, 1, MPI_INTEGER, root, communicator(commType)) != MPI_SUCCESS)
+		if (MPI_Bcast(&length, 1, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
 		{
-			Messenger::print("Slave %i (world rank %i) failed to receive Array<int> size from root %i.\n", poolRank_, worldRank_, root);
+			Messenger::print("Slave %i (world rank %i) failed to receive Array<int> size from root rank %i.\n", poolRank_, worldRank_, rootRank);
 			return false;
 		}
 
@@ -1016,9 +1051,9 @@ bool ProcessPool::broadcast(Array<int>& array, int root, ProcessPool::Communicat
 			// Create array of specified size
 			array.initialise(length);
 
-			if (MPI_Bcast(array.array(), length, MPI_INTEGER, root, communicator(commType)) != MPI_SUCCESS)
+			if (MPI_Bcast(array.array(), length, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
 			{
-				Messenger::print("Slave %i (world rank %i) failed to receive Array<int> data from root process %i.\n", poolRank_, worldRank_, root);
+				Messenger::print("Slave %i (world rank %i) failed to receive Array<int> data from root rank %i.\n", poolRank_, worldRank_, rootRank);
 				return false;
 			}
 		}
@@ -1032,29 +1067,29 @@ bool ProcessPool::broadcast(Array<int>& array, int root, ProcessPool::Communicat
 }
 
 // Broadcast Array<double>
-bool ProcessPool::broadcast(Array<double>& array, int root, ProcessPool::CommunicatorType commType)
+bool ProcessPool::broadcast(Array<double>& array, int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
 
 	int length;
-	if (poolRank_ == root)
+	if (poolRank_ == rootRank)
 	{
 		// Broadcast string length first...
 		length = array.nItems();
-		if (MPI_Bcast(&length, 1, MPI_INTEGER, root, communicator(commType)) != MPI_SUCCESS)
+		if (MPI_Bcast(&length, 1, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
 		{
-			Messenger::print("Failed to broadcast Array<double> size from root process %i.\n", root);
+			Messenger::print("Failed to broadcast Array<double> size from root rank %i.\n", rootRank);
 			return false;
 		}
 
 		// Now broadcast Arrah data
 		if (length > 0)
 		{
-			if (MPI_Bcast(array.array(), length, MPI_DOUBLE, root, communicator(commType)) != MPI_SUCCESS)
+			if (MPI_Bcast(array.array(), length, MPI_DOUBLE, rootRank, communicator(commType)) != MPI_SUCCESS)
 			{
-				Messenger::print("Failed to broadcast Array<double> data from root process %i.\n", root);
+				Messenger::print("Failed to broadcast Array<double> data from root rank %i.\n", rootRank);
 				return false;
 			}
 		}
@@ -1063,9 +1098,9 @@ bool ProcessPool::broadcast(Array<double>& array, int root, ProcessPool::Communi
 	{
 		// Slaves receive the data into the buffer, and then set the source string.
 		// Length first...
-		if (MPI_Bcast(&length, 1, MPI_INTEGER, root, communicator(commType)) != MPI_SUCCESS)
+		if (MPI_Bcast(&length, 1, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
 		{
-			Messenger::print("Slave %i (world rank %i) failed to receive Array<double> size from root %i.\n", poolRank_, worldRank_, root);
+			Messenger::print("Slave %i (world rank %i) failed to receive Array<double> size from root rank %i.\n", poolRank_, worldRank_, rootRank);
 			return false;
 		}
 
@@ -1074,9 +1109,9 @@ bool ProcessPool::broadcast(Array<double>& array, int root, ProcessPool::Communi
 			// Create array of specified size
 			array.initialise(length);
 
-			if (MPI_Bcast(array.array(), length, MPI_DOUBLE, root, communicator(commType)) != MPI_SUCCESS)
+			if (MPI_Bcast(array.array(), length, MPI_DOUBLE, rootRank, communicator(commType)) != MPI_SUCCESS)
 			{
-				Messenger::print("Slave %i (world rank %i) failed to receive Array<double> data from root process %i.\n", poolRank_, worldRank_, root);
+				Messenger::print("Slave %i (world rank %i) failed to receive Array<double> data from root rank %i.\n", poolRank_, worldRank_, rootRank);
 				return false;
 			}
 		}
@@ -1093,25 +1128,25 @@ bool ProcessPool::broadcast(Array<double>& array, int root, ProcessPool::Communi
  * Special Array Functions
  */
 
-// Reduce (sum) double data to root process
-bool ProcessPool::sum(double* source, int count, int root, ProcessPool::CommunicatorType commType)
+// Reduce (sum) double data to root rank
+bool ProcessPool::sum(double* source, int count, int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
 	// If we are the target process then we need to construct a temporary buffer to store the received data in.
 	if ((commType == ProcessPool::Leaders) && (!groupLeader())) return true;
-	if (poolRank_ == root)
+	if (poolRank_ == rootRank)
 	{
 		double buffer[count];
-		if (MPI_Reduce(source, buffer, count, MPI_DOUBLE, MPI_SUM, root, communicator(commType)) != MPI_SUCCESS) return false;
+		if (MPI_Reduce(source, buffer, count, MPI_DOUBLE, MPI_SUM, rootRank, communicator(commType)) != MPI_SUCCESS) return false;
 		// Put reduced data back into original buffer
 		for (int n=0; n<count; ++n) source[n] = buffer[n];
 	}
 	else
 	{
 		// Not the target process, so just send data
-		if (MPI_Reduce(source, NULL, count, MPI_DOUBLE, MPI_SUM, root, communicator(commType)) != MPI_SUCCESS) return false;
+		if (MPI_Reduce(source, NULL, count, MPI_DOUBLE, MPI_SUM, rootRank, communicator(commType)) != MPI_SUCCESS) return false;
 	}
 	totalTime_.accumulate();
 	accumTime_.accumulate();
@@ -1119,25 +1154,25 @@ bool ProcessPool::sum(double* source, int count, int root, ProcessPool::Communic
 	return true;
 }
 
-// Reduce (sum) int data to root process
-bool ProcessPool::sum(int* source, int count, int root, ProcessPool::CommunicatorType commType)
+// Reduce (sum) int data to root rank
+bool ProcessPool::sum(int* source, int count, int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
 	// If we are the target process then we need to construct a temporary buffer to store the received data in.
 	if ((commType == ProcessPool::Leaders) && (!groupLeader())) return true;
-	if (poolRank_ == root)
+	if (poolRank_ == rootRank)
 	{
 		int buffer[count];
-		if (MPI_Reduce(source, buffer, count, MPI_INTEGER, MPI_SUM, root, communicator(commType)) != MPI_SUCCESS) return false;
+		if (MPI_Reduce(source, buffer, count, MPI_INTEGER, MPI_SUM, rootRank, communicator(commType)) != MPI_SUCCESS) return false;
 		// Put reduced data back into original buffer
 		for (int n=0; n<count; ++n) source[n] = buffer[n];
 	}
 	else
 	{
 		// Not the target process, so just send data
-		if (MPI_Reduce(source, NULL, count, MPI_INTEGER, MPI_SUM, root, communicator(commType)) != MPI_SUCCESS) return false;
+		if (MPI_Reduce(source, NULL, count, MPI_INTEGER, MPI_SUM, rootRank, communicator(commType)) != MPI_SUCCESS) return false;
 	}
 	totalTime_.accumulate();
 	accumTime_.accumulate();
@@ -1180,20 +1215,20 @@ bool ProcessPool::allSum(int* source, int count, ProcessPool::CommunicatorType c
 }
 
 // Assemble integer array for entire pool on target process
-bool ProcessPool::assemble(int* array, int nData, int* rootDest, int rootMaxData, int root, ProcessPool::CommunicatorType commType)
+bool ProcessPool::assemble(int* array, int nData, int* rootDest, int rootMaxData, int rootRank, ProcessPool::CommunicatorType commType)
 {
 	/*
 	 * Given that the integer 'array' exists on all processes, and each process has stored nData at the
 	 * beginning of this array, this function will assemble the data into a complete, continuous array (up to
-	 * maxData elements in the new array rootDest) on the root.
+	 * maxData elements in the new array rootDest) on the rootRank.
 	 */
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
-	if (poolRank_ == root)
+	if (poolRank_ == rootRank)
 	{
 		int n;
-		// The root' data must be copied into the local array
+		// The root's data must be copied into the local array
 		for (n=0; n<nData; ++n) rootDest[n] = array[n];
 
 		// Now get data from other processes, appending each chunk to the rootDest array
@@ -1208,7 +1243,7 @@ bool ProcessPool::assemble(int* array, int nData, int* rootDest, int rootMaxData
 			// Check buffer length
 			if ((nData + slaveNData) > rootMaxData)
 			{
-				printf("MPI ERROR: Tried to assemble more data on process '%i' than the array allows for (maxData = %i).\n", root, rootMaxData);
+				printf("MPI ERROR: Tried to assemble more data on process '%i' than the array allows for (maxData = %i).\n", rootRank, rootMaxData);
 				return false;
 			}
 			// Receive data
@@ -1219,8 +1254,8 @@ bool ProcessPool::assemble(int* array, int nData, int* rootDest, int rootMaxData
 	else
 	{
 		// Slaves send array size and then the data to the master...
-		if (!send(nData, root, commType)) return false;
-		if (!send(array, nData, root, commType)) return false;
+		if (!send(nData, rootRank, commType)) return false;
+		if (!send(array, nData, rootRank, commType)) return false;
 	}
 	totalTime_.accumulate();
 	accumTime_.accumulate();
@@ -1229,7 +1264,7 @@ bool ProcessPool::assemble(int* array, int nData, int* rootDest, int rootMaxData
 }
 
 // Assemble double array for entire pool on target process
-bool ProcessPool::assemble(double* array, int nLocalData, double* rootDest, int rootMaxData, int root, ProcessPool::CommunicatorType commType)
+bool ProcessPool::assemble(double* array, int nLocalData, double* rootDest, int rootMaxData, int rootRank, ProcessPool::CommunicatorType commType)
 {
 	/*
 	 * Given that the double 'array' exists on all processes, and each process has stored nData at the
@@ -1239,9 +1274,9 @@ bool ProcessPool::assemble(double* array, int nLocalData, double* rootDest, int 
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
-	if (poolRank_ == root)
+	if (poolRank_ == rootRank)
 	{
-		// The root' data must be copied into the local array
+		// The root's data must be copied into the local array
 		for (int n=0; n<nLocalData; ++n) rootDest[n] = array[n];
 
 		// Now get data from other processes, appending each chunk to the rootDest array
@@ -1256,7 +1291,7 @@ bool ProcessPool::assemble(double* array, int nLocalData, double* rootDest, int 
 			// Check buffer length
 			if ((nLocalData + slaveNData) > rootMaxData)
 			{
-				printf("MPI ERROR: Tried to assemble more data on process '%i' than the array allows for (maxData = %i).\n", root, rootMaxData);
+				printf("MPI ERROR: Tried to assemble more data on process '%i' than the array allows for (maxData = %i).\n", rootRank, rootMaxData);
 				return false;
 			}
 			// Receive data
@@ -1267,8 +1302,8 @@ bool ProcessPool::assemble(double* array, int nLocalData, double* rootDest, int 
 	else
 	{
 		// Slaves send array size and then the data to the master...
-		if (!send(nLocalData, root, commType)) return false;
-		if (!send(array, nLocalData, root, commType)) return false;
+		if (!send(nLocalData, rootRank, commType)) return false;
+		if (!send(array, nLocalData, rootRank, commType)) return false;
 	}
 	totalTime_.accumulate();
 	accumTime_.accumulate();
@@ -1277,22 +1312,22 @@ bool ProcessPool::assemble(double* array, int nLocalData, double* rootDest, int 
 }
 
 // Assemble Array<double> for entire pool on target process
-bool ProcessPool::assemble(Array<double>& array, int nData, Array<double>& rootDest, int rootMaxData, int root, ProcessPool::CommunicatorType commType)
+bool ProcessPool::assemble(Array<double>& array, int nData, Array<double>& rootDest, int rootMaxData, int rootRank, ProcessPool::CommunicatorType commType)
 {
-	if (poolRank_ == root)
+	if (poolRank_ == rootRank)
 	{
 		if (rootDest.size() < rootMaxData)
 		{
 			Messenger::error("Destination Array<double> in ProcessPool::assemble() is not large enough.");
-			stop(commType);
+			stop(rootRank, commType);
 			return false;
 		}
-		else proceed(commType);
+		else proceed(rootRank, commType);
 	}
-	else if (!decision(commType)) return false;
+	else if (!decision(rootRank, commType)) return false;
 
 	// Call double* version of routine...
-	return assemble(array.array(), nData, rootDest.array(), rootMaxData, root, commType);
+	return assemble(array.array(), nData, rootDest.array(), rootMaxData, rootRank, commType);
 }
 
 /*
@@ -1300,59 +1335,45 @@ bool ProcessPool::assemble(Array<double>& array, int nData, Array<double>& rootD
  */
 
 // Broadcast logical decision to proceed to all processes (Master only)
-void ProcessPool::proceed(ProcessPool::CommunicatorType commType)
+void ProcessPool::proceed(int rootRank, ProcessPool::CommunicatorType commType)
 {
 	bool decision = true;
 #ifdef PARALLEL
-	if (!isMaster(commType))
-	{
-		Messenger::print("BAD_USAGE - Slave tried to make a decision.\n");
-		return;
-	}
-	if (!broadcast(decision, 0, commType)) Messenger::print("Error telling slaves to proceed.\n");
+	if (!broadcast(decision, rootRank, commType)) Messenger::print("Error telling processes to proceed.\n");
 #endif
 }
 
 // Broadcast logical decision to stop to all processes (Master only)
-void ProcessPool::stop(ProcessPool::CommunicatorType commType)
+void ProcessPool::stop(int rootRank, ProcessPool::CommunicatorType commType)
 {
 	bool decision = false;
 #ifdef PARALLEL
-	if (!isMaster(commType))
-	{
-		Messenger::print("BAD_USAGE - Slave tried to make a decision.\n");
-		return;
-	}
-	if (!broadcast(decision, 0, commType)) Messenger::print("Error telling slaves to stop.\n");
+	if (!broadcast(decision, rootRank, commType)) Messenger::print("Error telling processes to stop.\n");
 #endif
 }
 
 // Receive logical decision from master (Slaves only)
-bool ProcessPool::decision(ProcessPool::CommunicatorType commType)
+bool ProcessPool::decision(int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-	if (!isSlave(commType))
-	{
-		Messenger::print("BAD_USAGE - Master tried to receive a decision.\n");
-		return false;
-	}
 	bool data;
-	if (!broadcast(data, 0, commType)) Messenger::print("Error receiving decision.\n");
+	if (!broadcast(data, rootRank, commType)) Messenger::print("Error receiving decision from root rank %i.\n", rootRank);
 	return data;
 #endif
 	return true;
 }
 
-// Return if one or more processes have failed (based on supplied bool)
-bool ProcessPool::ok(bool isOK, ProcessPool::CommunicatorType commType)
+// Test the supplied condition over all processes, returning true only if they all report truth
+bool ProcessPool::allTrue(bool value, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	// First, sum all bool values of the processes in the pool
-	int summedResult = (isOK ? 1 : 0);
+	int summedResult = (value ? 1 : 0);
 	if (!allSum(&summedResult, 1, commType)) return false;
-	return (summedResult == nProcesses());
+	if (commType == ProcessPool::Leaders) return (summedResult == groupLeaders_.nItems());
+	else return (summedResult == nProcesses());
 #endif
-	return isOK;
+	return value;
 }
 
 /*

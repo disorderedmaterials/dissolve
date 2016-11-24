@@ -117,6 +117,14 @@ class Partials : public Module
 	static PartialRSet* partialSet(Configuration* cfg);
 	// (Re)calculate unweighted partials for the specified Configuration
 	bool calculateUnweighted(Configuration* cfg, ProcessPool& procPool, int method = 0);
+
+
+	/*
+	 * Parallel Comms
+	 */
+	public:
+	// Broadcast data associated to module
+	bool broadcastData(DUQ& duq, ProcessPool& procPool);
 };
 
 #endif

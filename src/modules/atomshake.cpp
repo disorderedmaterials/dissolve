@@ -433,3 +433,11 @@ bool AtomShake::postProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return true;
 }
+
+// Broadcast data associated to module
+bool AtomShake::broadcastData(ProcessPool& procPool, int rootRank)
+{
+#ifdef PARALLEL
+#endif
+	return true;
+}

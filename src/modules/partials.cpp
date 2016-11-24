@@ -336,11 +336,11 @@ bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, in
 	// Is the PartialSet already up-to-date?
 	if (partialgr->upToDate())
 	{
-		Messenger::print("No need to calculate g(r) for Configuration '%s' - nothing has changed since the last calculation.\n", cfg->name());
+		Messenger::print("Partials: No need to calculate g(r) for Configuration '%s' - nothing has changed since the last calculation.\n", cfg->name());
 		return true;
 	}
 
-	Messenger::print("Calculating partial g(r) for Configuration '%s'...\n", cfg->name());
+	Messenger::print("Partials: Calculating partial g(r) for Configuration '%s'...\n", cfg->name());
 
 	/*
 	 * Reset any existing data
@@ -358,7 +358,7 @@ bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, in
 	procPool.resetAccumulatedTime();
 	calculateSimple(partialgr, procPool);
 	timer.stop();
-	Messenger::print("--> Finished calculation of partials (%s elapsed, %s comms).\n", timer.timeString(), procPool.accumulatedTimeString());
+	Messenger::print("Partials: Finished calculation of partials (%s elapsed, %s comms).\n", timer.timeString(), procPool.accumulatedTimeString());
 
 	/*
 	 * Calculate intramolecular partials
@@ -403,7 +403,7 @@ bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, in
 		}
 	}
 	timer.stop();
-	Messenger::print("--> Finished calculation of intramolecular partials (%s elapsed, %s comms).\n", timer.timeString(), procPool.accumulatedTimeString());
+	Messenger::print("Partials: Finished calculation of intramolecular partials (%s elapsed, %s comms).\n", timer.timeString(), procPool.accumulatedTimeString());
 
 	/*
 	 * Sum partials
@@ -445,13 +445,14 @@ bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, in
 	// Sum total functions
 	partialgr->formTotal();
 	timer.stop();
-	Messenger::print("--> Finished summation and normalisation of partial g(r) data (%s elapsed, %s comms).\n", timer.timeString(), procPool.accumulatedTimeString());
+	Messenger::print("Partials: Finished summation and normalisation of partial g(r) data (%s elapsed, %s comms).\n", timer.timeString(), procPool.accumulatedTimeString());
 
 	/*
 	 * Partials are now up-to-date
 	 */
 
 	partialgr->setUpToDate();
+	++staticLogPoint_;
 
 	return true;
 }
@@ -500,3 +501,79 @@ bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, in
 // 			}
 // 		}
 // 	}
+
+/*
+ * Parallel Comms
+ */
+
+// Broadcast data associated to module
+bool Partials::broadcastData(DUQ& duq, ProcessPool& procPool)
+{
+	/*
+	 * Broadcast all data from this type of Module over the ProcessPool specified.
+	 * This function should only ever be called on the root instance of the Module. Static data can be distributed here,
+	 * as well as instance-local information (via the instances_ list).
+	 */
+#ifdef PARALLEL
+	/*
+	 * Static Data
+	 */
+	// Has the data been updated since the last broadcast? Use the 
+	Messenger::printVerbose("Partials: This process thinks that the static/logpoints are %i and %i\n", staticBroadcastPoint_, staticLogPoint_);
+	if (!procPool.allTrue(staticBroadcastPoint_ == staticLogPoint_))
+	{
+		Messenger::print("Partials: Broadcasting partialSets over processes...\n");
+		// PartialSets - each process in the pool will loop over its own partialSets_ list and, for those in which it was the root
+		// proces in the Configuration's process pool, it will broadcast the data. Other processes may not know about this Configuration's
+		// PartialSet yet, so we should check for its existence and create it if it doesn't exist.
+		Dnchar cfgName;
+		for (int rootRank = 0; rootRank < procPool.nProcesses(); ++rootRank)
+		{
+			// Loop over partialSets_ - we must be careful only to broadcast those data for which the specified rootRank
+			// is the root process in the associated Configuration's ProcessPool
+			if (procPool.poolRank() == rootRank)
+			{
+				// The current rootRank will go through its list of partialSets_
+				for (PartialRSet* ps = partialSets_.first(); ps != NULL; ps = ps->next)
+				{
+					Configuration* cfg = ps->targetConfiguration();
+					if (!cfg->processPool().involvesMe()) continue;
+					if (!cfg->processPool().isMaster()) continue;
+
+					procPool.proceed(rootRank);
+					// Broadcast name of Configuration that the partialSet targets
+					cfgName = cfg->name();
+					if (!procPool.broadcast(cfgName, rootRank)) return false;
+					if (!ps->broadcast(procPool, rootRank)) return false;
+				}
+
+				procPool.stop(rootRank);
+			}
+			else
+			{
+				// Slaves wait to see if they will receive any data
+				while (procPool.decision(rootRank))
+				{
+					// Receive name of Configuration from root process
+					if (!procPool.broadcast(cfgName, rootRank)) return false;
+					// Find named Configuration
+					Configuration* cfg = duq.findConfiguration(cfgName);
+					// Do we currently have a partialSet for this Configuration?
+					PartialRSet* partialgr = partialSet(cfg);
+					if (partialgr == NULL)
+					{
+						// No match, so create new
+						partialgr = partialSets_.add();
+						partialgr->setup(cfg, "unweighted", "rdf");
+					}
+					if (!partialgr->broadcast(procPool, rootRank)) return false;
+				}
+			}
+		}
+
+		// Update logPoint_
+		staticBroadcastPoint_ = staticLogPoint_;
+	}
+#endif
+	return true;
+}

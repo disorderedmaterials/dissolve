@@ -237,7 +237,7 @@ class Data2D : public ListItem<Data2D>
 	 */
 	public:
 	// Broadcast data
-	bool broadcast(ProcessPool& procPool);
+	bool broadcast(ProcessPool& procPool, int rootRank = 0);
 };
 
 #endif

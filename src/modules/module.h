@@ -201,10 +201,27 @@ class Module : public ListItem<Module>
 
 
 	/*
+	 * LogPoints
+	 */
+	protected:
+	// Logpoint for instance-local data
+	int logPoint_;
+	// Logpoint for static data, shared across all instances
+	static int staticLogPoint_;
+	// Logpoint reflecting time of last broadcast of instance-local data
+	int broadcastPoint_;
+	// Logpoint reflecting time of last broadcast of static data (shared across all instances)
+	static int staticBroadcastPoint_;
+
+
+	/*
 	 * Parallel Comms
 	 */
 	public:
+	// Broadcast module variables
 	bool broadcastVariables(ProcessPool& procPool);
+	// Broadcast data associated to module
+	virtual bool broadcastData(DUQ& duq, ProcessPool& procPool);
 };
 
 #endif

@@ -39,8 +39,6 @@ class Histogram : public ListItem<Histogram>
 	Histogram(const Histogram& source);
 	// Assignment Operator
 	void operator=(const Histogram& source);
-	// Clear data
-	void clear();
 	// Normalisation Method
 	enum NormalisationType
 	{
@@ -63,7 +61,7 @@ class Histogram : public ListItem<Histogram>
 	// Number of points in histogram
 	int nBins_;
 	// Histogram data
-	int* histogram_;
+	Array<int> histogram_;
 	// Normalisation method
 	NormalisationType normalisationType_;
 	// Normalisation array
@@ -116,6 +114,8 @@ class Histogram : public ListItem<Histogram>
 	public:
 	// Sum all data over processes
 	bool allSum(ProcessPool& procPool);
+	// Broadcast data over pool processes
+	bool broadcast(ProcessPool& procPool, int rootRank);
 };
 
 #endif

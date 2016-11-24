@@ -30,7 +30,7 @@
 class Configuration;
 
 // Set of Partials in r (g(r))
-class PartialRSet : public MPIListItem<PartialRSet>
+class PartialRSet : public ListItem<PartialRSet>
 {
 	public:
 	// Constructor
@@ -91,8 +91,8 @@ class PartialRSet : public MPIListItem<PartialRSet>
 	 * Parallel Comms
 	 */
 	public:
-	// Broadcast data from Master to all Slaves
-	bool broadcast(ProcessPool& procPool);
+	// Broadcast data from root to all other processes
+	bool broadcast(ProcessPool& procPool, int rootRank);
 };
 
 #endif

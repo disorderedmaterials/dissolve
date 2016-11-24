@@ -135,7 +135,7 @@ bool DUQ::go()
 		for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
 		{
 			// Check for failure of one or more processes / processing tasks
-			if (!worldPool_.ok(result))
+			if (!worldPool_.allTrue(result))
 			{
 				Messenger::error("One or more processes experienced failures. Exiting now.\n");
 				return false;
@@ -168,7 +168,7 @@ bool DUQ::go()
 		worldPool_.wait(ProcessPool::Pool);
 
 		/*
-		 *  3)	Reassemble all Configuration data on all nodes
+		 *  3)	Reassemble data on all nodes
 		 */
 		Messenger::print("\n");
 		Messenger::print("===== Reassemble Data\n");
@@ -178,7 +178,10 @@ bool DUQ::go()
 		{
 			if (!cfg->broadcastCoordinates(worldPool_, cfg->processPool().rootWorldRank())) return false;
 		}
-
+		// Module-centred data
+		RefListIterator<Module,bool> moduleIterator(modules_);
+		while (Module* module = moduleIterator.iterate()) if (!module->broadcastData(*this, worldPool_)) return false;
+		
 		// Sync up all processes
 		worldPool_.wait(ProcessPool::Pool);
 

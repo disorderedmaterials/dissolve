@@ -218,6 +218,9 @@ bool Configuration::setupMolecules()
 
 	}
 
+	// Set fractional populations in usedAtomTypes_
+	usedAtomTypes_.finalise();
+
 	return true;
 }
 

@@ -6,8 +6,9 @@ module.h
 atomshake.cpp
 energy.cpp
 export.cpp
-fq.cpp
 partials.cpp
+structurefactor.cpp
+test.cpp
 #forces.cpp
 #grainshake.cpp
 #intrashake.cpp
@@ -17,8 +18,9 @@ partials.cpp
 atomshake.h
 energy.h
 export.h
-fq.h
 partials.h
+structurefactor.h
+test.h
 #forces.h
 #grainshake.h
 #intrashake.h

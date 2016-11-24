@@ -24,7 +24,7 @@
 #include "box.h"
 
 // Constructor
-PartialRSet::PartialRSet() : MPIListItem<PartialRSet>()
+PartialRSet::PartialRSet() : ListItem<PartialRSet>()
 {
 	partialsIndex_ = -1;
 	nTypes_ = 0;
@@ -202,7 +202,7 @@ bool PartialRSet::save()
 		{
 			// Open file and check that we're OK to proceed writing to it
 			const char* filename = partials_.ref(typeI, typeJ).normalisedData().name();
-			Messenger::print("Writing RDF file '%s'...\n", filename);
+			Messenger::print("--> Writing RDF file '%s'...\n", filename);
 
 			parser.openOutput(filename, true);
 			if (!parser.isFileGoodForWriting())
@@ -220,7 +220,7 @@ bool PartialRSet::save()
 		}
 	}
 
-	Messenger::print("Writing RDF file '%s'...\n", total_.name());
+	Messenger::print("--> Writing RDF file '%s'...\n", total_.name());
 	return total_.save(total_.name());
 }
 
@@ -228,12 +228,21 @@ bool PartialRSet::save()
  * Parallel Comms
  */
 
-// Broadcast data from Master to all Slaves
-bool PartialRSet::broadcast(ProcessPool& procPool)
+// Broadcast data from root to all other processes
+bool PartialRSet::broadcast(ProcessPool& procPool, int rootRank)
 {
 #ifdef PARALLEL
-	Messenger::print("BROADCAST OF PartialRSet NOT IMPLEMENTED.\n");
-	return false;
+	// The structure should have already been setup(), so arrays should be ready to copy
+	for (int typeI=0; typeI<nTypes_; ++typeI)
+	{
+		for (int typeJ=typeI; typeJ<nTypes_; ++typeJ)
+		{
+			partials_.ref(typeI, typeJ).broadcast(procPool, rootRank);
+			boundPartials_.ref(typeI, typeJ).broadcast(procPool, rootRank);
+			unboundPartials_.ref(typeI, typeJ).broadcast(procPool, rootRank);
+		}
+	}
+	total_.broadcast(procPool, rootRank);
 #endif
 	return true;
 }

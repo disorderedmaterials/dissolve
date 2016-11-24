@@ -32,7 +32,6 @@ Histogram::Histogram() : ListItem<Histogram>()
 	binOffset_ = 0;
 	delta_ = 0.1;
 	rDelta_ = 1.0/delta_;
-	histogram_ = NULL;
 	nAdded_ = 0;
 	normalisationType_ = Histogram::NoNormalisation;
 }
@@ -40,13 +39,11 @@ Histogram::Histogram() : ListItem<Histogram>()
 // Destructor
 Histogram::~Histogram()
 {
-	clear();
 }
 
 // Copy Constructor
 Histogram::Histogram(const Histogram& source)
 {
-	histogram_ = NULL;
 	copy(source);
 }
 
@@ -56,23 +53,14 @@ void Histogram::operator=(const Histogram& source)
 	copy(source);
 }
 
-// Clear data
-void Histogram::clear()
-{
-	if (histogram_ != NULL) delete[] histogram_;
-	histogram_ = NULL;
-}
-
 // Copy data
 void Histogram::copy(const Histogram& source)
 {
-	clear();
 	nBins_ = source.nBins_;
 	binOffset_ = source.binOffset_;
 	delta_ = source.delta_;
 	rDelta_ = 1.0/delta_;
-	histogram_ = new int[nBins_];
-	for (int n=0; n<nBins_; ++n) histogram_[n] = source.histogram_[n];
+	histogram_ = source.histogram_;
 	nAdded_ = source.nAdded_;
 	normalisedData_ = source.normalisedData_;
 	normalisationType_ = source.normalisationType_;
@@ -90,8 +78,7 @@ void Histogram::initialise(double minValue, double maxValue, double binWidth)
 	 * Initialise all values and arrays, ready for histogram calculation. Note that the normalisationType_ is reset to NoNormalisation by
 	 * this routine, and so the correct normalisation type must be set manually afterwards.
 	 */
-	clear();
-	
+
 	// Determine number of points from range and binwidth
 	maximum_ = maxValue;
 	minimum_ = minValue;
@@ -104,7 +91,7 @@ void Histogram::initialise(double minValue, double maxValue, double binWidth)
 	binOffset_ = -minimum_/delta_;
 
 	// Create arrays
-	histogram_ = new int[nBins_];
+	histogram_.initialise(nBins_);
 	normalisation_.initialise(nBins_);
 	normalisation_ = 1.0;
 	normalisationType_ = Histogram::NoNormalisation;
@@ -145,7 +132,7 @@ int Histogram::nBins() const
 // Return histogram data
 int* Histogram::histogram()
 {
-	return histogram_;
+	return histogram_.array();
 }
 
 // Return normalised data
@@ -248,4 +235,22 @@ bool Histogram::allSum(ProcessPool& procPool)
 {
 	if (!procPool.allSum(histogram_, nBins_)) return false;
 	return true;
+}
+
+// Broadcast data over pool processes
+bool Histogram::broadcast(ProcessPool& procPool, int rootRank)
+{
+#ifdef PARALLEL
+	if (!procPool.broadcast(nBins_, rootRank)) return false;
+	if (!procPool.broadcast(binOffset_, rootRank)) return false;
+	if (!procPool.broadcast(delta_, rootRank)) return false;
+	if (!procPool.broadcast(rDelta_, rootRank)) return false;
+	if (!procPool.broadcast(histogram_, rootRank)) return false;
+	if (!procPool.broadcast(nAdded_, rootRank)) return false;
+
+	if (!normalisedData_.broadcast(procPool, rootRank)) return false;
+	if (!procPool.broadcast(nAdded_, rootRank)) return false;
+	if (!procPool.broadcast(normalisation_, rootRank)) return false;
+	if (!procPool.broadcast(EnumCast<Histogram::NormalisationType>(normalisationType_), rootRank)) return false;
+#endif
 }

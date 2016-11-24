@@ -1,6 +1,6 @@
 /*
 	*** Structure Factor Module
-	*** src/modules/fq.cpp
+	*** src/modules/structurefactor.cpp
 	Copyright T. Youngs 2012-2016
 
 	This file is part of dUQ.
@@ -20,7 +20,7 @@
 */
 
 #include "main/duq.h"
-#include "modules/fq.h"
+#include "modules/structurefactor.h"
 #include "modules/partials.h"
 #include "classes/box.h"
 #include "classes/cell.h"
@@ -250,13 +250,13 @@ bool StructureFactor::calculateUnweighted(Configuration* cfg, Data2D::WindowFunc
 	Partials* partialsModule = (Partials*) dependentModule("Partials");
 	if (!partialsModule)
 	{
-		Messenger::error("No Partials module was associated to this instance of StructureFactor.\n");
+		Messenger::error("StructureFactor: No Partials module was associated to this instance of StructureFactor.\n");
 		return false;
 	}
 
 	// Ensure that partials are up-to-date for the Configuration, and grab the PartialSet
 	partialsModule->calculateUnweighted(cfg, procPool);
-	PartialRSet* partialRDFs = Partials::partialSet(cfg);
+	PartialRSet* partialRDFs = partialsModule->partialSet(cfg);
 
 	// Create / grab PartialSet for structure factors
 	PartialQSet* partialSQ = StructureFactor::partialSet(cfg);
@@ -270,11 +270,11 @@ bool StructureFactor::calculateUnweighted(Configuration* cfg, Data2D::WindowFunc
 	// Is the PartialSet already up-to-date?
 	if (partialSQ->upToDate())
 	{
-		Messenger::print("No need to calculate S(Q) for Configuration '%s' - nothing has changed since the last calculation.\n", cfg->name());
+		Messenger::print("StructureFactor: No need to calculate S(Q) for Configuration '%s' - nothing has changed since the last calculation.\n", cfg->name());
 		return true;
 	}
 
-	Messenger::print("Calculating partial S(Q) for Configuration '%s'...\n", cfg->name());
+	Messenger::print("StructureFactor: Calculating partial S(Q) for Configuration '%s'...\n", cfg->name());
 
 	/*
 	 * Reset any existing data
@@ -325,7 +325,7 @@ bool StructureFactor::calculateUnweighted(Configuration* cfg, Data2D::WindowFunc
 	partialSQ->formTotal();
 
 	timer.stop();
-	Messenger::print("--> Finished Fourier transform and summation of partial g(r) into partial S(Q) (%s elapsed, %s comms).\n", timer.timeString(), procPool.accumulatedTimeString());
+	Messenger::print("StructureFactor: Finished Fourier transform and summation of partial g(r) into partial S(Q) (%s elapsed, %s comms).\n", timer.timeString(), procPool.accumulatedTimeString());
 
 	/*
 	 * Partials are now up-to-date
@@ -570,3 +570,79 @@ bool StructureFactor::postProcess(DUQ& duq, ProcessPool& procPool)
 // 	Dnchar filename(-1, "%s-unweighted-total.fq", baseName);
 // 	totalFQ_.save(filename);
 // }
+
+/*
+ * Parallel Comms
+ */
+
+// Broadcast data associated to module
+bool StructureFactor::broadcastData(DUQ& duq, ProcessPool& procPool)
+{
+	/*
+	 * Broadcast all data from this type of Module over the ProcessPool specified.
+	 * This function should only ever be called on the root instance of the Module. Static data can be distributed here,
+	 * as well as instance-local information (via the instances_ list).
+	 */
+#ifdef PARALLEL
+	/*
+	 * Static Data
+	 */
+	// Has the data been updated since the last broadcast? Use the 
+	Messenger::printVerbose("StructureFactor: This process thinks that the static/logpoints are %i and %i\n", staticBroadcastPoint_, staticLogPoint_);
+	if (!procPool.allTrue(staticBroadcastPoint_ == staticLogPoint_))
+	{
+		Messenger::print("StructureFactor: Broadcasting partialSets over processes...\n");
+		// PartialSets - each process in the pool will loop over its own partialSets_ list and, for those in which it was the root
+		// proces in the Configuration's process pool, it will broadcast the data. Other processes may not know about this Configuration's
+		// PartialSet yet, so we should check for its existence and create it if it doesn't exist.
+		Dnchar cfgName;
+		for (int rootRank = 0; rootRank < procPool.nProcesses(); ++rootRank)
+		{
+			// Loop over partialSets_ - we must be careful only to broadcast those data for which the specified rootRank
+			// is the root process in the associated Configuration's ProcessPool
+			if (procPool.poolRank() == rootRank)
+			{
+				// The current rootRank will go through its list of partialSets_
+				for (PartialQSet* ps = partialSets_.first(); ps != NULL; ps = ps->next)
+				{
+					Configuration* cfg = ps->targetConfiguration();
+					if (!cfg->processPool().involvesMe()) continue;
+					if (!cfg->processPool().isMaster()) continue;
+
+					procPool.proceed(rootRank);
+					// Broadcast name of Configuration that the partialSet targets
+					cfgName = cfg->name();
+					if (!procPool.broadcast(cfgName, rootRank)) return false;
+					if (!ps->broadcast(procPool, rootRank)) return false;
+				}
+
+				procPool.stop(rootRank);
+			}
+			else
+			{
+				// Slaves wait to see if they will receive any data
+				while (procPool.decision(rootRank))
+				{
+					// Receive name of Configuration from root process
+					if (!procPool.broadcast(cfgName, rootRank)) return false;
+					// Find named Configuration
+					Configuration* cfg = duq.findConfiguration(cfgName);
+					// Do we currently have a partialSet for this Configuration?
+					PartialQSet* partialsq = partialSet(cfg);
+					if (partialsq == NULL)
+					{
+						// No match, so create new
+						partialsq = partialSets_.add();
+						partialsq->setup(cfg, "unweighted", "rdf");
+					}
+					if (!partialsq->broadcast(procPool, rootRank)) return false;
+				}
+			}
+		}
+
+		// Update logPoint_
+		staticBroadcastPoint_ = staticLogPoint_;
+	}
+#endif
+	return true;
+}

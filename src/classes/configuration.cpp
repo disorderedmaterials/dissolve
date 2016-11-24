@@ -290,7 +290,6 @@ bool Configuration::setup(ProcessPool& procPool, const List<AtomType>& atomTypes
 	// 1) If useOutputCoordinatesAsInput_ is true and that file exists, this overrides everything else
 	// 2) If randomConfiguration_ is true, generate some random coordinates
 	// 3) Load the inputCoordinatesFile_
-	printf("RANDOMCONFIG = %i\n", randomConfiguration_);
 	if (useOutputCoordinatesAsInput_ && (!outputCoordinatesFile_.isEmpty()) && DUQSys::fileExists(outputCoordinatesFile_))
 	{
 		Messenger::print("--> Loading initial coordinates from output coordinates file '%s'...\n", outputCoordinatesFile_.get());
@@ -564,6 +563,9 @@ bool Configuration::broadcastCoordinates(ProcessPool& procPool, int rootRank)
 	delete[] x;
 	delete[] y;
 	delete[] z;
+
+	// Update coordinate index
+	if (!procPool.broadcast(coordinateIndex_, rootRank)) return false;
 #endif
 	return true;
 }
