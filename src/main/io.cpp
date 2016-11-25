@@ -438,3 +438,15 @@ const char* DUQ::filename() const
 {
 	return filename_.get();
 }
+
+// Set whether to automatically add dependent Modules if they have not been defined
+void DUQ::setAutoAddDependentModules(bool b)
+{
+	autoAddDependentModules_ = b;
+}
+
+// Return whether to automatically add dependent Modules if they have not been defined
+bool DUQ::autoAddDependentModules()
+{
+	return autoAddDependentModules_;
+}

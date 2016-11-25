@@ -129,7 +129,7 @@ bool Keywords::parseConfigurationBlock(LineParser& parser, DUQ* duq, Configurati
 				}
 
 				// Try to add this module (or an instance of it) to the current Configuration
-				module = cfg->addModule(module);
+				module = cfg->addModule(module, duq->autoAddDependentModules());
 				if (module)
 				{
 					// Add our pointer to the Module's list of associated Configurations
@@ -148,6 +148,9 @@ bool Keywords::parseConfigurationBlock(LineParser& parser, DUQ* duq, Configurati
 
 				// Parse rest of Module block
 				if (!parseModuleBlock(parser, duq, module, cfg, NULL)) error = true;
+
+				// Now finished parsing the Module block, so must update target Samples and Configurations in any auto-added Modules
+				module->updateDependentTargets();
 				break;
 			case (Keywords::MultiplierKeyword):
 				cfg->setMultiplier(parser.argd(1));

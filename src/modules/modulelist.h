@@ -49,7 +49,7 @@ class ModuleList
 
 	public:
 	// Associate Module to list
-	Module* addModule(Module* module);
+	Module* addModule(Module* module, bool autoAddDependents = false, RefListItem<Module, bool>* addBeforeThis = NULL);
 	// Find associated Module by name
 	Module* findModule(const char* name);
 	// Return number of Modules associated

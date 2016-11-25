@@ -64,9 +64,9 @@ const char* Module::uniqueName()
 }
 
 // Add dependent Module to this Module
-void Module::addDependentModule(Module* module)
+void Module::addDependentModule(Module* module, bool autoAdded)
 {
-	dependentModules_.add(module);
+	dependentModules_.add(module, autoAdded);
 }
 
 // Return pointer for specified dependent Module
@@ -76,6 +76,12 @@ Module* Module::dependentModule(const char* name)
 	while (Module* module = iterator.iterate()) if (DUQSys::sameString(name, module->name())) return module;
 
 	return NULL;
+}
+
+// Update targets for any auto-added dependent Modules with those of this Module
+void Module::updateDependentTargets()
+{
+	
 }
 
 /*
@@ -163,9 +169,22 @@ int Module::nConfigurationTargets()
 }
 
 // Return first targeted Configuration
-RefListItem<Configuration,bool>* Module::targetConfigurations()
+RefList<Configuration,bool>& Module::targetConfigurations()
 {
-	return targetConfigurations_.first();
+	return targetConfigurations_;
+}
+
+// Copy Configuration targets from specified Module
+void Module::copyTargetConfigurations(Module* sourceModule)
+{
+	// First, check if this module actually accepts target Configurations
+	if ((nTargetableConfigurations() < sourceModule->nConfigurationTargets()) && (nTargetableConfigurations() != -1))
+	{
+		Messenger::warn("Dependent Module '%s' does not accept Configuration targets, but the source Module '%s' lists %i.\n", name(), sourceModule->name());
+		return;
+	}
+	RefListIterator<Configuration,bool> configIterator(sourceModule->targetConfigurations());
+	while (Configuration* cfg = configIterator.iterate()) addConfigurationTarget(cfg);
 }
 
 // Add Sample target
@@ -193,9 +212,22 @@ int Module::nSampleTargets()
 }
 
 // Return first targeted Sample
-RefListItem<Sample,bool>* Module::targetSamples()
+RefList<Sample,bool>& Module::targetSamples()
 {
-	return targetSamples_.first();
+	return targetSamples_;
+}
+
+// Copy Sample targets from specified Module
+void Module::copyTargetSamples(Module* sourceModule)
+{
+	// First, check if this module actually accepts target Samples
+	if ((nTargetableSamples() < sourceModule->nSampleTargets()) && (nTargetableSamples() != -1))
+	{
+		Messenger::warn("Dependent Module '%s' does not accept Sample targets, but the source Module '%s' lists %i.\n", name(), sourceModule->name());
+		return;
+	}
+	RefListIterator<Sample,bool> sampleIterator(sourceModule->targetSamples());
+	while (Sample* sample = sampleIterator.iterate()) addSampleTarget(sample);
 }
 
 /*

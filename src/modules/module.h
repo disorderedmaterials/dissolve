@@ -83,11 +83,13 @@ class Module : public ListItem<Module>
 	// Whether the Module has a post-processing stage
 	virtual bool hasPostProcessing() = 0;
 	// Add dependent Module to this Module
-	void addDependentModule(Module* module);
+	void addDependentModule(Module* module, bool autoAdded);
 	// Return pointer for specified dependent Module
 	Module* dependentModule(const char* name);
 	// Modules upon which this Module depends to have run first
 	virtual const char* dependentModules() = 0;
+	// Update targets for any auto-added dependent Modules with those of this Module
+	void updateDependentTargets();
 
 
 	/*
@@ -118,7 +120,7 @@ class Module : public ListItem<Module>
 	 * Targets
 	 */
 	protected:
-	// Configurations that are targeted by this module
+	// Configurations that are targeted by this Module
 	RefList<Configuration,bool> targetConfigurations_;
 	// Samples that are targeted by this module
 	RefList<Sample,bool> targetSamples_;
@@ -131,7 +133,9 @@ class Module : public ListItem<Module>
 	// Return number of targeted Configurations
 	int nConfigurationTargets();
 	// Return first targeted Configuration
-	RefListItem<Configuration,bool>* targetConfigurations();
+	RefList<Configuration,bool>& targetConfigurations();
+	// Copy Configuration targets from specified Module
+	void copyTargetConfigurations(Module* sourceModule);
 	// Return the maximum number of Samples the Module can target (or -1 for any number)
 	virtual int nTargetableSamples() = 0;
 	// Add Sample target
@@ -139,7 +143,9 @@ class Module : public ListItem<Module>
 	// Return number of targeted Samples
 	int nSampleTargets();
 	// Return first targeted Sample
-	RefListItem<Sample,bool>* targetSamples();
+	RefList<Sample,bool>& targetSamples();
+	// Copy Sample targets from specified Module
+	void copyTargetSamples(Module* sourceModule);
 
 
 	/*

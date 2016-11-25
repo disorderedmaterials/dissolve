@@ -46,8 +46,12 @@ class Messenger
 	private:
 	// Storage for text to print
 	static char text_[8096];
+	// Working storage for text to print
+	static char workingText_[8096];
 	// Master text creation / formatting routine
 	static void createText(const char* indentText, const char* format, va_list arguments);
+	// Print text
+	static void printText(const char* text);
 	// Create and print text
 	static void createAndPrintText(const char* indentText, const char* format, va_list arguments);
 

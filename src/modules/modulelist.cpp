@@ -42,7 +42,7 @@ ModuleList::~ModuleList()
  */
 
 // Add module to list
-Module* ModuleList::addModule(Module* module)
+Module* ModuleList::addModule(Module* module, bool autoAddDependents, RefListItem<Module, bool>* addBeforeThis)
 {
 	Module* moduleToAdd = NULL;
 
@@ -66,8 +66,9 @@ Module* ModuleList::addModule(Module* module)
 	}
 
 	// Add the module pointer to the list
-	modules_.add(moduleToAdd);
-	printf("ADDED MODULE %s\n", moduleToAdd->uniqueName());
+	RefListItem<Module, bool>* newModuleItem;
+	if (addBeforeThis) newModuleItem = modules_.addBefore(addBeforeThis, moduleToAdd);
+	else newModuleItem = modules_.add(moduleToAdd);
 
 	// Check dependencies of the new Module - loop over dependent Module names
 	LineParser moduleParser;
@@ -86,14 +87,25 @@ Module* ModuleList::addModule(Module* module)
 		Module* existingModule = findModule(dependentModule->name());
 		if (existingModule)
 		{
-			moduleToAdd->addDependentModule(existingModule);
+			moduleToAdd->addDependentModule(existingModule, false);
 			Messenger::print("Added dependent Module '%s' to Module '%s'.\n", existingModule->uniqueName(), moduleToAdd->uniqueName());
 		}
 		else
 		{
-			// No Module exists in the Configuration already
-			Messenger::error("The Module '%s' requires the Module '%s' to run prior to it, but the '%s' Module has not been associated to the Configuration.\n", module->name(), dependentModule->name(), dependentModule->name());
-			return NULL;
+			// No Module exists in the Configuration already - add it automatically?
+			if (autoAddDependents)
+			{
+				printf("AUTOADD = %i\n", autoAddDependents);
+				Messenger::warn("Auto-adding the Module '%s', since the Module '%s' depends on it.\nDefault parameters will be used.\nFor better control, add the Module by hand to the input file.\n", dependentModule->name(), moduleToAdd->name());
+				Module* autoAddedModule = addModule(dependentModule, autoAddDependents, newModuleItem);
+				if (!autoAddedModule) return NULL;
+				moduleToAdd->addDependentModule(autoAddedModule, true);
+			}
+			else
+			{
+				Messenger::error("The Module '%s' requires the Module '%s' to run prior to it, but the '%s' Module has not been associated to the Configuration.\n", module->name(), dependentModule->name(), dependentModule->name());
+				return NULL;
+			}
 		}
 	}
 

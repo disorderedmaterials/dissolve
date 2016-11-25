@@ -299,6 +299,8 @@ class DUQ
 	private:
 	// Filename of current input file
 	Dnchar filename_;
+	// Whether to automatically add dependent Modules if they have not been defined
+	bool autoAddDependentModules_;
 
 	public:
 	// Load datafiles
@@ -313,6 +315,10 @@ class DUQ
 	bool hasFileName() const;
 	// Return filename of current input file
 	const char* filename() const;
+	// Set whether to automatically add dependent Modules if they have not been defined
+	void setAutoAddDependentModules(bool b);
+	// Return whether to automatically add dependent Modules if they have not been defined
+	bool autoAddDependentModules();
 
 
 	/*

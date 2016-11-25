@@ -32,9 +32,7 @@
 // Forward Declarations
 class Species;
 
-/*
- * Sample Definition
- */
+// Sample Definition
 class Sample : public ModuleList, public ListItem<Sample>
 {
 	public:

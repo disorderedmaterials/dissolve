@@ -158,7 +158,14 @@ void Dnchar::createEmpty(Dnchar &s)
 	createEmpty(s.size_);
 }
 
-// Empty?
+// Fill current string with specified character
+void Dnchar::fill(char c)
+{
+	for (int n=0; n<size_-1; ++n) data_[n] = c;
+	data_[size_-1] = '\0';
+}
+
+// Returns the length of the current string
 bool Dnchar::isEmpty() const
 {
 	return (endPosition_ <= 0 ? true : false);

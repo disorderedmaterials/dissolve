@@ -51,19 +51,18 @@ int main(int argc, char **argv)
 			{
 				case ('h'):
 					printf("dUQ version %s\n\nAvailable CLI options are:\n\n", DUQVERSION);
-// 					printf("\t-i\t\tStart in interactive mode\n");
+					printf("\t-a\t\tAuto-add dependent Modules if they are not present already\n");
 					printf("\t-m\t\tRestrict output to be from the master process alone (parallel code only)\n");
 					printf("\t-q\t\tQuiet mode - print no output\n");
 					printf("\t-r <file>\tRedirect output from all process to 'file.N', where N is the process rank\n");
 					printf("\t-s\t\tPerform full dump of system setup from all processes and quit\n");
 					printf("\t-v\t\tVerbose mode - be a little more descriptive throughout\n");
 					ProcessPool::finalise();
-					return 1;
+					return 0;
 					break;
-// 				case ('i'):
-// 					interactive = true;
-// 					Messenger::print("Will start in interactive mode.\n");
-// 					break;
+				case ('a'):
+					dUQ.setAutoAddDependentModules(true);
+					break;
 				case ('m'):
 					Messenger::setMasterOnly(true);
 					break;

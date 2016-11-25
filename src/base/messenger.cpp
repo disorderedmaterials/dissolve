@@ -32,6 +32,7 @@ bool Messenger::redirect_ = false;
 bool Messenger::masterOnly_ = false;
 LineParser Messenger::parser_;
 char Messenger::text_[8096];
+char Messenger::workingText_[8096];
 
 // Constructor
 Messenger::Messenger()
@@ -61,21 +62,39 @@ void Messenger::createText(const char* indentText, const char* format, va_list a
 {
 	text_[0] = '\0';
 	
-	// If we were given some 'indentText', print copies of it before the message
+	// First, vsprintf the supplied format/arguments into workingText_, prepending a newline to it
 	Dnchar newFormat;
-	if (indentText != NULL)
-	{
-		if (redirect_ || (ProcessPool::nWorldProcesses() == 1)) newFormat.sprintf("%s\n%s %s%s\n", indentText, indentText, format, indentText);
-		else newFormat.sprintf("[%i] %s\n[%i]%s %s[%i]%s\n", ProcessPool::worldRank(), indentText, ProcessPool::worldRank(), indentText, format, ProcessPool::worldRank(), indentText);
-	}
-	else
-	{
-		if (redirect_ || (ProcessPool::nWorldProcesses() == 1)) newFormat = format;
-		else newFormat.sprintf("[%i] %s", ProcessPool::worldRank(), format);
-	}
+	newFormat.sprintf("\n%s", format);
+	vsprintf(workingText_, newFormat.get(), arguments);
 
-	// Parse the argument list (...) and internally write the output string into text[]
-	vsprintf(text_, newFormat.get(), arguments);
+	// Now, use strtok to split the workingText_ up into lines, prepending the indentText and/or process id to each
+	Dnchar prependedLine;
+	char* line = strtok(workingText_, "\n");
+	while (line != NULL)
+	{
+		// If we were given some 'indentText', print copies of it before the message
+		if (indentText != NULL)
+		{
+			if (redirect_ || (ProcessPool::nWorldProcesses() == 1)) prependedLine.sprintf("%s %s\n", indentText, line);
+			else prependedLine.sprintf("[%i] %s %s\n", ProcessPool::worldRank(), indentText, line);
+		}
+		else
+		{
+			if (redirect_ || (ProcessPool::nWorldProcesses() == 1)) prependedLine.sprintf("%s\n", line);
+			else prependedLine.sprintf("[%i] %s\n", ProcessPool::worldRank(), line);
+		}
+		strcat(text_, prependedLine.get());
+
+		line = strtok(NULL, "\n");
+	}
+}
+
+// Print text
+void Messenger::printText(const char* text)
+{
+	// Print the passed string
+	if (redirect_) parser_.writeLineF("%s", text);
+	else printf("%s", text);
 }
 
 // Master text creation / formatting routine
@@ -85,9 +104,7 @@ void Messenger::createAndPrintText(const char* indentText, const char* format, v
 
 	createText(indentText, format, arguments);
 
-	// Print the text
-	if (redirect_) parser_.writeLineF("%s", text_);
-	else printf("%s", text_);
+	printText(text_);
 }
 
 // Print standard message
@@ -117,9 +134,9 @@ void Messenger::error(const char* fmt, ...)
 {
 	va_list arguments;
 	va_start(arguments,fmt);
-	print("\n");
-	createAndPrintText("[[[ ERROR ]]]", fmt, arguments);
-	print("\n");
+	printText("\n***  ERROR\n");
+	createAndPrintText("***  ERROR    ", fmt, arguments);
+	printText("***  ERROR\n\n");
 	va_end(arguments);
 }
 
@@ -128,36 +145,40 @@ void Messenger::warn(const char* fmt, ...)
 {
 	va_list arguments;
 	va_start(arguments, fmt);
-	print("\n");
-	createAndPrintText("[[[ WARNING ]]]", fmt, arguments);
-	print("\n");
+	printText("\n!!! WARNING\n");
+	createAndPrintText("!!! WARNING   ", fmt, arguments);
+	printText("!!! WARNING\n\n");
 	va_end(arguments);
 }
 
 // Print banner message of specified width
 void Messenger::banner(const char* fmt, ...)
 {
+	static Dnchar bannerChars;
 	const int width = 80;
+	if (bannerChars.length() < width)
+	{
+		bannerChars.createEmpty(width+1);
+		bannerChars.fill('=');
+	}
 
-	// First, create the text as normal (but don't print it yet) and assess its length
+	// First, create the text using vsprintf
 	va_list arguments;
 	va_start(arguments, fmt);
-	createText(NULL, fmt, arguments);
-	Dnchar bannerText = text_;
+	vsprintf(workingText_, fmt, arguments);
 	va_end(arguments);
+	Dnchar bannerText = workingText_;
 
-	int bannerLength = strlen(text_);
-	int leftPad = (width - bannerLength) / 2 - 1;
-	int rightPad = width - bannerLength - leftPad - 2;
+	// Now, get the length of the banner text and create a format for printing it into a line 80 chars wide
+	int leftPad = (width - bannerText.length()) / 2 - 1;
+	int rightPad = width - bannerText.length() - leftPad - 2;
 	char bannerFormat[64];
-	sprintf(bannerFormat, "\n%c%%%is%s%%%is%c\n", '*', leftPad, bannerText.get(), rightPad, '*');
+	sprintf(bannerFormat, "%%s\n%%c%%%is%%s%%%is%%c\n%%s", leftPad, rightPad);
 
 	// Finally, print the banner
-	print("\n");
-	for (int n=0; n<width; ++n) printf("%c", '=');
-	print(bannerFormat, " ", " ");
-	for (int n=0; n<width; ++n) printf("%c", '=');
-	print("\n\n");
+	printText("\n");
+	print(bannerFormat, bannerChars.get(), '*', " ", bannerText.get(), " ", '*', bannerChars.get());
+	printText("\n");
 }
 
 /*

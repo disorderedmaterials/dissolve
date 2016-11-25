@@ -451,18 +451,16 @@ template <class T, class D> RefListItem<T,D>* RefList<T,D>::item(int n) const
 template <class T, class D> RefListItem<T,D>* RefList<T,D>::contains(T* xitem) const
 {
 	// Search references for specified item
-	RefListItem<T,D>* r;
-	for (r = listHead_; r != NULL; r = r->next) if (r->item == xitem) break;
-	return r;
+	for (RefListItem<T,D>* r = listHead_; r != NULL; r = r->next) if (r->item == xitem) return r;
+	return NULL;
 }
 
 // Search for data
 template <class T, class D> RefListItem<T,D>* RefList<T,D>::containsData(D data) const
 {
 	// Search references for specified data
-	RefListItem<T,D>* r;
-	for (r = listHead_; r != NULL; r = r->next) if (r->data == data) break;
-	return r;
+	for (RefListItem<T,D>* r = listHead_; r != NULL; r = r->next) if (r->data == data) return r;
+	return NULL;
 }
 
 // Clear atoms from list

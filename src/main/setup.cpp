@@ -170,29 +170,50 @@ bool DUQ::setupSimulation()
 			}
 		}
 	}
+
 	if (preProcessingTasks_.nItems() == 0) Messenger::print("--> No pre-processing tasks found.\n");
 	else Messenger::print("--> %i pre-processing %s found.\n", preProcessingTasks_.nItems(), preProcessingTasks_.nItems() == 1 ? "task" : "tasks");
-	for (RefListItem<Module,bool>* ri = preProcessingTasks_.first(); ri != NULL; ri = ri->next)
+	RefListIterator<Module,bool> preProcessingIterator(preProcessingTasks_);
+	while (Module* module = preProcessingIterator.iterate())
 	{
-		// Grab Module pointer
-		Module* module = ri->item;
-
 		Messenger::print("    %s:\n", module->name());
 		if (module->nConfigurationTargets() == 0) Messenger::print("      No Configuration targets.\n");
 		else
 		{
 			Messenger::print("      %i Configuration %s:\n", module->nConfigurationTargets(), module->nConfigurationTargets() == 1 ? "target" : "targets");
-			for (RefListItem<Configuration,bool>* refCfg = module->targetConfigurations(); refCfg != NULL; refCfg = refCfg->next)
-			{
-				// Get Configuration pointer
-				Configuration* cfg = refCfg->item;
-
-				// Print name, and all associated variables with the module from the Configuration
-				Messenger::print("      --> %s\n", cfg->name());
-			}
+			RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
+			while (Configuration* cfg = configIterator.iterate()) Messenger::print("      --> %s\n", cfg->name());
+		}
+		if (module->nSampleTargets() == 0) Messenger::print("      No Sample targets.\n");
+		else
+		{
+			Messenger::print("      %i Sample %s:\n", module->nSampleTargets(), module->nSampleTargets() == 1 ? "target" : "targets");
+			RefListIterator<Sample,bool> sampleIterator(module->targetSamples());
+			while (Sample* sample = sampleIterator.iterate()) Messenger::print("      --> %s\n", sample->name());
 		}
 	}
-		
+
+	if (postProcessingTasks_.nItems() == 0) Messenger::print("--> No post-processing tasks found.\n");
+	else Messenger::print("--> %i post-processing %s found.\n", postProcessingTasks_.nItems(), postProcessingTasks_.nItems() == 1 ? "task" : "tasks");
+	RefListIterator<Module,bool> postProcessingIterator(postProcessingTasks_);
+	while (Module* module = postProcessingIterator.iterate())
+	{
+		Messenger::print("    %s:\n", module->name());
+		if (module->nConfigurationTargets() == 0) Messenger::print("      No Configuration targets.\n");
+		else
+		{
+			Messenger::print("      %i Configuration %s:\n", module->nConfigurationTargets(), module->nConfigurationTargets() == 1 ? "target" : "targets");
+			RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
+			while (Configuration* cfg = configIterator.iterate()) Messenger::print("      --> %s\n", cfg->name());
+		}
+		if (module->nSampleTargets() == 0) Messenger::print("      No Sample targets.\n");
+		else
+		{
+			Messenger::print("      %i Sample %s:\n", module->nSampleTargets(), module->nSampleTargets() == 1 ? "target" : "targets");
+			RefListIterator<Sample,bool> sampleIterator(module->targetSamples());
+			while (Sample* sample = sampleIterator.iterate()) Messenger::print("      --> %s\n", sample->name());
+		}
+	}
 
 	return true;
 }

@@ -64,9 +64,11 @@ class Dnchar : public ListItem<Dnchar>
 	void createEmpty(int);
 	// Resize data (to be same length as source Dnchar)
 	void createEmpty(Dnchar&);
+	// Fill current string with specified character
+	void fill(char c);
 	// Returns the length of the current string
 	int length() const;
-	// Returns true if current length is 1 or less.
+	// Returns true if the string is empty.
 	bool isEmpty() const;
 	// Return last character of string (before '\0')
 	char lastChar() const;

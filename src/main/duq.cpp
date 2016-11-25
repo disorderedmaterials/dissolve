@@ -40,6 +40,9 @@ DUQ::DUQ()
 
 	// Parallel
 	parallelStrategy_ = DUQ::SequentialConfigStrategy;
+
+	// I/O
+	autoAddDependentModules_ = false;
 }
 
 // Destructor

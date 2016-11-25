@@ -112,7 +112,7 @@ bool Keywords::parseSampleBlock(LineParser& parser, DUQ* duq, Sample* sample)
 				}
 
 				// Try to add this module (or an instance of it) to the current Configuration
-				module = sample->addModule(module);
+				module = sample->addModule(module, duq->autoAddDependentModules());
 				if (module)
 				{
 					// Add our pointer to the Module's list of associated Configurations
@@ -131,6 +131,9 @@ bool Keywords::parseSampleBlock(LineParser& parser, DUQ* duq, Sample* sample)
 
 				// Parse rest of Module block
 				if (!parseModuleBlock(parser, duq, module, NULL, sample)) error = true;
+
+				// Now finished parsing the Module block, so must update target Samples and Configurations in any auto-added Modules
+				module->updateDependentTargets();
 				break;
 			case (Keywords::ReferenceDataKeyword):
 				if (!sample->loadReferenceData(parser.argc(1)))
