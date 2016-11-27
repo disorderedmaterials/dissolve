@@ -133,13 +133,13 @@ const char* StructureFactor::dependentModules()
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
 int StructureFactor::nTargetableConfigurations()
 {
-	return 1;
+	return -1;
 }
 
 // Return the maximum number of Samples the Module can target (or -1 for any number)
 int StructureFactor::nTargetableSamples()
 {
-	return 0;
+	return 1;
 }
 
 /*
@@ -175,6 +175,7 @@ bool StructureFactor::process(DUQ& duq, ProcessPool& procPool)
 	{
 		// TODO Assemble partials from all Configurations specified, weighting them accordingly
 // 		if ((nSampleTargets() == 1) && (targetSamples_.first()->item->hasReferenceData())) qMax = targetSamples_.first()->item->referenceData().xMax();
+		return false;
 	}
 	else
 	{

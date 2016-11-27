@@ -95,7 +95,6 @@ Module* ModuleList::addModule(Module* module, bool autoAddDependents, RefListIte
 			// No Module exists in the Configuration already - add it automatically?
 			if (autoAddDependents)
 			{
-				printf("AUTOADD = %i\n", autoAddDependents);
 				Messenger::warn("Auto-adding the Module '%s', since the Module '%s' depends on it.\nDefault parameters will be used.\nFor better control, add the Module by hand to the input file.\n", dependentModule->name(), moduleToAdd->name());
 				Module* autoAddedModule = addModule(dependentModule, autoAddDependents, newModuleItem);
 				if (!autoAddedModule) return NULL;

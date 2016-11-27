@@ -58,6 +58,8 @@ class AtomTypeList
 	void clear();
 	// Add/increase this AtomType/Isotope pair, returning the index of the AtomType in the list
 	int add(AtomType* atomType, Isotope* tope, int popAdd = 0);
+	// Zero populations of all types in the list
+	void zero();
 	// Return number of AtomType/Isotopes in list
 	int nItems() const;
 	// Return first item in list

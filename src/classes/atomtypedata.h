@@ -62,6 +62,8 @@ class AtomTypeData : public ListItem<AtomTypeData>
 	bool initialise(AtomType* atomType, Isotope* topeA);
 	// Add to population of Isotope
 	void add(int nAdd);
+	// Zero population
+	void zero();
 	// Return reference AtomType
 	AtomType* atomType() const;
 	// Finalise, calculating fractional populations etc.

@@ -238,6 +238,18 @@ bool Sample::createTypeList(const List<Species>& allSpecies, const List<AtomType
 	return true;
 }
 
+// Return AtomTypeList
+AtomTypeList& Sample::atomTypes()
+{
+	return atomTypes_;
+}
+
+// Return number of used AtomTypes
+int Sample::nUsedTypes()
+{
+	return atomTypes_.nItems();
+}
+
 /*
  * Reference Data
  */
@@ -270,9 +282,7 @@ bool Sample::loadReferenceData(const char* filename)
 		return false;
 	}
 
-	Messenger::print("--> Loading reference F(Q) data from '%s'...\n", referenceDataFileName_.get());
-
-	// Read data, assuming that column 0 = Q and column 1 = F(Q)...
+	Messenger::print("--> Loading reference data from '%s'...\n", referenceDataFileName_.get());
 	bool result = true;
 	while (!parser.eofOrBlank())
 	{

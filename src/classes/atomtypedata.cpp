@@ -77,6 +77,13 @@ void AtomTypeData::add(int nAdd)
 	population_ += nAdd;
 }
 
+// Zero population
+void AtomTypeData::zero()
+{
+	population_ = 0;
+	fraction_ = 0.0;
+}
+
 // Return reference AtomType
 AtomType* AtomTypeData::atomType() const
 {

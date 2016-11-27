@@ -81,7 +81,18 @@ Module* Module::dependentModule(const char* name)
 // Update targets for any auto-added dependent Modules with those of this Module
 void Module::updateDependentTargets()
 {
-	
+	RefListIterator<Module,bool> iterator(dependentModules_);
+	while (Module* module = iterator.iterate())
+	{
+		// If the Module was *not* added automatically, then do not update the targets
+		if (!iterator.currentData()) continue;
+
+		module->copyTargetSamples(this);
+		module->copyTargetConfigurations(this);
+
+		// Also may need to update dependent targets of this Module...
+		module->updateDependentTargets();
+	}
 }
 
 /*

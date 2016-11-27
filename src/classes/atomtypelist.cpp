@@ -84,6 +84,15 @@ int AtomTypeList::add(AtomType* atomType, Isotope* tope, int popAdd)
 	return index;
 }
 
+// Zero populations of all types in the list
+void AtomTypeList::zero()
+{
+	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next)
+	{
+		atd->zero();
+	}
+}
+
 // Return number of AtomType/Isotopes in list
 int AtomTypeList::nItems() const
 {

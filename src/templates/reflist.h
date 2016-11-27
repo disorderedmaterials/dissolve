@@ -611,6 +611,13 @@ template <class T, class D> class RefListIterator
 
 		return (currentItem_ ? currentItem_->item : NULL);
 	}
+	// Return current data
+	D currentData()
+	{
+		if (finished_) return D();
+
+		return (currentItem_ ? currentItem_->data : D());
+	}
 	// Restart iteration
 	void restart()
 	{

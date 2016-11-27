@@ -64,7 +64,9 @@ class Sample : public ModuleList, public ListItem<Sample>
 	private:
 	// List of IsotopologueMix-tures for Species in this Sample
 	List<IsotopologueMix> isotopologueMixtures_;
-	
+	// Type list for this Sample
+	AtomTypeList atomTypes_;
+
 	public:
 	// Update IsotopologueMix data
 	void updateIsotopologueMixtures(const List<Species>& species);
@@ -78,12 +80,14 @@ class Sample : public ModuleList, public ListItem<Sample>
 	IsotopologueMix* isotopologueMixture(int n);
 	// Assign default (first) Isotopologues for all Species
 	void assignDefaultIsotopes();
-	// Type list for this Sample
-	AtomTypeList atomTypes_;
 
 	public:
 	// Create type list
 	bool createTypeList(const List<Species>& allSpecies, const List<AtomType>& masterIndex);
+	// Return AtomTypeList
+	AtomTypeList& atomTypes();
+	// Return number of used AtomTypes
+	int nUsedTypes();
 
 
 	/*

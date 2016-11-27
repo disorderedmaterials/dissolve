@@ -93,6 +93,16 @@ bool DUQ::go()
 		}
 		Messenger::print("\n");
 
+		Messenger::print("--> Sample Processing\n");
+		for (Sample* sam = samples_.first(); sam != NULL; sam = sam->next)
+		{
+			Messenger::print("   * '%s'\n", sam->name());
+			if (sam->nModules() == 0) Messenger::print("  (( No Tasks ))\n");
+			RefListIterator<Module,bool> modIterator(sam->modules());
+			while (Module* module = modIterator.iterate()) Messenger::print("      --> %20s  (%s)\n", module->name(), module->frequencyDetails(iteration_));
+		}
+		Messenger::print("\n");
+
 		Messenger::print("--> Post-Processing\n");
 		if (postProcessingTasks_.nItems() == 0) Messenger::print("  (( No Tasks ))\n");
 		RefListIterator<Module,bool> postIterator(postProcessingTasks_);
@@ -158,9 +168,10 @@ bool DUQ::go()
 				Messenger::print("\n");
 				result = module->process(*this, cfg->processPool());
 
-				if (!result) break;
+				if (!result) return false;
 			}
 		}
+		if (!result) return false;
 
 		// Sync up all processes
 		worldPool_.wait(ProcessPool::Pool);
@@ -187,10 +198,33 @@ bool DUQ::go()
 		 *  4)	Run Modules for all Samples (using worldPool_)
 		 */
 		Messenger::banner("Sample Processing");
+		for (Sample* sam = samples_.first(); sam != NULL; sam = sam->next)
+		{
+			Messenger::print("\n");
+			Messenger::print("--> Sample '%s'\n", sam->name());
 
-		// TODO
+			// Loop over Modules defined in the Configuration
+			RefListIterator<Module,bool> moduleIterator(sam->modules());
+			while (Module* module = moduleIterator.iterate())
+			{
+				if (!module->runThisIteration(iteration_)) continue;
 
+				Messenger::print("\n");
+				result = module->process(*this, worldPool_);
 
+				if (!result)
+				{
+					Messenger::error("Module '%s' experienced errors. Exiting now.\n", module->name());
+					return false;
+				}
+			}
+		}
+		
+
+		// Sync up all processes
+		worldPool_.wait(ProcessPool::Pool);
+
+		
 		/*
 		 *  5)	Perform post-processing tasks (using worldPool_)
 		 */

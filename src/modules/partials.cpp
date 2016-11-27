@@ -138,7 +138,7 @@ int Partials::nTargetableSamples()
 // Perform setup tasks for module
 bool Partials::setup(ProcessPool& procPool)
 {
-	return true;
+	return false;
 }
 
 // Execute pre-processing stage
@@ -162,7 +162,21 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 
 	if (targetSamples_.nItems() > 0)
 	{
-		// TODO Assemble partials from all Configurations specified, weighting them accordingly
+		// Assemble partials from all Configurations specified, weighting them accordingly
+		Sample* sam = targetSamples_.firstItem();
+
+		// First, construct the weights matrix for the Sample, using atomtype populations from the referenced Configurations
+		// We will need to work out the fractional atomtype populations and how to weight them.
+		AtomTypeList sampleTypes = sam->atomTypes();
+		sampleTypes.zero();
+
+// 		weightsMatrix.initialise(sam->nUsedTypes(), sam->nUsedTypes(), true);
+// 		RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
+// 		while (Configuration* cfg = configIterator.iterate())
+
+// 		Array2D<double> weightsMatrix;
+
+		return false;
 	}
 	else
 	{
