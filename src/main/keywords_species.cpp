@@ -36,28 +36,28 @@ KeywordData SpeciesBlockData[] = {
 };
 
 // Convert text string to SpeciesKeyword
-Keywords::SpeciesKeyword Keywords::speciesKeyword(const char* s)
+SpeciesBlock::SpeciesKeyword SpeciesBlock::keyword(const char* s)
 {
-	for (int n=0; n<nSpeciesKeywords; ++n) if (DUQSys::sameString(s,SpeciesBlockData[n].name)) return (Keywords::SpeciesKeyword) n;
+	for (int n=0; n<nSpeciesKeywords; ++n) if (DUQSys::sameString(s,SpeciesBlockData[n].name)) return (SpeciesBlock::SpeciesKeyword) n;
 	return nSpeciesKeywords;
 }
 
 // Convert SpeciesKeyword to text string
-const char* Keywords::speciesKeyword(Keywords::SpeciesKeyword id)
+const char* SpeciesBlock::keyword(SpeciesBlock::SpeciesKeyword id)
 {
 	return SpeciesBlockData[id].name;
 }
 
 // Return minimum number of expected arguments
-int Keywords::speciesBlockNArguments(Keywords::SpeciesKeyword id)
+int SpeciesBlock::nArguments(SpeciesBlock::SpeciesKeyword id)
 {
 	return SpeciesBlockData[id].nArguments;
 }
 
 // Parse Species block
-bool Keywords::parseSpeciesBlock(LineParser& parser, DUQ* duq, Species* species)
+bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 {
-	Messenger::print("Parsing %s '%s'\n", Keywords::inputBlock(Keywords::SpeciesBlock), species->name());
+	Messenger::print("\nParsing %s '%s'\n", InputBlocks::inputBlock(InputBlocks::SpeciesBlock), species->name());
 
 	int el;
 	Dnchar arg1, arg2;
@@ -74,16 +74,16 @@ bool Keywords::parseSpeciesBlock(LineParser& parser, DUQ* duq, Species* species)
 	{
 		// Read in a line, which should contain a keyword and a minimum number of arguments
 		parser.getArgsDelim(duq->worldPool(), LineParser::SkipBlanks+LineParser::UseQuotes);
-		Keywords::SpeciesKeyword spKeyword = Keywords::speciesKeyword(parser.argc(0));
-		if ((spKeyword != Keywords::nSpeciesKeywords) && ((parser.nArgs()-1) < Keywords::speciesBlockNArguments(spKeyword)))
+		SpeciesBlock::SpeciesKeyword spKeyword = SpeciesBlock::keyword(parser.argc(0));
+		if ((spKeyword != SpeciesBlock::nSpeciesKeywords) && ((parser.nArgs()-1) < SpeciesBlock::nArguments(spKeyword)))
 		{
-			Messenger::error("Not enough arguments given to '%s' keyword.\n", Keywords::speciesKeyword(spKeyword));
+			Messenger::error("Not enough arguments given to '%s' keyword.\n", SpeciesBlock::keyword(spKeyword));
 			error = true;
 			break;
 		}
 		switch (spKeyword)
 		{
-			case (Keywords::AngleKeyword):
+			case (SpeciesBlock::AngleKeyword):
 				a = species->addAngle(parser.argi(1)-1, parser.argi(2)-1, parser.argi(3)-1);
 				if (a)
 				{
@@ -92,11 +92,11 @@ bool Keywords::parseSpeciesBlock(LineParser& parser, DUQ* duq, Species* species)
 				}
 				else error = true;
 				break;
-			case (Keywords::AtomKeyword):
+			case (SpeciesBlock::AtomKeyword):
 				el = PeriodicTable::find(parser.argc(2));
 				if (el == -1)
 				{
-					Messenger::error("Unrecognised element symbol '%s' found in %s keyword.\n", parser.argc(2), Keywords::speciesKeyword(Keywords::AtomKeyword));
+					Messenger::error("Unrecognised element symbol '%s' found in %s keyword.\n", parser.argc(2), SpeciesBlock::keyword(SpeciesBlock::AtomKeyword));
 					el = 0;
 					error = true;
 					break;
@@ -118,7 +118,7 @@ bool Keywords::parseSpeciesBlock(LineParser& parser, DUQ* duq, Species* species)
 				}
 				i->setAtomType(at);
 				break;
-			case (Keywords::BondKeyword):
+			case (SpeciesBlock::BondKeyword):
 				b = species->addBond(parser.argi(1)-1, parser.argi(2)-1);
 				if (b)
 				{
@@ -127,7 +127,7 @@ bool Keywords::parseSpeciesBlock(LineParser& parser, DUQ* duq, Species* species)
 				}
 				else error = true;
 				break;
-			case (Keywords::EndSpeciesKeyword):
+			case (SpeciesBlock::EndSpeciesKeyword):
 				species->updateGrains();
 				species->centreAtOrigin();
 				species->orderAtomsWithinGrains();
@@ -137,7 +137,7 @@ bool Keywords::parseSpeciesBlock(LineParser& parser, DUQ* duq, Species* species)
 				Messenger::print("Found end of Species '%s'.\n", species->name());
 				blockDone = true;
 				break;
-			case (Keywords::GrainKeyword):
+			case (SpeciesBlock::GrainKeyword):
 				sg = species->addGrain();
 				sg->setName(species->uniqueGrainName(parser.argc(1)));
 				Messenger::print("--> Added grain definition '%s' to Species '%s'\n", sg->name(), species->name());
@@ -152,7 +152,7 @@ bool Keywords::parseSpeciesBlock(LineParser& parser, DUQ* duq, Species* species)
 					else species->addAtomToGrain(i, sg);
 				}
 				break;
-			case (Keywords::IsotopologueKeyword):
+			case (SpeciesBlock::IsotopologueKeyword):
 				iso = species->addIsotopologue(species->uniqueIsotopologueName(parser.argc(1)));
 				duq->updateIsotopologues(species, iso);
 				Messenger::print("--> Added Isotopologue '%s' to Species '%s'\n", iso->name(), species->name());
@@ -185,13 +185,13 @@ bool Keywords::parseSpeciesBlock(LineParser& parser, DUQ* duq, Species* species)
 					iso->setAtomTypeIsotope(at, tope);
 				}
 				break;
-			case (Keywords::nSpeciesKeywords):
-				Messenger::error("Unrecognised %s block keyword found - '%s'\n", Keywords::inputBlock(Keywords::SpeciesBlock), parser.argc(0));
-				Keywords::printValidKeywords(Keywords::SpeciesBlock);
+			case (SpeciesBlock::nSpeciesKeywords):
+				Messenger::error("Unrecognised %s block keyword found - '%s'\n", InputBlocks::inputBlock(InputBlocks::SpeciesBlock), parser.argc(0));
+				InputBlocks::printValidKeywords(InputBlocks::SpeciesBlock);
 				error = true;
 				break;
 			default:
-				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", Keywords::inputBlock(Keywords::SpeciesBlock), Keywords::speciesKeyword(spKeyword));
+				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", InputBlocks::inputBlock(InputBlocks::SpeciesBlock), SpeciesBlock::keyword(spKeyword));
 				error = true;
 				break;
 		}

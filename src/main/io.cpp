@@ -85,9 +85,6 @@ bool DUQ::loadSpecies(const char* filename)
 	Isotopologue* iso = newSpecies->addIsotopologue("Natural");
 	updateIsotopologues(newSpecies, iso);
 
-	// Must update all existing Samples, so that this Species is added to them...
-	updateSamples();
-
 	return true;
 }
 
@@ -116,7 +113,7 @@ bool DUQ::loadInput(const char* filename)
 	Configuration* cfg;
 	Sample* sam;
 	Species* sp;
-	Keywords::InputBlock block;
+	InputBlocks::InputBlock block;
 	bool error = false;
 
 	while (!parser.eofOrBlank(worldPool()))
@@ -124,13 +121,13 @@ bool DUQ::loadInput(const char* filename)
 		// Master will read the next line from the file, and broadcast it to slaves (who will then parse it)
 		if (parser.getArgsDelim(worldPool(), LineParser::SkipBlanks+LineParser::StripComments+LineParser::UseQuotes) != 0) break;
 
-		block = Keywords::inputBlock(parser.argc(0));
+		block = InputBlocks::inputBlock(parser.argc(0));
 		switch (block)
 		{
-			case (Keywords::AtomTypesBlock):
-				if (!Keywords::parseAtomTypesBlock(parser, this)) error = true;
+			case (InputBlocks::AtomTypesBlock):
+				if (!AtomTypesBlock::parse(parser, this)) error = true;
 				break;
-			case (Keywords::ConfigurationBlock):
+			case (InputBlocks::ConfigurationBlock):
 				// Check to see if a Configuration with this name already exists...
 				if (findConfiguration(parser.argc(1)))
 				{
@@ -141,12 +138,12 @@ bool DUQ::loadInput(const char* filename)
 				cfg = configurations_.add();
 				cfg->setName(parser.argc(1));
 				Messenger::print("Created Configuration '%s'...\n", cfg->name());
-				if (!Keywords::parseConfigurationBlock(parser, this, cfg)) error = true;
+				if (!ConfigurationBlock::parse(parser, this, cfg)) error = true;
 				break;
-			case (Keywords::PairPotentialsBlock):
-				if (!Keywords::parsePairPotentialsBlock(parser, this)) error = true;
+			case (InputBlocks::PairPotentialsBlock):
+				if (!PairPotentialsBlock::parse(parser, this)) error = true;
 				break;
-			case (Keywords::SampleBlock):
+			case (InputBlocks::SampleBlock):
 				// Check to see if a Sample with this name already exists...
 				if (findSample(parser.argc(1)))
 				{
@@ -155,12 +152,12 @@ bool DUQ::loadInput(const char* filename)
 					break;
 				}
 				sam = addSample(parser.argc(1));
-				if (!Keywords::parseSampleBlock(parser, this, sam)) error = true;
+				if (!SampleBlock::parse(parser, this, sam)) error = true;
 				break;
-			case (Keywords::SimulationBlock):
-				if (!Keywords::parseSimulationBlock(parser, this)) error = true;
+			case (InputBlocks::SimulationBlock):
+				if (!SimulationBlock::parse(parser, this)) error = true;
 				break;
-			case (Keywords::SpeciesBlock):
+			case (InputBlocks::SpeciesBlock):
 				// Check to see if a Species with this name already exists...
 				if (findSpecies(parser.argc(1)))
 				{
@@ -170,14 +167,14 @@ bool DUQ::loadInput(const char* filename)
 				}
 				sp = addSpecies();
 				sp->setName(parser.argc(1));
-				if (!Keywords::parseSpeciesBlock(parser, this, sp)) error = true;
+				if (!SpeciesBlock::parse(parser, this, sp)) error = true;
 				break;
-			case (Keywords::nInputBlocks):
+			case (InputBlocks::nInputBlocks):
 				Messenger::error("Unrecognised input block found - '%s'\n", parser.argc(0));
 				error = true;
 				break;
 			default:
-				printf("DEV_OOPS - Input block keyword '%s' not accounted for.\n", Keywords::inputBlock(block));
+				printf("DEV_OOPS - Input block keyword '%s' not accounted for.\n", InputBlocks::inputBlock(block));
 				error = true;
 				break;
 		}

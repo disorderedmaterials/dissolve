@@ -93,7 +93,7 @@ class Configuration : public ModuleList, public ListItem<Configuration>
 	// Add Species to list of those used by the Configuration
 	bool addUsedSpecies(Species* sp, double relativePopulation);
 	// Return reference list of Species used by the Configuration and their relative populations
-	RefListItem<Species,double>* usedSpecies();
+	RefList<Species,double>& usedSpecies();
 	// Return total relative population of Species used by this Configuration
 	double totalRelative() const;
 	// Set multiplier for System components

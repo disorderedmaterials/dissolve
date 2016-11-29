@@ -31,28 +31,28 @@ KeywordData AtomTypesBlockData[] = {
 };
 
 // Convert text string to AtomTypesKeyword
-Keywords::AtomTypesKeyword Keywords::atomTypesKeyword(const char* s)
+AtomTypesBlock::AtomTypesKeyword AtomTypesBlock::keyword(const char* s)
 {
-	for (int n=0; n<nAtomTypesKeywords; ++n) if (DUQSys::sameString(s,AtomTypesBlockData[n].name)) return (Keywords::AtomTypesKeyword) n;
+	for (int n=0; n<nAtomTypesKeywords; ++n) if (DUQSys::sameString(s,AtomTypesBlockData[n].name)) return (AtomTypesBlock::AtomTypesKeyword) n;
 	return nAtomTypesKeywords;
 }
 
 // Convert AtomTypesKeyword to text string
-const char* Keywords::atomTypesKeyword(Keywords::AtomTypesKeyword id)
+const char* AtomTypesBlock::keyword(AtomTypesBlock::AtomTypesKeyword id)
 {
 	return AtomTypesBlockData[id].name;
 }
 
 // Return minimum number of expected arguments
-int Keywords::atomTypesBlockNArguments(Keywords::AtomTypesKeyword id)
+int AtomTypesBlock::nArguments(AtomTypesBlock::AtomTypesKeyword id)
 {
 	return AtomTypesBlockData[id].nArguments;
 }
 
 // Parse AtomTypes block
-bool Keywords::parseAtomTypesBlock(LineParser& parser, DUQ* duq)
+bool AtomTypesBlock::parse(LineParser& parser, DUQ* duq)
 {
-	Messenger::print("Parsing %s block\n", Keywords::inputBlock(Keywords::AtomTypesBlock));
+	Messenger::print("\nParsing %s block...\n", InputBlocks::inputBlock(InputBlocks::AtomTypesBlock));
 	
 	int el;
 	AtomType* at;
@@ -63,20 +63,20 @@ bool Keywords::parseAtomTypesBlock(LineParser& parser, DUQ* duq)
 	{
 		// Read in a line, which should contain a keyword and a minimum number of arguments
 		parser.getArgsDelim(duq->worldPool(), LineParser::SkipBlanks+LineParser::UseQuotes);
-		Keywords::AtomTypesKeyword atKeyword = Keywords::atomTypesKeyword(parser.argc(0));
-		if ((atKeyword != Keywords::nAtomTypesKeywords) && ((parser.nArgs()-1) < Keywords::atomTypesBlockNArguments(atKeyword)))
+		AtomTypesBlock::AtomTypesKeyword atKeyword = AtomTypesBlock::keyword(parser.argc(0));
+		if ((atKeyword != AtomTypesBlock::nAtomTypesKeywords) && ((parser.nArgs()-1) < AtomTypesBlock::nArguments(atKeyword)))
 		{
-			Messenger::error("Not enough arguments given to '%s' keyword.\n", Keywords::atomTypesKeyword(atKeyword));
+			Messenger::error("Not enough arguments given to '%s' keyword.\n", AtomTypesBlock::keyword(atKeyword));
 			error = true;
 			break;
 		}
 		switch (atKeyword)
 		{
-			case (Keywords::AtomTypeKeyword):
+			case (AtomTypesBlock::AtomTypeKeyword):
 				el = PeriodicTable::find(parser.argc(2));
 				if (el == -1)
 				{
-					Messenger::error("Unrecognised element symbol '%s' found in %s keyword.\n", parser.argc(2), Keywords::atomTypesKeyword(Keywords::AtomTypeKeyword));
+					Messenger::error("Unrecognised element symbol '%s' found in %s keyword.\n", parser.argc(2), AtomTypesBlock::keyword(AtomTypesBlock::AtomTypeKeyword));
 					el = 0;
 					error = true;
 					break;
@@ -93,16 +93,16 @@ bool Keywords::parseAtomTypesBlock(LineParser& parser, DUQ* duq)
 				at->setName(parser.argc(1));
 				at->setParameters(params);
 				break;
-			case (Keywords::EndAtomTypesKeyword):
+			case (AtomTypesBlock::EndAtomTypesKeyword):
 				blockDone = true;
 				break;
-			case (Keywords::nAtomTypesKeywords):
-				Messenger::error("Unrecognised %s block keyword found - '%s'\n", Keywords::inputBlock(Keywords::AtomTypesBlock), parser.argc(0));
-				Keywords::printValidKeywords(Keywords::AtomTypesBlock);
+			case (AtomTypesBlock::nAtomTypesKeywords):
+				Messenger::error("Unrecognised %s block keyword found - '%s'\n", InputBlocks::inputBlock(InputBlocks::AtomTypesBlock), parser.argc(0));
+				InputBlocks::printValidKeywords(InputBlocks::AtomTypesBlock);
 				error = true;
 				break;
 			default:
-				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", Keywords::inputBlock(Keywords::AtomTypesBlock), Keywords::atomTypesKeyword(atKeyword));
+				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", InputBlocks::inputBlock(InputBlocks::AtomTypesBlock), AtomTypesBlock::keyword(atKeyword));
 				error = true;
 				break;
 		}

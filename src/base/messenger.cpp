@@ -60,32 +60,44 @@ void Messenger::setMasterOnly(bool b)
 // Master text creation / formatting routine
 void Messenger::createText(const char* indentText, const char* format, va_list arguments)
 {
+	// Reset main text string storage
 	text_[0] = '\0';
-	
-	// First, vsprintf the supplied format/arguments into workingText_, prepending a newline to it
-	Dnchar newFormat;
-	newFormat.sprintf("\n%s", format);
-	vsprintf(workingText_, newFormat.get(), arguments);
 
+	// First, vsprintf the supplied format/arguments into workingText_
+	vsprintf(workingText_, format, arguments);
+	
 	// Now, use strtok to split the workingText_ up into lines, prepending the indentText and/or process id to each
 	Dnchar prependedLine;
-	char* line = strtok(workingText_, "\n");
-	while (line != NULL)
+	char* startChar = workingText_;
+	char* endChar = workingText_;
+	bool lastPart = (*endChar == '\0');
+	while (!lastPart)
 	{
+		// Find end position of next segment, which is either a newline or NULL (if it is the latter, note that it is the true end of the string)
+		// We will set this end position to be NULL regardless, since a newline will be appended in the next part
+		while ((*endChar != '\n') && (*endChar != '\0')) endChar++;
+		if (*endChar == '\0') lastPart = true;
+		*endChar = '\0';
+
 		// If we were given some 'indentText', print copies of it before the message
 		if (indentText != NULL)
 		{
-			if (redirect_ || (ProcessPool::nWorldProcesses() == 1)) prependedLine.sprintf("%s %s\n", indentText, line);
-			else prependedLine.sprintf("[%i] %s %s\n", ProcessPool::worldRank(), indentText, line);
+			if (redirect_ || (ProcessPool::nWorldProcesses() == 1)) prependedLine.sprintf("%s %s\n", indentText, startChar);
+			else prependedLine.sprintf("[%i] %s %s\n", ProcessPool::worldRank(), indentText, startChar);
 		}
 		else
 		{
-			if (redirect_ || (ProcessPool::nWorldProcesses() == 1)) prependedLine.sprintf("%s\n", line);
-			else prependedLine.sprintf("[%i] %s\n", ProcessPool::worldRank(), line);
+			if (redirect_ || (ProcessPool::nWorldProcesses() == 1)) prependedLine.sprintf("%s\n", startChar);
+			else prependedLine.sprintf("[%i] %s\n", ProcessPool::worldRank(), startChar);
 		}
 		strcat(text_, prependedLine.get());
 
-		line = strtok(NULL, "\n");
+		// Move our endChar position to the next character, and set the startChar to this position as well
+		++endChar;
+		startChar = endChar;
+
+		// Make an additional check for this being the actual string terminator
+		if (*endChar == '\0') break;
 	}
 }
 

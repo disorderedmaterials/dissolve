@@ -38,27 +38,27 @@ KeywordData PairPotentialsBlockData[] = {
 int PairPotentialsBlockNArguments[] = { 4, 1, 4, 0, 6, 1, 1 };
 
 // Convert text string to PairPotentialsKeyword
-Keywords::PairPotentialsKeyword Keywords::pairPotentialsKeyword(const char* s)
+PairPotentialsBlock::PairPotentialsKeyword PairPotentialsBlock::keyword(const char* s)
 {
-	for (int n=0; n<Keywords::nPairPotentialsKeywords; ++n) if (DUQSys::sameString(s,PairPotentialsBlockData[n].name)) return (Keywords::PairPotentialsKeyword) n;
-	return Keywords::nPairPotentialsKeywords;
+	for (int n=0; n<PairPotentialsBlock::nPairPotentialsKeywords; ++n) if (DUQSys::sameString(s,PairPotentialsBlockData[n].name)) return (PairPotentialsBlock::PairPotentialsKeyword) n;
+	return PairPotentialsBlock::nPairPotentialsKeywords;
 }
 
 // Convert PairPotentialsKeyword to text string
-const char* Keywords::pairPotentialsKeyword(Keywords::PairPotentialsKeyword id)
+const char* PairPotentialsBlock::keyword(PairPotentialsBlock::PairPotentialsKeyword id)
 {
 	return PairPotentialsBlockData[id].name;
 }
 
 // Return minimum number of expected arguments
-int Keywords::pairPotentialsBlockNArguments(Keywords::PairPotentialsKeyword id)
+int PairPotentialsBlock::nArguments(PairPotentialsBlock::PairPotentialsKeyword id)
 {
 	return PairPotentialsBlockData[id].nArguments;
 }
 // Parse PairPotentials block
-bool Keywords::parsePairPotentialsBlock(LineParser& parser, DUQ* duq)
+bool PairPotentialsBlock::parse(LineParser& parser, DUQ* duq)
 {
-	Messenger::print("Parsing %s block\n", Keywords::inputBlock(Keywords::PairPotentialsBlock));
+	Messenger::print("\nParsing %s block...\n", InputBlocks::inputBlock(InputBlocks::PairPotentialsBlock));
 
 	AtomType* at, *at2;
 	PairPotential* pot;
@@ -68,18 +68,18 @@ bool Keywords::parsePairPotentialsBlock(LineParser& parser, DUQ* duq)
 	{
 		// Read in a line, which should contain a keyword and a minimum number of arguments
 		parser.getArgsDelim(duq->worldPool(), LineParser::SkipBlanks+LineParser::UseQuotes);
-		Keywords::PairPotentialsKeyword ppKeyword = Keywords::pairPotentialsKeyword(parser.argc(0));
-		if ((ppKeyword != Keywords::nPairPotentialsKeywords) && ((parser.nArgs()-1) < Keywords::pairPotentialsBlockNArguments(ppKeyword)))
+		PairPotentialsBlock::PairPotentialsKeyword ppKeyword = PairPotentialsBlock::keyword(parser.argc(0));
+		if ((ppKeyword != PairPotentialsBlock::nPairPotentialsKeywords) && ((parser.nArgs()-1) < PairPotentialsBlock::nArguments(ppKeyword)))
 		{
-			Messenger::error("Not enough arguments given to '%s' keyword.\n", Keywords::pairPotentialsKeyword(ppKeyword));
+			Messenger::error("Not enough arguments given to '%s' keyword.\n", PairPotentialsBlock::keyword(ppKeyword));
 			error = true;
 			break;
 		}
 		switch (ppKeyword)
 		{
-			case (Keywords::CoulombKeyword):
-			case (Keywords::DispersionKeyword):
-			case (Keywords::FullKeyword):
+			case (PairPotentialsBlock::CoulombKeyword):
+			case (PairPotentialsBlock::DispersionKeyword):
+			case (PairPotentialsBlock::FullKeyword):
 				// Grab AtomTypes first...
 				at = duq->findAtomType(parser.argc(1));
 				at2 = duq->findAtomType(parser.argc(2));
@@ -92,7 +92,7 @@ bool Keywords::parsePairPotentialsBlock(LineParser& parser, DUQ* duq)
 				pot = duq->addPairPotential();
 				pot->setParameters(at, at2);
 				// Pair potential now contains values from the Parameters associated with the AtomTypes, so we will overwrite them...
-				if (ppKeyword == Keywords::CoulombKeyword)
+				if (ppKeyword == PairPotentialsBlock::CoulombKeyword)
 				{
 					if (!parser.hasArg(4))
 					{
@@ -104,7 +104,7 @@ bool Keywords::parsePairPotentialsBlock(LineParser& parser, DUQ* duq)
 					pot->setChargeI(parser.argd(3));
 					pot->setChargeJ(parser.argd(4));
 				}
-				else if (ppKeyword == Keywords::DispersionKeyword)
+				else if (ppKeyword == PairPotentialsBlock::DispersionKeyword)
 				{
 					if (!parser.hasArg(4))
 					{
@@ -131,26 +131,26 @@ bool Keywords::parsePairPotentialsBlock(LineParser& parser, DUQ* duq)
 					pot->setChargeJ(parser.argd(6));
 				}
 				break;
-			case (Keywords::DeltaKeyword):
+			case (PairPotentialsBlock::DeltaKeyword):
 				duq->setPairPotentialDelta(parser.argd(1));
 				break;
-			case (Keywords::EndPairPotentialsKeyword):
-				Messenger::print("Found end of %s block.\n", Keywords::inputBlock(Keywords::PairPotentialsBlock));
+			case (PairPotentialsBlock::EndPairPotentialsKeyword):
+				Messenger::print("Found end of %s block.\n", InputBlocks::inputBlock(InputBlocks::PairPotentialsBlock));
 				blockDone = true;
 				break;
-			case (Keywords::RangeKeyword):
+			case (PairPotentialsBlock::RangeKeyword):
 				duq->setPairPotentialRange(parser.argd(1));
 				break;
-			case (Keywords::TruncationWidthKeyword):
+			case (PairPotentialsBlock::TruncationWidthKeyword):
 				duq->setPairPotentialTruncationWidth(parser.argd(1));
 				break;
-			case (Keywords::nPairPotentialsKeywords):
-				Messenger::error("Unrecognised %s block keyword found - '%s'\n", Keywords::inputBlock(Keywords::PairPotentialsBlock), parser.argc(0));
-				Keywords::printValidKeywords(Keywords::PairPotentialsBlock);
+			case (PairPotentialsBlock::nPairPotentialsKeywords):
+				Messenger::error("Unrecognised %s block keyword found - '%s'\n", InputBlocks::inputBlock(InputBlocks::PairPotentialsBlock), parser.argc(0));
+				InputBlocks::printValidKeywords(InputBlocks::PairPotentialsBlock);
 				error = true;
 				break;
 			default:
-				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", Keywords::inputBlock(Keywords::PairPotentialsBlock), Keywords::pairPotentialsKeyword(ppKeyword));
+				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", InputBlocks::inputBlock(InputBlocks::PairPotentialsBlock), PairPotentialsBlock::keyword(ppKeyword));
 				error = true;
 				break;
 		}

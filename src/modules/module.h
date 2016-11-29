@@ -134,6 +134,8 @@ class Module : public ListItem<Module>
 	int nConfigurationTargets();
 	// Return first targeted Configuration
 	RefList<Configuration,bool>& targetConfigurations();
+	// Return if the specified Configuration is in the targets list
+	bool isTargetConfiguration(Configuration* cfg);
 	// Copy Configuration targets from specified Module
 	void copyTargetConfigurations(Module* sourceModule);
 	// Return the maximum number of Samples the Module can target (or -1 for any number)
@@ -144,6 +146,8 @@ class Module : public ListItem<Module>
 	int nSampleTargets();
 	// Return first targeted Sample
 	RefList<Sample,bool>& targetSamples();
+	// Return if the specified Sample is in the targets list
+	bool isTargetSample(Sample* sam);
 	// Copy Sample targets from specified Module
 	void copyTargetSamples(Module* sourceModule);
 

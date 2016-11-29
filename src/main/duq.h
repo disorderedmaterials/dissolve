@@ -33,6 +33,7 @@ class Atom;
 class Box;
 class Cell;
 class Grain;
+class Isotopologue;
 class Molecule;
 class ChangeStore;
 class ModuleProxyBase;
@@ -117,8 +118,6 @@ class DUQ
 	List<Sample> samples_;
 
 	public:
-	// Update current Samples
-	void updateSamples();
 	// Add Sample
 	Sample* addSample(const char* baseName = "NewSample");
 	// Remove Sample
@@ -129,8 +128,6 @@ class DUQ
 	Sample* sample(int n);
 	// Search for Sample by name
 	Sample* findSample(const char* name) const;
-	// Setup Samples
-	bool setupSamples();
 
 
 	/*

@@ -88,7 +88,7 @@ Module* ModuleList::addModule(Module* module, bool autoAddDependents, RefListIte
 		if (existingModule)
 		{
 			moduleToAdd->addDependentModule(existingModule, false);
-			Messenger::print("Added dependent Module '%s' to Module '%s'.\n", existingModule->uniqueName(), moduleToAdd->uniqueName());
+			Messenger::print("--> Added dependent Module '%s' to Module '%s'.\n", existingModule->uniqueName(), moduleToAdd->uniqueName());
 		}
 		else
 		{

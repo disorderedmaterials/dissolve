@@ -22,12 +22,10 @@
 #ifndef DUQ_SAMPLE_H
 #define DUQ_SAMPLE_H
 
-#include "classes/isotopologuemix.h"
-#include "classes/atomtypelist.h"
-#include "classes/histogram.h"
 #include "modules/modulelist.h"
+#include "base/data2d.h"
 #include "base/dnchar.h"
-#include "templates/reflist.h"
+#include "templates/list.h"
 
 // Forward Declarations
 class Species;
@@ -59,38 +57,6 @@ class Sample : public ModuleList, public ListItem<Sample>
 	
 	
 	/*
-	 * Isotopologue Definition
-	 */
-	private:
-	// List of IsotopologueMix-tures for Species in this Sample
-	List<IsotopologueMix> isotopologueMixtures_;
-	// Type list for this Sample
-	AtomTypeList atomTypes_;
-
-	public:
-	// Update IsotopologueMix data
-	void updateIsotopologueMixtures(const List<Species>& species);
-	// Return whether the Sample contains a mixtures definition for the provided Species
-	IsotopologueMix* hasSpeciesIsotopologueMixture(Species* sp) const;
-	// Add Isotopologue to mixture
-	bool addIsotopologueToMixture(Species* sp, Isotopologue* iso, double relPop);
-	// Return first IsotopologueMix
-	IsotopologueMix* isotopologueMixtures() const;
-	// Return nth IsotopologueMix
-	IsotopologueMix* isotopologueMixture(int n);
-	// Assign default (first) Isotopologues for all Species
-	void assignDefaultIsotopes();
-
-	public:
-	// Create type list
-	bool createTypeList(const List<Species>& allSpecies, const List<AtomType>& masterIndex);
-	// Return AtomTypeList
-	AtomTypeList& atomTypes();
-	// Return number of used AtomTypes
-	int nUsedTypes();
-
-
-	/*
 	 * Reference Data
 	 */
 	private:
@@ -121,7 +87,7 @@ class Sample : public ModuleList, public ListItem<Sample>
 	 */
 	public:
 	// Broadcast data from Master to all Slaves
-	bool broadcast(ProcessPool& procPool, const List<Species>& species);
+	bool broadcast(ProcessPool& procPool);
 };
 
 #endif

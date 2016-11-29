@@ -111,15 +111,6 @@ bool DUQ::setupSimulation()
 	}
 	if (nMissingPots > 0) return false;
 
-	/* Prepare Samples */
-	Messenger::print("\n");
-	Messenger::print("*** Preparing Samples...\n");
-	if (!setupSamples())
-	{
-		Messenger::error("Failed to setup Samples.\n");
-		return false;
-	}
-
 	/* Finalise AtomTypes */
 
 	// Assign indices to atom types

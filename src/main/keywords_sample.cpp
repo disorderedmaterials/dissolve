@@ -27,34 +27,33 @@
 // Sample Block Keywords
 KeywordData SampleBlockData[] = {
 	{ "EndSample",			0,	"Signals the end of the Sample block" },
-	{ "Isotopologue",		3,	"Specifies a Species, Isotopologue, and relative population in this Sample" },
 	{ "Module",			1,	"Starts the setup of a Module for this Sample" },
 	{ "ReferenceData",		1,	"Datafile which represents this Sample" }
 };
 
 // Convert text string to SampleKeyword
-Keywords::SampleKeyword Keywords::sampleKeyword(const char* s)
+SampleBlock::SampleKeyword SampleBlock::keyword(const char* s)
 {
-	for (int n=0; n<Keywords::nSampleKeywords; ++n) if (DUQSys::sameString(s,SampleBlockData[n].name)) return (Keywords::SampleKeyword) n;
-	return Keywords::nSampleKeywords;
+	for (int n=0; n<SampleBlock::nSampleKeywords; ++n) if (DUQSys::sameString(s,SampleBlockData[n].name)) return (SampleBlock::SampleKeyword) n;
+	return SampleBlock::nSampleKeywords;
 }
 
 // Convert SampleKeyword to text string
-const char* Keywords::sampleKeyword(Keywords::SampleKeyword id)
+const char* SampleBlock::keyword(SampleBlock::SampleKeyword id)
 {
 	return SampleBlockData[id].name;
 }
 
 // Return minimum number of expected arguments
-int Keywords::sampleBlockNArguments(Keywords::SampleKeyword id)
+int SampleBlock::nArguments(SampleBlock::SampleKeyword id)
 {
 	return SampleBlockData[id].nArguments;
 }
 
 // Parse Sample block
-bool Keywords::parseSampleBlock(LineParser& parser, DUQ* duq, Sample* sample)
+bool SampleBlock::parse(LineParser& parser, DUQ* duq, Sample* sample)
 {
-	Messenger::print("Parsing %s '%s'\n", Keywords::inputBlock(Keywords::SampleBlock), sample->name());
+	Messenger::print("\nParsing %s '%s'\n", InputBlocks::inputBlock(InputBlocks::SampleBlock), sample->name());
 
 	Species* sp;
 	Isotopologue* iso;
@@ -65,43 +64,20 @@ bool Keywords::parseSampleBlock(LineParser& parser, DUQ* duq, Sample* sample)
 	{
 		// Read in a line, which should contain a keyword and a minimum number of arguments
 		parser.getArgsDelim(duq->worldPool(), LineParser::SkipBlanks+LineParser::UseQuotes);
-		Keywords::SampleKeyword samKeyword = Keywords::sampleKeyword(parser.argc(0));
-		if ((samKeyword != Keywords::nSampleKeywords) && ((parser.nArgs()-1) < Keywords::sampleBlockNArguments(samKeyword)))
+		SampleBlock::SampleKeyword samKeyword = SampleBlock::keyword(parser.argc(0));
+		if ((samKeyword != SampleBlock::nSampleKeywords) && ((parser.nArgs()-1) < SampleBlock::nArguments(samKeyword)))
 		{
-			Messenger::error("Not enough arguments given to '%s' keyword.\n", Keywords::sampleKeyword(samKeyword));
+			Messenger::error("Not enough arguments given to '%s' keyword.\n", SampleBlock::keyword(samKeyword));
 			error = true;
 			break;
 		}
 		switch (samKeyword)
 		{
-			case (Keywords::EndSampleKeyword):
-				Messenger::print("Found end of %s block '%s'.\n", Keywords::inputBlock(Keywords::SampleBlock), sample->name());
+			case (SampleBlock::EndSampleKeyword):
+				Messenger::print("Found end of %s block '%s'.\n", InputBlocks::inputBlock(InputBlocks::SampleBlock), sample->name());
 				blockDone = true;
 				break;
-			case (Keywords::IsotopologueSampleKeyword):
-				// Locate Species first...
-				sp = duq->findSpecies(parser.argc(1));
-				if (sp == NULL)
-				{
-					Messenger::error("Sample refers to Species '%s', but no such Species is defined.\n", parser.argc(1));
-					error = true;
-					break;
-				}
-				
-				// Now locate Isotopologue
-				iso = sp->findIsotopologue(parser.argc(2));
-				if (iso == NULL)
-				{
-					Messenger::error("Sample refers to Isotopologue '%s' in Species '%s', but no such Isotopologue is defined.\n", parser.argc(2), parser.argc(1));
-					error = true;
-					break;
-				}
-
-				// OK to add 
-				if (!sample->addIsotopologueToMixture(sp, iso, parser.argd(3))) error = true;
-				else Messenger::print("--> Added Isotopologue '%s' (Species '%s') to Sample '%s' (%f relative population).\n", iso->name(), sp->name(), sample->name(), parser.argd(3));
-				break;
-			case (Keywords::SampleModuleKeyword):
+			case (SampleBlock::ModuleKeyword):
 				// The argument following the keyword is the module name
 				module = ModuleList::findMasterInstance(parser.argc(1));
 				if (!module)
@@ -130,25 +106,25 @@ bool Keywords::parseSampleBlock(LineParser& parser, DUQ* duq, Sample* sample)
 				if (error) break;
 
 				// Parse rest of Module block
-				if (!parseModuleBlock(parser, duq, module, NULL, sample)) error = true;
+				if (!ModuleBlock::parse(parser, duq, module, NULL, sample)) error = true;
 
 				// Now finished parsing the Module block, so must update target Samples and Configurations in any auto-added Modules
 				module->updateDependentTargets();
 				break;
-			case (Keywords::ReferenceDataKeyword):
+			case (SampleBlock::ReferenceDataKeyword):
 				if (!sample->loadReferenceData(parser.argc(1)))
 				{
 					error = true;
 					break;
 				}
 				break;
-			case (Keywords::nSampleKeywords):
-				Messenger::error("Unrecognised %s block keyword found - '%s'\n", Keywords::inputBlock(Keywords::SampleBlock), parser.argc(0));
-				Keywords::printValidKeywords(Keywords::SampleBlock);
+			case (SampleBlock::nSampleKeywords):
+				Messenger::error("Unrecognised %s block keyword found - '%s'\n", InputBlocks::inputBlock(InputBlocks::SampleBlock), parser.argc(0));
+				InputBlocks::printValidKeywords(InputBlocks::SampleBlock);
 				error = true;
 				break;
 			default:
-				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", Keywords::inputBlock(Keywords::SampleBlock), Keywords::sampleKeyword(samKeyword));
+				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", InputBlocks::inputBlock(InputBlocks::SampleBlock), SampleBlock::keyword(samKeyword));
 				error = true;
 				break;
 		}

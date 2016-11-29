@@ -185,6 +185,12 @@ RefList<Configuration,bool>& Module::targetConfigurations()
 	return targetConfigurations_;
 }
 
+// Return if the specified Configuration is in the targets list
+bool Module::isTargetConfiguration(Configuration* cfg)
+{
+	return targetConfigurations_.contains(cfg);
+}
+
 // Copy Configuration targets from specified Module
 void Module::copyTargetConfigurations(Module* sourceModule)
 {
@@ -226,6 +232,12 @@ int Module::nSampleTargets()
 RefList<Sample,bool>& Module::targetSamples()
 {
 	return targetSamples_;
+}
+
+// Return if the specified Sample is in the targets list
+bool Module::isTargetSample(Sample* sam)
+{
+	return targetSamples_.contains(sam);
 }
 
 // Copy Sample targets from specified Module

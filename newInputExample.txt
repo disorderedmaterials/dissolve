@@ -33,22 +33,6 @@ Species 'Water'
   Isotopologue  'Deuteriated'  OW=0  HW=2
 EndSpecies
 
-# Reference Data
-Sample 'NIMROD-Protiated'
-  # Define the isotopologues of any species relevant to this dataset
-  Isotopologue  'Water'  'Natural'  1.000000  1.000000
-  # Provide reference data if available / required
-  #ReferenceData 'test/water/H2O.mint01'
-EndSample
-
-Sample 'NIMROD-Deuteriated'
-  Isotopologue  'Water'  'Deuteriated'  1.000000  1.000000
-  ReferenceData 'test/water/D2O.mint01'
-  #Module StructureFactor
-  #  QDepBroadening 0.02    # For SLS
-  #EndModule
-EndSample
-
 # Define Configuration(s)
 Configuration  'Bulk'
   RDFRange  15.0
@@ -126,6 +110,22 @@ Configuration  'Bulk2'
     Frequency 5
   EndModule
 EndConfiguration
+
+# Reference Data
+Sample 'NIMROD-Protiated'
+  #Isotopologue  'Water'  'Natural'  1.000000  1.000000  DEFAULTS?????
+  ## Provide reference data if available / required
+  #ReferenceData 'test/water/H2O.mint01'
+EndSample
+
+Sample 'NIMROD-Deuteriated'
+  ReferenceData 'test/water/D2O.mint01'
+  Module StructureFactor
+    QDepBroadening 0.02    # For SLS
+    Configuration  'Bulk'
+    Isotopologue  'Bulk'  'Water'  'Deuteriated'  1.0
+  EndModule
+EndSample
 
 # Pair Potentials
 PairPotentials

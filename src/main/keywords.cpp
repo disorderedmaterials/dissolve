@@ -22,38 +22,37 @@
 #include "main/keywords.h"
 #include "base/sysfunc.h"
 #include "base/messenger.h"
-#include <string.h>
 
 // Print list of valid keywords for InputBlock specified
-void Keywords::printValidKeywords(Keywords::InputBlock block)
+void InputBlocks::printValidKeywords(InputBlocks::InputBlock block)
 {
 	Messenger::print("Valid Keywords for '%s' block are:\n", inputBlock(block));
 	int n;
 	switch (block)
 	{
-		case (Keywords::AtomTypesBlock):
-			for (n=0; n<Keywords::nAtomTypesKeywords; ++n) Messenger::print("%s%s", n == 0 ? "" : ", ", atomTypesKeyword( (AtomTypesKeyword) n ));
+		case (InputBlocks::AtomTypesBlock):
+			for (n=0; n<AtomTypesBlock::nAtomTypesKeywords; ++n) Messenger::print("%s%s", n == 0 ? "" : ", ", AtomTypesBlock::keyword( (AtomTypesBlock::AtomTypesKeyword) n ));
 			break;
-		case (Keywords::ConfigurationBlock):
-			for (n=0; n<Keywords::nConfigurationKeywords; ++n) Messenger::print("%s%s", n == 0 ? "" : ", ", configurationKeyword( (ConfigurationKeyword) n ));
+		case (InputBlocks::ConfigurationBlock):
+			for (n=0; n<ConfigurationBlock::nConfigurationKeywords; ++n) Messenger::print("%s%s", n == 0 ? "" : ", ", ConfigurationBlock::keyword( (ConfigurationBlock::ConfigurationKeyword) n ));
 			break;
-		case (Keywords::ModuleBlock):
-			for (n=0; n<Keywords::nModuleKeywords; ++n) Messenger::print("%s%s", n == 0 ? "" : ", ", moduleKeyword( (ModuleKeyword) n ));
+		case (InputBlocks::ModuleBlock):
+			for (n=0; n<ModuleBlock::nModuleKeywords; ++n) Messenger::print("%s%s", n == 0 ? "" : ", ", ModuleBlock::keyword( (ModuleBlock::ModuleKeyword) n ));
 			break;
-		case (Keywords::PairPotentialsBlock):
-			for (n=0; n<Keywords::nPairPotentialsKeywords; ++n) Messenger::print("%s%s", n == 0 ? "" : ", ", pairPotentialsKeyword( (PairPotentialsKeyword) n ));
+		case (InputBlocks::PairPotentialsBlock):
+			for (n=0; n<PairPotentialsBlock::nPairPotentialsKeywords; ++n) Messenger::print("%s%s", n == 0 ? "" : ", ", PairPotentialsBlock::keyword( (PairPotentialsBlock::PairPotentialsKeyword) n ));
 			break;
-		case (Keywords::SampleBlock):
-			for (n=0; n<Keywords::nSampleKeywords; ++n) Messenger::print("%s%s", n == 0 ? "" : ", ", sampleKeyword( (SampleKeyword) n ));
+		case (InputBlocks::SampleBlock):
+			for (n=0; n<SampleBlock::nSampleKeywords; ++n) Messenger::print("%s%s", n == 0 ? "" : ", ", SampleBlock::keyword( (SampleBlock::SampleKeyword) n ));
 			break;
 			break;
-		case (Keywords::SimulationBlock):
-			for (n=0; n<Keywords::nSimulationKeywords; ++n) Messenger::print("%s%s", n == 0 ? "" : ", ", simulationKeyword( (SimulationKeyword) n ));
+		case (InputBlocks::SimulationBlock):
+			for (n=0; n<SimulationBlock::nSimulationKeywords; ++n) Messenger::print("%s%s", n == 0 ? "" : ", ", SimulationBlock::keyword( (SimulationBlock::SimulationKeyword) n ));
 			break;
-		case (Keywords::SpeciesBlock):
-			for (n=0; n<Keywords::nSpeciesKeywords; ++n) Messenger::print("%s%s", n == 0 ? "" : ", ", speciesKeyword( (SpeciesKeyword) n ));
+		case (InputBlocks::SpeciesBlock):
+			for (n=0; n<SpeciesBlock::nSpeciesKeywords; ++n) Messenger::print("%s%s", n == 0 ? "" : ", ", SpeciesBlock::keyword( (SpeciesBlock::SpeciesKeyword) n ));
 		default:
-			printf("Unrecognised block given to Keywords::printValidKeywords.\n");
+			printf("Unrecognised block given to InputBlocks::printValidKeywords.\n");
 			break;
 	}
 	Messenger::print("\n");
@@ -67,14 +66,14 @@ void Keywords::printValidKeywords(Keywords::InputBlock block)
 const char* InputBlockKeywords[] = { "AtomTypes", "Configuration", "Module", "PairPotentials", "Sample", "Simulation", "Species" };
 
 // Convert text string to InputBlock
-Keywords::InputBlock Keywords::inputBlock(const char* s)
+InputBlocks::InputBlock InputBlocks::inputBlock(const char* s)
 {
-	for (int n=0; n<Keywords::nInputBlocks; ++n) if (strcmp(s,InputBlockKeywords[n]) == 0) return (Keywords::InputBlock) n;
-	return Keywords::nInputBlocks;
+	for (int n=0; n<InputBlocks::nInputBlocks; ++n) if (DUQSys::sameString(s,InputBlockKeywords[n])) return (InputBlocks::InputBlock) n;
+	return InputBlocks::nInputBlocks;
 }
 
 // Convert InputBlock to text string
-const char* Keywords::inputBlock(Keywords::InputBlock id)
+const char* InputBlocks::inputBlock(InputBlocks::InputBlock id)
 {
 	return InputBlockKeywords[id];
 }

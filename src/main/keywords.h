@@ -42,13 +42,14 @@ class KeywordData
 	const char* argumentDescription;
 };
 
-// Keyword Definitions
-class Keywords
+/*
+ * Main Keyword Blocks
+ */
+namespace InputBlocks
 {
 	/*
 	 * Input Block Keywords
 	 */
-	public:
 	// Input File Block Keyword Enum
 	enum InputBlock
 	{
@@ -62,17 +63,19 @@ class Keywords
 		nInputBlocks			/* Number of defined InputBlock keywords */
 	};
 	// Convert text string to InputBlock
-	static InputBlock inputBlock(const char* s);
+	InputBlock inputBlock(const char* s);
 	// Convert InputBlock to text string
-	static const char* inputBlock(InputBlock id);
+	const char* inputBlock(InputBlock id);
 	// Print list of valid keywords for InputBlock specified
-	static void printValidKeywords(Keywords::InputBlock block);
+	void printValidKeywords(InputBlock block);
+};
 
 
-	/*
-	 * AtomTypes Block Keywords
-	 */
-	public:
+/*
+ * AtomTypes Block Keywords
+ */
+namespace AtomTypesBlock
+{
 	// AtomTypes Block Keyword Enum
 	enum AtomTypesKeyword
 	{
@@ -81,19 +84,21 @@ class Keywords
 		nAtomTypesKeywords		/* Number of keywords defined for this block */
 	};
 	// Convert text string to AtomTypesKeyword
-	static AtomTypesKeyword atomTypesKeyword(const char* s);
+	AtomTypesKeyword keyword(const char* s);
 	// Convert AtomTypesKeyword to text string
-	static const char* atomTypesKeyword(AtomTypesKeyword id);
+	const char* keyword(AtomTypesKeyword id);
 	// Return expected number of expected arguments
-	static int atomTypesBlockNArguments(AtomTypesKeyword id);
+	int nArguments(AtomTypesKeyword id);
 	// Parse AtomTypes block
-	static bool parseAtomTypesBlock(LineParser& parser, DUQ* duq);
+	bool parse(LineParser& parser, DUQ* duq);
+};
 
 
-	/*
-	 * Configuration Block Keywords
-	 */
-	public:
+/*
+ * Configuration Block Keywords
+ */
+namespace ConfigurationBlock
+{
 	// Configuration Block Keyword Enum
 	enum ConfigurationKeyword
 	{
@@ -104,53 +109,59 @@ class Keywords
 		DensityKeyword,			/* 'Density' - Specifies the density of the simulation, along with its units */
 		EndConfigurationKeyword,	/* 'EndConfiguration' - Signals the end of the Configuration block */
 		InputCoordinatesKeyword,	/* 'InputCoordinates' - Specifies the file which contains the starting coordinates */
-		ConfigurationModuleKeyword,	/* 'Module' - Starts the setup of a Module for this configuration */
+		ModuleKeyword,			/* 'Module' - Starts the setup of a Module for this configuration */
 		MultiplierKeyword,		/* 'Multiplier' - Specifies the factor by which relative populations are multiplied when generating the Configuration data */
 		NonPeriodicKeyword,		/* 'NonPeriodic' - States that the simulation should be treated as non-periodic */
 		OutputCoordinatesKeyword,	/* 'OutputCoordinates' - Specifies the file which should contain output coordinates */
 		RDFBinWidthKeyword,		/* 'RDFBinWidth' - Specified bin width for all RDF generation */
-		RDFRangeKeyword,		/* 'RDFRange' - Requested extent for RDF (and subsequent S(Q)) calculation */
+		RDFRangeKeyword,		/* 'RDFRange' - Requested extent for RDF calculation */
 		SpeciesAddKeyword,		/* 'Species' - Specifies a Species and its relative population to add to this Configuration */
 		TemperatureKeyword,		/* 'Temperature' - Defines the temperature of the simulation */
 		UseOutputAsInputKeyword,	/* 'UseOutputAsInput' - "Use output coordinates file as input (if it exists) */
 		nConfigurationKeywords		/* Number of keywords defined for this block */
 	};
 	// Convert text string to ConfigurationKeyword
-	static ConfigurationKeyword configurationKeyword(const char* s);
+	ConfigurationKeyword keyword(const char* s);
 	// Convert ConfigurationKeyword to text string
-	static const char* configurationKeyword(ConfigurationKeyword id);
+	const char* keyword(ConfigurationKeyword id);
 	// Return expected number of expected arguments
-	static int configurationBlockNArguments(ConfigurationKeyword id);
+	int nArguments(ConfigurationKeyword id);
 	// Parse Configuration block
-	static bool parseConfigurationBlock(LineParser& parser, DUQ* duq, Configuration* cfg);
+	bool parse(LineParser& parser, DUQ* duq, Configuration* cfg);
+};
 
 
-	/*
-	 * Module Block Keywords
-	 */
-	public:
+/*
+ * Module Block Keywords
+ */
+namespace ModuleBlock
+{
 	// Module Block Keyword Enum
 	enum ModuleKeyword
 	{
-		DisabledModuleKeyword,		/* 'Disable' - Disables the module from running */
+		ConfigurationKeyword,		/* 'Configuration' - Associates the specified Configuration to this Module */
+		DisableKeyword,			/* 'Disable' - Disables the module, preventing it from running */
 		EndModuleKeyword,		/* 'EndModule' - Signals the end of the Module block */
 		FrequencyKeyword,		/* 'Frequency' - Frequency at which the Module is run */
+		IsotopologueKeyword,		/* 'Isotopologue' - Sets the relative popupalation of a Species Isotopologue in a Configuration */
 		nModuleKeywords			/* Number of keywords defined for this block */
 	};
 	// Convert text string to ModuleKeyword
-	static ModuleKeyword moduleKeyword(const char* s);
+	ModuleKeyword keyword(const char* s);
 	// Convert ModuleKeyword to text string
-	static const char* moduleKeyword(ModuleKeyword id);
+	const char* keyword(ModuleKeyword id);
 	// Return expected number of expected arguments
-	static int moduleBlockNArguments(ModuleKeyword id);
+	int nArguments(ModuleKeyword id);
 	// Parse Module block
-	static bool parseModuleBlock(LineParser& parser, DUQ* duq, Module* module, Configuration* cfg, Sample* sam);
+	bool parse(LineParser& parser, DUQ* duq, Module* module, Configuration* cfg, Sample* sam);
+};
 
 
-	/*
-	 * PairPotential Block Keywords
-	 */
-	public:
+/*
+ * PairPotential Block Keywords
+ */
+namespace PairPotentialsBlock
+{
 	// PairPotential Block Keyword Enum
 	enum PairPotentialsKeyword
 	{
@@ -164,42 +175,45 @@ class Keywords
 		nPairPotentialsKeywords		/* Number of keywords defined for this block */
 	};
 	// Convert text string to PairPotentialKeyword
-	static PairPotentialsKeyword pairPotentialsKeyword(const char* s);
+	PairPotentialsKeyword keyword(const char* s);
 	// Convert PairPotentialsKeyword to text string
-	static const char* pairPotentialsKeyword(PairPotentialsKeyword id);
+	const char* keyword(PairPotentialsKeyword id);
 	// Return expected number of expected arguments
-	static int pairPotentialsBlockNArguments(PairPotentialsKeyword id);
+	int nArguments(PairPotentialsKeyword id);
 	// Parse PairPotentials block
-	static bool parsePairPotentialsBlock(LineParser& parser, DUQ* duq);
+	bool parse(LineParser& parser, DUQ* duq);
+};
 
 
-	/*
-	 * Sample Block Keywords
-	 */
-	public:
+/*
+ * Sample Block Keywords
+ */
+namespace SampleBlock
+{
 	// Sample Block Keyword Enum
 	enum SampleKeyword
 	{
 		EndSampleKeyword,		/* 'EndSample' - Signals the end of the Sample block */
-		IsotopologueSampleKeyword,	/* 'Isotopologue' - Specifies a Species, Isotopologue, and relative population in this Sample */
-		SampleModuleKeyword,		/* 'Module' - Begins a Module associated to this Sample */
+		ModuleKeyword,			/* 'Module' - Begins a Module associated to this Sample */
 		ReferenceDataKeyword,		/* 'ReferenceData' - Specifies a datafile which represents this Sample */
 		nSampleKeywords			/* Number of keywords defined for this block */
 	};
 	// Convert text string to SampleKeyword
-	static SampleKeyword sampleKeyword(const char* s);
+	SampleKeyword keyword(const char* s);
 	// Convert SampleKeyword to text string
-	static const char* sampleKeyword(SampleKeyword id);
+	const char* keyword(SampleKeyword id);
 	// Return expected number of expected arguments
-	static int sampleBlockNArguments(SampleKeyword id);
+	int nArguments(SampleKeyword id);
 	// Parse Sample block
-	static bool parseSampleBlock(LineParser& parser, DUQ* duq, Sample* sample);
+	bool parse(LineParser& parser, DUQ* duq, Sample* sample);
+};
 
 
-	/*
-	 * Simulation Block Keywords
-	 */
-	public:
+/*
+ * Simulation Block Keywords
+ */
+namespace SimulationBlock
+{
 	// Simulation Block Keyword Enum
 	enum SimulationKeyword
 	{
@@ -212,19 +226,21 @@ class Keywords
 		nSimulationKeywords		/* '' -  */
 	};
 	// Convert text string to SimulationKeyword
-	static SimulationKeyword simulationKeyword(const char* s);
+	SimulationKeyword keyword(const char* s);
 	// Convert SimulationKeyword to text string
-	static const char* simulationKeyword(SimulationKeyword id);
+	const char* keyword(SimulationKeyword id);
 	// Return expected number of expected arguments
-	static int simulationBlockNArguments(SimulationKeyword id);
+	int nArguments(SimulationKeyword id);
 	// Parse Simulation block
-	static bool parseSimulationBlock(LineParser& parser, DUQ* duq);
+	bool parse(LineParser& parser, DUQ* duq);
+};
 
 
-	/*
-	 * Species Block Keywords
-	 */
-	public:
+/*
+ * Species Block Keywords
+ */
+namespace SpeciesBlock
+{
 	// Species Block Keyword Enum
 	enum SpeciesKeyword
 	{
@@ -237,13 +253,13 @@ class Keywords
 		nSpeciesKeywords		/* Number of keywords defined for this block */
 	};
 	// Convert text string to SpeciesKeyword
-	static SpeciesKeyword speciesKeyword(const char* s);
+	SpeciesKeyword keyword(const char* s);
 	// Convert SpeciesKeyword to text string
-	static const char* speciesKeyword(SpeciesKeyword id);
+	const char* keyword(SpeciesKeyword id);
 	// Return expected number of expected arguments
-	static int speciesBlockNArguments(SpeciesKeyword id);
+	int nArguments(SpeciesKeyword id);
 	// Parse Species block
-	static bool parseSpeciesBlock(LineParser& parser, DUQ* duq, Species* species);
+	bool parse(LineParser& parser, DUQ* duq, Species* species);
 };
 
 #endif

@@ -25,22 +25,11 @@
 #include "base/sysfunc.h"
 #include <string.h>
 
-// Update current Samples
-void DUQ::updateSamples()
-{
-	// Easy check - are there any Species defined?
-	if (species_.nItems() == 0) samples_.clear();
-
-	// Check all Species / Isotopologue definitions
-	for (Sample* sam = samples_.first(); sam != NULL; sam = sam->next) sam->updateIsotopologueMixtures(species_);
-}
-
 // Add new Sample
 Sample* DUQ::addSample(const char* baseName)
 {
 	Sample* sample = samples_.add();
 	sample->setName(baseName);
-	sample->updateIsotopologueMixtures(species_);
 
 	return sample;
 }
@@ -74,43 +63,3 @@ Sample* DUQ::findSample(const char* name) const
 	return NULL;
 }
 
-// Setup Samples
-bool DUQ::setupSamples()
-{
-	/*
-	 * Functions performed by this routine:
-	 *  1)	Construct list of AtomTypes used by the Isotopologues referenced in this sample
-	 *  2)	Finalise any reference data
-	 *  3)	Initialise Modules assigned to this Sample
-	 * 
-	 * The AtomTypeList will contain a list of all AtomTypes used by the Isotopologues referenced by the sample, but will *not* contain
-	 * any population information (since this is determined only by a Configuration).  The Sample is therefore a simple reference
-	 * container that holds some kind of data with which to compare against. The AtomTypeList is used by various Modules (e.g. StructureFactor)
-	 * in order to calculate, from reference Configurations, the correctly-weighted partials / F(Q).
-	 */
-
-	// Loop over Samples
-	for (Sample* sam = samples_.first(); sam != NULL; sam = sam->next)
-	{
-		// Print out some useful info
-		Messenger::print("--> Sample: '%s'\n", sam->name());
-		for (IsotopologueMix* mix = sam->isotopologueMixtures(); mix != NULL; mix = mix->next)
-		{
-			for (RefListItem<Isotopologue,double>* tope = mix->isotopologues(); tope != NULL; tope = tope->next)
-			{
-				if (tope == mix->isotopologues()) Messenger::print("       %-15s  %-15s\n", mix->species()->name(), tope->item->name());
-				else Messenger::print("                        %-15s\n", tope->item->name());
-			}
-		}
-
-		// Create AtomType list for Sample
-		if (!sam->createTypeList(species_, atomTypes_)) return false;
-
-		// MODULES
-		// TODO
-
-		Messenger::print("\n");
-	}
-
-	return true;
-}

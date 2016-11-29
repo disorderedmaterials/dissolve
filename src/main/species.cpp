@@ -30,9 +30,6 @@ Species* DUQ::addSpecies()
 	// Create a new Species
 	Species* sp = species_.add();
 
-	// Must update Samples...
-	updateSamples();
-
 	return sp;
 }
 
@@ -41,9 +38,6 @@ void DUQ::removeSpecies(Species* sp)
 {
 	// Remove Species
 	species_.remove(sp);
-	
-	// Update Samples
-	updateSamples();
 }
 
 // Return number of defined Species
@@ -95,5 +89,4 @@ void DUQ::removeSpeciesIsotopologue(Species* species, Isotopologue* iso)
 	}
 	
 	species->removeIsotopologue(iso);
-	updateSamples();
 }

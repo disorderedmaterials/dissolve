@@ -21,73 +21,140 @@
 
 #include "main/keywords.h"
 #include "main/duq.h"
+#include "classes/species.h"
 #include "base/sysfunc.h"
 
 // Module Block Keywords
 KeywordData ModuleBlockData[] = {
+	{ "Configuration",		1,	"Associates the named Configuration to this Module" },
 	{ "Disabled",			0,	"Specifies that the Module should never be run" },
 	{ "EndModule",			0,	"Marks the end of a Module block" },
-	{ "Frequency",			1,	"Frequency, relative to the main loop, at which this Module is run" }
+	{ "Frequency",			1,	"Frequency, relative to the main loop, at which this Module is run" },
+	{ "Isotopologue",		3,	"Sets the relative population of a Species Isotopologue in a Configuration" }
 };
 
 // Convert text string to ModuleKeyword
-Keywords::ModuleKeyword Keywords::moduleKeyword(const char* s)
+ModuleBlock::ModuleKeyword ModuleBlock::keyword(const char* s)
 {
-	for (int n=0; n<Keywords::nModuleKeywords; ++n) if (DUQSys::sameString(s,ModuleBlockData[n].name)) return (Keywords::ModuleKeyword) n;
-	return Keywords::nModuleKeywords;
+	for (int n=0; n<ModuleBlock::nModuleKeywords; ++n) if (DUQSys::sameString(s,ModuleBlockData[n].name)) return (ModuleBlock::ModuleKeyword) n;
+	return ModuleBlock::nModuleKeywords;
 }
 
 // Convert ModuleKeyword to text string
-const char* Keywords::moduleKeyword(Keywords::ModuleKeyword id)
+const char* ModuleBlock::keyword(ModuleBlock::ModuleKeyword id)
 {
 	return ModuleBlockData[id].name;
 }
 
 // Return minimum number of expected arguments
-int Keywords::moduleBlockNArguments(Keywords::ModuleKeyword id)
+int ModuleBlock::nArguments(ModuleBlock::ModuleKeyword id)
 {
 	return ModuleBlockData[id].nArguments;
 }
 
 // Parse Module block
-bool Keywords::parseModuleBlock(LineParser& parser, DUQ* duq, Module* module, Configuration* cfg, Sample* sam)
+bool ModuleBlock::parse(LineParser& parser, DUQ* duq, Module* module, Configuration* cfg, Sample* sam)
 {
-	Messenger::print("Parsing %s block\n", Keywords::inputBlock(Keywords::ModuleBlock));
+	Messenger::print("\nParsing %s block '%s'...\n", InputBlocks::inputBlock(InputBlocks::ModuleBlock), module->name());
 
-	int el;
-	AtomType* at;
+	Configuration* targetCfg;
 	Parameters* params;
+	Species* sp;
+	Isotopologue* tope;
+	Dnchar varName;
 	bool blockDone = false, error = false;
 	
 	while (!parser.eofOrBlank(duq->worldPool()))
 	{
 		// Read in a line, which should contain a keyword and a minimum number of arguments
 		parser.getArgsDelim(duq->worldPool(), LineParser::SkipBlanks+LineParser::UseQuotes);
-		Keywords::ModuleKeyword modKeyword = Keywords::moduleKeyword(parser.argc(0));
-		if ((modKeyword != Keywords::nModuleKeywords) && ((parser.nArgs()-1) < Keywords::moduleBlockNArguments(modKeyword)))
+		ModuleBlock::ModuleKeyword modKeyword = ModuleBlock::keyword(parser.argc(0));
+		if ((modKeyword != ModuleBlock::nModuleKeywords) && ((parser.nArgs()-1) < ModuleBlock::nArguments(modKeyword)))
 		{
-			Messenger::error("Not enough arguments given to '%s' keyword.\n", Keywords::moduleKeyword(modKeyword));
+			Messenger::error("Not enough arguments given to '%s' keyword.\n", ModuleBlock::keyword(modKeyword));
 			error = true;
 			break;
 		}
-		else if (modKeyword != Keywords::nModuleKeywords) switch (modKeyword)
+		else if (modKeyword != ModuleBlock::nModuleKeywords) switch (modKeyword)
 		{
-			case (Keywords::DisabledModuleKeyword):
+			case (ModuleBlock::ConfigurationKeyword):
+				targetCfg = duq->findConfiguration(parser.argc(1));
+				if (!targetCfg)
+				{
+					Messenger::error("Can't associate Configuration '%s' to the Module '%s', since no Configuration by this name exists.\n", parser.argc(1), module->name());
+					error = true;
+				}
+				if (!module->addConfigurationTarget(targetCfg))
+				{
+					Messenger::error("Failed to add Configuration target in Module '%s'.\n", module->name());
+					error = true;
+				}
+				break;
+			case (ModuleBlock::DisableKeyword):
 				module->setEnabled(false);
 				break;
-			case (Keywords::EndModuleKeyword):
+			case (ModuleBlock::EndModuleKeyword):
 				blockDone = true;
 				break;
-			case (Keywords::FrequencyKeyword):
+			case (ModuleBlock::FrequencyKeyword):
 				module->setFrequency(parser.argi(1));
 				break;
-			case (Keywords::nModuleKeywords):
-				Messenger::error("Unrecognised %s block keyword found - '%s'\n", Keywords::inputBlock(Keywords::ModuleBlock), parser.argc(0));
-				Keywords::printValidKeywords(Keywords::ModuleBlock);
+			case (ModuleBlock::IsotopologueKeyword):
+				// Essentially a shortcut for setting a variable in a target Configuration
+				// Find target Configuration
+				targetCfg = duq->findConfiguration(parser.argc(1));
+				if (!targetCfg)
+				{
+					Messenger::error("Error defining Isotopologue - no Configuration named '%s' exists.\n", parser.argc(1));
+					error = true;
+					break;
+				}
+
+				// Raise an error if this Configuration is not targetted by the Module
+				if (!module->isTargetConfiguration(targetCfg)) 
+				{
+					Messenger::error("Configuration '%s' is not targetted by the Module '%s'.\n", targetCfg->name(), module->name());
+					error = true;
+					break;
+				}
+
+				// Find specified Species - must be present in the target Configuration
+				sp = duq->findSpecies(parser.argc(2));
+				if (!sp)
+				{
+					Messenger::error("Error defining Isotopologue - no Species named '%s' exists.\n", parser.argc(2));
+					error = true;
+					break;
+				}
+
+				if (!targetCfg->usedSpecies().contains(sp))
+				{
+					Messenger::error("Error defining Isotopologue - Species '%s' is not present in Configuration '%s'.\n", sp->name(), targetCfg->name());
+					error = true;
+					break;
+				}
+
+				// Finally, locate isotopologue definition for species
+				tope = sp->findIsotopologue(parser.argc(3));
+				if (!tope)
+				{
+					Messenger::error("Error defining Isotopologue - no Isotopologue named '%s' exists for Species '%s'.\n", parser.argc(3), sp->name());
+					error = true;
+					break;
+				}
+
+				// Ready - add a suitable variable to the Configuration
+				varName.sprintf("Isotopologue_%s_%s", sp->name(), tope->name());
+				targetCfg->setModuleVariable(varName.get(), parser.argd(4), "Isotopologue weighting", module->uniqueName());
+
+				break;
+			case (ModuleBlock::nModuleKeywords):
+				Messenger::error("Unrecognised %s block keyword found - '%s'\n", InputBlocks::inputBlock(InputBlocks::ModuleBlock), parser.argc(0));
+				InputBlocks::printValidKeywords(InputBlocks::ModuleBlock);
 				error = true;
 				break;
 			default:
-				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", Keywords::inputBlock(Keywords::ModuleBlock), Keywords::moduleKeyword(modKeyword));
+				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", InputBlocks::inputBlock(InputBlocks::ModuleBlock), ModuleBlock::keyword(modKeyword));
 				error = true;
 				break;
 		}
@@ -98,13 +165,13 @@ bool Keywords::parseModuleBlock(LineParser& parser, DUQ* duq, Module* module, Co
 			Variable* var = module->findVariable(parser.argc(0));
 			if (!var)
 			{
-				Messenger::error("Unrecognised %s block keyword found - '%s', and the Module '%s' contains no variable of this name.\n", Keywords::inputBlock(Keywords::ModuleBlock), parser.argc(0), module->name());
+				Messenger::error("Unrecognised %s block keyword found - '%s', and the Module '%s' contains no variable of this name.\n", InputBlocks::inputBlock(InputBlocks::ModuleBlock), parser.argc(0), module->name());
 				error = true;
 				break;
 			}
 			// Set variable in Configuration / Sample as appropriate
 			if (cfg) cfg->setModuleVariable(var->name(), parser.argc(1), var->description(), module->uniqueName());
-// 			if (sam) sam->setVariable(var->name(), parser.argc(1), var->description(), module->name());
+			if (sam) sam->setModuleVariable(var->name(), parser.argc(1), var->description(), module->uniqueName());
 		}
 
 		// Error encountered?
@@ -116,3 +183,4 @@ bool Keywords::parseModuleBlock(LineParser& parser, DUQ* duq, Module* module, Co
 
 	return (!error);
 }
+

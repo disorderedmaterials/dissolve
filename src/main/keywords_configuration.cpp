@@ -46,28 +46,28 @@ KeywordData ConfigurationBlockData[] = {
 };
 
 // Convert text string to ConfigurationKeyword
-Keywords::ConfigurationKeyword Keywords::configurationKeyword(const char* s)
+ConfigurationBlock::ConfigurationKeyword ConfigurationBlock::keyword(const char* s)
 {
-	for (int n=0; n<Keywords::nConfigurationKeywords; ++n) if (strcmp(s,ConfigurationBlockData[n].name) == 0) return (Keywords::ConfigurationKeyword) n;
-	return Keywords::nConfigurationKeywords;
+	for (int n=0; n<ConfigurationBlock::nConfigurationKeywords; ++n) if (DUQSys::sameString(s,ConfigurationBlockData[n].name)) return (ConfigurationBlock::ConfigurationKeyword) n;
+	return ConfigurationBlock::nConfigurationKeywords;
 }
 
 // Convert ConfigurationKeyword to text string
-const char* Keywords::configurationKeyword(Keywords::ConfigurationKeyword id)
+const char* ConfigurationBlock::keyword(ConfigurationBlock::ConfigurationKeyword id)
 {
 	return ConfigurationBlockData[id].name;
 }
 
 // Return minimum number of expected arguments
-int Keywords::configurationBlockNArguments(Keywords::ConfigurationKeyword id)
+int ConfigurationBlock::nArguments(ConfigurationBlock::ConfigurationKeyword id)
 {
 	return ConfigurationBlockData[id].nArguments;
 }
 
 // Parse Configuration block
-bool Keywords::parseConfigurationBlock(LineParser& parser, DUQ* duq, Configuration* cfg)
+bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
 {
-	Messenger::print("Parsing %s block\n", Keywords::inputBlock(Keywords::ConfigurationBlock));
+	Messenger::print("\nParsing %s block '%s'...\n", InputBlocks::inputBlock(InputBlocks::ConfigurationBlock), cfg->name());
 
 	Sample* sam;
 	Species* sp;
@@ -78,28 +78,28 @@ bool Keywords::parseConfigurationBlock(LineParser& parser, DUQ* duq, Configurati
 	{
 		// Read in a line, which should contain a keyword and a minimum number of arguments
 		parser.getArgsDelim(duq->worldPool(), LineParser::SkipBlanks+LineParser::UseQuotes);
-		Keywords::ConfigurationKeyword conKeyword = Keywords::configurationKeyword(parser.argc(0));
-		if ((conKeyword != Keywords::nConfigurationKeywords) && ((parser.nArgs()-1) < Keywords::configurationBlockNArguments(conKeyword)))
+		ConfigurationBlock::ConfigurationKeyword conKeyword = ConfigurationBlock::keyword(parser.argc(0));
+		if ((conKeyword != ConfigurationBlock::nConfigurationKeywords) && ((parser.nArgs()-1) < ConfigurationBlock::nArguments(conKeyword)))
 		{
-			Messenger::error("Not enough arguments given to '%s' keyword.\n", Keywords::configurationKeyword(conKeyword));
+			Messenger::error("Not enough arguments given to '%s' keyword.\n", ConfigurationBlock::keyword(conKeyword));
 			error = true;
 			break;
 		}
 		switch (conKeyword)
 		{
-			case (Keywords::BoxNormalisationFileKeyword):
+			case (ConfigurationBlock::BoxNormalisationFileKeyword):
 				cfg->setBoxNormalisationFile(parser.argc(1));
 				break;
-			case (Keywords::BraggMaximumQKeyword):
+			case (ConfigurationBlock::BraggMaximumQKeyword):
 				cfg->setBraggMaximumQ(parser.argd(1));
 				break;
-			case (Keywords::CellAnglesKeyword):
+			case (ConfigurationBlock::CellAnglesKeyword):
 				cfg->setBoxAngles(Vec3<double>(parser.argd(1),  parser.argd(2), parser.argd(3)));
 				break;
-			case (Keywords::CellLengthsKeyword):
+			case (ConfigurationBlock::CellLengthsKeyword):
 				cfg->setRelativeBoxLengths(Vec3<double>(parser.argd(1), parser.argd(2), parser.argd(3)));
 				break;
-			case (Keywords::DensityKeyword):
+			case (ConfigurationBlock::DensityKeyword):
 				// Determine units given
 				if (strcmp(parser.argc(2),"atoms/A3") == 0) cfg->setAtomicDensity(parser.argd(1));
 				else if (strcmp(parser.argc(2),"g/cm3") == 0) cfg->setChemicalDensity(parser.argd(1));
@@ -109,16 +109,16 @@ bool Keywords::parseConfigurationBlock(LineParser& parser, DUQ* duq, Configurati
 					error = true;
 				}
 				break;
-			case (Keywords::EndConfigurationKeyword):
-				Messenger::print("Found end of %s block.\n", Keywords::inputBlock(Keywords::ConfigurationBlock));
+			case (ConfigurationBlock::EndConfigurationKeyword):
+				Messenger::print("Found end of %s block.\n", InputBlocks::inputBlock(InputBlocks::ConfigurationBlock));
 				blockDone = true;
 				break;
-			case (Keywords::InputCoordinatesKeyword):
+			case (ConfigurationBlock::InputCoordinatesKeyword):
 				cfg->setInputCoordinatesFile(parser.argc(1));
 				cfg->setRandomConfiguration(false);
 				Messenger::print("--> Initial coordinates will be loaded from file '%s'\n", parser.argc(1));
 				break;
-			case (Keywords::ConfigurationModuleKeyword):
+			case (ConfigurationBlock::ModuleKeyword):
 				// The argument following the keyword is the module name
 				module = ModuleList::findMasterInstance(parser.argc(1));
 				if (!module)
@@ -147,32 +147,32 @@ bool Keywords::parseConfigurationBlock(LineParser& parser, DUQ* duq, Configurati
 				if (error) break;
 
 				// Parse rest of Module block
-				if (!parseModuleBlock(parser, duq, module, cfg, NULL)) error = true;
+				if (!ModuleBlock::parse(parser, duq, module, cfg, NULL)) error = true;
 
 				// Now finished parsing the Module block, so must update target Samples and Configurations in any auto-added Modules
 				module->updateDependentTargets();
 				break;
-			case (Keywords::MultiplierKeyword):
+			case (ConfigurationBlock::MultiplierKeyword):
 				cfg->setMultiplier(parser.argd(1));
 				Messenger::print("--> Set Configuration contents multiplier to %i.\n", cfg->multiplier());
 				break;
-			case (Keywords::NonPeriodicKeyword):
+			case (ConfigurationBlock::NonPeriodicKeyword):
 				cfg->setNonPeriodic(true);
 				Messenger::print("--> Flag set for a non-periodic calculation.\n");
 				break;
-			case (Keywords::OutputCoordinatesKeyword):
+			case (ConfigurationBlock::OutputCoordinatesKeyword):
 				cfg->setOutputCoordinatesFile(parser.argc(1));
 				if (parser.hasArg(2)) cfg->setCoordinatesOutputFrequency(parser.argi(2));
 				if (cfg->coordinatesOutputFrequency() == 1) Messenger::print("--> Output coordinates will be saved to file '%s' every iteration.\n", parser.argc(1));
 				else Messenger::print("--> Output coordinates will be saved to file '%s' every %i iterations.\n", parser.argc(1), cfg->coordinatesOutputFrequency());
 				break;
-			case (Keywords::RDFBinWidthKeyword):
+			case (ConfigurationBlock::RDFBinWidthKeyword):
 				cfg->setRDFBinWidth(parser.argd(1));
 				break;
-			case (Keywords::RDFRangeKeyword):
+			case (ConfigurationBlock::RDFRangeKeyword):
 				cfg->setRequestedRDFRange(parser.argd(1));
 				break;
-			case (Keywords::SpeciesAddKeyword):
+			case (ConfigurationBlock::SpeciesAddKeyword):
 				sp = duq->findSpecies(parser.argc(1));
 				if (sp == NULL)
 				{
@@ -190,19 +190,19 @@ bool Keywords::parseConfigurationBlock(LineParser& parser, DUQ* duq, Configurati
 					else Messenger::print("--> Set composition for Species '%s' (%f relative population).\n", sp->name(), parser.argd(2));
 				}
 				break;
-			case (Keywords::TemperatureKeyword):
+			case (ConfigurationBlock::TemperatureKeyword):
 				cfg->setTemperature(parser.argd(1));
 				break;
-			case (Keywords::UseOutputAsInputKeyword):
+			case (ConfigurationBlock::UseOutputAsInputKeyword):
 				cfg->setUseOutputCoordinatesAsInput(true);
 				break;
-			case (Keywords::nConfigurationKeywords):
-				Messenger::error("Unrecognised %s block keyword found - '%s'\n", Keywords::inputBlock(Keywords::ConfigurationBlock), parser.argc(0));
-				Keywords::printValidKeywords(Keywords::ConfigurationBlock);
+			case (ConfigurationBlock::nConfigurationKeywords):
+				Messenger::error("Unrecognised %s block keyword found - '%s'\n", InputBlocks::inputBlock(InputBlocks::ConfigurationBlock), parser.argc(0));
+				InputBlocks::printValidKeywords(InputBlocks::ConfigurationBlock);
 				error = true;
 				break;
 			default:
-				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", Keywords::inputBlock(Keywords::ConfigurationBlock), Keywords::configurationKeyword(conKeyword));
+				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", InputBlocks::inputBlock(InputBlocks::ConfigurationBlock), ConfigurationBlock::keyword(conKeyword));
 				error = true;
 				break;
 		}

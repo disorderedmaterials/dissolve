@@ -34,28 +34,28 @@ KeywordData SimulationBlockData[] = {
 };
 
 // Convert text string to SimulationKeyword
-Keywords::SimulationKeyword Keywords::simulationKeyword(const char* s)
+SimulationBlock::SimulationKeyword SimulationBlock::keyword(const char* s)
 {
-	for (int n=0; n<Keywords::nSimulationKeywords; ++n) if (DUQSys::sameString(s,SimulationBlockData[n].name)) return (Keywords::SimulationKeyword) n;
-	return Keywords::nSimulationKeywords;
+	for (int n=0; n<SimulationBlock::nSimulationKeywords; ++n) if (DUQSys::sameString(s,SimulationBlockData[n].name)) return (SimulationBlock::SimulationKeyword) n;
+	return SimulationBlock::nSimulationKeywords;
 }
 
 // Convert SimulationKeyword to text string
-const char* Keywords::simulationKeyword(Keywords::SimulationKeyword id)
+const char* SimulationBlock::keyword(SimulationBlock::SimulationKeyword id)
 {
 	return SimulationBlockData[id].name;
 }
 
 // Return minimum number of expected arguments
-int Keywords::simulationBlockNArguments(Keywords::SimulationKeyword id)
+int SimulationBlock::nArguments(SimulationBlock::SimulationKeyword id)
 {
 	return SimulationBlockData[id].nArguments;
 }
 
 // Parse Simulation block
-bool Keywords::parseSimulationBlock(LineParser& parser, DUQ* duq)
+bool SimulationBlock::parse(LineParser& parser, DUQ* duq)
 {
-	Messenger::print("Parsing %s block\n", Keywords::inputBlock(Keywords::SimulationBlock));
+	Messenger::print("\nParsing %s block...\n", InputBlocks::inputBlock(InputBlocks::SimulationBlock));
 
 	bool blockDone = false, error = false;
 
@@ -63,26 +63,26 @@ bool Keywords::parseSimulationBlock(LineParser& parser, DUQ* duq)
 	{
 		// Read in a line, which should contain a keyword and a minimum number of arguments
 		parser.getArgsDelim(duq->worldPool(), LineParser::SkipBlanks+LineParser::UseQuotes);
-		Keywords::SimulationKeyword simKeyword = Keywords::simulationKeyword(parser.argc(0));
-		if ((simKeyword != Keywords::nSimulationKeywords) && ((parser.nArgs()-1) < Keywords::simulationBlockNArguments(simKeyword)))
+		SimulationBlock::SimulationKeyword simKeyword = SimulationBlock::keyword(parser.argc(0));
+		if ((simKeyword != SimulationBlock::nSimulationKeywords) && ((parser.nArgs()-1) < SimulationBlock::nArguments(simKeyword)))
 		{
-			Messenger::error("Not enough arguments given to '%s' keyword.\n", Keywords::simulationKeyword(simKeyword));
+			Messenger::error("Not enough arguments given to '%s' keyword.\n", SimulationBlock::keyword(simKeyword));
 			error = true;
 			break;
 		}
 		switch (simKeyword)
 		{
-			case (Keywords::BoxNormalisationPointsKeyword):
+			case (SimulationBlock::BoxNormalisationPointsKeyword):
 				duq->setBoxNormalisationPoints(parser.argi(1));
 				break;
-			case (Keywords::EndSimulationKeyword):
-				Messenger::print("Found end of %s block.\n", Keywords::inputBlock(Keywords::SimulationBlock));
+			case (SimulationBlock::EndSimulationKeyword):
+				Messenger::print("Found end of %s block.\n", InputBlocks::inputBlock(InputBlocks::SimulationBlock));
 				blockDone = true;
 				break;
-			case (Keywords::MaxIterationsKeyword):
+			case (SimulationBlock::MaxIterationsKeyword):
 				duq->setMaxIterations(parser.argi(1));
 				break;
-			case (Keywords::ParallelStrategyKeyword):
+			case (SimulationBlock::ParallelStrategyKeyword):
 				if (DUQ::parallelStrategy(parser.argc(1)) == DUQ::nParallelStrategies)
 				{
 					Messenger::error("Unrecognised parallel strategy '%s'.\n", parser.argc(1));
@@ -90,10 +90,10 @@ bool Keywords::parseSimulationBlock(LineParser& parser, DUQ* duq)
 				}
 				else duq->setParallelStrategy(DUQ::parallelStrategy(parser.argc(1)));
 				break;
-			case (Keywords::SeedKeyword):
+			case (SimulationBlock::SeedKeyword):
 				duq->setSeed(parser.argi(1));
 				break;
-			case (Keywords::WindowFunctionKeyword):
+			case (SimulationBlock::WindowFunctionKeyword):
 				if (Data2D::windowFunction(parser.argc(1)) == Data2D::nWindowFunctions)
 				{
 					Messenger::error("Unrecognised window function '%s'.\n", parser.argc(1));
@@ -101,13 +101,13 @@ bool Keywords::parseSimulationBlock(LineParser& parser, DUQ* duq)
 				}
 				else duq->setWindowFunction(Data2D::windowFunction(parser.argc(1)));
 				break;
-			case (Keywords::nSimulationKeywords):
-				Messenger::print("Unrecognised %s block keyword found - '%s'\n", Keywords::inputBlock(Keywords::SimulationBlock), parser.argc(0));
-				Keywords::printValidKeywords(Keywords::SimulationBlock);
+			case (SimulationBlock::nSimulationKeywords):
+				Messenger::print("Unrecognised %s block keyword found - '%s'\n", InputBlocks::inputBlock(InputBlocks::SimulationBlock), parser.argc(0));
+				InputBlocks::printValidKeywords(InputBlocks::SimulationBlock);
 				error = true;
 				break;
 			default:
-				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", Keywords::inputBlock(Keywords::SimulationBlock), Keywords::simulationKeyword(simKeyword));
+				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", InputBlocks::inputBlock(InputBlocks::SimulationBlock), SimulationBlock::keyword(simKeyword));
 				error = true;
 				break;
 		}

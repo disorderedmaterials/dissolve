@@ -66,6 +66,9 @@ bool DUQ::go()
 	/*
 	 * Start of Main Loop
 	 */
+	
+	// TODO Run Setup tasks for Modules
+
 	bool keepGoing = true;
 	do
 	{
@@ -197,7 +200,7 @@ bool DUQ::go()
 		/*
 		 *  4)	Run Modules for all Samples (using worldPool_)
 		 */
-		Messenger::banner("Sample Processing");
+		if (samples_.nItems() > 0) Messenger::banner("Sample Processing");
 		for (Sample* sam = samples_.first(); sam != NULL; sam = sam->next)
 		{
 			Messenger::print("\n");
@@ -228,7 +231,7 @@ bool DUQ::go()
 		/*
 		 *  5)	Perform post-processing tasks (using worldPool_)
 		 */
-		if (postProcessingTasks_.nItems() > 0) Messenger::print("Post-Processing");
+		if (postProcessingTasks_.nItems() > 0) Messenger::banner("Post-Processing");
 		postIterator.restart();
 		while (Module* module = postIterator.iterate())
 		{
@@ -254,13 +257,13 @@ bool DUQ::go()
 		 */
 		if (worldPool_.isMaster())
 		{
-			Messenger::print("\n");
-			Messenger::print("===== Write Configuration Data\n");
-			Messenger::print("\n");
+			// Keep track of number of Configurations saved / to save - print banner before first one
+			int nSaved = 0;
 			for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
 			{
 				if (iteration_%cfg->coordinatesOutputFrequency() != 0) continue;
 
+				if (nSaved == 0) Messenger::banner("Write Configurations");
 				Messenger::print("Writing Configuration output file '%s'...\n", cfg->outputCoordinatesFile());
 
 				// Open the file and use the Export module to write the Configuration data as xyz
@@ -279,6 +282,7 @@ bool DUQ::go()
 					return false;
 				}
 
+				++nSaved;
 			}
 		}
 		else if (!worldPool_.decision()) return false;

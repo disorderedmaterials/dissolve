@@ -64,9 +64,9 @@ bool Configuration::addUsedSpecies(Species* sp, double relativePopulation)
 }
 
 // Return feference list of Species used by the Configuration and their relative populations
-RefListItem<Species,double>* Configuration::usedSpecies()
+RefList<Species,double>& Configuration::usedSpecies()
 {
-	return usedSpecies_.first();
+	return usedSpecies_;
 }
 
 // Return total relative population of Species

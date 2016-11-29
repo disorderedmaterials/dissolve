@@ -37,18 +37,18 @@ void DUQ::dumpSystemSetup(bool includeData)
 	
 	// Write AtomTypes block
 	Messenger::print("# AtomType Definitions\n");
-	Messenger::print("%s\n", Keywords::inputBlock(Keywords::AtomTypesBlock));
+	Messenger::print("%s\n", InputBlocks::inputBlock(InputBlocks::AtomTypesBlock));
 	for (AtomType* at = atomTypes_.first(); at != NULL; at = at->next)
 	{
-		Messenger::print("  %s  '%s'  %3s  '%s'\n", Keywords::atomTypesKeyword(Keywords::AtomTypeKeyword), at->name(), periodicTable.element(at->element()).symbol(), at->parameters()->name());
+		Messenger::print("  %s  '%s'  %3s  '%s'\n", AtomTypesBlock::keyword(AtomTypesBlock::AtomTypeKeyword), at->name(), periodicTable.element(at->element()).symbol(), at->parameters()->name());
 	}
-	Messenger::print("%s\n\n", Keywords::atomTypesKeyword(Keywords::EndAtomTypesKeyword));
+	Messenger::print("%s\n\n", AtomTypesBlock::keyword(AtomTypesBlock::EndAtomTypesKeyword));
 
 	// Write Species data
 	Messenger::print("# Species Definitions\n");
 	for (Species* sp = species_.first(); sp != NULL; sp = sp->next)
 	{
-		Messenger::print("%s '%s'\n", Keywords::inputBlock(Keywords::SpeciesBlock), sp->name());
+		Messenger::print("%s '%s'\n", InputBlocks::inputBlock(InputBlocks::SpeciesBlock), sp->name());
 		
 		// Atoms
 		Messenger::print("  # Atoms\n");
@@ -56,28 +56,28 @@ void DUQ::dumpSystemSetup(bool includeData)
 		for (SpeciesAtom* i = sp->atoms(); i != NULL; i = i->next)
 		{
 			++count;
-			Messenger::print("  %s  %3i  %3s  %8.3f %8.3f %8.3f %8.3f '%s'\n", Keywords::speciesKeyword(Keywords::AtomKeyword), count, periodicTable.element(i->element()).symbol(), i->r().x, i->r().y, i->r().z, i->charge(), i->atomType() == NULL ? "???" : i->atomType()->name());
+			Messenger::print("  %s  %3i  %3s  %8.3f %8.3f %8.3f %8.3f '%s'\n", SpeciesBlock::keyword(SpeciesBlock::AtomKeyword), count, periodicTable.element(i->element()).symbol(), i->r().x, i->r().y, i->r().z, i->charge(), i->atomType() == NULL ? "???" : i->atomType()->name());
 		}
 		
 		// Bonds
 		Messenger::print("\n  # Bonds\n");
 		for (SpeciesBond* b = sp->bonds(); b != NULL; b = b->next)
 		{
-			Messenger::print("  %s  %3i  %3i  %8.3f %8.3f\n", Keywords::speciesKeyword(Keywords::BondKeyword), b->indexI()+1, b->indexJ()+1, b->equilibrium(), b->forceConstant());
+			Messenger::print("  %s  %3i  %3i  %8.3f %8.3f\n", SpeciesBlock::keyword(SpeciesBlock::BondKeyword), b->indexI()+1, b->indexJ()+1, b->equilibrium(), b->forceConstant());
 		}
 		
 		// Angles
 		Messenger::print("\n  # Angles\n");
 		for (SpeciesAngle* a = sp->angles(); a != NULL; a = a->next)
 		{
-			Messenger::print("  %s  %3i  %3i  %3i  %8.3f %8.3f\n", Keywords::speciesKeyword(Keywords::AngleKeyword), a->indexI()+1, a->indexJ()+1, a->indexK()+1, a->equilibrium(), a->forceConstant());
+			Messenger::print("  %s  %3i  %3i  %3i  %8.3f %8.3f\n", SpeciesBlock::keyword(SpeciesBlock::AngleKeyword), a->indexI()+1, a->indexJ()+1, a->indexK()+1, a->equilibrium(), a->forceConstant());
 		}
 		
 		// Grains
 		Messenger::print("\n  # Grain Definitions\n");
 		for (SpeciesGrain* sg = sp->grains(); sg != NULL; sg = sg->next)
 		{
-			Messenger::print("  %s  '%s'", Keywords::speciesKeyword(Keywords::GrainKeyword), sg->name());
+			Messenger::print("  %s  '%s'", SpeciesBlock::keyword(SpeciesBlock::GrainKeyword), sg->name());
 			for (RefListItem<SpeciesAtom,int>* ri = sg->atoms(); ri != NULL; ri = ri->next) Messenger::print("  %i", ri->item->userIndex());
 			Messenger::print("\n");
 		}
@@ -86,7 +86,7 @@ void DUQ::dumpSystemSetup(bool includeData)
 		Messenger::print("\n  # Isotopologues\n");
 		for (Isotopologue* iso = sp->isotopologues(); iso != NULL; iso = iso->next)
 		{
-			Messenger::print("  %s  '%s'", Keywords::speciesKeyword(Keywords::IsotopologueKeyword), iso->name());
+			Messenger::print("  %s  '%s'", SpeciesBlock::keyword(SpeciesBlock::IsotopologueKeyword), iso->name());
 			for (RefListItem<AtomType,Isotope*>* ri = iso->isotopes(); ri != NULL; ri = ri->next)
 			{
 				Messenger::print("  %s=%i", ri->item->name(), ri->data->A());
@@ -95,27 +95,64 @@ void DUQ::dumpSystemSetup(bool includeData)
 		}
 		
 		// Done with this species
-		Messenger::print("%s\n\n", Keywords::speciesKeyword(Keywords::EndSpeciesKeyword));
+		Messenger::print("%s\n\n", SpeciesBlock::keyword(SpeciesBlock::EndSpeciesKeyword));
+	}
+
+	// Write Configurations
+	Messenger::print("# Configurations\n");
+	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
+	{
+		Messenger::print("%s  '%s'\n", InputBlocks::inputBlock(InputBlocks::ConfigurationBlock), cfg->name());
+		Messenger::print("  %s  %i\n", ConfigurationBlock::keyword(ConfigurationBlock::MultiplierKeyword), cfg->multiplier());
+		Messenger::print("  %s  %f  %s\n", ConfigurationBlock::keyword(ConfigurationBlock::DensityKeyword), cfg->density(), cfg->densityIsAtomic() ? "atoms/A3" : "g/cm3");
+		Messenger::print("  %s  %f  %f  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::CellLengthsKeyword), cfg->relativeBoxLengths().x, cfg->relativeBoxLengths().y, cfg->relativeBoxLengths().z);
+		Messenger::print("  %s  %f  %f  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::CellAnglesKeyword), cfg->boxAngles().x, cfg->boxAngles().y, cfg->boxAngles().z);
+		if (cfg->nonPeriodic()) Messenger::print("  %s\n", ConfigurationBlock::keyword(ConfigurationBlock::NonPeriodicKeyword));
+		if (!DUQSys::isEmpty(cfg->inputCoordinatesFile())) Messenger::print("  %s  '%s'\n", ConfigurationBlock::keyword(ConfigurationBlock::InputCoordinatesKeyword), cfg->inputCoordinatesFile());
+		if (!DUQSys::isEmpty(cfg->outputCoordinatesFile())) Messenger::print("  %s  '%s'  %i\n", ConfigurationBlock::keyword(ConfigurationBlock::OutputCoordinatesKeyword), cfg->outputCoordinatesFile(), cfg->coordinatesOutputFrequency());
+		if (cfg->useOutputCoordinatesAsInput()) Messenger::print("  %s  '%s'\n", ConfigurationBlock::keyword(ConfigurationBlock::UseOutputAsInputKeyword), DUQSys::btoa(true));
+
+		// Species
+		Messenger::print("\n  # Species\n");
+		RefListIterator<Species,double> speciesIterator(cfg->usedSpecies());
+		while (Species* sp = speciesIterator.iterate()) Messenger::print("  %s  '%s'  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::SpeciesAddKeyword), sp->name(), speciesIterator.currentData());
+
+		// Modules
+		Messenger::print("\n  # Modules\n");
+		if (cfg->nModules() == 0) Messenger::print("  # -- None\n");
+		RefListIterator<Module,bool> moduleIterator(cfg->modules());
+		while (Module* module = moduleIterator.iterate())
+		{
+			Messenger::print("  %s  %s  # %s\n", ConfigurationBlock::keyword(ConfigurationBlock::ModuleKeyword), module->name(), module->uniqueName());
+
+			// For each Module, print all available variables
+			for (Variable* var = module->variables(); var != NULL; var = var->next)
+			{
+				if (var->type() == VariableValue::CharType) Messenger::print("    %s  '%s'\n", var->name(), var->asChar());
+				else Messenger::print("    %s  %s\n", var->name(), var->asChar());
+			}
+
+			Messenger::print("  %s\n", ModuleBlock::keyword(ModuleBlock::EndModuleKeyword));
+		}
+
+		Messenger::print("\n");
+		Messenger::print("  %s  '%s'\n", ConfigurationBlock::keyword(ConfigurationBlock::BoxNormalisationFileKeyword), cfg->boxNormalisationFileName());
+		Messenger::print("  %s  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::BraggMaximumQKeyword), cfg->braggMaximumQ());
+		Messenger::print("  %s  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::RDFBinWidthKeyword), cfg->rdfBinWidth());
+		Messenger::print("  %s  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::RDFRangeKeyword), cfg->rdfRange());
+		Messenger::print("  %s  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::TemperatureKeyword), cfg->temperature());
+
+		Messenger::print("%s\n\n", ConfigurationBlock::keyword(ConfigurationBlock::EndConfigurationKeyword));
 	}
 
 	// Write Sample blocks
 	Messenger::print("# Samples\n");
 	for (Sample* sam = samples_.first(); sam != NULL; sam = sam->next)
 	{
-		Messenger::print("%s  '%s'\n", Keywords::inputBlock(Keywords::SampleBlock), sam->name()); 
-		for (IsotopologueMix* iso = sam->isotopologueMixtures(); iso != NULL; iso = iso->next)
-		{
-			double sum = iso->totalRelative();
-			for (RefListItem<Isotopologue,double>* ri = iso->isotopologues(); ri != NULL; ri = ri->next)
-			{
-				Messenger::print("  %s  '%s'  '%s'  %f\n", Keywords::sampleKeyword(Keywords::IsotopologueSampleKeyword), iso->species()->name(), ri->item->name(), ri->data);
-			}
-		}
-
 		// Reference data present?
 		if (!sam->referenceDataFileName().isEmpty())
 		{
-			Messenger::print("  %s '%s'\n", Keywords::sampleKeyword(Keywords::ReferenceDataKeyword), sam->referenceDataFileName().get());
+			Messenger::print("  %s '%s'\n", SampleBlock::keyword(SampleBlock::ReferenceDataKeyword), sam->referenceDataFileName().get());
 		}
 
 		// Modules
@@ -124,7 +161,7 @@ void DUQ::dumpSystemSetup(bool includeData)
 		RefListIterator<Module,bool> moduleIterator(sam->modules());
 		while (Module* module = moduleIterator.iterate())
 		{
-			Messenger::print("  %s  %s  # %s\n", Keywords::configurationKeyword(Keywords::ConfigurationModuleKeyword), module->name(), module->uniqueName());
+			Messenger::print("  %s  %s  # %s\n", SampleBlock::keyword(SampleBlock::ModuleKeyword), module->name(), module->uniqueName());
 
 			// For each Module, print all available variables
 			for (Variable* var = module->variables(); var != NULL; var = var->next)
@@ -133,83 +170,44 @@ void DUQ::dumpSystemSetup(bool includeData)
 				else Messenger::print("    %s  %s\n", var->name(), var->asChar());
 			}
 
-			Messenger::print("  %s\n", Keywords::moduleKeyword(Keywords::EndModuleKeyword));
+			// Not in a Configuration block, so print associated Configuration information
+			//Messenger::print("%s  '%s'\n", InputBlocks::inputBlock(Keywords::SampleBlock), sam->name()); 
+			//for (IsotopologueMix* iso = sam->isotopologueMixtures(); iso != NULL; iso = iso->next)
+			//{
+			//	double sum = iso->totalRelative();
+			//	for (RefListItem<Isotopologue,double>* ri = iso->isotopologues(); ri != NULL; ri = ri->next)
+			//	{
+			//		Messenger::print("  %s  '%s'  '%s'  %f\n", Keywords::sampleKeyword(Keywords::IsotopologueSampleKeyword), iso->species()->name(), ri->item->name(), ri->data);
+			//	}
+			//}
+
+			Messenger::print("  %s\n", ModuleBlock::keyword(ModuleBlock::EndModuleKeyword));
 		}
 
-		Messenger::print("%s\n\n", Keywords::sampleKeyword(Keywords::EndSampleKeyword));
-	}
-
-	// Write Configurations
-	Messenger::print("# Configurations\n");
-	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
-	{
-		Messenger::print("%s  '%s'\n", Keywords::inputBlock(Keywords::ConfigurationBlock), cfg->name());
-		Messenger::print("  %s  %i\n", Keywords::configurationKeyword(Keywords::MultiplierKeyword), cfg->multiplier());
-		Messenger::print("  %s  %f  %s\n", Keywords::configurationKeyword(Keywords::DensityKeyword), cfg->density(), cfg->densityIsAtomic() ? "atoms/A3" : "g/cm3");
-		Messenger::print("  %s  %f  %f  %f\n", Keywords::configurationKeyword(Keywords::CellLengthsKeyword), cfg->relativeBoxLengths().x, cfg->relativeBoxLengths().y, cfg->relativeBoxLengths().z);
-		Messenger::print("  %s  %f  %f  %f\n", Keywords::configurationKeyword(Keywords::CellAnglesKeyword), cfg->boxAngles().x, cfg->boxAngles().y, cfg->boxAngles().z);
-		if (cfg->nonPeriodic()) Messenger::print("  %s\n", Keywords::configurationKeyword(Keywords::NonPeriodicKeyword));
-		if (!DUQSys::isEmpty(cfg->inputCoordinatesFile())) Messenger::print("  %s  '%s'\n", Keywords::configurationKeyword(Keywords::InputCoordinatesKeyword), cfg->inputCoordinatesFile());
-		if (!DUQSys::isEmpty(cfg->outputCoordinatesFile())) Messenger::print("  %s  '%s'  %i\n", Keywords::configurationKeyword(Keywords::OutputCoordinatesKeyword), cfg->outputCoordinatesFile(), cfg->coordinatesOutputFrequency());
-		if (cfg->useOutputCoordinatesAsInput()) Messenger::print("  %s  '%s'\n", Keywords::configurationKeyword(Keywords::UseOutputAsInputKeyword), DUQSys::btoa(true));
-
-		// Species
-		Messenger::print("\n  # Species\n");
-		for (RefListItem<Species,double>* ri = cfg->usedSpecies(); ri != NULL; ri = ri->next)
-		{
-			Species* sp = ri->item;
-			Messenger::print("  %s  '%s'  %f\n", Keywords::configurationKeyword(Keywords::SpeciesAddKeyword), sp->name(), ri->data);
-		}
-
-		// Modules
-		Messenger::print("\n  # Modules\n");
-		if (cfg->nModules() == 0) Messenger::print("  # -- None\n");
-		RefListIterator<Module,bool> moduleIterator(cfg->modules());
-		while (Module* module = moduleIterator.iterate())
-		{
-			Messenger::print("  %s  %s  # %s\n", Keywords::configurationKeyword(Keywords::ConfigurationModuleKeyword), module->name(), module->uniqueName());
-
-			// For each Module, print all available variables
-			for (Variable* var = module->variables(); var != NULL; var = var->next)
-			{
-				if (var->type() == VariableValue::CharType) Messenger::print("    %s  '%s'\n", var->name(), var->asChar());
-				else Messenger::print("    %s  %s\n", var->name(), var->asChar());
-			}
-
-			Messenger::print("  %s\n", Keywords::moduleKeyword(Keywords::EndModuleKeyword));
-		}
-
-		Messenger::print("\n");
-		Messenger::print("  %s  '%s'\n", Keywords::configurationKeyword(Keywords::BoxNormalisationFileKeyword), cfg->boxNormalisationFileName());
-		Messenger::print("  %s  %f\n", Keywords::configurationKeyword(Keywords::BraggMaximumQKeyword), cfg->braggMaximumQ());
-		Messenger::print("  %s  %f\n", Keywords::configurationKeyword(Keywords::RDFBinWidthKeyword), cfg->rdfBinWidth());
-		Messenger::print("  %s  %f\n", Keywords::configurationKeyword(Keywords::RDFRangeKeyword), cfg->rdfRange());
-		Messenger::print("  %s  %f\n", Keywords::configurationKeyword(Keywords::TemperatureKeyword), cfg->temperature());
-
-		Messenger::print("%s\n\n", Keywords::configurationKeyword(Keywords::EndConfigurationKeyword));
+		Messenger::print("%s\n\n", SampleBlock::keyword(SampleBlock::EndSampleKeyword));
 	}
 
 	// Write PairPotentials block
 	Messenger::print("# Pair Potentials\n");
-	Messenger::print("%s\n", Keywords::inputBlock(Keywords::PairPotentialsBlock));
-	Messenger::print("  %s  %f\n", Keywords::pairPotentialsKeyword(Keywords::RangeKeyword), pairPotentialRange_);
-	Messenger::print("  %s  %f\n", Keywords::pairPotentialsKeyword(Keywords::DeltaKeyword), pairPotentialDelta_);
-	Messenger::print("  %s  %f\n", Keywords::pairPotentialsKeyword(Keywords::TruncationWidthKeyword), pairPotentialTruncationWidth_);
+	Messenger::print("%s\n", InputBlocks::inputBlock(InputBlocks::PairPotentialsBlock));
+	Messenger::print("  %s  %f\n", PairPotentialsBlock::keyword(PairPotentialsBlock::RangeKeyword), pairPotentialRange_);
+	Messenger::print("  %s  %f\n", PairPotentialsBlock::keyword(PairPotentialsBlock::DeltaKeyword), pairPotentialDelta_);
+	Messenger::print("  %s  %f\n", PairPotentialsBlock::keyword(PairPotentialsBlock::TruncationWidthKeyword), pairPotentialTruncationWidth_);
 	for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next)
 	{
 		if (pot->type() == PairPotential::CoulombType) Messenger::print("  %s  '%s'  '%s'  %f  %f\n", PairPotential::pairPotentialType(pot->type()), pot->atomTypeI()->name(), pot->atomTypeJ()->name(), pot->chargeI(), pot->chargeJ());
 		else if (pot->type() == PairPotential::DispersionType) Messenger::print("  %s  '%s'  '%s'  %f  %f\n", PairPotential::pairPotentialType(pot->type()), pot->atomTypeI()->name(), pot->atomTypeJ()->name(), pot->sigmaIJ(), pot->epsilonIJ());
 		else Messenger::print("  %s  '%s'  '%s'  %f  %f  %f  %f\n", PairPotential::pairPotentialType(pot->type()), pot->atomTypeI()->name(), pot->atomTypeJ()->name(), pot->sigmaIJ(), pot->epsilonIJ(), pot->chargeI(), pot->chargeJ());
 	}
-	Messenger::print("%s\n\n", Keywords::pairPotentialsKeyword(Keywords::EndPairPotentialsKeyword));
+	Messenger::print("%s\n\n", PairPotentialsBlock::keyword(PairPotentialsBlock::EndPairPotentialsKeyword));
 
 	// Write Simulation block
 	Messenger::print("# Simulation\n");
-	Messenger::print("%s\n", Keywords::inputBlock(Keywords::SimulationBlock));
-	Messenger::print("  %s  %i\n", Keywords::simulationKeyword(Keywords::BoxNormalisationPointsKeyword), boxNormalisationPoints_);
-	Messenger::print("  %s  %i\n", Keywords::simulationKeyword(Keywords::SeedKeyword), seed_);
-	Messenger::print("  %s  %s\n", Keywords::simulationKeyword(Keywords::WindowFunctionKeyword), Data2D::windowFunction(windowFunction_));
-	Messenger::print("%s\n\n", Keywords::simulationKeyword(Keywords::EndSimulationKeyword));
+	Messenger::print("%s\n", InputBlocks::inputBlock(InputBlocks::SimulationBlock));
+	Messenger::print("  %s  %i\n", SimulationBlock::keyword(SimulationBlock::BoxNormalisationPointsKeyword), boxNormalisationPoints_);
+	Messenger::print("  %s  %i\n", SimulationBlock::keyword(SimulationBlock::SeedKeyword), seed_);
+	Messenger::print("  %s  %s\n", SimulationBlock::keyword(SimulationBlock::WindowFunctionKeyword), Data2D::windowFunction(windowFunction_));
+	Messenger::print("%s\n\n", SimulationBlock::keyword(SimulationBlock::EndSimulationKeyword));
 
 	// Additional data?
 	if (!includeData) return;

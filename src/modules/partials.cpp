@@ -167,8 +167,8 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 
 		// First, construct the weights matrix for the Sample, using atomtype populations from the referenced Configurations
 		// We will need to work out the fractional atomtype populations and how to weight them.
-		AtomTypeList sampleTypes = sam->atomTypes();
-		sampleTypes.zero();
+// // 		AtomTypeList sampleTypes = sam->atomTypes();
+// 		sampleTypes.zero();
 
 // 		weightsMatrix.initialise(sam->nUsedTypes(), sam->nUsedTypes(), true);
 // 		RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
