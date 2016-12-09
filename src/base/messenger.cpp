@@ -24,6 +24,7 @@
 #include "base/processpool.h"
 #include <stdarg.h>
 #include <stdio.h>
+#include <string.h>
 
 // Static Members
 bool Messenger::quiet_ = false;

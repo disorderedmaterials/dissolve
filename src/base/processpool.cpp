@@ -487,8 +487,8 @@ bool ProcessPool::setupCellStrategy(const Vec3<int>& divisions, const Vec3<int>&
 	if (MPI_Comm_create(MPI_COMM_WORLD, leaderGroup_, &leaderCommunicator_) != MPI_SUCCESS) return false;
 #else
 	// No MPI, but must still setup a dummy process group
-	Array<int>* procList = processGroups_.add();
-	procList->add(0);
+	ProcessGroup* group = processGroups_.add();
+	group->addProcess(0, 0);
 	groupIndex_ = 0;
 	groupRank_ = 0;
 #endif

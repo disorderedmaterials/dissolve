@@ -101,8 +101,8 @@ bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
 				break;
 			case (ConfigurationBlock::DensityKeyword):
 				// Determine units given
-				if (strcmp(parser.argc(2),"atoms/A3") == 0) cfg->setAtomicDensity(parser.argd(1));
-				else if (strcmp(parser.argc(2),"g/cm3") == 0) cfg->setChemicalDensity(parser.argd(1));
+				if (DUQSys::sameString(parser.argc(2),"atoms/A3")) cfg->setAtomicDensity(parser.argd(1));
+				else if (DUQSys::sameString(parser.argc(2),"g/cm3")) cfg->setChemicalDensity(parser.argd(1));
 				else
 				{
 					Messenger::error("Unrecognised density unit given - '%s'\nValid values are 'atoms/A3' or 'g/cm3'.\n", parser.argc(2));
