@@ -36,6 +36,8 @@ class ModuleList
 	ModuleList();
 	// Destructor
 	~ModuleList();
+	// List Context
+	enum ModuleListContext { SampleContext, ConfigurationContext };
 
 
 	/*
@@ -48,6 +50,8 @@ class ModuleList
 	VariableList moduleVariables_;
 
 	public:
+	// Return context of the list
+	virtual ModuleListContext context() = 0;
 	// Associate Module to list
 	Module* addModule(Module* module, bool autoAddDependents = false, RefListItem<Module, bool>* addBeforeThis = NULL);
 	// Find associated Module by name

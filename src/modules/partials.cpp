@@ -23,6 +23,7 @@
 #include "modules/partials.h"
 #include "classes/box.h"
 #include "classes/grain.h"
+#include "classes/isotopologueset.h"
 #include "classes/species.h"
 #include "base/sysfunc.h"
 #include "base/processpool.h"
@@ -46,6 +47,7 @@ Partials::Partials() : Module()
 	// Setup variables / control parameters
 	addVariable("Save", false, "Whether to save partials to disk after calculation");
 	addVariable("Smoothing", 0, "Specifies the degree of smoothing 'n' to apply to calculated RDFs, where 2n+1 controls the length in the applied Spline smooth");
+	addVariable("UseMixFrom", "", "Unique Module name under which to search for Species/Isotopologue mix information");
 }	
 
 // Destructor
@@ -115,6 +117,12 @@ const char* Partials::dependentModules()
 	return "";
 }
 
+// Setup supplied dependent module (only if it has been auto-added)
+bool Partials::setupDependentModule(Module* depMod)
+{
+	return true;
+}
+
 /*
  * Targets
  */
@@ -163,18 +171,79 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 	if (targetSamples_.nItems() > 0)
 	{
 		// Assemble partials from all Configurations specified, weighting them accordingly
+		Dnchar varName;
+		double totalWeight = 0.0;
+
+		// Get target Sample
 		Sample* sam = targetSamples_.firstItem();
 
-		// First, construct the weights matrix for the Sample, using atomtype populations from the referenced Configurations
-		// We will need to work out the fractional atomtype populations and how to weight them.
-// // 		AtomTypeList sampleTypes = sam->atomTypes();
-// 		sampleTypes.zero();
+		// If the UseMixFrom variable was set, grab its value now
+		Dnchar mixSource = uniqueName_;
+		if (sam->moduleVariable("UseMixFrom", uniqueName()))
+		{
+			mixSource = sam->moduleVariable("UseMixFrom", uniqueName())->asChar();
+			Messenger::print("Partials: Isotopologue mixture data will be taken from Module '%s'.\n", mixSource.get());
+		}
 
-// 		weightsMatrix.initialise(sam->nUsedTypes(), sam->nUsedTypes(), true);
-// 		RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
-// 		while (Configuration* cfg = configIterator.iterate())
+		// Create / grab partial set for the Sample
+// 		PartialRSet* samplePartials = Partials::partialSet(sam);
 
-// 		Array2D<double> weightsMatrix;
+		// Loop over Configurations. For each, go through the list of Species used in the Configuration, and for each Species, search for any Isotopologues
+		// that are specified as being relevant to this Sample. These will have been defined as Module variables in the Configuration. For each one we find
+		// we update an AtomTypeList with the Isotopologue's atomtypes/isotopes, constructing our atomic fractions .
+		// We will keep a running total of the weights associated with each Configuration, and re-weight the entire set of partials at the end.
+		RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
+		while (Configuration* cfg = configIterator.iterate())
+		{
+			// Get weight for this Configuration
+			varName.sprintf("%s_Weight", cfg->name());
+			Variable* weightVar = sam->moduleVariable(varName, mixSource);
+			if (!weightVar)
+			{
+				Messenger::error("Partials: Required variable '%s' found in Sample '%s'.\n", varName.get(), sam->name());
+				return false;
+			}
+			double weight = weightVar->asDouble();
+			totalWeight += weight;
+  			Messenger::printVerbose("Partials: Weight for Configuration '%s' is %f (total weight is now %f).\n", cfg->name(), weight, totalWeight);
+
+			// Create a WeightsMatrix using the Isotopologues referenced in the Sample, and the populations of atomtypes in the Configuration.
+			WeightsMatrix weightsMatrix;
+			RefListIterator<Species,double> speciesIterator(cfg->usedSpecies());
+			while (Species* sp = speciesIterator.iterate())
+			{
+				int speciesPopulation = speciesIterator.currentData() * cfg->multiplier();
+
+				// Loop over available Isotopologues for Species
+				for (Isotopologue* availableIso = sp->isotopologues(); availableIso != NULL; availableIso = availableIso->next)
+				{
+					// Construct variable name that we expect to find if the tope was used in the Module (variable is defined in the associated Configuration)
+					varName.sprintf("Isotopologue/%s/%s", sp->name(), availableIso->name());
+					Variable* var = sam->moduleVariable(varName, mixSource);
+					if (!var) continue;
+
+					// This isotopologue is defined as being used, so add its atomtypes (in the isotopic proportions defined in the Isotopologue) to the sampleAtomTypes list.
+					weightsMatrix.addIsotopologue(sp, speciesPopulation, availableIso, var->asDouble());
+				}
+			}
+
+			// We will complain strongly if a species in the Configuration is not covered by at least one Isotopologue definition
+			speciesIterator.restart();
+			while (Species* sp = speciesIterator.iterate()) if (!weightsMatrix.hasSpeciesIsotopologueMixture(sp)) 
+			{
+				Messenger::error("Isotopologue specification for Species '%s' in Configuration '%s' is missing.\n", sp->name(), cfg->name());
+				return false;
+			}
+
+			// Construct atom type lists and matrices
+			weightsMatrix.finalise();
+
+			// Calculate and grab partials for Configuration
+			calculateUnweighted(cfg, procPool);
+			PartialRSet* cfgPartials = Partials::partialSet(cfg);
+
+			// 
+		}
 
 		return false;
 	}

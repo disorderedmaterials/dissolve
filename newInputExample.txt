@@ -123,7 +123,8 @@ Sample 'NIMROD-Deuteriated'
   Module StructureFactor
     QDepBroadening 0.02    # For SLS
     Configuration  'Bulk'
-    Isotopologue  'Bulk'  'Water'  'Deuteriated'  1.0
+    Isotopologue  'Bulk'  'Water'  'Deuteriated'  0.5
+    Isotopologue  'Bulk'  'Water'  'Natural'  0.5
   EndModule
 EndSample
 

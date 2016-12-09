@@ -27,6 +27,7 @@
 IsotopologueMix::IsotopologueMix() : ListItem<IsotopologueMix>()
 {
 	species_ = NULL;
+	speciesPopulation_ = 0;
 }
 
 // Destructor
@@ -39,15 +40,22 @@ IsotopologueMix::~IsotopologueMix()
  */
 
 // Set associated Species
-void IsotopologueMix::setSpecies(Species* sp)
+void IsotopologueMix::setSpecies(Species* sp, int population)
 {
 	species_ = sp;
+	speciesPopulation_ = population;
 }
 
 // Return associated Species
 Species* IsotopologueMix::species() const
 {
 	return species_;
+}
+
+// Return associated Species population
+int IsotopologueMix::speciesPopulation()
+{
+	return speciesPopulation_;
 }
 
 // Update Isotopologue RefList
@@ -106,7 +114,7 @@ bool IsotopologueMix::addIsotopologue(Isotopologue* iso, double relPop)
 	// Search current list to see if the specified Isotopologue already exists
 	if (hasIsotopologue(iso))
 	{
-		Messenger::error("Can't add Isotopologue '%s' (of Species '%s') to Sample since it is already there.\n", iso->name(), species_->name());
+		Messenger::error("Can't add Isotopologue '%s' (of Species '%s') to IsotopologueMix since it is already there.\n", iso->name(), species_->name());
 		return false;
 	}
 
@@ -128,7 +136,7 @@ bool IsotopologueMix::setIsotopologue(Isotopologue* iso, double relPop)
 	RefListItem<Isotopologue,double>* tope = mix_.contains(iso);
 	if (tope == NULL)
 	{
-		Messenger::warn("Warning: IsotopologueMix doest not contain the Isotopologue '%s', so its fraction can't be set.\n", iso->name());
+		Messenger::warn("Warning: IsotopologueMix does not contain the Isotopologue '%s', so its fraction can't be set.\n", iso->name());
 		return false;
 	}
 	tope->data = relPop;
@@ -165,4 +173,11 @@ double IsotopologueMix::totalRelative() const
 	double total = 0.0;
 	for (RefListItem<Isotopologue,double>* ri = mix_.first(); ri != NULL; ri = ri->next) total += ri->data;
 	return total;
+}
+
+// Normalise total relative population to 1.0
+void IsotopologueMix::normalise()
+{
+	double total = totalRelative();
+	for (RefListItem<Isotopologue,double>* ri = mix_.first(); ri != NULL; ri = ri->next) ri->data /= total;
 }

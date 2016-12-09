@@ -87,8 +87,12 @@ void Module::updateDependentTargets()
 		// If the Module was *not* added automatically, then do not update the targets
 		if (!iterator.currentData()) continue;
 
+		// Copy target Samples and Configurations
 		module->copyTargetSamples(this);
 		module->copyTargetConfigurations(this);
+
+		// Perform any setup on the dependent module
+		setupDependentModule(module);
 
 		// Also may need to update dependent targets of this Module...
 		module->updateDependentTargets();

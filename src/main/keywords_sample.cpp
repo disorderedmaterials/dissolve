@@ -106,7 +106,7 @@ bool SampleBlock::parse(LineParser& parser, DUQ* duq, Sample* sample)
 				if (error) break;
 
 				// Parse rest of Module block
-				if (!ModuleBlock::parse(parser, duq, module, NULL, sample)) error = true;
+				if (!ModuleBlock::parse(parser, duq, module, sample)) error = true;
 
 				// Now finished parsing the Module block, so must update target Samples and Configurations in any auto-added Modules
 				module->updateDependentTargets();

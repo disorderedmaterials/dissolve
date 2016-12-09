@@ -43,8 +43,10 @@ class VariableValue
 	VariableValue(int value);
 	// Constructor (double)
 	VariableValue(double value);
-	// Constructor (int)
+	// Constructor (const char*)
 	VariableValue(const char* value);
+	// Constructor (Dnchar)
+	VariableValue(const Dnchar& value);
 	// Constructor (Array<int>)
 	VariableValue(const Array<int>& value);
 	// Constructor (Array<double>)

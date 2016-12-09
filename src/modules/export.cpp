@@ -111,6 +111,12 @@ const char* Export::dependentModules()
 	return "";
 }
 
+// Setup supplied dependent module (only if it has been auto-added)
+bool Export::setupDependentModule(Module* depMod)
+{
+	return true;
+}
+
 /*
  * Targets
  */

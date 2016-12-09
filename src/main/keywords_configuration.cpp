@@ -147,7 +147,7 @@ bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
 				if (error) break;
 
 				// Parse rest of Module block
-				if (!ModuleBlock::parse(parser, duq, module, cfg, NULL)) error = true;
+				if (!ModuleBlock::parse(parser, duq, module, cfg)) error = true;
 
 				// Now finished parsing the Module block, so must update target Samples and Configurations in any auto-added Modules
 				module->updateDependentTargets();

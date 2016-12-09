@@ -113,6 +113,12 @@ const char* Energy::dependentModules()
 	return "";
 }
 
+// Setup supplied dependent module (only if it has been auto-added)
+bool Energy::setupDependentModule(Module* depMod)
+{
+	return true;
+}
+
 /*
  * Targets
  */

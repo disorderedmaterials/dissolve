@@ -29,6 +29,7 @@ class Sample;
 class Configuration;
 class Species;
 class Module;
+class ModuleList;
 
 // Keyword Data
 class KeywordData
@@ -153,7 +154,7 @@ namespace ModuleBlock
 	// Return expected number of expected arguments
 	int nArguments(ModuleKeyword id);
 	// Parse Module block
-	bool parse(LineParser& parser, DUQ* duq, Module* module, Configuration* cfg, Sample* sam);
+	bool parse(LineParser& parser, DUQ* duq, Module* module, ModuleList* targetList);
 };
 
 

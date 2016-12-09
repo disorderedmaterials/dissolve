@@ -138,6 +138,16 @@ Data2D& Sample::calculatedData()
 }
 
 /*
+ * Module List
+ */
+
+// Return context of the list
+ModuleList::ModuleListContext Sample::context()
+{
+	return ModuleList::SampleContext;
+}
+
+/*
  * Parallel Comms
  */
 

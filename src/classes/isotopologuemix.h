@@ -47,14 +47,18 @@ class IsotopologueMix : public ListItem<IsotopologueMix>
 	private:
 	// Associated Species
 	Species* species_;
+	// Integer population of associated Species
+	int speciesPopulation_;
 	// Isotopologue List
 	RefList<Isotopologue,double> mix_;
 	
 	public:
-	// Set associated Species
-	void setSpecies(Species* sp);
+	// Set associated Species and population
+	void setSpecies(Species* sp, int population);
 	// Return associated Species
 	Species* species() const;
+	// Return associated Species population
+	int speciesPopulation();
 	// Update Isotopologue RefList
 	void update();
 	// Add next available Isotopologue to list
@@ -75,6 +79,8 @@ class IsotopologueMix : public ListItem<IsotopologueMix>
 	RefListItem<Isotopologue,double>* hasIsotopologue(Isotopologue* iso) const;
 	// Return total relative population
 	double totalRelative() const;
+	// Normalise total relative population to 1.0
+	void normalise();
 
 
 	/*

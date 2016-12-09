@@ -113,6 +113,12 @@ const char* Test::dependentModules()
 	return "";
 }
 
+// Setup supplied dependent module (only if it has been auto-added)
+bool Test::setupDependentModule(Module* depMod)
+{
+	return true;
+}
+
 /*
  * Targets
  */

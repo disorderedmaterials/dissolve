@@ -188,6 +188,8 @@ class Configuration : public ModuleList, public ListItem<Configuration>
 	AtomType* type(int index);
 	// Return first AtomTypeData for this Configuration
 	AtomTypeData* usedAtomTypes();
+	// Return AtomTypeList for this Configuration
+	const AtomTypeList& usedAtomTypesList() const;
 	// Return fraction of specified AtomTypeData in Configuration
 	double usedAtomTypeFraction(int index);
 	// Return number of atom types used in this Configuration
@@ -383,6 +385,14 @@ class Configuration : public ModuleList, public ListItem<Configuration>
 	void updateGrains();
 	// Create cell atom neighbour lists
 	void recreateCellAtomNeighbourLists(double pairPotentialRange);
+
+
+	/*
+	 * Module List
+	 */
+	public:
+	// Return context of the list
+	ModuleList::ModuleListContext context();
 
 
 	/*
