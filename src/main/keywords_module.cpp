@@ -30,7 +30,7 @@ KeywordData ModuleBlockData[] = {
 	{ "Disabled",			0,	"Specifies that the Module should never be run" },
 	{ "EndModule",			0,	"Marks the end of a Module block" },
 	{ "Frequency",			1,	"Frequency, relative to the main loop, at which this Module is run" },
-	{ "Isotopologue",		3,	"Sets the relative population of a Species Isotopologue in a Configuration" }
+	{ "Isotopologue",		3,	"Sets the relative population of a Species Isotopologue for a specific Configuration" }
 };
 
 // Convert text string to ModuleKeyword
@@ -53,7 +53,7 @@ int ModuleBlock::nArguments(ModuleBlock::ModuleKeyword id)
 }
 
 // Parse Module block
-bool ModuleBlock::parse(LineParser& parser, DUQ* duq, Module* module, Configuration* cfg, Sample* sam)
+bool ModuleBlock::parse(LineParser& parser, DUQ* duq, Module* module, ModuleList* targetList)
 {
 	Messenger::print("\nParsing %s block '%s'...\n", InputBlocks::inputBlock(InputBlocks::ModuleBlock), module->name());
 
@@ -63,6 +63,7 @@ bool ModuleBlock::parse(LineParser& parser, DUQ* duq, Module* module, Configurat
 	Isotopologue* tope;
 	Dnchar varName;
 	bool blockDone = false, error = false;
+	int argIndex;
 	
 	while (!parser.eofOrBlank(duq->worldPool()))
 	{
@@ -78,17 +79,28 @@ bool ModuleBlock::parse(LineParser& parser, DUQ* duq, Module* module, Configurat
 		else if (modKeyword != ModuleBlock::nModuleKeywords) switch (modKeyword)
 		{
 			case (ModuleBlock::ConfigurationKeyword):
+				// Find the named Configuration
 				targetCfg = duq->findConfiguration(parser.argc(1));
 				if (!targetCfg)
 				{
 					Messenger::error("Can't associate Configuration '%s' to the Module '%s', since no Configuration by this name exists.\n", parser.argc(1), module->name());
 					error = true;
+					break;
 				}
+
+				// Add it is a target
 				if (!module->addConfigurationTarget(targetCfg))
 				{
 					Messenger::error("Failed to add Configuration target in Module '%s'.\n", module->name());
 					error = true;
+					break;
 				}
+
+				// Add a weight variable (optional second parameter)
+				// Name of the variable depends on the context of the list
+				if (targetList->context() == ModuleList::SampleContext) varName.sprintf("%s_Weight", targetCfg->name());
+				else varName = "Weight";
+				targetList->setModuleVariable(varName, parser.hasArg(2) ? parser.argd(2) : 1.0, "Configuration weighting for Module", module->uniqueName());
 				break;
 			case (ModuleBlock::DisableKeyword):
 				module->setEnabled(false);
@@ -100,7 +112,7 @@ bool ModuleBlock::parse(LineParser& parser, DUQ* duq, Module* module, Configurat
 				module->setFrequency(parser.argi(1));
 				break;
 			case (ModuleBlock::IsotopologueKeyword):
-				// Essentially a shortcut for setting a variable in a target Configuration
+				// Essentially a shortcut for setting a variable in a target Configuration / Sample
 				// Find target Configuration
 				targetCfg = duq->findConfiguration(parser.argc(1));
 				if (!targetCfg)
@@ -144,9 +156,8 @@ bool ModuleBlock::parse(LineParser& parser, DUQ* duq, Module* module, Configurat
 				}
 
 				// Ready - add a suitable variable to the Configuration
-				varName.sprintf("Isotopologue_%s_%s", sp->name(), tope->name());
-				targetCfg->setModuleVariable(varName.get(), parser.argd(4), "Isotopologue weighting", module->uniqueName());
-
+				varName.sprintf("Isotopologue/%s/%s", sp->name(), tope->name());
+				targetList->setModuleVariable(varName.get(), parser.argd(4), "Isotopologue weighting", module->uniqueName());
 				break;
 			case (ModuleBlock::nModuleKeywords):
 				Messenger::error("Unrecognised %s block keyword found - '%s'\n", InputBlocks::inputBlock(InputBlocks::ModuleBlock), parser.argc(0));
@@ -169,9 +180,8 @@ bool ModuleBlock::parse(LineParser& parser, DUQ* duq, Module* module, Configurat
 				error = true;
 				break;
 			}
-			// Set variable in Configuration / Sample as appropriate
-			if (cfg) cfg->setModuleVariable(var->name(), parser.argc(1), var->description(), module->uniqueName());
-			if (sam) sam->setModuleVariable(var->name(), parser.argc(1), var->description(), module->uniqueName());
+			// Set variable in target
+			targetList->setModuleVariable(var->name(), parser.argc(1), var->description(), module->uniqueName());
 		}
 
 		// Error encountered?

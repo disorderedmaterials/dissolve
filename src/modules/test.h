@@ -73,6 +73,8 @@ class Test : public Module
 	bool hasPostProcessing();
 	// Modules upon which this Module depends to have run first
 	const char* dependentModules();
+	// Setup supplied dependent module (only if it has been auto-added)
+	bool setupDependentModule(Module* depMod);
 
 
 	/*

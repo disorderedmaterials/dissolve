@@ -1,6 +1,6 @@
 /*
-	*** Isotopologue Set
-	*** src/classes/isotopologueset.cpp
+	*** Weights Matrix
+	*** src/classes/werightsmatrix.cpp
 	Copyright T. Youngs 2012-2016
 
 	This file is part of dUQ.
@@ -25,18 +25,20 @@
 #include "base/processpool.h"
 
 // Constructor
-IsotopologueSet::IsotopologueSet()
+WeightsMatrix::WeightsMatrix()
 {
+	boundCoherentAverageSquared_ = 0.0;
+	boundCoherentSquaredAverage_ = 0.0;
 }
 
 // Copy Constructor
-IsotopologueSet::IsotopologueSet(const IsotopologueSet& source)
+WeightsMatrix::WeightsMatrix(const WeightsMatrix& source)
 {
 	(*this) = source;
 }
 
 // Assignment Operator
-void IsotopologueSet::operator=(const IsotopologueSet& source)
+void WeightsMatrix::operator=(const WeightsMatrix& source)
 {
 	// Isotopologue Mix
 	isotopologueMixtures_ = source.isotopologueMixtures_;
@@ -47,112 +49,19 @@ void IsotopologueSet::operator=(const IsotopologueSet& source)
  * Species/Isotopologue Definition
  */
 
-// Return whether the IsotopologueSet contains a mixtures definition for the provided Species
-IsotopologueMix* IsotopologueSet::hasSpeciesIsotopologueMixture(Species* sp) const
-{
-	/*
-	 * This function reconstructs the current RefList of Species/Isotopologue pairs and ensures that
-	 * it contains only valid Species and Isotopologue pointers.
-	 */
-	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next) if (mix->species() == sp) return mix;
-	return NULL;
-}
-
-// 			case (Keywords::IsotopologueModuleKeyword):
-// 				// Locate Species first...
-// 				sp = duq->findSpecies(parser.argc(1));
-// 				if (sp == NULL)
-// 				{
-// 					Messenger::error("Module refers to Species '%s', but no such Species is defined.\n", parser.argc(1));
-// 					error = true;
-// 					break;
-// 				}
-// 				
-// 				// Now locate Isotopologue
-// 				iso = sp->findIsotopologue(parser.argc(2));
-// 				if (iso == NULL)
-// 				{
-// 					Messenger::error("Module refers to Isotopologue '%s' in Species '%s', but no such Isotopologue is defined.\n", parser.argc(2), parser.argc(1));
-// 					error = true;
-// 					break;
-// 				}
-// 
-// 				// OK to add 
-// 				if (!sample->addIsotopologueToMixture(sp, iso, parser.argd(3))) error = true;
-// 				else Messenger::print("--> Added Isotopologue '%s' (Species '%s') to Module '%s' (%f relative population).\n", iso->name(), sp->name(), sample->name(), parser.argd(3));
-// 				break;
-// 
-
-
-// Update IsotopologueMix List
-void IsotopologueSet::updateIsotopologueMixtures(const List<Species>& species)
-{
-	/*
-	 * This function reconstructs the current List of IsotopologueMix items and ensures that
-	 * it contains all valid component Species and Isotopologue pointers.
-	 */
-
-	// Construct a temporary RefList, and move all existing RefListItems to it
-	List<IsotopologueMix> oldItems;
-	IsotopologueMix* mix;
-	while (isotopologueMixtures_.last() != NULL)
-	{
-		mix = isotopologueMixtures_.last();
-		isotopologueMixtures_.cut(mix);
-		oldItems.own(mix);
-	}
-	
-	// Loop over Species in System, and search for an associated IsotopologueMix in the oldItems list
-	for (Species* sp = species.first(); sp != NULL; sp = sp->next)
-	{
-		for (mix = oldItems.first(); mix != NULL; mix = mix->next) if (mix->species() == sp) break;
-
-		// If we found the existing item, append it to the local list.
-		// Otherwise, create a new one with the default (first) Isotopologue.
-		if (mix != NULL)
-		{
-			// Update IsotopologueMix, and check that it still contains something...
-			// If there are no isotopologues left in the mix, try to add one
-			mix->update();
-			if (mix->nIsotopologues() == 0) mix->addNextIsotopologue();
-			
-			// If we get here, its still valid, so store it
-			oldItems.cut(mix);
-			isotopologueMixtures_.own(mix);
-		}
-		else
-		{
-			mix = isotopologueMixtures_.add();
-			mix->setSpecies(sp);
-		}
-	}
-}
-
 // Add Isotopologue for Species
-bool IsotopologueSet::addIsotopologue(Species* sp, Isotopologue *iso, double relPop)
+bool WeightsMatrix::addIsotopologue(Species* sp, int speciesPopulation, Isotopologue* iso, double isotopologueRelativePopulation)
 {
 	// Check that the Species is in the list...
 	IsotopologueMix* mix = hasSpeciesIsotopologueMixture(sp);
 	if (mix == NULL)
 	{
-		Messenger::print("Warning: IsotopologueSet contains no IsotopologueMix definition for Species '%s'.\n", sp->name());
-		return false;
+		mix = isotopologueMixtures_.add();
+		mix->setSpecies(sp, speciesPopulation);
 	}
 
-	// Check current number of Isotopologues defined against total available
-	if (sp->nIsotopologues() == mix->nIsotopologues())
-	{
-		Messenger::print("Can't add a new Isotopologue definition for Species '%s' in IsotopologueSet since there are no unused Isotopologue definitions left.\n", sp->name());
-		return false;
-	}
-
-	// Was a specific Isotopologue provided?
-	if (iso == NULL)
-	{
-		// Add next available Isotopologue to mixture
-		if (!mix->addNextIsotopologue()) return false;
-	}
-	else if (!mix->addIsotopologue(iso, relPop))
+	// Add/update Isotopologue provided?
+	if (!mix->addIsotopologue(iso, isotopologueRelativePopulation))
 	{
 		Messenger::error("Failed to add Isotopologue to IsotopologueSet.\n");
 		return false;
@@ -161,151 +70,103 @@ bool IsotopologueSet::addIsotopologue(Species* sp, Isotopologue *iso, double rel
 	return true;
 }
 
-// Return first IsotopologueMix
-IsotopologueMix *IsotopologueSet::isotopologueMixtures() const
+// Return whether the IsotopologueSet contains a mixtures definition for the provided Species
+IsotopologueMix* WeightsMatrix::hasSpeciesIsotopologueMixture(Species* sp) const
 {
-	return isotopologueMixtures_.first();
+	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next) if (mix->species() == sp) return mix;
+	return NULL;
 }
 
-// Return nth IsotopologueMix
-IsotopologueMix *IsotopologueSet::isotopologueMixture(int n)
+// Print full isotopologue information
+void WeightsMatrix::printIsotopologues()
 {
-	return isotopologueMixtures_[n];
-}
-
-// Assign default (first) Isotopologues for all Species
-void IsotopologueSet::assignDefaultIsotopes()
-{
+	Messenger::print("  Species          Isotopologue     nTotMols    TopeFrac\n");
+	Messenger::print("  ------------------------------------------------------\n");
 	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next)
 	{
-		if (mix->nIsotopologues() != 0) continue;
-		if (mix->species()->nIsotopologues() == 0) continue;
-		mix->addNextIsotopologue();
+		for (RefListItem<Isotopologue,double>* tope = mix->isotopologues(); tope != NULL; tope = tope->next)
+		{
+			if (tope == mix->isotopologues()) Messenger::print("  %-15s  %-15s  %-10i  %f\n", mix->species()->name(), tope->item->name(), mix->speciesPopulation(), tope->data);
+			else Messenger::print("                   %-15s              %f\n", tope->item->name(), tope->data);
+		}
 	}
 }
 
-// Create type list
-bool IsotopologueSet::createTypeList(const List<Species>& allSpecies, const List<AtomType>& masterIndex)
+/*
+ * Calculated Data
+ */
+
+// Finalise lists and matrices based on IsotopologueMix information
+void WeightsMatrix::finalise(bool quiet)
 {
-	// Loop over IsotopologueSets and go through Isotopologues in each mixture
-	atomTypes_.clear();
-	Isotope* iso;
-
-	Messenger::print("--> Generating AtomType/Isotope index...\n");
-	// Simultaneous loop over defined Species and IsotopologueMixtures (which are directly related)
-	Species* refSp = allSpecies.first();
-	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next, refSp = refSp->next)
+	// Loop over IsotopologueMix entries and ensure relative populations of Isotopologues sum to 1.0
+	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next) mix->normalise();
+	if (!quiet)
 	{
-		// Sanity check
-		if (mix->species() != refSp)
-		{
-			Messenger::error("Species referred to in mixture in IsotopologueSet '%s' does not correspond to that in the main Species list.\n", mix->species()->name());
-			return false;
-		}
+		Messenger::print("\n");
+		printIsotopologues();
+	}
 
+	// Fill atomTypes_ list with AtomType populations, based on IsotopologueMix relative populations and associated Species populations
+	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next)
+	{
 		// We must now loop over the Isotopologues in the mixture
 		for (RefListItem<Isotopologue,double>* tope = mix->isotopologues(); tope != NULL; tope = tope->next)
 		{
 			// Loop over Atoms in the Species, searching for the AtomType/Isotope entry in the isotopes list of the Isotopologue
-			for (SpeciesAtom* i = refSp->atoms(); i != NULL; i = i->next)
+			for (SpeciesAtom* i = mix->species()->atoms(); i != NULL; i = i->next)
 			{
-				iso = tope->item->atomTypeIsotope(i->atomType());
-				atomTypes_.add(i->atomType(), iso);
+				Isotope* iso = tope->item->atomTypeIsotope(i->atomType());
+				atomTypes_.add(i->atomType(), iso, tope->data*mix->speciesPopulation());
 			}
 		}
 	}
-
-	// Calculate fractional populations
 	atomTypes_.finalise();
-
-	// Set master type indices
-	for (AtomTypeData* atd = atomTypes_.first(); atd != NULL; atd = atd->next)
+	if (!quiet)
 	{
-		// Find entry in the master index which contains the AtomType of 'at1'
-		int id = masterIndex.indexOf(atd->atomType());
-		if (id < 0)
-		{
-			Messenger::print("INTERNAL_ERROR - Couldn't find entry for first AtomType '%s' in masterIndex.\n", atd->name());
-			return false;
-		}
-		atd->setMasterIndex(id);
+		Messenger::print("\n");
+		atomTypes_.print();
 	}
 
-	return true;
-}
-
-// Print full isotopologue information
-void IsotopologueSet::print()
-{
-	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next)
+	// Create weights matrices and calculate average scattering lengths
+	// Note: Multiplier of 0.1 on b terms converts from units of fm (1e-11 m) to barn (1e-12 m)
+	concentrationMatrix_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
+	scatteringMatrix_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
+	boundCoherentAverageSquared_ = 0.0;
+	boundCoherentSquaredAverage_ = 0.0;
+	double ci, cj, bi, bj;
+	AtomTypeData* at1 = atomTypes_.first(), *at2;
+	for (int typeI=0; typeI<atomTypes_.nItems(); ++typeI, at1 = at1->next)
 	{
-		for (RefListItem<Isotopologue,double>* tope = mix->isotopologues(); tope != NULL; tope = tope->next)
+		ci = at1->fraction();
+		bi = at1->isotope()->boundCoherent() * 0.1;
+		// Update average scattering values
+		boundCoherentAverageSquared_ += ci*bi;
+		boundCoherentSquaredAverage_ += ci*bi*bi;
+
+		at2 = at1;
+		for (int typeJ=typeI; typeJ<atomTypes_.nItems(); ++typeJ, at2 = at2->next)
 		{
-			if (tope == mix->isotopologues()) Messenger::print("       %-15s  %-15s\n", mix->species()->name(), tope->item->name());
-			else Messenger::print("                        %-15s\n", tope->item->name());
+			cj = at2->fraction();
+			bj = at2->isotope()->boundCoherent() * 0.1;
+
+			concentrationMatrix_.ref(typeI,typeJ) = ci * cj;
+			scatteringMatrix_.ref(typeI,typeJ) = ci * cj * bi * bj;
 		}
 	}
+	boundCoherentAverageSquared_ *= boundCoherentAverageSquared_;
+
+	if (!quiet) Messenger::print("Calculated average scattering lengths: <b>**2 = %f, <b**2> = %f\n", boundCoherentAverageSquared_, boundCoherentSquaredAverage_);
 }
 
 // Return AtomTypeList
-AtomTypeList& IsotopologueSet::atomTypes()
+AtomTypeList& WeightsMatrix::atomTypes()
 {
 	return atomTypes_;
 }
 
 // Return number of used AtomTypes
-int IsotopologueSet::nUsedTypes()
+int WeightsMatrix::nUsedTypes()
 {
 	return atomTypes_.nItems();
-}
-
-/*
- * Parallel Comms
- */
-
-// Broadcast data from Master to all Slaves
-bool IsotopologueSet::broadcast(ProcessPool& procPool, const List<Species>& species)
-{
-#ifdef PARALLEL
-	int index, topeCount;
-	double relPop;
-	IsotopologueMix* iso;
-
-	// Mixture information
-	// Component/Species RefList will have already been constructed in DUQ::addSample(), so just update constituent Isotopologue
-	for (iso = isotopologueMixtures_.first(); iso != NULL; iso = iso->next)
-	{
-		// Master needs to determine Species index
-		if (procPool.isMaster()) index = species.indexOf(iso->species());
-		if (!procPool.broadcast(&index, 1)) return false;
-		iso->setSpecies(species.item(index));
-
-		// Now sent number of isotopes in mixture
-		topeCount = iso->nIsotopologues();
-		if (!procPool.broadcast(&topeCount, 1)) return false;
-		
-		if (procPool.isMaster()) for (RefListItem<Isotopologue,double>* ri = iso->isotopologues(); ri != NULL; ri = ri->next)
-		{
-			// Get Isotopologue index from Species
-			index = iso->species()->indexOfIsotopologue(ri->item);
-			if (!procPool.broadcast(&index, 1)) return false;
-			// Send relative population
-			relPop = ri->data;
-			if (!procPool.broadcast(&relPop, 1)) return false;
-		}
-		else
-		{
-			for (int m = 0; m<topeCount; ++m)
-			{
-				// Receive Isotopologue index in associated Species
-				if (!procPool.broadcast(&index, 1)) return false;
-				// Receive relative population
-				if (!procPool.broadcast(&relPop, 1)) return false;
-				// Add new mixture component
-				iso->addIsotopologue(iso->species()->isotopologue(index), relPop);
-			}
-		}
-	}
-#endif
-	return true;
 }

@@ -117,6 +117,12 @@ const char* AtomShake::dependentModules()
 	return "";
 }
 
+// Setup supplied dependent module (only if it has been auto-added)
+bool AtomShake::setupDependentModule(Module* depMod)
+{
+	return true;
+}
+
 /*
  * Targets
  */

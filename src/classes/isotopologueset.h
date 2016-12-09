@@ -29,58 +29,56 @@
 // Forward Declarations
 /* none */
 
-// Isotopologue Set
-class IsotopologueSet
+// Weights Matrix
+class WeightsMatrix
 {
 	public:
 	// Constructor
-	IsotopologueSet();
+	WeightsMatrix();
 	// Copy Constructor
-	IsotopologueSet(const IsotopologueSet& source);
+	WeightsMatrix(const WeightsMatrix& source);
 	// Assignment operator
-	void operator=(const IsotopologueSet& source);
+	void operator=(const WeightsMatrix& source);
 
 
 	/*
-	 * Isotopologue Definition
+	 * Construction
 	 */
 	private:
 	// List of IsotopologueMix-tures for Species
 	List<IsotopologueMix> isotopologueMixtures_;
+
+	public:
+	// Add Species Isotopologue to the relevant mixture
+	bool addIsotopologue(Species* sp, int speciesPopulation, Isotopologue* iso, double isotopologueRelativePopulation);
+	// Return whether we have a mixtures definition for the provided Species
+	IsotopologueMix* hasSpeciesIsotopologueMixture(Species* sp) const;
+	// Print full IsotopologueMix information
+	void printIsotopologues();
+
+
+	/*
+	 * Calculated Data
+	 */
+	private:
 	// Type list derived from Species referenced in isotopologueMixtures_
 	AtomTypeList atomTypes_;
+	// Atom concentration weights matrix (ci * cj)
+	Array2D<double> concentrationMatrix_;
+	// Scattering weights matrix (ci * cj * bi * bj)
+	Array2D<double> scatteringMatrix_;
+	// Bound coherent average squared scattering (<b>**2)
+	double boundCoherentAverageSquared_;
+	// Bound coherent squared average scattering (<b**2>)
+	double boundCoherentSquaredAverage_;
 
 	public:
-	// Update IsotopologueMix data
-	void updateIsotopologueMixtures(const List<Species>& species);
-	// Return whether the set contains a mixtures definition for the provided Species
-	IsotopologueMix* hasSpeciesIsotopologueMixture(Species* sp) const;
-	// Add Isotopologue to the relevant mixture
-	bool addIsotopologue(Species* sp, Isotopologue* iso, double relPop);
-	// Return first IsotopologueMix
-	IsotopologueMix* isotopologueMixtures() const;
-	// Return nth IsotopologueMix
-	IsotopologueMix* isotopologueMixture(int n);
-	// Assign default (first) Isotopologues for all Species
-	void assignDefaultIsotopes();
-
-	public:
-	// Create type list
-	bool createTypeList(const List<Species>& allSpecies, const List<AtomType>& masterIndex);
-	// Print full isotopologue information
-	void print();
+	// Finalise lists and matrices based on IsotopologueMix information
+	void finalise(bool quiet = false);
 	// Return AtomTypeList
 	AtomTypeList& atomTypes();
 	// Return number of used AtomTypes
 	int nUsedTypes();
-
-
-	/*
-	 * Parallel Comms
-	 */
-
-	// Broadcast data from Master to all Slaves
-	bool broadcast(ProcessPool& procPool, const List<Species>& species);
 };
 
 #endif

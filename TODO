@@ -15,6 +15,9 @@ o Different bond types - e.g. replicate those used in EPSR for reference?
 Ideas / Notes / Weird Algorithm Suggestions
 -------------------------------------------
 
+** Allow Chemical Units When Specifying Quantities
+If density for specific Isotopologues can be provided, we can allow gram quantities of them to be added (in Partials/Spatials definitions, for instance) and converted automatically to relative molar amounts (which is what we need). Will need to set a tolerance on the resulting relative populations between species for this method, since we need to ensure some kind of consistency between the exact, specified composition of the Configuration(s) and the Sample information.
+
 ** Monte Carlo 'Velocity'
 Keep track of last successful rotation / translation for each Grain, allowing similar moves to be attempted on next round? Reset if move fails.
 

@@ -48,14 +48,14 @@ class Sample : public ModuleList, public ListItem<Sample>
 	private:
 	// Descriptive name
 	Dnchar name_;
-	
+
 	public:
 	// Set name of Sample
 	void setName(const char* name);
 	// Return name of Sample
 	const char* name() const;
-	
-	
+
+
 	/*
 	 * Reference Data
 	 */
@@ -80,6 +80,14 @@ class Sample : public ModuleList, public ListItem<Sample>
 	Data2D& referenceData();
 	// Return calculated data
 	Data2D& calculatedData();
+
+
+	/*
+	 * Module List
+	 */
+	public:
+	// Return context of the list
+	ModuleList::ModuleListContext context();
 
 
 	/*

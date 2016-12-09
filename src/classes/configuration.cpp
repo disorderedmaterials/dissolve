@@ -372,6 +372,16 @@ bool Configuration::setup(ProcessPool& procPool, const List<AtomType>& atomTypes
 }
 
 /*
+ * Module List
+ */
+
+// Return context of the list
+ModuleList::ModuleListContext Configuration::context()
+{
+	return ModuleList::ConfigurationContext;
+}
+
+/*
  * Parallel Comms
  */
 

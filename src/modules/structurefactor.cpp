@@ -126,6 +126,18 @@ const char* StructureFactor::dependentModules()
 	return "Partials";
 }
 
+// Setup supplied dependent module (only if it has been auto-added)
+bool StructureFactor::setupDependentModule(Module* depMod)
+{
+	if (DUQSys::sameString(depMod->name(), "Partials"))
+	{
+		// Need to set UseMixFrom variable in any associated Samples
+		RefListIterator<Sample,bool> sampleIterator(depMod->targetSamples());
+		while (Sample* sam = sampleIterator.iterate()) sam->setModuleVariable("UseMixFrom", uniqueName_, "Isotopologue mixture reference", depMod->uniqueName());
+	}
+	return true;
+}
+
 /*
  * Targets
  */

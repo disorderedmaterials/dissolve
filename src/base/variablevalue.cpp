@@ -58,6 +58,13 @@ VariableValue::VariableValue(const char* value)
 	valueC_ = value;
 }
 
+// Constructor (Dnchar)
+VariableValue::VariableValue(const Dnchar& value)
+{
+	type_ = VariableValue::CharType;
+	valueC_ = value;
+}
+
 // Constructor (Array<int>)
 VariableValue::VariableValue(const Array<int>& value)
 {

@@ -230,10 +230,16 @@ AtomType* Configuration::type(int index)
 	return usedAtomTypes_.atomType(index);
 }
 
-// Return first AtomTypeData for this configuration
+// Return first AtomTypeData for this Configuration
 AtomTypeData* Configuration::usedAtomTypes()
 {
 	return usedAtomTypes_.first();
+}
+
+// Return AtomTypeList for this Configuration
+const AtomTypeList& Configuration::usedAtomTypesList() const
+{
+	return usedAtomTypes_;
 }
 
 // Return fraction of specified AtomTypeData in Configuration

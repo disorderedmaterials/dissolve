@@ -88,6 +88,8 @@ class Module : public ListItem<Module>
 	Module* dependentModule(const char* name);
 	// Modules upon which this Module depends to have run first
 	virtual const char* dependentModules() = 0;
+	// Setup supplied dependent module (only if it has been auto-added)
+	virtual bool setupDependentModule(Module* depMod) = 0;
 	// Update targets for any auto-added dependent Modules with those of this Module
 	void updateDependentTargets();
 

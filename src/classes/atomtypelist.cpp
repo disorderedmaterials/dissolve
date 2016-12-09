@@ -84,6 +84,19 @@ int AtomTypeList::add(AtomType* atomType, Isotope* tope, int popAdd)
 	return index;
 }
 
+// Check for presence of AtomType/Isotope pair in list
+bool AtomTypeList::contains(AtomType* atomType, Isotope* tope)
+{
+	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next)
+	{
+		if (atd->atomType() != atomType) continue;
+		if (atd->isotope() != tope) continue;
+		return true;
+	}
+
+	return false;
+}
+
 // Zero populations of all types in the list
 void AtomTypeList::zero()
 {
@@ -108,16 +121,16 @@ AtomTypeData* AtomTypeList::first() const
 // Print AtomType populations
 void AtomTypeList::print()
 {
-	int count = 0;
 	Dnchar indexData;
-	Messenger::print("--> Populations : AtomType    El   Population  AtomFrac  Isotope  bc (fm)\n");
+	Messenger::print("  AtomType    El   Population  AtomFrac  Isotope  bc (fm)\n");
+	Messenger::print("  ---------------------------------------------------------\n");
 	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next)
 	{
 		if (atd->masterIndex() == -1) indexData = "M";
 		else indexData.sprintf("index=%i", atd->masterIndex());
 		
-		if (atd->isotope()) Messenger::print("              %2i  %-10s  %-3s  %-10i  %8.6f    %-3i   %8.3f  (%s)\n", count++, atd->name(), PeriodicTable::element(atd->atomType()->element()).symbol(), atd->population(), atd->fraction(), atd->isotope()->A(), atd->isotope()->boundCoherent(), indexData.get());
-		else Messenger::print("              %2i  %-10s  %-3s  %-10i  %8.6f     --- N/A ---    (%s)\n", count++, atd->name(), PeriodicTable::element(atd->atomType()->element()).symbol(), atd->population(), atd->fraction(), indexData.get());
+		if (atd->isotope()) Messenger::print("  %-10s  %-3s  %-10i  %8.6f    %-3i   %8.3f  (%s)\n", atd->name(), PeriodicTable::element(atd->atomType()->element()).symbol(), atd->population(), atd->fraction(), atd->isotope()->A(), atd->isotope()->boundCoherent(), indexData.get());
+		else Messenger::print("  %-10s  %-3s  %-10i  %8.6f     --- N/A ---    (%s)\n", atd->name(), PeriodicTable::element(atd->atomType()->element()).symbol(), atd->population(), atd->fraction(), indexData.get());
 	}
 }
 
