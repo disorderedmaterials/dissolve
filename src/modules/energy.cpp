@@ -40,10 +40,10 @@ Energy::Energy() : Module()
 	uniqueName_.sprintf("%s_%02i", name(), instances_.nItems()-1);
 
 	// Setup variables / control parameters
-	addVariable("Test", false);
-	addVariable("Save", true);
-	addVariable("StabilityWindow", 10);
-	addVariable("StabilityThreshold", 0.01);
+	options_.add("Test", false);
+	options_.add("Save", true);
+	options_.add("StabilityWindow", 10);
+	options_.add("StabilityThreshold", 0.01);
 }
 
 // Destructor
@@ -167,10 +167,10 @@ bool Energy::process(DUQ& duq, ProcessPool& procPool)
 		Configuration* cfg = ri->item;
 
 		// Retrieve control parameters from Configuration
-		const bool testMode = variableAsBool(cfg, "Test");
-		const bool saveData = variableAsBool(cfg, "Save");
-		const int stabilityWindow = variableAsInt(cfg, "StabilityWindow");
-		const double stabilityThreshold = variableAsDouble(cfg, "StabilityThreshold");
+		const bool testMode = GenericListHelper<bool>::retrieve(cfg->moduleData(), "Test", uniqueName(), options_.valueAsBool("Test"));
+		const bool saveData = GenericListHelper<bool>::retrieve(cfg->moduleData(), "Save", uniqueName(), options_.valueAsBool("Save"));
+		const int stabilityWindow = GenericListHelper<int>::retrieve(cfg->moduleData(), "StabilityWindow", uniqueName(), options_.valueAsInt("StabilityWindow"));
+		const double stabilityThreshold = GenericListHelper<double>::retrieve(cfg->moduleData(), "StabilityThreshold", uniqueName(), options_.valueAsDouble("StabilityThreshold"));
 
 		double interEnergy = 0.0, intraEnergy = 0.0;
 
@@ -299,42 +299,42 @@ bool Energy::process(DUQ& duq, ProcessPool& procPool)
 			Messenger::print("Energy: Total Energy (World) is %15.9e kJ/mol (%15.9e kJ/mol interatomic + %15.9e kJ/mol intramolecular)\n", interEnergy + intraEnergy, interEnergy, intraEnergy);
 
 			// Store energies in the Configuration in case somebody else needs them
-			appendVariable(cfg, "Inter", interEnergy);
-			appendVariable(cfg, "Intra", intraEnergy);
-			appendVariable(cfg, "Total", interEnergy+intraEnergy);
+			GenericListHelper< Array<double> >::realise(cfg->moduleData(), "Inter", uniqueName()).add(interEnergy);
+			GenericListHelper< Array<double> >::realise(cfg->moduleData(), "Intra", uniqueName()).add(intraEnergy);
+			Array<double>& totalEnergyArray = GenericListHelper< Array<double> >::realise(cfg->moduleData(), "Total", uniqueName());
+			totalEnergyArray.add(interEnergy+intraEnergy);
 
 			// Determine stability of energy
-			// Check nuymber of points already stored for the Configuration
-			Array<double>& totalEnergy = variableAsDoubleArray(cfg, "Total");
+			// Check number of points already stored for the Configuration
 			double grad = 0.0;
 			bool stable = false;
-			if (stabilityWindow > totalEnergy.nItems()) Messenger::print("Energy: Too few points to assess stability.\n");
+			if (stabilityWindow > totalEnergyArray.nItems()) Messenger::print("Energy: Too few points to assess stability.\n");
 			else
 			{
 				// Work out standard deviation of energy points
 				double Sx = 0.0, Sy = 0.0, Sxy = 0.0;
 				double xBar = 0.0, yBar = 0.0;
 				// -- Calculate mean values
-				for (int n=totalEnergy.nItems()-stabilityWindow; n<totalEnergy.nItems(); ++n)
+				for (int n=totalEnergyArray.nItems()-stabilityWindow; n<totalEnergyArray.nItems(); ++n)
 				{
 					xBar += n;
-					yBar += totalEnergy.value(n);
+					yBar += totalEnergyArray.value(n);
 				}
 				xBar /= stabilityWindow;
 				yBar /= stabilityWindow;
 				// -- Determine Sx, Sy, and Sxy
-				for (int n=totalEnergy.nItems()-stabilityWindow; n<totalEnergy.nItems(); ++n)
+				for (int n=totalEnergyArray.nItems()-stabilityWindow; n<totalEnergyArray.nItems(); ++n)
 				{
 					Sx += (n - xBar)*(n - xBar);
-					Sy += (totalEnergy.value(n) - yBar)*(totalEnergy.value(n) - yBar);
-					Sxy += (n - xBar) * (totalEnergy.value(n) - yBar);
+					Sy += (totalEnergyArray.value(n) - yBar)*(totalEnergyArray.value(n) - yBar);
+					Sxy += (n - xBar) * (totalEnergyArray.value(n) - yBar);
 				}
 				grad = Sxy / Sx;
 				double thresholdValue = fabs(stabilityThreshold*yBar);
 				stable = fabs(grad) < thresholdValue;
 
 				// Set variable in Configuration and print output
-				cfg->setModuleVariable("EnergyStable", stable, "Whether the energy of the Configuration is stable", "");
+				GenericListHelper<bool>::realise(cfg->moduleData(), "EnergyStable") = stable;
 				Messenger::print("Energy: Gradient of last %i points is %e kJ/mol/step (absolute threshold value is %e, stable = %s).\n", stabilityWindow, grad, thresholdValue, DUQSys::btoa(stable));
 			}
 
@@ -342,7 +342,7 @@ bool Energy::process(DUQ& duq, ProcessPool& procPool)
 			if (saveData)
 			{
 				LineParser parser;
-				Dnchar filename(-1, "%s-energy.txt", cfg->niceName());
+				CharString filename(-1, "%s-energy.txt", cfg->niceName());
 
 				if (!DUQSys::fileExists(filename))
 				{

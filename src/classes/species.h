@@ -29,7 +29,7 @@
 #include "classes/speciesbond.h"
 #include "classes/speciesgrain.h"
 #include "classes/isotopologue.h"
-#include "base/dnchar.h"
+#include "base/charstring.h"
 
 // Forward Declarations
 class Box;
@@ -53,7 +53,7 @@ class Species : public ListItem<Species>
 	 */
 	private:
 	// Name of the Species
-	Dnchar name_;
+	CharString name_;
 
 	public:
 	// Set name of the Species

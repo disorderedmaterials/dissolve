@@ -26,7 +26,7 @@
 #define RANDBUFFERSIZE 16172
 
 #include "base/processgroup.h"
-#include "base/dnchar.h"
+#include "base/charstring.h"
 #include "base/timer.h"
 #include "templates/vector3.h"
 #include "templates/reflist.h"
@@ -149,7 +149,7 @@ class ProcessPool
 	 */
 	private:
 	// Name of this pool
-	Dnchar name_;
+	CharString name_;
 	// List of world ranks in this pool
 	Array<int> worldRanks_;
 	// List of process groups within the pool, referencing pool ranks of processes
@@ -256,8 +256,8 @@ class ProcessPool
 	 * Broadcast Functions
 	 */
 	public:
-	// Broadcast Dnchar
-	bool broadcast(Dnchar& source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	// Broadcast CharString
+	bool broadcast(CharString& source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Broadcast char data
 	bool broadcast(char* source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Broadcast Vec3<double>

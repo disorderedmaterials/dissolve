@@ -32,7 +32,7 @@
 bool DUQ::loadDataFiles()
 {
 	// Get basic path for data files
-	Dnchar filename, dataPath = getenv("DUQ_DATA");
+	CharString filename, dataPath = getenv("DUQ_DATA");
 	if (dataPath.isEmpty())
 	{
 		Messenger::print("Environment variable DUQ_DATA not set - using './data' as the default.\n");
@@ -373,7 +373,7 @@ bool DUQ::saveInput(const char* filename)
 // 		{
 // 			if (step->iterations() == 1) parser.writeLineF("%s", step->command()->name());
 // 			else parser.writeLineF("%i %s", step->iterations(), step->command()->name());
-// 			for (RefListItem<Argument,Dnchar>* argRef = step->argumentValues(); argRef != NULL; argRef = argRef->next)
+// 			for (RefListItem<Argument,CharString>* argRef = step->argumentValues(); argRef != NULL; argRef = argRef->next)
 // 			{
 // 				parser.writeLineF(" %s=%s", argRef->item->name(), argRef->data.get());
 // 			}
@@ -388,7 +388,7 @@ bool DUQ::saveInput(const char* filename)
 // 		{
 // 			if (step->iterations() == 1) parser.writeLineF("%s", step->command()->name());
 // 			else parser.writeLineF("%i %s", step->iterations(), step->command()->name());
-// 			for (RefListItem<Argument,Dnchar>* argRef = step->argumentValues(); argRef != NULL; argRef = argRef->next)
+// 			for (RefListItem<Argument,CharString>* argRef = step->argumentValues(); argRef != NULL; argRef = argRef->next)
 // 			{
 // 				parser.writeLineF(" %s=%s", argRef->item->name(), argRef->data.get());
 // 			}
@@ -403,7 +403,7 @@ bool DUQ::saveInput(const char* filename)
 // 		{
 // 			if (step->iterations() == 1) parser.writeLineF("%s", step->command()->name());
 // 			else parser.writeLineF("%i %s", step->iterations(), step->command()->name());
-// 			for (RefListItem<Argument,Dnchar>* argRef = step->argumentValues(); argRef != NULL; argRef = argRef->next)
+// 			for (RefListItem<Argument,CharString>* argRef = step->argumentValues(); argRef != NULL; argRef = argRef->next)
 // 			{
 // 				parser.writeLineF(" %s=%s", argRef->item->name(), argRef->data.get());
 // 			}

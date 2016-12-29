@@ -22,7 +22,7 @@
 #ifndef DUQ_ISOTOPOLOGUE_H
 #define DUQ_ISOTOPOLOGUE_H
 
-#include "base/dnchar.h"
+#include "base/charstring.h"
 #include "base/ptable.h"
 #include "templates/reflist.h"
 
@@ -49,7 +49,7 @@ class Isotopologue : public ListItem<Isotopologue>
 	// Parent Species
 	Species* parent_;
 	// Descriptive name
-	Dnchar name_;
+	CharString name_;
 	
 	public:
 	// Set parent Species

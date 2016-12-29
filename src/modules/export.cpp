@@ -41,7 +41,8 @@ Export::Export() : Module()
 	uniqueName_.sprintf("%s_%02i", name(), instances_.nItems()-1);
 
 	// Setup variables / control parameters
-	addVariable("SaveTrajectory", "");
+	options_.add("SaveTrajectory", false);
+	options_.add("TrajectoryFile", "trajectory.xyz");
 }
 
 // Destructor
@@ -163,21 +164,22 @@ bool Export::process(DUQ& duq, ProcessPool& procPool)
 		Configuration* cfg = ri->item;
 
 		// Retrieve control parameters from Configuration
-		const char* saveTrajectory = variableAsChar(cfg, "SaveTrajectory");
+		bool saveTrajectory = GenericListHelper<bool>::retrieve(cfg->moduleData(), "SaveTrajectory", uniqueName(), options_.valueAsBool("SaveTrajectory"));
 
 		/*
 		 * Save XYZ Trajectory
 		 */
-		if (!DUQSys::isEmpty(saveTrajectory))
+		if (saveTrajectory)
 		{
-			Messenger::print("Export: Appending to trajectory output file '%s'...\n", cfg->outputCoordinatesFile());
+			const char* trajectoryFile = GenericListHelper<const char*>::retrieve(cfg->moduleData(), "TrajectoryFile", uniqueName(), options_.valueAsString("TrajectoryFile"));
+			Messenger::print("Export: Appending to trajectory output file '%s'...\n", trajectoryFile);
 
 			// Only the pool master saves the data
 			if (procPool.isMaster())
 			{
 				// Open the file
 				LineParser parser;
-				if (!parser.appendOutput(saveTrajectory))
+				if (!parser.appendOutput(trajectoryFile))
 				{
 					parser.closeFiles();
 					procPool.stop();

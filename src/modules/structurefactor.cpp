@@ -47,16 +47,16 @@ StructureFactor::StructureFactor() : Module()
 	instances_.own(this);
 
 	// Setup variables / control parameters
-	addVariable("Bragg", "off", "Enable calculation of Bragg scattering");
-	addVariable("BraggQDepBroadening", 0.0063, "FWHM of Gaussian for Q-dependent Bragg broadening function");
-	addVariable("BraggQIndepBroadening", 0.0, "FWHM of Gaussian for Q-dependent Bragg broadening function");
-	addVariable("NormaliseToAvSq", false, "Normalise calculated F(Q) to < b >**2");
-	addVariable("NormaliseToSqAv", false, "Normalise calculated F(Q) to < b**2 >");
-	addVariable("QDelta", 0.05, "Step size in Q");
-	addVariable("QDepBroadening", 0.0, "FWHM of Gaussian for Q-dependent instrument broadening function");
-	addVariable("QIndepBroadening", 0.0, "FWHM of Gaussian for Q-independent instrument broadening function");
-	addVariable("QMax", -1.0, "Maximum Q in calculated F(Q)");
-	addVariable("Save", false, "Whether to save partials to disk after calculation");
+	options_.add("Bragg", "off", "Enable calculation of Bragg scattering");
+	options_.add("BraggQDepBroadening", 0.0063, "FWHM of Gaussian for Q-dependent Bragg broadening function");
+	options_.add("BraggQIndepBroadening", 0.0, "FWHM of Gaussian for Q-independent Bragg broadening function");
+	options_.add("NormaliseToAvSq", false, "Normalise calculated F(Q) to < b >**2");
+	options_.add("NormaliseToSqAv", false, "Normalise calculated F(Q) to < b**2 >");
+	options_.add("QDelta", 0.05, "Step size in Q");
+	options_.add("QDepBroadening", 0.0, "FWHM of Gaussian for Q-dependent instrument broadening function");
+	options_.add("QIndepBroadening", 0.0, "FWHM of Gaussian for Q-independent instrument broadening function");
+	options_.add("QMax", -1.0, "Maximum Q in calculated F(Q)");
+	options_.add("Save", false, "Whether to save partials to disk after calculation");
 }
 
 // Destructor
@@ -133,7 +133,7 @@ bool StructureFactor::setupDependentModule(Module* depMod)
 	{
 		// Need to set UseMixFrom variable in any associated Samples
 		RefListIterator<Sample,bool> sampleIterator(depMod->targetSamples());
-		while (Sample* sam = sampleIterator.iterate()) sam->setModuleVariable("UseMixFrom", uniqueName_, "Isotopologue mixture reference", depMod->uniqueName());
+		while (Sample* sam = sampleIterator.iterate()) GenericListHelper<CharString>::add(sam->moduleData(), "UseMixFrom", uniqueName_);
 	}
 	return true;
 }
@@ -195,16 +195,17 @@ bool StructureFactor::process(DUQ& duq, ProcessPool& procPool)
 		while (Configuration* cfg = configIterator.iterate())
 		{
 			// Retrieve control parameters from Configuration
-			const double qDelta = variableAsDouble(cfg, "QDelta");
-			const double qMax = variableAsDouble(cfg, "QMax") < 0.0 ? 30.0 : variableAsDouble(cfg, "QMax");
-			const bool braggOn = variableAsBool(cfg, "Bragg");
-			const double braggQDepBroadening = variableAsDouble(cfg, "BraggQDepBroadening");
-			const double braggQIndepBroadening = variableAsDouble(cfg, "BraggQIndepBroadening");
-			const double qDepBroadening = variableAsDouble(cfg, "QDepBroadening");
-			const double qIndepBroadening = variableAsDouble(cfg, "QIndepBroadening");
-			const bool normaliseToAvSq = variableAsBool(cfg, "NormaliseToAvSq");
-			const bool normaliseToSqAv = variableAsBool(cfg, "NormaliseToSqAv");
-			const bool saveData = variableAsBool(cfg, "Save");
+			const double qDelta = GenericListHelper<double>::retrieve(cfg->moduleData(), "QDelta", uniqueName(), options_.valueAsDouble("QDelta"));
+			double qMax = GenericListHelper<double>::retrieve(cfg->moduleData(), "QMax", uniqueName(), options_.valueAsDouble("QMax"));
+			if (qMax < 0.0) qMax = 30.0;
+			const bool braggOn = GenericListHelper<bool>::retrieve(cfg->moduleData(), "Bragg", uniqueName(), options_.valueAsBool("Bragg"));
+			const double braggQDepBroadening = GenericListHelper<double>::retrieve(cfg->moduleData(), "BraggQDepBroadening", uniqueName(), options_.valueAsDouble("BraggQDepBroadening"));
+			const double braggQIndepBroadening = GenericListHelper<double>::retrieve(cfg->moduleData(), "BraggQIndepBroadening", uniqueName(), options_.valueAsDouble("BraggQIndepBroadening"));
+			const double qDepBroadening = GenericListHelper<double>::retrieve(cfg->moduleData(), "QDepBroadening", uniqueName(), options_.valueAsDouble("QDepBroadening"));
+			const double qIndepBroadening = GenericListHelper<double>::retrieve(cfg->moduleData(), "QIndepBroadening", uniqueName(), options_.valueAsDouble("QIndepBroadening"));
+			const bool normaliseToAvSq = GenericListHelper<bool>::retrieve(cfg->moduleData(), "NormaliseToAvSq", uniqueName(), options_.valueAsBool("NormaliseToAvSq"));
+			const bool normaliseToSqAv = GenericListHelper<bool>::retrieve(cfg->moduleData(), "NormaliseToSqAv", uniqueName(), options_.valueAsBool("NormaliseToSqAv"));
+			const bool saveData = GenericListHelper<bool>::retrieve(cfg->moduleData(), "Save", uniqueName(), options_.valueAsBool("Save"));
 
 			// Print argument/parameter summary
 			Messenger::print("StructureFactor: Calculating S(Q)/F(Q) out to %f Angstroms**-1 using step size of %f Angstroms**-1.\n", qMax, qDelta);
@@ -249,15 +250,16 @@ PartialQSet* StructureFactor::partialSet(Configuration* cfg)
 bool StructureFactor::calculateUnweighted(Configuration* cfg, Data2D::WindowFunction windowFunction, ProcessPool& procPool)
 {
 	// Retrieve control parameters from Configuration
-	const double qDelta = variableAsDouble(cfg, "QDelta");
-	const double qMax = variableAsDouble(cfg, "QMax") < 0.0 ? 30.0 : variableAsDouble(cfg, "QMax");
-	const bool braggOn = variableAsBool(cfg, "Bragg");
-	const double braggQDepBroadening = variableAsDouble(cfg, "BraggQDepBroadening");
-	const double braggQIndepBroadening = variableAsDouble(cfg, "BraggQIndepBroadening");
-	const double qDepBroadening = variableAsDouble(cfg, "QDepBroadening");
-	const double qIndepBroadening = variableAsDouble(cfg, "QIndepBroadening");
-	const bool normaliseToAvSq = variableAsBool(cfg, "NormaliseToAvSq");
-	const bool normaliseToSqAv = variableAsBool(cfg, "NormaliseToSqAv");
+	const double qDelta = GenericListHelper<double>::retrieve(cfg->moduleData(), "QDelta", uniqueName(), options_.valueAsDouble("QDelta"));
+	double qMax = GenericListHelper<double>::retrieve(cfg->moduleData(), "QMax", uniqueName(), options_.valueAsDouble("QMax"));
+	if (qMax < 0.0) qMax = 30.0;
+	const bool braggOn = GenericListHelper<bool>::retrieve(cfg->moduleData(), "Bragg", uniqueName(), options_.valueAsBool("Bragg"));
+	const double braggQDepBroadening = GenericListHelper<double>::retrieve(cfg->moduleData(), "BraggQDepBroadening", uniqueName(), options_.valueAsDouble("BraggQDepBroadening"));
+	const double braggQIndepBroadening = GenericListHelper<double>::retrieve(cfg->moduleData(), "BraggQIndepBroadening", uniqueName(), options_.valueAsDouble("BraggQIndepBroadening"));
+	const double qDepBroadening = GenericListHelper<double>::retrieve(cfg->moduleData(), "QDepBroadening", uniqueName(), options_.valueAsDouble("QDepBroadening"));
+	const double qIndepBroadening = GenericListHelper<double>::retrieve(cfg->moduleData(), "QIndepBroadening", uniqueName(), options_.valueAsDouble("QIndepBroadening"));
+	const bool normaliseToAvSq = GenericListHelper<bool>::retrieve(cfg->moduleData(), "NormaliseToAvSq", uniqueName(), options_.valueAsBool("NormaliseToAvSq"));
+	const bool normaliseToSqAv = GenericListHelper<bool>::retrieve(cfg->moduleData(), "NormaliseToSqAv", uniqueName(), options_.valueAsBool("NormaliseToSqAv"));
 
 	// Get the associated Partials module pointer so we can utilise it
 	Partials* partialsModule = (Partials*) dependentModule("Partials");
@@ -454,7 +456,7 @@ bool StructureFactor::calculateUnweighted(Configuration* cfg, Data2D::WindowFunc
 // bool Sample::setupPairCorrelations(double volume, double range, double binWidth, Data2D& boxNormalisation, double rho)
 // {
 // 	// Get a nice sample name (i.e. no spaces, slashes etc.)
-// 	Dnchar otherName, niceSampleName = name_;
+// 	CharString otherName, niceSampleName = name_;
 // 	niceSampleName.replace(' ', '_');
 // 	niceSampleName.replace('/', '_');
 // 	double cc, bb;
@@ -468,7 +470,7 @@ bool StructureFactor::calculateUnweighted(Configuration* cfg, Data2D::WindowFunc
 // 	scatteringMatrix_.initialise(typeIndex_.nItems(), typeIndex_.nItems(), true);
 // 
 // 	// Set names of elements in the S(Q) arrays, and calculate weights and self-scattering values
-// 	Dnchar title;
+// 	CharString title;
 // 	AtomTypeData* at1 = typeIndex_.first(), *at2;
 // 	for (typeI=0; typeI<typeIndex_.nItems(); ++typeI, at1 = at1->next)
 // 	{
@@ -547,7 +549,7 @@ bool StructureFactor::postProcess(DUQ& duq, ProcessPool& procPool)
 // 	{
 // 		for (typeJ=typeI; typeJ<usedAtomTypes_.nItems(); ++typeJ)
 // 		{
-// 			Dnchar filename(-1, "%s-unweighted-%s-%s.sq", baseName, usedAtomTypes_[typeI]->name(), usedAtomTypes_[typeJ]->name());
+// 			CharString filename(-1, "%s-unweighted-%s-%s.sq", baseName, usedAtomTypes_[typeI]->name(), usedAtomTypes_[typeJ]->name());
 // 
 // 			// Open file and check that we're OK to proceed writing to it
 // 			Messenger::print("Writing S(Q) file '%s'...\n", filename.get());
@@ -580,7 +582,7 @@ bool StructureFactor::postProcess(DUQ& duq, ProcessPool& procPool)
 // 		}
 // 	}
 // 
-// 	Dnchar filename(-1, "%s-unweighted-total.fq", baseName);
+// 	CharString filename(-1, "%s-unweighted-total.fq", baseName);
 // 	totalFQ_.save(filename);
 // }
 
@@ -608,7 +610,7 @@ bool StructureFactor::broadcastData(DUQ& duq, ProcessPool& procPool)
 		// PartialSets - each process in the pool will loop over its own partialSets_ list and, for those in which it was the root
 		// proces in the Configuration's process pool, it will broadcast the data. Other processes may not know about this Configuration's
 		// PartialSet yet, so we should check for its existence and create it if it doesn't exist.
-		Dnchar cfgName;
+		CharString cfgName;
 		for (int rootRank = 0; rootRank < procPool.nProcesses(); ++rootRank)
 		{
 			// Loop over partialSets_ - we must be careful only to broadcast those data for which the specified rootRank

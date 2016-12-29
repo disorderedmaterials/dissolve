@@ -125,11 +125,11 @@ void DUQ::dumpSystemSetup(bool includeData)
 		{
 			Messenger::print("  %s  %s  # %s\n", ConfigurationBlock::keyword(ConfigurationBlock::ModuleKeyword), module->name(), module->uniqueName());
 
-			// For each Module, print all available variables
-			for (Variable* var = module->variables(); var != NULL; var = var->next)
+			// For each Module, print all available options
+			for (PlainValue* option = module->options().values(); option != NULL; option = option->next)
 			{
-				if (var->type() == VariableValue::CharType) Messenger::print("    %s  '%s'\n", var->name(), var->asChar());
-				else Messenger::print("    %s  %s\n", var->name(), var->asChar());
+				if (option->type() == PlainValue::StringType) Messenger::print("    %s  '%s'\n", option->name(), option->asString());
+				else Messenger::print("    %s  %s\n", option->name(), option->asString());
 			}
 
 			Messenger::print("  %s\n", ModuleBlock::keyword(ModuleBlock::EndModuleKeyword));
@@ -163,11 +163,11 @@ void DUQ::dumpSystemSetup(bool includeData)
 		{
 			Messenger::print("  %s  %s  # %s\n", SampleBlock::keyword(SampleBlock::ModuleKeyword), module->name(), module->uniqueName());
 
-			// For each Module, print all available variables
-			for (Variable* var = module->variables(); var != NULL; var = var->next)
+			// For each Module, print all available options
+			for (PlainValue* option = module->options().values(); option != NULL; option = option->next)
 			{
-				if (var->type() == VariableValue::CharType) Messenger::print("    %s  '%s'\n", var->name(), var->asChar());
-				else Messenger::print("    %s  %s\n", var->name(), var->asChar());
+				if (option->type() == PlainValue::StringType) Messenger::print("    %s  '%s'\n", option->name(), option->asString());
+				else Messenger::print("    %s  %s\n", option->name(), option->asString());
 			}
 
 			// Not in a Configuration block, so print associated Configuration information

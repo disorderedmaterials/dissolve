@@ -87,7 +87,7 @@ bool SampleBlock::parse(LineParser& parser, DUQ* duq, Sample* sample)
 					break;
 				}
 
-				// Try to add this module (or an instance of it) to the current Configuration
+				// Try to add this module (or an instance of it) to the present Sample
 				module = sample->addModule(module, duq->autoAddDependentModules());
 				if (module)
 				{
@@ -106,7 +106,7 @@ bool SampleBlock::parse(LineParser& parser, DUQ* duq, Sample* sample)
 				if (error) break;
 
 				// Parse rest of Module block
-				if (!ModuleBlock::parse(parser, duq, module, sample)) error = true;
+				if (!ModuleBlock::parse(parser, duq, module, sample->moduleData(), false)) error = true;
 
 				// Now finished parsing the Module block, so must update target Samples and Configurations in any auto-added Modules
 				module->updateDependentTargets();

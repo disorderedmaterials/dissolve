@@ -45,9 +45,9 @@ Partials::Partials() : Module()
 	instances_.own(this);
 
 	// Setup variables / control parameters
-	addVariable("Save", false, "Whether to save partials to disk after calculation");
-	addVariable("Smoothing", 0, "Specifies the degree of smoothing 'n' to apply to calculated RDFs, where 2n+1 controls the length in the applied Spline smooth");
-	addVariable("UseMixFrom", "", "Unique Module name under which to search for Species/Isotopologue mix information");
+	options_.add("Save", false, "Whether to save partials to disk after calculation");
+	options_.add("Smoothing", 0, "Specifies the degree of smoothing 'n' to apply to calculated RDFs, where 2n+1 controls the length in the applied Spline smooth");
+	options_.add("UseMixFrom", "", "Unique Module name under which to search for Species/Isotopologue mix information");
 }	
 
 // Destructor
@@ -171,17 +171,17 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 	if (targetSamples_.nItems() > 0)
 	{
 		// Assemble partials from all Configurations specified, weighting them accordingly
-		Dnchar varName;
+		CharString varName;
 		double totalWeight = 0.0;
 
 		// Get target Sample
 		Sample* sam = targetSamples_.firstItem();
 
 		// If the UseMixFrom variable was set, grab its value now
-		Dnchar mixSource = uniqueName_;
-		if (sam->moduleVariable("UseMixFrom", uniqueName()))
+		CharString mixSource = uniqueName_;
+		if (sam->moduleData().contains("UseMixFrom", uniqueName()))
 		{
-			mixSource = sam->moduleVariable("UseMixFrom", uniqueName())->asChar();
+			mixSource = GenericListHelper<const char*>::retrieve(sam->moduleData(), "UseMixFrom", uniqueName());
 			Messenger::print("Partials: Isotopologue mixture data will be taken from Module '%s'.\n", mixSource.get());
 		}
 
@@ -197,13 +197,13 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 		{
 			// Get weight for this Configuration
 			varName.sprintf("%s_Weight", cfg->name());
-			Variable* weightVar = sam->moduleVariable(varName, mixSource);
-			if (!weightVar)
+			double weight = 1.0;
+			if (sam->moduleData().contains(varName, mixSource)) weight = GenericListHelper<double>::retrieve(sam->moduleData(), varName, mixSource, 1.0);
+			else 
 			{
 				Messenger::error("Partials: Required variable '%s' found in Sample '%s'.\n", varName.get(), sam->name());
 				return false;
 			}
-			double weight = weightVar->asDouble();
 			totalWeight += weight;
   			Messenger::printVerbose("Partials: Weight for Configuration '%s' is %f (total weight is now %f).\n", cfg->name(), weight, totalWeight);
 
@@ -219,11 +219,10 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 				{
 					// Construct variable name that we expect to find if the tope was used in the Module (variable is defined in the associated Configuration)
 					varName.sprintf("Isotopologue/%s/%s", sp->name(), availableIso->name());
-					Variable* var = sam->moduleVariable(varName, mixSource);
-					if (!var) continue;
+					if (!sam->moduleData().contains(varName, mixSource))
 
 					// This isotopologue is defined as being used, so add its atomtypes (in the isotopic proportions defined in the Isotopologue) to the sampleAtomTypes list.
-					weightsMatrix.addIsotopologue(sp, speciesPopulation, availableIso, var->asDouble());
+					weightsMatrix.addIsotopologue(sp, speciesPopulation, availableIso, GenericListHelper<double>::retrieve(sam->moduleData(), varName, mixSource));
 				}
 			}
 
@@ -253,7 +252,7 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 		while (Configuration* cfg = configIterator.iterate())
 		{
 			// Retrieve control parameters from Configuration
-			const bool saveData = variableAsBool(cfg, "Save");
+			const bool saveData = GenericListHelper<bool>::retrieve(cfg->moduleData(), "Save", uniqueName(), options_.valueAsBool("Save"));
 
 			// Print argument/parameter summary
 			Messenger::print("Partials: Save data is %s.\n", DUQSys::onOff(saveData));
@@ -405,7 +404,8 @@ PartialRSet* Partials::partialSet(Configuration* cfg)
 bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, int method)
 {
 	// Retrieve control parameters from Configuration
-	const int smoothing = variableAsInt(cfg, "Smoothing");
+	const int smoothing = GenericListHelper<int>::retrieve(cfg->moduleData(), "Smoothing", uniqueName(), options_.valueAsInt("Smoothing"));
+
 
 	// Does a PartialSet already exist for this Configuration?
 	PartialRSet* partialgr = Partials::partialSet(cfg);
@@ -609,7 +609,7 @@ bool Partials::broadcastData(DUQ& duq, ProcessPool& procPool)
 		// PartialSets - each process in the pool will loop over its own partialSets_ list and, for those in which it was the root
 		// proces in the Configuration's process pool, it will broadcast the data. Other processes may not know about this Configuration's
 		// PartialSet yet, so we should check for its existence and create it if it doesn't exist.
-		Dnchar cfgName;
+		CharString cfgName;
 		for (int rootRank = 0; rootRank < procPool.nProcesses(); ++rootRank)
 		{
 			// Loop over partialSets_ - we must be careful only to broadcast those data for which the specified rootRank

@@ -1,6 +1,6 @@
 /*
-	*** VariableValue
-	*** src/base/variablevalue.h
+	*** Plain (old datatype) Value
+	*** src/base/plainvalue.h
 	Copyright T. Youngs 2012-2016
 
 	This file is part of dUQ.
@@ -19,44 +19,39 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_VARIABLEVALUE_H
-#define DUQ_VARIABLEVALUE_H
+#ifndef DUQ_PLAINVALUE_H
+#define DUQ_PLAINVALUE_H
 
-#include "base/dnchar.h"
-#include "templates/array.h"
+#include "base/charstring.h"
 #include "templates/list.h"
 
 // Forward Declarations
 /* none */
 
-// VariableValue
-class VariableValue
+// PlainValue
+class PlainValue : public ListItem<PlainValue>
 {
 	public:
 	// Constructor
-	VariableValue();
+	PlainValue();
 	// Destructor
-	~VariableValue();
+	~PlainValue();
 	// Constructor (bool)
-	VariableValue(bool value);
+	PlainValue(bool value);
 	// Constructor (int)
-	VariableValue(int value);
+	PlainValue(int value);
 	// Constructor (double)
-	VariableValue(double value);
+	PlainValue(double value);
 	// Constructor (const char*)
-	VariableValue(const char* value);
-	// Constructor (Dnchar)
-	VariableValue(const Dnchar& value);
-	// Constructor (Array<int>)
-	VariableValue(const Array<int>& value);
-	// Constructor (Array<double>)
-	VariableValue(const Array<double>& value);
-	// Constructor (VariableValue)
-	VariableValue(const VariableValue& value);
+	PlainValue(const char* value);
+	// Constructor (CharString)
+	PlainValue(const CharString& value);
+	// Constructor (PlainValue)
+	PlainValue(const PlainValue& value);
 	// Assignment Operator
-	void operator=(const VariableValue& value);
+	void operator=(const PlainValue& value);
 	// Value Type
-	enum ValueType { BooleanType, IntegerType, DoubleType, CharType, IntegerArrayType, DoubleArrayType };
+	enum ValueType { BooleanType, IntegerType, DoubleType, StringType };
 	// Return ValueType name
 	static const char* valueType(ValueType vt);
 
@@ -65,7 +60,11 @@ class VariableValue
 	 * Value Storage
 	 */
 	private:
-	// Type of variable
+	// Name of value
+	CharString name_;
+	// Description of valur, if any
+	CharString description_;
+	// Type of value
 	ValueType type_;
 	// Value (bool)
 	bool valueB_;
@@ -74,14 +73,18 @@ class VariableValue
 	// Value (double)
 	double valueD_;
 	// Value (string)
-	Dnchar valueC_;
-	// Value (integer array)
-	Array<int> arrayI_;
-	// Value (double array)
-	Array<double> arrayD_;
+	CharString valueC_;
 
 	public:
-	// Return type of variable
+	// Setup value, including name and description
+	void set(const char* name, PlainValue newValue, const char* description);
+	// Set value
+	void set(const PlainValue& newValue);
+	// Return name of value
+	const char* name();
+	// Return description for value
+	const char* description();
+	// Return type of value
 	ValueType type();
 
 
@@ -90,23 +93,17 @@ class VariableValue
 	 */
 	private:
 	// Temporary working string
-	Dnchar conversionStringTemp_;
+	CharString conversionStringTemp_;
 
 	public:
-	// Set variable value
-	bool set(VariableValue newValue);
-	// Return variable (as bool)
+	// Return value (as bool)
 	bool asBool();
-	// Return variable (as int)
+	// Return value (as int)
 	int asInt();
-	// Return variable (as double)
+	// Return value (as double)
 	double asDouble();
-	// Return variable (as string)
-	const char* asChar();
-	// Return variable (as integer array)
-	Array<int>& asIntArray();
-	// Return variable (as double array)
-	Array<double>& asDoubleArray();
+	// Return value (as string)
+	const char* asString();
 
 
 	/*

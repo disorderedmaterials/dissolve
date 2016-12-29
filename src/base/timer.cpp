@@ -19,7 +19,7 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "base/dnchar.h"
+#include "base/charstring.h"
 #include "base/timer.h"
 
 // Constructor

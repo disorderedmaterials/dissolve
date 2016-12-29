@@ -30,7 +30,7 @@ using namespace std;
 // Convert string to uppercase
 const char* DUQSys::upperCase(const char* s)
 {
-	static Dnchar result(1024);
+	static CharString result(1024);
 	result.clear();
 	for (int i = 0; s[i] != '\0'; i++) result += toupper(s[i]);
 	return result;
@@ -39,7 +39,7 @@ const char* DUQSys::upperCase(const char* s)
 // Convert string to lowercase
 const char* DUQSys::lowerCase(const char* s)
 {
-	static Dnchar result(1024);
+	static CharString result(1024);
 	result.clear();
 	for (int i = 0; s[i] != '\0'; i++) result += tolower(s[i]);
 	return result;
@@ -66,7 +66,7 @@ bool DUQSys::sameString(const char* s1, const char* s2, bool caseSensitive)
 // Get characters before first occurrence of designated character
 const char* DUQSys::beforeChar(const char* s, char delim)
 {
-	static Dnchar result(1024);
+	static CharString result(1024);
 	result.clear();
 	for (int i = 0; s[i] != '\0'; i++)
 	{
@@ -79,7 +79,7 @@ const char* DUQSys::beforeChar(const char* s, char delim)
 // Get characters after first occurrence of designated character
 const char* DUQSys::afterChar(const char* s, char delim)
 {
-	static Dnchar result(1024);
+	static CharString result(1024);
 	result.clear();
 	bool found = false;
 	for (int i = 0; s[i] != '\0'; i++)
@@ -93,7 +93,7 @@ const char* DUQSys::afterChar(const char* s, char delim)
 // Get characters after last occurrence of designated character
 const char* DUQSys::afterLastChar(const char* s, char delim)
 {
-	static Dnchar result;
+	static CharString result;
 	result.clear();
 	const char* c, *d = NULL;
 	for (c = &s[0]; *c != '\0'; ++c) if (*c == delim) d = c;
@@ -104,7 +104,7 @@ const char* DUQSys::afterLastChar(const char* s, char delim)
 // Get characters before last occurrence of designated character
 const char* DUQSys::beforeLastChar(const char* s, char delim)
 {
-	static Dnchar result;
+	static CharString result;
 	result.clear();
 	
 	// First, find last occurrence of specified character
@@ -198,7 +198,7 @@ bool DUQSys::isEmpty(const char* s)
 // Search enum list for text
 int DUQSys::enumSearch(const char* name, int maxn, const char**itemlist, const char* query, bool reportError)
 {
-	static Dnchar lowerq, lowers;
+	static CharString lowerq, lowers;
 	int result = maxn, i;
 	lowerq = lowerCase(query);
 	for (i=0; i<maxn; i++)
@@ -229,7 +229,7 @@ void DUQSys::enumPrintValid(int nitems, const char**list)
 // Convert the number 'n' to a string representation.
 const char* DUQSys::itoa(int n)
 {
-	static Dnchar result;
+	static CharString result;
 	result.sprintf("%i",n);
 	return result;
 }
@@ -237,7 +237,7 @@ const char* DUQSys::itoa(int n)
 // Convert the real number 'f' to a string representation
 const char* DUQSys::ftoa(double f)
 {
-	static Dnchar result;
+	static CharString result;
 	result.sprintf("%f",f);
 	return result;
 }
@@ -245,7 +245,7 @@ const char* DUQSys::ftoa(double f)
 // Convert the real number 'f' to a string representation with supplied format
 const char* DUQSys::ftoa(double f, const char* fmt)
 {
-	static Dnchar result;
+	static CharString result;
 	result.sprintf(fmt,f);
 	return result;
 }
@@ -284,7 +284,7 @@ const char* DUQSys::stripTrailing(const char* s)
 // Replace all of the supplied characters in the source string
 const char* DUQSys::replaceChars(const char* s, const char* charstoreplace, char r)
 {
-	static Dnchar result;
+	static CharString result;
 	bool found;
 	char const* c1, *c2;
 	result.clear();
@@ -308,7 +308,7 @@ const char* DUQSys::replaceChars(const char* s, const char* charstoreplace, char
 // Strip all of the supplied characters from the source string
 const char* DUQSys::stripChars(const char* s, const char* charstostrip)
 {
-	static Dnchar result;
+	static CharString result;
 	char const* c1, *c2;
 	bool found;
 	result.clear();

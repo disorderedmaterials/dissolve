@@ -22,8 +22,9 @@
 #ifndef DUQ_MODULE_H
 #define DUQ_MODULE_H
 
-#include "base/variablelist.h"
 #include "base/messenger.h"
+#include "base/plainvaluelist.h"
+#include "templates/genericlist.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
@@ -63,7 +64,9 @@ class Module : public ListItem<Module>
 	 */
 	protected:
 	// Unique name of Module
-	Dnchar uniqueName_;
+	CharString uniqueName_;
+	// Options for Module
+	PlainValueList options_;
 	// RefList of dependent Modules
 	RefList<Module,bool> dependentModules_;
 
@@ -72,6 +75,8 @@ class Module : public ListItem<Module>
 	virtual const char* name() = 0;
 	// Return unique name of Module
 	const char* uniqueName();
+	// Return options for Module
+	PlainValueList& options();
 	// Return brief description of Module
 	virtual const char* brief() = 0;
 	// Return instance type for Module
@@ -155,50 +160,6 @@ class Module : public ListItem<Module>
 
 
 	/*
-	 * Variables
-	 */
-	private:
-	// Module variables list
-	VariableList variables_;
-
-	public:
-	// Add Variable to Module
-	void addVariable(const char* varName, VariableValue defaultValue, const char* description = "");
-	// Retrieve variable from Module (bool)
-	bool variableAsBool(const char* varName);
-	// Retrieve variable from Module (int)
-	int variableAsInt(const char* varName);
-	// Retrieve variable from Module (double)
-	double variableAsDouble(const char* varName);
-	// Retrieve variable from Module (char)
-	const char* variableAsChar(const char* varName);
-	// Retrieve variable from Module (Array<int>)
-	Array<int>& variableAsIntArray(const char* varName);
-	// Retrieve variable from Module (Array<double>)
-	Array<double>& variableAsDoubleArray(const char* varName);
-	// Retrieve Module variable in supplied Configuration (bool)
-	bool variableAsBool(Configuration* cfg, const char* varName);
-	// Retrieve Module variable in supplied Configuration (int)
-	int variableAsInt(Configuration* cfg, const char* varName);
-	// Retrieve Module variable in supplied Configuration (double)
-	double variableAsDouble(Configuration* cfg, const char* varName);
-	// Retrieve Module variable in supplied Configuration (char)
-	const char* variableAsChar(Configuration* cfg, const char* varName);
-	// Retrieve Module variable in supplied Configuration (Array<int>)
-	Array<int>& variableAsIntArray(Configuration* cfg, const char* varName);
-	// Retrieve Module variable in supplied Configuration (Array<double>)
-	Array<double>& variableAsDoubleArray(Configuration* cfg, const char* varName);
-	// Retrieve Module variable from supplied Configuration, or get default value
-	void setVariable(Configuration* cfg, const char* varName, VariableValue value);
-	// Append value to Module array variable in supplied Configuration
-	bool appendVariable(Configuration* cfg, const char* varName, VariableValue value);
-	// Search for named variable in Module
-	Variable* findVariable(const char* varName);
-	// Return first defined Variable
-	Variable* variables();
-
-
-	/*
 	 * Method
 	 */
 	public:
@@ -224,16 +185,6 @@ class Module : public ListItem<Module>
 	int broadcastPoint_;
 	// Logpoint reflecting time of last broadcast of static data (shared across all instances)
 	static int staticBroadcastPoint_;
-
-
-	/*
-	 * Parallel Comms
-	 */
-	public:
-	// Broadcast module variables
-	bool broadcastVariables(ProcessPool& procPool);
-	// Broadcast data associated to module
-	virtual bool broadcastData(DUQ& duq, ProcessPool& procPool);
 };
 
 #endif

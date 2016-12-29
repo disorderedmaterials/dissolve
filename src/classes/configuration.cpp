@@ -372,13 +372,31 @@ bool Configuration::setup(ProcessPool& procPool, const List<AtomType>& atomTypes
 }
 
 /*
- * Module List
+ * Modules
  */
 
-// Return context of the list
-ModuleList::ModuleListContext Configuration::context()
+// Add Module (or an instance of it) to the Configuration
+Module* Configuration::addModule(Module* masterInstance, bool autoAddDependents)
 {
-	return ModuleList::ConfigurationContext;
+	return modules_.addModule(masterInstance, moduleData_, autoAddDependents);
+}
+
+// Return number of Modules associated to this Configuration
+int Configuration::nModules() const
+{
+	return modules_.nModules();
+}
+
+// Return list of Modules associated to this Configuration
+RefList<Module,bool>& Configuration::modules()
+{
+	return modules_.modules();
+}
+
+// Return list of data variables set by Modules
+GenericList& Configuration::moduleData()
+{
+	return moduleData_;
 }
 
 /*

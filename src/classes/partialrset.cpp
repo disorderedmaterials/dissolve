@@ -57,7 +57,7 @@ bool PartialRSet::setup(Configuration* cfg, const char* tag, const char* suffix)
 	boundPartials_.initialise(nTypes_, nTypes_, true);
 	unboundPartials_.initialise(nTypes_, nTypes_, true);
 
-	Dnchar title;
+	CharString title;
 	AtomTypeData* at1 = targetConfiguration_->usedAtomTypes(), *at2;
 	Messenger::print("--> Creating Lists of partials and linking into matrices...\n");
 	Messenger::printVerbose("Range/binWidth/Volume = %f/%f/%f\n", rdfRange, binWidth, boxVolume);

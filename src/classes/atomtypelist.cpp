@@ -121,7 +121,7 @@ AtomTypeData* AtomTypeList::first() const
 // Print AtomType populations
 void AtomTypeList::print()
 {
-	Dnchar indexData;
+	CharString indexData;
 	Messenger::print("  AtomType    El   Population  AtomFrac  Isotope  bc (fm)\n");
 	Messenger::print("  ---------------------------------------------------------\n");
 	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next)

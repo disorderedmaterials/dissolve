@@ -22,7 +22,7 @@
 #ifndef DUQ_DATA2D_H
 #define DUQ_DATA2D_H
 
-#include "base/dnchar.h"
+#include "base/charstring.h"
 #include "templates/array.h"
 
 #define OPTOLERANCE 1.0e-6
@@ -54,7 +54,7 @@ class Data2D : public ListItem<Data2D>
 	// Array of y values
 	Array<double> y_;
 	// Name
-	Dnchar name_;
+	CharString name_;
 	
 	private:
 	// Reset arrays to zero

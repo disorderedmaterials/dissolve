@@ -1,6 +1,6 @@
 /*
-	*** Dynamic character array
-	*** src/base/dnchar.cpp
+	*** Dynamic character string
+	*** src/base/charstring.cpp
 	Copyright T. Youngs 2012-2016
 
 	This file is part of dUQ.
@@ -20,7 +20,7 @@
 */
 
 #include "base/sysfunc.h"
-#include "base/dnchar.h"
+#include "base/charstring.h"
 #include "math/constants.h"
 #include <cstring>
 using namespace std;
@@ -29,7 +29,7 @@ using namespace std;
 #include <cstdarg>
 
 // Constructors
-Dnchar::Dnchar() : ListItem<Dnchar>()
+CharString::CharString() : ListItem<CharString>()
 {
 	// Private variables
 	data_ = NULL;
@@ -37,7 +37,7 @@ Dnchar::Dnchar() : ListItem<Dnchar>()
 	endPosition_ = 0;
 }
 
-Dnchar::Dnchar(int emptysize) : ListItem<Dnchar>()
+CharString::CharString(int emptysize) : ListItem<CharString>()
 {
 	// Private variables
 	data_ = NULL;
@@ -47,7 +47,7 @@ Dnchar::Dnchar(int emptysize) : ListItem<Dnchar>()
 	createEmpty(emptysize);
 }
 
-Dnchar::Dnchar(const char* s) : ListItem<Dnchar>()
+CharString::CharString(const char* s) : ListItem<CharString>()
 {
 	// Private variables
 	data_ = NULL;
@@ -57,7 +57,7 @@ Dnchar::Dnchar(const char* s) : ListItem<Dnchar>()
 	set(s);
 }
 
-Dnchar::Dnchar(int dummyparameter, const char* fmt, ...) : ListItem<Dnchar>()
+CharString::CharString(int dummyparameter, const char* fmt, ...) : ListItem<CharString>()
 {
 	// Private variables
 	data_ = NULL;
@@ -75,7 +75,7 @@ Dnchar::Dnchar(int dummyparameter, const char* fmt, ...) : ListItem<Dnchar>()
 }
 
 // Copy constructor
-Dnchar::Dnchar(const Dnchar &source) : ListItem<Dnchar>()
+CharString::CharString(const CharString &source) : ListItem<CharString>()
 {
 	// Private variables
 	data_ = NULL;
@@ -87,25 +87,25 @@ Dnchar::Dnchar(const Dnchar &source) : ListItem<Dnchar>()
 }
 
 // Conversion operators
-Dnchar::operator const char*()
+CharString::operator const char*()
 {
 	return get();
 }
 
 // Destructor
-Dnchar::~Dnchar()
+CharString::~CharString()
 {
 	if (data_ != NULL) delete[] data_;
 }
 
 // Print
-void Dnchar::info() const
+void CharString::info() const
 {
-	std::printf("DnChar len = %i, end = %i : '%s'\n",size_,endPosition_,data_);
+	std::printf("CharString len = %i, end = %i : '%s'\n",size_,endPosition_,data_);
 }
 
 // Clear
-void Dnchar::clear()
+void CharString::clear()
 {
 	if (data_ == NULL) return;
 	endPosition_ = 0;
@@ -113,7 +113,7 @@ void Dnchar::clear()
 }
 
 // Set from C-style string
-void Dnchar::set(const char* s)
+void CharString::set(const char* s)
 {
 	// If new size is less than or equal to old size, don't reallocate
 	int newsize = (s == NULL ? 1 : strlen(s) + 1);
@@ -129,19 +129,19 @@ void Dnchar::set(const char* s)
 }
 
 // Get
-const char* Dnchar::get() const
+const char* CharString::get() const
 {
 	return (data_ != NULL ? data_ : "");
 }
 
 // Get length
-int Dnchar::length() const
+int CharString::length() const
 {
 	return (endPosition_ < size_ ? endPosition_ : size_);
 }
 
 // Create empty array
-void Dnchar::createEmpty(int newsize)
+void CharString::createEmpty(int newsize)
 {
 	// Check if array has already been initialised
 	if (data_ != NULL) delete[] data_;
@@ -153,26 +153,26 @@ void Dnchar::createEmpty(int newsize)
 }
 
 // Create empty array
-void Dnchar::createEmpty(Dnchar &s)
+void CharString::createEmpty(CharString &s)
 {
 	createEmpty(s.size_);
 }
 
 // Fill current string with specified character
-void Dnchar::fill(char c)
+void CharString::fill(char c)
 {
 	for (int n=0; n<size_-1; ++n) data_[n] = c;
 	data_[size_-1] = '\0';
 }
 
 // Returns the length of the current string
-bool Dnchar::isEmpty() const
+bool CharString::isEmpty() const
 {
 	return (endPosition_ <= 0 ? true : false);
 }
 
 // Return last character of string (before '\0')
-char Dnchar::lastChar() const
+char CharString::lastChar() const
 {
 	return (endPosition_ == 0 ? '\0' : data_[endPosition_-1]);
 }
@@ -182,7 +182,7 @@ char Dnchar::lastChar() const
  */
 
 // Erase range
-void Dnchar::erase(int start, int end)
+void CharString::erase(int start, int end)
 {
 	// Retain original memory length of string, but move '\0' and decrease 'size_'
 	// Check range given
@@ -192,7 +192,7 @@ void Dnchar::erase(int start, int end)
 	//printf("Range to erase is %i to %i.\n",start,end);
 	//printf("Characters after endpoint = %i\n",count);
 	// Copy the character in position 'n' to position 'start + (n-last-1)'
-	//printf("   DNCHAR - Before erase(%i,%i) = '%s', After = ",start,end,data_);
+	//printf("   CharString - Before erase(%i,%i) = '%s', After = ",start,end,data_);
 	for (int n=0; n<count; n++) data_[start+n] = data_[end+n+1];
 	size_ -= (1 + end - start);
 	endPosition_ -= (1 + end - start);
@@ -200,7 +200,7 @@ void Dnchar::erase(int start, int end)
 }
 
 // Erase from start
-void Dnchar::eraseStart(int n)
+void CharString::eraseStart(int n)
 {
 	//printf("erasestart - n = %i, endPosition_ = %i\n",n,endPosition_);
 	if ((n - 1) > endPosition_)
@@ -212,21 +212,21 @@ void Dnchar::eraseStart(int n)
 }
 
 // Erase from end
-void Dnchar::eraseEnd(int n)
+void CharString::eraseEnd(int n)
 {
 	if ((n - 1) >= endPosition_) n = endPosition_;
 	if (n > 0) erase(endPosition_-n,endPosition_-1);
 }
 
 // Erase from specified position to end
-void Dnchar::eraseFrom(int n)
+void CharString::eraseFrom(int n)
 {
 	if (n >= (endPosition_-1)) n = endPosition_-1;
 	if (n > 0) erase(n,endPosition_-1);
 }
 
 // Cut characters from start
-void Dnchar::cutStart(int len, Dnchar &target)
+void CharString::cutStart(int len, CharString &target)
 {
 	// Set new size_ of target string
 	target.createEmpty(len+1);
@@ -235,13 +235,13 @@ void Dnchar::cutStart(int len, Dnchar &target)
 }
 
 // Replace characters
-void Dnchar::replace(char fromChar, char toChar)
+void CharString::replace(char fromChar, char toChar)
 {
 	for (int n=0; n<endPosition_; ++n) if (data_[n] == fromChar) data_[n] = toChar;
 }
 
 // Replace multiple characters
-void Dnchar::replace(const char* fromChars, char toChar)
+void CharString::replace(const char* fromChars, char toChar)
 {
 	for (int n=0; n<endPosition_; ++n) if (std::strchr(fromChars, data_[n])) data_[n] = toChar;
 }
@@ -251,34 +251,34 @@ void Dnchar::replace(const char* fromChars, char toChar)
  */
 
 // Assignment operator (const char*)
-void Dnchar::operator=(const char* s)
+void CharString::operator=(const char* s)
 {
 	set(s);
 }
 
-// Assignment operator (const Dnchar&)
-void Dnchar::operator=(const Dnchar &source)
+// Assignment operator (const CharString&)
+void CharString::operator=(const CharString &source)
 {
 	if (source.data_ == NULL) clear();
 	else set(source.data_);
 }
 
 // Equality Operator (const char*)
-bool Dnchar::operator==(const char* s) const
+bool CharString::operator==(const char* s) const
 {
 	if (data_ == NULL) return (s[0] == '\0');
 	return (strcmp(data_,s) == 0);
 }
 
 // Inequality Operator (const char*)
-bool Dnchar::operator!=(const char* s) const
+bool CharString::operator!=(const char* s) const
 {
 	if (data_ == NULL) return (s[0] != '\0');
 	return (strcmp(data_,s) != 0);
 }
 
 // Equality Operator
-bool Dnchar::operator==(const Dnchar &s) const
+bool CharString::operator==(const CharString &s) const
 {
 	if (data_ == NULL)
 	{
@@ -290,7 +290,7 @@ bool Dnchar::operator==(const Dnchar &s) const
 }
 
 // Inequality Operator
-bool Dnchar::operator!=(const Dnchar &s) const
+bool CharString::operator!=(const CharString &s) const
 {
 	if (data_ == NULL)
 	{
@@ -302,18 +302,18 @@ bool Dnchar::operator!=(const Dnchar &s) const
 }
 
 // Subscript operator
-char Dnchar::operator[](int n) const
+char CharString::operator[](int n) const
 {
 	if ((n < 0) || (n >= size_))
 	{
-		std::printf("Dnchar::operator[] <<<< Array subscript %i out of range (0-%i) >>>>\n",n,size_-1);
+		std::printf("CharString::operator[] <<<< Array subscript %i out of range (0-%i) >>>>\n",n,size_-1);
 		return 0;
 	}
 	return data_[n];
 }
 
 // Character addition
-void Dnchar::operator+=(char c)
+void CharString::operator+=(char c)
 {
 	// Check whether we need to reallocate
 	if ((endPosition_+1) > (size_-1))
@@ -338,23 +338,23 @@ void Dnchar::operator+=(char c)
  */
 
 // Return as double
-double Dnchar::asDouble() const
+double CharString::asDouble() const
 {
 	return (data_ != NULL ? atof(data_) : 0.0);
 }
 
 // Return as integer
-int Dnchar::asInteger() const
+int CharString::asInteger() const
 {
 	return (data_ != NULL ? atoi(data_) : 0);
 }
 
 // Return as bool
-bool Dnchar::asBool() const
+bool CharString::asBool() const
 {
 	// Convert string to boolean
 	bool result = false;
-	Dnchar lcase(DUQSys::lowerCase(data_));
+	CharString lcase(DUQSys::lowerCase(data_));
 	if (lcase == "off") result = false;
 	else if (lcase == "on") result = true;
 	else if (lcase == "no") result = false;
@@ -370,7 +370,7 @@ bool Dnchar::asBool() const
 }
 
 // Is Number?
-bool Dnchar::isNumeric() const
+bool CharString::isNumeric() const
 {
 	// Go through string - if we find a 'non-number' character, return false
 	int nSymbols = 0, nChars = 0;
@@ -394,14 +394,14 @@ bool Dnchar::isNumeric() const
 }
 
 // Return the lowercase conversion of the string
-const char* Dnchar::lower() const
+const char* CharString::lower() const
 {
 	if (data_ == NULL) return "\0";
 	return DUQSys::lowerCase(data_);
 }
 
 // Return the uppercase conversion of the string
-const char* Dnchar::upper() const
+const char* CharString::upper() const
 {
 	if (data_ == NULL) return "\0";
 	return DUQSys::upperCase(data_);
@@ -412,13 +412,13 @@ const char* Dnchar::upper() const
  */
 
 // Find character
-int Dnchar::find(char search) const
+int CharString::find(char search) const
 {
 	int count = 0;
 	char* c;
 	for (c = data_; *c != '\0'; c++)
 	{
-// 	printf("Dnchar %c %c\n",*c,search);
+// 	printf("CharString %c %c\n",*c,search);
 		if (*c == search) return count;
 		++count;
 	}
@@ -426,7 +426,7 @@ int Dnchar::find(char search) const
 }
 
 // Reverse find character
-int Dnchar::rFind(char search, char stopat1, char stopat2) const
+int CharString::rFind(char search, char stopat1, char stopat2) const
 {
 	int result;
 	for (result = endPosition_; result >= 0; --result)
@@ -443,7 +443,7 @@ int Dnchar::rFind(char search, char stopat1, char stopat2) const
 */
 
 // String addition
-void Dnchar::strcat(const char* s, int charcount)
+void CharString::strcat(const char* s, int charcount)
 {
 	if (charcount == 0) return;
 	// Check whether we need to reallocate
@@ -466,7 +466,7 @@ void Dnchar::strcat(const char* s, int charcount)
 		// Check size_ of array
 		if (endPosition_ == (size_ - 1))
 		{
-			printf("Dnchar::cat <<<< Buffer overflow - blame shoddy programming >>>>\n");
+			printf("CharString::cat <<<< Buffer overflow - blame shoddy programming >>>>\n");
 			return;
 		}
 		data_[endPosition_] = *c;
@@ -478,7 +478,7 @@ void Dnchar::strcat(const char* s, int charcount)
 }
 
 // Append formatted string
-void Dnchar::strcatf(const char* fmt ...)
+void CharString::strcatf(const char* fmt ...)
 {
 	va_list arguments;
 	static char s[8096];
@@ -492,7 +492,7 @@ void Dnchar::strcatf(const char* fmt ...)
 }
 
 // Create formatted string
-void Dnchar::sprintf(const char* fmt ...)
+void CharString::sprintf(const char* fmt ...)
 {
 	va_list arguments;
 	static char s[8096];
@@ -505,13 +505,13 @@ void Dnchar::sprintf(const char* fmt ...)
 }
 
 // Search for character in string
-char *Dnchar::strchr(char c) const
+char *CharString::strchr(char c) const
 {
 	return std::strchr(data_, c);
 }
 
 // Copy substring of supplied string into this string
-void Dnchar::substr(const char* source, int pos, int nchars)
+void CharString::substr(const char* source, int pos, int nchars)
 {
 	clear();
 	// Check start position
@@ -528,7 +528,7 @@ void Dnchar::substr(const char* source, int pos, int nchars)
 }
 
 // Static sprintf
-const char* Dnchar::string(const char* fmt, ...)
+const char* CharString::string(const char* fmt, ...)
 {
 	va_list arguments;
 	static char s[8096];

@@ -22,11 +22,11 @@
 #ifndef DUQ_MODULELIST_H
 #define DUQ_MODULELIST_H
 
-#include "base/variablelist.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
 class Module;
+class GenericList;
 
 // ModuleList
 class ModuleList
@@ -46,26 +46,16 @@ class ModuleList
 	private:
 	// List of Modules
 	RefList<Module,bool> modules_;
-	// Variables set by Modules
-	VariableList moduleVariables_;
 
 	public:
-	// Return context of the list
-	virtual ModuleListContext context() = 0;
 	// Associate Module to list
-	Module* addModule(Module* module, bool autoAddDependents = false, RefListItem<Module, bool>* addBeforeThis = NULL);
+	Module* addModule(Module* module, GenericList& moduleData, bool autoAddDependents = false, RefListItem<Module, bool>* addBeforeThis = NULL);
 	// Find associated Module by name
 	Module* findModule(const char* name);
-	// Return number of Modules associated
-	int nModules();
+	// Return number of Modules in the list
+	int nModules() const;
 	// Return Modules associated to list
 	RefList<Module,bool>& modules();
-	// Set Module variable
-	void setModuleVariable(const char* name, VariableValue value, const char* description, const char* source);
-	// Append Module variable
-	void appendModuleVariable(const char* name, VariableValue value, const char* description, const char* source);
-	// Return named Module variable
-	Variable* moduleVariable(const char* name, const char* source);
 
 
 	/*

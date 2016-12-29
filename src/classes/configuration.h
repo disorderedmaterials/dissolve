@@ -30,7 +30,7 @@
 #include "classes/sample.h"
 #include "modules/modulelist.h"
 #include "base/processpool.h"
-#include "base/variablelist.h"
+#include "templates/genericlist.h"
 #include "templates/vector3.h"
 #include "templates/orderedlist.h"
 #include "templates/array.h"
@@ -43,7 +43,7 @@ class Cell;
 class Species;
 
 // Configuration
-class Configuration : public ModuleList, public ListItem<Configuration>
+class Configuration : public ListItem<Configuration>
 {
 	public:
 	// Constructor
@@ -59,9 +59,9 @@ class Configuration : public ModuleList, public ListItem<Configuration>
 	 */
 	private:
 	// Name of the configuration
-	Dnchar name_;
+	CharString name_;
 	// Nice name (generated from name_) used for output files
-	Dnchar niceName_;
+	CharString niceName_;
 	// Reference list of Species used by the Configuration and their relative populations
 	RefList<Species,double> usedSpecies_;
 	// Integer multiplier of used relative species populations
@@ -73,9 +73,9 @@ class Configuration : public ModuleList, public ListItem<Configuration>
 	// Whether a random config should be generated (as opposed to loading one from a file)
 	bool randomConfiguration_;
 	// File containing input coordinates
-	Dnchar inputCoordinatesFile_;
+	CharString inputCoordinatesFile_;
 	// File containing output coordinates
-	Dnchar outputCoordinatesFile_;
+	CharString outputCoordinatesFile_;
 	// Flag specifying to use output coordinates file as input coordinates (if it exists)
 	bool useOutputCoordinatesAsInput_;
 	// Frequency with which to write output coordinates
@@ -239,7 +239,7 @@ class Configuration : public ModuleList, public ListItem<Configuration>
 	// Last Cell distributed
 	int lastCellDistributed_;
 	// Box normalisation array to load/save for this configuration
-	Dnchar boxNormalisationFileName_;
+	CharString boxNormalisationFileName_;
 	// RDF Normalisation function for Box shape/extent
 	Data2D boxNormalisation_;
 	
@@ -388,11 +388,23 @@ class Configuration : public ModuleList, public ListItem<Configuration>
 
 
 	/*
-	 * Module List
+	 * Modules
 	 */
+	private:
+	// List of Modules associated to this Configuration
+	ModuleList modules_;
+	// Variables set by Modules
+	GenericList moduleData_;
+
 	public:
-	// Return context of the list
-	ModuleList::ModuleListContext context();
+	// Add Module (or an instance of it) to the Configuration
+	Module* addModule(Module* masterInstance, bool autoAddDependents);
+	// Return number of Modules associated to this Configuration
+	int nModules() const;
+	// Return list of Modules associated to this Configuration
+	RefList<Module,bool>& modules();
+	// Return list of variables set by Modules
+	GenericList& moduleData();
 
 
 	/*

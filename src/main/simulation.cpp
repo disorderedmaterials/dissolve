@@ -188,11 +188,9 @@ bool DUQ::go()
 		for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
 		{
 			if (!cfg->broadcastCoordinates(worldPool_, cfg->processPool().rootWorldRank())) return false;
+			if (!cfg->moduleData().broadcast(worldPool_, cfg->processPool().rootWorldRank())) return false;
 		}
-		// Module-centred data
-		RefListIterator<Module,bool> moduleIterator(ModuleList::masterInstances());
-		while (Module* module = moduleIterator.iterate()) if (!module->broadcastData(*this, worldPool_)) return false;
-		
+
 		// Sync up all processes
 		worldPool_.wait(ProcessPool::Pool);
 

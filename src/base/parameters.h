@@ -23,7 +23,7 @@
 #define DUQ_PARAMETERS_H
 
 #include "templates/list.h"
-#include "base/dnchar.h"
+#include "base/charstring.h"
 
 // Parameters Definition
 class Parameters : public MPIListItem<Parameters>
@@ -40,9 +40,9 @@ class Parameters : public MPIListItem<Parameters>
 	 */
 	private:
 	// Short Name
-	Dnchar name_;
+	CharString name_;
 	// Description
-	Dnchar description_;
+	CharString description_;
 
 	public:
 	// Set name of Parameters

@@ -23,7 +23,7 @@
 #define DUQ_ISOTOPE_H
 
 #include "templates/list.h"
-#include "base/dnchar.h"
+#include "base/charstring.h"
 
 // Isotope Definition
 class Isotope : public MPIListItem<Isotope>

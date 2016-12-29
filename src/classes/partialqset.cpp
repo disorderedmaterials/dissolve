@@ -52,7 +52,7 @@ bool PartialQSet::setup(Configuration* cfg, const char* tag, const char* suffix)
 	boundPartials_.initialise(nTypes_, nTypes_, true);
 	unboundPartials_.initialise(nTypes_, nTypes_, true);
 
-	Dnchar title;
+	CharString title;
 	AtomTypeData* at1 = targetConfiguration_->usedAtomTypes(), *at2;
 	Messenger::print("--> Creating lists of partials and linking into matrices...\n");
 	for (n=0; n<nTypes_; ++n, at1 = at1->next)

@@ -1,6 +1,6 @@
 /*
 	*** Dynamic character array
-	*** src/base/dnchar.h
+	*** src/base/charstring.h
 	Copyright T. Youngs 2012-2016
 
 	This file is part of dUQ.
@@ -19,23 +19,23 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_DNCHAR_H
-#define DUQ_DNCHAR_H
+#ifndef DUQ_CharString_H
+#define DUQ_CharString_H
 
 #include "templates/list.h"
 
 // Dynamic character array
-class Dnchar : public ListItem<Dnchar>
+class CharString : public ListItem<CharString>
 {
 	public:
 	// Constructor / Destructor
-	Dnchar();
-	Dnchar(int size);
-	Dnchar(const char* s);
-	Dnchar(int dummyparameter, const char* fmt, ...);
-	~Dnchar();
+	CharString();
+	CharString(int size);
+	CharString(const char* s);
+	CharString(int dummyparameter, const char* fmt, ...);
+	~CharString();
 	// Copy constructor
-	Dnchar(const Dnchar&);
+	CharString(const CharString&);
 	// Conversion operators
 	operator const char*();
 
@@ -62,8 +62,8 @@ class Dnchar : public ListItem<Dnchar>
 	const char* get() const;
 	// Resize data
 	void createEmpty(int);
-	// Resize data (to be same length as source Dnchar)
-	void createEmpty(Dnchar&);
+	// Resize data (to be same length as source CharString)
+	void createEmpty(CharString&);
 	// Fill current string with specified character
 	void fill(char c);
 	// Returns the length of the current string
@@ -87,7 +87,7 @@ class Dnchar : public ListItem<Dnchar>
 	// Erase from nth character to the end of string
 	void eraseFrom(int);
 	// Cut n characters from start of string and place in other
-	void cutStart(int, Dnchar&);
+	void cutStart(int, CharString&);
 	// Replace characters
 	void replace(char fromChar, char toChar);
 	// Replace multiple characters
@@ -101,15 +101,15 @@ class Dnchar : public ListItem<Dnchar>
 	// Assignment operator
 	void operator=(const char*);
 	// Assignment operator
-	void operator=(const Dnchar&);
+	void operator=(const CharString&);
 	// Equality operator (const char*)
 	bool operator==(const char*) const;
 	// Inequality operator (const char*)
 	bool operator!=(const char*) const;
 	// Equality operator
-	bool operator==(const Dnchar&) const;
+	bool operator==(const CharString&) const;
 	// Inequality operator
-	bool operator!=(const Dnchar&) const;
+	bool operator!=(const CharString&) const;
 	// Array subscript operator
 	char operator[](int) const;
 	// Character addition operator

@@ -23,7 +23,7 @@
 #define DUQ_SPECIESGRAIN_H
 
 #include "classes/atom.h"
-#include "base/dnchar.h"
+#include "base/charstring.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
 
@@ -52,7 +52,7 @@ class SpeciesGrain : public ListItem<SpeciesGrain>
 	// Parent Species
 	Species* parent_;
 	// Name of this SpeciesGrain
-	Dnchar name_;
+	CharString name_;
 	
 	public:
 	// Set parent Species

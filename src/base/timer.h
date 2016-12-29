@@ -22,7 +22,7 @@
 #ifndef DUQ_TIMER_H
 #define DUQ_TIMER_H
 
-#include "base/dnchar.h"
+#include "base/charstring.h"
 #include <ctime>
 
 // Timer
@@ -45,7 +45,7 @@ class Timer
 	// Total time
 	clock_t totalTime_;
 	// Local string storage
-	Dnchar timeString_;
+	CharString timeString_;
 	
 	public:
 	// Start timer

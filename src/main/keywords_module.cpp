@@ -53,7 +53,7 @@ int ModuleBlock::nArguments(ModuleBlock::ModuleKeyword id)
 }
 
 // Parse Module block
-bool ModuleBlock::parse(LineParser& parser, DUQ* duq, Module* module, ModuleList* targetList)
+bool ModuleBlock::parse(LineParser& parser, DUQ* duq, Module* module, GenericList& targetList, bool moduleInConfiguration)
 {
 	Messenger::print("\nParsing %s block '%s'...\n", InputBlocks::inputBlock(InputBlocks::ModuleBlock), module->name());
 
@@ -61,7 +61,7 @@ bool ModuleBlock::parse(LineParser& parser, DUQ* duq, Module* module, ModuleList
 	Parameters* params;
 	Species* sp;
 	Isotopologue* tope;
-	Dnchar varName;
+	CharString varName;
 	bool blockDone = false, error = false;
 	int argIndex;
 	
@@ -98,9 +98,9 @@ bool ModuleBlock::parse(LineParser& parser, DUQ* duq, Module* module, ModuleList
 
 				// Add a weight variable (optional second parameter)
 				// Name of the variable depends on the context of the list
-				if (targetList->context() == ModuleList::SampleContext) varName.sprintf("%s_Weight", targetCfg->name());
+				if (!moduleInConfiguration) varName.sprintf("%s_Weight", targetCfg->name());
 				else varName = "Weight";
-				targetList->setModuleVariable(varName, parser.hasArg(2) ? parser.argd(2) : 1.0, "Configuration weighting for Module", module->uniqueName());
+				GenericListHelper<double>::add(targetList, varName, module->uniqueName()) = parser.hasArg(2) ? parser.argd(2) : 1.0;
 				break;
 			case (ModuleBlock::DisableKeyword):
 				module->setEnabled(false);
@@ -157,7 +157,7 @@ bool ModuleBlock::parse(LineParser& parser, DUQ* duq, Module* module, ModuleList
 
 				// Ready - add a suitable variable to the Configuration
 				varName.sprintf("Isotopologue/%s/%s", sp->name(), tope->name());
-				targetList->setModuleVariable(varName.get(), parser.argd(4), "Isotopologue weighting", module->uniqueName());
+				GenericListHelper<double>::add(targetList, varName, module->uniqueName()) = parser.argd(4);
 				break;
 			case (ModuleBlock::nModuleKeywords):
 				Messenger::error("Unrecognised %s block keyword found - '%s'\n", InputBlocks::inputBlock(InputBlocks::ModuleBlock), parser.argc(0));
@@ -171,17 +171,19 @@ bool ModuleBlock::parse(LineParser& parser, DUQ* duq, Module* module, ModuleList
 		}
 		else
 		{
-			// Might be a Module variable?
-			// First of all, does the named variable exist?
-			Variable* var = module->findVariable(parser.argc(0));
-			if (!var)
+			// Might be an option defined in the Module?
+			PlainValue* value = module->options().value(parser.argc(0));
+			if (!value)
 			{
-				Messenger::error("Unrecognised %s block keyword found - '%s', and the Module '%s' contains no variable of this name.\n", InputBlocks::inputBlock(InputBlocks::ModuleBlock), parser.argc(0), module->name());
+				Messenger::error("Unrecognised %s block keyword found - '%s', and the Module '%s' contains no option with this name.\n", InputBlocks::inputBlock(InputBlocks::ModuleBlock), parser.argc(0), module->name());
 				error = true;
 				break;
 			}
 			// Set variable in target
-			targetList->setModuleVariable(var->name(), parser.argc(1), var->description(), module->uniqueName());
+			if (value->type() == PlainValue::BooleanType) GenericListHelper<bool>::add(targetList, value->name(), module->uniqueName()) = parser.argb(1);
+			else if (value->type() == PlainValue::IntegerType) GenericListHelper<int>::add(targetList, value->name(), module->uniqueName()) = parser.argi(1);
+			else if (value->type() == PlainValue::DoubleType) GenericListHelper<double>::add(targetList, value->name(), module->uniqueName()) = parser.argd(1);
+			else GenericListHelper<CharString>::add(targetList, value->name(), module->uniqueName()) = parser.argc(1);
 		}
 
 		// Error encountered?

@@ -23,7 +23,7 @@
 #define DUQ_GRAINDEFINITION_H
 
 #include "classes/atom.h"
-#include "base/dnchar.h"
+#include "base/charstring.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
 
@@ -48,7 +48,7 @@ class GrainDefinition : public ListItem<GrainDefinition>
 	// Parent Species
 	Species* parent_;
 	// Name of this GrainDefinition
-	Dnchar name_;
+	CharString name_;
 	
 	public:
 	// Set parent Species

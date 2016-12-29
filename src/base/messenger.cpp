@@ -68,7 +68,7 @@ void Messenger::createText(const char* indentText, const char* format, va_list a
 	vsprintf(workingText_, format, arguments);
 	
 	// Now, use strtok to split the workingText_ up into lines, prepending the indentText and/or process id to each
-	Dnchar prependedLine;
+	CharString prependedLine;
 	char* startChar = workingText_;
 	char* endChar = workingText_;
 	bool lastPart = (*endChar == '\0');
@@ -167,7 +167,7 @@ void Messenger::warn(const char* fmt, ...)
 // Print banner message of specified width
 void Messenger::banner(const char* fmt, ...)
 {
-	static Dnchar bannerChars;
+	static CharString bannerChars;
 	const int width = 80;
 	if (bannerChars.length() < width)
 	{
@@ -180,7 +180,7 @@ void Messenger::banner(const char* fmt, ...)
 	va_start(arguments, fmt);
 	vsprintf(workingText_, fmt, arguments);
 	va_end(arguments);
-	Dnchar bannerText = workingText_;
+	CharString bannerText = workingText_;
 
 	// Now, get the length of the banner text and create a format for printing it into a line 80 chars wide
 	int leftPad = (width - bannerText.length()) / 2 - 1;

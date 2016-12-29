@@ -60,7 +60,7 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 	Messenger::print("\nParsing %s '%s'\n", InputBlocks::inputBlock(InputBlocks::SpeciesBlock), species->name());
 
 	int el;
-	Dnchar arg1, arg2;
+	CharString arg1, arg2;
 	AtomType* at;
 	Isotopologue* iso;
 	SpeciesAngle* a;

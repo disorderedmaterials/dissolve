@@ -190,8 +190,8 @@ void Species::addAtomToGrain(SpeciesAtom* i, SpeciesGrain* gd)
 // Generate unique GrainDefinition name with base name provided
 const char* Species::uniqueGrainName(const char* base, SpeciesGrain* exclude) const
 {
-	static Dnchar uniqueName;
-	Dnchar baseName = base;
+	static CharString uniqueName;
+	CharString baseName = base;
 	SpeciesGrain* sg;
 	int highest = -1;
 	

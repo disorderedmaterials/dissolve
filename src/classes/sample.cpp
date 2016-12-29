@@ -120,7 +120,7 @@ bool Sample::loadReferenceData(const char* filename)
 }
 
 // Return reference data filename (if any)
-Dnchar& Sample::referenceDataFileName()
+CharString& Sample::referenceDataFileName()
 {
 	return referenceDataFileName_;
 }
@@ -141,10 +141,28 @@ Data2D& Sample::calculatedData()
  * Module List
  */
 
-// Return context of the list
-ModuleList::ModuleListContext Sample::context()
+// Add Module (or an instance of it) to the Sample
+Module* Sample::addModule(Module* masterInstance, bool autoAddDependents)
 {
-	return ModuleList::SampleContext;
+	return modules_.addModule(masterInstance, moduleData_, autoAddDependents);
+}
+
+// Return number of Modules associated to this Sample
+int Sample::nModules() const
+{
+	return modules_.nModules();
+}
+
+// Return list of Modules associated to this Sample
+RefList<Module,bool>& Sample::modules()
+{
+	return modules_.modules();
+}
+
+// Return list of data variables set by Modules
+GenericList& Sample::moduleData()
+{
+	return moduleData_;
 }
 
 /*

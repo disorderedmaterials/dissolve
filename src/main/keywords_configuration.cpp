@@ -71,7 +71,7 @@ bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
 
 	Sample* sam;
 	Species* sp;
-	Module* module;
+	Module* masterInstance, *module;
 	bool blockDone = false, error = false;
 
 	while (!parser.eofOrBlank(duq->worldPool()))
@@ -120,8 +120,8 @@ bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
 				break;
 			case (ConfigurationBlock::ModuleKeyword):
 				// The argument following the keyword is the module name
-				module = ModuleList::findMasterInstance(parser.argc(1));
-				if (!module)
+				masterInstance = ModuleList::findMasterInstance(parser.argc(1));
+				if (!masterInstance)
 				{
 					Messenger::error("No Module named '%s' exists.\n", parser.argc(1));
 					error = true;
@@ -129,7 +129,7 @@ bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
 				}
 
 				// Try to add this module (or an instance of it) to the current Configuration
-				module = cfg->addModule(module, duq->autoAddDependentModules());
+				module = cfg->addModule(masterInstance, duq->autoAddDependentModules());
 				if (module)
 				{
 					// Add our pointer to the Module's list of associated Configurations
@@ -147,10 +147,10 @@ bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
 				if (error) break;
 
 				// Parse rest of Module block
-				if (!ModuleBlock::parse(parser, duq, module, cfg)) error = true;
+				if (!ModuleBlock::parse(parser, duq, masterInstance, cfg->moduleData(), true)) error = true;
 
 				// Now finished parsing the Module block, so must update target Samples and Configurations in any auto-added Modules
-				module->updateDependentTargets();
+				masterInstance->updateDependentTargets();
 				break;
 			case (ConfigurationBlock::MultiplierKeyword):
 				cfg->setMultiplier(parser.argd(1));
@@ -187,7 +187,7 @@ bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
 						Messenger::error("Configuration already uses Species '%s' - cannot add it a second time.\n", sp->name());
 						error = true;
 					}
-					else Messenger::print("--> Set composition for Species '%s' (%f relative population).\n", sp->name(), parser.argd(2));
+					else Messenger::print("--> Set composition for Species '%s' (relative population = %f).\n", sp->name(), parser.argd(2));
 				}
 				break;
 			case (ConfigurationBlock::TemperatureKeyword):

@@ -201,7 +201,7 @@ void Bond::setAttachedAtoms(int terminus, const RefList<Atom,int>& atoms)
 	int index = 0;
 	for (RefListItem<Atom,int>* refAtom = atoms.first(); refAtom != NULL; refAtom = refAtom->next) attached_[terminus][index++] = refAtom->item;
 
-	Dnchar s(-1, "--> For Bond between Atoms %i-%i, terminus %i moves %i Atoms :", indexI()+1, indexJ()+1, terminus+1, nAttached_[terminus]);
+	CharString s(-1, "--> For Bond between Atoms %i-%i, terminus %i moves %i Atoms :", indexI()+1, indexJ()+1, terminus+1, nAttached_[terminus]);
 	for (int n=0; n<nAttached_[terminus]; ++n) s.strcatf(" %i", attached_[terminus][n]->userIndex());
 	Messenger::print("%s\n", s.get());
 }

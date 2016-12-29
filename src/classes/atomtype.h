@@ -22,7 +22,7 @@
 #ifndef DUQ_ATOMTYPE_H
 #define DUQ_ATOMTYPE_H
 
-#include "base/dnchar.h"
+#include "base/charstring.h"
 #include "templates/list.h"
 
 // Forward Declarations
@@ -46,7 +46,7 @@ class AtomType : public MPIListItem<AtomType>
 	 */
 	private:
 	// Name
-	Dnchar name_;
+	CharString name_;
 	// Associated Element
 	int element_;
 	// Associated Parameters

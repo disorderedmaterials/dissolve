@@ -104,7 +104,7 @@ bool DUQ::md(Configuration& cfg, double cutoffDistance, int nSteps, double delta
 	LineParser trajParser;
 	if (writeTraj)
 	{
-		Dnchar trajectoryFile = cfg.name();
+		CharString trajectoryFile = cfg.name();
 		trajectoryFile.strcat(".md.xyz");
 		if (Comm.master())
 		{
@@ -264,7 +264,7 @@ bool DUQ::md(Configuration& cfg, double cutoffDistance, int nSteps, double delta
 				trajParser.writeLineF("%i\n", cfg.nAtoms());
 
 				// Construct and write header
-				Dnchar header(-1, "Step %i of %i, T = %10.3e, ke = %10.3e", step+1, nSteps, tInstant, ke);
+				CharString header(-1, "Step %i of %i, T = %10.3e, ke = %10.3e", step+1, nSteps, tInstant, ke);
 				if (calcEnergy) header.strcatf(", pe = %10.3e, tot = %10.3e", pe, ke+pe);
 				trajParser.writeLineF("%s\n", header.get());
 				// Write Atoms

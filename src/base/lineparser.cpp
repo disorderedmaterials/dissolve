@@ -379,7 +379,7 @@ int LineParser::readNextLine(int optionMask)
 }
 
 // Gets next delimited arg from internal line
-bool LineParser::getNextArg(int optionMask, Dnchar* destarg)
+bool LineParser::getNextArg(int optionMask, CharString* destarg)
 {
 	// Get the next input chunk from the internal string and put into argument specified.
 	int arglen;
@@ -484,7 +484,7 @@ bool LineParser::getNextArg(int optionMask, Dnchar* destarg)
 }
 
 // Rip next n characters
-bool LineParser::getNextN(int optionMask, int length, Dnchar* destarg)
+bool LineParser::getNextN(int optionMask, int length, CharString* destarg)
 {
 	// Put the next 'length' characters from line_ into temparg (and put into supplied arg if supplied)
 	// A negative length may be supplied, which we interpret as 'strip trailing spaces'
@@ -531,11 +531,11 @@ void LineParser::getAllArgsDelim(int optionMask)
 	// Parse the string in 'line_' into arguments in 'args'
 	arguments_.clear();
 	endOfLine_ = false;
-	Dnchar* arg;
+	CharString* arg;
 	while (!endOfLine_)
 	{
-		// Create new, empty dnchar
-		arg = new Dnchar;
+		// Create new, empty CharString
+		arg = new CharString;
 		// We must pass on the current optionMask, else it will be reset by the default value in getNextArg()
 		if (getNextArg(optionMask, arg))
 		{
@@ -569,7 +569,7 @@ int LineParser::getArgsDelim(int optionMask)
 }
 
 // Get rest of current line starting at next delimited part (and put into destination argument if supplied)
-bool LineParser::getRestDelim(Dnchar* destarg)
+bool LineParser::getRestDelim(CharString* destarg)
 {
 	int arglen = 0, n, length;
 	char c;
@@ -603,7 +603,7 @@ bool LineParser::getRestDelim(Dnchar* destarg)
 }
 
 // Get next argument (delimited) from file stream
-bool LineParser::getArgDelim(int optionMask, Dnchar* destarg)
+bool LineParser::getArgDelim(int optionMask, CharString* destarg)
 {
 	bool result = getNextArg(optionMask, destarg);
 	printf("getArgDelim = %s [%s]\n", result ? "true" : "false", destarg->get());
@@ -620,7 +620,7 @@ void LineParser::getArgsDelim(int optionMask, const char* s)
 }
 
 // Get next delimited chunk from input stream (not line)
-bool LineParser::getCharsDelim(Dnchar* destarg)
+bool LineParser::getCharsDelim(CharString* destarg)
 {
 	int length = 0;
 	bool result = true;
@@ -649,7 +649,7 @@ bool LineParser::getCharsDelim(Dnchar* destarg)
 }
 
 // Get next delimited chunk from string, removing grabbed part
-bool LineParser::getCharsDelim(int optionMask, Dnchar* source, Dnchar* destarg)
+bool LineParser::getCharsDelim(int optionMask, CharString* source, CharString* destarg)
 {
 	// Get the next input chunk from the internal string and put into argument specified.
 	int arglen, pos = 0, length = source->length();

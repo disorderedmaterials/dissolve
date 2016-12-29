@@ -40,10 +40,7 @@ Test::Test() : Module()
 	uniqueName_.sprintf("%s_%02i", name(), instances_.nItems()-1);
 
 	// Setup variables / control parameters
-	addVariable("Test", false);
-	addVariable("Save", true);
-	addVariable("StabilityWindow", 10);
-	addVariable("StabilityThreshold", 0.01);
+	options_.add("Test", false);
 }
 
 // Destructor

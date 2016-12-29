@@ -63,6 +63,12 @@ const char* Module::uniqueName()
 	return uniqueName_.get();
 }
 
+// Return options for Module
+PlainValueList& Module::options()
+{
+	return options_;
+}
+
 // Add dependent Module to this Module
 void Module::addDependentModule(Module* module, bool autoAdded)
 {
@@ -126,7 +132,7 @@ bool Module::runThisIteration(int iteration)
 // Return short descriptive text relating frequency to supplied iteration number
 const char* Module::frequencyDetails(int iteration)
 {
-	static Dnchar result;
+	static CharString result;
 
 	if (frequency_ < 0) return "NEGATIVE?";
 	else if (frequency_ == 0) return "disabled";
@@ -255,132 +261,4 @@ void Module::copyTargetSamples(Module* sourceModule)
 	}
 	RefListIterator<Sample,bool> sampleIterator(sourceModule->targetSamples());
 	while (Sample* sample = sampleIterator.iterate()) addSampleTarget(sample);
-}
-
-/*
- * Variables
- */
-
-// Add Variable to Module
-void Module::addVariable(const char* varName, VariableValue defaultValue, const char* description)
-{
-	variables_.setVariable(varName, defaultValue, description, uniqueName());
-}
-
-// Retrieve variable from Module (bool)
-bool Module::variableAsBool(const char* varName)
-{
-	return variables_.variableAsBool(varName);
-}
-
-// Retrieve variable from Module (int)
-int Module::variableAsInt(const char* varName)
-{
-	return variables_.variableAsInt(varName);
-}
-
-// Retrieve variable from Module (double)
-double Module::variableAsDouble(const char* varName)
-{
-	return variables_.variableAsDouble(varName);
-}
-
-// Retrieve variable from Module (char)
-const char* Module::variableAsChar(const char* varName)
-{
-	return variables_.variableAsChar(varName);
-}
-
-// Retrieve variable from Module (Array<int>)
-Array<int>& Module::variableAsIntArray(const char* varName)
-{
-	return variables_.variableAsIntArray(varName);
-}
-
-// Retrieve variable from Module (Array<double>)
-Array<double>& Module::variableAsDoubleArray(const char* varName)
-{
-	return variables_.variableAsDoubleArray(varName);
-}
-
-// Retrieve Module variable from supplied Configuration, or get default value (bool)
-bool Module::variableAsBool(Configuration* cfg, const char* varName)
-{
-	Variable* var = cfg->moduleVariable(varName, uniqueName());
-	return (var ? var->asBool() : variableAsBool(varName));
-}
-
-// Retrieve Module variable from supplied Configuration, or get default value (int)
-int Module::variableAsInt(Configuration* cfg, const char* varName)
-{
-	Variable* var = cfg->moduleVariable(varName, uniqueName());
-	return (var ? var->asInt() : variableAsInt(varName));
-}
-
-// Retrieve Module variable from supplied Configuration, or get default value (double)
-double Module::variableAsDouble(Configuration* cfg, const char* varName)
-{
-	Variable* var = cfg->moduleVariable(varName, uniqueName());
-	return (var ? var->asDouble() : variableAsDouble(varName));
-}
-
-// Retrieve Module variable from supplied Configuration, or get default value (char)
-const char* Module::variableAsChar(Configuration* cfg, const char* varName)
-{
-	Variable* var = cfg->moduleVariable(varName, uniqueName());
-	return (var ? var->asChar() : variableAsChar(varName));
-}
-
-// Retrieve Module variable in supplied Configuration (Array<int>)
-Array<int>& Module::variableAsIntArray(Configuration* cfg, const char* varName)
-{
-	Variable* var = cfg->moduleVariable(varName, uniqueName());
-	return (var ? var->asIntArray() : variableAsIntArray(varName));
-}
-
-// Retrieve Module variable in supplied Configuration (Array<double>)
-Array<double>& Module::variableAsDoubleArray(Configuration* cfg, const char* varName)
-{
-	Variable* var = cfg->moduleVariable(varName, uniqueName());
-	return (var ? var->asDoubleArray() : variableAsDoubleArray(varName));
-}
-
-// Retrieve Module variable from supplied Configuration, or get default value
-void Module::setVariable(Configuration* cfg, const char* varName, VariableValue value)
-{
-	cfg->setModuleVariable(varName, value, "", uniqueName());
-}
-
-// Append value to Module array variable in supplied Configuration
-bool Module::appendVariable(Configuration* cfg, const char* varName, VariableValue value)
-{
-	cfg->appendModuleVariable(varName, value, "", uniqueName());
-}
-
-// Search for named variable in Module
-Variable* Module::findVariable(const char* varName)
-{
-	return variables_.variable(varName, uniqueName());
-}
-
-// Return first defined Variable
-Variable* Module::variables()
-{
-	return variables_.variables();
-}
-
-/*
- * Parallel Comms
- */
-
-// Broadcast module variables
-bool Module::broadcastVariables(ProcessPool& procPool)
-{
-	return variables_.broadcast(procPool);
-}
-
-// Broadcast data associated to module
-bool Module::broadcastData(DUQ& duq, ProcessPool& procPool)
-{
-	return true;
 }

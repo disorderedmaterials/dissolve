@@ -126,8 +126,8 @@ void DUQ::updateAtomTypes()
 // Generate unique AtomType name with base name provided
 const char* DUQ::uniqueAtomTypeName(const char* base, AtomType* exclude) const
 {
-	static Dnchar uniqueName;
-	Dnchar baseName = base;
+	static CharString uniqueName;
+	CharString baseName = base;
 	AtomType* at;
 	int highest = -1;
 	

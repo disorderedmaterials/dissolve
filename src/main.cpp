@@ -40,7 +40,7 @@ int main(int argc, char **argv)
 
 	// Parse CLI options...
 	int n = 1;
-	Dnchar inputFile, redirectFileName;
+	CharString inputFile, redirectFileName;
 	int fullDump = 0;
 	while (n < argc)
 	{

@@ -284,7 +284,7 @@ template <class T> class List
 		// In the interests of 'pointer etiquette', refuse to own the item if its pointers are not NULL
 		if ((oldItem->next != NULL) || (oldItem->prev != NULL))
 		{
-			printf("list::own <<<< List refused to own an item that still had ties >>>>\n");
+			printf("List::own() <<<< Refused to own an item that still had links to other items >>>>\n");
 			return;
 		}
 		listHead_ == NULL ? listHead_ = oldItem : listTail_->next = oldItem;

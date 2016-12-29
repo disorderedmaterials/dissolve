@@ -126,7 +126,7 @@ bool PeriodicTable::loadIsotopes(const char* filename)
 	
 	// Read data until EOF
 	int Z = 0, A, count = 0;
-	Dnchar arg, arg2, el;
+	CharString arg, arg2, el;
 	double weight, bc, bi, sc, si, ss, sa;
 	Isotope* isotope;
 	bool failed = false;
@@ -291,7 +291,7 @@ bool PeriodicTable::loadParameters(const char* filename)
 // Return atomic number of element in string
 int PeriodicTable::find(const char* query)
 {
-	static Dnchar cleaned;
+	static CharString cleaned;
 	cleaned.clear();
 	int n, nDigits = 0, count = 0;
 	for (n=0; query[n] != '\0'; n++)
@@ -348,7 +348,7 @@ void PeriodicTable::addToEmpirical(int z, int count)
 // Return current empirical formula
 const char* PeriodicTable::empiricalFormula()
 {
-	static Dnchar formula(1024);
+	static CharString formula(1024);
 	formula.clear();
 
 	// Loop over elements in descending order

@@ -359,7 +359,7 @@ template <class T, class D> void RefList<T,D>::own(RefListItem<T,D>* olditem)
 	// In the interests of 'pointer cleanliness, refuse to own the item if its pointers are not NULL
 	if ((olditem->next != NULL) || (olditem->prev != NULL))
 	{
-		printf("RefList::own <<<< RefList refused to own an item that still had ties >>>>\n");
+		printf("RefList::own() <<<< Refused to own an item that still had links to other items >>>>\n");
 		return;
 	}
 	listHead_ == NULL ? listHead_ = olditem : listTail_->next = olditem;

@@ -93,7 +93,7 @@ void PairPotential::setData2DNames()
 		return;
 	}
 
-	Dnchar s(-1, "%s-%s", atomTypeI_->name(), atomTypeJ_->name()), otherName;
+	CharString s(-1, "%s-%s", atomTypeI_->name(), atomTypeJ_->name()), otherName;
 	u_.setName(s);
 	otherName.sprintf("%s (Ptb.)", s.get());
 	v_.setName(otherName);

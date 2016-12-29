@@ -23,7 +23,7 @@
 #define DUQ_ELEMENT_H
 
 #include "templates/list.h"
-#include "base/dnchar.h"
+#include "base/charstring.h"
 #include "base/isotope.h"
 #include "base/parameters.h"
 
@@ -42,9 +42,9 @@ class Element
 	// Atomic number (Z)
 	int z_;
 	// Element name
-	Dnchar name_;
+	CharString name_;
 	// Element symbol
-	Dnchar symbol_;
+	CharString symbol_;
 	// Rough elemental radius (for bond calculation etc.)
 	double atomicRadius_;
 	// Element colour

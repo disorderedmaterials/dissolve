@@ -22,7 +22,7 @@
 #ifndef DUQ_LINEPARSER_H
 #define DUQ_LINEPARSER_H
 
-#include "base/dnchar.h"
+#include "base/charstring.h"
 #include "math/constants.h"
 #include "templates/list.h"
 #include <fstream>
@@ -64,9 +64,9 @@ class LineParser
 	 */
 	private:
 	// Current input filename (if any)
-	Dnchar inputFilename_;
+	CharString inputFilename_;
 	// Current output filename (if any)
-	Dnchar outputFilename_;
+	CharString outputFilename_;
 	// Line to parse
 	char line_[MAXLINELENGTH];
 	// Length of line_
@@ -134,25 +134,25 @@ class LineParser
 
 	public:
 	// Gets next delimited arg from internal line
-	bool getNextArg(int optionMask, Dnchar* destarg);
+	bool getNextArg(int optionMask, CharString* destarg);
 	// Gets next n chars from internal line
-	bool getNextN(int optionMask, int length, Dnchar* destarg = NULL);
+	bool getNextN(int optionMask, int length, CharString* destarg = NULL);
 	// Read line from file and do delimited parse
 	int getArgsDelim(int optionMask);
 	// Get rest of line starting at next delimited part
-	bool getRestDelim(Dnchar* destarg = NULL);
+	bool getRestDelim(CharString* destarg = NULL);
 	// Set line and parse using delimiters
 	void getArgsDelim(int optionMask, const char* s);
 	// Get next delimited chunk from file (not line)
-	bool getCharsDelim(Dnchar* destarg = NULL);
+	bool getCharsDelim(CharString* destarg = NULL);
 	// Get next delimited chunk from string, removing grabbed part
-	bool getCharsDelim(int optionMask, Dnchar* source, Dnchar* destarg);
+	bool getCharsDelim(int optionMask, CharString* source, CharString* destarg);
 	// Read next line from internal source file, setting as parsing source
 	int readNextLine(int optionMask);
 	// Skip 'n' lines from internal file
 	int skipLines(int nskip);
 	// Get next delimited argument from internal line
-	bool getArgDelim(int optionMask, Dnchar* destarg);
+	bool getArgDelim(int optionMask, CharString* destarg);
 	// Return a number of characters from the input stream
 	const char* getChars(int nchars, bool skipeol = true);
 	// Write line to file
@@ -180,7 +180,7 @@ class LineParser
 	// Temporary string variable
 	char tempArg_[MAXLINELENGTH];
 	// Parsed arguments
-	List<Dnchar> arguments_;
+	List<CharString> arguments_;
 	// Whether the end of the string has been found in get_next_arg()
 	bool endOfLine_;
 

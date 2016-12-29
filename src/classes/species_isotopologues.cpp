@@ -45,7 +45,7 @@ void Species::removeIsotopologue(Isotopologue* iso)
 	if (iso == NULL) Messenger::error("NULL_POINTER - NULL Isotopologue passed to Species::removeIsotopologue().\n");
 	else if (isotopologues_.contains(iso))
 	{
-		Dnchar tempName = iso->name();
+		CharString tempName = iso->name();
 		isotopologues_.remove(iso);
 		Messenger::print("Removed Isotopologue '%s' from Species '%s'.\n", tempName.get(), name_.get());
 	}
@@ -84,8 +84,8 @@ bool Species::hasIsotopologue(Isotopologue* iso) const
 // Generate unique Isotopologue name with base name provided
 const char* Species::uniqueIsotopologueName(const char* base, Isotopologue* exclude) const
 {
-	static Dnchar uniqueName;
-	Dnchar baseName = base;
+	static CharString uniqueName;
+	CharString baseName = base;
 	Isotopologue* iso;
 	int highest = -1;
 	

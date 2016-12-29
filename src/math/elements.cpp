@@ -521,7 +521,7 @@ int ElementMap::numberToZ(const char* s) const
 int ElementMap::alphaToZ(const char* s) const
 {
 	// Ignore numbers. Convert up to non-alpha character.
-	static Dnchar cleaned;
+	static CharString cleaned;
 	cleaned.clear();
 	int n;
 	for (n=0; s[n] != '\0'; n++)
@@ -539,7 +539,7 @@ int ElementMap::alphaToZ(const char* s) const
 int ElementMap::firstAlphaToZ(const char* s) const
 {
 	// Convert up to non-alpha character.
-	static Dnchar cleaned;
+	static CharString cleaned;
 	cleaned.clear();
 	int n;
 	for (n=0; s[n] != '\0'; n++)
@@ -577,7 +577,7 @@ int ElementMap::singleAlphaToZ(const char* s) const
 int ElementMap::nameToZ(const char* s) const
 {
 	// Ignore numbers. Convert up to non-alpha character.
-	static Dnchar cleaned;
+	static CharString cleaned;
 	cleaned.clear();
 	int n;
 	for (n=0; s[n] != '\0'; n++)

@@ -258,7 +258,7 @@ bool ProcessPool::groupLeader()
 // Return process info string
 const char* ProcessPool::processInfo()
 {
-	static Dnchar info;
+	static CharString info;
 	// World Rank / Pool Rank, Group Rank @ Group Index
 	info.sprintf("W%i/P%i,G%i@GI%i", worldRank_, poolRank_, groupRank_, groupIndex_);
 	return info.get();
@@ -406,7 +406,7 @@ bool ProcessPool::setupCellStrategy(const Vec3<int>& divisions, const Vec3<int>&
 	int baseAlloc = worldRanks_.nItems() / nGroups;
 	int remainder = worldRanks_.nItems() % nGroups;
 	ProcessGroup* group;
-	Dnchar rankString;
+	CharString rankString;
 	for (int n=0; n<nGroups; ++n)
 	{
 		// Create nth process group and add a (currently null) entry to the groupLeaders_ array
@@ -804,15 +804,15 @@ bool ProcessPool::receive(double* source, int nData, int sourceWorldRank, Proces
  * Broadcast Functions
  */
 
-// Broadcast Dnchar to all Processes
-bool ProcessPool::broadcast(Dnchar& source, int rootRank, ProcessPool::CommunicatorType commType)
+// Broadcast CharString to all Processes
+bool ProcessPool::broadcast(CharString& source, int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	totalTime_.start();
 	accumTime_.start();
 	static char buffer[4096];
 	
-	// Get length of string, and make a local copy to avoid the const-ness of Dnchar.get().
+	// Get length of string, and make a local copy to avoid the const-ness of CharString.get().
 	if (poolRank_ == rootRank) strcpy(buffer, source.get());
 
 	// Broadcast data

@@ -42,7 +42,7 @@ ModuleList::~ModuleList()
  */
 
 // Add module to list
-Module* ModuleList::addModule(Module* module, bool autoAddDependents, RefListItem<Module, bool>* addBeforeThis)
+Module* ModuleList::addModule(Module* module, GenericList& moduleData, bool autoAddDependents, RefListItem<Module, bool>* addBeforeThis)
 {
 	Module* moduleToAdd = NULL;
 
@@ -96,7 +96,7 @@ Module* ModuleList::addModule(Module* module, bool autoAddDependents, RefListIte
 			if (autoAddDependents)
 			{
 				Messenger::warn("Auto-adding the Module '%s', since the Module '%s' depends on it.\nDefault parameters will be used.\nFor better control, add the Module by hand to the input file.\n", dependentModule->name(), moduleToAdd->name());
-				Module* autoAddedModule = addModule(dependentModule, autoAddDependents, newModuleItem);
+				Module* autoAddedModule = addModule(dependentModule, moduleData, autoAddDependents, newModuleItem);
 				if (!autoAddedModule) return NULL;
 				moduleToAdd->addDependentModule(autoAddedModule, true);
 			}
@@ -120,8 +120,8 @@ Module* ModuleList::findModule(const char* name)
 	return NULL;
 }
 
-// Return total number of Modules associated
-int ModuleList::nModules()
+// Return total number of Modules in the list
+int ModuleList::nModules() const
 {
 	return modules_.nItems();
 }
@@ -130,24 +130,6 @@ int ModuleList::nModules()
 RefList<Module,bool>& ModuleList::modules()
 {
 	return modules_;
-}
-
-// Set Module variable
-void ModuleList::setModuleVariable(const char* name, VariableValue value, const char* description, const char* source)
-{
-	moduleVariables_.setVariable(name, value, description, source);
-}
-
-// Append Module variable
-void ModuleList::appendModuleVariable(const char* name, VariableValue value, const char* description, const char* source)
-{
-	moduleVariables_.appendVariable(name, value, description, source);
-}
-
-// Return named Module variable
-Variable* ModuleList::moduleVariable(const char* name, const char* source)
-{
-	return moduleVariables_.variable(name, source);
 }
 
 /*

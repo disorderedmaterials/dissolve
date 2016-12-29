@@ -295,7 +295,7 @@ class DUQ
 	 */
 	private:
 	// Filename of current input file
-	Dnchar filename_;
+	CharString filename_;
 	// Whether to automatically add dependent Modules if they have not been defined
 	bool autoAddDependentModules_;
 

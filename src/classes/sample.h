@@ -24,14 +24,15 @@
 
 #include "modules/modulelist.h"
 #include "base/data2d.h"
-#include "base/dnchar.h"
+#include "base/charstring.h"
 #include "templates/list.h"
+#include "templates/genericlist.h"
 
 // Forward Declarations
 class Species;
 
 // Sample Definition
-class Sample : public ModuleList, public ListItem<Sample>
+class Sample : public ListItem<Sample>
 {
 	public:
 	// Constructor
@@ -47,7 +48,7 @@ class Sample : public ModuleList, public ListItem<Sample>
 	 */
 	private:
 	// Descriptive name
-	Dnchar name_;
+	CharString name_;
 
 	public:
 	// Set name of Sample
@@ -63,7 +64,7 @@ class Sample : public ModuleList, public ListItem<Sample>
 	// Whether reference data exists
 	bool hasReferenceData_;
 	// Filename of reference data (if present)
-	Dnchar referenceDataFileName_;
+	CharString referenceDataFileName_;
 	// Reference data
 	Data2D referenceData_;
 	// Calculated data
@@ -75,7 +76,7 @@ class Sample : public ModuleList, public ListItem<Sample>
 	// Load reference data
 	bool loadReferenceData(const char* filename);
 	// Return reference data filename (if any)
-	Dnchar& referenceDataFileName();
+	CharString& referenceDataFileName();
 	// Return reference data
 	Data2D& referenceData();
 	// Return calculated data
@@ -83,11 +84,23 @@ class Sample : public ModuleList, public ListItem<Sample>
 
 
 	/*
-	 * Module List
+	 * Modules
 	 */
+	private:
+	// List of Modules associated to this Sample
+	ModuleList modules_;
+	// Variables set by Modules
+	GenericList moduleData_;
+
 	public:
-	// Return context of the list
-	ModuleList::ModuleListContext context();
+	// Add Module (or an instance of it) to the Sample
+	Module* addModule(Module* masterInstance, bool autoAddDependents);
+	// Return number of Modules associated to this Sample
+	int nModules() const;
+	// Return list of Modules associated to this Sample
+	RefList<Module,bool>& modules();
+	// Return list of variables set by Modules
+	GenericList& moduleData();
 
 
 	/*

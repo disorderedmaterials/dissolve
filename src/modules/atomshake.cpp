@@ -44,10 +44,10 @@ AtomShake::AtomShake() : Module()
 	instances_.own(this);
 
 	// Setup variables / control parameters
-	addVariable("CutoffDistance", -1.0);
-	addVariable("ShakesPerAtom", 1);
-	addVariable("TargetAcceptanceRate", 0.33);
-	addVariable("StepSize", 0.05);
+	options_.add("CutoffDistance", -1.0);
+	options_.add("ShakesPerAtom", 1);
+	options_.add("TargetAcceptanceRate", 0.33);
+	options_.add("StepSize", 0.05);
 }
 
 // Destructor
@@ -168,10 +168,11 @@ bool AtomShake::process(DUQ& duq, ProcessPool& procPool)
 	Configuration* cfg = targetConfigurations_.firstItem();
 
 	// Retrieve control parameters from Configuration
-	const double cutoffDistance = variableAsDouble(cfg, "CutoffDistance") < 0.0 ? duq.pairPotentialRange() : variableAsDouble(cfg, "CutoffDistance");
-	const int nShakesPerAtom = variableAsInt(cfg, "ShakesPerAtom");
-	const double targetAcceptanceRate = variableAsDouble(cfg, "TargetAcceptanceRate");
-	double stepSize = variableAsDouble(cfg, "StepSize");
+	double cutoffDistance = GenericListHelper<double>::retrieve(cfg->moduleData(), "CutoffDistance", uniqueName(), options_.valueAsDouble("CutoffDistance"));
+	if (cutoffDistance < 0.0) cutoffDistance = duq.pairPotentialRange();
+	const int nShakesPerAtom = GenericListHelper<int>::retrieve(cfg->moduleData(), "ShakesPerAtom", uniqueName(), options_.valueAsInt("ShakesPerAtom"));
+	const double targetAcceptanceRate = GenericListHelper<double>::retrieve(cfg->moduleData(), "TargetAcceptanceRate", uniqueName(), options_.valueAsDouble("TargetAcceptanceRate"));
+	double stepSize = GenericListHelper<double>::retrieve(cfg->moduleData(), "StepSize", uniqueName(), options_.valueAsDouble("StepSize"));
 	const double termScale = 1.0;
 	const double rRT = 1.0/(.008314472*cfg->temperature());
 
@@ -309,7 +310,7 @@ bool AtomShake::process(DUQ& duq, ProcessPool& procPool)
 
 	// Store updated parameter values
 	if (!procPool.broadcast(&stepSize, 1, 0, ProcessPool::Group)) return false;
-	setVariable(cfg, "StepSize", stepSize);
+	GenericListHelper<double>::add(cfg->moduleData(), "StepSize", uniqueName()) = stepSize;
 	Messenger::print("AtomShake: Updated translation step is %f Angstroms.\n", stepSize);
 	
 	// Increment configuration changeCount_
