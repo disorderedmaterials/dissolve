@@ -206,5 +206,14 @@ bool DUQ::setupSimulation()
 		}
 	}
 
+	/* Print Species information for reference */
+
+	Messenger::print("*** Defined Species\n");
+	for (Species* sp = species_.first(); sp != NULL; sp = sp->next)
+	{
+		Messenger::print("--- Species '%s'...\n", sp->name());
+		sp->print();
+	}
+
 	return true;
 }

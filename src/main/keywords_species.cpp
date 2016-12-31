@@ -128,6 +128,7 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 				else error = true;
 				break;
 			case (SpeciesBlock::EndSpeciesKeyword):
+				species->autoAddGrains();
 				species->updateGrains();
 				species->centreAtOrigin();
 				species->orderAtomsWithinGrains();

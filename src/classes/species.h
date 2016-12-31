@@ -62,6 +62,8 @@ class Species : public ListItem<Species>
 	const char* name() const;
 	// Check setup
 	bool checkSetup(const List<AtomType>& atomTypes);
+	// Print Species information
+	void print();
 
 
 	/*

@@ -208,7 +208,7 @@ void Angle::setAttachedAtoms(int terminus, const RefList<Atom,int>& atoms)
 
 	CharString s(-1, "--> For Angle between Atoms %i-%i-%i, terminus %i moves %i Atoms :", indexI()+1, indexJ()+1, indexK()+1, terminus+1, nAttached_[terminus]);
 	for (int n=0; n<nAttached_[terminus]; ++n) s.strcatf(" %i", attached_[terminus][n]->userIndex());
-	Messenger::print("%s\n", s.get());
+	Messenger::printVerbose("%s\n", s.get());
 }
 
 // Return number of attached Atoms for terminus specified

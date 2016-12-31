@@ -176,6 +176,47 @@ bool Species::checkSetup(const List<AtomType>& atomTypes)
 	return (nErrors == 0);
 }
 
+// Print Species information
+void Species::print()
+{
+	Messenger::print("  Atoms:\n");
+	Messenger::print("      ID   El  Type (ID)        X           Y           Z      \n");
+	Messenger::print("    -------------------------------------------------------------\n");
+	for (int n=0; n<nAtoms(); ++n)
+	{
+		SpeciesAtom* i = atoms_[n];
+		Messenger::print("    %4i  %3s  %4s (%2i)  %12.4e  %12.5e  %12.4e\n", n+1, PeriodicTable::element(i->element()).symbol(), i->atomType()->name(), i->atomType()->index(), i->r().x, i->r().y, i->r().z);
+	}
+
+	Messenger::print("\n  Bonds:\n");
+	Messenger::print("      I     J        Eq          ForceK   \n");
+	Messenger::print("    --------------------------------------\n");
+	for (int n=0; n<nBonds(); ++n)
+	{
+		SpeciesBond* b = bonds_[n];
+		Messenger::print("   %4i  %4i  %12.4e  %12.4e\n", b->indexI()+1, b->indexJ()+1, b->equilibrium(), b->forceConstant());
+	}
+
+	Messenger::print("\n  Angles:\n");
+	Messenger::print("      I     J     K        Eq          ForceK   \n");
+	Messenger::print("    --------------------------------------------\n");
+	for (int n=0; n<nAngles(); ++n)
+	{
+		SpeciesAngle* a = angles_[n];
+		Messenger::print("   %4i  %4i  %4i  %12.4e  %12.4e\n", a->indexI()+1, a->indexJ()+1, a->indexK(), a->equilibrium(), a->forceConstant());
+	}
+
+	Messenger::print("\n  Grains:\n");
+	for (int n=0; n<nGrains(); ++n)
+	{
+		SpeciesGrain* grain = grains_[n];
+		CharString grainAtoms;
+		for (int m=0; m<grain->nAtoms(); ++m) grainAtoms.strcatf("%4i ", m+1);
+		Messenger::print("  %4i  '%s'\n", n+1, grain->name());
+		Messenger::print("       %2i atoms: %s\n", grain->nAtoms(), grainAtoms.get());
+	}
+}
+
 /*
  * Parallel Comms
  */

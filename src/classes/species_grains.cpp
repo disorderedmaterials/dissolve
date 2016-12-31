@@ -79,8 +79,8 @@ void Species::addDefaultGrain()
 // Automatically determine Grains based on chemical connectivity
 void Species::autoAddGrains()
 {
-	grains_.clear();
-	
+// 	grains_.clear();
+// 	
 	// Make a list of bonds for each atom
 	RefList<SpeciesBond,int> bondList[atoms_.nItems()];
 	for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next)
@@ -92,7 +92,7 @@ void Species::autoAddGrains()
 	// Now loop over Atoms
 	SpeciesGrain* sg;
 	int n, m, *group = new int[atoms_.nItems()];
-	for (n=0; n<atoms_.nItems(); ++n) group[n] = 0;
+	for (n=0; n<atoms_.nItems(); ++n) group[n] = (atoms_[n]->grain() == NULL ? 0 : 1);
 	for (n=0; n<atoms_.nItems(); ++n)
 	{
 		if (group[n] == 1) continue;

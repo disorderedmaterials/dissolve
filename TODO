@@ -15,6 +15,11 @@ o Different bond types - e.g. replicate those used in EPSR for reference?
 Ideas / Notes / Weird Algorithm Suggestions
 -------------------------------------------
 
+** Unit Tests
+Have input examples that provide unit tests, e.g.:
+o Check that the calculated Energy is correct based on some reference value from another code (could add CheckValue option to Energy module, failing if the calculated value is different).
+o Check that Grain definitions do not affect the overall calculated Energy (i.e. different Grain definitions with increasing numbers of atoms for a given species).
+
 ** Allow Chemical Units When Specifying Quantities
 If density for specific Isotopologues can be provided, we can allow gram quantities of them to be added (in Partials/Spatials definitions, for instance) and converted automatically to relative molar amounts (which is what we need). Will need to set a tolerance on the resulting relative populations between species for this method, since we need to ensure some kind of consistency between the exact, specified composition of the Configuration(s) and the Sample information.
 

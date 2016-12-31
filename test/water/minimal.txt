@@ -1,0 +1,83 @@
+# Minimal Example: Water
+
+# AtomType Definitions
+AtomTypes
+  AtomType  'OW'    O  'OW'
+  AtomType  'HW'    H  'HW'
+EndAtomTypes
+
+# Define Water Molecule
+Species 'Water'
+  # Atoms
+  Atom    1    O     0.015   -0.009   -0.373   -0.848 'OW'
+  Atom    2    H     0.757    0.013    0.217    0.424 'HW'
+  Atom    3    H    -0.771   -0.003    0.157    0.424 'HW'
+
+  # Intramolecular Terms
+  Bond    1    2     0.995 3000.000
+  Bond    1    3     0.995 3000.000
+  Angle    2    1    3   109.500  400.000
+
+  # Isotopologues
+  Isotopologue  'Natural'  OW=0  HW=0
+  Isotopologue  'Deuteriated'  OW=0  HW=2
+EndSpecies
+
+# Define Configuration
+Configuration  'Bulk'
+  Density  9.99999642E-02 atoms/A3
+  Multiplier  1000
+  Species 'Water'  1.0
+
+  OutputCoordinates 'Bulk.xyz'
+  UseOutputAsInput
+
+  # Enable modules and set associated variables
+  Module AtomShake
+  EndModule
+  Module Energy
+    Save true
+  EndModule
+  Module Partials
+    Frequency 5
+    Save on
+  EndModule
+  Module StructureFactor
+    Frequency 5
+    Save true
+  EndModule
+EndConfiguration
+
+# Reference Data
+Sample 'NIMROD-Protiated'
+  #Isotopologue  'Water'  'Natural'  1.000000  1.000000  DEFAULTS?????
+  ## Provide reference data if available / required
+  #ReferenceData 'data/H2O.mint01'
+EndSample
+
+Sample 'NIMROD-Deuteriated'
+  ReferenceData 'data/D2O.mint01'
+  Module StructureFactor
+    QDepBroadening 0.02    # For SLS
+    Configuration  'Bulk'
+    Isotopologue  'Bulk'  'Water'  'Deuteriated'  0.5
+    Isotopologue  'Bulk'  'Water'  'Natural'  0.5
+  EndModule
+EndSample
+
+# Pair Potentials
+PairPotentials
+  Range  15.000000
+  Delta  0.050000
+  TruncationWidth  2.000000
+  Full  'OW'  'OW'  3.166000  0.650000  -0.820000  -0.820000
+  Full  'OW'  'HW'  2.783000  0.286182  -0.820000  0.410000
+  Full  'HW'  'HW'  2.400000  0.126000  0.410000  0.410000
+EndPairPotentials
+
+# Simulation Setup / Definition
+Simulation
+  Seed  943723867
+  MaxIterations  5
+  ParallelStrategy  Even
+EndSimulation

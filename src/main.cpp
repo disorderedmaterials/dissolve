@@ -127,7 +127,7 @@ int main(int argc, char **argv)
 	Messenger::print("For more details read the GPL at <http://www.gnu.org/copyleft/gpl.html>.\n");
 
 	// Load external datafiles (master only)
-	Messenger::banner("External Data");
+	Messenger::banner("Load External Data");
 	if (!MPIRunMaster(dUQ.loadDataFiles()))
 	{
 		ProcessPool::finalise();
@@ -142,7 +142,7 @@ int main(int argc, char **argv)
 	}
 
 	// Register modules and print info
-	Messenger::banner("Modules");
+	Messenger::banner("Register Modules");
 	ModuleRegistry moduleRegistry;
 	if (!ModuleList::printMasterModuleInformation())
 	{
@@ -152,7 +152,7 @@ int main(int argc, char **argv)
 
 	// Load input file
 	// If no input file was provided, exit here
-	Messenger::banner("Parsing Input File");
+	Messenger::banner("Parse Input File");
 	if (inputFile.isEmpty())
 	{
 		Messenger::print("No input file provided. Nothing more to do.\n");
