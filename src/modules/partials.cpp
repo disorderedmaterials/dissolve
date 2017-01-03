@@ -199,13 +199,8 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 			varName.sprintf("%s_Weight", cfg->name());
 			double weight = 1.0;
 			if (sam->moduleData().contains(varName, mixSource)) weight = GenericListHelper<double>::retrieve(sam->moduleData(), varName, mixSource, 1.0);
-			else 
-			{
-				Messenger::error("Partials: Required variable '%s' found in Sample '%s'.\n", varName.get(), sam->name());
-				return false;
-			}
 			totalWeight += weight;
-  			Messenger::printVerbose("Partials: Weight for Configuration '%s' is %f (total weight is now %f).\n", cfg->name(), weight, totalWeight);
+  			Messenger::print("Partials: Weight for Configuration '%s' is %f (total weight is now %f).\n", cfg->name(), weight, totalWeight);
 
 			// Create a WeightsMatrix using the Isotopologues referenced in the Sample, and the populations of atomtypes in the Configuration.
 			WeightsMatrix weightsMatrix;
@@ -219,10 +214,11 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 				{
 					// Construct variable name that we expect to find if the tope was used in the Module (variable is defined in the associated Configuration)
 					varName.sprintf("Isotopologue/%s/%s", sp->name(), availableIso->name());
-					if (!sam->moduleData().contains(varName, mixSource))
-
-					// This isotopologue is defined as being used, so add its atomtypes (in the isotopic proportions defined in the Isotopologue) to the sampleAtomTypes list.
-					weightsMatrix.addIsotopologue(sp, speciesPopulation, availableIso, GenericListHelper<double>::retrieve(sam->moduleData(), varName, mixSource));
+					if (sam->moduleData().contains(varName, mixSource))
+					{
+						// This isotopologue is defined as being used, so add its (in the isotopic proportions defined in the Isotopologue) to the weightsMatrix.
+						weightsMatrix.addIsotopologue(sp, speciesPopulation, availableIso, GenericListHelper<double>::retrieve(sam->moduleData(), varName, mixSource));
+					}
 				}
 			}
 

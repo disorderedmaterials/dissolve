@@ -233,9 +233,6 @@ bool Box::calculateRDFNormalisation(ProcessPool& procPool, Data2D& boxNorm, doub
 	y *= volume_ * (rdfBinWidth / binWidth);
 	normData.interpolate();
 
-	// Write histogram data for random distribution
-	if (procPool.isMaster()) normData.save("duq.box.random");
-	
 	// Now we have the interpolated data, create the proper interpolated data
 	nBins = rdfRange/rdfBinWidth;
 	boxNorm.clear();
@@ -255,12 +252,9 @@ bool Box::calculateRDFNormalisation(ProcessPool& procPool, Data2D& boxNorm, doub
 		r += rdfBinWidth;
 		x += rdfBinWidth;
 	}
-	
+
 	// Interpolate normalisation array
 	boxNorm.interpolate();
-
-	// Write final box normalisation file
-	if (procPool.isMaster()) boxNorm.save("duq.box.norm");
 
 	return true;
 }

@@ -362,6 +362,9 @@ bool Configuration::setup(ProcessPool& procPool, const List<AtomType>& atomTypes
 		{
 			Messenger::print("--> Calculating box normalisation array for RDFs...\n");
 			if (!box()->calculateRDFNormalisation(procPool, boxNormalisation_, rdfRange_, rdfBinWidth_, boxNormalisationNPoints)) return false;
+			
+			// Save normalisation file so we don't have to recalculate it next time
+			if (procPool.isMaster()) boxNormalisation_.save(boxNormalisationFileName_);
 		}
 	}
 

@@ -137,7 +137,7 @@ class Configuration : public ListItem<Configuration>
 	// Clear all data
 	void clear();
 	// Setup configuration
-	bool setup(ProcessPool& procPool, const List< AtomType >& atomTypes, double pairPotentialRange, int boxNormalisationNPoints);
+	bool setup(ProcessPool& procPool, const List<AtomType>& atomTypes, double pairPotentialRange, int boxNormalisationNPoints);
 
 
 	/*

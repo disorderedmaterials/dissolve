@@ -267,6 +267,7 @@ class GenericList
 	bool broadcast(ProcessPool& procPool, int root)
 	{
 		for (GenericItem* item = items_.first(); item != NULL; item = item->next) if (!item->broadcast(procPool, root)) return false;
+		return true;
 	}
 };
 

@@ -47,6 +47,7 @@ StructureFactor::StructureFactor() : Module()
 	instances_.own(this);
 
 	// Setup variables / control parameters
+	frequency_ = 5;
 	options_.add("Bragg", "off", "Enable calculation of Bragg scattering");
 	options_.add("BraggQDepBroadening", 0.0063, "FWHM of Gaussian for Q-dependent Bragg broadening function");
 	options_.add("BraggQIndepBroadening", 0.0, "FWHM of Gaussian for Q-independent Bragg broadening function");
@@ -235,6 +236,8 @@ bool StructureFactor::process(DUQ& duq, ProcessPool& procPool)
 			}
 		}
 	}
+
+	return true;
 }
 
 // Return PartialSet for specified Configuration (if it exists)

@@ -102,7 +102,7 @@ class Module : public ListItem<Module>
 	/*
 	 * Basic Control
 	 */
-	private:
+	protected:
 	// Frequency with which to run Module (relative to master simulation loop counter)
 	int frequency_;
 	// Whether the Module is enabled

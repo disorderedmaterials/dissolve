@@ -31,9 +31,11 @@ void Configuration::setName(const char* name)
 	niceName_ = name_;
 	niceName_.replace(" /\\#*$", '_');
 
-	// Set initial output coordinates filename based on configuration name
+	// Set initial filenames based on Configuration name
 	outputCoordinatesFile_ = niceName_;
 	outputCoordinatesFile_.strcat(".xyz");
+	boxNormalisationFileName_ = niceName_;
+	boxNormalisationFileName_.strcat(".boxnorm");
 }
 
 // Return name of the configuration
