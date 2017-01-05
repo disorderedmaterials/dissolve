@@ -134,8 +134,13 @@ bool StructureFactor::setupDependentModule(Module* depMod)
 	{
 		// Need to set UseMixFrom variable in any associated Samples
 		RefListIterator<Sample,bool> sampleIterator(depMod->targetSamples());
-		while (Sample* sam = sampleIterator.iterate()) GenericListHelper<CharString>::add(sam->moduleData(), "UseMixFrom", uniqueName_);
+		while (Sample* sam = sampleIterator.iterate())
+		{
+			Messenger::print("Setting target Module for isotopologue mixture information in '%s' to '%s'.\n", depMod->uniqueName(), uniqueName_.get());
+			GenericListHelper<CharString>::add(sam->moduleData(), "UseMixFrom", depMod->uniqueName()) = uniqueName_;
+		}
 	}
+
 	return true;
 }
 

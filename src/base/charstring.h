@@ -31,8 +31,8 @@ class CharString : public ListItem<CharString>
 	// Constructor / Destructor
 	CharString();
 	CharString(int size);
-	CharString(const char* s);
-	CharString(int dummyparameter, const char* fmt, ...);
+// 	CharString(const char* s);
+	CharString(const char* fmt, ...);
 	~CharString();
 	// Copy constructor
 	CharString(const CharString&);

@@ -47,17 +47,17 @@ CharString::CharString(int emptysize) : ListItem<CharString>()
 	createEmpty(emptysize);
 }
 
-CharString::CharString(const char* s) : ListItem<CharString>()
-{
-	// Private variables
-	data_ = NULL;
-	size_ = 0;
-	endPosition_ = 0;
+// CharString::CharString(const char* s) : ListItem<CharString>()
+// {
+// 	// Private variables
+// 	data_ = NULL;
+// 	size_ = 0;
+// 	endPosition_ = 0;
+// 
+// 	set(s);
+// }
 
-	set(s);
-}
-
-CharString::CharString(int dummyparameter, const char* fmt, ...) : ListItem<CharString>()
+CharString::CharString(const char* fmt, ...) : ListItem<CharString>()
 {
 	// Private variables
 	data_ = NULL;

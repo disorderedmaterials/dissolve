@@ -47,7 +47,7 @@ Partials::Partials() : Module()
 	// Setup variables / control parameters
 	options_.add("Save", false, "Whether to save partials to disk after calculation");
 	options_.add("Smoothing", 0, "Specifies the degree of smoothing 'n' to apply to calculated RDFs, where 2n+1 controls the length in the applied Spline smooth");
-	options_.add("UseMixFrom", "", "Unique Module name under which to search for Species/Isotopologue mix information");
+	options_.add("UseMixFrom", uniqueName_, "Unique Module name under which to search for Species/Isotopologue mix information");
 }	
 
 // Destructor
@@ -178,15 +178,12 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 		Sample* sam = targetSamples_.firstItem();
 
 		// If the UseMixFrom variable was set, grab its value now
-		CharString mixSource = uniqueName_;
-		if (sam->moduleData().contains("UseMixFrom", uniqueName()))
-		{
-			mixSource = GenericListHelper<const char*>::retrieve(sam->moduleData(), "UseMixFrom", uniqueName());
-			Messenger::print("Partials: Isotopologue mixture data will be taken from Module '%s'.\n", mixSource.get());
-		}
+		CharString mixSource = GenericListHelper<CharString>::retrieve(sam->moduleData(), "UseMixFrom", options_.valueAsString("UseMixFrom"));
+		Messenger::print("Partials: Isotopologue mixture data will be taken from Module '%s'.\n", mixSource.get());
 
 		// Create / grab partial set for the Sample
-// 		PartialRSet* samplePartials = Partials::partialSet(sam);
+		PartialRSet& samplePartials = GenericListHelper<PartialRSet>::realise(sam->moduleData(), CharString("Partials_%s", mixSource.get()), uniqueName_);
+// 		if (samplePartials. REMOVE TARGETCONFIGURATION FROM PARTIALRSET???)
 
 		// Loop over Configurations. For each, go through the list of Species used in the Configuration, and for each Species, search for any Isotopologues
 		// that are specified as being relevant to this Sample. These will have been defined as Module variables in the Configuration. For each one we find
@@ -401,7 +398,6 @@ bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, in
 {
 	// Retrieve control parameters from Configuration
 	const int smoothing = GenericListHelper<int>::retrieve(cfg->moduleData(), "Smoothing", uniqueName(), options_.valueAsInt("Smoothing"));
-
 
 	// Does a PartialSet already exist for this Configuration?
 	PartialRSet* partialgr = Partials::partialSet(cfg);

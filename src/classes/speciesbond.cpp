@@ -196,7 +196,7 @@ void SpeciesBond::setAttachedAtoms(int terminus, const RefList<SpeciesAtom,int>&
 		++index;
 	}
 
-	CharString s(-1, "--> For bond between atoms %i-%i, terminus %i moves %i other atoms:", indexI()+1, indexJ()+1, terminus+1, nAttached_[terminus]);
+	CharString s("--> For bond between atoms %i-%i, terminus %i moves %i other atoms:", indexI()+1, indexJ()+1, terminus+1, nAttached_[terminus]);
 	for (int n=0; n<nAttached_[terminus]; ++n) s.strcatf(" %i", attachedAtoms_[terminus][n]->userIndex());
 	Messenger::print("%s\n", s.get());
 }

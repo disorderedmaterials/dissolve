@@ -165,8 +165,7 @@ bool DUQ::savePairPotentials(const char* baseName) const
 	for (PairPotential* pp = pairPotentials_.first(); pp != NULL; pp = pp->next)
 	{
 		// Generate filename
-		CharString filename(-1, "%s-%s-%s.pp", baseName, pp->atomTypeNameI(), pp->atomTypeNameJ());
-		result = pp->save(filename);
+		result = pp->save(CharString("%s-%s-%s.pp", baseName, pp->atomTypeNameI(), pp->atomTypeNameJ()));
 		if (!result) break;
 	}
 	

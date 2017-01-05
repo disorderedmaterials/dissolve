@@ -123,7 +123,7 @@ Configuration* PartialRSet::targetConfiguration()
 	return targetConfiguration_;
 }
 
-// Return whether these partials are up-to-date?usedAtomTypes_.nItems
+// Return whether these partials are up-to-date
 bool PartialRSet::upToDate()
 {
 	return (partialsIndex_ == targetConfiguration_->coordinateIndex());

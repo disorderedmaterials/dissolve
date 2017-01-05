@@ -342,7 +342,7 @@ bool Energy::process(DUQ& duq, ProcessPool& procPool)
 			if (saveData)
 			{
 				LineParser parser;
-				CharString filename(-1, "%s-energy.txt", cfg->niceName());
+				CharString filename("%s-energy.txt", cfg->niceName());
 
 				if (!DUQSys::fileExists(filename))
 				{

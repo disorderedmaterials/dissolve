@@ -31,26 +31,26 @@ void InputBlocks::printValidKeywords(InputBlocks::InputBlock block)
 	switch (block)
 	{
 		case (InputBlocks::AtomTypesBlock):
-			for (n=0; n<AtomTypesBlock::nAtomTypesKeywords; ++n) Messenger::print("%s%s", n == 0 ? "" : ", ", AtomTypesBlock::keyword( (AtomTypesBlock::AtomTypesKeyword) n ));
+			for (n=0; n<AtomTypesBlock::nAtomTypesKeywords; ++n) Messenger::print("  %s", AtomTypesBlock::keyword( (AtomTypesBlock::AtomTypesKeyword) n ));
 			break;
 		case (InputBlocks::ConfigurationBlock):
-			for (n=0; n<ConfigurationBlock::nConfigurationKeywords; ++n) Messenger::print("%s%s", n == 0 ? "" : ", ", ConfigurationBlock::keyword( (ConfigurationBlock::ConfigurationKeyword) n ));
+			for (n=0; n<ConfigurationBlock::nConfigurationKeywords; ++n) Messenger::print("  %s", ConfigurationBlock::keyword( (ConfigurationBlock::ConfigurationKeyword) n ));
 			break;
 		case (InputBlocks::ModuleBlock):
-			for (n=0; n<ModuleBlock::nModuleKeywords; ++n) Messenger::print("%s%s", n == 0 ? "" : ", ", ModuleBlock::keyword( (ModuleBlock::ModuleKeyword) n ));
+			for (n=0; n<ModuleBlock::nModuleKeywords; ++n) Messenger::print("  %s", ModuleBlock::keyword( (ModuleBlock::ModuleKeyword) n ));
 			break;
 		case (InputBlocks::PairPotentialsBlock):
-			for (n=0; n<PairPotentialsBlock::nPairPotentialsKeywords; ++n) Messenger::print("%s%s", n == 0 ? "" : ", ", PairPotentialsBlock::keyword( (PairPotentialsBlock::PairPotentialsKeyword) n ));
+			for (n=0; n<PairPotentialsBlock::nPairPotentialsKeywords; ++n) Messenger::print("  %s", PairPotentialsBlock::keyword( (PairPotentialsBlock::PairPotentialsKeyword) n ));
 			break;
 		case (InputBlocks::SampleBlock):
-			for (n=0; n<SampleBlock::nSampleKeywords; ++n) Messenger::print("%s%s", n == 0 ? "" : ", ", SampleBlock::keyword( (SampleBlock::SampleKeyword) n ));
+			for (n=0; n<SampleBlock::nSampleKeywords; ++n) Messenger::print("  %s", SampleBlock::keyword( (SampleBlock::SampleKeyword) n ));
 			break;
 			break;
 		case (InputBlocks::SimulationBlock):
-			for (n=0; n<SimulationBlock::nSimulationKeywords; ++n) Messenger::print("%s%s", n == 0 ? "" : ", ", SimulationBlock::keyword( (SimulationBlock::SimulationKeyword) n ));
+			for (n=0; n<SimulationBlock::nSimulationKeywords; ++n) Messenger::print("  %s", SimulationBlock::keyword( (SimulationBlock::SimulationKeyword) n ));
 			break;
 		case (InputBlocks::SpeciesBlock):
-			for (n=0; n<SpeciesBlock::nSpeciesKeywords; ++n) Messenger::print("%s%s", n == 0 ? "" : ", ", SpeciesBlock::keyword( (SpeciesBlock::SpeciesKeyword) n ));
+			for (n=0; n<SpeciesBlock::nSpeciesKeywords; ++n) Messenger::print("  %s", SpeciesBlock::keyword( (SpeciesBlock::SpeciesKeyword) n ));
 		default:
 			printf("Unrecognised block given to InputBlocks::printValidKeywords.\n");
 			break;
