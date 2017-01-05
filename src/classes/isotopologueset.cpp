@@ -156,7 +156,7 @@ void WeightsMatrix::finalise(bool quiet)
 	}
 	boundCoherentAverageSquared_ *= boundCoherentAverageSquared_;
 
-	if (!quiet) Messenger::print("Calculated average scattering lengths: <b>**2 = %f, <b**2> = %f\n", boundCoherentAverageSquared_, boundCoherentSquaredAverage_);
+	if (!quiet) Messenger::print("  \nCalculated average scattering lengths: <b>**2 = %f, <b**2> = %f\n", boundCoherentAverageSquared_, boundCoherentSquaredAverage_);
 }
 
 // Return AtomTypeList

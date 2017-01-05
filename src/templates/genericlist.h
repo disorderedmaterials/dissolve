@@ -327,7 +327,7 @@ template <class T> class GenericListHelper
 		return castItem->data;
 	}
 	// Retrieve (or create and retrieve) named item from specified list as template-guided type
-	static T& realise(GenericList& sourceList, const char* name, const char* prefix = NULL)
+	static T& realise(GenericList& sourceList, const char* name, const char* prefix = NULL, bool* created = NULL)
 	{
 		// Construct full name
 		CharString varName;
@@ -336,7 +336,11 @@ template <class T> class GenericListHelper
 
 		// Find item in the list - if it isn't there, create it and return
 		GenericItem* item = sourceList.find(varName);
-		if (!item) return add(sourceList, name, prefix);
+		if (!item)
+		{
+			if (created != NULL) (*created) = true;
+			return add(sourceList, name, prefix);
+		}
 
 		// Cast to correct type
 		GenericItemContainer<T>* castItem = (GenericItemContainer<T>*) item;
@@ -347,6 +351,7 @@ template <class T> class GenericListHelper
 			return dummy;
 		}
 
+		if (created != NULL) (*created) = false;
 		return castItem->data;
 	}
 };

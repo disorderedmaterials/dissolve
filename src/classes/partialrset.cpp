@@ -26,8 +26,7 @@
 // Constructor
 PartialRSet::PartialRSet() : ListItem<PartialRSet>()
 {
-	partialsIndex_ = -1;
-	nTypes_ = 0;
+	index_ = -1;
 }
 
 // Destructor
@@ -44,27 +43,27 @@ bool PartialRSet::setup(Configuration* cfg, const char* tag, const char* suffix)
 {
 	// Construct a matrix based on the usedAtomTypes_ list of the Configuration, since this reflects all our possible partials
 	int n, m;
-	nTypes_ = cfg->nUsedAtomTypes();
-	targetConfiguration_ = cfg;
-	const double rdfRange = targetConfiguration_->rdfRange();
-	const double binWidth = targetConfiguration_->rdfBinWidth();
-	const double boxVolume = targetConfiguration_->box()->volume();
-	Data2D boxNormalisation = targetConfiguration_->boxNormalisation();
+	atomTypes_ = cfg->usedAtomTypesList();
+	int nTypes = atomTypes_.nItems();
+	const double rdfRange = cfg->rdfRange();
+	const double binWidth = cfg->rdfBinWidth();
+	const double boxVolume = cfg->box()->volume();
+	Data2D boxNormalisation = cfg->boxNormalisation();
 
-	Messenger::print("--> Creating matrices (%ix%i)...\n", nTypes_, nTypes_);
+	Messenger::print("--> Creating matrices (%ix%i)...\n", nTypes, nTypes);
 
-	partials_.initialise(nTypes_, nTypes_, true);
-	boundPartials_.initialise(nTypes_, nTypes_, true);
-	unboundPartials_.initialise(nTypes_, nTypes_, true);
+	partials_.initialise(nTypes, nTypes, true);
+	boundPartials_.initialise(nTypes, nTypes, true);
+	unboundPartials_.initialise(nTypes, nTypes, true);
 
 	CharString title;
-	AtomTypeData* at1 = targetConfiguration_->usedAtomTypes(), *at2;
+	AtomTypeData* at1 = atomTypes_.first(), *at2;
 	Messenger::print("--> Creating Lists of partials and linking into matrices...\n");
 	Messenger::printVerbose("Range/binWidth/Volume = %f/%f/%f\n", rdfRange, binWidth, boxVolume);
-	for (n=0; n<nTypes_; ++n, at1 = at1->next)
+	for (n=0; n< nTypes; ++n, at1 = at1->next)
 	{
 		at2 = at1;
-		for (m=n; m<nTypes_; ++m, at2 = at2->next)
+		for (m=n; m< nTypes; ++m, at2 = at2->next)
 		{
 			// Partial g(r)
 			title.sprintf("%s-%s-%s-%s.%s", cfg->niceName(), tag, at1->name(), at2->name(), suffix);
@@ -89,7 +88,7 @@ bool PartialRSet::setup(Configuration* cfg, const char* tag, const char* suffix)
 	title.sprintf("%s-%s-total.%s", cfg->name(), tag, suffix);
 	total_.setName(title);
 
-	partialsIndex_ = -1;
+	index_ = -1;
 
 	return true;
 }
@@ -97,9 +96,10 @@ bool PartialRSet::setup(Configuration* cfg, const char* tag, const char* suffix)
 // Reset partial arrays
 void PartialRSet::reset()
 {
-	for (int n=0; n<nTypes_; ++n)
+	int nTypes = atomTypes_.nItems();
+	for (int n=0; n<nTypes; ++n)
 	{
-		for (int m=n; m<nTypes_; ++m)
+		for (int m=n; m<nTypes; ++m)
 		{
 			partials_.ref(n,m).reset();
 			boundPartials_.ref(n,m).reset();
@@ -108,31 +108,25 @@ void PartialRSet::reset()
 	}
 	total_.arrayY() = 0.0;
 
-	partialsIndex_ = -1;
+	index_ = -1;
 }
 
 // Return number of AtomTypes used to generate matrices
 int PartialRSet::nTypes()
 {
-	return nTypes_;
+	return atomTypes_.nItems();
 }
 
-// Return target Configuration
-Configuration* PartialRSet::targetConfiguration()
+// Return index of partials
+int PartialRSet::index() const
 {
-	return targetConfiguration_;
+	return index_;
 }
 
-// Return whether these partials are up-to-date
-bool PartialRSet::upToDate()
+// Set new index
+void PartialRSet::setIndex(int index)
 {
-	return (partialsIndex_ == targetConfiguration_->coordinateIndex());
-}
-
-// Flag that these partials are up-to-date
-void PartialRSet::setUpToDate()
-{
-	partialsIndex_ = targetConfiguration_->coordinateIndex();
+	index_ = index;
 }
 
 // Return full atom-atom partial specified
@@ -156,7 +150,8 @@ Histogram& PartialRSet::boundPartial(int i, int j)
 // Sum partials into total
 void PartialRSet::formTotal()
 {
-	if (nTypes_ == 0)
+	int nTypes = atomTypes_.nItems();
+	if (nTypes == 0)
 	{
 		total_.clear();
 		return;
@@ -168,13 +163,13 @@ void PartialRSet::formTotal()
 	total_.arrayY() = 0.0;
 
 	int typeI, typeJ;
-	for (typeI=0; typeI<nTypes_; ++typeI)
+	for (typeI=0; typeI<nTypes; ++typeI)
 	{
-		for (typeJ=typeI; typeJ<nTypes_; ++typeJ)
+		for (typeJ=typeI; typeJ<nTypes; ++typeJ)
 		{
 			// Calculate weighting factor
-			double ci = targetConfiguration_->usedAtomTypeFraction(typeI);
-			double cj = targetConfiguration_->usedAtomTypeFraction(typeJ);
+			double ci = atomTypes_[typeI]->fraction();
+			double cj = atomTypes_[typeJ]->fraction();
 			double factor = ci * cj * (typeI == typeJ ? 1.0 : 2.0);
 
 			// Add contribution from partial (bound + unbound)
@@ -196,9 +191,10 @@ bool PartialRSet::save()
 	LineParser parser;
 	int typeI, typeJ, n;
 
-	for (typeI=0; typeI<nTypes_; ++typeI)
+	int nTypes = atomTypes_.nItems();
+	for (typeI=0; typeI<nTypes; ++typeI)
 	{
-		for (typeJ=typeI; typeJ<nTypes_; ++typeJ)
+		for (typeJ=typeI; typeJ<nTypes; ++typeJ)
 		{
 			// Open file and check that we're OK to proceed writing to it
 			const char* filename = partials_.ref(typeI, typeJ).normalisedData().name();

@@ -107,16 +107,10 @@ class Partials : public Module
 	 * Members / Functions
 	 */
 	private:
-	// List of RDF PartialSets for specific Configuration
-	static List<PartialRSet> partialSets_;
-
-	private:
 	// Calculate partial RDFs with simple double-loop
-	static bool calculateSimple(PartialRSet* partialSet, ProcessPool& procPool);
+	static bool calculateSimple(Configuration* cfg, PartialRSet& partialSet, ProcessPool& procPool);
 
 	public:
-	// Add or return new PartialSet for specified Configuration
-	static PartialRSet* partialSet(Configuration* cfg);
 	// (Re)calculate unweighted partials for the specified Configuration
 	bool calculateUnweighted(Configuration* cfg, ProcessPool& procPool, int method = 0);
 

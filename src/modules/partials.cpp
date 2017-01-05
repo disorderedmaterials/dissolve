@@ -31,7 +31,6 @@
 
 // Static Members
 List<Module> Partials::instances_;
-List<PartialRSet> Partials::partialSets_;
 
 /*
  * Constructor / Destructor
@@ -232,7 +231,7 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 
 			// Calculate and grab partials for Configuration
 			calculateUnweighted(cfg, procPool);
-			PartialRSet* cfgPartials = Partials::partialSet(cfg);
+			PartialRSet& cfgPartials = GenericListHelper<PartialRSet>::retrieve(cfg->moduleData(), "UnweightedPartials", uniqueName_);
 
 			// 
 		}
@@ -259,8 +258,8 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 				if (procPool.isMaster())
 				{
 					// Find PartialSet for this Configuration
-					PartialRSet* partials = partialSet(cfg);
-					if (partials->save()) procPool.proceed();
+					PartialRSet& partials = GenericListHelper<PartialRSet>::retrieve(cfg->moduleData(), "UnweightedPartials", uniqueName_);
+					if (partials.save()) procPool.proceed();
 					else
 					{
 						procPool.stop();
@@ -286,22 +285,21 @@ bool Partials::postProcess(DUQ& duq, ProcessPool& procPool)
  */
 
 // Calculate partial RDFs with simple double-loop
-bool Partials::calculateSimple(PartialRSet* partialSet, ProcessPool& procPool)
+bool Partials::calculateSimple(Configuration* cfg, PartialRSet& partialSet, ProcessPool& procPool)
 {
 	// Variables
 	int n, m, nTypes, typeI, typeJ, i, j, nPoints;
 
 	// Construct local arrays of atom type positions
 	Messenger::printVerbose("Constructing local partial working arrays.\n");
-	nTypes = partialSet->nTypes();
-	Configuration* targetConfiguration = partialSet->targetConfiguration();
-	const Box* box = targetConfiguration->box();
+	nTypes = partialSet.nTypes();
+	const Box* box = cfg->box();
 	Vec3<double>* r[nTypes];
 	int maxr[nTypes], nr[nTypes];
 	int* binss[nTypes], *bins;
 
 	n = 0;
-	for (AtomTypeData* atd = targetConfiguration->usedAtomTypes(); atd != NULL; atd = atd->next)
+	for (AtomTypeData* atd = cfg->usedAtomTypes(); atd != NULL; atd = atd->next)
 	{
 		maxr[n] = atd->population();
 		nr[n] = 0;
@@ -311,8 +309,8 @@ bool Partials::calculateSimple(PartialRSet* partialSet, ProcessPool& procPool)
 	}
 
 	// Loop over Atoms and construct arrays
-	Atom* atoms = targetConfiguration->atoms();
-	for (n=0; n<targetConfiguration->nAtoms(); ++n)
+	Atom* atoms = cfg->atoms();
+	for (n=0; n< cfg->nAtoms(); ++n)
 	{
 		m = atoms[n].localTypeIndex();
 		r[m][nr[m]++] = atoms[n].r();
@@ -323,7 +321,7 @@ bool Partials::calculateSimple(PartialRSet* partialSet, ProcessPool& procPool)
 	// Loop over assigned Atoms
 	Vec3<double> centre, *ri, *rj, mim;
 	int* histogram;
-	double rbin = 1.0 / targetConfiguration->rdfBinWidth();
+	double rbin = 1.0 / cfg->rdfBinWidth();
 
 	// Loop context is to use all processes in Pool as one group
 	int start = procPool.interleavedLoopStart(ProcessPool::OverPoolProcesses);
@@ -335,9 +333,9 @@ bool Partials::calculateSimple(PartialRSet* partialSet, ProcessPool& procPool)
 	for (typeI = 0; typeI<nTypes; ++typeI)
 	{
 		ri = r[typeI];
-		histogram = partialSet->partial(typeI,typeI).histogram();
+		histogram = partialSet.partial(typeI,typeI).histogram();
 		bins = binss[typeI];
-		nPoints = partialSet->partial(typeI,typeI).nBins();
+		nPoints = partialSet.partial(typeI,typeI).nBins();
 		for (i=start; i < maxr[typeI]; i += stride)
 		{
 			centre = ri[i];
@@ -361,9 +359,9 @@ bool Partials::calculateSimple(PartialRSet* partialSet, ProcessPool& procPool)
 			if ((nr[typeI] == nr[typeJ]) && (typeI > typeJ)) continue;
 
 			rj = r[typeJ];
-			histogram = partialSet->partial(typeI,typeJ).histogram();
+			histogram = partialSet.partial(typeI,typeJ).histogram();
 			bins = binss[typeJ];
-			nPoints = partialSet->partial(typeI,typeJ).nBins();
+			nPoints = partialSet.partial(typeI,typeJ).nBins();
 			for (i=start; i < maxr[typeI]; i += stride)
 			{
 				centre = ri[i];
@@ -384,15 +382,6 @@ bool Partials::calculateSimple(PartialRSet* partialSet, ProcessPool& procPool)
 	return true;
 }
 
-// Return PartialSet for specified Configuration (if it exists)
-PartialRSet* Partials::partialSet(Configuration* cfg)
-{
-	// Search existing list
-	for (PartialRSet* ps = partialSets_.first(); ps != NULL; ps = ps->next) if (ps->targetConfiguration() == cfg) return ps;
-
-	return NULL;
-}
-
 // Calculate unweighted partials for the specified Configuration
 bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, int method)
 {
@@ -400,16 +389,12 @@ bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, in
 	const int smoothing = GenericListHelper<int>::retrieve(cfg->moduleData(), "Smoothing", uniqueName(), options_.valueAsInt("Smoothing"));
 
 	// Does a PartialSet already exist for this Configuration?
-	PartialRSet* partialgr = Partials::partialSet(cfg);
-	if (partialgr == NULL)
-	{
-		// No match, so create new
-		partialgr = partialSets_.add();
-		partialgr->setup(cfg, "unweighted", "rdf");
-	}
+	bool wasCreated;
+	PartialRSet& partialgr = GenericListHelper<PartialRSet>::realise(cfg->moduleData(), "PartialRSet", uniqueName_, &wasCreated);
+	if (wasCreated) partialgr.setup(cfg, "unweighted", "rdf");
 
 	// Is the PartialSet already up-to-date?
-	if (partialgr->upToDate())
+	if (partialgr.index() == cfg->coordinateIndex())
 	{
 		Messenger::print("Partials: No need to calculate g(r) for Configuration '%s' - nothing has changed since the last calculation.\n", cfg->name());
 		return true;
@@ -421,7 +406,7 @@ bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, in
 	 * Reset any existing data
 	 */
 
-	partialgr->reset();
+	partialgr.reset();
 
 	/*
 	 * Calculate full (intra+inter) partials
@@ -431,7 +416,7 @@ bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, in
 	Timer timer;
 	timer.start();
 	procPool.resetAccumulatedTime();
-	calculateSimple(partialgr, procPool);
+	calculateSimple(cfg, partialgr, procPool);
 	timer.stop();
 	Messenger::print("Partials: Finished calculation of partials (%s elapsed, %s comms).\n", timer.timeString(), procPool.accumulatedTimeString());
 
@@ -461,7 +446,7 @@ bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, in
 			j = mol->atom(b->indexJ());
 			if (cfg->useMim(i->cell(), j->cell())) distance = box->minimumDistance(i, j);
 			else distance = (i->r() - j->r()).magnitude();
-			partialgr->boundPartial(i->localTypeIndex(), j->localTypeIndex()).add(distance);
+			partialgr.boundPartial(i->localTypeIndex(), j->localTypeIndex()).add(distance);
 		}
 
 		// Angles
@@ -474,7 +459,7 @@ bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, in
 			// Determine whether we need to apply minimum image between 'j-i' and 'j-k'
 			if (cfg->useMim(i->grain()->cell(), k->grain()->cell())) distance = box->minimumDistance(i, k);
 			else distance = (i->r() - k->r()).magnitude();
-			partialgr->boundPartial(i->localTypeIndex(), k->localTypeIndex()).add(distance);
+			partialgr.boundPartial(i->localTypeIndex(), k->localTypeIndex()).add(distance);
 		}
 	}
 	timer.stop();
@@ -490,35 +475,35 @@ bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, in
 	int typeI, typeJ;
 	procPool.resetAccumulatedTime();
 	timer.start();
-	for (typeI=0; typeI<partialgr->nTypes(); ++typeI)
+	for (typeI=0; typeI<partialgr.nTypes(); ++typeI)
 	{
-		for (typeJ=typeI; typeJ<partialgr->nTypes(); ++typeJ)
+		for (typeJ=typeI; typeJ<partialgr.nTypes(); ++typeJ)
 		{
 			// Sum histogram data from all processes
-			if (!partialgr->partial(typeI, typeJ).allSum(procPool)) return false;
-			if (!partialgr->boundPartial(typeI, typeJ).allSum(procPool)) return false;
+			if (!partialgr.partial(typeI, typeJ).allSum(procPool)) return false;
+			if (!partialgr.boundPartial(typeI, typeJ).allSum(procPool)) return false;
 
 			// Create unbound histogram from total and bound data
-			partialgr->unboundPartial(typeI, typeJ) = partialgr->partial(typeI, typeJ);
-			partialgr->unboundPartial(typeI, typeJ).addHistogramData(partialgr->boundPartial(typeI, typeJ), -1.0);
+			partialgr.unboundPartial(typeI, typeJ) = partialgr.partial(typeI, typeJ);
+			partialgr.unboundPartial(typeI, typeJ).addHistogramData(partialgr.boundPartial(typeI, typeJ), -1.0);
 
 			// Finalise (normalise) partials
-			partialgr->partial(typeI, typeJ).finalise();
-			partialgr->boundPartial(typeI, typeJ).finalise();
-			partialgr->unboundPartial(typeI, typeJ).finalise();
+			partialgr.partial(typeI, typeJ).finalise();
+			partialgr.boundPartial(typeI, typeJ).finalise();
+			partialgr.unboundPartial(typeI, typeJ).finalise();
 
 			// Smooth partials if requested
 			if (smoothing > 0)
 			{
-				partialgr->partial(typeI,typeJ).normalisedData().smooth(smoothing*2+1);
-				partialgr->boundPartial(typeI,typeJ).normalisedData().smooth(smoothing*2+1);
-				partialgr->unboundPartial(typeI,typeJ).normalisedData().smooth(smoothing*2+1);
+				partialgr.partial(typeI,typeJ).normalisedData().smooth(smoothing*2+1);
+				partialgr.boundPartial(typeI,typeJ).normalisedData().smooth(smoothing*2+1);
+				partialgr.unboundPartial(typeI,typeJ).normalisedData().smooth(smoothing*2+1);
 			}
 		}
 	}
 
 	// Sum total functions
-	partialgr->formTotal();
+	partialgr.formTotal();
 	timer.stop();
 	Messenger::print("Partials: Finished summation and normalisation of partial g(r) data (%s elapsed, %s comms).\n", timer.timeString(), procPool.accumulatedTimeString());
 
@@ -526,7 +511,7 @@ bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, in
 	 * Partials are now up-to-date
 	 */
 
-	partialgr->setUpToDate();
+	partialgr.setIndex(cfg->coordinateIndex());
 	++staticLogPoint_;
 
 	return true;
@@ -639,9 +624,9 @@ bool Partials::broadcastData(DUQ& duq, ProcessPool& procPool)
 					{
 						// No match, so create new
 						partialgr = partialSets_.add();
-						partialgr->setup(cfg, "unweighted", "rdf");
+						partialgr.setup(cfg, "unweighted", "rdf");
 					}
-					if (!partialgr->broadcast(procPool, rootRank)) return false;
+					if (!partialgr.broadcast(procPool, rootRank)) return false;
 				}
 			}
 		}

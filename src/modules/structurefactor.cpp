@@ -279,7 +279,7 @@ bool StructureFactor::calculateUnweighted(Configuration* cfg, Data2D::WindowFunc
 
 	// Ensure that partials are up-to-date for the Configuration, and grab the PartialSet
 	partialsModule->calculateUnweighted(cfg, procPool);
-	PartialRSet* partialRDFs = partialsModule->partialSet(cfg);
+	PartialRSet& partialRDFs = GenericListHelper<PartialRSet>::retrieve(cfg->moduleData(), "UnweightedPartials", partialsModule->uniqueName());
 
 	// Create / grab PartialSet for structure factors
 	PartialQSet* partialSQ = StructureFactor::partialSet(cfg);
@@ -317,11 +317,11 @@ bool StructureFactor::calculateUnweighted(Configuration* cfg, Data2D::WindowFunc
 		for (typeJ=typeI; typeJ<partialSQ->nTypes(); ++typeJ)
 		{
 			// All data except that for bound interactions must have 1.0 subtracted in order to ??????
-			partialSQ->partial(typeI,typeJ).copyData(partialRDFs->partial(typeI,typeJ).normalisedData());
+			partialSQ->partial(typeI,typeJ).copyData(partialRDFs.partial(typeI,typeJ).normalisedData());
 			partialSQ->partial(typeI,typeJ).arrayY() -= 1.0;
-			partialSQ->boundPartial(typeI,typeJ).copyData(partialRDFs->boundPartial(typeI,typeJ).normalisedData());
+			partialSQ->boundPartial(typeI,typeJ).copyData(partialRDFs.boundPartial(typeI,typeJ).normalisedData());
 // 			partialSQ->boundPartial(typeI,typeJ).arrayY() -= 1.0;
-			partialSQ->unboundPartial(typeI,typeJ).copyData(partialRDFs->unboundPartial(typeI,typeJ).normalisedData());
+			partialSQ->unboundPartial(typeI,typeJ).copyData(partialRDFs.unboundPartial(typeI,typeJ).normalisedData());
 			partialSQ->unboundPartial(typeI,typeJ).arrayY() -= 1.0;
 		}
 	}

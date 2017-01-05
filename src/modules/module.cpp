@@ -90,12 +90,15 @@ void Module::updateDependentTargets()
 	RefListIterator<Module,bool> iterator(dependentModules_);
 	while (Module* module = iterator.iterate())
 	{
-		// If the Module was *not* added automatically, then do not update the targets
+		// If the Module was *not* added automatically, then do not update the targets since it is the user's responsibility to ensure consistency
 		if (!iterator.currentData()) continue;
 
 		// Copy target Samples and Configurations
 		module->copyTargetSamples(this);
 		module->copyTargetConfigurations(this);
+
+		// Set frequency of module to match that of the parent
+		module->setFrequency(frequency_);
 
 		// Perform any setup on the dependent module
 		setupDependentModule(module);
