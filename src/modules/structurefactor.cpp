@@ -33,7 +33,6 @@
 
 // Static Members
 List<Module> StructureFactor::instances_;
-List<PartialQSet> StructureFactor::partialSets_;
 
 /*
  * Constructor / Destructor
@@ -229,8 +228,8 @@ bool StructureFactor::process(DUQ& duq, ProcessPool& procPool)
 				if (procPool.isMaster())
 				{
 					// Find PartialSet for this Configuration
-					PartialQSet* partials = partialSet(cfg);
-					if (partials->save()) procPool.proceed();
+					PartialQSet& partials = GenericListHelper<PartialQSet>::retrieve(cfg->moduleData(), "UnweightedSQ", uniqueName_);
+					if (partials.save()) procPool.proceed();
 					else
 					{
 						procPool.stop();
@@ -243,15 +242,6 @@ bool StructureFactor::process(DUQ& duq, ProcessPool& procPool)
 	}
 
 	return true;
-}
-
-// Return PartialSet for specified Configuration (if it exists)
-PartialQSet* StructureFactor::partialSet(Configuration* cfg)
-{
-	// Search existing list
-	for (PartialQSet* ps = partialSets_.first(); ps != NULL; ps = ps->next) if (ps->targetConfiguration() == cfg) return ps;
-
-	return NULL;
 }
 
 // Calculate unweighted S(Q) for the specified Configuration
@@ -279,19 +269,15 @@ bool StructureFactor::calculateUnweighted(Configuration* cfg, Data2D::WindowFunc
 
 	// Ensure that partials are up-to-date for the Configuration, and grab the PartialSet
 	partialsModule->calculateUnweighted(cfg, procPool);
-	PartialRSet& partialRDFs = GenericListHelper<PartialRSet>::retrieve(cfg->moduleData(), "UnweightedPartials", partialsModule->uniqueName());
+	PartialRSet& partialRDFs = GenericListHelper<PartialRSet>::retrieve(cfg->moduleData(), "UnweightedGR", partialsModule->uniqueName());
 
 	// Create / grab PartialSet for structure factors
-	PartialQSet* partialSQ = StructureFactor::partialSet(cfg);
-	if (partialSQ == NULL)
-	{
-		// No match, so create new
-		partialSQ = partialSets_.add();
-		partialSQ->setup(cfg, "unweighted", "sq");
-	}
+	bool wasCreated;
+	PartialQSet& partialSQ = GenericListHelper<PartialQSet>::realise(cfg->moduleData(), "UnweightedSQ", uniqueName_, &wasCreated);
+	if (wasCreated) partialSQ.setup(cfg, "unweighted", "sq");
 
 	// Is the PartialSet already up-to-date?
-	if (partialSQ->upToDate())
+	if (partialSQ.index() == cfg->coordinateIndex())
 	{
 		Messenger::print("StructureFactor: No need to calculate S(Q) for Configuration '%s' - nothing has changed since the last calculation.\n", cfg->name());
 		return true;
@@ -303,7 +289,7 @@ bool StructureFactor::calculateUnweighted(Configuration* cfg, Data2D::WindowFunc
 	 * Reset any existing data
 	 */
 
-	partialSQ->reset();
+	partialSQ.reset();
 
 	/*
 	 * Copy g(r) data into our S(Q) arrays
@@ -312,17 +298,17 @@ bool StructureFactor::calculateUnweighted(Configuration* cfg, Data2D::WindowFunc
 	// Copy partial data into our own PartialSet
 	int typeI, typeJ;
 	procPool.resetAccumulatedTime();
-	for (typeI=0; typeI<partialSQ->nTypes(); ++typeI)
+	for (typeI=0; typeI<partialSQ.nTypes(); ++typeI)
 	{
-		for (typeJ=typeI; typeJ<partialSQ->nTypes(); ++typeJ)
+		for (typeJ=typeI; typeJ<partialSQ.nTypes(); ++typeJ)
 		{
 			// All data except that for bound interactions must have 1.0 subtracted in order to ??????
-			partialSQ->partial(typeI,typeJ).copyData(partialRDFs.partial(typeI,typeJ).normalisedData());
-			partialSQ->partial(typeI,typeJ).arrayY() -= 1.0;
-			partialSQ->boundPartial(typeI,typeJ).copyData(partialRDFs.boundPartial(typeI,typeJ).normalisedData());
-// 			partialSQ->boundPartial(typeI,typeJ).arrayY() -= 1.0;
-			partialSQ->unboundPartial(typeI,typeJ).copyData(partialRDFs.unboundPartial(typeI,typeJ).normalisedData());
-			partialSQ->unboundPartial(typeI,typeJ).arrayY() -= 1.0;
+			partialSQ.partial(typeI,typeJ).copyData(partialRDFs.partial(typeI,typeJ).normalisedData());
+			partialSQ.partial(typeI,typeJ).arrayY() -= 1.0;
+			partialSQ.boundPartial(typeI,typeJ).copyData(partialRDFs.boundPartial(typeI,typeJ).normalisedData());
+// 			partialSQ.boundPartial(typeI,typeJ).arrayY() -= 1.0;
+			partialSQ.unboundPartial(typeI,typeJ).copyData(partialRDFs.unboundPartial(typeI,typeJ).normalisedData());
+			partialSQ.unboundPartial(typeI,typeJ).arrayY() -= 1.0;
 		}
 	}
 
@@ -334,18 +320,18 @@ bool StructureFactor::calculateUnweighted(Configuration* cfg, Data2D::WindowFunc
 	Timer timer;
 	timer.start();
 	double rho = cfg->atomicDensity();
-	for (typeI=0; typeI<partialSQ->nTypes(); ++typeI)
+	for (typeI=0; typeI<partialSQ.nTypes(); ++typeI)
 	{
-		for (typeJ=typeI; typeJ<partialSQ->nTypes(); ++typeJ)
+		for (typeJ=typeI; typeJ<partialSQ.nTypes(); ++typeJ)
 		{
-			if (!partialSQ->partial(typeI,typeJ).transformBroadenedRDF(rho, qDelta, qMax, qDepBroadening, qIndepBroadening, windowFunction)) return false;
-			if (!partialSQ->boundPartial(typeI,typeJ).transformBroadenedRDF(rho, qDelta, qMax, qDepBroadening, qIndepBroadening, windowFunction)) return false;
-			if (!partialSQ->unboundPartial(typeI,typeJ).transformBroadenedRDF(rho, qDelta, qMax, qDepBroadening, qIndepBroadening, windowFunction)) return false;
+			if (!partialSQ.partial(typeI,typeJ).transformBroadenedRDF(rho, qDelta, qMax, qDepBroadening, qIndepBroadening, windowFunction)) return false;
+			if (!partialSQ.boundPartial(typeI,typeJ).transformBroadenedRDF(rho, qDelta, qMax, qDepBroadening, qIndepBroadening, windowFunction)) return false;
+			if (!partialSQ.unboundPartial(typeI,typeJ).transformBroadenedRDF(rho, qDelta, qMax, qDepBroadening, qIndepBroadening, windowFunction)) return false;
 		}
 	}
 
 	// Sum into total
-	partialSQ->formTotal();
+	partialSQ.formTotal();
 
 	timer.stop();
 	Messenger::print("StructureFactor: Finished Fourier transform and summation of partial g(r) into partial S(Q) (%s elapsed, %s comms).\n", timer.timeString(), procPool.accumulatedTimeString());
@@ -354,7 +340,7 @@ bool StructureFactor::calculateUnweighted(Configuration* cfg, Data2D::WindowFunc
 	 * Partials are now up-to-date
 	 */
 
-	partialSQ->setUpToDate();
+	partialSQ.setIndex(cfg->coordinateIndex());
 
 	return true;
 }

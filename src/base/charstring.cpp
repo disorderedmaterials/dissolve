@@ -47,16 +47,6 @@ CharString::CharString(int emptysize) : ListItem<CharString>()
 	createEmpty(emptysize);
 }
 
-// CharString::CharString(const char* s) : ListItem<CharString>()
-// {
-// 	// Private variables
-// 	data_ = NULL;
-// 	size_ = 0;
-// 	endPosition_ = 0;
-// 
-// 	set(s);
-// }
-
 CharString::CharString(const char* fmt, ...) : ListItem<CharString>()
 {
 	// Private variables
@@ -67,6 +57,7 @@ CharString::CharString(const char* fmt, ...) : ListItem<CharString>()
 	va_list arguments;
 	static char s[8096];
 	s[0] = '\0';
+
 	// Parse the argument list (...) and internally write the output string into s[]
 	va_start(arguments,fmt);
 	vsprintf(s,fmt,arguments);
@@ -257,7 +248,7 @@ void CharString::operator=(const char* s)
 }
 
 // Assignment operator (const CharString&)
-void CharString::operator=(const CharString &source)
+void CharString::operator=(const CharString& source)
 {
 	if (source.data_ == NULL) clear();
 	else set(source.data_);

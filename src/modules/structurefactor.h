@@ -104,15 +104,9 @@ class StructureFactor : public Module
 
 
 	/*
-	 * Static Members / Functions
+	 * Members / Functions
 	 */
-	private:
-	// List of S(Q) PartialSets for specific Configuration
-	static List<PartialQSet> partialSets_;
-
 	public:
-	// Add or return new PartialSet for specified Configuration
-	static PartialQSet* partialSet(Configuration* cfg);
 	// Calculate unweighted S(Q) for the specified Configuration
 	bool calculateUnweighted(Configuration* cfg, Data2D::WindowFunction windowFunction, ProcessPool& procPool);
 

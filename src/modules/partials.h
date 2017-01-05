@@ -108,7 +108,7 @@ class Partials : public Module
 	 */
 	private:
 	// Calculate partial RDFs with simple double-loop
-	static bool calculateSimple(Configuration* cfg, PartialRSet& partialSet, ProcessPool& procPool);
+	bool calculateSimple(Configuration* cfg, PartialRSet& partialSet, ProcessPool& procPool);
 
 	public:
 	// (Re)calculate unweighted partials for the specified Configuration

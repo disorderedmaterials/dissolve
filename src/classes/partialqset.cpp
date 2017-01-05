@@ -25,8 +25,7 @@
 // Constructor
 PartialQSet::PartialQSet() : ListItem<PartialQSet>()
 {
-	partialsIndex_ = -1;
-	nTypes_ = 0;
+	index_ = -1;
 }
 
 // Destructor
@@ -43,22 +42,22 @@ bool PartialQSet::setup(Configuration* cfg, const char* tag, const char* suffix)
 {
 	// Construct a matrix based on the usedAtomTypes_ list of the Configuration, since this reflects all our possible partials
 	int n, m;
-	nTypes_ = cfg->nUsedAtomTypes();
-	targetConfiguration_ = cfg;
+	atomTypes_ = cfg->usedAtomTypesList();
+	int nTypes = atomTypes_.nItems();
 
-	Messenger::print("--> Creating S(Q) matrices (%ix%i)...\n", nTypes_, nTypes_);
+	Messenger::print("--> Creating S(Q) matrices (%ix%i)...\n", nTypes, nTypes);
 
-	partials_.initialise(nTypes_, nTypes_, true);
-	boundPartials_.initialise(nTypes_, nTypes_, true);
-	unboundPartials_.initialise(nTypes_, nTypes_, true);
+	partials_.initialise(nTypes, nTypes, true);
+	boundPartials_.initialise(nTypes, nTypes, true);
+	unboundPartials_.initialise(nTypes, nTypes, true);
 
 	CharString title;
-	AtomTypeData* at1 = targetConfiguration_->usedAtomTypes(), *at2;
+	AtomTypeData* at1 = cfg->usedAtomTypes(), *at2;
 	Messenger::print("--> Creating lists of partials and linking into matrices...\n");
-	for (n=0; n<nTypes_; ++n, at1 = at1->next)
+	for (n=0; n< nTypes; ++n, at1 = at1->next)
 	{
 		at2 = at1;
-		for (m=n; m<nTypes_; ++m, at2 = at2->next)
+		for (m=n; m< nTypes; ++m, at2 = at2->next)
 		{
 			// Partial S(Q)
 			title.sprintf("%s-%s-%s-%s.%s", cfg->niceName(), tag, at1->name(), at2->name(), suffix);
@@ -72,7 +71,7 @@ bool PartialQSet::setup(Configuration* cfg, const char* tag, const char* suffix)
 	title.sprintf("%s-%s-total.%s", cfg->name(), tag, suffix);
 	total_.setName(title);
 
-	partialsIndex_ = -1;
+	index_ = -1;
 
 	return true;
 }
@@ -80,9 +79,10 @@ bool PartialQSet::setup(Configuration* cfg, const char* tag, const char* suffix)
 // Reset partial arrays
 void PartialQSet::reset()
 {
-	for (int n=0; n<nTypes_; ++n)
+	int nTypes = atomTypes_.nItems();
+	for (int n=0; n<nTypes; ++n)
 	{
-		for (int m=n; m<nTypes_; ++m)
+		for (int m=n; m<nTypes; ++m)
 		{
 			partials_.ref(n,m).arrayY() = 0.0;
 			boundPartials_.ref(n,m).arrayY() = 0.0;
@@ -91,31 +91,25 @@ void PartialQSet::reset()
 	}
 	total_.arrayY() = 0.0;
 
-	partialsIndex_ = -1;
+	index_ = -1;
 }
 
 // Return number of AtomTypes used to generate matrices
 int PartialQSet::nTypes()
 {
-	return nTypes_;
+	return atomTypes_.nItems();
 }
 
-// Return target Configuration
-Configuration* PartialQSet::targetConfiguration()
+// Return index of partials
+int PartialQSet::index() const
 {
-	return targetConfiguration_;
+	return index_;
 }
 
-// Return whether these partials are up-to-date?usedAtomTypes_.nItems
-bool PartialQSet::upToDate()
+// Set new index
+void PartialQSet::setIndex(int index)
 {
-	return (partialsIndex_ == targetConfiguration_->coordinateIndex());
-}
-
-// Flag that these partials are up-to-date
-void PartialQSet::setUpToDate()
-{
-	partialsIndex_ = targetConfiguration_->coordinateIndex();
+	index_ = index;
 }
 
 // Return full atom-atom partial specified
@@ -139,7 +133,8 @@ Data2D& PartialQSet::boundPartial(int i, int j)
 // Sum partials into total
 void PartialQSet::formTotal()
 {
-	if (nTypes_ == 0)
+	int nTypes = atomTypes_.nItems();
+	if (nTypes == 0)
 	{
 		total_.clear();
 		return;
@@ -151,14 +146,14 @@ void PartialQSet::formTotal()
 	total_.arrayY() = 0.0;
 
 	int typeI, typeJ;
-	for (typeI=0; typeI<nTypes_; ++typeI)
+	for (typeI=0; typeI<nTypes; ++typeI)
 	{
-		for (typeJ=typeI; typeJ<nTypes_; ++typeJ)
+		for (typeJ=typeI; typeJ<nTypes; ++typeJ)
 		{
 			
 			// Calculate weighting factor
-			double ci = targetConfiguration_->usedAtomTypeFraction(typeI);
-			double cj = targetConfiguration_->usedAtomTypeFraction(typeJ);
+			double ci = atomTypes_[typeI]->fraction();
+			double cj = atomTypes_[typeJ]->fraction();
 			double factor = ci * cj * (typeI == typeJ ? 1.0 : 2.0);
 
 			// Add contribution from partial (bound + unbound)
@@ -180,9 +175,10 @@ bool PartialQSet::save()
 	LineParser parser;
 	int typeI, typeJ, n;
 
-	for (typeI=0; typeI<nTypes_; ++typeI)
+	int nTypes = atomTypes_.nItems();
+	for (typeI=0; typeI<nTypes; ++typeI)
 	{
-		for (typeJ=typeI; typeJ<nTypes_; ++typeJ)
+		for (typeJ=typeI; typeJ<nTypes; ++typeJ)
 		{
 			// Open file and check that we're OK to proceed writing to it
 			const char* filename = partials_.ref(typeI, typeJ).name();
@@ -217,9 +213,10 @@ bool PartialQSet::broadcast(ProcessPool& procPool, int rootRank)
 {
 #ifdef PARALLEL
 	// The structure should have already been setup(), so arrays should be ready to copy
-	for (int typeI=0; typeI<nTypes_; ++typeI)
+	int nTypes = atomTypes_.nItems();
+	for (int typeI=0; typeI<nTypes; ++typeI)
 	{
-		for (int typeJ=typeI; typeJ<nTypes_; ++typeJ)
+		for (int typeJ=typeI; typeJ<nTypes; ++typeJ)
 		{
 			partials_.ref(typeI, typeJ).broadcast(procPool, rootRank);
 			boundPartials_.ref(typeI, typeJ).broadcast(procPool, rootRank);

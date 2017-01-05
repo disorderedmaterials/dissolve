@@ -22,6 +22,7 @@
 #ifndef DUQ_PARTIALQSET_H
 #define DUQ_PARTIALQSET_H
 
+#include "classes/atomtypelist.h"
 #include "base/data2d.h"
 #include "templates/list.h"
 #include "templates/array.h"
@@ -43,12 +44,10 @@ class PartialQSet : public ListItem<PartialQSet>
 	 * Partials Data
 	 */
 	private:
-	// Number of AtomTypes used to generate matrices
-	int nTypes_;
-	// Target Configuration
-	Configuration* targetConfiguration_;
-	// Configuration index at which these partials were last calculated
-	int partialsIndex_;
+	// AtomTypes used to create matrices
+	AtomTypeList atomTypes_;
+	// Index (e.g. in related Configuration) at which these partials were last calculated
+	int index_;
 	// Pair matrix, containing full atom-atom partial
 	Array2D<Data2D> partials_;
 	// Unbound matrix, containing atom-atom partial of pairs not joined by bonds or angles
@@ -67,12 +66,10 @@ class PartialQSet : public ListItem<PartialQSet>
 	void reset();
 	// Return number of AtomTypes used to generate matrices
 	int nTypes();
-	// Return target Configuration
-	Configuration* targetConfiguration();
-	// Return whether these partials are up-to-date?
-	bool upToDate();
-	// Flag that these partials are up-to-date
-	void setUpToDate();
+	// Return index of partials
+	int index() const;
+	// Set new index
+	void setIndex(int index);
 	// Return full atom-atom partial specified
 	Data2D& partial(int i, int j);
 	// Return atom-atom partial for pairs not joined by bonds or angles

@@ -44,6 +44,7 @@ Partials::Partials() : Module()
 	instances_.own(this);
 
 	// Setup variables / control parameters
+	frequency_ = 5;
 	options_.add("Save", false, "Whether to save partials to disk after calculation");
 	options_.add("Smoothing", 0, "Specifies the degree of smoothing 'n' to apply to calculated RDFs, where 2n+1 controls the length in the applied Spline smooth");
 	options_.add("UseMixFrom", uniqueName_, "Unique Module name under which to search for Species/Isotopologue mix information");
@@ -177,12 +178,8 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 		Sample* sam = targetSamples_.firstItem();
 
 		// If the UseMixFrom variable was set, grab its value now
-		CharString mixSource = GenericListHelper<CharString>::retrieve(sam->moduleData(), "UseMixFrom", options_.valueAsString("UseMixFrom"));
+		CharString mixSource = GenericListHelper<CharString>::retrieve(sam->moduleData(), "UseMixFrom", uniqueName_, options_.valueAsString("UseMixFrom"));
 		Messenger::print("Partials: Isotopologue mixture data will be taken from Module '%s'.\n", mixSource.get());
-
-		// Create / grab partial set for the Sample
-		PartialRSet& samplePartials = GenericListHelper<PartialRSet>::realise(sam->moduleData(), CharString("Partials_%s", mixSource.get()), uniqueName_);
-// 		if (samplePartials. REMOVE TARGETCONFIGURATION FROM PARTIALRSET???)
 
 		// Loop over Configurations. For each, go through the list of Species used in the Configuration, and for each Species, search for any Isotopologues
 		// that are specified as being relevant to this Sample. These will have been defined as Module variables in the Configuration. For each one we find
@@ -231,9 +228,12 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 
 			// Calculate and grab partials for Configuration
 			calculateUnweighted(cfg, procPool);
-			PartialRSet& cfgPartials = GenericListHelper<PartialRSet>::retrieve(cfg->moduleData(), "UnweightedPartials", uniqueName_);
+			PartialRSet& cfgPartials = GenericListHelper<PartialRSet>::retrieve(cfg->moduleData(), "UnweightedGR", uniqueName_);
 
-			// 
+			// Create / grab partial set for the Sample
+			bool wasCreated;
+			PartialRSet& samplePartials = GenericListHelper<PartialRSet>::realise(sam->moduleData(), CharString("WeightedGR_%s", mixSource.get()), uniqueName_, &wasCreated);
+// 			if (wasCreated) samplePartials.
 		}
 
 		return false;
@@ -258,7 +258,7 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 				if (procPool.isMaster())
 				{
 					// Find PartialSet for this Configuration
-					PartialRSet& partials = GenericListHelper<PartialRSet>::retrieve(cfg->moduleData(), "UnweightedPartials", uniqueName_);
+					PartialRSet& partials = GenericListHelper<PartialRSet>::retrieve(cfg->moduleData(), "UnweightedGR", uniqueName_);
 					if (partials.save()) procPool.proceed();
 					else
 					{
