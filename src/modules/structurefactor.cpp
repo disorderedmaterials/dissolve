@@ -26,6 +26,8 @@
 #include "classes/cell.h"
 #include "classes/changestore.h"
 #include "classes/energykernel.h"
+#include "classes/species.h"
+#include "classes/weightsmatrix.h"
 #include "base/sysfunc.h"
 #include "base/processpool.h"
 #include "base/timer.h"
@@ -47,16 +49,16 @@ StructureFactor::StructureFactor() : Module()
 
 	// Setup variables / control parameters
 	frequency_ = 5;
-	options_.add("Bragg", "off", "Enable calculation of Bragg scattering");
+	options_.add("Bragg", bool(false), "Enable calculation of Bragg scattering");
 	options_.add("BraggQDepBroadening", 0.0063, "FWHM of Gaussian for Q-dependent Bragg broadening function");
 	options_.add("BraggQIndepBroadening", 0.0, "FWHM of Gaussian for Q-independent Bragg broadening function");
-	options_.add("NormaliseToAvSq", false, "Normalise calculated F(Q) to < b >**2");
-	options_.add("NormaliseToSqAv", false, "Normalise calculated F(Q) to < b**2 >");
+	options_.add("NormaliseToAvSq", bool(false), "Normalise calculated F(Q) to < b >**2");
+	options_.add("NormaliseToSqAv", bool(false), "Normalise calculated F(Q) to < b**2 >");
 	options_.add("QDelta", 0.05, "Step size in Q");
 	options_.add("QDepBroadening", 0.0, "FWHM of Gaussian for Q-dependent instrument broadening function");
 	options_.add("QIndepBroadening", 0.0, "FWHM of Gaussian for Q-independent instrument broadening function");
 	options_.add("QMax", -1.0, "Maximum Q in calculated F(Q)");
-	options_.add("Save", false, "Whether to save partials to disk after calculation");
+	options_.add("Save", bool(false), "Whether to save partials to disk after calculation");
 }
 
 // Destructor
@@ -190,6 +192,76 @@ bool StructureFactor::process(DUQ& duq, ProcessPool& procPool)
 
 	if (targetSamples_.nItems() > 0)
 	{
+		// Assemble partials from all Configurations specified, weighting them accordingly
+		CharString varName;
+		double totalWeight = 0.0;
+
+		// Get target Sample
+		Sample* sam = targetSamples_.firstItem();
+
+		// If the UseMixFrom variable was set, grab its value now
+		CharString mixSource = GenericListHelper<CharString>::retrieve(sam->moduleData(), "UseMixFrom", uniqueName_, options_.valueAsString("UseMixFrom"));
+		Messenger::print("Partials: Isotopologue mixture data will be taken from Module '%s'.\n", mixSource.get());
+
+		// Loop over Configurations. For each, go through the list of Species used in the Configuration, and for each Species, search for any Isotopologues
+		// that are specified as being relevant to this Sample. These will have been defined as Module variables in the Configuration. For each one we find
+		// we update an AtomTypeList with the Isotopologue's atomtypes/isotopes, constructing our atomic fractions.
+		// We will keep a running total of the weights associated with each Configuration, and re-weight the entire set of partials at the end.
+		RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
+		while (Configuration* cfg = configIterator.iterate())
+		{
+			// Get weight for this Configuration
+			varName.sprintf("%s_Weight", cfg->name());
+			double weight = 1.0;
+			if (sam->moduleData().contains(varName, mixSource)) weight = GenericListHelper<double>::retrieve(sam->moduleData(), varName, mixSource, 1.0);
+			totalWeight += weight;
+  			Messenger::print("Partials: Weight for Configuration '%s' is %f (total weight is now %f).\n", cfg->name(), weight, totalWeight);
+
+			// Create a WeightsMatrix using the Isotopologues referenced in the Sample, and the populations of atomtypes in the Configuration.
+			WeightsMatrix weightsMatrix;
+			RefListIterator<Species,double> speciesIterator(cfg->usedSpecies());
+			while (Species* sp = speciesIterator.iterate())
+			{
+				int speciesPopulation = speciesIterator.currentData() * cfg->multiplier();
+
+				// Loop over available Isotopologues for Species
+				for (Isotopologue* availableIso = sp->isotopologues(); availableIso != NULL; availableIso = availableIso->next)
+				{
+					// Construct variable name that we expect to find if the tope was used in the Module (variable is defined in the associated Configuration)
+					varName.sprintf("Isotopologue/%s/%s", sp->name(), availableIso->name());
+					if (sam->moduleData().contains(varName, mixSource))
+					{
+						// This isotopologue is defined as being used, so add its (in the isotopic proportions defined in the Isotopologue) to the weightsMatrix.
+						weightsMatrix.addIsotopologue(sp, speciesPopulation, availableIso, GenericListHelper<double>::retrieve(sam->moduleData(), varName, mixSource));
+					}
+				}
+			}
+
+			// We will complain strongly if a species in the Configuration is not covered by at least one Isotopologue definition
+			speciesIterator.restart();
+			while (Species* sp = speciesIterator.iterate()) if (!weightsMatrix.hasSpeciesIsotopologueMixture(sp)) 
+			{
+				Messenger::error("Isotopologue specification for Species '%s' in Configuration '%s' is missing.\n", sp->name(), cfg->name());
+				return false;
+			}
+
+			// Construct atom type lists and matrices
+			weightsMatrix.finalise();
+
+			// Calculate and grab partials for Configuration
+// 			calculateUnweighted(cfg, procPool);
+// 			PartialRSet& cfgPartials = GenericListHelper<PartialRSet>::retrieve(cfg->moduleData(), "UnweightedGR", uniqueName_);
+
+			/*
+			 * TODO
+			 */
+			
+			// Create / grab partial set for the Sample
+			bool wasCreated;
+			PartialRSet& samplePartials = GenericListHelper<PartialRSet>::realise(sam->moduleData(), CharString("WeightedGR_%s", mixSource.get()), uniqueName_, &wasCreated);
+// 			if (wasCreated) samplePartials.
+// 			XXX
+		}
 		// TODO Assemble partials from all Configurations specified, weighting them accordingly
 // 		if ((nSampleTargets() == 1) && (targetSamples_.first()->item->hasReferenceData())) qMax = targetSamples_.first()->item->referenceData().xMax();
 		return false;
@@ -279,7 +351,7 @@ bool StructureFactor::calculateUnweighted(Configuration* cfg, Data2D::WindowFunc
 	// Is the PartialSet already up-to-date?
 	if (partialSQ.index() == cfg->coordinateIndex())
 	{
-		Messenger::print("StructureFactor: No need to calculate S(Q) for Configuration '%s' - nothing has changed since the last calculation.\n", cfg->name());
+		Messenger::print("StructureFactor: Partials are up-to-date for Configuration '%s'.\n", cfg->name());
 		return true;
 	}
 

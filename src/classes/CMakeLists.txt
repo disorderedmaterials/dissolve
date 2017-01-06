@@ -30,7 +30,6 @@ graindefinition.cpp
 histogram.cpp
 isotopologue.cpp
 isotopologuemix.cpp
-isotopologueset.cpp
 kvector.cpp
 molecule.cpp
 pairpotential.cpp
@@ -49,6 +48,7 @@ species_intra.cpp
 species_io.cpp
 species_isotopologues.cpp
 species_transform.cpp
+weightsmatrix.cpp
 
 angle.h
 atom.h
@@ -70,7 +70,6 @@ grain.h
 histogram.h
 isotopologue.h
 isotopologuemix.h
-isotopologueset.h
 kvector.h
 molecule.h
 pairpotential.h
@@ -83,6 +82,7 @@ speciesatom.h
 speciesbond.h
 speciesgrain.h
 species.h
+weightsmatrix.h
 )
 
 include_directories(

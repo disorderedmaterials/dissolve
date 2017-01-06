@@ -84,6 +84,16 @@ int AtomTypeList::add(AtomType* atomType, Isotope* tope, int popAdd)
 	return index;
 }
 
+// Add the AtomTypes in the supplied list into this one, increasing populations etc.
+void AtomTypeList::add(const AtomTypeList& source)
+{
+	// Loop over AtomTypes in the source list
+	for (AtomTypeData* newType = source.first(); newType != NULL; newType = newType->next)
+	{
+		add(newType->atomType(), newType->isotope(), newType->population());
+	}
+}
+
 // Check for presence of AtomType/Isotope pair in list
 bool AtomTypeList::contains(AtomType* atomType, Isotope* tope)
 {

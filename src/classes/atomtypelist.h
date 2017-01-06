@@ -58,6 +58,8 @@ class AtomTypeList
 	void clear();
 	// Add/increase this AtomType/Isotope pair, returning the index of the AtomType in the list
 	int add(AtomType* atomType, Isotope* tope, int popAdd = 0);
+	// Add the AtomTypes in the supplied list into this one, increasing populations etc.
+	void add(const AtomTypeList& source);
 	// Check for presence of AtomType/Isotope pair in list
 	bool contains(AtomType* atomType, Isotope* tope);
 	// Zero populations of all types in the list

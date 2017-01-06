@@ -19,7 +19,7 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "classes/isotopologueset.h"
+#include "classes/weightsmatrix.h"
 #include "classes/species.h"
 #include "classes/atomtype.h"
 #include "base/processpool.h"

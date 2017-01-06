@@ -26,7 +26,7 @@
 void Configuration::setName(const char* name)
 {
 	name_ = name;
-	
+
 	// Generate a nice name (i.e. no spaces, slashes etc.)
 	niceName_ = name_;
 	niceName_.replace(" /\\#*$", '_');

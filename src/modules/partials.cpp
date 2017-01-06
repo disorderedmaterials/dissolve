@@ -23,8 +23,8 @@
 #include "modules/partials.h"
 #include "classes/box.h"
 #include "classes/grain.h"
-#include "classes/isotopologueset.h"
 #include "classes/species.h"
+#include "classes/weightsmatrix.h"
 #include "base/sysfunc.h"
 #include "base/processpool.h"
 #include "base/timer.h"
@@ -45,7 +45,7 @@ Partials::Partials() : Module()
 
 	// Setup variables / control parameters
 	frequency_ = 5;
-	options_.add("Save", false, "Whether to save partials to disk after calculation");
+	options_.add("Save", bool(false), "Whether to save partials to disk after calculation");
 	options_.add("Smoothing", 0, "Specifies the degree of smoothing 'n' to apply to calculated RDFs, where 2n+1 controls the length in the applied Spline smooth");
 	options_.add("UseMixFrom", uniqueName_, "Unique Module name under which to search for Species/Isotopologue mix information");
 }	
@@ -173,6 +173,7 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 		// Assemble partials from all Configurations specified, weighting them accordingly
 		CharString varName;
 		double totalWeight = 0.0;
+		AtomTypeList atomTypes;
 
 		// Get target Sample
 		Sample* sam = targetSamples_.firstItem();
@@ -181,60 +182,42 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 		CharString mixSource = GenericListHelper<CharString>::retrieve(sam->moduleData(), "UseMixFrom", uniqueName_, options_.valueAsString("UseMixFrom"));
 		Messenger::print("Partials: Isotopologue mixture data will be taken from Module '%s'.\n", mixSource.get());
 
-		// Loop over Configurations. For each, go through the list of Species used in the Configuration, and for each Species, search for any Isotopologues
-		// that are specified as being relevant to this Sample. These will have been defined as Module variables in the Configuration. For each one we find
-		// we update an AtomTypeList with the Isotopologue's atomtypes/isotopes, constructing our atomic fractions .
-		// We will keep a running total of the weights associated with each Configuration, and re-weight the entire set of partials at the end.
+		// Loop over Configurations, creating a list of unique AtomTypes encountered over all. Also, make sure the unweighted partials are up-to-date.
 		RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
 		while (Configuration* cfg = configIterator.iterate())
 		{
-			// Get weight for this Configuration
+			// Add any missing atom types into our local list
+			atomTypes.add(cfg->usedAtomTypesList());
+
+			// Calculate partials for Configuration
+			calculateUnweighted(cfg, procPool);
+		}
+
+		// Setup partial set for the Sample, using the AtomTypeList we have just constructed
+		PartialRSet& samplePartials = GenericListHelper<PartialRSet>::realise(sam->moduleData(), CharString("WeightedGR_%s", mixSource.get()), uniqueName_);
+		samplePartials.setup(targetConfigurations_.firstItem(), atomTypes, sam->niceName(), "unweighted", "rdf");
+		atomTypes.print();
+
+		// Loop over Configurations again, summing into the PartialRSet we have just set up
+		// We will keep a running total of the weights associated with each Configuration, and re-weight the entire set of partials at the end.
+		configIterator.restart();
+		while (Configuration* cfg = configIterator.iterate())
+		{
+			// Get weighting factor for this Configuration to contribute to the summed partials
 			varName.sprintf("%s_Weight", cfg->name());
 			double weight = 1.0;
 			if (sam->moduleData().contains(varName, mixSource)) weight = GenericListHelper<double>::retrieve(sam->moduleData(), varName, mixSource, 1.0);
 			totalWeight += weight;
-  			Messenger::print("Partials: Weight for Configuration '%s' is %f (total weight is now %f).\n", cfg->name(), weight, totalWeight);
+			Messenger::print("Partials: Weight for Configuration '%s' is %f (total weight is now %f).\n", cfg->name(), weight, totalWeight);
 
-			// Create a WeightsMatrix using the Isotopologues referenced in the Sample, and the populations of atomtypes in the Configuration.
-			WeightsMatrix weightsMatrix;
-			RefListIterator<Species,double> speciesIterator(cfg->usedSpecies());
-			while (Species* sp = speciesIterator.iterate())
-			{
-				int speciesPopulation = speciesIterator.currentData() * cfg->multiplier();
-
-				// Loop over available Isotopologues for Species
-				for (Isotopologue* availableIso = sp->isotopologues(); availableIso != NULL; availableIso = availableIso->next)
-				{
-					// Construct variable name that we expect to find if the tope was used in the Module (variable is defined in the associated Configuration)
-					varName.sprintf("Isotopologue/%s/%s", sp->name(), availableIso->name());
-					if (sam->moduleData().contains(varName, mixSource))
-					{
-						// This isotopologue is defined as being used, so add its (in the isotopic proportions defined in the Isotopologue) to the weightsMatrix.
-						weightsMatrix.addIsotopologue(sp, speciesPopulation, availableIso, GenericListHelper<double>::retrieve(sam->moduleData(), varName, mixSource));
-					}
-				}
-			}
-
-			// We will complain strongly if a species in the Configuration is not covered by at least one Isotopologue definition
-			speciesIterator.restart();
-			while (Species* sp = speciesIterator.iterate()) if (!weightsMatrix.hasSpeciesIsotopologueMixture(sp)) 
-			{
-				Messenger::error("Isotopologue specification for Species '%s' in Configuration '%s' is missing.\n", sp->name(), cfg->name());
-				return false;
-			}
-
-			// Construct atom type lists and matrices
-			weightsMatrix.finalise();
-
-			// Calculate and grab partials for Configuration
-			calculateUnweighted(cfg, procPool);
+			// Grab partials for Configuration
 			PartialRSet& cfgPartials = GenericListHelper<PartialRSet>::retrieve(cfg->moduleData(), "UnweightedGR", uniqueName_);
 
-			// Create / grab partial set for the Sample
-			bool wasCreated;
-			PartialRSet& samplePartials = GenericListHelper<PartialRSet>::realise(sam->moduleData(), CharString("WeightedGR_%s", mixSource.get()), uniqueName_, &wasCreated);
-// 			if (wasCreated) samplePartials.
+			// Add all partials from the Configuration into our Sample partials
+			samplePartials.add(cfgPartials, weight);
 		}
+		// XXX Need to finalise histograms in samplePartials...
+		samplePartials.save();
 
 		return false;
 	}
@@ -391,12 +374,12 @@ bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, in
 	// Does a PartialSet already exist for this Configuration?
 	bool wasCreated;
 	PartialRSet& partialgr = GenericListHelper<PartialRSet>::realise(cfg->moduleData(), "PartialRSet", uniqueName_, &wasCreated);
-	if (wasCreated) partialgr.setup(cfg, "unweighted", "rdf");
+	if (wasCreated) partialgr.setup(cfg, cfg->niceName(), "unweighted", "rdf");
 
 	// Is the PartialSet already up-to-date?
 	if (partialgr.index() == cfg->coordinateIndex())
 	{
-		Messenger::print("Partials: No need to calculate g(r) for Configuration '%s' - nothing has changed since the last calculation.\n", cfg->name());
+		Messenger::print("Partials: Partials are up-to-date for Configuration '%s'.\n", cfg->name());
 		return true;
 	}
 
@@ -517,7 +500,11 @@ bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, in
 	return true;
 }
 
-
+// Calculate weighted partials for the specified Configuration
+bool Partials::calculateWeighted(Configuration* cfg, ProcessPool& procPool, WeightsMatrix& weightsMatrix)
+{
+	
+}
 
 // 	// Calculate Bragg partials (if requested)
 // 	if (braggOn)

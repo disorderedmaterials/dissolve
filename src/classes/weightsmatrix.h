@@ -1,6 +1,6 @@
 /*
-	*** Isotopologue Set
-	*** src/classes/isotopologueset.h
+	*** Weights Matrix
+	*** src/classes/weightsmatrix.h
 	Copyright T. Youngs 2012-2016
 
 	This file is part of dUQ.
@@ -19,8 +19,8 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_ISOTOPOLOGUESET_H
-#define DUQ_ISOTOPOLOGUESET_H
+#ifndef DUQ_WEIGHTSMATRIX_H
+#define DUQ_WEIGHTSMATRIX_H
 
 #include "classes/atomtypelist.h"
 #include "classes/isotopologuemix.h"

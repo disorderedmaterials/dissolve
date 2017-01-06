@@ -96,6 +96,11 @@ bool DUQ::setupSimulation()
 	/* We expect a PairPotential to have been defined for every combination of AtomType used in the system */
 	Messenger::print("\n");
 	Messenger::print("*** Checking PairPotential definitions....\n");
+	if (!pairPotentialIncludesCharges_)
+	{
+		Messenger::error("Option to utilise atom-local charges is not yet implemented.\n");
+		return false;
+	}
 	int nMissingPots = 0;
 	for (AtomType* at1 = atomTypes_.first(); at1 != NULL; at1 = at1->next)
 	{

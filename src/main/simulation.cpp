@@ -60,7 +60,7 @@ bool DUQ::go()
 	 *  3)	Reassemble Configuration data on all processes
 	 *  4)	Run all Modules assigned to Samples using all processes available (worldPool_)
 	 *  5)	Run any Module post-processing tasks using all processes available (worldPool_)
-	 *  6)	Write Configuration coordinates (master process only)
+	 *  6)	Write data (master process only)
 	 */
 
 	/*
@@ -251,10 +251,25 @@ bool DUQ::go()
 
 
 		/*
-		 *  6)	Write Configuration data
+		 *  6)	Write data
 		 */
 		if (worldPool_.isMaster())
 		{
+			/*
+			 * Input File
+			 */
+
+			if (!saveInput(CharString("%s.new", filename_.get())))
+			{
+				Messenger::error("Failed to write input file output file.\n");
+				worldPool_.stop();
+				return false;
+			}
+
+			/*
+			 * Configuration Data
+			 */
+
 			// Keep track of number of Configurations saved / to save - print banner before first one
 			int nSaved = 0;
 			for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
@@ -281,6 +296,20 @@ bool DUQ::go()
 				}
 
 				++nSaved;
+			}
+
+			/*
+			 * Pair Potentials
+			 */
+			for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next)
+			{
+				CharString filename("potential-%s-%s.txt", pot->atomTypeNameI(), pot->atomTypeNameJ());
+				if (!pot->save(filename))
+				{
+					Messenger::error("Failed to write PairPotential output file.\n");
+					worldPool_.stop();
+					return false;
+				}
 			}
 		}
 		else if (!worldPool_.decision()) return false;

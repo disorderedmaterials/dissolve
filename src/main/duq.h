@@ -253,8 +253,6 @@ class DUQ
 	Data2D::WindowFunction windowFunction();
 	// Setup all simulation data, checking it as we go
 	bool setupSimulation();
-	// Dump full system setup
-	void dumpSystemSetup(bool includeData);
 
 
 	/*
@@ -301,6 +299,8 @@ class DUQ
 	bool loadInput(const char* filename);
 	// Save input file
 	bool saveInput(const char* filename);
+	// Dump additional data
+	void dump();
 	// Return whether a filename has been set
 	bool hasFileName() const;
 	// Return filename of current input file

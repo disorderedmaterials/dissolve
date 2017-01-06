@@ -44,6 +44,7 @@ void Sample::operator=(const Sample& source)
 {
 	// Basic Information
 	name_ = source.name_;
+	niceName_ = source.niceName_;
 
 	// Reference Data
 	hasReferenceData_ = source.hasReferenceData_;
@@ -59,12 +60,22 @@ void Sample::operator=(const Sample& source)
 void Sample::setName(const char* name)
 {
 	 name_ = name;
+
+	// Generate a nice name (i.e. no spaces, slashes etc.)
+	niceName_ = name_;
+	niceName_.replace(" /\\#*$", '_');
 }
 
 // Return name of Sample
 const char* Sample::name() const
 {
 	return name_.get();
+}
+
+// Return nice name of the Sample
+const char* Sample::niceName()
+{
+	return niceName_.get();
 }
 
 /*

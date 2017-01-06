@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 	// Parse CLI options...
 	int n = 1;
 	CharString inputFile, redirectFileName;
-	int fullDump = 0;
+	int dumpData = 0;
 	while (n < argc)
 	{
 		if (argv[n][0] == '-')
@@ -55,7 +55,7 @@ int main(int argc, char **argv)
 					printf("\t-m\t\tRestrict output to be from the master process alone (parallel code only)\n");
 					printf("\t-q\t\tQuiet mode - print no output\n");
 					printf("\t-r <file>\tRedirect output from all process to 'file.N', where N is the process rank\n");
-					printf("\t-d\t\tPerform full dump of system setup from all processes and quit\n");
+					printf("\t-d\t\tPerform dump of system data from all processes and quit\n");
 					printf("\t-v\t\tVerbose mode - be a little more descriptive throughout\n");
 					ProcessPool::finalise();
 					return 0;
@@ -65,11 +65,7 @@ int main(int argc, char **argv)
 					break;
 				case ('d'):
 					Messenger::print("Full dump of system setup across all processes enabled.\n");
-					fullDump = 1;
-					break;
-				case ('D'):
-					Messenger::print("Full dump of system setup (including data) across all processes enabled.\n");
-					fullDump = 2;
+					dumpData = true;
 					break;
 				case ('m'):
 					Messenger::setMasterOnly(true);
@@ -189,7 +185,7 @@ int main(int argc, char **argv)
 	}
 	
 	// Full system dump?
-	if (fullDump > 0) dUQ.dumpSystemSetup(fullDump == 2);
+	if (dumpData) dUQ.dump();
 
 #ifdef PARALLEL
 	Messenger::print("This is process rank %i of %i processes total.\n", ProcessPool::worldRank(), ProcessPool::nWorldProcesses());

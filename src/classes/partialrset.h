@@ -61,7 +61,9 @@ class PartialRSet : public ListItem<PartialRSet>
 
 	public:
 	// Setup array storage based on supplied Configuration
-	bool setup(Configuration* cfg, const char* tag, const char* suffix);
+	bool setup(Configuration* cfg, const char* prefix, const char* tag, const char* suffix);
+	// Setup array storage based on supplied Configuration, but using alternative AtomTypeList
+	bool setup(Configuration* cfg, const AtomTypeList& atomTypes, const char* prefix, const char* tag, const char* suffix);
 	// Reset partial arrays
 	void reset();
 	// Return number of AtomTypes used to generate matrices
@@ -82,6 +84,14 @@ class PartialRSet : public ListItem<PartialRSet>
 	Data2D& total();
 	// Save partials information to disk
 	bool save();
+
+
+	/*
+	 * Manipulation
+	 */
+	public:
+	// Add in partials from source PartialRSet to our own
+	bool add(PartialRSet& source, double weighting);
 
 
 	/*

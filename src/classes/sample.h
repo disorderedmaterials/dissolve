@@ -49,12 +49,16 @@ class Sample : public ListItem<Sample>
 	private:
 	// Descriptive name
 	CharString name_;
+	// Nice name (generated from name_) used for output files
+	CharString niceName_;
 
 	public:
 	// Set name of Sample
 	void setName(const char* name);
 	// Return name of Sample
 	const char* name() const;
+	// Return nice name of the Sample
+	const char* niceName();
 
 
 	/*

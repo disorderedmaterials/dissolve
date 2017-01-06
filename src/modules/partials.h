@@ -26,7 +26,7 @@
 #include "classes/partialrset.h"
 
 // Forward Declarations
-/* none */
+class WeightsMatrix;
 
 // Partials Module
 class Partials : public Module
@@ -113,6 +113,8 @@ class Partials : public Module
 	public:
 	// (Re)calculate unweighted partials for the specified Configuration
 	bool calculateUnweighted(Configuration* cfg, ProcessPool& procPool, int method = 0);
+	// Calculate weighted partials for the specified Configuration
+	bool calculateWeighted(Configuration* cfg, ProcessPool& procPool, WeightsMatrix& weightsMatrix);
 
 
 	/*

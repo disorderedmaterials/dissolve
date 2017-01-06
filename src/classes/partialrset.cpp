@@ -19,9 +19,10 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "classes/atomtype.h"
 #include "classes/partialrset.h"
-#include "configuration.h"
-#include "box.h"
+#include "classes/configuration.h"
+#include "classes/box.h"
 
 // Constructor
 PartialRSet::PartialRSet() : ListItem<PartialRSet>()
@@ -39,11 +40,17 @@ PartialRSet::~PartialRSet()
  */
 
 // Setup array storage based on supplied Configuration
-bool PartialRSet::setup(Configuration* cfg, const char* tag, const char* suffix)
+bool PartialRSet::setup(Configuration* cfg, const char* prefix, const char* tag, const char* suffix)
+{
+	return setup(cfg, cfg->usedAtomTypesList(), prefix, tag, suffix);
+}
+
+// Setup array storage based on supplied Configuration, but using alternative AtomTypeList
+bool PartialRSet::setup(Configuration* cfg, const AtomTypeList& atomTypes, const char* prefix, const char* tag, const char* suffix)
 {
 	// Construct a matrix based on the usedAtomTypes_ list of the Configuration, since this reflects all our possible partials
 	int n, m;
-	atomTypes_ = cfg->usedAtomTypesList();
+	atomTypes_ = atomTypes;
 	int nTypes = atomTypes_.nItems();
 	const double rdfRange = cfg->rdfRange();
 	const double binWidth = cfg->rdfBinWidth();
@@ -66,7 +73,7 @@ bool PartialRSet::setup(Configuration* cfg, const char* tag, const char* suffix)
 		for (m=n; m< nTypes; ++m, at2 = at2->next)
 		{
 			// Partial g(r)
-			title.sprintf("%s-%s-%s-%s.%s", cfg->niceName(), tag, at1->name(), at2->name(), suffix);
+			title.sprintf("%s-%s-%s-%s.%s", prefix, tag, at1->name(), at2->name(), suffix);
 			partials_.ref(n,m).initialise(0.0, rdfRange, binWidth);
 			partials_.ref(n,m).normalisedData().setName(title.get());
 			boundPartials_.ref(n,m).initialise(0.0, rdfRange, binWidth);
@@ -85,7 +92,7 @@ bool PartialRSet::setup(Configuration* cfg, const char* tag, const char* suffix)
 	int nBins = partials_.ref(0,0).nBins();
 	total_.initialise(nBins);
 	for (n=0; n<nBins; ++n) total_.setX(n, (n+0.5)*binWidth);
-	title.sprintf("%s-%s-total.%s", cfg->name(), tag, suffix);
+	title.sprintf("%s-%s-total.%s", prefix, tag, suffix);
 	total_.setName(title);
 
 	index_ = -1;
@@ -218,6 +225,46 @@ bool PartialRSet::save()
 
 	Messenger::print("--> Writing RDF file '%s'...\n", total_.name());
 	return total_.save(total_.name());
+}
+
+/*
+ * Manipulation
+ */
+
+// Add in partials from source PartialRSet to our own
+bool PartialRSet::add(PartialRSet& source, double weighting)
+{
+	// Loop over partials in source set
+	int typeI, typeJ, localI, localJ;
+
+	int sourceNTypes = source.atomTypes_.nItems();
+	for (typeI=0; typeI<sourceNTypes; ++typeI)
+	{
+		AtomType* atI = source.atomTypes_.atomType(typeI);
+		localI = atomTypes_.indexOf(atI);
+		if (localI == -1)
+		{
+			Messenger::error("AtomType '%s' not present in this PartialRSet, so can't add in the associated data.\n", atI->name());
+			return false;
+		}
+
+		for (typeJ=typeI; typeJ<sourceNTypes; ++typeJ)
+		{
+			AtomType* atJ = source.atomTypes_.atomType(typeJ);
+			localJ = atomTypes_.indexOf(atJ);
+			if (localJ == -1)
+			{
+				Messenger::error("AtomType '%s' not present in this PartialRSet, so can't add in the associated data.\n", atJ->name());
+				return false;
+			}
+
+			// Grab Histogram and update it
+			Histogram& hist = partial(localI, localJ);
+			hist.addHistogramData(source.partial(typeI, typeJ), weighting);
+		}
+	}
+
+	return true;
 }
 
 /*
