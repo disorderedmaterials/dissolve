@@ -66,18 +66,12 @@ class DUQ
 	public:
 	// Add AtomType
 	AtomType* addAtomType(int el);
-	// Remove AtomType
-	void removeAtomType( AtomType* at);
 	// Return number of AtomTypes in list
 	int nAtomTypes() const;
 	// Return first AtomType in list
 	AtomType* atomTypes() const;
 	// Return nth AtomType in list
 	AtomType* atomType(int n);
-	// Return first AtomType for element specified
-	AtomType* atomTypeForElement(int el) const;
-	// Update AtomTypes definitions
-	void updateAtomTypes();
 	// Generate unique AtomType name with base name provided
 	const char* uniqueAtomTypeName(const char* base, AtomType* exclude = 0) const;
 	// Search for AtomType by name
@@ -142,10 +136,13 @@ class DUQ
 	double pairPotentialTruncationWidth_;
 	// Delta to use in tabulation
 	double pairPotentialDelta_;
+	// Whether atomic charges are included in generated PairPotentials
+	bool pairPotentialIncludesCharges_;
 	// Simulation PairPotentials
 	List<PairPotential> pairPotentials_;
 	// Map for PairPotentials
 	PotentialMap potentialMap_;
+
 
 	public:
 	// Set maximum distance for tabulated PairPotentials
@@ -162,26 +159,22 @@ class DUQ
 	void setPairPotentialDelta(double delta);
 	// Return delta to use in tabulations
 	double pairPotentialDelta() const;
-	// Add missing pair PairPotentials to lists
-	bool addMissingPairPotentials();
-	// Remove specified PairPotential from the list
-	void removePairPotential(PairPotential* pot);
+	// Set whether atomic charges are included in generated PairPotentials
+	void setPairPotentialIncludesCharges(bool b);
+	// Return whether atomic charges are included in generated PairPotentials
+	bool pairPotentialIncludesCharges();
 	// Return index of specified PairPotential
 	int indexOf(PairPotential* pp);
 	// Return number of defined PairPotentials
 	int nPairPotentials() const;
 	// Add new pair potential to list
-	PairPotential* addPairPotential();
+	PairPotential* addPairPotential(AtomType* at1, AtomType* at2);
 	// Return first PairPotential in list
 	PairPotential* pairPotentials() const;
 	// Return nth PairPotential in list
 	PairPotential* pairPotential(int n);
 	// Return whether specified PairPotential is defined
 	PairPotential* hasPairPotential(AtomType* at1, AtomType* at2) const;
-	// Regenerate all currently-defined PairPotentials
-	void regeneratePairPotentials();
-	// Regenerate specific PairPotential
-	void regeneratePairPotential(PairPotential* pp);
 	// Save all PairPotentials
 	bool savePairPotentials(const char* baseName) const;
 	// Return map for PairPotentials

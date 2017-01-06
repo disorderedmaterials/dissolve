@@ -7,7 +7,6 @@ duq.cpp
 energy.cpp
 forces.cpp
 io.cpp
-keywords_atomtypes.cpp
 keywords_configuration.cpp
 keywords.cpp
 keywords_module.cpp

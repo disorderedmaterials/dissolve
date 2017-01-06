@@ -1,17 +1,17 @@
 # Minimal Example: Water
 
 # AtomType Definitions
-AtomTypes
-  AtomType  'OW'    O  'OW'
-  AtomType  'HW'    H  'HW'
-EndAtomTypes
+#AtomTypes
+#  AtomType  'OW'    O  'OW'
+#  AtomType  'HW'    H  'HW'
+#EndAtomTypes
 
 # Define Water Molecule
 Species 'Water'
   # Atoms
-  Atom    1    O     0.015   -0.009   -0.373   -0.848 'OW'
-  Atom    2    H     0.757    0.013    0.217    0.424 'HW'
-  Atom    3    H    -0.771   -0.003    0.157    0.424 'HW'
+  Atom    1    O     0.015   -0.009   -0.373   'OW'
+  Atom    2    H     0.757    0.013    0.217   'HW'
+  Atom    3    H    -0.771   -0.003    0.157   'HW'
 
   # Intramolecular Terms
   Bond    1    2     0.995 3000.000
@@ -65,6 +65,7 @@ PairPotentials
   Range  15.000000
   Delta  0.050000
   TruncationWidth  2.000000
+  GenerateAll  'LJ'
   Full  'OW'  'OW'  3.166000  0.650000  -0.820000  -0.820000
   Full  'OW'  'HW'  2.783000  0.286182  -0.820000  0.410000
   Full  'HW'  'HW'  2.400000  0.126000  0.410000  0.410000

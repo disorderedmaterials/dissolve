@@ -28,8 +28,9 @@
 // Species Block Keywords
 KeywordData SpeciesBlockData[] = {
 	{ "Angle",			5,	"" },
-	{ "Atom",			7,	"" },
+	{ "Atom",			6,	"" },
 	{ "Bond",			4,	"" },
+	{ "Charge",			2,	"" },
 	{ "EndSpecies",			0,	"" },
 	{ "Grain",			1,	"" },
 	{ "Isotopologue",		1,	"" }
@@ -63,6 +64,7 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 	CharString arg1, arg2;
 	AtomType* at;
 	Isotopologue* iso;
+	Parameters* params;
 	SpeciesAngle* a;
 	SpeciesAtom* i;
 	SpeciesBond* b;
@@ -102,20 +104,26 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 					break;
 				}
 				i = species->addAtom(el, parser.argd(3), parser.argd(4), parser.argd(5));
-				i->setCharge(parser.argd(6));
-				at = duq->findAtomType(parser.argc(7));
+
+				// Locate the AtomType assigned to the Atom
+				at = duq->findAtomType(parser.argc(6));
 				if (!at)
 				{
-					Messenger::print("Warning: AtomType '%s' has not been defined in Species '%s'...\n", parser.argc(7), species->name());
-					at = duq->atomTypeForElement(el);
-					if (at) Messenger::print("--> Using first available AtomType ('%s') for element.\n", at->name());
-					else
+					Messenger::print("Creating AtomType '%s'...\n", parser.argc(6));
+					at = duq->addAtomType(el);
+					at->setName(parser.argc(6));
+				
+					// Check to see if some named potential parameters exist, corrsponding to the AtomType name
+					params = PeriodicTable::element(el).findParameters(parser.argc(6));
+					if (params)
 					{
-						Messenger::error("No available AtomTypes.\n");
-						error = true;
-						break;
+						at->setParameters(params);
+						Messenger::print("Initial parameters set for AtomType '%s' : sigma=%f, epsilon=%f, charge=%f.\n", parser.argc(6), params->sigma(), params->epsilon(), params->charge());
 					}
+					else Messenger::print("No Parameters called '%s' exist to associate to AtomType - they must be added in the PairPotentials block.\n", parser.argc(6));
 				}
+
+				// Finally, set AtomType for the Atom
 				i->setAtomType(at);
 				break;
 			case (SpeciesBlock::BondKeyword):
@@ -126,6 +134,15 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 					b->setForceConstant(parser.argd(4));
 				}
 				else error = true;
+				break;
+			case (SpeciesBlock::ChargeKeyword):
+				i = species->atom(parser.argi(1) - 1);
+				if (i) i->setCharge(parser.argd(2));
+				else
+				{
+					Messenger::error("Specified atom index (%i) for Charge keyword is out of range.\n", parser.argi(1));
+					error = true;
+				}
 				break;
 			case (SpeciesBlock::EndSpeciesKeyword):
 				species->autoAddGrains();

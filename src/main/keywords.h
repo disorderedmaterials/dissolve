@@ -54,7 +54,6 @@ namespace InputBlocks
 	// Input File Block Keyword Enum
 	enum InputBlock
 	{
-		AtomTypesBlock,			/* 'AtomTypes' - Contains definitions of AtomTypes over all Species */
 		ConfigurationBlock,		/* 'Configuration' - Defines a single Configuration for use in the simulation */
 		ModuleBlock,			/* 'Module' - Sets up a Module within a Configuration */
 		PairPotentialsBlock,		/* 'PairPotentials' - Contains definitions of the PairPotentials for the simulation */
@@ -69,29 +68,6 @@ namespace InputBlocks
 	const char* inputBlock(InputBlock id);
 	// Print list of valid keywords for InputBlock specified
 	void printValidKeywords(InputBlock block);
-};
-
-
-/*
- * AtomTypes Block Keywords
- */
-namespace AtomTypesBlock
-{
-	// AtomTypes Block Keyword Enum
-	enum AtomTypesKeyword
-	{
-		AtomTypeKeyword,		/* 'AtomType' - Specifies an AtomType definition  */
-		EndAtomTypesKeyword,		/* 'EndAtomTypes' - Signals the end of the AtomTypes block */
-		nAtomTypesKeywords		/* Number of keywords defined for this block */
-	};
-	// Convert text string to AtomTypesKeyword
-	AtomTypesKeyword keyword(const char* s);
-	// Convert AtomTypesKeyword to text string
-	const char* keyword(AtomTypesKeyword id);
-	// Return expected number of expected arguments
-	int nArguments(AtomTypesKeyword id);
-	// Parse AtomTypes block
-	bool parse(LineParser& parser, DUQ* duq);
 };
 
 
@@ -166,13 +142,14 @@ namespace PairPotentialsBlock
 	// PairPotential Block Keyword Enum
 	enum PairPotentialsKeyword
 	{
-		CoulombKeyword,			/* 'Coulomb' - Specifies a PairPotential with Coulomb contributions only */
 		DeltaKeyword,			/* 'Delta' - Gives the spacing between points in the tabulated potentials */
-		DispersionKeyword,		/* 'Dispersion' - Specifies a PairPotential with LJ contributions only */
 		EndPairPotentialsKeyword,	/* 'EndPairPotentials' - Signals the end of the PairPotentials block */
-		FullKeyword,			/* 'Full' - Specifies a full PairPotential with LJ and charge contributions */
+		GenerateAllKeyword,		/* 'GenerateAll' - Generates all required PairPotentials with the specified contributions */
+		GenerateKeyword,		/* 'Generate' - Generates a single PairPotential with the specified contributions */
+		ParametersKeyword,		/* 'Parameters' - Sets or re-sets the LJ and charge parameters for a specific AtomType */
 		RangeKeyword,			/* 'Range' - Specifies the total range (inc. truncation width) over which to generate potentials */
 		TruncationWidthKeyword,		/* 'TruncationWidth' - Width of potential tail over which to reduce to zero */
+		UseAtomChargesKeyword,		/* 'UseAtomCharges' - Specifies that Coulomb interactions should be calculated from atomic charges, rather than be included in PairPotentials */
 		nPairPotentialsKeywords		/* Number of keywords defined for this block */
 	};
 	// Convert text string to PairPotentialKeyword
@@ -248,6 +225,7 @@ namespace SpeciesBlock
 		AngleKeyword,			/* 'Angle' - Defines an Angle joining three atoms */
 		AtomKeyword,			/* 'Atom' - Specifies an Atom in the Species */
 		BondKeyword,			/* 'Bond' - Defines a Bond joining two atoms */
+		ChargeKeyword,			/* 'Charge' - Specifies the atomic charge for an individual atom */
 		EndSpeciesKeyword,		/* 'EndSpecies' - Signals the end of the current Species */
 		GrainKeyword,			/* 'Grain' - Defines a Grain containing a number of Atoms */
 		IsotopologueKeyword,		/* 'Isotopologue' - Defines isotope information for the Atoms */

@@ -29,21 +29,12 @@
 // Dump full system setup
 void DUQ::dumpSystemSetup(bool includeData)
 {
-	// Print the full system setup (in input file format)/
+	// Print the full system setup (in input file format)
 	// Can optionally include data (i.e. datasets, coordinates, box normalisation etc.) for extra checks
 
 	// Write title comment
 	Messenger::print("\n\n# SYSTEM DUMP\n\n");
 	
-	// Write AtomTypes block
-	Messenger::print("# AtomType Definitions\n");
-	Messenger::print("%s\n", InputBlocks::inputBlock(InputBlocks::AtomTypesBlock));
-	for (AtomType* at = atomTypes_.first(); at != NULL; at = at->next)
-	{
-		Messenger::print("  %s  '%s'  %3s  '%s'\n", AtomTypesBlock::keyword(AtomTypesBlock::AtomTypeKeyword), at->name(), periodicTable.element(at->element()).symbol(), at->parameters()->name());
-	}
-	Messenger::print("%s\n\n", AtomTypesBlock::keyword(AtomTypesBlock::EndAtomTypesKeyword));
-
 	// Write Species data
 	Messenger::print("# Species Definitions\n");
 	for (Species* sp = species_.first(); sp != NULL; sp = sp->next)
@@ -195,9 +186,7 @@ void DUQ::dumpSystemSetup(bool includeData)
 	Messenger::print("  %s  %f\n", PairPotentialsBlock::keyword(PairPotentialsBlock::TruncationWidthKeyword), pairPotentialTruncationWidth_);
 	for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next)
 	{
-		if (pot->type() == PairPotential::CoulombType) Messenger::print("  %s  '%s'  '%s'  %f  %f\n", PairPotential::pairPotentialType(pot->type()), pot->atomTypeI()->name(), pot->atomTypeJ()->name(), pot->chargeI(), pot->chargeJ());
-		else if (pot->type() == PairPotential::DispersionType) Messenger::print("  %s  '%s'  '%s'  %f  %f\n", PairPotential::pairPotentialType(pot->type()), pot->atomTypeI()->name(), pot->atomTypeJ()->name(), pot->sigmaIJ(), pot->epsilonIJ());
-		else Messenger::print("  %s  '%s'  '%s'  %f  %f  %f  %f\n", PairPotential::pairPotentialType(pot->type()), pot->atomTypeI()->name(), pot->atomTypeJ()->name(), pot->sigmaIJ(), pot->epsilonIJ(), pot->chargeI(), pot->chargeJ());
+		Messenger::print("  %s  '%s'  '%s'  %f  %f\n", PairPotentialsBlock::keyword(PairPotentialsBlock::GenerateKeyword), PairPotential::shortRangeType(pot->shortRangeType()), pot->atomTypeI()->name(), pot->atomTypeJ()->name());
 	}
 	Messenger::print("%s\n\n", PairPotentialsBlock::keyword(PairPotentialsBlock::EndPairPotentialsKeyword));
 
@@ -243,10 +232,10 @@ void DUQ::dumpSystemSetup(bool includeData)
 	{
 		Messenger::print("\n# PairPotential between atomtypes %s and %s:\n", pp->atomTypeNameI(), pp->atomTypeNameJ());
 		Messenger::print("# Original:\n");
-		pp->originalU().dump();
-		Messenger::print("# Current:\n");
-		pp->u().dump();
-		Messenger::print("# Current (Derivative):\n");
-		pp->dU().dump();
+		pp->uOriginal().dump();
+		Messenger::print("# Current (Full):\n");
+		pp->uFull().dump();
+		Messenger::print("# Current (Full, Derivative):\n");
+		pp->dUFull().dump();
 	}
 }

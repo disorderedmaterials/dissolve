@@ -41,19 +41,6 @@ AtomType* DUQ::addAtomType(int el)
 	return at;
 }
 
-// Remove AtomType definition
-void DUQ::removeAtomType(AtomType* at)
-{
-	// Nullify all Atoms using this AtomType
-	for (Species* sp = species_.first(); sp != NULL; sp = sp->next)
-	{
-		for (SpeciesAtom* i = sp->atoms(); i != NULL; i = i->next) if (i->atomType() == at) i->setAtomType(NULL);
-	}
-	atomTypes_.remove(at);
-
-	updateAtomTypes();
-}
-
 // Return number of AtomTypes in list
 int DUQ::nAtomTypes() const
 {
@@ -70,57 +57,6 @@ AtomType* DUQ::atomTypes() const
 AtomType* DUQ::atomType(int n)
 {
 	return atomTypes_[n];
-}
-
-// Return first AtomType for element specified
-AtomType* DUQ::atomTypeForElement(int el) const
-{
-	for (AtomType* at = atomTypes_.first(); at != NULL; at = at->next) if (at->element() == el) return at;
-	return NULL;
-}
-
-// Update AtomTypes definitions
-void DUQ::updateAtomTypes()
-{
-	// Loop over Atoms in all Species - check AtomType availability and validity for each
-	AtomType* at;
-	for (Species* sp = species_.first(); sp != NULL; sp = sp->next)
-	{
-		for (SpeciesAtom* i = sp->atoms(); i != NULL; i = i->next)
-		{
-			// Is current AtomType definition valid?
-			if (i->atomType() != NULL)
-			{
-				// Check it exists...
-				if (!atomTypes_.contains(i->atomType())) i->setAtomType(NULL);
-				else
-				{
-					// Check elements
-					if (i->element() == i->atomType()->element()) continue;
-					else i->setAtomType(NULL);
-				}
-			}
-			
-			// Either not valid, or nothing present.
-			// Does an AtomType definition exist for this element?
-			at = atomTypeForElement(i->element());
-			if (!at)
-			{
-				// Create a suitable AtomType
-				at = atomTypes_.add();
-				at->setElement(i->element());
-				at->setParameters(PeriodicTable::element(i->element()).parameters());
-				at->setName(uniqueAtomTypeName(PeriodicTable::element(i->element()).symbol(), at));
-			}
-			i->setAtomType(at);
-		}
-	}
-	
-	// Step through AtomType definitions and make sure all have a valid set of Parameters
-	for (AtomType* at = atomTypes_.first(); at != NULL; at = at->next)
-	{
-		if (!at->parameters()) at->setParameters(PeriodicTable::element(at->element()).parameters());
-	}
 }
 
 // Generate unique AtomType name with base name provided

@@ -38,22 +38,25 @@ PairPotential::PairPotential() : ListItem<PairPotential>()
 	chargeJ_ = 0.0;
 	nPoints_ = 0;
 	delta_ = -1.0;
-	type_ = DispersionType;
+	range_ = 0.0;
+	rangeSquared_ = 0.0;
+	includeCharges_ = true;
+	shortRangeType_ = LennardJonesType;
 	rangeSquared_ = 0.0;
 }
 
 // Input File Block Keywords
-const char* PairPotentialTypeKeywords[] = { "Coulomb", "Dispersion", "Full" };
+const char* PairPotentialTypeKeywords[] = { "None", "LJ" };
 
-// Convert text string to PairPotentialType
-PairPotential::PairPotentialType PairPotential::pairPotentialType(const char* s)
+// Convert text string to ShortRangeType
+PairPotential::ShortRangeType PairPotential::shortRangeType(const char* s)
 {
-	for (int n=0; n<PairPotential::nPairPotentialTypes; ++n) if (strcmp(s,PairPotentialTypeKeywords[n]) == 0) return (PairPotential::PairPotentialType) n;
-	return PairPotential::nPairPotentialTypes;
+	for (int n=0; n<PairPotential::nShortRangeTypes; ++n) if (strcmp(s,PairPotentialTypeKeywords[n]) == 0) return (PairPotential::ShortRangeType) n;
+	return PairPotential::nShortRangeTypes;
 }
 
-// Convert PairPotentialType to text string
-const char* PairPotential::pairPotentialType(PairPotential::PairPotentialType id)
+// Convert ShortRangeType to text string
+const char* PairPotential::shortRangeType(PairPotential::ShortRangeType id)
 {
 	return PairPotentialTypeKeywords[id];
 }
@@ -62,16 +65,16 @@ const char* PairPotential::pairPotentialType(PairPotential::PairPotentialType id
  * Potential Type
  */
 
-// Set PairPotential type
-void PairPotential::setType(PairPotential::PairPotentialType type)
+// Set short-ranged type
+void PairPotential::setShortRangeType(PairPotential::ShortRangeType type)
 {
-	type_ = type;
+	shortRangeType_ = type;
 }
 
-// Return PairPotential type
-PairPotential::PairPotentialType PairPotential::type() const
+// Return short-ranged type
+PairPotential::ShortRangeType PairPotential::shortRangeType() const
 {
-	return type_;
+	return shortRangeType_;
 }
 
 /*
@@ -94,13 +97,13 @@ void PairPotential::setData2DNames()
 	}
 
 	CharString s("%s-%s", atomTypeI_->name(), atomTypeJ_->name()), otherName;
-	u_.setName(s);
-	otherName.sprintf("%s (Ptb.)", s.get());
-	v_.setName(otherName);
-	otherName.sprintf("%s (Orig.)", s.get());
-	originalU_.setName(otherName);
-	otherName.sprintf("%s (dU/dX)", s.get());
-	dU_.setName(otherName);
+	uFull_.setName(s);
+	otherName.sprintf("%s (Add)", s.get());
+	uAdditional_.setName(otherName);
+	otherName.sprintf("%s (Orig)", s.get());
+	uOriginal_.setName(otherName);
+	otherName.sprintf("%s (dU/dr)", s.get());
+	dUFull_.setName(otherName);
 }
 
 // Set source parameters from AtomTypes
@@ -249,26 +252,36 @@ double PairPotential::chargeJ() const
  * Tabulated PairPotential
  */
 
+// Calculate full potential
+void PairPotential::calculateUFull()
+{
+	// Copy uOriginal_ into uFull_;
+	uFull_ = uOriginal_;
+
+	// Add on uAdditional...
+	uFull_ += uAdditional_;
+}
+
 // Regenerate derivative data
-void PairPotential::calculateDerivative()
+void PairPotential::calculateDUFull()
 {
 	if (nPoints_ < 2) return;
 
 	double x1, x2;
 	for (int n=1; n<nPoints_-1; ++n)
 	{
-		x1 = u_.x(n-1);
-		x2 = u_.x(n+1);
-		dU_.setY(n, -(u_.y(n-1) - u_.y(n+1)) / (x2-x1));
+		x1 = uFull_.x(n-1);
+		x2 = uFull_.x(n+1);
+		dUFull_.setY(n, -(uFull_.y(n-1) - uFull_.y(n+1)) / (x2-x1));
 	}
 	
 	// Set first and last points
-	dU_.setY(0, 10.0*dU_.y(1));
-	dU_.setY(nPoints_-1, 0.0);
+	dUFull_.setY(0, 10.0*dUFull_.y(1));
+	dUFull_.setY(nPoints_-1, 0.0);
 }
 
-// Generate potential
-bool PairPotential::generate(double maxR, double truncationWidth, double delta)
+// Setup and generate initial potential
+bool PairPotential::setup(double maxR, double truncationWidth, double delta, bool includeCharges)
 {
 	// Check that AtomType pointers were set at some pointer
 	if ((atomTypeI_ == NULL) || (atomTypeJ_ == NULL))
@@ -280,28 +293,47 @@ bool PairPotential::generate(double maxR, double truncationWidth, double delta)
 	// Determine nPoints_
 	delta_ = delta;
 	rDelta_ = 1.0/delta_;
+	range_ = maxR;
 	rangeSquared_ = maxR*maxR;
+	truncationWidth_ = truncationWidth;
+	includeCharges_ = includeCharges;
 	nPoints_ = rangeSquared_ / delta_;
 	
-	// Initialise arrays
-	u_.initialise(nPoints_);
-	dU_.initialise(nPoints_);
-	
-	// Generate potential
+	// Initialise and calculate original potential
+	uOriginal_.initialise(nPoints_);
+	calculateUOriginal();
+
+	// Set up empty array for additional potential
+	uAdditional_ = uOriginal_;
+	uAdditional_.arrayY() = 0.0;
+
+	// Update full potential
+	calculateUFull();
+
+	// Generate derivative data
+	dUFull_.initialise(nPoints_);
+	calculateDUFull();
+
+	return true;
+}
+
+// (Re)generate potential from current parameters
+bool PairPotential::calculateUOriginal()
+{
 	double r, sigmar, sigmar6, sigmar12, truncr, rSq, energy;
+
 	for (int n=1; n<nPoints_; ++n)
 	{
 		// Calculate r-squared, and the corresponding r, and truncation r
 		rSq = n*delta_;
-		u_.setX(n, rSq);
-		dU_.setX(n, rSq);
+		uOriginal_.setX(n, rSq);
 		r = sqrt(rSq);
 
 		// Construct potential
-		u_.setY(n, 0.0);
+		uOriginal_.setY(n, 0.0);
 		
-		// -- Add LJ contribution
-		if (type_ != PairPotential::CoulombType)
+		// -- Standard Lennard-Jones potential
+		if (shortRangeType_ == PairPotential::LennardJonesType)
 		{
 			sigmar = sigmaIJ_ / r;
 			sigmar6 = pow(sigmar, 6.0);
@@ -309,42 +341,32 @@ bool PairPotential::generate(double maxR, double truncationWidth, double delta)
 			energy = 4.0 * epsilonIJ_ * ( sigmar12 - sigmar6 );
 			
 			// Are we into the truncation strip?
-			truncr = r - (maxR-truncationWidth);
+			truncr = r - (range_-truncationWidth_);
 			if (truncr >= 0)
 			{
 				// Simple truncation scheme - (cos(x)+1)*0.5, mapping the truncation region to {0,Pi}
-				energy *= (cos(PI*(truncr/truncationWidth))+1)*0.5;
+				energy *= (cos(PI*(truncr/truncationWidth_))+1)*0.5;
 			}
 			
-			// LJ potential only in the current case - no coulomb interaction
-			u_.addY(n, energy);
+			uOriginal_.addY(n, energy);
 		}
 		
 		// -- Add Coulomb contribution
-		if (type_ != PairPotential::DispersionType)
+		if (includeCharges_)
 		{
 			energy = COULCONVERT * chargeI_ * chargeJ_ / r;
 
 			// Apply potential truncation
-			energy *= (1.0/r - 1.0/maxR);
-			u_.addY(n, energy);
+			energy *= (1.0/r - 1.0/range_);
+			uOriginal_.addY(n, energy);
 		}
 	}
 
-	// Since the first point (at zero) would be a nan, set it to ten times the second point instead
-	u_.setY(0, 10.0*u_.y(1));
+	// Since the first point (at zero) risks being a nan, set it to ten times the second point instead
+	uOriginal_.setY(0, 10.0*uOriginal_.y(1));
 
-	// Store copy of this original data
-	originalU_ = u_;
-
-	// Set up empty array for perturbation potential
-	v_ = u_;
-	v_.arrayY() = 0.0;
-
-	// Generate derivative data
-	calculateDerivative();
-
-	return true;
+	// Update full potential
+	calculateUFull();
 }
 
 // Return potential at specified r-squared
@@ -363,7 +385,7 @@ double PairPotential::energyAtRSquared(double distanceSq) const
 // 	// Determine potential bin
 // 	int bin = distanceSq*rDelta_;
 // 	return (bin >= nPoints_ ? 0.0 : u_.y(bin));
-	return u_.y(distanceSq*rDelta_);
+	return uFull_.y(distanceSq*rDelta_);
 }
 
 // Return derivative at specified r-squared
@@ -379,110 +401,40 @@ double PairPotential::forceAtRSquared(double distanceSq) const
 #endif
 	// Determine potential bin
 	int bin = distanceSq*rDelta_;
-	return (bin >= nPoints_ ? 0.0 : dU_.y(bin));
+	return (bin >= nPoints_ ? 0.0 : dUFull_.y(bin));
 }
 
-// Return tabulated potential
-Data2D& PairPotential::u()
+// Return full tabulated potential (original plus additional)
+Data2D& PairPotential::uFull()
 {
-	return u_;
+	return uFull_;
 }
 
-// Return tabulated derivative
-Data2D& PairPotential::dU()
+// Return full tabulated derivative
+Data2D& PairPotential::dUFull()
 {
-	return dU_;
+	return dUFull_;
 }
 
-// Return original potential (without modifications)
-Data2D& PairPotential::originalU()
+// Return original potential (calculated from AtomType parameters)
+Data2D& PairPotential::uOriginal()
 {
-	return originalU_;
+	return uOriginal_;
 }
 
-/*
- * Perturbation
- */
-
-// Update perturbation to potential, recreating tabulated data
-bool PairPotential::updatePerturbation(Data2D& perturbation, double yScale, double blendFactor)
+// Return additional potential (generated by some means)
+Data2D& PairPotential::uAdditional()
 {
-	// Add new perturbation 
-// 	v_.addInterpolated(addV);
-	v_ = perturbation;
-	v_.save("v.txt");
-	
-// 	// Find first negative value of potential...
-// 	ljFitMaximum_ = 7.0;
-// 	for (int n=0; n<v_.nPoints(); ++n)
-// 	{
-// 		ljFitMinimum_ = v_.x(n);
-// 		if (v_.y(n) < 0.0) break;
-// 	}
-// 	Messenger::print("LJ fit range is %f to %f Angstroms.\n", ljFitMinimum_, ljFitMaximum_);
-// 	
-// 	// Fit LJ potential to first minimum well in perturbation
-// 	Simplex<PairPotential> ljFitSimplex(this, &PairPotential::potentialFitCost);
-// 	Array<double> alpha;
-// 	alpha.add(3.0);	// Sigma
-// 	alpha.add(0.1);	// Epsilon
-// 	alpha.add(12.0);// Power 1
-// 	alpha.add(6.0);	// Power 2
-// 
-// 	ljFitSimplex.initialise(alpha, 0.1);
-// 	alpha = ljFitSimplex.minimise(100, 100, 1.0e-5, 1.0);
-// 	for (int n=0; n< alpha.nItems(); ++n) printf("%i  %f\n", n, alpha[n]);
-// 	printf("Final cost is %f\n", potentialFitCost(alpha));
-// 	double lj, r, sigma = alpha[0], epsilon = alpha[1], power1 = alpha[2], power2 = alpha[3];
-	double r;
-	for (int n=1; n<u_.nPoints(); ++n)
-	{
-		r = sqrt(u_.x(n));
-// 		lj = yScale * 4.0*epsilon * (pow(sigma/r, power1) - pow(sigma/r, power2));
-
-		// Blend LJ potential with remainder of function
-// 		u_.arrayY()[n] += yScale * (lj + (v_.interpolated(r) - lj) * blendFactor);
-		
-		u_.arrayY()[n] -= v_.interpolated(r) * 0.1;
-	}
-	u_.save("pp.txt");
-
-	// Modify pair potential
-// 	u_ = originalU_;
-// 	for (int n=0; n<u_.nPoints(); ++n) u_.arrayY()[n] += v_.interpolated(sqrt(u_.x(n)));
-// 	for (int n=0; n<u_.nPoints(); ++n) u_.arrayY()[n] = v_.interpolated(sqrt(u_.x(n)));
-	calculateDerivative();
-
-	return true;
+	return uAdditional_;
 }
 
-// Cost function callback (passed to Simplex on construction)
-double PairPotential::potentialFitCost(Array<double>& alpha)
+// Zero additional potential
+void PairPotential::resetUAdditional()
 {
-	double r, cost = 0.0;
-	double lj, sigma = alpha[0], epsilon = alpha[1], power1 = alpha[2], power2 = alpha[3];
-	for (int n=0; n<v_.nPoints(); ++n)
-	{
-		r = v_.x(n);
-		if (r < ljFitMinimum_) continue;
-		if (r > ljFitMaximum_) break;
-		lj = 4.0*epsilon * (pow(sigma/r, power1) - pow(sigma/r, power2));
-		cost += (v_.y(n) - lj) * (v_.y(n) - lj) * (ljFitMinimum_ / r) * (ljFitMinimum_ / r);
-	}
-	return cost;
-}
+	uAdditional_.arrayY() = 0.0;
 
-// Clear perturbation to potential, reverting to original
-void PairPotential::clearPerturbation()
-{
-	u_ = originalU_;
-	calculateDerivative();
-}
-
-// Return modification to PairPotential
-Data2D& PairPotential::v()
-{
-	return v_;
+	calculateUFull();
+	calculateDUFull();
 }
 
 /*
@@ -503,9 +455,10 @@ bool PairPotential::save(const char* filename)
 		return false;
 	}
 	
-	parser.writeLineF("#%9s  %12s  %12s  %12s  %12s\n", "r(Angs)", "U(kJ/mol)", "dU(kJ/mol/Ang)", "U0(kJ/mol)", "V(kJ/mol)");
-	if (v_.nPoints() > 0) for (int n = 0; n<nPoints_; ++n) parser.writeLineF("%10.4e  %12.4e  %12.4e  %12.4e  %12.4e\n", sqrt(u_.x(n)), u_.y(n), dU_.y(n), originalU_.y(n), v_.interpolated(sqrt(u_.x(n))));
-	else for (int n = 0; n<nPoints_; ++n) parser.writeLineF("%10.4e  %12.4e  %12.4e  %12.4e  %12.4e\n", sqrt(u_.x(n)), u_.y(n), dU_.y(n), originalU_.y(n), 0.0);
+	parser.writeLineF("#%9s  %12s  %12s  %12s  %12s\n", "", "Full", "Derivative", "Original", "Additional");
+	parser.writeLineF("#%9s  %12s  %12s  %12s  %12s\n", "r(Angs)", "U(kJ/mol)", "dU(kJ/mol/Ang)", "U(kJ/mol)", "U(kJ/mol)");
+	for (int n = 0; n<nPoints_; ++n) parser.writeLineF("%10.4e  %12.4e  %12.4e  %12.4e  %12.4e\n", sqrt(uOriginal_.x(n)), uFull_.y(n), dUFull_.y(n), uOriginal_.y(n), uAdditional_.interpolated(sqrt(uOriginal_.x(n))));
+
 	parser.closeFiles();
 	return true;
 }

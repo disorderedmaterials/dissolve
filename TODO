@@ -2,7 +2,6 @@
 TODO
 ----
 
-o Allow atom types to be added/generated automatically as they are found in Species (removing need for AtomTypes block)?
 o Output of new (full) input file after each cycle
 o Dynamic load-balancing when running Configurations in parallel - assess time taken to go through all steps and adjust overall repeats relative to other Configurations.
 o Modify EnergyKernel to add in Coulomb term to PairPotential if it does not include it (may have to re-write PairPotential class slightly to make this clear).

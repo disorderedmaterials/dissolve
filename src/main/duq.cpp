@@ -30,6 +30,7 @@ DUQ::DUQ()
 	pairPotentialDelta_ = 0.01;
 	pairPotentialRange_ = 15.0;
 	pairPotentialTruncationWidth_ = 2.0;
+	pairPotentialIncludesCharges_ = true;
 
 	// Setup
 	boxNormalisationPoints_ = 50000000;

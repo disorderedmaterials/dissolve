@@ -65,43 +65,16 @@ double DUQ::pairPotentialDelta() const
 	return pairPotentialDelta_;
 }
 
-// Add missing pair potentials to lists
-bool DUQ::addMissingPairPotentials()
+// Set whether atomic charges are included in generated PairPotentials
+void DUQ::setPairPotentialIncludesCharges(bool b)
 {
-	// Double loop over defined AtomTypes - search for these potentials in the list
-	PairPotential* pot;
-	for (AtomType* at1 = atomTypes_.first(); at1 != NULL; at1 = at1->next)
-	{
-		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next)
-		{
-			// Search for existing potential
-			if (hasPairPotential(at1, at2)) continue;
-			
-			// Not there, so create it
-			pot = pairPotentials_.add();
-			pot->setType(PairPotential::FullType);
-			pot->setParameters(at1, at2);
-			
-			pot->generate(pairPotentialRange_, pairPotentialTruncationWidth_,  pairPotentialDelta_);
-		}
-	}
-
-	// Finally, go through list and prune any potentials with unknown AtomTypes
-	for (pot = pairPotentials_.first(); pot != NULL; pot = pot->next)
-	{
-		if ((!atomTypes_.contains(pot->atomTypeI())) || (!atomTypes_.contains(pot->atomTypeJ())))
-		{ 
-			Messenger::print("An existing Potential has been removed, since one (or both) of its original AtomTypes no longer exists.\n");
-		}
-	}
-	
-	return true;
+	pairPotentialIncludesCharges_ = b;
 }
 
-// Remove specified PairPotential from the list
-void DUQ::removePairPotential(PairPotential* pot)
+// Return whether atomic charges are included in generated PairPotentials
+bool DUQ::pairPotentialIncludesCharges()
 {
-	pairPotentials_.remove(pot);
+	return pairPotentialIncludesCharges_;
 }
 
 // Return index of specified PairPotential
@@ -117,9 +90,12 @@ int DUQ::nPairPotentials() const
 }
 
 // Add new pair potential to list
-PairPotential* DUQ::addPairPotential()
+PairPotential* DUQ::addPairPotential(AtomType* at1, AtomType* at2)
 {
-	return pairPotentials_.add();
+	PairPotential* pp = pairPotentials_.add();
+	pp->setAtomTypes(at1, at2);
+
+	return pp;
 }
 
 // Return first PaiPotential in list
@@ -143,18 +119,6 @@ PairPotential* DUQ::hasPairPotential(AtomType* at1, AtomType* at2) const
 		if ((pot->atomTypeI() == at2) && (pot->atomTypeJ() == at1)) return pot;
 	}
 	return NULL;
-}
-
-// Regenerate all currently-defined PairPotentials
-void DUQ::regeneratePairPotentials()
-{
-	for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next) pot->generate(pairPotentialRange_, pairPotentialTruncationWidth_, pairPotentialDelta_);
-}
-
-// Regenerate specific PairPotential
-void DUQ::regeneratePairPotential(PairPotential* pp)
-{
-	pp->generate(pairPotentialRange_, pairPotentialTruncationWidth_, pairPotentialDelta_);
 }
 
 // Save all PairPotentials

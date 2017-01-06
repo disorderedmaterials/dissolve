@@ -69,9 +69,6 @@ bool DUQ::loadSpecies(const char* filename)
 	// Centre coordinates at the origin
 	newSpecies->centreAtOrigin();
 
-	// Update the AtomTypes list
-	updateAtomTypes();
-
 	// Calculate bonds and angles
 	Messenger::print("Recalculating bonds/angles for '%s'...\n", newSpecies->name());
 	newSpecies->recalculateIntramolecular();
@@ -124,9 +121,6 @@ bool DUQ::loadInput(const char* filename)
 		block = InputBlocks::inputBlock(parser.argc(0));
 		switch (block)
 		{
-			case (InputBlocks::AtomTypesBlock):
-				if (!AtomTypesBlock::parse(parser, this)) error = true;
-				break;
 			case (InputBlocks::ConfigurationBlock):
 				// Check to see if a Configuration with this name already exists...
 				if (findConfiguration(parser.argc(1)))
@@ -184,10 +178,7 @@ bool DUQ::loadInput(const char* filename)
 	}
 	
 	if (!error) Messenger::print("Finished reading input file.\n");
-
-	// Update necessary objects
 	filename_ = filename;
-	regeneratePairPotentials();
 
 	// Error encountered?
 	if (error)

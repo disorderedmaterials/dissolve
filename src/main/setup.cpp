@@ -107,6 +107,13 @@ bool DUQ::setupSimulation()
 				Messenger::error("A PairPotential between AtomTypes '%s' and '%s' is required, but has not been defined.\n", at1->name(), at2->name());
 				++nMissingPots;
 			}
+
+			// Setup PairPotential
+			if (!pot->setup(pairPotentialRange_, pairPotentialTruncationWidth_, pairPotentialDelta_, pairPotentialIncludesCharges_))
+			{
+				Messenger::error("Failed to setup PairPotential between AtomTypes '%s' and '%s'.\n", at1->name(), at2->name());
+				return false;
+			}
 		}
 	}
 	if (nMissingPots > 0) return false;
