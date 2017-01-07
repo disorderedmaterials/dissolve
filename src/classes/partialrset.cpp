@@ -67,10 +67,10 @@ bool PartialRSet::setup(Configuration* cfg, const AtomTypeList& atomTypes, const
 	AtomTypeData* at1 = atomTypes_.first(), *at2;
 	Messenger::print("--> Creating Lists of partials and linking into matrices...\n");
 	Messenger::printVerbose("Range/binWidth/Volume = %f/%f/%f\n", rdfRange, binWidth, boxVolume);
-	for (n=0; n< nTypes; ++n, at1 = at1->next)
+	for (n=0; n<nTypes; ++n, at1 = at1->next)
 	{
 		at2 = at1;
-		for (m=n; m< nTypes; ++m, at2 = at2->next)
+		for (m=n; m<nTypes; ++m, at2 = at2->next)
 		{
 			// Partial g(r)
 			title.sprintf("%s-%s-%s-%s.%s", prefix, tag, at1->name(), at2->name(), suffix);

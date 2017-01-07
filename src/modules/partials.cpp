@@ -194,7 +194,7 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 		}
 
 		// Setup partial set for the Sample, using the AtomTypeList we have just constructed
-		PartialRSet& samplePartials = GenericListHelper<PartialRSet>::realise(sam->moduleData(), CharString("WeightedGR_%s", mixSource.get()), uniqueName_);
+		PartialRSet& samplePartials = GenericListHelper<PartialRSet>::realise(sam->moduleData(), CharString("UnweightedGR", mixSource.get()), uniqueName_);
 		samplePartials.setup(targetConfigurations_.firstItem(), atomTypes, sam->niceName(), "unweighted", "rdf");
 		atomTypes.print();
 
@@ -212,6 +212,7 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 
 			// Grab partials for Configuration
 			PartialRSet& cfgPartials = GenericListHelper<PartialRSet>::retrieve(cfg->moduleData(), "UnweightedGR", uniqueName_);
+			cfgPartials.save();
 
 			// Add all partials from the Configuration into our Sample partials
 			samplePartials.add(cfgPartials, weight);
@@ -373,7 +374,7 @@ bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, in
 
 	// Does a PartialSet already exist for this Configuration?
 	bool wasCreated;
-	PartialRSet& partialgr = GenericListHelper<PartialRSet>::realise(cfg->moduleData(), "PartialRSet", uniqueName_, &wasCreated);
+	PartialRSet& partialgr = GenericListHelper<PartialRSet>::realise(cfg->moduleData(), "UnweightedGR", uniqueName_, &wasCreated);
 	if (wasCreated) partialgr.setup(cfg, cfg->niceName(), "unweighted", "rdf");
 
 	// Is the PartialSet already up-to-date?

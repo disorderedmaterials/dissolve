@@ -222,6 +222,7 @@ void Histogram::finalise()
 			break;
 		case (Histogram::RadialNumberDensityNormalisation):
 			for (n=0; n<nBins_; ++n) normalisedData_.setY(n, (histogram_[n] * normalisation_[n]));
+			for (n=0; n<nBins_; ++n) printf("NORM  %f  %f  %i %f\n", normalisedData_.x(n), normalisedData_.y(n), histogram_[n], normalisation_[n]);
 			break;
 	}
 }

@@ -183,7 +183,7 @@ int main(int argc, char **argv)
 		ProcessPool::finalise();
 		return 1;
 	}
-	
+
 	// Full system dump?
 	if (dumpData) dUQ.dump();
 

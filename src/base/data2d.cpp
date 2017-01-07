@@ -36,6 +36,7 @@ Data2D::Data2D() : ListItem<Data2D>()
 {
 	name_ = "Untitled";
 	splineInterval_ = -1;
+	constrainedSpline_ = true;
 }
 
 // Destructor
@@ -54,6 +55,7 @@ Data2D::Data2D(const Data2D& source)
 	splineD_ = source.splineD_;
 	splineH_ = source.splineH_;
 	splineInterval_ = source.splineInterval_;
+	constrainedSpline_ = source.constrainedSpline_;
 	name_ = source.name_;
 }
 
@@ -113,6 +115,7 @@ void Data2D::copyData(Data2D& source)
 	splineD_ = source.splineD_;
 	splineH_ = source.splineH_;
 	splineInterval_ = source.splineInterval_;
+	constrainedSpline_ = source.constrainedSpline_;
 }
 
 // Copy existing X data and generate empty Y
@@ -1223,7 +1226,7 @@ double Data2D::interpolated(double xvalue)
 		}
 	}
 	
-// 	printf("Requested value is %f, interval = %i (xmin=%f)\n", xvalue, splineInterval_, x_[splineInterval_]);
+	printf("Requested value is %f, interval = %i (xmin=%f)\n", xvalue, splineInterval_, x_[splineInterval_]);
 	// Calculate interpolated point
 // 	double a, b;
 // 	a = (x_[splineBracketRight_] - xvalue) / interval;
