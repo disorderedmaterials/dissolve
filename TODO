@@ -9,10 +9,12 @@ o Allow for Fixed atoms:
 	- Provision for pre-calculation of RDF/F(Q) data between fixed atoms, and introduction of this into final RDF/F(Q) data for speed?
 o Different bond types - e.g. replicate those used in EPSR for reference?
 
-
 -------------------------------------------
 Ideas / Notes / Weird Algorithm Suggestions
 -------------------------------------------
+
+** Averaging of Calculated Partials
+Options in Partials module to allow either stacking and averaging of RDFs (requiring additional storage inside PartialGRSet and PartialSQSet) or blending of current calculated values with previous values in some percentage (easier, but real, actual partials are unavailable). Can use the moduleData() lists and store datasets to be averaged as additional data.
 
 ** Unit Tests
 Have input examples that provide unit tests, e.g.:
@@ -27,9 +29,6 @@ Keep track of last successful rotation / translation for each Grain, allowing si
 
 ** RDF Calculation for Large Systems
 Can Grains be treated as a single scattering body (with average scattering length of the constituent Atoms) at far-enough distance? Might offer a speed-up for larger systems since all atoms within the Grain can be treated as being at (approximately) the same distance (that of the Grain).
-
-** Empirical Potential Generation / RDFs
-If the empirical potential only depends on the partial RDFs up to the potential cutoff distance (as it states in the EPSR manual) then we can use the Cell neighbour lists to calculate the RDFs extremely quickly up to this range. In order to calculate the full RDFs for comparison with the experimental S(Q), all Atoms must be considered *unless* each Cell has a second neighbour list which includes all Cells within the maximal distance (root 3 of the cell diagonal for a cubic cell, or whatever it may be). We may then take advantage of know which Cells do/do not need minimum image calculation, and can speed up things considerably.
 
 ** Configuration Branching
 Above a certain threshold of r-squared, or at certain time intervals, 'big events' could occur which radically change the structure of the system. For instance, large molecule flips / rotations / exchanges. Standard energetic criteria would normally disallow such moves, but a 'big event' could unequivocally accept all such moves and progress the system back to an equilibrium, at which point the goodness of fit would be recalculated and compared against those previously stored.  We would maintain a history of branch points, storing the model coordinates at these points so that we can revert back to the previous best if necessary. Perhaps it is possible to track the r-squared value and predict its value at some future point if we keep progressing down a particular branch.

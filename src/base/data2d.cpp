@@ -1226,7 +1226,7 @@ double Data2D::interpolated(double xvalue)
 		}
 	}
 	
-	printf("Requested value is %f, interval = %i (xmin=%f)\n", xvalue, splineInterval_, x_[splineInterval_]);
+// 	printf("Requested value is %f, interval = %i (xmin=%f)\n", xvalue, splineInterval_, x_[splineInterval_]);
 	// Calculate interpolated point
 // 	double a, b;
 // 	a = (x_[splineBracketRight_] - xvalue) / interval;

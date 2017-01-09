@@ -217,7 +217,7 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 			// Add all partials from the Configuration into our Sample partials
 			samplePartials.add(cfgPartials, weight);
 		}
-		// XXX Need to finalise histograms in samplePartials...
+		XXX Don't sum histogram data - just sum normalisedData... - Make PartialRSet.add() function into addNormalisedData()...
 		samplePartials.save();
 
 		return false;
@@ -265,7 +265,7 @@ bool Partials::postProcess(DUQ& duq, ProcessPool& procPool)
 }
 
 /*
- * Static Functions
+ * Members / Functions
  */
 
 // Calculate partial RDFs with simple double-loop
