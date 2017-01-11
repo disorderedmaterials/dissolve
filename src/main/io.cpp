@@ -379,7 +379,7 @@ bool DUQ::saveInput(const char* filename)
 	parser.writeLineF("  %s  %f\n", PairPotentialsBlock::keyword(PairPotentialsBlock::TruncationWidthKeyword), pairPotentialTruncationWidth_);
 	for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next)
 	{
-		parser.writeLineF("  %s  '%s'  '%s'\n", PairPotentialsBlock::keyword(PairPotentialsBlock::GenerateKeyword), PairPotential::shortRangeType(pot->shortRangeType()), pot->atomTypeI()->name(), pot->atomTypeJ()->name());
+		parser.writeLineF("  %s  '%s'  '%s'  '%s'\n", PairPotentialsBlock::keyword(PairPotentialsBlock::GenerateKeyword), PairPotential::shortRangeType(pot->shortRangeType()), pot->atomTypeI()->name(), pot->atomTypeJ()->name());
 	}
 	parser.writeLineF("%s\n\n", PairPotentialsBlock::keyword(PairPotentialsBlock::EndPairPotentialsKeyword));
 

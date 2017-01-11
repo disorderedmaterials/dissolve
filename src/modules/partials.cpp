@@ -217,7 +217,7 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 			// Add all partials from the Configuration into our Sample partials
 			samplePartials.add(cfgPartials, weight);
 		}
-		XXX Don't sum histogram data - just sum normalisedData... - Make PartialRSet.add() function into addNormalisedData()...
+// 		XXX Don't sum histogram data - just sum normalisedData... - Make PartialRSet.add() function into addNormalisedData()...
 		samplePartials.save();
 
 		return false;

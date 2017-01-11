@@ -1,11 +1,5 @@
 # Minimal Example: Water
 
-# AtomType Definitions
-#AtomTypes
-#  AtomType  'OW'    O  'OW'
-#  AtomType  'HW'    H  'HW'
-#EndAtomTypes
-
 # Define Water Molecule
 Species 'Water'
   # Atoms
@@ -32,11 +26,8 @@ Configuration  'Bulk'
   OutputCoordinates 'Bulk.xyz'
   UseOutputAsInput
 
-  # Modules
   Module AtomShake
   EndModule
-  #Module IntraShake
-  #EndModule
 EndConfiguration
 
 # Samples
@@ -65,14 +56,7 @@ PairPotentials
   Range  15.000000
   Delta  0.050000
   TruncationWidth  2.000000
-  GenerateAll  'LJ'
-  Full  'OW'  'OW'  3.166000  0.650000  -0.820000  -0.820000
-  Full  'OW'  'HW'  2.783000  0.286182  -0.820000  0.410000
-  Full  'HW'  'HW'  2.400000  0.126000  0.410000  0.410000
+  Generate  'LJ'  'OW'  'OW'
+  Generate  'LJ'  'OW'  'HW'
+  Generate  'LJ'  'HW'  'HW'
 EndPairPotentials
-
-# Simulation Setup / Definition
-Simulation
-  Seed  943723867
-  MaxIterations  5
-EndSimulation
