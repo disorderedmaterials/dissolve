@@ -33,7 +33,6 @@ Histogram::Histogram() : ListItem<Histogram>()
 	delta_ = 0.1;
 	rDelta_ = 1.0/delta_;
 	nAdded_ = 0;
-	normalisationType_ = Histogram::NoNormalisation;
 }
 
 // Destructor
@@ -62,9 +61,6 @@ void Histogram::copy(const Histogram& source)
 	rDelta_ = 1.0/delta_;
 	histogram_ = source.histogram_;
 	nAdded_ = source.nAdded_;
-	normalisedData_ = source.normalisedData_;
-	normalisationType_ = source.normalisationType_;
-	normalisation_ = source.normalisation_;
 }
 
 /*
@@ -92,35 +88,12 @@ void Histogram::initialise(double minValue, double maxValue, double binWidth)
 
 	// Create arrays
 	histogram_.initialise(nBins_);
-	normalisation_.initialise(nBins_);
-	normalisation_ = 1.0;
-	normalisationType_ = Histogram::NoNormalisation;
-	normalisedData_.initialise(nBins_);
+	bins_.initialise(nBins_);
 	nAdded_ = 0;
 	nMissed_ = 0;
 
-	// Set up X axis values
-	for (int n=0; n<nBins_; ++n) normalisedData_.setX(n, (n+0.5)*delta_);
-}
-
-// Set relative normalisation
-void Histogram::setRelativeNormalisation()
-{
-	normalisationType_ = Histogram::RelativeNormalisation;
-}
-
-// Set radial number density normalisation
-void Histogram::setRadialNumberDensityNormalisation(double boxVolume, int nCentres, int nSurrounding, double factor, Data2D& boxNormalisation)
-{
-	normalisationType_ = Histogram::RadialNumberDensityNormalisation;
-	double shellVolume, norm, r = 0.0, numberDensity = nSurrounding / boxVolume;
-	for (int n=0; n<nBins_; ++n)
-	{
-		shellVolume = (4.0/3.0)*PI*(pow(r+delta_,3.0) - pow(r,3.0));
-		norm = nCentres * (shellVolume * numberDensity);
-		normalisation_[n] = (factor / norm) * boxNormalisation.interpolated(r+delta_*0.5);
-		r += delta_;
-	}
+	// Set up bin values
+	for (int n=0; n<nBins_; ++n) bins_[n] = (n+0.5)*delta_;
 }
 
 // Return number of bins
@@ -129,16 +102,22 @@ int Histogram::nBins() const
 	return nBins_;
 }
 
-// Return histogram data
-int* Histogram::histogram()
+// Return spacing between bins
+double Histogram::delta() const
 {
-	return histogram_.array();
+	return delta_;
 }
 
-// Return normalised data
-Data2D& Histogram::normalisedData()
+// Return histogram data
+Array<int>& Histogram::histogram()
 {
-	return normalisedData_;
+	return histogram_;
+}
+
+// Return bin data
+Array<double>& Histogram::bins()
+{
+	return bins_;
 }
 
 // Add source histogram data into local array
@@ -159,11 +138,7 @@ void Histogram::addHistogramData(Histogram& otherHistogram, int factor)
 // Reset arrays ready for new calculation
 void Histogram::reset()
 {
-	for (int n=0; n<nBins_; ++n)
-	{
-		normalisedData_.setY(n, 0.0);
-		histogram_[n] = 0;
-	}
+	histogram_ = 0;
 	nAdded_ = 0;
 	nMissed_ = 0;
 }
@@ -187,43 +162,14 @@ void Histogram::add(double x)
 	else ++nMissed_;
 }
 
-// Merge histogram data with other RDF
-void Histogram::merge(Histogram& otherHistogram)
+// Normalise data, giving raltive histogram
+Array<double> Histogram::normalised()
 {
-	if (nBins_ != otherHistogram.nBins_)
-	{
-		Messenger::print("BAD_USAGE - Can't merge RDF data since arrays are not the same size.\n");
-		return;
-	}
-	for (int n=0; n<nBins_; ++n)
-	{
-		histogram_[n] += otherHistogram.histogram_[n];
-		otherHistogram.histogram_[n] = histogram_[n];
-	}
-}
+	Array<double> normalised(nBins_);
 
-// Finalise data
-void Histogram::finalise()
-{
-	/*
-	 * Finalise the data by normalising according to the previously-selected method, creating the normalisedData_ array 
-	 * in the process. If not called, the normalisedData_ array will contain either garbage or old data.
-	 */
+	for (int n=0; n<nBins_; ++n) normalised[n] = double(histogram_[n]) / nAdded_;
 
-	// Normalise according to specified method
-	int n;
-	switch (normalisationType_)
-	{
-		case (Histogram::NoNormalisation):
-			for (n=0; n<nBins_; ++n) normalisedData_.setY(n, histogram_[n]);
-			break;
-		case (Histogram::RelativeNormalisation):
-			for (n=0; n<nBins_; ++n) normalisedData_.setY(n, double(histogram_[n]) / nAdded_);
-			break;
-		case (Histogram::RadialNumberDensityNormalisation):
-			for (n=0; n<nBins_; ++n) normalisedData_.setY(n, (histogram_[n] * normalisation_[n]));
-			break;
-	}
+	return normalised;
 }
 
 /*

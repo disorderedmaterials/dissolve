@@ -144,7 +144,7 @@ class PairPotential : public ListItem<PairPotential>
 	// Setup and perform initial generation of potential
 	bool setup(double maxR, double truncationWidth, double delta, bool includeCharges);
 	// (Re)generate original potential (uOriginal) from current parameters
-	bool calculateUOriginal();
+	bool calculateUOriginal(bool recalculateUFull = true);
 	// Return potential at specified r-squared
 	double energyAtRSquared(double rSq) const;
 	// Return derivative of potential at specified r-squared

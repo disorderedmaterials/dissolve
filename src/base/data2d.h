@@ -187,9 +187,7 @@ class Data2D : public ListItem<Data2D>
 	// Smooth data
 	void smooth(int avgSize, int skip = 0);
 	// Add interpolated data
-	void addInterpolated(Data2D& source);
-	// Subtract interpolated data
-	void subtractInterpolated(Data2D& source);
+	void addInterpolated(Data2D& source, double weighting = 1.0);
 
 
 	/*

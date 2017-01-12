@@ -298,16 +298,14 @@ bool PairPotential::setup(double maxR, double truncationWidth, double delta, boo
 	truncationWidth_ = truncationWidth;
 	includeCharges_ = includeCharges;
 	nPoints_ = rangeSquared_ / delta_;
-	
-	// Initialise and calculate original potential
-	uOriginal_.initialise(nPoints_);
-	calculateUOriginal();
 
-	// Set up empty array for additional potential
+	// Initialise original and additional potential arrays, and calculate original potential
+	uOriginal_.initialise(nPoints_);
+	calculateUOriginal(false);
+
+	// Set additional potential to zero (or load it - TODO) and update full potential
 	uAdditional_ = uOriginal_;
 	uAdditional_.arrayY() = 0.0;
-
-	// Update full potential
 	calculateUFull();
 
 	// Generate derivative data
@@ -318,7 +316,7 @@ bool PairPotential::setup(double maxR, double truncationWidth, double delta, boo
 }
 
 // (Re)generate potential from current parameters
-bool PairPotential::calculateUOriginal()
+bool PairPotential::calculateUOriginal(bool recalculateUFull)
 {
 	double r, sigmar, sigmar6, sigmar12, truncr, rSq, energy;
 
@@ -365,8 +363,8 @@ bool PairPotential::calculateUOriginal()
 	// Since the first point (at zero) risks being a nan, set it to ten times the second point instead
 	uOriginal_.setY(0, 10.0*uOriginal_.y(1));
 
-	// Update full potential
-	calculateUFull();
+	// Update full potential (if not the first generation of the poten
+	if (recalculateUFull) calculateUFull();
 }
 
 // Return potential at specified r-squared

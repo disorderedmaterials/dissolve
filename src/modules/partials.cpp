@@ -193,9 +193,11 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 			calculateUnweighted(cfg, procPool);
 		}
 
-		// Setup partial set for the Sample, using the AtomTypeList we have just constructed
+		// Setup partial set for the Sample, using the AtomTypeList we have just constructed.
+		// We will use RDF range information from the first COnfiguration in the list
+		Configuration* refConfig = targetConfigurations_.firstItem();
 		PartialRSet& samplePartials = GenericListHelper<PartialRSet>::realise(sam->moduleData(), CharString("UnweightedGR", mixSource.get()), uniqueName_);
-		samplePartials.setup(targetConfigurations_.firstItem(), atomTypes, sam->niceName(), "unweighted", "rdf");
+		samplePartials.setup(atomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), sam->niceName(), "unweighted", "rdf");
 		atomTypes.print();
 
 		// Loop over Configurations again, summing into the PartialRSet we have just set up
@@ -215,7 +217,7 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 			cfgPartials.save();
 
 			// Add all partials from the Configuration into our Sample partials
-			samplePartials.add(cfgPartials, weight);
+			samplePartials.addPartials(cfgPartials, weight);
 		}
 // 		XXX Don't sum histogram data - just sum normalisedData... - Make PartialRSet.add() function into addNormalisedData()...
 		samplePartials.save();
@@ -317,9 +319,9 @@ bool Partials::calculateSimple(Configuration* cfg, PartialRSet& partialSet, Proc
 	for (typeI = 0; typeI<nTypes; ++typeI)
 	{
 		ri = r[typeI];
-		histogram = partialSet.partial(typeI,typeI).histogram();
+		histogram = partialSet.fullHistogram(typeI,typeI).histogram().array();
 		bins = binss[typeI];
-		nPoints = partialSet.partial(typeI,typeI).nBins();
+		nPoints = partialSet.fullHistogram(typeI,typeI).nBins();
 		for (i=start; i < maxr[typeI]; i += stride)
 		{
 			centre = ri[i];
@@ -343,9 +345,9 @@ bool Partials::calculateSimple(Configuration* cfg, PartialRSet& partialSet, Proc
 			if ((nr[typeI] == nr[typeJ]) && (typeI > typeJ)) continue;
 
 			rj = r[typeJ];
-			histogram = partialSet.partial(typeI,typeJ).histogram();
+			histogram = partialSet.fullHistogram(typeI,typeJ).histogram().array();
 			bins = binss[typeJ];
-			nPoints = partialSet.partial(typeI,typeJ).nBins();
+			nPoints = partialSet.fullHistogram(typeI,typeJ).nBins();
 			for (i=start; i < maxr[typeI]; i += stride)
 			{
 				centre = ri[i];
@@ -430,7 +432,7 @@ bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, in
 			j = mol->atom(b->indexJ());
 			if (cfg->useMim(i->cell(), j->cell())) distance = box->minimumDistance(i, j);
 			else distance = (i->r() - j->r()).magnitude();
-			partialgr.boundPartial(i->localTypeIndex(), j->localTypeIndex()).add(distance);
+			partialgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).add(distance);
 		}
 
 		// Angles
@@ -443,14 +445,14 @@ bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, in
 			// Determine whether we need to apply minimum image between 'j-i' and 'j-k'
 			if (cfg->useMim(i->grain()->cell(), k->grain()->cell())) distance = box->minimumDistance(i, k);
 			else distance = (i->r() - k->r()).magnitude();
-			partialgr.boundPartial(i->localTypeIndex(), k->localTypeIndex()).add(distance);
+			partialgr.boundHistogram(i->localTypeIndex(), k->localTypeIndex()).add(distance);
 		}
 	}
 	timer.stop();
 	Messenger::print("Partials: Finished calculation of intramolecular partials (%s elapsed, %s comms).\n", timer.timeString(), procPool.accumulatedTimeString());
 
 	/*
-	 * Sum partials
+	 * Sum hstogram data
 	 */
 
 	// Note that merging/summation of cross-term data (i.e. [n][m] with [m][n]) is not necessary since the partials matrix knows
@@ -464,24 +466,29 @@ bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, in
 		for (typeJ=typeI; typeJ<partialgr.nTypes(); ++typeJ)
 		{
 			// Sum histogram data from all processes
-			if (!partialgr.partial(typeI, typeJ).allSum(procPool)) return false;
-			if (!partialgr.boundPartial(typeI, typeJ).allSum(procPool)) return false;
+			if (!partialgr.fullHistogram(typeI, typeJ).allSum(procPool)) return false;
+			if (!partialgr.boundHistogram(typeI, typeJ).allSum(procPool)) return false;
 
 			// Create unbound histogram from total and bound data
-			partialgr.unboundPartial(typeI, typeJ) = partialgr.partial(typeI, typeJ);
-			partialgr.unboundPartial(typeI, typeJ).addHistogramData(partialgr.boundPartial(typeI, typeJ), -1.0);
+			partialgr.unboundHistogram(typeI, typeJ) = partialgr.fullHistogram(typeI, typeJ);
+			partialgr.unboundHistogram(typeI, typeJ).addHistogramData(partialgr.boundHistogram(typeI, typeJ), -1.0);
+		}
+	}
 
-			// Finalise (normalise) partials
-			partialgr.partial(typeI, typeJ).finalise();
-			partialgr.boundPartial(typeI, typeJ).finalise();
-			partialgr.unboundPartial(typeI, typeJ).finalise();
+	// Transform histogram data into radial ditribution functions
+	Data2D boxNorm = cfg->boxNormalisation();
+	partialgr.formPartials(box->volume(), boxNorm);
 
-			// Smooth partials if requested
-			if (smoothing > 0)
+	// Smooth partials if requested
+	if (smoothing > 0)
+	{
+		for (typeI=0; typeI<partialgr.nTypes(); ++typeI)
+		{
+			for (typeJ=typeI; typeJ<partialgr.nTypes(); ++typeJ)
 			{
-				partialgr.partial(typeI,typeJ).normalisedData().smooth(smoothing*2+1);
-				partialgr.boundPartial(typeI,typeJ).normalisedData().smooth(smoothing*2+1);
-				partialgr.unboundPartial(typeI,typeJ).normalisedData().smooth(smoothing*2+1);
+				partialgr.partial(typeI,typeJ).smooth(smoothing*2+1);
+				partialgr.boundPartial(typeI,typeJ).smooth(smoothing*2+1);
+				partialgr.unboundPartial(typeI,typeJ).smooth(smoothing*2+1);
 			}
 		}
 	}

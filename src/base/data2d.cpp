@@ -353,6 +353,9 @@ Data2D Data2D::operator+(const Data2D& source) const
 // Operator +=
 void Data2D::operator+=(const Data2D& source)
 {
+	// If source array is empty, nothing to do
+	if (source.nPoints() == 0) return;
+
 	// Initialise current arrays?
 	if (x_.nItems() == 0)
 	{
@@ -1262,15 +1265,9 @@ void Data2D::smooth(int avgSize, int skip)
 }
 
 // Add interpolated data
-void Data2D::addInterpolated(Data2D& source)
+void Data2D::addInterpolated(Data2D& source, double weighting)
 {
-	for (int n=0; n<x_.nItems(); ++n) addY(n, source.interpolated(x_.value(n)));
-}
-
-// Subtract interpolated data
-void Data2D::subtractInterpolated(Data2D& source)
-{
-	for (int n=0; n<x_.nItems(); ++n) addY(n, -source.interpolated(x_.value(n)));
+	for (int n=0; n<x_.nItems(); ++n) addY(n, source.interpolated(x_.value(n)) * weighting);
 }
 
 /*

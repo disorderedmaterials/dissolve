@@ -188,22 +188,29 @@ void Species::print()
 		Messenger::print("    %4i  %3s  %4s (%2i)  %12.4e  %12.5e  %12.4e\n", n+1, PeriodicTable::element(i->element()).symbol(), i->atomType()->name(), i->atomType()->index(), i->r().x, i->r().y, i->r().z);
 	}
 
-	Messenger::print("\n  Bonds:\n");
-	Messenger::print("      I     J        Eq          ForceK   \n");
-	Messenger::print("    --------------------------------------\n");
-	for (int n=0; n<nBonds(); ++n)
+
+	if (nBonds() > 0)
 	{
-		SpeciesBond* b = bonds_[n];
-		Messenger::print("   %4i  %4i  %12.4e  %12.4e\n", b->indexI()+1, b->indexJ()+1, b->equilibrium(), b->forceConstant());
+		Messenger::print("\n  Bonds:\n");
+		Messenger::print("      I     J        Eq          ForceK   \n");
+		Messenger::print("    --------------------------------------\n");
+		for (int n=0; n<nBonds(); ++n)
+		{
+			SpeciesBond* b = bonds_[n];
+			Messenger::print("   %4i  %4i  %12.4e  %12.4e\n", b->indexI()+1, b->indexJ()+1, b->equilibrium(), b->forceConstant());
+		}
 	}
 
-	Messenger::print("\n  Angles:\n");
-	Messenger::print("      I     J     K        Eq          ForceK   \n");
-	Messenger::print("    --------------------------------------------\n");
-	for (int n=0; n<nAngles(); ++n)
+	if (nAngles() > 0)
 	{
-		SpeciesAngle* a = angles_[n];
-		Messenger::print("   %4i  %4i  %4i  %12.4e  %12.4e\n", a->indexI()+1, a->indexJ()+1, a->indexK(), a->equilibrium(), a->forceConstant());
+		Messenger::print("\n  Angles:\n");
+		Messenger::print("      I     J     K        Eq          ForceK   \n");
+		Messenger::print("    --------------------------------------------\n");
+		for (int n=0; n<nAngles(); ++n)
+		{
+			SpeciesAngle* a = angles_[n];
+			Messenger::print("   %4i  %4i  %4i  %12.4e  %12.4e\n", a->indexI()+1, a->indexJ()+1, a->indexK(), a->equilibrium(), a->forceConstant());
+		}
 	}
 
 	Messenger::print("\n  Grains:\n");

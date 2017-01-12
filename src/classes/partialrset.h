@@ -48,22 +48,28 @@ class PartialRSet : public ListItem<PartialRSet>
 	AtomTypeList atomTypes_;
 	// Index (e.g. in related Configuration) at which these partials were last calculated
 	int index_;
+	// Histograms used for calculating full atom-atom partials
+	Array2D<Histogram> fullHistograms_;
+	// Histograms used for calculating bound atom-atom partials
+	Array2D<Histogram> boundHistograms_;
+	// Histograms used for deriving unbound atom-atom partials
+	Array2D<Histogram> unboundHistograms_;
 	// Pair matrix, containing full atom-atom partial
-	Array2D<Histogram> partials_;
+	Array2D<Data2D> partials_;
 	// Unbound matrix, containing atom-atom partial of pairs not joined by bonds or angles
-	Array2D<Histogram> unboundPartials_;
+	Array2D<Data2D> unboundPartials_;
 	// Bound matrix, containing atom-atom partial of pairs joined by bonds or angles
-	Array2D<Histogram> boundPartials_;
+	Array2D<Data2D> boundPartials_;
 	// Bragg S(Q) matrix, derived from summation of HKL terms
 // 	Array2D<Data2D> braggSQMatrix_;
 	// Total function
 	Data2D total_;
 
 	public:
-	// Setup array storage based on supplied Configuration
+	// Setup using supplied Configuration
 	bool setup(Configuration* cfg, const char* prefix, const char* tag, const char* suffix);
-	// Setup array storage based on supplied Configuration, but using alternative AtomTypeList
-	bool setup(Configuration* cfg, const AtomTypeList& atomTypes, const char* prefix, const char* tag, const char* suffix);
+	// Setup PartialRSet
+	bool setup(const AtomTypeList& atomTypes, double rdfRange, double binWidth, const char* prefix, const char* tag, const char* suffix);
 	// Reset partial arrays
 	void reset();
 	// Return number of AtomTypes used to generate matrices
@@ -72,12 +78,18 @@ class PartialRSet : public ListItem<PartialRSet>
 	int index() const;
 	// Set new index
 	void setIndex(int index);
+	// Return full histogram specified
+	Histogram& fullHistogram(int i, int j);
+	// Return bound histogram specified
+	Histogram& boundHistogram(int i, int j);
+	// Return unbound histogram specified
+	Histogram& unboundHistogram(int i, int j);
 	// Return full atom-atom partial specified
-	Histogram& partial(int i, int j);
+	Data2D& partial(int i, int j);
 	// Return atom-atom partial for pairs not joined by bonds or angles
-	Histogram& unboundPartial(int i, int j);
+	Data2D& unboundPartial(int i, int j);
 	// Return atom-atom partial for pairs joined by bonds or angles
-	Histogram& boundPartial(int i, int j);
+	Data2D& boundPartial(int i, int j);
 	// Sum partials into total
 	void formTotal();
 	// Return total function
@@ -91,7 +103,11 @@ class PartialRSet : public ListItem<PartialRSet>
 	 */
 	public:
 	// Add in partials from source PartialRSet to our own
-	bool add(PartialRSet& source, double weighting);
+	bool addPartials(PartialRSet& source, double weighting);
+	// Form partials from stored Histogram data
+	void formPartials(double boxVolume, Data2D& boxNormalisation);
+	// Calculate RDF from supplied Histogram and normalisation data
+	void calculateRDF(Data2D& destination, Histogram& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier, Data2D& boxNormalisation);
 
 
 	/*

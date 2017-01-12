@@ -374,12 +374,13 @@ bool StructureFactor::calculateUnweighted(Configuration* cfg, Data2D::WindowFunc
 	{
 		for (typeJ=typeI; typeJ<partialSQ.nTypes(); ++typeJ)
 		{
-			// All data except that for bound interactions must have 1.0 subtracted in order to ??????
-			partialSQ.partial(typeI,typeJ).copyData(partialRDFs.partial(typeI,typeJ).normalisedData());
+			// Subtract 1.0 from the full and unbound partials so as to give (g(r)-1)
+			// Don't subtract 1.0 from the bound partials, since they do not tend to 1.0 at longer r??
+			partialSQ.partial(typeI,typeJ).copyData(partialRDFs.partial(typeI,typeJ));
 			partialSQ.partial(typeI,typeJ).arrayY() -= 1.0;
-			partialSQ.boundPartial(typeI,typeJ).copyData(partialRDFs.boundPartial(typeI,typeJ).normalisedData());
+			partialSQ.boundPartial(typeI,typeJ).copyData(partialRDFs.boundPartial(typeI,typeJ));
 // 			partialSQ.boundPartial(typeI,typeJ).arrayY() -= 1.0;
-			partialSQ.unboundPartial(typeI,typeJ).copyData(partialRDFs.unboundPartial(typeI,typeJ).normalisedData());
+			partialSQ.unboundPartial(typeI,typeJ).copyData(partialRDFs.unboundPartial(typeI,typeJ));
 			partialSQ.unboundPartial(typeI,typeJ).arrayY() -= 1.0;
 		}
 	}
