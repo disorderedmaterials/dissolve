@@ -1018,7 +1018,7 @@ bool ProcessPool::broadcast(Array<int>& array, int rootRank, ProcessPool::Commun
 	int length;
 	if (poolRank_ == rootRank)
 	{
-		// Broadcast string length first...
+		// Broadcast array length first...
 		length = array.nItems();
 		if (MPI_Bcast(&length, 1, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
 		{
@@ -1038,7 +1038,7 @@ bool ProcessPool::broadcast(Array<int>& array, int rootRank, ProcessPool::Commun
 	}
 	else
 	{
-		// Slaves receive the data into the buffer, and then set the source string.
+		// Slaves receive the length, and then create and receive the array
 		// Length first...
 		if (MPI_Bcast(&length, 1, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
 		{
@@ -1076,7 +1076,7 @@ bool ProcessPool::broadcast(Array<double>& array, int rootRank, ProcessPool::Com
 	int length;
 	if (poolRank_ == rootRank)
 	{
-		// Broadcast string length first...
+		// Broadcast array length first...
 		length = array.nItems();
 		if (MPI_Bcast(&length, 1, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
 		{
@@ -1084,7 +1084,7 @@ bool ProcessPool::broadcast(Array<double>& array, int rootRank, ProcessPool::Com
 			return false;
 		}
 
-		// Now broadcast Arrah data
+		// Now broadcast Array data
 		if (length > 0)
 		{
 			if (MPI_Bcast(array.array(), length, MPI_DOUBLE, rootRank, communicator(commType)) != MPI_SUCCESS)
@@ -1096,7 +1096,7 @@ bool ProcessPool::broadcast(Array<double>& array, int rootRank, ProcessPool::Com
 	}
 	else
 	{
-		// Slaves receive the data into the buffer, and then set the source string.
+		// Slaves receive the length, and then create and receive the array
 		// Length first...
 		if (MPI_Bcast(&length, 1, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
 		{
@@ -1112,6 +1112,85 @@ bool ProcessPool::broadcast(Array<double>& array, int rootRank, ProcessPool::Com
 			if (MPI_Bcast(array.array(), length, MPI_DOUBLE, rootRank, communicator(commType)) != MPI_SUCCESS)
 			{
 				Messenger::print("Slave %i (world rank %i) failed to receive Array<double> data from root rank %i.\n", poolRank_, worldRank_, rootRank);
+				return false;
+			}
+		}
+		else array.clear();
+	}
+
+	totalTime_.accumulate();
+	accumTime_.accumulate();
+#endif
+	return true;
+}
+
+// Broadcast Array2D<double>
+bool ProcessPool::broadcast(Array2D<double>& array, int rootRank, ProcessPool::CommunicatorType commType)
+{
+#ifdef PARALLEL
+	totalTime_.start();
+	accumTime_.start();
+
+	int nRows, nColumns;
+	bool half;
+	if (poolRank_ == rootRank)
+	{
+		// Broadcast array size first...
+		nRows = array.nRows();
+		if (!broadcast(nRows, rootRank))
+		{
+			Messenger::print("Failed to broadcast Array2D<double> nRows from root rank %i.\n", rootRank);
+			return false;
+		}
+		nColumns = array.nColumns();
+		if (!broadcast(nColumns, rootRank))
+		{
+			Messenger::print("Failed to broadcast Array2D<double> nColmnns from root rank %i.\n", rootRank);
+			return false;
+		}
+		half = array.halved();
+		if (!broadcast(half, rootRank))
+		{
+			Messenger::print("Failed to broadcast Array2D<double> half-diagonal status from root rank %i.\n", rootRank);
+			return false;
+		}
+		
+		// Now broadcast Array data
+		if ((nRows*nColumns) > 0)
+		{
+			if (MPI_Bcast(array.linearArray(), nRows*nColumns, MPI_DOUBLE, rootRank, communicator(commType)) != MPI_SUCCESS)
+			{
+				Messenger::print("Failed to broadcast Array2D<double> data from root rank %i.\n", rootRank);
+				return false;
+			}
+		}
+	}
+	else
+	{
+		// Slaves receive the size, and then create and receive the array
+		if (!broadcast(nRows, rootRank))
+		{
+			Messenger::print("Slave %i (world rank %i) failed to receive Array2D<double> nRows from root rank %i.\n", poolRank_, worldRank_, rootRank);
+			return false;
+		}
+		if (!broadcast(nColumns, rootRank))
+		{
+			Messenger::print("Slave %i (world rank %i) failed to receive Array2D<double> nRows from root rank %i.\n", poolRank_, worldRank_, rootRank);
+			return false;
+		}
+		if (!broadcast(half, rootRank))
+		{
+			Messenger::print("Slave %i (world rank %i) failed to receive Array2D<double> halved status from root rank %i.\n", poolRank_, worldRank_, rootRank);
+			return false;
+		}
+
+		// Resize and receive array
+		array.initialise(nRows, nColumns, half);
+		if ((nRows*nColumns) > 0)
+		{
+			if (MPI_Bcast(array.linearArray(), nRows*nColumns, MPI_DOUBLE, rootRank, communicator(commType)) != MPI_SUCCESS)
+			{
+				Messenger::print("Slave %i (world rank %i) failed to receive ArrayD<double> data from root rank %i.\n", poolRank_, worldRank_, rootRank);
 				return false;
 			}
 		}

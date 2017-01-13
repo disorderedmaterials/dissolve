@@ -1267,7 +1267,14 @@ void Data2D::smooth(int avgSize, int skip)
 // Add interpolated data
 void Data2D::addInterpolated(Data2D& source, double weighting)
 {
-	for (int n=0; n<x_.nItems(); ++n) addY(n, source.interpolated(x_.value(n)) * weighting);
+	// If there is currently no data, just copy the source data
+	if (x_.nItems() == 0)
+	{
+		x_ = source.arrayX();
+		y_ = source.arrayY();
+		y_ *= weighting;
+	}
+	else for (int n=0; n<x_.nItems(); ++n) addY(n, source.interpolated(x_.value(n)) * weighting);
 }
 
 /*

@@ -146,10 +146,10 @@ bool PlainValueList::broadcast(ProcessPool& procPool)
 	if (!procPool.broadcast(&varCount, 1)) return false;
 	for (int n=0; n<varCount; ++n)
 	{
-		Value* var;
-		if (procPool.isMaster()) var = values_[n];
-		else var = values_.add();
-		var->broadcast(procPool);
+		PlainValue* value;
+		if (procPool.isMaster()) value = values_[n];
+		else value = values_.add();
+		value->broadcast(procPool);
 	}
 #endif
 	return true;

@@ -34,6 +34,7 @@ class Partials : public Module
 	/*
 	 * Calculates partial radial distribution functions for the Sample or Configuration in which the Module is placed.
 	 * Partial RDFs according to atomtype isotopes are constructed individually, including separate bound/unbound terms.
+	 * If a weighting scheme is specified with the Weights option, the weighted partials are also calculated.
 	 */
 
 	public:
@@ -111,10 +112,12 @@ class Partials : public Module
 	bool calculateSimple(Configuration* cfg, PartialRSet& partialSet, ProcessPool& procPool);
 
 	public:
+	// Weighting Type enum
+	enum WeightingType { NoWeighting, NeutronWeighting };
 	// (Re)calculate unweighted partials for the specified Configuration
 	bool calculateUnweighted(Configuration* cfg, ProcessPool& procPool, int method = 0);
-	// Calculate weighted partials for the specified Configuration
-	bool calculateWeighted(Configuration* cfg, ProcessPool& procPool, WeightsMatrix& weightsMatrix);
+	// Calculate weighted partials (from existing partial) for the specified Configuration
+	bool calculateWeighted(Configuration* cfg, PartialRSet& unweightedPartials, WeightsMatrix& weightsMatrix);
 
 
 	/*

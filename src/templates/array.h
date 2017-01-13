@@ -258,10 +258,7 @@ template <class A> class Array : public ListItem< Array<A> >
 	
 };
 
-/*
- * \short Array2D
- * \details A simple two-dimensional array class
- */
+// Array2D
 template <class A> class Array2D
 {
 	public:
@@ -451,6 +448,21 @@ template <class A> class Array2D
 			else return &array_[rowOffsets_[row] + column - row];
 		}
 		else return &array_[rowOffsets_[row] + column];
+	}
+	// Returun whether the array is halved
+	bool halved() const
+	{
+		return half_;
+	}
+	// Return number of rows
+	int nRows() const
+	{
+		return nRows_;
+	}
+	// Return number of columns
+	int nColumns() const
+	{
+		return nColumns_;
 	}
 	// Return linear array size
 	int linearArraySize()

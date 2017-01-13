@@ -48,7 +48,8 @@ Partials::Partials() : Module()
 	options_.add("Save", bool(false), "Whether to save partials to disk after calculation");
 	options_.add("Smoothing", 0, "Specifies the degree of smoothing 'n' to apply to calculated RDFs, where 2n+1 controls the length in the applied Spline smooth");
 	options_.add("UseMixFrom", uniqueName_, "Unique Module name under which to search for Species/Isotopologue mix information");
-}	
+	options_.add("Weights", "None", "Weighting scheme to use for calculated partials (None,Neutron)");
+}
 
 // Destructor
 Partials::~Partials()
@@ -178,8 +179,20 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 		// Get target Sample
 		Sample* sam = targetSamples_.firstItem();
 
-		// If the UseMixFrom variable was set, grab its value now
+		// Retrieve control parameters from Configuration
+		const bool saveData = GenericListHelper<bool>::retrieve(sam->moduleData(), "Save", uniqueName(), options_.valueAsBool("Save"));
 		CharString mixSource = GenericListHelper<CharString>::retrieve(sam->moduleData(), "UseMixFrom", uniqueName_, options_.valueAsString("UseMixFrom"));
+		CharString weightsString = GenericListHelper<CharString>::retrieve(sam->moduleData(), "Weights", uniqueName_, options_.valueAsString("Weights"));
+		Partials::WeightingType weightsType = Partials::NoWeighting;
+		if (DUQSys::sameString(weightsString, "Neutron")) weightsType = Partials::NeutronWeighting;
+		else if (DUQSys::sameString(weightsString, "None"))
+		{
+			Messenger::error("Invalid weighting scheme found for Sample '%s'.\n", weightsString.get());
+			return false;
+		}
+
+		// Print argument/parameter summary
+		Messenger::print("Partials: Save data is %s.\n", DUQSys::onOff(saveData));
 		Messenger::print("Partials: Isotopologue mixture data will be taken from Module '%s'.\n", mixSource.get());
 
 		// Loop over Configurations, creating a list of unique AtomTypes encountered over all. Also, make sure the unweighted partials are up-to-date.
@@ -191,13 +204,54 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 
 			// Calculate partials for Configuration
 			calculateUnweighted(cfg, procPool);
+			
+			// Need to calculate weighted terms here if requested
+			if (weightsType != Partials::NoWeighting)
+			{
+				// Construct weights matrix based on Isotopologue specifications in some module (specified by mixSource) and the populations of atomtypes in the Configuration
+				WeightsMatrix weightsMatrix;
+				RefListIterator<Species,double> speciesIterator(cfg->usedSpecies());
+				while (Species* sp = speciesIterator.iterate())
+				{
+					int speciesPopulation = speciesIterator.currentData() * cfg->multiplier();
+
+					// Loop over available Isotopologues for Species
+					for (Isotopologue* availableIso = sp->isotopologues(); availableIso != NULL; availableIso = availableIso->next)
+					{
+						// Construct variable name that we expect to find if the tope was used in the Module (variable is defined in the associated Configuration)
+						varName.sprintf("Isotopologue/%s/%s", sp->name(), availableIso->name());
+						if (sam->moduleData().contains(varName, mixSource))
+						{
+							// This isotopologue is defined as being used, so add its (in the isotopic proportions defined in the Isotopologue) to the weightsMatrix.
+							weightsMatrix.addIsotopologue(sp, speciesPopulation, availableIso, GenericListHelper<double>::retrieve(sam->moduleData(), varName, mixSource));
+						}
+					}
+				}
+
+				// We will complain strongly if a species in the Configuration is not covered by at least one Isotopologue definition
+				speciesIterator.restart();
+				while (Species* sp = speciesIterator.iterate()) if (!weightsMatrix.hasSpeciesIsotopologueMixture(sp)) 
+				{
+					Messenger::error("Isotopologue specification for Species '%s' in Configuration '%s' is missing.\n", sp->name(), cfg->name());
+					return false;
+				}
+
+				// Finalise and store weighting matrix
+				weightsMatrix.finalise();
+				GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "PartialWeights", uniqueName_) = weightsMatrix.scatteringMatrix();
+
+				// Calculate weighted partials
+				PartialRSet& partialgr = GenericListHelper<PartialRSet>::realise(cfg->moduleData(), "UnweightedGR", uniqueName_);
+				calculateWeighted(cfg, partialgr, weightsMatrix);
+			}
 		}
 
 		// Setup partial set for the Sample, using the AtomTypeList we have just constructed.
-		// We will use RDF range information from the first COnfiguration in the list
+		// We will use RDF range information from the first Configuration in the list
 		Configuration* refConfig = targetConfigurations_.firstItem();
-		PartialRSet& samplePartials = GenericListHelper<PartialRSet>::realise(sam->moduleData(), CharString("UnweightedGR", mixSource.get()), uniqueName_);
-		samplePartials.setup(atomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), sam->niceName(), "unweighted", "rdf");
+		PartialRSet& unweightedPartials = GenericListHelper<PartialRSet>::realise(sam->moduleData(), "UnweightedGR", uniqueName_);
+		unweightedPartials.setup(atomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), sam->niceName(), "unweighted", "rdf");
+		atomTypes.finalise();
 		atomTypes.print();
 
 		// Loop over Configurations again, summing into the PartialRSet we have just set up
@@ -217,12 +271,34 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 			cfgPartials.save();
 
 			// Add all partials from the Configuration into our Sample partials
-			samplePartials.addPartials(cfgPartials, weight);
+			unweightedPartials.addPartials(cfgPartials, weight);
 		}
-// 		XXX Don't sum histogram data - just sum normalisedData... - Make PartialRSet.add() function into addNormalisedData()...
-		samplePartials.save();
 
-		return false;
+		// Now must normalise Sample partials to the overall weight of the source configurations
+		unweightedPartials.reweightPartials(1.0 / totalWeight);
+
+		// Calculate weighted partials and total
+// 		if (weightsType != Partials::NoWeighting) calculateWeighted(moduleSource, weights);
+// 		PartialRSet& weightedPartials = GenericListHelper<PartialRSet>::realise(sam->moduleData(), CharString("WeightedGR", mixSource.get()), uniqueName_);
+// 		weightedPartials.setup(atomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), sam->niceName(), "weighted", "rdf");
+		// TODO XXX
+
+		// Save data?
+		if (saveData)
+		{
+			// Only the pool master saves the data
+			if (procPool.isMaster())
+			{
+				// Find PartialSet for this Configuration
+				if (unweightedPartials.save()) procPool.proceed();
+				else
+				{
+					procPool.stop();
+					return false;
+				}
+			}
+			else if (!procPool.decision()) return false;
+		}
 	}
 	else
 	{
@@ -508,10 +584,35 @@ bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, in
 	return true;
 }
 
-// Calculate weighted partials for the specified Configuration
-bool Partials::calculateWeighted(Configuration* cfg, ProcessPool& procPool, WeightsMatrix& weightsMatrix)
+// Calculate weighted partials (from existing partial) for the specified Configuration
+bool Partials::calculateWeighted(Configuration* cfg, PartialRSet& unweightedPartials, WeightsMatrix& weightsMatrix)
 {
-	
+	// Does a PartialSet already exist for this Configuration?
+	bool wasCreated;
+	PartialRSet& partialgr = GenericListHelper<PartialRSet>::realise(cfg->moduleData(), "WeightedGR", uniqueName_, &wasCreated);
+	if (wasCreated) partialgr.setup(cfg, cfg->niceName(), "weighted", "rdf");
+
+	int typeI, typeJ;
+	for (typeI=0; typeI<partialgr.nTypes(); ++typeI)
+	{
+		for (typeJ=typeI; typeJ<partialgr.nTypes(); ++typeJ)
+		{
+			// Weight S(Q), Bragg S(Q) and full partial S(Q)
+			double factor = weightsMatrix.scatteringWeight(typeI, typeJ);
+			partialgr.partial(typeI, typeJ).copyData(unweightedPartials.partial(typeI, typeJ));
+			partialgr.partial(typeI, typeJ).arrayY() *= factor;
+			partialgr.boundPartial(typeI, typeJ).copyData(unweightedPartials.boundPartial(typeI, typeJ));
+			partialgr.boundPartial(typeI, typeJ).arrayY() *= factor;
+			partialgr.unboundPartial(typeI, typeJ).copyData(unweightedPartials.unboundPartial(typeI, typeJ));
+			partialgr.unboundPartial(typeI, typeJ).arrayY() *= factor;
+// 			braggSQ.arrayY() *= factor;   TODO
+		}
+	}
+
+	// Calculate total
+	partialgr.formTotal();
+
+	return true;
 }
 
 // 	// Calculate Bragg partials (if requested)

@@ -94,7 +94,7 @@ class PartialRSet : public ListItem<PartialRSet>
 	void formTotal();
 	// Return total function
 	Data2D& total();
-	// Save partials information to disk
+	// Save all partials and total
 	bool save();
 
 
@@ -106,6 +106,8 @@ class PartialRSet : public ListItem<PartialRSet>
 	bool addPartials(PartialRSet& source, double weighting);
 	// Form partials from stored Histogram data
 	void formPartials(double boxVolume, Data2D& boxNormalisation);
+	// Re-weight partials (including total) with supplied weighting factor
+	void reweightPartials(double factor);
 	// Calculate RDF from supplied Histogram and normalisation data
 	void calculateRDF(Data2D& destination, Histogram& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier, Data2D& boxNormalisation);
 

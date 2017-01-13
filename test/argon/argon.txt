@@ -26,11 +26,12 @@ Sample  'Yarnell-85K'
   Module Partials
     Save true
     Configuration  'liquid'
+    Weights neutron
     Isotopologue  'liquid'  'Argon'  'Ar36'  1.0
   EndModule
   Module StructureFactor
-    QDepBroadening 0.02    # For SLS
-    Configuration  'liquid'
+    QDepBroadening  0.02    # For SLS
+    Configuration   'liquid'
     #NormalisedToAvSq
     #SubtractSelf
   EndModule
@@ -38,8 +39,5 @@ EndSample
 
 # Pair Potentials
 PairPotentials
-  Range  15.000000
-  Delta  0.050000
-  TruncationWidth  2.000000
   Generate  'LJ'  'Ar'  'Ar'
 EndPairPotentials

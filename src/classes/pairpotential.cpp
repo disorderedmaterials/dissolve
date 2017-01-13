@@ -470,30 +470,35 @@ bool PairPotential::broadcast(ProcessPool& procPool, const List<AtomType>& atomT
 {
 #ifdef PARALLEL
 	// PairPotential type
-	int n = type_;
-	procPool.broadcast(&n, 1);
-	type_ = (PairPotential::PairPotentialType) n;
+	if (!procPool.broadcast(EnumCast<PairPotential::ShortRangeType>(shortRangeType_))) return false;
+	if (!procPool.broadcast(includeCharges_)) return false;
 
 	// Source Parameters - Master needs to determine AtomType indices
 	int index;
 	if (procPool.isMaster()) index = atomTypes.indexOf(atomTypeI_);
-	if (!procPool.broadcast(&index, 1)) return false;
+	if (!procPool.broadcast(index)) return false;
 	atomTypeI_ = atomTypes.item(index);
 	if (procPool.isMaster()) index = atomTypes.indexOf(atomTypeJ_);
-	if (!procPool.broadcast(&index, 1)) return false;
+	if (!procPool.broadcast(index)) return false;
 	atomTypeJ_ = atomTypes.item(index);
-	if (!procPool.broadcast(&sigmaIJ_, 1)) return false;
-	if (!procPool.broadcast(&epsilonIJ_, 1)) return false;
-	if (!procPool.broadcast(&chargeI_, 1)) return false;
-	if (!procPool.broadcast(&chargeJ_, 1)) return false;
+	if (!procPool.broadcast(sigmaIJ_)) return false;
+	if (!procPool.broadcast(epsilonIJ_)) return false;
+	if (!procPool.broadcast(chargeI_)) return false;
+	if (!procPool.broadcast(chargeJ_)) return false;
 
-	// Tabulated Potential
-	if (!procPool.broadcast(&nPoints_, 1)) return false;
-	if (!procPool.broadcast(&delta_, 1)) return false;
-	if (!procPool.broadcast(&rDelta_, 1)) return false;
-	u_.broadcast(procPool);
-	originalU_.broadcast(procPool);
-	dU_.broadcast(procPool);
+	// Tabulation Parameters
+	if (!procPool.broadcast(range_)) return false;
+	if (!procPool.broadcast(rangeSquared_)) return false;
+	if (!procPool.broadcast(truncationWidth_)) return false;
+	if (!procPool.broadcast(nPoints_)) return false;
+	if (!procPool.broadcast(delta_)) return false;
+	if (!procPool.broadcast(rDelta_)) return false;
+
+	// Tabulations
+	uOriginal_.broadcast(procPool);
+	uAdditional_.broadcast(procPool);
+	uFull_.broadcast(procPool);
+	dUFull_.broadcast(procPool);
 #endif
 	return true;
 }

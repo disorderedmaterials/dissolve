@@ -185,7 +185,7 @@ void Species::print()
 	for (int n=0; n<nAtoms(); ++n)
 	{
 		SpeciesAtom* i = atoms_[n];
-		Messenger::print("    %4i  %3s  %4s (%2i)  %12.4e  %12.5e  %12.4e\n", n+1, PeriodicTable::element(i->element()).symbol(), i->atomType()->name(), i->atomType()->index(), i->r().x, i->r().y, i->r().z);
+		Messenger::print("    %4i  %3s  %4s (%2i)  %12.4e  %12.4e  %12.4e\n", n+1, PeriodicTable::element(i->element()).symbol(), i->atomType()->name(), i->atomType()->index(), i->r().x, i->r().y, i->r().z);
 	}
 
 

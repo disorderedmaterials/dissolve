@@ -43,11 +43,24 @@ void WeightsMatrix::operator=(const WeightsMatrix& source)
 	// Isotopologue Mix
 	isotopologueMixtures_ = source.isotopologueMixtures_;
 	atomTypes_ = source.atomTypes_;
+	scatteringMatrix_ = source.scatteringMatrix_;
+	concentrationMatrix_ = source.concentrationMatrix_;
+	boundCoherentAverageSquared_ = source.boundCoherentAverageSquared_;
+	boundCoherentSquaredAverage_ = source.boundCoherentSquaredAverage_;
 }
 
 /*
- * Species/Isotopologue Definition
+ * Construction
  */
+
+// Clear contents
+void WeightsMatrix::clear()
+{
+	isotopologueMixtures_.clear();
+	atomTypes_.clear();
+	boundCoherentAverageSquared_ = 0.0;
+	boundCoherentSquaredAverage_ = 0.0;
+}
 
 // Add Isotopologue for Species
 bool WeightsMatrix::addIsotopologue(Species* sp, int speciesPopulation, Isotopologue* iso, double isotopologueRelativePopulation)
@@ -169,4 +182,22 @@ AtomTypeList& WeightsMatrix::atomTypes()
 int WeightsMatrix::nUsedTypes()
 {
 	return atomTypes_.nItems();
+}
+
+// Return concentration weighting for types i and j
+double WeightsMatrix::concentrationWeight(int i, int j)
+{
+	return concentrationMatrix_.ref(i, j);
+}
+
+// Return scattering weighting for types i and j
+double WeightsMatrix::scatteringWeight(int i, int j)
+{
+	return scatteringMatrix_.ref(i, j);
+}
+
+// Return scattering weights matrix (ci * cj * bi * bj)
+Array2D<double>& WeightsMatrix::scatteringMatrix()
+{
+	return scatteringMatrix_;
 }

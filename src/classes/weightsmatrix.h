@@ -49,6 +49,8 @@ class WeightsMatrix
 	List<IsotopologueMix> isotopologueMixtures_;
 
 	public:
+	// Clear contents
+	void clear();
 	// Add Species Isotopologue to the relevant mixture
 	bool addIsotopologue(Species* sp, int speciesPopulation, Isotopologue* iso, double isotopologueRelativePopulation);
 	// Return whether we have a mixtures definition for the provided Species
@@ -79,6 +81,12 @@ class WeightsMatrix
 	AtomTypeList& atomTypes();
 	// Return number of used AtomTypes
 	int nUsedTypes();
+	// Return concentration weighting for types i and j
+	double concentrationWeight(int i, int j);
+	// Return scattering weighting for types i and j
+	double scatteringWeight(int i, int j);
+	// Return scattering weights matrix (ci * cj * bi * bj)
+	Array2D<double>& scatteringMatrix();
 };
 
 #endif

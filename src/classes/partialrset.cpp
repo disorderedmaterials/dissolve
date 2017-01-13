@@ -87,7 +87,7 @@ bool PartialRSet::setup(const AtomTypeList& atomTypes, double rdfRange, double b
 	// Total g(r)
 	int nBins = fullHistograms_.ref(0,0).nBins();
 	total_.initialise(nBins);
-	for (n=0; n<nBins; ++n) total_.setX(n, (n+0.5)*binWidth);
+	for (n=0; n<nBins; ++n) total_.setX(n, n*binWidth);
 	title.sprintf("%s-%s-total.%s", prefix, tag, suffix);
 	total_.setName(title);
 
@@ -210,7 +210,7 @@ Data2D& PartialRSet::total()
 	return total_;
 }
 
-// Save all unweighted RDFs
+// Save all partials and total
 bool PartialRSet::save()
 {
 	LineParser parser;
@@ -278,11 +278,13 @@ bool PartialRSet::addPartials(PartialRSet& source, double weighting)
 
 			// Grab source partials
 			partials_.ref(localI, localJ).addInterpolated(source.partial(typeI, typeJ), weighting);
-// 			Histogram& hist = partial(localI, localJ);
-// 			hist.addHistogramData(source.partial(typeI, typeJ), weighting);
-// 			hist.addNormalisedData(source.partial(typeI, typeJ), weighting);
+			boundPartials_.ref(localI, localJ).addInterpolated(source.boundPartial(typeI, typeJ), weighting);
+			unboundPartials_.ref(localI, localJ).addInterpolated(source.unboundPartial(typeI, typeJ), weighting);
 		}
 	}
+
+	// Add total function
+	total_.addInterpolated(source.total(), weighting);
 
 	return true;
 }
@@ -304,6 +306,27 @@ void PartialRSet::formPartials(double boxVolume, Data2D& boxNormalisation)
 			calculateRDF(unboundPartials_.ref(n, m), unboundHistograms_.ref(n, m), boxVolume, at1->population(), at2->population(), at1 == at2 ? 2.0 : 1.0, boxNormalisation);
 		}
 	}
+}
+
+// Re-weight partials (including total) with supplied weighting factor
+void PartialRSet::reweightPartials(double factor)
+{
+	int n, m;
+	int nTypes = atomTypes_.nItems();
+
+	AtomTypeData* at1 = atomTypes_.first(), *at2;
+	for (n=0; n<nTypes; ++n, at1 = at1->next)
+	{
+		at2 = at1;
+		for (m=n; m<nTypes; ++m, at2 = at2->next)
+		{
+			partials_.ref(n, m).arrayY() *= factor;
+			boundPartials_.ref(n, m).arrayY() *= factor;
+			unboundPartials_.ref(n, m).arrayY() *= factor;
+		}
+	}
+
+	total_.arrayY() *= factor;
 }
 
 // Calculate and return RDF from supplied Histogram and normalisation data

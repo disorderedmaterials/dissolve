@@ -87,12 +87,17 @@ template <class T> class GenericItemContainer : public GenericItem
 	/*
 	 * Parallel Comms
 	 */
+	public:
 	// Broadcast item contsnts
 	bool broadcast(ProcessPool& procPool, int root)
 	{
 		return data.broadcast(procPool, root);
 	}
 };
+
+/*
+ * Specialisations
+ */
 
 // GenericItemContainer<bool>
 template <> class GenericItemContainer<bool> : public GenericItem
@@ -220,6 +225,29 @@ template <> class GenericItemContainer< Array<double> > : public GenericItem
 	}
 	// Data item
 	Array<double> data;
+
+
+	/*
+	 * Parallel Comms
+	 */
+	public:
+	// Broadcast item contsnts
+	bool broadcast(ProcessPool& procPool, int root)
+	{
+		return procPool.broadcast(data, root);
+	}
+};
+
+// GenericItemContainer< Array2D<double> >
+template <> class GenericItemContainer< Array2D<double> > : public GenericItem
+{
+	public:
+	// Constructor
+	GenericItemContainer< Array2D<double> >(const char* name) : GenericItem(name)
+	{
+	}
+	// Data item
+	Array2D<double> data;
 
 
 	/*

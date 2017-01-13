@@ -39,7 +39,10 @@ DUQ::DUQ()
 	maxIterations_ = -1;
 	windowFunction_ = Data2D::NoWindow;
 
-	// Parallel
+	// Simulation
+	iteration_ = 0;
+
+	// Parallel Comms
 	parallelStrategy_ = DUQ::SequentialConfigStrategy;
 
 	// I/O

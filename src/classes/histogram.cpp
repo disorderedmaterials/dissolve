@@ -193,10 +193,6 @@ bool Histogram::broadcast(ProcessPool& procPool, int rootRank)
 	if (!procPool.broadcast(rDelta_, rootRank)) return false;
 	if (!procPool.broadcast(histogram_, rootRank)) return false;
 	if (!procPool.broadcast(nAdded_, rootRank)) return false;
-
-	if (!normalisedData_.broadcast(procPool, rootRank)) return false;
-	if (!procPool.broadcast(nAdded_, rootRank)) return false;
-	if (!procPool.broadcast(normalisation_, rootRank)) return false;
-	if (!procPool.broadcast(EnumCast<Histogram::NormalisationType>(normalisationType_), rootRank)) return false;
 #endif
+	return true;
 }

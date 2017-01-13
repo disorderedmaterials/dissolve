@@ -8,6 +8,8 @@ o Allow for Fixed atoms:
 	- Checks for fixed Atoms with GrainDefinitions - this should not be allowed since a Grain will be mobile.
 	- Provision for pre-calculation of RDF/F(Q) data between fixed atoms, and introduction of this into final RDF/F(Q) data for speed?
 o Different bond types - e.g. replicate those used in EPSR for reference?
+o Simplify output of new input files by checking module option values to see if they have changed before writing.
+o Look backwards through Module list to find closest dependent one to Module being added.
 
 -------------------------------------------
 Ideas / Notes / Weird Algorithm Suggestions
