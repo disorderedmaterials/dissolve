@@ -78,7 +78,7 @@ void Module::addDependentModule(Module* module, bool autoAdded)
 // Return pointer for specified dependent Module
 Module* Module::dependentModule(const char* name)
 {
-	RefListIterator<Module,bool> iterator(dependentModules_);
+	RefListIterator<Module,bool> iterator(dependentModules_, true);
 	while (Module* module = iterator.iterate()) if (DUQSys::sameString(name, module->name())) return module;
 
 	return NULL;

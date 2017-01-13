@@ -582,7 +582,7 @@ template <class T, class D> class RefListIterator
 {
 	public:
 	// Constructor
-	RefListIterator<T,D>(RefList<T,D>& source) : targetRefList_(source)
+	RefListIterator<T,D>(RefList<T,D>& source, bool reverse = false) : targetRefList_(source), reverse_(reverse)
 	{
 		finished_ = false;
 		currentItem_ = NULL;
@@ -591,6 +591,8 @@ template <class T, class D> class RefListIterator
 	private:
 	// Whether the iterator has reached the end of the list
 	bool finished_;
+	// Whether the iterator operates in reverse (iterating tail to head)
+	bool reverse_;
 	// Target list
 	RefList<T,D>& targetRefList_;
 	// Current item
@@ -602,9 +604,9 @@ template <class T, class D> class RefListIterator
 	{
 		if (finished_) return NULL;
 
-		// Go to first / next item
-		if (currentItem_ == NULL) currentItem_ = targetRefList_.first();
-		else currentItem_ = currentItem_->next;
+		// Go to initial / next item
+		if (currentItem_ == NULL) currentItem_ = reverse_ ? targetRefList_.last() : targetRefList_.first();
+		else currentItem_ = reverse_ ? currentItem_->prev : currentItem_->next;
 
 		// Check for end of list
 		if (currentItem_ == NULL) finished_ = true;
