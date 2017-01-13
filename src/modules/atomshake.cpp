@@ -1,7 +1,7 @@
 /*
 	*** AtomShake Module
 	*** src/modules/atomshake.cpp
-	Copyright T. Youngs 2012-2016
+	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
 
@@ -40,7 +40,7 @@ List<Module> AtomShake::instances_;
 AtomShake::AtomShake() : Module()
 {
 	// Add to instances list and set unique name for this instance
-	uniqueName_.sprintf("%s_%02i", name(), instances_.nItems());
+	uniqueName_.sprintf("%s%02i", name(), instances_.nItems());
 	instances_.own(this);
 
 	// Setup variables / control parameters

@@ -1,7 +1,7 @@
 /*
 	*** Keyword Parsing - Configuration Block
 	*** src/main/keywords_configuration.cpp
-	Copyright T. Youngs 2012-2016
+	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
 

@@ -1,7 +1,7 @@
 /*
 	*** Object Factory
 	*** src/templates/factory.h
-	Copyright T. Youngs 2012-2016
+	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
 

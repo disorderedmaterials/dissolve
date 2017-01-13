@@ -1,7 +1,7 @@
 /*
 	*** Export Module
 	*** src/modules/export.cpp
-	Copyright T. Youngs 2012-2016
+	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
 
@@ -38,7 +38,7 @@ Export::Export() : Module()
 {
 	// Add to instances list and set unique name for this instance
 	instances_.own(this);
-	uniqueName_.sprintf("%s_%02i", name(), instances_.nItems()-1);
+	uniqueName_.sprintf("%s%02i", name(), instances_.nItems()-1);
 
 	// Setup variables / control parameters
 	options_.add("SaveTrajectory", false);

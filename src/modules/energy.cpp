@@ -1,7 +1,7 @@
 /*
 	*** Energy Module
 	*** src/modules/energy.cpp
-	Copyright T. Youngs 2012-2016
+	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
 
@@ -37,7 +37,7 @@ Energy::Energy() : Module()
 {
 	// Add to instances list and set unique name for this instance
 	instances_.own(this);
-	uniqueName_.sprintf("%s_%02i", name(), instances_.nItems()-1);
+	uniqueName_.sprintf("%s%02i", name(), instances_.nItems()-1);
 
 	// Setup variables / control parameters
 	options_.add("Test", false);

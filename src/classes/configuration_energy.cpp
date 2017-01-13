@@ -1,7 +1,7 @@
 /*
 	*** Configuration - Energy Functions
 	*** src/classes/configuration_energy.cpp
-	Copyright T. Youngs 2012-2016
+	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
 
