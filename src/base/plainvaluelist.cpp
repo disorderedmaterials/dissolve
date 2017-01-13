@@ -111,7 +111,7 @@ const char* PlainValueList::valueAsString(const char* name)
 	PlainValue* oldValue = value(name);
 	if (!oldValue)
 	{
-		Messenger::error("Can't find string value '%s' (source = '%s').\n", name);
+		Messenger::error("Can't find string value '%s'.\n", name);
 		return "NULL";
 	}
 

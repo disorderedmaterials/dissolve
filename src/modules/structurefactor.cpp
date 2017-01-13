@@ -187,53 +187,43 @@ bool StructureFactor::process(DUQ& duq, ProcessPool& procPool)
 	 * Partial calculation routines called by this routine are parallel.
 	 */
 
-	// If there is a Sample target, then we calculate the weighted structure factors for it (using the supplied Configurations)
-	// Otherwise take the Configuration targets and calculate unweighted structure factors for them.
+	// If there is a Sample target, then we calculate the weighted structure factors for the data we find in it
+	// Otherwise take the Configuration targets and calculate unweighted structure factors for their data.
 
 	if (targetSamples_.nItems() > 0)
 	{
-		// Assemble partials from all Configurations specified, weighting them accordingly
-		CharString varName;
-		double totalWeight = 0.0;
-
 		// Get target Sample
 		Sample* sam = targetSamples_.firstItem();
 
-		// If the UseMixFrom variable was set, grab its value now
-		CharString mixSource = GenericListHelper<CharString>::retrieve(sam->moduleData(), "UseMixFrom", uniqueName_, options_.valueAsString("UseMixFrom"));
-		Messenger::print("Partials: Isotopologue mixture data will be taken from Module '%s'.\n", mixSource.get());
-
-		// Loop over Configurations. For each, go through the list of Species used in the Configuration, and for each Species, search for any Isotopologues
-		// that are specified as being relevant to this Sample. These will have been defined as Module variables in the Configuration. For each one we find
-		// we update an AtomTypeList with the Isotopologue's atomtypes/isotopes, constructing our atomic fractions.
-		// We will keep a running total of the weights associated with each Configuration, and re-weight the entire set of partials at the end.
-		RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
-		while (Configuration* cfg = configIterator.iterate())
+		// Get the associated Partials module and check the Weights value in the associated Partials module, so we know which data we are looking for
+		Partials* partialsModule = (Partials*) dependentModule("Partials");
+		if (!partialsModule)
 		{
-			// Get weight for this Configuration
-			varName.sprintf("%s_Weight", cfg->name());
-			double weight = 1.0;
-			if (sam->moduleData().contains(varName, mixSource)) weight = GenericListHelper<double>::retrieve(sam->moduleData(), varName, mixSource, 1.0);
-			totalWeight += weight;
-  			Messenger::print("Partials: Weight for Configuration '%s' is %f (total weight is now %f).\n", cfg->name(), weight, totalWeight);
-
-
-			// Calculate and grab partials for Configuration
-// 			calculateUnweighted(cfg, procPool);
-// 			PartialRSet& cfgPartials = GenericListHelper<PartialRSet>::retrieve(cfg->moduleData(), "UnweightedGR", uniqueName_);
-
-			/*
-			 * TODO
-			 */
-			
-			// Create / grab partial set for the Sample
-			bool wasCreated;
-			PartialRSet& samplePartials = GenericListHelper<PartialRSet>::realise(sam->moduleData(), CharString("WeightedGR_%s", mixSource.get()), uniqueName_, &wasCreated);
-// 			if (wasCreated) samplePartials.
-// 			XXX
+			Messenger::error("No Partials module was associated to this instance of StructureFactor.\n");
+			return false;
 		}
-		// TODO Assemble partials from all Configurations specified, weighting them accordingly
-// 		if ((nSampleTargets() == 1) && (targetSamples_.first()->item->hasReferenceData())) qMax = targetSamples_.first()->item->referenceData().xMax();
+		CharString weightsString = GenericListHelper<CharString>::retrieve(sam->moduleData(), "Weights", partialsModule->uniqueName(), options_.valueAsString("Weights"));
+		Partials::WeightingType weightsType = Partials::NoWeighting;
+		if (DUQSys::sameString(weightsString, "Neutron")) weightsType = Partials::NeutronWeighting;
+		else if (!DUQSys::sameString(weightsString, "None"))
+		{
+			Messenger::error("Invalid weighting scheme found for Sample '%s'.\n", weightsString.get());
+			return false;
+		}
+
+		// Create / grab partial set for the weighted sample g(r)
+		PartialRSet& samplegr = GenericListHelper<PartialRSet>::retrieve(sam->moduleData(), "WeightedGR", uniqueName_);
+
+		// Create / grab partial set for the weighted sample S(Q)
+		bool wasCreated;
+		PartialQSet& samplesq = GenericListHelper<PartialQSet>::realise(sam->moduleData(), "WeightedSQ", uniqueName_, &wasCreated);
+		if (wasCreated)
+		{
+// 			XXX Rework calculateUnweighted() to just calculate S(Q) from a supplied PartialRSet.
+// 			XXX Check equivalence (or not...) of combining individual weighted functions into F(Q), or transforming total g(r) into F(Q)
+// 			XXX Create a water example with known F(Q) (i.e. from EPSR) that doesn't move the atoms etc.
+		}
+
 		return false;
 	}
 	else

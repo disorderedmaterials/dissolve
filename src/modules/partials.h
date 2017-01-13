@@ -117,7 +117,7 @@ class Partials : public Module
 	// (Re)calculate unweighted partials for the specified Configuration
 	bool calculateUnweighted(Configuration* cfg, ProcessPool& procPool, int method = 0);
 	// Calculate weighted partials (from existing partial) for the specified Configuration
-	bool calculateWeighted(Configuration* cfg, PartialRSet& unweightedPartials, WeightsMatrix& weightsMatrix, const char* weightSource);
+	bool calculateWeighted(Configuration* cfg, PartialRSet& unweightedPartials, WeightsMatrix& weightsMatrix);
 
 
 	/*

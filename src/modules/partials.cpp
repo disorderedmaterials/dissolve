@@ -47,7 +47,6 @@ Partials::Partials() : Module()
 	frequency_ = 5;
 	options_.add("Save", bool(false), "Whether to save partials to disk after calculation");
 	options_.add("Smoothing", 0, "Specifies the degree of smoothing 'n' to apply to calculated RDFs, where 2n+1 controls the length in the applied Spline smooth");
-	options_.add("UseMixFrom", uniqueName_, "Unique Module name under which to search for Species/Isotopologue mix information");
 	options_.add("Weights", "None", "Weighting scheme to use for calculated partials (None,Neutron)");
 }
 
@@ -179,12 +178,11 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 		Sample* sam = targetSamples_.firstItem();
 
 		// Retrieve control parameters from Configuration
-		const bool saveData = GenericListHelper<bool>::retrieve(sam->moduleData(), "Save", uniqueName(), options_.valueAsBool("Save"));
-		CharString mixSource = GenericListHelper<CharString>::retrieve(sam->moduleData(), "UseMixFrom", uniqueName_, options_.valueAsString("UseMixFrom"));
+		const bool saveData = GenericListHelper<bool>::retrieve(sam->moduleData(), "Save", uniqueName_, options_.valueAsBool("Save"));
 		CharString weightsString = GenericListHelper<CharString>::retrieve(sam->moduleData(), "Weights", uniqueName_, options_.valueAsString("Weights"));
 		Partials::WeightingType weightsType = Partials::NoWeighting;
 		if (DUQSys::sameString(weightsString, "Neutron")) weightsType = Partials::NeutronWeighting;
-		else if (DUQSys::sameString(weightsString, "None"))
+		else if (!DUQSys::sameString(weightsString, "None"))
 		{
 			Messenger::error("Invalid weighting scheme found for Sample '%s'.\n", weightsString.get());
 			return false;
@@ -192,7 +190,6 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 
 		// Print argument/parameter summary
 		Messenger::print("Partials: Save data is %s.\n", DUQSys::onOff(saveData));
-		Messenger::print("Partials: Isotopologue mixture data will be taken from Module '%s'.\n", mixSource.get());
 
 		// Loop over Configurations, creating a list of unique AtomTypes encountered over all. Also, make sure the unweighted partials are up-to-date.
 		RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
@@ -219,10 +216,10 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 					{
 						// Construct variable name that we expect to find if the tope was used in the Module (variable is defined in the associated Configuration)
 						varName.sprintf("Isotopologue/%s/%s", sp->name(), availableIso->name());
-						if (sam->moduleData().contains(varName, mixSource))
+						if (sam->moduleData().contains(varName, uniqueName_))
 						{
 							// This isotopologue is defined as being used, so add its (in the isotopic proportions defined in the Isotopologue) to the weightsMatrix.
-							weightsMatrix.addIsotopologue(sp, speciesPopulation, availableIso, GenericListHelper<double>::retrieve(sam->moduleData(), varName, mixSource));
+							weightsMatrix.addIsotopologue(sp, speciesPopulation, availableIso, GenericListHelper<double>::retrieve(sam->moduleData(), varName, uniqueName_));
 						}
 					}
 				}
@@ -241,7 +238,7 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 
 				// Calculate weighted partials
 				PartialRSet& partialgr = GenericListHelper<PartialRSet>::realise(cfg->moduleData(), "UnweightedGR", uniqueName_);
-				calculateWeighted(cfg, partialgr, weightsMatrix, mixSource);
+				calculateWeighted(cfg, partialgr, weightsMatrix);
 			}
 		}
 
@@ -260,7 +257,7 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 		while (Configuration* cfg = configIterator.iterate())
 		{
 			// Get weighting factor for this Configuration to contribute to the summed partials
-			double weight = GenericListHelper<double>::retrieve(sam->moduleData(), CharString("%s_Weight", cfg->name()), mixSource, 1.0);
+			double weight = GenericListHelper<double>::retrieve(sam->moduleData(), CharString("%s_Weight", cfg->name()), uniqueName_, 1.0);
 			totalWeight += weight;
 			Messenger::print("Partials: Weight for Configuration '%s' is %f (total weight is now %f).\n", cfg->name(), weight, totalWeight);
 
@@ -279,7 +276,7 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 		if (weightsType != Partials::NoWeighting)
 		{
 			bool wasCreated;
-			PartialRSet& weightedPartials = GenericListHelper<PartialRSet>::realise(sam->moduleData(), CharString("WeightedGR_", mixSource.get()), uniqueName_, &wasCreated);
+			PartialRSet& weightedPartials = GenericListHelper<PartialRSet>::realise(sam->moduleData(), "WeightedGR", uniqueName_, &wasCreated);
 			if (wasCreated) weightedPartials.setup(atomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), sam->niceName(), "weighted", "rdf");
 			weightedPartials.reset();
 
@@ -288,10 +285,10 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 			while (Configuration* cfg = configIterator.iterate())
 			{
 				// Grab weighted partials for this Configuration
-				PartialRSet& configPartials = GenericListHelper<PartialRSet>::retrieve(cfg->moduleData(), CharString("WeightedGR_", mixSource.get()), uniqueName_);
+				PartialRSet& configPartials = GenericListHelper<PartialRSet>::retrieve(cfg->moduleData(), "WeightedGR", uniqueName_);
 
 				// Get weighting factor for this Configuration to contribute to the summed partials
-				double weight = GenericListHelper<double>::retrieve(sam->moduleData(), CharString("%s_Weight", cfg->name()), mixSource, 1.0);
+				double weight = GenericListHelper<double>::retrieve(sam->moduleData(), CharString("%s_Weight", cfg->name()), uniqueName_, 1.0);
 
 				weightedPartials.addPartials(configPartials, weight);
 			}
@@ -317,7 +314,7 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 				if (weightsType != Partials::NoWeighting)
 				{
 					// Find the partials set...
-					PartialRSet& weightedPartials = GenericListHelper<PartialRSet>::retrieve(sam->moduleData(), CharString("WeightedGR_", mixSource.get()), uniqueName_);
+					PartialRSet& weightedPartials = GenericListHelper<PartialRSet>::retrieve(sam->moduleData(), "WeightedGR", uniqueName_);
 					if (weightedPartials.save()) procPool.proceed();
 					else
 					{
@@ -614,11 +611,11 @@ bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, in
 }
 
 // Calculate weighted partials (from existing partial) for the specified Configuration
-bool Partials::calculateWeighted(Configuration* cfg, PartialRSet& unweightedPartials, WeightsMatrix& weightsMatrix, const char* weightSource)
+bool Partials::calculateWeighted(Configuration* cfg, PartialRSet& unweightedPartials, WeightsMatrix& weightsMatrix)
 {
 	// Does a PartialSet already exist for this Configuration?
 	bool wasCreated;
-	PartialRSet& partialgr = GenericListHelper<PartialRSet>::realise(cfg->moduleData(), CharString("WeightedGR_", weightSource), uniqueName_, &wasCreated);
+	PartialRSet& partialgr = GenericListHelper<PartialRSet>::realise(cfg->moduleData(), "WeightedGR", uniqueName_, &wasCreated);
 	if (wasCreated) partialgr.setup(cfg, cfg->niceName(), "weighted", "rdf");
 
 	int typeI, typeJ;

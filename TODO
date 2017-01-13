@@ -10,6 +10,9 @@ o Allow for Fixed atoms:
 o Different bond types - e.g. replicate those used in EPSR for reference?
 o Simplify output of new input files by checking module option values to see if they have changed before writing.
 o Look backwards through Module list to find closest dependent one to Module being added.
+o Add Module::parseArg() or similar to examine keywords given to module, acting accordingly (and allowing keyword-style multiple argument specs as well as PlainValue options, and convert Isotoplogue to make it specific to Partials.
+o Accumulate timing information for each module, displaying averages and total in schedule at each step?
+o Add Module virtual 'mutuallyExclusiveTargets', forcing either Configuration or Sample target(s) to be specified but never both (e.g. as for StructureFactor module).
 
 -------------------------------------------
 Ideas / Notes / Weird Algorithm Suggestions
