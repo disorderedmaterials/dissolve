@@ -15,6 +15,9 @@ o Look backwards through Module list to find closest dependent one to Module bei
 Ideas / Notes / Weird Algorithm Suggestions
 -------------------------------------------
 
+** Directional MC Moves
+Could allow definition of displacement vectors (based on molecular axes) for species, and have a module which attempts MC moves along those vectors.
+
 ** Averaging of Calculated Partials
 Options in Partials module to allow either stacking and averaging of RDFs (requiring additional storage inside PartialGRSet and PartialSQSet) or blending of current calculated values with previous values in some percentage (easier, but real, actual partials are unavailable). Can use the moduleData() lists and store datasets to be averaged as additional data.
 
