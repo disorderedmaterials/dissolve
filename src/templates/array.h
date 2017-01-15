@@ -376,6 +376,8 @@ template <class A> class Array2D
 	// Initialise array
 	void initialise(int nrows, int ncolumns, bool half = false)
 	{
+		clear();
+
 		half_ = half;
 		if ((nrows > 0) && (ncolumns > 0)) resize(nrows, ncolumns);
 // 		else printf("BAD_USAGE - Zero or negative row/column size(s) given to Array2D::initialise() (r=%i, c=%i)\n", nrows, ncolumns);

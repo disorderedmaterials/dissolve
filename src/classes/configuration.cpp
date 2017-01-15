@@ -191,8 +191,10 @@ void Configuration::clear()
 	if (grains_ != NULL) delete[] grains_;
 	grains_ = NULL;
 	nGrains_ = 0;
+	if (atoms_ != NULL) delete[] atoms_;
+	atoms_ = NULL;
 	nAtoms_ = 0;
-	if (box_ == NULL) delete box_;
+	if (box_ != NULL) delete box_;
 	box_ = NULL;
 	clearCells();
 }

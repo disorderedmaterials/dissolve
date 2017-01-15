@@ -33,6 +33,13 @@ PartialRSet::PartialRSet() : ListItem<PartialRSet>()
 // Destructor
 PartialRSet::~PartialRSet()
 {
+	fullHistograms_.clear();
+	boundHistograms_.clear();
+	unboundHistograms_.clear();
+
+	partials_.clear();
+	boundPartials_.clear();
+	unboundPartials_.clear();
 }
 
 /*

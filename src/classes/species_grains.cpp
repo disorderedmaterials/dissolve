@@ -119,7 +119,8 @@ void Species::autoAddGrains()
 			}
 		}
 	}
-	
+	delete[] group;
+
 	// Name each grain....
 	for (SpeciesGrain* sg = grains_.first(); sg != NULL; sg = sg->next) sg->setName(uniqueGrainName(sg->nameFromAtoms()));
 

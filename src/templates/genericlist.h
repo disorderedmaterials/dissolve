@@ -37,6 +37,9 @@ class GenericItem
 		prev = NULL;
 		next = NULL;
 	}
+	virtual ~GenericItem()
+	{
+	};
 	// List pointers
 	GenericItem* prev, *next;
 

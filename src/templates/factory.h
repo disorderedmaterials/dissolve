@@ -37,9 +37,24 @@ template <class T> class ObjectChunk
 	 */
 	public:
 	// Constructor
-	ObjectChunk<T>();
+	ObjectChunk<T>()
+	{
+		objectArray_ = new T[FACTORYCHUNKSIZE];
+		objectUsed_ = new bool[FACTORYCHUNKSIZE];
+		objectSize_ = sizeof(T);
+		for (int n=0; n<FACTORYCHUNKSIZE; ++n) objectUsed_[n] = false;
+		nextAvailableObject_ = 0;
+		nUnusedObjects_ = FACTORYCHUNKSIZE;
+		
+		prev = NULL;
+		next = NULL;
+	}
 	// Destructor
-	~ObjectChunk();
+	~ObjectChunk()
+	{
+		if (objectArray_) delete[] objectArray_;
+		if (objectUsed_) delete[] objectUsed_;
+	}
 	// List pointers
 	ObjectChunk<T>* prev, *next;
 
@@ -61,130 +76,96 @@ template <class T> class ObjectChunk
 
 	private:
 	// Determine array offset of object
-	int objectOffset(T* object);
+	int objectOffset(T* object)
+	{
+	// 	printf("in objectoffset: %li %li\n", intptr_t(object), intptr_t(&objectArray_[0]));
+		intptr_t offset = intptr_t(object) - intptr_t(&objectArray_[0]);
+	// 	printf("Offset = %li\n", offset);
+		if (offset < 0) return -1;
+		int index = offset / objectSize_;
+		return (index < FACTORYCHUNKSIZE ? index : -1);
+	}
 
 	public:
 	// Return next available object
-	T* nextAvailable();
-	// Return specified object to pool
-	bool returnObject(T* object);
-	// Return whether object is part of this chunk
-	bool ownsObject(T* object);
-	// Return whether there are unused objects in the chunk
-	bool hasUnusedObjects();
-};
-
-// Constructor
-template <class T> ObjectChunk<T>::ObjectChunk()
-{
-	objectArray_ = new T[FACTORYCHUNKSIZE];
-	objectUsed_ = new bool[FACTORYCHUNKSIZE];
-	objectSize_ = sizeof(T);
-	for (int n=0; n<FACTORYCHUNKSIZE; ++n) objectUsed_[n] = false;
-	nextAvailableObject_ = 0;
-	nUnusedObjects_ = FACTORYCHUNKSIZE;
-	
-	prev = NULL;
-	next = NULL;
-}
-
-// Destructor
-template <class T> ObjectChunk<T>::~ObjectChunk()
-{
-	delete[] objectArray_;
-}
-
-// Determine array offset of object
-template <class T> int ObjectChunk<T>::objectOffset(T* object)
-{
-// 	printf("in objectoffset: %li %li\n", intptr_t(object), intptr_t(&objectArray_[0]));
-	intptr_t offset = intptr_t(object) - intptr_t(&objectArray_[0]);
-// 	printf("Offset = %li\n", offset);
-	if (offset < 0) return -1;
-	int index = offset / objectSize_;
-	return (index < FACTORYCHUNKSIZE ? index : -1);
-}
-
-// Return next available object
-template <class T> T* ObjectChunk<T>::nextAvailable()
-{
-	if (nextAvailableObject_ == -1) return NULL;
-	T* object = &objectArray_[nextAvailableObject_];
-	objectUsed_[nextAvailableObject_] = true;
-	--nUnusedObjects_;
-
-	// If there are no more unused objects, then we are done
-	if (nUnusedObjects_ == 0)
+	T* nextAvailable()
 	{
-		nextAvailableObject_ = -1;
+		if (nextAvailableObject_ == -1) return NULL;
+		T* object = &objectArray_[nextAvailableObject_];
+		objectUsed_[nextAvailableObject_] = true;
+		--nUnusedObjects_;
+
+		// If there are no more unused objects, then we are done
+		if (nUnusedObjects_ == 0)
+		{
+			nextAvailableObject_ = -1;
+			return object;
+		}
+
+		// Search for next available object before we return the object
+		int nextFree = nextAvailableObject_ + 1;
+		// -- First part - search to end of current array
+		while (nextFree < FACTORYCHUNKSIZE)
+		{
+			if (!objectUsed_[nextFree])
+			{
+				nextAvailableObject_ = nextFree;
+				return object;
+			}
+			++nextFree;
+		}
+		// -- Second part - search beginning of array up to current position
+		nextFree = 0;
+		while (nextFree < nextAvailableObject_)
+		{
+			if (!objectUsed_[nextFree])
+			{
+				nextAvailableObject_ = nextFree;
+				return object;
+			}
+			++nextFree;
+		}
+
+		// Shouldn't get here!
+		printf("Internal Error - ObjectChunk.\n");
 		return object;
 	}
-
-	// Search for next available object before we return the object
-	int nextFree = nextAvailableObject_ + 1;
-	// -- First part - search to end of current array
-	while (nextFree < FACTORYCHUNKSIZE)
+	// Return specified object to pool
+	bool returnObject(T* object)
 	{
-		if (!objectUsed_[nextFree])
-		{
-			nextAvailableObject_ = nextFree;
-			return object;
-		}
-		++nextFree;
+		// Get the item offset of the object
+		int offset = objectOffset(object);
+		if (offset == -1) return false;
+		
+		// Mark the object as unused, and increase the unused counter
+		objectUsed_[offset] = false;
+
+		++nUnusedObjects_;
+		if (nextAvailableObject_ == -1) nextAvailableObject_ = offset;
+		return true;
 	}
-	// -- Second part - search beginning of array up to current position
-	nextFree = 0;
-	while (nextFree < nextAvailableObject_)
+	// Return whether object is part of this chunk
+	bool ownsObject(T* object)
 	{
-		if (!objectUsed_[nextFree])
-		{
-			nextAvailableObject_ = nextFree;
-			return object;
-		}
-		++nextFree;
+		// Calculate array offset of this object
+		return (objectOffset(object) != -1);
 	}
-
-	// Shouldn't get here!
-	printf("Internal Error - ObjectChunk.\n");
-	return object;
-}
-
-// Return specified object to pool
-template <class T> bool ObjectChunk<T>::returnObject(T* object)
-{
-	// Get the item offset of the object
-	int offset = objectOffset(object);
-	if (offset == -1) return false;
-	
-	// Mark the object as unused, and increase the unused counter
-	objectUsed_[offset] = false;
-
-	++nUnusedObjects_;
-	if (nextAvailableObject_ == -1) nextAvailableObject_ = offset;
-	return true;
-}
-
-// Return whether object is part of this chunk
-template <class T> bool ObjectChunk<T>::ownsObject(T* object)
-{
-	// Calculate array offset of this object
-	return (objectOffset(object) != -1);
-}
-
-// Return whether there are unused objects in the chunk
-template <class T> bool ObjectChunk<T>::hasUnusedObjects()
-{
-	return (nUnusedObjects_ != 0);
-}
+	// Return whether there are unused objects in the chunk
+	bool hasUnusedObjects()
+	{
+		return (nUnusedObjects_ != 0);
+	}
+};
 
 // Object Factory Class
 template <class T> class ObjectFactory
 {
 	public:
 	// Constructor
-	ObjectFactory<T>();
-	// Destructor
-	~ObjectFactory();
+	ObjectFactory<T>()
+	{
+		currentChunk_ = NULL;
+	}
 
 
 	/*
@@ -202,66 +183,46 @@ template <class T> class ObjectFactory
 	 */
 	public:
 	// Produce a new object
-	T* produce();
-	// Return specified object to factory
-	void returnObject(T* object);
-};
-
-// Constructor
-template <class T> ObjectFactory<T>::ObjectFactory()
-{
-	currentChunk_ = NULL;
-}
-
-// Destructor
-template <class T> ObjectFactory<T>::~ObjectFactory()
-{
-}
-
-/*
- * Object Access
- */
-
-// Produce a new object
-template <class T> T* ObjectFactory<T>::produce()
-{
-	if (currentChunk_ == NULL)
+	T* produce()
 	{
-		currentChunk_ = objectChunks_.add();
-		return currentChunk_->nextAvailable();
-	}
-	else if (currentChunk_->hasUnusedObjects()) return currentChunk_->nextAvailable();
-	else
-	{
-		// Must search current chunk list to see if any current chunks have available space. If not, we will create a new one
-		for (ObjectChunk<T>* chunk = objectChunks_.first(); chunk != NULL; chunk = chunk->next)
+		if (currentChunk_ == NULL)
 		{
-			if (chunk == currentChunk_) continue;
-			if (chunk->hasUnusedObjects())
+			currentChunk_ = objectChunks_.add();
+			return currentChunk_->nextAvailable();
+		}
+		else if (currentChunk_->hasUnusedObjects()) return currentChunk_->nextAvailable();
+		else
+		{
+			// Must search current chunk list to see if any current chunks have available space. If not, we will create a new one
+			for (ObjectChunk<T>* chunk = objectChunks_.first(); chunk != NULL; chunk = chunk->next)
 			{
-				currentChunk_ = chunk;
-				return currentChunk_->nextAvailable();
+				if (chunk == currentChunk_) continue;
+				if (chunk->hasUnusedObjects())
+				{
+					currentChunk_ = chunk;
+					return currentChunk_->nextAvailable();
+				}
 			}
+
+			// No dice - make a new chunk
+			currentChunk_ = objectChunks_.add();
+			return currentChunk_->nextAvailable();
 		}
 
-		// No dice - make a new chunk
-		currentChunk_ = objectChunks_.add();
-		return currentChunk_->nextAvailable();
+		// If we get here, then something has gone horribly wrong...
+		printf("Internal Error - Couldn't find an empty chunk to return an object from.\n");
+		return NULL;
 	}
 
-	// If we get here, then something has gone horribly wrong...
-	printf("Internal Error - Couldn't find an empty chunk to return an object from.\n");
-	return NULL;
-}
+	// Return specified object to factory
+	void returnObject(T* object)
+	{
+		// Must find chunk which owns this object
+		for (ObjectChunk<T>* chunk = objectChunks_.first(); chunk != NULL; chunk = chunk->next) if (chunk->returnObject(object)) return;
 
-// Return specified object to factory
-template <class T> void ObjectFactory<T>::returnObject(T* object)
-{
-	// Must find chunk which owns this object
-	for (ObjectChunk<T>* chunk = objectChunks_.first(); chunk != NULL; chunk = chunk->next) if (chunk->returnObject(object)) return;
-
-	// Couldn't find it!
-	printf("Internal Error - Tried to return an object to an ObjectFactory which didn't produce it.\n");
-}
+		// Couldn't find it!
+		printf("Internal Error - Tried to return an object to an ObjectFactory which didn't produce it.\n");
+	}
+};
 
 #endif

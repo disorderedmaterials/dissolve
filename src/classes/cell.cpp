@@ -38,6 +38,9 @@ Cell::Cell()
 // Destructor
 Cell::~Cell()
 {
+	if (cellNeighbours_) delete[] cellNeighbours_;
+	if (mimCellNeighbours_) delete[] mimCellNeighbours_;
+	if (allCellNeighbours_) delete[] allCellNeighbours_;
 }
 
 /*

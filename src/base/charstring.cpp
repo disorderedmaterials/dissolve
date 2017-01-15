@@ -116,7 +116,7 @@ void CharString::set(const char* s)
 	size_ = newsize;
 	endPosition_ = size_-1;
 	if (s == NULL) data_[0] = '\0';
-	else strcpy(data_,s);
+	else strcpy(data_, s);
 }
 
 // Get
