@@ -24,7 +24,6 @@
 #include "modules/energy.h"
 #include "modules/export.h"
 #include "modules/partials.h"
-#include "modules/structurefactor.h"
 #include "modules/test.h"
 
 /*
@@ -40,6 +39,5 @@ ModuleRegistry::ModuleRegistry()
 	ModuleRegistrar<Energy> energyRegistrar;
 	ModuleRegistrar<Export> exportRegistrar;
 	ModuleRegistrar<Partials> partailsRegistrar;
-	ModuleRegistrar<StructureFactor> structureFactorRegistrar;
 	ModuleRegistrar<Test> testRegistrar;
 }

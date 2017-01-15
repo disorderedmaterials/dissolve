@@ -26,6 +26,8 @@
 #include "classes/partialrset.h"
 
 // Forward Declarations
+class PartialQSet;
+class PartialRSet;
 class WeightsMatrix;
 
 // Partials Module
@@ -115,9 +117,11 @@ class Partials : public Module
 	// Weighting Type enum
 	enum WeightingType { NoWeighting, NeutronWeighting };
 	// (Re)calculate unweighted partials for the specified Configuration
-	bool calculateUnweighted(Configuration* cfg, ProcessPool& procPool, int method = 0);
+	bool calculateUnweighted(Configuration* cfg, ProcessPool& procPool, int smoothing);
 	// Calculate weighted partials (from existing partial) for the specified Configuration
 	bool calculateWeighted(Configuration* cfg, PartialRSet& unweightedPartials, WeightsMatrix& weightsMatrix);
+	// Generate S(Q) from supplied g(r)
+	bool generateSQ(PartialRSet& partialgr, PartialQSet& partialsq, double qMax, double qDelta);
 
 
 	/*

@@ -45,8 +45,18 @@ Partials::Partials() : Module()
 
 	// Setup variables / control parameters
 	frequency_ = 5;
+	options_.add("Bragg", bool(false), "Enable calculation of Bragg scattering");
+	options_.add("BraggQDepBroadening", 0.0063, "FWHM of Gaussian for Q-dependent Bragg broadening function");
+	options_.add("BraggQIndepBroadening", 0.0, "FWHM of Gaussian for Q-independent Bragg broadening function");
+	options_.add("NormaliseToAvSq", bool(false), "Normalise calculated F(Q) to < b >**2");
+	options_.add("NormaliseToSqAv", bool(false), "Normalise calculated F(Q) to < b**2 >");
+	options_.add("QDelta", 0.05, "Step size in Q for S(Q) calculation");
+	options_.add("QDepBroadening", 0.0, "FWHM of Gaussian for Q-dependent instrument broadening function when calculating S(Q)");
+	options_.add("QIndepBroadening", 0.0, "FWHM of Gaussian for Q-independent instrument broadening function when calculating S(Q)");
+	options_.add("QMax", -1.0, "Maximum Q for calculated S(Q)");
 	options_.add("Save", bool(false), "Whether to save partials to disk after calculation");
 	options_.add("Smoothing", 0, "Specifies the degree of smoothing 'n' to apply to calculated RDFs, where 2n+1 controls the length in the applied Spline smooth");
+	options_.add("StructureFactor", bool(false), "Determined whether S(Q) are calculated from the g(r)");
 	options_.add("Weights", "None", "Weighting scheme to use for calculated partials (None,Neutron)");
 }
 
@@ -84,7 +94,7 @@ const char* Partials::name()
 // Return brief description of module
 const char* Partials::brief()
 {
-	return "Calculate partial and total RDFs";
+	return "Calculate partial and total g(r) and S(Q)";
 }
 
 // Return instance type for module
@@ -159,96 +169,127 @@ bool Partials::preProcess(DUQ& duq, ProcessPool& procPool)
 bool Partials::process(DUQ& duq, ProcessPool& procPool)
 {
 	/*
-	 * Calculate weighted or unweighted partials and total RDFs for the Sample or Configuration
+	 * Calculate weighted or unweighted partials and total RDFs  or S(Q) for the specified Sample or Configurations
 	 * 
 	 * This is a serial routine, with each process constructing its own copy of the data.
 	 * Partial calculation routines called by this routine are parallel.
 	 */
+	CharString varName;
 
-	// If there is a Sample target, then we calculate the weighted structure factors for it (using the supplied Configurations)
-	// Otherwise take the Configuration targets and calculate unweighted structure factors for them.
+	// Get control variables from target Sample or, if no target Sample is defined, the first of the defined Configurations (options eill be the same for each).
+	GenericList& moduleData = targetSamples_.nItems() > 0 ? targetSamples_.firstItem()->moduleData() : targetConfigurations_.firstItem()->moduleData();
+	const bool braggOn = GenericListHelper<bool>::retrieve(moduleData, "Bragg", uniqueName(), options_.valueAsBool("Bragg"));
+	const double braggQDepBroadening = GenericListHelper<double>::retrieve(moduleData, "BraggQDepBroadening", uniqueName(), options_.valueAsDouble("BraggQDepBroadening"));
+	const double braggQIndepBroadening = GenericListHelper<double>::retrieve(moduleData, "BraggQIndepBroadening", uniqueName(), options_.valueAsDouble("BraggQIndepBroadening"));
+	const double qDepBroadening = GenericListHelper<double>::retrieve(moduleData, "QDepBroadening", uniqueName(), options_.valueAsDouble("QDepBroadening"));
+	const double qIndepBroadening = GenericListHelper<double>::retrieve(moduleData, "QIndepBroadening", uniqueName(), options_.valueAsDouble("QIndepBroadening"));
+	const bool normaliseToAvSq = GenericListHelper<bool>::retrieve(moduleData, "NormaliseToAvSq", uniqueName(), options_.valueAsBool("NormaliseToAvSq"));
+	const bool normaliseToSqAv = GenericListHelper<bool>::retrieve(moduleData, "NormaliseToSqAv", uniqueName(), options_.valueAsBool("NormaliseToSqAv"));
+	const double qDelta = GenericListHelper<double>::retrieve(moduleData, "QDelta", uniqueName(), options_.valueAsDouble("QDelta"));
+	double qMax = GenericListHelper<double>::retrieve(moduleData, "QMax", uniqueName(), options_.valueAsDouble("QMax"));
+	if (qMax < 0.0) qMax = 30.0;
+	const bool saveData = GenericListHelper<bool>::retrieve(moduleData, "Save", uniqueName(), options_.valueAsBool("Save"));
+	const int smoothing = GenericListHelper<int>::retrieve(moduleData, "Smoothing", uniqueName(), options_.valueAsInt("Smoothing"));
+	const bool sqCalculation = GenericListHelper<bool>::retrieve(moduleData, "StructureFactor", uniqueName(), options_.valueAsBool("StructureFactor"));
+	CharString weightsString = GenericListHelper<CharString>::retrieve(moduleData, "Weights", uniqueName_, options_.valueAsString("Weights"));
+	Partials::WeightingType weightsType = Partials::NoWeighting;
+	if (DUQSys::sameString(weightsString, "Neutron")) weightsType = Partials::NeutronWeighting;
+	else if (!DUQSys::sameString(weightsString, "None"))
+	{
+		Messenger::error("Partials: Invalid weighting scheme '%s' found.\n", weightsString.get());
+		return false;
+	}
 
+	// Print argument/parameter summary
+	Messenger::print("Partials: Calculating S(Q)/F(Q) out to %f Angstroms**-1 using step size of %f Angstroms**-1.\n", qMax, qDelta);
+	Messenger::print("Partials: Q-dependent FWHM broadening to use is %f, Q-independent FWHM broadening to use is %f.\n", qDepBroadening, qIndepBroadening);
+	Messenger::print("Partials: Calculation of Bragg features is %s.\n", DUQSys::onOff(braggOn));
+	if (braggOn) Messenger::print("Partials: Q-dependent FWHM Bragg broadening to use is %f, Q-independent FWHM Bragg broadening to use is %f.\n", braggQDepBroadening, braggQIndepBroadening);
+	Messenger::print("Partials: Save data is %s.\n", DUQSys::onOff(saveData));
+	Messenger::print("Partials: Structure factor calculation is %s.\n", DUQSys::onOff(sqCalculation));
+	if (sqCalculation)
+	{
+		Messenger::print("Partials: Structure factor QMax = %f, QDelta = %f.\n", qMax, qDelta);
+		Messenger::print("Partials: Bragg calculationg is %s.\n", DUQSys::onOff(saveData));
+		if (braggOn) Messenger::print("Partials: Bragg Q-dependent FWHM broadening to use is %f, Q-independent FWHM broadening to use is %f.\n", braggQDepBroadening, braggQIndepBroadening);
+	}
+
+	/*
+	 * Regardless of whether we are targetting a Sample (made up from some combination of Configuration's partials) or multiple independent Configurations,
+	 * we must loop over the specified targetConfigurations_ and calculate the partials for each.
+	 */
+	RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
+	while (Configuration* cfg = configIterator.iterate())
+	{
+		// Calculate unweighted partials for this Configuration
+		calculateUnweighted(cfg, procPool, smoothing);
+		
+		// Calculate weighted partials here if requested
+		if (weightsType != Partials::NoWeighting)
+		{
+			// Construct weights matrix based on Isotopologue specifications in some module (specified by mixSource) and the populations of atomtypes in the Configuration
+			WeightsMatrix weightsMatrix;
+			RefListIterator<Species,double> speciesIterator(cfg->usedSpecies());
+			while (Species* sp = speciesIterator.iterate())
+			{
+				int speciesPopulation = speciesIterator.currentData() * cfg->multiplier();
+
+				// Loop over available Isotopologues for Species
+				for (Isotopologue* availableIso = sp->isotopologues(); availableIso != NULL; availableIso = availableIso->next)
+				{
+					// Construct variable name that we expect to find if the tope was used in the Module (variable is defined in the associated Configuration)
+					varName.sprintf("Isotopologue/%s/%s", sp->name(), availableIso->name());
+					if (moduleData.contains(varName, uniqueName_))
+					{
+						// This isotopologue is defined as being used, so add its (in the isotopic proportions defined in the Isotopologue) to the weightsMatrix.
+						weightsMatrix.addIsotopologue(sp, speciesPopulation, availableIso, GenericListHelper<double>::retrieve(moduleData, varName, uniqueName_));
+					}
+				}
+			}
+
+			// We will complain strongly if a species in the Configuration is not covered by at least one Isotopologue definition
+			speciesIterator.restart();
+			while (Species* sp = speciesIterator.iterate()) if (!weightsMatrix.hasSpeciesIsotopologueMixture(sp)) 
+			{
+				Messenger::error("Isotopologue specification for Species '%s' in Configuration '%s' is missing.\n", sp->name(), cfg->name());
+				return false;
+			}
+
+			// Finalise and store weighting matrix
+			weightsMatrix.finalise();
+			GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "PartialWeights", uniqueName_) = weightsMatrix.scatteringMatrix();
+
+			// Calculate weighted partials
+			PartialRSet& partialgr = GenericListHelper<PartialRSet>::realise(cfg->moduleData(), "UnweightedGR", uniqueName_);
+			calculateWeighted(cfg, partialgr, weightsMatrix);
+		}
+	}
+
+	// If a target sample was spdeified, construct the weighted sum of Configuration
 	if (targetSamples_.nItems() > 0)
 	{
-		// Assemble partials from all Configurations specified, weighting them accordingly
+		// Assemble partials from all target Configurations specified, weighting them accordingly
 		CharString varName;
 		AtomTypeList atomTypes;
 
 		// Get target Sample
 		Sample* sam = targetSamples_.firstItem();
 
-		// Retrieve control parameters from Configuration
-		const bool saveData = GenericListHelper<bool>::retrieve(sam->moduleData(), "Save", uniqueName_, options_.valueAsBool("Save"));
-		CharString weightsString = GenericListHelper<CharString>::retrieve(sam->moduleData(), "Weights", uniqueName_, options_.valueAsString("Weights"));
-		Partials::WeightingType weightsType = Partials::NoWeighting;
-		if (DUQSys::sameString(weightsString, "Neutron")) weightsType = Partials::NeutronWeighting;
-		else if (!DUQSys::sameString(weightsString, "None"))
-		{
-			Messenger::error("Invalid weighting scheme found for Sample '%s'.\n", weightsString.get());
-			return false;
-		}
-
-		// Print argument/parameter summary
-		Messenger::print("Partials: Save data is %s.\n", DUQSys::onOff(saveData));
-
-		// Loop over Configurations, creating a list of unique AtomTypes encountered over all. Also, make sure the unweighted partials are up-to-date.
+		// Loop over Configurations, creating a list of unique AtomTypes encountered over all.
 		RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
 		while (Configuration* cfg = configIterator.iterate())
 		{
 			// Add any missing atom types into our local list
 			atomTypes.add(cfg->usedAtomTypesList());
-
-			// Calculate partials for Configuration
-			calculateUnweighted(cfg, procPool);
-			
-			// Need to calculate weighted terms here if requested
-			if (weightsType != Partials::NoWeighting)
-			{
-				// Construct weights matrix based on Isotopologue specifications in some module (specified by mixSource) and the populations of atomtypes in the Configuration
-				WeightsMatrix weightsMatrix;
-				RefListIterator<Species,double> speciesIterator(cfg->usedSpecies());
-				while (Species* sp = speciesIterator.iterate())
-				{
-					int speciesPopulation = speciesIterator.currentData() * cfg->multiplier();
-
-					// Loop over available Isotopologues for Species
-					for (Isotopologue* availableIso = sp->isotopologues(); availableIso != NULL; availableIso = availableIso->next)
-					{
-						// Construct variable name that we expect to find if the tope was used in the Module (variable is defined in the associated Configuration)
-						varName.sprintf("Isotopologue/%s/%s", sp->name(), availableIso->name());
-						if (sam->moduleData().contains(varName, uniqueName_))
-						{
-							// This isotopologue is defined as being used, so add its (in the isotopic proportions defined in the Isotopologue) to the weightsMatrix.
-							weightsMatrix.addIsotopologue(sp, speciesPopulation, availableIso, GenericListHelper<double>::retrieve(sam->moduleData(), varName, uniqueName_));
-						}
-					}
-				}
-
-				// We will complain strongly if a species in the Configuration is not covered by at least one Isotopologue definition
-				speciesIterator.restart();
-				while (Species* sp = speciesIterator.iterate()) if (!weightsMatrix.hasSpeciesIsotopologueMixture(sp)) 
-				{
-					Messenger::error("Isotopologue specification for Species '%s' in Configuration '%s' is missing.\n", sp->name(), cfg->name());
-					return false;
-				}
-
-				// Finalise and store weighting matrix
-				weightsMatrix.finalise();
-				GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "PartialWeights", uniqueName_) = weightsMatrix.scatteringMatrix();
-
-				// Calculate weighted partials
-				PartialRSet& partialgr = GenericListHelper<PartialRSet>::realise(cfg->moduleData(), "UnweightedGR", uniqueName_);
-				calculateWeighted(cfg, partialgr, weightsMatrix);
-			}
 		}
+		atomTypes.finalise();
+		atomTypes.print();
 
 		// Setup partial set for the Sample, using the AtomTypeList we have just constructed.
 		// We will use RDF range information from the first Configuration in the list
 		Configuration* refConfig = targetConfigurations_.firstItem();
 		PartialRSet& unweightedPartials = GenericListHelper<PartialRSet>::realise(sam->moduleData(), "UnweightedGR", uniqueName_);
 		unweightedPartials.setup(atomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), sam->niceName(), "unweighted", "rdf");
-		atomTypes.finalise();
-		atomTypes.print();
 
 		// Loop over Configurations again, summing into the PartialRSet we have just set up
 		// We will keep a running total of the weights associated with each Configuration, and re-weight the entire set of partials at the end.
@@ -324,38 +365,6 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 				}
 			}
 			else if (!procPool.decision()) return false;
-		}
-	}
-	else
-	{
-		RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
-		while (Configuration* cfg = configIterator.iterate())
-		{
-			// Retrieve control parameters from Configuration
-			const bool saveData = GenericListHelper<bool>::retrieve(cfg->moduleData(), "Save", uniqueName(), options_.valueAsBool("Save"));
-
-			// Print argument/parameter summary
-			Messenger::print("Partials: Save data is %s.\n", DUQSys::onOff(saveData));
-
-			calculateUnweighted(cfg, procPool);
-
-			// Save data?
-			if (saveData)
-			{
-				// Only the pool master saves the data
-				if (procPool.isMaster())
-				{
-					// Find PartialSet for this Configuration
-					PartialRSet& partials = GenericListHelper<PartialRSet>::retrieve(cfg->moduleData(), "UnweightedGR", uniqueName_);
-					if (partials.save()) procPool.proceed();
-					else
-					{
-						procPool.stop();
-						return false;
-					}
-				}
-				else if (!procPool.decision()) return false;
-			}
 		}
 	}
 
@@ -471,11 +480,8 @@ bool Partials::calculateSimple(Configuration* cfg, PartialRSet& partialSet, Proc
 }
 
 // Calculate unweighted partials for the specified Configuration
-bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, int method)
+bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, int smoothing)
 {
-	// Retrieve control parameters from Configuration
-	const int smoothing = GenericListHelper<int>::retrieve(cfg->moduleData(), "Smoothing", uniqueName(), options_.valueAsInt("Smoothing"));
-
 	// Does a PartialSet already exist for this Configuration?
 	bool wasCreated;
 	PartialRSet& partialgr = GenericListHelper<PartialRSet>::realise(cfg->moduleData(), "UnweightedGR", uniqueName_, &wasCreated);
@@ -640,6 +646,73 @@ bool Partials::calculateWeighted(Configuration* cfg, PartialRSet& unweightedPart
 
 	return true;
 }
+
+// 	// Perform FT of reference data (if present)
+// 	if (referenceData_.nPoints() > 0)
+// 	{
+// 		referenceDataFT_ = referenceData_;
+// // 		referenceDataFT_.rebin();
+// 		referenceDataFT_.transformLorch(rho, 0.025, 50.0, 0.5, 0.08, true);
+// 	}
+
+
+// Generate S(Q) from supplied g(r)
+bool Partials::generateSQ(PartialRSet& partialgr, PartialQSet& partialsq, double qMax, double qDelta)
+{
+	/*
+	 * Copy g(r) data into our S(Q) arrays
+	 */
+
+	// Copy partial data into our own PartialSet
+// 	int typeI, typeJ;
+// 	procPool.resetAccumulatedTime();
+// 	for (typeI=0; typeI<partialSQ.nTypes(); ++typeI)
+// 	{
+// 		for (typeJ=typeI; typeJ<partialSQ.nTypes(); ++typeJ)
+// 		{
+// 			// Subtract 1.0 from the full and unbound partials so as to give (g(r)-1)
+// 			// Don't subtract 1.0 from the bound partials, since they do not tend to 1.0 at longer r??
+// 			partialSQ.partial(typeI,typeJ).copyData(partialRDFs.partial(typeI,typeJ));
+// 			partialSQ.partial(typeI,typeJ).arrayY() -= 1.0;
+// 			partialSQ.boundPartial(typeI,typeJ).copyData(partialRDFs.boundPartial(typeI,typeJ));
+// // 			partialSQ.boundPartial(typeI,typeJ).arrayY() -= 1.0;
+// 			partialSQ.unboundPartial(typeI,typeJ).copyData(partialRDFs.unboundPartial(typeI,typeJ));
+// 			partialSQ.unboundPartial(typeI,typeJ).arrayY() -= 1.0;
+// 		}
+// 	}
+// 
+// 	/*
+// 	 * Perform FT of partial g(r) into S(Q)
+// 	 */
+// 	// TODO Parallelise this
+// 	procPool.resetAccumulatedTime();
+// 	Timer timer;
+// 	timer.start();
+// 	double rho = cfg->atomicDensity();
+// 	for (typeI=0; typeI<partialSQ.nTypes(); ++typeI)
+// 	{
+// 		for (typeJ=typeI; typeJ<partialSQ.nTypes(); ++typeJ)
+// 		{
+// 			if (!partialSQ.partial(typeI,typeJ).transformBroadenedRDF(rho, qDelta, qMax, qDepBroadening, qIndepBroadening, windowFunction)) return false;
+// 			if (!partialSQ.boundPartial(typeI,typeJ).transformBroadenedRDF(rho, qDelta, qMax, qDepBroadening, qIndepBroadening, windowFunction)) return false;
+// 			if (!partialSQ.unboundPartial(typeI,typeJ).transformBroadenedRDF(rho, qDelta, qMax, qDepBroadening, qIndepBroadening, windowFunction)) return false;
+// 		}
+// 	}
+// 
+// 	// Sum into total
+// 	partialSQ.formTotal();
+// 
+// 	timer.stop();
+// 	Messenger::print("StructureFactor: Finished Fourier transform and summation of partial g(r) into partial S(Q) (%s elapsed, %s comms).\n", timer.timeString(), procPool.accumulatedTimeString());
+// 
+// 	/*
+// 	 * Partials are now up-to-date
+// 	 */
+// 
+// 	partialSQ.setIndex(cfg->coordinateIndex());
+
+}
+
 
 // 	// Calculate Bragg partials (if requested)
 // 	if (braggOn)

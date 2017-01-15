@@ -11,7 +11,6 @@ atomshake.cpp
 energy.cpp
 export.cpp
 partials.cpp
-structurefactor.cpp
 test.cpp
 #forces.cpp
 #grainshake.cpp
@@ -23,7 +22,6 @@ atomshake.h
 energy.h
 export.h
 partials.h
-structurefactor.h
 test.h
 #forces.h
 #grainshake.h
