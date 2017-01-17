@@ -1,5 +1,5 @@
 /*
-	*** System functions
+	*** System Functions
 	*** src/base/sysfunc.cpp
 	Copyright T. Youngs 2012-2017
 
@@ -26,6 +26,57 @@
 #include <string.h>
 
 using namespace std;
+
+/*
+ * Conversion Functions
+ */
+
+// Convert integer to string representation
+const char* DUQSys::itoa(int n)
+{
+	static CharString result;
+	result.sprintf("%i",n);
+	return result;
+}
+
+// Convert double to string representation (as %f)
+const char* DUQSys::ftoa(double f)
+{
+	static CharString result;
+	result.sprintf("%f",f);
+	return result;
+}
+
+// Convert double to string representation with supplied format
+const char* DUQSys::ftoa(double f, const char* fmt)
+{
+	static CharString result;
+	result.sprintf(fmt,f);
+	return result;
+}
+
+// Convert string to boolean
+bool DUQSys::atob(const char* s)
+{
+	if (sameString(s, "true") || sameString(s, "on")) return true;
+	return false;
+}
+
+// Convert boolean to string representation ("True" or "False")
+const char* DUQSys::btoa(bool b)
+{
+	return (b ? "True" : "False");
+}
+
+// Convert boolean to string representation ("On" or "Off")
+const char* DUQSys::onOff(bool b)
+{
+	return (b ? "On" : "Off");
+}
+
+/*
+ * String Functions
+ */
 
 // Convert string to uppercase
 const char* DUQSys::upperCase(const char* s)
@@ -175,100 +226,6 @@ void DUQSys::removeComments(char* s)
 	}
 }
 
-// Return whether string consists of empty whitespace characters only
-bool DUQSys::isEmpty(const char* s)
-{
-	if (s == NULL) return true;
-	for (const char* c = s; *c != '\0'; ++c)
-	{
-		switch (*c)
-		{
-			case (' '):
-			case ('\t'):
-			case ('\n'):
-			case ('\r'):
-				continue;
-			default:
-				return false;
-		}
-	}
-	return true;
-}
-
-// Search enum list for text
-int DUQSys::enumSearch(const char* name, int maxn, const char**itemlist, const char* query, bool reportError)
-{
-	static CharString lowerq, lowers;
-	int result = maxn, i;
-	lowerq = lowerCase(query);
-	for (i=0; i<maxn; i++)
-	{
-		lowers = lowerCase(itemlist[i]);
-		if (lowerq == lowers)
-		{
-			result = i;
-			break;
-		}
-	}
-	if ((result == maxn) && (name[0] != '\0') && reportError) printf("Unrecognised %s '%s'\n",name,query);
-	return result;
-}
-
-// Print valid enum values
-void DUQSys::enumPrintValid(int nitems, const char**list)
-{
-	Messenger::print("Valid values are:\n    ");
-	for (int i=0; i < nitems; i++)
-	{
-		if ((strcmp(list[i],"_NULL_") == 0) || (list[i][0] == '_')) continue;
-		Messenger::print("%s ", lowerCase(list[i]));
-	}
-	Messenger::print("\n");
-}
-
-// Convert the number 'n' to a string representation.
-const char* DUQSys::itoa(int n)
-{
-	static CharString result;
-	result.sprintf("%i",n);
-	return result;
-}
-
-// Convert the real number 'f' to a string representation
-const char* DUQSys::ftoa(double f)
-{
-	static CharString result;
-	result.sprintf("%f",f);
-	return result;
-}
-
-// Convert the real number 'f' to a string representation with supplied format
-const char* DUQSys::ftoa(double f, const char* fmt)
-{
-	static CharString result;
-	result.sprintf(fmt,f);
-	return result;
-}
-
-// Convert text string to boolean
-bool DUQSys::atob(const char* s)
-{
-	if (sameString(s, "true") || sameString(s, "on")) return true;
-	return false;
-}
-
-// Convert boolean to text string (true/false)
-const char* DUQSys::btoa(bool b)
-{
-	return (b ? "True" : "False");
-}
-
-// Convert boolean to text string (on/off)
-const char* DUQSys::onOff(bool b)
-{
-	return (b ? "On" : "Off");
-}
-
 // Strip trailing whitespace from string
 const char* DUQSys::stripTrailing(const char* s)
 {
@@ -344,6 +301,30 @@ int DUQSys::countChars(const char* s, const char* chars, int offset)
 	return total;
 }
 
+// Return whether string consists of empty whitespace characters only
+bool DUQSys::isEmpty(const char* s)
+{
+	if (s == NULL) return true;
+	for (const char* c = s; *c != '\0'; ++c)
+	{
+		switch (*c)
+		{
+			case (' '):
+			case ('\t'):
+			case ('\n'):
+			case ('\r'):
+				continue;
+			default:
+				return false;
+		}
+	}
+	return true;
+}
+
+/*
+ * Files
+ */
+
 // Return whether file exists
 bool DUQSys::fileExists(const char* filename)
 {
@@ -354,4 +335,18 @@ bool DUQSys::fileExists(const char* filename)
 		return true;
 	}
 	else return false;
+}
+
+/*
+ * Time Functions
+ */
+
+// Return string of current time / date
+const char* DUQSys::currentTimeAndDate()
+{
+	static char result[128];
+	time_t currentTime = time(NULL);
+	tm* converted = gmtime(&currentTime);
+	strftime(result, sizeof(result), "%H:%M:%S on %d-%m-%Y", converted);
+	return result;
 }

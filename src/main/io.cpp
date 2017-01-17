@@ -26,6 +26,7 @@
 #include "classes/graindefinition.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
+#include "version.h"
 #include <string.h>
 
 // Load datafiles
@@ -206,7 +207,8 @@ bool DUQ::saveInput(const char* filename)
 	}
 	
 	// Write title comment
-	parser.writeLineF("\n\n# Input file written by dUQ\n\n");
+	parser.writeLineF("# Input file written by dUQ v%s\n", DUQVERSION);
+	parser.writeLineF("# %s\n\n", DUQSys::currentTimeAndDate());
 	
 	// Write Species data
 	parser.writeLineF("# Species Definitions\n");

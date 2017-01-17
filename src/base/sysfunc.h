@@ -1,5 +1,5 @@
 /*
-	*** System functions
+	*** System Functions
 	*** src/base/sysfunc.h
 	Copyright T. Youngs 2012-2017
 
@@ -25,38 +25,74 @@
 // System Functions
 class DUQSys
 {
+	/*
+	 * Conversion Functions
+	 */
 	public:
-	// Number/string conversion
+	// Convert integer to string representation
 	static const char* itoa(int i);
+	// Convert double to string representation (as %f)
 	static const char* ftoa(double d);
+	// Convert double to string representation with supplied format
 	static const char* ftoa(double d, const char* fmt);
+	// Convert string to boolean
 	static bool atob(const char* s);
-	static const char* onOff(bool b);
+	// Convert boolean to string representation ("True" or "False")
 	static const char* btoa(bool b);
+	// Convert boolean to string representation ("On" or "Off")
+	static const char* onOff(bool b);
 
-	// String functions
+
+	/*
+	 * String Functions
+	 */
+	public:
+	// Convert string to uppercase
 	static const char* upperCase(const char*);
+	// Convert string to lowercase
 	static const char* lowerCase(const char*);
+	// Perform case-(in)sensitive string comparison
 	static bool sameString(const char* s1, const char* s2, bool caseSensitive = false);
+	// Get characters before first occurrence of designated character
 	static const char* beforeChar(const char*, char);
+	// Get characters after first occurrence of designated character
 	static const char* afterChar(const char*, char);
+	// Get characters after last occurrence of designated character
 	static const char* afterLastChar(const char*, char);
+	// Get characters before last occurrence of designated character
 	static const char* beforeLastChar(const char*, char);
+	// Get characters before first occurrence of designated string
 	static const char* beforeStr(const char*, const char*);
+	// Get characters after first occurrence of designated character
 	static const char* afterStr(const char*, const char*);
-	static const char* stripTrailing(const char*);
-	static const char* replaceChars(const char* s, const char* charstoreplace, char r);
-	static const char* stripChars(const char* s, const char* charstostrip);
-	static int countChars(const char* string, const char* searchchars, int offset = 0);
+	// Remove comments from line
 	static void removeComments(char* s);
+	// Strip trailing whitespace from string
+	static const char* stripTrailing(const char*);
+	// Replace all of the supplied characters in the source string
+	static const char* replaceChars(const char* s, const char* charstoreplace, char r);
+	// Strip all of the supplied characters from the source string
+	static const char* stripChars(const char* s, const char* charstostrip);
+	// Count number of times that supplied characters occur in supplied string
+	static int countChars(const char* string, const char* searchchars, int offset = 0);
+	// Return whether string consists of empty whitespace characters only
 	static bool isEmpty(const char* s);
 
-	// Enum search and print
-	static int enumSearch(const char* name, int nitems, const char**list, const char* query, bool reportError = 1);
-	static void enumPrintValid(int nitems, const char**list);
 
-	// Files
+	/*
+	 * Files
+	 */
+	public:
+	// Return whether specified file exists
 	static bool fileExists(const char* filename);
+
+
+	/*
+	 * Time Functions
+	 */
+	public:
+	// Return string of current time / date
+	static const char* currentTimeAndDate();
 };
 
 #endif
