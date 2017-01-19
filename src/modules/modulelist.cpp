@@ -190,3 +190,20 @@ RefList<Module,bool>& ModuleList::masterInstances()
 {
 	return masterInstances_;
 }
+
+// Search for any instance of any module with the specified unique name
+Module* ModuleList::findInstanceByUniqueName(const char* uniqueName)
+{
+	RefListIterator<Module,bool> moduleIterator(masterInstances_);
+	while (Module* masterInstance = moduleIterator.iterate())
+	{
+		// Master instance itself?
+		if (DUQSys::sameString(masterInstance->uniqueName(), uniqueName)) return masterInstance;
+
+		// Child instances
+		Module* instance = masterInstance->findInstance(uniqueName);
+		if (instance) return instance;
+	}
+
+	return NULL;
+}

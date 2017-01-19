@@ -187,12 +187,20 @@ bool DUQ::setupSimulation()
 			RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
 			while (Configuration* cfg = configIterator.iterate()) Messenger::print("      --> %s\n", cfg->name());
 		}
-		if (module->nSampleTargets() == 0) Messenger::print("      No Sample targets.\n");
+	}
+
+	if (processingModules_.nModules() == 0) Messenger::print("--> No main processing Modules found.\n");
+	else Messenger::print("--> %i main processing %s found.\n", processingModules_.nModules(), processingModules_.nModules() == 1 ? "Module" : "Modules");
+	RefListIterator<Module,bool> mainProcessingIterator(processingModules_.modules());
+	while (Module* module = mainProcessingIterator.iterate())
+	{
+		Messenger::print("    %s:\n", module->name());
+		if (module->nConfigurationTargets() == 0) Messenger::print("      No Configuration targets.\n");
 		else
 		{
-			Messenger::print("      %i Sample %s:\n", module->nSampleTargets(), module->nSampleTargets() == 1 ? "target" : "targets");
-			RefListIterator<Sample,bool> sampleIterator(module->targetSamples());
-			while (Sample* sample = sampleIterator.iterate()) Messenger::print("      --> %s\n", sample->name());
+			Messenger::print("      %i Configuration %s:\n", module->nConfigurationTargets(), module->nConfigurationTargets() == 1 ? "target" : "targets");
+			RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
+			while (Configuration* cfg = configIterator.iterate()) Messenger::print("      --> %s\n", cfg->name());
 		}
 	}
 
@@ -208,13 +216,6 @@ bool DUQ::setupSimulation()
 			Messenger::print("      %i Configuration %s:\n", module->nConfigurationTargets(), module->nConfigurationTargets() == 1 ? "target" : "targets");
 			RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
 			while (Configuration* cfg = configIterator.iterate()) Messenger::print("      --> %s\n", cfg->name());
-		}
-		if (module->nSampleTargets() == 0) Messenger::print("      No Sample targets.\n");
-		else
-		{
-			Messenger::print("      %i Sample %s:\n", module->nSampleTargets(), module->nSampleTargets() == 1 ? "target" : "targets");
-			RefListIterator<Sample,bool> sampleIterator(module->targetSamples());
-			while (Sample* sample = sampleIterator.iterate()) Messenger::print("      --> %s\n", sample->name());
 		}
 	}
 

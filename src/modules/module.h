@@ -31,7 +31,6 @@
 class DUQ;
 class Configuration;
 class ProcessPool;
-class Sample;
 
 // Module
 class Module : public ListItem<Module>
@@ -55,6 +54,8 @@ class Module : public ListItem<Module>
 	public:
 	// Create instance of this module
 	virtual Module* createInstance() = 0;
+	// Find instance with unique name specified
+	Module* findInstance(const char* uniqueName);
 	// Delete all instances of this Module
 	void deleteInstances();
 
@@ -73,6 +74,8 @@ class Module : public ListItem<Module>
 	public:
 	// Return name of Module
 	virtual const char* name() = 0;
+	// Set unique name of Module
+	void setUniqueName(const char* uniqueName);
 	// Return unique name of Module
 	const char* uniqueName();
 	// Return options for Module
@@ -129,8 +132,8 @@ class Module : public ListItem<Module>
 	protected:
 	// Configurations that are targeted by this Module
 	RefList<Configuration,bool> targetConfigurations_;
-	// Samples that are targeted by this module
-	RefList<Sample,bool> targetSamples_;
+	// Whether this module is a local Module in a Configuration 
+	bool configurationLocal_;
 
 	public:
 	// Return the maximum number of Configurations the Module can target (or -1 for any number)
@@ -145,19 +148,10 @@ class Module : public ListItem<Module>
 	bool isTargetConfiguration(Configuration* cfg);
 	// Copy Configuration targets from specified Module
 	void copyTargetConfigurations(Module* sourceModule);
-	// Return the maximum number of Samples the Module can target (or -1 for any number)
-	virtual int nTargetableSamples() = 0;
-	// Add Sample target
-	bool addSampleTarget(Sample* sam);
-	// Return number of targeted Samples
-	int nSampleTargets();
-	// Return first targeted Sample
-	RefList<Sample,bool>& targetSamples();
-	// Return if the specified Sample is in the targets list
-	bool isTargetSample(Sample* sam);
-	// Copy Sample targets from specified Module
-	void copyTargetSamples(Module* sourceModule);
-
+	// Set whether this module is a local Module in a Configuration
+	void setConfigurationLocal(bool b);
+	// Return whether this module is a local Module in a Configuration
+	bool configurationLocal();
 
 	/*
 	 * Method

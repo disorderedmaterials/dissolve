@@ -140,7 +140,7 @@ bool Partials::setupDependentModule(Module* depMod)
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
 int Partials::nTargetableConfigurations()
 {
-	return -1;
+	return (configurationLocal_ ? 1 : -1);
 }
 
 // Return the maximum number of Samples the Module can target (or -1 for any number)
@@ -176,8 +176,8 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 	 */
 	CharString varName;
 
-	// Get control variables from target Sample or, if no target Sample is defined, the first of the defined Configurations (options eill be the same for each).
-	GenericList& moduleData = targetSamples_.nItems() > 0 ? targetSamples_.firstItem()->moduleData() : targetConfigurations_.firstItem()->moduleData();
+	// Get control variables from first target Configuration or, if no target Sample is defined, the first of the defined Configurations (options will be the same for each).
+	GenericList& moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : duq.processingModuleData();
 	const bool braggOn = GenericListHelper<bool>::retrieve(moduleData, "Bragg", uniqueName(), options_.valueAsBool("Bragg"));
 	const double braggQDepBroadening = GenericListHelper<double>::retrieve(moduleData, "BraggQDepBroadening", uniqueName(), options_.valueAsDouble("BraggQDepBroadening"));
 	const double braggQIndepBroadening = GenericListHelper<double>::retrieve(moduleData, "BraggQIndepBroadening", uniqueName(), options_.valueAsDouble("BraggQIndepBroadening"));
@@ -215,7 +215,7 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 	}
 
 	/*
-	 * Regardless of whether we are targetting a Sample (made up from some combination of Configuration's partials) or multiple independent Configurations,
+	 * Regardless of whether we are a main processing task (summing some combination of Configuration's partials) or multiple independent Configurations,
 	 * we must loop over the specified targetConfigurations_ and calculate the partials for each.
 	 */
 	RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
@@ -265,15 +265,12 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 		}
 	}
 
-	// If a target sample was spdeified, construct the weighted sum of Configuration
-	if (targetSamples_.nItems() > 0)
+	// If we are a main processing task, construct the weighted sum of Configuration
+	if (!configurationLocal_)
 	{
 		// Assemble partials from all target Configurations specified, weighting them accordingly
 		CharString varName;
 		AtomTypeList atomTypes;
-
-		// Get target Sample
-		Sample* sam = targetSamples_.firstItem();
 
 		// Loop over Configurations, creating a list of unique AtomTypes encountered over all.
 		RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
@@ -288,8 +285,8 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 		// Setup partial set for the Sample, using the AtomTypeList we have just constructed.
 		// We will use RDF range information from the first Configuration in the list
 		Configuration* refConfig = targetConfigurations_.firstItem();
-		PartialRSet& unweightedPartials = GenericListHelper<PartialRSet>::realise(sam->moduleData(), "UnweightedGR", uniqueName_);
-		unweightedPartials.setup(atomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), sam->niceName(), "unweighted", "rdf");
+		PartialRSet& unweightedPartials = GenericListHelper<PartialRSet>::realise(duq.processingModuleData(), "UnweightedGR", uniqueName_);
+		unweightedPartials.setup(atomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), uniqueName(), "unweighted", "rdf");
 
 		// Loop over Configurations again, summing into the PartialRSet we have just set up
 		// We will keep a running total of the weights associated with each Configuration, and re-weight the entire set of partials at the end.
@@ -298,7 +295,7 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 		while (Configuration* cfg = configIterator.iterate())
 		{
 			// Get weighting factor for this Configuration to contribute to the summed partials
-			double weight = GenericListHelper<double>::retrieve(sam->moduleData(), CharString("%s_Weight", cfg->name()), uniqueName_, 1.0);
+			double weight = GenericListHelper<double>::retrieve(moduleData, CharString("%s_Weight", cfg->name()), uniqueName_, 1.0);
 			totalWeight += weight;
 			Messenger::print("Partials: Weight for Configuration '%s' is %f (total weight is now %f).\n", cfg->name(), weight, totalWeight);
 
@@ -317,8 +314,8 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 		if (weightsType != Partials::NoWeighting)
 		{
 			bool wasCreated;
-			PartialRSet& weightedPartials = GenericListHelper<PartialRSet>::realise(sam->moduleData(), "WeightedGR", uniqueName_, &wasCreated);
-			if (wasCreated) weightedPartials.setup(atomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), sam->niceName(), "weighted", "rdf");
+			PartialRSet& weightedPartials = GenericListHelper<PartialRSet>::realise(moduleData, "WeightedGR", uniqueName_, &wasCreated);
+			if (wasCreated) weightedPartials.setup(atomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), uniqueName(), "weighted", "rdf");
 			weightedPartials.reset();
 
 			// Loop over Configurations, adding in their weighted partial sets as we go
@@ -329,7 +326,7 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 				PartialRSet& configPartials = GenericListHelper<PartialRSet>::retrieve(cfg->moduleData(), "WeightedGR", uniqueName_);
 
 				// Get weighting factor for this Configuration to contribute to the summed partials
-				double weight = GenericListHelper<double>::retrieve(sam->moduleData(), CharString("%s_Weight", cfg->name()), uniqueName_, 1.0);
+				double weight = GenericListHelper<double>::retrieve(moduleData, CharString("%s_Weight", cfg->name()), uniqueName_, 1.0);
 
 				weightedPartials.addPartials(configPartials, weight);
 			}
@@ -355,7 +352,7 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 				if (weightsType != Partials::NoWeighting)
 				{
 					// Find the partials set...
-					PartialRSet& weightedPartials = GenericListHelper<PartialRSet>::retrieve(sam->moduleData(), "WeightedGR", uniqueName_);
+					PartialRSet& weightedPartials = GenericListHelper<PartialRSet>::retrieve(moduleData, "WeightedGR", uniqueName_);
 					if (weightedPartials.save()) procPool.proceed();
 					else
 					{

@@ -65,9 +65,6 @@ void DUQ::clear()
 	Messenger::printVerbose("Clearing Configurations...\n");
 	configurations_.clear();
 
-	Messenger::printVerbose("Clearing Samples...\n");
-	samples_.clear();
-
 	Messenger::printVerbose("Clearing Species...\n");
 	species_.clear();
 

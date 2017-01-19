@@ -27,7 +27,6 @@
 #include "classes/histogram.h"
 #include "classes/kvector.h"
 #include "classes/braggpeak.h"
-#include "classes/sample.h"
 #include "modules/modulelist.h"
 #include "base/processpool.h"
 #include "templates/genericlist.h"

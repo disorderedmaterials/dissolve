@@ -159,9 +159,9 @@ bool AtomShake::preProcess(DUQ& duq, ProcessPool& procPool)
 bool AtomShake::process(DUQ& duq, ProcessPool& procPool)
 {
 	/*
-	* Perform an Atom shake
-	* 
-	* This is a parallel routine, with processes operating in groups.
+	 * Perform an Atom shake
+	 * 
+	 * This is a parallel routine, with processes operating in groups.
 	 */
 
 	// Get target Configuration

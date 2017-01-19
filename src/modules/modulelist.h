@@ -36,8 +36,6 @@ class ModuleList
 	ModuleList();
 	// Destructor
 	~ModuleList();
-	// List Context
-	enum ModuleListContext { SampleContext, ConfigurationContext };
 
 
 	/*
@@ -76,6 +74,8 @@ class ModuleList
 	static bool printMasterModuleInformation();
 	// Return list of all master instances
 	static RefList<Module,bool>& masterInstances();
+	// Search for any instance of any module with the specified unique name
+	static Module* findInstanceByUniqueName(const char* uniqueName);
 };
 
 #endif

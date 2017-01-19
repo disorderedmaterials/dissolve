@@ -106,6 +106,7 @@ bool ModuleBlock::parse(LineParser& parser, DUQ* duq, Module* module, GenericLis
 				module->setEnabled(false);
 				break;
 			case (ModuleBlock::EndModuleKeyword):
+				Messenger::print("Found end of %s block.\n", InputBlocks::inputBlock(InputBlocks::ModuleBlock));
 				blockDone = true;
 				break;
 			case (ModuleBlock::FrequencyKeyword):

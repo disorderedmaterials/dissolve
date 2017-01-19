@@ -72,6 +72,7 @@ bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
 	Sample* sam;
 	Species* sp;
 	Module* masterInstance, *module;
+	CharString niceName;
 	bool blockDone = false, error = false;
 
 	while (!parser.eofOrBlank(duq->worldPool()))
@@ -145,12 +146,22 @@ bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
 					error = true;
 				}
 				if (error) break;
+				
+				// Set unique name, if it was provided - need to check if it has bbeen used elsewhere (in any Module or instance of it)
+				niceName = DUQSys::niceName(parser.argc(1));
+				if (ModuleList::findInstanceByUniqueName(niceName))
+				{
+					Messenger::error("A Module with the unique name '%s' already exist.\n", niceName.get());
+					error = true;
+				}
+				else module->setUniqueName(niceName);
 
 				// Parse rest of Module block
-				if (!ModuleBlock::parse(parser, duq, masterInstance, cfg->moduleData(), true)) error = true;
+				module->setConfigurationLocal(true);
+				if (!ModuleBlock::parse(parser, duq, module, cfg->moduleData(), true)) error = true;
 
 				// Now finished parsing the Module block, so must update target Samples and Configurations in any auto-added Modules
-				masterInstance->updateDependentTargets();
+				module->updateDependentTargets();
 				break;
 			case (ConfigurationBlock::MultiplierKeyword):
 				cfg->setMultiplier(parser.argd(1));

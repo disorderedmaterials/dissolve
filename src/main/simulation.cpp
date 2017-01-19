@@ -58,7 +58,7 @@ bool DUQ::go()
 	 *  1)	Run all Module pre-processing tasks using all processes available (worldPool_)
 	 *  2)	Run all Modules assigned to Configurations using individual parallel strategies for Configurations
 	 *  3)	Reassemble Configuration data on all processes
-	 *  4)	Run all Modules assigned to Samples using all processes available (worldPool_)
+	 *  4)	Run all processing Modules using all processes available (worldPool_)
 	 *  5)	Run any Module post-processing tasks using all processes available (worldPool_)
 	 *  6)	Write data (master process only)
 	 */
@@ -67,7 +67,7 @@ bool DUQ::go()
 	 * Start of Main Loop
 	 */
 	
-	// TODO Run Setup tasks for Modules
+	// TODO Run Setup tasks for Modules? Or remove this feature...
 
 	bool keepGoing = true;
 	do
@@ -75,7 +75,7 @@ bool DUQ::go()
 		// Increase iteration counter
 		++iteration_;
 
-		Messenger::banner("MAIN LOOP ITERATION %10i / %-10s", iteration_, maxIterations_ == -1 ? "(no limit)" : DUQSys::itoa(maxIterations_));
+		Messenger::banner("MAIN LOOP ITERATION %10i / %-10s    %s", iteration_, maxIterations_ == -1 ? "(no limit)" : DUQSys::itoa(maxIterations_), DUQSys::currentTimeAndDate());
 
 		/*
 		 *  0)	Print schedule of tasks to run
@@ -96,14 +96,9 @@ bool DUQ::go()
 		}
 		Messenger::print("\n");
 
-		Messenger::print("--> Sample Processing\n");
-		for (Sample* sam = samples_.first(); sam != NULL; sam = sam->next)
-		{
-			Messenger::print("   * '%s'\n", sam->name());
-			if (sam->nModules() == 0) Messenger::print("  (( No Tasks ))\n");
-			RefListIterator<Module,bool> modIterator(sam->modules());
-			while (Module* module = modIterator.iterate()) Messenger::print("      --> %20s  (%s)\n", module->name(), module->frequencyDetails(iteration_));
-		}
+		Messenger::print("--> Main Processing\n");
+		RefListIterator<Module,bool> processingIterator(processingModules_.modules());
+		while (Module* module = preIterator.iterate()) Messenger::print("      --> %20s  (%s)\n", module->name(), module->frequencyDetails(iteration_));
 		Messenger::print("\n");
 
 		Messenger::print("--> Post-Processing\n");
@@ -196,36 +191,28 @@ bool DUQ::go()
 
 	
 		/*
-		 *  4)	Run Modules for all Samples (using worldPool_)
+		 *  4)	Run processing Modules (using worldPool_)
 		 */
-		if (samples_.nItems() > 0) Messenger::banner("Sample Processing");
-		for (Sample* sam = samples_.first(); sam != NULL; sam = sam->next)
+		if (processingModules_.nModules() > 0) Messenger::banner("Main Processing");
+		processingIterator.restart();
+		while (Module* module = processingIterator.iterate())
 		{
+			if (!module->runThisIteration(iteration_)) continue;
+
 			Messenger::print("\n");
-			Messenger::print("--> Sample '%s'\n", sam->name());
+			result = module->process(*this, worldPool_);
 
-			// Loop over Modules defined in the Configuration
-			RefListIterator<Module,bool> moduleIterator(sam->modules());
-			while (Module* module = moduleIterator.iterate())
+			if (!result)
 			{
-				if (!module->runThisIteration(iteration_)) continue;
-
-				Messenger::print("\n");
-				result = module->process(*this, worldPool_);
-
-				if (!result)
-				{
-					Messenger::error("Module '%s' experienced errors. Exiting now.\n", module->name());
-					return false;
-				}
+				Messenger::error("Module '%s' experienced errors. Exiting now.\n", module->name());
+				return false;
 			}
 		}
-		
 
 		// Sync up all processes
 		worldPool_.wait(ProcessPool::Pool);
 
-		
+
 		/*
 		 *  5)	Perform post-processing tasks (using worldPool_)
 		 */
@@ -255,6 +242,8 @@ bool DUQ::go()
 		 */
 		if (worldPool_.isMaster())
 		{
+			Messenger::banner("Write Data");
+
 			/*
 			 * Input File
 			 */
@@ -270,13 +259,11 @@ bool DUQ::go()
 			 * Configuration Data
 			 */
 
-			// Keep track of number of Configurations saved / to save - print banner before first one
-			int nSaved = 0;
+			// Keep track of number of Configurations saved / to save
 			for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
 			{
 				if (iteration_%cfg->coordinatesOutputFrequency() != 0) continue;
 
-				if (nSaved == 0) Messenger::banner("Write Configurations");
 				Messenger::print("Writing Configuration output file '%s'...\n", cfg->outputCoordinatesFile());
 
 				// Open the file and use the Export module to write the Configuration data as xyz
@@ -294,8 +281,6 @@ bool DUQ::go()
 					worldPool_.stop();
 					return false;
 				}
-
-				++nSaved;
 			}
 
 			/*
@@ -314,7 +299,7 @@ bool DUQ::go()
 		}
 		else if (!worldPool_.decision()) return false;
 
-		Messenger::banner("END OF MAIN LOOP ITERATION %10i", iteration_);
+		Messenger::banner("END OF MAIN LOOP ITERATION %10i         %s", iteration_, DUQSys::currentTimeAndDate());
 	}
 	while ((maxIterations_ < 0) || (iteration_ < maxIterations_));
 
@@ -325,4 +310,10 @@ bool DUQ::go()
 int DUQ::iteration()
 {
 	return iteration_;
+}
+
+// Return data associated with main processing Modules
+GenericList& DUQ::processingModuleData()
+{
+	return processingModuleData_;
 }

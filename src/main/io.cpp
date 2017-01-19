@@ -109,7 +109,7 @@ bool DUQ::loadInput(const char* filename)
 	
 	// Variables
 	Configuration* cfg;
-	Sample* sam;
+	Module* module, *masterInstance;
 	Species* sp;
 	InputBlocks::InputBlock block;
 	bool error = false;
@@ -135,19 +135,34 @@ bool DUQ::loadInput(const char* filename)
 				Messenger::print("Created Configuration '%s'...\n", cfg->name());
 				if (!ConfigurationBlock::parse(parser, this, cfg)) error = true;
 				break;
-			case (InputBlocks::PairPotentialsBlock):
-				if (!PairPotentialsBlock::parse(parser, this)) error = true;
-				break;
-			case (InputBlocks::SampleBlock):
-				// Check to see if a Sample with this name already exists...
-				if (findSample(parser.argc(1)))
+			case (InputBlocks::ModuleBlock):
+				// The argument following the keyword is the module name
+				masterInstance = ModuleList::findMasterInstance(parser.argc(1));
+				if (!masterInstance)
 				{
-					Messenger::error("Redefinition of Sample '%s'.\n", parser.argc(1));
+					Messenger::error("No Module named '%s' exists.\n", parser.argc(1));
 					error = true;
 					break;
 				}
-				sam = addSample(parser.argc(1));
-				if (!SampleBlock::parse(parser, this, sam)) error = true;
+
+				// Try to add this module (or an instance of it) to the main processing Module list
+				module = processingModules_.addModule(masterInstance, processingModuleData_, autoAddDependentModules_);
+				if (!module)
+				{
+					Messenger::error("Failed to add Module '%s' as main processing task.\n", parser.argc(1));
+					error = true;
+				}
+				if (error) break;
+
+				// Parse rest of Module block
+				module->setConfigurationLocal(false);
+				if (!ModuleBlock::parse(parser, this, module, processingModuleData_, false)) error = true;
+
+				// Now finished parsing the Module block, so must update targets in any auto-added Modules
+				module->updateDependentTargets();
+				break;
+			case (InputBlocks::PairPotentialsBlock):
+				if (!PairPotentialsBlock::parse(parser, this)) error = true;
 				break;
 			case (InputBlocks::SimulationBlock):
 				if (!SimulationBlock::parse(parser, this)) error = true;
@@ -207,8 +222,7 @@ bool DUQ::saveInput(const char* filename)
 	}
 	
 	// Write title comment
-	parser.writeLineF("# Input file written by dUQ v%s\n", DUQVERSION);
-	parser.writeLineF("# %s\n\n", DUQSys::currentTimeAndDate());
+	parser.writeLineF("# Input file written by dUQ v%s at \n", DUQVERSION, DUQSys::currentTimeAndDate());
 	
 	// Write Species data
 	parser.writeLineF("# Species Definitions\n");
@@ -295,7 +309,7 @@ bool DUQ::saveInput(const char* filename)
 		RefListIterator<Module,bool> moduleIterator(cfg->modules());
 		while (Module* module = moduleIterator.iterate())
 		{
-			parser.writeLineF("  %s  %s  # %s\n", ConfigurationBlock::keyword(ConfigurationBlock::ModuleKeyword), module->name(), module->uniqueName());
+			parser.writeLineF("  %s  %s  '%s'\n", ConfigurationBlock::keyword(ConfigurationBlock::ModuleKeyword), module->name(), module->uniqueName());
 
 			// For each Module, print all available options
 			// Write value set in Configuration if it exists
@@ -331,46 +345,35 @@ bool DUQ::saveInput(const char* filename)
 		parser.writeLineF("%s\n\n", ConfigurationBlock::keyword(ConfigurationBlock::EndConfigurationKeyword));
 	}
 
-	// Write Sample blocks
-	parser.writeLineF("# Samples\n");
-	for (Sample* sam = samples_.first(); sam != NULL; sam = sam->next)
+	// Write processing Module blocks
+	parser.writeLineF("# Processing Modules\n");
+	RefListIterator<Module,bool> processingIterator(processingModules_.modules());
+	while (Module* module = processingIterator.iterate())
 	{
-		// Reference data present?
-		if (!sam->referenceDataFileName().isEmpty())
-		{
-			parser.writeLineF("  %s '%s'\n", SampleBlock::keyword(SampleBlock::ReferenceDataKeyword), sam->referenceDataFileName().get());
-		}
+		parser.writeLineF("%s  %s  '%s'\n", InputBlocks::inputBlock(InputBlocks::ModuleBlock), module->name(), module->uniqueName());
 
-		// Modules
-		parser.writeLineF("\n  # Modules\n");
-		if (sam->nModules() == 0) parser.writeLineF("  # -- None\n");
-		RefListIterator<Module,bool> moduleIterator(sam->modules());
-		while (Module* module = moduleIterator.iterate())
+		// For each Module, print all available options
+		// Write value set in Configuration if it exists
+		for (PlainValue* option = module->options().values(); option != NULL; option = option->next)
 		{
-			parser.writeLineF("  %s  %s  # %s\n", SampleBlock::keyword(SampleBlock::ModuleKeyword), module->name(), module->uniqueName());
-
-			// For each Module, print all available options
-			for (PlainValue* option = module->options().values(); option != NULL; option = option->next)
+			switch (option->type())
 			{
-				if (option->type() == PlainValue::StringType) parser.writeLineF("    %s  '%s'\n", option->name(), option->asString());
-				else parser.writeLineF("    %s  %s\n", option->name(), option->asString());
+				case (PlainValue::BooleanType):
+					parser.writeLineF("  %s  %s\n", option->name(), DUQSys::btoa(GenericListHelper<bool>::retrieve(processingModuleData_, option->name(), module->uniqueName(), option->asBool())));
+					break;
+				case (PlainValue::IntegerType):
+					parser.writeLineF("  %s  %i\n", option->name(), GenericListHelper<int>::retrieve(processingModuleData_, option->name(), module->uniqueName(), option->asInt()));
+					break;
+				case (PlainValue::DoubleType):
+					parser.writeLineF("  %s  %12.6e\n", option->name(), GenericListHelper<double>::retrieve(processingModuleData_, option->name(), module->uniqueName(), option->asDouble()));
+					break;
+				case (PlainValue::StringType):
+					parser.writeLineF("  %s  '%s'\n", option->name(), GenericListHelper<CharString>::retrieve(processingModuleData_, option->name(), module->uniqueName(), option->asString()).get());
+					break;
 			}
-
-			// Not in a Configuration block, so print associated Configuration information
-			//parser.writeLineF("%s  '%s'\n", InputBlocks::inputBlock(Keywords::SampleBlock), sam->name()); 
-			//for (IsotopologueMix* iso = sam->isotopologueMixtures(); iso != NULL; iso = iso->next)
-			//{
-			//	double sum = iso->totalRelative();
-			//	for (RefListItem<Isotopologue,double>* ri = iso->isotopologues(); ri != NULL; ri = ri->next)
-			//	{
-			//		parser.writeLineF("  %s  '%s'  '%s'  %f\n", Keywords::sampleKeyword(Keywords::IsotopologueSampleKeyword), iso->species()->name(), ri->item->name(), ri->data);
-			//	}
-			//}
-
-			parser.writeLineF("  %s\n", ModuleBlock::keyword(ModuleBlock::EndModuleKeyword));
 		}
 
-		parser.writeLineF("%s\n\n", SampleBlock::keyword(SampleBlock::EndSampleKeyword));
+		parser.writeLineF("%s\n", ModuleBlock::keyword(ModuleBlock::EndModuleKeyword));
 	}
 
 	// Write PairPotentials block
@@ -402,14 +405,6 @@ bool DUQ::saveInput(const char* filename)
 void DUQ::dump()
 {
 	Messenger::print("\n");
-
-	// Reference Data
-	for (Sample* sam = samples_.first(); sam != NULL; sam = sam->next)
-	{
-		if (!sam->hasReferenceData()) continue;
-		Messenger::print("\n# Reference data for Sample '%s':\n", sam->name());
-		sam->referenceData().dump();
-	}
 
 	// Configurations
 	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)

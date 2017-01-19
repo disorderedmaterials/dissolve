@@ -32,6 +32,7 @@ Module::Module()
 {
 	frequency_ = 1;
 	enabled_ = true;
+	configurationLocal_ = true;
 
 	// LogPoints
 	logPoint_ = 0;
@@ -47,6 +48,13 @@ Module::~Module()
  * Instances
  */
 
+// Find instance with unique name specified
+Module* Module::findInstance(const char* uniqueName)
+{
+	for (Module* instance = instances().first(); instance != NULL; instance = instance->next) if (DUQSys::sameString(instance->uniqueName(), uniqueName)) return instance;
+	return NULL;
+}
+
 // Delete all instances of this Module
 void Module::deleteInstances()
 {
@@ -56,6 +64,12 @@ void Module::deleteInstances()
 /*
  * Definition
  */
+
+// Set unique name of Module
+void Module::setUniqueName(const char* uniqueName)
+{
+	uniqueName_ = uniqueName;
+}
 
 // Return unique name of Module
 const char* Module::uniqueName()
@@ -93,8 +107,7 @@ void Module::updateDependentTargets()
 		// If the Module was *not* added automatically, then do not update the targets since it is the user's responsibility to ensure consistency
 		if (!iterator.currentData()) continue;
 
-		// Copy target Samples and Configurations
-		module->copyTargetSamples(this);
+		// Copy target Configurations
 		module->copyTargetConfigurations(this);
 
 		// Set frequency of module to match that of the parent
@@ -217,51 +230,14 @@ void Module::copyTargetConfigurations(Module* sourceModule)
 	while (Configuration* cfg = configIterator.iterate()) addConfigurationTarget(cfg);
 }
 
-// Add Sample target
-bool Module::addSampleTarget(Sample* sam)
+// Set whether this module is a local Module in a Configuration
+void Module::setConfigurationLocal(bool b)
 {
-	// Check how many Samples we accept before we do anything else
-	if ((nTargetableSamples() == -1) || (targetSamples_.nItems() < nTargetableSamples()))
-	{
-		targetSamples_.add(sam);
-		return true;
-	}
-	else
-	{
-		if (nTargetableSamples() == 0) Messenger::error("Can't add Sample '%s' as a target to Module '%s' since it doesn't accept any such targets.\n", sam->name(), name());
-		else Messenger::error("Can't add Sample '%s' as a target to Module '%s' since the maximum number (%i) has already been reached.\n", sam->name(), name(), nTargetableSamples());
-	}
-
-	return false;
+	configurationLocal_ = b;
 }
 
-// Return number of targeted Samples
-int Module::nSampleTargets()
+// Return whether this module is a local Module in a Configuration
+bool Module::configurationLocal()
 {
-	return targetSamples_.nItems();
-}
-
-// Return first targeted Sample
-RefList<Sample,bool>& Module::targetSamples()
-{
-	return targetSamples_;
-}
-
-// Return if the specified Sample is in the targets list
-bool Module::isTargetSample(Sample* sam)
-{
-	return targetSamples_.contains(sam);
-}
-
-// Copy Sample targets from specified Module
-void Module::copyTargetSamples(Module* sourceModule)
-{
-	// First, check if this module actually accepts target Samples
-	if ((nTargetableSamples() < sourceModule->nSampleTargets()) && (nTargetableSamples() != -1))
-	{
-		Messenger::warn("Dependent Module '%s' does not accept Sample targets, but the source Module '%s' lists %i.\n", name(), sourceModule->name());
-		return;
-	}
-	RefListIterator<Sample,bool> sampleIterator(sourceModule->targetSamples());
-	while (Sample* sample = sampleIterator.iterate()) addSampleTarget(sample);
+	return configurationLocal_;
 }

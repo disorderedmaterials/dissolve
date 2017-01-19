@@ -18,22 +18,22 @@ Configuration 'liquid'
   EndModule
 EndConfiguration
 
-# Samples
 # Experimental data taken from Table 1 of Yarnell, Katz, Wenzel, and Koenig, Phys. Rev. A 7, 2130 (1973).
 # Liquid Ar36 at 85 K. Data are normalised to <b2>, and oscillate around 1.0.
-Sample  'Yarnell-85K'
-  ReferenceData  'yarnell.sq'
-  Module Partials
-    Save true
-    Configuration  'liquid'
-    Weights neutron
-    Isotopologue  'liquid'  'Argon'  'Ar36'  1.0
-    StructureFactor  on
-    QDepBroadening  0.02    # For SLS
-    #NormalisedToAvSq
-    #SubtractSelf
-  EndModule
-EndSample
+Module Partials 'Yarnell-85K'
+  Save true
+  Configuration  'liquid'
+  Weights neutron
+  Isotopologue  'liquid'  'Argon'  'Ar36'  1.0
+  StructureFactor  on
+  QDepBroadening  0.02    # For SLS
+  #NormalisedToAvSq
+  #SubtractSelf
+EndModule
+
+#Module EPSR
+#  AddReferenceData  'Yarnell-85K'  'yarnell.sq'
+#EndModule
 
 # Pair Potentials
 PairPotentials

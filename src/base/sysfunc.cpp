@@ -321,6 +321,16 @@ bool DUQSys::isEmpty(const char* s)
 	return true;
 }
 
+// Return nice version of string (no spaces, slashes etc.)
+const char* DUQSys::niceName(const char* original)
+{
+	static CharString result;
+	result = original;
+	result.replace(" /\\#*$", '_');
+
+	return result.get();
+}
+
 /*
  * Files
  */

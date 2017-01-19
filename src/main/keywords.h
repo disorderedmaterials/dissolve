@@ -57,7 +57,6 @@ namespace InputBlocks
 		ConfigurationBlock,		/* 'Configuration' - Defines a single Configuration for use in the simulation */
 		ModuleBlock,			/* 'Module' - Sets up a Module within a Configuration */
 		PairPotentialsBlock,		/* 'PairPotentials' - Contains definitions of the PairPotentials for the simulation */
-		SampleBlock,			/* 'Sample' - Begins a definition of a Sample */
 		SimulationBlock,		/* 'Simulation' - Setting of simulation variables affecting the calculation */
 		SpeciesBlock,			/* 'Species' - Begins a definition of a Species */
 		nInputBlocks			/* Number of defined InputBlock keywords */

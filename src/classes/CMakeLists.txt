@@ -36,7 +36,6 @@ pairpotential.cpp
 potentialmap.cpp
 partialqset.cpp
 partialrset.cpp
-sample.cpp
 speciesangle.cpp
 speciesatom.cpp
 species_atomic.cpp
@@ -76,7 +75,6 @@ pairpotential.h
 potentialmap.h
 partialqset.h
 partialrset.h
-sample.h
 speciesangle.h
 speciesatom.h
 speciesbond.h

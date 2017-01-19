@@ -105,26 +105,6 @@ class DUQ
 
 
 	/*
-	 * Sample Definitions
-	 */
-	private:
-	// List of Samples
-	List<Sample> samples_;
-
-	public:
-	// Add Sample
-	Sample* addSample(const char* baseName = "NewSample");
-	// Remove Sample
-	void removeSample(Sample* sample);
-	// Return first Sample
-	Sample* samples() const;
-	// Return nth Sample
-	Sample* sample(int n);
-	// Search for Sample by name
-	Sample* findSample(const char* name) const;
-
-
-	/*
 	 * Pair Potentials
 	 */
 	private:
@@ -199,9 +179,13 @@ class DUQ
 	 * Simulation
 	 */
 	private:
-	// List of pre-processing tasks to perform
+	// List of Modules with pre-processing tasks to perform
 	RefList<Module,bool> preProcessingTasks_;
-	// List of post-processing stages to perform
+	// List of main processing Modules to run
+	ModuleList processingModules_;
+	// Data associated with main processing Modules
+	GenericList processingModuleData_;
+	// List of Modules with post-processing tasks to perform
 	RefList<Module,bool> postProcessingTasks_;
 	// Current simulation step
 	int iteration_;
@@ -217,6 +201,8 @@ class DUQ
 	bool go();
 	// Return current simulation step
 	int iteration();
+	// Return data associated with main processing Modules
+	GenericList& processingModuleData();
 
 
 	/*

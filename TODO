@@ -11,11 +11,15 @@ o Different bond types - e.g. replicate those used in EPSR for reference?
 o Simplify output of new input files by checking module option values to see if they have changed before writing.
 o Add Module::parseArg() or similar to examine keywords given to module, acting accordingly (and allowing keyword-style multiple argument specs as well as PlainValue options, and convert Isotoplogue to make it specific to Partials.
 o Accumulate timing information for each module, displaying averages and total in schedule at each step?
-o Add Module virtual 'mutuallyExclusiveTargets', forcing either Configuration or Sample target(s) to be specified but never both (e.g. as for StructureFactor module).
+o Tag output and output files with program version and current date/time.
+o Allow Isotopologue list input as block as well as single line, since for large molecules the line will become annoyingly long.
 
 -------------------------------------------
 Ideas / Notes / Weird Algorithm Suggestions
 -------------------------------------------
+
+** Exchangeable Hydrogens
+Program should auto-detect exchangeable hydrogens based on connectivity (but which can be overridden by user, e.g. add '*' after atom name?). Calculation of partials still needs to account for exchangeable hydrogen blending - can we do this simply through the AtomTypeLists that we create for the WeightsMatrix?
 
 ** Directional MC Moves
 Could allow definition of displacement vectors (based on molecular axes) for species, and have a module which attempts MC moves along those vectors.

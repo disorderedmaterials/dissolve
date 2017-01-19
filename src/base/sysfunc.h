@@ -77,6 +77,8 @@ class DUQSys
 	static int countChars(const char* string, const char* searchchars, int offset = 0);
 	// Return whether string consists of empty whitespace characters only
 	static bool isEmpty(const char* s);
+	// Return nice version of string (no spaces, slashes etc.)
+	static const char* niceName(const char* original);
 
 
 	/*

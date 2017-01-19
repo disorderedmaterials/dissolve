@@ -10,11 +10,9 @@ keywords_configuration.cpp
 keywords.cpp
 keywords_module.cpp
 keywords_pairpotentials.cpp
-keywords_sample.cpp
 keywords_simulation.cpp
 keywords_species.cpp
 pairpotentials.cpp
-samples.cpp
 setup.cpp
 simulation.cpp
 species.cpp
