@@ -112,58 +112,8 @@ bool ModuleBlock::parse(LineParser& parser, DUQ* duq, Module* module, GenericLis
 			case (ModuleBlock::FrequencyKeyword):
 				module->setFrequency(parser.argi(1));
 				break;
-			case (ModuleBlock::IsotopologueKeyword):
-				// Essentially a shortcut for setting a variable in a target Configuration / Sample
-				// Find target Configuration
-				targetCfg = duq->findConfiguration(parser.argc(1));
-				if (!targetCfg)
-				{
-					Messenger::error("Error defining Isotopologue - no Configuration named '%s' exists.\n", parser.argc(1));
-					error = true;
-					break;
-				}
-
-				// Raise an error if this Configuration is not targetted by the Module
-				if (!module->isTargetConfiguration(targetCfg)) 
-				{
-					Messenger::error("Configuration '%s' is not targetted by the Module '%s'.\n", targetCfg->name(), module->name());
-					error = true;
-					break;
-				}
-
-				// Find specified Species - must be present in the target Configuration
-				sp = duq->findSpecies(parser.argc(2));
-				if (!sp)
-				{
-					Messenger::error("Error defining Isotopologue - no Species named '%s' exists.\n", parser.argc(2));
-					error = true;
-					break;
-				}
-
-				if (!targetCfg->usedSpecies().contains(sp))
-				{
-					Messenger::error("Error defining Isotopologue - Species '%s' is not present in Configuration '%s'.\n", sp->name(), targetCfg->name());
-					error = true;
-					break;
-				}
-
-				// Finally, locate isotopologue definition for species
-				tope = sp->findIsotopologue(parser.argc(3));
-				if (!tope)
-				{
-					Messenger::error("Error defining Isotopologue - no Isotopologue named '%s' exists for Species '%s'.\n", parser.argc(3), sp->name());
-					error = true;
-					break;
-				}
-
-				// Ready - add a suitable variable to the Configuration
-				varName.sprintf("Isotopologue/%s/%s", sp->name(), tope->name());
-				GenericListHelper<double>::add(targetList, varName, module->uniqueName()) = parser.argd(4);
-				break;
 			case (ModuleBlock::nModuleKeywords):
-				Messenger::error("Unrecognised %s block keyword found - '%s'\n", InputBlocks::inputBlock(InputBlocks::ModuleBlock), parser.argc(0));
-				InputBlocks::printValidKeywords(InputBlocks::ModuleBlock);
-				error = true;
+				// Never used, since it is accounted for in the beginning 'if'
 				break;
 			default:
 				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", InputBlocks::inputBlock(InputBlocks::ModuleBlock), ModuleBlock::keyword(modKeyword));
@@ -172,19 +122,27 @@ bool ModuleBlock::parse(LineParser& parser, DUQ* duq, Module* module, GenericLis
 		}
 		else
 		{
-			// Might be an option defined in the Module?
+			// Might be an plain option defined in the Module?
 			PlainValue* value = module->options().value(parser.argc(0));
-			if (!value)
+			if (value)
 			{
-				Messenger::error("Unrecognised %s block keyword found - '%s', and the Module '%s' contains no option with this name.\n", InputBlocks::inputBlock(InputBlocks::ModuleBlock), parser.argc(0), module->name());
-				error = true;
-				break;
+				// Set variable in target
+				if (value->type() == PlainValue::BooleanType) GenericListHelper<bool>::add(targetList, value->name(), module->uniqueName()) = parser.argb(1);
+				else if (value->type() == PlainValue::IntegerType) GenericListHelper<int>::add(targetList, value->name(), module->uniqueName()) = parser.argi(1);
+				else if (value->type() == PlainValue::DoubleType) GenericListHelper<double>::add(targetList, value->name(), module->uniqueName()) = parser.argd(1);
+				else GenericListHelper<CharString>::add(targetList, value->name(), module->uniqueName()) = parser.argc(1);
 			}
-			// Set variable in target
-			if (value->type() == PlainValue::BooleanType) GenericListHelper<bool>::add(targetList, value->name(), module->uniqueName()) = parser.argb(1);
-			else if (value->type() == PlainValue::IntegerType) GenericListHelper<int>::add(targetList, value->name(), module->uniqueName()) = parser.argi(1);
-			else if (value->type() == PlainValue::DoubleType) GenericListHelper<double>::add(targetList, value->name(), module->uniqueName()) = parser.argd(1);
-			else GenericListHelper<CharString>::add(targetList, value->name(), module->uniqueName()) = parser.argc(1);
+			else
+			{
+				// Might be a keyword defined in the Module itself?
+				int result = module->parseKeyword(parser, duq, targetList);
+				printf("Result = %i\n", result);
+				if (result != 1)
+				{
+					if (result == 0) Messenger::error("Unrecognised %s block keyword found - '%s', and the Module '%s' contains no option with this name.\n", InputBlocks::inputBlock(InputBlocks::ModuleBlock), parser.argc(0), module->name());
+					error = true;
+				}
+			}
 		}
 
 		// Error encountered?

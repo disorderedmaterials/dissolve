@@ -77,12 +77,6 @@ const char* Module::uniqueName()
 	return uniqueName_.get();
 }
 
-// Return options for Module
-PlainValueList& Module::options()
-{
-	return options_;
-}
-
 // Add dependent Module to this Module
 void Module::addDependentModule(Module* module, bool autoAdded)
 {
@@ -119,6 +113,12 @@ void Module::updateDependentTargets()
 		// Also may need to update dependent targets of this Module...
 		module->updateDependentTargets();
 	}
+}
+
+// Return options for Module
+PlainValueList& Module::options()
+{
+	return options_;
 }
 
 /*

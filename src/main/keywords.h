@@ -119,7 +119,6 @@ namespace ModuleBlock
 		DisableKeyword,			/* 'Disable' - Disables the module, preventing it from running */
 		EndModuleKeyword,		/* 'EndModule' - Signals the end of the Module block */
 		FrequencyKeyword,		/* 'Frequency' - Frequency at which the Module is run */
-		IsotopologueKeyword,		/* 'Isotopologue' - Sets the relative popupalation of a Species Isotopologue in a Configuration */
 		nModuleKeywords			/* Number of keywords defined for this block */
 	};
 	// Convert text string to ModuleKeyword

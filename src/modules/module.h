@@ -78,8 +78,6 @@ class Module : public ListItem<Module>
 	void setUniqueName(const char* uniqueName);
 	// Return unique name of Module
 	const char* uniqueName();
-	// Return options for Module
-	PlainValueList& options();
 	// Return brief description of Module
 	virtual const char* brief() = 0;
 	// Return instance type for Module
@@ -100,6 +98,10 @@ class Module : public ListItem<Module>
 	virtual bool setupDependentModule(Module* depMod) = 0;
 	// Update targets for any auto-added dependent Modules with those of this Module
 	void updateDependentTargets();
+	// Return options for Module
+	PlainValueList& options();
+	// Parse keyword line, returning 1 on success, 0 for not recognised, and -1 for failed
+	virtual int parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList) = 0;
 
 
 	/*

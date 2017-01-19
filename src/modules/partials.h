@@ -80,6 +80,8 @@ class Partials : public Module
 	const char* dependentModules();
 	// Setup supplied dependent module (only if it has been auto-added)
 	bool setupDependentModule(Module* depMod);
+	// Parse keyword line, returning 1 on success, 0 for not recognised, and -1 for failed
+	int parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList);
 
 
 	/*
@@ -88,8 +90,6 @@ class Partials : public Module
 	public:
 	// Return the maximum number of Configurations the Module can target (or -1 for any number)
 	int nTargetableConfigurations();
-	// Return the maximum number of Samples the Module can target (or -1 for any number)
-	int nTargetableSamples();
 
 
 	/*

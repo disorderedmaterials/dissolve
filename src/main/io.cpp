@@ -110,6 +110,7 @@ bool DUQ::loadInput(const char* filename)
 	// Variables
 	Configuration* cfg;
 	Module* module, *masterInstance;
+	CharString niceName;
 	Species* sp;
 	InputBlocks::InputBlock block;
 	bool error = false;
@@ -153,6 +154,19 @@ bool DUQ::loadInput(const char* filename)
 					error = true;
 				}
 				if (error) break;
+
+				// Set unique name, if it was provided - need to check if it has bbeen used elsewhere (in any Module or instance of it)
+				if (parser.hasArg(2))
+				{
+					niceName = DUQSys::niceName(parser.argc(2));
+					if (ModuleList::findInstanceByUniqueName(niceName))
+					{
+						Messenger::error("A Module with the unique name '%s' already exist.\n", niceName.get());
+						error = true;
+						break;
+					}
+					else module->setUniqueName(niceName);
+				}
 
 				// Parse rest of Module block
 				module->setConfigurationLocal(false);

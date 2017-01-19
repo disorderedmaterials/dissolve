@@ -9,9 +9,7 @@ o Allow for Fixed atoms:
 	- Provision for pre-calculation of RDF/F(Q) data between fixed atoms, and introduction of this into final RDF/F(Q) data for speed?
 o Different bond types - e.g. replicate those used in EPSR for reference?
 o Simplify output of new input files by checking module option values to see if they have changed before writing.
-o Add Module::parseArg() or similar to examine keywords given to module, acting accordingly (and allowing keyword-style multiple argument specs as well as PlainValue options, and convert Isotoplogue to make it specific to Partials.
 o Accumulate timing information for each module, displaying averages and total in schedule at each step?
-o Tag output and output files with program version and current date/time.
 o Allow Isotopologue list input as block as well as single line, since for large molecules the line will become annoyingly long.
 
 -------------------------------------------

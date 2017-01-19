@@ -133,6 +133,58 @@ bool Partials::setupDependentModule(Module* depMod)
 	return true;
 }
 
+// Parse keyword line, returning 1 on success, 0 for not recognised, and -1 for failed
+int Partials::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
+{
+	if (DUQSys::sameString(parser.argc(0), "Isotopologue"))
+	{
+		// Essentially a shortcut for setting a variable in a target Configuration / Sample
+		// Find target Configuration
+		Configuration* targetCfg = duq->findConfiguration(parser.argc(1));
+		if (!targetCfg)
+		{
+			Messenger::error("Error defining Isotopologue - no Configuration named '%s' exists.\n", parser.argc(1));
+			return -1;
+		}
+
+		// Raise an error if this Configuration is not targetted by the Module
+		if (!isTargetConfiguration(targetCfg)) 
+		{
+			Messenger::error("Configuration '%s' is not targetted by the Module '%s'.\n", targetCfg->name(), name());
+			return -1;
+		}
+
+		// Find specified Species - must be present in the target Configuration
+		Species* sp = duq->findSpecies(parser.argc(2));
+		if (!sp)
+		{
+			Messenger::error("Error defining Isotopologue - no Species named '%s' exists.\n", parser.argc(2));
+			return -1;
+		}
+
+		if (!targetCfg->usedSpecies().contains(sp))
+		{
+			Messenger::error("Error defining Isotopologue - Species '%s' is not present in Configuration '%s'.\n", sp->name(), targetCfg->name());
+			return -1;
+		}
+
+		// Finally, locate isotopologue definition for species
+		Isotopologue* tope = sp->findIsotopologue(parser.argc(3));
+		if (!tope)
+		{
+			Messenger::error("Error defining Isotopologue - no Isotopologue named '%s' exists for Species '%s'.\n", parser.argc(3), sp->name());
+			return -1;
+		}
+
+		// Ready - add a suitable variable to the Configuration
+		CharString varName("Isotopologue/%s/%s", sp->name(), tope->name());
+		GenericListHelper<double>::add(targetList, varName, uniqueName()) = parser.argd(4);
+	}
+	else return 0;
+
+	return 1;
+}
+
 /*
  * Targets
  */
@@ -141,12 +193,6 @@ bool Partials::setupDependentModule(Module* depMod)
 int Partials::nTargetableConfigurations()
 {
 	return (configurationLocal_ ? 1 : -1);
-}
-
-// Return the maximum number of Samples the Module can target (or -1 for any number)
-int Partials::nTargetableSamples()
-{
-	return 1;
 }
 
 /*

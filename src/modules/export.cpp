@@ -118,6 +118,12 @@ bool Export::setupDependentModule(Module* depMod)
 	return true;
 }
 
+// Parse keyword line, returning 1 on success, 0 for not recognised, and -1 for failed
+int Export::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
+{
+	return 0;
+}
+
 /*
  * Targets
  */
@@ -126,12 +132,6 @@ bool Export::setupDependentModule(Module* depMod)
 int Export::nTargetableConfigurations()
 {
 	return -1;
-}
-
-// Return the maximum number of Samples the Module can target (or -1 for any number)
-int Export::nTargetableSamples()
-{
-	return 0;
 }
 
 /*

@@ -148,13 +148,17 @@ bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
 				if (error) break;
 				
 				// Set unique name, if it was provided - need to check if it has bbeen used elsewhere (in any Module or instance of it)
-				niceName = DUQSys::niceName(parser.argc(1));
-				if (ModuleList::findInstanceByUniqueName(niceName))
+				if (parser.hasArg(2))
 				{
-					Messenger::error("A Module with the unique name '%s' already exist.\n", niceName.get());
-					error = true;
+					niceName = DUQSys::niceName(parser.argc(2));
+					if (ModuleList::findInstanceByUniqueName(niceName))
+					{
+						Messenger::error("A Module with the unique name '%s' already exist.\n", niceName.get());
+						error = true;
+						break;
+					}
+					else module->setUniqueName(niceName);
 				}
-				else module->setUniqueName(niceName);
 
 				// Parse rest of Module block
 				module->setConfigurationLocal(true);
