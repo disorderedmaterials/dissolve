@@ -24,7 +24,7 @@
 #include "modules/energy.h"
 #include "modules/export.h"
 #include "modules/partials.h"
-#include "modules/skeleton.h"
+#include "modules/test.h"
 
 /*
  * Module Registration
@@ -39,5 +39,5 @@ ModuleRegistry::ModuleRegistry()
 	ModuleRegistrar<Energy> energyRegistrar;
 	ModuleRegistrar<Export> exportRegistrar;
 	ModuleRegistrar<Partials> partailsRegistrar;
-	ModuleRegistrar<Skeleton> skeletonRegistrar;
+	ModuleRegistrar<Test> testRegistrar;
 }

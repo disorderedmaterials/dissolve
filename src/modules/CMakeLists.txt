@@ -12,6 +12,7 @@ energy.cpp
 export.cpp
 partials.cpp
 skeleton.cpp
+test.cpp
 #forces.cpp
 #grainshake.cpp
 #intrashake.cpp
@@ -23,6 +24,7 @@ energy.h
 export.h
 partials.h
 skeleton.h
+test.h
 #forces.h
 #grainshake.h
 #intrashake.h

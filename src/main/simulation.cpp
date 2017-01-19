@@ -66,8 +66,6 @@ bool DUQ::go()
 	/*
 	 * Start of Main Loop
 	 */
-	
-	// TODO Run Setup tasks for Modules? Or remove this feature...
 
 	bool keepGoing = true;
 	do

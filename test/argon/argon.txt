@@ -31,9 +31,9 @@ Module Partials 'Yarnell-85K'
   #SubtractSelf
 EndModule
 
-#Module EPSR
-#  AddReferenceData  'Yarnell-85K'  'yarnell.sq'
-#EndModule
+Module Test
+  AddSample  'Yarnell-85K'  'data/yarnell.sq'
+EndModule
 
 # Pair Potentials
 PairPotentials
