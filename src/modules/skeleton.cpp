@@ -1,6 +1,6 @@
 /*
-	*** Test Module
-	*** src/modules/test.cpp
+	*** Skeleton Module
+	*** src/modules/skeleton.cpp
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -19,32 +19,30 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/test.h"
+#include "modules/skeleton.h"
 #include "main/duq.h"
-#include "classes/species.h"
-#include "classes/box.h"
 #include "base/sysfunc.h"
 
 // Static Members
-List<Module> Test::instances_;
+List<Module> Skeleton::instances_;
 
 /*
  * Constructor / Destructor
  */
 
 // Constructor
-Test::Test() : Module()
+Skeleton::Skeleton() : Module()
 {
 	// Add to instances list and set unique name for this instance
 	instances_.own(this);
 	uniqueName_.sprintf("%s%02i", name(), instances_.nItems()-1);
 
 	// Setup variables / control parameters
-	options_.add("Test", false);
+	options_.add("Skeleton", false);
 }
 
 // Destructor
-Test::~Test()
+Skeleton::~Skeleton()
 {
 }
 
@@ -53,15 +51,15 @@ Test::~Test()
  */
 
 // Create instance of this module
-List<Module>& Test::instances()
+List<Module>& Skeleton::instances()
 {
 	return instances_;
 }
 
 // Create instance of this module
-Module* Test::createInstance()
+Module* Skeleton::createInstance()
 {
-	return new Test;
+	return new Skeleton;
 }
 
 /*
@@ -69,55 +67,55 @@ Module* Test::createInstance()
  */
 
 // Return name of module
-const char* Test::name()
+const char* Skeleton::name()
 {
-	return "Test";
+	return "Skeleton";
 }
 
 // Return brief description of module
-const char* Test::brief()
+const char* Skeleton::brief()
 {
-	return "Calculate the total energy of a Configuration";
+	return "Empty Module providing skeletal structure for new Module development";
 }
 
 // Return instance type for module
-Module::InstanceType Test::instanceType()
+Module::InstanceType Skeleton::instanceType()
 {
 	return Module::MultipleInstance;
 }
 
 // Whether the Module has a pre-processing stage
-bool Test::hasPreProcessing()
+bool Skeleton::hasPreProcessing()
 {
 	return false;
 }
 
 // Whether the Module has a processing stage
-bool Test::hasProcessing()
+bool Skeleton::hasProcessing()
 {
-	return true;
+	return false;
 }
 
 // Whether the Module has a post-processing stage
-bool Test::hasPostProcessing()
+bool Skeleton::hasPostProcessing()
 {
 	return false;
 }
 
 // Modules upon which this Module depends to have run first
-const char* Test::dependentModules()
+const char* Skeleton::dependentModules()
 {
 	return "";
 }
 
 // Setup supplied dependent module (only if it has been auto-added)
-bool Test::setupDependentModule(Module* depMod)
+bool Skeleton::setupDependentModule(Module* depMod)
 {
 	return true;
 }
 
 // Parse keyword line, returning 1 on success, 0 for not recognised, and -1 for failed
-int Test::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
+int Skeleton::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
 {
 	return 0;
 }
@@ -127,9 +125,9 @@ int Test::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
  */
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
-int Test::nTargetableConfigurations()
+int Skeleton::nTargetableConfigurations()
 {
-	return -1;
+	return 0;
 }
 
 /*
@@ -137,25 +135,25 @@ int Test::nTargetableConfigurations()
  */
 
 // Perform setup tasks for module
-bool Test::setup(ProcessPool& procPool)
+bool Skeleton::setup(ProcessPool& procPool)
 {
 	return true;
 }
 
 // Execute pre-processing stage
-bool Test::preProcess(DUQ& duq, ProcessPool& procPool)
+bool Skeleton::preProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return false;
 }
 
 // Execute Method
-bool Test::process(DUQ& duq, ProcessPool& procPool)
+bool Skeleton::process(DUQ& duq, ProcessPool& procPool)
 {
-	return true;
+	return false;
 }
 
 // Execute post-processing stage
-bool Test::postProcess(DUQ& duq, ProcessPool& procPool)
+bool Skeleton::postProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return false;
 }

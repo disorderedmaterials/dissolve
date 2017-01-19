@@ -1,6 +1,6 @@
 /*
-	*** Test Module
-	*** src/modules/test.h
+	*** Skeleton Module
+	*** src/modules/skeleton.h
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -19,16 +19,16 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_TESTMODULE_H
-#define DUQ_TESTMODULE_H
+#ifndef DUQ_SKELETONMODULE_H
+#define DUQ_SKELETONMODULE_H
 
 #include "modules/module.h"
 
 // Forward Declarations
 /* none */
 
-// Test Module
-class Test : public Module
+// Skeleton Module
+class Skeleton : public Module
 {
 	/*
 	 * Module for testing various functions
@@ -36,9 +36,9 @@ class Test : public Module
 
 	public:
 	// Constructor
-	Test();
+	Skeleton();
 	// Destructor
-	~Test();
+	~Skeleton();
 
 
 	/*

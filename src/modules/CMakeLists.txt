@@ -11,7 +11,7 @@ atomshake.cpp
 energy.cpp
 export.cpp
 partials.cpp
-test.cpp
+skeleton.cpp
 #forces.cpp
 #grainshake.cpp
 #intrashake.cpp
@@ -22,7 +22,7 @@ atomshake.h
 energy.h
 export.h
 partials.h
-test.h
+skeleton.h
 #forces.h
 #grainshake.h
 #intrashake.h
