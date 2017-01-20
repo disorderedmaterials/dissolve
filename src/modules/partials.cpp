@@ -133,7 +133,7 @@ bool Partials::setupDependentModule(Module* depMod)
 	return true;
 }
 
-// Parse keyword line, returning 1 on success, 0 for not recognised, and -1 for failed
+// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
 int Partials::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
 {
 	if (DUQSys::sameString(parser.argc(0), "Isotopologue"))
@@ -144,14 +144,14 @@ int Partials::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList
 		if (!targetCfg)
 		{
 			Messenger::error("Error defining Isotopologue - no Configuration named '%s' exists.\n", parser.argc(1));
-			return -1;
+			return false;
 		}
 
 		// Raise an error if this Configuration is not targetted by the Module
 		if (!isTargetConfiguration(targetCfg)) 
 		{
 			Messenger::error("Configuration '%s' is not targetted by the Module '%s'.\n", targetCfg->name(), name());
-			return -1;
+			return false;
 		}
 
 		// Find specified Species - must be present in the target Configuration
@@ -159,13 +159,13 @@ int Partials::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList
 		if (!sp)
 		{
 			Messenger::error("Error defining Isotopologue - no Species named '%s' exists.\n", parser.argc(2));
-			return -1;
+			return false;
 		}
 
 		if (!targetCfg->usedSpecies().contains(sp))
 		{
 			Messenger::error("Error defining Isotopologue - Species '%s' is not present in Configuration '%s'.\n", sp->name(), targetCfg->name());
-			return -1;
+			return false;
 		}
 
 		// Finally, locate isotopologue definition for species
@@ -173,16 +173,16 @@ int Partials::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList
 		if (!tope)
 		{
 			Messenger::error("Error defining Isotopologue - no Isotopologue named '%s' exists for Species '%s'.\n", parser.argc(3), sp->name());
-			return -1;
+			return false;
 		}
 
 		// Ready - add a suitable variable to the Configuration
 		CharString varName("Isotopologue/%s/%s", sp->name(), tope->name());
 		GenericListHelper<double>::add(targetList, varName, uniqueName()) = parser.argd(4);
 	}
-	else return 0;
+	else return -1;
 
-	return 1;
+	return true;
 }
 
 /*

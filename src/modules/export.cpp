@@ -118,10 +118,10 @@ bool Export::setupDependentModule(Module* depMod)
 	return true;
 }
 
-// Parse keyword line, returning 1 on success, 0 for not recognised, and -1 for failed
+// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
 int Export::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
 {
-	return 0;
+	return -1;
 }
 
 /*

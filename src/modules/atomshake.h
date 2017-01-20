@@ -75,7 +75,7 @@ class AtomShake : public Module
 	const char* dependentModules();
 	// Setup supplied dependent module (only if it has been auto-added)
 	bool setupDependentModule(Module* depMod);
-	// Parse keyword line, returning 1 on success, 0 for not recognised, and -1 for failed
+	// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
 	int parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList);
 
 

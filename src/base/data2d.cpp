@@ -1569,3 +1569,28 @@ bool Data2D::broadcast(ProcessPool& procPool, int rootRank)
 #endif
 	return true;
 }
+
+// Load data from specified file (master) and distribute
+bool Data2D::load(const char* filename, ProcessPool& procPool)
+{
+	// Master will load the data
+	if (procPool.isMaster())
+	{
+		if (!load(filename))
+		{
+			procPool.stop();
+			return false;
+		}
+		procPool.proceed();
+		if (!broadcast(procPool)) return false;
+	}
+	else
+	{
+		// Slaves first wait to see if the master loaded the file successfully
+		if (!procPool.decision()) return false;
+		if (!broadcast(procPool)) return false;
+	}
+
+	return true;
+}
+	

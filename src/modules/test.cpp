@@ -114,16 +114,36 @@ bool Test::setupDependentModule(Module* depMod)
 	return true;
 }
 
-// Parse keyword line, returning 1 on success, 0 for not recognised, and -1 for failed
+// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
 int Test::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
 {
-	if (DUQSys::sameString("AddSample", parser.argc(0)))
+	if (DUQSys::sameString("AddTotalSQ", parser.argc(0)))
 	{
-		
-	}
-	else return 0;
+		// Find the Module named by the first argument - it must be a Partials module in which the StructureFactor calculation is 'On'
+		Module* partialsModule = ModuleList::findInstanceByUniqueName(parser.argc(1));
+		if (!partialsModule)
+		{
+			Messenger::error("Specified Module target '%s' does not exist.", parser.argc(1));
+			return false;
+		}
+		else if (!DUQSys::sameString(partialsModule->name(), "Partials"))
+		{
+			Messenger::error("Specified Module target '%s' is not a Partials module.", parser.argc(1));
+			return false;
+		}
+		else if (!partialsModule->options().valueAsBool("StructureFactor"))
+		{
+			Messenger::error("Specified Module target '%s' does not calculate a structure factor.", parser.argc(1));
+			return false;
+		}
 
-	return 1;
+		// All fine, so add data to the list and load any reference data
+		RefListItem<Module,Data2D>* newSample = sampleData_.add(partialsModule);
+		if (parser.hasArg(2) && !newSample->data.load(parser.argc(2))) return false;
+	}
+	else return -1;
+
+	return true;
 }
 
 /*
@@ -163,6 +183,7 @@ bool Test::process(DUQ& duq, ProcessPool& procPool)
 	{
 		// First, need to grab GenericList that will contain the target
 		GenericList& moduleData = module->configurationLocal() ? module->targetConfigurations().firstItem()->moduleData() : duq.processingModuleData();
+		
 	}
 
 	// Create weights matrix based on our defined 

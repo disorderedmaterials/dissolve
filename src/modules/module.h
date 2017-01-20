@@ -100,7 +100,7 @@ class Module : public ListItem<Module>
 	void updateDependentTargets();
 	// Return options for Module
 	PlainValueList& options();
-	// Parse keyword line, returning 1 on success, 0 for not recognised, and -1 for failed
+	// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
 	virtual int parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList) = 0;
 
 

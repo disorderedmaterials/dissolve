@@ -236,6 +236,8 @@ class Data2D : public ListItem<Data2D>
 	public:
 	// Broadcast data
 	bool broadcast(ProcessPool& procPool, int rootRank = 0);
+	// Load data from specified file (master) and distribute
+	bool load(const char* filename, ProcessPool& procPool);
 };
 
 #endif
