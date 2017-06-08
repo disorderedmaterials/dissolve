@@ -33,6 +33,21 @@ Timer::Timer()
  * Timing Routines
  */
 
+// Return time string based on provided tick count
+const char* Timer::timeString(clock_t ticks)
+{
+	int n = ticks / CLOCKS_PER_SEC;
+	int hours = n / 3600;
+	n %= 3600;
+	int minutes = n / 60;
+	n %= 60;
+	double seconds = ticks /  double(CLOCKS_PER_SEC) - hours*3600 - minutes*60;
+	if (hours != 0) timeString_.sprintf("%i hours, %i minutes, and %0.1f seconds", hours, minutes, seconds);
+	else if (minutes != 0) timeString_.sprintf("%i minutes and %0.1f seconds", minutes, seconds);
+	else timeString_.sprintf("%0.1f seconds", seconds);
+	return timeString_.get();
+}
+
 // Start timer
 void Timer::start()
 {
@@ -45,29 +60,26 @@ void Timer::stop()
 	totalTime_ = clock() - startTime_;
 }
 
+// Accumulate time since last start
+void Timer::accumulate()
+{
+	totalTime_ += clock() - startTime_;
+}
+
 // Zero total time
 void Timer::zero()
 {
 	totalTime_ = 0;
 }
 
-// Accumulate partial time since last start
-void Timer::accumulate()
+// Return current elapsed time as a time string
+const char* Timer::elapsedTimeString()
 {
-	totalTime_ += clock() - startTime_;
+	return timeString(clock() - startTime_);
 }
 
-// Return time string
-const char* Timer::timeString()
+// Return total time (after stop()) as a time string
+const char* Timer::totalTimeString()
 {
-	int n = totalTime_ / CLOCKS_PER_SEC;
-	int hours = n / 3600;
-	n %= 3600;
-	int minutes = n / 60;
-	n %= 60;
-	double seconds = totalTime_ /  double(CLOCKS_PER_SEC) - hours*3600 - minutes*60;
-	if (hours != 0) timeString_.sprintf("%i hours, %i minutes, and %0.1f seconds", hours, minutes, seconds);
-	else if (minutes != 0) timeString_.sprintf("%i minutes and %0.1f seconds", minutes, seconds);
-	else timeString_.sprintf("%0.1f seconds", seconds);
-	return timeString_.get();
+	return timeString(totalTime_);
 }

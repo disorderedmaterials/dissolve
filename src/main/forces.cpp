@@ -206,13 +206,13 @@ void DUQ::totalForces(ProcessPool& procPool, Configuration* cfg, double* fx, dou
 	timer.start();
 	grainForces(procPool, cfg, fx, fy, fz, cutoffSq);
 	timer.stop();
-	Messenger::printVerbose("Time to do Grain forces was %s.\n", timer.timeString());
+	Messenger::printVerbose("Time to do Grain forces was %s.\n", timer.totalTimeString());
 	
 	// Calculate intramolecular forces
 	timer.start();
 	intramolecularForces(procPool, cfg, fx, fy, fz);
 	timer.stop();
-	Messenger::printVerbose("Time to do intramolecular forces was %s.\n", timer.timeString());
+	Messenger::printVerbose("Time to do intramolecular forces was %s.\n", timer.totalTimeString());
 	
 	// Gather forces together
 	if (!procPool.allSum(fx, cfg->nAtoms())) return;

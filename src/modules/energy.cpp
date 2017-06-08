@@ -26,14 +26,14 @@
 #include "base/sysfunc.h"
 
 // Static Members
-List<Module> Energy::instances_;
+List<Module> EnergyModule::instances_;
 
 /*
  * Constructor / Destructor
  */
 
 // Constructor
-Energy::Energy() : Module()
+EnergyModule::EnergyModule() : Module()
 {
 	// Add to instances list and set unique name for this instance
 	instances_.own(this);
@@ -47,7 +47,7 @@ Energy::Energy() : Module()
 }
 
 // Destructor
-Energy::~Energy()
+EnergyModule::~EnergyModule()
 {
 }
 
@@ -56,15 +56,15 @@ Energy::~Energy()
  */
 
 // Create instance of this module
-List<Module>& Energy::instances()
+List<Module>& EnergyModule::instances()
 {
 	return instances_;
 }
 
 // Create instance of this module
-Module* Energy::createInstance()
+Module* EnergyModule::createInstance()
 {
-	return new Energy;
+	return new EnergyModule;
 }
 
 /*
@@ -72,55 +72,55 @@ Module* Energy::createInstance()
  */
 
 // Return name of module
-const char* Energy::name()
+const char* EnergyModule::name()
 {
 	return "Energy";
 }
 
 // Return brief description of module
-const char* Energy::brief()
+const char* EnergyModule::brief()
 {
 	return "Calculate the total energy of a Configuration";
 }
 
 // Return instance type for module
-Module::InstanceType Energy::instanceType()
+Module::InstanceType EnergyModule::instanceType()
 {
 	return Module::MultipleInstance;
 }
 
 // Whether the Module has a pre-processing stage
-bool Energy::hasPreProcessing()
+bool EnergyModule::hasPreProcessing()
 {
 	return false;
 }
 
 // Whether the Module has a processing stage
-bool Energy::hasProcessing()
+bool EnergyModule::hasProcessing()
 {
 	return true;
 }
 
 // Whether the Module has a post-processing stage
-bool Energy::hasPostProcessing()
+bool EnergyModule::hasPostProcessing()
 {
 	return false;
 }
 
 // Modules upon which this Module depends to have run first
-const char* Energy::dependentModules()
+const char* EnergyModule::dependentModules()
 {
 	return "";
 }
 
 // Setup supplied dependent module (only if it has been auto-added)
-bool Energy::setupDependentModule(Module* depMod)
+bool EnergyModule::setupDependentModule(Module* depMod)
 {
 	return true;
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int Energy::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
+int EnergyModule::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
 {
 	return -1;
 }
@@ -130,7 +130,7 @@ int Energy::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
  */
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
-int Energy::nTargetableConfigurations()
+int EnergyModule::nTargetableConfigurations()
 {
 	return -1;
 }
@@ -140,19 +140,19 @@ int Energy::nTargetableConfigurations()
  */
 
 // Perform setup tasks for module
-bool Energy::setup(ProcessPool& procPool)
+bool EnergyModule::setup(ProcessPool& procPool)
 {
 	return true;
 }
 
 // Execute pre-processing stage
-bool Energy::preProcess(DUQ& duq, ProcessPool& procPool)
+bool EnergyModule::preProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return false;
 }
 
 // Execute Method
-bool Energy::process(DUQ& duq, ProcessPool& procPool)
+bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 {
 	/*
 	* Calculate Energy for the target Configuration(s)
@@ -273,7 +273,7 @@ bool Energy::process(DUQ& duq, ProcessPool& procPool)
 			Messenger::print("Energy: Correct (test) particle energy is %15.9e kJ/mol\n", interEnergy);
 			Messenger::print("Energy: Correct (test) intramolecular energy is %15.9e kJ/mol\n", intraEnergy);
 			Messenger::print("Energy: Correct (test) total energy is %15.9e kJ/mol\n", interEnergy + intraEnergy);
-			Messenger::print("Energy: Time to do total (test) energy was %s.\n", timer.timeString());
+			Messenger::print("Energy: Time to do total (test) energy was %s.\n", timer.totalTimeString());
 		}
 		else
 		{
@@ -295,7 +295,7 @@ bool Energy::process(DUQ& duq, ProcessPool& procPool)
 			intraEnergy = duq.intramolecularEnergy(procPool, cfg);
 			intraTimer.stop();
 
-			Messenger::print("Energy: Time to do interatomic energy was %s, intramolecular energy was %s.\n", interTimer.timeString(), intraTimer.timeString());
+			Messenger::print("Energy: Time to do interatomic energy was %s, intramolecular energy was %s.\n", interTimer.totalTimeString(), intraTimer.totalTimeString());
 			Messenger::print("Energy: Total Energy (World) is %15.9e kJ/mol (%15.9e kJ/mol interatomic + %15.9e kJ/mol intramolecular)\n", interEnergy + intraEnergy, interEnergy, intraEnergy);
 
 			// Store energies in the Configuration in case somebody else needs them
@@ -362,7 +362,7 @@ bool Energy::process(DUQ& duq, ProcessPool& procPool)
 }
 
 // Execute post-processing stage
-bool Energy::postProcess(DUQ& duq, ProcessPool& procPool)
+bool EnergyModule::postProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return false;
 }

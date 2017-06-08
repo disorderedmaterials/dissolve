@@ -17,7 +17,7 @@ Ideas / Notes / Weird Algorithm Suggestions
 -------------------------------------------
 
 ** Exchangeable Hydrogens
-Program should auto-detect exchangeable hydrogens based on connectivity (but which can be overridden by user, e.g. add '*' after atom name?). Calculation of partials still needs to account for exchangeable hydrogen blending - can we do this simply through the AtomTypeLists that we create for the WeightsMatrix?
+Program should auto-detect exchangeable hydrogens based on connectivity (but which can be overridden by user, e.g. add '*' after atom name?). Calculation of partials still needs to account for exchangeable hydrogen blending - can we do this already through the AtomTypeLists that we create for the WeightsMatrix?
 
 ** Directional MC Moves
 Could allow definition of displacement vectors (based on molecular axes) for species, and have a module which attempts MC moves along those vectors.

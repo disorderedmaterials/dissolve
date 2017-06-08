@@ -168,7 +168,7 @@
 // 		}
 // 	}
 // 	timer.stop();
-// 	Messenger::print("--> Calculated atomic cos/sin terms (%s elapsed, %s comms)\n", timer.timeString(), procPool.accumulatedTimeString());
+// 	Messenger::print("--> Calculated atomic cos/sin terms (%s elapsed, %s comms)\n", timer.totalTimeString(), procPool.accumulatedTimeString());
 // 
 // 	// Calculate k-vector contributions
 // 	KVector** kVectors = braggKVectors_.array();
@@ -216,7 +216,7 @@
 // 		}
 // 	}
 // 	timer.stop();
-// 	Messenger::print("--> Calculated atomic contributions to k-vectors (%s elapsed, %s comms)\n", timer.timeString(), procPool.accumulatedTimeString());
+// 	Messenger::print("--> Calculated atomic contributions to k-vectors (%s elapsed, %s comms)\n", timer.totalTimeString(), procPool.accumulatedTimeString());
 // 
 // 	// Zero Bragg peak intensities
 // 	BraggPeak** peaks = braggPeaks_.objects();

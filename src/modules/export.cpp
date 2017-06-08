@@ -27,14 +27,14 @@
 #include "base/sysfunc.h"
 
 // Static Members
-List<Module> Export::instances_;
+List<Module> ExportModule::instances_;
 
 /*
  * Constructor / Destructor
  */
 
 // Constructor
-Export::Export() : Module()
+ExportModule::ExportModule() : Module()
 {
 	// Add to instances list and set unique name for this instance
 	instances_.own(this);
@@ -46,7 +46,7 @@ Export::Export() : Module()
 }
 
 // Destructor
-Export::~Export()
+ExportModule::~ExportModule()
 {
 }
 
@@ -55,15 +55,15 @@ Export::~Export()
  */
 
 // Create instance of this module
-List<Module>& Export::instances()
+List<Module>& ExportModule::instances()
 {
 	return instances_;
 }
 
 // Create instance of this module
-Module* Export::createInstance()
+Module* ExportModule::createInstance()
 {
-	return new Export;
+	return new ExportModule;
 }
 
 /*
@@ -71,55 +71,55 @@ Module* Export::createInstance()
  */
 
 // Return name of module
-const char* Export::name()
+const char* ExportModule::name()
 {
 	return "Export";
 }
 
 // Return brief description of module
-const char* Export::brief()
+const char* ExportModule::brief()
 {
 	return "Export data from one or more Configurations";
 }
 
 // Return instance type for module
-Module::InstanceType Export::instanceType()
+Module::InstanceType ExportModule::instanceType()
 {
 	return Module::MultipleInstance;
 }
 
 // Whether the Module has a pre-processing stage
-bool Export::hasPreProcessing()
+bool ExportModule::hasPreProcessing()
 {
 	return false;
 }
 
 // Whether the Module has a processing stage
-bool Export::hasProcessing()
+bool ExportModule::hasProcessing()
 {
 	return true;
 }
 
 // Whether the Module has a post-processing stage
-bool Export::hasPostProcessing()
+bool ExportModule::hasPostProcessing()
 {
 	return false;
 }
 
 // Modules upon which this Module depends to have run first
-const char* Export::dependentModules()
+const char* ExportModule::dependentModules()
 {
 	return "";
 }
 
 // Setup supplied dependent module (only if it has been auto-added)
-bool Export::setupDependentModule(Module* depMod)
+bool ExportModule::setupDependentModule(Module* depMod)
 {
 	return true;
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int Export::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
+int ExportModule::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
 {
 	return -1;
 }
@@ -129,7 +129,7 @@ int Export::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
  */
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
-int Export::nTargetableConfigurations()
+int ExportModule::nTargetableConfigurations()
 {
 	return -1;
 }
@@ -139,19 +139,19 @@ int Export::nTargetableConfigurations()
  */
 
 // Perform setup tasks for module
-bool Export::setup(ProcessPool& procPool)
+bool ExportModule::setup(ProcessPool& procPool)
 {
 	return true;
 }
 
 // Execute pre-processing stage
-bool Export::preProcess(DUQ& duq, ProcessPool& procPool)
+bool ExportModule::preProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return false;
 }
 
 // Execute Method
-bool Export::process(DUQ& duq, ProcessPool& procPool)
+bool ExportModule::process(DUQ& duq, ProcessPool& procPool)
 {
 	/*
 	* Export data from the target Configuration(s)
@@ -205,7 +205,7 @@ bool Export::process(DUQ& duq, ProcessPool& procPool)
 }
 
 // Execute post-processing stage
-bool Export::postProcess(DUQ& duq, ProcessPool& procPool)
+bool ExportModule::postProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return false;
 }
@@ -215,7 +215,7 @@ bool Export::postProcess(DUQ& duq, ProcessPool& procPool)
  */
 
 // Write Configuration as XYZ
-bool Export::writeConfigurationXYZ(LineParser& parser, Configuration* cfg, const char* header)
+bool ExportModule::writeConfigurationXYZ(LineParser& parser, Configuration* cfg, const char* header)
 {
 	// Write number of atoms and title
 	if (!parser.writeLineF("%i\n", cfg->nAtoms())) return false;
@@ -232,7 +232,7 @@ bool Export::writeConfigurationXYZ(LineParser& parser, Configuration* cfg, const
 }
 
 // Write Configuration as CONFIG
-bool Export::writeConfigurationDLPOLY(LineParser& parser, Configuration* cfg, const char* header)
+bool ExportModule::writeConfigurationDLPOLY(LineParser& parser, Configuration* cfg, const char* header)
 {
 	// Write title
 	parser.writeLineF("%s\n", header);

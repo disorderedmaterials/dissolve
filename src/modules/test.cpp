@@ -24,14 +24,14 @@
 #include "base/sysfunc.h"
 
 // Static Members
-List<Module> Test::instances_;
+List<Module> TestModule::instances_;
 
 /*
  * Constructor / Destructor
  */
 
 // Constructor
-Test::Test() : Module()
+TestModule::TestModule() : Module()
 {
 	// Add to instances list and set unique name for this instance
 	instances_.own(this);
@@ -42,7 +42,7 @@ Test::Test() : Module()
 }
 
 // Destructor
-Test::~Test()
+TestModule::~TestModule()
 {
 }
 
@@ -51,15 +51,15 @@ Test::~Test()
  */
 
 // Create instance of this module
-List<Module>& Test::instances()
+List<Module>& TestModule::instances()
 {
 	return instances_;
 }
 
 // Create instance of this module
-Module* Test::createInstance()
+Module* TestModule::createInstance()
 {
-	return new Test;
+	return new TestModule;
 }
 
 /*
@@ -67,55 +67,55 @@ Module* Test::createInstance()
  */
 
 // Return name of module
-const char* Test::name()
+const char* TestModule::name()
 {
 	return "Test";
 }
 
 // Return brief description of module
-const char* Test::brief()
+const char* TestModule::brief()
 {
 	return "Test Module";
 }
 
 // Return instance type for module
-Module::InstanceType Test::instanceType()
+Module::InstanceType TestModule::instanceType()
 {
 	return Module::MultipleInstance;
 }
 
 // Whether the Module has a pre-processing stage
-bool Test::hasPreProcessing()
+bool TestModule::hasPreProcessing()
 {
 	return false;
 }
 
 // Whether the Module has a processing stage
-bool Test::hasProcessing()
+bool TestModule::hasProcessing()
 {
 	return true;
 }
 
 // Whether the Module has a post-processing stage
-bool Test::hasPostProcessing()
+bool TestModule::hasPostProcessing()
 {
 	return false;
 }
 
 // Modules upon which this Module depends to have run first
-const char* Test::dependentModules()
+const char* TestModule::dependentModules()
 {
 	return "";
 }
 
 // Setup supplied dependent module (only if it has been auto-added)
-bool Test::setupDependentModule(Module* depMod)
+bool TestModule::setupDependentModule(Module* depMod)
 {
 	return true;
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int Test::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
+int TestModule::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
 {
 	if (DUQSys::sameString("AddTotalSQ", parser.argc(0)))
 	{
@@ -151,7 +151,7 @@ int Test::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
  */
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
-int Test::nTargetableConfigurations()
+int TestModule::nTargetableConfigurations()
 {
 	return 0;
 }
@@ -161,19 +161,19 @@ int Test::nTargetableConfigurations()
  */
 
 // Perform setup tasks for module
-bool Test::setup(ProcessPool& procPool)
+bool TestModule::setup(ProcessPool& procPool)
 {
 	return true;
 }
 
 // Execute pre-processing stage
-bool Test::preProcess(DUQ& duq, ProcessPool& procPool)
+bool TestModule::preProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return false;
 }
 
 // Execute Method
-bool Test::process(DUQ& duq, ProcessPool& procPool)
+bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 {
 	// First, check that we can find the total structure factors that have been specified
 	sampleData_.clear();
@@ -191,7 +191,7 @@ bool Test::process(DUQ& duq, ProcessPool& procPool)
 }
 
 // Execute post-processing stage
-bool Test::postProcess(DUQ& duq, ProcessPool& procPool)
+bool TestModule::postProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return false;
 }

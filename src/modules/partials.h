@@ -31,7 +31,7 @@ class PartialRSet;
 class WeightsMatrix;
 
 // Partials Module
-class Partials : public Module
+class PartialsModule : public Module
 {
 	/*
 	 * Calculates partial radial distribution functions for the Sample or Configuration in which the Module is placed.
@@ -41,9 +41,9 @@ class Partials : public Module
 
 	public:
 	// Constructor
-	Partials();
+	PartialsModule();
 	// Destructor
-	~Partials();
+	~PartialsModule();
 
 
 	/*

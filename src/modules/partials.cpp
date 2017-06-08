@@ -30,14 +30,14 @@
 #include "base/timer.h"
 
 // Static Members
-List<Module> Partials::instances_;
+List<Module> PartialsModule::instances_;
 
 /*
  * Constructor / Destructor
  */
 
 // Constructor
-Partials::Partials() : Module()
+PartialsModule::PartialsModule() : Module()
 {
 	// Add to instances list and set unique name for this instance
 	uniqueName_.sprintf("%s%02i", name(), instances_.nItems());
@@ -61,7 +61,7 @@ Partials::Partials() : Module()
 }
 
 // Destructor
-Partials::~Partials()
+PartialsModule::~PartialsModule()
 {
 }
 
@@ -70,15 +70,15 @@ Partials::~Partials()
  */
 
 // Create instance of this module
-List<Module>& Partials::instances()
+List<Module>& PartialsModule::instances()
 {
 	return instances_;
 }
 
 // Create instance of this module
-Module* Partials::createInstance()
+Module* PartialsModule::createInstance()
 {
-	return new Partials;
+	return new PartialsModule;
 }
 
 /*
@@ -86,55 +86,55 @@ Module* Partials::createInstance()
  */
 
 // Return name of module
-const char* Partials::name()
+const char* PartialsModule::name()
 {
 	return "Partials";
 }
 
 // Return brief description of module
-const char* Partials::brief()
+const char* PartialsModule::brief()
 {
 	return "Calculate partial and total g(r) and S(Q)";
 }
 
 // Return instance type for module
-Module::InstanceType Partials::instanceType()
+Module::InstanceType PartialsModule::instanceType()
 {
 	return Module::MultipleInstance;
 }
 
 // Whether the Module has a pre-processing stage
-bool Partials::hasPreProcessing()
+bool PartialsModule::hasPreProcessing()
 {
 	return false;
 }
 
 // Whether the Module has a processing stage
-bool Partials::hasProcessing()
+bool PartialsModule::hasProcessing()
 {
 	return true;
 }
 
 // Whether the Module has a post-processing stage
-bool Partials::hasPostProcessing()
+bool PartialsModule::hasPostProcessing()
 {
 	return false;
 }
 
 // Modules upon which this Module depends to have run first
-const char* Partials::dependentModules()
+const char* PartialsModule::dependentModules()
 {
 	return "";
 }
 
 // Setup supplied dependent module (only if it has been auto-added)
-bool Partials::setupDependentModule(Module* depMod)
+bool PartialsModule::setupDependentModule(Module* depMod)
 {
 	return true;
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int Partials::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
+int PartialsModule::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
 {
 	if (DUQSys::sameString(parser.argc(0), "Isotopologue"))
 	{
@@ -190,7 +190,7 @@ int Partials::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList
  */
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
-int Partials::nTargetableConfigurations()
+int PartialsModule::nTargetableConfigurations()
 {
 	return (configurationLocal_ ? 1 : -1);
 }
@@ -200,19 +200,19 @@ int Partials::nTargetableConfigurations()
  */
 
 // Perform setup tasks for module
-bool Partials::setup(ProcessPool& procPool)
+bool PartialsModule::setup(ProcessPool& procPool)
 {
 	return false;
 }
 
 // Execute pre-processing stage
-bool Partials::preProcess(DUQ& duq, ProcessPool& procPool)
+bool PartialsModule::preProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return false;
 }
 
 // Execute Method
-bool Partials::process(DUQ& duq, ProcessPool& procPool)
+bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 {
 	/*
 	 * Calculate weighted or unweighted partials and total RDFs  or S(Q) for the specified Sample or Configurations
@@ -238,8 +238,8 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 	const int smoothing = GenericListHelper<int>::retrieve(moduleData, "Smoothing", uniqueName(), options_.valueAsInt("Smoothing"));
 	const bool sqCalculation = GenericListHelper<bool>::retrieve(moduleData, "StructureFactor", uniqueName(), options_.valueAsBool("StructureFactor"));
 	CharString weightsString = GenericListHelper<CharString>::retrieve(moduleData, "Weights", uniqueName_, options_.valueAsString("Weights"));
-	Partials::WeightingType weightsType = Partials::NoWeighting;
-	if (DUQSys::sameString(weightsString, "Neutron")) weightsType = Partials::NeutronWeighting;
+	PartialsModule::WeightingType weightsType = PartialsModule::NoWeighting;
+	if (DUQSys::sameString(weightsString, "Neutron")) weightsType = PartialsModule::NeutronWeighting;
 	else if (!DUQSys::sameString(weightsString, "None"))
 	{
 		Messenger::error("Partials: Invalid weighting scheme '%s' found.\n", weightsString.get());
@@ -271,7 +271,7 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 		calculateUnweighted(cfg, procPool, smoothing);
 		
 		// Calculate weighted partials here if requested
-		if (weightsType != Partials::NoWeighting)
+		if (weightsType != PartialsModule::NoWeighting)
 		{
 			// Construct weights matrix based on Isotopologue specifications in some module (specified by mixSource) and the populations of atomtypes in the Configuration
 			WeightsMatrix weightsMatrix;
@@ -357,7 +357,7 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 		unweightedPartials.reweightPartials(1.0 / totalWeight);
 
 		// Calculate weighted Sample partials and total if requested
-		if (weightsType != Partials::NoWeighting)
+		if (weightsType != PartialsModule::NoWeighting)
 		{
 			bool wasCreated;
 			PartialRSet& weightedPartials = GenericListHelper<PartialRSet>::realise(moduleData, "WeightedGR", uniqueName_, &wasCreated);
@@ -395,7 +395,7 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 					return false;
 				}
 				// Do we have weighted as well?
-				if (weightsType != Partials::NoWeighting)
+				if (weightsType != PartialsModule::NoWeighting)
 				{
 					// Find the partials set...
 					PartialRSet& weightedPartials = GenericListHelper<PartialRSet>::retrieve(moduleData, "WeightedGR", uniqueName_);
@@ -415,7 +415,7 @@ bool Partials::process(DUQ& duq, ProcessPool& procPool)
 }
 
 // Execute post-processing stage
-bool Partials::postProcess(DUQ& duq, ProcessPool& procPool)
+bool PartialsModule::postProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return false;
 }
@@ -425,13 +425,13 @@ bool Partials::postProcess(DUQ& duq, ProcessPool& procPool)
  */
 
 // Calculate partial RDFs with simple double-loop
-bool Partials::calculateSimple(Configuration* cfg, PartialRSet& partialSet, ProcessPool& procPool)
+bool PartialsModule::calculateSimple(Configuration* cfg, PartialRSet& partialSet, ProcessPool& procPool)
 {
 	// Variables
 	int n, m, nTypes, typeI, typeJ, i, j, nPoints;
 
 	// Construct local arrays of atom type positions
-	Messenger::printVerbose("Constructing local partial working arrays.\n");
+	Messenger::printVerbose("Constructing local partial working arrays for %i types.\n", nTypes);
 	nTypes = partialSet.nTypes();
 	const Box* box = cfg->box();
 	Vec3<double>* r[nTypes];
@@ -508,7 +508,7 @@ bool Partials::calculateSimple(Configuration* cfg, PartialRSet& partialSet, Proc
 				for (j = 0; j < maxr[typeJ]; ++j) bins[j] = box->minimumDistance(centre, rj[j]) * rbin;
 				for (j = 0; j < maxr[typeJ]; ++j) if (bins[j] < nPoints) ++histogram[bins[j]];
 			}
-// 			printf("For types %i-%i count = %i, time = %s\n", typeI, typeJ, count, timer.timeString());
+// 			printf("For types %i-%i count = %i, time = %s\n", typeI, typeJ, count, timer.totalTimeString());
 		}
 	}
 
@@ -523,7 +523,7 @@ bool Partials::calculateSimple(Configuration* cfg, PartialRSet& partialSet, Proc
 }
 
 // Calculate unweighted partials for the specified Configuration
-bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, int smoothing)
+bool PartialsModule::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, int smoothing)
 {
 	// Does a PartialSet already exist for this Configuration?
 	bool wasCreated;
@@ -555,7 +555,7 @@ bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, in
 	procPool.resetAccumulatedTime();
 	calculateSimple(cfg, partialgr, procPool);
 	timer.stop();
-	Messenger::print("Partials: Finished calculation of partials (%s elapsed, %s comms).\n", timer.timeString(), procPool.accumulatedTimeString());
+	Messenger::print("Partials: Finished calculation of partials (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
 
 	/*
 	 * Calculate intramolecular partials
@@ -600,7 +600,7 @@ bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, in
 		}
 	}
 	timer.stop();
-	Messenger::print("Partials: Finished calculation of intramolecular partials (%s elapsed, %s comms).\n", timer.timeString(), procPool.accumulatedTimeString());
+	Messenger::print("Partials: Finished calculation of intramolecular partials (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
 
 	/*
 	 * Sum hstogram data
@@ -647,7 +647,7 @@ bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, in
 	// Sum total functions
 	partialgr.formTotal();
 	timer.stop();
-	Messenger::print("Partials: Finished summation and normalisation of partial g(r) data (%s elapsed, %s comms).\n", timer.timeString(), procPool.accumulatedTimeString());
+	Messenger::print("Partials: Finished summation and normalisation of partial g(r) data (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
 
 	/*
 	 * Partials are now up-to-date
@@ -660,7 +660,7 @@ bool Partials::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, in
 }
 
 // Calculate weighted partials (from existing partial) for the specified Configuration
-bool Partials::calculateWeighted(Configuration* cfg, PartialRSet& unweightedPartials, WeightsMatrix& weightsMatrix)
+bool PartialsModule::calculateWeighted(Configuration* cfg, PartialRSet& unweightedPartials, WeightsMatrix& weightsMatrix)
 {
 	// Does a PartialSet already exist for this Configuration?
 	bool wasCreated;
@@ -700,7 +700,7 @@ bool Partials::calculateWeighted(Configuration* cfg, PartialRSet& unweightedPart
 
 
 // Generate S(Q) from supplied g(r)
-bool Partials::generateSQ(PartialRSet& partialgr, PartialQSet& partialsq, double qMax, double qDelta)
+bool PartialsModule::generateSQ(PartialRSet& partialgr, PartialQSet& partialsq, double qMax, double qDelta)
 {
 	/*
 	 * Copy g(r) data into our S(Q) arrays
@@ -746,7 +746,7 @@ bool Partials::generateSQ(PartialRSet& partialgr, PartialQSet& partialsq, double
 // 	partialSQ.formTotal();
 // 
 // 	timer.stop();
-// 	Messenger::print("StructureFactor: Finished Fourier transform and summation of partial g(r) into partial S(Q) (%s elapsed, %s comms).\n", timer.timeString(), procPool.accumulatedTimeString());
+// 	Messenger::print("StructureFactor: Finished Fourier transform and summation of partial g(r) into partial S(Q) (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
 // 
 // 	/*
 // 	 * Partials are now up-to-date
@@ -765,7 +765,7 @@ bool Partials::generateSQ(PartialRSet& partialgr, PartialQSet& partialsq, double
 // 		if (!calculateBraggContributions(procPool)) return false;
 // // 		if (!calculateBraggSQ(procPool)) return false;
 // 		timer.stop();
-// 		Messenger::print("--> Finished calculation of partial Bragg S(Q) (%s elapsed, %s comms).\n", timer.timeString(), procPool.accumulatedTimeString());
+// 		Messenger::print("--> Finished calculation of partial Bragg S(Q) (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
 // 	}
 // 
 // 	// Generate final partial S(Q) combining pair correlations and Bragg partials
@@ -805,7 +805,7 @@ bool Partials::generateSQ(PartialRSet& partialgr, PartialQSet& partialsq, double
  */
 
 // Broadcast data associated to module
-bool Partials::broadcastData(DUQ& duq, ProcessPool& procPool)
+bool PartialsModule::broadcastData(DUQ& duq, ProcessPool& procPool)
 {
 	/*
 	 * Broadcast all data from this type of Module over the ProcessPool specified.
@@ -813,65 +813,6 @@ bool Partials::broadcastData(DUQ& duq, ProcessPool& procPool)
 	 * as well as instance-local information (via the instances_ list).
 	 */
 #ifdef PARALLEL
-	/*
-	 * Static Data
-	 */
-	// Has the data been updated since the last broadcast? Use the 
-	Messenger::printVerbose("Partials: This process thinks that the static/logpoints are %i and %i\n", staticBroadcastPoint_, staticLogPoint_);
-	if (!procPool.allTrue(staticBroadcastPoint_ == staticLogPoint_))
-	{
-		Messenger::print("Partials: Broadcasting partialSets over processes...\n");
-		// PartialSets - each process in the pool will loop over its own partialSets_ list and, for those in which it was the root
-		// proces in the Configuration's process pool, it will broadcast the data. Other processes may not know about this Configuration's
-		// PartialSet yet, so we should check for its existence and create it if it doesn't exist.
-		CharString cfgName;
-		for (int rootRank = 0; rootRank < procPool.nProcesses(); ++rootRank)
-		{
-			// Loop over partialSets_ - we must be careful only to broadcast those data for which the specified rootRank
-			// is the root process in the associated Configuration's ProcessPool
-			if (procPool.poolRank() == rootRank)
-			{
-				// The current rootRank will go through its list of partialSets_
-				for (PartialRSet* ps = partialSets_.first(); ps != NULL; ps = ps->next)
-				{
-					Configuration* cfg = ps->targetConfiguration();
-					if (!cfg->processPool().involvesMe()) continue;
-					if (!cfg->processPool().isMaster()) continue;
-
-					procPool.proceed(rootRank);
-					// Broadcast name of Configuration that the partialSet targets
-					cfgName = cfg->name();
-					if (!procPool.broadcast(cfgName, rootRank)) return false;
-					if (!ps->broadcast(procPool, rootRank)) return false;
-				}
-
-				procPool.stop(rootRank);
-			}
-			else
-			{
-				// Slaves wait to see if they will receive any data
-				while (procPool.decision(rootRank))
-				{
-					// Receive name of Configuration from root process
-					if (!procPool.broadcast(cfgName, rootRank)) return false;
-					// Find named Configuration
-					Configuration* cfg = duq.findConfiguration(cfgName);
-					// Do we currently have a partialSet for this Configuration?
-					PartialRSet* partialgr = partialSet(cfg);
-					if (partialgr == NULL)
-					{
-						// No match, so create new
-						partialgr = partialSets_.add();
-						partialgr.setup(cfg, "unweighted", "rdf");
-					}
-					if (!partialgr.broadcast(procPool, rootRank)) return false;
-				}
-			}
-		}
-
-		// Update logPoint_
-		staticBroadcastPoint_ = staticLogPoint_;
-	}
 #endif
 	return true;
 }

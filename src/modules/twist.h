@@ -31,7 +31,7 @@
  * Twist Module
  * ----------------
  *
- * Performs a traditional atom-by-atom Monte Carlo cycle over all atoms in the system
+ * XXX
  */
 class Twist : public Module
 {

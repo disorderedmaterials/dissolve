@@ -30,28 +30,28 @@
 #include "math/matrix4.h"
 
 // Static Members
-List<Module> AtomShake::instances_;
+List<Module> AtomShakeModule::instances_;
 
 /*
  * Constructor / Destructor
  */
 
 // Constructor
-AtomShake::AtomShake() : Module()
+AtomShakeModule::AtomShakeModule() : Module()
 {
 	// Add to instances list and set unique name for this instance
 	uniqueName_.sprintf("%s%02i", name(), instances_.nItems());
 	instances_.own(this);
 
 	// Setup variables / control parameters
-	options_.add("CutoffDistance", -1.0);
+	options_.add("CutoffDistance", -1.0, "Interatomic cutoff distance to employ");
 	options_.add("ShakesPerAtom", 1);
 	options_.add("TargetAcceptanceRate", 0.33);
 	options_.add("StepSize", 0.05);
 }
 
 // Destructor
-AtomShake::~AtomShake()
+AtomShakeModule::~AtomShakeModule()
 {
 }
 
@@ -60,15 +60,15 @@ AtomShake::~AtomShake()
  */
 
 // Create instance of this module
-List<Module>& AtomShake::instances()
+List<Module>& AtomShakeModule::instances()
 {
 	return instances_;
 }
 
 // Create instance of this module
-Module* AtomShake::createInstance()
+Module* AtomShakeModule::createInstance()
 {
-	return new AtomShake;
+	return new AtomShakeModule;
 }
 
 /*
@@ -76,55 +76,55 @@ Module* AtomShake::createInstance()
  */
 
 // Return name of module
-const char* AtomShake::name()
+const char* AtomShakeModule::name()
 {
 	return "AtomShake";
 }
 
 // Return brief description of module
-const char* AtomShake::brief()
+const char* AtomShakeModule::brief()
 {
 	return "Perform atomic Monte Carlo on all atoms";
 }
 
 // Return instance type for module
-Module::InstanceType AtomShake::instanceType()
+Module::InstanceType AtomShakeModule::instanceType()
 {
 	return Module::MultipleInstance;
 }
 
 // Whether the Module has a pre-processing stage
-bool AtomShake::hasPreProcessing()
+bool AtomShakeModule::hasPreProcessing()
 {
 	return false;
 }
 
 // Whether the Module has a processing stage
-bool AtomShake::hasProcessing()
+bool AtomShakeModule::hasProcessing()
 {
 	return true;
 }
 
 // Whether the Module has a post-processing stage
-bool AtomShake::hasPostProcessing()
+bool AtomShakeModule::hasPostProcessing()
 {
 	return false;
 }
 
 // Modules upon which this Module depends to have run first
-const char* AtomShake::dependentModules()
+const char* AtomShakeModule::dependentModules()
 {
 	return "";
 }
 
 // Setup supplied dependent module (only if it has been auto-added)
-bool AtomShake::setupDependentModule(Module* depMod)
+bool AtomShakeModule::setupDependentModule(Module* depMod)
 {
 	return true;
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int AtomShake::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
+int AtomShakeModule::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
 {
 	return -1;
 }
@@ -134,7 +134,7 @@ int AtomShake::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetLis
  */
 
 // Return the maximum number of Configurations the Module can target (or -1 for any number)
-int AtomShake::nTargetableConfigurations()
+int AtomShakeModule::nTargetableConfigurations()
 {
 	return 1;
 }
@@ -144,19 +144,19 @@ int AtomShake::nTargetableConfigurations()
  */
 
 // Perform setup tasks for module
-bool AtomShake::setup(ProcessPool& procPool)
+bool AtomShakeModule::setup(ProcessPool& procPool)
 {
 	return true;
 }
 
 // Execute pre-processing stage
-bool AtomShake::preProcess(DUQ& duq, ProcessPool& procPool)
+bool AtomShakeModule::preProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return false;
 }
 
 // Execute Method
-bool AtomShake::process(DUQ& duq, ProcessPool& procPool)
+bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
 {
 	/*
 	 * Perform an Atom shake
@@ -298,11 +298,13 @@ bool AtomShake::process(DUQ& duq, ProcessPool& procPool)
 	{
 		double rate = double(nAccepted)/nTries;
 
-		Messenger::print("AtomShake: Overall acceptance rate was %4.2f% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*rate, nAccepted, nTries, timer.timeString(), procPool.accumulatedTimeString());
+		Messenger::print("AtomShake: Overall acceptance rate was %4.2f% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*rate, nAccepted, nTries, timer.totalTimeString(), procPool.accumulatedTimeString());
 		Messenger::print("AtomShake: Total energy delta was %10.4e kJ/mol.\n", totalDelta);
 
 		// Adjust step size
 		stepSize *= rate/targetAcceptanceRate;
+
+		// Clamp step size
 // 		if (stepSize_ < 0.05) stepSize_ = 0.05;
 // 		else if (stepSize_ > maxTranslationStep_) stepSize_ = maxTranslationStep_;
 // 		if (rotationStep_ < 3.0) rotationStep_ = 3.0;
@@ -412,7 +414,7 @@ bool AtomShake::process(DUQ& duq, ProcessPool& procPool)
 // 	{
 // 		double rate = double(nAccepted)/nTries;
 // 
-// 		Messenger::print("WorldAtomShake: Overall acceptance rate was %4.2f% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*rate, nAccepted, nTries, timer.timeString(), procPool.accumulatedTimeString());
+// 		Messenger::print("WorldAtomShake: Overall acceptance rate was %4.2f% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*rate, nAccepted, nTries, timer.totalTimeString(), procPool.accumulatedTimeString());
 // 		Messenger::print("WorldAtomShake: Total energy delta was %10.4e kJ/mol.\n", totalDelta);
 // 
 // 		// Adjust step size
@@ -436,13 +438,13 @@ bool AtomShake::process(DUQ& duq, ProcessPool& procPool)
 // }
 
 // Execute post-processing stage
-bool AtomShake::postProcess(DUQ& duq, ProcessPool& procPool)
+bool AtomShakeModule::postProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return true;
 }
 
 // Broadcast data associated to module
-bool AtomShake::broadcastData(ProcessPool& procPool, int rootRank)
+bool AtomShakeModule::broadcastData(ProcessPool& procPool, int rootRank)
 {
 #ifdef PARALLEL
 #endif

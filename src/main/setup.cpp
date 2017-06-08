@@ -124,6 +124,8 @@ bool DUQ::setupSimulation()
 	if (nMissingPots > 0) return false;
 
 	/* Finalise AtomTypes */
+	Messenger::print("\n");
+	Messenger::print("*** Finalising AtomTypes");
 
 	// Assign indices to atom types
 	Messenger::print("--> Assigning indices to master AtomTypes...\n");
@@ -140,7 +142,7 @@ bool DUQ::setupSimulation()
 
 	/* Construct Pre/Post-Process Lists */
 
-	Messenger::print("--> Creating Pre/Post-Processing task list...\n");
+	Messenger::print("*** Creating Pre/Post-Processing task list...\n");
 	// Loop over configurations
 	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
 	{

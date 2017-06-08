@@ -33,13 +33,13 @@
  *
  * Performs a grain-by-grain Monte Carlo cycle over all grains in a configuration
  */
-class GrainShake : public Module
+class GrainShakeModule : public Module
 {
 	public:
 	// Constructor
-	GrainShake();
+	GrainShakeModule();
 	// Destructor
-	~GrainShake();
+	~GrainShakeModule();
 
 
 	/*

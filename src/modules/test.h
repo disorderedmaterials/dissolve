@@ -29,7 +29,7 @@
 /* none */
 
 // Test Module
-class Test : public Module
+class TestModule : public Module
 {
 	/*
 	 * Module for testing various functions
@@ -37,9 +37,9 @@ class Test : public Module
 
 	public:
 	// Constructor
-	Test();
+	TestModule();
 	// Destructor
-	~Test();
+	~TestModule();
 
 
 	/*

@@ -94,5 +94,5 @@ void Configuration::recreateCellAtomNeighbourLists(double pairPotentialRange)
 		}
 	}
 	timer.stop();
-	Messenger::print("--> Cell atom neighbour lists generated (%s).\n", timer.timeString());
+	Messenger::print("--> Cell atom neighbour lists generated (%s).\n", timer.totalTimeString());
 }

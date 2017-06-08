@@ -28,7 +28,7 @@
 /* none */
 
 // Export Module
-class Export : public Module
+class ExportModule : public Module
 {
 	/*
 	 * Calculates the total energy of the system by one of several methods
@@ -36,9 +36,9 @@ class Export : public Module
 
 	public:
 	// Constructor
-	Export();
+	ExportModule();
 	// Destructor
-	~Export();
+	~ExportModule();
 
 
 	/*

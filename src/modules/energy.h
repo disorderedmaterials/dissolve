@@ -28,7 +28,7 @@
 /* none */
 
 // Energy Module
-class Energy : public Module
+class EnergyModule : public Module
 {
 	/*
 	 * Calculates the total energy of the system by one of several methods
@@ -36,9 +36,9 @@ class Energy : public Module
 
 	public:
 	// Constructor
-	Energy();
+	EnergyModule();
 	// Destructor
-	~Energy();
+	~EnergyModule();
 
 
 	/*

@@ -191,7 +191,7 @@ bool DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 	if (!Comm.allSum(&totalDelta, 1, ProcessPool::Leaders)) return false;
 	if (Comm.groupLeader())
 	{
-		Messenger::print("IntraShake: Overall acceptance rate was %6.1f%% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*nAccepted / nTries, nAccepted, nTries, timer.timeString(), Comm.accumulatedTimeString());
+		Messenger::print("IntraShake: Overall acceptance rate was %6.1f%% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*nAccepted / nTries, nAccepted, nTries, timer.totalTimeString(), Comm.accumulatedTimeString());
 
 		// Adjust step size??
 // 		double ratio = 0.3 / (double(nAccepted)/nTries);
@@ -350,7 +350,7 @@ bool DUQ::interShake(Configuration& cfg)
 	if (!Comm.allSum(&nTries, 1, ProcessPool::Leaders)) return false;
 	if (Comm.groupLeader())
 	{
-		Messenger::print("InterShake: Overall acceptance rate was %6.1f%% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*nAccepted / nTries, nAccepted, nTries, timer.timeString(), Comm.accumulatedTimeString());
+		Messenger::print("InterShake: Overall acceptance rate was %6.1f%% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*nAccepted / nTries, nAccepted, nTries, timer.totalTimeString(), Comm.accumulatedTimeString());
 
 // 		// Adjust step size?
 // 		double acceptanceRate = double(nAccepted)/nTries;
@@ -548,7 +548,7 @@ bool DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 	if (!Comm.allSum(&totalDelta, 1, ProcessPool::Leaders)) return false;
 	if (Comm.groupLeader())
 	{
-		Messenger::print("TermShake: Overall acceptance rate was %6.1f%% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*nAccepted / nTries, nAccepted, nTries, timer.timeString(), Comm.accumulatedTimeString());
+		Messenger::print("TermShake: Overall acceptance rate was %6.1f%% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*nAccepted / nTries, nAccepted, nTries, timer.totalTimeString(), Comm.accumulatedTimeString());
 
 		// Adjust step size??
 // 		double ratio = 0.3 / (double(nAccepted)/nTries);

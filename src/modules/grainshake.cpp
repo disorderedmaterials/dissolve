@@ -34,7 +34,7 @@
  */
 
 // Constructor
-GrainShake::GrainShake() : Module()
+GrainShakeModule::GrainShakeModule() : Module()
 {
 	// Setup variables / control parameters
 	setVariable("cutoffDistance", -1.0);
@@ -45,14 +45,14 @@ GrainShake::GrainShake() : Module()
 }
 
 // Destructor
-GrainShake::~GrainShake()
+GrainShakeModule::~GrainShakeModule()
 {
 }
 
 // Create instance of this module
-Module* GrainShake::createInstance()
+Module* GrainShakeModule::createInstance()
 {
-	return new GrainShake;
+	return new GrainShakeModule;
 }
 
 /*
@@ -60,19 +60,19 @@ Module* GrainShake::createInstance()
  */
 
 // Return name of module
-const char* GrainShake::name()
+const char* GrainShakeModule::name()
 {
 	return "GrainShake";
 }
 
 // Return brief description of module
-const char* GrainShake::brief()
+const char* GrainShakeModule::brief()
 {
 	return "Perform Monte Carlo on all grains";
 }
 
 // Return type of module
-Module::ModuleType GrainShake::type()
+Module::ModuleType GrainShakeModule::type()
 {
 	return Module::EvolutionModule;
 }
@@ -83,7 +83,7 @@ Module::ModuleType GrainShake::type()
 
 // Execute Method
 
-bool GrainShake::execute(DUQ& duq)
+bool GrainShakeModule::execute(DUQ& duq)
 {
 	/*
 	* Perform a Grain shake
@@ -225,7 +225,7 @@ bool GrainShake::execute(DUQ& duq)
 	{
 		double rate = double(nAccepted)/nTries;
 
-		Messenger::print("GrainShake: Overall acceptance rate was %4.2f (%i of %i attempted moves) (%s work, %s comms)\n", rate, nAccepted, nTries, timer.timeString(), Comm.accumulatedTimeString());
+		Messenger::print("GrainShake: Overall acceptance rate was %4.2f (%i of %i attempted moves) (%s work, %s comms)\n", rate, nAccepted, nTries, timer.totalTimeString(), Comm.accumulatedTimeString());
 		Messenger::print("GrainShake: Total energy delta was %10.4e kJ/mol.\n", totalDelta);
 
 		// Adjust step size

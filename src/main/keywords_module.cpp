@@ -136,10 +136,9 @@ bool ModuleBlock::parse(LineParser& parser, DUQ* duq, Module* module, GenericLis
 			{
 				// Might be a keyword defined in the Module itself?
 				int result = module->parseKeyword(parser, duq, targetList);
-				printf("Result = %i\n", result);
 				if (result != 1)
 				{
-					if (result == 0) Messenger::error("Unrecognised %s block keyword found - '%s', and the Module '%s' contains no option with this name.\n", InputBlocks::inputBlock(InputBlocks::ModuleBlock), parser.argc(0), module->name());
+					if (result == -1) Messenger::error("Unrecognised %s block keyword found - '%s', and the Module '%s' contains no option with this name.\n", InputBlocks::inputBlock(InputBlocks::ModuleBlock), parser.argc(0), module->name());
 					error = true;
 				}
 			}

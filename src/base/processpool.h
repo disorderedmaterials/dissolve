@@ -99,15 +99,13 @@ class ProcessPool
 	 */
 	private:
 	// Communication Timers
-	Timer accumTime_, totalTime_;
+	Timer timer_;
 
 	public:
 	// Reset accumulated Comm time
 	void resetAccumulatedTime();
 	// Return accumulated time string
 	const char* accumulatedTimeString();
-	// Return total time string
-	const char* totalTimeString();
 
 
 	/*
@@ -280,6 +278,8 @@ class ProcessPool
 	bool broadcast(Array<int>& array, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Broadcast Array<double>
 	bool broadcast(Array<double>& array, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	// Broadcast Array< Vec3<double> >
+	bool broadcast(Array< Vec3<double> >& array, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Broadcast Array2D<double>
 	bool broadcast(Array2D<double>& array, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 

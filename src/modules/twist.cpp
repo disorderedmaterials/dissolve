@@ -138,7 +138,7 @@ bool DUQ::twist(Configuration& cfg, double cutoffDistance, int nTwistsPerTerm)
 	{
 		double rate = double(nTries) / nAccepted;
 
-		Messenger::print("Twist: Overall acceptance rate was %4.2f (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*rate, nAccepted, nTries, timer.timeString(), Comm.accumulatedTimeString());
+		Messenger::print("Twist: Overall acceptance rate was %4.2f (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*rate, nAccepted, nTries, timer.totalTimeString(), Comm.accumulatedTimeString());
 
 		// Adjust step size??
 

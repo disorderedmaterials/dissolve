@@ -367,9 +367,10 @@ bool PartialRSet::broadcast(ProcessPool& procPool, int rootRank)
 {
 #ifdef PARALLEL
 	// The structure should have already been setup(), so arrays should be ready to copy
-	for (int typeI=0; typeI<nTypes_; ++typeI)
+	int nTypes = atomTypes_.nItems();
+	for (int typeI=0; typeI<nTypes; ++typeI)
 	{
-		for (int typeJ=typeI; typeJ<nTypes_; ++typeJ)
+		for (int typeJ=typeI; typeJ<nTypes; ++typeJ)
 		{
 			partials_.ref(typeI, typeJ).broadcast(procPool, rootRank);
 			boundPartials_.ref(typeI, typeJ).broadcast(procPool, rootRank);

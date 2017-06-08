@@ -1,6 +1,6 @@
 /*
 	*** dUQ Methods - Molecular Dynamics
-	*** src/main/methods_md.cpp
+	*** src/modules/md.cpp
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -19,6 +19,7 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "modules/md.h"
 #include "main/duq.h"
 #include "classes/grain.h"
 #include "classes/box.h"
@@ -26,64 +27,225 @@
 #include "classes/forcekernel.h"
 #include "base/timer.h"
 
+
+// Static Members
+List<Module> MDModule::instances_;
+
 /*
- * \brief Perform some MD
- * \details Evolve the current Configuration using a simple molecular dynamics algorithm.
- * 
- * This is a parallel routine, with processes operating in process groups.
+ * Constructor / Destructor
  */
-bool DUQ::md(Configuration& cfg, double cutoffDistance, int nSteps, double deltaT)
+
+// Constructor
+MDModule::MDModule() : Module()
 {
-	// Check input values if necessary
-	if (cutoffDistance < 0.0) cutoffDistance = pairPotentialRange_;
+	// Add to instances list and set unique name for this instance
+	instances_.own(this);
+	uniqueName_.sprintf("%s%02i", name(), instances_.nItems()-1);
+
+	// Setup variables / control parameters
+	options_.add("CapForces", 1.0e7, "Set cap on allowable force (kJ/mol) per atom per axis (or -ve to inhibit)");
+	options_.add("CutoffDistance", -1.0, "Interatomic cutoff distance to employ");
+	options_.add("DeltaT", 1.0e-4, "Timestep (ps) to use in MD simulation");
+	options_.add("EnergyFrequency", 10, "Frequency at which to calculate total system energy (or 0 to inhibit)");
+	options_.add("NSteps", 100, "Number of MD steps to perform");
+	options_.add("OutputFrequency", 5, "Frequency at which to output step information (or 0 to inhibit)");
+	options_.add("RandomVelocities", false, "Whether random velocities should always be assigned before beginning MD simulation");
+}
+
+// Destructor
+MDModule::~MDModule()
+{
+}
+
+/*
+ * Instances
+ */
+
+// Create instance of this module
+List<Module>& MDModule::instances()
+{
+	return instances_;
+}
+
+// Create instance of this module
+Module* MDModule::createInstance()
+{
+	return new MDModule;
+}
+
+/*
+ * Definition
+ */
+
+// Return name of module
+const char* MDModule::name()
+{
+	return "MD";
+}
+
+// Return brief description of module
+const char* MDModule::brief()
+{
+	return "Evolve a Configuration using molecular dynamics";
+}
+
+// Return instance type for module
+Module::InstanceType MDModule::instanceType()
+{
+	return Module::MultipleInstance;
+}
+
+// Whether the Module has a pre-processing stage
+bool MDModule::hasPreProcessing()
+{
+	return false;
+}
+
+// Whether the Module has a processing stage
+bool MDModule::hasProcessing()
+{
+	return true;
+}
+
+// Whether the Module has a post-processing stage
+bool MDModule::hasPostProcessing()
+{
+	return false;
+}
+
+// Modules upon which this Module depends to have run first
+const char* MDModule::dependentModules()
+{
+	return "";
+}
+
+// Setup supplied dependent module (only if it has been auto-added)
+bool MDModule::setupDependentModule(Module* depMod)
+{
+	return true;
+}
+
+// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
+int MDModule::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
+{
+	return -1;
+}
+
+/*
+ * Targets
+ */
+
+// Return the maximum number of Configurations the Module can target (or -1 for any number)
+int MDModule::nTargetableConfigurations()
+{
+	return 1;
+}
+
+
+/*
+ * Method
+ */
+
+// Perform setup tasks for module
+bool MDModule::setup(ProcessPool& procPool)
+{
+	return true;
+}
+
+// Execute pre-processing stage
+bool MDModule::preProcess(DUQ& duq, ProcessPool& procPool)
+{
+	return false;
+}
+
+// Execute Method
+bool MDModule::process(DUQ& duq, ProcessPool& procPool)
+{
+	/*
+	 * Perform Molecular Dynamics on a given Configuration
+	 * 
+	 * This is a parallel routine, with processes operating in groups.
+	 */
+
+	// Get target Configuration
+	Configuration* cfg = targetConfigurations_.firstItem();
+	GenericList& moduleData = cfg->moduleData();
+
+	// Retrieve control parameters from Configuration
+	const double maxForce = GenericListHelper<double>::retrieve(cfg->moduleData(), "CapForces", uniqueName(), options_.valueAsDouble("CapForces")) * 100.0;		// To convert from kJ/mol to 10 J/mol
+	double cutoffDistance = GenericListHelper<double>::retrieve(cfg->moduleData(), "CutoffDistance", uniqueName(), options_.valueAsDouble("CutoffDistance"));
+	if (cutoffDistance < 0.0) cutoffDistance = duq.pairPotentialRange();
 	const double cutoffSq = cutoffDistance * cutoffDistance;
-	const double temperature = cfg.temperature();
+	double deltaT = GenericListHelper<double>::retrieve(cfg->moduleData(), "DeltaT", uniqueName(), options_.valueAsDouble("DeltaT"));
+	const int energyFrequency = GenericListHelper<int>::retrieve(cfg->moduleData(), "EnergyFrequency", uniqueName(), options_.valueAsInt("EnergyFrequency"));
+	const int nSteps = GenericListHelper<int>::retrieve(cfg->moduleData(), "NSteps", uniqueName(), options_.valueAsInt("NSteps"));
+	const int outputFrequency = GenericListHelper<int>::retrieve(cfg->moduleData(), "OutputFrequency", uniqueName(), options_.valueAsInt("OutputFrequency"));
+	bool randomVelocities = GenericListHelper<int>::retrieve(cfg->moduleData(), "RandomVelocities", uniqueName(), options_.valueAsBool("RandomVelocities"));
+	const double temperature = cfg->temperature();
 	bool writeTraj = false;
-	bool calcEnergy = true;
 	int writeFreq = 10;
 
-	// Print summary of parameters
-	Messenger::print("MD: Number of steps = %i\n", nSteps);
+	// Print argument/parameter summary
 	Messenger::print("MD: Cutoff distance is %f\n", cutoffDistance);
+	Messenger::print("MD: Number of steps = %i\n", nSteps);
 	Messenger::print("MD: Timestep = %10.3e ps\n", deltaT);
 	if (writeTraj) Messenger::print("MD: Trajectory file '%s' will be appended.\n");
 	else Messenger::print("MD: Trajectory file off.\n");
-	Messenger::print("MD: Energy %s be calculated at each step.\n", calcEnergy ? "will" : "will not");
-	Messenger::print("MD: Summary will be written every %i step(s).\n", writeFreq);
+	if (maxForce > 0) Messenger::print("MD: Forces will be capped to %10.3e kJ/mol per atom per axis.\n", maxForce / 100.0);
+	else Messenger::print("MD: Energy will be not be calculated.\n");
+	if (energyFrequency > 0) Messenger::print("MD: Energy will be calculated every %i step(s).\n", energyFrequency);
+	else Messenger::print("MD: Energy will be not be calculated.\n");
+	if (outputFrequency > 0) Messenger::print("MD: Summary will be written every %i step(s).\n", outputFrequency);
+	else Messenger::print("MD: Summary will not be written.\n");
 
 	// Create force arrays as simple double arrays (easier to sum with MPI) - others are Vec3<double> arrays
-	Array<double> mass(cfg.nAtoms()), fx(cfg.nAtoms()), fy(cfg.nAtoms()), fz(cfg.nAtoms());
-	Array< Vec3<double> > a(cfg.nAtoms()), v(cfg.nAtoms()), deltaR(cfg.nAtoms());
+	Array<double> mass(cfg->nAtoms()), fx(cfg->nAtoms()), fy(cfg->nAtoms()), fz(cfg->nAtoms());
+	Array< Vec3<double> > a(cfg->nAtoms()), deltaR(cfg->nAtoms());
 
 	// Variables
-	int n, maxDeltaId;
-	Atom* atoms = cfg.atoms();
+	int n, nCapped = 0;
+	Atom* atoms = cfg->atoms();
 	Atom* i;
-	double maxDelta, deltaSq, massSum, tInstant, ke, tScale, pe;
+	double maxDelta, deltaSq, tInstant, ke, tScale, pe;
 	double deltaTSq = deltaT*deltaT;
-	Vec3<double> vCom;
-	double maxForce = 100.0;
 
 	/*
 	 * Calculation Begins
 	 */
 	
-	// Assign random velocities to start... (grab atomic masses at the same time...)
-	Messenger::print("Assigning random velocities...\n");
-	vCom.zero();
-	massSum = 0.0;
-	for (n=0; n<cfg.nAtoms(); ++n)
+	// Read in or assign random velocities
+	// Realise the velocity array from the moduleData
+	bool created;
+	Array< Vec3<double> > &v = GenericListHelper< Array< Vec3<double> > >::realise(moduleData, "Velocities", uniqueName(), &created);
+	if (created)
 	{
-		i = cfg.atom(n);
-		v[n].x = exp(DUQMath::random()-0.5) / sqrt(TWOPI);
-		v[n].y = exp(DUQMath::random()-0.5) / sqrt(TWOPI);
-		v[n].z = exp(DUQMath::random()-0.5) / sqrt(TWOPI);
+		randomVelocities = true;
+		v.initialise(cfg->nAtoms());
+	}
+	if (randomVelocities) Messenger::print("MD: Random initial velocities will be assigned.\n");
+	else Messenger::print("MD: Existing velocities will be used.\n");
+
+	Vec3<double> vCom;
+	double massSum = 0.0;
+	for (n=0; n<cfg->nAtoms(); ++n)
+	{
+		i = &atoms[n];
+		if (randomVelocities)
+		{
+			v[n].x = exp(DUQMath::random()-0.5) / sqrt(TWOPI);
+			v[n].y = exp(DUQMath::random()-0.5) / sqrt(TWOPI);
+			v[n].z = exp(DUQMath::random()-0.5) / sqrt(TWOPI);
+		}
+
+		// Grab atom mass for future use
 		mass[n] = PeriodicTable::element(i->element()).isotope(0)->atomicWeight();
+
+		// Calculate total velocity and mass over all atoms
 		vCom += v[n] * mass[n];
 		massSum += mass[n];
 	}
 
-	// Remove velocity shift
+	// Remove any velocity shift
 	vCom /= massSum;
 	v -= vCom;
 
@@ -93,131 +255,108 @@ bool DUQ::md(Configuration& cfg, double cutoffDistance, int nSteps, double delta
 	const double kb = 0.8314462;
 	ke = 0.0;
 	pe = 0.0;
-	for (n=0; n<cfg.nAtoms(); ++n) ke += 0.5 * mass[n] * v[n].dp(v[n]);
-	tInstant = ke * 2.0 / (3.0 * cfg.nAtoms() * kb);
+	for (n=0; n<cfg->nAtoms(); ++n) ke += 0.5 * mass[n] * v[n].dp(v[n]);
+	tInstant = ke * 2.0 / (3.0 * cfg->nAtoms() * kb);
 	
 	// Rescale velocities for desired temperature
 	tScale = sqrt(temperature / tInstant);
-	for (n=0; n<cfg.nAtoms(); ++n) v[n] *= tScale;
+	for (n=0; n<cfg->nAtoms(); ++n) v[n] *= tScale;
 
 	// Open trajectory file (if requested)
 	LineParser trajParser;
 	if (writeTraj)
 	{
-		CharString trajectoryFile = cfg.name();
+		CharString trajectoryFile = cfg->name();
 		trajectoryFile.strcat(".md.xyz");
-		if (Comm.master())
+		if (procPool.isMaster())
 		{
 			if ((!trajParser.openOutput(trajectoryFile, true)) || (!trajParser.isFileGoodForWriting()))
 			{
 				Messenger::error("Failed to open MD trajectory output file '%s'.\n", trajectoryFile.get());
-				Comm.decide(false);
+				procPool.stop();
 				return false;
 			}
-			Comm.decide(true);
+			procPool.proceed();
 		}
-		else if (!Comm.decision()) return false;
+		else if (!procPool.decision()) return false;
 	}
 
-	// Write header to screen
-	if (calcEnergy) Messenger::print("  Step             T(K)      K.E.(kJ/mol) P.E.(kJ/mol) Etot(kJ/mol)\n");
-	else Messenger::print("  Step             T(K)      K.E.(kj/mol)\n");
+	// Write header
+	if (outputFrequency > 0) Messenger::print("  Step             T(K)      K.E.(kJ/mol) P.E.(kJ/mol) Etot(kJ/mol)  deltaT(ps)\n");
 
-	// Start a timer
-	Timer timer;
+	// Start a timer and reset the ProcessPool's time accumulator
+	procPool.resetAccumulatedTime();
 
 	// Ready to do MD propagation of system
-	timer.start();
-	Comm.resetAccumulatedTime();
-	for (int step=0; step<nSteps; ++step)
+	for (int step=1; step<=nSteps; ++step)
 	{
-// 		 deltaT = 0.001;
-// 		 deltaTSq = deltaT*deltaT;
-// 		// Velocity Verlet first stage (A) and zero forces
-// 		// A:  r(t+dt) = r(t) + v(t)*dt + 0.5*a(t)*dt**2
-// 		// A:  v(t+dt/2) = v(t) + 0.5*a(t)*dt
-// 		// B:  a(t+dt) = F(t+dt)/m
-// 		// B:  v(t+dt) = v(t+dt/2) + 0.5*a(t+dt)*dt
-// 		maxDelta = 0.0;
-// 		maxDeltaId = -1;
-// 		for (n=0; n<cfg.nAtoms(); ++n)
-// 		{
-// 			// Calculate position deltas and determine maximum displacement for current timestep
-// 			deltaR[n] = v[n]*deltaT + a[n]*0.5*deltaTSq;
-// 			deltaSq = deltaR[n].magnitudeSq();
-// 			if (deltaSq > maxDelta)
-// 			{
-// 				maxDelta = deltaSq;
-// 				maxDeltaId = n;
-// 			}
-// 		}
-// 		maxDelta = sqrt(maxDelta);
-// 		Messenger::print("Current timestep (%e) will give a maximum displacement of %f Angstroms\n", deltaT, maxDelta);
-// 		if (step > 0)
-// 		{
-// 			do
-// 			{
-// 				deltaT *= (v[maxDeltaId]*deltaT + a[maxDeltaId]*0.5*deltaTSq).magnitude() > maxDisplacement ? 0.99 : 1.01;
-// 				deltaTSq = deltaT*deltaT;
-// 			} while (fabs((v[maxDeltaId]*deltaT + a[maxDeltaId]*0.5*deltaTSq).magnitude() - maxDisplacement) > (maxDisplacement*0.05));
-// 			// Adjust timestep to give maximum movement and avoid explosion
-// 			// dR/dT = v + a*deltaT
-// // 			printf("Deriv = %f %f\n", (v[maxDeltaId]+a[maxDeltaId]*deltaT).magnitude(), (v[maxDeltaId]+a[maxDeltaId]*deltaT).magnitude() / (maxDelta - 0.1));
-// // 			deltaT = 1.0 / ((v[maxDeltaId]+a[maxDeltaId]*deltaT).magnitude() / 0.1);
-// // 			printf("xxx = %f %f\n", 1.0 / deltaT, (maxDelta/maxDisplacement) * (v[maxDeltaId]+a[maxDeltaId]*deltaT).magnitude());
-// // // 			deltaT = 0.000564480;
-// // 			deltaT = 1.0 / ((maxDelta/maxDisplacement) * (v[maxDeltaId]+a[maxDeltaId]*deltaT).magnitude());
-// // 			deltaT = deltaT/2.0;
-// 			printf("New DeltaT = %f\n", deltaT);
-// 		}
-
-// 		// TEST - Check max displacement with new deltaT
-// 		maxDelta = 0.0;
-// 		for (n=0; n<cfg.nAtoms(); ++n)
-// 		{
-// 			// Calculate position deltas and determine maximum displacement for current timestep
-// 			deltaR[n] = v[n]*deltaT + a[n]*0.5*deltaTSq;
-// 			deltaSq = deltaR[n].magnitudeSq();
-// 			if (deltaSq > maxDelta) maxDelta = deltaSq;
-// 		}
-// 		printf("New max delta = %f\n", sqrt(maxDelta));
-		
-		for (n=0; n<cfg.nAtoms(); ++n)
+	Timer timer;
+	timer.start();
+		// Velocity Verlet first stage (A)
+		// A:  r(t+dt) = r(t) + v(t)*dt + 0.5*a(t)*dt**2
+		// A:  v(t+dt/2) = v(t) + 0.5*a(t)*dt
+		// B:  a(t+dt) = F(t+dt)/m
+		// B:  v(t+dt) = v(t+dt/2) + 0.5*a(t+dt)*dt
+		for (n=0; n<cfg->nAtoms(); ++n)
 		{
-			i = cfg.atom(n);
+			i = &atoms[n];
 
 			// Propagate positions (by whole step)...
 			i->translateCoordinates(v[n]*deltaT + a[n]*0.5*deltaTSq);
 
 			// ...velocities (by half step)...
 			v[n] += a[n]*0.5*deltaT;
-			
-			// Zero force ready for next calculation
-			fx[n] = 0.0;
-			fy[n] = 0.0;
-			fz[n] = 0.0;
 		}
 
 		// Grain coordinates will have changed...
-		cfg.updateGrains();
+		cfg->updateGrains();
 
 		// Calculate forces - must multiply by 100.0 to convert from kJ/mol to 10J/mol (internal MD units)
-		totalForces(cfg, fx, fy, fz, cutoffSq);
+		fx = 0.0;
+		fy = 0.0;
+		fz = 0.0;
+		duq.totalForces(procPool, cfg, fx, fy, fz, cutoffSq);
 		fx *= 100.0;
 		fy *= 100.0;
 		fz *= 100.0;
 
-// 		// Cap forces
-// 		for (n=0; n<cfg.nAtoms(); ++n)
-// 		{
-// 			// Calculate position deltas and determine maximum displacement for current timestep
-// 			if (fx[n] < maxForce) fx[n] = -maxForce;
-// 			else if (fx[n] > maxForce) fx[n] = maxForce;
-// 			if (fy[n] < maxForce) fy[n] = -maxForce;
-// 			else if (fy[n] > maxForce) fy[n] = maxForce;
-// 			if (fz[n] < maxForce) fz[n] = -maxForce;
-// 			else if (fz[n] > maxForce) fz[n] = maxForce;
-// 		}
+		// Cap forces (per atom, per axis)
+		if (maxForce > 0)
+		{
+			for (n=0; n<cfg->nAtoms(); ++n)
+			{
+				if (fx[n] > maxForce)
+				{
+					fx[n] = maxForce;
+					++nCapped;
+				}
+				else if (fx[n] < -maxForce)
+				{
+					fx[n] = -maxForce;
+					++nCapped;
+				}
+				if (fy[n] > maxForce)
+				{
+					fy[n] = maxForce;
+					++nCapped;
+				}
+				else if (fy[n] < -maxForce)
+				{
+					fy[n] = -maxForce;
+					++nCapped;
+				}
+				if (fz[n] > maxForce)
+				{
+					fz[n] = maxForce;
+					++nCapped;
+				}
+				else if (fz[n] < -maxForce)
+				{
+					fz[n] = -maxForce;
+					++nCapped;
+				}
+			}
+		}
 
 		// Velocity Verlet second stage (B) and velocity scaling
 		// A:  r(t+dt) = r(t) + v(t)*dt + 0.5*a(t)*dt**2
@@ -225,7 +364,7 @@ bool DUQ::md(Configuration& cfg, double cutoffDistance, int nSteps, double delta
 		// B:  a(t+dt) = F(t+dt)/m
 		// B:  v(t+dt) = v(t+dt/2) + 0.5*a(t+dt)*dt
 		ke = 0.0;
-		for (n=0; n<cfg.nAtoms(); ++n)
+		for (n=0; n<cfg->nAtoms(); ++n)
 		{
 			// Determine new accelerations
 			a[n].set(fx[n], fy[n], fz[n]);
@@ -238,58 +377,79 @@ bool DUQ::md(Configuration& cfg, double cutoffDistance, int nSteps, double delta
 		}
 
 		// Rescale velocities for desired temperature
-		tInstant = ke * 2.0 / (3.0 * cfg.nAtoms() * kb);
+		tInstant = ke * 2.0 / (3.0 * cfg->nAtoms() * kb);
 		tScale = sqrt(temperature / tInstant);
 		v *= tScale;
 		
-		// Convert ke from 10J mol-1 to kJ/mol
+		// Convert ke from 10J/mol to kJ/mol
 		ke *= 0.01;
 
-		// Calculate step energy
-		if (calcEnergy) pe = intergrainEnergy(cfg) + intramolecularEnergy(cfg);
-		
 		// Write step summary?
-		if (step%writeFreq == 0)
+		if ((step == 1)|| (step%outputFrequency == 0))
 		{
-			if (calcEnergy) Messenger::print("  %-10i    %10.3e   %10.3e   %10.3e   %10.3e\n", step+1, tInstant, ke, pe, ke+pe);
-			else Messenger::print("  %-10i    %10.3e   %10.3e\n", step+1, tInstant, ke);
+			// Include total energy term?
+			if ((energyFrequency > 0) && (step%energyFrequency == 0))
+			{
+				pe = duq.interatomicEnergy(procPool, cfg) + duq.intramolecularEnergy(procPool, cfg);
+				Messenger::print("  %-10i    %10.3e   %10.3e   %10.3e   %10.3e   %10.3e\n", step, tInstant, ke, pe, ke+pe, deltaT);
+			}
+			else Messenger::print("  %-10i    %10.3e   %10.3e                             %10.3e\n", step, tInstant, ke, deltaT);
 		}
 
 		// Save trajectory frame
 		if (writeTraj)
 		{
-			if (Comm.master())
+			if (procPool.isMaster())
 			{
 				// Write number of atoms
-				trajParser.writeLineF("%i\n", cfg.nAtoms());
+				trajParser.writeLineF("%i\n", cfg->nAtoms());
 
 				// Construct and write header
-				CharString header(-1, "Step %i of %i, T = %10.3e, ke = %10.3e", step+1, nSteps, tInstant, ke);
-				if (calcEnergy) header.strcatf(", pe = %10.3e, tot = %10.3e", pe, ke+pe);
-				trajParser.writeLineF("%s\n", header.get());
-				// Write Atoms
-				for (int n=0; n<cfg.nAtoms(); ++n)
+				CharString header("Step %i of %i, T = %10.3e, ke = %10.3e", step, nSteps, tInstant, ke);
+				if ((energyFrequency > 0) && (step%energyFrequency == 0)) header.strcatf(", pe = %10.3e, tot = %10.3e", pe, ke+pe);
+				if (!trajParser.writeLineF("%s\n", header.get()))
 				{
-					i = cfg.atom(n);
-					trajParser.writeLineF("%-3s   %10.3f  %10.3f  %10.3f\n", PeriodicTable::element(i->element()).symbol(), i->r().x, i->r().y, i->r().z);
+					procPool.stop();
+					return false;
 				}
+
+				// Write Atoms
+				for (int n=0; n<cfg->nAtoms(); ++n)
+				{
+					i = cfg->atom(n);
+					if (!trajParser.writeLineF("%-3s   %10.3f  %10.3f  %10.3f\n", PeriodicTable::element(i->element()).symbol(), i->r().x, i->r().y, i->r().z))
+					{
+						procPool.stop();
+						return false;
+					}
+				}
+
+				procPool.proceed();
 			}
-			else if (!Comm.decision()) return false;
+			else if (!procPool.decision()) return false;
 		}
+	timer.stop();
+	Messenger::print("MD: %i steps performed (%s work, %s comms)\n", nSteps, timer.totalTimeString(), procPool.accumulatedTimeString());
         }
-        timer.stop();
 
 	// Close trajectory file
-	if (writeTraj && Comm.master()) trajParser.closeFiles();
+	if (writeTraj && procPool.isMaster()) trajParser.closeFiles();
 
-        Messenger::print("%i molecular dynamics steps performed (%s work, %s comms)\n", nSteps, timer.timeString(), Comm.accumulatedTimeString());
+	if (maxForce > 0) Messenger::print("MD: A total of %i forces were capped over the course of the dynamics (%9.3e per step).\n", nCapped, double(nCapped) / nSteps);
+//         Messenger::print("MD: %i steps performed (%s work, %s comms)\n", nSteps, timer.totalTimeString(), procPool.accumulatedTimeString());
 
-	// Increment configuration changeCount_
-	cfg.incrementCoordinateIndex();
+	// Increment configuration changeCount
+	cfg->incrementCoordinateIndex();
 
 	/*
 	 * Calculation End
 	 */
 	
 	return true;
+}
+
+// Execute post-processing stage
+bool MDModule::postProcess(DUQ& duq, ProcessPool& procPool)
+{
+	return false;
 }

@@ -272,7 +272,7 @@ bool DUQ::go()
 					worldPool_.stop();
 					return false;
 				}
-				else if (!Export::writeConfigurationXYZ(parser, cfg, cfg->name()))
+				else if (!ExportModule::writeConfigurationXYZ(parser, cfg, cfg->name()))
 				{
 					Messenger::print("Export: Failed to write Configuration output file.\n");
 					parser.closeFiles();

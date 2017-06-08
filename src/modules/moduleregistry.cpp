@@ -23,6 +23,7 @@
 #include "modules/atomshake.h"
 #include "modules/energy.h"
 #include "modules/export.h"
+#include "modules/md.h"
 #include "modules/partials.h"
 #include "modules/test.h"
 
@@ -35,9 +36,10 @@
 // Constructor
 ModuleRegistry::ModuleRegistry()
 {
-	ModuleRegistrar<AtomShake> atomShakeRegistrar;
-	ModuleRegistrar<Energy> energyRegistrar;
-	ModuleRegistrar<Export> exportRegistrar;
-	ModuleRegistrar<Partials> partailsRegistrar;
-	ModuleRegistrar<Test> testRegistrar;
+	ModuleRegistrar<AtomShakeModule> atomShakeRegistrar;
+	ModuleRegistrar<EnergyModule> energyRegistrar;
+	ModuleRegistrar<ExportModule> exportRegistrar;
+	ModuleRegistrar<MDModule> mdRegistrar;
+	ModuleRegistrar<PartialsModule> partailsRegistrar;
+	ModuleRegistrar<TestModule> testRegistrar;
 }

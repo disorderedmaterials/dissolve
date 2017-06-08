@@ -166,19 +166,13 @@ bool ProcessPool::isWorldMaster()
 // Reset accumulated Comm time
 void ProcessPool::resetAccumulatedTime()
 {
-	accumTime_.zero();
+	timer_.zero();
 }
 
 // Return accumulated time string
 const char* ProcessPool::accumulatedTimeString()
 {
-	return accumTime_.timeString();
-}
-
-// Return total time string
-const char* ProcessPool::totalTimeString()
-{
-	return totalTime_.timeString();
+	return timer_.totalTimeString();
 }
 
 /*
@@ -666,11 +660,9 @@ bool ProcessPool::wait(ProcessPool::CommunicatorType commType)
 bool ProcessPool::send(int value, int targetWorldRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-	totalTime_.start();
-	accumTime_.start();
+	timer_.start();
 	if (MPI_Send(&value, 1, MPI_INTEGER, targetWorldRank, 0, communicator(commType)) != MPI_SUCCESS) return false;
-	totalTime_.accumulate();
-	accumTime_.accumulate();
+	timer_.accumulate();
 #endif
 	return true;
 }
@@ -679,12 +671,10 @@ bool ProcessPool::send(int value, int targetWorldRank, ProcessPool::Communicator
 bool ProcessPool::receive(int& value, int sourceWorldRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-	totalTime_.start();
-	accumTime_.start();
+	timer_.start();
 	MPI_Status status;
 	if (MPI_Recv(&value, 1, MPI_INTEGER, sourceWorldRank, 0, communicator(commType), &status) != MPI_SUCCESS) return false;
-	totalTime_.accumulate();
-	accumTime_.accumulate();
+	timer_.accumulate();
 #endif
 	return true;
 }
@@ -693,11 +683,9 @@ bool ProcessPool::receive(int& value, int sourceWorldRank, ProcessPool::Communic
 bool ProcessPool::send(double value, int targetWorldRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-	totalTime_.start();
-	accumTime_.start();
+	timer_.start();
 	if (MPI_Send(&value, 1, MPI_DOUBLE, targetWorldRank, 0, communicator(commType)) != MPI_SUCCESS) return false;
-	totalTime_.accumulate();
-	accumTime_.accumulate();
+	timer_.accumulate();
 #endif
 	return true;
 }
@@ -706,12 +694,10 @@ bool ProcessPool::send(double value, int targetWorldRank, ProcessPool::Communica
 bool ProcessPool::receive(double& value, int sourceWorldRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-	totalTime_.start();
-	accumTime_.start();
+	timer_.start();
 	MPI_Status status;
 	if (MPI_Recv(&value, 1, MPI_DOUBLE, sourceWorldRank, 0, communicator(commType), &status) != MPI_SUCCESS) return false;
-	totalTime_.accumulate();
-	accumTime_.accumulate();
+	timer_.accumulate();
 #endif
 	return true;
 }
@@ -720,12 +706,10 @@ bool ProcessPool::receive(double& value, int sourceWorldRank, ProcessPool::Commu
 bool ProcessPool::send(bool value, int targetWorldRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-	totalTime_.start();
-	accumTime_.start();
+	timer_.start();
 	int data = value;
 	if (MPI_Send(&data, 1, MPI_INTEGER, targetWorldRank, 0, communicator(commType)) != MPI_SUCCESS) return false;
-	totalTime_.accumulate();
-	accumTime_.accumulate();
+	timer_.accumulate();
 #endif
 	return true;
 }
@@ -734,14 +718,12 @@ bool ProcessPool::send(bool value, int targetWorldRank, ProcessPool::Communicato
 bool ProcessPool::receive(bool& value, int sourceWorldRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-	totalTime_.start();
-	accumTime_.start();
+	timer_.start();
 	MPI_Status status;
 	int result;
 	if (MPI_Recv(&result, 1, MPI_INTEGER, sourceWorldRank, 0, communicator(commType), &status) != MPI_SUCCESS) return false;
 	value = result;
-	totalTime_.accumulate();
-	accumTime_.accumulate();
+	timer_.accumulate();
 #endif
 	return true;
 }
@@ -750,11 +732,9 @@ bool ProcessPool::receive(bool& value, int sourceWorldRank, ProcessPool::Communi
 bool ProcessPool::send(int* source, int nData, int targetWorldRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-	totalTime_.start();
-	accumTime_.start();
+	timer_.start();
 	if (MPI_Send(source, nData, MPI_INTEGER, targetWorldRank, 0, communicator(commType)) != MPI_SUCCESS) return false;
-	totalTime_.accumulate();
-	accumTime_.accumulate();
+	timer_.accumulate();
 #endif
 	return true;
 }
@@ -763,12 +743,10 @@ bool ProcessPool::send(int* source, int nData, int targetWorldRank, ProcessPool:
 bool ProcessPool::receive(int* source, int nData, int sourceWorldRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-	totalTime_.start();
-	accumTime_.start();
+	timer_.start();
 	MPI_Status status;
 	if (MPI_Recv(source, nData, MPI_INTEGER, sourceWorldRank, 0, communicator(commType), &status) != MPI_SUCCESS) return false;
-	totalTime_.accumulate();
-	accumTime_.accumulate();
+	timer_.accumulate();
 #endif
 	return true;
 }
@@ -777,11 +755,9 @@ bool ProcessPool::receive(int* source, int nData, int sourceWorldRank, ProcessPo
 bool ProcessPool::send(double* source, int nData, int targetWorldRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-	totalTime_.start();
-	accumTime_.start();
+	timer_.start();
 	if (MPI_Send(source, nData, MPI_DOUBLE, targetWorldRank, 0, communicator(commType)) != MPI_SUCCESS) return false;
-	totalTime_.accumulate();
-	accumTime_.accumulate();
+	timer_.accumulate();
 #endif
 	return true;
 }
@@ -790,12 +766,10 @@ bool ProcessPool::send(double* source, int nData, int targetWorldRank, ProcessPo
 bool ProcessPool::receive(double* source, int nData, int sourceWorldRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-	totalTime_.start();
-	accumTime_.start();
+	timer_.start();
 	MPI_Status status;
 	if (MPI_Recv(source, nData, MPI_DOUBLE, sourceWorldRank, 0, communicator(commType), &status) != MPI_SUCCESS) return false;
-	totalTime_.accumulate();
-	accumTime_.accumulate();
+	timer_.accumulate();
 #endif
 	return true;
 }
@@ -808,8 +782,7 @@ bool ProcessPool::receive(double* source, int nData, int sourceWorldRank, Proces
 bool ProcessPool::broadcast(CharString& source, int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-	totalTime_.start();
-	accumTime_.start();
+	timer_.start();
 	static char buffer[4096];
 	
 	// Get length of string, and make a local copy to avoid the const-ness of CharString.get().
@@ -819,8 +792,7 @@ bool ProcessPool::broadcast(CharString& source, int rootRank, ProcessPool::Commu
 	if (!broadcast(buffer, rootRank, commType)) return false;
 	
 	if (isSlave()) source = buffer;
-	totalTime_.accumulate();
-	accumTime_.accumulate();
+	timer_.accumulate();
 #endif
 	return true;
 }
@@ -829,8 +801,7 @@ bool ProcessPool::broadcast(CharString& source, int rootRank, ProcessPool::Commu
 bool ProcessPool::broadcast(char* source, int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-	totalTime_.start();
-	accumTime_.start();
+	timer_.start();
 	int length;
 	if (poolRank_ == rootRank)
 	{
@@ -865,8 +836,7 @@ bool ProcessPool::broadcast(char* source, int rootRank, ProcessPool::Communicato
 			return false;
 		}
 	}
-	totalTime_.accumulate();
-	accumTime_.accumulate();
+	timer_.accumulate();
 #endif
 	return true;
 }
@@ -875,8 +845,7 @@ bool ProcessPool::broadcast(char* source, int rootRank, ProcessPool::Communicato
 bool ProcessPool::broadcast(Vec3<double>& source, int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-	totalTime_.start();
-	accumTime_.start();
+	timer_.start();
 	double buffer[3];
 	if (poolRank_ == rootRank)
 	{
@@ -902,8 +871,7 @@ bool ProcessPool::broadcast(Vec3<double>& source, int rootRank, ProcessPool::Com
 		source.y = buffer[1];
 		source.z = buffer[2];
 	}
-	totalTime_.accumulate();
-	accumTime_.accumulate();
+	timer_.accumulate();
 #endif
 	return true;
 }
@@ -918,15 +886,13 @@ bool ProcessPool::broadcast(int& source, int rootRank, ProcessPool::Communicator
 bool ProcessPool::broadcast(int* source, int count, int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-	totalTime_.start();
-	accumTime_.start();
+	timer_.start();
 	if (MPI_Bcast(source, count, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
 	{
 		Messenger::print("Failed to broadcast int data from root rank %i.\n", rootRank);
 		return false;
 	}
-	totalTime_.accumulate();
-	accumTime_.accumulate();
+	timer_.accumulate();
 #endif
 	return true;
 }
@@ -935,15 +901,13 @@ bool ProcessPool::broadcast(int* source, int count, int rootRank, ProcessPool::C
 bool ProcessPool::broadcast(long int& source, int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-	totalTime_.start();
-	accumTime_.start();
+	timer_.start();
 	if (MPI_Bcast(&source, 1, MPI_LONG, rootRank, communicator(commType)) != MPI_SUCCESS)
 	{
 		Messenger::print("Failed to broadcast long int data from root rank %i.\n", rootRank);
 		return false;
 	}
-	totalTime_.accumulate();
-	accumTime_.accumulate();
+	timer_.accumulate();
 #endif
 	return true;
 }
@@ -958,15 +922,13 @@ bool ProcessPool::broadcast(double& source, int rootRank, ProcessPool::Communica
 bool ProcessPool::broadcast(double* source, int count, int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-	totalTime_.start();
-	accumTime_.start();
+	timer_.start();
 	if (MPI_Bcast(source, count, MPI_DOUBLE, rootRank, communicator(commType)) != MPI_SUCCESS)
 	{
 		Messenger::print("Failed to broadcast int data from root rank %i.\n", rootRank);
 		return false;
 	}
-	totalTime_.accumulate();
-	accumTime_.accumulate();
+	timer_.accumulate();
 #endif
 	return true;
 }
@@ -975,15 +937,13 @@ bool ProcessPool::broadcast(double* source, int count, int rootRank, ProcessPool
 bool ProcessPool::broadcast(float* source, int count, int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-	totalTime_.start();
-	accumTime_.start();
+	timer_.start();
 	if (MPI_Bcast(source, count, MPI_FLOAT, rootRank, communicator(commType)) != MPI_SUCCESS)
 	{
 		Messenger::print("Failed to broadcast float data from root rank %i.\n", rootRank);
 		return false;
 	}
-	totalTime_.accumulate();
-	accumTime_.accumulate();
+	timer_.accumulate();
 #endif
 
 	return true;
@@ -993,8 +953,7 @@ bool ProcessPool::broadcast(float* source, int count, int rootRank, ProcessPool:
 bool ProcessPool::broadcast(bool& source, int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-	totalTime_.start();
-	accumTime_.start();
+	timer_.start();
 	int result = source;
 	if (MPI_Bcast(&result, 1, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
 	{
@@ -1002,8 +961,7 @@ bool ProcessPool::broadcast(bool& source, int rootRank, ProcessPool::Communicato
 		return false;
 	}
 	source = result;
-	totalTime_.accumulate();
-	accumTime_.accumulate();
+	timer_.accumulate();
 #endif
 	return true;
 }
@@ -1012,8 +970,7 @@ bool ProcessPool::broadcast(bool& source, int rootRank, ProcessPool::Communicato
 bool ProcessPool::broadcast(Array<int>& array, int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-	totalTime_.start();
-	accumTime_.start();
+	timer_.start();
 
 	int length;
 	if (poolRank_ == rootRank)
@@ -1060,8 +1017,7 @@ bool ProcessPool::broadcast(Array<int>& array, int rootRank, ProcessPool::Commun
 		else array.clear();
 	}
 
-	totalTime_.accumulate();
-	accumTime_.accumulate();
+	timer_.accumulate();
 #endif
 	return true;
 }
@@ -1070,8 +1026,7 @@ bool ProcessPool::broadcast(Array<int>& array, int rootRank, ProcessPool::Commun
 bool ProcessPool::broadcast(Array<double>& array, int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-	totalTime_.start();
-	accumTime_.start();
+	timer_.start();
 
 	int length;
 	if (poolRank_ == rootRank)
@@ -1118,8 +1073,108 @@ bool ProcessPool::broadcast(Array<double>& array, int rootRank, ProcessPool::Com
 		else array.clear();
 	}
 
-	totalTime_.accumulate();
-	accumTime_.accumulate();
+	timer_.accumulate();
+#endif
+	return true;
+}
+
+// Broadcast Array< Vec3<double> >
+bool ProcessPool::broadcast(Array< Vec3<double> >& array, int rootRank, ProcessPool::CommunicatorType commType)
+{
+#ifdef PARALLEL
+	timer_.start();
+
+	// Working arrays (static)
+	static Array<double> tempx, tempy, tempz;
+
+	int length;
+	if (poolRank_ == rootRank)
+	{
+		// Broadcast array length first...
+		length = array.nItems();
+		if (MPI_Bcast(&length, 1, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
+		{
+			Messenger::print("Failed to broadcast Array< Vec3<double> > size from root rank %i.\n", rootRank);
+			return false;
+		}
+
+		// Now broadcast Array data
+		if (length > 0)
+		{
+			// Construct local array data to broadcast
+			tempx.initialise(length);
+			tempy.initialise(length);
+			tempz.initialise(length);
+			for (int n=0; n<length; ++n)
+			{
+				tempx[n] = array[n].x;
+				tempy[n] = array[n].y;
+				tempz[n] = array[n].z;
+			}
+
+			if (MPI_Bcast(tempx.array(), length, MPI_DOUBLE, rootRank, communicator(commType)) != MPI_SUCCESS)
+			{
+				Messenger::print("Failed to broadcast Array< Vec3<double> > (x) data from root rank %i.\n", rootRank);
+				return false;
+			}
+			if (MPI_Bcast(tempy.array(), length, MPI_DOUBLE, rootRank, communicator(commType)) != MPI_SUCCESS)
+			{
+				Messenger::print("Failed to broadcast Array< Vec3<double> > (y) data from root rank %i.\n", rootRank);
+				return false;
+			}
+			if (MPI_Bcast(tempz.array(), length, MPI_DOUBLE, rootRank, communicator(commType)) != MPI_SUCCESS)
+			{
+				Messenger::print("Failed to broadcast Array< Vec3<double> > (z) data from root rank %i.\n", rootRank);
+				return false;
+			}
+		}
+	}
+	else
+	{
+		// Slaves receive the length, and then create and receive the array
+		// Length first...
+		if (MPI_Bcast(&length, 1, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
+		{
+			Messenger::print("Slave %i (world rank %i) failed to receive Array< Vec3<double> > size from root rank %i.\n", poolRank_, worldRank_, rootRank);
+			return false;
+		}
+
+		if (length > 0)
+		{
+			// Create array of specified size, and temporary storage arrays
+			array.initialise(length);
+			tempx.initialise(length);
+			tempy.initialise(length);
+			tempz.initialise(length);
+
+			if (MPI_Bcast(tempx.array(), length, MPI_DOUBLE, rootRank, communicator(commType)) != MPI_SUCCESS)
+			{
+				Messenger::print("Slave %i (world rank %i) failed to receive Array< Vec3<double> > (x) data from root rank %i.\n", poolRank_, worldRank_, rootRank);
+				return false;
+			}
+			if (MPI_Bcast(tempy.array(), length, MPI_DOUBLE, rootRank, communicator(commType)) != MPI_SUCCESS)
+			{
+				Messenger::print("Slave %i (world rank %i) failed to receive Array< Vec3<double> > (y) data from root rank %i.\n", poolRank_, worldRank_, rootRank);
+				return false;
+			}
+			if (MPI_Bcast(tempz.array(), length, MPI_DOUBLE, rootRank, communicator(commType)) != MPI_SUCCESS)
+			{
+				Messenger::print("Slave %i (world rank %i) failed to receive Array< Vec3<double> > (z) data from root rank %i.\n", poolRank_, worldRank_, rootRank);
+				return false;
+			}
+
+			// Store received data in array
+			for (int n=0; n<length; ++n)
+			{
+				array[n].x = tempx[n];
+				array[n].y = tempy[n];
+				array[n].z = tempz[n];
+			}
+		}
+		else array.clear();
+	}
+
+	timer_.accumulate();
 #endif
 	return true;
 }
@@ -1128,8 +1183,7 @@ bool ProcessPool::broadcast(Array<double>& array, int rootRank, ProcessPool::Com
 bool ProcessPool::broadcast(Array2D<double>& array, int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-	totalTime_.start();
-	accumTime_.start();
+	timer_.start();
 
 	int nRows, nColumns;
 	bool half;
@@ -1197,8 +1251,7 @@ bool ProcessPool::broadcast(Array2D<double>& array, int rootRank, ProcessPool::C
 		else array.clear();
 	}
 
-	totalTime_.accumulate();
-	accumTime_.accumulate();
+	timer_.accumulate();
 #endif
 	return true;
 }
@@ -1211,8 +1264,7 @@ bool ProcessPool::broadcast(Array2D<double>& array, int rootRank, ProcessPool::C
 bool ProcessPool::sum(double* source, int count, int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-	totalTime_.start();
-	accumTime_.start();
+	timer_.start();
 	// If we are the target process then we need to construct a temporary buffer to store the received data in.
 	if ((commType == ProcessPool::Leaders) && (!groupLeader())) return true;
 	if (poolRank_ == rootRank)
@@ -1227,8 +1279,7 @@ bool ProcessPool::sum(double* source, int count, int rootRank, ProcessPool::Comm
 		// Not the target process, so just send data
 		if (MPI_Reduce(source, NULL, count, MPI_DOUBLE, MPI_SUM, rootRank, communicator(commType)) != MPI_SUCCESS) return false;
 	}
-	totalTime_.accumulate();
-	accumTime_.accumulate();
+	timer_.accumulate();
 #endif
 	return true;
 }
@@ -1237,8 +1288,7 @@ bool ProcessPool::sum(double* source, int count, int rootRank, ProcessPool::Comm
 bool ProcessPool::sum(int* source, int count, int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-	totalTime_.start();
-	accumTime_.start();
+	timer_.start();
 	// If we are the target process then we need to construct a temporary buffer to store the received data in.
 	if ((commType == ProcessPool::Leaders) && (!groupLeader())) return true;
 	if (poolRank_ == rootRank)
@@ -1253,8 +1303,7 @@ bool ProcessPool::sum(int* source, int count, int rootRank, ProcessPool::Communi
 		// Not the target process, so just send data
 		if (MPI_Reduce(source, NULL, count, MPI_INTEGER, MPI_SUM, rootRank, communicator(commType)) != MPI_SUCCESS) return false;
 	}
-	totalTime_.accumulate();
-	accumTime_.accumulate();
+	timer_.accumulate();
 #endif
 	return true;
 }
@@ -1263,15 +1312,13 @@ bool ProcessPool::sum(int* source, int count, int rootRank, ProcessPool::Communi
 bool ProcessPool::allSum(double* source, int count, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-	totalTime_.start();
-	accumTime_.start();
+	timer_.start();
 	double buffer[count];
 	if ((commType == ProcessPool::Leaders) && (!groupLeader())) return true;
 	if (MPI_Allreduce(source, &buffer, count, MPI_DOUBLE, MPI_SUM, communicator(commType)) != MPI_SUCCESS) return false;
 	// Put reduced data back into original buffer
 	for (int n=0; n<count; ++n) source[n] = buffer[n];
-	totalTime_.accumulate();
-	accumTime_.accumulate();
+	timer_.accumulate();
 #endif
 	return true;
 }
@@ -1280,15 +1327,13 @@ bool ProcessPool::allSum(double* source, int count, ProcessPool::CommunicatorTyp
 bool ProcessPool::allSum(int* source, int count, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-	totalTime_.start();
-	accumTime_.start();
+	timer_.start();
 	int buffer[count];
 	if ((commType == ProcessPool::Leaders) && (!groupLeader())) return true;
 	if (MPI_Allreduce(source, &buffer, count, MPI_INTEGER, MPI_SUM, communicator(commType)) != MPI_SUCCESS) return false;
 	// Put reduced data back into original buffer
 	for (int n=0; n<count; ++n) source[n] = buffer[n];
-	totalTime_.accumulate();
-	accumTime_.accumulate();
+	timer_.accumulate();
 #endif
 	return true;
 }
@@ -1302,8 +1347,7 @@ bool ProcessPool::assemble(int* array, int nData, int* rootDest, int rootMaxData
 	 * maxData elements in the new array rootDest) on the rootRank.
 	 */
 #ifdef PARALLEL
-	totalTime_.start();
-	accumTime_.start();
+	timer_.start();
 	if (poolRank_ == rootRank)
 	{
 		int n;
@@ -1336,8 +1380,7 @@ bool ProcessPool::assemble(int* array, int nData, int* rootDest, int rootMaxData
 		if (!send(nData, rootRank, commType)) return false;
 		if (!send(array, nData, rootRank, commType)) return false;
 	}
-	totalTime_.accumulate();
-	accumTime_.accumulate();
+	timer_.accumulate();
 #endif
 	return true;
 }
@@ -1351,8 +1394,7 @@ bool ProcessPool::assemble(double* array, int nLocalData, double* rootDest, int 
 	 * maxData elements in the new array rootDest) on the root.
 	 */
 #ifdef PARALLEL
-	totalTime_.start();
-	accumTime_.start();
+	timer_.start();
 	if (poolRank_ == rootRank)
 	{
 		// The root's data must be copied into the local array
@@ -1384,8 +1426,7 @@ bool ProcessPool::assemble(double* array, int nLocalData, double* rootDest, int 
 		if (!send(nLocalData, rootRank, commType)) return false;
 		if (!send(array, nLocalData, rootRank, commType)) return false;
 	}
-	totalTime_.accumulate();
-	accumTime_.accumulate();
+	timer_.accumulate();
 #endif
 	return true;
 }

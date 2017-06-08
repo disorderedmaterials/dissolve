@@ -1,6 +1,6 @@
 /*
-	*** AtomShake Module
-	*** src/modules/atomshake.h
+	*** Molecular Dynamics Module
+	*** src/modules/md.h
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -19,26 +19,26 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_ATOMSHAKEMODULE_H
-#define DUQ_ATOMSHAKEMODULE_H
+#ifndef DUQ_MDMODULE_H
+#define DUQ_MDMODULE_H
 
 #include "modules/module.h"
 
 // Forward Declarations
 /* none */
 
-// AtomShake Module
-class AtomShakeModule : public Module
+// Molecular Dynamics Module
+class MDModule : public Module
 {
 	/*
-	 * Performs a traditional atom-by-atom Monte Carlo cycle over all atoms in a configuration
+	 * Module for testing various functions
 	 */
 
 	public:
 	// Constructor
-	AtomShakeModule();
+	MDModule();
 	// Destructor
-	~AtomShakeModule();
+	~MDModule();
 
 
 	/*
@@ -99,14 +99,6 @@ class AtomShakeModule : public Module
 	bool process(DUQ& duq, ProcessPool& procPool);
 	// Execute post-processing stage
 	bool postProcess(DUQ& duq, ProcessPool& procPool);
-
-
-	/*
-	 * Parallel Comms
-	 */
-	public:
-	// Broadcast data associated to module
-	bool broadcastData(ProcessPool& procPool, int rootRank);
 };
 
 #endif

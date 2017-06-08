@@ -46,18 +46,24 @@ class Timer
 	clock_t totalTime_;
 	// Local string storage
 	CharString timeString_;
-	
+
+	private:
+	// Return time string based on provided tick count
+	const char* timeString(clock_t ticks);
+
 	public:
 	// Start timer
 	void start();
 	// Stop timer and set total time
 	void stop();
+	// Accumulate time since last start
+	void accumulate();
 	// Zero total time
 	void zero();
-	// Accumulate partial time since last start
-	void accumulate();
-	// Return time string
-	const char* timeString();
+	// Return current elapsed time as a time string
+	const char* elapsedTimeString();
+	// Return total time (after stop()) as a time string
+	const char* totalTimeString();
 };
 
 #endif
