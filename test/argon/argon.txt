@@ -11,7 +11,7 @@ EndSpecies
 
 # Define Configuration
 Configuration 'liquid'
-  Multiplier  10000
+  Multiplier  100000
   Density  0.021300  atoms/A3
   Species  'Argon'  1.0
   Module AtomShake

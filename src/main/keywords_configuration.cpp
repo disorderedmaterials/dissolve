@@ -37,7 +37,7 @@ KeywordData ConfigurationBlockData[] = {
 	{ "Module",			1,	"Starts the setup of a Module for this Configuration" },
 	{ "Multiplier",			1,	"Specifies the factor by which relative populations are multiplied when generating the Configuration data" },
 	{ "NonPeriodic",		0,	"States that the simulation should be treated as non-periodic" },
-	{ "OutputCoordinates",		1,	"Specifies the file which should contain output coordinates, and optionally the output frequency" },
+	{ "OutputCoordinates",		1,	"Specifies the file which should contain output coordinates, followed by the (optional) output frequency" },
 	{ "RDFBinWidth",		1,	"Specified bin width for all radial distribution functions" },
 	{ "RDFRange",			1,	"Requested extent for calculated radial distribution functions" },
 	{ "Species",			2,	"Specifies a Species and its relative population to add to this Configuration" },

@@ -63,16 +63,17 @@ void DUQ::intramolecularForces(ProcessPool& procPool, Configuration* cfg, double
 			
 			// Get distance and normalise vector ready for force calculation
 			distance = vecji.magAndNormalise();
+			if (distance > 5.0) printf("SHITTTTT! %f\n", distance);
 
 			// Determine final forces
 			vecji *= b->force(distance);
 
 			// Calculate forces
-			index = b->i()->index();
+			index = i->index();
 			fx[index] -= vecji.x;
 			fy[index] -= vecji.y;
 			fz[index] -= vecji.z;
-			index = b->j()->index();
+			index = j->index();
 			fx[index] += vecji.x;
 			fy[index] += vecji.y;
 			fz[index] += vecji.z;
@@ -105,15 +106,15 @@ void DUQ::intramolecularForces(ProcessPool& procPool, Configuration* cfg, double
 			forcek *= force / magjk;
 			
 			// Store forces
-			index = a->i()->index();
+			index = i->index();
 			fx[index] += forcei.x;
 			fy[index] += forcei.y;
 			fz[index] += forcei.z;
-			index = a->j()->index();
+			index = j->index();
 			fx[index] -= forcei.x + forcek.x;
 			fy[index] -= forcei.y + forcek.y;
 			fz[index] -= forcei.z + forcek.z;
-			index = a->k()->index();
+			index = k->index();
 			fx[index] += forcek.x;
 			fy[index] += forcek.y;
 			fz[index] += forcek.z;

@@ -128,13 +128,13 @@ int Atom::globalTypeIndex() const
 	return globalTypeIndex_;
 }
 
-// Set List index (0->[N-1])
+// Set index (0->[N-1])
 void Atom::setIndex(int id)
 {
 	index_ = id;
 }
 
-// Return List index (0->[N-1])
+// Return index (0->[N-1])
 int Atom::index() const
 {
 	return index_;

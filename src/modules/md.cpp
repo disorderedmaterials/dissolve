@@ -182,7 +182,7 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 	const int outputFrequency = GenericListHelper<int>::retrieve(cfg->moduleData(), "OutputFrequency", uniqueName(), options_.valueAsInt("OutputFrequency"));
 	bool randomVelocities = GenericListHelper<int>::retrieve(cfg->moduleData(), "RandomVelocities", uniqueName(), options_.valueAsBool("RandomVelocities"));
 	const double temperature = cfg->temperature();
-	bool writeTraj = false;
+	bool writeTraj = true;
 	int writeFreq = 10;
 
 	// Print argument/parameter summary
@@ -285,13 +285,13 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 	if (outputFrequency > 0) Messenger::print("  Step             T(K)      K.E.(kJ/mol) P.E.(kJ/mol) Etot(kJ/mol)  deltaT(ps)\n");
 
 	// Start a timer and reset the ProcessPool's time accumulator
+	Timer timer;
+	timer.start();
 	procPool.resetAccumulatedTime();
 
 	// Ready to do MD propagation of system
 	for (int step=1; step<=nSteps; ++step)
 	{
-	Timer timer;
-	timer.start();
 		// Velocity Verlet first stage (A)
 		// A:  r(t+dt) = r(t) + v(t)*dt + 0.5*a(t)*dt**2
 		// A:  v(t+dt/2) = v(t) + 0.5*a(t)*dt
@@ -428,15 +428,14 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 			}
 			else if (!procPool.decision()) return false;
 		}
-	timer.stop();
-	Messenger::print("MD: %i steps performed (%s work, %s comms)\n", nSteps, timer.totalTimeString(), procPool.accumulatedTimeString());
         }
+	timer.stop();
 
 	// Close trajectory file
 	if (writeTraj && procPool.isMaster()) trajParser.closeFiles();
 
 	if (maxForce > 0) Messenger::print("MD: A total of %i forces were capped over the course of the dynamics (%9.3e per step).\n", nCapped, double(nCapped) / nSteps);
-//         Messenger::print("MD: %i steps performed (%s work, %s comms)\n", nSteps, timer.totalTimeString(), procPool.accumulatedTimeString());
+        Messenger::print("MD: %i steps performed (%s work, %s comms)\n", nSteps, timer.totalTimeString(), procPool.accumulatedTimeString());
 
 	// Increment configuration changeCount
 	cfg->incrementCoordinateIndex();

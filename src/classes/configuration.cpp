@@ -43,7 +43,7 @@ Configuration::Configuration() : ListItem<Configuration>()
 	relativeBoxLengths_.set(1.0, 1.0, 1.0);
 	nonPeriodic_ = false;
 	randomConfiguration_ = true;
-	useOutputCoordinatesAsInput_ = true;
+	useOutputCoordinatesAsInput_ = false;
 	coordinatesOutputFrequency_ = 1;
 
 	// Box / Cells
