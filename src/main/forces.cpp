@@ -67,8 +67,8 @@ void DUQ::intramolecularForces(ProcessPool& procPool, Configuration* cfg, Array<
 void DUQ::interatomicForces(ProcessPool& procPool, Configuration* cfg, Array<double>& fx, Array<double>& fy, Array<double>& fz)
 {
 	/*
-	 * Calculates the total interatomic energy of the system, i.e. the energy contributions from PairPotential
-	 * interactions between individual atoms, accounting for intramolecular terms
+	 * Calculates the interatomic forces in the system arising from contributions from PairPotential
+	 * interactions between individual atoms, and accounting for intramolecular terms
 	 * 
 	 * This is a parallel routine, with processes operating as process groups.
 	 */
@@ -81,16 +81,7 @@ void DUQ::interatomicForces(ProcessPool& procPool, Configuration* cfg, Array<dou
 	ForceKernel kernel(procPool, cfg, potentialMap_, fx, fy, fz);
 
 	int cellId, n, m, start, stride;
-	Cell* cell, *otherCell;
-	double totalEnergy = 0.0;
-/*	
-	// TEST Invalidate all cell atom lists
-	for (int n=0; n<cfg->nCells(); ++n)
-	{
-		cfg->cell(n)->atoms().invalidateLists();
-		cfg->cell(n)->atomNeighbours().invalidateLists();
-		cfg->cell(n)->mimAtomNeighbours().invalidateLists();
-	}*/
+	Cell* cell;
 
 	// Set start/skip for parallel loop
 	start = procPool.interleavedLoopStart(ProcessPool::OverGroups);
@@ -133,7 +124,7 @@ void DUQ::totalForces(ProcessPool& procPool, Configuration* cfg, Array<double>& 
 	timer.start();
 	interatomicForces(procPool, cfg, fx, fy, fz);
 	timer.stop();
-	Messenger::printVerbose("Time to do Grain forces was %s.\n", timer.totalTimeString());
+	Messenger::printVerbose("Time to do interatomic forces was %s.\n", timer.totalTimeString());
 	
 	// Calculate intramolecular forces
 	timer.start();

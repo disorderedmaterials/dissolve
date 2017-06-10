@@ -50,6 +50,7 @@ MDModule::MDModule() : Module()
 	options_.add("NSteps", 100, "Number of MD steps to perform");
 	options_.add("OutputFrequency", 5, "Frequency at which to output step information (or 0 to inhibit)");
 	options_.add("RandomVelocities", false, "Whether random velocities should always be assigned before beginning MD simulation");
+	options_.add("TrajectoryFrequency", 0, "Write frequency for trajectory file (or 0 to inhibit)");
 }
 
 // Destructor
@@ -162,7 +163,7 @@ bool MDModule::preProcess(DUQ& duq, ProcessPool& procPool)
 bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 {
 	/*
-	 * Perform Molecular Dynamics on a given Configuration
+	 * Perform Molecular Dynamics on a given Configuration.
 	 * 
 	 * This is a parallel routine, with processes operating in groups.
 	 */
@@ -181,15 +182,15 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 	const int nSteps = GenericListHelper<int>::retrieve(cfg->moduleData(), "NSteps", uniqueName(), options_.valueAsInt("NSteps"));
 	const int outputFrequency = GenericListHelper<int>::retrieve(cfg->moduleData(), "OutputFrequency", uniqueName(), options_.valueAsInt("OutputFrequency"));
 	bool randomVelocities = GenericListHelper<int>::retrieve(cfg->moduleData(), "RandomVelocities", uniqueName(), options_.valueAsBool("RandomVelocities"));
+	const int trajectoryFrequency = GenericListHelper<int>::retrieve(cfg->moduleData(), "TrajectoryFrequency", uniqueName(), options_.valueAsInt("TrajectoryFrequency"));
+	bool writeTraj = trajectoryFrequency > 0;
 	const double temperature = cfg->temperature();
-	bool writeTraj = true;
-	int writeFreq = 10;
 
 	// Print argument/parameter summary
 	Messenger::print("MD: Cutoff distance is %f\n", cutoffDistance);
 	Messenger::print("MD: Number of steps = %i\n", nSteps);
 	Messenger::print("MD: Timestep = %10.3e ps\n", deltaT);
-	if (writeTraj) Messenger::print("MD: Trajectory file '%s' will be appended.\n");
+	if (writeTraj) Messenger::print("MD: Trajectory file will be appended every %i step(s).\n", trajectoryFrequency);
 	else Messenger::print("MD: Trajectory file off.\n");
 	if (maxForce > 0) Messenger::print("MD: Forces will be capped to %10.3e kJ/mol per atom per axis.\n", maxForce / 100.0);
 	else Messenger::print("MD: Energy will be not be calculated.\n");
@@ -270,7 +271,7 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 		trajectoryFile.strcat(".md.xyz");
 		if (procPool.isMaster())
 		{
-			if ((!trajParser.openOutput(trajectoryFile, true)) || (!trajParser.isFileGoodForWriting()))
+			if ((!trajParser.appendOutput(trajectoryFile)) || (!trajParser.isFileGoodForWriting()))
 			{
 				Messenger::error("Failed to open MD trajectory output file '%s'.\n", trajectoryFile.get());
 				procPool.stop();
@@ -282,7 +283,7 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 	}
 
 	// Write header
-	if (outputFrequency > 0) Messenger::print("  Step             T(K)      K.E.(kJ/mol) P.E.(kJ/mol) Etot(kJ/mol)  deltaT(ps)\n");
+	if (outputFrequency > 0) Messenger::print("MD:  Step             T(K)      K.E.(kJ/mol) P.E.(kJ/mol) Etot(kJ/mol)  deltaT(ps)\n");
 
 	// Start a timer and reset the ProcessPool's time accumulator
 	Timer timer;
@@ -391,13 +392,16 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 			if ((energyFrequency > 0) && (step%energyFrequency == 0))
 			{
 				pe = duq.interatomicEnergy(procPool, cfg) + duq.intramolecularEnergy(procPool, cfg);
-				Messenger::print("  %-10i    %10.3e   %10.3e   %10.3e   %10.3e   %10.3e\n", step, tInstant, ke, pe, ke+pe, deltaT);
+				Messenger::print("MD:  %-10i    %10.3e   %10.3e   %10.3e   %10.3e   %10.3e\n", step, tInstant, ke, pe, ke+pe, deltaT);
 			}
-			else Messenger::print("  %-10i    %10.3e   %10.3e                             %10.3e\n", step, tInstant, ke, deltaT);
+			else Messenger::print("MD:  %-10i    %10.3e   %10.3e                             %10.3e\n", step, tInstant, ke, deltaT);
 		}
 
+		// Fold atoms and update cells
+		cfg->updateAtomsInCells();
+
 		// Save trajectory frame
-		if (writeTraj)
+		if (writeTraj && (step%outputFrequency == 0))
 		{
 			if (procPool.isMaster())
 			{

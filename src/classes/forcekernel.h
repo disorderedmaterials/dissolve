@@ -98,15 +98,15 @@ class ForceKernel
 	// Calculate forces between atoms provided (as pointers)
 	void forces(const Atom* i, const Atom* j, bool applyMim, bool excludeIgeJ = false);
 	// Calculate forces between two cells
-	void forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool excludeIgeJ = false, ProcessPool::LoopContext loopContext = ProcessPool::Individual, bool sumOverProcesses = false);
+	void forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool excludeIgeJ = false, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
 	// Calculate forces between cell and atomic neighbours
-	void forces(Cell* centralCell, bool excludeIgeJ = false, ProcessPool::LoopContext loopContext = ProcessPool::Individual, bool sumOverProcesses = false);
+	void forces(Cell* centralCell, bool excludeIgeJ = false, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
 	// Calculate forces between atom and cell
-	void forces(const Atom* i, OrderedPointerList<Atom>& neighbours, int flags = ForceKernel::NoFlags, ProcessPool::LoopContext loopContext = ProcessPool::Individual, bool sumOverProcesses = false);
+	void forces(const Atom* i, OrderedPointerList<Atom>& neighbours, int flags = ForceKernel::NoFlags, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
 	// Calculate forces between atom and world
 	void forces(const Atom* i, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
 	// Calculate forces between Grain and list of neighbouring cells
-	void forces(const Grain* grain, OrderedPointerList<Atom>& neighbours, bool applyMim, bool excludeIgeJ = false, ProcessPool::LoopContext loopContext = ProcessPool::Individual, bool sumOverProcesses = false);
+	void forces(const Grain* grain, OrderedPointerList<Atom>& neighbours, bool applyMim, bool excludeIgeJ = false, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
 	// Calculate forces between grain and world
 	void forces(const Grain* grain, bool excludeIgtJ, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
 
