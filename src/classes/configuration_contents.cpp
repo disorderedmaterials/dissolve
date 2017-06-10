@@ -316,7 +316,7 @@ bool Configuration::loadCoordinates(const char* filename)
 
 	// All good, so copy atom coordinates over into our arrays
 	SpeciesAtom* i = sourceCoordinates.atoms();
-	for (int n=0; n<nAtoms_; ++n, i = i->next) atoms_[n].setCoordinatesNasty(i->r());
+	for (int n=0; n<nAtoms_; ++n, i = i->next) atoms_[n].setCoordinates(i->r());
 
 	return true;
 }
@@ -354,7 +354,7 @@ bool Configuration::createRandom(ProcessPool& procPool)
 			// Get / generate atom coordinate
 			r = (transform * (i->r() - cog)) + newCentre;
 
-			atoms_[index].setCoordinatesNasty(r);
+			atoms_[index].setCoordinates(r);
 		}
 	}
 

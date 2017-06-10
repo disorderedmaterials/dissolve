@@ -325,7 +325,6 @@ bool Configuration::setup(ProcessPool& procPool, const List<AtomType>& atomTypes
 	// Initialise neighbour lists and update grains
 	Messenger::print("--> Initialising Cell neighbour lists and Grains\n");
 	if (!updateAtomsInCells()) return false;
-	updateGrains();
 	
 	// Initialise cell atom neighbour lists
 	recreateCellAtomNeighbourLists(pairPotentialRange);

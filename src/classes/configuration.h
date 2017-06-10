@@ -380,8 +380,6 @@ class Configuration : public ListItem<Configuration>
 	bool updateAtomsInCells();
 	// Update cell locations of specified atom index, and update neighbour
 	bool updateAtomInCell(int id);
-	// Update Grains
-	void updateGrains();
 	// Create cell atom neighbour lists
 	void recreateCellAtomNeighbourLists(double pairPotentialRange);
 

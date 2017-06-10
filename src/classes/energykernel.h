@@ -125,8 +125,6 @@ class EnergyKernel
 	double energy(const Grain* grain, bool excludeIgtJ, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
 	// Return molecular correction energy related to intramolecular terms involving supplied atom
 	double correct(const Atom* i);
-	// Return molecular correction energy related to intramolecular terms involving atoms in supplied grain
-	double correct(const Grain* i);
 
 
 	/*

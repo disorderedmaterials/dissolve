@@ -82,27 +82,6 @@ bool Configuration::updateAtomInCell(int id)
 	return true;
 }
 
-// Update Grains
-void Configuration::updateGrains()
-{
-	// Loop over Grains, folding them into the Box and reassigning Cell locations
-	Cell* inCell;
-	Vec3<double> newCentre;
-	for (int n=0; n<nGrains_; ++n)
-	{
-		newCentre = box_->fold(grains_[n].centre());
-		grains_[n].moveTo(newCentre);
-		inCell = cell(newCentre);
-		
-		// Is the Grain now in a different Cell?
-		if (inCell != grains_[n].cell())
-		{
-			if (grains_[n].cell() != NULL) grains_[n].removeFromCell(NULL);
-			inCell->addGrain(&grains_[n]);
-		}
-	}
-}
-
 // Recalculate cell atom neighbour lists
 void Configuration::recreateCellAtomNeighbourLists(double pairPotentialRange)
 {

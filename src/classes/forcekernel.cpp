@@ -29,10 +29,10 @@
 #include "base/processpool.h"
 
 // Constructor
-ForceKernel::ForceKernel(ProcessPool& procPool, const Configuration* cfg, const PotentialMap& potentialMap, Array<double>& fx, Array<double>& fy, Array<double>& fz, double energyCutoff) : processPool_(procPool),  configuration_(cfg), potentialMap_(potentialMap), fx_(fx), fy_(fy), fz_(fz)
+ForceKernel::ForceKernel(ProcessPool& procPool, const Configuration* cfg, const PotentialMap& potentialMap, Array<double>& fx, Array<double>& fy, Array<double>& fz, double cutoffDistance) : processPool_(procPool),  configuration_(cfg), potentialMap_(potentialMap), fx_(fx), fy_(fy), fz_(fz)
 {
 	box_ = configuration_->box();
-	cutoffDistanceSquared_ = (energyCutoff < 0.0 ? potentialMap_.rangeSquared() : energyCutoff*energyCutoff);
+	cutoffDistanceSquared_ = (cutoffDistance < 0.0 ? potentialMap_.rangeSquared() : cutoffDistance*cutoffDistance);
 }
 
 // Destructor
@@ -178,195 +178,554 @@ void ForceKernel::forcesWithMim(const Grain* grainI, const Grain* grainJ)
  * PairPotential Terms
  */
 
-// Calculate PairPotential forces between Atoms provided
-void ForceKernel::forces(const Atom* i, const Atom* j, bool applyMim, bool excludeIgtJ)
+// Calculate forces between atoms (provided as pointers)
+void ForceKernel::forces(const Atom* i, const Atom* j, bool applyMim, bool excludeIgeJ)
 {
 #ifdef CHECKS
 	if (i == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL Atom pointer (i) passed to ForceKernel::force(Atom,Atom,bool,bool).\n");
+		Messenger::error("NULL_POINTER - NULL Atom pointer (i) passed to ForceKernel::forces(Atom,Atom,bool,bool).\n");
 		return;
 	}
 	if (j == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL Atom pointer (j) passed to ForceKernel::force(Atom,Atom,bool,bool).\n");
-		return;
-	}
-	// If Atoms are the same, we refuse to calculate
-	if (i == j)
-	{
-		printf("Warning: Refusing to calculate self-force in ForceKernel::force(Atom,Atom,bool,bool).\n");
+		Messenger::error("NULL_POINTER - NULL Atom pointer (j) passed to ForceKernel::forces(Atom,Atom,bool,bool).\n");
 		return;
 	}
 #endif
+	// If Atoms are the same, we refuse to calculate
+	if (i == j)
+	{
+// 		printf("Warning: Refusing to calculate self-energy in ForceKernel::forces(Atom,Atom,bool,bool).\n");
+		return;
+	}
+	
 	// Check indices of Atoms if required
-	if (excludeIgtJ && (i->index() > j->index())) return;
+	if (excludeIgeJ && (i->index() >= j->index())) return;
 
 	if (applyMim) forcesWithMim(i, j);
 	else forcesWithoutMim(i, j);
 }
 
-// Calculate PairPotential forces between Atom and Grain provided
-void ForceKernel::forces(const Atom* i, const Grain* grain, bool applyMim, bool excludeIgtJ)
+// Calculate forces between atoms in supplied cells
+void ForceKernel::forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool excludeIgeJ, ProcessPool::LoopContext loopContext, bool sumOverProcesses)
 {
+#ifdef CHECKS
+	if (centralCell == NULL)
+	{
+		Messenger::error("NULL_POINTER - NULL central Cell pointer passed to ForceKernel::forces(Cell,Cell,bool,bool).\n");
+		return 0.0;
+	}
+	if (otherCell == NULL)
+	{
+		Messenger::error("NULL_POINTER - NULL other Cell pointer passed to ForceKernel::forces(Cell,Cell,bool,bool).\n");
+		return 0.0;
+	}
+#endif
+	double totalEnergy = 0.0;
+	Atom** centralAtoms = centralCell->atoms().objects(), **otherAtoms = otherCell->atoms().objects();
+	Atom* ii, *jj;
+	Vec3<double> rI;
+	Molecule* molI;
+	int i, typeI, indexI, j, start = 0, stride = 1;
+	double rSq, scale;
+
+	// Get start/stride for specified loop context
+	start = processPool_.interleavedLoopStart(loopContext);
+	stride = processPool_.interleavedLoopStride(loopContext);
+
+	// Loop over central cell atoms
+	if (applyMim)
+	{
+		for (i = start; i < centralCell->atoms().nItems(); i += stride)
+		{
+			ii = centralAtoms[i];
+			molI = ii->molecule();
+			indexI = ii->index();
+			typeI = ii->globalTypeIndex();
+			rI = ii->r();
+
+			// Straight loop over other cell atoms
+			for (j = 0; j < otherCell->atoms().nItems(); ++j)
+			{
+				jj = otherAtoms[j];
+
+				// Check exclusion of I > J
+				if (excludeIgeJ && (indexI >= jj->index())) continue;
+
+				// Calculate rSquared distance betwenn atoms, and check it against the stored cutoff distance
+				rSq = box_->minimumDistanceSquared(rI, jj->r());
+				if (rSq > cutoffDistanceSquared_) continue;
+
+				// Check for atoms in the same species
+				if (molI != jj->molecule()) totalEnergy += potentialMap_.force(typeI, jj->globalTypeIndex(), rSq);
+				else
+				{
+					scale = molI->species()->scaling(ii->moleculeAtomIndex(), jj->moleculeAtomIndex());
+					if (scale > 1.0e-3) totalEnergy += potentialMap_.force(typeI, jj->globalTypeIndex(), rSq) * scale;
+				}
+			}
+		}
+	}
+	else
+	{
+		for (i = start; i < centralCell->atoms().nItems(); i += stride)
+		{
+			ii = centralAtoms[i];
+			molI = ii->molecule();
+			indexI = ii->index();
+			typeI = ii->globalTypeIndex();
+			rI = ii->r();
+
+			// Straight loop over other cell atoms
+			for (j = 0; j < otherCell->atoms().nItems(); ++j)
+			{
+				jj = otherAtoms[j];
+				
+				// Check exclusion of I > J
+				if (excludeIgeJ && (ii->index() >= jj->index())) continue;
+
+				// Calculate rSquared distance betwenn atoms, and check it against the stored cutoff distance
+				rSq = (rI - jj->r()).magnitudeSq();
+				if (rSq > cutoffDistanceSquared_) continue;
+
+				// Check for atoms in the same molecule
+				if (molI != jj->molecule()) totalEnergy += potentialMap_.force(typeI, jj->globalTypeIndex(), rSq);
+				else
+				{
+					scale = molI->species()->scaling(ii->moleculeAtomIndex(), jj->moleculeAtomIndex());
+					if (scale > 1.0e-3) totalEnergy += potentialMap_.force(typeI, jj->globalTypeIndex(), rSq) * scale;
+				}
+			}
+		}
+	}
+
+	// Sum over processes if necessary
+	if (sumOverProcesses)
+	{
+		if (loopContext == ProcessPool::OverGroupProcesses) processPool_.allSum(&totalEnergy, 1, ProcessPool::Group);
+		else if (loopContext == ProcessPool::OverPoolProcesses) processPool_.allSum(&totalEnergy, 1);
+	}
+}
+
+// Calculate forces between cell and atomic neighbours
+void ForceKernel::forces(Cell* centralCell, bool excludeIgeJ, ProcessPool::LoopContext loopContext, bool sumOverProcesses)
+{
+	double totalEnergy = 0.0;
+	Atom** centralAtoms = centralCell->atoms().objects();
+	Atom** neighbours = centralCell->atomNeighbours().objects();
+	Atom** mimNeighbours = centralCell->mimAtomNeighbours().objects();
+	Atom* ii, *jj;
+	Vec3<double> rJ;
+	int i, j, indexJ, typeJ, start = 0, stride = 1;
+	Molecule* molJ;
+	double rSq, scale;
+
+	// Get start/stride for specified loop context
+	start = processPool_.interleavedLoopStart(loopContext);
+	stride = processPool_.interleavedLoopStride(loopContext);
+
+	// Straight loop over atoms *not* requiring mim
+	for (j = 0; j < centralCell->atomNeighbours().nItems(); ++j)
+	{
+		jj = neighbours[j];
+		molJ = jj->molecule();
+		indexJ = jj->index();
+		typeJ = jj->globalTypeIndex();
+		rJ = jj->r();
+
+		// Loop over central cell atoms
+		for (i = start; i < centralCell->atoms().nItems(); i += stride)
+		{
+			ii = centralAtoms[i];
+
+			// Check exclusion of I > J
+			if (excludeIgeJ && (ii->index() >= indexJ)) break;
+
+			// Calculate rSquared distance betwenn atoms, and check it against the stored cutoff distance
+			rSq = (ii->r() - rJ).magnitudeSq();
+			if (rSq > cutoffDistanceSquared_) continue;
+
+			// Check for atoms in the same species
+			if (ii->molecule() != molJ) totalEnergy += potentialMap_.force(typeJ, ii->globalTypeIndex(), rSq);
+			else
+			{
+				scale = ii->molecule()->species()->scaling(ii->moleculeAtomIndex(), jj->moleculeAtomIndex());
+				if (scale > 1.0e-3) totalEnergy += potentialMap_.force(typeJ, ii->globalTypeIndex(), rSq);
+			}
+		}
+	}
+
+	// Straight loop over atoms requiring mim
+	for (j = 0; j < centralCell->mimAtomNeighbours().nItems(); ++j)
+	{
+		jj = mimNeighbours[j];
+		molJ = jj->molecule();
+		indexJ = jj->index();
+		typeJ = jj->globalTypeIndex();
+		rJ = jj->r();
+
+		// Loop over central cell atoms
+		for (i = start; i < centralCell->atoms().nItems(); i += stride)
+		{
+			ii = centralAtoms[i];
+
+			// Check exclusion of I > J
+			if (excludeIgeJ && (ii->index() >= indexJ)) break;
+
+			// Calculate rSquared distance betwenn atoms, and check it against the stored cutoff distance
+			rSq = box_->minimumDistanceSquared(ii->r(), rJ);
+			if (rSq > cutoffDistanceSquared_) continue;
+
+			// Check for atoms in the same species
+			if (ii->molecule() != molJ) totalEnergy += potentialMap_.force(typeJ, ii->globalTypeIndex(), rSq);
+			else
+			{
+				scale = ii->molecule()->species()->scaling(ii->moleculeAtomIndex(), jj->moleculeAtomIndex());
+				if (scale < 1.0e-3) totalEnergy += potentialMap_.force(typeJ, ii->globalTypeIndex(), rSq) * scale;
+			}
+		}
+	}
+
+	// Sum over processes if necessary
+	if (sumOverProcesses)
+	{
+		if (loopContext == ProcessPool::OverGroupProcesses) processPool_.allSum(&totalEnergy, 1, ProcessPool::Group);
+		else if (loopContext == ProcessPool::OverPoolProcesses) processPool_.allSum(&totalEnergy, 1);
+	}
+}
+
+// Calculate forces between atom and list of neighbouring cells
+void ForceKernel::forces(const Atom* i, OrderedPointerList<Atom>& neighbours, int flags, ProcessPool::LoopContext loopContext, bool sumOverProcesses)
+{
+	/*
+	 * Calculate the energy between the supplied atom and list of neighbouring cells. Note that it is assumed that the supplied atom
+	 * is in a cell which does *not* appear in the list.
+	 */
 #ifdef CHECKS
 	if (i == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL Atom pointer passed to ForceKernel::force(Atom,Grain,bool,bool).\n");
-		return;
-	}
-	if (grain == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL Grain pointer passed to ForceKernel::force(Atom,Grain,bool,bool).\n");
-		return;
+		Messenger::error("NULL_POINTER - NULL atom pointer passed to ForceKernel::forces(Atom,OrderedPointerList,int,CommGroup).\n");
+		return 0.0;
 	}
 #endif
-	if (applyMim) forcesWithMim(i, grain, excludeIgtJ);
-	else forcesWithoutMim(i, grain, excludeIgtJ);
-}
-
-// Calculate PairPotential forces between Grains provided
-void ForceKernel::forces(const Grain* grainI, const Grain* grainJ, bool applyMim, bool excludeIgtJ)
-{
-#ifdef CHECKS
-	if (grainI == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL Grain pointer (grainI) passed to ForceKernel::force(Grain,Grain,bool,bool).\n");
-		return;
-	}
-	if (grainJ == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL Grain pointer (grainJ) passed to ForceKernel::force(Grain,Grain,bool,bool).\n");
-		return;
-	}
-	// If Grains are the same, we refuse to calculate
-	if (grainI == grainJ)
-	{
-		printf("Warning: Refusing to calculate self-energy in ForceKernel::force(Grain,Grain,bool,bool).\n");
-		return;
-	}
-#endif
-	// Check Grain-Grain distance
-// 	double rSq;
-// 	if (applyMim) rSq = box_->minimumDistanceSquared(grainI->centre(), grainJ->centre());
-// 	else rSq = (grainI->centre() - grainJ->centre()).magnitudeSq();
-// // 	Messenger::print("GG %3i %3i MIM=%i EXC=%i rSq=%f (%f,%f,%f) (%f,%f,%f)\n", grainI->index(), grainJ->index(), applyMim, excludeIgtJ, rSq, grainI->centre().x, grainI->centre().y, grainI->centre().z, grainJ->centre().x, grainJ->centre().y, grainJ->centre().z);
-// 	if (rSq > cutoffSq) return;
+	double totalEnergy = 0.0;
+	Atom* jj;
+	int j, start = 0, stride = 1;
+	double scale;
+	double rSq;
+	Atom** neighbourAtoms = neighbours.objects();
+	int nNeighbourAtoms = neighbours.nItems();
 	
-	// Check exclusion of I > J
-	if (excludeIgtJ && (grainI->index() > grainJ->index())) return;
+	// Grab some information on the supplied atom
+	const int indexI = i->index(), typeI = i->globalTypeIndex();
+	Molecule* moleculeI = i->molecule();
+	const Species* spI = moleculeI->species();
+	const Vec3<double> rI = i->r();
 
-	if (applyMim) forcesWithMim(grainI, grainJ);
-	else forcesWithoutMim(grainI, grainJ);
+	// Get start/stride for specified loop context
+	start = processPool_.interleavedLoopStart(loopContext);
+	stride = processPool_.interleavedLoopStride(loopContext);
+
+	// Loop over cell atoms
+	if (flags&ForceKernel::ApplyMinimumImage)
+	{
+		// Loop over atom neighbours
+		if (flags&ForceKernel::ExcludeSelfFlag) for (j=start; j<nNeighbourAtoms; j += stride)
+		{
+			jj = neighbourAtoms[j];
+			if (i == jj) continue;
+
+			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
+			rSq = box_->minimumDistanceSquared(rI, jj->r());
+			if (rSq > cutoffDistanceSquared_) continue;
+
+			// Check for atoms in the same species
+			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.force(typeI, jj->globalTypeIndex(), rSq);
+			else
+			{
+				if ((flags&ForceKernel::ExcludeIntraGreaterThan) && (i->moleculeAtomIndex() > jj->moleculeAtomIndex())) continue;
+				scale = spI->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
+				if (scale > 1.0e-3) totalEnergy += potentialMap_.force(typeI, jj->globalTypeIndex(), rSq) * scale;
+			}
+		}
+		else if (flags&ForceKernel::ExcludeGreaterThanEqualTo) for (j=start; j<nNeighbourAtoms; j += stride)
+		{
+			jj = neighbourAtoms[j];
+			if (indexI >= jj->index()) continue;
+
+			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
+			rSq = box_->minimumDistanceSquared(rI, jj->r());
+			if (rSq > cutoffDistanceSquared_) continue;
+
+			// Check for atoms in the same species
+			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.force(typeI, jj->globalTypeIndex(), rSq);
+			else
+			{
+				if ((flags&ForceKernel::ExcludeIntraGreaterThan) && (i->moleculeAtomIndex() > jj->moleculeAtomIndex())) continue;
+				scale = spI->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
+				if (scale > 1.0e-3) totalEnergy += potentialMap_.force(typeI, jj->globalTypeIndex(), rSq) * scale;
+			}
+		}
+		else for (j=start; j<nNeighbourAtoms; j += stride)
+		{
+			jj = neighbourAtoms[j];
+
+			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
+			rSq = box_->minimumDistanceSquared(rI, jj->r());
+			if (rSq > cutoffDistanceSquared_) continue;
+
+			// Check for atoms in the same species
+			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.force(typeI, jj->globalTypeIndex(), rSq);
+			else
+			{
+				if ((flags&ForceKernel::ExcludeIntraGreaterThan) && (i->moleculeAtomIndex() > jj->moleculeAtomIndex())) continue;
+				scale = spI->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
+				if (scale > 1.0e-3) totalEnergy += potentialMap_.force(typeI, jj->globalTypeIndex(), rSq) * scale;
+			}
+		}
+	}
+	else
+	{
+		// Loop over atom neighbours
+		if (flags&ForceKernel::ExcludeSelfFlag) for (j=start; j<nNeighbourAtoms; j += stride)
+		{
+			jj = neighbourAtoms[j];
+			if (i == jj) continue;
+
+			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
+			rSq = (rI - jj->r()).magnitudeSq();
+			if (rSq > cutoffDistanceSquared_) continue;
+
+			// Check for atoms in the same species
+			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.force(typeI, jj->globalTypeIndex(), rSq);
+			else
+			{
+				scale = moleculeI->species()->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
+				if (scale > 1.0e-3) totalEnergy += potentialMap_.force(typeI, jj->globalTypeIndex(), rSq) * scale;
+			}
+		}
+		else if (flags&ForceKernel::ExcludeGreaterThanEqualTo) for (j=start; j<nNeighbourAtoms; j += stride)
+		{
+			jj = neighbourAtoms[j];
+			if (indexI >= jj->index()) continue;
+
+			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
+			rSq = (rI - jj->r()).magnitudeSq();
+			if (rSq > cutoffDistanceSquared_) continue;
+
+			// Check for atoms in the same species
+			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.force(typeI, jj->globalTypeIndex(), rSq);
+			else
+			{
+				scale = moleculeI->species()->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
+				if (scale > 1.0e-3) totalEnergy += potentialMap_.force(typeI, jj->globalTypeIndex(), rSq) * scale;
+			}
+		}
+		else for (j=start; j<nNeighbourAtoms; j += stride)
+		{
+			jj = neighbourAtoms[j];
+
+			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
+			rSq = (rI - jj->r()).magnitudeSq();
+			if (rSq > cutoffDistanceSquared_) continue;
+
+			// Check for atoms in the same species
+			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.force(typeI, jj->globalTypeIndex(), rSq);
+			else
+			{
+				scale = moleculeI->species()->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
+				if (scale > 1.0e-3) totalEnergy += potentialMap_.force(typeI, jj->globalTypeIndex(), rSq) * scale;
+			}
+		}
+	}
+
+	// Sum over processes if necessary
+	if (sumOverProcesses)
+	{
+		if (loopContext == ProcessPool::OverGroupProcesses) processPool_.allSum(&totalEnergy, 1, ProcessPool::Group);
+		else if (loopContext == ProcessPool::OverPoolProcesses) processPool_.allSum(&totalEnergy, 1);
+	}
 }
 
-// Calculate PairPotential forces between Atom and Cell contents
-void ForceKernel::forces(const Atom* i, const Cell* cell, bool applyMim, bool excludeIgtJ)
-{
-#ifdef CHECKS
-	if (i == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL Atom pointer passed to ForceKernel::force(Atom,Cell,bool,bool).\n");
-		return;
-	}
-	if (cell == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL Cell pointer passed to ForceKernel::force(Atom,Cell,bool,bool).\n");
-		return;
-	}
-#endif
-	// Loop over Cell Grains
-	for (RefListItem<Grain,int>* grainRef = cell->grains(); grainRef != NULL; grainRef = grainRef->next)
-	{
-		forces(i, grainRef->item, applyMim, excludeIgtJ);
-	}
-}
-
-// Calculate PairPotential forces between Grain and Cell contents
-void ForceKernel::forces(const Grain* grain, const Cell* cell, bool applyMim, bool excludeIgtJ)
+// Calculate forces between Grain and list of Cells
+void ForceKernel::forces(const Grain* grain, OrderedPointerList<Atom>& neighbours, bool applyMim, bool excludeIgeJ, ProcessPool::LoopContext loopContext, bool sumOverProcesses)
 {
 #ifdef CHECKS
 	if (grain == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL Grain pointer passed to ForceKernel::force(Grain,Cell,bool).\n");
-		return;
-	}
-	if (cell == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL Cell pointer passed to ForceKernel::force(Grain,Cell,bool).\n");
+		Messenger::error("NULL_POINTER - NULL Grain pointer passed to ForceKernel::forces(Grain,RefList<Cell>,bool,bool,ParallelStyle).\n");
 		return;
 	}
 #endif
-	// Loop over Cell Grains
-	for (RefListItem<Grain,int>* grainRef = cell->grains(); grainRef != NULL; grainRef = grainRef->next) forces(grain, grainRef->item, applyMim, excludeIgtJ);
+	double totalEnergy = 0.0;
+	Atom* ii, *jj;
+	int i, j, start = 0, stride = 1;
+	int indexI, typeI;
+	double scale, rSq;
+	Molecule* grainMol = grain->parent();
+	Atom** neighbourAtoms = neighbours.objects();
+	int nNeighbourAtoms = neighbours.nItems();
+	Vec3<double> rI;
+
+	// Get start/stride for specified loop context
+	start = processPool_.interleavedLoopStart(loopContext);
+	stride = processPool_.interleavedLoopStride(loopContext);
+
+	if (applyMim)
+	{
+		// Loop over grain atoms
+		for (i = 0; i<grain->nAtoms(); ++i)
+		{
+			ii = grain->atom(i);
+			indexI = ii->index();
+			rI = ii->r();
+			typeI = ii->globalTypeIndex();
+
+			// Loop over atom neighbours
+			if (excludeIgeJ) for (j=start; j<nNeighbourAtoms; j += stride)
+			{
+				jj = neighbourAtoms[j];
+				if (indexI >= jj->index()) continue;
+
+				// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
+				rSq = box_->minimumDistanceSquared(rI, jj->r());
+				if (rSq > cutoffDistanceSquared_) continue;
+
+				// Check for atoms in the same species
+				if (grainMol != jj->molecule()) totalEnergy += potentialMap_.force(typeI, jj->globalTypeIndex(), rSq);
+				else
+				{
+					scale = grainMol->species()->scaling(ii->moleculeAtomIndex(), jj->moleculeAtomIndex());
+					if (scale > 1.0e-3) totalEnergy += potentialMap_.force(typeI, jj->globalTypeIndex(), rSq) * scale;
+				}
+			}
+			else for (j=start; j<nNeighbourAtoms; j += stride)
+			{
+				jj = neighbourAtoms[j];
+				if (indexI == jj->index()) continue;
+
+				// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
+				rSq = box_->minimumDistanceSquared(rI, jj->r());
+				if (rSq > cutoffDistanceSquared_) continue;
+
+				// Check for atoms in the same species
+				if (grainMol != jj->molecule()) totalEnergy += potentialMap_.force(typeI, jj->globalTypeIndex(), rSq);
+				else
+				{
+					scale = grainMol->species()->scaling(ii->moleculeAtomIndex(), jj->moleculeAtomIndex());
+					if (scale > 1.0e-3) totalEnergy += potentialMap_.force(typeI, jj->globalTypeIndex(), rSq) * scale;
+				}
+			}
+		}
+	}
+	else
+	{
+		// Loop over grain atoms
+		for (i = 0; i<grain->nAtoms(); ++i)
+		{
+			ii = grain->atom(i);
+			indexI = ii->index();
+			rI = ii->r();
+			typeI = ii->globalTypeIndex();
+
+			// Loop over atom neighbours
+			if (excludeIgeJ) for (j=start; j<nNeighbourAtoms; j += stride)
+			{
+				jj = neighbourAtoms[j];
+				if (indexI >= jj->index()) continue;
+
+				// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
+				rSq = (rI - jj->r()).magnitudeSq();
+				if (rSq > cutoffDistanceSquared_) continue;
+
+				// Check for atoms in the same species
+				if (grainMol != jj->molecule()) totalEnergy += potentialMap_.force(typeI, jj->globalTypeIndex(), rSq);
+				else
+				{
+					scale = grainMol->species()->scaling(ii->moleculeAtomIndex(), jj->moleculeAtomIndex());
+					if (scale > 1.0e-3) totalEnergy += potentialMap_.force(typeI, jj->globalTypeIndex(), rSq) * scale;
+				}
+			}
+			else for (j=start; j<nNeighbourAtoms; j += stride)
+			{
+				jj = neighbourAtoms[j];
+				if (indexI == jj->index()) continue;
+
+				// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
+				rSq = (rI - jj->r()).magnitudeSq();
+				if (rSq > cutoffDistanceSquared_) continue;
+
+				// Check for atoms in the same species
+				if (grainMol != jj->molecule()) totalEnergy += potentialMap_.force(typeI, jj->globalTypeIndex(), rSq);
+				else
+				{
+					scale = grainMol->species()->scaling(ii->moleculeAtomIndex(), jj->moleculeAtomIndex());
+					if (scale > 1.0e-3) totalEnergy += potentialMap_.force(typeI, jj->globalTypeIndex(), rSq) * scale;
+				}
+			}
+		}
+	}
+
+	// Sum over processes if necessary
+	if (sumOverProcesses)
+	{
+		if (loopContext == ProcessPool::OverGroupProcesses) processPool_.allSum(&totalEnergy, 1, ProcessPool::Group);
+		else if (loopContext == ProcessPool::OverPoolProcesses) processPool_.allSum(&totalEnergy, 1);
+	}
 }
 
-// Calculate PairPotential forces between Atom and list of Cells
-void ForceKernel::forces(const Atom* i, int nNeighbours, Cell** neighbours, bool applyMim, bool excludeIgtJ, ProcessPool::LoopContext loopContext)
+// Calculate forces between atom and world
+void ForceKernel::forces(const Atom* i, ProcessPool::LoopContext loopContext)
 {
-	/*
-	 * Calculate the PairPotential forces between the supplied Atom and a list of Cells, storing (adding) the results to
-	 * the three force component arrays provided. Because partial forces are added to the supplied arrays which are defined
-	 * elsewhere, no parallel summation of the calculated data is performed by this routine, and must be handled externally by
-	 * the calling function.
-	 */
-
 #ifdef CHECKS
 	if (i == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL Atom pointer passed to ForceKernel::force(Atom,RefList<Cell>,bool,ParallelStyle).\n");
+		Messenger::error("NULL_POINTER - NULL Atom pointer passed to ForceKernel::forces(Atom,ParallelStyle).\n");
 		return;
 	}
 #endif
-	// Check loop style
-	if (loopContext == ProcessPool::Individual)
-	{
-		// Straight loop over Cell neighbours
-		for (int n=0; n<nNeighbours; ++n) forces(i, neighbours[n], applyMim, excludeIgtJ);
-	}
-	else if (loopContext == ProcessPool::OverGroupProcesses)
-	{
-		// Striped loop over Cell neighbours (Process Groups)
-		for (int n=processPool_.groupRank(); n<nNeighbours; n += processPool_.myGroup()->nProcesses()) forces(i, neighbours[n], applyMim, excludeIgtJ);
-	}
-	else if (loopContext == ProcessPool::OverPoolProcesses)
-	{
-		// Striped loop over Cell neighbours (individual processes)
-		for (int n=processPool_.poolRank(); n<nNeighbours; n += processPool_.nProcesses()) forces(i, neighbours[n], applyMim, excludeIgtJ);
-	}
+	Cell* cellI = i->cell();
+	forces(i, cellI->atoms(), ForceKernel::ExcludeSelfFlag, loopContext);
+	forces(i, cellI->atomNeighbours(), ForceKernel::NoFlags, loopContext);
+	forces(i, cellI->mimAtomNeighbours(), ForceKernel::ApplyMinimumImage, loopContext);
 }
 
-// Calculate PairPotential forces between Grain and list of Cells
-void ForceKernel::forces(const Grain* grain, int nNeighbours, Cell** neighbours, bool applyMim, bool excludeIgtJ, ProcessPool::LoopContext loopContext)
+// Calculate forces between grain and world
+void ForceKernel::forces(const Grain* grain, bool excludeIgtJ, ProcessPool::LoopContext loopContext)
 {
-	/*
-	 * Calculate the PairPotential forces between the supplied Grain and a list of Cells, storing (adding) the results to
-	 * the three force component arrays provided. Because partial forces are added to the supplied arrays which are defined
-	 * elsewhere, no parallel summation of the calculated data is performed by this routine, and must be handled externally by
-	 * the calling function.
-	 */
 #ifdef CHECKS
 	if (grain == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL Grain pointer passed to ForceKernel::force(Grain,RefList<Cell>,bool,ParallelStyle).\n");
+		Messenger::error("NULL_POINTER - NULL Grain pointer passed to ForceKernel::forces(Grain,ParallelStyle).\n");
 		return;
 	}
 #endif
-	// Check loop style
-	if (loopContext == ProcessPool::Individual)
+
+	int i, j, nAtoms = grain->nAtoms();
+	Vec3<double> rI;
+	Molecule* grainMol = grain->parent();
+	Species* grainSp = grainMol->species();
+	Atom* ii, **atoms = grain->atoms();
+	Cell* cellI;
+	double scale;
+
+	// Loop over grain atoms
+	if (excludeIgtJ) for (i = 0; i<grain->nAtoms(); ++i)
 	{
-		// Straight loop over Cell neighbours
-		for (int n=0; n<nNeighbours; ++n) forces(grain, neighbours[n], applyMim, excludeIgtJ);
+		ii = grain->atom(i);
+		cellI = ii->cell();
+		forces(ii, cellI->atoms(), ForceKernel::ExcludeGreaterThanEqualTo | ForceKernel::ExcludeIntraGreaterThan, loopContext);
+		forces(ii, cellI->atomNeighbours(), ForceKernel::ExcludeGreaterThanEqualTo, loopContext);
+		forces(ii, cellI->mimAtomNeighbours(), ForceKernel::ApplyMinimumImage | ForceKernel::ExcludeGreaterThanEqualTo, loopContext);
 	}
-	else if (loopContext == ProcessPool::OverGroupProcesses)
+	else for (i = 0; i<grain->nAtoms(); ++i)
 	{
-		// Striped loop over Cell neighbours (Process Groups)
-		for (int n=processPool_.groupRank(); n<nNeighbours; n += processPool_.myGroup()->nProcesses()) forces(grain, neighbours[n], applyMim, excludeIgtJ);
-	}
-	else if (loopContext == ProcessPool::OverPoolProcesses)
-	{
-		// Striped loop over Cell neighbours (individual processes)
-		for (int n=processPool_.poolRank(); n<nNeighbours; n += processPool_.nProcesses()) forces(grain, neighbours[n], applyMim, excludeIgtJ);
+		ii = grain->atom(i);
+		cellI = ii->cell();
+		forces(ii, cellI->atoms(), ForceKernel::ExcludeSelfFlag | ForceKernel::ExcludeIntraGreaterThan, loopContext);
+		forces(ii, cellI->atomNeighbours(), ForceKernel::ExcludeIntraGreaterThan, loopContext);
+		forces(ii, cellI->mimAtomNeighbours(), ForceKernel::ApplyMinimumImage | ForceKernel::ExcludeIntraGreaterThan, loopContext);
 	}
 }
 
@@ -416,9 +775,9 @@ void ForceKernel::forces(const Molecule* mol, const SpeciesAngle* a)
 	Atom* k = mol->atom(a->indexK());
 
 	// Determine whether we need to apply minimum image between 'j-i' and 'j-k'
-	if (configuration_->useMim(j->grain()->cell(), i->grain()->cell())) vecji = configuration_->box()->minimumVector(j, i);
+	if (configuration_->useMim(j->cell(), i->cell())) vecji = configuration_->box()->minimumVector(j, i);
 	else vecji = i->r() - j->r();
-	if (configuration_->useMim(j->grain()->cell(), k->grain()->cell())) vecjk = configuration_->box()->minimumVector(j, k);
+	if (configuration_->useMim(j->cell(), k->cell())) vecjk = configuration_->box()->minimumVector(j, k);
 	else vecjk = k->r() - j->r();
 	
 	// Calculate angle

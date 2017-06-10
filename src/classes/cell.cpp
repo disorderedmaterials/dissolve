@@ -184,6 +184,12 @@ OrderedPointerList<Atom>& Cell::atoms()
 	return atoms_;
 }
 
+// Return number of Atoms in list
+int Cell::nAtoms() const
+{
+	return atoms_.nItems();
+}
+
 // Add specified atom to this Cell
 bool Cell::moveAtom(Atom* i, Cell* targetCell)
 {
@@ -276,74 +282,6 @@ bool Cell::addAtom(Atom* atom)
 	atom->setCell(this);
 
 	return true;
-}
-
-// Add Grain to Cell
-void Cell::addGrain(Grain* grain)
-{
-	// Has the Grain already had its Cell pointer set?
-	if (grain->cell() == NULL) grain->setCell(this, grains_.nItems());
-	else if (grain->cell() != this)
-	{
-		Messenger::print("BAD_USAGE - Grain should have been removed from its Cell before calling Cell::addGrain() with it.\n");
-		return;
-	}
-
-	grains_.addUnique(grain);
-}
-
-// Remove Grain from Cell
-void Cell::removeGrain(Grain* grain)
-{
-#ifdef CHECKS
-	if (grain == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL Grain pointer passed to Cell::removeGrain().\n");
-		return;
-	}
-	if (!grains_.contains(grain))
-	{
-		Messenger::print("BAD_USAGE - Cell %i does not contain the supplied Grain (index %i).\n", index_, grain->index());
-		return;
-	}
-#endif
-	// Has the Grain already been removed from the cell?
-	if (grain->cell() == this) grain->removeFromCell(this);
-	else if (grain->cell() && (grain->cell() != this))
-	{
-		Messenger::print("BAD_USAGE - Trying to remove a Grain from a Cell which it doesn't think its in.\n");
-		return;
-	}
-	grains_.remove(grain);
-	
-	// Now need to update indices of remaining Grains
-	int index = 0;
-	for (RefListItem<Grain,int>* ri = grains_.first(); ri != NULL; ri = ri->next) ri->item->setCell(this, index++);
-}
-
-// Return number of Grains in Cell
-int Cell::nGrains() const
-{
-	return grains_.nItems();
-}
-
-// Return first Grain in list
-RefListItem<Grain,int>* Cell::grains() const
-{
-	return grains_.first();
-}
-
-// Return nth Grain in list
-Grain* Cell::grain(int n)
-{
-#ifdef CHECKS
-	if ((n < 0) || (n >= grains_.nItems()))
-	{
-		Messenger::print("OUT_OF_RANGE - Grain index (%i) passed to Cell::grain() is out of range (nGrains_ = %i).\n", n, grains_.nItems());
-		return NULL;
-	}
-#endif
-	return grains_[n]->item;
 }
 
 /*

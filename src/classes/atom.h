@@ -126,12 +126,6 @@ class Atom
 	void translateCoordinates(const Vec3<double>& delta);
 	// Translate coordinates
 	void translateCoordinates(double dx, double dy, double dz);
-	// Set coordinates with no Grain update
-	void setCoordinatesNasty(const Vec3<double>& newr);
-	// Set coordinates with no Grain update
-	void setCoordinatesNasty(double x, double y, double z);
-	// Translate coordinates with no Grain update
-	void translateCoordinatesNasty(const Vec3<double>& delta);
 
 
 	/*

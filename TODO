@@ -13,9 +13,17 @@ o Accumulate timing information for each module, displaying averages and total i
 o Allow Isotopologue list input as block as well as single line, since for large molecules the line will become annoyingly long.
 o Grains are next to useless currently, since atoms traversing the unit cell boundaries render the grain 'invalid', and we must keep all atoms folded inside the unit cell to ensure energy / force calculations are correct (i.e. each atom exists inside a Cell).
 
+
 -------------------------------------------
 Ideas / Notes / Weird Algorithm Suggestions
 -------------------------------------------
+
+** 'Unit' Testing
+Build in testing options to those Modules that really need it - e.g. Energy and Forces - and compare against computed data:
+  - Structure factors of systems calculated from other sources (e.g. dlputils, EPSR)
+  - Reproduction of test potentials, from simulated structure factors
+  - Energies and forces from DL_POLY
+Can provide test data such as forces within the input file itself, provided GenericItemContainer<> specialisations provide read() and write() functions. This would be useful in allowing complete state of the code (i.e. module data from Configurations etc.) to be saved in one text file.
 
 ** Partial MD
 Allow specific Species types to be targetted in MD, in effect temporarily freezing all other atoms, but allowing all atoms within the Species molecule(s) to relax.

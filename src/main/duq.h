@@ -249,8 +249,6 @@ class DUQ
 	double intramolecularEnergy(ProcessPool& procPool, Configuration* cfg);
 	// Return total interatomic energy
 	double interatomicEnergy(ProcessPool& procPool, Configuration* cfg);
-	// Return total grain energy
-	double intergrainEnergy(ProcessPool& procPool, Configuration* cfg);
 	// Test - Return total energy of the system using Molecules
 	double totalEnergyTestMolecules(Configuration* cfg);
 

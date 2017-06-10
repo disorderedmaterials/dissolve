@@ -81,9 +81,9 @@ class Cell
 	void clearLocks();
 	// Check lock possibility
 	bool canLock();
-	// Lock self and neighbouring cells
+	// Lock self and neighbouring Cells
 	bool lock(bool willBeModified);
-	// Unlock self and neighbouring cells
+	// Unlock self and neighbouring Cells
 	bool unlock(bool willBeModified);
 
 
@@ -91,28 +91,18 @@ class Cell
 	 * Contents
 	 */
 	private:
-	// List of atoms contained in this cell
+	// List of Atoms contained in this Cell
 	OrderedPointerList<Atom> atoms_;
-	// List of Grains in Cell
-	RefList<Grain,int> grains_;
 
 	public:
-	// Return list of contained atoms
+	// Return list of contained Atoms
 	OrderedPointerList<Atom>& atoms();
+	// Return number of Atoms in list
+	int nAtoms() const;
 	// Move specified atom to specified Cell
 	bool moveAtom(Atom* i, Cell* targetCell);
 	// Add atom to Cell
 	bool addAtom(Atom* atom);
-	// Add Grain to Cell
-	void addGrain(Grain* grain);
-	// Remove Grain from Cell
-	void removeGrain(Grain* grain);
-	// Return number of Grains in Cell
-	int nGrains() const;
-	// Return first Grain in list
-	RefListItem<Grain,int>* grains() const;
-	// Return nth Grain in list
-	Grain* grain(int n);
 
 
 	/*

@@ -225,7 +225,8 @@ void Atom::setCoordinates(const Vec3<double>& newr)
 	}
 #endif
 	// Update Grain centre before we store the new position
-	grain_->updateCentre(newr-r_);
+// 	grain_->updateCentre(newr-r_);
+
 	r_ = newr;
 }
 
@@ -245,24 +246,6 @@ void Atom::translateCoordinates(const Vec3<double>& delta)
 void Atom::translateCoordinates(double dx, double dy, double dz)
 {
 	setCoordinates(r_+Vec3<double>(dx,dy,dz));
-}
-
-// Set coordinates with no Grain update
-void Atom::setCoordinatesNasty(const Vec3<double>& newr)
-{
-	r_ = newr;
-}
-
-// Set coordinates with no Grain update
-void Atom::setCoordinatesNasty(double x, double y, double z)
-{
-	r_.set(x, y, z);
-}
-
-// Translate coordinates with no Grain update
-void Atom::translateCoordinatesNasty(const Vec3<double>& delta)
-{
-	r_ += delta;
 }
 
 /*

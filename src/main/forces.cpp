@@ -67,66 +67,52 @@ void DUQ::intramolecularForces(ProcessPool& procPool, Configuration* cfg, Array<
 void DUQ::interatomicForces(ProcessPool& procPool, Configuration* cfg, Array<double>& fx, Array<double>& fy, Array<double>& fz)
 {
 	/*
-	 * Calculates the total interatomic forces within the system, i.e. the energy contributions from PairPotential
-	 * interactions between all Atoms. Loop over Grains is used so that intramolecular connections such as bonds can be
-	 * automatically excluded from the calculation.
+	 * Calculates the total interatomic energy of the system, i.e. the energy contributions from PairPotential
+	 * interactions between individual atoms, accounting for intramolecular terms
 	 * 
-	 * This is a parallel routine.
+	 * This is a parallel routine, with processes operating as process groups.
 	 */
 
 	// Initialise the Cell distributor
 	const bool willBeModified = false, allowRepeats = false;
 	cfg->initialiseCellDistribution();
 
-	// Create a ForcesKernel
+	// Create a ForceKernel
 	ForceKernel kernel(procPool, cfg, potentialMap_, fx, fy, fz);
 
 	int cellId, n, m, start, stride;
-	Cell* cell;
-	Grain* grainI, *grainJ;
+	Cell* cell, *otherCell;
+	double totalEnergy = 0.0;
+/*	
+	// TEST Invalidate all cell atom lists
+	for (int n=0; n<cfg->nCells(); ++n)
+	{
+		cfg->cell(n)->atoms().invalidateLists();
+		cfg->cell(n)->atomNeighbours().invalidateLists();
+		cfg->cell(n)->mimAtomNeighbours().invalidateLists();
+	}*/
 
 	// Set start/skip for parallel loop
 	start = procPool.interleavedLoopStart(ProcessPool::OverGroups);
 	stride = procPool.interleavedLoopStride(ProcessPool::OverGroups);
 
-	while (cellId = cfg->nextAvailableCell(procPool, willBeModified, allowRepeats), cellId != Cell::AllCellsComplete)
+	for (cellId = start; cellId<cfg->nCells(); cellId += stride)
 	{
-		// Check for valid cell
-		if (cellId == Cell::NoCellsAvailable)
-		{
-			Messenger::printVerbose("Nothing for this process to do.\n");
-			cfg->finishedWithCell(procPool, willBeModified, cellId);
-			continue;
-		}
 		cell = cfg->cell(cellId);
-		Messenger::printVerbose("Cell %i now the target, containing %i Grains interacting with %i neighbours.\n", cellId, cell->nGrains(), cell->nTotalCellNeighbours());
 
 		/*
 		 * Calculation Begins
 		 */
 
-		for (n=start; n<cell->nGrains(); n += stride)
-		{
-			grainI = cell->grain(n);
+		// This cell with itself
+		kernel.forces(cell, cell, false, true, ProcessPool::OverGroupProcesses);
 
-			// Inter-Grain interactions in this Cell...
-			for (m=n+1; m<cell->nGrains(); ++m)
-			{
-				grainJ = cell->grain(m);
-				kernel.forces(grainI, grainJ, false, false);
-			}
-			
-			// Inter-Grain interactions between this Grain and those in Cell neighbours
-			kernel.forces(grainI, cell->nCellNeighbours(), cell->cellNeighbours(), false, true, ProcessPool::Individual);
-			kernel.forces(grainI, cell->nMimCellNeighbours(), cell->mimCellNeighbours(), true, true, ProcessPool::Individual);
-		}
+		// Interatomic interactions between atoms in this cell and its neighbours
+		kernel.forces(cell, true, ProcessPool::OverGroupProcesses);
 
 		/*
 		 * Calculation End
 		 */
-		
-		// Must unlock the Cell when we are done with it!
-		cfg->finishedWithCell(procPool, willBeModified, cellId);
 	}
 }
 

@@ -94,28 +94,10 @@ class Grain
 	 * Coordinates / Manipulation
 	 */
 	private:
-	// Centre of geometry of grain
-	Vec3<double> centre_;
-	// Cell location
-	Cell* cell_;
 	// Local index of grain in cell's list
 	int localIndex_;
 	
 	public:
-	// Adjust centre
-	void updateCentre(const Vec3<double>& atomDeltaR);
-	// Return centre of geometry of grain
-	const Vec3<double>& centre() const;
-	// Set cell location
-	void setCell(Cell* cell, int index);
-	// Remove grain from its current cell
-	void removeFromCell(Cell* caller);
-	// Return cell location
-	Cell* cell() const;
-	// Return local index of grain in cell's list
-	int cellListIndex() const;
-	// Move grain centre
-	void moveTo(const Vec3<double>& delta);
 	// Translate grain centre
 	void translate(const Vec3<double>& delta);
 };

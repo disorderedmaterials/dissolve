@@ -609,7 +609,7 @@ double EnergyKernel::energy(const Atom* i, OrderedPointerList<Atom>& neighbours,
 }
 
 // Return intermolecular energy between Grain and list of Cells
-double EnergyKernel::energy(const Grain* grain, OrderedPointerList< Atom >& neighbours, bool applyMim, bool excludeIgeJ, ProcessPool::LoopContext loopContext, bool sumOverProcesses)
+double EnergyKernel::energy(const Grain* grain, OrderedPointerList<Atom>& neighbours, bool applyMim, bool excludeIgeJ, ProcessPool::LoopContext loopContext, bool sumOverProcesses)
 {
 #ifdef CHECKS
 	if (grain == NULL)

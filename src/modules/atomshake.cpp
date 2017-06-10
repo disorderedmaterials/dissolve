@@ -215,7 +215,7 @@ bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
 			continue;
 		}
 		cell = cfg->cell(cellId);
-		Messenger::printVerbose("AtomShake: Cell %i now the target on process %s, containing %i Grains interacting with %i neighbours.\n", cellId, procPool.processInfo(), cell->nGrains(), cell->nTotalCellNeighbours());
+		Messenger::printVerbose("AtomShake: Cell %i now the target on process %s, containing %i Atoms interacting with %i neighbour cells.\n", cellId, procPool.processInfo(), cell->nAtoms(), cell->nTotalCellNeighbours());
 
 		/*
 		 * Calculation Begins
@@ -287,8 +287,8 @@ bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
 	}
 	timer.stop();
 
-	// Grains have moved, so refold and update locations
-	cfg->updateGrains();
+	// Atoms have moved, so need to refold them back into the unit cell
+	cfg->updateAtomsInCells();
 
 	// Collect statistics from process group leaders
 	if (!procPool.allSum(&nAccepted, 1, ProcessPool::Leaders)) return false;

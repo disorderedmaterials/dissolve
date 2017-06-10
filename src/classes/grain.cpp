@@ -31,7 +31,6 @@ Grain::Grain()
 	atoms_ = NULL;
 	nAtoms_ = 0;
 	localIndex_ = -1;
-	cell_ = NULL;
 	index_ = -1;
 	parent_ = NULL;
 	source_ = NULL;
@@ -50,7 +49,6 @@ void Grain::clear()
 	atoms_ = NULL;
 	nAtoms_ = 0;
 	atomsArraySize_ = 0;
-	centre_.zero();
 }
 
 /*
@@ -119,11 +117,7 @@ bool Grain::addAtom(Atom* i)
 		atoms_[nAtoms_] = i;
 		atoms_[nAtoms_]->setGrain(this);
 
-		// Update centre and increase nAtoms_
-		centre_ *= nAtoms_;
-		centre_ += atoms_[nAtoms_]->r();
 		++nAtoms_;
-		centre_ /= nAtoms_;
 	}
 	else
 	{
@@ -187,78 +181,8 @@ int Grain::index() const
  * Coordinates / Manipulation
  */
 
-// Adjust centre
-void Grain::updateCentre(const Vec3<double>& atomDeltaR)
-{
-	// Multiply old coordinates by nAtoms_ and add deltaR
-	Vec3<double> newCentre = centre_*nAtoms_ + atomDeltaR;
-	centre_ = newCentre / nAtoms_;
-}
-
-// Return centre of geometry of Grain
-const Vec3<double>& Grain::centre() const
-{
-	return centre_;
-}
-
-// Set Cell location
-void Grain::setCell(Cell* cell, int index)
-{
-#ifdef CHECKS
-	if (cell == NULL)
-	{
-		Messenger::print("BAD_USAGE - Don't pass a NULL cell to Grain::setCell() - call Grain::removeFromCell() instead.\n");
-		return;
-	}
-	// Check for a different Cell assignment (ok to pass same cell, since we allow index to be updated)
-	if ((cell_ != NULL) && (cell_ != cell))
-	{
-		Messenger::print("BAD_USAGE - Refused to set Cell within Grain %i since it is still associated to a Cell.\n", index_);
-		return;
-	}
-#endif
-	cell_ = cell;
-	localIndex_ = index;
-}
-
-// Remove Grain from its current Cell
-void Grain::removeFromCell(Cell* caller)
-{
-#ifdef CHECKS
-	if (cell_ == NULL)
-	{
-		Messenger::error("NULL_POINTER - Tried to remove Grain %i from its Cell, but Cell is NULL.\n", index_);
-		return;
-	}
-#endif
-	if (!caller) cell_->removeGrain(this);
-	cell_ = NULL;
-	localIndex_ = -1;
-}
-
-// Return Cell location
-Cell* Grain::cell() const
-{
-	return cell_;
-}
-
-// Return local index of Grain in Cell's list
-int Grain::cellListIndex() const
-{
-	return localIndex_;
-}
-
-// Move Grain centre
-void Grain::moveTo(const Vec3<double>& target)
-{
-	Vec3<double> delta = target - centre_;
-	for (int n=0; n<nAtoms_; ++n) atom(n)->translateCoordinatesNasty(delta);
-	centre_ = target;
-}
-
 // Translate Grain centre
 void Grain::translate(const Vec3<double>& delta)
 {
-	for (int n=0; n<nAtoms_; ++n) atom(n)->translateCoordinatesNasty(delta);
-	centre_ += delta;
+	for (int n=0; n<nAtoms_; ++n) atom(n)->translateCoordinates(delta);
 }

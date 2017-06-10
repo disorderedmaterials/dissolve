@@ -594,7 +594,7 @@ bool PartialsModule::calculateUnweighted(Configuration* cfg, ProcessPool& procPo
 			k = mol->atom(a->indexK());
 			
 			// Determine whether we need to apply minimum image between 'j-i' and 'j-k'
-			if (cfg->useMim(i->grain()->cell(), k->grain()->cell())) distance = box->minimumDistance(i, k);
+			if (cfg->useMim(i->cell(), k->cell())) distance = box->minimumDistance(i, k);
 			else distance = (i->r() - k->r()).magnitude();
 			partialgr.boundHistogram(i->localTypeIndex(), k->localTypeIndex()).add(distance);
 		}
