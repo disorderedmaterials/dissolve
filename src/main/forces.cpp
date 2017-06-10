@@ -63,13 +63,13 @@ void DUQ::intramolecularForces(ProcessPool& procPool, Configuration* cfg, Array<
 	}
 }
 
-// Calculate Grain forces within the system
-void DUQ::grainForces(ProcessPool& procPool, Configuration* cfg, Array<double>& fx, Array<double>& fy, Array<double>& fz)
+// Calculate interatomic forces within the system
+void DUQ::interatomicForces(ProcessPool& procPool, Configuration* cfg, Array<double>& fx, Array<double>& fy, Array<double>& fz)
 {
 	/*
-	 * Calculates the total Grain forces within the system, i.e. the energy contributions from PairPotential
-	 * interactions between Grains. Any connections between Grains (which in reality correspond to proper chemical bonds
-	 * between Atoms) are automatically excluded.
+	 * Calculates the total interatomic forces within the system, i.e. the energy contributions from PairPotential
+	 * interactions between all Atoms. Loop over Grains is used so that intramolecular connections such as bonds can be
+	 * automatically excluded from the calculation.
 	 * 
 	 * This is a parallel routine.
 	 */
@@ -143,9 +143,9 @@ void DUQ::totalForces(ProcessPool& procPool, Configuration* cfg, Array<double>& 
 	// Create a Timer
 	Timer timer;
 	
-	// Calculate Grain forces
+	// Calculate interatomic forces
 	timer.start();
-	grainForces(procPool, cfg, fx, fy, fz);
+	interatomicForces(procPool, cfg, fx, fy, fz);
 	timer.stop();
 	Messenger::printVerbose("Time to do Grain forces was %s.\n", timer.totalTimeString());
 	
@@ -155,7 +155,7 @@ void DUQ::totalForces(ProcessPool& procPool, Configuration* cfg, Array<double>& 
 	timer.stop();
 	Messenger::printVerbose("Time to do intramolecular forces was %s.\n", timer.totalTimeString());
 	
-	// Gather forces together
+	// Gather forces together over all processes
 	if (!procPool.allSum(fx, cfg->nAtoms())) return;
 	if (!procPool.allSum(fy, cfg->nAtoms())) return;
 	if (!procPool.allSum(fz, cfg->nAtoms())) return;

@@ -261,8 +261,8 @@ class DUQ
 	public:
 	// Calculate total intramolecular forces
 	void intramolecularForces(ProcessPool& procPool, Configuration* cfg, Array<double>& fx, Array<double>& fy, Array<double>& fz);
-	// Calculate total Grain forces
-	void grainForces(ProcessPool& procPool, Configuration* cfg, Array<double>& fx, Array<double>& fy, Array<double>& fz);
+	// Calculate interatomic forces within the specified Configuration
+	void interatomicForces(ProcessPool& procPool, Configuration* cfg, Array<double>& fx, Array<double>& fy, Array<double>& fz);
 	// Calculate total forces within the system
 	void totalForces(ProcessPool& procPool, Configuration* cfg, Array<double>& fx, Array<double>& fy, Array<double>& fz);
 
