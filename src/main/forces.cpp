@@ -29,102 +29,42 @@
 #include "base/timer.h"
 
 // Calculate total intramolecular forces
-void DUQ::intramolecularForces(ProcessPool& procPool, Configuration* cfg, double* fx, double* fy, double* fz)
+void DUQ::intramolecularForces(ProcessPool& procPool, Configuration* cfg, Array<double>& fx, Array<double>& fy, Array<double>& fz)
 {
 	/*
 	 * Calculate the total intramolecular forces within the system, arising from Bond, Angle, and Torsion
 	 * terms in all molecules.
 	 * 
+	 * Calculated forces are added in to the provided arrays. Assembly of the arrays over processes must be performed by the
+	 * calling function.
+	 * 
 	 * This is a parallel routine.
 	 */
 
-	double distance, angle, force, dp, magji, magjk;
-	int index, start, stride;
-	Atom* i, *j, *k;
-	Vec3<double> vecji, vecjk, forcei, forcek;
+	// Create a ForceKernel
+	ForceKernel kernel(procPool, cfg, potentialMap_, fx, fy, fz);
+
+	int start, stride;
 
 	// Set start/skip for parallel loop
 	start = procPool.interleavedLoopStart(ProcessPool::OverPoolProcesses);
 	stride = procPool.interleavedLoopStride(ProcessPool::OverPoolProcesses);
 
 	// Main loop over molecules
-	for (Molecule* mol = cfg->molecules(); mol != NULL; mol = mol->next)
+	for (int m=start; m<cfg->nMolecules(); m += stride)
 	{
+		Molecule* mol = cfg->molecule(m);
+
 		// Bonds
-		for (SpeciesBond* b = mol->species()->bonds(); b != NULL; b = b->next)
-		{
-			// Grab pointers to atoms involved in bond
-			i = mol->atom(b->indexI());
-			j = mol->atom(b->indexJ());
-
-			// Determine whether we need to apply minimum image to the vector calculation
-			if (cfg->useMim(i->grain()->cell(), j->grain()->cell())) vecji = cfg->box()->minimumVector(i, j);
-			else vecji = j->r() - i->r();
-			
-			// Get distance and normalise vector ready for force calculation
-			distance = vecji.magAndNormalise();
-			if (distance > 5.0) printf("SHITTTTT! %f\n", distance);
-
-			// Determine final forces
-			vecji *= b->force(distance);
-
-			// Calculate forces
-			index = i->index();
-			fx[index] -= vecji.x;
-			fy[index] -= vecji.y;
-			fz[index] -= vecji.z;
-			index = j->index();
-			fx[index] += vecji.x;
-			fy[index] += vecji.y;
-			fz[index] += vecji.z;
-		}
+		for (SpeciesBond* b = mol->species()->bonds(); b != NULL; b = b->next) kernel.forces(mol, b);
 
 		// Angles
-		for (SpeciesAngle* a = mol->species()->angles(); a != NULL; a = a->next)
-		{
-			// Grab pointers to atoms involved in angle
-			i = mol->atom(a->indexI());
-			j = mol->atom(a->indexJ());
-			k = mol->atom(a->indexK());
-
-			// Determine whether we need to apply minimum image between 'j-i' and 'j-k'
-			if (cfg->useMim(j->grain()->cell(), i->grain()->cell())) vecji = cfg->box()->minimumVector(j, i);
-			else vecji = i->r() - j->r();
-			if (cfg->useMim(j->grain()->cell(), k->grain()->cell())) vecjk = cfg->box()->minimumVector(j, k);
-			else vecjk = k->r() - j->r();
-			
-			// Calculate angle
-			magji = vecji.magAndNormalise();
-			magjk = vecjk.magAndNormalise();
-			angle = Box::angle(vecji, vecjk, dp);
-
-			// Determine Angle force vectors for atoms
-			force = a->force(angle);
-			forcei = vecjk - vecji * dp;
-			forcei *= force / magji;
-			forcek = vecji - vecjk * dp;
-			forcek *= force / magjk;
-			
-			// Store forces
-			index = i->index();
-			fx[index] += forcei.x;
-			fy[index] += forcei.y;
-			fz[index] += forcei.z;
-			index = j->index();
-			fx[index] -= forcei.x + forcek.x;
-			fy[index] -= forcei.y + forcek.y;
-			fz[index] -= forcei.z + forcek.z;
-			index = k->index();
-			fx[index] += forcek.x;
-			fy[index] += forcek.y;
-			fz[index] += forcek.z;
-		}
-
+		for (SpeciesAngle* a = mol->species()->angles(); a != NULL; a = a->next) kernel.forces(mol, a);
 	}
 }
 
 // Calculate Grain forces within the system
-void DUQ::grainForces(ProcessPool& procPool, Configuration* cfg, double* fx, double* fy, double* fz, double cutoffSq)
+void DUQ::grainForces(ProcessPool& procPool, Configuration* cfg, Array<double>& fx, Array<double>& fy, Array<double>& fz)
 {
 	/*
 	 * Calculates the total Grain forces within the system, i.e. the energy contributions from PairPotential
@@ -139,7 +79,7 @@ void DUQ::grainForces(ProcessPool& procPool, Configuration* cfg, double* fx, dou
 	cfg->initialiseCellDistribution();
 
 	// Create a ForcesKernel
-	ForceKernel kernel(procPool, cfg->box(), potentialMap_);
+	ForceKernel kernel(procPool, cfg, potentialMap_, fx, fy, fz);
 
 	int cellId, n, m, start, stride;
 	Cell* cell;
@@ -173,12 +113,12 @@ void DUQ::grainForces(ProcessPool& procPool, Configuration* cfg, double* fx, dou
 			for (m=n+1; m<cell->nGrains(); ++m)
 			{
 				grainJ = cell->grain(m);
-				kernel.forces(grainI, grainJ, false, false, fx, fy, fz);
+				kernel.forces(grainI, grainJ, false, false);
 			}
 			
 			// Inter-Grain interactions between this Grain and those in Cell neighbours
-			kernel.forces(grainI, cell->nCellNeighbours(), cell->cellNeighbours(), false, true, fx, fy, fz, ProcessPool::Individual);
-			kernel.forces(grainI, cell->nMimCellNeighbours(), cell->mimCellNeighbours(), true, true, fx, fy, fz, ProcessPool::Individual);
+			kernel.forces(grainI, cell->nCellNeighbours(), cell->cellNeighbours(), false, true, ProcessPool::Individual);
+			kernel.forces(grainI, cell->nMimCellNeighbours(), cell->mimCellNeighbours(), true, true, ProcessPool::Individual);
 		}
 
 		/*
@@ -191,7 +131,7 @@ void DUQ::grainForces(ProcessPool& procPool, Configuration* cfg, double* fx, dou
 }
 
 // Calculate total forces within the system
-void DUQ::totalForces(ProcessPool& procPool, Configuration* cfg, double* fx, double* fy, double* fz, double cutoffSq)
+void DUQ::totalForces(ProcessPool& procPool, Configuration* cfg, Array<double>& fx, Array<double>& fy, Array<double>& fz)
 {
 	/*
 	 * Calculates the total forces within the system, arising from inter-Grain PairPotential interactions
@@ -205,7 +145,7 @@ void DUQ::totalForces(ProcessPool& procPool, Configuration* cfg, double* fx, dou
 	
 	// Calculate Grain forces
 	timer.start();
-	grainForces(procPool, cfg, fx, fy, fz, cutoffSq);
+	grainForces(procPool, cfg, fx, fy, fz);
 	timer.stop();
 	Messenger::printVerbose("Time to do Grain forces was %s.\n", timer.totalTimeString());
 	

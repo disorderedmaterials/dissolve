@@ -25,6 +25,63 @@
 #include "classes/grain.h"
 #include "classes/changestore.h"
 
+// Update cell locations of all atoms
+bool Configuration::updateAtomsInCells()
+{
+	// Fold the coordinates of each atom into the box, and then check its cell location, moving if necessary.
+	// Loop over cells, focussing on one atom index at a time. Do it this way to try and avoid moving large numbers of atoms into one cell at once, causing an overflow.
+	int n, atomId = 0;
+	Cell* currentCell, *targetCell;
+	Vec3<double> foldedR;
+	Atom* i;
+	for (int c = 0; c < nCells_; ++c)
+	{
+		// Grab cell pointer
+		currentCell = &cells_[c];
+
+		// TODO Overload cell() to take a pointer to a Vec3<> in which the folded r can be returned
+		for (OrderedPointerListItem<Atom>* item = currentCell->atoms().first(); item != NULL; item = item->next)
+		{
+			i = item->object();
+			foldedR = box_->fold(i->r());
+			i->setCoordinates(foldedR);
+			targetCell = cell(i->r());
+
+			// Need to move?
+			if (targetCell != currentCell)
+			{
+				// We first must remove
+				if (!currentCell->moveAtom(i, targetCell)) return false;
+			}
+		}
+	}
+
+	return true;
+}
+
+// Update cell locations of specified atom index
+bool Configuration::updateAtomInCell(int id)
+{
+	// Fold the coordinates of specified atom into the box, and then check its cell location, moving if necessary.
+	Cell* currentCell, *targetCell;
+	Vec3<double> foldedR;
+
+	// Grab atom pointers
+	Atom* i = &atoms_[id];
+
+	// TODO Overload cell() to take a pointer to a Vec3<> in which the folded r can be returned
+	// Grab current cell pointer, and calculate folded coordinate and new cell location
+	currentCell = i->cell();
+	foldedR = box_->fold(i->r());
+	i->setCoordinates(foldedR);
+	targetCell = cell(foldedR);
+
+	// Need to move?
+	if (targetCell != currentCell) currentCell->moveAtom(i, targetCell);
+
+	return true;
+}
+
 // Update Grains
 void Configuration::updateGrains()
 {

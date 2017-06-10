@@ -30,6 +30,7 @@
 // Forward Declarations
 class Cell;
 class Box;
+class Configuration;
 class PotentialMap;
 class ChangeStore;
 
@@ -38,7 +39,7 @@ class ForceKernel
 {
 	public:
 	// Constructor
-	ForceKernel(ProcessPool& procPool, const Box* box, const PotentialMap& potentialMap);
+	ForceKernel(ProcessPool& procPool, const Configuration* cfg, const PotentialMap& potentialMap, Array<double>& fx, Array<double>& fy, Array<double>& fz, double energyCutoff = -1.0);
 	// Destructor
 	~ForceKernel();
 	// Clear all data
@@ -49,10 +50,20 @@ class ForceKernel
 	 * Source Data
 	 */
 	protected:
-	// Source Box
+	// Source Configuration
+	const Configuration* configuration_;
+	// Source Box (from Configuration)
 	const Box* box_;
 	// Potential map to use
 	const PotentialMap& potentialMap_;
+	// Squared cutoff distance to use in calculation
+	double cutoffDistanceSquared_;
+	// Force array for x component
+	Array<double>& fx_;
+	// Force array for y component
+	Array<double>& fy_;
+	// Force array for z component
+	Array<double>& fz_;
 
 
 	/*
@@ -60,37 +71,47 @@ class ForceKernel
 	 */
 	private:
 	// Calculate inter-particle forces between Atoms provided (no minimum image calculation)
-	void forcesWithoutMim(const Atom* i, const Atom* j, double* fx, double* fy, double* fz, double scale = 1.0);
+	void forcesWithoutMim(const Atom* i, const Atom* j, double scale = 1.0);
 	// Calculate inter-particle forces between Atom and Grain provided (no minimum image calculation)
-	void forcesWithoutMim(const Atom* i, const Grain* grain, bool excludeIgtJ, double* fx, double* fy, double* fz);
+	void forcesWithoutMim(const Atom* i, const Grain* grain, bool excludeIgtJ);
 	// Calculate inter-particle forces between Grains provided (no minimum image calculation)
-	void forcesWithoutMim(const Grain* grainI, const Grain* grainJ, double* fx, double* fy, double* fz);
+	void forcesWithoutMim(const Grain* grainI, const Grain* grainJ);
 	// Calculate inter-particle forces between Atoms provided (minimum image calculation)
-	void forcesWithMim(const Atom* i, const Atom* j, double* fx, double* fy, double* fz, double scale = 1.0);
+	void forcesWithMim(const Atom* i, const Atom* j, double scale = 1.0);
 	// Calculate inter-particle forces between Atom and Grain provided (minimum image calculation)
-	void forcesWithMim(const Atom* i, const Grain* grain, bool excludeIgtJ, double* fx, double* fy, double* fz);
+	void forcesWithMim(const Atom* i, const Grain* grain, bool excludeIgtJ);
 	// Calculate inter-particle forces between Grains provided (minimum image calculation)
-	void forcesWithMim(const Grain* grainI, const Grain* grainJ, double* fx, double* fy, double* fz);
+	void forcesWithMim(const Grain* grainI, const Grain* grainJ);
 
 
 	/*
-	 * Force Calculation
+	 * PairPotential Terms
 	 */
 	public:
 	// Calculate inter-particle forces between Atoms provided
-	void forces(const Atom* i, const Atom* j, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz);
+	void forces(const Atom* i, const Atom* j, bool applyMim, bool excludeIgtJ);
 	// Calculate inter-particle forces between Atom and Grain provided
-	void forces(const Atom* i, const Grain* grain, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz);
+	void forces(const Atom* i, const Grain* grain, bool applyMim, bool excludeIgtJ);
 	// Calculate inter-particle forces between Grains provided
-	void forces(const Grain* grainI, const Grain* grainJ, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz);
+	void forces(const Grain* grainI, const Grain* grainJ, bool applyMim, bool excludeIgtJ);
 	// Calculate inter-particle forces between Atom and Cell contents
-	void forces(const Atom* i, const Cell* cell, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz);
+	void forces(const Atom* i, const Cell* cell, bool applyMim, bool excludeIgtJ);
 	// Calculate inter-particle forces between Grain and Cell contents
-	void forces(const Grain* grain, const Cell* cell, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz);
+	void forces(const Grain* grain, const Cell* cell, bool applyMim, bool excludeIgtJ);
 	// Calculate inter-particle forces between Atom and list of Cells
-	void forces(const Atom* i, int nNeighbours, Cell** neighbours, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
+	void forces(const Atom* i, int nNeighbours, Cell** neighbours, bool applyMim, bool excludeIgtJ, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
 	// Calculate inter-particle forces between Grain and list of Cells
-	void forces(const Grain* grain, int nNeighbours, Cell** neighbours, bool applyMim, bool excludeIgtJ, double* fx, double* fy, double* fz, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
+	void forces(const Grain* grain, int nNeighbours, Cell** neighbours, bool applyMim, bool excludeIgtJ, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
+
+
+	/*
+	 * Intramolecular Terms
+	 */
+	public:
+	// Calculate Bond forces
+	void forces(const Molecule* mol, const SpeciesBond* b);
+	// Calculate Angle forces
+	void forces(const Molecule* mol, const SpeciesAngle* a);
 
 
 	/*

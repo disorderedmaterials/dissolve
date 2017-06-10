@@ -287,10 +287,6 @@ class Configuration : public ListItem<Configuration>
 	int nextAvailableCell(ProcessPool& procPool, bool willBeModified, bool allowRepeats);
 	// Unlock Cell specified, once calculation is complete
 	bool finishedWithCell(ProcessPool& procPool, bool willBeModified, int cellId);
-	// Update cell locations of all atoms
-	bool updateAtomsInCells();
-	// Update cell locations of specified atom index, and update neighbour
-	bool updateAtomInCell(int id);
 	// Set box normalisation array to load/save for this configuration
 	void setBoxNormalisationFile(const char* filename);
 	// Return box normalisation file to load/save for this configuration
@@ -380,6 +376,10 @@ class Configuration : public ListItem<Configuration>
 	 * Upkeep
 	 */
 	public:
+	// Update cell locations of all atoms
+	bool updateAtomsInCells();
+	// Update cell locations of specified atom index, and update neighbour
+	bool updateAtomInCell(int id);
 	// Update Grains
 	void updateGrains();
 	// Create cell atom neighbour lists

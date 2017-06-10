@@ -315,7 +315,7 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 		fx = 0.0;
 		fy = 0.0;
 		fz = 0.0;
-		duq.totalForces(procPool, cfg, fx, fy, fz, cutoffSq);
+		duq.totalForces(procPool, cfg, fx, fy, fz);
 		fx *= 100.0;
 		fy *= 100.0;
 		fz *= 100.0;
