@@ -49,7 +49,7 @@ MDModule::MDModule() : Module()
 	options_.add("EnergyFrequency", 10, "Frequency at which to calculate total system energy (or 0 to inhibit)");
 	options_.add("NSteps", 100, "Number of MD steps to perform");
 	options_.add("OutputFrequency", 5, "Frequency at which to output step information (or 0 to inhibit)");
-	options_.add("RandomVelocities", false, "Whether random velocities should always be assigned before beginning MD simulation");
+	options_.add("RandomVelocities", bool(false), "Whether random velocities should always be assigned before beginning MD simulation");
 	options_.add("TrajectoryFrequency", 0, "Write frequency for trajectory file (or 0 to inhibit)");
 }
 
@@ -181,7 +181,7 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 	const int energyFrequency = GenericListHelper<int>::retrieve(cfg->moduleData(), "EnergyFrequency", uniqueName(), options_.valueAsInt("EnergyFrequency"));
 	const int nSteps = GenericListHelper<int>::retrieve(cfg->moduleData(), "NSteps", uniqueName(), options_.valueAsInt("NSteps"));
 	const int outputFrequency = GenericListHelper<int>::retrieve(cfg->moduleData(), "OutputFrequency", uniqueName(), options_.valueAsInt("OutputFrequency"));
-	bool randomVelocities = GenericListHelper<int>::retrieve(cfg->moduleData(), "RandomVelocities", uniqueName(), options_.valueAsBool("RandomVelocities"));
+	bool randomVelocities = GenericListHelper<bool>::retrieve(cfg->moduleData(), "RandomVelocities", uniqueName(), options_.valueAsBool("RandomVelocities"));
 	const int trajectoryFrequency = GenericListHelper<int>::retrieve(cfg->moduleData(), "TrajectoryFrequency", uniqueName(), options_.valueAsInt("TrajectoryFrequency"));
 	bool writeTraj = trajectoryFrequency > 0;
 	const double temperature = cfg->temperature();
@@ -217,7 +217,7 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 	// Read in or assign random velocities
 	// Realise the velocity array from the moduleData
 	bool created;
-	Array< Vec3<double> > &v = GenericListHelper< Array< Vec3<double> > >::realise(moduleData, "Velocities", uniqueName(), &created);
+	Array< Vec3<double> >& v = GenericListHelper< Array< Vec3<double> > >::realise(moduleData, "Velocities", uniqueName(), &created);
 	if (created)
 	{
 		randomVelocities = true;
@@ -396,9 +396,6 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 			}
 			else Messenger::print("MD:  %-10i    %10.3e   %10.3e                             %10.3e\n", step, tInstant, ke, deltaT);
 		}
-
-		// Fold atoms and update cells
-		cfg->updateAtomsInCells();
 
 		// Save trajectory frame
 		if (writeTraj && (step%outputFrequency == 0))

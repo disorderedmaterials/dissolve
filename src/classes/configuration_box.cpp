@@ -118,7 +118,7 @@ bool Configuration::setupBox(double ppRange)
 		return false;
 	}
 
-	generateCells(5.0, ppRange, atomicDensity());
+	generateCells(3.0, ppRange, atomicDensity());
 	 
 	return true;
 }
