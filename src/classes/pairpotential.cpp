@@ -255,11 +255,14 @@ double PairPotential::chargeJ() const
 // Calculate full potential
 void PairPotential::calculateUFull()
 {
-	// Copy uOriginal_ into uFull_;
+	// Copy uOriginal_ into uFull_...
 	uFull_ = uOriginal_;
 
-	// Add on uAdditional...
+	// ...add on uAdditional...
 	uFull_ += uAdditional_;
+
+	// ...and interpolate it
+	uFull_.interpolate();
 }
 
 // Regenerate derivative data
@@ -278,6 +281,9 @@ void PairPotential::calculateDUFull()
 	// Set first and last points
 	dUFull_.setY(0, 10.0*dUFull_.y(1));
 	dUFull_.setY(nPoints_-1, 0.0);
+
+	// Interpolate it
+	dUFull_.interpolate();
 }
 
 // Setup and generate initial potential
@@ -363,12 +369,15 @@ bool PairPotential::calculateUOriginal(bool recalculateUFull)
 	// Since the first point (at zero) risks being a nan, set it to ten times the second point instead
 	uOriginal_.setY(0, 10.0*uOriginal_.y(1));
 
-	// Update full potential (if not the first generation of the poten
+	// Create a spline interpolation of the 
+	uOriginal_.interpolate();
+
+	// Update full potential (if not the first generation of the potential)
 	if (recalculateUFull) calculateUFull();
 }
 
 // Return potential at specified r-squared
-double PairPotential::energyAtRSquared(double distanceSq) const
+double PairPotential::energyAtRSquared(double distanceSq)
 {
 	// Perform some checks
 #ifdef CHECKS
@@ -380,14 +389,16 @@ double PairPotential::energyAtRSquared(double distanceSq) const
 #endif
 	// Is distance out of range?
 	if (distanceSq > rangeSquared_) return 0.0;
-// 	// Determine potential bin
-// 	int bin = distanceSq*rDelta_;
-// 	return (bin >= nPoints_ ? 0.0 : u_.y(bin));
-	return uFull_.y(distanceSq*rDelta_);
+
+	// Return binned value
+// 	return uFull_.y(distanceSq*rDelta_);
+
+	// Return interpolated value
+	return uFull_.interpolated(distanceSq, distanceSq*rDelta_);
 }
 
 // Return derivative at specified r-squared
-double PairPotential::forceAtRSquared(double distanceSq) const
+double PairPotential::forceAtRSquared(double distanceSq)
 {
 	// Perform some checks
 #ifdef CHECKS
@@ -397,9 +408,12 @@ double PairPotential::forceAtRSquared(double distanceSq) const
 		return 0.0;
 	}
 #endif
-	// Determine potential bin
-	int bin = distanceSq*rDelta_;
-	return (bin >= nPoints_ ? 0.0 : dUFull_.y(bin));
+	// Return binned value
+// 	int bin = distanceSq*rDelta_;
+// 	return (bin >= nPoints_ ? 0.0 : dUFull_.y(bin));
+
+	// Return interpolated value
+	return dUFull_.interpolated(distanceSq, distanceSq*rDelta_);
 }
 
 // Return full tabulated potential (original plus additional)

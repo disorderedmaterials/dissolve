@@ -146,9 +146,9 @@ class PairPotential : public ListItem<PairPotential>
 	// (Re)generate original potential (uOriginal) from current parameters
 	bool calculateUOriginal(bool recalculateUFull = true);
 	// Return potential at specified r-squared
-	double energyAtRSquared(double rSq) const;
+	double energyAtRSquared(double rSq);
 	// Return derivative of potential at specified r-squared
-	double forceAtRSquared(double rSq) const;
+	double forceAtRSquared(double rSq);
 	// Return full tabulated potential (original plus additional)
 	Data2D& uFull();
 	// Return full tabulated derivative

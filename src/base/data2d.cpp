@@ -1228,18 +1228,18 @@ double Data2D::interpolated(double xvalue)
 			else splineInterval_ = i;
 		}
 	}
-	
-// 	printf("Requested value is %f, interval = %i (xmin=%f)\n", xvalue, splineInterval_, x_[splineInterval_]);
-	// Calculate interpolated point
-// 	double a, b;
-// 	a = (x_[splineBracketRight_] - xvalue) / interval;
-// 	b = (xvalue - x_[splineBracketLeft_]) / interval;
-	
+
+	return interpolated(xvalue, splineInterval_);
+}
+
+// Return spline interpolated y value for supplied x, specifying containing interval
+double Data2D::interpolated(double xvalue, int interval)
+{
 	// Calculate cubic polynomial
 // 	double result = a*y_[splineBracketLeft_] + b*y_[splineBracketRight_] + ((a*a*a-a)*ddy_[splineBracketLeft_] + (b*b*b-b)*ddy_[splineBracketRight_])*(interval*interval)/6.0;
-	double h = constrainedSpline_ ? xvalue : xvalue - x_[splineInterval_];
-	double result = splineA_[splineInterval_] + splineB_[splineInterval_]*h + splineC_[splineInterval_]*h*h + splineD_[splineInterval_]*h*h*h;
-	return result;
+	double h = constrainedSpline_ ? xvalue : xvalue - x_[interval];
+	double hh = h*h;
+	return splineA_[interval] + splineB_[interval]*h + splineC_[interval]*hh + splineD_[interval]*hh*h;
 }
 
 // Smooth data

@@ -184,6 +184,8 @@ class Data2D : public ListItem<Data2D>
 	void interpolate(bool constrained = true);
 	// Return spline interpolated y value for supplied x
 	double interpolated(double xvalue);
+	// Return spline interpolated y value for supplied x, specifying containing interval
+	double interpolated(double xvalue, int interval);
 	// Smooth data
 	void smooth(int avgSize, int skip = 0);
 	// Add interpolated data
