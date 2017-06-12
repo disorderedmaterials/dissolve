@@ -50,6 +50,7 @@ Configuration::Configuration() : ListItem<Configuration>()
 	box_ = NULL;
 	cells_ = NULL;
 	cellFlag_ = NULL;
+	requestedCellDivisionLength_ = 10.0;
 	nCells_ = 0;
 	coordinateIndex_ = 0;
 
@@ -238,7 +239,7 @@ bool Configuration::setup(ProcessPool& procPool, const List<AtomType>& atomTypes
 	}
 
 	// Create a Box
-	Messenger::print("--> Creating periodic box...\n");
+	Messenger::print("--> Creating periodic Box and Cell partitioning...\n");
 	if (!setupBox(pairPotentialRange))
 	{
 		Messenger::error("Failed to set-up Box/Cells for Configuration.\n");

@@ -30,6 +30,7 @@ KeywordData ConfigurationBlockData[] = {
 	{ "BoxNormalisationFile", 	1,	"Specifies a file from which to load the RDF normalisation array" },
 	{ "BraggMaximumQ",		1,	"Sets the maximum Q value for Bragg calculation" },
 	{ "CellAngles", 		3,	"Gives the angles of the unit cell" },
+	{ "CellDivisionLength",		1,	"Set the requested side length for regions when partitioning the unit cell" },
 	{ "CellLengths",		3,	"Gives the relative lengths of the unit cell" },
 	{ "Density",			2,	"Specifies the density of the Configuration, along with its units" },
 	{ "EndConfiguration",		0,	"Signals the end of the Configuration block" },
@@ -96,6 +97,9 @@ bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
 				break;
 			case (ConfigurationBlock::CellAnglesKeyword):
 				cfg->setBoxAngles(Vec3<double>(parser.argd(1),  parser.argd(2), parser.argd(3)));
+				break;
+			case (ConfigurationBlock::CellDivisionLengthKeyword):
+				cfg->setRequestedCellDivisionLength(parser.argd(1));
 				break;
 			case (ConfigurationBlock::CellLengthsKeyword):
 				cfg->setRelativeBoxLengths(Vec3<double>(parser.argd(1), parser.argd(2), parser.argd(3)));

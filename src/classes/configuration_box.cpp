@@ -55,10 +55,22 @@ void Configuration::setNonPeriodic(bool b)
 	nonPeriodic_ = b;
 }
 
-// Return whether the configuration is non-periodic
+// Return whether the configuration is non-periodicI
 bool Configuration::nonPeriodic() const
 {
 	return nonPeriodic_;
+}
+
+// Set requested side length for individual Cell
+void Configuration::setRequestedCellDivisionLength(double a)
+{
+	requestedCellDivisionLength_ = a;
+}
+
+// Return equested side length for individual Cell
+double Configuration::requestedCellDivisionLength()
+{
+	return requestedCellDivisionLength_;
 }
 
 // Return Box
@@ -118,7 +130,8 @@ bool Configuration::setupBox(double ppRange)
 		return false;
 	}
 
-	generateCells(3.0, ppRange, atomicDensity());
+	// Generate cells within unit cell
+	generateCells(requestedCellDivisionLength_, ppRange, atomicDensity());
 	 
 	return true;
 }

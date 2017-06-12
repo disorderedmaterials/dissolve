@@ -44,6 +44,7 @@ PartialsModule::PartialsModule() : Module()
 	instances_.own(this);
 
 	// Setup variables / control parameters
+	// Boolean options must be set as 'bool(false)' or 'bool(true)' rather than just 'false' or 'true' so that the correct overloaded add() function is called
 	frequency_ = 5;
 	options_.add("Bragg", bool(false), "Enable calculation of Bragg scattering");
 	options_.add("BraggQDepBroadening", 0.0063, "FWHM of Gaussian for Q-dependent Bragg broadening function");

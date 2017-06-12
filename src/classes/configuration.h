@@ -217,6 +217,8 @@ class Configuration : public ListItem<Configuration>
 	bool nonPeriodic_;
 	// Periodic Box definition for the Model
 	Box* box_;
+	// Requested side length for individual Cell
+	double requestedCellDivisionLength_;
 	// Cell divisions along each axis
 	Vec3<int> divisions_;
 	// Fractional Cell size
@@ -261,6 +263,10 @@ class Configuration : public ListItem<Configuration>
 	void setNonPeriodic(bool b);
 	// Return whether the box is non-periodic
 	bool nonPeriodic() const;
+	// Set requested side length for individual Cell
+	void setRequestedCellDivisionLength(double a);
+	// Return requested side length for individual Cell
+	double requestedCellDivisionLength();
 	// Return Box
 	const Box* box() const;
 	// Setup periodic Box

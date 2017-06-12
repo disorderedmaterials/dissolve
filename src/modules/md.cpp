@@ -207,7 +207,7 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 	int n, nCapped = 0;
 	Atom* atoms = cfg->atoms();
 	Atom* i;
-	double maxDelta, deltaSq, tInstant, ke, tScale, pe;
+	double maxDelta, deltaSq, tInstant, ke, tScale, peInter, peIntra;
 	double deltaTSq = deltaT*deltaT;
 
 	/*
@@ -255,7 +255,6 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
         // If ke is in units of [g mol-1 Angstroms2 ps-2] then must use kb in units of 10 J mol-1 K-1 (= 0.8314462)
 	const double kb = 0.8314462;
 	ke = 0.0;
-	pe = 0.0;
 	for (n=0; n<cfg->nAtoms(); ++n) ke += 0.5 * mass[n] * v[n].dp(v[n]);
 	tInstant = ke * 2.0 / (3.0 * cfg->nAtoms() * kb);
 	
@@ -283,7 +282,11 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 	}
 
 	// Write header
-	if (outputFrequency > 0) Messenger::print("MD:  Step             T(K)      K.E.(kJ/mol) P.E.(kJ/mol) Etot(kJ/mol)  deltaT(ps)\n");
+	if (outputFrequency > 0)
+	{
+		Messenger::print("MD:                                             Energies (kJ/mol)\n");
+		Messenger::print("MD:  Step             T(K)         Kinetic      Inter        Intra        Total      deltaT(ps)\n");
+	}
 
 	// Start a timer and reset the ProcessPool's time accumulator
 	Timer timer;
@@ -391,14 +394,15 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 			// Include total energy term?
 			if ((energyFrequency > 0) && (step%energyFrequency == 0))
 			{
-				pe = duq.interatomicEnergy(procPool, cfg) + duq.intramolecularEnergy(procPool, cfg);
-				Messenger::print("MD:  %-10i    %10.3e   %10.3e   %10.3e   %10.3e   %10.3e\n", step, tInstant, ke, pe, ke+pe, deltaT);
+				peInter = duq.interatomicEnergy(procPool, cfg);
+				peIntra = duq.intramolecularEnergy(procPool, cfg);
+				Messenger::print("MD:  %-10i    %10.3e   %10.3e   %10.3e   %10.3e   %10.3e   %10.3e\n", step, tInstant, ke, peInter, peIntra, ke+peIntra+peInter, deltaT);
 			}
-			else Messenger::print("MD:  %-10i    %10.3e   %10.3e                             %10.3e\n", step, tInstant, ke, deltaT);
+			else Messenger::print("MD:  %-10i    %10.3e   %10.3e                                          %10.3e\n", step, tInstant, ke, deltaT);
 		}
 
 		// Save trajectory frame
-		if (writeTraj && (step%outputFrequency == 0))
+		if (writeTraj && (step%trajectoryFrequency == 0))
 		{
 			if (procPool.isMaster())
 			{
@@ -407,7 +411,7 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 
 				// Construct and write header
 				CharString header("Step %i of %i, T = %10.3e, ke = %10.3e", step, nSteps, tInstant, ke);
-				if ((energyFrequency > 0) && (step%energyFrequency == 0)) header.strcatf(", pe = %10.3e, tot = %10.3e", pe, ke+pe);
+				if ((energyFrequency > 0) && (step%energyFrequency == 0)) header.strcatf(", inter = %10.3e, intra = %10.3e, tot = %10.3e", peInter, peIntra, ke+peInter+peIntra);
 				if (!trajParser.writeLineF("%s\n", header.get()))
 				{
 					procPool.stop();

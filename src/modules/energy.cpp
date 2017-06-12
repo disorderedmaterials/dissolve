@@ -40,8 +40,9 @@ EnergyModule::EnergyModule() : Module()
 	uniqueName_.sprintf("%s%02i", name(), instances_.nItems()-1);
 
 	// Setup variables / control parameters
-	options_.add("Test", false);
-	options_.add("Save", true);
+	// Boolean options must be set as 'bool(false)' or 'bool(true)' rather than just 'false' or 'true' so that the correct overloaded add() function is called
+	options_.add("Test", bool(false));
+	options_.add("Save", bool(true));
 	options_.add("StabilityWindow", 10);
 	options_.add("StabilityThreshold", 0.01);
 }
@@ -342,7 +343,7 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 			if (saveData)
 			{
 				LineParser parser;
-				CharString filename("%s-energy.txt", cfg->niceName());
+				CharString filename("%s.energy.txt", cfg->niceName());
 
 				if (!DUQSys::fileExists(filename))
 				{

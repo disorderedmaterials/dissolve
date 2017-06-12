@@ -41,7 +41,8 @@ ExportModule::ExportModule() : Module()
 	uniqueName_.sprintf("%s%02i", name(), instances_.nItems()-1);
 
 	// Setup variables / control parameters
-	options_.add("SaveTrajectory", false);
+	// Boolean options must be set as 'bool(false)' or 'bool(true)' rather than just 'false' or 'true' so that the correct overloaded add() function is called
+	options_.add("SaveTrajectory", bool(false));
 	options_.add("TrajectoryFile", "trajectory.xyz");
 }
 

@@ -38,7 +38,8 @@ TestModule::TestModule() : Module()
 	uniqueName_.sprintf("%s%02i", name(), instances_.nItems()-1);
 
 	// Setup variables / control parameters
-	options_.add("Test", false);
+	// Boolean options must be set as 'bool(false)' or 'bool(true)' rather than just 'false' or 'true' so that the correct overloaded add() function is called
+	options_.add("Test", bool(false));
 }
 
 // Destructor
