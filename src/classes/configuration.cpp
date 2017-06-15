@@ -61,6 +61,10 @@ Configuration::Configuration() : ListItem<Configuration>()
 	requestedRDFRange_ = -1.0;
 	temperature_ = 300.0;
 	braggMaximumQ_ = 1.0;
+
+	// Ensemble
+	appendEnsemble_ = false;
+	ensembleFrequency_ = 10;
 }
 
 // Destructor
@@ -402,6 +406,34 @@ RefList<Module,bool>& Configuration::modules()
 GenericList& Configuration::moduleData()
 {
 	return moduleData_;
+}
+
+/*
+ * Ensemble
+ */
+
+// Set whether ensemble file is to be appended
+void Configuration::setAppendEnsemble(bool b)
+{
+	appendEnsemble_ = b;
+}
+
+// Return whether ensemble file is to be appended
+bool Configuration::appendEnsemble()
+{
+	return appendEnsemble_;
+}
+
+// Return frequency at which to append ensemble
+int Configuration::setEnsembleFrequency(int frequency)
+{
+	ensembleFrequency_ = frequency;
+}
+
+// Return frequency at which to append ensemble
+int Configuration::ensembleFrequency()
+{
+	return ensembleFrequency_;
 }
 
 /*

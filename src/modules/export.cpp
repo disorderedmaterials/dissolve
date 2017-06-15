@@ -42,8 +42,7 @@ ExportModule::ExportModule() : Module()
 
 	// Setup variables / control parameters
 	// Boolean options must be set as 'bool(false)' or 'bool(true)' rather than just 'false' or 'true' so that the correct overloaded add() function is called
-	options_.add("SaveTrajectory", bool(false));
-	options_.add("TrajectoryFile", "trajectory.xyz");
+	options_.add("WriteConfig", bool(false));
 }
 
 // Destructor
@@ -155,7 +154,7 @@ bool ExportModule::preProcess(DUQ& duq, ProcessPool& procPool)
 bool ExportModule::process(DUQ& duq, ProcessPool& procPool)
 {
 	/*
-	* Export data from the target Configuration(s)
+	 * Export data from the target Configuration(s)
 	 */
 
 	// Loop over target Configurations
@@ -165,30 +164,32 @@ bool ExportModule::process(DUQ& duq, ProcessPool& procPool)
 		Configuration* cfg = ri->item;
 
 		// Retrieve control parameters from Configuration
-		bool saveTrajectory = GenericListHelper<bool>::retrieve(cfg->moduleData(), "SaveTrajectory", uniqueName(), options_.valueAsBool("SaveTrajectory"));
+		bool writeConfig = GenericListHelper<bool>::retrieve(cfg->moduleData(), "WriteConfig", uniqueName(), options_.valueAsBool("WriteConfig"));
 
 		/*
-		 * Save XYZ Trajectory
+		 * Write DL_POLY Config
 		 */
-		if (saveTrajectory)
+		if (writeConfig)
 		{
-			const char* trajectoryFile = GenericListHelper<const char*>::retrieve(cfg->moduleData(), "TrajectoryFile", uniqueName(), options_.valueAsString("TrajectoryFile"));
-			Messenger::print("Export: Appending to trajectory output file '%s'...\n", trajectoryFile);
+			Messenger::print("Export: Writing DL_POLY CONFIG file for Configuration '%s'...\n", cfg->name());
 
 			// Only the pool master saves the data
 			if (procPool.isMaster())
 			{
+				// Construct the filename
+				CharString filename("%s.CONFIG", cfg->niceName());
+
 				// Open the file
 				LineParser parser;
-				if (!parser.appendOutput(trajectoryFile))
+				if (!parser.openOutput(filename))
 				{
 					parser.closeFiles();
 					procPool.stop();
 					return false;
 				}
-				else if (!writeConfigurationXYZ(parser, cfg, cfg->name()))
+				else if (!writeConfigurationDLPOLY(parser, cfg, cfg->name()))
 				{
-					Messenger::print("Export: Failed to append to trajectory file.\n");
+					Messenger::print("Export: Failed to export DL_POLY CONFIG file.\n");
 					parser.closeFiles();
 					procPool.stop();
 					return false;
@@ -198,7 +199,7 @@ bool ExportModule::process(DUQ& duq, ProcessPool& procPool)
 			}
 			else if (!procPool.decision()) return false;
 
-			Messenger::print("Export: Finished appending trajectory file.\n");
+			Messenger::print("Export: Finished writing DL_POLY CONFIG file.\n");
 		}
 	}
 
@@ -259,8 +260,6 @@ bool ExportModule::writeConfigurationDLPOLY(LineParser& parser, Configuration* c
 		Atom* i = cfg->atom(n);
 		parser.writeLineF("%-6s%10i%20.10f\n%20.12f%20.12f%20.12f\n", cfg->type(i->localTypeIndex())->name(), n+1, PeriodicTable::element(i->element()).isotope(0)->atomicWeight(), i->r().x, i->r().y, i->r().z);
 	}
-
-	Messenger::print("Export: Finished writing model CONFIG file.\n");
 
 	return true;
 }

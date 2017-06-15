@@ -34,6 +34,8 @@ KeywordData ConfigurationBlockData[] = {
 	{ "CellLengths",		3,	"Gives the relative lengths of the unit cell" },
 	{ "Density",			2,	"Specifies the density of the Configuration, along with its units" },
 	{ "EndConfiguration",		0,	"Signals the end of the Configuration block" },
+	{ "Ensemble",			1,	"Whether an ensemble file should be appended to" },
+	{ "EnsembleFrequency",		1,	"Frequency at which to append ensemble file" },
 	{ "InputCoordinates",		1,	"Specifies the file which contains the starting coordinates" },
 	{ "Module",			1,	"Starts the setup of a Module for this Configuration" },
 	{ "Multiplier",			1,	"Specifies the factor by which relative populations are multiplied when generating the Configuration data" },
