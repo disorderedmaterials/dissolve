@@ -255,7 +255,19 @@ template <class A> class Array : public ListItem< Array<A> >
 		for (int n=0; n<nItems_; ++n) result += array_[n];
 		return result;
 	}
-	
+	// Return maximal absolute value in array
+	A maxAbs() const
+	{
+		A result = 0.0;
+		A temp;
+		for (int n=0; n<nItems_; ++n)
+		{
+			temp = array_[n];
+			if (temp < 0) temp = -temp;
+			if (temp > result) result = temp;
+		}
+		return result;
+	};
 };
 
 // Array2D

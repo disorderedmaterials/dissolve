@@ -1,6 +1,6 @@
 /*
-	*** Test Module
-	*** src/modules/test.h
+	*** Forces Module
+	*** src/modules/forces.h
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -19,27 +19,26 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_TESTMODULE_H
-#define DUQ_TESTMODULE_H
+#ifndef DUQ_FORCESMODULE_H
+#define DUQ_FORCESMODULE_H
 
 #include "modules/module.h"
-#include "base/xydata.h"
 
 // Forward Declarations
 /* none */
 
-// Test Module
-class TestModule : public Module
+// Forces Module
+class ForcesModule : public Module
 {
 	/*
-	 * Module for testing various functions
+	 * Calculates the total energy of the system by one of several methods
 	 */
 
 	public:
 	// Constructor
-	TestModule();
+	ForcesModule();
 	// Destructor
-	~TestModule();
+	~ForcesModule();
 
 
 	/*
@@ -100,16 +99,6 @@ class TestModule : public Module
 	bool process(DUQ& duq, ProcessPool& procPool);
 	// Execute post-processing stage
 	bool postProcess(DUQ& duq, ProcessPool& procPool);
-
-
-	/*
-	 * Local Data
-	 */
-	private:
-	// List of Modules that contain total S(Q) data (i.e. sample data) to fit, and the associated reference data
-	RefList<Module,XYData> sampleData_;
-	// Weights matrix for partials / target data
-	Array2D<double> partialWeights_;
 };
 
 #endif

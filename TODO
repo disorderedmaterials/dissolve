@@ -12,7 +12,6 @@ o Different bond types - e.g. replicate those used in EPSR for reference?
 o Simplify output of new input files by checking module option values to see if they have changed before writing.
 o Accumulate timing information for each module, displaying averages and total in schedule at each step?
 o Allow Isotopologue list input as block as well as single line, since for large molecules the line will become annoyingly long.
-o Grains are next to useless currently, since atoms traversing the unit cell boundaries render the grain 'invalid', and we must keep all atoms folded inside the unit cell to ensure energy / force calculations are correct (i.e. each atom exists inside a Cell).
 
 
 -------------------------------------------

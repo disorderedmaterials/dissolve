@@ -10,11 +10,11 @@ moduleregistry.h
 atomshake.cpp
 energy.cpp
 export.cpp
+forces.cpp
 md.cpp
 partials.cpp
 skeleton.cpp
 test.cpp
-#forces.cpp
 #grainshake.cpp
 #intrashake.cpp
 #twist.cpp
@@ -22,11 +22,11 @@ test.cpp
 atomshake.h
 energy.h
 export.h
+forces.h
 md.h
 partials.h
 skeleton.h
 test.h
-#forces.h
 #grainshake.h
 #intrashake.h
 #twist.h

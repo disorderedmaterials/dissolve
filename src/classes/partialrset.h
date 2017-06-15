@@ -55,15 +55,15 @@ class PartialRSet : public ListItem<PartialRSet>
 	// Histograms used for deriving unbound atom-atom partials
 	Array2D<Histogram> unboundHistograms_;
 	// Pair matrix, containing full atom-atom partial
-	Array2D<Data2D> partials_;
+	Array2D<XYData> partials_;
 	// Unbound matrix, containing atom-atom partial of pairs not joined by bonds or angles
-	Array2D<Data2D> unboundPartials_;
+	Array2D<XYData> unboundPartials_;
 	// Bound matrix, containing atom-atom partial of pairs joined by bonds or angles
-	Array2D<Data2D> boundPartials_;
+	Array2D<XYData> boundPartials_;
 	// Bragg S(Q) matrix, derived from summation of HKL terms
-// 	Array2D<Data2D> braggSQMatrix_;
+// 	Array2D<XYData> braggSQMatrix_;
 	// Total function
-	Data2D total_;
+	XYData total_;
 
 	public:
 	// Setup using supplied Configuration
@@ -85,15 +85,15 @@ class PartialRSet : public ListItem<PartialRSet>
 	// Return unbound histogram specified
 	Histogram& unboundHistogram(int i, int j);
 	// Return full atom-atom partial specified
-	Data2D& partial(int i, int j);
+	XYData& partial(int i, int j);
 	// Return atom-atom partial for pairs not joined by bonds or angles
-	Data2D& unboundPartial(int i, int j);
+	XYData& unboundPartial(int i, int j);
 	// Return atom-atom partial for pairs joined by bonds or angles
-	Data2D& boundPartial(int i, int j);
+	XYData& boundPartial(int i, int j);
 	// Sum partials into total
 	void formTotal();
 	// Return total function
-	Data2D& total();
+	XYData& total();
 	// Save all partials and total
 	bool save();
 
@@ -105,11 +105,11 @@ class PartialRSet : public ListItem<PartialRSet>
 	// Add in partials from source PartialRSet to our own
 	bool addPartials(PartialRSet& source, double weighting);
 	// Form partials from stored Histogram data
-	void formPartials(double boxVolume, Data2D& boxNormalisation);
+	void formPartials(double boxVolume, XYData& boxNormalisation);
 	// Re-weight partials (including total) with supplied weighting factor
 	void reweightPartials(double factor);
 	// Calculate RDF from supplied Histogram and normalisation data
-	void calculateRDF(Data2D& destination, Histogram& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier, Data2D& boxNormalisation);
+	void calculateRDF(XYData& destination, Histogram& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier, XYData& boxNormalisation);
 
 
 	/*

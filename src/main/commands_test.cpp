@@ -32,7 +32,7 @@ bool DUQ::commandTest(Configuration& cfg)
 	calculateBraggSQ(cfg);
 	return false;
 	// Test FT
-// 	Data2D test;
+// 	XYData test;
 // 	int npoints = 1000;
 // 	for (int n=0; n<npoints; ++n)
 // 	{
@@ -40,7 +40,7 @@ bool DUQ::commandTest(Configuration& cfg)
 // 		test.addPoint(x, cos(x)+cos(3.0*x));
 // 	}
 // 	test.save("test.txt");
-// 	Data2D ft = test, another;
+// 	XYData ft = test, another;
 // 	ft.interpolate();
 // 	for (int n=0; n<npoints; ++n)
 // 	{
@@ -53,7 +53,7 @@ bool DUQ::commandTest(Configuration& cfg)
 // 	ft.save("test.sq");
 
 	// Smooth totalRDF_...
-// 	Data2D test = totalRDF_;
+// 	XYData test = totalRDF_;
 // 	test.smooth(3);
 // 	test.save("smooth3.txt");
 // 	test.forwardTransformReal();
@@ -70,21 +70,21 @@ bool DUQ::commandTest(Configuration& cfg)
 		for (typeJ = typeI;  typeJ < typeIndex_.nItems(); ++typeJ)
 		{
 			// Grab references to original and modified data
-			Data2D& sq = workingSQMatrixA_.ref(typeI, typeJ);
+			XYData& sq = workingSQMatrixA_.ref(typeI, typeJ);
 
 			sq.save(CharString::string("mod%s.txt", pairSQMatrix_.ref(typeI, typeJ).name()));
-			Data2D gr = sq;
+			XYData gr = sq;
 			gr.transformSQ(atomicDensity(), windowFunction_);
 			gr.arrayY() += 1.0;
 			gr.save(CharString::string("mod%sft.txt", pairSQMatrix_.ref(typeI, typeJ).name()));
 			
 			// Calculate correlation function for S(Q)
-			Data2D cr = sq;
+			XYData cr = sq;
 			cr.correlateSQ(atomicDensity());
 // 			cr.save("cr.txt");
 			
 			// Calculate PP from Hypernetted chain and Percus-Yevick theories
-			Data2D hnc, py, pmf;
+			XYData hnc, py, pmf;
 			double y;
 			for (int n=0; n<cr.nPoints(); ++n)
 			{
@@ -107,7 +107,7 @@ bool DUQ::commandTest(Configuration& cfg)
 	}
 	
 // 	// Arbitrarily extend S(Q)
-// 	Data2D gr, sq = samples_[0]->referenceFQ();
+// 	XYData gr, sq = samples_[0]->referenceFQ();
 // 	sq.arrayY() /= 6.2;
 // 	for (int n=0; n<sq.nPoints(); ++n) if (sq.x(n) > 11.14) sq.setY(n, 0.0);
 // 	for (int n=0; n<1000; ++n) sq.addPoint( (sq.x(1)-sq.x(0)) + sq.arrayX().last(), 0.0);
@@ -139,12 +139,12 @@ bool DUQ::commandTest(Configuration& cfg)
 // 	}
 
 // 	// Calculate correlation function for S(Q)
-// 	Data2D cr = sq;
+// 	XYData cr = sq;
 // 	cr.correlateSQ(atomicDensity());
 // 	cr.save("cr.txt");
 // 	
 // 	// Calculate PP from Hypernetted chain and Percus-Yevick theories
-// 	Data2D hnc, py;
+// 	XYData hnc, py;
 // 	double y;
 // 	for (int n=0; n<cr.nPoints(); ++n)
 // 	{

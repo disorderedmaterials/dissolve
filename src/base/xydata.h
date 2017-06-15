@@ -1,6 +1,6 @@
 /*
-	*** Two-Dimensional Data
-	*** src/base/data2d.h
+	*** Basic XY Data
+	*** src/base/xydata.h
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -19,24 +19,24 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_DATA2D_H
-#define DUQ_DATA2D_H
+#ifndef DUQ_XYDATA_H
+#define DUQ_XYDATA_H
 
 #include "base/charstring.h"
 #include "templates/array.h"
 
 #define OPTOLERANCE 1.0e-6
 
-// Data2D
-class Data2D : public ListItem<Data2D>
+// XYData
+class XYData : public ListItem<XYData>
 {
 	public:
 	// Constructor
-	Data2D();
+	XYData();
 	// Destructor
-	~Data2D();
+	~XYData();
 	// Copy Constructor
-	Data2D(const Data2D& source);
+	XYData(const XYData& source);
 	// Clear data
 	void clear();
 	
@@ -66,9 +66,9 @@ class Data2D : public ListItem<Data2D>
 	// Create new X data and empty Y data
 	void createEmpty(double xDelta, double xMax, bool halfBins = true);
 	// Copy existing X and Y data
-	void copyData(Data2D& source);
+	void copyData(XYData& source);
 	// Copy existing X data and generate empty Y
-	void templateFrom(Data2D& source);
+	void templateFrom(XYData& source);
 	// Return current array size
 	int arraySize();
 	// Set data point 
@@ -108,17 +108,17 @@ class Data2D : public ListItem<Data2D>
 	 */
 	public:
 	// Assignment Operator
-	void operator=(const Data2D& source);
+	void operator=(const XYData& source);
 	// Operator +
-	Data2D operator+(const Data2D& source) const;
+	XYData operator+(const XYData& source) const;
 	// Operator +=
-	void operator+=(const Data2D& source);
+	void operator+=(const XYData& source);
 	// Operator +=
 	void operator+=(const double dy);
 	// Operator -
-	Data2D operator-(const Data2D& source) const;
+	XYData operator-(const XYData& source) const;
 	// Operator -=
-	void operator-=(const Data2D& source);
+	void operator-=(const XYData& source);
 	// Operator -=
 	void operator-=(const double dy);
 	// Operator *=
@@ -145,23 +145,23 @@ class Data2D : public ListItem<Data2D>
 	// Convert text string to WindowFunction
 	static WindowFunction windowFunction(const char* s);
 	// Covert WindowFunction to text string
-	static const char* windowFunction(Data2D::WindowFunction wf);
+	static const char* windowFunction(XYData::WindowFunction wf);
 
 	private:
 	// Make some checks before doing transform
 	bool checkBeforeTransform();
 	// Return value of window function at specified position (in range 0 - 1.0)
-	double window(Data2D::WindowFunction wf, double pos);
+	double window(XYData::WindowFunction wf, double pos);
 
 	public:
 	// Perform plain Fourier transform of real data
-	bool fourierTransformReal(bool forwardTransform = true, Data2D::WindowFunction wf = Data2D::NoWindow);
+	bool fourierTransformReal(bool forwardTransform = true, XYData::WindowFunction wf = XYData::NoWindow);
 	// Transform g(r) to S(Q)
-	bool transformRDF(double atomicDensity, Data2D::WindowFunction wf = Data2D::NoWindow);
+	bool transformRDF(double atomicDensity, XYData::WindowFunction wf = XYData::NoWindow);
 	// Transform g(r) to S(Q), applying instrumental broadening functions
-	bool transformBroadenedRDF(double atomicDensity, double qStep, double qMax, double qDepFWHM, double qIndepFWHM, Data2D::WindowFunction wf = Data2D::NoWindow);
+	bool transformBroadenedRDF(double atomicDensity, double qStep, double qMax, double qDepFWHM, double qIndepFWHM, XYData::WindowFunction wf = XYData::NoWindow);
 	// Transform S(Q) to g(r)
-	bool transformSQ(double atomicDensity, Data2D::WindowFunction wf = Data2D::NoWindow);
+	bool transformSQ(double atomicDensity, XYData::WindowFunction wf = XYData::NoWindow);
 	// Fourier transform current data, applying line-width broadening in real-space using the modified Lorch function
 	bool transformLorch(double atomicDensity, double step, double rMax, double beta, double delta0, bool qToR);
 	// Calculate S(Q) correlation function
@@ -189,7 +189,7 @@ class Data2D : public ListItem<Data2D>
 	// Smooth data
 	void smooth(int avgSize, int skip = 0);
 	// Add interpolated data
-	void addInterpolated(Data2D& source, double weighting = 1.0);
+	void addInterpolated(XYData& source, double weighting = 1.0);
 
 
 	/*
@@ -211,7 +211,7 @@ class Data2D : public ListItem<Data2D>
 	// Apply median filter to data
 	void medianFilter(int length);
 	// Convolute this data with the supplied data, by products
-	bool convoluteProduct(Data2D& data);
+	bool convoluteProduct(XYData& data);
 	// Trim data to X-range specified
 	void trim(double minX, double maxX);
 	// Rebin data onto uniform x axis

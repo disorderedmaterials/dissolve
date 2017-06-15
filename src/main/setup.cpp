@@ -60,13 +60,13 @@ int DUQ::maxIterations()
 }
 
 // Set window function to use for all Fourier transforms
-void DUQ::setWindowFunction(Data2D::WindowFunction wf)
+void DUQ::setWindowFunction(XYData::WindowFunction wf)
 {
 	windowFunction_ = wf;
 }
 
 // Return window function to use for all Fourier transforms
-Data2D::WindowFunction DUQ::windowFunction()
+XYData::WindowFunction DUQ::windowFunction()
 {
 	return windowFunction_;
 }

@@ -207,8 +207,9 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 	int n, nCapped = 0;
 	Atom* atoms = cfg->atoms();
 	Atom* i;
-	double maxDelta, deltaSq, tInstant, ke, tScale, peInter, peIntra;
+	double tInstant, ke, tScale, peInter, peIntra;
 	double deltaTSq = deltaT*deltaT;
+	double fMax, fTemp;
 
 	/*
 	 * Calculation Begins
@@ -315,7 +316,7 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 		// Grain coordinates will have changed...
 		cfg->updateAtomsInCells();
 
-		// Calculate forces - must multiply by 100.0 to convert from kJ/mol to 10J/mol (internal MD units)
+		// Calculate forces - must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
 		fx = 0.0;
 		fy = 0.0;
 		fz = 0.0;
@@ -325,42 +326,49 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 		fz *= 100.0;
 
 		// Cap forces (per atom, per axis)
-		if (maxForce > 0)
-		{
-			for (n=0; n<cfg->nAtoms(); ++n)
-			{
-				if (fx[n] > maxForce)
-				{
-					fx[n] = maxForce;
-					++nCapped;
-				}
-				else if (fx[n] < -maxForce)
-				{
-					fx[n] = -maxForce;
-					++nCapped;
-				}
-				if (fy[n] > maxForce)
-				{
-					fy[n] = maxForce;
-					++nCapped;
-				}
-				else if (fy[n] < -maxForce)
-				{
-					fy[n] = -maxForce;
-					++nCapped;
-				}
-				if (fz[n] > maxForce)
-				{
-					fz[n] = maxForce;
-					++nCapped;
-				}
-				else if (fz[n] < -maxForce)
-				{
-					fz[n] = -maxForce;
-					++nCapped;
-				}
-			}
-		}
+// 		if (maxForce > 0)
+// 		{
+// 			for (n=0; n<cfg->nAtoms(); ++n)
+// 			{
+// 				if (fx[n] > maxForce)
+// 				{
+// 					fx[n] = maxForce;
+// 					++nCapped;
+// 				}
+// 				else if (fx[n] < -maxForce)
+// 				{
+// 					fx[n] = -maxForce;
+// 					++nCapped;
+// 				}
+// 				if (fy[n] > maxForce)
+// 				{
+// 					fy[n] = maxForce;
+// 					++nCapped;
+// 				}
+// 				else if (fy[n] < -maxForce)
+// 				{
+// 					fy[n] = -maxForce;
+// 					++nCapped;
+// 				}
+// 				if (fz[n] > maxForce)
+// 				{
+// 					fz[n] = maxForce;
+// 					++nCapped;
+// 				}
+// 				else if (fz[n] < -maxForce)
+// 				{
+// 					fz[n] = -maxForce;
+// 					++nCapped;
+// 				}
+// 			}
+// 		}
+
+		fMax = fx.maxAbs();
+		fTemp = fy.maxAbs();
+		if (fTemp > fMax) fMax = fTemp;
+		fTemp = fz.maxAbs();
+		if (fTemp > fMax) fMax = fTemp;
+		printf("Max force is %10.3e, timestep = %10.3e\n", fMax, 1.0 / fMax);
 
 		// Velocity Verlet second stage (B) and velocity scaling
 		// A:  r(t+dt) = r(t) + v(t)*dt + 0.5*a(t)*dt**2

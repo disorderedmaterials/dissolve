@@ -23,7 +23,7 @@
 #define DUQ_PARTIALQSET_H
 
 #include "classes/atomtypelist.h"
-#include "base/data2d.h"
+#include "base/xydata.h"
 #include "templates/list.h"
 #include "templates/array.h"
 
@@ -49,15 +49,15 @@ class PartialQSet : public ListItem<PartialQSet>
 	// Index (e.g. in related Configuration) at which these partials were last calculated
 	int index_;
 	// Pair matrix, containing full atom-atom partial
-	Array2D<Data2D> partials_;
+	Array2D<XYData> partials_;
 	// Unbound matrix, containing atom-atom partial of pairs not joined by bonds or angles
-	Array2D<Data2D> unboundPartials_;
+	Array2D<XYData> unboundPartials_;
 	// Bound matrix, containing atom-atom partial of pairs joined by bonds or angles
-	Array2D<Data2D> boundPartials_;
+	Array2D<XYData> boundPartials_;
 	// Bragg S(Q) matrix, derived from summation of HKL terms
-// 	Array2D<Data2D> braggSQMatrix_;
+// 	Array2D<XYData> braggSQMatrix_;
 	// Total function
-	Data2D total_;
+	XYData total_;
 
 	public:
 	// Setup array storage based on supplied Configuration
@@ -71,15 +71,15 @@ class PartialQSet : public ListItem<PartialQSet>
 	// Set new index
 	void setIndex(int index);
 	// Return full atom-atom partial specified
-	Data2D& partial(int i, int j);
+	XYData& partial(int i, int j);
 	// Return atom-atom partial for pairs not joined by bonds or angles
-	Data2D& unboundPartial(int i, int j);
+	XYData& unboundPartial(int i, int j);
 	// Return atom-atom partial for pairs joined by bonds or angles
-	Data2D& boundPartial(int i, int j);
+	XYData& boundPartial(int i, int j);
 	// Sum partials into total
 	void formTotal();
 	// Return total function
-	Data2D& total();
+	XYData& total();
 	// Save partials information to disk
 	bool save();
 

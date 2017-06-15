@@ -139,7 +139,7 @@ int TestModule::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetLi
 		}
 
 		// All fine, so add data to the list and load any reference data
-		RefListItem<Module,Data2D>* newSample = sampleData_.add(partialsModule);
+		RefListItem<Module,XYData>* newSample = sampleData_.add(partialsModule);
 		if (parser.hasArg(2) && !newSample->data.load(parser.argc(2))) return false;
 	}
 	else return -1;
@@ -179,7 +179,7 @@ bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 	// First, check that we can find the total structure factors that have been specified
 	sampleData_.clear();
 	
-	RefListIterator<Module,Data2D> sampleIterator(sampleData_);
+	RefListIterator<Module,XYData> sampleIterator(sampleData_);
 	while (Module* module = sampleIterator.iterate())
 	{
 		// First, need to grab GenericList that will contain the target

@@ -162,19 +162,19 @@ Histogram& PartialRSet::unboundHistogram(int i, int j)
 }
 
 // Return full atom-atom partial specified
-Data2D& PartialRSet::partial(int i, int j)
+XYData& PartialRSet::partial(int i, int j)
 {
 	return partials_.ref(i, j);
 }
 
 // Return atom-atom partial for pairs not joined by bonds or angles
-Data2D& PartialRSet::unboundPartial(int i, int j)
+XYData& PartialRSet::unboundPartial(int i, int j)
 {
 	return unboundPartials_.ref(i, j);
 }
 
 // Return atom-atom partial for pairs joined by bonds or angles
-Data2D& PartialRSet::boundPartial(int i, int j)
+XYData& PartialRSet::boundPartial(int i, int j)
 {
 	return boundPartials_.ref(i, j);
 }
@@ -212,7 +212,7 @@ void PartialRSet::formTotal()
 }
 
 // Return total function
-Data2D& PartialRSet::total()
+XYData& PartialRSet::total()
 {
 	return total_;
 }
@@ -239,9 +239,9 @@ bool PartialRSet::save()
 				return false;
 			}
 			
-			Data2D& rdf = partials_.ref(typeI,typeJ);
-			Data2D& bound = boundPartials_.ref(typeI,typeJ);
-			Data2D& unbound = unboundPartials_.ref(typeI,typeJ);
+			XYData& rdf = partials_.ref(typeI,typeJ);
+			XYData& bound = boundPartials_.ref(typeI,typeJ);
+			XYData& unbound = unboundPartials_.ref(typeI,typeJ);
 			parser.writeLineF("# %-14s  %-16s  %-16s  %-16s\n", "r, Angstroms", "g(r)", "bound(r)", "unbound(r)"); 
 			for (n = 0; n<rdf.nPoints(); ++n) parser.writeLineF("%16.10e  %16.10e  %16.10e  %16.10e\n", rdf.x(n), rdf.y(n), bound.y(n), unbound.y(n));
 			parser.closeFiles();
@@ -297,7 +297,7 @@ bool PartialRSet::addPartials(PartialRSet& source, double weighting)
 }
 
 // Form partials from stored Histogram data
-void PartialRSet::formPartials(double boxVolume, Data2D& boxNormalisation)
+void PartialRSet::formPartials(double boxVolume, XYData& boxNormalisation)
 {
 	int n, m;
 	int nTypes = atomTypes_.nItems();
@@ -337,7 +337,7 @@ void PartialRSet::reweightPartials(double factor)
 }
 
 // Calculate and return RDF from supplied Histogram and normalisation data
-void PartialRSet::calculateRDF(Data2D& destination, Histogram& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier, Data2D& boxNormalisation)
+void PartialRSet::calculateRDF(XYData& destination, Histogram& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier, XYData& boxNormalisation)
 {
 	int nBins = histogram.nBins();
 	double delta = histogram.delta();

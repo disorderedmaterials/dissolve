@@ -1,6 +1,6 @@
 /*
-	*** Two-dimensional data
-	*** src/base/data2d.cpp
+	*** Basic XY Data
+	*** src/base/xydata.cpp
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -20,7 +20,7 @@
 */
 
 #include "base/processpool.h"
-#include "base/data2d.h"
+#include "base/xydata.h"
 #include "base/messenger.h"
 #include "math/constants.h"
 #include <math.h>
@@ -29,10 +29,10 @@
 #include <string.h>
 
 // Static Members
-bool Data2D::useFFT_ = false;
+bool XYData::useFFT_ = false;
 
 // Constructor
-Data2D::Data2D() : ListItem<Data2D>()
+XYData::XYData() : ListItem<XYData>()
 {
 	name_ = "Untitled";
 	splineInterval_ = -1;
@@ -40,12 +40,12 @@ Data2D::Data2D() : ListItem<Data2D>()
 }
 
 // Destructor
-Data2D::~Data2D()
+XYData::~XYData()
 {
 }
 
 // Copy Constructor
-Data2D::Data2D(const Data2D& source)
+XYData::XYData(const XYData& source)
 {
 	x_ = source.x_;
 	y_ = source.y_;
@@ -60,7 +60,7 @@ Data2D::Data2D(const Data2D& source)
 }
 
 // Clear Data
-void Data2D::clear()
+void XYData::clear()
 {
 	x_.clear();
 	y_.clear();
@@ -77,7 +77,7 @@ void Data2D::clear()
  */
 
 // Reset arrays to zero
-void Data2D::reset()
+void XYData::reset()
 {
 	for (int n=0; n<x_.nItems(); ++n) x_[n] = 0.0;
 	for (int n=0; n<y_.nItems(); ++n) y_[n] = 0.0;
@@ -85,7 +85,7 @@ void Data2D::reset()
 }
 
 // Initialise arrays to specified size
-void Data2D::initialise(int size)
+void XYData::initialise(int size)
 {
 	clear();
 	x_.initialise(size);
@@ -93,7 +93,7 @@ void Data2D::initialise(int size)
 }
 
 // Create new X data and empty Y data
-void Data2D::createEmpty(double xDelta, double xMax, bool halfBins)
+void XYData::createEmpty(double xDelta, double xMax, bool halfBins)
 {
 	clear();
 	double x = (halfBins ? 0.5*xDelta : 0.0);
@@ -105,7 +105,7 @@ void Data2D::createEmpty(double xDelta, double xMax, bool halfBins)
 }
 
 // Copy existing X and Y data
-void Data2D::copyData(Data2D& source)
+void XYData::copyData(XYData& source)
 {
 	x_ = source.x_;
 	y_ = source.y_;
@@ -119,7 +119,7 @@ void Data2D::copyData(Data2D& source)
 }
 
 // Copy existing X data and generate empty Y
-void Data2D::templateFrom(Data2D& source)
+void XYData::templateFrom(XYData& source)
 {
 	x_ = source.x_;
 	y_.initialise(x_.nItems(), 0.0);
@@ -127,23 +127,23 @@ void Data2D::templateFrom(Data2D& source)
 }
 
 // Return current array size
-int Data2D::arraySize()
+int XYData::arraySize()
 {
 	return x_.nItems();
 }
 
 // Set specified data point
-void Data2D::setPoint(int index, double x, double y)
+void XYData::setPoint(int index, double x, double y)
 {
 #ifdef CHECKS
 	if ((index < 0) || (index >= x_.nItems()))
 	{
-		Messenger::print("OUT_OF_RANGE - Index %i is out of range for x_ array in Data2D::setPoint().\n", index);
+		Messenger::print("OUT_OF_RANGE - Index %i is out of range for x_ array in XYData::setPoint().\n", index);
 		return;
 	}
 	if ((index < 0) || (index >= y_.nItems()))
 	{
-		Messenger::print("OUT_OF_RANGE - Index %i is out of range for y_ array in Data2D::setPoint().\n", index);
+		Messenger::print("OUT_OF_RANGE - Index %i is out of range for y_ array in XYData::setPoint().\n", index);
 		return;
 	}
 #endif
@@ -153,18 +153,18 @@ void Data2D::setPoint(int index, double x, double y)
 }
 
 // Return number of defined datapoints
-int Data2D::nPoints() const
+int XYData::nPoints() const
 {
 	return x_.nItems();
 }
 
 // Set x value
-void Data2D::setX(int index, double x)
+void XYData::setX(int index, double x)
 {
 #ifdef CHECKS
 	if ((index < 0) || (index >= x_.nItems()))
 	{
-		Messenger::print("OUT_OF_RANGE - Index %i is out of range for x_ array in Data2D::setX().\n", index);
+		Messenger::print("OUT_OF_RANGE - Index %i is out of range for x_ array in XYData::setX().\n", index);
 		return;
 	}
 #endif
@@ -173,12 +173,12 @@ void Data2D::setX(int index, double x)
 }
 
 // Add to x value
-void Data2D::addX(int index, double delta)
+void XYData::addX(int index, double delta)
 {
 #ifdef CHECKS
 	if ((index < 0) || (index >= x_.nItems()))
 	{
-		Messenger::print("OUT_OF_RANGE - Index %i is out of range for x_ array in Data2D::addX().\n", index);
+		Messenger::print("OUT_OF_RANGE - Index %i is out of range for x_ array in XYData::addX().\n", index);
 		return;
 	}
 #endif
@@ -187,12 +187,12 @@ void Data2D::addX(int index, double delta)
 }
 
 // Return x value specified
-double Data2D::x(int index) const
+double XYData::x(int index) const
 {
 #ifdef CHECKS
 	if ((index < 0) || (index >= x_.nItems()))
 	{
-		Messenger::print("OUT_OF_RANGE - Index %i is out of range for x_ array in Data2D::x().\n", index);
+		Messenger::print("OUT_OF_RANGE - Index %i is out of range for x_ array in XYData::x().\n", index);
 		return 0.0;
 	}
 #endif
@@ -200,19 +200,19 @@ double Data2D::x(int index) const
 }
 
 // Return x Array
-Array<double>& Data2D::arrayX()
+Array<double>& XYData::arrayX()
 {
 	splineInterval_ = -1;
 	return x_;
 }
 
 // Set y value
-void Data2D::setY(int index, double y)
+void XYData::setY(int index, double y)
 {
 #ifdef CHECKS
 	if ((index < 0) || (index >= y_.nItems()))
 	{
-		Messenger::print("OUT_OF_RANGE - Index %i is out of range for y_ array in Data2D::setY().\n", index);
+		Messenger::print("OUT_OF_RANGE - Index %i is out of range for y_ array in XYData::setY().\n", index);
 		return;
 	}
 #endif
@@ -221,12 +221,12 @@ void Data2D::setY(int index, double y)
 }
 
 // Add to y value
-void Data2D::addY(int index, double delta)
+void XYData::addY(int index, double delta)
 {
 #ifdef CHECKS
 	if ((index < 0) || (index >= y_.nItems()))
 	{
-		Messenger::print("OUT_OF_RANGE - Index %i is out of range for y_ array in Data2D::addY().\n", index);
+		Messenger::print("OUT_OF_RANGE - Index %i is out of range for y_ array in XYData::addY().\n", index);
 		return;
 	}
 #endif
@@ -235,7 +235,7 @@ void Data2D::addY(int index, double delta)
 }
 
 // Add to y array
-bool Data2D::addY(const Array<double>& source, double factor)
+bool XYData::addY(const Array<double>& source, double factor)
 {
 	if (y_.nItems() != source.nItems())
 	{
@@ -249,12 +249,12 @@ bool Data2D::addY(const Array<double>& source, double factor)
 }
 
 // Multiply y value
-void Data2D::multiplyY(int index, double factor)
+void XYData::multiplyY(int index, double factor)
 {
 #ifdef CHECKS
 	if ((index < 0) || (index >= y_.nItems()))
 	{
-		Messenger::print("OUT_OF_RANGE - Index %i is out of range for y_ array in Data2D::multiplyY().\n", index);
+		Messenger::print("OUT_OF_RANGE - Index %i is out of range for y_ array in XYData::multiplyY().\n", index);
 		return;
 	}
 #endif
@@ -263,12 +263,12 @@ void Data2D::multiplyY(int index, double factor)
 }
 
 // Return y value specified
-double Data2D::y(int index) const
+double XYData::y(int index) const
 {
 #ifdef CHECKS
 	if ((index < 0) || (index >= y_.nItems()))
 	{
-		Messenger::print("OUT_OF_RANGE - Index %i is out of range for y_ array in Data2D::y().\n", index);
+		Messenger::print("OUT_OF_RANGE - Index %i is out of range for y_ array in XYData::y().\n", index);
 		return 0.0;
 	}
 #endif
@@ -276,14 +276,14 @@ double Data2D::y(int index) const
 }
 
 // Return y Array
-Array<double>& Data2D::arrayY()
+Array<double>& XYData::arrayY()
 {
 	splineInterval_ = -1;
 	return y_;
 }
 
 // Add new data point
-void Data2D::addPoint(double x, double y)
+void XYData::addPoint(double x, double y)
 {
 	x_.add(x);
 	y_.add(y);
@@ -291,13 +291,13 @@ void Data2D::addPoint(double x, double y)
 }
 
 // Set name of data
-void Data2D::setName(const char* name)
+void XYData::setName(const char* name)
 {
 	name_ = name;
 }
 
 // Return name of data
-const char* Data2D::name() const
+const char* XYData::name() const
 {
 	return name_.get();
 }
@@ -307,7 +307,7 @@ const char* Data2D::name() const
  */
 
 // Operator =
-void Data2D::operator=(const Data2D& source)
+void XYData::operator=(const XYData& source)
 {
 	x_ = source.x_;
 	y_ = source.y_;
@@ -321,15 +321,15 @@ void Data2D::operator=(const Data2D& source)
 }
 
 // Operator +
-Data2D Data2D::operator+(const Data2D& source) const
+XYData XYData::operator+(const XYData& source) const
 {
 	// Construct copy of current data
-	Data2D newData(*this);
+	XYData newData(*this);
 	
 	// Check array sizes
 	if (x_.nItems() != source.x_.nItems())
 	{
-		Messenger::error("Can't + these Data2D together, since they are of differing sizes (%i vs %i).\n", x_.nItems(), source.x_.nItems());
+		Messenger::error("Can't + these XYData together, since they are of differing sizes (%i vs %i).\n", x_.nItems(), source.x_.nItems());
 		return newData;
 	}
 
@@ -339,7 +339,7 @@ Data2D Data2D::operator+(const Data2D& source) const
 		// Check x values
 		if (fabs(x_.value(n) - source.x_.value(n)) > OPTOLERANCE)
 		{
-			Messenger::error("Can't + these Data2D, since the x axes are different.\n");
+			Messenger::error("Can't + these XYData, since the x axes are different.\n");
 			return newData;
 		}
 		newData.y_[n] += source.y_.value(n);
@@ -351,7 +351,7 @@ Data2D Data2D::operator+(const Data2D& source) const
 }
 
 // Operator +=
-void Data2D::operator+=(const Data2D& source)
+void XYData::operator+=(const XYData& source)
 {
 	// If source array is empty, nothing to do
 	if (source.nPoints() == 0) return;
@@ -366,7 +366,7 @@ void Data2D::operator+=(const Data2D& source)
 	// Check array sizes
 	if (x_.nItems() != source.x_.nItems())
 	{
-		Messenger::error("Can't += these Data2D together, since they are of differing sizes (%i vs %i).\n", x_.nItems(), source.x_.nItems());
+		Messenger::error("Can't += these XYData together, since they are of differing sizes (%i vs %i).\n", x_.nItems(), source.x_.nItems());
 		return;
 	}
 
@@ -376,7 +376,7 @@ void Data2D::operator+=(const Data2D& source)
 		// Check x values
 		if (fabs(x_.value(n) - source.x_.value(n)) > OPTOLERANCE)
 		{
-			Messenger::error("Can't += these Data2D, since the x axes are different.\n");
+			Messenger::error("Can't += these XYData, since the x axes are different.\n");
 			return;
 		}
 		y_[n] += source.y_.value(n);
@@ -386,22 +386,22 @@ void Data2D::operator+=(const Data2D& source)
 }
 
 // Operator +=
-void Data2D::operator+=(const double dy)
+void XYData::operator+=(const double dy)
 {
 	for (int n=0; n<x_.nItems(); ++n) y_[n] += dy;
 	splineInterval_ = -1;
 }
 
 // Operator -
-Data2D Data2D::operator-(const Data2D& source) const
+XYData XYData::operator-(const XYData& source) const
 {
 	// Construct copy of current data
-	Data2D newData(*this);
+	XYData newData(*this);
 	
 	// Check array sizes
 	if (x_.nItems() != source.x_.nItems())
 	{
-		Messenger::error("Can't - these Data2D together, since they are of differing sizes (%i vs %i).\n", x_.nItems(), source.x_.nItems());
+		Messenger::error("Can't - these XYData together, since they are of differing sizes (%i vs %i).\n", x_.nItems(), source.x_.nItems());
 		return newData;
 	}
 
@@ -411,7 +411,7 @@ Data2D Data2D::operator-(const Data2D& source) const
 		// Check x values
 		if (fabs(x_.value(n) - source.x_.value(n)) > OPTOLERANCE)
 		{
-			Messenger::error("Can't - these Data2D, since the x axes are different.\n");
+			Messenger::error("Can't - these XYData, since the x axes are different.\n");
 			return newData;
 		}
 		newData.y_[n] -= source.y_.value(n);
@@ -423,7 +423,7 @@ Data2D Data2D::operator-(const Data2D& source) const
 }
 
 // Operator -=
-void Data2D::operator-=(const Data2D& source)
+void XYData::operator-=(const XYData& source)
 {
 	// Initialise current arrays?
 	if (x_.nItems() == 0)
@@ -435,7 +435,7 @@ void Data2D::operator-=(const Data2D& source)
 	// Check array sizes
 	if (x_.nItems() != source.x_.nItems())
 	{
-		Messenger::error("Can't -= these Data2D together, since they are of differing sizes (%i vs %i).\n", x_.nItems(), source.x_.nItems());
+		Messenger::error("Can't -= these XYData together, since they are of differing sizes (%i vs %i).\n", x_.nItems(), source.x_.nItems());
 		return;
 	}
 
@@ -445,7 +445,7 @@ void Data2D::operator-=(const Data2D& source)
 		// Check x values
 		if (fabs(x_.value(n) - source.x_.value(n)) > OPTOLERANCE)
 		{
-			Messenger::error("Can't -= these Data2D, since the x axes are different.\n");
+			Messenger::error("Can't -= these XYData, since the x axes are different.\n");
 			return;
 		}
 		y_[n] -= source.y_.value(n);
@@ -455,14 +455,14 @@ void Data2D::operator-=(const Data2D& source)
 }
 
 // Operator -=
-void Data2D::operator-=(const double dy)
+void XYData::operator-=(const double dy)
 {
 	for (int n=0; n<x_.nItems(); ++n) y_[n] -= dy;
 	splineInterval_ = -1;
 }
 
 // Operator *=
-void Data2D::operator*=(const double factor)
+void XYData::operator*=(const double factor)
 {
 	// Multiply current data
 	for (int n=0; n<x_.nItems(); ++n) y_[n] *= factor;
@@ -470,7 +470,7 @@ void Data2D::operator*=(const double factor)
 }
 
 // Operator /=
-void Data2D::operator/=(const double factor)
+void XYData::operator/=(const double factor)
 {
 	// Divide current data
 	for (int n=0; n<x_.nItems(); ++n) y_[n] /= factor;
@@ -485,32 +485,32 @@ void Data2D::operator/=(const double factor)
 const char* WindowFunctionKeywords[] = { "None", "Bartlett", "Hann", "Lanczos", "Nuttall", "Sine" };
 
 // Convert text string to WindowFunction
-Data2D::WindowFunction Data2D::windowFunction(const char* s)
+XYData::WindowFunction XYData::windowFunction(const char* s)
 {
-	for (int n=0; n<Data2D::nWindowFunctions; ++n) if (strcmp(s,WindowFunctionKeywords[n]) == 0) return (Data2D::WindowFunction) n;
-	return Data2D::nWindowFunctions;
+	for (int n=0; n<XYData::nWindowFunctions; ++n) if (strcmp(s,WindowFunctionKeywords[n]) == 0) return (XYData::WindowFunction) n;
+	return XYData::nWindowFunctions;
 }
 
 // Convert WindowFunction to text string
-const char* Data2D::windowFunction(Data2D::WindowFunction wf)
+const char* XYData::windowFunction(XYData::WindowFunction wf)
 {
 	return WindowFunctionKeywords[wf];
 }
 
 // Make some checks before doing transform
-bool Data2D::checkBeforeTransform()
+bool XYData::checkBeforeTransform()
 {
 	// Enough data to do transform?
 	if (x_.nItems() < 5)
 	{
-		Messenger::error("Not enough X data points (%i) in Data2D. Can't do transform.\n", x_.nItems());
+		Messenger::error("Not enough X data points (%i) in XYData. Can't do transform.\n", x_.nItems());
 		return false;
 	}
 	
 	// X and Y arrays match?
 	if (x_.nItems() != y_.nItems())
 	{
-		Messenger::error("X and Y array sizes do not match (%i vs %i) in Data2D. Can't do transform.\n", x_.nItems(), y_.nItems());
+		Messenger::error("X and Y array sizes do not match (%i vs %i) in XYData. Can't do transform.\n", x_.nItems(), y_.nItems());
 		return false;
 	}
 
@@ -518,7 +518,7 @@ bool Data2D::checkBeforeTransform()
 	double deltaX = x_[1] - x_[0], tolerance = 0.001;
 	for (int n=2; n<x_.nItems(); ++n) if (fabs((x_[n] - x_[n-1])-deltaX) > tolerance)
 	{
-		Messenger::error("Data are unevenly spaced in Data2D. Can't do transform.\n");
+		Messenger::error("Data are unevenly spaced in XYData. Can't do transform.\n");
 		return false;
 	}
 	
@@ -526,29 +526,29 @@ bool Data2D::checkBeforeTransform()
 }
 
 // Return value of window function at specified position (in range 0.0 - 1.0 inclusive)
-double Data2D::window(Data2D::WindowFunction wf, double x)
+double XYData::window(XYData::WindowFunction wf, double x)
 {
 #ifdef CHECKS
 	if ((x < 0.0) || (x > 1.0)) Messenger::warn("Position for window function is out of range (%f).\n", x);
 #endif
 	switch (wf)
 	{
-		case (Data2D::NoWindow):
+		case (XYData::NoWindow):
 			return 1.0;
 			break;
-		case (Data2D::BartlettWindow):
+		case (XYData::BartlettWindow):
 			return (1.0 - fabs( (x-0.5)/0.5 ));
 			break;
-		case (Data2D::HannWindow):
+		case (XYData::HannWindow):
 			return 0.5*(1.0-cos(2*PI*x));
 			break;
-		case (Data2D::LanczosWindow):
+		case (XYData::LanczosWindow):
 			return sin(PI*(2*x-1.0))/(PI*(2*x-1.0));
 			break;
-		case (Data2D::NuttallWindow):
+		case (XYData::NuttallWindow):
 			return (0.355768 - 0.487396*cos(2.0*PI*x) + 0.144232*cos(4.0*PI*x) - 0.012604*cos(6.0*PI*x));
 			break;
-		case (Data2D::SineWindow):
+		case (XYData::SineWindow):
 			return sin(PI*x);
 			break;
 		default:
@@ -558,7 +558,7 @@ double Data2D::window(Data2D::WindowFunction wf, double x)
 }
 
 // Perform plain Fourier transform of real data
-bool Data2D::fourierTransformReal(bool forwardTransform, Data2D::WindowFunction wf)
+bool XYData::fourierTransformReal(bool forwardTransform, XYData::WindowFunction wf)
 {
 	// Okay to continue with transform?
 	if (!checkBeforeTransform()) return false;
@@ -568,7 +568,7 @@ bool Data2D::fourierTransformReal(bool forwardTransform, Data2D::WindowFunction 
 	double lambda = x_.last() - x_.first();
 	double k = TWOPI / lambda;
 	double deltaX = x_[1] - x_[0];
-	Messenger::printVerbose("In Data2D::fourierTransformReal(), period of function is %f, real deltaX is %f, and wavenumber is %f\n", lambda, deltaX, k);
+	Messenger::printVerbose("In XYData::fourierTransformReal(), period of function is %f, real deltaX is %f, and wavenumber is %f\n", lambda, deltaX, k);
 
 	// Create working arrays
 	Array<double> real(x_.nItems()), imaginary(x_.nItems());
@@ -613,7 +613,7 @@ bool Data2D::fourierTransformReal(bool forwardTransform, Data2D::WindowFunction 
 }
 
 // Transform g(r) to S(Q)
-bool Data2D::transformRDF(double atomicDensity, Data2D::WindowFunction wf)
+bool XYData::transformRDF(double atomicDensity, XYData::WindowFunction wf)
 {
 	// Okay to continue with transform?
 	if (!checkBeforeTransform()) return false;
@@ -624,9 +624,9 @@ bool Data2D::transformRDF(double atomicDensity, Data2D::WindowFunction wf)
 	double lambda = x_.last() - x_.first() + deltaR;
 	double k = TWOPI / lambda;
 	double windowPos;
-	Messenger::printVerbose("In Data2D::transformRDF(), period of function is %f, real deltaX is %f, and wavenumber is %f\n", lambda, deltaR, k);
+	Messenger::printVerbose("In XYData::transformRDF(), period of function is %f, real deltaX is %f, and wavenumber is %f\n", lambda, deltaR, k);
 
-	if (Data2D::useFFT_)
+	if (XYData::useFFT_)
 	{
 		// Pad input data up to power of 2 and bit-reverse data
 		int n, i, j, bit, N = pow( 2, ceil( log( x_.nItems() ) / log( 2 ) ) );
@@ -763,7 +763,7 @@ bool Data2D::transformRDF(double atomicDensity, Data2D::WindowFunction wf)
 }
 
 // Transform g(r) to S(Q), applying instrumental broadening functions
-bool Data2D::transformBroadenedRDF(double atomicDensity, double qStep, double qMax, double qDepFWHM, double qIndepFWHM, Data2D::WindowFunction wf)
+bool XYData::transformBroadenedRDF(double atomicDensity, double qStep, double qMax, double qDepFWHM, double qIndepFWHM, XYData::WindowFunction wf)
 {
 	// Okay to continue with transform?
 	if (!checkBeforeTransform()) return false;
@@ -775,7 +775,7 @@ bool Data2D::transformBroadenedRDF(double atomicDensity, double qStep, double qM
 	double deltaX = x_[1] - x_[0];
 	double windowPos, broaden, sigma, sigmaq, sigr, Q, factor, fq;
 	int n, m, nR = x_.nItems();
-	Messenger::printVerbose("In Data2D::transformBroadenedRDF(), period of function is %f, real deltaX is %f, and wavenumber is %f\n", lambda, deltaX, k);
+	Messenger::printVerbose("In XYData::transformBroadenedRDF(), period of function is %f, real deltaX is %f, and wavenumber is %f\n", lambda, deltaX, k);
 
 	sigma = 0.5*qIndepFWHM/sqrt(2.0*log(2.0));
 	sigmaq = 0.5*qDepFWHM/sqrt(2.0*log(2.0));
@@ -818,7 +818,7 @@ bool Data2D::transformBroadenedRDF(double atomicDensity, double qStep, double qM
 }
 
 // Transform S(Q) to g(r)
-bool Data2D::transformSQ(double atomicDensity, Data2D::WindowFunction wf)
+bool XYData::transformSQ(double atomicDensity, XYData::WindowFunction wf)
 {
 	// Okay to continue with transform?
 	if (!checkBeforeTransform()) return false;
@@ -829,7 +829,7 @@ bool Data2D::transformSQ(double atomicDensity, Data2D::WindowFunction wf)
 	double lambda = x_.last() - x_.first() + lambda;
 	double k = TWOPI / lambda;
 	double windowPos;
-	Messenger::printVerbose("In Data2D::transformSQ(), period of function is %f, real deltaX is %f, and wavenumber is %f\n", lambda, deltaQ, k);
+	Messenger::printVerbose("In XYData::transformSQ(), period of function is %f, real deltaX is %f, and wavenumber is %f\n", lambda, deltaQ, k);
 
 	// Create working arrays
 	Array<double> real(x_.nItems());
@@ -862,7 +862,7 @@ bool Data2D::transformSQ(double atomicDensity, Data2D::WindowFunction wf)
 }
 
 // Fourier transform current data, applying line-width broadening in real-space using the modified Lorch function
-bool Data2D::transformLorch(double atomicDensity, double step, double rMax, double beta, double delta0, bool qToR)
+bool XYData::transformLorch(double atomicDensity, double step, double rMax, double beta, double delta0, bool qToR)
 {
 	/*
 	 * Fourier transforms from Q to r-space, or r to Q-space, employing the modified Lorch function as described by Soper in
@@ -930,7 +930,7 @@ bool Data2D::transformLorch(double atomicDensity, double step, double rMax, doub
 }
 
 // Calculate S(Q) correlation function
-bool Data2D::correlateSQ(double atomicDensity)
+bool XYData::correlateSQ(double atomicDensity)
 {
 	// Okay to continue with transform?
 	if (!checkBeforeTransform()) return false;
@@ -939,7 +939,7 @@ bool Data2D::correlateSQ(double atomicDensity)
 	double lambda = x_.last() - x_.first();
 	double k = TWOPI / lambda;
 	double deltaQ = x_[1] - x_[0];
-	Messenger::printVerbose("In Data2D::correlateSQ(), period of function is %f, real deltaX is %f, and wavenumber is %f\n", lambda, deltaQ, k);
+	Messenger::printVerbose("In XYData::correlateSQ(), period of function is %f, real deltaX is %f, and wavenumber is %f\n", lambda, deltaQ, k);
 
 	// Create working arrays
 	Array<double> real(x_.nItems());
@@ -970,7 +970,7 @@ bool Data2D::correlateSQ(double atomicDensity)
  */
 
 // Calculate natural spline interpolation of current data
-void Data2D::interpolate(bool constrained)
+void XYData::interpolate(bool constrained)
 {
 	/* For a set of N points {x(i),y(i)} for i = 0 - (N-1), the i'th interval can be represented by a cubic spline
 	 * 
@@ -1182,7 +1182,7 @@ void Data2D::interpolate(bool constrained)
 }
 
 // Return spline interpolated y value for supplied x
-double Data2D::interpolated(double xvalue)
+double XYData::interpolated(double xvalue)
 {
 	// Do we need to (re)generate the interpolation?
 	if (splineInterval_ == -1) interpolate();
@@ -1190,7 +1190,7 @@ double Data2D::interpolated(double xvalue)
 // 	// X and ddy arrays match?
 // 	if (x_.nItems() != splineB_.nItems())
 // 	{
-// 		Messenger::error("X and spline coefficient array sizes do not match (%i vs %i) in Data2D::interpolated().\n", x_.nItems(), splineB_.nItems());
+// 		Messenger::error("X and spline coefficient array sizes do not match (%i vs %i) in XYData::interpolated().\n", x_.nItems(), splineB_.nItems());
 // 		return 0.0;
 // 	}
 
@@ -1233,7 +1233,7 @@ double Data2D::interpolated(double xvalue)
 }
 
 // Return spline interpolated y value for supplied x, specifying containing interval
-double Data2D::interpolated(double xvalue, int interval)
+double XYData::interpolated(double xvalue, int interval)
 {
 	// Calculate cubic polynomial
 // 	double result = a*y_[splineBracketLeft_] + b*y_[splineBracketRight_] + ((a*a*a-a)*ddy_[splineBracketLeft_] + (b*b*b-b)*ddy_[splineBracketRight_])*(interval*interval)/6.0;
@@ -1243,10 +1243,10 @@ double Data2D::interpolated(double xvalue, int interval)
 }
 
 // Smooth data
-void Data2D::smooth(int avgSize, int skip)
+void XYData::smooth(int avgSize, int skip)
 {
 	// First, create a new dataset using Y-averages of the current data
-	Data2D avg;
+	XYData avg;
 	double y;
 	int n, m, i = avgSize/2;
 	for (n=i; n < x_.nItems()-i; n += (1+skip))
@@ -1265,7 +1265,7 @@ void Data2D::smooth(int avgSize, int skip)
 }
 
 // Add interpolated data
-void Data2D::addInterpolated(Data2D& source, double weighting)
+void XYData::addInterpolated(XYData& source, double weighting)
 {
 	// If there is currently no data, just copy the source data
 	if (x_.nItems() == 0)
@@ -1282,7 +1282,7 @@ void Data2D::addInterpolated(Data2D& source, double weighting)
  */
 
 // Return minumum x value in data
-double Data2D::xMin()
+double XYData::xMin()
 {
 	if (x_.nItems() == 0) return 0.0;
 	double result = x_[0];
@@ -1291,7 +1291,7 @@ double Data2D::xMin()
 }
 
 // Return maxumum x value in data
-double Data2D::xMax()
+double XYData::xMax()
 {
 	if (x_.nItems() == 0) return 0.0;
 	double result = x_[0];
@@ -1300,7 +1300,7 @@ double Data2D::xMax()
 }
 
 // Return minumum y value in data
-double Data2D::yMin()
+double XYData::yMin()
 {
 	if (y_.nItems() == 0) return 0.0;
 	double result = y_[0];
@@ -1309,7 +1309,7 @@ double Data2D::yMin()
 }
 
 // Return maxumum y value in data
-double Data2D::yMax()
+double XYData::yMax()
 {
 	if (y_.nItems() == 0) return 0.0;
 	double result = y_[0];
@@ -1318,7 +1318,7 @@ double Data2D::yMax()
 }
 
 // Compute integral of the data
-double Data2D::integral()
+double XYData::integral()
 {
 	double total = 0.0, y0 = y_.first(), y1, x0 = x_.first(), x1;
 	for (int n=1; n<x_.nItems(); ++n)
@@ -1333,7 +1333,7 @@ double Data2D::integral()
 }
 
 // Compute absolute integral of the data
-double Data2D::absIntegral()
+double XYData::absIntegral()
 {
 	if (nPoints() < 2) return 0.0;
 	double total = 0.0, y0 = y_.first(), y1, x0 = x_.first(), x1;
@@ -1349,7 +1349,7 @@ double Data2D::absIntegral()
 }
 
 // Apply median filter to data
-void Data2D::medianFilter(int length)
+void XYData::medianFilter(int length)
 {
 	double data[length], avg, result;
 	int m, i = length/2, n = length/2, miny, maxy;
@@ -1395,7 +1395,7 @@ void Data2D::medianFilter(int length)
 }
 
 // Convolute this data with the supplied data, by products
-bool Data2D::convoluteProduct(Data2D& data)
+bool XYData::convoluteProduct(XYData& data)
 {
 	// Check compatibility of datasets
 	if (data.nPoints() != nPoints())
@@ -1419,7 +1419,7 @@ bool Data2D::convoluteProduct(Data2D& data)
 }
 
 // Trim data to X-range specified
-void Data2D::trim(double minX, double maxX)
+void XYData::trim(double minX, double maxX)
 {
 	// Copy old data first...
 	Array<double> oldX = x_;
@@ -1435,7 +1435,7 @@ void Data2D::trim(double minX, double maxX)
 }
 
 // Rebin data onto uniform x axis
-void Data2D::rebin(double deltaX)
+void XYData::rebin(double deltaX)
 {
 	// If deltaX is negative, work out a deltaX to use
 	if (deltaX < 0.0)
@@ -1450,7 +1450,7 @@ void Data2D::rebin(double deltaX)
 	interpolate(true);
 
 	// Generate new data
-	Data2D rebinnedData;
+	XYData rebinnedData;
 	double x = 0.0, xLimit = xMax();
 	while (x < xLimit)
 	{
@@ -1467,7 +1467,7 @@ void Data2D::rebin(double deltaX)
  */
 
 // Load data from specified file
-bool Data2D::load(const char* filename)
+bool XYData::load(const char* filename)
 {
 	// Open file and check that we're OK to proceed reading from it
 	LineParser parser;
@@ -1502,7 +1502,7 @@ bool Data2D::load(const char* filename)
 }
 
 // Save data to specified file
-bool Data2D::save(const char* filename) const
+bool XYData::save(const char* filename) const
 {
 	// Open file and check that we're OK to proceed writing to it
 	LineParser parser;
@@ -1521,7 +1521,7 @@ bool Data2D::save(const char* filename) const
 }
 
 // Save data and interpolation to specified file
-bool Data2D::saveWithInterpolation(const char* filename)
+bool XYData::saveWithInterpolation(const char* filename)
 {
 	// Open file and check that we're OK to proceed writing to it
 	LineParser parser;
@@ -1540,7 +1540,7 @@ bool Data2D::saveWithInterpolation(const char* filename)
 }
 
 // Dump contents
-void Data2D::dump()
+void XYData::dump()
 {
 	for (int n=0; n<x_.nItems(); ++n) Messenger::print("%16.10e  %16.10e  %16.10e\n", x_.value(n), y_.value(n), interpolated(x_.value(n)));
 }
@@ -1550,7 +1550,7 @@ void Data2D::dump()
  */
 
 // Broadcast data
-bool Data2D::broadcast(ProcessPool& procPool, int rootRank)
+bool XYData::broadcast(ProcessPool& procPool, int rootRank)
 {
 #ifdef PARALLEL
 	// XY data
@@ -1571,7 +1571,7 @@ bool Data2D::broadcast(ProcessPool& procPool, int rootRank)
 }
 
 // Load data from specified file (master) and distribute
-bool Data2D::load(const char* filename, ProcessPool& procPool)
+bool XYData::load(const char* filename, ProcessPool& procPool)
 {
 	// Master will load the data
 	if (procPool.isMaster())

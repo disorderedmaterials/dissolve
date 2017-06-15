@@ -198,7 +198,7 @@ class DUQ
 
 	public:
 	// Run main simulation
-	bool go();
+	bool go(bool singleIteration);
 	// Return current simulation step
 	int iteration();
 	// Return data associated with main processing Modules
@@ -218,7 +218,7 @@ class DUQ
 	// Maximum number of main loop iterations to perform
 	int maxIterations_;
 	// Window function to use for all Fourier transforms
-	Data2D::WindowFunction windowFunction_;
+	XYData::WindowFunction windowFunction_;
 
 	public:
 	// Set number of test points to use when calculating Box normalisation arrays
@@ -234,9 +234,9 @@ class DUQ
 	// Return maximum number of main loop iterations to perform
 	int maxIterations();
 	// Set window function to use for all Fourier transforms
-	void setWindowFunction(Data2D::WindowFunction wf);
+	void setWindowFunction(XYData::WindowFunction wf);
 	// Return window function to use for all Fourier transforms
-	Data2D::WindowFunction windowFunction();
+	XYData::WindowFunction windowFunction();
 	// Setup all simulation data, checking it as we go
 	bool setupSimulation();
 

@@ -654,7 +654,10 @@ void ForceKernel::forces(const Molecule* mol, const SpeciesBond* b)
 	
 	// Get distance and normalise vector ready for force calculation
 	double distance = vecji.magAndNormalise();
-	if (distance > 5.0) printf("SHITTTTT! %f\n", distance);
+
+#ifdef CHECKS
+	if (distance > 5.0) printf("!!! Long bond: %i-%i = %f Angstroms\n", i->index(), j->index(), distance);
+#endif
 
 	// Determine final forces
 	vecji *= b->force(distance);
@@ -682,9 +685,9 @@ void ForceKernel::forces(const Molecule* mol, const SpeciesAngle* a)
 	Atom* k = mol->atom(a->indexK());
 
 	// Determine whether we need to apply minimum image between 'j-i' and 'j-k'
-	if (configuration_->useMim(j->cell(), i->cell())) vecji = configuration_->box()->minimumVector(j, i);
+	if (configuration_->useMim(j->cell(), i->cell())) vecji = box_->minimumVector(j, i);
 	else vecji = i->r() - j->r();
-	if (configuration_->useMim(j->cell(), k->cell())) vecjk = configuration_->box()->minimumVector(j, k);
+	if (configuration_->useMim(j->cell(), k->cell())) vecjk = box_->minimumVector(j, k);
 	else vecjk = k->r() - j->r();
 	
 	// Calculate angle

@@ -628,7 +628,7 @@ bool PartialsModule::calculateUnweighted(Configuration* cfg, ProcessPool& procPo
 	}
 
 	// Transform histogram data into radial ditribution functions
-	Data2D boxNorm = cfg->boxNormalisation();
+	XYData boxNorm = cfg->boxNormalisation();
 	partialgr.formPartials(box->volume(), boxNorm);
 
 	// Smooth partials if requested
@@ -776,11 +776,11 @@ bool PartialsModule::generateSQ(PartialRSet& partialgr, PartialQSet& partialsq, 
 // 		{
 // 			// Grab references:
 // 			// -- Full atom pair-pair structure factors (bound + unbound)
-// 			Data2D& pairSQ = pairSQMatrix_.ref(typeI,typeJ);
+// 			XYData& pairSQ = pairSQMatrix_.ref(typeI,typeJ);
 // 			// -- Bragg partial structure factors
-// 			Data2D& braggSQ = braggSQMatrix_.ref(typeI,typeJ);
+// 			XYData& braggSQ = braggSQMatrix_.ref(typeI,typeJ);
 // 			// -- Full partial structure factors (destination)
-// 			Data2D& partialSQ = partialSQMatrix_.ref(typeI,typeJ);
+// 			XYData& partialSQ = partialSQMatrix_.ref(typeI,typeJ);
 // 
 // 			// Copy atomic pair S(Q) information
 // 			partialSQ = pairSQ;

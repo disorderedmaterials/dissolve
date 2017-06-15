@@ -113,19 +113,19 @@ void PartialQSet::setIndex(int index)
 }
 
 // Return full atom-atom partial specified
-Data2D& PartialQSet::partial(int i, int j)
+XYData& PartialQSet::partial(int i, int j)
 {
 	return partials_.ref(i, j);
 }
 
 // Return atom-atom partial for pairs not joined by bonds or angles
-Data2D& PartialQSet::unboundPartial(int i, int j)
+XYData& PartialQSet::unboundPartial(int i, int j)
 {
 	return unboundPartials_.ref(i, j);
 }
 
 // Return atom-atom partial for pairs joined by bonds or angles
-Data2D& PartialQSet::boundPartial(int i, int j)
+XYData& PartialQSet::boundPartial(int i, int j)
 {
 	return boundPartials_.ref(i, j);
 }
@@ -164,7 +164,7 @@ void PartialQSet::formTotal()
 }
 
 // Return total function
-Data2D& PartialQSet::total()
+XYData& PartialQSet::total()
 {
 	return total_;
 }
@@ -191,9 +191,9 @@ bool PartialQSet::save()
 				return false;
 			}
 			
-			Data2D& sq = partials_.ref(typeI,typeJ);
-			Data2D& bound = boundPartials_.ref(typeI,typeJ);
-			Data2D& unbound = unboundPartials_.ref(typeI,typeJ);
+			XYData& sq = partials_.ref(typeI,typeJ);
+			XYData& bound = boundPartials_.ref(typeI,typeJ);
+			XYData& unbound = unboundPartials_.ref(typeI,typeJ);
 			parser.writeLineF("# %-14s  %-16s  %-16s  %-16s\n", "Q, 1/Angstroms", "S(Q)", "bound(Q)", "unbound(Q)"); 
 			for (n = 0; n< sq.nPoints(); ++n) parser.writeLineF("%16.10e  %16.10e  %16.10e  %16.10e\n", sq.x(n), sq.y(n), bound.y(n), unbound.y(n));
 			parser.closeFiles();

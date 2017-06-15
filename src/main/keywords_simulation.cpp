@@ -94,12 +94,12 @@ bool SimulationBlock::parse(LineParser& parser, DUQ* duq)
 				duq->setSeed(parser.argi(1));
 				break;
 			case (SimulationBlock::WindowFunctionKeyword):
-				if (Data2D::windowFunction(parser.argc(1)) == Data2D::nWindowFunctions)
+				if (XYData::windowFunction(parser.argc(1)) == XYData::nWindowFunctions)
 				{
 					Messenger::error("Unrecognised window function '%s'.\n", parser.argc(1));
 					error = true;
 				}
-				else duq->setWindowFunction(Data2D::windowFunction(parser.argc(1)));
+				else duq->setWindowFunction(XYData::windowFunction(parser.argc(1)));
 				break;
 			case (SimulationBlock::nSimulationKeywords):
 				Messenger::print("Unrecognised %s block keyword found - '%s'\n", InputBlocks::inputBlock(InputBlocks::SimulationBlock), parser.argc(0));

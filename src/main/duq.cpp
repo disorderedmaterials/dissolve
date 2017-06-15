@@ -37,7 +37,7 @@ DUQ::DUQ()
 	rmseDeltaQ_ = 0.05;
 	seed_ = -1;
 	maxIterations_ = -1;
-	windowFunction_ = Data2D::NoWindow;
+	windowFunction_ = XYData::NoWindow;
 
 	// Simulation
 	iteration_ = 0;

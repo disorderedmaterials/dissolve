@@ -22,7 +22,7 @@
 #ifndef DUQ_HISTOGRAM_H
 #define DUQ_HISTOGRAM_H
 
-#include "base/data2d.h"
+#include "base/xydata.h"
 
 // Forward Declarations
 class Box;

@@ -22,6 +22,7 @@
 #include "modules/moduleregistry.h"
 #include "modules/atomshake.h"
 #include "modules/energy.h"
+#include "modules/forces.h"
 #include "modules/export.h"
 #include "modules/md.h"
 #include "modules/partials.h"
@@ -38,6 +39,7 @@ ModuleRegistry::ModuleRegistry()
 {
 	ModuleRegistrar<AtomShakeModule> atomShakeRegistrar;
 	ModuleRegistrar<EnergyModule> energyRegistrar;
+	ModuleRegistrar<ForcesModule> forcesRegistrar;
 	ModuleRegistrar<ExportModule> exportRegistrar;
 	ModuleRegistrar<MDModule> mdRegistrar;
 	ModuleRegistrar<PartialsModule> partailsRegistrar;

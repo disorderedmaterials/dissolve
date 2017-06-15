@@ -50,7 +50,7 @@ Module* DUQ::findPostProcessingTask(const char* name)
 }
 
 // Run Simulation
-bool DUQ::go()
+bool DUQ::go(bool singleIteration)
 {
 	/*
 	 * This is the main program loop. We perform the following steps:
@@ -63,11 +63,6 @@ bool DUQ::go()
 	 *  6)	Write data (master process only)
 	 */
 
-	/*
-	 * Start of Main Loop
-	 */
-
-	bool keepGoing = true;
 	do
 	{
 		// Increase iteration counter
@@ -298,6 +293,9 @@ bool DUQ::go()
 		else if (!worldPool_.decision()) return false;
 
 		Messenger::banner("END OF MAIN LOOP ITERATION %10i         %s", iteration_, DUQSys::currentTimeAndDate());
+
+		// If we are only performing a single iteration, break here
+		if (singleIteration) break;
 	}
 	while ((maxIterations_ < 0) || (iteration_ < maxIterations_));
 

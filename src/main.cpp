@@ -42,6 +42,7 @@ int main(int argc, char **argv)
 	int n = 1;
 	CharString inputFile, redirectFileName;
 	int dumpData = 0;
+	bool singleIteration = false;
 	while (n < argc)
 	{
 		if (argv[n][0] == '-')
@@ -52,10 +53,11 @@ int main(int argc, char **argv)
 				case ('h'):
 					printf("dUQ version %s\n\nAvailable CLI options are:\n\n", DUQVERSION);
 					printf("\t-a\t\tAuto-add dependent Modules if they are not present already\n");
+					printf("\t-d\t\tPerform dump of system data from all processes and quit\n");
 					printf("\t-m\t\tRestrict output to be from the master process alone (parallel code only)\n");
 					printf("\t-q\t\tQuiet mode - print no output\n");
 					printf("\t-r <file>\tRedirect output from all process to 'file.N', where N is the process rank\n");
-					printf("\t-d\t\tPerform dump of system data from all processes and quit\n");
+					printf("\t-s\t\tPerform single main loop iteration and then quit\n");
 					printf("\t-v\t\tVerbose mode - be a little more descriptive throughout\n");
 					ProcessPool::finalise();
 					return 0;
@@ -83,6 +85,10 @@ int main(int argc, char **argv)
 					}
 					redirectFileName.sprintf("%s.%i", argv[n], ProcessPool::worldRank());
 					Messenger::enableRedirect(redirectFileName.get());
+					break;
+				case ('s'):
+					Messenger::print("Single main-loop iteration will be performed, then dUQ will exit.\n");
+					singleIteration = true;
 					break;
 				case ('v'):
 					Messenger::setVerbose(true);
@@ -192,7 +198,7 @@ int main(int argc, char **argv)
 #endif
 	
 	// Run main simulation
-	bool result = dUQ.go();
+	bool result = dUQ.go(singleIteration);
 
 	// Clear all data
 	dUQ.clear();

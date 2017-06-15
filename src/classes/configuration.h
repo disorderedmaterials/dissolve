@@ -242,7 +242,7 @@ class Configuration : public ListItem<Configuration>
 	// Box normalisation array to load/save for this configuration
 	CharString boxNormalisationFileName_;
 	// RDF Normalisation function for Box shape/extent
-	Data2D boxNormalisation_;
+	XYData boxNormalisation_;
 	
 	private:
 	// Clear Cell arrays
@@ -300,7 +300,7 @@ class Configuration : public ListItem<Configuration>
 	// Load Box normalisation array from specified file
 	bool loadBoxNormalisationFile();
 	// Return current Box normalisation array
-	const Data2D& boxNormalisation() const;
+	const XYData& boxNormalisation() const;
 
 
 	/*
@@ -333,7 +333,7 @@ class Configuration : public ListItem<Configuration>
 	// Calculate Bragg peak contributions
 	bool calculateBraggContributions(ProcessPool& procPool);
 	// Calculate weighted Bragg S(Q)
-	bool calculateBraggSQ(const AtomTypeList& sampleAtomTypes, Array2D<Data2D>& braggMatrix, double broadening);
+	bool calculateBraggSQ(const AtomTypeList& sampleAtomTypes, Array2D<XYData>& braggMatrix, double broadening);
 	
 	public:
 	// Set RDF bin width
@@ -363,7 +363,7 @@ class Configuration : public ListItem<Configuration>
 	 */
 	private:
 	// Configuration energy data
-	Data2D energyData_;
+	XYData energyData_;
 	// Energy change since last point added to energyData_
 	double energyChange_;
 	// Whether energy has changed since the last point was added

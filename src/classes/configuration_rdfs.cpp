@@ -230,7 +230,7 @@
 // }
 // 
 // // Calculate Bragg S(Q) into supplied matrix, using specified broadening
-// bool Configuration::calculateBraggSQ(const AtomTypeList& sampleAtomTypes, Array2D<Data2D>& braggMatrix, double broadening)
+// bool Configuration::calculateBraggSQ(const AtomTypeList& sampleAtomTypes, Array2D<XYData>& braggMatrix, double broadening)
 // {
 // 	double factor, qCentre, q, inten, qSub, qAdd, broaden, lFactor, lambda, lambdaCubed;
 // 	int typeI, typeJ, nTypes;
@@ -247,7 +247,7 @@
 // 	{
 // 		for (typeJ = typeI; typeJ < nTypes; ++typeJ)
 // 		{
-// 			Data2D& braggSQ = braggSQMatrix_.ref(typeI, typeJ);
+// 			XYData& braggSQ = braggSQMatrix_.ref(typeI, typeJ);
 // 
 // 			// Calculate prefactor
 // 			factor = (typeI == typeJ ? 1.0 : 2.0);
@@ -261,7 +261,7 @@
 // 				lambda = braggBroadening_ + qCentre * 0.02; //qDependentFWHM_;
 // 				lambdaCubed = lambda * lambda * lambda;
 // 
-// 				// Loop over points in braggSQ Data2D (which will provide our x-values)
+// 				// Loop over points in braggSQ XYData (which will provide our x-values)
 // 				for (m=0; m<braggSQ.nPoints(); ++m)
 // 				{
 // 					// Get q value from array

@@ -22,7 +22,7 @@
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "base/processpool.h"
-#include <base/data2d.h>
+#include "base/xydata.h"
 #include <string.h>
 
 // Constructor
@@ -204,13 +204,13 @@ double Box::inscribedSphereRadius() const
 }
 
 // Calculate the RDF normalisation for the Box
-bool Box::calculateRDFNormalisation(ProcessPool& procPool, Data2D& boxNorm, double rdfRange, double rdfBinWidth, int nPoints) const
+bool Box::calculateRDFNormalisation(ProcessPool& procPool, XYData& boxNorm, double rdfRange, double rdfBinWidth, int nPoints) const
 {
 	// Setup array - we will use a nominal bin width of 0.1 Angstroms and then interpolate to the rdfBinWidth afterwards
 	const double binWidth = 0.1;
 	const double rBinWidth = 1.0/binWidth;
 	int bin, nBins = rdfRange / binWidth;
-	Data2D normData;
+	XYData normData;
 	normData.initialise(nBins);
 	Array<double>& y = normData.arrayY();
 	for (int n=0; n<nBins; ++n) normData.arrayX()[n] = (n+0.5)*binWidth;

@@ -129,6 +129,16 @@ double PotentialMap::energy(int typeI, int typeJ, double distanceSquared) const
 		Messenger::print("OUT_OF_RANGE - Type index typeJ (%i) passed to PotentialMap::energy() is out of range (nTypes_ = %i).\n", typeJ, nTypes_);
 		return 0.0;
 	}
+	if (distanceSquared < 0.0)
+	{
+		Messenger::print("OUT_OF_RANGE - Squared distance passed to PotentialMap::energy() is negative (%f).\n", distanceSquared);
+		return 0.0;
+	}
+	if (distanceSquared > rangeSquared_)
+	{
+		Messenger::print("OUT_OF_RANGE - Squared distance passed to PotentialMap::energy() (%f) is greater than the range (%f).\n", distanceSquared, rangeSquared_);
+		return 0.0;
+	}
 #endif
 	return potentialMatrix_.value(typeI,typeJ)->energyAtRSquared(distanceSquared);
 }
@@ -145,6 +155,16 @@ double PotentialMap::force(int typeI, int typeJ, double distanceSquared) const
 	if ((typeJ < 0) || (typeJ >= nTypes_))
 	{
 		Messenger::print("OUT_OF_RANGE - Type index typeJ (%i) passed to PotentialMap::force() is out of range (nTypes_ = %i).\n", typeJ, nTypes_);
+		return 0.0;
+	}
+	if (distanceSquared < 0.0)
+	{
+		Messenger::print("OUT_OF_RANGE - Squared distance passed to PotentialMap::force() is negative (%f).\n", distanceSquared);
+		return 0.0;
+	}
+	if (distanceSquared > rangeSquared_)
+	{
+		Messenger::print("OUT_OF_RANGE - Squared distance passed to PotentialMap::force() (%f) is greater than the range (%f).\n", distanceSquared, rangeSquared_);
 		return 0.0;
 	}
 #endif

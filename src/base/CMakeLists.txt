@@ -1,6 +1,5 @@
 add_library(base
 charstring.cpp
-data2d.cpp
 element.cpp
 isotope.cpp
 lineparser.cpp
@@ -13,10 +12,10 @@ processpool.cpp
 ptable.cpp
 sysfunc.cpp
 timer.cpp
+xydata.cpp
 
 charstring.h
 constants.h
-data2d.h
 element.h
 isotope.h
 lineparser.h
@@ -29,6 +28,7 @@ processpool.h
 ptable.h
 sysfunc.h
 timer.h
+xydata.h
 )
 
 include_directories(
