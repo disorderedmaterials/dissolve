@@ -236,7 +236,7 @@ bool DUQ::saveInput(const char* filename)
 	}
 	
 	// Write title comment
-	parser.writeLineF("# Input file written by dUQ v%s at \n", DUQVERSION, DUQSys::currentTimeAndDate());
+	parser.writeLineF("# Input file written by dUQ v%s at %s.\n", DUQVERSION, DUQSys::currentTimeAndDate());
 	
 	// Write Species data
 	parser.writeLineF("# Species Definitions\n");
@@ -389,6 +389,7 @@ bool DUQ::saveInput(const char* filename)
 
 		parser.writeLineF("%s\n", ModuleBlock::keyword(ModuleBlock::EndModuleKeyword));
 	}
+	parser.writeLine("");
 
 	// Write PairPotentials block
 	parser.writeLineF("# Pair Potentials\n");

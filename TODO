@@ -2,7 +2,6 @@
 TODO
 ----
 
-o SEVERE - Modifying Cell size changes total energy and/or forces, but this should only affect efficiency.
 o Dynamic load-balancing when running Configurations in parallel - assess time taken to go through all steps and adjust overall repeats relative to other Configurations.
 o Modify EnergyKernel to add in Coulomb term to PairPotential if it does not include it (determined by DUQ::pairPotentialIncludesCharges_).
 o Allow for Fixed atoms:
@@ -36,11 +35,6 @@ Could allow definition of displacement vectors (based on molecular axes) for spe
 
 ** Averaging of Calculated Partials
 Options in Partials module to allow either stacking and averaging of RDFs (requiring additional storage inside PartialGRSet and PartialSQSet) or blending of current calculated values with previous values in some percentage (easier, but real, actual partials are unavailable). Can use the moduleData() lists and store datasets to be averaged as additional data.
-
-** Unit Tests
-Have input examples that provide unit tests, e.g.:
-o Check that the calculated Energy is correct based on some reference value from another code (could add CheckValue option to Energy module, failing if the calculated value is different).
-o Check that Grain definitions do not affect the overall calculated Energy (i.e. different Grain definitions with increasing numbers of atoms for a given species).
 
 ** Allow Chemical Units When Specifying Quantities
 If density for specific Isotopologues can be provided, we can allow gram quantities of them to be added (in Partials/Spatials definitions, for instance) and converted automatically to relative molar amounts (which is what we need). Will need to set a tolerance on the resulting relative populations between species for this method, since we need to ensure some kind of consistency between the exact, specified composition of the Configuration(s) and the Sample information.

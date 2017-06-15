@@ -286,7 +286,6 @@ void PairPotential::calculateDUFull()
 
 	// Interpolate it
 	dUFull_.interpolate();
-	dUFull_.save("shit.txt");
 }
 
 // Setup and generate initial potential
