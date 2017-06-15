@@ -1,5 +1,5 @@
 /*
-	*** Pair Potential Definition
+	*** Interatomic Pair Potential
 	*** src/classes/pairpotential.h
 	Copyright T. Youngs 2012-2017
 
@@ -123,7 +123,7 @@ class PairPotential : public ListItem<PairPotential>
 	double range_, rangeSquared_;
 	// Distance between r-squared points in tabulated potentials
 	double delta_, rDelta_;
-	// Truncation width for potential
+	// Truncation width for LJ part of potential
 	double truncationWidth_;
 	// Tabulated original potential, calculated from AtomType parameters
 	XYData uOriginal_;

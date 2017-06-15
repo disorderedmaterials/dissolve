@@ -91,7 +91,7 @@ template <class T> class GenericListHelper
 		return newItem->data;
 	}
 	// Retrieve named item from specified list as template-guided type
-	static T& retrieve(GenericList& sourceList, const char* name, const char* prefix = NULL, T defaultValue = T())
+	static T& retrieve(GenericList& sourceList, const char* name, const char* prefix = NULL, T defaultValue = T(), bool* found = NULL)
 	{
 		// Construct full name
 		CharString varName;
@@ -105,6 +105,7 @@ template <class T> class GenericListHelper
 			Messenger::printVerbose("No item named '%s' in list - default value item will be returned.\n", varName.get());
 			static T dummy;
 			dummy = defaultValue;
+			if (found != NULL) (*found) = false;
 			return dummy;
 		}
 
@@ -114,9 +115,11 @@ template <class T> class GenericListHelper
 		{
 			printf("That didn't work, because its of the wrong type.\n");
 			static T dummy;
+			if (found != NULL) (*found) = false;
 			return dummy;
 		}
 
+		if (found != NULL) (*found) = true;
 		return castItem->data;
 	}
 	// Retrieve (or create and retrieve) named item from specified list as template-guided type

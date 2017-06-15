@@ -99,7 +99,7 @@ const char* PlainValue::valueType(ValueType vt)
  */
 
 // Set value, including name and description
-void PlainValue::set(const char* name, PlainValue newValue, const char* description)
+void PlainValue::initialise(const char* name, PlainValue newValue, const char* description)
 {
 	name_ = name;
 	description_ = description;

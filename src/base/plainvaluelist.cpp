@@ -52,7 +52,7 @@ void PlainValueList::add(const char* name, PlainValue newValue, const char* desc
 	if (!var)
 	{
 		var = values_.add();
-		var->set(name, newValue, description);
+		var->initialise(name, newValue, description);
 		Messenger::printVerbose("Added new %s value '%s' with value '%s'.\n", PlainValue::valueType(var->type()), name, newValue.asString());
 	}
 	else

@@ -149,7 +149,7 @@ namespace PairPotentialsBlock
 		GenerateKeyword,		/* 'Generate' - Generates a single PairPotential with the specified contributions */
 		ParametersKeyword,		/* 'Parameters' - Sets or re-sets the LJ and charge parameters for a specific AtomType */
 		RangeKeyword,			/* 'Range' - Specifies the total range (inc. truncation width) over which to generate potentials */
-		TruncationWidthKeyword,		/* 'TruncationWidth' - Width of potential tail over which to reduce to zero */
+		TruncationWidthKeyword,		/* 'TruncationWidth' - Width of potential tail over which to reduce LJ term to zero */
 		UseAtomChargesKeyword,		/* 'UseAtomCharges' - Specifies that Coulomb interactions should be calculated from atomic charges, rather than be included in PairPotentials */
 		nPairPotentialsKeywords		/* Number of keywords defined for this block */
 	};

@@ -1,4 +1,4 @@
-# Minimal Example: Water
+# Test Case 01 - Bulk water energy and forces
 
 # Define Water Molecule
 Species 'Water'
@@ -14,7 +14,6 @@ Species 'Water'
 
   # Isotopologues
   Isotopologue  'Natural'  OW=0  HW=0
-  Isotopologue  'Deuteriated'  OW=0  HW=2
 EndSpecies
 
 # Define Configuration
@@ -23,43 +22,17 @@ Configuration  'Bulk'
   Multiplier  1000
   Species 'Water'  1.0
 
-  OutputCoordinates 'Bulk.xyz'
-  UseOutputAsInput
+  InputCoordinates 'input.xyz'
 
-  #Module AtomShake
-  #EndModule
   Module Energy
     Test on
   EndModule
-  #Module MD
-  #  RandomVelocities true
-  #EndModule
   Module Forces
+Disabled
     Test on
-    TestData  'lfilename
+    #TestData  'lfilename
   EndModule
 EndConfiguration
-
-# Samples
-Module Partials 'NIMROD-Protiated'
-  #ReferenceData 'data/H2O.mint01'
-  StructureFactor on
-  QDepBroadening 0.02    # For SLS
-  Configuration  'Bulk'
-  Weights neutron
-  Isotopologue  'Bulk'  'Water'  'Deuteriated'  0.5
-  Isotopologue  'Bulk'  'Water'  'Natural'  0.5
-EndModule
-
-Module Partials 'NIMROD-Deuteriated'
-  #ReferenceData 'data/D2O.mint01'
-  StructureFactor on
-  QDepBroadening 0.02    # For SLS
-  Configuration  'Bulk'
-  Weights neutron
-  Isotopologue  'Bulk'  'Water'  'Deuteriated'  0.5
-  Isotopologue  'Bulk'  'Water'  'Natural'  0.5
-EndModule
 
 # Pair Potentials
 PairPotentials
@@ -72,5 +45,5 @@ PairPotentials
 EndPairPotentials
 
 Simulation
-   Seed 3
+  MaxIterations 1
 EndSimulation

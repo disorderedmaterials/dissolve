@@ -62,7 +62,7 @@ class PlainValue : public ListItem<PlainValue>
 	private:
 	// Name of value
 	CharString name_;
-	// Description of valur, if any
+	// Description of value, if any
 	CharString description_;
 	// Type of value
 	ValueType type_;
@@ -77,7 +77,7 @@ class PlainValue : public ListItem<PlainValue>
 
 	public:
 	// Setup value, including name and description
-	void set(const char* name, PlainValue newValue, const char* description);
+	void initialise(const char* name, PlainValue newValue, const char* description);
 	// Set value
 	void set(const PlainValue& newValue);
 	// Return name of value

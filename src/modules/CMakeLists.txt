@@ -11,6 +11,7 @@ atomshake.cpp
 energy.cpp
 export.cpp
 forces.cpp
+import.cpp
 md.cpp
 partials.cpp
 skeleton.cpp
@@ -23,6 +24,7 @@ atomshake.h
 energy.h
 export.h
 forces.h
+import.h
 md.h
 partials.h
 skeleton.h

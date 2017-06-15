@@ -1,5 +1,5 @@
 /*
-	*** Pair Potential Definition
+	*** Interatomic Pair Potential
 	*** src/classes/pairpotential.cpp
 	Copyright T. Youngs 2012-2017
 
@@ -360,10 +360,10 @@ bool PairPotential::calculateUOriginal(bool recalculateUFull)
 		// -- Add Coulomb contribution
 		if (includeCharges_)
 		{
-			energy = COULCONVERT * chargeI_ * chargeJ_ / r;
+			// Calculate energy including truncation scheme (truncated and shifted sum)
+			energy = COULCONVERT * chargeI_ * chargeJ_;
+			energy *= (1.0/r + r/rangeSquared_ - 2.0/range_);
 
-			// Apply potential truncation
-			energy *= (1.0/r - 1.0/range_);
 			uOriginal_.addY(n, energy);
 		}
 	}

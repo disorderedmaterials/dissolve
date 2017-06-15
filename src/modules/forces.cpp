@@ -46,6 +46,7 @@ ForcesModule::ForcesModule() : Module()
 	options_.add("TestExact", bool(false), "Compare parallel energy routines against exact (analytic) energy rather than tabulated values");
 	options_.add("TestInter", bool(true), "Include interatomic forces in test");
 	options_.add("TestIntra", bool(true), "Include intramolecular forces in test");
+	options_.add("TestReference", "", "File containing reference forces against which to compare calculated");
 	options_.add("TestThreshold", 1.0e-2, "Threshold of energy at which test comparison will fail");
 }
 
@@ -175,6 +176,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 		const bool testExact = GenericListHelper<bool>::retrieve(cfg->moduleData(), "TestExact", uniqueName(), options_.valueAsBool("TestExact"));
 		const bool testInter = GenericListHelper<bool>::retrieve(cfg->moduleData(), "TestInter", uniqueName(), options_.valueAsBool("TestInter"));
 		const bool testIntra = GenericListHelper<bool>::retrieve(cfg->moduleData(), "TestIntra", uniqueName(), options_.valueAsBool("TestIntra"));
+		CharString testReference = GenericListHelper<CharString>::retrieve(cfg->moduleData(), "TestReference", uniqueName(), options_.valueAsString("TestReference"));
 		const double testThreshold = GenericListHelper<double>::retrieve(cfg->moduleData(), "TestThreshold", uniqueName(), options_.valueAsDouble("TestThreshold"));
 
 		// Calculate the total forces
@@ -205,6 +207,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 			// Allocate the force arrays
 			Array<double> interFx(cfg->nAtoms()), interFy(cfg->nAtoms()), interFz(cfg->nAtoms());
 			Array<double> intraFx(cfg->nAtoms()), intraFy(cfg->nAtoms()), intraFz(cfg->nAtoms());
+			Array<double> referenceFx(cfg->nAtoms()), referenceFy(cfg->nAtoms()), referenceFz(cfg->nAtoms());
 			Array<double> checkInterFx(cfg->nAtoms()), checkInterFy(cfg->nAtoms()), checkInterFz(cfg->nAtoms());
 			Array<double> checkIntraFx(cfg->nAtoms()), checkIntraFy(cfg->nAtoms()), checkIntraFz(cfg->nAtoms());
 			interFx = 0.0;
@@ -213,6 +216,9 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 			intraFx = 0.0;
 			intraFy = 0.0;
 			intraFz = 0.0;
+			referenceFx = 0.0;
+			referenceFy = 0.0;
+			referenceFz = 0.0;
 			checkInterFx = 0.0;
 			checkInterFy = 0.0;
 			checkInterFz = 0.0;
@@ -220,8 +226,8 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 			checkIntraFy = 0.0;
 			checkIntraFz = 0.0;
 
-			Timer timer;
 			// Calculate interatomic and intramlecular energy in a loop over defined Molecules
+			Timer timer;
 			for (int n=0; n<cfg->nMolecules(); ++n)
 			{
 				molN = cfg->molecule(n);
