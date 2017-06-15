@@ -1,0 +1,7 @@
+Unit Test 01 - Forces test on 1000 water molecules
+==================================================
+
+Test of forces between 1000 equilibrated water molecules in a cubic box.
+Reference forces are calculated with DL_POLY using LJ plus truncated
+Coulomb, with cutoff distance of 15 Angstroms (truncation window width
+is 2.0 Angstroms).

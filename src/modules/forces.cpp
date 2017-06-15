@@ -43,8 +43,10 @@ ForcesModule::ForcesModule() : Module()
 	// Boolean options must be set as 'bool(false)' or 'bool(true)' rather than just 'false' or 'true' so that the correct overloaded add() function is called
 	options_.add("Save", bool(false), "Save forces for the Configuration to the file '<name>.forces.txt'");
 	options_.add("Test", bool(false), "Test parallel energy routines against simplified, serial ones");
-	options_.add("TestThreshold", 1.0e-2, "Threshold of energy at which test comparison will fail");
 	options_.add("TestExact", bool(false), "Compare parallel energy routines against exact (analytic) energy rather than tabulated values");
+	options_.add("TestInter", bool(true), "Include interatomic forces in test");
+	options_.add("TestIntra", bool(true), "Include intramolecular forces in test");
+	options_.add("TestThreshold", 1.0e-2, "Threshold of energy at which test comparison will fail");
 }
 
 // Destructor
@@ -170,8 +172,10 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 		// Retrieve control parameters from Configuration
 		const bool saveData = GenericListHelper<bool>::retrieve(cfg->moduleData(), "Save", uniqueName(), options_.valueAsBool("Save"));
 		const bool testMode = GenericListHelper<bool>::retrieve(cfg->moduleData(), "Test", uniqueName(), options_.valueAsBool("Test"));
-		const double testThreshold = GenericListHelper<double>::retrieve(cfg->moduleData(), "TestThreshold", uniqueName(), options_.valueAsDouble("TestThreshold"));
 		const bool testExact = GenericListHelper<bool>::retrieve(cfg->moduleData(), "TestExact", uniqueName(), options_.valueAsBool("TestExact"));
+		const bool testInter = GenericListHelper<bool>::retrieve(cfg->moduleData(), "TestInter", uniqueName(), options_.valueAsBool("TestInter"));
+		const bool testIntra = GenericListHelper<bool>::retrieve(cfg->moduleData(), "TestIntra", uniqueName(), options_.valueAsBool("TestIntra"));
+		const double testThreshold = GenericListHelper<double>::retrieve(cfg->moduleData(), "TestThreshold", uniqueName(), options_.valueAsDouble("TestThreshold"));
 
 		// Calculate the total forces
 		if (testMode)
@@ -223,7 +227,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 				molN = cfg->molecule(n);
 
 				// Intramolecular forces (excluding bound terms) in molecule N
-				for (int ii = 0; ii <molN->nAtoms()-1; ++ii)
+				if (testInter) for (int ii = 0; ii <molN->nAtoms()-1; ++ii)
 				{
 					i = molN->atom(ii);
 
@@ -252,7 +256,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 				}
 
 				// Forces between molecule N and molecule M
-				for (int m=n+1; m<cfg->nMolecules(); ++m)
+				if (testInter) for (int m=n+1; m<cfg->nMolecules(); ++m)
 				{
 					molM = cfg->molecule(m);
 
@@ -283,7 +287,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 
 				// Bond forces
 				Species* sp = molN->species();
-				for (SpeciesBond* b = sp->bonds(); b != NULL; b = b->next)
+				if (testIntra) for (SpeciesBond* b = sp->bonds(); b != NULL; b = b->next)
 				{
 					// Grab pointers to atoms involved in bond
 					i = molN->atom(b->indexI());
@@ -302,7 +306,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 				}
 
 				// Angle forces
-				for (SpeciesAngle* a = sp->angles(); a != NULL; a = a->next)
+				if (testIntra) for (SpeciesAngle* a = sp->angles(); a != NULL; a = a->next)
 				{
 					// Grab pointers to atoms involved in angle
 					i = molN->atom(a->indexI());
@@ -362,14 +366,14 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 			// Calculate interatomic forces
 			Timer interTimer;
 			interTimer.start();
-			duq.interatomicForces(procPool, cfg, checkInterFx, checkInterFy, checkInterFz);
+			if (testInter) duq.interatomicForces(procPool, cfg, checkInterFx, checkInterFy, checkInterFz);
 			interTimer.stop();
 			Messenger::printVerbose("Forces: Time to do interatomic forces was %s.\n", interTimer.totalTimeString());
 			
 			// Calculate intramolecular forces
 			Timer intraTimer;
 			intraTimer.start();
-			duq.intramolecularForces(procPool, cfg, checkIntraFx, checkIntraFy, checkIntraFz);
+			if (testIntra) duq.intramolecularForces(procPool, cfg, checkIntraFx, checkIntraFy, checkIntraFz);
 			intraTimer.stop();
 
 			// Convert forces to 10J/mol
