@@ -126,7 +126,7 @@ bool ModuleBlock::parse(LineParser& parser, DUQ* duq, Module* module, GenericLis
 			PlainValue* value = module->options().value(parser.argc(0));
 			if (value)
 			{
-				// Set variable in target
+				// Add variable to target list
 				if (value->type() == PlainValue::BooleanType) GenericListHelper<bool>::add(targetList, value->name(), module->uniqueName()) = parser.argb(1);
 				else if (value->type() == PlainValue::IntegerType) GenericListHelper<int>::add(targetList, value->name(), module->uniqueName()) = parser.argi(1);
 				else if (value->type() == PlainValue::DoubleType) GenericListHelper<double>::add(targetList, value->name(), module->uniqueName()) = parser.argd(1);

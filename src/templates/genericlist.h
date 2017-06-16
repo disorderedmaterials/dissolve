@@ -50,6 +50,11 @@ class GenericList
 		for (GenericItem* item = items_.first(); item != NULL; item = item->next) if (DUQSys::sameString(item->name(), varName.get())) return true;
 		return false;
 	}
+	// Return head of the list
+	GenericItem* items()
+	{
+		return items_.first();
+	}
 	// Return the named item from the list
 	GenericItem* find(const char* name)
 	{

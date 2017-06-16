@@ -40,7 +40,12 @@ class GenericItem
 	virtual ~GenericItem()
 	{
 	};
-	// List pointers
+	// Item Flags
+	enum Flags
+	{
+		ModuleOptionFlag	= 1	/* Specifies that the item represents a Module option (i.e. a PlainValue in Module::options_) */
+	};
+	// List Pointers
 	GenericItem* prev, *next;
 
 	private:
@@ -48,6 +53,8 @@ class GenericItem
 	CharString name_;
 	// Description, if any, for the item
 	CharString description_;
+	// Flags
+	int flags_;
 
 	public:
 	// Return item name

@@ -329,6 +329,9 @@ bool DUQ::saveInput(const char* filename)
 			// Write value set in Configuration if it exists
 			for (PlainValue* option = module->options().values(); option != NULL; option = option->next)
 			{
+				// Search the Configuration's module data for the option - if it doesn't exist then it wasn't set and the default value is relevant, so don't bother writing the option out
+				if (!cfg->moduleData().contains(option->name(), module->uniqueName())) continue;
+
 				switch (option->type())
 				{
 					case (PlainValue::BooleanType):
@@ -410,6 +413,17 @@ bool DUQ::saveInput(const char* filename)
 	parser.writeLineF("  %s  %i\n", SimulationBlock::keyword(SimulationBlock::SeedKeyword), seed_);
 	parser.writeLineF("  %s  %s\n", SimulationBlock::keyword(SimulationBlock::WindowFunctionKeyword), XYData::windowFunction(windowFunction_));
 	parser.writeLineF("%s\n\n", SimulationBlock::keyword(SimulationBlock::EndSimulationKeyword));
+
+	// Save additional Module data from Configurations
+	parser.writeLineF("# Module Data (Configurations)\n");
+	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
+	{
+		GenericList& moduleData = cfg->moduleData();
+		for (GenericItem* item = moduleData.items(); item != NULL; item = item->next)
+		{
+			
+		}
+	}
 
 	parser.closeFiles();
 
