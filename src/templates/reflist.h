@@ -476,6 +476,7 @@ template <class T, class D> void RefList<T,D>::clear()
 	listHead_ = NULL;
 	listTail_ = NULL;
 	nItems_ = 0;
+
 	// Delete static items array if its there
 	if (items_ != NULL) delete[] items_;
 	items_ = NULL;

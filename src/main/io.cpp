@@ -370,9 +370,13 @@ bool DUQ::saveInput(const char* filename)
 		parser.writeLineF("%s  %s  '%s'\n", InputBlocks::inputBlock(InputBlocks::ModuleBlock), module->name(), module->uniqueName());
 
 		// For each Module, print all available options
+
 		// Write value set in Configuration if it exists
 		for (PlainValue* option = module->options().values(); option != NULL; option = option->next)
 		{
+			// Search the master's processing module data for the option - if it doesn't exist then it wasn't set and the default value is relevant, so don't bother writing the option out
+			if (!processingModuleData_.contains(option->name(), module->uniqueName())) continue;
+			
 			switch (option->type())
 			{
 				case (PlainValue::BooleanType):
@@ -414,14 +418,152 @@ bool DUQ::saveInput(const char* filename)
 	parser.writeLineF("  %s  %s\n", SimulationBlock::keyword(SimulationBlock::WindowFunctionKeyword), XYData::windowFunction(windowFunction_));
 	parser.writeLineF("%s\n\n", SimulationBlock::keyword(SimulationBlock::EndSimulationKeyword));
 
-	// Save additional Module data from Configurations
-	parser.writeLineF("# Module Data (Configurations)\n");
+	parser.closeFiles();
+
+	return true;
+}
+
+// Load restart file
+bool DUQ::loadRestart(const char* filename)
+{
+	// Open file and check that we're OK to proceed reading from it (master only...)
+	LineParser parser;
+	if (worldPool().isWorldMaster())
+	{
+		parser.openInput(filename);
+		if (!parser.isFileGoodForReading())
+		{
+			Messenger::error("Couldn't open file '%s' for reading.\n", filename);
+			worldPool().stop();
+			return false;
+		}
+		worldPool().proceed();
+	}
+	else if (!worldPool().decision()) return false;
+
+	// Variables
+	Configuration* cfg;
+	GenericItem::ItemClass itemClass;
+	int classIndex, nameIndex;
+	bool error = false;
+
+	while (!parser.eofOrBlank(worldPool()))
+	{
+		// Master will read the next line from the file, and broadcast it to slaves (who will then parse it)
+		if (parser.getArgsDelim(worldPool(), LineParser::SkipBlanks+LineParser::StripComments+LineParser::UseQuotes) != 0) break;
+
+		// First component of line indicates the destination for the module data
+		if (DUQSys::sameString(parser.argc(0), "Configuration"))
+		{
+			cfg = findConfiguration(parser.argc(1));
+			if (!cfg)
+			{
+				Messenger::error("No Configuration named '%s' exists.\n", parser.argc(1));
+				error = true;
+				break;
+			}
+			nameIndex = 2;
+			classIndex = 3;
+		}
+		else if (DUQSys::sameString(parser.argc(0), "Processing"))
+		{
+			cfg = NULL;
+			nameIndex = 1;
+			classIndex = 2;
+		}
+		else
+		{
+			Messenger::error("Unrecognised target '%s' for module data '%s'.\n", parser.argc(0), parser.argc(1));
+			error = true;
+			break;
+		}
+
+		// Get reference to correct target moduleData
+		GenericList& moduleData = (cfg == NULL ? processingModuleData_ : cfg->moduleData());
+
+		// If a Configuration target, third arg is data name and fourth is class. Otherwise second arg is data name and third is class.
+		itemClass = GenericItem::itemClass(parser.argc(classIndex));
+		if (itemClass == GenericItem::nItemClasses)
+		{
+			Messenger::error("Unrecognised item class '%s' given for module data '%s'.\n", parser.argc(classIndex), parser.argc(nameIndex));
+			error = true;
+			break;
+		}
+
+		// Realise the item in the list
+		GenericItem* item = moduleData.create(parser.argc(nameIndex), itemClass);
+
+		// Read in the data
+		if (!item->read(parser))
+		{
+			Messenger::error("Failed to read item data '%s' from restart file.\n", item->name());
+			error = true;
+			break;
+		}
+	}
+	
+	if (!error) Messenger::print("Finished reading restart file.\n");
+
+	// Error encountered?
+	if (error)
+	{
+		Messenger::print("Errors encountered while loading restart file.\nLoad aborted.\n");
+		clear();
+	}
+	
+	// Done
+	if (worldPool_.isWorldMaster()) parser.closeFiles();
+
+	return (!error);
+}
+
+// Save restart file
+bool DUQ::saveRestart(const char* filename)
+{
+	// Open file
+	LineParser parser;
+
+	if (!parser.openOutput(filename, true) || (!parser.isFileGoodForWriting()))
+	{
+		Messenger::error("Couldn't open resetart file '%s'.\n", filename);
+		return false;
+	}
+	
+	// Write title comment
+	parser.writeLineF("# Restart file written by dUQ v%s at %s.\n", DUQVERSION, DUQSys::currentTimeAndDate());
+
+	// Configuration Module Data
 	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
 	{
-		GenericList& moduleData = cfg->moduleData();
-		for (GenericItem* item = moduleData.items(); item != NULL; item = item->next)
+		RefListIterator<Module,bool> configModuleIterator(cfg->modules());
+		while (Module* module = configModuleIterator.iterate())
 		{
-			
+			// For each Module, print all available data in the list (unless it is flagged not to)
+			RefList<GenericItem,bool> moduleData = cfg->moduleData().findWithPrefix(module->uniqueName());
+			for (RefListItem<GenericItem,bool>* ri = moduleData.first(); ri != NULL; ri = ri->next)
+			{
+				GenericItem* item = ri->item;
+				if (item->flags()&GenericItem::NoOutputFlag) continue;
+
+				parser.writeLineF("Configuration  %s  %s  %s\n", cfg->name(), item->name(), GenericItem::itemClass(item->itemClass()));
+				ri->item->write(parser);
+			}
+		}
+	}
+
+	// Processing Module Data
+	RefListIterator<Module,bool> processModuleIterator(processingModules_.modules());
+	while (Module* module = processModuleIterator.iterate())
+	{
+		// For each Module, print all available data in the list (unless it is flagged not to)
+		RefList<GenericItem,bool> moduleData = processingModuleData_.findWithPrefix(module->uniqueName());
+		for (RefListItem<GenericItem,bool>* ri = moduleData.first(); ri != NULL; ri = ri->next)
+		{
+			GenericItem* item = ri->item;
+			if (item->flags()&GenericItem::NoOutputFlag) continue;
+
+			parser.writeLineF("Processing  %s  %s\n", item->name(), GenericItem::itemClass(item->itemClass()));
+			ri->item->write(parser);
 		}
 	}
 

@@ -427,9 +427,9 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 			Messenger::print("Forces: Calculating total forces for Configuration '%s'...\n", cfg->name());
 
 			// Realise the force arrays
-			Array<double>& fx = GenericListHelper< Array<double> >::realise(cfg->moduleData(), "FX", uniqueName());
-			Array<double>& fy = GenericListHelper< Array<double> >::realise(cfg->moduleData(), "FY", uniqueName());
-			Array<double>& fz = GenericListHelper< Array<double> >::realise(cfg->moduleData(), "FZ", uniqueName());
+			Array<double>& fx = GenericListHelper< Array<double> >::realise(cfg->moduleData(), "FX", uniqueName(), GenericItem::NoOutputFlag);
+			Array<double>& fy = GenericListHelper< Array<double> >::realise(cfg->moduleData(), "FY", uniqueName(), GenericItem::NoOutputFlag);
+			Array<double>& fz = GenericListHelper< Array<double> >::realise(cfg->moduleData(), "FZ", uniqueName(), GenericItem::NoOutputFlag);
 			fx.initialise(cfg->nAtoms());
 			fy.initialise(cfg->nAtoms());
 			fz.initialise(cfg->nAtoms());

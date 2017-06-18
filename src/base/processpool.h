@@ -31,6 +31,7 @@
 #include "templates/vector3.h"
 #include "templates/reflist.h"
 #include "templates/array.h"
+#include "templates/array2d.h"
 // Include <mpi.h> only if we are compiling in parallel
 #ifdef PARALLEL
 #include <mpi.h>
@@ -278,6 +279,8 @@ class ProcessPool
 	bool broadcast(Array<int>& array, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Broadcast Array<double>
 	bool broadcast(Array<double>& array, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	// Broadcast Array< Vec3<int> >
+	bool broadcast(Array< Vec3<int> >& array, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Broadcast Array< Vec3<double> >
 	bool broadcast(Array< Vec3<double> >& array, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Broadcast Array2D<double>

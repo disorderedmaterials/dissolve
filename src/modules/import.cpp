@@ -24,6 +24,7 @@
 #include "classes/atom.h"
 #include "classes/atomtype.h"
 #include "classes/box.h"
+#include "base/lineparser.h"
 #include "base/sysfunc.h"
 
 // Static Members
@@ -217,7 +218,7 @@ bool ImportModule::postProcess(DUQ& duq, ProcessPool& procPool)
  */
 
 // Read simple forces from specified file
-bool ImportModule::readForcesSimple(LineParser& parser, Array<double>& fx, Array<double>& fy, Array<double>& fz)
+bool ImportModule::readSimpleForces(LineParser& parser, Array<double>& fx, Array<double>& fy, Array<double>& fz)
 {
 	/*
 	 * Read force information through the specified line parser.
@@ -232,6 +233,69 @@ bool ImportModule::readForcesSimple(LineParser& parser, Array<double>& fx, Array
 	if (!parser.getArgsDelim(LineParser::Defaults)) return false;
 	int nAtoms = parser.argi(0);
 	Messenger::print(" --> Expecting forces for %i atoms.\n", nAtoms);
+	fx.initialise(nAtoms);
+	fy.initialise(nAtoms);
+	fz.initialise(nAtoms);
 
-	
+	for (int n=0; n<nAtoms; ++n)
+	{
+		if (!parser.getArgsDelim(LineParser::Defaults)) return false;
+		fx[n] = parser.argd(0);
+		fy[n] = parser.argd(1);
+		fz[n] = parser.argd(2);
+	}
+
+	return true;
+}
+
+// Read DL_POLY forces from specified file
+bool ImportModule::readDLPOLYForces(LineParser& parser, Array<double>& fx, Array<double>& fy, Array<double>& fz)
+{
+	/*
+	 * Read DL_POLY force information through the specified line parser.
+	 * We assume CONFIG or REVCON format:
+	 * 
+	 * Line 1:    Title
+	 * Line 2:    keytrj   imcon    natoms    []
+	 * Line 3-5:  cell matrix (if imcon > 0)
+	 * Line 6:    atomtype        id
+	 * Line 7:    rx   ry   rz
+	 * Line 8:    vx   vy   vz      if (keytrj > 0)
+	 * Line 9:    fx   fy   fz	if (keytrj > 1)
+	 *   ...
+	 */
+
+	// Skip title
+	if (!parser.skipLines(1)) return false;
+
+	// Read in keytrj, imcon, and number of atoms, and initiliase arrays
+	if (!parser.getArgsDelim(LineParser::Defaults)) return false;
+	int keytrj = parser.argi(0);
+	int imcon = parser.argi(1);
+	int nAtoms = parser.argi(2);
+	if (keytrj != 2)
+	{
+		Messenger::error("File does not contain forces (keytrj = %i).\n", keytrj);
+		return false;
+	}
+	Messenger::print(" --> Expecting forces for %i atoms (DLPOLY keytrj=%i, imcon=%i).\n", nAtoms, keytrj, imcon);
+	fx.initialise(nAtoms);
+	fy.initialise(nAtoms);
+	fz.initialise(nAtoms);
+
+	// Skip cell information if given
+	if (imcon > 0) parser.skipLines(3);
+
+	// Loop over atoms
+	for (int n=0; n<nAtoms; ++n)
+	{
+		// Skip position and velocity lines
+		if (!parser.skipLines(2)) return false;
+		if (!parser.getArgsDelim(LineParser::Defaults)) return false;
+		fx[n] = parser.argd(0);
+		fy[n] = parser.argd(1);
+		fz[n] = parser.argd(2);
+	}
+
+	return true;
 }

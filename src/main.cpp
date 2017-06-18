@@ -42,7 +42,7 @@ int main(int argc, char **argv)
 	int n = 1;
 	CharString inputFile, redirectFileName;
 	int dumpData = 0;
-	bool singleIteration = false;
+	bool singleIteration = false, ignoreRestart = false;
 	while (n < argc)
 	{
 		if (argv[n][0] == '-')
@@ -54,6 +54,7 @@ int main(int argc, char **argv)
 					printf("dUQ version %s\n\nAvailable CLI options are:\n\n", DUQVERSION);
 					printf("\t-a\t\tAuto-add dependent Modules if they are not present already\n");
 					printf("\t-d\t\tPerform dump of system data from all processes and quit\n");
+					printf("\t-i\t\tIgnore restart file\n");
 					printf("\t-m\t\tRestrict output to be from the master process alone (parallel code only)\n");
 					printf("\t-q\t\tQuiet mode - print no output\n");
 					printf("\t-r <file>\tRedirect output from all process to 'file.N', where N is the process rank\n");
@@ -163,9 +164,24 @@ int main(int argc, char **argv)
 	}
 	if (!dUQ.loadInput(inputFile))
 	{
-		Messenger::print("Error loading input file.\n");
+		Messenger::error("Input file contained errors.\n");
 		ProcessPool::finalise();
 		return 1;
+	}
+
+	// Load restart file
+	if (!ignoreRestart)
+	{
+		CharString restartFile("%s.restart", inputFile.get());
+		if (DUQSys::fileExists(restartFile))
+		{
+			if (!dUQ.loadRestart(restartFile.get()))
+			{
+				Messenger::error("Restart file contained errors.\n");
+				ProcessPool::finalise();
+				return 1;
+			}
+		}
 	}
 
 	// Initialise random seed

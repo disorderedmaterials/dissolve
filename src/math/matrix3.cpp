@@ -20,6 +20,7 @@
 */
 
 #include "math/matrix3.h"
+#include "base/messenger.h"
 
 // Constructor
 Matrix3::Matrix3()
@@ -110,9 +111,9 @@ double &Matrix3::operator[](int index)
 	return matrix_[index];
 }
 
-//
-// General Routines
-//
+/*
+ * General Routines
+ */
 
 // Reset to the identity matrix
 void Matrix3::setIdentity()

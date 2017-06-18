@@ -1237,6 +1237,8 @@ double XYData::interpolated(double xvalue, int interval)
 {
 	// Calculate cubic polynomial
 // 	double result = a*y_[splineBracketLeft_] + b*y_[splineBracketRight_] + ((a*a*a-a)*ddy_[splineBracketLeft_] + (b*b*b-b)*ddy_[splineBracketRight_])*(interval*interval)/6.0;
+	if (interval < 0) return y_.first();
+	else if (interval >= splineA_.nItems()) return y_.last();
 	double h = constrainedSpline_ ? xvalue : xvalue - x_[interval];
 	double hh = h*h;
 	return splineA_[interval] + splineB_[interval]*h + splineC_[interval]*hh + splineD_[interval]*hh*h;
@@ -1506,7 +1508,6 @@ bool XYData::save(const char* filename) const
 {
 	// Open file and check that we're OK to proceed writing to it
 	LineParser parser;
-// 	Messenger::print("Writing datafile '%s'...\n", filename);
 
 	parser.openOutput(filename, true);
 	if (!parser.isFileGoodForWriting())

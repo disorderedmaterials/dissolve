@@ -1078,6 +1078,107 @@ bool ProcessPool::broadcast(Array<double>& array, int rootRank, ProcessPool::Com
 	return true;
 }
 
+// Broadcast Array< Vec3<int> >
+bool ProcessPool::broadcast(Array< Vec3<int> >& array, int rootRank, ProcessPool::CommunicatorType commType)
+{
+#ifdef PARALLEL
+	timer_.start();
+
+	// Working arrays (static)
+	static Array<int> tempx, tempy, tempz;
+
+	int length;
+	if (poolRank_ == rootRank)
+	{
+		// Broadcast array length first...
+		length = array.nItems();
+		if (MPI_Bcast(&length, 1, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
+		{
+			Messenger::print("Failed to broadcast Array< Vec3<int> > size from root rank %i.\n", rootRank);
+			return false;
+		}
+
+		// Now broadcast Array data
+		if (length > 0)
+		{
+			// Construct local array data to broadcast
+			tempx.initialise(length);
+			tempy.initialise(length);
+			tempz.initialise(length);
+			for (int n=0; n<length; ++n)
+			{
+				tempx[n] = array[n].x;
+				tempy[n] = array[n].y;
+				tempz[n] = array[n].z;
+			}
+
+			if (MPI_Bcast(tempx.array(), length, MPI_DOUBLE, rootRank, communicator(commType)) != MPI_SUCCESS)
+			{
+				Messenger::print("Failed to broadcast Array< Vec3<int> > (x) data from root rank %i.\n", rootRank);
+				return false;
+			}
+			if (MPI_Bcast(tempy.array(), length, MPI_DOUBLE, rootRank, communicator(commType)) != MPI_SUCCESS)
+			{
+				Messenger::print("Failed to broadcast Array< Vec3<int> > (y) data from root rank %i.\n", rootRank);
+				return false;
+			}
+			if (MPI_Bcast(tempz.array(), length, MPI_DOUBLE, rootRank, communicator(commType)) != MPI_SUCCESS)
+			{
+				Messenger::print("Failed to broadcast Array< Vec3<int> > (z) data from root rank %i.\n", rootRank);
+				return false;
+			}
+		}
+	}
+	else
+	{
+		// Slaves receive the length, and then create and receive the array
+		// Length first...
+		if (MPI_Bcast(&length, 1, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
+		{
+			Messenger::print("Slave %i (world rank %i) failed to receive Array< Vec3<int> > size from root rank %i.\n", poolRank_, worldRank_, rootRank);
+			return false;
+		}
+
+		if (length > 0)
+		{
+			// Create array of specified size, and temporary storage arrays
+			array.initialise(length);
+			tempx.initialise(length);
+			tempy.initialise(length);
+			tempz.initialise(length);
+
+			if (MPI_Bcast(tempx.array(), length, MPI_DOUBLE, rootRank, communicator(commType)) != MPI_SUCCESS)
+			{
+				Messenger::print("Slave %i (world rank %i) failed to receive Array< Vec3<int> > (x) data from root rank %i.\n", poolRank_, worldRank_, rootRank);
+				return false;
+			}
+			if (MPI_Bcast(tempy.array(), length, MPI_DOUBLE, rootRank, communicator(commType)) != MPI_SUCCESS)
+			{
+				Messenger::print("Slave %i (world rank %i) failed to receive Array< Vec3<int> > (y) data from root rank %i.\n", poolRank_, worldRank_, rootRank);
+				return false;
+			}
+			if (MPI_Bcast(tempz.array(), length, MPI_DOUBLE, rootRank, communicator(commType)) != MPI_SUCCESS)
+			{
+				Messenger::print("Slave %i (world rank %i) failed to receive Array< Vec3<int> > (z) data from root rank %i.\n", poolRank_, worldRank_, rootRank);
+				return false;
+			}
+
+			// Store received data in array
+			for (int n=0; n<length; ++n)
+			{
+				array[n].x = tempx[n];
+				array[n].y = tempy[n];
+				array[n].z = tempz[n];
+			}
+		}
+		else array.clear();
+	}
+
+	timer_.accumulate();
+#endif
+	return true;
+}
+
 // Broadcast Array< Vec3<double> >
 bool ProcessPool::broadcast(Array< Vec3<double> >& array, int rootRank, ProcessPool::CommunicatorType commType)
 {

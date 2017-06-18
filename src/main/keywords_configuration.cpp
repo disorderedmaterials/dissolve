@@ -27,24 +27,24 @@
 
 // Configuration Block Keywords
 KeywordData ConfigurationBlockData[] = {
-	{ "BoxNormalisationFile", 	1,	"Specifies a file from which to load the RDF normalisation array" },
-	{ "BraggMaximumQ",		1,	"Sets the maximum Q value for Bragg calculation" },
-	{ "CellAngles", 		3,	"Gives the angles of the unit cell" },
-	{ "CellDivisionLength",		1,	"Set the requested side length for regions when partitioning the unit cell" },
-	{ "CellLengths",		3,	"Gives the relative lengths of the unit cell" },
-	{ "Density",			2,	"Specifies the density of the Configuration, along with its units" },
+	{ "BoxNormalisationFile", 	1,	"File from which to load the RDF normalisation array" },
+	{ "BraggMaximumQ",		1,	"Maximum Q value for Bragg calculation" },
+	{ "CellAngles", 		3,	"Angles of the unit cell" },
+	{ "CellDivisionLength",		1,	"Requested side length for regions when partitioning the unit cell" },
+	{ "CellLengths",		3,	"Relative lengths of the unit cell" },
+	{ "Density",			2,	"Density of the Configuration, along with its units" },
 	{ "EndConfiguration",		0,	"Signals the end of the Configuration block" },
 	{ "Ensemble",			1,	"Whether an ensemble file should be appended to" },
 	{ "EnsembleFrequency",		1,	"Frequency at which to append ensemble file" },
-	{ "InputCoordinates",		1,	"Specifies the file which contains the starting coordinates" },
+	{ "InputCoordinates",		1,	"File which contains the starting coordinates" },
 	{ "Module",			1,	"Starts the setup of a Module for this Configuration" },
-	{ "Multiplier",			1,	"Specifies the factor by which relative populations are multiplied when generating the Configuration data" },
+	{ "Multiplier",			1,	"Factor by which relative populations are multiplied when generating the Configuration data" },
 	{ "NonPeriodic",		0,	"States that the simulation should be treated as non-periodic" },
-	{ "OutputCoordinates",		1,	"Specifies the file which should contain output coordinates, followed by the (optional) output frequency" },
-	{ "RDFBinWidth",		1,	"Specified bin width for all radial distribution functions" },
+	{ "OutputCoordinates",		1,	"File which should contain output coordinates, followed by the (optional) output frequency" },
+	{ "RDFBinWidth",		1,	"Bin width for all radial distribution functions" },
 	{ "RDFRange",			1,	"Requested extent for calculated radial distribution functions" },
 	{ "Species",			2,	"Specifies a Species and its relative population to add to this Configuration" },
-	{ "Temperature",		1,	"Defines the temperature of the Configuration" },
+	{ "Temperature",		1,	"Simulation temperature of the Configuration" },
 	{ "UseOutputAsInput",		0,	"Use output coordinates file as input (if it exists)" }
 };
 
@@ -119,6 +119,12 @@ bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
 			case (ConfigurationBlock::EndConfigurationKeyword):
 				Messenger::print("Found end of %s block.\n", InputBlocks::inputBlock(InputBlocks::ConfigurationBlock));
 				blockDone = true;
+				break;
+			case (ConfigurationBlock::EnsembleKeyword):
+				cfg->setAppendEnsemble(parser.argb(1));
+				break;
+			case (ConfigurationBlock::EnsembleFrequencyKeyword):
+				cfg->setEnsembleFrequency(parser.argi(1));
 				break;
 			case (ConfigurationBlock::InputCoordinatesKeyword):
 				cfg->setInputCoordinatesFile(parser.argc(1));

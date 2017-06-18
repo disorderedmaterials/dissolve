@@ -849,6 +849,36 @@ bool LineParser::writeLineF(const char* fmt, ...) const
 	return true;
 }
 
+// Write int argument as single line
+bool LineParser::writeArg(int i) const
+{
+	return writeLineF("%i\n", i);
+}
+
+// Write double argument as single line
+bool LineParser::writeArg(double d) const
+{
+	return writeLineF("%16.9e\n", d);
+}
+
+// Write bool argument as single line
+bool LineParser::writeArg(bool b) const
+{
+	return writeLineF("%s\n", DUQSys::btoa(b));
+}
+
+// Write Vec3<int> argument as single line
+bool LineParser::writeArg(Vec3<int> v) const
+{
+	return writeLineF("%i  %i  %i\n", v.x, v.y, v.z);
+}
+
+// Write Vec3<double> argument as single line
+bool LineParser::writeArg(Vec3<double> v) const
+{
+	return writeLineF("%16.9e  %16.9e  %16.9e\n", v.x, v.y, v.z);
+}
+
 // Commit cached output stream to actual output file
 bool LineParser::commitCache()
 {
@@ -990,5 +1020,75 @@ float LineParser::argf(int i)
 bool LineParser::hasArg(int i) const
 {
 	if ((i < 0) || (i >= nArgs())) return false;
+	return true;
+}
+
+// Return specified argument as int, placing in variable provided
+bool LineParser::argAs(int i, int& destination)
+{
+	if ((i < 0) || (i >= nArgs()))
+	{
+		printf("Warning: Argument %i is out of range.\n", i);
+		return false;
+	}
+
+	destination = argi(i);
+
+	return true;
+}
+
+// Return specified argument as double, placing in variable provided
+bool LineParser::argAs(int i, double& destination)
+{
+	if ((i < 0) || (i >= nArgs()))
+	{
+		printf("Warning: Argument %i is out of range.\n", i);
+		return false;
+	}
+
+	destination = argd(i);
+
+	return true;
+}
+
+// Return specified argument as bool, placing in variable provided
+bool LineParser::argAs(int i, bool& destination)
+{
+	if ((i < 0) || (i >= nArgs()))
+	{
+		printf("Warning: Argument %i is out of range.\n", i);
+		return false;
+	}
+
+	destination = argb(i);
+
+	return true;
+}
+
+// Return specified argument as Vec3<double>, placing in variable provided
+bool LineParser::argAs(int i, Vec3<int>& destination)
+{
+	if ((i < 0) || (i >= (nArgs()-2)))
+	{
+		printf("Warning: Argument %i is out of range.\n", i);
+		return false;
+	}
+
+	destination.set(argi(i), argi(i), argi(i));
+
+	return true;
+}
+
+// Return specified argument as Vec3<double>, placing in variable provided
+bool LineParser::argAs(int i, Vec3<double>& destination)
+{
+	if ((i < 0) || (i >= (nArgs()-2)))
+	{
+		printf("Warning: Argument %i is out of range.\n", i);
+		return false;
+	}
+
+	destination.set(argd(i), argd(i), argd(i));
+
 	return true;
 }

@@ -25,7 +25,7 @@
 #include "classes/atomtypelist.h"
 #include "base/xydata.h"
 #include "templates/list.h"
-#include "templates/array.h"
+#include "templates/array2d.h"
 
 // Forward Declarations
 class Configuration;

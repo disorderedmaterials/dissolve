@@ -283,6 +283,10 @@ class DUQ
 	bool loadInput(const char* filename);
 	// Save input file
 	bool saveInput(const char* filename);
+	// Load restart file
+	bool loadRestart(const char* filename);
+	// Save restart file
+	bool saveRestart(const char* filename);
 	// Dump additional data
 	void dump();
 	// Return whether a filename has been set

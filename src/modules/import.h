@@ -106,7 +106,9 @@ class ImportModule : public Module
 	 */
 	public:
 	// Read simple forces from specified file
-	static bool readForcesSimple(LineParser& parser, Array<double>& fx, Array<double>& fy, Array<double>& fz);
+	static bool readSimpleForces(LineParser& parser, Array<double>& fx, Array<double>& fy, Array<double>& fz);
+	// Read DL_POLY forces from specified file
+	static bool readDLPOLYForces(LineParser& parser, Array<double>& fx, Array<double>& fy, Array<double>& fz);
 };
 
 #endif

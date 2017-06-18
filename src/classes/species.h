@@ -23,7 +23,7 @@
 #define DUQ_SPECIES_H
 
 #include "templates/list.h"
-#include "templates/array.h"
+#include "templates/array2d.h"
 #include "classes/speciesangle.h"
 #include "classes/speciesatom.h"
 #include "classes/speciesbond.h"

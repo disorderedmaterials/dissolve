@@ -24,7 +24,7 @@
 
 #include "base/sysfunc.h"
 #include "templates/list.h"
-#include "templates/genericitem.h"
+#include "templates/genericitems.h"
 
 // Generic List
 class GenericList
@@ -38,6 +38,53 @@ class GenericList
 	void add(GenericItem* item)
 	{
 		items_.own(item);
+	}
+	// Create an item of the specified type
+	GenericItem* create(const char* name, GenericItem::ItemClass itemClass)
+	{
+		// Check for existing item with this name
+		GenericItem* newItem = find(name);
+		if (newItem)
+		{
+			return newItem;
+// 			Messenger::error("Item named '%s' already exists in the list.\n", name);
+// 			return NULL;
+		}
+		switch (itemClass)
+		{
+			case (GenericItem::BoolClass):
+				newItem = new GenericItemContainer<bool>(name);
+				break;
+			case (GenericItem::IntClass):
+				newItem = new GenericItemContainer<int>(name);
+				break;
+			case (GenericItem::DoubleClass):
+				newItem = new GenericItemContainer<double>(name);
+				break;
+			case (GenericItem::ArrayIntClass):
+				newItem = new GenericItemContainer< Array<int> >(name);
+				break;
+			case (GenericItem::ArrayDoubleClass):
+				newItem = new GenericItemContainer< Array<double> >(name);
+				break;
+			case (GenericItem::ArrayVec3IntClass):
+				newItem = new GenericItemContainer< Array< Vec3<int> > >(name);
+				break;
+			case (GenericItem::ArrayVec3DoubleClass):
+				newItem = new GenericItemContainer< Array< Vec3<double> > >(name);
+				break;
+			case (GenericItem::Array2DDoubleClass):
+				newItem = new GenericItemContainer< Array2D<double> >(name);
+				break;
+			default:
+				Messenger::error("GenericList::create() doesn't know how to create an item of type '%s'\n", itemClass);
+				break;
+		}
+
+		// Add the new item to our list
+		if (newItem) add(newItem);
+
+		return newItem;
 	}
 	// Return whether the named item is contained in the list
 	bool contains(const char* name, const char* prefix = NULL)
@@ -61,6 +108,19 @@ class GenericList
 		for (GenericItem* item = items_.first(); item != NULL; item = item->next) if (DUQSys::sameString(item->name(), name)) return item;
 		return NULL;
 	}
+	// Return list of all items with specified prefix (before first '_')
+	RefList<GenericItem,bool> findWithPrefix(const char* prefix)
+	{
+		RefList<GenericItem,bool> items;
+		CharString itemUniqueName;
+		for (GenericItem* item = items_.first(); item != NULL; item = item->next)
+		{
+			itemUniqueName = DUQSys::beforeChar(item->name(), '_');
+			if (itemUniqueName == prefix) items.add(item);
+		}
+
+		return items;
+	}
 	// Broadcast all data
 	bool broadcast(ProcessPool& procPool, int root)
 	{
@@ -74,7 +134,7 @@ template <class T> class GenericListHelper
 {
 	public:
 	// Add new named item of template-guided type to specified list
-	static T& add(GenericList& targetList, const char* name, const char* prefix = NULL)
+	static T& add(GenericList& targetList, const char* name, const char* prefix = NULL, int flags = -1)
 	{
 		// Construct full name
 		CharString varName;
@@ -92,6 +152,7 @@ template <class T> class GenericListHelper
 
 		// Create new item
 		GenericItemContainer<T>* newItem = new GenericItemContainer<T>(varName);
+		if (flags >= 0) newItem->setFlags(flags);
 		targetList.add(newItem);
 		return newItem->data;
 	}
@@ -128,7 +189,7 @@ template <class T> class GenericListHelper
 		return castItem->data;
 	}
 	// Retrieve (or create and retrieve) named item from specified list as template-guided type
-	static T& realise(GenericList& sourceList, const char* name, const char* prefix = NULL, bool* created = NULL)
+	static T& realise(GenericList& sourceList, const char* name, const char* prefix = NULL, int flags = -1, bool* created = NULL)
 	{
 		// Construct full name
 		CharString varName;
@@ -140,7 +201,7 @@ template <class T> class GenericListHelper
 		if (!item)
 		{
 			if (created != NULL) (*created) = true;
-			return add(sourceList, name, prefix);
+			return add(sourceList, name, prefix, flags);
 		}
 
 		// Cast to correct type
@@ -151,6 +212,9 @@ template <class T> class GenericListHelper
 			static T dummy;
 			return dummy;
 		}
+
+		// Update flags
+		if (flags >= 0) item->setFlags(flags);
 
 		if (created != NULL) (*created) = false;
 		return castItem->data;

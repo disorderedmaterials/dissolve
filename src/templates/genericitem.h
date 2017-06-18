@@ -23,6 +23,7 @@
 #define DUQ_GENERICITEM_H
 
 #include "base/processpool.h"
+#include "base/sysfunc.h"
 
 /*
  * GenericItem - Base class for all GenericItemContainers
@@ -31,9 +32,11 @@ class GenericItem
 {
 	public:
 	// Constructor
-	GenericItem(const char* name)
+	GenericItem(const char* name, int flags)
 	{
 		name_ = name;
+		flags_ = flags;
+		itemClass_ = nItemClasses;
 		prev = NULL;
 		next = NULL;
 	}
@@ -43,8 +46,35 @@ class GenericItem
 	// Item Flags
 	enum Flags
 	{
-		ModuleOptionFlag	= 1	/* Specifies that the item represents a Module option (i.e. a PlainValue in Module::options_) */
+		ModuleOptionFlag		= 1,	/* Specifies that the item represents a Module option (i.e. a PlainValue in Module::options_) */
+		NoOutputFlag			= 2	/* The item should not be read or written by input / output routines */
 	};
+	// Item Classes
+	enum ItemClass
+	{
+		BoolClass,				/* Item is of 'bool' type */
+		IntClass,				/* Item is of 'int' type */
+		DoubleClass,				/* Item is of 'double' type */
+		CharStringClass,			/* Item is a 'CharString' */
+		ArrayIntClass,				/* Item is a 'Array<int>' */
+		ArrayDoubleClass,			/* Item is a 'Array<double>' */
+		ArrayVec3IntClass,			/* Item is a 'Array< Vec3<int> >' */
+		ArrayVec3DoubleClass,			/* Item is a 'Array< Vec3<double> >' */
+		Array2DDoubleClass,			/* Item is a 'Array2D<double>' */
+		nItemClasses
+	};
+	// Convert item class to char string
+	static const char* itemClass(ItemClass c)
+	{
+		static const char* classKeywords[] = { "Bool", "Int", "Double", "CharString", "Array<int>", "Array<double>", "Array<Vec3<int>>", "Array<Vec3<double>>", "Array2D<double>" };
+		return classKeywords[c];
+	}
+	// Convert char string to item class
+	static ItemClass itemClass(const char* s)
+	{
+		for (int n=0; n<nItemClasses; ++n) if (DUQSys::sameString(itemClass( (ItemClass) n), s)) return (ItemClass) n;
+		return nItemClasses;
+	}
 	// List Pointers
 	GenericItem* prev, *next;
 
@@ -55,6 +85,10 @@ class GenericItem
 	CharString description_;
 	// Flags
 	int flags_;
+
+	protected:
+	// Item class
+	ItemClass itemClass_;
 
 	public:
 	// Return item name
@@ -72,6 +106,31 @@ class GenericItem
 	{
 		return description_.get();
 	}
+	// Set flags for item
+	void setFlags(int flags)
+	{
+		flags_ = flags;
+	}
+	// Return flags
+	int flags()
+	{
+		return flags_;
+	}
+	// Return item class
+	ItemClass itemClass()
+	{
+		return itemClass_;
+	}
+
+
+	/*
+	 * Read / Write
+	 */
+	public:
+	// Read item contents from specified LineParser
+	virtual bool read(LineParser& parser) = 0;
+	// Write item contents to specified LineParser
+	virtual bool write(LineParser& parser) = 0;
 
 
 	/*
@@ -80,220 +139,6 @@ class GenericItem
 	public:
 	// Broadcast item contsnts
 	virtual bool broadcast(ProcessPool& procPool, int root) = 0;
-};
-
-/*
- * GenericItemContainer Template Class
- */
-template <class T> class GenericItemContainer : public GenericItem
-{
-	public:
-	// Constructor
-	GenericItemContainer<T>(const char* name) : GenericItem(name)
-	{
-	}
-	// Data item
-	T data;
-
-
-	/*
-	 * Parallel Comms
-	 */
-	public:
-	// Broadcast item contsnts
-	bool broadcast(ProcessPool& procPool, int root)
-	{
-		return data.broadcast(procPool, root);
-	}
-};
-
-/*
- * GenericItemContainer Specialisations
- */
-
-// GenericItemContainer<bool>
-template <> class GenericItemContainer<bool> : public GenericItem
-{
-	public:
-	// Constructor
-	GenericItemContainer<bool>(const char* name) : GenericItem(name)
-	{
-	}
-	// Data item
-	bool data;
-
-
-	/*
-	 * Parallel Comms
-	 */
-	public:
-	// Broadcast item contsnts
-	bool broadcast(ProcessPool& procPool, int root)
-	{
-		return procPool.broadcast(data, root);
-	}
-};
-
-// GenericItemContainer<int>
-template <> class GenericItemContainer<int> : public GenericItem
-{
-	public:
-	// Constructor
-	GenericItemContainer<int>(const char* name) : GenericItem(name)
-	{
-	}
-	// Data item
-	int data;
-
-
-	/*
-	 * Parallel Comms
-	 */
-	public:
-	// Broadcast item contsnts
-	bool broadcast(ProcessPool& procPool, int root)
-	{
-		return procPool.broadcast(data, root);
-	}
-};
-
-// GenericItemContainer<double>
-template <> class GenericItemContainer<double> : public GenericItem
-{
-	public:
-	// Constructor
-	GenericItemContainer<double>(const char* name) : GenericItem(name)
-	{
-	}
-	// Data item
-	double data;
-
-
-	/*
-	 * Parallel Comms
-	 */
-	public:
-	// Broadcast item contsnts
-	bool broadcast(ProcessPool& procPool, int root)
-	{
-		return procPool.broadcast(data, root);
-	}
-};
-
-// GenericItemContainer<CharString>
-template <> class GenericItemContainer<CharString> : public GenericItem
-{
-	public:
-	// Constructor
-	GenericItemContainer<CharString>(const char* name) : GenericItem(name)
-	{
-	}
-	// Data item
-	CharString data;
-
-
-	/*
-	 * Parallel Comms
-	 */
-	public:
-	// Broadcast item contsnts
-	bool broadcast(ProcessPool& procPool, int root)
-	{
-		return procPool.broadcast(data, root);
-	}
-};
-
-
-// GenericItemContainer< Array<int> >
-template <> class GenericItemContainer< Array<int> > : public GenericItem
-{
-	public:
-	// Constructor
-	GenericItemContainer< Array<int> >(const char* name) : GenericItem(name)
-	{
-	}
-	// Data item
-	Array<int> data;
-
-
-	/*
-	 * Parallel Comms
-	 */
-	public:
-	// Broadcast item contsnts
-	bool broadcast(ProcessPool& procPool, int root)
-	{
-		return procPool.broadcast(data, root);
-	}
-};
-
-// GenericItemContainer< Array<double> >
-template <> class GenericItemContainer< Array<double> > : public GenericItem
-{
-	public:
-	// Constructor
-	GenericItemContainer< Array<double> >(const char* name) : GenericItem(name)
-	{
-	}
-	// Data item
-	Array<double> data;
-
-
-	/*
-	 * Parallel Comms
-	 */
-	public:
-	// Broadcast item contsnts
-	bool broadcast(ProcessPool& procPool, int root)
-	{
-		return procPool.broadcast(data, root);
-	}
-};
-
-// GenericItemContainer< Array< Vec3<double> > >
-template <> class GenericItemContainer< Array< Vec3<double> > > : public GenericItem
-{
-	public:
-	// Constructor
-	GenericItemContainer< Array< Vec3<double> > >(const char* name) : GenericItem(name)
-	{
-	}
-	// Data item
-	Array< Vec3<double> > data;
-
-
-	/*
-	 * Parallel Comms
-	 */
-	public:
-	// Broadcast item contsnts
-	bool broadcast(ProcessPool& procPool, int root)
-	{
-		return procPool.broadcast(data, root);
-	}
-};
-
-// GenericItemContainer< Array2D<double> >
-template <> class GenericItemContainer< Array2D<double> > : public GenericItem
-{
-	public:
-	// Constructor
-	GenericItemContainer< Array2D<double> >(const char* name) : GenericItem(name)
-	{
-	}
-	// Data item
-	Array2D<double> data;
-
-
-	/*
-	 * Parallel Comms
-	 */
-	public:
-	// Broadcast item contsnts
-	bool broadcast(ProcessPool& procPool, int root)
-	{
-		return procPool.broadcast(data, root);
-	}
 };
 
 #endif

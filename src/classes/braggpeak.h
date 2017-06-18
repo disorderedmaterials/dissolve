@@ -23,7 +23,7 @@
 #define DUQ_BRAGGPEAK_H
 
 #include "templates/vector3.h"
-#include "templates/array.h"
+#include "templates/array2d.h"
 
 // Forward Declarations
 /* none */

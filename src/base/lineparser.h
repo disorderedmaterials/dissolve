@@ -25,6 +25,7 @@
 #include "base/charstring.h"
 #include "math/constants.h"
 #include "templates/list.h"
+#include "templates/vector3.h"
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -159,6 +160,16 @@ class LineParser
 	bool writeLine(const char* s) const;
 	// Write formatted line to file
 	bool writeLineF(const char* fmt, ...) const;
+	// Write int argument as single line
+	bool writeArg(int i) const;
+	// Write double argument as single line
+	bool writeArg(double d) const;
+	// Write bool argument as single line
+	bool writeArg(bool b) const;
+	// Write Vec3<double> argument as single line
+	bool writeArg(Vec3<double> v) const;
+	// Write Vec3<int> argument as single line
+	bool writeArg(Vec3<int> v) const;
 	// Commit cached output stream to actual output file
 	bool commitCache();
 
@@ -199,6 +210,16 @@ class LineParser
 	float argf(int i);
 	// Returns whether the specified argument exists
 	bool hasArg(int i) const;
+	// Return specified argument as int, placing in variable provided
+	bool argAs(int i, int& destination);
+	// Return specified argument as double, placing in variable provided
+	bool argAs(int i, double& destination);
+	// Return specified argument as bool, placing in variable provided
+	bool argAs(int i, bool& destination);
+	// Return specified argument as Vec3<double>, placing in variable provided
+	bool argAs(int i, Vec3<int>& destination);
+	// Return specified argument as Vec3<double>, placing in variable provided
+	bool argAs(int i, Vec3<double>& destination);
 };
 
 #endif

@@ -238,12 +238,12 @@ bool DUQ::go(bool singleIteration)
 			Messenger::banner("Write Data");
 
 			/*
-			 * Input File
+			 * Restart File
 			 */
 
-			if (!saveInput(CharString("%s.new", filename_.get())))
+			if (!saveRestart(CharString("%s.restart", filename_.get())))
 			{
-				Messenger::error("Failed to write input file output file.\n");
+				Messenger::error("Failed to write restart file.\n");
 				worldPool_.stop();
 				return false;
 			}
@@ -274,6 +274,27 @@ bool DUQ::go(bool singleIteration)
 					worldPool_.stop();
 					return false;
 				}
+
+				// Append ensemble file
+				if (cfg->appendEnsemble())
+				{
+					CharString ensembleFile("%s.xyz.ensemble", cfg->name());
+					Messenger::print("Appending Configuration output file '%s'...\n", ensembleFile.get());
+
+					LineParser ensembleParser;
+					if (!ensembleParser.appendOutput(ensembleFile.get()))
+					{
+						ensembleParser.closeFiles();
+						worldPool_.stop();
+						return false;
+					}
+					else if (!ExportModule::writeConfigurationXYZ(ensembleParser, cfg, cfg->name()))
+					{
+						Messenger::print("Export: Failed to append Configuration ensemble output file.\n");
+						ensembleParser.closeFiles();
+						worldPool_.stop();
+						return false;
+					}				}
 			}
 
 			/*

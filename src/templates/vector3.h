@@ -22,7 +22,6 @@
 #ifndef DUQ_VECTOR3_H
 #define DUQ_VECTOR3_H
 
-#include "base/messenger.h"
 #include "math/constants.h"
 #include "math/mathfunc.h"
 #include "templates/list.h"

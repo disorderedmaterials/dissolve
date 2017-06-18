@@ -304,10 +304,10 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 
 			// Finalise and store weighting matrix
 			weightsMatrix.finalise();
-			GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "PartialWeights", uniqueName_) = weightsMatrix.scatteringMatrix();
+			GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "PartialWeights", uniqueName_, GenericItem::NoOutputFlag) = weightsMatrix.scatteringMatrix();
 
 			// Calculate weighted partials
-			PartialRSet& partialgr = GenericListHelper<PartialRSet>::realise(cfg->moduleData(), "UnweightedGR", uniqueName_);
+			PartialRSet& partialgr = GenericListHelper<PartialRSet>::realise(cfg->moduleData(), "UnweightedGR", uniqueName_, GenericItem::NoOutputFlag);
 			calculateWeighted(cfg, partialgr, weightsMatrix);
 		}
 	}
@@ -332,7 +332,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		// Setup partial set for the Sample, using the AtomTypeList we have just constructed.
 		// We will use RDF range information from the first Configuration in the list
 		Configuration* refConfig = targetConfigurations_.firstItem();
-		PartialRSet& unweightedPartials = GenericListHelper<PartialRSet>::realise(duq.processingModuleData(), "UnweightedGR", uniqueName_);
+		PartialRSet& unweightedPartials = GenericListHelper<PartialRSet>::realise(duq.processingModuleData(), "UnweightedGR", uniqueName_, GenericItem::NoOutputFlag);
 		unweightedPartials.setup(atomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), uniqueName(), "unweighted", "rdf");
 
 		// Loop over Configurations again, summing into the PartialRSet we have just set up
@@ -361,7 +361,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		if (weightsType != PartialsModule::NoWeighting)
 		{
 			bool wasCreated;
-			PartialRSet& weightedPartials = GenericListHelper<PartialRSet>::realise(moduleData, "WeightedGR", uniqueName_, &wasCreated);
+			PartialRSet& weightedPartials = GenericListHelper<PartialRSet>::realise(moduleData, "WeightedGR", uniqueName_, GenericItem::NoOutputFlag, &wasCreated);
 			if (wasCreated) weightedPartials.setup(atomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), uniqueName(), "weighted", "rdf");
 			weightedPartials.reset();
 
@@ -395,6 +395,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 					procPool.stop();
 					return false;
 				}
+
 				// Do we have weighted as well?
 				if (weightsType != PartialsModule::NoWeighting)
 				{
@@ -528,7 +529,7 @@ bool PartialsModule::calculateUnweighted(Configuration* cfg, ProcessPool& procPo
 {
 	// Does a PartialSet already exist for this Configuration?
 	bool wasCreated;
-	PartialRSet& partialgr = GenericListHelper<PartialRSet>::realise(cfg->moduleData(), "UnweightedGR", uniqueName_, &wasCreated);
+	PartialRSet& partialgr = GenericListHelper<PartialRSet>::realise(cfg->moduleData(), "UnweightedGR", uniqueName_, GenericItem::NoOutputFlag, &wasCreated);
 	if (wasCreated) partialgr.setup(cfg, cfg->niceName(), "unweighted", "rdf");
 
 	// Is the PartialSet already up-to-date?
@@ -665,7 +666,7 @@ bool PartialsModule::calculateWeighted(Configuration* cfg, PartialRSet& unweight
 {
 	// Does a PartialSet already exist for this Configuration?
 	bool wasCreated;
-	PartialRSet& partialgr = GenericListHelper<PartialRSet>::realise(cfg->moduleData(), "WeightedGR", uniqueName_, &wasCreated);
+	PartialRSet& partialgr = GenericListHelper<PartialRSet>::realise(cfg->moduleData(), "WeightedGR", uniqueName_, GenericItem::NoOutputFlag, &wasCreated);
 	if (wasCreated) partialgr.setup(cfg, cfg->niceName(), "weighted", "rdf");
 
 	int typeI, typeJ;

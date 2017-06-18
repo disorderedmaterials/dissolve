@@ -20,6 +20,7 @@
 */
 
 #include "math/matrix4.h"
+#include "base/messenger.h"
 
 // Constructor
 Matrix4::Matrix4()
@@ -27,9 +28,9 @@ Matrix4::Matrix4()
 	setIdentity();
 }
 
-//
-// Operators
-//
+/*
+ * Operators
+ */
 
 // Matrix4 multiply (operator *) (return new matrix)
 Matrix4 Matrix4::operator*(const Matrix4& B) const
@@ -132,9 +133,9 @@ double &Matrix4::operator[](int index)
 	return matrix_[index];
 }
 
-//
-// Basic Set/Get
-//
+/*
+ * Basic Set/Get
+ */
 
 // Reset to the identity matrix
 void Matrix4::setIdentity()
@@ -187,7 +188,6 @@ void Matrix4::zero()
 	matrix_[14] = 0.0;
 	matrix_[15] = 0.0;
 }
-
 
 // Return matrix array
 double *Matrix4::matrix()
@@ -310,9 +310,9 @@ void Matrix4::invert()
 	}
 }
 
-//
-// Column Operations
-//
+/*
+ * Column Operations
+ */
 
 // Copy column contents to supplied Vec3
 Vec3<double> Matrix4::columnAsVec3(int col)
@@ -463,9 +463,9 @@ void Matrix4::orthogonaliseColumn(int targetcol, int orthocol1, int orthocol2)
 	setColumn(targetcol, v, matrix_[targetcol*4+3]);
 }
 
-//
-// Rotations
-//
+/*
+ * Rotations
+ */
 
 // Create rotation matrix about X
 void Matrix4::createRotationX(double angle)
@@ -668,9 +668,9 @@ void Matrix4::applyRotationAxis(double ax, double ay, double az, double angle, b
 	matrix_[7] = temp[7];
 }
 
-//
-// Translations
-//
+/*
+ * Translations
+ */
 
 // Apply a translation to the matrix (as glTranslated would do)
 void Matrix4::createTranslation(double dx, double dy, double dz)
@@ -932,4 +932,3 @@ void Matrix4::copyTranslationAndScaling(Matrix4& source)
 	matrix_[13] = source.matrix_[13];
 	matrix_[14] = source.matrix_[14];
 }
-

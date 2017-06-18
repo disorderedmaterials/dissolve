@@ -390,7 +390,7 @@ double PairPotential::energyAtRSquared(double distanceSq)
 	}
 #endif
 	// Is distance out of range?
-	if (distanceSq > rangeSquared_) return 0.0;
+// 	if (distanceSq >= rangeSquared_) return 0.0;
 
 	// Return binned value
 // 	return uFull_.y(distanceSq*rDelta_);
