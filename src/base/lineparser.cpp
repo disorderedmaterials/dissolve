@@ -106,26 +106,39 @@ int LineParser::lastLineNo() const
 // Open new file for reading
 bool LineParser::openInput(const char* filename)
 {
-	// Check existing input file
-	if (inputFile_ != NULL)
+	// Master needs to check for an existing input file
+	if ((!processPool_) || processPool_->isMaster())
 	{
-		printf("Warning - LineParser already appears to have an open file...\n");
-		inputFile_->close();
-		delete inputFile_;
-		inputFile_ = NULL;
+		if (inputFile_ != NULL)
+		{
+			printf("Warning - LineParser already appears to have an open file...\n");
+			inputFile_->close();
+			delete inputFile_;
+			inputFile_ = NULL;
+		}
 	}
-	// Open new file
-	inputFile_ = new ifstream(filename, ios::in | ios::binary);
-	if (!inputFile_->is_open())
+
+	// Master will open new file
+	bool result = true;
+	if ((!processPool_) || processPool_->isMaster())
 	{
-		closeFiles();
-		Messenger::error("Failed to open file '%s' for reading.\n", filename);
-		return false;
+		inputFile_ = new ifstream(filename, ios::in | ios::binary);
+		if (!inputFile_->is_open())
+		{
+			closeFiles();
+			Messenger::error("Failed to open file '%s' for reading.\n", filename);
+			result = false;
+		}
 	}
-	// Reset variables
+
+	// Broadcast result of open
+	if (processPool_ && (!processPool_->broadcast(result))) return false;
+
+	// Reset and broadcast variables
 	lastLineNo_ = 0;
 	inputFilename_ = filename;
-	return true;
+
+	return result;
 }
 
 // Open new stream for writing
@@ -202,15 +215,18 @@ bool LineParser::appendOutput(const char* filename)
 // Close file 
 void LineParser::closeFiles()
 {
-	if (inputFile_ != NULL)
+	if ((!processPool_) || processPool_->isMaster())
 	{
-		inputFile_->close();
-		delete inputFile_;
-	}
-	if (outputFile_ != NULL)
-	{
-		outputFile_->close();
-		delete outputFile_;
+		if (inputFile_ != NULL)
+		{
+			inputFile_->close();
+			delete inputFile_;
+		}
+		if (outputFile_ != NULL)
+		{
+			outputFile_->close();
+			delete outputFile_;
+		}
 	}
 
 	reset();
@@ -320,38 +336,40 @@ bool LineParser::eofOrBlank() const
  */
 
 // Read single line from internal file source
-int LineParser::readNextLine(int optionMask)
+LineParser::ParseReturnValue LineParser::readNextLine(int optionMask)
 {
 	// Master will check the file and broadcast the result
-	int result = 0;
+	LineParser::ParseReturnValue result = LineParser::Success;
 	if ((!processPool_) || processPool_->isMaster())
 	{
 		// Returns : 0=ok, 1=error, -1=eof
 		if (inputFile_ == NULL)
 		{
 			printf("Error: No input file open for LineParser::readNextLine.\n");
-			result = 1;
+			result = LineParser::Fail;
 		}
-		else if (inputFile_->eof()) result = -1;
+		else if (inputFile_->eof()) result = LineParser::EndOfFile;
 	}
 
-	// Broadcast result of read
+	// Broadcast result of file check
 	if (processPool_)
 	{
-		if (!processPool_->broadcast(result)) return 1;
-		if (result != 0) return result;
+		if (!processPool_->broadcast(EnumCast<LineParser::ParseReturnValue>(result))) return LineParser::Fail;
+		if (result != LineParser::Success) return result;
 	}
 
 	// Master will read the line and broadcast the result of the read
 	if ((!processPool_) || processPool_->isMaster())
 	{
 		// Loop until we get 'suitable' line from file
-		int nchars, nspaces, result = 0;
-		do
+		int nchars, nspaces;
+		result = LineParser::Fail;
+		while (result != LineParser::Success)
 		{
 			char chr;
 			lineLength_ = 0;
-			while(inputFile_->get(chr).good())
+			result = LineParser::Fail;
+			while (inputFile_->get(chr).good())
 			{
 				if (chr == '\r')
 				{
@@ -362,12 +380,10 @@ int LineParser::readNextLine(int optionMask)
 				line_[lineLength_++] = chr;
 
 				// Check here for overfilling the line_ buffer - perhaps it's a binary file?
-				if (lineLength_ == MAXLINELENGTH)
-				{
-					return -1;
-				}
+				if (lineLength_ == MAXLINELENGTH) result = LineParser::Fail;
 			}
 			line_[lineLength_] = '\0';
+			++lastLineNo_;
 // 			Messenger::print("Line from file is: [%s]\n", line_);
 
 			// Remove comments from line
@@ -384,34 +400,39 @@ int LineParser::readNextLine(int optionMask)
 					nchars++;
 					if (isspace(*c)) nspaces++;
 				}
-				if (nchars == nspaces) result = -1;
-				else result = 0;
-			}
-			else result = 0;
-			
-			// If result is 0, everything went okay, but if not we got a blank line. EOF or failed perhaps?
-			if (result == -1)
-			{
-				if (inputFile_->eof())
+
+				if (nchars == nspaces)
 				{
-					return -1;
+					// Blank line - if we're at the end of the file, return EOF.
+					// Otherwise, read in another line.
+					if (inputFile_->eof()) result = LineParser::EndOfFile;
+					else if (inputFile_->fail()) result = LineParser::Fail;
+					else continue;
 				}
-				if (inputFile_->fail())
-				{
-					return 1;
-				}
+				else result = LineParser::Success;
 			}
+			else result = LineParser::Success;
+
 			lineLength_ = strlen(line_);
 			linePos_ = 0;
-			lastLineNo_ ++;
-		} while (result != 0);
-		// printf("LineParser Returned line = [%s], length = %i\n",line_,lineLength_);
+
+			// Exit on EOF or error
+			if (result != LineParser::Success) break;
+		};
+// 		printf("LineParser Returned line = [%s], length = %i\n",line_,lineLength_);
+	}
+
+	// Broadcast result of file check
+	if (processPool_)
+	{
+		if (!processPool_->broadcast(EnumCast<LineParser::ParseReturnValue>(result))) return LineParser::Fail;
+		if (result != LineParser::Success) return result;
 	}
 
 	// Broadcast line
 	if (processPool_ )
 	{
-		if (!processPool_->broadcast(line_)) return 1;
+		if (!processPool_->broadcast(line_)) return LineParser::Fail;
 
 		if (processPool_->isSlave())
 		{
@@ -420,7 +441,7 @@ int LineParser::readNextLine(int optionMask)
 		}
 	}
 
-	return result;
+	return LineParser::Success;
 }
 
 // Gets next delimited arg from internal line
@@ -597,9 +618,9 @@ void LineParser::getAllArgsDelim(int optionMask)
 }
 
 // Parse delimited (from file)
-int LineParser::getArgsDelim(int optionMask)
+LineParser::ParseReturnValue LineParser::getArgsDelim(int optionMask)
 {
-	int result = readNextLine(optionMask);
+	LineParser::ParseReturnValue result = readNextLine(optionMask);
 
 	// Parse the line before returning the result of the initial line read
 	getAllArgsDelim(optionMask);
@@ -942,15 +963,16 @@ bool LineParser::commitCache()
 }
 
 // Skip lines from file
-int LineParser::skipLines(int nlines)
+LineParser::ParseReturnValue LineParser::skipLines(int nlines)
 {
-	int result;
-	for (int n=0; n<nlines; n++)
+	LineParser::ParseReturnValue result;
+	for (int n=0; n<nlines; ++n)
 	{
-		result = readNextLine(0);
-		if (result != 0) return result;
+		result = readNextLine(LineParser::Defaults);
+		if (result != LineParser::Success) return result;
 	}
-	return 0;
+
+	return LineParser::Success;
 }
 
 /*

@@ -102,9 +102,11 @@ class ImportModule : public Module
 
 
 	/*
-	 * Static Functions
+	 * Static Functions - Force
 	 */
 	public:
+	// Read forces in specified format
+	static bool readForces(const char* format, LineParser& parser, Array<double>& fx, Array<double>& fy, Array<double>& fz);
 	// Read simple forces from specified file
 	static bool readSimpleForces(LineParser& parser, Array<double>& fx, Array<double>& fy, Array<double>& fz);
 	// Read DL_POLY forces from specified file

@@ -214,8 +214,19 @@ bool ImportModule::postProcess(DUQ& duq, ProcessPool& procPool)
 }
 
 /*
- * Static Functions
+ * Static Functions - Forces
  */
+
+// Read forces in specified format
+bool ImportModule::readForces(const char* format, LineParser& parser, Array<double>& fx, Array<double>& fy, Array<double>& fz)
+{
+	// Check supplied format string
+	if (DUQSys::sameString(format, "simple")) return readSimpleForces(parser, fx, fy, fz);
+	else if (DUQSys::sameString(format, "dlpoly")) return readDLPOLYForces(parser, fx, fy, fz);
+
+	Messenger::error("Unrecognised force format - '%s'.\nKnown formats are: simple, dlpoly.\n", format);
+	return false;
+}
 
 // Read simple forces from specified file
 bool ImportModule::readSimpleForces(LineParser& parser, Array<double>& fx, Array<double>& fy, Array<double>& fz)
@@ -265,11 +276,13 @@ bool ImportModule::readDLPOLYForces(LineParser& parser, Array<double>& fx, Array
 	 *   ...
 	 */
 
+	Messenger::print(" --> Reading forces in DL_POLY (CONFIG/REVCON) format...\n");
 	// Skip title
-	if (!parser.skipLines(1)) return false;
+	if (parser.skipLines(1) != LineParser::Success) return false;
 
 	// Read in keytrj, imcon, and number of atoms, and initiliase arrays
-	if (!parser.getArgsDelim(LineParser::Defaults)) return false;
+	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+
 	int keytrj = parser.argi(0);
 	int imcon = parser.argi(1);
 	int nAtoms = parser.argi(2);
@@ -289,9 +302,9 @@ bool ImportModule::readDLPOLYForces(LineParser& parser, Array<double>& fx, Array
 	// Loop over atoms
 	for (int n=0; n<nAtoms; ++n)
 	{
-		// Skip position and velocity lines
-		if (!parser.skipLines(2)) return false;
-		if (!parser.getArgsDelim(LineParser::Defaults)) return false;
+		// Skip atomname, position and velocity lines
+		if (parser.skipLines(3) != LineParser::Success) return false;
+		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 		fx[n] = parser.argd(0);
 		fy[n] = parser.argd(1);
 		fz[n] = parser.argd(2);

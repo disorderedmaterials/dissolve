@@ -59,6 +59,13 @@ class LineParser
 		DummyOption = 128,
 		nParseOptions = 9
 	};
+	// Parse Return Value
+	enum ParseReturnValue
+	{
+		EndOfFile		= -1,	/* Operation encountered the end of the current file */
+		Success			= 0,	/* Operation succeeded */
+		Fail			= 1	/* Operation failed */
+	};
 
 
 	/*
@@ -142,7 +149,7 @@ class LineParser
 	// Gets next n chars from internal line
 	bool getNextN(int optionMask, int length, CharString* destarg = NULL);
 	// Read line from file and do delimited parse
-	int getArgsDelim(int optionMask);
+	ParseReturnValue getArgsDelim(int optionMask);
 	// Get rest of line starting at next delimited part
 	bool getRestDelim(CharString* destarg = NULL);
 	// Set line and parse using delimiters
@@ -152,9 +159,9 @@ class LineParser
 	// Get next delimited chunk from string, removing grabbed part
 	bool getCharsDelim(int optionMask, CharString* source, CharString* destarg);
 	// Read next line from internal source file, setting as parsing source
-	int readNextLine(int optionMask);
+	ParseReturnValue readNextLine(int optionMask);
 	// Skip 'n' lines from internal file
-	int skipLines(int nskip);
+	ParseReturnValue skipLines(int nskip);
 	// Get next delimited argument from internal line
 	bool getArgDelim(int optionMask, CharString* destarg);
 	// Return a number of characters from the input stream

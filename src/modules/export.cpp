@@ -42,7 +42,7 @@ ExportModule::ExportModule() : Module()
 
 	// Setup variables / control parameters
 	// Boolean options must be set as 'bool(false)' or 'bool(true)' rather than just 'false' or 'true' so that the correct overloaded add() function is called
-	options_.add("WriteConfig", bool(false));
+	options_.add("WriteConfig", bool(false), "Write a DL_POLY CONFIG file of the Configuration");
 }
 
 // Destructor

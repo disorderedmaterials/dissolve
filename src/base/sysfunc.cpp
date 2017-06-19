@@ -200,17 +200,17 @@ void DUQSys::removeComments(char* s)
 		if (*c == '"')
 		{
 			if (quotechar == '\0') quotechar = '"';
-			    else if (quotechar == '"') quotechar = '\0';
+			else if (quotechar == '"') quotechar = '\0';
 		}
 		if (*c == '\'')
 		{
 			if (quotechar == '\0') quotechar = '\'';
-			    else if (quotechar == '\'') quotechar = '\0';
+			else if (quotechar == '\'') quotechar = '\0';
 		}
 		if ((*c == '#') && (!escaped) && (quotechar == '\0'))
 		{
 			*c = '\0';
-		break;
+			break;
 		}
 		else if ((*c == '/') && (!escaped) && (quotechar == '\0'))
 		{

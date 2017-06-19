@@ -20,6 +20,7 @@
 */
 
 #include "modules/forces.h"
+#include "modules/import.h"
 #include "main/duq.h"
 #include "classes/species.h"
 #include "classes/box.h"
@@ -46,7 +47,7 @@ ForcesModule::ForcesModule() : Module()
 	options_.add("TestExact", bool(false), "Compare parallel energy routines against exact (analytic) energy rather than tabulated values");
 	options_.add("TestInter", bool(true), "Include interatomic forces in test");
 	options_.add("TestIntra", bool(true), "Include intramolecular forces in test");
-	options_.add("TestReference", "", "File containing reference forces against which to compare calculated");
+// 	options_.add("TestReference", "", "File containing reference forces against which to compare calculated");
 	options_.add("TestThreshold", 1.0e-2, "Threshold of energy at which test comparison will fail");
 }
 
@@ -126,6 +127,26 @@ bool ForcesModule::setupDependentModule(Module* depMod)
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
 int ForcesModule::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
 {
+	if (DUQSys::sameString(parser.argc(0), "TestReference"))
+	{
+		Messenger::print("Reading test reference forces.\n");
+
+		// Realise some arrays to store the forces in
+		Array<double>& fx = GenericListHelper< Array<double> >::realise(targetList, "ReferenceFX", uniqueName(), GenericItem::NoOutputFlag);
+		Array<double>& fy = GenericListHelper< Array<double> >::realise(targetList, "ReferenceFY", uniqueName(), GenericItem::NoOutputFlag);
+		Array<double>& fz = GenericListHelper< Array<double> >::realise(targetList, "ReferenceFZ", uniqueName(), GenericItem::NoOutputFlag);
+
+		// Second argument is the format, third (if present) is the target file
+		if (parser.hasArg(2))
+		{
+			LineParser fileParser(&duq->worldPool());
+			if (!fileParser.openInput(parser.argc(2))) return 0;
+
+			return ImportModule::readForces(parser.argc(1), fileParser, fx, fy, fz);
+		}
+		else return ImportModule::readForces(parser.argc(1), parser, fx, fy, fz);
+	}
+
 	return -1;
 }
 
@@ -176,7 +197,6 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 		const bool testExact = GenericListHelper<bool>::retrieve(cfg->moduleData(), "TestExact", uniqueName(), options_.valueAsBool("TestExact"));
 		const bool testInter = GenericListHelper<bool>::retrieve(cfg->moduleData(), "TestInter", uniqueName(), options_.valueAsBool("TestInter"));
 		const bool testIntra = GenericListHelper<bool>::retrieve(cfg->moduleData(), "TestIntra", uniqueName(), options_.valueAsBool("TestIntra"));
-		CharString testReference = GenericListHelper<CharString>::retrieve(cfg->moduleData(), "TestReference", uniqueName(), options_.valueAsString("TestReference"));
 		const double testThreshold = GenericListHelper<double>::retrieve(cfg->moduleData(), "TestThreshold", uniqueName(), options_.valueAsDouble("TestThreshold"));
 
 		// Calculate the total forces
@@ -397,24 +417,79 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 			 */
 
 			// Test 'correct' forces against production forces
-			int nFailed = 0;
+			int nFailed1 = 0;
+			bool failed;
 			Vec3<double> interDelta, intraDelta;
+			Messenger::print("Testing calculated 'correct' forces against calculated production forces - atoms with erroneous forces will be output...\n");
 			for (int n=0; n<cfg->nAtoms(); ++n)
 			{
 				interDelta.set(interFx[n] - checkInterFx[n], interFy[n] - checkInterFy[n], interFz[n] - checkInterFz[n]);
 				intraDelta.set(intraFx[n] - checkIntraFx[n], intraFy[n] - checkIntraFy[n], intraFz[n] - checkIntraFz[n]);
 
-				Messenger::print("Forces: Check atom %10i - delta forces are %15.8e %15.8e %15.8e / %15.8e %15.8e %15.8e (x y z) 10J/mol (interatomic / intramolecular)\n", n+1, interDelta.x, interDelta.y, interDelta.z, intraDelta.x, intraDelta.y, intraDelta.z);
-				if (fabs(intraDelta.x) > testThreshold) ++nFailed;
-				if (fabs(intraDelta.y) > testThreshold) ++nFailed;
-				if (fabs(intraDelta.z) > testThreshold) ++nFailed;
-				if (fabs(interDelta.x) > testThreshold) ++nFailed;
-				if (fabs(interDelta.y) > testThreshold) ++nFailed;
-				if (fabs(interDelta.z) > testThreshold) ++nFailed;
-			}
-			Messenger::print("Forces: Number of failed force components = %i = %s\n", nFailed, nFailed == 0 ? "OK" : "NOT OK");
+				if (fabs(intraDelta.x) > testThreshold) failed = true;
+				else if (fabs(intraDelta.y) > testThreshold) failed = true;
+				else if (fabs(intraDelta.z) > testThreshold) failed = true;
+				else if (fabs(interDelta.x) > testThreshold) failed = true;
+				else if (fabs(interDelta.y) > testThreshold) failed = true;
+				else if (fabs(interDelta.z) > testThreshold) failed = true;
+				else failed = false;
 
-			if (!procPool.allTrue(nFailed == 0)) return false;
+				if (failed)
+				{
+					Messenger::print("Forces: Check atom %10i - delta forces are %15.8e %15.8e %15.8e / %15.8e %15.8e %15.8e (x y z) 10J/mol (interatomic / intramolecular)\n", n+1, interDelta.x, interDelta.y, interDelta.z, intraDelta.x, intraDelta.y, intraDelta.z);
+					++nFailed1;
+				}
+			}
+			Messenger::print("Forces: Number of failed force components = %i = %s\n", nFailed1, nFailed1 == 0 ? "OK" : "NOT OK");
+
+			// Test reference forces against production (if reference forces present)
+			int nFailed2 = 0;
+			Vec3<double> totalDelta;
+			if (cfg->moduleData().contains("ReferenceFX", uniqueName()) && cfg->moduleData().contains("ReferenceFY", uniqueName()) && cfg->moduleData().contains("ReferenceFZ", uniqueName()))
+			{
+				Messenger::print("Testing reference forces against calculated production forces - atoms with erroneous forces will be output...\n");
+
+				// Grab reference force arrays and check sizes
+				Array<double>& referenceFx = GenericListHelper< Array<double> >::retrieve(cfg->moduleData(), "ReferenceFX", uniqueName());
+				if (referenceFx.nItems() != cfg->nAtoms())
+				{
+					Messenger::error("Number of force components in ReferenceFX is %i, but the Configuration '%s' contains %i atoms.\n", referenceFx.nItems(), cfg->name(), cfg->nAtoms());
+					return false;
+				}
+				Array<double>& referenceFy = GenericListHelper< Array<double> >::retrieve(cfg->moduleData(), "ReferenceFY", uniqueName());
+				if (referenceFy.nItems() != cfg->nAtoms())
+				{
+					Messenger::error("Number of force components in ReferenceFY is %i, but the Configuration '%s' contains %i atoms.\n", referenceFy.nItems(), cfg->name(), cfg->nAtoms());
+					return false;
+				}
+				Array<double>& referenceFz = GenericListHelper< Array<double> >::retrieve(cfg->moduleData(), "ReferenceFZ", uniqueName());
+				if (referenceFz.nItems() != cfg->nAtoms())
+				{
+					Messenger::error("Number of force components in ReferenceFZ is %i, but the Configuration '%s' contains %i atoms.\n", referenceFz.nItems(), cfg->name(), cfg->nAtoms());
+					return false;
+				}
+
+				for (int n=0; n<cfg->nAtoms(); ++n)
+				{
+					totalDelta.x = referenceFx[n] - (checkInterFx[n] + checkIntraFx[n]);
+					totalDelta.y = referenceFy[n] - (checkInterFy[n] + checkIntraFy[n]);
+					totalDelta.z = referenceFz[n] - (checkInterFz[n] + checkIntraFz[n]);
+
+					if (fabs(totalDelta.x) > testThreshold) failed = true;
+					else if (fabs(totalDelta.y) > testThreshold) failed = true;
+					else if (fabs(totalDelta.z) > testThreshold) failed = true;
+					else failed = false;
+
+					if (failed)
+					{
+						Messenger::print("Forces: Check atom %10i - delta forces are %15.8e %15.8e %15.8e (x y z) 10J/mol (total)\n", n+1, totalDelta.x, totalDelta.y, totalDelta.z);
+						++nFailed2;
+					}
+				}
+				Messenger::print("Forces: Number of failed force components = %i = %s\n", nFailed2, nFailed2 == 0 ? "OK" : "NOT OK");
+			}
+
+			if (!procPool.allTrue((nFailed1 + nFailed2) == 0)) return false;
 		}
 		else
 		{

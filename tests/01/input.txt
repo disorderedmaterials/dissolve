@@ -28,10 +28,12 @@ Configuration  'Bulk'
     Test on
   EndModule
   Module Forces
-Disabled
     Test on
-    #TestData  'lfilename
+    TestReference  dlpoly  'input.REVCON'
   EndModule
+  #Module Export
+  #  WriteConfig  On
+  #EndModule
 EndConfiguration
 
 # Pair Potentials
