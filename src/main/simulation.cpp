@@ -121,6 +121,7 @@ bool DUQ::go(bool singleIteration)
 		}
 
 		// Sync up all processes
+		Messenger::printVerbose("Waiting for other processes at end of pre-processing...\n");
 		worldPool_.wait(ProcessPool::Pool);
 
 
@@ -165,6 +166,7 @@ bool DUQ::go(bool singleIteration)
 		if (!result) return false;
 
 		// Sync up all processes
+		Messenger::printVerbose("Waiting for other processes at end of Configuration processing...\n");
 		worldPool_.wait(ProcessPool::Pool);
 
 
@@ -180,6 +182,7 @@ bool DUQ::go(bool singleIteration)
 		}
 
 		// Sync up all processes
+		Messenger::printVerbose("Waiting for other processes at end of data reassembly...\n");
 		worldPool_.wait(ProcessPool::Pool);
 
 	
@@ -192,6 +195,7 @@ bool DUQ::go(bool singleIteration)
 		{
 			if (!module->runThisIteration(iteration_)) continue;
 
+			Messenger::print("Main processing module '%s'\n", module->name());
 			Messenger::print("\n");
 			result = module->process(*this, worldPool_);
 
@@ -203,6 +207,7 @@ bool DUQ::go(bool singleIteration)
 		}
 
 		// Sync up all processes
+		Messenger::printVerbose("Waiting for other processes at end of main processing...\n");
 		worldPool_.wait(ProcessPool::Pool);
 
 
@@ -227,6 +232,7 @@ bool DUQ::go(bool singleIteration)
 		}
 
 		// Sync up all processes
+		Messenger::printVerbose("Waiting for other processes at end of post-processing...\n");
 		worldPool_.wait(ProcessPool::Pool);
 
 
@@ -310,10 +316,19 @@ bool DUQ::go(bool singleIteration)
 					return false;
 				}
 			}
+
+			// All good. Carry on!
+			worldPool_.proceed();
 		}
 		else if (!worldPool_.decision()) return false;
 
+		// Sync up all processes
+		Messenger::printVerbose("Waiting for other processes at end of data write section...\n");
+		worldPool_.wait(ProcessPool::Pool);
+
+
 		Messenger::banner("END OF MAIN LOOP ITERATION %10i         %s", iteration_, DUQSys::currentTimeAndDate());
+
 
 		// If we are only performing a single iteration, break here
 		if (singleIteration) break;

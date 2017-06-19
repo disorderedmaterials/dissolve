@@ -78,10 +78,10 @@ bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
 	CharString niceName;
 	bool blockDone = false, error = false;
 
-	while (!parser.eofOrBlank(duq->worldPool()))
+	while (!parser.eofOrBlank())
 	{
 		// Read in a line, which should contain a keyword and a minimum number of arguments
-		parser.getArgsDelim(duq->worldPool(), LineParser::SkipBlanks+LineParser::UseQuotes);
+		parser.getArgsDelim(LineParser::SkipBlanks+LineParser::StripComments+LineParser::UseQuotes);
 		ConfigurationBlock::ConfigurationKeyword conKeyword = ConfigurationBlock::keyword(parser.argc(0));
 		if ((conKeyword != ConfigurationBlock::nConfigurationKeywords) && ((parser.nArgs()-1) < ConfigurationBlock::nArguments(conKeyword)))
 		{

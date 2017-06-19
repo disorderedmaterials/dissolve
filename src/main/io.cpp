@@ -90,7 +90,7 @@ bool DUQ::loadSpecies(const char* filename)
 bool DUQ::loadInput(const char* filename)
 {
 	// Open file and check that we're OK to proceed reading from it (master only...)
-	LineParser parser;
+	LineParser parser(&worldPool_);
 	if (worldPool().isWorldMaster())
 	{
 		parser.openInput(filename);
@@ -115,10 +115,10 @@ bool DUQ::loadInput(const char* filename)
 	InputBlocks::InputBlock block;
 	bool error = false;
 
-	while (!parser.eofOrBlank(worldPool()))
+	while (!parser.eofOrBlank())
 	{
 		// Master will read the next line from the file, and broadcast it to slaves (who will then parse it)
-		if (parser.getArgsDelim(worldPool(), LineParser::SkipBlanks+LineParser::StripComments+LineParser::UseQuotes) != 0) break;
+		if (parser.getArgsDelim(LineParser::SkipBlanks+LineParser::StripComments+LineParser::UseQuotes) != 0) break;
 
 		block = InputBlocks::inputBlock(parser.argc(0));
 		switch (block)
@@ -427,7 +427,7 @@ bool DUQ::saveInput(const char* filename)
 bool DUQ::loadRestart(const char* filename)
 {
 	// Open file and check that we're OK to proceed reading from it (master only...)
-	LineParser parser;
+	LineParser parser(&worldPool_);
 	if (worldPool().isWorldMaster())
 	{
 		parser.openInput(filename);
@@ -447,10 +447,10 @@ bool DUQ::loadRestart(const char* filename)
 	int classIndex, nameIndex;
 	bool error = false;
 
-	while (!parser.eofOrBlank(worldPool()))
+	while (!parser.eofOrBlank())
 	{
 		// Master will read the next line from the file, and broadcast it to slaves (who will then parse it)
-		if (parser.getArgsDelim(worldPool(), LineParser::SkipBlanks+LineParser::StripComments+LineParser::UseQuotes) != 0) break;
+		if (parser.getArgsDelim(LineParser::SkipBlanks+LineParser::StripComments+LineParser::UseQuotes) != 0) break;
 
 		// First component of line indicates the destination for the module data
 		if (DUQSys::sameString(parser.argc(0), "Configuration"))
@@ -489,6 +489,7 @@ bool DUQ::loadRestart(const char* filename)
 			error = true;
 			break;
 		}
+		Messenger::printVerbose("Reading item '%s' which is of class type %i.\n", parser.argc(nameIndex), itemClass);
 
 		// Realise the item in the list
 		GenericItem* item = moduleData.create(parser.argc(nameIndex), itemClass);

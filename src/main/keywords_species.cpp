@@ -72,10 +72,12 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 	Isotope* tope;
 	bool blockDone = false, error = false;
 
-	while (!parser.eofOrBlank(duq->worldPool()))
+	Messenger::print("HERE\n");
+	while (!parser.eofOrBlank())
 	{
+	Messenger::print("LOOPY\n");
 		// Read in a line, which should contain a keyword and a minimum number of arguments
-		parser.getArgsDelim(duq->worldPool(), LineParser::SkipBlanks+LineParser::UseQuotes);
+		parser.getArgsDelim(LineParser::SkipBlanks+LineParser::StripComments+LineParser::UseQuotes);
 		SpeciesBlock::SpeciesKeyword spKeyword = SpeciesBlock::keyword(parser.argc(0));
 		if ((spKeyword != SpeciesBlock::nSpeciesKeywords) && ((parser.nArgs()-1) < SpeciesBlock::nArguments(spKeyword)))
 		{

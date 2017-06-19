@@ -40,8 +40,9 @@ class ProcessPool;
 class LineParser
 {
 	public:
-	// Constructor
+	// Constructors
 	LineParser();
+	LineParser(ProcessPool* procPool);
 	// Destructor
 	~LineParser();
 	// Parse Options Enum
@@ -64,6 +65,8 @@ class LineParser
 	 * Source line/file and read options
 	 */
 	private:
+	// Associated process pool (if any)
+	ProcessPool* processPool_;
 	// Current input filename (if any)
 	CharString inputFilename_;
 	// Current output filename (if any)
@@ -172,16 +175,6 @@ class LineParser
 	bool writeArg(Vec3<int> v) const;
 	// Commit cached output stream to actual output file
 	bool commitCache();
-
-
-	/*
-	 * Parallel Read/Write Routines
-	 */
-	public:
-	// Return whether the end of the input stream has been reached (or only whitespace remains)
-	bool eofOrBlank(ProcessPool& procPool) const;
-	// Read line from file and do delimited parse
-	int getArgsDelim(ProcessPool& procPool, int optionMask);
 
 
 	/*

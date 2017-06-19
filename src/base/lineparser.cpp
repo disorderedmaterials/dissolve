@@ -26,11 +26,21 @@
 #include <string.h>
 #include <stdarg.h>
 
-// Constructor
+// Constructors
 LineParser::LineParser()
 {
 	arguments_.clear();
 	reset();
+
+	processPool_ = NULL;
+}
+
+LineParser::LineParser(ProcessPool* procPool)
+{
+	arguments_.clear();
+	reset();
+
+	processPool_ = procPool;
 }
 
 // Destructor
@@ -202,6 +212,7 @@ void LineParser::closeFiles()
 		outputFile_->close();
 		delete outputFile_;
 	}
+
 	reset();
 }
 
@@ -269,30 +280,38 @@ void LineParser::rewind()
 // Return whether the end of the input stream has been reached (or only whitespace remains)
 bool LineParser::eofOrBlank() const
 {
-	if (inputFile_ == NULL) return true;
-	// Simple check first - is this the end of the file?
-	if (inputFile_->eof()) return true;
-	// Otherwise, store the current file position and search for a non-whitespace character (or end of file)
-	streampos pos = inputFile_->tellg();
-	
-	// Skip through whitespace, searching for 'hard' character
-	char c;
-	bool result = true;
-	do
+	// If no process pool is defined, or we are the master, do the check
+	bool result;
+	if ((!processPool_) || processPool_->isMaster())
 	{
-		inputFile_->get(c);
-		if (inputFile_->eof()) break;
-		// If a whitespace character then skip it....
-		if ((c == ' ') || (c == '\r') || ( c == '\n') || (c == '\t') || (c == '\0'))
+		if (inputFile_ == NULL) return true;
+		// Simple check first - is this the end of the file?
+		if (inputFile_->eof()) return true;
+		// Otherwise, store the current file position and search for a non-whitespace character (or end of file)
+		streampos pos = inputFile_->tellg();
+		
+		// Skip through whitespace, searching for 'hard' character
+		char c;
+		result  = true;
+		do
 		{
+			inputFile_->get(c);
 			if (inputFile_->eof()) break;
-			else continue;
-		}
-		result = false;
-		break;
-	} while (1);
-	inputFile_->seekg(pos);
-	
+			// If a whitespace character then skip it....
+			if ((c == ' ') || (c == '\r') || ( c == '\n') || (c == '\t') || (c == '\0'))
+			{
+				if (inputFile_->eof()) break;
+				else continue;
+			}
+			result = false;
+			break;
+		} while (1);
+		inputFile_->seekg(pos);
+	}
+
+	// Broadcast result to pool if it is defined
+	if (processPool_ && (!processPool_->broadcast(result))) return false;
+
 	return result;
 }
 
@@ -303,77 +322,103 @@ bool LineParser::eofOrBlank() const
 // Read single line from internal file source
 int LineParser::readNextLine(int optionMask)
 {
-	// Returns : 0=ok, 1=error, -1=eof
-	if (inputFile_ == NULL)
+	// Master will check the file and broadcast the result
+	int result = 0;
+	if ((!processPool_) || processPool_->isMaster())
 	{
-		printf("Error: No input file open for LineParser::readNextLine.\n");
-		return 1;
-	}
-	if (inputFile_->eof())
-	{
-		return -1;
-	}
-	
-	// Loop until we get 'suitable' line from file
-	int nchars, nspaces, result = 0;
-	do
-	{
-		char chr;
-		lineLength_ = 0;
-		while(inputFile_->get(chr).good())
+		// Returns : 0=ok, 1=error, -1=eof
+		if (inputFile_ == NULL)
 		{
-			if (chr == '\r')
-			{
-				if (inputFile_->peek() == '\n') inputFile_->ignore();
-				break;
-			}
-			else if (chr == '\n') break;
-			line_[lineLength_++] = chr;
-			// Check here for overfilling the line_ buffer - perhaps it's a binary file?
-			if (lineLength_ == MAXLINELENGTH)
-			{
-				return -1;
-			}
+			printf("Error: No input file open for LineParser::readNextLine.\n");
+			result = 1;
 		}
-		line_[lineLength_] = '\0';
-//		Messenger::print(Messenger::Parse, "Line from file is: [%s]\n", line_);
+		else if (inputFile_->eof()) result = -1;
+	}
 
-		// Remove comments from line
-		if (optionMask&LineParser::StripComments) DUQSys::removeComments(line_);
-		
-		// If we are skipping blank lines, check for a blank line here
-		if (optionMask&LineParser::SkipBlanks)
+	// Broadcast result of read
+	if (processPool_)
+	{
+		if (!processPool_->broadcast(result)) return 1;
+		if (result != 0) return result;
+	}
+
+	// Master will read the line and broadcast the result of the read
+	if ((!processPool_) || processPool_->isMaster())
+	{
+		// Loop until we get 'suitable' line from file
+		int nchars, nspaces, result = 0;
+		do
 		{
-			// Now, see if our line contains only blanks
-			nchars = 0;
-			nspaces = 0;
-			for (char* c = line_; *c != '\0'; c++)
+			char chr;
+			lineLength_ = 0;
+			while(inputFile_->get(chr).good())
 			{
-				nchars++;
-				if (isspace(*c)) nspaces++;
+				if (chr == '\r')
+				{
+					if (inputFile_->peek() == '\n') inputFile_->ignore();
+					break;
+				}
+				else if (chr == '\n') break;
+				line_[lineLength_++] = chr;
+
+				// Check here for overfilling the line_ buffer - perhaps it's a binary file?
+				if (lineLength_ == MAXLINELENGTH)
+				{
+					return -1;
+				}
 			}
-			if (nchars == nspaces) result = -1;
+			line_[lineLength_] = '\0';
+// 			Messenger::print("Line from file is: [%s]\n", line_);
+
+			// Remove comments from line
+			if (optionMask&LineParser::StripComments) DUQSys::removeComments(line_);
+			
+			// If we are skipping blank lines, check for a blank line here
+			if (optionMask&LineParser::SkipBlanks)
+			{
+				// Now, see if our line contains only blanks
+				nchars = 0;
+				nspaces = 0;
+				for (char* c = line_; *c != '\0'; c++)
+				{
+					nchars++;
+					if (isspace(*c)) nspaces++;
+				}
+				if (nchars == nspaces) result = -1;
+				else result = 0;
+			}
 			else result = 0;
-		}
-		else result = 0;
-		
-		// If result is 0, everything went okay, but if not we got a blank line. EOF or failed perhaps?
-		if (result == -1)
+			
+			// If result is 0, everything went okay, but if not we got a blank line. EOF or failed perhaps?
+			if (result == -1)
+			{
+				if (inputFile_->eof())
+				{
+					return -1;
+				}
+				if (inputFile_->fail())
+				{
+					return 1;
+				}
+			}
+			lineLength_ = strlen(line_);
+			linePos_ = 0;
+			lastLineNo_ ++;
+		} while (result != 0);
+		// printf("LineParser Returned line = [%s], length = %i\n",line_,lineLength_);
+	}
+
+	// Broadcast line
+	if (processPool_ )
+	{
+		if (!processPool_->broadcast(line_)) return 1;
+
+		if (processPool_->isSlave())
 		{
-			if (inputFile_->eof())
-			{
-				return -1;
-			}
-			if (inputFile_->fail())
-			{
-				return 1;
-			}
+			lineLength_ = strlen(line_);
+			linePos_ = 0;
 		}
-		lineLength_ = strlen(line_);
-		linePos_ = 0;
-		lastLineNo_ ++;
-	} while (result != 0);
-	// printf("LineParser Returned line = [%s], length = %i\n",line_,lineLength_);
+	}
 
 	return result;
 }
@@ -474,9 +519,11 @@ bool LineParser::getNextArg(int optionMask, CharString* destarg)
 		++linePos_;
 		if (done || failed) break;
 	}
+
 	// Finalise argument
 	tempArg_[arglen] = '\0';
 	if (linePos_ == lineLength_) endOfLine_ = true;
+
 	// Store the result in the desired destination
 	if (destarg != NULL) *destarg = tempArg_;
 	if (failed) return false;
@@ -516,6 +563,7 @@ bool LineParser::getNextN(int optionMask, int length, CharString* destarg)
 		}
 		linePos_ ++;
 	}
+
 	// Add terminating character to temparg
 	tempArg_[arglen] = '\0';
 	if (striptrailing) for (n = arglen-1; (tempArg_[n] == ' ') || (tempArg_[n] == '\t'); --n) tempArg_[n] = '\0'; 
@@ -536,6 +584,7 @@ void LineParser::getAllArgsDelim(int optionMask)
 	{
 		// Create new, empty CharString
 		arg = new CharString;
+
 		// We must pass on the current optionMask, else it will be reset by the default value in getNextArg()
 		if (getNextArg(optionMask, arg))
 		{
@@ -550,22 +599,12 @@ void LineParser::getAllArgsDelim(int optionMask)
 // Parse delimited (from file)
 int LineParser::getArgsDelim(int optionMask)
 {
-	bool done = false;
-	int result;
-	// Returns : 0=ok, 1=error, -1=eof
-	do
-	{
-		// Read line from file and parse it
-		result = readNextLine(optionMask);
-		if (result != 0) return result;
-		
-		// Assume that we will finish after parsing the line we just read in
-		done = true;
-		// To check for blank lines, do the parsing and then check nargs()
-		getAllArgsDelim(optionMask);
-		if ((optionMask&LineParser::SkipBlanks) && (nArgs() == 0)) done = false;
-	} while (!done);
-	return 0;
+	int result = readNextLine(optionMask);
+
+	// Parse the line before returning the result of the initial line read
+	getAllArgsDelim(optionMask);
+
+	return result;
 }
 
 // Get rest of current line starting at next delimited part (and put into destination argument if supplied)
@@ -912,43 +951,6 @@ int LineParser::skipLines(int nlines)
 		if (result != 0) return result;
 	}
 	return 0;
-}
-
-/*
- * Parallel Read/Write
- */
-
-// Return whether the end of the input stream has been reached (or only whitespace remains)
-bool LineParser::eofOrBlank(ProcessPool& procPool) const
-{
-	// Run command on master and broadcast result
-	bool result;
-	if (procPool.isMaster()) result = eofOrBlank();
-	if (!procPool.broadcast(result)) return false;
-
-	return result;
-}
-
-// Read line from file and do delimited parse
-int LineParser::getArgsDelim(ProcessPool& procPool, int optionMask)
-{
-	// Master will read the next line from the file, and broadcast it to slaves (who will then parse it)
-	int result;
-	if (procPool.isMaster()) result = getArgsDelim(optionMask);
-	if (!procPool.broadcast(&result, 1)) return -1;
-
-	// Everybody now has the result of the read/parse, so transfer line
-	if (!procPool.broadcast(line_)) return false;
-	if (procPool.isSlave())
-	{
-		lineLength_ = strlen(line_);
-		linePos_ = 0;
-
-		// Parse the line before returning the result of the initial line read
-		getAllArgsDelim(optionMask);
-	}
-
-	return result;
 }
 
 /*
