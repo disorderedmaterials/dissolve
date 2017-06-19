@@ -147,6 +147,8 @@ class PairPotential : public ListItem<PairPotential>
 	bool calculateUOriginal(bool recalculateUFull = true);
 	// Return potential at specified r-squared
 	double energyAtRSquared(double rSq);
+	// Return analytic potential at specified r-squared
+	double analyticEnergyAtRSquared(double rSq);
 	// Return derivative of potential at specified r-squared
 	double forceAtRSquared(double rSq);
 	// Return full tabulated potential (original plus additional)

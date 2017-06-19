@@ -175,13 +175,13 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 		const bool saveData = GenericListHelper<bool>::retrieve(cfg->moduleData(), "Save", uniqueName(), options_.valueAsBool("Save"));
 		const double stabilityThreshold = GenericListHelper<double>::retrieve(cfg->moduleData(), "StabilityThreshold", uniqueName(), options_.valueAsDouble("StabilityThreshold"));
 		const int stabilityWindow = GenericListHelper<int>::retrieve(cfg->moduleData(), "StabilityWindow", uniqueName(), options_.valueAsInt("StabilityWindow"));
+		const bool testExact = GenericListHelper<bool>::retrieve(cfg->moduleData(), "TestExact", uniqueName(), options_.valueAsBool("TestExact"));
 		const bool testMode = GenericListHelper<bool>::retrieve(cfg->moduleData(), "Test", uniqueName(), options_.valueAsBool("Test"));
 		const double testThreshold = GenericListHelper<double>::retrieve(cfg->moduleData(), "TestThreshold", uniqueName(), options_.valueAsDouble("TestThreshold"));
 		bool hasReferenceInter;
 		const double testReferenceInter = GenericListHelper<double>::retrieve(cfg->moduleData(), "TestReferenceInter", uniqueName(), options_.valueAsDouble("TestReferenceInter"), &hasReferenceInter);
 		bool hasReferenceIntra;
 		const double testReferenceIntra = GenericListHelper<double>::retrieve(cfg->moduleData(), "TestReferenceIntra", uniqueName(), options_.valueAsDouble("TestReferenceIntra"), &hasReferenceIntra);
-		const bool testExact = GenericListHelper<bool>::retrieve(cfg->moduleData(), "TestExact", uniqueName(), options_.valueAsBool("TestExact"));
 
 		// Calculate the total energy
 		if (testMode)
@@ -222,7 +222,8 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 						scale = molN->species()->scaling(ii, jj);
 						if (scale < 1.0e-3) continue;
 
-						correctInterEnergy += potentialMap.energy(molN->atom(ii)->globalTypeIndex(), molN->atom(jj)->globalTypeIndex(), box->minimumDistanceSquared(molN->atom(ii), molN->atom(jj)));
+						if (testExact) correctInterEnergy += potentialMap.analyticEnergy(molN->atom(ii)->globalTypeIndex(), molN->atom(jj)->globalTypeIndex(), box->minimumDistanceSquared(molN->atom(ii), molN->atom(jj)));
+						else correctInterEnergy += potentialMap.energy(molN->atom(ii)->globalTypeIndex(), molN->atom(jj)->globalTypeIndex(), box->minimumDistanceSquared(molN->atom(ii), molN->atom(jj)));
 					}
 				}
 
@@ -233,8 +234,11 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 					// Double loop over atoms
 					for (int ii = 0; ii <molN->nAtoms(); ++ii)
 					{
-						for (int jj = 0; jj <molM->nAtoms(); ++jj) correctInterEnergy += potentialMap.energy(molN->atom(ii)->globalTypeIndex(), molM->atom(jj)->globalTypeIndex(), box->minimumDistanceSquared(molN->atom(ii), molM->atom(jj)));
-
+						for (int jj = 0; jj <molM->nAtoms(); ++jj)
+						{
+							if (testExact) correctInterEnergy += potentialMap.analyticEnergy(molN->atom(ii)->globalTypeIndex(), molM->atom(jj)->globalTypeIndex(), box->minimumDistanceSquared(molN->atom(ii), molM->atom(jj)));
+							else correctInterEnergy += potentialMap.energy(molN->atom(ii)->globalTypeIndex(), molM->atom(jj)->globalTypeIndex(), box->minimumDistanceSquared(molN->atom(ii), molM->atom(jj)));
+						}
 					}
 				}
 

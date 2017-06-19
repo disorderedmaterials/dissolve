@@ -337,7 +337,7 @@ bool PairPotential::calculateUOriginal(bool recalculateUFull)
 
 		// Construct potential
 		uOriginal_.setY(n, 0.0);
-		
+
 		// -- Standard Lennard-Jones potential
 		if (shortRangeType_ == PairPotential::LennardJonesType)
 		{
@@ -397,6 +397,44 @@ double PairPotential::energyAtRSquared(double distanceSq)
 
 	// Return interpolated value
 	return uFull_.interpolated(distanceSq, distanceSq*rDelta_);
+}
+
+// Return analytic potential at specified r-squared
+double PairPotential::analyticEnergyAtRSquared(double rSq)
+{
+	double contribution, energy = 0.0;
+	double r = sqrt(rSq);
+
+	// -- Standard Lennard-Jones potential
+	if (shortRangeType_ == PairPotential::LennardJonesType)
+	{
+		double sigmar = sigmaIJ_ / r;
+		double sigmar6 = pow(sigmar, 6.0);
+		double sigmar12 = sigmar6*sigmar6;
+		contribution = 4.0 * epsilonIJ_ * ( sigmar12 - sigmar6 );
+		
+		// Are we into the truncation strip?
+		double truncr = r - (range_-truncationWidth_);
+		if (truncr >= 0)
+		{
+			// Simple truncation scheme - (cos(x)+1)*0.5, mapping the truncation region to {0,Pi}
+			contribution *= (cos(PI*(truncr/truncationWidth_))+1)*0.5;
+		}
+
+		energy += contribution;
+	}
+	
+	// -- Add Coulomb contribution
+	if (includeCharges_)
+	{
+		// Calculate energy including truncation scheme (truncated and shifted sum)
+		contribution = COULCONVERT * chargeI_ * chargeJ_;
+		contribution *= (1.0/r + r/rangeSquared_ - 2.0/range_);
+
+		energy += contribution;
+	}
+
+	return energy;
 }
 
 // Return derivative at specified r-squared
@@ -474,6 +512,7 @@ bool PairPotential::save(const char* filename)
 	for (int n = 0; n<nPoints_; ++n) parser.writeLineF("%10.4e  %12.4e  %12.4e  %12.4e  %12.4e\n", sqrt(uOriginal_.x(n)), uFull_.y(n), dUFull_.y(n), uOriginal_.y(n), uAdditional_.interpolated(sqrt(uOriginal_.x(n))));
 
 	parser.closeFiles();
+
 	return true;
 }
 

@@ -25,9 +25,12 @@ Configuration  'Bulk'
   InputCoordinates 'input.xyz'
 
   Module Energy
+    Disabled
     Test on
+    TestExact on
   EndModule
   Module Forces
+    Disabled
     Test on
     TestReference  dlpoly  'input.REVCON'
   EndModule
