@@ -315,13 +315,13 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 			if (hasReferenceInter)
 			{
 				double delta = testReferenceInter - interEnergy;
-				Messenger::print("Energy: Reference interatomic energy delta is %15.9e kJ/mol and is %s (threshold is %10.3e kJ/mol)\n", delta, fabs(delta) < testThreshold ? "OK" : "NOT OK");
+				Messenger::print("Energy: Reference interatomic energy delta is %15.9e kJ/mol and is %s (threshold is %10.3e kJ/mol)\n", delta, fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
 				if (!procPool.allTrue(fabs(delta) < testThreshold)) return false;
 			}
 			if (hasReferenceIntra)
 			{
 				double delta = testReferenceIntra - intraEnergy;
-				Messenger::print("Energy: Reference intramolecular energy delta is %15.9e kJ/mol and is %s (threshold is %10.3e kJ/mol)\n", delta, fabs(delta) < testThreshold ? "OK" : "NOT OK");
+				Messenger::print("Energy: Reference intramolecular energy delta is %15.9e kJ/mol and is %s (threshold is %10.3e kJ/mol)\n", delta, fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
 				if (!procPool.allTrue(fabs(delta) < testThreshold)) return false;
 			}
 

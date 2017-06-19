@@ -353,7 +353,7 @@ bool PairPotential::calculateUOriginal(bool recalculateUFull)
 				// Simple truncation scheme - (cos(x)+1)*0.5, mapping the truncation region to {0,Pi}
 				energy *= (cos(PI*(truncr/truncationWidth_))+1)*0.5;
 			}
-			
+
 			uOriginal_.addY(n, energy);
 		}
 		

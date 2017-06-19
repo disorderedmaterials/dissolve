@@ -1526,7 +1526,6 @@ bool XYData::saveWithInterpolation(const char* filename)
 {
 	// Open file and check that we're OK to proceed writing to it
 	LineParser parser;
-// 	Messenger::print("Writing datafile '%s'...\n", filename);
 
 	parser.openOutput(filename, true);
 	if (!parser.isFileGoodForWriting())

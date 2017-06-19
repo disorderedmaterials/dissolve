@@ -28,11 +28,13 @@ Configuration  'Bulk'
     Disabled
     Test on
     TestExact on
+    TestReferenceInter    -21508.21   #   LJ Only = 1.247030E+03, coul only = -2.275524E+04, full = -21508.21, lrc = -0.541613E+02
+    TestReferenceIntra    4462.651
   EndModule
   Module Forces
     Disabled
     Test on
-    TestReference  dlpoly  'input.REVCON'
+    #TestReference  dlpoly  'input.REVCON'
   EndModule
   #Module Export
   #  WriteConfig  On
@@ -42,7 +44,7 @@ EndConfiguration
 # Pair Potentials
 PairPotentials
   Range  15.000000
-  Delta  0.050000
+  Delta  0.100000
   TruncationWidth  2.000000
   Generate  'LJ'  'OW'  'OW'
   Generate  'LJ'  'OW'  'HW'
