@@ -337,7 +337,7 @@ bool PairPotential::calculateUOriginal(bool recalculateUFull)
 
 		// Construct potential
 		uOriginal_.setY(n, 0.0);
-		
+
 		// -- Standard Lennard-Jones potential
 		if (shortRangeType_ == PairPotential::LennardJonesType)
 		{
@@ -353,7 +353,7 @@ bool PairPotential::calculateUOriginal(bool recalculateUFull)
 				// Simple truncation scheme - (cos(x)+1)*0.5, mapping the truncation region to {0,Pi}
 				energy *= (cos(PI*(truncr/truncationWidth_))+1)*0.5;
 			}
-			
+
 			uOriginal_.addY(n, energy);
 		}
 		
@@ -474,6 +474,8 @@ bool PairPotential::save(const char* filename)
 	for (int n = 0; n<nPoints_; ++n) parser.writeLineF("%10.4e  %12.4e  %12.4e  %12.4e  %12.4e\n", sqrt(uOriginal_.x(n)), uFull_.y(n), dUFull_.y(n), uOriginal_.y(n), uAdditional_.interpolated(sqrt(uOriginal_.x(n))));
 
 	parser.closeFiles();
+	CharString shitFile("%s.shit", filename);
+		uFull_.saveWithInterpolation(shitFile);
 	return true;
 }
 

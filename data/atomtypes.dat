@@ -7,7 +7,7 @@
 // Symbol TypeName Sigma Epsilon Q Description
 H	HC	2.5	0.126	0.06	"Aliphatic hydrogen"
 H	HA	2.4	0.126	0.115	"Aromatic hydrogen"
-H	HW	2.4	0.126	0.41	"Water hydrogen"
+H	HW	0.0	0.000	0.41	"Water hydrogen"
 H	HO	2.4	0.126	0.48	"Alcohol hydrogen"
 He	He	2.556	0.084	0.0	"Helium"
 Li	Li	2.126	0.075	0.0	"Lithium"
