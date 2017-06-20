@@ -41,14 +41,14 @@ EnergyModule::EnergyModule() : Module()
 
 	// Setup variables / control parameters
 	// Boolean options must be set as 'bool(false)' or 'bool(true)' rather than just 'false' or 'true' so that the correct overloaded add() function is called
-	options_.add("Save", bool(true), "Save calculate energy points to the file '<name>.energy.txt'");
-	options_.add("StabilityWindow", 10, "Number of points over which to assess the stability of the energy (per Configuration)");
-	options_.add("StabilityThreshold", 0.01, "Threshold value at which energy is deemed stable over the defined windowing period");
-	options_.add("Test", bool(false), "Test parallel energy routines against simplified, serial ones");
-	options_.add("TestExact", bool(false), "Compare parallel energy routines against exact (analytic) energy rather than tabulated values");
-	options_.add("TestReferenceInter", 0.0, "Reference value for interatomic energy against which to test calculated value");
-	options_.add("TestReferenceIntra", 0.0, "Reference value for intramolecular energy against which to test calculated value");
-	options_.add("TestThreshold", 1.0e-2, "Threshold of energy at which test comparison will fail");
+	options_.add("Save", bool(true), "Save calculate energy points to the file '<name>.energy.txt'", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("StabilityWindow", 10, "Number of points over which to assess the stability of the energy (per Configuration)", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("StabilityThreshold", 0.01, "Threshold value at which energy is deemed stable over the defined windowing period", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("Test", bool(false), "Test parallel energy routines against simplified, serial ones", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("TestExact", bool(false), "Compare parallel energy routines against exact (analytic) energy rather than tabulated values", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("TestReferenceInter", 0.0, "Reference value for interatomic energy against which to test calculated value", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("TestReferenceIntra", 0.0, "Reference value for intramolecular energy against which to test calculated value", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("TestThreshold", 1.0e-2, "Threshold of energy at which test comparison will fail", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
 }
 
 // Destructor
@@ -314,12 +314,14 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 			// Compare production vs reference values
 			if (hasReferenceInter)
 			{
+				Messenger::print("Energy: Reference interatomic energy is %15.9e kJ/mol.\n", testReferenceInter);
 				double delta = testReferenceInter - interEnergy;
 				Messenger::print("Energy: Reference interatomic energy delta is %15.9e kJ/mol and is %s (threshold is %10.3e kJ/mol)\n", delta, fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
 				if (!procPool.allTrue(fabs(delta) < testThreshold)) return false;
 			}
 			if (hasReferenceIntra)
 			{
+				Messenger::print("Energy: Reference intramolecular energy is %15.9e kJ/mol.\n", testReferenceIntra);
 				double delta = testReferenceIntra - intraEnergy;
 				Messenger::print("Energy: Reference intramolecular energy delta is %15.9e kJ/mol and is %s (threshold is %10.3e kJ/mol)\n", delta, fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
 				if (!procPool.allTrue(fabs(delta) < testThreshold)) return false;

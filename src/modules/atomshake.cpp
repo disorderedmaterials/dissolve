@@ -44,10 +44,10 @@ AtomShakeModule::AtomShakeModule() : Module()
 	instances_.own(this);
 
 	// Setup variables / control parameters
-	options_.add("CutoffDistance", -1.0, "Interatomic cutoff distance to employ");
-	options_.add("ShakesPerAtom", 1);
-	options_.add("TargetAcceptanceRate", 0.33);
-	options_.add("StepSize", 0.05);
+	options_.add("CutoffDistance", -1.0, "Interatomic cutoff distance to employ", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("ShakesPerAtom", 1, "Number of shakes per atom", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("TargetAcceptanceRate", 0.33, "Target acceptance rate for Monte Carlo moves", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("StepSize", 0.05, "Maximal step size for single Monte Carlo move", GenericItem::ModuleOptionFlag);
 }
 
 // Destructor

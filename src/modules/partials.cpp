@@ -46,19 +46,19 @@ PartialsModule::PartialsModule() : Module()
 	// Setup variables / control parameters
 	// Boolean options must be set as 'bool(false)' or 'bool(true)' rather than just 'false' or 'true' so that the correct overloaded add() function is called
 	frequency_ = 5;
-	options_.add("Bragg", bool(false), "Enable calculation of Bragg scattering");
-	options_.add("BraggQDepBroadening", 0.0063, "FWHM of Gaussian for Q-dependent Bragg broadening function");
-	options_.add("BraggQIndepBroadening", 0.0, "FWHM of Gaussian for Q-independent Bragg broadening function");
-	options_.add("NormaliseToAvSq", bool(false), "Normalise calculated F(Q) to < b >**2");
-	options_.add("NormaliseToSqAv", bool(false), "Normalise calculated F(Q) to < b**2 >");
-	options_.add("QDelta", 0.05, "Step size in Q for S(Q) calculation");
-	options_.add("QDepBroadening", 0.0, "FWHM of Gaussian for Q-dependent instrument broadening function when calculating S(Q)");
-	options_.add("QIndepBroadening", 0.0, "FWHM of Gaussian for Q-independent instrument broadening function when calculating S(Q)");
-	options_.add("QMax", -1.0, "Maximum Q for calculated S(Q)");
-	options_.add("Save", bool(false), "Whether to save partials to disk after calculation");
-	options_.add("Smoothing", 0, "Specifies the degree of smoothing 'n' to apply to calculated RDFs, where 2n+1 controls the length in the applied Spline smooth");
-	options_.add("StructureFactor", bool(false), "Determined whether S(Q) are calculated from the g(r)");
-	options_.add("Weights", "None", "Weighting scheme to use for calculated partials (None,Neutron)");
+	options_.add("Bragg", bool(false), "Enable calculation of Bragg scattering", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("BraggQDepBroadening", 0.0063, "FWHM of Gaussian for Q-dependent Bragg broadening function", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("BraggQIndepBroadening", 0.0, "FWHM of Gaussian for Q-independent Bragg broadening function", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("NormaliseToAvSq", bool(false), "Normalise calculated F(Q) to < b >**2", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("NormaliseToSqAv", bool(false), "Normalise calculated F(Q) to < b**2 >", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("QDelta", 0.05, "Step size in Q for S(Q) calculation", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("QDepBroadening", 0.0, "FWHM of Gaussian for Q-dependent instrument broadening function when calculating S(Q)", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("QIndepBroadening", 0.0, "FWHM of Gaussian for Q-independent instrument broadening function when calculating S(Q)", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("QMax", -1.0, "Maximum Q for calculated S(Q)", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("Save", bool(false), "Whether to save partials to disk after calculation", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("Smoothing", 0, "Specifies the degree of smoothing 'n' to apply to calculated RDFs, where 2n+1 controls the length in the applied Spline smooth", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("StructureFactor", bool(false), "Determined whether S(Q) are calculated from the g(r)", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("Weights", "None", "Weighting scheme to use for calculated partials (None,Neutron)", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
 }
 
 // Destructor

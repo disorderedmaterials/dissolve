@@ -226,7 +226,8 @@ int main(int argc, char **argv)
 	// End parallel communication
 	ProcessPool::finalise();
 
-	Messenger::print("dUQ is done.\n");
+	if (result) Messenger::print("dUQ is done.\n");
+	else Messenger::print("dUQ is done, but with errors.\n");
 
 	// Done.
 	return (result ? 0 : 1);

@@ -28,6 +28,7 @@ PlainValue::PlainValue()
 {
 	type_ = PlainValue::IntegerType;
 	valueI_ = 0;
+	genericItemFlags_ = -1;
 }
 
 // Constructor (bool)
@@ -35,6 +36,7 @@ PlainValue::PlainValue(bool value)
 {
 	type_ = PlainValue::BooleanType;
 	valueB_ = value;
+	genericItemFlags_ = -1;
 }
 
 // Constructor (int)
@@ -42,6 +44,7 @@ PlainValue::PlainValue(int value)
 {
 	type_ = PlainValue::IntegerType;
 	valueI_ = value;
+	genericItemFlags_ = -1;
 }
 
 // Constructor (double)
@@ -49,6 +52,7 @@ PlainValue::PlainValue(double value)
 {
 	type_ = PlainValue::DoubleType;
 	valueD_ = value;
+	genericItemFlags_ = -1;
 }
 
 // Constructor (string)
@@ -56,6 +60,7 @@ PlainValue::PlainValue(const char* value)
 {
 	type_ = PlainValue::StringType;
 	valueC_ = value;
+	genericItemFlags_ = -1;
 }
 
 // Constructor (CharString)
@@ -63,6 +68,7 @@ PlainValue::PlainValue(const CharString& value)
 {
 	type_ = PlainValue::StringType;
 	valueC_ = value;
+	genericItemFlags_ = -1;
 }
 
 // Constructor (PlainValue)
@@ -76,6 +82,7 @@ void PlainValue::operator=(const PlainValue& value)
 {
 	name_ = value.name_;
 	description_ = value.description_;
+	genericItemFlags_ = value.genericItemFlags_;
 
 	set(value);
 }
@@ -99,10 +106,11 @@ const char* PlainValue::valueType(ValueType vt)
  */
 
 // Set value, including name and description
-void PlainValue::initialise(const char* name, PlainValue newValue, const char* description)
+void PlainValue::initialise(const char* name, PlainValue newValue, const char* description, int genericItemFlags)
 {
 	name_ = name;
 	description_ = description;
+	genericItemFlags_ = genericItemFlags;
 
 	set(newValue);
 }
@@ -133,6 +141,12 @@ const char* PlainValue::description()
 PlainValue::ValueType PlainValue::type()
 {
 	return type_;
+}
+
+// Return flags to apply if reinstated as a GenericListItem (i.e. in a Module)
+int PlainValue::genericItemFlags()
+{
+	return genericItemFlags_;
 }
 
 /*

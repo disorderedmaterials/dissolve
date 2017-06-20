@@ -66,6 +66,8 @@ class PlainValue : public ListItem<PlainValue>
 	CharString description_;
 	// Type of value
 	ValueType type_;
+	// Flags to apply if reinstated as a GenericListItem (i.e. in a Module)
+	int genericItemFlags_;
 	// Value (bool)
 	bool valueB_;
 	// Value (integer)
@@ -77,7 +79,7 @@ class PlainValue : public ListItem<PlainValue>
 
 	public:
 	// Setup value, including name and description
-	void initialise(const char* name, PlainValue newValue, const char* description);
+	void initialise(const char* name, PlainValue newValue, const char* description, int genericItemFlags);
 	// Set value
 	void set(const PlainValue& newValue);
 	// Return name of value
@@ -86,7 +88,8 @@ class PlainValue : public ListItem<PlainValue>
 	const char* description();
 	// Return type of value
 	ValueType type();
-
+	// Return flags to apply if reinstated as a GenericListItem (i.e. in a Module)
+	int genericItemFlags();
 
 	/*
 	 * Conversion

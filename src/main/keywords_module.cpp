@@ -127,10 +127,10 @@ bool ModuleBlock::parse(LineParser& parser, DUQ* duq, Module* module, GenericLis
 			if (value)
 			{
 				// Add variable to target list
-				if (value->type() == PlainValue::BooleanType) GenericListHelper<bool>::add(targetList, value->name(), module->uniqueName()) = parser.argb(1);
-				else if (value->type() == PlainValue::IntegerType) GenericListHelper<int>::add(targetList, value->name(), module->uniqueName()) = parser.argi(1);
-				else if (value->type() == PlainValue::DoubleType) GenericListHelper<double>::add(targetList, value->name(), module->uniqueName()) = parser.argd(1);
-				else GenericListHelper<CharString>::add(targetList, value->name(), module->uniqueName()) = parser.argc(1);
+				if (value->type() == PlainValue::BooleanType) GenericListHelper<bool>::add(targetList, value->name(), module->uniqueName(), value->genericItemFlags()) = parser.argb(1);
+				else if (value->type() == PlainValue::IntegerType) GenericListHelper<int>::add(targetList, value->name(), module->uniqueName(), value->genericItemFlags()) = parser.argi(1);
+				else if (value->type() == PlainValue::DoubleType) GenericListHelper<double>::add(targetList, value->name(), module->uniqueName(), value->genericItemFlags()) = parser.argd(1);
+				else GenericListHelper<CharString>::add(targetList, value->name(), module->uniqueName(), value->genericItemFlags()) = parser.argc(1);
 			}
 			else
 			{

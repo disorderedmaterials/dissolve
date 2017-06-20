@@ -42,13 +42,13 @@ ForcesModule::ForcesModule() : Module()
 
 	// Setup variables / control parameters
 	// Boolean options must be set as 'bool(false)' or 'bool(true)' rather than just 'false' or 'true' so that the correct overloaded add() function is called
-	options_.add("Save", bool(false), "Save forces for the Configuration to the file '<name>.forces.txt'");
-	options_.add("Test", bool(false), "Test parallel energy routines against simplified, serial ones");
-	options_.add("TestExact", bool(false), "Compare parallel energy routines against exact (analytic) energy rather than tabulated values");
-	options_.add("TestInter", bool(true), "Include interatomic forces in test");
-	options_.add("TestIntra", bool(true), "Include intramolecular forces in test");
+	options_.add("Save", bool(false), "Save forces for the Configuration to the file '<name>.forces.txt'", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("Test", bool(false), "Test parallel energy routines against simplified, serial ones", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("TestExact", bool(false), "Compare parallel energy routines against exact (analytic) energy rather than tabulated values", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("TestInter", bool(true), "Include interatomic forces in test", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("TestIntra", bool(true), "Include intramolecular forces in test", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
 // 	options_.add("TestReference", "", "File containing reference forces against which to compare calculated");
-	options_.add("TestThreshold", 1.0e-2, "Threshold of energy at which test comparison will fail");
+	options_.add("TestThreshold", 1.0e-2, "Threshold of energy at which test comparison will fail", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
 }
 
 // Destructor

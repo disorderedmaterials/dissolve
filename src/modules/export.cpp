@@ -42,7 +42,7 @@ ExportModule::ExportModule() : Module()
 
 	// Setup variables / control parameters
 	// Boolean options must be set as 'bool(false)' or 'bool(true)' rather than just 'false' or 'true' so that the correct overloaded add() function is called
-	options_.add("WriteConfig", bool(false), "Write a DL_POLY CONFIG file of the Configuration");
+	options_.add("WriteConfig", bool(false), "Write a DL_POLY CONFIG file of the Configuration", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
 }
 
 // Destructor
@@ -227,7 +227,7 @@ bool ExportModule::writeConfigurationXYZ(LineParser& parser, Configuration* cfg,
 	for (int n=0; n<cfg->nAtoms(); ++n)
 	{
 		Atom* i = cfg->atom(n);
-		if (!parser.writeLineF("%-3s   %10.4f  %10.4f  %10.4f\n", PeriodicTable::element(i->element()).symbol(), i->r().x, i->r().y, i->r().z)) return false;
+		if (!parser.writeLineF("%-3s   %15.9f  %15.9f  %15.9f\n", PeriodicTable::element(i->element()).symbol(), i->r().x, i->r().y, i->r().z)) return false;
 	}
 
 	return true;
