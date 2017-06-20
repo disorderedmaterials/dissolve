@@ -44,7 +44,7 @@ ForcesModule::ForcesModule() : Module()
 	// Boolean options must be set as 'bool(false)' or 'bool(true)' rather than just 'false' or 'true' so that the correct overloaded add() function is called
 	options_.add("Save", bool(false), "Save forces for the Configuration to the file '<name>.forces.txt'", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
 	options_.add("Test", bool(false), "Test parallel energy routines against simplified, serial ones", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
-	options_.add("TestExact", bool(false), "Compare parallel energy routines against exact (analytic) energy rather than tabulated values", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("TestAnalytic", bool(false), "Compare parallel energy routines against exact (analytic) energy rather than tabulated values", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
 	options_.add("TestInter", bool(true), "Include interatomic forces in test", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
 	options_.add("TestIntra", bool(true), "Include intramolecular forces in test", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
 // 	options_.add("TestReference", "", "File containing reference forces against which to compare calculated");
@@ -195,7 +195,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 		// Retrieve control parameters from Configuration
 		const bool saveData = GenericListHelper<bool>::retrieve(cfg->moduleData(), "Save", uniqueName(), options_.valueAsBool("Save"));
 		const bool testMode = GenericListHelper<bool>::retrieve(cfg->moduleData(), "Test", uniqueName(), options_.valueAsBool("Test"));
-		const bool testExact = GenericListHelper<bool>::retrieve(cfg->moduleData(), "TestExact", uniqueName(), options_.valueAsBool("TestExact"));
+		const bool testAnalytic = GenericListHelper<bool>::retrieve(cfg->moduleData(), "TestAnalytic", uniqueName(), options_.valueAsBool("TestAnalytic"));
 		const bool testInter = GenericListHelper<bool>::retrieve(cfg->moduleData(), "TestInter", uniqueName(), options_.valueAsBool("TestInter"));
 		const bool testIntra = GenericListHelper<bool>::retrieve(cfg->moduleData(), "TestIntra", uniqueName(), options_.valueAsBool("TestIntra"));
 		const double testThreshold = GenericListHelper<double>::retrieve(cfg->moduleData(), "TestThreshold", uniqueName(), options_.valueAsDouble("TestThreshold"));
@@ -210,6 +210,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 			 */
 
 			Messenger::print("Forces: Calculating forces for Configuration '%s' in serial test mode...\n", cfg->name());
+			if (testAnalytic) Messenger::print("Exact (analytic) forces will be calculated.\n");
 
 			/*
 			 * Calculation Begins
@@ -258,7 +259,6 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 				{
 					i = molN->atom(ii);
 
-//					Messenger::print("Atom %i r = %f %f %f\n", ii, molN->atom(ii)->r().x, molN->atom(ii)->r().y, molN->atom(ii)->r().z);
 					for (int jj = ii+1; jj <molN->nAtoms(); ++jj)
 					{
 						// Get intramolecular scaling of atom pair
@@ -272,7 +272,8 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 						magji = vecji.magSqAndNormalise();
 						if (magji > cutoffSq) continue;
 
-						vecji *= potentialMap.force(molN->atom(ii)->globalTypeIndex(), molN->atom(jj)->globalTypeIndex(), magji);
+						if (testAnalytic) vecji *= potentialMap.analyticForce(molN->atom(ii)->globalTypeIndex(), molN->atom(jj)->globalTypeIndex(), magji);
+						else vecji *= potentialMap.force(molN->atom(ii)->globalTypeIndex(), molN->atom(jj)->globalTypeIndex(), magji);
 						interFx[i->index()] += vecji.x;
 						interFy[i->index()] += vecji.y;
 						interFz[i->index()] += vecji.z;
@@ -301,7 +302,8 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 							magji = vecji.magSqAndNormalise();
 							if (magji > cutoffSq) continue;
 
-							vecji *= potentialMap.force(i->globalTypeIndex(), j->globalTypeIndex(), magji);
+							if (testAnalytic) vecji *= potentialMap.analyticForce(i->globalTypeIndex(), j->globalTypeIndex(), magji);
+							else vecji *= potentialMap.force(i->globalTypeIndex(), j->globalTypeIndex(), magji);
 							interFx[i->index()] += vecji.x;
 							interFy[i->index()] += vecji.y;
 							interFz[i->index()] += vecji.z;
@@ -441,15 +443,13 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 					++nFailed1;
 				}
 			}
-			Messenger::print("Forces: Number of failed force components = %i = %s\n", nFailed1, nFailed1 == 0 ? "OK" : "NOT OK");
+			Messenger::print("Forces: Number of atoms with failed force components = %i = %s\n", nFailed1, nFailed1 == 0 ? "OK" : "NOT OK");
 
 			// Test reference forces against production (if reference forces present)
 			int nFailed2 = 0;
 			Vec3<double> totalDelta;
 			if (cfg->moduleData().contains("ReferenceFX", uniqueName()) && cfg->moduleData().contains("ReferenceFY", uniqueName()) && cfg->moduleData().contains("ReferenceFZ", uniqueName()))
 			{
-				Messenger::print("Forces: Testing reference forces against calculated production forces - atoms with erroneous forces will be output...\n");
-
 				// Grab reference force arrays and check sizes
 				Array<double>& referenceFx = GenericListHelper< Array<double> >::retrieve(cfg->moduleData(), "ReferenceFX", uniqueName());
 				if (referenceFx.nItems() != cfg->nAtoms())
@@ -470,6 +470,27 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 					return false;
 				}
 
+				Messenger::print("\nForces: Testing reference forces against calculated 'correct' forces - atoms with erroneous forces will be output...\n");
+				for (int n=0; n<cfg->nAtoms(); ++n)
+				{
+					totalDelta.x = referenceFx[n] - (interFx[n] + intraFx[n]);
+					totalDelta.y = referenceFy[n] - (interFy[n] + intraFy[n]);
+					totalDelta.z = referenceFz[n] - (interFz[n] + intraFz[n]);
+
+					if (fabs(totalDelta.x) > testThreshold) failed = true;
+					else if (fabs(totalDelta.y) > testThreshold) failed = true;
+					else if (fabs(totalDelta.z) > testThreshold) failed = true;
+					else failed = false;
+
+					if (failed)
+					{
+						Messenger::print("Forces: Check atom %10i - delta forces are %15.8e %15.8e %15.8e (x y z) 10J/mol (total)\n", n+1, totalDelta.x, totalDelta.y, totalDelta.z);
+						++nFailed2;
+					}
+				}
+				Messenger::print("Forces: Number of atoms with failed force components = %i = %s\n", nFailed2, nFailed2 == 0 ? "OK" : "NOT OK");
+
+				Messenger::print("\nForces: Testing reference forces against calculated production forces - atoms with erroneous forces will be output...\n");
 				for (int n=0; n<cfg->nAtoms(); ++n)
 				{
 					totalDelta.x = referenceFx[n] - (checkInterFx[n] + checkIntraFx[n]);
@@ -487,7 +508,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 						++nFailed2;
 					}
 				}
-				Messenger::print("Forces: Number of failed force components = %i = %s\n", nFailed2, nFailed2 == 0 ? "OK" : "NOT OK");
+				Messenger::print("Forces: Number of atoms with failed force components = %i = %s\n", nFailed2, nFailed2 == 0 ? "OK" : "NOT OK");
 			}
 
 			if (!procPool.allTrue((nFailed1 + nFailed2) == 0)) return false;

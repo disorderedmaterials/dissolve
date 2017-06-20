@@ -23,8 +23,9 @@
 #include "classes/atomtype.h"
 #include "base/messenger.h"
 #include "base/parameters.h"
-#include "math/constants.h"
 #include "base/processpool.h"
+#include "base/sysfunc.h"
+#include "math/constants.h"
 #include "templates/simplex.h"
 #include <math.h>
 #include <string.h>
@@ -41,24 +42,41 @@ PairPotential::PairPotential() : ListItem<PairPotential>()
 	range_ = 0.0;
 	rangeSquared_ = 0.0;
 	includeCharges_ = true;
-	shortRangeType_ = LennardJonesType;
+	shortRangeType_ = PairPotential::LennardJonesType;
+	coulombTruncationScheme_ = PairPotential::ShiftedTruncation;
 	rangeSquared_ = 0.0;
 }
 
-// Input File Block Keywords
-const char* PairPotentialTypeKeywords[] = { "None", "LJ" };
+// Short-range typeKeywords
+const char* ShortRangeTypeKeywords[] = { "None", "LJ" };
 
 // Convert text string to ShortRangeType
 PairPotential::ShortRangeType PairPotential::shortRangeType(const char* s)
 {
-	for (int n=0; n<PairPotential::nShortRangeTypes; ++n) if (strcmp(s,PairPotentialTypeKeywords[n]) == 0) return (PairPotential::ShortRangeType) n;
+	for (int n=0; n<PairPotential::nShortRangeTypes; ++n) if (DUQSys::sameString(s,ShortRangeTypeKeywords[n])) return (PairPotential::ShortRangeType) n;
 	return PairPotential::nShortRangeTypes;
 }
 
 // Convert ShortRangeType to text string
 const char* PairPotential::shortRangeType(PairPotential::ShortRangeType id)
 {
-	return PairPotentialTypeKeywords[id];
+	return ShortRangeTypeKeywords[id];
+}
+
+// Truncation Scheme Keywords
+const char* TruncationSchemeKeywords[] = { "None", "Shifted" };
+
+// Convert text string to TruncationScheme
+PairPotential::TruncationScheme PairPotential::truncationScheme(const char* s)
+{
+	for (int n=0; n<PairPotential::nTruncationSchemes; ++n) if (DUQSys::sameString(s,TruncationSchemeKeywords[n])) return (PairPotential::TruncationScheme) n;
+	return PairPotential::nTruncationSchemes;
+}
+
+// Convert TruncationScheme to text string
+const char* PairPotential::truncationScheme(TruncationScheme id)
+{
+	return TruncationSchemeKeywords[id];
 }
 
 /*
@@ -75,6 +93,18 @@ void PairPotential::setShortRangeType(PairPotential::ShortRangeType type)
 PairPotential::ShortRangeType PairPotential::shortRangeType() const
 {
 	return shortRangeType_;
+}
+
+// Set Coulomb truncation scheme
+void PairPotential::setCoulombTruncationScheme(PairPotential::TruncationScheme scheme)
+{
+	coulombTruncationScheme_ = scheme;
+}
+
+// Return Coulomb truncation scheme
+PairPotential::TruncationScheme PairPotential::coulombTruncationScheme() const
+{
+	return coulombTruncationScheme_;
 }
 
 /*
@@ -265,6 +295,88 @@ void PairPotential::calculateUFull()
 	uFull_.interpolate();
 }
 
+// Return analytic short range potential energy
+double PairPotential::analyticShortRangeEnergy(double r, PairPotential::ShortRangeType type)
+{
+	// Standard Lennard-Jones potential
+	if (type == PairPotential::LennardJonesType)
+	{
+		double sigmar = sigmaIJ_ / r;
+		double sigmar6 = pow(sigmar, 6.0);
+		double sigmar12 = sigmar6*sigmar6;
+		double energy = 4.0 * epsilonIJ_ * ( sigmar12 - sigmar6 );
+		
+		// Are we into the truncation strip?
+		double truncr = r - (range_-truncationWidth_);
+		if (truncr >= 0)
+		{
+			// Simple truncation scheme - (cos(x)+1)*0.5, mapping the truncation region to {0,Pi}
+			energy *= (cos(PI*(truncr/truncationWidth_))+1)*0.5;
+		}
+
+		return energy;
+	}
+
+	return 0.0;
+}
+
+// Return analytic coulomb potential energy
+double PairPotential::analyticCoulombEnergy(double r)
+{
+	// Calculate energy including truncation scheme (truncated and shifted sum)
+	double energy = 0.0;
+
+	// Calculate based on truncation scheme
+	if (coulombTruncationScheme_ == PairPotential::NoTruncation) energy = COULCONVERT * chargeI_ * chargeJ_ / r;
+	else if (coulombTruncationScheme_ == PairPotential::ShiftedTruncation) energy = COULCONVERT * chargeI_ * chargeJ_ * (1.0/r + r/rangeSquared_ - 2.0/range_);
+
+	return energy;
+}
+
+// Return analytic short range force
+double PairPotential::analyticShortRangeForce(double r, PairPotential::ShortRangeType type)
+{
+	// Standard Lennard-Jones potential
+	if (type == PairPotential::LennardJonesType)
+	{
+		// f = -48*epsilon*((sigma**12/x**13)-0.5*(sigma**6/x**7))
+
+		double sigmar = sigmaIJ_ / r;
+		double sigmar6 = pow(sigmar, 6.0);
+		double sigmar12 = sigmar6*sigmar6;
+		double force;
+
+		// Are we into the truncation strip?
+		double truncr = r - (range_-truncationWidth_);
+		if (truncr >= 0)
+		{
+			// Simple truncation scheme - (cos(x)+1)*0.5, mapping the truncation region to {0,Pi}
+			// d/dx = -PI*sin((PI*truncr)/truncationWidth_) / truncationWidth_
+			double de_t = (-48.0 * epsilonIJ_ * ( (sigmar12 / pow(r, 13.0)) - 0.5 * (sigmar6 / pow(r, 7.0)) )) * (cos(PI*(truncr/truncationWidth_))+1)*0.5;
+			double e_dt = (4.0 * epsilonIJ_ * ( sigmar12 - sigmar6 )) * -PI*sin((PI*truncr)/truncationWidth_) / truncationWidth_;
+			force = de_t * e_dt;
+		}
+		else force = 48.0*epsilonIJ_ * sigmar6 * (-sigmar6 + 0.5) / r;
+
+		return force;
+	}
+
+	return 0.0;
+}
+
+// Return analytic coulomb potential energy
+double PairPotential::analyticCoulombForce(double r)
+{
+	// Calculate energy including truncation scheme (truncated and shifted sum)
+	double force = 0.0;
+
+	// Calculate based on truncation scheme
+	if (coulombTruncationScheme_ == PairPotential::NoTruncation) force = -COULCONVERT * chargeI_ * chargeJ_ / (r*r);
+	else if (coulombTruncationScheme_ == PairPotential::ShiftedTruncation) force = -COULCONVERT * chargeI_ * chargeJ_ * (1.0/(r*r) - 1.0/rangeSquared_);
+
+	return force;
+}
+
 // Regenerate derivative data
 void PairPotential::calculateDUFull()
 {
@@ -275,8 +387,8 @@ void PairPotential::calculateDUFull()
 	double x1, x2;
 	for (int n=1; n<nPoints_-1; ++n)
 	{
-		x1 = uFull_.x(n-1);
-		x2 = uFull_.x(n+1);
+		x1 = sqrt(uFull_.x(n-1));
+		x2 = sqrt(uFull_.x(n+1));
 		dUFull_.setY(n, -(uFull_.y(n-1) - uFull_.y(n+1)) / (x2-x1));
 	}
 	
@@ -338,34 +450,11 @@ bool PairPotential::calculateUOriginal(bool recalculateUFull)
 		// Construct potential
 		uOriginal_.setY(n, 0.0);
 
-		// -- Standard Lennard-Jones potential
-		if (shortRangeType_ == PairPotential::LennardJonesType)
-		{
-			sigmar = sigmaIJ_ / r;
-			sigmar6 = pow(sigmar, 6.0);
-			sigmar12 = sigmar6*sigmar6;
-			energy = 4.0 * epsilonIJ_ * ( sigmar12 - sigmar6 );
-			
-			// Are we into the truncation strip?
-			truncr = r - (range_-truncationWidth_);
-			if (truncr >= 0)
-			{
-				// Simple truncation scheme - (cos(x)+1)*0.5, mapping the truncation region to {0,Pi}
-				energy *= (cos(PI*(truncr/truncationWidth_))+1)*0.5;
-			}
-
-			uOriginal_.addY(n, energy);
-		}
+		// Short-range potential contribution
+		uOriginal_.addY(n, analyticShortRangeEnergy(r, shortRangeType_));
 		
 		// -- Add Coulomb contribution
-		if (includeCharges_)
-		{
-			// Calculate energy including truncation scheme (truncated and shifted sum)
-			energy = COULCONVERT * chargeI_ * chargeJ_;
-			energy *= (1.0/r + r/rangeSquared_ - 2.0/range_);
-
-			uOriginal_.addY(n, energy);
-		}
+		if (includeCharges_) uOriginal_.addY(n, analyticCoulombEnergy(r));
 	}
 
 	// Since the first point (at zero) risks being a nan, set it to ten times the second point instead
@@ -402,37 +491,16 @@ double PairPotential::energyAtRSquared(double distanceSq)
 // Return analytic potential at specified r-squared
 double PairPotential::analyticEnergyAtRSquared(double rSq)
 {
-	double contribution, energy = 0.0;
+	double energy = 0.0;
 	double r = sqrt(rSq);
 
-	// -- Standard Lennard-Jones potential
-	if (shortRangeType_ == PairPotential::LennardJonesType)
-	{
-		double sigmar = sigmaIJ_ / r;
-		double sigmar6 = pow(sigmar, 6.0);
-		double sigmar12 = sigmar6*sigmar6;
-		contribution = 4.0 * epsilonIJ_ * ( sigmar12 - sigmar6 );
-		
-		// Are we into the truncation strip?
-		double truncr = r - (range_-truncationWidth_);
-		if (truncr >= 0)
-		{
-			// Simple truncation scheme - (cos(x)+1)*0.5, mapping the truncation region to {0,Pi}
-			contribution *= (cos(PI*(truncr/truncationWidth_))+1)*0.5;
-		}
+	if (rSq > rangeSquared_) return 0.0;
 
-		energy += contribution;
-	}
-	
-	// -- Add Coulomb contribution
-	if (includeCharges_)
-	{
-		// Calculate energy including truncation scheme (truncated and shifted sum)
-		contribution = COULCONVERT * chargeI_ * chargeJ_;
-		contribution *= (1.0/r + r/rangeSquared_ - 2.0/range_);
+	// Short-range potential
+	energy += analyticShortRangeEnergy(r, shortRangeType_);
 
-		energy += contribution;
-	}
+	// Coulomb contribution
+	if (includeCharges_) energy += analyticCoulombEnergy(r);
 
 	return energy;
 }
@@ -454,6 +522,23 @@ double PairPotential::forceAtRSquared(double distanceSq)
 
 	// Return interpolated value
 	return dUFull_.interpolated(distanceSq, distanceSq*rDelta_);
+}
+
+// Return analytic derivative of potential at specified r-squared
+double PairPotential::analyticForceAtRSquared(double rSq)
+{
+	if (rSq > rangeSquared_) return 0.0;
+
+	double force = 0.0;
+	double r = sqrt(rSq);
+
+	// Short-range potential
+	force += analyticShortRangeForce(r, shortRangeType_);
+
+	// Coulomb contribution
+	if (includeCharges_) force += analyticCoulombForce(r);
+
+	return force;
 }
 
 // Return full tabulated potential (original plus additional)

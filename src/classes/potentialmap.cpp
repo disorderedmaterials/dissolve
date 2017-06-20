@@ -149,22 +149,22 @@ double PotentialMap::analyticEnergy(int typeI, int typeJ, double distanceSquared
 #ifdef CHECKS
 	if ((typeI < 0) || (typeI >= nTypes_))
 	{
-		Messenger::print("OUT_OF_RANGE - Type index typeI (%i) passed to PotentialMap::energy() is out of range (nTypes_ = %i).\n", typeI, nTypes_);
+		Messenger::print("OUT_OF_RANGE - Type index typeI (%i) passed to PotentialMap::analyticEnergy() is out of range (nTypes_ = %i).\n", typeI, nTypes_);
 		return 0.0;
 	}
 	if ((typeJ < 0) || (typeJ >= nTypes_))
 	{
-		Messenger::print("OUT_OF_RANGE - Type index typeJ (%i) passed to PotentialMap::energy() is out of range (nTypes_ = %i).\n", typeJ, nTypes_);
+		Messenger::print("OUT_OF_RANGE - Type index typeJ (%i) passed to PotentialMap::analyticEnergy() is out of range (nTypes_ = %i).\n", typeJ, nTypes_);
 		return 0.0;
 	}
 	if (distanceSquared < 0.0)
 	{
-		Messenger::print("OUT_OF_RANGE - Squared distance passed to PotentialMap::energy() is negative (%f).\n", distanceSquared);
+		Messenger::print("OUT_OF_RANGE - Squared distance passed to PotentialMap::analyticEnergy() is negative (%f).\n", distanceSquared);
 		return 0.0;
 	}
 	if (distanceSquared > rangeSquared_)
 	{
-		Messenger::print("OUT_OF_RANGE - Squared distance passed to PotentialMap::energy() (%f) is greater than the range (%f).\n", distanceSquared, rangeSquared_);
+		Messenger::print("OUT_OF_RANGE - Squared distance passed to PotentialMap::analyticEnergy() (%f) is greater than the range (%f).\n", distanceSquared, rangeSquared_);
 		return 0.0;
 	}
 #endif
@@ -197,4 +197,32 @@ double PotentialMap::force(int typeI, int typeJ, double distanceSquared) const
 	}
 #endif
 	return potentialMatrix_.value(typeI, typeJ)->forceAtRSquared(distanceSquared);
+}
+
+// Return analytic force between Atom types at squared distance specified
+double PotentialMap::analyticForce(int typeI, int typeJ, double distanceSquared) const
+{
+#ifdef CHECKS
+	if ((typeI < 0) || (typeI >= nTypes_))
+	{
+		Messenger::print("OUT_OF_RANGE - Type index typeI (%i) passed to PotentialMap::analyticForce() is out of range (nTypes_ = %i).\n", typeI, nTypes_);
+		return 0.0;
+	}
+	if ((typeJ < 0) || (typeJ >= nTypes_))
+	{
+		Messenger::print("OUT_OF_RANGE - Type index typeJ (%i) passed to PotentialMap::analyticForce() is out of range (nTypes_ = %i).\n", typeJ, nTypes_);
+		return 0.0;
+	}
+	if (distanceSquared < 0.0)
+	{
+		Messenger::print("OUT_OF_RANGE - Squared distance passed to PotentialMap::analyticForce() is negative (%f).\n", distanceSquared);
+		return 0.0;
+	}
+	if (distanceSquared > rangeSquared_)
+	{
+		Messenger::print("OUT_OF_RANGE - Squared distance passed to PotentialMap::analyticForce() (%f) is greater than the range (%f).\n", distanceSquared, rangeSquared_);
+		return 0.0;
+	}
+#endif
+	return potentialMatrix_.value(typeI,typeJ)->analyticForceAtRSquared(distanceSquared);
 }

@@ -1,4 +1,4 @@
-# Test Case 01 - Bulk water energy and forces, intramolecular component
+# Test Case 01 - Bulk water energy and forces, intramolecular components
 
 # Define Water Molecule
 Species 'Water'
@@ -24,20 +24,14 @@ Configuration  'Bulk'
 
   InputCoordinates  dlpoly  'dlpoly_intra/CONFIG'
 
-  # Test analytical energy
+  # Test analytical energy against production and reference energy
   Module Energy
     Test on
-    TestExact on
+    TestAnalytic on
     TestReferenceIntra  5584.45180873
   EndModule
 
-  # Test 'correct' production energy
-  Module Energy
-    Test on
-    TestExact on
-    TestReferenceIntra  5584.45180873
-  EndModule
-
+  # Test production forces against reference forces
   Module Forces
     Test on
     TestReference  dlpoly  'dlpoly_intra/REVCON'

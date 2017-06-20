@@ -45,10 +45,10 @@ EnergyModule::EnergyModule() : Module()
 	options_.add("StabilityWindow", 10, "Number of points over which to assess the stability of the energy (per Configuration)", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
 	options_.add("StabilityThreshold", 0.01, "Threshold value at which energy is deemed stable over the defined windowing period", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
 	options_.add("Test", bool(false), "Test parallel energy routines against simplified, serial ones", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
-	options_.add("TestExact", bool(false), "Compare parallel energy routines against exact (analytic) energy rather than tabulated values", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("TestAnalytic", bool(false), "Compare parallel energy routines against exact (analytic) energy rather than tabulated values", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
 	options_.add("TestReferenceInter", 0.0, "Reference value for interatomic energy against which to test calculated value", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
 	options_.add("TestReferenceIntra", 0.0, "Reference value for intramolecular energy against which to test calculated value", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
-	options_.add("TestThreshold", 1.0e-2, "Threshold of energy at which test comparison will fail", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("TestThreshold", 1.0e-1, "Threshold of energy at which test comparison will fail", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
 }
 
 // Destructor
@@ -175,7 +175,7 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 		const bool saveData = GenericListHelper<bool>::retrieve(cfg->moduleData(), "Save", uniqueName(), options_.valueAsBool("Save"));
 		const double stabilityThreshold = GenericListHelper<double>::retrieve(cfg->moduleData(), "StabilityThreshold", uniqueName(), options_.valueAsDouble("StabilityThreshold"));
 		const int stabilityWindow = GenericListHelper<int>::retrieve(cfg->moduleData(), "StabilityWindow", uniqueName(), options_.valueAsInt("StabilityWindow"));
-		const bool testExact = GenericListHelper<bool>::retrieve(cfg->moduleData(), "TestExact", uniqueName(), options_.valueAsBool("TestExact"));
+		const bool testAnalytic = GenericListHelper<bool>::retrieve(cfg->moduleData(), "TestAnalytic", uniqueName(), options_.valueAsBool("TestAnalytic"));
 		const bool testMode = GenericListHelper<bool>::retrieve(cfg->moduleData(), "Test", uniqueName(), options_.valueAsBool("Test"));
 		const double testThreshold = GenericListHelper<double>::retrieve(cfg->moduleData(), "TestThreshold", uniqueName(), options_.valueAsDouble("TestThreshold"));
 		bool hasReferenceInter;
@@ -191,6 +191,7 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 			 */
 
 			Messenger::print("Energy: Calculating energy for Configuration '%s' in serial test mode...\n", cfg->name());
+			if (testAnalytic) Messenger::print("Energy: Exact, analytical potential will be used.\n");
 
 			/*
 			* Test Calculation Begins
@@ -222,7 +223,7 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 						scale = molN->species()->scaling(ii, jj);
 						if (scale < 1.0e-3) continue;
 
-						if (testExact) correctInterEnergy += potentialMap.analyticEnergy(molN->atom(ii)->globalTypeIndex(), molN->atom(jj)->globalTypeIndex(), box->minimumDistanceSquared(molN->atom(ii), molN->atom(jj)));
+						if (testAnalytic) correctInterEnergy += potentialMap.analyticEnergy(molN->atom(ii)->globalTypeIndex(), molN->atom(jj)->globalTypeIndex(), box->minimumDistanceSquared(molN->atom(ii), molN->atom(jj)));
 						else correctInterEnergy += potentialMap.energy(molN->atom(ii)->globalTypeIndex(), molN->atom(jj)->globalTypeIndex(), box->minimumDistanceSquared(molN->atom(ii), molN->atom(jj)));
 					}
 				}
@@ -236,7 +237,7 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 					{
 						for (int jj = 0; jj <molM->nAtoms(); ++jj)
 						{
-							if (testExact) correctInterEnergy += potentialMap.analyticEnergy(molN->atom(ii)->globalTypeIndex(), molM->atom(jj)->globalTypeIndex(), box->minimumDistanceSquared(molN->atom(ii), molM->atom(jj)));
+							if (testAnalytic) correctInterEnergy += potentialMap.analyticEnergy(molN->atom(ii)->globalTypeIndex(), molM->atom(jj)->globalTypeIndex(), box->minimumDistanceSquared(molN->atom(ii), molM->atom(jj)));
 							else correctInterEnergy += potentialMap.energy(molN->atom(ii)->globalTypeIndex(), molM->atom(jj)->globalTypeIndex(), box->minimumDistanceSquared(molN->atom(ii), molM->atom(jj)));
 						}
 					}
@@ -290,46 +291,59 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 			 * Production Calculation Begins
 			 */
 
-			Messenger::print("Energy: Calculating total energy for Configuration '%s'...\n", cfg->name());
+			Messenger::print("\nEnergy: Calculating total energy for Configuration '%s'...\n", cfg->name());
 
-			// Calculate Grain energy
+			// Calculate interatomic energy
 			Timer interTimer;
 			double interEnergy = duq.interatomicEnergy(procPool, cfg);
 			interTimer.stop();
 
-			// Calculate intramolecular and interGrain correction energy
+			// Calculate intramolecular energy
 			Timer intraTimer;
 			double intraEnergy = duq.intramolecularEnergy(procPool, cfg);
 			intraTimer.stop();
 
-			Messenger::print("Energy: Interatomic pairpotential energy is %15.9e kJ/mol\n", interEnergy);
-			Messenger::print("Energy: Intramolecular energy is %15.9e kJ/mol\n", intraEnergy);
-			Messenger::print("Energy: Total energy is %15.9e kJ/mol\n", interEnergy + intraEnergy);
-			Messenger::print("Energy: Time to do total (test) energy was %s.\n", testTimer.totalTimeString());
+			Messenger::print("Energy: Production interatomic pairpotential energy is %15.9e kJ/mol\n", interEnergy);
+			Messenger::print("Energy: Production intramolecular energy is %15.9e kJ/mol\n", intraEnergy);
+			Messenger::print("Energy: Total production energy is %15.9e kJ/mol\n", interEnergy + intraEnergy);
+			Messenger::print("Energy: Time to do interatomic energy was %s.\n", interTimer.totalTimeString());
+			Messenger::print("Energy: Time to do intramolecular energy was %s.\n", intraTimer.totalTimeString());
 
 			/*
 			 * Production Calculation Ends
 			 */
 
 			// Compare production vs reference values
+			double delta;
 			if (hasReferenceInter)
 			{
-				Messenger::print("Energy: Reference interatomic energy is %15.9e kJ/mol.\n", testReferenceInter);
-				double delta = testReferenceInter - interEnergy;
-				Messenger::print("Energy: Reference interatomic energy delta is %15.9e kJ/mol and is %s (threshold is %10.3e kJ/mol)\n", delta, fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
+				Messenger::print("\nEnergy: Reference interatomic energy is %15.9e kJ/mol.\n", testReferenceInter);
+
+				delta = testReferenceInter - correctInterEnergy;
+				Messenger::print("Energy: Reference interatomic energy delta with correct value is %15.9e kJ/mol and is %s (threshold is %10.3e kJ/mol)\n", delta, fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
+				if (!procPool.allTrue(fabs(delta) < testThreshold)) return false;
+
+				delta = testReferenceInter - interEnergy;
+				Messenger::print("Energy: Reference interatomic energy delta with production value is %15.9e kJ/mol and is %s (threshold is %10.3e kJ/mol)\n", delta, fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
 				if (!procPool.allTrue(fabs(delta) < testThreshold)) return false;
 			}
 			if (hasReferenceIntra)
 			{
 				Messenger::print("Energy: Reference intramolecular energy is %15.9e kJ/mol.\n", testReferenceIntra);
-				double delta = testReferenceIntra - intraEnergy;
-				Messenger::print("Energy: Reference intramolecular energy delta is %15.9e kJ/mol and is %s (threshold is %10.3e kJ/mol)\n", delta, fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
+
+				delta = testReferenceIntra - correctIntraEnergy;
+				Messenger::print("Energy: Reference intramolecular energy delta with correct value is %15.9e kJ/mol and is %s (threshold is %10.3e kJ/mol)\n", delta, fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
+				if (!procPool.allTrue(fabs(delta) < testThreshold)) return false;
+
+				delta = testReferenceIntra - intraEnergy;
+				Messenger::print("Energy: Reference intramolecular energy delta with production value is %15.9e kJ/mol and is %s (threshold is %10.3e kJ/mol)\n", delta, fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
 				if (!procPool.allTrue(fabs(delta) < testThreshold)) return false;
 			}
 
 			// Compare production vs 'correct' values
 			double interDelta = correctInterEnergy-interEnergy;
 			double intraDelta = correctIntraEnergy-intraEnergy;
+			Messenger::print("\nEnergy: Comparing 'correct' with production values...\n");
 			Messenger::print("Energy: Interatomic energy delta is %15.9e kJ/mol and is %s (threshold is %10.3e kJ/mol)\n", interDelta, fabs(interDelta) < testThreshold ? "OK" : "NOT OK", testThreshold);
 			Messenger::print("Energy: Intramolecular energy delta is %15.9e kJ/mol and is %s (threshold is %10.3e kJ/mol)\n", intraDelta, fabs(intraDelta) < testThreshold ? "OK" : "NOT OK", testThreshold);
 

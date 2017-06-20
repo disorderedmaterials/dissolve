@@ -1,7 +1,34 @@
-Unit Test 01 - Forces test on 1000 water molecules
-==================================================
+Unit Test 01 - Energy / forces test bulk water
+==============================================
 
 Test of forces between 1000 equilibrated water molecules in a cubic box.
-Reference forces are calculated with DL_POLY using LJ plus truncated
-Coulomb, with cutoff distance of 15 Angstroms (truncation window width
-is 2.0 Angstroms).
+Reference forces are calculated with DL_POLY using the SPC/FW forcefield.
+Cutoff is 15.0 Angstroms in all cases.
+
+Four test cases are considered:
+
+1) Intramolecular Terms Only
+
+Simulations with only bond and angle terms contributing to energy and forces.
+
+2) van der Waals Terms Only
+
+Simulations utilising only a Lennard-Jones potential contributing to energy and
+forces, with charges and bond / angle force constants set to zero. The truncation
+width is set to zero in this simulation in order to correctly reproduce the 
+(non-truncated) LJ potential in DL_POLY.
+
+3) Coulomb Terms Only
+
+Simulations utilising only a Coulombic potential contributing to energy and
+forces, with charges and bond / angle force constants set to zero. The truncation scheme
+employed in DL_POLY is a more advanced form (Fennell and Gezelter) than that employed in
+the present code (unmodified truncated and shifted potential) so energies and forces
+are expected to contain slightly higher errors, and higher threshold values are used
+for the corresponding tests.
+
+4) Full Forcefield
+
+Simulations employing full intramolecular and interatomic contributions to energy and
+forces.
+

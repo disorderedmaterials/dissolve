@@ -45,6 +45,17 @@ class PairPotential : public ListItem<PairPotential>
 	static ShortRangeType shortRangeType(const char* s);
 	// Convert ShortRangeType to text string
 	static const char* shortRangeType(ShortRangeType id);
+	// Truncation Scheme enum
+	enum TruncationScheme
+	{
+		NoTruncation,			/* No truncation scheme */
+		ShiftedTruncation,		/* Shifted and truncated */
+		nTruncationSchemes		/* Number of truncation schemes */
+	};
+	// Convert text string to TruncationScheme
+	static TruncationScheme truncationScheme(const char* s);
+	// Convert TruncationScheme to text string
+	static const char* truncationScheme(TruncationScheme id);
 
 
 	/*
@@ -55,12 +66,18 @@ class PairPotential : public ListItem<PairPotential>
 	ShortRangeType shortRangeType_;
 	// Whether charges should be included in the generated potential
 	bool includeCharges_;
+	// Truncation scheme to apply to generated Coulomb potential
+	TruncationScheme coulombTruncationScheme_;
 	
 	public:
 	// Set short-ranged type
 	void setShortRangeType(ShortRangeType type);
 	// Return short-ranged type
 	ShortRangeType shortRangeType() const;
+	// Set Coulomb truncation scheme
+	void setCoulombTruncationScheme(TruncationScheme scheme);
+	// Return Coulomb truncation scheme
+	TruncationScheme coulombTruncationScheme() const;
 
 
 	/*
@@ -135,6 +152,14 @@ class PairPotential : public ListItem<PairPotential>
 	XYData dUFull_;
 	
 	private:
+	// Return analytic short range potential energy
+	double analyticShortRangeEnergy(double r, PairPotential::ShortRangeType type);
+	// Return analytic coulomb potential energy
+	double analyticCoulombEnergy(double r);
+	// Return analytic short range force
+	double analyticShortRangeForce(double r, PairPotential::ShortRangeType type);
+	// Return analytic coulomb potential energy
+	double analyticCoulombForce(double r);
 	// Regenerate derivative data
 	void calculateDUFull();
 	// Calculate full potential
@@ -151,6 +176,8 @@ class PairPotential : public ListItem<PairPotential>
 	double analyticEnergyAtRSquared(double rSq);
 	// Return derivative of potential at specified r-squared
 	double forceAtRSquared(double rSq);
+	// Return analytic derivative of potential at specified r-squared
+	double analyticForceAtRSquared(double rSq);
 	// Return full tabulated potential (original plus additional)
 	XYData& uFull();
 	// Return full tabulated derivative

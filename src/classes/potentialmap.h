@@ -75,6 +75,8 @@ class PotentialMap
 	double analyticEnergy(int typeI, int typeJ, double distanceSquared) const;
 	// Return force between Atom types at squared distance specified
 	double force(int typeI, int typeJ, double distanceSquared) const;
+	// Return analytic force between Atom types at squared distance specified
+	double analyticForce(int typeI, int typeJ, double distanceSquared) const;
 };
 
 #endif
