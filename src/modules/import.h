@@ -102,6 +102,18 @@ class ImportModule : public Module
 
 
 	/*
+	 * Static Functions - Coordinates
+	 */
+	public:
+	// Read coordinates in specified format
+	static bool readCoordinates(const char* format, LineParser& parser, Array< Vec3<double> >& r);
+	// Read xyz coordinates from specified file
+	static bool readXYZCoordinates(LineParser& parser, Array< Vec3<double> >& r);
+	// Read DL_POLY coordinates from specified file
+	static bool readDLPOLYCoordinates(LineParser& parser, Array< Vec3<double> >& r);
+
+
+	/*
 	 * Static Functions - Force
 	 */
 	public:

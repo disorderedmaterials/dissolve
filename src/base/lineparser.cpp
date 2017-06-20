@@ -1040,6 +1040,17 @@ float LineParser::argf(int i)
 	return (float) argd(i);
 }
 
+// Return the specified and next two arguments as a Vec3<double>
+Vec3<double> LineParser::arg3d(int i)
+{
+	if ((i < 0) || (i >= (nArgs()-2)))
+	{
+		printf("Warning: Argument %i is out of range - returning Vec3<double>()...\n", i);
+		return Vec3<double>();
+	}
+	return Vec3<double>(argd(i), argd(i+1), argd(i+2));
+}
+
 // Returns whether the specified argument exists (has been provided)
 bool LineParser::hasArg(int i) const
 {

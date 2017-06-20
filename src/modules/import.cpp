@@ -214,6 +214,74 @@ bool ImportModule::postProcess(DUQ& duq, ProcessPool& procPool)
 }
 
 /*
+ * Static Functions - Coordinates
+ */
+
+// Read coordinates in specified format
+bool ImportModule::readCoordinates(const char* format, LineParser& parser, Array< Vec3<double> >& r)
+{
+	// Check supplied format string
+	if (DUQSys::sameString(format, "xyz")) return readXYZCoordinates(parser, r);
+	else if (DUQSys::sameString(format, "dlpoly")) return readDLPOLYCoordinates(parser, r);
+
+	Messenger::error("Unrecognised coordinate format - '%s'.\nKnown formats are: xyz, dlpoly.\n", format);
+	return false;
+}
+
+// Read xyz coordinates from specified file
+bool ImportModule::readXYZCoordinates(LineParser& parser, Array< Vec3<double> >& r)
+{
+}
+
+// Read DL_POLY coordinates from specified file
+bool ImportModule::readDLPOLYCoordinates(LineParser& parser, Array< Vec3<double> >& r)
+{
+	/*
+	 * Read DL_POLY force information through the specified line parser.
+	 * We assume CONFIG or REVCON format:
+	 * 
+	 * Line 1:    Title
+	 * Line 2:    keytrj   imcon    natoms    []
+	 * Line 3-5:  cell matrix (if imcon > 0)
+	 * Line 6:    atomtype        id
+	 * Line 7:    rx   ry   rz
+	 * Line 8:    vx   vy   vz      if (keytrj > 0)
+	 * Line 9:    fx   fy   fz	if (keytrj > 1)
+	 *   ...
+	 */
+
+	Messenger::print(" --> Reading coordinates in DL_POLY (CONFIG/REVCON) format...\n");
+	// Skip title
+	if (parser.skipLines(1) != LineParser::Success) return false;
+
+	// Read in keytrj, imcon, and number of atoms, and initiliase arrays
+	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+
+	int keytrj = parser.argi(0);
+	int imcon = parser.argi(1);
+	int nAtoms = parser.hasArg(2) ? parser.argi(2) : 0;
+	Messenger::print(" --> Expecting coordinates for %i atoms (DLPOLY keytrj=%i, imcon=%i).\n", nAtoms, keytrj, imcon);
+	r.clear();
+
+	// Skip cell information if given
+	if (imcon > 0) parser.skipLines(3);
+
+	// Loop over atoms (either a specified number, or until we reach the end of the file
+	int atomCount = 0;
+	while (!parser.eofOrBlank())
+	{
+		// Skip atomname, position and velocity lines
+		if (parser.skipLines(1+keytrj) != LineParser::Success) return false;
+		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+		r.add(parser.arg3d(0));
+		++atomCount;
+		if ((nAtoms > 0) && (atomCount == nAtoms)) break;
+	}
+
+	return true;
+}
+
+/*
  * Static Functions - Forces
  */
 

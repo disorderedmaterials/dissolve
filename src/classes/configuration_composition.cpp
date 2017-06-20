@@ -162,6 +162,18 @@ const char* Configuration::inputCoordinatesFile()
 	return inputCoordinatesFile_.get();
 }
 
+// Set input coordinates file format
+void Configuration::setInputCoordinatesFormat(const char* format)
+{
+	inputCoordinatesFormat_ = format;
+}
+
+// Return input coordinates file format
+const char* Configuration::inputCoordinatesFormat()
+{
+	return inputCoordinatesFormat_.get();
+}
+
 // Set file containing output coordinates
 void Configuration::setOutputCoordinatesFile(const char* filename)
 {

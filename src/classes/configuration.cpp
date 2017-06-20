@@ -45,6 +45,7 @@ Configuration::Configuration() : ListItem<Configuration>()
 	randomConfiguration_ = true;
 	useOutputCoordinatesAsInput_ = false;
 	coordinatesOutputFrequency_ = 1;
+	inputCoordinatesFormat_ = "xyz";
 
 	// Box / Cells
 	box_ = NULL;
@@ -301,7 +302,10 @@ bool Configuration::setup(ProcessPool& procPool, const List<AtomType>& atomTypes
 	if (useOutputCoordinatesAsInput_ && (!outputCoordinatesFile_.isEmpty()) && DUQSys::fileExists(outputCoordinatesFile_))
 	{
 		Messenger::print("--> Loading initial coordinates from output coordinates file '%s'...\n", outputCoordinatesFile_.get());
-		if (!loadCoordinates(outputCoordinatesFile_)) return false;
+		LineParser inputFileParser(&procPool);
+		if (!inputFileParser.openInput(outputCoordinatesFile_)) return false;
+		if (!loadCoordinates(inputFileParser, "xyz")) return false;
+		inputFileParser.closeFiles();
 	}
 	else if (randomConfiguration_)
 	{
@@ -316,7 +320,10 @@ bool Configuration::setup(ProcessPool& procPool, const List<AtomType>& atomTypes
 	else
 	{
 		Messenger::print("--> Loading initial coordinates from file '%s'...\n", inputCoordinatesFile_.get());
-		if (!loadCoordinates(inputCoordinatesFile_)) return false;
+		LineParser inputFileParser(&procPool);
+		if (!inputFileParser.openInput(inputCoordinatesFile_)) return false;
+		if (!loadCoordinates(inputFileParser, inputCoordinatesFormat_)) return false;
+		inputFileParser.closeFiles();
 	}
 
 	// Populate Atom and Grain arrays from Molecule copies

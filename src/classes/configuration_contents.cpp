@@ -26,6 +26,7 @@
 #include "classes/grain.h"
 #include "classes/species.h"
 #include "base/processpool.h"
+#include "modules/import.h"
 
 // Add Atom/Grain space for a Molecule of the Species provided
 void Configuration::addMolecule(Species* sp)
@@ -301,22 +302,21 @@ void Configuration::incrementCoordinateIndex()
 }
 
 // Load coordinates from file
-bool Configuration::loadCoordinates(const char* filename)
+bool Configuration::loadCoordinates(LineParser& parser, const char* format)
 {
-	// Construct a temporary Species to load the source coordinates into
-	Species sourceCoordinates;
-	if (!sourceCoordinates.load(filename)) return false;
+	// Load coordinates into temporary array
+	Array< Vec3<double> > r;
+	if (!ImportModule::readCoordinates(format, parser, r)) return false;
 
-	// Temporary Species now contains some number of atoms - does it match the number in the configuration's molecules?
-	if (nAtoms_ != sourceCoordinates.nAtoms())
+	// Temporary array now contains some number of atoms - does it match the number in the configuration's molecules?
+	if (nAtoms_ != r.nItems())
 	{
-		Messenger::error("Number of atoms in initial coordinates file (%i) does not match that in configuration (%i).\n", sourceCoordinates.nAtoms(), nAtoms_);
+		Messenger::error("Number of atoms read from initial coordinates file (%i) does not match that in Configuration (%i).\n", r.nItems(), nAtoms_);
 		return false;
 	}
 
-	// All good, so copy atom coordinates over into our arrays
-	SpeciesAtom* i = sourceCoordinates.atoms();
-	for (int n=0; n<nAtoms_; ++n, i = i->next) atoms_[n].setCoordinates(i->r());
+	// All good, so copy atom coordinates over into our array
+	for (int n=0; n<nAtoms_; ++n) atoms_[n].setCoordinates(r[n]);
 
 	return true;
 }

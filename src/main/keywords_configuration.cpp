@@ -36,7 +36,7 @@ KeywordData ConfigurationBlockData[] = {
 	{ "EndConfiguration",		0,	"Signals the end of the Configuration block" },
 	{ "Ensemble",			1,	"Whether an ensemble file should be appended to" },
 	{ "EnsembleFrequency",		1,	"Frequency at which to append ensemble file" },
-	{ "InputCoordinates",		1,	"File which contains the starting coordinates" },
+	{ "InputCoordinates",		1,	"File which contains the starting coordinates, followed by optional coordinate format (otherwise xyz assumed)" },
 	{ "Module",			1,	"Starts the setup of a Module for this Configuration" },
 	{ "Multiplier",			1,	"Factor by which relative populations are multiplied when generating the Configuration data" },
 	{ "NonPeriodic",		0,	"States that the simulation should be treated as non-periodic" },
@@ -127,9 +127,10 @@ bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
 				cfg->setEnsembleFrequency(parser.argi(1));
 				break;
 			case (ConfigurationBlock::InputCoordinatesKeyword):
-				cfg->setInputCoordinatesFile(parser.argc(1));
+				cfg->setInputCoordinatesFormat(parser.argc(1));
+				cfg->setInputCoordinatesFile(parser.argc(2));
 				cfg->setRandomConfiguration(false);
-				Messenger::print("--> Initial coordinates will be loaded from file '%s'\n", parser.argc(1));
+				Messenger::print("--> Initial coordinates will be loaded from file '%s' (format: %s)\n", cfg->inputCoordinatesFile(), cfg->inputCoordinatesFormat());
 				break;
 			case (ConfigurationBlock::ModuleKeyword):
 				// The argument following the keyword is the module name

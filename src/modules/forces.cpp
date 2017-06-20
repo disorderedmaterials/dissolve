@@ -113,6 +113,7 @@ bool ForcesModule::hasPostProcessing()
 }
 
 // Modules upon which this Module depends to have run first
+// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for
 const char* ForcesModule::dependentModules()
 {
 	return "";
@@ -420,7 +421,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 			int nFailed1 = 0;
 			bool failed;
 			Vec3<double> interDelta, intraDelta;
-			Messenger::print("Testing calculated 'correct' forces against calculated production forces - atoms with erroneous forces will be output...\n");
+			Messenger::print("Forces: Testing calculated 'correct' forces against calculated production forces - atoms with erroneous forces will be output...\n");
 			for (int n=0; n<cfg->nAtoms(); ++n)
 			{
 				interDelta.set(interFx[n] - checkInterFx[n], interFy[n] - checkInterFy[n], interFz[n] - checkInterFz[n]);
@@ -447,7 +448,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 			Vec3<double> totalDelta;
 			if (cfg->moduleData().contains("ReferenceFX", uniqueName()) && cfg->moduleData().contains("ReferenceFY", uniqueName()) && cfg->moduleData().contains("ReferenceFZ", uniqueName()))
 			{
-				Messenger::print("Testing reference forces against calculated production forces - atoms with erroneous forces will be output...\n");
+				Messenger::print("Forces: Testing reference forces against calculated production forces - atoms with erroneous forces will be output...\n");
 
 				// Grab reference force arrays and check sizes
 				Array<double>& referenceFx = GenericListHelper< Array<double> >::retrieve(cfg->moduleData(), "ReferenceFX", uniqueName());

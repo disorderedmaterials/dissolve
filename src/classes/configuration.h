@@ -73,6 +73,8 @@ class Configuration : public ListItem<Configuration>
 	bool randomConfiguration_;
 	// File containing input coordinates
 	CharString inputCoordinatesFile_;
+	// Format of input coordinates file
+	CharString inputCoordinatesFormat_;
 	// File containing output coordinates
 	CharString outputCoordinatesFile_;
 	// Flag specifying to use output coordinates file as input coordinates (if it exists)
@@ -117,6 +119,10 @@ class Configuration : public ListItem<Configuration>
 	void setInputCoordinatesFile(const char* filename);
 	// Return file containing input coordinates
 	const char* inputCoordinatesFile();
+	// Set input coordinates file format
+	void setInputCoordinatesFormat(const char* format);
+	// Return input coordinates file format
+	const char* inputCoordinatesFormat();
 	// Set file containing output coordinates
 	void setOutputCoordinatesFile(const char* filename);
 	// Return file containing output coordinates
@@ -199,8 +205,8 @@ class Configuration : public ListItem<Configuration>
 	int coordinateIndex();
 	// Increment current coordinate index
 	void incrementCoordinateIndex();
-	// Load coordinates from specified file
-	bool loadCoordinates(const char* filename);
+	// Load coordinates from specified parser
+	bool loadCoordinates(LineParser& parser, const char* format);
 	// Create random configuration
 	bool createRandom(ProcessPool& procPool);
 
