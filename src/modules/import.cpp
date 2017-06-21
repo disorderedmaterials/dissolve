@@ -231,6 +231,24 @@ bool ImportModule::readCoordinates(const char* format, LineParser& parser, Array
 // Read xyz coordinates from specified file
 bool ImportModule::readXYZCoordinates(LineParser& parser, Array< Vec3<double> >& r)
 {
+	Messenger::print(" --> Reading coordinates in xyz format...\n");
+
+	// Read in natoms
+	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+	int nAtoms = parser.argi(0);
+
+	// Skip title
+	if (parser.skipLines(1) != LineParser::Success) return false;
+
+	Messenger::print(" --> Expecting coordinates for %i atoms.\n", nAtoms);
+	r.clear();
+	for (int n=0; n<nAtoms; ++n)
+	{
+		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+		r.add(parser.arg3d(0));
+	}
+
+	return true;
 }
 
 // Read DL_POLY coordinates from specified file
