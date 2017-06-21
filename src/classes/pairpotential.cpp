@@ -592,12 +592,22 @@ bool PairPotential::save(const char* filename)
 		return false;
 	}
 	
-	parser.writeLineF("#%9s  %12s  %12s  %12s  %12s\n", "", "Full", "Derivative", "Original", "Additional");
-	parser.writeLineF("#%9s  %12s  %12s  %12s  %12s\n", "r(Angs)", "U(kJ/mol)", "dU(kJ/mol/Ang)", "U(kJ/mol)", "U(kJ/mol)");
-	for (int n = 0; n<nPoints_; ++n) parser.writeLineF("%10.4e  %12.4e  %12.4e  %12.4e  %12.4e\n", sqrt(uOriginal_.x(n)), uFull_.y(n), dUFull_.y(n), uOriginal_.y(n), uAdditional_.interpolated(sqrt(uOriginal_.x(n))));
+	parser.writeLineF("#%9s  %12s  %12s  %12s  %12s  %12s  %12s\n", "", "Full", "Derivative", "Original", "Additional", "Exact(Orig)", "Exact(Deriv)");
+	parser.writeLineF("#%9s  %12s  %12s  %12s  %12s  %12s  %12s\n", "r(Angs)", "U(kJ/mol)", "dU(kJ/mol/Ang)", "U(kJ/mol)", "U(kJ/mol)", "U(kJ/mol)", "dU(kJ/mol/Ang)");
+	for (int n = 0; n<nPoints_; ++n) parser.writeLineF("%10.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e\n", sqrt(uOriginal_.x(n)), uFull_.y(n), dUFull_.y(n), uOriginal_.y(n), uAdditional_.interpolated(sqrt(uOriginal_.x(n))), analyticEnergyAtRSquared(uOriginal_.x(n)), analyticForceAtRSquared(uOriginal_.x(n)));
 
 	parser.closeFiles();
 
+	CharString test("%s.test", filename);
+	LineParser shitParser;
+	shitParser.openOutput(test);
+	double x = 0.0, delta = delta_*0.05;
+	while (x < rangeSquared_)
+	{
+		shitParser.writeLineF("%12.6e  %12.6e  %12.6e  %12.6e\n", sqrt(x), uFull_.interpolated(x), analyticEnergyAtRSquared(x), (uFull_.interpolated(x) - analyticEnergyAtRSquared(x))*100.0);
+		x += delta;
+	}
+	shitParser.closeFiles();
 	return true;
 }
 

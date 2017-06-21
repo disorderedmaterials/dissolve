@@ -1235,9 +1235,9 @@ double XYData::interpolated(double xvalue)
 // Return spline interpolated y value for supplied x, specifying containing interval
 double XYData::interpolated(double xvalue, int interval)
 {
-	// Calculate cubic polynomial
 	if (interval < 0) return y_.first();
 	else if (interval >= splineA_.nItems()) return y_.last();
+
 	double h = constrainedSpline_ ? xvalue : xvalue - x_[interval];
 	double hh = h*h;
 	return splineA_[interval] + splineB_[interval]*h + splineC_[interval]*hh + splineD_[interval]*hh*h;

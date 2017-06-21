@@ -304,6 +304,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 
 							if (testAnalytic) vecji *= potentialMap.analyticForce(i->globalTypeIndex(), j->globalTypeIndex(), magji);
 							else vecji *= potentialMap.force(i->globalTypeIndex(), j->globalTypeIndex(), magji);
+							
 							interFx[i->index()] += vecji.x;
 							interFy[i->index()] += vecji.y;
 							interFz[i->index()] += vecji.z;

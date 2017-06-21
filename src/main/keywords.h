@@ -143,6 +143,7 @@ namespace PairPotentialsBlock
 	// PairPotential Block Keyword Enum
 	enum PairPotentialsKeyword
 	{
+		CoulombTruncationKeyword,	/* 'CoulombTruncation' - Truncation scheme to apply to Coulomb potential */
 		DeltaKeyword,			/* 'Delta' - Gives the spacing between points in the tabulated potentials */
 		EndPairPotentialsKeyword,	/* 'EndPairPotentials' - Signals the end of the PairPotentials block */
 		GenerateAllKeyword,		/* 'GenerateAll' - Generates all required PairPotentials with the specified contributions */

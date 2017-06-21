@@ -22,18 +22,19 @@
 #include "main/keywords.h"
 #include "main/duq.h"
 #include "base/sysfunc.h"
-#include <classes/atomtype.h>
+#include "classes/atomtype.h"
 
 // PairPotentials Block Keywords
 KeywordData PairPotentialsBlockData[] = {
-	{ "Delta",			1,	"" },
-	{ "EndPairPotentials",		0,	"" },
-	{ "GenerateAll",		1,	"" },
-	{ "Generate",			3,	"" },
-	{ "Parameters",			4,	"" },
-	{ "Range",			1,	"" },
-	{ "TruncationWidth",		1,	"" },
-	{ "UseAtomCharges",		0,	"" }
+	{ "CoulombTruncation",		1,	"Truncation scheme to apply to Coulomb potential" },
+	{ "Delta",			1,	"Delta (in r-squared) of tabulated potential" },
+	{ "EndPairPotentials",		0,	"Signals the end of the PairPotentials block" },
+	{ "GenerateAll",		1,	"All potentials should be generated using internal atomtype parameters" },
+	{ "Generate",			3,	"Generate a pair potential of the specified form, according to internal parameters (or those supplied with 'Parameters')" },
+	{ "Parameters",			4,	"Set the sigma, epsilon, and charge for the named atomtype" },
+	{ "Range",			1,	"Maximal range of the pair potential (in r)" },
+	{ "TruncationWidth",		1,	"Width of the truncation region applied to the short-range potential" },
+	{ "UseAtomCharges",		0,	"Don't include charge term in the pair potential, instead calculating from atomic charges on-the-fly [NOT YET IMPLEMENTED]" }
 };
 
 // Convert text string to PairPotentialsKeyword
@@ -62,6 +63,7 @@ bool PairPotentialsBlock::parse(LineParser& parser, DUQ* duq)
 	AtomType* at1, *at2;
 	PairPotential* pot;
 	PairPotential::ShortRangeType srType;
+	PairPotential::TruncationScheme cTrunc = PairPotential::ShiftedTruncation;
 	Parameters* params;
 	bool blockDone = false, error = false;
 
@@ -78,6 +80,22 @@ bool PairPotentialsBlock::parse(LineParser& parser, DUQ* duq)
 		}
 		switch (ppKeyword)
 		{
+			case (PairPotentialsBlock::CoulombTruncationKeyword):
+				cTrunc = PairPotential::truncationScheme(parser.argc(1));
+				if (cTrunc == PairPotential::nTruncationSchemes)
+				{
+					Messenger::error("Unknown short-range interaction type '%s' used in PairPotentials block.\n", parser.argc(1));
+					error = true;
+					break;
+				}
+				break;
+			case (PairPotentialsBlock::DeltaKeyword):
+				duq->setPairPotentialDelta(parser.argd(1));
+				break;
+			case (PairPotentialsBlock::EndPairPotentialsKeyword):
+				Messenger::print("Found end of %s block.\n", InputBlocks::inputBlock(InputBlocks::PairPotentialsBlock));
+				blockDone = true;
+				break;
 			case (PairPotentialsBlock::GenerateKeyword):
 				// Get short-range type
 				srType = PairPotential::shortRangeType(parser.argc(1));
@@ -114,14 +132,8 @@ bool PairPotentialsBlock::parse(LineParser& parser, DUQ* duq)
 				}
 
 				pot->setShortRangeType(srType);
+				pot->setCoulombTruncationScheme(cTrunc);
 				pot->setParameters(at1, at2);
-				break;
-			case (PairPotentialsBlock::DeltaKeyword):
-				duq->setPairPotentialDelta(parser.argd(1));
-				break;
-			case (PairPotentialsBlock::EndPairPotentialsKeyword):
-				Messenger::print("Found end of %s block.\n", InputBlocks::inputBlock(InputBlocks::PairPotentialsBlock));
-				blockDone = true;
 				break;
 			case (PairPotentialsBlock::ParametersKeyword):
 				// Find AtomType...
