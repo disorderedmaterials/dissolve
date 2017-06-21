@@ -27,7 +27,7 @@
 DUQ::DUQ()
 {
 	// PairPotentials
-	pairPotentialDelta_ = 0.01;
+	pairPotentialDelta_ = 0.005;
 	pairPotentialRange_ = 15.0;
 	pairPotentialTruncationWidth_ = 2.0;
 	pairPotentialIncludesCharges_ = true;

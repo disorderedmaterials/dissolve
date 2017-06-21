@@ -34,8 +34,8 @@ Configuration  'Bulk'
   # Test production forces against reference forces
   Module Forces
     Test on
+    TestThreshold 0.05
     TestAnalytic  on
-    TestThreshold  0.1
     TestReference  dlpoly  'dlpoly_vdw/REVCON'
   EndModule
 EndConfiguration
@@ -43,8 +43,8 @@ EndConfiguration
 # Pair Potentials
 PairPotentials
   Range  15.000000
-  Delta  0.005000
   TruncationWidth  0.0000000
+  Delta  0.05
   Parameters  'OW'  3.165492   0.6503   0.0
   Parameters  'HW'  0.0        0.0      0.0
   Generate  'LJ'  'OW'  'OW'

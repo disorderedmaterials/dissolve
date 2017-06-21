@@ -35,8 +35,8 @@ bool XYData::useFFT_ = false;
 XYData::XYData() : ListItem<XYData>()
 {
 	name_ = "Untitled";
-	splineInterval_ = -1;
-	constrainedSpline_ = true;
+	interpolationInterval_ = -1;
+	interpolationScheme_ = NoInterpolation;
 }
 
 // Destructor
@@ -49,13 +49,13 @@ XYData::XYData(const XYData& source)
 {
 	x_ = source.x_;
 	y_ = source.y_;
-	splineA_ = source.splineA_;
-	splineB_ = source.splineB_;
-	splineC_ = source.splineC_;
-	splineD_ = source.splineD_;
-	splineH_ = source.splineH_;
-	splineInterval_ = source.splineInterval_;
-	constrainedSpline_ = source.constrainedSpline_;
+	interpolationA_ = source.interpolationA_;
+	interpolationB_ = source.interpolationB_;
+	interpolationC_ = source.interpolationC_;
+	interpolationD_ = source.interpolationD_;
+	interpolationH_ = source.interpolationH_;
+	interpolationInterval_ = source.interpolationInterval_;
+	interpolationScheme_ = source.interpolationScheme_;
 	name_ = source.name_;
 }
 
@@ -64,12 +64,20 @@ void XYData::clear()
 {
 	x_.clear();
 	y_.clear();
-	splineA_.clear();
-	splineB_.clear();
-	splineC_.clear();
-	splineD_.clear();
-	splineH_.clear();
-	splineInterval_ = -1;
+	clearInterpolationArrays();
+
+}
+
+// Clear interpolation arrays
+void XYData::clearInterpolationArrays()
+{
+	interpolationA_.clear();
+	interpolationB_.clear();
+	interpolationC_.clear();
+	interpolationD_.clear();
+	interpolationH_.clear();
+	interpolationInterval_ = -1;
+	interpolationScheme_ = NoInterpolation;
 }
 
 /*
@@ -81,7 +89,7 @@ void XYData::reset()
 {
 	for (int n=0; n<x_.nItems(); ++n) x_[n] = 0.0;
 	for (int n=0; n<y_.nItems(); ++n) y_[n] = 0.0;
-	splineInterval_ = -1;
+	interpolationInterval_ = -1;
 }
 
 // Initialise arrays to specified size
@@ -109,13 +117,13 @@ void XYData::copyData(XYData& source)
 {
 	x_ = source.x_;
 	y_ = source.y_;
-	splineA_ = source.splineA_;
-	splineB_ = source.splineB_;
-	splineC_ = source.splineC_;
-	splineD_ = source.splineD_;
-	splineH_ = source.splineH_;
-	splineInterval_ = source.splineInterval_;
-	constrainedSpline_ = source.constrainedSpline_;
+	interpolationA_ = source.interpolationA_;
+	interpolationB_ = source.interpolationB_;
+	interpolationC_ = source.interpolationC_;
+	interpolationD_ = source.interpolationD_;
+	interpolationH_ = source.interpolationH_;
+	interpolationInterval_ = source.interpolationInterval_;
+	interpolationScheme_ = source.interpolationScheme_;
 }
 
 // Copy existing X data and generate empty Y
@@ -123,7 +131,7 @@ void XYData::templateFrom(XYData& source)
 {
 	x_ = source.x_;
 	y_.initialise(x_.nItems(), 0.0);
-	splineInterval_ = -1;
+	interpolationInterval_ = -1;
 }
 
 // Return current array size
@@ -149,7 +157,7 @@ void XYData::setPoint(int index, double x, double y)
 #endif
 	x_[index] = x;
 	y_[index] = y;
-	splineInterval_ = -1;
+	interpolationInterval_ = -1;
 }
 
 // Return number of defined datapoints
@@ -169,7 +177,7 @@ void XYData::setX(int index, double x)
 	}
 #endif
 	x_[index] = x;
-	splineInterval_ = -1;
+	interpolationInterval_ = -1;
 }
 
 // Add to x value
@@ -183,7 +191,7 @@ void XYData::addX(int index, double delta)
 	}
 #endif
 	x_[index] += delta;
-	splineInterval_ = -1;
+	interpolationInterval_ = -1;
 }
 
 // Return x value specified
@@ -202,7 +210,7 @@ double XYData::x(int index) const
 // Return x Array
 Array<double>& XYData::arrayX()
 {
-	splineInterval_ = -1;
+	interpolationInterval_ = -1;
 	return x_;
 }
 
@@ -217,7 +225,7 @@ void XYData::setY(int index, double y)
 	}
 #endif
 	y_[index] = y;
-	splineInterval_ = -1;
+	interpolationInterval_ = -1;
 }
 
 // Add to y value
@@ -231,7 +239,7 @@ void XYData::addY(int index, double delta)
 	}
 #endif
 	y_[index] += delta;
-	splineInterval_ = -1;
+	interpolationInterval_ = -1;
 }
 
 // Add to y array
@@ -244,7 +252,7 @@ bool XYData::addY(const Array<double>& source, double factor)
 	}
 
 	for (int n=0; n<y_.nItems(); ++n) y_[n] += source.value(n)*factor;
-	splineInterval_ = -1;
+	interpolationInterval_ = -1;
 	return true;
 }
 
@@ -259,7 +267,7 @@ void XYData::multiplyY(int index, double factor)
 	}
 #endif
 	y_[index] *= factor;
-	splineInterval_ = -1;
+	interpolationInterval_ = -1;
 }
 
 // Return y value specified
@@ -278,7 +286,7 @@ double XYData::y(int index) const
 // Return y Array
 Array<double>& XYData::arrayY()
 {
-	splineInterval_ = -1;
+	interpolationInterval_ = -1;
 	return y_;
 }
 
@@ -287,7 +295,7 @@ void XYData::addPoint(double x, double y)
 {
 	x_.add(x);
 	y_.add(y);
-	splineInterval_ = -1;
+	interpolationInterval_ = -1;
 }
 
 // Set name of data
@@ -311,12 +319,13 @@ void XYData::operator=(const XYData& source)
 {
 	x_ = source.x_;
 	y_ = source.y_;
-	splineA_ = source.splineA_;
-	splineB_ = source.splineB_;
-	splineC_ = source.splineC_;
-	splineD_ = source.splineD_;
-	splineH_ = source.splineH_;
-	splineInterval_ = source.splineInterval_;
+	interpolationA_ = source.interpolationA_;
+	interpolationB_ = source.interpolationB_;
+	interpolationC_ = source.interpolationC_;
+	interpolationD_ = source.interpolationD_;
+	interpolationH_ = source.interpolationH_;
+	interpolationInterval_ = source.interpolationInterval_;
+	interpolationScheme_ = source.interpolationScheme_;
 	name_ = source.name_;
 }
 
@@ -345,7 +354,7 @@ XYData XYData::operator+(const XYData& source) const
 		newData.y_[n] += source.y_.value(n);
 	}
 	
-	newData.splineInterval_ = -1;
+	newData.interpolationInterval_ = -1;
 	
 	return newData;
 }
@@ -382,14 +391,14 @@ void XYData::operator+=(const XYData& source)
 		y_[n] += source.y_.value(n);
 	}
 
-	splineInterval_ = -1;
+	interpolationInterval_ = -1;
 }
 
 // Operator +=
 void XYData::operator+=(const double dy)
 {
 	for (int n=0; n<x_.nItems(); ++n) y_[n] += dy;
-	splineInterval_ = -1;
+	interpolationInterval_ = -1;
 }
 
 // Operator -
@@ -417,7 +426,7 @@ XYData XYData::operator-(const XYData& source) const
 		newData.y_[n] -= source.y_.value(n);
 	}
 	
-	newData.splineInterval_ = -1;
+	newData.interpolationInterval_ = -1;
 	
 	return newData;
 }
@@ -451,14 +460,14 @@ void XYData::operator-=(const XYData& source)
 		y_[n] -= source.y_.value(n);
 	}
 
-	splineInterval_ = -1;
+	interpolationInterval_ = -1;
 }
 
 // Operator -=
 void XYData::operator-=(const double dy)
 {
 	for (int n=0; n<x_.nItems(); ++n) y_[n] -= dy;
-	splineInterval_ = -1;
+	interpolationInterval_ = -1;
 }
 
 // Operator *=
@@ -466,7 +475,7 @@ void XYData::operator*=(const double factor)
 {
 	// Multiply current data
 	for (int n=0; n<x_.nItems(); ++n) y_[n] *= factor;
-	splineInterval_ = -1;
+	interpolationInterval_ = -1;
 }
 
 // Operator /=
@@ -474,7 +483,7 @@ void XYData::operator/=(const double factor)
 {
 	// Divide current data
 	for (int n=0; n<x_.nItems(); ++n) y_[n] /= factor;
-	splineInterval_ = -1;
+	interpolationInterval_ = -1;
 }
 
 /*
@@ -608,7 +617,7 @@ bool XYData::fourierTransformReal(bool forwardTransform, XYData::WindowFunction 
 	// Copy transform data over initial data
 	for (n=0; n<nPoints; ++n) x_[n] = (n*0.5)*k;
 	y_ = real;
-	splineInterval_ = -1;
+	interpolationInterval_ = -1;
 	return true;
 }
 
@@ -758,7 +767,7 @@ bool XYData::transformRDF(double atomicDensity, XYData::WindowFunction wf)
 		y_ = real;
 	}
 
-	splineInterval_ = -1;
+	interpolationInterval_ = -1;
 	return true;
 }
 
@@ -812,7 +821,7 @@ bool XYData::transformBroadenedRDF(double atomicDensity, double qStep, double qM
 	x_.forgetData();
 	for (n=0; n<y_.nItems(); ++n) x_.add((n+0.5)*qStep);
 
-	splineInterval_ = -1;
+	interpolationInterval_ = -1;
 
 	return true;
 }
@@ -857,7 +866,7 @@ bool XYData::transformSQ(double atomicDensity, XYData::WindowFunction wf)
 	for (n=0; n<nPoints; ++n) x_[n] = (n+0.5)*k;
 	y_ = real;
 
-	splineInterval_ = -1;
+	interpolationInterval_ = -1;
 	return true;
 }
 
@@ -925,7 +934,7 @@ bool XYData::transformLorch(double atomicDensity, double step, double rMax, doub
 	y_ = result;
 	x_.forgetData();
 	for (n=0; n<y_.nItems(); ++n) x_.add((n+0.5)*step);
-	splineInterval_ = -1;
+	interpolationInterval_ = -1;
 	return true;
 }
 
@@ -961,16 +970,16 @@ bool XYData::correlateSQ(double atomicDensity)
 	// Copy transform data over initial data
 	for (n=0; n<nPoints; ++n) x_[n] = (n+0.5)*k;
 	y_ = real;
-	splineInterval_ = -1;
+	interpolationInterval_ = -1;
 	return true;
 }
 
 /*
- * Spline Interpolation
+ * Interpolation Scheme
  */
 
-// Calculate natural spline interpolation of current data
-void XYData::interpolate(bool constrained)
+// Construct natural spline interpolation of data
+void XYData::interpolateSpline()
 {
 	/* For a set of N points {x(i),y(i)} for i = 0 - (N-1), the i'th interval can be represented by a cubic spline
 	 * 
@@ -1085,163 +1094,213 @@ void XYData::interpolate(bool constrained)
 	int i, nPoints = x_.nItems();
 	
 	// Calculate interval array 'h'
-	splineH_.initialise(nPoints);
-	for (i=0; i<nPoints-1; ++i) splineH_[i] = x_[i+1] - x_[i];
+	interpolationH_.initialise(nPoints);
+	for (i=0; i<nPoints-1; ++i) interpolationH_[i] = x_[i+1] - x_[i];
 
 	// Initialise parameter arrays and working array
-	splineA_.initialise(nPoints-1);
-	splineB_.initialise(nPoints-1);
-	splineC_.initialise(nPoints-1);
-	splineD_.initialise(nPoints-1);
+	interpolationA_.initialise(nPoints-1);
+	interpolationB_.initialise(nPoints-1);
+	interpolationC_.initialise(nPoints-1);
+	interpolationD_.initialise(nPoints-1);
 
-	constrainedSpline_ = constrained;
-	
-	if (!constrainedSpline_)
+	// Determine 'm' values (== C) now by solving the tridiagonal matrix above. Use Thomas algorithm...
+	// -- First stage
+	double p, q, r, s;
+	Array<double> rprime(nPoints), sprime(nPoints);
+	rprime[0] = 0.0;	// Would be 0.0 / 1.0 in the case of Natural spline
+	sprime[0] = 0.0;
+
+	for (i=1; i<nPoints-1; ++i)
 	{
-		/*
-		 * Unconstrained Spline Fit
-		 */
-		// Determine 'm' values (== C) now by solving the tridiagonal matrix above. Use Thomas algorithm...
-		// -- First stage
-		double p, q, r, s;
-		Array<double> rprime(nPoints), sprime(nPoints);
-		rprime[0] = 0.0;	// Would be 0.0 / 1.0 in the case of Natural spline
-		sprime[0] = 0.0;
+		// For a given i, p(i) = h(i-1), q(i) = 2(h(i-1)+h(i)), r(i) = h(i), s(i) = 6 ((y(n+1) - y(n)) / h(n) - (y(n) - y(n-1)) / h(n-1)
+		p = interpolationH_[i-1];
+		q = 2.0*(interpolationH_[i-1]+interpolationH_[i]);
+		r = interpolationH_[i];
+		s = 6.0 * ((y_[i+1] - y_[i]) / interpolationH_[i] - (y_[i] - y_[i-1]) / interpolationH_[i-1]);
 
-		for (i=1; i<nPoints-1; ++i)
-		{
-			// For a given i, p(i) = h(i-1), q(i) = 2(h(i-1)+h(i)), r(i) = h(i), s(i) = 6 ((y(n+1) - y(n)) / h(n) - (y(n) - y(n-1)) / h(n-1)
-			p = splineH_[i-1];
-			q = 2.0*(splineH_[i-1]+splineH_[i]);
-			r = splineH_[i];
-			s = 6.0 * ((y_[i+1] - y_[i]) / splineH_[i] - (y_[i] - y_[i-1]) / splineH_[i-1]);
-
-			// -- Calculate r'(i) = r(i) / ( q(i) - r'(i-1)p(i) )
-			rprime[i] = r / (q - rprime[i-1]*p);
-			// -- Calculate s'(i) = (s(i) - s'(i-1)p(i) ) / ( q(i) - r'(i-1)p(i))
-			sprime[i] = (s - sprime[i-1]*p) / (q - rprime[i-1]*p);
-		}
-		rprime[nPoints-1] = 0.0;
-		sprime[nPoints-1] = (0.0 - sprime[nPoints-2]/splineH_[i-1]) / (2.0*splineH_[i-1]);
-
-		// -- Second stage - backsubstitution
-		splineC_[nPoints-1] = 0.0;
-		for (i=nPoints-2; i>=0; --i)
-		{
-			// For a given i, m(i) = s'(i) - r'(i)m(i+1)
-			splineC_[i] = sprime[i] - rprime[i]*splineC_[i+1];
-		}
-		
-		// splineC_ array now contains m(i)...
-		for (i=0; i<nPoints-1; ++i)
-		{
-			splineB_[i] = (y_[i+1] - y_[i]) / splineH_[i] - 0.5 * splineH_[i] * splineC_[i] - (splineH_[i] * (splineC_[i+1]-splineC_[i]))/6.0;
-			splineD_[i] = (splineC_[i+1] - splineC_[i]) / (6.0 * splineH_[i]);
-			splineC_[i] *= 0.5;
-			splineA_[i] = y_[i];
-		}
+		// -- Calculate r'(i) = r(i) / ( q(i) - r'(i-1)p(i) )
+		rprime[i] = r / (q - rprime[i-1]*p);
+		// -- Calculate s'(i) = (s(i) - s'(i-1)p(i) ) / ( q(i) - r'(i-1)p(i))
+		sprime[i] = (s - sprime[i-1]*p) / (q - rprime[i-1]*p);
 	}
-	else
+	rprime[nPoints-1] = 0.0;
+	sprime[nPoints-1] = (0.0 - sprime[nPoints-2]/interpolationH_[i-1]) / (2.0*interpolationH_[i-1]);
+
+	// -- Second stage - backsubstitution
+	interpolationC_[nPoints-1] = 0.0;
+	for (i=nPoints-2; i>=0; --i)
 	{
-		/*
-		 * Constrained Spline fit
-		 */
+		// For a given i, m(i) = s'(i) - r'(i)m(i+1)
+		interpolationC_[i] = sprime[i] - rprime[i]*interpolationC_[i+1];
+	}
+	
+	// interpolationC_ array now contains m(i)...
+	for (i=0; i<nPoints-1; ++i)
+	{
+		interpolationB_[i] = (y_[i+1] - y_[i]) / interpolationH_[i] - 0.5 * interpolationH_[i] * interpolationC_[i] - (interpolationH_[i] * (interpolationC_[i+1]-interpolationC_[i]))/6.0;
+		interpolationD_[i] = (interpolationC_[i+1] - interpolationC_[i]) / (6.0 * interpolationH_[i]);
+		interpolationC_[i] *= 0.5;
+		interpolationA_[i] = y_[i];
+	}
+
+	interpolationInterval_ = 0;
+}
+
+// Prepare constrained natural spline interpolation of data
+void XYData::interpolateConstrainedSpline()
+{
+	/*
+	 * Constrained Spline fit
+	 */
+
+	int i, nPoints = x_.nItems();
+
+	// Initialise parameter arrays and working array
+	interpolationA_.initialise(nPoints-1);
+	interpolationB_.initialise(nPoints-1);
+	interpolationC_.initialise(nPoints-1);
+	interpolationD_.initialise(nPoints-1);
+
+	// Calculate first derivatives at each point
+	Array<double> fp(nPoints);
+	double gradA, gradB;
+	for (i=1; i<nPoints-1; ++i)
+	{
+		gradA = (x_[i+1] - x_[i])/(y_[i+1] - y_[i]);
+		gradB = (x_[i] - x_[i-1])/(y_[i] - y_[i-1]);
+		if (DUQMath::sgn(gradA) != DUQMath::sgn(gradB)) fp[i] = 0.0;
+		else fp[i] = 2.0 / (gradA + gradB);
 		
-		// Calculate first derivatives at each point
-		Array<double> fp(nPoints);
-		double gradA, gradB;
-		for (i=1; i<nPoints-1; ++i)
-		{
-			gradA = (x_[i+1] - x_[i])/(y_[i+1] - y_[i]);
-			gradB = (x_[i] - x_[i-1])/(y_[i] - y_[i-1]);
-			if (DUQMath::sgn(gradA) != DUQMath::sgn(gradB)) fp[i] = 0.0;
-			else fp[i] = 2.0 / (gradA + gradB);
-			
-		}
+	}
 // 		fp[0] = (3.0*(y_[1] - y_[0])) / (2.0*x_[1]-x_[0]) - 0.5*fp[1];
 // 		fp[nPoints-1] = (3.0*(y_[nPoints-1] - y_[nPoints-2])) / (2.0*x_[nPoints-1]-x_[nPoints-2]) - 0.5*fp[nPoints-2];
-		fp[0] = 0.0;
-		fp[nPoints-1] = 0.0;
+	fp[0] = 0.0;
+	fp[nPoints-1] = 0.0;
 
-		// Calculate coefficients
-		double fppi, fppim1, dx, dy;
-		for (i=1; i<nPoints; ++i)
-		{
-			dx = x_[i] - x_[i-1];
-			dy = y_[i] - y_[i-1];
-			fppim1 = -2.0*(fp[i]+2.0*fp[i-1]) / dx + 6.0*dy/(dx*dx);
-			fppi = 2.0*(2.0*fp[i]+fp[i-1]) / dx - 6.0*dy/(dx*dx);
-			splineD_[i-1] = (fppi - fppim1) / (6.0*dx);
-			splineC_[i-1] = (x_[i]*fppim1 - x_[i-1]*fppi) / (2.0*dx);
-			splineB_[i-1] = (dy - splineC_[i-1]*(x_[i]*x_[i] - x_[i-1]*x_[i-1]) - splineD_[i-1]*(x_[i]*x_[i]*x_[i] - x_[i-1]*x_[i-1]*x_[i-1])) / dx;
-			splineA_[i-1] = y_[i-1] - splineB_[i-1]*x_[i-1] - splineC_[i-1]*x_[i-1]*x_[i-1] - splineD_[i-1]*x_[i-1]*x_[i-1]*x_[i-1];
-		}
+	// Calculate coefficients
+	double fppi, fppim1, dx, dy;
+	for (i=1; i<nPoints; ++i)
+	{
+		dx = x_[i] - x_[i-1];
+		dy = y_[i] - y_[i-1];
+		fppim1 = -2.0*(fp[i]+2.0*fp[i-1]) / dx + 6.0*dy/(dx*dx);
+		fppi = 2.0*(2.0*fp[i]+fp[i-1]) / dx - 6.0*dy/(dx*dx);
+		interpolationD_[i-1] = (fppi - fppim1) / (6.0*dx);
+		interpolationC_[i-1] = (x_[i]*fppim1 - x_[i-1]*fppi) / (2.0*dx);
+		interpolationB_[i-1] = (dy - interpolationC_[i-1]*(x_[i]*x_[i] - x_[i-1]*x_[i-1]) - interpolationD_[i-1]*(x_[i]*x_[i]*x_[i] - x_[i-1]*x_[i-1]*x_[i-1])) / dx;
+		interpolationA_[i-1] = y_[i-1] - interpolationB_[i-1]*x_[i-1] - interpolationC_[i-1]*x_[i-1]*x_[i-1] - interpolationD_[i-1]*x_[i-1]*x_[i-1]*x_[i-1];
 	}
 
-	splineInterval_ = 0;
+	interpolationInterval_ = 0;
+}
+
+// Prepare linear interpolation of data
+void XYData::interpolateLinear()
+{
+	// Calculate y interval array 'a'
+	interpolationA_.initialise(x_.nItems()-1);
+	for (int i=0; i<x_.nItems()-1; ++i) interpolationA_[i] = y_[i+1] - y_[i];
+
+	interpolationInterval_ = 0;
+}
+
+// Prepare linear interpolation of data
+void XYData::interpolateThreePoint()
+{
+	interpolationInterval_ = 0;
+}
+
+// Calculate natural spline interpolation of current data
+void XYData::interpolate(XYData::InterpolationScheme scheme)
+{
+	if (scheme == XYData::NoInterpolation)
+	{
+		clearInterpolationArrays();
+		interpolationScheme_ = NoInterpolation;
+		return;
+	}
+
+	// Calculate interval array 'h'
+	interpolationH_.initialise(x_.nItems()-1);
+	for (int i=0; i<x_.nItems()-1; ++i) interpolationH_[i] = x_[i+1] - x_[i];
+
+	if (scheme == XYData::SplineInterpolation) interpolateSpline();
+	else if (scheme == XYData::ConstrainedSplineInterpolation) interpolateConstrainedSpline();
+	else if (scheme == XYData::LinearInterpolation) interpolateLinear();
+	else if (scheme == XYData::ThreePointInterpolation) interpolateThreePoint();
+
+	interpolationScheme_ = scheme;
 }
 
 // Return spline interpolated y value for supplied x
 double XYData::interpolated(double xvalue)
 {
 	// Do we need to (re)generate the interpolation?
-	if (splineInterval_ == -1) interpolate();
-	
-// 	// X and ddy arrays match?
-// 	if (x_.nItems() != splineB_.nItems())
-// 	{
-// 		Messenger::error("X and spline coefficient array sizes do not match (%i vs %i) in XYData::interpolated().\n", x_.nItems(), splineB_.nItems());
-// 		return 0.0;
-// 	}
-
-	// Bracket x-value - we'll assume that access is likely to be more sequential than random...
-
-	// Check old interval (and next one up...)
-	if (xvalue < x_[splineInterval_])
+	if (interpolationInterval_ == -1)
 	{
-		if (splineInterval_ > 0)
+		// Do we know what the interpolation scheme is?
+		if (interpolationScheme_ != XYData::NoInterpolation) interpolate(interpolationScheme_);
+		else
 		{
-			--splineInterval_;
-			if ((xvalue < x_[splineInterval_]) || (xvalue > x_[splineInterval_+1])) splineInterval_ = -1;
-		}
-		else return y_.first();
-	}
-	else if (xvalue > x_[splineInterval_+1])
-	{
-		if (splineInterval_ < splineB_.nItems()-2)
-		{
-			++splineInterval_;
-			if ((xvalue < x_[splineInterval_]) || (xvalue > x_[splineInterval_+1])) splineInterval_ = -1;
-		}
-		else return y_.last();
-	}
-
-	// If interval is now (or still) -1, must search data...
-	if (splineInterval_ == -1)
-	{
-		splineInterval_ = 0;
-		int i, right = splineB_.nItems()-1;
-		while ((right-splineInterval_) > 1)
-		{
-			i = (right+splineInterval_) / 2;
-			if (x_[i] > xvalue) right = i;
-			else splineInterval_ = i;
+			Messenger::warn("Interpolated point requested, but no interpolation scheme has been set. Assuming ConstrainedSpline...\n");
+			interpolate(XYData::ConstrainedSplineInterpolation);
 		}
 	}
 
-	return interpolated(xvalue, splineInterval_);
+	// Perform binary chop search
+	interpolationInterval_ = 0;
+	int i, right = interpolationH_.nItems()-1;
+	while ((right-interpolationInterval_) > 1)
+	{
+		i = (right+interpolationInterval_) / 2;
+		if (x_[i] > xvalue) right = i;
+		else interpolationInterval_ = i;
+	}
+
+	return interpolated(xvalue, interpolationInterval_);
 }
 
 // Return spline interpolated y value for supplied x, specifying containing interval
 double XYData::interpolated(double xvalue, int interval)
 {
 	if (interval < 0) return y_.first();
-	else if (interval >= splineA_.nItems()) return y_.last();
+	if (interval >= (x_.nItems()-1)) return y_.last();
 
-	double h = constrainedSpline_ ? xvalue : xvalue - x_[interval];
-	double hh = h*h;
-	return splineA_[interval] + splineB_[interval]*h + splineC_[interval]*hh + splineD_[interval]*hh*h;
+	if (interpolationScheme_ == XYData::SplineInterpolation)
+	{
+		double h = xvalue - x_[interval];
+		double hh = h*h;
+		return interpolationA_[interval] + interpolationB_[interval]*h + interpolationC_[interval]*hh + interpolationD_[interval]*hh*h;
+	}
+	else if (interpolationScheme_ == XYData::ConstrainedSplineInterpolation)
+	{
+		double h = xvalue;
+		double hh = h*h;
+		return interpolationA_[interval] + interpolationB_[interval]*h + interpolationC_[interval]*hh + interpolationD_[interval]*hh*h;
+	}
+	else if (interpolationScheme_ == XYData::LinearInterpolation)
+	{
+		double delta = (xvalue - x_.value(interval)) / interpolationH_.value(interval);
+		return y_.value(interval) + delta * interpolationA_.value(interval);
+	}
+	else if (interpolationScheme_ == XYData::ThreePointInterpolation)
+	{
+//             interval=int(rrr*rdr)
+		double rXdelta = 1.0 / interpolationH_.value(0);
+		double ppp = xvalue*rXdelta - double(interval);
+
+		double vk0 = y_.value(interval);
+		double vk1 = y_.value(interval+1);
+		double vk2 = y_.value(interval+2);
+		double t1=vk0+(vk1-vk0)*ppp;
+		double t2=vk1+(vk2-vk1)*(ppp-1.0);
+		return t1+(t2-t1)*ppp*0.5;
+	}
 }
+
+/*
+ * General Functions
+ */
 
 // Smooth data
 void XYData::smooth(int avgSize, int skip)
@@ -1259,7 +1318,7 @@ void XYData::smooth(int avgSize, int skip)
 		avg.addPoint(x_[n], y);
 	}
 
-	avg.interpolate();
+	avg.interpolate(XYData::ConstrainedSplineInterpolation);
 
 	// Now go through old data, setting new Y values from the interpolation
 	for (n=0; n<x_.nItems(); ++n) y_[n] = avg.interpolated(x_[n]);
@@ -1277,10 +1336,6 @@ void XYData::addInterpolated(XYData& source, double weighting)
 	}
 	else for (int n=0; n<x_.nItems(); ++n) addY(n, source.interpolated(x_.value(n)) * weighting);
 }
-
-/*
- * General Functions
- */
 
 // Return minumum x value in data
 double XYData::xMin()
@@ -1448,7 +1503,7 @@ void XYData::rebin(double deltaX)
 	}
 
 	// Interpolate the existing data
-	interpolate(true);
+	interpolate(XYData::ConstrainedSplineInterpolation);
 
 	// Generate new data
 	XYData rebinnedData;
@@ -1557,11 +1612,11 @@ bool XYData::broadcast(ProcessPool& procPool, int rootRank)
 	if (!procPool.broadcast(y_, rootRank)) return false;
 
 	// Spline data
-	if (!procPool.broadcast(splineA_, rootRank)) return false;
-	if (!procPool.broadcast(splineB_, rootRank)) return false;
-	if (!procPool.broadcast(splineC_, rootRank)) return false;
-	if (!procPool.broadcast(splineD_, rootRank)) return false;
-	if (!procPool.broadcast(splineInterval_, rootRank)) return false;
+	if (!procPool.broadcast(interpolationA_, rootRank)) return false;
+	if (!procPool.broadcast(interpolationB_, rootRank)) return false;
+	if (!procPool.broadcast(interpolationC_, rootRank)) return false;
+	if (!procPool.broadcast(interpolationD_, rootRank)) return false;
+	if (!procPool.broadcast(interpolationInterval_, rootRank)) return false;
 
 	// Axis/title information
 	if (!procPool.broadcast(name_, rootRank)) return false;

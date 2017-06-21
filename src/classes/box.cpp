@@ -231,7 +231,7 @@ bool Box::calculateRDFNormalisation(ProcessPool& procPool, XYData& boxNorm, doub
 	// Normalise histogram data, and scale by volume and binWidth ratio
 	y /= double(nPointsPerProcess*procPool.nProcesses());
 	y *= volume_ * (rdfBinWidth / binWidth);
-	normData.interpolate();
+	normData.interpolate(XYData::ConstrainedSplineInterpolation);
 
 	// Now we have the interpolated data, create the proper interpolated data
 	nBins = rdfRange/rdfBinWidth;
@@ -254,7 +254,7 @@ bool Box::calculateRDFNormalisation(ProcessPool& procPool, XYData& boxNorm, doub
 	}
 
 	// Interpolate normalisation array
-	boxNorm.interpolate();
+	boxNorm.interpolate(XYData::ConstrainedSplineInterpolation);
 
 	return true;
 }

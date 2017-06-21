@@ -292,7 +292,7 @@ void PairPotential::calculateUFull()
 	uFull_ += uAdditional_;
 
 	// ...and interpolate it
-	uFull_.interpolate();
+	uFull_.interpolate(XYData::ThreePointInterpolation);
 }
 
 // Return analytic short range potential energy
@@ -397,7 +397,7 @@ void PairPotential::calculateDUFull()
 	dUFull_.setY(nPoints_-1, 0.0);
 
 	// Interpolate it
-	dUFull_.interpolate();
+	dUFull_.interpolate(XYData::ThreePointInterpolation);
 }
 
 // Setup and generate initial potential
@@ -461,7 +461,7 @@ bool PairPotential::calculateUOriginal(bool recalculateUFull)
 	uOriginal_.setY(0, 10.0*uOriginal_.y(1));
 
 	// Create a spline interpolation of the original potential
-	uOriginal_.interpolate();
+	uOriginal_.interpolate(XYData::ThreePointInterpolation);
 
 	// Update full potential (if not the first generation of the potential)
 	if (recalculateUFull) calculateUFull();

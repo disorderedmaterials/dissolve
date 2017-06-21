@@ -382,7 +382,7 @@ bool Configuration::setup(ProcessPool& procPool, const List<AtomType>& atomTypes
 	}
 
 	// Interpolate the Box normalisation array
-	boxNormalisation_.interpolate();
+	boxNormalisation_.interpolate(XYData::ConstrainedSplineInterpolation);
 	
 	return true;
 }

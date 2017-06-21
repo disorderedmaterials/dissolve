@@ -39,6 +39,8 @@ class XYData : public ListItem<XYData>
 	XYData(const XYData& source);
 	// Clear data
 	void clear();
+	// Clear interpolation arrays
+	void clearInterpolationArrays();
 	
 	private:
 	// Whether to use local FFT code over DFT
@@ -169,27 +171,42 @@ class XYData : public ListItem<XYData>
 
 
 	/*
-	 * Spline Interpolation
+	 * Interpolation Scheme
 	 */
+	// Interpolation Schemes
+	enum InterpolationScheme
+	{
+		NoInterpolation,
+		SplineInterpolation,
+		ConstrainedSplineInterpolation,
+		LinearInterpolation,
+		ThreePointInterpolation
+	};
 	private:
-	// Array of parameters for spline fit (if created)
-	Array<double> splineA_, splineB_, splineC_, splineD_, splineH_;
+	// Array of parameters for interpolations (if created)
+	Array<double> interpolationA_, interpolationB_, interpolationC_, interpolationD_, interpolationH_;
 	// Interval of last interpolated point
-	int splineInterval_;
-	// Whether a constrained spline fit was used
-	bool constrainedSpline_;
+	int interpolationInterval_;
+	// Interpolation scheme currently employed
+	InterpolationScheme interpolationScheme_;
+
+	private:
+	// Prepare natural spline interpolation of data
+	void interpolateSpline();
+	// Prepare constrained natural spline interpolation of data
+	void interpolateConstrainedSpline();
+	// Prepare linear interpolation of data
+	void interpolateLinear();
+	// Prepare three-point interpolation of data
+	void interpolateThreePoint();
 
 	public:
-	// Calculate natural spline interpolation of current data
-	void interpolate(bool constrained = true);
-	// Return spline interpolated y value for supplied x
+	// Calculate interpolation of current data using the supplied scheme
+	void interpolate(InterpolationScheme scheme);
+	// Return interpolated y value for supplied x
 	double interpolated(double xvalue);
-	// Return spline interpolated y value for supplied x, specifying containing interval
+	// Return interpolated y value for supplied x, specifying containing interval
 	double interpolated(double xvalue, int interval);
-	// Smooth data
-	void smooth(int avgSize, int skip = 0);
-	// Add interpolated data
-	void addInterpolated(XYData& source, double weighting = 1.0);
 
 
 	/*
@@ -216,6 +233,10 @@ class XYData : public ListItem<XYData>
 	void trim(double minX, double maxX);
 	// Rebin data onto uniform x axis
 	void rebin(double deltaX = -1.0);
+	// Smooth data
+	void smooth(int avgSize, int skip = 0);
+	// Add interpolated data
+	void addInterpolated(XYData& source, double weighting = 1.0);
 
 
 	/*

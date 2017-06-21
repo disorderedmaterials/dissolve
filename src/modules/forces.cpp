@@ -305,6 +305,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 							if (testAnalytic) vecji *= potentialMap.analyticForce(i->globalTypeIndex(), j->globalTypeIndex(), magji);
 							else vecji *= potentialMap.force(i->globalTypeIndex(), j->globalTypeIndex(), magji);
 							
+// 							printf("%i  %i  %f  %15.9e %15.9e\n", i->index()+1, j->index()+1, sqrt(magji), potentialMap.force(i->globalTypeIndex(), j->globalTypeIndex(), magji), potentialMap.analyticForce(i->globalTypeIndex(), j->globalTypeIndex(), magji));
 							interFx[i->index()] += vecji.x;
 							interFy[i->index()] += vecji.y;
 							interFz[i->index()] += vecji.z;
@@ -447,7 +448,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 			Messenger::print("Forces: Number of atoms with failed force components = %i = %s\n", nFailed1, nFailed1 == 0 ? "OK" : "NOT OK");
 
 			// Test reference forces against production (if reference forces present)
-			int nFailed2 = 0;
+			int nFailed2 = 0, nFailed3 = 0;
 			Vec3<double> totalDelta;
 			if (cfg->moduleData().contains("ReferenceFX", uniqueName()) && cfg->moduleData().contains("ReferenceFY", uniqueName()) && cfg->moduleData().contains("ReferenceFZ", uniqueName()))
 			{
@@ -492,6 +493,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 				Messenger::print("Forces: Number of atoms with failed force components = %i = %s\n", nFailed2, nFailed2 == 0 ? "OK" : "NOT OK");
 
 				Messenger::print("\nForces: Testing reference forces against calculated production forces - atoms with erroneous forces will be output...\n");
+
 				for (int n=0; n<cfg->nAtoms(); ++n)
 				{
 					totalDelta.x = referenceFx[n] - (checkInterFx[n] + checkIntraFx[n]);
@@ -506,13 +508,13 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 					if (failed)
 					{
 						Messenger::print("Forces: Check atom %10i - delta forces are %15.8e %15.8e %15.8e (x y z) 10J/mol (total)\n", n+1, totalDelta.x, totalDelta.y, totalDelta.z);
-						++nFailed2;
+						++nFailed3;
 					}
 				}
-				Messenger::print("Forces: Number of atoms with failed force components = %i = %s\n", nFailed2, nFailed2 == 0 ? "OK" : "NOT OK");
+				Messenger::print("Forces: Number of atoms with failed force components = %i = %s\n", nFailed3, nFailed3 == 0 ? "OK" : "NOT OK");
 			}
 
-			if (!procPool.allTrue((nFailed1 + nFailed2) == 0)) return false;
+			if (!procPool.allTrue((nFailed1 + nFailed2 + nFailed3) == 0)) return false;
 		}
 		else
 		{

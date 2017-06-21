@@ -2,6 +2,7 @@
 TODO
 ----
 
+o Revert COULCONVERT to accurate value
 o Dynamic load-balancing when running Configurations in parallel - assess time taken to go through all steps and adjust overall repeats relative to other Configurations.
 o Modify EnergyKernel to add in Coulomb term to PairPotential if it does not include it (determined by DUQ::pairPotentialIncludesCharges_).
 o Allow for Fixed atoms:
