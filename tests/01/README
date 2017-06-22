@@ -18,7 +18,7 @@ forces, with charges and bond / angle force constants set to zero. The truncatio
 width is set to zero in this simulation in order to correctly reproduce the 
 (non-truncated) LJ potential in DL_POLY.
 
-3) Coulomb Terms Only
+3) Coulomb Terms Only (truncated Coulomb sum)
 
 Simulations utilising only a Coulombic potential contributing to energy and
 forces, with charges and bond / angle force constants set to zero. The truncation scheme
@@ -27,8 +27,15 @@ the present code (unmodified truncated and shifted potential) so energies and fo
 are expected to contain slightly higher errors, and higher threshold values are used
 for the corresponding tests.
 
-4) Full Forcefield
+4) Coulomb Terms Only (direct Coulomb sum)
+
+Simulations utilising only a Coulombic potential contributing to energy and
+forces, with charges and bond / angle force constants set to zero. A direct Coulomb sum
+is employed with no truncation scheme.
+
+5) Full Forcefield
 
 Simulations employing full intramolecular and interatomic contributions to energy and
-forces.
+forces. Coulomb terms are calculated employing the truncated and shifted form, so test
+thresholds are adjusted to match.
 

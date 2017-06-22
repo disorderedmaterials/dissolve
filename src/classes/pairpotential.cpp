@@ -382,17 +382,32 @@ void PairPotential::calculateDUFull()
 
 	if (nPoints_ < 2) return;
 
-	double x1, x2;
+	double fprime;
 	for (int n=1; n<nPoints_-1; ++n)
 	{
-		x1 = uFull_.x(n-1);
-		x2 = uFull_.x(n+1);
-		dUFull_.setY(n, -(uFull_.y(n-1) - uFull_.y(n+1)) / (x2-x1));
+		/* Calculate numerical derivative with five-point stencil if possible. Otherwise use three-point stencil.
+		 * Assumes data are regularly-spaced (they should be, with gap of delta_)
+		 *            -f(x+2) + 8 f(x+1) - 8 f(x-1) + f(x-2)
+		 *    f'(x) = --------------------------------------
+		 *                           12 h 
+		 */
+		if ((n == 1) || (n == (nPoints_-2)))
+		{
+			// Three-point 
+			dUFull_.setY(n, -(uFull_.y(n-1) - uFull_.y(n+1)) / (2*delta_));
+		}
+		else
+		{
+			// Five-point stencil
+			fprime = -uFull_.y(n+2) + 8*uFull_.y(n+1) - 8*uFull_.y(n-1) + uFull_.y(n-2);
+			fprime /= 12*delta_;
+			dUFull_.setY(n, fprime);
+		}
 	}
 	
 	// Set first and last points
 	dUFull_.setY(0, 10.0*dUFull_.y(1));
-	dUFull_.setY(nPoints_-1, 0.0);
+	dUFull_.setY(nPoints_-1, dUFull().y(nPoints_-2));
 
 	// Interpolate it
 	dUFull_.interpolate(XYData::ThreePointInterpolation);

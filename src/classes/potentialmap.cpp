@@ -133,6 +133,7 @@ double PotentialMap::energy(int typeI, int typeJ, double r) const
 		return 0.0;
 	}
 #endif
+	if (r > 14.98*14.98) return 0.0;
 	return potentialMatrix_.value(typeI,typeJ)->energy(r);
 }
 

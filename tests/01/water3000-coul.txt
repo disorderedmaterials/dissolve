@@ -1,4 +1,4 @@
-# Test Case 01 - Bulk water energy and forces, electrostatic components
+# Test Case 01 - Bulk water energy and forces, electrostatic components (Coulomb sum)
 
 # Define Water Molecule
 Species 'Water'
@@ -22,29 +22,31 @@ Configuration  'Bulk'
   Multiplier  1000
   Species 'Water'  1.0
 
-  InputCoordinates  dlpoly  'dlpoly_elec/CONFIG'
+  InputCoordinates  dlpoly  'dlpoly_coul/CONFIG'
 
   # Test analytical energy against production and reference energy
   Module Energy
     Test on
     TestAnalytic on
-    TestReferenceInter    -29163.384451743802  # Shifted potential
+    TestThreshold 100.0
+    TestReferenceInter    -34173.942995962962   # Straight Coulomb sum (no truncation)
   EndModule
 
   # Test production forces against reference forces
   Module Forces
     Test on
     TestAnalytic  on
-    TestThreshold  1.0
-    TestReference  dlpoly  'dlpoly_elec/REVCON'
+    TestThreshold 100.0
+    TestReference  dlpoly  'dlpoly_coul/REVCON'
   EndModule
 EndConfiguration
 
 # Pair Potentials
 PairPotentials
   Range  15.000000
+  Delta  0.0010000
   TruncationWidth  2.000000
-  Delta 0.001
+  CoulombTruncation  None
   Parameters  'OW'  0.0        0.0     -0.82
   Parameters  'HW'  0.0        0.0      0.41
   Generate  'LJ'  'OW'  'OW'

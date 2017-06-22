@@ -450,7 +450,8 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 
 				if (failed)
 				{
-					Messenger::print("Forces: Check atom %10i - precentage errors are %15.8e %15.8e %15.8e / %15.8e %15.8e %15.8e (x y z) 10J/mol (interatomic / intramolecular)\n", n+1, interRatio.x, interRatio.y, interRatio.z, intraRatio.x, intraRatio.y, intraRatio.z);
+					Messenger::print("Forces: Check atom %10i - errors are %15.8e (%4.1f%%) %15.8e (%4.1f%%) %15.8e (%4.1f%%) (x y z) 10J/mol (inter)\n", n+1, interFx[n] - checkInterFx[n], interRatio.x, interFy[n] - checkInterFy[n], interRatio.y, interFz[n] - checkInterFz[n], interRatio.z);
+					Messenger::print("                                     %15.8e (%4.1f%%) %15.8e (%4.1f%%) %15.8e (%4.1f%%) (x y z) 10J/mol (intra)\n", n+1, intraFx[n] - checkIntraFx[n], intraRatio.x, intraFy[n] - checkIntraFy[n], intraRatio.y, intraFz[n] - checkIntraFz[n], intraRatio.z);
 					++nFailed1;
 				}
 			}
@@ -498,7 +499,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 
 					if (failed)
 					{
-						Messenger::print("Forces: Check atom %10i - percentage errors are %15.8e %15.8e %15.8e (x y z) 10J/mol (total)\n", n+1, totalRatio.x, totalRatio.y, totalRatio.z);
+						Messenger::print("Forces: Check atom %10i - errors are %15.8e (%4.1f%%) %15.8e (%4.1f%%) %15.8e (%4.1f%%) (x y z) 10J/mol\n", n+1, referenceFx[n] - (interFx[n] + intraFx[n]), totalRatio.x, referenceFy[n] - (interFy[n] + intraFy[n]), totalRatio.y, referenceFz[n] - (interFz[n] + intraFz[n]), totalRatio.z);
 						++nFailed2;
 					}
 				}
@@ -522,7 +523,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 
 					if (failed)
 					{
-						Messenger::print("Forces: Check atom %10i - delta forces are %15.8e %15.8e %15.8e (x y z) 10J/mol (total)\n", n+1, totalRatio.x, totalRatio.y, totalRatio.z);
+						Messenger::print("Forces: Check atom %10i - errors are %15.8e (%4.1f%%) %15.8e (%4.1f%%) %15.8e (%4.1f%%) (x y z) 10J/mol\n", n+1, referenceFx[n] - (checkInterFx[n] + checkIntraFx[n]), totalRatio.x, referenceFy[n] - (checkInterFy[n] + checkIntraFy[n]), totalRatio.y, referenceFz[n] - (checkInterFz[n] + checkIntraFz[n]), totalRatio.z);
 						++nFailed3;
 					}
 				}

@@ -13,6 +13,8 @@ ptable.cpp
 sysfunc.cpp
 timer.cpp
 xydata.cpp
+xydata_ft.cpp
+xydata_interp.cpp
 
 charstring.h
 constants.h

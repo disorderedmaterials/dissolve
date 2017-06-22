@@ -1,5 +1,5 @@
 /*
-	*** Basic XY Data
+	*** XY Data
 	*** src/base/xydata.h
 	Copyright T. Youngs 2012-2017
 
@@ -130,6 +130,50 @@ class XYData : public ListItem<XYData>
 
 
 	/*
+	 * General Functions
+	 */
+	public:
+	// Return minumum x value in data
+	double xMin();
+	// Return maxumum x value in data
+	double xMax();
+	// Return minumum y value in data
+	double yMin();
+	// Return maxumum y value in data
+	double yMax();
+	// Compute integral of the data
+	double integral();
+	// Compute absolute integral of the data
+	double absIntegral();
+	// Apply median filter to data
+	void medianFilter(int length);
+	// Convolute this data with the supplied data, by products
+	bool convoluteProduct(XYData& data);
+	// Trim data to X-range specified
+	void trim(double minX, double maxX);
+	// Rebin data onto uniform x axis
+	void rebin(double deltaX = -1.0);
+	// Smooth data
+	void smooth(int avgSize, int skip = 0);
+	// Add interpolated data
+	void addInterpolated(XYData& source, double weighting = 1.0);
+
+
+	/*
+	 * File I/O
+	 */
+	public:
+	// Load data from specified file
+	bool load(const char* filename);
+	// Save data to specified file
+	bool save(const char* filename) const;
+	// Save data and interpolation to specified file
+	bool saveWithInterpolation(const char* filename);
+	// Dump contents
+	void dump();
+
+
+	/*
 	 * Fourier Transforms
 	 */
 	public:
@@ -207,50 +251,6 @@ class XYData : public ListItem<XYData>
 	double interpolated(double xvalue);
 	// Return interpolated y value for supplied x, specifying containing interval
 	double interpolated(double xvalue, int interval);
-
-
-	/*
-	 * General Functions
-	 */
-	public:
-	// Return minumum x value in data
-	double xMin();
-	// Return maxumum x value in data
-	double xMax();
-	// Return minumum y value in data
-	double yMin();
-	// Return maxumum y value in data
-	double yMax();
-	// Compute integral of the data
-	double integral();
-	// Compute absolute integral of the data
-	double absIntegral();
-	// Apply median filter to data
-	void medianFilter(int length);
-	// Convolute this data with the supplied data, by products
-	bool convoluteProduct(XYData& data);
-	// Trim data to X-range specified
-	void trim(double minX, double maxX);
-	// Rebin data onto uniform x axis
-	void rebin(double deltaX = -1.0);
-	// Smooth data
-	void smooth(int avgSize, int skip = 0);
-	// Add interpolated data
-	void addInterpolated(XYData& source, double weighting = 1.0);
-
-
-	/*
-	 * File I/O
-	 */
-	public:
-	// Load data from specified file
-	bool load(const char* filename);
-	// Save data to specified file
-	bool save(const char* filename) const;
-	// Save data and interpolation to specified file
-	bool saveWithInterpolation(const char* filename);
-	// Dump contents
-	void dump();
 
 
 	/*
