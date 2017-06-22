@@ -32,7 +32,7 @@
 ForceKernel::ForceKernel(ProcessPool& procPool, const Configuration* cfg, const PotentialMap& potentialMap, Array<double>& fx, Array<double>& fy, Array<double>& fz, double cutoffDistance) : processPool_(procPool),  configuration_(cfg), potentialMap_(potentialMap), fx_(fx), fy_(fy), fz_(fz)
 {
 	box_ = configuration_->box();
-	cutoffDistanceSquared_ = (cutoffDistance < 0.0 ? potentialMap_.rangeSquared() : cutoffDistance*cutoffDistance);
+	cutoffDistanceSquared_ = (cutoffDistance < 0.0 ? potentialMap_.range()*potentialMap_.range() : cutoffDistance*cutoffDistance);
 }
 
 // Destructor
@@ -48,9 +48,12 @@ ForceKernel::~ForceKernel()
 void ForceKernel::forcesWithoutMim(const Atom* i, const Atom* j, double scale)
 {
 	Vec3<double> force = j->r() - i->r();
-	double distanceSq = force.magSqAndNormalise();
+	double distanceSq = force.magnitudeSq();
 	if (distanceSq > cutoffDistanceSquared_) return;
-	force *= potentialMap_.force(i->globalTypeIndex(), j->globalTypeIndex(), distanceSq) * scale;
+	double r = DUQMath::squareRoot(distanceSq);
+	force /= r;
+	force *= potentialMap_.force(i->globalTypeIndex(), j->globalTypeIndex(), r) * scale;
+
 	int index = i->index();
 	fx_[index] += force.x;
 	fy_[index] += force.y;
@@ -114,9 +117,12 @@ void ForceKernel::forcesWithoutMim(const Grain* grainI, const Grain* grainJ)
 void ForceKernel::forcesWithMim(const Atom* i, const Atom* j, double scale)
 {
 	Vec3<double> force = box_->minimumVector(i, j);
-	double distanceSq = force.magSqAndNormalise();
+	double distanceSq = force.magnitudeSq();
 	if (distanceSq > cutoffDistanceSquared_) return;
-	force *= potentialMap_.force(i->globalTypeIndex(), j->globalTypeIndex(), distanceSq) * scale;
+	double r = DUQMath::squareRoot(distanceSq);
+	force /= r;
+	force *= potentialMap_.force(i->globalTypeIndex(), j->globalTypeIndex(), r) * scale;
+
 	int index = i->index();
 	fx_[index] += force.x;
 	fy_[index] += force.y;
@@ -229,7 +235,7 @@ void ForceKernel::forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool
 	Vec3<double> rI;
 	Molecule* molI;
 	int i, indexI, j, start = 0, stride = 1;
-	double rSq, scale;
+	double scale;
 
 	// Get start/stride for specified loop context
 	start = processPool_.interleavedLoopStart(loopContext);

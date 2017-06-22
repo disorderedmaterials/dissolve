@@ -67,7 +67,7 @@ MonoclinicBox::~MonoclinicBox()
 // Return minimum image coordinates of 'i' with respect to 'j'
 Vec3<double> MonoclinicBox::minimumImage(const Atom* i, const Atom* ref) const
 {
-	// TODO Can speedup this since we know which matrix elements are zero
+	// TODO Can speed this up since we know which matrix elements are zero
 	Vec3<double> mim = inverseAxes_*(ref->r() - i->r());
 	if (mim.x < -0.5) mim.x += 1.0;
 	else if (mim.x > 0.5) mim.x -= 1.0;
@@ -81,7 +81,7 @@ Vec3<double> MonoclinicBox::minimumImage(const Atom* i, const Atom* ref) const
 // Return minimum image coordinates of 'i' with respect to 'j'
 Vec3<double> MonoclinicBox::minimumImage(const Atom* i, const Vec3<double>& ref) const
 {
-	// TODO Can speedup this since we know which matrix elements are zero
+	// TODO Can speed this up since we know which matrix elements are zero
 	Vec3<double> mim = inverseAxes_*(ref - i->r());
 	if (mim.x < -0.5) mim.x += 1.0;
 	else if (mim.x > 0.5) mim.x -= 1.0;
@@ -95,7 +95,7 @@ Vec3<double> MonoclinicBox::minimumImage(const Atom* i, const Vec3<double>& ref)
 // Return minimum image coordinates of 'i' with respect to 'j'
 Vec3<double> MonoclinicBox::minimumImage(const Vec3<double>& i, const Vec3<double>& ref) const
 {
-	// TODO Can speedup this since we know which matrix elements are zero
+	// TODO Can speed this up since we know which matrix elements are zero
 	Vec3<double> mim = inverseAxes_*(ref - i);
 	if (mim.x < -0.5) mim.x += 1.0;
 	else if (mim.x > 0.5) mim.x -= 1.0;
@@ -109,8 +109,22 @@ Vec3<double> MonoclinicBox::minimumImage(const Vec3<double>& i, const Vec3<doubl
 // Return minimum image vector from 'i' to 'j'
 Vec3<double> MonoclinicBox::minimumVector(const Atom* i, const Atom* j) const
 {
-	// TODO Can speedup this since we know which matrix elements are zero
+	// TODO Can speed this up since we know which matrix elements are zero
 	Vec3<double> mim = inverseAxes_*(j->r() - i->r());
+	if (mim.x < -0.5) mim.x += 1.0;
+	else if (mim.x > 0.5) mim.x -= 1.0;
+	if (mim.y < -0.5) mim.y += 1.0;
+	else if (mim.y > 0.5) mim.y -= 1.0;
+	if (mim.z < -0.5) mim.z += 1.0;
+	else if (mim.z > 0.5) mim.z -= 1.0;
+	return axes_*mim;
+}
+
+// Return minimum image vector from 'i' to 'j'
+Vec3<double> MonoclinicBox::minimumVector(const Atom& i, const Atom& j) const
+{
+	// TODO Can speed this up since we know which matrix elements are zero
+	Vec3<double> mim = inverseAxes_*(j.r() - i.r());
 	if (mim.x < -0.5) mim.x += 1.0;
 	else if (mim.x > 0.5) mim.x -= 1.0;
 	if (mim.y < -0.5) mim.y += 1.0;
@@ -123,7 +137,7 @@ Vec3<double> MonoclinicBox::minimumVector(const Atom* i, const Atom* j) const
 // Return minimum image vector from 'i' to 'j'
 Vec3<double> MonoclinicBox::minimumVector(const Atom* i, const Vec3<double>& j) const
 {
-	// TODO Can speedup this since we know which matrix elements are zero
+	// TODO Can speed this up since we know which matrix elements are zero
 	Vec3<double> mim = inverseAxes_*(j - i->r());
 	if (mim.x < -0.5) mim.x += 1.0;
 	else if (mim.x > 0.5) mim.x -= 1.0;
@@ -137,7 +151,7 @@ Vec3<double> MonoclinicBox::minimumVector(const Atom* i, const Vec3<double>& j) 
 // Return minimum image vector from 'i' to 'j'
 Vec3<double> MonoclinicBox::minimumVector(const Vec3<double>& i, const Vec3<double>& j) const
 {
-	// TODO Can speedup this since we know which matrix elements are zero
+	// TODO Can speed this up since we know which matrix elements are zero
 	Vec3<double> mim = inverseAxes_*(j - i);
 	if (mim.x < -0.5) mim.x += 1.0;
 	else if (mim.x > 0.5) mim.x -= 1.0;
@@ -150,6 +164,12 @@ Vec3<double> MonoclinicBox::minimumVector(const Vec3<double>& i, const Vec3<doub
 
 // Return minimum image distance from 'i' to 'j'
 double MonoclinicBox::minimumDistance(const Atom* i, const Atom* j) const
+{
+	return minimumVector(i, j).magnitude();
+}
+
+// Return minimum image distance from 'i' to 'j'
+double MonoclinicBox::minimumDistance(const Atom& i, const Atom& j) const
 {
 	return minimumVector(i, j).magnitude();
 }
@@ -204,7 +224,7 @@ Vec3<double> MonoclinicBox::randomCoordinate() const
 // Return folded coordinate (i.e. inside current Box)
 Vec3<double> MonoclinicBox::fold(const Vec3<double>& r) const
 {
-	// TODO Can speedup this part since we know which matrix elements are zero
+	// TODO Can speed this up part since we know which matrix elements are zero
 
 	// Convert coordinate to fractional coords
 	Vec3<double> frac = inverseAxes_*r;
@@ -220,7 +240,7 @@ Vec3<double> MonoclinicBox::fold(const Vec3<double>& r) const
 // Return folded fractional coordinate (i.e. inside current Box)
 Vec3<double> MonoclinicBox::foldFrac(const Vec3<double>& r) const
 {
-	// TODO Can speedup this part since we know which matrix elements are zero
+	// TODO Can speed this up part since we know which matrix elements are zero
 
 	// Convert coordinate to fractional coords
 	Vec3<double> frac = inverseAxes_*r;
@@ -237,6 +257,6 @@ Vec3<double> MonoclinicBox::foldFrac(const Vec3<double>& r) const
 Vec3<double> MonoclinicBox::fracToReal(const Vec3<double>& r) const
 {
 	// Multiply by axes matrix
-	// TODO Can speedup this part since we know which matrix elements are zero
+	// TODO Can speed this up part since we know which matrix elements are zero
 	return axes_*r;
 }

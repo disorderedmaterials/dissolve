@@ -88,4 +88,10 @@ int DUQMath::sgn(int x)
 {
 	return (x < 0 ? -1 : x > 0);
 }
-	
+
+// Sqrt function
+double DUQMath::squareRoot(double x)
+{
+	// TODO Replace with faster approximation
+	return sqrt(x);
+}

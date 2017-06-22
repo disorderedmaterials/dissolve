@@ -200,7 +200,7 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 			const PotentialMap& potentialMap = duq.potentialMap();
 			double correctInterEnergy = 0.0, correctIntraEnergy = 0.0;
 
-			double distanceSq, angle;
+			double r, angle;
 			Atom* i, *j, *k;
 			Vec3<double> vecji, vecjk;
 			Molecule* molN, *molM;
@@ -223,8 +223,8 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 						scale = molN->species()->scaling(ii, jj);
 						if (scale < 1.0e-3) continue;
 
-						if (testAnalytic) correctInterEnergy += potentialMap.analyticEnergy(molN->atom(ii)->globalTypeIndex(), molN->atom(jj)->globalTypeIndex(), box->minimumDistanceSquared(molN->atom(ii), molN->atom(jj)));
-						else correctInterEnergy += potentialMap.energy(molN->atom(ii)->globalTypeIndex(), molN->atom(jj)->globalTypeIndex(), box->minimumDistanceSquared(molN->atom(ii), molN->atom(jj)));
+						if (testAnalytic) correctInterEnergy += potentialMap.analyticEnergy(molN->atom(ii)->globalTypeIndex(), molN->atom(jj)->globalTypeIndex(), box->minimumDistance(molN->atom(ii), molN->atom(jj)));
+						else correctInterEnergy += potentialMap.energy(molN->atom(ii)->globalTypeIndex(), molN->atom(jj)->globalTypeIndex(), box->minimumDistance(molN->atom(ii), molN->atom(jj)));
 					}
 				}
 
@@ -237,8 +237,8 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 					{
 						for (int jj = 0; jj <molM->nAtoms(); ++jj)
 						{
-							if (testAnalytic) correctInterEnergy += potentialMap.analyticEnergy(molN->atom(ii)->globalTypeIndex(), molM->atom(jj)->globalTypeIndex(), box->minimumDistanceSquared(molN->atom(ii), molM->atom(jj)));
-							else correctInterEnergy += potentialMap.energy(molN->atom(ii)->globalTypeIndex(), molM->atom(jj)->globalTypeIndex(), box->minimumDistanceSquared(molN->atom(ii), molM->atom(jj)));
+							if (testAnalytic) correctInterEnergy += potentialMap.analyticEnergy(molN->atom(ii)->globalTypeIndex(), molM->atom(jj)->globalTypeIndex(), box->minimumDistance(molN->atom(ii), molM->atom(jj)));
+							else correctInterEnergy += potentialMap.energy(molN->atom(ii)->globalTypeIndex(), molM->atom(jj)->globalTypeIndex(), box->minimumDistance(molN->atom(ii), molM->atom(jj)));
 						}
 					}
 				}
@@ -251,8 +251,8 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 					i = molN->atom(b->indexI());
 					j = molN->atom(b->indexJ());
 
-					distanceSq = cfg->box()->minimumDistanceSquared(i, j);
-					correctIntraEnergy += b->energy(sqrt(distanceSq));
+					r = cfg->box()->minimumDistance(i, j);
+					correctIntraEnergy += b->energy(r);
 				}
 
 				// Angles

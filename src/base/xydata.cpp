@@ -1294,6 +1294,7 @@ double XYData::interpolated(double xvalue, int interval)
 		double vk2 = y_.value(interval+2);
 		double t1=vk0+(vk1-vk0)*ppp;
 		double t2=vk1+(vk2-vk1)*(ppp-1.0);
+// 		printf("%f %20.14e %20.14e %20.14e %20.14e %20.14e\n", xvalue, vk0, vk1, vk2, ppp, t1+(t2-t1)*ppp*0.5); 
 		return t1+(t2-t1)*ppp*0.5;
 	}
 }

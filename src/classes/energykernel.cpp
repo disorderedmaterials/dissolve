@@ -32,7 +32,7 @@
 EnergyKernel::EnergyKernel(ProcessPool& procPool, const Configuration* config, const PotentialMap& potentialMap, double energyCutoff) : processPool_(procPool), configuration_(config), potentialMap_(potentialMap)
 {
 	box_ = configuration_->box();
-	cutoffDistanceSquared_ = (energyCutoff < 0.0 ? potentialMap_.rangeSquared() : energyCutoff*energyCutoff);
+	cutoffDistanceSquared_ = (energyCutoff < 0.0 ? potentialMap_.range()*potentialMap_.range() : energyCutoff*energyCutoff);
 }
 
 // Destructor
@@ -47,28 +47,28 @@ EnergyKernel::~EnergyKernel()
 // Return PairPotential energy between atoms provided as pointers (no minimum image calculation)
 double EnergyKernel::energyWithoutMim(const Atom* i, const Atom* j)
 {
-// 	printf("EnergyKernel:;atoms(*,*) - energy %i-%i is %f at %f lit\n", min(i->index(),j->index()), max(i->index(),j->index()), potentialMap_.energy(i->globalTypeIndex(), j->globalTypeIndex(), (i->r() - j->r()).magnitudeSq()), (i->r() - j->r()).magnitudeSq());
-	return potentialMap_.energy(i->globalTypeIndex(), j->globalTypeIndex(), (i->r() - j->r()).magnitudeSq());
+// 	printf("EnergyKernel:;atoms(*,*) - energy %i-%i is %f at %f lit\n", min(i->index(),j->index()), max(i->index(),j->index()), potentialMap_.energy(i->globalTypeIndex(), j->globalTypeIndex(), (i->r() - j->r()).magnitude()), (i->r() - j->r()).magnitude());
+	return potentialMap_.energy(i->globalTypeIndex(), j->globalTypeIndex(), (i->r() - j->r()).magnitude());
 }
 
 // Return PairPotential energy between atoms provided as info and reference (minimum image calculation)
 double EnergyKernel::energyWithoutMim(const int typeI, const Vec3<double>& rI, const Atom* j)
 {
-	return potentialMap_.energy(typeI, j->globalTypeIndex(), (rI - j->r()).magnitudeSq());
+	return potentialMap_.energy(typeI, j->globalTypeIndex(), (rI - j->r()).magnitude());
 }
 
 // Return PairPotential energy between atoms provided as references (no minimum image calculation)
 double EnergyKernel::energyWithoutMim(const Atom& i, const Atom& j)
 {
-// 	printf("EnergyKernel::atoms(&,&) - energy %i-%i is %f at %f lit\n", min(i.index(),j.index()), max(i.index(),j.index()), potentialMap_.energy(i.globalTypeIndex(), j.globalTypeIndex(), (i.r() - j.r()).magnitudeSq()), (i.r() - j.r()).magnitudeSq());
-	return potentialMap_.energy(i.globalTypeIndex(), j.globalTypeIndex(), (i.r() - j.r()).magnitudeSq());
+// 	printf("EnergyKernel::atoms(&,&) - energy %i-%i is %f at %f lit\n", min(i.index(),j.index()), max(i.index(),j.index()), potentialMap_.energy(i.globalTypeIndex(), j.globalTypeIndex(), (i.r() - j.r()).magnitude()), (i.r() - j.r()).magnitude());
+	return potentialMap_.energy(i.globalTypeIndex(), j.globalTypeIndex(), (i.r() - j.r()).magnitude());
 }
 
 // Return PairPotential energy between atoms provided as reference/pointer (no minimum image calculation)
 double EnergyKernel::energyWithoutMim(const Atom& i, const Atom* j)
 {
-// 	printf("EnergyKernel - energy %i-%i is %f at %f\n", i.index(), j.index(), potentialMap_.energy(i, j, (i.r() - j->r()).magnitudeSq()), (i.r() - j->r()).magnitudeSq());
-	return potentialMap_.energy(i.globalTypeIndex(), j->globalTypeIndex(), (i.r() - j->r()).magnitudeSq());
+// 	printf("EnergyKernel - energy %i-%i is %f at %f\n", i.index(), j.index(), potentialMap_.energy(i, j, (i.r() - j->r()).magnitude()), (i.r() - j->r()).magnitude());
+	return potentialMap_.energy(i.globalTypeIndex(), j->globalTypeIndex(), (i.r() - j->r()).magnitude());
 }
 
 // Return PairPotential energy between atom (pointer) and grain provided (no minimum image calculation)
@@ -138,28 +138,28 @@ double EnergyKernel::energyWithoutMim(const Grain* grainI, const Grain* grainJ)
 // Return PairPotential energy between atoms provided as pointers (minimum image calculation)
 double EnergyKernel::energyWithMim(const Atom* i, const Atom* j)
 {
-// 	Messenger::print("EnergyKernel::atoms(*,*) - energy %i-%i is %f at %f mim\n", min(i->index(),j->index()), max(i->index(),j->index()), potentialMap_.energy(i->globalTypeIndex(), j->globalTypeIndex(), box_->minimumDistanceSquared(j, i)), box_->minimumDistanceSquared(j, i));
-	return potentialMap_.energy(i->globalTypeIndex(), j->globalTypeIndex(), box_->minimumDistanceSquared(j, i));
+// 	Messenger::print("EnergyKernel::atoms(*,*) - energy %i-%i is %f at %f mim\n", min(i->index(),j->index()), max(i->index(),j->index()), potentialMap_.energy(i->globalTypeIndex(), j->globalTypeIndex(), box_->minimumDistance(j, i)), box_->minimumDistance(j, i));
+	return potentialMap_.energy(i->globalTypeIndex(), j->globalTypeIndex(), box_->minimumDistance(j, i));
 }
 
 // Return PairPotential energy between atoms provided as info and reference (minimum image calculation)
 double EnergyKernel::energyWithMim(const int typeI, const Vec3<double>& rI, const Atom* j)
 {
-	return potentialMap_.energy(typeI, j->globalTypeIndex(), box_->minimumDistanceSquared(j->r(), rI));
+	return potentialMap_.energy(typeI, j->globalTypeIndex(), box_->minimumDistance(j->r(), rI));
 }
 
 // Return PairPotential energy between atoms provided as references (minimum image calculation)
 double EnergyKernel::energyWithMim(const Atom& i, const Atom& j)
 {
-// 	Messenger::print("EnergyKernel::atoms(&,&) - energy %i-%i is %f at %f mim\n", min(i.index(),j.index()), max(i.index(), j.index()), potentialMap_.energy(i.globalTypeIndex(), j.globalTypeIndex(), box_->minimumDistanceSquared(j, i)), box_->minimumDistanceSquared(j, i));
-	return potentialMap_.energy(i.globalTypeIndex(), j.globalTypeIndex(), box_->minimumDistanceSquared(j, i));
+// 	Messenger::print("EnergyKernel::atoms(&,&) - energy %i-%i is %f at %f mim\n", min(i.index(),j.index()), max(i.index(), j.index()), potentialMap_.energy(i.globalTypeIndex(), j.globalTypeIndex(), box_->minimumDistance(j, i)), box_->minimumDistance(j, i));
+	return potentialMap_.energy(i.globalTypeIndex(), j.globalTypeIndex(), box_->minimumDistance(j, i));
 }
 
 // eturn PairPotential energy between atoms provided as reference/pointer (minimum image calculation)
 double EnergyKernel::energyWithMim(const Atom& i, const Atom* j)
 {
-// 	Messenger::print("EnergyKernel - energy %i-%i is %f at %f\n", i->index(), j->index(), potentialMap_.energy(i, j, box_->minimumDistanceSquared(j, i)), box_->minimumDistanceSquared(j, i));
-	return potentialMap_.energy(i.globalTypeIndex(), j->globalTypeIndex(), box_->minimumDistanceSquared(j, i.r()));
+// 	Messenger::print("EnergyKernel - energy %i-%i is %f at %f\n", i->index(), j->index(), potentialMap_.energy(i, j, box_->minimumDistance(j, i)), box_->minimumDistance(j, i));
+	return potentialMap_.energy(i.globalTypeIndex(), j->globalTypeIndex(), box_->minimumDistance(j, i.r()));
 }
 
 // Return PairPotential energy between atom (pointer) and grain provided (minimum image calculation)
@@ -282,7 +282,7 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 	Vec3<double> rI;
 	Molecule* molI;
 	int i, typeI, indexI, j, start = 0, stride = 1;
-	double rSq, scale;
+	double rSq, r, scale;
 
 	// Get start/stride for specified loop context
 	start = processPool_.interleavedLoopStart(loopContext);
@@ -310,13 +310,14 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 				// Calculate rSquared distance betwenn atoms, and check it against the stored cutoff distance
 				rSq = box_->minimumDistanceSquared(rI, jj->r());
 				if (rSq > cutoffDistanceSquared_) continue;
+				r = DUQMath::squareRoot(rSq);
 
 				// Check for atoms in the same species
-				if (molI != jj->molecule()) totalEnergy += potentialMap_.energy(typeI, jj->globalTypeIndex(), rSq);
+				if (molI != jj->molecule()) totalEnergy += potentialMap_.energy(typeI, jj->globalTypeIndex(), r);
 				else
 				{
 					scale = molI->species()->scaling(ii->moleculeAtomIndex(), jj->moleculeAtomIndex());
-					if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(typeI, jj->globalTypeIndex(), rSq) * scale;
+					if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(typeI, jj->globalTypeIndex(), r) * scale;
 				}
 			}
 		}
@@ -342,13 +343,14 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 				// Calculate rSquared distance betwenn atoms, and check it against the stored cutoff distance
 				rSq = (rI - jj->r()).magnitudeSq();
 				if (rSq > cutoffDistanceSquared_) continue;
+				r = DUQMath::squareRoot(rSq);
 
 				// Check for atoms in the same molecule
-				if (molI != jj->molecule()) totalEnergy += potentialMap_.energy(typeI, jj->globalTypeIndex(), rSq);
+				if (molI != jj->molecule()) totalEnergy += potentialMap_.energy(typeI, jj->globalTypeIndex(), r);
 				else
 				{
 					scale = molI->species()->scaling(ii->moleculeAtomIndex(), jj->moleculeAtomIndex());
-					if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(typeI, jj->globalTypeIndex(), rSq) * scale;
+					if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(typeI, jj->globalTypeIndex(), r) * scale;
 				}
 			}
 		}
@@ -375,7 +377,7 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::Lo
 	Vec3<double> rJ;
 	int i, j, indexJ, typeJ, start = 0, stride = 1;
 	Molecule* molJ;
-	double rSq, scale;
+	double rSq, r, scale;
 
 	// Get start/stride for specified loop context
 	start = processPool_.interleavedLoopStart(loopContext);
@@ -401,13 +403,14 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::Lo
 			// Calculate rSquared distance betwenn atoms, and check it against the stored cutoff distance
 			rSq = (ii->r() - rJ).magnitudeSq();
 			if (rSq > cutoffDistanceSquared_) continue;
+			r = DUQMath::squareRoot(rSq);
 
 			// Check for atoms in the same species
-			if (ii->molecule() != molJ) totalEnergy += potentialMap_.energy(typeJ, ii->globalTypeIndex(), rSq);
+			if (ii->molecule() != molJ) totalEnergy += potentialMap_.energy(typeJ, ii->globalTypeIndex(), r);
 			else
 			{
 				scale = ii->molecule()->species()->scaling(ii->moleculeAtomIndex(), jj->moleculeAtomIndex());
-				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(typeJ, ii->globalTypeIndex(), rSq);
+				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(typeJ, ii->globalTypeIndex(), r);
 			}
 		}
 	}
@@ -432,13 +435,14 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::Lo
 			// Calculate rSquared distance betwenn atoms, and check it against the stored cutoff distance
 			rSq = box_->minimumDistanceSquared(ii->r(), rJ);
 			if (rSq > cutoffDistanceSquared_) continue;
+			r = DUQMath::squareRoot(rSq);
 
 			// Check for atoms in the same species
-			if (ii->molecule() != molJ) totalEnergy += potentialMap_.energy(typeJ, ii->globalTypeIndex(), rSq);
+			if (ii->molecule() != molJ) totalEnergy += potentialMap_.energy(typeJ, ii->globalTypeIndex(), r);
 			else
 			{
 				scale = ii->molecule()->species()->scaling(ii->moleculeAtomIndex(), jj->moleculeAtomIndex());
-				if (scale < 1.0e-3) totalEnergy += potentialMap_.energy(typeJ, ii->globalTypeIndex(), rSq) * scale;
+				if (scale < 1.0e-3) totalEnergy += potentialMap_.energy(typeJ, ii->globalTypeIndex(), r) * scale;
 			}
 		}
 	}
@@ -470,8 +474,7 @@ double EnergyKernel::energy(const Atom* i, OrderedPointerList<Atom>& neighbours,
 	double totalEnergy = 0.0;
 	Atom* jj;
 	int j, start = 0, stride = 1;
-	double scale;
-	double rSq;
+	double rSq, r, scale;
 	Atom** neighbourAtoms = neighbours.objects();
 	int nNeighbourAtoms = neighbours.nItems();
 	
@@ -497,14 +500,15 @@ double EnergyKernel::energy(const Atom* i, OrderedPointerList<Atom>& neighbours,
 			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
 			rSq = box_->minimumDistanceSquared(rI, jj->r());
 			if (rSq > cutoffDistanceSquared_) continue;
+			r = DUQMath::squareRoot(rSq);
 
 			// Check for atoms in the same species
-			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(typeI, jj->globalTypeIndex(), rSq);
+			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(typeI, jj->globalTypeIndex(), r);
 			else
 			{
 				if ((flags&EnergyKernel::ExcludeIntraGreaterThan) && (i->moleculeAtomIndex() > jj->moleculeAtomIndex())) continue;
 				scale = spI->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
-				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(typeI, jj->globalTypeIndex(), rSq) * scale;
+				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(typeI, jj->globalTypeIndex(), r) * scale;
 			}
 		}
 		else if (flags&EnergyKernel::ExcludeGreaterThanEqualTo) for (j=start; j<nNeighbourAtoms; j += stride)
@@ -515,14 +519,15 @@ double EnergyKernel::energy(const Atom* i, OrderedPointerList<Atom>& neighbours,
 			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
 			rSq = box_->minimumDistanceSquared(rI, jj->r());
 			if (rSq > cutoffDistanceSquared_) continue;
+			r = DUQMath::squareRoot(rSq);
 
 			// Check for atoms in the same species
-			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(typeI, jj->globalTypeIndex(), rSq);
+			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(typeI, jj->globalTypeIndex(), r);
 			else
 			{
 				if ((flags&EnergyKernel::ExcludeIntraGreaterThan) && (i->moleculeAtomIndex() > jj->moleculeAtomIndex())) continue;
 				scale = spI->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
-				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(typeI, jj->globalTypeIndex(), rSq) * scale;
+				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(typeI, jj->globalTypeIndex(), r) * scale;
 			}
 		}
 		else for (j=start; j<nNeighbourAtoms; j += stride)
@@ -532,14 +537,15 @@ double EnergyKernel::energy(const Atom* i, OrderedPointerList<Atom>& neighbours,
 			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
 			rSq = box_->minimumDistanceSquared(rI, jj->r());
 			if (rSq > cutoffDistanceSquared_) continue;
+			r = DUQMath::squareRoot(rSq);
 
 			// Check for atoms in the same species
-			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(typeI, jj->globalTypeIndex(), rSq);
+			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(typeI, jj->globalTypeIndex(), r);
 			else
 			{
 				if ((flags&EnergyKernel::ExcludeIntraGreaterThan) && (i->moleculeAtomIndex() > jj->moleculeAtomIndex())) continue;
 				scale = spI->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
-				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(typeI, jj->globalTypeIndex(), rSq) * scale;
+				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(typeI, jj->globalTypeIndex(), r) * scale;
 			}
 		}
 	}
@@ -554,13 +560,14 @@ double EnergyKernel::energy(const Atom* i, OrderedPointerList<Atom>& neighbours,
 			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
 			rSq = (rI - jj->r()).magnitudeSq();
 			if (rSq > cutoffDistanceSquared_) continue;
+			r = DUQMath::squareRoot(rSq);
 
 			// Check for atoms in the same species
-			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(typeI, jj->globalTypeIndex(), rSq);
+			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(typeI, jj->globalTypeIndex(), r);
 			else
 			{
 				scale = moleculeI->species()->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
-				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(typeI, jj->globalTypeIndex(), rSq) * scale;
+				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(typeI, jj->globalTypeIndex(), r) * scale;
 			}
 		}
 		else if (flags&EnergyKernel::ExcludeGreaterThanEqualTo) for (j=start; j<nNeighbourAtoms; j += stride)
@@ -571,13 +578,14 @@ double EnergyKernel::energy(const Atom* i, OrderedPointerList<Atom>& neighbours,
 			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
 			rSq = (rI - jj->r()).magnitudeSq();
 			if (rSq > cutoffDistanceSquared_) continue;
+			r = DUQMath::squareRoot(rSq);
 
 			// Check for atoms in the same species
-			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(typeI, jj->globalTypeIndex(), rSq);
+			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(typeI, jj->globalTypeIndex(), r);
 			else
 			{
 				scale = moleculeI->species()->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
-				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(typeI, jj->globalTypeIndex(), rSq) * scale;
+				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(typeI, jj->globalTypeIndex(), r) * scale;
 			}
 		}
 		else for (j=start; j<nNeighbourAtoms; j += stride)
@@ -587,13 +595,14 @@ double EnergyKernel::energy(const Atom* i, OrderedPointerList<Atom>& neighbours,
 			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
 			rSq = (rI - jj->r()).magnitudeSq();
 			if (rSq > cutoffDistanceSquared_) continue;
+			r = DUQMath::squareRoot(rSq);
 
 			// Check for atoms in the same species
-			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(typeI, jj->globalTypeIndex(), rSq);
+			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(typeI, jj->globalTypeIndex(), r);
 			else
 			{
 				scale = moleculeI->species()->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
-				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(typeI, jj->globalTypeIndex(), rSq) * scale;
+				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(typeI, jj->globalTypeIndex(), r) * scale;
 			}
 		}
 	}

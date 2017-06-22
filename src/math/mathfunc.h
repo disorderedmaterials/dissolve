@@ -1,5 +1,5 @@
 /*
-	*** Math functions
+	*** Math Functions
 	*** src/math/mathfunc.h
 	Copyright T. Youngs 2012-2017
 
@@ -40,9 +40,10 @@ class DUQMath
 	// Integer power function
 	public:
 	static int power(int i, int p);
-	
 	// Sign function
 	static int sgn(int x);
+	// Sqrt
+	static double squareRoot(double x);
 };
 
 #endif

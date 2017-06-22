@@ -77,6 +77,12 @@ Vec3<double> NonPeriodicBox::minimumVector(const Atom* i, const Atom* j) const
 }
 
 // Return minimum image vector from 'i' to 'j'
+Vec3<double> NonPeriodicBox::minimumVector(const Atom& i, const Atom& j) const
+{
+	return j.r() - i.r();
+}
+
+// Return minimum image vector from 'i' to 'j'
 Vec3<double> NonPeriodicBox::minimumVector(const Atom* i, const Vec3<double>& j) const
 {
 	return j - i->r();
@@ -92,6 +98,12 @@ Vec3<double> NonPeriodicBox::minimumVector(const Vec3<double>& i, const Vec3<dou
 double NonPeriodicBox::minimumDistance(const Atom* i, const Atom* j) const
 {
 	return (j->r() - i->r()).magnitude();
+}
+
+// Return minimum image distance from 'i' to 'j'
+double NonPeriodicBox::minimumDistance(const Atom& i, const Atom& j) const
+{
+	return (j.r() - i.r()).magnitude();
 }
 
 // Return minimum image distance from 'i' to 'j'

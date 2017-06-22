@@ -40,11 +40,9 @@ PairPotential::PairPotential() : ListItem<PairPotential>()
 	nPoints_ = 0;
 	delta_ = -1.0;
 	range_ = 0.0;
-	rangeSquared_ = 0.0;
 	includeCharges_ = true;
 	shortRangeType_ = PairPotential::LennardJonesType;
 	coulombTruncationScheme_ = PairPotential::ShiftedTruncation;
-	rangeSquared_ = 0.0;
 }
 
 // Short-range typeKeywords
@@ -282,19 +280,6 @@ double PairPotential::chargeJ() const
  * Tabulated PairPotential
  */
 
-// Calculate full potential
-void PairPotential::calculateUFull()
-{
-	// Copy uOriginal_ into uFull_...
-	uFull_ = uOriginal_;
-
-	// ...add on uAdditional...
-	uFull_ += uAdditional_;
-
-	// ...and interpolate it
-	uFull_.interpolate(XYData::ThreePointInterpolation);
-}
-
 // Return analytic short range potential energy
 double PairPotential::analyticShortRangeEnergy(double r, PairPotential::ShortRangeType type)
 {
@@ -328,7 +313,7 @@ double PairPotential::analyticCoulombEnergy(double r)
 
 	// Calculate based on truncation scheme
 	if (coulombTruncationScheme_ == PairPotential::NoTruncation) energy = COULCONVERT * chargeI_ * chargeJ_ / r;
-	else if (coulombTruncationScheme_ == PairPotential::ShiftedTruncation) energy = COULCONVERT * chargeI_ * chargeJ_ * (1.0/r + r/rangeSquared_ - 2.0/range_);
+	else if (coulombTruncationScheme_ == PairPotential::ShiftedTruncation) energy = COULCONVERT * chargeI_ * chargeJ_ * (1.0/r + r/(range_*range_) - 2.0/range_);
 
 	return energy;
 }
@@ -372,12 +357,25 @@ double PairPotential::analyticCoulombForce(double r)
 
 	// Calculate based on truncation scheme
 	if (coulombTruncationScheme_ == PairPotential::NoTruncation) force = -COULCONVERT * chargeI_ * chargeJ_ / (r*r);
-	else if (coulombTruncationScheme_ == PairPotential::ShiftedTruncation) force = -COULCONVERT * chargeI_ * chargeJ_ * (1.0/(r*r) - 1.0/rangeSquared_);
+	else if (coulombTruncationScheme_ == PairPotential::ShiftedTruncation) force = -COULCONVERT * chargeI_ * chargeJ_ * (1.0/(r*r) - 1.0/(range_*range_));
 
 	return force;
 }
 
-// Regenerate derivative data
+// Calculate full potential
+void PairPotential::calculateUFull()
+{
+	// Copy uOriginal_ into uFull_...
+	uFull_ = uOriginal_;
+
+	// ...add on uAdditional...
+	uFull_ += uAdditional_;
+
+	// ...and interpolate it
+	uFull_.interpolate(XYData::ThreePointInterpolation);
+}
+
+// Calculate derivative of potential
 void PairPotential::calculateDUFull()
 {
 	dUFull_.templateFrom(uFull_);
@@ -387,8 +385,8 @@ void PairPotential::calculateDUFull()
 	double x1, x2;
 	for (int n=1; n<nPoints_-1; ++n)
 	{
-		x1 = sqrt(uFull_.x(n-1));
-		x2 = sqrt(uFull_.x(n+1));
+		x1 = uFull_.x(n-1);
+		x2 = uFull_.x(n+1);
 		dUFull_.setY(n, -(uFull_.y(n-1) - uFull_.y(n+1)) / (x2-x1));
 	}
 	
@@ -414,10 +412,9 @@ bool PairPotential::setup(double maxR, double truncationWidth, double delta, boo
 	delta_ = delta;
 	rDelta_ = 1.0/delta_;
 	range_ = maxR;
-	rangeSquared_ = maxR*maxR;
 	truncationWidth_ = truncationWidth;
 	includeCharges_ = includeCharges;
-	nPoints_ = rangeSquared_ / delta_;
+	nPoints_ = range_ / delta_;
 
 	// Initialise original and additional potential arrays, and calculate original potential
 	uOriginal_.initialise(nPoints_);
@@ -438,14 +435,12 @@ bool PairPotential::setup(double maxR, double truncationWidth, double delta, boo
 // (Re)generate potential from current parameters
 bool PairPotential::calculateUOriginal(bool recalculateUFull)
 {
-	double r, sigmar, sigmar6, sigmar12, truncr, rSq, energy;
+	double r;
 
 	for (int n=1; n<nPoints_; ++n)
 	{
-		// Calculate r-squared, and the corresponding r, and truncation r
-		rSq = n*delta_;
-		uOriginal_.setX(n, rSq);
-		r = sqrt(rSq);
+		r = n*delta_;
+		uOriginal_.setX(n, r);
 
 		// Construct potential
 		uOriginal_.setY(n, 0.0);
@@ -467,14 +462,14 @@ bool PairPotential::calculateUOriginal(bool recalculateUFull)
 	if (recalculateUFull) calculateUFull();
 }
 
-// Return potential at specified r-squared
-double PairPotential::energyAtRSquared(double distanceSq)
+// Return potential at specified r
+double PairPotential::energy(double r)
 {
 	// Perform some checks
 #ifdef CHECKS
-	if (int(distanceSq*rDelta_) < 0)
+	if (int(r*rDelta_) < 0)
 	{
-		Messenger::print("BAD_VALUE - Bin value of rSq is negative (%i) in PairPotential::energyAtRSquared.\n", int(distanceSq*rDelta_));
+		Messenger::print("BAD_VALUE - Bin value of r is negative (%i) in PairPotential::energy.\n", int(r*rDelta_));
 		return 0.0;
 	}
 #endif
@@ -485,16 +480,15 @@ double PairPotential::energyAtRSquared(double distanceSq)
 // 	return uFull_.y(distanceSq*rDelta_);
 
 	// Return interpolated value
-	return uFull_.interpolated(distanceSq, distanceSq*rDelta_);
+	return uFull_.interpolated(r, r*rDelta_);
 }
 
-// Return analytic potential at specified r-squared
-double PairPotential::analyticEnergyAtRSquared(double rSq)
+// Return analytic potential at specified r
+double PairPotential::analyticEnergy(double r)
 {
 	double energy = 0.0;
-	double r = sqrt(rSq);
 
-	if (rSq > rangeSquared_) return 0.0;
+	if (r > range_) return 0.0;
 
 	// Short-range potential
 	energy += analyticShortRangeEnergy(r, shortRangeType_);
@@ -505,14 +499,14 @@ double PairPotential::analyticEnergyAtRSquared(double rSq)
 	return energy;
 }
 
-// Return derivative at specified r-squared
-double PairPotential::forceAtRSquared(double distanceSq)
+// Return derivative at specified r
+double PairPotential::force(double r)
 {
 	// Perform some checks
 #ifdef CHECKS
-	if (int(distanceSq*rDelta_) < 0)
+	if (int(r*rDelta_) < 0)
 	{
-		Messenger::print("BAD_VALUE - Bin value of rSq is negative (%i) in PairPotential::forceAtRSquared.\n", int(distanceSq*rDelta_));
+		Messenger::print("BAD_VALUE - Bin value of r is negative (%i) in PairPotential::force.\n", int(r*rDelta_));
 		return 0.0;
 	}
 #endif
@@ -521,16 +515,15 @@ double PairPotential::forceAtRSquared(double distanceSq)
 // 	return (bin >= nPoints_ ? 0.0 : dUFull_.y(bin));
 
 	// Return interpolated value
-	return dUFull_.interpolated(distanceSq, distanceSq*rDelta_);
+	return dUFull_.interpolated(r, r*rDelta_);
 }
 
-// Return analytic derivative of potential at specified r-squared
-double PairPotential::analyticForceAtRSquared(double rSq)
+// Return analytic derivative of potential at specified r
+double PairPotential::analyticForce(double r)
 {
-	if (rSq > rangeSquared_) return 0.0;
+	if (r > range_) return 0.0;
 
 	double force = 0.0;
-	double r = sqrt(rSq);
 
 	// Short-range potential
 	force += analyticShortRangeForce(r, shortRangeType_);
@@ -594,7 +587,7 @@ bool PairPotential::save(const char* filename)
 	
 	parser.writeLineF("#%9s  %12s  %12s  %12s  %12s  %12s  %12s\n", "", "Full", "Derivative", "Original", "Additional", "Exact(Orig)", "Exact(Deriv)");
 	parser.writeLineF("#%9s  %12s  %12s  %12s  %12s  %12s  %12s\n", "r(Angs)", "U(kJ/mol)", "dU(kJ/mol/Ang)", "U(kJ/mol)", "U(kJ/mol)", "U(kJ/mol)", "dU(kJ/mol/Ang)");
-	for (int n = 0; n<nPoints_; ++n) parser.writeLineF("%10.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e\n", sqrt(uOriginal_.x(n)), uFull_.y(n), dUFull_.y(n), uOriginal_.y(n), uAdditional_.interpolated(sqrt(uOriginal_.x(n))), analyticEnergyAtRSquared(uOriginal_.x(n)), analyticForceAtRSquared(uOriginal_.x(n)));
+	for (int n = 0; n<nPoints_; ++n) parser.writeLineF("%10.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e\n", uOriginal_.x(n), uFull_.y(n), dUFull_.y(n), uOriginal_.y(n), uAdditional_.interpolated(uOriginal_.x(n)), analyticEnergy(uOriginal_.x(n)), analyticForce(uOriginal_.x(n)));
 
 	parser.closeFiles();
 
@@ -602,9 +595,9 @@ bool PairPotential::save(const char* filename)
 	LineParser shitParser;
 	shitParser.openOutput(test);
 	double x = 0.0, delta = delta_*0.05;
-	while (x < rangeSquared_)
+	while (x < range_)
 	{
-		shitParser.writeLineF("%12.6e  %12.6e  %12.6e  %12.6e\n", sqrt(x), uFull_.interpolated(x), analyticEnergyAtRSquared(x), (uFull_.interpolated(x) - analyticEnergyAtRSquared(x))*100.0);
+		shitParser.writeLineF("%12.6e  %12.6e  %12.6e  %12.6e\n", x, dUFull_.interpolated(x), analyticForce(x), (dUFull_.interpolated(x) - analyticForce(x))*100.0);
 		x += delta;
 	}
 	shitParser.closeFiles();
@@ -638,7 +631,6 @@ bool PairPotential::broadcast(ProcessPool& procPool, const List<AtomType>& atomT
 
 	// Tabulation Parameters
 	if (!procPool.broadcast(range_)) return false;
-	if (!procPool.broadcast(rangeSquared_)) return false;
 	if (!procPool.broadcast(truncationWidth_)) return false;
 	if (!procPool.broadcast(nPoints_)) return false;
 	if (!procPool.broadcast(delta_)) return false;

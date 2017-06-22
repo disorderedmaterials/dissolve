@@ -117,11 +117,15 @@ class Box
 	// Return minimum image vector from 'i' to 'j'
 	virtual Vec3<double> minimumVector(const Atom* i, const Atom* j) const = 0;
 	// Return minimum image vector from 'i' to 'j'
+	virtual Vec3<double> minimumVector(const Atom& i, const Atom& j) const = 0;
+	// Return minimum image vector from 'i' to 'j'
 	virtual Vec3<double> minimumVector(const Atom* i, const Vec3<double>& j) const = 0;
 	// Return minimum image vector from 'i' to 'j'
 	virtual Vec3<double> minimumVector(const Vec3<double>& i, const Vec3<double>& j) const = 0;
 	// Return minimum image distance from 'i' to 'j'
 	virtual double minimumDistance(const Atom* i, const Atom* j) const = 0;
+	// Return minimum image distance from 'i' to 'j' (references)
+	virtual double minimumDistance(const Atom& i, const Atom& j) const = 0;
 	// Return minimum image distance from 'i' to 'j'
 	virtual double minimumDistance(const Atom* i, const Vec3<double>& j) const = 0;
 	// Return minimum image distance from 'i' to 'j'
@@ -197,11 +201,15 @@ class NonPeriodicBox : public Box
 	// Return minimum image vector from 'i' to 'j'
 	Vec3<double> minimumVector(const Atom* i, const Atom* j) const;
 	// Return minimum image vector from 'i' to 'j'
+	Vec3<double> minimumVector(const Atom& i, const Atom& j) const;
+	// Return minimum image vector from 'i' to 'j'
 	Vec3<double> minimumVector(const Atom* i, const Vec3<double>& j) const;
 	// Return minimum image vector from 'i' to 'j'
 	Vec3<double> minimumVector(const Vec3<double>& i, const Vec3<double>& j) const;
 	// Return minimum image distance from 'i' to 'j'
 	double minimumDistance(const Atom* i, const Atom* j) const;
+	// Return minimum image distance from 'i' to 'j' (references)
+	double minimumDistance(const Atom& i, const Atom& j) const;
 	// Return minimum image distance from 'i' to 'j'
 	double minimumDistance(const Atom* i, const Vec3<double>& j) const;
 	// Return minimum image distance from 'i' to 'j'
@@ -253,11 +261,15 @@ class CubicBox : public Box
 	// Return minimum image vector from 'i' to 'j'
 	Vec3<double> minimumVector(const Atom* i, const Atom* j) const;
 	// Return minimum image vector from 'i' to 'j'
+	Vec3<double> minimumVector(const Atom& i, const Atom& j) const;
+	// Return minimum image vector from 'i' to 'j'
 	Vec3<double> minimumVector(const Atom* i, const Vec3<double>& j) const;
 	// Return minimum image vector from 'i' to 'j'
 	Vec3<double> minimumVector(const Vec3<double>& i, const Vec3<double>& j) const;
 	// Return minimum image distance from 'i' to 'j'
 	double minimumDistance(const Atom* i, const Atom* j) const;
+	// Return minimum image distance from 'i' to 'j' (references)
+	double minimumDistance(const Atom& i, const Atom& j) const;
 	// Return minimum image distance from 'i' to 'j'
 	double minimumDistance(const Atom* i, const Vec3<double>& j) const;
 	// Return minimum image distance from 'i' to 'j'
@@ -309,11 +321,15 @@ class OrthorhombicBox : public Box
 	// Return minimum image vector from 'i' to 'j'
 	Vec3<double> minimumVector(const Atom* i, const Atom* j) const;
 	// Return minimum image vector from 'i' to 'j'
+	Vec3<double> minimumVector(const Atom& i, const Atom& j) const;
+	// Return minimum image vector from 'i' to 'j'
 	Vec3<double> minimumVector(const Atom* i, const Vec3<double>& j) const;
 	// Return minimum image vector from 'i' to 'j'
 	Vec3<double> minimumVector(const Vec3<double>& i, const Vec3<double>& j) const;
 	// Return minimum image distance from 'i' to 'j'
 	double minimumDistance(const Atom* i, const Atom* j) const;
+	// Return minimum image distance from 'i' to 'j' (references)
+	double minimumDistance(const Atom& i, const Atom& j) const;
 	// Return minimum image distance from 'i' to 'j'
 	double minimumDistance(const Atom* i, const Vec3<double>& j) const;
 	// Return minimum image distance from 'i' to 'j'
@@ -365,11 +381,15 @@ class MonoclinicBox : public Box
 	// Return minimum image vector from 'i' to 'j'
 	Vec3<double> minimumVector(const Atom* i, const Atom* j) const;
 	// Return minimum image vector from 'i' to 'j'
+	Vec3<double> minimumVector(const Atom& i, const Atom& j) const;
+	// Return minimum image vector from 'i' to 'j'
 	Vec3<double> minimumVector(const Atom* i, const Vec3<double>& j) const;
 	// Return minimum image vector from 'i' to 'j'
 	Vec3<double> minimumVector(const Vec3<double>& i, const Vec3<double>& j) const;
 	// Return minimum image distance from 'i' to 'j'
 	double minimumDistance(const Atom* i, const Atom* j) const;
+	// Return minimum image distance from 'i' to 'j' (references)
+	double minimumDistance(const Atom& i, const Atom& j) const;
 	// Return minimum image distance from 'i' to 'j'
 	double minimumDistance(const Atom* i, const Vec3<double>& j) const;
 	// Return minimum image distance from 'i' to 'j'
@@ -421,11 +441,15 @@ class TriclinicBox : public Box
 	// Return minimum image vector from 'i' to 'j'
 	Vec3<double> minimumVector(const Atom* i, const Atom* j) const;
 	// Return minimum image vector from 'i' to 'j'
+	Vec3<double> minimumVector(const Atom& i, const Atom& j) const;
+	// Return minimum image vector from 'i' to 'j'
 	Vec3<double> minimumVector(const Atom* i, const Vec3<double>& j) const;
 	// Return minimum image vector from 'i' to 'j'
 	Vec3<double> minimumVector(const Vec3<double>& i, const Vec3<double>& j) const;
 	// Return minimum image distance from 'i' to 'j'
 	double minimumDistance(const Atom* i, const Atom* j) const;
+	// Return minimum image distance from 'i' to 'j' (references)
+	double minimumDistance(const Atom& i, const Atom& j) const;
 	// Return minimum image distance from 'i' to 'j'
 	double minimumDistance(const Atom* i, const Vec3<double>& j) const;
 	// Return minimum image distance from 'i' to 'j'

@@ -137,8 +137,8 @@ class PairPotential : public ListItem<PairPotential>
 	// Number of points to tabulate
 	int nPoints_;
 	// Maximum distance of potential
-	double range_, rangeSquared_;
-	// Distance between r-squared points in tabulated potentials
+	double range_;
+	// Distance between points in tabulated potentials
 	double delta_, rDelta_;
 	// Truncation width for LJ part of potential
 	double truncationWidth_;
@@ -160,24 +160,24 @@ class PairPotential : public ListItem<PairPotential>
 	double analyticShortRangeForce(double r, PairPotential::ShortRangeType type);
 	// Return analytic coulomb potential energy
 	double analyticCoulombForce(double r);
-	// Regenerate derivative data
-	void calculateDUFull();
 	// Calculate full potential
 	void calculateUFull();
+	// Calculate derivative of potential
+	void calculateDUFull();
 
 	public:
 	// Setup and perform initial generation of potential
 	bool setup(double maxR, double truncationWidth, double delta, bool includeCharges);
 	// (Re)generate original potential (uOriginal) from current parameters
 	bool calculateUOriginal(bool recalculateUFull = true);
-	// Return potential at specified r-squared
-	double energyAtRSquared(double rSq);
-	// Return analytic potential at specified r-squared
-	double analyticEnergyAtRSquared(double rSq);
-	// Return derivative of potential at specified r-squared
-	double forceAtRSquared(double rSq);
-	// Return analytic derivative of potential at specified r-squared
-	double analyticForceAtRSquared(double rSq);
+	// Return potential at specified r
+	double energy(double r);
+	// Return analytic potential at specified r
+	double analyticEnergy(double r);
+	// Return derivative of potential at specified r
+	double force(double r);
+	// Return analytic derivative of potential at specified r
+	double analyticForce(double r);
 	// Return full tabulated potential (original plus additional)
 	XYData& uFull();
 	// Return full tabulated derivative

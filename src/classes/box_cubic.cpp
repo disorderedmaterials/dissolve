@@ -110,6 +110,19 @@ Vec3<double> CubicBox::minimumVector(const Atom* i, const Atom* j) const
 }
 
 // Return minimum image vector from 'i' to 'j'
+Vec3<double> CubicBox::minimumVector(const Atom& i, const Atom& j) const
+{
+	Vec3<double> mimVec = j.r();
+	mimVec -= i.r();
+
+	mimVec.x -= int(mimVec.x*ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5))*a_;
+	mimVec.y -= int(mimVec.y*ra_ + (mimVec.y < 0.0 ? -0.5 : 0.5))*a_;
+	mimVec.z -= int(mimVec.z*ra_ + (mimVec.z < 0.0 ? -0.5 : 0.5))*a_;
+
+	return mimVec;
+}
+
+// Return minimum image vector from 'i' to 'j'
 Vec3<double> CubicBox::minimumVector(const Atom* i, const Vec3<double>& j) const
 {
 	Vec3<double> mimVec = j;
@@ -140,6 +153,19 @@ double CubicBox::minimumDistance(const Atom* i, const Atom* j) const
 {
 	Vec3<double> mimVec = j->r();
 	mimVec -= i->r();
+
+	mimVec.x -= int(mimVec.x*ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5))*a_;
+	mimVec.y -= int(mimVec.y*ra_ + (mimVec.y < 0.0 ? -0.5 : 0.5))*a_;
+	mimVec.z -= int(mimVec.z*ra_ + (mimVec.z < 0.0 ? -0.5 : 0.5))*a_;
+
+	return mimVec.magnitude();
+}
+
+// Return minimum image distance from 'i' to 'j'
+double CubicBox::minimumDistance(const Atom& i, const Atom& j) const
+{
+	Vec3<double> mimVec = j.r();
+	mimVec -= i.r();
 
 	mimVec.x -= int(mimVec.x*ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5))*a_;
 	mimVec.y -= int(mimVec.y*ra_ + (mimVec.y < 0.0 ? -0.5 : 0.5))*a_;

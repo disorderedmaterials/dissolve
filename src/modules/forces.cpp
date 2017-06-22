@@ -210,16 +210,16 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 			 */
 
 			Messenger::print("Forces: Calculating forces for Configuration '%s' in serial test mode...\n", cfg->name());
-			if (testAnalytic) Messenger::print("Exact (analytic) forces will be calculated.\n");
+			if (testAnalytic) Messenger::print("Forces: Exact (analytic) forces will be calculated.\n");
 
 			/*
 			 * Calculation Begins
 			 */
 
 			const PotentialMap& potentialMap = duq.potentialMap();
-			double cutoffSq = potentialMap.rangeSquared();
+			double cutoffSq = potentialMap.range()*potentialMap.range();
 
-			double distance, angle, magji, magjk, dp, force;
+			double angle, magjisq, magji, magjk, dp, force, r;
 			Atom* i, *j, *k;
 			Vec3<double> vecji, vecjk, forcei, forcek;
 			Molecule* molN, *molM;
@@ -269,11 +269,13 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 
 						// Determine final forces
 						vecji = box->minimumVector(i, j);
-						magji = vecji.magSqAndNormalise();
-						if (magji > cutoffSq) continue;
+						magjisq = vecji.magnitudeSq();
+						if (magjisq > cutoffSq) continue;
+						r = DUQMath::squareRoot(magjisq);
+						vecji /= r;
 
-						if (testAnalytic) vecji *= potentialMap.analyticForce(molN->atom(ii)->globalTypeIndex(), molN->atom(jj)->globalTypeIndex(), magji);
-						else vecji *= potentialMap.force(molN->atom(ii)->globalTypeIndex(), molN->atom(jj)->globalTypeIndex(), magji);
+						if (testAnalytic) vecji *= potentialMap.analyticForce(molN->atom(ii)->globalTypeIndex(), molN->atom(jj)->globalTypeIndex(), r);
+						else vecji *= potentialMap.force(molN->atom(ii)->globalTypeIndex(), molN->atom(jj)->globalTypeIndex(), r);
 						interFx[i->index()] += vecji.x;
 						interFy[i->index()] += vecji.y;
 						interFz[i->index()] += vecji.z;
@@ -299,11 +301,13 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 
 							// Determine final forces
 							vecji = box->minimumVector(i, j);
-							magji = vecji.magSqAndNormalise();
-							if (magji > cutoffSq) continue;
+							magjisq = vecji.magnitudeSq();
+							if (magjisq > cutoffSq) continue;
+							r = DUQMath::squareRoot(magjisq);
+							vecji /= r;
 
-							if (testAnalytic) vecji *= potentialMap.analyticForce(i->globalTypeIndex(), j->globalTypeIndex(), magji);
-							else vecji *= potentialMap.force(i->globalTypeIndex(), j->globalTypeIndex(), magji);
+							if (testAnalytic) vecji *= potentialMap.analyticForce(i->globalTypeIndex(), j->globalTypeIndex(), r);
+							else vecji *= potentialMap.force(i->globalTypeIndex(), j->globalTypeIndex(), r);
 							
 // 							printf("%i  %i  %f  %15.9e %15.9e\n", i->index()+1, j->index()+1, sqrt(magji), potentialMap.force(i->globalTypeIndex(), j->globalTypeIndex(), magji), potentialMap.analyticForce(i->globalTypeIndex(), j->globalTypeIndex(), magji));
 							interFx[i->index()] += vecji.x;
@@ -326,8 +330,8 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 
 					// Determine final forces
 					vecji = box->minimumVector(i, j);
-					distance = vecji.magAndNormalise();
-					vecji *= b->force(distance);
+					r = vecji.magAndNormalise();
+					vecji *= b->force(r);
 					intraFx[i->index()] -= vecji.x;
 					intraFy[i->index()] -= vecji.y;
 					intraFz[i->index()] -= vecji.z;

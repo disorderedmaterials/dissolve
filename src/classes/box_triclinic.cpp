@@ -116,6 +116,19 @@ Vec3<double> TriclinicBox::minimumVector(const Atom* i, const Atom* j) const
 }
 
 // Return minimum image vector from 'i' to 'j'
+Vec3<double> TriclinicBox::minimumVector(const Atom& i, const Atom& j) const
+{
+	Vec3<double> mim = inverseAxes_*(j.r() - i.r());
+	if (mim.x < -0.5) mim.x += 1.0;
+	else if (mim.x > 0.5) mim.x -= 1.0;
+	if (mim.y < -0.5) mim.y += 1.0;
+	else if (mim.y > 0.5) mim.y -= 1.0;
+	if (mim.z < -0.5) mim.z += 1.0;
+	else if (mim.z > 0.5) mim.z -= 1.0;
+	return axes_*mim;
+}
+
+// Return minimum image vector from 'i' to 'j'
 Vec3<double> TriclinicBox::minimumVector(const Atom* i, const Vec3<double>& j) const
 {
 	Vec3<double> mim = inverseAxes_*(j - i->r());
@@ -144,6 +157,12 @@ Vec3<double> TriclinicBox::minimumVector(const Vec3<double>& i, const Vec3<doubl
 
 // Return minimum image distance from 'i' to 'j'
 double TriclinicBox::minimumDistance(const Atom* i, const Atom* j) const
+{
+	return minimumVector(i, j).magnitude();
+}
+
+// Return minimum image distance from 'i' to 'j'
+double TriclinicBox::minimumDistance(const Atom& i, const Atom& j) const
 {
 	return minimumVector(i, j).magnitude();
 }
