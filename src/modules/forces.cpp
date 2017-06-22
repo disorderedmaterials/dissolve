@@ -47,7 +47,6 @@ ForcesModule::ForcesModule() : Module()
 	options_.add("TestAnalytic", bool(false), "Compare parallel energy routines against exact (analytic) energy rather than tabulated values", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
 	options_.add("TestInter", bool(true), "Include interatomic forces in test", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
 	options_.add("TestIntra", bool(true), "Include intramolecular forces in test", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
-// 	options_.add("TestReference", "", "File containing reference forces against which to compare calculated");
 	options_.add("TestThreshold", 1.0e-2, "Threshold of energy at which test comparison will fail", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
 }
 
@@ -60,7 +59,7 @@ ForcesModule::~ForcesModule()
  * Instances
  */
 
-// Create instance of this module
+// Return list of all created instances of this Module
 List<Module>& ForcesModule::instances()
 {
 	return instances_;
@@ -428,24 +427,30 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 			// Test 'correct' forces against production forces
 			int nFailed1 = 0;
 			bool failed;
-			Vec3<double> interDelta, intraDelta;
+			Vec3<double> interRatio, intraRatio;
 			Messenger::print("Forces: Testing calculated 'correct' forces against calculated production forces - atoms with erroneous forces will be output...\n");
 			for (int n=0; n<cfg->nAtoms(); ++n)
 			{
-				interDelta.set(interFx[n] - checkInterFx[n], interFy[n] - checkInterFy[n], interFz[n] - checkInterFz[n]);
-				intraDelta.set(intraFx[n] - checkIntraFx[n], intraFy[n] - checkIntraFy[n], intraFz[n] - checkIntraFz[n]);
+				interRatio.set(interFx[n] - checkInterFx[n], interFy[n] - checkInterFy[n], interFz[n] - checkInterFz[n]);
+				intraRatio.set(intraFx[n] - checkIntraFx[n], intraFy[n] - checkIntraFy[n], intraFz[n] - checkIntraFz[n]);
+				if (fabs(interFx[n]) > 1.0e-6) interRatio.x *= 100.0 / interFx[n];
+				if (fabs(interFy[n]) > 1.0e-6) interRatio.y *= 100.0 / interFy[n];
+				if (fabs(interFz[n]) > 1.0e-6) interRatio.z *= 100.0 / interFz[n];
+				if (fabs(intraFx[n]) > 1.0e-6) intraRatio.x *= 100.0 / intraFx[n];
+				if (fabs(intraFy[n]) > 1.0e-6) intraRatio.y *= 100.0 / intraFy[n];
+				if (fabs(intraFz[n]) > 1.0e-6) intraRatio.z *= 100.0 / intraFz[n];
 
-				if (fabs(intraDelta.x) > testThreshold) failed = true;
-				else if (fabs(intraDelta.y) > testThreshold) failed = true;
-				else if (fabs(intraDelta.z) > testThreshold) failed = true;
-				else if (fabs(interDelta.x) > testThreshold) failed = true;
-				else if (fabs(interDelta.y) > testThreshold) failed = true;
-				else if (fabs(interDelta.z) > testThreshold) failed = true;
+				if (fabs(intraRatio.x) > testThreshold) failed = true;
+				else if (fabs(intraRatio.y) > testThreshold) failed = true;
+				else if (fabs(intraRatio.z) > testThreshold) failed = true;
+				else if (fabs(interRatio.x) > testThreshold) failed = true;
+				else if (fabs(interRatio.y) > testThreshold) failed = true;
+				else if (fabs(interRatio.z) > testThreshold) failed = true;
 				else failed = false;
 
 				if (failed)
 				{
-					Messenger::print("Forces: Check atom %10i - delta forces are %15.8e %15.8e %15.8e / %15.8e %15.8e %15.8e (x y z) 10J/mol (interatomic / intramolecular)\n", n+1, interDelta.x, interDelta.y, interDelta.z, intraDelta.x, intraDelta.y, intraDelta.z);
+					Messenger::print("Forces: Check atom %10i - precentage errors are %15.8e %15.8e %15.8e / %15.8e %15.8e %15.8e (x y z) 10J/mol (interatomic / intramolecular)\n", n+1, interRatio.x, interRatio.y, interRatio.z, intraRatio.x, intraRatio.y, intraRatio.z);
 					++nFailed1;
 				}
 			}
@@ -453,7 +458,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 
 			// Test reference forces against production (if reference forces present)
 			int nFailed2 = 0, nFailed3 = 0;
-			Vec3<double> totalDelta;
+			Vec3<double> totalRatio;
 			if (cfg->moduleData().contains("ReferenceFX", uniqueName()) && cfg->moduleData().contains("ReferenceFY", uniqueName()) && cfg->moduleData().contains("ReferenceFZ", uniqueName()))
 			{
 				// Grab reference force arrays and check sizes
@@ -479,18 +484,21 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 				Messenger::print("\nForces: Testing reference forces against calculated 'correct' forces - atoms with erroneous forces will be output...\n");
 				for (int n=0; n<cfg->nAtoms(); ++n)
 				{
-					totalDelta.x = referenceFx[n] - (interFx[n] + intraFx[n]);
-					totalDelta.y = referenceFy[n] - (interFy[n] + intraFy[n]);
-					totalDelta.z = referenceFz[n] - (interFz[n] + intraFz[n]);
+					totalRatio.x = referenceFx[n] - (interFx[n] + intraFx[n]);
+					totalRatio.y = referenceFy[n] - (interFy[n] + intraFy[n]);
+					totalRatio.z = referenceFz[n] - (interFz[n] + intraFz[n]);
+					if (fabs(interFx[n]+intraFx[n]) > 1.0e-6) totalRatio.x *= 100.0 / (interFx[n]+intraFx[n]);
+					if (fabs(interFy[n]+intraFy[n]) > 1.0e-6) totalRatio.y *= 100.0 / (interFy[n]+intraFy[n]);
+					if (fabs(interFz[n]+intraFz[n]) > 1.0e-6) totalRatio.z *= 100.0 / (interFz[n]+intraFz[n]);
 
-					if (fabs(totalDelta.x) > testThreshold) failed = true;
-					else if (fabs(totalDelta.y) > testThreshold) failed = true;
-					else if (fabs(totalDelta.z) > testThreshold) failed = true;
+					if (fabs(totalRatio.x) > testThreshold) failed = true;
+					else if (fabs(totalRatio.y) > testThreshold) failed = true;
+					else if (fabs(totalRatio.z) > testThreshold) failed = true;
 					else failed = false;
 
 					if (failed)
 					{
-						Messenger::print("Forces: Check atom %10i - delta forces are %15.8e %15.8e %15.8e (x y z) 10J/mol (total)\n", n+1, totalDelta.x, totalDelta.y, totalDelta.z);
+						Messenger::print("Forces: Check atom %10i - percentage errors are %15.8e %15.8e %15.8e (x y z) 10J/mol (total)\n", n+1, totalRatio.x, totalRatio.y, totalRatio.z);
 						++nFailed2;
 					}
 				}
@@ -500,18 +508,21 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 
 				for (int n=0; n<cfg->nAtoms(); ++n)
 				{
-					totalDelta.x = referenceFx[n] - (checkInterFx[n] + checkIntraFx[n]);
-					totalDelta.y = referenceFy[n] - (checkInterFy[n] + checkIntraFy[n]);
-					totalDelta.z = referenceFz[n] - (checkInterFz[n] + checkIntraFz[n]);
+					totalRatio.x = referenceFx[n] - (checkInterFx[n] + checkIntraFx[n]);
+					totalRatio.y = referenceFy[n] - (checkInterFy[n] + checkIntraFy[n]);
+					totalRatio.z = referenceFz[n] - (checkInterFz[n] + checkIntraFz[n]);
+					if (fabs(checkInterFx[n]+checkIntraFx[n]) > 1.0e-6) totalRatio.x *= 100.0 / (checkInterFx[n]+checkIntraFx[n]);
+					if (fabs(checkInterFy[n]+checkIntraFy[n]) > 1.0e-6) totalRatio.y *= 100.0 / (checkInterFy[n]+checkIntraFy[n]);
+					if (fabs(checkInterFz[n]+checkIntraFz[n]) > 1.0e-6) totalRatio.z *= 100.0 / (checkInterFz[n]+checkIntraFz[n]);
 
-					if (fabs(totalDelta.x) > testThreshold) failed = true;
-					else if (fabs(totalDelta.y) > testThreshold) failed = true;
-					else if (fabs(totalDelta.z) > testThreshold) failed = true;
+					if (fabs(totalRatio.x) > testThreshold) failed = true;
+					else if (fabs(totalRatio.y) > testThreshold) failed = true;
+					else if (fabs(totalRatio.z) > testThreshold) failed = true;
 					else failed = false;
 
 					if (failed)
 					{
-						Messenger::print("Forces: Check atom %10i - delta forces are %15.8e %15.8e %15.8e (x y z) 10J/mol (total)\n", n+1, totalDelta.x, totalDelta.y, totalDelta.z);
+						Messenger::print("Forces: Check atom %10i - delta forces are %15.8e %15.8e %15.8e (x y z) 10J/mol (total)\n", n+1, totalRatio.x, totalRatio.y, totalRatio.z);
 						++nFailed3;
 					}
 				}
