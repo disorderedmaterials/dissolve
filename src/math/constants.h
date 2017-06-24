@@ -46,12 +46,12 @@
 #define ANGBOHR 0.529177249
 
 /*
-// Conversion from atomic units to kJ/mol for Electrostatic Energy / Forces
-//
-// COULCONVERT =      q * q	 
-//		 ----------------
-//		 4 * pi * e0 * r2
-*/
+ * Conversion from atomic units to kJ/mol for Electrostatic Energy / Forces
+ *
+ * COULCONVERT =      q * q	 
+ *		 ----------------
+ *		 4 * pi * e0 * r2
+ */
 #define COULCONVERT 1389.354835
 //1389.35444426359172669289
 

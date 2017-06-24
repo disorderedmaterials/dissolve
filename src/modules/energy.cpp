@@ -223,8 +223,8 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 						scale = molN->species()->scaling(ii, jj);
 						if (scale < 1.0e-3) continue;
 
-						if (testAnalytic) correctInterEnergy += potentialMap.analyticEnergy(molN->atom(ii)->globalTypeIndex(), molN->atom(jj)->globalTypeIndex(), box->minimumDistance(molN->atom(ii), molN->atom(jj)));
-						else correctInterEnergy += potentialMap.energy(molN->atom(ii)->globalTypeIndex(), molN->atom(jj)->globalTypeIndex(), box->minimumDistance(molN->atom(ii), molN->atom(jj)));
+						if (testAnalytic) correctInterEnergy += potentialMap.analyticEnergy(molN->atom(ii), molN->atom(jj), box->minimumDistance(molN->atom(ii), molN->atom(jj)));
+						else correctInterEnergy += potentialMap.energy(molN->atom(ii), molN->atom(jj), box->minimumDistance(molN->atom(ii), molN->atom(jj)));
 					}
 				}
 
@@ -237,8 +237,9 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 					{
 						for (int jj = 0; jj <molM->nAtoms(); ++jj)
 						{
-							if (testAnalytic) correctInterEnergy += potentialMap.analyticEnergy(molN->atom(ii)->globalTypeIndex(), molM->atom(jj)->globalTypeIndex(), box->minimumDistance(molN->atom(ii), molM->atom(jj)));
-							else correctInterEnergy += potentialMap.energy(molN->atom(ii)->globalTypeIndex(), molM->atom(jj)->globalTypeIndex(), box->minimumDistance(molN->atom(ii), molM->atom(jj)));
+							if (testAnalytic) correctInterEnergy += potentialMap.analyticEnergy(molN->atom(ii), molM->atom(jj), box->minimumDistance(molN->atom(ii), molM->atom(jj)));
+							else correctInterEnergy += potentialMap.energy(molN->atom(ii), molM->atom(jj), box->minimumDistance(molN->atom(ii), molM->atom(jj)));
+							printf("Correct interEnregy is now %f\n", correctInterEnergy);
 						}
 					}
 				}

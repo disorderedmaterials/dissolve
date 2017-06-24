@@ -109,17 +109,17 @@ double PotentialMap::range() const
  */
 
 // Return energy between Atom types at squared distance specified
-double PotentialMap::energy(int typeI, int typeJ, double r) const
+double PotentialMap::energy(const Atom* i, const Atom* j, double r) const
 {
 #ifdef CHECKS
-	if ((typeI < 0) || (typeI >= nTypes_))
+	if ((i->globalTypeIndex() < 0) || (i->globalTypeIndex() >= nTypes_))
 	{
-		Messenger::print("OUT_OF_RANGE - Type index typeI (%i) passed to PotentialMap::energy() is out of range (nTypes_ = %i).\n", typeI, nTypes_);
+		Messenger::print("OUT_OF_RANGE - Type index of atom i (%i) passed to PotentialMap::energy() is out of range (nTypes_ = %i).\n", i->globalTypeIndex(), nTypes_);
 		return 0.0;
 	}
-	if ((typeJ < 0) || (typeJ >= nTypes_))
+	if ((j->globalTypeIndex() < 0) || (j->globalTypeIndex() >= nTypes_))
 	{
-		Messenger::print("OUT_OF_RANGE - Type index typeJ (%i) passed to PotentialMap::energy() is out of range (nTypes_ = %i).\n", typeJ, nTypes_);
+		Messenger::print("OUT_OF_RANGE - Type index of atom j (%i) passed to PotentialMap::energy() is out of range (nTypes_ = %i).\n", j->globalTypeIndex(), nTypes_);
 		return 0.0;
 	}
 	if (r < 0.0)
@@ -133,22 +133,21 @@ double PotentialMap::energy(int typeI, int typeJ, double r) const
 		return 0.0;
 	}
 #endif
-	if (r > 14.98*14.98) return 0.0;
-	return potentialMatrix_.value(typeI,typeJ)->energy(r);
+	return potentialMatrix_.value(i->globalTypeIndex(), j->globalTypeIndex())->energy(r);
 }
 
 // Return analytic energy between Atom types at squared distance specified
-double PotentialMap::analyticEnergy(int typeI, int typeJ, double r) const
+double PotentialMap::analyticEnergy(const Atom* i, const Atom* j, double r) const
 {
 #ifdef CHECKS
-	if ((typeI < 0) || (typeI >= nTypes_))
+	if ((i->globalTypeIndex() < 0) || (i->globalTypeIndex() >= nTypes_))
 	{
-		Messenger::print("OUT_OF_RANGE - Type index typeI (%i) passed to PotentialMap::analyticEnergy() is out of range (nTypes_ = %i).\n", typeI, nTypes_);
+		Messenger::print("OUT_OF_RANGE - Type index of atom i (%i) passed to PotentialMap::analyticEnergy() is out of range (nTypes_ = %i).\n", i->globalTypeIndex(), nTypes_);
 		return 0.0;
 	}
-	if ((typeJ < 0) || (typeJ >= nTypes_))
+	if ((j->globalTypeIndex() < 0) || (j->globalTypeIndex() >= nTypes_))
 	{
-		Messenger::print("OUT_OF_RANGE - Type index typeJ (%i) passed to PotentialMap::analyticEnergy() is out of range (nTypes_ = %i).\n", typeJ, nTypes_);
+		Messenger::print("OUT_OF_RANGE - Type index of atom j (%i) passed to PotentialMap::analyticEnergy() is out of range (nTypes_ = %i).\n", j->globalTypeIndex(), nTypes_);
 		return 0.0;
 	}
 	if (r < 0.0)
@@ -162,21 +161,21 @@ double PotentialMap::analyticEnergy(int typeI, int typeJ, double r) const
 		return 0.0;
 	}
 #endif
-	return potentialMatrix_.value(typeI,typeJ)->analyticEnergy(r);
+	return potentialMatrix_.value(i->globalTypeIndex(), j->globalTypeIndex())->analyticEnergy(r);
 }
 
 // Return force between Atom types at squared distance specified
-double PotentialMap::force(int typeI, int typeJ, double r) const
+double PotentialMap::force(const Atom* i, const Atom* j, double r) const
 {
 #ifdef CHECKS
-	if ((typeI < 0) || (typeI >= nTypes_))
+	if ((i->globalTypeIndex() < 0) || (i->globalTypeIndex() >= nTypes_))
 	{
-		Messenger::print("OUT_OF_RANGE - Type index typeI (%i) passed to PotentialMap::force() is out of range (nTypes_ = %i).\n", typeI, nTypes_);
+		Messenger::print("OUT_OF_RANGE - Type index of atom i (%i) passed to PotentialMap::force() is out of range (nTypes_ = %i).\n", i->globalTypeIndex(), nTypes_);
 		return 0.0;
 	}
-	if ((typeJ < 0) || (typeJ >= nTypes_))
+	if ((j->globalTypeIndex() < 0) || (j->globalTypeIndex() >= nTypes_))
 	{
-		Messenger::print("OUT_OF_RANGE - Type index typeJ (%i) passed to PotentialMap::force() is out of range (nTypes_ = %i).\n", typeJ, nTypes_);
+		Messenger::print("OUT_OF_RANGE - Type index of atom j (%i) passed to PotentialMap::force() is out of range (nTypes_ = %i).\n", j->globalTypeIndex(), nTypes_);
 		return 0.0;
 	}
 	if (r < 0.0)
@@ -190,21 +189,21 @@ double PotentialMap::force(int typeI, int typeJ, double r) const
 		return 0.0;
 	}
 #endif
-	return potentialMatrix_.value(typeI, typeJ)->force(r);
+	return potentialMatrix_.value(i->globalTypeIndex(), j->globalTypeIndex())->force(r);
 }
 
 // Return analytic force between Atom types at squared distance specified
-double PotentialMap::analyticForce(int typeI, int typeJ, double r) const
+double PotentialMap::analyticForce(const Atom* i, const Atom* j, double r) const
 {
 #ifdef CHECKS
-	if ((typeI < 0) || (typeI >= nTypes_))
+	if ((i->globalTypeIndex() < 0) || (i->globalTypeIndex() >= nTypes_))
 	{
-		Messenger::print("OUT_OF_RANGE - Type index typeI (%i) passed to PotentialMap::analyticForce() is out of range (nTypes_ = %i).\n", typeI, nTypes_);
+		Messenger::print("OUT_OF_RANGE - Type index of atom i (%i) passed to PotentialMap::analyticForce() is out of range (nTypes_ = %i).\n", i->globalTypeIndex(), nTypes_);
 		return 0.0;
 	}
-	if ((typeJ < 0) || (typeJ >= nTypes_))
+	if ((j->globalTypeIndex() < 0) || (j->globalTypeIndex() >= nTypes_))
 	{
-		Messenger::print("OUT_OF_RANGE - Type index typeJ (%i) passed to PotentialMap::analyticForce() is out of range (nTypes_ = %i).\n", typeJ, nTypes_);
+		Messenger::print("OUT_OF_RANGE - Type index of atom j (%i) passed to PotentialMap::analyticForce() is out of range (nTypes_ = %i).\n", j->globalTypeIndex(), nTypes_);
 		return 0.0;
 	}
 	if (r < 0.0)
@@ -218,5 +217,5 @@ double PotentialMap::analyticForce(int typeI, int typeJ, double r) const
 		return 0.0;
 	}
 #endif
-	return potentialMatrix_.value(typeI,typeJ)->analyticForce(r);
+	return potentialMatrix_.value(i->globalTypeIndex(), j->globalTypeIndex())->analyticForce(r);
 }

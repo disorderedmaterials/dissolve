@@ -217,16 +217,6 @@ Grain* Atom::grain() const
 // Set coordinates
 void Atom::setCoordinates(const Vec3<double>& newr)
 {
-#ifdef CHECKS
-	if (grain_ == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL grain pointer found in Atom::setCoordinates() (atom id = %i).\n", index_);
-		return;
-	}
-#endif
-	// Update Grain centre before we store the new position
-// 	grain_->updateCentre(newr-r_);
-
 	r_ = newr;
 }
 

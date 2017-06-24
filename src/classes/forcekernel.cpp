@@ -52,7 +52,7 @@ void ForceKernel::forcesWithoutMim(const Atom* i, const Atom* j, double scale)
 	if (distanceSq > cutoffDistanceSquared_) return;
 	double r = DUQMath::squareRoot(distanceSq);
 	force /= r;
-	force *= potentialMap_.force(i->globalTypeIndex(), j->globalTypeIndex(), r) * scale;
+	force *= potentialMap_.force(i, j, r) * scale;
 
 	int index = i->index();
 	fx_[index] += force.x;
@@ -121,7 +121,7 @@ void ForceKernel::forcesWithMim(const Atom* i, const Atom* j, double scale)
 	if (distanceSq > cutoffDistanceSquared_) return;
 	double r = DUQMath::squareRoot(distanceSq);
 	force /= r;
-	force *= potentialMap_.force(i->globalTypeIndex(), j->globalTypeIndex(), r) * scale;
+	force *= potentialMap_.force(i, j, r) * scale;
 
 	int index = i->index();
 	fx_[index] += force.x;
@@ -222,12 +222,12 @@ void ForceKernel::forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool
 	if (centralCell == NULL)
 	{
 		Messenger::error("NULL_POINTER - NULL central Cell pointer passed to ForceKernel::forces(Cell,Cell,bool,bool).\n");
-		return 0.0;
+		return;
 	}
 	if (otherCell == NULL)
 	{
 		Messenger::error("NULL_POINTER - NULL other Cell pointer passed to ForceKernel::forces(Cell,Cell,bool,bool).\n");
-		return 0.0;
+		return;
 	}
 #endif
 	Atom** centralAtoms = centralCell->atoms().objects(), **otherAtoms = otherCell->atoms().objects();
@@ -378,7 +378,7 @@ void ForceKernel::forces(const Atom* i, OrderedPointerList<Atom>& neighbours, in
 	if (i == NULL)
 	{
 		Messenger::error("NULL_POINTER - NULL atom pointer passed to ForceKernel::forces(Atom,OrderedPointerList,int,CommGroup).\n");
-		return 0.0;
+		return;
 	}
 #endif
 	Atom* jj;

@@ -77,30 +77,14 @@ class EnergyKernel
 	private:
 	// Return PairPotential energy between atoms provided as pointers (no minimum image calculation)
 	double energyWithoutMim(const Atom* i, const Atom* j);
-	// Return PairPotential energy between atoms provided as info and reference (minimum image calculation)
-	double energyWithoutMim(const int typeI, const Vec3<double>& rI, const Atom* j);
-	// Return PairPotential energy between atoms provided as references (no minimum image calculation)
-	double energyWithoutMim(const Atom& i, const Atom& j);
-	// Return PairPotential energy between atoms provided as reference/pointer (no minimum image calculation)
-	double energyWithoutMim(const Atom& i, const Atom* j);
 	// Return PairPotential energy between atom (pointer) and grain provided (no minimum image calculation)
 	double energyWithoutMim(const Atom* i, const Grain* grain, bool excludeIgeJ = false);
-	// Return PairPotential energy between atom (reference) and grain provided (no minimum image calculation)
-	double energyWithoutMim(const Atom& i, const Grain* grain, bool excludeIgeJ = false);
 	// Return PairPotential energy between grains provided (no minimum image calculation)
 	double energyWithoutMim(const Grain* grainI, const Grain* grainJ);
 	// Return PairPotential energy between atoms provided as pointers (minimum image calculation)
 	double energyWithMim(const Atom* i, const Atom* j);
-	// Return PairPotential energy between atoms provided as info and reference (minimum image calculation)
-	double energyWithMim(const int typeI, const Vec3<double>& rI, const Atom* j);
-	// Return PairPotential energy between atoms provided as references (minimum image calculation)
-	double energyWithMim(const Atom& i, const Atom& j);
-	// Return PairPotential energy between atoms provided as reference/pointer (minimum image calculation)
-	double energyWithMim(const Atom& i, const Atom* j);
 	// Return PairPotential energy between atom (pointer) and Grain provided (minimum image calculation)
 	double energyWithMim(const Atom* i, const Grain* grain, bool excludeIgeJ = false);
-	// Return PairPotential energy between atom (reference) and grain provided (minimum image calculation)
-	double energyWithMim(const Atom& i, const Grain* grain, bool excludeIgeJ = false);
 	// Return PairPotential energy between Grains provided (minimum image calculation)
 	double energyWithMim(const Grain* grainI, const Grain* grainJ);
 

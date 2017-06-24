@@ -273,8 +273,8 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 						r = DUQMath::squareRoot(magjisq);
 						vecji /= r;
 
-						if (testAnalytic) vecji *= potentialMap.analyticForce(molN->atom(ii)->globalTypeIndex(), molN->atom(jj)->globalTypeIndex(), r);
-						else vecji *= potentialMap.force(molN->atom(ii)->globalTypeIndex(), molN->atom(jj)->globalTypeIndex(), r);
+						if (testAnalytic) vecji *= potentialMap.analyticForce(molN->atom(ii), molN->atom(jj), r);
+						else vecji *= potentialMap.force(molN->atom(ii), molN->atom(jj), r);
 						interFx[i->index()] += vecji.x;
 						interFy[i->index()] += vecji.y;
 						interFz[i->index()] += vecji.z;
@@ -305,8 +305,8 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 							r = DUQMath::squareRoot(magjisq);
 							vecji /= r;
 
-							if (testAnalytic) vecji *= potentialMap.analyticForce(i->globalTypeIndex(), j->globalTypeIndex(), r);
-							else vecji *= potentialMap.force(i->globalTypeIndex(), j->globalTypeIndex(), r);
+							if (testAnalytic) vecji *= potentialMap.analyticForce(i, j, r);
+							else vecji *= potentialMap.force(i, j, r);
 							
 // 							printf("%i  %i  %f  %15.9e %15.9e\n", i->index()+1, j->index()+1, sqrt(magji), potentialMap.force(i->globalTypeIndex(), j->globalTypeIndex(), magji), potentialMap.analyticForce(i->globalTypeIndex(), j->globalTypeIndex(), magji));
 							interFx[i->index()] += vecji.x;

@@ -19,6 +19,7 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "base/messenger.h"
 #include "classes/changedata.h"
 #include "classes/atom.h"
 

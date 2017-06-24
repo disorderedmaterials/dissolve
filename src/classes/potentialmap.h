@@ -66,13 +66,13 @@ class PotentialMap
 	 */
 	public:
 	// Return energy between Atom types at distance specified
-	double energy(int typeI, int typeJ, double r) const;
+	double energy(const Atom* i, const Atom* j, double r) const;
 	// Return analytic energy between Atom types at distance specified
-	double analyticEnergy(int typeI, int typeJ, double r) const;
+	double analyticEnergy(const Atom* i, const Atom* j, double r) const;
 	// Return force between Atom types at distance specified
-	double force(int typeI, int typeJ, double r) const;
+	double force(const Atom* i, const Atom* j, double r) const;
 	// Return analytic force between Atom types at distance specified
-	double analyticForce(int typeI, int typeJ, double r) const;
+	double analyticForce(const Atom* i, const Atom* j, double r) const;
 };
 
 #endif
