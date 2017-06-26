@@ -133,7 +133,10 @@ double PotentialMap::energy(const Atom* i, const Atom* j, double r) const
 		return 0.0;
 	}
 #endif
-	return potentialMatrix_.value(i->globalTypeIndex(), j->globalTypeIndex())->energy(r);
+	// Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the interpolated potential
+	PairPotential* pp = potentialMatrix_.value(i->globalTypeIndex(), j->globalTypeIndex());
+	if (pp->includeCoulomb()) return pp->energy(r);
+	else return (pp->energy(r) + pp->analyticCoulombEnergy(i->charge() * j->charge(), r));
 }
 
 // Return analytic energy between Atom types at squared distance specified
@@ -189,7 +192,10 @@ double PotentialMap::force(const Atom* i, const Atom* j, double r) const
 		return 0.0;
 	}
 #endif
-	return potentialMatrix_.value(i->globalTypeIndex(), j->globalTypeIndex())->force(r);
+	// Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the interpolated potential
+	PairPotential* pp = potentialMatrix_.value(i->globalTypeIndex(), j->globalTypeIndex());
+	if (pp->includeCoulomb()) return pp->force(r);
+	else return (pp->force(r) + pp->analyticCoulombForce(i->charge() * j->charge(), r));
 }
 
 // Return analytic force between Atom types at squared distance specified

@@ -239,7 +239,6 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 						{
 							if (testAnalytic) correctInterEnergy += potentialMap.analyticEnergy(molN->atom(ii), molM->atom(jj), box->minimumDistance(molN->atom(ii), molM->atom(jj)));
 							else correctInterEnergy += potentialMap.energy(molN->atom(ii), molM->atom(jj), box->minimumDistance(molN->atom(ii), molM->atom(jj)));
-							printf("Correct interEnregy is now %f\n", correctInterEnergy);
 						}
 					}
 				}

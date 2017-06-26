@@ -31,6 +31,7 @@ KeywordData PairPotentialsBlockData[] = {
 	{ "EndPairPotentials",		0,	"Signals the end of the PairPotentials block" },
 	{ "GenerateAll",		1,	"All potentials should be generated using internal atomtype parameters" },
 	{ "Generate",			3,	"Generate a pair potential of the specified form, according to internal parameters (or those supplied with 'Parameters')" },
+	{ "IncludeCoulomb",		1,	"Include Coulomb term in tabulated pair potentials" },
 	{ "Parameters",			4,	"Set the sigma, epsilon, and charge for the named atomtype" },
 	{ "Range",			1,	"Maximal range of the pair potential (in r)" },
 	{ "TruncationWidth",		1,	"Width of the truncation region applied to the short-range potential" },
@@ -70,7 +71,7 @@ bool PairPotentialsBlock::parse(LineParser& parser, DUQ* duq)
 	while (!parser.eofOrBlank())
 	{
 		// Read in a line, which should contain a keyword and a minimum number of arguments
-		parser.getArgsDelim(LineParser::SkipBlanks+LineParser::UseQuotes);
+		parser.getArgsDelim(LineParser::SkipBlanks+LineParser::StripComments+LineParser::UseQuotes);
 		PairPotentialsBlock::PairPotentialsKeyword ppKeyword = PairPotentialsBlock::keyword(parser.argc(0));
 		if ((ppKeyword != PairPotentialsBlock::nPairPotentialsKeywords) && ((parser.nArgs()-1) < PairPotentialsBlock::nArguments(ppKeyword)))
 		{
@@ -88,6 +89,7 @@ bool PairPotentialsBlock::parse(LineParser& parser, DUQ* duq)
 					error = true;
 					break;
 				}
+				PairPotential::setCoulombTruncationScheme(cTrunc);
 				break;
 			case (PairPotentialsBlock::DeltaKeyword):
 				duq->setPairPotentialDelta(parser.argd(1));
@@ -132,8 +134,10 @@ bool PairPotentialsBlock::parse(LineParser& parser, DUQ* duq)
 				}
 
 				pot->setShortRangeType(srType);
-				pot->setCoulombTruncationScheme(cTrunc);
 				pot->setParameters(at1, at2);
+				break;
+			case (PairPotentialsBlock::IncludeCoulombKeyword):
+				duq->setPairPotentialsIncludeCoulomb(parser.argb(1));
 				break;
 			case (PairPotentialsBlock::ParametersKeyword):
 				// Find AtomType...
@@ -164,9 +168,6 @@ bool PairPotentialsBlock::parse(LineParser& parser, DUQ* duq)
 				break;
 			case (PairPotentialsBlock::TruncationWidthKeyword):
 				duq->setPairPotentialTruncationWidth(parser.argd(1));
-				break;
-			case (PairPotentialsBlock::UseAtomChargesKeyword):
-				duq->setPairPotentialIncludesCharges(false);
 				break;
 			case (PairPotentialsBlock::nPairPotentialsKeywords):
 				Messenger::error("Unrecognised %s block keyword found - '%s'\n", InputBlocks::inputBlock(InputBlocks::PairPotentialsBlock), parser.argc(0));

@@ -65,16 +65,16 @@ double DUQ::pairPotentialDelta() const
 	return pairPotentialDelta_;
 }
 
-// Set whether atomic charges are included in generated PairPotentials
-void DUQ::setPairPotentialIncludesCharges(bool b)
+// Set whether Coulomb term should be included in generated PairPotentials
+void DUQ::setPairPotentialsIncludeCoulomb(bool b)
 {
-	pairPotentialIncludesCharges_ = b;
+	pairPotentialsIncludeCoulomb_ = b;
 }
 
-// Return whether atomic charges are included in generated PairPotentials
-bool DUQ::pairPotentialIncludesCharges()
+// Return whether Coulomb term should be included in generated PairPotentials
+bool DUQ::pairPotentialsIncludeCoulomb()
 {
-	return pairPotentialIncludesCharges_;
+	return pairPotentialsIncludeCoulomb_;
 }
 
 // Return index of specified PairPotential

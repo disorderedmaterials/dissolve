@@ -24,9 +24,9 @@ Simulations utilising only a Coulombic potential contributing to energy and
 forces, with charges and bond / angle force constants set to zero. The truncation scheme
 employed in DL_POLY is a more advanced form (Fennell and Gezelter) than that employed in
 the present code (unmodified truncated and shifted potential) and Coulomb terms are
-calculated analytically in DL_POLY so energies and forces
-are expected to contain slightly higher errors, and higher threshold values are used
-for the corresponding tests.
+calculated analytically in DL_POLY so energies and forces are expected to show slightly
+higher errors, and higher threshold values are used for the corresponding tests.
+If Coulomb terms are not included in the tabulated pair potentials, 
 
 4) Coulomb Terms Only (direct Coulomb sum)
 

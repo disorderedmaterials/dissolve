@@ -30,6 +30,9 @@
 #include <math.h>
 #include <string.h>
 
+// Static members
+PairPotential::TruncationScheme PairPotential::coulombTruncationScheme_ = PairPotential::ShiftedTruncation;
+
 // Constructor
 PairPotential::PairPotential() : ListItem<PairPotential>()
 {
@@ -40,9 +43,8 @@ PairPotential::PairPotential() : ListItem<PairPotential>()
 	nPoints_ = 0;
 	delta_ = -1.0;
 	range_ = 0.0;
-	includeCharges_ = true;
+	includeCoulomb_ = true;
 	shortRangeType_ = PairPotential::LennardJonesType;
-	coulombTruncationScheme_ = PairPotential::ShiftedTruncation;
 }
 
 // Short-range typeKeywords
@@ -93,6 +95,18 @@ PairPotential::ShortRangeType PairPotential::shortRangeType() const
 	return shortRangeType_;
 }
 
+// Set whether Coulomb term should be included in the generated potential
+void PairPotential::setIncludeCoulomb(bool b)
+{
+	includeCoulomb_ = b;
+}
+
+// Return whether Coulomb term should be included in the generated potential
+bool PairPotential::includeCoulomb()
+{
+	return includeCoulomb_;
+}
+
 // Set Coulomb truncation scheme
 void PairPotential::setCoulombTruncationScheme(PairPotential::TruncationScheme scheme)
 {
@@ -100,7 +114,7 @@ void PairPotential::setCoulombTruncationScheme(PairPotential::TruncationScheme s
 }
 
 // Return Coulomb truncation scheme
-PairPotential::TruncationScheme PairPotential::coulombTruncationScheme() const
+PairPotential::TruncationScheme PairPotential::coulombTruncationScheme()
 {
 	return coulombTruncationScheme_;
 }
@@ -305,19 +319,6 @@ double PairPotential::analyticShortRangeEnergy(double r, PairPotential::ShortRan
 	return 0.0;
 }
 
-// Return analytic coulomb potential energy
-double PairPotential::analyticCoulombEnergy(double r)
-{
-	// Calculate energy including truncation scheme (truncated and shifted sum)
-	double energy = 0.0;
-
-	// Calculate based on truncation scheme
-	if (coulombTruncationScheme_ == PairPotential::NoTruncation) energy = COULCONVERT * chargeI_ * chargeJ_ / r;
-	else if (coulombTruncationScheme_ == PairPotential::ShiftedTruncation) energy = COULCONVERT * chargeI_ * chargeJ_ * (1.0/r + r/(range_*range_) - 2.0/range_);
-
-	return energy;
-}
-
 // Return analytic short range force
 double PairPotential::analyticShortRangeForce(double r, PairPotential::ShortRangeType type)
 {
@@ -347,19 +348,6 @@ double PairPotential::analyticShortRangeForce(double r, PairPotential::ShortRang
 	}
 
 	return 0.0;
-}
-
-// Return analytic coulomb potential energy
-double PairPotential::analyticCoulombForce(double r)
-{
-	// Calculate energy including truncation scheme (truncated and shifted sum)
-	double force = 0.0;
-
-	// Calculate based on truncation scheme
-	if (coulombTruncationScheme_ == PairPotential::NoTruncation) force = -COULCONVERT * chargeI_ * chargeJ_ / (r*r);
-	else if (coulombTruncationScheme_ == PairPotential::ShiftedTruncation) force = -COULCONVERT * chargeI_ * chargeJ_ * (1.0/(r*r) - 1.0/(range_*range_));
-
-	return force;
 }
 
 // Calculate full potential
@@ -414,7 +402,7 @@ void PairPotential::calculateDUFull()
 }
 
 // Setup and generate initial potential
-bool PairPotential::setup(double maxR, double truncationWidth, double delta, bool includeCharges)
+bool PairPotential::setup(double maxR, double truncationWidth, double delta, bool includeCoulomb)
 {
 	// Check that AtomType pointers were set at some pointer
 	if ((atomTypeI_ == NULL) || (atomTypeJ_ == NULL))
@@ -428,7 +416,7 @@ bool PairPotential::setup(double maxR, double truncationWidth, double delta, boo
 	rDelta_ = 1.0/delta_;
 	range_ = maxR;
 	truncationWidth_ = truncationWidth;
-	includeCharges_ = includeCharges;
+	includeCoulomb_ = includeCoulomb;
 	nPoints_ = range_ / delta_;
 
 	// Initialise original and additional potential arrays, and calculate original potential
@@ -464,7 +452,7 @@ bool PairPotential::calculateUOriginal(bool recalculateUFull)
 		uOriginal_.addY(n, analyticShortRangeEnergy(r, shortRangeType_));
 		
 		// -- Add Coulomb contribution
-		if (includeCharges_) uOriginal_.addY(n, analyticCoulombEnergy(r));
+		if (includeCoulomb_) uOriginal_.addY(n, analyticCoulombEnergy(chargeI_*chargeJ_, r));
 	}
 
 	// Since the first point (at zero) risks being a nan, set it to ten times the second point instead
@@ -488,11 +476,6 @@ double PairPotential::energy(double r)
 		return 0.0;
 	}
 #endif
-	// Is distance out of range?
-// 	if (distanceSq >= rangeSquared_) return 0.0;
-
-	// Return binned value
-// 	return uFull_.y(distanceSq*rDelta_);
 
 	// Return interpolated value
 	return uFull_.interpolated(r, r*rDelta_);
@@ -501,17 +484,25 @@ double PairPotential::energy(double r)
 // Return analytic potential at specified r
 double PairPotential::analyticEnergy(double r)
 {
-	double energy = 0.0;
-
 	if (r > range_) return 0.0;
 
 	// Short-range potential
-	energy += analyticShortRangeEnergy(r, shortRangeType_);
+	double energy = analyticShortRangeEnergy(r, shortRangeType_);
 
 	// Coulomb contribution
-	if (includeCharges_) energy += analyticCoulombEnergy(r);
+	energy += analyticCoulombEnergy(chargeI_*chargeJ_, r);
 
 	return energy;
+}
+
+// Return analytic coulomb potential energy of specified charges
+double PairPotential::analyticCoulombEnergy(double qiqj, double r)
+{
+	// Calculate based on truncation scheme
+	if (coulombTruncationScheme_ == PairPotential::NoTruncation) return COULCONVERT * qiqj / r;
+	else if (coulombTruncationScheme_ == PairPotential::ShiftedTruncation) return COULCONVERT * qiqj * (1.0/r + r/(range_*range_) - 2.0/range_);
+
+	return 0.0;
 }
 
 // Return derivative at specified r
@@ -525,9 +516,6 @@ double PairPotential::force(double r)
 		return 0.0;
 	}
 #endif
-	// Return binned value
-// 	int bin = distanceSq*rDelta_;
-// 	return (bin >= nPoints_ ? 0.0 : dUFull_.y(bin));
 
 	// Return interpolated value
 	return dUFull_.interpolated(r, r*rDelta_);
@@ -538,15 +526,23 @@ double PairPotential::analyticForce(double r)
 {
 	if (r > range_) return 0.0;
 
-	double force = 0.0;
-
 	// Short-range potential
-	force += analyticShortRangeForce(r, shortRangeType_);
+	double force = analyticShortRangeForce(r, shortRangeType_);
 
 	// Coulomb contribution
-	if (includeCharges_) force += analyticCoulombForce(r);
+	force += analyticCoulombForce(chargeI_*chargeJ_, r);
 
 	return force;
+}
+
+// Return analytic coulomb force of specified charges
+double PairPotential::analyticCoulombForce(double qiqj, double r)
+{
+	// Calculate based on truncation scheme
+	if (coulombTruncationScheme_ == PairPotential::NoTruncation) return -COULCONVERT * qiqj / (r*r);
+	else if (coulombTruncationScheme_ == PairPotential::ShiftedTruncation) return -COULCONVERT * qiqj * (1.0/(r*r) - 1.0/(range_*range_));
+
+	return 0.0;
 }
 
 // Return full tabulated potential (original plus additional)
@@ -561,13 +557,13 @@ XYData& PairPotential::dUFull()
 	return dUFull_;
 }
 
-// Return original potential (calculated from AtomType parameters)
+// Return original potential
 XYData& PairPotential::uOriginal()
 {
 	return uOriginal_;
 }
 
-// Return additional potential (generated by some means)
+// Return additional potential
 XYData& PairPotential::uAdditional()
 {
 	return uAdditional_;
@@ -601,21 +597,12 @@ bool PairPotential::save(const char* filename)
 	}
 	
 	parser.writeLineF("#%9s  %12s  %12s  %12s  %12s  %12s  %12s\n", "", "Full", "Derivative", "Original", "Additional", "Exact(Orig)", "Exact(Deriv)");
-	parser.writeLineF("#%9s  %12s  %12s  %12s  %12s  %12s  %12s\n", "r(Angs)", "U(kJ/mol)", "dU(kJ/mol/Ang)", "U(kJ/mol)", "U(kJ/mol)", "U(kJ/mol)", "dU(kJ/mol/Ang)");
-	for (int n = 0; n<nPoints_; ++n) parser.writeLineF("%10.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e\n", uOriginal_.x(n), uFull_.y(n), dUFull_.y(n), uOriginal_.y(n), uAdditional_.interpolated(uOriginal_.x(n)), analyticEnergy(uOriginal_.x(n)), analyticForce(uOriginal_.x(n)));
+	parser.writeLineF("#%9s  %12s  %12s  %12s  %12s  %12s  %12s  %12s  %12s\n", "r(Angs)", "U(kJ/mol)", "dU(kJ/mol/Ang)", "U(kJ/mol)", "U(kJ/mol)", "U(kJ/mol)", "dU(kJ/mol/Ang)", "rFine(Angs)", "Derivative");
+	double fineDelta = delta_*0.05;
+	for (int n = 0; n<nPoints_; ++n) parser.writeLineF("%10.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e\n", uOriginal_.x(n), uFull_.y(n), dUFull_.y(n), uOriginal_.y(n), uAdditional_.interpolated(uOriginal_.x(n)), analyticEnergy(uOriginal_.x(n)), analyticForce(uOriginal_.x(n)), fineDelta*n, dUFull_.x(fineDelta*n));
 
 	parser.closeFiles();
 
-	CharString test("%s.test", filename);
-	LineParser shitParser;
-	shitParser.openOutput(test);
-	double x = 0.0, delta = delta_*0.05;
-	while (x < range_)
-	{
-		shitParser.writeLineF("%12.6e  %12.6e  %12.6e  %12.6e\n", x, dUFull_.interpolated(x), analyticForce(x), (dUFull_.interpolated(x) - analyticForce(x))*100.0);
-		x += delta;
-	}
-	shitParser.closeFiles();
 	return true;
 }
 
@@ -629,7 +616,7 @@ bool PairPotential::broadcast(ProcessPool& procPool, const List<AtomType>& atomT
 #ifdef PARALLEL
 	// PairPotential type
 	if (!procPool.broadcast(EnumCast<PairPotential::ShortRangeType>(shortRangeType_))) return false;
-	if (!procPool.broadcast(includeCharges_)) return false;
+	if (!procPool.broadcast(includeCoulomb_)) return false;
 
 	// Source Parameters - Master needs to determine AtomType indices
 	int index;

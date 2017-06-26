@@ -116,8 +116,8 @@ class DUQ
 	double pairPotentialTruncationWidth_;
 	// Delta to use in tabulation
 	double pairPotentialDelta_;
-	// Whether atomic charges are included in generated PairPotentials
-	bool pairPotentialIncludesCharges_;
+	// Whether Coulomb terms are included in generated PairPotentials
+	bool pairPotentialsIncludeCoulomb_;
 	// Simulation PairPotentials
 	List<PairPotential> pairPotentials_;
 	// Map for PairPotentials
@@ -139,10 +139,10 @@ class DUQ
 	void setPairPotentialDelta(double delta);
 	// Return delta to use in tabulations
 	double pairPotentialDelta() const;
-	// Set whether atomic charges are included in generated PairPotentials
-	void setPairPotentialIncludesCharges(bool b);
-	// Return whether atomic charges are included in generated PairPotentials
-	bool pairPotentialIncludesCharges();
+	// Set whether Coulomb term should be included in generated PairPotentials
+	void setPairPotentialsIncludeCoulomb(bool b);
+	// Return whether Coulomb term should be included in generated PairPotentials
+	bool pairPotentialsIncludeCoulomb();
 	// Return index of specified PairPotential
 	int indexOf(PairPotential* pp);
 	// Return number of defined PairPotentials

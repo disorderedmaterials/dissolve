@@ -47,7 +47,7 @@ class PotentialMap
 	 * Source Parameters
 	 */
 	private:
-	// Number of unique types forming potentialMatrix_
+	// Number of unique types forming the matrix
 	int nTypes_;
 	// PairPotential matrix
 	Array2D<PairPotential*> potentialMatrix_;
@@ -55,7 +55,7 @@ class PotentialMap
 	double range_;
 
 	public:
-	// Initialise maps
+	// Initialise map
 	bool initialise(const List<AtomType>& masterAtomTypes, const List<PairPotential>& pairPotentials, double pairPotentialRange);
 	// Return PairPotential range
 	double range() const;

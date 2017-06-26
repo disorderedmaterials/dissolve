@@ -123,7 +123,6 @@ bool Configuration::setupBox(double ppRange)
 	Messenger::print("-->               B = %10.4e %10.4e %10.4e, length = %10.4e Angstroms\n", axes[3], axes[4], axes[5], box_->axisLength(1));
 	Messenger::print("-->               C = %10.4e %10.4e %10.4e, length = %10.4e Angstroms\n", axes[6], axes[7], axes[8], box_->axisLength(2));
 
-		printf("lkjlk111\n");
 	// Check cell lengths against pair potential range
 	if (ppRange > box_->inscribedSphereRadius())
 	{
@@ -132,9 +131,7 @@ bool Configuration::setupBox(double ppRange)
 	}
 
 	// Generate cells within unit cell
-	printf("lkjlk\n");
 	generateCells(requestedCellDivisionLength_, ppRange, atomicDensity());
-	printf("lkjlk\n");
 	 
 	return true;
 }

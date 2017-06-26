@@ -104,6 +104,7 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 					break;
 				}
 				i = species->addAtom(el, parser.argd(3), parser.argd(4), parser.argd(5));
+				if (parser.hasArg(7)) i->setCharge(parser.argd(7));
 
 				// Locate the AtomType assigned to the Atom
 				at = duq->findAtomType(parser.argc(6));

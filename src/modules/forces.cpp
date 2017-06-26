@@ -210,6 +210,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 
 			Messenger::print("Forces: Calculating forces for Configuration '%s' in serial test mode...\n", cfg->name());
 			if (testAnalytic) Messenger::print("Forces: Exact (analytic) forces will be calculated.\n");
+			Messenger::print("Forces:: Test threshold for failure is %f%%.\n", testThreshold);
 
 			/*
 			 * Calculation Begins
@@ -428,7 +429,10 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 			int nFailed1 = 0;
 			bool failed;
 			Vec3<double> interRatio, intraRatio;
+			double sumError;
+
 			Messenger::print("Forces: Testing calculated 'correct' forces against calculated production forces - atoms with erroneous forces will be output...\n");
+			sumError = 0.0;
 			for (int n=0; n<cfg->nAtoms(); ++n)
 			{
 				interRatio.set(interFx[n] - checkInterFx[n], interFy[n] - checkInterFy[n], interFz[n] - checkInterFz[n]);
@@ -448,18 +452,23 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 				else if (fabs(interRatio.z) > testThreshold) failed = true;
 				else failed = false;
 
+				// Sum average errors
+				sumError += intraRatio.x + intraRatio.y + intraRatio.z + interRatio.x + interRatio.y + interRatio.z;
+
 				if (failed)
 				{
-					Messenger::print("Forces: Check atom %10i - errors are %15.8e (%4.1f%%) %15.8e (%4.1f%%) %15.8e (%4.1f%%) (x y z) 10J/mol (inter)\n", n+1, interFx[n] - checkInterFx[n], interRatio.x, interFy[n] - checkInterFy[n], interRatio.y, interFz[n] - checkInterFz[n], interRatio.z);
-					Messenger::print("                                     %15.8e (%4.1f%%) %15.8e (%4.1f%%) %15.8e (%4.1f%%) (x y z) 10J/mol (intra)\n", n+1, intraFx[n] - checkIntraFx[n], intraRatio.x, intraFy[n] - checkIntraFy[n], intraRatio.y, intraFz[n] - checkIntraFz[n], intraRatio.z);
+					Messenger::print("Forces: Check atom %10i - errors are %15.8e (%5.2f%%) %15.8e (%5.2f%%) %15.8e (%5.2f%%) (x y z) 10J/mol (inter)\n", n+1, interFx[n] - checkInterFx[n], interRatio.x, interFy[n] - checkInterFy[n], interRatio.y, interFz[n] - checkInterFz[n], interRatio.z);
+					Messenger::print("                                     %15.8e (%5.2f%%) %15.8e (%5.2f%%) %15.8e (%5.2f%%) (x y z) 10J/mol (intra)\n", n+1, intraFx[n] - checkIntraFx[n], intraRatio.x, intraFy[n] - checkIntraFy[n], intraRatio.y, intraFz[n] - checkIntraFz[n], intraRatio.z);
 					++nFailed1;
 				}
 			}
 			Messenger::print("Forces: Number of atoms with failed force components = %i = %s\n", nFailed1, nFailed1 == 0 ? "OK" : "NOT OK");
+			Messenger::print("Forces: Average error in force components was %f%%.\n", sumError / (cfg->nAtoms()*6));
 
 			// Test reference forces against production (if reference forces present)
 			int nFailed2 = 0, nFailed3 = 0;
 			Vec3<double> totalRatio;
+			sumError = 0.0;
 			if (cfg->moduleData().contains("ReferenceFX", uniqueName()) && cfg->moduleData().contains("ReferenceFY", uniqueName()) && cfg->moduleData().contains("ReferenceFZ", uniqueName()))
 			{
 				// Grab reference force arrays and check sizes
@@ -483,6 +492,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 				}
 
 				Messenger::print("\nForces: Testing reference forces against calculated 'correct' forces - atoms with erroneous forces will be output...\n");
+				sumError = 0.0;
 				for (int n=0; n<cfg->nAtoms(); ++n)
 				{
 					totalRatio.x = referenceFx[n] - (interFx[n] + intraFx[n]);
@@ -497,16 +507,21 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 					else if (fabs(totalRatio.z) > testThreshold) failed = true;
 					else failed = false;
 
+					// Sum average errors
+					sumError += totalRatio.x + totalRatio.y + totalRatio.z;
+
 					if (failed)
 					{
-						Messenger::print("Forces: Check atom %10i - errors are %15.8e (%4.1f%%) %15.8e (%4.1f%%) %15.8e (%4.1f%%) (x y z) 10J/mol\n", n+1, referenceFx[n] - (interFx[n] + intraFx[n]), totalRatio.x, referenceFy[n] - (interFy[n] + intraFy[n]), totalRatio.y, referenceFz[n] - (interFz[n] + intraFz[n]), totalRatio.z);
+						Messenger::print("Forces: Check atom %10i - errors are %15.8e (%5.2f%%) %15.8e (%5.2f%%) %15.8e (%5.2f%%) (x y z) 10J/mol\n", n+1, referenceFx[n] - (interFx[n] + intraFx[n]), totalRatio.x, referenceFy[n] - (interFy[n] + intraFy[n]), totalRatio.y, referenceFz[n] - (interFz[n] + intraFz[n]), totalRatio.z);
 						++nFailed2;
 					}
 				}
 				Messenger::print("Forces: Number of atoms with failed force components = %i = %s\n", nFailed2, nFailed2 == 0 ? "OK" : "NOT OK");
+				Messenger::print("Forces: Average error in force components was %f%%.\n", sumError / (cfg->nAtoms()*3));
 
 				Messenger::print("\nForces: Testing reference forces against calculated production forces - atoms with erroneous forces will be output...\n");
 
+				sumError = 0.0;
 				for (int n=0; n<cfg->nAtoms(); ++n)
 				{
 					totalRatio.x = referenceFx[n] - (checkInterFx[n] + checkIntraFx[n]);
@@ -521,13 +536,17 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 					else if (fabs(totalRatio.z) > testThreshold) failed = true;
 					else failed = false;
 
+					// Sum average errors
+					sumError += totalRatio.x + totalRatio.y + totalRatio.z;
+
 					if (failed)
 					{
-						Messenger::print("Forces: Check atom %10i - errors are %15.8e (%4.1f%%) %15.8e (%4.1f%%) %15.8e (%4.1f%%) (x y z) 10J/mol\n", n+1, referenceFx[n] - (checkInterFx[n] + checkIntraFx[n]), totalRatio.x, referenceFy[n] - (checkInterFy[n] + checkIntraFy[n]), totalRatio.y, referenceFz[n] - (checkInterFz[n] + checkIntraFz[n]), totalRatio.z);
+						Messenger::print("Forces: Check atom %10i - errors are %15.8e (%5.2f%%) %15.8e (%5.2f%%) %15.8e (%5.2f%%) (x y z) 10J/mol\n", n+1, referenceFx[n] - (checkInterFx[n] + checkIntraFx[n]), totalRatio.x, referenceFy[n] - (checkInterFy[n] + checkIntraFy[n]), totalRatio.y, referenceFz[n] - (checkInterFz[n] + checkIntraFz[n]), totalRatio.z);
 						++nFailed3;
 					}
 				}
 				Messenger::print("Forces: Number of atoms with failed force components = %i = %s\n", nFailed3, nFailed3 == 0 ? "OK" : "NOT OK");
+				Messenger::print("Forces: Average error in force components was %f%%.\n", sumError / (cfg->nAtoms()*6));
 			}
 
 			if (!procPool.allTrue((nFailed1 + nFailed2 + nFailed3) == 0)) return false;
