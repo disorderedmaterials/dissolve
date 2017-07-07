@@ -50,7 +50,7 @@ void ForceKernel::forcesWithoutMim(const Atom* i, const Atom* j, double scale)
 	Vec3<double> force = j->r() - i->r();
 	double distanceSq = force.magnitudeSq();
 	if (distanceSq > cutoffDistanceSquared_) return;
-	double r = DUQMath::squareRoot(distanceSq);
+	double r = sqrt(distanceSq);
 	force /= r;
 	force *= potentialMap_.force(i, j, r) * scale;
 
@@ -119,7 +119,7 @@ void ForceKernel::forcesWithMim(const Atom* i, const Atom* j, double scale)
 	Vec3<double> force = box_->minimumVector(i, j);
 	double distanceSq = force.magnitudeSq();
 	if (distanceSq > cutoffDistanceSquared_) return;
-	double r = DUQMath::squareRoot(distanceSq);
+	double r = sqrt(distanceSq);
 	force /= r;
 	force *= potentialMap_.force(i, j, r) * scale;
 

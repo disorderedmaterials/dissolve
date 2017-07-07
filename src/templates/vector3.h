@@ -405,7 +405,7 @@ template <class T> double Vec3<T>::dp(const Vec3<T> &v) const
 // Normalise and return original magnitude
 template <class T> double Vec3<T>::magAndNormalise()
 {
-	double mag = DUQMath::squareRoot(x*x + y*y + z*z);
+	double mag = sqrt(x*x + y*y + z*z);
 	if (mag < 1.0E-8) zero();
 	else
 	{
@@ -420,7 +420,7 @@ template <class T> double Vec3<T>::magAndNormalise()
 template <class T> double Vec3<T>::magSqAndNormalise()
 {
 	double magSq = x*x + y*y + z*z;
-	double mag = DUQMath::squareRoot(magSq);
+	double mag = sqrt(magSq);
 	if (mag < 1.0E-8) zero();
 	else
 	{
@@ -434,7 +434,7 @@ template <class T> double Vec3<T>::magSqAndNormalise()
 // Vector magnitude
 template <class T> double Vec3<T>::magnitude() const
 {
-	return DUQMath::squareRoot(x*x + y*y + z*z);
+	return sqrt(x*x + y*y + z*z);
 }
 
 // Vector magnitude squared
@@ -484,7 +484,7 @@ template <class T> void Vec3<T>::multiply(const Vec3<T> &v)
 // Normalise
 template <class T> void Vec3<T>::normalise()
 {
-	double mag = DUQMath::squareRoot(x*x + y*y + z*z);
+	double mag = sqrt(x*x + y*y + z*z);
 	if (mag < 1.0E-8) zero();
 	else
 	{

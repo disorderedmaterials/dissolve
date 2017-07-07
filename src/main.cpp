@@ -70,6 +70,10 @@ int main(int argc, char **argv)
 					Messenger::print("Full dump of system setup across all processes enabled.\n");
 					dumpData = true;
 					break;
+				case ('i'):
+					Messenger::print("Restart file (if it exists) will be ignored.\n");
+					ignoreRestart = true;
+					break;
 				case ('m'):
 					Messenger::setMasterOnly(true);
 					break;

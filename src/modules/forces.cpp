@@ -271,7 +271,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 						vecji = box->minimumVector(i, j);
 						magjisq = vecji.magnitudeSq();
 						if (magjisq > cutoffSq) continue;
-						r = DUQMath::squareRoot(magjisq);
+						r = sqrt(magjisq);
 						vecji /= r;
 
 						if (testAnalytic) vecji *= potentialMap.analyticForce(molN->atom(ii), molN->atom(jj), r);
@@ -303,7 +303,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 							vecji = box->minimumVector(i, j);
 							magjisq = vecji.magnitudeSq();
 							if (magjisq > cutoffSq) continue;
-							r = DUQMath::squareRoot(magjisq);
+							r = sqrt(magjisq);
 							vecji /= r;
 
 							if (testAnalytic) vecji *= potentialMap.analyticForce(i, j, r);

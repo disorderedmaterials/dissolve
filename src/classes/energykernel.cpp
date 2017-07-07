@@ -237,7 +237,7 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 				// Calculate rSquared distance betwenn atoms, and check it against the stored cutoff distance
 				rSq = box_->minimumDistanceSquared(rI, jj->r());
 				if (rSq > cutoffDistanceSquared_) continue;
-				r = DUQMath::squareRoot(rSq);
+				r = sqrt(rSq);
 
 				// Check for atoms in the same species
 				if (molI != jj->molecule()) totalEnergy += potentialMap_.energy(ii, jj, r);
@@ -270,7 +270,7 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 				// Calculate rSquared distance betwenn atoms, and check it against the stored cutoff distance
 				rSq = (rI - jj->r()).magnitudeSq();
 				if (rSq > cutoffDistanceSquared_) continue;
-				r = DUQMath::squareRoot(rSq);
+				r = sqrt(rSq);
 
 				// Check for atoms in the same molecule
 				if (molI != jj->molecule()) totalEnergy += potentialMap_.energy(ii, jj, r);
@@ -330,7 +330,7 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::Lo
 			// Calculate rSquared distance betwenn atoms, and check it against the stored cutoff distance
 			rSq = (ii->r() - rJ).magnitudeSq();
 			if (rSq > cutoffDistanceSquared_) continue;
-			r = DUQMath::squareRoot(rSq);
+			r = sqrt(rSq);
 
 			// Check for atoms in the same species
 			if (ii->molecule() != molJ) totalEnergy += potentialMap_.energy(jj, ii, r);
@@ -362,7 +362,7 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::Lo
 			// Calculate rSquared distance betwenn atoms, and check it against the stored cutoff distance
 			rSq = box_->minimumDistanceSquared(ii->r(), rJ);
 			if (rSq > cutoffDistanceSquared_) continue;
-			r = DUQMath::squareRoot(rSq);
+			r = sqrt(rSq);
 
 			// Check for atoms in the same species
 			if (ii->molecule() != molJ) totalEnergy += potentialMap_.energy(jj, ii, r);
@@ -427,7 +427,7 @@ double EnergyKernel::energy(const Atom* i, OrderedPointerList<Atom>& neighbours,
 			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
 			rSq = box_->minimumDistanceSquared(rI, jj->r());
 			if (rSq > cutoffDistanceSquared_) continue;
-			r = DUQMath::squareRoot(rSq);
+			r = sqrt(rSq);
 
 			// Check for atoms in the same species
 			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(i, jj, r);
@@ -446,7 +446,7 @@ double EnergyKernel::energy(const Atom* i, OrderedPointerList<Atom>& neighbours,
 			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
 			rSq = box_->minimumDistanceSquared(rI, jj->r());
 			if (rSq > cutoffDistanceSquared_) continue;
-			r = DUQMath::squareRoot(rSq);
+			r = sqrt(rSq);
 
 			// Check for atoms in the same species
 			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(i, jj, r);
@@ -464,7 +464,7 @@ double EnergyKernel::energy(const Atom* i, OrderedPointerList<Atom>& neighbours,
 			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
 			rSq = box_->minimumDistanceSquared(rI, jj->r());
 			if (rSq > cutoffDistanceSquared_) continue;
-			r = DUQMath::squareRoot(rSq);
+			r = sqrt(rSq);
 
 			// Check for atoms in the same species
 			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(i, jj, r);
@@ -487,7 +487,7 @@ double EnergyKernel::energy(const Atom* i, OrderedPointerList<Atom>& neighbours,
 			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
 			rSq = (rI - jj->r()).magnitudeSq();
 			if (rSq > cutoffDistanceSquared_) continue;
-			r = DUQMath::squareRoot(rSq);
+			r = sqrt(rSq);
 
 			// Check for atoms in the same species
 			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(i, jj, r);
@@ -505,7 +505,7 @@ double EnergyKernel::energy(const Atom* i, OrderedPointerList<Atom>& neighbours,
 			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
 			rSq = (rI - jj->r()).magnitudeSq();
 			if (rSq > cutoffDistanceSquared_) continue;
-			r = DUQMath::squareRoot(rSq);
+			r = sqrt(rSq);
 
 			// Check for atoms in the same species
 			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(i, jj, r);
@@ -522,7 +522,7 @@ double EnergyKernel::energy(const Atom* i, OrderedPointerList<Atom>& neighbours,
 			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
 			rSq = (rI - jj->r()).magnitudeSq();
 			if (rSq > cutoffDistanceSquared_) continue;
-			r = DUQMath::squareRoot(rSq);
+			r = sqrt(rSq);
 
 			// Check for atoms in the same species
 			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(i, jj, r);
@@ -586,7 +586,7 @@ double EnergyKernel::energy(const Grain* grain, OrderedPointerList<Atom>& neighb
 				// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
 				rSq = box_->minimumDistanceSquared(rI, jj->r());
 				if (rSq > cutoffDistanceSquared_) continue;
-				r = DUQMath::squareRoot(rSq);
+				r = sqrt(rSq);
 
 				// Check for atoms in the same species
 				if (grainMol != jj->molecule()) totalEnergy += potentialMap_.energy(ii, jj, r);
@@ -604,7 +604,7 @@ double EnergyKernel::energy(const Grain* grain, OrderedPointerList<Atom>& neighb
 				// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
 				rSq = box_->minimumDistanceSquared(rI, jj->r());
 				if (rSq > cutoffDistanceSquared_) continue;
-				r = DUQMath::squareRoot(rSq);
+				r = sqrt(rSq);
 
 				// Check for atoms in the same species
 				if (grainMol != jj->molecule()) totalEnergy += potentialMap_.energy(ii, jj, r);
@@ -634,7 +634,7 @@ double EnergyKernel::energy(const Grain* grain, OrderedPointerList<Atom>& neighb
 				// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
 				rSq = (rI - jj->r()).magnitudeSq();
 				if (rSq > cutoffDistanceSquared_) continue;
-				r = DUQMath::squareRoot(rSq);
+				r = sqrt(rSq);
 
 				// Check for atoms in the same species
 				if (grainMol != jj->molecule()) totalEnergy += potentialMap_.energy(ii, jj, r);
@@ -652,7 +652,7 @@ double EnergyKernel::energy(const Grain* grain, OrderedPointerList<Atom>& neighb
 				// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
 				rSq = (rI - jj->r()).magnitudeSq();
 				if (rSq > cutoffDistanceSquared_) continue;
-				r = DUQMath::squareRoot(rSq);
+				r = sqrt(rSq);
 
 				// Check for atoms in the same species
 				if (grainMol != jj->molecule()) totalEnergy += potentialMap_.energy(ii, jj, r);

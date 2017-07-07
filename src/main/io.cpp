@@ -33,24 +33,24 @@
 bool DUQ::loadDataFiles()
 {
 	// Get basic path for data files
-	CharString filename, dataPath = getenv("DUQ_DATA");
+	CharString filename, dataPath = getenv("DUQDATA");
 	if (dataPath.isEmpty())
 	{
-		Messenger::print("Environment variable DUQ_DATA not set - using './data' as the default.\n");
+		Messenger::print("Environment variable DUQDATA not set - using './data' as the default.\n");
 		dataPath = "./data";
 	}
 	else Messenger::print("Looking for datafiles in '%s'...\n", dataPath.get());
 	
 	// Load elements data
-	filename.sprintf("%s/elements.dat", dataPath.get());
+	filename.sprintf("%s/elements.txt", dataPath.get());
 	if (!periodicTable.loadElements(filename)) return false;
 	
 	// Load isotope data
-	filename.sprintf("%s/sears91_gudrun.dat", dataPath.get());
+	filename.sprintf("%s/sears91.txt", dataPath.get());
 	if (!periodicTable.loadIsotopes(filename)) return false;
 	
 	// Load parameter data
-	filename.sprintf("%s/atomtypes.dat", dataPath.get());
+	filename.sprintf("%s/atomtypes.txt", dataPath.get());
 	if (!periodicTable.loadParameters(filename)) return false;
 	
 	return true;

@@ -42,8 +42,6 @@ class DUQMath
 	static int power(int i, int p);
 	// Sign function
 	static int sgn(int x);
-	// Sqrt
-	static double squareRoot(double x);
 };
 
 #endif
