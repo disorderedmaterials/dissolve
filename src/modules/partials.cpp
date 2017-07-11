@@ -25,6 +25,7 @@
 #include "classes/grain.h"
 #include "classes/species.h"
 #include "classes/weightsmatrix.h"
+#include "classes/partialqset.h"
 #include "base/sysfunc.h"
 #include "base/processpool.h"
 #include "base/timer.h"
@@ -58,6 +59,8 @@ PartialsModule::PartialsModule() : Module()
 	options_.add("Save", bool(false), "Whether to save partials to disk after calculation", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
 	options_.add("Smoothing", 0, "Specifies the degree of smoothing 'n' to apply to calculated RDFs, where 2n+1 controls the length in the applied Spline smooth", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
 	options_.add("StructureFactor", bool(false), "Determined whether S(Q) are calculated from the g(r)", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("Test", bool(false), "Test calculated total G(r) and/or F(Q) against supplied reference data", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("TestThreshold", 0.1, "Test threshold (RMSE) above which test fails", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
 	options_.add("Weights", "None", "Weighting scheme to use for calculated partials (None,Neutron)", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
 }
 
@@ -181,6 +184,34 @@ int PartialsModule::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targ
 		CharString varName("Isotopologue/%s/%s", sp->name(), tope->name());
 		GenericListHelper<double>::add(targetList, varName, uniqueName()) = parser.argd(4);
 	}
+	else if (DUQSys::sameString(parser.argc(0), "TestReferenceSQ"))
+	{
+		Messenger::print("Reading test reference structure factor data...\n");
+
+		// Realise an XYData to store the reference data in
+		XYData& data = GenericListHelper<XYData>::realise(targetList, CharString("ReferenceSQ-%s", parser.argc(2)), uniqueName(), GenericItem::NoOutputFlag);
+
+		// Fourth and fifth arguments are x and y columns respectively (defaulting to 0,1 if not given)
+		int xcol = parser.hasArg(3) ? parser.argi(3) : 0;
+		int ycol = parser.hasArg(4) ? parser.argi(4) : 1;
+
+		LineParser fileParser(&duq->worldPool());
+		if ((!fileParser.openInput(parser.argc(1))) || (!data.load(fileParser, xcol, ycol))) return false;
+	}
+	else if (DUQSys::sameString(parser.argc(0), "TestReferenceGR"))
+	{
+		Messenger::print("Reading test reference radial distribution function data...\n");
+
+		// Realise an XYData to store the reference data in
+		XYData& data = GenericListHelper<XYData>::realise(targetList, CharString("ReferenceGR-%s", parser.argc(2)), uniqueName(), GenericItem::NoOutputFlag);
+
+		// Fourth and fifth arguments are x and y columns respectively (defaulting to 0,1 if not given)
+		int xcol = parser.hasArg(3) ? parser.argi(3) : 0;
+		int ycol = parser.hasArg(4) ? parser.argi(4) : 1;
+
+		LineParser fileParser(&duq->worldPool());
+		if ((!fileParser.openInput(parser.argc(1))) || (!data.load(fileParser, xcol, ycol))) return false;
+	}
 	else return -1;
 
 	return true;
@@ -216,7 +247,7 @@ bool PartialsModule::preProcess(DUQ& duq, ProcessPool& procPool)
 bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 {
 	/*
-	 * Calculate weighted or unweighted partials and total RDFs  or S(Q) for the specified Sample or Configurations
+	 * Calculate weighted or unweighted partials and total g(r)/G(r) or S(Q)/F(Q) for the specified Sample or Configurations
 	 * 
 	 * This is a serial routine, with each process constructing its own copy of the data.
 	 * Partial calculation routines called by this routine are parallel.
@@ -238,6 +269,8 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 	const bool saveData = GenericListHelper<bool>::retrieve(moduleData, "Save", uniqueName(), options_.valueAsBool("Save"));
 	const int smoothing = GenericListHelper<int>::retrieve(moduleData, "Smoothing", uniqueName(), options_.valueAsInt("Smoothing"));
 	const bool sqCalculation = GenericListHelper<bool>::retrieve(moduleData, "StructureFactor", uniqueName(), options_.valueAsBool("StructureFactor"));
+	const bool testMode = GenericListHelper<bool>::retrieve(moduleData, "Test", uniqueName(), options_.valueAsBool("Test"));
+	const double testThreshold = GenericListHelper<bool>::retrieve(moduleData, "TestThreshold", uniqueName(), options_.valueAsBool("TestThreshold"));
 	CharString weightsString = GenericListHelper<CharString>::retrieve(moduleData, "Weights", uniqueName_, options_.valueAsString("Weights"));
 	PartialsModule::WeightingType weightsType = PartialsModule::NoWeighting;
 	if (DUQSys::sameString(weightsString, "Neutron")) weightsType = PartialsModule::NeutronWeighting;
@@ -270,7 +303,16 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 	{
 		// Calculate unweighted partials for this Configuration
 		calculateUnweighted(cfg, procPool, smoothing);
-		
+
+		// Calculate S(Q) if requested
+		if (sqCalculation)
+		{
+			// Realise a PartialSQ set, and grab the existing unweighted PartialRSet
+			PartialQSet& unweightedsq = GenericListHelper<PartialQSet>::realise(cfg->moduleData(), "UnweightedSQ", uniqueName_, GenericItem::NoOutputFlag);
+			PartialRSet& unweightedgr = GenericListHelper<PartialRSet>::realise(cfg->moduleData(), "UnweightedGR", uniqueName_, GenericItem::NoOutputFlag);
+			generateSQ(procPool, unweightedgr, unweightedsq, "unweighted", "sq", qMax, qDelta, cfg->atomicDensity(), duq.windowFunction(), qDepBroadening, qIndepBroadening, braggOn, braggQDepBroadening, braggQIndepBroadening);
+		}
+
 		// Calculate weighted partials here if requested
 		if (weightsType != PartialsModule::NoWeighting)
 		{
@@ -307,8 +349,13 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 			GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "PartialWeights", uniqueName_, GenericItem::NoOutputFlag) = weightsMatrix.scatteringMatrix();
 
 			// Calculate weighted partials
-			PartialRSet& partialgr = GenericListHelper<PartialRSet>::realise(cfg->moduleData(), "UnweightedGR", uniqueName_, GenericItem::NoOutputFlag);
+			PartialRSet& partialgr = GenericListHelper<PartialRSet>::realise(cfg->moduleData(), "WeightedGR", uniqueName_, GenericItem::NoOutputFlag);
 			calculateWeighted(cfg, partialgr, weightsMatrix);
+		}
+
+		// Test mode
+		if (testMode)
+		{
 		}
 	}
 
@@ -329,7 +376,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		atomTypes.finalise();
 		atomTypes.print();
 
-		// Setup partial set for the Sample, using the AtomTypeList we have just constructed.
+		// Setup partial set using the AtomTypeList we have just constructed.
 		// We will use RDF range information from the first Configuration in the list
 		Configuration* refConfig = targetConfigurations_.firstItem();
 		PartialRSet& unweightedPartials = GenericListHelper<PartialRSet>::realise(duq.processingModuleData(), "UnweightedGR", uniqueName_, GenericItem::NoOutputFlag);
@@ -408,6 +455,28 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 						return false;
 					}
 				}
+
+				// What about structure factors?
+				if (sqCalculation)
+				{
+					// Unweighted partials
+					PartialQSet& unweightedSQ = GenericListHelper<PartialQSet>::retrieve(moduleData, "UnweightedSQ", uniqueName_);
+					if (unweightedSQ.save()) procPool.proceed();
+					else
+					{
+						procPool.stop();
+						return false;
+					}
+
+					// Weighted partials
+					PartialQSet& weightedSQ = GenericListHelper<PartialQSet>::retrieve(moduleData, "WeightedSQ", uniqueName_);
+					if (weightedSQ.save()) procPool.proceed();
+					else
+					{
+						procPool.stop();
+						return false;
+					}
+				}
 			}
 			else if (!procPool.decision()) return false;
 		}
@@ -434,7 +503,7 @@ bool PartialsModule::calculateSimple(Configuration* cfg, PartialRSet& partialSet
 
 	// Construct local arrays of atom type positions
 	Messenger::printVerbose("Constructing local partial working arrays for %i types.\n", nTypes);
-	nTypes = partialSet.nTypes();
+	nTypes = partialSet.nAtomTypes();
 	const Box* box = cfg->box();
 	Vec3<double>* r[nTypes];
 	int maxr[nTypes], nr[nTypes];
@@ -484,7 +553,6 @@ bool PartialsModule::calculateSimple(Configuration* cfg, PartialRSet& partialSet
 			for (j = i+1; j < maxr[typeI]; ++j) bins[j] = box->minimumDistance(centre, ri[j]) * rbin;
 			for (j = i+1; j < maxr[typeI]; ++j) if (bins[j] < nPoints) ++histogram[bins[j]];
 		}
-// 		printf("For types %i-%i, count = %i\n", typeI, typeI, count);
 	}
 
 	Messenger::printVerbose("Cross terms..\n");
@@ -510,7 +578,6 @@ bool PartialsModule::calculateSimple(Configuration* cfg, PartialRSet& partialSet
 				for (j = 0; j < maxr[typeJ]; ++j) bins[j] = box->minimumDistance(centre, rj[j]) * rbin;
 				for (j = 0; j < maxr[typeJ]; ++j) if (bins[j] < nPoints) ++histogram[bins[j]];
 			}
-// 			printf("For types %i-%i count = %i, time = %s\n", typeI, typeJ, count, timer.totalTimeString());
 		}
 	}
 
@@ -614,9 +681,9 @@ bool PartialsModule::calculateUnweighted(Configuration* cfg, ProcessPool& procPo
 	int typeI, typeJ;
 	procPool.resetAccumulatedTime();
 	timer.start();
-	for (typeI=0; typeI<partialgr.nTypes(); ++typeI)
+	for (typeI=0; typeI<partialgr.nAtomTypes(); ++typeI)
 	{
-		for (typeJ=typeI; typeJ<partialgr.nTypes(); ++typeJ)
+		for (typeJ=typeI; typeJ<partialgr.nAtomTypes(); ++typeJ)
 		{
 			// Sum histogram data from all processes
 			if (!partialgr.fullHistogram(typeI, typeJ).allSum(procPool)) return false;
@@ -635,9 +702,9 @@ bool PartialsModule::calculateUnweighted(Configuration* cfg, ProcessPool& procPo
 	// Smooth partials if requested
 	if (smoothing > 0)
 	{
-		for (typeI=0; typeI<partialgr.nTypes(); ++typeI)
+		for (typeI=0; typeI<partialgr.nAtomTypes(); ++typeI)
 		{
-			for (typeJ=typeI; typeJ<partialgr.nTypes(); ++typeJ)
+			for (typeJ=typeI; typeJ<partialgr.nAtomTypes(); ++typeJ)
 			{
 				partialgr.partial(typeI,typeJ).smooth(smoothing*2+1);
 				partialgr.boundPartial(typeI,typeJ).smooth(smoothing*2+1);
@@ -670,9 +737,9 @@ bool PartialsModule::calculateWeighted(Configuration* cfg, PartialRSet& unweight
 	if (wasCreated) partialgr.setup(cfg, cfg->niceName(), "weighted", "rdf");
 
 	int typeI, typeJ;
-	for (typeI=0; typeI<partialgr.nTypes(); ++typeI)
+	for (typeI=0; typeI<partialgr.nAtomTypes(); ++typeI)
 	{
-		for (typeJ=typeI; typeJ<partialgr.nTypes(); ++typeJ)
+		for (typeJ=typeI; typeJ<partialgr.nAtomTypes(); ++typeJ)
 		{
 			// Weight S(Q), Bragg S(Q) and full partial S(Q)
 			double factor = weightsMatrix.scatteringWeight(typeI, typeJ);
@@ -702,62 +769,59 @@ bool PartialsModule::calculateWeighted(Configuration* cfg, PartialRSet& unweight
 
 
 // Generate S(Q) from supplied g(r)
-bool PartialsModule::generateSQ(PartialRSet& partialgr, PartialQSet& partialsq, double qMax, double qDelta)
+bool PartialsModule::generateSQ(ProcessPool& procPool, PartialRSet& partialgr, PartialQSet& partialsq, const char* tag, const char* suffix, double qMax, double qDelta, double rho, XYData::WindowFunction wf, double qDepBroadening, double qIndepBroadening, bool includeBragg, double qDepBraggBroadening, double qIndepBraggBroad)
 {
+	// Initialise / clear our S(Q) set
+	partialsq.setup(partialgr.atomTypes(), uniqueName(), tag, suffix);
+
+	// Copy partial g(r) into our new S(Q) matrices
+	Messenger::printVerbose("  --> Copying partial g(r) into S(Q) matrices...\n");
+	int nTypes = partialgr.nAtomTypes();
+	for (int n=0; n<nTypes; ++n)
+	{
+		for (int m=n; m<nTypes; ++m)
+		{
+			// Copy g(r) data into our arrays
+			// Subtract 1.0 from the full and unbound partials so as to give (g(r)-1)
+			// Don't subtract 1.0 from the bound partials, since they do not tend to 1.0 at longer r??
+			partialsq.partial(n,m).copyData(partialgr.partial(n,m));
+			partialsq.partial(n,m).arrayY() -= 1.0;
+			partialsq.boundPartial(n,m).copyData(partialgr.boundPartial(n,m));
+// 			partialsq.boundPartial(n,m).arrayY() -= 1.0;
+			partialsq.unboundPartial(n,m).copyData(partialgr.unboundPartial(n,m));
+			partialsq.unboundPartial(n,m).arrayY() -= 1.0;
+		}
+	}
+
+	// Perform FT of partial g(r) into S(Q)
+	// TODO Parallelise this
+	procPool.resetAccumulatedTime();
+	Timer timer;
+	timer.start();
+	for (int n=0; n<nTypes; ++n)
+	{
+		for (int m=n; m<nTypes; ++m)
+		{
+			if (!partialsq.partial(n,m).transformBroadenedRDF(rho, qDelta, qMax, qDepBroadening, qIndepBroadening, wf)) return false;
+			if (!partialsq.boundPartial(n,m).transformBroadenedRDF(rho, qDelta, qMax, qDepBroadening, qIndepBroadening, wf)) return false;
+			if (!partialsq.unboundPartial(n,m).transformBroadenedRDF(rho, qDelta, qMax, qDepBroadening, qIndepBroadening, wf)) return false;
+		}
+	}
+
+	// Sum into total
+	partialsq.formTotal();
+
+	timer.stop();
+	Messenger::print("Partials: Finished Fourier transform and summation of partial g(r) into partial S(Q) (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
+
 	/*
-	 * Copy g(r) data into our S(Q) arrays
+	 * S(Q) are now up-to-date
 	 */
 
-	// Copy partial data into our own PartialSet
-// 	int typeI, typeJ;
-// 	procPool.resetAccumulatedTime();
-// 	for (typeI=0; typeI<partialSQ.nTypes(); ++typeI)
-// 	{
-// 		for (typeJ=typeI; typeJ<partialSQ.nTypes(); ++typeJ)
-// 		{
-// 			// Subtract 1.0 from the full and unbound partials so as to give (g(r)-1)
-// 			// Don't subtract 1.0 from the bound partials, since they do not tend to 1.0 at longer r??
-// 			partialSQ.partial(typeI,typeJ).copyData(partialRDFs.partial(typeI,typeJ));
-// 			partialSQ.partial(typeI,typeJ).arrayY() -= 1.0;
-// 			partialSQ.boundPartial(typeI,typeJ).copyData(partialRDFs.boundPartial(typeI,typeJ));
-// // 			partialSQ.boundPartial(typeI,typeJ).arrayY() -= 1.0;
-// 			partialSQ.unboundPartial(typeI,typeJ).copyData(partialRDFs.unboundPartial(typeI,typeJ));
-// 			partialSQ.unboundPartial(typeI,typeJ).arrayY() -= 1.0;
-// 		}
-// 	}
-// 
-// 	/*
-// 	 * Perform FT of partial g(r) into S(Q)
-// 	 */
-// 	// TODO Parallelise this
-// 	procPool.resetAccumulatedTime();
-// 	Timer timer;
-// 	timer.start();
-// 	double rho = cfg->atomicDensity();
-// 	for (typeI=0; typeI<partialSQ.nTypes(); ++typeI)
-// 	{
-// 		for (typeJ=typeI; typeJ<partialSQ.nTypes(); ++typeJ)
-// 		{
-// 			if (!partialSQ.partial(typeI,typeJ).transformBroadenedRDF(rho, qDelta, qMax, qDepBroadening, qIndepBroadening, windowFunction)) return false;
-// 			if (!partialSQ.boundPartial(typeI,typeJ).transformBroadenedRDF(rho, qDelta, qMax, qDepBroadening, qIndepBroadening, windowFunction)) return false;
-// 			if (!partialSQ.unboundPartial(typeI,typeJ).transformBroadenedRDF(rho, qDelta, qMax, qDepBroadening, qIndepBroadening, windowFunction)) return false;
-// 		}
-// 	}
-// 
-// 	// Sum into total
-// 	partialSQ.formTotal();
-// 
-// 	timer.stop();
-// 	Messenger::print("StructureFactor: Finished Fourier transform and summation of partial g(r) into partial S(Q) (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
-// 
-// 	/*
-// 	 * Partials are now up-to-date
-// 	 */
-// 
-// 	partialSQ.setIndex(cfg->coordinateIndex());
+	partialsq.setIndex(partialgr.index());
 
+	return true;
 }
-
 
 // 	// Calculate Bragg partials (if requested)
 // 	if (braggOn)

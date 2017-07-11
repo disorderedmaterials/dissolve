@@ -36,7 +36,7 @@ KeywordData ConfigurationBlockData[] = {
 	{ "EndConfiguration",		0,	"Signals the end of the Configuration block" },
 	{ "Ensemble",			1,	"Whether an ensemble file should be appended to" },
 	{ "EnsembleFrequency",		1,	"Frequency at which to append ensemble file" },
-	{ "InputCoordinates",		1,	"File which contains the starting coordinates, followed by optional coordinate format (otherwise xyz assumed)" },
+	{ "InputCoordinates",		2,	"Format and filename which contains the starting coordinates" },
 	{ "Module",			1,	"Starts the setup of a Module for this Configuration" },
 	{ "Multiplier",			1,	"Factor by which relative populations are multiplied when generating the Configuration data" },
 	{ "NonPeriodic",		0,	"States that the simulation should be treated as non-periodic" },

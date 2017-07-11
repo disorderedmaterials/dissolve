@@ -707,6 +707,35 @@ void XYData::rebin(double deltaX)
  * File I/O
  */
 
+// Load data from specified LineParser, using columns specified
+bool XYData::load(LineParser& parser, int xcol, int ycol)
+{
+	int success, nCols = -1;
+	clear();
+	while (!parser.eofOrBlank())
+	{
+		success = parser.getArgsDelim(LineParser::Defaults+LineParser::SkipBlanks+LineParser::StripComments);
+		if (success != 0)
+		{
+			parser.closeFiles();
+			Messenger::error("Error reading from '%s'.\n", parser.inputFilename());
+			return false;
+		}
+
+		if ((xcol >= parser.nArgs()) || (ycol >= parser.nArgs()))
+		{
+			Messenger::error("Error reading from '%s', as one or both columns specified (%i and %i) are not present.\n", parser.inputFilename(), xcol, ycol);
+			return false;
+		}
+
+		addPoint(parser.argd(0), parser.argd(1));
+	}
+	
+	Messenger::print("Loaded %i points from '%s'.\n", nPoints(), parser.inputFilename());
+	
+	return true;
+}
+
 // Load data from specified file
 bool XYData::load(const char* filename)
 {
@@ -809,28 +838,3 @@ bool XYData::broadcast(ProcessPool& procPool, int rootRank)
 #endif
 	return true;
 }
-
-// Load data from specified file (master) and distribute
-bool XYData::load(const char* filename, ProcessPool& procPool)
-{
-	// Master will load the data
-	if (procPool.isMaster())
-	{
-		if (!load(filename))
-		{
-			procPool.stop();
-			return false;
-		}
-		procPool.proceed();
-		if (!broadcast(procPool)) return false;
-	}
-	else
-	{
-		// Slaves first wait to see if the master loaded the file successfully
-		if (!procPool.decision()) return false;
-		if (!broadcast(procPool)) return false;
-	}
-
-	return true;
-}
-	

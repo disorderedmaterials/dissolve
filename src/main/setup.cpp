@@ -74,13 +74,20 @@ XYData::WindowFunction DUQ::windowFunction()
 // Setup all simulation data, checking it as we go
 bool DUQ::setupSimulation()
 {
-	/* Check each defined Species */
+	/*
+	 * Check Species
+	 */
+
 	Messenger::print("*** Checking Species definitions...\n");
 	for (Species* sp = species_.first(); sp != NULL; sp = sp->next)
 	{
 		Messenger::print("--- Species '%s'...\n", sp->name());
 		if (!sp->checkSetup(atomTypes_)) return false;
 	}
+
+	/*
+	 * Setup Configurations
+	 */
 
 	Messenger::print("\n");
 	Messenger::print("*** Setting up Configurations...\n");
@@ -92,8 +99,11 @@ bool DUQ::setupSimulation()
 		if (!cfg->setup(worldPool_, atomTypes_, pairPotentialRange_, boxNormalisationPoints_)) return false;
 	}
 
-	/* Pair Potentials */
-	/* We expect a PairPotential to have been defined for every combination of AtomType used in the system */
+	/*
+	 * Pair Potentials
+	 * We expect a PairPotential to have been defined for every combination of AtomType used in the system
+	 */
+
 	Messenger::print("\n");
 	Messenger::print("*** Setting up PairPotentials...\n");
 	int nMissingPots = 0;
@@ -118,7 +128,10 @@ bool DUQ::setupSimulation()
 	}
 	if (nMissingPots > 0) return false;
 
-	/* Finalise AtomTypes */
+	/*
+	 * Finalise AtomTypes
+	 */
+
 	Messenger::print("\n");
 	Messenger::print("*** Finalising AtomTypes");
 
@@ -135,7 +148,9 @@ bool DUQ::setupSimulation()
 	Messenger::print("--> Creating PairPotential matrix (%ix%i)...\n", atomTypes_.nItems(), atomTypes_.nItems());
 	if (!potentialMap_.initialise(atomTypes_, pairPotentials_, pairPotentialRange_)) return false;
 
-	/* Construct Pre/Post-Process Lists */
+	/*
+	 * Construct Pre/Post-Process Lists
+	 */
 
 	Messenger::print("*** Creating Pre/Post-Processing task list...\n");
 	// Loop over configurations
@@ -168,6 +183,34 @@ bool DUQ::setupSimulation()
 				}
 				else postProcessingTasks_.add(module);
 			}
+		}
+	}
+	// Loop over processing modules and add pre/post tasks
+	RefListIterator<Module,bool> processingIterator(processingModules_.modules());
+	while (Module* module = processingIterator.iterate())
+	{
+		// Pre-Processing
+		if (module->hasPreProcessing())
+		{
+			// If the Module's instance type is UniqueInstance, check that it is not already in the list
+			if (module->instanceType() == Module::UniqueInstance)
+			{
+				Module* oldModule = findPreProcessingTask(module->name());
+				if (!oldModule) preProcessingTasks_.add(module);
+			}
+			else preProcessingTasks_.add(module);
+		}
+
+		// Post-Processing
+		if (module->hasPostProcessing())
+		{
+			// If the Module's instance type is UniqueInstance, check that it is not already in the list
+			if (module->instanceType() == Module::UniqueInstance)
+			{
+				Module* oldModule = findPostProcessingTask(module->name());
+				if (!oldModule) postProcessingTasks_.add(module);
+			}
+			else postProcessingTasks_.add(module);
 		}
 	}
 

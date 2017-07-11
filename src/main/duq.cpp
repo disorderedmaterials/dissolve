@@ -33,7 +33,7 @@ DUQ::DUQ()
 	pairPotentialsIncludeCoulomb_ = true;
 
 	// Setup
-	boxNormalisationPoints_ = 50000000;
+	boxNormalisationPoints_ = 500000000;
 	rmseDeltaQ_ = 0.05;
 	seed_ = -1;
 	maxIterations_ = -1;

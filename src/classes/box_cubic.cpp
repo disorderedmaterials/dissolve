@@ -196,7 +196,7 @@ double CubicBox::minimumDistance(const Vec3<double>& i, const Vec3<double>& j) c
 	mimVec.x -= int(mimVec.x*ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5))*a_;
 	mimVec.y -= int(mimVec.y*ra_ + (mimVec.y < 0.0 ? -0.5 : 0.5))*a_;
 	mimVec.z -= int(mimVec.z*ra_ + (mimVec.z < 0.0 ? -0.5 : 0.5))*a_;
-
+	
 	return mimVec.magnitude();
 }
 

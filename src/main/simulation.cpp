@@ -91,7 +91,7 @@ bool DUQ::go(bool singleIteration)
 
 		Messenger::print("--> Main Processing\n");
 		RefListIterator<Module,bool> processingIterator(processingModules_.modules());
-		while (Module* module = preIterator.iterate()) Messenger::print("      --> %20s  (%s)\n", module->name(), module->frequencyDetails(iteration_));
+		while (Module* module = processingIterator.iterate()) Messenger::print("      --> %20s  (%s)\n", module->name(), module->frequencyDetails(iteration_));
 		Messenger::print("\n");
 
 		Messenger::print("--> Post-Processing\n");

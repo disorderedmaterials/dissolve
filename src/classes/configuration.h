@@ -28,6 +28,7 @@
 #include "classes/kvector.h"
 #include "classes/braggpeak.h"
 #include "modules/modulelist.h"
+#include "base/xydata.h"
 #include "base/processpool.h"
 #include "templates/genericlist.h"
 #include "templates/vector3.h"

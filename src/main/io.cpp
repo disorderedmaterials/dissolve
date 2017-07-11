@@ -143,7 +143,7 @@ bool DUQ::loadInput(const char* filename)
 				}
 				if (error) break;
 
-				// Set unique name, if it was provided - need to check if it has bbeen used elsewhere (in any Module or instance of it)
+				// Set unique name, if it was provided - need to check if it has been used elsewhere (in any Module or instance of it)
 				if (parser.hasArg(2))
 				{
 					niceName = DUQSys::niceName(parser.argc(2));

@@ -165,6 +165,8 @@ class XYData : public ListItem<XYData>
 	public:
 	// Load data from specified file
 	bool load(const char* filename);
+	// Load data from specified LineParser, using columns specified
+	bool load(LineParser& parser, int xcol = 0, int ycol = 1);
 	// Save data to specified file
 	bool save(const char* filename) const;
 	// Save data and interpolation to specified file
@@ -259,8 +261,6 @@ class XYData : public ListItem<XYData>
 	public:
 	// Broadcast data
 	bool broadcast(ProcessPool& procPool, int rootRank = 0);
-	// Load data from specified file (master) and distribute
-	bool load(const char* filename, ProcessPool& procPool);
 };
 
 #endif

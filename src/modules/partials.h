@@ -121,7 +121,7 @@ class PartialsModule : public Module
 	// Calculate weighted partials (from existing partial) for the specified Configuration
 	bool calculateWeighted(Configuration* cfg, PartialRSet& unweightedPartials, WeightsMatrix& weightsMatrix);
 	// Generate S(Q) from supplied g(r)
-	bool generateSQ(PartialRSet& partialgr, PartialQSet& partialsq, double qMax, double qDelta);
+	bool generateSQ(ProcessPool& procPool, PartialRSet& partialgr, PartialQSet& partialsq, const char* tag, const char* suffix, double qMax, double qDelta, double rho, XYData::WindowFunction wf, double qDepBroadening, double qIndepBroadening, bool includeBragg, double qDepBraggBroadening, double qIndepBraggBroad);
 
 
 	/*

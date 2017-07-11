@@ -25,6 +25,7 @@
 #include "classes/species.h"
 #include "base/processpool.h"
 #include "base/sysfunc.h"
+#include "modules/export.h"
 
 // Constructor
 Configuration::Configuration() : ListItem<Configuration>()
@@ -382,7 +383,7 @@ bool Configuration::setup(ProcessPool& procPool, const List<AtomType>& atomTypes
 	}
 
 	// Interpolate the Box normalisation array
-	boxNormalisation_.interpolate(XYData::ConstrainedSplineInterpolation);
+	boxNormalisation_.interpolate(XYData::LinearInterpolation);
 	
 	return true;
 }

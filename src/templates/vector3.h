@@ -89,7 +89,7 @@ template <class T> class Vec3
 
 
 	/*
-	// Methods
+	 * Methods
 	 */
 	public:
 	// Return vector of absolute elements

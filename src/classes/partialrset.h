@@ -24,6 +24,7 @@
 
 #include "classes/histogram.h"
 #include "classes/atomtypelist.h"
+#include "base/xydata.h"
 #include "templates/list.h"
 #include "templates/array2d.h"
 
@@ -73,7 +74,9 @@ class PartialRSet : public ListItem<PartialRSet>
 	// Reset partial arrays
 	void reset();
 	// Return number of AtomTypes used to generate matrices
-	int nTypes();
+	int nAtomTypes() const;
+	// Return atom types array
+	AtomTypeList atomTypes() const;
 	// Return index of partials
 	int index() const;
 	// Set new index

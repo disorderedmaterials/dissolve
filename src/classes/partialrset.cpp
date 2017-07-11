@@ -60,7 +60,7 @@ bool PartialRSet::setup(const AtomTypeList& atomTypes, double rdfRange, double b
 	atomTypes_ = atomTypes;
 	int nTypes = atomTypes_.nItems();
 
-	Messenger::print("--> Creating matrices (%ix%i)...\n", nTypes, nTypes);
+	Messenger::printVerbose("  --> Creating matrices (%ix%i)...\n", nTypes, nTypes);
 
 	fullHistograms_.initialise(nTypes, nTypes, true);
 	boundHistograms_.initialise(nTypes, nTypes, true);
@@ -72,7 +72,7 @@ bool PartialRSet::setup(const AtomTypeList& atomTypes, double rdfRange, double b
 
 	CharString title;
 	AtomTypeData* at1 = atomTypes_.first(), *at2;
-	Messenger::print("--> Creating lists of partials and linking into matrices...\n");
+	Messenger::printVerbose("  --> Creating lists of partials and linking into matrices...\n");
 	for (n=0; n<nTypes; ++n, at1 = at1->next)
 	{
 		at2 = at1;
@@ -126,9 +126,15 @@ void PartialRSet::reset()
 }
 
 // Return number of AtomTypes used to generate matrices
-int PartialRSet::nTypes()
+int PartialRSet::nAtomTypes() const
 {
 	return atomTypes_.nItems();
+}
+
+// Return atom types array
+AtomTypeList PartialRSet::atomTypes() const
+{
+	return atomTypes_;
 }
 
 // Return index of partials

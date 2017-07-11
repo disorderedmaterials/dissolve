@@ -245,7 +245,7 @@ bool ImportModule::readXYZCoordinates(LineParser& parser, Array< Vec3<double> >&
 	for (int n=0; n<nAtoms; ++n)
 	{
 		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-		r.add(parser.arg3d(0));
+		r.add(parser.arg3d(1));
 	}
 
 	return true;

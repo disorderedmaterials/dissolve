@@ -28,6 +28,7 @@
 #include "templates/array2d.h"
 
 // Forward Declarations
+class PartialRSet;
 class Configuration;
 
 // Set of Partials in Q (S(Q))
@@ -54,14 +55,14 @@ class PartialQSet : public ListItem<PartialQSet>
 	Array2D<XYData> unboundPartials_;
 	// Bound matrix, containing atom-atom partial of pairs joined by bonds or angles
 	Array2D<XYData> boundPartials_;
-	// Bragg S(Q) matrix, derived from summation of HKL terms
-// 	Array2D<XYData> braggSQMatrix_;
+	// Bragg S(Q) matrix, derived from summation of HKL terms (if requested)
+	Array2D<XYData> braggPartials_;
 	// Total function
 	XYData total_;
 
 	public:
-	// Setup array storage based on supplied Configuration
-	bool setup(Configuration* cfg, const char* tag, const char* suffix);
+	// Setup arrays
+	bool setup(const AtomTypeList& types, const char* prefix, const char* tag, const char* suffix);
 	// Reset partial arrays
 	void reset();
 	// Return number of AtomTypes used to generate matrices
@@ -76,6 +77,8 @@ class PartialQSet : public ListItem<PartialQSet>
 	XYData& unboundPartial(int i, int j);
 	// Return atom-atom partial for pairs joined by bonds or angles
 	XYData& boundPartial(int i, int j);
+	// Return atom-atom Bragg partial
+	XYData& braggPartial(int i, int j);
 	// Sum partials into total
 	void formTotal();
 	// Return total function

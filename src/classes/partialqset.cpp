@@ -21,6 +21,7 @@
 
 #include "classes/partialqset.h"
 #include "classes/configuration.h"
+#include "classes/partialrset.h"
 
 // Constructor
 PartialQSet::PartialQSet() : ListItem<PartialQSet>()
@@ -34,42 +35,41 @@ PartialQSet::~PartialQSet()
 }
 
 /*
- * Set of Partials
+ * Partials Data
  */
 
-// Setup array storage based on supplied Configuration
-bool PartialQSet::setup(Configuration* cfg, const char* tag, const char* suffix)
+// Setup arrays
+bool PartialQSet::setup(const AtomTypeList& types, const char* prefix, const char* tag, const char* suffix)
 {
-	// Construct a matrix based on the usedAtomTypes_ list of the Configuration, since this reflects all our possible partials
-	int n, m;
-	atomTypes_ = cfg->usedAtomTypesList();
+	// Copy type array
+	atomTypes_ = types;
 	int nTypes = atomTypes_.nItems();
-
-	Messenger::print("--> Creating S(Q) matrices (%ix%i)...\n", nTypes, nTypes);
 
 	partials_.initialise(nTypes, nTypes, true);
 	boundPartials_.initialise(nTypes, nTypes, true);
 	unboundPartials_.initialise(nTypes, nTypes, true);
+	braggPartials_.initialise(nTypes, nTypes, true);
 
 	CharString title;
-	AtomTypeData* at1 = cfg->usedAtomTypes(), *at2;
-	Messenger::print("--> Creating lists of partials and linking into matrices...\n");
-	for (n=0; n< nTypes; ++n, at1 = at1->next)
+	AtomTypeData* at1 = atomTypes_.first(), *at2;
+	for (int n=0; n<nTypes; ++n, at1 = at1->next)
 	{
 		at2 = at1;
-		for (m=n; m< nTypes; ++m, at2 = at2->next)
+		for (int m=n; m<nTypes; ++m, at2 = at2->next)
 		{
 			// Partial S(Q)
-			title.sprintf("%s-%s-%s-%s.%s", cfg->niceName(), tag, at1->name(), at2->name(), suffix);
+			title.sprintf("%s-%s-%s-%s.%s", prefix, tag, at1->name(), at2->name(), suffix);
 			partials_.ref(n,m).setName(title.get());
 			boundPartials_.ref(n,m).setName(title.get());
 			unboundPartials_.ref(n,m).setName(title.get());
+			braggPartials_.ref(n,m).setName(title.get());
 		}
 	}
 
-	// Total F(Q)
-	title.sprintf("%s-%s-total.%s", cfg->name(), tag, suffix);
+	// Total S(Q)
+	title.sprintf("%s-%s-total.%s", prefix, tag, suffix);
 	total_.setName(title);
+	total_.clear();
 
 	index_ = -1;
 
