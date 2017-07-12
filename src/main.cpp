@@ -135,7 +135,7 @@ int main(int argc, char **argv)
 
 	// Load external datafiles (master only)
 	Messenger::banner("Load External Data");
-	if (!MPIRunMaster(dUQ.loadDataFiles()))
+	if (!MPIRunMaster(dUQ.worldPool(), dUQ.loadDataFiles()))
 	{
 		ProcessPool::finalise();
 		return 1;

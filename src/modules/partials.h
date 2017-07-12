@@ -117,11 +117,13 @@ class PartialsModule : public Module
 	// Weighting Type enum
 	enum WeightingType { NoWeighting, NeutronWeighting };
 	// (Re)calculate unweighted partials for the specified Configuration
-	bool calculateUnweighted(Configuration* cfg, ProcessPool& procPool, int smoothing);
-	// Calculate weighted partials (from existing partial) for the specified Configuration
-	bool calculateWeighted(Configuration* cfg, PartialRSet& unweightedPartials, WeightsMatrix& weightsMatrix);
-	// Generate S(Q) from supplied g(r)
-	bool generateSQ(ProcessPool& procPool, PartialRSet& partialgr, PartialQSet& partialsq, const char* tag, const char* suffix, double qMax, double qDelta, double rho, XYData::WindowFunction wf, double qDepBroadening, double qIndepBroadening, bool includeBragg, double qDepBraggBroadening, double qIndepBraggBroad);
+	bool calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg, int smoothing);
+	// Calculate weighted partials from supplied unweighted partials
+	bool calculateWeightedGR(PartialRSet& unweightedPartials, PartialRSet& weightedPartials, WeightsMatrix& weightsMatrix);
+	// Calculate unweighted S(Q) from supplied unweighted g(r)
+	bool calculateUnweightedSQ(ProcessPool& procPool, PartialRSet& sourcegr, PartialQSet& destsq, double qMax, double qDelta, double rho, XYData::WindowFunction wf, double qDepBroadening, double qIndepBroadening, bool includeBragg, double qDepBraggBroadening, double qIndepBraggBroad);
+	// Calculate weighted S(Q) from supplied unweighted S(Q)
+	bool calculateWeightedSQ(PartialQSet& unweightedsq, PartialQSet& weightedsq, WeightsMatrix& weightsMatrix);
 
 
 	/*

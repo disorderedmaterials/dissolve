@@ -262,6 +262,25 @@ bool PartialRSet::save()
  * Manipulation
  */
 
+// Form partials from stored Histogram data
+void PartialRSet::formPartials(double boxVolume, XYData& boxNormalisation)
+{
+	int n, m;
+	int nTypes = atomTypes_.nItems();
+
+	AtomTypeData* at1 = atomTypes_.first(), *at2;
+	for (n=0; n<nTypes; ++n, at1 = at1->next)
+	{
+		at2 = at1;
+		for (m=n; m<nTypes; ++m, at2 = at2->next)
+		{
+			calculateRDF(partials_.ref(n, m), fullHistograms_.ref(n, m), boxVolume, at1->population(), at2->population(), at1 == at2 ? 2.0 : 1.0, boxNormalisation);
+			calculateRDF(boundPartials_.ref(n, m), boundHistograms_.ref(n, m), boxVolume, at1->population(), at2->population(), at1 == at2 ? 2.0 : 1.0, boxNormalisation);
+			calculateRDF(unboundPartials_.ref(n, m), unboundHistograms_.ref(n, m), boxVolume, at1->population(), at2->population(), at1 == at2 ? 2.0 : 1.0, boxNormalisation);
+		}
+	}
+}
+
 // Add in partials from source PartialRSet to our own
 bool PartialRSet::addPartials(PartialRSet& source, double weighting)
 {
@@ -300,25 +319,6 @@ bool PartialRSet::addPartials(PartialRSet& source, double weighting)
 	total_.addInterpolated(source.total(), weighting);
 
 	return true;
-}
-
-// Form partials from stored Histogram data
-void PartialRSet::formPartials(double boxVolume, XYData& boxNormalisation)
-{
-	int n, m;
-	int nTypes = atomTypes_.nItems();
-
-	AtomTypeData* at1 = atomTypes_.first(), *at2;
-	for (n=0; n<nTypes; ++n, at1 = at1->next)
-	{
-		at2 = at1;
-		for (m=n; m<nTypes; ++m, at2 = at2->next)
-		{
-			calculateRDF(partials_.ref(n, m), fullHistograms_.ref(n, m), boxVolume, at1->population(), at2->population(), at1 == at2 ? 2.0 : 1.0, boxNormalisation);
-			calculateRDF(boundPartials_.ref(n, m), boundHistograms_.ref(n, m), boxVolume, at1->population(), at2->population(), at1 == at2 ? 2.0 : 1.0, boxNormalisation);
-			calculateRDF(unboundPartials_.ref(n, m), unboundHistograms_.ref(n, m), boxVolume, at1->population(), at2->population(), at1 == at2 ? 2.0 : 1.0, boxNormalisation);
-		}
-	}
 }
 
 // Re-weight partials (including total) with supplied weighting factor

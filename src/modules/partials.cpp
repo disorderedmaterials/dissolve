@@ -254,7 +254,6 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 	 */
 	CharString varName;
 
-	// Get control variables from first target Configuration or, if no target Sample is defined, the first of the defined Configurations (options will be the same for each).
 	GenericList& moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : duq.processingModuleData();
 	const bool braggOn = GenericListHelper<bool>::retrieve(moduleData, "Bragg", uniqueName(), options_.valueAsBool("Bragg"));
 	const double braggQDepBroadening = GenericListHelper<double>::retrieve(moduleData, "BraggQDepBroadening", uniqueName(), options_.valueAsDouble("BraggQDepBroadening"));
@@ -302,15 +301,19 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 	while (Configuration* cfg = configIterator.iterate())
 	{
 		// Calculate unweighted partials for this Configuration
-		calculateUnweighted(cfg, procPool, smoothing);
+		calculateUnweightedGR(procPool, cfg, smoothing);
+		PartialRSet& unweightedgr = GenericListHelper<PartialRSet>::retrieve(cfg->moduleData(), "UnweightedGR", uniqueName_);
+		if (saveData && (!configurationLocal_) && (!MPIRunMaster(procPool, unweightedgr.save()))) return false;
 
 		// Calculate S(Q) if requested
 		if (sqCalculation)
 		{
-			// Realise a PartialSQ set, and grab the existing unweighted PartialRSet
+			// Realise a PartialSQ set
 			PartialQSet& unweightedsq = GenericListHelper<PartialQSet>::realise(cfg->moduleData(), "UnweightedSQ", uniqueName_, GenericItem::NoOutputFlag);
-			PartialRSet& unweightedgr = GenericListHelper<PartialRSet>::realise(cfg->moduleData(), "UnweightedGR", uniqueName_, GenericItem::NoOutputFlag);
-			generateSQ(procPool, unweightedgr, unweightedsq, "unweighted", "sq", qMax, qDelta, cfg->atomicDensity(), duq.windowFunction(), qDepBroadening, qIndepBroadening, braggOn, braggQDepBroadening, braggQIndepBroadening);
+			unweightedsq.setup(unweightedgr.atomTypes(), cfg->niceName(), "unweighted", "sq");
+			calculateUnweightedSQ(procPool, unweightedgr, unweightedsq, qMax, qDelta, cfg->atomicDensity(), duq.windowFunction(), qDepBroadening, qIndepBroadening, braggOn, braggQDepBroadening, braggQIndepBroadening);
+
+			if (saveData && (!configurationLocal_) && (!MPIRunMaster(procPool, unweightedsq.save()))) return false;
 		}
 
 		// Calculate weighted partials here if requested
@@ -349,8 +352,23 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 			GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "PartialWeights", uniqueName_, GenericItem::NoOutputFlag) = weightsMatrix.scatteringMatrix();
 
 			// Calculate weighted partials
-			PartialRSet& partialgr = GenericListHelper<PartialRSet>::realise(cfg->moduleData(), "WeightedGR", uniqueName_, GenericItem::NoOutputFlag);
-			calculateWeighted(cfg, partialgr, weightsMatrix);
+			PartialRSet& weightedgr = GenericListHelper<PartialRSet>::realise(cfg->moduleData(), "WeightedGR", uniqueName_, GenericItem::NoOutputFlag);
+			PartialQSet& weightedsq = GenericListHelper<PartialQSet>::realise(cfg->moduleData(), "WeightedSQ", uniqueName_, GenericItem::NoOutputFlag);
+			weightedgr.setup(cfg, cfg->niceName(), "weighted", "rdf");
+			calculateWeightedGR(unweightedgr, weightedgr, weightsMatrix);
+			if (sqCalculation)
+			{
+				PartialQSet& unweightedsq = GenericListHelper<PartialQSet>::retrieve(cfg->moduleData(), "UnweightedSQ", uniqueName_);
+				weightedsq.setup(weightedgr.atomTypes(), cfg->niceName(), "weighted", "sq");
+				calculateWeightedSQ(unweightedsq, weightedsq, weightsMatrix);
+			}
+
+			if (saveData && (!configurationLocal_))
+			{
+				if (!MPIRunMaster(procPool, weightedgr.save())) return false;
+				if (sqCalculation && (!MPIRunMaster(procPool, weightedsq.save()))) return false;
+			}
+
 		}
 
 		// Test mode
@@ -379,12 +397,12 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		// Setup partial set using the AtomTypeList we have just constructed.
 		// We will use RDF range information from the first Configuration in the list
 		Configuration* refConfig = targetConfigurations_.firstItem();
-		PartialRSet& unweightedPartials = GenericListHelper<PartialRSet>::realise(duq.processingModuleData(), "UnweightedGR", uniqueName_, GenericItem::NoOutputFlag);
-		unweightedPartials.setup(atomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), uniqueName(), "unweighted", "rdf");
+		PartialRSet& unweightedgr = GenericListHelper<PartialRSet>::realise(duq.processingModuleData(), "UnweightedGR", uniqueName_, GenericItem::NoOutputFlag);
+		unweightedgr.setup(atomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), uniqueName(), "unweighted", "rdf");
 
 		// Loop over Configurations again, summing into the PartialRSet we have just set up
 		// We will keep a running total of the weights associated with each Configuration, and re-weight the entire set of partials at the end.
-		double totalWeight = 0.0;
+		double totalWeight = 0.0, density = 0.0, volume = 0.0;
 		configIterator.restart();
 		while (Configuration* cfg = configIterator.iterate())
 		{
@@ -393,92 +411,89 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 			totalWeight += weight;
 			Messenger::print("Partials: Weight for Configuration '%s' is %f (total weight is now %f).\n", cfg->name(), weight, totalWeight);
 
-			// Grab partials for Configuration
+			// Grab partials for Configuration and add into our set
 			PartialRSet& cfgPartials = GenericListHelper<PartialRSet>::retrieve(cfg->moduleData(), "UnweightedGR", uniqueName_);
-			cfgPartials.save();
+			unweightedgr.addPartials(cfgPartials, weight);
 
-			// Add all partials from the Configuration into our Sample partials
-			unweightedPartials.addPartials(cfgPartials, weight);
+			// Sum density weighted by volume, and total volume (both of which are multiplied by the overall weight)
+			density += cfg->atomicDensity()*cfg->box()->volume()*weight;
+			volume += cfg->box()->volume()*weight;
 		}
+		density /= volume;
 
-		// Now must normalise Sample partials to the overall weight of the source configurations
-		unweightedPartials.reweightPartials(1.0 / totalWeight);
+		// Now must normalise our partials to the overall weight of the source configurations
+		unweightedgr.reweightPartials(1.0 / totalWeight);
+		if (saveData) if (!MPIRunMaster(procPool, unweightedgr.save())) return false;
+
+		// Calculate S(Q) if requested
+		if (sqCalculation)
+		{
+			// Realise a PartialSQ set
+			PartialQSet& unweightedsq = GenericListHelper<PartialQSet>::realise(moduleData, "UnweightedSQ", uniqueName_, GenericItem::NoOutputFlag);
+			unweightedsq.setup(unweightedgr.atomTypes(), uniqueName(), "unweighted", "sq");
+
+			// Sum in weighted S(Q) partials
+			configIterator.restart();
+			while (Configuration* cfg = configIterator.iterate())
+			{
+				// Get unweighted SQ for this Configuration and their overall weight
+				PartialQSet& cfgunweightedsq = GenericListHelper<PartialQSet>::retrieve(cfg->moduleData(), "UnweightedSQ", uniqueName_);
+				double weight = GenericListHelper<double>::retrieve(moduleData, CharString("%s_Weight", cfg->name()), uniqueName_, 1.0);
+
+				// Add into our set
+				unweightedsq.addPartials(cfgunweightedsq, weight);
+			}
+
+			// Now must normalise our partials to the overall weight of the source configurations
+			unweightedsq.reweightPartials(1.0 / totalWeight);
+			if (saveData && (!MPIRunMaster(procPool, unweightedsq.save()))) return false;
+		}
 
 		// Calculate weighted Sample partials and total if requested
 		if (weightsType != PartialsModule::NoWeighting)
 		{
-			bool wasCreated;
-			PartialRSet& weightedPartials = GenericListHelper<PartialRSet>::realise(moduleData, "WeightedGR", uniqueName_, GenericItem::NoOutputFlag, &wasCreated);
-			if (wasCreated) weightedPartials.setup(atomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), uniqueName(), "weighted", "rdf");
-			weightedPartials.reset();
+			PartialRSet& weightedgr = GenericListHelper<PartialRSet>::realise(moduleData, "WeightedGR", uniqueName_, GenericItem::NoOutputFlag);
+			weightedgr.setup(atomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), uniqueName(), "weighted", "rdf");
+			weightedgr.reset();
 
 			// Loop over Configurations, adding in their weighted partial sets as we go
 			configIterator.restart();
 			while (Configuration* cfg = configIterator.iterate())
 			{
-				// Grab weighted partials for this Configuration
-				PartialRSet& configPartials = GenericListHelper<PartialRSet>::retrieve(cfg->moduleData(), "WeightedGR", uniqueName_);
-
-				// Get weighting factor for this Configuration to contribute to the summed partials
+				// Grab weighted partials for this Configuration and their associated weight
+				PartialRSet& cfgweightedgr = GenericListHelper<PartialRSet>::retrieve(cfg->moduleData(), "WeightedGR", uniqueName_);
 				double weight = GenericListHelper<double>::retrieve(moduleData, CharString("%s_Weight", cfg->name()), uniqueName_, 1.0);
 
-				weightedPartials.addPartials(configPartials, weight);
+				weightedgr.addPartials(cfgweightedgr, weight);
 			}
 
 			// Re-weight partial set according to totalWeight (calculated earlier)
-			weightedPartials.reweightPartials(1.0 / totalWeight);
-		}
+			weightedgr.reweightPartials(1.0 / totalWeight);
+			if (saveData && (!MPIRunMaster(procPool, unweightedgr.save()))) return false;
 
-		// Save data?
-		if (saveData)
-		{
-			// Only the pool master saves the data
-			if (procPool.isMaster())
+			// Calculate S(Q) if requested
+			if (sqCalculation)
 			{
-				// We know we have the unweighted partials...
-				if (unweightedPartials.save()) procPool.proceed();
-				else
+				// Realise a PartialSQ set
+				PartialQSet& weightedsq = GenericListHelper<PartialQSet>::realise(moduleData, "WeightedSQ", uniqueName_, GenericItem::NoOutputFlag);
+				weightedsq.setup(unweightedgr.atomTypes(), uniqueName(), "weighted", "sq");
+
+				// Sum in weighted S(Q) partials
+				configIterator.restart();
+				while (Configuration* cfg = configIterator.iterate())
 				{
-					procPool.stop();
-					return false;
+					// Get unweighted SQ for this Configuration and their overall weight
+					PartialQSet& cfgweightedsq = GenericListHelper<PartialQSet>::retrieve(cfg->moduleData(), "WeightedSQ", uniqueName_);
+					double weight = GenericListHelper<double>::retrieve(moduleData, CharString("%s_Weight", cfg->name()), uniqueName_, 1.0);
+
+					// Add into our set
+					weightedsq.addPartials(cfgweightedsq, weight);
 				}
 
-				// Do we have weighted as well?
-				if (weightsType != PartialsModule::NoWeighting)
-				{
-					// Find the partials set...
-					PartialRSet& weightedPartials = GenericListHelper<PartialRSet>::retrieve(moduleData, "WeightedGR", uniqueName_);
-					if (weightedPartials.save()) procPool.proceed();
-					else
-					{
-						procPool.stop();
-						return false;
-					}
-				}
-
-				// What about structure factors?
-				if (sqCalculation)
-				{
-					// Unweighted partials
-					PartialQSet& unweightedSQ = GenericListHelper<PartialQSet>::retrieve(moduleData, "UnweightedSQ", uniqueName_);
-					if (unweightedSQ.save()) procPool.proceed();
-					else
-					{
-						procPool.stop();
-						return false;
-					}
-
-					// Weighted partials
-					PartialQSet& weightedSQ = GenericListHelper<PartialQSet>::retrieve(moduleData, "WeightedSQ", uniqueName_);
-					if (weightedSQ.save()) procPool.proceed();
-					else
-					{
-						procPool.stop();
-						return false;
-					}
-				}
+				// Now must normalise our partials to the overall weight of the source configurations
+				weightedsq.reweightPartials(1.0 / totalWeight);
+				if (saveData && (!MPIRunMaster(procPool, weightedsq.save()))) return false;
 			}
-			else if (!procPool.decision()) return false;
 		}
 	}
 
@@ -592,7 +607,7 @@ bool PartialsModule::calculateSimple(Configuration* cfg, PartialRSet& partialSet
 }
 
 // Calculate unweighted partials for the specified Configuration
-bool PartialsModule::calculateUnweighted(Configuration* cfg, ProcessPool& procPool, int smoothing)
+bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg, int smoothing)
 {
 	// Does a PartialSet already exist for this Configuration?
 	bool wasCreated;
@@ -728,33 +743,28 @@ bool PartialsModule::calculateUnweighted(Configuration* cfg, ProcessPool& procPo
 	return true;
 }
 
-// Calculate weighted partials (from existing partial) for the specified Configuration
-bool PartialsModule::calculateWeighted(Configuration* cfg, PartialRSet& unweightedPartials, WeightsMatrix& weightsMatrix)
+// Calculate weighted partials from supplied unweighted partials
+bool PartialsModule::calculateWeightedGR(PartialRSet& unweightedgr, PartialRSet& weightedgr, WeightsMatrix& weightsMatrix)
 {
-	// Does a PartialSet already exist for this Configuration?
-	bool wasCreated;
-	PartialRSet& partialgr = GenericListHelper<PartialRSet>::realise(cfg->moduleData(), "WeightedGR", uniqueName_, GenericItem::NoOutputFlag, &wasCreated);
-	if (wasCreated) partialgr.setup(cfg, cfg->niceName(), "weighted", "rdf");
-
 	int typeI, typeJ;
-	for (typeI=0; typeI<partialgr.nAtomTypes(); ++typeI)
+	for (typeI=0; typeI<weightedgr.nAtomTypes(); ++typeI)
 	{
-		for (typeJ=typeI; typeJ<partialgr.nAtomTypes(); ++typeJ)
+		for (typeJ=typeI; typeJ<weightedgr.nAtomTypes(); ++typeJ)
 		{
 			// Weight S(Q), Bragg S(Q) and full partial S(Q)
 			double factor = weightsMatrix.scatteringWeight(typeI, typeJ);
-			partialgr.partial(typeI, typeJ).copyData(unweightedPartials.partial(typeI, typeJ));
-			partialgr.partial(typeI, typeJ).arrayY() *= factor;
-			partialgr.boundPartial(typeI, typeJ).copyData(unweightedPartials.boundPartial(typeI, typeJ));
-			partialgr.boundPartial(typeI, typeJ).arrayY() *= factor;
-			partialgr.unboundPartial(typeI, typeJ).copyData(unweightedPartials.unboundPartial(typeI, typeJ));
-			partialgr.unboundPartial(typeI, typeJ).arrayY() *= factor;
+			weightedgr.partial(typeI, typeJ).copyData(unweightedgr.partial(typeI, typeJ));
+			weightedgr.partial(typeI, typeJ).arrayY() *= factor;
+			weightedgr.boundPartial(typeI, typeJ).copyData(unweightedgr.boundPartial(typeI, typeJ));
+			weightedgr.boundPartial(typeI, typeJ).arrayY() *= factor;
+			weightedgr.unboundPartial(typeI, typeJ).copyData(unweightedgr.unboundPartial(typeI, typeJ));
+			weightedgr.unboundPartial(typeI, typeJ).arrayY() *= factor;
 // 			braggSQ.arrayY() *= factor;   TODO
 		}
 	}
 
 	// Calculate total
-	partialgr.formTotal();
+	weightedgr.formTotal();
 
 	return true;
 }
@@ -769,14 +779,11 @@ bool PartialsModule::calculateWeighted(Configuration* cfg, PartialRSet& unweight
 
 
 // Generate S(Q) from supplied g(r)
-bool PartialsModule::generateSQ(ProcessPool& procPool, PartialRSet& partialgr, PartialQSet& partialsq, const char* tag, const char* suffix, double qMax, double qDelta, double rho, XYData::WindowFunction wf, double qDepBroadening, double qIndepBroadening, bool includeBragg, double qDepBraggBroadening, double qIndepBraggBroad)
+bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, PartialRSet& sourcegr, PartialQSet& destsq, double qMax, double qDelta, double rho, XYData::WindowFunction wf, double qDepBroadening, double qIndepBroadening, bool includeBragg, double qDepBraggBroadening, double qIndepBraggBroad)
 {
-	// Initialise / clear our S(Q) set
-	partialsq.setup(partialgr.atomTypes(), uniqueName(), tag, suffix);
-
 	// Copy partial g(r) into our new S(Q) matrices
 	Messenger::printVerbose("  --> Copying partial g(r) into S(Q) matrices...\n");
-	int nTypes = partialgr.nAtomTypes();
+	int nTypes = sourcegr.nAtomTypes();
 	for (int n=0; n<nTypes; ++n)
 	{
 		for (int m=n; m<nTypes; ++m)
@@ -784,12 +791,12 @@ bool PartialsModule::generateSQ(ProcessPool& procPool, PartialRSet& partialgr, P
 			// Copy g(r) data into our arrays
 			// Subtract 1.0 from the full and unbound partials so as to give (g(r)-1)
 			// Don't subtract 1.0 from the bound partials, since they do not tend to 1.0 at longer r??
-			partialsq.partial(n,m).copyData(partialgr.partial(n,m));
-			partialsq.partial(n,m).arrayY() -= 1.0;
-			partialsq.boundPartial(n,m).copyData(partialgr.boundPartial(n,m));
-// 			partialsq.boundPartial(n,m).arrayY() -= 1.0;
-			partialsq.unboundPartial(n,m).copyData(partialgr.unboundPartial(n,m));
-			partialsq.unboundPartial(n,m).arrayY() -= 1.0;
+			destsq.partial(n,m).copyData(sourcegr.partial(n,m));
+			destsq.partial(n,m).arrayY() -= 1.0;
+			destsq.boundPartial(n,m).copyData(sourcegr.boundPartial(n,m));
+// 			destsq.boundPartial(n,m).arrayY() -= 1.0;
+			destsq.unboundPartial(n,m).copyData(sourcegr.unboundPartial(n,m));
+			destsq.unboundPartial(n,m).arrayY() -= 1.0;
 		}
 	}
 
@@ -802,14 +809,14 @@ bool PartialsModule::generateSQ(ProcessPool& procPool, PartialRSet& partialgr, P
 	{
 		for (int m=n; m<nTypes; ++m)
 		{
-			if (!partialsq.partial(n,m).transformBroadenedRDF(rho, qDelta, qMax, qDepBroadening, qIndepBroadening, wf)) return false;
-			if (!partialsq.boundPartial(n,m).transformBroadenedRDF(rho, qDelta, qMax, qDepBroadening, qIndepBroadening, wf)) return false;
-			if (!partialsq.unboundPartial(n,m).transformBroadenedRDF(rho, qDelta, qMax, qDepBroadening, qIndepBroadening, wf)) return false;
+			if (!destsq.partial(n,m).transformBroadenedRDF(rho, qDelta, qMax, qDepBroadening, qIndepBroadening, wf)) return false;
+			if (!destsq.boundPartial(n,m).transformBroadenedRDF(rho, qDelta, qMax, qDepBroadening, qIndepBroadening, wf)) return false;
+			if (!destsq.unboundPartial(n,m).transformBroadenedRDF(rho, qDelta, qMax, qDepBroadening, qIndepBroadening, wf)) return false;
 		}
 	}
 
 	// Sum into total
-	partialsq.formTotal();
+	destsq.formTotal();
 
 	timer.stop();
 	Messenger::print("Partials: Finished Fourier transform and summation of partial g(r) into partial S(Q) (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
@@ -818,10 +825,37 @@ bool PartialsModule::generateSQ(ProcessPool& procPool, PartialRSet& partialgr, P
 	 * S(Q) are now up-to-date
 	 */
 
-	partialsq.setIndex(partialgr.index());
+	destsq.setIndex(sourcegr.index());
 
 	return true;
 }
+
+// Calculate weighted S(Q) from supplied unweighted S(Q)
+bool PartialsModule::calculateWeightedSQ(PartialQSet& unweightedsq, PartialQSet& weightedsq, WeightsMatrix& weightsMatrix)
+{
+	int typeI, typeJ;
+	for (typeI=0; typeI<unweightedsq.nAtomTypes(); ++typeI)
+	{
+		for (typeJ=typeI; typeJ<unweightedsq.nAtomTypes(); ++typeJ)
+		{
+			// Weight S(Q), Bragg S(Q) and full partial S(Q)
+			double factor = weightsMatrix.scatteringWeight(typeI, typeJ);
+			weightedsq.partial(typeI, typeJ).copyData(unweightedsq.partial(typeI, typeJ));
+			weightedsq.partial(typeI, typeJ).arrayY() *= factor;
+			weightedsq.boundPartial(typeI, typeJ).copyData(unweightedsq.boundPartial(typeI, typeJ));
+			weightedsq.boundPartial(typeI, typeJ).arrayY() *= factor;
+			weightedsq.unboundPartial(typeI, typeJ).copyData(unweightedsq.unboundPartial(typeI, typeJ));
+			weightedsq.unboundPartial(typeI, typeJ).arrayY() *= factor;
+// 			braggSQ.arrayY() *= factor;   TODO
+		}
+	}
+
+	// Calculate total
+	weightedsq.formTotal();
+
+	return true;
+}
+
 
 // 	// Calculate Bragg partials (if requested)
 // 	if (braggOn)

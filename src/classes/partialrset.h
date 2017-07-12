@@ -105,14 +105,14 @@ class PartialRSet : public ListItem<PartialRSet>
 	 * Manipulation
 	 */
 	public:
-	// Add in partials from source PartialRSet to our own
-	bool addPartials(PartialRSet& source, double weighting);
 	// Form partials from stored Histogram data
 	void formPartials(double boxVolume, XYData& boxNormalisation);
+	// Add in partials from source PartialRSet to our own
+	bool addPartials(PartialRSet& source, double weighting);
 	// Re-weight partials (including total) with supplied weighting factor
 	void reweightPartials(double factor);
 	// Calculate RDF from supplied Histogram and normalisation data
-	void calculateRDF(XYData& destination, Histogram& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier, XYData& boxNormalisation);
+	static void calculateRDF(XYData& destination, Histogram& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier, XYData& boxNormalisation);
 
 
 	/*

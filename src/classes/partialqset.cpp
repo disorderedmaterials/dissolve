@@ -22,6 +22,7 @@
 #include "classes/partialqset.h"
 #include "classes/configuration.h"
 #include "classes/partialrset.h"
+#include "classes/atomtype.h"
 
 // Constructor
 PartialQSet::PartialQSet() : ListItem<PartialQSet>()
@@ -95,7 +96,7 @@ void PartialQSet::reset()
 }
 
 // Return number of AtomTypes used to generate matrices
-int PartialQSet::nTypes()
+int PartialQSet::nAtomTypes() const
 {
 	return atomTypes_.nItems();
 }
@@ -202,6 +203,71 @@ bool PartialQSet::save()
 
 	Messenger::print("Writing RDF file '%s'...\n", total_.name());
 	return total_.save(total_.name());
+}
+
+/*
+ * Manipulation
+ */
+
+// Add in partials from source PartialQSet to our own
+bool PartialQSet::addPartials(PartialQSet& source, double weighting)
+{
+	// Loop over partials in source set
+	int typeI, typeJ, localI, localJ;
+
+	int sourceNTypes = source.atomTypes_.nItems();
+	for (typeI=0; typeI<sourceNTypes; ++typeI)
+	{
+		AtomType* atI = source.atomTypes_.atomType(typeI);
+		localI = atomTypes_.indexOf(atI);
+		if (localI == -1)
+		{
+			Messenger::error("AtomType '%s' not present in this PartialQSet, so can't add in the associated data.\n", atI->name());
+			return false;
+		}
+
+		for (typeJ=typeI; typeJ<sourceNTypes; ++typeJ)
+		{
+			AtomType* atJ = source.atomTypes_.atomType(typeJ);
+			localJ = atomTypes_.indexOf(atJ);
+			if (localJ == -1)
+			{
+				Messenger::error("AtomType '%s' not present in this PartialQSet, so can't add in the associated data.\n", atJ->name());
+				return false;
+			}
+
+			// Grab source partials
+			partials_.ref(localI, localJ).addInterpolated(source.partial(typeI, typeJ), weighting);
+			boundPartials_.ref(localI, localJ).addInterpolated(source.boundPartial(typeI, typeJ), weighting);
+			unboundPartials_.ref(localI, localJ).addInterpolated(source.unboundPartial(typeI, typeJ), weighting);
+		}
+	}
+
+	// Add total function
+	total_.addInterpolated(source.total(), weighting);
+
+	return true;
+}
+
+// Re-weight partials (including total) with supplied weighting factor
+void PartialQSet::reweightPartials(double factor)
+{
+	int n, m;
+	int nTypes = atomTypes_.nItems();
+
+	AtomTypeData* at1 = atomTypes_.first(), *at2;
+	for (n=0; n<nTypes; ++n, at1 = at1->next)
+	{
+		at2 = at1;
+		for (m=n; m<nTypes; ++m, at2 = at2->next)
+		{
+			partials_.ref(n, m).arrayY() *= factor;
+			boundPartials_.ref(n, m).arrayY() *= factor;
+			unboundPartials_.ref(n, m).arrayY() *= factor;
+		}
+	}
+
+	total_.arrayY() *= factor;
 }
 
 /*

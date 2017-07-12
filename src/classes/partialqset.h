@@ -66,7 +66,7 @@ class PartialQSet : public ListItem<PartialQSet>
 	// Reset partial arrays
 	void reset();
 	// Return number of AtomTypes used to generate matrices
-	int nTypes();
+	int nAtomTypes() const;
 	// Return index of partials
 	int index() const;
 	// Set new index
@@ -85,6 +85,16 @@ class PartialQSet : public ListItem<PartialQSet>
 	XYData& total();
 	// Save partials information to disk
 	bool save();
+
+
+	/*
+	 * Manipulation
+	 */
+	public:
+	// Add in partials from source PartialRSet to our own
+	bool addPartials(PartialQSet& source, double weighting);
+	// Re-weight partials (including total) with supplied weighting factor
+	void reweightPartials(double factor);
 
 
 	/*

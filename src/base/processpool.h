@@ -503,10 +503,10 @@ template <class E> class EnumCast
 /*
  * MPIRunMaster(x)
  * Effectively performs the following code:
- * if (ProcessPool::isWorldMaster()) then
+ * if (ProcessPool::isWorldMaster())
  * {
  *	// Test supplied code/condition 'x', and broadcast result to all processes
- *	if (x) then
+ *	if (x)
  * 	{
  * 		MPI_Bcast(&ProcessPool::SUCCEEDED,1,MPI_INTEGER,0,MPI_COMM_WORLD);
  * 		return true;
@@ -525,13 +525,9 @@ template <class E> class EnumCast
  * }
  */
 #ifdef PARALLEL
-#define MPIRunMaster(x)\
-(ProcessPool::isWorldMaster() ?\
-   (x ? (MPI_Bcast(&ProcessPool::SUCCEEDED,1,MPI_INTEGER,0,MPI_COMM_WORLD),true)\
-      : (MPI_Bcast(&ProcessPool::FAILED,1,MPI_INTEGER,0,MPI_COMM_WORLD),false))\
-: (MPI_Bcast(&ProcessPool::RESULT,1,MPI_INTEGER,0,MPI_COMM_WORLD),ProcessPool::RESULT ? true : false))
+#define MPIRunMaster(pool,x) (pool.isMaster() ? (x ? (pool.proceed(),true) : (pool.stop(),false)) : pool.decision())
 #else
-#define MPIRunMaster(x) x
+#define MPIRunMaster(pool,x) x
 #endif
 
 #endif
