@@ -22,6 +22,7 @@ stamp-h1
 ui_*
 moc_*
 src/duq
+src/monitor
 Aten.desktop
 .kdev4/
 build/

@@ -12,5 +12,15 @@ libduq_la_LDFLAGS = -static
 
 duq_LDADD = libduq.la @DUQ_CFLAGS@
 
-AM_CPPFLAGS = -I../ @DUQ_CFLAGS@
+# Target 'monitor'
+if BUILDGUI
 
+bin_PROGRAMS += monitor
+
+monitor_SOURCES = monitor.cpp
+
+monitor_LDADD = libduq.la @DUQ_CFLAGS@
+
+endif
+
+AM_CPPFLAGS = -I../ @DUQ_CFLAGS@

@@ -15,6 +15,7 @@ AM_INIT_AUTOMAKE
 # Set initial variable values
 PARALLEL_CFLAGS=""
 CHECK_CFLAGS=""
+GUI_CFLAGS=""
 
 
 # Determine C++ compiler - Parallel Build?
@@ -40,12 +41,41 @@ AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 
 
+# Configuration options - Qt Tools
+AC_ARG_WITH([qtmoc],[AC_HELP_STRING([--with-qtmoc=<executable>],
+    [Specify Qt5 Meta-Object Compiler tool (moc) [default="moc-qt5"]])], ,
+    [with_qtmoc="moc-qt5"])
+AC_ARG_WITH([qtuic],[AC_HELP_STRING([--with-qtuic=<executable>],
+    [Specify Qt5 User Interface Compiler tool (uic) [default="uic-qt5"]])], ,
+    [with_qtuic="uic-qt5"])
+AC_ARG_WITH([qtrcc],[AC_HELP_STRING([--with-qtrcc=<executable],
+    [Specify Qt5 Resource Compiler tool (rcc) [default="rcc-qt5"]])], ,
+    [with_qtrcc="rcc-qt5"])
+QTMOC="$with_qtmoc"
+QTRCC="$with_qtrcc"
+QTUIC="$with_qtuic"
+
 # Compile with internal object checking for debugging / testing?
 AC_ARG_WITH([checks], [AC_HELP_STRING([--with-checks], [Enable internal code array/pointer checking [default="no"]])], [with_checks="yes"], [with_checks="no"])
 if test "$with_checks" = "yes"; then
   CHECK_CFLAGS="-DCHECKS"
 fi
 
+# Compile GUI elements (which require Qt)
+AC_ARG_WITH([gui], [AC_HELP_STRING([--with-gui], [Enable build of GUI elements plugin [default="no"]])], [with_gui="yes"], [with_gui="no"])
+AM_CONDITIONAL([BUILDGUI], [test "$with_gui" = "yes"])
+if test "$with_gui" = "yes"; then
+  # Check for required Qt packages
+  PKG_CHECK_MODULES(QTGUI, Qt5Gui >= 5.0.0)
+  PKG_CHECK_MODULES(QTOPENGL, Qt5OpenGL >= 5.0.0)
+  PKG_CHECK_MODULES(QTWIDGETS, Qt5Widgets >= 5.0.0)
+  PKG_CHECK_MODULES(QTPRINT, Qt5PrintSupport >= 5.0.0)
+
+  # Update CFLAGS, includes etc.
+  GUI_LDLIBS="$QTGUI_LIBS $QTOPENGL_LIBS $QTPRINT_LIBS"
+  GUI_CFLAGS="-fPIC"
+  GUI_INCLUDES=" $QTGUI_CFLAGS $QTWIDGETS_CFLAGS $QTPRINT_CFLAGS"
+fi
 
 # Readline include dir
 RLINCDIR=""
@@ -88,10 +118,13 @@ AC_SUBST(BUILDDIR)
 AC_SUBST(INSTALLDIR)
 VERSION=DUQ_VERSION
 AC_SUBST(VERSION)
-DUQ_CFLAGS="$PARALLEL_CFLAGS $CHECK_CFLAGS"
+DUQ_CFLAGS="$PARALLEL_CFLAGS $CHECK_CFLAGS $GUI_FLAGS"
 AC_SUBST(DUQ_CFLAGS)
 DUQ_READLINE="-L$RLINCDIR"
 AC_SUBST(DUQ_READLINE)
+AC_SUBST(QTMOC)
+AC_SUBST(QTUIC)
+AC_SUBST(QTRCC)
 
 
 # Checks for typedefs, structures, and compiler characteristics.
@@ -116,5 +149,8 @@ AC_CONFIG_FILES(src/main/Makefile)
 AC_CONFIG_FILES(src/math/Makefile)
 AC_CONFIG_FILES(src/modules/Makefile)
 AC_CONFIG_FILES(src/templates/Makefile)
+if test "$with_gui" = "yes"; then
+  AC_CONFIG_FILES(src/gui/Makefile)
+fi
 AC_OUTPUT
 
