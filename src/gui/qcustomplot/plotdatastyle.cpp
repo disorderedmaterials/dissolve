@@ -22,8 +22,6 @@
 #include "gui/qcustomplot/plotdatastyle.h"
 #include <stdio.h>
 
-DUQ_USING_NAMESPACE
-
 /*
  * PlotDataStyle
  */

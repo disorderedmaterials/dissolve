@@ -19,7 +19,9 @@ bin_PROGRAMS += monitor
 
 monitor_SOURCES = monitor.cpp
 
-monitor_LDADD = libduq.la @DUQ_CFLAGS@
+SUBDIRS += gui
+
+monitor_LDADD = libduq.la libgui.la @DUQ_CFLAGS@
 
 endif
 

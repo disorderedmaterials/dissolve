@@ -28,8 +28,6 @@
 // Forward Declarations (Qt)
 /* none */
 
-DUQ_USING_NAMESPACE
-
 // Simple container for data displayed in QCustomPlot
 class PlotData : public ListItem<PlotData>
 {

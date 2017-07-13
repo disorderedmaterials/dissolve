@@ -25,6 +25,6 @@ clean-local:
 
 libgui_la_SOURCES = # icons.qrc mainwindow.ui
 
-noinst_HEADERS = mainwindow.h
+noinst_HEADERS = # mainwindow.h
 
 AM_CPPFLAGS = -I$(top_srcdir)/src -I../ -I./ @DUQ_INCLUDES@ @DUQ_CFLAGS@

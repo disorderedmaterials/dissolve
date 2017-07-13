@@ -22,10 +22,7 @@
 #ifndef DUQ_PLOTDATASTYLE_H
 #define DUQ_PLOTDATASTYLE_H
 
-#include "base/namespace.h"
 #include <QPen>
-
-DUQ_BEGIN_NAMESPACE
 
 // Style information for plotted data
 class PlotDataStyle
@@ -64,8 +61,6 @@ class PlotDataStyles
 	// Return use count for the specified style
 	static int useCount(PlotDataStyle::DataStyle style);
 };
-
-DUQ_END_NAMESPACE
 
 #endif
 

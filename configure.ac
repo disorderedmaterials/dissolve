@@ -125,6 +125,8 @@ AC_SUBST(DUQ_READLINE)
 AC_SUBST(QTMOC)
 AC_SUBST(QTUIC)
 AC_SUBST(QTRCC)
+AC_SUBST(GUI_CFLAGS)
+AC_SUBST(GUI_INCLUDES)
 
 
 # Checks for typedefs, structures, and compiler characteristics.
@@ -151,6 +153,7 @@ AC_CONFIG_FILES(src/modules/Makefile)
 AC_CONFIG_FILES(src/templates/Makefile)
 if test "$with_gui" = "yes"; then
   AC_CONFIG_FILES(src/gui/Makefile)
+  AC_CONFIG_FILES(src/gui/qcustomplot/Makefile)
 fi
 AC_OUTPUT
 

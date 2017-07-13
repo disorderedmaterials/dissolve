@@ -3,26 +3,25 @@
 	*** src/gui/qcustomplot/tcustomplot.hui
 	Copyright T. Youngs 2007-2017
 
-	This file is part of Aten.
+	This file is part of dUQ.
 
-	Aten is free software: you can redistribute it and/or modify
+	dUQ is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	Aten is distributed in the hope that it will be useful,
+	dUQ is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with Aten.  If not, see <http://www.gnu.org/licenses/>.
+	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ATEN_TPLOTWIDGET_H
-#define ATEN_TPLOTWIDGET_H
+#ifndef DUQ_TPLOTWIDGET_H
+#define DUQ_TPLOTWIDGET_H
 
-#include "base/namespace.h"
 #include "templates/list.h"
 #include "gui/qcustomplot/plotdata.h"
 #include "gui/qcustomplot/plotdatastyle.h"
@@ -35,8 +34,6 @@ class QToolButton;
 class QCPGraph;
 class QCPBars;
 class QCPBarsGroup;
-
-ATEN_USING_NAMESPACE
 
 // Plot Widget, encompassing QCustomPlot and associated button controls
 class TPlotWidget : public QWidget

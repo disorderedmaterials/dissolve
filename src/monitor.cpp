@@ -30,6 +30,11 @@
 
 int main(int argc, char **argv)
 {
+#ifdef PARALLEL
+	// Initialise parallel communication
+	ProcessPool::initialiseMPI(&argc, &argv);
+#endif
+
 	// Instantiate main class
 	DUQ dUQ;
 
@@ -70,6 +75,7 @@ int main(int argc, char **argv)
 				default:
 					printf("Unrecognised command-line switch '%s'.\n", argv[n]);
 					printf("Run with -h to see available switches.\n");
+					ProcessPool::finalise();
 					return 1;
 					break;
 			}
@@ -89,20 +95,39 @@ int main(int argc, char **argv)
 	}
 
 	// Print GPL license information
-	Messenger::print("Monitor version %s, Copyright (C) 2012-2017 T. Youngs.\n", DUQVERSION);
+#ifdef PARALLEL
+	Messenger::print("Monitor PARALLEL version %s, Copyright (C) 2012-2017 T. Youngs.\n", DUQVERSION);
+#else
+	Messenger::print("Monitor SERIAL version %s, Copyright (C) 2012-2017 T. Youngs.\n", DUQVERSION);
+#endif
 	Messenger::print("Source repository: %s.\n", DUQREPO);
 	Messenger::print("dUQ comes with ABSOLUTELY NO WARRANTY.\n");
 	Messenger::print("This is free software, and you are welcome to redistribute it under certain conditions.\n");
 	Messenger::print("For more details read the GPL at <http://www.gnu.org/copyleft/gpl.html>.\n");
 
-	// Load external datafiles
+	// Load external datafiles (master only)
 	Messenger::banner("Load External Data");
-	if (!dUQ.loadDataFiles()) return 1;
+	if (!MPIRunMaster(dUQ.worldPool(), dUQ.loadDataFiles()))
+	{
+		ProcessPool::finalise();
+		return 1;
+	}
+
+	// Broadcast periodic table (including isotope and parameter data)
+	if (!periodicTable.broadcast(dUQ.worldPool()))
+	{
+		ProcessPool::finalise();
+		return 1;
+	}
 
 	// Register modules and print info
 	Messenger::banner("Register Modules");
 	ModuleRegistry moduleRegistry;
-	if (!ModuleList::printMasterModuleInformation()) return 1;
+	if (!ModuleList::printMasterModuleInformation())
+	{
+		ProcessPool::finalise();
+		return 1;
+	}
 
 	// Load input file
 	// If no input file was provided, exit here
@@ -110,11 +135,13 @@ int main(int argc, char **argv)
 	if (inputFile.isEmpty())
 	{
 		Messenger::error("No input file provided.\n");
+		ProcessPool::finalise();
 		return 1;
 	}
 	if (!dUQ.loadInput(inputFile))
 	{
 		Messenger::error("Input file contained errors.\n");
+		ProcessPool::finalise();
 		return 1;
 	}
 
@@ -129,6 +156,7 @@ int main(int argc, char **argv)
 			if (!dUQ.loadRestart(restartFile.get()))
 			{
 				Messenger::error("Restart file contained errors.\n");
+				ProcessPool::finalise();
 				return 1;
 			}
 		}
