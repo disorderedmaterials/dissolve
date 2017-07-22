@@ -41,6 +41,7 @@ DUQ::DUQ()
 
 	// Simulation
 	iteration_ = 0;
+	writeIterationData_ = true;
 
 	// Parallel Comms
 	parallelStrategy_ = DUQ::SequentialConfigStrategy;

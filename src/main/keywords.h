@@ -55,7 +55,7 @@ namespace InputBlocks
 	enum InputBlock
 	{
 		ConfigurationBlock,		/* 'Configuration' - Defines a single Configuration for use in the simulation */
-		ModuleBlock,			/* 'Module' - Sets up a Module within a Configuration */
+		ModuleBlock,			/* 'Module' - Sets up a Module to run after Configuration processing */
 		PairPotentialsBlock,		/* 'PairPotentials' - Contains definitions of the PairPotentials for the simulation */
 		SimulationBlock,		/* 'Simulation' - Setting of simulation variables affecting the calculation */
 		SpeciesBlock,			/* 'Species' - Begins a definition of a Species */
@@ -203,7 +203,8 @@ namespace SimulationBlock
 		ParallelStrategyKeyword,	/* 'ParallelStrategy' - Determines the distribution of processes across Configurations */
 		SeedKeyword,			/* 'Seed' - Random seed to use */
 		WindowFunctionKeyword,		/* 'WindowFunction' - Window function to use in all Fourier transforms */
-		nSimulationKeywords		/* '' -  */
+		WriteIterationDataKeyword,	/* 'WriteIterationData' - Write various data at the end of each iteration */
+		nSimulationKeywords		/* Number of keywords defined for this block */
 	};
 	// Convert text string to SimulationKeyword
 	SimulationKeyword keyword(const char* s);

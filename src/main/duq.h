@@ -189,6 +189,8 @@ class DUQ
 	RefList<Module,bool> postProcessingTasks_;
 	// Current simulation step
 	int iteration_;
+	// Whether to write various data after each iteration
+	bool writeIterationData_;
 
 	private:
 	// Find first occurrence of named Module in pre-processing tasks

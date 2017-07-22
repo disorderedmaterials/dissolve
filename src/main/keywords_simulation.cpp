@@ -30,7 +30,8 @@ KeywordData SimulationBlockData[] = {
 	{ "MaxIterations",			1,	"Maximum number of main loop iterations to perform, or -1 for no limit" },
 	{ "ParallelStrategy",			1, 	"Determines the distribution of processes across Configurations" },
 	{ "Seed",				1,	"Random seed to use" },
-	{ "WindowFunction",			1,	"Window function to use in all Fourier transforms" }
+	{ "WindowFunction",			1,	"Window function to use in all Fourier transforms" },
+	{ "WriteIterationData",			1,	"Write various data at the end of each iteration" }
 };
 
 // Convert text string to SimulationKeyword

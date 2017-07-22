@@ -239,7 +239,7 @@ bool DUQ::go(bool singleIteration)
 		/*
 		 *  6)	Write data
 		 */
-		if (worldPool_.isMaster())
+		if (worldPool_.isMaster() && writeIterationData_)
 		{
 			Messenger::banner("Write Data");
 
@@ -306,6 +306,7 @@ bool DUQ::go(bool singleIteration)
 			/*
 			 * Pair Potentials
 			 */
+
 			for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next)
 			{
 				CharString filename("potential-%s-%s.txt", pot->atomTypeNameI(), pot->atomTypeNameJ());
