@@ -94,7 +94,7 @@ bool PartialRSet::setup(const AtomTypeList& atomTypes, double rdfRange, double b
 	// Total g(r)
 	int nBins = fullHistograms_.ref(0,0).nBins();
 	total_.initialise(nBins);
-	for (n=0; n<nBins; ++n) total_.setX(n, n*binWidth);
+	for (n=0; n<nBins; ++n) total_.setX(n, (n+0.5)*binWidth);
 	title.sprintf("%s-%s-total.%s", prefix, tag, suffix);
 	total_.setName(title);
 
@@ -249,7 +249,7 @@ bool PartialRSet::save()
 			XYData& bound = boundPartials_.ref(typeI,typeJ);
 			XYData& unbound = unboundPartials_.ref(typeI,typeJ);
 			parser.writeLineF("# %-14s  %-16s  %-16s  %-16s\n", "r, Angstroms", "g(r)", "bound(r)", "unbound(r)"); 
-			for (n = 0; n<rdf.nPoints(); ++n) parser.writeLineF("%16.10e  %16.10e  %16.10e  %16.10e\n", rdf.x(n), rdf.y(n), bound.y(n), unbound.y(n));
+			for (n=0; n<rdf.nPoints(); ++n) parser.writeLineF("%16.10e  %16.10e  %16.10e  %16.10e\n", rdf.x(n), rdf.y(n), bound.y(n), unbound.y(n));
 			parser.closeFiles();
 		}
 	}
@@ -351,16 +351,17 @@ void PartialRSet::calculateRDF(XYData& destination, Histogram& histogram, double
 
 	destination.clear();
 
-	double shellVolume, factor, r = 0.0, numberDensity = nSurrounding / boxVolume, normalisation;
+	double shellVolume, factor, r = 0.5*delta, lowerShellLimit = 0.0, numberDensity = nSurrounding / boxVolume, normalisation;
 	for (int n=0; n<nBins; ++n)
 	{
-		shellVolume = (4.0/3.0)*PI*(pow(r+delta,3.0) - pow(r,3.0));
+		shellVolume = (4.0/3.0)*PI*(pow(lowerShellLimit+delta,3.0) - pow(lowerShellLimit,3.0));
 		factor = nCentres * (shellVolume * numberDensity);
 		normalisation = (multiplier / factor) * boxNormalisation.interpolated(r+delta*0.5);
 
 		destination.addPoint(r, histo[n]*normalisation);
 
 		r += delta;
+		lowerShellLimit += delta;
 	}
 }
 

@@ -327,7 +327,7 @@ bool XYData::transformBroadenedRDF(double atomicDensity, double qStep, double qM
 	// Create working arrays
 	Array<double> oldy = y_;
 	y_.forgetData();
-	Q = qStep*0.5;
+	Q = 0.0;
 
 	// Perform Fourier sine transform, including instrument broadening of RDF
 	while (Q <= qMax)
@@ -470,6 +470,7 @@ bool XYData::transformLorch(double atomicDensity, double step, double rMax, doub
 	x_.forgetData();
 	for (n=0; n<y_.nItems(); ++n) x_.add((n+0.5)*step);
 	interpolationInterval_ = -1;
+
 	return true;
 }
 
