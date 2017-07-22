@@ -7,12 +7,12 @@ COMMITMSG="none"
 COMMITTYPE="none"
 BUMP="false"
 PUSH="false"
-ALL="false"
+ALL="true"
 
 # Parse CLI arguments / options
 USAGE1="commit [-F <filename>] [-m <text>] [-p] [-b]"
 
-while getopts "F:m:bp" options; do
+while getopts "F:m:bpo" options; do
   case $options in
     F ) COMMITFILE=$OPTARG
 	COMMITTYPE="file"
@@ -22,6 +22,8 @@ while getopts "F:m:bp" options; do
         echo "Using supplied text for commit message.";;
     b ) BUMP="true"
 	echo "Version (patch) number will be bumped.";;
+    o ) ALL="false"
+	echo "Only specific changes will be committed.";;
     p ) PUSH="true"
 	echo "Files will be committed and local changes pushed to server.";;
     \? ) echo -e $USAGE1
@@ -30,6 +32,13 @@ while getopts "F:m:bp" options; do
         exit 1;;
   esac
 done
+
+# Set up flags to pass
+FLAGS=""
+if [ "$ALL" = "true" ]
+then
+  FLAGS="$FLAGS -a"
+fi
 
 # Check that a commit type was given
 if [ "$COMMITTYPE" = "none" ]
@@ -49,11 +58,11 @@ fi
 # Commit changes
 if [ "$COMMITTYPE" = "file" ]
 then
-  git commit -a -F $COMMITFILE
+  git commit $FLAGS -F $COMMITFILE
 fi
 if [ "$COMMITTYPE" = "msg" ]
 then
-  git commit -a -m "$COMMITMSG"
+  git commit $FLAGS -m "$COMMITMSG"
 fi
 
 # Push changes to server?
