@@ -220,14 +220,21 @@ bool Box::calculateRDFNormalisation(ProcessPool& procPool, XYData& boxNorm, doub
 	// Divide points over processes
 	const int nPointsPerProcess = nPoints / procPool.nProcesses();
 	Messenger::print("--> Number of insertion points per process is %i, total is %i\n", nPointsPerProcess, nPointsPerProcess*procPool.nProcesses());
+
+	// Pre-waste random numbers so that the random number generators in all processes line up
+	for (int n=0; n<nPointsPerProcess*procPool.poolRank(); ++n) randomCoordinate();
+
+	// Calculate the function
 	y = 0.0;
 	for (int n=0; n<nPointsPerProcess; ++n)
 	{
 		bin = (randomCoordinate() - centre).magnitude() * rBinWidth;
-		Messenger::print("n=%i, bin=%i\n", n, bin);
 		if (bin < nBins) y[bin] += 1.0;
 	}
 	if (!procPool.allSum(y.array(), nBins)) return false;
+
+	// Post-waste random numbers so that the random number generators in all processes line up
+	for (int n=0; n<nPointsPerProcess*(procPool.nProcesses()-1-procPool.poolRank()); ++n) randomCoordinate();
 
 	// Normalise histogram data, and scale by volume and binWidth ratio
 	y /= double(nPointsPerProcess*procPool.nProcesses());
