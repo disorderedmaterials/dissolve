@@ -102,6 +102,9 @@ bool SimulationBlock::parse(LineParser& parser, DUQ* duq)
 				}
 				else duq->setWindowFunction(XYData::windowFunction(parser.argc(1)));
 				break;
+			case (SimulationBlock::WriteIterationDataKeyword):
+				duq->setWriteIterationData(parser.argb(1));
+				break;
 			case (SimulationBlock::nSimulationKeywords):
 				Messenger::print("Unrecognised %s block keyword found - '%s'\n", InputBlocks::inputBlock(InputBlocks::SimulationBlock), parser.argc(0));
 				InputBlocks::printValidKeywords(InputBlocks::SimulationBlock);

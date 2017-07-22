@@ -189,8 +189,6 @@ class DUQ
 	RefList<Module,bool> postProcessingTasks_;
 	// Current simulation step
 	int iteration_;
-	// Whether to write various data after each iteration
-	bool writeIterationData_;
 
 	private:
 	// Find first occurrence of named Module in pre-processing tasks
@@ -221,6 +219,8 @@ class DUQ
 	int maxIterations_;
 	// Window function to use for all Fourier transforms
 	XYData::WindowFunction windowFunction_;
+	// Whether to write various data after each iteration
+	bool writeIterationData_;
 
 	public:
 	// Set number of test points to use when calculating Box normalisation arrays
@@ -239,6 +239,10 @@ class DUQ
 	void setWindowFunction(XYData::WindowFunction wf);
 	// Return window function to use for all Fourier transforms
 	XYData::WindowFunction windowFunction();
+	// Set whether to write various data after each iteration
+	void setWriteIterationData(bool b);
+	// Return whether to write various data after each iteration
+	bool writeIterationData();
 	// Setup all simulation data, checking it as we go
 	bool setupSimulation();
 

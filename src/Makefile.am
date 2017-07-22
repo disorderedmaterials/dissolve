@@ -12,6 +12,8 @@ libduq_la_LDFLAGS = -static
 
 duq_LDADD = libduq.la
 
+duq_CPPFLAGS = @DUQ_CFLAGS@
+
 # Target 'monitor'
 if BUILDGUI
 
@@ -22,6 +24,8 @@ monitor_SOURCES = monitor.cpp
 SUBDIRS += gui
 
 monitor_LDADD = libduq.la gui/libgui.la gui/qcustomplot/libqcustomplot.la @GUI_LDLIBS@
+
+monitor_CPPFLAGS = @DUQ_CFLAGS@ @GUI_CFLAGS@
 
 endif
 

@@ -71,6 +71,18 @@ XYData::WindowFunction DUQ::windowFunction()
 	return windowFunction_;
 }
 
+// Set whether to write various data after each iteration
+void DUQ::setWriteIterationData(bool b)
+{
+	writeIterationData_ = b;
+}
+
+// Return whether to write various data after each iteration
+bool DUQ::writeIterationData()
+{
+	return writeIterationData_;
+}
+
 // Setup all simulation data, checking it as we go
 bool DUQ::setupSimulation()
 {

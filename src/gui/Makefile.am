@@ -27,4 +27,4 @@ libgui_la_SOURCES = mainwindow.ui mainwindow_funcs.cpp
 
 noinst_HEADERS = mainwindow.h
 
-AM_CPPFLAGS = -I$(top_srcdir)/src -I../ -I./ @DUQ_CFLAGS@ @GUI_INCLUDES@
+AM_CPPFLAGS = -I$(top_srcdir)/src -I../ -I./ @DUQ_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
