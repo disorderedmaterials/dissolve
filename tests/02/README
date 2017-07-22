@@ -1,0 +1,7 @@
+Unit Test 02 - Simulated S(Q) for water
+=======================================
+
+Comparison between calculated structure factors for water isotopologues and those from EPSR.
+
+Notes:
+EPSR input file set up to use all molecular origins in formation of g(r) (2000 for safety, since nmols is only 1000).
