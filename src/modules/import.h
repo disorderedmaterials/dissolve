@@ -111,6 +111,8 @@ class ImportModule : public Module
 	static bool readXYZCoordinates(LineParser& parser, Array< Vec3<double> >& r);
 	// Read DL_POLY coordinates from specified file
 	static bool readDLPOLYCoordinates(LineParser& parser, Array< Vec3<double> >& r);
+	// Read EPSR ATO coordinates from specified file
+	static bool readEPSRCoordinates(LineParser& parser, Array< Vec3<double> >& r);
 
 
 	/*
