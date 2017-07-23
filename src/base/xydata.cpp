@@ -487,41 +487,6 @@ void XYData::operator/=(const double factor)
  * General Functions
  */
 
-// Smooth data
-void XYData::smooth(int avgSize, int skip)
-{
-	// First, create a new dataset using Y-averages of the current data
-	XYData avg;
-	double y;
-	int n, m, i = avgSize/2;
-	for (n=i; n < x_.nItems()-i; n += (1+skip))
-	{
-		y = 0.0;
-		for (m=n-i; m <= n+i; ++m) y += y_[m];
-		y /= avgSize;
-		
-		avg.addPoint(x_[n], y);
-	}
-
-	avg.interpolate(XYData::ConstrainedSplineInterpolation);
-
-	// Now go through old data, setting new Y values from the interpolation
-	for (n=0; n<x_.nItems(); ++n) y_[n] = avg.interpolated(x_[n]);
-}
-
-// Add interpolated data
-void XYData::addInterpolated(XYData& source, double weighting)
-{
-	// If there is currently no data, just copy the source data
-	if (x_.nItems() == 0)
-	{
-		x_ = source.arrayX();
-		y_ = source.arrayY();
-		y_ *= weighting;
-	}
-	else for (int n=0; n<x_.nItems(); ++n) addY(n, source.interpolated(x_.value(n)) * weighting);
-}
-
 // Return minumum x value in data
 double XYData::xMin()
 {
@@ -538,6 +503,18 @@ double XYData::xMax()
 	double result = x_[0];
 	for (int n=1; n<x_.nItems(); ++n) if (x_[n] > result) result = x_[n];
 	return result;
+}
+
+// Return first x value in data
+double XYData::xFirst()
+{
+	return x_.first();
+}
+
+// Return last x value in data
+double XYData::xLast()
+{
+	return x_.last();
 }
 
 // Return minumum y value in data
@@ -702,7 +679,77 @@ void XYData::rebin(double deltaX)
 	// Overwrite old data
 	(*this) = rebinnedData;
 }
-	
+
+// Smooth data
+void XYData::smooth(int avgSize, int skip)
+{
+	// First, create a new dataset using Y-averages of the current data
+	XYData avg;
+	double y;
+	int n, m, i = avgSize/2;
+	for (n=i; n < x_.nItems()-i; n += (1+skip))
+	{
+		y = 0.0;
+		for (m=n-i; m <= n+i; ++m) y += y_[m];
+		y /= avgSize;
+		
+		avg.addPoint(x_[n], y);
+	}
+
+	avg.interpolate(XYData::ConstrainedSplineInterpolation);
+
+	// Now go through old data, setting new Y values from the interpolation
+	for (n=0; n<x_.nItems(); ++n) y_[n] = avg.interpolated(x_[n]);
+}
+
+// Add interpolated data
+void XYData::addInterpolated(XYData& source, double weighting)
+{
+	// If there is currently no data, just copy the source data
+	if (x_.nItems() == 0)
+	{
+		x_ = source.arrayX();
+		y_ = source.arrayY();
+		y_ *= weighting;
+	}
+	else for (int n=0; n<x_.nItems(); ++n) addY(n, source.interpolated(x_.value(n)) * weighting);
+}
+
+// Return RMSE of current data with (interpolated) reference data
+double XYData::rmse(XYData ref)
+{
+	// First, generate interpolation of reference data if it needs it
+	if (ref.interpolationScheme_ == XYData::NoInterpolation) ref.interpolate(XYData::ConstrainedSplineInterpolation);
+
+	// Generate RMSE over actual values of our data
+	double rmse = 0.0, delta;
+	double firstX = 0.0, lastX = 0.0;
+	int nPointsConsidered = 0;
+	for (int n=0; n<x_.nItems(); ++n)
+	{
+		// Is our x value lower than the lowest x value of the reference data?
+		if (x_[n] < ref.xFirst()) continue;
+
+		// Is our x value higher than the last x value of the reference data?
+		if (x_[n] > ref.xLast()) break;
+
+		// Is this the first point considered?
+		if (nPointsConsidered == 0) firstX = x_[n];
+
+		// Sum squared error
+		delta = y_[n] - ref.interpolated(x_[n]);
+		rmse += delta*delta;
+		lastX = x_[n];
+		++nPointsConsidered;
+	}
+
+	// Finalise RMSE and summarise result
+	rmse = sqrt(rmse/nPointsConsidered);
+	Messenger::print("RMSE between datasets is %15.4e over %15.4e < x < %15.4e (%i points).\n", rmse, firstX, lastX, nPointsConsidered);
+
+	return rmse;
+}
+
 /*
  * File I/O
  */

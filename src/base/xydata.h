@@ -137,6 +137,10 @@ class XYData : public ListItem<XYData>
 	double xMin();
 	// Return maxumum x value in data
 	double xMax();
+	// Return first x value in data
+	double xFirst();
+	// Return last x value in data
+	double xLast();
 	// Return minumum y value in data
 	double yMin();
 	// Return maxumum y value in data
@@ -157,6 +161,8 @@ class XYData : public ListItem<XYData>
 	void smooth(int avgSize, int skip = 0);
 	// Add interpolated data
 	void addInterpolated(XYData& source, double weighting = 1.0);
+	// Return RMSE of current data with (interpolated) reference data
+	double rmse(XYData ref);
 
 
 	/*
@@ -219,6 +225,7 @@ class XYData : public ListItem<XYData>
 	/*
 	 * Interpolation Scheme
 	 */
+	public:
 	// Interpolation Schemes
 	enum InterpolationScheme
 	{
@@ -228,6 +235,7 @@ class XYData : public ListItem<XYData>
 		LinearInterpolation,
 		ThreePointInterpolation
 	};
+
 	private:
 	// Array of parameters for interpolations (if created)
 	Array<double> interpolationA_, interpolationB_, interpolationC_, interpolationD_, interpolationH_;
