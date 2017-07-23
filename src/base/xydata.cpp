@@ -665,7 +665,7 @@ void XYData::rebin(double deltaX)
 	}
 
 	// Interpolate the existing data
-	interpolate(XYData::ConstrainedSplineInterpolation);
+	interpolate(XYData::LinearInterpolation);
 
 	// Generate new data
 	XYData rebinnedData;
@@ -696,7 +696,7 @@ void XYData::smooth(int avgSize, int skip)
 		avg.addPoint(x_[n], y);
 	}
 
-	avg.interpolate(XYData::ConstrainedSplineInterpolation);
+	avg.interpolate(XYData::SplineInterpolation);
 
 	// Now go through old data, setting new Y values from the interpolation
 	for (n=0; n<x_.nItems(); ++n) y_[n] = avg.interpolated(x_[n]);
@@ -719,7 +719,7 @@ void XYData::addInterpolated(XYData& source, double weighting)
 double XYData::rmse(XYData ref)
 {
 	// First, generate interpolation of reference data if it needs it
-	if (ref.interpolationScheme_ == XYData::NoInterpolation) ref.interpolate(XYData::ConstrainedSplineInterpolation);
+	if (ref.interpolationScheme_ == XYData::NoInterpolation) ref.interpolate(XYData::SplineInterpolation);
 
 	// Generate RMSE over actual values of our data
 	double rmse = 0.0, delta;
@@ -745,7 +745,7 @@ double XYData::rmse(XYData ref)
 
 	// Finalise RMSE and summarise result
 	rmse = sqrt(rmse/nPointsConsidered);
-	Messenger::print("RMSE between datasets is %15.4e over %15.4e < x < %15.4e (%i points).\n", rmse, firstX, lastX, nPointsConsidered);
+	Messenger::print("RMSE between datasets is %15.9e over %15.9e < x < %15.9e (%i points).\n", rmse, firstX, lastX, nPointsConsidered);
 
 	return rmse;
 }
@@ -771,14 +771,14 @@ bool XYData::load(LineParser& parser, int xcol, int ycol)
 
 		if ((xcol >= parser.nArgs()) || (ycol >= parser.nArgs()))
 		{
-			Messenger::error("Error reading from '%s', as one or both columns specified (%i and %i) are not present.\n", parser.inputFilename(), xcol, ycol);
+			Messenger::error("Error reading from '%s', as one or both columns specified (%i and %i) are not present.\n", parser.inputFilename(), xcol+1, ycol+1);
 			return false;
 		}
 
 		addPoint(parser.argd(0), parser.argd(1));
 	}
 	
-	Messenger::print("Loaded %i points from '%s'.\n", nPoints(), parser.inputFilename());
+	Messenger::print("Loaded %i points from '%s' (columns %i and %i).\n", nPoints(), parser.inputFilename(), xcol+1, ycol+1);
 	
 	return true;
 }
@@ -833,6 +833,7 @@ bool XYData::save(const char* filename) const
 	
 	for (int n = 0; n<x_.nItems(); ++n) parser.writeLineF("%16.10e  %16.10e\n", x_.value(n), y_.value(n));
 	parser.closeFiles();
+
 	return true;
 }
 
@@ -851,6 +852,7 @@ bool XYData::saveWithInterpolation(const char* filename)
 	
 	for (int n=0; n<x_.nItems(); ++n) parser.writeLineF("%16.10e  %16.10e  %16.10e\n", x_.value(n), y_.value(n), interpolated(x_.value(n)));
 	parser.closeFiles();
+
 	return true;
 }
 

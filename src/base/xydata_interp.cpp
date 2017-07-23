@@ -268,7 +268,7 @@ void XYData::interpolate(XYData::InterpolationScheme scheme)
 	for (int i=0; i<x_.nItems()-1; ++i) interpolationH_[i] = x_[i+1] - x_[i];
 
 	if (scheme == XYData::SplineInterpolation) interpolateSpline();
-	else if (scheme == XYData::ConstrainedSplineInterpolation) interpolateConstrainedSpline();
+// 	else if (scheme == XYData::ConstrainedSplineInterpolation) interpolateConstrainedSpline();
 	else if (scheme == XYData::LinearInterpolation) interpolateLinear();
 	else if (scheme == XYData::ThreePointInterpolation) interpolateThreePoint();
 
@@ -285,8 +285,8 @@ double XYData::interpolated(double xvalue)
 		if (interpolationScheme_ != XYData::NoInterpolation) interpolate(interpolationScheme_);
 		else
 		{
-			Messenger::warn("Interpolated point requested, but no interpolation scheme has been set. Assuming ConstrainedSpline...\n");
-			interpolate(XYData::ConstrainedSplineInterpolation);
+			Messenger::warn("Interpolated point requested, but no interpolation scheme has been set. Assuming Spline...\n");
+			interpolate(XYData::SplineInterpolation);
 		}
 	}
 
@@ -315,12 +315,12 @@ double XYData::interpolated(double xvalue, int interval)
 		double hh = h*h;
 		return interpolationA_[interval] + interpolationB_[interval]*h + interpolationC_[interval]*hh + interpolationD_[interval]*hh*h;
 	}
-	else if (interpolationScheme_ == XYData::ConstrainedSplineInterpolation)
-	{
-		double h = xvalue;
-		double hh = h*h;
-		return interpolationA_[interval] + interpolationB_[interval]*h + interpolationC_[interval]*hh + interpolationD_[interval]*hh*h;
-	}
+//	else if (interpolationScheme_ == XYData::ConstrainedSplineInterpolation)
+//	{
+//		double h = xvalue;
+//		double hh = h*h;
+//		return interpolationA_[interval] + interpolationB_[interval]*h + interpolationC_[interval]*hh + interpolationD_[interval]*hh*h;
+//	}
 	else if (interpolationScheme_ == XYData::LinearInterpolation)
 	{
 		double delta = (xvalue - x_.value(interval)) / interpolationH_.value(interval);

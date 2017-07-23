@@ -215,6 +215,8 @@ void PartialRSet::formTotal()
 			// TODO Does not include contributions from Bragg partials
 		}
 	}
+
+	total_.interpolate(XYData::SplineInterpolation);
 }
 
 // Return total function
@@ -236,7 +238,7 @@ bool PartialRSet::save()
 		{
 			// Open file and check that we're OK to proceed writing to it
 			const char* filename = partials_.ref(typeI, typeJ).name();
-			Messenger::print("--> Writing RDF file '%s'...\n", filename);
+			Messenger::print("--> Writing g(r) file '%s'...\n", filename);
 
 			parser.openOutput(filename, true);
 			if (!parser.isFileGoodForWriting())
@@ -254,7 +256,7 @@ bool PartialRSet::save()
 		}
 	}
 
-	Messenger::print("--> Writing RDF file '%s'...\n", total_.name());
+	Messenger::print("--> Writing G(r) file '%s'...\n", total_.name());
 	return total_.save(total_.name());
 }
 

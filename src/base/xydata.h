@@ -231,7 +231,7 @@ class XYData : public ListItem<XYData>
 	{
 		NoInterpolation,
 		SplineInterpolation,
-		ConstrainedSplineInterpolation,
+		/* ConstrainedSplineInterpolation, */  // Removed for now as it produces spurious features in some fits.
 		LinearInterpolation,
 		ThreePointInterpolation
 	};
