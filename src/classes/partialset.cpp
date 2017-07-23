@@ -1,6 +1,6 @@
 /*
-	*** Set of Partials in r (g(r))
-	*** src/classes/partialrset.cpp
+	*** Set of Partials
+	*** src/classes/partialset.cpp
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -20,18 +20,18 @@
 */
 
 #include "classes/atomtype.h"
-#include "classes/partialrset.h"
+#include "classes/partialset.h"
 #include "classes/configuration.h"
 #include "classes/box.h"
 
 // Constructor
-PartialRSet::PartialRSet() : ListItem<PartialRSet>()
+PartialSet::PartialSet() : ListItem<PartialSet>()
 {
 	index_ = -1;
 }
 
 // Destructor
-PartialRSet::~PartialRSet()
+PartialSet::~PartialSet()
 {
 	fullHistograms_.clear();
 	boundHistograms_.clear();
@@ -47,13 +47,13 @@ PartialRSet::~PartialRSet()
  */
 
 // Setup using supplied Configuration
-bool PartialRSet::setup(Configuration* cfg, const char* prefix, const char* tag, const char* suffix)
+bool PartialSet::setup(Configuration* cfg, const char* prefix, const char* tag, const char* suffix)
 {
 	return setup(cfg->usedAtomTypesList(), cfg->rdfRange(), cfg->rdfBinWidth(), prefix, tag, suffix);
 }
 
-// Setup PartialRSet
-bool PartialRSet::setup(const AtomTypeList& atomTypes, double rdfRange, double binWidth, const char* prefix, const char* tag, const char* suffix)
+// Setup PartialSet
+bool PartialSet::setup(const AtomTypeList& atomTypes, double rdfRange, double binWidth, const char* prefix, const char* tag, const char* suffix)
 {
 	// Construct a matrix based on the usedAtomTypes_ list of the Configuration, since this reflects all our possible partials
 	int n, m;
@@ -69,7 +69,9 @@ bool PartialRSet::setup(const AtomTypeList& atomTypes, double rdfRange, double b
 	partials_.initialise(nTypes, nTypes, true);
 	boundPartials_.initialise(nTypes, nTypes, true);
 	unboundPartials_.initialise(nTypes, nTypes, true);
+	braggPartials_.initialise(nTypes, nTypes, true);
 
+	// Setup array matrices for partials
 	CharString title;
 	AtomTypeData* at1 = atomTypes_.first(), *at2;
 	Messenger::printVerbose("  --> Creating lists of partials and linking into matrices...\n");
@@ -78,20 +80,21 @@ bool PartialRSet::setup(const AtomTypeList& atomTypes, double rdfRange, double b
 		at2 = at1;
 		for (m=n; m<nTypes; ++m, at2 = at2->next)
 		{
-			// Working arrays
+			// Histogram arrays for g(r)
 			fullHistograms_.ref(n,m).initialise(0.0, rdfRange, binWidth);
 			boundHistograms_.ref(n,m).initialise(0.0, rdfRange, binWidth);
 			unboundHistograms_.ref(n,m).initialise(0.0, rdfRange, binWidth);
 
-			// Partial g(r)
+			// Partials
 			title.sprintf("%s-%s-%s-%s.%s", prefix, tag, at1->name(), at2->name(), suffix);
 			partials_.ref(n,m).setName(title.get());
 			boundPartials_.ref(n,m).setName(title.get());
 			unboundPartials_.ref(n,m).setName(title.get());
+			braggPartials_.ref(n,m).setName(title.get());
 		}
 	}
 
-	// Total g(r)
+	// Setup array for total
 	int nBins = fullHistograms_.ref(0,0).nBins();
 	total_.initialise(nBins);
 	for (n=0; n<nBins; ++n) total_.setX(n, (n+0.5)*binWidth);
@@ -103,8 +106,46 @@ bool PartialRSet::setup(const AtomTypeList& atomTypes, double rdfRange, double b
 	return true;
 }
 
+// Setup PartialSet without initialising arrays
+bool PartialSet::setup(const AtomTypeList& atomTypes, const char* prefix, const char* tag, const char* suffix)
+{
+	// Copy type array
+	atomTypes_ = atomTypes;
+	int nTypes = atomTypes_.nItems();
+
+	partials_.initialise(nTypes, nTypes, true);
+	boundPartials_.initialise(nTypes, nTypes, true);
+	unboundPartials_.initialise(nTypes, nTypes, true);
+	braggPartials_.initialise(nTypes, nTypes, true);
+
+	// Setup array matrices for partials
+	CharString title;
+	AtomTypeData* at1 = atomTypes_.first(), *at2;
+	for (int n=0; n<nTypes; ++n, at1 = at1->next)
+	{
+		at2 = at1;
+		for (int m=n; m<nTypes; ++m, at2 = at2->next)
+		{
+			title.sprintf("%s-%s-%s-%s.%s", prefix, tag, at1->name(), at2->name(), suffix);
+			partials_.ref(n,m).setName(title.get());
+			boundPartials_.ref(n,m).setName(title.get());
+			unboundPartials_.ref(n,m).setName(title.get());
+			braggPartials_.ref(n,m).setName(title.get());
+		}
+	}
+
+	// Setup array for total
+	title.sprintf("%s-%s-total.%s", prefix, tag, suffix);
+	total_.setName(title);
+	total_.clear();
+
+	index_ = -1;
+
+	return true;
+}
+
 // Reset partial arrays
-void PartialRSet::reset()
+void PartialSet::reset()
 {
 	int nTypes = atomTypes_.nItems();
 	for (int n=0; n<nTypes; ++n)
@@ -118,6 +159,7 @@ void PartialRSet::reset()
 			partials_.ref(n,m).arrayY() = 0.0;
 			boundPartials_.ref(n,m).arrayY() = 0.0;
 			unboundPartials_.ref(n,m).arrayY() = 0.0;
+			braggPartials_.ref(n,m).arrayY() = 0.0;
 		}
 	}
 	total_.arrayY() = 0.0;
@@ -126,67 +168,67 @@ void PartialRSet::reset()
 }
 
 // Return number of AtomTypes used to generate matrices
-int PartialRSet::nAtomTypes() const
+int PartialSet::nAtomTypes() const
 {
 	return atomTypes_.nItems();
 }
 
 // Return atom types array
-AtomTypeList PartialRSet::atomTypes() const
+AtomTypeList PartialSet::atomTypes() const
 {
 	return atomTypes_;
 }
 
 // Return index of partials
-int PartialRSet::index() const
+int PartialSet::index() const
 {
 	return index_;
 }
 
 // Set new index
-void PartialRSet::setIndex(int index)
+void PartialSet::setIndex(int index)
 {
 	index_ = index;
 }
 
 // Return full histogram specified
-Histogram& PartialRSet::fullHistogram(int i, int j)
+Histogram& PartialSet::fullHistogram(int i, int j)
 {
 	return fullHistograms_.ref(i, j);
 }
 
 // Return bound histogram specified
-Histogram& PartialRSet::boundHistogram(int i, int j)
+Histogram& PartialSet::boundHistogram(int i, int j)
 {
 	return boundHistograms_.ref(i, j);
 }
 
 // Return unbound histogram specified
-Histogram& PartialRSet::unboundHistogram(int i, int j)
+Histogram& PartialSet::unboundHistogram(int i, int j)
 {
 	return unboundHistograms_.ref(i, j);
 }
 
 // Return full atom-atom partial specified
-XYData& PartialRSet::partial(int i, int j)
+XYData& PartialSet::partial(int i, int j)
 {
 	return partials_.ref(i, j);
 }
 
 // Return atom-atom partial for pairs not joined by bonds or angles
-XYData& PartialRSet::unboundPartial(int i, int j)
+XYData& PartialSet::unboundPartial(int i, int j)
 {
 	return unboundPartials_.ref(i, j);
 }
 
 // Return atom-atom partial for pairs joined by bonds or angles
-XYData& PartialRSet::boundPartial(int i, int j)
+XYData& PartialSet::boundPartial(int i, int j)
 {
 	return boundPartials_.ref(i, j);
 }
 
 // Sum partials into total
-void PartialRSet::formTotal()
+void PartialSet::formTotal()
 {
 	int nTypes = atomTypes_.nItems();
 	if (nTypes == 0)
@@ -220,13 +262,13 @@ void PartialRSet::formTotal()
 }
 
 // Return total function
-XYData& PartialRSet::total()
+XYData& PartialSet::total()
 {
 	return total_;
 }
 
 // Save all partials and total
-bool PartialRSet::save()
+bool PartialSet::save()
 {
 	LineParser parser;
 	int typeI, typeJ, n;
@@ -238,7 +280,7 @@ bool PartialRSet::save()
 		{
 			// Open file and check that we're OK to proceed writing to it
 			const char* filename = partials_.ref(typeI, typeJ).name();
-			Messenger::print("--> Writing g(r) file '%s'...\n", filename);
+			Messenger::print("--> Writing partial file '%s'...\n", filename);
 
 			parser.openOutput(filename, true);
 			if (!parser.isFileGoodForWriting())
@@ -256,7 +298,7 @@ bool PartialRSet::save()
 		}
 	}
 
-	Messenger::print("--> Writing G(r) file '%s'...\n", total_.name());
+	Messenger::print("--> Writing total file '%s'...\n", total_.name());
 	return total_.save(total_.name());
 }
 
@@ -265,7 +307,7 @@ bool PartialRSet::save()
  */
 
 // Form partials from stored Histogram data
-void PartialRSet::formPartials(double boxVolume, XYData& boxNormalisation)
+void PartialSet::formPartials(double boxVolume, XYData& boxNormalisation)
 {
 	int n, m;
 	int nTypes = atomTypes_.nItems();
@@ -283,8 +325,8 @@ void PartialRSet::formPartials(double boxVolume, XYData& boxNormalisation)
 	}
 }
 
-// Add in partials from source PartialRSet to our own
-bool PartialRSet::addPartials(PartialRSet& source, double weighting)
+// Add in partials from source PartialSet to our own
+bool PartialSet::addPartials(PartialSet& source, double weighting)
 {
 	// Loop over partials in source set
 	int typeI, typeJ, localI, localJ;
@@ -296,7 +338,7 @@ bool PartialRSet::addPartials(PartialRSet& source, double weighting)
 		localI = atomTypes_.indexOf(atI);
 		if (localI == -1)
 		{
-			Messenger::error("AtomType '%s' not present in this PartialRSet, so can't add in the associated data.\n", atI->name());
+			Messenger::error("AtomType '%s' not present in this PartialSet, so can't add in the associated data.\n", atI->name());
 			return false;
 		}
 
@@ -306,7 +348,7 @@ bool PartialRSet::addPartials(PartialRSet& source, double weighting)
 			localJ = atomTypes_.indexOf(atJ);
 			if (localJ == -1)
 			{
-				Messenger::error("AtomType '%s' not present in this PartialRSet, so can't add in the associated data.\n", atJ->name());
+				Messenger::error("AtomType '%s' not present in this PartialSet, so can't add in the associated data.\n", atJ->name());
 				return false;
 			}
 
@@ -324,7 +366,7 @@ bool PartialRSet::addPartials(PartialRSet& source, double weighting)
 }
 
 // Re-weight partials (including total) with supplied weighting factor
-void PartialRSet::reweightPartials(double factor)
+void PartialSet::reweightPartials(double factor)
 {
 	int n, m;
 	int nTypes = atomTypes_.nItems();
@@ -345,7 +387,7 @@ void PartialRSet::reweightPartials(double factor)
 }
 
 // Calculate and return RDF from supplied Histogram and normalisation data
-void PartialRSet::calculateRDF(XYData& destination, Histogram& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier, XYData& boxNormalisation)
+void PartialSet::calculateRDF(XYData& destination, Histogram& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier, XYData& boxNormalisation)
 {
 	int nBins = histogram.nBins();
 	double delta = histogram.delta();
@@ -372,7 +414,7 @@ void PartialRSet::calculateRDF(XYData& destination, Histogram& histogram, double
  */
 
 // Broadcast data from root to all other processes
-bool PartialRSet::broadcast(ProcessPool& procPool, int rootRank)
+bool PartialSet::broadcast(ProcessPool& procPool, int rootRank)
 {
 #ifdef PARALLEL
 	// The structure should have already been setup(), so arrays should be ready to copy

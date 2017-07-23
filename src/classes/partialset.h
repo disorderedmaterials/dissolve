@@ -1,6 +1,6 @@
 /*
-	*** Set of Partials in Q (S(Q))
-	*** src/classes/partialqset.h
+	*** Set of Partials
+	*** src/classes/partialset.h
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -19,71 +19,87 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_PARTIALQSET_H
-#define DUQ_PARTIALQSET_H
+#ifndef DUQ_PARTIALSET_H
+#define DUQ_PARTIALSET_H
 
+#include "classes/histogram.h"
 #include "classes/atomtypelist.h"
 #include "base/xydata.h"
 #include "templates/list.h"
 #include "templates/array2d.h"
 
 // Forward Declarations
-class PartialRSet;
 class Configuration;
 
-// Set of Partials in Q (S(Q))
-class PartialQSet : public ListItem<PartialQSet>
+// Set of Partials
+class PartialSet : public ListItem<PartialSet>
 {
 	public:
 	// Constructor
-	PartialQSet();
+	PartialSet();
 	// Destructor
-	~PartialQSet();
+	~PartialSet();
 
 
 	/*
 	 * Partials Data
 	 */
 	private:
-	// AtomTypes used to create matrices
+	// AtomTypes used to generate matrices
 	AtomTypeList atomTypes_;
 	// Index (e.g. in related Configuration) at which these partials were last calculated
 	int index_;
+	// Histograms used for calculating full atom-atom partials in r
+	Array2D<Histogram> fullHistograms_;
+	// Histograms used for calculating bound atom-atom partials in r
+	Array2D<Histogram> boundHistograms_;
+	// Histograms used for deriving unbound atom-atom partials in r
+	Array2D<Histogram> unboundHistograms_;
 	// Pair matrix, containing full atom-atom partial
 	Array2D<XYData> partials_;
 	// Unbound matrix, containing atom-atom partial of pairs not joined by bonds or angles
 	Array2D<XYData> unboundPartials_;
 	// Bound matrix, containing atom-atom partial of pairs joined by bonds or angles
 	Array2D<XYData> boundPartials_;
-	// Bragg S(Q) matrix, derived from summation of HKL terms (if requested)
+	// Bragg matrix, derived from summation of HKL terms
 	Array2D<XYData> braggPartials_;
 	// Total function
 	XYData total_;
 
 	public:
-	// Setup arrays
-	bool setup(const AtomTypeList& types, const char* prefix, const char* tag, const char* suffix);
+	// Setup using supplied Configuration
+	bool setup(Configuration* cfg, const char* prefix, const char* tag, const char* suffix);
+	// Setup PartialSet, initialising arrays for g(r) use
+	bool setup(const AtomTypeList& atomTypes, double rdfRange, double binWidth, const char* prefix, const char* tag, const char* suffix);
+	// Setup PartialSet without initialising arrays
+	bool setup(const AtomTypeList& atomTypes, const char* prefix, const char* tag, const char* suffix);
 	// Reset partial arrays
 	void reset();
 	// Return number of AtomTypes used to generate matrices
 	int nAtomTypes() const;
+	// Return atom types array
+	AtomTypeList atomTypes() const;
 	// Return index of partials
 	int index() const;
 	// Set new index
 	void setIndex(int index);
+	// Return full histogram specified
+	Histogram& fullHistogram(int i, int j);
+	// Return bound histogram specified
+	Histogram& boundHistogram(int i, int j);
+	// Return unbound histogram specified
+	Histogram& unboundHistogram(int i, int j);
 	// Return full atom-atom partial specified
 	XYData& partial(int i, int j);
 	// Return atom-atom partial for pairs not joined by bonds or angles
 	XYData& unboundPartial(int i, int j);
 	// Return atom-atom partial for pairs joined by bonds or angles
 	XYData& boundPartial(int i, int j);
-	// Return atom-atom Bragg partial
-	XYData& braggPartial(int i, int j);
 	// Sum partials into total
 	void formTotal();
 	// Return total function
 	XYData& total();
-	// Save partials information to disk
+	// Save all partials and total
 	bool save();
 
 
@@ -91,17 +107,21 @@ class PartialQSet : public ListItem<PartialQSet>
 	 * Manipulation
 	 */
 	public:
-	// Add in partials from source PartialRSet to our own
-	bool addPartials(PartialQSet& source, double weighting);
+	// Form partials from stored Histogram data
+	void formPartials(double boxVolume, XYData& boxNormalisation);
+	// Add in partials from source PartialSet to our own
+	bool addPartials(PartialSet& source, double weighting);
 	// Re-weight partials (including total) with supplied weighting factor
 	void reweightPartials(double factor);
+	// Calculate RDF from supplied Histogram and normalisation data
+	static void calculateRDF(XYData& destination, Histogram& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier, XYData& boxNormalisation);
 
 
 	/*
 	 * Parallel Comms
 	 */
 	public:
-	// Broadcast data from Master to all Slaves
+	// Broadcast data from root to all other processes
 	bool broadcast(ProcessPool& procPool, int rootRank);
 };
 

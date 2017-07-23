@@ -23,11 +23,10 @@
 #define DUQ_PARTIALS_H
 
 #include "modules/module.h"
-#include "classes/partialrset.h"
+#include "classes/partialset.h"
 
 // Forward Declarations
-class PartialQSet;
-class PartialRSet;
+class PartialSet;
 class WeightsMatrix;
 
 // Partials Module
@@ -110,8 +109,10 @@ class PartialsModule : public Module
 	 * Members / Functions
 	 */
 	private:
+	// Test reference data against calculated PartialSet set
+	bool testReferencePartials(GenericList& sourceModuleData, AtomTypeList& typesList, PartialSet& partialgr, const char* dataPrefix, double testThreshold);
 	// Calculate partial RDFs with simple double-loop
-	bool calculateSimple(Configuration* cfg, PartialRSet& partialSet, ProcessPool& procPool);
+	bool calculateSimple(Configuration* cfg, PartialSet& partialSet, ProcessPool& procPool);
 
 	public:
 	// Weighting Type enum
@@ -119,11 +120,11 @@ class PartialsModule : public Module
 	// (Re)calculate unweighted partials for the specified Configuration
 	bool calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg, int smoothing);
 	// Calculate weighted partials from supplied unweighted partials
-	bool calculateWeightedGR(PartialRSet& unweightedPartials, PartialRSet& weightedPartials, WeightsMatrix& weightsMatrix);
+	bool calculateWeightedGR(PartialSet& unweightedPartials, PartialSet& weightedPartials, WeightsMatrix& weightsMatrix);
 	// Calculate unweighted S(Q) from supplied unweighted g(r)
-	bool calculateUnweightedSQ(ProcessPool& procPool, PartialRSet& sourcegr, PartialQSet& destsq, double qMax, double qDelta, double rho, XYData::WindowFunction wf, double qDepBroadening, double qIndepBroadening, bool includeBragg, double qDepBraggBroadening, double qIndepBraggBroad);
+	bool calculateUnweightedSQ(ProcessPool& procPool, PartialSet& sourcegr, PartialSet& destsq, double qMax, double qDelta, double rho, XYData::WindowFunction wf, double qDepBroadening, double qIndepBroadening, bool includeBragg, double qDepBraggBroadening, double qIndepBraggBroad);
 	// Calculate weighted S(Q) from supplied unweighted S(Q)
-	bool calculateWeightedSQ(PartialQSet& unweightedsq, PartialQSet& weightedsq, WeightsMatrix& weightsMatrix);
+	bool calculateWeightedSQ(PartialSet& unweightedsq, PartialSet& weightedsq, WeightsMatrix& weightsMatrix);
 
 
 	/*

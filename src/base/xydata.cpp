@@ -739,7 +739,6 @@ double XYData::rmse(XYData ref)
 		// Sum squared error
 		delta = y_[n] - ref.interpolated(x_[n]);
 		rmse += delta*delta;
-		printf("At x = %f, y1 = %f, y2 = %f, delta = %f, se = %f\n", x_[n], y_[n], ref.interpolated(x_[n]), delta, rmse);
 		lastX = x_[n];
 		++nPointsConsidered;
 	}
