@@ -321,7 +321,7 @@ bool DUQ::go(bool singleIteration)
 			// All good. Carry on!
 			worldPool_.proceed();
 		}
-		else if (!worldPool_.decision()) return false;
+		else if (worldPool_.isSlave() && writeIterationData_ && (!worldPool_.decision())) return false;
 
 		// Sync up all processes
 		Messenger::printVerbose("Waiting for other processes at end of data write section...\n");
