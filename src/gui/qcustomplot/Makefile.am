@@ -4,7 +4,7 @@ SUFFIXES: .hui
 
 .hui.lo:
 	$(QTMOC) -o $*.cpp -f$< $<
-	${LIBTOOL} --tag=CXX --mode=compile $(CXX) -I$(top_srcdir)/src -I../../ -I./ ${AM_CPPFLAGS} -c $*.cpp -o $@
+	${LIBTOOL} --tag=CXX --mode=compile $(CXX) ${AM_CPPFLAGS} -c $*.cpp -o $@
 	rm $*.cpp
 
 clean-local:
@@ -13,6 +13,6 @@ clean-local:
 
 libqcustomplot_la_SOURCES = plotdata.cpp plotdatastyle.cpp qcustomplot.hui qcustomplot_funcs.cpp tplotwidget.hui tplotwidget_funcs.cpp
 
-AM_CPPFLAGS = -I$(top_srcdir)/src -I../../ -I$(top_srcdir)/src/gui @GUI_INCLUDES@ @DUQ_CFLAGS@
+AM_CPPFLAGS = -I$(top_srcdir)/src -I../../ -I$(top_srcdir)/src/gui @GUI_INCLUDES@ @DUQ_CFLAGS@ @GUI_CFLAGS@
 
 noinst_HEADERS = plotdata.h plotdatastyle.h
