@@ -54,4 +54,5 @@ EndPairPotentials
 
 Simulation
   MaxIterations 1
+  WriteIterationData  false
 EndSimulation
