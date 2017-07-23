@@ -143,7 +143,7 @@ void XYData::interpolateSpline()
 	// Initialise parameter arrays and working array
 	interpolationA_.initialise(nPoints-1);
 	interpolationB_.initialise(nPoints-1);
-	interpolationC_.initialise(nPoints-1);
+	interpolationC_.initialise(nPoints);
 	interpolationD_.initialise(nPoints-1);
 
 	// Determine 'm' values (== C) now by solving the tridiagonal matrix above. Use Thomas algorithm...
