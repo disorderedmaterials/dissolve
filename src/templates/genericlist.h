@@ -121,6 +121,12 @@ class GenericList
 
 		return items;
 	}
+	// List all items
+	void listItems()
+	{
+		int count = 0;
+		for (GenericItem* item = items_.first(); item != NULL; item = item->next, ++count) Messenger::print("  %3i  %s", count, item->name());
+	}
 	// Broadcast all data
 	bool broadcast(ProcessPool& procPool, int root)
 	{
