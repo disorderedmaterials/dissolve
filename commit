@@ -10,7 +10,7 @@ PUSH="false"
 ALL="true"
 
 # Parse CLI arguments / options
-USAGE1="commit [-F <filename>] [-m <text>] [-p] [-b]"
+USAGE1="commit [-F <filename>] [-m <text>] [-p] [-b] [-o]"
 
 while getopts "F:m:bpo" options; do
   case $options in
