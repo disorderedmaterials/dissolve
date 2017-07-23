@@ -739,6 +739,7 @@ double XYData::rmse(XYData ref)
 		// Sum squared error
 		delta = y_[n] - ref.interpolated(x_[n]);
 		rmse += delta*delta;
+		printf("At x = %f, y1 = %f, y2 = %f, delta = %f, se = %f\n", x_[n], y_[n], ref.interpolated(x_[n]), delta, rmse);
 		lastX = x_[n];
 		++nPointsConsidered;
 	}
@@ -775,7 +776,7 @@ bool XYData::load(LineParser& parser, int xcol, int ycol)
 			return false;
 		}
 
-		addPoint(parser.argd(0), parser.argd(1));
+		addPoint(parser.argd(xcol), parser.argd(ycol));
 	}
 	
 	Messenger::print("Loaded %i points from '%s' (columns %i and %i).\n", nPoints(), parser.inputFilename(), xcol+1, ycol+1);
