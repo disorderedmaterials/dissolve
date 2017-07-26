@@ -20,13 +20,13 @@
 */
 
 #include "modules/moduleregistry.h"
-#include "modules/atomshake.h"
-#include "modules/energy.h"
-#include "modules/forces.h"
-#include "modules/export.h"
-#include "modules/md.h"
-#include "modules/partials.h"
-#include "modules/test.h"
+#include "modules/atomshake/atomshake.h"
+#include "modules/energy/energy.h"
+#include "modules/forces/forces.h"
+#include "modules/export/export.h"
+#include "modules/md/md.h"
+#include "modules/partials/partials.h"
+#include "modules/test/test.h"
 
 /*
  * Module Registration

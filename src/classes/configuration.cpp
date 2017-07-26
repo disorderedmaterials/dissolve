@@ -25,7 +25,7 @@
 #include "classes/species.h"
 #include "base/processpool.h"
 #include "base/sysfunc.h"
-#include "modules/export.h"
+#include "modules/export/export.h"
 
 // Constructor
 Configuration::Configuration() : ListItem<Configuration>()

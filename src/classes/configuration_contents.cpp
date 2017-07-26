@@ -26,7 +26,7 @@
 #include "classes/grain.h"
 #include "classes/species.h"
 #include "base/processpool.h"
-#include "modules/import.h"
+#include "modules/import/import.h"
 
 // Add Atom/Grain space for a Molecule of the Species provided
 void Configuration::addMolecule(Species* sp)

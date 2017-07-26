@@ -13,6 +13,7 @@ export.cpp
 forces.cpp
 import.cpp
 md.cpp
+partials.cpp
 skeleton.cpp
 test.cpp
 #grainshake.cpp
@@ -25,6 +26,7 @@ export.h
 forces.h
 import.h
 md.h
+partials.h
 skeleton.h
 test.h
 #grainshake.h
@@ -38,6 +40,3 @@ ${CMAKE_SOURCE_DIR}
 ${CMAKE_BINARY_DIR}
 ${CMAKE_BINARY_DIR}/src
 )
-
-# Module subdirectories
-add_subdirectory(partials)

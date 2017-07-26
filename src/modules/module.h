@@ -66,8 +66,6 @@ class Module : public ListItem<Module>
 	protected:
 	// Unique name of Module
 	CharString uniqueName_;
-	// Options for Module
-	PlainValueList options_;
 	// RefList of dependent Modules
 	RefList<Module,bool> dependentModules_;
 
@@ -82,6 +80,8 @@ class Module : public ListItem<Module>
 	virtual const char* brief() = 0;
 	// Return instance type for Module
 	virtual InstanceType instanceType() = 0;
+	// Return the maximum number of Configurations the Module can target (or -1 for any number)
+	virtual int nTargetableConfigurations() = 0;
 	// Whether the Module has a pre-processing stage
 	virtual bool hasPreProcessing() = 0;
 	// Whether the Module has a processing stage
@@ -98,6 +98,20 @@ class Module : public ListItem<Module>
 	virtual bool setupDependentModule(Module* depMod) = 0;
 	// Update targets for any auto-added dependent Modules with those of this Module
 	void updateDependentTargets();
+
+
+	/*
+	 * Options
+	 */
+	protected:
+	// Options for Module
+	PlainValueList options_;
+
+	protected:
+	// Setup options for Module
+	virtual void setupOptions() = 0;
+
+	public:
 	// Return options for Module
 	PlainValueList& options();
 	// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
@@ -105,7 +119,7 @@ class Module : public ListItem<Module>
 
 
 	/*
-	 * Basic Control
+	 * Control
 	 */
 	protected:
 	// Frequency with which to run Module (relative to master simulation loop counter)
@@ -138,8 +152,6 @@ class Module : public ListItem<Module>
 	bool configurationLocal_;
 
 	public:
-	// Return the maximum number of Configurations the Module can target (or -1 for any number)
-	virtual int nTargetableConfigurations() = 0;
 	// Add Configuration target
 	bool addConfigurationTarget(Configuration* cfg);
 	// Return number of targeted Configurations
@@ -154,6 +166,7 @@ class Module : public ListItem<Module>
 	void setConfigurationLocal(bool b);
 	// Return whether this module is a local Module in a Configuration
 	bool configurationLocal();
+
 
 	/*
 	 * Method

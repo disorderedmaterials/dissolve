@@ -21,7 +21,7 @@
 
 #include "main/duq.h"
 #include "base/sysfunc.h"
-#include "modules/export.h"
+#include "modules/export/export.h"
 
 // Find first occurrence of named Module in pre-processing tasks
 Module* DUQ::findPreProcessingTask(const char* name)
