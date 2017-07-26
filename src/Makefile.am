@@ -3,6 +3,8 @@ bin_PROGRAMS = duq
 
 duq_SOURCES = main.cpp
 
+EXTRA_DIST = version.h
+
 SUBDIRS = base classes main math modules templates
 
 noinst_LTLIBRARIES = libduq.la
