@@ -23,7 +23,6 @@
 #include "main/keywords.h"
 #include "classes/atomtype.h"
 #include "classes/species.h"
-#include "classes/graindefinition.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "version.h"
