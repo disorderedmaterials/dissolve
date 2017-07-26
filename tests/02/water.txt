@@ -29,18 +29,35 @@ EndConfiguration
 
 # Samples
 Module Partials 'NIMROD-Deuteriated'
-  #TestReferenceSQ  'epsr/water.EPSR.u01'  Total  1  2
-  Test  on
-  TestReference  'epsr/water.EPSR.g01'  GR-unweighted-OW-OW-unbound  1  2
-  TestReference  'epsr/water.EPSR.g01'  GR-unweighted-OW-HW-unbound  1  4
-  TestReference  'epsr/water.EPSR.g01'  GR-unweighted-HW-HW-unbound  1  6
   StructureFactor  on
+  QMin 0.05
   QDepBroadening  0.02    # For SLS
   Configuration  'Bulk'
   Weights  neutron
   Isotopologue  'Bulk'  'Water'  'Deuteriated'  1.0
   Save  On
   Frequency  1
+
+  Test  on
+  TestThreshold  1.0
+  # -- Partial g(r) (unbound terms), unweighted
+  TestReference  'epsr/water.EPSR.g01'  GR-unweighted-OW-OW-unbound  1  2
+  TestReference  'epsr/water.EPSR.g01'  GR-unweighted-OW-HW-unbound  1  4
+  TestReference  'epsr/water.EPSR.g01'  GR-unweighted-HW-HW-unbound  1  6
+  # -- Partial g(r) (intramolecular terms), unweighted
+  TestReference  'epsr/water.EPSR.y01'  GR-unweighted-OW-OW-bound  1  2
+  TestReference  'epsr/water.EPSR.y01'  GR-unweighted-OW-HW-bound  1  4
+  TestReference  'epsr/water.EPSR.y01'  GR-unweighted-HW-HW-bound  1  6
+  # -- Partial S(Q) (unbound terms), unweighted
+  TestReference  'epsr/water.EPSR.f01'  SQ-unweighted-OW-OW-unbound  1  2
+  TestReference  'epsr/water.EPSR.f01'  SQ-unweighted-OW-HW-unbound  1  4
+  TestReference  'epsr/water.EPSR.f01'  SQ-unweighted-HW-HW-unbound  1  6
+  # -- Partial S(Q) (bound terms), unweighted
+  TestReference  'epsr/water.EPSR.s01'  SQ-unweighted-OW-OW-bound  1  2
+  TestReference  'epsr/water.EPSR.s01'  SQ-unweighted-OW-HW-bound  1  4
+  TestReference  'epsr/water.EPSR.s01'  SQ-unweighted-HW-HW-bound  1  6
+  # -- Total neutron-weighted S(Q)
+  TestReference  'epsr/water.EPSR.u01'  SQ-weighted-total  1  2
 EndModule
 
 # Pair Potentials

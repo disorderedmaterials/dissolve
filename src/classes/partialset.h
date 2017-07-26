@@ -49,6 +49,8 @@ class PartialSet : public ListItem<PartialSet>
 	AtomTypeList atomTypes_;
 	// Index (e.g. in related Configuration) at which these partials were last calculated
 	int index_;
+	// Abscissa units for contained data
+	CharString abscissaUnits_;
 	// Histograms used for calculating full atom-atom partials in r
 	Array2D<Histogram> fullHistograms_;
 	// Histograms used for calculating bound atom-atom partials in r
@@ -68,11 +70,11 @@ class PartialSet : public ListItem<PartialSet>
 
 	public:
 	// Setup using supplied Configuration
-	bool setup(Configuration* cfg, const char* prefix, const char* tag, const char* suffix);
+	bool setup(Configuration* cfg, const char* prefix, const char* tag, const char* suffix, const char* abscissaUnits);
 	// Setup PartialSet, initialising arrays for g(r) use
-	bool setup(const AtomTypeList& atomTypes, double rdfRange, double binWidth, const char* prefix, const char* tag, const char* suffix);
+	bool setup(const AtomTypeList& atomTypes, double rdfRange, double binWidth, const char* prefix, const char* tag, const char* suffix, const char* abscissaUnits);
 	// Setup PartialSet without initialising arrays
-	bool setup(const AtomTypeList& atomTypes, const char* prefix, const char* tag, const char* suffix);
+	bool setup(const AtomTypeList& atomTypes, const char* prefix, const char* tag, const char* suffix, const char* abscissaUnits);
 	// Reset partial arrays
 	void reset();
 	// Return number of AtomTypes used to generate matrices
@@ -95,6 +97,8 @@ class PartialSet : public ListItem<PartialSet>
 	XYData& unboundPartial(int i, int j);
 	// Return atom-atom partial for pairs joined by bonds or angles
 	XYData& boundPartial(int i, int j);
+	// Return atom-atom Bragg partial for pairs joined by bonds or angles
+	XYData& braggPartial(int i, int j);
 	// Sum partials into total
 	void formTotal();
 	// Return total function

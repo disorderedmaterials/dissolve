@@ -57,6 +57,7 @@ PartialsModule::PartialsModule() : Module()
 	options_.add("QDepBroadening", 0.0, "FWHM of Gaussian for Q-dependent instrument broadening function when calculating S(Q)", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
 	options_.add("QIndepBroadening", 0.0, "FWHM of Gaussian for Q-independent instrument broadening function when calculating S(Q)", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
 	options_.add("QMax", -1.0, "Maximum Q for calculated S(Q)", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("QMin", 0.0, "Minimum Q for calculated S(Q)", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
 	options_.add("Save", bool(false), "Whether to save partials to disk after calculation", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
 	options_.add("Smoothing", 0, "Specifies the degree of smoothing 'n' to apply to calculated RDFs, where 2n+1 controls the length in the applied Spline smooth", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
 	options_.add("StructureFactor", bool(false), "Determines whether S(Q) are to be calculated from F.T. of the g(r)", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
@@ -250,6 +251,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 	const bool normaliseToAvSq = GenericListHelper<bool>::retrieve(moduleData, "NormaliseToAvSq", uniqueName(), options_.valueAsBool("NormaliseToAvSq"));
 	const bool normaliseToSqAv = GenericListHelper<bool>::retrieve(moduleData, "NormaliseToSqAv", uniqueName(), options_.valueAsBool("NormaliseToSqAv"));
 	const double qDelta = GenericListHelper<double>::retrieve(moduleData, "QDelta", uniqueName(), options_.valueAsDouble("QDelta"));
+	const double qMin = GenericListHelper<double>::retrieve(moduleData, "QMin", uniqueName(), options_.valueAsDouble("QMin"));
 	double qMax = GenericListHelper<double>::retrieve(moduleData, "QMax", uniqueName(), options_.valueAsDouble("QMax"));
 	if (qMax < 0.0) qMax = 30.0;
 	const bool saveData = GenericListHelper<bool>::retrieve(moduleData, "Save", uniqueName(), options_.valueAsBool("Save"));
@@ -297,8 +299,8 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		{
 			// Realise a PartialSQ set
 			PartialSet& unweightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", uniqueName_, GenericItem::NoOutputFlag);
-			unweightedsq.setup(unweightedgr.atomTypes(), cfg->niceName(), "unweighted", "sq");
-			calculateUnweightedSQ(procPool, unweightedgr, unweightedsq, qMax, qDelta, cfg->atomicDensity(), duq.windowFunction(), qDepBroadening, qIndepBroadening, braggOn, braggQDepBroadening, braggQIndepBroadening);
+			unweightedsq.setup(unweightedgr.atomTypes(), cfg->niceName(), "unweighted", "sq", "Q, 1/Angstroms");
+			calculateUnweightedSQ(procPool, unweightedgr, unweightedsq, qMin, qDelta, qMax, cfg->atomicDensity(), duq.windowFunction(), qDepBroadening, qIndepBroadening, braggOn, braggQDepBroadening, braggQIndepBroadening);
 
 			if (saveData && (!configurationLocal_) && (!MPIRunMaster(procPool, unweightedsq.save()))) return false;
 		}
@@ -341,12 +343,12 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 			// Calculate weighted partials
 			PartialSet& weightedgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedGR", uniqueName_, GenericItem::NoOutputFlag);
 			PartialSet& weightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedSQ", uniqueName_, GenericItem::NoOutputFlag);
-			weightedgr.setup(cfg, cfg->niceName(), "weighted", "rdf");
+			weightedgr.setup(cfg, cfg->niceName(), "weighted", "rdf", "r, Angstroms");
 			calculateWeightedGR(unweightedgr, weightedgr, weightsMatrix);
 			if (sqCalculation)
 			{
 				PartialSet& unweightedsq = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedSQ", uniqueName_);
-				weightedsq.setup(weightedgr.atomTypes(), cfg->niceName(), "weighted", "sq");
+				weightedsq.setup(weightedgr.atomTypes(), cfg->niceName(), "weighted", "sq", "Q, 1/Angstroms");
 				calculateWeightedSQ(unweightedsq, weightedsq, weightsMatrix);
 			}
 
@@ -385,7 +387,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		// We will use RDF range information from the first Configuration in the list
 		Configuration* refConfig = targetConfigurations_.firstItem();
 		PartialSet& unweightedgr = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedGR", uniqueName_, GenericItem::NoOutputFlag);
-		unweightedgr.setup(atomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), uniqueName(), "unweighted", "rdf");
+		unweightedgr.setup(atomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), uniqueName(), "unweighted", "rdf", "r, Angstroms");
 
 		// Loop over Configurations again, summing into the PartialSet we have just set up
 		// We will keep a running total of the weights associated with each Configuration, and re-weight the entire set of partials at the end.
@@ -415,7 +417,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		// Test unweighted g(r)?
 		if (testMode)
 		{
-			Messenger::print("\nTesting calculated unweighted g(r) data against supplied datasets (if any)...\n\n");
+			Messenger::print("\nTesting calculated unweighted g(r) data against supplied datasets (if any)...\n");
 			if (!testReferencePartials(moduleData, atomTypes, unweightedgr, "TestReferenceGR-unweighted", testThreshold)) return false;
 		}
 
@@ -424,7 +426,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		{
 			// Realise a PartialSQ set
 			PartialSet& unweightedsq = GenericListHelper<PartialSet>::realise(moduleData, "UnweightedSQ", uniqueName_, GenericItem::NoOutputFlag);
-			unweightedsq.setup(unweightedgr.atomTypes(), uniqueName(), "unweighted", "sq");
+			unweightedsq.setup(unweightedgr.atomTypes(), uniqueName(), "unweighted", "sq", "Q, 1/Angstroms");
 
 			// Sum in unweighted S(Q) partials
 			configIterator.restart();
@@ -445,7 +447,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 			// Test unweighted S(Q)?
 			if (testMode)
 			{
-				Messenger::print("\nTesting calculated unweighted S(Q) data against supplied datasets (if any)...\n\n");
+				Messenger::print("\nTesting calculated unweighted S(Q) data against supplied datasets (if any)...\n");
 				if (!testReferencePartials(moduleData, atomTypes, unweightedsq, "TestReferenceSQ-unweighted", testThreshold)) return false;
 			}
 		}
@@ -454,7 +456,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		if (weightsType != PartialsModule::NoWeighting)
 		{
 			PartialSet& weightedgr = GenericListHelper<PartialSet>::realise(moduleData, "WeightedGR", uniqueName_, GenericItem::NoOutputFlag);
-			weightedgr.setup(atomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), uniqueName(), "weighted", "rdf");
+			weightedgr.setup(atomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), uniqueName(), "weighted", "rdf", "r, Angstroms");
 			weightedgr.reset();
 
 			// Loop over Configurations, adding in their weighted partial sets as we go
@@ -475,7 +477,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 			// Test weighted g(r)?
 			if (testMode)
 			{
-				Messenger::print("\nTesting calculated weighted g(r) data against supplied datasets (if any)...\n\n");
+				Messenger::print("\nTesting calculated weighted g(r) data against supplied datasets (if any)...\n");
 				if (!testReferencePartials(moduleData, atomTypes, weightedgr, "TestReferenceGR-weighted", testThreshold)) return false;
 			}
 
@@ -484,7 +486,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 			{
 				// Realise a PartialSQ set
 				PartialSet& weightedsq = GenericListHelper<PartialSet>::realise(moduleData, "WeightedSQ", uniqueName_, GenericItem::NoOutputFlag);
-				weightedsq.setup(unweightedgr.atomTypes(), uniqueName(), "weighted", "sq");
+				weightedsq.setup(unweightedgr.atomTypes(), uniqueName(), "weighted", "sq", "Q, 1/Angstroms");
 
 				// Sum in weighted S(Q) partials
 				configIterator.restart();
@@ -505,7 +507,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 				// Test weighted S(Q)?
 				if (testMode)
 				{
-					Messenger::print("\nTesting calculated weighted S(Q) data against supplied datasets (if any)...\n\n");
+					Messenger::print("\nTesting calculated weighted S(Q) data against supplied datasets (if any)...\n");
 					if (!testReferencePartials(moduleData, atomTypes, weightedsq, "TestReferenceSQ-weighted", testThreshold)) return false;
 				}
 			}
@@ -538,39 +540,60 @@ bool PartialsModule::testReferencePartials(GenericList& sourceModuleData, AtomTy
 		AtomTypeData* typeJ = typeI;
 		for (int m = n; m <typesList.nItems(); ++m, typeJ = typeJ->next)
 		{
-			// Unweighted g(r) full partial (bound + unbound) reference data supplied?
+			// Full partial (bound + unbound) reference data supplied?
 			dataName = CharString("%s-%s-%s", dataPrefix, typeI->name(), typeJ->name());
 			if (sourceModuleData.contains(dataName, uniqueName()))
 			{
 				double rmse = partials.partial(n,m).rmse(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, uniqueName()));
 				{
-					Messenger::print("Partials: Test reference data '%s' has RMSE of %15.9e with calculated data and is %s (threshold is %10.3e)\n", dataName.get(), rmse, rmse < testThreshold ? "OK" : "NOT OK", testThreshold);
+					Messenger::print("Partials: Test reference data '%s' has RMSE of %15.9e with calculated data and is %s (threshold is %10.3e)\n\n", dataName.get(), rmse, rmse < testThreshold ? "OK" : "NOT OK", testThreshold);
 					if (rmse > testThreshold) return false;
 				}
 			}
 
-			// Unweighted g(r) bound partial reference data supplied?
+			// Bound partial reference data supplied?
 			dataName = CharString("%s-%s-%s-bound", dataPrefix, typeI->name(), typeJ->name());
 			if (sourceModuleData.contains(dataName, uniqueName()))
 			{
 				double rmse = partials.boundPartial(n,m).rmse(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, uniqueName()));
 				{
-					Messenger::print("Partials: Test reference data '%s' has RMSE of %15.9e with calculated data and is %s (threshold is %10.3e)\n", dataName.get(), rmse, rmse < testThreshold ? "OK" : "NOT OK", testThreshold);
+					Messenger::print("Partials: Test reference data '%s' has RMSE of %15.9e with calculated data and is %s (threshold is %10.3e)\n\n", dataName.get(), rmse, rmse < testThreshold ? "OK" : "NOT OK", testThreshold);
 					if (rmse > testThreshold) return false;
 				}
 			}
 
-			// Unweighted g(r) full partial (bound + unbound) reference data supplied?
+			// Unbound reference data supplied?
 			dataName = CharString("%s-%s-%s-unbound", dataPrefix, typeI->name(), typeJ->name());
 			if (sourceModuleData.contains(dataName, uniqueName()))
 			{
 				double rmse = partials.unboundPartial(n,m).rmse(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, uniqueName()));
 				{
-					Messenger::print("Partials: Test reference data '%s' has RMSE of %15.9e with calculated data and is %s (threshold is %10.3e)\n", dataName.get(), rmse, rmse < testThreshold ? "OK" : "NOT OK", testThreshold);
+					Messenger::print("Partials: Test reference data '%s' has RMSE of %15.9e with calculated data and is %s (threshold is %10.3e)\n\n", dataName.get(), rmse, rmse < testThreshold ? "OK" : "NOT OK", testThreshold);
 					if (rmse > testThreshold) return false;
 				}
 			}
 
+			// Bragg reference data supplied?
+			dataName = CharString("%s-%s-%s-bragg", dataPrefix, typeI->name(), typeJ->name());
+			if (sourceModuleData.contains(dataName, uniqueName()))
+			{
+				double rmse = partials.braggPartial(n,m).rmse(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, uniqueName()));
+				{
+					Messenger::print("Partials: Test reference data '%s' has RMSE of %15.9e with calculated data and is %s (threshold is %10.3e)\n\n", dataName.get(), rmse, rmse < testThreshold ? "OK" : "NOT OK", testThreshold);
+					if (rmse > testThreshold) return false;
+				}
+			}
+		}
+	}
+
+	// Total reference data supplied?
+	dataName = CharString("%s-total", dataPrefix);
+	if (sourceModuleData.contains(dataName, uniqueName()))
+	{
+		double rmse = partials.total().rmse(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, uniqueName()));
+		{
+			Messenger::print("Partials: Test reference data '%s' has RMSE of %15.9e with calculated data and is %s (threshold is %10.3e)\n\n", dataName.get(), rmse, rmse < testThreshold ? "OK" : "NOT OK", testThreshold);
+			if (rmse > testThreshold) return false;
 		}
 	}
 
@@ -679,7 +702,7 @@ bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration*
 	// Does a PartialSet already exist for this Configuration?
 	bool wasCreated;
 	PartialSet& partialgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedGR", uniqueName_, GenericItem::NoOutputFlag, &wasCreated);
-	if (wasCreated) partialgr.setup(cfg, cfg->niceName(), "unweighted", "rdf");
+	if (wasCreated) partialgr.setup(cfg, cfg->niceName(), "unweighted", "rdf", "r, Angstroms");
 
 	// Is the PartialSet already up-to-date?
 	if (partialgr.index() == cfg->coordinateIndex())
@@ -820,13 +843,15 @@ bool PartialsModule::calculateWeightedGR(PartialSet& unweightedgr, PartialSet& w
 		{
 			// Weight S(Q), Bragg S(Q) and full partial S(Q)
 			double factor = weightsMatrix.scatteringWeight(typeI, typeJ);
+
 			weightedgr.partial(typeI, typeJ).copyData(unweightedgr.partial(typeI, typeJ));
 			weightedgr.partial(typeI, typeJ).arrayY() *= factor;
 			weightedgr.boundPartial(typeI, typeJ).copyData(unweightedgr.boundPartial(typeI, typeJ));
 			weightedgr.boundPartial(typeI, typeJ).arrayY() *= factor;
 			weightedgr.unboundPartial(typeI, typeJ).copyData(unweightedgr.unboundPartial(typeI, typeJ));
 			weightedgr.unboundPartial(typeI, typeJ).arrayY() *= factor;
-// 			braggSQ.arrayY() *= factor;   TODO
+			weightedgr.braggPartial(typeI, typeJ).copyData(unweightedgr.braggPartial(typeI, typeJ));
+			weightedgr.braggPartial(typeI, typeJ).arrayY() *= factor;
 		}
 	}
 
@@ -846,7 +871,7 @@ bool PartialsModule::calculateWeightedGR(PartialSet& unweightedgr, PartialSet& w
 
 
 // Generate S(Q) from supplied g(r)
-bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, PartialSet& sourcegr, PartialSet& destsq, double qMax, double qDelta, double rho, XYData::WindowFunction wf, double qDepBroadening, double qIndepBroadening, bool includeBragg, double qDepBraggBroadening, double qIndepBraggBroad)
+bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, PartialSet& sourcegr, PartialSet& destsq, double qMin, double qDelta, double qMax, double rho, XYData::WindowFunction wf, double qDepBroadening, double qIndepBroadening, bool includeBragg, double qDepBraggBroadening, double qIndepBraggBroad)
 {
 	// Copy partial g(r) into our new S(Q) matrices
 	Messenger::printVerbose("  --> Copying partial g(r) into S(Q) matrices...\n");
@@ -876,9 +901,9 @@ bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, PartialSet& so
 	{
 		for (int m=n; m<nTypes; ++m)
 		{
-			if (!destsq.partial(n,m).transformBroadenedRDF(rho, qDelta, qMax, qDepBroadening, qIndepBroadening, wf)) return false;
-			if (!destsq.boundPartial(n,m).transformBroadenedRDF(rho, qDelta, qMax, qDepBroadening, qIndepBroadening, wf)) return false;
-			if (!destsq.unboundPartial(n,m).transformBroadenedRDF(rho, qDelta, qMax, qDepBroadening, qIndepBroadening, wf)) return false;
+			if (!destsq.partial(n,m).transformBroadenedRDF(rho, qMin, qDelta, qMax, qDepBroadening, qIndepBroadening, wf)) return false;
+			if (!destsq.boundPartial(n,m).transformBroadenedRDF(rho, qMin, qDelta, qMax, qDepBroadening, qIndepBroadening, wf)) return false;
+			if (!destsq.unboundPartial(n,m).transformBroadenedRDF(rho, qMin, qDelta, qMax, qDepBroadening, qIndepBroadening, wf)) return false;
 		}
 	}
 
@@ -913,7 +938,8 @@ bool PartialsModule::calculateWeightedSQ(PartialSet& unweightedsq, PartialSet& w
 			weightedsq.boundPartial(typeI, typeJ).arrayY() *= factor;
 			weightedsq.unboundPartial(typeI, typeJ).copyData(unweightedsq.unboundPartial(typeI, typeJ));
 			weightedsq.unboundPartial(typeI, typeJ).arrayY() *= factor;
-// 			braggSQ.arrayY() *= factor;   TODO
+			weightedsq.braggPartial(typeI, typeJ).copyData(unweightedsq.braggPartial(typeI, typeJ));
+			weightedsq.braggPartial(typeI, typeJ).arrayY() *= factor;
 		}
 	}
 

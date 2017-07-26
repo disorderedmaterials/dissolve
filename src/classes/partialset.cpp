@@ -47,14 +47,16 @@ PartialSet::~PartialSet()
  */
 
 // Setup using supplied Configuration
-bool PartialSet::setup(Configuration* cfg, const char* prefix, const char* tag, const char* suffix)
+bool PartialSet::setup(Configuration* cfg, const char* prefix, const char* tag, const char* suffix, const char* abscissaUnits)
 {
-	return setup(cfg->usedAtomTypesList(), cfg->rdfRange(), cfg->rdfBinWidth(), prefix, tag, suffix);
+	return setup(cfg->usedAtomTypesList(), cfg->rdfRange(), cfg->rdfBinWidth(), prefix, tag, suffix, abscissaUnits);
 }
 
 // Setup PartialSet
-bool PartialSet::setup(const AtomTypeList& atomTypes, double rdfRange, double binWidth, const char* prefix, const char* tag, const char* suffix)
+bool PartialSet::setup(const AtomTypeList& atomTypes, double rdfRange, double binWidth, const char* prefix, const char* tag, const char* suffix, const char* abscissaUnits)
 {
+	abscissaUnits_ = abscissaUnits;
+
 	// Construct a matrix based on the usedAtomTypes_ list of the Configuration, since this reflects all our possible partials
 	int n, m;
 	atomTypes_ = atomTypes;
@@ -107,8 +109,10 @@ bool PartialSet::setup(const AtomTypeList& atomTypes, double rdfRange, double bi
 }
 
 // Setup PartialSet without initialising arrays
-bool PartialSet::setup(const AtomTypeList& atomTypes, const char* prefix, const char* tag, const char* suffix)
+bool PartialSet::setup(const AtomTypeList& atomTypes, const char* prefix, const char* tag, const char* suffix, const char* abscissaUnits)
 {
+	abscissaUnits_ = abscissaUnits;
+
 	// Copy type array
 	atomTypes_ = atomTypes;
 	int nTypes = atomTypes_.nItems();
@@ -227,6 +231,12 @@ XYData& PartialSet::boundPartial(int i, int j)
 	return boundPartials_.ref(i, j);
 }
 
+// Return atom-atom Bragg partial for pairs joined by bonds or angles
+XYData& PartialSet::braggPartial(int i, int j)
+{
+	return braggPartials_.ref(i, j);
+}
+
 // Sum partials into total
 void PartialSet::formTotal()
 {
@@ -239,7 +249,6 @@ void PartialSet::formTotal()
 
 	// Copy x and y arrays from one of the partials, and zero the latter
 	total_.templateFrom(partials_.ref(0,0));
-	total_.arrayY() = partials_.ref(0,0).arrayY();
 	total_.arrayY() = 0.0;
 
 	int typeI, typeJ;
@@ -253,7 +262,7 @@ void PartialSet::formTotal()
 			double factor = ci * cj * (typeI == typeJ ? 1.0 : 2.0);
 
 			// Add contribution from partial (bound + unbound)
-			total_.addY(partials_.ref(typeI,typeJ).arrayY(), factor);
+			total_.addY(partials_.ref(typeI,typeJ).arrayY(), 1.0); //factor);
 			// TODO Does not include contributions from Bragg partials
 		}
 	}
@@ -289,11 +298,11 @@ bool PartialSet::save()
 				return false;
 			}
 			
-			XYData& rdf = partials_.ref(typeI,typeJ);
+			XYData& full = partials_.ref(typeI,typeJ);
 			XYData& bound = boundPartials_.ref(typeI,typeJ);
 			XYData& unbound = unboundPartials_.ref(typeI,typeJ);
-			parser.writeLineF("# %-14s  %-16s  %-16s  %-16s\n", "r, Angstroms", "g(r)", "bound(r)", "unbound(r)"); 
-			for (n=0; n<rdf.nPoints(); ++n) parser.writeLineF("%16.10e  %16.10e  %16.10e  %16.10e\n", rdf.x(n), rdf.y(n), bound.y(n), unbound.y(n));
+			parser.writeLineF("# %-14s  %-16s  %-16s  %-16s\n", abscissaUnits_.get(), "full", "bound", "unbound"); 
+			for (n=0; n<full.nPoints(); ++n) parser.writeLineF("%16.10e  %16.10e  %16.10e  %16.10e\n", full.x(n), full.y(n), bound.y(n), unbound.y(n));
 			parser.closeFiles();
 		}
 	}
