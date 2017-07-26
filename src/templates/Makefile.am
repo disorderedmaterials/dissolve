@@ -1,4 +1,14 @@
-noinst_HEADERS = array.h array2d.h factory.h genericitem.h genericlist.h list.h orderedlist.h orderedpointerlist.h pair.h reflist.h simplex.h vector3.h vector4.h
+noinst_HEADERS = array2d.h array.h
+noinst_HEADERS += factory.h
+noinst_HEADERS += genericitemcontainer_array2ddouble.h genericitemcontainer_arraydouble.h genericitemcontainer_arrayint.h genericitemcontainer_arrayvec3double.h genericitemcontainer_arrayvec3int.h genericitemcontainer_bool.h genericitemcontainer_charstring.h genericitemcontainer_double.h genericitemcontainer.h genericitemcontainer_int.h
+noinst_HEADERS += genericitem.h genericitems.h genericlist.h
+noinst_HEADERS += list.h
+noinst_HEADERS += orderedlist.h orderedpointerlist.h
+noinst_HEADERS += pair.h
+noinst_HEADERS += reflist.h
+noinst_HEADERS += simplex.h
+noinst_HEADERS += vector3.h
+noinst_HEADERS += vector4.h
 
 AM_CPPFLAGS = -I../ @DUQ_CFLAGS@
 
