@@ -307,17 +307,17 @@ bool XYData::transformRDF(double atomicDensity, XYData::WindowFunction wf)
 }
 
 // Transform g(r) to S(Q), applying instrumental broadening functions
-bool XYData::transformBroadenedRDF(double atomicDensity, double qStep, double qMax, double qDepFWHM, double qIndepFWHM, XYData::WindowFunction wf)
+bool XYData::transformBroadenedRDF(double atomicDensity, double qMin, double qStep, double qMax, double qDepFWHM, double qIndepFWHM, XYData::WindowFunction wf)
 {
 	// Okay to continue with transform?
 	if (!checkBeforeTransform()) return false;
 
 	// Assume that the entire dataset constitutes one period of the function...
 	// X values of original function are half-bin values, so we must add another bin width on to recover period of original function
-	double lambda = x_.last() - x_.first() + 2.0*x_.first();
-	double k = TWOPI / lambda;
 	double deltaX = x_[1] - x_[0];
-	double windowPos, broaden, sigma, sigmaq, sigr, Q, factor, fq;
+	double lambda = x_.last() - x_.first() + deltaX;
+	double k = TWOPI / lambda;
+	double windowPos, broaden, sigma, sigmaq, sigr, Q, factor, ft;
 	int n, m, nR = x_.nItems();
 	Messenger::printVerbose("In XYData::transformBroadenedRDF(), period of function is %f, real deltaX is %f, and wavenumber is %f\n", lambda, deltaX, k);
 
@@ -327,12 +327,12 @@ bool XYData::transformBroadenedRDF(double atomicDensity, double qStep, double qM
 	// Create working arrays
 	Array<double> oldy = y_;
 	y_.forgetData();
-	Q = 0.0;
 
 	// Perform Fourier sine transform, including instrument broadening of RDF
+	Q = qMin;
 	while (Q <= qMax)
 	{
-		fq = 0.0;
+		ft = 0.0;
 		for (m=0; m<nR; ++m)
 		{
 			// Get window value at this position in the function
@@ -342,19 +342,20 @@ bool XYData::transformBroadenedRDF(double atomicDensity, double qStep, double qM
 			sigr = (sigma + sigmaq*Q) * x_[m];
 			broaden = exp(-0.5*sigr*sigr);
 
-			fq += sin(x_[m]*Q) * x_[m] * broaden * window(wf, windowPos) * oldy[m] * deltaX;
+			ft += sin(x_[m]*Q) * x_[m] * broaden * window(wf, windowPos) * oldy[m] * deltaX;
 		}
 
 		// Normalise
-		factor = 4.0 * PI * atomicDensity / Q;
-		y_.add(fq*factor);
+		if (Q > 0.0) factor = 4.0 * PI * atomicDensity / Q;
+		else factor = 4.0 * PI * atomicDensity;
+		y_.add(ft*factor);
 		
 		Q += qStep;
 	}
 
 	// Copy transform data over initial data
 	x_.forgetData();
-	for (n=0; n<y_.nItems(); ++n) x_.add((n+0.5)*qStep);
+	for (n=0; n<y_.nItems(); ++n) x_.add(qMin + n*qStep);
 
 	interpolationInterval_ = -1;
 

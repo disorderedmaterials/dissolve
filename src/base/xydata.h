@@ -213,7 +213,7 @@ class XYData : public ListItem<XYData>
 	// Transform g(r) to S(Q)
 	bool transformRDF(double atomicDensity, XYData::WindowFunction wf = XYData::NoWindow);
 	// Transform g(r) to S(Q), applying instrumental broadening functions
-	bool transformBroadenedRDF(double atomicDensity, double qStep, double qMax, double qDepFWHM, double qIndepFWHM, XYData::WindowFunction wf = XYData::NoWindow);
+	bool transformBroadenedRDF(double atomicDensity, double qMin, double qStep, double qMax, double qDepFWHM, double qIndepFWHM, XYData::WindowFunction wf = XYData::NoWindow);
 	// Transform S(Q) to g(r)
 	bool transformSQ(double atomicDensity, XYData::WindowFunction wf = XYData::NoWindow);
 	// Fourier transform current data, applying line-width broadening in real-space using the modified Lorch function
