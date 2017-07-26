@@ -84,7 +84,7 @@ class WeightsMatrix
 	int nUsedTypes();
 	// Return concentration weighting for types i and j
 	double concentrationWeight(int i, int j);
-	// Return scattering weighting for types i and j
+	// Return scattering weighting, including concentration weighting, for types i and j
 	double scatteringWeight(int i, int j);
 	// Return scattering weights matrix (ci * cj * bi * bj)
 	Array2D<double>& scatteringMatrix();
