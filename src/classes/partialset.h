@@ -100,7 +100,7 @@ class PartialSet : public ListItem<PartialSet>
 	// Return atom-atom Bragg partial for pairs joined by bonds or angles
 	XYData& braggPartial(int i, int j);
 	// Sum partials into total
-	void formTotal();
+	void formTotal(bool applyConcentrationWeights);
 	// Return total function
 	XYData& total();
 	// Save all partials and total

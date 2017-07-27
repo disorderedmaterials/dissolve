@@ -318,7 +318,7 @@ bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration*
 	}
 
 	// Sum total functions
-	partialgr.formTotal();
+	partialgr.formTotal(true);
 	timer.stop();
 	Messenger::print("Partials: Finished summation and normalisation of partial g(r) data (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
 
@@ -341,7 +341,7 @@ bool PartialsModule::calculateWeightedGR(PartialSet& unweightedgr, PartialSet& w
 		for (typeJ=typeI; typeJ<weightedgr.nAtomTypes(); ++typeJ)
 		{
 			// Weight S(Q), Bragg S(Q) and full partial S(Q)
-			double factor = weightsMatrix.scatteringWeight(typeI, typeJ);
+			double factor = weightsMatrix.fullWeight(typeI, typeJ);
 
 			weightedgr.partial(typeI, typeJ).copyData(unweightedgr.partial(typeI, typeJ));
 			weightedgr.partial(typeI, typeJ).arrayY() *= factor;
@@ -355,7 +355,7 @@ bool PartialsModule::calculateWeightedGR(PartialSet& unweightedgr, PartialSet& w
 	}
 
 	// Calculate total
-	weightedgr.formTotal();
+	weightedgr.formTotal(false);
 
 	return true;
 }
@@ -407,7 +407,7 @@ bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, PartialSet& so
 	}
 
 	// Sum into total
-	destsq.formTotal();
+	destsq.formTotal(true);
 
 	timer.stop();
 	Messenger::print("Partials: Finished Fourier transform and summation of partial g(r) into partial S(Q) (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
@@ -430,7 +430,8 @@ bool PartialsModule::calculateWeightedSQ(PartialSet& unweightedsq, PartialSet& w
 		for (typeJ=typeI; typeJ<unweightedsq.nAtomTypes(); ++typeJ)
 		{
 			// Weight S(Q), Bragg S(Q) and full partial S(Q)
-			double factor = weightsMatrix.scatteringWeight(typeI, typeJ);
+			double factor = weightsMatrix.fullWeight(typeI, typeJ);
+
 			weightedsq.partial(typeI, typeJ).copyData(unweightedsq.partial(typeI, typeJ));
 			weightedsq.partial(typeI, typeJ).arrayY() *= factor;
 			weightedsq.boundPartial(typeI, typeJ).copyData(unweightedsq.boundPartial(typeI, typeJ));
@@ -443,7 +444,7 @@ bool PartialsModule::calculateWeightedSQ(PartialSet& unweightedsq, PartialSet& w
 	}
 
 	// Calculate total
-	weightedsq.formTotal();
+	weightedsq.formTotal(false);
 
 	return true;
 }

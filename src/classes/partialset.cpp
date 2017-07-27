@@ -238,7 +238,7 @@ XYData& PartialSet::braggPartial(int i, int j)
 }
 
 // Sum partials into total
-void PartialSet::formTotal()
+void PartialSet::formTotal(bool applyConcentrationWeights)
 {
 	int nTypes = atomTypes_.nItems();
 	if (nTypes == 0)
@@ -256,13 +256,17 @@ void PartialSet::formTotal()
 	{
 		for (typeJ=typeI; typeJ<nTypes; ++typeJ)
 		{
-			// Calculate weighting factor
-			double ci = atomTypes_[typeI]->fraction();
-			double cj = atomTypes_[typeJ]->fraction();
-			double factor = ci * cj * (typeI == typeJ ? 1.0 : 2.0);
+			// Calculate weighting factor if requested
+			double factor = 1.0;
+			if (applyConcentrationWeights)
+			{
+				double ci = atomTypes_[typeI]->fraction();
+				double cj = atomTypes_[typeJ]->fraction();
+				factor *= ci * cj * (typeI == typeJ ? 1.0 : 2.0);
+			}
 
 			// Add contribution from partial (bound + unbound)
-			total_.addY(partials_.ref(typeI,typeJ).arrayY(), 1.0); //factor);
+			total_.addY(partials_.ref(typeI,typeJ).arrayY(), factor);
 			// TODO Does not include contributions from Bragg partials
 		}
 	}

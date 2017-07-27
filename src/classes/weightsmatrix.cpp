@@ -43,7 +43,7 @@ void WeightsMatrix::operator=(const WeightsMatrix& source)
 	// Isotopologue Mix
 	isotopologueMixtures_ = source.isotopologueMixtures_;
 	atomTypes_ = source.atomTypes_;
-	scatteringMatrix_ = source.scatteringMatrix_;
+	boundCoherentMatrix_= source.boundCoherentMatrix_;
 	concentrationMatrix_ = source.concentrationMatrix_;
 	boundCoherentAverageSquared_ = source.boundCoherentAverageSquared_;
 	boundCoherentSquaredAverage_ = source.boundCoherentSquaredAverage_;
@@ -144,7 +144,8 @@ void WeightsMatrix::finalise(bool quiet)
 	// Create weights matrices and calculate average scattering lengths
 	// Note: Multiplier of 0.1 on b terms converts from units of fm (1e-11 m) to barn (1e-12 m)
 	concentrationMatrix_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
-	scatteringMatrix_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
+	boundCoherentMatrix_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
+	fullMatrix_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
 	boundCoherentAverageSquared_ = 0.0;
 	boundCoherentSquaredAverage_ = 0.0;
 	double ci, cj, bi, bj;
@@ -153,6 +154,7 @@ void WeightsMatrix::finalise(bool quiet)
 	{
 		ci = at1->fraction();
 		bi = at1->isotope()->boundCoherent() * 0.1;
+
 		// Update average scattering values
 		boundCoherentAverageSquared_ += ci*bi;
 		boundCoherentSquaredAverage_ += ci*bi*bi;
@@ -164,7 +166,8 @@ void WeightsMatrix::finalise(bool quiet)
 			bj = at2->isotope()->boundCoherent() * 0.1;
 
 			concentrationMatrix_.ref(typeI,typeJ) = ci * cj;
-			scatteringMatrix_.ref(typeI,typeJ) = ci * cj * bi * bj;
+			boundCoherentMatrix_.ref(typeI,typeJ) = bi * bj;
+			fullMatrix_.ref(typeI,typeJ) = ci * cj * bi * bj * (typeI == typeJ ? 1 : 2);
 		}
 	}
 	boundCoherentAverageSquared_ *= boundCoherentAverageSquared_;
@@ -190,14 +193,20 @@ double WeightsMatrix::concentrationWeight(int i, int j)
 	return concentrationMatrix_.ref(i, j);
 }
 
-// Return scattering weighting for types i and j
-double WeightsMatrix::scatteringWeight(int i, int j)
+// Return full weighting, including atomic concentration, bound coherent scattering weights, and i !+ j weighting for types i and j
+double WeightsMatrix::fullWeight(int i, int j)
 {
-	return scatteringMatrix_.ref(i, j);
+	return fullMatrix_.ref(i, j);
 }
 
-// Return scattering weights matrix (ci * cj * bi * bj)
-Array2D<double>& WeightsMatrix::scatteringMatrix()
+// Return bound coherent scattering weighting for types i and j
+double WeightsMatrix::boundCoherentWeight(int i, int j)
 {
-	return scatteringMatrix_;
+	return boundCoherentMatrix_.ref(i, j);
+}
+
+// Return full scattering weights matrix (ci * cj * bi * bj * (i == j ? 1 : 2))
+Array2D<double>& WeightsMatrix::fullWeightsMatrix()
+{
+	return fullMatrix_;
 }

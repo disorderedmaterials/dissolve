@@ -61,15 +61,17 @@ class WeightsMatrix
 
 
 	/*
-	 * Calculated Data
+	 * Data
 	 */
 	private:
 	// Type list derived from Species referenced in isotopologueMixtures_
 	AtomTypeList atomTypes_;
 	// Atom concentration weights matrix (ci * cj)
 	Array2D<double> concentrationMatrix_;
-	// Scattering weights matrix (ci * cj * bi * bj)
-	Array2D<double> scatteringMatrix_;
+	// Bound coherent weights matrix (bi * bj)
+	Array2D<double> boundCoherentMatrix_;
+	// Full weights matrix (ci * cj * bi * bj * (i == j ? 1 : 2))
+	Array2D<double> fullMatrix_;
 	// Bound coherent average squared scattering (<b>**2)
 	double boundCoherentAverageSquared_;
 	// Bound coherent squared average scattering (<b**2>)
@@ -84,10 +86,12 @@ class WeightsMatrix
 	int nUsedTypes();
 	// Return concentration weighting for types i and j
 	double concentrationWeight(int i, int j);
-	// Return scattering weighting, including concentration weighting, for types i and j
-	double scatteringWeight(int i, int j);
-	// Return scattering weights matrix (ci * cj * bi * bj)
-	Array2D<double>& scatteringMatrix();
+	// Return bound coherent scattering weighting for types i and j
+	double boundCoherentWeight(int i, int j);
+	// Return full weighting, including atomic concentration, bound coherent scattering weights, and i !+ j weighting for types i and j
+	double fullWeight(int i, int j);
+	// Return full scattering weights matrix (ci * cj * bi * bj * (i == j ? 1 : 2))
+	Array2D<double>& fullWeightsMatrix();
 };
 
 #endif

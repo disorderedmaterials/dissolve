@@ -25,11 +25,6 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "classes/weightsmatrix.h"
-// #include "classes/partialset.h"
-// #include "classes/atomtype.h"
-// #include "base/sysfunc.h"
-// #include "base/processpool.h"
-// #include "base/timer.h"
 
 // Perform setup tasks for module
 bool PartialsModule::setup(ProcessPool& procPool)
@@ -150,7 +145,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 
 			// Finalise and store weighting matrix
 			weightsMatrix.finalise();
-			GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "PartialWeights", uniqueName_, GenericItem::NoOutputFlag) = weightsMatrix.scatteringMatrix();
+			GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "PartialWeights", uniqueName_, GenericItem::NoOutputFlag) = weightsMatrix.fullWeightsMatrix();
 
 			// Calculate weighted partials
 			PartialSet& weightedgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedGR", uniqueName_, GenericItem::NoOutputFlag);
