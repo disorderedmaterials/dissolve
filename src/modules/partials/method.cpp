@@ -129,7 +129,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 					varName.sprintf("Isotopologue/%s/%s", sp->name(), availableIso->name());
 					if (moduleData.contains(varName, uniqueName_))
 					{
-						// This isotopologue is defined as being used, so add its (in the isotopic proportions defined in the Isotopologue) to the weightsMatrix.
+						// This isotopologue is defined as being used, so add it (in the isotopic proportions defined in the Isotopologue) to the Weights.
 						weights.addIsotopologue(sp, speciesPopulation, availableIso, GenericListHelper<double>::retrieve(moduleData, varName, uniqueName_));
 					}
 				}
@@ -143,8 +143,10 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 				return false;
 			}
 
-			// Finalise and store weighting matrix
+			// Finalise, print, and store weights
+			Messenger::print("Partials: Isotopologue and isotope composition for Configuration '%s':\n\n", cfg->name());
 			weights.finalise();
+			weights.print();
 			GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "PartialWeights", uniqueName_, GenericItem::NoOutputFlag) = weights.fullWeightsMatrix();
 
 			// Calculate weighted partials

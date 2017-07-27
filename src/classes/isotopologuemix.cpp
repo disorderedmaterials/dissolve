@@ -119,6 +119,7 @@ bool IsotopologueMix::addIsotopologue(Isotopologue* iso, double relPop)
 	}
 
 	mix_.add(iso, relPop);
+
 	return true;
 }
 

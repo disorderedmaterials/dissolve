@@ -45,6 +45,7 @@ void Weights::operator=(const Weights& source)
 	atomTypes_ = source.atomTypes_;
 	boundCoherentMatrix_= source.boundCoherentMatrix_;
 	concentrationMatrix_ = source.concentrationMatrix_;
+	fullMatrix_ = source.fullMatrix_;
 	boundCoherentAverageSquared_ = source.boundCoherentAverageSquared_;
 	boundCoherentSquaredAverage_ = source.boundCoherentSquaredAverage_;
 }
@@ -90,8 +91,8 @@ IsotopologueMix* Weights::hasSpeciesIsotopologueMixture(Species* sp) const
 	return NULL;
 }
 
-// Print full isotopologue information
-void Weights::printIsotopologues()
+// Print atomtype / weights information
+void Weights::print() const
 {
 	Messenger::print("  Species          Isotopologue     nTotMols    TopeFrac\n");
 	Messenger::print("  ------------------------------------------------------\n");
@@ -103,6 +104,12 @@ void Weights::printIsotopologues()
 			else Messenger::print("                   %-15s              %f\n", tope->item->name(), tope->data);
 		}
 	}
+
+	// Print atomtypes table
+	Messenger::print("\n");
+	atomTypes_.print();
+
+	Messenger::print("\nCalculated average scattering lengths: <b>**2 = %f, <b**2> = %f\n", boundCoherentAverageSquared_, boundCoherentSquaredAverage_);
 }
 
 /*
@@ -110,15 +117,10 @@ void Weights::printIsotopologues()
  */
 
 // Finalise lists and matrices based on IsotopologueMix information
-void Weights::finalise(bool quiet)
+void Weights::finalise()
 {
 	// Loop over IsotopologueMix entries and ensure relative populations of Isotopologues sum to 1.0
 	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next) mix->normalise();
-	if (!quiet)
-	{
-		Messenger::print("\n");
-		printIsotopologues();
-	}
 
 	// Fill atomTypes_ list with AtomType populations, based on IsotopologueMix relative populations and associated Species populations
 	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next)
@@ -135,11 +137,6 @@ void Weights::finalise(bool quiet)
 		}
 	}
 	atomTypes_.finalise();
-	if (!quiet)
-	{
-		Messenger::print("\n");
-		atomTypes_.print();
-	}
 
 	// Create weights matrices and calculate average scattering lengths
 	// Note: Multiplier of 0.1 on b terms converts from units of fm (1e-11 m) to barn (1e-12 m)
@@ -171,8 +168,6 @@ void Weights::finalise(bool quiet)
 		}
 	}
 	boundCoherentAverageSquared_ *= boundCoherentAverageSquared_;
-
-	if (!quiet) Messenger::print("  \nCalculated average scattering lengths: <b>**2 = %f, <b**2> = %f\n", boundCoherentAverageSquared_, boundCoherentSquaredAverage_);
 }
 
 // Return AtomTypeList

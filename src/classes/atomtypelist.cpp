@@ -131,13 +131,19 @@ AtomTypeData* AtomTypeList::first() const
 // Print AtomType populations
 void AtomTypeList::print() const
 {
-	CharString indexData;
-	Messenger::print("  AtomType    El   Population  AtomFrac  Isotope  bc (fm)\n");
+	Messenger::print("  AtomType    El   Population  AtomFrac  Isotope   bc (fm)\n");
 	Messenger::print("  ---------------------------------------------------------\n");
+	int lastElement = -1;
 	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next)
 	{
-		if (atd->isotope()) Messenger::print("  %-10s  %-3s  %-10i  %8.6f    %-3i   %8.3f  (%s)\n", atd->name(), PeriodicTable::element(atd->atomType()->element()).symbol(), atd->population(), atd->fraction(), atd->isotope()->A(), atd->isotope()->boundCoherent(), indexData.get());
-		else Messenger::print("  %-10s  %-3s  %-10i  %8.6f     --- N/A ---    (%s)\n", atd->name(), PeriodicTable::element(atd->atomType()->element()).symbol(), atd->population(), atd->fraction(), indexData.get());
+		if (atd->isotope())
+		{
+			if (lastElement == atd->atomType()->element()) Messenger::print("                   %-10i  %8.6f    %-3i   %8.3f  ()\n", atd->population(), atd->fraction(), atd->isotope()->A(), atd->isotope()->boundCoherent());
+			else Messenger::print("  %-10s  %-3s  %-10i  %8.6f    %-3i   %8.3f  ()\n", atd->name(), PeriodicTable::element(atd->atomType()->element()).symbol(), atd->population(), atd->fraction(), atd->isotope()->A(), atd->isotope()->boundCoherent());
+		}
+		else Messenger::print("  %-10s  %-3s  %-10i  %8.6f     --- N/A ---    ()\n", atd->name(), PeriodicTable::element(atd->atomType()->element()).symbol(), atd->population(), atd->fraction());
+
+		lastElement = atd->atomType()->element();
 	}
 }
 

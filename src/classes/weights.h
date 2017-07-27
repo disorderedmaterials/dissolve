@@ -56,8 +56,8 @@ class Weights
 	bool addIsotopologue(Species* sp, int speciesPopulation, Isotopologue* iso, double isotopologueRelativePopulation);
 	// Return whether we have a mixtures definition for the provided Species
 	IsotopologueMix* hasSpeciesIsotopologueMixture(Species* sp) const;
-	// Print full IsotopologueMix information
-	void printIsotopologues();
+	// Print atomtype / weights information
+	void print() const;
 
 
 	/*
@@ -79,7 +79,7 @@ class Weights
 
 	public:
 	// Finalise lists and matrices based on IsotopologueMix information
-	void finalise(bool quiet = false);
+	void finalise();
 	// Return AtomTypeList
 	AtomTypeList& atomTypes();
 	// Return number of used AtomTypes
