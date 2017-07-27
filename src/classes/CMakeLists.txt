@@ -46,7 +46,7 @@ species_intra.cpp
 species_io.cpp
 species_isotopologues.cpp
 species_transform.cpp
-weightsmatrix.cpp
+weights.cpp
 
 angle.h
 atom.h
@@ -78,7 +78,7 @@ speciesatom.h
 speciesbond.h
 speciesgrain.h
 species.h
-weightsmatrix.h
+weights.h
 )
 
 include_directories(

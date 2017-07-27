@@ -24,7 +24,7 @@
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
-#include "classes/weightsmatrix.h"
+#include "classes/weights.h"
 
 // Perform setup tasks for module
 bool PartialsModule::setup(ProcessPool& procPool)
@@ -116,7 +116,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		if (weightsType != PartialsModule::NoWeighting)
 		{
 			// Construct weights matrix based on Isotopologue specifications in some module (specified by mixSource) and the populations of atomtypes in the Configuration
-			WeightsMatrix weightsMatrix;
+			Weights weights;
 			RefListIterator<Species,double> speciesIterator(cfg->usedSpecies());
 			while (Species* sp = speciesIterator.iterate())
 			{
@@ -130,33 +130,33 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 					if (moduleData.contains(varName, uniqueName_))
 					{
 						// This isotopologue is defined as being used, so add its (in the isotopic proportions defined in the Isotopologue) to the weightsMatrix.
-						weightsMatrix.addIsotopologue(sp, speciesPopulation, availableIso, GenericListHelper<double>::retrieve(moduleData, varName, uniqueName_));
+						weights.addIsotopologue(sp, speciesPopulation, availableIso, GenericListHelper<double>::retrieve(moduleData, varName, uniqueName_));
 					}
 				}
 			}
 
 			// We will complain strongly if a species in the Configuration is not covered by at least one Isotopologue definition
 			speciesIterator.restart();
-			while (Species* sp = speciesIterator.iterate()) if (!weightsMatrix.hasSpeciesIsotopologueMixture(sp)) 
+			while (Species* sp = speciesIterator.iterate()) if (!weights.hasSpeciesIsotopologueMixture(sp)) 
 			{
 				Messenger::error("Isotopologue specification for Species '%s' in Configuration '%s' is missing.\n", sp->name(), cfg->name());
 				return false;
 			}
 
 			// Finalise and store weighting matrix
-			weightsMatrix.finalise();
-			GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "PartialWeights", uniqueName_, GenericItem::NoOutputFlag) = weightsMatrix.fullWeightsMatrix();
+			weights.finalise();
+			GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "PartialWeights", uniqueName_, GenericItem::NoOutputFlag) = weights.fullWeightsMatrix();
 
 			// Calculate weighted partials
 			PartialSet& weightedgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedGR", uniqueName_, GenericItem::NoOutputFlag);
 			PartialSet& weightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedSQ", uniqueName_, GenericItem::NoOutputFlag);
 			weightedgr.setup(cfg, cfg->niceName(), "weighted", "rdf", "r, Angstroms");
-			calculateWeightedGR(unweightedgr, weightedgr, weightsMatrix);
+			calculateWeightedGR(unweightedgr, weightedgr, weights);
 			if (sqCalculation)
 			{
 				PartialSet& unweightedsq = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedSQ", uniqueName_);
 				weightedsq.setup(weightedgr.atomTypes(), cfg->niceName(), "weighted", "sq", "Q, 1/Angstroms");
-				calculateWeightedSQ(unweightedsq, weightedsq, weightsMatrix);
+				calculateWeightedSQ(unweightedsq, weightedsq, weights);
 			}
 
 			if (saveData && (!configurationLocal_))

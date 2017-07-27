@@ -1,6 +1,6 @@
 /*
-	*** Weights Matrix
-	*** src/classes/weightsmatrix.h
+	*** Weights Container
+	*** src/classes/weights.h
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -19,8 +19,8 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_WEIGHTSMATRIX_H
-#define DUQ_WEIGHTSMATRIX_H
+#ifndef DUQ_WEIGHTS_H
+#define DUQ_WEIGHTS_H
 
 #include "classes/atomtypelist.h"
 #include "classes/isotopologuemix.h"
@@ -30,16 +30,16 @@
 // Forward Declarations
 /* none */
 
-// Weights Matrix
-class WeightsMatrix
+// Weights Container
+class Weights
 {
 	public:
 	// Constructor
-	WeightsMatrix();
+	Weights();
 	// Copy Constructor
-	WeightsMatrix(const WeightsMatrix& source);
+	Weights(const Weights& source);
 	// Assignment operator
-	void operator=(const WeightsMatrix& source);
+	void operator=(const Weights& source);
 
 
 	/*

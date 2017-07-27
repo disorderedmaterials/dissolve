@@ -1,6 +1,6 @@
 /*
-	*** Weights Matrix
-	*** src/classes/werightsmatrix.cpp
+	*** Weights Container
+	*** src/classes/weights.cpp
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -19,26 +19,26 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "classes/weightsmatrix.h"
+#include "classes/weights.h"
 #include "classes/species.h"
 #include "classes/atomtype.h"
 #include "base/processpool.h"
 
 // Constructor
-WeightsMatrix::WeightsMatrix()
+Weights::Weights()
 {
 	boundCoherentAverageSquared_ = 0.0;
 	boundCoherentSquaredAverage_ = 0.0;
 }
 
 // Copy Constructor
-WeightsMatrix::WeightsMatrix(const WeightsMatrix& source)
+Weights::Weights(const Weights& source)
 {
 	(*this) = source;
 }
 
 // Assignment Operator
-void WeightsMatrix::operator=(const WeightsMatrix& source)
+void Weights::operator=(const Weights& source)
 {
 	// Isotopologue Mix
 	isotopologueMixtures_ = source.isotopologueMixtures_;
@@ -54,7 +54,7 @@ void WeightsMatrix::operator=(const WeightsMatrix& source)
  */
 
 // Clear contents
-void WeightsMatrix::clear()
+void Weights::clear()
 {
 	isotopologueMixtures_.clear();
 	atomTypes_.clear();
@@ -63,7 +63,7 @@ void WeightsMatrix::clear()
 }
 
 // Add Isotopologue for Species
-bool WeightsMatrix::addIsotopologue(Species* sp, int speciesPopulation, Isotopologue* iso, double isotopologueRelativePopulation)
+bool Weights::addIsotopologue(Species* sp, int speciesPopulation, Isotopologue* iso, double isotopologueRelativePopulation)
 {
 	// Check that the Species is in the list...
 	IsotopologueMix* mix = hasSpeciesIsotopologueMixture(sp);
@@ -84,14 +84,14 @@ bool WeightsMatrix::addIsotopologue(Species* sp, int speciesPopulation, Isotopol
 }
 
 // Return whether the IsotopologueSet contains a mixtures definition for the provided Species
-IsotopologueMix* WeightsMatrix::hasSpeciesIsotopologueMixture(Species* sp) const
+IsotopologueMix* Weights::hasSpeciesIsotopologueMixture(Species* sp) const
 {
 	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next) if (mix->species() == sp) return mix;
 	return NULL;
 }
 
 // Print full isotopologue information
-void WeightsMatrix::printIsotopologues()
+void Weights::printIsotopologues()
 {
 	Messenger::print("  Species          Isotopologue     nTotMols    TopeFrac\n");
 	Messenger::print("  ------------------------------------------------------\n");
@@ -110,7 +110,7 @@ void WeightsMatrix::printIsotopologues()
  */
 
 // Finalise lists and matrices based on IsotopologueMix information
-void WeightsMatrix::finalise(bool quiet)
+void Weights::finalise(bool quiet)
 {
 	// Loop over IsotopologueMix entries and ensure relative populations of Isotopologues sum to 1.0
 	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next) mix->normalise();
@@ -176,37 +176,37 @@ void WeightsMatrix::finalise(bool quiet)
 }
 
 // Return AtomTypeList
-AtomTypeList& WeightsMatrix::atomTypes()
+AtomTypeList& Weights::atomTypes()
 {
 	return atomTypes_;
 }
 
 // Return number of used AtomTypes
-int WeightsMatrix::nUsedTypes()
+int Weights::nUsedTypes()
 {
 	return atomTypes_.nItems();
 }
 
 // Return concentration weighting for types i and j
-double WeightsMatrix::concentrationWeight(int i, int j)
+double Weights::concentrationWeight(int i, int j)
 {
 	return concentrationMatrix_.ref(i, j);
 }
 
 // Return full weighting, including atomic concentration, bound coherent scattering weights, and i !+ j weighting for types i and j
-double WeightsMatrix::fullWeight(int i, int j)
+double Weights::fullWeight(int i, int j)
 {
 	return fullMatrix_.ref(i, j);
 }
 
 // Return bound coherent scattering weighting for types i and j
-double WeightsMatrix::boundCoherentWeight(int i, int j)
+double Weights::boundCoherentWeight(int i, int j)
 {
 	return boundCoherentMatrix_.ref(i, j);
 }
 
 // Return full scattering weights matrix (ci * cj * bi * bj * (i == j ? 1 : 2))
-Array2D<double>& WeightsMatrix::fullWeightsMatrix()
+Array2D<double>& Weights::fullWeightsMatrix()
 {
 	return fullMatrix_;
 }

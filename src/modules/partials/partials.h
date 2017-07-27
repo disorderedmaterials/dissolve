@@ -27,7 +27,7 @@
 
 // Forward Declarations
 class PartialSet;
-class WeightsMatrix;
+class Weights;
 
 // Partials Module
 class PartialsModule : public Module
@@ -124,11 +124,11 @@ class PartialsModule : public Module
 	// (Re)calculate unweighted partials for the specified Configuration
 	bool calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg, int smoothing);
 	// Calculate weighted partials from supplied unweighted partials
-	bool calculateWeightedGR(PartialSet& unweightedPartials, PartialSet& weightedPartials, WeightsMatrix& weightsMatrix);
+	bool calculateWeightedGR(PartialSet& unweightedPartials, PartialSet& weightedPartials, Weights& weights);
 	// Calculate unweighted S(Q) from supplied unweighted g(r)
 	bool calculateUnweightedSQ(ProcessPool& procPool, PartialSet& sourcegr, PartialSet& destsq, double qMin, double qDelta, double qMax, double rho, XYData::WindowFunction wf, double qDepBroadening, double qIndepBroadening, bool includeBragg, double qDepBraggBroadening, double qIndepBraggBroad);
 	// Calculate weighted S(Q) from supplied unweighted S(Q)
-	bool calculateWeightedSQ(PartialSet& unweightedsq, PartialSet& weightedsq, WeightsMatrix& weightsMatrix);
+	bool calculateWeightedSQ(PartialSet& unweightedsq, PartialSet& weightedsq, Weights& weights);
 
 
 	/*

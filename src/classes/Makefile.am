@@ -12,8 +12,8 @@ libclasses_la_SOURCES += kvector.cpp
 libclasses_la_SOURCES += molecule.cpp
 libclasses_la_SOURCES += pairpotential.cpp potentialmap.cpp partialset.cpp
 libclasses_la_SOURCES += species.cpp species_atomic.cpp species_grains.cpp species_intra.cpp species_io.cpp species_isotopologues.cpp species_transform.cpp speciesangle.cpp speciesatom.cpp speciesbond.cpp speciesgrain.cpp species_io.cpp
-libclasses_la_SOURCES += weightsmatrix.cpp
+libclasses_la_SOURCES += weights.cpp
 
-noinst_HEADERS = atom.h atomtype.h atomtypedata.h atomtypelist.h box.h braggpeak.h cell.h cellneighbour.h changedata.h changestore.h configuration.h energykernel.h forcekernel.h grain.h histogram.h isotopologue.h isotopologuemix.h kvector.h molecule.h pairpotential.h potentialmap.h partialset.h species.h speciesangle.h speciesatom.h speciesbond.h speciesgrain.h weightsmatrix.h
+noinst_HEADERS = atom.h atomtype.h atomtypedata.h atomtypelist.h box.h braggpeak.h cell.h cellneighbour.h changedata.h changestore.h configuration.h energykernel.h forcekernel.h grain.h histogram.h isotopologue.h isotopologuemix.h kvector.h molecule.h pairpotential.h potentialmap.h partialset.h species.h speciesangle.h speciesatom.h speciesbond.h speciesgrain.h weights.h
 
 AM_CPPFLAGS = -I../ @DUQ_CFLAGS@

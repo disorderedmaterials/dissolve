@@ -24,7 +24,7 @@
 #include "classes/atom.h"
 #include "classes/box.h"
 #include "classes/species.h"
-#include "classes/weightsmatrix.h"
+#include "classes/weights.h"
 
 // Test reference data against calculated partials set
 bool PartialsModule::testReferencePartials(GenericList& sourceModuleData, AtomTypeList& typesList, PartialSet& partials, const char* dataPrefix, double testThreshold)
@@ -333,7 +333,7 @@ bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration*
 }
 
 // Calculate weighted partials from supplied unweighted partials
-bool PartialsModule::calculateWeightedGR(PartialSet& unweightedgr, PartialSet& weightedgr, WeightsMatrix& weightsMatrix)
+bool PartialsModule::calculateWeightedGR(PartialSet& unweightedgr, PartialSet& weightedgr, Weights& weights)
 {
 	int typeI, typeJ;
 	for (typeI=0; typeI<weightedgr.nAtomTypes(); ++typeI)
@@ -341,7 +341,7 @@ bool PartialsModule::calculateWeightedGR(PartialSet& unweightedgr, PartialSet& w
 		for (typeJ=typeI; typeJ<weightedgr.nAtomTypes(); ++typeJ)
 		{
 			// Weight S(Q), Bragg S(Q) and full partial S(Q)
-			double factor = weightsMatrix.fullWeight(typeI, typeJ);
+			double factor = weights.fullWeight(typeI, typeJ);
 
 			weightedgr.partial(typeI, typeJ).copyData(unweightedgr.partial(typeI, typeJ));
 			weightedgr.partial(typeI, typeJ).arrayY() *= factor;
@@ -422,7 +422,7 @@ bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, PartialSet& so
 }
 
 // Calculate weighted S(Q) from supplied unweighted S(Q)
-bool PartialsModule::calculateWeightedSQ(PartialSet& unweightedsq, PartialSet& weightedsq, WeightsMatrix& weightsMatrix)
+bool PartialsModule::calculateWeightedSQ(PartialSet& unweightedsq, PartialSet& weightedsq, Weights& weights)
 {
 	int typeI, typeJ;
 	for (typeI=0; typeI<unweightedsq.nAtomTypes(); ++typeI)
@@ -430,7 +430,7 @@ bool PartialsModule::calculateWeightedSQ(PartialSet& unweightedsq, PartialSet& w
 		for (typeJ=typeI; typeJ<unweightedsq.nAtomTypes(); ++typeJ)
 		{
 			// Weight S(Q), Bragg S(Q) and full partial S(Q)
-			double factor = weightsMatrix.fullWeight(typeI, typeJ);
+			double factor = weights.fullWeight(typeI, typeJ);
 
 			weightedsq.partial(typeI, typeJ).copyData(unweightedsq.partial(typeI, typeJ));
 			weightedsq.partial(typeI, typeJ).arrayY() *= factor;
