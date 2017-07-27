@@ -1,7 +1,7 @@
 # Target 'duq'
 bin_PROGRAMS = duq
 
-duq_SOURCES = main.cpp
+duq_SOURCES = main.cpp base/messenger_printtext.cpp
 
 EXTRA_DIST = version.h
 
@@ -21,7 +21,7 @@ if BUILDGUI
 
 bin_PROGRAMS += monitor
 
-monitor_SOURCES = monitor.cpp
+monitor_SOURCES = monitor.cpp gui/messenger_printtext.cpp
 
 SUBDIRS += gui
 

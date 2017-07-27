@@ -102,14 +102,6 @@ void Messenger::createText(const char* indentText, const char* format, va_list a
 	}
 }
 
-// Print text
-void Messenger::printText(const char* text)
-{
-	// Print the passed string
-	if (redirect_) parser_.writeLineF("%s", text);
-	else printf("%s", text);
-}
-
 // Master text creation / formatting routine
 void Messenger::createAndPrintText(const char* indentText, const char* format, va_list arguments)
 {
