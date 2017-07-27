@@ -750,6 +750,45 @@ double XYData::rmse(XYData ref)
 	return rmse;
 }
 
+// Return mean absolute percentage error of current data with (interpolated) reference data
+double XYData::mape(XYData ref)
+{
+	// First, generate interpolation of reference data if it needs it
+	if (ref.interpolationScheme_ == XYData::NoInterpolation) ref.interpolate(XYData::SplineInterpolation);
+
+	// Generate RMSE over actual values of our data
+	double sume = 0.0, sumf = 0.0, delta;
+	double firstX = 0.0, lastX = 0.0;
+	int nPointsConsidered = 0;
+	for (int n=0; n<x_.nItems(); ++n)
+	{
+		// Is our x value lower than the lowest x value of the reference data?
+		if (x_[n] < ref.xFirst()) continue;
+
+		// Is our x value higher than the last x value of the reference data?
+		if (x_[n] > ref.xLast()) break;
+
+		// Is this the first point considered?
+		if (nPointsConsidered == 0) firstX = x_[n];
+
+		// Accumulate numerator - sum of forecast errors
+		sume += fabs(y_[n] - ref.interpolated(x_[n]));
+
+		// Accumulate denominator - one-step naive forecast
+		if (nPointsConsidered > 0) sumf += fabs(y_[n] - y_[n-1]);
+
+		lastX = x_[n];
+		++nPointsConsidered;
+	}
+
+	// Finalise MAPE and summarise result
+	double factor = double(nPointsConsidered) / double(nPointsConsidered-1);
+	double mape = sume / (factor * sumf);
+	Messenger::print("MAPE between datasets is %15.9e over %15.9e < x < %15.9e (%i points).\n", mape, firstX, lastX, nPointsConsidered);
+
+	return mape;
+}
+
 /*
  * File I/O
  */
