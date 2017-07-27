@@ -54,8 +54,6 @@ class AtomTypeData : public ListItem<AtomTypeData>
 	int population_;
 	// Fractional populations of isotopes
 	double fraction_;
-	// Index of non-isotopic master type
-	int masterIndex_;
 
 	public:
 	// Initialise
@@ -76,10 +74,6 @@ class AtomTypeData : public ListItem<AtomTypeData>
 	double fraction() const;
 	// Return referenced AtomType name
 	const char* name();
-	// Set index of non-isotopic master type
-	void setMasterIndex(int id);
-	// Return index of non-isotopic master type
-	int masterIndex();
 };
 
 #endif

@@ -69,7 +69,7 @@ class AtomTypeList
 	// Return first item in list
 	AtomTypeData* first() const;
 	// Print AtomType populations
-	void print();
+	void print() const;
 
 
 	/*

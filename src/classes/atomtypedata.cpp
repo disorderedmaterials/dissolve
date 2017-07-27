@@ -31,7 +31,6 @@
 AtomTypeData::AtomTypeData() : ListItem<AtomTypeData>()
 {
 	atomType_ = NULL;
-	masterIndex_ = -1;
 }
 
 // Copy Constructor
@@ -47,7 +46,6 @@ void AtomTypeData::operator=(const AtomTypeData& source)
 	isotope_ = source.isotope_;
 	population_ = source.population_;
 	fraction_ = source.fraction_;
-	masterIndex_ = source.masterIndex_;
 }
 
 /*
@@ -118,16 +116,4 @@ double AtomTypeData::fraction() const
 const char* AtomTypeData::name()
 {
 	return atomType_->name();
-}
-
-// Set index of non-isotopic master type
-void AtomTypeData::setMasterIndex(int id)
-{
-	masterIndex_ = id;
-}
-
-// Return index of non-isotopic master type
-int AtomTypeData::masterIndex()
-{
-	return masterIndex_;
 }

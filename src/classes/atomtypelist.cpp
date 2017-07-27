@@ -129,16 +129,13 @@ AtomTypeData* AtomTypeList::first() const
 }
 
 // Print AtomType populations
-void AtomTypeList::print()
+void AtomTypeList::print() const
 {
 	CharString indexData;
 	Messenger::print("  AtomType    El   Population  AtomFrac  Isotope  bc (fm)\n");
 	Messenger::print("  ---------------------------------------------------------\n");
 	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next)
 	{
-		if (atd->masterIndex() == -1) indexData = "M";
-		else indexData.sprintf("index=%i", atd->masterIndex());
-		
 		if (atd->isotope()) Messenger::print("  %-10s  %-3s  %-10i  %8.6f    %-3i   %8.3f  (%s)\n", atd->name(), PeriodicTable::element(atd->atomType()->element()).symbol(), atd->population(), atd->fraction(), atd->isotope()->A(), atd->isotope()->boundCoherent(), indexData.get());
 		else Messenger::print("  %-10s  %-3s  %-10i  %8.6f     --- N/A ---    (%s)\n", atd->name(), PeriodicTable::element(atd->atomType()->element()).symbol(), atd->population(), atd->fraction(), indexData.get());
 	}
