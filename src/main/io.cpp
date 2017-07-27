@@ -152,6 +152,12 @@ bool DUQ::loadInput(const char* filename)
 						error = true;
 						break;
 					}
+					else if (findConfiguration(niceName, true))
+					{
+						Messenger::error("A Configuration with the unique name '%s' already exist, and so cannot be used as a Module name.\n", niceName.get());
+						error = true;
+						break;
+					}
 					else module->setUniqueName(niceName);
 				}
 
