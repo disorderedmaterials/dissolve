@@ -43,10 +43,10 @@ bool PartialsModule::testReferencePartials(GenericList& sourceModuleData, AtomTy
 			dataName = CharString("%s-%s-%s", dataPrefix, typeI->name(), typeJ->name());
 			if (sourceModuleData.contains(dataName, uniqueName()))
 			{
-				double rmse = partials.partial(n,m).rmse(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, uniqueName()));
+				double mape = partials.partial(n,m).mape(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, uniqueName()));
 				{
-					Messenger::print("Partials: Test reference data '%s' has RMSE of %15.9e with calculated data and is %s (threshold is %10.3e)\n\n", dataName.get(), rmse, rmse < testThreshold ? "OK" : "NOT OK", testThreshold);
-					if (rmse > testThreshold) return false;
+					Messenger::print("Partials: Test reference data '%s' has MAPE of %15.9e with calculated data and is %s (threshold is %10.3e)\n\n", dataName.get(), mape, mape <= testThreshold ? "OK" : "NOT OK", testThreshold);
+					if (mape > testThreshold) return false;
 				}
 			}
 
@@ -54,10 +54,10 @@ bool PartialsModule::testReferencePartials(GenericList& sourceModuleData, AtomTy
 			dataName = CharString("%s-%s-%s-bound", dataPrefix, typeI->name(), typeJ->name());
 			if (sourceModuleData.contains(dataName, uniqueName()))
 			{
-				double rmse = partials.boundPartial(n,m).rmse(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, uniqueName()));
+				double mape = partials.boundPartial(n,m).mape(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, uniqueName()));
 				{
-					Messenger::print("Partials: Test reference data '%s' has RMSE of %15.9e with calculated data and is %s (threshold is %10.3e)\n\n", dataName.get(), rmse, rmse < testThreshold ? "OK" : "NOT OK", testThreshold);
-					if (rmse > testThreshold) return false;
+					Messenger::print("Partials: Test reference data '%s' has MAPE of %15.9e with calculated data and is %s (threshold is %10.3e)\n\n", dataName.get(), mape, mape <= testThreshold ? "OK" : "NOT OK", testThreshold);
+					if (mape > testThreshold) return false;
 				}
 			}
 
@@ -65,10 +65,10 @@ bool PartialsModule::testReferencePartials(GenericList& sourceModuleData, AtomTy
 			dataName = CharString("%s-%s-%s-unbound", dataPrefix, typeI->name(), typeJ->name());
 			if (sourceModuleData.contains(dataName, uniqueName()))
 			{
-				double rmse = partials.unboundPartial(n,m).rmse(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, uniqueName()));
+				double mape = partials.unboundPartial(n,m).mape(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, uniqueName()));
 				{
-					Messenger::print("Partials: Test reference data '%s' has RMSE of %15.9e with calculated data and is %s (threshold is %10.3e)\n\n", dataName.get(), rmse, rmse < testThreshold ? "OK" : "NOT OK", testThreshold);
-					if (rmse > testThreshold) return false;
+					Messenger::print("Partials: Test reference data '%s' has MAPE of %15.9e with calculated data and is %s (threshold is %10.3e)\n\n", dataName.get(), mape, mape <= testThreshold ? "OK" : "NOT OK", testThreshold);
+					if (mape > testThreshold) return false;
 				}
 			}
 
@@ -76,10 +76,10 @@ bool PartialsModule::testReferencePartials(GenericList& sourceModuleData, AtomTy
 			dataName = CharString("%s-%s-%s-bragg", dataPrefix, typeI->name(), typeJ->name());
 			if (sourceModuleData.contains(dataName, uniqueName()))
 			{
-				double rmse = partials.braggPartial(n,m).rmse(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, uniqueName()));
+				double mape = partials.braggPartial(n,m).mape(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, uniqueName()));
 				{
-					Messenger::print("Partials: Test reference data '%s' has RMSE of %15.9e with calculated data and is %s (threshold is %10.3e)\n\n", dataName.get(), rmse, rmse < testThreshold ? "OK" : "NOT OK", testThreshold);
-					if (rmse > testThreshold) return false;
+					Messenger::print("Partials: Test reference data '%s' has MAPE of %15.9e with calculated data and is %s (threshold is %10.3e)\n\n", dataName.get(), mape, mape <= testThreshold ? "OK" : "NOT OK", testThreshold);
+					if (mape > testThreshold) return false;
 				}
 			}
 		}
@@ -89,10 +89,10 @@ bool PartialsModule::testReferencePartials(GenericList& sourceModuleData, AtomTy
 	dataName = CharString("%s-total", dataPrefix);
 	if (sourceModuleData.contains(dataName, uniqueName()))
 	{
-		double rmse = partials.total().rmse(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, uniqueName()));
+		double mape = partials.total().mape(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, uniqueName()));
 		{
-			Messenger::print("Partials: Test reference data '%s' has RMSE of %15.9e with calculated data and is %s (threshold is %10.3e)\n\n", dataName.get(), rmse, rmse < testThreshold ? "OK" : "NOT OK", testThreshold);
-			if (rmse > testThreshold) return false;
+			Messenger::print("Partials: Test reference data '%s' has MAPE of %15.9e with calculated data and is %s (threshold is %10.3e)\n\n", dataName.get(), mape, mape <= testThreshold ? "OK" : "NOT OK", testThreshold);
+			if (mape > testThreshold) return false;
 		}
 	}
 

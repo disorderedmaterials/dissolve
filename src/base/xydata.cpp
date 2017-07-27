@@ -757,7 +757,7 @@ double XYData::mape(XYData ref)
 	if (ref.interpolationScheme_ == XYData::NoInterpolation) ref.interpolate(XYData::SplineInterpolation);
 
 	// Generate RMSE over actual values of our data
-	double sume = 0.0, sumf = 0.0, delta;
+	double sume = 0.0, sumf = 0.0;
 	double firstX = 0.0, lastX = 0.0;
 	int nPointsConsidered = 0;
 	for (int n=0; n<x_.nItems(); ++n)
@@ -782,8 +782,10 @@ double XYData::mape(XYData ref)
 	}
 
 	// Finalise MAPE and summarise result
-	double factor = double(nPointsConsidered) / double(nPointsConsidered-1);
-	double mape = sume / (factor * sumf);
+	double denominator;
+	if (sumf > 0.0) denominator = (double(nPointsConsidered) / double(nPointsConsidered-1)) * sumf;
+	else denominator = 1.0;
+	double mape = sume / denominator;
 	Messenger::print("MAPE between datasets is %15.9e over %15.9e < x < %15.9e (%i points).\n", mape, firstX, lastX, nPointsConsidered);
 
 	return mape;

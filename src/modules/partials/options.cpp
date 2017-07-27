@@ -42,7 +42,7 @@ void PartialsModule::setupOptions()
 	options_.add("Smoothing", 0, "Specifies the degree of smoothing 'n' to apply to calculated RDFs, where 2n+1 controls the length in the applied Spline smooth", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
 	options_.add("StructureFactor", bool(false), "Determines whether S(Q) are to be calculated from F.T. of the g(r)", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
 	options_.add("Test", bool(false), "Test calculated total and partials against supplied reference data", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
-	options_.add("TestThreshold", 0.1, "Test threshold (RMSE) above which test fails", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("TestThreshold", 0.1, "Test threshold (%%error) above which test fails", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
 	options_.add("Weights", "None", "Weighting scheme to use for calculated partials (None,Neutron)", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
 }
 
