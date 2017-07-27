@@ -29,9 +29,9 @@ Configuration* DUQ::addConfiguration()
 }
 
 // Find configuration by name
-Configuration* DUQ::findConfiguration(const char* name) const
+Configuration* DUQ::findConfiguration(const char* name, bool useNiceName) const
 {
-	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next) if (strcmp(name, cfg->name()) == 0) return cfg;
+	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next) if (DUQSys::sameString(name, useNiceName ? cfg->niceName() : cfg->name())) return cfg;
 
 	return NULL;
 }

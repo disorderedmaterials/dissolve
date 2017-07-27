@@ -172,7 +172,7 @@ class DUQ
 	// Add new Configuration
 	Configuration* addConfiguration();
 	// Find configuration by name
-	Configuration* findConfiguration(const char* name) const;
+	Configuration* findConfiguration(const char* name, bool useNiceName = false) const;
 
 
 	/*
