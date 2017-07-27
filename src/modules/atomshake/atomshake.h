@@ -106,11 +106,11 @@ class AtomShakeModule : public Module
 
 
 	/*
-	 * Parallel Comms
+	 * Data Access
 	 */
 	public:
-	// Broadcast data associated to module
-	bool broadcastData(ProcessPool& procPool, int rootRank);
+	// Reap data for this Module instance
+	void reapData();
 };
 
 #endif

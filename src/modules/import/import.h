@@ -129,6 +129,14 @@ class ImportModule : public Module
 	static bool readSimpleForces(LineParser& parser, Array<double>& fx, Array<double>& fy, Array<double>& fz);
 	// Read DL_POLY forces from specified file
 	static bool readDLPOLYForces(LineParser& parser, Array<double>& fx, Array<double>& fy, Array<double>& fz);
+
+
+	/*
+	 * Data Access
+	 */
+	public:
+	// Reap data for this Module instance
+	void reapData();
 };
 
 #endif

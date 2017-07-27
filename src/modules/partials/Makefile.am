@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = libpartials.la
 
-libpartials_la_SOURCES = comms.cpp core.cpp definition.cpp functions.cpp method.cpp options.cpp
+libpartials_la_SOURCES = core.cpp data.cpp definition.cpp functions.cpp method.cpp options.cpp
 
 noinst_HEADERS = partials.h
 

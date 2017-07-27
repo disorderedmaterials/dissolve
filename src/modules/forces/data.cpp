@@ -1,6 +1,6 @@
 /*
-	*** Forces Module - Comms
-	*** src/modules/forces/comms.cpp
+	*** Forces Module - Data
+	*** src/modules/forces/data.cpp
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -20,4 +20,9 @@
 */
 
 #include "modules/forces/forces.h"
+
+// Reap data for this Module instance
+void ForcesModule::reapData()
+{
+}
 

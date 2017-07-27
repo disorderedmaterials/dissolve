@@ -132,11 +132,11 @@ class PartialsModule : public Module
 
 
 	/*
-	 * Parallel Comms
+	 * Data Access
 	 */
 	public:
-	// Broadcast data associated to module
-	bool broadcastData(DUQ& duq, ProcessPool& procPool);
+	// Reap data for this Module instance
+	void reapData();
 };
 
 #endif

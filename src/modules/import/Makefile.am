@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = libimport.la
 
-libimport_la_SOURCES = comms.cpp core.cpp definition.cpp functions.cpp method.cpp options.cpp
+libimport_la_SOURCES = core.cpp data.cpp definition.cpp functions.cpp method.cpp options.cpp
 
 noinst_HEADERS = import.h
 

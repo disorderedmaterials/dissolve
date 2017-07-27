@@ -114,6 +114,14 @@ class TestModule : public Module
 	RefList<Module,XYData> sampleData_;
 	// Weights matrix for partials / target data
 	Array2D<double> partialWeights_;
+
+
+	/*
+	 * Data Access
+	 */
+	public:
+	// Reap data for this Module instance
+	void reapData();
 };
 
 #endif

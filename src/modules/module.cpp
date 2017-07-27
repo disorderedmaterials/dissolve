@@ -241,3 +241,13 @@ bool Module::configurationLocal()
 {
 	return configurationLocal_;
 }
+
+/*
+ * Data Reaping
+ */
+
+// Reap data for all instances of this Module
+void Module::reapAllInstances()
+{
+	for (Module* instance = instances().first(); instance != NULL; instance = instance->next) instance->reapData();
+}

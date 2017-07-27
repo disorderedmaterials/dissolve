@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = libtest.la
 
-libtest_la_SOURCES = comms.cpp core.cpp definition.cpp functions.cpp method.cpp options.cpp
+libtest_la_SOURCES = core.cpp data.cpp definition.cpp functions.cpp method.cpp options.cpp
 
 noinst_HEADERS = test.h
 

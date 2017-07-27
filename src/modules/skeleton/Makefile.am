@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = libskeleton.la
 
-libskeleton_la_SOURCES = comms.cpp core.cpp definition.cpp functions.cpp method.cpp options.cpp
+libskeleton_la_SOURCES = core.cpp data.cpp definition.cpp functions.cpp method.cpp options.cpp
 
 noinst_HEADERS = skeleton.h
 

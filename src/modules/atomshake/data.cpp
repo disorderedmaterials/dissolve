@@ -1,6 +1,6 @@
 /*
-	*** AtomShake Module - Comms
-	*** src/modules/atomshake/comms.cpp
+	*** AtomShake Module - Data
+	*** src/modules/atomshake/data.cpp
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -21,10 +21,8 @@
 
 #include "modules/atomshake/atomshake.h"
 
-// Broadcast data associated to module
-bool AtomShakeModule::broadcastData(ProcessPool& procPool, int rootRank)
+// Reap data for this Module instance
+void AtomShakeModule::reapData()
 {
-#ifdef PARALLEL
-#endif
-	return true;
 }
+

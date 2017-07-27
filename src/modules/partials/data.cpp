@@ -1,6 +1,6 @@
 /*
-	*** Partials Module - Comms
-	*** src/modules/partials/comms.cpp
+	*** Partials Module - Data
+	*** src/modules/partials/data.cpp
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -20,17 +20,9 @@
 */
 
 #include "modules/partials/partials.h"
-#include "main/duq.h"
 
-// Broadcast data associated to module
-bool PartialsModule::broadcastData(DUQ& duq, ProcessPool& procPool)
+// Reap data for this Module instance
+void PartialsModule::reapData()
 {
-	/*
-	 * Broadcast all data from this type of Module over the ProcessPool specified.
-	 * This function should only ever be called on the root instance of the Module. Static data can be distributed here,
-	 * as well as instance-local information (via the instances_ list).
-	 */
-#ifdef PARALLEL
-#endif
-	return true;
 }
+

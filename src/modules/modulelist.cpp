@@ -133,6 +133,18 @@ RefList<Module,bool>& ModuleList::modules()
 }
 
 /*
+ * Reaping
+ */
+
+// Reap data from disk for all Modules
+void ModuleList::reapAllData()
+{
+	// Loop over all Modules, loading in all the data that they can
+	RefListIterator<Module,bool> allModules(modules_);
+	while (Module* module = allModules.iterate()) module->reapAllInstances();
+}
+
+/*
  * Master Module List
  */
 

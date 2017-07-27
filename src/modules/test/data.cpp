@@ -1,6 +1,6 @@
 /*
-	*** Test Module - Comms
-	*** src/modules/test/comms.cpp
+	*** Test Module - Data
+	*** src/modules/test/data.cpp
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -20,4 +20,9 @@
 */
 
 #include "modules/test/test.h"
+
+// Reap data for this Module instance
+void TestModule::reapData()
+{
+}
 

@@ -1,6 +1,6 @@
 /*
-	*** Energy Module - Comms
-	*** src/modules/energy/comms.cpp
+	*** Energy Module - Data
+	*** src/modules/energy/data.cpp
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -20,4 +20,9 @@
 */
 
 #include "modules/energy/energy.h"
+
+// Reap data for this Module instance
+void EnergyModule::reapData()
+{
+}
 

@@ -1,6 +1,6 @@
 /*
-	*** Export Module - Comms
-	*** src/modules/export/comms.cpp
+	*** Export Module - Data
+	*** src/modules/export/data.cpp
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -20,4 +20,9 @@
 */
 
 #include "modules/export/export.h"
+
+// Reap data for this Module instance
+void ExportModule::reapData()
+{
+}
 

@@ -194,6 +194,16 @@ class Module : public ListItem<Module>
 	int broadcastPoint_;
 	// Logpoint reflecting time of last broadcast of static data (shared across all instances)
 	static int staticBroadcastPoint_;
+
+
+	/*
+	 * Data Access
+	 */
+	public:
+	// Reap data for this Module instance
+	virtual void reapData() = 0;
+	// Reap data for all instances of this Module
+	void reapAllInstances();
 };
 
 #endif

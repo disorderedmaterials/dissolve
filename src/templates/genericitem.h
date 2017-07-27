@@ -56,11 +56,11 @@ class GenericItem
 		IntClass,				/* Item is of 'int' type */
 		DoubleClass,				/* Item is of 'double' type */
 		CharStringClass,			/* Item is a 'CharString' */
-		ArrayIntClass,				/* Item is a 'Array<int>' */
-		ArrayDoubleClass,			/* Item is a 'Array<double>' */
-		ArrayVec3IntClass,			/* Item is a 'Array< Vec3<int> >' */
-		ArrayVec3DoubleClass,			/* Item is a 'Array< Vec3<double> >' */
-		Array2DDoubleClass,			/* Item is a 'Array2D<double>' */
+		ArrayIntClass,				/* Item is an 'Array<int>' */
+		ArrayDoubleClass,			/* Item is an 'Array<double>' */
+		ArrayVec3IntClass,			/* Item is an 'Array< Vec3<int> >' */
+		ArrayVec3DoubleClass,			/* Item is an 'Array< Vec3<double> >' */
+		Array2DDoubleClass,			/* Item is an 'Array2D<double>' */
 		nItemClasses
 	};
 	// Convert item class to char string

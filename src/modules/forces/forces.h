@@ -103,6 +103,14 @@ class ForcesModule : public Module
 	bool process(DUQ& duq, ProcessPool& procPool);
 	// Execute post-processing stage
 	bool postProcess(DUQ& duq, ProcessPool& procPool);
+
+
+	/*
+	 * Data Access
+	 */
+	public:
+	// Reap data for this Module instance
+	void reapData();
 };
 
 #endif

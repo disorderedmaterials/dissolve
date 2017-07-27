@@ -57,6 +57,14 @@ class ModuleList
 
 
 	/*
+	 * Reaping
+	 */
+	public:
+	// Reap data from disk for all Modules
+	void reapAllData();
+
+
+	/*
 	 * Master Module Instances
 	 */
 	private:

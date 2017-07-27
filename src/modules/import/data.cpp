@@ -1,6 +1,6 @@
 /*
-	*** Import Module - Comms
-	*** src/modules/import/comms.cpp
+	*** Import Module - Data
+	*** src/modules/import/data.cpp
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -20,4 +20,9 @@
 */
 
 #include "modules/import/import.h"
+
+// Reap data for this Module instance
+void ImportModule::reapData()
+{
+}
 

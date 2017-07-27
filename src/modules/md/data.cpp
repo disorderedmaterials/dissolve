@@ -1,6 +1,6 @@
 /*
-	*** MD Module - Comms
-	*** src/modules/md/comms.cpp
+	*** MD Module - Data
+	*** src/modules/md/data.cpp
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -20,4 +20,9 @@
 */
 
 #include "modules/md/md.h"
+
+// Reap data for this Module instance
+void MDModule::reapData()
+{
+}
 

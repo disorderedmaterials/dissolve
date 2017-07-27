@@ -1,6 +1,6 @@
 /*
-	*** Skeleton Module - Comms
-	*** src/modules/skeleton/comms.cpp
+	*** Skeleton Module - Data
+	*** src/modules/skeleton/data.cpp
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -20,4 +20,9 @@
 */
 
 #include "modules/skeleton/skeleton.h"
+
+// Reap data for this Module instance
+void SkeletonModule::reapData()
+{
+}
 
