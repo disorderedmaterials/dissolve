@@ -28,7 +28,7 @@ Configuration  'Bulk'
 EndConfiguration
 
 # Samples
-Module Partials 'NIMROD-Deuteriated'
+Module Partials 'D2O'
   StructureFactor  on
   QMin 0.05
   QDepBroadening  0.02    # For SLS
@@ -58,6 +58,39 @@ Module Partials 'NIMROD-Deuteriated'
   TestReference  'epsr/water.EPSR.s01'  SQ-unweighted-HW-HW-bound  1  6
   # -- Total neutron-weighted S(Q)
   TestReference  'epsr/water.EPSR.u01'  SQ-weighted-total  1  2
+EndModule
+
+Module Partials 'H2O'
+  StructureFactor  on
+  QMin 0.05
+  QDepBroadening  0.02    # For SLS
+  Configuration  'Bulk'
+  Weights  neutron
+  Isotopologue  'Bulk'  'Water'  'Protiated'  1.0
+  Save  On
+  Frequency  1
+
+  Test  on
+  TestThreshold  1.0
+  # -- Total neutron-weighted S(Q)
+  TestReference  'epsr/water.EPSR.u01'  SQ-weighted-total  1  4
+EndModule
+
+Module Partials 'HDO'
+  StructureFactor  on
+  QMin 0.05
+  QDepBroadening  0.02    # For SLS
+  Configuration  'Bulk'
+  Weights  neutron
+  Isotopologue  'Bulk'  'Water'  'Protiated'  0.5
+  Isotopologue  'Bulk'  'Water'  'Deuteriated'  0.5
+  Save  On
+  Frequency  1
+
+  Test  on
+  TestThreshold  1.0
+  # -- Total neutron-weighted S(Q)
+  TestReference  'epsr/water.EPSR.u01'  SQ-weighted-total  1  6
 EndModule
 
 # Pair Potentials
