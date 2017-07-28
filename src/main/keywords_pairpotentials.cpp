@@ -29,8 +29,8 @@ KeywordData PairPotentialsBlockData[] = {
 	{ "CoulombTruncation",		1,	"Truncation scheme to apply to Coulomb potential" },
 	{ "Delta",			1,	"Delta (in r-squared) of tabulated potential" },
 	{ "EndPairPotentials",		0,	"Signals the end of the PairPotentials block" },
-	{ "GenerateAll",		1,	"All potentials should be generated using internal atomtype parameters" },
 	{ "Generate",			3,	"Generate a pair potential of the specified form, according to internal parameters (or those supplied with 'Parameters')" },
+	{ "GenerateAll",		1,	"Generate all (remaining) potentials according to internal atomtype parameters (or those supplied with 'Parameters')b bn" },
 	{ "IncludeCoulomb",		1,	"Include Coulomb term in tabulated pair potentials" },
 	{ "Parameters",			4,	"Set the sigma, epsilon, and charge for the named atomtype" },
 	{ "Range",			1,	"Maximal range of the pair potential (in r)" },
@@ -135,6 +135,49 @@ bool PairPotentialsBlock::parse(LineParser& parser, DUQ* duq)
 
 				pot->setShortRangeType(srType);
 				pot->setParameters(at1, at2);
+				break;
+			case (PairPotentialsBlock::GenerateAllKeyword):
+				Messenger::print("Generating all missing pair potentials...\n");
+
+				// Get short-range type
+				srType = PairPotential::shortRangeType(parser.argc(1));
+				if (srType == PairPotential::nShortRangeTypes)
+				{
+					Messenger::error("Unknown short-range interaction type '%s' used in PairPotentials block.\n", parser.argc(1));
+					error = true;
+					break;
+				}
+
+				// Loop over all atomtype pairs and generate any missing potentials
+				for (at1 = duq->atomTypes(); at1 != NULL; at1 = at1->next)
+				{
+					for (at2 = at1; at2 != NULL; at2 = at2->next)
+					{
+						pot = duq->hasPairPotential(at1, at2);
+						if (pot)
+						{
+							Messenger::print("PairPotential already exists for interaction between '%s' and '%s'...\n", at1->name(), at2->name());
+							continue;
+						}
+						else
+						{
+							Messenger::print("Adding PairPotential for interaction between '%s' and '%s'...\n", at1->name(), at2->name());
+							pot = duq->addPairPotential(at1, at2);
+						}
+
+						// Check Parameters for AtomTypes
+						if ((!at1->parameters()) || (!at2->parameters()))
+						{
+							Messenger::error("Parameters for AtomType '%s' don't exist, so can't setup a PairPotential.\n", at1->parameters() ? at2->name() : at1->name());
+							error = true;
+							break;
+						}
+
+						pot->setShortRangeType(srType);
+						pot->setParameters(at1, at2);
+					}
+					if (error) break;
+				}
 				break;
 			case (PairPotentialsBlock::IncludeCoulombKeyword):
 				duq->setPairPotentialsIncludeCoulomb(parser.argb(1));
