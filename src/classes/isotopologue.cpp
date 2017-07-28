@@ -139,7 +139,7 @@ bool Isotopologue::setAtomTypeIsotope(AtomType* at, Isotope* isotope)
 	RefListItem<AtomType,Isotope*>* rli = isotopes_.contains(at);
 	if (!rli)
 	{
-		Messenger::error("AtomType not found in Isotopologue...\n");
+		Messenger::error("AtomType '%s' not found in Isotopologue '%s'.\n", at->name(), name_.get());
 		return false;
 	}
 	
@@ -154,7 +154,7 @@ Isotope* Isotopologue::atomTypeIsotope(AtomType* at) const
 	RefListItem<AtomType,Isotope*>* rli = isotopes_.contains(at);
 	if (!rli)
 	{
-		Messenger::error("AtomType not found in Isotopologue...\n");
+		Messenger::error("Couldn't retrieve AtomType '%s' from Isotopologue '%s' as it doesn't exist.\n", at->name(), name_.get());
 		return NULL;
 	}
 	return rli->data;
