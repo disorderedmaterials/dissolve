@@ -342,49 +342,66 @@ bool Configuration::setup(ProcessPool& procPool, const List<AtomType>& atomTypes
 	// Initialise cell atom neighbour lists
 	recreateCellAtomNeighbourLists(pairPotentialRange);
 
-	// Create/load Box normalisation array
-	if (!boxNormalisationFileName_.isEmpty())
+	// Load or calculate Box normalisation (if we need one)
+	if (rdfRange_ <= inscribedSphereRadius)
 	{
-		// Master will open file and attempt to read it...
-		bool loadResult;
-		if (procPool.isMaster()) loadResult = boxNormalisation_.load(boxNormalisationFileName_);
-		if (!procPool.broadcast(loadResult)) return false;
+		Messenger::print("--> No need for Box normalisation array since rdfRange is within periodic range.\n");
+		boxNormalisation_.clear();
+		double x = rdfBinWidth_*0.5;
+		while (x < rdfRange_)
+		{
+			boxNormalisation_.addPoint(x, 1.0);
+			x += rdfBinWidth_;
+		}
+	}
+	else
+	{
+		// Attempt to load existing Box normalisation file
+		if (!boxNormalisationFileName_.isEmpty())
+		{
+			// Master will open file and attempt to read it...
+			bool loadResult;
+			if (procPool.isMaster()) loadResult = boxNormalisation_.load(boxNormalisationFileName_);
+			if (!procPool.broadcast(loadResult)) return false;
+
+			// Did we successfully load the file?
+			if (loadResult)
+			{
+				Messenger::print("--> Successfully loaded box normalisation data from file '%s'.\n", boxNormalisationFileName_.get());
+				if (!boxNormalisation_.broadcast(procPool)) return false;
+			}
+			else Messenger::print("--> Couldn't load Box normalisation data - it will be calculated.\n");
+		}
 
 		// Did we successfully load the file?
-		if (loadResult)
+		if (boxNormalisation_.nPoints() <= 1)
 		{
-			Messenger::print("--> Successfully loaded box normalisation data from file '%s'.\n", boxNormalisationFileName_.get());
-			if (!boxNormalisation_.broadcast(procPool)) return false;
-		}
-		else Messenger::print("--> Couldn't load Box normalisation data - it will be calculated.\n");
-	}
-	if (boxNormalisation_.nPoints() <= 1)
-	{
-		// Only calculate if RDF range is greater than the inscribed sphere radius
-		if (rdfRange_ <= inscribedSphereRadius)
-		{
-			Messenger::print("--> No need to calculate Box normalisation array since rdfRange is within periodic range.\n");
-			boxNormalisation_.clear();
-			double x = rdfBinWidth_*0.5;
-			while (x < rdfRange_)
+			// Only calculate if RDF range is greater than the inscribed sphere radius
+			if (rdfRange_ <= inscribedSphereRadius)
 			{
-				boxNormalisation_.addPoint(x, 1.0);
-				x += rdfBinWidth_;
+				Messenger::print("--> No need to calculate Box normalisation array since rdfRange is within periodic range.\n");
+				boxNormalisation_.clear();
+				double x = rdfBinWidth_*0.5;
+				while (x < rdfRange_)
+				{
+					boxNormalisation_.addPoint(x, 1.0);
+					x += rdfBinWidth_;
+				}
+			}
+			else
+			{
+				Messenger::print("--> Calculating box normalisation array for RDFs...\n");
+				if (!box()->calculateRDFNormalisation(procPool, boxNormalisation_, rdfRange_, rdfBinWidth_, boxNormalisationNPoints)) return false;
+				
+				// Save normalisation file so we don't have to recalculate it next time
+				if (procPool.isMaster()) boxNormalisation_.save(boxNormalisationFileName_);
 			}
 		}
-		else
-		{
-			Messenger::print("--> Calculating box normalisation array for RDFs...\n");
-			if (!box()->calculateRDFNormalisation(procPool, boxNormalisation_, rdfRange_, rdfBinWidth_, boxNormalisationNPoints)) return false;
-			
-			// Save normalisation file so we don't have to recalculate it next time
-			if (procPool.isMaster()) boxNormalisation_.save(boxNormalisationFileName_);
-		}
+
+		// Interpolate the Box normalisation array
+		boxNormalisation_.interpolate(XYData::LinearInterpolation);
 	}
 
-	// Interpolate the Box normalisation array
-	boxNormalisation_.interpolate(XYData::LinearInterpolation);
-	
 	return true;
 }
 
