@@ -88,7 +88,7 @@ bool PartialSet::setup(const AtomTypeList& atomTypes, double rdfRange, double bi
 			unboundHistograms_.ref(n,m).initialise(0.0, rdfRange, binWidth);
 
 			// Partials
-			title.sprintf("%s-%s-%s-%s.%s", prefix, tag, at1->name(), at2->name(), suffix);
+			title.sprintf("%s-%s-%s-%s.%s", prefix, tag, at1->atomTypeName(), at2->atomTypeName(), suffix);
 			partials_.ref(n,m).setName(title.get());
 			boundPartials_.ref(n,m).setName(title.get());
 			unboundPartials_.ref(n,m).setName(title.get());
@@ -130,7 +130,7 @@ bool PartialSet::setup(const AtomTypeList& atomTypes, const char* prefix, const 
 		at2 = at1;
 		for (int m=n; m<nTypes; ++m, at2 = at2->next)
 		{
-			title.sprintf("%s-%s-%s-%s.%s", prefix, tag, at1->name(), at2->name(), suffix);
+			title.sprintf("%s-%s-%s-%s.%s", prefix, tag, at1->atomTypeName(), at2->atomTypeName(), suffix);
 			partials_.ref(n,m).setName(title.get());
 			boundPartials_.ref(n,m).setName(title.get());
 			unboundPartials_.ref(n,m).setName(title.get());

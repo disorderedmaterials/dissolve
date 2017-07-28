@@ -40,7 +40,7 @@ bool PartialsModule::testReferencePartials(GenericList& sourceModuleData, AtomTy
 		for (int m = n; m <typesList.nItems(); ++m, typeJ = typeJ->next)
 		{
 			// Full partial (bound + unbound) reference data supplied?
-			dataName = CharString("%s-%s-%s", dataPrefix, typeI->name(), typeJ->name());
+			dataName = CharString("%s-%s-%s", dataPrefix, typeI->atomTypeName(), typeJ->atomTypeName());
 			if (sourceModuleData.contains(dataName, uniqueName()))
 			{
 				double mape = partials.partial(n,m).mape(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, uniqueName()));
@@ -51,7 +51,7 @@ bool PartialsModule::testReferencePartials(GenericList& sourceModuleData, AtomTy
 			}
 
 			// Bound partial reference data supplied?
-			dataName = CharString("%s-%s-%s-bound", dataPrefix, typeI->name(), typeJ->name());
+			dataName = CharString("%s-%s-%s-bound", dataPrefix, typeI->atomTypeName(), typeJ->atomTypeName());
 			if (sourceModuleData.contains(dataName, uniqueName()))
 			{
 				double mape = partials.boundPartial(n,m).mape(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, uniqueName()));
@@ -62,7 +62,7 @@ bool PartialsModule::testReferencePartials(GenericList& sourceModuleData, AtomTy
 			}
 
 			// Unbound reference data supplied?
-			dataName = CharString("%s-%s-%s-unbound", dataPrefix, typeI->name(), typeJ->name());
+			dataName = CharString("%s-%s-%s-unbound", dataPrefix, typeI->atomTypeName(), typeJ->atomTypeName());
 			if (sourceModuleData.contains(dataName, uniqueName()))
 			{
 				double mape = partials.unboundPartial(n,m).mape(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, uniqueName()));
@@ -73,7 +73,7 @@ bool PartialsModule::testReferencePartials(GenericList& sourceModuleData, AtomTy
 			}
 
 			// Bragg reference data supplied?
-			dataName = CharString("%s-%s-%s-bragg", dataPrefix, typeI->name(), typeJ->name());
+			dataName = CharString("%s-%s-%s-bragg", dataPrefix, typeI->atomTypeName(), typeJ->atomTypeName());
 			if (sourceModuleData.contains(dataName, uniqueName()))
 			{
 				double mape = partials.braggPartial(n,m).mape(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, uniqueName()));

@@ -21,7 +21,7 @@
 
 #include "classes/atomtypelist.h"
 #include "classes/atomtype.h"
-#include "base/isotope.h"
+#include "classes/isotopedata.h"
 #include "base/ptable.h"
 #include <string.h>
 
@@ -57,31 +57,33 @@ void AtomTypeList::clear()
 	types_.clear();
 }
 
-// Add/increase this AtomType/Isotope pair
-int AtomTypeList::add(AtomType* atomType, Isotope* tope, int popAdd)
+// Add the specified AtomType to the list, returning the index of the AtomType in the list
+AtomTypeData* AtomTypeList::add(AtomType* atomType, int population)
 {
 	// Search the list for the AtomType provided.
-	// If present, we will check the isotope already stored
 	AtomTypeData* atd = NULL;
-	int index = 0;
-	for (atd = types_.first(); atd != NULL; atd = atd->next, ++index)
-	{
-		if (atd->atomType() != atomType) continue;
-		if (atd->isotope() != tope) continue;
-		break;
-	}
+	for (atd = types_.first(); atd != NULL; atd = atd->next) if (atd->atomType() == atomType) break;
 	
 	// Create new entry if one wasn't found
 	if (atd == NULL)
 	{
 		atd = types_.add();
-		atd->initialise(atomType, tope);
+		atd->initialise(types_.nItems()-1, atomType, population);
 	}
-	
-	// Increase population
-	atd->add(popAdd);
 
-	return index;
+	// Increase general (non-isotopic) population
+	atd->add(population);
+
+	return atd;
+}
+
+// Add/increase this AtomType/Isotope pair
+void AtomTypeList::addIsotope(AtomType* atomType, Isotope* tope, int popAdd)
+{
+	AtomTypeData* atd = add(atomType);
+	
+	// Add / increase isotope population
+	if (tope != NULL) atd->add(tope, popAdd);
 }
 
 // Add the AtomTypes in the supplied list into this one, increasing populations etc.
@@ -90,7 +92,10 @@ void AtomTypeList::add(const AtomTypeList& source)
 	// Loop over AtomTypes in the source list
 	for (AtomTypeData* newType = source.first(); newType != NULL; newType = newType->next)
 	{
-		add(newType->atomType(), newType->isotope(), newType->population());
+		AtomTypeData* atd = add(newType->atomType());
+
+		// Now add Isotope data
+		for (IsotopeData* topeData = newType->isotopeData(); topeData != NULL; topeData = topeData->next) atd->add(topeData->isotope(), topeData->population());
 	}
 }
 
@@ -100,7 +105,7 @@ bool AtomTypeList::contains(AtomType* atomType, Isotope* tope)
 	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next)
 	{
 		if (atd->atomType() != atomType) continue;
-		if (atd->isotope() != tope) continue;
+		if (!atd->hasIsotope(tope)) continue;
 		return true;
 	}
 
@@ -110,10 +115,7 @@ bool AtomTypeList::contains(AtomType* atomType, Isotope* tope)
 // Zero populations of all types in the list
 void AtomTypeList::zero()
 {
-	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next)
-	{
-		atd->zero();
-	}
+	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next) atd->zeroPopulations();
 }
 
 // Return number of AtomType/Isotopes in list
@@ -131,19 +133,24 @@ AtomTypeData* AtomTypeList::first() const
 // Print AtomType populations
 void AtomTypeList::print() const
 {
-	Messenger::print("  AtomType    El   Population  AtomFrac  Isotope   bc (fm)\n");
-	Messenger::print("  ---------------------------------------------------------\n");
-	int lastElement = -1;
+	Messenger::print("  AtomType  El  Isotope  Population  Fraction           bc (fm)\n");
+	Messenger::print("  -------------------------------------------------------------\n");
 	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next)
 	{
-		if (atd->isotope())
+		// If there are isotopes defined, print them
+		if (atd->isotopeData())
 		{
-			if (lastElement == atd->atomType()->element()) Messenger::print("                   %-10i  %8.6f    %-3i   %8.3f  ()\n", atd->population(), atd->fraction(), atd->isotope()->A(), atd->isotope()->boundCoherent());
-			else Messenger::print("  %-10s  %-3s  %-10i  %8.6f    %-3i   %8.3f  ()\n", atd->name(), PeriodicTable::element(atd->atomType()->element()).symbol(), atd->population(), atd->fraction(), atd->isotope()->A(), atd->isotope()->boundCoherent());
-		}
-		else Messenger::print("  %-10s  %-3s  %-10i  %8.6f     --- N/A ---    ()\n", atd->name(), PeriodicTable::element(atd->atomType()->element()).symbol(), atd->population(), atd->fraction());
+			Messenger::print("  %-8s  %-3s    -     %-10i  %8.6f (of world) %6.3f\n", atd->atomTypeName(), PeriodicTable::element(atd->atomType()->element()).symbol(), atd->population(), atd->fraction(), atd->boundCoherent());
 
-		lastElement = atd->atomType()->element();
+			for (IsotopeData* topeData = atd->isotopeData(); topeData != NULL; topeData = topeData->next)
+			{
+				Messenger::print("                   %-3i   %-10i  %8.6f (of type)  %6.3f\n", topeData->isotope()->A(), topeData->population(), topeData->fraction(), topeData->isotope()->boundCoherent());
+			}
+
+		}
+		else Messenger::print("  %-8s  %-3s          %-10i  %8.6f     --- N/A ---\n", atd->atomTypeName(), PeriodicTable::element(atd->atomType()->element()).symbol(), atd->population(), atd->fraction());
+
+	Messenger::print("  -------------------------------------------------------------\n");	
 	}
 }
 

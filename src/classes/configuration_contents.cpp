@@ -194,8 +194,8 @@ bool Configuration::setupMolecules()
 			if (!c->addAtom(&atoms_[atomCount])) return false;
 
 			// Update our typeIndex (non-isotopic) and set index of the atom
-			localTypeIndex = usedAtomTypes_.add(i->atomType(), NULL, 1);
-			atoms_[atomCount].setLocalTypeIndex(localTypeIndex);
+			AtomTypeData* atd = usedAtomTypes_.add(i->atomType(), 1);
+			atoms_[atomCount].setLocalTypeIndex(atd->listIndex());
 
 			// Set atom pointer and character (charge, atomtype etc.) of atom in molecule from the source Species
 			if (!mol->setupAtom(n, &atoms_[atomCount], i)) return false;
@@ -241,13 +241,6 @@ AtomTypeData* Configuration::usedAtomTypes()
 const AtomTypeList& Configuration::usedAtomTypesList() const
 {
 	return usedAtomTypes_;
-}
-
-// Return fraction of specified AtomTypeData in Configuration
-double Configuration::usedAtomTypeFraction(int index)
-{
-	AtomTypeData* atd = usedAtomTypes_[index];
-	return (atd ? atd->fraction() : 0.0);
 }
 
 // Return number of atom types used in this Configuration

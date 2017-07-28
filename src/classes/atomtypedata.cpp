@@ -1,6 +1,6 @@
 /*
-	*** AtomTypeIndexIndex Definition
-	*** src/classes/atomtypeindex.cpp
+	*** AtomTypeData Definition
+	*** src/classes/atomtypedata.cpp
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -21,16 +21,20 @@
 
 #include "classes/atomtypelist.h"
 #include "classes/atomtype.h"
+#include "isotopedata.h"
 #include "base/constants.h"
 #include "base/isotope.h"
 #include "base/messenger.h"
-#include <base/ptable.h>
+#include "base/ptable.h"
 #include <string.h>
 
 // Constructor
 AtomTypeData::AtomTypeData() : ListItem<AtomTypeData>()
 {
 	atomType_ = NULL;
+	population_ = 0;
+	fraction_ = 0.0;
+	boundCoherent_ = 0.0;
 }
 
 // Copy Constructor
@@ -43,9 +47,10 @@ AtomTypeData::AtomTypeData(const AtomTypeData& source)
 void AtomTypeData::operator=(const AtomTypeData& source)
 {
 	atomType_ = source.atomType_;
-	isotope_ = source.isotope_;
+	isotopes_ = source.isotopes_;
 	population_ = source.population_;
 	fraction_ = source.fraction_;
+	boundCoherent_ = source.boundCoherent_;
 }
 
 /*
@@ -53,33 +58,64 @@ void AtomTypeData::operator=(const AtomTypeData& source)
  */
 
 // Initialise
-bool AtomTypeData::initialise(AtomType* atomType, Isotope* tope)
+bool AtomTypeData::initialise(int listIndex, AtomType* atomType, int population)
 {
+	listIndex_ = listIndex;
 	atomType_ = atomType;
-	isotope_ = tope;
 	if (atomType == NULL)
 	{
 		Messenger::error("NULL_POINTER - NULL AtomType pointer passed to AtomTypeData::initialise().\n");
 		return false;
 	}
 
-	population_ = 0;
+	population_ = population;
 	fraction_ = 0.0;
-// 	Messenger::print("--> Initialised AtomType index entry with AtomType '%s', Isotope %i (bc = %7.3f)\n", atomType->name(), tope->A(), tope->boundCoherent());
+	boundCoherent_ = 0.0;
+
+	// 	Messenger::print("--> Initialised AtomType index entry with AtomType '%s', Isotope %i (bc = %7.3f)\n", atomType->name(), tope->A(), tope->boundCoherent());
 	return true;
 }
 
-// Add to population of Isotope
+// Add to population
 void AtomTypeData::add(int nAdd)
 {
 	population_ += nAdd;
 }
 
-// Zero population
-void AtomTypeData::zero()
+// Add to population of Isotope
+void AtomTypeData::add(Isotope* tope, int nAdd)
 {
+	// Has this isotope already been added to the list?
+	IsotopeData* topeData = NULL;
+	for (topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next) if (topeData->isotope() == tope) break;
+	if (topeData == NULL)
+	{
+		topeData = isotopes_.add();
+		topeData->initialise(tope);
+	}
+
+	// Increase Isotope population
+	topeData->add(nAdd);
+
+	// Increase total integer population
+	population_ += nAdd;
+}
+
+// Zero populations
+void AtomTypeData::zeroPopulations()
+{
+	// Zero individual isotope counts
+	for (IsotopeData* topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next) topeData->zeroPopulation();
+
+	// Zero totals
 	population_ = 0;
 	fraction_ = 0.0;
+}
+
+// Return list index of AtomTypeData in AtomTypeList
+int AtomTypeData::listIndex() const
+{
+	return listIndex_;
 }
 
 // Return reference AtomType
@@ -91,29 +127,51 @@ AtomType* AtomTypeData::atomType() const
 // Finalise, calculating fractional populations etc.
 void AtomTypeData::finalise(int totalAtoms)
 {
+	// Calculate fractional world population
 	fraction_ = double(population_) / totalAtoms;
+
+	// Calculate isotope fractional populations (of AtomType)
+	for (IsotopeData* topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next) topeData->finalise(population_);
+
+	// Determine bound coherent scattering for AtomType, based on Isotope populations
+	boundCoherent_ = 0.0;
+	for (IsotopeData* topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next) boundCoherent_ += topeData->fraction()*topeData->isotope()->boundCoherent();
+}
+
+// Return if specified Isotope is already in the list
+bool AtomTypeData::hasIsotope(Isotope* tope)
+{
+	for (IsotopeData* topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next) if (topeData->isotope() == tope) return true;
+
+	return false;
 }
 
 // Return Isotope
-Isotope* AtomTypeData::isotope() const
+IsotopeData* AtomTypeData::isotopeData()
 {
-	return isotope_;
+	return isotopes_.first();
 }
 
-// Return population
+// Return total population over all isotopes
 int AtomTypeData::population() const
 {
 	return population_;
 }
 
-// Return fractional population
+// Return total fractional population including all isotopes
 double AtomTypeData::fraction() const
 {
 	return fraction_;
 }
 
+// Calculated bound coherent scattering over all Isotopes
+double AtomTypeData::boundCoherent() const
+{
+	return boundCoherent_;
+}
+
 // Return referenced AtomType name
-const char* AtomTypeData::name()
+const char* AtomTypeData::atomTypeName() const
 {
 	return atomType_->name();
 }

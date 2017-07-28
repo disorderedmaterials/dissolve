@@ -196,8 +196,6 @@ class Configuration : public ListItem<Configuration>
 	AtomTypeData* usedAtomTypes();
 	// Return AtomTypeList for this Configuration
 	const AtomTypeList& usedAtomTypesList() const;
-	// Return fraction of specified AtomTypeData in Configuration
-	double usedAtomTypeFraction(int index);
 	// Return number of atom types used in this Configuration
 	int nUsedAtomTypes();
 	// Set global AtomType indices in Atoms from the map provided

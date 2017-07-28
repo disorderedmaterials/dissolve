@@ -28,6 +28,7 @@ forcekernel.cpp
 grain.cpp
 graindefinition.cpp
 histogram.cpp
+isotope.cpp
 isotopologue.cpp
 isotopologuemix.cpp
 kvector.cpp
@@ -66,6 +67,7 @@ forcekernel.h
 graindefinition.h
 grain.h
 histogram.h
+isotope.h
 isotopologue.h
 isotopologuemix.h
 kvector.h

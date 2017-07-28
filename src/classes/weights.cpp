@@ -94,7 +94,7 @@ IsotopologueMix* Weights::hasSpeciesIsotopologueMixture(Species* sp) const
 // Print atomtype / weights information
 void Weights::print() const
 {
-	Messenger::print("  Species          Isotopologue     nTotMols    TopeFrac\n");
+	Messenger::print("  Species          Isotopologue     nTotMols    Fraction\n");
 	Messenger::print("  ------------------------------------------------------\n");
 	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next)
 	{
@@ -132,7 +132,7 @@ void Weights::finalise()
 			for (SpeciesAtom* i = mix->species()->atoms(); i != NULL; i = i->next)
 			{
 				Isotope* iso = tope->item->atomTypeIsotope(i->atomType());
-				atomTypes_.add(i->atomType(), iso, tope->data*mix->speciesPopulation());
+				atomTypes_.addIsotope(i->atomType(), iso, tope->data*mix->speciesPopulation());
 			}
 		}
 	}
@@ -150,7 +150,7 @@ void Weights::finalise()
 	for (int typeI=0; typeI<atomTypes_.nItems(); ++typeI, at1 = at1->next)
 	{
 		ci = at1->fraction();
-		bi = at1->isotope()->boundCoherent() * 0.1;
+		bi = at1->boundCoherent() * 0.1;
 
 		// Update average scattering values
 		boundCoherentAverageSquared_ += ci*bi;
@@ -160,7 +160,7 @@ void Weights::finalise()
 		for (int typeJ=typeI; typeJ<atomTypes_.nItems(); ++typeJ, at2 = at2->next)
 		{
 			cj = at2->fraction();
-			bj = at2->isotope()->boundCoherent() * 0.1;
+			bj = at2->boundCoherent() * 0.1;
 
 			concentrationMatrix_.ref(typeI,typeJ) = ci * cj;
 			boundCoherentMatrix_.ref(typeI,typeJ) = bi * bj;

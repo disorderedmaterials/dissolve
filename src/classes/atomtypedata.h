@@ -23,9 +23,11 @@
 #define DUQ_ATOMTYPEDATA_H
 
 #include "templates/list.h"
+#include "templates/reflist.h"
 
 // Forward Declarations
 class AtomType;
+class IsotopeData;
 class Isotope;
 
 /*
@@ -46,34 +48,46 @@ class AtomTypeData : public ListItem<AtomTypeData>
 	 * Properties
 	 */
 	private:
+	// List index of AtomTypeData in AtomTypeList
+	int listIndex_;
 	// Reference AtomType
 	AtomType* atomType_;
-	// Isotopes
-	Isotope* isotope_;
-	// Integer populations of isotopes
+	// Isotopes information (if any)
+	List<IsotopeData> isotopes_;
+	// Total integer population
 	int population_;
-	// Fractional populations of isotopes
+	// World fractional population over all Isotopes
 	double fraction_;
+	// Calculated bound coherent scattering over all Isotopes
+	double boundCoherent_;
 
 	public:
 	// Initialise
-	bool initialise(AtomType* atomType, Isotope* topeA);
-	// Add to population of Isotope
+	bool initialise(int listIndex, AtomType* atomType, int population = 0);
+	// Add to population
 	void add(int nAdd);
-	// Zero population
-	void zero();
+	// Add to population of Isotope
+	void add(Isotope* tope, int nAdd);
+	// Zero populations
+	void zeroPopulations();
+	// Return list index of AtomTypeData in AtomTypeList
+	int listIndex() const;
 	// Return reference AtomType
 	AtomType* atomType() const;
 	// Finalise, calculating fractional populations etc.
-	void finalise(int totalAtoms);
-	// Return Isotope
-	Isotope* isotope() const;
-	// Return population
+	void finalise(int nWorldAtoms);
+	// Return if specified Isotope is already in the list
+	bool hasIsotope(Isotope* tope);
+	// Return first IsotopeData
+	IsotopeData* isotopeData();
+	// Return total population over all isotopes
 	int population() const;
-	// Return fractional population
+	// Return total fractional population including all isotopes
 	double fraction() const;
+	// Calculated bound coherent scattering over all Isotopes
+	double boundCoherent() const;
 	// Return referenced AtomType name
-	const char* name();
+	const char* atomTypeName() const;
 };
 
 #endif
