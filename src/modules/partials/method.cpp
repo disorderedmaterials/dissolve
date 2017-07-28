@@ -85,7 +85,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 	if (sqCalculation)
 	{
 		Messenger::print("Partials: Structure factor QMax = %f, QDelta = %f.\n", qMax, qDelta);
-		Messenger::print("Partials: Bragg calculation is %s.\n", DUQSys::onOff(saveData));
+		Messenger::print("Partials: Bragg calculation is %s.\n", DUQSys::onOff(braggOn));
 		if (braggOn) Messenger::print("Partials: Bragg Q-dependent FWHM broadening to use is %f, Q-independent FWHM broadening to use is %f.\n", braggQDepBroadening, braggQIndepBroadening);
 	}
 
