@@ -100,7 +100,7 @@ bool PartialsModule::testReferencePartials(GenericList& sourceModuleData, AtomTy
 }
 
 // Calculate partial RDFs with simple double-loop
-bool PartialsModule::calculateSimple(Configuration* cfg, PartialSet& partialSet, ProcessPool& procPool)
+bool PartialsModule::calculateSimple(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet)
 {
 	// Variables
 	int n, m, nTypes, typeI, typeJ, i, j, nPoints;
@@ -196,11 +196,11 @@ bool PartialsModule::calculateSimple(Configuration* cfg, PartialSet& partialSet,
 }
 
 // Calculate unweighted partials for the specified Configuration
-bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg, int smoothing)
+bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg, bool allIntra, int smoothing)
 {
 	// Does a PartialSet already exist for this Configuration?
 	bool wasCreated;
-	PartialSet& partialgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedGR", uniqueName_, GenericItem::NoOutputFlag, &wasCreated);
+	PartialSet& partialgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedGR", "Partials", GenericItem::NoOutputFlag, &wasCreated);
 	if (wasCreated) partialgr.setup(cfg, cfg->niceName(), "unweighted", "rdf", "r, Angstroms");
 
 	// Is the PartialSet already up-to-date?
@@ -226,7 +226,7 @@ bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration*
 	Timer timer;
 	timer.start();
 	procPool.resetAccumulatedTime();
-	calculateSimple(cfg, partialgr, procPool);
+	calculateSimple(procPool, cfg, partialgr);
 	timer.stop();
 	Messenger::print("Partials: Finished calculation of partials (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
 
@@ -244,32 +244,53 @@ bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration*
 
 	timer.start();
 	// Loop over molecules...
-	Atom* i, *j, *k;
 	for (int m=start; m<cfg->nMolecules(); m += stride)
 	{
 		Molecule* mol = cfg->molecule(m);
 
-		// Bonds
-		for (SpeciesBond* b = mol->species()->bonds(); b != NULL; b = b->next)
-		{
-			i = mol->atom(b->indexI());
-			j = mol->atom(b->indexJ());
-			if (cfg->useMim(i->cell(), j->cell())) distance = box->minimumDistance(i, j);
-			else distance = (i->r() - j->r()).magnitude();
-			partialgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).add(distance);
-		}
+		Atom* i, *j, *k;
 
-		// Angles
-		for (SpeciesAngle* a = mol->species()->angles(); a != NULL; a = a->next)
+		// Consider all intramolecular pairs?
+		if (allIntra)
 		{
-			i = mol->atom(a->indexI());
-			j = mol->atom(a->indexJ());
-			k = mol->atom(a->indexK());
-			
-			// Determine whether we need to apply minimum image between 'j-i' and 'j-k'
-			if (cfg->useMim(i->cell(), k->cell())) distance = box->minimumDistance(i, k);
-			else distance = (i->r() - k->r()).magnitude();
-			partialgr.boundHistogram(i->localTypeIndex(), k->localTypeIndex()).add(distance);
+			Atom** atoms = mol->atoms();
+			for (int ii=0; ii<mol->nAtoms()-1; ++ii)
+			{
+				i = atoms[ii];
+				for (int jj=ii+1; jj<mol->nAtoms(); ++jj)
+				{
+					j = atoms[jj];
+
+					if (cfg->useMim(i->cell(), j->cell())) distance = box->minimumDistance(i, j);
+					else distance = (i->r() - j->r()).magnitude();
+					partialgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).add(distance);
+				}
+			}
+		}
+		else
+		{
+			// Bonds
+			for (SpeciesBond* b = mol->species()->bonds(); b != NULL; b = b->next)
+			{
+				i = mol->atom(b->indexI());
+				j = mol->atom(b->indexJ());
+				if (cfg->useMim(i->cell(), j->cell())) distance = box->minimumDistance(i, j);
+				else distance = (i->r() - j->r()).magnitude();
+				partialgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).add(distance);
+			}
+
+			// Angles
+			for (SpeciesAngle* a = mol->species()->angles(); a != NULL; a = a->next)
+			{
+				i = mol->atom(a->indexI());
+				j = mol->atom(a->indexJ());
+				k = mol->atom(a->indexK());
+				
+				// Determine whether we need to apply minimum image between 'j-i' and 'j-k'
+				if (cfg->useMim(i->cell(), k->cell())) distance = box->minimumDistance(i, k);
+				else distance = (i->r() - k->r()).magnitude();
+				partialgr.boundHistogram(i->localTypeIndex(), k->localTypeIndex()).add(distance);
+			}
 		}
 	}
 	timer.stop();

@@ -123,7 +123,6 @@ class DUQ
 	// Map for PairPotentials
 	PotentialMap potentialMap_;
 
-
 	public:
 	// Set maximum distance for tabulated PairPotentials
 	void setPairPotentialRange(double range);
@@ -210,9 +209,7 @@ class DUQ
 	 */
 	private:
 	// Number of test points to use when calculating Box normalisation arrays
-	int boxNormalisationPoints_;
-	// Bin width to use when calculating RMSE between Sample F(Q) and reference data
-	double rmseDeltaQ_;
+	int nBoxNormalisationPoints_;
 	// Random seed
 	int seed_;
 	// Maximum number of main loop iterations to perform
@@ -221,12 +218,14 @@ class DUQ
 	XYData::WindowFunction windowFunction_;
 	// Whether to write various data after each iteration
 	bool writeIterationData_;
+	// Whether all intramolecular interactions contribute to intra partials
+	bool allIntra_;
 
 	public:
 	// Set number of test points to use when calculating Box normalisation arrays
-	void setBoxNormalisationPoints(int nPoints);
-	// Bin width to use when calculating RMSE between Sample F(Q) and reference data
-	void setRMSEDeltaQ(double dq);
+	void setNBoxNormalisationPoints(int nPoints);
+	// Return number of test points to use when calculating Box normalisation arrays
+	int nBoxNormalisationPoints() const;
 	// Set random seed
 	void setSeed(int seed);
 	// Return random seed

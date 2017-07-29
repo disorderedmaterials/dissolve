@@ -116,13 +116,13 @@ class PartialsModule : public Module
 	// Test reference data against calculated PartialSet set
 	bool testReferencePartials(GenericList& sourceModuleData, AtomTypeList& typesList, PartialSet& partialgr, const char* dataPrefix, double testThreshold);
 	// Calculate partial RDFs with simple double-loop
-	bool calculateSimple(Configuration* cfg, PartialSet& partialSet, ProcessPool& procPool);
+	bool calculateSimple(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet);
 
 	public:
 	// Weighting Type enum
 	enum WeightingType { NoWeighting, NeutronWeighting };
 	// (Re)calculate unweighted partials for the specified Configuration
-	bool calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg, int smoothing);
+	bool calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg, bool allIntra, int smoothing);
 	// Calculate weighted partials from supplied unweighted partials
 	bool calculateWeightedGR(PartialSet& unweightedPartials, PartialSet& weightedPartials, Weights& weights);
 	// Calculate unweighted S(Q) from supplied unweighted g(r)

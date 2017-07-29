@@ -74,7 +74,8 @@ bool SimulationBlock::parse(LineParser& parser, DUQ* duq)
 		switch (simKeyword)
 		{
 			case (SimulationBlock::BoxNormalisationPointsKeyword):
-				duq->setBoxNormalisationPoints(parser.argi(1));
+				duq->setNBoxNormalisationPoints(parser.argi(1));
+				Messenger::print("Number of points to use in Box normalisation calculation = %i\n", duq->nBoxNormalisationPoints());
 				break;
 			case (SimulationBlock::EndSimulationKeyword):
 				Messenger::print("Found end of %s block.\n", InputBlocks::inputBlock(InputBlocks::SimulationBlock));
@@ -82,6 +83,7 @@ bool SimulationBlock::parse(LineParser& parser, DUQ* duq)
 				break;
 			case (SimulationBlock::MaxIterationsKeyword):
 				duq->setMaxIterations(parser.argi(1));
+				Messenger::print("Maximum number of main loop iterations set to %i.\n", duq->maxIterations());
 				break;
 			case (SimulationBlock::ParallelStrategyKeyword):
 				if (DUQ::parallelStrategy(parser.argc(1)) == DUQ::nParallelStrategies)
@@ -93,6 +95,7 @@ bool SimulationBlock::parse(LineParser& parser, DUQ* duq)
 				break;
 			case (SimulationBlock::SeedKeyword):
 				duq->setSeed(parser.argi(1));
+				Messenger::print("Random seed set to %i.\n", duq->seed());
 				break;
 			case (SimulationBlock::WindowFunctionKeyword):
 				if (XYData::windowFunction(parser.argc(1)) == XYData::nWindowFunctions)
@@ -104,6 +107,7 @@ bool SimulationBlock::parse(LineParser& parser, DUQ* duq)
 				break;
 			case (SimulationBlock::WriteIterationDataKeyword):
 				duq->setWriteIterationData(parser.argb(1));
+				Messenger::print("Data will be written to disk after each iteration.\n");
 				break;
 			case (SimulationBlock::nSimulationKeywords):
 				Messenger::print("Unrecognised %s block keyword found - '%s'\n", InputBlocks::inputBlock(InputBlocks::SimulationBlock), parser.argc(0));

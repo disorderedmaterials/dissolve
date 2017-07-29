@@ -24,15 +24,15 @@
 #include "classes/species.h"
 
 // Set number of test points to use when calculating Box normalisation arrays
-void DUQ::setBoxNormalisationPoints(int nPoints)
+void DUQ::setNBoxNormalisationPoints(int nPoints)
 {
-	boxNormalisationPoints_ = nPoints;
+	nBoxNormalisationPoints_ = nPoints;
 }
 
-// Bin width to use when calculating RMSE between Sample F(Q) and reference data
-void DUQ::setRMSEDeltaQ(double dq)
+// Return number of test points to use when calculating Box normalisation arrays
+int DUQ::nBoxNormalisationPoints() const
 {
-	rmseDeltaQ_ = dq;
+	return nBoxNormalisationPoints_;
 }
 
 // Set random seed
@@ -108,7 +108,7 @@ bool DUQ::setupSimulation()
 	{
 		Messenger::print("*** Configuration %2i: '%s'\n", index, cfg->name());
 
-		if (!cfg->setup(worldPool_, atomTypes_, pairPotentialRange_, boxNormalisationPoints_)) return false;
+		if (!cfg->setup(worldPool_, atomTypes_, pairPotentialRange_, nBoxNormalisationPoints_)) return false;
 	}
 
 	/*
