@@ -78,7 +78,6 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 	// Print argument/parameter summary
 	Messenger::print("Partials: Calculating S(Q)/F(Q) out to %f Angstroms**-1 using step size of %f Angstroms**-1.\n", qMax, qDelta);
 	Messenger::print("Partials: Q-dependent FWHM broadening to use is %f, Q-independent FWHM broadening to use is %f.\n", qDepBroadening, qIndepBroadening);
-	Messenger::print("Partials: Calculation of Bragg features is %s.\n", DUQSys::onOff(braggOn));
 	if (braggOn) Messenger::print("Partials: Q-dependent FWHM Bragg broadening to use is %f, Q-independent FWHM Bragg broadening to use is %f.\n", braggQDepBroadening, braggQIndepBroadening);
 	Messenger::print("Partials: Save data is %s.\n", DUQSys::onOff(saveData));
 	Messenger::print("Partials: Structure factor calculation is %s.\n", DUQSys::onOff(sqCalculation));
