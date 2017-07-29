@@ -135,11 +135,11 @@ bool Configuration::createArrays()
 		Messenger::error("Configuration::setupArrays - Molecules have been added to the Configuration, but no Atoms were counted.\n");
 		return false;
 	}
-	if (nGrains_ == 0)
-	{
-		Messenger::error("Configuration::setupArrays - Molecules have been added to the Configuration, but no Grains were counted.\n");
-		return false;
-	}
+// 	if (nGrains_ == 0)
+// 	{
+// 		Messenger::error("Configuration::setupArrays - Molecules have been added to the Configuration, but no Grains were counted.\n");
+// 		return false;
+// 	}
 	
 	Messenger::print("--> Creating arrays for %i atoms and %i grains...\n", nAtoms_, nGrains_);
 	try

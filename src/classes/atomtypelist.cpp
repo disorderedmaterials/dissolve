@@ -150,7 +150,7 @@ void AtomTypeList::print() const
 		}
 		else Messenger::print("  %-8s  %-3s          %-10i  %8.6f     --- N/A ---\n", atd->atomTypeName(), PeriodicTable::element(atd->atomType()->element()).symbol(), atd->population(), atd->fraction());
 
-	Messenger::print("  -------------------------------------------------------------\n");	
+		Messenger::print("  -------------------------------------------------------------\n");	
 	}
 }
 

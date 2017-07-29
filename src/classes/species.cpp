@@ -110,16 +110,16 @@ bool Species::checkSetup(const List<AtomType>& atomTypes)
 	}
 	for (RefListItem<SpeciesAtom,int>* ri = grainCount.first(); ri != NULL; ri = ri->next)
 	{
-		if (ri->data == 0)
-		{
-			Messenger::error("SpeciesAtom %i (%s) is not present in any GrainDefinition.\n", ri->item->userIndex(), PeriodicTable::element(ri->item->element()).symbol());
-			++nErrors;
-		}
-		else if (ri->data > 1)
+		if (ri->data > 1)
 		{
 			Messenger::error("SpeciesAtom %i (%s) is present in more than one (%i) GrainDefinition.\n", ri->item->userIndex(), PeriodicTable::element(ri->item->element()).symbol(), ri->data);
 			++nErrors;
 		}
+// 		else if (ri->data == 0)
+// 		{
+// 			Messenger::error("SpeciesAtom %i (%s) is not present in any GrainDefinition.\n", ri->item->userIndex(), PeriodicTable::element(ri->item->element()).symbol());
+// 			++nErrors;
+// 		}
 	}
 	if (nErrors > 0) return false;
 

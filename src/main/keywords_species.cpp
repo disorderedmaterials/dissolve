@@ -29,6 +29,7 @@
 KeywordData SpeciesBlockData[] = {
 	{ "Angle",			5,	"" },
 	{ "Atom",			6,	"" },
+	{ "AutoAddGrains",		0,	"" },
 	{ "Bond",			4,	"" },
 	{ "Charge",			2,	"" },
 	{ "EndSpecies",			0,	"" },
@@ -113,7 +114,7 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 					Messenger::print("Creating AtomType '%s'...\n", parser.argc(6));
 					at = duq->addAtomType(el);
 					at->setName(parser.argc(6));
-				
+
 					// Check to see if some named potential parameters exist, corrsponding to the AtomType name
 					params = PeriodicTable::element(el).findParameters(parser.argc(6));
 					if (params)
@@ -126,6 +127,9 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 
 				// Finally, set AtomType for the Atom
 				i->setAtomType(at);
+				break;
+			case (SpeciesBlock::AutoAddGrainsKeyword):
+				species->autoAddGrains();
 				break;
 			case (SpeciesBlock::BondKeyword):
 				b = species->addBond(parser.argi(1)-1, parser.argi(2)-1);
@@ -146,7 +150,6 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 				}
 				break;
 			case (SpeciesBlock::EndSpeciesKeyword):
-				species->autoAddGrains();
 				species->updateGrains();
 				species->centreAtOrigin();
 				species->orderAtomsWithinGrains();

@@ -227,6 +227,7 @@ namespace SpeciesBlock
 	{
 		AngleKeyword,			/* 'Angle' - Defines an Angle joining three atoms */
 		AtomKeyword,			/* 'Atom' - Specifies an Atom in the Species */
+		AutoAddGrainsKeyword,		/* 'AutoAddGrains' - Automatically add Grains to cover all atoms in the Species */
 		BondKeyword,			/* 'Bond' - Defines a Bond joining two atoms */
 		ChargeKeyword,			/* 'Charge' - Specifies the atomic charge for an individual atom */
 		EndSpeciesKeyword,		/* 'EndSpecies' - Signals the end of the current Species */

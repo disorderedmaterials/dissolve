@@ -381,12 +381,10 @@ void Species::identifyInterGrainTerms()
 			Messenger::error("NULL_POINTER - One or both Atom pointers in a Bond are NULL (%p, %p)\n", b->i(), b->j());
 			continue;
 		}
-		if ((b->i()->grain() == NULL) || (b->j()->grain() == NULL))
-		{
-			Messenger::error("NULL_POINTER - One or both Grain pointers in a Bond are NULL (%p, %p)\n", b->i()->grain(), b->j()->grain());
-			continue;
-		}
 #endif
+
+		// If neither Atom is in a Grain, continue
+		if ((b->i()->grain() == NULL) && (b->j()->grain() == NULL)) continue;
 
 		// Is this an entirely INTRA-Grain Bond?
 		if (b->i()->grain() == b->j()->grain())
@@ -397,8 +395,8 @@ void Species::identifyInterGrainTerms()
 
 		// Bond is between two Grains, so add it to both and set the interGrain flag
 		b->setInterGrain(true);
-		b->i()->grain()->addBondConnection(b);
-		b->j()->grain()->addBondConnection(b);
+		if (b->i()->grain()) b->i()->grain()->addBondConnection(b);
+		if (b->j()->grain()) b->j()->grain()->addBondConnection(b);
 	}
 
 	// Angles
@@ -410,12 +408,10 @@ void Species::identifyInterGrainTerms()
 			Messenger::error("NULL_POINTER - One or more Atom pointers in an Angle are NULL (%p, %p, %p)\n", a->i(), a->j(), a->k());
 			continue;
 		}
-		if ((a->i()->grain() == NULL) || (a->j()->grain() == NULL) || (a->k()->grain() == NULL))
-		{
-			Messenger::error("NULL_POINTER - One or more Grain pointers in an Angle are NULL (%p, %p, %p)\n", a->i()->grain(), a->j()->grain(), a->k()->grain());
-			continue;
-		}
 #endif
+
+		// If no Atoms are in a Grain, continue
+		if ((a->i()->grain() == NULL) && (a->j()->grain() == NULL) && (a->k()->grain() == NULL)) continue;
 
 		// Is this an entirely INTRA-Grain Angle?
 		if ((a->i()->grain() == a->j()->grain()) && (a->j()->grain() == a->k()->grain()))
@@ -426,17 +422,24 @@ void Species::identifyInterGrainTerms()
 		
 		// Angle is between at least two Grains, so add it to the relevant parties.
 		// Always add to central Atom...
-		a->j()->grain()->addAngleConnection(a);
-		
-		// If Atom 'i' is in a different Grain, add it to that...
-		if (a->j()->grain() != a->i()->grain()) a->i()->grain()->addAngleConnection(a);
-		
-		// If Atom 'k' is in *another* different Grain, add it to that too
-		
-		// Only add to third Atom if its different again...
-		if ((a->k()->grain() != a->i()->grain()) && (a->k()->grain() != a->j()->grain())) a->k()->grain()->addAngleConnection(a);
-		
-		// Finally, if 'i' and 'k' are in different Grains, set the intraGrain flag to intramolecular correction energies are calculated correctly
-		if (a->i()->grain() != a->k()->grain()) a->setInterGrain(true);
+		if (a->j()->grain() == NULL)
+		{
+			// No Grain for central atom, so check 
+			if (a->i()->grain()) a->i()->grain()->addAngleConnection(a);
+		}
+		else
+		{
+			a->j()->grain()->addAngleConnection(a);
+			
+			// If Atom 'i' is in a different Grain, add it to that...
+			if ((a->j()->grain() != a->i()->grain()) && a->i()->grain()) a->i()->grain()->addAngleConnection(a);
+
+			// If Atom 'k' is in *another* different Grain, add it to that too
+			// Only add to third Atom if its different again...
+			if ((a->k()->grain() != a->i()->grain()) && (a->k()->grain() != a->j()->grain()) && a->k()->grain()) a->k()->grain()->addAngleConnection(a);
+
+			// Finally, if 'i' and 'k' are in different Grains, set the interGrain flag so intramolecular correction energies are calculated correctly
+			if (a->i()->grain() && a->k()->grain() && (a->i()->grain() != a->k()->grain())) a->setInterGrain(true);
+		}
 	}
 }
