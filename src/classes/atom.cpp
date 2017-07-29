@@ -30,7 +30,7 @@ Atom::Atom()
 	element_ = 0;
 	charge_ = 0.0;
 	localTypeIndex_ = -1;
-	globalTypeIndex_ = -1;
+	masterTypeIndex_ = -1;
 	index_ = -1;
 	molecule_ = NULL;
 	moleculeAtomIndex_ = 0;
@@ -110,22 +110,20 @@ int Atom::localTypeIndex() const
 	return localTypeIndex_;
 }
 
-// Set global AtomType index 
-void Atom::setGlobalTypeIndex(int id)
+// Set master AtomType index 
+void Atom::setMasterTypeIndex(int id)
 {
-#ifdef CHECKS
-	if (globalTypeIndex_ != -1) Messenger::print("Warning: Overwriting global AtomType index for atom '%i'.\n", index_);
-#endif
-	globalTypeIndex_ = id;
+	if (masterTypeIndex_ != -1) Messenger::warn("Warning: Overwriting master AtomType index for atom '%i'.\n", index_);
+	masterTypeIndex_ = id;
 }
 
-// Return global AtomType index 
-int Atom::globalTypeIndex() const
+// Return master AtomType index 
+int Atom::masterTypeIndex() const
 {
 #ifdef CHECKS
-	if (globalTypeIndex_ == -1) Messenger::print("Warning: Global AtomType index has not yet been set for atom '%i'.\n", index_);
+	if (masterTypeIndex_ == -1) Messenger::print("Warning: Global AtomType index has not yet been set for atom '%i'.\n", index_);
 #endif
-	return globalTypeIndex_;
+	return masterTypeIndex_;
 }
 
 // Set index (0->[N-1])
@@ -183,7 +181,7 @@ void Atom::copyProperties(const Atom* source)
 	r_ = source->r_;
 	element_ = source->element_;
 	localTypeIndex_ = source->localTypeIndex_;
-	globalTypeIndex_ = source->globalTypeIndex_;
+	masterTypeIndex_ = source->masterTypeIndex_;
 	charge_ = source->charge_;
 	index_ = source->index_;
 	molecule_ = source->molecule_;
@@ -250,7 +248,7 @@ bool Atom::broadcast(ProcessPool& procPool)
 	if (!procPool.broadcast(r_)) return false;
 	if (!procPool.broadcast(&charge_, 1)) return false;
 	if (!procPool.broadcast(&localTypeIndex_, 1)) return false;
-	if (!procPool.broadcast(&globalTypeIndex_, 1)) return false;
+	if (!procPool.broadcast(&masterTypeIndex_, 1)) return false;
 #endif
 	return true;
 }

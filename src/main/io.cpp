@@ -568,7 +568,7 @@ void DUQ::dump()
 		Atom* atoms = cfg->atoms();
 		for (int n=0; n<cfg->nAtoms(); ++n)
 		{
-			Messenger::print("%10i  %5s  %10.4e  %10.4e  %10.4e  %i  %i\n", n+1, PeriodicTable::element(atoms[n].element()).symbol(), atoms[n].r().x, atoms[n].r().y, atoms[n].r().z, atoms[n].localTypeIndex(), atoms[n].globalTypeIndex());
+			Messenger::print("%10i  %5s  %10.4e  %10.4e  %10.4e  %i  %i\n", n+1, PeriodicTable::element(atoms[n].element()).symbol(), atoms[n].r().x, atoms[n].r().y, atoms[n].r().z, atoms[n].localTypeIndex(), atoms[n].masterTypeIndex());
 		}
 
 		Messenger::print("# Box normalisation\n");

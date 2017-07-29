@@ -250,22 +250,22 @@ int Configuration::nUsedAtomTypes()
 }
 
 // Set global AtomType indices in Atoms from the list provided
-bool Configuration::setGlobalAtomTypeIndices(const List<AtomType>& masterList)
+bool Configuration::setMasterAtomTypeIndices(const List<AtomType>& masterList)
 {
 	// Loop over AtomTypes in index, then over Atoms in Configuration
 	int nAssigned = 0, globalIndex = 0;
 	for (AtomType* at = masterList.first(); at != NULL; at = at->next, ++globalIndex)
 	{
 		// Loop over Molecules (need the original Species pointer to look up original AtomType pointer)
-		int localIndex = 0;
+		int count = 0;
 		for (Molecule* mol = molecules_.first(); mol != NULL; mol = mol->next)
 		{
 			Species* sp = mol->species();
-			for (int i=0; i<sp->nAtoms(); ++i, ++localIndex)
+			for (int i=0; i<sp->nAtoms(); ++i, ++count)
 			{
 				if (at == sp->atom(i)->atomType())
 				{
-					atoms_[localIndex].setGlobalTypeIndex(globalIndex);
+					atoms_[count].setMasterTypeIndex(globalIndex);
 					++nAssigned;
 				}
 			}
@@ -275,7 +275,7 @@ bool Configuration::setGlobalAtomTypeIndices(const List<AtomType>& masterList)
 	// Did we successfully assign AtomTypes to all Atoms?
 	if (nAssigned != nAtoms_)
 	{
-		Messenger::error("Failed to assign global AtomType indices to all Atoms in Configuration '%s'.\n", name());
+		Messenger::error("Failed to assign master AtomType indices to all Atoms in Configuration '%s'.\n", name());
 		return false;
 	}
 

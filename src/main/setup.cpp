@@ -153,8 +153,8 @@ bool DUQ::setupSimulation()
 	for (AtomType* at = atomTypes_.first(); at != NULL; at = at->next) at->setIndex(id++);
 
 	// Set global AtomType indices in all Configurations
-	Messenger::print("--> Setting global AtomType indices in Configurations...\n");
-	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next) cfg->setGlobalAtomTypeIndices(atomTypes_);
+	Messenger::print("--> Setting master AtomType indices in Configurations...\n");
+	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next) cfg->setMasterAtomTypeIndices(atomTypes_);
 
 	// Create PairPotential matrix
 	Messenger::print("--> Creating PairPotential matrix (%ix%i)...\n", atomTypes_.nItems(), atomTypes_.nItems());
