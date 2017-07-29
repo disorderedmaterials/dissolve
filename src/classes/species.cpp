@@ -209,7 +209,7 @@ void Species::print()
 		for (int n=0; n<nAngles(); ++n)
 		{
 			SpeciesAngle* a = angles_[n];
-			Messenger::print("   %4i  %4i  %4i  %12.4e  %12.4e\n", a->indexI()+1, a->indexJ()+1, a->indexK(), a->equilibrium(), a->forceConstant());
+			Messenger::print("   %4i  %4i  %4i  %12.4e  %12.4e\n", a->indexI()+1, a->indexJ()+1, a->indexK()+1, a->equilibrium(), a->forceConstant());
 		}
 	}
 
@@ -218,7 +218,7 @@ void Species::print()
 	{
 		SpeciesGrain* grain = grains_[n];
 		CharString grainAtoms;
-		for (int m=0; m<grain->nAtoms(); ++m) grainAtoms.strcatf("%4i ", m+1);
+		for (int m=0; m<grain->nAtoms(); ++m) grainAtoms.strcatf("%4i ", grain->atom(m)->item->userIndex());
 		Messenger::print("  %4i  '%s'\n", n+1, grain->name());
 		Messenger::print("       %2i atoms: %s\n", grain->nAtoms(), grainAtoms.get());
 	}
