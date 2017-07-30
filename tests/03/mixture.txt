@@ -45,6 +45,7 @@ Species 'Methanol'
   Isotopologue  'Protiated'    HO=0  HC=0
   Isotopologue  'Deuteriated'  HO=2  HC=2
   Isotopologue  'MethylD-OH'   HO=0  HC=2
+  Isotopologue  'OD-MethylH'   HO=2  HC=0
 EndSpecies
 
 # Define Configuration
@@ -60,6 +61,8 @@ EndConfiguration
 # Samples
 Module Partials 'HHH'
   StructureFactor  on
+  # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
+  AllIntra  true
   QMin 0.05
   QDepBroadening  0.02    # For SLS
   Configuration  'Mix'
@@ -163,40 +166,30 @@ Module Partials 'HHH'
   TestReference  'epsr/watermeth.EPSR.s01'  SQ-unweighted-OH-HO-bound  1  40
   TestReference  'epsr/watermeth.EPSR.s01'  SQ-unweighted-HO-HO-bound  1  42
   # -- Total neutron-weighted S(Q)
+  # u01 file: 1  2   4   6   8   10  12  14  16
   TestReference  'epsr/watermeth.EPSR.u01'  SQ-weighted-total  1  2
 EndModule
 
-Module Partials 'H2O'
+Module Partials 'H5H'
   StructureFactor  on
+  # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
+  AllIntra  true
   QMin 0.05
   QDepBroadening  0.02    # For SLS
   Configuration  'Mix'
   Weights  neutron
   Isotopologue  'Mix'  'Water'  'Protiated'  1.0
+  Isotopologue  'Mix'  'Methanol'  'Protiated'  0.5
+  Isotopologue  'Mix'  'Methanol'  'OD-MethylH'  0.5
   Save  On
   Frequency  1
 
   Test  on
   TestThreshold  1.0
   # -- Total neutron-weighted S(Q)
-  TestReference  'epsr/watermeth.EPSR.u01'  SQ-weighted-total  1  2
-EndModule
-
-Module Partials 'HDO'
-  StructureFactor  on
-  QMin 0.05
-  QDepBroadening  0.02    # For SLS
-  Configuration  'Mix'
-  Weights  neutron
-  Isotopologue  'Mix'  'Water'  'Protiated'  0.5
-  Isotopologue  'Mix'  'Water'  'Deuteriated'  0.5
-  Save  On
-  Frequency  1
-
-  Test  on
-  TestThreshold  1.0
-  # -- Total neutron-weighted S(Q)
-  TestReference  'epsr/watermeth.EPSR.u01'  SQ-weighted-total  1  2
+  # u01 file: 1  2   4   6   8   10  12  14  16
+  #           Q HHH H5H DHH HDH HHD DDH HDD DDD 
+  TestReference  'epsr/watermeth.EPSR.u01'  SQ-weighted-total  1  4
 EndModule
 
 # Pair Potentials
@@ -208,7 +201,7 @@ PairPotentials
 EndPairPotentials
 
 Simulation
-   MaxIterations  1
-   WriteIterationData  false
+  MaxIterations  1
+  WriteIterationData  false
 EndSimulation
 
