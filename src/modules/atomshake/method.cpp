@@ -199,7 +199,7 @@ bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
 
 	// Store updated parameter values
 	if (!procPool.broadcast(&stepSize, 1, 0, ProcessPool::Group)) return false;
-	GenericListHelper<double>::realise(cfg->moduleData(), "StepSize", uniqueName()) = stepSize;
+	GenericListHelper<double>::realise(cfg->moduleData(), "StepSize", uniqueName(), GenericItem::InRestartFileFlag) = stepSize;
 	Messenger::print("AtomShake: Updated translation step is %f Angstroms.\n", stepSize);
 	
 	// Increment configuration changeCount_

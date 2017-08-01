@@ -24,14 +24,14 @@
 // Setup options for module
 void MDModule::setupOptions()
 {
-	options_.add("CapForces", 1.0e7, "Set cap on allowable force (kJ/mol) per atom per axis (or -ve to inhibit)", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
-	options_.add("CutoffDistance", -1.0, "Interatomic cutoff distance to employ", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
-	options_.add("DeltaT", 1.0e-4, "Timestep (ps) to use in MD simulation", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
-	options_.add("EnergyFrequency", 10, "Frequency at which to calculate total system energy (or 0 to inhibit)", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
-	options_.add("NSteps", 100, "Number of MD steps to perform", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
-	options_.add("OutputFrequency", 5, "Frequency at which to output step information (or 0 to inhibit)", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
-	options_.add("RandomVelocities", bool(false), "Whether random velocities should always be assigned before beginning MD simulation", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
-	options_.add("TrajectoryFrequency", 0, "Write frequency for trajectory file (or 0 to inhibit)", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("CapForces", 1.0e7, "Set cap on allowable force (kJ/mol) per atom per axis (or -ve to inhibit)");
+	options_.add("CutoffDistance", -1.0, "Interatomic cutoff distance to employ");
+	options_.add("DeltaT", 1.0e-4, "Timestep (ps) to use in MD simulation");
+	options_.add("EnergyFrequency", 10, "Frequency at which to calculate total system energy (or 0 to inhibit)");
+	options_.add("NSteps", 100, "Number of MD steps to perform");
+	options_.add("OutputFrequency", 5, "Frequency at which to output step information (or 0 to inhibit)");
+	options_.add("RandomVelocities", bool(false), "Whether random velocities should always be assigned before beginning MD simulation");
+	options_.add("TrajectoryFrequency", 0, "Write frequency for trajectory file (or 0 to inhibit)");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised

@@ -27,12 +27,12 @@
 void ForcesModule::setupOptions()
 {
 	// Boolean options must be set as 'bool(false)' or 'bool(true)' rather than just 'false' or 'true' so that the correct overloaded add() function is called
-	options_.add("Save", bool(false), "Save forces for the Configuration to the file '<name>.forces.txt'", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
-	options_.add("Test", bool(false), "Test parallel force routines against simplified, serial ones", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
-	options_.add("TestAnalytic", bool(false), "Compare parallel force routines against exact (analytic) force rather than tabulated values", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
-	options_.add("TestInter", bool(true), "Include interatomic forces in test", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
-	options_.add("TestIntra", bool(true), "Include intramolecular forces in test", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
-	options_.add("TestThreshold", 1.0e-2, "Threshold of force at which test comparison will fail", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("Save", bool(false), "Save forces for the Configuration to the file '<name>.forces.txt'");
+	options_.add("Test", bool(false), "Test parallel force routines against simplified, serial ones");
+	options_.add("TestAnalytic", bool(false), "Compare parallel force routines against exact (analytic) force rather than tabulated values");
+	options_.add("TestInter", bool(true), "Include interatomic forces in test");
+	options_.add("TestIntra", bool(true), "Include intramolecular forces in test");
+	options_.add("TestThreshold", 1.0e-2, "Threshold of force at which test comparison will fail");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
@@ -43,9 +43,9 @@ int ForcesModule::parseKeyword(LineParser& parser, DUQ* duq, GenericList& target
 		Messenger::print("Reading test reference forces.\n");
 
 		// Realise some arrays to store the forces in
-		Array<double>& fx = GenericListHelper< Array<double> >::realise(targetList, "ReferenceFX", uniqueName(), GenericItem::NoOutputFlag);
-		Array<double>& fy = GenericListHelper< Array<double> >::realise(targetList, "ReferenceFY", uniqueName(), GenericItem::NoOutputFlag);
-		Array<double>& fz = GenericListHelper< Array<double> >::realise(targetList, "ReferenceFZ", uniqueName(), GenericItem::NoOutputFlag);
+		Array<double>& fx = GenericListHelper< Array<double> >::realise(targetList, "ReferenceFX", uniqueName());
+		Array<double>& fy = GenericListHelper< Array<double> >::realise(targetList, "ReferenceFY", uniqueName());
+		Array<double>& fz = GenericListHelper< Array<double> >::realise(targetList, "ReferenceFZ", uniqueName());
 
 		// Second argument is the format, third (if present) is the target file
 		if (parser.hasArg(2))

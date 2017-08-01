@@ -46,8 +46,8 @@ class GenericItem
 	// Item Flags
 	enum Flags
 	{
-		ModuleOptionFlag		= 1,	/* Specifies that the item represents a Module option (i.e. a PlainValue in Module::options_) */
-		NoOutputFlag			= 2	/* The item should not be read or written by input / output routines */
+		NoFlag				= -1,	/* Null flag */
+		InRestartFileFlag		= 1	/* The item should be written to the restart file */
 	};
 	// Item Classes
 	enum ItemClass

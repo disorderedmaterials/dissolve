@@ -255,9 +255,9 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 			Messenger::print("Energy: Total Energy (World) is %15.9e kJ/mol (%15.9e kJ/mol interatomic + %15.9e kJ/mol intramolecular)\n", interEnergy + intraEnergy, interEnergy, intraEnergy);
 
 			// Store energies in the Configuration in case somebody else needs them
-			GenericListHelper< Array<double> >::realise(cfg->moduleData(), "Inter", uniqueName()).add(interEnergy);
-			GenericListHelper< Array<double> >::realise(cfg->moduleData(), "Intra", uniqueName()).add(intraEnergy);
-			Array<double>& totalEnergyArray = GenericListHelper< Array<double> >::realise(cfg->moduleData(), "Total", uniqueName());
+			GenericListHelper< Array<double> >::realise(cfg->moduleData(), "Inter", uniqueName(), GenericItem::InRestartFileFlag).add(interEnergy);
+			GenericListHelper< Array<double> >::realise(cfg->moduleData(), "Intra", uniqueName(), GenericItem::InRestartFileFlag).add(intraEnergy);
+			Array<double>& totalEnergyArray = GenericListHelper< Array<double> >::realise(cfg->moduleData(), "Total", uniqueName(), GenericItem::InRestartFileFlag);
 			totalEnergyArray.add(interEnergy+intraEnergy);
 
 			// Determine stability of energy
@@ -290,7 +290,7 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 				stable = fabs(grad) < thresholdValue;
 
 				// Set variable in Configuration and print output
-				GenericListHelper<bool>::realise(cfg->moduleData(), "EnergyStable") = stable;
+				GenericListHelper<bool>::realise(cfg->moduleData(), "EnergyStable", "", GenericItem::InRestartFileFlag) = stable;
 				Messenger::print("Energy: Gradient of last %i points is %e kJ/mol/step (absolute threshold value is %e, stable = %s).\n", stabilityWindow, grad, thresholdValue, DUQSys::btoa(stable));
 			}
 

@@ -25,7 +25,7 @@
 void ExportModule::setupOptions()
 {
 	// Boolean options must be set as 'bool(false)' or 'bool(true)' rather than just 'false' or 'true' so that the correct overloaded add() function is called
-	options_.add("WriteConfig", bool(false), "Write a DL_POLY CONFIG file of the Configuration", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
+	options_.add("WriteConfig", bool(false), "Write a DL_POLY CONFIG file of the Configuration");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised

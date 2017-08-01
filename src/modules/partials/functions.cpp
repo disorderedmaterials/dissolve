@@ -200,7 +200,7 @@ bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration*
 {
 	// Does a PartialSet already exist for this Configuration?
 	bool wasCreated;
-	PartialSet& partialgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedGR", uniqueName_, GenericItem::NoOutputFlag, &wasCreated);
+	PartialSet& partialgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedGR", uniqueName_, GenericItem::NoFlag, &wasCreated);
 	if (wasCreated) partialgr.setup(cfg, cfg->niceName(), "unweighted", "rdf", "r, Angstroms");
 
 	// Is the PartialSet already up-to-date?

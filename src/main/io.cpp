@@ -526,7 +526,7 @@ bool DUQ::saveRestart(const char* filename)
 			for (RefListItem<GenericItem,bool>* ri = moduleData.first(); ri != NULL; ri = ri->next)
 			{
 				GenericItem* item = ri->item;
-				if (item->flags()&GenericItem::NoOutputFlag) continue;
+				if (!(item->flags()&GenericItem::InRestartFileFlag)) continue;
 
 				parser.writeLineF("Configuration  %s  %s  %s\n", cfg->name(), item->name(), GenericItem::itemClass(item->itemClass()));
 				ri->item->write(parser);
@@ -543,7 +543,7 @@ bool DUQ::saveRestart(const char* filename)
 		for (RefListItem<GenericItem,bool>* ri = moduleData.first(); ri != NULL; ri = ri->next)
 		{
 			GenericItem* item = ri->item;
-			if (item->flags()&GenericItem::NoOutputFlag) continue;
+			if (!(item->flags()&GenericItem::InRestartFileFlag)) continue;
 
 			parser.writeLineF("Processing  %s  %s\n", item->name(), GenericItem::itemClass(item->itemClass()));
 			ri->item->write(parser);

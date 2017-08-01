@@ -24,10 +24,10 @@
 // Setup options for Module
 void AtomShakeModule::setupOptions()
 {
-	options_.add("CutoffDistance", -1.0, "Interatomic cutoff distance to employ", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
-	options_.add("ShakesPerAtom", 1, "Number of shakes per atom", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
-	options_.add("TargetAcceptanceRate", 0.33, "Target acceptance rate for Monte Carlo moves", GenericItem::ModuleOptionFlag+GenericItem::NoOutputFlag);
-	options_.add("StepSize", 0.05, "Maximal step size for single Monte Carlo move", GenericItem::ModuleOptionFlag);
+	options_.add("CutoffDistance", -1.0, "Interatomic cutoff distance to employ");
+	options_.add("ShakesPerAtom", 1, "Number of shakes per atom");
+	options_.add("TargetAcceptanceRate", 0.33, "Target acceptance rate for Monte Carlo moves");
+	options_.add("StepSize", 0.05, "Maximal step size for single Monte Carlo move", GenericItem::InRestartFileFlag);
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised

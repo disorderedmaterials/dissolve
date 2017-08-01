@@ -105,7 +105,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		if (sqCalculation)
 		{
 			// Realise a PartialSQ set
-			PartialSet& unweightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", uniqueName_, GenericItem::NoOutputFlag);
+			PartialSet& unweightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", uniqueName_);
 			unweightedsq.setup(unweightedgr.atomTypes(), cfg->niceName(), "unweighted", "sq", "Q, 1/Angstroms");
 			calculateUnweightedSQ(procPool, unweightedgr, unweightedsq, qMin, qDelta, qMax, cfg->atomicDensity(), duq.windowFunction(), qDepBroadening, qIndepBroadening, braggOn, braggQDepBroadening, braggQIndepBroadening);
 
@@ -147,11 +147,11 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 			Messenger::print("Partials: Isotopologue and isotope composition for Configuration '%s':\n\n", cfg->name());
 			weights.finalise();
 			weights.print();
-			GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "PartialWeights", uniqueName_, GenericItem::NoOutputFlag) = weights.fullWeightsMatrix();
+			GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "PartialWeights", uniqueName_) = weights.fullWeightsMatrix();
 
 			// Calculate weighted partials
-			PartialSet& weightedgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedGR", uniqueName_, GenericItem::NoOutputFlag);
-			PartialSet& weightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedSQ", uniqueName_, GenericItem::NoOutputFlag);
+			PartialSet& weightedgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedGR", uniqueName_);
+			PartialSet& weightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedSQ", uniqueName_);
 			weightedgr.setup(cfg, cfg->niceName(), "weighted", "rdf", "r, Angstroms");
 			calculateWeightedGR(unweightedgr, weightedgr, weights);
 			if (sqCalculation)
@@ -195,7 +195,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		// Setup partial set using the AtomTypeList we have just constructed.
 		// We will use RDF range information from the first Configuration in the list
 		Configuration* refConfig = targetConfigurations_.firstItem();
-		PartialSet& unweightedgr = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedGR", uniqueName_, GenericItem::NoOutputFlag);
+		PartialSet& unweightedgr = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedGR", uniqueName_);
 		unweightedgr.setup(atomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), uniqueName(), "unweighted", "rdf", "r, Angstroms");
 
 		// Loop over Configurations again, summing into the PartialSet we have just set up
@@ -234,7 +234,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		if (sqCalculation)
 		{
 			// Realise a PartialSQ set
-			PartialSet& unweightedsq = GenericListHelper<PartialSet>::realise(moduleData, "UnweightedSQ", uniqueName_, GenericItem::NoOutputFlag);
+			PartialSet& unweightedsq = GenericListHelper<PartialSet>::realise(moduleData, "UnweightedSQ", uniqueName_);
 			unweightedsq.setup(unweightedgr.atomTypes(), uniqueName(), "unweighted", "sq", "Q, 1/Angstroms");
 
 			// Sum in unweighted S(Q) partials
@@ -264,7 +264,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		// Calculate weighted Sample partials and total if requested
 		if (weightsType != PartialsModule::NoWeighting)
 		{
-			PartialSet& weightedgr = GenericListHelper<PartialSet>::realise(moduleData, "WeightedGR", uniqueName_, GenericItem::NoOutputFlag);
+			PartialSet& weightedgr = GenericListHelper<PartialSet>::realise(moduleData, "WeightedGR", uniqueName_);
 			weightedgr.setup(atomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), uniqueName(), "weighted", "rdf", "r, Angstroms");
 			weightedgr.reset();
 
@@ -294,7 +294,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 			if (sqCalculation)
 			{
 				// Realise a PartialSQ set
-				PartialSet& weightedsq = GenericListHelper<PartialSet>::realise(moduleData, "WeightedSQ", uniqueName_, GenericItem::NoOutputFlag);
+				PartialSet& weightedsq = GenericListHelper<PartialSet>::realise(moduleData, "WeightedSQ", uniqueName_);
 				weightedsq.setup(unweightedgr.atomTypes(), uniqueName(), "weighted", "sq", "Q, 1/Angstroms");
 
 				// Sum in weighted S(Q) partials

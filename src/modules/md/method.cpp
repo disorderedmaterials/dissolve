@@ -98,7 +98,7 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 	// Read in or assign random velocities
 	// Realise the velocity array from the moduleData
 	bool created;
-	Array< Vec3<double> >& v = GenericListHelper< Array< Vec3<double> > >::realise(moduleData, "Velocities", uniqueName(), -1, &created);
+	Array< Vec3<double> >& v = GenericListHelper< Array< Vec3<double> > >::realise(moduleData, "Velocities", uniqueName(), GenericItem::NoFlag, &created);
 	if (created)
 	{
 		randomVelocities = true;
