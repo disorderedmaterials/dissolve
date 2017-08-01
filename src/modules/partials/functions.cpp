@@ -206,7 +206,7 @@ bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration*
 	// Is the PartialSet already up-to-date?
 	if (partialgr.index() == cfg->coordinateIndex())
 	{
-		Messenger::print("Partials: Partials are up-to-date for Configuration '%s'.\n", cfg->name());
+		Messenger::print("Partials: Unweighted partial g(r) are up-to-date for Configuration '%s'.\n", cfg->name());
 		return true;
 	}
 
@@ -391,11 +391,31 @@ bool PartialsModule::calculateWeightedGR(PartialSet& unweightedgr, PartialSet& w
 
 
 // Generate S(Q) from supplied g(r)
-bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, PartialSet& sourcegr, PartialSet& destsq, double qMin, double qDelta, double qMax, double rho, XYData::WindowFunction wf, double qDepBroadening, double qIndepBroadening, bool includeBragg, double qDepBraggBroadening, double qIndepBraggBroad)
+bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration* cfg, double qMin, double qDelta, double qMax, double rho, XYData::WindowFunction wf, double qDepBroadening, double qIndepBroadening, bool includeBragg, double qDepBraggBroadening, double qIndepBraggBroad)
 {
+	// Grab unweighted g(r) for Configuration
+	if (!cfg->moduleData().contains("UnweightedGR", "Partials"))
+	{
+		Messenger::error("Unweighted g(r) do not exist in Configuration '%s', so unweighted S(Q) cannot be calculated.\n", cfg->name());
+		return false;
+	}
+	PartialSet& partialgr = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedGR", "Partials");
+
+	// Does a PartialSet already exist for this Configuration?
+	bool wasCreated;
+	PartialSet& partialsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", "Partials", GenericItem::NoFlag, &wasCreated);
+	if (wasCreated) partialsq.setup(partialgr.atomTypes(), cfg->niceName(), "unweighted", "sq", "Q, 1/Angstroms");
+
+	// Is the PartialSet already up-to-date?
+	if (partialsq.index() == cfg->coordinateIndex())
+	{
+		Messenger::print("Partials: Unweighted partial S(Q) are up-to-date for Configuration '%s'.\n", cfg->name());
+		return true;
+	}
+
 	// Copy partial g(r) into our new S(Q) matrices
 	Messenger::printVerbose("  --> Copying partial g(r) into S(Q) matrices...\n");
-	int nTypes = sourcegr.nAtomTypes();
+	int nTypes = partialgr.nAtomTypes();
 	for (int n=0; n<nTypes; ++n)
 	{
 		for (int m=n; m<nTypes; ++m)
@@ -403,12 +423,12 @@ bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, PartialSet& so
 			// Copy g(r) data into our arrays
 			// Subtract 1.0 from the full and unbound partials so as to give (g(r)-1)
 			// Don't subtract 1.0 from the bound partials, since they do not tend to 1.0 at longer r??
-			destsq.partial(n,m).copyData(sourcegr.partial(n,m));
-			destsq.partial(n,m).arrayY() -= 1.0;
-			destsq.boundPartial(n,m).copyData(sourcegr.boundPartial(n,m));
-// 			destsq.boundPartial(n,m).arrayY() -= 1.0;
-			destsq.unboundPartial(n,m).copyData(sourcegr.unboundPartial(n,m));
-			destsq.unboundPartial(n,m).arrayY() -= 1.0;
+			partialsq.partial(n,m).copyData(partialgr.partial(n,m));
+			partialsq.partial(n,m).arrayY() -= 1.0;
+			partialsq.boundPartial(n,m).copyData(partialgr.boundPartial(n,m));
+// 			partialsq.boundPartial(n,m).arrayY() -= 1.0;
+			partialsq.unboundPartial(n,m).copyData(partialgr.unboundPartial(n,m));
+			partialsq.unboundPartial(n,m).arrayY() -= 1.0;
 		}
 	}
 
@@ -421,14 +441,14 @@ bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, PartialSet& so
 	{
 		for (int m=n; m<nTypes; ++m)
 		{
-			if (!destsq.partial(n,m).transformBroadenedRDF(rho, qMin, qDelta, qMax, qDepBroadening, qIndepBroadening, wf)) return false;
-			if (!destsq.boundPartial(n,m).transformBroadenedRDF(rho, qMin, qDelta, qMax, qDepBroadening, qIndepBroadening, wf)) return false;
-			if (!destsq.unboundPartial(n,m).transformBroadenedRDF(rho, qMin, qDelta, qMax, qDepBroadening, qIndepBroadening, wf)) return false;
+			if (!partialsq.partial(n,m).transformBroadenedRDF(rho, qMin, qDelta, qMax, qDepBroadening, qIndepBroadening, wf)) return false;
+			if (!partialsq.boundPartial(n,m).transformBroadenedRDF(rho, qMin, qDelta, qMax, qDepBroadening, qIndepBroadening, wf)) return false;
+			if (!partialsq.unboundPartial(n,m).transformBroadenedRDF(rho, qMin, qDelta, qMax, qDepBroadening, qIndepBroadening, wf)) return false;
 		}
 	}
 
 	// Sum into total
-	destsq.formTotal(true);
+	partialsq.formTotal(true);
 
 	timer.stop();
 	Messenger::print("Partials: Finished Fourier transform and summation of partial g(r) into partial S(Q) (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
@@ -437,7 +457,7 @@ bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, PartialSet& so
 	 * S(Q) are now up-to-date
 	 */
 
-	destsq.setIndex(sourcegr.index());
+	partialsq.setIndex(partialgr.index());
 
 	return true;
 }

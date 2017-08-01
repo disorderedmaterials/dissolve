@@ -105,11 +105,8 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		// Calculate S(Q) if requested
 		if (sqCalculation)
 		{
-			// Realise a PartialSQ set
-			PartialSet& unweightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", uniqueName_);
-			unweightedsq.setup(unweightedgr.atomTypes(), cfg->niceName(), "unweighted", "sq", "Q, 1/Angstroms");
-			calculateUnweightedSQ(procPool, unweightedgr, unweightedsq, qMin, qDelta, qMax, cfg->atomicDensity(), duq.windowFunction(), qDepBroadening, qIndepBroadening, braggOn, braggQDepBroadening, braggQIndepBroadening);
-
+			calculateUnweightedSQ(procPool, cfg, qMin, qDelta, qMax, cfg->atomicDensity(), duq.windowFunction(), qDepBroadening, qIndepBroadening, braggOn, braggQDepBroadening, braggQIndepBroadening);
+			PartialSet& unweightedsq = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedSQ", "Partials");
 			if (saveData && (!configurationLocal_) && (!MPIRunMaster(procPool, unweightedsq.save()))) return false;
 		}
 
@@ -161,7 +158,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 			calculateWeightedGR(unweightedgr, weightedgr, weights);
 			if (sqCalculation)
 			{
-				PartialSet& unweightedsq = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedSQ", uniqueName_);
+				PartialSet& unweightedsq = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedSQ", "Partials");
 				weightedsq.setup(weightedgr.atomTypes(), cfg->niceName(), "weighted", "sq", "Q, 1/Angstroms");
 				calculateWeightedSQ(unweightedsq, weightedsq, weights);
 			}
@@ -246,7 +243,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 			while (Configuration* cfg = configIterator.iterate())
 			{
 				// Get unweighted S(Q) for this Configuration and their overall weight
-				PartialSet& cfgunweightedsq = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedSQ", uniqueName_);
+				PartialSet& cfgunweightedsq = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedSQ", "Partials");
 				double weight = GenericListHelper<double>::retrieve(moduleData, CharString("%s_Weight", cfg->name()), uniqueName_, 1.0);
 
 				// Add into our set
