@@ -52,7 +52,7 @@ template <class T> class MPIListItem
 
 	public:
 	// Broadcast data from Master to all Slaves
-	virtual bool broadcast(ProcessPool& procPool) = 0;
+	virtual bool broadcast(ProcessPool& procPool, int root = 0) = 0;
 };
 
 /*

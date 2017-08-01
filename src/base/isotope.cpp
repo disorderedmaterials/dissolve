@@ -110,18 +110,18 @@ double Isotope::absorptionXS() const
  */
 
 // Broadcast data from Master to all Slaves
-bool Isotope::broadcast(ProcessPool& procPool)
+bool Isotope::broadcast(ProcessPool& procPool, int root)
 {
 #ifdef PARALLEL
 	// Send isotope info
-	if (!procPool.broadcast(&A_, 1)) return false;
-	if (!procPool.broadcast(&atomicWeight_, 1)) return false;
-	if (!procPool.broadcast(&boundCoherent_, 1)) return false;
-	if (!procPool.broadcast(&boundIncoherent_, 1)) return false;
-	if (!procPool.broadcast(&boundCoherentXS_, 1)) return false;
-	if (!procPool.broadcast(&boundIncoherentXS_, 1)) return false;
-	if (!procPool.broadcast(&totalXS_, 1)) return false;
-	if (!procPool.broadcast(&absorptionXS_, 1)) return false;
+	if (!procPool.broadcast(&A_, 1, root)) return false;
+	if (!procPool.broadcast(&atomicWeight_, 1, root)) return false;
+	if (!procPool.broadcast(&boundCoherent_, 1, root)) return false;
+	if (!procPool.broadcast(&boundIncoherent_, 1, root)) return false;
+	if (!procPool.broadcast(&boundCoherentXS_, 1, root)) return false;
+	if (!procPool.broadcast(&boundIncoherentXS_, 1, root)) return false;
+	if (!procPool.broadcast(&totalXS_, 1, root)) return false;
+	if (!procPool.broadcast(&absorptionXS_, 1, root)) return false;
 #endif
 	return true;
 }

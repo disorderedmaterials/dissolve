@@ -94,20 +94,20 @@ int AtomType::index() const
  */
 
 // Broadcast data from Master to all Slaves
-bool AtomType::broadcast(ProcessPool& procPool)
+bool AtomType::broadcast(ProcessPool& procPool, int root)
 {
 #ifdef PARALLEL
 	int index;
 
 	// Send name
-	procPool.broadcast(name_);
+	procPool.broadcast(name_, root);
 	
 	// Send element
-	procPool.broadcast(&element_, 1);
+	procPool.broadcast(&element_, 1, root);
 	
 	// Get index of Parameters, 
 	if (procPool.isMaster()) index = PeriodicTable::element(element_).indexOfParameters(parameters_);
-	procPool.broadcast(&index, 1);
+	procPool.broadcast(&index, 1, root);
 	parameters_ = PeriodicTable::element(element_).parameters(index);
 #endif
 	return true;

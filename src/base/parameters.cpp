@@ -116,14 +116,14 @@ double Parameters::charge()
  */
 
 // Broadcast data from Master to all Slaves
-bool Parameters::broadcast(ProcessPool& procPool)
+bool Parameters::broadcast(ProcessPool& procPool, int root)
 {
 #ifdef PARALLEL
-	if (!procPool.broadcast(name_)) return false;
-	if (!procPool.broadcast(description_)) return false;
-	if (!procPool.broadcast(&sigma_, 1)) return false;
-	if (!procPool.broadcast(&epsilon_, 1)) return false;
-	if (!procPool.broadcast(&charge_, 1)) return false;
+	if (!procPool.broadcast(name_, root)) return false;
+	if (!procPool.broadcast(description_, root)) return false;
+	if (!procPool.broadcast(&sigma_, 1, root)) return false;
+	if (!procPool.broadcast(&epsilon_, 1, root)) return false;
+	if (!procPool.broadcast(&charge_, 1, root)) return false;
 #endif
 	return true;
 }
