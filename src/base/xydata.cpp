@@ -819,7 +819,7 @@ bool XYData::load(LineParser& parser, int xcol, int ycol)
 		addPoint(parser.argd(xcol), parser.argd(ycol));
 	}
 	
-	Messenger::print("Loaded %i points from '%s' (columns %i and %i).\n", nPoints(), parser.inputFilename(), xcol+1, ycol+1);
+	Messenger::printVerbose("Loaded %i points from '%s' (columns %i and %i).\n", nPoints(), parser.inputFilename(), xcol+1, ycol+1);
 	
 	return true;
 }

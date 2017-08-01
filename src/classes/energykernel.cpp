@@ -47,7 +47,7 @@ EnergyKernel::~EnergyKernel()
 // Return PairPotential energy between atoms provided as pointers (no minimum image calculation)
 double EnergyKernel::energyWithoutMim(const Atom* i, const Atom* j)
 {
-// 	printf("EnergyKernel:;atoms(*,*) - energy %i-%i is %f at %f lit\n", min(i->index(),j->index()), max(i->index(),j->index()), potentialMap_.energy(i->globalTypeIndex(), j->globalTypeIndex(), (i->r() - j->r()).magnitude()), (i->r() - j->r()).magnitude());
+// 	printf("EnergyKernel:;atoms(*,*) - energy %i-%i is %f at %f lit\n", min(i->index(),j->index()), max(i->index(),j->index()), potentialMap_.energy(i->masterTypeIndex(), j->masterTypeIndex(), (i->r() - j->r()).magnitude()), (i->r() - j->r()).magnitude());
 	return potentialMap_.energy(i, j, (i->r() - j->r()).magnitude());
 }
 
@@ -102,7 +102,7 @@ double EnergyKernel::energyWithoutMim(const Grain* grainI, const Grain* grainJ)
 // Return PairPotential energy between atoms provided as pointers (minimum image calculation)
 double EnergyKernel::energyWithMim(const Atom* i, const Atom* j)
 {
-// 	Messenger::print("EnergyKernel::atoms(*,*) - energy %i-%i is %f at %f mim\n", min(i->index(),j->index()), max(i->index(),j->index()), potentialMap_.energy(i->globalTypeIndex(), j->globalTypeIndex(), box_->minimumDistance(j, i)), box_->minimumDistance(j, i));
+// 	Messenger::print("EnergyKernel::atoms(*,*) - energy %i-%i is %f at %f mim\n", min(i->index(),j->index()), max(i->index(),j->index()), potentialMap_.energy(i->masterTypeIndex(), j->masterTypeIndex(), box_->minimumDistance(j, i)), box_->minimumDistance(j, i));
 	return potentialMap_.energy(i, j, box_->minimumDistance(j, i));
 }
 
@@ -223,7 +223,7 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 			ii = centralAtoms[i];
 			molI = ii->molecule();
 			indexI = ii->index();
-			typeI = ii->globalTypeIndex();
+			typeI = ii->masterTypeIndex();
 			rI = ii->r();
 
 			// Straight loop over other cell atoms
@@ -256,7 +256,7 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 			ii = centralAtoms[i];
 			molI = ii->molecule();
 			indexI = ii->index();
-			typeI = ii->globalTypeIndex();
+			typeI = ii->masterTypeIndex();
 			rI = ii->r();
 
 			// Straight loop over other cell atoms
@@ -316,7 +316,7 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::Lo
 		jj = neighbours[j];
 		molJ = jj->molecule();
 		indexJ = jj->index();
-		typeJ = jj->globalTypeIndex();
+		typeJ = jj->masterTypeIndex();
 		rJ = jj->r();
 
 		// Loop over central cell atoms
@@ -348,7 +348,7 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::Lo
 		jj = mimNeighbours[j];
 		molJ = jj->molecule();
 		indexJ = jj->index();
-		typeJ = jj->globalTypeIndex();
+		typeJ = jj->masterTypeIndex();
 		rJ = jj->r();
 
 		// Loop over central cell atoms

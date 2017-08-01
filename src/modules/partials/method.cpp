@@ -50,6 +50,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 	CharString varName;
 
 	GenericList& moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : duq.processingModuleData();
+	const bool allIntra = GenericListHelper<bool>::retrieve(moduleData, "AllIntra", uniqueName(), options_.valueAsBool("AllIntra"));
 	const bool braggOn = GenericListHelper<bool>::retrieve(moduleData, "Bragg", uniqueName(), options_.valueAsBool("Bragg"));
 	const double braggQDepBroadening = GenericListHelper<double>::retrieve(moduleData, "BraggQDepBroadening", uniqueName(), options_.valueAsDouble("BraggQDepBroadening"));
 	const double braggQIndepBroadening = GenericListHelper<double>::retrieve(moduleData, "BraggQIndepBroadening", uniqueName(), options_.valueAsDouble("BraggQIndepBroadening"));
@@ -76,16 +77,16 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 	}
 
 	// Print argument/parameter summary
-	Messenger::print("Partials: Calculating S(Q)/F(Q) out to %f Angstroms**-1 using step size of %f Angstroms**-1.\n", qMax, qDelta);
+	Messenger::print("Partails: Use of all pairs in intramolecular partials is %s.\n", DUQSys::onOff(allIntra));
+	Messenger::print("Partials: Calculating S(Q)/F(Q) over %f < Q < %f Angstroms**-1 using step size of %f Angstroms**-1.\n", qMin, qMax, qDelta);
 	Messenger::print("Partials: Q-dependent FWHM broadening to use is %f, Q-independent FWHM broadening to use is %f.\n", qDepBroadening, qIndepBroadening);
-	Messenger::print("Partials: Calculation of Bragg features is %s.\n", DUQSys::onOff(braggOn));
 	if (braggOn) Messenger::print("Partials: Q-dependent FWHM Bragg broadening to use is %f, Q-independent FWHM Bragg broadening to use is %f.\n", braggQDepBroadening, braggQIndepBroadening);
 	Messenger::print("Partials: Save data is %s.\n", DUQSys::onOff(saveData));
 	Messenger::print("Partials: Structure factor calculation is %s.\n", DUQSys::onOff(sqCalculation));
 	if (sqCalculation)
 	{
 		Messenger::print("Partials: Structure factor QMax = %f, QDelta = %f.\n", qMax, qDelta);
-		Messenger::print("Partials: Bragg calculation is %s.\n", DUQSys::onOff(saveData));
+		Messenger::print("Partials: Bragg calculation is %s.\n", DUQSys::onOff(braggOn));
 		if (braggOn) Messenger::print("Partials: Bragg Q-dependent FWHM broadening to use is %f, Q-independent FWHM broadening to use is %f.\n", braggQDepBroadening, braggQIndepBroadening);
 	}
 
@@ -96,9 +97,9 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 	RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
 	while (Configuration* cfg = configIterator.iterate())
 	{
-		// Calculate unweighted partials for this Configuration
-		calculateUnweightedGR(procPool, cfg, smoothing);
-		PartialSet& unweightedgr = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedGR", uniqueName_);
+		// Calculate unweighted partials for this Configuration (under generic Module name 'Partials', rather than the uniqueName_)
+		calculateUnweightedGR(procPool, cfg, allIntra, smoothing);
+		PartialSet& unweightedgr = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedGR", "Partials");
 		if (saveData && (!configurationLocal_) && (!MPIRunMaster(procPool, unweightedgr.save()))) return false;
 
 		// Calculate S(Q) if requested
@@ -193,9 +194,8 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		atomTypes.print();
 
 		// Setup partial set using the AtomTypeList we have just constructed.
-		// We will use RDF range information from the first Configuration in the list
 		Configuration* refConfig = targetConfigurations_.firstItem();
-		PartialSet& unweightedgr = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedGR", uniqueName_);
+		PartialSet& unweightedgr = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedGR", "Partials");
 		unweightedgr.setup(atomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), uniqueName(), "unweighted", "rdf", "r, Angstroms");
 
 		// Loop over Configurations again, summing into the PartialSet we have just set up
@@ -210,7 +210,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 			Messenger::print("Partials: Weight for Configuration '%s' is %f (total weight is now %f).\n", cfg->name(), weight, totalWeight);
 
 			// Grab partials for Configuration and add into our set
-			PartialSet& cfgPartials = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedGR", uniqueName_);
+			PartialSet& cfgPartials = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedGR", "Partials");
 			unweightedgr.addPartials(cfgPartials, weight);
 
 			// Sum density weighted by volume, and total volume (both of which are multiplied by the overall weight)

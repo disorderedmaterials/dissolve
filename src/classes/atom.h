@@ -48,8 +48,8 @@ class Atom
 	Vec3<double> r_;
 	// Assigned AtomType index, local to Configuration (for partial indexing etc.)
 	int localTypeIndex_;
-	// Assigned global AtomType index (for pair potential indexing)
-	int globalTypeIndex_;
+	// Assigned master AtomType index (for pair potential indexing)
+	int masterTypeIndex_;
 	// Index of Atom
 	int index_;
 	// Molecule which this atom is in
@@ -82,10 +82,10 @@ class Atom
 	void setLocalTypeIndex(int id);
 	// Return local AtomType index
 	int localTypeIndex() const;
-	// Set global AtomType index 
-	void setGlobalTypeIndex(int id);
-	// Return global AtomType index 
-	int globalTypeIndex() const;
+	// Set master AtomType index 
+	void setMasterTypeIndex(int id);
+	// Return master AtomType index 
+	int masterTypeIndex() const;
 	// Set index (0->[N-1])
 	void setIndex(int id);
 	// Return index (0->[N-1])

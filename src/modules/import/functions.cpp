@@ -156,6 +156,8 @@ bool ImportModule::readEPSRCoordinates(LineParser& parser, Array< Vec3<double> >
 	Vec3<double> com, delta;
 	for (int m=0; m<nMols; m++)
 	{
+		Messenger::printVerbose("Reading molecule %i from EPSR ato file...\n", m+1);
+
 		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 		nAtoms = parser.argi(0);
 		com = parser.arg3d(1);
@@ -169,7 +171,7 @@ bool ImportModule::readEPSRCoordinates(LineParser& parser, Array< Vec3<double> >
 			if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 			delta = parser.arg3d(0);
 
-			// Create a new atom with element 0 - it will be set to a proper element later on - and store the atom name in its data member
+			// Add a new atom position to our list
 			r.add(com+delta);
 
 			// Read in number of restraints line
@@ -204,18 +206,18 @@ bool ImportModule::readEPSRCoordinates(LineParser& parser, Array< Vec3<double> >
 			if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 
 			// Skip axis line
-			if (!parser.skipLines(1)) return false;
+			if (parser.skipLines(1) != LineParser::Success) return false;
 
 			// If a DIHedral, we expect an integer which defines the number of constraints, and thus the number of lines to skip before the main
-			if (parser.argc(0) == "DIH")
+			if (DUQSys::sameString(parser.argc(0), "DIH"))
 			{
 				if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-				if (!parser.skipLines(parser.argi(0))) return false;
+				if (parser.skipLines(parser.argi(0)) != LineParser::Success) return false;
 			}
 
 			// Finally, read in number of atoms affected by rotation and calculate next number of lines to discard
 			if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-			if (!parser.skipLines(parser.argi(0)/14)) return false;
+			if (parser.skipLines(parser.argi(0)/14) != LineParser::Success) return false;
 
 			--nRotations;
 		}

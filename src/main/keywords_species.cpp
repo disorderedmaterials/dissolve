@@ -29,6 +29,7 @@
 KeywordData SpeciesBlockData[] = {
 	{ "Angle",			5,	"" },
 	{ "Atom",			6,	"" },
+	{ "AutoAddGrains",		0,	"" },
 	{ "Bond",			4,	"" },
 	{ "Charge",			2,	"" },
 	{ "EndSpecies",			0,	"" },
@@ -113,7 +114,7 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 					Messenger::print("Creating AtomType '%s'...\n", parser.argc(6));
 					at = duq->addAtomType(el);
 					at->setName(parser.argc(6));
-				
+
 					// Check to see if some named potential parameters exist, corrsponding to the AtomType name
 					params = PeriodicTable::element(el).findParameters(parser.argc(6));
 					if (params)
@@ -121,11 +122,14 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 						at->setParameters(params);
 						Messenger::print("Initial parameters set for AtomType '%s' : sigma=%f, epsilon=%f, charge=%f.\n", parser.argc(6), params->sigma(), params->epsilon(), params->charge());
 					}
-					else Messenger::print("No Parameters called '%s' exist to associate to AtomType - they must be added in the PairPotentials block.\n", parser.argc(6));
+					else Messenger::print("No Parameters called '%s' exist to associate to AtomType - they must be added in a PairPotentials block.\n", parser.argc(6));
 				}
 
 				// Finally, set AtomType for the Atom
 				i->setAtomType(at);
+				break;
+			case (SpeciesBlock::AutoAddGrainsKeyword):
+				species->autoAddGrains();
 				break;
 			case (SpeciesBlock::BondKeyword):
 				b = species->addBond(parser.argi(1)-1, parser.argi(2)-1);
@@ -146,7 +150,6 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 				}
 				break;
 			case (SpeciesBlock::EndSpeciesKeyword):
-				species->autoAddGrains();
 				species->updateGrains();
 				species->centreAtOrigin();
 				species->orderAtomsWithinGrains();
@@ -201,7 +204,11 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 					}
 					
 					// Assign isotope to AtomType
-					iso->setAtomTypeIsotope(at, tope);
+					if (!iso->setAtomTypeIsotope(at, tope))
+					{
+						error = true;
+						break;
+					}
 				}
 				break;
 			case (SpeciesBlock::nSpeciesKeywords):

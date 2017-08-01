@@ -146,8 +146,8 @@ namespace PairPotentialsBlock
 		CoulombTruncationKeyword,	/* 'CoulombTruncation' - Truncation scheme to apply to Coulomb potential */
 		DeltaKeyword,			/* 'Delta' - Gives the spacing between points in the tabulated potentials */
 		EndPairPotentialsKeyword,	/* 'EndPairPotentials' - Signals the end of the PairPotentials block */
-		GenerateAllKeyword,		/* 'GenerateAll' - Generates all required PairPotentials with the specified contributions */
 		GenerateKeyword,		/* 'Generate' - Generates a single PairPotential with the specified contributions */
+		GenerateAllKeyword,		/* 'GenerateAll' - Generates all required PairPotentials with the specified contributions */
 		IncludeCoulombKeyword,		/* 'IncludeCoulomb' - Include Coulomb term in tabulated pair potentials" */
 		ParametersKeyword,		/* 'Parameters' - Sets or re-sets the LJ and charge parameters for a specific AtomType */
 		RangeKeyword,			/* 'Range' - Specifies the total range (inc. truncation width) over which to generate potentials */
@@ -227,6 +227,7 @@ namespace SpeciesBlock
 	{
 		AngleKeyword,			/* 'Angle' - Defines an Angle joining three atoms */
 		AtomKeyword,			/* 'Atom' - Specifies an Atom in the Species */
+		AutoAddGrainsKeyword,		/* 'AutoAddGrains' - Automatically add Grains to cover all atoms in the Species */
 		BondKeyword,			/* 'Bond' - Defines a Bond joining two atoms */
 		ChargeKeyword,			/* 'Charge' - Specifies the atomic charge for an individual atom */
 		EndSpeciesKeyword,		/* 'EndSpecies' - Signals the end of the current Species */

@@ -33,11 +33,11 @@ DUQ::DUQ()
 	pairPotentialsIncludeCoulomb_ = true;
 
 	// Setup
-	boxNormalisationPoints_ = 500000000;
-	rmseDeltaQ_ = 0.05;
+	nBoxNormalisationPoints_ = 500000000;
 	seed_ = -1;
 	maxIterations_ = -1;
 	windowFunction_ = XYData::NoWindow;
+	allIntra_ = false;
 
 	// Simulation
 	iteration_ = 0;

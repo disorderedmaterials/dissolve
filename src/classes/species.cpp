@@ -110,16 +110,16 @@ bool Species::checkSetup(const List<AtomType>& atomTypes)
 	}
 	for (RefListItem<SpeciesAtom,int>* ri = grainCount.first(); ri != NULL; ri = ri->next)
 	{
-		if (ri->data == 0)
-		{
-			Messenger::error("SpeciesAtom %i (%s) is not present in any GrainDefinition.\n", ri->item->userIndex(), PeriodicTable::element(ri->item->element()).symbol());
-			++nErrors;
-		}
-		else if (ri->data > 1)
+		if (ri->data > 1)
 		{
 			Messenger::error("SpeciesAtom %i (%s) is present in more than one (%i) GrainDefinition.\n", ri->item->userIndex(), PeriodicTable::element(ri->item->element()).symbol(), ri->data);
 			++nErrors;
 		}
+// 		else if (ri->data == 0)
+// 		{
+// 			Messenger::error("SpeciesAtom %i (%s) is not present in any GrainDefinition.\n", ri->item->userIndex(), PeriodicTable::element(ri->item->element()).symbol());
+// 			++nErrors;
+// 		}
 	}
 	if (nErrors > 0) return false;
 
@@ -209,7 +209,7 @@ void Species::print()
 		for (int n=0; n<nAngles(); ++n)
 		{
 			SpeciesAngle* a = angles_[n];
-			Messenger::print("   %4i  %4i  %4i  %12.4e  %12.4e\n", a->indexI()+1, a->indexJ()+1, a->indexK(), a->equilibrium(), a->forceConstant());
+			Messenger::print("   %4i  %4i  %4i  %12.4e  %12.4e\n", a->indexI()+1, a->indexJ()+1, a->indexK()+1, a->equilibrium(), a->forceConstant());
 		}
 	}
 
@@ -218,7 +218,7 @@ void Species::print()
 	{
 		SpeciesGrain* grain = grains_[n];
 		CharString grainAtoms;
-		for (int m=0; m<grain->nAtoms(); ++m) grainAtoms.strcatf("%4i ", m+1);
+		for (int m=0; m<grain->nAtoms(); ++m) grainAtoms.strcatf("%4i ", grain->atom(m)->item->userIndex());
 		Messenger::print("  %4i  '%s'\n", n+1, grain->name());
 		Messenger::print("       %2i atoms: %s\n", grain->nAtoms(), grainAtoms.get());
 	}

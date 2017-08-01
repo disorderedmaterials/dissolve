@@ -24,15 +24,15 @@
 #include "classes/species.h"
 
 // Set number of test points to use when calculating Box normalisation arrays
-void DUQ::setBoxNormalisationPoints(int nPoints)
+void DUQ::setNBoxNormalisationPoints(int nPoints)
 {
-	boxNormalisationPoints_ = nPoints;
+	nBoxNormalisationPoints_ = nPoints;
 }
 
-// Bin width to use when calculating RMSE between Sample F(Q) and reference data
-void DUQ::setRMSEDeltaQ(double dq)
+// Return number of test points to use when calculating Box normalisation arrays
+int DUQ::nBoxNormalisationPoints() const
 {
-	rmseDeltaQ_ = dq;
+	return nBoxNormalisationPoints_;
 }
 
 // Set random seed
@@ -108,7 +108,7 @@ bool DUQ::setupSimulation()
 	{
 		Messenger::print("*** Configuration %2i: '%s'\n", index, cfg->name());
 
-		if (!cfg->setup(worldPool_, atomTypes_, pairPotentialRange_, boxNormalisationPoints_)) return false;
+		if (!cfg->setup(worldPool_, atomTypes_, pairPotentialRange_, nBoxNormalisationPoints_)) return false;
 	}
 
 	/*
@@ -153,8 +153,8 @@ bool DUQ::setupSimulation()
 	for (AtomType* at = atomTypes_.first(); at != NULL; at = at->next) at->setIndex(id++);
 
 	// Set global AtomType indices in all Configurations
-	Messenger::print("--> Setting global AtomType indices in Configurations...\n");
-	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next) cfg->setGlobalAtomTypeIndices(atomTypes_);
+	Messenger::print("--> Setting master AtomType indices in Configurations...\n");
+	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next) cfg->setMasterAtomTypeIndices(atomTypes_);
 
 	// Create PairPotential matrix
 	Messenger::print("--> Creating PairPotential matrix (%ix%i)...\n", atomTypes_.nItems(), atomTypes_.nItems());

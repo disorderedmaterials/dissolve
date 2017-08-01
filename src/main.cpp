@@ -180,7 +180,7 @@ int main(int argc, char **argv)
 		CharString restartFile("%s.restart", inputFile.get());
 		if (DUQSys::fileExists(restartFile))
 		{
-			Messenger::print("\nRestart file '%s' exists and will be loaded.\n", restartFile.get());
+			Messenger::print("Restart file '%s' exists and will be loaded.\n", restartFile.get());
 			if (!dUQ.loadRestart(restartFile.get()))
 			{
 				Messenger::error("Restart file contained errors.\n");
@@ -188,9 +188,9 @@ int main(int argc, char **argv)
 				return 1;
 			}
 		}
-		else Messenger::print("\nRestart file '%s' does not exist.\n", restartFile.get());
+		else Messenger::print("Restart file '%s' does not exist.\n", restartFile.get());
 	}
-	else Messenger::print("\nRestart file (if it exists) will be ignored.\n");
+	else Messenger::print("Restart file (if it exists) will be ignored.\n");
 
 	// Initialise random seed
 	if (dUQ.seed() == -1) srand( (unsigned)time( NULL ) );

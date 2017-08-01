@@ -198,8 +198,8 @@ class Configuration : public ListItem<Configuration>
 	const AtomTypeList& usedAtomTypesList() const;
 	// Return number of atom types used in this Configuration
 	int nUsedAtomTypes();
-	// Set global AtomType indices in Atoms from the map provided
-	bool setGlobalAtomTypeIndices(const List<AtomType>& masterList);
+	// Set master AtomType indices in Atoms from the map provided
+	bool setMasterAtomTypeIndices(const List<AtomType>& masterList);
 	// Return current coordinate index
 	int coordinateIndex();
 	// Increment current coordinate index
