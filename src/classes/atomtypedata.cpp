@@ -33,6 +33,7 @@
 AtomTypeData::AtomTypeData() : MPIListItem<AtomTypeData>()
 {
 	atomType_ = NULL;
+	exchangeable_ = false;
 	population_ = 0;
 	fraction_ = 0.0;
 	boundCoherent_ = 0.0;
@@ -48,6 +49,7 @@ AtomTypeData::AtomTypeData(const AtomTypeData& source)
 void AtomTypeData::operator=(const AtomTypeData& source)
 {
 	atomType_ = source.atomType_;
+	exchangeable_ = source.exchangeable_;
 	isotopes_ = source.isotopes_;
 	population_ = source.population_;
 	fraction_ = source.fraction_;
@@ -125,6 +127,18 @@ AtomType* AtomTypeData::atomType() const
 	return atomType_;
 }
 
+// Set whether this atom is exchangeable
+void AtomTypeData::setExchangeable(bool b)
+{
+	exchangeable_ = b;
+}
+
+// Return whether this atom is exchangeable
+bool AtomTypeData::exchangeable() const
+{
+	return exchangeable_;
+}
+
 // Finalise, calculating fractional populations etc.
 void AtomTypeData::finalise(int totalAtoms)
 {
@@ -163,6 +177,12 @@ int AtomTypeData::population() const
 double AtomTypeData::fraction() const
 {
 	return fraction_;
+}
+
+// Set calculated bond coherent scattering over all isotopes
+void AtomTypeData::setBoundCoherent(double d)
+{
+	boundCoherent_ = d;
 }
 
 // Calculated bound coherent scattering over all Isotopes

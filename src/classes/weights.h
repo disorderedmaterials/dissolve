@@ -79,7 +79,7 @@ class Weights
 
 	public:
 	// Finalise lists and matrices based on IsotopologueMix information
-	void finalise();
+	void finalise(AtomTypeList exchangeableTypes = AtomTypeList());
 	// Return AtomTypeList
 	AtomTypeList& atomTypes();
 	// Return number of used AtomTypes

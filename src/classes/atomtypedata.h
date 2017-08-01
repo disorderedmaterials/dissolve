@@ -52,6 +52,8 @@ class AtomTypeData : public MPIListItem<AtomTypeData>
 	int listIndex_;
 	// Reference AtomType
 	AtomType* atomType_;
+	// Whether this atom is exchangeable
+	bool exchangeable_;
 	// Isotopes information (if any)
 	List<IsotopeData> isotopes_;
 	// Total integer population
@@ -74,6 +76,10 @@ class AtomTypeData : public MPIListItem<AtomTypeData>
 	int listIndex() const;
 	// Return reference AtomType
 	AtomType* atomType() const;
+	// Set whether this atom is exchangeable
+	void setExchangeable(bool b);
+	// Return whether this atom is exchangeable
+	bool exchangeable() const;
 	// Finalise, calculating fractional populations etc.
 	void finalise(int nWorldAtoms);
 	// Return if specified Isotope is already in the list
@@ -84,7 +90,9 @@ class AtomTypeData : public MPIListItem<AtomTypeData>
 	int population() const;
 	// Return total fractional population including all isotopes
 	double fraction() const;
-	// Calculated bound coherent scattering over all Isotopes
+	// Set calculated bond coherent scattering over all isotopes
+	void setBoundCoherent(double d);
+	// Return calculated bound coherent scattering over all Isotopes
 	double boundCoherent() const;
 	// Return referenced AtomType name
 	const char* atomTypeName() const;

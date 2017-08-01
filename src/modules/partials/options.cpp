@@ -50,7 +50,25 @@ void PartialsModule::setupOptions()
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
 int PartialsModule::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
 {
-	if (DUQSys::sameString(parser.argc(0), "Isotopologue"))
+	if (DUQSys::sameString(parser.argc(0), "Exchangeable"))
+	{
+		// Define an exchangeable group of atoms
+		// Loop over all provided arguments (which are atom type names) and add them to our list
+		AtomTypeList exchangeableAtoms;
+		for (int n=1; n<parser.nArgs(); ++n)
+		{
+			AtomType* atomType = duq->findAtomType(parser.argc(n));
+			if (!atomType)
+			{
+				Messenger::error("Unrecognised AtomType '%s' given in Exchangeable keyword.\n", parser.argc(n));
+				return false;
+			}
+			exchangeableAtoms.add(atomType);
+		}
+
+		GenericListHelper<AtomTypeList>::add(targetList, "Exchangeable", uniqueName()) = exchangeableAtoms;
+	}
+	else if (DUQSys::sameString(parser.argc(0), "Isotopologue"))
 	{
 		// Essentially a shortcut for setting a variable in a target Configuration / Sample
 		// Find target Configuration

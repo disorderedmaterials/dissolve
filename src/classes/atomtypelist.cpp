@@ -62,7 +62,7 @@ void AtomTypeList::clear()
 }
 
 // Add the specified AtomType to the list, returning the index of the AtomType in the list
-AtomTypeData* AtomTypeList::add(AtomType* atomType, int population)
+AtomTypeData* AtomTypeList::add(AtomType* atomType, int population, bool exchangeable)
 {
 	// Search the list for the AtomType provided.
 	AtomTypeData* atd = NULL;
@@ -73,6 +73,7 @@ AtomTypeData* AtomTypeList::add(AtomType* atomType, int population)
 	{
 		atd = types_.add();
 		atd->initialise(types_.nItems()-1, atomType, population);
+		atd->setExchangeable(exchangeable);
 	}
 
 	// Increase general (non-isotopic) population
@@ -82,9 +83,9 @@ AtomTypeData* AtomTypeList::add(AtomType* atomType, int population)
 }
 
 // Add/increase this AtomType/Isotope pair
-void AtomTypeList::addIsotope(AtomType* atomType, Isotope* tope, int popAdd)
+void AtomTypeList::addIsotope(AtomType* atomType, Isotope* tope, int popAdd, bool exchangeable)
 {
-	AtomTypeData* atd = add(atomType);
+	AtomTypeData* atd = add(atomType, 0, exchangeable);
 	
 	// Add / increase isotope population
 	if (tope != NULL) atd->add(tope, popAdd);
@@ -101,6 +102,14 @@ void AtomTypeList::add(const AtomTypeList& source)
 		// Now add Isotope data
 		for (IsotopeData* topeData = newType->isotopeData(); topeData != NULL; topeData = topeData->next) atd->add(topeData->isotope(), topeData->population());
 	}
+}
+
+// Check for presence of AtomType in list
+bool AtomTypeList::contains(AtomType* atomType)
+{
+	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next) if (atd->atomType() == atomType) return true;
+
+	return false;
 }
 
 // Check for presence of AtomType/Isotope pair in list
@@ -141,10 +150,12 @@ void AtomTypeList::print() const
 	Messenger::print("  -------------------------------------------------------------\n");
 	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next)
 	{
+		char exch = atd->exchangeable() ? 'E' : ' ';
+
 		// If there are isotopes defined, print them
 		if (atd->isotopeData())
 		{
-			Messenger::print("  %-8s  %-3s    -     %-10i  %8.6f (of world) %6.3f\n", atd->atomTypeName(), PeriodicTable::element(atd->atomType()->element()).symbol(), atd->population(), atd->fraction(), atd->boundCoherent());
+			Messenger::print("%c %-8s  %-3s    -     %-10i  %8.6f (of world) %6.3f\n", exch, atd->atomTypeName(), PeriodicTable::element(atd->atomType()->element()).symbol(), atd->population(), atd->fraction(), atd->boundCoherent());
 
 			for (IsotopeData* topeData = atd->isotopeData(); topeData != NULL; topeData = topeData->next)
 			{
@@ -152,7 +163,7 @@ void AtomTypeList::print() const
 			}
 
 		}
-		else Messenger::print("  %-8s  %-3s          %-10i  %8.6f     --- N/A ---\n", atd->atomTypeName(), PeriodicTable::element(atd->atomType()->element()).symbol(), atd->population(), atd->fraction());
+		else Messenger::print("%c %-8s  %-3s          %-10i  %8.6f     --- N/A ---\n", exch, atd->atomTypeName(), PeriodicTable::element(atd->atomType()->element()).symbol(), atd->population(), atd->fraction());
 
 		Messenger::print("  -------------------------------------------------------------\n");	
 	}
@@ -185,8 +196,22 @@ int AtomTypeList::totalPopulation() const
 // Finalise list, calculating fractional populations etc.
 void AtomTypeList::finalise()
 {
+	// Finalise AtomTypeData
 	int total = totalPopulation();
 	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next) atd->finalise(total);
+
+	// Account for exchangeable atoms - form the average bound coherent scattering over all exchangeable atoms
+	double totalFraction = 0.0, boundCoherent = 0.0;
+	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next)
+	{
+		if (!atd->exchangeable()) continue;
+		totalFraction += atd->fraction();
+		boundCoherent += atd->fraction() * atd->boundCoherent();
+	}
+	boundCoherent /= totalFraction;
+
+	// Now go back through the list and set the new scattering length for exchangeable components
+	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next) if (atd->exchangeable()) atd->setBoundCoherent(boundCoherent);
 }
 
 // Return nth referenced AtomType

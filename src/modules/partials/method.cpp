@@ -116,7 +116,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		// Calculate weighted partials here if requested
 		if (weightsType != PartialsModule::NoWeighting)
 		{
-			// Construct weights matrix based on Isotopologue specifications in some module (specified by mixSource) and the populations of atomtypes in the Configuration
+			// Construct weights matrix based on Isotopologue specifications in some Module (specified by mixSource) and the populations of AtomTypes in the Configuration
 			Weights weights;
 			RefListIterator<Species,double> speciesIterator(cfg->usedSpecies());
 			while (Species* sp = speciesIterator.iterate())
@@ -144,9 +144,13 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 				return false;
 			}
 
+			// Grab exchangeable atoms list if it is present (in the Module data, rather than the local Configuration data)
+			// This is passed to Weights::finalise(), which uses the contained information when finalising its AtomTypeList
+			AtomTypeList exchangeableAtoms = GenericListHelper<AtomTypeList>::retrieve(moduleData, "Exchangeable", uniqueName());
+
 			// Finalise, print, and store weights
 			Messenger::print("Partials: Isotopologue and isotope composition for Configuration '%s':\n\n", cfg->name());
-			weights.finalise();
+			weights.finalise(exchangeableAtoms);
 			weights.print();
 			GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "PartialWeights", uniqueName_) = weights.fullWeightsMatrix();
 
