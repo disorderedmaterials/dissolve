@@ -86,20 +86,22 @@ const float *Element::colour() const
  * Isotopes
  */
 
-// Add new Isotope to this element
-Isotope *Element::addIsotope()
+// Add new Isotope to this Element
+Isotope* Element::addIsotope()
 {
-	return isotopes_.add();
+	Isotope* newIsotope = new Isotope(this);
+	isotopes_.own(newIsotope);
+	return newIsotope;
 }
 
 // Return first Isotope
-Isotope *Element::isotopes() const
+Isotope* Element::isotopes() const
 {
 	return isotopes_.first();
 }
 
 // Return nth Isotope
-Isotope *Element::isotope(int n)
+Isotope* Element::isotope(int n)
 {
 	return isotopes_[n];
 }

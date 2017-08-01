@@ -25,12 +25,15 @@
 #include "templates/list.h"
 #include "base/charstring.h"
 
+// Forward Declarations
+class Element;
+
 // Isotope Definition
 class Isotope : public MPIListItem<Isotope>
 {
 	public:
 	// Constructor
-	Isotope();
+	Isotope(Element* parent = NULL);
 	// Destructor
 	~Isotope();
 
@@ -39,6 +42,8 @@ class Isotope : public MPIListItem<Isotope>
 	 * Isotope Information
 	 */
 	private:
+	// Parent element
+	Element* element_;
 	// Mass number (A) of isotope
 	int A_;
 	// Atomic weight (given C = 12)
@@ -57,9 +62,11 @@ class Isotope : public MPIListItem<Isotope>
 	double absorptionXS_;
 	
 	public:
-	// Set isotope information
+	// Set Isotope information
 	void set(int A, double weight, double bc, double bi, double sc, double si, double totalxs, double absxs);
-	// Mass number (A) of isotope
+	// Return parent Element of Isotope
+	Element* element() const;
+	// Mass number (A) of Isotope
 	int A() const;
 	// Return atomic weight (given C = 12)
 	double atomicWeight() const;

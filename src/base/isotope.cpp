@@ -23,8 +23,9 @@
 #include "base/processpool.h"
 
 // Constructor
-Isotope::Isotope() : MPIListItem<Isotope>()
+Isotope::Isotope(Element* parent) : MPIListItem<Isotope>()
 {
+	element_ = parent;
 	A_ = 0;
 	atomicWeight_ = 0.0;
 	boundCoherent_ = 0.0;
@@ -55,6 +56,12 @@ void Isotope::set(int A, double weight, double bc, double bi, double sc, double 
 	boundIncoherentXS_ = si;
 	totalXS_ = totalxs;
 	absorptionXS_ = absxs;
+}
+
+// Return parent Element of Isotope
+Element* Isotope::element() const
+{
+	return element_;
 }
 
 // Mass number (A) of isotope
