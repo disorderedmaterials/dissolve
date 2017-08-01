@@ -59,7 +59,7 @@ template <class T> class GenericItemContainer : public GenericItem
 	 * Parallel Comms
 	 */
 	public:
-	// Broadcast item contsnts
+	// Broadcast item contents
 	bool broadcast(ProcessPool& procPool, int root)
 	{
 		return data.broadcast(procPool, root);
