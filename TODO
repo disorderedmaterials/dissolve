@@ -2,16 +2,12 @@
 TODO
 ----
 
-o Revert COULCONVERT to accurate value
 o Dynamic load-balancing when running Configurations in parallel - assess time taken to go through all steps and adjust overall repeats relative to other Configurations.
-o Modify EnergyKernel to add in Coulomb term to PairPotential if it does not include it (determined by DUQ::pairPotentialIncludesCharges_).
 o Allow for Fixed atoms:
 	- Checks for fixed Atoms with GrainDefinitions - this should not be allowed since a Grain will be mobile.
 	- Provision for pre-calculation of RDF/F(Q) data between fixed atoms, and introduction of this into final RDF/F(Q) data for speed?
 o Different bond types - e.g. replicate those used in EPSR for reference?
-o Simplify output of new input files by checking module option values to see if they have changed before writing.
 o Accumulate timing information for each module, displaying averages and total in schedule at each step?
-o Allow Isotopologue list input as block as well as single line, since for large molecules the line will become annoyingly long.
 
 
 -------------------------------------------
@@ -20,22 +16,19 @@ Ideas / Notes / Weird Algorithm Suggestions
 
 ** 'Unit' Testing
 Build in testing options to those Modules that really need it - e.g. Energy and Forces - and compare against computed data:
-  - Structure factors of systems calculated from other sources (e.g. dlputils, EPSR)
+  - Normalisation of calculated data to <b>2 and <b**2>
+  - Unit tests run in parallel mode
   - Reproduction of test potentials, from simulated structure factors
-  - Energies and forces from DL_POLY
 Can provide test data such as forces within the input file itself, provided GenericItemContainer<> specialisations provide read() and write() functions. This would be useful in allowing complete state of the code (i.e. module data from Configurations etc.) to be saved in one text file.
 
 ** Partial MD
 Allow specific Species types to be targetted in MD, in effect temporarily freezing all other atoms, but allowing all atoms within the Species molecule(s) to relax.
 
-** Exchangeable Hydrogens
-Program should auto-detect exchangeable hydrogens based on connectivity (but which can be overridden by user, e.g. add '*' after atom name?). Calculation of partials still needs to account for exchangeable hydrogen blending - can we do this already through the AtomTypeLists that we create for the WeightsMatrix?
-
 ** Directional MC Moves
 Could allow definition of displacement vectors (based on molecular axes) for species, and have a module which attempts MC moves along those vectors.
 
 ** Averaging of Calculated Partials
-Options in Partials module to allow either stacking and averaging of RDFs (requiring additional storage inside PartialGRSet and PartialSQSet) or blending of current calculated values with previous values in some percentage (easier, but real, actual partials are unavailable). Can use the moduleData() lists and store datasets to be averaged as additional data.
+Options in Partials module to allow either stacking and averaging of RDFs (requiring additional storage inside PartialSet) or blending of current calculated values with previous values in some percentage (easier, but real, actual partials are unavailable). Can use the moduleData() lists and store datasets to be averaged as additional data.
 
 ** Allow Chemical Units When Specifying Quantities
 If density for specific Isotopologues can be provided, we can allow gram quantities of them to be added (in Partials/Spatials definitions, for instance) and converted automatically to relative molar amounts (which is what we need). Will need to set a tolerance on the resulting relative populations between species for this method, since we need to ensure some kind of consistency between the exact, specified composition of the Configuration(s) and the Sample information.
@@ -45,6 +38,7 @@ Keep track of last successful rotation / translation for each Grain, allowing si
 
 ** RDF Calculation for Large Systems
 Can Grains be treated as a single scattering body (with average scattering length of the constituent Atoms) at far-enough distance? Might offer a speed-up for larger systems since all atoms within the Grain can be treated as being at (approximately) the same distance (that of the Grain).
+Can Cells be utilised in order to calculate RDFs between Atoms a certain distance (i.e. the RDF cutoff) apart? May need to generalise some ProcessPool functions.
 
 ** Configuration Branching
 Above a certain threshold of r-squared, or at certain time intervals, 'big events' could occur which radically change the structure of the system. For instance, large molecule flips / rotations / exchanges. Standard energetic criteria would normally disallow such moves, but a 'big event' could unequivocally accept all such moves and progress the system back to an equilibrium, at which point the goodness of fit would be recalculated and compared against those previously stored.  We would maintain a history of branch points, storing the model coordinates at these points so that we can revert back to the previous best if necessary. Perhaps it is possible to track the r-squared value and predict its value at some future point if we keep progressing down a particular branch.
