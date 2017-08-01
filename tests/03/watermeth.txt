@@ -1,0 +1,334 @@
+# Test Case 04 - Calculated structure factor for water/methanol mix vs. EPSR simulated data
+
+# Define Water Molecule
+Species 'Water'
+  # Atoms
+  Atom    1    O     0.015   -0.009   -0.373   'OW'
+  Atom    2    H     0.757    0.013    0.217   'HW'
+  Atom    3    H    -0.771   -0.003    0.157   'HW'
+
+  # Intramolecular Terms
+  Bond    1    2     0.995 3000.000
+  Bond    1    3     0.995 3000.000
+  Angle    2    1    3   109.500  400.000
+
+  # Isotopologues
+  Isotopologue  'Protiated'  HW=0
+  Isotopologue  'Deuteriated'  HW=2
+EndSpecies
+
+# Define Methanol Molecule
+Species 'Methanol'
+  # Atoms
+  Atom      1   C    0.00000E+00  0.00000E+00  0.00000E+00  CT
+  Atom      2   H    0.11187E+01  0.00000E+00  0.00000E+00  HC
+  Atom      3   O   -0.36830E+00  0.13617E+01  0.00000E+00  OH
+  Atom      4   H   -0.38340E+00 -0.51810E+00 -0.91440E+00  HC
+  Atom      5   H   -0.38340E+00 -0.51770E+00  0.91460E+00  HC
+  Atom      6   H   -0.13318E+01  0.13955E+01 -0.17000E-02  HO
+
+  # Bonds
+  Bond    1   2   1.12    3000.0
+  Bond    1   3   1.41    3000.0
+  Bond    1   4   1.12    3000.0
+  Bond    1   5   1.12    3000.0
+  Bond    3   6   0.964   3000.0
+  Angle   2   1   3   109.5   300.0
+  Angle   2   1   4   109.5   300.0
+  Angle   2   1   5   109.5   300.0
+  Angle   3   1   4   109.5   300.0
+  Angle   3   1   5   109.5   300.0
+  Angle   4   1   5   109.5   300.0
+  Angle   6   3   1   109.5   300.0
+
+  # Isotopologues
+  Isotopologue  'Protiated'    HO=0  HC=0
+  Isotopologue  'Deuteriated'  HO=2  HC=2
+  Isotopologue  'MethylD-OH'   HO=0  HC=2
+  Isotopologue  'OD-MethylH'   HO=2  HC=0
+EndSpecies
+
+# Define Configuration
+Configuration  'Mix'
+  Density  0.1  atoms/A3
+  Multiplier  1000
+  Species 'Water'  3.0
+  Species 'Methanol'  6.0
+  InputCoordinates  epsr  'epsr/watermeth.ato'
+  RDFBinWidth 0.03
+  RDFRange 38.0
+
+  # Sample Structure Factor Calculations
+  Module Partials 'HHH'
+    StructureFactor  on
+    # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
+    AllIntra  true
+    QMin 0.05
+    QDepBroadening  0.02    # For SLS
+    Weights  neutron
+    Isotopologue  'Mix'  'Water'  'Protiated'  1.0
+    Isotopologue  'Mix'  'Methanol'  'Protiated'  1.0
+    Exchangeable  HW  HO
+    Save  On
+    Frequency  1
+  
+    Test  on
+    TestThreshold  1.0
+    #  Order of partials in EPSR files is: 
+    #    2      4      6      8      10     12     14     16     18     20     22     24     26     28     30     32     34     36     38     40     42
+    #  OW-OW  OW-HW  OW-CT  OW-HC  OW-OH  OW-HO  HW-HW  HW-CT  HW-HC  HW-OH  HW-HO  CT-CT  CT-HC  CT-OH  CT-HO  HC-HC  HC-OH  HC-HO  OH-OH  OH-HO  HO-HO  
+    # -- Partial g(r) (unbound terms), unweighted
+    TestReference  'epsr/watermeth.EPSR.g01'  GR-unweighted-OW-OW-unbound  1  2
+    TestReference  'epsr/watermeth.EPSR.g01'  GR-unweighted-OW-HW-unbound  1  4
+    TestReference  'epsr/watermeth.EPSR.g01'  GR-unweighted-OW-CT-unbound  1  6
+    TestReference  'epsr/watermeth.EPSR.g01'  GR-unweighted-OW-HC-unbound  1  8
+    TestReference  'epsr/watermeth.EPSR.g01'  GR-unweighted-OW-OH-unbound  1  10
+    TestReference  'epsr/watermeth.EPSR.g01'  GR-unweighted-OW-HO-unbound  1  12
+    TestReference  'epsr/watermeth.EPSR.g01'  GR-unweighted-HW-HW-unbound  1  14
+    TestReference  'epsr/watermeth.EPSR.g01'  GR-unweighted-HW-CT-unbound  1  16
+    TestReference  'epsr/watermeth.EPSR.g01'  GR-unweighted-HW-HC-unbound  1  18
+    TestReference  'epsr/watermeth.EPSR.g01'  GR-unweighted-HW-OH-unbound  1  20
+    TestReference  'epsr/watermeth.EPSR.g01'  GR-unweighted-HW-HO-unbound  1  22
+    TestReference  'epsr/watermeth.EPSR.g01'  GR-unweighted-CT-CT-unbound  1  24
+    TestReference  'epsr/watermeth.EPSR.g01'  GR-unweighted-CT-HC-unbound  1  26
+    TestReference  'epsr/watermeth.EPSR.g01'  GR-unweighted-CT-OH-unbound  1  28
+    TestReference  'epsr/watermeth.EPSR.g01'  GR-unweighted-CT-HO-unbound  1  30
+    TestReference  'epsr/watermeth.EPSR.g01'  GR-unweighted-HC-HC-unbound  1  32
+    TestReference  'epsr/watermeth.EPSR.g01'  GR-unweighted-HC-OH-unbound  1  34
+    TestReference  'epsr/watermeth.EPSR.g01'  GR-unweighted-HC-HO-unbound  1  36
+    TestReference  'epsr/watermeth.EPSR.g01'  GR-unweighted-OH-OH-unbound  1  38
+    TestReference  'epsr/watermeth.EPSR.g01'  GR-unweighted-OH-HO-unbound  1  40
+    TestReference  'epsr/watermeth.EPSR.g01'  GR-unweighted-HO-HO-unbound  1  42
+    # -- Partial g(r) (intramolecular terms), unweighted
+    TestReference  'epsr/watermeth.EPSR.y01'  GR-unweighted-OW-OW-bound  1  2
+    TestReference  'epsr/watermeth.EPSR.y01'  GR-unweighted-OW-HW-bound  1  4
+    TestReference  'epsr/watermeth.EPSR.y01'  GR-unweighted-OW-CT-bound  1  6
+    TestReference  'epsr/watermeth.EPSR.y01'  GR-unweighted-OW-HC-bound  1  8
+    TestReference  'epsr/watermeth.EPSR.y01'  GR-unweighted-OW-OH-bound  1  10
+    TestReference  'epsr/watermeth.EPSR.y01'  GR-unweighted-OW-HO-bound  1  12
+    TestReference  'epsr/watermeth.EPSR.y01'  GR-unweighted-HW-HW-bound  1  14
+    TestReference  'epsr/watermeth.EPSR.y01'  GR-unweighted-HW-CT-bound  1  16
+    TestReference  'epsr/watermeth.EPSR.y01'  GR-unweighted-HW-HC-bound  1  18
+    TestReference  'epsr/watermeth.EPSR.y01'  GR-unweighted-HW-OH-bound  1  20
+    TestReference  'epsr/watermeth.EPSR.y01'  GR-unweighted-HW-HO-bound  1  22
+    TestReference  'epsr/watermeth.EPSR.y01'  GR-unweighted-CT-CT-bound  1  24
+    TestReference  'epsr/watermeth.EPSR.y01'  GR-unweighted-CT-HC-bound  1  26
+    TestReference  'epsr/watermeth.EPSR.y01'  GR-unweighted-CT-OH-bound  1  28
+    TestReference  'epsr/watermeth.EPSR.y01'  GR-unweighted-CT-HO-bound  1  30
+    TestReference  'epsr/watermeth.EPSR.y01'  GR-unweighted-HC-HC-bound  1  32
+    TestReference  'epsr/watermeth.EPSR.y01'  GR-unweighted-HC-OH-bound  1  34
+    TestReference  'epsr/watermeth.EPSR.y01'  GR-unweighted-HC-HO-bound  1  36
+    TestReference  'epsr/watermeth.EPSR.y01'  GR-unweighted-OH-OH-bound  1  38
+    TestReference  'epsr/watermeth.EPSR.y01'  GR-unweighted-OH-HO-bound  1  40
+    TestReference  'epsr/watermeth.EPSR.y01'  GR-unweighted-HO-HO-bound  1  42
+    # -- Partial S(Q) (unbound terms), unweighted
+    TestReference  'epsr/watermeth.EPSR.f01'  SQ-unweighted-OW-OW-unbound  1  2
+    TestReference  'epsr/watermeth.EPSR.f01'  SQ-unweighted-OW-HW-unbound  1  4
+    TestReference  'epsr/watermeth.EPSR.f01'  SQ-unweighted-OW-CT-unbound  1  6
+    TestReference  'epsr/watermeth.EPSR.f01'  SQ-unweighted-OW-HC-unbound  1  8
+    TestReference  'epsr/watermeth.EPSR.f01'  SQ-unweighted-OW-OH-unbound  1  10
+    TestReference  'epsr/watermeth.EPSR.f01'  SQ-unweighted-OW-HO-unbound  1  12
+    TestReference  'epsr/watermeth.EPSR.f01'  SQ-unweighted-HW-HW-unbound  1  14
+    TestReference  'epsr/watermeth.EPSR.f01'  SQ-unweighted-HW-CT-unbound  1  16
+    TestReference  'epsr/watermeth.EPSR.f01'  SQ-unweighted-HW-HC-unbound  1  18
+    TestReference  'epsr/watermeth.EPSR.f01'  SQ-unweighted-HW-OH-unbound  1  20
+    TestReference  'epsr/watermeth.EPSR.f01'  SQ-unweighted-HW-HO-unbound  1  22
+    TestReference  'epsr/watermeth.EPSR.f01'  SQ-unweighted-CT-CT-unbound  1  24
+    TestReference  'epsr/watermeth.EPSR.f01'  SQ-unweighted-CT-HC-unbound  1  26
+    TestReference  'epsr/watermeth.EPSR.f01'  SQ-unweighted-CT-OH-unbound  1  28
+    TestReference  'epsr/watermeth.EPSR.f01'  SQ-unweighted-CT-HO-unbound  1  30
+    TestReference  'epsr/watermeth.EPSR.f01'  SQ-unweighted-HC-HC-unbound  1  32
+    TestReference  'epsr/watermeth.EPSR.f01'  SQ-unweighted-HC-OH-unbound  1  34
+    TestReference  'epsr/watermeth.EPSR.f01'  SQ-unweighted-HC-HO-unbound  1  36
+    TestReference  'epsr/watermeth.EPSR.f01'  SQ-unweighted-OH-OH-unbound  1  38
+    TestReference  'epsr/watermeth.EPSR.f01'  SQ-unweighted-OH-HO-unbound  1  40
+    TestReference  'epsr/watermeth.EPSR.f01'  SQ-unweighted-HO-HO-unbound  1  42
+    # -- Partial S(Q) (bound terms), unweighted
+    TestReference  'epsr/watermeth.EPSR.s01'  SQ-unweighted-OW-OW-bound  1  2
+    TestReference  'epsr/watermeth.EPSR.s01'  SQ-unweighted-OW-HW-bound  1  4
+    TestReference  'epsr/watermeth.EPSR.s01'  SQ-unweighted-OW-CT-bound  1  6
+    TestReference  'epsr/watermeth.EPSR.s01'  SQ-unweighted-OW-HC-bound  1  8
+    TestReference  'epsr/watermeth.EPSR.s01'  SQ-unweighted-OW-OH-bound  1  10
+    TestReference  'epsr/watermeth.EPSR.s01'  SQ-unweighted-OW-HO-bound  1  12
+    TestReference  'epsr/watermeth.EPSR.s01'  SQ-unweighted-HW-HW-bound  1  14
+    TestReference  'epsr/watermeth.EPSR.s01'  SQ-unweighted-HW-CT-bound  1  16
+    TestReference  'epsr/watermeth.EPSR.s01'  SQ-unweighted-HW-HC-bound  1  18
+    TestReference  'epsr/watermeth.EPSR.s01'  SQ-unweighted-HW-OH-bound  1  20
+    TestReference  'epsr/watermeth.EPSR.s01'  SQ-unweighted-HW-HO-bound  1  22
+    TestReference  'epsr/watermeth.EPSR.s01'  SQ-unweighted-CT-CT-bound  1  24
+    TestReference  'epsr/watermeth.EPSR.s01'  SQ-unweighted-CT-HC-bound  1  26
+    TestReference  'epsr/watermeth.EPSR.s01'  SQ-unweighted-CT-OH-bound  1  28
+    TestReference  'epsr/watermeth.EPSR.s01'  SQ-unweighted-CT-HO-bound  1  30
+    TestReference  'epsr/watermeth.EPSR.s01'  SQ-unweighted-HC-HC-bound  1  32
+    TestReference  'epsr/watermeth.EPSR.s01'  SQ-unweighted-HC-OH-bound  1  34
+    TestReference  'epsr/watermeth.EPSR.s01'  SQ-unweighted-HC-HO-bound  1  36
+    TestReference  'epsr/watermeth.EPSR.s01'  SQ-unweighted-OH-OH-bound  1  38
+    TestReference  'epsr/watermeth.EPSR.s01'  SQ-unweighted-OH-HO-bound  1  40
+    TestReference  'epsr/watermeth.EPSR.s01'  SQ-unweighted-HO-HO-bound  1  42
+    # -- Total neutron-weighted S(Q)
+    # u01 file: 1  2   4   6   8   10  12  14  16
+    TestReference  'epsr/watermeth.EPSR.u01'  SQ-weighted-total  1  2
+  EndModule
+  
+  Module Partials 'H5H'
+    StructureFactor  on
+    # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
+    AllIntra  true
+    QMin 0.05
+    QDepBroadening  0.02    # For SLS
+    Weights  neutron
+    Isotopologue  'Mix'  'Water'  'Protiated'  1.0
+    Isotopologue  'Mix'  'Methanol'  'Protiated'  0.5
+    Isotopologue  'Mix'  'Methanol'  'OD-MethylH'  0.5
+    Exchangeable  HW  HO
+    Save  On
+    Frequency  1
+  
+    Test  on
+    TestThreshold  1.0
+    # -- Total neutron-weighted S(Q)
+    # u01 file: 1  2   4   6   8   10  12  14  16
+    #           Q HHH H5H DHH HDH HHD DDH HDD DDD 
+    TestReference  'epsr/watermeth.EPSR.u01'  SQ-weighted-total  1  4
+  EndModule
+  
+  Module Partials 'DHH'
+    StructureFactor  on
+    # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
+    AllIntra  true
+    QMin 0.05
+    QDepBroadening  0.02    # For SLS
+    Weights  neutron
+    Isotopologue  'Mix'  'Water'  'Deuteriated'  1.0
+    Isotopologue  'Mix'  'Methanol'  'Protiated'  1.0
+    Exchangeable  HW  HO
+    Save  On
+    Frequency  1
+  
+    Test  on
+    TestThreshold  1.0
+    # -- Total neutron-weighted S(Q)
+    # u01 file: 1  2   4   6   8   10  12  14  16
+    #           Q HHH H5H DHH HDH HHD DDH HDD DDD 
+    TestReference  'epsr/watermeth.EPSR.u01'  SQ-weighted-total  1  6
+  EndModule
+  
+  Module Partials 'HDH'
+    StructureFactor  on
+    # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
+    AllIntra  true
+    QMin 0.05
+    QDepBroadening  0.02    # For SLS
+    Weights  neutron
+    Isotopologue  'Mix'  'Water'  'Protiated'  1.0
+    Isotopologue  'Mix'  'Methanol'  'OD-MethylH'  1.0
+    Exchangeable  HW  HO
+    Save  On
+    Frequency  1
+  
+    Test  on
+    TestThreshold  1.0
+    # -- Total neutron-weighted S(Q)
+    # u01 file: 1  2   4   6   8   10  12  14  16
+    #           Q HHH H5H DHH HDH HHD DDH HDD DDD 
+    TestReference  'epsr/watermeth.EPSR.u01'  SQ-weighted-total  1  8
+  EndModule
+  
+  Module Partials 'HHD'
+    StructureFactor  on
+    # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
+    AllIntra  true
+    QMin 0.05
+    QDepBroadening  0.02    # For SLS
+    Weights  neutron
+    Isotopologue  'Mix'  'Water'  'Protiated'  1.0
+    Isotopologue  'Mix'  'Methanol'  'MethylD-OH'  1.0
+    Exchangeable  HW  HO
+    Save  On
+    Frequency  1
+  
+    Test  on
+    TestThreshold  1.0
+    # -- Total neutron-weighted S(Q)
+    # u01 file: 1  2   4   6   8   10  12  14  16
+    #           Q HHH H5H DHH HDH HHD DDH HDD DDD 
+    TestReference  'epsr/watermeth.EPSR.u01'  SQ-weighted-total  1  10
+  EndModule
+  
+  Module Partials 'DDH'
+    StructureFactor  on
+    # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
+    AllIntra  true
+    QMin 0.05
+    QDepBroadening  0.02    # For SLS
+    Weights  neutron
+    Isotopologue  'Mix'  'Water'  'Deuteriated'  1.0
+    Isotopologue  'Mix'  'Methanol'  'OD-MethylH'  1.0
+    Exchangeable  HW  HO
+    Save  On
+    Frequency  1
+  
+    Test  on
+    TestThreshold  1.0
+    # -- Total neutron-weighted S(Q)
+    # u01 file: 1  2   4   6   8   10  12  14  16
+    #           Q HHH H5H DHH HDH HHD DDH HDD DDD 
+    TestReference  'epsr/watermeth.EPSR.u01'  SQ-weighted-total  1  12
+  EndModule
+  
+  Module Partials 'HDD'
+    StructureFactor  on
+    # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
+    AllIntra  true
+    QMin 0.05
+    QDepBroadening  0.02    # For SLS
+    Weights  neutron
+    Isotopologue  'Mix'  'Water'  'Protiated'  1.0
+    Isotopologue  'Mix'  'Methanol'  'Deuteriated'  1.0
+    Exchangeable  HW  HO
+    Save  On
+    Frequency  1
+  
+    Test  on
+    TestThreshold  1.0
+    # -- Total neutron-weighted S(Q)
+    # u01 file: 1  2   4   6   8   10  12  14  16
+    #           Q HHH H5H DHH HDH HHD DDH HDD DDD 
+    TestReference  'epsr/watermeth.EPSR.u01'  SQ-weighted-total  1  14
+  EndModule
+  
+  Module Partials 'DDD'
+    StructureFactor  on
+    # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
+    AllIntra  true
+    QMin 0.05
+    QDepBroadening  0.02    # For SLS
+    Weights  neutron
+    Isotopologue  'Mix'  'Water'  'Deuteriated'  1.0
+    Isotopologue  'Mix'  'Methanol'  'Deuteriated'  1.0
+    Exchangeable  HW  HO
+    Save  On
+    Frequency  1
+  
+    Test  on
+    TestThreshold  1.0
+    # -- Total neutron-weighted S(Q)
+    # u01 file: 1  2   4   6   8   10  12  14  16
+    #           Q HHH H5H DHH HDH HHD DDH HDD DDD 
+    TestReference  'epsr/watermeth.EPSR.u01'  SQ-weighted-total  1  16
+  EndModule
+EndConfiguration
+
+# Pair Potentials
+PairPotentials
+  Range  15.000000
+  Delta  0.050000
+  TruncationWidth  2.000000
+  GenerateAll  'LJ'
+EndPairPotentials
+
+Simulation
+  MaxIterations  1
+  WriteIterationData  false
+EndSimulation
+
