@@ -366,7 +366,7 @@ template <class T> class BroadcastList
 	 */
 	public:
 	// Constructor
-	BroadcastList(ProcessPool& procPool, List<T>& items, bool& result)
+	BroadcastList(ProcessPool& procPool, List<T>& items, bool& result, int root = 0)
 	{
 		result = false;
 		int count;
@@ -374,13 +374,13 @@ template <class T> class BroadcastList
 		{
 			// Broadcast number of items in list, then list items...
 			count = items.nItems();
-			if (!procPool.broadcast(&count, 1)) return;
-			for (MPIListItem<T>* item = items.first(); item != NULL; item = item->next) if (!item->broadcast(procPool)) return;
+			if (!procPool.broadcast(count, root)) return;
+			for (MPIListItem<T>* item = items.first(); item != NULL; item = item->next) if (!item->broadcast(procPool, root)) return;
 		}
 		else
 		{
 			// Get number of list items to expect
-			if (!procPool.broadcast(&count, 1)) return;
+			if (!procPool.broadcast(count, root)) return;
 
 			// Clear list and reconstruct
 			items.clear();
@@ -388,7 +388,7 @@ template <class T> class BroadcastList
 			{
 				// Slaves must create a suitable structure first, and then join the broadcast
 				T* item = items.add();
-				if (!item->broadcast(procPool)) return;
+				if (!item->broadcast(procPool, root)) return;
 			}
 		}
 
