@@ -48,6 +48,9 @@ DUQ::DUQ()
 
 	// I/O
 	autoAddDependentModules_ = false;
+
+	// Master Instances
+	AtomTypeList::setMasterAtomTypeList(&atomTypes_);
 }
 
 // Destructor
@@ -78,3 +81,4 @@ void DUQ::clear()
 	Messenger::printVerbose("Clearing misc...\n");
 	filename_.clear();
 }
+

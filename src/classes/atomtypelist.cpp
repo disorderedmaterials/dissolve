@@ -23,7 +23,11 @@
 #include "classes/atomtype.h"
 #include "classes/isotopedata.h"
 #include "base/ptable.h"
+#include "base/processpool.h"
 #include <string.h>
+
+// Static Members
+List<AtomType>* AtomTypeList::masterAtomTypeList_ = NULL;
 
 // Constructor
 AtomTypeList::AtomTypeList()
@@ -209,4 +213,35 @@ AtomTypeData* AtomTypeList::operator[](int n)
 	}
 #endif
 	return types_[n];
+}
+
+/*
+ * Parallel Comms
+ */
+
+// Set master list
+void AtomTypeList::setMasterAtomTypeList(List<AtomType>* instance)
+{
+	masterAtomTypeList_ = instance;
+}
+
+// Return master instance
+List<AtomType>* AtomTypeList::masterAtomTypeList()
+{
+	return masterAtomTypeList_;
+}
+
+// Broadcast item contents
+bool AtomTypeList::broadcast(ProcessPool& procPool, int root)
+{
+	// Must have a master instance to proceed
+	if (!masterAtomTypeList_) return false;
+
+#ifdef PARALLEL
+	// Broadcast AtomTypeData list
+	bool result;
+	BroadcastList<AtomTypeData> atdBroadcaster(procPool, types_, result, root);
+	if (!result) return false;
+#endif
+	return true;
 }

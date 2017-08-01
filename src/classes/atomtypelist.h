@@ -31,7 +31,9 @@ class AtomType;
 class Isotope;
 
 /*
- * AtomTypeList Definition
+ * AtomTypeList
+ * 
+ * Contains a list of AtomTypes referenced using a List<> of AtomTypData, and optionally containing Isotope and population information.
  */
 class AtomTypeList
 {
@@ -88,6 +90,22 @@ class AtomTypeList
 	AtomType* atomType(int n);
 	// Array access operator
 	AtomTypeData* operator[](int n);
+
+
+	/*
+	 * Parallel Comms
+	 */
+	private:
+	// Master list instance, used to reform list on broadcast()
+	static List<AtomType>* masterAtomTypeList_;
+
+	public:
+	// Set master AtomType list
+	static void setMasterAtomTypeList(List<AtomType>* masterList);
+	// Return master AtomType list
+	static List<AtomType>* masterAtomTypeList();
+	// Broadcast item contents
+	bool broadcast(ProcessPool& procPool, int root);
 };
 
 #endif

@@ -60,7 +60,7 @@ class DUQ
 	 * Atom Types
 	 */
 	private:
-	// List of allowed AtomTypes for all Species
+	// Master list of allowed AtomTypes for all Species
 	List<AtomType> atomTypes_;
 	
 	public:

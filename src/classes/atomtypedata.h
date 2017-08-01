@@ -33,7 +33,7 @@ class Isotope;
 /*
  * AtomTypeData Definition
  */
-class AtomTypeData : public ListItem<AtomTypeData>
+class AtomTypeData : public MPIListItem<AtomTypeData>
 {
 	public:
 	// Constructor
@@ -88,6 +88,14 @@ class AtomTypeData : public ListItem<AtomTypeData>
 	double boundCoherent() const;
 	// Return referenced AtomType name
 	const char* atomTypeName() const;
+
+
+	/*
+	 * Parallel Comms
+	 */
+	public:
+	// Broadcast data from Master to all Slaves
+	bool broadcast(ProcessPool& procPool, int root = 0);
 };
 
 #endif

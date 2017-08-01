@@ -30,7 +30,7 @@ class Isotope;
 /*
  * IsotopeData Definition
  */
-class IsotopeData : public ListItem<IsotopeData>
+class IsotopeData : public MPIListItem<IsotopeData>
 {
 	public:
 	// Constructor
@@ -67,6 +67,14 @@ class IsotopeData : public ListItem<IsotopeData>
 	int population() const;
 	// Return local fractional population (e.g. within an AtomTypeData)
 	double fraction() const;
+
+
+	/*
+	 * Parallel Comms
+	 */
+	public:
+	// Broadcast data from Master to all Slaves
+	bool broadcast(ProcessPool& procPool, int root = 0);
 };
 
 #endif

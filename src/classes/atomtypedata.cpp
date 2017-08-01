@@ -21,15 +21,16 @@
 
 #include "classes/atomtypelist.h"
 #include "classes/atomtype.h"
-#include "isotopedata.h"
+#include "classes/isotopedata.h"
 #include "base/constants.h"
 #include "base/isotope.h"
 #include "base/messenger.h"
 #include "base/ptable.h"
+#include "base/processpool.h"
 #include <string.h>
 
 // Constructor
-AtomTypeData::AtomTypeData() : ListItem<AtomTypeData>()
+AtomTypeData::AtomTypeData() : MPIListItem<AtomTypeData>()
 {
 	atomType_ = NULL;
 	population_ = 0;
@@ -174,4 +175,29 @@ double AtomTypeData::boundCoherent() const
 const char* AtomTypeData::atomTypeName() const
 {
 	return atomType_->name();
+}
+
+/*
+ * Parallel Comms
+ */
+
+// Broadcast data from Master to all Slaves
+bool AtomTypeData::broadcast(ProcessPool& procPool, int root)
+{
+#ifdef PARALLEL
+	// For atomType_, use the AtomTypeList::masterInstance_ to find the index (*not* the local listIndex_) and broadcast it
+	int typeIndex = AtomTypeList::masterAtomTypeList()->indexOf(atomType_);
+	procPool.broadcast(typeIndex, root);
+	atomType_ = AtomTypeList::masterAtomTypeList()->item(typeIndex);
+
+	// Broadcast the IsotopeData list
+	bool result;
+	BroadcastList<IsotopeData> topeBroadcaster(procPool, isotopes_, result, root);
+	if (!result) return false;
+
+	procPool.broadcast(population_, root);
+	procPool.broadcast(fraction_, root);
+	procPool.broadcast(boundCoherent_, root);
+#endif
+	return true;
 }

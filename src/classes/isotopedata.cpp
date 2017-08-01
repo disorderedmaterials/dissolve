@@ -22,9 +22,11 @@
 #include "classes/isotopedata.h"
 #include "base/isotope.h"
 #include "base/messenger.h"
+#include "base/ptable.h"
+#include "base/processpool.h"
 
 // Constructor
-IsotopeData::IsotopeData() : ListItem<IsotopeData>()
+IsotopeData::IsotopeData() : MPIListItem<IsotopeData>()
 {
 	isotope_ = NULL;
 	population_ = 0.0;
@@ -100,4 +102,29 @@ int IsotopeData::population() const
 double IsotopeData::fraction() const
 {
 	return fraction_;
+}
+
+/*
+ * Parallel Comms
+ */
+
+// Broadcast data from Master to all Slaves
+bool IsotopeData::broadcast(ProcessPool& procPool, int root)
+{
+// #ifdef PARALLEL
+	// For isotope_, need to broadcast element Z and isotope A
+	int Z, A;
+	if (procPool.poolRank() == root)
+	{
+		Z = isotope_->element()->z();
+		A = isotope_->A();
+	}
+	procPool.broadcast(Z, root);
+	procPool.broadcast(A, root);
+	isotope_ = PeriodicTable::element(Z).hasIsotope(A);
+
+	procPool.broadcast(population_, root);
+	procPool.broadcast(fraction_, root);
+// #endif
+	return true;
 }
