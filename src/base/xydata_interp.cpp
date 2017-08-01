@@ -135,6 +135,8 @@ void XYData::interpolateSpline()
 	 */
 	
 	int i, nPoints = x_.nItems();
+
+	if (nPoints < 2) return;
 	
 	// Calculate interval array 'h'
 	interpolationH_.initialise(nPoints);
