@@ -121,14 +121,14 @@ bool Isotope::broadcast(ProcessPool& procPool, int root)
 {
 #ifdef PARALLEL
 	// Send isotope info
-	if (!procPool.broadcast(&A_, 1, root)) return false;
-	if (!procPool.broadcast(&atomicWeight_, 1, root)) return false;
-	if (!procPool.broadcast(&boundCoherent_, 1, root)) return false;
-	if (!procPool.broadcast(&boundIncoherent_, 1, root)) return false;
-	if (!procPool.broadcast(&boundCoherentXS_, 1, root)) return false;
-	if (!procPool.broadcast(&boundIncoherentXS_, 1, root)) return false;
-	if (!procPool.broadcast(&totalXS_, 1, root)) return false;
-	if (!procPool.broadcast(&absorptionXS_, 1, root)) return false;
+	if (!procPool.broadcast(A_, root)) return false;
+	if (!procPool.broadcast(atomicWeight_, root)) return false;
+	if (!procPool.broadcast(boundCoherent_, root)) return false;
+	if (!procPool.broadcast(boundIncoherent_, root)) return false;
+	if (!procPool.broadcast(boundCoherentXS_, root)) return false;
+	if (!procPool.broadcast(boundIncoherentXS_, root)) return false;
+	if (!procPool.broadcast(totalXS_, root)) return false;
+	if (!procPool.broadcast(absorptionXS_, root)) return false;
 #endif
 	return true;
 }
