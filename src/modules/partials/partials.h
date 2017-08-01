@@ -114,7 +114,7 @@ class PartialsModule : public Module
 	 */
 	private:
 	// Test reference data against calculated PartialSet set
-	bool testReferencePartials(GenericList& sourceModuleData, AtomTypeList& typesList, PartialSet& partialgr, const char* dataPrefix, double testThreshold);
+	bool testReferencePartials(GenericList& sourceModuleData, PartialSet& partialgr, const char* dataPrefix, double testThreshold);
 	// Calculate partial RDFs with simple double-loop
 	bool calculateSimple(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet);
 

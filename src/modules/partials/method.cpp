@@ -102,12 +102,26 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		PartialSet& unweightedgr = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedGR", "Partials");
 		if (saveData && (!configurationLocal_) && (!MPIRunMaster(procPool, unweightedgr.save()))) return false;
 
+		// Test unweighted g(r)?
+		if (testMode)
+		{
+			Messenger::print("\nTesting calculated unweighted g(r) data against supplied datasets (if any)...\n");
+			if (!testReferencePartials(moduleData, unweightedgr, "TestReferenceGR-unweighted", testThreshold)) return false;
+		}
+
 		// Calculate S(Q) if requested
 		if (sqCalculation)
 		{
 			calculateUnweightedSQ(procPool, cfg, qMin, qDelta, qMax, cfg->atomicDensity(), duq.windowFunction(), qDepBroadening, qIndepBroadening, braggOn, braggQDepBroadening, braggQIndepBroadening);
 			PartialSet& unweightedsq = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedSQ", "Partials");
 			if (saveData && (!configurationLocal_) && (!MPIRunMaster(procPool, unweightedsq.save()))) return false;
+
+			// Test unweighted S(Q)?
+			if (testMode)
+			{
+				Messenger::print("\nTesting calculated unweighted S(Q) data against supplied datasets (if any)...\n");
+				if (!testReferencePartials(moduleData, unweightedsq, "TestReferenceSQ-unweighted", testThreshold)) return false;
+			}
 		}
 
 		// Calculate weighted partials here if requested
@@ -156,11 +170,26 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 			PartialSet& weightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedSQ", uniqueName_);
 			weightedgr.setup(cfg, cfg->niceName(), "weighted", "rdf", "r, Angstroms");
 			calculateWeightedGR(unweightedgr, weightedgr, weights);
+
+			// Test weighted g(r)?
+			if (testMode)
+			{
+				Messenger::print("\nTesting calculated weighted g(r) data against supplied datasets (if any)...\n");
+				if (!testReferencePartials(moduleData, weightedgr, "TestReferenceGR-weighted", testThreshold)) return false;
+			}
+
 			if (sqCalculation)
 			{
 				PartialSet& unweightedsq = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedSQ", "Partials");
 				weightedsq.setup(weightedgr.atomTypes(), cfg->niceName(), "weighted", "sq", "Q, 1/Angstroms");
 				calculateWeightedSQ(unweightedsq, weightedsq, weights);
+
+				// Test weighted S(Q)?
+				if (testMode)
+				{
+					Messenger::print("\nTesting calculated weighted S(Q) data against supplied datasets (if any)...\n");
+					if (!testReferencePartials(moduleData, weightedsq, "TestReferenceSQ-weighted", testThreshold)) return false;
+				}
 			}
 
 			if (saveData && (!configurationLocal_))
@@ -171,10 +200,6 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 
 		}
 
-		// Test mode
-		if (testMode && (!configurationLocal_))
-		{
-		}
 	}
 
 	// If we are a main processing task, construct the weighted sum of Configuration
@@ -228,7 +253,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		if (testMode)
 		{
 			Messenger::print("\nTesting calculated unweighted g(r) data against supplied datasets (if any)...\n");
-			if (!testReferencePartials(moduleData, atomTypes, unweightedgr, "TestReferenceGR-unweighted", testThreshold)) return false;
+			if (!testReferencePartials(moduleData, unweightedgr, "TestReferenceGR-unweighted", testThreshold)) return false;
 		}
 
 		// Calculate S(Q) if requested
@@ -258,7 +283,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 			if (testMode)
 			{
 				Messenger::print("\nTesting calculated unweighted S(Q) data against supplied datasets (if any)...\n");
-				if (!testReferencePartials(moduleData, atomTypes, unweightedsq, "TestReferenceSQ-unweighted", testThreshold)) return false;
+				if (!testReferencePartials(moduleData, unweightedsq, "TestReferenceSQ-unweighted", testThreshold)) return false;
 			}
 		}
 
@@ -288,7 +313,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 			if (testMode)
 			{
 				Messenger::print("\nTesting calculated weighted g(r) data against supplied datasets (if any)...\n");
-				if (!testReferencePartials(moduleData, atomTypes, weightedgr, "TestReferenceGR-weighted", testThreshold)) return false;
+				if (!testReferencePartials(moduleData, weightedgr, "TestReferenceGR-weighted", testThreshold)) return false;
 			}
 
 			// Calculate S(Q) if requested
@@ -318,7 +343,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 				if (testMode)
 				{
 					Messenger::print("\nTesting calculated weighted S(Q) data against supplied datasets (if any)...\n");
-					if (!testReferencePartials(moduleData, atomTypes, weightedsq, "TestReferenceSQ-weighted", testThreshold)) return false;
+					if (!testReferencePartials(moduleData, weightedsq, "TestReferenceSQ-weighted", testThreshold)) return false;
 				}
 			}
 		}

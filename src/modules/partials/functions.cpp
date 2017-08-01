@@ -27,17 +27,19 @@
 #include "classes/weights.h"
 
 // Test reference data against calculated partials set
-bool PartialsModule::testReferencePartials(GenericList& sourceModuleData, AtomTypeList& typesList, PartialSet& partials, const char* dataPrefix, double testThreshold)
+bool PartialsModule::testReferencePartials(GenericList& sourceModuleData, PartialSet& partials, const char* dataPrefix, double testThreshold)
 {
 	// We'll do a loop over all possible named test datasets that we expect to find with the given prefix and all combinations of atom type names.
 
 	CharString dataName;
 
-	AtomTypeData* typeI = typesList.first();
-	for (int n=0; n<typesList.nItems(); ++n, typeI = typeI->next)
+	// Get a copy of the AtomTypeList to work from
+	AtomTypeList atomTypes = partials.atomTypes();
+	AtomTypeData* typeI = atomTypes.first();
+	for (int n=0; n<atomTypes.nItems(); ++n, typeI = typeI->next)
 	{
 		AtomTypeData* typeJ = typeI;
-		for (int m = n; m <typesList.nItems(); ++m, typeJ = typeJ->next)
+		for (int m = n; m <atomTypes.nItems(); ++m, typeJ = typeJ->next)
 		{
 			// Full partial (bound + unbound) reference data supplied?
 			dataName = CharString("%s-%s-%s", dataPrefix, typeI->atomTypeName(), typeJ->atomTypeName());
