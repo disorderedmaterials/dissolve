@@ -57,7 +57,7 @@ template <> class GenericItemContainer< Array<double> > : public GenericItem
 	 * Parallel Comms
 	 */
 	public:
-	// Broadcast item contsnts
+	// Broadcast item contents
 	bool broadcast(ProcessPool& procPool, int root)
 	{
 		return procPool.broadcast(data, root);

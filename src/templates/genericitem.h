@@ -137,7 +137,7 @@ class GenericItem
 	 * Parallel Comms
 	 */
 	public:
-	// Broadcast item contsnts
+	// Broadcast item contents
 	virtual bool broadcast(ProcessPool& procPool, int root) = 0;
 };
 
