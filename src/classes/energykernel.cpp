@@ -29,7 +29,7 @@
 #include "base/processpool.h"
 
 // Constructor
-EnergyKernel::EnergyKernel(ProcessPool& procPool, const Configuration* config, const PotentialMap& potentialMap, double energyCutoff) : processPool_(procPool), configuration_(config), potentialMap_(potentialMap)
+EnergyKernel::EnergyKernel(ProcessPool& procPool, Configuration* config, const PotentialMap& potentialMap, double energyCutoff) : processPool_(procPool), configuration_(config), cells_(config->cells()), potentialMap_(potentialMap)
 {
 	box_ = configuration_->box();
 	cutoffDistanceSquared_ = (energyCutoff < 0.0 ? potentialMap_.range()*potentialMap_.range() : energyCutoff*energyCutoff);
@@ -772,7 +772,7 @@ double EnergyKernel::energy(const Molecule* mol, const SpeciesBond* b)
 	Atom* i, *j;
 	i = mol->atom(b->indexI());
 	j = mol->atom(b->indexJ());
-	if (configuration_->useMim(i->cell(), j->cell())) return b->energy(box_->minimumDistance(i, j));
+	if (cells_.useMim(i->cell(), j->cell())) return b->energy(box_->minimumDistance(i, j));
 	else return b->energy((i->r() - j->r()).magnitude());
 }
 
@@ -786,9 +786,9 @@ double EnergyKernel::energy(const Molecule* mol, const SpeciesAngle* a)
 	i = mol->atom(a->indexI());
 	j = mol->atom(a->indexJ());
 	k = mol->atom(a->indexK());
-	if (configuration_->useMim(j->cell(), i->cell())) vecji = box_->minimumVector(j, i);
+	if (cells_.useMim(j->cell(), i->cell())) vecji = box_->minimumVector(j, i);
 	else vecji = i->r() - j->r();
-	if (configuration_->useMim(j->cell(), k->cell())) vecjk = box_->minimumVector(j, k);
+	if (cells_.useMim(j->cell(), k->cell())) vecjk = box_->minimumVector(j, k);
 	else vecjk = k->r() - j->r();
 	
 	// Normalise vectors

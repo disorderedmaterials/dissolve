@@ -29,6 +29,7 @@
 
 // Forward Declarations
 class Cell;
+class CellArray;
 class Box;
 class Configuration;
 class PotentialMap;
@@ -41,7 +42,7 @@ class EnergyKernel
 {
 	public:
 	// Constructor
-	EnergyKernel(ProcessPool& procPool, const Configuration* config, const PotentialMap& potentialMap, double energyCutoff = -1.0);
+	EnergyKernel(ProcessPool& procPool, Configuration* config, const PotentialMap& potentialMap, double energyCutoff = -1.0);
 	// Destructor
 	~EnergyKernel();
 	// Clear all data
@@ -65,6 +66,8 @@ class EnergyKernel
 	const Configuration* configuration_;
 	// Source Box (from Configuration)
 	const Box* box_;
+	// Source CellArray (from Configuration)
+	const CellArray& cells_;
 	// Potential map to use
 	const PotentialMap& potentialMap_;
 	// Squared cutoff distance to use in calculation

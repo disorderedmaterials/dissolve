@@ -115,7 +115,7 @@ bool Cell::removeLock()
 }
 
 // Return lock count
-int Cell::lockCount()
+int Cell::lockCount() const
 {
 	return lockCount_;
 }
@@ -128,7 +128,7 @@ void Cell::clearLocks()
 }
 
 // Check lock possibility
-bool Cell::canLock()
+bool Cell::canLock() const
 {
 	if (lockCount_ != 0) return false;
 	for (int n=0; n<nCellNeighbours_; ++n) if (cellNeighbours_[n]->lockCount() == -1) return false;
@@ -152,6 +152,7 @@ bool Cell::lock(bool willBeModified)
 		for (int n=0; n<nMimCellNeighbours_; ++n) mimCellNeighbours_[n]->addLock();
 	}
 	lockCount_ = -1;
+
 	return true;
 }
 
@@ -171,6 +172,7 @@ bool Cell::unlock(bool willBeModified)
 		for (int n=0; n<nMimCellNeighbours_; ++n) mimCellNeighbours_[n]->removeLock();
 	}
 	lockCount_ = 0;
+
 	return true;
 }
 

@@ -39,7 +39,7 @@ class ForceKernel
 {
 	public:
 	// Constructor
-	ForceKernel(ProcessPool& procPool, const Configuration* cfg, const PotentialMap& potentialMap, Array<double>& fx, Array<double>& fy, Array<double>& fz, double cutoffDistance = -1.0);
+	ForceKernel(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, Array<double>& fx, Array<double>& fy, Array<double>& fz, double cutoffDistance = -1.0);
 	// Destructor
 	~ForceKernel();
 	// Flags
@@ -61,6 +61,8 @@ class ForceKernel
 	const Configuration* configuration_;
 	// Source Box (from Configuration)
 	const Box* box_;
+	// Source CellArray (from Configuration)
+	const CellArray& cells_;
 	// Potential map to use
 	const PotentialMap& potentialMap_;
 	// Squared cutoff distance to use in calculation

@@ -46,7 +46,7 @@ void DUQ::intramolecularForces(ProcessPool& procPool, Configuration* cfg, Array<
 
 	int start, stride;
 
-	// Set start/skip for parallel loop
+	// Set start/stride for parallel loop
 	start = procPool.interleavedLoopStart(ProcessPool::OverPoolProcesses);
 	stride = procPool.interleavedLoopStride(ProcessPool::OverPoolProcesses);
 
@@ -73,9 +73,8 @@ void DUQ::interatomicForces(ProcessPool& procPool, Configuration* cfg, Array<dou
 	 * This is a parallel routine, with processes operating as process groups.
 	 */
 
-	// Initialise the Cell distributor
-	const bool willBeModified = false, allowRepeats = false;
-	cfg->initialiseCellDistribution();
+	// Grab the Cell array
+	const CellArray& cellArray = cfg->cells();
 
 	// Create a ForceKernel
 	ForceKernel kernel(procPool, cfg, potentialMap_, fx, fy, fz);
@@ -83,13 +82,13 @@ void DUQ::interatomicForces(ProcessPool& procPool, Configuration* cfg, Array<dou
 	int cellId, n, m, start, stride;
 	Cell* cell;
 
-	// Set start/skip for parallel loop
+	// Set start/stride for parallel loop
 	start = procPool.interleavedLoopStart(ProcessPool::OverGroups);
 	stride = procPool.interleavedLoopStride(ProcessPool::OverGroups);
 
-	for (cellId = start; cellId<cfg->nCells(); cellId += stride)
+	for (cellId = start; cellId<cellArray.nCells(); cellId += stride)
 	{
-		cell = cfg->cell(cellId);
+		cell = cellArray.cell(cellId);
 
 		/*
 		 * Calculation Begins

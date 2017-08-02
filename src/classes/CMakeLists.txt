@@ -13,6 +13,7 @@ box_orthorhombic.cpp
 box_triclinic.cpp
 braggpeak.cpp
 cell.cpp
+cellarray.cpp
 cellneighbour.cpp
 changedata.cpp
 changestore.cpp
@@ -58,6 +59,7 @@ bond.h
 box.h
 braggpeak.h
 cell.h
+cellarray.h
 cellneighbour.h
 changedata.h
 changestore.h

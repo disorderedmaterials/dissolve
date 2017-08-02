@@ -50,10 +50,7 @@ Configuration::Configuration() : ListItem<Configuration>()
 
 	// Box / Cells
 	box_ = NULL;
-	cells_ = NULL;
-	cellFlag_ = NULL;
 	requestedCellDivisionLength_ = 10.0;
-	nCells_ = 0;
 	coordinateIndex_ = 0;
 
 	// Setup
@@ -203,7 +200,7 @@ void Configuration::clear()
 	nAtoms_ = 0;
 	if (box_ != NULL) delete box_;
 	box_ = NULL;
-	clearCells();
+	cells_.clear();
 }
 
 // Setup configuration
@@ -475,7 +472,7 @@ bool Configuration::setupProcessPool(Array<int> worldRanks)
 	if (!processPool_.calculateLimits(nAtoms(), nGrains())) return false;
 	
 	// Send Cell info to Comm so suitable parallel strategy over cells can be deduced
-	if (!processPool_.setupCellStrategy(divisions_, cellExtents_, cellNeighbourIndices_)) return false;
+	if (!processPool_.setupCellStrategy(cells_.divisions(), cells_.extents(), cells_.neighbourIndices())) return false;
 }
 
 // Return process pool for this Configuration

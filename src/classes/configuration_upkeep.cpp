@@ -34,10 +34,10 @@ bool Configuration::updateAtomsInCells()
 	Cell* currentCell, *targetCell;
 	Vec3<double> foldedR;
 	Atom* i;
-	for (int c = 0; c < nCells_; ++c)
+	for (int c = 0; c < cells_.nCells(); ++c)
 	{
 		// Grab cell pointer
-		currentCell = &cells_[c];
+		currentCell = cells_.cell(n);
 
 		// TODO Overload cell() to take a pointer to a Vec3<> in which the folded r can be returned
 		for (OrderedPointerListItem<Atom>* item = currentCell->atoms().first(); item != NULL; item = item->next)
@@ -45,7 +45,7 @@ bool Configuration::updateAtomsInCells()
 			i = item->object();
 			foldedR = box_->fold(i->r());
 			i->setCoordinates(foldedR);
-			targetCell = cell(i->r());
+			targetCell = cells_.cell(i->r());
 
 			// Need to move?
 			if (targetCell != currentCell)
@@ -74,7 +74,7 @@ bool Configuration::updateAtomInCell(int id)
 	currentCell = i->cell();
 	foldedR = box_->fold(i->r());
 	i->setCoordinates(foldedR);
-	targetCell = cell(foldedR);
+	targetCell = cells_.cell(foldedR);
 
 	// Need to move?
 	if (targetCell != currentCell) currentCell->moveAtom(i, targetCell);
@@ -86,7 +86,7 @@ bool Configuration::updateAtomInCell(int id)
 void Configuration::recreateCellAtomNeighbourLists(double pairPotentialRange)
 {
 	// Clear all existing atoms in cell neighbour lists
-	for (int n=0; n<nCells_; ++n) cell(n)->clearAtomNeighbourList();
+	for (int n=0; n<cells_.nCells(); ++n) cells_.cell(n)->clearAtomNeighbourList();
 
 	Vec3<double> r, atomR;
 	double distSq, cutoffSq;
@@ -97,7 +97,7 @@ void Configuration::recreateCellAtomNeighbourLists(double pairPotentialRange)
 	int nNeighbours, nMimNeighbours, c;
 
 	// Calculate cutoff distance squared
-	cutoffSq = pairPotentialRange + sqrt(realCellSize_.dp(realCellSize_))*0.5;
+	cutoffSq = pairPotentialRange + sqrt(cells_.realCellSize().dp(cells_.realCellSize()))*0.5;
 	Messenger::print("--> Cutoff for atom cell neighbours is %f\n", cutoffSq);
 	cutoffSq *= cutoffSq;
 

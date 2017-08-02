@@ -45,7 +45,7 @@ double DUQ::intramolecularEnergy(ProcessPool& procPool, Configuration* cfg)
 	double energy = 0.0;
 	int start, stride;
 
-	// Set start/skip for parallel loop
+	// Set start/stride for parallel loop
 	start = procPool.interleavedLoopStart(ProcessPool::OverPoolProcesses);
 	stride = procPool.interleavedLoopStride(ProcessPool::OverPoolProcesses);
 
@@ -80,32 +80,23 @@ double DUQ::interatomicEnergy(ProcessPool& procPool, Configuration* cfg)
 	 * This is a parallel routine, with processes operating as process groups.
 	 */
 
-	// Initialise the Cell distributor
-	const bool willBeModified = false, allowRepeats = false;
-	cfg->initialiseCellDistribution();
+	// Grab the Cell array
+	const CellArray& cellArray = cfg->cells();
 
 	// Create an EnergyKernel
 	EnergyKernel kernel(procPool, cfg, potentialMap_);
 
 	int cellId, n, m, start, stride;
-	Cell* cell, *otherCell;
+	Cell* cell;
 	double totalEnergy = 0.0;
-/*	
-	// TEST Invalidate all cell atom lists
-	for (int n=0; n<cfg->nCells(); ++n)
-	{
-		cfg->cell(n)->atoms().invalidateLists();
-		cfg->cell(n)->atomNeighbours().invalidateLists();
-		cfg->cell(n)->mimAtomNeighbours().invalidateLists();
-	}*/
 
-	// Set start/skip for parallel loop
+	// Set start/stride for parallel loop
 	start = procPool.interleavedLoopStart(ProcessPool::OverGroups);
 	stride = procPool.interleavedLoopStride(ProcessPool::OverGroups);
 
-	for (cellId = start; cellId<cfg->nCells(); cellId += stride)
+	for (cellId = start; cellId<cellArray.nCells(); cellId += stride)
 	{
-		cell = cfg->cell(cellId);
+		cell = cellArray.cell(cellId);
 
 		/*
 		 * Calculation Begins

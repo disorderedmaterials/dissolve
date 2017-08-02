@@ -70,7 +70,8 @@ bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
 
 	// Initialise the Cell distributor
 	const bool willBeModified = true, allowRepeats = false;
-	cfg->initialiseCellDistribution();
+	CellArray& cellArray = cfg->cells();
+	cellArray.initialiseDistribution();
 
 	// Create a local ChangeStore and EnergyKernel
 	ChangeStore changeStore(procPool);
@@ -91,17 +92,17 @@ bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
 
 	Timer timer;
 	procPool.resetAccumulatedTime();
-	while (cellId = cfg->nextAvailableCell(procPool, willBeModified, allowRepeats), cellId != Cell::AllCellsComplete)
+	while (cellId = cellArray.nextAvailableCell(procPool, willBeModified, allowRepeats), cellId != Cell::AllCellsComplete)
 	{
 		// Check for valid cell
 		if (cellId == Cell::NoCellsAvailable)
 		{
 			// No valid cell, but still need to enter into change distribution with other processes
 			changeStore.distributeAndApply(cfg);
-			cfg->finishedWithCell(procPool, willBeModified, cellId);
+			cellArray.finishedWithCell(procPool, willBeModified, cellId);
 			continue;
 		}
-		cell = cfg->cell(cellId);
+		cell = cellArray.cell(cellId);
 		Messenger::printVerbose("AtomShake: Cell %i now the target on process %s, containing %i Atoms interacting with %i neighbour cells.\n", cellId, procPool.processInfo(), cell->nAtoms(), cell->nTotalCellNeighbours());
 
 		/*
@@ -170,7 +171,7 @@ bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		changeStore.reset();
 
 		// Must unlock the Cell when we are done with it!
-		cfg->finishedWithCell(procPool, willBeModified, cellId);
+		cellArray.finishedWithCell(procPool, willBeModified, cellId);
 	}
 	timer.stop();
 

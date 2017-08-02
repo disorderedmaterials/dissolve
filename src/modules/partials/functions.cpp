@@ -259,17 +259,20 @@ bool PartialsModule::calculateSimple(ProcessPool& procPool, Configuration* cfg, 
 // Calculate partial RDFs utilising Cell neighbour lists
 bool PartialsModule::calculateCells(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet)
 {
-	const Box* box = cfg->box();
-
 	Atom* i, *j;
 	int n, m, ii, jj, nI, nJ, typeI, typeJ;
 	Atom** atomsI, **atomsJ;
 	Cell* cellI, *cellJ;
 	double distance;
 	Vec3<double> rI;
-	for (n = 0; n<cfg->nCells(); ++n)
+
+	// Grab the Box pointer and Cell array
+	const Box* box = cfg->box();
+	CellArray& cellArray = cfg->cells();
+
+	for (n = 0; n<cellArray.nCells(); ++n)
 	{
-		cellI = cfg->cell(n);
+		cellI = cellArray.cell(n);
 		atomsI = cellI->atoms().objects();
 		nI = cellI->nAtoms();
 
@@ -289,9 +292,9 @@ bool PartialsModule::calculateCells(ProcessPool& procPool, Configuration* cfg, P
 			}
 		}
 
-		for (m = n+1; m<cfg->nCells(); ++m)
+		for (m = n+1; m<cellArray.nCells(); ++m)
 		{
-			cellJ = cfg->cell(m);
+			cellJ = cellArray.cell(m);
 			atomsJ = cellJ->atoms().objects();
 			nJ = cellJ->nAtoms();
 
@@ -303,7 +306,7 @@ bool PartialsModule::calculateCells(ProcessPool& procPool, Configuration* cfg, P
 				rI = i->r();
 
 				// May need to perform mim on atom pairs...
-				if (true) //cfg->minimumImageRequired(cellI,cellJ))
+				if (cellArray.useMim(cellI,cellJ))
 				{
 					for (jj = 0; jj < nJ; ++jj)
 					{
@@ -376,8 +379,9 @@ bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration*
 	double distance;
 	int start, stride;
 	const Box* box = cfg->box();
+	CellArray& cellArray = cfg->cells();
 
-	// Set start/skip for parallel loop (pool solo)
+	// Set start/stride for parallel loop (pool solo)
 	start = procPool.interleavedLoopStart(ProcessPool::OverPoolProcesses);
 	stride = procPool.interleavedLoopStride(ProcessPool::OverPoolProcesses);
 
@@ -400,7 +404,7 @@ bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration*
 				{
 					j = atoms[jj];
 
-					if (cfg->useMim(i->cell(), j->cell())) distance = box->minimumDistance(i, j);
+					if (cellArray.useMim(i->cell(), j->cell())) distance = box->minimumDistance(i, j);
 					else distance = (i->r() - j->r()).magnitude();
 					partialgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).add(distance);
 				}
@@ -413,7 +417,7 @@ bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration*
 			{
 				i = mol->atom(b->indexI());
 				j = mol->atom(b->indexJ());
-				if (cfg->useMim(i->cell(), j->cell())) distance = box->minimumDistance(i, j);
+				if (cellArray.useMim(i->cell(), j->cell())) distance = box->minimumDistance(i, j);
 				else distance = (i->r() - j->r()).magnitude();
 				partialgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).add(distance);
 			}
@@ -426,7 +430,7 @@ bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration*
 				k = mol->atom(a->indexK());
 				
 				// Determine whether we need to apply minimum image between 'j-i' and 'j-k'
-				if (cfg->useMim(i->cell(), k->cell())) distance = box->minimumDistance(i, k);
+				if (cellArray.useMim(i->cell(), k->cell())) distance = box->minimumDistance(i, k);
 				else distance = (i->r() - k->r()).magnitude();
 				partialgr.boundHistogram(i->localTypeIndex(), k->localTypeIndex()).add(distance);
 			}

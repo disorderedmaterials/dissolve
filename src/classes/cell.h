@@ -76,11 +76,11 @@ class Cell
 	// Remove lock
 	bool removeLock();
 	// Return lockCount
-	int lockCount();
+	int lockCount() const;
 	// Clear locks
 	void clearLocks();
 	// Check lock possibility
-	bool canLock();
+	bool canLock() const;
 	// Lock self and neighbouring Cells
 	bool lock(bool willBeModified);
 	// Unlock self and neighbouring Cells

@@ -42,7 +42,7 @@
 // 	double hkCos, hkSin, hklCos, hklSin;
 // 	KVector* kVector;
 // 
-// 	// Set start/skip for parallel loop
+// 	// Set start/stride for parallel loop
 // 	int start = procPool.interleavedLoopStart(ProcessPool::OverPoolProcesses);
 // 	int stride = procPool.interleavedLoopStride(ProcessPool::OverPoolProcesses);
 // 

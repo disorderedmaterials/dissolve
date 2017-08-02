@@ -29,7 +29,7 @@
 #include "base/processpool.h"
 
 // Constructor
-ForceKernel::ForceKernel(ProcessPool& procPool, const Configuration* cfg, const PotentialMap& potentialMap, Array<double>& fx, Array<double>& fy, Array<double>& fz, double cutoffDistance) : processPool_(procPool),  configuration_(cfg), potentialMap_(potentialMap), fx_(fx), fy_(fy), fz_(fz)
+ForceKernel::ForceKernel(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, Array<double>& fx, Array<double>& fy, Array<double>& fz, double cutoffDistance) : processPool_(procPool),  configuration_(cfg), cells_(cfg->cells()), potentialMap_(potentialMap), fx_(fx), fy_(fy), fz_(fz)
 {
 	box_ = configuration_->box();
 	cutoffDistanceSquared_ = (cutoffDistance < 0.0 ? potentialMap_.range()*potentialMap_.range() : cutoffDistance*cutoffDistance);
@@ -655,7 +655,7 @@ void ForceKernel::forces(const Molecule* mol, const SpeciesBond* b)
 
 	// Determine whether we need to apply minimum image to the vector calculation
 	Vec3<double> vecji;
-	if (configuration_->useMim(i->cell(), j->cell())) vecji = box_->minimumVector(i, j);
+	if (cells_.useMim(i->cell(), j->cell())) vecji = box_->minimumVector(i, j);
 	else vecji = j->r() - i->r();
 	
 	// Get distance and normalise vector ready for force calculation
@@ -691,9 +691,9 @@ void ForceKernel::forces(const Molecule* mol, const SpeciesAngle* a)
 	Atom* k = mol->atom(a->indexK());
 
 	// Determine whether we need to apply minimum image between 'j-i' and 'j-k'
-	if (configuration_->useMim(j->cell(), i->cell())) vecji = box_->minimumVector(j, i);
+	if (cells_.useMim(j->cell(), i->cell())) vecji = box_->minimumVector(j, i);
 	else vecji = i->r() - j->r();
-	if (configuration_->useMim(j->cell(), k->cell())) vecjk = box_->minimumVector(j, k);
+	if (cells_.useMim(j->cell(), k->cell())) vecjk = box_->minimumVector(j, k);
 	else vecjk = k->r() - j->r();
 	
 	// Calculate angle

@@ -186,7 +186,7 @@ bool Configuration::setupMolecules()
 		for (int n = 0; n<sp->nAtoms(); ++n)
 		{
 			// Get cell location of atom, and find an empty atom slot in that cell
-			c = cell(atoms_[atomCount].r());
+			c = cells_.cell(atoms_[atomCount].r());
 
 			// Set the master atom reference
 			atoms_[atomCount].setIndex(atomCount);

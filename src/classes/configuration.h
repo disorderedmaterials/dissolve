@@ -23,6 +23,7 @@
 #define DUQ_CONFIGURATION_H
 
 #include "classes/atomtypelist.h"
+#include "classes/cellarray.h"
 #include "classes/molecule.h"
 #include "classes/histogram.h"
 #include "classes/kvector.h"
@@ -224,36 +225,12 @@ class Configuration : public ListItem<Configuration>
 	Box* box_;
 	// Requested side length for individual Cell
 	double requestedCellDivisionLength_;
-	// Cell divisions along each axis
-	Vec3<int> divisions_;
-	// Fractional Cell size
-	Vec3<double> cellSize_;
-	// Real Cell size
-	Vec3<double> realCellSize_;
-	// Cell extents out from given central cell
-	Vec3<int> cellExtents_;
-	// List of Cell neighbour indices
-	List< ListVec3<int> > cellNeighbourIndices_;
-	// Total number of Cells in Box
-	int nCells_;
-	// Cell array (one-dimensional)
-	Cell* cells_;
-	// Cell modified/completed/calculated flag
-	bool* cellFlag_;
-	// Counter for distributed Cells
-	int nCellsDistributed_;
-	// Last Cell distributed
-	int lastCellDistributed_;
 	// Box normalisation array to load/save for this configuration
 	CharString boxNormalisationFileName_;
 	// RDF Normalisation function for Box shape/extent
 	XYData boxNormalisation_;
-	
-	private:
-	// Clear Cell arrays
-	void clearCells();
-	// Return whether the contents of two Cells should be mim'd in calculations
-	bool minimumImageRequired(Cell* a, Cell* b) const;
+	// Cell array
+	CellArray cells_;
 
 	public:
 	// Set relative box lengths
@@ -278,26 +255,6 @@ class Configuration : public ListItem<Configuration>
 	bool setupBox(double ppRange);
 	// Generate Cells for Box
 	bool generateCells(double cellSize, double pairPotentialRange, double atomicDensity);
-	// Return number of Cells for box
-	int nCells() const;
-	// Return real Cell dimensions
-	Vec3<double> realCellSize() const;
-	// Retrieve Cell with (wrapped) grid reference specified
-	Cell* cell(int x, int y, int z) const;
-	// Retrieve Cell with id specified
-	Cell* cell(int id) const;
-	// Return Cell which contains specified coordinate
-	Cell* cell(const Vec3<double> r) const;
-	// Return maximum number of atoms per cell
-	int maxAtomsPerCell() const;
-	// Return whether two Cells need minimum image calculation
-	bool useMim(Cell* a, Cell* b) const;
-	// Initialise Cells for distribution
-	void initialiseCellDistribution();
-	// Return next available Cell for calculation
-	int nextAvailableCell(ProcessPool& procPool, bool willBeModified, bool allowRepeats);
-	// Unlock Cell specified, once calculation is complete
-	bool finishedWithCell(ProcessPool& procPool, bool willBeModified, int cellId);
 	// Set box normalisation array to load/save for this configuration
 	void setBoxNormalisationFile(const char* filename);
 	// Return box normalisation file to load/save for this configuration
@@ -306,6 +263,8 @@ class Configuration : public ListItem<Configuration>
 	bool loadBoxNormalisationFile();
 	// Return current Box normalisation array
 	const XYData& boxNormalisation() const;
+	// Return cell array
+	CellArray& cells();
 
 
 	/*
