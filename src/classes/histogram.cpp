@@ -162,7 +162,7 @@ void Histogram::add(double x)
 	else ++nMissed_;
 }
 
-// Normalise data, giving raltive histogram
+// Normalise data, giving relative histogram
 Array<double> Histogram::normalised()
 {
 	Array<double> normalised(nBins_);
