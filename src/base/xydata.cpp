@@ -774,8 +774,9 @@ double XYData::mape(XYData ref)
 		// Accumulate numerator - sum of forecast errors
 		sume += fabs(y_[n] - ref.interpolated(x_[n]));
 
-		// Accumulate denominator - one-step naive forecast
+		// Accumulate denominator - one-step naive forecast (backwards forecast for first point)
 		if (nPointsConsidered > 0) sumf += fabs(y_[n] - y_[n-1]);
+		else if (n < x_.nItems()-1) sumf += fabs(y_[n] - y_[n+1]);
 
 		lastX = x_[n];
 		++nPointsConsidered;
@@ -783,7 +784,9 @@ double XYData::mape(XYData ref)
 
 	// Finalise MAPE and summarise result
 	double denominator;
-	if (sumf > 0.0) denominator = (double(nPointsConsidered) / double(nPointsConsidered-1)) * sumf;
+	// Normalisation to N/(N-1) not performed when using one-step backwards forecast for first point.
+// 	if (sumf > 0.0) denominator = (double(nPointsConsidered) / double(nPointsConsidered-1)) * sumf;
+	if (sumf > 0.0) denominator = sumf;
 	else denominator = 1.0;
 	double mape = sume / denominator;
 	Messenger::print("MAPE between datasets is %15.9e over %15.9e < x < %15.9e (%i points).\n", mape, firstX, lastX, nPointsConsidered);
