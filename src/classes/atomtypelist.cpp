@@ -72,7 +72,7 @@ AtomTypeData* AtomTypeList::add(AtomType* atomType, int population, bool exchang
 	if (atd == NULL)
 	{
 		atd = types_.add();
-		atd->initialise(types_.nItems()-1, atomType, population);
+		atd->initialise(types_.nItems()-1, atomType, 0);
 		atd->setExchangeable(exchangeable);
 	}
 
