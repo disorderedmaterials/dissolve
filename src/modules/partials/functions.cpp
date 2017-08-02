@@ -27,6 +27,38 @@
 #include "classes/weights.h"
 #include <classes/cell.h>
 
+// Partial Calculation Method enum
+const char* PartialsMethodKeywords[] = { "Auto", "Test", "Simple", "Cells" };
+
+// Convert character string to PartialsMethod
+PartialsModule::PartialsMethod PartialsModule::partialsMethod(const char* s)
+{
+	for (int n=0; n<nPartialsMethods; ++n) if (DUQSys::sameString(s, PartialsMethodKeywords[n])) return (PartialsModule::PartialsMethod) n;
+	return PartialsModule::nPartialsMethods;
+}
+
+// Return character string for PartialsMethod
+const char* PartialsModule::partialsMethod(PartialsModule::PartialsMethod pm)
+{
+	return PartialsMethodKeywords[pm];
+}
+
+// Weighting Type enum
+const char* WeightingTypeKeywords[] = { "None", "Neutron" };
+
+// Convert character string to WeightingType
+PartialsModule::WeightingType PartialsModule::weightingType(const char* s)
+{
+	for (int n=0; n<nWeightingTypes; ++n) if (DUQSys::sameString(s, WeightingTypeKeywords[n])) return (PartialsModule::WeightingType) n;
+	return PartialsModule::nWeightingTypes;
+}
+
+// Return character string for WeightingType
+const char* PartialsModule::weightingType(PartialsModule::WeightingType wt)
+{
+	return WeightingTypeKeywords[wt];
+}
+
 // Test reference data against calculated partials set
 bool PartialsModule::testReferencePartials(GenericList& sourceModuleData, PartialSet& partials, const char* dataPrefix, double testThreshold)
 {
@@ -102,7 +134,32 @@ bool PartialsModule::testReferencePartials(GenericList& sourceModuleData, Partia
 	return true;
 }
 
-// Calculate partial RDFs with simple double-loop
+// Calculate partial RDFs in serial with simple double-loop
+bool PartialsModule::calculateTest(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet)
+{
+	// Calculate radial distribution functions with a simple double loop, in serial
+	const Box* box = cfg->box();
+	Atom* atoms = cfg->atoms();
+	int ii, jj, typeI;
+	double distance;
+	double rbin = 1.0 / cfg->rdfBinWidth();
+	Vec3<double> rI;
+
+	for (ii = 0; ii < cfg->nAtoms()-1; ++ii)
+	{
+		rI = atoms[ii].r();
+		typeI = atoms[ii].localTypeIndex();
+		for (jj = ii+1; jj < cfg->nAtoms(); ++jj)
+		{
+			distance = box->minimumDistance(rI, atoms[jj].r());
+			partialSet.fullHistogram(typeI, atoms[jj].localTypeIndex()).add(distance);
+		}
+	}
+
+	return true;
+}
+
+// Calculate partial RDFs with optimised double-loop
 bool PartialsModule::calculateSimple(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet)
 {
 	// Variables
@@ -183,6 +240,7 @@ bool PartialsModule::calculateSimple(ProcessPool& procPool, Configuration* cfg, 
 			{
 				centre = ri[i];
 				for (j = 0; j < maxr[typeJ]; ++j) bins[j] = box->minimumDistance(centre, rj[j]) * rbin;
+				for (j = 0; j < maxr[typeJ]; ++j) if (bins[j] <= 0) printf("i,j = %i,%i, bin = %i\n", i, j, bins[j]);
 				for (j = 0; j < maxr[typeJ]; ++j) if (bins[j] < nPoints) ++histogram[bins[j]];
 			}
 		}
@@ -208,7 +266,7 @@ bool PartialsModule::calculateCells(ProcessPool& procPool, Configuration* cfg, P
 	Atom** atomsI, **atomsJ;
 	Cell* cellI, *cellJ;
 	double distance;
-	Vec3<double> r;
+	Vec3<double> rI;
 	for (n = 0; n<cfg->nCells(); ++n)
 	{
 		cellI = cfg->cell(n);
@@ -238,27 +296,29 @@ bool PartialsModule::calculateCells(ProcessPool& procPool, Configuration* cfg, P
 			nJ = cellJ->nAtoms();
 
 			// Add contributions between atoms in cellI and cellJ
-			for (ii = 0; ii < nI-1; ++ii)
+			for (ii = 0; ii < nI; ++ii)
 			{
 				i = atomsI[ii];
 				typeI = i->localTypeIndex();
+				rI = i->r();
 
 				// May need to perform mim on atom pairs...
 				if (true) //cfg->minimumImageRequired(cellI,cellJ))
 				{
-					for (jj = ii+1; jj < nI; ++jj)
+					for (jj = 0; jj < nJ; ++jj)
 					{
-						distance = box->minimumDistance(i, j);
-						partialSet.fullHistogram(typeI,j->localTypeIndex()).add(distance);
+						j = atomsJ[jj];
+						distance = box->minimumDistance(j, rI);
+						partialSet.fullHistogram(typeI, j->localTypeIndex()).add(distance);
 					}
 				}
 				else
 				{
-					for (jj = ii+1; jj < nI; ++jj)
+					for (jj = 0; jj < nJ; ++jj)
 					{
 						j = atomsJ[jj];
-						distance = (i->r() - j->r()).magnitude();
-						partialSet.fullHistogram(typeI,j->localTypeIndex()).add(distance);
+						distance = (rI - j->r()).magnitude();
+						partialSet.fullHistogram(typeI, j->localTypeIndex()).add(distance);
 					}
 				}
 			}
@@ -270,7 +330,7 @@ bool PartialsModule::calculateCells(ProcessPool& procPool, Configuration* cfg, P
 }
 
 // Calculate unweighted partials for the specified Configuration
-bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg, bool allIntra, int smoothing)
+bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg, PartialsModule::PartialsMethod method, bool allIntra, int smoothing)
 {
 	// Does a PartialSet already exist for this Configuration?
 	bool wasCreated;
@@ -296,11 +356,16 @@ bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration*
 	 * Calculate full (intra+inter) partials
 	 */
 
-	// if (method == 0) ...
 	Timer timer;
 	timer.start();
 	procPool.resetAccumulatedTime();
-	calculateSimple(procPool, cfg, partialgr);
+	if (method == PartialsModule::TestMethod) calculateTest(procPool, cfg, partialgr);
+	else if (method == PartialsModule::SimpleMethod) calculateSimple(procPool, cfg, partialgr);
+	else if (method == PartialsModule::CellsMethod) calculateCells(procPool, cfg, partialgr);
+	else if (method == PartialsModule::AutoMethod)
+	{
+		cfg->nAtoms() > 10000 ? calculateCells(procPool, cfg, partialgr) : calculateSimple(procPool, cfg, partialgr);
+	}
 	timer.stop();
 	Messenger::print("Partials: Finished calculation of partials (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
 

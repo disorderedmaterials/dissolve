@@ -56,6 +56,12 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 	const double braggQIndepBroadening = GenericListHelper<double>::retrieve(moduleData, "BraggQIndepBroadening", uniqueName(), options_.valueAsDouble("BraggQIndepBroadening"));
 	const double qDepBroadening = GenericListHelper<double>::retrieve(moduleData, "QDepBroadening", uniqueName(), options_.valueAsDouble("QDepBroadening"));
 	const double qIndepBroadening = GenericListHelper<double>::retrieve(moduleData, "QIndepBroadening", uniqueName(), options_.valueAsDouble("QIndepBroadening"));
+	PartialsModule::PartialsMethod method = PartialsModule::partialsMethod(GenericListHelper<CharString>::retrieve(moduleData, "Method", uniqueName_, options_.valueAsString("Method")));
+	if (method == PartialsModule::nPartialsMethods)
+	{
+		Messenger::error("Partials: Invalid calculation method '%s' found.\n", GenericListHelper<CharString>::retrieve(moduleData, "Method", uniqueName_, options_.valueAsString("Method")).get());
+		return false;
+	}
 	const bool normaliseToAvSq = GenericListHelper<bool>::retrieve(moduleData, "NormaliseToAvSq", uniqueName(), options_.valueAsBool("NormaliseToAvSq"));
 	const bool normaliseToSqAv = GenericListHelper<bool>::retrieve(moduleData, "NormaliseToSqAv", uniqueName(), options_.valueAsBool("NormaliseToSqAv"));
 	const double qDelta = GenericListHelper<double>::retrieve(moduleData, "QDelta", uniqueName(), options_.valueAsDouble("QDelta"));
@@ -67,28 +73,27 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 	const bool sqCalculation = GenericListHelper<bool>::retrieve(moduleData, "StructureFactor", uniqueName(), options_.valueAsBool("StructureFactor"));
 	const bool testMode = GenericListHelper<bool>::retrieve(moduleData, "Test", uniqueName(), options_.valueAsBool("Test"));
 	const double testThreshold = GenericListHelper<double>::retrieve(moduleData, "TestThreshold", uniqueName(), options_.valueAsDouble("TestThreshold"));
-	CharString weightsString = GenericListHelper<CharString>::retrieve(moduleData, "Weights", uniqueName_, options_.valueAsString("Weights"));
-	PartialsModule::WeightingType weightsType = PartialsModule::NoWeighting;
-	if (DUQSys::sameString(weightsString, "Neutron")) weightsType = PartialsModule::NeutronWeighting;
-	else if (!DUQSys::sameString(weightsString, "None"))
+	PartialsModule::WeightingType weightsType = PartialsModule::weightingType(GenericListHelper<CharString>::retrieve(moduleData, "Weights", uniqueName_, options_.valueAsString("Weights")));
+	if (weightsType == PartialsModule::nWeightingTypes)
 	{
-		Messenger::error("Partials: Invalid weighting scheme '%s' found.\n", weightsString.get());
+		Messenger::error("Partials: Invalid weighting scheme '%s' found.\n", GenericListHelper<CharString>::retrieve(moduleData, "Weights", uniqueName_, options_.valueAsString("Weights")).get());
 		return false;
 	}
 
 	// Print argument/parameter summary
 	Messenger::print("Partails: Use of all pairs in intramolecular partials is %s.\n", DUQSys::onOff(allIntra));
-	Messenger::print("Partials: Calculating S(Q)/F(Q) over %f < Q < %f Angstroms**-1 using step size of %f Angstroms**-1.\n", qMin, qMax, qDelta);
-	Messenger::print("Partials: Q-dependent FWHM broadening to use is %f, Q-independent FWHM broadening to use is %f.\n", qDepBroadening, qIndepBroadening);
-	if (braggOn) Messenger::print("Partials: Q-dependent FWHM Bragg broadening to use is %f, Q-independent FWHM Bragg broadening to use is %f.\n", braggQDepBroadening, braggQIndepBroadening);
-	Messenger::print("Partials: Save data is %s.\n", DUQSys::onOff(saveData));
+	Messenger::print("Partials: Calculation method for partials is '%s'.\n", PartialsModule::partialsMethod(method));
+	Messenger::print("Partials: Degree of smoothing to apply to calculated partial g(r) is %i (%s).\n", smoothing, DUQSys::onOff(smoothing > 0));
 	Messenger::print("Partials: Structure factor calculation is %s.\n", DUQSys::onOff(sqCalculation));
 	if (sqCalculation)
 	{
-		Messenger::print("Partials: Structure factor QMax = %f, QDelta = %f.\n", qMax, qDelta);
+		Messenger::print("Partials: Calculating S(Q)/F(Q) over %f < Q < %f Angstroms**-1 using step size of %f Angstroms**-1.\n", qMin, qMax, qDelta);
 		Messenger::print("Partials: Bragg calculation is %s.\n", DUQSys::onOff(braggOn));
+		Messenger::print("Partials: Q-dependent FWHM broadening to use is %f, Q-independent FWHM broadening to use is %f.\n", qDepBroadening, qIndepBroadening);
 		if (braggOn) Messenger::print("Partials: Bragg Q-dependent FWHM broadening to use is %f, Q-independent FWHM broadening to use is %f.\n", braggQDepBroadening, braggQIndepBroadening);
 	}
+	Messenger::print("Partials: Weighting scheme to employ is '%s'.\n", PartialsModule::weightingType(weightsType));
+	Messenger::print("Partials: Save data is %s.\n", DUQSys::onOff(saveData));
 
 	/*
 	 * Regardless of whether we are a main processing task (summing some combination of Configuration's partials) or multiple independent Configurations,
@@ -98,12 +103,12 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 	while (Configuration* cfg = configIterator.iterate())
 	{
 		// Calculate unweighted partials for this Configuration (under generic Module name 'Partials', rather than the uniqueName_)
-		calculateUnweightedGR(procPool, cfg, allIntra, smoothing);
+		calculateUnweightedGR(procPool, cfg, method, allIntra, smoothing);
 		PartialSet& unweightedgr = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedGR", "Partials");
 		if (saveData && (!configurationLocal_) && (!MPIRunMaster(procPool, unweightedgr.save()))) return false;
 
 		// Test unweighted g(r)?
-		if (testMode)
+		if (testMode && configurationLocal_)
 		{
 			Messenger::print("\nTesting calculated unweighted g(r) data against supplied datasets (if any)...\n");
 			if (!testReferencePartials(moduleData, unweightedgr, "TestReferenceGR-unweighted", testThreshold)) return false;
@@ -117,7 +122,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 			if (saveData && (!configurationLocal_) && (!MPIRunMaster(procPool, unweightedsq.save()))) return false;
 
 			// Test unweighted S(Q)?
-			if (testMode)
+			if (testMode && configurationLocal_)
 			{
 				Messenger::print("\nTesting calculated unweighted S(Q) data against supplied datasets (if any)...\n");
 				if (!testReferencePartials(moduleData, unweightedsq, "TestReferenceSQ-unweighted", testThreshold)) return false;
@@ -172,7 +177,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 			calculateWeightedGR(unweightedgr, weightedgr, weights);
 
 			// Test weighted g(r)?
-			if (testMode)
+			if (testMode && configurationLocal_)
 			{
 				Messenger::print("\nTesting calculated weighted g(r) data against supplied datasets (if any)...\n");
 				if (!testReferencePartials(moduleData, weightedgr, "TestReferenceGR-weighted", testThreshold)) return false;
@@ -185,7 +190,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 				calculateWeightedSQ(unweightedsq, weightedsq, weights);
 
 				// Test weighted S(Q)?
-				if (testMode)
+				if (testMode && configurationLocal_)
 				{
 					Messenger::print("\nTesting calculated weighted S(Q) data against supplied datasets (if any)...\n");
 					if (!testReferencePartials(moduleData, weightedsq, "TestReferenceSQ-weighted", testThreshold)) return false;

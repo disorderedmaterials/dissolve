@@ -115,16 +115,28 @@ class PartialsModule : public Module
 	private:
 	// Test reference data against calculated PartialSet set
 	bool testReferencePartials(GenericList& sourceModuleData, PartialSet& partialgr, const char* dataPrefix, double testThreshold);
-	// Calculate partial RDFs with simple double-loop
+	// Calculate partial RDFs in serial with simple double-loop
+	bool calculateTest(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet);
+	// Calculate partial RDFs with optimised double-loop
 	bool calculateSimple(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet);
 	// Calculate partial RDFs utilising Cell neighbour lists
 	bool calculateCells(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet);
 
 	public:
+	// Partial Calculation Method enum
+	enum PartialsMethod { AutoMethod, TestMethod, SimpleMethod, CellsMethod, nPartialsMethods };
+	// Convert character string to PartialsMethod
+	static PartialsMethod partialsMethod(const char* s);
+	// Return character string for PartialsMethod
+	static const char* partialsMethod(PartialsMethod pm);
 	// Weighting Type enum
-	enum WeightingType { NoWeighting, NeutronWeighting };
+	enum WeightingType { NoWeighting, NeutronWeighting, nWeightingTypes };
+	// Convert character string to WeightingType
+	static WeightingType weightingType(const char* s);
+	// Return character string for WeightingType
+	static const char* weightingType(WeightingType wt);
 	// (Re)calculate unweighted partials for the specified Configuration
-	bool calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg, bool allIntra, int smoothing);
+	bool calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg, PartialsModule::PartialsMethod method, bool allIntra, int smoothing);
 	// Calculate weighted partials from supplied unweighted partials
 	bool calculateWeightedGR(PartialSet& unweightedPartials, PartialSet& weightedPartials, Weights& weights);
 	// Calculate unweighted S(Q) from supplied unweighted g(r)

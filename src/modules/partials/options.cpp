@@ -32,6 +32,7 @@ void PartialsModule::setupOptions()
 	options_.add("Bragg", bool(false), "Enable calculation of Bragg scattering");
 	options_.add("BraggQDepBroadening", 0.0063, "FWHM of Gaussian for Q-dependent Bragg broadening function");
 	options_.add("BraggQIndepBroadening", 0.0, "FWHM of Gaussian for Q-independent Bragg broadening function");
+	options_.add("Method", "Auto", "Calculation method for partial radial distribution functions");
 	options_.add("NormaliseToAvSq", bool(false), "Normalise calculated F(Q) to < b >**2");
 	options_.add("NormaliseToSqAv", bool(false), "Normalise calculated F(Q) to < b**2 >");
 	options_.add("QDelta", 0.05, "Step size in Q for S(Q) calculation");
