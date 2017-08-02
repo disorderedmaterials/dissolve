@@ -1,6 +1,6 @@
 /*
 	*** Partials Module
-	*** src/modules/partials.h
+	*** src/modules/partials/partials.h
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -117,6 +117,8 @@ class PartialsModule : public Module
 	bool testReferencePartials(GenericList& sourceModuleData, AtomTypeList& typesList, PartialSet& partialgr, const char* dataPrefix, double testThreshold);
 	// Calculate partial RDFs with simple double-loop
 	bool calculateSimple(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet);
+	// Calculate partial RDFs utilising Cell neighbour lists
+	bool calculateCells(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet);
 
 	public:
 	// Weighting Type enum

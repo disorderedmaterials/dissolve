@@ -25,6 +25,7 @@
 #include "classes/box.h"
 #include "classes/species.h"
 #include "classes/weights.h"
+#include <classes/cell.h>
 
 // Test reference data against calculated partials set
 bool PartialsModule::testReferencePartials(GenericList& sourceModuleData, AtomTypeList& typesList, PartialSet& partials, const char* dataPrefix, double testThreshold)
@@ -190,6 +191,77 @@ bool PartialsModule::calculateSimple(ProcessPool& procPool, Configuration* cfg, 
 	{
 		delete[] r[n];
 		delete[] binss[n];
+	}
+
+	return true;
+}
+
+// Calculate partial RDFs utilising Cell neighbour lists
+bool PartialsModule::calculateCells(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet)
+{
+	const Box* box = cfg->box();
+
+	Atom* i, *j;
+	int n, m, ii, jj, nI, nJ, typeI, typeJ;
+	Atom** atomsI, **atomsJ;
+	Cell* cellI, *cellJ;
+	double distance;
+	Vec3<double> r;
+	for (n = 0; n<cfg->nCells(); ++n)
+	{
+		cellI = cfg->cell(n);
+		atomsI = cellI->atoms().objects();
+		nI = cellI->nAtoms();
+
+		// Add contributions between atoms in cellI
+		for (ii = 0; ii < nI-1; ++ii)
+		{
+			i = atomsI[ii];
+			typeI = i->localTypeIndex();
+
+			for (jj = ii+1; jj < nI; ++jj)
+			{
+				j = atomsI[jj];
+
+				// No need to perform MIM since we're in the same cell
+				distance = (i->r() - j->r()).magnitude();
+				partialSet.fullHistogram(typeI,j->localTypeIndex()).add(distance);
+			}
+		}
+
+		for (m = n+1; m<cfg->nCells(); ++m)
+		{
+			cellJ = cfg->cell(m);
+			atomsJ = cellJ->atoms().objects();
+			nJ = cellJ->nAtoms();
+
+			// Add contributions between atoms in cellI and cellJ
+			for (ii = 0; ii < nI-1; ++ii)
+			{
+				i = atomsI[ii];
+				typeI = i->localTypeIndex();
+
+				// May need to perform mim on atom pairs...
+				if (true) //cfg->minimumImageRequired(cellI,cellJ))
+				{
+					for (jj = ii+1; jj < nI; ++jj)
+					{
+						distance = box->minimumDistance(i, j);
+						partialSet.fullHistogram(typeI,j->localTypeIndex()).add(distance);
+					}
+				}
+				else
+				{
+					for (jj = ii+1; jj < nI; ++jj)
+					{
+						j = atomsJ[jj];
+						distance = (i->r() - j->r()).magnitude();
+						partialSet.fullHistogram(typeI,j->localTypeIndex()).add(distance);
+					}
+				}
+			}
+
+		}
 	}
 
 	return true;
