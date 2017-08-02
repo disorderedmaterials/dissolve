@@ -56,7 +56,6 @@ Configuration::Configuration() : ListItem<Configuration>()
 	// Setup
 	rdfBinWidth_ = 0.025;
 	rdfRange_ = -1.0;
-	rdfSmoothing_ = 0;
 	requestedRDFRange_ = -1.0;
 	temperature_ = 300.0;
 	braggMaximumQ_ = 1.0;

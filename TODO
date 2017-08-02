@@ -9,6 +9,7 @@ o Allow for Fixed atoms:
 o Different bond types - e.g. replicate those used in EPSR for reference?
 o Accumulate timing information for each module, displaying averages and total in schedule at each step?
 o Establish proper limit for switching between RDF calculation methods
+o Move Bragg-related functions from Configuration to PartialsModule, and remove need for src/classes/configuration_rdfs.cpp.
 
 
 -------------------------------------------

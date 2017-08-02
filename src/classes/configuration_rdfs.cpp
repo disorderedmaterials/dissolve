@@ -305,18 +305,6 @@ double Configuration::rdfRange()
 	return rdfRange_;
 }
 
-// Set degree of smoothing to apply to calculated RDF data
-void Configuration::setRDFSmoothing(int smoothingDegree)
-{
-	rdfSmoothing_ = smoothingDegree;
-}
-
-// Return degree of smoothing to apply to calculated RDF data
-int Configuration::rdfSmoothing()
-{
-	return rdfSmoothing_;
-}
-
 // Set requested RDF extent
 void Configuration::setRequestedRDFRange(double range)
 {

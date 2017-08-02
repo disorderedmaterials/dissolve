@@ -275,8 +275,6 @@ class Configuration : public ListItem<Configuration>
 	double rdfBinWidth_;
 	// Maximum extent (actual) of calculated RDFs
 	double rdfRange_;
-	// Degree of smoothing to apply to calculated RDF data, if any
-	int rdfSmoothing_;
 	// Maximum extent (requested) of calculated RDFs
 	double requestedRDFRange_;
 	// Maximum Q value for Bragg calculation
@@ -306,10 +304,6 @@ class Configuration : public ListItem<Configuration>
 	double rdfBinWidth();
 	// Return working RDF extent
 	double rdfRange();
-	// Set degree of smoothing to apply to calculated RDF data
-	void setRDFSmoothing(int smoothingDegree);
-	// Return degree of smoothing to apply to calculated RDF data
-	int rdfSmoothing();
 	// Set requested RDF extent
 	void setRequestedRDFRange(double range);
 	// Return requested RDF extent
