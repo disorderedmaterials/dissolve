@@ -25,16 +25,15 @@
 #include "classes/grain.h"
 #include "classes/changestore.h"
 
-// Update cell locations of all atoms
+// Update Cell locations of all atoms
 bool Configuration::updateAtomsInCells()
 {
-	// Fold the coordinates of each atom into the box, and then check its cell location, moving if necessary.
-	// Loop over cells, focussing on one atom index at a time. Do it this way to try and avoid moving large numbers of atoms into one cell at once, causing an overflow.
-	int n, atomId = 0;
+	// Fold the coordinates of each atom into the box, and then check its Cell location, moving if necessary.
+	// Loop over Cells, focussing on one atom index at a time. Do it this way to try and avoid moving large numbers of atoms into one cell at once, causing an overflow.
 	Cell* currentCell, *targetCell;
 	Vec3<double> foldedR;
 	Atom* i;
-	for (int c = 0; c < cells_.nCells(); ++c)
+	for (int n = 0; n < cells_.nCells(); ++n)
 	{
 		// Grab cell pointer
 		currentCell = cells_.cell(n);
