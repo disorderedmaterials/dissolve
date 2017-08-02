@@ -392,6 +392,44 @@ bool CellArray::useMim(Cell* a, Cell* b) const
 	return false;
 }
 
+// Return if any Atoms in the supplied Cells are within the range supplied
+bool CellArray::withinRange(Cell* a, Cell* b, double distance)
+{
+	/*
+	 * For the supplied Cells, check whether it is possible for the contained Atoms to be within the specified distance.
+	 */
+#ifdef CHECKS
+	// Check for NULL cell pointers
+	if (a == NULL)
+	{
+		Messenger::error("NULL_POINTER - NULL Cell pointer 'a' given to CellArray::useMim().\n");
+		return false;
+	}
+	if (b == NULL)
+	{
+		Messenger::error("NULL_POINTER - NULL Cell pointer 'b' given to CellArray::useMim().\n");
+		return false;
+	}
+#endif
+
+	// We need both the minimum image centroid-centroid distance, as well as the integer mim grid-reference delta
+	double centroidDistance = box_->minimumDistance(a->centre(), b->centre());
+	Vec3<double> u(a->gridReference().x-b->gridReference().x, a->gridReference().y-b->gridReference().y, a->gridReference().z-b->gridReference().z);
+	if (u.x > divisions_.x*0.5) u.x -= divisions_.x;
+	else if (u.x < -divisions_.x*0.5) u.x += divisions_.x;
+	if (u.y > divisions_.y*0.5) u.y -= divisions_.y;
+	else if (u.y < -divisions_.y*0.5) u.y += divisions_.y;
+	if (u.z > divisions_.z*0.5) u.z -= divisions_.z;
+	else if (u.z < -divisions_.z*0.5) u.z += divisions_.z;
+	double gridMagnitude = u.magnitude();
+
+	// Now, we can take the centroidDistance and reduce its magnitude by one unit (relative to the gridMagnitude)
+	centroidDistance *= (gridMagnitude - 1.0) / gridMagnitude;
+
+	// If this distance is now less than the specified distance, it is possible for within the Cells to interact
+	return (centroidDistance <= distance);
+}
+
 /*
  * Cell Distribution
  */

@@ -22,19 +22,6 @@
 #ifndef DUQ_CELLARRAY_H
 #define DUQ_CELLARRAY_H
 
-// #include "classes/atomtypelist.h"
-// #include "classes/molecule.h"
-// #include "classes/histogram.h"
-// #include "classes/kvector.h"
-// #include "classes/braggpeak.h"
-// #include "modules/modulelist.h"
-// #include "base/xydata.h"
-// #include "base/processpool.h"
-// #include "templates/genericlist.h"
-// #include "templates/vector3.h"
-// #include "templates/orderedlist.h"
-// #include "templates/array.h"
-
 // Forward Declarations
 class Box;
 class Cell;
@@ -93,6 +80,8 @@ class CellArray
 	Cell* cell(const Vec3<double> r) const;
 	// Return whether two Cells need minimum image calculation
 	bool useMim(Cell* a, Cell* b) const;
+	// Return if any Atoms in the supplied Cells are within the range supplied
+	bool withinRange(Cell* a, Cell* b, double distance);
 
 
 	/*

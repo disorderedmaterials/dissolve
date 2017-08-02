@@ -240,7 +240,6 @@ bool PartialsModule::calculateSimple(ProcessPool& procPool, Configuration* cfg, 
 			{
 				centre = ri[i];
 				for (j = 0; j < maxr[typeJ]; ++j) bins[j] = box->minimumDistance(centre, rj[j]) * rbin;
-				for (j = 0; j < maxr[typeJ]; ++j) if (bins[j] <= 0) printf("i,j = %i,%i, bin = %i\n", i, j, bins[j]);
 				for (j = 0; j < maxr[typeJ]; ++j) if (bins[j] < nPoints) ++histogram[bins[j]];
 			}
 		}
@@ -263,7 +262,7 @@ bool PartialsModule::calculateCells(ProcessPool& procPool, Configuration* cfg, P
 	int n, m, ii, jj, nI, nJ, typeI, typeJ;
 	Atom** atomsI, **atomsJ;
 	Cell* cellI, *cellJ;
-	double distance;
+	double distance, rdfRange = cfg->rdfRange();
 	Vec3<double> rI;
 
 	// Grab the Box pointer and Cell array
@@ -292,22 +291,25 @@ bool PartialsModule::calculateCells(ProcessPool& procPool, Configuration* cfg, P
 			}
 		}
 
+		// Add contributions between atoms in cellI and cellJ
 		for (m = n+1; m<cellArray.nCells(); ++m)
 		{
+			// Grab cell J and check that we need to consider it (i.e. it is within range)
 			cellJ = cellArray.cell(m);
+// 			if (!cellArray.withinRange(cellI, cellJ, rdfRange)) continue;
+
 			atomsJ = cellJ->atoms().objects();
 			nJ = cellJ->nAtoms();
 
-			// Add contributions between atoms in cellI and cellJ
-			for (ii = 0; ii < nI; ++ii)
+			// Only perform mim on atom pairs if we really need to...
+			if (cellArray.useMim(cellI,cellJ))
 			{
-				i = atomsI[ii];
-				typeI = i->localTypeIndex();
-				rI = i->r();
-
-				// May need to perform mim on atom pairs...
-				if (cellArray.useMim(cellI,cellJ))
+				for (ii = 0; ii < nI; ++ii)
 				{
+					i = atomsI[ii];
+					typeI = i->localTypeIndex();
+					rI = i->r();
+
 					for (jj = 0; jj < nJ; ++jj)
 					{
 						j = atomsJ[jj];
@@ -315,8 +317,15 @@ bool PartialsModule::calculateCells(ProcessPool& procPool, Configuration* cfg, P
 						partialSet.fullHistogram(typeI, j->localTypeIndex()).add(distance);
 					}
 				}
-				else
+			}
+			else
+			{
+				for (ii = 0; ii < nI; ++ii)
 				{
+					i = atomsI[ii];
+					typeI = i->localTypeIndex();
+					rI = i->r();
+
 					for (jj = 0; jj < nJ; ++jj)
 					{
 						j = atomsJ[jj];
@@ -325,7 +334,6 @@ bool PartialsModule::calculateCells(ProcessPool& procPool, Configuration* cfg, P
 					}
 				}
 			}
-
 		}
 	}
 
