@@ -174,6 +174,10 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 		fracCentre_.x += fractionalCellSize_.x;
 	}
 
+	// Calculate Cell axes matrix
+	axes_ = box_->axes();
+	axes_.columnMultiply(fractionalCellSize_);
+
 	// Construct Cell neighbour lists
 	Messenger::print("--> Creating cell neighbour lists...\n");
 	// Make a list of integer vectors which we'll then use to pick Cells for the neighbour lists
@@ -375,19 +379,13 @@ bool CellArray::useMim(Cell* a, Cell* b) const
 	// Never require images for the same Cell
 	if (a == b) return false;
 
-	// Do straight check on integer Cell distance
 	Vec3<int> u = a->gridReference() - b->gridReference();
-	if (abs(u.x)*2 >= divisions_.x) return true;
-	if (abs(u.y)*2 >= divisions_.y) return true;
-	if (abs(u.z)*2 >= divisions_.z) return true;
-
-	// Second check - mirrored Cell 'b'
-	u.x -= DUQMath::sgn(u.x) * divisions_.x;
-	u.y -= DUQMath::sgn(u.y) * divisions_.y;
-	u.z -= DUQMath::sgn(u.z) * divisions_.z;
-	if (abs(u.x)-1 <= extents_.x) return true;
-	if (abs(u.y)-1 <= extents_.y) return true;
-	if (abs(u.z)-1 <= extents_.z) return true;
+	if (u.x < divisions_.x*0.5) return true;
+	if (u.y < divisions_.y*0.5) return true;
+	if (u.z < divisions_.z*0.5) return true;
+	if (u.x > divisions_.x*0.5) return true;
+	if (u.y > divisions_.y*0.5) return true;
+	if (u.z > divisions_.z*0.5) return true;
 
 	return false;
 }
@@ -413,21 +411,28 @@ bool CellArray::withinRange(Cell* a, Cell* b, double distance)
 #endif
 
 	// We need both the minimum image centroid-centroid distance, as well as the integer mim grid-reference delta
-	double centroidDistance = box_->minimumDistance(a->centre(), b->centre());
-	Vec3<double> u(a->gridReference().x-b->gridReference().x, a->gridReference().y-b->gridReference().y, a->gridReference().z-b->gridReference().z);
+	Vec3<int> u = b->gridReference() - a->gridReference();
 	if (u.x > divisions_.x*0.5) u.x -= divisions_.x;
 	else if (u.x < -divisions_.x*0.5) u.x += divisions_.x;
 	if (u.y > divisions_.y*0.5) u.y -= divisions_.y;
 	else if (u.y < -divisions_.y*0.5) u.y += divisions_.y;
 	if (u.z > divisions_.z*0.5) u.z -= divisions_.z;
 	else if (u.z < -divisions_.z*0.5) u.z += divisions_.z;
-	double gridMagnitude = u.magnitude();
 
-	// Now, we can take the centroidDistance and reduce its magnitude by one unit (relative to the gridMagnitude)
-	centroidDistance *= (gridMagnitude - 1.0) / gridMagnitude;
+	/*
+	 * We now have the minimum image integer grid vector from Cell a to Cell b.
+	 * Subtract 1 from any vector that is not zero (adding 1 to negative indices and -1 to positive indices.
+	 * This has the effect of shortening the vector to account for atoms being at the near edges of the distant cells.
+	 */
+	u.x -= DUQMath::sgn(u.x);
+	u.y -= DUQMath::sgn(u.y);
+	u.z -= DUQMath::sgn(u.z);
 
-	// If this distance is now less than the specified distance, it is possible for within the Cells to interact
-	return (centroidDistance <= distance);
+	// Turn this grid reference delta into a real distamce by multiplying by the Cell axes_ matrix
+	Vec3<double> v = axes_ * Vec3<double>(u.x, u.y, u.z);
+
+	// Check ths vector magnitude against the supplied distance
+	return (v.magnitude() <= distance);
 }
 
 /*

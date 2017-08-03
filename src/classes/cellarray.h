@@ -22,6 +22,8 @@
 #ifndef DUQ_CELLARRAY_H
 #define DUQ_CELLARRAY_H
 
+#include "math/matrix3.h"
+
 // Forward Declarations
 class Box;
 class Cell;
@@ -48,8 +50,10 @@ class CellArray
 	Vec3<double> realCellSize_;
 	// Cell extents out from given central cell
 	Vec3<int> extents_;
-	// List of Cell neighbour indices
+	// List of Cell neighbour indices (within pair potential range)
 	List< ListVec3<int> > neighbourIndices_;
+	// Cell axes
+	Matrix3 axes_;
 	// Total number of Cells in Box
 	int nCells_;
 	// Cell array (one-dimensional)
