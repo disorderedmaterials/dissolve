@@ -1,4 +1,4 @@
-# Test Case 04 - Calculated structure factor for water/methanol mix vs. EPSR simulated data
+# Test Case 03 - Calculated structure factor for water/methanol mix vs. EPSR simulated data
 
 # Define Water Molecule
 Species 'Water'
@@ -71,6 +71,7 @@ Configuration  'Mix'
     Exchangeable  HW  HO
     Save  On
     Frequency  1
+    Method  Cells
   
     Test  on
     TestThreshold  1.0
