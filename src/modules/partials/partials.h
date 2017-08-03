@@ -113,6 +113,8 @@ class PartialsModule : public Module
 	 * Members / Functions
 	 */
 	private:
+	// Test supplied PartialSets against each other
+	bool testReferencePartials(PartialSet& setA, PartialSet& setB, double testThreshold);
 	// Test reference data against calculated PartialSet set
 	bool testReferencePartials(GenericList& sourceModuleData, PartialSet& partialgr, const char* dataPrefix, double testThreshold);
 	// Calculate partial RDFs in serial with simple double-loop

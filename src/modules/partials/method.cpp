@@ -62,6 +62,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		Messenger::error("Partials: Invalid calculation method '%s' found.\n", GenericListHelper<CharString>::retrieve(moduleData, "Method", uniqueName_, options_.valueAsString("Method")).get());
 		return false;
 	}
+	const bool internalTest = GenericListHelper<bool>::retrieve(moduleData, "InternalTest", uniqueName(), options_.valueAsBool("InternalTest"));
 	const bool normaliseToAvSq = GenericListHelper<bool>::retrieve(moduleData, "NormaliseToAvSq", uniqueName(), options_.valueAsBool("NormaliseToAvSq"));
 	const bool normaliseToSqAv = GenericListHelper<bool>::retrieve(moduleData, "NormaliseToSqAv", uniqueName(), options_.valueAsBool("NormaliseToSqAv"));
 	const double qDelta = GenericListHelper<double>::retrieve(moduleData, "QDelta", uniqueName(), options_.valueAsDouble("QDelta"));
@@ -106,6 +107,15 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		calculateUnweightedGR(procPool, cfg, method, allIntra, smoothing);
 		PartialSet& unweightedgr = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedGR", "Partials");
 		if (saveData && (!configurationLocal_) && (!MPIRunMaster(procPool, unweightedgr.save()))) return false;
+
+		// Perform internal test of unweighted g(r)?
+		if (internalTest)
+		{
+			// Copy the already-calculated g(r), then calculate a new set using the Test method
+			PartialSet referencePartials = unweightedgr;
+			calculateUnweightedGR(procPool, cfg, PartialsModule::TestMethod, allIntra, smoothing);
+			if (!testReferencePartials(referencePartials, unweightedgr, 1.0e-6)) return false;
+		}
 
 		// Test unweighted g(r)?
 		if (testMode && configurationLocal_)

@@ -59,6 +59,58 @@ const char* PartialsModule::weightingType(PartialsModule::WeightingType wt)
 	return WeightingTypeKeywords[wt];
 }
 
+// Test supplied PartialSets against each other
+bool PartialsModule::testReferencePartials(PartialSet& setA, PartialSet& setB, double testThreshold)
+{
+	// Get a copy of the AtomTypeList to work from
+	AtomTypeList atomTypes = setA.atomTypes();
+	AtomTypeData* typeI = atomTypes.first();
+	double mape;
+	for (int n=0; n<atomTypes.nItems(); ++n, typeI = typeI->next)
+	{
+		AtomTypeData* typeJ = typeI;
+		for (int m = n; m <atomTypes.nItems(); ++m, typeJ = typeJ->next)
+		{
+			// Full partial
+			mape = setA.partial(n,m).mape(setB.partial(n,m));
+			{
+				Messenger::print("Partials: Test reference full partial '%s-%s' has MAPE of %15.9e with calculated data and is %s (threshold is %10.3e)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), mape, mape <= testThreshold ? "OK" : "NOT OK", testThreshold);
+				if (mape > testThreshold) return false;
+			}
+
+			// Bound partial
+			mape = setA.boundPartial(n,m).mape(setB.boundPartial(n,m));
+			{
+				Messenger::print("Partials: Test reference bound partial '%s-%s' has MAPE of %15.9e with calculated data and is %s (threshold is %10.3e)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), mape, mape <= testThreshold ? "OK" : "NOT OK", testThreshold);
+				if (mape > testThreshold) return false;
+			}
+
+			// Unbound reference
+			mape = setA.unboundPartial(n,m).mape(setB.unboundPartial(n,m));
+			{
+				Messenger::print("Partials: Test reference unbound partial '%s-%s' has MAPE of %15.9e with calculated data and is %s (threshold is %10.3e)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), mape, mape <= testThreshold ? "OK" : "NOT OK", testThreshold);
+				if (mape > testThreshold) return false;
+			}
+
+			// Bragg reference
+			mape = setA.braggPartial(n,m).mape(setB.braggPartial(n,m));
+			{
+				Messenger::print("Partials: Test reference data '%s' has MAPE of %15.9e with calculated data and is %s (threshold is %10.3e)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), mape, mape <= testThreshold ? "OK" : "NOT OK", testThreshold);
+				if (mape > testThreshold) return false;
+			}
+		}
+	}
+
+	// Total reference data supplied?
+	mape = setA.total().mape(setB.total());
+	{
+		Messenger::print("Partials: Test reference total has MAPE of %15.9e with calculated data and is %s (threshold is %10.3e)\n\n", mape, mape <= testThreshold ? "OK" : "NOT OK", testThreshold);
+		if (mape > testThreshold) return false;
+	}
+
+	return true;
+}
+
 // Test reference data against calculated partials set
 bool PartialsModule::testReferencePartials(GenericList& sourceModuleData, PartialSet& partials, const char* dataPrefix, double testThreshold)
 {
@@ -296,7 +348,7 @@ bool PartialsModule::calculateCells(ProcessPool& procPool, Configuration* cfg, P
 		{
 			// Grab cell J and check that we need to consider it (i.e. it is within range)
 			cellJ = cellArray.cell(m);
-// 			if (!cellArray.withinRange(cellI, cellJ, rdfRange)) continue;
+			if (!cellArray.withinRange(cellI, cellJ, rdfRange)) continue;
 
 			atomsJ = cellJ->atoms().objects();
 			nJ = cellJ->nAtoms();
@@ -349,7 +401,8 @@ bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration*
 	if (wasCreated) partialgr.setup(cfg, cfg->niceName(), "unweighted", "rdf", "r, Angstroms");
 
 	// Is the PartialSet already up-to-date?
-	if (partialgr.index() == cfg->coordinateIndex())
+	// If so, can exit now, *unless* the Test method is requested, in which case we go ahead and calculate anyway
+	if ((partialgr.index() == cfg->coordinateIndex()) && (method != PartialsModule::TestMethod))
 	{
 		Messenger::print("Partials: Unweighted partial g(r) are up-to-date for Configuration '%s'.\n", cfg->name());
 		return true;
