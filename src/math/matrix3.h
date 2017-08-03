@@ -50,7 +50,7 @@ class Matrix3
 
 
 	/*
-	// General Routines
+	 * General Routines
 	 */
 	public:
 	// Reset the matrix to the identity
@@ -72,7 +72,7 @@ class Matrix3
 
 
 	/*
-	// Column Operations
+	 * Column Operations
 	 */
 	public:
 	// Copy column contents to supplied Vec3
@@ -91,7 +91,7 @@ class Matrix3
 	double columnMagnitude(int column) const;
 	// Multiply single column by single value
 	void columnMultiply(int col, double d);
-	// Multiply first three columns by values in supplied vector
+	// Multiply columns by values in supplied vector
 	void columnMultiply(const Vec3<double> vec);
 	// Normalise specified column to 1
 	void columnNormalise(int column);
@@ -100,7 +100,7 @@ class Matrix3
 
 
 	/*
-	// Rotations
+	 * Rotations
 	 */
 	public:
 	// Create rotation matrix about X
@@ -120,7 +120,7 @@ class Matrix3
 
 
 	/*
-	// Scaling
+	 * Scaling
 	 */
 	public:
 	// Apply a general scaling to the matrix (as glScaled would to)
@@ -138,7 +138,7 @@ class Matrix3
 
 
 	/*
-	// Transforms
+	 * Transforms
 	 */
 	public:
 	// Transform coordinates supplied and return as Vec3<double>
