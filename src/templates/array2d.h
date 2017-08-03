@@ -62,6 +62,12 @@ template <class A> class Array2D
 	// Copy Constructor
 	Array2D(const Array2D<A>& source)
 	{
+		array_ = NULL;
+		linearSize_ = 0;
+		rowOffsets_ = NULL;
+		nRows_ = 0;
+		nColumns_ = 0;
+		half_ = false;
 		(*this) = source;
 	}
 	// Assignment Operator
