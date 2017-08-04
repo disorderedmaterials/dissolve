@@ -315,7 +315,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 				else failed = false;
 
 				// Sum average errors
-				sumError += intraRatio.x + intraRatio.y + intraRatio.z + interRatio.x + interRatio.y + interRatio.z;
+				sumError += fabs(intraRatio.x) +fabs(intraRatio.y) + fabs(intraRatio.z) + fabs(interRatio.x) + fabs(interRatio.y) + fabs(interRatio.z);
 
 				if (failed)
 				{
@@ -370,7 +370,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 					else failed = false;
 
 					// Sum average errors
-					sumError += totalRatio.x + totalRatio.y + totalRatio.z;
+					sumError += fabs(totalRatio.x) + fabs(totalRatio.y) + fabs(totalRatio.z);
 
 					if (failed)
 					{
@@ -399,7 +399,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 					else failed = false;
 
 					// Sum average errors
-					sumError += totalRatio.x + totalRatio.y + totalRatio.z;
+					sumError += fabs(totalRatio.x) + fabs(totalRatio.y) + fabs(totalRatio.z);
 
 					if (failed)
 					{
