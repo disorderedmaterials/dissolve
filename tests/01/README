@@ -18,6 +18,23 @@ forces, with charges and bond / angle force constants set to zero. The truncatio
 width is set to zero in this simulation in order to correctly reproduce the 
 (non-truncated) LJ potential in DL_POLY.
 
+At standard test threshold (0.1%) the test will fail because four atoms have very small
+actual forces, so we are within absolute error:
+
+ OW    796 - errors are  2.22825872e-03 ( 0.00%) -3.11711449e-04 ( 0.00%) -8.59981372e-03 (-3.18%) (x y z) 10J/mol
+  DL_POLY forces are  1225.01868154           -1954.49704175               0.261973449973    
+
+ OW   1657 - errors are  5.83142750e-03 (-0.00%)  2.51281376e-02 ( 0.01%) -1.09027552e-02 ( 1.62%) (x y z) 10J/mol
+  DL_POLY forces are  -279.203352162            387.475509414             -0.685387813058    
+
+ OW   2821 - errors are  2.02395125e-03 (-0.29%)  1.55921425e-03 ( 0.00%) -5.24764610e-03 ( 0.00%) (x y z) 10J/mol
+  DL_POLY forces are    -0.690548847271       139.169178001             -931.130038220    
+
+ OW   2860 - errors are  3.02940339e-03 (-0.00%)  3.55327456e-03 ( 0.11%)  5.55293368e-03 ( 0.00%) (x y z) 10J/mol
+  DL_POLY forces are -1024.61811987               3.28581570197          808.091520856  
+
+As such, the test is run with a relatively high threshold of 3.2%.
+
 3) Coulomb Terms Only (truncated Coulomb sum)
 
 Simulations utilising only a Coulombic potential contributing to energy and

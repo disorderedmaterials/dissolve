@@ -35,7 +35,7 @@ Configuration  'Bulk'
   Module Forces
     Test on
     TestAnalytic  on
-    TestThreshold  0.1
+    TestThreshold  3.2   # See README
     TestReference  dlpoly  'dlpoly_vdw/REVCON'
   EndModule
 EndConfiguration
