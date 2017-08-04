@@ -72,7 +72,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 
 			Messenger::print("Forces: Calculating forces for Configuration '%s' in serial test mode...\n", cfg->name());
 			if (testAnalytic) Messenger::print("Forces: Exact (analytic) forces will be calculated.\n");
-			Messenger::print("Forces:: Test threshold for failure is %f%%.\n", testThreshold);
+			Messenger::print("Forces: Test threshold for failure is %f%%.\n", testThreshold);
 
 			/*
 			 * Calculation Begins

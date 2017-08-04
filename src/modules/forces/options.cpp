@@ -32,7 +32,7 @@ void ForcesModule::setupOptions()
 	options_.add("TestAnalytic", bool(false), "Compare parallel force routines against exact (analytic) force rather than tabulated values");
 	options_.add("TestInter", bool(true), "Include interatomic forces in test");
 	options_.add("TestIntra", bool(true), "Include intramolecular forces in test");
-	options_.add("TestThreshold", 1.0e-2, "Threshold of force at which test comparison will fail");
+	options_.add("TestThreshold", 0.1, "Threshold of force (%%) at which test comparison will fail");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
