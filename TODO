@@ -6,7 +6,6 @@ o Dynamic load-balancing when running Configurations in parallel - assess time t
 o Allow for Fixed atoms:
 	- Checks for fixed Atoms with GrainDefinitions - this should not be allowed since a Grain will be mobile.
 	- Provision for pre-calculation of RDF/F(Q) data between fixed atoms, and introduction of this into final RDF/F(Q) data for speed?
-o Different bond types - e.g. replicate those used in EPSR for reference?
 o Accumulate timing information for each module, displaying averages and total in schedule at each step?
 o Establish proper limit for switching between RDF calculation methods
 o Move Bragg-related functions from Configuration to PartialsModule, and remove need for src/classes/configuration_rdfs.cpp.
@@ -37,10 +36,6 @@ If density for specific Isotopologues can be provided, we can allow gram quantit
 
 ** Monte Carlo 'Velocity'
 Keep track of last successful rotation / translation for each Grain, allowing similar moves to be attempted on next round? Reset if move fails.
-
-** RDF Calculation for Large Systems
-Can Grains be treated as a single scattering body (with average scattering length of the constituent Atoms) at far-enough distance? Might offer a speed-up for larger systems since all atoms within the Grain can be treated as being at (approximately) the same distance (that of the Grain).
-Can Cells be utilised in order to calculate RDFs between Atoms a certain distance (i.e. the RDF cutoff) apart? May need to generalise some ProcessPool functions.
 
 ** Configuration Branching
 Above a certain threshold of r-squared, or at certain time intervals, 'big events' could occur which radically change the structure of the system. For instance, large molecule flips / rotations / exchanges. Standard energetic criteria would normally disallow such moves, but a 'big event' could unequivocally accept all such moves and progress the system back to an equilibrium, at which point the goodness of fit would be recalculated and compared against those previously stored.  We would maintain a history of branch points, storing the model coordinates at these points so that we can revert back to the previous best if necessary. Perhaps it is possible to track the r-squared value and predict its value at some future point if we keep progressing down a particular branch.
