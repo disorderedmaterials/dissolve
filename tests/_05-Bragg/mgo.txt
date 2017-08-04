@@ -1,0 +1,44 @@
+# Test Case 05 - Bragg calculation for MgO
+
+# Define Atomic Species
+Species 'Mg'
+  Atom    1    Mg     0.0  0.0  0.0  'Mg'
+  Isotopologue  'Natural'
+EndSpecies
+Species 'O'
+  Atom    1    O      0.0  0.0  0.0  'OX'
+  Isotopologue  'Natural'
+EndSpecies
+
+# Define Configuration
+Configuration  'Box'
+  Density  0.05  atoms/A3
+  CellLengths  70.7472  70.7472  70.7472
+  Species 'Mg'  16384
+  Species 'O'   16384
+  InputCoordinates  xyz  'mgo.xyz'
+  RDFRange 20.0
+
+  Module Partials
+    Isotopologue  'Box'  'Mg'  'Natural'  1.0
+    Isotopologue  'Box'  'O'  'Natural'  1.0
+    Frequency  1
+    StructureFactor  on
+    Weights  Neutron
+    Bragg  On
+  EndModule
+EndConfiguration
+
+# Pair Potentials
+PairPotentials
+  Range  15.000000
+  Delta  0.050000
+  TruncationWidth  2.000000
+  GenerateAll  'LJ'
+EndPairPotentials
+
+Simulation
+  MaxIterations  1
+  WriteIterationData  false
+EndSimulation
+
