@@ -1,0 +1,58 @@
+#!/bin/bash -l
+
+# Run and check all tests
+
+NFAILED=0
+
+# Set path to binary and data and check that it exists
+
+DUQ=../src/duq
+export DUQDATA=../../data
+if [ ! -e $DUQ ]
+then
+	echo "Couldn't find binary."
+	exit 1
+fi
+
+# Loop over test directories
+for test in `ls -d [0-9]*[0-9]`
+do
+	echo "Test directory: "$test
+
+	# Descend into test directory, and print out first two lines from README (containing description of test)
+	cd $test
+	head -n2 README
+
+	# Loop over all input files (*.txt)
+	for input in *.txt
+	do
+		# Set output filename path
+		output=../${test}.${input%.txt}.out
+
+		echo -e "\nRunning test ${input}..."
+		if ../$DUQ $input > $output
+		then
+			echo "Success!"
+		else
+			echo "*****************"
+			echo "*  TEST FAILED  *"
+			echo "*****************"
+			echo "==> Check output file $output"
+			NFAILED=$(( NFAILED+1 ))
+		fi
+	done
+
+	# Done, so move up to base test directory
+	cd ../
+	echo ""
+done
+
+# Did we have any failures
+
+if [ "$NFAILED" -gt "0" ]
+then
+	echo -e "\nOne or more tests failed.\n"
+	exit 1
+fi
+
+exit 0
