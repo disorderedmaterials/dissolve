@@ -32,10 +32,16 @@
 #include "templates/genericitemcontainer_double.h"
 #include "templates/genericitemcontainer_charstring.h"
 
+#include "templates/genericitemcontainer_vec3int.h"
+#include "templates/genericitemcontainer_vec3double.h"
+
 #include "templates/genericitemcontainer_array2ddouble.h"
 #include "templates/genericitemcontainer_arraydouble.h"
 #include "templates/genericitemcontainer_arrayint.h"
 #include "templates/genericitemcontainer_arrayvec3int.h"
 #include "templates/genericitemcontainer_arrayvec3double.h"
+
+#include "templates/genericitemcontainer_list.h"
+#include "templates/genericitemcontainer_orderedlist.h"
 
 #endif
