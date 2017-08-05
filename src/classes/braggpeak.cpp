@@ -20,12 +20,13 @@
 */
 
 #include "classes/braggpeak.h"
+#include "base/processpool.h"
 
 // Constructor
-BraggPeak::BraggPeak(double Q, int index)
+BraggPeak::BraggPeak()
 {
-	q_ = Q;
-	index_ = index;
+	q_ = 0.0;
+	index_ = -1;
 	nKVectors_ = 0;
 }
 
@@ -50,12 +51,14 @@ void BraggPeak::operator=(const BraggPeak& source)
 }
 
 /*
- * BraggPeak Data
+ * Data
  */
 
 // Initialise arrays
-void BraggPeak::initialise(int nTypes)
+void BraggPeak::initialise(double q, int index, int nTypes)
 {
+	q_ = q;
+	index_ = index;
 	intensities_.initialise(nTypes, nTypes, true);
 	nKVectors_ = 0;
 }
@@ -101,4 +104,20 @@ void BraggPeak::addKVectors(int count)
 int BraggPeak::nKVectors()
 {
 	return nKVectors_;
+}
+
+/*
+ * Parallel Comms
+ */
+
+// Broadcast data from Master to all Slaves
+bool BraggPeak::broadcast(ProcessPool& procPool, int rootRank)
+{
+#ifdef PARALLEL
+	if (!procPool.broadcast(q_, rootRank)) return false;
+	if (!procPool.broadcast(index_, rootRank)) return false;
+	if (!procPool.broadcast(nKVectors_, rootRank)) return false;
+	if (!procPool.broadcast(intensities_, rootRank)) return false;
+#endif
+	return true;
 }

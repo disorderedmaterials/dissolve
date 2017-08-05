@@ -29,29 +29,27 @@
 class BraggPeak;
 
 // K-Vector
-class KVector
+class KVector : public MPIListItem<KVector>
 {
 	public:
 	// Constructor
-	KVector(int h = 0, int k = 0, int l = 0, BraggPeak* braggPeak_ = 0, int nAtomTypes = 0);
+	KVector(int h = 0, int k = 0, int l = 0, int peakIndex = 0, int nAtomTypes = 0);
 	// Destructor
 	~KVector();
 	// Copy constructor
 	KVector(const KVector& source);
 	// Operator=
 	void operator=(const KVector& source);
-	// List pointers
-	KVector* prev, *next;
 
 
 	/*
-	 * KVector Data
+	 * Data
 	 */
 	private:
 	// Integer hkl indices of vector
 	Vec3<int> hkl_;
-	// Associated BraggPeak
-	BraggPeak* braggPeak_;
+	// Associated BraggPeak index
+	int braggPeakIndex_;
 	// Contributions to this kvector from individual atom types
 	Array<double> cosTerms_, sinTerms_;
 
@@ -64,8 +62,6 @@ class KVector
 	const int k() const;
 	// Return l index
 	const int l() const;
-	// Return associated BraggPeak
-	const BraggPeak* braggPeak() const;
 	// Zero cos/sin term arrays
 	void zeroCosSinTerms();
 	// Add value to cosTerm index specified
@@ -73,9 +69,17 @@ class KVector
 	// Add value to sinTerm index specified
 	void addSinTerm(int atomTypeIndex, double value);
 	// Calculate intensities and sum into associated BraggPeak
-	void calculateIntensities();
+	void calculateIntensities(BraggPeak** peakArray);
 	// Return specified intensity
 	double intensity(int typeI, int typeJ);
+
+
+	/*
+	 * Parallel Comms
+	 */
+	public:
+	// Broadcast data from root to all other processes
+	bool broadcast(ProcessPool& procPool, int rootRank);
 };
 
 #endif

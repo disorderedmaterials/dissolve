@@ -22,21 +22,20 @@
 #ifndef DUQ_BRAGGPEAK_H
 #define DUQ_BRAGGPEAK_H
 
-#include "templates/vector3.h"
 #include "templates/array2d.h"
 
 // Forward Declarations
 /* none */
 
 // BraggPeak Class
-class BraggPeak
+class BraggPeak : public MPIListItem<BraggPeak>
 {
 	/*
 	 *  BraggPeak acts as a 'bin' for collecting contributions arising from a set of KVectors which occur at the same Q value.
 	 */
 	public:
 	// Constructor
-	BraggPeak(double Q = 0.0, int index = 0);
+	BraggPeak();
 	// Destructor
 	~BraggPeak();
 	// Copy constructor
@@ -46,7 +45,7 @@ class BraggPeak
 
 
 	/*
-	 * BraggPeak Data
+	 * Data
 	 */
 	private:
 	// Q-position of peak
@@ -60,7 +59,7 @@ class BraggPeak
 
 	public:
 	// Initialise arrays
-	void initialise(int nTypes);
+	void initialise(double q, int index, int nTypes);
 	// Return Q value of peak
 	const double q() const;
 	// Return index
@@ -75,6 +74,14 @@ class BraggPeak
 	void addKVectors(int count);
 	// Return number of k-vectors contributing to this peak
 	int nKVectors();
+
+
+	/*
+	 * Parallel Comms
+	 */
+	public:
+	// Broadcast data from root to all other processes
+	bool broadcast(ProcessPool& procPool, int rootRank);
 };
 
 #endif

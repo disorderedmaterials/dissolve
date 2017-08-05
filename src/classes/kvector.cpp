@@ -20,20 +20,18 @@
 */
 
 #include "classes/kvector.h"
-#include "braggpeak.h"
+#include "classes/braggpeak.h"
+#include "base/processpool.h"
 
 // Constructor
-KVector::KVector(int h, int k, int l, BraggPeak* bp, int nAtomTypes)
+KVector::KVector(int h, int k, int l, int peakIndex, int nAtomTypes) : MPIListItem<KVector>()
 {
 	hkl_.set(h, k, l);
-	braggPeak_ = bp;
+	braggPeakIndex_ = peakIndex;
 
 	// Create atomtype contribution arrays
 	cosTerms_.initialise(nAtomTypes);
 	sinTerms_.initialise(nAtomTypes);
-
-	prev = NULL;
-	next = NULL;
 }
 
 // Destructor
@@ -51,13 +49,13 @@ KVector::KVector(const KVector& source)
 void KVector::operator=(const KVector& source)
 {
 	hkl_ = source.hkl_;
-	braggPeak_ = source.braggPeak_;
+	braggPeakIndex_ = source.braggPeakIndex_;
 	cosTerms_ = source.cosTerms_;
 	sinTerms_ = source.sinTerms_;
 }
 
 /*
- * KVector Data
+ * Data
  */
 
 // Return integer hkl indices
@@ -82,12 +80,6 @@ const int KVector::k() const
 const int KVector::l() const
 {
 	return hkl_.z;
-}
-
-// Return associated BraggPeak
-const BraggPeak* KVector::braggPeak() const
-{
-	return braggPeak_;
 }
 
 // Zero cos/sin term arrays
@@ -124,7 +116,7 @@ void KVector::addSinTerm(int atomTypeIndex, double value)
 }
 
 // Calculate intensities from stored cos and sin term arrays
-void KVector::calculateIntensities()
+void KVector::calculateIntensities(BraggPeak** peakArray)
 {
 #ifdef CHECKS
 	if (braggPeak_ == NULL)
@@ -138,22 +130,39 @@ void KVector::calculateIntensities()
 	// Take account of the half-matrix of atom types, doubling contributions from dissimilar types
 	int i, j, nTypes = cosTerms_.nItems(), halfSphereNorm = (hkl_.x == 0 ? 1 : 2);
 	double intensity;
-	Messenger::print("KVector %3i %3i %3i  %f  ", hkl_.x, hkl_.y, hkl_.z, braggPeak_->q());
-	braggPeak_->addKVectors(halfSphereNorm);
+	BraggPeak* braggPeak = peakArray[braggPeakIndex_];
+// 	Messenger::print("KVector %3i %3i %3i  %f  ", hkl_.x, hkl_.y, hkl_.z, braggPeak->q());
+	braggPeak->addKVectors(halfSphereNorm);
 	for (i = 0; i<nTypes; ++i)
 	{
 		for (j = i; j < nTypes; ++j)
 		{
 			intensity = (cosTerms_[i]*cosTerms_[j] + sinTerms_[i]*sinTerms_[j]);
-			Messenger::print("%f  ", intensity / 1000.0 );
-			braggPeak_->addIntensity(i, j, intensity * halfSphereNorm);
+// 			Messenger::print("%f  ", intensity / 1000.0 );
+			braggPeak->addIntensity(i, j, intensity * halfSphereNorm);
 		}
 	}
-	Messenger::print("\n");
+// 	Messenger::print("\n");
 }
 
 // Return specified intensity
 double KVector::intensity(int typeI, int typeJ)
 {
 	return (cosTerms_[typeI]*cosTerms_[typeJ] + sinTerms_[typeI]*sinTerms_[typeJ]) * (hkl_.x == 0 ? 1 : 2);
+}
+
+/*
+ * Parallel Comms
+ */
+
+// Broadcast data from Master to all Slaves
+bool KVector::broadcast(ProcessPool& procPool, int rootRank)
+{
+#ifdef PARALLEL
+	if (!procPool.broadcast(hkl_, rootRank)) return false;
+	if (!procPool.broadcast(braggPeakIndex_, rootRank)) return false;
+	if (!procPool.broadcast(cosTerms_, rootRank)) return false;
+	if (!procPool.broadcast(sinTerms_, rootRank)) return false;
+#endif
+	return true;
 }
