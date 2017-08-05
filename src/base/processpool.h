@@ -259,6 +259,8 @@ class ProcessPool
 	bool broadcast(CharString& source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Broadcast char data
 	bool broadcast(char* source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	// Broadcast Vec3<int>
+	bool broadcast(Vec3<int>& source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Broadcast Vec3<double>
 	bool broadcast(Vec3<double>& source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Broadcast single integer

@@ -841,6 +841,41 @@ bool ProcessPool::broadcast(char* source, int rootRank, ProcessPool::Communicato
 	return true;
 }
 
+// Broadcast Vec3<int> to all Processes
+bool ProcessPool::broadcast(Vec3<int>& source, int rootRank, ProcessPool::CommunicatorType commType)
+{
+#ifdef PARALLEL
+	timer_.start();
+	double buffer[3];
+	if (poolRank_ == rootRank)
+	{
+		// Construct an array from the data...
+		buffer[0] = source.x;
+		buffer[1] = source.y;
+		buffer[2] = source.z;
+		if (MPI_Bcast(buffer, 3, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
+		{
+			Messenger::print("Failed to broadcast Vec3<int> data from root rank %i.\n", rootRank);
+			return false;
+		}
+	}
+	else
+	{
+		// Slaves receive the data into the buffer, and then set the source variable.
+		if (MPI_Bcast(buffer, 3, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
+		{
+			Messenger::print("Slave %i (world rank %i) failed to receive Vec3<int> data from root rank %i (world rank %i).\n", poolRank_, worldRank_, rootRank);
+			return false;
+		}
+		source.x = buffer[0];
+		source.y = buffer[1];
+		source.z = buffer[2];
+	}
+	timer_.accumulate();
+#endif
+	return true;
+}
+
 // Broadcast Vec3<double> to all Processes
 bool ProcessPool::broadcast(Vec3<double>& source, int rootRank, ProcessPool::CommunicatorType commType)
 {
