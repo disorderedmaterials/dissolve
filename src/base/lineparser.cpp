@@ -1040,6 +1040,17 @@ float LineParser::argf(int i)
 	return (float) argd(i);
 }
 
+// Return the specified and next two arguments as a Vec3<int>
+Vec3<int> LineParser::arg3i(int i)
+{
+	if ((i < 0) || (i >= (nArgs()-2)))
+	{
+		printf("Warning: Argument %i is out of range - returning Vec3<int>()...\n", i);
+		return Vec3<int>();
+	}
+	return Vec3<int>(argi(i), argi(i+1), argi(i+2));
+}
+
 // Return the specified and next two arguments as a Vec3<double>
 Vec3<double> LineParser::arg3d(int i)
 {

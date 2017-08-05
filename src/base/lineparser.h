@@ -208,6 +208,8 @@ class LineParser
 	bool argb(int i);
 	// Returns the specified argument as a float
 	float argf(int i);
+	// Return the specified and next two arguments as a Vec3<int>
+	Vec3<int> arg3i(int i);
 	// Return the specified and next two arguments as a Vec3<double>
 	Vec3<double> arg3d(int i);
 	// Returns whether the specified argument exists
