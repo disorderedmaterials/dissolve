@@ -86,13 +86,18 @@ Box::BoxType Box::type() const
 // Setup box, scaling to specified volume (in cubic Angstroms)
 void Box::setup(double volume)
 {
-	Messenger::print("--> Current box volume is %f cubic Angstroms, requested = %f\n", axes_.determinant(), volume);
+	if (volume > 0.0)
+	{
+		Messenger::print("--> Current box volume is %f cubic Angstroms, requested = %f\n", axes_.determinant(), volume);
+		double factor = pow(volume,1.0/3.0) / pow(axes_.determinant(),1.0/3.0);
+		Messenger::print("--> Scaling factor = %f\n", factor);
+		axes_.applyScaling(factor, factor, factor);
+	}
+	else Messenger::print("--> Current box volume is %f cubic Angstroms and will not be altered.\n", axes_.determinant());
 
-	double factor = pow(volume,1.0/3.0) / pow(axes_.determinant(),1.0/3.0);
-	Messenger::print("--> Scaling factor = %f\n", factor);
-	axes_.applyScaling(factor, factor, factor);
+	// Calculate box volume
 	volume_ = axes_.determinant();
-	
+
 	// Calculate inverse axes
 	inverseAxes_ = axes_;
 	inverseAxes_.invert();

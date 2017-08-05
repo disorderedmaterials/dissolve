@@ -243,7 +243,7 @@ class CubicBox : public Box
 {
 	public:
 	// Constructor
-	CubicBox(double volume);
+	CubicBox(double volume, double boxLength);
 	// Destructor
 	~CubicBox();
 

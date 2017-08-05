@@ -38,7 +38,7 @@ Configuration::Configuration() : ListItem<Configuration>()
 
 	// Composition
 	multiplier_ = 1;
-	density_ = 0.1;
+	density_ = -1.0;
 	densityIsAtomic_ = true;
 	boxAngles_.set(90.0, 90.0, 90.0);
 	relativeBoxLengths_.set(1.0, 1.0, 1.0);

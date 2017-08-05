@@ -24,14 +24,14 @@
 #include "classes/cell.h"
 
 // Constructor
-CubicBox::CubicBox(double volume) : Box()
+CubicBox::CubicBox(double volume, double boxLength) : Box()
 {
 	type_ = Box::CubicBox;
 	
 	// Construct axes_
-	axes_.setColumn(0, 1.0, 0.0, 0.0);
-	axes_.setColumn(1, 0.0, 1.0, 0.0);
-	axes_.setColumn(2, 0.0, 0.0, 1.0);
+	axes_.setColumn(0, boxLength, 0.0, 0.0);
+	axes_.setColumn(1, 0.0, boxLength, 0.0);
+	axes_.setColumn(2, 0.0, 0.0, boxLength);
 	
 	// Setup box, rescaling to desired volume
 	setup(volume);
