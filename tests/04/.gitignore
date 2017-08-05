@@ -1,0 +1,5 @@
+# Local gitignore for test subdirectory
+*.rdf
+*.sq
+potential-*
+*.boxnorm
