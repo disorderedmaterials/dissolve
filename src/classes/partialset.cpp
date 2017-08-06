@@ -305,8 +305,9 @@ bool PartialSet::save()
 			XYData& full = partials_.ref(typeI,typeJ);
 			XYData& bound = boundPartials_.ref(typeI,typeJ);
 			XYData& unbound = unboundPartials_.ref(typeI,typeJ);
-			parser.writeLineF("# %-14s  %-16s  %-16s  %-16s\n", abscissaUnits_.get(), "full", "bound", "unbound"); 
-			for (n=0; n<full.nPoints(); ++n) parser.writeLineF("%16.10e  %16.10e  %16.10e  %16.10e\n", full.x(n), full.y(n), bound.y(n), unbound.y(n));
+			XYData& bragg = braggPartials_.ref(typeI,typeJ);
+			parser.writeLineF("# %-14s  %-16s  %-16s  %-16s  %-16s\n", abscissaUnits_.get(), "Full", "Bound", "Unbound", "Bragg"); 
+			for (n=0; n<full.nPoints(); ++n) parser.writeLineF("%16.9e  %16.9e  %16.9e  %16.9e  %16.9e\n", full.x(n), full.y(n), bound.y(n), unbound.y(n), n < bragg.nPoints() ? bragg.y(n) : 0.0);
 			parser.closeFiles();
 		}
 	}

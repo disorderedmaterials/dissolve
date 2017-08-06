@@ -12,12 +12,12 @@ EndSpecies
 
 # Define Configuration
 Configuration  'Box'
-  Density  0.05  atoms/A3
-  CellLengths  70.7472  70.7472  70.7472
+  CellLengths  67.4720001  67.4720001  67.4720001
   Species 'Mg'  16384
   Species 'O'   16384
-  InputCoordinates  xyz  'mgo.xyz'
-  RDFRange 20.0
+  InputCoordinates  epsr 'epsr/mgo.ato'
+  RDFRange  33.736
+  RDFBinWidth  0.03
 
   Module Partials
     Isotopologue  'Box'  'Mg'  'Natural'  1.0
@@ -26,6 +26,23 @@ Configuration  'Box'
     StructureFactor  on
     Weights  Neutron
     Bragg  On
+    Save  On
+
+    Test  On
+    TestThreshold  1.1
+
+    # Order of data in EPSR partial files is:  Mg-Mg    Mg-OX    OX-OX
+    #                                            2        4        6
+
+    # Partial g(r)
+    TestReference  'epsr/mgo.EPSR.g01'  GR-unweighted-Mg-Mg-unbound  1  2
+    TestReference  'epsr/mgo.EPSR.g01'  GR-unweighted-Mg-OX-unbound  1  4
+    TestReference  'epsr/mgo.EPSR.g01'  GR-unweighted-OX-OX-unbound  1  6
+
+    # Partial S(Q)
+    TestReference  'epsr/mgo.EPSR.f01'  SQ-unweighted-Mg-Mg-unbound  1  2
+    TestReference  'epsr/mgo.EPSR.f01'  SQ-unweighted-Mg-OX-unbound  1  4
+    TestReference  'epsr/mgo.EPSR.f01'  SQ-unweighted-OX-OX-unbound  1  6
   EndModule
 EndConfiguration
 

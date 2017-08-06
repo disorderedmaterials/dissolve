@@ -54,6 +54,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 	const bool braggOn = GenericListHelper<bool>::retrieve(moduleData, "Bragg", uniqueName(), options_.valueAsBool("Bragg"));
 	const double braggQDepBroadening = GenericListHelper<double>::retrieve(moduleData, "BraggQDepBroadening", uniqueName(), options_.valueAsDouble("BraggQDepBroadening"));
 	const double braggQIndepBroadening = GenericListHelper<double>::retrieve(moduleData, "BraggQIndepBroadening", uniqueName(), options_.valueAsDouble("BraggQIndepBroadening"));
+	const double braggQMax = GenericListHelper<double>::retrieve(moduleData, "BraggQMax", uniqueName(), options_.valueAsDouble("BraggQMax"));
 	const double qDepBroadening = GenericListHelper<double>::retrieve(moduleData, "QDepBroadening", uniqueName(), options_.valueAsDouble("QDepBroadening"));
 	const double qIndepBroadening = GenericListHelper<double>::retrieve(moduleData, "QIndepBroadening", uniqueName(), options_.valueAsDouble("QIndepBroadening"));
 	PartialsModule::PartialsMethod method = PartialsModule::partialsMethod(GenericListHelper<CharString>::retrieve(moduleData, "Method", uniqueName_, options_.valueAsString("Method")));
@@ -91,7 +92,11 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		Messenger::print("Partials: Calculating S(Q)/F(Q) over %f < Q < %f Angstroms**-1 using step size of %f Angstroms**-1.\n", qMin, qMax, qDelta);
 		Messenger::print("Partials: Bragg calculation is %s.\n", DUQSys::onOff(braggOn));
 		Messenger::print("Partials: Q-dependent FWHM broadening to use is %f, Q-independent FWHM broadening to use is %f.\n", qDepBroadening, qIndepBroadening);
-		if (braggOn) Messenger::print("Partials: Bragg Q-dependent FWHM broadening to use is %f, Q-independent FWHM broadening to use is %f.\n", braggQDepBroadening, braggQIndepBroadening);
+		if (braggOn)
+		{
+			Messenger::print("Partials: Bragg Q-dependent FWHM broadening to use is %f, Q-independent FWHM broadening to use is %f.\n", braggQDepBroadening, braggQIndepBroadening);
+			Messenger::print("Partials: Bragg scattering will be calculated to Q = %f.\n", braggQMax);
+		}
 	}
 	Messenger::print("Partials: Weighting scheme to employ is '%s'.\n", PartialsModule::weightingType(weightsType));
 	Messenger::print("Partials: Save data is %s.\n", DUQSys::onOff(saveData));
@@ -106,7 +111,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		// Calculate unweighted partials for this Configuration (under generic Module name 'Partials', rather than the uniqueName_)
 		calculateUnweightedGR(procPool, cfg, method, allIntra, smoothing);
 		PartialSet& unweightedgr = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedGR", "Partials");
-		if (saveData && (!configurationLocal_) && (!MPIRunMaster(procPool, unweightedgr.save()))) return false;
+		if (saveData && configurationLocal_ && (!MPIRunMaster(procPool, unweightedgr.save()))) return false;
 
 		// Perform internal test of unweighted g(r)?
 		if (internalTest)
@@ -127,9 +132,9 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		// Calculate S(Q) if requested
 		if (sqCalculation)
 		{
-			calculateUnweightedSQ(procPool, cfg, qMin, qDelta, qMax, cfg->atomicDensity(), duq.windowFunction(), qDepBroadening, qIndepBroadening, braggOn, braggQDepBroadening, braggQIndepBroadening);
+			calculateUnweightedSQ(procPool, cfg, qMin, qDelta, qMax, cfg->atomicDensity(), duq.windowFunction(), qDepBroadening, qIndepBroadening, braggOn ? braggQMax : -1.0, braggQDepBroadening, braggQIndepBroadening);
 			PartialSet& unweightedsq = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedSQ", "Partials");
-			if (saveData && (!configurationLocal_) && (!MPIRunMaster(procPool, unweightedsq.save()))) return false;
+			if (saveData && configurationLocal_ && (!MPIRunMaster(procPool, unweightedsq.save()))) return false;
 
 			// Test unweighted S(Q)?
 			if (testMode && configurationLocal_)
@@ -207,7 +212,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 				}
 			}
 
-			if (saveData && (!configurationLocal_))
+			if (saveData && configurationLocal_)
 			{
 				if (!MPIRunMaster(procPool, weightedgr.save())) return false;
 				if (sqCalculation && (!MPIRunMaster(procPool, weightedsq.save()))) return false;

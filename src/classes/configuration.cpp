@@ -402,6 +402,52 @@ bool Configuration::setup(ProcessPool& procPool, const List<AtomType>& atomTypes
 }
 
 /*
+ * Calculation Limits
+ */
+
+// Set RDF bin width
+void Configuration::setRDFBinWidth(double width)
+{
+	rdfBinWidth_ = width;
+}
+
+// Return RDF bin width
+double Configuration::rdfBinWidth()
+{
+	return rdfBinWidth_;
+}
+
+// Return working RDF extent
+double Configuration::rdfRange()
+{
+	return rdfRange_;
+}
+
+// Set requested RDF extent
+void Configuration::setRequestedRDFRange(double range)
+{
+	requestedRDFRange_ = range;
+}
+
+// Return requested RDF extent
+double Configuration::requestedRDFRange()
+{
+	return requestedRDFRange_;
+}
+
+// Set maximum Q value for Bragg calculation
+void Configuration::setBraggMaximumQ(double qMax)
+{
+	braggMaximumQ_ = qMax;
+}
+
+// Return maximum Q value for Bragg calculation
+double Configuration::braggMaximumQ()
+{
+	return braggMaximumQ_;
+}
+
+/*
  * Modules
  */
 

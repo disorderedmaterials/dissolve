@@ -1,0 +1,61 @@
+# Test Case 05 - Bragg calculation for MgO
+
+# Define Atomic Species
+Species 'Mg'
+  Atom    1    Mg     0.0  0.0  0.0  'Mg'
+  Isotopologue  'Natural'
+EndSpecies
+Species 'O'
+  Atom    1    O      0.0  0.0  0.0  'OX'
+  Isotopologue  'Natural'
+EndSpecies
+
+# Define Configuration
+Configuration  'Box-noBragg'
+  CellLengths  67.4720001  67.4720001  67.4720001
+  Species 'Mg'  16384
+  Species 'O'   16384
+  InputCoordinates  epsr 'epsr/mgo.ato'
+  RDFRange  33.736
+  RDFBinWidth  0.03
+
+  Module Partials
+    Isotopologue  'Box-noBragg'  'Mg'  'Natural'  1.0
+    Isotopologue  'Box-noBragg'  'O'  'Natural'  1.0
+    Frequency  1
+    StructureFactor  on
+    QDepBroadening  0.02
+    Weights  Neutron
+    Save  On
+
+    Test  On
+    TestThreshold  1.1
+
+    # Order of data in EPSR partial files is:  Mg-Mg    Mg-OX    OX-OX
+    #                                            2        4        6
+
+    # Partial g(r)
+    TestReference  'epsr_noBragg/mgo.EPSR.g01'  GR-unweighted-Mg-Mg-unbound  1  2
+    TestReference  'epsr_noBragg/mgo.EPSR.g01'  GR-unweighted-Mg-OX-unbound  1  4
+    TestReference  'epsr_noBragg/mgo.EPSR.g01'  GR-unweighted-OX-OX-unbound  1  6
+
+    # Partial S(Q)
+    TestReference  'epsr_noBragg/mgo.EPSR.f01'  SQ-unweighted-Mg-Mg-unbound  1  2
+    TestReference  'epsr_noBragg/mgo.EPSR.f01'  SQ-unweighted-Mg-OX-unbound  1  4
+    TestReference  'epsr_noBragg/mgo.EPSR.f01'  SQ-unweighted-OX-OX-unbound  1  6
+  EndModule
+EndConfiguration
+
+# Pair Potentials
+PairPotentials
+  Range  15.000000
+  Delta  0.050000
+  TruncationWidth  2.000000
+  GenerateAll  'LJ'
+EndPairPotentials
+
+Simulation
+  MaxIterations  1
+  WriteIterationData  false
+EndSimulation
+

@@ -279,24 +279,7 @@ class Configuration : public ListItem<Configuration>
 	double requestedRDFRange_;
 	// Maximum Q value for Bragg calculation
 	double braggMaximumQ_;
-	// Maximal extent of hkl for Bragg calculation, based on braggMaximumQ_
-	Vec3<int> braggMaximumHKL_;
-	// Bragg calculation k-vector list
-// 	List<KVector> braggKVectors_;
-	// Bragg calculation peak list
-// 	OrderedList<BraggPeak> braggPeaks_;
-	// Bragg S(Q) working arrays
-//         Array2D<double> braggAtomVectorXCos_, braggAtomVectorYCos_, braggAtomVectorZCos_;
-//         Array2D<double> braggAtomVectorXSin_, braggAtomVectorYSin_, braggAtomVectorZSin_;
-	// Configuration index at which Bragg peaks were last calculated
-// 	int braggIndex_;
 
-	private:
-	// Calculate Bragg peak contributions
-	bool calculateBraggContributions(ProcessPool& procPool);
-	// Calculate weighted Bragg S(Q)
-	bool calculateBraggSQ(const AtomTypeList& sampleAtomTypes, Array2D<XYData>& braggMatrix, double broadening);
-	
 	public:
 	// Set RDF bin width
 	void setRDFBinWidth(double width);
@@ -312,8 +295,6 @@ class Configuration : public ListItem<Configuration>
 	void setBraggMaximumQ(double qMax);
 	// Return maximum Q value for Bragg calculation
 	double braggMaximumQ();
-	// Return maximal extent of hkl for Bragg calculation
-	Vec3<int> braggMaximumHKL();
 
 
 	/*

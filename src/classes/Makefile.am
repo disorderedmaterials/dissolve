@@ -2,7 +2,7 @@ noinst_LTLIBRARIES = libclasses.la
 
 libclasses_la_SOURCES = atom.cpp atomtype.cpp atomtypedata.cpp atomtypelist.cpp
 libclasses_la_SOURCES += box.cpp box_cubic.cpp box_monoclinic.cpp box_nonperiodic.cpp box_orthorhombic.cpp box_triclinic.cpp braggpeak.cpp
-libclasses_la_SOURCES += cell.cpp cellarray.cpp cellneighbour.cpp changedata.cpp changestore.cpp configuration.cpp configuration_box.cpp configuration_composition.cpp configuration_contents.cpp configuration_energy.cpp configuration_rdfs.cpp configuration_upkeep.cpp
+libclasses_la_SOURCES += cell.cpp cellarray.cpp cellneighbour.cpp changedata.cpp changestore.cpp configuration.cpp configuration_box.cpp configuration_composition.cpp configuration_contents.cpp configuration_energy.cpp configuration_upkeep.cpp
 libclasses_la_SOURCES += energykernel.cpp
 libclasses_la_SOURCES += forcekernel.cpp
 libclasses_la_SOURCES += grain.cpp

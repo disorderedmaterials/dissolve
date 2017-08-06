@@ -74,28 +74,28 @@ bool PartialsModule::testReferencePartials(PartialSet& setA, PartialSet& setB, d
 			// Full partial
 			error = setA.partial(n,m).error(setB.partial(n,m));
 			{
-				Messenger::print("Partials: Test reference full partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+				Messenger::print("Partials: Test reference full partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 				if (error > testThreshold) return false;
 			}
 
 			// Bound partial
 			error = setA.boundPartial(n,m).error(setB.boundPartial(n,m));
 			{
-				Messenger::print("Partials: Test reference bound partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+				Messenger::print("Partials: Test reference bound partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 				if (error > testThreshold) return false;
 			}
 
 			// Unbound reference
 			error = setA.unboundPartial(n,m).error(setB.unboundPartial(n,m));
 			{
-				Messenger::print("Partials: Test reference unbound partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+				Messenger::print("Partials: Test reference unbound partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 				if (error > testThreshold) return false;
 			}
 
 			// Bragg reference
 			error = setA.braggPartial(n,m).error(setB.braggPartial(n,m));
 			{
-				Messenger::print("Partials: Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+				Messenger::print("Partials: Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 				if (error > testThreshold) return false;
 			}
 		}
@@ -104,7 +104,7 @@ bool PartialsModule::testReferencePartials(PartialSet& setA, PartialSet& setB, d
 	// Total reference data supplied?
 	error = setA.total().error(setB.total());
 	{
-		Messenger::print("Partials: Test reference total has error of %7.3f%% with calculated data and is %s (threshold is %6.3%%)\n\n", error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+		Messenger::print("Partials: Test reference total has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 		if (error > testThreshold) return false;
 	}
 
@@ -132,7 +132,7 @@ bool PartialsModule::testReferencePartials(GenericList& sourceModuleData, Partia
 			{
 				double error = partials.partial(n,m).error(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, uniqueName()));
 				{
-					Messenger::print("Partials: Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+					Messenger::print("Partials: Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 					if (error > testThreshold) return false;
 				}
 			}
@@ -143,7 +143,7 @@ bool PartialsModule::testReferencePartials(GenericList& sourceModuleData, Partia
 			{
 				double error = partials.boundPartial(n,m).error(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, uniqueName()));
 				{
-					Messenger::print("Partials: Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+					Messenger::print("Partials: Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 					if (error > testThreshold) return false;
 				}
 			}
@@ -154,7 +154,7 @@ bool PartialsModule::testReferencePartials(GenericList& sourceModuleData, Partia
 			{
 				double error = partials.unboundPartial(n,m).error(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, uniqueName()));
 				{
-					Messenger::print("Partials: Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+					Messenger::print("Partials: Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 					if (error > testThreshold) return false;
 				}
 			}
@@ -165,7 +165,7 @@ bool PartialsModule::testReferencePartials(GenericList& sourceModuleData, Partia
 			{
 				double error = partials.braggPartial(n,m).error(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, uniqueName()));
 				{
-					Messenger::print("Partials: Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+					Messenger::print("Partials: Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 					if (error > testThreshold) return false;
 				}
 			}
@@ -178,7 +178,7 @@ bool PartialsModule::testReferencePartials(GenericList& sourceModuleData, Partia
 	{
 		double error = partials.total().error(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, uniqueName()));
 		{
-			Messenger::print("Partials: Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+			Messenger::print("Partials: Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 			if (error > testThreshold) return false;
 		}
 	}
@@ -595,7 +595,7 @@ bool PartialsModule::calculateWeightedGR(PartialSet& unweightedgr, PartialSet& w
 
 
 // Generate S(Q) from supplied g(r)
-bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration* cfg, double qMin, double qDelta, double qMax, double rho, XYData::WindowFunction wf, double qDepBroadening, double qIndepBroadening, bool includeBragg, double qDepBraggBroadening, double qIndepBraggBroad)
+bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration* cfg, double qMin, double qDelta, double qMax, double rho, XYData::WindowFunction wf, double qDepBroadening, double qIndepBroadening, double braggQMax, double qDepBraggBroadening, double qIndepBraggBroadening)
 {
 	// Grab unweighted g(r) for Configuration
 	if (!cfg->moduleData().contains("UnweightedGR", "Partials"))
@@ -648,7 +648,22 @@ bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration*
 			if (!partialsq.partial(n,m).transformBroadenedRDF(rho, qMin, qDelta, qMax, qDepBroadening, qIndepBroadening, wf)) return false;
 			if (!partialsq.boundPartial(n,m).transformBroadenedRDF(rho, qMin, qDelta, qMax, qDepBroadening, qIndepBroadening, wf)) return false;
 			if (!partialsq.unboundPartial(n,m).transformBroadenedRDF(rho, qMin, qDelta, qMax, qDepBroadening, qIndepBroadening, wf)) return false;
+
+			// Zero Bragg partial, leave x array intact for use if needed
+			partialsq.braggPartial(n,m) = partialsq.partial(n,m);
+			partialsq.braggPartial(n,m).arrayY() = 0.0;
+
 		}
+	}
+
+	// Calculate Bragg partials (if requested)
+	if (braggQMax > 0.0)
+	{
+		procPool.resetAccumulatedTime();
+		timer.start();
+		if (!calculateUnweightedBragg(procPool, cfg, partialsq, braggQMax, qIndepBraggBroadening, qDepBroadening)) return false;
+		timer.stop();
+		Messenger::print("--> Finished calculation of partial Bragg S(Q) (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
 	}
 
 	// Sum into total
@@ -694,18 +709,267 @@ bool PartialsModule::calculateWeightedSQ(PartialSet& unweightedsq, PartialSet& w
 	return true;
 }
 
+// Calculate unweighted Bragg scattering for specified Configuration
+bool PartialsModule::calculateUnweightedBragg(ProcessPool& procPool, Configuration* cfg, PartialSet& partialsq, double braggQMax, double braggQIndepBroadening, double qDepBroadening)
+{
+	// Check to see if the arrays are up-to-date
+	// TODO
 
-// 	// Calculate Bragg partials (if requested)
-// 	if (braggOn)
-// 	{
-// 		procPool.resetAccumulatedTime();
-// 		timer.start();
-// 		if (!calculateBraggContributions(procPool)) return false;
-// // 		if (!calculateBraggSQ(procPool)) return false;
-// 		timer.stop();
-// 		Messenger::print("--> Finished calculation of partial Bragg S(Q) (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
-// 	}
-// 
+	// Realise the arrays from the Configuration
+	List<KVector>& braggKVectors_ = GenericListHelper< List<KVector> >::realise(cfg->moduleData(), "BraggKVectors", uniqueName());
+	List<BraggPeak>& braggPeaks_ = GenericListHelper< List<BraggPeak> >::realise(cfg->moduleData(), "BraggPeaks", uniqueName());
+	Array2D<double>& braggAtomVectorXCos_ = GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "BraggAtomVectorXCos", uniqueName());
+	Array2D<double>& braggAtomVectorYCos_ = GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "BraggAtomVectorYCos", uniqueName());
+	Array2D<double>& braggAtomVectorZCos_ = GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "BraggAtomVectorZCos", uniqueName());
+	Array2D<double>& braggAtomVectorXSin_ = GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "BraggAtomVectorXSin", uniqueName());
+	Array2D<double>& braggAtomVectorYSin_ = GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "BraggAtomVectorYSin", uniqueName());
+	Array2D<double>& braggAtomVectorZSin_ = GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "BraggAtomVectorZSin", uniqueName());
+	Vec3<int>& braggMaximumHKL_ = GenericListHelper< Vec3<int> >::realise(cfg->moduleData(), "BraggMaximumHKL", uniqueName());
+
+	// Grab some useful values
+	const Box* box = cfg->box();
+	Matrix3 rAxes = box->reciprocalAxes();
+	Vec3<double> rI, v, rLengths = box->reciprocalAxisLengths();
+	int nTypes = cfg->nUsedAtomTypes();
+	AtomTypeList atomTypes = cfg->usedAtomTypesList();
+	int nAtoms = cfg->nAtoms();
+	Atom* atoms = cfg->atoms();
+
+	int n, m, h, k, l, hAbs, kAbs, lAbs, typeI, typeJ;
+	double* cosTermsH, *sinTermsH, *cosTermsK, *sinTermsK, *cosTermsL, *sinTermsL, *cosTerms, *sinTerms;
+	double hkCos, hkSin, hklCos, hklSin;
+	KVector* kVector;
+
+	// Create a timer
+	Timer timer;
+
+	rAxes.print();
+
+	// Calculate number of k-vectors within cutoff range
+	double mag, magSq, braggQMaxSq = braggQMax*braggQMax;
+	int braggIndex;
+	if (braggKVectors_.nItems() == 0)
+	{
+		Messenger::print("Partials: Performing initial setup of Bragg arrays...\n");
+		timer.start();
+
+		// Determine extents of hkl indices to use
+		braggMaximumHKL_.x = braggQMax / rLengths.x;
+		braggMaximumHKL_.y = braggQMax / rLengths.y;
+		braggMaximumHKL_.z = braggQMax / rLengths.z;
+
+		braggKVectors_.clear();
+		Vec3<double> kVec;
+		for (h = 0; h <= braggMaximumHKL_.x; ++h)
+		{
+			kVec.x = h;
+			for (k = -braggMaximumHKL_.y; k <= braggMaximumHKL_.y; ++k)
+			{
+				kVec.y = k;
+				for (l = -braggMaximumHKL_.z; l <= braggMaximumHKL_.z; ++l)
+				{
+					if ((h == 0) && (k == 0) && (l == 0)) continue;
+
+					kVec.z = l;
+					v = rAxes * kVec;
+
+					// Calculate magnitude of this k vector
+					magSq = v.magnitudeSq();
+					if (magSq <= braggQMaxSq)
+					{
+						mag = sqrt(magSq);
+
+						// Calculate integer BraggPeak index and see if a BraggPeak already exists at this position
+						braggIndex = int(mag*10000);
+						BraggPeak* peak = NULL;
+						for (peak = braggPeaks_.first(); peak != NULL; peak = peak->next) if (peak->index() == braggIndex) break;
+						if (peak == NULL)
+						{
+							peak = braggPeaks_.add();
+							peak->initialise(mag, braggIndex, nTypes);
+						}
+						kVector = new KVector(h, k, l, braggPeaks_.indexOf(peak), nTypes);
+						braggKVectors_.own(kVector);
+					}
+				}
+			}
+		}
+		Messenger::print("Partials: Bragg calculation spans %i hkl indices (max HKL = %i x %i x %i) within cutoff of Q = %f (%s elapsed).\n", braggKVectors_.nItems(), braggMaximumHKL_.x, braggMaximumHKL_.y, braggMaximumHKL_.z, braggQMax, timer.elapsedTimeString());
+
+                // Create atom working arrays
+		braggAtomVectorXCos_.initialise(nAtoms, braggMaximumHKL_.x+1);
+		braggAtomVectorYCos_.initialise(nAtoms, braggMaximumHKL_.y+1);
+		braggAtomVectorZCos_.initialise(nAtoms, braggMaximumHKL_.z+1);
+		braggAtomVectorXSin_.initialise(nAtoms, 2*braggMaximumHKL_.x+1);
+		braggAtomVectorYSin_.initialise(nAtoms, 2*braggMaximumHKL_.y+1);
+		braggAtomVectorZSin_.initialise(nAtoms, 2*braggMaximumHKL_.z+1);
+	}
+
+	// Precalculate cos/sin terms for atoms
+	timer.stop();
+	timer.zero();
+	timer.start();
+	for (n = 0; n<nAtoms; ++n)
+	{
+		// Calculate reciprocal lattice atom coordinates
+		v = atoms[n].r();
+		rI.x = v.x*rAxes[0] + v.y*rAxes[1] + v.z*rAxes[2];
+		rI.y = v.x*rAxes[3] + v.y*rAxes[4] + v.z*rAxes[5];
+		rI.z = v.x*rAxes[6] + v.y*rAxes[7] + v.z*rAxes[8];
+
+		// Grab pointers to cos/sin arrays for atom
+		cosTermsH = braggAtomVectorXCos_.ptr(n, 0);
+		cosTermsK = braggAtomVectorYCos_.ptr(n, 0);
+		cosTermsL = braggAtomVectorZCos_.ptr(n, 0);
+		sinTermsH = braggAtomVectorXSin_.ptr(n, braggMaximumHKL_.x);
+		sinTermsK = braggAtomVectorYSin_.ptr(n, braggMaximumHKL_.y);
+		sinTermsL = braggAtomVectorZSin_.ptr(n, braggMaximumHKL_.z);
+
+		// Initialise zero and first terms
+		cosTermsH[0] = 1.0;
+		cosTermsK[0] = 1.0;
+		cosTermsL[0] = 1.0;
+		sinTermsH[0] = 0.0;
+		sinTermsK[0] = 0.0;
+		sinTermsL[0] = 0.0;
+		cosTermsH[1] = cos(rI.x);
+		cosTermsK[1] = cos(rI.y);
+		cosTermsL[1] = cos(rI.z);
+		sinTermsH[1] = sin(rI.x);
+		sinTermsK[1] = sin(rI.y);
+		sinTermsL[1] = sin(rI.z);
+		sinTermsH[-1] = -sinTermsH[1];
+		sinTermsK[-1] = -sinTermsK[1];
+		sinTermsL[-1] = -sinTermsL[1];
+
+		// Generate H terms via power expansion
+		for (m=2; m<=braggMaximumHKL_.x; ++m)
+		{
+			cosTermsH[m] = cosTermsH[1] * cosTermsH[m-1] - sinTermsH[1] * sinTermsH[m-1];
+			sinTermsH[m] = cosTermsH[1] * sinTermsH[m-1] + sinTermsH[1] * cosTermsH[m-1];
+			sinTermsH[-m] = -sinTermsH[m];
+		}
+		// Generate K terms via power expansion
+		for (m=2; m<=braggMaximumHKL_.y; ++m)
+		{
+			cosTermsK[m] = cosTermsK[1] * cosTermsK[m-1] - sinTermsK[1] * sinTermsK[m-1];
+			sinTermsK[m] = cosTermsK[1] * sinTermsK[m-1] + sinTermsK[1] * cosTermsK[m-1];
+			sinTermsK[-m] = -sinTermsK[m];
+		}
+		// Generate L terms via power expansion
+		for (m=2; m<=braggMaximumHKL_.z; ++m)
+		{
+			cosTermsL[m] = cosTermsL[1] * cosTermsL[m-1] - sinTermsL[1] * sinTermsL[m-1];
+			sinTermsL[m] = cosTermsL[1] * sinTermsL[m-1] + sinTermsL[1] * cosTermsL[m-1];
+			sinTermsL[-m] = -sinTermsL[m];
+		}
+	}
+	timer.stop();
+	Messenger::print("Partials: Calculated atomic cos/sin terms (%s elapsed)\n", timer.totalTimeString());
+
+	// Calculate k-vector contributions
+	KVector** kVectors = braggKVectors_.array();
+	const int nKVectors = braggKVectors_.nItems();
+	int localTypeIndex;
+
+	// Zero kvector cos/sin contributions
+	for (m = 0; m < nKVectors; ++m) kVectors[m]->zeroCosSinTerms();
+
+	// Loop over atoms
+	timer.start();
+	for (n = 0; n<nAtoms; ++n)
+	{
+		// Grab localTypeIndex and array pointers for this atom
+		localTypeIndex = atoms[n].localTypeIndex();
+		cosTermsH = braggAtomVectorXCos_.ptr(n, 0);
+		cosTermsK = braggAtomVectorYCos_.ptr(n, 0);
+		cosTermsL = braggAtomVectorZCos_.ptr(n, 0);
+		sinTermsH = braggAtomVectorXSin_.ptr(n, braggMaximumHKL_.x);
+		sinTermsK = braggAtomVectorYSin_.ptr(n, braggMaximumHKL_.y);
+		sinTermsL = braggAtomVectorZSin_.ptr(n, braggMaximumHKL_.z);
+
+		// Loop over k-vectors
+		for (m = 0; m < nKVectors; ++m)
+		{
+			kVector = kVectors[m];
+
+			// Grab h, k, and l indices from KVector
+			h = kVector->h();
+			k = kVector->k();
+			l = kVector->l();
+			kAbs = abs(k);
+			lAbs = abs(l);
+
+			// Calculate complex product from atomic cos/sin terms
+			hkCos = cosTermsH[h] * cosTermsK[kAbs] - sinTermsH[h] * sinTermsK[k];
+			hkSin = cosTermsH[h] * sinTermsK[k] + sinTermsH[h] * cosTermsK[kAbs];
+			hklCos = hkCos * cosTermsL[lAbs] - hkSin * sinTermsL[l];
+			hklSin = hkCos * sinTermsL[l] + hkSin * cosTermsL[lAbs];
+
+			// Sum contribution into the k-vector's cos/sin arrays
+			kVector->addCosTerm(localTypeIndex, hklCos);
+			kVector->addSinTerm(localTypeIndex, hklSin);
+		}
+	}
+	timer.stop();
+	Messenger::print("Partials: Calculated atomic contributions to k-vectors (%s elapsed)\n", timer.totalTimeString());
+
+	// Zero Bragg peak intensities
+	BraggPeak** peaks = braggPeaks_.array();
+	int nPeaks = braggPeaks_.nItems();
+	for (m=0; m<nPeaks; ++m) peaks[m]->resetIntensities();
+
+	// Calculate intensities for individual KVectors - this will be automatically summed into the corresponding BraggPeak
+	for (m = 0; m < nKVectors; ++m) kVectors[m]->calculateIntensities(peaks);
+
+	double lFactor = cfg->box()->reciprocalVolume() / (PI*PI);
+
+	double qCentre, factor, lambda, lambdaCubed, inten, qSub, qAdd, broaden, q;
+	for (int typeI = 0; typeI < nTypes; ++typeI)
+	{
+		for (int typeJ = typeI; typeJ < nTypes; ++typeJ)
+		{
+			XYData& braggSQ = partialsq.braggPartial(typeI, typeJ);
+
+			// Calculate prefactor
+			factor = (typeI == typeJ ? 1.0 : 2.0);
+
+			// Loop over defined Bragg peaks
+			for (n=0; n<nPeaks; ++n)
+			{
+				// Get q value and intensity of peak
+				qCentre = peaks[n]->q();
+				inten = peaks[n]->intensity(typeI, typeJ);
+				lambda = braggQIndepBroadening + qCentre * 0.02;//qDepBroadening;
+				lambdaCubed = lambda * lambda * lambda;
+				printf("%f %f\n", lambda, inten);
+
+				// Loop over points in braggSQ XYData (which will provide our x-values)
+				for (m=0; m<braggSQ.nPoints(); ++m)
+				{
+					// Get q value from array
+					q = braggSQ.x(m);
+
+					// Set up Lorentzian parameters
+					qSub = (qCentre - q) / lambda;
+					qAdd = (qCentre + q) / lambda;
+					broaden = lFactor / ((1.0 + qSub*qSub) * (1.0 + qAdd*qAdd) * lambdaCubed);
+					braggSQ.addY(m, inten * broaden);
+				}
+			}
+
+			// Normalise to total number of atoms, subtract single atom scattering, and normalise to atomic fractions
+			braggSQ.arrayY() /= nAtoms;
+			if (typeI == typeJ) braggSQ.arrayY() -= atomTypes[typeI]->fraction();
+			braggSQ.arrayY() /= atomTypes[typeI]->fraction() * atomTypes[typeJ]->fraction();
+		}
+	}
+
+	for (m=0; m<nPeaks; ++m) Messenger::print("  %f   %f\n", peaks[m]->q(), peaks[m]->intensity(0,0));
+
+	return true;
+}
+
 // 	// Generate final partial S(Q) combining pair correlations and Bragg partials
 // 	for (typeI=0; typeI<usedAtomTypes_.nItems(); ++typeI)
 // 	{
@@ -726,7 +990,7 @@ bool PartialsModule::calculateWeightedSQ(PartialSet& unweightedsq, PartialSet& w
 // 			if (braggOn)
 // 			{
 // 				double xRange = 0.1, x;
-// 				double xMin = braggMaximumQ_ - xRange - qDelta*0.5;
+// 				double xMin = braggQMax - xRange - qDelta*0.5;
 // 				for (int n=0; n<braggSQ.nPoints(); ++n)
 // 				{
 // 					x = (braggSQ.x(n) <= xMin ? 0.0 : (braggSQ.x(n) - xMin) / xRange);
