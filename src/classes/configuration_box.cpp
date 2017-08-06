@@ -89,8 +89,9 @@ bool Configuration::setupBox(double ppRange)
 		delete box_;
 	}
 
-	// Determine volume
-	double volume = nAtoms_ / atomicDensity();
+	// Determine volume for box, if a density was supplied. Otherwise, set to -1.0 to keep current cell lengths
+	double volume = -1.0;
+	if (density_ > 0.0) volume = nAtoms_ / atomicDensity();
 
 	// Determine box type from supplied lengths / angles
 	bool rightAlpha = (fabs(boxAngles_.x-90.0) < 0.001);
@@ -98,7 +99,7 @@ bool Configuration::setupBox(double ppRange)
 	bool rightGamma = (fabs(boxAngles_.z-90.0) < 0.001);
 	if (nonPeriodic_)
 	{
-		// Might need to increase box volume to accommodate three times the ppRange
+		// Might need to increase pseudo-box volume to accommodate three times the ppRange
 		if (volume < pow(ppRange*3.0, 3.0)) volume = pow(ppRange*3.0, 3.0);
 		box_ = new NonPeriodicBox(volume);
 	}
@@ -107,7 +108,7 @@ bool Configuration::setupBox(double ppRange)
 		// Cubic or orthorhombic
 		bool abSame = (fabs(relativeBoxLengths_.x-relativeBoxLengths_.y) < 0.0001);
 		bool acSame = (fabs(relativeBoxLengths_.x-relativeBoxLengths_.z) < 0.0001);
-		if (abSame && acSame) box_ = new CubicBox(volume);
+		if (abSame && acSame) box_ = new CubicBox(volume, relativeBoxLengths_.x);
 		else box_ = new OrthorhombicBox(volume, relativeBoxLengths_);
 	}
 	else if (rightAlpha && (!rightBeta) && rightGamma) box_ = new MonoclinicBox(volume, relativeBoxLengths_, boxAngles_.y);	// Monoclinic
@@ -116,7 +117,10 @@ bool Configuration::setupBox(double ppRange)
 		// Triclinic
 		box_ = new TriclinicBox(volume, relativeBoxLengths_, boxAngles_);
 	}
-	
+
+	// Need to calculate atomic density if it wasn't provided
+	if (density_ < 0.0) density_ = nAtoms_ / box_->volume();
+
 	Messenger::print("--> %s box created for system.\n", Box::boxType(box_->type()));
 	Matrix3 axes = box_->axes();
 	Messenger::print("--> Axes Matrix : A = %10.4e %10.4e %10.4e, length = %10.4e Angstroms\n", axes[0], axes[1], axes[2], box_->axisLength(0));
