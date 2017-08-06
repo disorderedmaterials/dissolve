@@ -65,47 +65,47 @@ bool PartialsModule::testReferencePartials(PartialSet& setA, PartialSet& setB, d
 	// Get a copy of the AtomTypeList to work from
 	AtomTypeList atomTypes = setA.atomTypes();
 	AtomTypeData* typeI = atomTypes.first();
-	double mape;
+	double error;
 	for (int n=0; n<atomTypes.nItems(); ++n, typeI = typeI->next)
 	{
 		AtomTypeData* typeJ = typeI;
 		for (int m = n; m <atomTypes.nItems(); ++m, typeJ = typeJ->next)
 		{
 			// Full partial
-			mape = setA.partial(n,m).mape(setB.partial(n,m));
+			error = setA.partial(n,m).error(setB.partial(n,m));
 			{
-				Messenger::print("Partials: Test reference full partial '%s-%s' has MAPE of %15.9e with calculated data and is %s (threshold is %10.3e)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), mape, mape <= testThreshold ? "OK" : "NOT OK", testThreshold);
-				if (mape > testThreshold) return false;
+				Messenger::print("Partials: Test reference full partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+				if (error > testThreshold) return false;
 			}
 
 			// Bound partial
-			mape = setA.boundPartial(n,m).mape(setB.boundPartial(n,m));
+			error = setA.boundPartial(n,m).error(setB.boundPartial(n,m));
 			{
-				Messenger::print("Partials: Test reference bound partial '%s-%s' has MAPE of %15.9e with calculated data and is %s (threshold is %10.3e)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), mape, mape <= testThreshold ? "OK" : "NOT OK", testThreshold);
-				if (mape > testThreshold) return false;
+				Messenger::print("Partials: Test reference bound partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+				if (error > testThreshold) return false;
 			}
 
 			// Unbound reference
-			mape = setA.unboundPartial(n,m).mape(setB.unboundPartial(n,m));
+			error = setA.unboundPartial(n,m).error(setB.unboundPartial(n,m));
 			{
-				Messenger::print("Partials: Test reference unbound partial '%s-%s' has MAPE of %15.9e with calculated data and is %s (threshold is %10.3e)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), mape, mape <= testThreshold ? "OK" : "NOT OK", testThreshold);
-				if (mape > testThreshold) return false;
+				Messenger::print("Partials: Test reference unbound partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+				if (error > testThreshold) return false;
 			}
 
 			// Bragg reference
-			mape = setA.braggPartial(n,m).mape(setB.braggPartial(n,m));
+			error = setA.braggPartial(n,m).error(setB.braggPartial(n,m));
 			{
-				Messenger::print("Partials: Test reference data '%s' has MAPE of %15.9e with calculated data and is %s (threshold is %10.3e)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), mape, mape <= testThreshold ? "OK" : "NOT OK", testThreshold);
-				if (mape > testThreshold) return false;
+				Messenger::print("Partials: Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+				if (error > testThreshold) return false;
 			}
 		}
 	}
 
 	// Total reference data supplied?
-	mape = setA.total().mape(setB.total());
+	error = setA.total().error(setB.total());
 	{
-		Messenger::print("Partials: Test reference total has MAPE of %15.9e with calculated data and is %s (threshold is %10.3e)\n\n", mape, mape <= testThreshold ? "OK" : "NOT OK", testThreshold);
-		if (mape > testThreshold) return false;
+		Messenger::print("Partials: Test reference total has error of %7.3f%% with calculated data and is %s (threshold is %6.3%%)\n\n", error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+		if (error > testThreshold) return false;
 	}
 
 	return true;
@@ -130,10 +130,10 @@ bool PartialsModule::testReferencePartials(GenericList& sourceModuleData, Partia
 			dataName = CharString("%s-%s-%s", dataPrefix, typeI->atomTypeName(), typeJ->atomTypeName());
 			if (sourceModuleData.contains(dataName, uniqueName()))
 			{
-				double mape = partials.partial(n,m).mape(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, uniqueName()));
+				double error = partials.partial(n,m).error(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, uniqueName()));
 				{
-					Messenger::print("Partials: Test reference data '%s' has MAPE of %15.9e with calculated data and is %s (threshold is %10.3e)\n\n", dataName.get(), mape, mape <= testThreshold ? "OK" : "NOT OK", testThreshold);
-					if (mape > testThreshold) return false;
+					Messenger::print("Partials: Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+					if (error > testThreshold) return false;
 				}
 			}
 
@@ -141,10 +141,10 @@ bool PartialsModule::testReferencePartials(GenericList& sourceModuleData, Partia
 			dataName = CharString("%s-%s-%s-bound", dataPrefix, typeI->atomTypeName(), typeJ->atomTypeName());
 			if (sourceModuleData.contains(dataName, uniqueName()))
 			{
-				double mape = partials.boundPartial(n,m).mape(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, uniqueName()));
+				double error = partials.boundPartial(n,m).error(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, uniqueName()));
 				{
-					Messenger::print("Partials: Test reference data '%s' has MAPE of %15.9e with calculated data and is %s (threshold is %10.3e)\n\n", dataName.get(), mape, mape <= testThreshold ? "OK" : "NOT OK", testThreshold);
-					if (mape > testThreshold) return false;
+					Messenger::print("Partials: Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+					if (error > testThreshold) return false;
 				}
 			}
 
@@ -152,10 +152,10 @@ bool PartialsModule::testReferencePartials(GenericList& sourceModuleData, Partia
 			dataName = CharString("%s-%s-%s-unbound", dataPrefix, typeI->atomTypeName(), typeJ->atomTypeName());
 			if (sourceModuleData.contains(dataName, uniqueName()))
 			{
-				double mape = partials.unboundPartial(n,m).mape(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, uniqueName()));
+				double error = partials.unboundPartial(n,m).error(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, uniqueName()));
 				{
-					Messenger::print("Partials: Test reference data '%s' has MAPE of %15.9e with calculated data and is %s (threshold is %10.3e)\n\n", dataName.get(), mape, mape <= testThreshold ? "OK" : "NOT OK", testThreshold);
-					if (mape > testThreshold) return false;
+					Messenger::print("Partials: Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+					if (error > testThreshold) return false;
 				}
 			}
 
@@ -163,10 +163,10 @@ bool PartialsModule::testReferencePartials(GenericList& sourceModuleData, Partia
 			dataName = CharString("%s-%s-%s-bragg", dataPrefix, typeI->atomTypeName(), typeJ->atomTypeName());
 			if (sourceModuleData.contains(dataName, uniqueName()))
 			{
-				double mape = partials.braggPartial(n,m).mape(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, uniqueName()));
+				double error = partials.braggPartial(n,m).error(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, uniqueName()));
 				{
-					Messenger::print("Partials: Test reference data '%s' has MAPE of %15.9e with calculated data and is %s (threshold is %10.3e)\n\n", dataName.get(), mape, mape <= testThreshold ? "OK" : "NOT OK", testThreshold);
-					if (mape > testThreshold) return false;
+					Messenger::print("Partials: Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+					if (error > testThreshold) return false;
 				}
 			}
 		}
@@ -176,10 +176,10 @@ bool PartialsModule::testReferencePartials(GenericList& sourceModuleData, Partia
 	dataName = CharString("%s-total", dataPrefix);
 	if (sourceModuleData.contains(dataName, uniqueName()))
 	{
-		double mape = partials.total().mape(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, uniqueName()));
+		double error = partials.total().error(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, uniqueName()));
 		{
-			Messenger::print("Partials: Test reference data '%s' has MAPE of %15.9e with calculated data and is %s (threshold is %10.3e)\n\n", dataName.get(), mape, mape <= testThreshold ? "OK" : "NOT OK", testThreshold);
-			if (mape > testThreshold) return false;
+			Messenger::print("Partials: Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+			if (error > testThreshold) return false;
 		}
 	}
 

@@ -163,8 +163,8 @@ class XYData : public ListItem<XYData>
 	void addInterpolated(XYData& source, double weighting = 1.0);
 	// Return RMSE of current data with (interpolated) reference data
 	double rmse(XYData ref);
-	// Return mean absolute percentage error of current data with (interpolated) reference data
-	double mape(XYData ref);
+	// Return percentage error between this and reference data
+	double error(XYData ref);
 
 
 	/*

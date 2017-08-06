@@ -750,14 +750,20 @@ double XYData::rmse(XYData ref)
 	return rmse;
 }
 
-// Return mean absolute percentage error of current data with (interpolated) reference data
-double XYData::mape(XYData ref)
+// Return percentage error between this and reference data
+double XYData::error(XYData ref)
 {
 	// First, generate interpolation of reference data if it needs it
 	if (ref.interpolationScheme_ == XYData::NoInterpolation) ref.interpolate(XYData::SplineInterpolation);
 
-	// Generate RMSE over actual values of our data
-	double sume = 0.0, sumf = 0.0;
+	/*
+	 * Generate error estimate over actual values of our own data
+	 * We will calculate the mean absolute percentage error (MAPE) as well as the simple sum of errors divided by sum of reference data.
+	 * We do both, and return the higher of the two, since the MAPE is not a good measure when considering very spiky data (since the
+	 * on-step forecast is often worse than the actual error of the predicted value.
+	 */
+	
+	double sume = 0.0, sumf = 0.0, sumy = 0.0;
 	double firstX = 0.0, lastX = 0.0;
 	int nPointsConsidered = 0;
 	for (int n=0; n<x_.nItems(); ++n)
@@ -773,6 +779,7 @@ double XYData::mape(XYData ref)
 
 		// Accumulate numerator - sum of forecast errors
 		sume += fabs(y_[n] - ref.interpolated(x_[n]));
+		sumy += fabs(ref.interpolated(x_[n]));
 
 		// Accumulate denominator - one-step naive forecast (backwards forecast for first point)
 		if (nPointsConsidered > 0) sumf += fabs(y_[n] - y_[n-1]);
@@ -789,9 +796,9 @@ double XYData::mape(XYData ref)
 	if (sumf > 0.0) denominator = sumf;
 	else denominator = 1.0;
 	double mape = sume / denominator;
-	Messenger::print("MAPE between datasets is %15.9e over %15.9e < x < %15.9e (%i points).\n", mape, firstX, lastX, nPointsConsidered);
+	Messenger::print("MAPE between datasets is %7.3f%% over %15.9e < x < %15.9e (%i points), d(|Y|)/sum(|Y|) = %7.3f%%.\n", mape, firstX, lastX, nPointsConsidered, sume/sumy);
 
-	return mape;
+	return max(mape,sume/sumy);
 }
 
 /*
