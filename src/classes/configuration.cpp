@@ -58,7 +58,7 @@ Configuration::Configuration() : ListItem<Configuration>()
 	rdfRange_ = -1.0;
 	requestedRDFRange_ = -1.0;
 	temperature_ = 300.0;
-	braggMaximumQ_ = 1.0;
+	braggQMax_ = 2.0;
 
 	// Ensemble
 	appendEnsemble_ = false;
@@ -436,15 +436,15 @@ double Configuration::requestedRDFRange()
 }
 
 // Set maximum Q value for Bragg calculation
-void Configuration::setBraggMaximumQ(double qMax)
+void Configuration::setBraggQMax(double qMax)
 {
-	braggMaximumQ_ = qMax;
+	braggQMax_ = qMax;
 }
 
 // Return maximum Q value for Bragg calculation
-double Configuration::braggMaximumQ()
+double Configuration::braggQMax()
 {
-	return braggMaximumQ_;
+	return braggQMax_;
 }
 
 /*
@@ -518,6 +518,8 @@ bool Configuration::setupProcessPool(Array<int> worldRanks)
 	
 	// Send Cell info to Comm so suitable parallel strategy over cells can be deduced
 	if (!processPool_.setupCellStrategy(cells_.divisions(), cells_.extents(), cells_.neighbourIndices())) return false;
+
+	return true;
 }
 
 // Return process pool for this Configuration

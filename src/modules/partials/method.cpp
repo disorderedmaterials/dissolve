@@ -54,7 +54,6 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 	const bool braggOn = GenericListHelper<bool>::retrieve(moduleData, "Bragg", uniqueName(), options_.valueAsBool("Bragg"));
 	const double braggQDepBroadening = GenericListHelper<double>::retrieve(moduleData, "BraggQDepBroadening", uniqueName(), options_.valueAsDouble("BraggQDepBroadening"));
 	const double braggQIndepBroadening = GenericListHelper<double>::retrieve(moduleData, "BraggQIndepBroadening", uniqueName(), options_.valueAsDouble("BraggQIndepBroadening"));
-	const double braggQMax = GenericListHelper<double>::retrieve(moduleData, "BraggQMax", uniqueName(), options_.valueAsDouble("BraggQMax"));
 	const double qDepBroadening = GenericListHelper<double>::retrieve(moduleData, "QDepBroadening", uniqueName(), options_.valueAsDouble("QDepBroadening"));
 	const double qIndepBroadening = GenericListHelper<double>::retrieve(moduleData, "QIndepBroadening", uniqueName(), options_.valueAsDouble("QIndepBroadening"));
 	PartialsModule::PartialsMethod method = PartialsModule::partialsMethod(GenericListHelper<CharString>::retrieve(moduleData, "Method", uniqueName_, options_.valueAsString("Method")));
@@ -95,7 +94,6 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		if (braggOn)
 		{
 			Messenger::print("Partials: Bragg Q-dependent FWHM broadening to use is %f, Q-independent FWHM broadening to use is %f.\n", braggQDepBroadening, braggQIndepBroadening);
-			Messenger::print("Partials: Bragg scattering will be calculated to Q = %f.\n", braggQMax);
 		}
 	}
 	Messenger::print("Partials: Weighting scheme to employ is '%s'.\n", PartialsModule::weightingType(weightsType));
@@ -132,7 +130,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		// Calculate S(Q) if requested
 		if (sqCalculation)
 		{
-			calculateUnweightedSQ(procPool, cfg, qMin, qDelta, qMax, cfg->atomicDensity(), duq.windowFunction(), qDepBroadening, qIndepBroadening, braggOn ? braggQMax : -1.0, braggQDepBroadening, braggQIndepBroadening);
+			calculateUnweightedSQ(procPool, cfg, qMin, qDelta, qMax, cfg->atomicDensity(), duq.windowFunction(), qDepBroadening, qIndepBroadening, braggOn, braggQDepBroadening, braggQIndepBroadening);
 			PartialSet& unweightedsq = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedSQ", "Partials");
 			if (saveData && configurationLocal_ && (!MPIRunMaster(procPool, unweightedsq.save()))) return false;
 

@@ -26,8 +26,6 @@
 #include "classes/cellarray.h"
 #include "classes/molecule.h"
 #include "classes/histogram.h"
-#include "classes/kvector.h"
-#include "classes/braggpeak.h"
 #include "modules/modulelist.h"
 #include "base/xydata.h"
 #include "base/processpool.h"
@@ -278,7 +276,7 @@ class Configuration : public ListItem<Configuration>
 	// Maximum extent (requested) of calculated RDFs
 	double requestedRDFRange_;
 	// Maximum Q value for Bragg calculation
-	double braggMaximumQ_;
+	double braggQMax_;
 
 	public:
 	// Set RDF bin width
@@ -292,9 +290,9 @@ class Configuration : public ListItem<Configuration>
 	// Return requested RDF extent
 	double requestedRDFRange();
 	// Set maximum Q value for Bragg calculation
-	void setBraggMaximumQ(double qMax);
+	void setBraggQMax(double qMax);
 	// Return maximum Q value for Bragg calculation
-	double braggMaximumQ();
+	double braggQMax();
 
 
 	/*

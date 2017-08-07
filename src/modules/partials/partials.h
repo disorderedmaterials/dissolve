@@ -142,7 +142,7 @@ class PartialsModule : public Module
 	// Calculate weighted partials from supplied unweighted partials
 	bool calculateWeightedGR(PartialSet& unweightedPartials, PartialSet& weightedPartials, Weights& weights);
 	// Calculate unweighted S(Q) from supplied unweighted g(r)
-	bool calculateUnweightedSQ(ProcessPool& procPool, Configuration* cfg, double qMin, double qDelta, double qMax, double rho, XYData::WindowFunction wf, double qDepBroadening, double qIndepBroadening, double braggQMax, double qDepBraggBroadening, double qIndepBraggBroad);
+	bool calculateUnweightedSQ(ProcessPool& procPool, Configuration* cfg, double qMin, double qDelta, double qMax, double rho, XYData::WindowFunction wf, double qDepBroadening, double qIndepBroadening, bool braggOn, double qDepBraggBroadening, double qIndepBraggBroad);
 	// Calculate weighted S(Q) from supplied unweighted S(Q)
 	bool calculateWeightedSQ(PartialSet& unweightedsq, PartialSet& weightedsq, Weights& weights);
 	// Calculate unweighted Bragg scattering for specified Configuration

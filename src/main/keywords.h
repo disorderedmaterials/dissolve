@@ -79,7 +79,7 @@ namespace ConfigurationBlock
 	enum ConfigurationKeyword
 	{
 		BoxNormalisationFileKeyword,	/* 'BoxNormalisationFile' - Specifies a file from which to load the RDF normalisation array */
-		BraggMaximumQKeyword,		/* 'BraggMaximumQ' - Sets the maximum Q value for Bragg calculation */
+		BraggQMaxKeyword,		/* 'BraggQMax' - Sets the maximum Q value for Bragg calculation */
 		CellAnglesKeyword,		/* 'CellAngles' - Gives the angles of the unit cell */
 		CellDivisionLengthKeyword,	/* 'CellDivisionLength' - Set the requested side length for regions when partitioning the unit cell */
 		CellLengthsKeyword,		/* 'CellLengths' - Gives the relative lengths of the unit cell */

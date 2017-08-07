@@ -18,14 +18,17 @@ Configuration  'Box'
   InputCoordinates  epsr 'epsr/mgo.ato'
   RDFRange  33.736
   RDFBinWidth  0.03
+  BraggQMax  0.1
 
   Module Partials
     Isotopologue  'Box'  'Mg'  'Natural'  1.0
     Isotopologue  'Box'  'O'  'Natural'  1.0
     Frequency  1
     StructureFactor  on
+    QDepBroadening  0.02
     Weights  Neutron
     Bragg  On
+
     Save  On
 
     Test  On
