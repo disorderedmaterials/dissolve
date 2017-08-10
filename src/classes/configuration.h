@@ -279,6 +279,8 @@ class Configuration : public ListItem<Configuration>
 	double braggQMin_;
 	// Maximum Q value for Bragg calculation
 	double braggQMax_;
+	// Multiplicities reflecting any crystal supercell
+	Vec3<int> braggMultiplicity_;
 
 	public:
 	// Set RDF bin width
@@ -299,6 +301,10 @@ class Configuration : public ListItem<Configuration>
 	void setBraggQMax(double qMax);
 	// Return maximum Q value for Bragg calculation
 	double braggQMax();
+	// Set multiplicities reflecting any crystal supercell
+	void setBraggMultiplicity(Vec3<int> mult);
+	// Return multiplicities reflecting any crystal supercell
+	Vec3<int> braggMultiplicity();
 
 
 	/*

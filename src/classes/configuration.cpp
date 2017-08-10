@@ -60,6 +60,7 @@ Configuration::Configuration() : ListItem<Configuration>()
 	temperature_ = 300.0;
 	braggQMax_ = 0.01;
 	braggQMax_ = 2.0;
+	braggMultiplicity_.set(1,1,1);
 
 	// Ensemble
 	appendEnsemble_ = false;
@@ -458,6 +459,18 @@ void Configuration::setBraggQMax(double qMax)
 double Configuration::braggQMax()
 {
 	return braggQMax_;
+}
+
+// Set multiplicities reflecting any crystal supercell
+void Configuration::setBraggMultiplicity(Vec3<int> mult)
+{
+	braggMultiplicity_ = mult;
+}
+
+// Return multiplicities reflecting any crystal supercell
+Vec3<int> Configuration::braggMultiplicity()
+{
+	return braggMultiplicity_;
 }
 
 /*
