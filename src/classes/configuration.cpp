@@ -58,6 +58,7 @@ Configuration::Configuration() : ListItem<Configuration>()
 	rdfRange_ = -1.0;
 	requestedRDFRange_ = -1.0;
 	temperature_ = 300.0;
+	braggQMax_ = 0.01;
 	braggQMax_ = 2.0;
 
 	// Ensemble
@@ -433,6 +434,18 @@ void Configuration::setRequestedRDFRange(double range)
 double Configuration::requestedRDFRange()
 {
 	return requestedRDFRange_;
+}
+
+// Set minimum Q value for Bragg calculation
+void Configuration::setBraggQMin(double qMin)
+{
+	braggQMin_ = qMin;
+}
+
+// Return minimum Q value for Bragg calculation
+double Configuration::braggQMin()
+{
+	return braggQMin_;
 }
 
 // Set maximum Q value for Bragg calculation
