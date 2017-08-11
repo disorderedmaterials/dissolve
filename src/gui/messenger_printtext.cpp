@@ -20,14 +20,14 @@
 */
 
 #include "base/messenger.h"
-//#include <stdio.h>
-//#include <string.h>
+#include "base/lineparser.h"
+#include <stdio.h>
 
 // Print text
 void Messenger::printText(const char* text)
 {
 	// Print the passed string
-	if (redirect_) parser_.writeLineF("%s", text);
+	if (redirect_) parser_->writeLineF("%s", text);
 	else printf("%s", text);
 }
 

@@ -22,7 +22,7 @@
 #ifndef DUQ_PARAMETERS_H
 #define DUQ_PARAMETERS_H
 
-#include "templates/list.h"
+#include "templates/mpilistitem.h"
 #include "base/charstring.h"
 
 // Parameters Definition

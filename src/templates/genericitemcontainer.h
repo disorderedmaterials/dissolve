@@ -38,24 +38,6 @@ template <class T> class GenericItemContainer : public GenericItem
 
 
 	/*
-	 * Read / Write
-	 */
-	public:
-	// Read item contents from specified LineParser
-	bool read(LineParser& parser)
-	{
-		Messenger::print("# Note: Data from item '%s' has no read() method defined.\n", name());
-		return false;
-	}
-	// Write item contents to specified LineParser
-	bool write(LineParser& parser)
-	{
-		Messenger::print("# Note: Data from item '%s' has no write() method defined.\n", name());
-		return false;
-	}
-
-
-	/*
 	 * Parallel Comms
 	 */
 	public:

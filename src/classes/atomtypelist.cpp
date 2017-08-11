@@ -24,6 +24,7 @@
 #include "classes/isotopedata.h"
 #include "base/ptable.h"
 #include "base/processpool.h"
+#include "templates/broadcastlist.h"
 #include <string.h>
 
 // Static Members
@@ -265,7 +266,7 @@ bool AtomTypeList::broadcast(ProcessPool& procPool, int root)
 #ifdef PARALLEL
 	// Broadcast AtomTypeData list
 	bool result;
-	BroadcastList<AtomTypeData> atdBroadcaster(procPool, types_, result, root);
+	BroadcastList<AtomTypeData> atdBroadcaster(procPool, root, types_, result);
 	if (!result) return false;
 #endif
 	return true;

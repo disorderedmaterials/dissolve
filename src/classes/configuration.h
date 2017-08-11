@@ -275,8 +275,12 @@ class Configuration : public ListItem<Configuration>
 	double rdfRange_;
 	// Maximum extent (requested) of calculated RDFs
 	double requestedRDFRange_;
+	// Minimum Q value for Bragg calculation
+	double braggQMin_;
 	// Maximum Q value for Bragg calculation
 	double braggQMax_;
+	// Multiplicities reflecting any crystal supercell
+	Vec3<int> braggMultiplicity_;
 
 	public:
 	// Set RDF bin width
@@ -289,10 +293,18 @@ class Configuration : public ListItem<Configuration>
 	void setRequestedRDFRange(double range);
 	// Return requested RDF extent
 	double requestedRDFRange();
+	// Set minimum Q value for Bragg calculation
+	void setBraggQMin(double qMin);
+	// Return minimum Q value for Bragg calculation
+	double braggQMin();
 	// Set maximum Q value for Bragg calculation
 	void setBraggQMax(double qMax);
 	// Return maximum Q value for Bragg calculation
 	double braggQMax();
+	// Set multiplicities reflecting any crystal supercell
+	void setBraggMultiplicity(Vec3<int> mult);
+	// Return multiplicities reflecting any crystal supercell
+	Vec3<int> braggMultiplicity();
 
 
 	/*

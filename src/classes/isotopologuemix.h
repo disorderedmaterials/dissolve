@@ -22,12 +22,13 @@
 #ifndef DUQ_ISOTOPOLOGUEMIX_H
 #define DUQ_ISOTOPOLOGUEMIX_H
 
-#include "templates/list.h"
+#include "templates/listitem.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
 class Species;
 class Isotopologue;
+class ProcessPool;
 
 /*
  * IsotopologueMix Definition

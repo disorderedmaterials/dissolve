@@ -24,7 +24,7 @@
 
 #include "math/constants.h"
 #include "math/mathfunc.h"
-#include "templates/list.h"
+#include "templates/listitem.h"
 #include <stdio.h>
 #include <math.h>
 
@@ -39,7 +39,7 @@ template <class T> class Vec3
 
 
 	/*
-	// Set / adjust / retrieve
+	 * Set / adjust / retrieve
 	 */
 	public:
 	// Set the vector to 0,0,0
@@ -59,7 +59,7 @@ template <class T> class Vec3
 
 
 	/*
-	// Operators
+	 * Operators
 	 */
 	public:
 	// Operator =
@@ -149,8 +149,8 @@ template <class T> Vec3<T>::Vec3(T xx, T yy, T zz)
 }
 
 /*
-// Set / adjust / retrieve 
-*/
+ * Set / adjust / retrieve 
+ */
 
 // Zero
 template <class T> void Vec3<T>::zero()
@@ -212,8 +212,8 @@ template <class T> T Vec3<T>::get(int index) const
 }
 
 /*
-// Operators
-*/
+ * Operators
+ */
 
 // Assignment from single value
 template <class T> void Vec3<T>::operator=(const T value)
@@ -567,12 +567,12 @@ template <class T> void Vec3<T>::toSpherical()
 	rho = magnitude();
 	theta = acos(z/rho);
 	phi = atan2(y,x);
-	set(rho,phi*DEGRAD,theta*DEGRAD);
+	set(rho, phi*DEGRAD,theta*DEGRAD);
 }
 
 /*
-// 3D vector with List Pointers
-*/
+ * 3D vector with List Pointers
+ */
 template <class T> class ListVec3 : public Vec3<T>, public ListItem< ListVec3<T> >
 {
 	public:

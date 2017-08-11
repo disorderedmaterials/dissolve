@@ -27,6 +27,9 @@
 
 #define OPTOLERANCE 1.0e-6
 
+// Forward Declarations
+class ProcessPool;
+
 // XYData
 class XYData : public ListItem<XYData>
 {
@@ -70,7 +73,7 @@ class XYData : public ListItem<XYData>
 	// Copy existing X and Y data
 	void copyData(XYData& source);
 	// Copy existing X data and generate empty Y
-	void templateFrom(XYData& source);
+	void templateFrom(const XYData& source);
 	// Return current array size
 	int arraySize();
 	// Set data point 
@@ -151,6 +154,8 @@ class XYData : public ListItem<XYData>
 	double absIntegral();
 	// Apply median filter to data
 	void medianFilter(int length);
+	// Convolute this data with the supplied data
+	bool convolute(XYData& data);
 	// Convolute this data with the supplied data, by products
 	bool convoluteProduct(XYData& data);
 	// Trim data to X-range specified

@@ -12,11 +12,10 @@ EndSpecies
 
 # Define Configuration
 Configuration  'Box-noBragg'
-  CellLengths  67.4720001  67.4720001  67.4720001
-  Species 'Mg'  16384
-  Species 'O'   16384
+  CellLengths  21.085  21.085  21.085
+  Species 'Mg'  500
+  Species 'O'   500
   InputCoordinates  epsr 'epsr_noBragg/mgo.ato'
-  RDFRange  33.736
   RDFBinWidth  0.03
 
   Module Partials

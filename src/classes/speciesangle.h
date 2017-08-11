@@ -22,12 +22,13 @@
 #ifndef DUQ_SPECIESANGLE_H
 #define DUQ_SPECIESANGLE_H
 
-#include "templates/list.h"
+#include "templates/listitem.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
 class SpeciesAtom;
 class Species;
+class ProcessPool;
 
 /*
  * Angle Definition

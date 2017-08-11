@@ -22,6 +22,7 @@
 #ifndef DUQ_KVECTOR_H
 #define DUQ_KVECTOR_H
 
+#include "templates/mpilistitem.h"
 #include "templates/vector3.h"
 #include "templates/array.h"
 
@@ -33,7 +34,7 @@ class KVector : public MPIListItem<KVector>
 {
 	public:
 	// Constructor
-	KVector(int h = 0, int k = 0, int l = 0, int peakIndex = 0, int nAtomTypes = 0);
+	KVector(int h = 0, int k = 0, int l = 0, int peakIndex = -1, int nAtomTypes = 0);
 	// Destructor
 	~KVector();
 	// Copy constructor
@@ -54,6 +55,8 @@ class KVector : public MPIListItem<KVector>
 	Array<double> cosTerms_, sinTerms_;
 
 	public:
+	// Initialise
+	void initialise(int h, int k, int l, int peakIndex, int nAtomTypes);
 	// Return hkl indices
 	const Vec3<int>& hkl() const;
 	// Return h index
@@ -62,6 +65,8 @@ class KVector : public MPIListItem<KVector>
 	const int k() const;
 	// Return l index
 	const int l() const;
+	// Return associated BraggPeak index
+	int braggPeakIndex();
 	// Zero cos/sin term arrays
 	void zeroCosSinTerms();
 	// Add value to cosTerm index specified
@@ -69,7 +74,7 @@ class KVector : public MPIListItem<KVector>
 	// Add value to sinTerm index specified
 	void addSinTerm(int atomTypeIndex, double value);
 	// Calculate intensities and sum into associated BraggPeak
-	void calculateIntensities(BraggPeak** peakArray);
+	void calculateIntensities(BraggPeak* peakArray);
 	// Return specified intensity
 	double intensity(int typeI, int typeJ);
 

@@ -24,6 +24,7 @@
 #include "classes/atomtype.h"
 #include "classes/species.h"
 #include "base/sysfunc.h"
+#include "base/lineparser.h"
 
 // Species Block Keywords
 KeywordData SpeciesBlockData[] = {

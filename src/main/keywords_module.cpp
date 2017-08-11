@@ -22,6 +22,7 @@
 #include "main/keywords.h"
 #include "main/duq.h"
 #include "classes/species.h"
+#include "base/lineparser.h"
 #include "base/sysfunc.h"
 
 // Module Block Keywords

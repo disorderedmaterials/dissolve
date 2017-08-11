@@ -21,6 +21,7 @@
 
 #include "main/duq.h"
 #include "base/sysfunc.h"
+#include "base/lineparser.h"
 #include "modules/export/export.h"
 
 // Find first occurrence of named Module in pre-processing tasks

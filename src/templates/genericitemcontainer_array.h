@@ -1,6 +1,6 @@
 /*
-	*** Generic Item Container - Bool
-	*** src/templates/genericitemcontainer_bool.h
+	*** Generic Item Container - Array<T>
+	*** src/templates/genericitemcontainer_array.h
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -19,23 +19,23 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_GENERICITEMCONTAINER_BOOL_H
-#define DUQ_GENERICITEMCONTAINER_BOOL_H
+#ifndef DUQ_GENERICITEMCONTAINER_ARRAY_H
+#define DUQ_GENERICITEMCONTAINER_ARRAY_H
 
 #include "templates/genericitemcontainer.h"
-#include "base/sysfunc.h"
+#include "templates/broadcastarray.h"
 
-// GenericItemContainer<bool>
-template <> class GenericItemContainer<bool> : public GenericItem
+// GenericItemContainer< Array<T> >
+template <class T> class GenericItemContainer< Array<T> > : public GenericItem
 {
 	public:
 	// Constructor
-	GenericItemContainer<bool>(const char* name, int flags = 0) : GenericItem(name, flags)
+	GenericItemContainer< Array<T> >(const char* name, int flags = 0) : GenericItem(name, flags)
 	{
-		itemClass_ = GenericItem::BoolClass;
+		itemClass_ = GenericItem::ArrayIntClass;
 	}
 	// Data item
-	bool data;
+	Array<T> data;
 
 
 	/*
@@ -45,7 +45,9 @@ template <> class GenericItemContainer<bool> : public GenericItem
 	// Broadcast item contents
 	bool broadcast(ProcessPool& procPool, int root)
 	{
-		return procPool.broadcast(data, root);
+		bool success;
+		BroadcastArray<T>(procPool, root, data, success);
+		return success;
 	}
 };
 

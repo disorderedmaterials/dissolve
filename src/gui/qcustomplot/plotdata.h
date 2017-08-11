@@ -22,7 +22,7 @@
 #ifndef DUQ_PLOTDATA_H
 #define DUQ_PLOTDATA_H
 
-#include "templates/list.h"
+#include "templates/listitem.h"
 #include <QWidget>
 
 // Forward Declarations (Qt)

@@ -20,6 +20,7 @@
 */
 
 #include "base/messenger.h"
+#include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "base/processpool.h"
 #include <stdarg.h>
@@ -31,7 +32,7 @@ bool Messenger::quiet_ = false;
 bool Messenger::verbose_ = false;
 bool Messenger::redirect_ = false;
 bool Messenger::masterOnly_ = false;
-LineParser Messenger::parser_;
+LineParser* Messenger::parser_ = new LineParser;
 char Messenger::text_[8096];
 char Messenger::workingText_[8096];
 
@@ -193,8 +194,8 @@ void Messenger::banner(const char* fmt, ...)
 // Enable redirection of all messaging to specified file
 bool Messenger::enableRedirect(const char* filename)
 {
-	parser_.openOutput(filename, true);
-	if (!parser_.isFileGoodForWriting())
+	parser_->openOutput(filename, true);
+	if (!parser_->isFileGoodForWriting())
 	{
 		Messenger::print("Couldn't open output file '%s' for writing.\n", filename);
 		return false;

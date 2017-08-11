@@ -26,6 +26,8 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "version.h"
+#include "templates/genericitemreader.h"
+#include "templates/genericitemwriter.h"
 #include <string.h>
 
 // Load datafiles
@@ -348,6 +350,8 @@ bool DUQ::saveInput(const char* filename)
 		parser.writeLineF("\n");
 		parser.writeLineF("  %s  '%s'\n", ConfigurationBlock::keyword(ConfigurationBlock::BoxNormalisationFileKeyword), cfg->boxNormalisationFileName());
 		parser.writeLineF("  %s  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::BraggQMaxKeyword), cfg->braggQMax());
+		parser.writeLineF("  %s  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::BraggQMinKeyword), cfg->braggQMin());
+		parser.writeLineF("  %s  %i %i %i\n", ConfigurationBlock::keyword(ConfigurationBlock::BraggMultiplicityKeyword), cfg->braggMultiplicity().x, cfg->braggMultiplicity().y, cfg->braggMultiplicity().z);
 		parser.writeLineF("  %s  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::RDFBinWidthKeyword), cfg->rdfBinWidth());
 		parser.writeLineF("  %s  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::RDFRangeKeyword), cfg->rdfRange());
 		parser.writeLineF("  %s  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::TemperatureKeyword), cfg->temperature());
@@ -477,7 +481,9 @@ bool DUQ::loadRestart(const char* filename)
 		GenericItem* item = moduleData.create(parser.argc(nameIndex), itemClass);
 
 		// Read in the data
-		if (!item->read(parser))
+		bool success;
+		GenericItemReader(parser, item, success);
+		if (!success)
 		{
 			Messenger::error("Failed to read item data '%s' from restart file.\n", item->name());
 			error = true;
@@ -529,7 +535,9 @@ bool DUQ::saveRestart(const char* filename)
 				if (!(item->flags()&GenericItem::InRestartFileFlag)) continue;
 
 				parser.writeLineF("Configuration  %s  %s  %s\n", cfg->name(), item->name(), GenericItem::itemClass(item->itemClass()));
-				ri->item->write(parser);
+				bool success;
+				GenericItemWriter(parser, item, success);
+				if (!success) return false;
 			}
 		}
 	}
@@ -546,7 +554,9 @@ bool DUQ::saveRestart(const char* filename)
 			if (!(item->flags()&GenericItem::InRestartFileFlag)) continue;
 
 			parser.writeLineF("Processing  %s  %s\n", item->name(), GenericItem::itemClass(item->itemClass()));
-			ri->item->write(parser);
+			bool success;
+			GenericItemWriter(parser, item, success);
+			if (!success) return false;
 		}
 	}
 

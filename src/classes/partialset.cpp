@@ -19,6 +19,7 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "base/lineparser.h"
 #include "classes/atomtype.h"
 #include "classes/partialset.h"
 #include "classes/configuration.h"

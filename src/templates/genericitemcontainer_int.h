@@ -38,24 +38,6 @@ template <> class GenericItemContainer<int> : public GenericItem
 
 
 	/*
-	 * Read / Write
-	 */
-	public:
-	// Read item contents from specified LineParser
-	bool read(LineParser& parser)
-	{
-		if (parser.getArgsDelim(LineParser::Defaults) != 0) return false;
-		data = parser.argi(0);
-		return true;
-	}
-	// Write item contents to specified LineParser
-	bool write(LineParser& parser)
-	{
-		return parser.writeLineF("%i\n", data);
-	}
-
-
-	/*
 	 * Parallel Comms
 	 */
 	public:

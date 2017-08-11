@@ -25,6 +25,7 @@
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "base/ptable.h"
+#include "base/lineparser.h"
 
 // Write Configuration as XYZ
 bool ExportModule::writeConfigurationXYZ(LineParser& parser, Configuration* cfg, const char* header)

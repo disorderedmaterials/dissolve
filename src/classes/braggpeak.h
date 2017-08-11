@@ -23,6 +23,7 @@
 #define DUQ_BRAGGPEAK_H
 
 #include "templates/array2d.h"
+#include "templates/mpilistitem.h"
 
 // Forward Declarations
 /* none */

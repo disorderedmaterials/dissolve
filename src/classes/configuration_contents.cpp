@@ -28,6 +28,8 @@
 #include "base/processpool.h"
 #include "modules/import/import.h"
 
+using namespace std;
+
 // Add Atom/Grain space for a Molecule of the Species provided
 void Configuration::addMolecule(Species* sp)
 {

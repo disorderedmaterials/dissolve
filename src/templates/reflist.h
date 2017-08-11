@@ -22,7 +22,6 @@
 #ifndef DUQ_REFLIST_H
 #define DUQ_REFLIST_H
 
-#include "templates/list.h"
 #include <stddef.h>
 #include <stdio.h>
 
@@ -63,8 +62,8 @@ template <class T, class D> class RefList
 	public:
 	// Constructor
 	RefList<T,D>();
-	// List Constructor
-	RefList<T,D>(const List<T>& source, D startData);
+// 	// List Constructor
+// 	RefList<T,D>(const List<T>& source, D startData);
 	// Destructor
 	~RefList();
 	// Copy Constructor
@@ -158,16 +157,16 @@ template <class T, class D> RefList<T,D>::RefList()
 	nItems_ = 0;
 }
 
-// List Constructor
-template <class T, class D> RefList<T,D>::RefList(const List<T>& source, D startData)
-{
-	listHead_ = NULL;
-	listTail_ = NULL;
-	items_ = NULL;
-	regenerate_ = 1;
-	nItems_ = 0;
-	createFromList(source.first(), startData);
-}
+// // List Constructor
+// template <class T, class D> RefList<T,D>::RefList(const List<T>& source, D startData)
+// {
+// 	listHead_ = NULL;
+// 	listTail_ = NULL;
+// 	items_ = NULL;
+// 	regenerate_ = 1;
+// 	nItems_ = 0;
+// 	createFromList(source.first(), startData);
+// }
 
 // Destructor
 template <class T, class D> RefList<T,D>::~RefList()
@@ -573,12 +572,11 @@ template <class T, class D> RefListItem<T,D>** RefList<T,D>::array()
 	return items_;
 }
 
-
 /*
  * RefListIterator
  */
 
-// Linked List Reference Item Class
+// Reference List Iterator
 template <class T, class D> class RefListIterator
 {
 	public:

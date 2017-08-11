@@ -29,7 +29,6 @@
 #include "base/charstring.h"
 #include "base/timer.h"
 #include "templates/vector3.h"
-#include "templates/reflist.h"
 #include "templates/array.h"
 #include "templates/array2d.h"
 // Include <mpi.h> only if we are compiling in parallel
@@ -357,113 +356,6 @@ class ProcessPool
 	static int SUCCEEDED;
 	// Accessible return result buffer for slave processes
 	static int RESULT;
-};
-
-// BroadcastList
-template <class T> class BroadcastList
-{
-	/*
-	 * Constructor-only template class which iterates over a supplied list, broadcasting the object from master
-	 * to slave processes. The List must contain items which subclass MPIListItem, in order to provide the 'broadcast()' virtual.
-	 */
-	public:
-	// Constructor
-	BroadcastList(ProcessPool& procPool, List<T>& items, bool& result, int root = 0)
-	{
-		result = false;
-		int count;
-		if (procPool.isMaster())
-		{
-			// Broadcast number of items in list, then list items...
-			count = items.nItems();
-			if (!procPool.broadcast(count, root)) return;
-			for (MPIListItem<T>* item = items.first(); item != NULL; item = item->next) if (!item->broadcast(procPool, root)) return;
-		}
-		else
-		{
-			// Get number of list items to expect
-			if (!procPool.broadcast(count, root)) return;
-
-			// Clear list and reconstruct
-			items.clear();
-			for (int n=0; n<count; ++n)
-			{
-				// Slaves must create a suitable structure first, and then join the broadcast
-				T* item = items.add();
-				if (!item->broadcast(procPool, root)) return;
-			}
-		}
-
-		// All OK - success!
-		result = true;
-	};
-};
-
-// BroadcastRefList
-template <class T, class D> class BroadcastRefList
-{
-	/*
-	 * Constructor-only template class which iterates over a supplied RefList, recreating the reference list of the master
-	 * on the slave processes.
-	 */
-	public:
-	// Constructor
-	BroadcastRefList(ProcessPool& procPool, RefList<T,D>& items, const List<T>& itemSource, bool& result)
-	{
-		result = false;
-		int nItems, index;
-		T* item;
-		D data;
-		if (procPool.isMaster())
-		{
-			// Send number of items in list
-			nItems = items.nItems();
-			if (!procPool.broadcast(&nItems, 1)) return;
-			// Loop over items - send index of referenced item in its original list, and then associated data
-			for (RefListItem<T,D>* ri = items.first(); ri != NULL; ri = ri->next)
-			{
-				index = itemSource.indexOf(ri->item);
-				if (!procPool.broadcast(&index, 1))
-				{
-					Messenger::error("Master failed to broadcast item index in BroadcastRefList.\n");
-					return;
-				}
-				if (!procPool.broadcast(&ri->data, 1))
-				{
-					Messenger::error("Master failed to broadcast item data in BroadcastRefList.\n");
-					return;
-				}
-			}
-		}
-		else
-		{
-			// Receive number of items to create
-			if (!procPool.broadcast(&nItems, 1)) return;
-			for (int n=0; n<nItems; ++n)
-			{
-				// Master will send the index of the item in the itemSource list to reference
-				if (!procPool.broadcast(&index, 1))
-				{
-					Messenger::error("Slave %i in pool '%s' failed to broadcast item index in BroadcastRefList.\n", procPool.poolRank(), procPool.name());
-					return;
-				}
-				if (!procPool.broadcast(&data, 1))
-				{
-					Messenger::error("Slave %i in pool '%s' failed to broadcast item data in BroadcastRefList.\n", procPool.poolRank(), procPool.name());
-					return;
-				}
-				item = itemSource.item(index);
-				if (item == NULL)
-				{
-					Messenger::error("BroadcastRefList couldn't find index %i in source list.\n", index);
-					return;
-				}
-				items.add(item, data);
-			}
-		}
-		// Success!
-		result = true;
-	};
 };
 
 // Enum Broadcast Vessel

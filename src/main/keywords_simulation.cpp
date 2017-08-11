@@ -22,6 +22,7 @@
 #include "main/keywords.h"
 #include "main/duq.h"
 #include "base/sysfunc.h"
+#include "base/lineparser.h"
 
 // Simulation Block Keywords
 KeywordData SimulationBlockData[] = {

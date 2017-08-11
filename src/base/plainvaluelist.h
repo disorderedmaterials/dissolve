@@ -23,6 +23,7 @@
 #define DUQ_PLAINVALUELIST_H
 
 #include "base/plainvalue.h"
+#include "templates/list.h"
 
 // Forward Declarations
 /* none */

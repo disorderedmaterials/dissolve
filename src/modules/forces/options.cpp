@@ -22,6 +22,7 @@
 #include "modules/forces/forces.h"
 #include "modules/import/import.h"
 #include "main/duq.h"
+#include "base/lineparser.h"
 
 // Setup options for module
 void ForcesModule::setupOptions()

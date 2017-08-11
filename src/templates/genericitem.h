@@ -128,16 +128,6 @@ class GenericItem
 
 
 	/*
-	 * Read / Write
-	 */
-	public:
-	// Read item contents from specified LineParser
-	virtual bool read(LineParser& parser) = 0;
-	// Write item contents to specified LineParser
-	virtual bool write(LineParser& parser) = 0;
-
-
-	/*
 	 * Parallel Comms
 	 */
 	public:

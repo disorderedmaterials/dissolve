@@ -24,6 +24,7 @@
 
 #include "base/sysfunc.h"
 #include "templates/list.h"
+#include "templates/reflist.h"
 #include "templates/genericitems.h"
 
 // Generic List

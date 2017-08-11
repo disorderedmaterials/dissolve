@@ -23,6 +23,7 @@
 #include "classes/box.h"
 #include "classes/grain.h"
 #include "classes/species.h"
+#include "base/lineparser.h"
 #include "base/processpool.h"
 #include "base/sysfunc.h"
 #include "modules/export/export.h"
@@ -56,9 +57,11 @@ Configuration::Configuration() : ListItem<Configuration>()
 	// Setup
 	rdfBinWidth_ = 0.025;
 	rdfRange_ = -1.0;
-	requestedRDFRange_ = -1.0;
+	requestedRDFRange_ = -2.0;
 	temperature_ = 300.0;
+	braggQMax_ = 0.01;
 	braggQMax_ = 2.0;
+	braggMultiplicity_.set(1,1,1);
 
 	// Ensemble
 	appendEnsemble_ = false;
@@ -435,6 +438,18 @@ double Configuration::requestedRDFRange()
 	return requestedRDFRange_;
 }
 
+// Set minimum Q value for Bragg calculation
+void Configuration::setBraggQMin(double qMin)
+{
+	braggQMin_ = qMin;
+}
+
+// Return minimum Q value for Bragg calculation
+double Configuration::braggQMin()
+{
+	return braggQMin_;
+}
+
 // Set maximum Q value for Bragg calculation
 void Configuration::setBraggQMax(double qMax)
 {
@@ -445,6 +460,18 @@ void Configuration::setBraggQMax(double qMax)
 double Configuration::braggQMax()
 {
 	return braggQMax_;
+}
+
+// Set multiplicities reflecting any crystal supercell
+void Configuration::setBraggMultiplicity(Vec3<int> mult)
+{
+	braggMultiplicity_ = mult;
+}
+
+// Return multiplicities reflecting any crystal supercell
+Vec3<int> Configuration::braggMultiplicity()
+{
+	return braggMultiplicity_;
 }
 
 /*

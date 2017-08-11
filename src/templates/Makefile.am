@@ -1,8 +1,10 @@
-noinst_HEADERS = array2d.h array.h
+noinst_HEADERS = array2d.h array3d.h array.h
+noinst_HEADERS += broadcastarray.h broadcastlist.h
 noinst_HEADERS += factory.h
-noinst_HEADERS += genericitemcontainer_array2ddouble.h genericitemcontainer_arraydouble.h genericitemcontainer_arrayint.h genericitemcontainer_arrayvec3double.h genericitemcontainer_arrayvec3int.h genericitemcontainer_bool.h genericitemcontainer_charstring.h genericitemcontainer_double.h genericitemcontainer.h genericitemcontainer_int.h
-noinst_HEADERS += genericitem.h genericitems.h genericlist.h
-noinst_HEADERS += list.h
+noinst_HEADERS += genericitemcontainer_array2ddouble.h genericitemcontainer_arraydouble.h genericitemcontainer_array.h genericitemcontainer_arrayint.h genericitemcontainer_arrayvec3double.h genericitemcontainer_arrayvec3int.h genericitemcontainer_bool.h genericitemcontainer_charstring.h genericitemcontainer_double.h genericitemcontainer.h genericitemcontainer_int.h genericitemcontainer_list.h genericitemcontainer_orderedlist.h genericitemcontainer_vec3double.h genericitemcontainer_vec3int.h
+noinst_HEADERS += genericitem.h genericitemreader.h genericitems.h genericitemwriter.h genericlist.h
+noinst_HEADERS += list.h listitem.h
+noinst_HEADERS += mpilistitem.h
 noinst_HEADERS += orderedlist.h orderedpointerlist.h
 noinst_HEADERS += pair.h
 noinst_HEADERS += reflist.h

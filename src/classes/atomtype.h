@@ -23,7 +23,7 @@
 #define DUQ_ATOMTYPE_H
 
 #include "base/charstring.h"
-#include "templates/list.h"
+#include "templates/mpilistitem.h"
 
 // Forward Declarations
 class Parameters;

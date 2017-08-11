@@ -19,10 +19,10 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_CharString_H
-#define DUQ_CharString_H
+#ifndef DUQ_CHARSTRING_H
+#define DUQ_CHARSTRING_H
 
-#include "templates/list.h"
+#include "templates/listitem.h"
 
 // Dynamic character array
 class CharString : public ListItem<CharString>

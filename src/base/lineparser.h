@@ -22,8 +22,8 @@
 #ifndef DUQ_LINEPARSER_H
 #define DUQ_LINEPARSER_H
 
+#include "base/processpool.h"
 #include "base/charstring.h"
-#include "math/constants.h"
 #include "templates/list.h"
 #include "templates/vector3.h"
 #include <fstream>
@@ -34,7 +34,7 @@ using namespace std;
 #define MAXLINELENGTH 1024
 
 // Forward Declarations
-class ProcessPool;
+/* none */
 
 // Line Parser
 class LineParser

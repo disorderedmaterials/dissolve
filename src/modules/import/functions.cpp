@@ -20,6 +20,7 @@
 */
 
 #include "modules/import/import.h"
+#include "base/lineparser.h"
 
 /*
  * Coordinates

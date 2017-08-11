@@ -23,6 +23,7 @@
 #define DUQ_SPECIESATOM_H
 
 #include "templates/list.h"
+#include "templates/listitem.h"
 #include "templates/vector3.h"
 #include "templates/reflist.h"
 
@@ -31,6 +32,7 @@ class AtomType;
 class Species;
 class SpeciesBond;
 class SpeciesGrain;
+class ProcessPool;
 
 /*
  * SpeciesAtom Definition

@@ -38,22 +38,6 @@ template <> class GenericItemContainer< Array< Vec3<int> > > : public GenericIte
 
 
 	/*
-	 * Read / Write
-	 */
-	public:
-	// Read item contents from specified LineParser
-	bool read(LineParser& parser)
-	{
-		return data.read(parser);
-	}
-	// Write item contents to specified LineParser
-	bool write(LineParser& parser)
-	{
-		return data.write(parser);
-	}
-
-
-	/*
 	 * Parallel Comms
 	 */
 	public:

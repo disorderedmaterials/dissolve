@@ -22,6 +22,7 @@
 #include "modules/modulelist.h"
 #include "modules/module.h"
 #include "base/sysfunc.h"
+#include "base/lineparser.h"
 
 // Static Members
 RefList<Module,bool> ModuleList::masterInstances_;
