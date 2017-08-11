@@ -65,8 +65,10 @@ class KVector : public MPIListItem<KVector>
 	const int k() const;
 	// Return l index
 	const int l() const;
+	// Set BraggPeak index 
+	void setBraggPeakIndex(int index);
 	// Return associated BraggPeak index
-	int braggPeakIndex();
+	int braggPeakIndex() const;
 	// Zero cos/sin term arrays
 	void zeroCosSinTerms();
 	// Add value to cosTerm index specified

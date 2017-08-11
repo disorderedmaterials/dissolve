@@ -69,6 +69,12 @@ const double BraggPeak::q() const
 	return q_;
 }
 
+// Set index 
+void BraggPeak::setIndex(int index)
+{
+	index_ = index;
+}
+
 // Return index
 const int BraggPeak::index() const
 {

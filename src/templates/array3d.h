@@ -233,16 +233,8 @@ template <class A> class OffsetArray3D
 		array_ = NULL;
 		linearSize_ = 0;
 		sliceOffsets_ = NULL;
-		xMin_ = xMin;
-		yMin_ = yMin;
-		zMin_ = zMin;
-		xMax_ = xMax;
-		yMax_ = yMax;
-		zMax_ = zMax;
-		nX_ = (xMax_ - xMin_)+1;
-		nY_ = (yMax_ - yMin_)+1;
-		nZ_ = (zMax_ - zMin_)+1;
-		if ((nX_ > 0) && (nY_ > 0) && (nZ_ > 0)) resize(nX_, nY_, nZ_);
+
+		initialise(xMin, xMax, yMin, yMax, zMin, zMax);
 	}
 	// Destructor
 	~OffsetArray3D()
@@ -316,25 +308,6 @@ template <class A> class OffsetArray3D
 	// XY slice offsets
 	int* sliceOffsets_;
 
-	private:
-	// Resize array 
-	void resize(int nX, int nY, int nZ)
-	{
-		// Clear old data
-		clear();
-
-		// Create new array
-		nX_ = nX;
-		nY_ = nY;
-		nZ_ = nZ;
-		linearSize_ = nX_*nY_*nZ_;
-		array_ = new A[linearSize_];
-
-		// Create slice offsets array
-		sliceOffsets_ = new int[nZ_];
-		for (int n=0; n<nZ_; ++n) sliceOffsets_[n] = n*nX_*nY_;
-	}
-
 	public:
 	// Initialise array
 	void initialise(int xMin, int xMax, int yMin, int yMax, int zMin, int zMax)
@@ -350,8 +323,16 @@ template <class A> class OffsetArray3D
 		nX_ = (xMax_ - xMin_)+1;
 		nY_ = (yMax_ - yMin_)+1;
 		nZ_ = (zMax_ - zMin_)+1;
+		linearSize_ = nX_*nY_*nZ_;
 
-		if ((nX_ > 0) && (nY_ > 0) && (nZ_ > 0)) resize(nX_, nY_, nZ_);
+		if ((nX_ > 0) && (nY_ > 0) && (nZ_ > 0))
+		{
+			array_ = new A[linearSize_];
+
+			// Create slice offsets array
+			sliceOffsets_ = new int[nZ_];
+			for (int n=0; n<nZ_; ++n) sliceOffsets_[n] = n*nX_*nY_;
+		}
 // 		else printf("BAD_USAGE - Zero or negative row/column size(s) given to Array3D::initialise() (r=%i, c=%i)\n", nrows, ncolumns);
 	}
 	// Return specified element as reference

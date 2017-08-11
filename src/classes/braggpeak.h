@@ -63,6 +63,8 @@ class BraggPeak : public MPIListItem<BraggPeak>
 	void initialise(double q, int index, int nTypes);
 	// Return Q value of peak
 	const double q() const;
+	// Set index 
+	void setIndex(int index);
 	// Return index
 	const int index() const;
 	// Reset stored intensities

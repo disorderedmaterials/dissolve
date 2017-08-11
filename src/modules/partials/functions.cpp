@@ -779,7 +779,7 @@ bool PartialsModule::calculateUnweightedBragg(ProcessPool& procPool, Configurati
 		double q = 0.5*braggQDelta;
 		for (int n=0; n<nBraggBins; ++n)
 		{
-			tempPeaks[n].initialise(q, n, nTypes);
+			tempPeaks[n].initialise(q, -1, nTypes);
 			q += braggQDelta;
 		}
 		Vec3<double> kVec;
@@ -815,15 +815,22 @@ bool PartialsModule::calculateUnweightedBragg(ProcessPool& procPool, Configurati
 			}
 		}
 
+		// Renumber peaks in BraggPeak array, assigning an index only if there are KVectors associated with it
+		braggIndex = 0;
+		for (int n=0; n<nBraggBins; ++n) if (tempPeaks[n].nKVectors() > 0) tempPeaks[n].setIndex(braggIndex++);
+
 		// Collapse KVectors into a linear list, excluding any that weren't initialised
 		KVector* kVectorsLinear = tempKVectors.linearArray();
 		for (int n=0; n< tempKVectors.linearArraySize(); ++n)
 		{
 			if (kVectorsLinear[n].braggPeakIndex() == -1) continue;
+
+			// Look up and set the new index of the associated BraggPeak
+			kVectorsLinear[n].setBraggPeakIndex(tempPeaks[kVectorsLinear[n].braggPeakIndex()].index());
 			braggKVectors_.add(kVectorsLinear[n]);
 		}
 
-		// Prune BraggPeaks array
+		// Prune BraggPeaks array, putting them into a sequential Array that will reflect their new indexing
 		for (int n=0; n<nBraggBins; ++n)
 		{
 			if (tempPeaks[n].nKVectors() == 0) continue;
@@ -916,7 +923,6 @@ bool PartialsModule::calculateUnweightedBragg(ProcessPool& procPool, Configurati
 	timer.start();
 	for (n = 0; n<nAtoms; ++n)
 	{
-	// 		printf("n = %i\n, natoms = %i\n", n, nAtoms);
 		// Grab localTypeIndex and array pointers for this atom
 		localTypeIndex = atoms[n].localTypeIndex();
 		cosTermsH = braggAtomVectorXCos_.ptr(n, 0);

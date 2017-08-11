@@ -93,8 +93,14 @@ const int KVector::l() const
 	return hkl_.z;
 }
 
+// Set BraggPeak index 
+void KVector::setBraggPeakIndex(int index)
+{
+	braggPeakIndex_ = index;
+}
+
 // Return associated BraggPeak index
-int KVector::braggPeakIndex()
+int KVector::braggPeakIndex() const
 {
 	return braggPeakIndex_;
 }
