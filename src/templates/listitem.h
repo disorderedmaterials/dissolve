@@ -1,6 +1,6 @@
 /*
-	*** Generic Item Container - Bool
-	*** src/templates/genericitemcontainer_bool.h
+	*** Linked List Item Class
+	*** src/templates/listiitem.h
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -19,34 +19,30 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_GENERICITEMCONTAINER_BOOL_H
-#define DUQ_GENERICITEMCONTAINER_BOOL_H
+#ifndef DUQ_LISTITEM_H
+#define DUQ_LISTITEM_H
 
-#include "templates/genericitemcontainer.h"
-#include "base/sysfunc.h"
+#include <stdlib.h>     // To get NULL
 
-// GenericItemContainer<bool>
-template <> class GenericItemContainer<bool> : public GenericItem
+// Forward Declarations
+/* none */
+
+/*
+ * ListItem Class
+ * Basic class providing linked list pointers. Any class which is required to be contained in a linked list must
+ * subclass ListItem or MPIListItem
+ */
+template <class T> class ListItem
 {
 	public:
 	// Constructor
-	GenericItemContainer<bool>(const char* name, int flags = 0) : GenericItem(name, flags)
+	ListItem<T>()
 	{
-		itemClass_ = GenericItem::BoolClass;
+		prev = NULL;
+		next = NULL;
 	}
-	// Data item
-	bool data;
-
-
-	/*
-	 * Parallel Comms
-	 */
-	public:
-	// Broadcast item contents
-	bool broadcast(ProcessPool& procPool, int root)
-	{
-		return procPool.broadcast(data, root);
-	}
+	// List pointers
+	T *prev, *next;
 };
 
 #endif

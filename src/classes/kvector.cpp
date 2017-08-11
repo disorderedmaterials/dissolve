@@ -58,6 +58,17 @@ void KVector::operator=(const KVector& source)
  * Data
  */
 
+// Initialise
+void KVector::initialise(int h, int k, int l, int peakIndex, int nAtomTypes)
+{
+	hkl_.set(h, k, l);
+	braggPeakIndex_ = peakIndex;
+
+	// Create atomtype contribution arrays
+	cosTerms_.initialise(nAtomTypes);
+	sinTerms_.initialise(nAtomTypes);
+}
+
 // Return integer hkl indices
 const Vec3<int>& KVector::hkl() const
 {
@@ -80,6 +91,12 @@ const int KVector::k() const
 const int KVector::l() const
 {
 	return hkl_.z;
+}
+
+// Return associated BraggPeak index
+int KVector::braggPeakIndex()
+{
+	return braggPeakIndex_;
 }
 
 // Zero cos/sin term arrays
@@ -116,7 +133,7 @@ void KVector::addSinTerm(int atomTypeIndex, double value)
 }
 
 // Calculate intensities from stored cos and sin term arrays
-void KVector::calculateIntensities(BraggPeak** peakArray)
+void KVector::calculateIntensities(BraggPeak* peakArray)
 {
 #ifdef CHECKS
 	if (braggPeak_ == NULL)
@@ -127,19 +144,18 @@ void KVector::calculateIntensities(BraggPeak** peakArray)
 #endif
 	// Calculate final intensities from stored cos/sin terms
 	// Take account of the half-sphere, doubling intensities of all k-vectors not on h == 0
-	// Take account of the half-matrix of atom types, doubling contributions from dissimilar types
 	int i, j, nTypes = cosTerms_.nItems(), halfSphereNorm = (hkl_.x == 0 ? 1 : 2);
 	double intensity;
-	BraggPeak* braggPeak = peakArray[braggPeakIndex_];
+	BraggPeak& braggPeak = peakArray[braggPeakIndex_];
 // 	Messenger::print("KVector %3i %3i %3i  %f  ", hkl_.x, hkl_.y, hkl_.z, braggPeak->q());
-	braggPeak->addKVectors(halfSphereNorm);
+	braggPeak.addKVectors(halfSphereNorm);
 	for (i = 0; i<nTypes; ++i)
 	{
 		for (j = i; j < nTypes; ++j)
 		{
 			intensity = (cosTerms_[i]*cosTerms_[j] + sinTerms_[i]*sinTerms_[j]);
 // 			Messenger::print("%f  ", intensity / 1000.0 );
-			braggPeak->addIntensity(i, j, intensity * halfSphereNorm);
+			braggPeak.addIntensity(i, j, intensity * halfSphereNorm);
 		}
 	}
 // 	Messenger::print("\n");

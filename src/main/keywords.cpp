@@ -45,7 +45,7 @@ void InputBlocks::printValidKeywords(InputBlocks::InputBlock block)
 		case (InputBlocks::SpeciesBlock):
 			for (n=0; n<SpeciesBlock::nSpeciesKeywords; ++n) Messenger::print("  %s", SpeciesBlock::keyword( (SpeciesBlock::SpeciesKeyword) n ));
 		default:
-			printf("Unrecognised block given to InputBlocks::printValidKeywords.\n");
+			Messenger::print("Unrecognised block given to InputBlocks::printValidKeywords.\n");
 			break;
 	}
 	Messenger::print("\n");

@@ -22,7 +22,10 @@
 #ifndef DUQ_MESSENGER_H
 #define DUQ_MESSENGER_H
 
-#include "base/lineparser.h"
+#include <stdarg.h>
+
+// Forward Declarations
+class LineParser;
 
 // Global messaging handler
 class Messenger
@@ -81,7 +84,7 @@ class Messenger
 	// Whether file redirection is enabled
 	static bool redirect_;
 	// Local LineParser for file redirection
-	static LineParser parser_;
+	static LineParser* parser_;
 	
 	public:
 	// Enable redirection of all messaging to specified file

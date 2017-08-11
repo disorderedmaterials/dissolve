@@ -25,6 +25,7 @@
 #include "classes/species.h"
 #include "classes/box.h"
 #include "base/sysfunc.h"
+#include "base/lineparser.h"
 
 // Perform setup tasks for module
 bool ForcesModule::setup(ProcessPool& procPool)

@@ -26,52 +26,7 @@
 #include <stdio.h>
 
 // Forward Declarations
-template <class T> class List;
-class ProcessPool;
-
-/*
- * MPIListItem Class
- * Basic class providing linked list pointers. Any class which is required to be contained in a linked list, and be 
- * broadcastable with the general broadcast routines must subclass MPIListItem.
- */
-template <class T> class MPIListItem
-{
-	public:
-	// Constructor
-	MPIListItem<T>()
-	{
-		prev = NULL;
-		next = NULL;
-	}
-	// Destructor (virtual)
-	virtual ~MPIListItem<T>()
-	{
-	}
-	// List pointers
-	T* prev, *next;
-
-	public:
-	// Broadcast data from Master to all Slaves
-	virtual bool broadcast(ProcessPool& procPool, int root = 0) = 0;
-};
-
-/*
- * ListItem Class
- * Basic class providing linked list pointers. Any class which is required to be contained in a linked list must
- * subclass ListItem or MPIListItem
- */
-template <class T> class ListItem
-{
-	public:
-	// Constructor
-	ListItem<T>()
-	{
-		prev = NULL;
-		next = NULL;
-	}
-	// List pointers
-	T *prev, *next;
-};
+/* none */
 
 /*
  * List Class

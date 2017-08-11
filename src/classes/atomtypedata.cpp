@@ -27,6 +27,7 @@
 #include "base/messenger.h"
 #include "base/ptable.h"
 #include "base/processpool.h"
+#include "templates/broadcastlist.h"
 #include <string.h>
 
 // Constructor
@@ -212,7 +213,7 @@ bool AtomTypeData::broadcast(ProcessPool& procPool, int root)
 
 	// Broadcast the IsotopeData list
 	bool result;
-	BroadcastList<IsotopeData> topeBroadcaster(procPool, isotopes_, result, root);
+	BroadcastList<IsotopeData> topeBroadcaster(procPool, root, isotopes_, result);
 	if (!result) return false;
 
 	procPool.broadcast(population_, root);

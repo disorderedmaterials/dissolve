@@ -8,7 +8,6 @@ o Allow for Fixed atoms:
 	- Provision for pre-calculation of RDF/F(Q) data between fixed atoms, and introduction of this into final RDF/F(Q) data for speed?
 o Accumulate timing information for each module, displaying averages and total in schedule at each step?
 o Establish proper limit for switching between RDF calculation methods
-o Move Bragg-related functions from Configuration to PartialsModule, and remove need for src/classes/configuration_rdfs.cpp.
 
 
 -------------------------------------------

@@ -23,10 +23,10 @@
 #define DUQ_PLAINVALUE_H
 
 #include "base/charstring.h"
-#include "templates/list.h"
+#include "templates/listitem.h"
 
 // Forward Declarations
-/* none */
+class ProcessPool;
 
 // PlainValue
 class PlainValue : public ListItem<PlainValue>

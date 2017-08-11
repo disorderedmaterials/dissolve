@@ -22,6 +22,7 @@
 #include "modules/partials/partials.h"
 #include "main/duq.h"
 #include "classes/species.h"
+#include "base/lineparser.h"
 
 // Setup options for module
 void PartialsModule::setupOptions()

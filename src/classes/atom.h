@@ -29,6 +29,7 @@ class AtomType;
 class Cell;
 class Grain;
 class Molecule;
+class ProcessPool;
 
 // Atom Definition
 class Atom

@@ -146,7 +146,7 @@ class PartialsModule : public Module
 	// Calculate weighted S(Q) from supplied unweighted S(Q)
 	bool calculateWeightedSQ(PartialSet& unweightedsq, PartialSet& weightedsq, Weights& weights);
 	// Calculate unweighted Bragg scattering for specified Configuration
-	bool calculateUnweightedBragg(ProcessPool& procPool, Configuration* cfg, PartialSet& partialsq, double braggQMax, double braggQIndepBroadening, double qDepBroadening);
+	bool calculateUnweightedBragg(ProcessPool& procPool, Configuration* cfg, PartialSet& partialsq, double braggQMin, double braggQDelta, double braggQMax, double braggQIndepBroadening, double qDepBroadening, double braggMultiplicity);
 
 
 	/*

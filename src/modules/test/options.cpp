@@ -21,6 +21,7 @@
 
 #include "modules/test/test.h"
 #include "modules/modulelist.h"
+#include "base/lineparser.h"
 
 // Setup options for module
 void TestModule::setupOptions()

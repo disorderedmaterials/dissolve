@@ -23,6 +23,7 @@
 #define DUQ_HISTOGRAM_H
 
 #include "templates/array.h"
+#include "base/processpool.h"
 
 // Forward Declarations
 class Box;

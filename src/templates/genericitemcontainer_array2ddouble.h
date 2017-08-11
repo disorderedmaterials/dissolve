@@ -38,45 +38,6 @@ template <> class GenericItemContainer< Array2D<double> > : public GenericItem
 
 
 	/*
-	 * Read / Write
-	 */
-	public:
-	// Read item contents from specified LineParser
-	bool read(LineParser& parser)
-	{
-		// First line is number of elements in array
-		if (parser.getArgsDelim(LineParser::Defaults) != 0) return false;
-		int nRows = parser.argi(0), nColumns = parser.argi(1);
-		data.initialise(nRows, nColumns);
-
-		// Read in data
-		for (int row=0; row<nRows; ++row)
-		{
-			for (int column=0; column<nColumns; ++column)
-			{
-				if (!parser.getArgsDelim(LineParser::Defaults)) return false;
-				data.ref(row, column) = parser.argd(0);
-			}
-		}
-		return true;
-	}
-	// Write item contents to specified LineParser
-	bool write(LineParser& parser)
-	{
-		// Write number of rows and columns
-		if (!parser.writeLineF("%i  %i\n", data.nRows(), data.nColumns())) return false;
-
-		// Write items
-		for (int row=0; row<data.nRows(); ++row)
-		{
-			for (int column=0; column<data.nColumns(); ++column) if (!parser.writeLineF("%16.9e\n", data.value(row, column))) return false;
-		}
-
-		return true;
-	}
-
-
-	/*
 	 * Parallel Comms
 	 */
 	public:

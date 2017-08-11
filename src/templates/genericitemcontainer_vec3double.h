@@ -38,24 +38,6 @@ template <> class GenericItemContainer< Vec3<double> > : public GenericItem
 
 
 	/*
-	 * Read / Write
-	 */
-	public:
-	// Read item contents from specified LineParser
-	bool read(LineParser& parser)
-	{
-		if (parser.getArgsDelim(LineParser::Defaults) != 0) return false;
-		data = parser.arg3d(0);
-		return true;
-	}
-	// Write item contents to specified LineParser
-	bool write(LineParser& parser)
-	{
-		return parser.writeLineF("%f  %f  %f\n", data.x, data.y, data.z);
-	}
-
-
-	/*
 	 * Parallel Comms
 	 */
 	public:

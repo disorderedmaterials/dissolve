@@ -22,11 +22,13 @@
 #include "base/processpool.h"
 #include "base/xydata.h"
 #include "base/messenger.h"
+#include "base/lineparser.h"
 #include "math/constants.h"
 #include <math.h>
 #include <stdio.h>
 #include <stddef.h>
 #include <string.h>
+using namespace std;
 
 // Constructor
 XYData::XYData() : ListItem<XYData>()
@@ -124,10 +126,11 @@ void XYData::copyData(XYData& source)
 }
 
 // Copy existing X data and generate empty Y
-void XYData::templateFrom(XYData& source)
+void XYData::templateFrom(const XYData& source)
 {
 	x_ = source.x_;
-	y_.initialise(x_.nItems(), 0.0);
+	y_.initialise(x_.nItems());
+	y_ = 0.0;
 	interpolationInterval_ = -1;
 }
 
@@ -363,11 +366,7 @@ void XYData::operator+=(const XYData& source)
 	if (source.nPoints() == 0) return;
 
 	// Initialise current arrays?
-	if (x_.nItems() == 0)
-	{
-		x_ = source.x_;
-		y_.initialise(x_.nItems(), 0.0);
-	}
+	if (x_.nItems() == 0) templateFrom(source);
 
 	// Check array sizes
 	if (x_.nItems() != source.x_.nItems())
@@ -432,11 +431,7 @@ XYData XYData::operator-(const XYData& source) const
 void XYData::operator-=(const XYData& source)
 {
 	// Initialise current arrays?
-	if (x_.nItems() == 0)
-	{
-		x_ = source.x_;
-		y_.initialise(x_.nItems(), 0.0);
-	}
+	if (x_.nItems() == 0) templateFrom(source);
 
 	// Check array sizes
 	if (x_.nItems() != source.x_.nItems())
@@ -610,6 +605,12 @@ void XYData::medianFilter(int length)
 	
 	// Store new values
 	y_ = newY;
+}
+
+// Convolute this data with the supplied data
+bool XYData::convolute(XYData& data)
+{
+	//
 }
 
 // Convolute this data with the supplied data, by products

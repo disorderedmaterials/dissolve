@@ -22,6 +22,7 @@
 #include "classes/pairpotential.h"
 #include "classes/atomtype.h"
 #include "base/messenger.h"
+#include "base/lineparser.h"
 #include "base/parameters.h"
 #include "base/processpool.h"
 #include "base/sysfunc.h"

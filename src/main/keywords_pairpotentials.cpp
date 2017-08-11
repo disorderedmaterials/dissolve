@@ -23,6 +23,7 @@
 #include "main/duq.h"
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
+#include "base/lineparser.h"
 
 // PairPotentials Block Keywords
 KeywordData PairPotentialsBlockData[] = {

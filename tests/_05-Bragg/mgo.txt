@@ -12,13 +12,14 @@ EndSpecies
 
 # Define Configuration
 Configuration  'Box'
-  CellLengths  67.4720001  67.4720001  67.4720001
-  Species 'Mg'  16384
-  Species 'O'   16384
+  CellLengths  21.085  21.085  21.085
+  Species 'Mg'  500
+  Species 'O'   500
   InputCoordinates  epsr 'epsr/mgo.ato'
-  RDFRange  33.736
   RDFBinWidth  0.03
-  BraggQMax  0.1
+  BraggQMin  0.01
+  BraggQMax  5.0
+  BraggMultiplicity  5 5 5
 
   Module Partials
     Isotopologue  'Box'  'Mg'  'Natural'  1.0
@@ -51,7 +52,7 @@ EndConfiguration
 
 # Pair Potentials
 PairPotentials
-  Range  15.000000
+  Range  10.000000
   Delta  0.050000
   TruncationWidth  2.000000
   GenerateAll  'LJ'

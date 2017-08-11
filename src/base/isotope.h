@@ -22,7 +22,7 @@
 #ifndef DUQ_ISOTOPE_H
 #define DUQ_ISOTOPE_H
 
-#include "templates/list.h"
+#include "templates/mpilistitem.h"
 #include "base/charstring.h"
 
 // Forward Declarations

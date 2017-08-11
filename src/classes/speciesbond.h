@@ -23,11 +23,13 @@
 #define DUQ_SPECIESBOND_H
 
 #include "templates/list.h"
+#include "templates/listitem.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
 class SpeciesAtom;
 class Species;
+class ProcessPool;
 
 // SpeciesBond Definition
 class SpeciesBond : public ListItem<SpeciesBond>

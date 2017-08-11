@@ -22,6 +22,7 @@
 #include "base/element.h"
 #include "base/isotope.h"
 #include "base/processpool.h"
+#include "templates/broadcastlist.h"
 #include <string.h>
 
 // Constructor
@@ -177,7 +178,7 @@ bool Element::broadcast(ProcessPool& procPool)
 
 	// Add isotopes
 	bool result;
-	BroadcastList<Isotope>(procPool, isotopes_, result);
+	BroadcastList<Isotope>(procPool, 0, isotopes_, result);
 	if (!result)
 	{
 		Messenger::print("Failed to broadcast Isotope data for element '%s'.\n", name_.get());
@@ -185,7 +186,7 @@ bool Element::broadcast(ProcessPool& procPool)
 	}
 
 	// Add parameters
-	BroadcastList<Parameters>(procPool, parameters_, result);
+	BroadcastList<Parameters>(procPool, 0, parameters_, result);
 	if (!result)
 	{
 		Messenger::print("Failed to broadcast Parameter data for element '%s'.\n", name_.get());

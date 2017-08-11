@@ -94,7 +94,8 @@ bool Species::checkSetup(const List<AtomType>& atomTypes)
 
 	/* GrainDefinitions */
 	/* Each Atom must be in exactly one GrainDefinition */
-	RefList<SpeciesAtom,int> grainCount(atoms_, 0);
+	RefList<SpeciesAtom,int> grainCount;
+	for (SpeciesAtom* sa = atoms_.first(); sa != NULL; sa = sa->next) grainCount.add(sa, 0);
 	for (SpeciesGrain* sg = grains_.first(); sg != NULL; sg = sg->next)
 	{
 		for (RefListItem<SpeciesAtom,int>* ri = sg->atoms(); ri != NULL; ri = ri->next)

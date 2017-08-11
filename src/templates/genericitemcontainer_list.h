@@ -23,6 +23,7 @@
 #define DUQ_GENERICITEMCONTAINER_LIST_H
 
 #include "templates/genericitemcontainer.h"
+#include "templates/broadcastlist.h"
 
 // GenericItemContainer< List<U> >
 template <class U> class GenericItemContainer< List<U> > : public GenericItem
@@ -35,24 +36,6 @@ template <class U> class GenericItemContainer< List<U> > : public GenericItem
 	}
 	// Data item
 	List<U> data;
-
-
-	/*
-	 * Read / Write
-	 */
-	public:
-	// Read item contents from specified LineParser
-	bool read(LineParser& parser)
-	{
-		Messenger::error("Reading data into GenericItemContainer< List<U> > not implemented.\n");
-		return false;
-	}
-	// Write item contents to specified LineParser
-	bool write(LineParser& parser)
-	{
-		Messenger::error("Writing data from GenericItemContainer< List<U> > not implemented.\n");
-		return false;
-	}
 
 
 	/*

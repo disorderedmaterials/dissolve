@@ -23,7 +23,7 @@
 #define DUQ_ATOMTYPEDATA_H
 
 #include "templates/list.h"
-#include "templates/reflist.h"
+#include "templates/mpilistitem.h"
 
 // Forward Declarations
 class AtomType;

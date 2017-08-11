@@ -23,6 +23,7 @@
 #include "classes/box.h"
 #include "classes/grain.h"
 #include "classes/species.h"
+#include "base/lineparser.h"
 #include "base/processpool.h"
 #include "base/sysfunc.h"
 #include "modules/export/export.h"

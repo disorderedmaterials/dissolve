@@ -25,7 +25,7 @@
 #define CHUNKSIZE 128
 
 #include "base/messenger.h"
-#include "templates/list.h"
+#include "templates/listitem.h"
 #include "templates/vector3.h"
 
 // Array
@@ -139,7 +139,7 @@ template <class A> class Array : public ListItem< Array<A> >
 		size_ = 0;
 	}
 	// Create empty array of specified size
-	void initialise(int size, int value = 0)
+	void initialise(int size)
 	{
 		// First, resize array...
 		resize(size);
@@ -147,8 +147,8 @@ template <class A> class Array : public ListItem< Array<A> >
 		// ...then set number of items to specified size...
 		nItems_ = size;
 		
-		// ...and finally set all elements to specified value
-		for (int n=0; n<nItems_; ++n) array_[n] = value;
+		// ...and finally set all elements to default value
+		for (int n=0; n<nItems_; ++n) array_[n] = A();
 	}
 
 
@@ -271,36 +271,27 @@ template <class A> class Array : public ListItem< Array<A> >
 
 
 	/*
-	 * Read / Write
+	 * Parallel Comms
 	 */
 	public:
-	// Read item contents from specified LineParser
-	bool read(LineParser& parser)
-	{
-		// First line is number of elements in array
-		if (parser.getArgsDelim(LineParser::Defaults) != 0) return false;
-		int nItems = parser.argi(0);
-		initialise(nItems);
-
-		// Read in data
-		for (int n=0; n<nItems; ++n)
-		{
-			if (parser.getArgsDelim(LineParser::Defaults) != 0) return false;
-			array_[n] = parser.argAs(0, array_[n]);
-		}
-		return true;
-	}
-	// Write item contents to specified LineParser
-	bool write(LineParser& parser)
-	{
-		// Write number of items
-		if (!parser.writeLineF("%i\n", nItems_)) return false;
-
-		// Write items
-		for (int n=0; n<nItems_; ++n) if (!parser.writeArg(array_[n])) return false;
-
-		return true;
-	}
+// 	// Broadcast data from root to all other processes
+// 	bool broadcast(ProcessPool& procPool, int rootRank)
+// 	{
+// 		procPool.poolRank();
+// #ifdef PARALLEL
+// // 		if (procPool.poolRank() == rootRank)
+// // 		{
+// // 		/*if (!procPool.broadcast(hkl_, rootRank)) return false;
+// // 		if (!procPool.broadcast(braggPeakIndex_, rootRank)) return false;
+// // 		if (!procPool.broadcast(cosTerms_, rootRank)) return false;
+// // 		if (!procPool.broadcast(sinTerms_, rootRank)) return false; */
+// // 		}
+// // 		else
+// // 		{
+// // 		}
+// #endif
+// 		return true;
+// 	}
 };
 
 #endif
