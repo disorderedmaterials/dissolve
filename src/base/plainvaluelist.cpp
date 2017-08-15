@@ -69,7 +69,7 @@ bool PlainValueList::valueAsBool(const char* name)
 	PlainValue* oldValue = value(name);
 	if (!oldValue)
 	{
-		Messenger::error("Can't find boolean value '%s' (source = '%s').\n", name);
+		Messenger::error("PlainValueList::valueAsBool - Can't find value '%s'.\n", name);
 		return 0;
 	}
 
@@ -83,7 +83,7 @@ int PlainValueList::valueAsInt(const char* name)
 	PlainValue* oldValue = value(name);
 	if (!oldValue)
 	{
-		Messenger::error("Can't find integer value '%s' (source = '%s').\n", name);
+		Messenger::error("PlainValueList::valueAsInt - Can't find value '%s'.\n", name);
 		return 0;
 	}
 
@@ -97,7 +97,7 @@ double PlainValueList::valueAsDouble(const char* name)
 	PlainValue* oldValue = value(name);
 	if (!oldValue)
 	{
-		Messenger::error("Can't find double value '%s' (source = '%s').\n", name);
+		Messenger::error("PlainValueList::valueAsDouble - Can't find value '%s'.\n", name);
 		return 0.0;
 	}
 
@@ -111,7 +111,7 @@ const char* PlainValueList::valueAsString(const char* name)
 	PlainValue* oldValue = value(name);
 	if (!oldValue)
 	{
-		Messenger::error("Can't find string value '%s'.\n", name);
+		Messenger::error("PlainValueList::valueAsString - Can't find value '%s'.\n", name);
 		return "NULL";
 	}
 
