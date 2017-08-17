@@ -358,38 +358,6 @@ class ProcessPool
 	static int RESULT;
 };
 
-// Enum Broadcast Vessel
-template <class E> class EnumCast
-{
-	/*
-	 * Template-only class that takes reference to an enum and allows the integer conversion to be passed by reference to the
-	 * broadcast routines. Before destruction, the integerValue_ that was subject to broadcast is cast back into the original enum ref.
-	 */
-	public:
-	// Constructor
-	EnumCast(E& originalEnum) : originalEnum_(originalEnum)
-	{
-		integerValue_ = originalEnum_;
-	}
-	// Destructor
-	~EnumCast()
-	{
-		// Cast integer variable back into enum
-		originalEnum_ = (E) integerValue_;
-	}
-	// Conversion Operator (to int&)
-	operator int&()
-	{
-		return integerValue_;
-	}
-
-	private:
-	// Original enum object
-	E& originalEnum_;
-	// Integer conversion of enum 
-	int integerValue_;
-};
-
 /*
  * Macro Definitions
  */

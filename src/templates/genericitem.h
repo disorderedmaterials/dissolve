@@ -65,6 +65,7 @@ class GenericItem
 		Array2DDoubleClass,			/* Item is an 'Array2D<double>' */
 		ListClass,				/* Item is a templated List */
 		OrderedListClass,			/* Item is a templated OrderedList */
+		EnumClass,				/* Item is an enum (inside an EnumContainer) */
 		nItemClasses
 	};
 	// Convert item class to char string

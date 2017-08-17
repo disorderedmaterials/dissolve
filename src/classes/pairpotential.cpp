@@ -27,7 +27,7 @@
 #include "base/processpool.h"
 #include "base/sysfunc.h"
 #include "math/constants.h"
-#include "templates/simplex.h"
+#include "templates/enumhelpers.h"
 #include <math.h>
 #include <string.h>
 

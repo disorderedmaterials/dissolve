@@ -23,6 +23,7 @@
 #include "base/sysfunc.h"
 #include "base/messenger.h"
 #include "base/processpool.h"
+#include "templates/enumhelpers.h"
 #include <string.h>
 #include <stdarg.h>
 

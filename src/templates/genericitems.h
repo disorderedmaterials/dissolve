@@ -45,4 +45,6 @@
 #include "templates/genericitemcontainer_list.h"
 #include "templates/genericitemcontainer_orderedlist.h"
 
+#include "templates/genericitemcontainer_enumcontainer.h"
+
 #endif
