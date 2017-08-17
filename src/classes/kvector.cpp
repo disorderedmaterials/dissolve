@@ -153,18 +153,15 @@ void KVector::calculateIntensities(BraggPeak* peakArray)
 	int i, j, nTypes = cosTerms_.nItems(), halfSphereNorm = (hkl_.x == 0 ? 1 : 2);
 	double intensity;
 	BraggPeak& braggPeak = peakArray[braggPeakIndex_];
-// 	Messenger::print("KVector %3i %3i %3i  %f  ", hkl_.x, hkl_.y, hkl_.z, braggPeak->q());
 	braggPeak.addKVectors(halfSphereNorm);
 	for (i = 0; i<nTypes; ++i)
 	{
 		for (j = i; j < nTypes; ++j)
 		{
 			intensity = (cosTerms_[i]*cosTerms_[j] + sinTerms_[i]*sinTerms_[j]);
-// 			Messenger::print("%f  ", intensity / 1000.0 );
 			braggPeak.addIntensity(i, j, intensity * halfSphereNorm);
 		}
 	}
-// 	Messenger::print("\n");
 }
 
 // Return specified intensity

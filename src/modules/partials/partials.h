@@ -24,6 +24,7 @@
 
 #include "modules/module.h"
 #include "classes/partialset.h"
+#include "classes/braggpeak.h"
 
 // Forward Declarations
 class PartialSet;
@@ -137,16 +138,24 @@ class PartialsModule : public Module
 	static WeightingType weightingType(const char* s);
 	// Return character string for WeightingType
 	static const char* weightingType(WeightingType wt);
+	// Bragg Broadening enum
+	enum BraggBroadening { NoBroadening, GaussianBroadening, nBroadeningTypes };
+	// Convert character string to BraggBroadening
+	static BraggBroadening braggBroadening(const char* s);
+	// Return character string for BraggBroadening
+	static const char* braggBroadening(BraggBroadening bt);
 	// (Re)calculate unweighted partials for the specified Configuration
 	bool calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg, PartialsModule::PartialsMethod method, bool allIntra, int smoothing);
 	// Calculate weighted partials from supplied unweighted partials
 	bool calculateWeightedGR(PartialSet& unweightedPartials, PartialSet& weightedPartials, Weights& weights);
 	// Calculate unweighted S(Q) from supplied unweighted g(r)
-	bool calculateUnweightedSQ(ProcessPool& procPool, Configuration* cfg, double qMin, double qDelta, double qMax, double rho, XYData::WindowFunction wf, double qDepBroadening, double qIndepBroadening, bool braggOn, double qDepBraggBroadening, double qIndepBraggBroad);
+	bool calculateUnweightedSQ(ProcessPool& procPool, Configuration* cfg, double qMin, double qDelta, double qMax, double rho, XYData::WindowFunction wf, double qDepBroadening, double qIndepBroadening, bool braggOn);
 	// Calculate weighted S(Q) from supplied unweighted S(Q)
 	bool calculateWeightedSQ(PartialSet& unweightedsq, PartialSet& weightedsq, Weights& weights);
-	// Calculate unweighted Bragg scattering for specified Configuration
-	bool calculateUnweightedBragg(ProcessPool& procPool, Configuration* cfg, PartialSet& partialsq, double braggQMin, double braggQDelta, double braggQMax, double braggQIndepBroadening, double qDepBroadening, double braggMultiplicity);
+	// Calculate Bragg terms for specified Configuration
+	bool calculateBraggTerms(ProcessPool& procPool, Configuration* cfg, double braggQMin, double braggQResolution, double braggQMax, double braggMultiplicity);
+	// Calculate unweighted Bragg partials from calculated peak data
+	bool calculateUnweightedBraggSQ(ProcessPool& procPool, Configuration* cfg, Array<BraggPeak>& braggPeaks, PartialSet& partialsq, PartialsModule::BraggBroadening broadeningType);
 
 
 	/*

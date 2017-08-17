@@ -23,6 +23,7 @@
 #include "main/duq.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
+#include "templates/enumhelpers.h"
 
 // Setup options for module
 void PartialsModule::setupOptions()
@@ -31,8 +32,10 @@ void PartialsModule::setupOptions()
 	frequency_ = 5;
 	options_.add("AllIntra", bool(false), "Consider all intramolecular pairs in intra partials");
 	options_.add("Bragg", bool(false), "Enable calculation of Bragg scattering");
+	options_.add("BraggBroadening", "None", "Broadening function to apply to calculated Bragg scattering");
 	options_.add("BraggQDepBroadening", 0.0063, "FWHM of Gaussian for Q-dependent Bragg broadening function");
 	options_.add("BraggQIndepBroadening", 0.0, "FWHM of Gaussian for Q-independent Bragg broadening function");
+	options_.add("BraggQResolution", 0.001, "Binwidth in Q to use when calculating Bragg peaks");
 	options_.add("InternalTest", bool(false), "Perform internal check of calculated partials (relative to Test method)");
 	options_.add("Method", "Auto", "Calculation method for partial radial distribution functions");
 	options_.add("NormaliseToAvSq", bool(false), "Normalise calculated F(Q) to < b >**2");
@@ -53,7 +56,21 @@ void PartialsModule::setupOptions()
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
 int PartialsModule::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
 {
-	if (DUQSys::sameString(parser.argc(0), "Exchangeable"))
+	if (DUQSys::sameString(parser.argc(0), "BraggBroadening"))
+	{
+		// Line broadening to apply to Bragg calculation
+		PartialsModule::BraggBroadening bb = PartialsModule::braggBroadening(parser.argc(1));
+		if (bb == PartialsModule::nBroadeningTypes)
+		{
+			Messenger::error("Unrecognised broadening type supplied.\n");
+			return false;
+		}
+		GenericListHelper<CharString>::add(targetList, "BraggBroadening", uniqueName()) = PartialsModule::braggBroadening(bb);
+
+		// Get any parameters supplied
+		for (int n=2; n<parser.nArgs(); ++n) GenericListHelper<double>::add(targetList, CharString("BraggBroadeningParameter%i", n-1), uniqueName()) = parser.argd(n);
+	}
+	else if (DUQSys::sameString(parser.argc(0), "Exchangeable"))
 	{
 		// Define an exchangeable group of atoms
 		// Loop over all provided arguments (which are atom type names) and add them to our list
