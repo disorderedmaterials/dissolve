@@ -92,6 +92,10 @@ class Weights
 	double fullWeight(int i, int j);
 	// Return full scattering weights matrix (ci * cj * bi * bj * (i == j ? 1 : 2))
 	Array2D<double>& fullWeightsMatrix();
+	// Return bound coherent average squared scattering (<b>**2)
+	double boundCoherentAverageSquared();
+	// Return bound coherent squared average scattering (<b**2>)
+	double boundCoherentSquaredAverage();
 };
 
 #endif

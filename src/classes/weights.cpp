@@ -207,3 +207,15 @@ Array2D<double>& Weights::fullWeightsMatrix()
 {
 	return fullMatrix_;
 }
+
+// Return bound coherent average squared scattering (<b>**2)
+double Weights::boundCoherentAverageSquared()
+{
+	return boundCoherentAverageSquared_;
+}
+
+// Return bound coherent squared average scattering (<b**2>)
+double Weights::boundCoherentSquaredAverage()
+{
+	return boundCoherentSquaredAverage_;
+}
