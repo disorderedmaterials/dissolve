@@ -96,6 +96,14 @@ class Weights
 	double boundCoherentAverageSquared();
 	// Return bound coherent squared average scattering (<b**2>)
 	double boundCoherentSquaredAverage();
+
+
+	/*
+	 * Parallel Comms
+	 */
+	public:
+	// Broadcast item contents
+	bool broadcast(ProcessPool& procPool, int root);
 };
 
 #endif

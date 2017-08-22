@@ -24,7 +24,7 @@
 #include "base/processpool.h"
 
 // Constructor
-IsotopologueMix::IsotopologueMix() : ListItem<IsotopologueMix>()
+IsotopologueMix::IsotopologueMix() : MPIListItem<IsotopologueMix>()
 {
 	species_ = NULL;
 	speciesPopulation_ = 0;
@@ -182,3 +182,60 @@ void IsotopologueMix::normalise()
 	double total = totalRelative();
 	for (RefListItem<Isotopologue,double>* ri = mix_.first(); ri != NULL; ri = ri->next) ri->data /= total;
 }
+
+/*
+ * Parallel Comms
+ */
+
+// Broadcast data
+bool IsotopologueMix::broadcast(ProcessPool& procPool, int root)
+{
+#ifdef PARALLEL
+	// Broadcast Species info
+	if (!List<Species>::hasMasterInstance())
+	{
+		Messenger::error("Master List<Species> instance has not been set, so IsotopologueMix::broadcast() is not possible.\n");
+		return false;
+	}
+	int speciesIndex = List<Species>::masterInstance()->indexOf(species_);
+	procPool.broadcast(speciesIndex, root);
+	species_ = List<Species>::masterInstance()->item(speciesIndex);
+
+	if (!procPool.broadcast(speciesPopulation_, root)) return false;
+
+	// Isotopologue list (mix_)
+	int nIso = mix_.nItems();
+	if (!procPool.broadcast(nIso, root)) return false;
+	int topIndex;
+	if (procPool.poolRank() == root)
+	{
+		for (int n=0; n<nIso; ++n)
+		{
+			// Broadcast Isotopologue index data
+			topIndex = species_->indexOfIsotopologue(mix_[n]->item);
+			if (!procPool.broadcast(topIndex, root)) return false;
+
+			// Broadcast relative population data
+			if (!procPool.broadcast(mix_[n]->data, root)) return false;
+		}
+	}
+	else
+	{
+		mix_.clear();
+		double relPop;
+		for (int n=0; n<nIso; ++n)
+		{
+			// Broadcast Isotopologue index data
+			if (!procPool.broadcast(topIndex, root)) return false;
+
+			// Broadcast relative population data
+			if (!procPool.broadcast(relPop, root)) return false;
+
+			// Add mix data
+			mix_.add(species_->isotopologue(topIndex), relPop);
+		}
+	}
+#endif
+	return true;
+}
+

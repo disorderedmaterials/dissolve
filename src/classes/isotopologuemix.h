@@ -22,7 +22,7 @@
 #ifndef DUQ_ISOTOPOLOGUEMIX_H
 #define DUQ_ISOTOPOLOGUEMIX_H
 
-#include "templates/listitem.h"
+#include "templates/mpilistitem.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
@@ -33,7 +33,7 @@ class ProcessPool;
 /*
  * IsotopologueMix Definition
  */
-class IsotopologueMix : public ListItem<IsotopologueMix>
+class IsotopologueMix : public MPIListItem<IsotopologueMix>
 {
 	public:
 	// Constructor
@@ -88,8 +88,8 @@ class IsotopologueMix : public ListItem<IsotopologueMix>
 	 * Parallel Comms
 	 */
 	public:
-	// Broadcast data from Master to all Slaves
-	bool broadcast(ProcessPool& procPool);
+	// Broadcast data
+	bool broadcast(ProcessPool& procPool, int root);
 };
 
 #endif

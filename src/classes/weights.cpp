@@ -23,6 +23,7 @@
 #include "classes/species.h"
 #include "classes/atomtype.h"
 #include "base/processpool.h"
+#include "templates/broadcastlist.h"
 
 // Constructor
 Weights::Weights()
@@ -218,4 +219,24 @@ double Weights::boundCoherentAverageSquared()
 double Weights::boundCoherentSquaredAverage()
 {
 	return boundCoherentSquaredAverage_;
+}
+
+/*
+ * Parallel Comms
+ */
+
+// Broadcast item contents
+bool Weights::broadcast(ProcessPool& procPool, int root)
+{
+#ifdef PARALLEL
+	BroadcastList<IsotopologueMix> isoMixBroadcaster(procPool, root, isotopologueMixtures_);
+	if (isoMixBroadcaster.failed()) return false;
+	if (!atomTypes_.broadcast(procPool, root)) return false;
+	if (!procPool.broadcast(concentrationMatrix_, root)) return false;
+	if (!procPool.broadcast(boundCoherentMatrix_, root)) return false;
+	if (!procPool.broadcast(fullMatrix_, root)) return false;
+	if (!procPool.broadcast(boundCoherentAverageSquared_, root)) return false;
+	if (!procPool.broadcast(boundCoherentSquaredAverage_, root)) return false;
+#endif
+	return true;
 }
