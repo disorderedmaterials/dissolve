@@ -23,6 +23,9 @@
 #include "classes/species.h"
 #include "classes/atomtype.h"
 
+// List<T> Master Instance
+template<class T> List<T>* List<T>::masterInstance_ = NULL;
+
 // Constructor
 DUQ::DUQ()
 {
@@ -50,7 +53,8 @@ DUQ::DUQ()
 	autoAddDependentModules_ = false;
 
 	// Master Instances
-	AtomTypeList::setMasterAtomTypeList(&atomTypes_);
+	List<AtomType>::setMasterInstance(&atomTypes_);
+	List<Species>::setMasterInstance(&species_);
 }
 
 // Destructor
@@ -58,10 +62,6 @@ DUQ::~DUQ()
 {
 	clear();
 }
-
-/*
- * Data
- */
 
 // Clear all data
 void DUQ::clear()
