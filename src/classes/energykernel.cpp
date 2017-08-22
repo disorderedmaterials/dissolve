@@ -547,13 +547,9 @@ double EnergyKernel::energy(const Atom* i, OrderedPointerList<Atom>& neighbours,
 // Return intermolecular energy between Grain and list of Cells
 double EnergyKernel::energy(const Grain* grain, OrderedPointerList<Atom>& neighbours, bool applyMim, bool excludeIgeJ, ProcessPool::LoopContext loopContext, bool sumOverProcesses)
 {
-#ifdef CHECKS
-	if (grain == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL Grain pointer passed to EnergyKernel::energy(Grain,RefList<Cell>,bool,bool,ParallelStyle).\n");
-		return 0.0;
-	}
-#endif
+	// If no Grain is given, return zero
+	if (grain == NULL) return 0.0;
+
 	double totalEnergy = 0.0;
 	Atom* ii, *jj;
 	int i, j, start = 0, stride = 1;
@@ -696,13 +692,8 @@ double EnergyKernel::energy(const Atom* i, ProcessPool::LoopContext loopContext)
 // Return PairPotential energy of grain with world
 double EnergyKernel::energy(const Grain* grain, bool excludeIgtJ, ProcessPool::LoopContext loopContext)
 {
-#ifdef CHECKS
-	if (grain == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL Grain pointer passed to EnergyKernel::energy(Grain,ParallelStyle).\n");
-		return 0.0;
-	}
-#endif
+	// If no Grain is given, return zero
+	if (grain == NULL) return 0.0;
 
 	double totalEnergy = 0.0;
 	int i, j, nAtoms = grain->nAtoms();
@@ -802,6 +793,9 @@ double EnergyKernel::energy(const Molecule* mol, const SpeciesAngle* a)
 // Return full intramolecular energy
 double EnergyKernel::fullIntraEnergy(const Grain* grain, double termFactor)
 {
+	// If no Grain is given, return zero
+	if (grain == NULL) return 0.0;
+
 	double intraEnergy = 0.0;
 	Molecule* mol = grain->parent();
 
