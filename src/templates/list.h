@@ -90,6 +90,31 @@ template <class T> class List
 
 
 	/*
+	 * Master Instance
+	 */
+	private:
+	// Static master instance for this List<T>
+	static List<T>* masterInstance_;
+
+	public:
+	// Set master instance for this List<T>
+	static void setMasterInstance(List<T>* master)
+	{
+		masterInstance_ = master;
+	}
+	// Set master instance for this List<T>
+	static List<T>* masterInstance()
+	{
+		return masterInstance_;
+	}
+	// Return whether a master instance has been set for this List<T>
+	static bool hasMasterInstance()
+	{
+		return (masterInstance_ != NULL);
+	}
+
+
+	/*
 	 * Basic Data
 	 */
 	protected:
