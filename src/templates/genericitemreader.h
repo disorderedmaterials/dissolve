@@ -33,7 +33,8 @@
 // For General Case
 template <class T> class GenericItemDataReader
 {
-	GenericItemDataReader<T>(LineParser& parser, GenericItemContainer<int>& container, bool& success)
+	public:
+	GenericItemDataReader<T>(LineParser& parser, GenericItemContainer<int>* container, bool& success)
 	{
 		Messenger::error("GenericItemDataReader - No specialisation for this class type.\n");
 		success = false;
@@ -45,10 +46,10 @@ template <> class GenericItemDataReader<int>
 {
 	public:
 	// Constructor
-	GenericItemDataReader<int>(LineParser& parser, GenericItemContainer<int>& container, bool& success)
+	GenericItemDataReader<int>(LineParser& parser, GenericItemContainer<int>* container, bool& success)
 	{
 		success = (parser.getArgsDelim(LineParser::Defaults) == 0);
-		container.data = parser.argi(0);
+		container->data = parser.argi(0);
 	}
 };
 
@@ -57,10 +58,10 @@ template <> class GenericItemDataReader<bool>
 {
 	public:
 	// Constructor
-	GenericItemDataReader<bool>(LineParser& parser, GenericItemContainer<bool>& container, bool& success)
+	GenericItemDataReader<bool>(LineParser& parser, GenericItemContainer<bool>* container, bool& success)
 	{
 		success = (parser.getArgsDelim(LineParser::Defaults) == 0);
-		container.data = parser.argb(0);
+		container->data = parser.argb(0);
 	}
 };
 
@@ -69,10 +70,10 @@ template <> class GenericItemDataReader<double>
 {
 	public:
 	// Constructor
-	GenericItemDataReader<double>(LineParser& parser, GenericItemContainer<double>& container, bool& success)
+	GenericItemDataReader<double>(LineParser& parser, GenericItemContainer<double>* container, bool& success)
 	{
 		success = (parser.getArgsDelim(LineParser::Defaults) == 0);
-		container.data = parser.argd(0);
+		container->data = parser.argd(0);
 	}
 };
 
@@ -81,10 +82,10 @@ template <> class GenericItemDataReader<CharString>
 {
 	public:
 	// Constructor
-	GenericItemDataReader<CharString>(LineParser& parser, GenericItemContainer<CharString>& container, bool& success)
+	GenericItemDataReader<CharString>(LineParser& parser, GenericItemContainer<CharString>* container, bool& success)
 	{
 		success = (parser.getArgsDelim(LineParser::Defaults) == 0);
-		container.data = parser.line();
+		container->data = parser.line();
 	}
 };
 
@@ -93,10 +94,10 @@ template <> class GenericItemDataReader< Vec3<int> >
 {
 	public:
 	// Constructor
-	GenericItemDataReader< Vec3<int> >(LineParser& parser, GenericItemContainer< Vec3<int> >& container, bool& success)
+	GenericItemDataReader< Vec3<int> >(LineParser& parser, GenericItemContainer< Vec3<int> >* container, bool& success)
 	{
 		success = (parser.getArgsDelim(LineParser::Defaults) == 0);
-		container.data = parser.arg3i(0);
+		container->data = parser.arg3i(0);
 	}
 };
 
@@ -105,10 +106,10 @@ template <> class GenericItemDataReader< Vec3<double> >
 {
 	public:
 	// Constructor
-	GenericItemDataReader< Vec3<double> >(LineParser& parser, GenericItemContainer< Vec3<double> >& container, bool& success)
+	GenericItemDataReader< Vec3<double> >(LineParser& parser, GenericItemContainer< Vec3<double> >* container, bool& success)
 	{
 		success = (parser.getArgsDelim(LineParser::Defaults) == 0);
-		container.data = parser.argd(0);
+		container->data = parser.argd(0);
 	}
 };
 
@@ -117,17 +118,17 @@ template <> class GenericItemDataReader< Array<int> >
 {
 	public:
 	// Constructor
-	GenericItemDataReader< Array<int> >(LineParser& parser, GenericItemContainer< Array<int> >& container, bool& success)
+	GenericItemDataReader< Array<int> >(LineParser& parser, GenericItemContainer< Array<int> >* container, bool& success)
 	{
 		success = (parser.getArgsDelim(LineParser::Defaults) == 0);
 		if (!success) return;
 		int nItems = parser.argi(0);
-		container.data.initialise(nItems);
+		container->data.initialise(nItems);
 		for (int n=0; n<nItems; ++n)
 		{
 			success = (parser.getArgsDelim(LineParser::Defaults) == 0);
 			if (!success) return;
-			container.data.add(parser.argi(0));
+			container->data.add(parser.argi(0));
 		}
 	}
 };
@@ -137,17 +138,17 @@ template <> class GenericItemDataReader< Array<double> >
 {
 	public:
 	// Constructor
-	GenericItemDataReader< Array<double> >(LineParser& parser, GenericItemContainer< Array<double> >& container, bool& success)
+	GenericItemDataReader< Array<double> >(LineParser& parser, GenericItemContainer< Array<double> >* container, bool& success)
 	{
 		success = (parser.getArgsDelim(LineParser::Defaults) == 0);
 		if (!success) return;
 		int nItems = parser.argi(0);
-		container.data.initialise(nItems);
+		container->data.initialise(nItems);
 		for (int n=0; n<nItems; ++n)
 		{
 			success = (parser.getArgsDelim(LineParser::Defaults) == 0);
 			if (!success) return;
-			container.data.add(parser.argd(0));
+			container->data.add(parser.argd(0));
 		}
 	}
 };
@@ -157,17 +158,17 @@ template <> class GenericItemDataReader< Array< Vec3<int> > >
 {
 	public:
 	// Constructor
-	GenericItemDataReader< Array< Vec3<int> > >(LineParser& parser, GenericItemContainer< Array< Vec3<int> > >& container, bool& success)
+	GenericItemDataReader< Array< Vec3<int> > >(LineParser& parser, GenericItemContainer< Array< Vec3<int> > >* container, bool& success)
 	{
 		success = (parser.getArgsDelim(LineParser::Defaults) == 0);
 		if (!success) return;
 		int nItems = parser.argi(0);
-		container.data.initialise(nItems);
+		container->data.initialise(nItems);
 		for (int n=0; n<nItems; ++n)
 		{
 			success = (parser.getArgsDelim(LineParser::Defaults) == 0);
 			if (!success) return;
-			container.data.add(parser.arg3i(0));
+			container->data.add(parser.arg3i(0));
 		}
 	}
 };
@@ -177,17 +178,17 @@ template <> class GenericItemDataReader< Array< Vec3<double> > >
 {
 	public:
 	// Constructor
-	GenericItemDataReader< Array< Vec3<double> > >(LineParser& parser, GenericItemContainer< Array< Vec3<double> > >& container, bool& success)
+	GenericItemDataReader< Array< Vec3<double> > >(LineParser& parser, GenericItemContainer< Array< Vec3<double> > >* container, bool& success)
 	{
 		success = (parser.getArgsDelim(LineParser::Defaults) == 0);
 		if (!success) return;
 		int nItems = parser.argi(0);
-		container.data.initialise(nItems);
+		container->data.initialise(nItems);
 		for (int n=0; n<nItems; ++n)
 		{
 			success = (parser.getArgsDelim(LineParser::Defaults) == 0);
 			if (!success) return;
-			container.data.add(parser.arg3d(0));
+			container->data.add(parser.arg3d(0));
 		}
 	}
 };
@@ -197,12 +198,12 @@ template <> class GenericItemDataReader< Array2D<int> >
 {
 	public:
 	// Constructor
-	GenericItemDataReader< Array2D<int> >(LineParser& parser, GenericItemContainer< Array2D<int> >& container, bool& success)
+	GenericItemDataReader< Array2D<int> >(LineParser& parser, GenericItemContainer< Array2D<int> >* container, bool& success)
 	{
 		success = (parser.getArgsDelim(LineParser::Defaults) == 0);
 		if (!success) return;
 		int nRows = parser.argi(0), nColumns = parser.argi(1);
-		container.data.initialise(nRows, nColumns);
+		container->data.initialise(nRows, nColumns);
 		// Read in data
 		for (int row=0; row<nRows; ++row)
 		{
@@ -210,7 +211,7 @@ template <> class GenericItemDataReader< Array2D<int> >
 			{
 				success = (parser.getArgsDelim(LineParser::Defaults) == 0);
 				if (!success) return;
-				container.data.ref(row, column) = parser.argi(0);
+				container->data.ref(row, column) = parser.argi(0);
 			}
 		}
 	}
@@ -221,12 +222,13 @@ template <> class GenericItemDataReader< Array2D<double> >
 {
 	public:
 	// Constructor
-	GenericItemDataReader< Array2D<double> >(LineParser& parser, GenericItemContainer< Array2D<double> >& container, bool& success)
+	GenericItemDataReader< Array2D<double> >(LineParser& parser, GenericItemContainer< Array2D<double> >* container, bool& success)
 	{
 		success = (parser.getArgsDelim(LineParser::Defaults) == 0);
 		if (!success) return;
 		int nRows = parser.argi(0), nColumns = parser.argi(1);
-		container.data.initialise(nRows, nColumns);
+		container->data.initialise(nRows, nColumns);
+
 		// Read in data
 		for (int row=0; row<nRows; ++row)
 		{
@@ -234,7 +236,7 @@ template <> class GenericItemDataReader< Array2D<double> >
 			{
 				success = (parser.getArgsDelim(LineParser::Defaults) == 0);
 				if (!success) return;
-				container.data.ref(row, column) = parser.argd(0);
+				container->data.ref(row, column) = parser.argd(0);
 			}
 		}
 	}
@@ -248,42 +250,45 @@ class GenericItemReader
 {
 	public:
 	// Constructor
-	GenericItemReader(LineParser& parser, GenericItem* item, bool& success)
+	GenericItemReader(LineParser& parser, GenericItem* item)
 	{
+		result_ = false;
+
 		// Need to check classType of item, and then instantiate the relevant GenericItemDataReader<>
-		switch (item->itemClass())
+		if (item->itemClass() == GenericItem::BoolClass) GenericItemDataReader<bool> writer(parser, (GenericItemContainer<bool>*)item, result_);
+		else if (item->itemClass() == GenericItem::IntClass) GenericItemDataReader<int> writer(parser, (GenericItemContainer<int>*)item, result_);
+		else if (item->itemClass() == GenericItem::DoubleClass) GenericItemDataReader<double> writer(parser, (GenericItemContainer<double>*)item, result_);
+		else if (item->itemClass() == GenericItem::CharStringClass) GenericItemDataReader<CharString> writer(parser, (GenericItemContainer<CharString>*)item, result_);
+		else if (item->itemClass() == GenericItem::Vec3IntClass) GenericItemDataReader< Vec3<int> > writer(parser, (GenericItemContainer< Vec3<int> >*)item, result_);
+		else if (item->itemClass() == GenericItem::Vec3DoubleClass) GenericItemDataReader< Vec3<double> > writer(parser, (GenericItemContainer< Vec3<double> >*)item, result_);
+		else if (item->itemClass() == GenericItem::ArrayIntClass) GenericItemDataReader< Array<int> > writer(parser, (GenericItemContainer< Array<int> >*)item, result_);
+		else if (item->itemClass() == GenericItem::ArrayDoubleClass) GenericItemDataReader< Array<double> > writer(parser, (GenericItemContainer< Array<double> >*)item, result_);
+		else if (item->itemClass() == GenericItem::ArrayVec3IntClass) GenericItemDataReader< Array< Vec3<int> > > writer(parser, (GenericItemContainer< Array< Vec3<int> > >*)item, result_);
+		else if (item->itemClass() == GenericItem::ArrayVec3DoubleClass) GenericItemDataReader< Array< Vec3<double> > > writer(parser, (GenericItemContainer< Array< Vec3<double> > >*)item, result_);
+		else if (item->itemClass() == GenericItem::Array2DDoubleClass) GenericItemDataReader< Array2D<double> > writer(parser, (GenericItemContainer< Array2D<double> >*)item, result_);
+// 		else if (item->itemClass() == GenericItem::ListClass) GenericItemDataReader< List > writer(parser, (GenericItemContainer<bool>*)item, result_);
+// 		else if (item->itemClass() == GenericItem::OrderedListClass) GenericItemDataReader<bool> writer(parser, (GenericItemContainer<bool>*)item, result_);
+		else
 		{
-			case (GenericItem::BoolClass):
-				GenericItemDataReader<bool> reader();
-				break;
-			case (GenericItem::IntClass):
-				break;
-			case (GenericItem::DoubleClass):
-				break;
-			case (GenericItem::CharStringClass):
-				break;
-			case (GenericItem::Vec3IntClass):
-				break;
-			case (GenericItem::Vec3DoubleClass):
-				break;
-			case (GenericItem::ArrayIntClass):
-				break;
-			case (GenericItem::ArrayDoubleClass):
-				break;
-			case (GenericItem::ArrayVec3IntClass):
-				break;
-			case (GenericItem::ArrayVec3DoubleClass):
-				break;
-			case (GenericItem::Array2DDoubleClass):
-				break;
-			case (GenericItem::ListClass):
-				break;
-			case (GenericItem::OrderedListClass):
-				break;
-			default:
-				Messenger::error("GenericItemReader doesn't know how to handle class type %i (item '%s').\n", item->itemClass(), item->name());
-				success = false;
+			Messenger::error("GenericItemWriter doesn't know how to handle class type %i (item '%s').\n", item->itemClass(), item->name());
+			result_ = false;
 		}
+	}
+
+	private:
+	// Result of the read
+	bool result_;
+
+	public:
+	// Return if the read succeeded
+	bool success()
+	{
+		return result_;
+	}
+	// Return if the read failed
+	bool failed()
+	{
+		return (!result_);
 	}
 };
 

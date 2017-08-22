@@ -71,7 +71,7 @@ class GenericItem
 	// Convert item class to char string
 	static const char* itemClass(ItemClass c)
 	{
-		static const char* classKeywords[] = { "Bool", "Int", "Double", "CharString", "Array<int>", "Array<double>", "Array<Vec3<int>>", "Array<Vec3<double>>", "Array2D<double>" };
+		static const char* classKeywords[] = { "Bool", "Int", "Double", "CharString", "Vec3<int>", "Vec3<double>", "Array<int>", "Array<double>", "Array<Vec3<int>>", "Array<Vec3<double>>", "Array2D<double>", "List<T>", "OrderedList<T>", "Enum" };
 		return classKeywords[c];
 	}
 	// Convert char string to item class
@@ -104,7 +104,7 @@ class GenericItem
 	// Set item description
 	void setDescription(const char* description)
 	{
-		description_ = description_;
+		description_ = description;
 	}
 	// Return item description
 	const char* description()

@@ -30,11 +30,13 @@
  * GenericItemDataWriters
  * Constructor-only template class to write contents of a GenericItemContainer with the specified LineParser.
  */
+
 // For General Case
 template <class T> class GenericItemDataWriter
 {
+	public:
 	// Constructor
-	GenericItemDataWriter<T>(LineParser& parser, GenericItemContainer<T>& container, bool& success)
+	GenericItemDataWriter<T>(LineParser& parser, GenericItemContainer<T>* container, bool& success)
 	{
 		Messenger::error("GenericItemDataWriter - No specialisation for this class type.\n");
 		success = false;
@@ -46,9 +48,9 @@ template <> class GenericItemDataWriter<int>
 {
 	public:
 	// Constructor
-	GenericItemDataWriter<int>(LineParser& parser, GenericItemContainer<int>& container, bool& success)
+	GenericItemDataWriter<int>(LineParser& parser, GenericItemContainer<int>* container, bool& success)
 	{
-		success = parser.writeLineF("%i\n", container.data);
+		success = parser.writeLineF("%i\n", container->data);
 	}
 };
 
@@ -57,9 +59,9 @@ template <> class GenericItemDataWriter<bool>
 {
 	public:
 	// Constructor
-	GenericItemDataWriter<bool>(LineParser& parser, GenericItemContainer<bool>& container, bool& success)
+	GenericItemDataWriter<bool>(LineParser& parser, GenericItemContainer<bool>* container, bool& success)
 	{
-		success = parser.writeLineF("%s\n", DUQSys::btoa(container.data));
+		success = parser.writeLineF("%s\n", DUQSys::btoa(container->data));
 	}
 };
 
@@ -68,9 +70,9 @@ template <> class GenericItemDataWriter<double>
 {
 	public:
 	// Constructor
-	GenericItemDataWriter<double>(LineParser& parser, GenericItemContainer<double>& container, bool& success)
+	GenericItemDataWriter<double>(LineParser& parser, GenericItemContainer<double>* container, bool& success)
 	{
-		success = parser.writeLineF("%16.9e\n", container.data);
+		success = parser.writeLineF("%16.9e\n", container->data);
 	}
 };
 
@@ -79,9 +81,9 @@ template <> class GenericItemDataWriter<CharString>
 {
 	public:
 	// Constructor
-	GenericItemDataWriter<CharString>(LineParser& parser, GenericItemContainer<CharString>& container, bool& success)
+	GenericItemDataWriter<CharString>(LineParser& parser, GenericItemContainer<CharString>* container, bool& success)
 	{
-		success = parser.writeLineF("%s\n", container.data.get());
+		success = parser.writeLineF("%s\n", container->data.get());
 	}
 };
 
@@ -90,9 +92,9 @@ template <> class GenericItemDataWriter< Vec3<int> >
 {
 	public:
 	// Constructor
-	GenericItemDataWriter< Vec3<int> >(LineParser& parser, GenericItemContainer< Vec3<int> >& container, bool& success)
+	GenericItemDataWriter< Vec3<int> >(LineParser& parser, GenericItemContainer< Vec3<int> >* container, bool& success)
 	{
-		success = parser.writeLineF("%i  %i  %i\n", container.data.x, container.data.y, container.data.z);
+		success = parser.writeLineF("%i  %i  %i\n", container->data.x, container->data.y, container->data.z);
 	}
 };
 
@@ -101,9 +103,9 @@ template <> class GenericItemDataWriter< Vec3<double> >
 {
 	public:
 	// Constructor
-	GenericItemDataWriter< Vec3<double> >(LineParser& parser, GenericItemContainer< Vec3<double> >& container, bool& success)
+	GenericItemDataWriter< Vec3<double> >(LineParser& parser, GenericItemContainer< Vec3<double> >* container, bool& success)
 	{
-		success = parser.writeLineF("%16.9e  %16.9e  %16.9e\n", container.data.x, container.data.y, container.data.z);
+		success = parser.writeLineF("%16.9e  %16.9e  %16.9e\n", container->data.x, container->data.y, container->data.z);
 	}
 };
 
@@ -112,11 +114,11 @@ template <> class GenericItemDataWriter< Array<int> >
 {
 	public:
 	// Constructor
-	GenericItemDataWriter< Array<int> >(LineParser& parser, GenericItemContainer< Array<int> >& container, bool& success)
+	GenericItemDataWriter< Array<int> >(LineParser& parser, GenericItemContainer< Array<int> >* container, bool& success)
 	{
-		parser.writeLineF("%i\n", container.data.nItems());
-		int* array = container.data.array();
-		for (int n=0; n<container.data.nItems(); ++n)
+		parser.writeLineF("%i\n", container->data.nItems());
+		int* array = container->data.array();
+		for (int n=0; n<container->data.nItems(); ++n)
 		{
 			success = parser.writeLineF("%i\n", array[n]);
 			if (!success) return;
@@ -129,11 +131,11 @@ template <> class GenericItemDataWriter< Array<double> >
 {
 	public:
 	// Constructor
-	GenericItemDataWriter< Array<double> >(LineParser& parser, GenericItemContainer< Array<double> >& container, bool& success)
+	GenericItemDataWriter< Array<double> >(LineParser& parser, GenericItemContainer< Array<double> >* container, bool& success)
 	{
-		parser.writeLineF("%16.9e\n", container.data.nItems());
-		double* array = container.data.array();
-		for (int n=0; n<container.data.nItems(); ++n)
+		parser.writeLineF("%16.9e\n", container->data.nItems());
+		double* array = container->data.array();
+		for (int n=0; n<container->data.nItems(); ++n)
 		{
 			success = parser.writeLineF("%16.9e\n", array[n]);
 			if (!success) return;
@@ -146,14 +148,14 @@ template <> class GenericItemDataWriter< Array2D<int> >
 {
 	public:
 	// Constructor
-	GenericItemDataWriter< Array2D<int> >(LineParser& parser, GenericItemContainer< Array2D<int> >& container, bool& success)
+	GenericItemDataWriter< Array2D<int> >(LineParser& parser, GenericItemContainer< Array2D<int> >* container, bool& success)
 	{
-		parser.writeLineF("%i  %i\n", container.data.nRows(), container.data.nColumns());
-		for (int row=0; row<container.data.nRows(); ++row)
+		parser.writeLineF("%i  %i\n", container->data.nRows(), container->data.nColumns());
+		for (int row=0; row<container->data.nRows(); ++row)
 		{
-			for (int column=0; column<container.data.nColumns(); ++column)
+			for (int column=0; column<container->data.nColumns(); ++column)
 			{
-				success = parser.writeLineF("%i\n", container.data.value(row, column));
+				success = parser.writeLineF("%i\n", container->data.value(row, column));
 				if (!success) return;
 			}
 		}
@@ -165,14 +167,14 @@ template <> class GenericItemDataWriter< Array2D<double> >
 {
 	public:
 	// Constructor
-	GenericItemDataWriter< Array2D<double> >(LineParser& parser, GenericItemContainer< Array2D<double> >& container, bool& success)
+	GenericItemDataWriter< Array2D<double> >(LineParser& parser, GenericItemContainer< Array2D<double> >* container, bool& success)
 	{
-		parser.writeLineF("%i  %i\n", container.data.nRows(), container.data.nColumns());
-		for (int row=0; row<container.data.nRows(); ++row)
+		parser.writeLineF("%i  %i\n", container->data.nRows(), container->data.nColumns());
+		for (int row=0; row<container->data.nRows(); ++row)
 		{
-			for (int column=0; column<container.data.nColumns(); ++column)
+			for (int column=0; column<container->data.nColumns(); ++column)
 			{
-				success = parser.writeLineF("%16.9e\n", container.data.value(row, column));
+				success = parser.writeLineF("%16.9e\n", container->data.value(row, column));
 				if (!success) return;
 			}
 		}
@@ -188,42 +190,45 @@ class GenericItemWriter
 {
 	public:
 	// Constructor
-	GenericItemWriter(LineParser& parser, GenericItem* item, bool& success)
+	GenericItemWriter(LineParser& parser, GenericItem* item)
 	{
-		// Need to check classType of item, and then instantiate the relevant GenericItemDataReader<>
-		switch (item->itemClass())
+		result_ = false;
+
+		// Need to check classType of item, and then instantiate the relevant GenericItemDataWriter<>
+		if (item->itemClass() == GenericItem::BoolClass) GenericItemDataWriter<bool> writer(parser, (GenericItemContainer<bool>*)item, result_);
+		else if (item->itemClass() == GenericItem::IntClass) GenericItemDataWriter<int> writer(parser, (GenericItemContainer<int>*)item, result_);
+		else if (item->itemClass() == GenericItem::DoubleClass) GenericItemDataWriter<double> writer(parser, (GenericItemContainer<double>*)item, result_);
+		else if (item->itemClass() == GenericItem::CharStringClass) GenericItemDataWriter<CharString> writer(parser, (GenericItemContainer<CharString>*)item, result_);
+		else if (item->itemClass() == GenericItem::Vec3IntClass) GenericItemDataWriter< Vec3<int> > writer(parser, (GenericItemContainer< Vec3<int> >*)item, result_);
+		else if (item->itemClass() == GenericItem::Vec3DoubleClass) GenericItemDataWriter< Vec3<double> > writer(parser, (GenericItemContainer< Vec3<double> >*)item, result_);
+		else if (item->itemClass() == GenericItem::ArrayIntClass) GenericItemDataWriter< Array<int> > writer(parser, (GenericItemContainer< Array<int> >*)item, result_);
+		else if (item->itemClass() == GenericItem::ArrayDoubleClass) GenericItemDataWriter< Array<double> > writer(parser, (GenericItemContainer< Array<double> >*)item, result_);
+		else if (item->itemClass() == GenericItem::ArrayVec3IntClass) GenericItemDataWriter< Array< Vec3<int> > > writer(parser, (GenericItemContainer< Array< Vec3<int> > >*)item, result_);
+		else if (item->itemClass() == GenericItem::ArrayVec3DoubleClass) GenericItemDataWriter< Array< Vec3<double> > > writer(parser, (GenericItemContainer< Array< Vec3<double> > >*)item, result_);
+		else if (item->itemClass() == GenericItem::Array2DDoubleClass) GenericItemDataWriter< Array2D<double> > writer(parser, (GenericItemContainer< Array2D<double> >*)item, result_);
+// 		else if (item->itemClass() == GenericItem::ListClass) GenericItemDataWriter< List > writer(parser, (GenericItemContainer<bool>*)item, result_);
+// 		else if (item->itemClass() == GenericItem::OrderedListClass) GenericItemDataWriter<bool> writer(parser, (GenericItemContainer<bool>*)item, result_);
+		else
 		{
-			case (GenericItem::BoolClass):
-				GenericItemDataReader<bool> reader();
-				break;
-			case (GenericItem::IntClass):
-				break;
-			case (GenericItem::DoubleClass):
-				break;
-			case (GenericItem::CharStringClass):
-				break;
-			case (GenericItem::Vec3IntClass):
-				break;
-			case (GenericItem::Vec3DoubleClass):
-				break;
-			case (GenericItem::ArrayIntClass):
-				break;
-			case (GenericItem::ArrayDoubleClass):
-				break;
-			case (GenericItem::ArrayVec3IntClass):
-				break;
-			case (GenericItem::ArrayVec3DoubleClass):
-				break;
-			case (GenericItem::Array2DDoubleClass):
-				break;
-			case (GenericItem::ListClass):
-				break;
-			case (GenericItem::OrderedListClass):
-				break;
-			default:
-				Messenger::error("GenericItemReader doesn't know how to handle class type %i (item '%s').\n", item->itemClass(), item->name());
-				success = false;
+			Messenger::error("GenericItemWriter doesn't know how to handle class type %i (item '%s').\n", item->itemClass(), item->name());
+			result_ = false;
 		}
+	}
+
+	private:
+	// Result of the write
+	bool result_;
+
+	public:
+	// Return if the write succeeded
+	bool success()
+	{
+		return result_;
+	}
+	// Return if the write failed
+	bool failed()
+	{
+		return (!result_);
 	}
 };
 

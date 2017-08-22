@@ -99,6 +99,7 @@ bool DUQ::loadInput(const char* filename)
 	
 	// Variables
 	Configuration* cfg;
+	Data* data;
 	Module* module, *masterInstance;
 	CharString niceName;
 	Species* sp;
@@ -124,6 +125,19 @@ bool DUQ::loadInput(const char* filename)
 				cfg->setName(parser.argc(1));
 				Messenger::print("Created Configuration '%s'...\n", cfg->name());
 				if (!ConfigurationBlock::parse(parser, this, cfg)) error = true;
+				break;
+			case (InputBlocks::DataBlock):
+				// Check to see if a Data with this name already exists...
+				if (findData(parser.argc(1)))
+				{
+					Messenger::error("Redefinition of Data '%s'.\n", parser.argc(1));
+					error = true;
+					break;
+				}
+				data = data_.add();
+				data->setName(parser.argc(1));
+				Messenger::print("Created Data '%s'...\n", data->name());
+				if (!DataBlock::parse(parser, this, data)) error = true;
 				break;
 			case (InputBlocks::ModuleBlock):
 				// The argument following the keyword is the module name
@@ -481,9 +495,7 @@ bool DUQ::loadRestart(const char* filename)
 		GenericItem* item = moduleData.create(parser.argc(nameIndex), itemClass);
 
 		// Read in the data
-		bool success;
-		GenericItemReader(parser, item, success);
-		if (!success)
+		if (GenericItemReader(parser, item).failed())
 		{
 			Messenger::error("Failed to read item data '%s' from restart file.\n", item->name());
 			error = true;
@@ -535,9 +547,7 @@ bool DUQ::saveRestart(const char* filename)
 				if (!(item->flags()&GenericItem::InRestartFileFlag)) continue;
 
 				parser.writeLineF("Configuration  %s  %s  %s\n", cfg->name(), item->name(), GenericItem::itemClass(item->itemClass()));
-				bool success;
-				GenericItemWriter(parser, item, success);
-				if (!success) return false;
+				if (GenericItemWriter(parser, item).failed()) return false;
 			}
 		}
 	}
@@ -554,9 +564,7 @@ bool DUQ::saveRestart(const char* filename)
 			if (!(item->flags()&GenericItem::InRestartFileFlag)) continue;
 
 			parser.writeLineF("Processing  %s  %s\n", item->name(), GenericItem::itemClass(item->itemClass()));
-			bool success;
-			GenericItemWriter(parser, item, success);
-			if (!success) return false;
+			if (GenericItemWriter(parser, item).failed()) return false;
 		}
 	}
 
