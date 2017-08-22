@@ -309,10 +309,11 @@ double XYData::interpolated(double xvalue)
 double XYData::interpolated(double xvalue, int interval)
 {
 	if (interval < 0) return y_.first();
-	if (interval >= (x_.nItems()-1)) return y_.last();
 
 	if (interpolationScheme_ == XYData::SplineInterpolation)
 	{
+		if (interval >= (x_.nItems()-1)) return y_.last();
+
 		double h = xvalue - x_[interval];
 		double hh = h*h;
 		return interpolationA_[interval] + interpolationB_[interval]*h + interpolationC_[interval]*hh + interpolationD_[interval]*hh*h;
@@ -325,11 +326,15 @@ double XYData::interpolated(double xvalue, int interval)
 //	}
 	else if (interpolationScheme_ == XYData::LinearInterpolation)
 	{
+		if (interval >= (x_.nItems()-1)) return y_.last();
+
 		double delta = (xvalue - x_.value(interval)) / interpolationH_.value(interval);
 		return y_.value(interval) + delta * interpolationA_.value(interval);
 	}
 	else if (interpolationScheme_ == XYData::ThreePointInterpolation)
 	{
+		if (interval >= (x_.nItems()-3)) return y_.last();
+
 //             interval=int(rrr*rdr)
 		double rXdelta = 1.0 / interpolationH_.value(0);
 		double ppp = xvalue*rXdelta - double(interval);
