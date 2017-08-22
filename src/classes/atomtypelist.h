@@ -97,15 +97,7 @@ class AtomTypeList
 	/*
 	 * Parallel Comms
 	 */
-	private:
-	// Master list instance, used to reform list on broadcast()
-	static List<AtomType>* masterAtomTypeList_;
-
 	public:
-	// Set master AtomType list
-	static void setMasterAtomTypeList(List<AtomType>* masterList);
-	// Return master AtomType list
-	static List<AtomType>* masterAtomTypeList();
 	// Broadcast item contents
 	bool broadcast(ProcessPool& procPool, int root);
 };

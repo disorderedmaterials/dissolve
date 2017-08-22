@@ -177,17 +177,16 @@ bool Element::broadcast(ProcessPool& procPool)
 	if (!procPool.broadcast(colour_, 4)) return false;
 
 	// Add isotopes
-	bool result;
-	BroadcastList<Isotope>(procPool, 0, isotopes_, result);
-	if (!result)
+	BroadcastList<Isotope> isotopeBroadcaster(procPool, 0, isotopes_);
+	if (isotopeBroadcaster.failed())
 	{
 		Messenger::print("Failed to broadcast Isotope data for element '%s'.\n", name_.get());
 		return false;
 	}
 
 	// Add parameters
-	BroadcastList<Parameters>(procPool, 0, parameters_, result);
-	if (!result)
+	BroadcastList<Parameters> parameterBroadcaster(procPool, 0, parameters_);
+	if (parameterBroadcaster.failed())
 	{
 		Messenger::print("Failed to broadcast Parameter data for element '%s'.\n", name_.get());
 		return false;

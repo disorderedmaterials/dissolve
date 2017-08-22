@@ -32,11 +32,15 @@ template <class T> class BroadcastList
 	 * Constructor-only template class which iterates over a supplied list, broadcasting the object from master
 	 * to slave processes. The List must contain items which subclass MPIListItem, in order to provide the 'broadcast()' virtual.
 	 */
+	private:
+	// Result of broadcast
+	bool result_;
+
 	public:
 	// Constructor
-	BroadcastList(ProcessPool& procPool, int root, List<T>& items, bool& result)
+	BroadcastList(ProcessPool& procPool, int root, List<T>& items)
 	{
-		result = false;
+		result_ = false;
 		int count;
 		if (procPool.isMaster())
 		{
@@ -61,8 +65,18 @@ template <class T> class BroadcastList
 		}
 
 		// All OK - success!
-		result = true;
-	};
+		result_ = true;
+	}
+	// Return whether broadcast was successful
+	bool success()
+	{
+		return result_;
+	}
+	// Return whether broadcast failed
+	bool failed()
+	{
+		return (!result_);
+	}
 };
 
 #endif

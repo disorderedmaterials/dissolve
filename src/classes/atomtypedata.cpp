@@ -206,15 +206,21 @@ const char* AtomTypeData::atomTypeName() const
 bool AtomTypeData::broadcast(ProcessPool& procPool, int root)
 {
 #ifdef PARALLEL
-	// For atomType_, use the AtomTypeList::masterInstance_ to find the index (*not* the local listIndex_) and broadcast it
-	int typeIndex = AtomTypeList::masterAtomTypeList()->indexOf(atomType_);
+	// Must have a master instance to proceed
+	if (!List<AtomType>::hasMasterInstance())
+	{
+		Messenger::error("Master List<AtomType> instance has not been set, so AtomTypeData::broadcast() is not possible.\n");
+		return false;
+	}
+
+	// For atomType_, use the master instance of List<AtomType> to find the index (*not* the local listIndex_) and broadcast it
+	int typeIndex = List<AtomType>::masterInstance()->indexOf(atomType_);
 	procPool.broadcast(typeIndex, root);
-	atomType_ = AtomTypeList::masterAtomTypeList()->item(typeIndex);
+	atomType_ = List<AtomType>::masterInstance()->item(typeIndex);
 
 	// Broadcast the IsotopeData list
-	bool result;
-	BroadcastList<IsotopeData> topeBroadcaster(procPool, root, isotopes_, result);
-	if (!result) return false;
+	BroadcastList<IsotopeData> topeBroadcaster(procPool, root, isotopes_);
+	if (topeBroadcaster.failed()) return false;
 
 	procPool.broadcast(population_, root);
 	procPool.broadcast(fraction_, root);

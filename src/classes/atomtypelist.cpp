@@ -27,9 +27,6 @@
 #include "templates/broadcastlist.h"
 #include <string.h>
 
-// Static Members
-List<AtomType>* AtomTypeList::masterAtomTypeList_ = NULL;
-
 // Constructor
 AtomTypeList::AtomTypeList()
 {
@@ -245,29 +242,13 @@ AtomTypeData* AtomTypeList::operator[](int n)
  * Parallel Comms
  */
 
-// Set master list
-void AtomTypeList::setMasterAtomTypeList(List<AtomType>* instance)
-{
-	masterAtomTypeList_ = instance;
-}
-
-// Return master instance
-List<AtomType>* AtomTypeList::masterAtomTypeList()
-{
-	return masterAtomTypeList_;
-}
-
 // Broadcast item contents
 bool AtomTypeList::broadcast(ProcessPool& procPool, int root)
 {
-	// Must have a master instance to proceed
-	if (!masterAtomTypeList_) return false;
-
 #ifdef PARALLEL
 	// Broadcast AtomTypeData list
-	bool result;
-	BroadcastList<AtomTypeData> atdBroadcaster(procPool, root, types_, result);
-	if (!result) return false;
+	BroadcastList<AtomTypeData> atdBroadcaster(procPool, root, types_);
+	if (atdBroadcaster.failed()) return false;
 #endif
 	return true;
 }
