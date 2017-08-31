@@ -70,6 +70,8 @@ class DUQ
 	int nAtomTypes() const;
 	// Return first AtomType in list
 	AtomType* atomTypes() const;
+	// Return AtomTypes list
+	const List<AtomType>& atomTypeList() const;
 	// Return nth AtomType in list
 	AtomType* atomType(int n);
 	// Generate unique AtomType name with base name provided

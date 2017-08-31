@@ -53,6 +53,12 @@ AtomType* DUQ::atomTypes() const
 	return atomTypes_.first();
 }
 
+// Return AtomTypes list
+const List<AtomType>& DUQ::atomTypeList() const
+{
+	return atomTypes_;
+}
+
 // Return nth AtomType in list
 AtomType* DUQ::atomType(int n)
 {
