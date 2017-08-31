@@ -38,8 +38,7 @@ void PartialsModule::setupOptions()
 	options_.add("BraggQResolution", 0.001, "Binwidth in Q to use when calculating Bragg peaks");
 	options_.add("InternalTest", bool(false), "Perform internal check of calculated partials (relative to Test method)");
 	options_.add("Method", "Auto", "Calculation method for partial radial distribution functions");
-	options_.add("NormaliseToAvSq", bool(false), "Normalise calculated F(Q) to < b >**2");
-	options_.add("NormaliseToSqAv", bool(false), "Normalise calculated F(Q) to < b**2 >");
+	options_.add("Normalisation", "None", "Normalisation to apply to total weighted F(Q)");
 	options_.add("QDelta", 0.05, "Step size in Q for S(Q) calculation");
 	options_.add("QDepBroadening", 0.0, "FWHM of Gaussian for Q-dependent instrument broadening function when calculating S(Q)");
 	options_.add("QIndepBroadening", 0.0, "FWHM of Gaussian for Q-independent instrument broadening function when calculating S(Q)");

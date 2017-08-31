@@ -28,8 +28,8 @@
 // Constructor
 Weights::Weights()
 {
-	boundCoherentAverageSquared_ = 0.0;
-	boundCoherentSquaredAverage_ = 0.0;
+	boundCoherentSquareOfAverage_ = 0.0;
+	boundCoherentAverageOfSquares_ = 0.0;
 }
 
 // Copy Constructor
@@ -47,8 +47,8 @@ void Weights::operator=(const Weights& source)
 	boundCoherentMatrix_= source.boundCoherentMatrix_;
 	concentrationMatrix_ = source.concentrationMatrix_;
 	fullMatrix_ = source.fullMatrix_;
-	boundCoherentAverageSquared_ = source.boundCoherentAverageSquared_;
-	boundCoherentSquaredAverage_ = source.boundCoherentSquaredAverage_;
+	boundCoherentSquareOfAverage_ = source.boundCoherentSquareOfAverage_;
+	boundCoherentAverageOfSquares_ = source.boundCoherentAverageOfSquares_;
 }
 
 /*
@@ -60,8 +60,8 @@ void Weights::clear()
 {
 	isotopologueMixtures_.clear();
 	atomTypes_.clear();
-	boundCoherentAverageSquared_ = 0.0;
-	boundCoherentSquaredAverage_ = 0.0;
+	boundCoherentSquareOfAverage_ = 0.0;
+	boundCoherentAverageOfSquares_ = 0.0;
 }
 
 // Add Isotopologue for Species
@@ -110,7 +110,7 @@ void Weights::print() const
 	Messenger::print("\n");
 	atomTypes_.print();
 
-	Messenger::print("\nCalculated average scattering lengths: <b>**2 = %f, <b**2> = %f\n", boundCoherentAverageSquared_, boundCoherentSquaredAverage_);
+	Messenger::print("\nCalculated average scattering lengths: <b>**2 = %f, <b**2> = %f\n", boundCoherentSquareOfAverage_, boundCoherentAverageOfSquares_);
 }
 
 /*
@@ -146,8 +146,8 @@ void Weights::finalise(AtomTypeList exchangeableTypes)
 	concentrationMatrix_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
 	boundCoherentMatrix_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
 	fullMatrix_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
-	boundCoherentAverageSquared_ = 0.0;
-	boundCoherentSquaredAverage_ = 0.0;
+	boundCoherentAverageOfSquares_ = 0.0;
+	boundCoherentSquareOfAverage_ = 0.0;
 	double ci, cj, bi, bj;
 	AtomTypeData* at1 = atomTypes_.first(), *at2;
 	for (int typeI=0; typeI<atomTypes_.nItems(); ++typeI, at1 = at1->next)
@@ -156,8 +156,8 @@ void Weights::finalise(AtomTypeList exchangeableTypes)
 		bi = at1->boundCoherent() * 0.1;
 
 		// Update average scattering values
-		boundCoherentAverageSquared_ += ci*bi;
-		boundCoherentSquaredAverage_ += ci*bi*bi;
+		boundCoherentSquareOfAverage_ += ci*bi;
+		boundCoherentAverageOfSquares_ += ci*bi*bi;
 
 		at2 = at1;
 		for (int typeJ=typeI; typeJ<atomTypes_.nItems(); ++typeJ, at2 = at2->next)
@@ -170,7 +170,7 @@ void Weights::finalise(AtomTypeList exchangeableTypes)
 			fullMatrix_.ref(typeI,typeJ) = ci * cj * bi * bj * (typeI == typeJ ? 1 : 2);
 		}
 	}
-	boundCoherentAverageSquared_ *= boundCoherentAverageSquared_;
+	boundCoherentSquareOfAverage_ *= boundCoherentSquareOfAverage_;
 }
 
 // Return AtomTypeList
@@ -210,15 +210,15 @@ Array2D<double>& Weights::fullWeightsMatrix()
 }
 
 // Return bound coherent average squared scattering (<b>**2)
-double Weights::boundCoherentAverageSquared()
+double Weights::boundCoherentSquareOfAverage()
 {
-	return boundCoherentAverageSquared_;
+	return boundCoherentSquareOfAverage_;
 }
 
 // Return bound coherent squared average scattering (<b**2>)
-double Weights::boundCoherentSquaredAverage()
+double Weights::boundCoherentAverageOfSquares()
 {
-	return boundCoherentSquaredAverage_;
+	return boundCoherentAverageOfSquares_;
 }
 
 /*
@@ -235,8 +235,8 @@ bool Weights::broadcast(ProcessPool& procPool, int root)
 	if (!procPool.broadcast(concentrationMatrix_, root)) return false;
 	if (!procPool.broadcast(boundCoherentMatrix_, root)) return false;
 	if (!procPool.broadcast(fullMatrix_, root)) return false;
-	if (!procPool.broadcast(boundCoherentAverageSquared_, root)) return false;
-	if (!procPool.broadcast(boundCoherentSquaredAverage_, root)) return false;
+	if (!procPool.broadcast(boundCoherentAverageOfSquares_, root)) return false;
+	if (!procPool.broadcast(boundCoherentSquareOfAverage_, root)) return false;
 #endif
 	return true;
 }

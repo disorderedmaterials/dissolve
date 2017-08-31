@@ -73,9 +73,9 @@ class Weights
 	// Full weights matrix (ci * cj * bi * bj * (i == j ? 1 : 2))
 	Array2D<double> fullMatrix_;
 	// Bound coherent average squared scattering (<b>**2)
-	double boundCoherentAverageSquared_;
+	double boundCoherentSquareOfAverage_;
 	// Bound coherent squared average scattering (<b**2>)
-	double boundCoherentSquaredAverage_;
+	double boundCoherentAverageOfSquares_;
 
 	public:
 	// Finalise lists and matrices based on IsotopologueMix information
@@ -93,9 +93,9 @@ class Weights
 	// Return full scattering weights matrix (ci * cj * bi * bj * (i == j ? 1 : 2))
 	Array2D<double>& fullWeightsMatrix();
 	// Return bound coherent average squared scattering (<b>**2)
-	double boundCoherentAverageSquared();
+	double boundCoherentSquareOfAverage();
 	// Return bound coherent squared average scattering (<b**2>)
-	double boundCoherentSquaredAverage();
+	double boundCoherentAverageOfSquares();
 
 
 	/*

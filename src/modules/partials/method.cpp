@@ -63,8 +63,11 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		return false;
 	}
 	const bool internalTest = GenericListHelper<bool>::retrieve(moduleData, "InternalTest", uniqueName(), options_.valueAsBool("InternalTest"));
-	const bool normaliseToAvSq = GenericListHelper<bool>::retrieve(moduleData, "NormaliseToAvSq", uniqueName(), options_.valueAsBool("NormaliseToAvSq"));
-	const bool normaliseToSqAv = GenericListHelper<bool>::retrieve(moduleData, "NormaliseToSqAv", uniqueName(), options_.valueAsBool("NormaliseToSqAv"));
+	PartialsModule::NormalisationType normalisation = normalisationType(GenericListHelper<CharString>::retrieve(moduleData, "Normalisation", uniqueName(), options_.valueAsString("Normalisation")));
+	if (normalisation == PartialsModule::nNormalisationTypes)
+	{
+		Messenger::error("Partials: Invalid normalisation type '%s' found.\n", GenericListHelper<CharString>::retrieve(moduleData, "Normalisation", uniqueName_, options_.valueAsString("Normalisation")).get());
+	}
 	const double qDelta = GenericListHelper<double>::retrieve(moduleData, "QDelta", uniqueName(), options_.valueAsDouble("QDelta"));
 	const double qMin = GenericListHelper<double>::retrieve(moduleData, "QMin", uniqueName(), options_.valueAsDouble("QMin"));
 	double qMax = GenericListHelper<double>::retrieve(moduleData, "QMax", uniqueName(), options_.valueAsDouble("QMax"));
@@ -89,6 +92,9 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 	if (sqCalculation)
 	{
 		Messenger::print("Partials: Calculating S(Q)/F(Q) over %f < Q < %f Angstroms**-1 using step size of %f Angstroms**-1.\n", qMin, qMax, qDelta);
+		if (normalisation == PartialsModule::NoNormalisation) Messenger::print("Partials: No normalisation will be applied to total F(Q).\n");
+		else if (normalisation == PartialsModule::AverageOfSquaresNormalisation) Messenger::print("Partials: Total F(Q) will be normalised to <b>**2");
+		else if (normalisation == PartialsModule::SquareOfAverageNormalisation) Messenger::print("Partials: Total F(Q) will be normalised to <b**2>");
 		Messenger::print("Partials: Bragg calculation is %s.\n", DUQSys::onOff(braggOn));
 		Messenger::print("Partials: Q-dependent FWHM broadening to use is %f, Q-independent FWHM broadening to use is %f.\n", qDepBroadening, qIndepBroadening);
 		if (braggOn)
@@ -96,16 +102,22 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 			Messenger::print("Partials: Bragg Q-dependent FWHM broadening to use is %f, Q-independent FWHM broadening to use is %f.\n", braggQDepBroadening, braggQIndepBroadening);
 		}
 	}
-	Messenger::print("Partials: Weighting scheme to employ is '%s'.\n", PartialsModule::weightingType(weightsType));
+	if (weightsType == PartialsModule::NoWeighting) Messenger::print("Partials: No weighted partials will be calculated.\n");
+	else Messenger::print("Partials: Weighting scheme to employ is '%s'.\n", PartialsModule::weightingType(weightsType));
 	Messenger::print("Partials: Save data is %s.\n", DUQSys::onOff(saveData));
 
 	/*
 	 * Regardless of whether we are a main processing task (summing some combination of Configuration's partials) or multiple independent Configurations,
 	 * we must loop over the specified targetConfigurations_ and calculate the partials for each.
 	 */
+	Weights combinedWeights;
+	AtomTypeList combinedAtomTypes, combinedExchangeableAtoms;
 	RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
 	while (Configuration* cfg = configIterator.iterate())
 	{
+		// Update total AtomTypeList
+		combinedAtomTypes.add(cfg->usedAtomTypesList());
+
 		// Calculate unweighted partials for this Configuration (under generic Module name 'Partials', rather than the uniqueName_)
 		calculateUnweightedGR(procPool, cfg, method, allIntra, smoothing);
 		PartialSet& unweightedgr = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedGR", "Partials");
@@ -160,7 +172,9 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 					if (moduleData.contains(varName, uniqueName_))
 					{
 						// This isotopologue is defined as being used, so add it (in the isotopic proportions defined in the Isotopologue) to the Weights.
-						weights.addIsotopologue(sp, speciesPopulation, availableIso, GenericListHelper<double>::retrieve(moduleData, varName, uniqueName_));
+						double proportion = GenericListHelper<double>::retrieve(moduleData, varName, uniqueName_);
+						weights.addIsotopologue(sp, speciesPopulation, availableIso, proportion);
+						combinedWeights.addIsotopologue(sp, speciesPopulation, availableIso, proportion);
 					}
 				}
 			}
@@ -176,12 +190,16 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 			// Grab exchangeable atoms list if it is present (in the Module data, rather than the local Configuration data)
 			// This is passed to Weights::finalise(), which uses the contained information when finalising its AtomTypeList
 			AtomTypeList exchangeableAtoms = GenericListHelper<AtomTypeList>::retrieve(moduleData, "Exchangeable", uniqueName());
+			combinedExchangeableAtoms.add(exchangeableAtoms);
 
 			// Finalise, print, and store weights
 			Messenger::print("Partials: Isotopologue and isotope composition for Configuration '%s':\n\n", cfg->name());
 			weights.finalise(exchangeableAtoms);
 			weights.print();
-			GenericListHelper< Array2D<double> >::realise(cfg->moduleData(), "PartialWeights", uniqueName_) = weights.fullWeightsMatrix();
+			GenericListHelper<Weights>::realise(cfg->moduleData(), "FullWeights", uniqueName_) = weights;
+
+			// If we are defined in a Configuration, also set the PartialWeights in the Module
+			if (configurationLocal_) GenericListHelper<Weights>::realise(duq.processingModuleData(), "FullWeights", uniqueName_) = weights;
 
 			// Calculate weighted partials
 			PartialSet& weightedgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedGR", uniqueName_);
@@ -200,7 +218,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 			{
 				PartialSet& unweightedsq = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedSQ", "Partials");
 				weightedsq.setup(weightedgr.atomTypes(), cfg->niceName(), "weighted", "sq", "Q, 1/Angstroms");
-				calculateWeightedSQ(unweightedsq, weightedsq, weights);
+				calculateWeightedSQ(unweightedsq, weightedsq, weights, normalisation);
 
 				// Test weighted S(Q)?
 				if (testMode && configurationLocal_)
@@ -220,27 +238,21 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 
 	}
 
-	// If we are a main processing task, construct the weighted sum of Configuration
+	// If we are a main processing task, construct the weighted sum of Configuration partials
 	if (!configurationLocal_)
 	{
 		// Assemble partials from all target Configurations specified, weighting them accordingly
 		CharString varName;
-		AtomTypeList atomTypes;
 
-		// Loop over Configurations, creating a list of unique AtomTypes encountered over all.
-		RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
-		while (Configuration* cfg = configIterator.iterate())
-		{
-			// Add any missing atom types into our local list
-			atomTypes.add(cfg->usedAtomTypesList());
-		}
-		atomTypes.finalise();
-		atomTypes.print();
+		// Finalise and print the combined AtomTypes matrix
+		Messenger::print("Partials: AtomTypes used over all source Configurations:\n");
+		combinedAtomTypes.finalise();
+		combinedAtomTypes.print();
 
 		// Setup partial set using the AtomTypeList we have just constructed.
 		Configuration* refConfig = targetConfigurations_.firstItem();
 		PartialSet& unweightedgr = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedGR", "Partials");
-		unweightedgr.setup(atomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), uniqueName(), "unweighted", "rdf", "r, Angstroms");
+		unweightedgr.setup(combinedAtomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), uniqueName(), "unweighted", "rdf", "r, Angstroms");
 
 		// Loop over Configurations again, summing into the PartialSet we have just set up
 		// We will keep a running total of the weights associated with each Configuration, and re-weight the entire set of partials at the end.
@@ -308,8 +320,13 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		// Calculate weighted Sample partials and total if requested
 		if (weightsType != PartialsModule::NoWeighting)
 		{
+			Messenger::print("Partials: Isotopologue and isotope composition over all Configurations used in '%s':\n\n", uniqueName_.get());
+			combinedWeights.finalise(combinedExchangeableAtoms);
+			combinedWeights.print();
+			GenericListHelper<Weights>::realise(duq.processingModuleData(), "FullWeights", uniqueName_) = combinedWeights;
+
 			PartialSet& weightedgr = GenericListHelper<PartialSet>::realise(moduleData, "WeightedGR", uniqueName_);
-			weightedgr.setup(atomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), uniqueName(), "weighted", "rdf", "r, Angstroms");
+			weightedgr.setup(combinedAtomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), uniqueName(), "weighted", "rdf", "r, Angstroms");
 			weightedgr.reset();
 
 			// Loop over Configurations, adding in their weighted partial sets as we go
@@ -375,4 +392,3 @@ bool PartialsModule::postProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return false;
 }
-

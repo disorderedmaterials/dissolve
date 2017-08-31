@@ -62,6 +62,22 @@ const char* PartialsModule::weightingType(PartialsModule::WeightingType wt)
 	return WeightingTypeKeywords[wt];
 }
 
+// Normalisation Type enum
+const char* NormalisationTypeKeywords[] = { "None", "AverageSquared", "SquaredAverage" };
+
+// Convert character string to NormalisationType
+PartialsModule::NormalisationType PartialsModule::normalisationType(const char* s)
+{
+	for (int n=0; n<PartialsModule::nNormalisationTypes; ++n) if (DUQSys::sameString(s, NormalisationTypeKeywords[n])) return (PartialsModule::NormalisationType) n;
+	return PartialsModule::nNormalisationTypes;
+}
+
+// Return character string for NormalisationType
+const char* PartialsModule::normalisationType(PartialsModule::NormalisationType nt)
+{
+	return NormalisationTypeKeywords[nt];
+}
+
 // Bragg Broadening enum
 const char* BraggBroadeningKeywords[] = { "None", "Gaussian" };
 
@@ -713,7 +729,7 @@ bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration*
 }
 
 // Calculate weighted S(Q) from supplied unweighted S(Q)
-bool PartialsModule::calculateWeightedSQ(PartialSet& unweightedsq, PartialSet& weightedsq, Weights& weights)
+bool PartialsModule::calculateWeightedSQ(PartialSet& unweightedsq, PartialSet& weightedsq, Weights& weights, PartialsModule::NormalisationType normalisation)
 {
 	int typeI, typeJ;
 	for (typeI=0; typeI<unweightedsq.nAtomTypes(); ++typeI)
@@ -734,8 +750,10 @@ bool PartialsModule::calculateWeightedSQ(PartialSet& unweightedsq, PartialSet& w
 		}
 	}
 
-	// Calculate total
+	// Calculate and normalise total to form factor if requested
 	weightedsq.formTotal(false);
+	if (normalisation == PartialsModule::AverageOfSquaresNormalisation) weightedsq.total().arrayY() /= weights.boundCoherentAverageOfSquares();
+	else if (normalisation == PartialsModule::SquareOfAverageNormalisation) weightedsq.total().arrayY() /= weights.boundCoherentSquareOfAverage();
 
 	return true;
 }

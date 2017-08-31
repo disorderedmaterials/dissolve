@@ -138,6 +138,12 @@ class PartialsModule : public Module
 	static WeightingType weightingType(const char* s);
 	// Return character string for WeightingType
 	static const char* weightingType(WeightingType wt);
+	// Normalisation Type enum
+	enum NormalisationType { NoNormalisation, AverageOfSquaresNormalisation, SquareOfAverageNormalisation, nNormalisationTypes };
+	// Convert character string to NormalisationType
+	static NormalisationType normalisationType(const char* s);
+	// Return character string for NormalisationType
+	static const char* normalisationType(NormalisationType nt);
 	// Bragg Broadening enum
 	enum BraggBroadening { NoBroadening, GaussianBroadening, nBroadeningTypes };
 	// Convert character string to BraggBroadening
@@ -151,7 +157,7 @@ class PartialsModule : public Module
 	// Calculate unweighted S(Q) from supplied unweighted g(r)
 	bool calculateUnweightedSQ(ProcessPool& procPool, Configuration* cfg, double qMin, double qDelta, double qMax, double rho, XYData::WindowFunction wf, double qDepBroadening, double qIndepBroadening, bool braggOn);
 	// Calculate weighted S(Q) from supplied unweighted S(Q)
-	bool calculateWeightedSQ(PartialSet& unweightedsq, PartialSet& weightedsq, Weights& weights);
+	bool calculateWeightedSQ(PartialSet& unweightedsq, PartialSet& weightedsq, Weights& weights, PartialsModule::NormalisationType normalisation);
 	// Calculate Bragg terms for specified Configuration
 	bool calculateBraggTerms(ProcessPool& procPool, Configuration* cfg, double braggQMin, double braggQResolution, double braggQMax, double braggMultiplicity);
 	// Calculate unweighted Bragg partials from calculated peak data
