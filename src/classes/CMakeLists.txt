@@ -37,6 +37,7 @@ molecule.cpp
 pairpotential.cpp
 potentialmap.cpp
 partialset.cpp
+scatteringmatrix.cpp
 speciesangle.cpp
 speciesatom.cpp
 species_atomic.cpp
@@ -78,6 +79,7 @@ molecule.h
 pairpotential.h
 potentialmap.h
 partialset.h
+scatteringmatrix.h
 speciesangle.h
 speciesatom.h
 speciesbond.h
