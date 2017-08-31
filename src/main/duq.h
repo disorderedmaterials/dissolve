@@ -25,6 +25,7 @@
 #include "base/ptable.h"
 #include "modules/module.h"
 #include "classes/configuration.h"
+#include "classes/data.h"
 #include "classes/pairpotential.h"
 #include "classes/potentialmap.h"
 
@@ -46,12 +47,6 @@ class DUQ
 	DUQ();
 	// Destructor
 	~DUQ();
-
-
-	/*
-	 * Data
-	 */
-	public:
 	// Clear all data
 	void clear();
 
@@ -174,6 +169,19 @@ class DUQ
 	Configuration* addConfiguration();
 	// Find configuration by name
 	Configuration* findConfiguration(const char* name, bool useNiceName = false) const;
+
+
+	/*
+	 * Data
+	 */
+	private:
+	List<Data> data_;
+
+	public:
+	// Add new Data
+	Data* addData();
+	// Find Data by name
+	Data* findData(const char* name, bool useNiceName = false) const;
 
 
 	/*

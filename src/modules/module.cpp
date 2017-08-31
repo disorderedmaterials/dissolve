@@ -242,6 +242,25 @@ bool Module::configurationLocal()
 	return configurationLocal_;
 }
 
+// Add Data target
+bool Module::addDataTarget(Data* data)
+{
+	targetData_.add(data);
+	return true;
+}
+
+// Return number of targeted Data
+int Module::nDataTargets()
+{
+	return targetData_.nItems();
+}
+
+// Return first targeted Data
+RefList<Data,bool>& Module::targetData()
+{
+	return targetData_;
+}
+
 /*
  * Data Reaping
  */

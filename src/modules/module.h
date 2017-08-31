@@ -31,6 +31,7 @@
 class DUQ;
 class Configuration;
 class ProcessPool;
+class Data;
 
 // Module
 class Module : public ListItem<Module>
@@ -150,6 +151,8 @@ class Module : public ListItem<Module>
 	RefList<Configuration,bool> targetConfigurations_;
 	// Whether this module is a local Module in a Configuration 
 	bool configurationLocal_;
+	// Data that are targetted by this Module
+	RefList<Data,bool> targetData_;
 
 	public:
 	// Add Configuration target
@@ -166,6 +169,12 @@ class Module : public ListItem<Module>
 	void setConfigurationLocal(bool b);
 	// Return whether this module is a local Module in a Configuration
 	bool configurationLocal();
+	// Add Data target
+	bool addDataTarget(Data* data);
+	// Return number of targeted Data
+	int nDataTargets();
+	// Return first targeted Data
+	RefList<Data,bool>& targetData();
 
 
 	/*
