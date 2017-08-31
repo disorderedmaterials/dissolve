@@ -116,7 +116,7 @@ bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		cellAtoms = cell->atoms().objects();
 		for (n = 0; n < cell->atoms().nItems(); ++n)
 		{
-			// Check for unused atom
+			// Grab Atom pointer
 			Atom* i = cellAtoms[n];
 
 			// Get the atom's grain pointer
