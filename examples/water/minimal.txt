@@ -30,25 +30,30 @@ Configuration  'Bulk'
   EndModule
 EndConfiguration
 
-# Samples
-Sample 'NIMROD-Protiated'
-  ReferenceData 'data/H2O.mint01'
-  Module StructureFactor
-    QDepBroadening 0.02    # For SLS
-    Configuration  'Bulk'
-    Isotopologue  'Bulk'  'Water'  'Deuteriated'  0.5
-    Isotopologue  'Bulk'  'Water'  'Natural'  0.5
-  EndModule
+# Structure Factors
+Module Partials 'H2O'
+  StructureFactor  on
+  QDepBroadening 0.02    # For SLS
+  Configuration  'Bulk'
+  Isotopologue  'Bulk'  'Water'  'Natural'  1.0
+  Save  on
+EndModule
+
+Module Partials 'HDO'
+  StructureFactor  on
+  QDepBroadening 0.02    # For SLS
+  Configuration  'Bulk'
+  Isotopologue  'Bulk'  'Water'  'Deuteriated'  0.5
+  Isotopologue  'Bulk'  'Water'  'Natural'  0.5
+  Save  on
 EndSample
 
-Sample 'NIMROD-Deuteriated'
-  ReferenceData 'data/D2O.mint01'
-  Module StructureFactor
-    QDepBroadening 0.02    # For SLS
-    Configuration  'Bulk'
-    Isotopologue  'Bulk'  'Water'  'Deuteriated'  0.5
-    Isotopologue  'Bulk'  'Water'  'Natural'  0.5
-  EndModule
+Module Partials 'D2O'
+  StructureFactor  on
+  QDepBroadening 0.02    # For SLS
+  Configuration  'Bulk'
+  Isotopologue  'Bulk'  'Water'  'Deuteriated'  1.0
+  Save  on
 EndSample
 
 # Pair Potentials
@@ -56,7 +61,5 @@ PairPotentials
   Range  15.000000
   Delta  0.050000
   TruncationWidth  2.000000
-  Generate  'LJ'  'OW'  'OW'
-  Generate  'LJ'  'OW'  'HW'
-  Generate  'LJ'  'HW'  'HW'
+  GenerateAll  'LJ'
 EndPairPotentials

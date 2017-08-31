@@ -14,7 +14,6 @@ Configuration 'liquid'
   Multiplier  10000
   Density  0.021300  atoms/A3
   Species  'Argon'  1.0
-  UseOutputAsInput
   Module AtomShake
   EndModule
 EndConfiguration
