@@ -23,6 +23,7 @@ configuration_composition.cpp
 configuration_contents.cpp
 configuration_energy.cpp
 configuration_upkeep.cpp
+data.cpp
 energykernel.cpp
 forcekernel.cpp
 grain.cpp
@@ -63,6 +64,7 @@ cellneighbour.h
 changedata.h
 changestore.h
 configuration.h
+data.h
 energykernel.h
 forcekernel.h
 graindefinition.h
