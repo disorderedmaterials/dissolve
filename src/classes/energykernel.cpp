@@ -384,7 +384,7 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::Lo
 	return totalEnergy;
 }
 
-// Return PairPotential energy between atom and list of neighbouring cells
+// Return PairPotential energy between atom and list of neighbouring Atoms
 double EnergyKernel::energy(const Atom* i, OrderedPointerList<Atom>& neighbours, int flags, ProcessPool::LoopContext loopContext, bool sumOverProcesses)
 {
 	/*

@@ -270,9 +270,9 @@ void Molecule::setCentre(const Box* box, const Vec3<double> newCentre)
 void Molecule::randomiseGeometry(const Box* box)
 {
 	/*
-	 * Randomise the geometry of the Molecule, exploring conformation space as best we can. This routine should be used when
+	 * Randomise the geometry of the Molecule, exploring conformational space as best we can. This routine should be used when
 	 * instantiating the initial ensemble of Molecules such that a variety of conformations exist in the starting system. Each defined
-	 * Bond is taken in turn, and the connect Atoms at one end (chosen randomly) are rotated about the Bond axis.
+	 * Bond is taken in turn, and the connected Atoms at one end (chosen randomly) are rotated about the Bond axis.
 	 */ 
 #ifdef CHECKS
 	// Check for NULL Species pointer
@@ -317,7 +317,3 @@ void Molecule::randomiseGeometry(const Box* box)
 		applyTransform(box, transform, terminus == 0 ? localI->r() : localJ->r(), b->nAttached(terminus), b->attachedIndices(terminus));
 	}
 }
-
-// Shake geometry
-void shakeGeometry(); // TODO
-

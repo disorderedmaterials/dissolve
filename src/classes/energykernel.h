@@ -106,7 +106,7 @@ class EnergyKernel
 	double energy(const Atom* i, OrderedPointerList<Atom>& neighbours, int flags = EnergyKernel::NoFlags, ProcessPool::LoopContext loopContext = ProcessPool::Individual, bool sumOverProcesses = false);
 	// Return PairPotential energy of atom with world
 	double energy(const Atom* i, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
-	// Return PairPotential energy between Grain and list of neighbouring cells
+	// Return PairPotential energy between Grain and list of neighbouring Atoms
 	double energy(const Grain* grain, OrderedPointerList<Atom>& neighbours, bool applyMim, bool excludeIgeJ = false, ProcessPool::LoopContext loopContext = ProcessPool::Individual, bool sumOverProcesses = false);
 	// Return PairPotential energy of grain with world
 	double energy(const Grain* grain, bool excludeIgtJ, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
