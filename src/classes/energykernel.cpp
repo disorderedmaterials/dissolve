@@ -401,7 +401,7 @@ double EnergyKernel::energy(const Atom* i, OrderedPointerList<Atom>& neighbours,
 	double totalEnergy = 0.0;
 	Atom* jj;
 	int j, start = 0, stride = 1;
-	double rSq, r, scale;
+	double rSq, scale;
 	Atom** neighbourAtoms = neighbours.objects();
 	int nNeighbourAtoms = neighbours.nItems();
 	
@@ -427,15 +427,14 @@ double EnergyKernel::energy(const Atom* i, OrderedPointerList<Atom>& neighbours,
 			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
 			rSq = box_->minimumDistanceSquared(rI, jj->r());
 			if (rSq > cutoffDistanceSquared_) continue;
-			r = sqrt(rSq);
 
 			// Check for atoms in the same species
-			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(i, jj, r);
+			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(i, jj, sqrt(rSq));
 			else
 			{
 				if ((flags&EnergyKernel::ExcludeIntraGreaterThan) && (i->moleculeAtomIndex() > jj->moleculeAtomIndex())) continue;
 				scale = spI->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
-				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(i, jj, r) * scale;
+				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(i, jj, sqrt(rSq)) * scale;
 			}
 		}
 		else if (flags&EnergyKernel::ExcludeGreaterThanEqualTo) for (j=start; j<nNeighbourAtoms; j += stride)
@@ -446,15 +445,14 @@ double EnergyKernel::energy(const Atom* i, OrderedPointerList<Atom>& neighbours,
 			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
 			rSq = box_->minimumDistanceSquared(rI, jj->r());
 			if (rSq > cutoffDistanceSquared_) continue;
-			r = sqrt(rSq);
 
 			// Check for atoms in the same species
-			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(i, jj, r);
+			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(i, jj, sqrt(rSq));
 			else
 			{
 				if ((flags&EnergyKernel::ExcludeIntraGreaterThan) && (i->moleculeAtomIndex() > jj->moleculeAtomIndex())) continue;
 				scale = spI->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
-				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(i, jj, r) * scale;
+				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(i, jj, sqrt(rSq)) * scale;
 			}
 		}
 		else for (j=start; j<nNeighbourAtoms; j += stride)
@@ -464,15 +462,14 @@ double EnergyKernel::energy(const Atom* i, OrderedPointerList<Atom>& neighbours,
 			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
 			rSq = box_->minimumDistanceSquared(rI, jj->r());
 			if (rSq > cutoffDistanceSquared_) continue;
-			r = sqrt(rSq);
 
 			// Check for atoms in the same species
-			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(i, jj, r);
+			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(i, jj, sqrt(rSq));
 			else
 			{
 				if ((flags&EnergyKernel::ExcludeIntraGreaterThan) && (i->moleculeAtomIndex() > jj->moleculeAtomIndex())) continue;
 				scale = spI->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
-				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(i, jj, r) * scale;
+				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(i, jj, sqrt(rSq)) * scale;
 			}
 		}
 	}
@@ -487,14 +484,13 @@ double EnergyKernel::energy(const Atom* i, OrderedPointerList<Atom>& neighbours,
 			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
 			rSq = (rI - jj->r()).magnitudeSq();
 			if (rSq > cutoffDistanceSquared_) continue;
-			r = sqrt(rSq);
 
 			// Check for atoms in the same species
-			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(i, jj, r);
+			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(i, jj, sqrt(rSq));
 			else
 			{
 				scale = moleculeI->species()->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
-				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(i, jj, r) * scale;
+				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(i, jj, sqrt(rSq)) * scale;
 			}
 		}
 		else if (flags&EnergyKernel::ExcludeGreaterThanEqualTo) for (j=start; j<nNeighbourAtoms; j += stride)
@@ -505,14 +501,13 @@ double EnergyKernel::energy(const Atom* i, OrderedPointerList<Atom>& neighbours,
 			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
 			rSq = (rI - jj->r()).magnitudeSq();
 			if (rSq > cutoffDistanceSquared_) continue;
-			r = sqrt(rSq);
 
 			// Check for atoms in the same species
-			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(i, jj, r);
+			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(i, jj, sqrt(rSq));
 			else
 			{
 				scale = moleculeI->species()->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
-				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(i, jj, r) * scale;
+				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(i, jj, sqrt(rSq)) * scale;
 			}
 		}
 		else for (j=start; j<nNeighbourAtoms; j += stride)
@@ -522,14 +517,13 @@ double EnergyKernel::energy(const Atom* i, OrderedPointerList<Atom>& neighbours,
 			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
 			rSq = (rI - jj->r()).magnitudeSq();
 			if (rSq > cutoffDistanceSquared_) continue;
-			r = sqrt(rSq);
 
 			// Check for atoms in the same species
-			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(i, jj, r);
+			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(i, jj, sqrt(rSq));
 			else
 			{
 				scale = moleculeI->species()->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
-				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(i, jj, r) * scale;
+				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(i, jj, sqrt(rSq)) * scale;
 			}
 		}
 	}
@@ -681,11 +675,12 @@ double EnergyKernel::energy(const Atom* i, ProcessPool::LoopContext loopContext)
 		return 0.0;
 	}
 #endif
-	double totalEnergy = 0.0;
 	Cell* cellI = i->cell();
-	totalEnergy = energy(i, cellI->atoms(), EnergyKernel::ExcludeSelfFlag, loopContext);
+
+	double totalEnergy = energy(i, cellI->atoms(), EnergyKernel::ExcludeSelfFlag, loopContext);
 	totalEnergy += energy(i, cellI->atomNeighbours(), EnergyKernel::NoFlags, loopContext);
 	totalEnergy += energy(i, cellI->mimAtomNeighbours(), EnergyKernel::ApplyMinimumImage, loopContext);
+
 	return totalEnergy;
 }
 
