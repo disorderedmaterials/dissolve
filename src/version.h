@@ -22,7 +22,7 @@
 #ifndef DUQ_VERSION_H
 #define DUQ_VERSION_H
 
-#define DUQVERSION "0.33.0"
+#define DUQVERSION "0.33.1"
 #define DUQREPO "https://github.com/trisyoungs/duq.git"
 
 #endif
