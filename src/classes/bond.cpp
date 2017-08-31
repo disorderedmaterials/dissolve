@@ -101,19 +101,19 @@ void Bond::setAtoms(Atom* i, Atom* j)
 }
 
 // Return first Atom involved in Bond
-Atom *Bond::i() const
+Atom* Bond::i() const
 {
 	return i_;
 }
 
 // Return second Atom involved in Bond
-Atom *Bond::j() const
+Atom* Bond::j() const
 {
 	return j_;
 }
 
 // Return the 'other' Atom in the Bond
-Atom *Bond::partner(Atom* i) const
+Atom* Bond::partner(Atom* i) const
 {
 	return (i == i_ ? j_ : i_);
 }

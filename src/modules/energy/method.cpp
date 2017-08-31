@@ -69,14 +69,14 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 		if (testMode)
 		{
 			/*
-			* Calculate the total energy of the system using a basic loop on each process, and then compare with production routines.
+			 * Calculate the total energy of the system using a basic loop on each process, and then compare with production routines.
 			 */
 
 			Messenger::print("Energy: Calculating energy for Configuration '%s' in serial test mode...\n", cfg->name());
 			if (testAnalytic) Messenger::print("Energy: Exact, analytical potential will be used.\n");
 
 			/*
-			* Test Calculation Begins
+			 * Test Calculation Begins
 			 */
 
 			const PotentialMap& potentialMap = duq.potentialMap();
@@ -235,9 +235,9 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 		else
 		{
 			/*
-			* Calculates the total energy of the entire system.
-			* 
-			* This is a serial routine (subroutines called from within are parallel).
+			 * Calculates the total energy of the entire system.
+			 * 
+			 * This is a serial routine (subroutines called from within are parallel).
 			 */
 
 			Messenger::print("Energy: Calculating total energy for Configuration '%s'...\n", cfg->name());
