@@ -21,6 +21,8 @@
 
 #include "modules/test/test.h"
 #include "main/duq.h"
+#include "classes/scatteringmatrix.h"
+#include "classes/weights.h"
 #include "base/sysfunc.h"
 
 // Perform setup tasks for module
@@ -38,18 +40,52 @@ bool TestModule::preProcess(DUQ& duq, ProcessPool& procPool)
 // Execute Method
 bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 {
-	// First, check that we can find the total structure factors that have been specified
-	sampleData_.clear();
-	
-	RefListIterator<Module,XYData> sampleIterator(sampleData_);
-	while (Module* module = sampleIterator.iterate())
+	// First, make sure that all of the associated Data is setup
+	RefListIterator<Data,bool> dataIterator(targetData_);
+	while (Data* data = dataIterator.iterate())
 	{
-		// First, need to grab GenericList that will contain the target
-		GenericList& moduleData = module->configurationLocal() ? module->targetConfigurations().firstItem()->moduleData() : duq.processingModuleData();
-		
+		if (!data->setup(duq.processingModuleData())) return false;
+		data->data().save("bollocks.txt");
 	}
 
-	// Create weights matrix based on our defined 
+	/*
+	 * Construct our full, square, scattering matrix, using the master AtomTypes list
+	 */
+	ScatteringMatrix scatteringMatrix;
+	scatteringMatrix.initialise(duq.atomTypeList());
+
+	// For each Data, get the associated Weights from the associated Partials module
+	dataIterator.restart();
+	while (Data* data = dataIterator.iterate())
+	{
+		bool found;
+		Weights& weights = GenericListHelper<Weights>::retrieve(duq.processingModuleData(), "FullWeights", data->associatedModule()->uniqueName(), Weights(), &found);
+		if (!found)
+		{
+			Messenger::error("TestModule: Couldn't find FullWeights for Data '%s', and so can't construct scattering matrix.\n", data->name());
+			return false;
+		}
+
+		// Set the next row of the scattering matrix with the weights of the supplied data.
+		if (!scatteringMatrix.addReferenceData(data, weights))
+		{
+			Messenger::error("TestModule: Failed to initialise reference Data.\n");
+			return false;
+		}
+	}
+	if (!scatteringMatrix.finalise())
+	{
+		Messenger::error("TestModule: Failed to set-up scattering matrix.\n");
+		return false;
+	}
+
+	scatteringMatrix.print();
+
+	/*
+	 * Use the ScatteringMatrix to generate partials from the supplied reference data
+	 */
+	scatteringMatrix.generatePartials();
+
 	return true;
 }
 

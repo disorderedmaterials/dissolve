@@ -35,27 +35,6 @@ int TestModule::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetLi
 {
 	if (DUQSys::sameString("AddTotalSQ", parser.argc(0)))
 	{
-		// Find the Module named by the first argument - it must be a Partials module in which the StructureFactor calculation is 'On'
-		Module* partialsModule = ModuleList::findInstanceByUniqueName(parser.argc(1));
-		if (!partialsModule)
-		{
-			Messenger::error("Specified Module target '%s' does not exist.", parser.argc(1));
-			return false;
-		}
-		else if (!DUQSys::sameString(partialsModule->name(), "Partials"))
-		{
-			Messenger::error("Specified Module target '%s' is not a Partials module.", parser.argc(1));
-			return false;
-		}
-		else if (!partialsModule->options().valueAsBool("StructureFactor"))
-		{
-			Messenger::error("Specified Module target '%s' does not calculate a structure factor.", parser.argc(1));
-			return false;
-		}
-
-		// All fine, so add data to the list and load any reference data
-		RefListItem<Module,XYData>* newSample = sampleData_.add(partialsModule);
-		if (parser.hasArg(2) && !newSample->data.load(parser.argc(2))) return false;
 	}
 	else return -1;
 

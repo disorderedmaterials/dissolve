@@ -110,8 +110,6 @@ class TestModule : public Module
 	 * Local Data
 	 */
 	private:
-	// List of Modules that contain total S(Q) data (i.e. sample data) to fit, and the associated reference data
-	RefList<Module,XYData> sampleData_;
 	// Weights matrix for partials / target data
 	Array2D<double> partialWeights_;
 
