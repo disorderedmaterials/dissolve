@@ -147,6 +147,8 @@ template <class T> class OrderedPointerList
 	int nItems() const;
 	// Add a new item reference to the list
 	void add(T* object);
+	// Add a new item reference to the list, unless it is already there
+	void addExclusive(T* object);
 	// Add a new item reference to the end of the list
 	void addAtEnd(T* object);
 	// Remove item reference from list
@@ -157,6 +159,8 @@ template <class T> class OrderedPointerList
 	void move(int objectIndex, OrderedPointerList<T>& targetList);
 	// Returns the list head
 	OrderedPointerListItem<T>* first() const;
+	// Returns the list tail
+	OrderedPointerListItem<T>* last() const;
 	// Generate (if necessary) and return item array
 	OrderedPointerListItem<T>** items();
 	// Generate (if necessary) and return object array
@@ -292,7 +296,7 @@ template <class T> void OrderedPointerList<T>::insertBefore(OrderedPointerListIt
 }
 
 // Remove the specified item from the list
-template <class T> void OrderedPointerList<T>::remove(OrderedPointerListItem<T> *xitem)
+template <class T> void OrderedPointerList<T>::remove(OrderedPointerListItem<T>* xitem)
 {
 	if (xitem == NULL)
 	{
@@ -312,7 +316,7 @@ template <class T> void OrderedPointerList<T>::remove(OrderedPointerListItem<T> 
 template <class T> OrderedPointerListItem<T>* OrderedPointerList<T>::contains(int objectIndex) const
 {
 	// TODO This can probably be made much faster - bisection?
-	OrderedPointerListItem<T> *item = listHead_;
+	OrderedPointerListItem<T>* item = listHead_;
 	while (item)
 	{
 		if (item->objectIndex() > objectIndex) return NULL;
@@ -355,8 +359,8 @@ template <class T> void OrderedPointerList<T>::cut(OrderedPointerListItem<T>* it
 // Find and return the item with the next highest index to the index specified
 template <class T> OrderedPointerListItem<T>* OrderedPointerList<T>::nextHighestIndex(int objectIndex)
 {
-	// TODO This can probably be made much faster - bisection?
-	OrderedPointerListItem<T> *item = listHead_;
+	// TODO This can probably be made much faster - binary chop?
+	OrderedPointerListItem<T>* item = listHead_;
 	while (item)
 	{
 		if (item->objectIndex() > objectIndex) return item;
@@ -400,6 +404,29 @@ template <class T> void OrderedPointerList<T>::add(T* object)
 #endif
 	// Add it in the correct place in the list
 	OrderedPointerListItem<T>* nextLargest = nextHighestIndex(object->index());
+	insertBefore(object, nextLargest);
+}
+
+// Add a new item reference to the list, unless it is already there
+template <class T> void OrderedPointerList<T>::addExclusive(T* object)
+{
+#ifdef CHECKS
+	if (object == NULL)
+	{
+		printf("NULL_POINTER - NULL object passed to OrderedPointerList<T>::add().\n");
+		return;
+	}
+#endif
+	// Seek the next highest index, checking to see if we find the specified index
+	// TODO This can be made much faster - binary chop?
+	OrderedPointerListItem<T>* nextLargest = listHead_;
+	while (nextLargest)
+	{
+		if (nextLargest->objectIndex() > object->index()) break;
+		else if (nextLargest->objectIndex() == object->index()) return;
+		nextLargest = nextLargest->next;
+	}
+
 	insertBefore(object, nextLargest);
 }
 
@@ -466,6 +493,12 @@ template <class T> void OrderedPointerList<T>::move(int objectIndex, OrderedPoin
 template <class T> OrderedPointerListItem<T>* OrderedPointerList<T>::first() const
 {
 	return listHead_;
+}
+
+// Returns the list tail
+template <class T> OrderedPointerListItem<T>* OrderedPointerList<T>::last() const
+{
+	return listTail_;
 }
 
 // Create (or just return) the item array
@@ -592,7 +625,7 @@ template <class T> void OrderedPointerList<T>::operator=(const OrderedPointerLis
 }
 
 // Element access operator
-template <class T> OrderedPointerListItem<T> *OrderedPointerList<T>::operator[](int index)
+template <class T> OrderedPointerListItem<T>* OrderedPointerList<T>::operator[](int index)
 {
 #ifdef CHECKS
 	if ((index < 0) || (index >= nItems_))
@@ -603,5 +636,60 @@ template <class T> OrderedPointerListItem<T> *OrderedPointerList<T>::operator[](
 #endif
 	return items()[index];
 }
+
+/*
+ * OrderedPointerListIterator
+ */
+
+// Ordered Pointer List Iterator
+template <class T> class OrderedPointerListIterator
+{
+	public:
+	// Constructor
+	OrderedPointerListIterator<T>(const OrderedPointerList<T>& source, bool reverse = false) : targetList_(source), reverse_(reverse)
+	{
+		finished_ = false;
+		currentItem_ = NULL;
+	}
+
+	private:
+	// Whether the iterator has reached the end of the list
+	bool finished_;
+	// Whether the iterator operates in reverse (iterating tail to head)
+	bool reverse_;
+	// Target list
+	const OrderedPointerList<T>& targetList_;
+	// Current item
+	OrderedPointerListItem<T>* currentItem_;
+
+	public:
+	// Iterate
+	T* iterate()
+	{
+		if (finished_) return NULL;
+
+		// Go to initial / next item
+		if (currentItem_ == NULL) currentItem_ = reverse_ ? targetList_.last() : targetList_.first();
+		else currentItem_ = reverse_ ? currentItem_->prev : currentItem_->next;
+
+		// Check for end of list
+		if (currentItem_ == NULL) finished_ = true;
+
+		return (currentItem_ ? currentItem_->object() : NULL);
+	}
+	// Return current item index
+	int currentIndex()
+	{
+		if (finished_) return 0;
+
+		return (currentItem_ ? currentItem_->object()->index() : 0);
+	}
+	// Restart iteration
+	void restart()
+	{
+		finished_ = false;
+		currentItem_ = NULL;
+	}
+};
 
 #endif
