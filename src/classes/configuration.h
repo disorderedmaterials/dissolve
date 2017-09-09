@@ -22,6 +22,10 @@
 #ifndef DUQ_CONFIGURATION_H
 #define DUQ_CONFIGURATION_H
 
+#include "classes/atom.h"
+#include "classes/angle.h"
+#include "classes/bond.h"
+#include "classes/torsion.h"
 #include "classes/atomtypelist.h"
 #include "classes/cellarray.h"
 #include "classes/molecule.h"
@@ -33,6 +37,7 @@
 #include "templates/vector3.h"
 #include "templates/orderedlist.h"
 #include "templates/array.h"
+#include "templates/dynamicarray.h"
 
 // Forward Declarations
 class Atom;
@@ -142,53 +147,65 @@ class Configuration : public ListItem<Configuration>
 	// Clear all data
 	void clear();
 	// Setup configuration
-	bool setup(ProcessPool& procPool, const List<AtomType>& atomTypes, double pairPotentialRange, int boxNormalisationNPoints);
+	bool setup(ProcessPool& procPool, const List<AtomType>& masterAtomTypes, double pairPotentialRange, int boxNormalisationNPoints);
 
 
 	/*
 	 * Content
 	 */
 	private:
-	// Molecule list
-	List<Molecule> molecules_;
-	// Number of grains in array
-	int nGrains_;
-	// Grain array
-	Grain* grains_;
-	// Number of atoms in configuration / reference array
-	int nAtoms_;
-	// Array of atoms
-	Atom* atoms_;
+	// Array of Molecules
+	DynamicArray<Molecule> molecules_;
+	// Array of Grains
+	DynamicArray<Grain> grains_;
+	// Array of Atoms
+	DynamicArray<Atom> atoms_;
+	// Array of Bonds between Atoms
+	DynamicArray<Bond> bonds_;
+	// Array of Angles between Atoms
+	DynamicArray<Angle> angles_;
 	// AtomType list, containing unique (non-isotopic) atom types over all Species used in this configuration
 	AtomTypeList usedAtomTypes_;
 	// Coordinate index, incremented whenever Atom positions change
 	int coordinateIndex_;
 
 	public:
-	// Add space for a molecule of the Species provided
-	void addMolecule(Species* sp);
-	// Return number of molecules
+	// Return number of Molecules in Configuration
 	int nMolecules() const;
-	// Return first molecule
+	// Return first Molecule
 	Molecule* molecules();
-	// Return specified molecule
-	Molecule* molecule(int id);
-	// Return number of grains
+	// Return nth Molecule
+	Molecule* molecule(int n);
+	// Return number of Grains in Configuration
 	int nGrains() const;
-	// Return grain array
-	Grain* grains();
-	// Return nth grain
-	Grain& grain(int n);
-	// Return number of atoms
+	// Return Grain array
+	Grain** grains();
+	// Return nth Grain
+	Grain* grain(int n);
+	// Return number of Atoms in Configuration
 	int nAtoms() const;
-	// Return atom array
-	Atom* atoms();
-	// Return nth atom
+	// Return Atom array
+	Atom** atoms();
+	// Return nth Atom
 	Atom* atom(int n);
-	// Create Atom and Grain arrays
-	bool createArrays();
-	// Setup Molecule information
-	bool setupMolecules();
+	// Return number of Bonds in Configuration
+	int nBonds() const;
+	// Return Bond array
+	Bond** bonds();
+	// Return nth Bond
+	Bond* bond(int n);
+	// Return number of Angles in Configuration
+	int nAngles() const;
+	// Return Angle array
+	Angle** angles();
+	// Return nth Angle
+	Angle* angle(int n);
+	// Return number of Torsions in Configuration
+	int nTorsions() const;
+	// Return Torsion array
+	Torsion** torsions();
+	// Return nth Torsion
+	Torsion* torsion(int n);
 	// Return specified type
 	AtomType* type(int index);
 	// Return first AtomTypeData for this Configuration
@@ -197,16 +214,12 @@ class Configuration : public ListItem<Configuration>
 	const AtomTypeList& usedAtomTypesList() const;
 	// Return number of atom types used in this Configuration
 	int nUsedAtomTypes();
-	// Set master AtomType indices in Atoms from the map provided
-	bool setMasterAtomTypeIndices(const List<AtomType>& masterList);
 	// Return current coordinate index
 	int coordinateIndex();
 	// Increment current coordinate index
 	void incrementCoordinateIndex();
 	// Load coordinates from specified parser
 	bool loadCoordinates(LineParser& parser, const char* format);
-	// Create random configuration
-	bool createRandom(ProcessPool& procPool);
 
 
 	/*
@@ -333,8 +346,8 @@ class Configuration : public ListItem<Configuration>
 	public:
 	// Update cell locations of all atoms
 	bool updateAtomsInCells();
-	// Update cell locations of specified atom index, and update neighbour
-	bool updateAtomInCell(int id);
+	// Update cell location of specified Atom
+	bool updateAtomInCell(Atom* i);
 	// Create cell atom neighbour lists
 	void recreateCellAtomNeighbourLists(double pairPotentialRange);
 

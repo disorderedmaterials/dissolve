@@ -34,7 +34,7 @@ double DUQ::intramolecularEnergy(ProcessPool& procPool, Configuration* cfg)
 {
 	/*
 	 * Calculate the total intramolecular energy of the system, arising from Bond, Angle, and Torsion
-	 * terms in all molecules.
+	 * terms in all Molecules.
 	 * 
 	 * This is a parallel routine, with processes operating as a standard world group.
 	 */
@@ -49,17 +49,17 @@ double DUQ::intramolecularEnergy(ProcessPool& procPool, Configuration* cfg)
 	start = procPool.interleavedLoopStart(ProcessPool::OverPoolProcesses);
 	stride = procPool.interleavedLoopStride(ProcessPool::OverPoolProcesses);
 
-	// Main loop over molecules
-	for (int m=start; m<cfg->nMolecules(); m += stride)
-	{
-		Molecule* mol = cfg->molecule(m);
+	// Loop over defined Bonds
+	Bond** bonds = cfg->bonds();
+	for (int m=start; m<cfg->nBonds(); m += stride) energy += kernel.energy(bonds[m]);
 
-		// Bonds
-		for (SpeciesBond* b = mol->species()->bonds(); b != NULL; b = b->next) energy += kernel.energy(mol, b);
+	// Loop over defined Angles
+	Angle** angles = cfg->angles();
+	for (int m=start; m<cfg->nAngles(); m += stride) energy += kernel.energy(angles[m]);
 
-		// Angles
-		for (SpeciesAngle* a = mol->species()->angles(); a != NULL; a = a->next) energy += kernel.energy(mol, a);
-	}
+	// Loop over defined Torsions
+	Torsion** torsions = cfg->torsions();
+	for (int m=start; m<cfg->nTorsions(); m += stride) energy += kernel.energy(torsions[m]);
 
 	Messenger::printVerbose("Intramolecular Energy (Local) is %15.9e\n", energy);
 	

@@ -238,52 +238,11 @@ bool Angle::interGrain() const
 // Return energy for specified angle
 double Angle::energy(double angleInDegrees) const
 {
-	double delta = (angleInDegrees - equilibrium_)/DEGRAD;
-	return 0.5*forceConstant_*delta*delta;
+	return speciesAngle_->energy(angleInDegrees);
 }
 
 // Return force multiplier for specified angle
 double Angle::force(double angleInDegrees) const
 {
-	// Set initial derivative of angle w.r.t. cos(angle)
-	double dU_dtheta = -1.0 / sin(angleInDegrees/DEGRAD);
-
-	// Chain rule - multiply by derivative of energy w.r.t. angle (harmonic form)
-	dU_dtheta *= -forceConstant_*((angleInDegrees-equilibrium_)/DEGRAD);
-
-	return dU_dtheta;
-}
-
-/*
- * Parallel Comms
- */
-
-// Broadcast data from Master to all Slaves
-bool Angle::broadcast(const List<Atom>& atoms)
-{
-#ifdef PARALLEL
-	int buffer[3];
-
-	// Put atom indices into buffer and send
-	if (Comm.master())
-	{
-		buffer[0] = indexI();
-		buffer[1] = indexJ();
-		buffer[2] = indexK();
-	}
-	if (!procPool.broadcast(buffer, 3)) return false;
-	
-	// Slaves now take Atom pointers from supplied List
-	if (Comm.slave())
-	{
-		i_ = atoms.item(buffer[0]);
-		j_ = atoms.item(buffer[1]);
-		k_ = atoms.item(buffer[2]);
-	}
-	
-	// Send parameter info
-	if (!procPool.broadcast(&equilibrium_, 1)) return false;
-	if (!procPool.broadcast(&forceConstant_, 1)) return false;
-#endif
-	return true;
+	return speciesAngle_->force(angleInDegrees);
 }

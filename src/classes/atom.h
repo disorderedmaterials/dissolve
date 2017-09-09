@@ -23,16 +23,20 @@
 #define DUQ_ATOM_H
 
 #include "templates/vector3.h"
+#include "templates/reflist.h"
+#include "templates/orderedpointerdatalist.h"
+#include "templates/dynamicarrayobject.h"
 
 // Forward Declarations
-class AtomType;
+class Angle;
+class Bond;
 class Cell;
 class Grain;
 class Molecule;
 class ProcessPool;
 
 // Atom Definition
-class Atom
+class Atom : public DynamicArrayObject<Atom>
 {
 	public:
 	// Constructor
@@ -51,15 +55,7 @@ class Atom
 	int localTypeIndex_;
 	// Assigned master AtomType index (for pair potential indexing)
 	int masterTypeIndex_;
-	// Index of Atom
-	int index_;
-	// Molecule which this atom is in
-	Molecule* molecule_;
-	// Local index of Atom in source molecule
-	int moleculeAtomIndex_;
-	// Cell in which the atom exists
-	Cell* cell_;
-	// Charge (if contained in file)
+	// Charge on atom
 	double charge_;
 	// Atomic Element
 	int element_;
@@ -87,38 +83,68 @@ class Atom
 	void setMasterTypeIndex(int id);
 	// Return master AtomType index 
 	int masterTypeIndex() const;
-	// Set index (0->[N-1])
-	void setIndex(int id);
-	// Return index (0->[N-1])
-	int index() const;
-	// Return 'user' index (1->N)
-	int userIndex() const;
-	// Set molecule and local atom index (0->[N-1])
-	void setMolecule(Molecule* mol, int id);
-	// Return molecule
-	Molecule* molecule() const;
-	// Return local atom index in molecule (0->[N-1])
-	int moleculeAtomIndex() const;
-	// Set cell in which the atom exists
-	void setCell(Cell* cell);
-	// Return cell in which the atom exists
-	Cell* cell() const;
 	// Copy properties from supplied Atom
 	void copyProperties(const Atom* source);
 
 
 	/*
-	 * Coordinate Manipulation
+	 * Location
 	 */
 	private:
-	// Grain to which this Atom belongs
+	// Molecule which this Atom is in
+	Molecule* molecule_;
+	// Grain to which this Atom belongs (if any)
 	Grain* grain_;
+	// Cell in which the atom exists
+	Cell* cell_;
 
 	public:
+	// Set molecule and local atom index (0->[N-1])
+	void setMolecule(Molecule* mol);
+	// Return molecule
+	Molecule* molecule() const;
 	// Set associated Grain
 	void setGrain(Grain* grain);
 	// Return associated Grain
 	Grain* grain() const;
+	// Set cell in which the atom exists
+	void setCell(Cell* cell);
+	// Return cell in which the atom exists
+	Cell* cell() const;
+
+
+	/*
+	 * Connectivity
+	 */
+	private:
+	// Reference list of Bonds in which this Atom exists
+	RefList<Bond,bool> bonds_;
+	// Reference list of Angles in which this Atom exists
+	RefList<Angle,bool> angles_;
+	// Reference list of Torsions in which this Atom exists
+	//RefList<Torsion,double> torsions_;
+	// Ordered list of Atoms with scaled or excluded interactions
+	OrderedPointerDataList<Atom,double> exclusions_;
+
+	public:
+	// Add reference to specified Bond
+	void addBond(Bond* bond);
+	// Return reference list of Bonds
+	RefList<Bond,bool> bonds() const;
+	// Add reference to specified Angle
+	void addAngle(Angle* angle);
+	// Return reference list of Angles
+	RefList<Angle,bool> angles() const;
+	// Add reference to specified Torsion
+	// void addTorsion(Torsion* torsion, double scaling14);
+	// Return scaling factor to employ with specified Atom
+	double scaling(Atom* j) const;
+
+
+	/*
+	 * Coordinate Manipulation
+	 */
+	public:
 	// Set coordinates
 	void setCoordinates(const Vec3<double>& newr);
 	// Set coordinates

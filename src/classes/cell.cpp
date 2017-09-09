@@ -22,6 +22,7 @@
 #include "classes/cell.h"
 #include "classes/cellneighbour.h"
 #include "classes/box.h"
+#include "classes/atom.h"
 
 // Constructor
 Cell::Cell()
@@ -208,7 +209,7 @@ bool Cell::moveAtom(Atom* i, Cell* targetCell)
 	}
 #endif
 	// Move atom from this cell to target cell
-	atoms_.move(i->index(), targetCell->atoms_);
+	atoms_.move(i, targetCell->atoms_);
 	i->setCell(targetCell);
 
 	// Now need to update atom neighbour lists on cells affected by this move
@@ -395,8 +396,8 @@ void Cell::addAtomToNeighbourList(Atom* i, bool useMim, bool atEnd)
 // Remove atom from neighbour list
 bool Cell::removeAtomFromNeighbourList(Atom* i, bool useMim)
 {
-	if (useMim) return mimAtomNeighbours_.removeIfPresent(i->index());
-	else return atomNeighbours_.removeIfPresent(i->index());
+	if (useMim) return mimAtomNeighbours_.removeIfPresent(i);
+	else return atomNeighbours_.removeIfPresent(i);
 }
 
 // Return total number of atom neighbours

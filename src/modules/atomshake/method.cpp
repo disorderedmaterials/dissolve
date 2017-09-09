@@ -86,7 +86,6 @@ bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
 	bool accept;
 	double currentEnergy, intraEnergy, newEnergy, newIntraEnergy, delta, totalDelta = 0.0;
 	Cell* cell;
-	Grain* grainI;
 	Vec3<double> centre, rDelta;
 	Atom** cellAtoms;
 
@@ -119,12 +118,9 @@ bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
 			// Grab Atom pointer
 			Atom* i = cellAtoms[n];
 
-			// Get the atom's grain pointer
-			grainI = i->grain();
-
-			// Calculate reference intramolecular energy for atom, including intramolecular terms through the atom's grain
+			// Calculate reference energy for atom, including intramolecular terms
 			currentEnergy = kernel.energy(i, ProcessPool::OverGroupProcesses);
-			intraEnergy = kernel.fullIntraEnergy(grainI, termScale);
+			intraEnergy = kernel.intraEnergy(i, termScale);
 
 			// Loop over number of shakes per atom
 			for (shake=0; shake<nShakesPerAtom; ++shake)
@@ -135,7 +131,7 @@ bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
 				// Translate atom and calculate new energy
 				i->translateCoordinates(rDelta);
 				newEnergy = kernel.energy(i, ProcessPool::OverGroupProcesses);
-				newIntraEnergy = kernel.fullIntraEnergy(grainI, termScale);
+				newIntraEnergy = kernel.intraEnergy(i, termScale);
 				
 				// Trial the transformed atom position
 				delta = (newEnergy + newIntraEnergy) - (currentEnergy + intraEnergy);

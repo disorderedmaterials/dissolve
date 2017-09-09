@@ -118,9 +118,11 @@ class ForceKernel
 	 */
 	public:
 	// Calculate Bond forces
-	void forces(const Molecule* mol, const SpeciesBond* b);
+	void forces(const Bond* b);
 	// Calculate Angle forces
-	void forces(const Molecule* mol, const SpeciesAngle* a);
+	void forces(const Angle* a);
+	// Return Torsion force
+	void forces(const Torsion* t);
 
 
 	/*

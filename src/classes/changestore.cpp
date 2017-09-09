@@ -181,7 +181,7 @@ bool ChangeStore::distributeAndApply(Configuration* cfg)
 	// Copy local change data into arrays
 	for (int n=0; n<changes_.nItems(); ++n)
 	{
-		indices_[n] = changes_[n]->atomIndex();
+		indices_[n] = changes_[n]->atomArrayIndex();
 		x_[n] = changes_[n]->r().x;
 		y_[n] = changes_[n]->r().y;
 		z_[n] = changes_[n]->r().z;
@@ -200,7 +200,7 @@ bool ChangeStore::distributeAndApply(Configuration* cfg)
 	if (!processPool_.broadcast(z_)) return false;
 
 	// Apply atom changes
-	Atom* atoms = cfg->atoms();
+	Atom** atoms = cfg->atoms();
 	for (int n=0; n<nTotalChanges; ++n)
 	{
 #ifdef CHECKS
@@ -211,9 +211,8 @@ bool ChangeStore::distributeAndApply(Configuration* cfg)
 		}
 #endif
 		// Set new coordinates and check cell position
-		if (atoms[indices_[n]].index() < 0) continue;
-		atoms[indices_[n]].setCoordinates(x_[n], y_[n], z_[n]);
-		cfg->updateAtomInCell(indices_[n]);
+		atoms[indices_[n]]->setCoordinates(x_[n], y_[n], z_[n]);
+		cfg->updateAtomInCell(atoms[indices_[n]]);
 	}
 #else
 	// Apply atom changes
@@ -221,7 +220,7 @@ bool ChangeStore::distributeAndApply(Configuration* cfg)
 	{
 		// Set new coordinates and check cell position (Configuration::updateAtomInCell() will do all this)
 		data->revertPosition();
-		cfg->updateAtomInCell(data->atomIndex());
+		cfg->updateAtomInCell(data->atom());
 	}
 #endif
 

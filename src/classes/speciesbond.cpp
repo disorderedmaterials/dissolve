@@ -20,7 +20,7 @@
 */
 
 #include "classes/speciesbond.h"
-#include "classes/species.h"
+#include "classes/speciesatom.h"
 #include "base/processpool.h"
 
 // Constructor

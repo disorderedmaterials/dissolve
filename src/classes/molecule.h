@@ -1,5 +1,5 @@
 /*
-	*** Species Molecule Definition
+	*** Molecule
 	*** src/classes/molecule.h
 	Copyright T. Youngs 2012-2017
 
@@ -22,6 +22,8 @@
 #ifndef DUQ_MOLECULE_H
 #define DUQ_MOLECULE_H
 
+#include "templates/array.h"
+#include "templates/dynamicarrayobject.h"
 #include "templates/reflist.h"
 #include "templates/vector3.h"
 
@@ -35,12 +37,13 @@ class Species;
 class SpeciesAtom;
 class SpeciesGrain;
 class Matrix3;
+class Torsion;
 
 // Molecule Definition
-class Molecule : public ListItem<Molecule>
+class Molecule : public DynamicArrayObject<Molecule>
 {
 	/*
-	 * A Molecule can be thought of as an instance of a Species which has a physical presence in a Configuration.
+	 * A Molecule can be thought of as a collection of Atoms / Grains that belong together, and can be moved as such.
 	 * A Molecule does not itself own its Atoms or Grains. Instead, pointers to the relevant Atoms/Grains in the parent
 	 * Configuration are stored.
 	 */
@@ -55,40 +58,58 @@ class Molecule : public ListItem<Molecule>
 	 * Atoms / Grains
 	 */
 	private:
-	// Source Species
-	Species* species_;
-	// Number of Atom (pointers) in Atom array
-	int nAtoms_;
 	// Array of pointers to Atoms
-	Atom** atoms_;
-	// Number of Grain (pointers) in the Grain array
-	int nGrains_;
+	Array<Atom*> atoms_;
 	// Array of Grain pointers
-	Grain** grains_;
-	// Index of Molecule
-	int index_;
+	Array<Grain*> grains_;
+	// Array of Bonds this Molecule contains
+	Array<Bond*> bonds_;
+	// Array of Angles this Molecule contains
+	Array<Angle*> angles_;
+	// Array of Torsions this Molecule contains
+	Array<Torsion*> torsions_;
 
 	public:
-	// Initialise Molecule arrays suitable for Species provided
-	bool initialise(Species* sp, int index);
-	// Return Species from which Molecule was initialised
-	Species* species();
+	// Initialise Molecule arrays
+	bool initialise(int nAtoms, int nGrains);
+	// Add Atom to Molecule
+	void addAtom(Atom* i);
 	// Return size of Atom array
-	int nAtoms();
-	// Set nth pointer to Atom pointer
-	bool setupAtom(int n, Atom* i, SpeciesAtom* source);
-	// Return atoms array
+	int nAtoms() const;
+	// Return Atoms array
 	Atom** atoms();
 	// Return nth Atom pointer
 	Atom* atom(int n) const;
+	// Add Grain to Molecule
+	void addGrain(Grain* grain);
 	// Return size of Grain array
-	int nGrains();
-	// Set nth Grain pointer
-	bool setupGrain(int n, Grain* grain, SpeciesGrain* source);
+	int nGrains() const;
 	// Return nth Grain pointer
 	Grain* grain(int n);
-	// Return index of Molecule
-	int index();
+	// Add Bond to Molecule
+	void addBond(Bond* bond);
+	// Return size of Bond array
+	int nBonds() const;
+	// Return Bonds array
+	Bond** bonds();
+	// Return nth Bond pointer
+	Bond* bond(int n);
+	// Add Angle to Molecule
+	void addAngle(Angle* angle);
+	// Return size of Angle array
+	int nAngles() const;
+	// Return Angles array
+	Angle** angles();
+	// Return nth Angle pointer
+	Angle* angle(int n);
+	// Add Torsion to Molecule
+	void addTorsion(Torsion* torsion);
+	// Return size of Torsion array
+	int nTorsions() const;
+	// Return Torsions array
+	Torsion** torsions();
+	// Return nth Torsion pointer
+	Torsion* torsion(int n);
 
 
 	/*
@@ -100,13 +121,11 @@ class Molecule : public ListItem<Molecule>
 	// Transform molecule with supplied matrix and translation vector
 	void applyTransform(const Box* box, const Matrix3& transform);
 	// Transform selected Atoms
-	void applyTransform(const Box* box, const Matrix3& transform, const Vec3<double>& origin, int nTargetAtoms, int* targetIndices);
+	void applyTransform(const Box* box, const Matrix3& transform, const Vec3<double>& origin, int nTargetAtoms, Atom** targetAtoms);
 	// Set centre of geometry of molecule
 	void setCentre(const Box* box, const Vec3<double> newCentre);
-	// Randomise geometry
+	// Randomise geometry utilising stored Bond terms
 	void randomiseGeometry(const Box* box);
-	// Shake geometry
-	void shakeGeometry();
 };
 
 #endif

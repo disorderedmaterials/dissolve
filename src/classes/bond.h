@@ -22,16 +22,15 @@
 #ifndef DUQ_BOND_H
 #define DUQ_BOND_H
 
-#include "templates/list.h"
-#include "templates/reflist.h"
+#include "templates/dynamicarrayobject.h"
 
 // Forward Declarations
 class Atom;
 class Molecule;
-class Species;
+class SpeciesBond;
 
 // Bond Definition
-class Bond : public ListItem<Bond>
+class Bond : public DynamicArrayObject<Bond>
 {
 	public:
 	// Constructor
@@ -46,20 +45,13 @@ class Bond : public ListItem<Bond>
 	 * Parent Data
 	 */
 	private:
-	// Parent Species (in setup)
-	Species* parent_;
-	// Parent Molecule (in simulation)
+	// Molecule in which the Bond exists
 	Molecule* molecule_;
 	
-	
 	public:
-	// Set parent Species
-	void setParent(Species* parent);
-	// Return parent Species
-	Species* parent() const;
-	// Set parent Molecule
+	// Set Molecule in which the Bond exists
 	void setMolecule(Molecule* parent);
-	// Return parent Molecule
+	// Return Molecule in which the Bond exists
 	Molecule* molecule() const;
 
 
@@ -81,22 +73,14 @@ class Bond : public ListItem<Bond>
 	Atom* j() const;
 	// Return the 'other' Atom in the Bond
 	Atom* partner(Atom* i) const;
-	// Return index (in parent Species) of first Atom
-	int indexI() const;
-	// Return index (in parent Species) of second Atom
-	int indexJ() const;
 	// Return whether Atoms in Bond match those specified
 	bool matches(Atom* i, Atom* j) const;
 
 
 	/*
-	 * Interaction Parameters
+	 * Connectivity
 	 */
 	private:
-	// Nominal equilibrium Bond length
-	double equilibrium_;
-	// Bond force constant
-	double forceConstant_;
 	// Number of Atoms attached to termini
 	int nAttached_[2];
 	// Arrays of Atoms (in)directly attached to termini
@@ -105,14 +89,6 @@ class Bond : public ListItem<Bond>
 	bool interGrain_;
 
 	public:
-	// Set nominal equilibrium Bond length
-	void setEquilibrium(double rEq);
-	// Return nominal equilibrium Bond length
-	double equilibrium() const;
-	// Set force constant
-	void setForceConstant(double k);
-	// Return force constant
-	double forceConstant() const;
 	// Create attached Atom array
 	void createAttachedAtomArray(int terminus, int size);
 	// Set attached Atoms for terminus specified
@@ -125,18 +101,24 @@ class Bond : public ListItem<Bond>
 	void setInterGrain(bool b);
 	// Return whether this Bond is interGrain
 	bool interGrain() const;
+
+
+	/*
+	 * Energy / Force
+	 */
+	private:
+	// Species Bond from which parameters are to be taken
+	SpeciesBond* speciesBond_;
+
+	public:
+	// Set SpeciesBond reference
+	void setSpeciesBond(SpeciesBond* bondRef);
+	// Return parent Species
+	SpeciesBond* speciesBond() const;
 	// Return energy for specified distance
 	double energy(double distance) const;
 	// Return force multiplier for specified distance
 	double force(double distance) const;
-
-
-	/*
-	 * Parallel Comms
-	 */
-	public:
-	// Broadcast data from Master to all Slaves
-	bool broadcast(ProcessPool& procPool, const List<Atom>& atoms);
 };
 
 #endif

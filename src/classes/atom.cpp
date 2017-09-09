@@ -22,19 +22,22 @@
 #include "classes/atom.h"
 #include "classes/atomtype.h"
 #include "classes/grain.h"
+#include "classes/bond.h"
+#include "classes/angle.h"
 #include "base/processpool.h"
 
 // Constructor
 Atom::Atom()
 {
+	// Properties
 	element_ = 0;
 	charge_ = 0.0;
 	localTypeIndex_ = -1;
 	masterTypeIndex_ = -1;
-	index_ = -1;
-	molecule_ = NULL;
-	moleculeAtomIndex_ = 0;
 	r_.zero();
+
+	// Location
+	molecule_ = NULL;
 	grain_ = NULL;
 	cell_ = NULL;
 }
@@ -96,7 +99,7 @@ double Atom::charge() const
 void Atom::setLocalTypeIndex(int id)
 {
 #ifdef CHECKS
-	if (localTypeIndex_ != -1) Messenger::print("Warning: Overwriting local AtomType index for atom '%i'.\n", index_);
+	if (localTypeIndex_ != -1) Messenger::print("Warning: Overwriting local AtomType index for atom '%p'.\n", this);
 #endif
 	localTypeIndex_ = id;
 }
@@ -105,7 +108,7 @@ void Atom::setLocalTypeIndex(int id)
 int Atom::localTypeIndex() const
 {
 #ifdef CHECKS
-	if (localTypeIndex_ == -1) Messenger::print("Warning: Local AtomType index has not yet been set for atom '%i'.\n", index_);
+	if (localTypeIndex_ == -1) Messenger::print("Warning: Local AtomType index has not yet been set for atom '%p'.\n", this);
 #endif
 	return localTypeIndex_;
 }
@@ -113,7 +116,7 @@ int Atom::localTypeIndex() const
 // Set master AtomType index 
 void Atom::setMasterTypeIndex(int id)
 {
-	if (masterTypeIndex_ != -1) Messenger::warn("Warning: Overwriting master AtomType index for atom '%i'.\n", index_);
+	if (masterTypeIndex_ != -1) Messenger::warn("Warning: Overwriting master AtomType index for atom '%p'.\n", this);
 	masterTypeIndex_ = id;
 }
 
@@ -121,46 +124,57 @@ void Atom::setMasterTypeIndex(int id)
 int Atom::masterTypeIndex() const
 {
 #ifdef CHECKS
-	if (masterTypeIndex_ == -1) Messenger::print("Warning: Global AtomType index has not yet been set for atom '%i'.\n", index_);
+	if (masterTypeIndex_ == -1) Messenger::print("Warning: Global AtomType index has not yet been set for atom '%p'.\n", this);
 #endif
 	return masterTypeIndex_;
 }
 
-// Set index (0->[N-1])
-void Atom::setIndex(int id)
+// Copy properties from supplied Atom
+void Atom::copyProperties(const Atom* source)
 {
-	index_ = id;
+	r_ = source->r_;
+	element_ = source->element_;
+	localTypeIndex_ = source->localTypeIndex_;
+	masterTypeIndex_ = source->masterTypeIndex_;
+	charge_ = source->charge_;
+	molecule_ = source->molecule_;
+	grain_ = source->grain_;
+	cell_ = source->cell_;
 }
 
-// Return index (0->[N-1])
-int Atom::index() const
-{
-	return index_;
-}
+/*
+ * Location
+ */
 
-// Return 'user' index (1->N)
-int Atom::userIndex() const
-{
-	return index_+1;
-}
 
-// Set molecule and local atom index (0->[N-1])
-void Atom::setMolecule(Molecule* mol, int atomIndex)
+// Set parent Molecule
+void Atom::setMolecule(Molecule* mol)
 {
 	molecule_ = mol;
-	moleculeAtomIndex_ = atomIndex;
 }
 
-// Return associated molecule (0->[N-1])
+// Return associated Molecule
 Molecule* Atom::molecule() const
 {
 	return molecule_;
 }
 
-// Return local atom index in molecule (0->[N-1])
-int Atom::moleculeAtomIndex() const
+// Set associated Grain
+void Atom::setGrain(Grain* grain)
 {
-	return moleculeAtomIndex_;
+	// Check for double-set of Grain
+	if (grain_ != NULL)
+	{
+		Messenger::print("BAD_USAGE - Tried to set Atom %p's grain for a second time.\n", this);
+		return;
+	}
+	grain_ = grain;
+}
+
+// Return associated Grain
+Grain* Atom::grain() const
+{
+	return grain_;
 }
 
 // Set cell in which the atom exists
@@ -175,42 +189,62 @@ Cell* Atom::cell() const
 	return cell_;
 }
 
-// Copy properties from supplied Atom
-void Atom::copyProperties(const Atom* source)
+/*
+ * Connectivity
+ */
+
+// Add reference to specified Bond
+void Atom::addBond(Bond* bond)
 {
-	r_ = source->r_;
-	element_ = source->element_;
-	localTypeIndex_ = source->localTypeIndex_;
-	masterTypeIndex_ = source->masterTypeIndex_;
-	charge_ = source->charge_;
-	index_ = source->index_;
-	molecule_ = source->molecule_;
-	moleculeAtomIndex_ = source->moleculeAtomIndex_;
-	grain_ = source->grain_;
-	cell_ = source->cell_;
+	bonds_.add(bond);
+
+	// Insert the pointer to the 'other' Atom into the exclusions_ list
+	exclusions_.addExclusive(bond->partner(this));
+}
+
+// Return reference list of Bonds
+RefList<Bond,bool> Atom::bonds() const
+{
+	return bonds_;
+}
+
+// Add reference to specified Angle
+void Atom::addAngle(Angle* angle)
+{
+	angles_.add(angle);
+
+	// Insert the pointers to the other Atoms into the exclusions_ list
+	if (angle->i() != this) exclusions_.addExclusive(angle->i());
+	if (angle->j() != this) exclusions_.addExclusive(angle->j());
+	if (angle->k() != this) exclusions_.addExclusive(angle->k());
+}
+
+// Return reference list of Angles
+RefList<Angle,bool> Atom::angles() const
+{
+	return angles_;
+}
+
+// Return scaling factor to employ with specified Atom
+double Atom::scaling(Atom* j) const
+{
+	// Look through our ordered list of excluded Atom interactions
+	OrderedPointerDataListIterator<Atom,double> exclusionIterator(exclusions_);
+	while (Atom* excluded = exclusionIterator.iterate())
+	{
+		// If the pointer of the item is greater than our test Atom 'j', we can exit the loop now since it is not in the list
+		if (excluded > j) return 1.0;
+
+		// If the current item matches our Atom 'j', we have found a match
+		if (excluded == j) return exclusionIterator.currentData();
+	}
+
+	return 1.0;
 }
 
 /*
  * Coordinate Manipulation
  */
-
-// Set associated Grain
-void Atom::setGrain(Grain* grain)
-{
-	// Check for double-set of Grain
-	if (grain_ != NULL)
-	{
-		Messenger::print("BAD_USAGE - Tried to set atom %i's grain for a second time.\n", index_);
-		return;
-	}
-	grain_ = grain;
-}
-
-// Return associated Grain
-Grain* Atom::grain() const
-{
-	return grain_;
-}
 
 // Set coordinates
 void Atom::setCoordinates(const Vec3<double>& newr)

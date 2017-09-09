@@ -1,6 +1,6 @@
 /*
-	*** Angle Definition
-	*** src/classes/angle.h
+	*** Torsion Definition
+	*** src/classes/torsion.h
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -19,37 +19,38 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_ANGLE_H
-#define DUQ_ANGLE_H
+#ifndef DUQ_TORSION_H
+#define DUQ_TORSION_H
 
 #include "templates/dynamicarrayobject.h"
+#include "templates/reflist.h"
 
 // Forward Declarations
 class Atom;
 class Molecule;
-class SpeciesAngle;
+class SpeciesTorsion;
 
-// Angle Definition
-class Angle : public DynamicArrayObject<Angle>
+// Torsion Definition
+class Torsion : public DynamicArrayObject<Torsion>
 {
 	public:
 	// Constructor
-	Angle();
+	Torsion();
 	// Destructor
-	~Angle();
+	~Torsion();
 
 
 	/*
 	 * Basic Data
 	 */
 	private:
-	// Molecule in which this Angle exists
+	// Molecule in which this Torsion exists
 	Molecule* molecule_;
 	
 	public:
-	// Set Molecule in which this Angle exists
+	// Set Molecule in which this Torsion exists
 	void setMolecule(Molecule* parent);
-	// Return Molecule in which this Angle exists
+	// Return Molecule in which this Torsion exists
 	Molecule* molecule() const;
 
 
@@ -57,24 +58,28 @@ class Angle : public DynamicArrayObject<Angle>
 	 * Atom Information
 	 */
 	private:
-	// First Atom in Angle
+	// First Atom in Torsion
 	Atom* i_;
-	// Second (central) Atom in Angle
+	// Second Atom in Torsion
 	Atom* j_;
-	// Third Atom in Angle
+	// Third Atom in Torsion
 	Atom* k_;
+	// Fourth Atom in Torsion
+	Atom* l_;
 
 	public:
-	// Set Atoms involved in Angle
-	void setAtoms(Atom* i, Atom* j, Atom* k);
-	// Return first Atom involved in Angle
+	// Set Atoms involved in Torsion
+	void setAtoms(Atom* i, Atom* j, Atom* k, Atom* l);
+	// Return first Atom involved in Torsion
 	Atom* i() const;
-	// Return second (central) Atom involved in Angle
+	// Return second Atom involved in Torsion
 	Atom* j() const;
-	// Return third Atom involved in Angle
+	// Return third Atom involved in Torsion
 	Atom* k() const;
-	// Return whether Atoms in Angle match those specified
-	bool matches(Atom* i, Atom* j, Atom* k) const;
+	// Return fourth Atom involved in Torsion
+	Atom* l() const;
+	// Return whether Atoms in Torsion match those specified
+	bool matches(Atom* i, Atom* j, Atom* k, Atom* l) const;
 
 
 	/*
@@ -89,14 +94,6 @@ class Angle : public DynamicArrayObject<Angle>
 	bool interGrain_;
 
 	public:
-	// Set equilibrium angle
-	void setEquilibrium(double rEq);
-	// Return equlibrium angle
-	double equilibrium() const;
-	// Set force constant
-	void setForceConstant(double k);
-	// Return force constant
-	double forceConstant() const;
 	// Create attached Atom array
 	void createAttachedAtomArray(int terminus, int size);
 	// Set attached Atoms for terminus specified
@@ -105,9 +102,9 @@ class Angle : public DynamicArrayObject<Angle>
 	int nAttached(int terminus) const;
 	// Return array of attached Atoms for terminus specified
 	Atom** attached(int terminus) const;
-	// Set whether this Angle is interGrain
+	// Set whether this Torsion is interGrain
 	void setInterGrain(bool b);
-	// Return whether this Angle is interGrain
+	// Return whether this Torsion is interGrain
 	bool interGrain() const;
 
 
@@ -115,16 +112,18 @@ class Angle : public DynamicArrayObject<Angle>
 	 * Energy / Force
 	 */
 	private:
-	// Species Angle from which parameters are to be taken
-	SpeciesAngle* speciesAngle_;
+	// Species Torsion from which parameters are to be taken
+	SpeciesTorsion* speciesTorsion_;
 
 	public:
-	// Set SpeciesAngle reference
-	void setSpeciesAngle(SpeciesAngle* angleRef);
-	// Return energy for specified angle
-	double energy(double angleInDegrees) const;
-	// Return force multiplier for specified angle
-	double force(double angleInDegrees) const;
+	// Set SpeciesTorsion reference
+	void setSpeciesTorsion(SpeciesTorsion* torsionRef);
+	// Return SpeciesTorsion reference
+	SpeciesTorsion* speciesTorsion();
+	// Return energy for specified torsion
+	double energy(double torsionInDegrees) const;
+	// Return force multiplier for specified torsion
+	double force(double torsionInDegrees) const;
 };
 
 #endif

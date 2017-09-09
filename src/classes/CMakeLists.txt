@@ -44,11 +44,13 @@ species_atomic.cpp
 speciesbond.cpp
 species.cpp
 speciesgrain.cpp
+speciestorsion.cpp
 species_grains.cpp
 species_intra.cpp
 species_io.cpp
 species_isotopologues.cpp
 species_transform.cpp
+torsion.cpp
 weights.cpp
 
 angle.h
@@ -80,11 +82,13 @@ pairpotential.h
 potentialmap.h
 partialset.h
 scatteringmatrix.h
+species.h
 speciesangle.h
 speciesatom.h
 speciesbond.h
 speciesgrain.h
-species.h
+speciestorsion.h
+torsion.h
 weights.h
 )
 

@@ -140,22 +140,6 @@ bool DUQ::setupSimulation()
 	}
 	if (nMissingPots > 0) return false;
 
-	/*
-	 * Finalise AtomTypes
-	 */
-
-	Messenger::print("\n");
-	Messenger::print("*** Finalising AtomTypes");
-
-	// Assign indices to atom types
-	Messenger::print("--> Assigning indices to master AtomTypes...\n");
-	int id = 0;
-	for (AtomType* at = atomTypes_.first(); at != NULL; at = at->next) at->setIndex(id++);
-
-	// Set global AtomType indices in all Configurations
-	Messenger::print("--> Setting master AtomType indices in Configurations...\n");
-	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next) cfg->setMasterAtomTypeIndices(atomTypes_);
-
 	// Create PairPotential matrix
 	Messenger::print("--> Creating PairPotential matrix (%ix%i)...\n", atomTypes_.nItems(), atomTypes_.nItems());
 	if (!potentialMap_.initialise(atomTypes_, pairPotentials_, pairPotentialRange_)) return false;

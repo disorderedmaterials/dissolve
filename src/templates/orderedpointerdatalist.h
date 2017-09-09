@@ -30,8 +30,8 @@
 template <class T, class D> class OrderedPointerDataListItem
 {
 	/*
-	 * OrderedPointerDataList maintains a list of OrderedPointerDataListItems, which contain a pointer to an object of the template class type.
-	 * The only requirement of the template class T is that is provides a member function 'int T::index()' which provides the index by which it should be sorted.
+	 * OrderedPointerDataList maintains a list of OrderedPointerDataListItems, which contain a pointer to an object of the template class type
+	 * and an associated data item of thie second template class type. The objects in the list are ordered according to their address in memory.
 	 */
 
 	public:
@@ -55,8 +55,6 @@ template <class T, class D> class OrderedPointerDataListItem
 	void setData(D data);
 	// Return data associated to object
 	D data();
-	// Return pointer index
-	int objectIndex();
 };
 
 // Constructor
@@ -89,19 +87,6 @@ template <class T, class D> void OrderedPointerDataListItem<T,D>::setData(D data
 template <class T, class D> D OrderedPointerDataListItem<T,D>::data()
 {
 	return data_;
-}
-
-// Return object index
-template <class T, class D> int OrderedPointerDataListItem<T,D>::objectIndex()
-{
-#ifdef CHECKS
-	if (object_ == NULL)
-	{
-		printf("NULL_POINTER - NULL object_ pointer encountered in OrderedPointerDataListItem::objectIndex().\n");
-		return -1;
-	}
-#endif
-	return object_->index();
 }
 
 // OrderedPointerDataList Class
@@ -153,11 +138,11 @@ template <class T, class D> class OrderedPointerDataList
 	// Remove an item from the list
 	void remove(OrderedPointerDataListItem<T,D>* xitem);
 	// Return whether the item is owned by the list
-	OrderedPointerDataListItem<T,D>* contains(int objectIndex) const;
+	OrderedPointerDataListItem<T,D>* contains(T* object) const;
 	// Cut item from list
 	void cut(OrderedPointerDataListItem<T,D>* item);
-	// Find and return the item with the next highest index to the index specified
-	OrderedPointerDataListItem<T,D>* nextHighestIndex(int objectIndex);
+	// Find and return the item with the next highest pointer after the object specified
+	OrderedPointerDataListItem<T,D>* nextHighest(T* object);
 
 	public:
 	// Clear the list
@@ -171,11 +156,11 @@ template <class T, class D> class OrderedPointerDataList
 	// Add a new item reference to the end of the list
 	void addAtEnd(T* object, D data = D());
 	// Remove item reference from list
-	void remove(int objectIndex);
+	void remove(T* object);
 	// Remove item reference from the list (but don't complain if it isn't there)
-	bool removeIfPresent(int objectIndex);
+	bool removeIfPresent(T* object);
 	// Move specified item to target list
-	void move(int objectIndex, OrderedPointerDataList<T,D>& targetList);
+	void move(T* object, OrderedPointerDataList<T,D>& targetList);
 	// Returns the list head
 	OrderedPointerDataListItem<T,D>* first() const;
 	// Returns the list tail
@@ -331,15 +316,15 @@ template <class T, class D> void OrderedPointerDataList<T,D>::remove(OrderedPoin
 	regenerateObjectArray_ = 1;
 }
 
-// Return whether item index is in the list
-template <class T, class D> OrderedPointerDataListItem<T,D>* OrderedPointerDataList<T,D>::contains(int objectIndex) const
+// Return whether specified item is in the list
+template <class T, class D> OrderedPointerDataListItem<T,D>* OrderedPointerDataList<T,D>::contains(T* object) const
 {
 	// TODO This can probably be made much faster - bisection?
 	OrderedPointerDataListItem<T,D>* item = listHead_;
 	while (item)
 	{
-		if (item->objectIndex() > objectIndex) return NULL;
-		if (item->objectIndex() == objectIndex) return item;
+		if (item > object) return NULL;
+		if (item == object) return item;
 		item = item->next;
 	}
 	return NULL;
@@ -375,14 +360,14 @@ template <class T, class D> void OrderedPointerDataList<T,D>::cut(OrderedPointer
 	regenerateObjectArray_ = 1;
 }
 
-// Find and return the item with the next highest index to the index specified
-template <class T, class D> OrderedPointerDataListItem<T,D>* OrderedPointerDataList<T,D>::nextHighestIndex(int objectIndex)
+// Find and return the item with the next highest pointer after the object specified
+template <class T, class D> OrderedPointerDataListItem<T,D>* OrderedPointerDataList<T,D>::nextHighest(T* object)
 {
 	// TODO This can probably be made much faster - binary chop?
 	OrderedPointerDataListItem<T,D>* item = listHead_;
 	while (item)
 	{
-		if (item->objectIndex() > objectIndex) return item;
+		if (item > object) return item;
 		item = item->next;
 	}
 	return NULL;
@@ -422,7 +407,7 @@ template <class T, class D> void OrderedPointerDataList<T,D>::add(T* object, D d
 	}
 #endif
 	// Add it in the correct place in the list
-	OrderedPointerDataListItem<T,D>* nextLargest = nextHighestIndex(object->index());
+	OrderedPointerDataListItem<T,D>* nextLargest = nextHighest(object);
 	insertBefore(object, nextLargest)->setData(data);
 }
 
@@ -436,13 +421,13 @@ template <class T, class D> void OrderedPointerDataList<T,D>::addExclusive(T* ob
 		return;
 	}
 #endif
-	// Seek the next highest index, checking to see if we find the specified index
+	// Seek the next highest object, checking to see if we find the specified index
 	// TODO This can be made much faster - binary chop?
 	OrderedPointerDataListItem<T,D>* nextLargest = listHead_;
 	while (nextLargest)
 	{
-		if (nextLargest->objectIndex() > object->index()) break;
-		else if (nextLargest->objectIndex() == object->index()) return;
+		if (nextLargest->object() > object) break;
+		else if (nextLargest->object() == object) return;
 		nextLargest = nextLargest->next;
 	}
 
@@ -462,15 +447,15 @@ template <class T, class D> void OrderedPointerDataList<T,D>::addAtEnd(T* object
 	// Add it directly to the end of the list, provided this adheres to the current order
 	// Check object index of last item in list
 	if (listTail_ == NULL) insertAfter(object, NULL);
-	else if (listTail_->objectIndex() < object->index()) insertAfter(object, listTail_)->setData(data);
-	else printf("BAD_USAGE - Attempted to add object with index %i to end of OrderedPointerDataList, but last item in list has index %i\n", object->index(), listTail_->objectIndex());
+	else if (listTail_->object() < object) insertAfter(object, listTail_)->setData(data);
+	else printf("BAD_USAGE - Attempted to add object %p to end of OrderedPointerDataList, but last item in list is %p\n", object, listTail_);
 }
 
 // Remove item reference from list
-template <class T, class D> void OrderedPointerDataList<T,D>::remove(int objectIndex)
+template <class T, class D> void OrderedPointerDataList<T,D>::remove(T* object)
 {
 	// Get item for specified objectIndex
-	OrderedPointerDataListItem<T,D>* item = contains(objectIndex);
+	OrderedPointerDataListItem<T,D>* item = contains(object);
 #ifdef CHECKS
 	if (item == NULL)
 	{
@@ -482,20 +467,20 @@ template <class T, class D> void OrderedPointerDataList<T,D>::remove(int objectI
 }
 
 // Remove item reference from the list (but don't complain if it isn't there)
-template <class T, class D> bool OrderedPointerDataList<T,D>::removeIfPresent(int objectIndex)
+template <class T, class D> bool OrderedPointerDataList<T,D>::removeIfPresent(T* object)
 {
 	// Get item for specified objectIndex
-	OrderedPointerDataListItem<T,D>* item = contains(objectIndex);
+	OrderedPointerDataListItem<T,D>* item = contains(object);
 	if (item == NULL) return false;
 	remove(item);
 	return true;
 }
 
 // Move specified item to target list
-template <class T, class D> void OrderedPointerDataList<T,D>::move(int objectIndex, OrderedPointerDataList<T,D>& targetList)
+template <class T, class D> void OrderedPointerDataList<T,D>::move(T* object, OrderedPointerDataList<T,D>& targetList)
 {
 	// Get item for specified objectIndex
-	OrderedPointerDataListItem<T,D>* item = contains(objectIndex);
+	OrderedPointerDataListItem<T,D>* item = contains(object);
 #ifdef CHECKS
 	if (item == NULL)
 	{

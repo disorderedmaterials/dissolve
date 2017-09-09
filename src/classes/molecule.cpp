@@ -20,49 +20,31 @@
 */
 
 #include "classes/molecule.h"
-#include "classes/species.h"
+#include "classes/atom.h"
+#include "classes/bond.h"
 #include "classes/grain.h"
 #include "classes/atomtype.h"
 #include "classes/box.h"
 #include "base/messenger.h"
+#include "templates/array.h"
 
 // Constructor
-Molecule::Molecule() : ListItem<Molecule>()
+Molecule::Molecule() : DynamicArrayObject<Molecule>()
 {
-	nAtoms_ = 0;
-	atoms_ = NULL;
-	nGrains_ = 0;
-	grains_ = NULL;
-	index_ = -1;
 }
 
 // Destructor
 Molecule::~Molecule()
 {
-	if (atoms_ != NULL) delete[] atoms_;
-	if (grains_ != NULL) delete[] grains_;
 }
 
 /*
  * Atoms / Grains
  */
 
-// Initialise Molecule arrays suitable for Species provided
-bool Molecule::initialise(Species* sp, int index)
+// Initialise Molecule arrays
+bool Molecule::initialise(int nAtoms, int nGrains)
 {
-	/*
-	 * Constructs the necessary Atom and Grain arrays to hold the contents of a copy of the specified Species.
-	 * No coordinate information is set at this point - this is done by a future call to instantiate().
-	 */
-
-	// Check for NULL pointer
-	species_ = sp;
-	if (species_ == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL Species pointer passed to Molecule::initialise().\n");
-		return false;
-	}
-	
 	// Check for double initialisation
 	if (atoms_ != NULL)
 	{
@@ -71,121 +53,64 @@ bool Molecule::initialise(Species* sp, int index)
 	}
 	
 	// Get data from Species and create local arrays
-	nAtoms_ = species_->nAtoms();
-	atoms_ = new Atom*[nAtoms_];
-	nGrains_ = species_->nGrains();
-	grains_ = new Grain*[nGrains_];
-	
-	index_ = index;
+	atoms_.createEmpty(nAtoms);
+	grains_.createEmpty(nGrains);
 
 	return true;
 }
 
-// Return Species from which Molecule was initialised
-Species* Molecule::species()
+// Add Atom to Molecule
+void Molecule::addAtom(Atom* i)
 {
-	return species_;
+	atoms_.add(i);
+
+	if (i->molecule() != NULL) Messenger::warn("Molecule parent is already set in Atom id %i, and we are about to overwrite it...\n", i->arrayIndex());
+	i->setMolecule(this);
 }
 
 // Return size of Atom array
-int Molecule::nAtoms()
+int Molecule::nAtoms() const
 {
-	return nAtoms_;
-}
-
-// Set nth pointer to Atom pointer
-bool Molecule::setupAtom(int n, Atom* i, SpeciesAtom* source)
-{
-	/*
-	 * Sets the n'th atom pointer location in the molecule, and copies characteristic atom data (e.g. element, charge, atomtype) from the 
-	 * source SpeciesAtom. Note that the coordinates of the original SpeciesAtom are *not* copied over.
-	 */
-#ifdef CHECKS
-	if (i == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL Atom pointer passed to Molecule::setupAtom().\n");
-		return false;
-	}
-	if (source == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer passed to Molecule::setupAtom().\n");
-		return false;
-	}
-	if ((n < 0) || (n >= nAtoms_))
-	{
-		Messenger::print("OUT_OF_RANGE - Atom index %i is out of range in Molecule::setupAtom().\n", n);
-		return false;
-	}
-#endif
-	atoms_[n] = i;
-
-	// Copy information from supplied SpeciesAtom
-	atoms_[n]->setElement(source->element());
-	atoms_[n]->setCharge(source->charge());
-	atoms_[n]->setMolecule(this, source->index());
-
-	return true;
+	return atoms_.nItems();
 }
 
 // Return atoms array
 Atom** Molecule::atoms()
 {
-	return atoms_;
+	return atoms_.array();
 }
 
 // Return nth Atom pointer
 Atom* Molecule::atom(int n) const
 {
 #ifdef CHECKS
-	static Atom dummy;
-	if ((n < 0) || (n >= nAtoms_))
+	if ((n < 0) || (n >= nAtoms()))
 	{
 		Messenger::print("OUT_OF_RANGE - Atom index %i is out of range in Molecule::atom().\n", n);
-		return &dummy;
+		return NULL;
 	}
-	if (atoms_[n] == NULL)
+	if (atoms_.value(n) == NULL)
 	{
 		Messenger::print("NULL_POINTER - The pointer to Atom %i in Molecule::atom() is NULL.\n", n);
-		return &dummy;
+		return NULL;
 	}
 #endif
-	return atoms_[n];
+	return atoms_.value(n);
+}
+
+// Add Grain to Molecule
+void Molecule::addGrain(Grain* grain)
+{
+	grains_.add(grain);
+
+	if (grain->molecule() != NULL) Messenger::warn("Molecule parent is already set in Grain id %i, and we are about to overwrite it...\n", grain->arrayIndex());
+	grain->setMolecule(this);
 }
 
 // Return size of Grain array
-int Molecule::nGrains()
+int Molecule::nGrains() const
 {
-	return nGrains_;
-}
-
-// Set nth Grain pointer
-bool Molecule::setupGrain(int n, Grain* grain, SpeciesGrain* source)
-{
-#ifdef CHECKS
-	if (grain == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL Grain pointer passed to Molecule::setupGrain().\n");
-		return false;
-	}
-	if (source == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL SpeciesGrain pointer passed to Molecule::setupGrain().\n");
-		return false;
-	}
-	if ((n < 0) || (n >= nGrains_))
-	{
-		Messenger::print("OUT_OF_RANGE - Grain index %i is out of range in Molecule::setupGrain().\n", n);
-		return false;
-	}
-#endif
-	grains_[n] = grain;
-	grains_[n]->setParent(this);
-	if (!grains_[n]->initialise(source)) return false;
-
-	// Set Atoms within Grain
-	for (int i=0; i<source->nAtoms(); ++i) if (!grains_[n]->addAtom( atoms_[source->atom(i)->item->index()] )) return false;
-	
-	return true;
+	return grains_.nItems();
 }
 
 // Return nth Grain pointer
@@ -201,10 +126,58 @@ Grain* Molecule::grain(int n)
 	return grains_[n];
 }
 
-// Return index of Molecule
-int Molecule::index()
+// Add Bond to Molecule
+void Molecule::addBond(Bond* bond)
 {
-	return index_;
+	bonds_.add(bond);
+}
+
+// Return size of Bond array
+int Molecule::nBonds() const
+{
+	return bonds_.nItems();
+}
+
+// Return nth Bond pointer
+Bond* Molecule::bond(int n)
+{
+	return bonds_[n];
+}
+
+// Add Angle to Molecule
+void Molecule::addAngle(Angle* angle)
+{
+	angles_.add(angle);
+}
+
+// Return size of Angle array
+int Molecule::nAngles() const
+{
+	return angles_.nItems();
+}
+
+// Return nth Angle pointer
+Angle* Molecule::angle(int n)
+{
+	return angles_[n];
+}
+
+// Add Torsion to Molecule
+void Molecule::addTorsion(Torsion* torsion)
+{
+	torsions_.add(torsion);
+}
+
+// Return size of Torsion array
+int Molecule::nTorsions() const
+{
+	return torsions_.nItems();
+}
+
+// Return nth Torsion pointer
+Torsion* Molecule::torsion(int n)
+{
+	return torsions_[n];
 }
 
 /*
@@ -214,13 +187,13 @@ int Molecule::index()
 // Calculate and return centre of geometry
 Vec3<double> Molecule::centreOfGeometry(const Box* box) const
 {
-	if (nAtoms_ == 0) return Vec3<double>();
+	if (nAtoms() == 0) return Vec3<double>();
 	
 	// Calculate center relative to first atom in molecule
 	Vec3<double> cog = atom(0)->r();
-	for (int n = 1; n<nAtoms_; ++n) cog += box->minimumImage(atom(n), cog);
+	for (int n = 1; n<nAtoms(); ++n) cog += box->minimumImage(atom(n), cog);
 
-	return (cog / nAtoms_);
+	return (cog / nAtoms());
 }
 
 // Transform molecule with supplied matrix
@@ -230,7 +203,7 @@ void Molecule::applyTransform(const Box* box, const Matrix3& transform)
 	Vec3<double> newR, cog = centreOfGeometry(box);
 	
 	// Apply transform
-	for (int n=0; n<nAtoms_; ++n)
+	for (int n=0; n<nAtoms(); ++n)
 	{
 		newR = transform * box->minimumVector(atom(n), cog) + cog;
 		atom(n)->setCoordinates(newR);
@@ -239,14 +212,14 @@ void Molecule::applyTransform(const Box* box, const Matrix3& transform)
 
 
 // Transform selected atoms with supplied matrix
-void Molecule::applyTransform(const Box* box, const Matrix3& transform, const Vec3<double>& origin, int nTargetAtoms, int* targetIndices)
+void Molecule::applyTransform(const Box* box, const Matrix3& transform, const Vec3<double>& origin, int nTargetAtoms, Atom** targetAtoms)
 {
 	// Loop over supplied Atoms
 	Vec3<double> newR;
 	Atom* i;
-	for (int n=0; n< nTargetAtoms; ++n)
+	for (int n=0; n<nTargetAtoms; ++n)
 	{
-		i = atom(targetIndices[n]);
+		i = targetAtoms[n];
 		newR = transform * (i->r() - origin) + origin;
 		i->setCoordinates(newR);
 	}
@@ -259,7 +232,7 @@ void Molecule::setCentre(const Box* box, const Vec3<double> newCentre)
 	Vec3<double> newR, cog = centreOfGeometry(box);
 
 	// Apply transform
-	for (int n=0; n<nAtoms_; ++n)
+	for (int n=0; n<nAtoms(); ++n)
 	{
 		newR = box->minimumVector(atom(n), cog) + newCentre;
 		atom(n)->setCoordinates(newR);
@@ -287,8 +260,11 @@ void Molecule::randomiseGeometry(const Box* box)
 	Matrix3 transform;
 	Vec3<double> axis;
 	Atom* localI, *localJ;
-	for (SpeciesBond* b = species_->bonds(); b!= NULL; b = b->next)
+	for (int n=0; n<bonds_.nItems(); ++n)
 	{
+		// Get pointer to Bond
+		Bond* b = bonds_[n];
+
 		// Select random terminus
 		terminus = DUQMath::random() > 0.5;
 		if (b->nAttached(terminus) < 2) continue;
@@ -306,14 +282,14 @@ void Molecule::randomiseGeometry(const Box* box)
 			return;
 		}
 #endif
-		localI = atom(b->i()->index());
-		localJ = atom(b->j()->index());
+		localI = b->i();
+		localJ = b->j();
 
 		// Create axis rotation matrix
 		axis = localI->r() - localJ->r();
 		transform.createRotationAxis(axis.x, axis.y, axis.z, DUQMath::random()*360.0, true);
 
 		// Perform transform
-		applyTransform(box, transform, terminus == 0 ? localI->r() : localJ->r(), b->nAttached(terminus), b->attachedIndices(terminus));
+		applyTransform(box, transform, terminus == 0 ? localI->r() : localJ->r(), b->nAttached(terminus), b->attached(terminus));
 	}
 }

@@ -21,6 +21,8 @@
 
 #include "classes/configuration.h"
 #include "classes/forcekernel.h"
+#include "classes/angle.h"
+#include "classes/bond.h"
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/potentialmap.h"
@@ -54,11 +56,11 @@ void ForceKernel::forcesWithoutMim(const Atom* i, const Atom* j, double scale)
 	force /= r;
 	force *= potentialMap_.force(i, j, r) * scale;
 
-	int index = i->index();
+	int index = i->arrayIndex();
 	fx_[index] += force.x;
 	fy_[index] += force.y;
 	fz_[index] += force.z;
-	index = j->index();
+	index = j->arrayIndex();
 	fx_[index] -= force.x;
 	fy_[index] -= force.y;
 	fz_[index] -= force.z;
@@ -70,7 +72,7 @@ void ForceKernel::forcesWithoutMim(const Atom* i, const Grain* grain, bool exclu
 	int m, nAtomsJ = grain->nAtoms();
 	if (excludeIgtJ)
 	{
-		for (m=0; m<nAtomsJ; ++m) if (i->index() <= grain->atom(m)->index()) forcesWithoutMim(i, grain->atom(m));
+		for (m=0; m<nAtomsJ; ++m) if (i->arrayIndex() <= grain->atom(m)->arrayIndex()) forcesWithoutMim(i, grain->atom(m));
 	}
 	else
 	{
@@ -88,7 +90,7 @@ void ForceKernel::forcesWithoutMim(const Grain* grainI, const Grain* grainJ)
 	 */
 	int n, m, nAtomsI = grainI->nAtoms(), nAtomsJ = grainJ->nAtoms();
 	Atom* i, *j;
-	if (grainI->parent() != grainJ->parent())
+	if (grainI->molecule() != grainJ->molecule())
 	{
 		for (n=0; n<nAtomsI; ++n)
 		{
@@ -105,7 +107,7 @@ void ForceKernel::forcesWithoutMim(const Grain* grainI, const Grain* grainJ)
 			for (m=0; m<nAtomsJ; ++m)
 			{
 				j = grainJ->atom(m);
-				scale = grainI->parent()->species()->scaling(i->moleculeAtomIndex(), j->moleculeAtomIndex());
+				scale = i->scaling(j);
 				if (scale < 1.0e-3) continue;
 				forcesWithoutMim(i, j, scale);
 			}
@@ -123,11 +125,11 @@ void ForceKernel::forcesWithMim(const Atom* i, const Atom* j, double scale)
 	force /= r;
 	force *= potentialMap_.force(i, j, r) * scale;
 
-	int index = i->index();
+	int index = i->arrayIndex();
 	fx_[index] += force.x;
 	fy_[index] += force.y;
 	fz_[index] += force.z;
-	index = j->index();
+	index = j->arrayIndex();
 	fx_[index] -= force.x;
 	fy_[index] -= force.y;
 	fz_[index] -= force.z;
@@ -139,7 +141,7 @@ void ForceKernel::forcesWithMim(const Atom* i, const Grain* grain, bool excludeI
 	int m, nAtomsJ = grain->nAtoms();
 	if (excludeIgtJ)
 	{
-		for (m=0; m<nAtomsJ; ++m) if (i->index() <= grain->atom(m)->index()) forcesWithMim(i, grain->atom(m));
+		for (m=0; m<nAtomsJ; ++m) if (i->arrayIndex() <= grain->atom(m)->arrayIndex()) forcesWithMim(i, grain->atom(m));
 	}
 	else
 	{
@@ -157,7 +159,7 @@ void ForceKernel::forcesWithMim(const Grain* grainI, const Grain* grainJ)
 	 */
 	int n, m, nAtomsI = grainI->nAtoms(), nAtomsJ = grainJ->nAtoms();
 	Atom* i, *j;
-	if (grainI->parent() != grainJ->parent())
+	if (grainI->molecule() != grainJ->molecule())
 	{
 		for (n=0; n<nAtomsI; ++n)
 		{
@@ -174,7 +176,7 @@ void ForceKernel::forcesWithMim(const Grain* grainI, const Grain* grainJ)
 			for (m=0; m<nAtomsJ; ++m)
 			{
 				j = grainJ->atom(m);
-				scale = grainI->parent()->species()->scaling(i->moleculeAtomIndex(), j->moleculeAtomIndex());
+				scale = i->scaling(j);
 				if (scale < 1.0e-3) continue;
 				forcesWithMim(i, j, scale);
 			}
@@ -209,7 +211,7 @@ void ForceKernel::forces(const Atom* i, const Atom* j, bool applyMim, bool exclu
 	}
 	
 	// Check indices of Atoms if required
-	if (excludeIgeJ && (i->index() >= j->index())) return;
+	if (excludeIgeJ && (i->arrayIndex() >= j->arrayIndex())) return;
 
 	if (applyMim) forcesWithMim(i, j);
 	else forcesWithoutMim(i, j);
@@ -248,7 +250,7 @@ void ForceKernel::forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool
 		{
 			ii = centralAtoms[i];
 			molI = ii->molecule();
-			indexI = ii->index();
+			indexI = ii->arrayIndex();
 			rI = ii->r();
 
 			// Straight loop over other cell atoms
@@ -257,13 +259,13 @@ void ForceKernel::forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool
 				jj = otherAtoms[j];
 
 				// Check exclusion of I > J
-				if (excludeIgeJ && (indexI >= jj->index())) continue;
+				if (excludeIgeJ && (indexI >= jj->arrayIndex())) continue;
 
 				// Check for atoms in the same species
 				if (molI != jj->molecule()) forcesWithMim(ii, jj);
 				else
 				{
-					scale = molI->species()->scaling(ii->moleculeAtomIndex(), jj->moleculeAtomIndex());
+					scale = ii->scaling(jj);
 					if (scale > 1.0e-3) forcesWithMim(ii, jj, scale);
 				}
 			}
@@ -275,7 +277,7 @@ void ForceKernel::forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool
 		{
 			ii = centralAtoms[i];
 			molI = ii->molecule();
-			indexI = ii->index();
+			indexI = ii->arrayIndex();
 			rI = ii->r();
 
 			// Straight loop over other cell atoms
@@ -284,13 +286,13 @@ void ForceKernel::forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool
 				jj = otherAtoms[j];
 				
 				// Check exclusion of I > J
-				if (excludeIgeJ && (ii->index() >= jj->index())) continue;
+				if (excludeIgeJ && (ii->arrayIndex() >= jj->arrayIndex())) continue;
 
 				// Check for atoms in the same molecule
 				if (molI != jj->molecule()) forcesWithoutMim(ii, jj);
 				else
 				{
-					scale = molI->species()->scaling(ii->moleculeAtomIndex(), jj->moleculeAtomIndex());
+					scale = ii->scaling(jj);
 					if (scale > 1.0e-3) forcesWithoutMim(ii, jj, scale);
 				}
 			}
@@ -319,7 +321,7 @@ void ForceKernel::forces(Cell* centralCell, bool excludeIgeJ, ProcessPool::LoopC
 	{
 		jj = neighbours[j];
 		molJ = jj->molecule();
-		indexJ = jj->index();
+		indexJ = jj->arrayIndex();
 		rJ = jj->r();
 
 		// Loop over central cell atoms
@@ -328,13 +330,13 @@ void ForceKernel::forces(Cell* centralCell, bool excludeIgeJ, ProcessPool::LoopC
 			ii = centralAtoms[i];
 
 			// Check exclusion of I > J
-			if (excludeIgeJ && (ii->index() >= indexJ)) break;
+			if (excludeIgeJ && (ii->arrayIndex() >= indexJ)) break;
 
-			// Check for atoms in the same species
+			// Check for atoms in the same molecule
 			if (ii->molecule() != molJ) forcesWithoutMim(jj, ii);
 			else
 			{
-				scale = ii->molecule()->species()->scaling(ii->moleculeAtomIndex(), jj->moleculeAtomIndex());
+				scale = ii->scaling(jj);
 				if (scale > 1.0e-3) forcesWithoutMim(jj, ii, scale);
 			}
 		}
@@ -345,7 +347,7 @@ void ForceKernel::forces(Cell* centralCell, bool excludeIgeJ, ProcessPool::LoopC
 	{
 		jj = mimNeighbours[j];
 		molJ = jj->molecule();
-		indexJ = jj->index();
+		indexJ = jj->arrayIndex();
 		rJ = jj->r();
 
 		// Loop over central cell atoms
@@ -354,13 +356,13 @@ void ForceKernel::forces(Cell* centralCell, bool excludeIgeJ, ProcessPool::LoopC
 			ii = centralAtoms[i];
 
 			// Check exclusion of I > J
-			if (excludeIgeJ && (ii->index() >= indexJ)) break;
+			if (excludeIgeJ && (ii->arrayIndex() >= indexJ)) break;
 
 			// Check for atoms in the same species
 			if (ii->molecule() != molJ) forcesWithMim(jj, ii);
 			else
 			{
-				scale = ii->molecule()->species()->scaling(ii->moleculeAtomIndex(), jj->moleculeAtomIndex());
+				scale = ii->scaling(jj);
 				if (scale < 1.0e-3) forcesWithMim(jj, ii, scale);
 			}
 		}
@@ -371,7 +373,7 @@ void ForceKernel::forces(Cell* centralCell, bool excludeIgeJ, ProcessPool::LoopC
 void ForceKernel::forces(const Atom* i, OrderedPointerList<Atom>& neighbours, int flags, ProcessPool::LoopContext loopContext)
 {
 	/*
-	 * Calculate the energy between the supplied atom and list of neighbouring cells. Note that it is assumed that the supplied atom
+	 * Calculate the forces between the supplied atom and list of neighbouring cells. Note that it is assumed that the supplied atom
 	 * is in a cell which does *not* appear in the list.
 	 */
 #ifdef CHECKS
@@ -388,9 +390,8 @@ void ForceKernel::forces(const Atom* i, OrderedPointerList<Atom>& neighbours, in
 	int nNeighbourAtoms = neighbours.nItems();
 	
 	// Grab some information on the supplied atom
-	const int indexI = i->index();
+	const int indexI = i->arrayIndex();
 	Molecule* moleculeI = i->molecule();
-	const Species* spI = moleculeI->species();
 	const Vec3<double> rI = i->r();
 
 	// Get start/stride for specified loop context
@@ -410,22 +411,22 @@ void ForceKernel::forces(const Atom* i, OrderedPointerList<Atom>& neighbours, in
 			if (moleculeI != jj->molecule()) forcesWithMim(i, jj);
 			else
 			{
-				if ((flags&ForceKernel::ExcludeIntraGreaterThan) && (i->moleculeAtomIndex() > jj->moleculeAtomIndex())) continue;
-				scale = spI->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
+				if ((flags&ForceKernel::ExcludeIntraGreaterThan) && (i > jj)) continue;
+				scale = i->scaling(jj);
 				if (scale > 1.0e-3) forcesWithMim(i, jj, scale);
 			}
 		}
 		else if (flags&ForceKernel::ExcludeGreaterThanEqualTo) for (j=start; j<nNeighbourAtoms; j += stride)
 		{
 			jj = neighbourAtoms[j];
-			if (indexI >= jj->index()) continue;
+			if (indexI >= jj->arrayIndex()) continue;
 
 			// Check for atoms in the same species
 			if (moleculeI != jj->molecule()) forcesWithMim(i, jj);
 			else
 			{
-				if ((flags&ForceKernel::ExcludeIntraGreaterThan) && (i->moleculeAtomIndex() > jj->moleculeAtomIndex())) continue;
-				scale = spI->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
+				if ((flags&ForceKernel::ExcludeIntraGreaterThan) && (i > jj)) continue;
+				scale = i->scaling(jj);
 				if (scale > 1.0e-3) forcesWithMim(i, jj, scale);
 			}
 		}
@@ -437,8 +438,8 @@ void ForceKernel::forces(const Atom* i, OrderedPointerList<Atom>& neighbours, in
 			if (moleculeI != jj->molecule()) forcesWithMim(i, jj);
 			else
 			{
-				if ((flags&ForceKernel::ExcludeIntraGreaterThan) && (i->moleculeAtomIndex() > jj->moleculeAtomIndex())) continue;
-				scale = spI->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
+				if ((flags&ForceKernel::ExcludeIntraGreaterThan) && (i > jj)) continue;
+				scale = i->scaling(jj);
 				if (scale > 1.0e-3) forcesWithMim(i, jj, scale);
 			}
 		}
@@ -455,20 +456,20 @@ void ForceKernel::forces(const Atom* i, OrderedPointerList<Atom>& neighbours, in
 			if (moleculeI != jj->molecule()) forcesWithoutMim(i, jj);
 			else
 			{
-				scale = moleculeI->species()->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
+				scale = i->scaling(jj);
 				if (scale > 1.0e-3) forcesWithoutMim(i, jj, scale);
 			}
 		}
 		else if (flags&ForceKernel::ExcludeGreaterThanEqualTo) for (j=start; j<nNeighbourAtoms; j += stride)
 		{
 			jj = neighbourAtoms[j];
-			if (indexI >= jj->index()) continue;
+			if (indexI >= jj->arrayIndex()) continue;
 
 			// Check for atoms in the same species
 			if (moleculeI != jj->molecule()) forcesWithoutMim(i, jj);
 			else
 			{
-				scale = moleculeI->species()->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
+				scale = i->scaling(jj);
 				if (scale > 1.0e-3) forcesWithoutMim(i, jj, scale);
 			}
 		}
@@ -480,7 +481,7 @@ void ForceKernel::forces(const Atom* i, OrderedPointerList<Atom>& neighbours, in
 			if (moleculeI != jj->molecule()) forcesWithoutMim(i, jj);
 			else
 			{
-				scale = moleculeI->species()->scaling(i->moleculeAtomIndex(), jj->moleculeAtomIndex());
+				scale = i->scaling(jj);
 				if (scale > 1.0e-3) forcesWithoutMim(i, jj, scale);
 			}
 		}
@@ -501,7 +502,7 @@ void ForceKernel::forces(const Grain* grain, OrderedPointerList<Atom>& neighbour
 	int i, j, start = 0, stride = 1;
 	int indexI;
 	double scale;
-	Molecule* grainMol = grain->parent();
+	Molecule* grainMol = grain->molecule();
 	Atom** neighbourAtoms = neighbours.objects();
 	int nNeighbourAtoms = neighbours.nItems();
 	Vec3<double> rI;
@@ -516,33 +517,33 @@ void ForceKernel::forces(const Grain* grain, OrderedPointerList<Atom>& neighbour
 		for (i = 0; i<grain->nAtoms(); ++i)
 		{
 			ii = grain->atom(i);
-			indexI = ii->index();
+			indexI = ii->arrayIndex();
 			rI = ii->r();
 
 			// Loop over atom neighbours
 			if (excludeIgeJ) for (j=start; j<nNeighbourAtoms; j += stride)
 			{
 				jj = neighbourAtoms[j];
-				if (indexI >= jj->index()) continue;
+				if (indexI >= jj->arrayIndex()) continue;
 
 				// Check for atoms in the same species
 				if (grainMol != jj->molecule()) forcesWithMim(ii, jj);
 				else
 				{
-					scale = grainMol->species()->scaling(ii->moleculeAtomIndex(), jj->moleculeAtomIndex());
+					scale = ii->scaling(jj);
 					if (scale > 1.0e-3) forcesWithMim(ii, jj, scale);
 				}
 			}
 			else for (j=start; j<nNeighbourAtoms; j += stride)
 			{
 				jj = neighbourAtoms[j];
-				if (indexI == jj->index()) continue;
+				if (indexI == jj->arrayIndex()) continue;
 
 				// Check for atoms in the same species
 				if (grainMol != jj->molecule()) forcesWithMim(ii, jj);
 				else
 				{
-					scale = grainMol->species()->scaling(ii->moleculeAtomIndex(), jj->moleculeAtomIndex());
+					scale = ii->scaling(jj);
 					if (scale > 1.0e-3) forcesWithMim(ii, jj, scale);
 				}
 			}
@@ -554,33 +555,33 @@ void ForceKernel::forces(const Grain* grain, OrderedPointerList<Atom>& neighbour
 		for (i = 0; i<grain->nAtoms(); ++i)
 		{
 			ii = grain->atom(i);
-			indexI = ii->index();
+			indexI = ii->arrayIndex();
 			rI = ii->r();
 
 			// Loop over atom neighbours
 			if (excludeIgeJ) for (j=start; j<nNeighbourAtoms; j += stride)
 			{
 				jj = neighbourAtoms[j];
-				if (indexI >= jj->index()) continue;
+				if (indexI >= jj->arrayIndex()) continue;
 
 				// Check for atoms in the same species
 				if (grainMol != jj->molecule()) forcesWithoutMim(ii, jj);
 				else
 				{
-					scale = grainMol->species()->scaling(ii->moleculeAtomIndex(), jj->moleculeAtomIndex());
+					scale = ii->scaling(jj);
 					if (scale > 1.0e-3) forcesWithoutMim(ii, jj, scale);
 				}
 			}
 			else for (j=start; j<nNeighbourAtoms; j += stride)
 			{
 				jj = neighbourAtoms[j];
-				if (indexI == jj->index()) continue;
+				if (indexI == jj->arrayIndex()) continue;
 
 				// Check for atoms in the same species
 				if (grainMol != jj->molecule()) forcesWithoutMim(ii, jj);
 				else
 				{
-					scale = grainMol->species()->scaling(ii->moleculeAtomIndex(), jj->moleculeAtomIndex());
+					scale = ii->scaling(jj);
 					if (scale > 1.0e-3) forcesWithoutMim(ii, jj, scale);
 				}
 			}
@@ -617,9 +618,8 @@ void ForceKernel::forces(const Grain* grain, bool excludeIgtJ, ProcessPool::Loop
 
 	int i, j, nAtoms = grain->nAtoms();
 	Vec3<double> rI;
-	Molecule* grainMol = grain->parent();
-	Species* grainSp = grainMol->species();
-	Atom* ii, **atoms = grain->atoms();
+	Molecule* grainMol = grain->molecule();
+	Atom* ii;
 	Cell* cellI;
 	double scale;
 
@@ -647,11 +647,10 @@ void ForceKernel::forces(const Grain* grain, bool excludeIgtJ, ProcessPool::Loop
  */
 
 // Calculate Bond forces
-void ForceKernel::forces(const Molecule* mol, const SpeciesBond* b)
+void ForceKernel::forces(const Bond* b)
 {
 	// Grab pointers to atoms involved in bond
-	Atom* i = mol->atom(b->indexI());
-	Atom* j = mol->atom(b->indexJ());
+	Atom* i = b->i(), *j = b->j();
 
 	// Determine whether we need to apply minimum image to the vector calculation
 	Vec3<double> vecji;
@@ -662,33 +661,31 @@ void ForceKernel::forces(const Molecule* mol, const SpeciesBond* b)
 	double distance = vecji.magAndNormalise();
 
 #ifdef CHECKS
-	if (distance > 5.0) printf("!!! Long bond: %i-%i = %f Angstroms\n", i->index(), j->index(), distance);
+	if (distance > 5.0) printf("!!! Long bond: %i-%i = %f Angstroms\n", i->arrayIndex(), j->arrayIndex(), distance);
 #endif
 
 	// Determine final forces
 	vecji *= b->force(distance);
 
 	// Calculate forces
-	int index = i->index();
+	int index = i->arrayIndex();
 	fx_[index] -= vecji.x;
 	fy_[index] -= vecji.y;
 	fz_[index] -= vecji.z;
-	index = j->index();
+	index = j->arrayIndex();
 	fx_[index] += vecji.x;
 	fy_[index] += vecji.y;
 	fz_[index] += vecji.z;
 }
 
 // Calculate Angle forces
-void ForceKernel::forces(const Molecule* mol, const SpeciesAngle* a)
+void ForceKernel::forces(const Angle* a)
 {
 	double distance, angle, force, dp, magji, magjk;
 	Vec3<double> vecji, vecjk, forcei, forcek;
 
 	// Grab pointers to atoms involved in angle
-	Atom* i = mol->atom(a->indexI());
-	Atom* j = mol->atom(a->indexJ());
-	Atom* k = mol->atom(a->indexK());
+	Atom* i = a->i(), *j = a->j(), *k = a->k();
 
 	// Determine whether we need to apply minimum image between 'j-i' and 'j-k'
 	if (cells_.useMim(j->cell(), i->cell())) vecji = box_->minimumVector(j, i);
@@ -709,16 +706,23 @@ void ForceKernel::forces(const Molecule* mol, const SpeciesAngle* a)
 	forcek *= force / magjk;
 	
 	// Store forces
-	int index = i->index();
+	int index = i->arrayIndex();
 	fx_[index] += forcei.x;
 	fy_[index] += forcei.y;
 	fz_[index] += forcei.z;
-	index = j->index();
+	index = j->arrayIndex();
 	fx_[index] -= forcei.x + forcek.x;
 	fy_[index] -= forcei.y + forcek.y;
 	fz_[index] -= forcei.z + forcek.z;
-	index = k->index();
+	index = k->arrayIndex();
 	fx_[index] += forcek.x;
 	fy_[index] += forcek.y;
 	fz_[index] += forcek.z;
+}
+
+// Return Torsion force
+void ForceKernel::forces(const Torsion* t)
+{
+	Messenger::warn("ForceKernel cannot yet calculate torsion forces!\n");
+	return;
 }

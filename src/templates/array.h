@@ -27,6 +27,9 @@
 #include "base/messenger.h"
 #include "templates/listitem.h"
 #include "templates/vector3.h"
+#include <new>
+
+using namespace std;
 
 // Array
 template <class A> class Array : public ListItem< Array<A> >
@@ -99,7 +102,15 @@ template <class A> class Array : public ListItem< Array<A> >
 		// Delete old, and create new array
 		if (array_ != NULL) delete[] array_;
 		size_ = newSize;
-		array_ = new A[size_];
+		try
+		{
+			array_ = new A[size_];
+		}
+		catch (bad_alloc& alloc)
+		{
+			Messenger::error("Array<T>() - Failed to allocate sufficient memory for array_. Exception was : %s\n", alloc.what());
+			return;
+		}
 
 		// Copy old data into new array
 		if (nItems_ > 0)
@@ -125,6 +136,42 @@ template <class A> class Array : public ListItem< Array<A> >
 	{
 		return array_;
 	}
+	// Create array of specified size
+	void initialise(int size)
+	{
+		// First, resize array...
+		resize(size);
+		
+		// ...then set number of items to specified size...
+		nItems_ = size;
+		
+		// ...and finally set all elements to default value
+		for (int n=0; n<nItems_; ++n) array_[n] = A();
+	}
+	// Create empty array of specified size
+	void createEmpty(int size)
+	{
+		clear(); 
+
+		resize(size);
+
+		nItems_ = 0;
+	}
+
+
+	/*
+	 * Add / Remove
+	 */
+	public:
+	// Add new element to array
+	void add(A data)
+	{
+		// Is current array large enough?
+		if (nItems_ == size_) resize(size_+CHUNKSIZE);
+
+		// Store new value
+		array_[nItems_++] = data;
+	}
 	// Forget data (set nItems to zero) leaving array intact
 	void forgetData()
 	{
@@ -138,33 +185,22 @@ template <class A> class Array : public ListItem< Array<A> >
 		array_ = NULL;
 		size_ = 0;
 	}
-	// Create empty array of specified size
-	void initialise(int size)
+	// Drop the last item from the array
+	void removeLast()
 	{
-		// First, resize array...
-		resize(size);
-		
-		// ...then set number of items to specified size...
-		nItems_ = size;
-		
-		// ...and finally set all elements to default value
-		for (int n=0; n<nItems_; ++n) array_[n] = A();
+		if (nItems_ == 0)
+		{
+			Messenger::warn("Tried to drop the last item of an empty array...\n");
+			return;
+		}
+		--nItems_;
 	}
 
 
 	/*
-	 * Set/Get
+	 * Set / Get
 	 */
 	public:
-	// Add new element to array
-	void add(A data)
-	{
-		// Is current array large enough?
-		if (nItems_ == size_) resize(size_+CHUNKSIZE);
-
-		// Store new value
-		array_[nItems_++] = data;
-	}
 	// Return nth item in array
 	A& operator[](int n)
 	{
@@ -190,6 +226,12 @@ template <class A> class Array : public ListItem< Array<A> >
 #endif
 		return array_[n];
 	}
+
+
+	/*
+	 * Operators
+	 */
+	public:
 	// Operator= (set all)
 	void operator=(const double value) { for (int n=0; n<nItems_; ++n) array_[n] = value; }
 	void operator=(const int value) { for (int n=0; n<nItems_; ++n) array_[n] = value; }
@@ -268,30 +310,6 @@ template <class A> class Array : public ListItem< Array<A> >
 		}
 		return result;
 	};
-
-
-	/*
-	 * Parallel Comms
-	 */
-	public:
-// 	// Broadcast data from root to all other processes
-// 	bool broadcast(ProcessPool& procPool, int rootRank)
-// 	{
-// 		procPool.poolRank();
-// #ifdef PARALLEL
-// // 		if (procPool.poolRank() == rootRank)
-// // 		{
-// // 		/*if (!procPool.broadcast(hkl_, rootRank)) return false;
-// // 		if (!procPool.broadcast(braggPeakIndex_, rootRank)) return false;
-// // 		if (!procPool.broadcast(cosTerms_, rootRank)) return false;
-// // 		if (!procPool.broadcast(sinTerms_, rootRank)) return false; */
-// // 		}
-// // 		else
-// // 		{
-// // 		}
-// #endif
-// 		return true;
-// 	}
 };
 
 #endif

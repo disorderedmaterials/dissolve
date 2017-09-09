@@ -22,24 +22,18 @@
 #ifndef DUQ_GRAIN_H
 #define DUQ_GRAIN_H
 
-#include "classes/atom.h"
 #include "math/matrix3.h"
-#include "templates/list.h"
-#include "templates/reflist.h"
+#include "templates/array.h"
+#include "templates/dynamicarrayobject.h"
 
 // Forward Declarations
-class Box;
-class Cell;
+class Atom;
 class Molecule;
-class PotentialMap;
-class SpeciesAngle;
-class SpeciesBond;
-class SpeciesGrain;
 
 /*
  * Grain
  */
-class Grain
+class Grain : public DynamicArrayObject<Grain>
 {
 	public:
 	// Constructor
@@ -55,48 +49,30 @@ class Grain
 	 */
 	private:
 	// Parent molecule
-	Molecule* parent_;
-	// Source SpeciesGrain
-	SpeciesGrain* source_;
-	// Number of atoms contained in this grain
-	int nAtoms_;
-	// Array size
-	int atomsArraySize_;
-	// Pointers to atoms
-	Atom** atoms_;
-	// Index of Grain
-	int index_;
+	Molecule* molecule_;
+	// Array of Atoms in this Grain
+	Array<Atom*> atoms_;
 
 	public:
-	// Initialise from SpeciesGrain
-	bool initialise(SpeciesGrain* sg);
-	// Set parent molecule
-	void setParent(Molecule* mol);
-	// Return parent molecule
-	Molecule* parent() const;
-	// Return source SpeciesGrain
-	const SpeciesGrain* source() const;
-	// Add atom pointer to list
-	bool addAtom(Atom* i);
-	// Return number of atoms in grain
+	// Initialise
+	void initialise(int nAtoms);
+	// Set Molecule that contains this Grain
+	void setMolecule(Molecule* mol);
+	// Return Molecule that contains this Grain
+	Molecule* molecule() const;
+	// Add Atom pointer to list
+	void addAtom(Atom* i);
+	// Return number of Atoms in Grain
 	int nAtoms() const;
-	// Return atoms array
-	Atom** atoms() const;
-	// Return nth atom in grain
+	// Return Atoms array
+	Atom** atoms();
+	// Return nth Atom in Grain
 	Atom* atom(int n) const;
-	// Set index of grain
-	void setIndex(int index);
-	// Return index of grain
-	int index() const;
 
 
 	/*
 	 * Coordinates / Manipulation
 	 */
-	private:
-	// Local index of grain in cell's list
-	int localIndex_;
-	
 	public:
 	// Translate grain centre
 	void translate(const Vec3<double>& delta);

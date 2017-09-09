@@ -49,8 +49,6 @@ template <class T> class OrderedPointerListItem
 	void setObject(T* object);
 	// Return pointer to object
 	T* object();
-	// Return pointer index
-	int objectIndex();
 };
 
 // Constructor
@@ -70,19 +68,6 @@ template <class T> void OrderedPointerListItem<T>::setObject(T* object)
 template <class T> T* OrderedPointerListItem<T>::object()
 {
 	return object_;
-}
-
-// Return object index
-template <class T> int OrderedPointerListItem<T>::objectIndex()
-{
-#ifdef CHECKS
-	if (object_ == NULL)
-	{
-		printf("NULL_POINTER - NULL object_ pointer encountered in OrderedPointerListItem::objectIndex().\n");
-		return -1;
-	}
-#endif
-	return object_->index();
 }
 
 // OrderedPointerList Class
@@ -134,11 +119,11 @@ template <class T> class OrderedPointerList
 	// Remove an item from the list
 	void remove(OrderedPointerListItem< T >* xitem);
 	// Return whether the item is owned by the list
-	OrderedPointerListItem<T>* contains(int objectIndex) const;
+	OrderedPointerListItem<T>* contains(T* object) const;
 	// Cut item from list
 	void cut(OrderedPointerListItem<T>* item);
 	// Find and return the item with the next highest index to the index specified
-	OrderedPointerListItem<T>* nextHighestIndex(int objectIndex);
+	OrderedPointerListItem<T>* nextHighest(T* object);
 
 	public:
 	// Clear the list
@@ -152,11 +137,11 @@ template <class T> class OrderedPointerList
 	// Add a new item reference to the end of the list
 	void addAtEnd(T* object);
 	// Remove item reference from list
-	void remove(int objectIndex);
+	void remove(T* object);
 	// Remove item reference from the list (but don't complain if it isn't there)
-	bool removeIfPresent(int objectIndex);
+	bool removeIfPresent(T* object);
 	// Move specified item to target list
-	void move(int objectIndex, OrderedPointerList<T>& targetList);
+	void move(T* object, OrderedPointerList<T>& targetList);
 	// Returns the list head
 	OrderedPointerListItem<T>* first() const;
 	// Returns the list tail
@@ -313,14 +298,14 @@ template <class T> void OrderedPointerList<T>::remove(OrderedPointerListItem<T>*
 }
 
 // Return whether item index is in the list
-template <class T> OrderedPointerListItem<T>* OrderedPointerList<T>::contains(int objectIndex) const
+template <class T> OrderedPointerListItem<T>* OrderedPointerList<T>::contains(T* object) const
 {
 	// TODO This can probably be made much faster - bisection?
 	OrderedPointerListItem<T>* item = listHead_;
 	while (item)
 	{
-		if (item->objectIndex() > objectIndex) return NULL;
-		if (item->objectIndex() == objectIndex) return item;
+		if (item->object() > object) return NULL;
+		if (item->object() == object) return item;
 		item = item->next;
 	}
 	return NULL;
@@ -357,13 +342,13 @@ template <class T> void OrderedPointerList<T>::cut(OrderedPointerListItem<T>* it
 }
 
 // Find and return the item with the next highest index to the index specified
-template <class T> OrderedPointerListItem<T>* OrderedPointerList<T>::nextHighestIndex(int objectIndex)
+template <class T> OrderedPointerListItem<T>* OrderedPointerList<T>::nextHighest(T* object)
 {
 	// TODO This can probably be made much faster - binary chop?
 	OrderedPointerListItem<T>* item = listHead_;
 	while (item)
 	{
-		if (item->objectIndex() > objectIndex) return item;
+		if (item->object() > object) return item;
 		item = item->next;
 	}
 	return NULL;
@@ -403,7 +388,7 @@ template <class T> void OrderedPointerList<T>::add(T* object)
 	}
 #endif
 	// Add it in the correct place in the list
-	OrderedPointerListItem<T>* nextLargest = nextHighestIndex(object->index());
+	OrderedPointerListItem<T>* nextLargest = nextHighest(object);
 	insertBefore(object, nextLargest);
 }
 
@@ -443,19 +428,19 @@ template <class T> void OrderedPointerList<T>::addAtEnd(T* object)
 	// Add it directly to the end of the list, provided this adheres to the current order
 	// Check object index of last item in list
 	if (listTail_ == NULL) insertAfter(object, NULL);
-	else if (listTail_->objectIndex() < object->index()) insertAfter(object, listTail_);
-	else printf("BAD_USAGE - Attempted to add object with index %i to end of OrderedPointerList, but last item in list has index %i\n", object->index(), listTail_->objectIndex());
+	else if (listTail_->object() < object) insertAfter(object, listTail_);
+	else printf("BAD_USAGE - Attempted to add object %p to end of OrderedPointerList, but last item in list is %p\n", object, listTail_->object());
 }
 
 // Remove item reference from list
-template <class T> void OrderedPointerList<T>::remove(int objectIndex)
+template <class T> void OrderedPointerList<T>::remove(T* object)
 {
 	// Get item for specified objectIndex
-	OrderedPointerListItem<T>* item = contains(objectIndex);
+	OrderedPointerListItem<T>* item = contains(object);
 #ifdef CHECKS
 	if (item == NULL)
 	{
-		printf("Internal Error: Specified objectIndex (%i) does not exist in this OrderedPointerList.\n", objectIndex);
+		printf("Internal Error: Specified object (%p) does not exist in this OrderedPointerList.\n", object);
 		return;
 	}
 #endif
@@ -463,24 +448,24 @@ template <class T> void OrderedPointerList<T>::remove(int objectIndex)
 }
 
 // Remove item reference from the list (but don't complain if it isn't there)
-template <class T> bool OrderedPointerList<T>::removeIfPresent(int objectIndex)
+template <class T> bool OrderedPointerList<T>::removeIfPresent(T* object)
 {
-	// Get item for specified objectIndex
-	OrderedPointerListItem<T>* item = contains(objectIndex);
+	// Get item for specified object
+	OrderedPointerListItem<T>* item = contains(object);
 	if (item == NULL) return false;
 	remove(item);
 	return true;
 }
 
 // Move specified item to target list
-template <class T> void OrderedPointerList<T>::move(int objectIndex, OrderedPointerList<T>& targetList)
+template <class T> void OrderedPointerList<T>::move(T* object, OrderedPointerList<T>& targetList)
 {
 	// Get item for specified objectIndex
-	OrderedPointerListItem<T>* item = contains(objectIndex);
+	OrderedPointerListItem<T>* item = contains(object);
 #ifdef CHECKS
 	if (item == NULL)
 	{
-		printf("Internal Error: Specified objectIndex (%i) does not exist in this OrderedPointerList.\n", objectIndex);
+		printf("Internal Error: Specified object (%p) does not exist in this OrderedPointerList.\n", object);
 		return;
 	}
 #endif
@@ -579,33 +564,33 @@ template <class T> void OrderedPointerList<T>::difference(OrderedPointerList<T>&
 	// Traverse the lists simultaneously, comparing indices at each turn
 	int indexA = 0, indexB = 0;
 	T** itemsA = objects(), **itemsB = listB.objects();
-	int objectIndexA = itemsA[indexA]->objectIndex(), objectIndexB = itemsB[indexB]->objectIndex();
+	T* objectA = itemsA[indexA], *objectB = itemsB[indexB];
 	while ((indexA < nItems_) && (indexB < listB.nItems_))
 	{
 		// If objectAndexA is less than objectIndexB, then the item in this_ list at indexA is unique
-		if (objectIndexA < objectIndexB)
+		if (objectA < objectB)
 		{
 			uniqueToA.addAtEnd(itemsA[indexA]);
 			++indexA;
-			objectIndexA = itemsA[indexA]->objectIndex();
+			objectA = itemsA[indexA]->objectIndex();
 			continue;
 		}
 
 		// If indexB is less than indexA, then the item in listB at indexB is unique
-		if (objectIndexB < objectIndexA)
+		if (objectB < objectA)
 		{
 			uniqueToB.addAtEnd(itemsB[indexB]);
 			++indexB;
-			objectIndexB = itemsB[indexB]->objectIndex();
+			objectB = itemsB[indexB];
 			continue;
 		}
 
 		// The indices are the same, so this is common element to both lists
 		commonItems.addAtEnd(itemsA[indexA]);
 		++indexA;
-		objectIndexA = itemsA[indexA]->objectIndex();
+		objectA = itemsA[indexA]->object();
 		++indexB;
-		objectIndexB = itemsB[indexB]->objectIndex();
+		objectB = itemsB[indexB]->object();
 	}
 
 	// If we have not yet gone through all the items in either list, add them to the relevant unique results list

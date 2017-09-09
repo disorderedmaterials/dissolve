@@ -6,10 +6,10 @@ noinst_HEADERS += genericitemcontainer_array2ddouble.h genericitemcontainer_arra
 noinst_HEADERS += genericitem.h genericitemreader.h genericitems.h genericitemwriter.h genericlist.h
 noinst_HEADERS += list.h listitem.h
 noinst_HEADERS += mpilistitem.h
-noinst_HEADERS += orderedlist.h orderedpointerlist.h
+noinst_HEADERS += orderedlist.h orderedpointerdatalist.h orderedpointerlist.h
 noinst_HEADERS += pair.h
 noinst_HEADERS += reflist.h
-noinst_HEADERS += simplex.h
+noinst_HEADERS += simplex.h staticarray.h
 noinst_HEADERS += vector3.h
 noinst_HEADERS += vector4.h
 

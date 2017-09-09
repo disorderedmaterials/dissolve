@@ -20,6 +20,7 @@
 */
 
 #include "main/duq.h"
+#include "classes/atom.h"
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/grain.h"
@@ -59,14 +60,11 @@ bool Configuration::updateAtomsInCells()
 }
 
 // Update cell locations of specified atom index
-bool Configuration::updateAtomInCell(int id)
+bool Configuration::updateAtomInCell(Atom* i)
 {
 	// Fold the coordinates of specified atom into the box, and then check its cell location, moving if necessary.
 	Cell* currentCell, *targetCell;
 	Vec3<double> foldedR;
-
-	// Grab atom pointers
-	Atom* i = &atoms_[id];
 
 	// TODO Overload cell() to take a pointer to a Vec3<> in which the folded r can be returned
 	// Grab current cell pointer, and calculate folded coordinate and new cell location
@@ -102,10 +100,10 @@ void Configuration::recreateCellAtomNeighbourLists(double pairPotentialRange)
 
 	// Loop over atoms
 	Timer timer;
-	for (int n=0; n<nAtoms_; ++n)
+	for (int n=0; n<atoms_.nItems(); ++n)
 	{
 		// Grab reference to atom and pointer to its current cell location
-		i = &atoms_[n];
+		i = atoms_[n];
 		centralCell = i->cell();
 		atomR = i->r();
 

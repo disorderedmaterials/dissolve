@@ -25,9 +25,9 @@
 #include "base/processpool.h"
 
 // Constructor
-Bond::Bond() : ListItem<Bond>()
+Bond::Bond() : DynamicArrayObject<Bond>()
 {
-	parent_ = NULL;
+	speciesBond_ = NULL;
 	molecule_ = NULL;
 	i_ = NULL;
 	j_ = NULL;
@@ -36,8 +36,6 @@ Bond::Bond() : ListItem<Bond>()
 	attached_[0] = NULL;
 	attached_[1] = NULL;
 	interGrain_ = false;
-	equilibrium_ = 1.0;
-	forceConstant_ = 4184.0;
 }
 
 // Destructor
@@ -61,25 +59,13 @@ void Bond::clear()
  * Basic Data
  */
 
-// Set parent Species
-void Bond::setParent(Species* parent)
-{
-	parent_ = parent;
-}
-
-// Return parent Species
-Species* Bond::parent() const
-{
-	return parent_;
-}
-
-// Set parent Molecule
+// Set Molecule in which this Bond exists
 void Bond::setMolecule(Molecule* parent)
 {
 	molecule_ = parent;
 }
 
-// Return parent Molecule
+// Return Molecule in which this Bond exists
 Molecule* Bond::molecule() const
 {
 	return molecule_;
@@ -118,32 +104,6 @@ Atom* Bond::partner(Atom* i) const
 	return (i == i_ ? j_ : i_);
 }
 
-// Return index (in parent Species) of first Atom
-int Bond::indexI() const
-{
-#ifdef CHECKS
-	if (i_ == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL Atom pointer 'i' found in Bond::indexI(). Returning 0...\n");
-		return 0;
-	}
-#endif
-	return i_->index();
-}
-
-// Return index (in parent Species) of second Atom
-int Bond::indexJ() const
-{
-#ifdef CHECKS
-	if (j_ == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL Atom pointer 'j' found in Bond::indexJ(). Returning 0...\n");
-		return 0;
-	}
-#endif
-	return j_->index();
-}
-
 // Return whether Atoms in Angle match those specified
 bool Bond::matches(Atom* i, Atom* j) const
 {
@@ -153,32 +113,8 @@ bool Bond::matches(Atom* i, Atom* j) const
 }
 
 /*
- * Interaction Parameters
+ * Connections
  */
-
-// Set nominal equilibrium Bond length
-void Bond::setEquilibrium(double rEq)
-{
-	equilibrium_ = rEq;
-}
-
-// Return nominal equilibrium Bond length
-double Bond::equilibrium() const
-{
-	return equilibrium_;
-}
-
-// Set force constant
-void Bond::setForceConstant(double k)
-{
-	forceConstant_ = k;
-}
-
-// Return force constant
-double Bond::forceConstant() const
-{
-	return forceConstant_;
-}
 
 // Create attached Atom array
 void Bond::createAttachedAtomArray(int terminus, int size)
@@ -200,10 +136,6 @@ void Bond::setAttachedAtoms(int terminus, const RefList<Atom,int>& atoms)
 	createAttachedAtomArray(terminus, atoms.nItems());
 	int index = 0;
 	for (RefListItem<Atom,int>* refAtom = atoms.first(); refAtom != NULL; refAtom = refAtom->next) attached_[terminus][index++] = refAtom->item;
-
-	CharString s(-1, "--> For Bond between Atoms %i-%i, terminus %i moves %i Atoms :", indexI()+1, indexJ()+1, terminus+1, nAttached_[terminus]);
-	for (int n=0; n<nAttached_[terminus]; ++n) s.strcatf(" %i", attached_[terminus][n]->userIndex());
-	Messenger::print("%s\n", s.get());
 }
 
 // Return number of attached Atoms for terminus specified
@@ -230,48 +162,30 @@ bool Bond::interGrain() const
 	return interGrain_;
 }
 
+/*
+ * Energy / Force
+ */
+
+// Set SpeciesBond reference
+void Bond::setSpeciesBond(SpeciesBond* bondRef)
+{
+	speciesBond_ = bondRef;
+}
+
+// Return parent Species
+SpeciesBond* Bond::speciesBond() const
+{
+	return speciesBond_;
+}
+
 // Return energy for specified distance
 double Bond::energy(double distance) const
 {
-	double delta = distance - equilibrium_;
-	return 0.5*forceConstant_*delta*delta;
+	return speciesBond_->energy(distance);
 }
 
 // Return force multiplier for specified distance
 double Bond::force(double distance) const
 {
-	return -forceConstant_*(distance-equilibrium_);
-}
-
-/*
- * Parallel Comms
- */
-
-// Broadcast data from Master to all Slaves
-bool Bond::broadcast(const List<Atom>& atoms)
-{
-#ifdef PARALLEL
-	int buffer[2];
-
-	// Put atom indices into buffer and send
-	if (Comm.master())
-	{
-		buffer[0] = indexI();
-		buffer[1] = indexJ();
-	}
-	if (!procPool.broadcast(buffer, 2)) return false;
-	
-	// Slaves now take Atom pointers from supplied List
-	if (Comm.slave())
-	{
-		setAtoms(atoms.item(buffer[0]), atoms.item(buffer[1]));
-		if (i_ != NULL) i_->addBond(this);
-		if (j_ != NULL) j_->addBond(this);
-	}
-	
-	// Send parameter info
-	if (!procPool.broadcast(&equilibrium_, 1)) return false;
-	if (!procPool.broadcast(&forceConstant_, 1)) return false;
-#endif
-	return true;
+	return speciesBond_->force(distance);
 }

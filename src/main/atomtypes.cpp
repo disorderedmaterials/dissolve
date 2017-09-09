@@ -37,6 +37,7 @@ AtomType* DUQ::addAtomType(int el)
 	// Create a suitable name...
 	at->setName(uniqueAtomTypeName(PeriodicTable::element(el).symbol()));
 	at->setElement(el);
+	at->setIndex(atomTypes_.nItems() - 1);
 
 	return at;
 }

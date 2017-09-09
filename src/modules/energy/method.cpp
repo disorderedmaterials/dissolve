@@ -90,7 +90,8 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 			double scale;
 
 			Timer testTimer;
-			// Calculate interatomic and intramlecular energy in a loop over defined Molecules
+
+			// Calculate interatomic energy in a loop over defined Molecules
 			for (int n=0; n<cfg->nMolecules(); ++n)
 			{
 				molN = cfg->molecule(n);
@@ -98,15 +99,19 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 				// Molecule-molecule energy
 				for (int ii = 0; ii <molN->nAtoms()-1; ++ii)
 				{
+					i = molN->atom(ii);
+
 // 					Messenger::print("Atom %i r = %f %f %f\n", ii, molN->atom(ii)->r().x, molN->atom(ii)->r().y, molN->atom(ii)->r().z);
 					for (int jj = ii+1; jj <molN->nAtoms(); ++jj)
 					{
+						j = molN->atom(jj);
+
 						// Get intramolecular scaling of atom pair
-						scale = molN->species()->scaling(ii, jj);
+						scale = i->scaling(j);
 						if (scale < 1.0e-3) continue;
 
-						if (testAnalytic) correctInterEnergy += potentialMap.analyticEnergy(molN->atom(ii), molN->atom(jj), box->minimumDistance(molN->atom(ii), molN->atom(jj)));
-						else correctInterEnergy += potentialMap.energy(molN->atom(ii), molN->atom(jj), box->minimumDistance(molN->atom(ii), molN->atom(jj)));
+						if (testAnalytic) correctInterEnergy += potentialMap.analyticEnergy(i, j, box->minimumDistance(i, j));
+						else correctInterEnergy += potentialMap.energy(i, j, box->minimumDistance(i, j));
 					}
 				}
 
@@ -117,47 +122,52 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 					// Double loop over atoms
 					for (int ii = 0; ii <molN->nAtoms(); ++ii)
 					{
+						i = molN->atom(ii);
+
 						for (int jj = 0; jj <molM->nAtoms(); ++jj)
 						{
-							if (testAnalytic) correctInterEnergy += potentialMap.analyticEnergy(molN->atom(ii), molM->atom(jj), box->minimumDistance(molN->atom(ii), molM->atom(jj)));
-							else correctInterEnergy += potentialMap.energy(molN->atom(ii), molM->atom(jj), box->minimumDistance(molN->atom(ii), molM->atom(jj)));
+							j = molM->atom(jj);
+
+							if (testAnalytic) correctInterEnergy += potentialMap.analyticEnergy(i, j, box->minimumDistance(i, j));
+							else correctInterEnergy += potentialMap.energy(i, j, box->minimumDistance(i, j));
 						}
 					}
 				}
-
-				// Bond energy
-				Species* sp = molN->species();
-				for (SpeciesBond* b = sp->bonds(); b != NULL; b = b->next)
-				{
-					// Grab pointers to atoms involved in bond
-					i = molN->atom(b->indexI());
-					j = molN->atom(b->indexJ());
-
-					r = cfg->box()->minimumDistance(i, j);
-					correctIntraEnergy += b->energy(r);
-				}
-
-				// Angles
-				for (SpeciesAngle* a = sp->angles(); a != NULL; a = a->next)
-				{
-					// Grab pointers to atoms involved in angle
-					i = molN->atom(a->indexI());
-					j = molN->atom(a->indexJ());
-					k = molN->atom(a->indexK());
-
-					// Get vectors 'j-i' and 'j-k'
-					vecji = cfg->box()->minimumVector(j, i);
-					vecjk = cfg->box()->minimumVector(j, k);
-					
-					// Calculate angle
-					vecji.normalise();
-					vecjk.normalise();
-					angle = Box::angle(vecji, vecjk);
-
-					// Determine Angle energy
-					correctIntraEnergy += a->energy(angle);
-				}
 			}
+
+			// Loop over defined Bonds
+			Bond** bonds = cfg->bonds();
+			for (int m=0; m<cfg->nBonds(); ++m)
+			{
+				r = cfg->box()->minimumDistance(bonds[m]->i(), bonds[m]->j());
+				correctIntraEnergy += bonds[m]->energy(r);
+			}
+
+			// Loop over defined Angles
+			Angle** angles = cfg->angles();
+			for (int m=0; m<cfg->nAngles(); ++m)
+			{
+				// Get vectors 'j-i' and 'j-k'
+				vecji = cfg->box()->minimumVector(angles[m]->j(), angles[m]->i());
+				vecjk = cfg->box()->minimumVector(angles[m]->j(), angles[m]->k());
+				
+				// Calculate angle
+				vecji.normalise();
+				vecjk.normalise();
+				angle = Box::angle(vecji, vecjk);
+
+				// Determine Angle energy
+				correctIntraEnergy += angles[m]->energy(angle);
+			}
+
+			// Loop over defined Torsions
+			Torsion** torsions = cfg->torsions();
+			for (int m=0; m<cfg->nTorsions(); ++m)
+			{
+				Messenger::error("Calculation of correct torsion energy in EnergyModule is not yet implemented.\n");
+				return false;
+			}
+
 			testTimer.stop();
 
 			Messenger::print("Energy: Correct interatomic pairpotential energy is %15.9e kJ/mol\n", correctInterEnergy);

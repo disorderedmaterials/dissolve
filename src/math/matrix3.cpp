@@ -106,7 +106,7 @@ Matrix3& Matrix3::operator*=(const Matrix3& B)
 }
 
 // Array access (operator [])
-double &Matrix3::operator[](int index)
+double& Matrix3::operator[](int index)
 {
 	return matrix_[index];
 }

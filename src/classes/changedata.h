@@ -44,21 +44,23 @@ class ChangeData : public ListItem<ChangeData>
 	private:
 	// Atom
 	Atom* atom_;
-	// Flag indicating that atom has moved
+	// Flag indicating whether Atom has moved
 	bool moved_;
 	// Current coordinates of Atom (either original or newly-accepted)
 	Vec3<double> r_;
 
 	public:
-	// Set target atom
+	// Set target Atom
 	void setAtom(Atom* i);
-	// Return index of stored atom
-	int atomIndex() const;
+	// Return target Atom
+	Atom* atom();
+	// Return array index of stored Atom
+	int atomArrayIndex() const;
 	// Update stored position, and flag as moved
 	void updatePosition();
-	// Revert atom to stored position
+	// Revert Atom to stored position
 	void revertPosition();
-	// Return whether atom has moved
+	// Return whether Atom has moved
 	bool hasMoved();
 	// Return position vector
 	Vec3<double> r() const;

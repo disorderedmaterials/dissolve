@@ -124,11 +124,11 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 
 					for (int jj = ii+1; jj <molN->nAtoms(); ++jj)
 					{
-						// Get intramolecular scaling of atom pair
-						scale = molN->species()->scaling(ii, jj);
-						if (scale < 1.0e-3) continue;
-
 						j = molN->atom(jj);
+
+						// Get intramolecular scaling of atom pair
+						scale = i->scaling(j);
+						if (scale < 1.0e-3) continue;
 
 						// Determine final forces
 						vecji = box->minimumVector(i, j);
@@ -139,12 +139,12 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 
 						if (testAnalytic) vecji *= potentialMap.analyticForce(molN->atom(ii), molN->atom(jj), r);
 						else vecji *= potentialMap.force(molN->atom(ii), molN->atom(jj), r);
-						interFx[i->index()] += vecji.x;
-						interFy[i->index()] += vecji.y;
-						interFz[i->index()] += vecji.z;
-						interFx[j->index()] -= vecji.x;
-						interFy[j->index()] -= vecji.y;
-						interFz[j->index()] -= vecji.z;
+						interFx[i->arrayIndex()] += vecji.x;
+						interFy[i->arrayIndex()] += vecji.y;
+						interFz[i->arrayIndex()] += vecji.z;
+						interFx[j->arrayIndex()] -= vecji.x;
+						interFy[j->arrayIndex()] -= vecji.y;
+						interFz[j->arrayIndex()] -= vecji.z;
 					}
 				}
 
@@ -172,71 +172,87 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 							if (testAnalytic) vecji *= potentialMap.analyticForce(i, j, r);
 							else vecji *= potentialMap.force(i, j, r);
 							
-// 							printf("%i  %i  %f  %15.9e %15.9e\n", i->index()+1, j->index()+1, sqrt(magji), potentialMap.force(i->globalTypeIndex(), j->globalTypeIndex(), magji), potentialMap.analyticForce(i->globalTypeIndex(), j->globalTypeIndex(), magji));
-							interFx[i->index()] += vecji.x;
-							interFy[i->index()] += vecji.y;
-							interFz[i->index()] += vecji.z;
-							interFx[j->index()] -= vecji.x;
-							interFy[j->index()] -= vecji.y;
-							interFz[j->index()] -= vecji.z;
+// 							printf("%i  %i  %f  %15.9e %15.9e\n", i->arrayIndex()+1, j->arrayIndex()+1, sqrt(magji), potentialMap.force(i->globalTypeIndex(), j->globalTypeIndex(), magji), potentialMap.analyticForce(i->globalTypeIndex(), j->globalTypeIndex(), magji));
+							interFx[i->arrayIndex()] += vecji.x;
+							interFy[i->arrayIndex()] += vecji.y;
+							interFz[i->arrayIndex()] += vecji.z;
+							interFx[j->arrayIndex()] -= vecji.x;
+							interFy[j->arrayIndex()] -= vecji.y;
+							interFz[j->arrayIndex()] -= vecji.z;
 						}
 					}
 				}
 
-				// Bond forces
-				Species* sp = molN->species();
-				if (testIntra) for (SpeciesBond* b = sp->bonds(); b != NULL; b = b->next)
+				if (testIntra)
 				{
-					// Grab pointers to atoms involved in bond
-					i = molN->atom(b->indexI());
-					j = molN->atom(b->indexJ());
+					// Bond forces
+					Bond** bonds = molN->bonds();
+					for (int m=0; m<molN->nBonds(); ++m)
+					{
+						Bond* b = bonds[m];
 
-					// Determine final forces
-					vecji = box->minimumVector(i, j);
-					r = vecji.magAndNormalise();
-					vecji *= b->force(r);
-					intraFx[i->index()] -= vecji.x;
-					intraFy[i->index()] -= vecji.y;
-					intraFz[i->index()] -= vecji.z;
-					intraFx[j->index()] += vecji.x;
-					intraFy[j->index()] += vecji.y;
-					intraFz[j->index()] += vecji.z;
-				}
+						// Grab pointers to atoms involved in bond
+						i = b->i();
+						j = b->j();
+	
+						// Determine final forces
+						vecji = box->minimumVector(i, j);
+						r = vecji.magAndNormalise();
+						vecji *= b->force(r);
+						intraFx[i->arrayIndex()] -= vecji.x;
+						intraFy[i->arrayIndex()] -= vecji.y;
+						intraFz[i->arrayIndex()] -= vecji.z;
+						intraFx[j->arrayIndex()] += vecji.x;
+						intraFy[j->arrayIndex()] += vecji.y;
+						intraFz[j->arrayIndex()] += vecji.z;
+					}
 
-				// Angle forces
-				if (testIntra) for (SpeciesAngle* a = sp->angles(); a != NULL; a = a->next)
-				{
-					// Grab pointers to atoms involved in angle
-					i = molN->atom(a->indexI());
-					j = molN->atom(a->indexJ());
-					k = molN->atom(a->indexK());
+					// Angle forces
+					Angle** angles = molN->angles();
+					for (int m=0; m<molN->nAngles(); ++m)
+					{
+						Angle* a = angles[m];
 
-					// Get vectors 'j-i' and 'j-k'
-					vecji = box->minimumVector(j, i);
-					vecjk = box->minimumVector(j, k);
+						// Grab pointers to atoms involved in angle
+						i = a->i();
+						j = a->j();
+						k = a->k();
+	
+						// Get vectors 'j-i' and 'j-k'
+						vecji = box->minimumVector(j, i);
+						vecjk = box->minimumVector(j, k);
+						
+						// Calculate angle
+						magji = vecji.magAndNormalise();
+						magjk = vecjk.magAndNormalise();
+						angle = Box::angle(vecji, vecjk, dp);
+	
+						// Determine Angle force vectors for atoms
+						force = a->force(angle);
+						forcei = vecjk - vecji * dp;
+						forcei *= force / magji;
+						forcek = vecji - vecjk * dp;
+						forcek *= force / magjk;
 					
-					// Calculate angle
-					magji = vecji.magAndNormalise();
-					magjk = vecjk.magAndNormalise();
-					angle = Box::angle(vecji, vecjk, dp);
+						// Store forces
+						intraFx[i->arrayIndex()] += forcei.x;
+						intraFy[i->arrayIndex()] += forcei.y;
+						intraFz[i->arrayIndex()] += forcei.z;
+						intraFx[j->arrayIndex()] -= forcei.x + forcek.x;
+						intraFy[j->arrayIndex()] -= forcei.y + forcek.y;
+						intraFz[j->arrayIndex()] -= forcei.z + forcek.z;
+						intraFx[k->arrayIndex()] += forcek.x;
+						intraFy[k->arrayIndex()] += forcek.y;
+						intraFz[k->arrayIndex()] += forcek.z;
+					}
 
-					// Determine Angle force vectors for atoms
-					force = a->force(angle);
-					forcei = vecjk - vecji * dp;
-					forcei *= force / magji;
-					forcek = vecji - vecjk * dp;
-					forcek *= force / magjk;
-					
-					// Store forces
-					intraFx[i->index()] += forcei.x;
-					intraFy[i->index()] += forcei.y;
-					intraFz[i->index()] += forcei.z;
-					intraFx[j->index()] -= forcei.x + forcek.x;
-					intraFy[j->index()] -= forcei.y + forcek.y;
-					intraFz[j->index()] -= forcei.z + forcek.z;
-					intraFx[k->index()] += forcek.x;
-					intraFy[k->index()] += forcek.y;
-					intraFz[k->index()] += forcek.z;
+					// Torsion forces
+					Torsion** torsions = molN->torsions();
+					for (int m=0; m<molN->nTorsions(); ++m)
+					{
+						Messenger::error("Torsion test forces not implemented yet.\n");
+						return false;
+					}
 				}
 			}
 			timer.stop();

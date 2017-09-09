@@ -1,5 +1,5 @@
 /*
-	*** SpeciesAngle Definition
+	*** SpeciesTorsion Definition
 	*** src/classes/speciesangle.h
 	Copyright T. Youngs 2012-2017
 
@@ -19,8 +19,8 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_SPECIESANGLE_H
-#define DUQ_SPECIESANGLE_H
+#ifndef DUQ_SPECIESTORSION_H
+#define DUQ_SPECIESTORSION_H
 
 #include "templates/list.h"
 #include "templates/listitem.h"
@@ -32,15 +32,15 @@ class Species;
 class ProcessPool;
 
 /*
- * Angle Definition
+ * SpeciesTorsion Definition
  */
-class SpeciesAngle : public ListItem<SpeciesAngle>
+class SpeciesTorsion : public ListItem<SpeciesTorsion>
 {
 	public:
 	// Constructor
-	SpeciesAngle();
+	SpeciesTorsion();
 	// Destructor
-	~SpeciesAngle();
+	~SpeciesTorsion();
 
 
 	/*
@@ -61,39 +61,45 @@ class SpeciesAngle : public ListItem<SpeciesAngle>
 	 * Atom Information
 	 */
 	private:
-	// First Atom in Angle
+	// First Atom in Torsion
 	SpeciesAtom* i_;
-	// Second (central) Atom in Angle
+	// Second Atom in Torsion
 	SpeciesAtom* j_;
-	// Third Atom in Angle
+	// Third Atom in Torsion
 	SpeciesAtom* k_;
+	// Fourth Atom in Torsion
+	SpeciesAtom* l_;
 
 	public:
-	// Set Atoms involved in Angle
-	void setAtoms(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k);
-	// Return first Atom involved in Angle
+	// Set Atoms involved in Torsion
+	void setAtoms(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l);
+	// Return first Atom involved in Torsion
 	SpeciesAtom* i() const;
-	// Return second (central) Atom involved in Angle
+	// Return second Atom involved in Torsion
 	SpeciesAtom* j() const;
-	// Return third Atom involved in Angle
+	// Return third Atom involved in Torsion
 	SpeciesAtom* k() const;
+	// Return fourth Atom involved in Torsion
+	SpeciesAtom* l() const;
 	// Return index (in parent Species) of first Atom
 	int indexI() const;
-	// Return index (in parent Species) of second (central) Atom
+	// Return index (in parent Species) of second Atom
 	int indexJ() const;
 	// Return index (in parent Species) of third Atom
 	int indexK() const;
-	// Return whether Atoms in Angle match those specified
-	bool matches(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const;
+	// Return index (in parent Species) of fourth Atom
+	int indexL() const;
+	// Return whether Atoms in Torsion match those specified
+	bool matches(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const;
 
 
 	/*
 	 * Interaction Parameters
 	 */
 	private:
-	// Equilibrium angle
+	// Nominal equilibrium angle
 	double equilibrium_;
-	// Force constant for angle
+	// Force constant for torsion
 	double forceConstant_;
 	// Number of Atoms attached to termini
 	int nAttached_[2];
@@ -123,9 +129,9 @@ class SpeciesAngle : public ListItem<SpeciesAngle>
 	SpeciesAtom** attachedAtoms(int terminus) const;
 	// Return array of attached indices for terminus specified
 	int* attachedIndices(int terminus) const;
-	// Set whether this Angle is interGrain
+	// Set whether this Torsion is interGrain
 	void setInterGrain(bool b);
-	// Return whether this Angle is interGrain
+	// Return whether this Torsion is interGrain
 	bool interGrain() const;
 	// Return energy for specified angle
 	double energy(double angleInDegrees) const;

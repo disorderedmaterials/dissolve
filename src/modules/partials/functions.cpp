@@ -226,7 +226,7 @@ bool PartialsModule::calculateTest(ProcessPool& procPool, Configuration* cfg, Pa
 {
 	// Calculate radial distribution functions with a simple double loop, in serial
 	const Box* box = cfg->box();
-	Atom* atoms = cfg->atoms();
+	Atom** atoms = cfg->atoms();
 	int ii, jj, typeI;
 	double distance;
 	double rbin = 1.0 / cfg->rdfBinWidth();
@@ -234,12 +234,12 @@ bool PartialsModule::calculateTest(ProcessPool& procPool, Configuration* cfg, Pa
 
 	for (ii = 0; ii < cfg->nAtoms()-1; ++ii)
 	{
-		rI = atoms[ii].r();
-		typeI = atoms[ii].localTypeIndex();
+		rI = atoms[ii]->r();
+		typeI = atoms[ii]->localTypeIndex();
 		for (jj = ii+1; jj < cfg->nAtoms(); ++jj)
 		{
-			distance = box->minimumDistance(rI, atoms[jj].r());
-			partialSet.fullHistogram(typeI, atoms[jj].localTypeIndex()).add(distance);
+			distance = box->minimumDistance(rI, atoms[jj]->r());
+			partialSet.fullHistogram(typeI, atoms[jj]->localTypeIndex()).add(distance);
 		}
 	}
 
@@ -271,11 +271,11 @@ bool PartialsModule::calculateSimple(ProcessPool& procPool, Configuration* cfg, 
 	}
 
 	// Loop over Atoms and construct arrays
-	Atom* atoms = cfg->atoms();
+	Atom** atoms = cfg->atoms();
 	for (n=0; n< cfg->nAtoms(); ++n)
 	{
-		m = atoms[n].localTypeIndex();
-		r[m][nr[m]++] = atoms[n].r();
+		m = atoms[n]->localTypeIndex();
+		r[m][nr[m]++] = atoms[n]->r();
 	}
 
 	Messenger::printVerbose("Ready..\n");
@@ -491,6 +491,7 @@ bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration*
 
 		// Consider all intramolecular pairs?
 		if (allIntra)
+XXX Put this outside the molecule loop, because we can use the Configuration list for the other calculation
 		{
 			Atom** atoms = mol->atoms();
 			for (int ii=0; ii<mol->nAtoms()-1; ++ii)
@@ -509,7 +510,7 @@ bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration*
 		else
 		{
 			// Bonds
-			for (SpeciesBond* b = mol->species()->bonds(); b != NULL; b = b->next)
+			for (Bond* b = mol->species()->bonds(); b != NULL; b = b->next)
 			{
 				i = mol->atom(b->indexI());
 				j = mol->atom(b->indexJ());

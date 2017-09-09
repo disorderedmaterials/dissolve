@@ -54,10 +54,10 @@ void ChangeData::setAtom(Atom* i)
 	r_ = atom_->r();
 }
 
-// Return index of stored atom
-int ChangeData::atomIndex() const
+// Return target Atom
+Atom* ChangeData::atom()
 {
-	return atom_->index();
+	return atom_;
 }
 
 // Update local position, and flag as moved

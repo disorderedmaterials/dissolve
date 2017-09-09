@@ -581,7 +581,7 @@ template <class T, class D> class RefListIterator
 {
 	public:
 	// Constructor
-	RefListIterator<T,D>(RefList<T,D>& source, bool reverse = false) : targetRefList_(source), reverse_(reverse)
+	RefListIterator<T,D>(const RefList<T,D>& source, bool reverse = false) : targetRefList_(source), reverse_(reverse)
 	{
 		finished_ = false;
 		currentItem_ = NULL;
@@ -593,7 +593,7 @@ template <class T, class D> class RefListIterator
 	// Whether the iterator operates in reverse (iterating tail to head)
 	bool reverse_;
 	// Target list
-	RefList<T,D>& targetRefList_;
+	const RefList<T,D>& targetRefList_;
 	// Current item
 	RefListItem<T,D>* currentItem_;
 

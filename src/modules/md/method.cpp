@@ -86,7 +86,7 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 
 	// Variables
 	int n, nCapped = 0;
-	Atom* atoms = cfg->atoms();
+	Atom** atoms = cfg->atoms();
 	Atom* i;
 	double tInstant, ke, tScale, peInter, peIntra;
 	double deltaTSq = deltaT*deltaT;
@@ -112,7 +112,7 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 	double massSum = 0.0;
 	for (n=0; n<cfg->nAtoms(); ++n)
 	{
-		i = &atoms[n];
+		i = atoms[n];
 		if (randomVelocities)
 		{
 			v[n].x = exp(DUQMath::random()-0.5) / sqrt(TWOPI);
@@ -185,7 +185,7 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 		// B:  v(t+dt) = v(t+dt/2) + 0.5*a(t+dt)*dt
 		for (n=0; n<cfg->nAtoms(); ++n)
 		{
-			i = &atoms[n];
+			i = atoms[n];
 
 			// Propagate positions (by whole step)...
 			i->translateCoordinates(v[n]*deltaT + a[n]*0.5*deltaTSq);
@@ -273,7 +273,7 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 		tInstant = ke * 2.0 / (3.0 * cfg->nAtoms() * kb);
 		tScale = sqrt(temperature / tInstant);
 		v *= tScale;
-		
+
 		// Convert ke from 10J/mol to kJ/mol
 		ke *= 0.01;
 

@@ -50,17 +50,17 @@ void DUQ::intramolecularForces(ProcessPool& procPool, Configuration* cfg, Array<
 	start = procPool.interleavedLoopStart(ProcessPool::OverPoolProcesses);
 	stride = procPool.interleavedLoopStride(ProcessPool::OverPoolProcesses);
 
-	// Main loop over molecules
-	for (int m=start; m<cfg->nMolecules(); m += stride)
-	{
-		Molecule* mol = cfg->molecule(m);
+	// Loop over Bonds
+	Bond** bonds = cfg->bonds();
+	for (int m=start; m<cfg->nBonds(); m += stride) kernel.forces(bonds[m]);
 
-		// Bonds
-		for (SpeciesBond* b = mol->species()->bonds(); b != NULL; b = b->next) kernel.forces(mol, b);
+	// Loop over Angles
+	Angle** angles = cfg->angles();
+	for (int m=start; m<cfg->nAngles(); m += stride) kernel.forces(angles[m]);
 
-		// Angles
-		for (SpeciesAngle* a = mol->species()->angles(); a != NULL; a = a->next) kernel.forces(mol, a);
-	}
+	// Loop over Torsions
+	Torsion** torsions = cfg->torsions();
+	for (int m=start; m<cfg->nTorsions(); m += stride) kernel.forces(torsions[m]);
 }
 
 // Calculate interatomic forces within the system
