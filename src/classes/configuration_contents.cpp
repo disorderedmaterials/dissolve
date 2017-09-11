@@ -28,6 +28,24 @@
 #include "base/processpool.h"
 #include "modules/import/import.h"
 
+// Return number of Molecules in Configuration
+int Configuration::nMolecules() const
+{
+	return molecules_.nItems();
+}
+
+// Return first Molecule
+Molecule** Configuration::molecules()
+{
+	return molecules_.array();
+}
+
+// Return nth Molecule
+Molecule* Configuration::molecule(int n)
+{
+	return molecules_[n];
+}
+
 // Return number of grains
 int Configuration::nGrains() const
 {
@@ -76,6 +94,60 @@ Atom* Configuration::atom(int n)
 	}
 #endif
 	return atoms_[n];
+}
+
+// Return number of Bonds in Configuration
+int Configuration::nBonds() const
+{
+	return bonds_.nItems();
+}
+
+// Return Bond array
+Bond** Configuration::bonds()
+{
+	return bonds_.array();
+}
+
+// Return nth Bond
+Bond* Configuration::bond(int n)
+{
+	return bonds_[n];
+}
+
+// Return number of Angles in Configuration
+int Configuration::nAngles() const
+{
+	return angles_.nItems();
+}
+
+// Return Angle array
+Angle** Configuration::angles()
+{
+	return angles_.array();
+}
+
+// Return nth Angle
+Angle* Configuration::angle(int n)
+{
+	return angles_[n];
+}
+
+// Return number of Torsions in Configuration
+int Configuration::nTorsions() const
+{
+	return torsions_.nItems();
+}
+
+// Return Torsion array
+Torsion** Configuration::torsions()
+{
+	return torsions_.array();
+}
+
+// Return nth Torsion
+Torsion* Configuration::torsion(int n)
+{
+	return torsions_[n];
 }
 
 // Return specified type

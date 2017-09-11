@@ -41,7 +41,10 @@ template <class T> class DynamicArrayObjectBase
 
 	public:
 	// Return index of object within parent DynamicArray
-	int arrayIndex() const;
+	int arrayIndex() const
+	{
+		return arrayIndex_;
+	}
 };
 
 // Dynamic Array Object Class
@@ -51,7 +54,10 @@ template <class T> class DynamicArrayObject : public DynamicArrayObjectBase<T>
 
 	protected:
 	// Return index of object within parent DynamicArray
-	void setArrayIndex(int index);
+	void setArrayIndex(int index)
+	{
+		DynamicArrayObjectBase<T>::arrayIndex_ = index;
+	}
 };
 
 #endif

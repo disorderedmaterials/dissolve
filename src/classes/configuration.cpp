@@ -201,26 +201,27 @@ void Configuration::clear()
 // Setup configuration
 bool Configuration::setup(ProcessPool& procPool, const List<AtomType>& masterAtomTypes, double pairPotentialRange, int boxNormalisationNPoints)
 {
+	Messenger::print("--> Setting up Configuration from Species / multiplier definition...\n");
+
 	/*
 	 * Order of business:
-	 * 1) Check for a sensible multiplier for the system
-	 * 2) Create atom, grain, and intramolecular lists based on defined Species
-	 * 3) Add a periodic box (since we now know the total number of atoms in the system, and hence can work out the number density)
- 	 * 4) Check RDF range
-	 * 5) Create atom/grain arrays
+	 * 1) Determine the system size
+	 * 2) Add a periodic Box, and check RDF range request
+	 * 3) Create Molecule, Atom, Grain, and intramolecular lists based on defined Species
+	 * 4) Load initial coordinates from file if necessary
+	 * 5) Initialise neighbour lists
 	 * 6) Calculate/load Box normalisation if necessary
 	 */
 
-	Messenger::print("--> Setting up Configuration from Species / multiplier definition...\n");
-
-	// Check Configuration multiplier
+	/*
+	 * 1) Determine System Size
+	 */
 	if (multiplier_ < 1)
 	{
 		Messenger::error("Configuration multiplier is zero or negative (%i).\n", multiplier_);
 		return false;
 	}
 
-	// Determine system size
 	int nGrains = 0;
 	int nAtoms = 0;
 	int nMolecules = 0;
@@ -244,9 +245,59 @@ bool Configuration::setup(ProcessPool& procPool, const List<AtomType>& masterAto
 	}
 
 	// Setup dynamic arrays based on the totals we now have
+	molecules_.initialise(nMolecules);
+	grains_.initialise(nGrains);
 	atoms_.initialise(nAtoms);
 
-	// Populate Atom and Grain arrays from Molecule copies
+	/*
+	 * 2) Create a Box to contain the system
+	 */
+	Messenger::print("--> Creating periodic Box and Cell partitioning...\n");
+	if (!setupBox(pairPotentialRange))
+	{
+		Messenger::error("Failed to set-up Box/Cells for Configuration.\n");
+		return false;
+	}
+
+	// Determine maximal extent of RDF (from origin to centre of box)
+	Vec3<double> half = box()->axes() * Vec3<double>(0.5,0.5,0.5);
+	double maxR = half.magnitude(), inscribedSphereRadius = box()->inscribedSphereRadius();
+	Messenger::print("\n");
+	Messenger::print("--> Maximal extent for RDFs is %f Angstrom (half cell diagonal distance).\n", maxR);
+	Messenger::print("--> Inscribed sphere radius (maximum RDF range avoiding periodic images) is %f Angstroms.\n", inscribedSphereRadius);
+	if (requestedRDFRange_ < -1.5)
+	{
+		Messenger::print("--> Using maximal non-minimum image range for RDFs.\n");
+		rdfRange_ = inscribedSphereRadius;
+	}
+	else if (requestedRDFRange_ < -0.5)
+	{
+		Messenger::print("--> Using 90%% of maximal extent for RDFs.\n");
+		rdfRange_ = 0.90*maxR;
+	}
+	else
+	{
+		Messenger::print("--> Specific RDF range supplied (%f Angstroms).\n", requestedRDFRange_);
+		rdfRange_ = requestedRDFRange_;
+		if (rdfRange_ < 0.0)
+		{
+			Messenger::error("Negative RDF range requested.\n");
+			return false;
+		}
+		else if (rdfRange_ > maxR)
+		{
+			Messenger::error("Requested RDF range is greater then the maximum possible extent for the Box.\n");
+			return false;
+		}
+		else if (rdfRange_ > (0.90*maxR)) Messenger::warn("Requested RDF range is greater than 90%% of the maximum possible extent for the Box. FT may be suspect!\n");
+	}
+	// 'Snap' rdfRange_ to nearest bin width...
+	rdfRange_ = int(rdfRange_/rdfBinWidth_) * rdfBinWidth_;
+	Messenger::print("--> RDF range (snapped to bin width) is %f Angstroms.\n", rdfRange_);
+
+	/*
+	 * 3) Create Molecules, Grains, and Atoms
+	 */
 	Messenger::print("--> Setting up Molecules, Atoms, and Grains...\n");
 
 	// If we need it, setup random buffer between all processes so our generated coordinates are the same
@@ -344,51 +395,9 @@ bool Configuration::setup(ProcessPool& procPool, const List<AtomType>& masterAto
 	// Set fractional populations in usedAtomTypes_
 	usedAtomTypes_.finalise();
 
-	// Create a Box
-	Messenger::print("--> Creating periodic Box and Cell partitioning...\n");
-	if (!setupBox(pairPotentialRange))
-	{
-		Messenger::error("Failed to set-up Box/Cells for Configuration.\n");
-		return false;
-	}
-
-	// Determine maximal extent of RDF (from origin to centre of box)
-	Vec3<double> half = box()->axes() * Vec3<double>(0.5,0.5,0.5);
-	double maxR = half.magnitude(), inscribedSphereRadius = box()->inscribedSphereRadius();
-	Messenger::print("\n");
-	Messenger::print("--> Maximal extent for RDFs is %f Angstrom (half cell diagonal distance).\n", maxR);
-	Messenger::print("--> Inscribed sphere radius (maximum RDF range avoiding periodic images) is %f Angstroms.\n", inscribedSphereRadius);
-	if (requestedRDFRange_ < -1.5)
-	{
-		Messenger::print("--> Using maximal non-minimum image range for RDFs.\n");
-		rdfRange_ = inscribedSphereRadius;
-	}
-	else if (requestedRDFRange_ < -0.5)
-	{
-		Messenger::print("--> Using 90%% of maximal extent for RDFs.\n");
-		rdfRange_ = 0.90*maxR;
-	}
-	else
-	{
-		Messenger::print("--> Specific RDF range supplied (%f Angstroms).\n", requestedRDFRange_);
-		rdfRange_ = requestedRDFRange_;
-		if (rdfRange_ < 0.0)
-		{
-			Messenger::error("Negative RDF range requested.\n");
-			return false;
-		}
-		else if (rdfRange_ > maxR)
-		{
-			Messenger::error("Requested RDF range is greater then the maximum possible extent for the Box.\n");
-			return false;
-		}
-		else if (rdfRange_ > (0.90*maxR)) Messenger::warn("Requested RDF range is greater than 90%% of the maximum possible extent for the Box. FT may be suspect!\n");
-	}
-	// 'Snap' rdfRange_ to nearest bin width...
-	rdfRange_ = int(rdfRange_/rdfBinWidth_) * rdfBinWidth_;
-	Messenger::print("--> RDF range (snapped to bin width) is %f Angstroms.\n", rdfRange_);
-
-	// Now, we need some coordinates:
+	/*
+	 * 4) Load Coordinates (if necessary)
+	 */
 	// 1) If useOutputCoordinatesAsInput_ is true and that file exists, this overrides everything else
 	// 2) If randomConfiguration_ is true, generate some random coordinates
 	// 3) Load the inputCoordinatesFile_
@@ -414,14 +423,18 @@ bool Configuration::setup(ProcessPool& procPool, const List<AtomType>& masterAto
 		inputFileParser.closeFiles();
 	}
 
-	// Initialise neighbour lists and update grains
+	/*
+	 * 5) Initialise neighbour lists and update grains
+	 */
 	Messenger::print("--> Initialising Cell neighbour lists and Grains\n");
 	if (!updateAtomsInCells()) return false;
 	
 	// Initialise cell atom neighbour lists
 	recreateCellAtomNeighbourLists(pairPotentialRange);
 
-	// Load or calculate Box normalisation (if we need one)
+	/*
+	 * 6) Load or calculate Box normalisation file (if we need one)
+	 */
 	if (rdfRange_ <= inscribedSphereRadius)
 	{
 		Messenger::print("--> No need for Box normalisation array since rdfRange is within periodic range.\n");

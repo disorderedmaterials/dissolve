@@ -473,27 +473,26 @@ bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration*
 	 */
 
 	double distance;
-	int start, stride;
 	const Box* box = cfg->box();
 	CellArray& cellArray = cfg->cells();
 
 	// Set start/stride for parallel loop (pool solo)
-	start = procPool.interleavedLoopStart(ProcessPool::OverPoolProcesses);
-	stride = procPool.interleavedLoopStride(ProcessPool::OverPoolProcesses);
+	int start = procPool.interleavedLoopStart(ProcessPool::OverPoolProcesses);
+	int stride = procPool.interleavedLoopStride(ProcessPool::OverPoolProcesses);
 
 	timer.start();
-	// Loop over molecules...
-	for (int m=start; m<cfg->nMolecules(); m += stride)
+
+	// If we're considering the intrmolecular part to be between all pairs, as opposed to just those that explicitly bound,
+	// perform a loop over molecules. Otherwise, use the Configuration's master lists of intramolecular terms.
+	Atom* i, *j, *k;
+	if (allIntra)
 	{
-		Molecule* mol = cfg->molecule(m);
-
-		Atom* i, *j, *k;
-
-		// Consider all intramolecular pairs?
-		if (allIntra)
-XXX Put this outside the molecule loop, because we can use the Configuration list for the other calculation
+		// Loop over molecules...
+		for (int m=start; m<cfg->nMolecules(); m += stride)
 		{
+			Molecule* mol = cfg->molecule(m);
 			Atom** atoms = mol->atoms();
+
 			for (int ii=0; ii<mol->nAtoms()-1; ++ii)
 			{
 				i = atoms[ii];
@@ -507,30 +506,32 @@ XXX Put this outside the molecule loop, because we can use the Configuration lis
 				}
 			}
 		}
-		else
+	}
+	else
+	{
+		// Bonds
+		Bond* b = cfg->bonds()[0];
+		for (int n = 0; n<cfg->nBonds(); ++n, ++b)
 		{
-			// Bonds
-			for (Bond* b = mol->species()->bonds(); b != NULL; b = b->next)
-			{
-				i = mol->atom(b->indexI());
-				j = mol->atom(b->indexJ());
-				if (cellArray.useMim(i->cell(), j->cell())) distance = box->minimumDistance(i, j);
-				else distance = (i->r() - j->r()).magnitude();
-				partialgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).add(distance);
-			}
+			i = b->i();
+			j = b->j();
+			if (cellArray.useMim(i->cell(), j->cell())) distance = box->minimumDistance(i, j);
+			else distance = (i->r() - j->r()).magnitude();
+			partialgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).add(distance);
+		}
 
-			// Angles
-			for (SpeciesAngle* a = mol->species()->angles(); a != NULL; a = a->next)
-			{
-				i = mol->atom(a->indexI());
-				j = mol->atom(a->indexJ());
-				k = mol->atom(a->indexK());
-				
-				// Determine whether we need to apply minimum image between 'j-i' and 'j-k'
-				if (cellArray.useMim(i->cell(), k->cell())) distance = box->minimumDistance(i, k);
-				else distance = (i->r() - k->r()).magnitude();
-				partialgr.boundHistogram(i->localTypeIndex(), k->localTypeIndex()).add(distance);
-			}
+		// Angles
+		Angle* a = cfg->angles()[0];
+		for (int n = 0; n<cfg->nAngles(); ++n, ++a)
+		{
+			i = a->i();
+			j = a->j();
+			k = a->k();
+			
+			// Determine whether we need to apply minimum image between 'j-i' and 'j-k'
+			if (cellArray.useMim(i->cell(), k->cell())) distance = box->minimumDistance(i, k);
+			else distance = (i->r() - k->r()).magnitude();
+			partialgr.boundHistogram(i->localTypeIndex(), k->localTypeIndex()).add(distance);
 		}
 	}
 	timer.stop();
@@ -782,7 +783,7 @@ bool PartialsModule::calculateBraggTerms(ProcessPool& procPool, Configuration* c
 	Vec3<double> rI, v, rLengths = box->reciprocalAxisLengths();
 	int nTypes = cfg->nUsedAtomTypes();
 	int nAtoms = cfg->nAtoms();
-	Atom* atoms = cfg->atoms();
+	Atom** atoms = cfg->atoms();
 
 	int n, m, h, k, l, hAbs, kAbs, lAbs, typeI, typeJ;
 	double* cosTermsH, *sinTermsH, *cosTermsK, *sinTermsK, *cosTermsL, *sinTermsL, *cosTerms, *sinTerms;
@@ -900,7 +901,7 @@ bool PartialsModule::calculateBraggTerms(ProcessPool& procPool, Configuration* c
 	for (n = 0; n<nAtoms; ++n)
 	{
 		// Calculate reciprocal lattice atom coordinates
-		v = atoms[n].r();
+		v = atoms[n]->r();
 		rI.x = v.x*rAxes[0] + v.y*rAxes[1] + v.z*rAxes[2];
 		rI.y = v.x*rAxes[3] + v.y*rAxes[4] + v.z*rAxes[5];
 		rI.z = v.x*rAxes[6] + v.y*rAxes[7] + v.z*rAxes[8];
@@ -968,7 +969,7 @@ bool PartialsModule::calculateBraggTerms(ProcessPool& procPool, Configuration* c
 	for (n = 0; n<nAtoms; ++n)
 	{
 		// Grab localTypeIndex and array pointers for this atom
-		localTypeIndex = atoms[n].localTypeIndex();
+		localTypeIndex = atoms[n]->localTypeIndex();
 		cosTermsH = braggAtomVectorXCos.ptr(n, 0);
 		cosTermsK = braggAtomVectorYCos.ptr(n, 0);
 		cosTermsL = braggAtomVectorZCos.ptr(n, 0);

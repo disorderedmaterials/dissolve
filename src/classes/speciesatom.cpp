@@ -25,7 +25,7 @@
 #include "base/processpool.h"
 
 // Constructor
-SpeciesAtom::SpeciesAtom()
+SpeciesAtom::SpeciesAtom() : ListItem<SpeciesAtom>()
 {
 	element_ = 0;
 	charge_ = 0.0;

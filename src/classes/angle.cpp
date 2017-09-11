@@ -25,9 +25,8 @@
 #include "base/processpool.h"
 
 // Constructor
-Angle::Angle() : ListItem<Angle>()
+Angle::Angle() : DynamicArrayObject<Angle>()
 {
-	parent_ = NULL;
 	molecule_ = NULL;
 	i_ = NULL;
 	j_ = NULL;
@@ -37,8 +36,6 @@ Angle::Angle() : ListItem<Angle>()
 	attached_[0] = NULL;
 	attached_[1] = NULL;
 	interGrain_ = false;
-	equilibrium_ = 109.5;
-	forceConstant_ = 418.4;
 }
 
 // Destructor
@@ -50,25 +47,13 @@ Angle::~Angle()
  * Basic Data
  */
 
-// Set parent Species
-void Angle::setParent(Species* parent)
-{
-	parent_ = parent;
-}
-
-// Return parent Species
-Species* Angle::parent() const
-{
-	return parent_;
-}
-
-// Set parent Molecule
+// Set Molecule that this Angle exists in
 void Angle::setMolecule(Molecule* parent)
 {
 	molecule_ = parent;
 }
 
-// Return parent Molecule
+// Return Molecule that this Angle exists in
 Molecule* Angle::molecule() const
 {
 	return molecule_;
@@ -109,45 +94,6 @@ Atom *Angle::k() const
 	return k_;
 }
 
-// Return index (in parent Species) of first Atom
-int Angle::indexI() const
-{
-#ifdef CHECKS
-	if (i_ == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL Atom pointer 'i' found in Angle::indexI(). Returning 0...\n");
-		return 0;
-	}
-#endif
-	return i_->index();
-}
-
-// Return index (in parent Species) of second (central) Atom
-int Angle::indexJ() const
-{
-#ifdef CHECKS
-	if (j_ == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL Atom pointer 'j' found in Angle::indexJ(). Returning 0...\n");
-		return 0;
-	}
-#endif
-	return j_->index();
-}
-
-// Return index (in parent Species) of third Atom
-int Angle::indexK() const
-{
-#ifdef CHECKS
-	if (k_ == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL Atom pointer 'k' found in Angle::indexK(). Returning 0...\n");
-		return 0;
-	}
-#endif
-	return k_->index();
-}
-
 // Return whether Atoms in Angle match those specified
 bool Angle::matches(Atom* i, Atom* j, Atom* k) const
 {
@@ -158,32 +104,8 @@ bool Angle::matches(Atom* i, Atom* j, Atom* k) const
 }
 
 /*
- * Interaction Parameters
+ * Connections
  */
-
-// Set equilibrium angle
-void Angle::setEquilibrium(double rEq)
-{
-	equilibrium_ = rEq;
-}
-
-// Return equilibrium angle
-double Angle::equilibrium() const
-{
-	return equilibrium_;
-}
-
-// Set force constant
-void Angle::setForceConstant(double k)
-{
-	forceConstant_ = k;
-}
-
-// Return force constant
-double Angle::forceConstant() const
-{
-	return forceConstant_;
-}
 
 // Create attached Atom array
 void Angle::createAttachedAtomArray(int terminus, int size)
@@ -205,10 +127,6 @@ void Angle::setAttachedAtoms(int terminus, const RefList<Atom,int>& atoms)
 	createAttachedAtomArray(terminus, atoms.nItems());
 	int index = 0;
 	for (RefListItem<Atom,int>* refAtom = atoms.first(); refAtom != NULL; refAtom = refAtom->next) attached_[terminus][index++] = refAtom->item;
-
-	CharString s(-1, "--> For Angle between Atoms %i-%i-%i, terminus %i moves %i Atoms :", indexI()+1, indexJ()+1, indexK()+1, terminus+1, nAttached_[terminus]);
-	for (int n=0; n<nAttached_[terminus]; ++n) s.strcatf(" %i", attached_[terminus][n]->userIndex());
-	Messenger::printVerbose("%s\n", s.get());
 }
 
 // Return number of attached Atoms for terminus specified
@@ -234,6 +152,10 @@ bool Angle::interGrain() const
 {
 	return interGrain_;
 }
+
+/*
+ * Energy / Force
+ */
 
 // Return energy for specified angle
 double Angle::energy(double angleInDegrees) const

@@ -164,6 +164,8 @@ class Configuration : public ListItem<Configuration>
 	DynamicArray<Bond> bonds_;
 	// Array of Angles between Atoms
 	DynamicArray<Angle> angles_;
+	// Array of Torsions between Atoms
+	DynamicArray<Torsion> torsions_;
 	// AtomType list, containing unique (non-isotopic) atom types over all Species used in this configuration
 	AtomTypeList usedAtomTypes_;
 	// Coordinate index, incremented whenever Atom positions change
@@ -173,7 +175,7 @@ class Configuration : public ListItem<Configuration>
 	// Return number of Molecules in Configuration
 	int nMolecules() const;
 	// Return first Molecule
-	Molecule* molecules();
+	Molecule** molecules();
 	// Return nth Molecule
 	Molecule* molecule(int n);
 	// Return number of Grains in Configuration

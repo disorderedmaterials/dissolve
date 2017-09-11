@@ -138,6 +138,12 @@ int Molecule::nBonds() const
 	return bonds_.nItems();
 }
 
+// Return Bond array
+Bond** Molecule::bonds()
+{
+	return bonds_;
+}
+
 // Return nth Bond pointer
 Bond* Molecule::bond(int n)
 {
@@ -156,6 +162,12 @@ int Molecule::nAngles() const
 	return angles_.nItems();
 }
 
+// Return Angle array
+Angle** Molecule::angles()
+{
+	return angles_;
+}
+
 // Return nth Angle pointer
 Angle* Molecule::angle(int n)
 {
@@ -172,6 +184,12 @@ void Molecule::addTorsion(Torsion* torsion)
 int Molecule::nTorsions() const
 {
 	return torsions_.nItems();
+}
+
+// Return Torsion array
+Torsion** Molecule::torsions()
+{
+	return torsions_;
 }
 
 // Return nth Torsion pointer

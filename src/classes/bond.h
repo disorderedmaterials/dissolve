@@ -23,6 +23,7 @@
 #define DUQ_BOND_H
 
 #include "templates/dynamicarrayobject.h"
+#include "templates/reflist.h"
 
 // Forward Declarations
 class Atom;

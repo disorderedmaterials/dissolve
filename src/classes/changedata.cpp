@@ -60,6 +60,12 @@ Atom* ChangeData::atom()
 	return atom_;
 }
 
+// Return array index of stored Atom
+int ChangeData::atomArrayIndex() const
+{
+	return atom_->arrayIndex();
+}
+
 // Update local position, and flag as moved
 void ChangeData::updatePosition()
 {

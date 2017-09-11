@@ -36,8 +36,9 @@ template <class T> class ArrayChunk
 	 */
 	public:
 	// Constructor
-	ArrayChunk<T>()
+	ArrayChunk<T>(int nObjects = 512)
 	{
+		nObjects_ = nObjects;
 		objectSize_ = 0;
 		objectArray_ = NULL;
 		objectUsed_ = NULL;
@@ -61,6 +62,8 @@ template <class T> class ArrayChunk
 	 * Chunk Data
 	 */
 	private:
+	// Number of objects in chunk
+	int nObjects_;
 	// Size of individual object
 	int objectSize_;
 	// Object array
@@ -81,7 +84,7 @@ template <class T> class ArrayChunk
 	// 	printf("Offset = %li\n", offset);
 		if (offset < 0) return -1;
 		int index = offset / objectSize_;
-		return (index < FACTORYCHUNKSIZE ? index : -1);
+		return (index < nObjects_ ? index : -1);
 	}
 
 	public:
@@ -91,7 +94,7 @@ template <class T> class ArrayChunk
 		// Allocate object array
 		try
 		{
-			objectArray_ = new T[FACTORYCHUNKSIZE];
+			objectArray_ = new T[nObjects_];
 		}
 		catch (bad_alloc& alloc)
 		{
@@ -102,7 +105,7 @@ template <class T> class ArrayChunk
 		// Allocate object used flags
 		try
 		{
-			objectUsed_ = new bool[FACTORYCHUNKSIZE];
+			objectUsed_ = new bool[nObjects_];
 		}
 		catch (bad_alloc& alloc)
 		{
@@ -111,9 +114,11 @@ template <class T> class ArrayChunk
 		}
 
 		objectSize_ = sizeof(T);
-		for (int n=0; n<FACTORYCHUNKSIZE; ++n) objectUsed_[n] = false;
+		for (int n=0; n<nObjects_; ++n) objectUsed_[n] = false;
 		nextAvailableObject_ = 0;
-		nUnusedObjects_ = FACTORYCHUNKSIZE;
+		nUnusedObjects_ = nObjects_;
+
+		return true;
 	}
 	// Return next available object
 	T* nextAvailable()
@@ -133,7 +138,7 @@ template <class T> class ArrayChunk
 		// Search for next available object before we return the object
 		int nextFree = nextAvailableObject_ + 1;
 		// -- First part - search to end of current array
-		while (nextFree < FACTORYCHUNKSIZE)
+		while (nextFree < nObjects_)
 		{
 			if (!objectUsed_[nextFree])
 			{
@@ -275,6 +280,13 @@ template <class T> class DynamicArray
 	bool initialise(int nItems)
 	{
 		array_.initialise(nItems);
+		T* newItem;
+		for (int n=0; n<nItems; ++n)
+		{
+			newItem = produce();
+			newItem->setArrayIndex(n);
+			array_[n] = newItem;
+		}
 	}
 
 
@@ -337,6 +349,44 @@ template <class T> class DynamicArray
 		}
 #endif
 		return array_[index];
+	}
+};
+
+// Iterator
+template <class T> class DynamicArrayIterator
+{
+	public:
+	// Constructor
+	DynamicArrayIterator<T>(DynamicArray<T>& target) : arrayTarget_(target)
+	{
+		if (arrayTarget_.nItems() == 0)
+		{
+			index_ = 0;
+			pointerOffset_ = NULL;
+		}
+		else
+		{
+			index_ = 0;
+			pointerOffset_ = arrayTarget_.array()[-1];
+		}
+	}
+
+	private:
+	// Target DynamicArray
+	DynamicArray<T>& arrayTarget_;
+	// Current index for iterator
+	int index_;
+	// Current array item offset
+	T* pointerOffset_;
+
+	public:
+	// Iterate
+	T* iterate()
+	{
+		++index_;
+		++pointerOffset_;
+		
+		return (index_ < arrayTarget_.nItems() ? pointerOffset_ : NULL);
 	}
 };
 
