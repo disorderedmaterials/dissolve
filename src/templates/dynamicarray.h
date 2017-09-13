@@ -364,11 +364,12 @@ template <class T> class DynamicArrayIterator
 		{
 			index_ = 0;
 			pointer_ = NULL;
+			result_ = NULL;
 		}
 		else
 		{
 			index_ = 0;
-			pointer_ = &arrayTarget_.array()[-1];
+			pointer_ = &arrayTarget_.array()[0];
 		}
 	}
 
@@ -379,15 +380,22 @@ template <class T> class DynamicArrayIterator
 	int index_;
 	// Pointer to current item
 	T** pointer_;
+	// Result to return
+	T* result_;
 
 	public:
 	// Iterate
 	T* iterate()
 	{
-		++index_;
-		++pointer_;
+		if (index_ < arrayTarget_.nItems())
+		{
+			result_ = (*pointer_);
+			++pointer_;
+			++index_;
+		}
+		else return NULL;
 		
-		return (index_ < arrayTarget_.nItems() ? (*pointer_) : NULL);
+		return result_;
 	}
 };
 
