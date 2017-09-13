@@ -116,9 +116,9 @@ int Configuration::nMolecules() const
 }
 
 // Return first Molecule
-Molecule** Configuration::molecules()
+DynamicArray<Molecule>& Configuration::molecules()
 {
-	return molecules_.array();
+	return molecules_;
 }
 
 // Return nth Molecule
@@ -146,9 +146,9 @@ int Configuration::nGrains() const
 }
 
 // Return grain array
-Grain** Configuration::grains()
+DynamicArray<Grain>& Configuration::grains()
 {
-	return grains_.array();
+	return grains_;
 }
 
 // Return nth grain
@@ -182,9 +182,9 @@ int Configuration::nAtoms() const
 }
 
 // Return Atom array
-Atom** Configuration::atoms()
+DynamicArray<Atom>& Configuration::atoms()
 {
-	return atoms_.array();
+	return atoms_;
 }
 
 // Return nth atom
@@ -222,9 +222,9 @@ int Configuration::nBonds() const
 }
 
 // Return Bond array
-Bond** Configuration::bonds()
+DynamicArray<Bond>& Configuration::bonds()
 {
-	return bonds_.array();
+	return bonds_;
 }
 
 // Return nth Bond
@@ -256,9 +256,9 @@ int Configuration::nAngles() const
 }
 
 // Return Angle array
-Angle** Configuration::angles()
+DynamicArray<Angle>& Configuration::angles()
 {
-	return angles_.array();
+	return angles_;
 }
 
 // Return nth Angle
@@ -291,9 +291,9 @@ int Configuration::nTorsions() const
 }
 
 // Return Torsion array
-Torsion** Configuration::torsions()
+DynamicArray<Torsion>& Configuration::torsions()
 {
-	return torsions_.array();
+	return torsions_;
 }
 
 // Return nth Torsion

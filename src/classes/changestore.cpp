@@ -200,7 +200,7 @@ bool ChangeStore::distributeAndApply(Configuration* cfg)
 	if (!processPool_.broadcast(z_)) return false;
 
 	// Apply atom changes
-	Atom** atoms = cfg->atoms();
+	Atom** atoms = cfg->atoms().array();
 	for (int n=0; n<nTotalChanges; ++n)
 	{
 #ifdef CHECKS

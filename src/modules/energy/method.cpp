@@ -137,20 +137,20 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 			}
 
 			// Loop over defined Bonds
-			Bond** bonds = cfg->bonds();
-			for (int m=0; m<cfg->nBonds(); ++m)
+			DynamicArrayIterator<Bond> bondIterator(cfg->bonds());
+			while (Bond* b = bondIterator.iterate())
 			{
-				r = cfg->box()->minimumDistance(bonds[m]->i(), bonds[m]->j());
-				correctIntraEnergy += bonds[m]->energy(r);
+				r = cfg->box()->minimumDistance(b->i(), b->j());
+				correctIntraEnergy += b->energy(r);
 			}
 
 			// Loop over defined Angles
-			Angle** angles = cfg->angles();
-			for (int m=0; m<cfg->nAngles(); ++m)
+			DynamicArrayIterator<Angle> angleIterator(cfg->angles());
+			while (Angle* a = angleIterator.iterate())
 			{
 				// Get vectors 'j-i' and 'j-k'
-				vecji = cfg->box()->minimumVector(angles[m]->j(), angles[m]->i());
-				vecjk = cfg->box()->minimumVector(angles[m]->j(), angles[m]->k());
+				vecji = cfg->box()->minimumVector(a->j(), a->i());
+				vecjk = cfg->box()->minimumVector(a->j(), a->k());
 				
 				// Calculate angle
 				vecji.normalise();
@@ -158,12 +158,12 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 				angle = Box::angle(vecji, vecjk);
 
 				// Determine Angle energy
-				correctIntraEnergy += angles[m]->energy(angle);
+				correctIntraEnergy += a->energy(angle);
 			}
 
 			// Loop over defined Torsions
-			Torsion** torsions = cfg->torsions();
-			for (int m=0; m<cfg->nTorsions(); ++m)
+			DynamicArrayIterator<Torsion> torsionIterator(cfg->torsions());
+			while (Torsion* t = torsionIterator.iterate())
 			{
 				Messenger::error("Calculation of correct torsion energy in EnergyModule is not yet implemented.\n");
 				return false;

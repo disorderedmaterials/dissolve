@@ -363,12 +363,12 @@ template <class T> class DynamicArrayIterator
 		if (arrayTarget_.nItems() == 0)
 		{
 			index_ = 0;
-			pointerOffset_ = NULL;
+			pointer_ = NULL;
 		}
 		else
 		{
 			index_ = 0;
-			pointerOffset_ = arrayTarget_.array()[-1];
+			pointer_ = &arrayTarget_.array()[-1];
 		}
 	}
 
@@ -377,17 +377,17 @@ template <class T> class DynamicArrayIterator
 	DynamicArray<T>& arrayTarget_;
 	// Current index for iterator
 	int index_;
-	// Current array item offset
-	T* pointerOffset_;
+	// Pointer to current item
+	T** pointer_;
 
 	public:
 	// Iterate
 	T* iterate()
 	{
 		++index_;
-		++pointerOffset_;
+		++pointer_;
 		
-		return (index_ < arrayTarget_.nItems() ? pointerOffset_ : NULL);
+		return (index_ < arrayTarget_.nItems() ? (*pointer_) : NULL);
 	}
 };
 

@@ -49,15 +49,15 @@ void DUQ::intramolecularForces(ProcessPool& procPool, Configuration* cfg, Array<
 	int stride = procPool.interleavedLoopStride(ProcessPool::OverPoolProcesses);
 
 	// Loop over Bonds
-	Bond** bonds = cfg->bonds();
+	Bond** bonds = cfg->bonds().array();
 	for (int m=start; m<cfg->nBonds(); m += stride) kernel.forces(bonds[m]);
 
 	// Loop over Angles
-	Angle** angles = cfg->angles();
+	Angle** angles = cfg->angles().array();
 	for (int m=start; m<cfg->nAngles(); m += stride) kernel.forces(angles[m]);
 
 	// Loop over Torsions
-	Torsion** torsions = cfg->torsions();
+	Torsion** torsions = cfg->torsions().array();
 	for (int m=start; m<cfg->nTorsions(); m += stride) kernel.forces(torsions[m]);
 }
 

@@ -583,7 +583,7 @@ void DUQ::dump()
 	{
 		Messenger::print("\n# Configuration: '%s'\n", cfg->name());
 		Messenger::print("# Atomic coordinates\n");
-		Atom** atoms = cfg->atoms();
+		Atom** atoms = cfg->atoms().array();
 		for (int n=0; n<cfg->nAtoms(); ++n)
 		{
 			Messenger::print("%10i  %5s  %10.4e  %10.4e  %10.4e  %i  %i\n", n+1, PeriodicTable::element(atoms[n]->element()).symbol(), atoms[n]->r().x, atoms[n]->r().y, atoms[n]->r().z, atoms[n]->localTypeIndex(), atoms[n]->masterTypeIndex());

@@ -49,15 +49,15 @@ double DUQ::intramolecularEnergy(ProcessPool& procPool, Configuration* cfg)
 	int stride = procPool.interleavedLoopStride(ProcessPool::OverPoolProcesses);
 
 	// Loop over defined Bonds
-	Bond** bonds = cfg->bonds();
+	Bond** bonds = cfg->bonds().array();
 	for (int m=start; m<cfg->nBonds(); m += stride) energy += kernel.energy(bonds[m]);
 
 	// Loop over defined Angles
-	Angle** angles = cfg->angles();
+	Angle** angles = cfg->angles().array();
 	for (int m=start; m<cfg->nAngles(); m += stride) energy += kernel.energy(angles[m]);
 
 	// Loop over defined Torsions
-	Torsion** torsions = cfg->torsions();
+	Torsion** torsions = cfg->torsions().array();
 	for (int m=start; m<cfg->nTorsions(); m += stride) energy += kernel.energy(torsions[m]);
 
 	Messenger::printVerbose("Intramolecular Energy (Local) is %15.9e\n", energy);

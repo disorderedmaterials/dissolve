@@ -177,7 +177,7 @@ class Configuration : public ListItem<Configuration>
 	// Return number of Molecules in Configuration
 	int nMolecules() const;
 	// Return first Molecule
-	Molecule** molecules();
+	DynamicArray<Molecule>& molecules();
 	// Return nth Molecule
 	Molecule* molecule(int n);
 	// Add new Grain to Configuration, with Molecule parent specified
@@ -185,7 +185,7 @@ class Configuration : public ListItem<Configuration>
 	// Return number of Grains in Configuration
 	int nGrains() const;
 	// Return Grain array
-	Grain** grains();
+	DynamicArray<Grain>& grains();
 	// Return nth Grain
 	Grain* grain(int n);
 	// Add new Atom to Configuration, with Molecule and Grain parents specified
@@ -193,7 +193,7 @@ class Configuration : public ListItem<Configuration>
 	// Return number of Atoms in Configuration
 	int nAtoms() const;
 	// Return Atom array
-	Atom** atoms();
+	DynamicArray<Atom>& atoms();
 	// Return nth Atom
 	Atom* atom(int n);
 	// Add new Bond to Configuration, with Molecule parent specified
@@ -201,7 +201,7 @@ class Configuration : public ListItem<Configuration>
 	// Return number of Bonds in Configuration
 	int nBonds() const;
 	// Return Bond array
-	Bond** bonds();
+	DynamicArray<Bond>& bonds();
 	// Return nth Bond
 	Bond* bond(int n);
 	// Add new Angle to Configuration, with Molecule parent specified
@@ -209,7 +209,7 @@ class Configuration : public ListItem<Configuration>
 	// Return number of Angles in Configuration
 	int nAngles() const;
 	// Return Angle array
-	Angle** angles();
+	DynamicArray<Angle>& angles();
 	// Return nth Angle
 	Angle* angle(int n);
 	// Add new Torsion to Configuration, with Molecule parent specified
@@ -217,7 +217,7 @@ class Configuration : public ListItem<Configuration>
 	// Return number of Torsions in Configuration
 	int nTorsions() const;
 	// Return Torsion array
-	Torsion** torsions();
+	DynamicArray<Torsion>& torsions();
 	// Return nth Torsion
 	Torsion* torsion(int n);
 	// Return specified type

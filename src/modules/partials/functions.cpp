@@ -226,7 +226,7 @@ bool PartialsModule::calculateTest(ProcessPool& procPool, Configuration* cfg, Pa
 {
 	// Calculate radial distribution functions with a simple double loop, in serial
 	const Box* box = cfg->box();
-	Atom** atoms = cfg->atoms();
+	Atom** atoms = cfg->atoms().array();
 	int ii, jj, typeI;
 	double distance;
 	double rbin = 1.0 / cfg->rdfBinWidth();
@@ -271,7 +271,7 @@ bool PartialsModule::calculateSimple(ProcessPool& procPool, Configuration* cfg, 
 	}
 
 	// Loop over Atoms and construct arrays
-	Atom** atoms = cfg->atoms();
+	Atom** atoms = cfg->atoms().array();
 	for (n=0; n< cfg->nAtoms(); ++n)
 	{
 		m = atoms[n]->localTypeIndex();
@@ -510,8 +510,8 @@ bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration*
 	else
 	{
 		// Bonds
-		Bond* b = cfg->bonds()[0];
-		for (int n = 0; n<cfg->nBonds(); ++n, ++b)
+		DynamicArrayIterator<Bond> bondIterator(cfg->bonds());
+		while (Bond* b = bondIterator.iterate())
 		{
 			i = b->i();
 			j = b->j();
@@ -521,8 +521,8 @@ bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration*
 		}
 
 		// Angles
-		Angle* a = cfg->angles()[0];
-		for (int n = 0; n<cfg->nAngles(); ++n, ++a)
+		DynamicArrayIterator<Angle> angleIterator(cfg->angles());
+		while (Angle* a = angleIterator.iterate())
 		{
 			i = a->i();
 			j = a->j();
@@ -783,7 +783,7 @@ bool PartialsModule::calculateBraggTerms(ProcessPool& procPool, Configuration* c
 	Vec3<double> rI, v, rLengths = box->reciprocalAxisLengths();
 	int nTypes = cfg->nUsedAtomTypes();
 	int nAtoms = cfg->nAtoms();
-	Atom** atoms = cfg->atoms();
+	Atom** atoms = cfg->atoms().array();
 
 	int n, m, h, k, l, hAbs, kAbs, lAbs, typeI, typeJ;
 	double* cosTermsH, *sinTermsH, *cosTermsK, *sinTermsK, *cosTermsL, *sinTermsL, *cosTerms, *sinTerms;

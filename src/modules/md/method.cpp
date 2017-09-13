@@ -86,7 +86,7 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 
 	// Variables
 	int n, nCapped = 0;
-	Atom** atoms = cfg->atoms();
+	Atom** atoms = cfg->atoms().array();
 	Atom* i;
 	double tInstant, ke, tScale, peInter, peIntra;
 	double deltaTSq = deltaT*deltaT;
