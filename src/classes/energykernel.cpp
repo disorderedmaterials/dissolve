@@ -210,12 +210,12 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 	Atom* ii, *jj;
 	Vec3<double> rI;
 	Molecule* molI;
-	int i, typeI, indexI, j, start = 0, stride = 1;
+	int i, typeI, indexI, j;
 	double rSq, scale;
 
 	// Get start/stride for specified loop context
-	start = processPool_.interleavedLoopStart(loopContext);
-	stride = processPool_.interleavedLoopStride(loopContext);
+	int start = processPool_.interleavedLoopStart(loopContext);
+	int stride = processPool_.interleavedLoopStride(loopContext);
 
 	// Loop over central cell atoms
 	if (applyMim)
@@ -224,8 +224,6 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 		{
 			ii = centralAtoms[i];
 			molI = ii->molecule();
-			indexI = ii->arrayIndex();
-			typeI = ii->masterTypeIndex();
 			rI = ii->r();
 
 			// Straight loop over other cell atoms
@@ -233,8 +231,8 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 			{
 				jj = otherAtoms[j];
 
-				// Check exclusion of I > J
-				if (excludeIgeJ && (indexI >= jj->arrayIndex())) continue;
+				// Check exclusion of I >= J
+				if (excludeIgeJ && (ii >= jj)) continue;
 
 				// Calculate rSquared distance betwenn atoms, and check it against the stored cutoff distance
 				rSq = box_->minimumDistanceSquared(rI, jj->r());
@@ -256,8 +254,6 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 		{
 			ii = centralAtoms[i];
 			molI = ii->molecule();
-			indexI = ii->arrayIndex();
-			typeI = ii->masterTypeIndex();
 			rI = ii->r();
 
 			// Straight loop over other cell atoms
@@ -265,8 +261,8 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 			{
 				jj = otherAtoms[j];
 				
-				// Check exclusion of I > J
-				if (excludeIgeJ && (ii->arrayIndex() >= jj->arrayIndex())) continue;
+				// Check exclusion of I >= J
+				if (excludeIgeJ && (ii >= jj)) continue;
 
 				// Calculate rSquared distance betwenn atoms, and check it against the stored cutoff distance
 				rSq = (rI - jj->r()).magnitudeSq();
@@ -301,7 +297,7 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::Lo
 	Atom** otherAtoms;
 	Atom* ii, *jj;
 	Vec3<double> rJ;
-	int i, j, typeJ;
+	int i, j;
 	Cell* otherCell;
 	Molecule* molJ;
 	double rSq, scale;
@@ -321,7 +317,6 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::Lo
 		{
 			jj = otherAtoms[j];
 			molJ = jj->molecule();
-			typeJ = jj->masterTypeIndex();
 			rJ = jj->r();
 
 			// Loop over central cell atoms
@@ -329,8 +324,8 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::Lo
 			{
 				ii = centralAtoms[i];
 
-				// Check exclusion of I > J (comparison by pointer)
-				if (excludeIgeJ && (ii > jj)) break;
+				// Check exclusion of I >= J (comparison by pointer)
+				if (excludeIgeJ && (ii >= jj)) continue;
 
 				// Calculate rSquared distance betwenn atoms, and check it against the stored cutoff distance
 				rSq = (ii->r() - rJ).magnitudeSq();
@@ -358,7 +353,6 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::Lo
 		{
 			jj = otherAtoms[j];
 			molJ = jj->molecule();
-			typeJ = jj->masterTypeIndex();
 			rJ = jj->r();
 
 			// Loop over central cell atoms
@@ -366,8 +360,8 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::Lo
 			{
 				ii = centralAtoms[i];
 
-				// Check exclusion of I > J (comparison by pointer)
-				if (excludeIgeJ && (ii > jj)) break;
+				// Check exclusion of I >= J (comparison by pointer)
+				if (excludeIgeJ && (ii >= jj)) continue;
 
 				// Calculate rSquared distance betwenn atoms, and check it against the stored cutoff distance
 				rSq = box_->minimumDistanceSquared(ii->r(), rJ);
@@ -448,8 +442,9 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::L
 		else if (flags&KernelFlags::ExcludeIGEJFlag) for (j=start; j<nOtherAtoms; j += stride)
 		{
 			jj = otherAtoms[j];
-			// Compare the Atom pointers - if i > jj, we can break since the 'jj' Atoms are in an OrderedPointerList
-			if (i >= jj) break;
+
+			// Pointer comparison
+			if (i >= jj) continue;
 
 			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
 			rSq = box_->minimumDistanceSquared(rI, jj->r());
@@ -503,8 +498,8 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::L
 		else if (flags&KernelFlags::ExcludeIGEJFlag) for (j=start; j<nOtherAtoms; j += stride)
 		{
 			jj = otherAtoms[j];
-			// Compare the Atom pointers - if i > jj, we can break since the 'jj' Atoms are in an OrderedPointerList
-			if (i >= jj) break;
+			// Compare pointers
+			if (i >= jj) continue;
 
 			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
 			rSq = (rI - jj->r()).magnitudeSq();

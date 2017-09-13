@@ -71,8 +71,6 @@ class ForceKernel
 	 * Internal Force Calculation
 	 */
 	private:
-	// Calculate forces between Atoms at vector / distance specified
-	void forces(const Atom* i, const Atom* j, Vec3< double > normalisedVector, double vectorMagnitude);
 	// Calculate inter-particle forces between Atoms provided (no minimum image calculation)
 	void forcesWithoutMim(const Atom* i, const Atom* j, double scale = 1.0);
 	// Calculate inter-particle forces between Atom and Grain provided (no minimum image calculation)

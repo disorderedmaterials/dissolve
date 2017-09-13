@@ -46,22 +46,6 @@ ForceKernel::~ForceKernel()
  * Internal Force Calculation
  */
 
-// Calculate forces between Atoms at vector / distance specified
-void ForceKernel::forces(const Atom* i, const Atom* j, Vec3<double> normalisedVector, double vectorMagnitude)
-{
-	// Calculate force vector
-	normalisedVector *= potentialMap_.force(i, j, vectorMagnitude);
-
-	int index = i->arrayIndex();
-	fx_[index] += normalisedVector.x;
-	fy_[index] += normalisedVector.y;
-	fz_[index] += normalisedVector.z;
-	index = j->arrayIndex();
-	fx_[index] -= normalisedVector.x;
-	fy_[index] -= normalisedVector.y;
-	fz_[index] -= normalisedVector.z;
-}
-
 // Calculate PairPotential forces between Atoms provided (no minimum image calculation)
 void ForceKernel::forcesWithoutMim(const Atom* i, const Atom* j, double scale)
 {
@@ -227,7 +211,7 @@ void ForceKernel::forces(const Atom* i, const Atom* j, bool applyMim, bool exclu
 	}
 	
 	// Check indices of Atoms if required
-	if (excludeIgeJ && (i->arrayIndex() >= j->arrayIndex())) return;
+	if (excludeIgeJ && (i >= j)) return;
 
 	if (applyMim) forcesWithMim(i, j);
 	else forcesWithoutMim(i, j);
@@ -252,12 +236,12 @@ void ForceKernel::forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool
 	Atom* ii, *jj;
 	Vec3<double> rI;
 	Molecule* molI;
-	int i, indexI, j, start = 0, stride = 1;
+	int i, j;
 	double scale;
 
 	// Get start/stride for specified loop context
-	start = processPool_.interleavedLoopStart(loopContext);
-	stride = processPool_.interleavedLoopStride(loopContext);
+	int start = processPool_.interleavedLoopStart(loopContext);
+	int stride = processPool_.interleavedLoopStride(loopContext);
 
 	// Loop over central cell atoms
 	if (applyMim)
@@ -266,7 +250,6 @@ void ForceKernel::forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool
 		{
 			ii = centralAtoms[i];
 			molI = ii->molecule();
-			indexI = ii->arrayIndex();
 			rI = ii->r();
 
 			// Straight loop over other cell atoms
@@ -274,10 +257,10 @@ void ForceKernel::forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool
 			{
 				jj = otherAtoms[j];
 
-				// Check exclusion of I > J
-				if (excludeIgeJ && (indexI >= jj->arrayIndex())) continue;
+				// Check exclusion of I > J (pointer comparison)
+				if (excludeIgeJ && (ii >= jj)) continue;
 
-				// Check for atoms in the same species
+				// Check for atoms in the same Molecule
 				if (molI != jj->molecule()) forcesWithMim(ii, jj);
 				else
 				{
@@ -293,7 +276,6 @@ void ForceKernel::forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool
 		{
 			ii = centralAtoms[i];
 			molI = ii->molecule();
-			indexI = ii->arrayIndex();
 			rI = ii->r();
 
 			// Straight loop over other cell atoms
@@ -301,8 +283,8 @@ void ForceKernel::forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool
 			{
 				jj = otherAtoms[j];
 				
-				// Check exclusion of I > J
-				if (excludeIgeJ && (ii->arrayIndex() >= jj->arrayIndex())) continue;
+				// Check exclusion of I > J (pointer comparison)
+				if (excludeIgeJ && (ii >= jj)) continue;
 
 				// Check for atoms in the same molecule
 				if (molI != jj->molecule()) forcesWithoutMim(ii, jj);
@@ -333,45 +315,12 @@ void ForceKernel::forces(Cell* cell, bool excludeIgeJ, ProcessPool::LoopContext 
 	int start = processPool_.interleavedLoopStart(loopContext);
 	int stride = processPool_.interleavedLoopStride(loopContext);
 
-	// Straight loop over Cells *not* requiring mim
+		// Straight loop over Cells *not* requiring mim
 	Cell** neighbours = cell->cellNeighbours();
 	for (int n = 0; n<cell->nCellNeighbours(); ++n)
 	{
 		otherCell = neighbours[n];
-		otherAtoms = otherCell->atoms().objects();
-
-		for (j = 0; j < otherCell->nAtoms(); ++j)
-		{
-			jj = otherAtoms[j];
-			molJ = jj->molecule();
-			rJ = jj->r();
-
-			// Loop over central cell atoms
-			for (i = start; i < cell->atoms().nItems(); i += stride)
-			{
-				ii = centralAtoms[i];
-
-				// Check exclusion of I > J (comparison by pointer)
-				if (excludeIgeJ && (ii >= jj)) break;
-
-				// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
-				v = rJ - ii->r();
-				rSq = v.magnitudeSq();
-				if (rSq > cutoffDistanceSquared_) continue;
-
-				// Normalise vector to pass to force routine
-				r = sqrt(rSq);
-				v /= r;
-
-				// Check for Atoms in the same Molecule
-				if (ii->molecule() != molJ) forces(ii, jj, v, r);
-				else
-				{
-					scale = ii->scaling(jj);
-					if (scale > 1.0e-3) forces(ii, jj, v * scale, r);
-				}
-			}
-		}
+		forces(cell, otherCell, false, excludeIgeJ, loopContext);
 	}
 
 	// Straight loop over Cells requiring mim
@@ -379,40 +328,7 @@ void ForceKernel::forces(Cell* cell, bool excludeIgeJ, ProcessPool::LoopContext 
 	for (int n = 0; n<cell->nMimCellNeighbours(); ++n)
 	{
 		otherCell = mimNeighbours[n];
-		otherAtoms = otherCell->atoms().objects();
-
-		for (j = 0; j < otherCell->nAtoms(); ++j)
-		{
-			jj = otherAtoms[j];
-			molJ = jj->molecule();
-			rJ = jj->r();
-
-			// Loop over central cell atoms
-			for (i = start; i < cell->atoms().nItems(); i += stride)
-			{
-				ii = centralAtoms[i];
-
-				// Check exclusion of I >= J (comparison by pointer)
-				if (excludeIgeJ && (ii >= jj)) break;
-
-				// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
-				v = rJ - ii->r();
-				rSq = v.magnitudeSq();
-				if (rSq > cutoffDistanceSquared_) continue;
-
-				// Normalise vector to pass to force routine
-				r = sqrt(rSq);
-				v /= r;
-
-				// Check for Atoms in the same Molecule
-				if (ii->molecule() != molJ) forces(ii, jj, v, r);
-				else
-				{
-					scale = ii->scaling(jj);
-					if (scale < 1.0e-3) forces(ii, jj, v * scale, r);
-				}
-			}
-		}
+		forces(cell, otherCell, true, excludeIgeJ, loopContext);
 	}
 }
 

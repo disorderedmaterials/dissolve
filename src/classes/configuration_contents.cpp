@@ -169,7 +169,6 @@ Atom* Configuration::addAtom(Molecule* molecule, Grain* grain)
 {
 	// Create new Atom object
 	Atom* newAtom = atoms_.add();
-	printf("New Atom has array index %i\n", newAtom->arrayIndex());
 	molecule->addAtom(newAtom);
 	newAtom->setGrain(grain);
 

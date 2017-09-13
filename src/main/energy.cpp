@@ -85,15 +85,14 @@ double DUQ::interatomicEnergy(ProcessPool& procPool, Configuration* cfg)
 	// Create an EnergyKernel
 	EnergyKernel kernel(procPool, cfg, potentialMap_);
 
-	int cellId, n, m, start, stride;
 	Cell* cell;
 	double totalEnergy = 0.0;
 
 	// Set start/stride for parallel loop
-	start = procPool.interleavedLoopStart(ProcessPool::OverGroups);
-	stride = procPool.interleavedLoopStride(ProcessPool::OverGroups);
+	int start = procPool.interleavedLoopStart(ProcessPool::OverGroups);
+	int stride = procPool.interleavedLoopStride(ProcessPool::OverGroups);
 
-	for (cellId = start; cellId<cellArray.nCells(); cellId += stride)
+	for (int cellId = start; cellId<cellArray.nCells(); cellId += stride)
 	{
 		cell = cellArray.cell(cellId);
 

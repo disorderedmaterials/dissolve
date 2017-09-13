@@ -44,11 +44,9 @@ void DUQ::intramolecularForces(ProcessPool& procPool, Configuration* cfg, Array<
 	// Create a ForceKernel
 	ForceKernel kernel(procPool, cfg, potentialMap_, fx, fy, fz);
 
-	int start, stride;
-
 	// Set start/stride for parallel loop
-	start = procPool.interleavedLoopStart(ProcessPool::OverPoolProcesses);
-	stride = procPool.interleavedLoopStride(ProcessPool::OverPoolProcesses);
+	int start = procPool.interleavedLoopStart(ProcessPool::OverPoolProcesses);
+	int stride = procPool.interleavedLoopStride(ProcessPool::OverPoolProcesses);
 
 	// Loop over Bonds
 	Bond** bonds = cfg->bonds();
@@ -79,14 +77,13 @@ void DUQ::interatomicForces(ProcessPool& procPool, Configuration* cfg, Array<dou
 	// Create a ForceKernel
 	ForceKernel kernel(procPool, cfg, potentialMap_, fx, fy, fz);
 
-	int cellId, n, m, start, stride;
 	Cell* cell;
 
 	// Set start/stride for parallel loop
-	start = procPool.interleavedLoopStart(ProcessPool::OverGroups);
-	stride = procPool.interleavedLoopStride(ProcessPool::OverGroups);
+	int start = procPool.interleavedLoopStart(ProcessPool::OverGroups);
+	int stride = procPool.interleavedLoopStride(ProcessPool::OverGroups);
 
-	for (cellId = start; cellId<cellArray.nCells(); cellId += stride)
+	for (int cellId = start; cellId<cellArray.nCells(); cellId += stride)
 	{
 		cell = cellArray.cell(cellId);
 
