@@ -20,17 +20,22 @@
 */
 
 #include "classes/molecule.h"
+#include "classes/angle.h"
 #include "classes/atom.h"
 #include "classes/bond.h"
 #include "classes/grain.h"
-#include "classes/atomtype.h"
+#include "classes/torsion.h"
 #include "classes/box.h"
-#include "base/messenger.h"
-#include "templates/array.h"
 
 // Constructor
 Molecule::Molecule() : DynamicArrayObject<Molecule>()
 {
+	// Set sensible defaults for Arrays
+	atoms_.setChunkSize(8);
+	grains_.setChunkSize(8);
+	bonds_.setChunkSize(8);
+	angles_.setChunkSize(8);
+	torsions_.setChunkSize(8);
 }
 
 // Destructor
@@ -41,23 +46,6 @@ Molecule::~Molecule()
 /*
  * Atoms / Grains
  */
-
-// Initialise Molecule arrays
-bool Molecule::initialise(int nAtoms, int nGrains)
-{
-	// Check for double initialisation
-	if (atoms_ != NULL)
-	{
-		printf("DOUBLE_INIT - Arrays already exist in Molecule::initialise().\n");
-		return false;
-	}
-	
-	// Get data from Species and create local arrays
-	atoms_.createEmpty(nAtoms);
-	grains_.createEmpty(nGrains);
-
-	return true;
-}
 
 // Add Atom to Molecule
 void Molecule::addAtom(Atom* i)
@@ -130,6 +118,9 @@ Grain* Molecule::grain(int n)
 void Molecule::addBond(Bond* bond)
 {
 	bonds_.add(bond);
+
+	if (bond->molecule() != NULL) Messenger::warn("Molecule parent is already set in Bond id %i, and we are about to overwrite it...\n", bond->arrayIndex());
+	bond->setMolecule(this);
 }
 
 // Return size of Bond array
@@ -154,6 +145,9 @@ Bond* Molecule::bond(int n)
 void Molecule::addAngle(Angle* angle)
 {
 	angles_.add(angle);
+
+	if (angle->molecule() != NULL) Messenger::warn("Molecule parent is already set in Angle id %i, and we are about to overwrite it...\n", angle->arrayIndex());
+	angle->setMolecule(this);
 }
 
 // Return size of Angle array
@@ -178,6 +172,9 @@ Angle* Molecule::angle(int n)
 void Molecule::addTorsion(Torsion* torsion)
 {
 	torsions_.add(torsion);
+
+	if (torsion->molecule() != NULL) Messenger::warn("Molecule parent is already set in Torsionid %i, and we are about to overwrite it...\n", torsion->arrayIndex());
+	torsion->setMolecule(this);
 }
 
 // Return size of Torsion array

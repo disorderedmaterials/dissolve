@@ -193,96 +193,43 @@ int Cell::nAtoms() const
 	return atoms_.nItems();
 }
 
-// Add specified atom to this Cell
-bool Cell::moveAtom(Atom* i, Cell* targetCell)
+// Add atom to Cell
+bool Cell::addAtom(Atom* i)
 {
 #ifdef CHECKS
 	if (i == NULL)
-	{
-		Messenger::print("NULL_POINTER - NULL Atom pointer given to Cell::moveAtom().\n");
-		return false;
-	}
-	if (targetCell == NULL)
-	{
-		Messenger::print("NULL_POINTER - NULL Cell pointer given to Cell::moveAtom().\n");
-		return false;
-	}
-#endif
-	// Move atom from this cell to target cell
-	atoms_.move(i, targetCell->atoms_);
-	i->setCell(targetCell);
-
-	// Now need to update atom neighbour lists on cells affected by this move
-	// Traverse the cell neighbour arrays from this cell and the target cell, comparing indices
-	int n = 0, m = 0;
-	CellNeighbour* oldNeighbours = allCellNeighbours_, *newNeighbours = targetCell->allCellNeighbours_;
-	Cell* oldNeighbour = oldNeighbours[0].cell(), *newNeighbour = newNeighbours[0].cell();
-	int oldIndex = oldNeighbour->index(), newIndex = newNeighbour->index();
-	int nNeighbours = nTotalCellNeighbours();
-	while (true)
-	{
-		// If the cell neighbour appears only in the current list (oldIndex < newIndex) then the atom should just be removed from this cell's atom list,
-		// since it has moved out of range.
-		if (oldIndex < newIndex)
-		{
-			oldNeighbour->removeAtomFromNeighbourList(i, oldNeighbours[n].useMim());
-			++n;
-			if (n == nNeighbours) break;
-			oldNeighbour = oldNeighbours[n].cell();
-			oldIndex = oldNeighbour->index();
-			continue;
-		}
-
-		// If the cell neighbour appears only in the new list (newIndex < oldIndex) then the atom should just be added to this cell's atom list,
-		// since is has moved within range
-		if (newIndex < oldIndex)
-		{
-			newNeighbour->addAtomToNeighbourList(i, newNeighbours[m].useMim());
-			++m;
-			if (m == nNeighbours) break;
-			newNeighbour = newNeighbours[m].cell();
-			newIndex = newNeighbour->index();
-			continue;
-		}
-
-		// If the cell reference appears in both lists, we must check the mim flag of the cell reference
-		// If the atom has moved into a cell with the same mim state, then there is nothing to do. Otherwise, must move atom to correct list
-		if (oldNeighbours[n].useMim() != newNeighbours[m].useMim())
-		{
-			oldNeighbour->removeAtomFromNeighbourList(i, oldNeighbours[n].useMim());
-			oldNeighbour->addAtomToNeighbourList(i, !oldNeighbours[n].useMim());
-		}
-
-		++n;
-		++m;
-		if (n == nNeighbours) break;
-		if (m == nNeighbours) break;
-		oldNeighbour = oldNeighbours[n].cell();
-		oldIndex = oldNeighbour->index();
-		newNeighbour = newNeighbours[m].cell();
-		newIndex = newNeighbour->index();
-	}
-
-	// If we have not yet gone through all the items in either list, add them to the relevant unique results list
-	for (int o = n; o<nNeighbours; ++o) oldNeighbours[o].cell()->removeAtomFromNeighbourList(i, oldNeighbours[o].useMim());
-	for (int o = m; o<nNeighbours; ++o) newNeighbours[o].cell()->addAtomToNeighbourList(i, newNeighbours[o].useMim());
-
-	return true;
-}
-
-// Add atom to Cell
-bool Cell::addAtom(Atom* atom)
-{
-#ifdef CHECKS
-	if (atom == NULL)
 	{
 		Messenger::print("NULL_POINTER - NULL Atom pointer given to Cell::addAtom().\n");
 		return false;
 	}
 #endif
-	// Copy source atom data to target atom, and set new reference to atom
-	atoms_.add(atom);
-	atom->setCell(this);
+	// Add Atom to our OrderedPointerList 
+	atoms_.add(i);
+
+	if (i->cell()) Messenger::warn("About to set Cell pointer in Atom %i, but this will overwrite an existing value.\n", i->arrayIndex());
+	i->setCell(this);
+
+	return true;
+}
+
+// Remove Atom from Cell
+bool Cell::removeAtom(Atom* i)
+{
+#ifdef CHECKS
+	if (i == NULL)
+	{
+		Messenger::print("NULL_POINTER - NULL Atom pointer given to Cell::removeAtom().\n");
+		return false;
+	}
+#endif
+	if (!atoms_.removeIfPresent(i)) Messenger::warn("Tried to remove Atom %i from Cell %i, but it was not present.\n", i->arrayIndex(), index_);
+
+	// Add Atom to our OrderedPointerList
+	atoms_.add(i);
+
+	// Set its Cell pointer
+	if (i->cell() != this) Messenger::warn("About to remove Cell pointer from Atom %i, and it does not match the current Cell.\n", i->arrayIndex());
+	i->setCell(NULL);
 
 	return true;
 }
@@ -369,51 +316,4 @@ Cell** Cell::mimCellNeighbours()
 CellNeighbour* Cell::allCellNeighbours()
 {
 	return allCellNeighbours_;
-}
-
-// Clear atom neighbour list
-void Cell::clearAtomNeighbourList()
-{
-	atomNeighbours_.clear();
-	mimAtomNeighbours_.clear();
-}
-
-// Add atom to neighbour list
-void Cell::addAtomToNeighbourList(Atom* i, bool useMim, bool atEnd)
-{
-	if (useMim)
-	{
-		if (atEnd) mimAtomNeighbours_.addAtEnd(i);
-		else mimAtomNeighbours_.add(i);
-	}
-	else
-	{
-		if (atEnd) atomNeighbours_.addAtEnd(i);
-		else atomNeighbours_.add(i);
-	}
-}
-
-// Remove atom from neighbour list
-bool Cell::removeAtomFromNeighbourList(Atom* i, bool useMim)
-{
-	if (useMim) return mimAtomNeighbours_.removeIfPresent(i);
-	else return atomNeighbours_.removeIfPresent(i);
-}
-
-// Return total number of atom neighbours
-int Cell::nTotalAtomNeighbours()
-{
-	return atomNeighbours_.nItems() + mimAtomNeighbours_.nItems();
-}
-
-// Return atom neighbour list
-OrderedPointerList<Atom>& Cell::atomNeighbours()
-{
-	return atomNeighbours_;
-}
-
-// Return atom neighbour list requiring mim
-OrderedPointerList<Atom>& Cell::mimAtomNeighbours()
-{
-	return mimAtomNeighbours_;
 }

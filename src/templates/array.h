@@ -22,8 +22,6 @@
 #ifndef DUQ_ARRAY_H
 #define DUQ_ARRAY_H
 
-#define CHUNKSIZE 128
-
 #include "base/messenger.h"
 #include "templates/listitem.h"
 #include "templates/vector3.h"
@@ -38,6 +36,7 @@ template <class A> class Array : public ListItem< Array<A> >
 	// Constructor
 	Array(int initialSize = 0) : ListItem< Array<A> >()
 	{
+		chunkSize_ = 128;
 		array_ = NULL;
 		size_ = 0;
 		nItems_ = 0;
@@ -51,6 +50,7 @@ template <class A> class Array : public ListItem< Array<A> >
 	// Copy Constructor
 	Array(const Array<A>& source)
 	{
+		chunkSize_ = source.chunkSize_;
 		array_ = NULL;
 		size_ = 0;
 		nItems_ = 0;
@@ -61,6 +61,7 @@ template <class A> class Array : public ListItem< Array<A> >
 	// Assignment Operator
 	void operator=(const Array<A>& source)
 	{
+		chunkSize_ = source.chunkSize_;
 		clear();
 		resize(source.size_);
 		nItems_ = source.nItems_;
@@ -83,6 +84,8 @@ template <class A> class Array : public ListItem< Array<A> >
 	A* array_;
 	// Number of data actually in Array
 	int nItems_;
+	// Chunk (increment) size for Array
+	int chunkSize_;
 
 	private:
 	// Resize array 
@@ -157,6 +160,11 @@ template <class A> class Array : public ListItem< Array<A> >
 
 		nItems_ = 0;
 	}
+	// Set chunksize to use when incrementally resizing this array
+	void setChunkSize(int chunkSize)
+	{
+		chunkSize_ = chunkSize;
+	}
 
 
 	/*
@@ -167,7 +175,7 @@ template <class A> class Array : public ListItem< Array<A> >
 	void add(A data)
 	{
 		// Is current array large enough?
-		if (nItems_ == size_) resize(size_+CHUNKSIZE);
+		if (nItems_ == size_) resize(size_+chunkSize_);
 
 		// Store new value
 		array_[nItems_++] = data;

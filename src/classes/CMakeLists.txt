@@ -76,6 +76,7 @@ histogram.h
 isotope.h
 isotopologue.h
 isotopologuemix.h
+kernelflags.h
 kvector.h
 molecule.h
 pairpotential.h

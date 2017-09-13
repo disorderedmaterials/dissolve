@@ -34,6 +34,7 @@ class Cell;
 class Grain;
 class Molecule;
 class ProcessPool;
+class Torsion;
 
 // Atom Definition
 class Atom : public DynamicArrayObject<Atom>
@@ -122,7 +123,7 @@ class Atom : public DynamicArrayObject<Atom>
 	// Reference list of Angles in which this Atom exists
 	RefList<Angle,bool> angles_;
 	// Reference list of Torsions in which this Atom exists
-	//RefList<Torsion,double> torsions_;
+	RefList<Torsion,double> torsions_;
 	// Ordered list of Atoms with scaled or excluded interactions
 	OrderedPointerDataList<Atom,double> exclusions_;
 
@@ -136,7 +137,7 @@ class Atom : public DynamicArrayObject<Atom>
 	// Return reference list of Angles
 	RefList<Angle,bool> angles() const;
 	// Add reference to specified Torsion
-	// void addTorsion(Torsion* torsion, double scaling14);
+	void addTorsion(Torsion* torsion, double scaling14);
 	// Return scaling factor to employ with specified Atom
 	double scaling(Atom* j) const;
 

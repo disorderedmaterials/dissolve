@@ -108,7 +108,7 @@ bool DUQ::setupSimulation()
 	{
 		Messenger::print("*** Configuration %2i: '%s'\n", index, cfg->name());
 
-		if (!cfg->setup(worldPool_, atomTypes_, pairPotentialRange_, nBoxNormalisationPoints_)) return false;
+		if (!cfg->setup(worldPool_, pairPotentialRange_, nBoxNormalisationPoints_)) return false;
 	}
 
 	/*

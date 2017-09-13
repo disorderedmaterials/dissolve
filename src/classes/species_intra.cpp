@@ -119,7 +119,7 @@ SpeciesAngle* Species::addAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k)
 	// Check for existence of Angle already
 	if (hasAngle(i, j, k))
 	{
-		Messenger::print("Warning: Refused to add a new Angle between atoms %i, %i and %i in Species '%s' since it already exists.\n", i->userIndex()+1, j->userIndex()+1, k->userIndex()+1, name_.get());
+		Messenger::print("Warning: Refused to add a new Angle between atoms %i, %i and %i in Species '%s' since it already exists.\n", i->userIndex(), j->userIndex(), k->userIndex(), name_.get());
 		return NULL;
 	}
 
@@ -174,6 +174,98 @@ SpeciesAngle *Species::angle(int n)
 bool Species::hasAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const
 {
 	for (SpeciesAngle* a = angles_.first(); a != NULL; a = a->next) if (a->matches(i, j, k)) return true;
+	return false;
+}
+
+// Add new torsion definition (from supplied atom pointers)
+SpeciesTorsion* Species::addTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l)
+{
+	// Check ownership of these Atoms
+	if (!atoms_.contains(i))
+	{
+		Messenger::print("BAD_OWNERSHIP - Atom 'i' is not owned by Species '%s' in Species::addTorsion.\n", name_.get());
+		return NULL;
+	}
+	if (!atoms_.contains(j))
+	{
+		Messenger::print("BAD_OWNERSHIP - Atom 'j' is not owned by Species '%s' in Species::addTorsion.\n", name_.get());
+		return NULL;
+	}
+	if (!atoms_.contains(k))
+	{
+		Messenger::print("BAD_OWNERSHIP - Atom 'k' is not owned by Species '%s' in Species::addTorsion.\n", name_.get());
+		return NULL;
+	}
+	if (!atoms_.contains(l))
+	{
+		Messenger::print("BAD_OWNERSHIP - Atom 'l' is not owned by Species '%s' in Species::addTorsion.\n", name_.get());
+		return NULL;
+	}
+
+	// Check for existence of Torsion already
+	if (hasTorsion(i, j, k, l))
+	{
+		Messenger::print("Warning: Refused to add a new Torsion between atoms %i, %i, %i and %i in Species '%s' since it already exists.\n", i->userIndex(), j->userIndex(), k->userIndex(), l->userIndex(), name_.get());
+		return NULL;
+	}
+
+	// OK to add new torsion
+	SpeciesTorsion* t = torsions_.add();
+	t->setParent(this);
+	t->setAtoms(i, j, k, l);
+
+	return t;
+}
+
+// Add new torsion definition
+SpeciesTorsion* Species::addTorsion(int i, int j, int k, int l)
+{
+	if ((i < 0) || (i >= atoms_.nItems()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'i' supplied to Species::addTorsion() is out of range (%i) for Species '%s'\n", i, name_.get());
+		return false;
+	}
+	if ((j < 0) || (j >= atoms_.nItems()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'j' supplied to Species::addTorsion() is out of range (%i) for Species '%s'\n", j, name_.get());
+		return false;
+	}
+	if ((k < 0) || (k >= atoms_.nItems()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'k' supplied to Species::addTorsion() is out of range (%i) for Species '%s'\n", k, name_.get());
+		return false;
+	}
+	if ((l < 0) || (l >= atoms_.nItems()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'l' supplied to Species::addTorsion() is out of range (%i) for Species '%s'\n", l, name_.get());
+		return false;
+	}
+
+	return addTorsion(atoms_[i], atoms_[j], atoms_[k], atoms_[l]);
+}
+
+// Return number of torsions in list
+int Species::nTorsions() const
+{
+	return torsions_.nItems();
+}
+
+// Return list of torsions
+SpeciesTorsion *Species::torsions() const
+{
+	return torsions_.first();
+}
+
+// Return nth torsion
+SpeciesTorsion *Species::torsion(int n)
+{
+	return torsions_[n];
+}
+
+// Return whether torsion between atoms exists
+bool Species::hasTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const
+{
+	for (SpeciesTorsion* t = torsions_.first(); t != NULL; t = t->next) if (t->matches(i, j, k, l)) return true;
 	return false;
 }
 
@@ -234,8 +326,7 @@ bool Species::calculateIndexLists()
 	/*
 	 * For each Bond and Angle defined within the Species, all directly or indirectly attached Atoms at each terminus of the
 	 * interaction are selected and the indices added to the relevant local lists for the interaction. If, in the process, we find that
-	 * when selecting from Atom 'i' (of a Bond) we end up selecting Atom 'j', then the two Atoms are present in a cycle and we must explicitly
-	 * deal with such cases. But how!!! XXX TODO
+	 * when selecting from Atom 'i' (of a Bond) we end up selecting Atom 'j', then the two Atoms are present in a cycle and we are forced to set the attached atoms lists to a minimal set comprising the bond partner.
 	 */
 
 	// Bonds
@@ -246,11 +337,8 @@ bool Species::calculateIndexLists()
 		selectFromAtom(b->i(), b);
 		if (selectedAtoms_.contains(b->j()))
 		{
-// 			Messenger::error("Species '%s' contains one or more cycles, and these cannot be dealt with at present.\n", name_.get());
-// 			return false;
 			Messenger::print("Bond between Atoms %i and %i in Species '%s' exists in a cycle, so a minimal set of attached atoms will be used.\n", b->indexI()+1, b->indexJ()+1, name_.get());
 			clearAtomSelection();
-// 			for (RefListItem<Bond,int>* ri = b->i()->bonds(); ri != NULL; ri = ri->next) if (ri->item->partner(b->i()) != b->j()) selectedAtoms_.add(ri->item->partner(b->i()));
 			selectedAtoms_.add(b->j());
 		}
 		b->setAttachedAtoms(0, selectedAtoms_);
@@ -260,11 +348,8 @@ bool Species::calculateIndexLists()
 		selectFromAtom(b->j(), b);
 		if (selectedAtoms_.contains(b->i()))
 		{
-// 			Messenger::error("Species '%s' contains one or more cycles, and these cannot be dealt with at present.\n", name_.get());
-// 			return false;
 			Messenger::print("Bond between Atoms %i and %i in Species '%s' exists in a cycle, so a minimal set of attached atoms will be used.\n", b->indexI()+1, b->indexJ()+1, name_.get());
 			clearAtomSelection();
-// 			for (RefListItem<Bond,int>* ri = b->j()->bonds(); ri != NULL; ri = ri->next) if (ri->item->partner(b->j()) != b->i()) selectedAtoms_.add(ri->item->partner(b->j()));
 			selectedAtoms_.add(b->j());
 		}
 		b->setAttachedAtoms(1, selectedAtoms_);
@@ -284,8 +369,6 @@ bool Species::calculateIndexLists()
 		selectFromAtom(a->i(), b);
 		if (selectedAtoms_.contains(a->j()))
 		{
-// 			Messenger::error("Species '%s' contains one or more cycles, and these cannot be dealt with at present.\n", name_.get());
-// 			return false;
 			Messenger::print("Angle between atoms %i-%i-%i in species '%s' exists in a cycle, so a minimal set of attached atoms will be used.\n", a->indexI()+1, a->indexJ()+1, a->indexK()+1, name_.get());
 			clearAtomSelection();
 			selectedAtoms_.add(a->i());
@@ -303,8 +386,6 @@ bool Species::calculateIndexLists()
 		selectFromAtom(a->k(), b);
 		if (selectedAtoms_.contains(a->j()))
 		{
-// 			Messenger::error("Species '%s' contains one or more cycles, and these cannot be dealt with at present.\n", name_.get());
-// 			return false;
 			Messenger::print("Angle between atoms %i-%i-%i in species '%s' exists in a cycle, so a minimal set of attached atoms will be used.\n", a->indexI()+1, a->indexJ()+1, a->indexK()+1, name_.get());
 			clearAtomSelection();
 			selectedAtoms_.add(a->k());

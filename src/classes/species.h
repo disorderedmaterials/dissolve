@@ -27,6 +27,7 @@
 #include "classes/speciesangle.h"
 #include "classes/speciesatom.h"
 #include "classes/speciesbond.h"
+#include "classes/speciestorsion.h"
 #include "classes/speciesgrain.h"
 #include "classes/isotopologue.h"
 #include "base/charstring.h"
@@ -112,6 +113,8 @@ class Species : public ListItem<Species>
 	List<SpeciesBond> bonds_;
 	// List of Angles between Atoms in the Species
 	List<SpeciesAngle> angles_;
+	// List of Torsions between Atoms in the Species
+	List<SpeciesTorsion> torsions_;
 	// Scaling matrix for intramolecular interactions
 	Array2D<double> scalingMatrix_;
 	
@@ -128,7 +131,7 @@ class Species : public ListItem<Species>
 	SpeciesBond* bond(int n);
 	// Return whether Bond between Atoms exists
 	SpeciesBond* hasBond(SpeciesAtom* i, SpeciesAtom* j) const;
-	// Add new Angle definition (from Atoms*)
+	// Add new Angle definition
 	SpeciesAngle* addAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k);
 	// Add new Angle definition
 	SpeciesAngle* addAngle(int i, int j, int k);
@@ -140,7 +143,19 @@ class Species : public ListItem<Species>
 	SpeciesAngle* angle(int n);
 	// Return whether Angle between Atoms exists
 	bool hasAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const;
-	// Recalculate intramolecular terms between atoms in the Species
+	// Add new Torsion definition (from SpeciesAtom*)
+	SpeciesTorsion* addTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l);
+	// Add new Torsion definition
+	SpeciesTorsion* addTorsion(int i, int j, int k, int l);
+	// Return number of Torsions in list
+	int nTorsions() const;
+	// Return list of Torsions
+	SpeciesTorsion* torsions() const;
+	// Return nth Torsion
+	SpeciesTorsion* torsion(int n);
+	// Return whether Torsion between Atoms exists
+	bool hasTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const;
+	// Recalculate intramolecular terms between Atoms in the Species
 	void recalculateIntramolecular();
 	// Calculate local Atom index lists for interactions
 	bool calculateIndexLists();
@@ -156,7 +171,7 @@ class Species : public ListItem<Species>
 	 * Grains
 	 */
 	private:
-	// List of grain, dividing the Atoms of this Species into individual groups
+	// List of Grains, dividing the Atoms of this Species into individual groups
 	List<SpeciesGrain> grains_;
 	
 	public:

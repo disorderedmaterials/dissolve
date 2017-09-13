@@ -22,12 +22,13 @@
 #ifndef DUQ_FORCEKERNEL_H
 #define DUQ_FORCEKERNEL_H
 
-#include "classes/atom.h"
-#include "classes/grain.h"
+#include "classes/kernelflags.h"
 #include "templates/orderedpointerlist.h"
 #include "base/processpool.h"
 
 // Forward Declarations
+class Atom;
+class Grain;
 class Cell;
 class Box;
 class Configuration;
@@ -42,15 +43,6 @@ class ForceKernel
 	ForceKernel(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, Array<double>& fx, Array<double>& fy, Array<double>& fz, double cutoffDistance = -1.0);
 	// Destructor
 	~ForceKernel();
-	// Flags
-	enum Flags
-	{
-		NoFlags = 0,
-		ExcludeSelfFlag = 1,
-		ExcludeGreaterThanEqualTo = 2,
-		ExcludeIntraGreaterThan = 4,
-		ApplyMinimumImage = 8
-	};
 
 
 	/*
@@ -79,6 +71,8 @@ class ForceKernel
 	 * Internal Force Calculation
 	 */
 	private:
+	// Calculate forces between Atoms at vector / distance specified
+	void forces(const Atom* i, const Atom* j, Vec3< double > normalisedVector, double vectorMagnitude);
 	// Calculate inter-particle forces between Atoms provided (no minimum image calculation)
 	void forcesWithoutMim(const Atom* i, const Atom* j, double scale = 1.0);
 	// Calculate inter-particle forces between Atom and Grain provided (no minimum image calculation)
@@ -100,15 +94,13 @@ class ForceKernel
 	// Calculate forces between atoms provided (as pointers)
 	void forces(const Atom* i, const Atom* j, bool applyMim, bool excludeIgeJ = false);
 	// Calculate forces between two cells
-	void forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool excludeIgeJ = false, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
-	// Calculate forces between cell and atomic neighbours
-	void forces(Cell* centralCell, bool excludeIgeJ = false, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
-	// Calculate forces between atom and cell
-	void forces(const Atom* i, OrderedPointerList<Atom>& neighbours, int flags = ForceKernel::NoFlags, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
+	void forces(Cell* cell, Cell* otherCell, bool applyMim, bool excludeIgeJ = false, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
+	// Calculate forces between Cell and its neighbours
+	void forces(Cell* cell, bool excludeIgeJ = false, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
+	// Calculate forces between Atom and Cell
+	void forces(const Atom* i, Cell* cell, int flags = KernelFlags::NoFlags, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
 	// Calculate forces between atom and world
 	void forces(const Atom* i, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
-	// Calculate forces between Grain and list of neighbouring cells
-	void forces(const Grain* grain, OrderedPointerList<Atom>& neighbours, bool applyMim, bool excludeIgeJ = false, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
 	// Calculate forces between grain and world
 	void forces(const Grain* grain, bool excludeIgtJ, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
 

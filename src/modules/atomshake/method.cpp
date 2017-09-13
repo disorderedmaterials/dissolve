@@ -171,9 +171,6 @@ bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
 	}
 	timer.stop();
 
-	// Atoms have moved, so need to refold them back into the unit cell
-	cfg->updateAtomsInCells();
-
 	// Collect statistics from process group leaders
 	if (!procPool.allSum(&nAccepted, 1, ProcessPool::Leaders)) return false;
 	if (!procPool.allSum(&nTries, 1, ProcessPool::Leaders)) return false;

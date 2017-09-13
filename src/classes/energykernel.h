@@ -22,12 +22,13 @@
 #ifndef DUQ_ENERGYKERNEL_H
 #define DUQ_ENERGYKERNEL_H
 
-#include "classes/atom.h"
-#include "classes/grain.h"
+#include "classes/kernelflags.h"
 #include "templates/orderedpointerlist.h"
 #include "base/processpool.h"
 
 // Forward Declarations
+class Atom;
+class Grain;
 class Cell;
 class CellArray;
 class Box;
@@ -48,15 +49,6 @@ class EnergyKernel
 	~EnergyKernel();
 	// Clear all data
 	void clear();
-	// Flags
-	enum Flags
-	{
-		NoFlags = 0,
-		ExcludeSelfFlag = 1,
-		ExcludeGreaterThanEqualTo = 2,
-		ExcludeIntraGreaterThan = 4,
-		ApplyMinimumImage = 8
-	};
 
 
 	/*
@@ -100,15 +92,13 @@ class EnergyKernel
 	// Return PairPotential energy between atoms provided (as pointers)
 	double energy(const Atom* i, const Atom* j, bool applyMim, bool excludeIgeJ = false);
 	// Return PairPotential energy between two cells
-	double energy(Cell* centralCell, Cell* otherCell, bool applyMim, bool excludeIgeJ = false, ProcessPool::LoopContext loopContext = ProcessPool::Individual, bool sumOverProcesses = false);
-	// Return PairPotential energy between cell and atomic neighbours
-	double energy(Cell* centralCell, bool excludeIgeJ = false, ProcessPool::LoopContext loopContext = ProcessPool::Individual, bool sumOverProcesses = false);
-	// Return PairPotential energy between atom and cell
-	double energy(const Atom* i, OrderedPointerList<Atom>& neighbours, int flags = EnergyKernel::NoFlags, ProcessPool::LoopContext loopContext = ProcessPool::Individual, bool sumOverProcesses = false);
+	double energy(Cell* cell, Cell* otherCell, bool applyMim, bool excludeIgeJ = false, ProcessPool::LoopContext loopContext = ProcessPool::Individual, bool sumOverProcesses = false);
+	// Return PairPotential energy between Cell and its neighbours
+	double energy(Cell* cell, bool excludeIgeJ = false, ProcessPool::LoopContext loopContext = ProcessPool::Individual, bool sumOverProcesses = false);
+	// Return PairPotential energy between Atom and Cell
+	double energy(const Atom* i, Cell* cell, int flags = KernelFlags::NoFlags, ProcessPool::LoopContext loopContext = ProcessPool::Individual, bool sumOverProcesses = false);
 	// Return PairPotential energy of atom with world
 	double energy(const Atom* i, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
-	// Return PairPotential energy between Grain and list of neighbouring Atoms
-	double energy(const Grain* grain, OrderedPointerList<Atom>& neighbours, bool applyMim, bool excludeIgeJ = false, ProcessPool::LoopContext loopContext = ProcessPool::Individual, bool sumOverProcesses = false);
 	// Return PairPotential energy of grain with world
 	double energy(const Grain* grain, bool excludeIgtJ, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
 	// Return molecular correction energy related to intramolecular terms involving supplied atom

@@ -24,6 +24,7 @@
 #include "classes/grain.h"
 #include "classes/bond.h"
 #include "classes/angle.h"
+#include "classes/torsion.h"
 #include "base/processpool.h"
 
 // Constructor
@@ -223,6 +224,33 @@ void Atom::addAngle(Angle* angle)
 RefList<Angle,bool> Atom::angles() const
 {
 	return angles_;
+}
+
+// Add reference to specified Torsion
+void Atom::addTorsion(Torsion* torsion, double scaling14)
+{
+	torsions_.add(torsion);
+
+	// Insert the pointers to the other Atoms into the exclusions_ list
+	if (torsion->i() == this)
+	{
+		exclusions_.addExclusive(torsion->j());
+		exclusions_.addExclusive(torsion->k());
+		exclusions_.addExclusive(torsion->l(), scaling14);
+	}
+	else if (torsion->l() == this)
+	{
+		exclusions_.addExclusive(torsion->i(), scaling14);
+		exclusions_.addExclusive(torsion->j());
+		exclusions_.addExclusive(torsion->k());
+	}
+	else
+	{
+		exclusions_.addExclusive(torsion->i());
+		exclusions_.addExclusive(torsion->l());
+		if (torsion->j() != this) exclusions_.addExclusive(torsion->j());
+		if (torsion->k() != this) exclusions_.addExclusive(torsion->k());
+	}
 }
 
 // Return scaling factor to employ with specified Atom

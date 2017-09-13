@@ -96,7 +96,7 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 			{
 				molN = cfg->molecule(n);
 
-				// Molecule-molecule energy
+				// Molecule self-energy
 				for (int ii = 0; ii <molN->nAtoms()-1; ++ii)
 				{
 					i = molN->atom(ii);
@@ -115,6 +115,7 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 					}
 				}
 
+				// Molecule-molecule energy
 				for (int m=n+1; m<cfg->nMolecules(); ++m)
 				{
 					molM = cfg->molecule(m);

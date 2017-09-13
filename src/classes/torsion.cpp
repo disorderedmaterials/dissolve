@@ -81,21 +81,27 @@ void Torsion::setAtoms(Atom* i, Atom* j, Atom* k, Atom* l)
 }
 
 // Return first Atom involved in Torsion
-Atom *Torsion::i() const
+Atom* Torsion::i() const
 {
 	return i_;
 }
 
 // Return second (central) Atom involved in Torsion
-Atom *Torsion::j() const
+Atom* Torsion::j() const
 {
 	return j_;
 }
 
 // Return third Atom involved in Torsion
-Atom *Torsion::k() const
+Atom* Torsion::k() const
 {
 	return k_;
+}
+
+// Return fourth Atom involved in Torsion
+Atom* Torsion::l() const
+{
+	return l_;
 }
 
 // Return whether Atoms in Torsion match those specified

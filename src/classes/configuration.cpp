@@ -199,7 +199,7 @@ void Configuration::clear()
 }
 
 // Setup configuration
-bool Configuration::setup(ProcessPool& procPool, const List<AtomType>& masterAtomTypes, double pairPotentialRange, int boxNormalisationNPoints)
+bool Configuration::setup(ProcessPool& procPool, double pairPotentialRange, int boxNormalisationNPoints)
 {
 	Messenger::print("--> Setting up Configuration from Species / multiplier definition...\n");
 
@@ -214,7 +214,7 @@ bool Configuration::setup(ProcessPool& procPool, const List<AtomType>& masterAto
 	 */
 
 	/*
-	 * 1) Determine System Size
+	 * 1) Check system size and Species populations
 	 */
 	if (multiplier_ < 1)
 	{
@@ -222,9 +222,6 @@ bool Configuration::setup(ProcessPool& procPool, const List<AtomType>& masterAto
 		return false;
 	}
 
-	int nGrains = 0;
-	int nAtoms = 0;
-	int nMolecules = 0;
 	for (RefListItem<Species,double>* refSp = usedSpecies_.first(); refSp != NULL; refSp = refSp->next)
 	{
 		// Determine the number of molecules of this component
@@ -236,21 +233,28 @@ bool Configuration::setup(ProcessPool& procPool, const List<AtomType>& masterAto
 			Messenger::error("Relative population for Species '%s' is too low (%e) to provide any Molecules in this Configuration.\n", refSp->item->name(), refSp->data);
 			return false;
 		}
-
-		// Sum Atom / Grain totals for this species
-		nMolecules += count;
-		nGrains += refSp->item->nGrains() * count;
-		nAtoms += refSp->item->nAtoms() * count;
-		// nBonds_ += refSp->item->nBonds() * count;
 	}
 
-	// Setup dynamic arrays based on the totals we now have
-	molecules_.initialise(nMolecules);
-	grains_.initialise(nGrains);
-	atoms_.initialise(nAtoms);
+	/*
+	 * 2) Create Molecules
+	 */
+	Messenger::print("--> Setting up Molecules, Atoms, and Grains...\n");
+
+	RefListIterator<Species,double> speciesIterator(usedSpecies_);
+	while (Species* sp = speciesIterator.iterate())
+	{
+		// Determine the number of molecules of this component
+		int count = speciesIterator.currentData() * multiplier_;
+
+		// Add copies of Species as Molecules
+		for (int n=0; n<count; ++n) addMolecule(sp);
+	}
+
+	// Set fractional populations in usedAtomTypes_
+	usedAtomTypes_.finalise();
 
 	/*
-	 * 2) Create a Box to contain the system
+	 * 3) Create a Box to contain the system
 	 */
 	Messenger::print("--> Creating periodic Box and Cell partitioning...\n");
 	if (!setupBox(pairPotentialRange))
@@ -296,107 +300,7 @@ bool Configuration::setup(ProcessPool& procPool, const List<AtomType>& masterAto
 	Messenger::print("--> RDF range (snapped to bin width) is %f Angstroms.\n", rdfRange_);
 
 	/*
-	 * 3) Create Molecules, Grains, and Atoms
-	 */
-	Messenger::print("--> Setting up Molecules, Atoms, and Grains...\n");
-
-	// If we need it, setup random buffer between all processes so our generated coordinates are the same
-	if (randomConfiguration_) procPool.initialiseRandomBuffer(ProcessPool::Pool);
-
-	// Loop over defined Species again - now we configure Atoms and Grains, and construct the intramolecular term lists
-	int atomOffset = 0, grainCounter = 0, molCount = 0;
-	Cell* c;
-	Vec3<double> r, cog, newCentre, fr;
-	Matrix3 transform;
-	RefListIterator<Species,double> speciesIterator(usedSpecies_);
-	while (Species* sp = speciesIterator.iterate())
-	{
-		// Get the centre of geometry of the molecule's source species
-		cog = sp->centreOfGeometry(box_);
-
-		// Determine the number of molecules of this component
-		int count = speciesIterator.currentData() * multiplier_;
-
-		for (int n=0; n<count; ++n)
-		{
-			// Get our Molecule reference
-			Molecule* mol = molecules_[molCount];
-			mol->initialise(sp->nAtoms(), sp->nGrains());
-
-			// Generate random position and orientation for this molecule?
-			if (randomConfiguration_)
-			{
-				// Generate a new random centre of geometry for the molecule
-				fr.set(procPool.random(), procPool.random(), procPool.random()); 
-				newCentre = box_->fracToReal(fr);
-
-				// Generate a random rotation matrix
-				transform.createRotationXY(procPool.randomPlusMinusOne()*180.0, procPool.randomPlusMinusOne()*180.0);
-			}
-
-			// Configure Atoms
-			// Set the transformed random position if we are generating random coordinates, otherwise just use original Species coordinate
-			SpeciesAtom* spi = sp->atoms();
-			for (int n = 0; n<sp->nAtoms(); ++n, spi = spi->next)
-			{
-				// Grab Atom reference
-				Atom* i = atoms_[atomOffset+n];
-
-				// Add this Atom to its parent Molecule (this also sets its Molecule pointer)
-				mol->addAtom(i);
-				i->setMolecule(mol);
-
-				// Copy information from SpeciesAtom
-				i->setElement(spi->element());
-				i->setCharge(spi->charge());
-				if (randomConfiguration_) i->setCoordinates((transform * (spi->r() - cog)) + newCentre);
-				else i->setCoordinates(spi->r());
-
-				// Determine and set cell location of atom
-				c = cells_.cell(i->r());
-				i->setCell(c);
-				if (!c->addAtom(i)) return false;
-
-				// Update our typeIndex (non-isotopic) and set local and master type indices
-				AtomTypeData* atd = usedAtomTypes_.add(spi->atomType(), 1);
-				i->setLocalTypeIndex(atd->listIndex());
-				i->setMasterTypeIndex(masterAtomTypes.indexOf(spi->atomType()));
-			}
-
-			// Grains
-			SpeciesGrain* spg = sp->grains();
-			for (int n = 0; n<sp->nGrains(); ++n, spg = spg->next)
-			{
-				// Grab Grain reference
-				Grain* grain = grains_[grainCounter];
-
-				// Add this Grain to its parent Molecule (this also sets its Molecule pointer)
-				mol->addGrain(grain);
-
-				// Add Atoms to the Grain
-				for (int m=0; m<spg->nAtoms(); ++m)
-				{
-					grain->addAtom(atoms_[atomOffset+spg->atom(m)->item->index()]);
-				}
-
-				// Increase grain counter
-				++grainCounter;
-			}
-
-			// Bonds
-			bonds_;
-
-			// Update offsets / counters
-			atomOffset += sp->nAtoms();
-			++molCount;
-		}
-	}
-
-	// Set fractional populations in usedAtomTypes_
-	usedAtomTypes_.finalise();
-
-	/*
-	 * 4) Load Coordinates (if necessary)
+	 * 4) Finalise Atomc coordinates (load / randomise if necessary)
 	 */
 	// 1) If useOutputCoordinatesAsInput_ is true and that file exists, this overrides everything else
 	// 2) If randomConfiguration_ is true, generate some random coordinates
@@ -408,6 +312,29 @@ bool Configuration::setup(ProcessPool& procPool, const List<AtomType>& masterAto
 		if (!inputFileParser.openInput(outputCoordinatesFile_)) return false;
 		if (!loadCoordinates(inputFileParser, "xyz")) return false;
 		inputFileParser.closeFiles();
+	}
+	else if (randomConfiguration_)
+	{
+		procPool.initialiseRandomBuffer(ProcessPool::Pool);
+		Vec3<double> r, cog, newCentre, fr;
+		Matrix3 transform;
+
+		// Generate random positions and orientations for all molecules
+		for (int n=0; n<molecules_.nItems(); ++n)
+		{
+			Molecule* mol = molecules_[n];
+
+			// Generate a new random centre of geometry for the molecule
+			fr.set(procPool.random(), procPool.random(), procPool.random()); 
+			newCentre = box_->fracToReal(fr);
+			mol->setCentre(box_, newCentre);
+	
+			// Generate and apply a random rotation matrix
+			transform.createRotationXY(procPool.randomPlusMinusOne()*180.0, procPool.randomPlusMinusOne()*180.0);
+			mol->applyTransform(box_, transform);
+
+			// Explore conformation space within the molecule by rotating bonds
+		}
 	}
 	else if (inputCoordinatesFile_.isEmpty())
 	{
@@ -423,17 +350,11 @@ bool Configuration::setup(ProcessPool& procPool, const List<AtomType>& masterAto
 		inputFileParser.closeFiles();
 	}
 
-	/*
-	 * 5) Initialise neighbour lists and update grains
-	 */
-	Messenger::print("--> Initialising Cell neighbour lists and Grains\n");
-	if (!updateAtomsInCells()) return false;
-	
-	// Initialise cell atom neighbour lists
-	recreateCellAtomNeighbourLists(pairPotentialRange);
+	// Update Cell contents / Atom locations
+	updateCellContents();
 
 	/*
-	 * 6) Load or calculate Box normalisation file (if we need one)
+	 * 5) Load or calculate Box normalisation file (if we need one)
 	 */
 	if (rdfRange_ <= inscribedSphereRadius)
 	{

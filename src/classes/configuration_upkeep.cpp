@@ -26,106 +26,27 @@
 #include "classes/grain.h"
 #include "classes/changestore.h"
 
-// Update Cell locations of all atoms
-bool Configuration::updateAtomsInCells()
+// Update Cell contents
+void Configuration::updateCellContents()
 {
 	// Fold the coordinates of each atom into the box, and then check its Cell location, moving if necessary.
-	// Loop over Cells, focussing on one atom index at a time. Do it this way to try and avoid moving large numbers of atoms into one cell at once, causing an overflow.
-	Cell* currentCell, *targetCell;
-	Vec3<double> foldedR;
-	Atom* i;
-	for (int n = 0; n < cells_.nCells(); ++n)
-	{
-		// Grab cell pointer
-		currentCell = cells_.cell(n);
-
-		// TODO Overload cell() to take a pointer to a Vec3<> in which the folded r can be returned
-		for (OrderedPointerListItem<Atom>* item = currentCell->atoms().first(); item != NULL; item = item->next)
-		{
-			i = item->object();
-			foldedR = box_->fold(i->r());
-			i->setCoordinates(foldedR);
-			targetCell = cells_.cell(i->r());
-
-			// Need to move?
-			if (targetCell != currentCell)
-			{
-				// We first must remove
-				if (!currentCell->moveAtom(i, targetCell)) return false;
-			}
-		}
-	}
-
-	return true;
+	Atom** atoms = atoms_.array();
+	for (int n = 0; n < atoms_.nItems(); ++n) updateCellLocation(atoms[n]);
 }
 
-// Update cell locations of specified atom index
-bool Configuration::updateAtomInCell(Atom* i)
+// Update Cell location of specified Atom
+void Configuration::updateCellLocation(Atom* i)
 {
-	// Fold the coordinates of specified atom into the box, and then check its cell location, moving if necessary.
-	Cell* currentCell, *targetCell;
-	Vec3<double> foldedR;
+	// Fold Atom coordinates into Box
+	i->setCoordinates(box_->fold(i->r()));
 
-	// TODO Overload cell() to take a pointer to a Vec3<> in which the folded r can be returned
-	// Grab current cell pointer, and calculate folded coordinate and new cell location
-	currentCell = i->cell();
-	foldedR = box_->fold(i->r());
-	i->setCoordinates(foldedR);
-	targetCell = cells_.cell(foldedR);
+	// Determine new Cell position
+	Cell* cell = cells_.cell(i->r());
 
 	// Need to move?
-	if (targetCell != currentCell) currentCell->moveAtom(i, targetCell);
-
-	return true;
-}
-
-// Recalculate cell atom neighbour lists
-void Configuration::recreateCellAtomNeighbourLists(double pairPotentialRange)
-{
-	// Clear all existing atoms in cell neighbour lists
-	for (int n=0; n<cells_.nCells(); ++n) cells_.cell(n)->clearAtomNeighbourList();
-
-	Vec3<double> r, atomR;
-	double distSq, cutoffSq;
-	Atom** otherAtoms;
-	Atom* i;
-	Cell* centralCell;
-	Cell** neighbours, **mimNeighbours;
-	int nNeighbours, nMimNeighbours, c;
-
-	// Calculate cutoff distance squared
-	cutoffSq = pairPotentialRange + sqrt(cells_.realCellSize().dp(cells_.realCellSize()))*0.5;
-	Messenger::print("--> Cutoff for atom cell neighbours is %f\n", cutoffSq);
-	cutoffSq *= cutoffSq;
-
-	// Loop over atoms
-	Timer timer;
-	for (int n=0; n<atoms_.nItems(); ++n)
+	if (cell != i->cell())
 	{
-		// Grab reference to atom and pointer to its current cell location
-		i = atoms_[n];
-		centralCell = i->cell();
-		atomR = i->r();
-
-		// Check distance of the current atom from the centres of each of the neighbouring cells
-		neighbours = centralCell->cellNeighbours();
-		nNeighbours = centralCell->nCellNeighbours();
-		for (c=0; c<nNeighbours; ++c)
-		{
-			r = box_->minimumVector(neighbours[c]->centre(), atomR);
-			distSq = r.magnitudeSq();
-			if (distSq <= cutoffSq) neighbours[c]->addAtomToNeighbourList(i, false, true);
-		}
-
-		mimNeighbours = centralCell->mimCellNeighbours();
-		nMimNeighbours = centralCell->nMimCellNeighbours();
-		for (c=0; c<nMimNeighbours; ++c)
-		{
-			r = box_->minimumVector(mimNeighbours[c]->centre(), atomR);
-			distSq = r.magnitudeSq();
-			if (distSq <= cutoffSq) mimNeighbours[c]->addAtomToNeighbourList(i, true, true);
-		}
+		if (i->cell()) i->cell()->removeAtom(i);
+		cell->addAtom(i);
 	}
-	timer.stop();
-	Messenger::print("--> Cell atom neighbour lists generated (%s).\n", timer.totalTimeString());
 }

@@ -70,8 +70,6 @@ class Molecule : public DynamicArrayObject<Molecule>
 	Array<Torsion*> torsions_;
 
 	public:
-	// Initialise Molecule arrays
-	bool initialise(int nAtoms, int nGrains);
 	// Add Atom to Molecule
 	void addAtom(Atom* i);
 	// Return size of Atom array

@@ -144,6 +144,19 @@ int SpeciesTorsion::indexK() const
 	return k_->index();
 }
 
+// Return index (in parent Species) of fourth SpeciesAtom
+int SpeciesTorsion::indexL() const
+{
+#ifdef CHECKS
+	if (l_ == NULL)
+	{
+		Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'l' found in SpeciesTorsion::indexK(). Returning 0...\n");
+		return 0;
+	}
+#endif
+	return l_->index();
+}
+
 // Return whether Atoms in Torsion match those specified
 bool SpeciesTorsion::matches(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const
 {

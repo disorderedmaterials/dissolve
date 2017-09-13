@@ -194,8 +194,8 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 			v[n] += a[n]*0.5*deltaT;
 		}
 
-		// Grain coordinates will have changed...
-		cfg->updateAtomsInCells();
+		// Update Cell contents / Atom locations
+		cfg->updateCellContents();
 
 		// Calculate forces - must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
 		fx = 0.0;

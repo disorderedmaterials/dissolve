@@ -212,7 +212,7 @@ bool ChangeStore::distributeAndApply(Configuration* cfg)
 #endif
 		// Set new coordinates and check cell position
 		atoms[indices_[n]]->setCoordinates(x_[n], y_[n], z_[n]);
-		cfg->updateAtomInCell(atoms[indices_[n]]);
+		cfg->updateCellLocation(atoms[indices_[n]]);
 	}
 #else
 	// Apply atom changes
@@ -220,7 +220,7 @@ bool ChangeStore::distributeAndApply(Configuration* cfg)
 	{
 		// Set new coordinates and check cell position (Configuration::updateAtomInCell() will do all this)
 		data->revertPosition();
-		cfg->updateAtomInCell(data->atom());
+		cfg->updateCellLocation(data->atom());
 	}
 #endif
 

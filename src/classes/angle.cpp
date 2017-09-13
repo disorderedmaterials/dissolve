@@ -157,6 +157,12 @@ bool Angle::interGrain() const
  * Energy / Force
  */
 
+// Set SpeciesAngle reference
+void Angle::setSpeciesAngle(SpeciesAngle* angleRef)
+{
+	speciesAngle_ = angleRef;
+}
+
 // Return energy for specified angle
 double Angle::energy(double angleInDegrees) const
 {

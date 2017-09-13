@@ -28,6 +28,87 @@
 #include "base/processpool.h"
 #include "modules/import/import.h"
 
+// Add Molecule to Configuration based on the supplied Species
+Molecule* Configuration::addMolecule(Species* sp)
+{
+	// Create the new Molecule object
+	Molecule* newMolecule = molecules_.add();
+
+	// Add Atoms from Species to the Molecule
+	SpeciesAtom* spi = sp->atoms();
+	for (int n=0; n<sp->nAtoms(); ++n, spi = spi->next)
+	{
+		// Create new Atom
+		Atom* i = addAtom(newMolecule);
+
+		// Copy information from SpeciesAtom
+		i->setElement(spi->element());
+		i->setCharge(spi->charge());
+		i->setCoordinates(spi->r());
+
+		// Update our typeIndex (non-isotopic) and set local and master type indices
+		AtomTypeData* atd = usedAtomTypes_.add(spi->atomType(), 1);
+		i->setLocalTypeIndex(atd->listIndex());
+		i->setMasterTypeIndex(spi->atomType()->index());
+	}
+
+	// Add Grains from Species into the Molecule
+	SpeciesGrain* spg = sp->grains();
+	for (int n = 0; n<sp->nGrains(); ++n, spg = spg->next)
+	{
+		// Create new Grain
+		Grain* g = addGrain(newMolecule);
+
+		// Add Atoms to the Grain
+		for (int m=0; m<spg->nAtoms(); ++m)
+		{
+			g->addAtom(newMolecule->atom(spg->atom(m)->item->index()));
+		}
+	}
+
+	// Add Bonds
+	SpeciesBond* spb = sp->bonds();
+	for (int n = 0; n<sp->nBonds(); ++n, spb = spb->next)
+	{
+		// Get Atom pointers involved in Bond
+		Atom* i = newMolecule->atom(spb->indexI());
+		Atom* j = newMolecule->atom(spb->indexJ());
+
+		// Create new Bond
+		Bond* b = addBond(newMolecule, i, j);
+		b->setSpeciesBond(spb);
+	}
+
+	// Add Angles
+	SpeciesAngle* spa = sp->angles();
+	for (int n = 0; n<sp->nAngles(); ++n, spa = spa->next)
+	{
+		// Get Atom pointers involved in Angle
+		Atom* i = newMolecule->atom(spa->indexI());
+		Atom* j = newMolecule->atom(spa->indexJ());
+		Atom* k = newMolecule->atom(spa->indexK());
+
+		// Create new Angle
+		Angle* a = addAngle(newMolecule, i, j, k);
+		a->setSpeciesAngle(spa);
+	}
+
+	// Add Torsions
+	SpeciesTorsion* spt = sp->torsions();
+	for (int n = 0; n<sp->nTorsions(); ++n, spt = spt->next)
+	{
+		// Get Atom pointers involved in Torsion
+		Atom* i = newMolecule->atom(spt->indexI());
+		Atom* j = newMolecule->atom(spt->indexJ());
+		Atom* k = newMolecule->atom(spt->indexK());
+		Atom* l = newMolecule->atom(spt->indexL());
+
+		// Create new Torsion
+		Torsion* t = addTorsion(newMolecule, i, j, k, l);
+		t->setSpeciesTorsion(spt);
+	}
+}
+
 // Return number of Molecules in Configuration
 int Configuration::nMolecules() const
 {
@@ -44,6 +125,18 @@ Molecule** Configuration::molecules()
 Molecule* Configuration::molecule(int n)
 {
 	return molecules_[n];
+}
+
+// Add new Grain to Configuration, with Molecule parent specified
+Grain* Configuration::addGrain(Molecule* molecule)
+{
+	// Create the new Grain object
+	Grain* newGrain = grains_.add();
+
+	// Add it to the specified Molecule, which also sets the Molecule parent of the Grain
+	molecule->addGrain(newGrain);
+
+	return newGrain;
 }
 
 // Return number of grains
@@ -71,6 +164,18 @@ Grain* Configuration::grain(int n)
 	return grains_[n];
 }
 
+// Add new Atom to Configuration, with Molecule and Grain parents specified
+Atom* Configuration::addAtom(Molecule* molecule, Grain* grain)
+{
+	// Create new Atom object
+	Atom* newAtom = atoms_.add();
+	printf("New Atom has array index %i\n", newAtom->arrayIndex());
+	molecule->addAtom(newAtom);
+	newAtom->setGrain(grain);
+
+	return newAtom;
+}
+
 // Return number of Atoms in Configuration
 int Configuration::nAtoms() const
 {
@@ -96,6 +201,21 @@ Atom* Configuration::atom(int n)
 	return atoms_[n];
 }
 
+// Add new Bond to Configuration, with Molecule parent specified
+Bond* Configuration::addBond(Molecule* molecule, Atom* i, Atom* j)
+{
+	// Create new Bond object
+	Bond* newBond = bonds_.add();
+	molecule->addBond(newBond);
+	newBond->setAtoms(i, j);
+
+	// Update local bound lists in Atoms
+	i->addBond(newBond);
+	j->addBond(newBond);
+
+	return newBond;
+}
+
 // Return number of Bonds in Configuration
 int Configuration::nBonds() const
 {
@@ -114,6 +234,22 @@ Bond* Configuration::bond(int n)
 	return bonds_[n];
 }
 
+// Add new Angle to Configuration, with Molecule parent specified
+Angle* Configuration::addAngle(Molecule* molecule, Atom* i, Atom* j, Atom* k)
+{
+	// Create new Angle object
+	Angle* newAngle = angles_.add();
+	molecule->addAngle(newAngle);
+	newAngle->setAtoms(i, j, k);
+
+	// Update local bound lists in Atoms
+	i->addAngle(newAngle);
+	j->addAngle(newAngle);
+	k->addAngle(newAngle);
+
+	return newAngle;
+}
+
 // Return number of Angles in Configuration
 int Configuration::nAngles() const
 {
@@ -130,6 +266,23 @@ Angle** Configuration::angles()
 Angle* Configuration::angle(int n)
 {
 	return angles_[n];
+}
+
+// Add new Torsion to Configuration, with Molecule parent specified
+Torsion* Configuration::addTorsion(Molecule* molecule, Atom* i, Atom* j, Atom* k, Atom* l)
+{
+	// Create new Torsion object
+	Torsion* newTorsion = torsions_.add();
+	molecule->addTorsion(newTorsion);
+	newTorsion->setAtoms(i, j, k, l);
+
+	// Update local bound lists in Atoms
+	i->addTorsion(newTorsion, 0.5);
+	j->addTorsion(newTorsion, 0.5);
+	k->addTorsion(newTorsion, 0.5);
+	l->addTorsion(newTorsion, 0.5);
+
+	return newTorsion;
 }
 
 // Return number of Torsions in Configuration

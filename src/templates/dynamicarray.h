@@ -300,6 +300,7 @@ template <class T> class DynamicArray
 		T* newItem = produce();
 		newItem->setArrayIndex(array_.nItems());
 		array_.add(newItem);
+		return newItem;
 	}
 	// Add multiple items to end of array
 	void add(int count)

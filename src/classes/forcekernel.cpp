@@ -46,6 +46,22 @@ ForceKernel::~ForceKernel()
  * Internal Force Calculation
  */
 
+// Calculate forces between Atoms at vector / distance specified
+void ForceKernel::forces(const Atom* i, const Atom* j, Vec3<double> normalisedVector, double vectorMagnitude)
+{
+	// Calculate force vector
+	normalisedVector *= potentialMap_.force(i, j, vectorMagnitude);
+
+	int index = i->arrayIndex();
+	fx_[index] += normalisedVector.x;
+	fy_[index] += normalisedVector.y;
+	fz_[index] += normalisedVector.z;
+	index = j->arrayIndex();
+	fx_[index] -= normalisedVector.x;
+	fy_[index] -= normalisedVector.y;
+	fz_[index] -= normalisedVector.z;
+}
+
 // Calculate PairPotential forces between Atoms provided (no minimum image calculation)
 void ForceKernel::forcesWithoutMim(const Atom* i, const Atom* j, double scale)
 {
@@ -300,82 +316,109 @@ void ForceKernel::forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool
 	}
 }
 
-// Calculate forces between cell and atomic neighbours
-void ForceKernel::forces(Cell* centralCell, bool excludeIgeJ, ProcessPool::LoopContext loopContext)
+// Calculate forces between Cell and its neighbours
+void ForceKernel::forces(Cell* cell, bool excludeIgeJ, ProcessPool::LoopContext loopContext)
 {
-	Atom** centralAtoms = centralCell->atoms().objects();
-	Atom** neighbours = centralCell->atomNeighbours().objects();
-	Atom** mimNeighbours = centralCell->mimAtomNeighbours().objects();
+	Atom** centralAtoms = cell->atoms().objects();
+	Atom** otherAtoms;
 	Atom* ii, *jj;
-	Vec3<double> rJ;
-	int i, j, indexJ, start = 0, stride = 1;
+	Vec3<double> rJ, v;
+	double rSq, r;
+	int i, j;
+	Cell* otherCell;
 	Molecule* molJ;
 	double scale;
 
 	// Get start/stride for specified loop context
-	start = processPool_.interleavedLoopStart(loopContext);
-	stride = processPool_.interleavedLoopStride(loopContext);
+	int start = processPool_.interleavedLoopStart(loopContext);
+	int stride = processPool_.interleavedLoopStride(loopContext);
 
-	// Straight loop over atoms *not* requiring mim
-	for (j = 0; j < centralCell->atomNeighbours().nItems(); ++j)
+	// Straight loop over Cells *not* requiring mim
+	Cell** neighbours = cell->cellNeighbours();
+	for (int n = 0; n<cell->nCellNeighbours(); ++n)
 	{
-		jj = neighbours[j];
-		molJ = jj->molecule();
-		indexJ = jj->arrayIndex();
-		rJ = jj->r();
+		otherCell = neighbours[n];
+		otherAtoms = otherCell->atoms().objects();
 
-		// Loop over central cell atoms
-		for (i = start; i < centralCell->atoms().nItems(); i += stride)
+		for (j = 0; j < otherCell->nAtoms(); ++j)
 		{
-			ii = centralAtoms[i];
+			jj = otherAtoms[j];
+			molJ = jj->molecule();
+			rJ = jj->r();
 
-			// Check exclusion of I > J
-			if (excludeIgeJ && (ii->arrayIndex() >= indexJ)) break;
-
-			// Check for atoms in the same molecule
-			if (ii->molecule() != molJ) forcesWithoutMim(jj, ii);
-			else
+			// Loop over central cell atoms
+			for (i = start; i < cell->atoms().nItems(); i += stride)
 			{
-				scale = ii->scaling(jj);
-				if (scale > 1.0e-3) forcesWithoutMim(jj, ii, scale);
+				ii = centralAtoms[i];
+
+				// Check exclusion of I > J (comparison by pointer)
+				if (excludeIgeJ && (ii >= jj)) break;
+
+				// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
+				v = rJ - ii->r();
+				rSq = v.magnitudeSq();
+				if (rSq > cutoffDistanceSquared_) continue;
+
+				// Normalise vector to pass to force routine
+				r = sqrt(rSq);
+				v /= r;
+
+				// Check for Atoms in the same Molecule
+				if (ii->molecule() != molJ) forces(ii, jj, v, r);
+				else
+				{
+					scale = ii->scaling(jj);
+					if (scale > 1.0e-3) forces(ii, jj, v * scale, r);
+				}
 			}
 		}
 	}
 
-	// Straight loop over atoms requiring mim
-	for (j = 0; j < centralCell->mimAtomNeighbours().nItems(); ++j)
+	// Straight loop over Cells requiring mim
+	Cell** mimNeighbours = cell->mimCellNeighbours();
+	for (int n = 0; n<cell->nMimCellNeighbours(); ++n)
 	{
-		jj = mimNeighbours[j];
-		molJ = jj->molecule();
-		indexJ = jj->arrayIndex();
-		rJ = jj->r();
+		otherCell = mimNeighbours[n];
+		otherAtoms = otherCell->atoms().objects();
 
-		// Loop over central cell atoms
-		for (i = start; i < centralCell->atoms().nItems(); i += stride)
+		for (j = 0; j < otherCell->nAtoms(); ++j)
 		{
-			ii = centralAtoms[i];
+			jj = otherAtoms[j];
+			molJ = jj->molecule();
+			rJ = jj->r();
 
-			// Check exclusion of I > J
-			if (excludeIgeJ && (ii->arrayIndex() >= indexJ)) break;
-
-			// Check for atoms in the same species
-			if (ii->molecule() != molJ) forcesWithMim(jj, ii);
-			else
+			// Loop over central cell atoms
+			for (i = start; i < cell->atoms().nItems(); i += stride)
 			{
-				scale = ii->scaling(jj);
-				if (scale < 1.0e-3) forcesWithMim(jj, ii, scale);
+				ii = centralAtoms[i];
+
+				// Check exclusion of I >= J (comparison by pointer)
+				if (excludeIgeJ && (ii >= jj)) break;
+
+				// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
+				v = rJ - ii->r();
+				rSq = v.magnitudeSq();
+				if (rSq > cutoffDistanceSquared_) continue;
+
+				// Normalise vector to pass to force routine
+				r = sqrt(rSq);
+				v /= r;
+
+				// Check for Atoms in the same Molecule
+				if (ii->molecule() != molJ) forces(ii, jj, v, r);
+				else
+				{
+					scale = ii->scaling(jj);
+					if (scale < 1.0e-3) forces(ii, jj, v * scale, r);
+				}
 			}
 		}
 	}
 }
 
-// Calculate forces between atom and list of neighbouring cells
-void ForceKernel::forces(const Atom* i, OrderedPointerList<Atom>& neighbours, int flags, ProcessPool::LoopContext loopContext)
+// Calculate forces between Atom and Cell
+void ForceKernel::forces(const Atom* i, Cell* cell, int flags, ProcessPool::LoopContext loopContext)
 {
-	/*
-	 * Calculate the forces between the supplied atom and list of neighbouring cells. Note that it is assumed that the supplied atom
-	 * is in a cell which does *not* appear in the list.
-	 */
 #ifdef CHECKS
 	if (i == NULL)
 	{
@@ -384,61 +427,59 @@ void ForceKernel::forces(const Atom* i, OrderedPointerList<Atom>& neighbours, in
 	}
 #endif
 	Atom* jj;
-	int j, start = 0, stride = 1;
+	int j;
 	double scale;
-	Atom** neighbourAtoms = neighbours.objects();
-	int nNeighbourAtoms = neighbours.nItems();
 	
 	// Grab some information on the supplied atom
-	const int indexI = i->arrayIndex();
 	Molecule* moleculeI = i->molecule();
 	const Vec3<double> rI = i->r();
 
+	// Grab the array of Atoms in the supplied Cell
+	Atom** otherAtoms = cell->atoms().objects();
+	int nOtherAtoms = cell->nAtoms();
+
 	// Get start/stride for specified loop context
-	start = processPool_.interleavedLoopStart(loopContext);
-	stride = processPool_.interleavedLoopStride(loopContext);
+	int start = processPool_.interleavedLoopStart(loopContext);
+	int stride = processPool_.interleavedLoopStride(loopContext);
 
 	// Loop over cell atoms
-	if (flags&ForceKernel::ApplyMinimumImage)
+	if (flags&KernelFlags::ApplyMinimumImageFlag)
 	{
 		// Loop over atom neighbours
-		if (flags&ForceKernel::ExcludeSelfFlag) for (j=start; j<nNeighbourAtoms; j += stride)
+		if (flags&KernelFlags::ExcludeSelfFlag) for (j=start; j<nOtherAtoms; j += stride)
 		{
-			jj = neighbourAtoms[j];
+			jj = otherAtoms[j];
 			if (i == jj) continue;
 
 			// Check for atoms in the same species
 			if (moleculeI != jj->molecule()) forcesWithMim(i, jj);
 			else
 			{
-				if ((flags&ForceKernel::ExcludeIntraGreaterThan) && (i > jj)) continue;
 				scale = i->scaling(jj);
 				if (scale > 1.0e-3) forcesWithMim(i, jj, scale);
 			}
 		}
-		else if (flags&ForceKernel::ExcludeGreaterThanEqualTo) for (j=start; j<nNeighbourAtoms; j += stride)
+		else if (flags&KernelFlags::ExcludeIGEJFlag) for (j=start; j<nOtherAtoms; j += stride)
 		{
-			jj = neighbourAtoms[j];
-			if (indexI >= jj->arrayIndex()) continue;
+			jj = otherAtoms[j];
+			if (i >= jj) continue;
 
 			// Check for atoms in the same species
 			if (moleculeI != jj->molecule()) forcesWithMim(i, jj);
 			else
 			{
-				if ((flags&ForceKernel::ExcludeIntraGreaterThan) && (i > jj)) continue;
 				scale = i->scaling(jj);
 				if (scale > 1.0e-3) forcesWithMim(i, jj, scale);
 			}
 		}
-		else for (j=start; j<nNeighbourAtoms; j += stride)
+		else for (j=start; j<nOtherAtoms; j += stride)
 		{
-			jj = neighbourAtoms[j];
+			jj = otherAtoms[j];
 
 			// Check for atoms in the same species
 			if (moleculeI != jj->molecule()) forcesWithMim(i, jj);
 			else
 			{
-				if ((flags&ForceKernel::ExcludeIntraGreaterThan) && (i > jj)) continue;
 				scale = i->scaling(jj);
 				if (scale > 1.0e-3) forcesWithMim(i, jj, scale);
 			}
@@ -447,9 +488,9 @@ void ForceKernel::forces(const Atom* i, OrderedPointerList<Atom>& neighbours, in
 	else
 	{
 		// Loop over atom neighbours
-		if (flags&ForceKernel::ExcludeSelfFlag) for (j=start; j<nNeighbourAtoms; j += stride)
+		if (flags&KernelFlags::ExcludeSelfFlag) for (j=start; j<nOtherAtoms; j += stride)
 		{
-			jj = neighbourAtoms[j];
+			jj = otherAtoms[j];
 			if (i == jj) continue;
 
 			// Check for atoms in the same species
@@ -460,10 +501,10 @@ void ForceKernel::forces(const Atom* i, OrderedPointerList<Atom>& neighbours, in
 				if (scale > 1.0e-3) forcesWithoutMim(i, jj, scale);
 			}
 		}
-		else if (flags&ForceKernel::ExcludeGreaterThanEqualTo) for (j=start; j<nNeighbourAtoms; j += stride)
+		else if (flags&KernelFlags::ExcludeIGEJFlag) for (j=start; j<nOtherAtoms; j += stride)
 		{
-			jj = neighbourAtoms[j];
-			if (indexI >= jj->arrayIndex()) continue;
+			jj = otherAtoms[j];
+			if (i >= jj) continue;
 
 			// Check for atoms in the same species
 			if (moleculeI != jj->molecule()) forcesWithoutMim(i, jj);
@@ -473,9 +514,9 @@ void ForceKernel::forces(const Atom* i, OrderedPointerList<Atom>& neighbours, in
 				if (scale > 1.0e-3) forcesWithoutMim(i, jj, scale);
 			}
 		}
-		else for (j=start; j<nNeighbourAtoms; j += stride)
+		else for (j=start; j<nOtherAtoms; j += stride)
 		{
-			jj = neighbourAtoms[j];
+			jj = otherAtoms[j];
 
 			// Check for atoms in the same species
 			if (moleculeI != jj->molecule()) forcesWithoutMim(i, jj);
@@ -483,107 +524,6 @@ void ForceKernel::forces(const Atom* i, OrderedPointerList<Atom>& neighbours, in
 			{
 				scale = i->scaling(jj);
 				if (scale > 1.0e-3) forcesWithoutMim(i, jj, scale);
-			}
-		}
-	}
-}
-
-// Calculate forces between Grain and list of Cells
-void ForceKernel::forces(const Grain* grain, OrderedPointerList<Atom>& neighbours, bool applyMim, bool excludeIgeJ, ProcessPool::LoopContext loopContext)
-{
-#ifdef CHECKS
-	if (grain == NULL)
-	{
-		Messenger::error("NULL_POINTER - NULL Grain pointer passed to ForceKernel::forces(Grain,RefList<Cell>,bool,bool,ParallelStyle).\n");
-		return;
-	}
-#endif
-	Atom* ii, *jj;
-	int i, j, start = 0, stride = 1;
-	int indexI;
-	double scale;
-	Molecule* grainMol = grain->molecule();
-	Atom** neighbourAtoms = neighbours.objects();
-	int nNeighbourAtoms = neighbours.nItems();
-	Vec3<double> rI;
-
-	// Get start/stride for specified loop context
-	start = processPool_.interleavedLoopStart(loopContext);
-	stride = processPool_.interleavedLoopStride(loopContext);
-
-	if (applyMim)
-	{
-		// Loop over grain atoms
-		for (i = 0; i<grain->nAtoms(); ++i)
-		{
-			ii = grain->atom(i);
-			indexI = ii->arrayIndex();
-			rI = ii->r();
-
-			// Loop over atom neighbours
-			if (excludeIgeJ) for (j=start; j<nNeighbourAtoms; j += stride)
-			{
-				jj = neighbourAtoms[j];
-				if (indexI >= jj->arrayIndex()) continue;
-
-				// Check for atoms in the same species
-				if (grainMol != jj->molecule()) forcesWithMim(ii, jj);
-				else
-				{
-					scale = ii->scaling(jj);
-					if (scale > 1.0e-3) forcesWithMim(ii, jj, scale);
-				}
-			}
-			else for (j=start; j<nNeighbourAtoms; j += stride)
-			{
-				jj = neighbourAtoms[j];
-				if (indexI == jj->arrayIndex()) continue;
-
-				// Check for atoms in the same species
-				if (grainMol != jj->molecule()) forcesWithMim(ii, jj);
-				else
-				{
-					scale = ii->scaling(jj);
-					if (scale > 1.0e-3) forcesWithMim(ii, jj, scale);
-				}
-			}
-		}
-	}
-	else
-	{
-		// Loop over grain atoms
-		for (i = 0; i<grain->nAtoms(); ++i)
-		{
-			ii = grain->atom(i);
-			indexI = ii->arrayIndex();
-			rI = ii->r();
-
-			// Loop over atom neighbours
-			if (excludeIgeJ) for (j=start; j<nNeighbourAtoms; j += stride)
-			{
-				jj = neighbourAtoms[j];
-				if (indexI >= jj->arrayIndex()) continue;
-
-				// Check for atoms in the same species
-				if (grainMol != jj->molecule()) forcesWithoutMim(ii, jj);
-				else
-				{
-					scale = ii->scaling(jj);
-					if (scale > 1.0e-3) forcesWithoutMim(ii, jj, scale);
-				}
-			}
-			else for (j=start; j<nNeighbourAtoms; j += stride)
-			{
-				jj = neighbourAtoms[j];
-				if (indexI == jj->arrayIndex()) continue;
-
-				// Check for atoms in the same species
-				if (grainMol != jj->molecule()) forcesWithoutMim(ii, jj);
-				else
-				{
-					scale = ii->scaling(jj);
-					if (scale > 1.0e-3) forcesWithoutMim(ii, jj, scale);
-				}
 			}
 		}
 	}
@@ -600,9 +540,17 @@ void ForceKernel::forces(const Atom* i, ProcessPool::LoopContext loopContext)
 	}
 #endif
 	Cell* cellI = i->cell();
-	forces(i, cellI->atoms(), ForceKernel::ExcludeSelfFlag, loopContext);
-	forces(i, cellI->atomNeighbours(), ForceKernel::NoFlags, loopContext);
-	forces(i, cellI->mimAtomNeighbours(), ForceKernel::ApplyMinimumImage, loopContext);
+
+	// This Atom with other Atoms in the same Cell
+	forces(i, cellI, KernelFlags::ExcludeSelfFlag, loopContext);
+
+	// This Atom with other Atoms in neighbour Cells
+	Cell** neighbours = cellI->cellNeighbours();
+	for (int n=0; n<cellI->nCellNeighbours(); ++n) forces(i, neighbours[n], KernelFlags::NoFlags, loopContext);
+
+	// This Atom with other Atoms in neighbour Cells which require minimum image
+	Cell** mimNeighbours = cellI->mimCellNeighbours();
+	for (int n=0; n<cellI->nMimCellNeighbours(); ++n) forces(i, mimNeighbours[n], KernelFlags::ApplyMinimumImageFlag, loopContext);
 }
 
 // Calculate forces between grain and world
@@ -628,17 +576,33 @@ void ForceKernel::forces(const Grain* grain, bool excludeIgtJ, ProcessPool::Loop
 	{
 		ii = grain->atom(i);
 		cellI = ii->cell();
-		forces(ii, cellI->atoms(), ForceKernel::ExcludeGreaterThanEqualTo | ForceKernel::ExcludeIntraGreaterThan, loopContext);
-		forces(ii, cellI->atomNeighbours(), ForceKernel::ExcludeGreaterThanEqualTo, loopContext);
-		forces(ii, cellI->mimAtomNeighbours(), ForceKernel::ApplyMinimumImage | ForceKernel::ExcludeGreaterThanEqualTo, loopContext);
+
+		// This Atom with its own Cell
+		forces(ii, cellI, KernelFlags::ExcludeIGEJFlag, loopContext);
+
+		// Cell neighbours not requiring minimum image
+		Cell** neighbours = cellI->cellNeighbours();
+		for (int n=0; n<cellI->nCellNeighbours(); ++n) forces(ii, neighbours[n], KernelFlags::ExcludeIGEJFlag, loopContext);
+
+		// Cell neighbours requiring minimum image
+		Cell** mimNeighbours = cellI->mimCellNeighbours();
+		for (int n=0; n<cellI->nMimCellNeighbours(); ++n) forces(ii, mimNeighbours[n], KernelFlags::ApplyMinimumImageFlag | KernelFlags::ExcludeIGEJFlag, loopContext);
 	}
 	else for (i = 0; i<grain->nAtoms(); ++i)
 	{
 		ii = grain->atom(i);
 		cellI = ii->cell();
-		forces(ii, cellI->atoms(), ForceKernel::ExcludeSelfFlag | ForceKernel::ExcludeIntraGreaterThan, loopContext);
-		forces(ii, cellI->atomNeighbours(), ForceKernel::ExcludeIntraGreaterThan, loopContext);
-		forces(ii, cellI->mimAtomNeighbours(), ForceKernel::ApplyMinimumImage | ForceKernel::ExcludeIntraGreaterThan, loopContext);
+		
+		// This Atom with its own Cell
+		forces(ii, cellI, KernelFlags::ExcludeSelfFlag, loopContext);
+
+		// Cell neighbours not requiring minimum image
+		Cell** neighbours = cellI->cellNeighbours();
+		for (int n=0; n<cellI->nCellNeighbours(); ++n) forces(ii, neighbours[n], KernelFlags::NoFlags, loopContext);
+
+		// Cell neighbours requiring minimum image
+		Cell** mimNeighbours = cellI->mimCellNeighbours();
+		for (int n=0; n<cellI->nMimCellNeighbours(); ++n) forces(ii, mimNeighbours[n], KernelFlags::ApplyMinimumImageFlag, loopContext);
 	}
 }
 

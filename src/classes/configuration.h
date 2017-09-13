@@ -147,7 +147,7 @@ class Configuration : public ListItem<Configuration>
 	// Clear all data
 	void clear();
 	// Setup configuration
-	bool setup(ProcessPool& procPool, const List<AtomType>& masterAtomTypes, double pairPotentialRange, int boxNormalisationNPoints);
+	bool setup(ProcessPool& procPool, double pairPotentialRange, int boxNormalisationNPoints);
 
 
 	/*
@@ -172,36 +172,48 @@ class Configuration : public ListItem<Configuration>
 	int coordinateIndex_;
 
 	public:
+	// Add Molecule to Configuration based on the supplied Species
+	Molecule* addMolecule(Species* sp);
 	// Return number of Molecules in Configuration
 	int nMolecules() const;
 	// Return first Molecule
 	Molecule** molecules();
 	// Return nth Molecule
 	Molecule* molecule(int n);
+	// Add new Grain to Configuration, with Molecule parent specified
+	Grain* addGrain(Molecule* molecule);
 	// Return number of Grains in Configuration
 	int nGrains() const;
 	// Return Grain array
 	Grain** grains();
 	// Return nth Grain
 	Grain* grain(int n);
+	// Add new Atom to Configuration, with Molecule and Grain parents specified
+	Atom* addAtom(Molecule* molecule, Grain* grain = NULL);
 	// Return number of Atoms in Configuration
 	int nAtoms() const;
 	// Return Atom array
 	Atom** atoms();
 	// Return nth Atom
 	Atom* atom(int n);
+	// Add new Bond to Configuration, with Molecule parent specified
+	Bond* addBond(Molecule* molecule, Atom* i, Atom* j);
 	// Return number of Bonds in Configuration
 	int nBonds() const;
 	// Return Bond array
 	Bond** bonds();
 	// Return nth Bond
 	Bond* bond(int n);
+	// Add new Angle to Configuration, with Molecule parent specified
+	Angle* addAngle(Molecule* molecule, Atom* i, Atom* j, Atom* k);
 	// Return number of Angles in Configuration
 	int nAngles() const;
 	// Return Angle array
 	Angle** angles();
 	// Return nth Angle
 	Angle* angle(int n);
+	// Add new Torsion to Configuration, with Molecule parent specified
+	Torsion* addTorsion(Molecule* molecule, Atom* i, Atom* j, Atom* k, Atom* l);
 	// Return number of Torsions in Configuration
 	int nTorsions() const;
 	// Return Torsion array
@@ -346,12 +358,10 @@ class Configuration : public ListItem<Configuration>
 	 * Upkeep
 	 */
 	public:
-	// Update cell locations of all atoms
-	bool updateAtomsInCells();
-	// Update cell location of specified Atom
-	bool updateAtomInCell(Atom* i);
-	// Create cell atom neighbour lists
-	void recreateCellAtomNeighbourLists(double pairPotentialRange);
+	// Update Cell contents
+	void updateCellContents();
+	// Update Cell location of specified Atom
+	void updateCellLocation(Atom* i);
 
 
 	/*

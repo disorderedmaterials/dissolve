@@ -43,11 +43,10 @@ double DUQ::intramolecularEnergy(ProcessPool& procPool, Configuration* cfg)
 	EnergyKernel kernel(procPool, cfg, potentialMap_);
 
 	double energy = 0.0;
-	int start, stride;
 
 	// Set start/stride for parallel loop
-	start = procPool.interleavedLoopStart(ProcessPool::OverPoolProcesses);
-	stride = procPool.interleavedLoopStride(ProcessPool::OverPoolProcesses);
+	int start = procPool.interleavedLoopStart(ProcessPool::OverPoolProcesses);
+	int stride = procPool.interleavedLoopStride(ProcessPool::OverPoolProcesses);
 
 	// Loop over defined Bonds
 	Bond** bonds = cfg->bonds();

@@ -99,24 +99,22 @@ class Cell
 	OrderedPointerList<Atom>& atoms();
 	// Return number of Atoms in list
 	int nAtoms() const;
-	// Move specified atom to specified Cell
-	bool moveAtom(Atom* i, Cell* targetCell);
 	// Add atom to Cell
 	bool addAtom(Atom* atom);
+	// Remove Atom from Cell
+	bool removeAtom(Atom* atom);
 
 
 	/*
 	 * Neighbours
 	 */
 	private:
-	// Arrays of neighbouring cells, within the defined potential cutoff (from anywhere in the cell)
+	// Arrays of neighbouring cells, within the defined potential cutoff (from anywhere in the Cell)
 	Cell** cellNeighbours_, **mimCellNeighbours_;
 	// Array of all neighbouring cells
 	CellNeighbour* allCellNeighbours_;
 	// Number of cells in cell arrays
 	int nCellNeighbours_, nMimCellNeighbours_;
-	// Lists of neighbouring atoms, within the defined potential cutoff (from anywhere in the cell)
-	OrderedPointerList<Atom> atomNeighbours_, mimAtomNeighbours_;
 
 	public:
 	// Add Cell neighbours
@@ -133,18 +131,6 @@ class Cell
 	Cell** mimCellNeighbours();
 	// Return list of all cell neighbours
 	CellNeighbour* allCellNeighbours();
-	// Clear atom neighbour list
-	void clearAtomNeighbourList();
-	// Add atom to neighbour list
-	void addAtomToNeighbourList(Atom* i, bool useMim, bool atEnd = false);
-	// Remove atom from neighbour list
-	bool removeAtomFromNeighbourList(Atom* i, bool useMim);
-	// Return total number of atom neighbours
-	int nTotalAtomNeighbours();
-	// Return atom neighbour list
-	OrderedPointerList<Atom>& atomNeighbours();
-	// Return atom neighbour list requiring mim
-	OrderedPointerList<Atom>& mimAtomNeighbours();
 };
 
 #endif
