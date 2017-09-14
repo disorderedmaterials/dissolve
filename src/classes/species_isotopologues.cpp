@@ -30,7 +30,7 @@ void Species::updateIsotopologues(const List<AtomType>& atomTypes)
 }
 
 // Add a new Isotopologue to this species
-Isotopologue *Species::addIsotopologue(const char* baseName)
+Isotopologue* Species::addIsotopologue(const char* baseName)
 {
 	Isotopologue* itp = isotopologues_.add();
 	itp->setParent(this);
@@ -64,13 +64,13 @@ int Species::nIsotopologues() const
 }
 
 // Return first Isotopologue defined
-Isotopologue *Species::isotopologues() const
+Isotopologue* Species::isotopologues() const
 {
 	return isotopologues_.first();
 }
 
 // Return nth Isotopologue defined
-Isotopologue *Species::isotopologue(int n)
+Isotopologue* Species::isotopologue(int n)
 {
 	return isotopologues_[n];
 }
@@ -105,7 +105,7 @@ const char* Species::uniqueIsotopologueName(const char* base, Isotopologue* excl
 }
 
 // Search for Isotopologue by name
-Isotopologue *Species::findIsotopologue(const char* name) const
+Isotopologue* Species::findIsotopologue(const char* name) const
 {
 	for (Isotopologue *iso = isotopologues_.first(); iso != NULL; iso = iso->next) if (strcmp(name,iso->name()) == 0) return iso;
 	return NULL;

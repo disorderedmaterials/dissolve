@@ -78,13 +78,13 @@ int Species::nBonds() const
 }
 
 // Return list of bonds
-SpeciesBond *Species::bonds() const
+SpeciesBond* Species::bonds() const
 {
 	return bonds_.first();
 }
 
 // Return nth bond
-SpeciesBond *Species::bond(int n)
+SpeciesBond* Species::bond(int n)
 {
 	return bonds_[n];
 }
@@ -159,13 +159,13 @@ int Species::nAngles() const
 }
 
 // Return list of angles
-SpeciesAngle *Species::angles() const
+SpeciesAngle* Species::angles() const
 {
 	return angles_.first();
 }
 
 // Return nth angle
-SpeciesAngle *Species::angle(int n)
+SpeciesAngle* Species::angle(int n)
 {
 	return angles_[n];
 }
@@ -251,13 +251,13 @@ int Species::nTorsions() const
 }
 
 // Return list of torsions
-SpeciesTorsion *Species::torsions() const
+SpeciesTorsion* Species::torsions() const
 {
 	return torsions_.first();
 }
 
 // Return nth torsion
-SpeciesTorsion *Species::torsion(int n)
+SpeciesTorsion* Species::torsion(int n)
 {
 	return torsions_[n];
 }
