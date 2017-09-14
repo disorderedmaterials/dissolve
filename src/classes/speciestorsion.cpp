@@ -80,10 +80,12 @@ void SpeciesTorsion::setAtoms(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, Sp
 	i_ = i;
 	j_ = j;
 	k_ = k;
+	l_ = l;
 #ifdef CHECKS
 	if (i_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* i in SpeciesTorsion::set().\n");
 	if (j_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* j in SpeciesTorsion::set().\n");
 	if (k_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* k in SpeciesTorsion::set().\n");
+	if (l_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* l in SpeciesTorsion::set().\n");
 #endif
 }
 
@@ -103,6 +105,12 @@ SpeciesAtom* SpeciesTorsion::j() const
 SpeciesAtom* SpeciesTorsion::k() const
 {
 	return k_;
+}
+
+// Return fourth SpeciesAtom involved in Torsion
+SpeciesAtom* SpeciesTorsion::l() const
+{
+	return l_;
 }
 
 // Return index (in parent Species) of first SpeciesAtom
