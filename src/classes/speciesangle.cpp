@@ -87,19 +87,19 @@ void SpeciesAngle::setAtoms(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k)
 }
 
 // Return first SpeciesAtom involved in Angle
-SpeciesAtom *SpeciesAngle::i() const
+SpeciesAtom* SpeciesAngle::i() const
 {
 	return i_;
 }
 
 // Return second (central) SpeciesAtom involved in Angle
-SpeciesAtom *SpeciesAngle::j() const
+SpeciesAtom* SpeciesAngle::j() const
 {
 	return j_;
 }
 
 // Return third SpeciesAtom involved in Angle
-SpeciesAtom *SpeciesAngle::k() const
+SpeciesAtom* SpeciesAngle::k() const
 {
 	return k_;
 }

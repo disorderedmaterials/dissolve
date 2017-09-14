@@ -88,19 +88,19 @@ void SpeciesTorsion::setAtoms(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, Sp
 }
 
 // Return first SpeciesAtom involved in Torsion
-SpeciesAtom *SpeciesTorsion::i() const
+SpeciesAtom* SpeciesTorsion::i() const
 {
 	return i_;
 }
 
 // Return second (central) SpeciesAtom involved in Torsion
-SpeciesAtom *SpeciesTorsion::j() const
+SpeciesAtom* SpeciesTorsion::j() const
 {
 	return j_;
 }
 
 // Return third SpeciesAtom involved in Torsion
-SpeciesAtom *SpeciesTorsion::k() const
+SpeciesAtom* SpeciesTorsion::k() const
 {
 	return k_;
 }

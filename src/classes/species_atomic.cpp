@@ -22,7 +22,7 @@
 #include "classes/species.h"
 
 // Add a new atom to the Species
-SpeciesAtom *Species::addAtom(int element, double rx, double ry, double rz)
+SpeciesAtom* Species::addAtom(int element, double rx, double ry, double rz)
 {
 	SpeciesAtom* i = atoms_.add();
 	i->setParent(this);
@@ -38,13 +38,13 @@ int Species::nAtoms() const
 }
 
 // Return the first Atom in the Species
-SpeciesAtom *Species::atoms() const
+SpeciesAtom* Species::atoms() const
 {
 	return atoms_.first();
 }
 
 // Return the nth Atom in the Species
-SpeciesAtom *Species::atom(int n)
+SpeciesAtom* Species::atom(int n)
 {
 	return atoms_[n];
 }

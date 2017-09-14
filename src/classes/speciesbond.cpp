@@ -84,19 +84,19 @@ void SpeciesBond::setAtoms(SpeciesAtom* i, SpeciesAtom* j)
 }
 
 // Return first SpeciesAtom involved in SpeciesBond
-SpeciesAtom *SpeciesBond::i() const
+SpeciesAtom* SpeciesBond::i() const
 {
 	return i_;
 }
 
 // Return second SpeciesAtom involved in SpeciesBond
-SpeciesAtom *SpeciesBond::j() const
+SpeciesAtom* SpeciesBond::j() const
 {
 	return j_;
 }
 
 // Return the 'other' SpeciesAtom in the SpeciesBond
-SpeciesAtom *SpeciesBond::partner(SpeciesAtom* i) const
+SpeciesAtom* SpeciesBond::partner(SpeciesAtom* i) const
 {
 	return (i == i_ ? j_ : i_);
 }
