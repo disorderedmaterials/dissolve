@@ -115,8 +115,6 @@ class Species : public ListItem<Species>
 	List<SpeciesAngle> angles_;
 	// List of Torsions between Atoms in the Species
 	List<SpeciesTorsion> torsions_;
-	// Scaling matrix for intramolecular interactions
-	Array2D<double> scalingMatrix_;
 	
 	public:
 	// Add new Bond definition (from SpeciesAtom*)
@@ -159,10 +157,6 @@ class Species : public ListItem<Species>
 	void recalculateIntramolecular();
 	// Calculate local Atom index lists for interactions
 	bool calculateIndexLists();
-	// Create scaling matrix
-	void createScalingMatrix();
-	// Return scaling factor for supplied indices
-	double scaling(int indexI, int indexJ) const;
 
 
 	/*

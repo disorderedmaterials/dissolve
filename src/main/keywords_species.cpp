@@ -155,7 +155,6 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 				species->centreAtOrigin();
 				species->orderAtomsWithinGrains();
 				species->calculateIndexLists();
-				species->createScalingMatrix();
 				Messenger::print("Found end of Species '%s'.\n", species->name());
 				blockDone = true;
 				break;

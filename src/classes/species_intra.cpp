@@ -306,7 +306,6 @@ void Species::recalculateIntramolecular()
 	for (j = atoms_.first(); j != NULL; j = j->next)
 	{
 		// Double loop over Bonds
-		printf("Angle is on Atom %i which has %i bonds\n", j->userIndex(), j->nBonds());;
 		for (ri = j->bonds(); ri != NULL; ri = ri->next)
 		{
 			i = ri->item->partner(j);
@@ -392,57 +391,4 @@ bool Species::calculateIndexLists()
 		}
 		a->setAttachedAtoms(1, selectedAtoms_);
 	}
-}
-
-// Create scaling matrix
-void Species::createScalingMatrix()
-{
-	int n, m, rootIndex = atoms_[0]->index();
-
-	scalingMatrix_.initialise(atoms_.nItems(), atoms_.nItems());
-
-	// Unitise matrix (i.e. set all Atom pairs to interact fully)
-	scalingMatrix_ = 1.0;
-	
-	// 'Torsion' interactions (set to 0.5)
-	for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next)
-	{
-		// TODO
-	}
-	
-	// Bond interactions (set to 0.0)
-	for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next)
-	{
-		n = b->indexI() - rootIndex;
-		m = b->indexJ() - rootIndex;
-		scalingMatrix_.ref(n,m) = 0.0;
-		scalingMatrix_.ref(m,n) = 0.0;
-	}
-
-	// Angle interactions (set to 0.0)
-	for (SpeciesAngle* a = angles_.first(); a != NULL; a = a->next)
-	{
-		n = a->indexI() - rootIndex;
-		m = a->indexK() - rootIndex;
-		scalingMatrix_.ref(n,m) = 0.0;
-		scalingMatrix_.ref(m,n) = 0.0;
-	}
-}
-
-// Return scaling factor for supplied indices
-double Species::scaling(int indexI, int indexJ) const
-{
-#ifdef CHECKS
-	if ((indexI < 0) || (indexI >= atoms_.nItems()))
-	{
-		Messenger::print("OUT_OF_RANGE - After rooting, supplied Atom indexI is out of range (%i) (nAtoms = %i).\n", indexI, atoms_.nItems());
-		return 0.0;
-	}
-	if ((indexJ < 0) || (indexJ >= atoms_.nItems()))
-	{
-		Messenger::print("OUT_OF_RANGE - After rooting, supplied Atom indexJ is out of range (%i) (nAtoms = %i).\n", indexJ, atoms_.nItems());
-		return 0.0;
-	}
-#endif
-	return scalingMatrix_.value(indexI, indexJ);
 }
