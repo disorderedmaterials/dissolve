@@ -35,7 +35,6 @@ Bond::Bond() : DynamicArrayObject<Bond>()
 	nAttached_[1] = 0;
 	attached_[0] = NULL;
 	attached_[1] = NULL;
-	interGrain_ = false;
 }
 
 // Destructor
@@ -148,18 +147,6 @@ int Bond::nAttached(int terminus) const
 Atom** Bond::attached(int terminus) const
 {
 	return attached_[terminus];
-}
-
-// Set whether this Bond is interGrain
-void Bond::setInterGrain(bool b)
-{
-	interGrain_ = b;
-}
-
-// Return whether this Bond is interGrain
-bool Bond::interGrain() const
-{
-	return interGrain_;
 }
 
 /*

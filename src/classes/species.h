@@ -163,8 +163,6 @@ class Species : public ListItem<Species>
 	void createScalingMatrix();
 	// Return scaling factor for supplied indices
 	double scaling(int indexI, int indexJ) const;
-	// Identify inter-Grain terms
-	void identifyInterGrainTerms();
 
 
 	/*

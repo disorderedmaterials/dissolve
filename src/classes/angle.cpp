@@ -35,7 +35,6 @@ Angle::Angle() : DynamicArrayObject<Angle>()
 	nAttached_[1] = 0;
 	attached_[0] = NULL;
 	attached_[1] = NULL;
-	interGrain_ = false;
 }
 
 // Destructor
@@ -139,18 +138,6 @@ int Angle::nAttached(int terminus) const
 Atom** Angle::attached(int terminus) const
 {
 	return attached_[terminus];
-}
-
-// Set whether this Angle is interGrain
-void Angle::setInterGrain(bool b)
-{
-	interGrain_ = b;
-}
-
-// Return whether this Angle is interGrain
-bool Angle::interGrain() const
-{
-	return interGrain_;
 }
 
 /*

@@ -219,18 +219,6 @@ int* SpeciesBond::attachedIndices(int terminus) const
 	return attachedAtomIndices_[terminus];
 }
 
-// Set whether this Bond is interGrain
-void SpeciesBond::setInterGrain(bool b)
-{
-	interGrain_ = b;
-}
-
-// Return whether this Bond is interGrain
-bool SpeciesBond::interGrain() const
-{
-	return interGrain_;
-}
-
 // Return energy for specified distance
 double SpeciesBond::energy(double distance) const
 {

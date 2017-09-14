@@ -37,7 +37,6 @@ Torsion::Torsion() : DynamicArrayObject<Torsion>()
 	nAttached_[1] = 0;
 	attached_[0] = NULL;
 	attached_[1] = NULL;
-	interGrain_ = false;
 }
 
 // Destructor
@@ -159,18 +158,6 @@ int Torsion::nAttached(int terminus) const
 Atom** Torsion::attached(int terminus) const
 {
 	return attached_[terminus];
-}
-
-// Set whether this Torsion is interGrain
-void Torsion::setInterGrain(bool b)
-{
-	interGrain_ = b;
-}
-
-// Return whether this Torsion is interGrain
-bool Torsion::interGrain() const
-{
-	return interGrain_;
 }
 
 /*

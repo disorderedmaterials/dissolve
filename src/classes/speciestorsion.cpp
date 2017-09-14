@@ -268,18 +268,6 @@ int* SpeciesTorsion::attachedIndices(int terminus) const
 	return attachedAtomIndices_[terminus];
 }
 
-// Set whether this Torsion is interGrain
-void SpeciesTorsion::setInterGrain(bool b)
-{
-	interGrain_ = b;
-}
-
-// Return whether this Torsion is interGrain
-bool SpeciesTorsion::interGrain() const
-{
-	return interGrain_;
-}
-
 // Return energy for specified angle
 double SpeciesTorsion::energy(double angleInDegrees) const
 {

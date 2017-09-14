@@ -101,8 +101,6 @@ class SpeciesAngle : public ListItem<SpeciesAngle>
 	SpeciesAtom** attachedAtoms_[2];
 	// Arrays of atom indices (in)directly attached to termini
 	int* attachedAtomIndices_[2];
-	// Flag specifying whether this is an inter-Grain connection
-	bool interGrain_;
 
 	public:
 	// Set equilibrium angle
@@ -123,10 +121,6 @@ class SpeciesAngle : public ListItem<SpeciesAngle>
 	SpeciesAtom** attachedAtoms(int terminus) const;
 	// Return array of attached indices for terminus specified
 	int* attachedIndices(int terminus) const;
-	// Set whether this Angle is interGrain
-	void setInterGrain(bool b);
-	// Return whether this Angle is interGrain
-	bool interGrain() const;
 	// Return energy for specified angle
 	double energy(double angleInDegrees) const;
 	// Return force multiplier for specified angle

@@ -96,8 +96,6 @@ class SpeciesBond : public ListItem<SpeciesBond>
 	SpeciesAtom** attachedAtoms_[2];
 	// Arrays of atom indices (in)directly attached to termini
 	int* attachedAtomIndices_[2];
-	// Flag specifying whether this is an inter-Grain connection
-	bool interGrain_;
 
 	public:
 	// Set nominal equilibrium SpeciesBond length
@@ -118,10 +116,6 @@ class SpeciesBond : public ListItem<SpeciesBond>
 	SpeciesAtom** attachedAtoms(int terminus) const;
 	// Return array of attached indices for terminus specified
 	int* attachedIndices(int terminus) const;
-	// Set whether this bond is interGrain
-	void setInterGrain(bool b);
-	// Return whether this bond is interGrain
-	bool interGrain() const;
 	// Return energy for specified distance
 	double energy(double distance) const;
 	// Return force multiplier for specified distance

@@ -90,8 +90,6 @@ class Torsion : public DynamicArrayObject<Torsion>
 	int nAttached_[2];
 	// Arrays of Atoms (in)directly attached to termini
 	Atom** attached_[2];
-	// Flag specifying whether this is an inter-Grain connection
-	bool interGrain_;
 
 	public:
 	// Create attached Atom array
@@ -102,10 +100,6 @@ class Torsion : public DynamicArrayObject<Torsion>
 	int nAttached(int terminus) const;
 	// Return array of attached Atoms for terminus specified
 	Atom** attached(int terminus) const;
-	// Set whether this Torsion is interGrain
-	void setInterGrain(bool b);
-	// Return whether this Torsion is interGrain
-	bool interGrain() const;
 
 
 	/*

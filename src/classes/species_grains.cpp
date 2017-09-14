@@ -71,9 +71,6 @@ void Species::addDefaultGrain()
 	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next) sg->addAtom(i);
 	
 	sg->setName(sg->nameFromAtoms());
-
-	// Locate inter/intra-grain terms
-	identifyInterGrainTerms();
 }
 
 // Automatically determine Grains based on chemical connectivity
@@ -123,9 +120,6 @@ void Species::autoAddGrains()
 
 	// Name each grain....
 	for (SpeciesGrain* sg = grains_.first(); sg != NULL; sg = sg->next) sg->setName(uniqueGrainName(sg->nameFromAtoms()));
-
-	// Locate inter/intra-grain terms
-	identifyInterGrainTerms();
 }
 
 // Add new GrainDefinition for this Species

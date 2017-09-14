@@ -86,8 +86,6 @@ class Angle : public DynamicArrayObject<Angle>
 	int nAttached_[2];
 	// Arrays of Atoms (in)directly attached to termini
 	Atom** attached_[2];
-	// Flag specifying whether this is an inter-Grain connection
-	bool interGrain_;
 
 	public:
 	// Set equilibrium angle
@@ -106,10 +104,6 @@ class Angle : public DynamicArrayObject<Angle>
 	int nAttached(int terminus) const;
 	// Return array of attached Atoms for terminus specified
 	Atom** attached(int terminus) const;
-	// Set whether this Angle is interGrain
-	void setInterGrain(bool b);
-	// Return whether this Angle is interGrain
-	bool interGrain() const;
 
 
 	/*

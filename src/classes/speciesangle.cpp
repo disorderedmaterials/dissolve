@@ -236,22 +236,10 @@ int* SpeciesAngle::attachedIndices(int terminus) const
 	return attachedAtomIndices_[terminus];
 }
 
-// Set whether this Angle is interGrain
-void SpeciesAngle::setInterGrain(bool b)
-{
-	interGrain_ = b;
-}
-
-// Return whether this Angle is interGrain
-bool SpeciesAngle::interGrain() const
-{
-	return interGrain_;
-}
-
 // Return energy for specified angle
 double SpeciesAngle::energy(double angleInDegrees) const
 {
-	double delta = (angleInDegrees - equilibrium_)/DEGRAD;
+	double delta = (angleInDegrees - equilibrium_) / DEGRAD;
 	return 0.5*forceConstant_*delta*delta;
 }
 
