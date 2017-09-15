@@ -26,6 +26,8 @@
 #include "templates/listitem.h"
 #include "templates/reflist.h"
 
+#define MAXANGLEPARAMS 5
+
 // Forward Declarations
 class SpeciesAtom;
 class Species;
@@ -90,11 +92,25 @@ class SpeciesAngle : public ListItem<SpeciesAngle>
 	/*
 	 * Interaction Parameters
 	 */
+	public:
+	// Angle functional forms
+	enum AngleFunction
+	{
+		HarmonicForm,
+		nAngleFunctions
+	};
+	// Convert string to functional form
+	static AngleFunction angleFunction(const char* s);
+	// Return functional form text
+	static const char* angleFunction(AngleFunction func);
+	// Return number of parameters required for functional form
+	static int nFunctionParameters(AngleFunction func);
+
 	private:
-	// Equilibrium angle
-	double equilibrium_;
-	// Force constant for angle
-	double forceConstant_;
+	// Interaction functional form
+	AngleFunction form_;
+	// Parameters for interaction
+	double parameters_[MAXANGLEPARAMS];
 	// Number of Atoms attached to termini
 	int nAttached_[2];
 	// Arrays of SpeciesAtoms (in)directly attached to termini
@@ -103,14 +119,14 @@ class SpeciesAngle : public ListItem<SpeciesAngle>
 	int* attachedAtomIndices_[2];
 
 	public:
-	// Set equilibrium angle
-	void setEquilibrium(double rEq);
-	// Return equlibrium angle
-	double equilibrium() const;
-	// Set force constant
-	void setForceConstant(double k);
-	// Return force constant
-	double forceConstant() const;
+	// Set functional form of interaction
+	void setForm(SpeciesAngle::AngleFunction form);
+	// Return functional form of interaction
+	SpeciesAngle::AngleFunction form();
+	// Set nth parameter
+	void setParameter(int id, double value);
+	// Return nth parameter
+	double parameter(int id) const;
 	// Create attached Atom array
 	void createAttachedAtomArrays(int terminus, int size);
 	// Set attached Atoms for terminus specified

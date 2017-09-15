@@ -22,6 +22,8 @@
 #include "classes/speciestorsion.h"
 #include "classes/speciesatom.h"
 #include "base/processpool.h"
+#include "base/sysfunc.h"
+#include "templates/enumhelpers.h"
 
 // Constructor
 SpeciesTorsion::SpeciesTorsion() : ListItem<SpeciesTorsion>()
@@ -37,8 +39,8 @@ SpeciesTorsion::SpeciesTorsion() : ListItem<SpeciesTorsion>()
 	attachedAtoms_[1] = NULL;
 	attachedAtomIndices_[0] = NULL;
 	attachedAtomIndices_[1] = NULL;
-	equilibrium_ = 109.5;
-	forceConstant_ = 418.4;
+	form_ = SpeciesTorsion::nTorsionFunctions;
+	for (int n=0; n<MAXTORSIONPARAMS; ++n) parameters_[n] = 0.0;
 }
 
 // Destructor
@@ -188,28 +190,65 @@ bool SpeciesTorsion::matches(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, Spe
  * Interaction Parameters
  */
 
-// Set equilibrium angle
-void SpeciesTorsion::setEquilibrium(double rEq)
+// Torsion function keywords
+const char* TorsionFunctionKeywords[] = { "Harmonic" };
+int TorsionFunctionNParameters[] = { 2 };
+
+// Convert string to functional form
+SpeciesTorsion::TorsionFunction SpeciesTorsion::torsionFunction(const char* s)
 {
-	equilibrium_ = rEq;
+	for (int n=0; n<SpeciesTorsion::nTorsionFunctions; ++n) if (DUQSys::sameString(s, TorsionFunctionKeywords[n])) return (SpeciesTorsion::TorsionFunction) n;
+	return SpeciesTorsion::nTorsionFunctions;
 }
 
-// Return equilibrium angle
-double SpeciesTorsion::equilibrium() const
+// Return functional form text
+const char* SpeciesTorsion::torsionFunction(SpeciesTorsion::TorsionFunction func)
 {
-	return equilibrium_;
+	return TorsionFunctionKeywords[func];
 }
 
-// Set force constant
-void SpeciesTorsion::setForceConstant(double k)
+// Return number of parameters required for functional form
+int SpeciesTorsion::nFunctionParameters(SpeciesTorsion::TorsionFunction func)
 {
-	forceConstant_ = k;
+	return TorsionFunctionNParameters[func];
 }
 
-// Return force constant
-double SpeciesTorsion::forceConstant() const
+// Set functional form of interaction
+void SpeciesTorsion::setForm(SpeciesTorsion::TorsionFunction form)
 {
-	return forceConstant_;
+	form_ = form;
+}
+
+// Return functional form of interaction
+SpeciesTorsion::TorsionFunction SpeciesTorsion::form()
+{
+	return form_;
+}
+
+// Set nth parameter
+void SpeciesTorsion::setParameter(int id, double value)
+{
+#ifdef CHECKS
+	if ((id < 0) || (id >= MAXANGLEPARAMS))
+	{
+		Messenger::error("Tried to add a parameter to an Bond, but the index is out of range (%i vs %i parameters max).\n", id, MAXANGLEPARAMS);
+		return;
+	}
+#endif
+	parameters_[id] = value;
+}
+
+// Return nth parameter
+double SpeciesTorsion::parameter(int id) const
+{
+#ifdef CHECKS
+	if ((id < 0) || (id >= MAXANGLEPARAMS))
+	{
+		Messenger::error("Tried to return a parameter from an Bond, but the index is out of range (%i vs %i parameters max).\n", id, MAXBONDPARAMS);
+		return;
+	}
+#endif
+	return parameters_[id];
 }
 
 // Create attached Atom array
@@ -271,20 +310,15 @@ int* SpeciesTorsion::attachedIndices(int terminus) const
 // Return energy for specified angle
 double SpeciesTorsion::energy(double angleInDegrees) const
 {
-	double delta = (angleInDegrees - equilibrium_)/DEGRAD;
-	return 0.5*forceConstant_*delta*delta;
+// 	if (form_ == 
+// 	double delta = (angleInDegrees - equilibrium_)/DEGRAD;
+// 	return 0.5*forceConstant_*delta*delta;
 }
 
 // Return force multiplier for specified angle
 double SpeciesTorsion::force(double angleInDegrees) const
 {
-	// Set initial derivative of angle w.r.t. cos(angle)
-	double dU_dtheta = -1.0 / sin(angleInDegrees/DEGRAD);
-
-	// Chain rule - multiply by derivative of energy w.r.t. angle (harmonic form)
-	dU_dtheta *= -forceConstant_*((angleInDegrees-equilibrium_)/DEGRAD);
-
-	return dU_dtheta;
+	// TODO
 }
 
 /*
@@ -315,8 +349,8 @@ bool SpeciesTorsion::broadcast(ProcessPool& procPool, const List<SpeciesAtom>& a
 	}
 	
 	// Send parameter info
-	if (!procPool.broadcast(&equilibrium_, 1)) return false;
-	if (!procPool.broadcast(&forceConstant_, 1)) return false;
+	if (!procPool.broadcast(parameters_, MAXTORSIONPARAMS)) return false;
+	if (!procPool.broadcast(EnumCast<SpeciesTorsion::TorsionFunction>(form_), 1)) return false;
 #endif
 	return true;
 }

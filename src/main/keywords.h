@@ -241,6 +241,7 @@ namespace SpeciesBlock
 		EndSpeciesKeyword,		/* 'EndSpecies' - Signals the end of the current Species */
 		GrainKeyword,			/* 'Grain' - Defines a Grain containing a number of Atoms */
 		IsotopologueKeyword,		/* 'Isotopologue' - Defines isotope information for the Atoms */
+		TorsionKeyword,			/* 'Torsion' - Define a Torsion interaction between four atoms */
 		nSpeciesKeywords		/* Number of keywords defined for this block */
 	};
 	// Convert text string to SpeciesKeyword

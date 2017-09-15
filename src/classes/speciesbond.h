@@ -26,6 +26,8 @@
 #include "templates/listitem.h"
 #include "templates/reflist.h"
 
+#define MAXBONDPARAMS 4
+
 // Forward Declarations
 class SpeciesAtom;
 class Species;
@@ -85,11 +87,25 @@ class SpeciesBond : public ListItem<SpeciesBond>
 	/*
 	 * Interaction Parameters
 	 */
+	public:
+	// Bond functional forms
+	enum BondFunction
+	{
+		HarmonicForm,
+		nBondFunctions
+	};
+	// Convert string to functional form
+	static BondFunction bondFunction(const char* s);
+	// Return functional form text
+	static const char* bondFunction(BondFunction func);
+	// Return number of parameters required for functional form
+	static int nFunctionParameters(BondFunction func);
+
 	private:
-	// Nominal equilibrium SpeciesBond length
-	double equilibrium_;
-	// SpeciesBond force constant
-	double forceConstant_;
+	// Interaction functional form
+	BondFunction form_;
+	// Parameters for interaction
+	double parameters_[MAXBONDPARAMS];
 	// Number of SpeciesAtoms attached to termini
 	int nAttached_[2];
 	// Arrays of SpeciesAtoms (in)directly attached to termini
@@ -98,14 +114,14 @@ class SpeciesBond : public ListItem<SpeciesBond>
 	int* attachedAtomIndices_[2];
 
 	public:
-	// Set nominal equilibrium SpeciesBond length
-	void setEquilibrium(double rEq);
-	// Return nominal equilibrium SpeciesBond length
-	double equilibrium() const;
-	// Set force constant
-	void setForceConstant(double k);
-	// Return force constant
-	double forceConstant() const;
+	// Set functional form of interaction
+	void setForm(SpeciesBond::BondFunction form);
+	// Return functional form of interaction
+	SpeciesBond::BondFunction form();
+	// Set nth parameter
+	void setParameter(int id, double value);
+	// Return nth parameter
+	double parameter(int id) const;
 	// Create attached SpeciesAtom array
 	void createAttachedAtomArrays(int terminus, int size);
 	// Set attached SpeciesAtoms for terminus specified

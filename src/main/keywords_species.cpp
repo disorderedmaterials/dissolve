@@ -28,14 +28,15 @@
 
 // Species Block Keywords
 KeywordData SpeciesBlockData[] = {
-	{ "Angle",			5,	"" },
+	{ "Angle",			4,	"Define an angle interaction within the Species" },
 	{ "Atom",			6,	"" },
 	{ "AutoAddGrains",		0,	"" },
-	{ "Bond",			4,	"" },
+	{ "Bond",			3,	"Define a bond interaction within the Species" },
 	{ "Charge",			2,	"" },
 	{ "EndSpecies",			0,	"" },
 	{ "Grain",			1,	"" },
-	{ "Isotopologue",		1,	"" }
+	{ "Isotopologue",		1,	"" },
+	{ "Torsion",			5,	"Define a torsion interaction within the Species" }
 };
 
 // Convert text string to SpeciesKeyword
@@ -70,7 +71,11 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 	SpeciesAngle* a;
 	SpeciesAtom* i;
 	SpeciesBond* b;
+	SpeciesTorsion* t;
 	SpeciesGrain* sg;
+	SpeciesBond::BondFunction bf;
+	SpeciesAngle::AngleFunction af;
+	SpeciesTorsion::TorsionFunction tf;
 	Isotope* tope;
 	bool blockDone = false, error = false;
 
@@ -88,11 +93,29 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 		switch (spKeyword)
 		{
 			case (SpeciesBlock::AngleKeyword):
-				a = species->addAngle(parser.argi(1)-1, parser.argi(2)-1, parser.argi(3)-1);
+				// Check the functional form specified
+				af = SpeciesAngle::angleFunction(parser.argc(1));
+				if (af == SpeciesAngle::nAngleFunctions)
+				{
+					Messenger::error("Functional form of angle (%s) not recognised.\n", parser.argc(1));
+					error = true;
+					break;
+				}
+				// Create a new angle definition
+				a = species->addAngle(parser.argi(2)-1, parser.argi(3)-1, parser.argi(4)-1);
 				if (a)
 				{
-					a->setEquilibrium(parser.argd(4));
-					a->setForceConstant(parser.argd(5));
+					a->setForm(af);
+					for (int n=0; n<SpeciesAngle::nFunctionParameters(af); ++n)
+					{
+						if (!parser.hasArg(n+5))
+						{
+							Messenger::error("Angle function type '%s' requires %i parameters\n", SpeciesAngle::angleFunction(af), SpeciesAngle::nFunctionParameters(af));
+							error = true;
+							break;
+						}
+						a->setParameter(n, parser.argd(n+5));
+					}
 				}
 				else error = true;
 				break;
@@ -133,11 +156,29 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 				species->autoAddGrains();
 				break;
 			case (SpeciesBlock::BondKeyword):
-				b = species->addBond(parser.argi(1)-1, parser.argi(2)-1);
+				// Check the functional form specified
+				bf = SpeciesBond::bondFunction(parser.argc(1));
+				if (bf == SpeciesBond::nBondFunctions)
+				{
+					Messenger::error("Functional form of bond (%s) not recognised.\n", parser.argc(1));
+					error = true;
+					break;
+				}
+				// Create a new bond definition
+				b = species->addBond(parser.argi(2)-1, parser.argi(3)-1);
 				if (b)
 				{
-					b->setEquilibrium(parser.argd(3));
-					b->setForceConstant(parser.argd(4));
+					b->setForm(bf);
+					for (int n=0; n<SpeciesBond::nFunctionParameters(bf); ++n)
+					{
+						if (!parser.hasArg(4+n))
+						{
+							Messenger::error("Bond function type '%s' requires %i parameters\n", SpeciesBond::bondFunction(bf), SpeciesBond::nFunctionParameters(bf));
+							error = true;
+							break;
+						}
+						b->setParameter(n, parser.argd(n+4));
+					}
 				}
 				else error = true;
 				break;
@@ -209,6 +250,33 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 						break;
 					}
 				}
+				break;
+			case (SpeciesBlock::TorsionKeyword):
+				// Check the functional form specified
+				tf = SpeciesTorsion::torsionFunction(parser.argc(1));
+				if (tf == SpeciesTorsion::nTorsionFunctions)
+				{
+					Messenger::error("Functional form of torsion (%s) not recognised.\n", parser.argc(1));
+					error = true;
+					break;
+				}
+				// Create a new torsion definition
+				t = species->addTorsion(parser.argi(2)-1, parser.argi(3)-1, parser.argi(4)-1, parser.argi(5)+1);
+				if (t)
+				{
+					t->setForm(tf);
+					for (int n=0; n<SpeciesTorsion::nFunctionParameters(tf); ++n)
+					{
+						if (!parser.hasArg(n+6))
+						{
+							Messenger::error("Torsion function type '%s' requires %i parameters\n", SpeciesTorsion::torsionFunction(tf), SpeciesTorsion::nFunctionParameters(tf));
+							error = true;
+							break;
+						}
+						t->setParameter(n, parser.argd(n+6));
+					}
+				}
+				else error = true;
 				break;
 			case (SpeciesBlock::nSpeciesKeywords):
 				Messenger::error("Unrecognised %s block keyword found - '%s'\n", InputBlocks::inputBlock(InputBlocks::SpeciesBlock), parser.argc(0));

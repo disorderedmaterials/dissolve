@@ -8,9 +8,9 @@ Species 'Water'
   Atom    3    H    -0.771   -0.003    0.157   'HW'
 
   # Intramolecular Terms
-  Bond    1    2     1.012  4431.53
-  Bond    1    3     1.012  4431.53
-  Angle    2    1    3   113.24   317.5656
+  Bond    Harmonic  1    2     4431.53   1.012
+  Bond    Harmonic  1    3     4431.53   1.012
+  Angle    Harmonic  2    1    3   317.5656   113.24
 
   # Isotopologues
   Isotopologue  'Natural'  OW=0  HW=0

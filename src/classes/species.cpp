@@ -193,24 +193,42 @@ void Species::print()
 	if (nBonds() > 0)
 	{
 		Messenger::print("\n  Bonds:\n");
-		Messenger::print("      I     J        Eq          ForceK   \n");
-		Messenger::print("    --------------------------------------\n");
+		Messenger::print("      I     J     Form        Parameters\n");
+		Messenger::print("    --------------------------------------------------------------------------\n");
 		for (int n=0; n<nBonds(); ++n)
 		{
 			SpeciesBond* b = bonds_[n];
-			Messenger::print("   %4i  %4i  %12.4e  %12.4e\n", b->indexI()+1, b->indexJ()+1, b->equilibrium(), b->forceConstant());
+			CharString s("   %4i  %4i  %12s", b->indexI()+1, b->indexJ()+1, SpeciesBond::bondFunction(b->form()));
+			for (int n=0; n<MAXBONDPARAMS; ++n) s.strcatf("  %12.4e", b->parameter(n));
+			Messenger::print("%s\n", s.get());
 		}
 	}
 
 	if (nAngles() > 0)
 	{
 		Messenger::print("\n  Angles:\n");
-		Messenger::print("      I     J     K        Eq          ForceK   \n");
-		Messenger::print("    --------------------------------------------\n");
+		Messenger::print("      I     J     K     Form        Parameters\n");
+		Messenger::print("    --------------------------------------------------------------------------\n");
 		for (int n=0; n<nAngles(); ++n)
 		{
 			SpeciesAngle* a = angles_[n];
-			Messenger::print("   %4i  %4i  %4i  %12.4e  %12.4e\n", a->indexI()+1, a->indexJ()+1, a->indexK()+1, a->equilibrium(), a->forceConstant());
+			CharString s("   %4i  %4i  %4i  %12s", a->indexI()+1, a->indexJ()+1, a->indexK()+1, SpeciesAngle::angleFunction(a->form()));
+			for (int n=0; n<MAXANGLEPARAMS; ++n) s.strcatf("  %12.4e", a->parameter(n));
+			Messenger::print("%s\n", s.get());
+		}
+	}
+
+	if (nTorsions() > 0)
+	{
+		Messenger::print("\n  Torsions:\n");
+		Messenger::print("      I     J     K     L     Form        Parameters\n");
+		Messenger::print("    --------------------------------------------------------------------------\n");
+		for (int n=0; n<nTorsions(); ++n)
+		{
+			SpeciesTorsion* t = torsions_[n];
+			CharString s("   %4i  %4i  %4i  %4i  %12s", t->indexI()+1, t->indexJ()+1, t->indexK()+1, t->indexL()+1, SpeciesTorsion::torsionFunction(t->form()));
+			for (int n=0; n<MAXTORSIONPARAMS; ++n) s.strcatf("  %12.4e", t->parameter(n));
+			Messenger::print("%s\n", s.get());
 		}
 	}
 

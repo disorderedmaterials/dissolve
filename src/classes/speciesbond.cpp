@@ -22,6 +22,8 @@
 #include "classes/speciesbond.h"
 #include "classes/speciesatom.h"
 #include "base/processpool.h"
+#include "base/sysfunc.h"
+#include "templates/enumhelpers.h"
 
 // Constructor
 SpeciesBond::SpeciesBond() : ListItem<SpeciesBond>()
@@ -35,8 +37,8 @@ SpeciesBond::SpeciesBond() : ListItem<SpeciesBond>()
 	attachedAtoms_[1] = NULL;
 	attachedAtomIndices_[0] = NULL;
 	attachedAtomIndices_[1] = NULL;
-	equilibrium_ = 1.0;
-	forceConstant_ = 4184.0;
+	form_ = SpeciesBond::nBondFunctions;
+	for (int n=0; n<MAXBONDPARAMS; ++n) parameters_[n] = 0.0;
 }
 
 // Destructor
@@ -139,28 +141,65 @@ bool SpeciesBond::matches(SpeciesAtom* i, SpeciesAtom* j) const
  * Interaction Parameters
  */
 
-// Set nominal equilibrium SpeciesBond length
-void SpeciesBond::setEquilibrium(double rEq)
+// Bond function keywords
+const char* BondFunctionKeywords[] = { "Harmonic" };
+int BondFunctionNParameters[] = { 2 };
+
+// Convert string to functional form
+SpeciesBond::BondFunction SpeciesBond::bondFunction(const char* s)
 {
-	equilibrium_ = rEq;
+	for (int n=0; n<SpeciesBond::nBondFunctions; ++n) if (DUQSys::sameString(s, BondFunctionKeywords[n])) return (SpeciesBond::BondFunction) n;
+	return SpeciesBond::nBondFunctions;
 }
 
-// Return nominal equilibrium SpeciesBond length
-double SpeciesBond::equilibrium() const
+// Return functional form text
+const char* SpeciesBond::bondFunction(SpeciesBond::BondFunction func)
 {
-	return equilibrium_;
+	return BondFunctionKeywords[func];
 }
 
-// Set force constant
-void SpeciesBond::setForceConstant(double k)
+// Return number of parameters required for functional form
+int SpeciesBond::nFunctionParameters(SpeciesBond::BondFunction func)
 {
-	forceConstant_ = k;
+	return BondFunctionNParameters[func];
 }
 
-// Return force constant
-double SpeciesBond::forceConstant() const
+// Set functional form of interaction
+void SpeciesBond::setForm(SpeciesBond::BondFunction form)
 {
-	return forceConstant_;
+	form_ = form;
+}
+
+// Return functional form of interaction
+SpeciesBond::BondFunction SpeciesBond::form()
+{
+	return form_;
+}
+
+// Set nth parameter
+void SpeciesBond::setParameter(int id, double value)
+{
+#ifdef CHECKS
+	if ((id < 0) || (id >= MAXANGLEPARAMS))
+	{
+		Messenger::error("Tried to add a parameter to an Bond, but the index is out of range (%i vs %i parameters max).\n", id, MAXANGLEPARAMS);
+		return;
+	}
+#endif
+	parameters_[id] = value;
+}
+
+// Return nth parameter
+double SpeciesBond::parameter(int id) const
+{
+#ifdef CHECKS
+	if ((id < 0) || (id >= MAXANGLEPARAMS))
+	{
+		Messenger::error("Tried to return a parameter from an Bond, but the index is out of range (%i vs %i parameters max).\n", id, MAXBONDPARAMS);
+		return;
+	}
+#endif
+	return parameters_[id];
 }
 
 // Create attached SpeciesAtom array
@@ -222,14 +261,36 @@ int* SpeciesBond::attachedIndices(int terminus) const
 // Return energy for specified distance
 double SpeciesBond::energy(double distance) const
 {
-	double delta = distance - equilibrium_;
-	return 0.5*forceConstant_*delta*delta;
+	if (form_ == SpeciesBond::HarmonicForm)
+	{
+		/*
+		 * Parameters:
+		 * 0 : force constant
+		 * 1 : equilibrium distance
+		 */
+		double delta = distance - parameters_[1];
+		return 0.5*parameters_[0]*delta*delta;
+	}
+
+	Messenger::error("Functional form of SpeciesBond term not set, so can't calculate energy.\n");
+	return 0.0;
 }
 
 // Return force multiplier for specified distance
 double SpeciesBond::force(double distance) const
 {
-	return -forceConstant_*(distance-equilibrium_);
+	if (form_ == SpeciesBond::HarmonicForm)
+	{
+		/*
+		 * Parameters:
+		 * 0 : force constant
+		 * 1 : equilibrium distance
+		 */
+		return -parameters_[0]*(distance-parameters_[1]);
+	}
+
+	Messenger::error("Functional form of SpeciesBond term not set, so can't calculate force.\n");
+	return 0.0;
 }
 
 /*
@@ -259,8 +320,8 @@ bool SpeciesBond::broadcast(ProcessPool& procPool, const List<SpeciesAtom>& atom
 	}
 	
 	// Send parameter info
-	if (!procPool.broadcast(&equilibrium_, 1)) return false;
-	if (!procPool.broadcast(&forceConstant_, 1)) return false;
+	if (!procPool.broadcast(parameters_, MAXBONDPARAMS)) return false;
+	if (!procPool.broadcast(EnumCast<SpeciesBond::BondFunction>(form_), 1)) return false;
 #endif
 	return true;
 }

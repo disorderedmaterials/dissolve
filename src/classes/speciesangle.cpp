@@ -22,6 +22,8 @@
 #include "classes/speciesangle.h"
 #include "classes/speciesatom.h"
 #include "base/processpool.h"
+#include "base/sysfunc.h"
+#include "templates/enumhelpers.h"
 
 // Constructor
 SpeciesAngle::SpeciesAngle() : ListItem<SpeciesAngle>()
@@ -36,8 +38,8 @@ SpeciesAngle::SpeciesAngle() : ListItem<SpeciesAngle>()
 	attachedAtoms_[1] = NULL;
 	attachedAtomIndices_[0] = NULL;
 	attachedAtomIndices_[1] = NULL;
-	equilibrium_ = 109.5;
-	forceConstant_ = 418.4;
+	form_ = SpeciesAngle::nAngleFunctions;
+	for (int n=0; n<MAXANGLEPARAMS; ++n) parameters_[n] = 0.0;
 }
 
 // Destructor
@@ -156,28 +158,65 @@ bool SpeciesAngle::matches(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const
  * Interaction Parameters
  */
 
-// Set equilibrium angle
-void SpeciesAngle::setEquilibrium(double rEq)
+// Angle function keywords
+const char* AngleFunctionKeywords[] = { "Harmonic" };
+int AngleFunctionNParameters[] = { 2 };
+
+// Convert string to functional form
+SpeciesAngle::AngleFunction SpeciesAngle::angleFunction(const char* s)
 {
-	equilibrium_ = rEq;
+	for (int n=0; n<SpeciesAngle::nAngleFunctions; ++n) if (DUQSys::sameString(s, AngleFunctionKeywords[n])) return (SpeciesAngle::AngleFunction) n;
+	return SpeciesAngle::nAngleFunctions;
 }
 
-// Return equilibrium angle
-double SpeciesAngle::equilibrium() const
+// Return functional form text
+const char* SpeciesAngle::angleFunction(SpeciesAngle::AngleFunction func)
 {
-	return equilibrium_;
+	return AngleFunctionKeywords[func];
 }
 
-// Set force constant
-void SpeciesAngle::setForceConstant(double k)
+// Return number of parameters required for functional form
+int SpeciesAngle::nFunctionParameters(AngleFunction func)
 {
-	forceConstant_ = k;
+	return AngleFunctionNParameters[func];
 }
 
-// Return force constant
-double SpeciesAngle::forceConstant() const
+// Set functional form of interaction
+void SpeciesAngle::setForm(SpeciesAngle::AngleFunction form)
 {
-	return forceConstant_;
+	form_ = form;
+}
+
+// Return functional form of interaction
+SpeciesAngle::AngleFunction SpeciesAngle::form()
+{
+	return form_;
+}
+
+// Set nth parameter
+void SpeciesAngle::setParameter(int id, double value)
+{
+#ifdef CHECKS
+	if ((id < 0) || (id >= MAXANGLEPARAMS))
+	{
+		Messenger::error("Tried to add a parameter to an Angle, but the index is out of range (%i vs %i parameters max).\n", id, MAXANGLEPARAMS);
+		return;
+	}
+#endif
+	parameters_[id] = value;
+}
+
+// Return nth parameter
+double SpeciesAngle::parameter(int id) const
+{
+#ifdef CHECKS
+	if ((id < 0) || (id >= MAXANGLEPARAMS))
+	{
+		Messenger::error("Tried to return a parameter from an Angle, but the index is out of range (%i vs %i parameters max).\n", id, MAXANGLEPARAMS);
+		return;
+	}
+#endif
+	return parameters_[id];
 }
 
 // Create attached Atom array
@@ -239,20 +278,42 @@ int* SpeciesAngle::attachedIndices(int terminus) const
 // Return energy for specified angle
 double SpeciesAngle::energy(double angleInDegrees) const
 {
-	double delta = (angleInDegrees - equilibrium_) / DEGRAD;
-	return 0.5*forceConstant_*delta*delta;
+	if (form_ == SpeciesAngle::HarmonicForm)
+	{
+		/*
+		 * Parameters:
+		 * 0 : force constant
+		 * 1 : equilibrium angle (degrees)
+		 */
+		double delta = (angleInDegrees - parameters_[1]) / DEGRAD;
+		return 0.5*parameters_[0]*delta*delta;
+	}
+
+	Messenger::error("Functional form of SpeciesAngle term not set, so can't calculate energy.\n");
+	return 0.0;
 }
 
 // Return force multiplier for specified angle
 double SpeciesAngle::force(double angleInDegrees) const
 {
-	// Set initial derivative of angle w.r.t. cos(angle)
-	double dU_dtheta = -1.0 / sin(angleInDegrees/DEGRAD);
+	if (form_ == SpeciesAngle::HarmonicForm)
+	{
+		/*
+		 * Parameters:
+		 * 0 : force constant
+		 * 1 : equilibrium angle (degrees)
+		 */
+		// Set initial derivative of angle w.r.t. cos(angle)
+		double dU_dtheta = -1.0 / sin(angleInDegrees/DEGRAD);
 
-	// Chain rule - multiply by derivative of energy w.r.t. angle (harmonic form)
-	dU_dtheta *= -forceConstant_*((angleInDegrees-equilibrium_)/DEGRAD);
+		// Chain rule - multiply by derivative of energy w.r.t. angle (harmonic form)
+		dU_dtheta *= -parameters_[0]*((angleInDegrees-parameters_[1])/DEGRAD);
 
-	return dU_dtheta;
+		return dU_dtheta;
+	}
+
+	Messenger::error("Functional form of SpeciesAngle term not set, so can't calculate force.\n");
+	return 0.0;
 }
 
 /*
@@ -283,8 +344,8 @@ bool SpeciesAngle::broadcast(ProcessPool& procPool, const List<SpeciesAtom>& ato
 	}
 	
 	// Send parameter info
-	if (!procPool.broadcast(&equilibrium_, 1)) return false;
-	if (!procPool.broadcast(&forceConstant_, 1)) return false;
+	if (!procPool.broadcast(parameters_, MAXANGLEPARAMS)) return false;
+	if (!procPool.broadcast(EnumCast<SpeciesAngle::AngleFunction>(form_), 1)) return false;
 #endif
 	return true;
 }

@@ -153,8 +153,6 @@ class Species : public ListItem<Species>
 	SpeciesTorsion* torsion(int n);
 	// Return whether Torsion between Atoms exists
 	bool hasTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const;
-	// Recalculate intramolecular terms between Atoms in the Species
-	void recalculateIntramolecular();
 	// Calculate local Atom index lists for interactions
 	bool calculateIndexLists();
 

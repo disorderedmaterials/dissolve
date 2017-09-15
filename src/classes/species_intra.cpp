@@ -269,56 +269,6 @@ bool Species::hasTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, Species
 	return false;
 }
 
-// Recalculate intramolecular terms between Atoms in the Species
-void Species::recalculateIntramolecular()
-{
-	SpeciesAtom* i, *j;
-	SpeciesBond* b;
-	SpeciesAngle* a;
-	RefListItem<SpeciesBond,int>* ri, *rj;
-	int n = 0;
-	double dist, radius_i;
-
-	// Clear existing bond and angle definitions
-	for (i = atoms_.first(); i != NULL; i = i->next) i->clearBonds();
-	bonds_.clear();
-	angles_.clear();
-
-	// First, determine which Atoms are within bonding distance
-	for (i = atoms_.first(); i != atoms_.last(); i = i->next)
-	{
-		radius_i = PeriodicTable::element(i->element()).atomicRadius();
-		for (j = i->next; j != NULL; j = j->next)
-		{
-			dist = (i->r()-j->r()).magnitude();
-			if (dist <= (radius_i+PeriodicTable::element(j->element()).atomicRadius())*1.15)
-			{
-				// Create Bond and set initial equilibrium distance
-				b = addBond(i, j);
-				b->setEquilibrium(dist);
-			}
-		}
-		++n;
-	}
-	Messenger::print("Found %i Bonds in Species '%s'.\n", bonds_.nItems(), name_.get());
-
-	// Construct Angles list, looping over central Atom
-	for (j = atoms_.first(); j != NULL; j = j->next)
-	{
-		// Double loop over Bonds
-		for (ri = j->bonds(); ri != NULL; ri = ri->next)
-		{
-			i = ri->item->partner(j);
-			for (rj = ri->next; rj != NULL; rj = rj->next)
-			{
-				// Create Angle and set initial equilibrium angle
-				a = addAngle(i, j, rj->item->partner(j));
-				a->setEquilibrium(Box::angle(i->r(), j->r(), rj->item->partner(j)->r()));
-			}
-		}
-	}
-}
-
 // Calculate local Atom index lists for interactions
 bool Species::calculateIndexLists()
 {

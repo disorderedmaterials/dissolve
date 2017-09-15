@@ -26,6 +26,8 @@
 #include "templates/listitem.h"
 #include "templates/reflist.h"
 
+#define MAXTORSIONPARAMS 8
+
 // Forward Declarations
 class SpeciesAtom;
 class Species;
@@ -96,11 +98,25 @@ class SpeciesTorsion : public ListItem<SpeciesTorsion>
 	/*
 	 * Interaction Parameters
 	 */
+	public:
+	// Torsion functional forms
+	enum TorsionFunction
+	{
+		HarmonicForm,
+		nTorsionFunctions
+	};
+	// Convert string to functional form
+	static TorsionFunction torsionFunction(const char* s);
+	// Return functional form text
+	static const char* torsionFunction(TorsionFunction func);
+	// Return number of parameters required for functional form
+	static int nFunctionParameters(TorsionFunction func);
+
 	private:
-	// Nominal equilibrium angle
-	double equilibrium_;
-	// Force constant for torsion
-	double forceConstant_;
+	// Interaction functional form
+	TorsionFunction form_;
+	// Parameters for interaction
+	double parameters_[MAXTORSIONPARAMS];
 	// Number of Atoms attached to termini
 	int nAttached_[2];
 	// Arrays of SpeciesAtoms (in)directly attached to termini
@@ -109,14 +125,14 @@ class SpeciesTorsion : public ListItem<SpeciesTorsion>
 	int* attachedAtomIndices_[2];
 
 	public:
-	// Set equilibrium angle
-	void setEquilibrium(double rEq);
-	// Return equlibrium angle
-	double equilibrium() const;
-	// Set force constant
-	void setForceConstant(double k);
-	// Return force constant
-	double forceConstant() const;
+	// Set functional form of interaction
+	void setForm(SpeciesTorsion::TorsionFunction form);
+	// Return functional form of interaction
+	SpeciesTorsion::TorsionFunction form();
+	// Set nth parameter
+	void setParameter(int id, double value);
+	// Return nth parameter
+	double parameter(int id) const;
 	// Create attached Atom array
 	void createAttachedAtomArrays(int terminus, int size);
 	// Set attached Atoms for terminus specified
