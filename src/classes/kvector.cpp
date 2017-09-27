@@ -142,9 +142,9 @@ void KVector::addSinTerm(int atomTypeIndex, double value)
 void KVector::calculateIntensities(BraggPeak* peakArray)
 {
 #ifdef CHECKS
-	if (braggPeak_ == NULL)
+	if (peakArray == NULL)
 	{
-		Messenger::print("NULL_POINTER - NULL braggPeak_ found in KVector::calculateIntensities().\n");
+		Messenger::print("NULL_POINTER - NULL braggPeak array found in KVector::calculateIntensities().\n");
 		return;
 	}
 #endif

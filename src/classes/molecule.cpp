@@ -105,9 +105,9 @@ int Molecule::nGrains() const
 Grain* Molecule::grain(int n)
 {
 #ifdef CHECKS
-	if ((n < 0) || (n >= nGrains_))
+	if ((n < 0) || (n >= grains_.nItems()))
 	{
-		Messenger::print("OUT_OF_RANGE - Grain index %i is out of range in Molecule::grain().\n", n);
+		Messenger::print("OUT_OF_RANGE - Grain index %i is out of range in Molecule::grain() (nGrains = %i).\n", n, grains_.nItems());
 		return NULL;
 	}
 #endif
@@ -262,14 +262,7 @@ void Molecule::randomiseGeometry(const Box* box)
 	 * instantiating the initial ensemble of Molecules such that a variety of conformations exist in the starting system. Each defined
 	 * Bond is taken in turn, and the connected Atoms at one end (chosen randomly) are rotated about the Bond axis.
 	 */ 
-#ifdef CHECKS
-	// Check for NULL Species pointer
-	if (species_ == NULL)
-	{
-		Messenger::error("NULL_POINTER - Found NULL species_ pointer in Molecule::randomiseGeometry().\n");
-		return;
-	}
-#endif
+
 	// Use Bond definitions in parent Species
 	int terminus;
 	Matrix3 transform;

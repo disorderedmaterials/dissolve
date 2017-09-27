@@ -229,9 +229,9 @@ SpeciesTorsion::TorsionFunction SpeciesTorsion::form()
 void SpeciesTorsion::setParameter(int id, double value)
 {
 #ifdef CHECKS
-	if ((id < 0) || (id >= MAXANGLEPARAMS))
+	if ((id < 0) || (id >= MAXTORSIONPARAMS))
 	{
-		Messenger::error("Tried to add a parameter to an Bond, but the index is out of range (%i vs %i parameters max).\n", id, MAXANGLEPARAMS);
+		Messenger::error("Tried to add a parameter to an Bond, but the index is out of range (%i vs %i parameters max).\n", id, MAXTORSIONPARAMS);
 		return;
 	}
 #endif
@@ -242,10 +242,10 @@ void SpeciesTorsion::setParameter(int id, double value)
 double SpeciesTorsion::parameter(int id) const
 {
 #ifdef CHECKS
-	if ((id < 0) || (id >= MAXANGLEPARAMS))
+	if ((id < 0) || (id >= MAXTORSIONPARAMS))
 	{
-		Messenger::error("Tried to return a parameter from an Bond, but the index is out of range (%i vs %i parameters max).\n", id, MAXBONDPARAMS);
-		return;
+		Messenger::error("Tried to return a parameter from an Bond, but the index is out of range (%i vs %i parameters max).\n", id, MAXTORSIONPARAMS);
+		return 0.0;
 	}
 #endif
 	return parameters_[id];

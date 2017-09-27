@@ -93,6 +93,7 @@ MPI_Comm ProcessPool::communicator(ProcessPool::CommunicatorType commType)
 	else if (commType == ProcessPool::Leaders) return leaderCommunicator_;
 	else if (commType == ProcessPool::Pool) return poolCommunicator_;
 	Messenger::print("BAD_USAGE - CommunicatorType %i is not valid in ProcessPool::communicator().\n", commType);
+
 	return MPI_COMM_WORLD;
 }
 #endif
@@ -631,7 +632,8 @@ int ProcessPool::interleavedLoopStart(ProcessPool::LoopContext loopContext)
 	if (loopContext == ProcessPool::OverPoolProcesses) return poolRank_;
 	else if (loopContext == ProcessPool::OverGroupProcesses) return groupRank_;
 	else if (loopContext == ProcessPool::OverGroups) return groupIndex_;
-	else return 0;
+
+	return 0;
 }
 
 // Return stride for general loop
@@ -640,7 +642,8 @@ int ProcessPool::interleavedLoopStride(ProcessPool::LoopContext loopContext)
 	if (loopContext == ProcessPool::OverPoolProcesses) return worldRanks_.nItems();
 	else if (loopContext == ProcessPool::OverGroupProcesses) return nProcessesInGroup(groupIndex_);
 	else if (loopContext == ProcessPool::OverGroups) return processGroups_.nItems();
-	else return 1;
+
+	return 1;
 }
 
 /*

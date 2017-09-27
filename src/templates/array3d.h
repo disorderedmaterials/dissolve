@@ -350,7 +350,7 @@ template <class A> class OffsetArray3D
 			Messenger::print("OUT_OF_RANGE - Y index (%i) is out of range in OffsetArray3D::ref() (yMin_ = %i, yMay_ = %i).\n", y, yMin_, yMax_);
 			return dummy;
 		}
-		if ((z < zMin_) || (z > zMaX_))
+		if ((z < zMin_) || (z > zMax_))
 		{
 			Messenger::print("OUT_OF_RANGE - Z index (%i) is out of range in OffsetArray3D::ref() (zMin_ = %i, zMaz_ = %i).\n", z, zMin_, zMax_);
 			return dummy;
@@ -373,7 +373,7 @@ template <class A> class OffsetArray3D
 			Messenger::print("OUT_OF_RANGE - Y index (%i) is out of range in OffsetArray3D::value() (yMin_ = %i, yMay_ = %i).\n", y, yMin_, yMax_);
 			return dummy;
 		}
-		if ((z < zMin_) || (z > zMaX_))
+		if ((z < zMin_) || (z > zMax_))
 		{
 			Messenger::print("OUT_OF_RANGE - Z index (%i) is out of range in OffsetArray3D::value() (zMin_ = %i, zMaz_ = %i).\n", z, zMin_, zMax_);
 			return dummy;
@@ -396,7 +396,7 @@ template <class A> class OffsetArray3D
 			Messenger::print("OUT_OF_RANGE - Y index (%i) is out of range in OffsetArray3D::ptr() (yMin_ = %i, yMay_ = %i).\n", y, yMin_, yMax_);
 			return dummy;
 		}
-		if ((z < zMin_) || (z > zMaX_))
+		if ((z < zMin_) || (z > zMax_))
 		{
 			Messenger::print("OUT_OF_RANGE - Z index (%i) is out of range in OffsetArray3D::ptr() (zMin_ = %i, zMaz_ = %i).\n", z, zMin_, zMax_);
 			return dummy;

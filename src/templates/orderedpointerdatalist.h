@@ -459,7 +459,7 @@ template <class T, class D> void OrderedPointerDataList<T,D>::remove(T* object)
 #ifdef CHECKS
 	if (item == NULL)
 	{
-		printf("Internal Error: Specified objectIndex (%i) does not exist in this OrderedPointerDataList.\n", objectIndex);
+		printf("Internal Error: Specified object (%p) does not exist in this OrderedPointerDataList, so it cannot be removed.\n", object);
 		return;
 	}
 #endif
@@ -484,7 +484,7 @@ template <class T, class D> void OrderedPointerDataList<T,D>::move(T* object, Or
 #ifdef CHECKS
 	if (item == NULL)
 	{
-		printf("Internal Error: Specified objectIndex (%i) does not exist in this OrderedPointerDataList.\n", objectIndex);
+		printf("Internal Error: Specified object (%p) does not exist in this OrderedPointerDataList, so it cannot be moved.\n", object);
 		return;
 	}
 #endif

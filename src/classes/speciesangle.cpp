@@ -213,7 +213,7 @@ double SpeciesAngle::parameter(int id) const
 	if ((id < 0) || (id >= MAXANGLEPARAMS))
 	{
 		Messenger::error("Tried to return a parameter from an Angle, but the index is out of range (%i vs %i parameters max).\n", id, MAXANGLEPARAMS);
-		return;
+		return 0.0;
 	}
 #endif
 	return parameters_[id];

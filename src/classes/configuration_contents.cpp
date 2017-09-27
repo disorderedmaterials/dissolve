@@ -155,9 +155,9 @@ DynamicArray<Grain>& Configuration::grains()
 Grain* Configuration::grain(int n)
 {
 #ifdef CHECKS
-	if ((n < 0) || (n >= nGrains_))
+	if ((n < 0) || (n >= grains_.nItems()))
 	{
-		Messenger::print("OUT_OF_RANGE - Grain index %i passed to Configuration::grain() is out of range (nGrains_ = %i).\n", n, nGrains_);
+		Messenger::print("OUT_OF_RANGE - Grain index %i passed to Configuration::grain() is out of range (nGrains = %i).\n", n, grains_.nItems());
 		return NULL;
 	}
 #endif
@@ -191,9 +191,9 @@ DynamicArray<Atom>& Configuration::atoms()
 Atom* Configuration::atom(int n)
 {
 #ifdef CHECKS
-	if ((n < 0) || (n >= nAtoms_))
+	if ((n < 0) || (n >= atoms_.nItems()))
 	{
-		Messenger::print("OUT_OF_RANGE - Atom index %i passed to Configuration::atom() is out of range (nAtoms_ = %i).\n", n, nAtoms_);
+		Messenger::print("OUT_OF_RANGE - Atom index %i passed to Configuration::atom() is out of range (nAtoms = %i).\n", n, atoms_.nItems());
 		return NULL;
 	}
 #endif

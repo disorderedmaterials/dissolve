@@ -180,9 +180,9 @@ SpeciesBond::BondFunction SpeciesBond::form()
 void SpeciesBond::setParameter(int id, double value)
 {
 #ifdef CHECKS
-	if ((id < 0) || (id >= MAXANGLEPARAMS))
+	if ((id < 0) || (id >= MAXBONDPARAMS))
 	{
-		Messenger::error("Tried to add a parameter to an Bond, but the index is out of range (%i vs %i parameters max).\n", id, MAXANGLEPARAMS);
+		Messenger::error("Tried to add a parameter to an Bond, but the index is out of range (%i vs %i parameters max).\n", id, MAXBONDPARAMS);
 		return;
 	}
 #endif
@@ -193,10 +193,10 @@ void SpeciesBond::setParameter(int id, double value)
 double SpeciesBond::parameter(int id) const
 {
 #ifdef CHECKS
-	if ((id < 0) || (id >= MAXANGLEPARAMS))
+	if ((id < 0) || (id >= MAXBONDPARAMS))
 	{
 		Messenger::error("Tried to return a parameter from an Bond, but the index is out of range (%i vs %i parameters max).\n", id, MAXBONDPARAMS);
-		return;
+		return 0.0;
 	}
 #endif
 	return parameters_[id];

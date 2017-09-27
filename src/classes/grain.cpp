@@ -73,7 +73,7 @@ void Grain::addAtom(Atom* i)
 	if (i == NULL)
 	{
 		Messenger::error("NULL_POINTER - NULL Atom pointer pointer passed to Grain::addAtom().\n");
-		return false;
+		return;
 	}
 #endif
 	atoms_.add(i);
@@ -101,10 +101,10 @@ Atom* Grain::atom(int n) const
 	static Atom dummy;
 	if ((n < 0) || (n >= nAtoms()))
 	{
-		Messenger::print("OUT_OF_RANGE - Atom index (%i) given to Grain::atom() is out of range (nAtoms_ = %i).\n", n, nAtoms());
+		Messenger::print("OUT_OF_RANGE - Atom index (%i) given to Grain::atom() is out of range (nAtoms = %i).\n", n, nAtoms());
 		return NULL;
 	}
-	if (atoms_[n] == NULL)
+	if (atoms_.value(n) == NULL)
 	{
 		Messenger::print("NULL_POINTER - Atom pointer pointer for index %i in Grain::atom() is NULL.\n", n);
 		return &dummy;
