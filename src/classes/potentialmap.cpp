@@ -127,11 +127,6 @@ double PotentialMap::energy(const Atom* i, const Atom* j, double r) const
 		Messenger::print("OUT_OF_RANGE - Distance passed to PotentialMap::energy() is negative (%f).\n", r);
 		return 0.0;
 	}
-	if (r > range_)
-	{
-		Messenger::print("OUT_OF_RANGE - Distance passed to PotentialMap::energy() (%f) is greater than the range (%f).\n", r, range_);
-		return 0.0;
-	}
 #endif
 	// Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the interpolated potential
 	PairPotential* pp = potentialMatrix_.value(i->masterTypeIndex(), j->masterTypeIndex());
@@ -158,11 +153,6 @@ double PotentialMap::analyticEnergy(const Atom* i, const Atom* j, double r) cons
 		Messenger::print("OUT_OF_RANGE - Distance passed to PotentialMap::analyticEnergy() is negative (%f).\n", r);
 		return 0.0;
 	}
-	if (r > range_)
-	{
-		Messenger::print("OUT_OF_RANGE - Distance passed to PotentialMap::analyticEnergy() (%f) is greater than the range (%f).\n", r, range_);
-		return 0.0;
-	}
 #endif
 	return potentialMatrix_.value(i->masterTypeIndex(), j->masterTypeIndex())->analyticEnergy(r);
 }
@@ -184,11 +174,6 @@ double PotentialMap::force(const Atom* i, const Atom* j, double r) const
 	if (r < 0.0)
 	{
 		Messenger::print("OUT_OF_RANGE - Distance passed to PotentialMap::force() is negative (%f).\n", r);
-		return 0.0;
-	}
-	if (r > range_)
-	{
-		Messenger::print("OUT_OF_RANGE - Distance passed to PotentialMap::force() (%f) is greater than the range (%f).\n", r, range_);
 		return 0.0;
 	}
 #endif
@@ -215,11 +200,6 @@ double PotentialMap::analyticForce(const Atom* i, const Atom* j, double r) const
 	if (r < 0.0)
 	{
 		Messenger::print("OUT_OF_RANGE - Distance passed to PotentialMap::analyticForce() is negative (%f).\n", r);
-		return 0.0;
-	}
-	if (r > range_)
-	{
-		Messenger::print("OUT_OF_RANGE - Distance passed to PotentialMap::analyticForce() (%f) is greater than the range (%f).\n", r, range_);
 		return 0.0;
 	}
 #endif
