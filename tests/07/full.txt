@@ -24,61 +24,61 @@ Species 'Hexane'
   Atom    20   H    0.0    0.0    0.0    'HC'    0.06
 
   # Intramolecular Terms
-  Bond   Harmonic    1     2  0.0     1.5290
-  Bond   Harmonic    1     3  0.0     1.0900
-  Bond   Harmonic    1     4  0.0     1.5290
-  Bond   Harmonic    1     5  0.0     1.0900
-  Bond   Harmonic    2     6  0.0     1.0900
-  Bond   Harmonic    2     7  0.0     1.0900
-  Bond   Harmonic    2     8  0.0     1.0900
-  Bond   Harmonic    4     9  0.0     1.0900
-  Bond   Harmonic    4    10  0.0     1.0900
-  Bond   Harmonic    4    14  0.0     1.5290
-  Bond   Harmonic   11    12  0.0     1.5290
-  Bond   Harmonic   11    13  0.0     1.0900
-  Bond   Harmonic   11    14  0.0     1.5290
-  Bond   Harmonic   11    15  0.0     1.0900
-  Bond   Harmonic   12    16  0.0     1.0900
-  Bond   Harmonic   12    17  0.0     1.0900
-  Bond   Harmonic   12    18  0.0     1.0900
-  Bond   Harmonic   14    19  0.0     1.0900
-  Bond   Harmonic   14    20  0.0     1.0900
-  Angle  Harmonic    2     1     3   0.0   110.7000
-  Angle  Harmonic    2     1     4   0.0   112.7000
-  Angle  Harmonic    2     1     5   0.0   110.7000
-  Angle  Harmonic    3     1     4   0.0   110.7000
-  Angle  Harmonic    3     1     5   0.0   107.8000
-  Angle  Harmonic    4     1     5   0.0   110.7000
-  Angle  Harmonic    1     2     6   0.0   110.7000
-  Angle  Harmonic    1     2     7   0.0   110.7000
-  Angle  Harmonic    1     2     8   0.0   110.7000
-  Angle  Harmonic    6     2     7   0.0   107.8000
-  Angle  Harmonic    6     2     8   0.0   107.8000
-  Angle  Harmonic    7     2     8   0.0   107.8000
-  Angle  Harmonic    1     4     9   0.0   110.7000
-  Angle  Harmonic    1     4    10   0.0   110.7000
-  Angle  Harmonic    1     4    14   0.0   112.7000
-  Angle  Harmonic    9     4    10   0.0   107.8000
-  Angle  Harmonic    9     4    14   0.0   110.7000
-  Angle  Harmonic   10     4    14   0.0   110.7000
-  Angle  Harmonic   12    11    13   0.0   110.7000
-  Angle  Harmonic   12    11    14   0.0   112.7000
-  Angle  Harmonic   12    11    15   0.0   110.7000
-  Angle  Harmonic   13    11    14   0.0   110.7000
-  Angle  Harmonic   13    11    15   0.0   107.8000
-  Angle  Harmonic   14    11    15   0.0   110.7000
-  Angle  Harmonic   11    12    16   0.0   110.7000
-  Angle  Harmonic   11    12    17   0.0   110.7000
-  Angle  Harmonic   11    12    18   0.0   110.7000
-  Angle  Harmonic   16    12    17   0.0   107.8000
-  Angle  Harmonic   16    12    18   0.0   107.8000
-  Angle  Harmonic   17    12    18   0.0   107.8000
-  Angle  Harmonic    4    14    11   0.0   112.7000
-  Angle  Harmonic    4    14    19   0.0   110.7000
-  Angle  Harmonic    4    14    20   0.0   110.7000
-  Angle  Harmonic   11    14    19   0.0   110.7000
-  Angle  Harmonic   11    14    20   0.0   110.7000
-  Angle  Harmonic   19    14    20   0.0   107.8000
+  Bond   Harmonic    1     2  2242.6240     1.5290
+  Bond   Harmonic    1     3  2845.1200     1.0900
+  Bond   Harmonic    1     4  2242.6240     1.5290
+  Bond   Harmonic    1     5  2845.1200     1.0900
+  Bond   Harmonic    2     6  2845.1200     1.0900
+  Bond   Harmonic    2     7  2845.1200     1.0900
+  Bond   Harmonic    2     8  2845.1200     1.0900
+  Bond   Harmonic    4     9  2845.1200     1.0900
+  Bond   Harmonic    4    10  2845.1200     1.0900
+  Bond   Harmonic    4    14  2242.6240     1.5290
+  Bond   Harmonic   11    12  2242.6240     1.5290
+  Bond   Harmonic   11    13  2845.1200     1.0900
+  Bond   Harmonic   11    14  2242.6240     1.5290
+  Bond   Harmonic   11    15  2845.1200     1.0900
+  Bond   Harmonic   12    16  2845.1200     1.0900
+  Bond   Harmonic   12    17  2845.1200     1.0900
+  Bond   Harmonic   12    18  2845.1200     1.0900
+  Bond   Harmonic   14    19  2845.1200     1.0900
+  Bond   Harmonic   14    20  2845.1200     1.0900
+  Angle  Harmonic    2     1     3   313.8000   110.7000
+  Angle  Harmonic    2     1     4   488.2728   112.7000
+  Angle  Harmonic    2     1     5   313.8000   110.7000
+  Angle  Harmonic    3     1     4   313.8000   110.7000
+  Angle  Harmonic    3     1     5   276.1440   107.8000
+  Angle  Harmonic    4     1     5   313.8000   110.7000
+  Angle  Harmonic    1     2     6   313.8000   110.7000
+  Angle  Harmonic    1     2     7   313.8000   110.7000
+  Angle  Harmonic    1     2     8   313.8000   110.7000
+  Angle  Harmonic    6     2     7   276.1440   107.8000
+  Angle  Harmonic    6     2     8   276.1440   107.8000
+  Angle  Harmonic    7     2     8   276.1440   107.8000
+  Angle  Harmonic    1     4     9   313.8000   110.7000
+  Angle  Harmonic    1     4    10   313.8000   110.7000
+  Angle  Harmonic    1     4    14   488.2728   112.7000
+  Angle  Harmonic    9     4    10   276.1440   107.8000
+  Angle  Harmonic    9     4    14   313.8000   110.7000
+  Angle  Harmonic   10     4    14   313.8000   110.7000
+  Angle  Harmonic   12    11    13   313.8000   110.7000
+  Angle  Harmonic   12    11    14   488.2728   112.7000
+  Angle  Harmonic   12    11    15   313.8000   110.7000
+  Angle  Harmonic   13    11    14   313.8000   110.7000
+  Angle  Harmonic   13    11    15   276.1440   107.8000
+  Angle  Harmonic   14    11    15   313.8000   110.7000
+  Angle  Harmonic   11    12    16   313.8000   110.7000
+  Angle  Harmonic   11    12    17   313.8000   110.7000
+  Angle  Harmonic   11    12    18   313.8000   110.7000
+  Angle  Harmonic   16    12    17   276.1440   107.8000
+  Angle  Harmonic   16    12    18   276.1440   107.8000
+  Angle  Harmonic   17    12    18   276.1440   107.8000
+  Angle  Harmonic    4    14    11   488.2728   112.7000
+  Angle  Harmonic    4    14    19   313.8000   110.7000
+  Angle  Harmonic    4    14    20   313.8000   110.7000
+  Angle  Harmonic   11    14    19   313.8000   110.7000
+  Angle  Harmonic   11    14    20   313.8000   110.7000
+  Angle  Harmonic   19    14    20   276.1440   107.8000
   Torsion  Cos3     3     1     2     6     0.0000     0.0000     1.2552
   Torsion  Cos3     3     1     2     7     0.0000     0.0000     1.2552
   Torsion  Cos3     3     1     2     8     0.0000     0.0000     1.2552
@@ -135,14 +135,12 @@ Configuration  'Liquid'
   Density  0.1  atoms/A3
   Multiplier  200
   Species 'Hexane'  1.0
-  InputCoordinates  dlpoly  'dlpoly_torsions/REVCON'
+  InputCoordinates  dlpoly  'dlpoly/REVCON'
   RDFBinWidth 0.03
 EndConfiguration
 
 Module  Energy
   Test  On
-  Configuration  'Liquid'
-  TestReferenceIntra  80.0
 EndModule
 
 # Pair Potentials
@@ -150,8 +148,8 @@ PairPotentials
   Range  15.000000
   Delta  0.050000
   TruncationWidth  2.000000
-  Parameters  'CT'   0.0       0.0      3.500000  
-  Parameters  'HC'   0.0       0.0      2.500000 
+  Parameters  'CT'   0.0       0.276144      3.500000  
+  Parameters  'HC'   0.0       0.125520      2.500000 
   GenerateAll  'LJ'
   IncludeCoulomb  False
 EndPairPotentials
