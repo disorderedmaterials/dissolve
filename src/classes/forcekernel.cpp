@@ -603,18 +603,9 @@ void ForceKernel::forces(const Angle* a)
 // Return Torsion force
 void ForceKernel::forces(const Torsion* t)
 {
-
-// 	// Calculate force contributions from the torsions in this pattern with coordinates from *xcfg
-// 	Messenger::enter("Pattern::torsionForces");
-// 	int i,j,k,l,aoff,m1;
-// 	static Vec3<double> vec_ji, vec_jk, vec_kl, xpj, xpk, dcos_dxpj, dcos_dxpk, temp;
-
-// 	static double phi, dp, forcek, period, eq, mag_ji, mag_jk, mag_kl, mag_xpj, mag_xpk, , dphi_dcosphi;
-// 	static Vec3<double> fi, fj, fk, fl;
-
 	Vec3<double> vecji, vecjk, veckl, xpj, xpk, dcos_dxpj, dcos_dxpk, temp, force;
 	Matrix3 dxpj_dij, dxpj_dkj, dxpk_dkj, dxpk_dlk;
-	double magji, magjk, magkl, magxpj, magxpk, dp, phi, du_dphi;
+	double magxpj, magxpk, dp, phi, du_dphi;
 	
 	// Grab pointers to atoms involved in angle
 	Atom* i = t->i(), *j = t->j(), *k = t->k(), *l = t->l();
@@ -626,11 +617,6 @@ void ForceKernel::forces(const Torsion* t)
 	else vecjk = k->r() - j->r();
 	if (cells_.useMim(k->cell(), l->cell())) veckl = box_->minimumVector(k, l);
 	else veckl = l->r() - k->r();
-
-	// Calculate vector magnitudes
-	magji = vecji.magnitude();
-	magjk = vecjk.magnitude();
-	magkl = veckl.magnitude();
 
 	// Calculate cross products and torsion angle formed (in radians)
 	xpj = vecji * vecjk;
