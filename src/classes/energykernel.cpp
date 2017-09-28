@@ -679,8 +679,32 @@ double EnergyKernel::energy(const Angle* a)
 // Return Torsion energy
 double EnergyKernel::energy(const Torsion* t)
 {
-	Messenger::warn("EnergyKernel cannot yet calculate torsion energies!\n");
-	return 0.0;
+	Vec3<double> vecji, vecjk, veckl, xpj, xpk, dcos_dxpj, dcos_dxpk, temp, force;
+	Matrix3 dxpj_dij, dxpj_dkj, dxpk_dkj, dxpk_dlk;
+	double magxpj, magxpk, dp, phi, du_dphi;
+	
+	// Grab pointers to atoms involved in angle
+	Atom* i = t->i(), *j = t->j(), *k = t->k(), *l = t->l();
+
+	// Calculate vectors, ensuring we account for minimum image
+	if (cells_.useMim(j->cell(), i->cell())) vecji = box_->minimumVector(j, i);
+	else vecji = i->r() - j->r();
+	if (cells_.useMim(j->cell(), k->cell())) vecjk = box_->minimumVector(j, k);
+	else vecjk = k->r() - j->r();
+	if (cells_.useMim(k->cell(), l->cell())) veckl = box_->minimumVector(k, l);
+	else veckl = l->r() - k->r();
+
+	// Calculate cross products and torsion angle formed (in radians)
+	xpj = vecji * vecjk;
+	xpk = veckl * vecjk;
+	magxpj = xpj.magAndNormalise();
+	magxpk = xpk.magAndNormalise();
+	dp = xpj.dp(xpk);
+	if (dp < -1.0) dp = -1.0;
+	else if (dp > 1.0) dp = 1.0;
+	phi = acos(dp);
+
+	return t->energy(phi*DEGRAD);
 }
 
 // Return intramolecular energy for the supplied Atom
