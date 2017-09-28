@@ -1,0 +1,28 @@
+DL_POLY CONTROL file 
+
+# System State
+temperature    300.0
+#zero
+ensemble   nvt hoover   0.1
+
+# Simulation Time
+timestep		1.0E-4 # ps
+steps   50000
+
+# Long-range Interactions
+cut			10.0
+rvdw			10.0
+delr			0.5
+shift
+
+# Output
+#traj    start at: 1 ; save every: 0 ; save information: 0
+print			100
+stack			100
+stats			100
+
+# Job Control
+job time		1E8
+close time		1E3
+
+finish

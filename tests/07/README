@@ -1,0 +1,9 @@
+Unit Test 07 - Liquid Hexane
+============================
+
+Cubic box of 200 hexane molecules, 4000 atoms total.
+
+Specific inputs are:
+
+torsions.txt - Testing explicitly the energy and forces for the Cos3 torsions in the system.
+
