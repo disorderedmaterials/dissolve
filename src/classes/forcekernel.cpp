@@ -603,6 +603,97 @@ void ForceKernel::forces(const Angle* a)
 // Return Torsion force
 void ForceKernel::forces(const Torsion* t)
 {
+
+// 	// Calculate force contributions from the torsions in this pattern with coordinates from *xcfg
+// 	Messenger::enter("Pattern::torsionForces");
+// 	int i,j,k,l,aoff,m1;
+// 	static Vec3<double> vec_ji, vec_jk, vec_kl, xpj, xpk, dcos_dxpj, dcos_dxpk, temp;
+
+// 	static double phi, dp, forcek, period, eq, mag_ji, mag_jk, mag_kl, mag_xpj, mag_xpk, , dphi_dcosphi;
+// 	static Vec3<double> fi, fj, fk, fl;
+
+	Vec3<double> vecji, vecjk, veckl, xpj, xpk, dcos_dxpj, dcos_dxpk, temp, force;
+	Matrix3 dxpj_dij, dxpj_dkj, dxpk_dkj, dxpk_dlk;
+	double magji, magjk, magkl, magxpj, magxpk, dp, phi, du_dphi;
+	
+	// Grab pointers to atoms involved in angle
+	Atom* i = t->i(), *j = t->j(), *k = t->k(), *l = t->l();
+
+	// Calculate vectors, ensuring we account for minimum image
+	if (cells_.useMim(j->cell(), i->cell())) vecji = box_->minimumVector(j, i);
+	else vecji = i->r() - j->r();
+	if (cells_.useMim(j->cell(), k->cell())) vecjk = box_->minimumVector(j, k);
+	else vecjk = k->r() - j->r();
+	if (cells_.useMim(k->cell(), l->cell())) veckl = box_->minimumVector(k, l);
+	else veckl = l->r() - k->r();
+
+	// Calculate vector magnitudes
+	magji = vecji.magnitude();
+	magjk = vecjk.magnitude();
+	magkl = veckl.magnitude();
+
+	// Calculate cross products and torsion angle formed (in radians)
+	xpj = vecji * vecjk;
+	xpk = veckl * vecjk;
+	magxpj = xpj.magAndNormalise();
+	magxpk = xpk.magAndNormalise();
+	dp = xpj.dp(xpk);
+	if (dp < -1.0) dp = -1.0;
+	else if (dp > 1.0) dp = 1.0;
+	phi = acos(dp);
+	du_dphi = t->force(phi*DEGRAD);
+
+	/* Construct derivatives of perpendicular axis (cross product) w.r.t. component vectors.
+	 * E.g.
+	 *	d (rij x rkj) 
+	 *	------------- = rij[cp(n+2)] * U[cp(n+1)] - rij[cp(n+1)] * U[cp(n+2)]
+	 *	d rkj[n]  
+	 *
+	 *where cp is a cylic permutation spanning {0,1,2} == {x,y,z}, and U[n] is a unit vector in the n direction.
+	 *So,
+	 *	d (rij x rkj) 
+	 *	------------- = rij[2] * U[1] - rij[1] * U[2]
+	 *	d rkj[0]  
+	 *			= rij[z] * (0,1,0) - rij[y] * (0,0,1)
+	 *
+	 *			= (0,rij[z],0) - (0,0,rij[y])
+	 *
+	 *			= (0,rij[z],-rij[y])
+	 */
+
+	dxpj_dij.makeCrossProductMatrix(vecjk);
+	temp = -vecji;
+	dxpj_dkj.makeCrossProductMatrix(temp);
+	temp = -veckl;
+	dxpk_dkj.makeCrossProductMatrix(temp);
+	dxpk_dlk.makeCrossProductMatrix(vecjk);
+
+	// Construct derivatives of cos(phi) w.r.t. perpendicular axes
+	dcos_dxpj = (xpk - xpj * dp) / magxpj;
+	dcos_dxpk = (xpj - xpk * dp) / magxpk;
+
+// 			printf("i-j-k-l %i-%i-%i-%i %f %f %f\n",i,j,k,l, phi, dphi_dcosphi, du_dphi);
+	// Calculate forces on atom i
+	int index = i->arrayIndex();
+	fx_[index] += du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(0));
+	fy_[index] += du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(1));
+	fz_[index] += du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(2));
+
+	index = j->arrayIndex();
+	fx_[index] += du_dphi * ( dcos_dxpj.dp( -dxpj_dij.columnAsVec3(0) - dxpj_dkj.columnAsVec3(0) ) - dcos_dxpk.dp(dxpk_dkj.columnAsVec3(0)) );
+	fy_[index] += du_dphi * ( dcos_dxpj.dp( -dxpj_dij.columnAsVec3(1) - dxpj_dkj.columnAsVec3(1) ) - dcos_dxpk.dp(dxpk_dkj.columnAsVec3(1)) );
+	fz_[index] += du_dphi * ( dcos_dxpj.dp( -dxpj_dij.columnAsVec3(2) - dxpj_dkj.columnAsVec3(2) ) - dcos_dxpk.dp(dxpk_dkj.columnAsVec3(2)) );
+
+	index = k->arrayIndex();
+	fx_[index] += du_dphi * ( dcos_dxpk.dp( dxpk_dkj.columnAsVec3(0) - dxpk_dlk.columnAsVec3(0) ) + dcos_dxpj.dp(dxpj_dkj.columnAsVec3(0)) );
+	fy_[index] += du_dphi * ( dcos_dxpk.dp( dxpk_dkj.columnAsVec3(1) - dxpk_dlk.columnAsVec3(1) ) + dcos_dxpj.dp(dxpj_dkj.columnAsVec3(1)) );
+	fz_[index] += du_dphi * ( dcos_dxpk.dp( dxpk_dkj.columnAsVec3(2) - dxpk_dlk.columnAsVec3(2) ) + dcos_dxpj.dp(dxpj_dkj.columnAsVec3(2)) );
+
+	index = l->arrayIndex();
+	fx_[index] += du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(0));
+	fy_[index] += du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(1));
+	fz_[index] += du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(2));
+
 	Messenger::warn("ForceKernel cannot yet calculate torsion forces!\n");
 	return;
 }

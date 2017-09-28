@@ -102,7 +102,10 @@ class SpeciesTorsion : public ListItem<SpeciesTorsion>
 	// Torsion functional forms
 	enum TorsionFunction
 	{
-		HarmonicForm,
+		CosineForm,
+		Cos3Form,
+		Cos4Form,
+		Cos3CForm,
 		nTorsionFunctions
 	};
 	// Convert string to functional form
