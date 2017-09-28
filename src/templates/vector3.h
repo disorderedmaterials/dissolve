@@ -408,7 +408,7 @@ template <class T> class Vec3
 		toCartesian();
 	}
 	// Return a unit vector along the specified direction
-	Vec3<T> unit(int index)
+	static Vec3<T> unit(int index)
 	{
 		if (index == 0) return Vec3<T>(1,0,0);
 		else if (index == 1) return Vec3<T>(0,1,0);
