@@ -205,33 +205,15 @@ class ProcessPool
 	/*
 	 * Local Process Limits
 	 */
-	private:
-	// Linear Atom index limits for this process
-	int linearFirstAtom_, linearLastAtom_;
-	// Linear Grain index limits for this process
-	int linearFirstGrain_, linearLastGrain_;
-	// Diagonal Atom index limits for this process
-	int diagonalFirstAtom_, diagonalLastAtom_;
-
 	public:
-	// Setup limits base on total nAtoms and nGrains
-	bool calculateLimits(int nAtoms, int nGrains);
-	// Return first linear Atom index
-	int linearFirstAtom();
-	// Return last linear Atom index
-	int linearLastAtom();
-	// Return first linear Grain index
-	int linearFirstGrain();
-	// Return last linear Grain index
-	int linearLastGrain();
-	// Return diagonal first Atom index
-	int diagonalFirstAtom();
-	// Return diagonal last Atom index
-	int diagonalLastAtom();
 	// Return starting index for general interleaved loop
 	int interleavedLoopStart(ProcessPool::LoopContext loopContext);
 	// Return stride for general interleaved loop
 	int interleavedLoopStride(ProcessPool::LoopContext loopContext);
+	// Return starting outer loop index for a two-body interaction calculation where only the upper half (i >= j) is required
+	int twoBodyLoopStart(int nItems);
+	// Return ending outer loop index for a two-body interaction calculation where only the upper half (i >= j) is required
+	int twoBodyLoopEnd(int nItems);
 
 
 	/*

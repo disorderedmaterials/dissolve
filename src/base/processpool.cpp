@@ -76,14 +76,6 @@ void ProcessPool::operator=(const ProcessPool& source)
 #endif
 	groupsModifiable_ = source.groupsModifiable_;
 
-	// Local process limits
-	linearFirstAtom_ = source.linearFirstAtom_;
-	linearLastAtom_ = source.linearLastAtom_;
-	linearFirstGrain_ = source.linearFirstGrain_;
-	linearLastGrain_ = source.linearLastGrain_;
-	diagonalFirstAtom_ = source.diagonalFirstAtom_;
-	diagonalLastAtom_ = source.diagonalLastAtom_;
-
 	// Random number buffer
 	// ???
 }
@@ -600,28 +592,15 @@ void ProcessPool::setGroupsFixed()
  * Process Limits
  */
 
-// Setup limits based on total nAtoms and nGrains
-bool ProcessPool::calculateLimits(int nAtoms, int nGrains)
+// Return starting outer loop index for a two-body interaction calculation where only the upper half (i >= j) is required
+int ProcessPool::twoBodyLoopStart(int nItems)
 {
+	// TODO Optimise calculation of limit
 	// Don't do anything if this pool doesn't involve us
 #ifdef PARALLEL
-	if (!involvesMe()) return true;
+	if (!involvesMe()) return -1;
 #endif
-	long int baseAlloc, remainder;
-	// Linear Atoms - Do straight division by number of processes to get basic allocation
-	baseAlloc = nAtoms / worldRanks_.nItems();
-	remainder = nAtoms % worldRanks_.nItems();
-	linearFirstAtom_ = baseAlloc * poolRank_ + (poolRank_ < remainder ?  poolRank_: remainder);
-	linearLastAtom_ = linearFirstAtom_ + baseAlloc - (poolRank_ >= remainder ? 1 : 0);
-	Messenger::print("--> Nominally assigned Atoms %i to %i (%i total) to process with pool rank %i (world rank %i).\n", linearFirstAtom_, linearLastAtom_, 1+linearLastAtom_-linearFirstAtom_, poolRank_, worldRank_);
 
-	// Linear Grains - Do straight division by number of processes to get basic allocation
-	baseAlloc = nGrains / worldRanks_.nItems();
-	remainder = nGrains % worldRanks_.nItems();
-	linearFirstGrain_ = baseAlloc * poolRank_ + (poolRank_ < remainder ?  poolRank_: remainder);
-	linearLastGrain_ = linearFirstGrain_ + baseAlloc - (poolRank_ >= remainder ? 1 : 0);
-	Messenger::print("--> Nominally assigned Grains %i to %i (%i total) to process with pool rank %i (world rank %i).\n", linearFirstGrain_, linearLastGrain_, 1+linearLastGrain_-linearFirstGrain_, poolRank_, worldRank_);
-	
 	// Diagonal Atoms - For calculation of upper-diagonal half of any two-body interaction matrix
 	double rnproc = 1.0 / worldRanks_.nItems(), area = 1.0;
 	int startAtom = 0, finishAtom;
@@ -630,60 +609,57 @@ bool ProcessPool::calculateLimits(int nAtoms, int nGrains)
 	for (int process = 0; process<worldRanks_.nItems(); ++process)
 	{
 		// If this is the last process, make sure we avoid doing sqrt of zero or delta-neg value
-		if (process == (worldRanks_.nItems()-1)) finishAtom = nAtoms - 1;
-		else finishAtom = (1.0 - sqrt(area - rnproc)) * nAtoms - 1;
+		if (process == (worldRanks_.nItems()-1)) finishAtom = nItems - 1;
+		else finishAtom = (1.0 - sqrt(area - rnproc)) * nItems - 1;
 		area -= rnproc;
 
 		// Store limits for this process (if it is us)
 		if (process == poolRank_)
 		{
-			diagonalFirstAtom_ = startAtom;
-			diagonalLastAtom_ = finishAtom;
+			Messenger::printVerbose("--> Assigned two-body outer loop start index of %i for process with pool rank %i.\n", startAtom, process);
+			return startAtom;
 		}
-
-		Messenger::print("--> Assigned diagonal Atom calculation limits of %i -> %i for process with pool rank %i.\n", startAtom, finishAtom, process);
 
 		// Update startAtom
 		startAtom = finishAtom+1;
 	}
 	
-	return true;
+	return -1;
 }
 
-// Return linear first Atom index
-int ProcessPool::linearFirstAtom()
+// Return ending outer loop index for a two-body interaction calculation where only the upper half (i >= j) is required
+int ProcessPool::twoBodyLoopEnd(int nItems)
 {
-	return linearFirstAtom_;
-}
+	// TODO Optimise calculation of limit
+	// Don't do anything if this pool doesn't involve us
+#ifdef PARALLEL
+	if (!involvesMe()) return -1;
+#endif
 
-// Return linear last Atom index
-int ProcessPool::linearLastAtom()
-{
-	return linearLastAtom_;
-}
+	// Diagonal Atoms - For calculation of upper-diagonal half of any two-body interaction matrix
+	double rnproc = 1.0 / worldRanks_.nItems(), area = 1.0;
+	int startAtom = 0, finishAtom;
 
-// Return linear first Grain index
-int ProcessPool::linearFirstGrain()
-{
-	return linearFirstGrain_;
-}
+	// Loop over processes
+	for (int process = 0; process<worldRanks_.nItems(); ++process)
+	{
+		// If this is the last process, make sure we avoid doing sqrt of zero or delta-neg value
+		if (process == (worldRanks_.nItems()-1)) finishAtom = nItems - 1;
+		else finishAtom = (1.0 - sqrt(area - rnproc)) * nItems - 1;
+		area -= rnproc;
 
-// Return linear last Grain index
-int ProcessPool::linearLastGrain()
-{
-	return linearLastGrain_;
-}
+		// Store limits for this process (if it is us)
+		if (process == poolRank_)
+		{
+			Messenger::printVerbose("--> Assigned two-body outer loop final index of %i for process with pool rank %i.\n", finishAtom, process);
+			return finishAtom;
+		}
 
-// Return diagonal first Atom index
-int ProcessPool::diagonalFirstAtom()
-{
-	return diagonalFirstAtom_;
-}
-
-// Return diagonal last Atom index
-int ProcessPool::diagonalLastAtom()
-{
-	return diagonalLastAtom_;
+		// Update startAtom
+		startAtom = finishAtom+1;
+	}
+	
+	return -1;
 }
 
 // Return starting index for general loop
