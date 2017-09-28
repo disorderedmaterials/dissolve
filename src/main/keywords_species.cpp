@@ -261,7 +261,7 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 					break;
 				}
 				// Create a new torsion definition
-				t = species->addTorsion(parser.argi(2)-1, parser.argi(3)-1, parser.argi(4)-1, parser.argi(5)+1);
+				t = species->addTorsion(parser.argi(2)-1, parser.argi(3)-1, parser.argi(4)-1, parser.argi(5)-1);
 				if (t)
 				{
 					t->setForm(tf);
