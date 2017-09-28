@@ -631,3 +631,18 @@ Vec3<double> Matrix3::transform(Vec3<double> vec) const
 	result.z = vec.x*matrix_[2] + vec.y*matrix_[5] + vec.z*matrix_[8];
 	return result;
 }
+
+/*
+ * Special Functions
+ */
+
+// Construct 'cross-product' matrix of the supplied vector using cyclic permutations
+void Matrix3::makeCrossProductMatrix(Vec3<double>& v)
+{
+	Vec3<double> temp;
+	for (int n=0; n<3; ++n)
+	{
+		temp = Vec3<double>::unit(DUQMath::cp3(n+1)) * v.get(DUQMath::cp3(n+2)) - Vec3<double>::unit(DUQMath::cp3(n+2)) * v.get(DUQMath::cp3(n+1));
+		setColumn(n, temp);
+	}
+}

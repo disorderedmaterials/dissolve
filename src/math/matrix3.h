@@ -37,7 +37,7 @@ class Matrix3
 
 
 	/*
-	// Operators
+	 * Operators
 	 */
 	public:
 	Matrix3 operator*(const Matrix3& B) const;
@@ -145,6 +145,14 @@ class Matrix3
 	Vec3<double> transform(double x, double y, double z) const;
 	// Transform coordinates supplied and return as Vec3<double>
 	Vec3<double> transform(const Vec3<double> vec) const;
+
+
+	/*
+	 * Special Functions
+	 */
+	public:
+	// Construct 'cross-product' matrix of the supplied vector using cyclic permutations
+	void makeCrossProductMatrix(Vec3<double>& v);
 };
 
 #endif
