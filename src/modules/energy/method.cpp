@@ -56,17 +56,20 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 		// Setup process pool - must do this to ensure we are using all available processes
 		procPool.assignProcessesToGroups(cfg->processPool());
 
+		// Get reference to relevant module data
+		GenericList& moduleData = configurationLocal_ ? cfg->moduleData() : duq.processingModuleData();
+
 		// Retrieve control parameters from Configuration
-		const bool saveData = GenericListHelper<bool>::retrieve(cfg->moduleData(), "Save", uniqueName(), options_.valueAsBool("Save"));
-		const double stabilityThreshold = GenericListHelper<double>::retrieve(cfg->moduleData(), "StabilityThreshold", uniqueName(), options_.valueAsDouble("StabilityThreshold"));
-		const int stabilityWindow = GenericListHelper<int>::retrieve(cfg->moduleData(), "StabilityWindow", uniqueName(), options_.valueAsInt("StabilityWindow"));
-		const bool testAnalytic = GenericListHelper<bool>::retrieve(cfg->moduleData(), "TestAnalytic", uniqueName(), options_.valueAsBool("TestAnalytic"));
-		const bool testMode = GenericListHelper<bool>::retrieve(cfg->moduleData(), "Test", uniqueName(), options_.valueAsBool("Test"));
-		const double testThreshold = GenericListHelper<double>::retrieve(cfg->moduleData(), "TestThreshold", uniqueName(), options_.valueAsDouble("TestThreshold"));
+		const bool saveData = GenericListHelper<bool>::retrieve(moduleData, "Save", uniqueName(), options_.valueAsBool("Save"));
+		const double stabilityThreshold = GenericListHelper<double>::retrieve(moduleData, "StabilityThreshold", uniqueName(), options_.valueAsDouble("StabilityThreshold"));
+		const int stabilityWindow = GenericListHelper<int>::retrieve(moduleData, "StabilityWindow", uniqueName(), options_.valueAsInt("StabilityWindow"));
+		const bool testAnalytic = GenericListHelper<bool>::retrieve(moduleData, "TestAnalytic", uniqueName(), options_.valueAsBool("TestAnalytic"));
+		const bool testMode = GenericListHelper<bool>::retrieve(moduleData, "Test", uniqueName(), options_.valueAsBool("Test"));
+		const double testThreshold = GenericListHelper<double>::retrieve(moduleData, "TestThreshold", uniqueName(), options_.valueAsDouble("TestThreshold"));
 		bool hasReferenceInter;
-		const double testReferenceInter = GenericListHelper<double>::retrieve(cfg->moduleData(), "TestReferenceInter", uniqueName(), options_.valueAsDouble("TestReferenceInter"), &hasReferenceInter);
+		const double testReferenceInter = GenericListHelper<double>::retrieve(moduleData, "TestReferenceInter", uniqueName(), options_.valueAsDouble("TestReferenceInter"), &hasReferenceInter);
 		bool hasReferenceIntra;
-		const double testReferenceIntra = GenericListHelper<double>::retrieve(cfg->moduleData(), "TestReferenceIntra", uniqueName(), options_.valueAsDouble("TestReferenceIntra"), &hasReferenceIntra);
+		const double testReferenceIntra = GenericListHelper<double>::retrieve(moduleData, "TestReferenceIntra", uniqueName(), options_.valueAsDouble("TestReferenceIntra"), &hasReferenceIntra);
 
 		// Calculate the total energy
 		if (testMode)
@@ -100,7 +103,7 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 				molN = cfg->molecule(n);
 
 				// Molecule self-energy
-				for (int ii = 0; ii <molN->nAtoms()-1; ++ii)
+				for (int ii = 0; ii<molN->nAtoms()-1; ++ii)
 				{
 					i = molN->atom(ii);
 
