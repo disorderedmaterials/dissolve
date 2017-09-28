@@ -41,6 +41,14 @@ ProcessPool::ProcessPool()
 	groupRank_ = -1;
 	maxProcessGroups_ = 0;
 	groupsModifiable_ = true;
+#ifdef PARALLEL
+	groupGroup_ = 0;
+	groupCommunicator_ = 0;
+	leaderGroup_ = 0;
+	leaderCommunicator_ = 0;
+	poolGroup_ = 0;
+	poolCommunicator_ = 0;
+#endif
 }
 
 // Copy Constructor
@@ -432,7 +440,7 @@ bool ProcessPool::assignProcessesToGroups()
 	if (MPI_Group_incl(origGroup, myGroup()->nProcesses(), myGroup()->worldRanks().array(), &groupGroup_) != MPI_SUCCESS) return false;
 	if (MPI_Comm_create(MPI_COMM_WORLD, groupGroup_, &groupCommunicator_) != MPI_SUCCESS) return false;
 	MPI_Group_rank(groupGroup_, &groupRank_);
-	Messenger::printVerbose("--> ... Process with pool rank %i (world rank %i) has local group %i, group rank %i, and is a process group %s\n", poolRank_, worldRank_, groupIndex_, groupRank_, groupLeader() ? "leader" : "slave");
+	Messenger::printVerbose("--> ... Process with pool rank %i (world rank %i) has local group %i (%i), group rank %i, and is a process group %s\n", poolRank_, worldRank_, groupIndex_, groupGroup_, groupRank_, groupLeader() ? "leader" : "slave");
 
 	// Master now assembles list of group leaders
 	bool leader;
@@ -514,10 +522,14 @@ bool ProcessPool::assignProcessesToGroups(ProcessPool& groupsSource)
 
 #ifdef PARALLEL
 	// All processes in this pool first abandon their current groupGroup_ and leaderGroup_ communicators and groups
-	MPI_Group_free(&groupGroup_);
-	MPI_Comm_free(&groupCommunicator_);
-	MPI_Group_free(&leaderGroup_);
-	MPI_Comm_free(&leaderCommunicator_);
+	if (groupGroup_ != 0) MPI_Group_free(&groupGroup_);
+	if (groupCommunicator_ != 0) MPI_Comm_free(&groupCommunicator_);
+	if (leaderGroup_ != 0) MPI_Group_free(&leaderGroup_);
+	if (leaderCommunicator_ != 0) MPI_Comm_free(&leaderCommunicator_);
+	groupGroup_ = 0;
+	groupCommunicator_ = 0;
+	leaderGroup_ = 0;
+	leaderCommunicator_ = 0;
 #endif
 
 	// Copy over the number of allowable groups from the source ProcessPool
