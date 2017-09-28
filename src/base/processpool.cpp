@@ -39,6 +39,8 @@ ProcessPool::ProcessPool()
 	poolRank_ = -1;
 	groupIndex_ = -1;
 	groupRank_ = -1;
+	maxProcessGroups_ = 0;
+	groupsModifiable_ = true;
 }
 
 // Copy Constructor
@@ -63,6 +65,7 @@ void ProcessPool::operator=(const ProcessPool& source)
 	groupIndex_ = source.groupIndex_;
 	groupRank_ = source.groupRank_;
 	groupLeaders_ = source.groupLeaders_;
+	maxProcessGroups_ = source.maxProcessGroups_;
 #ifdef PARALLEL
 	groupGroup_ = source.groupGroup_;
 	groupCommunicator_ = source.groupCommunicator_;
@@ -71,6 +74,7 @@ void ProcessPool::operator=(const ProcessPool& source)
 	poolGroup_ = source.poolGroup_;
 	poolCommunicator_ = source.poolCommunicator_;
 #endif
+	groupsModifiable_ = source.groupsModifiable_;
 
 	// Local process limits
 	linearFirstAtom_ = source.linearFirstAtom_;
@@ -259,7 +263,6 @@ const char* ProcessPool::processInfo()
 	return info.get();
 }
 
-	
 /*
  * Pool Contents
  */
@@ -316,8 +319,8 @@ int ProcessPool::rootWorldRank()
 	return worldRanks_.first();
 }
 
-// Setup strategy for Cells, based on local process pool size
-bool ProcessPool::setupCellStrategy(const Vec3<int>& divisions, const Vec3<int>& cellExtents, const List< ListVec3<int> >& neighbours)
+// Determine how many simultaneous processes (groups) we can have at once, based on the Cell divisions
+void ProcessPool::determineMaxProcessGroups(const Vec3<int>& divisions, const Vec3<int>& cellExtents, const List< ListVec3<int> >& neighbours)
 {
 #ifdef PARALLEL
 	// Check that this pool actually involves us - if not we can leave now
@@ -340,7 +343,7 @@ bool ProcessPool::setupCellStrategy(const Vec3<int>& divisions, const Vec3<int>&
 	}
 
 	// Test assignment - how many processes can we get onto one XY slice, and how many in total at once?
-	int nGroups = 0;
+	maxProcessGroups_ = 0;
 	int xx, yy, zz;
 	for (int x = 0; x<divisions.x; ++x)
 	{
@@ -381,23 +384,29 @@ bool ProcessPool::setupCellStrategy(const Vec3<int>& divisions, const Vec3<int>&
 				if (cells[x][y][z] != -1) continue;
 
 				// Otherwise, we found a Cell and locked it, so increase group count
-				++nGroups;
+				++maxProcessGroups_;
 			}
 		}
 	}
-	Messenger::print("--> For the current Cell division and extent values, a maximum of %i simultaneous Cell-modifying processes are possible.\n", nGroups);
+	Messenger::print("--> For the current Cell division and extent values, a maximum of %i simultaneous Cell-modifying processes are possible.\n", maxProcessGroups_);
 	// Maximum number of groups possible is the number of processes available, but we want all groups to contain the same number
 	// of processes...
-	while (worldRanks_.nItems()%nGroups != 0) --nGroups;
+	while (worldRanks_.nItems()%maxProcessGroups_ != 0) --maxProcessGroups_;
 	
-	Messenger::print("--> Processes will be divided into %i groups.\n", nGroups);
+	Messenger::print("--> Processes will be divided into %i groups.\n", maxProcessGroups_);
+#endif
+}
 
+// Assign processes to groups
+bool ProcessPool::assignProcessesToGroups()
+{
 	/*
 	 * Create process groups and set group membership for each process
 	 * The process in the pool (list in worldRanks_) will be assigned to one or more ProcessGroups.
 	 * Each process in the pool will construct a list of the groups and the world ranks in each.
 	 * Afterwards, an MPI communicator is constructed for each group.
 	 */
+#ifdef PARALLEL
 	int baseAlloc = worldRanks_.nItems() / nGroups;
 	int remainder = worldRanks_.nItems() % nGroups;
 	ProcessGroup* group;
@@ -407,7 +416,7 @@ bool ProcessPool::setupCellStrategy(const Vec3<int>& divisions, const Vec3<int>&
 		// Create nth process group and add a (currently null) entry to the groupLeaders_ array
 		group = processGroups_.add();
 		groupLeaders_.add(-1);
-		Messenger::print("--> Created process group %i\n", n);
+		Messenger::printVerbose("--> Created process group %i\n", n);
 
 		// Create array of ranks to put in new group
 		int firstRank = baseAlloc * n + (n < remainder ? n : remainder);
@@ -422,7 +431,7 @@ bool ProcessPool::setupCellStrategy(const Vec3<int>& divisions, const Vec3<int>&
 			// If this process is the current worldRank_ we are considering, set its group membership
 			if (wr == worldRank_) groupIndex_ = n;
 		}
-		Messenger::print("--> Group will contain %i processes (world ranks:%s).\n", group->nProcesses(), rankString.get());
+		Messenger::printVerbose("--> Group will contain %i processes (world ranks:%s).\n", group->nProcesses(), rankString.get());
 	}
 
 	// Create local group and communicator - each process will only create and be involved in one group communicator (groupGroup_)
@@ -431,7 +440,7 @@ bool ProcessPool::setupCellStrategy(const Vec3<int>& divisions, const Vec3<int>&
 	if (MPI_Group_incl(origGroup, myGroup()->nProcesses(), myGroup()->worldRanks().array(), &groupGroup_) != MPI_SUCCESS) return false;
 	if (MPI_Comm_create(MPI_COMM_WORLD, groupGroup_, &groupCommunicator_) != MPI_SUCCESS) return false;
 	MPI_Group_rank(groupGroup_, &groupRank_);
-	Messenger::print("--> ... Process with pool rank %i (world rank %i) has local group %i, group rank %i, and is a process group %s\n", poolRank_, worldRank_, groupIndex_, groupRank_, groupLeader() ? "leader" : "slave");
+	Messenger::printVerbose("--> ... Process with pool rank %i (world rank %i) has local group %i, group rank %i, and is a process group %s\n", poolRank_, worldRank_, groupIndex_, groupRank_, groupLeader() ? "leader" : "slave");
 
 	// Master now assembles list of group leaders
 	bool leader;
@@ -461,7 +470,7 @@ bool ProcessPool::setupCellStrategy(const Vec3<int>& divisions, const Vec3<int>&
 						return false;
 					}
 
-					Messenger::print("Process with pool rank %i (world rank %i) added to group leaders list for pool '%s'.\n", prank, worldRanks_[prank], name_.get());
+					Messenger::printVerbose("Process with pool rank %i (world rank %i) added to group leaders list for pool '%s'.\n", prank, worldRanks_[prank], name_.get());
 				}
 			}
 		}
@@ -470,8 +479,8 @@ bool ProcessPool::setupCellStrategy(const Vec3<int>& divisions, const Vec3<int>&
 
 	// Broadcast group leader list
 	if (!broadcast(groupLeaders_)) return false;
-	Messenger::print("--> Group leader processes are :\n");
-	for (int group=0; group<processGroups_.nItems(); ++group) Messenger::print("-->    Group %3i : process rank %i\n", group, groupLeaders_[group]);
+	Messenger::printVerbose("--> Group leader processes are :\n");
+	for (int group=0; group<processGroups_.nItems(); ++group) Messenger::printVerbose("-->    Group %3i : process rank %i\n", group, groupLeaders_[group]);
 
 	// Create group leader communicator
 	// Must first convert local pool ranks of the group leaders into world ranks, before passing this to MPI_Group_incl
@@ -487,6 +496,45 @@ bool ProcessPool::setupCellStrategy(const Vec3<int>& divisions, const Vec3<int>&
 	groupIndex_ = 0;
 	groupRank_ = 0;
 #endif
+
+	return true;
+}
+
+// Assign processes to groups taken from supplied ProcessPool
+bool ProcessPool::assignProcessesToGroups(ProcessPool& groupsSource)
+{
+	/*
+	 * Since we have the ability to run Modules with any ProcessPool and at any point, we must occasionally
+	 * re-assign the processes in the pool (typically the DUQ::worldPool_) to a different set of groups in
+	 * order to utilise all available processing power (e.g. when a Module is run as, or is performing, a
+	 * post-processing step.
+	 */
+
+	// If we have been supplied with ourself as the reference ProcessPool, we can exit gracefully now
+	if (this == &groupsSource) return true;
+
+	// First check that we are allowed to modify the groups within this pool
+	if (!groupsModifiable_)
+	{
+		Messenger::error("Tried to modify the group contents of a ProcessPool in which it has explicitly been fixed.\n");
+		return false;
+	}
+
+#ifdef PARALLEL
+	// All processes in this pool first abandon their current groupGroup_ and leaderGroup_ communicators and groups
+	MPI_Group_free(groupGroup_);
+	MPI_Comm_free(groupCommunicator_);
+	MPI_Group_free(leaderGroup_);
+	MPI_Comm_free(leaderCommunicator_);
+#endif
+
+	// Copy over the number of allowable groups from the source ProcessPool
+	maxProcessGroups_ = groupsSource.maxProcessGroups_;
+	if (!assignProcessesToGroups())
+	{
+		Messenger::error("Failed to re-assign processes to groups in this ProcessPool.\n");
+		return false;
+	}
 
 	return true;
 }
@@ -534,6 +582,18 @@ int* ProcessPool::poolRanksInGroup(int groupId)
 	}
 #endif
 	return processGroups_[groupId]->poolRanks().array();
+}
+
+// Return whether group data is modifiable
+bool ProcessPool::groupsModifiable()
+{
+	return groupsModifiable_;
+}
+
+// Prevent group data from being modified
+void ProcessPool::setGroupsFixed()
+{
+	groupsModifiable_ = false;
 }
 
 /*

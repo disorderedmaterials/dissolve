@@ -53,6 +53,9 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 		// Grab Configuration pointer
 		Configuration* cfg = ri->item;
 
+		// Setup process pool - must do this to ensure we are using all available processes
+		procPool.assignProcessesToGroups(cfg->processPool());
+
 		// Retrieve control parameters from Configuration
 		const bool saveData = GenericListHelper<bool>::retrieve(cfg->moduleData(), "Save", uniqueName(), options_.valueAsBool("Save"));
 		const double stabilityThreshold = GenericListHelper<double>::retrieve(cfg->moduleData(), "StabilityThreshold", uniqueName(), options_.valueAsDouble("StabilityThreshold"));

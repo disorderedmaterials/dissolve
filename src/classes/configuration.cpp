@@ -558,7 +558,9 @@ bool Configuration::setupProcessPool(Array<int> worldRanks)
 	if (!processPool_.calculateLimits(nAtoms(), nGrains())) return false;
 
 	// Give Cell info to our processPool_ so a suitable parallel strategy can be created
-	if (!processPool_.setupCellStrategy(cells_.divisions(), cells_.extents(), cells_.neighbourIndices())) return false;
+	processPool_.determineMaxProcessGroups(cells_.divisions(), cells_.extents(), cells_.neighbourIndices());
+	if (!processPool_.assignProcessesToGroups()) return false;
+	processPool_.setGroupsFixed();
 
 	return true;
 }

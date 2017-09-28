@@ -152,6 +152,8 @@ class ProcessPool
 	Array<int> worldRanks_;
 	// List of process groups within the pool, referencing pool ranks of processes
 	List<ProcessGroup> processGroups_;
+	// Maximum number of simultaneous process groups
+	int maxProcessGroups_;
 	// Pool ranks of process group leaders
 	Array<int> groupLeaders_;
 #ifdef PARALLEL
@@ -168,6 +170,8 @@ class ProcessPool
 	// Process leaders communicator
 	MPI_Comm leaderCommunicator_;
 #endif
+	// Whether group data is modifiable
+	bool groupsModifiable_;
 
 	public:
 	// Setup pool with processes specified
@@ -178,8 +182,12 @@ class ProcessPool
 	int nProcesses();
 	// Return root (first) world rank of this pool
 	int rootWorldRank();
-	// Setup strategy for Cells, based on local process pool size
-	bool setupCellStrategy(const Vec3<int>& divisions, const Vec3<int>& cellExtents, const List< ListVec3<int> >& neighbours);
+	// Determine how many simultaneous processes (groups) we can have at once, based on the Cell divisions
+	void determineMaxProcessGroups(const Vec3<int>& divisions, const Vec3<int>& cellExtents, const List< ListVec3<int> >& neighbours);
+	// Assign processes to groups
+	bool assignProcessesToGroups();
+	// Assign processes to groups taken from supplied ProcessPool
+	bool assignProcessesToGroups(ProcessPool& groupsSource);
 	// Return number of process groups
 	int nProcessGroups() const;
 	// Return nth process group
@@ -188,6 +196,10 @@ class ProcessPool
 	int nProcessesInGroup(int groupId);
 	// Return array of pool ranks in the specified group
 	int* poolRanksInGroup(int groupId);
+	// Return whether group data is modifiable
+	bool groupsModifiable();
+	// Prevent group data from being modified
+	void setGroupsFixed();
 
 
 	/*

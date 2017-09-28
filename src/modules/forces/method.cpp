@@ -54,6 +54,9 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 		// Grab Configuration pointer
 		Configuration* cfg = ri->item;
 
+		// Setup process pool - must do this to ensure we are using all available processes
+		procPool.assignProcessesToGroups(cfg->processPool());
+
 		// Retrieve control parameters from Configuration
 		const bool saveData = GenericListHelper<bool>::retrieve(cfg->moduleData(), "Save", uniqueName(), options_.valueAsBool("Save"));
 		const bool testMode = GenericListHelper<bool>::retrieve(cfg->moduleData(), "Test", uniqueName(), options_.valueAsBool("Test"));
