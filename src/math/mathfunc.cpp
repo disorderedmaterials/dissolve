@@ -24,6 +24,10 @@
 #include <cstdlib>
 #include <math.h>
 
+/*
+ * Error Functions
+ */
+
 // Error Function
 double DUQMath::erfc(double x)
 {
@@ -43,6 +47,10 @@ double DUQMath::erf(double x)
 {
 	return (1.0 - erfc(x));
 }
+
+/*
+ * Random Number Generation
+ */
 
 // Random Number Generator (0 - 1)
 double DUQMath::random()
@@ -73,6 +81,10 @@ int DUQMath::randomi(int range)
 	return int(range * (double(rand()-1) / RAND_MAX));
 }
 
+/*
+ * Integer Functions
+ */
+
 // Integer power function
 int DUQMath::power(int i, int p)
 {
@@ -87,4 +99,10 @@ int DUQMath::power(int i, int p)
 int DUQMath::sgn(int x)
 {
 	return (x < 0 ? -1 : x > 0);
+}
+
+// Return the cyclic permutation of the integer 'i', span 3
+int DUQMath::cp3(int i)
+{
+	return (i%3);
 }

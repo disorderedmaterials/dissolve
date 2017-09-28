@@ -25,23 +25,34 @@
 // Mathematical functions
 class DUQMath
 {
-	// Error functions
+	/*
+	 * Error Functions
+	 */
 	public:
 	static double erfc(double);
 	static double erf(double);
 
-	// Random number generation
+
+	/*
+	 * Random Number Generation
+	 */
 	public:
 	static double random();
 	static double randomPlusMinusOne();
 	static int randomimax();
 	static int randomi(int range);
 
-	// Integer power function
+
+	/*
+	 * Integer Functions
+	 */
 	public:
+	// Raise the integer 'i' to the power 'p'
 	static int power(int i, int p);
 	// Sign function
 	static int sgn(int x);
+	// Return the cyclic permutation of the integer 'i', span 3
+	static int cp3(int i);
 };
 
 #endif
