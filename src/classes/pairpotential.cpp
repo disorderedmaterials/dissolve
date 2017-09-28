@@ -640,38 +640,41 @@ bool PairPotential::save(const char* filename)
  */
 
 // Broadcast data from Master to all Slaves
-bool PairPotential::broadcast(ProcessPool& procPool, const List<AtomType>& atomTypes)
+bool PairPotential::broadcast(ProcessPool& procPool, int root)
 {
 #ifdef PARALLEL
+	// Need the master AtomType list ot proceed
+	List<AtomType>* masterAtomTypes = List<AtomType>::masterInstance();
+	if (masterAtomTypes == NULL) return false;
+
 	// PairPotential type
-	if (!procPool.broadcast(EnumCast<PairPotential::ShortRangeType>(shortRangeType_))) return false;
-	if (!procPool.broadcast(includeCoulomb_)) return false;
+	if (!procPool.broadcast(EnumCast<PairPotential::ShortRangeType>(shortRangeType_), root)) return false;
+	if (!procPool.broadcast(includeCoulomb_, root)) return false;
 
 	// Source Parameters - Master needs to determine AtomType indices
 	int index;
-	if (procPool.isMaster()) index = atomTypes.indexOf(atomTypeI_);
-	if (!procPool.broadcast(index)) return false;
-	atomTypeI_ = atomTypes.item(index);
-	if (procPool.isMaster()) index = atomTypes.indexOf(atomTypeJ_);
-	if (!procPool.broadcast(index)) return false;
-	atomTypeJ_ = atomTypes.item(index);
-	if (!procPool.broadcast(sigmaIJ_)) return false;
-	if (!procPool.broadcast(epsilonIJ_)) return false;
-	if (!procPool.broadcast(chargeI_)) return false;
-	if (!procPool.broadcast(chargeJ_)) return false;
+	if (procPool.isMaster()) index = masterAtomTypes->indexOf(atomTypeI_);
+	if (!procPool.broadcast(index, root)) return false;
+	atomTypeI_ = masterAtomTypes->item(index);
+	if (procPool.isMaster()) index = masterAtomTypes->indexOf(atomTypeJ_);
+	if (!procPool.broadcast(index, root)) return false;
+	atomTypeJ_ = masterAtomTypes->item(index);
+	if (!procPool.broadcast(parameters_, MAXSRPARAMETERS, root)) return false;
+	if (!procPool.broadcast(chargeI_, root)) return false;
+	if (!procPool.broadcast(chargeJ_, root)) return false;
 
 	// Tabulation Parameters
-	if (!procPool.broadcast(range_)) return false;
-	if (!procPool.broadcast(truncationWidth_)) return false;
-	if (!procPool.broadcast(nPoints_)) return false;
-	if (!procPool.broadcast(delta_)) return false;
-	if (!procPool.broadcast(rDelta_)) return false;
+	if (!procPool.broadcast(range_, root)) return false;
+	if (!procPool.broadcast(truncationWidth_, root)) return false;
+	if (!procPool.broadcast(nPoints_, root)) return false;
+	if (!procPool.broadcast(delta_, root)) return false;
+	if (!procPool.broadcast(rDelta_, root)) return false;
 
 	// Tabulations
-	uOriginal_.broadcast(procPool);
-	uAdditional_.broadcast(procPool);
-	uFull_.broadcast(procPool);
-	dUFull_.broadcast(procPool);
+	uOriginal_.broadcast(procPool, root);
+	uAdditional_.broadcast(procPool, root);
+	uFull_.broadcast(procPool, root);
+	dUFull_.broadcast(procPool, root);
 #endif
 	return true;
 }

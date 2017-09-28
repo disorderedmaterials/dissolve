@@ -319,7 +319,7 @@ void ProcessPool::determineMaxProcessGroups(const Vec3<int>& divisions, const Ve
 	if (!involvesMe())
 	{
 		Messenger::print("--> ... Process with world rank %i is not involved in the process pool '%s', so we will ignore its setup.\n", worldRank_, name_.get());
-		return true;
+		return;
 	}
 
 	// Construct a temporary array of 'Cells'
@@ -399,11 +399,11 @@ bool ProcessPool::assignProcessesToGroups()
 	 * Afterwards, an MPI communicator is constructed for each group.
 	 */
 #ifdef PARALLEL
-	int baseAlloc = worldRanks_.nItems() / nGroups;
-	int remainder = worldRanks_.nItems() % nGroups;
+	int baseAlloc = worldRanks_.nItems() / maxProcessGroups_;
+	int remainder = worldRanks_.nItems() % maxProcessGroups_;
 	ProcessGroup* group;
 	CharString rankString;
-	for (int n=0; n<nGroups; ++n)
+	for (int n=0; n<maxProcessGroups_; ++n)
 	{
 		// Create nth process group and add a (currently null) entry to the groupLeaders_ array
 		group = processGroups_.add();
@@ -514,10 +514,10 @@ bool ProcessPool::assignProcessesToGroups(ProcessPool& groupsSource)
 
 #ifdef PARALLEL
 	// All processes in this pool first abandon their current groupGroup_ and leaderGroup_ communicators and groups
-	MPI_Group_free(groupGroup_);
-	MPI_Comm_free(groupCommunicator_);
-	MPI_Group_free(leaderGroup_);
-	MPI_Comm_free(leaderCommunicator_);
+	MPI_Group_free(&groupGroup_);
+	MPI_Comm_free(&groupCommunicator_);
+	MPI_Group_free(&leaderGroup_);
+	MPI_Comm_free(&leaderCommunicator_);
 #endif
 
 	// Copy over the number of allowable groups from the source ProcessPool

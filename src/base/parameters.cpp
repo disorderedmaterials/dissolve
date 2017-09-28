@@ -114,8 +114,7 @@ bool Parameters::broadcast(ProcessPool& procPool, int root)
 #ifdef PARALLEL
 	if (!procPool.broadcast(name_, root)) return false;
 	if (!procPool.broadcast(description_, root)) return false;
-	if (!procPool.broadcast(&sigma_, 1, root)) return false;
-	if (!procPool.broadcast(&epsilon_, 1, root)) return false;
+	if (!procPool.broadcast(parameters_, MAXSRPARAMETERS, root)) return false;
 	if (!procPool.broadcast(&charge_, 1, root)) return false;
 #endif
 	return true;

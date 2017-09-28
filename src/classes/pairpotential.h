@@ -202,7 +202,7 @@ class PairPotential : public ListItem<PairPotential>
 	 */
 	public:
 	// Broadcast data from Master to all Slaves
-	bool broadcast(ProcessPool& procPool, const List<AtomType>& atomTypes);
+	bool broadcast(ProcessPool& procPool, int root = 0);
 };
 
 #endif
