@@ -21,7 +21,12 @@ do
 
 	# Descend into test directory, and print out first two lines from README (containing description of test)
 	cd $test
-	head -n2 README
+	if [ -e README ]
+	then
+	  head -n2 README
+	else
+	  echo "<<< No README file in this directory >>>"
+	fi
 
 	# Loop over all input files (*.txt)
 	for input in *.txt
@@ -29,7 +34,7 @@ do
 		# Set output filename path
 		output=../${test}.${input%.txt}.out
 
-		echo -e "\nRunning test ${input}..."
+		echo -e "\nRunning test \"${input}\"..."
 		if ../$DUQ $input > $output
 		then
 			echo "Success!"

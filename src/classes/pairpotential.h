@@ -23,6 +23,7 @@
 #define DUQ_PAIRPOTENTIAL_H
 
 #include "base/xydata.h"
+#include "base/parameters.h"
 #include "templates/list.h"
 
 // Forward Declarations
@@ -37,7 +38,7 @@ class PairPotential : public ListItem<PairPotential>
 	// ShortRange Interaction Type enum
 	enum ShortRangeType
 	{
-		NoShortRange,			/* No short-range dispersive forces */
+		NoInteractionType,		/* No short-range dispersive forces */
 		LennardJonesType,		/* Lennard-Jones 12-6 form */
 		nShortRangeTypes		/* Number of short-range interaction types */
 	};
@@ -59,7 +60,7 @@ class PairPotential : public ListItem<PairPotential>
 
 
 	/*
-	 * Potential Type
+	 * Seed Interaction Type
 	 */
 	private:
 	// Short range type
@@ -90,10 +91,8 @@ class PairPotential : public ListItem<PairPotential>
 	private:
 	// Original source AtomTypes
 	AtomType* atomTypeI_, *atomTypeJ_;
-	// Sigma value (determined from AtomTypes)
-	double sigmaIJ_;
-	// Epsilon value (determined from AtomTypes)
-	double epsilonIJ_;
+	// Parameters (determined from source AtomTypes
+	double parameters_[MAXSRPARAMETERS];
 	// Charge on I (taken from AtomType)
 	double chargeI_;
 	// Charge on J (taken from AtomType)
@@ -105,7 +104,7 @@ class PairPotential : public ListItem<PairPotential>
 	
 	public:
 	// Set source parameters from AtomTypes
-	void setParameters(AtomType* typeI, AtomType* typeJ);
+	bool setParameters(AtomType* typeI, AtomType* typeJ);
 	// Set source AtomType pointers only
 	void setAtomTypes(AtomType* typeI, AtomType* typeJ);
 	// Return first AtomType name
@@ -116,14 +115,10 @@ class PairPotential : public ListItem<PairPotential>
 	AtomType* atomTypeI() const;
 	// Return second source AtomType
 	AtomType* atomTypeJ() const;
-	// Set sigma
-	void setSigmaIJ(double value);
-	// Return sigma
-	double sigmaIJ() const;
-	// Set epsilon
-	void setEpsilonIJ(double value);
-	// Return epsilon
-	double epsilonIJ() const;
+	// Set parameter specified
+	void setParameter(int index, double value);
+	// Return parameter specified
+	double parameter(int index);
 	// Set charge I
 	void setChargeI(double value);
 	// Return charge I

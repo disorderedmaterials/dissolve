@@ -25,8 +25,7 @@
 // Constructor
 Parameters::Parameters() : MPIListItem<Parameters>()
 {
-	sigma_ = 0.0;
-	epsilon_ = 0.0;
+	for (int n=0; n<MAXSRPARAMETERS; ++n) parameters_[n] = 0.0;
 	charge_ = 0.0;
 }
 
@@ -67,36 +66,30 @@ const char* Parameters::description() const
  * Potential Parameters
  */
 
-// Set all parameters simultaneously
-void Parameters::set(double sigma, double epsilon, double charge)
+// Set parameter with index specified
+void Parameters::setParameter(int index, double value)
 {
-	sigma_ = sigma;
-	epsilon_ = epsilon;
-	charge_ = charge;
+#ifdef CHECKS
+	if ((index < 0) || (index >= MAXSRPARAMETERS))
+	{
+		Messenger::error("OUT_OF_RANGE - Parameter index %i is out of range (MAXSRPARAMETERS = %i) so it cannot be set.\n", index, MAXSRPARAMETERS);
+		return;
+	}
+#endif
+	 parameters_[index] = value;
 }
 
-// Set Lennard-Jones Sigma
-void Parameters::setSigma(double value)
+// Return parameter with index specified
+double Parameters::parameter(int index)
 {
-	sigma_ = value;
-}
-
-// Return Lennard-Jones Sigma
-double Parameters::sigma()
-{
-	return sigma_;
-}
-
-// Set Lennard-Jones Epsilon
-void Parameters::setEpsilon(double epsilon)
-{
-	epsilon_ = epsilon;
-}
-
-// Return Lennard-Jones Epsilon
-double Parameters::epsilon()
-{
-	return epsilon_;
+#ifdef CHECKS
+	if ((index < 0) || (index >= MAXSRPARAMETERS))
+	{
+		Messenger::error("OUT_OF_RANGE - Parameter index %i is out of range (MAXSRPARAMETERS = %i) so it cannot be returned.\n", index, MAXSRPARAMETERS);
+		return 0.0;
+	}
+#endif
+	 return parameters_[index];
 }
 
 // Set atomic charge

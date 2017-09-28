@@ -48,8 +48,8 @@ PairPotentials
   TruncationWidth  2.000000
   CoulombTruncation  None
   IncludeCoulomb  Off
-  Parameters  'OW'  0.0        0.0     -0.82
-  Parameters  'HW'  0.0        0.0      0.41
+  Parameters  'OW'	-0.82	0.0        0.0
+  Parameters  'HW'	0.41	0.0        0.0
   Generate  'LJ'  'OW'  'OW'
   Generate  'LJ'  'OW'  'HW'
   Generate  'LJ'  'HW'  'HW'

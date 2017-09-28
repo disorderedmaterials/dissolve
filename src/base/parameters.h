@@ -22,10 +22,12 @@
 #ifndef DUQ_PARAMETERS_H
 #define DUQ_PARAMETERS_H
 
+#define MAXSRPARAMETERS 4
+
 #include "templates/mpilistitem.h"
 #include "base/charstring.h"
 
-// Parameters Definition
+// Short-Range Interaction Prameters Definition
 class Parameters : public MPIListItem<Parameters>
 {
 	public:
@@ -59,24 +61,16 @@ class Parameters : public MPIListItem<Parameters>
 	 * Potential Parameters
 	 */
 	private:
-	// Lennard-Jones Sigma
-	double sigma_;
-	// Lennard-Jones Epsilon
-	double epsilon_;
+	// Parameter array
+	double parameters_[MAXSRPARAMETERS];
 	// Atomic charge
 	double charge_;
 
 	public:
-	// Set all parameters simultaneously
-	void set(double sigma, double epsilon, double charge);
-	// Set Lennard-Jones Sigma
-	void setSigma(double value);
-	// Return Lennard-Jones Sigma
-	double sigma();
-	// Set Lennard-Jones Epsilon
-	void setEpsilon(double epsilon);
-	// Return Lennard-Jones Epsilon
-	double epsilon();
+	// Set parameter with index specified
+	void setParameter(int index, double value);
+	// Return parameter with index specified
+	double parameter(int index);
 	// Set atomic charge
 	void setCharge(double charge);
 	// Return atomic charge

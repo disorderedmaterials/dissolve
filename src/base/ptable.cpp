@@ -262,7 +262,8 @@ bool PeriodicTable::loadParameters(const char* filename)
 		params = elements_[Z].addParameters();
 		params->setName(parser.argc(1));
 		params->setDescription(parser.argc(5));
-		params->set(parser.argd(2), parser.argd(3), parser.argd(4));
+		params->setCharge(parser.argd(2));
+		for (int n=3; n<parser.nArgs(); ++n) params->setParameter(n-3, parser.argd(n));
 		
 		++count;
 		
@@ -282,7 +283,8 @@ bool PeriodicTable::loadParameters(const char* filename)
 		params = elements_[Z].addParameters();
 		params->setName(elements_[Z].symbol());
 		params->setDescription(elements_[Z].name());
-		params->set(2.0, 0.1, 0.0);
+		params->setParameter(0, 0.1);
+		params->setParameter(1, 2.0);
 	}
 
 	return true;

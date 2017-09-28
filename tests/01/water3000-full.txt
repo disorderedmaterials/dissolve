@@ -46,8 +46,8 @@ PairPotentials
   Range  15.000000
   Delta  0.050000
   TruncationWidth  2.000000
-  Parameters  'OW'  3.165492   0.6503  -0.82
-  Parameters  'HW'  0.0        0.0      0.41
+  Parameters  'OW'  -0.82      0.6503    3.165492
+  Parameters  'HW'  0.41       0.0       0.0
   Generate  'LJ'  'OW'  'OW'
   Generate  'LJ'  'OW'  'HW'
   Generate  'LJ'  'HW'  'HW'

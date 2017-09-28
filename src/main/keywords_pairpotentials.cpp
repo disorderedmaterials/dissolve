@@ -31,12 +31,11 @@ KeywordData PairPotentialsBlockData[] = {
 	{ "Delta",			1,	"Delta (in r-squared) of tabulated potential" },
 	{ "EndPairPotentials",		0,	"Signals the end of the PairPotentials block" },
 	{ "Generate",			3,	"Generate a pair potential of the specified form, according to internal parameters (or those supplied with 'Parameters')" },
-	{ "GenerateAll",		1,	"Generate all (remaining) potentials according to internal atomtype parameters (or those supplied with 'Parameters')b bn" },
+	{ "GenerateAll",		1,	"Generate all (remaining) potentials according to internal atomtype parameters (or those supplied with 'Parameters')" },
 	{ "IncludeCoulomb",		1,	"Include Coulomb term in tabulated pair potentials" },
-	{ "Parameters",			4,	"Set the sigma, epsilon, and charge for the named atomtype" },
+	{ "Parameters",			4,	"Set the atomic charge and short-range interaction parameters for the named atomtype" },
 	{ "Range",			1,	"Maximal range of the pair potential (in r)" },
-	{ "TruncationWidth",		1,	"Width of the truncation region applied to the short-range potential" },
-	{ "UseAtomCharges",		0,	"Don't include charge term in the pair potential, instead calculating from atomic charges on-the-fly [NOT YET IMPLEMENTED]" }
+	{ "TruncationWidth",		1,	"Width of the truncation region applied to the short-range potential" }
 };
 
 // Convert text string to PairPotentialsKeyword
@@ -135,7 +134,7 @@ bool PairPotentialsBlock::parse(LineParser& parser, DUQ* duq)
 				}
 
 				pot->setShortRangeType(srType);
-				pot->setParameters(at1, at2);
+				if (!pot->setParameters(at1, at2)) error = true;
 				break;
 			case (PairPotentialsBlock::GenerateAllKeyword):
 				Messenger::print("Generating all missing pair potentials...\n");
@@ -203,9 +202,8 @@ bool PairPotentialsBlock::parse(LineParser& parser, DUQ* duq)
 
 				// Get Parameters pointer and set values
 				params = at1->parameters();
-				params->setSigma(parser.argd(2));
-				params->setEpsilon(parser.argd(3));
-				params->setCharge(parser.argd(4));
+				params->setCharge(parser.argd(2));
+				for (int n=3; n<parser.nArgs(); ++n) params->setParameter(n-3, parser.argd(n));
 				break;
 			case (PairPotentialsBlock::RangeKeyword):
 				duq->setPairPotentialRange(parser.argd(1));

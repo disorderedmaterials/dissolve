@@ -37,8 +37,7 @@ PairPotential::TruncationScheme PairPotential::coulombTruncationScheme_ = PairPo
 // Constructor
 PairPotential::PairPotential() : ListItem<PairPotential>()
 {
-	sigmaIJ_ = 0.0;
-	epsilonIJ_ = 0.0;
+	for (int n=0; n<MAXSRPARAMETERS; ++n) parameters_[n] = 0.0;
 	chargeI_ = 0.0;
 	chargeJ_ = 0.0;
 	nPoints_ = 0;
@@ -81,7 +80,7 @@ const char* PairPotential::truncationScheme(TruncationScheme id)
 }
 
 /*
- * Potential Type
+ * Seed Interaction Type
  */
 
 // Set short-ranged type
@@ -150,18 +149,18 @@ void PairPotential::setXYDataNames()
 }
 
 // Set source parameters from AtomTypes
-void PairPotential::setParameters(AtomType* typeI, AtomType* typeJ)
+bool PairPotential::setParameters(AtomType* typeI, AtomType* typeJ)
 {
 	// Check for NULL pointers
 	if (typeI == NULL)
 	{
 		Messenger::error("NULL_POINTER - NULL AtomType pointer (typeI) given to PairPotential::setParameters().\n");
-		return;
+		return false;
 	}
 	if (typeJ == NULL)
 	{
 		Messenger::error("NULL_POINTER - NULL AtomType pointer (typeJ) given to PairPotential::setParameters().\n");
-		return;
+		return false;
 	}
 	
 	atomTypeI_ = typeI;
@@ -172,19 +171,31 @@ void PairPotential::setParameters(AtomType* typeI, AtomType* typeJ)
 	if ((paramsI == NULL) || (paramsJ == NULL))
 	{
 		Messenger::error("NULL_POINTER - One or both AtomTypes ('%s' and '%s') given to PairPotential::setParameters() contain a NULL Parameters pointer.\n", atomTypeI_->name(), atomTypeJ_->name());
-		sigmaIJ_ = 0.0;
-		epsilonIJ_ = 0.0;
-		chargeI_ = 0.0;
-		chargeJ_ = 0.0;
+		return false;
 	}
-	else
+
+	// Combine / set parameters as necessary, depending on the sr interaction type of this PairPotential
+	switch (shortRangeType_)
 	{
-		// Combine parameters (Lorentz-Berthelot)
-		sigmaIJ_ = (paramsI->sigma() + paramsJ->sigma())*0.5;
-		epsilonIJ_ = sqrt(paramsI->epsilon() * paramsJ->epsilon());
-		chargeI_ = paramsI->charge();
-		chargeJ_ = paramsJ->charge();
+		case (PairPotential::NoInteractionType):
+			break;
+		case (PairPotential::LennardJonesType):
+			/*
+			 * Combine parameters (Lorentz-Berthelot):
+			 * Parameter 0 = Epsilon
+			 * Parameter 1 = Sigma
+			 */
+			parameters_[0] = sqrt(paramsI->parameter(0) * paramsJ->parameter(0));
+			parameters_[1] = (paramsI->parameter(1) + paramsJ->parameter(1))*0.5;
+			chargeI_ = paramsI->charge();
+			chargeJ_ = paramsJ->charge();
+			break;
+		default:
+			Messenger::error("Short-range type %i is not accounted for in PairPotential::setParameters().\n", shortRangeType_);
+			return false;
 	}
+
+	return true;
 }
 
 // Set source AtomType pointers only
@@ -243,28 +254,30 @@ AtomType* PairPotential::atomTypeJ() const
 	return atomTypeJ_;
 }
 
-// Set sigma
-void PairPotential::setSigmaIJ(double value)
+// Set parameter with index specified
+void PairPotential::setParameter(int index, double value)
 {
-	sigmaIJ_ = value;
+#ifdef CHECKS
+	if ((index < 0) || (index >= MAXSRPARAMETERS))
+	{
+		Messenger::error("OUT_OF_RANGE - PairPotential Parameter index %i is out of range (MAXSRPARAMETERS = %i) so it cannot be set.\n", index, MAXSRPARAMETERS);
+		return;
+	}
+#endif
+	 parameters_[index] = value;
 }
 
-// Return sigma
-double PairPotential::sigmaIJ() const
+// Return parameter with index specified
+double PairPotential::parameter(int index)
 {
-	return sigmaIJ_;
-}
-
-// Set epsilon
-void PairPotential::setEpsilonIJ(double value)
-{
-	epsilonIJ_ = value;
-}
-
-// Return epsilon
-double PairPotential::epsilonIJ() const
-{
-	return epsilonIJ_;
+#ifdef CHECKS
+	if ((index < 0) || (index >= MAXSRPARAMETERS))
+	{
+		Messenger::error("OUT_OF_RANGE - PairPotential Parameter index %i is out of range (MAXSRPARAMETERS = %i) so it cannot be returned.\n", index, MAXSRPARAMETERS);
+		return 0.0;
+	}
+#endif
+	 return parameters_[index];
 }
 
 // Set charge I
@@ -298,13 +311,18 @@ double PairPotential::chargeJ() const
 // Return analytic short range potential energy
 double PairPotential::analyticShortRangeEnergy(double r, PairPotential::ShortRangeType type)
 {
-	// Standard Lennard-Jones potential
-	if (type == PairPotential::LennardJonesType)
+	if (type == PairPotential::NoInteractionType) return 0.0;
+	else if (type == PairPotential::LennardJonesType)
 	{
-		double sigmar = sigmaIJ_ / r;
+		/*
+		 * Standard Lennard-Jones potential
+		 * Parameter 0 = Epsilon
+		 * Parameter 1 = Sigma
+		 */
+		double sigmar = parameters_[1] / r;
 		double sigmar6 = pow(sigmar, 6.0);
 		double sigmar12 = sigmar6*sigmar6;
-		double energy = 4.0 * epsilonIJ_ * ( sigmar12 - sigmar6 );
+		double energy = 4.0 * parameters_[0] * ( sigmar12 - sigmar6 );
 		
 		// Are we into the truncation strip?
 		double truncr = r - (range_-truncationWidth_);
@@ -317,18 +335,26 @@ double PairPotential::analyticShortRangeEnergy(double r, PairPotential::ShortRan
 		return energy;
 	}
 
+	Messenger::error("Short-range interaction type %i is not accounted for in PairPotential::analyticShortRangeEnergy(). Returning 0.0...\n", type);
+
 	return 0.0;
 }
 
 // Return analytic short range force
 double PairPotential::analyticShortRangeForce(double r, PairPotential::ShortRangeType type)
 {
-	// Standard Lennard-Jones potential
-	if (type == PairPotential::LennardJonesType)
+	if (type == PairPotential::NoInteractionType) return 0.0;
+	else if (type == PairPotential::LennardJonesType)
 	{
+		/*
+		 * Standard Lennard-Jones potential
+		 * Parameter 0 = Epsilon
+		 * Parameter 1 = Sigma
+		 */
+
 		// f = -48*epsilon*((sigma**12/x**13)-0.5*(sigma**6/x**7))
 
-		double sigmar = sigmaIJ_ / r;
+		double sigmar = parameters_[1] / r;
 		double sigmar6 = pow(sigmar, 6.0);
 		double sigmar12 = sigmar6*sigmar6;
 		double force;
@@ -339,14 +365,16 @@ double PairPotential::analyticShortRangeForce(double r, PairPotential::ShortRang
 		{
 			// Simple truncation scheme - (cos(x)+1)*0.5, mapping the truncation region to {0,Pi}
 			// d/dx = -PI*sin((PI*truncr)/truncationWidth_) / truncationWidth_
-			double de_t = (-48.0 * epsilonIJ_ * ( (sigmar12 / pow(r, 13.0)) - 0.5 * (sigmar6 / pow(r, 7.0)) )) * (cos(PI*(truncr/truncationWidth_))+1)*0.5;
-			double e_dt = (4.0 * epsilonIJ_ * ( sigmar12 - sigmar6 )) * -PI*sin((PI*truncr)/truncationWidth_) / truncationWidth_;
+			double de_t = (-48.0 * parameters_[0] * ( (sigmar12 / pow(r, 13.0)) - 0.5 * (sigmar6 / pow(r, 7.0)) )) * (cos(PI*(truncr/truncationWidth_))+1)*0.5;
+			double e_dt = (4.0 * parameters_[0] * ( sigmar12 - sigmar6 )) * -PI*sin((PI*truncr)/truncationWidth_) / truncationWidth_;
 			force = de_t * e_dt;
 		}
-		else force = 48.0*epsilonIJ_ * sigmar6 * (-sigmar6 + 0.5) / r;
+		else force = 48.0*parameters_[0] * sigmar6 * (-sigmar6 + 0.5) / r;
 
 		return force;
 	}
+
+	Messenger::error("Short-range interaction type %i is not accounted for in PairPotential::analyticShortRangeForce(). Returning 0.0...\n", type);
 
 	return 0.0;
 }
