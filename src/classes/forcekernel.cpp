@@ -576,7 +576,7 @@ void ForceKernel::forces(const Angle* a)
 	// Calculate angle
 	magji = vecji.magAndNormalise();
 	magjk = vecjk.magAndNormalise();
-	angle = Box::angle(vecji, vecjk, dp);
+	angle = Box::angleInDegrees(vecji, vecjk, dp);
 
 	// Determine Angle force vectors for atoms
 	force = a->force(angle);
@@ -635,8 +635,8 @@ void ForceKernel::forces(const Torsion* t)
 	 *	------------- = rij[cp(n+2)] * U[cp(n+1)] - rij[cp(n+1)] * U[cp(n+2)]
 	 *	d rkj[n]  
 	 *
-	 *where cp is a cylic permutation spanning {0,1,2} == {x,y,z}, and U[n] is a unit vector in the n direction.
-	 *So,
+	 * where cp is a cylic permutation spanning {0,1,2} == {x,y,z}, and U[n] is a unit vector in the n direction.
+	 * So,
 	 *	d (rij x rkj) 
 	 *	------------- = rij[2] * U[1] - rij[1] * U[2]
 	 *	d rkj[0]  

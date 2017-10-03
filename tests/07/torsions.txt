@@ -142,7 +142,7 @@ EndConfiguration
 Module  Energy
   Test  On
   Configuration  'Liquid'
-  TestReferenceIntra  80.0
+  TestReferenceIntra  2.173978E+03
 EndModule
 
 # Pair Potentials
@@ -153,7 +153,6 @@ PairPotentials
   Parameters  'CT'   0.0       0.0      3.500000  
   Parameters  'HC'   0.0       0.0      2.500000 
   GenerateAll  'LJ'
-  IncludeCoulomb  False
 EndPairPotentials
 
 Simulation
