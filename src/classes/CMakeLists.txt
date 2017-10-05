@@ -44,6 +44,7 @@ add_library(classes
   speciesbond.cpp
   species.cpp
   speciesgrain.cpp
+  speciesinfo.cpp
   speciesintra.cpp
   speciestorsion.cpp
   species_grains.cpp
@@ -89,6 +90,7 @@ add_library(classes
   speciesatom.h
   speciesbond.h
   speciesgrain.h
+  speciesinfo.h
   speciesintra.h
   speciestorsion.h
   torsion.h

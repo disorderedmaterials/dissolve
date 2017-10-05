@@ -12,10 +12,10 @@ libclasses_la_SOURCES += isotopedata.cpp isotopologue.cpp isotopologuemix.cpp
 libclasses_la_SOURCES += kvector.cpp
 libclasses_la_SOURCES += molecule.cpp
 libclasses_la_SOURCES += pairpotential.cpp potentialmap.cpp partialset.cpp
-libclasses_la_SOURCES += scatteringmatrix.cpp species.cpp species_atomic.cpp species_grains.cpp species_intra.cpp species_io.cpp species_isotopologues.cpp species_transform.cpp speciesangle.cpp speciesatom.cpp speciesbond.cpp speciesgrain.cpp speciesintra.cpp speciestorsion.cpp species_io.cpp
+libclasses_la_SOURCES += scatteringmatrix.cpp species.cpp species_atomic.cpp species_grains.cpp species_intra.cpp species_io.cpp species_isotopologues.cpp species_transform.cpp speciesangle.cpp speciesatom.cpp speciesbond.cpp speciesgrain.cpp speciesinfo.cpp speciesintra.cpp speciestorsion.cpp species_io.cpp
 libclasses_la_SOURCES += torsion.cpp
 libclasses_la_SOURCES += weights.cpp
 
-noinst_HEADERS = atom.h atomtype.h atomtypedata.h atomtypelist.h box.h braggpeak.h cell.h cellarray.h cellneighbour.h changedata.h changestore.h configuration.h data.h energykernel.h forcekernel.h grain.h histogram.h isotopedata.h isotopologue.h isotopologuemix.h kernelflags.h kvector.h molecule.h pairpotential.h potentialmap.h partialset.h scatteringmatrix.h species.h speciesangle.h speciesatom.h speciesbond.h speciesgrain.h speciesintra.h speciestorsion.h torsion.h weights.h
+noinst_HEADERS = atom.h atomtype.h atomtypedata.h atomtypelist.h box.h braggpeak.h cell.h cellarray.h cellneighbour.h changedata.h changestore.h configuration.h data.h energykernel.h forcekernel.h grain.h histogram.h isotopedata.h isotopologue.h isotopologuemix.h kernelflags.h kvector.h molecule.h pairpotential.h potentialmap.h partialset.h scatteringmatrix.h species.h speciesangle.h speciesatom.h speciesbond.h speciesgrain.h speciesinfo.h speciesintra.h speciestorsion.h torsion.h weights.h
 
 AM_CPPFLAGS = -I../ @DUQ_CFLAGS@
