@@ -30,6 +30,7 @@
 #include "classes/cellarray.h"
 #include "classes/molecule.h"
 #include "classes/histogram.h"
+#include "classes/speciesinfo.h"
 #include "modules/modulelist.h"
 #include "base/xydata.h"
 #include "base/processpool.h"
@@ -67,7 +68,7 @@ class Configuration : public ListItem<Configuration>
 	// Nice name (generated from name_) used for output files
 	CharString niceName_;
 	// Reference list of Species used by the Configuration and their relative populations
-	RefList<Species,double> usedSpecies_;
+	List<SpeciesInfo> usedSpecies_;
 	// Integer multiplier of used relative species populations
 	int multiplier_;
 	// Density of the configuration
@@ -97,9 +98,11 @@ class Configuration : public ListItem<Configuration>
 	// Return nice name of the configuration
 	const char* niceName();
 	// Add Species to list of those used by the Configuration
-	bool addUsedSpecies(Species* sp, double relativePopulation);
-	// Return reference list of Species used by the Configuration and their relative populations
-	RefList<Species,double>& usedSpecies();
+	SpeciesInfo* addUsedSpecies(Species* sp, double relativePopulation);
+	// Return list of SpeciesInfo for the Configuration
+	List<SpeciesInfo>& usedSpecies();
+	// Return if the specifeid Species is present in the usedSpecies list
+	bool hasUsedSpecies(Species* sp);
 	// Return total relative population of Species used by this Configuration
 	double totalRelative() const;
 	// Set multiplier for System components

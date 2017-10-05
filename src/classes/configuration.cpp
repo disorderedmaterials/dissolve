@@ -214,7 +214,7 @@ bool Configuration::setup(ProcessPool& procPool, double pairPotentialRange, int 
 	 */
 
 	/*
-	 * 1) Check system size and Species populations
+	 * 1) Check Species populations
 	 */
 	if (multiplier_ < 1)
 	{
@@ -222,15 +222,18 @@ bool Configuration::setup(ProcessPool& procPool, double pairPotentialRange, int 
 		return false;
 	}
 
-	for (RefListItem<Species,double>* refSp = usedSpecies_.first(); refSp != NULL; refSp = refSp->next)
+	for (SpeciesInfo* spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next)
 	{
+		// Get Species pointer
+		Species* sp = spInfo->species();
+
 		// Determine the number of molecules of this component
-		int count = refSp->data * multiplier_;
+		int count =  spInfo->population() * multiplier_;
 
 		// Check for zero count
 		if (count == 0)
 		{
-			Messenger::error("Relative population for Species '%s' is too low (%e) to provide any Molecules in this Configuration.\n", refSp->item->name(), refSp->data);
+			Messenger::error("Relative population for Species '%s' is too low (%e) to provide any Molecules in this Configuration.\n",  sp->name(),  spInfo->population());
 			return false;
 		}
 	}
@@ -238,16 +241,16 @@ bool Configuration::setup(ProcessPool& procPool, double pairPotentialRange, int 
 	/*
 	 * 2) Create Molecules
 	 */
-	Messenger::print("--> Setting up Molecules, Atoms, and Grains...\n");
+	Messenger::print("--> Setting up Molecules...\n");
 
-	RefListIterator<Species,double> speciesIterator(usedSpecies_);
-	while (Species* sp = speciesIterator.iterate())
+	ListIterator<SpeciesInfo> speciesInfoIterator(usedSpecies_);
+	while (SpeciesInfo* spInfo = speciesInfoIterator.iterate())
 	{
 		// Determine the number of molecules of this component
-		int count = speciesIterator.currentData() * multiplier_;
+		int count = spInfo->population() * multiplier_;
 
 		// Add copies of Species as Molecules
-		for (int n=0; n<count; ++n) addMolecule(sp);
+		for (int n=0; n<count; ++n) addMolecule(spInfo->species());
 	}
 
 	// Set fractional populations in usedAtomTypes_

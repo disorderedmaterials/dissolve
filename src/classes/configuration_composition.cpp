@@ -50,31 +50,42 @@ const char* Configuration::niceName()
 }
 
 // Add Species to list of those used by the Configuration
-bool Configuration::addUsedSpecies(Species* sp, double relativePopulation)
+SpeciesInfo* Configuration::addUsedSpecies(Species* sp, double relativePopulation)
 {
 	// Check that we have not already added it to this Configuration
-	if (usedSpecies_.contains(sp))
+	for (SpeciesInfo* spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next) if (spInfo->species() == sp) 
 	{
 		Messenger::error("Configuration '%s' already references Species '%s'.", name(), sp->name());
-		return false;
+		return NULL;
 	}
 
-	usedSpecies_.add(sp, relativePopulation);
+	// Add new SpeciesInfo
+	SpeciesInfo* spInfo = usedSpecies_.add();
+	spInfo->setSpecies(sp);
+	spInfo->setPopulation(relativePopulation);
 
-	return true;
+	return spInfo;
 }
 
-// Return feference list of Species used by the Configuration and their relative populations
-RefList<Species,double>& Configuration::usedSpecies()
+// Return list of SpeciesInfo for the Configuration
+List<SpeciesInfo>& Configuration::usedSpecies()
 {
 	return usedSpecies_;
+}
+
+// Return if the specifeid Species is present in the usedSpecies list
+bool Configuration::hasUsedSpecies(Species* sp)
+{
+	for (SpeciesInfo* spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next) if (spInfo->species() == sp) return true;
+
+	return false;
 }
 
 // Return total relative population of Species
 double Configuration::totalRelative() const
 {
 	double total = 0.0;
-	for (RefListItem<Species,double>* ri = usedSpecies_.first(); ri != NULL; ri = ri->next) total += ri->data;
+	for (SpeciesInfo* spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next) total += spInfo->population();
 	return total;
 }
 
@@ -124,10 +135,12 @@ double Configuration::atomicDensity() const
 	
 	// Determine total atomic mass and number of atoms in system
 	double mass = 0.0, nAtoms = 0.0;
-	for (RefListItem<Species,double>* ri = usedSpecies_.first(); ri != NULL; ri = ri->next)
+	for (SpeciesInfo* spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next)
 	{
-		mass += multiplier_*ri->data * ri->item->mass();
-		nAtoms += multiplier_*ri->data * ri->item->nAtoms();
+		Species* sp = spInfo->species();
+
+		mass += multiplier_ * spInfo->population() * sp->mass();
+		nAtoms += multiplier_ * spInfo->population() * sp->nAtoms();
 	}
 
 	// Convert density from g/cm3 to g/A3

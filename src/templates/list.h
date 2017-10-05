@@ -684,4 +684,48 @@ template <class T> class List
 	}
 };
 
+// List Iterator
+template <class T> class ListIterator
+{
+	public:
+	// Constructor
+	ListIterator<T>(const List<T>& source, bool reverse = false) : targetList_(source), reverse_(reverse)
+	{
+		finished_ = false;
+		currentItem_ = NULL;
+	}
+
+	private:
+	// Whether the iterator has reached the end of the list
+	bool finished_;
+	// Whether the iterator operates in reverse (iterating tail to head)
+	bool reverse_;
+	// Target list
+	const List<T>& targetList_;
+	// Current item
+	T* currentItem_;
+
+	public:
+	// Iterate
+	T* iterate()
+	{
+		if (finished_) return NULL;
+
+		// Go to initial / next item
+		if (currentItem_ == NULL) currentItem_ = reverse_ ? targetList_.last() : targetList_.first();
+		else currentItem_ = reverse_ ? currentItem_->prev : currentItem_->next;
+
+		// Check for end of list
+		if (currentItem_ == NULL) finished_ = true;
+
+		return currentItem_;
+	}
+	// Restart iteration
+	void restart()
+	{
+		finished_ = false;
+		currentItem_ = NULL;
+	}
+};
+
 #endif

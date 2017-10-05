@@ -113,7 +113,7 @@ int PartialsModule::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targ
 			return false;
 		}
 
-		if (!targetCfg->usedSpecies().contains(sp))
+		if (!targetCfg->hasUsedSpecies(sp))
 		{
 			Messenger::error("Error defining Isotopologue - Species '%s' is not present in Configuration '%s'.\n", sp->name(), targetCfg->name());
 			return false;

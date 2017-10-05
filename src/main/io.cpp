@@ -335,8 +335,11 @@ bool DUQ::saveInput(const char* filename)
 
 		// Species
 		parser.writeLineF("\n  # Species\n");
-		RefListIterator<Species,double> speciesIterator(cfg->usedSpecies());
-		while (Species* sp = speciesIterator.iterate()) parser.writeLineF("  %s  '%s'  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::SpeciesAddKeyword), sp->name(), speciesIterator.currentData());
+		for (SpeciesInfo* spInfo = cfg->usedSpecies().first(); spInfo != NULL; spInfo = spInfo->next)
+		{
+			Species* sp = spInfo->species();
+			parser.writeLineF("  %s  '%s'  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::SpeciesAddKeyword), sp->name(), spInfo->population());
+		}
 
 		// Modules
 		parser.writeLineF("\n  # Modules\n");

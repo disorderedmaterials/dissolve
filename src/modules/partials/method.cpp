@@ -159,10 +159,12 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		{
 			// Construct weights matrix based on Isotopologue specifications in some Module (specified by mixSource) and the populations of AtomTypes in the Configuration
 			Weights weights;
-			RefListIterator<Species,double> speciesIterator(cfg->usedSpecies());
-			while (Species* sp = speciesIterator.iterate())
+			ListIterator<SpeciesInfo> speciesInfoIterator(cfg->usedSpecies());
+			while (SpeciesInfo* spInfo = speciesInfoIterator.iterate())
 			{
-				int speciesPopulation = speciesIterator.currentData() * cfg->multiplier();
+				Species* sp = spInfo->species();
+
+				int speciesPopulation = spInfo->population() * cfg->multiplier();
 
 				// Loop over available Isotopologues for Species
 				for (Isotopologue* availableIso = sp->isotopologues(); availableIso != NULL; availableIso = availableIso->next)
@@ -180,10 +182,10 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 			}
 
 			// We will complain strongly if a species in the Configuration is not covered by at least one Isotopologue definition
-			speciesIterator.restart();
-			while (Species* sp = speciesIterator.iterate()) if (!weights.hasSpeciesIsotopologueMixture(sp)) 
+			speciesInfoIterator.restart();
+			while (SpeciesInfo* spInfo = speciesInfoIterator.iterate()) if (!weights.hasSpeciesIsotopologueMixture(spInfo->species())) 
 			{
-				Messenger::error("Isotopologue specification for Species '%s' in Configuration '%s' is missing.\n", sp->name(), cfg->name());
+				Messenger::error("Isotopologue specification for Species '%s' in Configuration '%s' is missing.\n", spInfo->species()->name(), cfg->name());
 				return false;
 			}
 
