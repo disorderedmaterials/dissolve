@@ -32,12 +32,6 @@ SpeciesAngle::SpeciesAngle() : ListItem<SpeciesAngle>()
 	i_ = NULL;
 	j_ = NULL;
 	k_ = NULL;
-	nAttached_[0] = 0;
-	nAttached_[1] = 0;
-	attachedAtoms_[0] = NULL;
-	attachedAtoms_[1] = NULL;
-	attachedAtomIndices_[0] = NULL;
-	attachedAtomIndices_[1] = NULL;
 	form_ = SpeciesAngle::nAngleFunctions;
 	for (int n=0; n<MAXANGLEPARAMS; ++n) parameters_[n] = 0.0;
 }
@@ -45,14 +39,6 @@ SpeciesAngle::SpeciesAngle() : ListItem<SpeciesAngle>()
 // Destructor
 SpeciesAngle::~SpeciesAngle()
 {
-	for (int n=0; n<2; ++n)
-	{
-		if (attachedAtoms_[n] != NULL) delete[] attachedAtoms_[n];
-		attachedAtoms_[n] = NULL;
-		if (attachedAtomIndices_[n] != NULL) delete[] attachedAtomIndices_[n];
-		attachedAtomIndices_[n] = NULL;
-		nAttached_[n] = 0;
-	}
 }
 
 /*
@@ -217,62 +203,6 @@ double SpeciesAngle::parameter(int id) const
 	}
 #endif
 	return parameters_[id];
-}
-
-// Create attached Atom array
-void SpeciesAngle::createAttachedAtomArrays(int terminus, int size)
-{
-	if (attachedAtoms_[terminus] != NULL) delete[] attachedAtoms_[terminus];
-	attachedAtoms_[terminus] = NULL;
-	if (attachedAtomIndices_[terminus] != NULL) delete[] attachedAtomIndices_[terminus];
-	attachedAtomIndices_[terminus] = NULL;
-	nAttached_[terminus] = size;
-
-	if (nAttached_[terminus] != 0)
-	{
-		attachedAtoms_[terminus] = new SpeciesAtom*[nAttached_[terminus]];
-		attachedAtomIndices_[terminus] = new int[nAttached_[terminus]];
-		for (int n=0; n<nAttached_[terminus]; ++n)
-		{
-			attachedAtoms_[terminus][n] = NULL;
-			attachedAtomIndices_[terminus][n] = -1;
-		}
-	}
-}
-
-// Set attached Atoms for terminus specified
-void SpeciesAngle::setAttachedAtoms(int terminus, const RefList<SpeciesAtom,int>& atoms)
-{
-	createAttachedAtomArrays(terminus, atoms.nItems());
-	int index = 0;
-	for (RefListItem<SpeciesAtom,int>* refAtom = atoms.first(); refAtom != NULL; refAtom = refAtom->next)
-	{
-		attachedAtoms_[terminus][index] = refAtom->item;
-		attachedAtomIndices_[terminus][index] = refAtom->item->index();
-		++index;
-	}
-
-	CharString s("--> For angle between atoms %i-%i-%i, terminus %i moves %i other atoms :", indexI()+1, indexJ()+1, indexK()+1, terminus+1, nAttached_[terminus]);
-	for (int n=0; n<nAttached_[terminus]; ++n) s.strcatf(" %i", attachedAtoms_[terminus][n]->userIndex());
-	Messenger::print("%s\n", s.get());
-}
-
-// Return number of attached Atoms for terminus specified
-int SpeciesAngle::nAttached(int terminus) const
-{
-	return nAttached_[terminus];
-}
-
-// Return array of attached Atoms for terminus specified
-SpeciesAtom** SpeciesAngle::attachedAtoms(int terminus) const
-{
-	return attachedAtoms_[terminus];
-}
-
-// Return array of attached indices for terminus specified
-int* SpeciesAngle::attachedIndices(int terminus) const
-{
-	return attachedAtomIndices_[terminus];
 }
 
 // Return energy for specified angle

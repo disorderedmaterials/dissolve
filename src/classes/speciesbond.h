@@ -106,12 +106,6 @@ class SpeciesBond : public ListItem<SpeciesBond>
 	BondFunction form_;
 	// Parameters for interaction
 	double parameters_[MAXBONDPARAMS];
-	// Number of SpeciesAtoms attached to termini
-	int nAttached_[2];
-	// Arrays of SpeciesAtoms (in)directly attached to termini
-	SpeciesAtom** attachedAtoms_[2];
-	// Arrays of atom indices (in)directly attached to termini
-	int* attachedAtomIndices_[2];
 
 	public:
 	// Set functional form of interaction
@@ -122,16 +116,6 @@ class SpeciesBond : public ListItem<SpeciesBond>
 	void setParameter(int id, double value);
 	// Return nth parameter
 	double parameter(int id) const;
-	// Create attached SpeciesAtom array
-	void createAttachedAtomArrays(int terminus, int size);
-	// Set attached SpeciesAtoms for terminus specified
-	void setAttachedAtoms(int terminus, const RefList<SpeciesAtom,int>& atoms);
-	// Return number of attached SpeciesAtoms for terminus specified
-	int nAttached(int terminus) const;
-	// Return array of attached SpeciesAtoms for terminus specified
-	SpeciesAtom** attachedAtoms(int terminus) const;
-	// Return array of attached indices for terminus specified
-	int* attachedIndices(int terminus) const;
 	// Return energy for specified distance
 	double energy(double distance) const;
 	// Return force multiplier for specified distance
