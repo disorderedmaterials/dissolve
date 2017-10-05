@@ -228,7 +228,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 						// Calculate angle
 						magji = vecji.magAndNormalise();
 						magjk = vecjk.magAndNormalise();
-						angle = Box::angle(vecji, vecjk, dp);
+						angle = Box::angleInDegrees(vecji, vecjk, dp);
 	
 						// Determine Angle force vectors for atoms
 						force = a->force(angle);

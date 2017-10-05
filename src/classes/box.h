@@ -169,11 +169,19 @@ class Box
 	 */
 	public:
 	// Return angle (in degrees, no MIM) between coordinates
-	static double angle(const Vec3<double>& i, const Vec3<double>& j, const Vec3<double>& k);
+	static double angleInDegrees(const Vec3<double>& i, const Vec3<double>& j, const Vec3<double>& k);
 	// Return angle (in degrees) between supplied normalised vectors
-	static double angle(const Vec3<double>& normji, const Vec3<double>& normjk);
+	static double angleInDegrees(const Vec3<double>& normji, const Vec3<double>& normjk);
 	// Return angle (in degrees) between supplied normalised vectors (storing dot product)
-	static double angle(const Vec3<double>& normji, const Vec3<double>& normjk, double& dotProduct);
+	static double angleInDegrees(const Vec3<double>& normji, const Vec3<double>& normjk, double& dotProduct);
+	// Return torsion (in degrees, no MIM) between supplied unnormalised vectors
+	static double torsionInDegrees(const Vec3<double>& vecji, const Vec3<double>& vecjk, const Vec3<double>& veckl);
+	// Return torsion (in degrees, no MIM) between supplied unnormalised vectors, storing cross products and magnitude in supplied variables
+	static double torsionInDegrees(const Vec3<double>& vecji, const Vec3<double>& vecjk, const Vec3<double>& veckl, Vec3<double>& xpj, double& magxpj, Vec3<double>& xpk, double& magxpk);
+	// Return torsion (in radians, no MIM) between supplied unnormalised vectors
+	static double torsionInRadians(const Vec3<double>& vecji, const Vec3<double>& vecjk, const Vec3<double>& veckl);
+	// Return torsion (in radians, no MIM) between supplied unnormalised vectors, storing cross products and magnitude in supplied variables
+	static double torsionInRadians(const Vec3<double>& vecji, const Vec3<double>& vecjk, const Vec3<double>& veckl, Vec3<double>& xpj, double& magxpj, Vec3<double>& xpk, double& magxpk);
 };
 
 /*

@@ -673,7 +673,7 @@ double EnergyKernel::energy(const Angle* a)
 	vecjk.normalise();
 
 	// Determine Angle energy
-	return a->energy(Box::angle(vecji, vecjk));
+	return a->energy(Box::angleInDegrees(vecji, vecjk));
 }
 
 // Return Torsion energy
@@ -694,17 +694,7 @@ double EnergyKernel::energy(const Torsion* t)
 	if (cells_.useMim(k->cell(), l->cell())) veckl = box_->minimumVector(k, l);
 	else veckl = l->r() - k->r();
 
-	// Calculate cross products and torsion angle formed (in radians)
-	xpj = vecji * vecjk;
-	xpk = veckl * vecjk;
-	magxpj = xpj.magAndNormalise();
-	magxpk = xpk.magAndNormalise();
-	dp = xpj.dp(xpk);
-	if (dp < -1.0) dp = -1.0;
-	else if (dp > 1.0) dp = 1.0;
-	phi = acos(dp);
-
-	return t->energy(phi*DEGRAD);
+	return t->energy(Box::torsionInDegrees(vecji, vecjk, veckl));
 }
 
 // Return intramolecular energy for the supplied Atom

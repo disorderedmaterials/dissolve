@@ -90,7 +90,7 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 
 			double r, angle;
 			Atom* i, *j, *k;
-			Vec3<double> vecji, vecjk;
+			Vec3<double> vecji, vecjk, veckl;
 			Molecule* molN, *molM;
 			const Box* box = cfg->box();
 			double scale;
@@ -161,7 +161,7 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 				// Calculate angle
 				vecji.normalise();
 				vecjk.normalise();
-				angle = Box::angle(vecji, vecjk);
+				angle = Box::angleInDegrees(vecji, vecjk);
 
 				// Determine Angle energy
 				correctIntraEnergy += a->energy(angle);
@@ -171,10 +171,16 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 			DynamicArrayIterator<Torsion> torsionIterator(cfg->torsions());
 			while (Torsion* t = torsionIterator.iterate())
 			{
-				Messenger::error("Calculation of correct torsion energy in EnergyModule is not yet implemented.\n");
-				return false;
-			}
+				// Get vectors 'j-i' and 'j-k'
+				vecji = cfg->box()->minimumVector(t->j(), t->i());
+				vecjk = cfg->box()->minimumVector(t->j(), t->k());
+				veckl = cfg->box()->minimumVector(t->k(), t->l());
 
+				angle = Box::torsionInDegrees(vecji, vecjk, veckl);
+
+				// Determine Torsion energy
+				correctIntraEnergy += t->energy(angle);
+			}
 			testTimer.stop();
 
 			Messenger::print("Energy: Correct interatomic pairpotential energy is %15.9e kJ/mol\n", correctInterEnergy);
