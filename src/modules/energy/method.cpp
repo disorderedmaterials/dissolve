@@ -171,7 +171,7 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 			DynamicArrayIterator<Torsion> torsionIterator(cfg->torsions());
 			while (Torsion* t = torsionIterator.iterate())
 			{
-				// Get vectors 'j-i' and 'j-k'
+				// Get vectors 'j-i', 'j-k' and 'k-l'
 				vecji = cfg->box()->minimumVector(t->j(), t->i());
 				vecjk = cfg->box()->minimumVector(t->j(), t->k());
 				veckl = cfg->box()->minimumVector(t->k(), t->l());
