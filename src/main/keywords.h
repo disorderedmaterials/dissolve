@@ -241,6 +241,9 @@ namespace SpeciesBlock
 		EndSpeciesKeyword,		/* 'EndSpecies' - Signals the end of the current Species */
 		GrainKeyword,			/* 'Grain' - Defines a Grain containing a number of Atoms */
 		IsotopologueKeyword,		/* 'Isotopologue' - Defines isotope information for the Atoms */
+		MasterAngleKeyword,		/* 'MasterAngle' - Define master Angle parameters that can be referred to */
+		MasterBondKeyword,		/* 'MasterBond' - Define master Bond parameters that can be referred to */
+		MasterTorsionKeyword,		/* 'MasterTorsion' - Define master Torsion parameters that can be referred to */
 		TorsionKeyword,			/* 'Torsion' - Define a Torsion interaction between four atoms */
 		nSpeciesKeywords		/* Number of keywords defined for this block */
 	};

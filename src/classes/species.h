@@ -115,7 +115,13 @@ class Species : public ListItem<Species>
 	List<SpeciesAngle> angles_;
 	// List of Torsions between Atoms in the Species
 	List<SpeciesTorsion> torsions_;
-	
+	// List of master Bonds (parameters only) for this Species
+	List<SpeciesBond> masterBonds_;
+	// List of master Angles (parameters only) for this Species
+	List<SpeciesAngle> masterAngles_;
+	// List of master Torsions (parameters only) for this Species
+	List<SpeciesTorsion> masterTorsions_;
+
 	public:
 	// Add new Bond definition (from SpeciesAtom*)
 	SpeciesBond* addBond(SpeciesAtom* i, SpeciesAtom* j);
@@ -153,6 +159,36 @@ class Species : public ListItem<Species>
 	SpeciesTorsion* torsion(int n);
 	// Return whether Torsion between Atoms exists
 	bool hasTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const;
+	// Add new master Bond definition
+	SpeciesBond* addMasterBond(const char* name);
+	// Return number of master Bonds in list
+	int nMasterBonds() const;
+	// Return list of master Bonds
+	SpeciesBond* masterBonds() const;
+	// Return nth master Bond
+	SpeciesBond* masterBond(int n);
+	// Return whether named master Bond exists
+	SpeciesBond* hasMasterBond(const char* name) const;
+	// Add new master Angle definition
+	SpeciesAngle* addMasterAngle(const char* name);
+	// Return number of master Angles in list
+	int nMasterAngles() const;
+	// Return list of master Angles
+	SpeciesAngle* masterAngles() const;
+	// Return nth master Angle
+	SpeciesAngle* masterAngle(int n);
+	// Return whether named master Angle exists
+	SpeciesAngle* hasMasterAngle(const char* name) const;
+	// Add new master Torsion definition
+	SpeciesTorsion* addMasterTorsion(const char* name);
+	// Return number of master Torsions in list
+	int nMasterTorsions() const;
+	// Return list of master Torsions
+	SpeciesTorsion* masterTorsions() const;
+	// Return nth master Torsion
+	SpeciesTorsion* masterTorsion(int n);
+	// Return whether named master Torsion exists
+	SpeciesTorsion* hasMasterTorsion(const char* name) const;
 
 
 	/*

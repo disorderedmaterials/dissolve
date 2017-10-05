@@ -36,6 +36,9 @@ KeywordData SpeciesBlockData[] = {
 	{ "EndSpecies",			0,	"" },
 	{ "Grain",			1,	"" },
 	{ "Isotopologue",		1,	"" },
+	{ "MasterBond",			2,	"Define master Bond parameters that can be referred to" },
+	{ "MasterAngle",		3,	"Define master Angle parameters that can be referred to" },
+	{ "MasterTorsion",		4,	"Define master Torsion parameters that can be referred to" },
 	{ "Torsion",			5,	"Define a torsion interaction within the Species" }
 };
 
@@ -187,7 +190,7 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 				if (i) i->setCharge(parser.argd(2));
 				else
 				{
-					Messenger::error("Specified atom index (%i) for Charge keyword is out of range.\n", parser.argi(1));
+					Messenger::error("Specified Atom index (%i) for Charge keyword is out of range.\n", parser.argi(1));
 					error = true;
 				}
 				break;
@@ -207,7 +210,7 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 					i = species->atom(parser.argi(n)-1);
 					if (i == NULL)
 					{
-						Messenger::error("Failed to find atom with index %i in Species '%s'\n", parser.argi(n), species->name());
+						Messenger::error("Failed to find Atom with index %i in Species '%s'\n", parser.argi(n), species->name());
 						error = true;
 					}
 					else species->addAtomToGrain(i, sg);
@@ -249,6 +252,90 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 						break;
 					}
 				}
+				break;
+			case (SpeciesBlock::MasterAngleKeyword):
+				// Check the functional form specified
+				af = SpeciesAngle::angleFunction(parser.argc(2));
+				if (af == SpeciesAngle::nAngleFunctions)
+				{
+					Messenger::error("Functional form of angle (%s) not recognised.\n", parser.argc(1));
+					error = true;
+					break;
+				}
+				// Create a new master angle definition
+				a = species->addMasterAngle(parser.argc(1));
+				if (a)
+				{
+					a->setName(parser.argc(1));
+					a->setForm(af);
+					for (int n=0; n<SpeciesAngle::nFunctionParameters(af); ++n)
+					{
+						if (!parser.hasArg(n+3))
+						{
+							Messenger::error("Angle function type '%s' requires %i parameters\n", SpeciesAngle::angleFunction(af), SpeciesAngle::nFunctionParameters(af));
+							error = true;
+							break;
+						}
+						a->setParameter(n, parser.argd(n+3));
+					}
+				}
+				else error = true;
+				break;
+			case (SpeciesBlock::MasterBondKeyword):
+				// Check the functional form specified
+				bf = SpeciesBond::bondFunction(parser.argc(2));
+				if (bf == SpeciesBond::nBondFunctions)
+				{
+					Messenger::error("Functional form of bond (%s) not recognised.\n", parser.argc(1));
+					error = true;
+					break;
+				}
+				// Create a new master bond definition
+				b = species->addMasterBond(parser.argc(1));
+				if (b)
+				{
+					b->setName(parser.argc(1));
+					b->setForm(bf);
+					for (int n=0; n<SpeciesBond::nFunctionParameters(bf); ++n)
+					{
+						if (!parser.hasArg(n+3))
+						{
+							Messenger::error("Bond function type '%s' requires %i parameters\n", SpeciesBond::bondFunction(bf), SpeciesBond::nFunctionParameters(bf));
+							error = true;
+							break;
+						}
+						b->setParameter(n, parser.argd(n+3));
+					}
+				}
+				else error = true;
+				break;
+			case (SpeciesBlock::MasterTorsionKeyword):
+				// Check the functional form specified
+				tf = SpeciesTorsion::torsionFunction(parser.argc(2));
+				if (tf == SpeciesTorsion::nTorsionFunctions)
+				{
+					Messenger::error("Functional form of torsion (%s) not recognised.\n", parser.argc(1));
+					error = true;
+					break;
+				}
+				// Create a new master torsion definition
+				t = species->addMasterTorsion(parser.argc(1));
+				if (t)
+				{
+					t->setName(parser.argc(1));
+					t->setForm(tf);
+					for (int n=0; n<SpeciesTorsion::nFunctionParameters(tf); ++n)
+					{
+						if (!parser.hasArg(n+3))
+						{
+							Messenger::error("Torsion function type '%s' requires %i parameters\n", SpeciesTorsion::torsionFunction(tf), SpeciesTorsion::nFunctionParameters(tf));
+							error = true;
+							break;
+						}
+						t->setParameter(n, parser.argd(n+3));
+					}
+				}
+				else error = true;
 				break;
 			case (SpeciesBlock::TorsionKeyword):
 				// Check the functional form specified
