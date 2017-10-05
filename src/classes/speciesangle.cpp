@@ -32,43 +32,12 @@ SpeciesAngle::SpeciesAngle() : ListItem<SpeciesAngle>()
 	i_ = NULL;
 	j_ = NULL;
 	k_ = NULL;
-	nAttached_[0] = 0;
-	nAttached_[1] = 0;
-	attachedAtoms_[0] = NULL;
-	attachedAtoms_[1] = NULL;
-	attachedAtomIndices_[0] = NULL;
-	attachedAtomIndices_[1] = NULL;
 	form_ = SpeciesAngle::nAngleFunctions;
-	for (int n=0; n<MAXANGLEPARAMS; ++n) parameters_[n] = 0.0;
 }
 
 // Destructor
 SpeciesAngle::~SpeciesAngle()
 {
-	for (int n=0; n<2; ++n)
-	{
-		if (attachedAtoms_[n] != NULL) delete[] attachedAtoms_[n];
-		attachedAtoms_[n] = NULL;
-		if (attachedAtomIndices_[n] != NULL) delete[] attachedAtomIndices_[n];
-		attachedAtomIndices_[n] = NULL;
-		nAttached_[n] = 0;
-	}
-}
-
-/*
- * Basic Data
- */
-
-// Set parent Species
-void SpeciesAngle::setParent(Species* parent)
-{
-	parent_ = parent;
-}
-
-// Return parent Species
-Species* SpeciesAngle::parent() const
-{
-	return parent_;
 }
 
 /*
@@ -193,88 +162,6 @@ SpeciesAngle::AngleFunction SpeciesAngle::form()
 	return form_;
 }
 
-// Set nth parameter
-void SpeciesAngle::setParameter(int id, double value)
-{
-#ifdef CHECKS
-	if ((id < 0) || (id >= MAXANGLEPARAMS))
-	{
-		Messenger::error("Tried to add a parameter to an Angle, but the index is out of range (%i vs %i parameters max).\n", id, MAXANGLEPARAMS);
-		return;
-	}
-#endif
-	parameters_[id] = value;
-}
-
-// Return nth parameter
-double SpeciesAngle::parameter(int id) const
-{
-#ifdef CHECKS
-	if ((id < 0) || (id >= MAXANGLEPARAMS))
-	{
-		Messenger::error("Tried to return a parameter from an Angle, but the index is out of range (%i vs %i parameters max).\n", id, MAXANGLEPARAMS);
-		return 0.0;
-	}
-#endif
-	return parameters_[id];
-}
-
-// Create attached Atom array
-void SpeciesAngle::createAttachedAtomArrays(int terminus, int size)
-{
-	if (attachedAtoms_[terminus] != NULL) delete[] attachedAtoms_[terminus];
-	attachedAtoms_[terminus] = NULL;
-	if (attachedAtomIndices_[terminus] != NULL) delete[] attachedAtomIndices_[terminus];
-	attachedAtomIndices_[terminus] = NULL;
-	nAttached_[terminus] = size;
-
-	if (nAttached_[terminus] != 0)
-	{
-		attachedAtoms_[terminus] = new SpeciesAtom*[nAttached_[terminus]];
-		attachedAtomIndices_[terminus] = new int[nAttached_[terminus]];
-		for (int n=0; n<nAttached_[terminus]; ++n)
-		{
-			attachedAtoms_[terminus][n] = NULL;
-			attachedAtomIndices_[terminus][n] = -1;
-		}
-	}
-}
-
-// Set attached Atoms for terminus specified
-void SpeciesAngle::setAttachedAtoms(int terminus, const RefList<SpeciesAtom,int>& atoms)
-{
-	createAttachedAtomArrays(terminus, atoms.nItems());
-	int index = 0;
-	for (RefListItem<SpeciesAtom,int>* refAtom = atoms.first(); refAtom != NULL; refAtom = refAtom->next)
-	{
-		attachedAtoms_[terminus][index] = refAtom->item;
-		attachedAtomIndices_[terminus][index] = refAtom->item->index();
-		++index;
-	}
-
-	CharString s("--> For angle between atoms %i-%i-%i, terminus %i moves %i other atoms :", indexI()+1, indexJ()+1, indexK()+1, terminus+1, nAttached_[terminus]);
-	for (int n=0; n<nAttached_[terminus]; ++n) s.strcatf(" %i", attachedAtoms_[terminus][n]->userIndex());
-	Messenger::print("%s\n", s.get());
-}
-
-// Return number of attached Atoms for terminus specified
-int SpeciesAngle::nAttached(int terminus) const
-{
-	return nAttached_[terminus];
-}
-
-// Return array of attached Atoms for terminus specified
-SpeciesAtom** SpeciesAngle::attachedAtoms(int terminus) const
-{
-	return attachedAtoms_[terminus];
-}
-
-// Return array of attached indices for terminus specified
-int* SpeciesAngle::attachedIndices(int terminus) const
-{
-	return attachedAtomIndices_[terminus];
-}
-
 // Return energy for specified angle
 double SpeciesAngle::energy(double angleInDegrees) const
 {
@@ -344,7 +231,7 @@ bool SpeciesAngle::broadcast(ProcessPool& procPool, const List<SpeciesAtom>& ato
 	}
 	
 	// Send parameter info
-	if (!procPool.broadcast(parameters_, MAXANGLEPARAMS)) return false;
+	if (!procPool.broadcast(parameters_, MAXINTRAPARAMS)) return false;
 	if (!procPool.broadcast(EnumCast<SpeciesAngle::AngleFunction>(form_), 1)) return false;
 #endif
 	return true;

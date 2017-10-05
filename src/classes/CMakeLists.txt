@@ -1,97 +1,99 @@
 add_library(classes
-angle.cpp
-atom.cpp
-atomtype.cpp
-atomtypedata.cpp
-atomtypelist.cpp
-bond.cpp
-box.cpp
-box_cubic.cpp
-box_monoclinic.cpp
-box_nonperiodic.cpp
-box_orthorhombic.cpp
-box_triclinic.cpp
-braggpeak.cpp
-cell.cpp
-cellarray.cpp
-cellneighbour.cpp
-changedata.cpp
-changestore.cpp
-configuration.cpp
-configuration_box.cpp
-configuration_composition.cpp
-configuration_contents.cpp
-configuration_energy.cpp
-configuration_upkeep.cpp
-data.cpp
-energykernel.cpp
-forcekernel.cpp
-grain.cpp
-graindefinition.cpp
-histogram.cpp
-isotope.cpp
-isotopologue.cpp
-isotopologuemix.cpp
-kvector.cpp
-molecule.cpp
-pairpotential.cpp
-potentialmap.cpp
-partialset.cpp
-scatteringmatrix.cpp
-speciesangle.cpp
-speciesatom.cpp
-species_atomic.cpp
-speciesbond.cpp
-species.cpp
-speciesgrain.cpp
-speciestorsion.cpp
-species_grains.cpp
-species_intra.cpp
-species_io.cpp
-species_isotopologues.cpp
-species_transform.cpp
-torsion.cpp
-weights.cpp
-
-angle.h
-atom.h
-atomtypedata.h
-atomtype.h
-atomtypelist.h
-bond.h
-box.h
-braggpeak.h
-cell.h
-cellarray.h
-cellneighbour.h
-changedata.h
-changestore.h
-configuration.h
-data.h
-energykernel.h
-forcekernel.h
-graindefinition.h
-grain.h
-histogram.h
-isotope.h
-isotopologue.h
-isotopologuemix.h
-kernelflags.h
-kvector.h
-molecule.h
-pairpotential.h
-potentialmap.h
-partialset.h
-scatteringmatrix.h
-species.h
-speciesangle.h
-speciesatom.h
-speciesbond.h
-speciesgrain.h
-speciestorsion.h
-torsion.h
-weights.h
-)
+  angle.cpp
+  atom.cpp
+  atomtype.cpp
+  atomtypedata.cpp
+  atomtypelist.cpp
+  bond.cpp
+  box.cpp
+  box_cubic.cpp
+  box_monoclinic.cpp
+  box_nonperiodic.cpp
+  box_orthorhombic.cpp
+  box_triclinic.cpp
+  braggpeak.cpp
+  cell.cpp
+  cellarray.cpp
+  cellneighbour.cpp
+  changedata.cpp
+  changestore.cpp
+  configuration.cpp
+  configuration_box.cpp
+  configuration_composition.cpp
+  configuration_contents.cpp
+  configuration_energy.cpp
+  configuration_upkeep.cpp
+  data.cpp
+  energykernel.cpp
+  forcekernel.cpp
+  grain.cpp
+  graindefinition.cpp
+  histogram.cpp
+  isotope.cpp
+  isotopologue.cpp
+  isotopologuemix.cpp
+  kvector.cpp
+  molecule.cpp
+  pairpotential.cpp
+  potentialmap.cpp
+  partialset.cpp
+  scatteringmatrix.cpp
+  speciesangle.cpp
+  speciesatom.cpp
+  species_atomic.cpp
+  speciesbond.cpp
+  species.cpp
+  speciesgrain.cpp
+  speciesintra.cpp
+  speciestorsion.cpp
+  species_grains.cpp
+  species_intra.cpp
+  species_io.cpp
+  species_isotopologues.cpp
+  species_transform.cpp
+  torsion.cpp
+  weights.cpp
+  
+  angle.h
+  atom.h
+  atomtypedata.h
+  atomtype.h
+  atomtypelist.h
+  bond.h
+  box.h
+  braggpeak.h
+  cell.h
+  cellarray.h
+  cellneighbour.h
+  changedata.h
+  changestore.h
+  configuration.h
+  data.h
+  energykernel.h
+  forcekernel.h
+  graindefinition.h
+  grain.h
+  histogram.h
+  isotope.h
+  isotopologue.h
+  isotopologuemix.h
+  kernelflags.h
+  kvector.h
+  molecule.h
+  pairpotential.h
+  potentialmap.h
+  partialset.h
+  scatteringmatrix.h
+  species.h
+  speciesangle.h
+  speciesatom.h
+  speciesbond.h
+  speciesgrain.h
+  speciesintra.h
+  speciestorsion.h
+  torsion.h
+  weights.h
+  )
 
 include_directories(
 ../

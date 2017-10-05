@@ -120,7 +120,7 @@ class ImportModule : public Module
 
 
 	/*
-	 * Static Functions - Force
+	 * Static Functions - Forces
 	 */
 	public:
 	// Read forces in specified format

@@ -22,11 +22,10 @@
 #ifndef DUQ_SPECIESBOND_H
 #define DUQ_SPECIESBOND_H
 
+#include "classes/speciesintra.h"
 #include "templates/list.h"
 #include "templates/listitem.h"
 #include "templates/reflist.h"
-
-#define MAXBONDPARAMS 4
 
 // Forward Declarations
 class SpeciesAtom;
@@ -34,28 +33,13 @@ class Species;
 class ProcessPool;
 
 // SpeciesBond Definition
-class SpeciesBond : public ListItem<SpeciesBond>
+class SpeciesBond : public SpeciesIntra, public ListItem<SpeciesBond>
 {
 	public:
 	// Constructor
 	SpeciesBond();
 	// Destructor
 	~SpeciesBond();
-
-
-	/*
-	 * Parent Data
-	 */
-	private:
-	// Parent Species
-	Species* parent_;
-	
-	
-	public:
-	// Set parent Species
-	void setParent(Species* parent);
-	// Return parent Species
-	Species* parent() const;
 
 
 	/*
@@ -104,34 +88,12 @@ class SpeciesBond : public ListItem<SpeciesBond>
 	private:
 	// Interaction functional form
 	BondFunction form_;
-	// Parameters for interaction
-	double parameters_[MAXBONDPARAMS];
-	// Number of SpeciesAtoms attached to termini
-	int nAttached_[2];
-	// Arrays of SpeciesAtoms (in)directly attached to termini
-	SpeciesAtom** attachedAtoms_[2];
-	// Arrays of atom indices (in)directly attached to termini
-	int* attachedAtomIndices_[2];
 
 	public:
 	// Set functional form of interaction
 	void setForm(SpeciesBond::BondFunction form);
 	// Return functional form of interaction
 	SpeciesBond::BondFunction form();
-	// Set nth parameter
-	void setParameter(int id, double value);
-	// Return nth parameter
-	double parameter(int id) const;
-	// Create attached SpeciesAtom array
-	void createAttachedAtomArrays(int terminus, int size);
-	// Set attached SpeciesAtoms for terminus specified
-	void setAttachedAtoms(int terminus, const RefList<SpeciesAtom,int>& atoms);
-	// Return number of attached SpeciesAtoms for terminus specified
-	int nAttached(int terminus) const;
-	// Return array of attached SpeciesAtoms for terminus specified
-	SpeciesAtom** attachedAtoms(int terminus) const;
-	// Return array of attached indices for terminus specified
-	int* attachedIndices(int terminus) const;
 	// Return energy for specified distance
 	double energy(double distance) const;
 	// Return force multiplier for specified distance

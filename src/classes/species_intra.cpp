@@ -21,6 +21,7 @@
 
 #include "classes/species.h"
 #include "classes/box.h"
+#include "base/sysfunc.h"
 
 // Add new Bond definition (from Atoms*)
 SpeciesBond* Species::addBond(SpeciesAtom* i, SpeciesAtom* j)
@@ -269,76 +270,131 @@ bool Species::hasTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, Species
 	return false;
 }
 
-// Calculate local Atom index lists for interactions
-bool Species::calculateIndexLists()
+// Add new master Bond definition
+SpeciesBond* Species::addMasterBond(const char* name)
 {
-	/*
-	 * For each Bond and Angle defined within the Species, all directly or indirectly attached Atoms at each terminus of the
-	 * interaction are selected and the indices added to the relevant local lists for the interaction. If, in the process, we find that
-	 * when selecting from Atom 'i' (of a Bond) we end up selecting Atom 'j', then the two Atoms are present in a cycle and we are forced to set the attached atoms lists to a minimal set comprising the bond partner.
-	 */
-
-	// Bonds
-	for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next)
+	// Check for existence of master Bond already
+	if (hasMasterBond(name))
 	{
-		// Atom 'i'
-		clearAtomSelection();
-		selectFromAtom(b->i(), b);
-		if (selectedAtoms_.contains(b->j()))
-		{
-			Messenger::print("Bond between Atoms %i and %i in Species '%s' exists in a cycle, so a minimal set of attached atoms will be used.\n", b->indexI()+1, b->indexJ()+1, name_.get());
-			clearAtomSelection();
-			selectedAtoms_.add(b->j());
-		}
-		b->setAttachedAtoms(0, selectedAtoms_);
-
-		// Atom 'j'
-		clearAtomSelection();
-		selectFromAtom(b->j(), b);
-		if (selectedAtoms_.contains(b->i()))
-		{
-			Messenger::print("Bond between Atoms %i and %i in Species '%s' exists in a cycle, so a minimal set of attached atoms will be used.\n", b->indexI()+1, b->indexJ()+1, name_.get());
-			clearAtomSelection();
-			selectedAtoms_.add(b->j());
-		}
-		b->setAttachedAtoms(1, selectedAtoms_);
+		Messenger::print("Warning: Refused to add a new master Bond named '%s' in Species '%s' since one with the same name already exists.\n", name, name_.get());
+		return NULL;
 	}
 
-	// Angles
-	for (SpeciesAngle* a = angles_.first(); a != NULL; a = a->next)
-	{
-		// Atom 'i'
-		clearAtomSelection();
-		SpeciesBond* b = hasBond(a->i(), a->j());
-		if (b == NULL)
-		{
-			Messenger::error("Species '%s' contains an angle %i-%i-%i, but a bond %i-%i is not defined.\n", name_.get(), a->indexI()+1, a->indexJ()+1, a->indexK()+1, a->indexI()+1, a->indexJ()+1 );
-			return false;
-		}
-		selectFromAtom(a->i(), b);
-		if (selectedAtoms_.contains(a->j()))
-		{
-			Messenger::print("Angle between atoms %i-%i-%i in species '%s' exists in a cycle, so a minimal set of attached atoms will be used.\n", a->indexI()+1, a->indexJ()+1, a->indexK()+1, name_.get());
-			clearAtomSelection();
-			selectedAtoms_.add(a->i());
-		}
-		a->setAttachedAtoms(0, selectedAtoms_);
+	// OK to add new master Bond
+	SpeciesBond* b = masterBonds_.add();
+	b->setParent(this);
+	b->setName(name);
 
-		// Atom 'k'
-		clearAtomSelection();
-		b = hasBond(a->j(), a->k());
-		if (b == NULL)
-		{
-			Messenger::error("Species '%s' contains an angle %i-%i-%i, but a bond %i-%i is not defined.\n", name_.get(), a->indexI()+1, a->indexJ()+1, a->indexK()+1, a->indexJ()+1, a->indexK()+1 );
-			return false;
-		}
-		selectFromAtom(a->k(), b);
-		if (selectedAtoms_.contains(a->j()))
-		{
-			Messenger::print("Angle between atoms %i-%i-%i in species '%s' exists in a cycle, so a minimal set of attached atoms will be used.\n", a->indexI()+1, a->indexJ()+1, a->indexK()+1, name_.get());
-			clearAtomSelection();
-			selectedAtoms_.add(a->k());
-		}
-		a->setAttachedAtoms(1, selectedAtoms_);
+	return b;
+}
+
+// Return number of master Bonds in list
+int Species::nMasterBonds() const
+{
+	return masterBonds_.nItems();
+}
+
+// Return list of master Bonds
+SpeciesBond* Species::masterBonds() const
+{
+	return masterBonds_.first();
+}
+
+// Return nth master Bond
+SpeciesBond* Species::masterBond(int n)
+{
+	return masterBonds_[n];
+}
+
+// Return whether named master Bond exists
+SpeciesBond* Species::hasMasterBond(const char* name) const
+{
+	for (SpeciesBond* b = masterBonds_.first(); b != NULL; b = b->next) if (DUQSys::sameString(name, b->name())) return b;
+	return NULL;
+}
+
+// Add new master Angle definition
+SpeciesAngle* Species::addMasterAngle(const char* name)
+{
+	// Check for existence of master Angle already
+	if (hasMasterAngle(name))
+	{
+		Messenger::print("Warning: Refused to add a new master Angle named '%s' in Species '%s' since one with the same name already exists.\n", name, name_.get());
+		return NULL;
 	}
+
+	// OK to add new master Angle
+	SpeciesAngle* a = masterAngles_.add();
+	a->setParent(this);
+	a->setName(name);
+
+	return a;
+}
+
+// Return number of master Angles in list
+int Species::nMasterAngles() const
+{
+	return masterAngles_.nItems();
+}
+
+// Return list of master Angles
+SpeciesAngle* Species::masterAngles() const
+{
+	return masterAngles_.first();
+}
+
+// Return nth master Angle
+SpeciesAngle* Species::masterAngle(int n)
+{
+	return masterAngles_[n];
+}
+
+// Return whether named master Angle exists
+SpeciesAngle* Species::hasMasterAngle(const char* name) const
+{
+	for (SpeciesAngle* a = masterAngles_.first(); a != NULL; a = a->next) if (DUQSys::sameString(name, a->name())) return a;
+	return NULL;
+}
+
+// Add new master Torsion definition
+SpeciesTorsion* Species::addMasterTorsion(const char* name)
+{
+	// Check for existence of master Torsion already
+	if (hasMasterTorsion(name))
+	{
+		Messenger::print("Warning: Refused to add a new master Torsion named '%s' in Species '%s' since one with the same name already exists.\n", name, name_.get());
+		return NULL;
+	}
+
+	// OK to add new master Torsion
+	SpeciesTorsion* t = masterTorsions_.add();
+	t->setParent(this);
+	t->setName(name);
+
+	return t;
+}
+
+// Return number of master Torsions in list
+int Species::nMasterTorsions() const
+{
+	return masterTorsions_.nItems();
+}
+
+// Return list of master Torsions
+SpeciesTorsion* Species::masterTorsions() const
+{
+	return masterTorsions_.first();
+}
+
+// Return nth master Torsion
+SpeciesTorsion* Species::masterTorsion(int n)
+{
+	return masterTorsions_[n];
+}
+
+// Return whether named master Torsion exists
+SpeciesTorsion* Species::hasMasterTorsion(const char* name) const
+{
+	for (SpeciesTorsion* t = masterTorsions_.first(); t != NULL; t = t->next) if (DUQSys::sameString(name, t->name())) return t;
+	return NULL;
 }
