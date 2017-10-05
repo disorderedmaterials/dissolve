@@ -339,3 +339,4 @@ double Box::torsionInRadians(const Vec3<double>& vecji, const Vec3<double>& vecj
 
 	return acos(dp);
 }
+
