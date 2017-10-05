@@ -273,14 +273,6 @@ class Species : public ListItem<Species>
 	bool loadFromXYZ(const char* filename);
 	// Load Species from file
 	bool load(const char* filename);
-
-
-	/*
-	 * Parallel Comms
-	 */
-	public:
-	// Broadcast data from Master to all Slaves
-	bool broadcast(ProcessPool& procPool, const List<AtomType>& atomTypes);
 };
 
 #endif
