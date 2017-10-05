@@ -34,28 +34,11 @@ SpeciesTorsion::SpeciesTorsion() : ListItem<SpeciesTorsion>()
 	k_ = NULL;
 	l_ = NULL;
 	form_ = SpeciesTorsion::nTorsionFunctions;
-	for (int n=0; n<MAXTORSIONPARAMS; ++n) parameters_[n] = 0.0;
 }
 
 // Destructor
 SpeciesTorsion::~SpeciesTorsion()
 {
-}
-
-/*
- * Basic Data
- */
-
-// Set parent Species
-void SpeciesTorsion::setParent(Species* parent)
-{
-	parent_ = parent;
-}
-
-// Return parent Species
-Species* SpeciesTorsion::parent() const
-{
-	return parent_;
 }
 
 /*
@@ -209,32 +192,6 @@ void SpeciesTorsion::setForm(SpeciesTorsion::TorsionFunction form)
 SpeciesTorsion::TorsionFunction SpeciesTorsion::form()
 {
 	return form_;
-}
-
-// Set nth parameter
-void SpeciesTorsion::setParameter(int id, double value)
-{
-#ifdef CHECKS
-	if ((id < 0) || (id >= MAXTORSIONPARAMS))
-	{
-		Messenger::error("Tried to add a parameter to an Bond, but the index is out of range (%i vs %i parameters max).\n", id, MAXTORSIONPARAMS);
-		return;
-	}
-#endif
-	parameters_[id] = value;
-}
-
-// Return nth parameter
-double SpeciesTorsion::parameter(int id) const
-{
-#ifdef CHECKS
-	if ((id < 0) || (id >= MAXTORSIONPARAMS))
-	{
-		Messenger::error("Tried to return a parameter from an Bond, but the index is out of range (%i vs %i parameters max).\n", id, MAXTORSIONPARAMS);
-		return 0.0;
-	}
-#endif
-	return parameters_[id];
 }
 
 // Return energy for specified angle
@@ -392,7 +349,7 @@ bool SpeciesTorsion::broadcast(ProcessPool& procPool, const List<SpeciesAtom>& a
 	}
 	
 	// Send parameter info
-	if (!procPool.broadcast(parameters_, MAXTORSIONPARAMS)) return false;
+	if (!procPool.broadcast(parameters_, MAXINTRAPARAMS)) return false;
 	if (!procPool.broadcast(EnumCast<SpeciesTorsion::TorsionFunction>(form_), 1)) return false;
 #endif
 	return true;

@@ -22,11 +22,10 @@
 #ifndef DUQ_SPECIESANGLE_H
 #define DUQ_SPECIESANGLE_H
 
+#include "classes/speciesintra.h"
 #include "templates/list.h"
 #include "templates/listitem.h"
 #include "templates/reflist.h"
-
-#define MAXANGLEPARAMS 5
 
 // Forward Declarations
 class SpeciesAtom;
@@ -36,27 +35,13 @@ class ProcessPool;
 /*
  * Angle Definition
  */
-class SpeciesAngle : public ListItem<SpeciesAngle>
+class SpeciesAngle : public SpeciesIntra, public ListItem<SpeciesAngle>
 {
 	public:
 	// Constructor
 	SpeciesAngle();
 	// Destructor
 	~SpeciesAngle();
-
-
-	/*
-	 * Basic Data
-	 */
-	private:
-	// Parent Species
-	Species* parent_;
-	
-	public:
-	// Set parent Species
-	void setParent(Species* parent);
-	// Return parent Species
-	Species* parent() const;
 
 
 	/*
@@ -109,18 +94,12 @@ class SpeciesAngle : public ListItem<SpeciesAngle>
 	private:
 	// Interaction functional form
 	AngleFunction form_;
-	// Parameters for interaction
-	double parameters_[MAXANGLEPARAMS];
 
 	public:
 	// Set functional form of interaction
 	void setForm(SpeciesAngle::AngleFunction form);
 	// Return functional form of interaction
 	SpeciesAngle::AngleFunction form();
-	// Set nth parameter
-	void setParameter(int id, double value);
-	// Return nth parameter
-	double parameter(int id) const;
 	// Return energy for specified angle
 	double energy(double angleInDegrees) const;
 	// Return force multiplier for specified angle

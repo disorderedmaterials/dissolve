@@ -199,7 +199,7 @@ void Species::print()
 		{
 			SpeciesBond* b = bonds_[n];
 			CharString s("   %4i  %4i  %12s", b->indexI()+1, b->indexJ()+1, SpeciesBond::bondFunction(b->form()));
-			for (int n=0; n<MAXBONDPARAMS; ++n) s.strcatf("  %12.4e", b->parameter(n));
+			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", b->parameter(n));
 			Messenger::print("%s\n", s.get());
 		}
 	}
@@ -213,7 +213,7 @@ void Species::print()
 		{
 			SpeciesAngle* a = angles_[n];
 			CharString s("   %4i  %4i  %4i  %12s", a->indexI()+1, a->indexJ()+1, a->indexK()+1, SpeciesAngle::angleFunction(a->form()));
-			for (int n=0; n<MAXANGLEPARAMS; ++n) s.strcatf("  %12.4e", a->parameter(n));
+			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", a->parameter(n));
 			Messenger::print("%s\n", s.get());
 		}
 	}
@@ -227,7 +227,7 @@ void Species::print()
 		{
 			SpeciesTorsion* t = torsions_[n];
 			CharString s("   %4i  %4i  %4i  %4i  %12s", t->indexI()+1, t->indexJ()+1, t->indexK()+1, t->indexL()+1, SpeciesTorsion::torsionFunction(t->form()));
-			for (int n=0; n<MAXTORSIONPARAMS; ++n) s.strcatf("  %12.4e", t->parameter(n));
+			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", t->parameter(n));
 			Messenger::print("%s\n", s.get());
 		}
 	}

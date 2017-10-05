@@ -33,28 +33,11 @@ SpeciesAngle::SpeciesAngle() : ListItem<SpeciesAngle>()
 	j_ = NULL;
 	k_ = NULL;
 	form_ = SpeciesAngle::nAngleFunctions;
-	for (int n=0; n<MAXANGLEPARAMS; ++n) parameters_[n] = 0.0;
 }
 
 // Destructor
 SpeciesAngle::~SpeciesAngle()
 {
-}
-
-/*
- * Basic Data
- */
-
-// Set parent Species
-void SpeciesAngle::setParent(Species* parent)
-{
-	parent_ = parent;
-}
-
-// Return parent Species
-Species* SpeciesAngle::parent() const
-{
-	return parent_;
 }
 
 /*
@@ -179,32 +162,6 @@ SpeciesAngle::AngleFunction SpeciesAngle::form()
 	return form_;
 }
 
-// Set nth parameter
-void SpeciesAngle::setParameter(int id, double value)
-{
-#ifdef CHECKS
-	if ((id < 0) || (id >= MAXANGLEPARAMS))
-	{
-		Messenger::error("Tried to add a parameter to an Angle, but the index is out of range (%i vs %i parameters max).\n", id, MAXANGLEPARAMS);
-		return;
-	}
-#endif
-	parameters_[id] = value;
-}
-
-// Return nth parameter
-double SpeciesAngle::parameter(int id) const
-{
-#ifdef CHECKS
-	if ((id < 0) || (id >= MAXANGLEPARAMS))
-	{
-		Messenger::error("Tried to return a parameter from an Angle, but the index is out of range (%i vs %i parameters max).\n", id, MAXANGLEPARAMS);
-		return 0.0;
-	}
-#endif
-	return parameters_[id];
-}
-
 // Return energy for specified angle
 double SpeciesAngle::energy(double angleInDegrees) const
 {
@@ -274,7 +231,7 @@ bool SpeciesAngle::broadcast(ProcessPool& procPool, const List<SpeciesAtom>& ato
 	}
 	
 	// Send parameter info
-	if (!procPool.broadcast(parameters_, MAXANGLEPARAMS)) return false;
+	if (!procPool.broadcast(parameters_, MAXINTRAPARAMS)) return false;
 	if (!procPool.broadcast(EnumCast<SpeciesAngle::AngleFunction>(form_), 1)) return false;
 #endif
 	return true;

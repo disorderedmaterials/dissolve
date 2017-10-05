@@ -22,11 +22,10 @@
 #ifndef DUQ_SPECIESTORSION_H
 #define DUQ_SPECIESTORSION_H
 
+#include "classes/speciesintra.h"
 #include "templates/list.h"
 #include "templates/listitem.h"
 #include "templates/reflist.h"
-
-#define MAXTORSIONPARAMS 8
 
 // Forward Declarations
 class SpeciesAtom;
@@ -36,27 +35,13 @@ class ProcessPool;
 /*
  * SpeciesTorsion Definition
  */
-class SpeciesTorsion : public ListItem<SpeciesTorsion>
+class SpeciesTorsion : public SpeciesIntra, public ListItem<SpeciesTorsion>
 {
 	public:
 	// Constructor
 	SpeciesTorsion();
 	// Destructor
 	~SpeciesTorsion();
-
-
-	/*
-	 * Basic Data
-	 */
-	private:
-	// Parent Species
-	Species* parent_;
-	
-	public:
-	// Set parent Species
-	void setParent(Species* parent);
-	// Return parent Species
-	Species* parent() const;
 
 
 	/*
@@ -118,18 +103,12 @@ class SpeciesTorsion : public ListItem<SpeciesTorsion>
 	private:
 	// Interaction functional form
 	TorsionFunction form_;
-	// Parameters for interaction
-	double parameters_[MAXTORSIONPARAMS];
 
 	public:
 	// Set functional form of interaction
 	void setForm(SpeciesTorsion::TorsionFunction form);
 	// Return functional form of interaction
 	SpeciesTorsion::TorsionFunction form();
-	// Set nth parameter
-	void setParameter(int id, double value);
-	// Return nth parameter
-	double parameter(int id) const;
 	// Return energy for specified angle
 	double energy(double angleInDegrees) const;
 	// Return force multiplier for specified angle

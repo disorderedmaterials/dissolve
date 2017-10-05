@@ -32,28 +32,11 @@ SpeciesBond::SpeciesBond() : ListItem<SpeciesBond>()
 	i_ = NULL;
 	j_ = NULL;
 	form_ = SpeciesBond::nBondFunctions;
-	for (int n=0; n<MAXBONDPARAMS; ++n) parameters_[n] = 0.0;
 }
 
 // Destructor
 SpeciesBond::~SpeciesBond()
 {
-}
-
-/*
- * Basic Data
- */
-
-// Set parent Species
-void SpeciesBond::setParent(Species* parent)
-{
-	parent_ = parent;
-}
-
-// Return parent Species
-Species* SpeciesBond::parent() const
-{
-	return parent_;
 }
 
 /*
@@ -162,32 +145,6 @@ SpeciesBond::BondFunction SpeciesBond::form()
 	return form_;
 }
 
-// Set nth parameter
-void SpeciesBond::setParameter(int id, double value)
-{
-#ifdef CHECKS
-	if ((id < 0) || (id >= MAXBONDPARAMS))
-	{
-		Messenger::error("Tried to add a parameter to an Bond, but the index is out of range (%i vs %i parameters max).\n", id, MAXBONDPARAMS);
-		return;
-	}
-#endif
-	parameters_[id] = value;
-}
-
-// Return nth parameter
-double SpeciesBond::parameter(int id) const
-{
-#ifdef CHECKS
-	if ((id < 0) || (id >= MAXBONDPARAMS))
-	{
-		Messenger::error("Tried to return a parameter from an Bond, but the index is out of range (%i vs %i parameters max).\n", id, MAXBONDPARAMS);
-		return 0.0;
-	}
-#endif
-	return parameters_[id];
-}
-
 // Return energy for specified distance
 double SpeciesBond::energy(double distance) const
 {
@@ -250,7 +207,7 @@ bool SpeciesBond::broadcast(ProcessPool& procPool, const List<SpeciesAtom>& atom
 	}
 	
 	// Send parameter info
-	if (!procPool.broadcast(parameters_, MAXBONDPARAMS)) return false;
+	if (!procPool.broadcast(parameters_, MAXINTRAPARAMS)) return false;
 	if (!procPool.broadcast(EnumCast<SpeciesBond::BondFunction>(form_), 1)) return false;
 #endif
 	return true;
