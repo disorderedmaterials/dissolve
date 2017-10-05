@@ -1,52 +1,65 @@
-# Liquid Argon Example
+# Minimal Example: Water
 
-# Species Definitions
-Species 'Argon'
+# Define Water Molecule
+Species 'Water'
   # Atoms
-  Atom    1   Ar     0.000    0.000    0.000    'Ar'
+  Atom    1    O     0.015   -0.009   -0.373   'OW'
+  Atom    2    H     0.757    0.013    0.217   'HW'
+  Atom    3    H    -0.771   -0.003    0.157   'HW'
+
+  # Intramolecular Terms
+  Bond    1    2     0.995 3000.000
+  Bond    1    3     0.995 3000.000
+  Angle    2    1    3   109.500  400.000
 
   # Isotopologues
-  Isotopologue  'Ar36'  Ar=36
+  Isotopologue  'Natural'  OW=0  HW=0
+  Isotopologue  'Deuteriated'  OW=0  HW=2
 EndSpecies
 
 # Define Configuration
-Configuration 'liquid'
-  Multiplier  10000
-  Density  0.021300  atoms/A3
-  Species  'Argon'  1.0
+Configuration  'Bulk'
+  Density  9.99999642E-02 atoms/A3
+  Multiplier  1000
+  Species 'Water'  1.0
+
+  OutputCoordinates 'Bulk.xyz'
+  UseOutputAsInput
+
   Module AtomShake
   EndModule
 EndConfiguration
 
-Module Partials 'Yarnell-85K'
-  Save true
-  Configuration  'liquid'
-  Weights neutron
-  Isotopologue  'liquid'  'Argon'  'Ar36'  1.0
+# Structure Factors
+Module Partials 'H2O'
   StructureFactor  on
-  QDepBroadening  0.02    # For SLS
+  QDepBroadening 0.02    # For SLS
+  Configuration  'Bulk'
+  Isotopologue  'Bulk'  'Water'  'Natural'  1.0
+  Save  on
 EndModule
 
-# Experimental data taken from Table 1 of Yarnell, Katz, Wenzel, and Koenig, Phys. Rev. A 7, 2130 (1973).
-# Liquid Ar36 at 85 K. Data are normalised to <b2>, and oscillate around 1.0.
-Data  'Yarnell-85K'
-  File  'data/yarnell.sq'
-  NeutronNormalisation  AverageSquared
-  SubtractAverageLevel  10.0
-  AssociatedTo  'Yarnell-85K'
-EndData
+Module Partials 'HDO'
+  StructureFactor  on
+  QDepBroadening 0.02    # For SLS
+  Configuration  'Bulk'
+  Isotopologue  'Bulk'  'Water'  'Deuteriated'  0.5
+  Isotopologue  'Bulk'  'Water'  'Natural'  0.5
+  Save  on
+EndSample
 
-Module Test
-  # Define targets
-  Data  'Yarnell-85K'
-  Frequency 5
-EndModule
+Module Partials 'D2O'
+  StructureFactor  on
+  QDepBroadening 0.02    # For SLS
+  Configuration  'Bulk'
+  Isotopologue  'Bulk'  'Water'  'Deuteriated'  1.0
+  Save  on
+EndSample
 
 # Pair Potentials
 PairPotentials
-  Generate  'LJ'  'Ar'  'Ar'
+  Range  15.000000
+  Delta  0.050000
+  TruncationWidth  2.000000
+  GenerateAll  'LJ'
 EndPairPotentials
-
-Simulation
-  MaxIterations 5
-EndSimulation
