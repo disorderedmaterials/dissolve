@@ -31,6 +31,7 @@ class Species;
 class Module;
 class GenericList;
 class Data;
+class SpeciesInfo;
 
 // Keyword Data
 class KeywordData
@@ -61,6 +62,7 @@ namespace InputBlocks
 		PairPotentialsBlock,		/* 'PairPotentials' - Contains definitions of the PairPotentials for the simulation */
 		SimulationBlock,		/* 'Simulation' - Setting of simulation variables affecting the calculation */
 		SpeciesBlock,			/* 'Species' - Begins a definition of a Species */
+		SpeciesInfoBlock,		/* 'SpeciesInfo' - Defines a Species for inclusion into a Configuration */
 		nInputBlocks			/* Number of defined InputBlock keywords */
 	};
 	// Convert text string to InputBlock
@@ -98,7 +100,7 @@ namespace ConfigurationBlock
 		OutputCoordinatesKeyword,	/* 'OutputCoordinates' - Specifies the file which should contain output coordinates */
 		RDFBinWidthKeyword,		/* 'RDFBinWidth' - Specified bin width for all RDF generation */
 		RDFRangeKeyword,		/* 'RDFRange' - Requested extent for RDF calculation */
-		SpeciesAddKeyword,		/* 'Species' - Specifies a Species and its relative population to add to this Configuration */
+		SpeciesInfoKeyword,		/* 'SpeciesInfo' - Specifies a Species to add to this Configuration */
 		TemperatureKeyword,		/* 'Temperature' - Defines the temperature of the simulation */
 		UseOutputAsInputKeyword,	/* 'UseOutputAsInput' - "Use output coordinates file as input (if it exists) */
 		nConfigurationKeywords		/* Number of keywords defined for this block */
@@ -255,6 +257,31 @@ namespace SpeciesBlock
 	int nArguments(SpeciesKeyword id);
 	// Parse Species block
 	bool parse(LineParser& parser, DUQ* duq, Species* species);
+};
+
+
+/*
+ * SpeciesInfo Block Keywords
+ */
+namespace SpeciesInfoBlock
+{
+	// SpeciesInfo Block Keyword Enum
+	enum SpeciesInfoKeyword
+	{
+		EndSpeciesInfoKeyword,		/* 'EndSpeciesInfo' - Signals the end of the SpeciesInfo */
+		NoRotationKeyword,		/* Flag that the Species should not be rotated when making a random configuration */
+		NoTranslationKeyword,		/* Flag that the Species should not be translated when making a random configuration */
+		PopulationKeyword,		/* Relative population of the Species */
+		nSpeciesInfoKeywords		/* Number of keywords defined for this block */
+	};
+	// Convert text string to SpeciesInfoKeyword
+	SpeciesInfoKeyword keyword(const char* s);
+	// Convert SpeciesInfoKeyword to text string
+	const char* keyword(SpeciesInfoKeyword id);
+	// Return expected number of expected arguments
+	int nArguments(SpeciesInfoKeyword id);
+	// Parse SpeciesInfo block
+	bool parse(LineParser& parser, DUQ* duq, SpeciesInfo* speciesInfo);
 };
 
 #endif

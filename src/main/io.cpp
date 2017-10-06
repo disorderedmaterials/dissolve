@@ -334,11 +334,15 @@ bool DUQ::saveInput(const char* filename)
 		if (cfg->useOutputCoordinatesAsInput()) parser.writeLineF("  %s  '%s'\n", ConfigurationBlock::keyword(ConfigurationBlock::UseOutputAsInputKeyword), DUQSys::btoa(true));
 
 		// Species
-		parser.writeLineF("\n  # Species\n");
+		parser.writeLineF("\n  # Species Information\n");
 		for (SpeciesInfo* spInfo = cfg->usedSpecies().first(); spInfo != NULL; spInfo = spInfo->next)
 		{
 			Species* sp = spInfo->species();
-			parser.writeLineF("  %s  '%s'  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::SpeciesAddKeyword), sp->name(), spInfo->population());
+
+			parser.writeLineF("  %s  '%s'\n", ConfigurationBlock::keyword(ConfigurationBlock::SpeciesInfoKeyword), sp->name());
+			parser.writeLineF("    %s  %f\n", SpeciesInfoBlock::keyword(SpeciesInfoBlock::PopulationKeyword), spInfo->population());
+			if (!spInfo->rotateOnInsertion()) parser.writeLineF("    %s  %s\n", SpeciesInfoBlock::keyword(SpeciesInfoBlock::NoRotationKeyword), DUQSys::btoa(false));
+			if (!spInfo->translateOnInsertion()) parser.writeLineF("    %s  %s\n", SpeciesInfoBlock::keyword(SpeciesInfoBlock::NoTranslationKeyword), DUQSys::btoa(false));
 		}
 
 		// Modules

@@ -46,7 +46,7 @@ KeywordData ConfigurationBlockData[] = {
 	{ "OutputCoordinates",		1,	"File which should contain output coordinates, followed by the (optional) output frequency" },
 	{ "RDFBinWidth",		1,	"Bin width for all radial distribution functions" },
 	{ "RDFRange",			1,	"Requested extent for calculated radial distribution functions" },
-	{ "Species",			2,	"Specifies a Species and its relative population to add to this Configuration" },
+	{ "SpeciesInfo",		2,	"Specifies a Species and its relative population to add to this Configuration" },
 	{ "Temperature",		1,	"Simulation temperature of the Configuration" },
 	{ "UseOutputAsInput",		0,	"Use output coordinates file as input (if it exists)" }
 };
@@ -79,6 +79,7 @@ bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
 	Species* sp;
 	Module* masterInstance, *module;
 	CharString niceName;
+	SpeciesInfo* spInfo;
 	bool blockDone = false, error = false;
 
 	while (!parser.eofOrBlank())
@@ -215,7 +216,7 @@ bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
 			case (ConfigurationBlock::RDFRangeKeyword):
 				cfg->setRequestedRDFRange(parser.argd(1));
 				break;
-			case (ConfigurationBlock::SpeciesAddKeyword):
+			case (ConfigurationBlock::SpeciesInfoKeyword):
 				sp = duq->findSpecies(parser.argc(1));
 				if (sp == NULL)
 				{
@@ -224,13 +225,27 @@ bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
 				}
 				else
 				{
-					// Add this species to the list of those used by the Configuration
-					if (!cfg->addUsedSpecies(sp, parser.argd(2)))
+					// Are we already using this species
+					if (cfg->hasUsedSpecies(sp))
 					{
 						Messenger::error("Configuration already uses Species '%s' - cannot add it a second time.\n", sp->name());
 						error = true;
 					}
-					else Messenger::print("--> Set composition for Species '%s' (relative population = %f).\n", sp->name(), parser.argd(2));
+
+					// Add this species to the list of those used by the Configuration
+					spInfo = cfg->addUsedSpecies(sp, parser.hasArg(2) ? parser.argd(2) : 1.0);
+
+					// If no population was given, assume that a block will follow with additional information
+					if (!parser.hasArg(2))
+					{
+						if (!SpeciesInfoBlock::parse(parser, duq, spInfo))
+						{
+							error = true;
+							break;
+						}
+					}
+
+					Messenger::print("--> Set composition for Species '%s' (relative population = %f).\n", sp->name(), spInfo->population());
 				}
 				break;
 			case (ConfigurationBlock::TemperatureKeyword):
