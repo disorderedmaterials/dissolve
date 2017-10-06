@@ -80,7 +80,7 @@ const Box* Configuration::box() const
 }
 
 // Setup periodic Box
-bool Configuration::setupBox(double ppRange)
+bool Configuration::setupBox(double ppRange, int nExpectedAtoms)
 {
 	// Remove old box if present
 	if (box_ != NULL)
@@ -91,7 +91,7 @@ bool Configuration::setupBox(double ppRange)
 
 	// Determine volume for box, if a density was supplied. Otherwise, set to -1.0 to keep current cell lengths
 	double volume = -1.0;
-	if (density_ > 0.0) volume = atoms_.nItems() / atomicDensity();
+	if (density_ > 0.0) volume = nExpectedAtoms / atomicDensity();
 
 	// Determine box type from supplied lengths / angles
 	bool rightAlpha = (fabs(boxAngles_.x-90.0) < 0.001);
@@ -119,7 +119,7 @@ bool Configuration::setupBox(double ppRange)
 	}
 
 	// Need to calculate atomic density if it wasn't provided
-	if (density_ < 0.0) density_ = atoms_.nItems() / box_->volume();
+	if (density_ < 0.0) density_ = nExpectedAtoms / box_->volume();
 
 	Messenger::print("--> %s box created for system.\n", Box::boxType(box_->type()));
 	Matrix3 axes = box_->axes();

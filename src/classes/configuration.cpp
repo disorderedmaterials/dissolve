@@ -204,24 +204,14 @@ bool Configuration::setup(ProcessPool& procPool, double pairPotentialRange, int 
 	Messenger::print("--> Setting up Configuration from Species / multiplier definition...\n");
 
 	/*
-	 * Order of business:
-	 * 1) Determine the system size
-	 * 2) Add a periodic Box, and check RDF range request
-	 * 3) Create Molecule, Atom, Grain, and intramolecular lists based on defined Species
-	 * 4) Load initial coordinates from file if necessary
-	 * 5) Initialise neighbour lists
-	 * 6) Calculate/load Box normalisation if necessary
-	 */
-
-	/*
-	 * 1) Check Species populations
+	 * Check Species populations, and calculate total number of expected Atoms
 	 */
 	if (multiplier_ < 1)
 	{
 		Messenger::error("Configuration multiplier is zero or negative (%i).\n", multiplier_);
 		return false;
 	}
-
+	int nExpectedAtoms = 0;
 	for (SpeciesInfo* spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next)
 	{
 		// Get Species pointer
@@ -236,12 +226,31 @@ bool Configuration::setup(ProcessPool& procPool, double pairPotentialRange, int 
 			Messenger::error("Relative population for Species '%s' is too low (%e) to provide any Molecules in this Configuration.\n",  sp->name(),  spInfo->population());
 			return false;
 		}
+
+		nExpectedAtoms += count * sp->nAtoms();
 	}
 
+	
 	/*
-	 * 2) Create Molecules
+	 * Create a Box to contain the system
+	 */
+	Messenger::print("--> Creating periodic Box and Cell partitioning...\n");
+	if (!setupBox(pairPotentialRange, nExpectedAtoms))
+	{
+		Messenger::error("Failed to set-up Box/Cells for Configuration.\n");
+		return false;
+	}
+
+	
+	/*
+	 * Create Molecules
 	 */
 	Messenger::print("--> Setting up Molecules...\n");
+
+	bool randomise = randomConfiguration_ && ((!useOutputCoordinatesAsInput_) || outputCoordinatesFile_.isEmpty() || (!DUQSys::fileExists(outputCoordinatesFile_)));
+	if (randomise) procPool.initialiseRandomBuffer(ProcessPool::Pool);
+	Vec3<double> r, cog, newCentre, fr;
+	Matrix3 transform;
 
 	ListIterator<SpeciesInfo> speciesInfoIterator(usedSpecies_);
 	while (SpeciesInfo* spInfo = speciesInfoIterator.iterate())
@@ -250,23 +259,42 @@ bool Configuration::setup(ProcessPool& procPool, double pairPotentialRange, int 
 		int count = spInfo->population() * multiplier_;
 
 		// Add copies of Species as Molecules
-		for (int n=0; n<count; ++n) addMolecule(spInfo->species());
+		for (int n=0; n<count; ++n)
+		{
+			// Add the Molecule
+			Molecule* mol = addMolecule(spInfo->species());
+
+			// Generate random positions and orientations if needed
+			if (randomise)
+			{
+				// Generate a new random centre of geometry for the molecule
+				if (spInfo->translateOnInsertion())
+				{
+					fr.set(procPool.random(), procPool.random(), procPool.random());
+					newCentre = box_->fracToReal(fr);
+					mol->setCentre(box_, newCentre);
+				}
+			
+				// Generate and apply a random rotation matrix
+				if (spInfo->rotateOnInsertion())
+				{
+					transform.createRotationXY(procPool.randomPlusMinusOne()*180.0, procPool.randomPlusMinusOne()*180.0);
+					mol->applyTransform(box_, transform);
+				}
+
+				// Explore conformation space within the molecule by rotating bonds
+				// TODO
+			}
+		}
 	}
 
 	// Set fractional populations in usedAtomTypes_
 	usedAtomTypes_.finalise();
 
-	/*
-	 * 3) Create a Box to contain the system
-	 */
-	Messenger::print("--> Creating periodic Box and Cell partitioning...\n");
-	if (!setupBox(pairPotentialRange))
-	{
-		Messenger::error("Failed to set-up Box/Cells for Configuration.\n");
-		return false;
-	}
 
-	// Determine maximal extent of RDF (from origin to centre of box)
+	/*
+	 * Determine maximal extent of RDF (from origin to centre of box)
+	 */
 	Vec3<double> half = box()->axes() * Vec3<double>(0.5,0.5,0.5);
 	double maxR = half.magnitude(), inscribedSphereRadius = box()->inscribedSphereRadius();
 	Messenger::print("\n");
@@ -302,11 +330,12 @@ bool Configuration::setup(ProcessPool& procPool, double pairPotentialRange, int 
 	rdfRange_ = int(rdfRange_/rdfBinWidth_) * rdfBinWidth_;
 	Messenger::print("--> RDF range (snapped to bin width) is %f Angstroms.\n", rdfRange_);
 
+
 	/*
-	 * 4) Finalise Atomc coordinates (load / randomise if necessary)
+	 * Load coordinates if necessary
 	 */
 	// 1) If useOutputCoordinatesAsInput_ is true and that file exists, this overrides everything else
-	// 2) If randomConfiguration_ is true, generate some random coordinates
+	// 2) If randomConfiguration_ is true, we will have already generated random coordinates earlier on
 	// 3) Load the inputCoordinatesFile_
 	if (useOutputCoordinatesAsInput_ && (!outputCoordinatesFile_.isEmpty()) && DUQSys::fileExists(outputCoordinatesFile_))
 	{
@@ -318,26 +347,7 @@ bool Configuration::setup(ProcessPool& procPool, double pairPotentialRange, int 
 	}
 	else if (randomConfiguration_)
 	{
-		procPool.initialiseRandomBuffer(ProcessPool::Pool);
-		Vec3<double> r, cog, newCentre, fr;
-		Matrix3 transform;
-
-		// Generate random positions and orientations for all molecules
-		for (int n=0; n<molecules_.nItems(); ++n)
-		{
-			Molecule* mol = molecules_[n];
-
-			// Generate a new random centre of geometry for the molecule
-			fr.set(procPool.random(), procPool.random(), procPool.random()); 
-			newCentre = box_->fracToReal(fr);
-			mol->setCentre(box_, newCentre);
-	
-			// Generate and apply a random rotation matrix
-			transform.createRotationXY(procPool.randomPlusMinusOne()*180.0, procPool.randomPlusMinusOne()*180.0);
-			mol->applyTransform(box_, transform);
-
-			// Explore conformation space within the molecule by rotating bonds
-		}
+		// Accounted for earlier on
 	}
 	else if (inputCoordinatesFile_.isEmpty())
 	{
@@ -356,8 +366,9 @@ bool Configuration::setup(ProcessPool& procPool, double pairPotentialRange, int 
 	// Update Cell contents / Atom locations
 	updateCellContents();
 
+
 	/*
-	 * 5) Load or calculate Box normalisation file (if we need one)
+	 * Load or calculate Box normalisation file (if we need one)
 	 */
 	if (rdfRange_ <= inscribedSphereRadius)
 	{

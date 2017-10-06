@@ -108,6 +108,7 @@ bool DUQ::setupSimulation()
 	{
 		Messenger::print("*** Configuration %2i: '%s'\n", index, cfg->name());
 
+		// If we are creating a random configuration 
 		if (!cfg->setup(worldPool_, pairPotentialRange_, nBoxNormalisationPoints_)) return false;
 	}
 

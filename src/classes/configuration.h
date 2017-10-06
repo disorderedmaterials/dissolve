@@ -280,7 +280,7 @@ class Configuration : public ListItem<Configuration>
 	// Return Box
 	const Box* box() const;
 	// Setup periodic Box
-	bool setupBox(double ppRange);
+	bool setupBox(double ppRange, int nExpectedAtoms);
 	// Generate Cells for Box
 	bool generateCells(double cellSize, double pairPotentialRange, double atomicDensity);
 	// Set box normalisation array to load/save for this configuration

@@ -357,4 +357,3 @@ bool Configuration::loadCoordinates(LineParser& parser, const char* format)
 
 	return true;
 }
-
