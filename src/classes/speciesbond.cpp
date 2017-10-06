@@ -202,7 +202,7 @@ bool SpeciesBond::broadcast(ProcessPool& procPool, const List<SpeciesAtom>& atom
 	
 	// Send parameter info
 	if (!procPool.broadcast(parameters_, MAXINTRAPARAMS)) return false;
-	if (!procPool.broadcast(EnumCast<SpeciesBond::BondFunction>(form_), 1)) return false;
+	if (!procPool.broadcast(form_)) return false;
 #endif
 	return true;
 }

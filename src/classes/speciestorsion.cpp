@@ -345,7 +345,7 @@ bool SpeciesTorsion::broadcast(ProcessPool& procPool, const List<SpeciesAtom>& a
 	
 	// Send parameter info
 	if (!procPool.broadcast(parameters_, MAXINTRAPARAMS)) return false;
-	if (!procPool.broadcast(EnumCast<SpeciesTorsion::TorsionFunction>(form_), 1)) return false;
+	if (!procPool.broadcast(form_)) return false;
 #endif
 	return true;
 }

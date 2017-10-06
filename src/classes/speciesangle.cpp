@@ -226,7 +226,7 @@ bool SpeciesAngle::broadcast(ProcessPool& procPool, const List<SpeciesAtom>& ato
 	
 	// Send parameter info
 	if (!procPool.broadcast(parameters_, MAXINTRAPARAMS)) return false;
-	if (!procPool.broadcast(EnumCast<SpeciesAngle::AngleFunction>(form_), 1)) return false;
+	if (!procPool.broadcast(form_)) return false;
 #endif
 	return true;
 }
