@@ -94,10 +94,11 @@ bool ImportModule::readDLPOLYCoordinates(LineParser& parser, Array< Vec3<double>
 	int atomCount = 0;
 	while (!parser.eofOrBlank())
 	{
-		// Skip atomname, position and velocity lines
-		if (parser.skipLines(1+keytrj) != LineParser::Success) return false;
+		// Skip atomname line, get the positions, then skip velocity and force lines if necessary
+		if (parser.skipLines(1) != LineParser::Success) return false;
 		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 		r.add(parser.arg3d(0));
+		if (parser.skipLines(keytrj) != LineParser::Success) return false;
 		++atomCount;
 		if ((nAtoms > 0) && (atomCount == nAtoms)) break;
 	}
