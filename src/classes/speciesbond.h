@@ -85,15 +85,7 @@ class SpeciesBond : public SpeciesIntra, public ListItem<SpeciesBond>
 	// Return number of parameters required for functional form
 	static int nFunctionParameters(BondFunction func);
 
-	private:
-	// Interaction functional form
-	BondFunction form_;
-
 	public:
-	// Set functional form of interaction
-	void setForm(SpeciesBond::BondFunction form);
-	// Return functional form of interaction
-	SpeciesBond::BondFunction form();
 	// Return energy for specified distance
 	double energy(double distance) const;
 	// Return force multiplier for specified distance

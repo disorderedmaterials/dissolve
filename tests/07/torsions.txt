@@ -134,7 +134,7 @@ EndSpecies
 Configuration  'Liquid'
   Density  0.1  atoms/A3
   Multiplier  200
-  Species 'Hexane'  1.0
+  SpeciesInfo  'Hexane'  1.0
   InputCoordinates  dlpoly  'dlpoly_torsions/REVCON'
   RDFBinWidth 0.03
 EndConfiguration

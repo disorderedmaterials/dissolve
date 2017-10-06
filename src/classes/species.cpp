@@ -189,17 +189,45 @@ void Species::print()
 		Messenger::print("    %4i  %3s  %4s (%2i)  %12.4e  %12.4e  %12.4e\n", n+1, PeriodicTable::element(i->element()).symbol(), i->atomType()->name(), i->atomType()->index(), i->r().x, i->r().y, i->r().z);
 	}
 
+	if (nMasterBonds() > 0)
+	{
+		Messenger::print("\n  Bond Masters:\n");
+		Messenger::print("     Name        Form            Parameters\n");
+		Messenger::print("    --------------------------------------------------------------------------\n");
+		for (SpeciesBond* b = masterBonds_.first(); b != NULL; b = b->next)
+		{
+			CharString s("     %-10s  %-12s", b->name(), SpeciesBond::bondFunction( (SpeciesBond::BondFunction) b->form()));
+			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", b->parameter(n));
+			Messenger::print("%s\n", s.get());
+		}
+	}
 
 	if (nBonds() > 0)
 	{
 		Messenger::print("\n  Bonds:\n");
-		Messenger::print("      I     J     Form        Parameters\n");
+		Messenger::print("      I     J    Form          Parameters\n");
 		Messenger::print("    --------------------------------------------------------------------------\n");
-		for (int n=0; n<nBonds(); ++n)
+		for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next)
 		{
-			SpeciesBond* b = bonds_[n];
-			CharString s("   %4i  %4i  %12s", b->indexI()+1, b->indexJ()+1, SpeciesBond::bondFunction(b->form()));
-			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", b->parameter(n));
+			if (b->masterParameters()) Messenger::print("   %4i  %4i    @%-12s\n", b->indexI()+1, b->indexJ()+1, b->masterParameters()->name());
+			else
+			{
+				CharString s("   %4i  %4i    %-12s", b->indexI()+1, b->indexJ()+1, SpeciesBond::bondFunction( (SpeciesBond::BondFunction) b->form()));
+				for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", b->parameter(n));
+				Messenger::print("%s\n", s.get());
+			}
+		}
+	}
+
+	if (nMasterAngles() > 0)
+	{
+		Messenger::print("\n  Angle Masters:\n");
+		Messenger::print("     Name        Form            Parameters\n");
+		Messenger::print("    --------------------------------------------------------------------------\n");
+		for (SpeciesAngle* a = masterAngles_.first(); a != NULL; a = a->next)
+		{
+			CharString s("     %-10s  %-12s", a->name(), SpeciesAngle::angleFunction( (SpeciesAngle::AngleFunction) a->form()));
+			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", a->parameter(n));
 			Messenger::print("%s\n", s.get());
 		}
 	}
@@ -207,13 +235,29 @@ void Species::print()
 	if (nAngles() > 0)
 	{
 		Messenger::print("\n  Angles:\n");
-		Messenger::print("      I     J     K     Form        Parameters\n");
+		Messenger::print("      I     J     K    Form          Parameters\n");
 		Messenger::print("    --------------------------------------------------------------------------\n");
-		for (int n=0; n<nAngles(); ++n)
+		for (SpeciesAngle* a = masterAngles_.first(); a != NULL; a = a->next)
 		{
-			SpeciesAngle* a = angles_[n];
-			CharString s("   %4i  %4i  %4i  %12s", a->indexI()+1, a->indexJ()+1, a->indexK()+1, SpeciesAngle::angleFunction(a->form()));
-			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", a->parameter(n));
+			if (a->masterParameters()) Messenger::print("   %4i  %4i  %4i    @%-12s\n", a->indexI()+1, a->indexJ()+1, a->indexK()+1, a->masterParameters()->name());
+			else
+			{
+				CharString s("   %4i  %4i  %4i    %-12s", a->indexI()+1, a->indexJ()+1, a->indexK()+1, SpeciesAngle::angleFunction( (SpeciesAngle::AngleFunction) a->form()));
+				for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", a->parameter(n));
+				Messenger::print("%s\n", s.get());
+			}
+		}
+	}
+
+	if (nMasterTorsions() > 0)
+	{
+		Messenger::print("\n  Torsion Masters:\n");
+		Messenger::print("     Name        Form            Parameters\n");
+		Messenger::print("    --------------------------------------------------------------------------\n");
+		for (SpeciesTorsion* t = masterTorsions_.first(); t != NULL; t = t->next)
+		{
+			CharString s("     %-10s  %-12s", t->name(), SpeciesTorsion::torsionFunction( (SpeciesTorsion::TorsionFunction) t->form()));
+			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", t->parameter(n));
 			Messenger::print("%s\n", s.get());
 		}
 	}
@@ -221,24 +265,30 @@ void Species::print()
 	if (nTorsions() > 0)
 	{
 		Messenger::print("\n  Torsions:\n");
-		Messenger::print("      I     J     K     L     Form        Parameters\n");
+		Messenger::print("      I     J     K     L    Form          Parameters\n");
 		Messenger::print("    --------------------------------------------------------------------------\n");
-		for (int n=0; n<nTorsions(); ++n)
+		for (SpeciesTorsion* t = masterTorsions_.first(); t != NULL; t = t->next)
 		{
-			SpeciesTorsion* t = torsions_[n];
-			CharString s("   %4i  %4i  %4i  %4i  %12s", t->indexI()+1, t->indexJ()+1, t->indexK()+1, t->indexL()+1, SpeciesTorsion::torsionFunction(t->form()));
-			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", t->parameter(n));
-			Messenger::print("%s\n", s.get());
+			if (t->masterParameters()) Messenger::print("   %4i  %4i  %4i  %4i    %-12s", t->indexI()+1, t->indexJ()+1, t->indexK()+1, t->indexL()+1, t->masterParameters()->name());
+			else
+			{
+				CharString s("   %4i  %4i  %4i  %4i    %-12s", t->indexI()+1, t->indexJ()+1, t->indexK()+1, t->indexL()+1, SpeciesTorsion::torsionFunction( (SpeciesTorsion::TorsionFunction) t->form()));
+				for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", t->parameter(n));
+				Messenger::print("%s\n", s.get());
+			}
 		}
 	}
 
-	Messenger::print("\n  Grains:\n");
-	for (int n=0; n<nGrains(); ++n)
+	if (nGrains() > 0)
 	{
-		SpeciesGrain* grain = grains_[n];
-		CharString grainAtoms;
-		for (int m=0; m<grain->nAtoms(); ++m) grainAtoms.strcatf("%4i ", grain->atom(m)->item->userIndex());
-		Messenger::print("  %4i  '%s'\n", n+1, grain->name());
-		Messenger::print("       %2i atoms: %s\n", grain->nAtoms(), grainAtoms.get());
+		Messenger::print("\n  Grains:\n");
+		for (int n=0; n<nGrains(); ++n)
+		{
+			SpeciesGrain* grain = grains_[n];
+			CharString grainAtoms;
+			for (int m=0; m<grain->nAtoms(); ++m) grainAtoms.strcatf("%4i ", grain->atom(m)->item->userIndex());
+			Messenger::print("  %4i  '%s'\n", n+1, grain->name());
+			Messenger::print("       %2i atoms: %s\n", grain->nAtoms(), grainAtoms.get());
+		}
 	}
 }

@@ -52,8 +52,8 @@ EndSpecies
 Configuration  'Mix'
   Density  0.1  atoms/A3
   Multiplier  1000
-  Species 'Water'  3.0
-  Species 'Methanol'  6.0
+  SpeciesInfo  'Water'  3.0
+  SpeciesInfo  'Methanol'  6.0
   InputCoordinates  epsr  'epsr/watermeth.ato'
   RDFBinWidth 0.03
   RDFRange 38.0

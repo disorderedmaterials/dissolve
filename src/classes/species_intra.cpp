@@ -276,7 +276,7 @@ SpeciesBond* Species::addMasterBond(const char* name)
 	// Check for existence of master Bond already
 	if (hasMasterBond(name))
 	{
-		Messenger::print("Warning: Refused to add a new master Bond named '%s' in Species '%s' since one with the same name already exists.\n", name, name_.get());
+		Messenger::error("Refused to add a new master Bond named '%s' in Species '%s' since one with the same name already exists.\n", name, name_.get());
 		return NULL;
 	}
 
@@ -309,7 +309,10 @@ SpeciesBond* Species::masterBond(int n)
 // Return whether named master Bond exists
 SpeciesBond* Species::hasMasterBond(const char* name) const
 {
-	for (SpeciesBond* b = masterBonds_.first(); b != NULL; b = b->next) if (DUQSys::sameString(name, b->name())) return b;
+	// Remove leading '@' if necessary
+	const char* trimmedName = name[0] == '@' ? &name[1] : name;
+
+	for (SpeciesBond* b = masterBonds_.first(); b != NULL; b = b->next) if (DUQSys::sameString(trimmedName, b->name())) return b;
 	return NULL;
 }
 
@@ -319,7 +322,7 @@ SpeciesAngle* Species::addMasterAngle(const char* name)
 	// Check for existence of master Angle already
 	if (hasMasterAngle(name))
 	{
-		Messenger::print("Warning: Refused to add a new master Angle named '%s' in Species '%s' since one with the same name already exists.\n", name, name_.get());
+		Messenger::error("Refused to add a new master Angle named '%s' in Species '%s' since one with the same name already exists.\n", name, name_.get());
 		return NULL;
 	}
 
@@ -352,7 +355,10 @@ SpeciesAngle* Species::masterAngle(int n)
 // Return whether named master Angle exists
 SpeciesAngle* Species::hasMasterAngle(const char* name) const
 {
-	for (SpeciesAngle* a = masterAngles_.first(); a != NULL; a = a->next) if (DUQSys::sameString(name, a->name())) return a;
+	// Remove leading '@' if necessary
+	const char* trimmedName = name[0] == '@' ? &name[1] : name;
+
+	for (SpeciesAngle* a = masterAngles_.first(); a != NULL; a = a->next) if (DUQSys::sameString(trimmedName, a->name())) return a;
 	return NULL;
 }
 
@@ -362,7 +368,7 @@ SpeciesTorsion* Species::addMasterTorsion(const char* name)
 	// Check for existence of master Torsion already
 	if (hasMasterTorsion(name))
 	{
-		Messenger::print("Warning: Refused to add a new master Torsion named '%s' in Species '%s' since one with the same name already exists.\n", name, name_.get());
+		Messenger::error("Refused to add a new master Torsion named '%s' in Species '%s' since one with the same name already exists.\n", name, name_.get());
 		return NULL;
 	}
 
@@ -395,6 +401,9 @@ SpeciesTorsion* Species::masterTorsion(int n)
 // Return whether named master Torsion exists
 SpeciesTorsion* Species::hasMasterTorsion(const char* name) const
 {
-	for (SpeciesTorsion* t = masterTorsions_.first(); t != NULL; t = t->next) if (DUQSys::sameString(name, t->name())) return t;
+	// Remove leading '@' if necessary
+	const char* trimmedName = name[0] == '@' ? &name[1] : name;
+
+	for (SpeciesTorsion* t = masterTorsions_.first(); t != NULL; t = t->next) if (DUQSys::sameString(trimmedName, t->name())) return t;
 	return NULL;
 }

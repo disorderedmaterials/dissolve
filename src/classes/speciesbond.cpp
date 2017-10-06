@@ -26,7 +26,7 @@
 #include "templates/enumhelpers.h"
 
 // Constructor
-SpeciesBond::SpeciesBond() : ListItem<SpeciesBond>()
+SpeciesBond::SpeciesBond() : SpeciesIntra(), ListItem<SpeciesBond>()
 {
 	parent_ = NULL;
 	i_ = NULL;
@@ -133,30 +133,21 @@ int SpeciesBond::nFunctionParameters(SpeciesBond::BondFunction func)
 	return BondFunctionNParameters[func];
 }
 
-// Set functional form of interaction
-void SpeciesBond::setForm(SpeciesBond::BondFunction form)
-{
-	form_ = form;
-}
-
-// Return functional form of interaction
-SpeciesBond::BondFunction SpeciesBond::form()
-{
-	return form_;
-}
-
 // Return energy for specified distance
 double SpeciesBond::energy(double distance) const
 {
-	if (form_ == SpeciesBond::HarmonicForm)
+	// Get pointer to relevant parameters array
+	const double* params = parameters();
+
+	if (form() == SpeciesBond::HarmonicForm)
 	{
 		/*
 		 * Parameters:
 		 * 0 : force constant
 		 * 1 : equilibrium distance
 		 */
-		double delta = distance - parameters_[1];
-		return 0.5*parameters_[0]*delta*delta;
+		double delta = distance - params[1];
+		return 0.5*params[0]*delta*delta;
 	}
 
 	Messenger::error("Functional form of SpeciesBond term not set, so can't calculate energy.\n");
@@ -166,14 +157,17 @@ double SpeciesBond::energy(double distance) const
 // Return force multiplier for specified distance
 double SpeciesBond::force(double distance) const
 {
-	if (form_ == SpeciesBond::HarmonicForm)
+	// Get pointer to relevant parameters array
+	const double* params = parameters();
+
+	if (form() == SpeciesBond::HarmonicForm)
 	{
 		/*
 		 * Parameters:
 		 * 0 : force constant
 		 * 1 : equilibrium distance
 		 */
-		return -parameters_[0]*(distance-parameters_[1]);
+		return -params[0]*(distance-params[1]);
 	}
 
 	Messenger::error("Functional form of SpeciesBond term not set, so can't calculate force.\n");

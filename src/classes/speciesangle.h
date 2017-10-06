@@ -91,15 +91,7 @@ class SpeciesAngle : public SpeciesIntra, public ListItem<SpeciesAngle>
 	// Return number of parameters required for functional form
 	static int nFunctionParameters(AngleFunction func);
 
-	private:
-	// Interaction functional form
-	AngleFunction form_;
-
 	public:
-	// Set functional form of interaction
-	void setForm(SpeciesAngle::AngleFunction form);
-	// Return functional form of interaction
-	SpeciesAngle::AngleFunction form();
 	// Return energy for specified angle
 	double energy(double angleInDegrees) const;
 	// Return force multiplier for specified angle

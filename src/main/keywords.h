@@ -242,7 +242,7 @@ namespace SpeciesBlock
 		ChargeKeyword,			/* 'Charge' - Specifies the atomic charge for an individual atom */
 		EndSpeciesKeyword,		/* 'EndSpecies' - Signals the end of the current Species */
 		GrainKeyword,			/* 'Grain' - Defines a Grain containing a number of Atoms */
-		IsotopologueKeyword,		/* 'Isotopologue' - Defines isotope information for the Atoms */
+		IsotopologueKeyword,		/* 'Isotopologue' - Add an isotopologue to the Species */
 		MasterAngleKeyword,		/* 'MasterAngle' - Define master Angle parameters that can be referred to */
 		MasterBondKeyword,		/* 'MasterBond' - Define master Bond parameters that can be referred to */
 		MasterTorsionKeyword,		/* 'MasterTorsion' - Define master Torsion parameters that can be referred to */

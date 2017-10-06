@@ -46,7 +46,7 @@ KeywordData ConfigurationBlockData[] = {
 	{ "OutputCoordinates",		1,	"File which should contain output coordinates, followed by the (optional) output frequency" },
 	{ "RDFBinWidth",		1,	"Bin width for all radial distribution functions" },
 	{ "RDFRange",			1,	"Requested extent for calculated radial distribution functions" },
-	{ "SpeciesInfo",		2,	"Specifies a Species and its relative population to add to this Configuration" },
+	{ "SpeciesInfo",		1,	"Specify a Species to add to this Configuration" },
 	{ "Temperature",		1,	"Simulation temperature of the Configuration" },
 	{ "UseOutputAsInput",		0,	"Use output coordinates file as input (if it exists)" }
 };

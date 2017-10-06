@@ -26,6 +26,7 @@
 SpeciesIntra::SpeciesIntra()
 {
 	parent_ = NULL;
+	masterParameters_ = NULL;
 	for (int n=0; n<MAXINTRAPARAMS; ++n) parameters_[n] = 0.0;
 }
 
@@ -66,6 +67,30 @@ const char* SpeciesIntra::name()
  * Interaction Parameters
  */
 
+// Set linked master from which parameters should be taken
+void SpeciesIntra::setMasterParameters(SpeciesIntra* master)
+{
+	masterParameters_ = master;
+}
+
+// Return linked master from which parameters should be taken
+SpeciesIntra* SpeciesIntra::masterParameters()
+{
+	return masterParameters_;
+}
+
+// Set functional form index of interaction
+void SpeciesIntra::setForm(int form)
+{
+	form_ = form;
+}
+
+// Return functional form index of interaction
+int SpeciesIntra::form() const
+{
+	return masterParameters_ ? masterParameters_->form_ : form_;
+}
+
 // Set nth parameter
 void SpeciesIntra::setParameter(int id, double value)
 {
@@ -76,6 +101,13 @@ void SpeciesIntra::setParameter(int id, double value)
 		return;
 	}
 #endif
+	// Does this intramolecular interaction reference a set of master parameters?
+	if (masterParameters_)
+	{
+		Messenger::error("Refused to set intramolecular parameter since master parameters are referenced.\n");
+		return;
+	}
+
 	parameters_[id] = value;
 }
 
@@ -89,5 +121,14 @@ double SpeciesIntra::parameter(int id) const
 		return 0.0;
 	}
 #endif
+	// Does this intramolecular interaction reference a set of master parameters?
+	if (masterParameters_) return masterParameters_->parameter(id);
+
 	return parameters_[id];
+}
+
+// Return array of parameters
+const double* SpeciesIntra::parameters() const
+{
+	return masterParameters_ ? masterParameters_->parameters() : parameters_;
 }

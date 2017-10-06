@@ -26,7 +26,7 @@
 #include "templates/enumhelpers.h"
 
 // Constructor
-SpeciesTorsion::SpeciesTorsion() : ListItem<SpeciesTorsion>()
+SpeciesTorsion::SpeciesTorsion() : SpeciesIntra(), ListItem<SpeciesTorsion>()
 {
 	parent_ = NULL;
 	i_ = NULL;
@@ -182,25 +182,16 @@ int SpeciesTorsion::nFunctionParameters(SpeciesTorsion::TorsionFunction func)
 	return TorsionFunctionNParameters[func];
 }
 
-// Set functional form of interaction
-void SpeciesTorsion::setForm(SpeciesTorsion::TorsionFunction form)
-{
-	form_ = form;
-}
-
-// Return functional form of interaction
-SpeciesTorsion::TorsionFunction SpeciesTorsion::form()
-{
-	return form_;
-}
-
 // Return energy for specified angle
 double SpeciesTorsion::energy(double angleInDegrees) const
 {
+	// Get pointer to relevant parameters array
+	const double* params = parameters();
+
 	// Convert torsion angle from degrees to radians
 	double phi = angleInDegrees / DEGRAD;
 
-	if (form_ == SpeciesTorsion::CosineForm)
+	if (form() == SpeciesTorsion::CosineForm)
 	{
 		/*
 		 * U(phi) = forcek * (1 + s*cos(period*phi - eq))
@@ -211,9 +202,9 @@ double SpeciesTorsion::energy(double angleInDegrees) const
 		 * 2 : equilibrium angle (degrees)
 		 * 3 : Sign S
 		 */
-		return parameters_[0] * (1.0 + parameters_[3] * cos(parameters_[1]*phi - (parameters_[2] / DEGRAD)));
+		return params[0] * (1.0 + params[3] * cos(params[1]*phi - (params[2] / DEGRAD)));
 	}
-	else if (form_ == SpeciesTorsion::Cos3Form)
+	else if (form() == SpeciesTorsion::Cos3Form)
 	{
 		/*
 		 * U(phi) = 0.5 * ( k1*(1+cos(phi)) + k2*(1-cos(2*phi)) + k3*(1+cos(3*phi)) )
@@ -223,10 +214,10 @@ double SpeciesTorsion::energy(double angleInDegrees) const
 		 * 1 : force constant k2
 		 * 2 : force constant k3
 		 */
-		printf("COS3 enregy %f = %f %f %f\n", phi, parameters_[0], parameters_[1], parameters_[2]);
-		return 0.5 * (parameters_[0] * (1.0 + cos(phi)) + parameters_[1] * (1.0 - cos(2.0*phi)) + parameters_[2] * (1.0 + cos(3.0*phi)));
+		printf("COS3 enregy %f = %f %f %f\n", phi, params[0], params[1], params[2]);
+		return 0.5 * (params[0] * (1.0 + cos(phi)) + params[1] * (1.0 - cos(2.0*phi)) + params[2] * (1.0 + cos(3.0*phi)));
 	}
-	else if (form_ == SpeciesTorsion::Cos4Form)
+	else if (form() == SpeciesTorsion::Cos4Form)
 	{
 		/*
 		 * U(phi) = 0.5 * ( k1*(1+cos(phi)) + k2*(1-cos(2*phi)) + k3*(1+cos(3*phi)) + k4*(1-cos(4*phi)) )
@@ -237,9 +228,9 @@ double SpeciesTorsion::energy(double angleInDegrees) const
 		 * 2 : force constant k3
 		 * 3 : force constant k4
 		 */
-		return 0.5 * (parameters_[0]*(1.0+cos(phi)) + parameters_[1]*(1.0-cos(2.0*phi)) + parameters_[2]*(1.0+cos(3.0*phi)) + parameters_[3]*(1.0-cos(4.0*phi)) );
+		return 0.5 * (params[0]*(1.0+cos(phi)) + params[1]*(1.0-cos(2.0*phi)) + params[2]*(1.0+cos(3.0*phi)) + params[3]*(1.0-cos(4.0*phi)) );
 	}
-	else if (form_ == SpeciesTorsion::Cos3CForm)
+	else if (form() == SpeciesTorsion::Cos3CForm)
 	{
 		/*
 		 * U(phi) = k0 + 0.5 * ( k1*(1+cos(phi)) + k2*(1-cos(2*phi)) + k3*(1+cos(3*phi)) )
@@ -250,7 +241,7 @@ double SpeciesTorsion::energy(double angleInDegrees) const
 		 * 2 : force constant k2
 		 * 3 : force constant k3
 		 */
-		return parameters_[0] + 0.5 * (parameters_[1]*(1.0+cos(phi)) + parameters_[2]*(1.0-cos(2.0*phi)) + parameters_[3]*(1.0+cos(3.0*phi)) );
+		return params[0] + 0.5 * (params[1]*(1.0+cos(phi)) + params[2]*(1.0-cos(2.0*phi)) + params[3]*(1.0+cos(3.0*phi)) );
 	}
 
 	Messenger::error("Functional form of SpeciesTorsion term not set, so can't calculate energy.\n");
@@ -260,11 +251,14 @@ double SpeciesTorsion::energy(double angleInDegrees) const
 // Return force multiplier for specified angle
 double SpeciesTorsion::force(double angleInDegrees) const
 {
+	// Get pointer to relevant parameters array
+	const double* params = parameters();
+
 	// Convert torsion angle from degrees to radians, and calculate derivative w.r.t. change in torsion angle
 	double phi = angleInDegrees / DEGRAD;
 	double dphi_dcosphi = (phi < 1E-8 ? 0.0 : -1.0 / sin(phi));
 
-	if (form_ == SpeciesTorsion::CosineForm)
+	if (form() == SpeciesTorsion::CosineForm)
 	{
 		/*
 		 * dU/dphi = forcek * period * s * -sin(period*phi - eq)
@@ -275,9 +269,9 @@ double SpeciesTorsion::force(double angleInDegrees) const
 		 * 2 : equilibrium angle (degrees)
 		 * 3 : Sign S
 		 */
-		return dphi_dcosphi * parameters_[1] * parameters_[0] * parameters_[3] * -sin(parameters_[1]*phi - (parameters_[2] / DEGRAD));
+		return dphi_dcosphi * params[1] * params[0] * params[3] * -sin(params[1]*phi - (params[2] / DEGRAD));
 	}
-	else if (form_ == SpeciesTorsion::Cos3Form)
+	else if (form() == SpeciesTorsion::Cos3Form)
 	{
 		/*
 		 * dU/dphi = 0.5 * ( -k1*sin(phi) + 2 * k2*sin(2*phi) - 3 * k3*(sin(3*phi)) )
@@ -287,9 +281,9 @@ double SpeciesTorsion::force(double angleInDegrees) const
 		 * 1 : force constant k2
 		 * 2 : force constant k3
 		 */
-		return dphi_dcosphi * 0.5 * ( -parameters_[0]*sin(phi) + 2.0*parameters_[1]*sin(2.0*phi) - 3.0*parameters_[2]*sin(3.0*phi));
+		return dphi_dcosphi * 0.5 * ( -params[0]*sin(phi) + 2.0*params[1]*sin(2.0*phi) - 3.0*params[2]*sin(3.0*phi));
 	}
-	else if (form_ == SpeciesTorsion::Cos4Form)
+	else if (form() == SpeciesTorsion::Cos4Form)
 	{
 		/*
 		 * dU/dphi = 0.5 * ( -k1*sin(phi) + 2 * k2*sin(2*phi) - 3 * k3*(sin(3*phi)) )
@@ -300,9 +294,9 @@ double SpeciesTorsion::force(double angleInDegrees) const
 		 * 2 : force constant k3
 		 * 3 : force constant k4
 		 */
-		return dphi_dcosphi * 0.5 * ( parameters_[0]*sin(phi) + parameters_[1]*sin(2.0*phi) + parameters_[2]*sin(3.0*phi) + parameters_[3]*sin(4.0*phi));
+		return dphi_dcosphi * 0.5 * ( params[0]*sin(phi) + params[1]*sin(2.0*phi) + params[2]*sin(3.0*phi) + params[3]*sin(4.0*phi));
 	}
-	else if (form_ == SpeciesTorsion::Cos3CForm)
+	else if (form() == SpeciesTorsion::Cos3CForm)
 	{
 		/*
 		 * dU/dphi = 0.5 * ( -k1*sin(phi) + 2 * k2*sin(2*phi) - 3 * k3*(sin(3*phi)) + 4 * k4*(sin(4*phi)))
@@ -313,7 +307,7 @@ double SpeciesTorsion::force(double angleInDegrees) const
 		 * 2 : force constant k2
 		 * 3 : force constant k3
 		 */
-		return dphi_dcosphi * 0.5 * ( -parameters_[1]*sin(phi) + 2.0*parameters_[2]*sin(2.0*phi) - 3.0*parameters_[3]*sin(3.0*phi));
+		return dphi_dcosphi * 0.5 * ( -params[1]*sin(phi) + 2.0*params[2]*sin(2.0*phi) - 3.0*params[3]*sin(3.0*phi));
 	}
 
 	Messenger::error("Functional form of SpeciesTorsion term not set, so can't calculate force.\n");

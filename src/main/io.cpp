@@ -264,8 +264,8 @@ bool DUQ::saveInput(const char* filename)
 			parser.writeLineF("\n  # Bonds\n");
 			for (SpeciesBond* b = sp->bonds(); b != NULL; b = b->next)
 			{
-				CharString s("  %s  %3i  %3i", SpeciesBlock::keyword(SpeciesBlock::BondKeyword), SpeciesBond::bondFunction(b->form()), b->indexI()+1, b->indexJ()+1);
-				for (int n=0; n<SpeciesBond::nFunctionParameters(b->form()); ++n) s.strcatf("  8.3f", b->parameter(n));
+				CharString s("  %s  %3i  %3i", SpeciesBlock::keyword(SpeciesBlock::BondKeyword), SpeciesBond::bondFunction( (SpeciesBond::BondFunction) b->form()), b->indexI()+1, b->indexJ()+1);
+				for (int n=0; n<SpeciesBond::nFunctionParameters( (SpeciesBond::BondFunction) b->form()); ++n) s.strcatf("  8.3f", b->parameter(n));
 				parser.writeLineF("%s\n", s.get());
 			}
 		}
@@ -276,8 +276,8 @@ bool DUQ::saveInput(const char* filename)
 			parser.writeLineF("\n  # Angles\n");
 			for (SpeciesAngle* a = sp->angles(); a != NULL; a = a->next)
 			{
-				CharString s("  %s  %3i  %3i  %3i", SpeciesBlock::keyword(SpeciesBlock::AngleKeyword), SpeciesAngle::angleFunction(a->form()), a->indexI()+1, a->indexJ()+1, a->indexK()+1);
-				for (int n=0; n<SpeciesAngle::nFunctionParameters(a->form()); ++n) s.strcatf("  8.3f", a->parameter(n));
+				CharString s("  %s  %3i  %3i  %3i", SpeciesBlock::keyword(SpeciesBlock::AngleKeyword), SpeciesAngle::angleFunction( (SpeciesAngle::AngleFunction) a->form()), a->indexI()+1, a->indexJ()+1, a->indexK()+1);
+				for (int n=0; n<SpeciesAngle::nFunctionParameters( (SpeciesAngle::AngleFunction) a->form()); ++n) s.strcatf("  8.3f", a->parameter(n));
 				parser.writeLineF("%s\n", s.get());
 			}
 		}
@@ -288,8 +288,8 @@ bool DUQ::saveInput(const char* filename)
 			parser.writeLineF("\n  # Torsions\n");
 			for (SpeciesTorsion* t = sp->torsions(); t != NULL; t = t->next)
 			{
-				CharString s("  %s  %3i  %3i  %3i", SpeciesBlock::keyword(SpeciesBlock::TorsionKeyword), SpeciesTorsion::torsionFunction(t->form()), t->indexI()+1, t->indexJ()+1, t->indexK()+1, t->indexL()+1);
-				for (int n=0; n<SpeciesTorsion::nFunctionParameters(t->form()); ++n) s.strcatf("  8.3f", t->parameter(n));
+				CharString s("  %s  %3i  %3i  %3i", SpeciesBlock::keyword(SpeciesBlock::TorsionKeyword), SpeciesTorsion::torsionFunction( (SpeciesTorsion::TorsionFunction) t->form()), t->indexI()+1, t->indexJ()+1, t->indexK()+1, t->indexL()+1);
+				for (int n=0; n<SpeciesTorsion::nFunctionParameters( (SpeciesTorsion::TorsionFunction) t->form()); ++n) s.strcatf("  8.3f", t->parameter(n));
 				parser.writeLineF("%s\n", s.get());
 			}
 		}

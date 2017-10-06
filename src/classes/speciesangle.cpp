@@ -26,7 +26,7 @@
 #include "templates/enumhelpers.h"
 
 // Constructor
-SpeciesAngle::SpeciesAngle() : ListItem<SpeciesAngle>()
+SpeciesAngle::SpeciesAngle() : SpeciesIntra(), ListItem<SpeciesAngle>()
 {
 	parent_ = NULL;
 	i_ = NULL;
@@ -150,30 +150,21 @@ int SpeciesAngle::nFunctionParameters(AngleFunction func)
 	return AngleFunctionNParameters[func];
 }
 
-// Set functional form of interaction
-void SpeciesAngle::setForm(SpeciesAngle::AngleFunction form)
-{
-	form_ = form;
-}
-
-// Return functional form of interaction
-SpeciesAngle::AngleFunction SpeciesAngle::form()
-{
-	return form_;
-}
-
 // Return energy for specified angle
 double SpeciesAngle::energy(double angleInDegrees) const
 {
-	if (form_ == SpeciesAngle::HarmonicForm)
+	// Get pointer to relevant parameters array
+	const double* params = parameters();
+
+	if (form() == SpeciesAngle::HarmonicForm)
 	{
 		/*
 		 * Parameters:
 		 * 0 : force constant
 		 * 1 : equilibrium angle (degrees)
 		 */
-		double delta = (angleInDegrees - parameters_[1]) / DEGRAD;
-		return 0.5*parameters_[0]*delta*delta;
+		double delta = (angleInDegrees - params[1]) / DEGRAD;
+		return 0.5*params[0]*delta*delta;
 	}
 
 	Messenger::error("Functional form of SpeciesAngle term not set, so can't calculate energy.\n");
@@ -183,7 +174,10 @@ double SpeciesAngle::energy(double angleInDegrees) const
 // Return force multiplier for specified angle
 double SpeciesAngle::force(double angleInDegrees) const
 {
-	if (form_ == SpeciesAngle::HarmonicForm)
+	// Get pointer to relevant parameters array
+	const double* params = parameters();
+
+	if (form() == SpeciesAngle::HarmonicForm)
 	{
 		/*
 		 * Parameters:
@@ -194,7 +188,7 @@ double SpeciesAngle::force(double angleInDegrees) const
 		double dU_dtheta = -1.0 / sin(angleInDegrees/DEGRAD);
 
 		// Chain rule - multiply by derivative of energy w.r.t. angle (harmonic form)
-		dU_dtheta *= -parameters_[0]*((angleInDegrees-parameters_[1])/DEGRAD);
+		dU_dtheta *= -params[0]*((angleInDegrees-params[1])/DEGRAD);
 
 		return dU_dtheta;
 	}

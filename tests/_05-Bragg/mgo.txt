@@ -13,8 +13,8 @@ EndSpecies
 # Define Configuration
 Configuration  'Box'
   CellLengths  21.085  21.085  21.085
-  Species 'Mg'  500
-  Species 'O'   500
+  SpeciesInfo  'Mg'  500
+  SpeciesInfo  'O'   500
   InputCoordinates  epsr 'epsr/mgo.ato'
   RDFBinWidth  0.03
   BraggQMin  0.01

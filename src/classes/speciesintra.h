@@ -49,7 +49,7 @@ class SpeciesIntra
 	Species* parent_;
 	// Name for interaction (if relevant)
 	CharString name_;
-	
+
 	public:
 	// Set parent Species
 	void setParent(Species* parent);
@@ -67,19 +67,26 @@ class SpeciesIntra
 	protected:
 	// Linked master from which parameters should be taken (if relevant)
 	SpeciesIntra* masterParameters_;
+	// Index of functional form of interaction
+	int form_;
 	// Parameters for interaction
 	double parameters_[MAXINTRAPARAMS];
-
 
 	public:
 	// Set linked master from which parameters should be taken
 	void setMasterParameters(SpeciesIntra* master);
 	// Return linked master from which parameters should be taken
 	SpeciesIntra* masterParameters();
+	// Set functional form index of interaction
+	void setForm(int form);
+	// Return functional form index of interaction
+	int form() const;
 	// Set nth parameter
 	void setParameter(int id, double value);
 	// Return nth parameter
 	double parameter(int id) const;
+	// Return array of parameters
+	const double* parameters() const;
 };
 
 #endif

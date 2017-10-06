@@ -20,7 +20,7 @@ EndSpecies
 Configuration  'Bulk'
   Density  9.99999642E-02 atoms/A3
   Multiplier  1000
-  Species 'Water'  1.0
+  SpeciesInfo  'Water'  1.0
 
   InputCoordinates  dlpoly  'dlpoly_intra/CONFIG'
 

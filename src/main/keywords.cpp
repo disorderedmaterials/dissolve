@@ -47,8 +47,10 @@ void InputBlocks::printValidKeywords(InputBlocks::InputBlock block)
 			break;
 		case (InputBlocks::SpeciesBlock):
 			for (n=0; n<SpeciesBlock::nSpeciesKeywords; ++n) Messenger::print("  %s", SpeciesBlock::keyword( (SpeciesBlock::SpeciesKeyword) n ));
+			break;
 		case (InputBlocks::SpeciesInfoBlock):
 			for (n=0; n<SpeciesInfoBlock::nSpeciesInfoKeywords; ++n) Messenger::print("  %s", SpeciesInfoBlock::keyword( (SpeciesInfoBlock::SpeciesInfoKeyword) n ));
+			break;
 		default:
 			Messenger::print("Unrecognised block given to InputBlocks::printValidKeywords.\n");
 			break;
@@ -61,7 +63,7 @@ void InputBlocks::printValidKeywords(InputBlocks::InputBlock block)
  */
 
 // Input File Block Keywords
-const char* InputBlockKeywords[] = { "Configuration", "Data", "Module", "PairPotentials", "Simulation", "Species" };
+const char* InputBlockKeywords[] = { "Configuration", "Data", "Module", "PairPotentials", "Simulation", "Species", "SpeciesInfo" };
 
 // Convert text string to InputBlock
 InputBlocks::InputBlock InputBlocks::inputBlock(const char* s)

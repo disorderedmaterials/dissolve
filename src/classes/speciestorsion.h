@@ -100,15 +100,7 @@ class SpeciesTorsion : public SpeciesIntra, public ListItem<SpeciesTorsion>
 	// Return number of parameters required for functional form
 	static int nFunctionParameters(TorsionFunction func);
 
-	private:
-	// Interaction functional form
-	TorsionFunction form_;
-
 	public:
-	// Set functional form of interaction
-	void setForm(SpeciesTorsion::TorsionFunction form);
-	// Return functional form of interaction
-	SpeciesTorsion::TorsionFunction form();
 	// Return energy for specified angle
 	double energy(double angleInDegrees) const;
 	// Return force multiplier for specified angle
