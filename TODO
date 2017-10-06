@@ -8,7 +8,8 @@ o Allow for Fixed atoms:
 	- Provision for pre-calculation of RDF/F(Q) data between fixed atoms, and introduction of this into final RDF/F(Q) data for speed?
 o Accumulate timing information for each module, displaying averages and total in schedule at each step?
 o Establish proper limit for switching between RDF calculation methods
-
+o Rework Configuration::setup() to account for all types of initailisation - random config, loaded coordinates, or loaded atoms/coordinates/connectivity.
+o Adding intramolecular connections with Configuration::addBond(), for instance, only adds involved Atoms to Atom exclusion list, whereas strictly-speaking we should exclude 1-3 and scale 1-4 interactions, even if there is no explicit potential term defined across those atoms.
 
 -------------------------------------------
 Ideas / Notes / Weird Algorithm Suggestions
