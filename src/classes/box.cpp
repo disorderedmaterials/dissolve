@@ -329,14 +329,10 @@ double Box::torsionInRadians(const Vec3<double>& vecji, const Vec3<double>& vecj
 // Return torsion (in radians, no MIM) between supplied unnormalised vectors, storing cross products and magnitude in supplied variables
 double Box::torsionInRadians(const Vec3<double>& vecji, const Vec3<double>& vecjk, const Vec3<double>& veckl, Vec3<double>& xpj, double& magxpj, Vec3<double>& xpk, double& magxpk)
 {
-	xpj = vecji * vecjk;
-	xpk = veckl * vecjk;
+	xpj = vecjk * vecji;
+	xpk = vecjk * veckl;
 	magxpj = xpj.magAndNormalise();
 	magxpk = xpk.magAndNormalise();
-	double dp = xpj.dp(xpk);
-	if (dp < -1.0) dp = -1.0;
-	else if (dp > 1.0) dp = 1.0;
-
-	return acos(dp);
+	return atan2(vecjk.dp(xpj*xpk) / vecjk.magnitude(), xpj.dp(xpk));
 }
 
