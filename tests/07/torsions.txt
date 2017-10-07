@@ -2,26 +2,26 @@
 
 Species 'Hexane'
   # Atoms
-  Atom    1    C    0.0    0.0    0.0    'CT'   -0.12
-  Atom    2    C    0.0    0.0    0.0    'CT'   -0.18
-  Atom    3    H    0.0    0.0    0.0    'HC'    0.06
-  Atom    4    C    0.0    0.0    0.0    'CT'   -0.12
-  Atom    5    H    0.0    0.0    0.0    'HC'    0.06
-  Atom    6    H    0.0    0.0    0.0    'HC'    0.06
-  Atom    7    H    0.0    0.0    0.0    'HC'    0.06
-  Atom    8    H    0.0    0.0    0.0    'HC'    0.06
-  Atom    9    H    0.0    0.0    0.0    'HC'    0.06
-  Atom    10   H    0.0    0.0    0.0    'HC'    0.06
-  Atom    11   C    0.0    0.0    0.0    'CT'   -0.12
-  Atom    12   C    0.0    0.0    0.0    'CT'   -0.18
-  Atom    13   H    0.0    0.0    0.0    'HC'    0.06
-  Atom    14   C    0.0    0.0    0.0    'CT'   -0.12
-  Atom    15   H    0.0    0.0    0.0    'HC'    0.06
-  Atom    16   H    0.0    0.0    0.0    'HC'    0.06
-  Atom    17   H    0.0    0.0    0.0    'HC'    0.06
-  Atom    18   H    0.0    0.0    0.0    'HC'    0.06
-  Atom    19   H    0.0    0.0    0.0    'HC'    0.06
-  Atom    20   H    0.0    0.0    0.0    'HC'    0.06
+  Atom    1    C    0.0    0.0    0.0    'CT'
+  Atom    2    C    0.0    0.0    0.0    'CT'
+  Atom    3    H    0.0    0.0    0.0    'HC'
+  Atom    4    C    0.0    0.0    0.0    'CT'
+  Atom    5    H    0.0    0.0    0.0    'HC'
+  Atom    6    H    0.0    0.0    0.0    'HC'
+  Atom    7    H    0.0    0.0    0.0    'HC'
+  Atom    8    H    0.0    0.0    0.0    'HC'
+  Atom    9    H    0.0    0.0    0.0    'HC'
+  Atom    10   H    0.0    0.0    0.0    'HC'
+  Atom    11   C    0.0    0.0    0.0    'CT'
+  Atom    12   C    0.0    0.0    0.0    'CT'
+  Atom    13   H    0.0    0.0    0.0    'HC'
+  Atom    14   C    0.0    0.0    0.0    'CT'
+  Atom    15   H    0.0    0.0    0.0    'HC'
+  Atom    16   H    0.0    0.0    0.0    'HC'
+  Atom    17   H    0.0    0.0    0.0    'HC'
+  Atom    18   H    0.0    0.0    0.0    'HC'
+  Atom    19   H    0.0    0.0    0.0    'HC'
+  Atom    20   H    0.0    0.0    0.0    'HC'
 
   # Intramolecular Terms
   Bond   Harmonic    1     2  0.0     1.5290
@@ -132,17 +132,23 @@ EndSpecies
 
 # Define Configuration
 Configuration  'Liquid'
-  Density  0.1  atoms/A3
+  CellLengths  30.769064857500   46.153597286200  30.769064857500
   Multiplier  200
   SpeciesInfo  'Hexane'  1.0
-  InputCoordinates  dlpoly  'dlpoly_torsions/REVCON'
+  InputCoordinates  dlpoly  'dlpoly_torsions/CONFIG'
   RDFBinWidth 0.03
 EndConfiguration
 
-Module  Energy
+Module Energy
   Test  On
   Configuration  'Liquid'
   TestReferenceIntra  2.173978E+03
+EndModule
+
+Module Forces
+  Test  On
+  Configuration  'Liquid'
+  TestReference  dlpoly  'dlpoly_torsions/REVCON'
 EndModule
 
 # Pair Potentials
