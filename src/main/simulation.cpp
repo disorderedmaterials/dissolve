@@ -142,8 +142,7 @@ bool DUQ::go(bool singleIteration)
 				return false;
 			}
 
-			Messenger::print("\n");
-			Messenger::print("--> Configuration '%s'\n", cfg->name());
+			Messenger::heading("'%s'", cfg->name());
 
 			// Check involvement of this process
 			if (!cfg->processPool().involvesMe())
@@ -196,8 +195,7 @@ bool DUQ::go(bool singleIteration)
 		{
 			if (!module->runThisIteration(iteration_)) continue;
 
-			Messenger::print("Main processing module '%s'\n", module->name());
-			Messenger::print("\n");
+			Messenger::heading("%s", module->name());
 			result = module->process(*this, worldPool_);
 
 			if (!result)
