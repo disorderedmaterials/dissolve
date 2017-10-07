@@ -680,6 +680,5 @@ void ForceKernel::forces(const Torsion* t)
 	fy_[index] += du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(1));
 	fz_[index] += du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(2));
 
-	Messenger::warn("ForceKernel cannot yet calculate torsion forces!\n");
 	return;
 }
