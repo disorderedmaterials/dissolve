@@ -190,7 +190,14 @@ void Messenger::banner(const char* fmt, ...)
 // Print heading message
 void Messenger::heading(const char* fmt, ...)
 {
-	const int width = 40;
+	static CharString bannerChars;
+	const int width = 80;
+	if (bannerChars.length() < width)
+	{
+		bannerChars.createEmpty(width+1);
+		bannerChars.fill('-');
+	}
+
 	// First, create the text using vsprintf
 	va_list arguments;
 	va_start(arguments, fmt);
@@ -202,10 +209,11 @@ void Messenger::heading(const char* fmt, ...)
 	int leftPad = (width - bannerText.length()) / 2 - 1;
 	int rightPad = width - bannerText.length() - leftPad - 2;
 	char bannerFormat[64];
-	sprintf(bannerFormat, "===============     %%%is%%s%%%is     ===============", leftPad, rightPad);
+	sprintf(bannerFormat, "%%%is%%s%%%is", leftPad, rightPad);
 
 	printText("\n");
 	print(bannerFormat, " ", bannerText.get(), " ");
+	print("%s\n", bannerChars.get());
 	printText("\n");
 }
 
