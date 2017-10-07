@@ -214,7 +214,6 @@ double SpeciesTorsion::energy(double angleInDegrees) const
 		 * 1 : force constant k2
 		 * 2 : force constant k3
 		 */
-		printf("COS3 enregy %f = %f %f %f\n", phi, params[0], params[1], params[2]);
 		return 0.5 * (params[0] * (1.0 + cos(phi)) + params[1] * (1.0 - cos(2.0*phi)) + params[2] * (1.0 + cos(3.0*phi)));
 	}
 	else if (form() == SpeciesTorsion::Cos4Form)
