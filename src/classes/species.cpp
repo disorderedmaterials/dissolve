@@ -267,7 +267,7 @@ void Species::print()
 		Messenger::print("\n  Torsions:\n");
 		Messenger::print("      I     J     K     L    Form          Parameters\n");
 		Messenger::print("    --------------------------------------------------------------------------\n");
-		for (SpeciesTorsion* t = masterTorsions_.first(); t != NULL; t = t->next)
+		for (SpeciesTorsion* t = torsions_.first(); t != NULL; t = t->next)
 		{
 			if (t->masterParameters()) Messenger::print("   %4i  %4i  %4i  %4i    %-12s", t->indexI()+1, t->indexJ()+1, t->indexK()+1, t->indexL()+1, t->masterParameters()->name());
 			else
