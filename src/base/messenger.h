@@ -73,8 +73,10 @@ class Messenger
 	static void error(const char* fmt, ...);
 	// Print warn message
 	static void warn(const char* fmt, ...);
-	// Print banner message of specified width
+	// Print banner message
 	static void banner(const char* fmt, ...);
+	// Print heading message
+	static void heading(const char* fmt, ...);
 
 
 	/*

@@ -187,6 +187,28 @@ void Messenger::banner(const char* fmt, ...)
 	printText("\n");
 }
 
+// Print heading message
+void Messenger::heading(const char* fmt, ...)
+{
+	const int width = 40;
+	// First, create the text using vsprintf
+	va_list arguments;
+	va_start(arguments, fmt);
+	vsprintf(workingText_, fmt, arguments);
+	va_end(arguments);
+	CharString bannerText = workingText_;
+
+	// Now, get the length of the banner text and create a format for printing it into a line 80 chars wide
+	int leftPad = (width - bannerText.length()) / 2 - 1;
+	int rightPad = width - bannerText.length() - leftPad - 2;
+	char bannerFormat[64];
+	sprintf(bannerFormat, "===============     %%%is%%s%%%is     ===============", leftPad, rightPad);
+
+	printText("\n");
+	print(bannerFormat, " ", bannerText.get(), " ");
+	printText("\n");
+}
+
 /*
  * File Redirection
  */
