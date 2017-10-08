@@ -222,14 +222,13 @@ bool Cell::removeAtom(Atom* i)
 		return false;
 	}
 #endif
-	if (!atoms_.removeIfPresent(i)) Messenger::warn("Tried to remove Atom %i from Cell %i, but it was not present.\n", i->arrayIndex(), index_);
-
-	// Add Atom to our OrderedPointerList
-	atoms_.add(i);
-
-	// Set its Cell pointer
-	if (i->cell() != this) Messenger::warn("About to remove Cell pointer from Atom %i, and it does not match the current Cell.\n", i->arrayIndex());
-	i->setCell(NULL);
+	// Remove atom from this cell
+	if (atoms_.removeIfPresent(i)) i->setCell(NULL);
+	else
+	{
+		Messenger::error("Tried to remove Atom %i from Cell %i, but it was not present.\n", i->arrayIndex(), index_);
+		return false;
+	}
 
 	return true;
 }
