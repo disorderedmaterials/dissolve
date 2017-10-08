@@ -89,8 +89,11 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 			double cutoffSq = potentialMap.range()*potentialMap.range();
 
 			double angle, magjisq, magji, magjk, dp, force, r;
-			Atom* i, *j, *k;
-			Vec3<double> vecji, vecjk, forcei, forcek;
+			Atom* i, *j, *k, *l;
+			Vec3<double> vecji, vecjk, veckl, forcei, forcek;
+			Vec3<double> xpj, xpk, dcos_dxpj, dcos_dxpk, temp;
+			Matrix3 dxpj_dij, dxpj_dkj, dxpk_dkj, dxpk_dlk;
+			double magxpj, magxpk, phi, du_dphi;
 			Molecule* molN, *molM;
 			const Box* box = cfg->box();
 			double scale;
@@ -256,8 +259,79 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 					Torsion** torsions = molN->torsions();
 					for (int m=0; m<molN->nTorsions(); ++m)
 					{
-						Messenger::error("Torsion test forces not implemented yet.\n");
-						return false;
+						Torsion* t = torsions[m];
+
+						// Grab pointers to atoms involved in angle
+						i = t->i();
+						j = t->j();
+						k = t->k();
+						l = t->l();
+
+						// Calculate vectors, ensuring we account for minimum image
+						vecji = box->minimumVector(j, i);
+						vecjk = box->minimumVector(j, k);
+						veckl = box->minimumVector(k, l);
+
+						// Calculate cross products and torsion angle formed (in radians)
+						xpj = vecji * vecjk;
+						xpk = veckl * vecjk;
+						magxpj = xpj.magAndNormalise();
+						magxpk = xpk.magAndNormalise();
+						dp = xpj.dp(xpk);
+						if (dp < -1.0) dp = -1.0;
+						else if (dp > 1.0) dp = 1.0;
+						phi = acos(dp);
+						du_dphi = t->force(phi*DEGRAD);
+
+						/* Construct derivatives of perpendicular axis (cross product) w.r.t. component vectors.
+						* E.g.
+						*	d (rij x rkj) 
+						*	------------- = rij[cp(n+2)] * U[cp(n+1)] - rij[cp(n+1)] * U[cp(n+2)]
+						*	d rkj[n]  
+						*
+						* where cp is a cylic permutation spanning {0,1,2} == {x,y,z}, and U[n] is a unit vector in the n direction.
+						* So,
+						*	d (rij x rkj) 
+						*	------------- = rij[2] * U[1] - rij[1] * U[2]
+						*	d rkj[0]  
+						*			= rij[z] * (0,1,0) - rij[y] * (0,0,1)
+						*
+						*			= (0,rij[z],0) - (0,0,rij[y])
+						*
+						*			= (0,rij[z],-rij[y])
+						*/
+
+						dxpj_dij.makeCrossProductMatrix(vecjk);
+						temp = -vecji;
+						dxpj_dkj.makeCrossProductMatrix(temp);
+						temp = -veckl;
+						dxpk_dkj.makeCrossProductMatrix(temp);
+						dxpk_dlk.makeCrossProductMatrix(vecjk);
+
+						// Construct derivatives of cos(phi) w.r.t. perpendicular axes
+						dcos_dxpj = (xpk - xpj * dp) / magxpj;
+						dcos_dxpk = (xpj - xpk * dp) / magxpk;
+
+						// Sum forces on Atoms
+						int index = i->arrayIndex();
+						intraFx[index] += du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(0));
+						intraFy[index] += du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(1));
+						intraFz[index] += du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(2));
+
+						index = j->arrayIndex();
+						intraFx[index] += du_dphi * ( dcos_dxpj.dp( -dxpj_dij.columnAsVec3(0) - dxpj_dkj.columnAsVec3(0) ) - dcos_dxpk.dp(dxpk_dkj.columnAsVec3(0)) );
+						intraFy[index] += du_dphi * ( dcos_dxpj.dp( -dxpj_dij.columnAsVec3(1) - dxpj_dkj.columnAsVec3(1) ) - dcos_dxpk.dp(dxpk_dkj.columnAsVec3(1)) );
+						intraFz[index] += du_dphi * ( dcos_dxpj.dp( -dxpj_dij.columnAsVec3(2) - dxpj_dkj.columnAsVec3(2) ) - dcos_dxpk.dp(dxpk_dkj.columnAsVec3(2)) );
+
+						index = k->arrayIndex();
+						intraFx[index] += du_dphi * ( dcos_dxpk.dp( dxpk_dkj.columnAsVec3(0) - dxpk_dlk.columnAsVec3(0) ) + dcos_dxpj.dp(dxpj_dkj.columnAsVec3(0)) );
+						intraFy[index] += du_dphi * ( dcos_dxpk.dp( dxpk_dkj.columnAsVec3(1) - dxpk_dlk.columnAsVec3(1) ) + dcos_dxpj.dp(dxpj_dkj.columnAsVec3(1)) );
+						intraFz[index] += du_dphi * ( dcos_dxpk.dp( dxpk_dkj.columnAsVec3(2) - dxpk_dlk.columnAsVec3(2) ) + dcos_dxpj.dp(dxpj_dkj.columnAsVec3(2)) );
+
+						index = l->arrayIndex();
+						intraFx[index] += du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(0));
+						intraFy[index] += du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(1));
+						intraFz[index] += du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(2));
 					}
 				}
 			}
@@ -354,22 +428,22 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 			int nFailed2 = 0, nFailed3 = 0;
 			Vec3<double> totalRatio;
 			sumError = 0.0;
-			if (cfg->moduleData().contains("ReferenceFX", uniqueName()) && cfg->moduleData().contains("ReferenceFY", uniqueName()) && cfg->moduleData().contains("ReferenceFZ", uniqueName()))
+			if (moduleData.contains("ReferenceFX", uniqueName()) && moduleData.contains("ReferenceFY", uniqueName()) && moduleData.contains("ReferenceFZ", uniqueName()))
 			{
 				// Grab reference force arrays and check sizes
-				Array<double>& referenceFx = GenericListHelper< Array<double> >::retrieve(cfg->moduleData(), "ReferenceFX", uniqueName());
+				Array<double>& referenceFx = GenericListHelper< Array<double> >::retrieve(moduleData, "ReferenceFX", uniqueName());
 				if (referenceFx.nItems() != cfg->nAtoms())
 				{
 					Messenger::error("Number of force components in ReferenceFX is %i, but the Configuration '%s' contains %i atoms.\n", referenceFx.nItems(), cfg->name(), cfg->nAtoms());
 					return false;
 				}
-				Array<double>& referenceFy = GenericListHelper< Array<double> >::retrieve(cfg->moduleData(), "ReferenceFY", uniqueName());
+				Array<double>& referenceFy = GenericListHelper< Array<double> >::retrieve(moduleData, "ReferenceFY", uniqueName());
 				if (referenceFy.nItems() != cfg->nAtoms())
 				{
 					Messenger::error("Number of force components in ReferenceFY is %i, but the Configuration '%s' contains %i atoms.\n", referenceFy.nItems(), cfg->name(), cfg->nAtoms());
 					return false;
 				}
-				Array<double>& referenceFz = GenericListHelper< Array<double> >::retrieve(cfg->moduleData(), "ReferenceFZ", uniqueName());
+				Array<double>& referenceFz = GenericListHelper< Array<double> >::retrieve(moduleData, "ReferenceFZ", uniqueName());
 				if (referenceFz.nItems() != cfg->nAtoms())
 				{
 					Messenger::error("Number of force components in ReferenceFZ is %i, but the Configuration '%s' contains %i atoms.\n", referenceFz.nItems(), cfg->name(), cfg->nAtoms());
