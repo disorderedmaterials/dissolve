@@ -15,15 +15,12 @@ o Adding intramolecular connections with Configuration::addBond(), for instance,
 Ideas / Notes / Weird Algorithm Suggestions
 -------------------------------------------
 
-** 'Unit' Testing
-Build in testing options to those Modules that really need it - e.g. Energy and Forces - and compare against computed data:
-  - Normalisation of calculated data to <b>2 and <b**2>
-  - Unit tests run in parallel mode
-  - Reproduction of test potentials, from simulated structure factors
-Can provide test data such as forces within the input file itself, provided GenericItemContainer<> specialisations provide read() and write() functions. This would be useful in allowing complete state of the code (i.e. module data from Configurations etc.) to be saved in one text file.
+** Position Restraints
+o Simple fixed atoms can be implemented with a 'frozen' flag in the Atom. Harmonic (or other) position restraints can be implemented as a separate thing, with local lists on Atoms and a master list in the Configuration.
 
 ** Partial MD
-Allow specific Species types to be targetted in MD, in effect temporarily freezing all other atoms, but allowing all atoms within the Species molecule(s) to relax.
+o Allow specific Species types to be targetted in MD, in effect temporarily freezing all other atoms, but allowing all atoms within the Species molecule(s) to relax.
+o Indivdiual molecules could be treated with 'rough' MD, only taking account of atoms in immediate neighbour cells, and would be useful after making drastic changes to intramolecular terms.
 
 ** Directional MC Moves
 Could allow definition of displacement vectors (based on molecular axes) for species, and have a module which attempts MC moves along those vectors.
@@ -46,9 +43,6 @@ For fixed atoms, can zero-point disorder be modelled effectively by introducing 
 ** Cycles
 Can store whether a Bond is involved in a cycle in the actual Bond structure, meaning randomisation / shake moves can be made accordingly. If such flags are present, can we just ignore bonds in the cycle when it comes to shakes and invent a 'ring' potential, which defines the maximum deviation of atoms from the general plane of the ring? 
 
-** Dynamic Bonding
-Could dynamic bonding be implemented? If a simple master list of Bonds / Angles is employed as suggested above then we can create / destroy them at will.
-
 ** Cache Misses
 At the start of a Cell-based loop calculation, is it worthwhile copying all neighbouring cell data to a local Grain array, and trying to avoid cache misses? AKS mentioned before that this seemed to be beneficial. Worth trying. May work better with, for instance, larger nShakesPerGrain in GrainShake. Adapt ChangeStore to automatically create list of Grains in Cell neighbours ready for calculation? Would also work well for Molecule-based loops.
 
@@ -56,4 +50,4 @@ At the start of a Cell-based loop calculation, is it worthwhile copying all neig
 For an alkane, for instance, the pairpotential for the terminal H may be different from the methylene H - to what extent does this affect the possible fit?  WOuld be nice to refine a system with one potential for all H, then split into CH3 and CH2 potentials to find out.
 
 ** Potential Library
-Keep standard (i.e. already perturbed) potentials available for things like water?
+Keep standard (i.e. already fitted) potentials available for standard solvents etc.
