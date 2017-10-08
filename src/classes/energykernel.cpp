@@ -698,7 +698,7 @@ double EnergyKernel::energy(const Torsion* t)
 }
 
 // Return intramolecular energy for the supplied Atom
-double EnergyKernel::intraEnergy(const Atom* i, double termFactor)
+double EnergyKernel::intraEnergy(const Atom* i)
 {
 	// If no Atom is given, return zero
 	if (i == NULL) return 0.0;
@@ -713,5 +713,9 @@ double EnergyKernel::intraEnergy(const Atom* i, double termFactor)
 	RefListIterator<Angle,bool> angleIterator(i->angles());
 	while (Angle* a = angleIterator.iterate()) intraEnergy += energy(a);
 
-	return intraEnergy*termFactor;
+	// Add energy from Torsion terms
+	RefListIterator<Torsion,double> torsionIterator(i->torsions());
+	while (Torsion* t = torsionIterator.iterate()) intraEnergy += energy(t);
+
+	return intraEnergy;
 }

@@ -116,7 +116,7 @@ class EnergyKernel
 	// Return Torsion energy
 	double energy(const Torsion* t);
 	// Return intramolecular energy for the supplied Atom
-	double intraEnergy(const Atom* i, double termFactor = 1.0);
+	double intraEnergy(const Atom* i);
 
 
 	/*
