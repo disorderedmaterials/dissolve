@@ -204,7 +204,7 @@ void Atom::addBond(Bond* bond)
 }
 
 // Return reference list of Bonds
-RefList<Bond,bool> Atom::bonds() const
+const RefList<Bond,bool>& Atom::bonds() const
 {
 	return bonds_;
 }
@@ -221,7 +221,7 @@ void Atom::addAngle(Angle* angle)
 }
 
 // Return reference list of Angles
-RefList<Angle,bool> Atom::angles() const
+const RefList<Angle,bool>& Atom::angles() const
 {
 	return angles_;
 }
@@ -251,6 +251,12 @@ void Atom::addTorsion(Torsion* torsion, double scaling14)
 		if (torsion->j() != this) exclusions_.addExclusive(torsion->j());
 		if (torsion->k() != this) exclusions_.addExclusive(torsion->k());
 	}
+}
+
+// Return reference list of Torsions
+const RefList<Torsion,double>& Atom::torsions() const
+{
+	return torsions_;
 }
 
 // Return scaling factor to employ with specified Atom

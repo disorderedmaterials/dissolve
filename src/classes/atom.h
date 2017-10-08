@@ -131,13 +131,15 @@ class Atom : public DynamicArrayObject<Atom>
 	// Add reference to specified Bond
 	void addBond(Bond* bond);
 	// Return reference list of Bonds
-	RefList<Bond,bool> bonds() const;
+	const RefList<Bond,bool>& bonds() const;
 	// Add reference to specified Angle
 	void addAngle(Angle* angle);
 	// Return reference list of Angles
-	RefList<Angle,bool> angles() const;
+	const RefList<Angle,bool>& angles() const;
 	// Add reference to specified Torsion
 	void addTorsion(Torsion* torsion, double scaling14);
+	// Return reference list of Torsions
+	const RefList<Torsion,double>& torsions() const;
 	// Return scaling factor to employ with specified Atom
 	double scaling(Atom* j) const;
 
