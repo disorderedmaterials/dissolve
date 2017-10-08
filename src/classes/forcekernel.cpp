@@ -603,7 +603,7 @@ void ForceKernel::forces(const Angle* a)
 // Return Torsion force
 void ForceKernel::forces(const Torsion* t)
 {
-	Vec3<double> vecji, vecjk, veckl, xpj, xpk, dcos_dxpj, dcos_dxpk, temp, force;
+	Vec3<double> vecji, vecjk, veckl, xpj, xpk, dcos_dxpj, dcos_dxpk, temp;
 	Matrix3 dxpj_dij, dxpj_dkj, dxpk_dkj, dxpk_dlk;
 	double magxpj, magxpk, dp, phi, du_dphi;
 	
