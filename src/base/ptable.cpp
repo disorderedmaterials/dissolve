@@ -261,12 +261,13 @@ bool PeriodicTable::loadParameters(const char* filename)
 		// Create new isotope definition for target element
 		params = elements_[Z].addParameters();
 		params->setName(parser.argc(1));
-		params->setDescription(parser.argc(5));
 		params->setCharge(parser.argd(2));
-		for (int n=3; n<parser.nArgs(); ++n) params->setParameter(n-3, parser.argd(n));
-		
+		params->setParameter(0, parser.argd(3));
+		params->setParameter(1, parser.argd(4));
+		params->setDescription(parser.argc(5));
+
 		++count;
-		
+
 		if (parser.eofOrBlank()) break;;
 	}
 	parser.closeFiles();
@@ -284,7 +285,7 @@ bool PeriodicTable::loadParameters(const char* filename)
 		params->setName(elements_[Z].symbol());
 		params->setDescription(elements_[Z].name());
 		params->setParameter(0, 0.1);
-		params->setParameter(1, 2.0);
+		params->setParameter(1, 3.0);
 	}
 
 	return true;
