@@ -57,13 +57,16 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 		// Setup process pool - must do this to ensure we are using all available processes
 		procPool.assignProcessesToGroups(cfg->processPool());
 
+		// Get reference to relevant module data
+		GenericList& moduleData = configurationLocal_ ? cfg->moduleData() : duq.processingModuleData();
+
 		// Retrieve control parameters from Configuration
-		const bool saveData = GenericListHelper<bool>::retrieve(cfg->moduleData(), "Save", uniqueName(), options_.valueAsBool("Save"));
-		const bool testMode = GenericListHelper<bool>::retrieve(cfg->moduleData(), "Test", uniqueName(), options_.valueAsBool("Test"));
-		const bool testAnalytic = GenericListHelper<bool>::retrieve(cfg->moduleData(), "TestAnalytic", uniqueName(), options_.valueAsBool("TestAnalytic"));
-		const bool testInter = GenericListHelper<bool>::retrieve(cfg->moduleData(), "TestInter", uniqueName(), options_.valueAsBool("TestInter"));
-		const bool testIntra = GenericListHelper<bool>::retrieve(cfg->moduleData(), "TestIntra", uniqueName(), options_.valueAsBool("TestIntra"));
-		const double testThreshold = GenericListHelper<double>::retrieve(cfg->moduleData(), "TestThreshold", uniqueName(), options_.valueAsDouble("TestThreshold"));
+		const bool saveData = GenericListHelper<bool>::retrieve(moduleData, "Save", uniqueName(), options_.valueAsBool("Save"));
+		const bool testMode = GenericListHelper<bool>::retrieve(moduleData, "Test", uniqueName(), options_.valueAsBool("Test"));
+		const bool testAnalytic = GenericListHelper<bool>::retrieve(moduleData, "TestAnalytic", uniqueName(), options_.valueAsBool("TestAnalytic"));
+		const bool testInter = GenericListHelper<bool>::retrieve(moduleData, "TestInter", uniqueName(), options_.valueAsBool("TestInter"));
+		const bool testIntra = GenericListHelper<bool>::retrieve(moduleData, "TestIntra", uniqueName(), options_.valueAsBool("TestIntra"));
+		const double testThreshold = GenericListHelper<double>::retrieve(moduleData, "TestThreshold", uniqueName(), options_.valueAsDouble("TestThreshold"));
 
 		// Calculate the total forces
 		if (testMode)
