@@ -13,9 +13,13 @@ EndSpecies
 Configuration 'liquid'
   Multiplier  10000
   Density  0.021300  atoms/A3
-  Species  'Argon'  1.0
+  SpeciesInfo  'Argon'  1.0
   UseOutputAsInput
+  Module Energy
+  EndModule
   Module AtomShake
+  EndModule
+  Module Energy
   EndModule
 EndConfiguration
 
@@ -49,5 +53,5 @@ PairPotentials
 EndPairPotentials
 
 Simulation
-  MaxIterations 5
+  MaxIterations 50
 EndSimulation
