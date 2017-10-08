@@ -83,7 +83,6 @@ void ScatteringMatrix::generatePartials()
 	// Clear current partials
 	for (int n=0; n<partials_.nItems(); ++n) partials_[n].clear();
 
-		printf("lkjlkj\n");
 	// Loop over rows in A_ / data_
 	int row = 0;
 	RefListIterator<Data,bool> dataIterator(data_);
@@ -98,7 +97,6 @@ void ScatteringMatrix::generatePartials()
 
 		++row;
 	}
-		printf("lkjlkj2123\n");
 
 	for (int n=0; n<partials_.nItems(); ++n) partials_[n].save(partials_[n].name());
 }
@@ -149,7 +147,7 @@ void ScatteringMatrix::initialise(const List<AtomType>& types)
 	int index = 0;
 	for (Pair<AtomType*,AtomType*>* pair = typePairs_.first(); pair != NULL; pair = pair->next)
 	{
-		partials_[index].setName(CharString("ScatteringMatrixPartial-%s-%s.txt", pair->a->name(), pair->b->name()));
+		partials_[index].setName(CharString("ScatteringMatrixPartial-%s-%s.sq", pair->a->name(), pair->b->name()));
 		++index;
 	}
 }
