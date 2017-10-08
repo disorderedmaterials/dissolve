@@ -530,6 +530,12 @@ bool ProcessPool::assignProcessesToGroups(ProcessPool& groupsSource)
 	groupCommunicator_ = 0;
 	leaderGroup_ = 0;
 	leaderCommunicator_ = 0;
+	groupRank_ = -1;
+	groupIndex_ = -1;
+
+	// Reset the groupLeaders and processGroups arrays
+	groupLeaders_.clear();
+	processGroups_.clear();
 #endif
 
 	// Copy over the number of allowable groups from the source ProcessPool

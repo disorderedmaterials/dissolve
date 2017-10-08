@@ -95,10 +95,10 @@ class ProcessPool
 
 
 	/*
-	 * Timers
+	 * Timing
 	 */
 	private:
-	// Communication Timers
+	// Communication Timer
 	Timer timer_;
 
 	public:
