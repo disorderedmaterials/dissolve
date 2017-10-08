@@ -28,7 +28,6 @@
 #include "classes/energykernel.h"
 #include "base/processpool.h"
 #include "base/timer.h"
-#include "math/matrix4.h"
 
 // Perform setup tasks for module
 bool AtomShakeModule::setup(ProcessPool& procPool)
@@ -120,7 +119,7 @@ bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
 
 			// Calculate reference energy for atom, including intramolecular terms
 			currentEnergy = kernel.energy(i, ProcessPool::OverGroupProcesses);
-			intraEnergy = kernel.intraEnergy(i, termScale);
+			intraEnergy = kernel.intraEnergy(i) * termScale;
 
 			// Loop over number of shakes per atom
 			for (shake=0; shake<nShakesPerAtom; ++shake)
@@ -131,7 +130,7 @@ bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
 				// Translate atom and calculate new energy
 				i->translateCoordinates(rDelta);
 				newEnergy = kernel.energy(i, ProcessPool::OverGroupProcesses);
-				newIntraEnergy = kernel.intraEnergy(i, termScale);
+				newIntraEnergy = kernel.intraEnergy(i) * termScale;
 				
 				// Trial the transformed atom position
 				delta = (newEnergy + newIntraEnergy) - (currentEnergy + intraEnergy);
@@ -186,7 +185,7 @@ bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		stepSize *= rate/targetAcceptanceRate;
 
 		// Clamp step size
-// 		if (stepSize_ < 0.05) stepSize_ = 0.05;
+// 		if (stepSize > 0.5) stepSize = 0.5;
 // 		else if (stepSize_ > maxTranslationStep_) stepSize_ = maxTranslationStep_;
 // 		if (rotationStep_ < 3.0) rotationStep_ = 3.0;
 	}
