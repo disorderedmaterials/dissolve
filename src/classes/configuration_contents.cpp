@@ -107,6 +107,8 @@ Molecule* Configuration::addMolecule(Species* sp)
 		Torsion* t = addTorsion(newMolecule, i, j, k, l);
 		t->setSpeciesTorsion(spt);
 	}
+
+	return newMolecule;
 }
 
 // Return number of Molecules in Configuration
