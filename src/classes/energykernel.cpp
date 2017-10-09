@@ -372,7 +372,7 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::Lo
 				else
 				{
 					scale = ii->scaling(jj);
-					if (scale < 1.0e-3) totalEnergy += potentialMap_.energy(jj, ii, sqrt(rSq)) * scale;
+					if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(jj, ii, sqrt(rSq)) * scale;
 				}
 			}
 		}
