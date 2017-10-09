@@ -336,7 +336,7 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::Lo
 				else
 				{
 					scale = ii->scaling(jj);
-					if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(jj, ii, sqrt(rSq));
+					if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(jj, ii, sqrt(rSq)) * scale;
 				}
 			}
 		}
@@ -633,7 +633,6 @@ double EnergyKernel::correct(const Atom* i)
 		scale = 1.0 - i->scaling(j);
 		if (scale > 1.0e-3)
 		{
-			
 			r = box_->minimumDistance(rI, j->r());
 			correctionEnergy += potentialMap_.energy(i, j, r) * scale;
 		}

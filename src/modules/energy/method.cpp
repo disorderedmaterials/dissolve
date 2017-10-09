@@ -116,8 +116,9 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 						scale = i->scaling(j);
 						if (scale < 1.0e-3) continue;
 
-						if (testAnalytic) correctInterEnergy += potentialMap.analyticEnergy(i, j, box->minimumDistance(i, j));
-						else correctInterEnergy += potentialMap.energy(i, j, box->minimumDistance(i, j));
+						if (testAnalytic) correctInterEnergy += potentialMap.analyticEnergy(i, j, box->minimumDistance(i, j)) * scale;
+						else correctInterEnergy += potentialMap.energy(i, j, box->minimumDistance(i, j)) * scale;
+						if (scale > 0.75) printf("%i  %i  %f  %f  %f\n", i->arrayIndex()+1, j->arrayIndex()+1, box->minimumDistance(i, j), potentialMap.energy(i, j, box->minimumDistance(i, j))*scale, scale);
 					}
 				}
 

@@ -146,8 +146,8 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 						r = sqrt(magjisq);
 						vecji /= r;
 
-						if (testAnalytic) vecji *= potentialMap.analyticForce(molN->atom(ii), molN->atom(jj), r);
-						else vecji *= potentialMap.force(molN->atom(ii), molN->atom(jj), r);
+						if (testAnalytic) vecji *= potentialMap.analyticForce(molN->atom(ii), molN->atom(jj), r) * scale;
+						else vecji *= potentialMap.force(molN->atom(ii), molN->atom(jj), r) * scale;
 						interFx[i->arrayIndex()] += vecji.x;
 						interFy[i->arrayIndex()] += vecji.y;
 						interFz[i->arrayIndex()] += vecji.z;
