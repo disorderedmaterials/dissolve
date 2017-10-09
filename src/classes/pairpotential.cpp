@@ -48,7 +48,7 @@ PairPotential::PairPotential() : ListItem<PairPotential>()
 }
 
 // Short-range typeKeywords
-const char* ShortRangeTypeKeywords[] = { "None", "LJ" };
+const char* ShortRangeTypeKeywords[] = { "None", "LJ", "LJGeometric" };
 
 // Convert text string to ShortRangeType
 PairPotential::ShortRangeType PairPotential::shortRangeType(const char* s)
@@ -190,6 +190,17 @@ bool PairPotential::setParameters(AtomType* typeI, AtomType* typeJ)
 			chargeI_ = paramsI->charge();
 			chargeJ_ = paramsJ->charge();
 			break;
+		case (PairPotential::LennardJonesGeometricType):
+			/*
+			 * Combine parameters (Geometric):
+			 * Parameter 0 = Epsilon
+			 * Parameter 1 = Sigma
+			 */
+			parameters_[0] = sqrt(paramsI->parameter(0) * paramsJ->parameter(0));
+			parameters_[1] = sqrt(paramsI->parameter(1) * paramsJ->parameter(1));
+			chargeI_ = paramsI->charge();
+			chargeJ_ = paramsJ->charge();
+			break;
 		default:
 			Messenger::error("Short-range type %i is not accounted for in PairPotential::setParameters().\n", shortRangeType_);
 			return false;
@@ -312,7 +323,7 @@ double PairPotential::chargeJ() const
 double PairPotential::analyticShortRangeEnergy(double r, PairPotential::ShortRangeType type)
 {
 	if (type == PairPotential::NoInteractionType) return 0.0;
-	else if (type == PairPotential::LennardJonesType)
+	else if ((type == PairPotential::LennardJonesType) || (type == PairPotential::LennardJonesGeometricType))
 	{
 		/*
 		 * Standard Lennard-Jones potential
@@ -344,7 +355,7 @@ double PairPotential::analyticShortRangeEnergy(double r, PairPotential::ShortRan
 double PairPotential::analyticShortRangeForce(double r, PairPotential::ShortRangeType type)
 {
 	if (type == PairPotential::NoInteractionType) return 0.0;
-	else if (type == PairPotential::LennardJonesType)
+	else if ((type == PairPotential::LennardJonesType) || (type == PairPotential::LennardJonesGeometricType))
 	{
 		/*
 		 * Standard Lennard-Jones potential

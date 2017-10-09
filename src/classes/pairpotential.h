@@ -39,7 +39,8 @@ class PairPotential : public ListItem<PairPotential>
 	enum ShortRangeType
 	{
 		NoInteractionType,		/* No short-range dispersive forces */
-		LennardJonesType,		/* Lennard-Jones 12-6 form */
+		LennardJonesType,		/* Lennard-Jones 12-6 form with Lorentz-Berthelot combination rules */
+		LennardJonesGeometricType,	/* Lennard-Jones 12-6 form with Geometric combination rules */
 		nShortRangeTypes		/* Number of short-range interaction types */
 	};
 	// Convert text string to ShortRangeType
