@@ -94,6 +94,7 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 			Molecule* molN, *molM;
 			const Box* box = cfg->box();
 			double scale;
+			const double cutoff = duq.potentialMap().range();
 
 			Timer testTimer;
 
@@ -112,12 +113,16 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 					{
 						j = molN->atom(jj);
 
+						// Get interatomic distance
+						r = box->minimumDistance(i, j);
+						if (r > cutoff) continue;
+
 						// Get intramolecular scaling of atom pair
 						scale = i->scaling(j);
 						if (scale < 1.0e-3) continue;
 
-						if (testAnalytic) correctInterEnergy += potentialMap.analyticEnergy(i, j, box->minimumDistance(i, j)) * scale;
-						else correctInterEnergy += potentialMap.energy(i, j, box->minimumDistance(i, j)) * scale;
+						if (testAnalytic) correctInterEnergy += potentialMap.analyticEnergy(i, j, r) * scale;
+						else correctInterEnergy += potentialMap.energy(i, j, r) * scale;
 					}
 				}
 
@@ -135,8 +140,12 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 						{
 							j = molM->atom(jj);
 
-							if (testAnalytic) correctInterEnergy += potentialMap.analyticEnergy(i, j, box->minimumDistance(i, j));
-							else correctInterEnergy += potentialMap.energy(i, j, box->minimumDistance(i, j));
+							// Get interatomic distance and check cutoff
+							r = box->minimumDistance(i, j);
+							if (r > cutoff) continue;
+
+							if (testAnalytic) correctInterEnergy += potentialMap.analyticEnergy(i, j, r);
+							else correctInterEnergy += potentialMap.energy(i, j, r);
 						}
 					}
 				}
