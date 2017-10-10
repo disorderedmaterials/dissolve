@@ -133,7 +133,7 @@ template <> class GenericItemDataWriter< Array<double> >
 	// Constructor
 	GenericItemDataWriter< Array<double> >(LineParser& parser, GenericItemContainer< Array<double> >* container, bool& success)
 	{
-		parser.writeLineF("%16.9e\n", container->data.nItems());
+		parser.writeLineF("%i\n", container->data.nItems());
 		double* array = container->data.array();
 		for (int n=0; n<container->data.nItems(); ++n)
 		{
@@ -180,7 +180,6 @@ template <> class GenericItemDataWriter< Array2D<double> >
 		}
 	}
 };
-
 
 /*
  * GenericItemWriter
