@@ -132,24 +132,31 @@ EndSpecies
 
 # Define Configuration
 Configuration  'Liquid'
-  CellLengths  30.769064857500  46.153597286200  30.769064857500
-  Multiplier  200
+  CellLengths  30.769064857500   46.153597286200  30.769064857500
+  Multiplier  1
   SpeciesInfo  'Hexane'  1.0
-  InputCoordinates  dlpoly  'dlpoly/CONFIG'
+  InputCoordinates  dlpoly  'dlpoly_one/CONFIG'
   RDFBinWidth 0.03
 EndConfiguration
 
-Module  Energy
+Module Energy
   Test  On
   Configuration  'Liquid'
-  TestReferenceInter  -3305.389		# LJ (-5124.720) + Coul (2020.063) + LJ correct (-200.732)
-  TestReferenceIntra  11488.122
+  TestReferenceIntra  71.59299
+  TestReferenceInter  14.32518630	# LJ (3.504968) + Coul (10.081520) + LJCorrect (-0.00501830)
+EndModule
+
+Module Forces
+  Test  On
+  Configuration  'Liquid'
+  TestReference  dlpoly  'dlpoly_one/REVCON'
+  TestThreshold  0.3
 EndModule
 
 # Pair Potentials
 PairPotentials
   Range  12.000000
-  Delta  0.0500000
+  Delta  0.05000
   TruncationWidth  2.000000
   Parameters  'CT'   0.0       0.276144      3.500000  
   Parameters  'HC'   0.0       0.125520      2.500000 

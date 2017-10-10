@@ -1,9 +1,12 @@
 Unit Test 07 - Liquid Hexane
 ============================
 
-Cubic box of 200 hexane molecules, 4000 atoms total.
+Orthorhombic box of hexane molecules inc cos3 torsion terms.
 
 Specific inputs are:
 
-torsions.txt - Testing explicitly the energy and forces for the Cos3 torsions in the system.
+one.txt - Energy and forces of a single molecule in a large box.
+full.txt - Energy and forces of 200 molecules.
+torsions.txt - Explicit testing of energy and forces for the Cos3 torsions only (200 molecules).
 
+In all of the above a straight Coulomb sum is used with no truncation.
