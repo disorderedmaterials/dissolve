@@ -10,10 +10,14 @@ o Accumulate timing information for each module, displaying averages and total i
 o Establish proper limit for switching between RDF calculation methods
 o Rework Configuration::setup() to account for all types of initailisation - random config, loaded coordinates, or loaded atoms/coordinates/connectivity.
 o Adding intramolecular connections with Configuration::addBond(), for instance, only adds involved Atoms to Atom exclusion list, whereas strictly-speaking we should exclude 1-3 and scale 1-4 interactions, even if there is no explicit potential term defined across those atoms.
+o By default, add 'Natural' isotopologue to all Species?
 
 -------------------------------------------
 Ideas / Notes / Weird Algorithm Suggestions
 -------------------------------------------
+
+** Long-Range RDF / PairPotential Calculation
+Partition each Cell up in to further subdivisions and calculate density of each atomtype within that space. Beyond the defined pairpotential cutoff, RDFs could be somehow constructed using this average density instead of specific atom information, reducing the number of checks that need to be performed.
 
 ** Position Restraints
 o Simple fixed atoms can be implemented with a 'frozen' flag in the Atom. Harmonic (or other) position restraints can be implemented as a separate thing, with local lists on Atoms and a master list in the Configuration.
