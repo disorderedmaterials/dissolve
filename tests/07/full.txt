@@ -142,15 +142,22 @@ EndConfiguration
 Module  Energy
   Test  On
   Configuration  'Liquid'
-  TestReferenceInter  -3305.389		# LJ (-5124.720) + Coul (2020.063) + LJ correct (-200.732)
+  TestReferenceInter  -2903.925000	# LJ (-5124.720) + Coul (2020.063) - LJ correct (-200.732)
   TestReferenceIntra  11488.122
+EndModule
+
+Module Forces
+  Test  On
+  Configuration  'Liquid'
+  TestReference  dlpoly  'dlpoly/REVCON'
+  TestThreshold  0.3
 EndModule
 
 # Pair Potentials
 PairPotentials
   Range  12.000000
-  Delta  0.0500000
-  TruncationWidth  2.000000
+  Delta  0.01000
+  TruncationWidth  0.000000
   Parameters  'CT'   0.0       0.276144      3.500000  
   Parameters  'HC'   0.0       0.125520      2.500000 
   GenerateAll  'LJGeometric'
