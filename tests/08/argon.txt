@@ -1,0 +1,103 @@
+# Liquid Argon Example
+
+# Species Definitions
+Species 'Argon'
+  # Atoms
+  Atom    1   Ar     0.000    0.000    0.000    'Ar'
+
+  # Isotopologues
+  Isotopologue  'Ar36'  Ar=36
+EndSpecies
+
+# Define Configuration
+Configuration 'liquid'
+  Multiplier  10000
+  Density  0.021300  atoms/A3
+  SpeciesInfo  'Argon'  1.0
+  Module  Energy
+    Test  On
+    TestReferenceInter  2.148969784e+18
+    TestThreshold  1.0e9
+  EndModule
+  Module AtomShake
+  EndModule
+  Module  Energy
+    Test  On
+    TestReferenceInter  2.963155030e+16
+    TestThreshold  1.0e7
+  EndModule
+  Module AtomShake
+  EndModule
+  Module  Energy
+    Test  On
+    TestReferenceInter  2.813288157e+16
+    TestThreshold  1.0e7
+  EndModule
+  Module AtomShake
+  EndModule
+  Module  Energy
+    Test  On
+    TestReferenceInter  7.771067908e+14
+    TestThreshold  1.0e5
+  EndModule
+  Module AtomShake
+  EndModule
+  Module  Energy
+    Test  On
+    TestReferenceInter  2.363090501e+14
+    TestThreshold  1.0e5
+  EndModule
+  Module AtomShake
+  EndModule
+  Module  Energy
+    Test  On
+    TestReferenceInter  4.409316564e+13
+    TestThreshold  1.0e4
+  EndModule
+  Module AtomShake
+  EndModule
+  Module  Energy
+    Test  On
+    TestReferenceInter  2.664743050e+13
+    TestThreshold  1.0e4
+  EndModule
+  Module AtomShake
+  EndModule
+  Module  Energy
+    Test  On
+    TestReferenceInter  2.318272628e+13
+    TestThreshold  1.0e4
+  EndModule
+  Module AtomShake
+  EndModule
+  Module  Energy
+    Test  On
+    TestReferenceInter  9.152616812e+12
+    TestThreshold  1.0e3
+  EndModule
+  Module AtomShake
+  EndModule
+  Module  Energy
+    Test  On
+    TestReferenceInter  8.116318000e+12
+    TestThreshold  1.0e3
+  EndModule
+  Module AtomShake
+  EndModule
+  Module  Energy
+    Test  On
+    TestReferenceInter  1.755766478e+12
+    TestThreshold  1.0e3
+  EndModule
+EndConfiguration
+
+# Pair Potentials
+PairPotentials
+  Generate  'LJ'  'Ar'  'Ar'
+EndPairPotentials
+
+Simulation
+  MaxIterations 1
+  Seed  123456789
+EndSimulation
+
