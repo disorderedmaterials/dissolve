@@ -3,9 +3,9 @@
 # Define Water Molecule
 Species 'Water'
   # Atoms
-  Atom    1    O     0.015   -0.009   -0.373   'OW'
-  Atom    2    H     0.757    0.013    0.217   'HW'
-  Atom    3    H    -0.771   -0.003    0.157   'HW'
+  Atom    1    O     0.015   -0.009   -0.373   'OW'	-0.82
+  Atom    2    H     0.757    0.013    0.217   'HW'	0.41
+  Atom    3    H    -0.771   -0.003    0.157   'HW'	0.41
 
   # Intramolecular Terms
   Bond    Harmonic  1    2     4431.53   1.012
@@ -28,7 +28,7 @@ Configuration  'Bulk'
   Module Energy
     Test on
     TestAnalytic on
-    TestReferenceInter  -27393.217815     # 1770.1666370083758 LJ + -29163.384451743802 Coulomb
+    TestReferenceInter  -27393.217815     # 1770.1666370083758 LJ + -29163.384451743802 Coulomb (LJ correction accounted for)
     TestReferenceIntra  5584.45180873  
   EndModule
 
@@ -36,7 +36,7 @@ Configuration  'Bulk'
   Module Forces
     Test on
     TestAnalytic  on
-    TestThreshold  0.1
+    TestThreshold  3.0
     TestReference  dlpoly  'dlpoly_full/REVCON'
   EndModule
 EndConfiguration
@@ -44,10 +44,11 @@ EndConfiguration
 # Pair Potentials
 PairPotentials
   Range  15.000000
-  Delta  0.050000
-  TruncationWidth  2.000000
+  Delta  0.005
+  TruncationWidth  0.0
   Parameters  'OW'  -0.82      0.6503    3.165492
   Parameters  'HW'  0.41       0.0       0.0
+  IncludeCoulomb  False
   Generate  'LJ'  'OW'  'OW'
   Generate  'LJ'  'OW'  'HW'
   Generate  'LJ'  'HW'  'HW'

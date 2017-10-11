@@ -43,7 +43,7 @@ EndConfiguration
 # Pair Potentials
 PairPotentials
   Range  15.000000
-  TruncationWidth  0.0000000
+  TruncationWidth  0.0
   Delta  0.001
   Parameters  'OW'  0.0      0.6503    3.165492
   Parameters  'HW'  0.0      0.0       0.0

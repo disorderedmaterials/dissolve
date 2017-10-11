@@ -42,8 +42,40 @@ forces, with charges and bond / angle force constants set to zero. The truncatio
 employed in DL_POLY is a more advanced form (Fennell and Gezelter) than that employed in
 the present code (unmodified truncated and shifted potential) and Coulomb terms are
 calculated analytically in DL_POLY so energies and forces are expected to show slightly
-higher errors, and higher threshold values are used for the corresponding tests.
-If Coulomb terms are not included in the tabulated pair potentials, 
+higher errors, and higher threshold values are used for the corresponding tests. At default
+threshold the following atoms fail the test (calculated vs production):
+
+ 452 - errors are -2.26088950e-02 ( 0.00%)  2.42622085e-02 ( 0.00%) -5.42386749e-02 ( 2.53%) (x y z) 10J/mol (inter)
+             0.00000000e+00 ( 0.00%)  0.00000000e+00 ( 0.00%)  0.00000000e+00 ( 0.00%) (x y z) 10J/mol (intra)
+ 568 - errors are  7.77534142e-03 ( 0.00%)  4.58754788e-02 ( 0.14%)  1.08432691e-02 ( 0.00%) (x y z) 10J/mol (inter)
+             0.00000000e+00 ( 0.00%)  0.00000000e+00 ( 0.00%)  0.00000000e+00 ( 0.00%) (x y z) 10J/mol (intra)
+ 597 - errors are  1.04068701e-02 ( 0.00%) -7.24389001e-03 (-0.00%)  6.37889357e-03 (-0.41%) (x y z) 10J/mol (inter)
+             0.00000000e+00 ( 0.00%)  0.00000000e+00 ( 0.00%)  0.00000000e+00 ( 0.00%) (x y z) 10J/mol (intra)
+ 730 - errors are  1.53595048e-02 ( 0.00%) -1.13314188e-01 ( 0.28%) -1.45349920e-01 (-0.00%) (x y z) 10J/mol (inter)
+             0.00000000e+00 ( 0.00%)  0.00000000e+00 ( 0.00%)  0.00000000e+00 ( 0.00%) (x y z) 10J/mol (intra)
+ 770 - errors are  3.59656675e-03 (-0.00%)  9.78084338e-03 (-0.00%)  1.32556444e-02 ( 0.21%) (x y z) 10J/mol (inter)
+             0.00000000e+00 ( 0.00%)  0.00000000e+00 ( 0.00%)  0.00000000e+00 ( 0.00%) (x y z) 10J/mol (intra)
+1064 - errors are -4.53496934e-03 (-0.00%)  3.62226922e-03 (-0.00%) -4.79802143e-03 (-3.41%) (x y z) 10J/mol (inter)
+             0.00000000e+00 ( 0.00%)  0.00000000e+00 ( 0.00%)  0.00000000e+00 ( 0.00%) (x y z) 10J/mol (intra)
+1702 - errors are  9.60944033e-02 (-0.10%)  1.18831410e-02 ( 0.00%) -2.82873519e-02 (-0.00%) (x y z) 10J/mol (inter)
+             0.00000000e+00 ( 0.00%)  0.00000000e+00 ( 0.00%)  0.00000000e+00 ( 0.00%) (x y z) 10J/mol (intra)
+1758 - errors are  2.60961265e-02 (-0.45%)  1.47073429e-02 (-0.00%)  5.25665320e-03 ( 0.00%) (x y z) 10J/mol (inter)
+             0.00000000e+00 ( 0.00%)  0.00000000e+00 ( 0.00%)  0.00000000e+00 ( 0.00%) (x y z) 10J/mol (intra)
+1984 - errors are  1.20473136e-01 (-0.17%) -8.59608076e-02 (-0.00%) -9.81909289e-04 ( 0.00%) (x y z) 10J/mol (inter)
+             0.00000000e+00 ( 0.00%)  0.00000000e+00 ( 0.00%)  0.00000000e+00 ( 0.00%) (x y z) 10J/mol (intra)
+2198 - errors are -1.02874885e-02 ( 0.00%) -1.01688799e-02 (-0.19%) -1.48896312e-02 (-0.00%) (x y z) 10J/mol (inter)
+             0.00000000e+00 ( 0.00%)  0.00000000e+00 ( 0.00%)  0.00000000e+00 ( 0.00%) (x y z) 10J/mol (intra)
+2211 - errors are -2.73379772e-02 (-0.17%)  1.34296831e-02 ( 0.00%) -1.96679543e-02 ( 0.00%) (x y z) 10J/mol (inter)
+             0.00000000e+00 ( 0.00%)  0.00000000e+00 ( 0.00%)  0.00000000e+00 ( 0.00%) (x y z) 10J/mol (intra)
+2256 - errors are -1.82009278e-02 ( 0.19%)  6.22658730e-03 ( 0.00%) -1.66562425e-04 (-0.00%) (x y z) 10J/mol (inter)
+             0.00000000e+00 ( 0.00%)  0.00000000e+00 ( 0.00%)  0.00000000e+00 ( 0.00%) (x y z) 10J/mol (intra)
+2902 - errors are  1.70960645e-02 (-0.00%)  6.62033672e-03 ( 0.10%)  2.00256694e-02 ( 0.00%) (x y z) 10J/mol (inter)
+             0.00000000e+00 ( 0.00%)  0.00000000e+00 ( 0.00%)  0.00000000e+00 ( 0.00%) (x y z) 10J/mol (intra)
+2960 - errors are -4.36764160e-03 ( 0.00%)  8.48315814e-03 (-0.00%)  1.60179865e-02 (-0.17%) (x y z) 10J/mol (inter)
+             0.00000000e+00 ( 0.00%)  0.00000000e+00 ( 0.00%)  0.00000000e+00 ( 0.00%) (x y z) 10J/mol (intra)
+
+Test threshold of 3.5% is necessary to avoid failure. If Coulomb terms are not included in the tabulated pair potentials, 
+the test succeeds at standard threshold.
 
 4) Coulomb Terms Only (direct Coulomb sum)
 
@@ -55,5 +87,6 @@ is employed with no truncation scheme.
 
 Simulations employing full intramolecular and interatomic contributions to energy and
 forces. Coulomb terms are calculated employing the truncated and shifted form, so test
-thresholds are adjusted to match.
+thresholds are adjusted to match. PairPotential truncation width is set to 0.0 for
+consitency with calculation of LJ terms in DL_POLY.
 
