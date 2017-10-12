@@ -559,7 +559,7 @@ bool DUQ::saveRestart(const char* filename)
 		while (Module* module = configModuleIterator.iterate())
 		{
 			// For each Module, print all available data in the list (unless it is flagged not to)
-			RefList<GenericItem,bool> moduleData = cfg->moduleData().findWithPrefix(module->uniqueName());
+			RefList<GenericItem,bool> moduleData = cfg->moduleData().listWithPrefix(module->uniqueName());
 			for (RefListItem<GenericItem,bool>* ri = moduleData.first(); ri != NULL; ri = ri->next)
 			{
 				GenericItem* item = ri->item;
@@ -576,7 +576,7 @@ bool DUQ::saveRestart(const char* filename)
 	while (Module* module = processModuleIterator.iterate())
 	{
 		// For each Module, print all available data in the list (unless it is flagged not to)
-		RefList<GenericItem,bool> moduleData = processingModuleData_.findWithPrefix(module->uniqueName());
+		RefList<GenericItem,bool> moduleData = processingModuleData_.listWithPrefix(module->uniqueName());
 		for (RefListItem<GenericItem,bool>* ri = moduleData.first(); ri != NULL; ri = ri->next)
 		{
 			GenericItem* item = ri->item;
