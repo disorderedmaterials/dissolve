@@ -113,18 +113,6 @@ class PartialsModule : public Module
 	/*
 	 * Members / Functions
 	 */
-	private:
-	// Test supplied PartialSets against each other
-	bool testReferencePartials(PartialSet& setA, PartialSet& setB, double testThreshold);
-	// Test reference data against calculated PartialSet set
-	bool testReferencePartials(GenericList& sourceModuleData, PartialSet& partialgr, const char* dataPrefix, double testThreshold);
-	// Calculate partial RDFs in serial with simple double-loop
-	bool calculateTest(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet);
-	// Calculate partial RDFs with optimised double-loop
-	bool calculateSimple(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet);
-	// Calculate partial RDFs utilising Cell neighbour lists
-	bool calculateCells(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet);
-
 	public:
 	// Partial Calculation Method enum
 	enum PartialsMethod { AutoMethod, TestMethod, SimpleMethod, CellsMethod, nPartialsMethods };
@@ -150,6 +138,28 @@ class PartialsModule : public Module
 	static BraggBroadening braggBroadening(const char* s);
 	// Return character string for BraggBroadening
 	static const char* braggBroadening(BraggBroadening bt);
+	// Averaging scheme enum
+	enum AveragingScheme { LinearAveraging, HalfLifeAveraging, nAveragingSchemes };
+	// Convert character string to AveragingScheme
+	static AveragingScheme averagingScheme(const char* s);
+	// Return character string for AveragingScheme
+	static const char* averagingScheme(AveragingScheme as);
+
+	private:
+	// Test supplied PartialSets against each other
+	bool testReferencePartials(PartialSet& setA, PartialSet& setB, double testThreshold);
+	// Test reference data against calculated PartialSet set
+	bool testReferencePartials(GenericList& sourceModuleData, PartialSet& partialgr, const char* dataPrefix, double testThreshold);
+	// Calculate partial RDFs in serial with simple double-loop
+	bool calculateTest(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet);
+	// Calculate partial RDFs with optimised double-loop
+	bool calculateSimple(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet);
+	// Calculate partial RDFs utilising Cell neighbour lists
+	bool calculateCells(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet);
+	// Perform averaging of specifed partials
+	bool performAveraging(GenericList& moduleData, const char* name, const char* prefix, int nSetsInAverage, PartialsModule::AveragingScheme averagingScheme);
+
+	public:
 	// (Re)calculate unweighted partials for the specified Configuration
 	bool calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg, PartialsModule::PartialsMethod method, bool allIntra, int smoothing);
 	// Calculate weighted partials from supplied unweighted partials

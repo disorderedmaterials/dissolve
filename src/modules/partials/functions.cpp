@@ -94,6 +94,26 @@ const char* PartialsModule::braggBroadening(PartialsModule::BraggBroadening bt)
 	return BraggBroadeningKeywords[bt];
 }
 
+// Averaging scheme enum
+const char* AveragingSchemeKeywords[] = { "Linear", "HalfLife" };
+
+// Convert character string to AveragingScheme
+PartialsModule::AveragingScheme PartialsModule::averagingScheme(const char* s)
+{
+	for (int n=0; n<nAveragingSchemes; ++n) if (DUQSys::sameString(s, AveragingSchemeKeywords[n])) return (PartialsModule::AveragingScheme) n;
+	return PartialsModule::nAveragingSchemes;
+}
+
+// Return character string for AveragingScheme
+const char* PartialsModule::averagingScheme(PartialsModule::AveragingScheme as)
+{
+	return AveragingSchemeKeywords[as];
+}
+
+/*
+ * Private Functions
+ */
+
 // Test supplied PartialSets against each other
 bool PartialsModule::testReferencePartials(PartialSet& setA, PartialSet& setB, double testThreshold)
 {
@@ -426,6 +446,62 @@ bool PartialsModule::calculateCells(ProcessPool& procPool, Configuration* cfg, P
 
 	return true;
 }
+
+// Perform averaging of specifed partials
+bool PartialsModule::performAveraging(GenericList& moduleData, const char* name, const char* prefix, int nSetsInAverage, PartialsModule::AveragingScheme averagingScheme)
+{
+	// Find the 'root' PartialSet, which should currently contain the most recently-calculated data
+	if (!moduleData.contains(name, prefix))
+	{
+		Messenger::error("Couldn't find root PartialSet '%s' (prefix = '%s') in order to perform averaging.\n", name, prefix);
+		return false;
+	}
+	PartialSet& currentPartials = GenericListHelper<PartialSet>::retrieve(moduleData, name, prefix);
+
+	// Establish how many stored datasets we have
+	int nStored = 0;
+	for (nStored = 0; nStored < nSetsInAverage; ++nStored) if (!moduleData.contains(CharString("%s_%i", name, nStored+1), prefix)) break;
+	Messenger::print("Partials: Average requested over %i datsets - %i available in module data (%i max).\n", nSetsInAverage, nStored, nSetsInAverage-1);
+
+	// Remove the oldest dataset if it exists, and shuffle the others down
+	if (nStored == nSetsInAverage)
+	{
+		moduleData.remove(CharString("%s_%i", name, nStored), prefix);
+		--nStored;
+	}
+	for (int n=nStored; n>0; --n) moduleData.rename(CharString("%s_%i", name, n), prefix, CharString("%s_%i", name, n+1), prefix);
+
+	// Store the current PartialSet as the earliest data (1)
+	GenericListHelper<PartialSet>::realise(moduleData, CharString("%s_1", name), prefix, GenericItem::InRestartFileFlag) = currentPartials;
+	++nStored;
+
+	// Calculate normalisation
+	double normalisation = 0.0;
+	if (averagingScheme == PartialsModule::LinearAveraging) normalisation = nStored;
+	else if (averagingScheme == PartialsModule::HalfLifeAveraging) for (int n=0; n<nStored; ++n) normalisation += pow(0.5,n);
+
+	// Perform averaging of the datsets that we have
+	currentPartials.reset();
+	double weight = 1.0;
+	for (int n=0; n<nStored; ++n)
+	{
+		// Get the (n+1)'th dataset
+		PartialSet& set = GenericListHelper<PartialSet>::retrieve(moduleData, CharString("%s_%i", name, n+1), prefix);
+
+		// Determine the weighting factor
+		if (averagingScheme == PartialsModule::LinearAveraging) weight = 1.0 / normalisation;
+		else if (averagingScheme == PartialsModule::HalfLifeAveraging) weight = pow(0.5,n) / normalisation;
+
+		// Sum in partials
+		currentPartials.addPartials(set, weight);
+	}
+
+	return true;
+}
+
+/*
+ * Public Functions
+ */
 
 // Calculate unweighted partials for the specified Configuration
 bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg, PartialsModule::PartialsMethod method, bool allIntra, int smoothing)

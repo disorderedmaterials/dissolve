@@ -31,6 +31,8 @@ void PartialsModule::setupOptions()
 	// Boolean options must be set as 'bool(false)' or 'bool(true)' rather than just 'false' or 'true' so that the correct overloaded add() function is called
 	frequency_ = 5;
 	options_.add("AllIntra", bool(false), "Consider all intramolecular pairs in intra partials");
+	options_.add("Averaging", 1, "Number of historical partial sets to combine into final partials");
+	options_.add("AveragingScheme", "Linear", "Weighting scheme to use when averaging partials");
 	options_.add("Bragg", bool(false), "Enable calculation of Bragg scattering");
 	options_.add("BraggBroadening", "None", "Broadening function to apply to calculated Bragg scattering");
 	options_.add("BraggQDepBroadening", 0.0063, "FWHM of Gaussian for Q-dependent Bragg broadening function");

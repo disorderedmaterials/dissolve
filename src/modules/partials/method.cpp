@@ -51,6 +51,13 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 
 	GenericList& moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : duq.processingModuleData();
 	const bool allIntra = GenericListHelper<bool>::retrieve(moduleData, "AllIntra", uniqueName(), options_.valueAsBool("AllIntra"));
+	const int averaging = GenericListHelper<int>::retrieve(moduleData, "Averaging", uniqueName(), options_.valueAsInt("Averaging"));
+	PartialsModule::AveragingScheme averagingScheme = PartialsModule::averagingScheme(GenericListHelper<CharString>::retrieve(moduleData, "AveragingScheme", uniqueName_, options_.valueAsString("AveragingScheme")));
+	if (averagingScheme == PartialsModule::nAveragingSchemes)
+	{
+		Messenger::error("Partials: Invalid averaging scheme '%s' found.\n", GenericListHelper<CharString>::retrieve(moduleData, "AveragingScheme", uniqueName_, options_.valueAsString("AveragingScheme")).get());
+		return false;
+	}
 	const bool braggOn = GenericListHelper<bool>::retrieve(moduleData, "Bragg", uniqueName(), options_.valueAsBool("Bragg"));
 	const double braggQDepBroadening = GenericListHelper<double>::retrieve(moduleData, "BraggQDepBroadening", uniqueName(), options_.valueAsDouble("BraggQDepBroadening"));
 	const double braggQIndepBroadening = GenericListHelper<double>::retrieve(moduleData, "BraggQIndepBroadening", uniqueName(), options_.valueAsDouble("BraggQIndepBroadening"));
@@ -85,8 +92,10 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 	}
 
 	// Print argument/parameter summary
-	Messenger::print("Partails: Use of all pairs in intramolecular partials is %s.\n", DUQSys::onOff(allIntra));
-	Messenger::print("Partials: Calculation method for partials is '%s'.\n", PartialsModule::partialsMethod(method));
+	Messenger::print("Partials: Use of all pairs in intramolecular partials is %s.\n", DUQSys::onOff(allIntra));
+	if (averaging <= 1) Messenger::print("Partials: No averaging of partials will be performed.\n");
+	else Messenger::print("Partials: Partials will be averaged over %i sets (scheme = %s).\n", averaging, PartialsModule::averagingScheme(averagingScheme));
+	Messenger::print("Partials: Calculation method is '%s'.\n", PartialsModule::partialsMethod(method));
 	Messenger::print("Partials: Degree of smoothing to apply to calculated partial g(r) is %i (%s).\n", smoothing, DUQSys::onOff(smoothing > 0));
 	Messenger::print("Partials: Structure factor calculation is %s.\n", DUQSys::onOff(sqCalculation));
 	if (sqCalculation)
@@ -121,6 +130,11 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		// Calculate unweighted partials for this Configuration (under generic Module name 'Partials', rather than the uniqueName_)
 		calculateUnweightedGR(procPool, cfg, method, allIntra, smoothing);
 		PartialSet& unweightedgr = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedGR", "Partials");
+
+		// Perform averaging of unweighted partials if requested
+		if (averaging > 1) performAveraging(cfg->moduleData(), "UnweightedGR", "Partials", averaging, averagingScheme);
+
+		// Save data if requested
 		if (saveData && configurationLocal_ && (!MPIRunMaster(procPool, unweightedgr.save()))) return false;
 
 		// Perform internal test of unweighted g(r)?
