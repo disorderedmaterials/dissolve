@@ -47,9 +47,8 @@ class GenericList
 		GenericItem* newItem = find(name);
 		if (newItem)
 		{
+			Messenger::printVerbose("Item named '%s' already exists in the list, so returning it instead of creating a new one.\n", name);
 			return newItem;
-// 			Messenger::error("Item named '%s' already exists in the list.\n", name);
-// 			return NULL;
 		}
 		switch (itemClass)
 		{
@@ -109,8 +108,19 @@ class GenericList
 		for (GenericItem* item = items_.first(); item != NULL; item = item->next) if (DUQSys::sameString(item->name(), name)) return item;
 		return NULL;
 	}
+	// Return the named item from the list (with prefix)
+	GenericItem* find(const char* name, const char* prefix)
+	{
+		// Construct full name
+		CharString varName;
+		if (DUQSys::isEmpty(prefix)) varName = name;
+		else varName.sprintf("%s_%s", prefix, name);
+
+		for (GenericItem* item = items_.first(); item != NULL; item = item->next) if (DUQSys::sameString(item->name(), varName.get())) return item;
+		return NULL;
+	}
 	// Return list of all items with specified prefix (before first '_')
-	RefList<GenericItem,bool> findWithPrefix(const char* prefix)
+	RefList<GenericItem,bool> listWithPrefix(const char* prefix)
 	{
 		RefList<GenericItem,bool> items;
 		CharString itemUniqueName;
@@ -127,6 +137,34 @@ class GenericList
 	{
 		int count = 0;
 		for (GenericItem* item = items_.first(); item != NULL; item = item->next, ++count) Messenger::print("  %3i  %s", count, item->name());
+	}
+	// Remove named item
+	bool remove(const char* name, const char* prefix)
+	{
+		// First, find the named item
+		GenericItem* item = find(name, prefix);
+		if (!item)
+		{
+			Messenger::printVerbose("Couldn't find named item '%s' (prefix = '%s') in the list, so can't remove it.\n", name, prefix);
+			return false;
+		}
+
+		items_.remove(item);
+		return true;
+	}
+	// Rename item
+	bool rename(const char* oldName, const char* oldPrefix, const char* newName, const char* newPrefix)
+	{
+		// First, find the named item
+		GenericItem* item = find(oldName, oldPrefix);
+		if (!item)
+		{
+			Messenger::printVerbose("Couldn't find named item '%s' (prefix = '%s') in the list, so can't rename it.\n", oldName, oldPrefix);
+			return false;
+		}
+
+		item->setName(CharString("%s_%s", newPrefix, newName));
+		return true;
 	}
 	// Broadcast all data
 	bool broadcast(ProcessPool& procPool, int root)
