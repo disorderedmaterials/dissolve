@@ -96,6 +96,11 @@ class GenericItem
 	ItemClass itemClass_;
 
 	public:
+	// Set item name
+	void setName(const char* name)
+	{
+		name_ = name;
+	}
 	// Return item name
 	const char* name()
 	{
