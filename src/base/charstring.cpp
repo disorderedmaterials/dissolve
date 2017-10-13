@@ -77,12 +77,6 @@ CharString::CharString(const CharString &source) : ListItem<CharString>()
 	else set(source.data_);
 }
 
-// Conversion operators
-CharString::operator const char*()
-{
-	return get();
-}
-
 // Destructor
 CharString::~CharString()
 {
@@ -324,6 +318,18 @@ void CharString::operator+=(char c)
 	data_[endPosition_] = '\0';
 }
 
+// String addition operator
+void CharString::operator+=(const char* s)
+{
+	strcat(s);
+}
+
+// Conversion operators
+CharString::operator const char*()
+{
+	return get();
+}
+
 /*
  * Conversion
  */
@@ -387,14 +393,14 @@ bool CharString::isNumeric() const
 // Return the lowercase conversion of the string
 const char* CharString::lower() const
 {
-	if (data_ == NULL) return "\0";
+	if (data_ == NULL) return "";
 	return DUQSys::lowerCase(data_);
 }
 
 // Return the uppercase conversion of the string
 const char* CharString::upper() const
 {
-	if (data_ == NULL) return "\0";
+	if (data_ == NULL) return "";
 	return DUQSys::upperCase(data_);
 }
 
@@ -430,8 +436,8 @@ int CharString::rFind(char search, char stopat1, char stopat2) const
 }
 
 /*
-// C-String Functions
-*/
+ * C-String Functions
+ */
 
 // String addition
 void CharString::strcat(const char* s, int charcount)

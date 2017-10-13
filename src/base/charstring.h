@@ -31,13 +31,10 @@ class CharString : public ListItem<CharString>
 	// Constructor / Destructor
 	CharString();
 	CharString(int size);
-// 	CharString(const char* s);
 	CharString(const char* fmt, ...);
 	~CharString();
 	// Copy constructor
 	CharString(const CharString&);
-	// Conversion operators
-	operator const char*();
 
 
 	/*
@@ -114,6 +111,10 @@ class CharString : public ListItem<CharString>
 	char operator[](int) const;
 	// Character addition operator
 	void operator+=(char);
+	// String addition operator
+	void operator+=(const char*);
+	// Conversion operators
+	operator const char*();
 
 
 	/*
