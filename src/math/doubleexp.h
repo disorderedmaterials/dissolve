@@ -22,12 +22,18 @@
 #ifndef DUQ_DOUBLEEXP_H
 #define DUQ_DOUBLEEXP_H
 
+#include "base/charstring.h"
+
 // Mantissa/exponent class
 class DoubleExp
 {
 	public:
 	// Constructor / Destructor
 	DoubleExp(double mantissa = 0.0, int exponent = 0);
+	// Operator =
+	void operator=(double d);
+	// Conversion (double)
+	operator double();
 
 	/*
 	 * Data
@@ -62,8 +68,8 @@ class DoubleExp
 	void setExponent(int exponent);
 	// Return exponent
 	int exponent() const;
-	// Operator =
-	void operator=(double d);
+	// Return value as string
+	CharString asString();
 };
 
 #endif
