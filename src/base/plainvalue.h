@@ -23,6 +23,7 @@
 #define DUQ_PLAINVALUE_H
 
 #include "base/charstring.h"
+#include "math/doubleexp.h"
 #include "templates/listitem.h"
 
 // Forward Declarations
@@ -77,6 +78,10 @@ class PlainValue : public ListItem<PlainValue>
 	// Value (string)
 	CharString valueC_;
 
+	private:
+	// Clear all data
+	void clear();
+
 	public:
 	// Setup value, including name and description
 	void initialise(const char* name, PlainValue newValue, const char* description, int genericItemFlags);
@@ -90,6 +95,63 @@ class PlainValue : public ListItem<PlainValue>
 	ValueType type();
 	// Return flags to apply if reinstated as a GenericListItem (i.e. in a Module)
 	int genericItemFlags();
+
+
+	/*
+	 * Validation
+	 */
+	private:
+	// Whether this option has any validation
+	bool hasValidation_;
+	// Validation limits to apply (if appropriate)
+	bool minimumLimit_, maximumLimit_;
+	// Integer validation range (if appropriate)
+	int minI_, maxI_;
+	// Double validation range (if appropriate)
+	DoubleExp minD_, maxD_;
+	// Number of valid string values (if appropriate)
+	int nValidC_;
+	// Pointer to valid string values array (if appropriate)
+	const char** validC_;
+
+	public:
+	// Set integer validation range
+	void setValidationRange(int minValue, int maxValue);
+	// Set minimum validation limit
+	void setValidationMin(int minValue);
+	// Set maximum validation limit
+	void setValidationMax(int maxValue);
+	// Return minimum integer value allowed
+	int minI();
+	// Return maximum integer value allowed
+	int maxI();
+	// Set double validation range
+	void setValidationRange(double minValue, double maxValue);
+	// Set minimum validation limit
+	void setValidationMin(double minValue);
+	// Set maximum validation limit
+	void setValidationMax(double maxValue);
+	// Return minimum double value allowed
+	double minD();
+	// Return maximum double value allowed
+	double maxD();
+	// Return minimum double value allowed (as string)
+	const char* minDAsString();
+	// Return maximum double value allowed (as string)
+	const char* maxDAsString();
+	// Set string validation
+	void setValidation(int nValues, const char** values);
+	// Return valid string values
+	CharString validC();
+	// Validate integer value
+	bool isValid(int i);
+	// Valudate double value
+	bool isValid(double d);
+	// Validate string value
+	bool isValid(const char* s);
+	// Return valid range
+	CharString validRange();
+
 
 	/*
 	 * Conversion

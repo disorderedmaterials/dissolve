@@ -142,15 +142,39 @@ bool ModuleBlock::parse(LineParser& parser, DUQ* duq, Module* module, GenericLis
 		}
 		else
 		{
-			// Might be an plain option defined in the Module?
+			// Might be a plain option defined in the Module?
 			PlainValue* value = module->options().value(parser.argc(0));
 			if (value)
 			{
 				// Add variable to target list
 				if (value->type() == PlainValue::BooleanType) GenericListHelper<bool>::add(targetList, value->name(), module->uniqueName(), value->genericItemFlags()) = parser.argb(1);
-				else if (value->type() == PlainValue::IntegerType) GenericListHelper<int>::add(targetList, value->name(), module->uniqueName(), value->genericItemFlags()) = parser.argi(1);
-				else if (value->type() == PlainValue::DoubleType) GenericListHelper<double>::add(targetList, value->name(), module->uniqueName(), value->genericItemFlags()) = parser.argd(1);
-				else GenericListHelper<CharString>::add(targetList, value->name(), module->uniqueName(), value->genericItemFlags()) = parser.argc(1);
+				else if (value->type() == PlainValue::IntegerType)
+				{
+					if (value->isValid(parser.argi(1))) GenericListHelper<int>::add(targetList, value->name(), module->uniqueName(), value->genericItemFlags()) = parser.argi(1);
+					else
+					{
+						Messenger::error("Integer value '%i' is out of range for option '%s' (allowable range is %i <= n <= %i)\n", parser.argi(1), value->name(), value->minI(), value->maxI());
+						error = true;
+					}
+				}
+				else if (value->type() == PlainValue::DoubleType)
+				{
+					if (value->isValid(parser.argd(1))) GenericListHelper<double>::add(targetList, value->name(), module->uniqueName(), value->genericItemFlags()) = parser.argd(1);
+					else
+					{
+						Messenger::error("Double value '%f' is out of range for option '%s' (allowable range is %s)\n", parser.argd(1), value->name(), value->validRange().get());
+						error = true;
+					}
+				}
+				else
+				{
+					if (value->isValid(parser.argc(1))) GenericListHelper<CharString>::add(targetList, value->name(), module->uniqueName(), value->genericItemFlags()) = parser.argc(1);
+					else
+					{
+						Messenger::error("String value '%s' is not recognised for option '%s'.\nAllowed values are: %s\n", parser.argc(1), value->name(), value->validC().get());
+						error = true;
+					}
+				}
 			}
 			else
 			{
