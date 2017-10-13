@@ -49,7 +49,7 @@ class PlainValueList
 	// Return first Value in list
 	PlainValue* values();
 	// Add Value
-	void add(const char* name, PlainValue value, const char* description = "", int genericItemFlags = -1);
+	PlainValue* add(const char* name, PlainValue value, const char* description = "", int genericItemFlags = -1);
 	// Add/Append Value
 	void appendValue(const char* name, PlainValue value, const char* description = "", int genericItemFlags = -1);
 	// Retrieve named Value (bool)

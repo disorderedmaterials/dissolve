@@ -45,21 +45,23 @@ PlainValue* PlainValueList::values()
 }
 
 // Add/set value
-void PlainValueList::add(const char* name, PlainValue newValue, const char* description, int genericItemFlags)
+PlainValue* PlainValueList::add(const char* name, PlainValue value, const char* description, int genericItemFlags)
 {
 	// Does the value already exist?
 	PlainValue* var  = value(name);
 	if (!var)
 	{
 		var = values_.add();
-		var->initialise(name, newValue, description, genericItemFlags);
-		Messenger::printVerbose("Added new %s value '%s' with value '%s'.\n", PlainValue::valueType(var->type()), name, newValue.asString());
+		var->initialise(name, value, description, genericItemFlags);
+		Messenger::printVerbose("Added new %s value '%s' with value '%s'.\n", PlainValue::valueType(var->type()), name, value.asString());
 	}
 	else
 	{
-		Messenger::printVerbose("Set existing %s value '%s' to value '%s' (previous value was '%s').\n", PlainValue::valueType(var->type()), name, newValue.asString(), var->asString());
-		var->set(newValue);
+		Messenger::printVerbose("Set existing %s value '%s' to value '%s' (previous value was '%s').\n", PlainValue::valueType(var->type()), name, value.asString(), var->asString());
+		var->set(value);
 	}
+
+	return var;
 }
 
 // Retrieve named value (bool)
