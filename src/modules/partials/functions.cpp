@@ -95,7 +95,7 @@ const char* PartialsModule::braggBroadening(PartialsModule::BraggBroadening bt)
 }
 
 // Averaging scheme enum
-const char* AveragingSchemeKeywords[] = { "Linear", "HalfLife" };
+const char* AveragingSchemeKeywords[] = { "Simple", "Exponential" };
 
 // Convert character string to AveragingScheme
 PartialsModule::AveragingScheme PartialsModule::averagingScheme(const char* s)
@@ -450,6 +450,8 @@ bool PartialsModule::calculateCells(ProcessPool& procPool, Configuration* cfg, P
 // Perform averaging of specifed partials
 bool PartialsModule::performAveraging(GenericList& moduleData, const char* name, const char* prefix, int nSetsInAverage, PartialsModule::AveragingScheme averagingScheme)
 {
+	const int expDecay = 0.7;
+
 	// Find the 'root' PartialSet, which should currently contain the most recently-calculated data
 	if (!moduleData.contains(name, prefix))
 	{
@@ -477,8 +479,8 @@ bool PartialsModule::performAveraging(GenericList& moduleData, const char* name,
 
 	// Calculate normalisation
 	double normalisation = 0.0;
-	if (averagingScheme == PartialsModule::LinearAveraging) normalisation = nStored;
-	else if (averagingScheme == PartialsModule::HalfLifeAveraging) for (int n=0; n<nStored; ++n) normalisation += pow(0.5,n);
+	if (averagingScheme == PartialsModule::SimpleAveraging) normalisation = nStored;
+	else if (averagingScheme == PartialsModule::ExponentialAveraging) normalisation = (1.0 - pow(expDecay,nStored)) / (1.0 - expDecay); 
 
 	// Perform averaging of the datsets that we have
 	currentPartials.reset();
@@ -489,8 +491,8 @@ bool PartialsModule::performAveraging(GenericList& moduleData, const char* name,
 		PartialSet& set = GenericListHelper<PartialSet>::retrieve(moduleData, CharString("%s_%i", name, n+1), prefix);
 
 		// Determine the weighting factor
-		if (averagingScheme == PartialsModule::LinearAveraging) weight = 1.0 / normalisation;
-		else if (averagingScheme == PartialsModule::HalfLifeAveraging) weight = pow(0.5,n) / normalisation;
+		if (averagingScheme == PartialsModule::SimpleAveraging) weight = 1.0 / normalisation;
+		else if (averagingScheme == PartialsModule::ExponentialAveraging) weight = pow(expDecay, n) / normalisation;
 
 		// Sum in partials
 		currentPartials.addPartials(set, weight);

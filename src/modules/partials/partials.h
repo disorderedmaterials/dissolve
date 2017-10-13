@@ -139,7 +139,7 @@ class PartialsModule : public Module
 	// Return character string for BraggBroadening
 	static const char* braggBroadening(BraggBroadening bt);
 	// Averaging scheme enum
-	enum AveragingScheme { LinearAveraging, HalfLifeAveraging, nAveragingSchemes };
+	enum AveragingScheme { SimpleAveraging, ExponentialAveraging, nAveragingSchemes };
 	// Convert character string to AveragingScheme
 	static AveragingScheme averagingScheme(const char* s);
 	// Return character string for AveragingScheme

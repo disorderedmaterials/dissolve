@@ -31,7 +31,7 @@ Module Partials 'Yarnell-85K'
   StructureFactor  on
   QDepBroadening  0.02    # For SLS
   Averaging  5
-  AveragingScheme  HalfLife
+  AveragingScheme  Exponential
 EndModule
 
 # Experimental data taken from Table 1 of Yarnell, Katz, Wenzel, and Koenig, Phys. Rev. A 7, 2130 (1973).
