@@ -25,6 +25,11 @@
 void SkeletonModule::setupOptions()
 {
 	// Boolean options must be set as 'bool(false)' or 'bool(true)' rather than just 'false' or 'true' so that the correct overloaded add() function is called
-	options_.add("Example", bool(false));
+// 	options_.add("Example", bool(false));
 }
 
+// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
+int SkeletonModule::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
+{
+	return -1;
+}

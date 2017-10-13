@@ -74,9 +74,3 @@ bool SkeletonModule::setupDependentModule(Module* depMod)
 {
 	return true;
 }
-
-// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int SkeletonModule::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
-{
-	return -1;
-}
