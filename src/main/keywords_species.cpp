@@ -96,14 +96,6 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 		switch (spKeyword)
 		{
 			case (SpeciesBlock::AngleKeyword):
-				// Create a new angle definition
-				a = species->addAngle(parser.argi(2)-1, parser.argi(3)-1, parser.argi(4)-1);
-				if (!a)
-				{
-					error = true;
-					break;
-				}
-
 				// Check the functional form specified - if it starts with '@' it is a reference to master parameters
 				if (parser.argc(1)[0] == '@')
 				{
@@ -116,6 +108,13 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 						break;
 					}
 
+					// Create a new angle definition
+					a = species->addAngle(parser.argi(2)-1, parser.argi(3)-1, parser.argi(4)-1);
+					if (!a)
+					{
+						error = true;
+						break;
+					}
 					a->setMasterParameters(master);
 				}
 				else
@@ -123,11 +122,18 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 					af = SpeciesAngle::angleFunction(parser.argc(1));
 					if (af == SpeciesAngle::nAngleFunctions)
 					{
-						Messenger::error("Functional form of angle (%s) not recognised.\n", parser.argc(1));
+						Messenger::error("Functional form of Angle (%s) not recognised.\n", parser.argc(1));
 						error = true;
 						break;
 					}
 
+					// Create a new angle definition
+					a = species->addAngle(parser.argi(2)-1, parser.argi(3)-1, parser.argi(4)-1);
+					if (!a)
+					{
+						error = true;
+						break;
+					}
 					a->setForm(af);
 					for (int n=0; n<SpeciesAngle::nFunctionParameters(af); ++n)
 					{
@@ -178,14 +184,6 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 				species->autoAddGrains();
 				break;
 			case (SpeciesBlock::BondKeyword):
-				// Create a new bond definition
-				b = species->addBond(parser.argi(2)-1, parser.argi(3)-1);
-				if (!b)
-				{
-					error = true;
-					break;
-				}
-
 				// Check the functional form specified - if it starts with '@' it is a reference to master parameters
 				if (parser.argc(1)[0] == '@')
 				{
@@ -198,6 +196,13 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 						break;
 					}
 
+					// Create a new bond definition
+					b = species->addBond(parser.argi(2)-1, parser.argi(3)-1);
+					if (!b)
+					{
+						error = true;
+						break;
+					}
 					b->setMasterParameters(master);
 				}
 				else
@@ -206,11 +211,18 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 					bf = SpeciesBond::bondFunction(parser.argc(1));
 					if (bf == SpeciesBond::nBondFunctions)
 					{
-						Messenger::error("Functional form of bond (%s) not recognised.\n", parser.argc(1));
+						Messenger::error("Functional form of Bond (%s) not recognised.\n", parser.argc(1));
 						error = true;
 						break;
 					}
 
+					// Create a new bond definition
+					b = species->addBond(parser.argi(2)-1, parser.argi(3)-1);
+					if (!b)
+					{
+						error = true;
+						break;
+					}
 					b->setForm(bf);
 					for (int n=0; n<SpeciesBond::nFunctionParameters(bf); ++n)
 					{
@@ -376,14 +388,6 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 				else error = true;
 				break;
 			case (SpeciesBlock::TorsionKeyword):
-				// Create a new torsion definition
-				t = species->addTorsion(parser.argi(2)-1, parser.argi(3)-1, parser.argi(4)-1, parser.argi(5)-1);
-				if (!t)
-				{
-					error = true;
-					break;
-				}
-
 				// Check the functional form specified - if it starts with '@' it is a reference to master parameters
 				if (parser.argc(1)[0] == '@')
 				{
@@ -396,6 +400,13 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 						break;
 					}
 
+					// Create a new torsion definition
+					t = species->addTorsion(parser.argi(2)-1, parser.argi(3)-1, parser.argi(4)-1, parser.argi(5)-1);
+					if (!t)
+					{
+						error = true;
+						break;
+					}
 					t->setMasterParameters(master);
 				}
 				else
@@ -404,11 +415,18 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 					tf = SpeciesTorsion::torsionFunction(parser.argc(1));
 					if (tf == SpeciesTorsion::nTorsionFunctions)
 					{
-						Messenger::error("Functional form of torsion (%s) not recognised.\n", parser.argc(1));
+						Messenger::error("Functional form of Torsion (%s) not recognised.\n", parser.argc(1));
 						error = true;
 						break;
 					}
 
+					// Create a new torsion definition
+					t = species->addTorsion(parser.argi(2)-1, parser.argi(3)-1, parser.argi(4)-1, parser.argi(5)-1);
+					if (!t)
+					{
+						error = true;
+						break;
+					}
 					t->setForm(tf);
 					for (int n=0; n<SpeciesTorsion::nFunctionParameters(tf); ++n)
 					{
