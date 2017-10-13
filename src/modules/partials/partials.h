@@ -92,28 +92,6 @@ class PartialsModule : public Module
 	void setupOptions();
 
 	public:
-	// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-	int parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList);
-
-
-	/*
-	 * Method
-	 */
-	public:
-	// Perform setup tasks for module
-	bool setup(ProcessPool& procPool);
-	// Execute pre-processing stage
-	bool preProcess(DUQ& duq, ProcessPool& procPool);
-	// Execute method on the specified config
-	bool process(DUQ& duq, ProcessPool& procPool);
-	// Execute post-processing stage
-	bool postProcess(DUQ& duq, ProcessPool& procPool);
-
-
-	/*
-	 * Members / Functions
-	 */
-	public:
 	// Partial Calculation Method enum
 	enum PartialsMethod { AutoMethod, TestMethod, SimpleMethod, CellsMethod, nPartialsMethods };
 	// Convert character string to PartialsMethod
@@ -145,6 +123,28 @@ class PartialsModule : public Module
 	// Return character string for AveragingScheme
 	static const char* averagingScheme(AveragingScheme as);
 
+	public:
+	// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
+	int parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList);
+
+
+	/*
+	 * Method
+	 */
+	public:
+	// Perform setup tasks for module
+	bool setup(ProcessPool& procPool);
+	// Execute pre-processing stage
+	bool preProcess(DUQ& duq, ProcessPool& procPool);
+	// Execute method on the specified config
+	bool process(DUQ& duq, ProcessPool& procPool);
+	// Execute post-processing stage
+	bool postProcess(DUQ& duq, ProcessPool& procPool);
+
+
+	/*
+	 * Members / Functions
+	 */
 	private:
 	// Test supplied PartialSets against each other
 	bool testReferencePartials(PartialSet& setA, PartialSet& setB, double testThreshold);
