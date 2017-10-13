@@ -287,7 +287,7 @@ double XYData::interpolated(double xvalue)
 		if (interpolationScheme_ != XYData::NoInterpolation) interpolate(interpolationScheme_);
 		else
 		{
-			Messenger::warn("Interpolated point requested, but no interpolation scheme has been set. Assuming Spline...\n");
+			// No existing interpolation scheme, so use Spline by default
 			interpolate(XYData::SplineInterpolation);
 		}
 	}
