@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Configuration
+rm -f Bulk.xyz
+
+# Restart file
+rm -f *.txt.restart
+
+# Potential files
+rm -f potential*txt
+
+# RDF / S(Q)
+rm -f *.rdf *.sq
+
