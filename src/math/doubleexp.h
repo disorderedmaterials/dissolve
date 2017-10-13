@@ -1,6 +1,6 @@
 /*
-	*** Double/Exponent class
-	*** src/base/doubleexp.h
+	*** Double with Exponent class
+	*** src/math/doubleexp.h
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -30,7 +30,7 @@ class DoubleExp
 	DoubleExp(double mantissa = 0.0, int exponent = 0);
 
 	/*
-	// Data
+	 * Data
 	 */
 	private:
 	// Mantissa
@@ -41,7 +41,7 @@ class DoubleExp
 	double value_;
 
 	/*
-	// Functions
+	 * Functions
 	 */
 	private:
 	// Recalculate value from stored mantissa and exponent

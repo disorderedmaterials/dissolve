@@ -1,5 +1,5 @@
 /*
-	*** Double/Exponent value
+	*** Double with Exponent value
 	*** src/math/doubleexp.cpp
 	Copyright T. Youngs 2012-2017
 
