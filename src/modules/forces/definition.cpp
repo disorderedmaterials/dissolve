@@ -64,7 +64,6 @@ bool ForcesModule::hasPostProcessing()
 }
 
 // Modules upon which this Module depends to have run first
-// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for
 const char* ForcesModule::dependentModules()
 {
 	return "";
