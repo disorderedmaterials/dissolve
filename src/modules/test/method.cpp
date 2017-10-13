@@ -23,6 +23,7 @@
 #include "main/duq.h"
 #include "classes/scatteringmatrix.h"
 #include "classes/weights.h"
+#include "classes/atomtype.h"
 #include "base/sysfunc.h"
 
 // Perform setup tasks for module
@@ -45,7 +46,7 @@ bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 	while (Data* data = dataIterator.iterate())
 	{
 		if (!data->setup(duq.processingModuleData())) return false;
-		data->data().save("bollocks.txt");
+		data->data().save(CharString("%s-setup.txt", data->name()));
 	}
 
 	/*
@@ -85,6 +86,17 @@ bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 	 * Use the ScatteringMatrix to generate partials from the supplied reference data
 	 */
 	scatteringMatrix.generatePartials();
+
+	/*
+	 * Construct difference matrix of partials
+	 */
+	Array2D<XYData> differences;
+	for (AtomType* at1 = duq.atomTypeList().first(); at1 != NULL; at1 = at1->next)
+	{
+		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next)
+		{
+		}
+	}
 
 	return true;
 }

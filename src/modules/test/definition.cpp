@@ -66,7 +66,7 @@ bool TestModule::hasPostProcessing()
 // Modules upon which this Module depends to have run first
 const char* TestModule::dependentModules()
 {
-	return "";
+	return "Partials";
 }
 
 // Setup supplied dependent module (only if it has been auto-added)
