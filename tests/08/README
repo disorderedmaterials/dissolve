@@ -1,6 +1,8 @@
 Unit Test 08 - Atom Shake
 =========================
 
+argon.txt
+-------------------------
 Cubic box of argon atoms, randomly generated from the same random seed. Ten invocations of the AtomShake
 are made with Energy calculations in between, using the reference energies from a straight calculation of the
 same system using the code as of 10th October 2017.
@@ -8,3 +10,8 @@ same system using the code as of 10th October 2017.
 Test tolerances are set for each EnergyModule calculation to take account of the finite number of significant
 figures in the supplied reference values.
 
+singlewater.txt
+-------------------------
+One water molecule in a large box, starting at known coordinates giving O-H bond lengths of 0.9 and H-O-H angle
+of 100.0 degrees. AtomShake at 0 K used to return geometry to forcefield values (1.012 Angstroms and 113.24
+degrees).
