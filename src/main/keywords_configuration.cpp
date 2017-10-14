@@ -255,7 +255,7 @@ bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
 				cfg->setUseOutputCoordinatesAsInput(true);
 				break;
 			case (ConfigurationBlock::nConfigurationKeywords):
-				Messenger::error("Unrecognised %s block keyword found - '%s'\n", InputBlocks::inputBlock(InputBlocks::ConfigurationBlock), parser.argc(0));
+				Messenger::error("Unrecognised %s block keyword '%s' found. block keyword found - '%s'\n", InputBlocks::inputBlock(InputBlocks::ConfigurationBlock), parser.argc(0));
 				InputBlocks::printValidKeywords(InputBlocks::ConfigurationBlock);
 				error = true;
 				break;

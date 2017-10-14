@@ -212,7 +212,7 @@ bool PairPotentialsBlock::parse(LineParser& parser, DUQ* duq)
 				duq->setPairPotentialTruncationWidth(parser.argd(1));
 				break;
 			case (PairPotentialsBlock::nPairPotentialsKeywords):
-				Messenger::error("Unrecognised %s block keyword found - '%s'\n", InputBlocks::inputBlock(InputBlocks::PairPotentialsBlock), parser.argc(0));
+				Messenger::error("Unrecognised %s block keyword '%s' found. block keyword found - '%s'\n", InputBlocks::inputBlock(InputBlocks::PairPotentialsBlock), parser.argc(0));
 				InputBlocks::printValidKeywords(InputBlocks::PairPotentialsBlock);
 				error = true;
 				break;

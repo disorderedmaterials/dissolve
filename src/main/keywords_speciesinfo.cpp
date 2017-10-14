@@ -87,7 +87,7 @@ bool SpeciesInfoBlock::parse(LineParser& parser, DUQ* duq, SpeciesInfo* speciesI
 				speciesInfo->setPopulation(parser.argd(1));
 				break;
 			case (SpeciesInfoBlock::nSpeciesInfoKeywords):
-				Messenger::error("Unrecognised %s block keyword found - '%s'\n", ConfigurationBlock::keyword(ConfigurationBlock::SpeciesInfoKeyword), parser.argc(0));
+				Messenger::error("Unrecognised %s block keyword '%s' found. block keyword found - '%s'\n", ConfigurationBlock::keyword(ConfigurationBlock::SpeciesInfoKeyword), parser.argc(0));
 				InputBlocks::printValidKeywords(InputBlocks::SpeciesInfoBlock);
 				error = true;
 				break;
