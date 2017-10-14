@@ -165,9 +165,11 @@ class Box
 
 
 	/*
-	 * Utility Routines (Static)
+	 * Utility Routines
 	 */
 	public:
+	// Return angle (in degrees, no MIM) between Atoms
+	double angleInDegrees(const Atom* i, const Atom* j, const Atom* k) const;
 	// Return angle (in degrees, no MIM) between coordinates
 	static double angleInDegrees(const Vec3<double>& i, const Vec3<double>& j, const Vec3<double>& k);
 	// Return angle (in degrees) between supplied normalised vectors

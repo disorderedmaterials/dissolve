@@ -273,8 +273,26 @@ bool Box::calculateRDFNormalisation(ProcessPool& procPool, XYData& boxNorm, doub
 }
 
 /*
- * Utility Routines (Static)
+ * Utility Routines
  */
+
+// Return angle (in degrees, no MIM) between Atoms
+double Box::angleInDegrees(const Atom* i, const Atom* j, const Atom* k) const
+{
+	Vec3<double> vecji, vecjk;
+
+	// Ge minimum image vectors 'j-i' and 'j-k'
+	vecji = minimumVector(j, i);
+	vecjk = minimumVector(j, k);
+	
+	// Normalise vectors
+	vecji.normalise();
+	vecjk.normalise();
+
+	// Determine Angle energy
+	return angleInDegrees(vecji, vecjk);
+
+}
 
 // Return angle (in degrees, no MIM) between coordinates
 double Box::angleInDegrees(const Vec3<double>& i, const Vec3<double>& j, const Vec3<double>& k)
