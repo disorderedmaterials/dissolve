@@ -1,35 +1,37 @@
 add_library(modules
-module.cpp
-modulelist.cpp
-moduleregistry.cpp
-
-module.h
-modulelist.h
-moduleregistry.h
-
-atomshake.cpp
-energy.cpp
-export.cpp
-forces.cpp
-import.cpp
-md.cpp
-skeleton.cpp
-test.cpp
-#grainshake.cpp
-#intrashake.cpp
-#twist.cpp
-
-atomshake.h
-energy.h
-export.h
-forces.h
-import.h
-md.h
-skeleton.h
-test.h
-#grainshake.h
-#intrashake.h
-#twist.h
+  module.cpp
+  modulelist.cpp
+  moduleregistry.cpp
+  
+  module.h
+  modulelist.h
+  moduleregistry.h
+  
+  atomshake.cpp
+  check.cpp
+  energy.cpp
+  export.cpp
+  forces.cpp
+  import.cpp
+  md.cpp
+  skeleton.cpp
+  test.cpp
+  #grainshake.cpp
+  #intrashake.cpp
+  #twist.cpp
+  
+  atomshake.h
+  check.h
+  energy.h
+  export.h
+  forces.h
+  import.h
+  md.h
+  skeleton.h
+  test.h
+  #grainshake.h
+  #intrashake.h
+  #twist.h
 )
 
 include_directories(

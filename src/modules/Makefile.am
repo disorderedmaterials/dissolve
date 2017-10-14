@@ -11,6 +11,8 @@ AM_CPPFLAGS = -I../ -I../../ @DUQ_CFLAGS@ @DUQ_READLINE@
 # Module targets
 SUBDIRS = atomshake
 libmodules_la_LIBADD += atomshake/libatomshake.la
+SUBDIRS += checks
+libmodules_la_LIBADD += checks/libchecks.la
 SUBDIRS += energy
 libmodules_la_LIBADD += energy/libenergy.la
 SUBDIRS += export
