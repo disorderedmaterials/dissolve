@@ -188,8 +188,8 @@ bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		Messenger::print("AtomShake: Overall acceptance rate was %4.2f% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*rate, nAccepted, nTries, timer.totalTimeString(), procPool.accumulatedTimeString());
 		Messenger::print("AtomShake: Total energy delta was %10.4e kJ/mol.\n", totalDelta);
 
-		// Adjust step size
-		stepSize *= rate/targetAcceptanceRate;
+		// Adjust step size - if nAccepted was zero, just decrease the current stepSize by a constant factor
+		stepSize *= (nAccepted == 0) ? 0.8 : rate/targetAcceptanceRate;
 
 		// Clamp step size
 // 		if (stepSize > 0.5) stepSize = 0.5;
