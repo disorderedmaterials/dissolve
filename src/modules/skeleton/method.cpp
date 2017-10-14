@@ -38,6 +38,30 @@ bool SkeletonModule::preProcess(DUQ& duq, ProcessPool& procPool)
 // Execute Method
 bool SkeletonModule::process(DUQ& duq, ProcessPool& procPool)
 {
+	/*
+	 * This is a XXX routine.
+	 * XXX
+	 */
+
+	// Check for zero Configuration targets
+	if (targetConfigurations_.nItems() == 0)
+	{
+		Messenger::warn("No Configuration targets for Module.\n");
+		return true;
+	}
+
+	// Loop over target Configurations
+	for (RefListItem<Configuration,bool>* ri = targetConfigurations_.first(); ri != NULL; ri = ri->next)
+	{
+		// Grab Configuration pointer
+		Configuration* cfg = ri->item;
+
+		// Setup process pool - must do this to ensure we are using all available processes
+		procPool.assignProcessesToGroups(cfg->processPool());
+
+		// MODULE CODE
+	}
+
 	return false;
 }
 
