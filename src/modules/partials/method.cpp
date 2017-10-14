@@ -47,6 +47,14 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 	 * This is a serial routine, with each process constructing its own copy of the data.
 	 * Partial calculation routines called by this routine are parallel.
 	 */
+
+	// Check for zero Configuration targets
+	if (targetConfigurations_.nItems() == 0)
+	{
+		Messenger::warn("No Configuration targets for Module.\n");
+		return true;
+	}
+
 	CharString varName;
 
 	GenericList& moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : duq.processingModuleData();

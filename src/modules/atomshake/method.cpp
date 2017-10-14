@@ -50,6 +50,13 @@ bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
 	 * This is a parallel routine, with processes operating in groups.
 	 */
 
+	// Check for zero Configuration targets
+	if (targetConfigurations_.nItems() == 0)
+	{
+		Messenger::warn("No Configuration targets for Module.\n");
+		return true;
+	}
+
 	// Get target Configuration
 	Configuration* cfg = targetConfigurations_.firstItem();
 

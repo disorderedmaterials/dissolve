@@ -46,6 +46,14 @@ bool ExportModule::process(DUQ& duq, ProcessPool& procPool)
 	 * Export data from the target Configuration(s)
 	 */
 
+	// Check for zero Configuration targets
+	if (targetConfigurations_.nItems() == 0)
+	{
+		Messenger::warn("No Configuration targets for Module.\n");
+		return true;
+	}
+
+
 	// Loop over target Configurations
 	for (RefListItem<Configuration,bool>* ri = targetConfigurations_.first(); ri != NULL; ri = ri->next)
 	{
