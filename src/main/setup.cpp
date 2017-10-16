@@ -134,7 +134,7 @@ bool DUQ::setupSimulation()
 			// Setup PairPotential
 			if (!pot->setup(pairPotentialRange_, pairPotentialTruncationWidth_, pairPotentialDelta_, pairPotentialsIncludeCoulomb_))
 			{
-				Messenger::error("Failed to setup PairPotential between AtomTypes '%s' and '%s'.\n", at1->name(), at2->name());
+				Messenger::error("Failed to set up PairPotential between AtomTypes '%s' and '%s'.\n", at1->name(), at2->name());
 				return false;
 			}
 		}
