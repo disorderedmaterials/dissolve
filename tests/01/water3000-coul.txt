@@ -28,7 +28,6 @@ Configuration  'Bulk'
   Module Energy
     Test on
     TestAnalytic on
-    TestThreshold 100.0
     TestReferenceInter    -34173.942995962962   # Straight Coulomb sum (no truncation)
   EndModule
 
@@ -36,7 +35,6 @@ Configuration  'Bulk'
   Module Forces
     Test on
     TestAnalytic  on
-    TestThreshold 100.0
     TestReference  dlpoly  'dlpoly_coul/REVCON'
   EndModule
 EndConfiguration
