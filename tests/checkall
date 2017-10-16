@@ -3,8 +3,21 @@
 # Run and check all tests
 
 NFAILED=0
+EXITONFAIL="TRUE"
 
 # Set path to binary and data and check that it exists
+while getopts "a" op
+do
+  case $op in
+    a ) EXITONFAIL="FALSE"
+        echo "Run all tests, regardless of the success or failure of each test.";;
+    \? ) echo "Error: Unrecognised switch '$op'"
+         exit 1;;
+    * ) echo "Error: Extra operands given."
+        echo -e $USAGE
+        exit 1;;
+  esac
+done
 
 DUQ=../src/duq
 export DUQDATA=../../data
@@ -17,7 +30,7 @@ fi
 # Do we have a parallel exe?
 PARALLEL="FALSE"
 PROCS="1 2 3 4"
-if ../src/duq -h | grep -c "MPI" >& /dev/null
+if $DUQ -h | grep -c "MPI" >& /dev/null
 then
 	echo "Parallel version available - checks will be performed over ($PROCS) processes."
 	PARALLEL="TRUE"
@@ -66,7 +79,14 @@ do
 				echo "*****************"
 				echo "==> Check output file $output"
 				NFAILED=$(( NFAILED+1 ))
+
+				# Exit early?
+				if [ "$EXITONFAIL" = "TRUE" ]
+				then
+					exit 1
+				fi
 			fi
+
 		done
 	done
 
