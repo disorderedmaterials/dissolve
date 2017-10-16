@@ -1,0 +1,3 @@
+#!/bin/bash
+
+rm -f *.out *.out.[0-9]
