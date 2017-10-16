@@ -142,7 +142,7 @@ PartialsModule::NormalisationType Data::neutronNormalisation()
 // Perform necessary tasks (normalisation etc.) on supplied data
 bool Data::setup(GenericList& processingModuleData)
 {
-	// If we're already setup return now 
+	// If we're already set up return now 
 	if (setup_) return true;
 
 	// Subtract average level from data?
@@ -196,7 +196,7 @@ bool Data::setup(GenericList& processingModuleData)
 			}
 			break;
 		default:
-			Messenger::error("No handler defined for setup of this type of data (%s)\n", name_.get());
+			Messenger::error("No handler defined for set up of this type of data (%s)\n", name_.get());
 			return false;
 	}
 
