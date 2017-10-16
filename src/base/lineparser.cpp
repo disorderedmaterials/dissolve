@@ -119,7 +119,7 @@ bool LineParser::openInput(const char* filename)
 		}
 	}
 
-	// Master will open new file
+	// Master will open the file
 	bool result = true;
 	if ((!processPool_) || processPool_->isMaster())
 	{
@@ -135,7 +135,6 @@ bool LineParser::openInput(const char* filename)
 	// Broadcast result of open
 	if (processPool_ && (!processPool_->broadcast(result))) return false;
 
-	// Reset and broadcast variables
 	lastLineNo_ = 0;
 	inputFilename_ = filename;
 
