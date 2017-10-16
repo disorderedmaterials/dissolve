@@ -27,7 +27,7 @@
 #include "base/sysfunc.h"
 #include "base/lineparser.h"
 
-// Perform setup tasks for module
+// Perform set up tasks for module
 bool ForcesModule::setup(ProcessPool& procPool)
 {
 	return true;
@@ -365,17 +365,34 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 			Messenger::print("Forces: Calculating total forces for Configuration '%s'...\n", cfg->name());
 
 			// Calculate interatomic forces
-			Timer interTimer;
-			interTimer.start();
-			if (testInter) duq.interatomicForces(procPool, cfg, checkInterFx, checkInterFy, checkInterFz);
-			interTimer.stop();
-			Messenger::printVerbose("Forces: Time to do interatomic forces was %s.\n", interTimer.totalTimeString());
+			if (testInter)
+			{
+				Timer interTimer;
+				interTimer.start();
+
+				duq.interatomicForces(procPool, cfg, checkInterFx, checkInterFy, checkInterFz);
+				if (!procPool.allSum(checkInterFx, cfg->nAtoms())) return false;
+				if (!procPool.allSum(checkInterFy, cfg->nAtoms())) return false;
+				if (!procPool.allSum(checkInterFz, cfg->nAtoms())) return false;
+
+				interTimer.stop();
+				Messenger::print("Forces: Time to do interatomic forces was %s.\n", interTimer.totalTimeString());
+			}
 			
 			// Calculate intramolecular forces
-			Timer intraTimer;
-			intraTimer.start();
-			if (testIntra) duq.intramolecularForces(procPool, cfg, checkIntraFx, checkIntraFy, checkIntraFz);
-			intraTimer.stop();
+			if (testIntra)
+			{
+				Timer intraTimer;
+				intraTimer.start();
+
+				duq.intramolecularForces(procPool, cfg, checkIntraFx, checkIntraFy, checkIntraFz);
+				if (!procPool.allSum(checkIntraFx, cfg->nAtoms())) return false;
+				if (!procPool.allSum(checkIntraFy, cfg->nAtoms())) return false;
+				if (!procPool.allSum(checkIntraFz, cfg->nAtoms())) return false;
+
+				intraTimer.stop();
+				Messenger::print("Forces: Time to do intramolecular forces was %s.\n", intraTimer.totalTimeString());
+			}
 
 			// Convert forces to 10J/mol
 			checkInterFx *= 100.0;
@@ -384,8 +401,6 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 			checkIntraFx *= 100.0;
 			checkIntraFy *= 100.0;
 			checkIntraFz *= 100.0;
-
-			Messenger::print("Forces: Time to do interatomic forces was %s, intramolecular forces was %s.\n", interTimer.totalTimeString(), intraTimer.totalTimeString());
 
 			/*
 			 * Production Calculation Ends
