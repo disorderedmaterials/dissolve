@@ -26,7 +26,7 @@
 #include "base/sysfunc.h"
 #include "base/lineparser.h"
 
-// Perform setup tasks for module
+// Perform set up tasks for module
 bool EnergyModule::setup(ProcessPool& procPool)
 {
 	return true;

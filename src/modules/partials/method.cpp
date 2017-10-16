@@ -26,7 +26,7 @@
 #include "classes/species.h"
 #include "classes/weights.h"
 
-// Perform setup tasks for module
+// Perform set up tasks for module
 bool PartialsModule::setup(ProcessPool& procPool)
 {
 	return false;

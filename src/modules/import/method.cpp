@@ -27,7 +27,7 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Perform setup tasks for module
+// Perform set up tasks for module
 bool ImportModule::setup(ProcessPool& procPool)
 {
 	return true;

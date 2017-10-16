@@ -197,4 +197,3 @@ bool ModuleBlock::parse(LineParser& parser, DUQ* duq, Module* module, GenericLis
 
 	return (!error);
 }
-

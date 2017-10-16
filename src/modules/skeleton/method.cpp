@@ -23,7 +23,7 @@
 #include "main/duq.h"
 #include "base/sysfunc.h"
 
-// Perform setup tasks for module
+// Perform set up tasks for module
 bool SkeletonModule::setup(ProcessPool& procPool)
 {
 	return true;

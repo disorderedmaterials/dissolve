@@ -128,7 +128,7 @@ bool PairPotentialsBlock::parse(LineParser& parser, DUQ* duq)
 				// Check Parameters for AtomTypes
 				if ((!at1->parameters()) || (!at2->parameters()))
 				{
-					Messenger::error("Parameters for AtomType '%s' don't yet exist, so can't setup a PairPotential.\n", at1->parameters() ? parser.argc(3) : parser.argc(2));
+					Messenger::error("Parameters for AtomType '%s' don't yet exist, so can't set up a PairPotential.\n", at1->parameters() ? parser.argc(3) : parser.argc(2));
 					error = true;
 					break;
 				}
@@ -168,7 +168,7 @@ bool PairPotentialsBlock::parse(LineParser& parser, DUQ* duq)
 						// Check Parameters for AtomTypes
 						if ((!at1->parameters()) || (!at2->parameters()))
 						{
-							Messenger::error("Parameters for AtomType '%s' don't exist, so can't setup a PairPotential.\n", at1->parameters() ? at2->name() : at1->name());
+							Messenger::error("Parameters for AtomType '%s' don't exist, so can't set up a PairPotential.\n", at1->parameters() ? at2->name() : at1->name());
 							error = true;
 							break;
 						}

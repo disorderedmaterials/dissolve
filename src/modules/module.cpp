@@ -107,7 +107,7 @@ void Module::updateDependentTargets()
 		// Set frequency of module to match that of the parent
 		module->setFrequency(frequency_);
 
-		// Perform any setup on the dependent module
+		// Perform any set up on the dependent module
 		setupDependentModule(module);
 
 		// Also may need to update dependent targets of this Module...

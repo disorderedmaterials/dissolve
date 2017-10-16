@@ -27,7 +27,7 @@
 #include "base/sysfunc.h"
 #include "base/lineparser.h"
 
-// Perform setup tasks for module
+// Perform set up tasks for module
 bool ExportModule::setup(ProcessPool& procPool)
 {
 	return true;

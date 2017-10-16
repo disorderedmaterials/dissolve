@@ -181,7 +181,7 @@ class Module : public ListItem<Module>
 	 * Method
 	 */
 	public:
-	// Perform setup tasks for Module
+	// Perform set up tasks for Module
 	virtual bool setup(ProcessPool& procPool) = 0;
 	// Execute pre-processing stage
 	virtual bool preProcess(DUQ& duq, ProcessPool& procPool) = 0;

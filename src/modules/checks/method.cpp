@@ -24,7 +24,7 @@
 #include "classes/box.h"
 #include "base/sysfunc.h"
 
-// Perform setup tasks for module
+// Perform set up tasks for module
 bool ChecksModule::setup(ProcessPool& procPool)
 {
 	return true;

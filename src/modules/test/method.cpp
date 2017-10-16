@@ -26,7 +26,7 @@
 #include "classes/atomtype.h"
 #include "base/sysfunc.h"
 
-// Perform setup tasks for module
+// Perform set up tasks for module
 bool TestModule::setup(ProcessPool& procPool)
 {
 	return true;
@@ -76,7 +76,7 @@ bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 	}
 	if (!scatteringMatrix.finalise())
 	{
-		Messenger::error("TestModule: Failed to set-up scattering matrix.\n");
+		Messenger::error("TestModule: Failed to set up scattering matrix.\n");
 		return false;
 	}
 

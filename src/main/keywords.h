@@ -94,7 +94,7 @@ namespace ConfigurationBlock
 		EnsembleKeyword,		/* 'Ensemble' - Whether to append to an ensemble file */
 		EnsembleFrequencyKeyword,	/* 'EnsembleFrequency' - Frequency with which to append to ensemble file */
 		InputCoordinatesKeyword,	/* 'InputCoordinates' - Specifies the file which contains the starting coordinates */
-		ModuleKeyword,			/* 'Module' - Starts the setup of a Module for this configuration */
+		ModuleKeyword,			/* 'Module' - Starts the set up of a Module for this configuration */
 		MultiplierKeyword,		/* 'Multiplier' - Specifies the factor by which relative populations are multiplied when generating the Configuration data */
 		NonPeriodicKeyword,		/* 'NonPeriodic' - States that the simulation should be treated as non-periodic */
 		OutputCoordinatesKeyword,	/* 'OutputCoordinates' - Specifies the file which should contain output coordinates */

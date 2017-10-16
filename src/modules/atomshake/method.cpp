@@ -29,7 +29,7 @@
 #include "base/processpool.h"
 #include "base/timer.h"
 
-// Perform setup tasks for module
+// Perform set up tasks for module
 bool AtomShakeModule::setup(ProcessPool& procPool)
 {
 	return true;

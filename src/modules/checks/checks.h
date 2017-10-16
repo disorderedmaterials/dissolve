@@ -96,7 +96,7 @@ class ChecksModule : public Module
 	 * Method
 	 */
 	public:
-	// Perform setup tasks for module
+	// Perform set up tasks for module
 	bool setup(ProcessPool& procPool);
 	// Execute pre-processing stage
 	bool preProcess(DUQ& duq, ProcessPool& procPool);

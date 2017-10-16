@@ -798,7 +798,7 @@ bool PartialsModule::calculateBraggTerms(ProcessPool& procPool, Configuration* c
 	timer.start();
 	if (braggKVectors.nItems() == 0)
 	{
-		Messenger::print("Partials: Performing initial setup of Bragg arrays...\n");
+		Messenger::print("Partials: Performing initial set up of Bragg arrays...\n");
 		timer.start();
 
 		double braggQMaxSq = braggQMax*braggQMax, braggQMinSQ = braggQMin*braggQMin;

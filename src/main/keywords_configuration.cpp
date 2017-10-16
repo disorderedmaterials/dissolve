@@ -40,7 +40,7 @@ KeywordData ConfigurationBlockData[] = {
 	{ "Ensemble",			1,	"Whether an ensemble file should be appended to" },
 	{ "EnsembleFrequency",		1,	"Frequency at which to append ensemble file" },
 	{ "InputCoordinates",		2,	"Format and filename which contains the starting coordinates" },
-	{ "Module",			1,	"Starts the setup of a Module for this Configuration" },
+	{ "Module",			1,	"Starts the set up of a Module for this Configuration" },
 	{ "Multiplier",			1,	"Factor by which relative populations are multiplied when generating the Configuration data" },
 	{ "NonPeriodic",		0,	"States that the simulation should be treated as non-periodic" },
 	{ "OutputCoordinates",		1,	"File which should contain output coordinates, followed by the (optional) output frequency" },
