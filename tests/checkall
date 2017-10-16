@@ -14,6 +14,18 @@ then
 	exit 1
 fi
 
+# Do we have a parallel exe?
+PARALLEL="FALSE"
+PROCS="1 2 3 4"
+if ../src/duq -h | grep -c "MPI" >& /dev/null
+then
+	echo "Parallel version available - checks will be performed over ($PROCS) processes."
+	PARALLEL="TRUE"
+else
+	echo "Tests will be performed in serial mode."
+	PROCS="1"
+fi
+
 # Loop over test directories
 for test in `ls -d [0-9]*[0-9]`
 do
@@ -31,20 +43,31 @@ do
 	# Loop over all input files (*.txt)
 	for input in *.txt
 	do
-		# Set output filename path
-		output=../${test}.${input%.txt}.out
+		for nprocs in $PROCS
+		do
+			# Set output filename path
+			if [ "$nprocs" -eq "1" ]
+			then
+				output=../${test}.${input%.txt}.out
+				echo -e "\nRunning test \"${input}\" (serial)..."
+				../$DUQ $input > $output
+			else
+				output=../${test}.${input%.txt}.${nprocs}.out
+				echo -e "\nRunning test \"${input}\" (${nprocs} processes)..."
+				mpirun -np $nprocs ../$DUQ $input -r $output > $output
+			fi
 
-		echo -e "\nRunning test \"${input}\"..."
-		if ../$DUQ $input > $output
-		then
-			echo "Success!"
-		else
-			echo "*****************"
-			echo "*  TEST FAILED  *"
-			echo "*****************"
-			echo "==> Check output file $output"
-			NFAILED=$(( NFAILED+1 ))
-		fi
+			if [ "$?" -eq "0" ]
+			then
+				echo "Success!"
+			else
+				echo "*****************"
+				echo "*  TEST FAILED  *"
+				echo "*****************"
+				echo "==> Check output file $output"
+				NFAILED=$(( NFAILED+1 ))
+			fi
+		done
 	done
 
 	# Done, so move up to base test directory
