@@ -51,7 +51,12 @@ int main(int argc, char **argv)
 			switch (argv[n][1])
 			{
 				case ('h'):
-					printf("dUQ version %s\n\nAvailable CLI options are:\n\n", DUQVERSION);
+#ifdef PARALLEL
+					printf("dUQ PARALLEL version %s, Copyright (C) 2012-2017 T. Youngs.\n\n", DUQVERSION);
+#else
+					printf("dUQ SERIAL version %s, Copyright (C) 2012-2017 T. Youngs.\n\n", DUQVERSION);
+#endif
+					printf("Recognised CLI options are:\n\n");
 					printf("\t-a\t\tAuto-add dependent Modules if they are not present already\n");
 					printf("\t-d\t\tPerform dump of system data from all processes and quit\n");
 					printf("\t-i\t\tIgnore restart file\n");
@@ -86,7 +91,7 @@ int main(int argc, char **argv)
 					if (n == argc)
 					{
 						Messenger::error("Expected redirection filename.\n");
-						return 1;
+						return 0;
 					}
 					redirectFileName.sprintf("%s.%i", argv[n], ProcessPool::worldRank());
 					Messenger::enableRedirect(redirectFileName.get());
@@ -103,7 +108,7 @@ int main(int argc, char **argv)
 					printf("Unrecognised command-line switch '%s'.\n", argv[n]);
 					printf("Run with -h to see available switches.\n");
 					ProcessPool::finalise();
-					return 1;
+					return 0;
 					break;
 			}
 		}
@@ -115,7 +120,7 @@ int main(int argc, char **argv)
 			{
 				printf("Error: More than one input file specified?\n");
 				ProcessPool::finalise();
-				return 1;
+				return 0;
 			}
 		}
 
@@ -138,14 +143,14 @@ int main(int argc, char **argv)
 	if (!MPIRunMaster(dUQ.worldPool(), dUQ.loadDataFiles()))
 	{
 		ProcessPool::finalise();
-		return 1;
+		return 0;
 	}
 
 	// Broadcast periodic table (including isotope and parameter data)
 	if (!periodicTable.broadcast(dUQ.worldPool()))
 	{
 		ProcessPool::finalise();
-		return 1;
+		return 0;
 	}
 
 	// Register modules and print info
@@ -154,7 +159,7 @@ int main(int argc, char **argv)
 	if (!ModuleList::printMasterModuleInformation())
 	{
 		ProcessPool::finalise();
-		return 1;
+		return 0;
 	}
 
 	// Load input file
@@ -170,7 +175,7 @@ int main(int argc, char **argv)
 	{
 		Messenger::error("Input file contained errors.\n");
 		ProcessPool::finalise();
-		return 1;
+		return 0;
 	}
 
 	// Load restart file if it exists
@@ -185,7 +190,7 @@ int main(int argc, char **argv)
 			{
 				Messenger::error("Restart file contained errors.\n");
 				ProcessPool::finalise();
-				return 1;
+				return 0;
 			}
 		}
 		else Messenger::print("Restart file '%s' does not exist.\n", restartFile.get());
