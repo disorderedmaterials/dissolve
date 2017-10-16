@@ -6,32 +6,6 @@ add_library(modules
   module.h
   modulelist.h
   moduleregistry.h
-  
-  atomshake.cpp
-  check.cpp
-  energy.cpp
-  export.cpp
-  forces.cpp
-  import.cpp
-  md.cpp
-  skeleton.cpp
-  test.cpp
-  #grainshake.cpp
-  #intrashake.cpp
-  #twist.cpp
-  
-  atomshake.h
-  check.h
-  energy.h
-  export.h
-  forces.h
-  import.h
-  md.h
-  skeleton.h
-  test.h
-  #grainshake.h
-  #intrashake.h
-  #twist.h
 )
 
 include_directories(
@@ -42,4 +16,13 @@ ${CMAKE_BINARY_DIR}/src
 )
 
 # Module subdirectories
+add_subdirectory(atomshake)
+add_subdirectory(checks)
+add_subdirectory(energy)
+add_subdirectory(export)
+add_subdirectory(forces)
+add_subdirectory(import)
+add_subdirectory(md)
 add_subdirectory(partials)
+add_subdirectory(skeleton)
+add_subdirectory(test)
