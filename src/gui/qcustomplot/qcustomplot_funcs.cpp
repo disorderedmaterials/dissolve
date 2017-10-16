@@ -823,7 +823,7 @@ void QCPPaintBufferGlPbuffer::reallocateBuffer()
   if applicable.
 
   All frame buffer objects shall share one OpenGL context and paint device, which need to be set up
-  externally and passed via \a glContext and \a glPaintDevice. The set-up is done in \ref
+  externally and passed via \a glContext and \a glPaintDevice. The set up is done in \ref
   QCustomPlot::setupOpenGl and the context and paint device are managed by the parent QCustomPlot
   instance.
 */

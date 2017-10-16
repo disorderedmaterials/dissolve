@@ -237,7 +237,7 @@ bool Configuration::setup(ProcessPool& procPool, double pairPotentialRange, int 
 	Messenger::print("--> Creating periodic Box and Cell partitioning...\n");
 	if (!setupBox(pairPotentialRange, nExpectedAtoms))
 	{
-		Messenger::error("Failed to set-up Box/Cells for Configuration.\n");
+		Messenger::error("Failed to set up Box/Cells for Configuration.\n");
 		return false;
 	}
 
