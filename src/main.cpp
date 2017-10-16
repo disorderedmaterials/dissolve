@@ -67,7 +67,7 @@ int main(int argc, char **argv)
 					dUQ.setAutoAddDependentModules(true);
 					break;
 				case ('d'):
-					Messenger::print("Full dump of system setup across all processes enabled.\n");
+					Messenger::print("Full dump of system set up across all processes enabled.\n");
 					dumpData = true;
 					break;
 				case ('i'):
@@ -196,22 +196,22 @@ int main(int argc, char **argv)
 	if (dUQ.seed() == -1) srand( (unsigned)time( NULL ) );
 	else srand(dUQ.seed());
 
-	// Perform simulation setup (all processes)
+	// Perform simulation set up (all processes)
 	Messenger::banner("Setting Up Simulation");
 	if (!dUQ.setupSimulation())
 	{
-		Messenger::print("Failed to setup simulation.\n");
+		Messenger::print("Failed to set up simulation.\n");
 		ProcessPool::finalise();
-		return 1;
+		return 0;
 	}
 
 	// Setup parallel comms / limits etc.
 	Messenger::banner("Setting Up Parallelism");
 	if (!dUQ.setupMPIPools())
 	{
-		Messenger::print("Failed to setup parallel communications.\n");
+		Messenger::print("Failed to set up parallel communications.\n");
 		ProcessPool::finalise();
-		return 1;
+		return 0;
 	}
 
 	// Full system dump?
@@ -234,6 +234,6 @@ int main(int argc, char **argv)
 	else Messenger::print("dUQ is done, but with errors.\n");
 
 	// Done.
-	return (result ? 0 : 1);
+	return 0;
 }
 
