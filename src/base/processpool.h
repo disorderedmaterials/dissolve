@@ -85,7 +85,7 @@ class ProcessPool
 	// Initialise parallel communications, setting rank within the specified communicators / nProcesses
 	static bool initialiseMPI(int* argn, char ***argv);
 	// End parallel communications
-	static bool finalise();
+	static void finalise();
 	// Return number of world processes
 	static int nWorldProcesses();
 	// Return rank within the specified communicator of this process

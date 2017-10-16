@@ -138,12 +138,11 @@ bool ProcessPool::initialiseMPI(int* argn, char*** argv)
 }
 
 // End parallel communications
-bool ProcessPool::finalise()
+void ProcessPool::finalise()
 {
 #ifdef PARALLEL
 	MPI_Finalize();
 #endif
-	return true;
 }
 
 // Return number of world processes
@@ -490,7 +489,7 @@ bool ProcessPool::assignProcessesToGroups()
 	if (MPI_Group_incl(origGroup, groupLeadersW.nItems(), groupLeadersW.array(), &leaderGroup_) != MPI_SUCCESS) return false;
 	if (MPI_Comm_create(MPI_COMM_WORLD, leaderGroup_, &leaderCommunicator_) != MPI_SUCCESS) return false;
 #else
-	// No MPI, but must still setup a dummy process group
+	// No MPI, but must still set up a dummy process group
 	ProcessGroup* group = processGroups_.add();
 	group->addProcess(0, 0);
 	groupIndex_ = 0;
