@@ -91,6 +91,8 @@ class Messenger
 	public:
 	// Enable redirection of all messaging to specified file
 	static bool enableRedirect(const char* filename);
+	// Cease redirection of messaging to file
+	static void ceaseRedirect();
 };
 
 #endif

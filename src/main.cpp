@@ -66,6 +66,7 @@ int main(int argc, char **argv)
 					printf("\t-s\t\tPerform single main loop iteration and then quit\n");
 					printf("\t-v\t\tVerbose mode - be a little more descriptive throughout\n");
 					ProcessPool::finalise();
+					Messenger::ceaseRedirect();
 					return 0;
 					break;
 				case ('a'):
@@ -91,6 +92,7 @@ int main(int argc, char **argv)
 					if (n == argc)
 					{
 						Messenger::error("Expected redirection filename.\n");
+						Messenger::ceaseRedirect();
 						return 0;
 					}
 					redirectFileName.sprintf("%s.%i", argv[n], ProcessPool::worldRank());
@@ -107,6 +109,7 @@ int main(int argc, char **argv)
 				default:
 					printf("Unrecognised command-line switch '%s'.\n", argv[n]);
 					printf("Run with -h to see available switches.\n");
+					Messenger::ceaseRedirect();
 					ProcessPool::finalise();
 					return 0;
 					break;
@@ -120,6 +123,7 @@ int main(int argc, char **argv)
 			{
 				printf("Error: More than one input file specified?\n");
 				ProcessPool::finalise();
+				Messenger::ceaseRedirect();
 				return 0;
 			}
 		}
@@ -143,6 +147,7 @@ int main(int argc, char **argv)
 	if (!MPIRunMaster(dUQ.worldPool(), dUQ.loadDataFiles()))
 	{
 		ProcessPool::finalise();
+		Messenger::ceaseRedirect();
 		return 0;
 	}
 
@@ -150,6 +155,7 @@ int main(int argc, char **argv)
 	if (!periodicTable.broadcast(dUQ.worldPool()))
 	{
 		ProcessPool::finalise();
+		Messenger::ceaseRedirect();
 		return 0;
 	}
 
@@ -159,6 +165,7 @@ int main(int argc, char **argv)
 	if (!ModuleList::printMasterModuleInformation())
 	{
 		ProcessPool::finalise();
+		Messenger::ceaseRedirect();
 		return 0;
 	}
 
@@ -169,12 +176,14 @@ int main(int argc, char **argv)
 	{
 		Messenger::print("No input file provided. Nothing more to do.\n");
 		ProcessPool::finalise();
+		Messenger::ceaseRedirect();
 		return 0;
 	}
 	if (!dUQ.loadInput(inputFile))
 	{
 		Messenger::error("Input file contained errors.\n");
 		ProcessPool::finalise();
+		Messenger::ceaseRedirect();
 		return 0;
 	}
 
@@ -190,6 +199,7 @@ int main(int argc, char **argv)
 			{
 				Messenger::error("Restart file contained errors.\n");
 				ProcessPool::finalise();
+				Messenger::ceaseRedirect();
 				return 0;
 			}
 		}
@@ -207,6 +217,7 @@ int main(int argc, char **argv)
 	{
 		Messenger::print("Failed to set up simulation.\n");
 		ProcessPool::finalise();
+		Messenger::ceaseRedirect();
 		return 0;
 	}
 
@@ -216,6 +227,7 @@ int main(int argc, char **argv)
 	{
 		Messenger::print("Failed to set up parallel communications.\n");
 		ProcessPool::finalise();
+		Messenger::ceaseRedirect();
 		return 0;
 	}
 
@@ -232,13 +244,15 @@ int main(int argc, char **argv)
 	// Clear all data
 	dUQ.clear();
 
+	if (result) Messenger::print("dUQ is done.\n");
+	else Messenger::print("dUQ is done, but with errors.\n");
+
 	// End parallel communication
 	ProcessPool::finalise();
 
-	if (result) Messenger::print("dUQ is done.\n");
-	else Messenger::print("dUQ is done, but with errors.\n");
+	// Stop redirecting
+	Messenger::ceaseRedirect();
 
 	// Done.
 	return 0;
 }
-

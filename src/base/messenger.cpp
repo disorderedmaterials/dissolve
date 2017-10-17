@@ -234,3 +234,10 @@ bool Messenger::enableRedirect(const char* filename)
 	redirect_ = true;
 	return true;
 }
+
+// Cease redirection of messaging to file
+void Messenger::ceaseRedirect()
+{
+	parser_->closeFiles();
+	redirect_ = false;
+}
