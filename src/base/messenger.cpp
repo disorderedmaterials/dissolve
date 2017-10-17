@@ -113,6 +113,20 @@ void Messenger::createAndPrintText(const char* indentText, const char* format, v
 	printText(text_);
 }
 
+// Create and print text (simple)
+void Messenger::createAndPrintText(const char* text)
+{
+	if (masterOnly_ && (!ProcessPool::isWorldMaster())) return;
+
+	// Reset main text string storage
+	text_[0] = '\0';
+
+	if (redirect_ || (ProcessPool::nWorldProcesses() == 1)) sprintf(text_, "%s\n", text);
+	else sprintf(text_, "[%i] %s\n", ProcessPool::worldRank(), text);
+
+	printText(text_);
+}
+
 // Print standard message
 void Messenger::print(const char* fmt, ...)
 {
@@ -140,9 +154,13 @@ void Messenger::error(const char* fmt, ...)
 {
 	va_list arguments;
 	va_start(arguments,fmt);
-	printText("\n***  ERROR\n");
+
+	printText("\n");
+	createAndPrintText("***  ERROR");
 	createAndPrintText("***  ERROR    ", fmt, arguments);
-	printText("***  ERROR\n\n");
+	createAndPrintText("***  ERROR");
+	printText("\n");
+
 	va_end(arguments);
 }
 

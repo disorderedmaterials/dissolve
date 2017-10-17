@@ -53,10 +53,14 @@ class Messenger
 	static char workingText_[8096];
 	// Master text creation / formatting routine
 	static void createText(const char* indentText, const char* format, va_list arguments);
+	// Master text creation / formatting routine (indent text only, for banners etc.)
+	static void createText(const char* indentText);
 	// Print text
 	static void printText(const char* text);
 	// Create and print text
 	static void createAndPrintText(const char* indentText, const char* format, va_list arguments);
+	// Create and print text (simple)
+	static void createAndPrintText(const char* text);
 
 	public:
 	// Set status of quiet mode
