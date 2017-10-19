@@ -680,9 +680,9 @@ bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration*
 	{
 		for (int m=n; m<nTypes; ++m)
 		{
-			if (!partialsq.partial(n,m).transformBroadenedRDF(rho, qMin, qDelta, qMax, qDepBroadening, qIndepBroadening, wf)) return false;
-			if (!partialsq.boundPartial(n,m).transformBroadenedRDF(rho, qMin, qDelta, qMax, qDepBroadening, qIndepBroadening, wf)) return false;
-			if (!partialsq.unboundPartial(n,m).transformBroadenedRDF(rho, qMin, qDelta, qMax, qDepBroadening, qIndepBroadening, wf)) return false;
+			if (!partialsq.partial(n,m).transformAndBroadenRDF(rho, qMin, qDelta, qMax, qDepBroadening, qIndepBroadening, wf)) return false;
+			if (!partialsq.boundPartial(n,m).transformAndBroadenRDF(rho, qMin, qDelta, qMax, qDepBroadening, qIndepBroadening, wf)) return false;
+			if (!partialsq.unboundPartial(n,m).transformAndBroadenRDF(rho, qMin, qDelta, qMax, qDepBroadening, qIndepBroadening, wf)) return false;
 
 			// Zero Bragg partial, leave x array intact for use if needed
 			partialsq.braggPartial(n,m).templateFrom(partialsq.partial(n,m));

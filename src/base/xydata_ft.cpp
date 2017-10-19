@@ -307,7 +307,7 @@ bool XYData::transformRDF(double atomicDensity, XYData::WindowFunction wf)
 }
 
 // Transform g(r) to S(Q), applying instrumental broadening functions
-bool XYData::transformBroadenedRDF(double atomicDensity, double qMin, double qStep, double qMax, double qDepFWHM, double qIndepFWHM, XYData::WindowFunction wf)
+bool XYData::transformAndBroadenRDF(double atomicDensity, double qMin, double qStep, double qMax, double qDepFWHM, double qIndepFWHM, XYData::WindowFunction wf)
 {
 	// Okay to continue with transform?
 	if (!checkBeforeTransform()) return false;
@@ -353,7 +353,7 @@ bool XYData::transformBroadenedRDF(double atomicDensity, double qMin, double qSt
 		Q += qStep;
 	}
 
-	// Copy transform data over initial data
+	// Create suitable x axis for new data
 	x_.forgetData();
 	for (n=0; n<y_.nItems(); ++n) x_.add(qMin + n*qStep);
 
@@ -371,7 +371,7 @@ bool XYData::transformSQ(double atomicDensity, XYData::WindowFunction wf)
 	// Assume that the entire dataset constitutes one period of the function...
 	// Assume that X values of original function are half-bin values, so we must add another bin width on to recover period of original function
 	double deltaQ = x_[1] - x_[0];
-	double lambda = x_.last() - x_.first() + lambda;
+	double lambda = x_.last() - x_.first() + deltaQ;
 	double k = TWOPI / lambda;
 	double windowPos;
 	Messenger::printVerbose("In XYData::transformSQ(), period of function is %f, real deltaX is %f, and wavenumber is %f\n", lambda, deltaQ, k);
@@ -403,6 +403,53 @@ bool XYData::transformSQ(double atomicDensity, XYData::WindowFunction wf)
 	y_ = real;
 
 	interpolationInterval_ = -1;
+	return true;
+}
+
+// Transform S(Q) to g(r)
+bool XYData::transformAndUnbroadenSQ(double atomicDensity, double rMin, double rStep, double rMax, double qDepFWHM, double qIndepFWHM, XYData::WindowFunction wf)
+{
+	// Okay to continue with transform?
+	if (!checkBeforeTransform()) return false;
+
+	// Assume that the entire dataset constitutes one period of the function...
+	// Assume that X values of original function are half-bin values, so we must add another bin width on to recover period of original function
+	double deltaQ = x_[1] - x_[0];
+	double lambda = x_.last() - x_.first() + deltaQ;
+	double k = TWOPI / lambda;
+	double windowPos;
+	Messenger::printVerbose("In XYData::transformSQ(), period of function is %f, real deltaX is %f, and wavenumber is %f\n", lambda, deltaQ, k);
+
+	// Create working arrays
+	Array<double> oldy = y_;
+	y_.forgetData();
+	
+	// Perform Fourier sine transform
+	double r = rMin, factor, rft;
+	int n, m, nQ = x_.nItems();
+	while (r <= rMax)
+	{
+		rft = 0.0;
+		for (m=0; m<nQ; ++m)
+		{
+			windowPos = double(m) / double(nQ-1);
+			
+			rft += sin(x_[m]*r) * x_[m] * window(wf, windowPos) * oldy[m] * deltaQ;
+		}
+
+		// Normalise
+		factor = 1.0 / (2.0 * PI * PI * atomicDensity * r);
+		y_.add(rft * factor);
+
+		r += rStep;
+	}
+
+	// Create suitable x axis for new data
+	x_.forgetData();
+	for (n=0; n<y_.nItems(); ++n) x_.add(rMin + n*rStep);
+
+	interpolationInterval_ = -1;
+
 	return true;
 }
 

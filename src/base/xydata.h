@@ -220,9 +220,11 @@ class XYData : public ListItem<XYData>
 	// Transform g(r) to S(Q)
 	bool transformRDF(double atomicDensity, XYData::WindowFunction wf = XYData::NoWindow);
 	// Transform g(r) to S(Q), applying instrumental broadening functions
-	bool transformBroadenedRDF(double atomicDensity, double qMin, double qStep, double qMax, double qDepFWHM, double qIndepFWHM, XYData::WindowFunction wf = XYData::NoWindow);
+	bool transformAndBroadenRDF(double atomicDensity, double qMin, double qStep, double qMax, double qDepFWHM, double qIndepFWHM, XYData::WindowFunction wf = XYData::NoWindow);
 	// Transform S(Q) to g(r)
 	bool transformSQ(double atomicDensity, XYData::WindowFunction wf = XYData::NoWindow);
+	// Transform S(Q) to g(r)
+	bool transformAndUnbroadenSQ(double atomicDensity, double rMin, double rStep, double rMax, double qDepFWHM, double qIndepFWHM, XYData::WindowFunction wf = XYData::NoWindow);
 	// Fourier transform current data, applying line-width broadening in real-space using the modified Lorch function
 	bool transformLorch(double atomicDensity, double step, double rMax, double beta, double delta0, bool qToR);
 	// Calculate S(Q) correlation function
