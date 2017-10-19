@@ -46,6 +46,8 @@ EndData
 Module Test
   # Define targets
   Data  'Yarnell-85K'
+  # Define S(Q) source
+  Partials  'Yarnell-85K'
   Frequency 5
 EndModule
 

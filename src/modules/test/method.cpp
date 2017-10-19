@@ -41,7 +41,32 @@ bool TestModule::preProcess(DUQ& duq, ProcessPool& procPool)
 // Execute Method
 bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 {
-	// First, make sure that all of the associated Data is setup
+	/*
+	 * Are calculated S(Q) available?
+	 */
+	CharString partialsModuleName = GenericListHelper<CharString>::retrieve(duq.processingModuleData(), "Partials", uniqueName_, options_.valueAsString("Partials"));
+	if (DUQSys::sameString(partialsModuleName, "<Undefined>"))
+	{
+		Messenger::error("Partials module name has not been defined in TestModule.\n");
+		return false;
+	}
+	Module* partialsModule = ModuleList::findInstanceByUniqueName(partialsModuleName);
+	if (!partialsModule)
+	{
+		Messenger::error("Couldn't find PartialsModule named '%s'.\n", partialsModuleName.get());
+		return false;
+	}
+	bool found;
+	PartialSet& weightedSQ = GenericListHelper<PartialSet>::retrieve(duq.processingModuleData(), "WeightedSQ", partialsModuleName.get(), PartialSet(), &found);
+	if (!found)
+	{
+		Messenger::error("Couldn't locate 'WeightedSQ' data in PartialsModule '%s'.\n", partialsModuleName.get());
+		return false;
+	}
+
+	/*
+	 * First, make sure that all of the associated Data is set up
+	 */
 	RefListIterator<Data,bool> dataIterator(targetData_);
 	while (Data* data = dataIterator.iterate())
 	{
@@ -90,11 +115,20 @@ bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 	/*
 	 * Construct difference matrix of partials
 	 */
-	Array2D<XYData> differences;
-	for (AtomType* at1 = duq.atomTypeList().first(); at1 != NULL; at1 = at1->next)
+	int nTypes = duq.atomTypeList().nItems();
+	Array2D<XYData> differences(nTypes, nTypes, true);
+	int n = 0;
+	for (AtomType* at1 = duq.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++n)
 	{
-		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next)
+		int m = n;
+		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
 		{
+			// Copy partial between these AtomTypes in the ScatteringMatrix
+			XYData partial = scatteringMatrix.partial(at1, at2);
+			partial.addInterpolated(weightedSQ.partial(n, m), -1.0);
+			partial.save("sub.sq");
+			partial.transformAndUnbroadenSQ(0.0213, 0.05, 0.01, 30.0, 0.0, 0.0);
+			partial.save("transformed.gr");
 		}
 	}
 

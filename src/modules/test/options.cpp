@@ -27,13 +27,13 @@
 void TestModule::setupOptions()
 {
 	// Boolean options must be set as 'bool(false)' or 'bool(true)' rather than just 'false' or 'true' so that the correct overloaded add() function is called
-	options_.add("Test", bool(false));
+	options_.add("Partials", "<Undefined>", "Partials Module from which to get simulated partial data");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
 int TestModule::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
 {
-	if (DUQSys::sameString("AddTotalSQ", parser.argc(0)))
+	if (DUQSys::sameString("__", parser.argc(0)))
 	{
 	}
 	else return -1;
