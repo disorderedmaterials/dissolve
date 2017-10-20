@@ -286,7 +286,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 
 		// Setup partial set using the AtomTypeList we have just constructed.
 		Configuration* refConfig = targetConfigurations_.firstItem();
-		PartialSet& unweightedgr = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedGR", "Partials");
+		PartialSet& unweightedgr = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedGR", uniqueName_);
 		unweightedgr.setup(combinedAtomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), uniqueName(), "unweighted", "rdf", "r, Angstroms");
 
 		// Loop over Configurations again, summing into the PartialSet we have just set up
