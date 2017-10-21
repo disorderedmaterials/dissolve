@@ -39,8 +39,14 @@ else
 	PROCS="1"
 fi
 
-# Loop over test directories
-for test in `ls -d [0-9]*[0-9]`
+# Loop over all test directories, or supplied dirs
+if [ "$#" -eq "0" ]
+then
+  TESTS=`ls -d [0-9]*[0-9]`
+else
+  TESTS="$*"
+fi
+for test in $TESTS
 do
 	echo "Test directory: "$test
 
