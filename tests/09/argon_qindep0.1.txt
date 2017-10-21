@@ -1,0 +1,38 @@
+# Liquid Argon Example
+
+# Species Definitions
+Species 'Argon'
+  # Atoms
+  Atom    1   Ar     0.000    0.000    0.000    'Ar'
+
+  # Isotopologues
+  Isotopologue  'Ar36'  Ar=36
+EndSpecies
+
+# Define Configuration
+Configuration 'liquid'
+  Multiplier  10000
+  CellLengths  77.721314  77.721314  77.721314
+  SpeciesInfo  'Argon'  1.0
+  InputCoordinates  epsr  'epsr_qindep0.1/argonbox.ato'
+EndConfiguration
+
+Module Partials
+  Configuration  'liquid'
+  Weights  neutron
+  Isotopologue  'liquid'  'Argon'  'Ar36'  1.0
+  StructureFactor  on
+  QIndepBroadening  0.1
+  Frequency  1
+  Test  On
+  TestReference  'epsr_qindep0.1/argon.EPSR.u01'  SQ-weighted-total  1  2
+EndModule
+
+PairPotentials
+  Generate  'LJ'  'Ar'  'Ar'
+EndPairPotentials
+
+Simulation
+  MaxIterations 1
+  WriteIterationData  False
+EndSimulation
