@@ -67,7 +67,7 @@ int main(int argc, char **argv)
 					printf("\t-v\t\tVerbose mode - be a little more descriptive throughout\n");
 					ProcessPool::finalise();
 					Messenger::ceaseRedirect();
-					return 0;
+					return 1;
 					break;
 				case ('a'):
 					dUQ.setAutoAddDependentModules(true);
@@ -93,7 +93,7 @@ int main(int argc, char **argv)
 					{
 						Messenger::error("Expected redirection filename.\n");
 						Messenger::ceaseRedirect();
-						return 0;
+						return 1;
 					}
 					redirectFileName.sprintf("%s.%i", argv[n], ProcessPool::worldRank());
 					Messenger::enableRedirect(redirectFileName.get());
@@ -111,7 +111,7 @@ int main(int argc, char **argv)
 					printf("Run with -h to see available switches.\n");
 					Messenger::ceaseRedirect();
 					ProcessPool::finalise();
-					return 0;
+					return 1;
 					break;
 			}
 		}
@@ -124,7 +124,7 @@ int main(int argc, char **argv)
 				printf("Error: More than one input file specified?\n");
 				ProcessPool::finalise();
 				Messenger::ceaseRedirect();
-				return 0;
+				return 1;
 			}
 		}
 
@@ -148,7 +148,7 @@ int main(int argc, char **argv)
 	{
 		ProcessPool::finalise();
 		Messenger::ceaseRedirect();
-		return 0;
+		return 1;
 	}
 
 	// Broadcast periodic table (including isotope and parameter data)
@@ -156,7 +156,7 @@ int main(int argc, char **argv)
 	{
 		ProcessPool::finalise();
 		Messenger::ceaseRedirect();
-		return 0;
+		return 1;
 	}
 
 	// Register modules and print info
@@ -166,7 +166,7 @@ int main(int argc, char **argv)
 	{
 		ProcessPool::finalise();
 		Messenger::ceaseRedirect();
-		return 0;
+		return 1;
 	}
 
 	// Load input file
@@ -177,14 +177,14 @@ int main(int argc, char **argv)
 		Messenger::print("No input file provided. Nothing more to do.\n");
 		ProcessPool::finalise();
 		Messenger::ceaseRedirect();
-		return 0;
+		return 1;
 	}
 	if (!dUQ.loadInput(inputFile))
 	{
 		Messenger::error("Input file contained errors.\n");
 		ProcessPool::finalise();
 		Messenger::ceaseRedirect();
-		return 0;
+		return 1;
 	}
 
 	// Load restart file if it exists
@@ -200,7 +200,7 @@ int main(int argc, char **argv)
 				Messenger::error("Restart file contained errors.\n");
 				ProcessPool::finalise();
 				Messenger::ceaseRedirect();
-				return 0;
+				return 1;
 			}
 		}
 		else Messenger::print("Restart file '%s' does not exist.\n", restartFile.get());
@@ -218,7 +218,7 @@ int main(int argc, char **argv)
 		Messenger::print("Failed to set up simulation.\n");
 		ProcessPool::finalise();
 		Messenger::ceaseRedirect();
-		return 0;
+		return 1;
 	}
 
 	// Setup parallel comms / limits etc.
@@ -228,7 +228,7 @@ int main(int argc, char **argv)
 		Messenger::print("Failed to set up parallel communications.\n");
 		ProcessPool::finalise();
 		Messenger::ceaseRedirect();
-		return 0;
+		return 1;
 	}
 
 	// Full system dump?
@@ -254,5 +254,5 @@ int main(int argc, char **argv)
 	Messenger::ceaseRedirect();
 
 	// Done.
-	return 0;
+	return (result ? 0 : 1);
 }
