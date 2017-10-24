@@ -20,8 +20,10 @@
 */
 
 #include "base/function.h"
+#include "base/lineparser.h"
 #include "base/processpool.h"
 #include "base/sysfunc.h"
+#include "templates/enumhelpers.h"
 
 // Constructor
 Function::Function()
@@ -86,17 +88,147 @@ void Function::set(FunctionType function, double a, double b, double c, double d
 	parameters_[5] = f;
 }
 
-// Return value of function at value x
-double Function::value(double x)
+// Set function data from LineParser source
+bool Function::set(LineParser& parser, int startArg)
 {
+	// First argument is the form of the function
+	Function::FunctionType funcType = Function::functionType(parser.argc(startArg));
+	if (funcType == Function::nFunctionTypes)
+	{
+		Messenger::error("Unrecognised Function type '%s'.\n", parser.argc(startArg));
+		return false;
+	}
+
+	// Do we have the right number of arguments for the function specified?
+	if ((parser.nArgs() - startArg) < Function::nFunctionParameters(funcType))
+	{
+		Messenger::error("Too few parameters supplied for Function '%s' (expected %i, found %i).\n", Function::functionType(funcType), Function::nFunctionParameters(funcType), parser.nArgs() - startArg);
+		return false;
+	}
+	
+	// Set up function
+	switch (funcType)
+	{
+		case (Function::UnityFunction):
+			break;
+		default:
+			Messenger::error("Function form '%s' not accounted for in set(LineParser&,int).\n", Function::functionType(funcType));
+			return false;
+	}
+
+	return true;
+}
+
+// Return function type
+Function::FunctionType Function::function() const
+{
+	return function_;
+}
+
+// Return short summary of function parameters
+CharString Function::summary() const
+{
+	switch (function_)
+	{
+		case (Function::UnityFunction):
+			return "1.0";
+			break;
+		default:
+			Messenger::warn("Function::value(x) - Function id %i not accounted for.\n", function_);
+			break;
+	}
+
+	return "NULL";
+}
+
+// Return value of function at value x
+double Function::value(double x) const
+{
+#ifdef CHECKS
+	if ((function_ != Function::UnityFunction) && (functions_[function_].nArguments != 2))
+	{
+		Messenger::error("Function::value(x) - Function '%s' requires %i arguments, not 1.\n", Function::functionType(function_), functions_[function_].nArguments);
+		return 0.0;
+	}
+#endif
+
+	switch (function_)
+	{
+		case (Function::UnityFunction):
+			return 1.0;
+			break;
+		default:
+			Messenger::warn("Function::value(x) - Function id %i not accounted for.\n", function_);
+			break;
+	}
+
+	return 0.0;
 }
 
 // Return value of function at values x and y
-double Function::value(double x, double y)
+double Function::value(double x, double y) const
 {
+#ifdef CHECKS
+	if ((function_ != Function::UnityFunction) && (functions_[function_].nArguments != 2))
+	{
+		Messenger::error("Function::value(x,y) - Function '%s' requires %i arguments, not 2.\n", Function::functionType(function_), functions_[function_].nArguments);
+		return 0.0;
+	}
+#endif
+	switch (function_)
+	{
+		case (Function::UnityFunction):
+			return 1.0;
+			break;
+		default:
+			Messenger::warn("Function::value(x,y) - Function id %i not accounted for.\n", function_);
+			break;
+	}
+
+	return 0.0;
 }
 
 // Return value of function at values x, y, and z
-double Function::value(double x, double y, double z)
+double Function::value(double x, double y, double z) const
 {
+#ifdef CHECKS
+	if ((function_ != Function::UnityFunction) && (functions_[function_].nArguments != 2))
+	{
+		Messenger::error("Function::value(x,y) - Function '%s' requires %i arguments, not 3.\n", Function::functionType(function_), functions_[function_].nArguments);
+		return 0.0;
+	}
+#endif
+
+	switch (function_)
+	{
+		case (Function::UnityFunction):
+			return 1.0;
+			break;
+		default:
+			Messenger::warn("Function::value(x,y,z) - Function id %i not accounted for.\n", function_);
+			break;
+	}
+
+	return 0.0;
+}
+
+// Return unity function
+Function& Function::unity()
+{
+	static Function unity;
+	return unity;
+}
+
+/*
+ * Parallel Comms
+ */
+
+// Broadcast data from Master to all Slaves
+bool Function::broadcast(ProcessPool& procPool, int root)
+{
+#ifdef PARALLEL
+	if (!procPool.broadcast(EnumCast<Function::FunctionType>(function_), root)) return false;
+	if (!procPool.broadcast(parameters_, MAXFUNCTIONPARAMS, root)) return false;
+#endif
+	return true;
 }

@@ -24,8 +24,11 @@
 
 #define MAXFUNCTIONPARAMS 6
 
+#include "base/charstring.h"
+
 // Forward Declarations
-/* none */
+class LineParser;
+class ProcessPool;
 
 // Function Definitions
 class FunctionDefinition
@@ -88,12 +91,28 @@ class Function
 	 * XXX
 	 */
 	void set(FunctionType function, double a = 0.0, double b = 0.0, double c = 0.0, double d = 0.0, double e = 0.0, double f = 0.0);
+	// Set function data from LineParser source
+	bool set(LineParser& parser, int startArg);
+	// Return function type
+	FunctionType function() const;
+	// Return short summary of function parameters
+	CharString summary() const;
 	// Return value of function at value x
-	double value(double x);
+	double value(double x) const;
 	// Return value of function at values x and y
-	double value(double x, double y);
-	// Return value of function at values x, y, and z
-	double value(double x, double y, double z);
+	double value(double x, double y) const;
+	// Return value of function at values x, y1, and z
+	double value(double x, double y, double z) const;
+	// Return unity function
+	static Function& unity();
+
+
+	/*
+	 * Parallel Comms
+	 */
+	public:
+	// Broadcast data from Master to all Slaves
+	bool broadcast(ProcessPool& procPool, int root = 0);
 };
 
 #endif
