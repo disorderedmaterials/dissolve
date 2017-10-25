@@ -70,7 +70,7 @@ const char* Data::niceName()
  */
 
 // DataType keywords
-const char* DataTypeKeywords[] = { "Neutron"};
+const char* DataTypeKeywords[] = { "Neutron" };
 
 // Convert text string to DataType
 Data::DataType Data::dataType(const char* s)
