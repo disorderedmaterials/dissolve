@@ -157,10 +157,38 @@ bool XYData::fourierTransformReal(bool forwardTransform, XYData::WindowFunction 
 }
 
 // Perform Fourier sine transform of current distribution function, over range specified, and with specified broadening functions and window applied (if requested)
-bool XYData::sineFT(double normFactor, double wMin, double wStep, double wMax, const Function& wBroadening, const Function& wDependentBroadening, XYData::WindowFunction wf)
+bool XYData::broadenedSineFT(double normFactor, double wMin, double wStep, double wMax, const Function& wBroadening, const Function& wDependentBroadening, XYData::WindowFunction wf)
 {
+	/*
+	 * Perform sine Fourier transform of current data. Function has no notion of forward or backwards transforms - normalisation and broadening functions must
+	 * be suitable for the required purpose. Broadening functions are applied to the transformed function utilising convolution theorem:
+	 * 
+	 * 	f(x) and g(x) are the original functions, while F(q) and G(q) are their Fourier transforms.
+	 * 	Pointwise multiplication (.) in one domain equals convolution (*) in the other:
+	 * 
+	 * 	FT[ f(x) * g(x) ] = F(q) . G(q)
+	 * 	FT[ f(x) . g(x) ] = F(q) * G(q)
+	 * 
+	 * Since the ultimate goal of this function is to generate the broadened FT of the input data (with the broadening applied to the transformed data, rather than
+	 * applied to the input data and then transformed) we require the first case listed above. The quantity we want is the pointwise multiplication of the FT of the 
+	 * input data with the broadening functions given, so we can simply perform the convolution of the input data with the *FT* of the broadening functions, and FT 
+	 * the result.
+	 */
+
 	// Okay to continue with transform?
 	if (!checkBeforeTransform()) return false;
+
+	// Check broadening functions supplied for suitability
+	if ((wBroadening.function() != Function::UnityFunction) && (wBroadening.nArguments() != 1))
+	{
+		Messenger::error("Supplied omega-independent broadening function does not accept exactly one argument.\n");
+		return false;
+	}
+	if ((wDependentBroadening.function() != Function::UnityFunction) && (wDependentBroadening.nArguments() != 2))
+	{
+		Messenger::error("Supplied omega-dependent broadening function does not accept exactly two arguments.\n");
+		return false;
+	}
 
 	int n, m;
 	const int nX = x_.nItems();

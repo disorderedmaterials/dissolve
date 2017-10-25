@@ -681,9 +681,9 @@ bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration*
 	{
 		for (int m=n; m<nTypes; ++m)
 		{
-			if (!partialsq.partial(n,m).sineFT(4.0*PI*rho, qMin, qDelta, qMax, generalBroadening, qDependentBroadening, wf)) return false;
-			if (!partialsq.boundPartial(n,m).sineFT(4.0*PI*rho, qMin, qDelta, qMax, generalBroadening, qDependentBroadening, wf)) return false;
-			if (!partialsq.unboundPartial(n,m).sineFT(4.0*PI*rho, qMin, qDelta, qMax, generalBroadening, qDependentBroadening, wf)) return false;
+			if (!partialsq.partial(n,m).broadenedSineFT(4.0*PI*rho, qMin, qDelta, qMax, generalBroadening, qDependentBroadening, wf)) return false;
+			if (!partialsq.boundPartial(n,m).broadenedSineFT(4.0*PI*rho, qMin, qDelta, qMax, generalBroadening, qDependentBroadening, wf)) return false;
+			if (!partialsq.unboundPartial(n,m).broadenedSineFT(4.0*PI*rho, qMin, qDelta, qMax, generalBroadening, qDependentBroadening, wf)) return false;
 
 			// Zero Bragg partial, leave x array intact for use if needed
 			partialsq.braggPartial(n,m).templateFrom(partialsq.partial(n,m));
