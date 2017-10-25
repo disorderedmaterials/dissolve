@@ -58,7 +58,7 @@ FunctionDefinition Function::functions_[] = {
 Function::FunctionType Function::functionType(const char* s)
 {
 	for (int n=0; n<nFunctionTypes; ++n) if (DUQSys::sameString(s, functions_[n].name)) return (FunctionType) n;
-	return Function::UnityFunction;
+	return Function::nFunctionTypes;
 }
 
 // Return FunctionType name
@@ -105,7 +105,7 @@ bool Function::set(LineParser& parser, int startArg)
 		Messenger::error("Too few parameters supplied for Function '%s' (expected %i, found %i).\n", Function::functionType(funcType), Function::nFunctionParameters(funcType), parser.nArgs() - startArg);
 		return false;
 	}
-	
+
 	// Set up function
 	switch (funcType)
 	{
