@@ -316,7 +316,7 @@ bool XYData::broadenedSineFT(double normFactor, double wMin, double wStep, doubl
 				windowPos = double(m) / double(nX-1);
 
 				// Calculate broadening
-				broadening = wBroadening.value(x_[m]) * wDependentBroadening.value(x_[m], omega);
+				broadening = wBroadening.ft(x_[m]) * wDependentBroadening.ft(x_[m], omega);
 
 				ft += sin(x_[m]*omega) * x_[m] * broadening * window(wf, windowPos) * y_[m] * deltaX;
 			}
