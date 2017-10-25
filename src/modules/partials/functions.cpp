@@ -381,6 +381,9 @@ bool PartialsModule::performAveraging(GenericList& moduleData, const char* name,
 	}
 	PartialSet& currentPartials = GenericListHelper<PartialSet>::retrieve(moduleData, name, prefix);
 
+	// Store the current index, since we must ensure we retain it in the averaged PartialSet
+	int currentIndex = currentPartials.index();
+
 	// Establish how many stored datasets we have
 	int nStored = 0;
 	for (nStored = 0; nStored < nSetsInAverage; ++nStored) if (!moduleData.contains(CharString("%s_%i", name, nStored+1), prefix)) break;
@@ -418,6 +421,9 @@ bool PartialsModule::performAveraging(GenericList& moduleData, const char* name,
 		// Sum in partials
 		currentPartials.addPartials(set, weight);
 	}
+
+	// Reinstate the index of the averaged PartialSet
+	currentPartials.setIndex(currentIndex);
 
 	return true;
 }
