@@ -80,7 +80,6 @@ bool DoubleModuleKeyword::parseArguments(LineParser& parser, int startArg)
 	return false;
 }
 
-
 /*
  * Conversion
  */
