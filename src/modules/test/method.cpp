@@ -44,7 +44,7 @@ bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 	/*
 	 * Are calculated S(Q) available?
 	 */
-	CharString partialsModuleName = GenericListHelper<CharString>::retrieve(duq.processingModuleData(), "Partials", uniqueName_, options_.valueAsString("Partials"));
+	CharString partialsModuleName = GenericListHelper<CharString>::retrieve(duq.processingModuleData(), "Partials", uniqueName_, keywords_.asString("Partials"));
 	if (DUQSys::sameString(partialsModuleName, "<Undefined>"))
 	{
 		Messenger::error("Partials module name has not been defined in TestModule.\n");
@@ -127,7 +127,7 @@ bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 			XYData partial = scatteringMatrix.partial(at1, at2);
 			partial.addInterpolated(weightedSQ.partial(n, m), -1.0);
 			partial.save("sub.sq");
-			partial.transformAndUnbroadenSQ(0.0213, 0.05, 0.01, 30.0, 0.0, 0.0);
+// 			partial.transformAndUnbroadenSQ(0.0213, 0.05, 0.01, 30.0, 0.0, 0.0);
 			partial.save("transformed.gr");
 		}
 	}

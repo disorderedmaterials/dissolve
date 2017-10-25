@@ -23,7 +23,7 @@
 #define DUQ_MODULE_H
 
 #include "base/messenger.h"
-#include "base/plainvaluelist.h"
+#include "modules/modulekeywordlist.h"
 #include "templates/genericlist.h"
 #include "templates/reflist.h"
 
@@ -102,21 +102,21 @@ class Module : public ListItem<Module>
 
 
 	/*
-	 * Options
+	 * Keywords
 	 */
 	protected:
-	// Options for Module
-	PlainValueList options_;
+	// Keywords recognised by Module
+	ModuleKeywordList keywords_;
 
 	protected:
-	// Setup options for Module
-	virtual void setupOptions() = 0;
+	// Setup keywords for Module
+	virtual void setupKeywords() = 0;
+	// Parse complex keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
+	virtual int parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix) = 0;
 
 	public:
-	// Return options for Module
-	PlainValueList& options();
 	// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-	virtual int parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList) = 0;
+	int parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix);
 
 
 	/*

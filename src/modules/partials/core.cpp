@@ -36,7 +36,7 @@ PartialsModule::PartialsModule() : Module()
 	instances_.own(this);
 
 	// Setup variables / control parameters
-	setupOptions();
+	setupKeywords();
 }
 
 // Destructor

@@ -1,10 +1,12 @@
 noinst_LTLIBRARIES = libmodules.la
 
-libmodules_la_SOURCES = module.cpp modulelist.cpp moduleregistry.cpp
+libmodules_la_SOURCES = module.cpp modulekeywordbase.cpp modulekeywordlist.cpp modulelist.cpp moduleregistry.cpp
+libmodules_la_SOURCES += modulekeyword_bool.cpp modulekeyword_charstring.cpp modulekeyword_complex.cpp modulekeyword_double.cpp modulekeyword_function.cpp modulekeyword_int.cpp
 libmodules_la_LIBADD = 
 libmodules_la_LDFLAGS = -static
 
-noinst_HEADERS = module.h modulelist.h moduleregistry.h
+noinst_HEADERS = module.h modulekeywordbase.h modulekeyworddata.h modulekeywordlist.h modulelist.h moduleregistry.h
+noinst_HEADERS += modulekeyword_bool.h modulekeyword_charstring.h modulekeyword_complex.h modulekeyword_double.h modulekeyword_function.h modulekeyword_int.h modulekeywords.h
 
 AM_CPPFLAGS = -I../ -I../../ @DUQ_CFLAGS@ @DUQ_READLINE@
 

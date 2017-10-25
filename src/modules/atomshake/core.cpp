@@ -36,7 +36,7 @@ AtomShakeModule::AtomShakeModule() : Module()
 	instances_.own(this);
 
 	// Setup variables / control parameters
-	setupOptions();
+	setupKeywords();
 }
 
 // Destructor

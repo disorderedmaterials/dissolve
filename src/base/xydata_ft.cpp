@@ -156,19 +156,15 @@ bool XYData::fourierTransformReal(bool forwardTransform, XYData::WindowFunction 
 	return true;
 }
 
-// Transform g(r) to S(Q)
-bool XYData::transformRDF(double atomicDensity, XYData::WindowFunction wf)
+// Perform Fourier sine transform of current distribution function, over range specified, and with specified broadening functions and window applied (if requested)
+bool XYData::sineFT(double normFactor, double wMin, double wStep, double wMax, const Function& generalBroadening, const Function& wDependentBroadening, XYData::WindowFunction wf)
 {
 	// Okay to continue with transform?
 	if (!checkBeforeTransform()) return false;
 
-	// Assume that the entire dataset constitutes one period of the function...
-	// Assume X values of original function are central bin values, so we must add another bin width on to recover period of original function
-	double deltaR = x_[1] - x_[0];
-	double lambda = x_.last() - x_.first() + deltaR;
-	double k = TWOPI / lambda;
-	double windowPos;
-	Messenger::printVerbose("In XYData::transformRDF(), period of function is %f, real deltaX is %f, and wavenumber is %f\n", lambda, deltaR, k);
+	int n, m;
+	const int nX = x_.nItems();
+	double windowPos, broadening;
 
 	if (XYData::useFFT_)
 	{
@@ -267,186 +263,49 @@ bool XYData::transformRDF(double atomicDensity, XYData::WindowFunction wf)
 // 		for (n=0; n<N; ++n) printf("FFT = %f\n", yin[n]);
 		
 		// Copy transform data over initial data
-		for (n=0; n<x_.nItems(); ++n) x_[n] = (n+0.5)*k;
+// 		for (n=0; n<x_.nItems(); ++n) x_[n] = (n+0.5)*k;  k not defined anymore
 		for (n=0; n<x_.nItems(); ++n) y_[n] = yin[n];
 		y_ *= 2.0 / x_.nItems();
 		y_[0] / 2.0;
 	}
 	else
 	{
-		// Create working arrays
-		Array<double> real(x_.nItems());
-		real = 0.0;
+		// Create working array
+		XYData sineft;
 
-		// Perform Fourier sine transform
-		double Q, factor;
-		int n, m, nPoints = x_.nItems();
-		for (n=0; n<nPoints; ++n)
+		// Assume deltaX is the difference between the first two points
+		double deltaX = x_[1] - x_[0];
+
+		// Perform Fourier sine transform, apply general and omega-dependent broadening, as well as window function
+		double ft;
+		double omega = wMin;
+		while (omega <= wMax)
 		{
-			Q = (n+0.5)*k;
-			for (m=0; m<nPoints; ++m)
+			ft = 0.0;
+			for (m=0; m<nX; ++m)
 			{
-				windowPos = double(m) / double(nPoints-1);
+				// Get window value at this position in the function
+				windowPos = double(m) / double(nX-1);
 
-	// 			real[n] += x_[m]*x_[m]*y_[m] * sin(x_[m]*Q) * deltaR / (Q * x_[m]);
-				real[n] += sin(x_[m]*Q) * x_[m] * window(wf, windowPos) * y_[m] * deltaR;
+				// Calculate broadening
+				broadening = generalBroadening.value(x_[m]) * wDependentBroadening.value(x_[m], omega);
+
+				ft += sin(x_[m]*omega) * x_[m] * broadening * window(wf, windowPos) * y_[m] * deltaX;
 			}
 
 			// Normalise
-			factor = 4.0 * PI * atomicDensity / Q;
-			real[n] *= factor;
-		}
-
-		// Copy transform data over initial data
-		for (n=0; n<nPoints; ++n) x_[n] = (n+0.5)*k;
-		y_ = real;
-	}
-
-	interpolationInterval_ = -1;
-	return true;
-}
-
-// Transform g(r) to S(Q), applying instrumental broadening functions
-bool XYData::transformAndBroadenRDF(double atomicDensity, double qMin, double qStep, double qMax, double qDepFWHM, double qIndepFWHM, XYData::WindowFunction wf)
-{
-	// Okay to continue with transform?
-	if (!checkBeforeTransform()) return false;
-
-	// Assume that the entire dataset constitutes one period of the function...
-	// X values of original function are half-bin values, so we must add another bin width on to recover period of original function
-	double deltaX = x_[1] - x_[0];
-	double lambda = x_.last() - x_.first() + deltaX;
-	double k = TWOPI / lambda;
-	double windowPos, broaden, sigma, sigmaq, sigr, Q, factor, ft;
-	int n, m, nR = x_.nItems();
-	Messenger::printVerbose("In XYData::transformBroadenedRDF(), period of function is %f, real deltaX is %f, and wavenumber is %f\n", lambda, deltaX, k);
-
-	sigma = 0.5*qIndepFWHM/sqrt(2.0*log(2.0));
-	sigmaq = 0.5*qDepFWHM/sqrt(2.0*log(2.0));
-
-	// Create working arrays
-	Array<double> oldy = y_;
-	y_.forgetData();
-
-	// Perform Fourier sine transform, including instrument broadening of RDF
-	Q = qMin;
-	while (Q <= qMax)
-	{
-		ft = 0.0;
-		for (m=0; m<nR; ++m)
-		{
-			// Get window value at this position in the function
-			windowPos = double(m) / double(nR-1);
-
-			// Calculate broadening
-			sigr = (sigma + sigmaq*Q) * x_[m];
-			broaden = exp(-0.5*sigr*sigr);
-
-			ft += sin(x_[m]*Q) * x_[m] * broaden * window(wf, windowPos) * oldy[m] * deltaX;
-		}
-
-		// Normalise
-		if (Q > 0.0) factor = 4.0 * PI * atomicDensity / Q;
-		else factor = 4.0 * PI * atomicDensity;
-		y_.add(ft*factor);
-		
-		Q += qStep;
-	}
-
-	// Create suitable x axis for new data
-	x_.forgetData();
-	for (n=0; n<y_.nItems(); ++n) x_.add(qMin + n*qStep);
-
-	interpolationInterval_ = -1;
-
-	return true;
-}
-
-// Transform S(Q) to g(r)
-bool XYData::transformSQ(double atomicDensity, XYData::WindowFunction wf)
-{
-	// Okay to continue with transform?
-	if (!checkBeforeTransform()) return false;
-
-	// Assume that the entire dataset constitutes one period of the function...
-	// Assume that X values of original function are half-bin values, so we must add another bin width on to recover period of original function
-	double deltaQ = x_[1] - x_[0];
-	double lambda = x_.last() - x_.first() + deltaQ;
-	double k = TWOPI / lambda;
-	double windowPos;
-	Messenger::printVerbose("In XYData::transformSQ(), period of function is %f, real deltaX is %f, and wavenumber is %f\n", lambda, deltaQ, k);
-
-	// Create working arrays
-	Array<double> real(x_.nItems());
-	real = 0.0;
-	
-	// Perform Fourier sine transform
-	double r, factor;
-	int n, m, nPoints = x_.nItems();
-	for (n=0; n<nPoints; ++n)
-	{
-		r = (n+0.5)*k;
-		for (m=0; m<nPoints; ++m)
-		{
-			windowPos = double(m) / double(nPoints-1);
+			if (omega > 0.0) ft /= omega;
+			sineft.addPoint(omega, ft);
 			
-			real[n] += sin(x_[m]*r) * x_[m] * window(wf, windowPos) * y_[m] * deltaQ;
+			omega += wStep;
 		}
 
-		// Normalise
-		factor = 1.0 / (2.0 * PI * PI * atomicDensity * r);
-		real[n] *= factor;
+		// Transfer working arrays to this object
+		copyData(sineft);
 	}
 
-	// Copy transform data over initial data
-	for (n=0; n<nPoints; ++n) x_[n] = (n+0.5)*k;
-	y_ = real;
-
-	interpolationInterval_ = -1;
-	return true;
-}
-
-// Transform S(Q) to g(r)
-bool XYData::transformAndUnbroadenSQ(double atomicDensity, double rMin, double rStep, double rMax, double qDepFWHM, double qIndepFWHM, XYData::WindowFunction wf)
-{
-	// Okay to continue with transform?
-	if (!checkBeforeTransform()) return false;
-
-	// Assume that the entire dataset constitutes one period of the function...
-	// Assume that X values of original function are half-bin values, so we must add another bin width on to recover period of original function
-	double deltaQ = x_[1] - x_[0];
-	double lambda = x_.last() - x_.first() + deltaQ;
-	double k = TWOPI / lambda;
-	double windowPos;
-	Messenger::printVerbose("In XYData::transformSQ(), period of function is %f, real deltaX is %f, and wavenumber is %f\n", lambda, deltaQ, k);
-
-	// Create working arrays
-	Array<double> oldy = y_;
-	y_.forgetData();
-	
-	// Perform Fourier sine transform
-	double r = rMin, factor, rft;
-	int n, m, nQ = x_.nItems();
-	while (r <= rMax)
-	{
-		rft = 0.0;
-		for (m=0; m<nQ; ++m)
-		{
-			windowPos = double(m) / double(nQ-1);
-			
-			rft += sin(x_[m]*r) * x_[m] * window(wf, windowPos) * oldy[m] * deltaQ;
-		}
-
-		// Normalise
-		factor = 1.0 / (2.0 * PI * PI * atomicDensity * r);
-		y_.add(rft * factor);
-
-		r += rStep;
-	}
-
-	// Create suitable x axis for new data
-	x_.forgetData();
-	for (n=0; n<y_.nItems(); ++n) x_.add(rMin + n*rStep);
+	// Apply normalisation factor
+	y_ *= normFactor;
 
 	interpolationInterval_ = -1;
 
@@ -477,7 +336,7 @@ bool XYData::transformLorch(double atomicDensity, double step, double rMax, doub
 	if (qToR) factor = 1.0 / (2.0 * PI * PI * atomicDensity);
 	else factor = 4.0 * PI * atomicDensity;
 	
-	// Perform Fourier sine transform, including line-broadening of RDF
+	// Perform Fourier sine transform
 	while (r <= rMax)
 	{
 		// Reset sum, and calculate r-dependent values

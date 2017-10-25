@@ -20,23 +20,23 @@
 */
 
 #include "modules/energy/energy.h"
+#include "modules/modulekeywords.h"
 
-// Setup options for module
-void EnergyModule::setupOptions()
+// Set up keywords for Module
+void EnergyModule::setupKeywords()
 {
-	// Boolean options must be set as 'bool(false)' or 'bool(true)' rather than just 'false' or 'true' so that the correct overloaded add() function is called
-	options_.add("Save", bool(true), "Save calculate energy points to the file '<name>.energy.txt'");
-	options_.add("StabilityWindow", 10, "Number of points over which to assess the stability of the energy (per Configuration)");
-	options_.add("StabilityThreshold", 0.01, "Threshold value at which energy is deemed stable over the defined windowing period");
-	options_.add("Test", bool(false), "Test parallel energy routines against simplified, serial ones");
-	options_.add("TestAnalytic", bool(false), "Compare parallel energy routines against exact (analytic) energy rather than tabulated values");
-	options_.add("TestReferenceInter", 0.0, "Reference value for interatomic energy against which to test calculated value");
-	options_.add("TestReferenceIntra", 0.0, "Reference value for intramolecular energy against which to test calculated value");
-	options_.add("TestThreshold", 1.0e-1, "Threshold of energy at which test comparison will fail");
+	keywords_.add(new BoolModuleKeyword(true), "Save", "Save calculate energy points to the file '<name>.energy.txt'");
+	keywords_.add(new IntegerModuleKeyword(10), "StabilityWindow", "Number of points over which to assess the stability of the energy (per Configuration)");
+	keywords_.add(new DoubleModuleKeyword(0.01), "StabilityThreshold", "Threshold value at which energy is deemed stable over the defined windowing period");
+	keywords_.add(new BoolModuleKeyword(false), "Test", "Test parallel energy routines against simplified, serial ones");
+	keywords_.add(new BoolModuleKeyword(false), "TestAnalytic", "Compare parallel energy routines against exact (analytic) energy rather than tabulated values");
+	keywords_.add(new DoubleModuleKeyword(0.0), "TestReferenceInter", "Reference value for interatomic energy against which to test calculated value");
+	keywords_.add(new DoubleModuleKeyword(0.0), "TestReferenceIntra", "Reference value for intramolecular energy against which to test calculated value");
+	keywords_.add(new DoubleModuleKeyword(0.1), "TestThreshold", "Threshold of energy at which test comparison will fail");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int EnergyModule::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
+int EnergyModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix)
 {
 	return -1;
 }

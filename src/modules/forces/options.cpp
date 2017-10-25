@@ -21,23 +21,24 @@
 
 #include "modules/forces/forces.h"
 #include "modules/import/import.h"
+#include "modules/modulekeywords.h"
 #include "main/duq.h"
 #include "base/lineparser.h"
 
-// Setup options for module
-void ForcesModule::setupOptions()
+// Set up keywords for Module
+void ForcesModule::setupKeywords()
 {
-	// Boolean options must be set as 'bool(false)' or 'bool(true)' rather than just 'false' or 'true' so that the correct overloaded add() function is called
-	options_.add("Save", bool(false), "Save forces for the Configuration to the file '<name>.forces.txt'");
-	options_.add("Test", bool(false), "Test parallel force routines against simplified, serial ones");
-	options_.add("TestAnalytic", bool(false), "Compare parallel force routines against exact (analytic) force rather than tabulated values");
-	options_.add("TestInter", bool(true), "Include interatomic forces in test");
-	options_.add("TestIntra", bool(true), "Include intramolecular forces in test");
-	options_.add("TestThreshold", 0.1, "Threshold of force (%%) at which test comparison will fail");
+	keywords_.add(new BoolModuleKeyword(false), "Save", "Save forces for the Configuration to the file '<name>.forces.txt'");
+	keywords_.add(new BoolModuleKeyword(false), "Test", "Test parallel force routines against simplified, serial ones");
+	keywords_.add(new BoolModuleKeyword(false), "TestAnalytic", "Compare parallel force routines against exact (analytic) force rather than tabulated values");
+	keywords_.add(new BoolModuleKeyword(true), "TestInter", "Include interatomic forces in test");
+	keywords_.add(new BoolModuleKeyword(true), "TestIntra", "Include intramolecular forces in test");
+	keywords_.add(new ComplexModuleKeyword(1,2), "TestReference", "Filename containing reference forces for test");
+	keywords_.add(new DoubleModuleKeyword(0.1), "TestThreshold", "Threshold of force (%%) at which test comparison will fail");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int ForcesModule::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
+int ForcesModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix)
 {
 	if (DUQSys::sameString(parser.argc(0), "TestReference"))
 	{

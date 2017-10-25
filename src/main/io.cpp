@@ -354,28 +354,29 @@ bool DUQ::saveInput(const char* filename)
 			parser.writeLineF("  %s  %s  '%s'\n", ConfigurationBlock::keyword(ConfigurationBlock::ModuleKeyword), module->name(), module->uniqueName());
 
 			// For each Module, print all available options
-			// Write value set in Configuration if it exists
-			for (PlainValue* option = module->options().values(); option != NULL; option = option->next)
-			{
-				// Search the Configuration's module data for the option - if it doesn't exist then it wasn't set and the default value is relevant, so don't bother writing the option out
-				if (!cfg->moduleData().contains(option->name(), module->uniqueName())) continue;
-
-				switch (option->type())
-				{
-					case (PlainValue::BooleanType):
-						parser.writeLineF("    %s  %s\n", option->name(), DUQSys::btoa(GenericListHelper<bool>::retrieve(cfg->moduleData(), option->name(), module->uniqueName(), option->asBool())));
-						break;
-					case (PlainValue::IntegerType):
-						parser.writeLineF("    %s  %i\n", option->name(), GenericListHelper<int>::retrieve(cfg->moduleData(), option->name(), module->uniqueName(), option->asInt()));
-						break;
-					case (PlainValue::DoubleType):
-						parser.writeLineF("    %s  %12.6e\n", option->name(), GenericListHelper<double>::retrieve(cfg->moduleData(), option->name(), module->uniqueName(), option->asDouble()));
-						break;
-					case (PlainValue::StringType):
-						parser.writeLineF("    %s  '%s'\n", option->name(), GenericListHelper<CharString>::retrieve(cfg->moduleData(), option->name(), module->uniqueName(), option->asString()).get());
-						break;
-				}
-			}
+			parser.writeLineF("XXX Writing of Module Keyword options in input files is currently broken.\n");
+// 			// Write value set in Configuration if it exists
+// 			for (PlainValue* option = module->options().values(); option != NULL; option = option->next)
+// 			{
+// 				// Search the Configuration's module data for the option - if it doesn't exist then it wasn't set and the default value is relevant, so don't bother writing the option out
+// 				if (!cfg->moduleData().contains(option->name(), module->uniqueName())) continue;
+// 
+// 				switch (option->type())
+// 				{
+// 					case (PlainValue::BooleanType):
+// 						parser.writeLineF("    %s  %s\n", option->name(), DUQSys::btoa(GenericListHelper<bool>::retrieve(cfg->moduleData(), option->name(), module->uniqueName(), option->asBool())));
+// 						break;
+// 					case (PlainValue::IntegerType):
+// 						parser.writeLineF("    %s  %i\n", option->name(), GenericListHelper<int>::retrieve(cfg->moduleData(), option->name(), module->uniqueName(), option->asInt()));
+// 						break;
+// 					case (PlainValue::DoubleType):
+// 						parser.writeLineF("    %s  %12.6e\n", option->name(), GenericListHelper<double>::retrieve(cfg->moduleData(), option->name(), module->uniqueName(), option->asDouble()));
+// 						break;
+// 					case (PlainValue::StringType):
+// 						parser.writeLineF("    %s  '%s'\n", option->name(), GenericListHelper<CharString>::retrieve(cfg->moduleData(), option->name(), module->uniqueName(), option->asString()).get());
+// 						break;
+// 				}
+// 			}
 
 			parser.writeLineF("  %s\n", ModuleBlock::keyword(ModuleBlock::EndModuleKeyword));
 		}
@@ -401,28 +402,29 @@ bool DUQ::saveInput(const char* filename)
 
 		// For each Module, print all available options
 
-		// Write value set in Configuration if it exists
-		for (PlainValue* option = module->options().values(); option != NULL; option = option->next)
-		{
-			// Search the master's processing module data for the option - if it doesn't exist then it wasn't set and the default value is relevant, so don't bother writing the option out
-			if (!processingModuleData_.contains(option->name(), module->uniqueName())) continue;
-			
-			switch (option->type())
-			{
-				case (PlainValue::BooleanType):
-					parser.writeLineF("  %s  %s\n", option->name(), DUQSys::btoa(GenericListHelper<bool>::retrieve(processingModuleData_, option->name(), module->uniqueName(), option->asBool())));
-					break;
-				case (PlainValue::IntegerType):
-					parser.writeLineF("  %s  %i\n", option->name(), GenericListHelper<int>::retrieve(processingModuleData_, option->name(), module->uniqueName(), option->asInt()));
-					break;
-				case (PlainValue::DoubleType):
-					parser.writeLineF("  %s  %12.6e\n", option->name(), GenericListHelper<double>::retrieve(processingModuleData_, option->name(), module->uniqueName(), option->asDouble()));
-					break;
-				case (PlainValue::StringType):
-					parser.writeLineF("  %s  '%s'\n", option->name(), GenericListHelper<CharString>::retrieve(processingModuleData_, option->name(), module->uniqueName(), option->asString()).get());
-					break;
-			}
-		}
+		parser.writeLineF("XXX Writing of Module Keyword options in input files is currently broken.\n");
+// 		// Write value set in Configuration if it exists
+// 		for (PlainValue* option = module->options().values(); option != NULL; option = option->next)
+// 		{
+// 			// Search the master's processing module data for the option - if it doesn't exist then it wasn't set and the default value is relevant, so don't bother writing the option out
+// 			if (!processingModuleData_.contains(option->name(), module->uniqueName())) continue;
+// 			
+// 			switch (option->type())
+// 			{
+// 				case (PlainValue::BooleanType):
+// 					parser.writeLineF("  %s  %s\n", option->name(), DUQSys::btoa(GenericListHelper<bool>::retrieve(processingModuleData_, option->name(), module->uniqueName(), option->asBool())));
+// 					break;
+// 				case (PlainValue::IntegerType):
+// 					parser.writeLineF("  %s  %i\n", option->name(), GenericListHelper<int>::retrieve(processingModuleData_, option->name(), module->uniqueName(), option->asInt()));
+// 					break;
+// 				case (PlainValue::DoubleType):
+// 					parser.writeLineF("  %s  %12.6e\n", option->name(), GenericListHelper<double>::retrieve(processingModuleData_, option->name(), module->uniqueName(), option->asDouble()));
+// 					break;
+// 				case (PlainValue::StringType):
+// 					parser.writeLineF("  %s  '%s'\n", option->name(), GenericListHelper<CharString>::retrieve(processingModuleData_, option->name(), module->uniqueName(), option->asString()).get());
+// 					break;
+// 			}
+// 		}
 
 		parser.writeLineF("%s\n", ModuleBlock::keyword(ModuleBlock::EndModuleKeyword));
 	}

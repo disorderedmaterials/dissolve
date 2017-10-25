@@ -36,7 +36,7 @@ TestModule::TestModule() : Module()
 	uniqueName_.sprintf("%s%02i", name(), instances_.nItems()-1);
 
 	// Setup variables / control parameters
-	setupOptions();
+	setupKeywords();
 }
 
 // Destructor

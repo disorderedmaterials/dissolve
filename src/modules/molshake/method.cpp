@@ -61,11 +61,11 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 	Configuration* cfg = targetConfigurations_.firstItem();
 
 	// Retrieve control parameters from Configuration
-	double cutoffDistance = GenericListHelper<double>::retrieve(cfg->moduleData(), "CutoffDistance", uniqueName(), options_.valueAsDouble("CutoffDistance"));
+	double cutoffDistance = GenericListHelper<double>::retrieve(cfg->moduleData(), "CutoffDistance", uniqueName(), keywords_.asDouble("CutoffDistance"));
 	if (cutoffDistance < 0.0) cutoffDistance = duq.pairPotentialRange();
-	const int nShakesPerMolecule = GenericListHelper<int>::retrieve(cfg->moduleData(), "ShakesPerMolecule", uniqueName(), options_.valueAsInt("ShakesPerMolecule"));
-	const double targetAcceptanceRate = GenericListHelper<double>::retrieve(cfg->moduleData(), "TargetAcceptanceRate", uniqueName(), options_.valueAsDouble("TargetAcceptanceRate"));
-	double stepSize = GenericListHelper<double>::retrieve(cfg->moduleData(), "StepSize", uniqueName(), options_.valueAsDouble("StepSize"));
+	const int nShakesPerMolecule = GenericListHelper<int>::retrieve(cfg->moduleData(), "ShakesPerMolecule", uniqueName(), keywords_.asInt("ShakesPerMolecule"));
+	const double targetAcceptanceRate = GenericListHelper<double>::retrieve(cfg->moduleData(), "TargetAcceptanceRate", uniqueName(), keywords_.asDouble("TargetAcceptanceRate"));
+	double stepSize = GenericListHelper<double>::retrieve(cfg->moduleData(), "StepSize", uniqueName(), keywords_.asDouble("StepSize"));
 	const double termScale = 1.0;
 	const double rRT = 1.0/(.008314472*cfg->temperature());
 

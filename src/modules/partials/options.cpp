@@ -20,6 +20,7 @@
 */
 
 #include "modules/partials/partials.h"
+#include "modules/modulekeywords.h"
 #include "main/duq.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
@@ -73,22 +74,6 @@ const char* PartialsModule::normalisationType(PartialsModule::NormalisationType 
 	return NormalisationTypeKeywords[nt];
 }
 
-// Bragg Broadening enum
-const char* BraggBroadeningKeywords[] = { "None", "Gaussian" };
-
-// Convert character string to BraggBroadening
-PartialsModule::BraggBroadening PartialsModule::braggBroadening(const char* s)
-{
-	for (int n=0; n<nBroadeningTypes; ++n) if (DUQSys::sameString(s, BraggBroadeningKeywords[n])) return (PartialsModule::BraggBroadening) n;
-	return PartialsModule::nBroadeningTypes;
-}
-
-// Return character string for BraggBroadening
-const char* PartialsModule::braggBroadening(PartialsModule::BraggBroadening bt)
-{
-	return BraggBroadeningKeywords[bt];
-}
-
 // Averaging scheme enum
 const char* AveragingSchemeKeywords[] = { "Simple", "Exponential" };
 
@@ -105,53 +90,40 @@ const char* PartialsModule::averagingScheme(PartialsModule::AveragingScheme as)
 	return AveragingSchemeKeywords[as];
 }
 
-// Setup options for module
-void PartialsModule::setupOptions()
+// Set up keywords for Module
+void PartialsModule::setupKeywords()
 {
-	// Boolean options must be set as 'bool(false)' or 'bool(true)' rather than just 'false' or 'true' so that the correct overloaded add() function is called
 	frequency_ = 5;
-	options_.add("AllIntra", bool(false), "Consider all intramolecular pairs in intra partials");
-	options_.add("Averaging", 5, "Number of historical partial sets to combine into final partials")->setValidationMin(0);
-	options_.add("AveragingScheme", "Exponential", "Weighting scheme to use when averaging partials")->setValidation(PartialsModule::nAveragingSchemes, AveragingSchemeKeywords);
-	options_.add("Bragg", bool(false), "Enable calculation of Bragg scattering");
-	options_.add("BraggBroadening", "None", "Broadening function to apply to calculated Bragg scattering")->setValidation(PartialsModule::nBroadeningTypes, BraggBroadeningKeywords);
-	options_.add("BraggQDepBroadening", 0.0063, "FWHM of Gaussian for Q-dependent Bragg broadening function");
-	options_.add("BraggQIndepBroadening", 0.0, "FWHM of Gaussian for Q-independent Bragg broadening function");
-	options_.add("BraggQResolution", 0.001, "Binwidth in Q to use when calculating Bragg peaks");
-	options_.add("InternalTest", bool(false), "Perform internal check of calculated partials (relative to Test method)");
-	options_.add("Method", "Auto", "Calculation method for partial radial distribution functions")->setValidation(PartialsModule::nPartialsMethods, PartialsMethodKeywords);
-	options_.add("Normalisation", "None", "Normalisation to apply to total weighted F(Q)")->setValidation(PartialsModule::nNormalisationTypes, NormalisationTypeKeywords);
-	options_.add("QDelta", 0.05, "Step size in Q for S(Q) calculation")->setValidationMin(1.0e-5);
-	options_.add("QDepBroadening", 0.0, "FWHM of Gaussian for Q-dependent instrument broadening function when calculating S(Q)")->setValidationMin(0.0);
-	options_.add("QIndepBroadening", 0.0, "FWHM of Gaussian for Q-independent instrument broadening function when calculating S(Q)")->setValidationMin(0.0);
-	options_.add("QMax", -1.0, "Maximum Q for calculated S(Q)")->setValidationMin(-1.0);
-	options_.add("QMin", 0.0, "Minimum Q for calculated S(Q)")->setValidationMin(0.0);
-	options_.add("Save", bool(false), "Whether to save partials to disk after calculation");
-	options_.add("Smoothing", 0, "Specifies the degree of smoothing 'n' to apply to calculated RDFs, where 2n+1 controls the length in the applied Spline smooth")->setValidationRange(0, 100);
-	options_.add("StructureFactor", bool(false), "Determines whether S(Q) are to be calculated from F.T. of the g(r)");
-	options_.add("Test", bool(false), "Test calculated total and partials against supplied reference data");
-	options_.add("TestThreshold", 0.1, "Test threshold (%%error) above which test fails")->setValidationMin(1.0e-5);
-	options_.add("Weights", "None", "Weighting scheme to use for calculated partials (None,Neutron)")->setValidation(PartialsModule::nWeightingTypes, WeightingTypeKeywords);
+	keywords_.add(new BoolModuleKeyword(false), "AllIntra", "Consider all intramolecular pairs in intra partials", "<True|False*>");
+	keywords_.add(new IntegerModuleKeyword(5, 0), "Averaging", "Number of historical partial sets to combine into final partials", "<N[5]>");
+	keywords_.add(new ComplexModuleKeyword(1), "Exchangeable", "Define an exchangeable group of atoms", "<AtomType> [AtomType ...]");
+	keywords_.add(new CharStringModuleKeyword("Exponential", PartialsModule::nAveragingSchemes, AveragingSchemeKeywords), "AveragingScheme", "Weighting scheme to use when averaging partials", "<scheme[Exponential]>");
+	keywords_.add(new BoolModuleKeyword(false), "Bragg", "Enable calculation of Bragg scattering", "<True|False*>");
+	keywords_.add(new FunctionModuleKeyword(Function::unity()), "BraggQDependentBroadening", "Q-dependent broadening function to apply to Bragg scattering", "<function['Unity']> [double a, ...]");
+	keywords_.add(new FunctionModuleKeyword(Function::unity()), "BraggBroadening", "General (Q-independent) broadening function to apply to Bragg scattering");
+	keywords_.add(new DoubleModuleKeyword(0.001), "BraggQResolution", "Binwidth in Q to use when calculating Bragg peaks");
+	keywords_.add(new BoolModuleKeyword(false), "InternalTest", "Perform internal check of calculated partials (relative to Test method)");
+	keywords_.add(new ComplexModuleKeyword(4,4), "Isotopologue", "Set Isotopologue (and its population) to use for a particular Species in a given Configuration");
+	keywords_.add(new CharStringModuleKeyword("Auto", PartialsModule::nPartialsMethods, PartialsMethodKeywords), "Method", "Calculation method for partial radial distribution functions");
+	keywords_.add(new CharStringModuleKeyword("None", PartialsModule::nNormalisationTypes, NormalisationTypeKeywords), "Normalisation", "Normalisation to apply to total weighted F(Q)");
+	keywords_.add(new DoubleModuleKeyword(0.05, 1.0e-5), "QDelta", "Step size in Q for S(Q) calculation");
+	keywords_.add(new FunctionModuleKeyword(Function::unity()), "QDependentBroadening", "Q-dependent instrument broadening function to apply when calculating S(Q)");
+	keywords_.add(new FunctionModuleKeyword(Function::unity()), "Broadening", "General (Q-independent) instrument broadening function to apply when calculating S(Q)");
+	keywords_.add(new DoubleModuleKeyword(-1.0, -1.0), "QMax", "Maximum Q for calculated S(Q)");
+	keywords_.add(new DoubleModuleKeyword(0.0, 0.0), "QMin", "Minimum Q for calculated S(Q)");
+	keywords_.add(new BoolModuleKeyword(false), "Save", "Whether to save partials to disk after calculation", "<True|False>");
+	keywords_.add(new IntegerModuleKeyword(0, 0, 100), "Smoothing", "Specifies the degree of smoothing 'n' to apply to calculated RDFs, where 2n+1 controls the length in the applied Spline smooth");
+	keywords_.add(new BoolModuleKeyword(false), "StructureFactor", "Determines whether S(Q) are to be calculated from F.T. of the g(r)", "<True|False>");
+	keywords_.add(new BoolModuleKeyword(false), "Test", "Test calculated total and partials against supplied reference data", "<True|False>");
+	keywords_.add(new ComplexModuleKeyword(2,4), "TestReference", "Specify g(r)/S(Q) test reference data", "<filename> <target> [xcol] [ycol]");
+	keywords_.add(new DoubleModuleKeyword(0.1, 1.0e-5), "TestThreshold", "Test threshold (%%error) above which test fails", "<threshold[0.1]>");
+	keywords_.add(new CharStringModuleKeyword("None", PartialsModule::nWeightingTypes, WeightingTypeKeywords), "Weights", "Weighting scheme to use for calculated partials (None,Neutron)");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int PartialsModule::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
+int PartialsModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix)
 {
-	if (DUQSys::sameString(parser.argc(0), "BraggBroadening"))
-	{
-		// Line broadening to apply to Bragg calculation
-		PartialsModule::BraggBroadening bb = PartialsModule::braggBroadening(parser.argc(1));
-		if (bb == PartialsModule::nBroadeningTypes)
-		{
-			Messenger::error("Unrecognised broadening type supplied.\n");
-			return false;
-		}
-		GenericListHelper<CharString>::add(targetList, "BraggBroadening", uniqueName()) = PartialsModule::braggBroadening(bb);
-
-		// Get any parameters supplied
-		for (int n=2; n<parser.nArgs(); ++n) GenericListHelper<double>::add(targetList, CharString("BraggBroadeningParameter%i", n-1), uniqueName()) = parser.argd(n);
-	}
-	else if (DUQSys::sameString(parser.argc(0), "Exchangeable"))
+	if (DUQSys::sameString(parser.argc(0), "Exchangeable"))
 	{
 		// Define an exchangeable group of atoms
 		// Loop over all provided arguments (which are atom type names) and add them to our list

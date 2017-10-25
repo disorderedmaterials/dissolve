@@ -88,8 +88,10 @@ class PartialsModule : public Module
 	 * Options
 	 */
 	protected:
-	// Setup options for Module
-	void setupOptions();
+	// Setup keywords for Module
+	void setupKeywords();
+	// Parse complex keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
+	int parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix);
 
 	public:
 	// Partial Calculation Method enum
@@ -110,22 +112,12 @@ class PartialsModule : public Module
 	static NormalisationType normalisationType(const char* s);
 	// Return character string for NormalisationType
 	static const char* normalisationType(NormalisationType nt);
-	// Bragg Broadening enum
-	enum BraggBroadening { NoBroadening, GaussianBroadening, nBroadeningTypes };
-	// Convert character string to BraggBroadening
-	static BraggBroadening braggBroadening(const char* s);
-	// Return character string for BraggBroadening
-	static const char* braggBroadening(BraggBroadening bt);
 	// Averaging scheme enum
 	enum AveragingScheme { SimpleAveraging, ExponentialAveraging, nAveragingSchemes };
 	// Convert character string to AveragingScheme
 	static AveragingScheme averagingScheme(const char* s);
 	// Return character string for AveragingScheme
 	static const char* averagingScheme(AveragingScheme as);
-
-	public:
-	// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-	int parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList);
 
 
 	/*
@@ -165,13 +157,13 @@ class PartialsModule : public Module
 	// Calculate weighted partials from supplied unweighted partials
 	bool calculateWeightedGR(PartialSet& unweightedPartials, PartialSet& weightedPartials, Weights& weights);
 	// Calculate unweighted S(Q) from supplied unweighted g(r)
-	bool calculateUnweightedSQ(ProcessPool& procPool, Configuration* cfg, double qMin, double qDelta, double qMax, double rho, XYData::WindowFunction wf, double qDepBroadening, double qIndepBroadening, bool braggOn);
+	bool calculateUnweightedSQ(ProcessPool& procPool, Configuration* cfg, double qMin, double qDelta, double qMax, double rho, XYData::WindowFunction wf, const Function& generalBroadening, const Function& qDependentBroadening, bool braggOn);
 	// Calculate weighted S(Q) from supplied unweighted S(Q)
 	bool calculateWeightedSQ(PartialSet& unweightedsq, PartialSet& weightedsq, Weights& weights, PartialsModule::NormalisationType normalisation);
 	// Calculate Bragg terms for specified Configuration
 	bool calculateBraggTerms(ProcessPool& procPool, Configuration* cfg, double braggQMin, double braggQResolution, double braggQMax, double braggMultiplicity);
 	// Calculate unweighted Bragg partials from calculated peak data
-	bool calculateUnweightedBraggSQ(ProcessPool& procPool, Configuration* cfg, Array<BraggPeak>& braggPeaks, PartialSet& partialsq, PartialsModule::BraggBroadening broadeningType);
+	bool calculateUnweightedBraggSQ(ProcessPool& procPool, Configuration* cfg, Array<BraggPeak>& braggPeaks, PartialSet& partialsq, const Function& generalBroadening, const Function& qDependentBroadening);
 
 
 	/*

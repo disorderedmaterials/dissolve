@@ -28,6 +28,7 @@
 #include "classes/kvector.h"
 #include "classes/species.h"
 #include "classes/weights.h"
+#include "base/function.h"
 #include "templates/array3d.h"
 
 /*
@@ -630,7 +631,7 @@ bool PartialsModule::calculateWeightedGR(PartialSet& unweightedgr, PartialSet& w
 
 
 // Generate S(Q) from supplied g(r)
-bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration* cfg, double qMin, double qDelta, double qMax, double rho, XYData::WindowFunction wf, double qDepBroadening, double qIndepBroadening, bool braggOn)
+bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration* cfg, double qMin, double qDelta, double qMax, double rho, XYData::WindowFunction wf, const Function& generalBroadening, const Function& qDependentBroadening, bool braggOn)
 {
 	// Grab unweighted g(r) for Configuration
 	if (!cfg->moduleData().contains("UnweightedGR", "Partials"))
@@ -661,7 +662,7 @@ bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration*
 		{
 			// Copy g(r) data into our arrays
 			// Subtract 1.0 from the full and unbound partials so as to give (g(r)-1)
-			// Don't subtract 1.0 from the bound partials, since they do not tend to 1.0 at longer r??
+			// Don't subtract 1.0 from the bound partials
 			partialsq.partial(n,m).copyData(partialgr.partial(n,m));
 			partialsq.partial(n,m).arrayY() -= 1.0;
 			partialsq.boundPartial(n,m).copyData(partialgr.boundPartial(n,m));
@@ -680,9 +681,9 @@ bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration*
 	{
 		for (int m=n; m<nTypes; ++m)
 		{
-			if (!partialsq.partial(n,m).transformAndBroadenRDF(rho, qMin, qDelta, qMax, qDepBroadening, qIndepBroadening, wf)) return false;
-			if (!partialsq.boundPartial(n,m).transformAndBroadenRDF(rho, qMin, qDelta, qMax, qDepBroadening, qIndepBroadening, wf)) return false;
-			if (!partialsq.unboundPartial(n,m).transformAndBroadenRDF(rho, qMin, qDelta, qMax, qDepBroadening, qIndepBroadening, wf)) return false;
+			if (!partialsq.partial(n,m).sineFT(4.0*PI*rho, qMin, qDelta, qMax, generalBroadening, qDependentBroadening, wf)) return false;
+			if (!partialsq.boundPartial(n,m).sineFT(4.0*PI*rho, qMin, qDelta, qMax, generalBroadening, qDependentBroadening, wf)) return false;
+			if (!partialsq.unboundPartial(n,m).sineFT(4.0*PI*rho, qMin, qDelta, qMax, generalBroadening, qDependentBroadening, wf)) return false;
 
 			// Zero Bragg partial, leave x array intact for use if needed
 			partialsq.braggPartial(n,m).templateFrom(partialsq.partial(n,m));
@@ -693,9 +694,10 @@ bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration*
 	if (braggOn)
 	{
 		double braggQMax = cfg->braggQMax();
-		double braggQResolution = GenericListHelper<double>::retrieve(cfg->moduleData(), "BraggQResolution", uniqueName(), options_.valueAsDouble("BraggQResolution"));
+		double braggQResolution = GenericListHelper<double>::retrieve(cfg->moduleData(), "BraggQResolution", uniqueName(), keywords_.asDouble("BraggQResolution"));
 		double braggQMin = cfg->braggQMin();
-		PartialsModule::BraggBroadening broadening = PartialsModule::braggBroadening(GenericListHelper<CharString>::retrieve(cfg->moduleData(), "BraggBroadening", uniqueName(), options_.valueAsString("BraggBroadening")));
+		Function& broadening = GenericListHelper<Function>::retrieve(cfg->moduleData(), "BraggBroadening", uniqueName(), Function::unity());
+		Function& qDependentbroadening = GenericListHelper<Function>::retrieve(cfg->moduleData(), "BraggQDependentBroadening", uniqueName(), Function::unity());
 		double mult = cfg->braggMultiplicity().x * cfg->braggMultiplicity().y * cfg->braggMultiplicity().z;
 
 		Messenger::print("Partials: Bragg scattering will be calculated over %f <= Q <= %f Angstroms**-1.\n", braggQMin, braggQMax);
@@ -707,7 +709,7 @@ bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration*
 
 		// Grab generated BraggPeak array and calculate S(Q)
 		Array<BraggPeak>& braggPeaks = GenericListHelper< Array<BraggPeak> >::realise(cfg->moduleData(), "BraggPeaks", uniqueName());
-		if (!calculateUnweightedBraggSQ(procPool, cfg, braggPeaks, partialsq, broadening)) return false;
+		if (!calculateUnweightedBraggSQ(procPool, cfg, braggPeaks, partialsq, broadening, qDependentbroadening)) return false;
 
 		timer.stop();
 		Messenger::print("Partials: Finished calculation of partial Bragg S(Q) (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
@@ -1017,7 +1019,7 @@ bool PartialsModule::calculateBraggTerms(ProcessPool& procPool, Configuration* c
 }
 
 // Calculate unweighted Bragg partials from calculated peak data
-bool PartialsModule::calculateUnweightedBraggSQ(ProcessPool& procPool, Configuration* cfg, Array< BraggPeak >& braggPeaks, PartialSet& partialsq, PartialsModule::BraggBroadening broadeningType)
+bool PartialsModule::calculateUnweightedBraggSQ(ProcessPool& procPool, Configuration* cfg, Array< BraggPeak >& braggPeaks, PartialSet& partialsq, const Function& generalBroadening, const Function& qDependentBroadening)
 {
 	double factor, qCentre, inten, q, x;
 	int nTypes = partialsq.nAtomTypes();
@@ -1028,13 +1030,15 @@ bool PartialsModule::calculateUnweightedBraggSQ(ProcessPool& procPool, Configura
 	// Print out a bit of info first
 	Messenger::print("Partials: Calculating Bragg contributions to S(Q)...\n");
 	double fwhm = 0.0;
-	if (broadeningType == PartialsModule::NoBroadening) Messenger::warn("Partials: No broadening will be applied to Bragg contributions.\n");
-	else if (broadeningType == PartialsModule::GaussianBroadening)
-	{
-		fwhm = GenericListHelper<double>::retrieve(cfg->moduleData(), "BraggBroadeningParameter1", uniqueName(), 0.01);
-		factor = sqrt(4.0 * log(2.0) / PI);
-		Messenger::print("Partials: Gaussian broadening will be applied to Bragg contributions with FWHM = %f Angstroms**-1.\n", fwhm);
-	}
+	// BRAGG TODO
+	Messenger::error("BROADENING OF BRAGG SCATTERING IS CURRENTLY DISABLED - FIX ME!\n");
+// 	if (broadeningType == PartialsModule::NoBroadening) Messenger::warn("Partials: No broadening will be applied to Bragg contributions.\n");
+// 	else if (broadeningType == PartialsModule::GaussianBroadening)
+// 	{
+// 		fwhm = GenericListHelper<double>::retrieve(cfg->moduleData(), "BraggBroadeningParameter1", uniqueName(), 0.01);
+// 		factor = sqrt(4.0 * log(2.0) / PI);
+// 		Messenger::print("Partials: Gaussian broadening will be applied to Bragg contributions with FWHM = %f Angstroms**-1.\n", fwhm);
+// 	}
 
 	// Loop over pairs of atom types, constructing Bragg partial SQ for each
 	for (int typeI = 0; typeI < nTypes; ++typeI)
@@ -1061,20 +1065,20 @@ bool PartialsModule::calculateUnweightedBraggSQ(ProcessPool& procPool, Configura
 					q = braggSQ.x(m);
 
 					// No broadening
-					if (broadeningType == PartialsModule::NoBroadening)
-					{
-						if (int(qCentre/qDelta) == m)
-						{
-							braggSQ.addY(m, inten);
-							break;
-						}
-					}
-					else if (broadeningType == PartialsModule::GaussianBroadening)
-					{
-						// broadeningA = FWHM
-						x = qCentre - q;
-						braggSQ.addY(m, inten * exp(-4.0*log(2.0) * (x * x) / (fwhm * fwhm)));
-					}
+// 					if (broadeningType == PartialsModule::NoBroadening)
+// 					{
+// 						if (int(qCentre/qDelta) == m)
+// 						{
+// 							braggSQ.addY(m, inten);
+// 							break;
+// 						}
+// 					}
+// 					else if (broadeningType == PartialsModule::GaussianBroadening)
+// 					{
+// 						// broadeningA = FWHM
+// 						x = qCentre - q;
+// 						braggSQ.addY(m, inten * exp(-4.0*log(2.0) * (x * x) / (fwhm * fwhm)));
+// 					}
 // 
 // 					// Set up Lorentzian parameters
 // 					qSub = (qCentre - q) / lambda;

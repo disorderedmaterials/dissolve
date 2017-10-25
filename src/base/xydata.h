@@ -23,6 +23,7 @@
 #define DUQ_XYDATA_H
 
 #include "base/charstring.h"
+#include "base/function.h"
 #include "templates/array.h"
 
 #define OPTOLERANCE 1.0e-6
@@ -217,14 +218,8 @@ class XYData : public ListItem<XYData>
 	public:
 	// Perform plain Fourier transform of real data
 	bool fourierTransformReal(bool forwardTransform = true, XYData::WindowFunction wf = XYData::NoWindow);
-	// Transform g(r) to S(Q)
-	bool transformRDF(double atomicDensity, XYData::WindowFunction wf = XYData::NoWindow);
-	// Transform g(r) to S(Q), applying instrumental broadening functions
-	bool transformAndBroadenRDF(double atomicDensity, double qMin, double qStep, double qMax, double qDepFWHM, double qIndepFWHM, XYData::WindowFunction wf = XYData::NoWindow);
-	// Transform S(Q) to g(r)
-	bool transformSQ(double atomicDensity, XYData::WindowFunction wf = XYData::NoWindow);
-	// Transform S(Q) to g(r)
-	bool transformAndUnbroadenSQ(double atomicDensity, double rMin, double rStep, double rMax, double qDepFWHM, double qIndepFWHM, XYData::WindowFunction wf = XYData::NoWindow);
+	// Perform Fourier sine transform of current distribution function, over range specified, and with specified broadening functions and window applied (if requested)
+	bool sineFT(double normFactor, double wMin, double wStep, double wMax, const Function& generalBroadening = Function::unity(), const Function& wDependentBroadening = Function::unity(), XYData::WindowFunction wf = XYData::NoWindow);
 	// Fourier transform current data, applying line-width broadening in real-space using the modified Lorch function
 	bool transformLorch(double atomicDensity, double step, double rMax, double beta, double delta0, bool qToR);
 	// Calculate S(Q) correlation function
@@ -232,7 +227,7 @@ class XYData : public ListItem<XYData>
 
 
 	/*
-	 * Interpolation Scheme
+	 * Interpolation
 	 */
 	public:
 	// Interpolation Schemes

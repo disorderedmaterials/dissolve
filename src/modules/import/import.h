@@ -84,11 +84,9 @@ class ImportModule : public Module
 	 */
 	protected:
 	// Setup options for Module
-	void setupOptions();
-
-	public:
-	// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-	int parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList);
+	void setupKeywords();
+	// Parse complex keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
+	int parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix);
 
 
 	/*

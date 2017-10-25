@@ -20,18 +20,19 @@
 */
 
 #include "modules/atomshake/atomshake.h"
+#include "modules/modulekeywords.h"
 
 // Setup options for Module
-void AtomShakeModule::setupOptions()
+void AtomShakeModule::setupKeywords()
 {
-	options_.add("CutoffDistance", -1.0, "Interatomic cutoff distance to employ");
-	options_.add("ShakesPerAtom", 1, "Number of shakes per atom");
-	options_.add("TargetAcceptanceRate", 0.33, "Target acceptance rate for Monte Carlo moves");
-	options_.add("StepSize", 0.05, "Maximal step size for single Monte Carlo move", GenericItem::InRestartFileFlag);
+	keywords_.add(new DoubleModuleKeyword(-1.0), "CutoffDistance", "Interatomic cutoff distance to employ");
+	keywords_.add(new IntegerModuleKeyword(1), "ShakesPerAtom", "Number of shakes per Atom to attempt");
+	keywords_.add(new DoubleModuleKeyword(0.33), "TargetAcceptanceRate", "Target acceptance rate for Monte Carlo moves");
+	keywords_.add(new DoubleModuleKeyword(0.05), "StepSize", "Maximal step size for single Monte Carlo move", GenericItem::InRestartFileFlag);
 }
 
-// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int AtomShakeModule::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
+// Parse complex keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
+int AtomShakeModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix)
 {
 	return -1;
 }

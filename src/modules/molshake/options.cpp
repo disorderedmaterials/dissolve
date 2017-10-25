@@ -20,18 +20,19 @@
 */
 
 #include "modules/molshake/molshake.h"
+#include "modules/modulekeywords.h"
 
 // Setup options for Module
-void MolShakeModule::setupOptions()
+void MolShakeModule::setupKeywords()
 {
-	options_.add("CutoffDistance", -1.0, "Interatomic cutoff distance to employ");
-	options_.add("ShakesPerMolecule", 1, "Number of shakes per Molecule");
-	options_.add("TargetAcceptanceRate", 0.33, "Target acceptance rate for Monte Carlo moves");
-	options_.add("StepSize", 0.05, "Maximal step size for single Monte Carlo move", GenericItem::InRestartFileFlag);
+	keywords_.add(new DoubleModuleKeyword(-1.0), "CutoffDistance", "Interatomic cutoff distance to employ");
+	keywords_.add(new IntegerModuleKeyword(1), "ShakesPerMolecule", "Number of shakes per Molecule");
+	keywords_.add(new DoubleModuleKeyword(0.33), "TargetAcceptanceRate", "Target acceptance rate for Monte Carlo moves");
+	keywords_.add(new DoubleModuleKeyword(0.05), "StepSize", "Step size for single Monte Carlo move", GenericItem::InRestartFileFlag);
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int MolShakeModule::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
+int MolShakeModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix)
 {
 	return -1;
 }

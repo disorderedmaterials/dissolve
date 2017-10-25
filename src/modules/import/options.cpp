@@ -20,16 +20,16 @@
 */
 
 #include "modules/import/import.h"
+#include "modules/modulekeywords.h"
 
-// Setup options for module
-void ImportModule::setupOptions()
+// Set up keywords for Module
+void ImportModule::setupKeywords()
 {
-	// Boolean options must be set as 'bool(false)' or 'bool(true)' rather than just 'false' or 'true' so that the correct overloaded add() function is called
-	//options_.add("WriteConfig", bool(false));
+// 	keywords_.add(new BoolModuleKeyword(true), "ExampleKeyword", "Example keyword description", "<args>");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int ImportModule::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
+int ImportModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix)
 {
 	return -1;
 }

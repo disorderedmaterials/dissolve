@@ -20,16 +20,16 @@
 */
 
 #include "modules/skeleton/skeleton.h"
+#include "modules/modulekeywords.h"
 
-// Setup options for module
-void SkeletonModule::setupOptions()
+// Set up keywords for Module
+void SkeletonModule::setupKeywords()
 {
-	// Boolean options must be set as 'bool(false)' or 'bool(true)' rather than just 'false' or 'true' so that the correct overloaded add() function is called
-// 	options_.add("Example", bool(false));
+// 	keywords_.add(new BoolModuleKeyword(true), "ExampleKeyword", "Example keyword description", "<args>");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int SkeletonModule::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
+int SkeletonModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix)
 {
 	return -1;
 }

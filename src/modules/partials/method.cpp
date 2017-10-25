@@ -58,44 +58,44 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 	CharString varName;
 
 	GenericList& moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : duq.processingModuleData();
-	const bool allIntra = GenericListHelper<bool>::retrieve(moduleData, "AllIntra", uniqueName(), options_.valueAsBool("AllIntra"));
-	const int averaging = GenericListHelper<int>::retrieve(moduleData, "Averaging", uniqueName(), options_.valueAsInt("Averaging"));
-	PartialsModule::AveragingScheme averagingScheme = PartialsModule::averagingScheme(GenericListHelper<CharString>::retrieve(moduleData, "AveragingScheme", uniqueName_, options_.valueAsString("AveragingScheme")));
+	const bool allIntra = GenericListHelper<bool>::retrieve(moduleData, "AllIntra", uniqueName(), keywords_.asBool("AllIntra"));
+	const int averaging = GenericListHelper<int>::retrieve(moduleData, "Averaging", uniqueName(), keywords_.asInt("Averaging"));
+	PartialsModule::AveragingScheme averagingScheme = PartialsModule::averagingScheme(GenericListHelper<CharString>::retrieve(moduleData, "AveragingScheme", uniqueName_, keywords_.asString("AveragingScheme")));
 	if (averagingScheme == PartialsModule::nAveragingSchemes)
 	{
-		Messenger::error("Partials: Invalid averaging scheme '%s' found.\n", GenericListHelper<CharString>::retrieve(moduleData, "AveragingScheme", uniqueName_, options_.valueAsString("AveragingScheme")).get());
+		Messenger::error("Partials: Invalid averaging scheme '%s' found.\n", GenericListHelper<CharString>::retrieve(moduleData, "AveragingScheme", uniqueName_, keywords_.asString("AveragingScheme")).get());
 		return false;
 	}
-	const bool braggOn = GenericListHelper<bool>::retrieve(moduleData, "Bragg", uniqueName(), options_.valueAsBool("Bragg"));
-	const double braggQDepBroadening = GenericListHelper<double>::retrieve(moduleData, "BraggQDepBroadening", uniqueName(), options_.valueAsDouble("BraggQDepBroadening"));
-	const double braggQIndepBroadening = GenericListHelper<double>::retrieve(moduleData, "BraggQIndepBroadening", uniqueName(), options_.valueAsDouble("BraggQIndepBroadening"));
-	const double qDepBroadening = GenericListHelper<double>::retrieve(moduleData, "QDepBroadening", uniqueName(), options_.valueAsDouble("QDepBroadening"));
-	const double qIndepBroadening = GenericListHelper<double>::retrieve(moduleData, "QIndepBroadening", uniqueName(), options_.valueAsDouble("QIndepBroadening"));
-	PartialsModule::PartialsMethod method = PartialsModule::partialsMethod(GenericListHelper<CharString>::retrieve(moduleData, "Method", uniqueName_, options_.valueAsString("Method")));
+	const bool braggOn = GenericListHelper<bool>::retrieve(moduleData, "Bragg", uniqueName(), keywords_.asBool("Bragg"));
+	const Function& braggBroadening = GenericListHelper<Function>::retrieve(moduleData, "Broadening", uniqueName(), Function::unity());
+	const Function& braggQDependentBroadening = GenericListHelper<Function>::retrieve(moduleData, "QDependentBroadening", uniqueName(), Function::unity());
+	const Function& broadening = GenericListHelper<Function>::retrieve(moduleData, "Broadening", uniqueName(), Function::unity());
+	const Function& qDependentBroadening = GenericListHelper<Function>::retrieve(moduleData, "QDependentBroadening", uniqueName(), Function::unity());
+	PartialsModule::PartialsMethod method = PartialsModule::partialsMethod(GenericListHelper<CharString>::retrieve(moduleData, "Method", uniqueName_, keywords_.asString("Method")));
 	if (method == PartialsModule::nPartialsMethods)
 	{
-		Messenger::error("Partials: Invalid calculation method '%s' found.\n", GenericListHelper<CharString>::retrieve(moduleData, "Method", uniqueName_, options_.valueAsString("Method")).get());
+		Messenger::error("Partials: Invalid calculation method '%s' found.\n", GenericListHelper<CharString>::retrieve(moduleData, "Method", uniqueName_, keywords_.asString("Method")).get());
 		return false;
 	}
-	const bool internalTest = GenericListHelper<bool>::retrieve(moduleData, "InternalTest", uniqueName(), options_.valueAsBool("InternalTest"));
-	PartialsModule::NormalisationType normalisation = normalisationType(GenericListHelper<CharString>::retrieve(moduleData, "Normalisation", uniqueName(), options_.valueAsString("Normalisation")));
+	const bool internalTest = GenericListHelper<bool>::retrieve(moduleData, "InternalTest", uniqueName(), keywords_.asBool("InternalTest"));
+	PartialsModule::NormalisationType normalisation = normalisationType(GenericListHelper<CharString>::retrieve(moduleData, "Normalisation", uniqueName(), keywords_.asString("Normalisation")));
 	if (normalisation == PartialsModule::nNormalisationTypes)
 	{
-		Messenger::error("Partials: Invalid normalisation type '%s' found.\n", GenericListHelper<CharString>::retrieve(moduleData, "Normalisation", uniqueName_, options_.valueAsString("Normalisation")).get());
+		Messenger::error("Partials: Invalid normalisation type '%s' found.\n", GenericListHelper<CharString>::retrieve(moduleData, "Normalisation", uniqueName_, keywords_.asString("Normalisation")).get());
 	}
-	const double qDelta = GenericListHelper<double>::retrieve(moduleData, "QDelta", uniqueName(), options_.valueAsDouble("QDelta"));
-	const double qMin = GenericListHelper<double>::retrieve(moduleData, "QMin", uniqueName(), options_.valueAsDouble("QMin"));
-	double qMax = GenericListHelper<double>::retrieve(moduleData, "QMax", uniqueName(), options_.valueAsDouble("QMax"));
+	const double qDelta = GenericListHelper<double>::retrieve(moduleData, "QDelta", uniqueName(), keywords_.asDouble("QDelta"));
+	const double qMin = GenericListHelper<double>::retrieve(moduleData, "QMin", uniqueName(), keywords_.asDouble("QMin"));
+	double qMax = GenericListHelper<double>::retrieve(moduleData, "QMax", uniqueName(), keywords_.asDouble("QMax"));
 	if (qMax < 0.0) qMax = 30.0;
-	const bool saveData = GenericListHelper<bool>::retrieve(moduleData, "Save", uniqueName(), options_.valueAsBool("Save"));
-	const int smoothing = GenericListHelper<int>::retrieve(moduleData, "Smoothing", uniqueName(), options_.valueAsInt("Smoothing"));
-	const bool sqCalculation = GenericListHelper<bool>::retrieve(moduleData, "StructureFactor", uniqueName(), options_.valueAsBool("StructureFactor"));
-	const bool testMode = GenericListHelper<bool>::retrieve(moduleData, "Test", uniqueName(), options_.valueAsBool("Test"));
-	const double testThreshold = GenericListHelper<double>::retrieve(moduleData, "TestThreshold", uniqueName(), options_.valueAsDouble("TestThreshold"));
-	PartialsModule::WeightingType weightsType = PartialsModule::weightingType(GenericListHelper<CharString>::retrieve(moduleData, "Weights", uniqueName_, options_.valueAsString("Weights")));
+	const bool saveData = GenericListHelper<bool>::retrieve(moduleData, "Save", uniqueName(), keywords_.asBool("Save"));
+	const int smoothing = GenericListHelper<int>::retrieve(moduleData, "Smoothing", uniqueName(), keywords_.asInt("Smoothing"));
+	const bool sqCalculation = GenericListHelper<bool>::retrieve(moduleData, "StructureFactor", uniqueName(), keywords_.asBool("StructureFactor"));
+	const bool testMode = GenericListHelper<bool>::retrieve(moduleData, "Test", uniqueName(), keywords_.asBool("Test"));
+	const double testThreshold = GenericListHelper<double>::retrieve(moduleData, "TestThreshold", uniqueName(), keywords_.asDouble("TestThreshold"));
+	PartialsModule::WeightingType weightsType = PartialsModule::weightingType(GenericListHelper<CharString>::retrieve(moduleData, "Weights", uniqueName_, keywords_.asString("Weights")));
 	if (weightsType == PartialsModule::nWeightingTypes)
 	{
-		Messenger::error("Partials: Invalid weighting scheme '%s' found.\n", GenericListHelper<CharString>::retrieve(moduleData, "Weights", uniqueName_, options_.valueAsString("Weights")).get());
+		Messenger::error("Partials: Invalid weighting scheme '%s' found.\n", GenericListHelper<CharString>::retrieve(moduleData, "Weights", uniqueName_, keywords_.asString("Weights")).get());
 		return false;
 	}
 
@@ -112,11 +112,17 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		if (normalisation == PartialsModule::NoNormalisation) Messenger::print("Partials: No normalisation will be applied to total F(Q).\n");
 		else if (normalisation == PartialsModule::AverageOfSquaresNormalisation) Messenger::print("Partials: Total F(Q) will be normalised to <b>**2");
 		else if (normalisation == PartialsModule::SquareOfAverageNormalisation) Messenger::print("Partials: Total F(Q) will be normalised to <b**2>");
+		if (broadening.function() == Function::UnityFunction) Messenger::print("Partials: No general (Q-independent) broadening will be applied in calculated S(Q).");
+		else Messenger::print("Partials: General (Q-independent) broadening to be applied in calculated S(Q) is %s (%s).", Function::functionType(broadening.function()), broadening.summary().get());
+		if (qDependentBroadening.function() == Function::UnityFunction) Messenger::print("Partials: No Q-dependent broadening will be applied in calculated S(Q).");
+		else Messenger::print("Partials: Q-dependent broadening to be applied in calculated S(Q) is %s (%s).", Function::functionType(qDependentBroadening.function()), qDependentBroadening.summary().get());
 		Messenger::print("Partials: Bragg calculation is %s.\n", DUQSys::onOff(braggOn));
-		Messenger::print("Partials: Q-dependent FWHM broadening to use is %f, Q-independent FWHM broadening to use is %f.\n", qDepBroadening, qIndepBroadening);
 		if (braggOn)
 		{
-			Messenger::print("Partials: Bragg Q-dependent FWHM broadening to use is %f, Q-independent FWHM broadening to use is %f.\n", braggQDepBroadening, braggQIndepBroadening);
+			if (braggBroadening.function() == Function::UnityFunction) Messenger::print("Partials: No general (Q-independent) broadening will be applied to Bragg scattering.");
+			else Messenger::print("Partials: General (Q-independent) broadening to be applied to Bragg scattering is %s (%s).", Function::functionType(braggBroadening.function()), braggBroadening.summary().get());
+			if (braggQDependentBroadening.function() == Function::UnityFunction) Messenger::print("Partials: No Q-dependent broadening will be applied to Bragg scattering.");
+			else Messenger::print("Partials: Q-dependent broadening to be applied to Bragg scattering is %s (%s).", Function::functionType(braggQDependentBroadening.function()), braggQDependentBroadening.summary().get());
 		}
 	}
 	if (weightsType == PartialsModule::NoWeighting) Messenger::print("Partials: No weighted partials will be calculated.\n");
@@ -167,7 +173,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		// Calculate S(Q) if requested
 		if (sqCalculation)
 		{
-			calculateUnweightedSQ(procPool, cfg, qMin, qDelta, qMax, cfg->atomicDensity(), duq.windowFunction(), qDepBroadening, qIndepBroadening, braggOn);
+			calculateUnweightedSQ(procPool, cfg, qMin, qDelta, qMax, cfg->atomicDensity(), duq.windowFunction(), broadening, qDependentBroadening, braggOn);
 			PartialSet& unweightedsq = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedSQ", "Partials");
 			if (saveData && configurationLocal_ && (!MPIRunMaster(procPool, unweightedsq.save()))) return false;
 

@@ -64,7 +64,7 @@ bool ExportModule::process(DUQ& duq, ProcessPool& procPool)
 		procPool.assignProcessesToGroups(cfg->processPool());
 
 		// Retrieve control parameters from Configuration
-		bool writeConfig = GenericListHelper<bool>::retrieve(cfg->moduleData(), "WriteConfig", uniqueName(), options_.valueAsBool("WriteConfig"));
+		bool writeConfig = GenericListHelper<bool>::retrieve(cfg->moduleData(), "WriteConfig", uniqueName(), keywords_.asBool("WriteConfig"));
 
 		/*
 		 * Write DL_POLY Config

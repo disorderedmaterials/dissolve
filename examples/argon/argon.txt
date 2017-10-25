@@ -48,7 +48,6 @@ Module Test
   Data  'Yarnell-85K'
   # Define S(Q) source
   Partials  'Yarnell-85K'
-  Frequency 5
 EndModule
 
 # Pair Potentials
@@ -57,5 +56,5 @@ PairPotentials
 EndPairPotentials
 
 Simulation
-  MaxIterations 50
+  MaxIterations  1
 EndSimulation

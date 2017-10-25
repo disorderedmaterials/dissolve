@@ -1,11 +1,31 @@
 add_library(modules
   module.cpp
+  modulekeywordbase.cpp
+  modulekeywordlist.cpp
   modulelist.cpp
   moduleregistry.cpp
-  
+  modulekeyword_bool.cpp
+  modulekeyword_charstring.cpp
+  modulekeyword_complex.cpp
+  modulekeyword_double.cpp
+  modulekeyword_function.cpp
+  modulekeyword_int.cpp
+
   module.h
   modulelist.h
   moduleregistry.h
+  modulekeywordbase.h
+  modulekeyworddata.h
+  modulekeywordlist.h
+  modulelist.h
+  moduleregistry.h
+  modulekeyword_bool.h
+  modulekeyword_charstring.h
+  modulekeyword_complex.h
+  modulekeyword_double.h
+  modulekeyword_function.h
+  modulekeyword_int.h
+  modulekeywords.h
 )
 
 include_directories(

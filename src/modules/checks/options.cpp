@@ -20,20 +20,21 @@
 */
 
 #include "modules/checks/checks.h"
+#include "modules/modulekeywords.h"
 #include "base/lineparser.h"
 
-// Setup options for module
-void ChecksModule::setupOptions()
+// Set up keywords for Module
+void ChecksModule::setupKeywords()
 {
-	// Boolean options must be set as 'bool(false)' or 'bool(true)' rather than just 'false' or 'true' so that the correct overloaded add() function is called
-	options_.add("AngleThreshold", 0.05, "Threshold at which angle checks will fail (degrees)")->setValidationMin(1.0-5);
-	options_.add("DistanceThreshold", 0.001, "Threshold at which distance checks will fail (Angstroms)")->setValidationMin(1.0-5);
+	keywords_.add(new ComplexModuleKeyword(4,4), "Angle", "Define an angle between Atoms to be checked", "<i> <j> <k> <referenceAngle>");
+	keywords_.add(new DoubleModuleKeyword(0.05, 1.0e-5), "AngleThreshold", "Threshold at which angle checks will fail", "<threshold[0.05]>");
+	keywords_.add(new ComplexModuleKeyword(3,3), "Distance", "Define a distance between Atoms to be checked", "<i> <j> <referenceDistance>");
+	keywords_.add(new DoubleModuleKeyword(0.001, 1.0e-5), "DistanceThreshold", "Threshold at which distance checks will fail (Angstroms)", "<threshold[0.001]>");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int ChecksModule::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList)
+int ChecksModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix)
 {
-	printf("HERE WE ARE %s\n", parser.argc(0));
 	if (DUQSys::sameString(parser.argc(0), "Angle"))
 	{
 		if (parser.nArgs() != 5)

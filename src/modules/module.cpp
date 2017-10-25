@@ -21,6 +21,7 @@
 
 #include "modules/module.h"
 #include "classes/configuration.h"
+#include "base/lineparser.h"
 #include "base/sysfunc.h"
 
 // Static Members
@@ -115,14 +116,56 @@ void Module::updateDependentTargets()
 	}
 }
 
-// Return options for Module
-PlainValueList& Module::options()
+/*
+ * Keywords
+ */
+
+// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
+int Module::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix)
 {
-	return options_;
+	// The LineParser currently contains a parsed line from the input file
+
+	// Do we recognise the first item (the 'keyword')?
+	ModuleKeywordBase* keyword = keywords_.find(parser.argc(0));
+	if (!keyword) return -1;
+
+	// We recognised the keyword - what should we try to do with it?
+	if (keyword->type() == ModuleKeywordBase::ComplexData)
+	{
+		// It's a 'complex' keyword, one that either sets up a complicated object, or does something specific within the Module
+		return parseComplexKeyword(keyword, parser, duq, targetList, prefix);
+	}
+	else
+	{
+		// It's a keyword that sets a simple POD or class
+		// Check the number of arguments we have against the min / max for the keyword
+		if ((parser.nArgs() - 1) < keyword->minArguments())
+		{
+			Messenger::error("Not enough arguments given to Module keyword '%s'.\n", keyword->keyword());
+			return 0;
+		}
+		if ((keyword->maxArguments() >= 0) && ((parser.nArgs() - 1) > keyword->maxArguments()))
+		{
+			Messenger::error("Too many arguments given to Module keyword '%s'.\n", keyword->keyword());
+			return 0;
+		}
+
+		// All OK, so pass the current line to it for parsing
+		if (!keyword->parseArguments(parser, 1))
+		{
+			Messenger::error("Failed to parse arguments for Module keyword '%s'.\n", keyword->keyword());
+			return 0;
+		}
+
+		// Add a copy of the data to the target list
+		keyword->duplicateInList(targetList, prefix);
+	}
+
+	return true;
 }
 
 /*
- * Basic Control
+ * Control
  */
 
 // Frequency with which to run Module (relative to master simulation loop counter)

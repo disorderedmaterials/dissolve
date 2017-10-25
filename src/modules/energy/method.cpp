@@ -67,16 +67,16 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 		GenericList& moduleData = configurationLocal_ ? cfg->moduleData() : duq.processingModuleData();
 
 		// Retrieve control parameters from Configuration
-		const bool saveData = GenericListHelper<bool>::retrieve(moduleData, "Save", uniqueName(), options_.valueAsBool("Save"));
-		const double stabilityThreshold = GenericListHelper<double>::retrieve(moduleData, "StabilityThreshold", uniqueName(), options_.valueAsDouble("StabilityThreshold"));
-		const int stabilityWindow = GenericListHelper<int>::retrieve(moduleData, "StabilityWindow", uniqueName(), options_.valueAsInt("StabilityWindow"));
-		const bool testAnalytic = GenericListHelper<bool>::retrieve(moduleData, "TestAnalytic", uniqueName(), options_.valueAsBool("TestAnalytic"));
-		const bool testMode = GenericListHelper<bool>::retrieve(moduleData, "Test", uniqueName(), options_.valueAsBool("Test"));
-		const double testThreshold = GenericListHelper<double>::retrieve(moduleData, "TestThreshold", uniqueName(), options_.valueAsDouble("TestThreshold"));
+		const bool saveData = GenericListHelper<bool>::retrieve(moduleData, "Save", uniqueName(), keywords_.asBool("Save"));
+		const double stabilityThreshold = GenericListHelper<double>::retrieve(moduleData, "StabilityThreshold", uniqueName(), keywords_.asDouble("StabilityThreshold"));
+		const int stabilityWindow = GenericListHelper<int>::retrieve(moduleData, "StabilityWindow", uniqueName(), keywords_.asInt("StabilityWindow"));
+		const bool testAnalytic = GenericListHelper<bool>::retrieve(moduleData, "TestAnalytic", uniqueName(), keywords_.asBool("TestAnalytic"));
+		const bool testMode = GenericListHelper<bool>::retrieve(moduleData, "Test", uniqueName(), keywords_.asBool("Test"));
+		const double testThreshold = GenericListHelper<double>::retrieve(moduleData, "TestThreshold", uniqueName(), keywords_.asDouble("TestThreshold"));
 		bool hasReferenceInter;
-		const double testReferenceInter = GenericListHelper<double>::retrieve(moduleData, "TestReferenceInter", uniqueName(), options_.valueAsDouble("TestReferenceInter"), &hasReferenceInter);
+		const double testReferenceInter = GenericListHelper<double>::retrieve(moduleData, "TestReferenceInter", uniqueName(), keywords_.asDouble("TestReferenceInter"), &hasReferenceInter);
 		bool hasReferenceIntra;
-		const double testReferenceIntra = GenericListHelper<double>::retrieve(moduleData, "TestReferenceIntra", uniqueName(), options_.valueAsDouble("TestReferenceIntra"), &hasReferenceIntra);
+		const double testReferenceIntra = GenericListHelper<double>::retrieve(moduleData, "TestReferenceIntra", uniqueName(), keywords_.asDouble("TestReferenceIntra"), &hasReferenceIntra);
 
 		// Calculate the total energy
 		if (testMode)
