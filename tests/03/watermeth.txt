@@ -58,23 +58,19 @@ Configuration  'Mix'
   RDFBinWidth 0.03
   RDFRange 38.0
 
-  # Sample Structure Factor Calculations
-  Module Partials 'HHH'
-    StructureFactor  on
+  # Calculate and test g(r)
+  Module Partials 'RDFs'
     # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
     AllIntra  true
-    QMin 0.05
-    QDependentBroadening  DependentGaussian  0.02    # For SLS
-    Weights  neutron
     Isotopologue  'Mix'  'Water'  'Protiated'  1.0
     Isotopologue  'Mix'  'Methanol'  'Protiated'  1.0
     Exchangeable  HW  HO
-    Save  On
+    # Save  On
     Frequency  1
     Method  Cells
   
     Test  on
-    TestThreshold  1.0
+    TestThreshold  0.55
     #  Order of partials in EPSR files is: 
     #    2      4      6      8      10     12     14     16     18     20     22     24     26     28     30     32     34     36     38     40     42
     #  OW-OW  OW-HW  OW-CT  OW-HC  OW-OH  OW-HO  HW-HW  HW-CT  HW-HC  HW-OH  HW-HO  CT-CT  CT-HC  CT-OH  CT-HO  HC-HC  HC-OH  HC-HO  OH-OH  OH-HO  HO-HO  
@@ -122,6 +118,28 @@ Configuration  'Mix'
     TestReference  'epsr/watermeth.EPSR.y01'  GR-unweighted-OH-OH-bound  1  38
     TestReference  'epsr/watermeth.EPSR.y01'  GR-unweighted-OH-HO-bound  1  40
     TestReference  'epsr/watermeth.EPSR.y01'  GR-unweighted-HO-HO-bound  1  42
+  EndModule
+
+  # Sample Structure Factor Calculations
+  Module Partials 'HHH'
+    StructureFactor  on
+    # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
+    AllIntra  true
+    QMin 0.05
+    QDependentBroadening  DependentGaussian  0.02    # For SLS
+    Weights  neutron
+    Isotopologue  'Mix'  'Water'  'Protiated'  1.0
+    Isotopologue  'Mix'  'Methanol'  'Protiated'  1.0
+    Exchangeable  HW  HO
+    # Save  On
+    Frequency  1
+    Method  Cells
+  
+    Test  on
+    TestThreshold  0.28
+    #  Order of partials in EPSR files is: 
+    #    2      4      6      8      10     12     14     16     18     20     22     24     26     28     30     32     34     36     38     40     42
+    #  OW-OW  OW-HW  OW-CT  OW-HC  OW-OH  OW-HO  HW-HW  HW-CT  HW-HC  HW-OH  HW-HO  CT-CT  CT-HC  CT-OH  CT-HO  HC-HC  HC-OH  HC-HO  OH-OH  OH-HO  HO-HO  
     # -- Partial S(Q) (unbound terms), unweighted
     TestReference  'epsr/watermeth.EPSR.f01'  SQ-unweighted-OW-OW-unbound  1  2
     TestReference  'epsr/watermeth.EPSR.f01'  SQ-unweighted-OW-HW-unbound  1  4
@@ -182,11 +200,11 @@ Configuration  'Mix'
     Isotopologue  'Mix'  'Methanol'  'Protiated'  0.5
     Isotopologue  'Mix'  'Methanol'  'OD-MethylH'  0.5
     Exchangeable  HW  HO
-    Save  On
+    #  Save  On
     Frequency  1
   
     Test  on
-    TestThreshold  1.0
+    TestThreshold  0.08
     # -- Total neutron-weighted S(Q)
     # u01 file: 1  2   4   6   8   10  12  14  16
     #           Q HHH H5H DHH HDH HHD DDH HDD DDD 
@@ -203,11 +221,11 @@ Configuration  'Mix'
     Isotopologue  'Mix'  'Water'  'Deuteriated'  1.0
     Isotopologue  'Mix'  'Methanol'  'Protiated'  1.0
     Exchangeable  HW  HO
-    Save  On
+    #  Save  On
     Frequency  1
   
     Test  on
-    TestThreshold  1.0
+    TestThreshold  0.08
     # -- Total neutron-weighted S(Q)
     # u01 file: 1  2   4   6   8   10  12  14  16
     #           Q HHH H5H DHH HDH HHD DDH HDD DDD 
@@ -224,11 +242,11 @@ Configuration  'Mix'
     Isotopologue  'Mix'  'Water'  'Protiated'  1.0
     Isotopologue  'Mix'  'Methanol'  'OD-MethylH'  1.0
     Exchangeable  HW  HO
-    Save  On
+    #  Save  On
     Frequency  1
   
     Test  on
-    TestThreshold  1.0
+    TestThreshold  0.08
     # -- Total neutron-weighted S(Q)
     # u01 file: 1  2   4   6   8   10  12  14  16
     #           Q HHH H5H DHH HDH HHD DDH HDD DDD 
@@ -245,11 +263,11 @@ Configuration  'Mix'
     Isotopologue  'Mix'  'Water'  'Protiated'  1.0
     Isotopologue  'Mix'  'Methanol'  'MethylD-OH'  1.0
     Exchangeable  HW  HO
-    Save  On
+    #  Save  On
     Frequency  1
   
     Test  on
-    TestThreshold  1.0
+    TestThreshold  0.11
     # -- Total neutron-weighted S(Q)
     # u01 file: 1  2   4   6   8   10  12  14  16
     #           Q HHH H5H DHH HDH HHD DDH HDD DDD 
@@ -266,11 +284,11 @@ Configuration  'Mix'
     Isotopologue  'Mix'  'Water'  'Deuteriated'  1.0
     Isotopologue  'Mix'  'Methanol'  'OD-MethylH'  1.0
     Exchangeable  HW  HO
-    Save  On
+    #  Save  On
     Frequency  1
   
     Test  on
-    TestThreshold  1.0
+    TestThreshold  0.07
     # -- Total neutron-weighted S(Q)
     # u01 file: 1  2   4   6   8   10  12  14  16
     #           Q HHH H5H DHH HDH HHD DDH HDD DDD 
@@ -287,11 +305,11 @@ Configuration  'Mix'
     Isotopologue  'Mix'  'Water'  'Protiated'  1.0
     Isotopologue  'Mix'  'Methanol'  'Deuteriated'  1.0
     Exchangeable  HW  HO
-    Save  On
+    #  Save  On
     Frequency  1
   
     Test  on
-    TestThreshold  1.0
+    TestThreshold  0.08
     # -- Total neutron-weighted S(Q)
     # u01 file: 1  2   4   6   8   10  12  14  16
     #           Q HHH H5H DHH HDH HHD DDH HDD DDD 
@@ -308,11 +326,11 @@ Configuration  'Mix'
     Isotopologue  'Mix'  'Water'  'Deuteriated'  1.0
     Isotopologue  'Mix'  'Methanol'  'Deuteriated'  1.0
     Exchangeable  HW  HO
-    Save  On
+    #  Save  On
     Frequency  1
   
     Test  on
-    TestThreshold  1.0
+    TestThreshold  0.07
     # -- Total neutron-weighted S(Q)
     # u01 file: 1  2   4   6   8   10  12  14  16
     #           Q HHH H5H DHH HDH HHD DDH HDD DDD 
