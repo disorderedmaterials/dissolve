@@ -51,7 +51,13 @@ Function::~Function()
 FunctionDefinition Function::functions_[] = {
 	{ "Unity",		0,	{ "_NO PARAMS_" },
 				1,	{ "x" },
-				"Function that always returns 1.0." }
+				"Function that always returns 1.0." },
+	{ "Gaussian",		1,	{ "FWHM" },
+				1,	{ "x" },
+				"Gaussian (no prefactor, unnormalised)" },
+	{ "DependentGaussian",	1,	{ "FWHM" },
+				2,	{ "x", "x2" },
+				"Gaussian (no prefactor, unnormalised, dependent FWHM)" }
 };
 
 // Return FunctionType from supplied string
@@ -77,15 +83,15 @@ int Function::nFunctionParameters(FunctionType func)
  * Function Data
  */
 
-void Function::set(FunctionType function, double a, double b, double c, double d, double e, double f)
+void Function::set(Function::FunctionType function, double p1, double p2, double p3, double p4, double p5, double p6)
 {
 	function_ = function;
-	parameters_[0] = a;
-	parameters_[1] = b;
-	parameters_[2] = c;
-	parameters_[3] = d;
-	parameters_[4] = e;
-	parameters_[5] = f;
+	parameters_[0] = p1;
+	parameters_[1] = p2;
+	parameters_[2] = p3;
+	parameters_[3] = p4;
+	parameters_[4] = p5;
+	parameters_[5] = p6;
 }
 
 // Set function data from LineParser source
@@ -107,9 +113,19 @@ bool Function::set(LineParser& parser, int startArg)
 	}
 
 	// Set up function
-	switch (funcType)
+	function_ = funcType;
+	switch (function_)
 	{
 		case (Function::UnityFunction):
+			break;
+		case (Function::GaussianFunction):
+		case (Function::DependentGaussianFunction):
+			// FWHM
+			parameters_[0] = parser.argd(startArg+1);
+			// c (calculated from FWHM)
+			parameters_[1] = parameters_[0] / (2.0 * sqrt(2.0 * log(2.0)));
+			// 1/c
+			parameters_[2] = 1.0 / parameters_[1];
 			break;
 		default:
 			Messenger::error("Function form '%s' not accounted for in set(LineParser&,int).\n", Function::functionType(funcType));
@@ -133,6 +149,10 @@ CharString Function::summary() const
 		case (Function::UnityFunction):
 			return "1.0";
 			break;
+		case (Function::GaussianFunction):
+		case (Function::DependentGaussianFunction):
+			return CharString("FWHM=%f", parameters_[0]);
+			break;
 		default:
 			Messenger::warn("Function::value(x) - Function id %i not accounted for.\n", function_);
 			break;
@@ -141,13 +161,19 @@ CharString Function::summary() const
 	return "NULL";
 }
 
-// Return value of function at value x
-double Function::value(double x) const
+// Return number of arguments accepted by function
+int Function::nArguments() const
+{
+	return functions_[function_].nArguments;
+}
+
+// Return value of function given parameter a
+double Function::value(double a) const
 {
 #ifdef CHECKS
-	if ((function_ != Function::UnityFunction) && (functions_[function_].nArguments != 2))
+	if ((function_ != Function::UnityFunction) && (functions_[function_].nArguments != 1))
 	{
-		Messenger::error("Function::value(x) - Function '%s' requires %i arguments, not 1.\n", Function::functionType(function_), functions_[function_].nArguments);
+		Messenger::error("Function::value(a) - Function '%s' requires %i arguments, not 1.\n", Function::functionType(function_), functions_[function_].nArguments);
 		return 0.0;
 	}
 #endif
@@ -157,21 +183,35 @@ double Function::value(double x) const
 		case (Function::UnityFunction):
 			return 1.0;
 			break;
+		case (Function::GaussianFunction):
+			/*
+			 * Unnormalised Gaussian with no prefactor, centred at zero
+			 * 
+			 * Parameters:  0 = FWHM
+			 * 		1 = c     	(precalculated from FWHM)
+			 * 		2 = 1.0 / c
+			 * 
+			 * 	      (     x * x   ) 			  FWHM
+			 * f(x) = exp ( - --------- )      where c = --------------
+			 * 	      (   2 * c * c )		     2 sqrt(2 ln 2) 
+			 */
+			return exp(-(0.5*a*a*parameters_[2]*parameters_[2]));
+			break;
 		default:
-			Messenger::warn("Function::value(x) - Function id %i not accounted for.\n", function_);
+			Messenger::warn("Function::value(a) - Function id %i not accounted for.\n", function_);
 			break;
 	}
 
 	return 0.0;
 }
 
-// Return value of function at values x and y
-double Function::value(double x, double y) const
+// Return value of function given parameters a and b
+double Function::value(double a, double b) const
 {
 #ifdef CHECKS
 	if ((function_ != Function::UnityFunction) && (functions_[function_].nArguments != 2))
 	{
-		Messenger::error("Function::value(x,y) - Function '%s' requires %i arguments, not 2.\n", Function::functionType(function_), functions_[function_].nArguments);
+		Messenger::error("Function::value(a,b) - Function '%s' requires %i arguments, not 2.\n", Function::functionType(function_), functions_[function_].nArguments);
 		return 0.0;
 	}
 #endif
@@ -180,21 +220,35 @@ double Function::value(double x, double y) const
 		case (Function::UnityFunction):
 			return 1.0;
 			break;
+		case (Function::DependentGaussianFunction):
+			/*
+			 * Unnormalised Gaussian with no prefactor, centred at zero, with variable FWHM
+			 * 
+			 * Parameters:  0 = FWHM
+			 * 		1 = c     	(precalculated from FWHM)
+			 * 		2 = 1.0 / c
+			 * 
+			 * 	      (     x * x   ) 			  FWHM
+			 * f(x) = exp ( - --------- )      where c = --------------
+			 * 	      (   2 * c * c )		     2 sqrt(2 ln 2) 
+			 */
+			return exp(-(a*a)/(2.0*parameters_[1]*b*parameters_[1]*b));
+			break;
 		default:
-			Messenger::warn("Function::value(x,y) - Function id %i not accounted for.\n", function_);
+			Messenger::warn("Function::value(a,b) - Function id %i not accounted for.\n", function_);
 			break;
 	}
 
 	return 0.0;
 }
 
-// Return value of function at values x, y, and z
-double Function::value(double x, double y, double z) const
+// Return value of function given parameters a, b, and c
+double Function::value(double a, double b, double c) const
 {
 #ifdef CHECKS
-	if ((function_ != Function::UnityFunction) && (functions_[function_].nArguments != 2))
+	if ((function_ != Function::UnityFunction) && (functions_[function_].nArguments != 3))
 	{
-		Messenger::error("Function::value(x,y) - Function '%s' requires %i arguments, not 3.\n", Function::functionType(function_), functions_[function_].nArguments);
+		Messenger::error("Function::value(a,b,c) - Function '%s' requires %i arguments, not 3.\n", Function::functionType(function_), functions_[function_].nArguments);
 		return 0.0;
 	}
 #endif
@@ -205,7 +259,106 @@ double Function::value(double x, double y, double z) const
 			return 1.0;
 			break;
 		default:
-			Messenger::warn("Function::value(x,y,z) - Function id %i not accounted for.\n", function_);
+			Messenger::warn("Function::value(a,b,c) - Function id %i not accounted for.\n", function_);
+			break;
+	}
+
+	return 0.0;
+}
+
+// Return value of Fourier transform of function, given parameter a
+double Function::ft(double a) const
+{
+#ifdef CHECKS
+	if ((function_ != Function::UnityFunction) && (functions_[function_].nArguments != 1))
+	{
+		Messenger::error("Function::value(a) - Function '%s' requires %i arguments, not 1.\n", Function::functionType(function_), functions_[function_].nArguments);
+		return 0.0;
+	}
+#endif
+
+	switch (function_)
+	{
+		case (Function::UnityFunction):
+			return 1.0;
+			break;
+		case (Function::GaussianFunction):
+			/*
+			 * Unnormalised Gaussian with no prefactor, centred at zero
+			 * 
+			 * Parameters:  0 = FWHM
+			 * 		1 = c     	(precalculated from FWHM)
+			 * 		2 = 1/c
+			 * 
+			 * 	      (   x * x * c * c ) 		      FWHM
+			 * f(x) = exp ( - ------------- )      where c = --------------
+			 * 	      (         2       )	         2 sqrt(2 ln 2) 
+			 */
+			return exp(-(0.5 * a*a * parameters_[1]*parameters_[1]));
+			break;
+		default:
+			Messenger::warn("Function::value(a) - Function id %i not accounted for.\n", function_);
+			break;
+	}
+
+	return 0.0;
+}
+
+// Return value of Fourier transform of function, given parameters a and b
+double Function::ft(double a, double b) const
+{
+#ifdef CHECKS
+	if ((function_ != Function::UnityFunction) && (functions_[function_].nArguments != 2))
+	{
+		Messenger::error("Function::ft(a,b) - Function '%s' requires %i arguments, not 2.\n", Function::functionType(function_), functions_[function_].nArguments);
+		return 0.0;
+	}
+#endif
+	switch (function_)
+	{
+		case (Function::UnityFunction):
+			return 1.0;
+			break;
+		case (Function::DependentGaussianFunction):
+			/*
+			 * Unnormalised Gaussian with no prefactor, centred at zero, with variable FWHM
+			 * 
+			 * Parameters:  0 = FWHM
+			 * 		1 = c     	(precalculated from FWHM)
+			 * 		2 = 1/c
+			 * 
+			 * 	      (   x * x * c * c ) 		      FWHM
+			 * f(x) = exp ( - ------------- )      where c = --------------
+			 * 	      (         2       )	         2 sqrt(2 ln 2) 
+			 */
+			return exp(-(0.5 * a*a * parameters_[1]*b*parameters_[1]*b));
+			break;
+		default:
+			Messenger::warn("Function::ft(a,b) - Function id %i not accounted for.\n", function_);
+			break;
+	}
+
+	return 0.0;
+}
+
+// Return value of Fourier transform of function, given parameters a, b, and c
+double Function::ft(double a, double b, double c) const
+{
+	#ifdef CHECKS
+	if ((function_ != Function::UnityFunction) && (functions_[function_].nArguments != 2))
+	{
+		Messenger::error("Function::ft(a,b,c) - Function '%s' requires %i arguments, not 3.\n", Function::functionType(function_), functions_[function_].nArguments);
+		return 0.0;
+	}
+#endif
+
+	switch (function_)
+	{
+		case (Function::UnityFunction):
+			return 1.0;
+			break;
+		default:
+			Messenger::warn("Function::ft(a,b,c) - Function id %i not accounted for.\n", function_);
 			break;
 	}
 

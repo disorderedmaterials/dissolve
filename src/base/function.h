@@ -59,7 +59,7 @@ class Function
 	// Assignment Operator
 	void operator=(const Function& source);
 	// Function Types
-	enum FunctionType { UnityFunction, nFunctionTypes };
+	enum FunctionType { UnityFunction, GaussianFunction, DependentGaussianFunction, nFunctionTypes };
 	// Return FunctionType from supplied string
 	static FunctionType functionType(const char* s);
 	// Return FunctionType name
@@ -90,19 +90,27 @@ class Function
 	 * Function Type	Parameters
 	 * XXX
 	 */
-	void set(FunctionType function, double a = 0.0, double b = 0.0, double c = 0.0, double d = 0.0, double e = 0.0, double f = 0.0);
+	void set(FunctionType function, double p1 = 0.0, double p2 = 0.0, double p3 = 0.0, double p4 = 0.0, double p5 = 0.0, double p6 = 0.0);
 	// Set function data from LineParser source
 	bool set(LineParser& parser, int startArg);
 	// Return function type
 	FunctionType function() const;
 	// Return short summary of function parameters
 	CharString summary() const;
-	// Return value of function at value x
-	double value(double x) const;
-	// Return value of function at values x and y
-	double value(double x, double y) const;
-	// Return value of function at values x, y1, and z
-	double value(double x, double y, double z) const;
+	// Return number of arguments accepted by function
+	int nArguments() const;
+	// Return value of function given parameter a
+	double value(double a) const;
+	// Return value of function given parameters a and b
+	double value(double a, double b) const;
+	// Return value of function given parameters a, b, and c
+	double value(double a, double b, double c) const;
+	// Return value of Fourier transform of function, given parameter a
+	double ft(double a) const;
+	// Return value of Fourier transform of function, given parameters a and b
+	double ft(double a, double b) const;
+	// Return value of Fourier transform of function, given parameters a, b, and c
+	double ft(double a, double b, double c) const;
 	// Return unity function
 	static Function& unity();
 
