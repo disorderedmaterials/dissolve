@@ -381,7 +381,7 @@ bool PartialsModule::performAveraging(GenericList& moduleData, const char* name,
 	}
 	PartialSet& currentPartials = GenericListHelper<PartialSet>::retrieve(moduleData, name, prefix);
 
-	// Store the current index, since we must ensure we retain it in the averaged PartialSet
+	// Store the current index, since we must ensure we retain it in the averaged PartialSet.
 	int currentIndex = currentPartials.index();
 
 	// Establish how many stored datasets we have
@@ -389,17 +389,34 @@ bool PartialsModule::performAveraging(GenericList& moduleData, const char* name,
 	for (nStored = 0; nStored < nSetsInAverage; ++nStored) if (!moduleData.contains(CharString("%s_%i", name, nStored+1), prefix)) break;
 	Messenger::print("Partials: Average requested over %i datsets - %i available in module data (%i max).\n", nSetsInAverage, nStored, nSetsInAverage-1);
 
-	// Remove the oldest dataset if it exists, and shuffle the others down
-	if (nStored == nSetsInAverage)
+	// If a stored PartialSet with index 1 exists, we need to check its index value against the current one.
+	// If it is the same, we do not store it since it is the same and does not add any new information to the averaging.
+	bool storeCurrent = true;
+	if (moduleData.contains(CharString("%s_1", name), prefix))
 	{
-		moduleData.remove(CharString("%s_%i", name, nStored), prefix);
-		--nStored;
+		PartialSet& lastPartials = GenericListHelper<PartialSet>::retrieve(moduleData, CharString("%s_1", name), prefix);
+		if (lastPartials.index() <= currentIndex)
+		{
+			Messenger::print("Partials: Current partials will not form part of average, since they are the same as the last stored set.\n");
+			storeCurrent = false;
+		}
 	}
-	for (int n=nStored; n>0; --n) moduleData.rename(CharString("%s_%i", name, n), prefix, CharString("%s_%i", name, n+1), prefix);
 
-	// Store the current PartialSet as the earliest data (1)
-	GenericListHelper<PartialSet>::realise(moduleData, CharString("%s_1", name), prefix, GenericItem::InRestartFileFlag) = currentPartials;
-	++nStored;
+	// So, store the current PartialSet?
+	if (storeCurrent)
+	{
+		// Remove the oldest dataset if it exists, and shuffle the others down
+		if (nStored == nSetsInAverage)
+		{
+			moduleData.remove(CharString("%s_%i", name, nStored), prefix);
+			--nStored;
+		}
+		for (int n=nStored; n>0; --n) moduleData.rename(CharString("%s_%i", name, n), prefix, CharString("%s_%i", name, n+1), prefix);
+
+		// Store the current PartialSet as the earliest data (1)
+		GenericListHelper<PartialSet>::realise(moduleData, CharString("%s_1", name), prefix, GenericItem::InRestartFileFlag) = currentPartials;
+		++nStored;
+	}
 
 	// Calculate normalisation
 	double normalisation = 0.0;
