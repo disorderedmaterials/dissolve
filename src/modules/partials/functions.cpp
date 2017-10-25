@@ -509,9 +509,12 @@ bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration*
 	else
 	{
 		// Bonds
-		DynamicArrayIterator<Bond> bondIterator(cfg->bonds());
-		while (Bond* b = bondIterator.iterate())
+		Bond** bonds = cfg->bonds().array();
+		Bond* b;
+		for (int n=start; n<cfg->nBonds(); n+=stride)
 		{
+			b = bonds[n];
+
 			i = b->i();
 			j = b->j();
 			if (cellArray.useMim(i->cell(), j->cell())) distance = box->minimumDistance(i, j);
@@ -520,9 +523,12 @@ bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration*
 		}
 
 		// Angles
-		DynamicArrayIterator<Angle> angleIterator(cfg->angles());
-		while (Angle* a = angleIterator.iterate())
+		Angle** angles = cfg->angles().array();
+		Angle* a;
+		for (int n=start; n<cfg->nAngles(); n+=stride)
 		{
+			a = angles[n];
+
 			i = a->i();
 			j = a->j();
 			k = a->k();
