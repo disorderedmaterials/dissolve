@@ -631,7 +631,7 @@ bool PartialsModule::calculateWeightedGR(PartialSet& unweightedgr, PartialSet& w
 
 
 // Generate S(Q) from supplied g(r)
-bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration* cfg, double qMin, double qDelta, double qMax, double rho, XYData::WindowFunction wf, const Function& generalBroadening, const Function& qDependentBroadening, bool braggOn)
+bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration* cfg, double qMin, double qDelta, double qMax, double rho, XYData::WindowFunction wf, const Function& qBroadening, const Function& qDependentBroadening, bool braggOn)
 {
 	// Grab unweighted g(r) for Configuration
 	if (!cfg->moduleData().contains("UnweightedGR", "Partials"))
@@ -681,9 +681,9 @@ bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration*
 	{
 		for (int m=n; m<nTypes; ++m)
 		{
-			if (!partialsq.partial(n,m).broadenedSineFT(4.0*PI*rho, qMin, qDelta, qMax, generalBroadening, qDependentBroadening, wf)) return false;
-			if (!partialsq.boundPartial(n,m).broadenedSineFT(4.0*PI*rho, qMin, qDelta, qMax, generalBroadening, qDependentBroadening, wf)) return false;
-			if (!partialsq.unboundPartial(n,m).broadenedSineFT(4.0*PI*rho, qMin, qDelta, qMax, generalBroadening, qDependentBroadening, wf)) return false;
+			if (!partialsq.partial(n,m).broadenedSineFT(4.0*PI*rho, qMin, qDelta, qMax, qBroadening, qDependentBroadening, wf)) return false;
+			if (!partialsq.boundPartial(n,m).broadenedSineFT(4.0*PI*rho, qMin, qDelta, qMax, qBroadening, qDependentBroadening, wf)) return false;
+			if (!partialsq.unboundPartial(n,m).broadenedSineFT(4.0*PI*rho, qMin, qDelta, qMax, qBroadening, qDependentBroadening, wf)) return false;
 
 			// Zero Bragg partial, leave x array intact for use if needed
 			partialsq.braggPartial(n,m).templateFrom(partialsq.partial(n,m));
