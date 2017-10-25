@@ -110,8 +110,7 @@ bool DUQ::go(bool singleIteration)
 		{
 			if (!module->runThisIteration(iteration_)) continue;
 
-			Messenger::print("\n");
-			Messenger::print("--> Module '%s'\n", module->name());
+			Messenger::heading("'%s'", module->name());
 
 			// Execute the pre-processing stage
 			if (!module->preProcess(*this, worldPool_))
@@ -157,7 +156,8 @@ bool DUQ::go(bool singleIteration)
 			{
 				if (!module->runThisIteration(iteration_)) continue;
 
-				Messenger::print("\n");
+				Messenger::heading("%s (%s)", module->name(), module->uniqueName());
+
 				result = module->process(*this, cfg->processPool());
 
 				if (!result) return false;
@@ -195,7 +195,8 @@ bool DUQ::go(bool singleIteration)
 		{
 			if (!module->runThisIteration(iteration_)) continue;
 
-			Messenger::heading("%s", module->name());
+			Messenger::heading("%s (%s)", module->name(), module->uniqueName());
+
 			result = module->process(*this, worldPool_);
 
 			if (!result)
