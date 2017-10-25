@@ -22,7 +22,7 @@ Module Partials
   Weights  neutron
   Isotopologue  'liquid'  'Argon'  'Ar36'  1.0
   StructureFactor  on
-  QIndepBroadening  0.1
+  QBroadening  Gaussian  0.1
   Frequency  1
   Test  On
   TestReference  'epsr_qindep0.1/argon.EPSR.u01'  SQ-weighted-total  1  2

@@ -28,18 +28,16 @@ Configuration  'Bulk'
 EndConfiguration
 
 # Samples
-Module Partials 'D2O'
-  StructureFactor  on
-  QMin 0.05
-  #QsDependentBroadening  0.02    # For SLS
+Module Partials 'RDFs'
+  StructureFactor  Off
   Configuration  'Bulk'
   Weights  neutron
   Isotopologue  'Bulk'  'Water'  'Deuteriated'  1.0
-  Save  On
+  # Save  On
+  TestThreshold  0.57
   Frequency  1
 
   Test  on
-  TestThreshold  1.0
   # -- Partial g(r) (unbound terms), unweighted
   TestReference  'epsr/water.EPSR.g01'  GR-unweighted-OW-OW-unbound  1  2
   TestReference  'epsr/water.EPSR.g01'  GR-unweighted-OW-HW-unbound  1  4
@@ -48,6 +46,18 @@ Module Partials 'D2O'
   TestReference  'epsr/water.EPSR.y01'  GR-unweighted-OW-OW-bound  1  2
   TestReference  'epsr/water.EPSR.y01'  GR-unweighted-OW-HW-bound  1  4
   TestReference  'epsr/water.EPSR.y01'  GR-unweighted-HW-HW-bound  1  6
+EndModule
+
+Module Partials 'D2O'
+  StructureFactor  on
+  QMin 0.05
+  QDependentBroadening  DependentGaussian  0.02    # For SLS
+  Configuration  'Bulk'
+  Weights  neutron
+  Isotopologue  'Bulk'  'Water'  'Deuteriated'  1.0
+  # Save  On
+  TestThreshold  0.1
+  Frequency  1
   # -- Partial S(Q) (unbound terms), unweighted
   TestReference  'epsr/water.EPSR.f01'  SQ-unweighted-OW-OW-unbound  1  2
   TestReference  'epsr/water.EPSR.f01'  SQ-unweighted-OW-HW-unbound  1  4
@@ -63,15 +73,14 @@ EndModule
 Module Partials 'H2O'
   StructureFactor  on
   QMin 0.05
-  #QDepBroadening  0.02    # For SLS
+  QDependentBroadening  DependentGaussian  0.02    # For SLS
   Configuration  'Bulk'
   Weights  neutron
   Isotopologue  'Bulk'  'Water'  'Protiated'  1.0
-  Save  On
+  # Save  On
+  TestThreshold  0.26
   Frequency  1
-
   Test  on
-  TestThreshold  1.0
   # -- Total neutron-weighted S(Q)
   TestReference  'epsr/water.EPSR.u01'  SQ-weighted-total  1  4
 EndModule
@@ -79,16 +88,16 @@ EndModule
 Module Partials 'HDO'
   StructureFactor  on
   QMin 0.05
-  #QDepBroadening  0.02    # For SLS
+  QDependentBroadening  DependentGaussian  0.02    # For SLS
   Configuration  'Bulk'
   Weights  neutron
   Isotopologue  'Bulk'  'Water'  'Protiated'  0.5
   Isotopologue  'Bulk'  'Water'  'Deuteriated'  0.5
-  Save  On
+  # Save  On
+  TestThreshold  0.11
   Frequency  1
 
   Test  on
-  TestThreshold  1.0
   # -- Total neutron-weighted S(Q)
   TestReference  'epsr/water.EPSR.u01'  SQ-weighted-total  1  6
 EndModule
