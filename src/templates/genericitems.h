@@ -23,7 +23,7 @@
 #define DUQ_GENERICITEMS_H
 
 /*
- * This file should be included if the use of GenericItems are to be used.
+ * This file should be included if the use of GenericItems is required.
  * It simply includes all other GenericItemContainers and specialisations.
  */
 
