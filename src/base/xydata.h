@@ -218,8 +218,8 @@ class XYData : public ListItem<XYData>
 	public:
 	// Perform plain Fourier transform of real data
 	bool fourierTransformReal(bool forwardTransform = true, XYData::WindowFunction wf = XYData::NoWindow);
-	// Perform Fourier sine transform of current distribution function, over range specified, and with specified broadening functions and window applied (if requested)
-	bool sineFT(double normFactor, double wMin, double wStep, double wMax, const Function& generalBroadening = Function::unity(), const Function& wDependentBroadening = Function::unity(), XYData::WindowFunction wf = XYData::NoWindow);
+	// Perform Fourier sine transform of current distribution function, over range specified, and with specified broadening functions (applied in Q space) and window applied (if requested)
+	bool sineFT(double normFactor, double wMin, double wStep, double wMax, const Function& wBroadening = Function::unity(), const Function& wDependentBroadening = Function::unity(), XYData::WindowFunction wf = XYData::NoWindow);
 	// Fourier transform current data, applying line-width broadening in real-space using the modified Lorch function
 	bool transformLorch(double atomicDensity, double step, double rMax, double beta, double delta0, bool qToR);
 	// Calculate S(Q) correlation function

@@ -67,9 +67,9 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		return false;
 	}
 	const bool braggOn = GenericListHelper<bool>::retrieve(moduleData, "Bragg", uniqueName(), keywords_.asBool("Bragg"));
-	const Function& braggBroadening = GenericListHelper<Function>::retrieve(moduleData, "Broadening", uniqueName(), Function::unity());
-	const Function& braggQDependentBroadening = GenericListHelper<Function>::retrieve(moduleData, "QDependentBroadening", uniqueName(), Function::unity());
-	const Function& broadening = GenericListHelper<Function>::retrieve(moduleData, "Broadening", uniqueName(), Function::unity());
+	const Function& braggQBroadening = GenericListHelper<Function>::retrieve(moduleData, "BraggQBroadening", uniqueName(), Function::unity());
+	const Function& braggQDependentBroadening = GenericListHelper<Function>::retrieve(moduleData, "BraggQDependentBroadening", uniqueName(), Function::unity());
+	const Function& qBroadening = GenericListHelper<Function>::retrieve(moduleData, "QBroadening", uniqueName(), Function::unity());
 	const Function& qDependentBroadening = GenericListHelper<Function>::retrieve(moduleData, "QDependentBroadening", uniqueName(), Function::unity());
 	PartialsModule::PartialsMethod method = PartialsModule::partialsMethod(GenericListHelper<CharString>::retrieve(moduleData, "Method", uniqueName_, keywords_.asString("Method")));
 	if (method == PartialsModule::nPartialsMethods)
@@ -112,15 +112,15 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		if (normalisation == PartialsModule::NoNormalisation) Messenger::print("Partials: No normalisation will be applied to total F(Q).\n");
 		else if (normalisation == PartialsModule::AverageOfSquaresNormalisation) Messenger::print("Partials: Total F(Q) will be normalised to <b>**2");
 		else if (normalisation == PartialsModule::SquareOfAverageNormalisation) Messenger::print("Partials: Total F(Q) will be normalised to <b**2>");
-		if (broadening.function() == Function::UnityFunction) Messenger::print("Partials: No general (Q-independent) broadening will be applied in calculated S(Q).");
-		else Messenger::print("Partials: General (Q-independent) broadening to be applied in calculated S(Q) is %s (%s).", Function::functionType(broadening.function()), broadening.summary().get());
+		if (qBroadening.function() == Function::UnityFunction) Messenger::print("Partials: No general (Q-independent) broadening will be applied in calculated S(Q).");
+		else Messenger::print("Partials: General (Q-independent) broadening to be applied in calculated S(Q) is %s (%s).", Function::functionType(qBroadening.function()), qBroadening.summary().get());
 		if (qDependentBroadening.function() == Function::UnityFunction) Messenger::print("Partials: No Q-dependent broadening will be applied in calculated S(Q).");
 		else Messenger::print("Partials: Q-dependent broadening to be applied in calculated S(Q) is %s (%s).", Function::functionType(qDependentBroadening.function()), qDependentBroadening.summary().get());
 		Messenger::print("Partials: Bragg calculation is %s.\n", DUQSys::onOff(braggOn));
 		if (braggOn)
 		{
-			if (braggBroadening.function() == Function::UnityFunction) Messenger::print("Partials: No general (Q-independent) broadening will be applied to Bragg scattering.");
-			else Messenger::print("Partials: General (Q-independent) broadening to be applied to Bragg scattering is %s (%s).", Function::functionType(braggBroadening.function()), braggBroadening.summary().get());
+			if (braggQBroadening.function() == Function::UnityFunction) Messenger::print("Partials: No general (Q-independent) broadening will be applied to Bragg scattering.");
+			else Messenger::print("Partials: General (Q-independent) broadening to be applied to Bragg scattering is %s (%s).", Function::functionType(braggQBroadening.function()), braggQBroadening.summary().get());
 			if (braggQDependentBroadening.function() == Function::UnityFunction) Messenger::print("Partials: No Q-dependent broadening will be applied to Bragg scattering.");
 			else Messenger::print("Partials: Q-dependent broadening to be applied to Bragg scattering is %s (%s).", Function::functionType(braggQDependentBroadening.function()), braggQDependentBroadening.summary().get());
 		}
@@ -173,7 +173,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		// Calculate S(Q) if requested
 		if (sqCalculation)
 		{
-			calculateUnweightedSQ(procPool, cfg, qMin, qDelta, qMax, cfg->atomicDensity(), duq.windowFunction(), broadening, qDependentBroadening, braggOn);
+			calculateUnweightedSQ(procPool, cfg, qMin, qDelta, qMax, cfg->atomicDensity(), duq.windowFunction(), qBroadening, qDependentBroadening, braggOn);
 			PartialSet& unweightedsq = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedSQ", "Partials");
 			if (saveData && configurationLocal_ && (!MPIRunMaster(procPool, unweightedsq.save()))) return false;
 

@@ -100,7 +100,7 @@ void PartialsModule::setupKeywords()
 	keywords_.add(new CharStringModuleKeyword("Exponential", PartialsModule::nAveragingSchemes, AveragingSchemeKeywords), "AveragingScheme", "Weighting scheme to use when averaging partials", "<scheme[Exponential]>");
 	keywords_.add(new BoolModuleKeyword(false), "Bragg", "Enable calculation of Bragg scattering", "<True|False*>");
 	keywords_.add(new FunctionModuleKeyword(Function::unity()), "BraggQDependentBroadening", "Q-dependent broadening function to apply to Bragg scattering", "<function['Unity']> [double a, ...]");
-	keywords_.add(new FunctionModuleKeyword(Function::unity()), "BraggBroadening", "General (Q-independent) broadening function to apply to Bragg scattering");
+	keywords_.add(new FunctionModuleKeyword(Function::unity()), "BraggQBroadening", "General (Q-independent) broadening function to apply to Bragg scattering");
 	keywords_.add(new DoubleModuleKeyword(0.001), "BraggQResolution", "Binwidth in Q to use when calculating Bragg peaks");
 	keywords_.add(new BoolModuleKeyword(false), "InternalTest", "Perform internal check of calculated partials (relative to Test method)");
 	keywords_.add(new ComplexModuleKeyword(4,4), "Isotopologue", "Set Isotopologue (and its population) to use for a particular Species in a given Configuration");
@@ -108,7 +108,7 @@ void PartialsModule::setupKeywords()
 	keywords_.add(new CharStringModuleKeyword("None", PartialsModule::nNormalisationTypes, NormalisationTypeKeywords), "Normalisation", "Normalisation to apply to total weighted F(Q)");
 	keywords_.add(new DoubleModuleKeyword(0.05, 1.0e-5), "QDelta", "Step size in Q for S(Q) calculation");
 	keywords_.add(new FunctionModuleKeyword(Function::unity()), "QDependentBroadening", "Q-dependent instrument broadening function to apply when calculating S(Q)");
-	keywords_.add(new FunctionModuleKeyword(Function::unity()), "Broadening", "General (Q-independent) instrument broadening function to apply when calculating S(Q)");
+	keywords_.add(new FunctionModuleKeyword(Function::unity()), "QBroadening", "General (Q-independent) instrument broadening function to apply when calculating S(Q)");
 	keywords_.add(new DoubleModuleKeyword(-1.0, -1.0), "QMax", "Maximum Q for calculated S(Q)");
 	keywords_.add(new DoubleModuleKeyword(0.0, 0.0), "QMin", "Minimum Q for calculated S(Q)");
 	keywords_.add(new BoolModuleKeyword(false), "Save", "Whether to save partials to disk after calculation", "<True|False>");
