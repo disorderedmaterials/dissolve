@@ -99,5 +99,6 @@ EndPairPotentials
 Simulation
   MaxIterations 1
   Seed  123456789
+  WriteIterationData  False
 EndSimulation
 
