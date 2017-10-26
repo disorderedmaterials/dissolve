@@ -1404,7 +1404,7 @@ bool ProcessPool::broadcast(Array2D<double>& array, int rootRank, ProcessPool::C
 		// Now broadcast Array data
 		if ((nRows*nColumns) > 0)
 		{
-			if (MPI_Bcast(array.linearArray(), nRows*nColumns, MPI_DOUBLE, rootRank, communicator(commType)) != MPI_SUCCESS)
+			if (MPI_Bcast(array.linearArray(), array.linearArraySize(), MPI_DOUBLE, rootRank, communicator(commType)) != MPI_SUCCESS)
 			{
 				Messenger::print("Failed to broadcast Array2D<double> data from root rank %i.\n", rootRank);
 				return false;
@@ -1434,7 +1434,7 @@ bool ProcessPool::broadcast(Array2D<double>& array, int rootRank, ProcessPool::C
 		array.initialise(nRows, nColumns, half);
 		if ((nRows*nColumns) > 0)
 		{
-			if (MPI_Bcast(array.linearArray(), nRows*nColumns, MPI_DOUBLE, rootRank, communicator(commType)) != MPI_SUCCESS)
+			if (MPI_Bcast(array.linearArray(), array.linearArraySize(), MPI_DOUBLE, rootRank, communicator(commType)) != MPI_SUCCESS)
 			{
 				Messenger::print("Slave %i (world rank %i) failed to receive ArrayD<double> data from root rank %i.\n", poolRank_, worldRank_, rootRank);
 				return false;
