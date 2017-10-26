@@ -36,7 +36,7 @@ class GenericItem
 	{
 		name_ = name;
 		flags_ = flags;
-		itemClass_ = nItemClasses;
+		itemClass_ = OtherClass;
 		prev = NULL;
 		next = NULL;
 	}
@@ -66,12 +66,13 @@ class GenericItem
 		ListClass,				/* Item is a templated List */
 		OrderedListClass,			/* Item is a templated OrderedList */
 		EnumClass,				/* Item is an enum (inside an EnumContainer) */
+		OtherClass,				/* Item is some other complex object or class */
 		nItemClasses
 	};
 	// Convert item class to char string
 	static const char* itemClass(ItemClass c)
 	{
-		static const char* classKeywords[] = { "Bool", "Int", "Double", "CharString", "Vec3<int>", "Vec3<double>", "Array<int>", "Array<double>", "Array<Vec3<int>>", "Array<Vec3<double>>", "Array2D<double>", "List<T>", "OrderedList<T>", "Enum" };
+		static const char* classKeywords[] = { "Bool", "Int", "Double", "CharString", "Vec3<int>", "Vec3<double>", "Array<int>", "Array<double>", "Array<Vec3<int>>", "Array<Vec3<double>>", "Array2D<double>", "List<T>", "OrderedList<T>", "Enum", "Class" };
 		return classKeywords[c];
 	}
 	// Convert char string to item class
