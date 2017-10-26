@@ -143,13 +143,13 @@ class PartialsModule : public Module
 	// Test reference data against calculated PartialSet set
 	bool testReferencePartials(GenericList& sourceModuleData, PartialSet& partialgr, const char* dataPrefix, double testThreshold);
 	// Calculate partial RDFs in serial with simple double-loop
-	bool calculateTest(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet);
+	bool calculateGRTestSerial(Configuration* cfg, PartialSet& partialSet);
 	// Calculate partial RDFs with optimised double-loop
-	bool calculateSimple(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet);
+	bool calculateGRSimple(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet);
 	// Calculate partial RDFs utilising Cell neighbour lists
-	bool calculateCells(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet);
-	// Perform averaging of specifed partials
-	bool performAveraging(GenericList& moduleData, const char* name, const char* prefix, int nSetsInAverage, PartialsModule::AveragingScheme averagingScheme);
+	bool calculateGRCells(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet);
+	// Perform averaging of named partial g(r)
+	bool performGRAveraging(GenericList& moduleData, const char* name, const char* prefix, int nSetsInAverage, PartialsModule::AveragingScheme averagingScheme);
 
 	public:
 	// (Re)calculate unweighted partials for the specified Configuration

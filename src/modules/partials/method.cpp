@@ -146,7 +146,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		PartialSet& unweightedgr = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedGR", "Partials");
 
 		// Perform averaging of unweighted partials if requested
-		if (averaging > 1) performAveraging(cfg->moduleData(), "UnweightedGR", "Partials", averaging, averagingScheme);
+		if (averaging > 1) performGRAveraging(cfg->moduleData(), "UnweightedGR", "Partials", averaging, averagingScheme);
 
 		// If we are associated to a local Configuration, copy the partial data over to the processing module list
 		if (configurationLocal_) GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedGR", uniqueName_) = unweightedgr;

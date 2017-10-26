@@ -163,7 +163,7 @@ bool PartialsModule::testReferencePartials(GenericList& sourceModuleData, Partia
 }
 
 // Calculate partial RDFs in serial with simple double-loop
-bool PartialsModule::calculateTest(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet)
+bool PartialsModule::calculateGRTestSerial(Configuration* cfg, PartialSet& partialSet)
 {
 	// Calculate radial distribution functions with a simple double loop, in serial
 	const Box* box = cfg->box();
@@ -188,7 +188,7 @@ bool PartialsModule::calculateTest(ProcessPool& procPool, Configuration* cfg, Pa
 }
 
 // Calculate partial RDFs with optimised double-loop
-bool PartialsModule::calculateSimple(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet)
+bool PartialsModule::calculateGRSimple(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet)
 {
 	// Variables
 	int n, m, nTypes, typeI, typeJ, i, j, nPoints;
@@ -284,7 +284,7 @@ bool PartialsModule::calculateSimple(ProcessPool& procPool, Configuration* cfg, 
 }
 
 // Calculate partial RDFs utilising Cell neighbour lists
-bool PartialsModule::calculateCells(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet)
+bool PartialsModule::calculateGRCells(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet)
 {
 	Atom* i, *j;
 	int n, m, ii, jj, nI, nJ, typeI, typeJ;
@@ -373,7 +373,7 @@ bool PartialsModule::calculateCells(ProcessPool& procPool, Configuration* cfg, P
 }
 
 // Perform averaging of specifed partials
-bool PartialsModule::performAveraging(GenericList& moduleData, const char* name, const char* prefix, int nSetsInAverage, PartialsModule::AveragingScheme averagingScheme)
+bool PartialsModule::performGRAveraging(GenericList& moduleData, const char* name, const char* prefix, int nSetsInAverage, PartialsModule::AveragingScheme averagingScheme)
 {
 	const int expDecay = 0.7;
 
@@ -484,12 +484,12 @@ bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration*
 	Timer timer;
 	timer.start();
 	procPool.resetAccumulatedTime();
-	if (method == PartialsModule::TestMethod) calculateTest(procPool, cfg, partialgr);
-	else if (method == PartialsModule::SimpleMethod) calculateSimple(procPool, cfg, partialgr);
-	else if (method == PartialsModule::CellsMethod) calculateCells(procPool, cfg, partialgr);
+	if (method == PartialsModule::TestMethod) calculateGRTestSerial(cfg, partialgr);
+	else if (method == PartialsModule::SimpleMethod) calculateGRSimple(procPool, cfg, partialgr);
+	else if (method == PartialsModule::CellsMethod) calculateGRCells(procPool, cfg, partialgr);
 	else if (method == PartialsModule::AutoMethod)
 	{
-		cfg->nAtoms() > 10000 ? calculateCells(procPool, cfg, partialgr) : calculateSimple(procPool, cfg, partialgr);
+		cfg->nAtoms() > 10000 ? calculateGRCells(procPool, cfg, partialgr) : calculateGRSimple(procPool, cfg, partialgr);
 	}
 	timer.stop();
 	Messenger::print("Partials: Finished calculation of partials (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
@@ -503,8 +503,8 @@ bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration*
 	CellArray& cellArray = cfg->cells();
 
 	// Set start/stride for parallel loop (pool solo)
-	int start = procPool.interleavedLoopStart(ProcessPool::OverPoolProcesses);
-	int stride = procPool.interleavedLoopStride(ProcessPool::OverPoolProcesses);
+	int start = (method == PartialsModule::TestMethod ? 0 : procPool.interleavedLoopStart(ProcessPool::OverPoolProcesses));
+	int stride = (method == PartialsModule::TestMethod ? 1 : procPool.interleavedLoopStride(ProcessPool::OverPoolProcesses));
 
 	timer.start();
 
@@ -583,9 +583,12 @@ bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration*
 	{
 		for (typeJ=typeI; typeJ<partialgr.nAtomTypes(); ++typeJ)
 		{
-			// Sum histogram data from all processes
-			if (!partialgr.fullHistogram(typeI, typeJ).allSum(procPool)) return false;
-			if (!partialgr.boundHistogram(typeI, typeJ).allSum(procPool)) return false;
+			// Sum histogram data from all processes (except if using PartialsModule::TestMethod, where all processes have all data already)
+			if (method != PartialsModule::TestMethod)
+			{
+				if (!partialgr.fullHistogram(typeI, typeJ).allSum(procPool)) return false;
+				if (!partialgr.boundHistogram(typeI, typeJ).allSum(procPool)) return false;
+			}
 
 			// Create unbound histogram from total and bound data
 			partialgr.unboundHistogram(typeI, typeJ) = partialgr.fullHistogram(typeI, typeJ);
