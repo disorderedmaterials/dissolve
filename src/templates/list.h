@@ -24,6 +24,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include "base/messenger.h"
 
 // Forward Declarations
 /* none */
@@ -82,7 +83,7 @@ template <class T> class List
 	{
 		if ((index < 0) || (index >= nItems_))
 		{
-			printf("LIST_OPERATOR[] - Array index (%i) out of bounds (%i items in List).\n", index, nItems_);
+			Messenger::error("LIST_OPERATOR[] - Array index (%i) out of bounds (%i items in List).\n", index, nItems_);
 			return NULL;
 		}
 		return array()[index];
@@ -236,7 +237,7 @@ template <class T> class List
 	{
 		if (item == NULL)
 		{
-			printf("No item supplied to List<T>::insertBefore().\n");
+			Messenger::error("No item supplied to List<T>::insertBefore().\n");
 			return NULL;
 		}
 		T* newItem = new T;
@@ -258,13 +259,13 @@ template <class T> class List
 	{
 		if (oldItem == NULL)
 		{
-			printf("Internal Error: NULL pointer passed to List<T>::own().\n");
+			Messenger::error("Internal Error: NULL pointer passed to List<T>::own().\n");
 			return;
 		}
 		// In the interests of 'pointer etiquette', refuse to own the item if its pointers are not NULL
 		if ((oldItem->next != NULL) || (oldItem->prev != NULL))
 		{
-			printf("List::own() <<<< Refused to own an item that still had links to other items >>>>\n");
+			Messenger::error("List::own() <<<< Refused to own an item that still had links to other items >>>>\n");
 			return;
 		}
 		listHead_ == NULL ? listHead_ = oldItem : listTail_->next = oldItem;
@@ -285,7 +286,7 @@ template <class T> class List
 	{
 		if (item == NULL)
 		{
-			printf("Internal Error: NULL pointer passed to List<T>::disown().\n");
+			Messenger::error("Internal Error: NULL pointer passed to List<T>::disown().\n");
 			return;
 		}
 		item->prev == NULL ? listHead_ = item->next : item->prev->next = item->next;
@@ -321,7 +322,7 @@ template <class T> class List
 	{
 		if (item == NULL)
 		{
-			printf("Internal Error: NULL pointer passed to List<T>::remove().\n");
+			Messenger::error("Internal Error: NULL pointer passed to List<T>::remove().\n");
 			return;
 		}
 		// Delete a specific item from the list
@@ -336,7 +337,7 @@ template <class T> class List
 	{
 		if (listHead_ == NULL)
 		{
-			printf("Internal Error: No first item to delete in list.\n");
+			Messenger::error("Internal Error: No first item to delete in list.\n");
 			return;
 		}
 		
@@ -353,7 +354,7 @@ template <class T> class List
 	{
 		if (listTail_ == NULL)
 		{
-			printf("Internal Error: No last item to delete in list.\n");
+			Messenger::error("Internal Error: No last item to delete in list.\n");
 			return;
 		}
 		// Delete the last item from the list
@@ -369,7 +370,7 @@ template <class T> class List
 	{
 		if (item == NULL)
 		{
-			printf("Internal Error: NULL pointer passed to List<T>::removeAndGetNext().\n");
+			Messenger::error("Internal Error: NULL pointer passed to List<T>::removeAndGetNext().\n");
 			return NULL;
 		}
 		// Delete a specific item from the list, and return the next in the list
@@ -386,7 +387,7 @@ template <class T> class List
 	{
 		if (item == NULL)
 		{
-			printf("Internal Error: NULL pointer passed to List<T>::cut().\n");
+			Messenger::error("Internal Error: NULL pointer passed to List<T>::cut().\n");
 			return;
 		}
 		T *prev, *next;
@@ -415,7 +416,7 @@ template <class T> class List
 			if (item == i) return result;
 			++result;
 		}
-		printf("Internal Error: List::indexOf() could not find supplied item.\n");
+		Messenger::error("Internal Error: List::indexOf() could not find supplied item.\n");
 		return -1;
 	}
 	// Return nth item in List
@@ -423,7 +424,7 @@ template <class T> class List
 	{
 		if ((n < 0) || (n >= nItems_))
 		{
-			printf("Internal Error: List array index %i is out of bounds in List<T>::item().\n", n);
+			Messenger::error("Internal Error: List array index %i is out of bounds in List<T>::item().\n", n);
 			return NULL;
 		}
 		int count = -1;
@@ -441,7 +442,7 @@ template <class T> class List
 			++count;
 			if (count == nItems) break;
 			i = i->next;
-			if (i == NULL) printf("List::fillArray <<<< Not enough items in list - requested %i, had %i >>>>\n", nItems ,nItems_);
+			if (i == NULL) Messenger::error("List::fillArray <<<< Not enough items in list - requested %i, had %i >>>>\n", nItems ,nItems_);
 		}
 	}
 	// Generate (if necessary) and return item array
@@ -488,7 +489,7 @@ template <class T> class List
 	{
 		if ((item1 == NULL) || (item2 == NULL))
 		{
-			printf("Internal Error: NULL pointer(s) passed to List<T>::swap(%p,%p).\n", item1, item2);
+			Messenger::error("Internal Error: NULL pointer(s) passed to List<T>::swap(%p,%p).\n", item1, item2);
 			return;
 		}
 		// If the items are adjacent, swap the pointers 'outside' the pair and swap the next/prev between them
@@ -552,7 +553,7 @@ template <class T> class List
 	{
 		if (item == NULL)
 		{
-			printf("Internal Error: NULL pointer passed to List<T>::shiftUp().\n");
+			Messenger::error("Internal Error: NULL pointer passed to List<T>::shiftUp().\n");
 			return;
 		}
 		// If the item is already at the head of the list, return NULL.
@@ -565,7 +566,7 @@ template <class T> class List
 	{
 		if (item == NULL)
 		{
-			printf("Internal Error: NULL pointer passed to List<T>::shiftDown().\n");
+			Messenger::error("Internal Error: NULL pointer passed to List<T>::shiftDown().\n");
 			return;
 		}
 
@@ -580,13 +581,13 @@ template <class T> class List
 		// Check positions
 		if ((target < 0) || (target >= nItems_))
 		{
-			printf("Internal Error: Old position (%i) is out of range (0 - %i) in List<T>::move\n", target, nItems_-1);
+			Messenger::error("Internal Error: Old position (%i) is out of range (0 - %i) in List<T>::move\n", target, nItems_-1);
 			return;
 		}
 		int newpos = target + delta;
 		if ((newpos < 0) || (newpos >= nItems_))
 		{
-			printf("Internal Error: New position (%i) is out of range (0 - %i) in List<T>::move\n", newpos, nItems_-1);
+			Messenger::error("Internal Error: New position (%i) is out of range (0 - %i) in List<T>::move\n", newpos, nItems_-1);
 			return;
 		}
 		// Get pointer to item that we're moving and shift it
@@ -600,7 +601,7 @@ template <class T> class List
 	{
 		if (item == NULL)
 		{
-			printf("Internal Error: NULL pointer passed to List<T>::moveToEnd().\n");
+			Messenger::error("Internal Error: NULL pointer passed to List<T>::moveToEnd().\n");
 			return;
 		}
 		// If the item is already at the tail, exit
@@ -617,7 +618,7 @@ template <class T> class List
 	{
 		if (item == NULL)
 		{
-			printf("Internal Error: NULL pointer passed to List<T>::moveToStart().\n");
+			Messenger::error("Internal Error: NULL pointer passed to List<T>::moveToStart().\n");
 			return;
 		}
 		// If the item is already at the head, exit
@@ -635,7 +636,7 @@ template <class T> class List
 		// If 'reference' is NULL, then move to the start of the list
 		if (item == NULL)
 		{
-			printf("Internal Error: NULL pointer passed to List<T>::moveAfter().\n");
+			Messenger::error("Internal Error: NULL pointer passed to List<T>::moveAfter().\n");
 			return;
 		}
 
@@ -667,12 +668,12 @@ template <class T> class List
 		// Check positions
 		if ((id1 < 0) || (id1 >= nItems_))
 		{
-			printf("Internal Error: First index (%i) is out of range (0 - %i) in List<T>::swapByIndex\n", id1, nItems_-1);
+			Messenger::error("Internal Error: First index (%i) is out of range (0 - %i) in List<T>::swapByIndex\n", id1, nItems_-1);
 			return;
 		}
 		if ((id2 < 0) || (id2 >= nItems_))
 		{
-			printf("Internal Error: Second index (%i) is out of range (0 - %i) in List<T>::swapByIndex\n", id2, nItems_-1);
+			Messenger::error("Internal Error: Second index (%i) is out of range (0 - %i) in List<T>::swapByIndex\n", id2, nItems_-1);
 			return;
 		}
 
