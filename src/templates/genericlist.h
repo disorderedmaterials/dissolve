@@ -169,7 +169,11 @@ class GenericList
 	// Broadcast all data
 	bool broadcast(ProcessPool& procPool, int root)
 	{
-		for (GenericItem* item = items_.first(); item != NULL; item = item->next) if (!item->broadcast(procPool, root)) return false;
+		for (GenericItem* item = items_.first(); item != NULL; item = item->next) 
+		{
+			Messenger::printVerbose("Broadcasting data '%s' (%s)...\n", item->name(), GenericItem::itemClass(item->itemClass()));
+			if (!item->broadcast(procPool, root)) return false;
+		}
 		return true;
 	}
 };

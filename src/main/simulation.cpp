@@ -177,7 +177,10 @@ bool DUQ::go(bool singleIteration)
 		// Loop over Configurations
 		for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
 		{
+			Messenger::printVerbose("Broadcasting data for Configuration '%s'...\n", cfg->name());
 			if (!cfg->broadcastCoordinates(worldPool_, cfg->processPool().rootWorldRank())) return false;
+
+			Messenger::printVerbose("Broadcasting Module data for Configuration '%s'...\n", cfg->name());
 			if (!cfg->moduleData().broadcast(worldPool_, cfg->processPool().rootWorldRank())) return false;
 		}
 
