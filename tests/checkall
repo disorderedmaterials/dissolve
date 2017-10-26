@@ -59,10 +59,18 @@ do
 	  echo "<<< No README file in this directory >>>"
 	fi
 
+	# Check for the presence of flag files
+	TARGETPROCS=$PROCS
+	if [ -e NOPARALLEL ] && [ "$PROCS" != "1" ]
+	then
+		echo "NOPARALLEL found - test will be performed in serial mode only."
+		TARGETPROCS="1"
+	fi
+	
 	# Loop over all input files (*.txt)
 	for input in *.txt
 	do
-		for nprocs in $PROCS
+		for nprocs in $TARGETPROCS
 		do
 			# Set output filename path
 			if [ "$nprocs" -eq "1" ]
