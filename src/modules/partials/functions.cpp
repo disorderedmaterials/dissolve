@@ -297,7 +297,11 @@ bool PartialsModule::calculateCells(ProcessPool& procPool, Configuration* cfg, P
 	const Box* box = cfg->box();
 	CellArray& cellArray = cfg->cells();
 
-	for (n = 0; n<cellArray.nCells(); ++n)
+	// Loop context is to use all processes in Pool as one group
+	int start = procPool.interleavedLoopStart(ProcessPool::OverPoolProcesses);
+	int stride = procPool.interleavedLoopStride(ProcessPool::OverPoolProcesses);
+
+	for (n = start; n<cellArray.nCells(); n += stride)
 	{
 		cellI = cellArray.cell(n);
 		atomsI = cellI->atoms().objects();
