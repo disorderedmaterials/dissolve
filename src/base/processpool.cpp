@@ -524,7 +524,8 @@ bool ProcessPool::assignProcessesToGroups(ProcessPool& groupsSource)
 	if (groupGroup_ != 0) MPI_Group_free(&groupGroup_);
 	if (groupCommunicator_ != 0) MPI_Comm_free(&groupCommunicator_);
 	if (leaderGroup_ != 0) MPI_Group_free(&leaderGroup_);
-	if (leaderCommunicator_ != 0) MPI_Comm_free(&leaderCommunicator_);
+	// -- NOTE If a group slave tries to free the leaderCommunicator_, we get an 'invalid communicator' error
+	if (groupLeader() && (leaderCommunicator_ != 0)) MPI_Comm_free(&leaderCommunicator_);
 	groupGroup_ = 0;
 	groupCommunicator_ = 0;
 	leaderGroup_ = 0;
