@@ -197,7 +197,8 @@ bool IsotopologueMix::broadcast(ProcessPool& procPool, int root)
 		Messenger::error("Master List<Species> instance has not been set, so IsotopologueMix::broadcast() is not possible.\n");
 		return false;
 	}
-	int speciesIndex = List<Species>::masterInstance()->indexOf(species_);
+	int speciesIndex;
+	if (procPool.poolRank() == root) speciesIndex = List<Species>::masterInstance()->indexOf(species_);
 	procPool.broadcast(speciesIndex, root);
 	species_ = List<Species>::masterInstance()->item(speciesIndex);
 

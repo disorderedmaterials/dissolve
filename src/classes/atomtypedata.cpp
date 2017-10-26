@@ -214,7 +214,8 @@ bool AtomTypeData::broadcast(ProcessPool& procPool, int root)
 	}
 
 	// For atomType_, use the master instance of List<AtomType> to find the index (*not* the local listIndex_) and broadcast it
-	int typeIndex = List<AtomType>::masterInstance()->indexOf(atomType_);
+	int typeIndex;
+	if (procPool.poolRank() == root) typeIndex = List<AtomType>::masterInstance()->indexOf(atomType_);
 	procPool.broadcast(typeIndex, root);
 	atomType_ = List<AtomType>::masterInstance()->item(typeIndex);
 
