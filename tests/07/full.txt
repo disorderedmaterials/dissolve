@@ -150,7 +150,7 @@ Module Forces
   Test  On
   Configuration  'Liquid'
   TestReference  dlpoly  'dlpoly/REVCON'
-  TestThreshold  0.3
+  TestThreshold  0.1
 EndModule
 
 # Pair Potentials
