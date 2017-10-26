@@ -35,7 +35,7 @@ class PartialsModule : public Module
 {
 	/*
 	 * Calculates partial radial distribution functions for the Sample or Configuration in which the Module is placed.
-	 * Partial RDFs according to atomtype isotopes are constructed individually, including separate bound/unbound terms.
+	 * Partial g(r) according to atomtype isotopes are constructed individually, including separate bound/unbound terms.
 	 * If a weighting scheme is specified with the Weights option, the weighted partials are also calculated.
 	 */
 
@@ -142,11 +142,11 @@ class PartialsModule : public Module
 	bool testReferencePartials(PartialSet& setA, PartialSet& setB, double testThreshold);
 	// Test reference data against calculated PartialSet set
 	bool testReferencePartials(GenericList& sourceModuleData, PartialSet& partialgr, const char* dataPrefix, double testThreshold);
-	// Calculate partial RDFs in serial with simple double-loop
+	// Calculate partial g(r) in serial with simple double-loop
 	bool calculateGRTestSerial(Configuration* cfg, PartialSet& partialSet);
-	// Calculate partial RDFs with optimised double-loop
+	// Calculate partial g(r) with optimised double-loop
 	bool calculateGRSimple(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet);
-	// Calculate partial RDFs utilising Cell neighbour lists
+	// Calculate partial g(r) utilising Cell neighbour lists
 	bool calculateGRCells(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet);
 	// Perform averaging of named partial g(r)
 	bool performGRAveraging(GenericList& moduleData, const char* name, const char* prefix, int nSetsInAverage, PartialsModule::AveragingScheme averagingScheme);

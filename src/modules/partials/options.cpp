@@ -112,7 +112,7 @@ void PartialsModule::setupKeywords()
 	keywords_.add(new DoubleModuleKeyword(-1.0, -1.0), "QMax", "Maximum Q for calculated S(Q)");
 	keywords_.add(new DoubleModuleKeyword(0.0, 0.0), "QMin", "Minimum Q for calculated S(Q)");
 	keywords_.add(new BoolModuleKeyword(false), "Save", "Whether to save partials to disk after calculation", "<True|False>");
-	keywords_.add(new IntegerModuleKeyword(0, 0, 100), "Smoothing", "Specifies the degree of smoothing 'n' to apply to calculated RDFs, where 2n+1 controls the length in the applied Spline smooth");
+	keywords_.add(new IntegerModuleKeyword(0, 0, 100), "Smoothing", "Specifies the degree of smoothing 'n' to apply to calculated g(r), where 2n+1 controls the length in the applied Spline smooth");
 	keywords_.add(new BoolModuleKeyword(false), "StructureFactor", "Determines whether S(Q) are to be calculated from F.T. of the g(r)", "<True|False>");
 	keywords_.add(new BoolModuleKeyword(false), "Test", "Test calculated total and partials against supplied reference data", "<True|False>");
 	keywords_.add(new ComplexModuleKeyword(2,4), "TestReference", "Specify g(r)/S(Q) test reference data", "<filename> <target> [xcol] [ycol]");

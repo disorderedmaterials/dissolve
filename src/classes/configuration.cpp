@@ -298,16 +298,16 @@ bool Configuration::setup(ProcessPool& procPool, double pairPotentialRange, int 
 	Vec3<double> half = box()->axes() * Vec3<double>(0.5,0.5,0.5);
 	double maxR = half.magnitude(), inscribedSphereRadius = box()->inscribedSphereRadius();
 	Messenger::print("\n");
-	Messenger::print("--> Maximal extent for RDFs is %f Angstrom (half cell diagonal distance).\n", maxR);
+	Messenger::print("--> Maximal extent for g(r) is %f Angstrom (half cell diagonal distance).\n", maxR);
 	Messenger::print("--> Inscribed sphere radius (maximum RDF range avoiding periodic images) is %f Angstroms.\n", inscribedSphereRadius);
 	if (requestedRDFRange_ < -1.5)
 	{
-		Messenger::print("--> Using maximal non-minimum image range for RDFs.\n");
+		Messenger::print("--> Using maximal non-minimum image range for g(r).\n");
 		rdfRange_ = inscribedSphereRadius;
 	}
 	else if (requestedRDFRange_ < -0.5)
 	{
-		Messenger::print("--> Using 90%% of maximal extent for RDFs.\n");
+		Messenger::print("--> Using 90%% of maximal extent for g(r).\n");
 		rdfRange_ = 0.90*maxR;
 	}
 	else
@@ -417,7 +417,7 @@ bool Configuration::setup(ProcessPool& procPool, double pairPotentialRange, int 
 			}
 			else
 			{
-				Messenger::print("--> Calculating box normalisation array for RDFs...\n");
+				Messenger::print("--> Calculating box normalisation array for g(r)...\n");
 				if (!box()->calculateRDFNormalisation(procPool, boxNormalisation_, rdfRange_, rdfBinWidth_, boxNormalisationNPoints)) return false;
 				
 				// Save normalisation file so we don't have to recalculate it next time

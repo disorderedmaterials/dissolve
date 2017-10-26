@@ -162,7 +162,7 @@ bool PartialsModule::testReferencePartials(GenericList& sourceModuleData, Partia
 	return true;
 }
 
-// Calculate partial RDFs in serial with simple double-loop
+// Calculate partial g(r) in serial with simple double-loop
 bool PartialsModule::calculateGRTestSerial(Configuration* cfg, PartialSet& partialSet)
 {
 	// Calculate radial distribution functions with a simple double loop, in serial
@@ -187,7 +187,7 @@ bool PartialsModule::calculateGRTestSerial(Configuration* cfg, PartialSet& parti
 	return true;
 }
 
-// Calculate partial RDFs with optimised double-loop
+// Calculate partial g(r) with optimised double-loop
 bool PartialsModule::calculateGRSimple(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet)
 {
 	// Variables
@@ -283,7 +283,7 @@ bool PartialsModule::calculateGRSimple(ProcessPool& procPool, Configuration* cfg
 	return true;
 }
 
-// Calculate partial RDFs utilising Cell neighbour lists
+// Calculate partial g(r) utilising Cell neighbour lists
 bool PartialsModule::calculateGRCells(ProcessPool& procPool, Configuration* cfg, PartialSet& partialSet)
 {
 	Atom* i, *j;

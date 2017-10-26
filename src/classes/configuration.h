@@ -301,9 +301,9 @@ class Configuration : public ListItem<Configuration>
 	private:
 	// RDF bin width
 	double rdfBinWidth_;
-	// Maximum extent (actual) of calculated RDFs
+	// Maximum extent (actual) of calculated g(r)
 	double rdfRange_;
-	// Maximum extent (requested) of calculated RDFs
+	// Maximum extent (requested) of calculated g(r)
 	double requestedRDFRange_;
 	// Minimum Q value for Bragg calculation
 	double braggQMin_;
