@@ -51,7 +51,7 @@ EndModule
 Module Partials 'D2O'
   StructureFactor  on
   QMin 0.05
-  QDependentBroadening  DependentGaussian  0.02    # For SLS
+  QBroadening  QDependentGaussian  0.02    # For SLS
   Configuration  'Bulk'
   Weights  neutron
   Isotopologue  'Bulk'  'Water'  'Deuteriated'  1.0
@@ -73,7 +73,7 @@ EndModule
 Module Partials 'H2O'
   StructureFactor  on
   QMin 0.05
-  QDependentBroadening  DependentGaussian  0.02    # For SLS
+  QBroadening  QDependentGaussian  0.02    # For SLS
   Configuration  'Bulk'
   Weights  neutron
   Isotopologue  'Bulk'  'Water'  'Protiated'  1.0
@@ -88,7 +88,7 @@ EndModule
 Module Partials 'HDO'
   StructureFactor  on
   QMin 0.05
-  QDependentBroadening  DependentGaussian  0.02    # For SLS
+  QBroadening  QDependentGaussian  0.02    # For SLS
   Configuration  'Bulk'
   Weights  neutron
   Isotopologue  'Bulk'  'Water'  'Protiated'  0.5

@@ -22,7 +22,7 @@ Module Partials
   Weights  neutron
   Isotopologue  'liquid'  'Argon'  'Ar36'  1.0
   StructureFactor  on
-  QDependentBroadening  DependentGaussian  0.2
+  QBroadening  QDependentGaussian  0.2
   Frequency  1
   TestThreshold  0.03
   Test  On

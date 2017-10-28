@@ -37,6 +37,6 @@
 
 // Classes
 #include "modules/modulekeyword_charstring.h"
-#include "modules/modulekeyword_function.h"
+#include "modules/modulekeyword_broadeningfunction.h"
 
 #endif

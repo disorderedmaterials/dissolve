@@ -1,13 +1,16 @@
 add_library(math
-doubleexp.cpp
-mathfunc.cpp
-matrix3.cpp
-matrix4.cpp
-constants.h
-doubleexp.h
-mathfunc.h
-matrix3.h
-matrix4.h
+  broadeningfunction.cpp
+  doubleexp.cpp
+  mathfunc.cpp
+  matrix3.cpp
+  matrix4.cpp
+
+  broadeningfunction.h
+  constants.h
+  doubleexp.h
+  mathfunc.h
+  matrix3.h
+  matrix4.h
 )
 
 include_directories(

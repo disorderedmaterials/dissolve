@@ -19,17 +19,17 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/modulekeyword_function.h"
+#include "modules/modulekeyword_broadeningfunction.h"
 #include "base/lineparser.h"
 #include "templates/genericlist.h"
 
 // Constructor
-FunctionModuleKeyword::FunctionModuleKeyword(Function value) : ModuleKeywordBase(ModuleKeywordBase::FunctionData), ModuleKeywordData<Function>(value)
+BroadeningFunctionModuleKeyword::BroadeningFunctionModuleKeyword(BroadeningFunction value) : ModuleKeywordBase(ModuleKeywordBase::BroadeningFunctionData), ModuleKeywordData<BroadeningFunction>(value)
 {
 }
 
 // Destructor
-FunctionModuleKeyword::~FunctionModuleKeyword()
+BroadeningFunctionModuleKeyword::~BroadeningFunctionModuleKeyword()
 {
 }
 
@@ -38,9 +38,9 @@ FunctionModuleKeyword::~FunctionModuleKeyword()
  */
 
 // Duplicate the keyword's data in the supplied GenericList
-void FunctionModuleKeyword::duplicateInList(GenericList& targetList, const char* prefix)
+void BroadeningFunctionModuleKeyword::duplicateInList(GenericList& targetList, const char* prefix)
 {
-	GenericListHelper<Function>::realise(targetList, keyword(), prefix, genericItemFlags()) = data_;
+	GenericListHelper<BroadeningFunction>::realise(targetList, keyword(), prefix, genericItemFlags()) = data_;
 }
 
 /*
@@ -48,19 +48,19 @@ void FunctionModuleKeyword::duplicateInList(GenericList& targetList, const char*
  */
 
 // Return minimum number of arguments accepted
-int FunctionModuleKeyword::minArguments()
+int BroadeningFunctionModuleKeyword::minArguments()
 {
 	return 1;
 }
 
 // Return maximum number of arguments accepted
-int FunctionModuleKeyword::maxArguments()
+int BroadeningFunctionModuleKeyword::maxArguments()
 {
 	return MAXFUNCTIONPARAMS;
 }
 
 // Parse arguments from supplied LineParser, starting at argument offset specified
-bool FunctionModuleKeyword::parseArguments(LineParser& parser, int startArg)
+bool BroadeningFunctionModuleKeyword::parseArguments(LineParser& parser, int startArg)
 {
 	return data_.set(parser, startArg);
 }

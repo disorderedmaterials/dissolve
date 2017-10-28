@@ -23,7 +23,7 @@ Configuration  'Box-noBragg'
     Isotopologue  'Box-noBragg'  'O'  'Natural'  1.0
     Frequency  1
     StructureFactor  on
-    QDepBroadening  0.02
+    QBroadening  QDependentGaussian  0.02
     Weights  Neutron
     Save  On
 

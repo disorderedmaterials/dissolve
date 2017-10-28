@@ -24,19 +24,19 @@
 
 #include "modules/modulekeyworddata.h"
 #include "modules/modulekeywordbase.h"
-#include "base/function.h"
+#include "math/broadeningfunction.h"
 
 // Forward Declarations
 /* none */
 
 // Keyword with Function Data
-class FunctionModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<Function>
+class BroadeningFunctionModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<BroadeningFunction>
 {
 	public:
 	// Constructor
-	FunctionModuleKeyword(Function value);
+	BroadeningFunctionModuleKeyword(BroadeningFunction value);
 	// Destructor
-	~FunctionModuleKeyword();
+	~BroadeningFunctionModuleKeyword();
 
 
 	/*

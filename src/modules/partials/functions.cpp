@@ -28,7 +28,7 @@
 #include "classes/kvector.h"
 #include "classes/species.h"
 #include "classes/weights.h"
-#include "base/function.h"
+#include "math/broadeningfunction.h"
 #include "templates/array3d.h"
 
 /*
@@ -667,7 +667,7 @@ bool PartialsModule::calculateWeightedGR(PartialSet& unweightedgr, PartialSet& w
 
 
 // Generate S(Q) from supplied g(r)
-bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration* cfg, double qMin, double qDelta, double qMax, double rho, XYData::WindowFunction wf, const Function& qBroadening, const Function& qDependentBroadening, bool braggOn)
+bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration* cfg, double qMin, double qDelta, double qMax, double rho, XYData::WindowFunction wf, const BroadeningFunction& broadening, bool braggOn)
 {
 	// Grab unweighted g(r) for Configuration
 	if (!cfg->moduleData().contains("UnweightedGR", "Partials"))
@@ -717,9 +717,9 @@ bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration*
 	{
 		for (int m=n; m<nTypes; ++m)
 		{
-			if (!partialsq.partial(n,m).broadenedSineFT(4.0*PI*rho, qMin, qDelta, qMax, qBroadening, qDependentBroadening, wf)) return false;
-			if (!partialsq.boundPartial(n,m).broadenedSineFT(4.0*PI*rho, qMin, qDelta, qMax, qBroadening, qDependentBroadening, wf)) return false;
-			if (!partialsq.unboundPartial(n,m).broadenedSineFT(4.0*PI*rho, qMin, qDelta, qMax, qBroadening, qDependentBroadening, wf)) return false;
+			if (!partialsq.partial(n,m).broadenedSineFT(4.0*PI*rho, qMin, qDelta, qMax, broadening, false, wf)) return false;
+			if (!partialsq.boundPartial(n,m).broadenedSineFT(4.0*PI*rho, qMin, qDelta, qMax, broadening, false, wf)) return false;
+			if (!partialsq.unboundPartial(n,m).broadenedSineFT(4.0*PI*rho, qMin, qDelta, qMax, broadening, false, wf)) return false;
 
 			// Zero Bragg partial, leave x array intact for use if needed
 			partialsq.braggPartial(n,m).templateFrom(partialsq.partial(n,m));
@@ -732,8 +732,6 @@ bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration*
 		double braggQMax = cfg->braggQMax();
 		double braggQResolution = GenericListHelper<double>::retrieve(cfg->moduleData(), "BraggQResolution", uniqueName(), keywords_.asDouble("BraggQResolution"));
 		double braggQMin = cfg->braggQMin();
-		Function& broadening = GenericListHelper<Function>::retrieve(cfg->moduleData(), "BraggBroadening", uniqueName(), Function::unity());
-		Function& qDependentbroadening = GenericListHelper<Function>::retrieve(cfg->moduleData(), "BraggQDependentBroadening", uniqueName(), Function::unity());
 		double mult = cfg->braggMultiplicity().x * cfg->braggMultiplicity().y * cfg->braggMultiplicity().z;
 
 		Messenger::print("Partials: Bragg scattering will be calculated over %f <= Q <= %f Angstroms**-1.\n", braggQMin, braggQMax);
@@ -745,7 +743,7 @@ bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration*
 
 		// Grab generated BraggPeak array and calculate S(Q)
 		Array<BraggPeak>& braggPeaks = GenericListHelper< Array<BraggPeak> >::realise(cfg->moduleData(), "BraggPeaks", uniqueName());
-		if (!calculateUnweightedBraggSQ(procPool, cfg, braggPeaks, partialsq, broadening, qDependentbroadening)) return false;
+		if (!calculateUnweightedBraggSQ(procPool, cfg, braggPeaks, partialsq, broadening)) return false;
 
 		timer.stop();
 		Messenger::print("Partials: Finished calculation of partial Bragg S(Q) (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
@@ -1055,7 +1053,7 @@ bool PartialsModule::calculateBraggTerms(ProcessPool& procPool, Configuration* c
 }
 
 // Calculate unweighted Bragg partials from calculated peak data
-bool PartialsModule::calculateUnweightedBraggSQ(ProcessPool& procPool, Configuration* cfg, Array< BraggPeak >& braggPeaks, PartialSet& partialsq, const Function& generalBroadening, const Function& qDependentBroadening)
+bool PartialsModule::calculateUnweightedBraggSQ(ProcessPool& procPool, Configuration* cfg, Array< BraggPeak >& braggPeaks, PartialSet& partialsq, const BroadeningFunction& broadening)
 {
 	double factor, qCentre, inten, q, x;
 	int nTypes = partialsq.nAtomTypes();

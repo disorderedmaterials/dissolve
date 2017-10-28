@@ -156,8 +156,8 @@ bool XYData::fourierTransformReal(bool forwardTransform, XYData::WindowFunction 
 	return true;
 }
 
-// Perform Fourier sine transform of current distribution function, over range specified, and with specified broadening functions and window applied (if requested)
-bool XYData::broadenedSineFT(double normFactor, double wMin, double wStep, double wMax, const Function& wBroadening, const Function& wDependentBroadening, XYData::WindowFunction wf)
+// Perform Fourier sine transform of current distribution function, over range specified, and with specified broadening function (in omege space) and window applied (if requested)
+bool XYData::broadenedSineFT(double normFactor, double wMin, double wStep, double wMax, const BroadeningFunction& broadening, bool deconvolute, XYData::WindowFunction wf)
 {
 	/*
 	 * Perform sine Fourier transform of current data. Function has no notion of forward or backwards transforms - normalisation and broadening functions must
@@ -178,21 +178,9 @@ bool XYData::broadenedSineFT(double normFactor, double wMin, double wStep, doubl
 	// Okay to continue with transform?
 	if (!checkBeforeTransform()) return false;
 
-	// Check broadening functions supplied for suitability
-	if ((wBroadening.function() != Function::UnityFunction) && (wBroadening.nArguments() != 1))
-	{
-		Messenger::error("Supplied omega-independent broadening function does not accept exactly one argument.\n");
-		return false;
-	}
-	if ((wDependentBroadening.function() != Function::UnityFunction) && (wDependentBroadening.nArguments() != 2))
-	{
-		Messenger::error("Supplied omega-dependent broadening function does not accept exactly two arguments.\n");
-		return false;
-	}
-
 	int n, m;
 	const int nX = x_.nItems();
-	double windowPos, broadening;
+	double windowPos, broaden;
 
 	if (XYData::useFFT_)
 	{
@@ -316,9 +304,9 @@ bool XYData::broadenedSineFT(double normFactor, double wMin, double wStep, doubl
 				windowPos = double(m) / double(nX-1);
 
 				// Calculate broadening
-				broadening = wBroadening.ft(x_[m]) * wDependentBroadening.ft(x_[m], omega);
+				broaden = (deconvolute ? 1.0 / broadening.yFT(x_[m], omega) : broadening.yFT(x_[m], omega));
 
-				ft += sin(x_[m]*omega) * x_[m] * broadening * window(wf, windowPos) * y_[m] * deltaX;
+				ft += sin(x_[m]*omega) * x_[m] * broaden * window(wf, windowPos) * y_[m] * deltaX;
 			}
 
 			// Normalise

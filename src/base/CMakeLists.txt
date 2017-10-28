@@ -1,7 +1,6 @@
 add_library(base
   charstring.cpp
   element.cpp
-  function.cpp
   geometry.cpp
   isotope.cpp
   lineparser.cpp
@@ -21,7 +20,6 @@ add_library(base
   charstring.h
   constants.h
   element.h
-  function.h
   geometry.h
   isotope.h
   lineparser.h

@@ -26,12 +26,10 @@ Configuration  'Box'
     Isotopologue  'Box'  'O'  'Natural'  1.0
     Frequency  1
     StructureFactor  on
-    QDepBroadening  0.02
+    QBroadening  QDependentGaussian  0.02
     Weights  Neutron
     Bragg  On
     #QDelta 0.001
-    BraggQResolution 0.1
-    BraggBroadening  Gaussian  0.01
 
     Save  On
 

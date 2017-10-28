@@ -5,10 +5,10 @@ add_library(modules
   modulelist.cpp
   moduleregistry.cpp
   modulekeyword_bool.cpp
+  modulekeyword_broadeningfunction.cpp
   modulekeyword_charstring.cpp
   modulekeyword_complex.cpp
   modulekeyword_double.cpp
-  modulekeyword_function.cpp
   modulekeyword_int.cpp
 
   module.h
@@ -20,10 +20,10 @@ add_library(modules
   modulelist.h
   moduleregistry.h
   modulekeyword_bool.h
+  modulekeyword_broadeningfunction.h
   modulekeyword_charstring.h
   modulekeyword_complex.h
   modulekeyword_double.h
-  modulekeyword_function.h
   modulekeyword_int.h
   modulekeywords.h
 )
