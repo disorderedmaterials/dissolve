@@ -1,5 +1,5 @@
 /*
-	*** Module Keyword Interface
+	*** Module Keyword Data
 	*** src/module/keyworddata.h
 	Copyright T. Youngs 2012-2017
 
@@ -19,8 +19,8 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_KEYWORDINTERFACE_H
-#define DUQ_KEYWORDINTERFACE_H
+#ifndef DUQ_KEYWORDDATA_H
+#define DUQ_KEYWORDDATA_H
 
 #include "templates/array.h"
 
