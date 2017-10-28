@@ -1,5 +1,5 @@
 /*
-	*** dUQ - Setup
+	*** dUQ - Set up
 	*** src/main/setup.cpp
 	Copyright T. Youngs 2012-2017
 
@@ -83,8 +83,8 @@ bool DUQ::writeIterationData()
 	return writeIterationData_;
 }
 
-// Setup all simulation data, checking it as we go
-bool DUQ::setupSimulation()
+// Set up all simulation data, checking it as we go
+bool DUQ::setUpSimulation()
 {
 	/*
 	 * Check Species
@@ -98,7 +98,7 @@ bool DUQ::setupSimulation()
 	}
 
 	/*
-	 * Setup Configurations
+	 * Set up Configurations
 	 */
 
 	Messenger::print("\n");
@@ -109,7 +109,7 @@ bool DUQ::setupSimulation()
 		Messenger::print("*** Configuration %2i: '%s'\n", index, cfg->name());
 
 		// If we are creating a random configuration 
-		if (!cfg->setup(worldPool_, pairPotentialRange_, nBoxNormalisationPoints_)) return false;
+		if (!cfg->setUp(worldPool_, pairPotentialRange_, nBoxNormalisationPoints_)) return false;
 	}
 
 	/*
@@ -131,8 +131,8 @@ bool DUQ::setupSimulation()
 				++nMissingPots;
 			}
 
-			// Setup PairPotential
-			if (!pot->setup(pairPotentialRange_, pairPotentialTruncationWidth_, pairPotentialDelta_, pairPotentialsIncludeCoulomb_))
+			// Set up PairPotential
+			if (!pot->setUp(pairPotentialRange_, pairPotentialTruncationWidth_, pairPotentialDelta_, pairPotentialsIncludeCoulomb_))
 			{
 				Messenger::error("Failed to set up PairPotential between AtomTypes '%s' and '%s'.\n", at1->name(), at2->name());
 				return false;

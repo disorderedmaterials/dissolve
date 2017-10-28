@@ -149,8 +149,8 @@ class Configuration : public ListItem<Configuration>
 	double temperature();
 	// Clear all data
 	void clear();
-	// Setup configuration
-	bool setup(ProcessPool& procPool, double pairPotentialRange, int boxNormalisationNPoints);
+	// Set up configuration
+	bool setUp(ProcessPool& procPool, double pairPotentialRange, int boxNormalisationNPoints);
 
 
 	/*
@@ -279,8 +279,8 @@ class Configuration : public ListItem<Configuration>
 	double requestedCellDivisionLength();
 	// Return Box
 	const Box* box() const;
-	// Setup periodic Box
-	bool setupBox(double ppRange, int nExpectedAtoms);
+	// Set up periodic Box
+	bool setUpBox(double ppRange, int nExpectedAtoms);
 	// Generate Cells for Box
 	bool generateCells(double cellSize, double pairPotentialRange, double atomicDensity);
 	// Set box normalisation array to load/save for this configuration
@@ -415,8 +415,8 @@ class Configuration : public ListItem<Configuration>
 	ProcessPool processPool_;
 
 	public:
-	// Setup process pool for this Configuration
-	bool setupProcessPool(Array<int> worldRanks);
+	// Set up process pool for this Configuration
+	bool setUpProcessPool(Array<int> worldRanks);
 	// Return process pool for this Configuration
 	ProcessPool& processPool();
 	// Broadcast coordinate from specified root process

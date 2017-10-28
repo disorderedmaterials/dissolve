@@ -459,7 +459,7 @@ bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration*
 	// Does a PartialSet already exist for this Configuration?
 	bool wasCreated;
 	PartialSet& partialgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedGR", "Partials", GenericItem::NoFlag, &wasCreated);
-	if (wasCreated) partialgr.setup(cfg, cfg->niceName(), "unweighted", "rdf", "r, Angstroms");
+	if (wasCreated) partialgr.setUp(cfg, cfg->niceName(), "unweighted", "rdf", "r, Angstroms");
 
 	// Is the PartialSet already up-to-date?
 	// If so, can exit now, *unless* the Test method is requested, in which case we go ahead and calculate anyway
@@ -680,7 +680,7 @@ bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration*
 	// Does a PartialSet already exist for this Configuration?
 	bool wasCreated;
 	PartialSet& partialsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", "Partials", GenericItem::NoFlag, &wasCreated);
-	if (wasCreated) partialsq.setup(partialgr.atomTypes(), cfg->niceName(), "unweighted", "sq", "Q, 1/Angstroms");
+	if (wasCreated) partialsq.setUp(partialgr.atomTypes(), cfg->niceName(), "unweighted", "sq", "Q, 1/Angstroms");
 
 	// Is the PartialSet already up-to-date?
 	if (partialsq.index() == cfg->coordinateIndex())

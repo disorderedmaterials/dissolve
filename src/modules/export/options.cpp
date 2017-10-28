@@ -22,8 +22,8 @@
 #include "modules/export/export.h"
 #include "module/keywordtypes.h"
 
-// Setup options for Module
-void ExportModule::setupKeywords()
+// Set up options for Module
+void ExportModule::setUpKeywords()
 {
 	keywords_.add(new BoolModuleKeyword(false), "WriteConfig", "Write a DL_POLY CONFIG file of the Configuration");
 }

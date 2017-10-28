@@ -37,8 +37,8 @@ Variable::~Variable()
  * Definition
  */
 
-// Setup variable
-void Variable::setup(const char* name, VariableValue defaultValue, const char* description, const char* source)
+// Set up variable
+void Variable::setUp(const char* name, VariableValue defaultValue, const char* description, const char* source)
 {
 	name_ = name;
 	source_ = source;

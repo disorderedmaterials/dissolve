@@ -162,8 +162,8 @@ class PairPotential : public ListItem<PairPotential>
 	void calculateDUFull();
 
 	public:
-	// Setup and perform initial generation of potential
-	bool setup(double maxR, double truncationWidth, double delta, bool includeCoulomb);
+	// Set up and perform initial generation of potential
+	bool setUp(double maxR, double truncationWidth, double delta, bool includeCoulomb);
 	// (Re)generate original potential (uOriginal) from current parameters
 	bool calculateUOriginal(bool recalculateUFull = true);
 	// Return potential at specified r

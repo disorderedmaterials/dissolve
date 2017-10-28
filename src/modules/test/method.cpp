@@ -27,7 +27,7 @@
 #include "base/sysfunc.h"
 
 // Perform set up tasks for module
-bool TestModule::setup(ProcessPool& procPool)
+bool TestModule::setUp(ProcessPool& procPool)
 {
 	return true;
 }
@@ -70,7 +70,7 @@ bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 	RefListIterator<Data,bool> dataIterator(targetData_);
 	while (Data* data = dataIterator.iterate())
 	{
-		if (!data->setup(duq.processingModuleData())) return false;
+		if (!data->setUp(duq.processingModuleData())) return false;
 		data->data().save(CharString("%s-setup.txt", data->name()));
 	}
 

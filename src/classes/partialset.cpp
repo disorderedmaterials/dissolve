@@ -47,14 +47,14 @@ PartialSet::~PartialSet()
  * Set of Partials
  */
 
-// Setup using supplied Configuration
-bool PartialSet::setup(Configuration* cfg, const char* prefix, const char* tag, const char* suffix, const char* abscissaUnits)
+// Set up using supplied Configuration
+bool PartialSet::setUp(Configuration* cfg, const char* prefix, const char* tag, const char* suffix, const char* abscissaUnits)
 {
-	return setup(cfg->usedAtomTypesList(), cfg->rdfRange(), cfg->rdfBinWidth(), prefix, tag, suffix, abscissaUnits);
+	return setUp(cfg->usedAtomTypesList(), cfg->rdfRange(), cfg->rdfBinWidth(), prefix, tag, suffix, abscissaUnits);
 }
 
-// Setup PartialSet
-bool PartialSet::setup(const AtomTypeList& atomTypes, double rdfRange, double binWidth, const char* prefix, const char* tag, const char* suffix, const char* abscissaUnits)
+// Set up PartialSet
+bool PartialSet::setUp(const AtomTypeList& atomTypes, double rdfRange, double binWidth, const char* prefix, const char* tag, const char* suffix, const char* abscissaUnits)
 {
 	abscissaUnits_ = abscissaUnits;
 
@@ -74,7 +74,7 @@ bool PartialSet::setup(const AtomTypeList& atomTypes, double rdfRange, double bi
 	unboundPartials_.initialise(nTypes, nTypes, true);
 	braggPartials_.initialise(nTypes, nTypes, true);
 
-	// Setup array matrices for partials
+	// Set up array matrices for partials
 	CharString title;
 	AtomTypeData* at1 = atomTypes_.first(), *at2;
 	Messenger::printVerbose("  --> Creating lists of partials and linking into matrices...\n");
@@ -97,7 +97,7 @@ bool PartialSet::setup(const AtomTypeList& atomTypes, double rdfRange, double bi
 		}
 	}
 
-	// Setup array for total
+	// Set up array for total
 	int nBins = fullHistograms_.ref(0,0).nBins();
 	total_.initialise(nBins);
 	for (n=0; n<nBins; ++n) total_.setX(n, (n+0.5)*binWidth);
@@ -109,8 +109,8 @@ bool PartialSet::setup(const AtomTypeList& atomTypes, double rdfRange, double bi
 	return true;
 }
 
-// Setup PartialSet without initialising arrays
-bool PartialSet::setup(const AtomTypeList& atomTypes, const char* prefix, const char* tag, const char* suffix, const char* abscissaUnits)
+// Set up PartialSet without initialising arrays
+bool PartialSet::setUp(const AtomTypeList& atomTypes, const char* prefix, const char* tag, const char* suffix, const char* abscissaUnits)
 {
 	abscissaUnits_ = abscissaUnits;
 
@@ -123,7 +123,7 @@ bool PartialSet::setup(const AtomTypeList& atomTypes, const char* prefix, const 
 	unboundPartials_.initialise(nTypes, nTypes, true);
 	braggPartials_.initialise(nTypes, nTypes, true);
 
-	// Setup array matrices for partials
+	// Set up array matrices for partials
 	CharString title;
 	AtomTypeData* at1 = atomTypes_.first(), *at2;
 	for (int n=0; n<nTypes; ++n, at1 = at1->next)
@@ -139,7 +139,7 @@ bool PartialSet::setup(const AtomTypeList& atomTypes, const char* prefix, const 
 		}
 	}
 
-	// Setup array for total
+	// Set up array for total
 	title.sprintf("%s-%s-total.%s", prefix, tag, suffix);
 	total_.setName(title);
 	total_.clear();

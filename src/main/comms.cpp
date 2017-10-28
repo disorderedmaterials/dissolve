@@ -58,15 +58,15 @@ ProcessPool& DUQ::worldPool()
 		// Assemble list of (world) process ranks for the pool
 		Array<int> ranks;
 		for (int n=0; n<ProcessPool::nWorldProcesses(); ++n) ranks.add(n);
-		worldPool_.setup("World", ranks);
+		worldPool_.setUp("World", ranks);
 		firstRun = false;
 	}
 
 	return worldPool_;
 }
 
-// Setup communications
-bool DUQ::setupMPIPools()
+// Set up communications
+bool DUQ::setUpMPIPools()
 {
 	Messenger::print("*** Setting up MPI pools...\n");
 
@@ -86,7 +86,7 @@ bool DUQ::setupMPIPools()
 	Array<int> allProcesses;
 	for (int n=0; n<ProcessPool::nWorldProcesses(); ++n) allProcesses.add(n);
 
-	// Setup pool based on selected strategy
+	// Set up pool based on selected strategy
 	int cfgIndex = 0;
 	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
 	{
@@ -95,7 +95,7 @@ bool DUQ::setupMPIPools()
 		if (parallelStrategy_ == DUQ::SequentialConfigStrategy)
 		{
 			// Simple, sequential strategy - all processes assigned to all Configurations
-			if (!cfg->setupProcessPool(allProcesses)) return false;
+			if (!cfg->setUpProcessPool(allProcesses)) return false;
 		}
 		else if (parallelStrategy_ == DUQ::EvenStrategy)
 		{
@@ -115,7 +115,7 @@ bool DUQ::setupMPIPools()
 			int procsPerConfig = ProcessPool::nWorldProcesses() / configurations_.nItems();
 			Array<int> poolProcesses;
 			for (int n=0; n<procsPerConfig; ++n) poolProcesses.add(procsPerConfig*cfgIndex + n);
-			if (!cfg->setupProcessPool(poolProcesses)) return false;
+			if (!cfg->setUpProcessPool(poolProcesses)) return false;
 		}
 
 		// Increase Configuration index

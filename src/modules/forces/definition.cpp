@@ -69,8 +69,8 @@ const char* ForcesModule::dependentModules()
 	return "";
 }
 
-// Setup supplied dependent module (only if it has been auto-added)
-bool ForcesModule::setupDependentModule(Module* depMod)
+// Set up supplied dependent module (only if it has been auto-added)
+bool ForcesModule::setUpDependentModule(Module* depMod)
 {
 	return true;
 }

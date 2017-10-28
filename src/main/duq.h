@@ -215,7 +215,7 @@ class DUQ
 
 
 	/*
-	 * Simulation Setup
+	 * Simulation Set up
 	 */
 	private:
 	// Number of test points to use when calculating Box normalisation arrays
@@ -252,8 +252,8 @@ class DUQ
 	void setWriteIterationData(bool b);
 	// Return whether to write various data after each iteration
 	bool writeIterationData();
-	// Setup all simulation data, checking it as we go
-	bool setupSimulation();
+	// Set up all simulation data, checking it as we go
+	bool setUpSimulation();
 
 
 	/*
@@ -336,8 +336,8 @@ class DUQ
 	ParallelStrategy parallelStrategy();
 	// Return world process pool
 	ProcessPool& worldPool();
-	// Setup local MPI pools
-	bool setupMPIPools();
+	// Set up local MPI pools
+	bool setUpMPIPools();
 };
 
 #endif

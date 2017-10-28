@@ -266,8 +266,8 @@ const char* ProcessPool::processInfo()
  * Pool Contents
  */
 
-// Setup pool with world ranks specified
-bool ProcessPool::setup(const char* name, Array<int> worldRanks)
+// Set up pool with world ranks specified
+bool ProcessPool::setUp(const char* name, Array<int> worldRanks)
 {
 	name_ = name;
 

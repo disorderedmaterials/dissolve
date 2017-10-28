@@ -28,7 +28,7 @@
 #include "base/lineparser.h"
 
 // Perform set up tasks for module
-bool ForcesModule::setup(ProcessPool& procPool)
+bool ForcesModule::setUp(ProcessPool& procPool)
 {
 	return true;
 }
@@ -61,7 +61,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 		// Grab Configuration pointer
 		Configuration* cfg = ri->item;
 
-		// Setup process pool - must do this to ensure we are using all available processes
+		// Set up process pool - must do this to ensure we are using all available processes
 		procPool.assignProcessesToGroups(cfg->processPool());
 
 		// Get reference to relevant module data

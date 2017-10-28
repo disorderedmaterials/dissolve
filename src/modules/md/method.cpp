@@ -29,7 +29,7 @@
 #include "base/lineparser.h"
 
 // Perform set up tasks for module
-bool MDModule::setup(ProcessPool& procPool)
+bool MDModule::setUp(ProcessPool& procPool)
 {
 	return true;
 }

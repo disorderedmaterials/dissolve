@@ -27,7 +27,7 @@
 #include "classes/weights.h"
 
 // Perform set up tasks for module
-bool PartialsModule::setup(ProcessPool& procPool)
+bool PartialsModule::setUp(ProcessPool& procPool)
 {
 	return false;
 }
@@ -231,7 +231,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 			// Calculate weighted partials
 			PartialSet& weightedgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedGR", uniqueName_);
 			PartialSet& weightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedSQ", uniqueName_);
-			weightedgr.setup(cfg, cfg->niceName(), "weighted", "rdf", "r, Angstroms");
+			weightedgr.setUp(cfg, cfg->niceName(), "weighted", "rdf", "r, Angstroms");
 			calculateWeightedGR(unweightedgr, weightedgr, weights);
 
 			// If we are associated to a local Configuration, copy the partial data over to the processing module list
@@ -247,7 +247,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 			if (sqCalculation)
 			{
 				PartialSet& unweightedsq = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedSQ", "Partials");
-				weightedsq.setup(weightedgr.atomTypes(), cfg->niceName(), "weighted", "sq", "Q, 1/Angstroms");
+				weightedsq.setUp(weightedgr.atomTypes(), cfg->niceName(), "weighted", "sq", "Q, 1/Angstroms");
 				calculateWeightedSQ(unweightedsq, weightedsq, weights, normalisation);
 
 				// If we are associated to a local Configuration, copy the partial data over to the processing module list
@@ -281,10 +281,10 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		combinedAtomTypes.finalise();
 		combinedAtomTypes.print();
 
-		// Setup partial set using the AtomTypeList we have just constructed.
+		// Set up partial set using the AtomTypeList we have just constructed.
 		Configuration* refConfig = targetConfigurations_.firstItem();
 		PartialSet& unweightedgr = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedGR", uniqueName_);
-		unweightedgr.setup(combinedAtomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), uniqueName(), "unweighted", "rdf", "r, Angstroms");
+		unweightedgr.setUp(combinedAtomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), uniqueName(), "unweighted", "rdf", "r, Angstroms");
 
 		// Loop over Configurations again, summing into the PartialSet we have just set up
 		// We will keep a running total of the weights associated with each Configuration, and re-weight the entire set of partials at the end.
@@ -323,7 +323,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		{
 			// Realise a PartialSQ set
 			PartialSet& unweightedsq = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedSQ", uniqueName_);
-			unweightedsq.setup(unweightedgr.atomTypes(), uniqueName(), "unweighted", "sq", "Q, 1/Angstroms");
+			unweightedsq.setUp(unweightedgr.atomTypes(), uniqueName(), "unweighted", "sq", "Q, 1/Angstroms");
 
 			// Sum in unweighted S(Q) partials
 			configIterator.restart();
@@ -358,7 +358,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 			GenericListHelper<Weights>::realise(duq.processingModuleData(), "FullWeights", uniqueName_) = combinedWeights;
 
 			PartialSet& weightedgr = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "WeightedGR", uniqueName_);
-			weightedgr.setup(combinedAtomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), uniqueName(), "weighted", "rdf", "r, Angstroms");
+			weightedgr.setUp(combinedAtomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), uniqueName(), "weighted", "rdf", "r, Angstroms");
 			weightedgr.reset();
 
 			// Loop over Configurations, adding in their weighted partial sets as we go
@@ -388,7 +388,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 			{
 				// Realise a PartialSQ set
 				PartialSet& weightedsq = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "WeightedSQ", uniqueName_);
-				weightedsq.setup(unweightedgr.atomTypes(), uniqueName(), "weighted", "sq", "Q, 1/Angstroms");
+				weightedsq.setUp(unweightedgr.atomTypes(), uniqueName(), "weighted", "sq", "Q, 1/Angstroms");
 
 				// Sum in weighted S(Q) partials
 				configIterator.restart();

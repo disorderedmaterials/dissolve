@@ -69,8 +69,8 @@ const char* SkeletonModule::dependentModules()
 	return "";
 }
 
-// Setup supplied dependent module (only if it has been auto-added)
-bool SkeletonModule::setupDependentModule(Module* depMod)
+// Set up supplied dependent module (only if it has been auto-added)
+bool SkeletonModule::setUpDependentModule(Module* depMod)
 {
 	return true;
 }

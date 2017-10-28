@@ -91,7 +91,7 @@ const char* PartialsModule::averagingScheme(PartialsModule::AveragingScheme as)
 }
 
 // Set up keywords for Module
-void PartialsModule::setupKeywords()
+void PartialsModule::setUpKeywords()
 {
 	frequency_ = 5;
 	keywords_.add(new BoolModuleKeyword(false), "AllIntra", "Consider all intramolecular pairs in intra partials", "<True|False*>");

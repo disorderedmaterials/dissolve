@@ -23,7 +23,7 @@
 #include "module/keywordtypes.h"
 
 // Set up keywords for Module
-void MDModule::setupKeywords()
+void MDModule::setUpKeywords()
 {
 	keywords_.add(new DoubleModuleKeyword(1.0e7), "CapForces", "Set cap on allowable force (kJ/mol) per atom per axis (or -ve to inhibit)");
 	keywords_.add(new DoubleModuleKeyword(-1.0), "CutoffDistance", "Interatomic cutoff distance to employ");

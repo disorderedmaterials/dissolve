@@ -35,7 +35,7 @@ DUQ::DUQ()
 	pairPotentialTruncationWidth_ = 2.0;
 	pairPotentialsIncludeCoulomb_ = true;
 
-	// Setup
+	// Set up
 	nBoxNormalisationPoints_ = 500000000;
 	seed_ = -1;
 	maxIterations_ = -1;

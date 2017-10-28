@@ -79,8 +79,8 @@ const Box* Configuration::box() const
 	return box_;
 }
 
-// Setup periodic Box
-bool Configuration::setupBox(double ppRange, int nExpectedAtoms)
+// Set up periodic Box
+bool Configuration::setUpBox(double ppRange, int nExpectedAtoms)
 {
 	// Remove old box if present
 	if (box_ != NULL)

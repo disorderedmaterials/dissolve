@@ -441,8 +441,8 @@ void PairPotential::calculateDUFull()
 	dUFull_.interpolate(XYData::ThreePointInterpolation);
 }
 
-// Setup and generate initial potential
-bool PairPotential::setup(double maxR, double truncationWidth, double delta, bool includeCoulomb)
+// Set up and generate initial potential
+bool PairPotential::setUp(double maxR, double truncationWidth, double delta, bool includeCoulomb)
 {
 	// Check that AtomType pointers were set at some pointer
 	if ((atomTypeI_ == NULL) || (atomTypeJ_ == NULL))

@@ -69,8 +69,8 @@ const char* ImportModule::dependentModules()
 	return "";
 }
 
-// Setup supplied dependent module (only if it has been auto-added)
-bool ImportModule::setupDependentModule(Module* depMod)
+// Set up supplied dependent module (only if it has been auto-added)
+bool ImportModule::setUpDependentModule(Module* depMod)
 {
 	return true;
 }

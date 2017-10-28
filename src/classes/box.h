@@ -84,8 +84,8 @@ class Box
 	public:
 	// Return Box type
 	BoxType type() const;
-	// Setup box, scaling to volume specified (in cubic Angstroms)
-	void setup(double volume);
+	// Set up box, scaling to volume specified (in cubic Angstroms)
+	void setUp(double volume);
 	// Return volume
 	double volume() const;
 	// Return axis length specified

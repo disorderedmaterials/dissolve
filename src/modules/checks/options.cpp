@@ -24,7 +24,7 @@
 #include "base/lineparser.h"
 
 // Set up keywords for Module
-void ChecksModule::setupKeywords()
+void ChecksModule::setUpKeywords()
 {
 	keywords_.add(new ComplexModuleKeyword(4,4), "Angle", "Define an angle between Atoms to be checked", "<i> <j> <k> <referenceAngle>");
 	keywords_.add(new DoubleModuleKeyword(0.05, 1.0e-5), "AngleThreshold", "Threshold at which angle checks will fail", "<threshold[0.05]>");

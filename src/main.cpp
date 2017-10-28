@@ -213,7 +213,7 @@ int main(int argc, char **argv)
 
 	// Perform simulation set up (all processes)
 	Messenger::banner("Setting Up Simulation");
-	if (!dUQ.setupSimulation())
+	if (!dUQ.setUpSimulation())
 	{
 		Messenger::print("Failed to set up simulation.\n");
 		ProcessPool::finalise();
@@ -221,9 +221,9 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	// Setup parallel comms / limits etc.
+	// Set up parallel comms / limits etc.
 	Messenger::banner("Setting Up Parallelism");
-	if (!dUQ.setupMPIPools())
+	if (!dUQ.setUpMPIPools())
 	{
 		Messenger::print("Failed to set up parallel communications.\n");
 		ProcessPool::finalise();

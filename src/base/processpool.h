@@ -174,8 +174,8 @@ class ProcessPool
 	bool groupsModifiable_;
 
 	public:
-	// Setup pool with processes specified
-	bool setup(const char* name, Array<int> worldRanks);
+	// Set up pool with processes specified
+	bool setUp(const char* name, Array<int> worldRanks);
 	// Return name of pool
 	const char* name();
 	// Return total number of processes in pool

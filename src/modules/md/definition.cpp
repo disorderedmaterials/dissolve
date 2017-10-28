@@ -69,8 +69,8 @@ const char* MDModule::dependentModules()
 	return "";
 }
 
-// Setup supplied dependent module (only if it has been auto-added)
-bool MDModule::setupDependentModule(Module* depMod)
+// Set up supplied dependent module (only if it has been auto-added)
+bool MDModule::setUpDependentModule(Module* depMod)
 {
 	return true;
 }

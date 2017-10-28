@@ -83,8 +83,8 @@ Box::BoxType Box::type() const
 	return type_;
 }
 
-// Setup box, scaling to specified volume (in cubic Angstroms)
-void Box::setup(double volume)
+// Set up box, scaling to specified volume (in cubic Angstroms)
+void Box::setUp(double volume)
 {
 	if (volume > 0.0)
 	{
@@ -211,7 +211,7 @@ double Box::inscribedSphereRadius() const
 // Calculate the RDF normalisation for the Box
 bool Box::calculateRDFNormalisation(ProcessPool& procPool, XYData& boxNorm, double rdfRange, double rdfBinWidth, int nPoints) const
 {
-	// Setup array - we will use a nominal bin width of 0.1 Angstroms and then interpolate to the rdfBinWidth afterwards
+	// Set up array - we will use a nominal bin width of 0.1 Angstroms and then interpolate to the rdfBinWidth afterwards
 	const double binWidth = 0.1;
 	const double rBinWidth = 1.0/binWidth;
 	int bin, nBins = rdfRange / binWidth;

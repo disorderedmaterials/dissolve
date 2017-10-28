@@ -348,7 +348,7 @@ bool XYData::transformLorch(double atomicDensity, double step, double rMax, doub
 	Array<double> result;
 	r = step * 0.5;
 
-	// Setup correct factor, depending on whether we are going from Q -> r or r -> Q
+	// Set up correct factor, depending on whether we are going from Q -> r or r -> Q
 	if (qToR) factor = 1.0 / (2.0 * PI * PI * atomicDensity);
 	else factor = 4.0 * PI * atomicDensity;
 	

@@ -34,7 +34,7 @@ Data::Data() : ListItem<Data>()
 	type_ = Data::NeutronData;
 
 	// Setup
-	setup_ = false;
+	setUp_ = false;
 }
 
 // Destructor
@@ -136,14 +136,14 @@ PartialsModule::NormalisationType Data::neutronNormalisation()
 }
 
 /*
- * Setup
+ * Set up
  */
 
 // Perform necessary tasks (normalisation etc.) on supplied data
-bool Data::setup(GenericList& processingModuleData)
+bool Data::setUp(GenericList& processingModuleData)
 {
 	// If we're already set up return now 
-	if (setup_) return true;
+	if (setUp_) return true;
 
 	// Subtract average level from data?
 	if (subtractAverageLevel_ >= 0.0)
@@ -200,7 +200,7 @@ bool Data::setup(GenericList& processingModuleData)
 			return false;
 	}
 
-	setup_ = true;
+	setUp_ = true;
 
 	return true;
 }

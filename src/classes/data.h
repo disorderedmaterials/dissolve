@@ -113,15 +113,15 @@ class Data : public ListItem<Data>
 
 
 	/*
-	 * Setup
+	 * Set up
 	 */
 	private:
 	// Whether the data has already been set up
-	bool setup_;
+	bool setUp_;
 
 	public:
 	// Perform necessary tasks (normalisation etc.) on supplied data
-	bool setup(GenericList& processingModuleData);
+	bool setUp(GenericList& processingModuleData);
 
 
 	/*

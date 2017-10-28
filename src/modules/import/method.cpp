@@ -28,7 +28,7 @@
 #include "base/sysfunc.h"
 
 // Perform set up tasks for module
-bool ImportModule::setup(ProcessPool& procPool)
+bool ImportModule::setUp(ProcessPool& procPool)
 {
 	return true;
 }
@@ -59,7 +59,7 @@ bool ImportModule::process(DUQ& duq, ProcessPool& procPool)
 		// Grab Configuration pointer
 		Configuration* cfg = ri->item;
 
-		// Setup process pool - must do this to ensure we are using all available processes
+		// Set up process pool - must do this to ensure we are using all available processes
 		procPool.assignProcessesToGroups(cfg->processPool());
 
 		// Retrieve control parameters from Configuration

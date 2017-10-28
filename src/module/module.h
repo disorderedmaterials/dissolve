@@ -95,8 +95,8 @@ class Module : public ListItem<Module>
 	Module* dependentModule(const char* name);
 	// Modules upon which this Module depends to have run first
 	virtual const char* dependentModules() = 0;
-	// Setup supplied dependent module (only if it has been auto-added)
-	virtual bool setupDependentModule(Module* depMod) = 0;
+	// Set up supplied dependent module (only if it has been auto-added)
+	virtual bool setUpDependentModule(Module* depMod) = 0;
 	// Update targets for any auto-added dependent Modules with those of this Module
 	void updateDependentTargets();
 
@@ -109,8 +109,8 @@ class Module : public ListItem<Module>
 	ModuleKeywordList keywords_;
 
 	protected:
-	// Setup keywords for Module
-	virtual void setupKeywords() = 0;
+	// Set up keywords for Module
+	virtual void setUpKeywords() = 0;
 	// Parse complex keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
 	virtual int parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix) = 0;
 
@@ -182,7 +182,7 @@ class Module : public ListItem<Module>
 	 */
 	public:
 	// Perform set up tasks for Module
-	virtual bool setup(ProcessPool& procPool) = 0;
+	virtual bool setUp(ProcessPool& procPool) = 0;
 	// Execute pre-processing stage
 	virtual bool preProcess(DUQ& duq, ProcessPool& procPool) = 0;
 	// Execute method

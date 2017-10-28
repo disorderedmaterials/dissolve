@@ -26,7 +26,7 @@
 #include "base/lineparser.h"
 
 // Set up keywords for Module
-void ForcesModule::setupKeywords()
+void ForcesModule::setUpKeywords()
 {
 	keywords_.add(new BoolModuleKeyword(false), "Save", "Save forces for the Configuration to the file '<name>.forces.txt'");
 	keywords_.add(new BoolModuleKeyword(false), "Test", "Test parallel force routines against simplified, serial ones");

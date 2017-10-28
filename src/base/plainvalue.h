@@ -83,7 +83,7 @@ class PlainValue : public ListItem<PlainValue>
 	void clear();
 
 	public:
-	// Setup value, including name and description
+	// Set up value, including name and description
 	void initialise(const char* name, PlainValue newValue, const char* description, int genericItemFlags);
 	// Set value
 	void set(const PlainValue& newValue);

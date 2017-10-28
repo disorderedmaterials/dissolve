@@ -50,8 +50,8 @@ TriclinicBox::TriclinicBox(double volume, const Vec3<double> relativeLengths, co
 	axes_.columnMultiply(1, relativeLengths.y);
 	axes_.columnMultiply(2, relativeLengths.z);
 	
-	// Setup box, rescaling to desired volume
-	setup(volume);
+	// Set up box, rescaling to desired volume
+	setUp(volume);
 }
 
 // Destructor

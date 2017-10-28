@@ -35,8 +35,8 @@ ChecksModule::ChecksModule() : Module()
 	instances_.own(this);
 	uniqueName_.sprintf("%s%02i", name(), instances_.nItems()-1);
 
-	// Setup variables / control parameters
-	setupKeywords();
+	// Set up variables / control parameters
+	setUpKeywords();
 }
 
 // Destructor

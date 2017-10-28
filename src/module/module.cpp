@@ -109,7 +109,7 @@ void Module::updateDependentTargets()
 		module->setFrequency(frequency_);
 
 		// Perform any set up on the dependent module
-		setupDependentModule(module);
+		setUpDependentModule(module);
 
 		// Also may need to update dependent targets of this Module...
 		module->updateDependentTargets();

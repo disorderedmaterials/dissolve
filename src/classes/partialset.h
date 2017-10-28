@@ -69,12 +69,12 @@ class PartialSet : public ListItem<PartialSet>
 	XYData total_;
 
 	public:
-	// Setup using supplied Configuration
-	bool setup(Configuration* cfg, const char* prefix, const char* tag, const char* suffix, const char* abscissaUnits);
-	// Setup PartialSet, initialising arrays for g(r) use
-	bool setup(const AtomTypeList& atomTypes, double rdfRange, double binWidth, const char* prefix, const char* tag, const char* suffix, const char* abscissaUnits);
-	// Setup PartialSet without initialising arrays
-	bool setup(const AtomTypeList& atomTypes, const char* prefix, const char* tag, const char* suffix, const char* abscissaUnits);
+	// Set up using supplied Configuration
+	bool setUp(Configuration* cfg, const char* prefix, const char* tag, const char* suffix, const char* abscissaUnits);
+	// Set up PartialSet, initialising arrays for g(r) use
+	bool setUp(const AtomTypeList& atomTypes, double rdfRange, double binWidth, const char* prefix, const char* tag, const char* suffix, const char* abscissaUnits);
+	// Set up PartialSet without initialising arrays
+	bool setUp(const AtomTypeList& atomTypes, const char* prefix, const char* tag, const char* suffix, const char* abscissaUnits);
 	// Reset partial arrays
 	void reset();
 	// Return number of AtomTypes used to generate matrices

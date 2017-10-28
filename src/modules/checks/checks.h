@@ -76,16 +76,16 @@ class ChecksModule : public Module
 	bool hasPostProcessing();
 	// Modules upon which this Module depends to have run first
 	const char* dependentModules();
-	// Setup supplied dependent module (only if it has been auto-added)
-	bool setupDependentModule(Module* depMod);
+	// Set up supplied dependent module (only if it has been auto-added)
+	bool setUpDependentModule(Module* depMod);
 
 
 	/*
 	 * Options
 	 */
 	protected:
-	// Setup options for Module
-	void setupKeywords();
+	// Set up options for Module
+	void setUpKeywords();
 	// Parse complex keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
 	int parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix);
 
@@ -95,7 +95,7 @@ class ChecksModule : public Module
 	 */
 	public:
 	// Perform set up tasks for module
-	bool setup(ProcessPool& procPool);
+	bool setUp(ProcessPool& procPool);
 	// Execute pre-processing stage
 	bool preProcess(DUQ& duq, ProcessPool& procPool);
 	// Execute method on the specified config

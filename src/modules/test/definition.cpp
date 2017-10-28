@@ -69,8 +69,8 @@ const char* TestModule::dependentModules()
 	return "Partials";
 }
 
-// Setup supplied dependent module (only if it has been auto-added)
-bool TestModule::setupDependentModule(Module* depMod)
+// Set up supplied dependent module (only if it has been auto-added)
+bool TestModule::setUpDependentModule(Module* depMod)
 {
 	return true;
 }

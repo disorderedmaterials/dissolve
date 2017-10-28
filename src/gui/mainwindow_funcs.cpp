@@ -29,7 +29,7 @@ MonitorWindow::MonitorWindow(DUQ& duq) : QMainWindow(NULL), duq_(duq)
 	// Initialise Qt's icon resource
 	Q_INIT_RESOURCE(icons);
 
-	// Setup user interface
+	// Set up user interface
 	ui.setupUi(this);
 
 	refreshing_ = false;

@@ -35,8 +35,8 @@ MolShakeModule::MolShakeModule() : Module()
 	uniqueName_.sprintf("%s%02i", name(), instances_.nItems());
 	instances_.own(this);
 
-	// Setup variables / control parameters
-	setupKeywords();
+	// Set up variables / control parameters
+	setUpKeywords();
 }
 
 // Destructor

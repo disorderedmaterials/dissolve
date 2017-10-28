@@ -23,7 +23,7 @@
 #include "module/keywordtypes.h"
 
 // Set up keywords for Module
-void EnergyModule::setupKeywords()
+void EnergyModule::setUpKeywords()
 {
 	keywords_.add(new BoolModuleKeyword(true), "Save", "Save calculate energy points to the file '<name>.energy.txt'");
 	keywords_.add(new IntegerModuleKeyword(10), "StabilityWindow", "Number of points over which to assess the stability of the energy (per Configuration)");

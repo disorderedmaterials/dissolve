@@ -35,8 +35,8 @@ NonPeriodicBox::NonPeriodicBox(double volume) : Box()
 	axes_.setColumn(1, 0.0, 1.0, 0.0);
 	axes_.setColumn(2, 0.0, 0.0, 1.0);
 
-	// Setup box, rescaling to desired volume
-	setup(volume);
+	// Set up box, rescaling to desired volume
+	setUp(volume);
 
 	// Grab new cell length
 	a_ = axes_.columnMagnitude(0);

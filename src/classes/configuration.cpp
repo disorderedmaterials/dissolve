@@ -52,7 +52,7 @@ Configuration::Configuration() : ListItem<Configuration>()
 	requestedCellDivisionLength_ = 10.0;
 	coordinateIndex_ = 0;
 
-	// Setup
+	// Set up
 	rdfBinWidth_ = 0.025;
 	rdfRange_ = -1.0;
 	requestedRDFRange_ = -2.0;
@@ -198,8 +198,8 @@ void Configuration::clear()
 	cells_.clear();
 }
 
-// Setup configuration
-bool Configuration::setup(ProcessPool& procPool, double pairPotentialRange, int boxNormalisationNPoints)
+// Set up configuration
+bool Configuration::setUp(ProcessPool& procPool, double pairPotentialRange, int boxNormalisationNPoints)
 {
 	Messenger::print("--> Setting up Configuration from Species / multiplier definition...\n");
 
@@ -235,7 +235,7 @@ bool Configuration::setup(ProcessPool& procPool, double pairPotentialRange, int 
 	 * Create a Box to contain the system
 	 */
 	Messenger::print("--> Creating periodic Box and Cell partitioning...\n");
-	if (!setupBox(pairPotentialRange, nExpectedAtoms))
+	if (!setUpBox(pairPotentialRange, nExpectedAtoms))
 	{
 		Messenger::error("Failed to set up Box/Cells for Configuration.\n");
 		return false;
@@ -562,11 +562,11 @@ int Configuration::ensembleFrequency()
  * Parallel Comms
  */
 
-// Setup process pool for this Configuration
-bool Configuration::setupProcessPool(Array<int> worldRanks)
+// Set up process pool for this Configuration
+bool Configuration::setUpProcessPool(Array<int> worldRanks)
 {
 	// Create pool
-	processPool_.setup(name_, worldRanks);
+	processPool_.setUp(name_, worldRanks);
 
 	// Give Cell info to our processPool_ so a suitable parallel strategy can be created
 	processPool_.determineMaxProcessGroups(cells_.divisions(), cells_.extents(), cells_.neighbourIndices());

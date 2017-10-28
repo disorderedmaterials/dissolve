@@ -274,7 +274,7 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 			else neighbours.add(nbr);
 		}
 
-		// Setup lists in the cell
+		// Set up lists in the cell
 		cells_[n].addCellNeighbours(neighbours, mimNeighbours, nCells_);
 	}
 

@@ -33,8 +33,8 @@ OrthorhombicBox::OrthorhombicBox(double volume, const Vec3<double> relativeLengt
 	axes_.setColumn(1, 0.0, relativeLengths.y, 0.0);
 	axes_.setColumn(2, 0.0, 0.0, relativeLengths.z);
 	
-	// Setup box, rescaling to desired volume
-	setup(volume);
+	// Set up box, rescaling to desired volume
+	setUp(volume);
 	
 	// Grab new cell lengths
 	a_ = axes_.columnMagnitude(0);

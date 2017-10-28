@@ -36,7 +36,7 @@
 // Constructor
 GrainShakeModule::GrainShakeModule() : Module()
 {
-	// Setup variables / control parameters
+	// Set up variables / control parameters
 	setVariable("cutoffDistance", -1.0);
 	setVariable("nShakesPerGrain", 1);
 	setVariable("targetAcceptanceRate", 0.33);

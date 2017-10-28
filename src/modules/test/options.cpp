@@ -25,7 +25,7 @@
 #include "base/lineparser.h"
 
 // Set up keywords for Module
-void TestModule::setupKeywords()
+void TestModule::setUpKeywords()
 {
 	keywords_.add(new CharStringModuleKeyword("<Undefined>"), "Partials", "Partials Module from which to get simulated partial data");
 }

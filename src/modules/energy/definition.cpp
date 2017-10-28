@@ -69,8 +69,8 @@ const char* EnergyModule::dependentModules()
 	return "";
 }
 
-// Setup supplied dependent module (only if it has been auto-added)
-bool EnergyModule::setupDependentModule(Module* depMod)
+// Set up supplied dependent module (only if it has been auto-added)
+bool EnergyModule::setUpDependentModule(Module* depMod)
 {
 	return true;
 }

@@ -23,7 +23,7 @@
 #include "module/keywordtypes.h"
 
 // Set up keywords for Module
-void SkeletonModule::setupKeywords()
+void SkeletonModule::setUpKeywords()
 {
 // 	keywords_.add(new BoolModuleKeyword(true), "ExampleKeyword", "Example keyword description", "<args>");
 }

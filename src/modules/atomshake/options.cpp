@@ -22,8 +22,8 @@
 #include "modules/atomshake/atomshake.h"
 #include "module/keywordtypes.h"
 
-// Setup options for Module
-void AtomShakeModule::setupKeywords()
+// Set up options for Module
+void AtomShakeModule::setUpKeywords()
 {
 	keywords_.add(new DoubleModuleKeyword(-1.0), "CutoffDistance", "Interatomic cutoff distance to employ");
 	keywords_.add(new IntegerModuleKeyword(1), "ShakesPerAtom", "Number of shakes per Atom to attempt");

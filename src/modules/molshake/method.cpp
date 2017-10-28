@@ -30,7 +30,7 @@
 #include "base/timer.h"
 
 // Perform set up tasks for module
-bool MolShakeModule::setup(ProcessPool& procPool)
+bool MolShakeModule::setUp(ProcessPool& procPool)
 {
 	return true;
 }

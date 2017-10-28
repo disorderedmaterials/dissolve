@@ -22,8 +22,8 @@
 #include "modules/molshake/molshake.h"
 #include "module/keywordtypes.h"
 
-// Setup options for Module
-void MolShakeModule::setupKeywords()
+// Set up options for Module
+void MolShakeModule::setUpKeywords()
 {
 	keywords_.add(new DoubleModuleKeyword(-1.0), "CutoffDistance", "Interatomic cutoff distance to employ");
 	keywords_.add(new IntegerModuleKeyword(1), "ShakesPerMolecule", "Number of shakes per Molecule");
