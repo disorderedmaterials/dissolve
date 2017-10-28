@@ -20,8 +20,8 @@
 */
 
 #include "modules/test/test.h"
-#include "modules/modulelist.h"
-#include "modules/modulekeywords.h"
+#include "module/list.h"
+#include "module/keywordtypes.h"
 #include "base/lineparser.h"
 
 // Set up keywords for Module

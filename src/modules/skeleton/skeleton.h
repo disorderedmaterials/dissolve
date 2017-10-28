@@ -22,7 +22,7 @@
 #ifndef DUQ_SKELETONMODULE_H
 #define DUQ_SKELETONMODULE_H
 
-#include "modules/module.h"
+#include "module/module.h"
 
 // Forward Declarations
 /* none */

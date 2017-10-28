@@ -22,8 +22,8 @@
 #ifndef DUQ_MODULEKEYWORDBOOL_H
 #define DUQ_MODULEKEYWORDBOOL_H
 
-#include "modules/modulekeyworddata.h"
-#include "modules/modulekeywordbase.h"
+#include "module/keyworddata.h"
+#include "module/keywordbase.h"
 
 // Forward Declarations
 /* none */

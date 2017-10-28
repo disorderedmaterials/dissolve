@@ -1,6 +1,6 @@
 /*
 	*** Module Keyword Base Class
-	*** src/modules/modulekeywordbase.h
+	*** src/module/keywordbase.h
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -19,11 +19,11 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_MODULEKEYWORDBASE_H
-#define DUQ_MODULEKEYWORDBASE_H
+#ifndef DUQ_KEYWORDBASE_H
+#define DUQ_KEYWORDBASE_H
 
 #include "base/charstring.h"
-#include "modules/modulekeyworddata.h"
+#include "module/keyworddata.h"
 #include "templates/listitem.h"
 
 // Forward Declarations

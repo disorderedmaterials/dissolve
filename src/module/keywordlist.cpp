@@ -1,6 +1,6 @@
 /*
 	*** Module Keyword List
-	*** src/modules/modulekeywordlist.cpp
+	*** src/module/keywordlist.cpp
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -19,7 +19,7 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/modulekeywordlist.h"
+#include "module/keywordlist.h"
 #include "base/sysfunc.h"
 
 // Add keyword

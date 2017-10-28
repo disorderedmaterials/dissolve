@@ -20,7 +20,7 @@
 */
 
 #include "modules/energy/energy.h"
-#include "modules/modulekeywords.h"
+#include "module/keywordtypes.h"
 
 // Set up keywords for Module
 void EnergyModule::setupKeywords()

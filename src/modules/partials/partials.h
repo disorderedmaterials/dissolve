@@ -22,7 +22,7 @@
 #ifndef DUQ_PARTIALS_H
 #define DUQ_PARTIALS_H
 
-#include "modules/module.h"
+#include "module/module.h"
 #include "classes/partialset.h"
 #include "classes/braggpeak.h"
 

@@ -1,6 +1,6 @@
 /*
 	*** dUQ Module Interface
-	*** src/modules/module.cpp
+	*** src/module/module.cpp
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -19,7 +19,7 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/module.h"
+#include "module/module.h"
 #include "classes/configuration.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"

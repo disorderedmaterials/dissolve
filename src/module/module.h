@@ -1,6 +1,6 @@
 /*
 	*** dUQ Module Interface
-	*** src/modules/module.h
+	*** src/module/module.h
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -23,7 +23,7 @@
 #define DUQ_MODULE_H
 
 #include "base/messenger.h"
-#include "modules/modulekeywordlist.h"
+#include "module/keywordlist.h"
 #include "templates/genericlist.h"
 #include "templates/reflist.h"
 

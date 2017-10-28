@@ -19,7 +19,7 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/modulekeyword_double.h"
+#include "module/keywordtypes/double.h"
 #include "base/lineparser.h"
 #include "templates/genericlist.h"
 

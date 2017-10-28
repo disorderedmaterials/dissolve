@@ -23,7 +23,7 @@
 #define DUQ_DUQ_H
 
 #include "base/ptable.h"
-#include "modules/module.h"
+#include "module/module.h"
 #include "classes/configuration.h"
 #include "classes/data.h"
 #include "classes/pairpotential.h"

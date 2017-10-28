@@ -1,6 +1,6 @@
 /*
 	*** Module Keyword Interface
-	*** src/modules/modulekeywordinterface.h
+	*** src/module/keywordinterface.h
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -19,8 +19,8 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_MODULEKEYWORDINTERFACE_H
-#define DUQ_MODULEKEYWORDINTERFACE_H
+#ifndef DUQ_KEYWORDINTERFACE_H
+#define DUQ_KEYWORDINTERFACE_H
 
 #include "templates/array.h"
 

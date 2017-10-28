@@ -1,6 +1,6 @@
 /*
 	*** Module Keyword List
-	*** src/modules/modulekeywordlist.h
+	*** src/module/keywordlist.h
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -19,10 +19,10 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_MODULEKEYWORDLIST_H
-#define DUQ_MODULEKEYWORDLIST_H
+#ifndef DUQ_KEYWORDLIST_H
+#define DUQ_KEYWORDLIST_H
 
-#include "modules/modulekeywordbase.h"
+#include "module/keywordbase.h"
 #include "templates/list.h"
 
 // Forward Declarations

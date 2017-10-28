@@ -22,7 +22,7 @@
 #ifndef DUQ_ATOMSHAKEMODULE_H
 #define DUQ_ATOMSHAKEMODULE_H
 
-#include "modules/module.h"
+#include "module/module.h"
 
 // Forward Declarations
 /* none */

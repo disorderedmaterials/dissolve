@@ -19,7 +19,7 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/modulekeyword_complex.h"
+#include "module/keywordtypes/complex.h"
 
 // Constructors
 ComplexModuleKeyword::ComplexModuleKeyword(int minArgs, int maxArgs) : ModuleKeywordBase(ModuleKeywordBase::ComplexData), ModuleKeywordData<int>(0)

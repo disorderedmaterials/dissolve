@@ -22,7 +22,7 @@
 #ifndef DUQ_FORCESMODULE_H
 #define DUQ_FORCESMODULE_H
 
-#include "modules/module.h"
+#include "module/module.h"
 
 // Forward Declarations
 /* none */

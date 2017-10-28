@@ -1,6 +1,6 @@
 /*
 	*** dUQ Module Registry
-	*** src/modules/moduleregistry.h
+	*** src/module/registry.h
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -22,7 +22,7 @@
 #ifndef DUQ_MODULEREGISTRY_H
 #define DUQ_MODULEREGISTRY_H
 
-#include "modules/modulelist.h"
+#include "module/list.h"
 
 // Forward Declarations
 class Module;

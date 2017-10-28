@@ -20,7 +20,7 @@
 */
 
 #include "modules/molshake/molshake.h"
-#include "modules/modulekeywords.h"
+#include "module/keywordtypes.h"
 
 // Setup options for Module
 void MolShakeModule::setupKeywords()

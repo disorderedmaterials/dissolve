@@ -22,7 +22,7 @@
 #ifndef DUQ_ENERGYMODULE_H
 #define DUQ_ENERGYMODULE_H
 
-#include "modules/module.h"
+#include "module/module.h"
 
 // Forward Declarations
 /* none */

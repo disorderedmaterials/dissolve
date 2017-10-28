@@ -22,8 +22,8 @@
 #ifndef DUQ_MODULEKEYWORDFUNCTION_H
 #define DUQ_MODULEKEYWORDFUNCTION_H
 
-#include "modules/modulekeyworddata.h"
-#include "modules/modulekeywordbase.h"
+#include "module/keyworddata.h"
+#include "module/keywordbase.h"
 #include "math/broadeningfunction.h"
 
 // Forward Declarations

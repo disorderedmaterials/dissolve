@@ -19,7 +19,7 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/modulekeyword_int.h"
+#include "module/keywordtypes/int.h"
 #include "base/lineparser.h"
 #include "templates/genericlist.h"
 

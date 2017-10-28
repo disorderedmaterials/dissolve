@@ -1,6 +1,6 @@
 /*
 	*** dUQ Module List
-	*** src/modules/modulelist.h
+	*** src/module/list.h
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.

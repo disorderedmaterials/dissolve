@@ -19,7 +19,7 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/modulekeyword_bool.h"
+#include "module/keywordtypes/bool.h"
 #include "base/lineparser.h"
 #include "templates/genericlist.h"
 

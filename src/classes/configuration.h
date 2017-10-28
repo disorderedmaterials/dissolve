@@ -31,7 +31,7 @@
 #include "classes/molecule.h"
 #include "classes/histogram.h"
 #include "classes/speciesinfo.h"
-#include "modules/modulelist.h"
+#include "module/list.h"
 #include "base/xydata.h"
 #include "base/processpool.h"
 #include "templates/genericlist.h"

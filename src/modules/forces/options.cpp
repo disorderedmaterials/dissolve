@@ -21,7 +21,7 @@
 
 #include "modules/forces/forces.h"
 #include "modules/import/import.h"
-#include "modules/modulekeywords.h"
+#include "module/keywordtypes.h"
 #include "main/duq.h"
 #include "base/lineparser.h"
 

@@ -22,7 +22,7 @@
 #ifndef DUQ_IMPORTMODULE_H
 #define DUQ_IMPORTMODULE_H
 
-#include "modules/module.h"
+#include "module/module.h"
 
 // Forward Declarations
 /* none */

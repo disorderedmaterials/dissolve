@@ -1,6 +1,6 @@
 /*
-	*** Module Keyword - Integer
-	*** src/modules/modulekeyword_int.h
+	*** Keywords
+	*** src/module/keywords.h
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -19,24 +19,24 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_MODULEKEYWORDS_H
-#define DUQ_MODULEKEYWORDS_H
+#ifndef DUQ_KEYWORDS_H
+#define DUQ_KEYWORDS_H
 
 /*
- * This file should be included if the use of ModuleKeywords is required.
+ * This file should be included if the use of Module Keywords is required.
  * It simply includes all other derived classes and specialisations.
  */
 
 // PODs
-#include "modules/modulekeyword_bool.h"
-#include "modules/modulekeyword_double.h"
-#include "modules/modulekeyword_int.h"
+#include "module/keywordtypes/bool.h"
+#include "module/keywordtypes/double.h"
+#include "module/keywordtypes/int.h"
 
 // Complex
-#include "modules/modulekeyword_complex.h"
+#include "module/keywordtypes/complex.h"
 
 // Classes
-#include "modules/modulekeyword_charstring.h"
-#include "modules/modulekeyword_broadeningfunction.h"
+#include "module/keywordtypes/charstring.h"
+#include "module/keywordtypes/broadeningfunction.h"
 
 #endif

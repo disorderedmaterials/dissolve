@@ -22,7 +22,7 @@
 #ifndef DUQ_MOLSHAKEMODULE_H
 #define DUQ_MOLSHAKEMODULE_H
 
-#include "modules/module.h"
+#include "module/module.h"
 
 // Forward Declarations
 /* none */

@@ -1,6 +1,6 @@
 /*
 	*** Module Keyword Base Class
-	*** src/modules/modulekeywordbase.cpp
+	*** src/module/keywordbase.cpp
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -19,7 +19,7 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/modulekeywordbase.h"
+#include "module/keywordbase.h"
 
 // Constructor
 ModuleKeywordBase::ModuleKeywordBase(KeywordDataType type) : ListItem<ModuleKeywordBase>(), type_(type)

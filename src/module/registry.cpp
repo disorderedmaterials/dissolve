@@ -1,6 +1,6 @@
 /*
 	*** dUQ Module Registry
-	*** src/modules/moduleregistry.cpp
+	*** src/module/registry.cpp
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -19,7 +19,7 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/moduleregistry.h"
+#include "module/registry.h"
 #include "modules/atomshake/atomshake.h"
 #include "modules/checks/checks.h"
 #include "modules/energy/energy.h"

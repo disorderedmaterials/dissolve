@@ -22,7 +22,7 @@
 #ifndef DUQ_CHECKSMODULE_H
 #define DUQ_CHECKSMODULE_H
 
-#include "modules/module.h"
+#include "module/module.h"
 #include "base/geometry.h"
 
 // Forward Declarations

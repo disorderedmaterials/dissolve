@@ -22,7 +22,7 @@
 #ifndef DUQ_TWIST_H
 #define DUQ_TWIST_H
 
-#include "modules/module.h"
+#include "module/module.h"
 
 // Forward Declarations
 /* none */

@@ -22,7 +22,7 @@
 #include "version.h"
 #include "base/messenger.h"
 #include "main/duq.h"
-#include "modules/moduleregistry.h"
+#include "module/registry.h"
 #include "base/processpool.h"
 #include <time.h>
 #include <ctime>

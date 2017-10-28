@@ -20,7 +20,7 @@
 */
 
 #include "modules/partials/partials.h"
-#include "modules/modulekeywords.h"
+#include "module/keywordtypes.h"
 #include "main/duq.h"
 #include "classes/species.h"
 #include "base/lineparser.h"

@@ -22,7 +22,7 @@
 #ifndef DUQ_TESTMODULE_H
 #define DUQ_TESTMODULE_H
 
-#include "modules/module.h"
+#include "module/module.h"
 #include "base/xydata.h"
 
 // Forward Declarations

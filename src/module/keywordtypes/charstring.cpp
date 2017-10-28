@@ -19,7 +19,7 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/modulekeyword_charstring.h"
+#include "module/keywordtypes/charstring.h"
 #include "base/lineparser.h"
 #include "templates/genericlist.h"
 
