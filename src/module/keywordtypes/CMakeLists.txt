@@ -1,0 +1,49 @@
+add_library(modules
+  module.cpp
+  modulekeywordbase.cpp
+  modulekeywordlist.cpp
+  modulelist.cpp
+  moduleregistry.cpp
+  modulekeyword_bool.cpp
+  modulekeyword_broadeningfunction.cpp
+  modulekeyword_charstring.cpp
+  modulekeyword_complex.cpp
+  modulekeyword_double.cpp
+  modulekeyword_int.cpp
+
+  module.h
+  modulelist.h
+  moduleregistry.h
+  modulekeywordbase.h
+  modulekeyworddata.h
+  modulekeywordlist.h
+  modulelist.h
+  moduleregistry.h
+  modulekeyword_bool.h
+  modulekeyword_broadeningfunction.h
+  modulekeyword_charstring.h
+  modulekeyword_complex.h
+  modulekeyword_double.h
+  modulekeyword_int.h
+  modulekeywords.h
+)
+
+include_directories(
+../
+${CMAKE_SOURCE_DIR}
+${CMAKE_BINARY_DIR}
+${CMAKE_BINARY_DIR}/src
+)
+
+# Module subdirectories
+add_subdirectory(atomshake)
+add_subdirectory(checks)
+add_subdirectory(energy)
+add_subdirectory(export)
+add_subdirectory(forces)
+add_subdirectory(import)
+add_subdirectory(md)
+add_subdirectory(molshake)
+add_subdirectory(partials)
+add_subdirectory(skeleton)
+add_subdirectory(test)
