@@ -81,7 +81,18 @@ target_include_directories(${target_name} PRIVATE
 
 # Perform final link
 target_link_libraries( ${target_name}
-  main modules classes base math
+  atomshakemodule
+  checksmodule
+  energymodule
+  exportmodule
+  forcesmodule
+  importmodule
+  mdmodule
+  molshakemodule
+  partialsmodule
+  skeletonmodule
+  testmodule
+  main classes module keywordtypes base math
 )
 
 # Install target for unix

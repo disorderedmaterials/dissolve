@@ -1,12 +1,13 @@
-add_library(partialsmodule
+add_library(importmodule
   core.cpp
   data.cpp
   definition.cpp
-  functions.cpp
+  functions_coordinates.cpp
+  functions_forces.cpp
   method.cpp
   options.cpp
 
-  partials.h
+  import.h
 )
 
 include_directories(

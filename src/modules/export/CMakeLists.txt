@@ -1,4 +1,4 @@
-add_library(partialsmodule
+add_library(exportmodule
   core.cpp
   data.cpp
   definition.cpp
@@ -6,7 +6,7 @@ add_library(partialsmodule
   method.cpp
   options.cpp
 
-  partials.h
+  export.h
 )
 
 include_directories(

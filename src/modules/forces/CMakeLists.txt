@@ -1,4 +1,4 @@
-add_library(partialsmodule
+add_library(forcesmodule
   core.cpp
   data.cpp
   definition.cpp
@@ -6,7 +6,7 @@ add_library(partialsmodule
   method.cpp
   options.cpp
 
-  partials.h
+  forces.h
 )
 
 include_directories(
