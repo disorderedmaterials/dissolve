@@ -71,7 +71,7 @@ Module* ModuleList::addModule(Module* module, GenericList& moduleData, Module* a
 	if (addBeforeThis)
 	{
 		// Find the specified Module in the list
-		RefListItem<Module,bool>* ri = modules_.contains(module);
+		RefListItem<Module,bool>* ri = modules_.contains(addBeforeThis);
 		if (!ri)
 		{
 			Messenger::error("ModuleList doesn't contain the Module pointer given as 'addBeforeThis'.\n");

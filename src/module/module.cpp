@@ -114,7 +114,7 @@ bool Module::updateDependentTargets(ModuleList& currentModuleList, bool autoAddD
 		if (existingModule)
 		{
 			addDependentModule(existingModule, false);
-			Messenger::print("--> Added dependent Module '%s' to Module '%s'.\n", existingModule->uniqueName(), uniqueName());
+			Messenger::print("--> Added dependent Module '%s' (%s) to Module '%s'.\n", existingModule->uniqueName(), existingModule->name(), uniqueName());
 		}
 		else
 		{
