@@ -15,11 +15,7 @@ Configuration 'liquid'
   Density  0.021300  atoms/A3
   SpeciesInfo  'Argon'  1.0
   UseOutputAsInput
-  Module Energy
-  EndModule
   Module AtomShake
-  EndModule
-  Module Energy
   EndModule
 EndConfiguration
 
@@ -29,9 +25,9 @@ Module Partials 'Yarnell-85K'
   Weights neutron
   Isotopologue  'liquid'  'Argon'  'Ar36'  1.0
   StructureFactor  on
-  QDepBroadening  0.02    # For SLS
   Averaging  5
   AveragingScheme  Exponential
+  Frequency 1
 EndModule
 
 # Experimental data taken from Table 1 of Yarnell, Katz, Wenzel, and Koenig, Phys. Rev. A 7, 2130 (1973).
@@ -46,8 +42,7 @@ EndData
 Module Test
   # Define targets
   Data  'Yarnell-85K'
-  # Define S(Q) source
-  Partials  'Yarnell-85K'
+  Frequency  1
 EndModule
 
 # Pair Potentials
@@ -56,5 +51,5 @@ PairPotentials
 EndPairPotentials
 
 Simulation
-  MaxIterations  1
+  MaxIterations  100
 EndSimulation

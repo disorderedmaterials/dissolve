@@ -176,7 +176,7 @@ bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 			partial.addInterpolated(unweightedSQ.partial(n, m), -1.0);
 
 			// Perform some judicious smoothing on the data
-			partial.medianFilter(5);
+			partial.smooth(10);
 			partial.save("sub.sq");
 
 			// Do the inverse FT
