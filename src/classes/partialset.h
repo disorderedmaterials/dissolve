@@ -47,8 +47,8 @@ class PartialSet : public ListItem<PartialSet>
 	private:
 	// AtomTypes used to generate matrices
 	AtomTypeList atomTypes_;
-	// Index (e.g. in related Configuration) at which these partials were last calculated
-	int index_;
+	// Fingerprint for these partials (e.g. reflecting Configuration indices at which they were calculated)
+	CharString fingerprint_;
 	// Abscissa units for contained data
 	CharString abscissaUnits_;
 	// Histograms used for calculating full atom-atom partials in r
@@ -81,10 +81,10 @@ class PartialSet : public ListItem<PartialSet>
 	int nAtomTypes() const;
 	// Return atom types array
 	AtomTypeList atomTypes() const;
-	// Return index of partials
-	int index() const;
-	// Set new index
-	void setIndex(int index);
+	// Set new fingerprint
+	void setFingerprint(const char* fingerprint);
+	// Return fingerprint of partials
+	const char* fingerprint() const;
 	// Return full histogram specified
 	Histogram& fullHistogram(int i, int j);
 	// Return bound histogram specified

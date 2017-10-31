@@ -28,7 +28,7 @@
 // Constructor
 PartialSet::PartialSet() : ListItem<PartialSet>()
 {
-	index_ = -1;
+	fingerprint_.clear();
 }
 
 // Destructor
@@ -104,7 +104,7 @@ bool PartialSet::setUp(const AtomTypeList& atomTypes, double rdfRange, double bi
 	title.sprintf("%s-%s-total.%s", prefix, tag, suffix);
 	total_.setName(title);
 
-	index_ = -1;
+	fingerprint_.clear();
 
 	return true;
 }
@@ -144,7 +144,7 @@ bool PartialSet::setUp(const AtomTypeList& atomTypes, const char* prefix, const 
 	total_.setName(title);
 	total_.clear();
 
-	index_ = -1;
+	fingerprint_.clear();
 
 	return true;
 }
@@ -169,7 +169,7 @@ void PartialSet::reset()
 	}
 	total_.arrayY() = 0.0;
 
-	index_ = -1;
+	fingerprint_.clear();
 }
 
 // Return number of AtomTypes used to generate matrices
@@ -184,16 +184,16 @@ AtomTypeList PartialSet::atomTypes() const
 	return atomTypes_;
 }
 
-// Return index of partials
-int PartialSet::index() const
+// Set new fingerprint
+void PartialSet::setFingerprint(const char* fingerprint)
 {
-	return index_;
+	fingerprint_ = fingerprint;
 }
 
-// Set new index
-void PartialSet::setIndex(int index)
+// Return fingerprint of partials
+const char* PartialSet::fingerprint() const
 {
-	index_ = index;
+	return fingerprint_.get();
 }
 
 // Return full histogram specified

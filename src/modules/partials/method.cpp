@@ -275,6 +275,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 	{
 		// Assemble partials from all target Configurations specified, weighting them accordingly
 		CharString varName;
+		CharString fingerprint;
 
 		// Finalise and print the combined AtomTypes matrix
 		Messenger::print("Partials: AtomTypes used over all source Configurations:\n");
@@ -292,6 +293,9 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		configIterator.restart();
 		while (Configuration* cfg = configIterator.iterate())
 		{
+			// Update fingerprint
+			fingerprint += fingerprint.isEmpty() ? CharString("%i", cfg->coordinateIndex()) : CharString("_%i", cfg->coordinateIndex());
+
 			// Get weighting factor for this Configuration to contribute to the summed partials
 			double weight = GenericListHelper<double>::retrieve(moduleData, CharString("%s_Weight", cfg->name()), uniqueName_, 1.0);
 			totalWeight += weight;
@@ -306,8 +310,9 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 			volume += cfg->box()->volume()*weight;
 		}
 		density /= volume;
+		unweightedgr.setFingerprint(fingerprint);
 
-		// Now must normalise our partials to the overall weight of the source configurations
+		// Now must normalise our partials to the overall weight of the source configurations // TODO This will not be correct...
 		unweightedgr.reweightPartials(1.0 / totalWeight);
 		if (saveData) if (!MPIRunMaster(procPool, unweightedgr.save())) return false;
 

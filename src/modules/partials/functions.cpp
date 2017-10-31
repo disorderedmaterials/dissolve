@@ -385,8 +385,8 @@ bool PartialsModule::performGRAveraging(GenericList& moduleData, const char* nam
 	}
 	PartialSet& currentPartials = GenericListHelper<PartialSet>::retrieve(moduleData, name, prefix);
 
-	// Store the current index, since we must ensure we retain it in the averaged PartialSet.
-	int currentIndex = currentPartials.index();
+	// Store the current fingerprint, since we must ensure we retain it in the averaged PartialSet.
+	CharString currentFingerprint = currentPartials.fingerprint();
 
 	// Establish how many stored datasets we have
 	int nStored = 0;
@@ -399,7 +399,7 @@ bool PartialsModule::performGRAveraging(GenericList& moduleData, const char* nam
 	if (moduleData.contains(CharString("%s_1", name), prefix))
 	{
 		PartialSet& lastPartials = GenericListHelper<PartialSet>::retrieve(moduleData, CharString("%s_1", name), prefix);
-		if (lastPartials.index() <= currentIndex)
+		if (DUQSys::sameString(lastPartials.fingerprint(), currentFingerprint, true))
 		{
 			Messenger::print("Partials: Current partials will not form part of average, since they are the same as the last stored set.\n");
 			storeCurrent = false;
@@ -444,7 +444,7 @@ bool PartialsModule::performGRAveraging(GenericList& moduleData, const char* nam
 	}
 
 	// Reinstate the index of the averaged PartialSet
-	currentPartials.setIndex(currentIndex);
+	currentPartials.setFingerprint(currentFingerprint);
 
 	return true;
 }
@@ -463,7 +463,7 @@ bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration*
 
 	// Is the PartialSet already up-to-date?
 	// If so, can exit now, *unless* the Test method is requested, in which case we go ahead and calculate anyway
-	if ((partialgr.index() == cfg->coordinateIndex()) && (method != PartialsModule::TestMethod))
+	if (DUQSys::sameString(partialgr.fingerprint(), CharString("%i", cfg->coordinateIndex())) && (method != PartialsModule::TestMethod))
 	{
 		Messenger::print("Partials: Unweighted partial g(r) are up-to-date for Configuration '%s'.\n", cfg->name());
 		return true;
@@ -623,7 +623,7 @@ bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration*
 	 * Partials are now up-to-date
 	 */
 
-	partialgr.setIndex(cfg->coordinateIndex());
+	partialgr.setFingerprint(CharString("%i", cfg->coordinateIndex()));
 	++staticLogPoint_;
 
 	return true;
@@ -683,7 +683,7 @@ bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration*
 	if (wasCreated) partialsq.setUp(partialgr.atomTypes(), cfg->niceName(), "unweighted", "sq", "Q, 1/Angstroms");
 
 	// Is the PartialSet already up-to-date?
-	if (partialsq.index() == cfg->coordinateIndex())
+	if (DUQSys::sameString(partialsq.fingerprint(), CharString("%i", cfg->coordinateIndex())))
 	{
 		Messenger::print("Partials: Unweighted partial S(Q) are up-to-date for Configuration '%s'.\n", cfg->name());
 		return true;
@@ -759,7 +759,7 @@ bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration*
 	 * S(Q) are now up-to-date
 	 */
 
-	partialsq.setIndex(partialgr.index());
+	partialsq.setFingerprint(partialgr.fingerprint());
 
 	return true;
 }
