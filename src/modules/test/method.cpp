@@ -42,25 +42,68 @@ bool TestModule::preProcess(DUQ& duq, ProcessPool& procPool)
 bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 {
 	/*
-	 * Are calculated S(Q) available?
+	 * Grab dependent Module pointers
 	 */
-	CharString partialsModuleName = GenericListHelper<CharString>::retrieve(duq.processingModuleData(), "Partials", uniqueName_, keywords_.asString("Partials"));
-	if (DUQSys::sameString(partialsModuleName, "<Undefined>"))
-	{
-		Messenger::error("Partials module name has not been defined in TestModule.\n");
-		return false;
-	}
-	Module* partialsModule = ModuleList::findInstanceByUniqueName(partialsModuleName);
+	Module* partialsModule = dependentModule("Partials");
 	if (!partialsModule)
 	{
-		Messenger::error("Couldn't find PartialsModule named '%s'.\n", partialsModuleName.get());
+		Messenger::error("No Partials Module associated to TestModule '%s'.\n", uniqueName());
 		return false;
 	}
+
+	/*
+	 * Set Module data target
+	 */
+	GenericList& moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : duq.processingModuleData();
+
+	/*
+	 * Are the energies of all involved Configurations stable (if OnlyWhenStable option is on)
+	 */
+	if (GenericListHelper<bool>::retrieve(moduleData, "OnlyWhenStable", uniqueName(), keywords_.asBool("OnlyWhenStable")))
+	{
+		bool anyFailed = false;
+		RefListIterator<Configuration,bool> configIterator(partialsModule->targetConfigurations());
+		while (Configuration* cfg = configIterator.iterate())
+		{
+			// First, check that the EnergyStable module data exists
+			if (cfg->moduleData().contains("EnergyStable"))
+			{
+				
+				bool stable = GenericListHelper<bool>::retrieve(cfg->moduleData(), "EnergyStable", "");
+				if (!stable)
+				{
+					Messenger::print("TestModule: Energy for Configuration '%s' is not yet stable. No potential refinement will be performed this iteration.\n", cfg->name());
+					anyFailed = true;
+				}
+			}
+			else
+			{
+				Messenger::error("No energy stability information found in Configuration '%s' - check your setup.\n", cfg->name());
+				return false;
+			}
+		}
+		if (anyFailed) return true;
+	}
+
+	/*
+	 * Get calculated S(Q), broadening function (which we will 'invert' for the backtransform) and density of the source Configuration(s)
+	 */
 	bool found;
-	PartialSet& weightedSQ = GenericListHelper<PartialSet>::retrieve(duq.processingModuleData(), "WeightedSQ", partialsModuleName.get(), PartialSet(), &found);
+	PartialSet& unweightedSQ = GenericListHelper<PartialSet>::retrieve(duq.processingModuleData(), "UnweightedSQ", partialsModule->uniqueName(), PartialSet(), &found);
 	if (!found)
 	{
-		Messenger::error("Couldn't locate 'WeightedSQ' data in PartialsModule '%s'.\n", partialsModuleName.get());
+		Messenger::error("Couldn't locate 'UnweightedSQ' data in PartialsModule '%s'.\n", partialsModule->uniqueName());
+		return false;
+	}
+
+	BroadeningFunction broadening = GenericListHelper<BroadeningFunction>::retrieve(duq.processingModuleData(), "Broadening", partialsModule->uniqueName(), BroadeningFunction::unity(), &found);
+	if (!found) Messenger::print("TestModule: No 'Broadening' specified in PartialsModule '%s', so no un-broadening will be performed.\n", partialsModule->uniqueName());
+	broadening.setInverted(true);
+
+	double rho = GenericListHelper<double>::retrieve(duq.processingModuleData(), "Density", partialsModule->uniqueName(), 0.0, &found);
+	if (!found)
+	{
+		Messenger::error("Couldn't locate 'Density' data in PartialsModule '%s'.\n", partialsModule->uniqueName());
 		return false;
 	}
 
@@ -123,12 +166,55 @@ bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 		int m = n;
 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
 		{
-			// Copy partial between these AtomTypes in the ScatteringMatrix
-			XYData partial = scatteringMatrix.partial(at1, at2);
-			partial.addInterpolated(weightedSQ.partial(n, m), -1.0);
+			// Grab difference partial
+			XYData& partial = differences.ref(n, m);
+
+			// Copy our partial S(Q) generated from the experimental datasets
+			partial = scatteringMatrix.partial(at1, at2);
+
+			// Subtract the simulated unweighted S(Q) from the difference partial
+			partial.addInterpolated(unweightedSQ.partial(n, m), -1.0);
+
+			// Perform some judicious smoothing on the data
+			partial.medianFilter(5);
 			partial.save("sub.sq");
-// 			partial.transformAndUnbroadenSQ(0.0213, 0.05, 0.01, 30.0, 0.0, 0.0);
+
+			// Do the inverse FT
+			partial.broadenedSineFT(1.0 / (2 * PI * rho), 0.05, 0.01, 30.0, broadening, true, XYData::HannWindow);
 			partial.save("transformed.gr");
+		}
+	}
+
+	/*
+	 * Generate a correction to the potential
+	 */
+	const double maxInt = 0.25;
+	double weight;
+	n = 0;
+	for (AtomType* at1 = duq.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++n)
+	{
+		int m = n;
+		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
+		{
+			// Grab difference partial, now back-transformed into a difference g(r)
+			XYData& diffgr = differences.ref(n, m);
+
+			// Process the addition a little?
+			// TODO
+
+			// Decide on the weight of the difference we will apply
+			double absInt = diffgr.absIntegral();
+			weight = absInt > maxInt ? -maxInt / absInt : -absInt;
+			printf("ABSInt = %f, weight = %f\n", absInt, weight);
+
+			// Grab and modify pair potential
+			PairPotential* pp = duq.pairPotential(at1, at2);
+			if (!pp)
+			{
+				Messenger::error("Failed to find PairPotential for AtomTypes '%s' and '%s'.\n", at1->name(), at2->name());
+				return false;
+			}
+			pp->adjustUAdditional(diffgr, weight);
 		}
 	}
 

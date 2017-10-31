@@ -66,11 +66,20 @@ bool TestModule::hasPostProcessing()
 // Modules upon which this Module depends to have run first
 const char* TestModule::dependentModules()
 {
-	return "Partials";
+	// If the 'OnlyWhenStable' keyword is 'true', we require the Energy module
+	if (keywords_.asBool("OnlyWhenStable")) return "Partials,Energy";
+	else return "Partials";
 }
 
 // Set up supplied dependent module (only if it has been auto-added)
 bool TestModule::setUpDependentModule(Module* depMod)
 {
+	if (depMod->name() == "Energy")
+	{
+		// Must add all Configuration targets in the associated Partials Module
+		Module* partialsModule = dependentModule("Partials");
+		if (!partialsModule) return false;
+		depMod->copyTargetConfigurations(partialsModule);
+	}
 	return true;
 }

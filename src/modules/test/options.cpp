@@ -27,7 +27,8 @@
 // Set up keywords for Module
 void TestModule::setUpKeywords()
 {
-	keywords_.add(new CharStringModuleKeyword("<Undefined>"), "Partials", "Partials Module from which to get simulated partial data");
+// 	keywords_.add(new CharStringModuleKeyword("<Undefined>"), "Partials", "Partials Module from which to get simulated partial data");
+	keywords_.add(new BoolModuleKeyword(true), "OnlyWhenStable", "Assesses the energy of the Configurations contributing to the Partials, refining the potential only when all energies are stable");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
