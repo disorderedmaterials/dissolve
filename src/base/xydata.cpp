@@ -610,7 +610,8 @@ void XYData::medianFilter(int length)
 // Convolute this data with the supplied data
 bool XYData::convolute(XYData& data)
 {
-	//
+	Messenger::error("Point-wise convolution of XYData sets is not yet implemented.\n");
+	return false;
 }
 
 // Convolute this data with the supplied data, by products
