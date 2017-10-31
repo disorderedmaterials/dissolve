@@ -157,7 +157,7 @@ bool XYData::fourierTransformReal(bool forwardTransform, XYData::WindowFunction 
 }
 
 // Perform Fourier sine transform of current distribution function, over range specified, and with specified broadening function (in omege space) and window applied (if requested)
-bool XYData::broadenedSineFT(double normFactor, double wMin, double wStep, double wMax, const BroadeningFunction& broadening, bool deconvolute, XYData::WindowFunction wf)
+bool XYData::broadenedSineFT(double normFactor, double wMin, double wStep, double wMax, const BroadeningFunction& broadening, bool unbroaden, XYData::WindowFunction wf)
 {
 	/*
 	 * Perform sine Fourier transform of current data. Function has no notion of forward or backwards transforms - normalisation and broadening functions must
@@ -304,7 +304,7 @@ bool XYData::broadenedSineFT(double normFactor, double wMin, double wStep, doubl
 				windowPos = double(m) / double(nX-1);
 
 				// Calculate broadening
-				broaden = (deconvolute ? 1.0 / broadening.yFT(x_[m], omega) : broadening.yFT(x_[m], omega));
+				broaden = (unbroaden ? 1.0 / broadening.yFT(x_[m], omega) : broadening.yFT(x_[m], omega));
 
 				ft += sin(x_[m]*omega) * x_[m] * broaden * window(wf, windowPos) * y_[m] * deltaX;
 			}
