@@ -378,11 +378,11 @@ class Configuration : public ListItem<Configuration>
 
 	public:
 	// Add Module (or an instance of it) to the Configuration
-	Module* addModule(Module* masterInstance, bool autoAddDependents);
+	Module* addModule(Module* masterInstance);
 	// Return number of Modules associated to this Configuration
 	int nModules() const;
 	// Return list of Modules associated to this Configuration
-	RefList<Module,bool>& modules();
+	ModuleList& modules();
 	// Return list of variables set by Modules
 	GenericList& moduleData();
 

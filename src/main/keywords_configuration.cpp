@@ -153,7 +153,7 @@ bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
 				}
 
 				// Try to add this module (or an instance of it) to the current Configuration
-				module = cfg->addModule(masterInstance, duq->autoAddDependentModules());
+				module = cfg->addModule(masterInstance);
 				if (module)
 				{
 					// Add our pointer to the Module's list of associated Configurations
@@ -193,8 +193,8 @@ bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
 				module->setConfigurationLocal(true);
 				if (!ModuleBlock::parse(parser, duq, module, cfg->moduleData(), true)) error = true;
 
-				// Now finished parsing the Module block, so must update target Samples and Configurations in any auto-added Modules
-				module->updateDependentTargets();
+				// Now finished parsing the Module block, so must update targets and auto-add Modules if necessary
+				if (!module->updateDependentTargets(cfg->modules(), duq->autoAddDependentModules(), cfg->moduleData())) error = true;
 				break;
 			case (ConfigurationBlock::MultiplierKeyword):
 				cfg->setMultiplier(parser.argd(1));

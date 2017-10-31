@@ -47,9 +47,9 @@ class ModuleList
 
 	public:
 	// Associate Module to list
-	Module* addModule(Module* module, GenericList& moduleData, bool autoAddDependents = false, RefListItem<Module, bool>* addBeforeThis = NULL);
+	Module* addModule(Module* module, GenericList& moduleData, Module* addBeforeThis = 0);
 	// Find associated Module by name
-	Module* findModule(const char* name);
+	Module* findModule(const char* name) const;
 	// Return number of Modules in the list
 	int nModules() const;
 	// Return Modules associated to list

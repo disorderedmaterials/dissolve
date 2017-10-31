@@ -32,6 +32,7 @@ class DUQ;
 class Configuration;
 class ProcessPool;
 class Data;
+class ModuleList;
 
 // Module
 class Module : public ListItem<Module>
@@ -98,7 +99,7 @@ class Module : public ListItem<Module>
 	// Set up supplied dependent module (only if it has been auto-added)
 	virtual bool setUpDependentModule(Module* depMod) = 0;
 	// Update targets for any auto-added dependent Modules with those of this Module
-	void updateDependentTargets();
+	bool updateDependentTargets(ModuleList& currentModuleList, bool autoAddDependents, GenericList& currentModuleData);
 
 
 	/*

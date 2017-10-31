@@ -507,9 +507,9 @@ Vec3<int> Configuration::braggMultiplicity()
  */
 
 // Add Module (or an instance of it) to the Configuration
-Module* Configuration::addModule(Module* masterInstance, bool autoAddDependents)
+Module* Configuration::addModule(Module* masterInstance)
 {
-	return modules_.addModule(masterInstance, moduleData_, autoAddDependents);
+	return modules_.addModule(masterInstance, moduleData_);
 }
 
 // Return number of Modules associated to this Configuration
@@ -519,9 +519,9 @@ int Configuration::nModules() const
 }
 
 // Return list of Modules associated to this Configuration
-RefList<Module,bool>& Configuration::modules()
+ModuleList& Configuration::modules()
 {
-	return modules_.modules();
+	return modules_;
 }
 
 // Return list of data variables set by Modules

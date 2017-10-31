@@ -154,7 +154,7 @@ bool DUQ::setUpSimulation()
 	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
 	{
 		// Loop over Modules, checking for those that have pre- or post-processing steps
-		RefListIterator<Module,bool> moduleIterator(cfg->modules());
+		RefListIterator<Module,bool> moduleIterator(cfg->modules().modules());
 		while (Module* module = moduleIterator.iterate())
 		{
 			// Pre-Processing

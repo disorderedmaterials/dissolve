@@ -43,7 +43,7 @@ ModuleList::~ModuleList()
  */
 
 // Add module to list
-Module* ModuleList::addModule(Module* module, GenericList& moduleData, bool autoAddDependents, RefListItem<Module, bool>* addBeforeThis)
+Module* ModuleList::addModule(Module* module, GenericList& moduleData, Module* addBeforeThis)
 {
 	Module* moduleToAdd = NULL;
 
@@ -68,52 +68,24 @@ Module* ModuleList::addModule(Module* module, GenericList& moduleData, bool auto
 
 	// Add the module pointer to the list
 	RefListItem<Module, bool>* newModuleItem;
-	if (addBeforeThis) newModuleItem = modules_.addBefore(addBeforeThis, moduleToAdd);
-	else newModuleItem = modules_.add(moduleToAdd);
-
-	// Check dependencies of the new Module - loop over dependent Module names
-	LineParser moduleParser;
-	moduleParser.getArgsDelim(LineParser::Defaults, module->dependentModules());
-	for (int n=0; n<moduleParser.nArgs(); ++n)
+	if (addBeforeThis)
 	{
-		// First, make sure this is an actual Module name
-		Module* dependentModule = findMasterInstance(moduleParser.argc(n));
-		if (!dependentModule)
+		// Find the specified Module in the list
+		RefListItem<Module,bool>* ri = modules_.contains(module);
+		if (!ri)
 		{
-			Messenger::error("Module lists a dependent module '%s', but this Module doesn't exist.\n", moduleParser.argc(n));
+			Messenger::error("ModuleList doesn't contain the Module pointer given as 'addBeforeThis'.\n");
 			return NULL;
 		}
-
-		// Find the named dependentModule in the current list
-		Module* existingModule = findModule(dependentModule->name());
-		if (existingModule)
-		{
-			moduleToAdd->addDependentModule(existingModule, false);
-			Messenger::print("--> Added dependent Module '%s' to Module '%s'.\n", existingModule->uniqueName(), moduleToAdd->uniqueName());
-		}
-		else
-		{
-			// No Module exists in the Configuration already - add it automatically?
-			if (autoAddDependents)
-			{
-				Messenger::warn("Auto-adding the Module '%s', since the Module '%s' depends on it.\nDefault parameters will be used.\nFor better control, add the Module by hand to the input file.\n", dependentModule->name(), moduleToAdd->name());
-				Module* autoAddedModule = addModule(dependentModule, moduleData, autoAddDependents, newModuleItem);
-				if (!autoAddedModule) return NULL;
-				moduleToAdd->addDependentModule(autoAddedModule, true);
-			}
-			else
-			{
-				Messenger::error("The Module '%s' requires the Module '%s' to run prior to it, but the '%s' Module has not been associated to the Configuration.\n", module->name(), dependentModule->name(), dependentModule->name());
-				return NULL;
-			}
-		}
+		else newModuleItem = modules_.addBefore(ri, moduleToAdd);
 	}
+	else newModuleItem = modules_.add(moduleToAdd);
 
 	return moduleToAdd;
 }
 
 // Find associated module by name
-Module* ModuleList::findModule(const char* name)
+Module* ModuleList::findModule(const char* name) const
 {
 	RefListIterator<Module,bool> moduleIterator(modules_);
 	while (Module* module = moduleIterator.iterate()) if (DUQSys::sameString(module->name(),name)) return module;

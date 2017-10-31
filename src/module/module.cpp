@@ -94,8 +94,46 @@ Module* Module::dependentModule(const char* name)
 }
 
 // Update targets for any auto-added dependent Modules with those of this Module
-void Module::updateDependentTargets()
+bool Module::updateDependentTargets(ModuleList& currentModuleList, bool autoAddDependents, GenericList& currentModuleData)
 {
+	// Check dependencies of the Module - loop over dependent Module names
+	LineParser moduleParser;
+	moduleParser.getArgsDelim(LineParser::Defaults, dependentModules());
+	for (int n=0; n<moduleParser.nArgs(); ++n)
+	{
+		// First, make sure this is an actual Module name
+		Module* dependentModule = currentModuleList.findMasterInstance(moduleParser.argc(n));
+		if (!dependentModule)
+		{
+			Messenger::error("Module lists a dependent module '%s', but this Module doesn't exist.\n", moduleParser.argc(n));
+			return false;
+		}
+
+		// Find the named dependentModule in the current list
+		Module* existingModule = currentModuleList.findModule(dependentModule->name());
+		if (existingModule)
+		{
+			addDependentModule(existingModule, false);
+			Messenger::print("--> Added dependent Module '%s' to Module '%s'.\n", existingModule->uniqueName(), uniqueName());
+		}
+		else
+		{
+			// No Module exists in the Configuration already - add it automatically?
+			if (autoAddDependents)
+			{
+				Messenger::warn("Auto-adding the Module '%s', since the Module '%s' depends on it.\nDefault parameters will be used.\nFor better control, add the Module by hand to the input file.\n", dependentModule->name(), name());
+				Module* autoAddedModule = currentModuleList.addModule(dependentModule, currentModuleData, this);
+				if (!autoAddedModule) return false;
+				addDependentModule(autoAddedModule, true);
+			}
+			else
+			{
+				Messenger::error("The Module '%s' requires the Module '%s' to run prior to it, but the '%s' Module is not present in the current setup.\n", name(), dependentModule->name(), dependentModule->name());
+				return false;
+			}
+		}
+	}
+
 	RefListIterator<Module,bool> iterator(dependentModules_);
 	while (Module* module = iterator.iterate())
 	{
@@ -112,8 +150,10 @@ void Module::updateDependentTargets()
 		setUpDependentModule(module);
 
 		// Also may need to update dependent targets of this Module...
-		module->updateDependentTargets();
+		if (!module->updateDependentTargets(currentModuleList, autoAddDependents, currentModuleData)) return false;
 	}
+
+	return true;
 }
 
 /*

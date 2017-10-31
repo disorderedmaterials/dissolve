@@ -146,7 +146,7 @@ bool DUQ::loadInput(const char* filename)
 				}
 
 				// Try to add this module (or an instance of it) to the main processing Module list
-				module = processingModules_.addModule(masterInstance, processingModuleData_, autoAddDependentModules_);
+				module = processingModules_.addModule(masterInstance, processingModuleData_);
 				if (!module)
 				{
 					Messenger::error("Failed to add Module '%s' as main processing task.\n", parser.argc(1));
@@ -177,8 +177,8 @@ bool DUQ::loadInput(const char* filename)
 				module->setConfigurationLocal(false);
 				if (!ModuleBlock::parse(parser, this, module, processingModuleData_, false)) error = true;
 
-				// Now finished parsing the Module block, so must update targets in any auto-added Modules
-				module->updateDependentTargets();
+				// Now finished parsing the Module block, so must update targets and auto-add Modules if necessary
+				if (!module->updateDependentTargets(processingModules_, autoAddDependentModules_, processingModuleData_)) error = true;
 				break;
 			case (InputBlocks::PairPotentialsBlock):
 				if (!PairPotentialsBlock::parse(parser, this)) error = true;
@@ -348,7 +348,7 @@ bool DUQ::saveInput(const char* filename)
 		// Modules
 		parser.writeLineF("\n  # Modules\n");
 		if (cfg->nModules() == 0) parser.writeLineF("  # -- None\n");
-		RefListIterator<Module,bool> moduleIterator(cfg->modules());
+		RefListIterator<Module,bool> moduleIterator(cfg->modules().modules());
 		while (Module* module = moduleIterator.iterate())
 		{
 			parser.writeLineF("  %s  %s  '%s'\n", ConfigurationBlock::keyword(ConfigurationBlock::ModuleKeyword), module->name(), module->uniqueName());
@@ -557,7 +557,7 @@ bool DUQ::saveRestart(const char* filename)
 	// Configuration Module Data
 	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
 	{
-		RefListIterator<Module,bool> configModuleIterator(cfg->modules());
+		RefListIterator<Module,bool> configModuleIterator(cfg->modules().modules());
 		while (Module* module = configModuleIterator.iterate())
 		{
 			// For each Module, print all available data in the list (unless it is flagged not to)
