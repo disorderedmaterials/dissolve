@@ -111,7 +111,7 @@ PairPotential* DUQ::pairPotential(int n)
 }
 
 // Return whether specified PairPotential is defined
-PairPotential* DUQ::hasPairPotential(AtomType* at1, AtomType* at2) const
+PairPotential* DUQ::pairPotential(AtomType* at1, AtomType* at2) const
 {
 	for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next)
 	{

@@ -117,7 +117,7 @@ bool PairPotentialsBlock::parse(LineParser& parser, DUQ* duq)
 					error = true;
 					break;
 				}
-				pot = duq->hasPairPotential(at1, at2);
+				pot = duq->pairPotential(at1, at2);
 				if (pot) Messenger::warn("Overwriting previous PairPotential parameters for interaction between '%s' and '%s'...\n", parser.argc(2), parser.argc(3));
 				else
 				{
@@ -153,7 +153,7 @@ bool PairPotentialsBlock::parse(LineParser& parser, DUQ* duq)
 				{
 					for (at2 = at1; at2 != NULL; at2 = at2->next)
 					{
-						pot = duq->hasPairPotential(at1, at2);
+						pot = duq->pairPotential(at1, at2);
 						if (pot)
 						{
 							Messenger::print("PairPotential already exists for interaction between '%s' and '%s'...\n", at1->name(), at2->name());

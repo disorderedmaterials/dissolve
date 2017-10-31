@@ -124,7 +124,7 @@ bool DUQ::setUpSimulation()
 	{
 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next)
 		{
-			PairPotential* pot = hasPairPotential(at1, at2);
+			PairPotential* pot = pairPotential(at1, at2);
 			if (pot == NULL)
 			{
 				Messenger::error("A PairPotential between AtomTypes '%s' and '%s' is required, but has not been defined.\n", at1->name(), at2->name());
