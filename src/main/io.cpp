@@ -1,6 +1,6 @@
 /*
-	*** dUQ I/O - Input File
-	*** src/main/io_input.cpp
+	*** dUQ I/O
+	*** src/main/io.cpp
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
