@@ -329,10 +329,11 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 				double thresholdValue = fabs(stabilityThreshold*yBar);
 				stable = fabs(grad) < thresholdValue;
 
-				// Set variable in Configuration and print output
-				GenericListHelper<bool>::realise(cfg->moduleData(), "EnergyStable", "", GenericItem::InRestartFileFlag) = stable;
 				Messenger::print("Energy: Gradient of last %i points is %e kJ/mol/step (absolute threshold value is %e, stable = %s).\n", stabilityWindow, grad, thresholdValue, DUQSys::btoa(stable));
 			}
+
+			// Set variable in Configuration
+			GenericListHelper<bool>::realise(cfg->moduleData(), "EnergyStable", "", GenericItem::InRestartFileFlag) = stable;
 
 			// If writing to a file, append it here
 			if (saveData)
