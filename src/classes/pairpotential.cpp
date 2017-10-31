@@ -618,6 +618,15 @@ void PairPotential::resetUAdditional()
 	calculateDUFull();
 }
 
+// Adjust additional potential, and recalculate UFull and dUFull
+void PairPotential::adjustUAdditional(XYData& u, double factor)
+{
+	uAdditional_.addInterpolated(u, factor);
+
+	calculateUFull();
+	calculateDUFull();
+}
+
 /*
  * File I/O
  */
