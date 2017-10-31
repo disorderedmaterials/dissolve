@@ -316,6 +316,9 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		unweightedgr.reweightPartials(1.0 / totalWeight);
 		if (saveData) if (!MPIRunMaster(procPool, unweightedgr.save())) return false;
 
+		// Store the blended density of our partials
+		GenericListHelper<double>::realise(duq.processingModuleData(), "Density", uniqueName_) = density;
+
 		// Test unweighted g(r)?
 		if (testMode)
 		{
