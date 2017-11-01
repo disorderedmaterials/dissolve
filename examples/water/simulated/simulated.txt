@@ -23,8 +23,10 @@ Configuration  'Bulk'
   Multiplier  1000
   SpeciesInfo 'Water'  1.0
 
-  UseOutputAsInput
+  # UseOutputAsInput
 
+  Module Energy
+  EndModule
   Module MolShake
   EndModule
 EndConfiguration
@@ -32,7 +34,7 @@ EndConfiguration
 # Structure Factors
 Module Partials 'H2O'
   StructureFactor  on
-  QDepBroadening 0.02
+  QBroadening  QDependentGaussian  0.02
   Configuration  'Bulk'
   Isotopologue  'Bulk'  'Water'  'Natural'  1.0
   Save  on
@@ -40,7 +42,7 @@ EndModule
 
 Module Partials 'HDO'
   StructureFactor  on
-  QDepBroadening 0.02
+  QBroadening  QDependentGaussian  0.02
   Configuration  'Bulk'
   Isotopologue  'Bulk'  'Water'  'Deuteriated'  0.5
   Isotopologue  'Bulk'  'Water'  'Natural'  0.5
@@ -49,7 +51,7 @@ EndModule
 
 Module Partials 'D2O'
   StructureFactor  on
-  QDepBroadening 0.02
+  QBroadening  QDependentGaussian  0.02
   Configuration  'Bulk'
   Isotopologue  'Bulk'  'Water'  'Deuteriated'  1.0
   Save  on
@@ -66,5 +68,6 @@ PairPotentials
 EndPairPotentials
 
 Simulation
-  MaxIterations 10
+  MaxIterations  5
+  WriteIterationData  Off
 EndSimulation

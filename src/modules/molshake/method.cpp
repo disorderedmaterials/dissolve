@@ -47,7 +47,7 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 	/*
 	 * Perform a Molecule shake
 	 * 
-	 * This is a parallel routine, with processes operating in groups.
+	 * This is a parallel routine, with processes operating as one pool.
 	 */
 
 	// Check for zero Configuration targets
@@ -105,8 +105,8 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		for (int m = 0; m < cfg->nMolecules(); ++m)
 		{
 			/*
-			* Calculation Begins
-			*/
+			 * Calculation Begins
+			 */
 
 			// Get Molecule pointer
 			Molecule* mol = cfg->molecule(m);

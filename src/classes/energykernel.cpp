@@ -621,7 +621,28 @@ double EnergyKernel::energy(const Grain* grain, bool excludeIgtJ, ProcessPool::L
 // Return PairPotential energy of Molecule with world
 double EnergyKernel::energy(const Molecule* mol, ProcessPool::LoopContext loopContext)
 {
-	
+	Atom* ii;
+	Cell* cellI;
+	double totalEnergy = 0.0;
+
+	for (int i = 0; i<mol->nAtoms(); ++i)
+	{
+		ii = mol->atom(i);
+		cellI = ii->cell();
+
+		// This Atom with its own Cell
+		totalEnergy += energy(ii, cellI, KernelFlags::ExcludeIGEJFlag, loopContext);
+
+		// Cell neighbours not requiring minimum image
+		Cell** neighbours = cellI->cellNeighbours();
+		for (int n=0; n<cellI->nCellNeighbours(); ++n) totalEnergy += energy(ii, neighbours[n], KernelFlags::ExcludeIGEJFlag, loopContext);
+
+		// Cell neighbours requiring minimum image
+		Cell** mimNeighbours = cellI->mimCellNeighbours();
+		for (int n=0; n<cellI->nMimCellNeighbours(); ++n) totalEnergy += energy(ii, mimNeighbours[n], KernelFlags::ApplyMinimumImageFlag | KernelFlags::ExcludeIGEJFlag, loopContext);
+	}
+
+	return totalEnergy;
 }
 
 // Return molecular correction energy related to intramolecular terms involving supplied atom
