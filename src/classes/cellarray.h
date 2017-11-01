@@ -23,6 +23,7 @@
 #define DUQ_CELLARRAY_H
 
 #include "math/matrix3.h"
+#include "templates/list.h"
 
 // Forward Declarations
 class Box;
@@ -86,26 +87,6 @@ class CellArray
 	bool useMim(Cell* a, Cell* b) const;
 	// Return if any Atoms in the supplied Cells are within the range supplied
 	bool withinRange(Cell* a, Cell* b, double distance);
-
-
-	/*
-	 * Distribution
-	 */
-	private:
-	// Cell modified/completed/calculated flag
-	bool* cellFlag_;
-	// Counter for distributed Cells
-	int nCellsDistributed_;
-	// Last Cell distributed
-	int lastCellDistributed_;
-
-	public:
-	// Initialise Cells for distribution
-	void initialiseDistribution();
-	// Return next available Cell for calculation
-	int nextAvailableCell(ProcessPool& procPool, bool willBeModified, bool allowRepeats);
-	// Unlock Cell specified, once calculation is complete
-	bool finishedWithCell(ProcessPool& procPool, bool willBeModified, int cellId);
 };
 
 #endif

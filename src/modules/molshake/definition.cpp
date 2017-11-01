@@ -30,7 +30,7 @@ const char* MolShakeModule::name()
 // Return brief description of module
 const char* MolShakeModule::brief()
 {
-	return "Perform molecular Monte Carlo";
+	return "Perform molecular Monte Carlo moves";
 }
 
 // Return instance type for module

@@ -14,6 +14,7 @@ add_library(classes
   braggpeak.cpp
   cell.cpp
   cellarray.cpp
+  celldistributor.cpp
   cellneighbour.cpp
   changedata.cpp
   changestore.cpp
@@ -63,6 +64,7 @@ add_library(classes
   braggpeak.h
   cell.h
   cellarray.h
+  celldistributor.h
   cellneighbour.h
   changedata.h
   changestore.h

@@ -86,97 +86,6 @@ const Vec3< double >& Cell::centre() const
 	return centre_;
 }
 
-// Add lock
-bool Cell::addLock()
-{
-	if (lockCount_ == -1)
-	{
-		Messenger::print("BAD_USAGE - Can't add a lock to a Cell which is being modified (lockCount_ = %i).\n", lockCount_);
-		return false;
-	}
-	++lockCount_;
-	return true;
-}
-
-// Remove lock
-bool Cell::removeLock()
-{
-	if (lockCount_ == -1)
-	{
-		Messenger::print("BAD_USAGE - Can't remove a lock from a Cell which is being modified (lockCount_ = %i).\n", lockCount_);
-		return false;
-	}
-	if (lockCount_ == 0)
-	{
-		Messenger::print("BAD_USAGE - Can't remove a lock from a Cell which is not locked (lockCount_ = %i).\n", lockCount_);
-		return false;
-	}
-	--lockCount_;
-	return true;
-}
-
-// Return lock count
-int Cell::lockCount() const
-{
-	return lockCount_;
-}
-
-// Clear locks
-void Cell::clearLocks()
-{
-	if (lockCount_ != 0) Messenger::print("Warning: Cleared existing locks (%i) from Cell id %i (%i,%i,%i).\n", lockCount_, index_, gridReference_.x, gridReference_.y, gridReference_.z);
-	lockCount_ = 0;
-}
-
-// Check lock possibility
-bool Cell::canLock() const
-{
-	if (lockCount_ != 0) return false;
-	for (int n=0; n<nCellNeighbours_; ++n) if (cellNeighbours_[n]->lockCount() == -1) return false;
-	for (int n=0; n<nMimCellNeighbours_; ++n) if (mimCellNeighbours_[n]->lockCount() == -1) return false;
-	return true;
-}
-
-// Lock self and neighbouring cells
-bool Cell::lock(bool willBeModified)
-{
-	if (lockCount_ != 0)
-	{
-		Messenger::print("BAD_USAGE - Can't lock Cell %i (%i,%i,%i) for modification since lockCount_ != 0 (%i).\n", index_, gridReference_.x, gridReference_.y, gridReference_.z, lockCount_);
-		return false;
-	}
-
-	// Lock surrounding Cells if we are modifying the central one
-	if (willBeModified)
-	{
-		for (int n=0; n<nCellNeighbours_; ++n) cellNeighbours_[n]->addLock();
-		for (int n=0; n<nMimCellNeighbours_; ++n) mimCellNeighbours_[n]->addLock();
-	}
-	lockCount_ = -1;
-
-	return true;
-}
-
-// Unlock self and neighbouring cells
-bool Cell::unlock(bool willBeModified)
-{
-	if (lockCount_ != -1)
-	{
-		Messenger::print("BAD_USAGE - Can't unlock Cell %i (%i,%i,%i) since lockCount_ != -1 (%i).\n", index_, gridReference_.x, gridReference_.y, gridReference_.z, lockCount_);
-		return false;
-	}
-
-	// Unlock surrounding cells if we were modifying the central one
-	if (willBeModified)
-	{
-		for (int n=0; n<nCellNeighbours_; ++n) cellNeighbours_[n]->removeLock();
-		for (int n=0; n<nMimCellNeighbours_; ++n) mimCellNeighbours_[n]->removeLock();
-	}
-	lockCount_ = 0;
-
-	return true;
-}
-
 /*
  * Contents
  */
@@ -282,19 +191,19 @@ void Cell::addCellNeighbours(OrderedPointerList<Cell>& neighbours, OrderedPointe
 }
 
 // Return number of adjacent cell neighbours
-int Cell::nCellNeighbours()
+int Cell::nCellNeighbours() const
 {
 	return nCellNeighbours_;
 }
 
 // Return total number of cell neighbours
-int Cell::nMimCellNeighbours()
+int Cell::nMimCellNeighbours() const
 {
 	return nMimCellNeighbours_;
 }
 
 // Return total number of cell neighbours
-int Cell::nTotalCellNeighbours()
+int Cell::nTotalCellNeighbours() const
 {
 	return nCellNeighbours_ + nMimCellNeighbours_;
 }
@@ -305,10 +214,22 @@ Cell** Cell::cellNeighbours()
 	return cellNeighbours_;
 }
 
+// Return specified cell neighbour
+Cell* Cell::cellNeighbour(int id) const
+{
+	return cellNeighbours_[id];
+}
+
 // Return cell neighbour list requiring mim
 Cell** Cell::mimCellNeighbours()
 {
 	return mimCellNeighbours_;
+}
+
+// Return specified cell neighbour
+Cell* Cell::mimCellNeighbour(int id) const
+{
+	return mimCellNeighbours_[id];
 }
 
 // Return list of all cell neighbours

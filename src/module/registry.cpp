@@ -26,6 +26,7 @@
 #include "modules/forces/forces.h"
 #include "modules/export/export.h"
 #include "modules/md/md.h"
+#include "modules/molshake/molshake.h"
 #include "modules/partials/partials.h"
 #include "modules/test/test.h"
 
@@ -44,6 +45,7 @@ ModuleRegistry::ModuleRegistry()
 	ModuleRegistrar<ForcesModule> forcesRegistrar;
 	ModuleRegistrar<ExportModule> exportRegistrar;
 	ModuleRegistrar<MDModule> mdRegistrar;
+	ModuleRegistrar<MolShakeModule> molShakeRegistrar;
 	ModuleRegistrar<PartialsModule> partailsRegistrar;
 	ModuleRegistrar<TestModule> testRegistrar;
 }

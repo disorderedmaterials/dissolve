@@ -41,8 +41,6 @@ class Cell
 	Cell();
 	// Destructor
 	~Cell();
-	// Special Cell Indices
-	enum SpecialCellIndices { AllCellsComplete = -1, NoCellsAvailable = -2 };
 
 
 	/*
@@ -71,20 +69,6 @@ class Cell
 	void setCentre(Vec3<double> r);
 	// Return real-space cell centre
 	const Vec3<double>& centre() const;
-	// Add lock
-	bool addLock();
-	// Remove lock
-	bool removeLock();
-	// Return lockCount
-	int lockCount() const;
-	// Clear locks
-	void clearLocks();
-	// Check lock possibility
-	bool canLock() const;
-	// Lock self and neighbouring Cells
-	bool lock(bool willBeModified);
-	// Unlock self and neighbouring Cells
-	bool unlock(bool willBeModified);
 
 
 	/*
@@ -120,15 +104,19 @@ class Cell
 	// Add Cell neighbours
 	void addCellNeighbours(OrderedPointerList<Cell>& neighbours, OrderedPointerList<Cell>& mimNeighbours, int allCells);
 	// Return number of normal cell neighbours
-	int nCellNeighbours();
+	int nCellNeighbours() const;
 	// Return number of mim cell neighbours
-	int nMimCellNeighbours();
+	int nMimCellNeighbours() const;
 	// Return total number of cell neighbours
-	int nTotalCellNeighbours();
+	int nTotalCellNeighbours() const;
 	// Return cell neighbour list, not requiring mim
 	Cell** cellNeighbours();
+	// Return specified cell neighbour
+	Cell* cellNeighbour(int id) const;
 	// Return cell neighbour list requiring mim
 	Cell** mimCellNeighbours();
+	// Return specified mim cell neighbour
+	Cell* mimCellNeighbour(int id) const;
 	// Return list of all cell neighbours
 	CellNeighbour* allCellNeighbours();
 };

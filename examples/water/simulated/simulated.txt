@@ -25,7 +25,7 @@ Configuration  'Bulk'
 
   UseOutputAsInput
 
-  Module AtomShake
+  Module MolShake
   EndModule
 EndConfiguration
 

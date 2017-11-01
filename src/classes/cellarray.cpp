@@ -1,6 +1,6 @@
 /*
-	*** Configuration - Periodic Box Functions
-	*** src/classes/configuration_box.cpp
+	*** Cell Array
+	*** src/classes/cellarray.cpp
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -19,17 +19,16 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "classes/configuration.h"
+#include "classes/cellarray.h"
 #include "classes/box.h"
 #include "classes/cell.h"
-#include "classes/grain.h"
-#include "base/processpool.h"
+// #include "classes/grain.h"
+// #include "base/processpool.h"
 
 // Constructor
 CellArray::CellArray()
 {
 	cells_ = NULL;
-	cellFlag_ = NULL;
 	nCells_ = 0;
 }
 
@@ -47,8 +46,6 @@ void CellArray::clear()
 {
 	if (cells_ != NULL) delete[] cells_;
 	cells_ = NULL;
-	if (cellFlag_ != NULL) delete[] cellFlag_;
-	cellFlag_ = NULL;
 	nCells_ = 0;
 }
 
@@ -150,7 +147,6 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 	// Construct Cell arrays
 	clear();
 	nCells_ = divisions_.x*divisions_.y*divisions_.z;
-	cellFlag_ = new bool[nCells_];
 	Messenger::print("--> Constructing array of %i cells...\n", nCells_);
 	cells_ = new Cell[nCells_];
 	Vec3<double> fracCentre_(fractionalCellSize_.x*0.5, 0.0, 0.0);
@@ -435,168 +431,3 @@ bool CellArray::withinRange(Cell* a, Cell* b, double distance)
 	return (v.magnitude() <= distance);
 }
 
-/*
- * Cell Distribution
- */
-
-// Initialise Cells for distribution
-void CellArray::initialiseDistribution()
-{
-	nCellsDistributed_ = 0;
-	lastCellDistributed_ = -1;
-
-	for (int n=0; n<nCells_; ++n)
-	{
-		// Clear usage flag, and remove any remaining locks
-		while (cells_[n].lockCount() > 0) cells_[n].removeLock();
-		cellFlag_[n] = false;
-	}
-}
-
-// Return next available Cell for calculation
-int CellArray::nextAvailableCell(ProcessPool& procPool, bool willBeModified, bool allowRepeats)
-{
-	/*
-	 * All processes should call here together. The local master process will distribute the index of the next available Cell to each process.
-	 * If all Cells have been distributed once then Cell::AllCellsComplete is returned to all processes. Otherwise, the next available 'unused' Cell index
-	 * is returned. If the routine runs out of available cells during a distribution cycle, then what is returned is determined by the value of
-	 * 'allowRepeats'. If 'allowRepeats' is true then Cells which have already been sent once will be sent again, in order for all processes to be
-	 * doing useful work at all times. If 'allowRepeats' is false, then repeat calculations on Cells are not allowed, and NoCellsAvailable is returned
-	 * instead. The latter is relevant when property calculation is being performed, and each Cell must be subjected to calculation once and once only.
-	 * 
-	 * Any routine which employs Cell distribution in this way implicitly operates in parallel with process groups.
-	 */
-#ifdef PARALLEL
-	int proc, group,m, cellId, rootCellId = -1;
-	int* procList;
-	if (procPool.isMaster())
-	{
-		Messenger::printVerbose("NextAvailableCell: nCellsDistributed_ = %i\n", nCellsDistributed_);
-		// All cells already distributed?
-		if (nCellsDistributed_ == nCells_)
-		{
-			for (int n=1; n<procPool.nProcesses(); ++n) if (!procPool.send(Cell::AllCellsComplete, n)) printf("MPI error in CellArray::nextAvailableCell() when all cells were distributed.\n");
-			return Cell::AllCellsComplete;
-		}
-		
-		// There are still Cells which haven't been worked on yet, so find and distribute them.
-		for (group = 0; group<procPool.nProcessGroups(); ++group)
-		{
-			Messenger::printVerbose("Finding next Cell for process group %i\n", group);
-
-			// Loop from 1 to nCells_
-			for (m=1; m<=nCells_; ++m)
-			{
-				// Get (wrapped) Cell index and check availability
-				cellId = (lastCellDistributed_+m)%nCells_;
-				if ((cells_[cellId].lockCount() != 0) || (willBeModified && !cells_[cellId].canLock()))
-				{
-					// Reset cellId and continue
-					cellId = Cell::NoCellsAvailable;
-					continue;
-				}
-
-				// If we have not distributed all cells...
-				if (nCellsDistributed_ < nCells_)
-				{
-					// ... then we want one we've not yet used, and which isn't currently locked by another process
-					if (cellFlag_[cellId]) continue;
-					
-					Messenger::printVerbose("Cell id %i will be sent to process group %i.\n", cellId, group);
-					++nCellsDistributed_;
-					lastCellDistributed_ = cellId;
-					break;
-				}
-				else if (allowRepeats)
-				{
-					// ... otherwise if 'allowRepeats' we're allowed to send an unlocked one which has already been used
-					Messenger::printVerbose("Cell id %i will be sent to process group %i (although it has already been used).\n", cellId, group);
-					break;
-				}
-				
-				// Reset id if we get here...
-				cellId = Cell::NoCellsAvailable;
-			}
-			
-			// Did we find a suitable Cell?
-			if (cellId == Cell::NoCellsAvailable)
-			{
-				Messenger::printVerbose("Warning: Couldn't find valid Cell to send to process group %i. Probably an odd number of Cells and an even number of process groups.\n", group);
-			}
-			else
-			{
-				// Lock the Cell and set its flag
-				cells_[cellId].lock(willBeModified);
-				cellFlag_[cellId] = true;
-			}
-			
-			// Broadcast Cell index to all processes in current ProcessGroup
-			for (proc=0; proc<procPool.nProcessesInGroup(group); ++proc)
-			{
-				int poolRank = procPool.processGroup(group)->poolRank(proc);
-				// If this world rank is our own, no need to send it - just store it for later return below
-				if (poolRank == procPool.poolRank()) rootCellId = cellId;
-				else if (!procPool.send(cellId, poolRank)) printf("MPI error in CellArray::nextAvailableCell() sending next cell to pool rank %i.\n", poolRank);
-			}
-		}
-
-		// All done - return our own cellId
-		return rootCellId;
-	}
-	else
-	{
-		// Slaves just receive the next Cell index
-		if (!procPool.receive(cellId, 0)) printf("MPI error in CellArray::nextAvailableCell() when all cells were distributed.\n");
-		Messenger::printVerbose("Slave with rank %i (world rank %i) received Cell id %i\n", procPool.poolRank(), procPool.worldRank(), cellId);
-		return cellId;
-	}
-#else
-	// If we have distributed all Cells already, return -1
-	if (nCellsDistributed_ == nCells_) return Cell::AllCellsComplete;
-
-	++lastCellDistributed_;
-	++nCellsDistributed_;
-	cells_[lastCellDistributed_].lock(willBeModified);
-	cellFlag_[lastCellDistributed_] = true;
-
-	return lastCellDistributed_;
-#endif
-}
-
-// Unlock Cell specified, once calculation is complete
-bool CellArray::finishedWithCell(ProcessPool& procPool, bool willBeModified, int cellId)
-{
-	/*
-	 * All processes should call this routine once they have finished performing manipulations of the Cell they were given from
-	 * CellArray::nextAvailableCell(), passing the cellId as the single argument.
-	 */
-#ifdef PARALLEL
-	if (procPool.isMaster())
-	{
-		// Receive all used cellId's from process group leaders
-		for (int group=0; group<procPool.nProcessGroups(); ++group)
-		{
-			// If this is *not* the masters group, receive data from the slave process leader
-			if (group != procPool.groupIndex())
-			{
-				if (!procPool.receive(cellId, procPool.processGroup(group)->poolRank(0))) Messenger::print("MPI error in CellArray::finishedWithCell() receiving from process with rank %i.\n", group);
-			}
-			if (cellId >= 0) cells_[cellId].unlock(willBeModified);
-		}
-	}
-	else
-	{
-		// Slaves just send their id to the master, provided they are process group leader
-		if (procPool.groupLeader())
-		{
-			if (!procPool.send(cellId, 0)) Messenger::print("MPI error in CellArray::finishedWithCell().\n");
-		}
-	}
-	
-	// Collect all processes in the pool together
-	if (!procPool.wait(ProcessPool::Pool)) return false;
-#else
-	if (cellId >= 0) cells_[cellId].unlock(willBeModified);
-#endif
-	return true;
-}

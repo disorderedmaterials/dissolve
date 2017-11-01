@@ -23,6 +23,7 @@
 #include "main/duq.h"
 #include "classes/box.h"
 #include "classes/cell.h"
+#include "classes/celldistributor.h"
 #include "classes/changestore.h"
 #include "classes/configuration.h"
 #include "classes/energykernel.h"
@@ -83,10 +84,9 @@ bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		Messenger::print("AtomShake: Performing %i shake(s) per Atom\n", nShakesPerAtom);
 		Messenger::print("AtomShake: Translation step is %f Angstroms, target acceptance rate is %f.\n", stepSize, targetAcceptanceRate);
 
-		// Initialise the Cell distributor
-		const bool willBeModified = true, allowRepeats = false;
+		// Initialise a CellDistributor
 		CellArray& cellArray = cfg->cells();
-		cellArray.initialiseDistribution();
+		CellDistributor distributor(cellArray, true, false);
 
 		// Create a local ChangeStore and EnergyKernel
 		ChangeStore changeStore(procPool);
@@ -106,14 +106,14 @@ bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
 
 		Timer timer;
 		procPool.resetAccumulatedTime();
-		while (cellId = cellArray.nextAvailableCell(procPool, willBeModified, allowRepeats), cellId != Cell::AllCellsComplete)
+		while (cellId = distributor.nextAvailableCell(procPool), cellId != CellDistributor::AllComplete)
 		{
 			// Check for valid cell
-			if (cellId == Cell::NoCellsAvailable)
+			if (cellId == CellDistributor::NoneAvailable)
 			{
 				// No valid cell, but still need to enter into change distribution with other processes
 				changeStore.distributeAndApply(cfg);
-				cellArray.finishedWithCell(procPool, willBeModified, cellId);
+				distributor.finishedWithCell(procPool, cellId);
 				continue;
 			}
 			cell = cellArray.cell(cellId);
@@ -182,7 +182,7 @@ bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
 			changeStore.reset();
 
 			// Must unlock the Cell when we are done with it!
-			cellArray.finishedWithCell(procPool, willBeModified, cellId);
+			distributor.finishedWithCell(procPool, cellId);
 		}
 		timer.stop();
 
