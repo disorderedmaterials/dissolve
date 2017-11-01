@@ -95,97 +95,78 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		int cellId, shake, n, nbr;
 		int nTries = 0, nAccepted = 0;
 		bool accept;
-		double currentEnergy, intraEnergy, newEnergy, newIntraEnergy, delta, totalDelta = 0.0;
-		Cell* cell;
-		Vec3<double> centre, rDelta;
-		Atom** cellAtoms;
+		double currentEnergy, newEnergy, delta, totalDelta = 0.0;
+		Vec3<double> rDelta;
+		Matrix3 transform;
+		const Box* box = cfg->box();
 
 		Timer timer;
 		procPool.resetAccumulatedTime();
-// 		while (cellId = cellArray.nextAvailableCell(procPool, willBeModified, allowRepeats), cellId != Cell::AllCellsComplete)
-// 		{
-// 			// Check for valid cell
-// 			if (cellId == Cell::NoCellsAvailable)
-// 			{
-// 				// No valid cell, but still need to enter into change distribution with other processes
-// 				changeStore.distributeAndApply(cfg);
-// 				cellArray.finishedWithCell(procPool, willBeModified, cellId);
-// 				continue;
-// 			}
-// 			cell = cellArray.cell(cellId);
-// 			Messenger::printVerbose("MolShake: Cell %i now the target on process %s, containing %i Atoms interacting with %i neighbour cells.\n", cellId, procPool.processInfo(), cell->nAtoms(), cell->nTotalCellNeighbours());
-// 
-// 			/*
-// 			* Calculation Begins
-// 			*/
-// 
-// 			// Set current atom targets in ChangeStore (entire cell contents)
-// 			changeStore.add(cell);
-// 
-// 			// Loop over atoms in this cell
-// 			cellAtoms = cell->atoms().objects();
-// 			for (n = 0; n < cell->atoms().nItems(); ++n)
-// 			{
-// 				// Grab Atom pointer
-// 				Atom* i = cellAtoms[n];
-// 
-// 				// Calculate reference energy for atom, including intramolecular terms
-// 				currentEnergy = kernel.energy(i, ProcessPool::OverGroupProcesses);
-// 				intraEnergy = kernel.intraEnergy(i) * termScale;
-// 
-// 				// Loop over number of shakes per atom
-// 				for (shake=0; shake<nShakesPerMolecule; ++shake)
-// 				{
-// 					// Create a random translation vector
-// 					rDelta.set(procPool.randomPlusMinusOne()*stepSize, procPool.randomPlusMinusOne()*stepSize, procPool.randomPlusMinusOne()*stepSize);
-// 
-// 					// Translate atom and calculate new energy
-// 					i->translateCoordinates(rDelta);
-// 					newEnergy = kernel.energy(i, ProcessPool::OverGroupProcesses);
-// 					newIntraEnergy = kernel.intraEnergy(i) * termScale;
-// 					
-// 					// Trial the transformed atom position
-// 					delta = (newEnergy + newIntraEnergy) - (currentEnergy + intraEnergy);
-// 	// 				printf("delta = %f\n", delta);
-// 					accept = delta < 0 ? true : (procPool.random() < exp(-delta*rRT));
-// 
-// 					if (accept)
-// 					{
-// 	// 					Messenger::print("Accepts move with delta %f\n", delta);
-// 						// Accept new (current) position of target Atom
-// 						changeStore.updateAtom(n);
-// 						currentEnergy = newEnergy;
-// 						intraEnergy = newIntraEnergy;
-// 						totalDelta += delta;
-// 						++nAccepted;
-// 					}
-// 					else changeStore.revert(n);
-// 					
-// 					++nTries;
-// 				}
-// 
-// 			}
-// 
-// 			// Store modifications to Atom positions ready for broadcast later
-// 			changeStore.storeAndReset();
-// 
-// 			/*
-// 			* Calculation End
-// 			*/
-// 
-// 			// Distribute coordinate changes to all processes
-// 			changeStore.distributeAndApply(cfg);
-// 			changeStore.reset();
-// 
-// 			// Must unlock the Cell when we are done with it!
-// 			cellArray.finishedWithCell(procPool, willBeModified, cellId);
-// 		}
+		for (int m = 0; m < cfg->nMolecules(); ++m)
+		{
+			/*
+			* Calculation Begins
+			*/
+
+			// Get Molecule pointer
+			Molecule* mol = cfg->molecule(m);
+
+			// Set current atom targets in ChangeStore (entire cell contents)
+			changeStore.add(mol);
+
+			// Calculate reference energy for Molecule, including intramolecular terms
+			currentEnergy = kernel.energy(mol, ProcessPool::OverPoolProcesses);
+
+			// Loop over number of shakes per atom
+			for (shake=0; shake<nShakesPerMolecule; ++shake)
+			{
+				// Create a random translation vector and apply it to the Molecule's centre
+				rDelta.set(procPool.randomPlusMinusOne()*translationStepSize, procPool.randomPlusMinusOne()*translationStepSize, procPool.randomPlusMinusOne()*translationStepSize);
+				mol->translateCentre(rDelta);
+
+				// Create a random rotation matrix and apply it to the Molecule
+				transform.createRotationXY(procPool.randomPlusMinusOne()*180.0, procPool.randomPlusMinusOne()*180.0);
+				mol->applyTransform(box, transform);
+				
+				// Calculate new energy
+				newEnergy = kernel.energy(mol, ProcessPool::OverPoolProcesses);
+				
+				// Trial the transformed atom position
+				delta = newEnergy - currentEnergy;
+// 				printf("delta = %f\n", delta);
+				accept = delta < 0 ? true : (procPool.random() < exp(-delta*rRT));
+
+				if (accept)
+				{
+// 					Messenger::print("Accepts move with delta %f\n", delta);
+					// Accept new (current) position of target Atom
+					changeStore.updateAll();
+					currentEnergy = newEnergy;
+					totalDelta += delta;
+					++nAccepted;
+				}
+				else changeStore.revertAll();
+				
+				++nTries;
+			}
+
+			// Store modifications to Atom positions ready for broadcast
+			changeStore.storeAndReset();
+
+			/*
+			* Calculation End
+			*/
+
+			// Distribute coordinate changes to all processes
+			changeStore.distributeAndApply(cfg);
+			changeStore.reset();
+		}
 		timer.stop();
 
 		// Collect statistics from process group leaders
-		if (!procPool.allSum(&nAccepted, 1, ProcessPool::Leaders)) return false;
-		if (!procPool.allSum(&nTries, 1, ProcessPool::Leaders)) return false;
-		if (!procPool.allSum(&totalDelta, 1, ProcessPool::Leaders)) return false;
+// 		if (!procPool.allSum(&nAccepted, 1, ProcessPool::Leaders)) return false;
+// 		if (!procPool.allSum(&nTries, 1, ProcessPool::Leaders)) return false;
+// 		if (!procPool.allSum(&totalDelta, 1, ProcessPool::Leaders)) return false;
 		if (procPool.groupLeader())
 		{
 			double rate = double(nAccepted)/nTries;
@@ -218,118 +199,6 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 
 	return true;
 }
-
-// // Perform a world atom shake
-// bool DUQ::worldMolShake(Configuration& cfg, double cutoffDistance, int nShakes, double targetAcceptanceRate, double stepSize)
-// {
-// 	// Control Parameters
-// 	const double termScale = 1.0;	
-// 	if (cutoffDistance < 0.0) cutoffDistance = pairPotentialRange_;
-// 	const double rRT = 1.0/(.008314472*cfg->temperature());
-// 	
-// 	// Print argument/parameter summary
-// 	Messenger::print("WorldMolShake: Cutoff distance is %f\n", cutoffDistance);
-// 	Messenger::print("WorldMolShake: Translation step is %f Angstroms, target acceptance rate is %f.\n", stepSize, targetAcceptanceRate);
-// 
-// 	// Initialise the Cell distributor
-// 	const bool willBeModified = true, allowRepeats = false;
-// 	cfg->initialiseCellDistribution();
-// 
-// 	// Create a local ChangeStore and EnergyKernel
-// 	ChangeStore changeStore;
-// 	EnergyKernel kernel(cfg, potentialMap_, cutoffDistance);
-// 
-// 	// Initialise the random number buffer
-// 	procPool.initialiseRandomBuffer(ProcessPool::Pool);
-// 
-// 	// Enter calculation loop until no more Cells are available
-// 	int cellId, shake, n, i;
-// 	int nTries = 0, nAccepted = 0;
-// 	bool accept;
-// 	double currentEnergy, newEnergy, delta, totalDelta = 0.0;
-// 	Cell* cell;
-// 	Vec3<double> rDelta;
-// 	int nAtoms = cfg->nAtoms();
-// 	Atom* atoms = cfg->atoms();
-// 
-// 	Timer timer;
-// 	procPool.resetAccumulatedTime();
-// 
-// 	// Add entire cell contents to a ChangeStore
-// 	for (n=0; n<nAtoms; ++n) changeStore.add(&atoms[n]);
-// 
-// 	// Calculate reference energy
-// 	currentEnergy = interatomicEnergy(cfg) + intramolecularEnergy(cfg);
-// 
-// 	// Loop over nShakes
-// 	for (int n=0; n<nShakes; ++n)
-// 	{
-// 		// Randomly displace each atom in the system
-// 		for (i=0; i<nAtoms; ++i)
-// 		{
-// 			// Create a random translation vector
-// 			rDelta.set(procPool.randomPlusMinusOne()*stepSize, procPool.randomPlusMinusOne()*stepSize, procPool.randomPlusMinusOne()*stepSize);
-// 
-// 			// Translate atom
-// 			atoms[i].translateCoordinates(rDelta);
-// 		}
-// 
-// 		// Update neighbour lists
-// 		cfg->recreateCellAtomNeighbourLists(pairPotentialRange_);
-// 
-// 		// Calculate new energy
-// 		newEnergy = interatomicEnergy(cfg) + intramolecularEnergy(cfg);
-// 
-// 		delta = newEnergy - currentEnergy;
-// 		printf("delta = %f\n", delta);
-// 		accept = delta < 0 ? true : (procPool.random() < exp(-delta*rRT));
-// 
-// 		if (accept)
-// 		{
-// // 			Messenger::print("Accepts move with delta %f\n", delta);
-// 			// Accept new (current) positions of atoms
-// 			changeStore.updateAll();
-// 			currentEnergy = newEnergy;
-// 			totalDelta += delta;
-// 			++nAccepted;
-// 		}
-// 		else
-// 		{
-// 			changeStore.revertAll();
-// 			cfg->recreateCellAtomNeighbourLists(pairPotentialRange_);
-// 		}
-// 	}
-// 
-// 	// Collect statistics from process group leaders
-// 	if (!procPool.allSum(&nAccepted, 1, ProcessPool::Leaders)) return false;
-// 	if (!procPool.allSum(&nTries, 1, ProcessPool::Leaders)) return false;
-// 	if (!procPool.allSum(&totalDelta, 1, ProcessPool::Leaders)) return false;
-// 	if (procPool.groupLeader())
-// 	{
-// 		double rate = double(nAccepted)/nTries;
-// 
-// 		Messenger::print("WorldMolShake: Overall acceptance rate was %4.2f% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*rate, nAccepted, nTries, timer.totalTimeString(), procPool.accumulatedTimeString());
-// 		Messenger::print("WorldMolShake: Total energy delta was %10.4e kJ/mol.\n", totalDelta);
-// 
-// 		// Adjust step size
-// 		stepSize *= rate/targetAcceptanceRate;
-// // 		if (stepSize_ < 0.05) stepSize_ = 0.05;
-// // 		else if (stepSize_ > maxTranslationStep_) stepSize_ = maxTranslationStep_;
-// // 		if (rotationStep_ < 3.0) rotationStep_ = 3.0;
-// 	}
-// 
-// 	// Store updated parameter values
-// 	if (!procPool.broadcast(&stepSize, 1, 0, ProcessPool::Group)) return false;
-// // 	stepSizeParam->setValue(stepSize); TODO
-// 	Messenger::print("WorldMolShake: Updated translation step is %f Angstroms.\n", stepSize);
-// 	
-// 	// Increment configuration changeCount_
-// 	if (nAccepted > 0) cfg->incrementCoordinateIndex();
-// 
-// 	// Update total energy
-// 	cfg->registerEnergyChange(totalDelta);
-// 	cfg->accumulateEnergyChange();
-// }
 
 // Execute post-processing stage
 bool MolShakeModule::postProcess(DUQ& duq, ProcessPool& procPool)

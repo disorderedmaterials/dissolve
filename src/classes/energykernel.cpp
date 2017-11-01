@@ -617,6 +617,12 @@ double EnergyKernel::energy(const Grain* grain, bool excludeIgtJ, ProcessPool::L
 	return totalEnergy;
 }
 
+// Return PairPotential energy of Molecule with world
+double EnergyKernel::energy(const Molecule* mol, ProcessPool::LoopContext loopContext)
+{
+	
+}
+
 // Return molecular correction energy related to intramolecular terms involving supplied atom
 double EnergyKernel::correct(const Atom* i)
 {

@@ -101,6 +101,8 @@ class EnergyKernel
 	double energy(const Atom* i, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
 	// Return PairPotential energy of grain with world
 	double energy(const Grain* grain, bool excludeIgtJ, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
+	// Return PairPotential energy of Molecule with world
+	double energy(const Molecule* mol, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
 	// Return molecular correction energy related to intramolecular terms involving supplied atom
 	double correct(const Atom* i);
 
@@ -117,14 +119,6 @@ class EnergyKernel
 	double energy(const Torsion* t);
 	// Return intramolecular energy for the supplied Atom
 	double intraEnergy(const Atom* i);
-
-
-	/*
-	 * Molecule Terms
-	 */
-	public:
-	// Return total Molecule energy
-	double energy(Molecule* mol, ProcessPool::LoopContext loopContext = ProcessPool::Individual, bool halfPP = false, double ppFactorIntra = 1.0, double termFactor = 1.0);
 
 
 	/*
