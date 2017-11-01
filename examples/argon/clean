@@ -12,3 +12,5 @@ rm -f potential*txt
 # RDF / S(Q)
 rm -f *.rdf *.sq
 
+# Other files
+rm -rf *.energy.txt
