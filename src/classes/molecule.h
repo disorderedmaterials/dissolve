@@ -120,8 +120,10 @@ class Molecule : public DynamicArrayObject<Molecule>
 	void applyTransform(const Box* box, const Matrix3& transform);
 	// Transform selected Atoms
 	void applyTransform(const Box* box, const Matrix3& transform, const Vec3<double>& origin, int nTargetAtoms, Atom** targetAtoms);
-	// Set centre of geometry of molecule
+	// Set centre of geometry
 	void setCentre(const Box* box, const Vec3<double> newCentre);
+	// Translate centre of geometry
+	void translateCentre(const Vec3<double> delta);
 	// Randomise geometry utilising stored Bond terms
 	void randomiseGeometry(const Box* box);
 };

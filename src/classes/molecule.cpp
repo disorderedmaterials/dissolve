@@ -254,6 +254,12 @@ void Molecule::setCentre(const Box* box, const Vec3<double> newCentre)
 	}
 }
 
+// Translate centre of geometry
+void Molecule::translateCentre(const Vec3<double> delta)
+{
+	for (int n=0; n<nAtoms(); ++n) atom(n)->translateCoordinates(delta);
+}
+
 // Randomise geometry
 void Molecule::randomiseGeometry(const Box* box)
 {
