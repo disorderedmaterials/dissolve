@@ -588,7 +588,7 @@ double EnergyKernel::energy(const Grain* grain, bool excludeIgtJ, ProcessPool::L
 		cellI = ii->cell();
 
 		// This Atom with its own Cell
-		double totalEnergy = energy(ii, cellI, KernelFlags::ExcludeIGEJFlag, loopContext);
+		totalEnergy = energy(ii, cellI, KernelFlags::ExcludeIGEJFlag, loopContext);
 
 		// Cell neighbours not requiring minimum image
 		Cell** neighbours = cellI->cellNeighbours();
@@ -602,8 +602,9 @@ double EnergyKernel::energy(const Grain* grain, bool excludeIgtJ, ProcessPool::L
 	{
 		ii = grain->atom(i);
 		cellI = ii->cell();
+
 		// This Atom with its own Cell
-		double totalEnergy = energy(ii, cellI, KernelFlags::ExcludeSelfFlag, loopContext);
+		totalEnergy = energy(ii, cellI, KernelFlags::ExcludeSelfFlag, loopContext);
 
 		// Cell neighbours not requiring minimum image
 		Cell** neighbours = cellI->cellNeighbours();
