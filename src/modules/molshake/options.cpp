@@ -25,11 +25,11 @@
 // Set up options for Module
 void MolShakeModule::setUpKeywords()
 {
-	keywords_.add(new DoubleModuleKeyword(-1.0), "CutoffDistance", "Interatomic cutoff distance to employ");
-	keywords_.add(new DoubleModuleKeyword(1.0), "RotationStepSize", "Step size for rotational component of Monte Carlo move", GenericItem::InRestartFileFlag);
-	keywords_.add(new IntegerModuleKeyword(1), "ShakesPerMolecule", "Number of shakes per Molecule");
-	keywords_.add(new DoubleModuleKeyword(0.33), "TargetAcceptanceRate", "Target acceptance rate for Monte Carlo moves");
-	keywords_.add(new DoubleModuleKeyword(0.05), "TranslationStepSize", "Step size for translational component of Monte Carlo move", GenericItem::InRestartFileFlag);
+	keywords_.add(new DoubleModuleKeyword(-1.0), "CutoffDistance", "Interatomic cutoff distance to employ", "<rcut>");
+	keywords_.add(new DoubleModuleKeyword(1.0), "RotationStepSize", "Step size for rotational component of Monte Carlo move (degrees)", "<stepsize>", GenericItem::InRestartFileFlag);
+	keywords_.add(new IntegerModuleKeyword(1), "ShakesPerMolecule", "Number of shakes per Molecule", "<n>");
+	keywords_.add(new DoubleModuleKeyword(0.33), "TargetAcceptanceRate", "Target acceptance rate for Monte Carlo moves", "<rate (0.0 - 1.0)>");
+	keywords_.add(new DoubleModuleKeyword(0.05), "TranslationStepSize", "Step size for translational component of Monte Carlo move (Angstroms)", "<stepsize>", GenericItem::InRestartFileFlag);
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
