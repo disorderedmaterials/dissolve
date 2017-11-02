@@ -89,16 +89,25 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		EnergyKernel kernel(procPool, cfg, duq.potentialMap(), cutoffDistance);
 
 		// Initialise the random number buffer
-		procPool.initialiseRandomBuffer(ProcessPool::Group);
+		procPool.initialiseRandomBuffer(ProcessPool::Pool);
 
 		// Enter calculation loop until no more Cells are available
 		int cellId, shake, n, nbr;
-		int nTries = 0, nAccepted = 0;
+		int nRotationAttempts = 0, nTranslationAttempts = 0, nRotationsAccepted = 0, nTranslationsAccepted = 0;
 		bool accept;
 		double currentEnergy, newEnergy, delta, totalDelta = 0.0;
 		Vec3<double> rDelta;
 		Matrix3 transform;
 		const Box* box = cfg->box();
+
+		/*
+		 * In order to be able to adjust translation and rotational steps independently, we will perform 80% of moves including both a translation
+		 * a rotation, 10% using only translations, and 10% using only rotations.
+		 */
+
+		// Set initial random offset for our counter determining whether to perform R+T, R, or T.
+		int count = procPool.random()*10;
+		bool rotate, translate;
 
 		Timer timer;
 		procPool.resetAccumulatedTime();
@@ -120,14 +129,37 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 			// Loop over number of shakes per atom
 			for (shake=0; shake<nShakesPerMolecule; ++shake)
 			{
+				// Determine what move(s) will we attempt
+				if (count == 0)
+				{
+					rotate = true;
+					translate = false;
+				}
+				else if (count == 1)
+				{
+					rotate = false;
+					translate = true;
+				}
+				else
+				{
+					rotate = true;
+					translate = true;
+				}
+
 				// Create a random translation vector and apply it to the Molecule's centre
-				rDelta.set(procPool.randomPlusMinusOne()*translationStepSize, procPool.randomPlusMinusOne()*translationStepSize, procPool.randomPlusMinusOne()*translationStepSize);
-				mol->translateCentre(rDelta);
+				if (translate)
+				{
+					rDelta.set(procPool.randomPlusMinusOne()*translationStepSize, procPool.randomPlusMinusOne()*translationStepSize, procPool.randomPlusMinusOne()*translationStepSize);
+					mol->translateCentre(rDelta);
+				}
 
 				// Create a random rotation matrix and apply it to the Molecule
-				transform.createRotationXY(procPool.randomPlusMinusOne()*180.0, procPool.randomPlusMinusOne()*180.0);
-				mol->applyTransform(box, transform);
-				
+				if (rotate)
+				{
+					transform.createRotationXY(procPool.randomPlusMinusOne()*rotationStepSize, procPool.randomPlusMinusOne()*rotationStepSize);
+					mol->applyTransform(box, transform);
+				}
+
 				// Calculate new energy
 				newEnergy = kernel.energy(mol, ProcessPool::OverPoolProcesses);
 				
@@ -143,11 +175,18 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 					changeStore.updateAll();
 					currentEnergy = newEnergy;
 					totalDelta += delta;
-					++nAccepted;
+					if (rotate) ++nRotationsAccepted;
+					if (translate) ++nTranslationsAccepted;
 				}
 				else changeStore.revertAll();
-				
-				++nTries;
+
+				// Increase attempt counters
+				if (rotate) ++nRotationAttempts;
+				if (translate) ++nTranslationAttempts;
+
+				// Increase and fold move type counter
+				++count;
+				if (count > 9) count = 0;
 			}
 
 			// Store modifications to Atom positions ready for broadcast
@@ -163,34 +202,24 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		}
 		timer.stop();
 
-		// Collect statistics from process group leaders
-// 		if (!procPool.allSum(&nAccepted, 1, ProcessPool::Leaders)) return false;
-// 		if (!procPool.allSum(&nTries, 1, ProcessPool::Leaders)) return false;
-// 		if (!procPool.allSum(&totalDelta, 1, ProcessPool::Leaders)) return false;
-		if (procPool.groupLeader())
-		{
-			double rate = double(nAccepted)/nTries;
+		Messenger::print("MolShake: Total energy delta was %10.4e kJ/mol.\n", totalDelta);
 
-			Messenger::print("MolShake: Overall acceptance rate was %4.2f% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*rate, nAccepted, nTries, timer.totalTimeString(), procPool.accumulatedTimeString());
-			Messenger::print("MolShake: Total energy delta was %10.4e kJ/mol.\n", totalDelta);
+		// Adjust translation step size - if no moves were accepted, just decrease the current stepSize by a constant factor
+		double rate = double(nTranslationsAccepted)/nTranslationAttempts;
+		Messenger::print("MolShake: Overall translation acceptance rate was %4.2f% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*rate, nTranslationsAccepted, nTranslationAttempts, timer.totalTimeString(), procPool.accumulatedTimeString());
+		translationStepSize *= (nTranslationsAccepted == 0) ? 0.8 : rate/targetAcceptanceRate;
 
-			// Adjust step size - if nAccepted was zero, just decrease the current stepSize by a constant factor
-			translationStepSize *= (nAccepted == 0) ? 0.8 : rate/targetAcceptanceRate;
-
-			// Clamp step size
-	// 		if (stepSize > 0.5) stepSize = 0.5;
-	// 		else if (stepSize_ > maxTranslationStep_) stepSize_ = maxTranslationStep_;
-	// 		if (rotationStep_ < 3.0) rotationStep_ = 3.0;
-		}
+		rate = double(nRotationsAccepted)/nRotationAttempts;
+		Messenger::print("MolShake: Overall rotation acceptance rate was %4.2f% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*rate, nRotationsAccepted, nRotationAttempts, timer.totalTimeString(), procPool.accumulatedTimeString());
+		rotationStepSize *= (nRotationsAccepted == 0) ? 0.8 : rate/targetAcceptanceRate;
 
 		// Store updated parameter values
-		if (!procPool.broadcast(&translationStepSize, 1, 0, ProcessPool::Group)) return false;
 		GenericListHelper<double>::realise(cfg->moduleData(), "TranslationStepSize", uniqueName(), GenericItem::InRestartFileFlag) = translationStepSize;
 		GenericListHelper<double>::realise(cfg->moduleData(), "RotationStepSize", uniqueName(), GenericItem::InRestartFileFlag) = rotationStepSize;
 		Messenger::print("MolShake: Updated translation step is %f Angstroms, rotation step is %f degrees.\n", translationStepSize, rotationStepSize);
 		
 		// Increment configuration changeCount_
-		if (nAccepted > 0) cfg->incrementCoordinateIndex();
+		if ((nRotationsAccepted > 0) || (nTranslationsAccepted > 0)) cfg->incrementCoordinateIndex();
 
 		// Update total energy
 		cfg->registerEnergyChange(totalDelta);
