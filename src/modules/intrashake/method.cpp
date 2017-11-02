@@ -116,15 +116,17 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 			// Set current atom targets in ChangeStore (entire cell contents)
 			changeStore.add(mol);
 
-			// Calculate reference energy for Molecule, including intramolecular terms
+			// Calculate reference pairpotential energy for Molecule
 			ppEnergy = kernel.energy(mol, ProcessPool::OverPoolProcesses);
-			intraEnergy = kernel.intraEnergy(mol);
 
 			// Loop over defined Bonds
 			if (adjustBonds) for (int n=0; n<mol->nBonds(); ++n)
 			{
 				// Grab Bond pointer
 				Bond* b = mol->bond(n);
+
+				// Store current energy of this intramolecular term
+				intraEnergy = kernel.energy(b);
 
 				// Select random terminus
 				terminus = procPool.random() > 0.5 ? 1 : 0;
@@ -138,12 +140,11 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 					vji *= procPool.randomPlusMinusOne() * bondStepSize;
 
 					// Adjust the Atoms attached to the selected terminus
-					printf("NATTACHED %i %i\n", b->nAttached(0), b->nAttached(1));
 					mol->translate(vji, b->nAttached(terminus), b->attached(terminus));
 
 					// Calculate new energy
 					newPPEnergy = kernel.energy(mol, ProcessPool::OverPoolProcesses);
-					newIntraEnergy = kernel.intraEnergy(mol);
+					newIntraEnergy = kernel.energy(b);
 					
 					// Trial the transformed Molecule
 					delta = (newPPEnergy + newIntraEnergy) - (ppEnergy + intraEnergy);
@@ -156,6 +157,7 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 						ppEnergy = newPPEnergy;
 						intraEnergy = newIntraEnergy;
 						totalDelta += delta;
+						++nBondAccepted;
 					}
 					else changeStore.revertAll();
 
@@ -163,11 +165,14 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 				}
 			}
 
-			// Loop over defined Bonds
+			// Loop over defined Angles
 			if (adjustAngles) for (int n=0; n<mol->nAngles(); ++n)
 			{
 				// Grab Angle pointer
 				Angle* a = mol->angle(n);
+
+				// Store current energy of this intramolecular term
+				intraEnergy = kernel.energy(a);
 
 				// Select random terminus
 				terminus = procPool.random() > 0.5 ? 1 : 0;
@@ -177,18 +182,19 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 				{
 					// Get bond vectors and calculate cross product to get rotation axis
 					vji = box->minimumVector(a->j(), a->i());
-					vjk = box->minimumVector(a->k(), a->k());
+					vjk = box->minimumVector(a->j(), a->k());
 					v = vji * vjk;
 
 					// Create suitable transformation matrix
-					transform.createRotationAxis(v.x, v.y, v.z, procPool.randomPlusMinusOne()*angleStepSize, true);
+// 					transform.createRotationAxis(v.x, v.y, v.z, procPool.randomPlusMinusOne()*angleStepSize, true);
+					transform.createRotationAxis(v.x, v.y, v.z, 1.0, true);
 
 					// Adjust the Atoms attached to the selected terminus
 					mol->transform(transform, a->j()->r(), a->nAttached(terminus), a->attached(terminus));
 
 					// Calculate new energy
 					newPPEnergy = kernel.energy(mol, ProcessPool::OverPoolProcesses);
-					newIntraEnergy = kernel.intraEnergy(mol);
+					newIntraEnergy = kernel.energy(a);
 					
 					// Trial the transformed Molecule
 					delta = (newPPEnergy + newIntraEnergy) - (ppEnergy + intraEnergy);
@@ -201,10 +207,11 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 						ppEnergy = newPPEnergy;
 						intraEnergy = newIntraEnergy;
 						totalDelta += delta;
+						++nAngleAccepted;
 					}
 					else changeStore.revertAll();
 
-					++nBondAttempts;
+					++nAngleAttempts;
 				}
 			}
 
@@ -263,7 +270,7 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		cfg->accumulateEnergyChange();
 	}
 
-	return false;
+	return true;
 }
 
 // Execute post-processing stage
