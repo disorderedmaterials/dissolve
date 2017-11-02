@@ -91,9 +91,7 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		// Initialise the random number buffer
 		procPool.initialiseRandomBuffer(ProcessPool::Pool);
 
-		// Enter calculation loop until no more Cells are available
-		int cellId, shake, n, nbr;
-		int nRotationAttempts = 0, nTranslationAttempts = 0, nRotationsAccepted = 0, nTranslationsAccepted = 0;
+		int shake, nRotationAttempts = 0, nTranslationAttempts = 0, nRotationsAccepted = 0, nTranslationsAccepted = 0;
 		bool accept;
 		double currentEnergy, newEnergy, delta, totalDelta = 0.0;
 		Vec3<double> rDelta;
@@ -204,14 +202,16 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 
 		Messenger::print("MolShake: Total energy delta was %10.4e kJ/mol.\n", totalDelta);
 
-		// Adjust translation step size - if no moves were accepted, just decrease the current stepSize by a constant factor
-		double rate = double(nTranslationsAccepted)/nTranslationAttempts;
-		Messenger::print("MolShake: Overall translation acceptance rate was %4.2f% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*rate, nTranslationsAccepted, nTranslationAttempts, timer.totalTimeString(), procPool.accumulatedTimeString());
-		translationStepSize *= (nTranslationsAccepted == 0) ? 0.8 : rate/targetAcceptanceRate;
+		// Calculate and print acceptance rates
+		double transRate = double(nTranslationsAccepted)/nTranslationAttempts;
+		double rotRate = double(nRotationsAccepted)/nRotationAttempts;
 
-		rate = double(nRotationsAccepted)/nRotationAttempts;
-		Messenger::print("MolShake: Overall rotation acceptance rate was %4.2f% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*rate, nRotationsAccepted, nRotationAttempts, timer.totalTimeString(), procPool.accumulatedTimeString());
-		rotationStepSize *= (nRotationsAccepted == 0) ? 0.8 : rate/targetAcceptanceRate;
+		Messenger::print("MolShake: Overall translation acceptance rate was %4.2f% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*transRate, nTranslationsAccepted, nTranslationAttempts, timer.totalTimeString(), procPool.accumulatedTimeString());
+		Messenger::print("MolShake: Overall rotation acceptance rate was %4.2f% (%i of %i attempted moves)\n", 100.0*rotRate, nRotationsAccepted, nRotationAttempts);
+
+		// Adjust translation step size - if no moves were accepted, just decrease the current stepSize by a constant factor
+		translationStepSize *= (nTranslationsAccepted == 0) ? 0.8 : transRate /targetAcceptanceRate;
+		rotationStepSize *= (nRotationsAccepted == 0) ? 0.8 : rotRate /targetAcceptanceRate;
 
 		// Store updated parameter values
 		GenericListHelper<double>::realise(cfg->moduleData(), "TranslationStepSize", uniqueName(), GenericItem::InRestartFileFlag) = translationStepSize;
