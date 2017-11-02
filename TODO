@@ -16,6 +16,9 @@ o By default, add 'Natural' isotopologue to all Species?
 Ideas / Notes / Weird Algorithm Suggestions
 -------------------------------------------
 
+** Monte Carlo Energy Check SpeedUp
+It is likely that the most severe energy penalties / gains arising from MC moves will be from 'local' atoms - i.e. those in the same cell(s) as the target atom(s) or those in the 26 which immediately surround it. A cutoff energy could be provided to various EnergyKernel routines which, if exceeded by the time the immediate cell neighbours have been considered, could return early.
+
 ** Long-Range RDF / PairPotential Calculation
 Partition each Cell up in to further subdivisions and calculate density of each atomtype within that space. Beyond the defined pairpotential cutoff, RDFs could be somehow constructed using this average density instead of specific atom information, reducing the number of checks that need to be performed.
 
