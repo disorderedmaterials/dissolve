@@ -272,7 +272,7 @@ bool Configuration::setUp(ProcessPool& procPool, double pairPotentialRange, int 
 				{
 					fr.set(procPool.random(), procPool.random(), procPool.random());
 					newCentre = box_->fracToReal(fr);
-					mol->setCentre(box_, newCentre);
+					mol->setCentreOfGeometry(box_, newCentre);
 				}
 			
 				// Generate and apply a random rotation matrix

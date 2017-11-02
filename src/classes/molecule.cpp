@@ -199,6 +199,20 @@ Torsion* Molecule::torsion(int n) const
  * Manipulations
  */
 
+// Set centre of geometry of molecule
+void Molecule::setCentreOfGeometry(const Box* box, const Vec3<double> newCentre)
+{
+	// Calculate Molecule centre of geometry
+	Vec3<double> newR, cog = centreOfGeometry(box);
+
+	// Apply transform
+	for (int n=0; n<nAtoms(); ++n)
+	{
+		newR = box->minimumVector(atom(n), cog) + newCentre;
+		atom(n)->setCoordinates(newR);
+	}
+}
+
 // Calculate and return centre of geometry
 Vec3<double> Molecule::centreOfGeometry(const Box* box) const
 {
@@ -211,7 +225,7 @@ Vec3<double> Molecule::centreOfGeometry(const Box* box) const
 	return (cog / nAtoms());
 }
 
-// Transform molecule with supplied matrix
+// Transform molecule with supplied matrix, using centre of geometry as the origin
 void Molecule::applyTransform(const Box* box, const Matrix3& transform)
 {
 	// Calculate Molecule centre of geometry
@@ -225,7 +239,7 @@ void Molecule::applyTransform(const Box* box, const Matrix3& transform)
 	}
 }
 
-// Transform selected atoms with supplied matrix
+// Transform selected atoms with supplied matrix, around specified origin
 void Molecule::applyTransform(const Box* box, const Matrix3& transform, const Vec3<double>& origin, int nTargetAtoms, Atom** targetAtoms)
 {
 	// Loop over supplied Atoms
@@ -239,24 +253,16 @@ void Molecule::applyTransform(const Box* box, const Matrix3& transform, const Ve
 	}
 }
 
-// Set centre of geometry of molecule
-void Molecule::setCentre(const Box* box, const Vec3<double> newCentre)
-{
-	// Calculate Molecule centre of geometry
-	Vec3<double> newR, cog = centreOfGeometry(box);
-
-	// Apply transform
-	for (int n=0; n<nAtoms(); ++n)
-	{
-		newR = box->minimumVector(atom(n), cog) + newCentre;
-		atom(n)->setCoordinates(newR);
-	}
-}
-
-// Translate centre of geometry
-void Molecule::translateCentre(const Vec3<double> delta)
+// Translate whole molecule by the delta specified
+void Molecule::translate(const Vec3<double> delta)
 {
 	for (int n=0; n<nAtoms(); ++n) atom(n)->translateCoordinates(delta);
+}
+
+// Translate specified atoms by the delta specified
+void Molecule::translate(const Vec3<double>& delta, int nTargetAtoms, Atom** targetAtoms)
+{
+	for (int n=0; n<nTargetAtoms; ++n) targetAtoms[n]->translateCoordinates(delta);
 }
 
 // Randomise geometry
