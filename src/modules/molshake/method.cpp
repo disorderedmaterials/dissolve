@@ -148,14 +148,14 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 				if (translate)
 				{
 					rDelta.set(procPool.randomPlusMinusOne()*translationStepSize, procPool.randomPlusMinusOne()*translationStepSize, procPool.randomPlusMinusOne()*translationStepSize);
-					mol->translateCentre(rDelta);
+					mol->translate(rDelta);
 				}
 
 				// Create a random rotation matrix and apply it to the Molecule
 				if (rotate)
 				{
 					transform.createRotationXY(procPool.randomPlusMinusOne()*rotationStepSize, procPool.randomPlusMinusOne()*rotationStepSize);
-					mol->applyTransform(box, transform);
+					mol->transform(box, transform);
 				}
 
 				// Calculate new energy
