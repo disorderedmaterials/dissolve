@@ -29,13 +29,13 @@
 class KernelFlags
 {
 	public:
-	// Flags
+	// Flags controlling Energy and ForceKernel routines. Note that at most, only one Exclude-type flag and the ApplyMinimumImage flag should be or'd together
 	enum Flags
 	{
 		NoFlags = 0,
 		ExcludeSelfFlag = 1,
 		ExcludeIGEJFlag = 2,
-		ExcludeIntraGreaterThan = 4,
+		ExcludeIntraIGEJFlag = 4,
 		ApplyMinimumImageFlag = 8
 	};
 };

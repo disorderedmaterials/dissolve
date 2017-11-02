@@ -424,7 +424,10 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::L
 		// Loop over other Atoms
 		if (flags&KernelFlags::ExcludeSelfFlag) for (j=start; j<nOtherAtoms; j += stride)
 		{
+			// Grab other Atom pointer
 			jj = otherAtoms[j];
+
+			// Check for same atom
 			if (i == jj) continue;
 			
 			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
@@ -441,9 +444,10 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::L
 		}
 		else if (flags&KernelFlags::ExcludeIGEJFlag) for (j=start; j<nOtherAtoms; j += stride)
 		{
+			// Grab other Atom pointer
 			jj = otherAtoms[j];
 
-			// Pointer comparison
+			// Pointer comparison for i >= jj
 			if (i >= jj) continue;
 
 			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
@@ -458,8 +462,29 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::L
 				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(i, jj, sqrt(rSq)) * scale;
 			}
 		}
+		else if (flags&KernelFlags::ExcludeIntraIGEJFlag) for (j=start; j<nOtherAtoms; j += stride)
+		{
+			// Grab other Atom pointer
+			jj = otherAtoms[j];
+
+			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
+			rSq = box_->minimumDistanceSquared(rI, jj->r());
+			if (rSq > cutoffDistanceSquared_) continue;
+
+			// Check for atoms in the same species
+			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(i, jj, sqrt(rSq));
+			else
+			{
+				// Pointer comparison for i >= jj
+				if (i >= jj) continue;
+
+				scale = i->scaling(jj);
+				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(i, jj, sqrt(rSq)) * scale;
+			}
+		}
 		else for (j=start; j<nOtherAtoms; j += stride)
 		{
+			// Grab other Atom pointer
 			jj = otherAtoms[j];
 
 			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
@@ -480,7 +505,10 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::L
 		// Loop over atom neighbours
 		if (flags&KernelFlags::ExcludeSelfFlag) for (j=start; j<nOtherAtoms; j += stride)
 		{
+			// Grab other Atom pointer
 			jj = otherAtoms[j];
+
+			// Check for same atom
 			if (i == jj) continue;
 
 			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
@@ -497,8 +525,10 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::L
 		}
 		else if (flags&KernelFlags::ExcludeIGEJFlag) for (j=start; j<nOtherAtoms; j += stride)
 		{
+			// Grab other Atom pointer
 			jj = otherAtoms[j];
-			// Compare pointers
+
+			// Pointer comparison for i >= jj
 			if (i >= jj) continue;
 
 			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
@@ -513,8 +543,29 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::L
 				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(i, jj, sqrt(rSq)) * scale;
 			}
 		}
+		else if (flags&KernelFlags::ExcludeIntraIGEJFlag) for (j=start; j<nOtherAtoms; j += stride)
+		{
+			// Grab other Atom pointer
+			jj = otherAtoms[j];
+
+			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
+			rSq = (rI - jj->r()).magnitudeSq();
+			if (rSq > cutoffDistanceSquared_) continue;
+
+			// Check for atoms in the same species
+			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(i, jj, sqrt(rSq));
+			else
+			{
+				// Pointer comparison for i >= jj
+				if (i >= jj) continue;
+
+				scale = i->scaling(jj);
+				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(i, jj, sqrt(rSq)) * scale;
+			}
+		}
 		else for (j=start; j<nOtherAtoms; j += stride)
 		{
+			// Grab other Atom pointer
 			jj = otherAtoms[j];
 
 			// Calculate rSquared distance between atoms, and check it against the stored cutoff distance
@@ -631,15 +682,15 @@ double EnergyKernel::energy(const Molecule* mol, ProcessPool::LoopContext loopCo
 		cellI = ii->cell();
 
 		// This Atom with its own Cell
-		totalEnergy += energy(ii, cellI, KernelFlags::ExcludeIGEJFlag, loopContext);
+		totalEnergy += energy(ii, cellI, KernelFlags::ExcludeIntraIGEJFlag, loopContext);
 
 		// Cell neighbours not requiring minimum image
 		Cell** neighbours = cellI->cellNeighbours();
-		for (int n=0; n<cellI->nCellNeighbours(); ++n) totalEnergy += energy(ii, neighbours[n], KernelFlags::ExcludeIGEJFlag, loopContext);
+		for (int n=0; n<cellI->nCellNeighbours(); ++n) totalEnergy += energy(ii, neighbours[n], KernelFlags::ExcludeIntraIGEJFlag, loopContext);
 
 		// Cell neighbours requiring minimum image
 		Cell** mimNeighbours = cellI->mimCellNeighbours();
-		for (int n=0; n<cellI->nMimCellNeighbours(); ++n) totalEnergy += energy(ii, mimNeighbours[n], KernelFlags::ApplyMinimumImageFlag | KernelFlags::ExcludeIGEJFlag, loopContext);
+		for (int n=0; n<cellI->nMimCellNeighbours(); ++n) totalEnergy += energy(ii, mimNeighbours[n], KernelFlags::ApplyMinimumImageFlag | KernelFlags::ExcludeIntraIGEJFlag, loopContext);
 	}
 
 	return totalEnergy;
