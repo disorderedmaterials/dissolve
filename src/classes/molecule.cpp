@@ -248,7 +248,7 @@ void Molecule::updateAttachedAtomLists()
 
 		// Select all Atoms attached to Atom 'i', excluding the Bond as a path
 		selectedAtoms.clear();
-		selectFromAtom(b->i(), selectedAtoms, b);
+		selectFromAtom(b->j(), selectedAtoms, b);
 		b->setAttachedAtoms(1, selectedAtoms);
 	}
 
