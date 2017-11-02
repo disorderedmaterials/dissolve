@@ -194,7 +194,7 @@ Cell* Atom::cell() const
  * Connectivity
  */
 
-// Add reference to specified Bond
+// Add specified Bond to Atom
 void Atom::addBond(Bond* bond)
 {
 	bonds_.add(bond);
@@ -209,7 +209,14 @@ const RefList<Bond,bool>& Atom::bonds() const
 	return bonds_;
 }
 
-// Add reference to specified Angle
+// Return Bond (if it exists) between this Atom and the Atom specified
+Bond* Atom::findBond(Atom* j)
+{
+	for (RefListItem<Bond,bool>* ri = bonds_.first(); ri != NULL; ri = ri->next) if (ri->item->partner(this) == j) return ri->item;
+	return NULL;
+}
+
+// Add specified Angle to Atom
 void Atom::addAngle(Angle* angle)
 {
 	angles_.add(angle);
@@ -226,7 +233,7 @@ const RefList<Angle,bool>& Atom::angles() const
 	return angles_;
 }
 
-// Add reference to specified Torsion
+// Add specified Torsion to Atom
 void Atom::addTorsion(Torsion* torsion, double scaling14)
 {
 	torsions_.add(torsion);

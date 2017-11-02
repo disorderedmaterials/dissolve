@@ -128,15 +128,17 @@ class Atom : public DynamicArrayObject<Atom>
 	OrderedPointerDataList<Atom,double> exclusions_;
 
 	public:
-	// Add reference to specified Bond
+	// Add specified Bond to Atom
 	void addBond(Bond* bond);
 	// Return reference list of Bonds
 	const RefList<Bond,bool>& bonds() const;
-	// Add reference to specified Angle
+	// Return Bond (if it exists) between this Atom and the Atom specified
+	Bond* findBond(Atom* j);
+	// Add specified Angle to Atom
 	void addAngle(Angle* angle);
 	// Return reference list of Angles
 	const RefList<Angle,bool>& angles() const;
-	// Add reference to specified Torsion
+	// Add specified Torsion to Atom
 	void addTorsion(Torsion* torsion, double scaling14);
 	// Return reference list of Torsions
 	const RefList<Torsion,double>& torsions() const;
