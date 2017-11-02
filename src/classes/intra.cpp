@@ -71,32 +71,33 @@ void Intra::deleteAttachedAtomArrays()
 	}
 }
 
-// Create attached Atom array
-void Intra::createAttachedAtomArray(int terminus, int size)
+// Set attached Atoms for the terminus specified
+void Intra::setAttachedAtoms(int terminus, const RefList<Atom,bool>& atoms)
 {
-	// If the current array size is large enough to contain the new one, just empty it
-	if (attached_[terminus] && (size <= arraySize_[terminus]))
+	// Is the current array non-existent or too small to hold the new list?
+	if ((!attached_[terminus]) || (atoms.nItems() > arraySize_[terminus]))
 	{
-// 		nAttached_ = 
+		// Delete existing array if it is there
+		if (attached_[terminus]) delete[] attached_[terminus];
+
+		// Create new array just big enough to hold the number of Atoms in the list
+		arraySize_[terminus] = atoms.nItems();
+		attached_[terminus] = new Atom*[arraySize_[terminus]];
 	}
 
-	if (attached_[terminus] != NULL) delete[] attached_[terminus];
-	attached_[terminus] = NULL;
-	nAttached_[terminus] = size;
+	// Zero the current count of items in the array
+	nAttached_[terminus] = 0;
 
-	if (nAttached_[terminus] != 0)
-	{
-		attached_[terminus] = new Atom*[nAttached_[terminus]];
-		for (int n=0; n<nAttached_[terminus]; ++n) attached_[terminus][n] = NULL;
-	}
+	// Add the Atoms in the list
+	for (RefListItem<Atom,bool>* refAtom = atoms.first(); refAtom != NULL; refAtom = refAtom->next) attached_[terminus][nAttached_[terminus]++] = refAtom->item;
 }
 
-// Set attached Atoms for terminus specified
-void Intra::setAttachedAtoms(int terminus, const RefList<Atom,int>& atoms)
+// Set attached Atoms for terminus specified (single Atom)
+void Intra::setAttachedAtoms(int terminus, Atom* atom)
 {
-	createAttachedAtomArray(terminus, atoms.nItems());
-	int index = 0;
-	for (RefListItem<Atom,int>* refAtom = atoms.first(); refAtom != NULL; refAtom = refAtom->next) attached_[terminus][index++] = refAtom->item;
+	RefList<Atom,bool> atoms;
+	atoms.add(atom);
+	setAttachedAtoms(terminus, atoms);
 }
 
 // Return number of attached Atoms for terminus specified

@@ -68,10 +68,10 @@ class Intra
 	public:
 	// Clear and delete all arrays
 	void deleteAttachedAtomArrays();
-	// Create attached Atom array
-	void createAttachedAtomArray(int terminus, int size);
 	// Set attached Atoms for terminus specified
-	void setAttachedAtoms(int terminus, const RefList<Atom,int>& atoms);
+	void setAttachedAtoms(int terminus, const RefList<Atom,bool>& atoms);
+	// Set attached Atoms for terminus specified (single Atom)
+	void setAttachedAtoms(int terminus, Atom* atom);
 	// Return number of attached Atoms for terminus specified
 	int nAttached(int terminus) const;
 	// Return array of attached Atoms for terminus specified
