@@ -119,9 +119,9 @@ class Molecule : public DynamicArrayObject<Molecule>
 	// Calculate and return centre of geometry
 	Vec3<double> centreOfGeometry(const Box* box) const;
 	// Transform molecule with supplied matrix, using centre of geometry as the origin
-	void applyTransform(const Box* box, const Matrix3& transform);
+	void transform(const Box* box, const Matrix3& transformationMatrix);
 	// Transform selected atoms with supplied matrix, around specified origin
-	void applyTransform(const Box* box, const Matrix3& transform, const Vec3<double>& origin, int nTargetAtoms, Atom** targetAtoms);
+	void transform(const Box* box, const Matrix3& transformationMatrix, const Vec3<double>& origin, int nTargetAtoms, Atom** targetAtoms);
 	// Translate whole molecule by the delta specified
 	void translate(const Vec3<double> delta);
 	// Translate specified atoms by the delta specified

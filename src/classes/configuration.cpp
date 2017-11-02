@@ -279,7 +279,7 @@ bool Configuration::setUp(ProcessPool& procPool, double pairPotentialRange, int 
 				if (spInfo->rotateOnInsertion())
 				{
 					transform.createRotationXY(procPool.randomPlusMinusOne()*180.0, procPool.randomPlusMinusOne()*180.0);
-					mol->applyTransform(box_, transform);
+					mol->transform(box_, transform);
 				}
 
 				// Explore conformation space within the molecule by rotating bonds

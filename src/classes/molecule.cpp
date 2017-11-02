@@ -226,7 +226,7 @@ Vec3<double> Molecule::centreOfGeometry(const Box* box) const
 }
 
 // Transform molecule with supplied matrix, using centre of geometry as the origin
-void Molecule::applyTransform(const Box* box, const Matrix3& transform)
+void Molecule::transform(const Box* box, const Matrix3& transformationMatrix)
 {
 	// Calculate Molecule centre of geometry
 	Vec3<double> newR, cog = centreOfGeometry(box);
@@ -234,13 +234,13 @@ void Molecule::applyTransform(const Box* box, const Matrix3& transform)
 	// Apply transform
 	for (int n=0; n<nAtoms(); ++n)
 	{
-		newR = transform * box->minimumVector(cog, atom(n)->r()) + cog;
+		newR = transformationMatrix * box->minimumVector(cog, atom(n)->r()) + cog;
 		atom(n)->setCoordinates(newR);
 	}
 }
 
 // Transform selected atoms with supplied matrix, around specified origin
-void Molecule::applyTransform(const Box* box, const Matrix3& transform, const Vec3<double>& origin, int nTargetAtoms, Atom** targetAtoms)
+void Molecule::transform(const Box* box, const Matrix3& transformationMatrix, const Vec3<double>& origin, int nTargetAtoms, Atom** targetAtoms)
 {
 	// Loop over supplied Atoms
 	Vec3<double> newR;
@@ -248,7 +248,7 @@ void Molecule::applyTransform(const Box* box, const Matrix3& transform, const Ve
 	for (int n=0; n<nTargetAtoms; ++n)
 	{
 		i = targetAtoms[n];
-		newR = transform * (i->r() - origin) + origin;
+		newR = transformationMatrix * (i->r() - origin) + origin;
 		i->setCoordinates(newR);
 	}
 }
@@ -276,7 +276,7 @@ void Molecule::randomiseGeometry(const Box* box)
 
 	// Use Bond definitions in parent Species
 	int terminus;
-	Matrix3 transform;
+	Matrix3 transformationMatrix;
 	Vec3<double> axis;
 	Atom* localI, *localJ;
 	for (int n=0; n<bonds_.nItems(); ++n)
@@ -306,9 +306,9 @@ void Molecule::randomiseGeometry(const Box* box)
 
 		// Create axis rotation matrix
 		axis = localI->r() - localJ->r();
-		transform.createRotationAxis(axis.x, axis.y, axis.z, DUQMath::random()*360.0, true);
+		transformationMatrix.createRotationAxis(axis.x, axis.y, axis.z, DUQMath::random()*360.0, true);
 
 		// Perform transform
-		applyTransform(box, transform, terminus == 0 ? localI->r() : localJ->r(), b->nAttached(terminus), b->attached(terminus));
+		transform(box, transformationMatrix, terminus == 0 ? localI->r() : localJ->r(), b->nAttached(terminus), b->attached(terminus));
 	}
 }
