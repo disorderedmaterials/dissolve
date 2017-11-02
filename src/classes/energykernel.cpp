@@ -797,3 +797,23 @@ double EnergyKernel::intraEnergy(const Atom* i)
 
 	return intraEnergy;
 }
+
+// Return intramolecular energy for the supplied Molecule
+double EnergyKernel::intraEnergy(const Molecule* mol)
+{
+	// If no Atom is given, return zero
+	if (mol == NULL) return 0.0;
+
+	double intraEnergy = 0.0;
+
+	// Add energy from Bond terms
+	for (int n=0; n<mol->nBonds(); ++n) intraEnergy += energy(mol->bond(n));
+
+	// Add energy from Angle terms
+	for (int n=0; n<mol->nAngles(); ++n) intraEnergy += energy(mol->angle(n));
+
+	// Add energy from Torsion terms
+	for (int n=0; n<mol->nTorsions(); ++n) intraEnergy += energy(mol->torsion(n));
+
+	return intraEnergy;
+}
