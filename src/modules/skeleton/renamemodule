@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Single argument expected - the name of the Module with correct capitalisation
+if [ "$#" -eq "1" ]
+then
+  NAME=$1
+else
+  echo "Usage:  renamemodule <name>"
+  echo "	<name> is the new name of the module with correct capitalisation (e.g. AtomShake, Energy, MD...)"
+  exit 1
+fi
+
+LCASE=`echo $NAME | tr '[:upper:]' '[:lower:]'`
+UCASE=`echo $NAME | tr '[:lower:]' '[:upper:]'`
+
+echo "New Module Name = $NAME"
+echo "Lowercased = $LCASE"
+echo "Uppercased = $UCASE"
+
+echo "Moving main header..."
+mv -v skeleton.h ${LCASE}.h
+
+echo "Changing boilerplate in main header..."
+sed -i "s/SKELETON/${UCASE}/g" ${LCASE}.h
+
+echo "Renaming class..."
+sed -i "s/SkeletonModule/${NAME}Module/g" *.cpp ${LCASE}.h
+
+echo "Adjusting include / header paths..."
+sed -i "s/skeleton/${LCASE}/g" *.cpp ${LCASE}.h
+
+echo "Adjusting makefiles..."
+sed -i "s/skeleton/${LCASE}/g" CMakeLists.txt Makefile.am
+
+echo "Adjusting header text..."
+sed -i "s/Skeleton Module/${NAME} Module/g" *.cpp ${LCASE}.h
