@@ -91,7 +91,7 @@ class Molecule : public DynamicArrayObject<Molecule>
 	// Return Bonds array
 	Bond** bonds();
 	// Return nth Bond pointer
-	Bond* bond(int n);
+	Bond* bond(int n) const;
 	// Add Angle to Molecule
 	void addAngle(Angle* angle);
 	// Return size of Angle array
@@ -99,7 +99,7 @@ class Molecule : public DynamicArrayObject<Molecule>
 	// Return Angles array
 	Angle** angles();
 	// Return nth Angle pointer
-	Angle* angle(int n);
+	Angle* angle(int n) const;
 	// Add Torsion to Molecule
 	void addTorsion(Torsion* torsion);
 	// Return size of Torsion array
@@ -107,7 +107,7 @@ class Molecule : public DynamicArrayObject<Molecule>
 	// Return Torsions array
 	Torsion** torsions();
 	// Return nth Torsion pointer
-	Torsion* torsion(int n);
+	Torsion* torsion(int n) const;
 
 
 	/*

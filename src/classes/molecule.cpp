@@ -136,9 +136,9 @@ Bond** Molecule::bonds()
 }
 
 // Return nth Bond pointer
-Bond* Molecule::bond(int n)
+Bond* Molecule::bond(int n) const
 {
-	return bonds_[n];
+	return bonds_.value(n);
 }
 
 // Add Angle to Molecule
@@ -163,9 +163,9 @@ Angle** Molecule::angles()
 }
 
 // Return nth Angle pointer
-Angle* Molecule::angle(int n)
+Angle* Molecule::angle(int n) const
 {
-	return angles_[n];
+	return angles_.value(n);
 }
 
 // Add Torsion to Molecule
@@ -190,9 +190,9 @@ Torsion** Molecule::torsions()
 }
 
 // Return nth Torsion pointer
-Torsion* Molecule::torsion(int n)
+Torsion* Molecule::torsion(int n) const
 {
-	return torsions_[n];
+	return torsions_.value(n);
 }
 
 /*
