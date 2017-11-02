@@ -240,7 +240,7 @@ void Molecule::transform(const Box* box, const Matrix3& transformationMatrix)
 }
 
 // Transform selected atoms with supplied matrix, around specified origin
-void Molecule::transform(const Box* box, const Matrix3& transformationMatrix, const Vec3<double>& origin, int nTargetAtoms, Atom** targetAtoms)
+void Molecule::transform(const Matrix3& transformationMatrix, const Vec3<double>& origin, int nTargetAtoms, Atom** targetAtoms)
 {
 	// Loop over supplied Atoms
 	Vec3<double> newR;
@@ -265,8 +265,8 @@ void Molecule::translate(const Vec3<double>& delta, int nTargetAtoms, Atom** tar
 	for (int n=0; n<nTargetAtoms; ++n) targetAtoms[n]->translateCoordinates(delta);
 }
 
-// Randomise geometry
-void Molecule::randomiseGeometry(const Box* box)
+// Randomise conformation by rotating around bond terms
+void Molecule::randomiseConformation()
 {
 	/*
 	 * Randomise the geometry of the Molecule, exploring conformational space as best we can. This routine should be used when
@@ -309,6 +309,6 @@ void Molecule::randomiseGeometry(const Box* box)
 		transformationMatrix.createRotationAxis(axis.x, axis.y, axis.z, DUQMath::random()*360.0, true);
 
 		// Perform transform
-		transform(box, transformationMatrix, terminus == 0 ? localI->r() : localJ->r(), b->nAttached(terminus), b->attached(terminus));
+		transform(transformationMatrix, terminus == 0 ? localI->r() : localJ->r(), b->nAttached(terminus), b->attached(terminus));
 	}
 }
