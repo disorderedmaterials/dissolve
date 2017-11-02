@@ -196,6 +196,101 @@ Torsion* Molecule::torsion(int n) const
 }
 
 /*
+ * Upkeep
+ */
+
+// Select Atoms along any path from the specified one
+void Molecule::selectFromAtom(Atom* i, RefList<Atom,bool>& selectedAtoms, Bond* excludedBond1, Bond* excludedBond2)
+{
+	// Add this Atom to our list
+	selectedAtoms.addUnique(i);
+
+	// Loop over Bonds on this Atom
+	Atom* j;
+	for (RefListItem<Bond,bool>* refBond = i->bonds().first(); refBond != NULL; refBond = refBond->next)
+	{
+		// Is this an excluded Bond?
+		if (excludedBond1 == refBond->item) continue;
+		if (excludedBond2 == refBond->item) continue;
+
+		// Get Bond partner Atom and begin selection from it unless it's already in the list
+		j = refBond->item->partner(i);
+		if (selectedAtoms.contains(j)) continue;
+		selectFromAtom(j, selectedAtoms, excludedBond1, excludedBond2);
+	}
+}
+
+// Recalculate attached Atom lists for all intramolecular terms involved in the Molecule
+void Molecule::updateAttachedAtomLists()
+{
+	RefList<Atom,bool> selectedAtoms;
+
+	// Bonds
+	for (int n=0; n<bonds_.nItems(); ++n)
+	{
+		// Grab Bond pointer
+		Bond* b = bonds_[n];
+
+		// Select all Atoms attached to Atom 'i', excluding the Bond as a path
+		selectedAtoms.clear();
+		selectFromAtom(b->i(), selectedAtoms, b);
+
+		// If the list now contains Atom j, the two atoms are present in a cycle of some sort, and we can only add the Atom 'i' itself
+		// In that case we can also finish the list for Atom 'j', and continue the loop.
+		if (selectedAtoms.contains(b->j()))
+		{
+			Messenger::printVerbose("Bond between Atoms %i-%i is present in a cycle, so a minimal set of attached atoms will be used.\n", b->i()->arrayIndex(), b->j()->arrayIndex());
+			b->setAttachedAtoms(0, b->i());
+			b->setAttachedAtoms(1, b->j());
+			continue;
+		}
+		else b->setAttachedAtoms(0, selectedAtoms);
+
+		// Select all Atoms attached to Atom 'i', excluding the Bond as a path
+		selectedAtoms.clear();
+		selectFromAtom(b->i(), selectedAtoms, b);
+		b->setAttachedAtoms(1, selectedAtoms);
+	}
+
+	// Angles - termini are 'i' and 'k'
+	for (int n=0; n<angles_.nItems(); ++n)
+	{
+		// Grab Angle pointer
+		Angle* a = angles_[n];
+
+		// Grab relevant Bonds (if they exist)
+		Bond* ji = a->j()->findBond(a->i());
+		Bond* jk = a->j()->findBond(a->k());
+
+		// Select all Atoms attached to Atom 'i', excluding the Bond ji as a path
+		selectedAtoms.clear();
+		selectFromAtom(a->i(), selectedAtoms, ji, jk);
+
+		// Remove Atom 'j' from the list if it's there
+		selectedAtoms.remove(a->j());
+
+		// If the list now contains Atom k, the two atoms are present in a cycle of some sort, and we can only add the Atom 'i' itself
+		// In that case we can also finish the list for Atom 'k', and continue the loop.
+		if (selectedAtoms.contains(a->k()))
+		{
+			Messenger::printVerbose("Angle between Atoms %i-%i-%i is present in a cycle, so a minimal set of attached atoms will be used.\n", a->i()->arrayIndex(), a->j()->arrayIndex(), a->k()->arrayIndex());
+			a->setAttachedAtoms(0, a->i());
+			a->setAttachedAtoms(1, a->k());
+		}
+		else a->setAttachedAtoms(0, selectedAtoms);
+
+		// Select all Atoms attached to Atom 'k', excluding the Bond jk as a path
+		selectedAtoms.clear();
+		selectFromAtom(a->k(), selectedAtoms, ji, jk);
+
+		// Remove Atom 'j' from the list if it's there
+		selectedAtoms.remove(a->j());
+
+		a->setAttachedAtoms(1, selectedAtoms);
+	}
+}
+
+/*
  * Manipulations
  */
 

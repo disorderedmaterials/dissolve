@@ -108,6 +108,9 @@ Molecule* Configuration::addMolecule(Species* sp)
 		t->setSpeciesTorsion(spt);
 	}
 
+	// Now that all intramolecular terms have been added, we can assemble the attached lists for each
+	newMolecule->updateAttachedAtomLists();
+
 	return newMolecule;
 }
 

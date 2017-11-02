@@ -55,7 +55,7 @@ class Molecule : public DynamicArrayObject<Molecule>
 
 
 	/*
-	 * Atoms / Grains
+	 * Contents
 	 */
 	private:
 	// Array of pointers to Atoms
@@ -108,6 +108,16 @@ class Molecule : public DynamicArrayObject<Molecule>
 	Torsion** torsions();
 	// Return nth Torsion pointer
 	Torsion* torsion(int n) const;
+
+
+	/*
+	 * Upkeep
+	 */
+	public:
+	// Select Atoms along any path from the specified one
+	void selectFromAtom(Atom* i, RefList<Atom,bool>& selectedAtoms, Bond* excludedBond1 = NULL, Bond* excludedBond2 = NULL);
+	// Recalculate attached Atom lists for all intramolecular terms involved in the Molecule
+	void updateAttachedAtomLists();
 
 
 	/*
