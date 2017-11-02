@@ -206,7 +206,7 @@ Vec3<double> Molecule::centreOfGeometry(const Box* box) const
 	
 	// Calculate center relative to first atom in molecule
 	Vec3<double> cog = atom(0)->r();
-	for (int n = 1; n<nAtoms(); ++n) cog += box->minimumImage(atom(n), cog);
+	for (int n = 1; n<nAtoms(); ++n) cog += box->minimumImage(atom(n), atom(0)->r());
 
 	return (cog / nAtoms());
 }
@@ -220,11 +220,10 @@ void Molecule::applyTransform(const Box* box, const Matrix3& transform)
 	// Apply transform
 	for (int n=0; n<nAtoms(); ++n)
 	{
-		newR = transform * box->minimumVector(atom(n), cog) + cog;
+		newR = transform * box->minimumVector(cog, atom(n)->r()) + cog;
 		atom(n)->setCoordinates(newR);
 	}
 }
-
 
 // Transform selected atoms with supplied matrix
 void Molecule::applyTransform(const Box* box, const Matrix3& transform, const Vec3<double>& origin, int nTargetAtoms, Atom** targetAtoms)
