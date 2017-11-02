@@ -25,39 +25,18 @@
 #include "base/processpool.h"
 
 // Constructor
-Torsion::Torsion() : DynamicArrayObject<Torsion>()
+Torsion::Torsion() : Intra(), DynamicArrayObject<Torsion>()
 {
 	speciesTorsion_ = NULL;
-	molecule_ = NULL;
 	i_ = NULL;
 	j_ = NULL;
 	k_ = NULL;
 	l_ = NULL;
-	nAttached_[0] = 0;
-	nAttached_[1] = 0;
-	attached_[0] = NULL;
-	attached_[1] = NULL;
 }
 
 // Destructor
 Torsion::~Torsion()
 {
-}
-
-/*
- * Basic Data
- */
-
-// Set Molecule in which this Torsion exists
-void Torsion::setMolecule(Molecule* parent)
-{
-	molecule_ = parent;
-}
-
-// Return Molecule in which this Torsion exists
-Molecule* Torsion::molecule() const
-{
-	return molecule_;
 }
 
 /*
@@ -120,44 +99,6 @@ bool Torsion::matches(Atom* i, Atom* j, Atom* k, Atom* l) const
 	}
 
 	return false;
-}
-
-/*
- * Connections
- */
-
-// Create attached Atom array
-void Torsion::createAttachedAtomArray(int terminus, int size)
-{
-	if (attached_[terminus] != NULL) delete[] attached_[terminus];
-	attached_[terminus] = NULL;
-	nAttached_[terminus] = size;
-
-	if (nAttached_[terminus] != 0)
-	{
-		attached_[terminus] = new Atom*[nAttached_[terminus]];
-		for (int n=0; n<nAttached_[terminus]; ++n) attached_[terminus][n] = NULL;
-	}
-}
-
-// Set attached Atoms for terminus specified
-void Torsion::setAttachedAtoms(int terminus, const RefList<Atom,int>& atoms)
-{
-	createAttachedAtomArray(terminus, atoms.nItems());
-	int index = 0;
-	for (RefListItem<Atom,int>* refAtom = atoms.first(); refAtom != NULL; refAtom = refAtom->next) attached_[terminus][index++] = refAtom->item;
-}
-
-// Return number of attached Atoms for terminus specified
-int Torsion::nAttached(int terminus) const
-{
-	return nAttached_[terminus];
-}
-
-// Return array of attached Atoms for terminus specified
-Atom** Torsion::attached(int terminus) const
-{
-	return attached_[terminus];
 }
 
 /*

@@ -22,6 +22,7 @@
 #ifndef DUQ_BOND_H
 #define DUQ_BOND_H
 
+#include "classes/intra.h"
 #include "templates/dynamicarrayobject.h"
 #include "templates/reflist.h"
 
@@ -31,29 +32,13 @@ class Molecule;
 class SpeciesBond;
 
 // Bond Definition
-class Bond : public DynamicArrayObject<Bond>
+class Bond : public Intra, public DynamicArrayObject<Bond>
 {
 	public:
 	// Constructor
 	Bond();
 	// Destructor
 	~Bond();
-	// Clear all data
-	void clear();
-
-
-	/*
-	 * Parent Data
-	 */
-	private:
-	// Molecule in which the Bond exists
-	Molecule* molecule_;
-	
-	public:
-	// Set Molecule in which the Bond exists
-	void setMolecule(Molecule* parent);
-	// Return Molecule in which the Bond exists
-	Molecule* molecule() const;
 
 
 	/*
@@ -76,26 +61,6 @@ class Bond : public DynamicArrayObject<Bond>
 	Atom* partner(Atom* i) const;
 	// Return whether Atoms in Bond match those specified
 	bool matches(Atom* i, Atom* j) const;
-
-
-	/*
-	 * Connectivity
-	 */
-	private:
-	// Number of Atoms attached to termini
-	int nAttached_[2];
-	// Arrays of Atoms (in)directly attached to termini
-	Atom** attached_[2];
-
-	public:
-	// Create attached Atom array
-	void createAttachedAtomArray(int terminus, int size);
-	// Set attached Atoms for terminus specified
-	void setAttachedAtoms(int terminus, const RefList<Atom,int>& atoms);
-	// Return number of attached Atoms for terminus specified
-	int nAttached(int terminus) const;
-	// Return array of attached Atoms for terminus specified
-	Atom** attached(int terminus) const;
 
 
 	/*

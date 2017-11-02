@@ -22,6 +22,7 @@
 #ifndef DUQ_TORSION_H
 #define DUQ_TORSION_H
 
+#include "classes/intra.h"
 #include "templates/dynamicarrayobject.h"
 #include "templates/reflist.h"
 
@@ -31,27 +32,13 @@ class Molecule;
 class SpeciesTorsion;
 
 // Torsion Definition
-class Torsion : public DynamicArrayObject<Torsion>
+class Torsion : public Intra, public DynamicArrayObject<Torsion>
 {
 	public:
 	// Constructor
 	Torsion();
 	// Destructor
 	~Torsion();
-
-
-	/*
-	 * Basic Data
-	 */
-	private:
-	// Molecule in which this Torsion exists
-	Molecule* molecule_;
-	
-	public:
-	// Set Molecule in which this Torsion exists
-	void setMolecule(Molecule* parent);
-	// Return Molecule in which this Torsion exists
-	Molecule* molecule() const;
 
 
 	/*
@@ -80,26 +67,6 @@ class Torsion : public DynamicArrayObject<Torsion>
 	Atom* l() const;
 	// Return whether Atoms in Torsion match those specified
 	bool matches(Atom* i, Atom* j, Atom* k, Atom* l) const;
-
-
-	/*
-	 * Connections
-	 */
-	private:
-	// Number of Atoms attached to termini
-	int nAttached_[2];
-	// Arrays of Atoms (in)directly attached to termini
-	Atom** attached_[2];
-
-	public:
-	// Create attached Atom array
-	void createAttachedAtomArray(int terminus, int size);
-	// Set attached Atoms for terminus specified
-	void setAttachedAtoms(int terminus, const RefList<Atom,int>& atoms);
-	// Return number of attached Atoms for terminus specified
-	int nAttached(int terminus) const;
-	// Return array of attached Atoms for terminus specified
-	Atom** attached(int terminus) const;
 
 
 	/*

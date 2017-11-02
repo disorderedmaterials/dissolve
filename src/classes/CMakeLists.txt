@@ -29,6 +29,7 @@ add_library(classes
   forcekernel.cpp
   grain.cpp
   histogram.cpp
+  intra.cpp
   isotopologue.cpp
   isotopologuemix.cpp
   kvector.cpp
@@ -74,6 +75,7 @@ add_library(classes
   forcekernel.h
   grain.h
   histogram.h
+  intra.h
   isotopologue.h
   isotopologuemix.h
   kernelflags.h

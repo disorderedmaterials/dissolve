@@ -22,6 +22,7 @@
 #ifndef DUQ_ANGLE_H
 #define DUQ_ANGLE_H
 
+#include "classes/intra.h"
 #include "templates/dynamicarrayobject.h"
 #include "templates/reflist.h"
 
@@ -31,27 +32,13 @@ class Molecule;
 class SpeciesAngle;
 
 // Angle Definition
-class Angle : public DynamicArrayObject<Angle>
+class Angle : public Intra, public DynamicArrayObject<Angle>
 {
 	public:
 	// Constructor
 	Angle();
 	// Destructor
 	~Angle();
-
-
-	/*
-	 * Basic Data
-	 */
-	private:
-	// Molecule in which this Angle exists
-	Molecule* molecule_;
-	
-	public:
-	// Set Molecule in which this Angle exists
-	void setMolecule(Molecule* parent);
-	// Return Molecule in which this Angle exists
-	Molecule* molecule() const;
 
 
 	/*
@@ -76,34 +63,6 @@ class Angle : public DynamicArrayObject<Angle>
 	Atom* k() const;
 	// Return whether Atoms in Angle match those specified
 	bool matches(Atom* i, Atom* j, Atom* k) const;
-
-
-	/*
-	 * Connections
-	 */
-	private:
-	// Number of Atoms attached to termini
-	int nAttached_[2];
-	// Arrays of Atoms (in)directly attached to termini
-	Atom** attached_[2];
-
-	public:
-	// Set equilibrium angle
-	void setEquilibrium(double rEq);
-	// Return equlibrium angle
-	double equilibrium() const;
-	// Set force constant
-	void setForceConstant(double k);
-	// Return force constant
-	double forceConstant() const;
-	// Create attached Atom array
-	void createAttachedAtomArray(int terminus, int size);
-	// Set attached Atoms for terminus specified
-	void setAttachedAtoms(int terminus, const RefList<Atom,int>& atoms);
-	// Return number of attached Atoms for terminus specified
-	int nAttached(int terminus) const;
-	// Return array of attached Atoms for terminus specified
-	Atom** attached(int terminus) const;
 
 
 	/*
