@@ -23,8 +23,9 @@
 #include "modules/atomshake/atomshake.h"
 #include "modules/checks/checks.h"
 #include "modules/energy/energy.h"
-#include "modules/forces/forces.h"
 #include "modules/export/export.h"
+#include "modules/forces/forces.h"
+#include "modules/intrashake/intrashake.h"
 #include "modules/md/md.h"
 #include "modules/molshake/molshake.h"
 #include "modules/partials/partials.h"
@@ -42,8 +43,9 @@ ModuleRegistry::ModuleRegistry()
 	ModuleRegistrar<AtomShakeModule> atomShakeRegistrar;
 	ModuleRegistrar<ChecksModule> checksRegistrar;
 	ModuleRegistrar<EnergyModule> energyRegistrar;
-	ModuleRegistrar<ForcesModule> forcesRegistrar;
 	ModuleRegistrar<ExportModule> exportRegistrar;
+	ModuleRegistrar<ForcesModule> forcesRegistrar;
+	ModuleRegistrar<IntraShakeModule> intraShakeRegistrar;
 	ModuleRegistrar<MDModule> mdRegistrar;
 	ModuleRegistrar<MolShakeModule> molShakeRegistrar;
 	ModuleRegistrar<PartialsModule> partailsRegistrar;

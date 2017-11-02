@@ -87,6 +87,7 @@ target_link_libraries( ${target_name}
   exportmodule
   forcesmodule
   importmodule
+  intrashakemodule
   mdmodule
   molshakemodule
   partialsmodule
