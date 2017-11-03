@@ -276,6 +276,7 @@ void Molecule::updateAttachedAtomLists()
 			Messenger::printVerbose("Angle between Atoms %i-%i-%i is present in a cycle, so a minimal set of attached atoms will be used.\n", a->i()->arrayIndex(), a->j()->arrayIndex(), a->k()->arrayIndex());
 			a->setAttachedAtoms(0, a->i());
 			a->setAttachedAtoms(1, a->k());
+			continue;
 		}
 		else a->setAttachedAtoms(0, selectedAtoms);
 
@@ -287,6 +288,42 @@ void Molecule::updateAttachedAtomLists()
 		selectedAtoms.remove(a->j());
 
 		a->setAttachedAtoms(1, selectedAtoms);
+	}
+
+	// Torsions - termini are 'j' and 'k'
+	for (int n=0; n<torsions_.nItems(); ++n)
+	{
+		// Grab Torsion pointer
+		Torsion* t = torsions_[n];
+
+		// Grab relevant Bond (if it exists)
+		Bond* jk = t->j()->findBond(t->k());
+
+		// Select all Atoms attached to Atom 'j', excluding the Bond ji as a path
+		selectedAtoms.clear();
+		selectFromAtom(t->j(), selectedAtoms, jk);
+
+		// Remove Atom 'j' from the list
+		selectedAtoms.remove(t->j());
+
+		// If the list now contains Atom k, the two atoms are present in a cycle of some sort, and we can only add the Atom 'i'
+		if (selectedAtoms.contains(t->k()))
+		{
+			Messenger::printVerbose("Torsion between Atoms %i-%i-%i-%i is present in a cycle, so a minimal set of attached atoms will be used.\n", t->i()->arrayIndex(), t->j()->arrayIndex(), t->k()->arrayIndex(), t->l()->arrayIndex());
+			t->setAttachedAtoms(0, t->i());
+			t->setAttachedAtoms(1, t->l());
+			continue;
+		}
+		else t->setAttachedAtoms(0, selectedAtoms);
+
+		// Select all Atoms attached to Atom 'k', excluding the Bond jk as a path
+		selectedAtoms.clear();
+		selectFromAtom(t->k(), selectedAtoms, jk);
+
+		// Remove Atom 'k' from the list
+		selectedAtoms.remove(t->k());
+
+		t->setAttachedAtoms(1, selectedAtoms);
 	}
 }
 
