@@ -33,8 +33,10 @@ Configuration  'Bulk'
   #EndModule
   Module IntraShake
     AdjustBonds  On
-    AdjustAngles  Off
+    AdjustAngles  On
     AdjustTorsions  Off
+  EndModule
+  Module Energy
   EndModule
 EndConfiguration
 

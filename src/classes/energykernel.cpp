@@ -745,7 +745,7 @@ double EnergyKernel::energy(const Angle* a)
 	else vecji = i->r() - j->r();
 	if (cells_.useMim(j->cell(), k->cell())) vecjk = box_->minimumVector(j, k);
 	else vecjk = k->r() - j->r();
-	
+
 	// Normalise vectors
 	vecji.normalise();
 	vecjk.normalise();

@@ -71,20 +71,26 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		bool adjustBonds = GenericListHelper<bool>::retrieve(moduleData, "AdjustBonds", uniqueName(), keywords_.asBool("AdjustBonds"));
 		bool adjustTorsions = GenericListHelper<bool>::retrieve(moduleData, "AdjustTorsions", uniqueName(), keywords_.asBool("AdjustTorsions"));
 		double angleStepSize = GenericListHelper<double>::retrieve(moduleData, "AngleStepSize", uniqueName(), keywords_.asDouble("AngleStepSize"));
+		const double angleStepSizeMax = GenericListHelper<double>::retrieve(moduleData, "AngleStepSizeMax", uniqueName(), keywords_.asDouble("AngleStepSizeMax"));
+		const double angleStepSizeMin = GenericListHelper<double>::retrieve(moduleData, "AngleStepSizeMin", uniqueName(), keywords_.asDouble("AngleStepSizeMin"));
 		double bondStepSize = GenericListHelper<double>::retrieve(moduleData, "BondStepSize", uniqueName(), keywords_.asDouble("BondStepSize"));
+		const double bondStepSizeMax = GenericListHelper<double>::retrieve(moduleData, "BondStepSizeMax", uniqueName(), keywords_.asDouble("BondStepSizeMax"));
+		const double bondStepSizeMin = GenericListHelper<double>::retrieve(moduleData, "BondStepSizeMin", uniqueName(), keywords_.asDouble("BondStepSizeMin"));
 		double cutoffDistance = GenericListHelper<double>::retrieve(moduleData, "CutoffDistance", uniqueName(), keywords_.asDouble("CutoffDistance"));
 		if (cutoffDistance < 0.0) cutoffDistance = duq.pairPotentialRange();
 		const int nShakesPerTerm = GenericListHelper<int>::retrieve(moduleData, "ShakesPerTerm", uniqueName(), keywords_.asInt("ShakesPerTerm"));
 		const double targetAcceptanceRate = GenericListHelper<double>::retrieve(moduleData, "TargetAcceptanceRate", uniqueName(), keywords_.asDouble("TargetAcceptanceRate"));
 		double torsionStepSize = GenericListHelper<double>::retrieve(moduleData, "TorsionStepSize", uniqueName(), keywords_.asDouble("TorsionStepSize"));
+		const double torsionStepSizeMax = GenericListHelper<double>::retrieve(moduleData, "TorsionStepSizeMax", uniqueName(), keywords_.asDouble("TorsionStepSizeMax"));
+		const double torsionStepSizeMin = GenericListHelper<double>::retrieve(moduleData, "TorsionStepSizeMin", uniqueName(), keywords_.asDouble("TorsionStepSizeMin"));
 		const double rRT = 1.0/(.008314472*cfg->temperature());
 
 		// Print argument/parameter summary
 		Messenger::print("IntraShake: Cutoff distance is %f\n", cutoffDistance);
 		Messenger::print("IntraShake: Performing %i shake(s) per term\n", nShakesPerTerm);
-		Messenger::print("IntraShake: Distance step size for bond adjustments is %f Angstroms.\n", bondStepSize);
-		Messenger::print("IntraShake: Angle step size for angle adjustments is %f degrees.\n", angleStepSize);
-		Messenger::print("IntraShake: Rotation step size for torsion adjustments is %f degrees.\n", torsionStepSize);
+		if (adjustBonds) Messenger::print("IntraShake: Distance step size for bond adjustments is %f Angstroms (allowed range is %f <= delta <= %f).\n", bondStepSize, bondStepSizeMin, bondStepSizeMax);
+		if (adjustAngles) Messenger::print("IntraShake: Angle step size for angle adjustments is %f degrees (allowed range is %f <= delta <= %f).\n", angleStepSize, angleStepSizeMin, angleStepSizeMax);
+		if (adjustTorsions) Messenger::print("IntraShake: Rotation step size for torsion adjustments is %f degrees (allowed range is %f <= delta <= %f).\n", torsionStepSize, torsionStepSizeMin, torsionStepSizeMax);
 		Messenger::print("IntraShake: Target acceptance rate is %f.\n", targetAcceptanceRate);
 
 		// Create a local ChangeStore and EnergyKernel
@@ -104,7 +110,7 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 
 		Timer timer;
 		procPool.resetAccumulatedTime();
-		for (int m = 0; m < cfg->nMolecules(); ++m)
+		for (int m = 0; m<cfg->nMolecules(); ++m)
 		{
 			/*
 			 * Calculation Begins
@@ -186,11 +192,10 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 					v = vji * vjk;
 
 					// Create suitable transformation matrix
-// 					transform.createRotationAxis(v.x, v.y, v.z, procPool.randomPlusMinusOne()*angleStepSize, true);
-					transform.createRotationAxis(v.x, v.y, v.z, 1.0, true);
+					transform.createRotationAxis(v.x, v.y, v.z, procPool.randomPlusMinusOne()*angleStepSize, true);
 
 					// Adjust the Atoms attached to the selected terminus
-					mol->transform(transform, a->j()->r(), a->nAttached(terminus), a->attached(terminus));
+					mol->transform(box, transform, a->j()->r(), a->nAttached(terminus), a->attached(terminus));
 
 					// Calculate new energy
 					newPPEnergy = kernel.energy(mol, ProcessPool::OverPoolProcesses);
@@ -238,6 +243,9 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 			Messenger::print("IntraShake: Overall bond shake acceptance rate was %4.2f% (%i of %i attempted moves)\n", 100.0*bondRate, nBondAccepted, nBondAttempts);
 
 			bondStepSize *= (nBondAccepted == 0) ? 0.8 : bondRate/targetAcceptanceRate;
+			if (bondStepSize < bondStepSizeMin) bondStepSize = bondStepSizeMin;
+			else if (bondStepSize > bondStepSizeMax) bondStepSize = bondStepSizeMax;
+
 			Messenger::print("IntraShake: Updated distance step size for bond adjustments is %f Angstroms.\n", bondStepSize); 
 			GenericListHelper<double>::realise(cfg->moduleData(), "BondStepSize", uniqueName(), GenericItem::InRestartFileFlag) = bondStepSize;
 		}
@@ -248,6 +256,9 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 			Messenger::print("IntraShake: Overall angle shake acceptance rate was %4.2f% (%i of %i attempted moves)\n", 100.0*angleRate, nAngleAccepted, nAngleAttempts);
 
 			angleStepSize *= (nAngleAccepted == 0) ? 0.8 : angleRate/targetAcceptanceRate;
+			if (angleStepSize < angleStepSizeMin) angleStepSize = angleStepSizeMin;
+			else if (angleStepSize > angleStepSizeMax) angleStepSize = angleStepSizeMax;
+
 			Messenger::print("IntraShake: Updated rotation step size for angle adjustments is %f degrees.\n", angleStepSize); 
 			GenericListHelper<double>::realise(cfg->moduleData(), "AngleStepSize", uniqueName(), GenericItem::InRestartFileFlag) = angleStepSize;
 		}
@@ -258,6 +269,9 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 			Messenger::print("IntraShake: Overall torsion shake acceptance rate was %4.2f% (%i of %i attempted moves)\n", 100.0*torsionRate, nTorsionAccepted, nTorsionAttempts);
 
 			torsionStepSize *= (nTorsionAccepted == 0) ? 0.8 : torsionRate/targetAcceptanceRate;
+			if (torsionStepSize < torsionStepSizeMin) torsionStepSize = torsionStepSizeMin;
+			else if (torsionStepSize > torsionStepSizeMax) torsionStepSize = torsionStepSizeMax;
+
 			Messenger::print("IntraShake: Updated rotation step size for torsion adjustments is %f degrees.\n", torsionStepSize); 
 			GenericListHelper<double>::realise(cfg->moduleData(), "TorsionStepSize", uniqueName(), GenericItem::InRestartFileFlag) = torsionStepSize;
 		}
