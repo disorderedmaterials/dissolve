@@ -23,18 +23,11 @@ Configuration  'Bulk'
   Multiplier  1000
   SpeciesInfo  'Water'  1.0
 
-  InputCoordinates  xyz  start.xyz
-
   UseOutputAsInput
 
-  Module Energy
+  Module MolShake
   EndModule
-  #Module MolShake
-  #EndModule
   Module IntraShake
-    AdjustBonds  On
-    AdjustAngles  On
-    AdjustTorsions  Off
   EndModule
   Module Energy
   EndModule
@@ -42,7 +35,6 @@ EndConfiguration
 
 # Structure Factors
 Module Partials 'H2O'
-  Disabled
   StructureFactor  on
   QBroadening  QDependentGaussian  0.02
   Configuration  'Bulk'
@@ -51,7 +43,6 @@ Module Partials 'H2O'
 EndModule
 
 Module Partials 'HDO'
-  Disabled
   StructureFactor  on
   QBroadening  QDependentGaussian  0.02
   Configuration  'Bulk'
@@ -61,7 +52,6 @@ Module Partials 'HDO'
 EndModule
 
 Module Partials 'D2O'
-  Disabled
   StructureFactor  on
   QBroadening  QDependentGaussian  0.02
   Configuration  'Bulk'
@@ -80,6 +70,5 @@ PairPotentials
 EndPairPotentials
 
 Simulation
-  MaxIterations  50
-  #WriteIterationData  Off
+  MaxIterations  500
 EndSimulation
