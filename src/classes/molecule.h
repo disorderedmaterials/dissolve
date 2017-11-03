@@ -131,13 +131,13 @@ class Molecule : public DynamicArrayObject<Molecule>
 	// Transform molecule with supplied matrix, using centre of geometry as the origin
 	void transform(const Box* box, const Matrix3& transformationMatrix);
 	// Transform selected atoms with supplied matrix, around specified origin
-	void transform(const Matrix3& transformationMatrix, const Vec3< double >& origin, int nTargetAtoms, Atom** targetAtoms);
+	void transform(const Box* box, const Matrix3& transformationMatrix, const Vec3< double >& origin, int nTargetAtoms, Atom** targetAtoms);
 	// Translate whole molecule by the delta specified
 	void translate(const Vec3<double> delta);
 	// Translate specified atoms by the delta specified
 	void translate(const Vec3<double>& delta, int nTargetAtoms, Atom** targetAtoms);
 	// Randomise conformation by rotating around bond terms
-	void randomiseConformation();
+	void randomiseConformation(const Box* box);
 };
 
 #endif
