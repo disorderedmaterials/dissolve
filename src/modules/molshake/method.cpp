@@ -91,7 +91,7 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		// Initialise the random number buffer
 		procPool.initialiseRandomBuffer(ProcessPool::Pool);
 
-		int shake, nRotationAttempts = 0, nTranslationAttempts = 0, nRotationsAccepted = 0, nTranslationsAccepted = 0;
+		int shake, nRotationAttempts = 0, nTranslationAttempts = 0, nRotationsAccepted = 0, nTranslationsAccepted = 0, nGeneralAttempts = 0;
 		bool accept;
 		double currentEnergy, newEnergy, delta, totalDelta = 0.0;
 		Vec3<double> rDelta;
@@ -181,6 +181,7 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 				// Increase attempt counters
 				if (rotate) ++nRotationAttempts;
 				if (translate) ++nTranslationAttempts;
+				++nGeneralAttempts;
 
 				// Increase and fold move type counter
 				++count;
@@ -205,8 +206,9 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		// Calculate and print acceptance rates
 		double transRate = double(nTranslationsAccepted)/nTranslationAttempts;
 		double rotRate = double(nRotationsAccepted)/nRotationAttempts;
+		Messenger::print("MolShake: Total number of attempted moves was %i (%s work, %s comms)\n", nGeneralAttempts, timer.totalTimeString(), procPool.accumulatedTimeString());
 
-		Messenger::print("MolShake: Overall translation acceptance rate was %4.2f% (%i of %i attempted moves) (%s work, %s comms)\n", 100.0*transRate, nTranslationsAccepted, nTranslationAttempts, timer.totalTimeString(), procPool.accumulatedTimeString());
+		Messenger::print("MolShake: Overall translation acceptance rate was %4.2f% (%i of %i attempted moves)\n", 100.0*transRate, nTranslationsAccepted, nTranslationAttempts);
 		Messenger::print("MolShake: Overall rotation acceptance rate was %4.2f% (%i of %i attempted moves)\n", 100.0*rotRate, nRotationsAccepted, nRotationAttempts);
 
 		// Adjust translation step size - if no moves were accepted, just decrease the current stepSize by a constant factor
