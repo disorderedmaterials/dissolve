@@ -74,7 +74,25 @@ bool IntegerModuleKeyword::parseArguments(LineParser& parser, int startArg)
 {
 	if (parser.hasArg(startArg))
 	{
+		// Grab data value
 		data_ = parser.argi(startArg);
+
+		// Check it against any defined validation limits
+		if (!isValid(data_))
+		{
+			if (listLimit_)
+			{
+				CharString validValues;
+				for (int n=0; n<allowedValues_.nItems(); ++n) validValues += CharString(n == 0 ? "%i" : ", %i", allowedValues_[n]);
+				Messenger::error("Value '%i' is not valid for this keyword.\nValid values are:  %s", data_, validValues.get());
+			}
+			else if (minimumLimit_ && maximumLimit_) Messenger::error("Value %i is out of range for keyword. Valid range is %i <= n <= %i.\n", data_, min_, max_);
+			else if (minimumLimit_) Messenger::error("Value %i is out of range for keyword. Valid range is %i <= n.\n", data_, min_);
+			else Messenger::error("Value %i is out of range for keyword. Valid range is n <= %i.\n", data_, max_);
+
+			return false;
+		}
+
 		return true;
 	}
 	return false;

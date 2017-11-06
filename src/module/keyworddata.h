@@ -54,7 +54,7 @@ template <class T> class ModuleKeywordData
 	/*
 	 * Data Validation
 	 */
-	private:
+	protected:
 	// Validation limits to apply (if any)
 	bool minimumLimit_, maximumLimit_, listLimit_;
 	// Validation range (if appropriate)
@@ -104,13 +104,13 @@ template <class T> class ModuleKeywordData
 			// Check minimum limit
 			if (minimumLimit_)
 			{
-				if (value < minimumLimit_) return false;
+				if (value < min_) return false;
 			}
 
 			// Check maximum limit
 			if (maximumLimit_)
 			{
-				if (value > minimumLimit_) return false;
+				if (value > max_) return false;
 			}
 		}
 

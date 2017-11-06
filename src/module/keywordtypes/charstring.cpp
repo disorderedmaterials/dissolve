@@ -73,7 +73,19 @@ bool CharStringModuleKeyword::parseArguments(LineParser& parser, int startArg)
 {
 	if (parser.hasArg(startArg))
 	{
+		// Grab data value
 		data_ = parser.argc(startArg);
+
+		// Check it against any defined validation limits
+		if (!isValid(data_))
+		{
+			CharString validValues;
+			for (int n=0; n<allowedValues_.nItems(); ++n) validValues += CharString(n == 0 ? "%s" : ", %s", allowedValues_[n].get());
+			Messenger::error("Value '%s' is not valid for this keyword.\nValid values are:  %s", data_.get(), validValues.get());
+
+			return false;
+		}
+
 		return true;
 	}
 	return false;
