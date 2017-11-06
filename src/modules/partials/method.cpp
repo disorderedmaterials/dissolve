@@ -133,11 +133,12 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		combinedAtomTypes.add(cfg->usedAtomTypesList());
 
 		// Calculate unweighted partials for this Configuration (under generic Module name 'Partials', rather than the uniqueName_)
-		calculateUnweightedGR(procPool, cfg, method, allIntra, smoothing);
+		bool alreadyUpToDate;
+		calculateUnweightedGR(procPool, cfg, method, allIntra, smoothing, alreadyUpToDate);
 		PartialSet& unweightedgr = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedGR", "Partials");
 
-		// Perform averaging of unweighted partials if requested
-		if (averaging > 1) performGRAveraging(cfg->moduleData(), "UnweightedGR", "Partials", averaging, averagingScheme);
+		// Perform averaging of unweighted partials if requested, and if we're not already up-to-date
+		if ((averaging > 1) && (!alreadyUpToDate)) performGRAveraging(cfg->moduleData(), "UnweightedGR", "Partials", averaging, averagingScheme);
 
 		// If we are associated to a local Configuration, copy the partial data over to the processing module list
 		if (configurationLocal_) GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedGR", uniqueName_) = unweightedgr;
@@ -150,7 +151,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		{
 			// Copy the already-calculated g(r), then calculate a new set using the Test method
 			PartialSet referencePartials = unweightedgr;
-			calculateUnweightedGR(procPool, cfg, PartialsModule::TestMethod, allIntra, smoothing);
+			calculateUnweightedGR(procPool, cfg, PartialsModule::TestMethod, allIntra, smoothing, alreadyUpToDate);
 			if (!testReferencePartials(referencePartials, unweightedgr, 1.0e-6)) return false;
 		}
 

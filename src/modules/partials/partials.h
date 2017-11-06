@@ -153,7 +153,7 @@ class PartialsModule : public Module
 
 	public:
 	// (Re)calculate unweighted partials for the specified Configuration
-	bool calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg, PartialsModule::PartialsMethod method, bool allIntra, int smoothing);
+	bool calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg, PartialsModule::PartialsMethod method, bool allIntra, int smoothing, bool& alreadyUpToDate);
 	// Calculate weighted partials from supplied unweighted partials
 	bool calculateWeightedGR(PartialSet& unweightedPartials, PartialSet& weightedPartials, Weights& weights);
 	// Calculate unweighted S(Q) from supplied unweighted g(r)

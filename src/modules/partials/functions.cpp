@@ -454,7 +454,7 @@ bool PartialsModule::performGRAveraging(GenericList& moduleData, const char* nam
  */
 
 // Calculate unweighted partials for the specified Configuration
-bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg, PartialsModule::PartialsMethod method, bool allIntra, int smoothing)
+bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg, PartialsModule::PartialsMethod method, bool allIntra, int smoothing, bool& alreadyUpToDate)
 {
 	// Does a PartialSet already exist for this Configuration?
 	bool wasCreated;
@@ -463,9 +463,11 @@ bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration*
 
 	// Is the PartialSet already up-to-date?
 	// If so, can exit now, *unless* the Test method is requested, in which case we go ahead and calculate anyway
+	alreadyUpToDate = false;
 	if (DUQSys::sameString(partialgr.fingerprint(), CharString("%i", cfg->coordinateIndex())) && (method != PartialsModule::TestMethod))
 	{
 		Messenger::print("Partials: Unweighted partial g(r) are up-to-date for Configuration '%s'.\n", cfg->name());
+		alreadyUpToDate = true;
 		return true;
 	}
 
