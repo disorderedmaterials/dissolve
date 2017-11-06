@@ -30,20 +30,25 @@ Configuration  'Bulk'
   Module IntraShake
   EndModule
   Module Energy
+    Save  On
   EndModule
 EndConfiguration
 
 # Structure Factors
 Module Partials 'H2O'
   StructureFactor  on
+  Weights  Neutron
   QBroadening  QDependentGaussian  0.02
   Configuration  'Bulk'
   Isotopologue  'Bulk'  'Water'  'Natural'  1.0
+  Averaging  10
+  AveragingScheme  Linear
   Save  on
 EndModule
 
 Module Partials 'HDO'
   StructureFactor  on
+  Weights  Neutron
   QBroadening  QDependentGaussian  0.02
   Configuration  'Bulk'
   Isotopologue  'Bulk'  'Water'  'Deuteriated'  0.5
@@ -53,6 +58,7 @@ EndModule
 
 Module Partials 'D2O'
   StructureFactor  on
+  Weights  Neutron
   QBroadening  QDependentGaussian  0.02
   Configuration  'Bulk'
   Isotopologue  'Bulk'  'Water'  'Deuteriated'  1.0
