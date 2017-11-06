@@ -288,15 +288,22 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 
 			// Calculate intramolecular and interGrain correction energy
 			Timer intraTimer;
-			double intraEnergy = duq.intramolecularEnergy(procPool, cfg);
+			double bondEnergy, angleEnergy, torsionEnergy;
+			double intraEnergy = duq.intramolecularEnergy(procPool, cfg, bondEnergy, angleEnergy, torsionEnergy);
 			intraTimer.stop();
 
 			Messenger::print("Energy: Time to do interatomic energy was %s, intramolecular energy was %s.\n", interTimer.totalTimeString(), intraTimer.totalTimeString());
-			Messenger::print("Energy: Total Energy (World) is %15.9e kJ/mol (%15.9e kJ/mol interatomic + %15.9e kJ/mol intramolecular)\n", interEnergy + intraEnergy, interEnergy, intraEnergy);
+			Messenger::print("Energy: Total Energy (World) is %15.9e kJ/mol (%15.9e kJ/mol interatomic + %15.9e kJ/mol intramolecular).\n", interEnergy + intraEnergy, interEnergy, intraEnergy);
+			Messenger::print("Energy: Intramolecular contributions are - bonds = %15.9e kJ/mol, angles = %15.9e kJ/mol, torsions = %15.9e kJ/mol.\n", bondEnergy, angleEnergy, torsionEnergy);
 
-			// Store energies in the Configuration in case somebody else needs them
+			// Store current energies in the Configuration in case somebody else needs them
 			GenericListHelper< Array<double> >::realise(cfg->moduleData(), "Inter", uniqueName(), GenericItem::InRestartFileFlag).add(interEnergy);
 			GenericListHelper< Array<double> >::realise(cfg->moduleData(), "Intra", uniqueName(), GenericItem::InRestartFileFlag).add(intraEnergy);
+			GenericListHelper< Array<double> >::realise(cfg->moduleData(), "Bond", uniqueName(), GenericItem::InRestartFileFlag).add(bondEnergy);
+			GenericListHelper< Array<double> >::realise(cfg->moduleData(), "Angle", uniqueName(), GenericItem::InRestartFileFlag).add(angleEnergy);
+			GenericListHelper< Array<double> >::realise(cfg->moduleData(), "Torsion", uniqueName(), GenericItem::InRestartFileFlag).add(torsionEnergy);
+
+			// Append to arrays of total energies
 			Array<double>& totalEnergyArray = GenericListHelper< Array<double> >::realise(cfg->moduleData(), "Total", uniqueName(), GenericItem::InRestartFileFlag);
 			totalEnergyArray.add(interEnergy+intraEnergy);
 
@@ -346,10 +353,10 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 					parser.openOutput(filename);
 					parser.writeLineF("# Energies for Configuration '%s'.\n", cfg->name());
 					parser.writeLine("# All values in kJ/mol.\n");
-					parser.writeLine("# Iteration   Total         Inter         Intra         Gradient      S?\n");
+					parser.writeLine("# Iteration   Total         Inter         Bond          Angle         Torsion       Gradient      S?\n");
 				}
 				else parser.appendOutput(filename);
-				parser.writeLineF("  %10i  %12.6e  %12.6e  %12.6e  %12.6e  %i\n", duq.iteration(), interEnergy+intraEnergy, interEnergy, intraEnergy, grad, stable);
+				parser.writeLineF("  %10i  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e  %i\n", duq.iteration(), interEnergy+intraEnergy, interEnergy, bondEnergy, angleEnergy, torsionEnergy, grad, stable);
 				parser.closeFiles();
 			}
 		}
