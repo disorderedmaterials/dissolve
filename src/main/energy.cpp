@@ -32,6 +32,14 @@
 // Return total intramolecular energy
 double DUQ::intramolecularEnergy(ProcessPool& procPool, Configuration* cfg)
 {
+	double bondEnergy, angleEnergy, torsionEnergy;
+
+	return intramolecularEnergy(procPool, cfg, bondEnergy, angleEnergy, torsionEnergy);
+}
+
+// Return total intramolecular energy, storing components in provided variables
+double DUQ::intramolecularEnergy(ProcessPool& procPool, Configuration* cfg, double& bondEnergy, double& angleEnergy, double& torsionEnergy)
+{
 	/*
 	 * Calculate the total intramolecular energy of the system, arising from Bond, Angle, and Torsion
 	 * terms in all Molecules.
@@ -42,7 +50,9 @@ double DUQ::intramolecularEnergy(ProcessPool& procPool, Configuration* cfg)
 	// Create an EnergyKernel
 	EnergyKernel kernel(procPool, cfg, potentialMap_);
 
-	double energy = 0.0;
+	bondEnergy = 0;
+	angleEnergy = 0;
+	torsionEnergy = 0;
 
 	// Set start/stride for parallel loop
 	int start = procPool.interleavedLoopStart(ProcessPool::OverPoolProcesses);
@@ -50,23 +60,35 @@ double DUQ::intramolecularEnergy(ProcessPool& procPool, Configuration* cfg)
 
 	// Loop over defined Bonds
 	Bond** bonds = cfg->bonds().array();
-	for (int m=start; m<cfg->nBonds(); m += stride) energy += kernel.energy(bonds[m]);
+	for (int m=start; m<cfg->nBonds(); m += stride) bondEnergy += kernel.energy(bonds[m]);
 
 	// Loop over defined Angles
 	Angle** angles = cfg->angles().array();
-	for (int m=start; m<cfg->nAngles(); m += stride) energy += kernel.energy(angles[m]);
+	for (int m=start; m<cfg->nAngles(); m += stride) angleEnergy += kernel.energy(angles[m]);
 
 	// Loop over defined Torsions
 	Torsion** torsions = cfg->torsions().array();
-	for (int m=start; m<cfg->nTorsions(); m += stride) energy += kernel.energy(torsions[m]);
+	for (int m=start; m<cfg->nTorsions(); m += stride) torsionEnergy += kernel.energy(torsions[m]);
 
-	Messenger::printVerbose("Intramolecular Energy (Local) is %15.9e\n", energy);
+	double totalIntra = bondEnergy + angleEnergy + torsionEnergy;
+
+	Messenger::printVerbose("Intramolecular Energy (Local) is %15.9e kJ/mol (%15.9e bond + %15.9e angle + %15.9e torsion)\n", totalIntra, bondEnergy, angleEnergy, torsionEnergy);
 	
 	// Sum energy and print
-	procPool.allSum(&energy, 1);
-	Messenger::printVerbose("Intramolecular Energy (World) is %15.9e\n", energy);
+	double values[3];
+	values[0] = bondEnergy;
+	values[1] = angleEnergy;
+	values[2] = torsionEnergy;	
+	procPool.allSum(values, 3);
+	bondEnergy = values[0];
+	angleEnergy = values[1];
+	torsionEnergy = values[2];
 
-	return energy;
+	totalIntra = bondEnergy + angleEnergy + torsionEnergy;
+
+	Messenger::printVerbose("Intramolecular Energy (World) is %15.9e kJ/mol (%15.9e bond + %15.9e angle + %15.9e torsion)\n", totalIntra, bondEnergy, angleEnergy, torsionEnergy);
+
+	return totalIntra;
 }
 
 // Return total interatomic energy

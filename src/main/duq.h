@@ -262,6 +262,8 @@ class DUQ
 	public:
 	// Return total intramolecular energy
 	double intramolecularEnergy(ProcessPool& procPool, Configuration* cfg);
+	// Return total intramolecular energy, storing components in provided variables
+	double intramolecularEnergy(ProcessPool& procPool, Configuration* cfg, double& bondEnergy, double& angleEnergy, double& torsionEnergy);
 	// Return total interatomic energy
 	double interatomicEnergy(ProcessPool& procPool, Configuration* cfg);
 	// Test - Return total energy of the system using Molecules
