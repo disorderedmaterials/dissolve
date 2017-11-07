@@ -237,7 +237,7 @@ void Species::print()
 		Messenger::print("\n  Angles:\n");
 		Messenger::print("      I     J     K    Form          Parameters\n");
 		Messenger::print("    --------------------------------------------------------------------------\n");
-		for (SpeciesAngle* a = masterAngles_.first(); a != NULL; a = a->next)
+		for (SpeciesAngle* a = angles_.first(); a != NULL; a = a->next)
 		{
 			if (a->masterParameters()) Messenger::print("   %4i  %4i  %4i    @%-12s\n", a->indexI()+1, a->indexJ()+1, a->indexK()+1, a->masterParameters()->name());
 			else
