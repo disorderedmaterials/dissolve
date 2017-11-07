@@ -111,7 +111,7 @@ bool SimulationBlock::parse(LineParser& parser, DUQ* duq)
 				Messenger::print("Data will be written to disk after each iteration.\n");
 				break;
 			case (SimulationBlock::nSimulationKeywords):
-				Messenger::print("Unrecognised %s block keyword '%s' found. block keyword found - '%s'\n", InputBlocks::inputBlock(InputBlocks::SimulationBlock), parser.argc(0));
+				Messenger::print("Unrecognised %s block keyword '%s' found.\n", InputBlocks::inputBlock(InputBlocks::SimulationBlock), parser.argc(0));
 				InputBlocks::printValidKeywords(InputBlocks::SimulationBlock);
 				error = true;
 				break;

@@ -120,7 +120,7 @@ bool DataBlock::parse(LineParser& parser, DUQ* duq, Data* data)
 				data->setType(dt);
 				break;
 			case (DataBlock::nDataKeywords):
-				Messenger::error("Unrecognised %s block keyword '%s' found. block keyword found - '%s'\n", InputBlocks::inputBlock(InputBlocks::ConfigurationBlock), parser.argc(0));
+				Messenger::error("Unrecognised %s block keyword '%s' found.\n", InputBlocks::inputBlock(InputBlocks::ConfigurationBlock), parser.argc(0));
 				InputBlocks::printValidKeywords(InputBlocks::DataBlock);
 				error = true;
 				break;

@@ -441,7 +441,7 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 				}
 				break;
 			case (SpeciesBlock::nSpeciesKeywords):
-				Messenger::error("Unrecognised %s block keyword '%s' found. block keyword found - '%s'\n", InputBlocks::inputBlock(InputBlocks::SpeciesBlock), parser.argc(0));
+				Messenger::error("Unrecognised %s block keyword '%s' found.\n", InputBlocks::inputBlock(InputBlocks::SpeciesBlock), parser.argc(0));
 				InputBlocks::printValidKeywords(InputBlocks::SpeciesBlock);
 				error = true;
 				break;
