@@ -68,9 +68,9 @@ void ScatteringMatrix::print()
 	// Loop over reference data
 	RefListIterator<Data,bool> dataIterator(data_);
 	int row = 0;
-	line.clear();
 	while (Data* data = dataIterator.iterate())
 	{
+		line.clear();
 		for (int n=0; n<A_.nColumns(); ++n) line.strcatf("%10f ", A_.value(row, n));
 		Messenger::print("%s  %s\n", line.get(), data->name());
 		++row;
