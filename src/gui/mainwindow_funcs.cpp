@@ -63,3 +63,11 @@ void MonitorWindow::resizeEvent(QResizeEvent* event)
 {
 }
 
+/*
+ * Update Functions
+ */
+
+// Refresh specified aspects of the window
+void MonitorWindow::updateWidgets(int targets)
+{
+}

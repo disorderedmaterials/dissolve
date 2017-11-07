@@ -24,6 +24,7 @@
 #include "main/duq.h"
 #include "module/registry.h"
 #include "base/processpool.h"
+#include "gui/mainwindow.h"
 #include <time.h>
 #include <ctime>
 #include <stdlib.h>
@@ -76,7 +77,7 @@ int main(int argc, char **argv)
 					printf("Unrecognised command-line switch '%s'.\n", argv[n]);
 					printf("Run with -h to see available switches.\n");
 					ProcessPool::finalise();
-					return 0;
+					return 1;
 					break;
 			}
 		}
@@ -87,7 +88,7 @@ int main(int argc, char **argv)
 			else
 			{
 				printf("Error: More than one input file specified?\n");
-				return 0;
+				return 1;
 			}
 		}
 
@@ -110,14 +111,14 @@ int main(int argc, char **argv)
 	if (!MPIRunMaster(dUQ.worldPool(), dUQ.loadDataFiles()))
 	{
 		ProcessPool::finalise();
-		return 0;
+		return 1;
 	}
 
 	// Broadcast periodic table (including isotope and parameter data)
 	if (!periodicTable.broadcast(dUQ.worldPool()))
 	{
 		ProcessPool::finalise();
-		return 0;
+		return 1;
 	}
 
 	// Register modules and print info
@@ -126,7 +127,7 @@ int main(int argc, char **argv)
 	if (!ModuleList::printMasterModuleInformation())
 	{
 		ProcessPool::finalise();
-		return 0;
+		return 1;
 	}
 
 	// Load input file
@@ -136,13 +137,13 @@ int main(int argc, char **argv)
 	{
 		Messenger::error("No input file provided.\n");
 		ProcessPool::finalise();
-		return 0;
+		return 1;
 	}
 	if (!dUQ.loadInput(inputFile))
 	{
 		Messenger::error("Input file contained errors.\n");
 		ProcessPool::finalise();
-		return 0;
+		return 1;
 	}
 
 	// Load restart file if it exists
@@ -157,7 +158,7 @@ int main(int argc, char **argv)
 			{
 				Messenger::error("Restart file contained errors.\n");
 				ProcessPool::finalise();
-				return 0;
+				return 1;
 			}
 		}
 		else Messenger::print("\nRestart file '%s' does not exist.\n", restartFile.get());
@@ -174,16 +175,37 @@ int main(int argc, char **argv)
 	{
 		Messenger::print("Failed to set up simulation.\n");
 		ProcessPool::finalise();
-		return 0;
+		return 1;
 	}
 
-	// Run main simulation
-	// bool result = dUQ.go(singleIteration);
+	/*
+	 * Create and launch GUI
+	 */
+
+	// Create the main QApplication */
+	QApplication app(argc, argv);
+	QCoreApplication::setOrganizationName("ProjectAten");
+	QCoreApplication::setOrganizationDomain("www.projectaten.com");
+	QCoreApplication::setApplicationName("Aten");
+
+	// Set native siblings attribute to prevent odd rendering artefacts on some systems
+	app.setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
+
+	// Set high DPI pixmaps
+	app.setAttribute(Qt::AA_UseHighDpiPixmaps, true);
+
+	// Ensure that the C locale is set, otherwise printf() and friends may not use dot for the radix point
+	setlocale(LC_NUMERIC,"C");
+
+	// Create the main window
+	MonitorWindow duqWindow(dUQ);
+
+	int result = app.exec();
 
 	// Clear all data
 	dUQ.clear();
 
 	// Done.
-	return 0;
+	return result;
 }
 

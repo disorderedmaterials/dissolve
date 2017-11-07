@@ -19,10 +19,10 @@
 	along with DUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ATEN_MAINWINDOW_H
-#define ATEN_MAINWINDOW_H
+#ifndef DUQ_MAINWINDOW_H
+#define DUQ_MAINWINDOW_H
 
-#include <QtWidgets/QButtonGroup>
+#include <QButtonGroup>
 #include <QSettings>
 #include <QMenu>
 #include "gui/ui_mainwindow.h"
@@ -77,7 +77,7 @@ class MonitorWindow : public QMainWindow
 	void updateMainWindow();
 
 	public slots:
-	// Refreshes specified (or all) dock widgets
+	// Refresh specified aspects of the window
 	void updateWidgets(int targets = MonitorWindow::DefaultTarget);
 };
 
