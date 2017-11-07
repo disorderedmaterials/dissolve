@@ -206,12 +206,14 @@ class DUQ
 	Module* findPostProcessingTask(const char* name);
 
 	public:
+	// Return list of main processing Modules to run
+	ModuleList& processingModules();
+	// Return data associated with main processing Modules
+	GenericList& processingModuleData();
 	// Run main simulation
 	bool go(bool singleIteration);
 	// Return current simulation step
 	int iteration();
-	// Return data associated with main processing Modules
-	GenericList& processingModuleData();
 
 
 	/*

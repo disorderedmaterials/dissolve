@@ -24,6 +24,10 @@
 #include "base/lineparser.h"
 #include "modules/export/export.h"
 
+/*
+ * Private Functions
+ */
+
 // Find first occurrence of named Module in pre-processing tasks
 Module* DUQ::findPreProcessingTask(const char* name)
 {
@@ -48,6 +52,22 @@ Module* DUQ::findPostProcessingTask(const char* name)
 	}
 
 	return NULL;
+}
+
+/*
+ * Public Functions
+ */
+
+// Return list of main processing Modules to run
+ModuleList& DUQ::processingModules()
+{
+	return processingModules_;
+}
+
+// Return data associated with main processing Modules
+GenericList& DUQ::processingModuleData()
+{
+	return processingModuleData_;
 }
 
 // Run Simulation
@@ -350,8 +370,3 @@ int DUQ::iteration()
 	return iteration_;
 }
 
-// Return data associated with main processing Modules
-GenericList& DUQ::processingModuleData()
-{
-	return processingModuleData_;
-}
