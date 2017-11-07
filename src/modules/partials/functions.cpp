@@ -418,7 +418,8 @@ bool PartialsModule::performGRAveraging(GenericList& moduleData, const char* nam
 		for (int n=nStored; n>0; --n) moduleData.rename(CharString("%s_%i", name, n), prefix, CharString("%s_%i", name, n+1), prefix);
 
 		// Store the current PartialSet as the earliest data (1)
-		GenericListHelper<PartialSet>::realise(moduleData, CharString("%s_1", name), prefix, GenericItem::InRestartFileFlag) = currentPartials;
+		// TODO Not currently saved in restart file.
+		GenericListHelper<PartialSet>::realise(moduleData, CharString("%s_1", name), prefix) = currentPartials;
 		++nStored;
 	}
 
