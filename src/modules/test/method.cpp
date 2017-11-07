@@ -96,8 +96,8 @@ bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 		return false;
 	}
 
-	BroadeningFunction broadening = GenericListHelper<BroadeningFunction>::retrieve(duq.processingModuleData(), "Broadening", partialsModule->uniqueName(), BroadeningFunction::unity(), &found);
-	if (!found) Messenger::print("TestModule: No 'Broadening' specified in PartialsModule '%s', so no un-broadening will be performed.\n", partialsModule->uniqueName());
+	BroadeningFunction broadening = GenericListHelper<BroadeningFunction>::retrieve(duq.processingModuleData(), "QBroadening", partialsModule->uniqueName(), BroadeningFunction::unity(), &found);
+	if (!found) Messenger::print("TestModule: No 'QBroadening' specified in PartialsModule '%s', so no un-broadening will be performed.\n", partialsModule->uniqueName());
 	broadening.setInverted(true);
 
 	double rho = GenericListHelper<double>::retrieve(duq.processingModuleData(), "Density", partialsModule->uniqueName(), 0.0, &found);
