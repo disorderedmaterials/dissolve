@@ -510,7 +510,10 @@ bool DUQ::loadRestart(const char* filename)
 			error = true;
 			break;
 		}
-		Messenger::printVerbose("Reading item '%s' which is of class type %i.\n", parser.argc(nameIndex), itemClass);
+
+		// Let the user know what we are doing
+		if (cfg) Messenger::print("--> Reading item '%s' (%s) into Configuration '%s'...\n", parser.argc(nameIndex), GenericItem::itemClass(itemClass), cfg->name());
+		else Messenger::print("--> Reading item '%s' (%s) into processing module data...\n", parser.argc(nameIndex), GenericItem::itemClass(itemClass));
 
 		// Realise the item in the list
 		GenericItem* item = moduleData.create(parser.argc(nameIndex), itemClass);
