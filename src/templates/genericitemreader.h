@@ -123,7 +123,7 @@ template <> class GenericItemDataReader< Array<int> >
 		success = (parser.getArgsDelim(LineParser::Defaults) == 0);
 		if (!success) return;
 		int nItems = parser.argi(0);
-		container->data.initialise(nItems);
+		container->data.createEmpty(nItems);
 		for (int n=0; n<nItems; ++n)
 		{
 			success = (parser.getArgsDelim(LineParser::Defaults) == 0);
@@ -143,7 +143,7 @@ template <> class GenericItemDataReader< Array<double> >
 		success = (parser.getArgsDelim(LineParser::Defaults) == 0);
 		if (!success) return;
 		int nItems = parser.argi(0);
-		container->data.initialise(nItems);
+		container->data.createEmpty(nItems);
 		for (int n=0; n<nItems; ++n)
 		{
 			success = (parser.getArgsDelim(LineParser::Defaults) == 0);
@@ -163,7 +163,7 @@ template <> class GenericItemDataReader< Array< Vec3<int> > >
 		success = (parser.getArgsDelim(LineParser::Defaults) == 0);
 		if (!success) return;
 		int nItems = parser.argi(0);
-		container->data.initialise(nItems);
+		container->data.createEmpty(nItems);
 		for (int n=0; n<nItems; ++n)
 		{
 			success = (parser.getArgsDelim(LineParser::Defaults) == 0);
@@ -183,7 +183,7 @@ template <> class GenericItemDataReader< Array< Vec3<double> > >
 		success = (parser.getArgsDelim(LineParser::Defaults) == 0);
 		if (!success) return;
 		int nItems = parser.argi(0);
-		container->data.initialise(nItems);
+		container->data.createEmpty(nItems);
 		for (int n=0; n<nItems; ++n)
 		{
 			success = (parser.getArgsDelim(LineParser::Defaults) == 0);
