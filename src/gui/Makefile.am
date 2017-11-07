@@ -23,8 +23,9 @@ SUFFIXES: .ui .hui .qrc
 clean-local:
 	-rm -f ui_* *.o moc_*.cpp icons.cpp
 
-libgui_la_SOURCES = icons.qrc mainwindow.ui mainwindow_funcs.cpp
+libgui_la_SOURCES = icons.qrc mainwindow.ui modulecontrolwidget.ui
+libgui_la_SOURCES += mainwindow_funcs.cpp modulecontrolwidget_funcs.cpp
 
-noinst_HEADERS = mainwindow.h
+noinst_HEADERS = mainwindow.h modulecontrolwidget.h
 
 AM_CPPFLAGS = -I$(top_srcdir)/src -I../ -I./ @DUQ_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@

@@ -199,6 +199,8 @@ int main(int argc, char **argv)
 
 	// Create the main window
 	MonitorWindow duqWindow(dUQ);
+	duqWindow.setUp();
+	duqWindow.show();
 
 	int result = app.exec();
 

@@ -21,16 +21,16 @@ echo "Moving main header..."
 mv -v skeleton.h ${LCASE}.h
 
 echo "Changing boilerplate in main header..."
-sed -i "s/SKELETON/${UCASE}/g" ${LCASE}.h
+sed -i "s/SKELETON/${UCASE}/g" ${LCASE}.h gui/modulewidget.h
 
 echo "Renaming class..."
-sed -i "s/SkeletonModule/${NAME}Module/g" *.cpp ${LCASE}.h
+sed -i "s/SkeletonModule/${NAME}Module/g" *.cpp ${LCASE}.h gui/*.cpp gui/modulewidget.h gui/modulewidget.ui
 
 echo "Adjusting include / header paths..."
-sed -i "s/skeleton/${LCASE}/g" *.cpp ${LCASE}.h
+sed -i "s/skeleton/${LCASE}/g" *.cpp ${LCASE}.h gui/modulewidget.h
 
 echo "Adjusting makefiles..."
-sed -i "s/skeleton/${LCASE}/g" CMakeLists.txt Makefile.am
+sed -i "s/skeleton/${LCASE}/g" CMakeLists.txt Makefile.am gui/Makefile.am
 
 echo "Adjusting header text..."
-sed -i "s/Skeleton Module/${NAME} Module/g" *.cpp ${LCASE}.h
+sed -i "s/Skeleton Module/${NAME} Module/g" *.cpp ${LCASE}.h gui/*.cpp gui/modulewidget.h

@@ -109,6 +109,14 @@ class SkeletonModule : public Module
 	public:
 	// Reap data for this Module instance
 	void reapData();
+
+
+	/*
+	 * GUI Widget
+	 */
+	public:
+	// Return a new widget controlling this Module
+	QWidget* createWidget(QWidget* parent);
 };
 
 #endif

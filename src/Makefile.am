@@ -12,7 +12,7 @@ libduq_la_SOURCES =
 libduq_la_LIBADD = main/libmain.la module/libmodule.la module/keywordtypes/libkeywordtypes.la modules/libmodules.la classes/libclasses.la base/libbase.la math/libmath.la @MPI_LDLIBS@
 libduq_la_LDFLAGS = -static
 
-duq_LDADD = libduq.la
+duq_LDADD = libduq.la modules/libmoduledummywidgets.la
 
 duq_CPPFLAGS = @DUQ_CFLAGS@
 
@@ -25,7 +25,7 @@ monitor_SOURCES = monitor.cpp gui/messenger_printtext.cpp
 
 SUBDIRS += gui
 
-monitor_LDADD = libduq.la gui/libgui.la gui/qcustomplot/libqcustomplot.la @GUI_LDLIBS@
+monitor_LDADD = libduq.la modules/libmodulewidgets.la gui/libgui.la gui/qcustomplot/libqcustomplot.la @GUI_LDLIBS@
 
 monitor_CPPFLAGS = @DUQ_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
 

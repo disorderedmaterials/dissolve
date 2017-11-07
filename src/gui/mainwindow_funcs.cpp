@@ -21,7 +21,9 @@
 
 #include "main/duq.h"
 #include "gui/mainwindow.h"
+#include "gui/modulecontrolwidget.h"
 #include <QCloseEvent>
+#include <QTabWidget>
 
 // Constructor
 MonitorWindow::MonitorWindow(DUQ& duq) : QMainWindow(NULL), duq_(duq)
@@ -56,7 +58,7 @@ void MonitorWindow::closeEvent(QCloseEvent* event)
 	}
 	else event->ignore();
 	*/
-	event->ignore();
+	event->accept();
 }
 
 void MonitorWindow::resizeEvent(QResizeEvent* event)
@@ -67,7 +69,35 @@ void MonitorWindow::resizeEvent(QResizeEvent* event)
  * Update Functions
  */
 
+// Set up window after load
+void MonitorWindow::setUp()
+{
+	// Add controls for all processing modules
+	RefListIterator<Module,bool> moduleIterator(duq_.processingModules().modules());
+	while (Module* module = moduleIterator.iterate())
+	{
+		// Create a new ModuleWidget to use as the page for the tab
+		ModuleControlWidget* moduleControlWidget = new ModuleControlWidget(NULL, module);
+		ui.ProcessingModulesTab->addTab(moduleControlWidget, CharString("%s (%s)", module->name(), module->uniqueName()).get());
+		
+	}
+}
+
 // Refresh specified aspects of the window
 void MonitorWindow::updateWidgets(int targets)
 {
+	// Update Species tab...
+	// TODO
+
+	// Update Configurations & Modules tab...
+	// TODO
+
+	// Update Processing Modules tab...
+	// TODO
+
+	// Update Data Sources tab...
+	// TODO
+
+	// Update Pair Potentials tab...
+	// TODO
 }

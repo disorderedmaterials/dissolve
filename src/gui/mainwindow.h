@@ -72,9 +72,9 @@ class MonitorWindow : public QMainWindow
 	// Whether window has been shown
 	bool shown_;
 
-	private:
-	// Refresh main window
-	void updateMainWindow();
+	public:
+	// Set up window after load
+	void setUp();
 
 	public slots:
 	// Refresh specified aspects of the window

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Monitor</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -77,27 +77,27 @@
     <item>
      <widget class="QTabWidget" name="MainTabs">
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
+      <widget class="QWidget" name="SpeciesTab">
+       <attribute name="title">
+        <string>Species</string>
+       </attribute>
+      </widget>
       <widget class="QWidget" name="ConfigurationsTab">
        <attribute name="title">
         <string>Configurations &amp;&amp; Modules</string>
        </attribute>
-       <widget class="QTabWidget" name="tabWidget">
-        <property name="geometry">
-         <rect>
-          <x>30</x>
-          <y>20</y>
-          <width>911</width>
-          <height>701</height>
-         </rect>
-        </property>
-       </widget>
       </widget>
       <widget class="QWidget" name="tab_2">
        <attribute name="title">
         <string>Processing Modules</string>
        </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QTabWidget" name="ProcessingModulesTab"/>
+        </item>
+       </layout>
       </widget>
       <widget class="QWidget" name="DataTab">
        <attribute name="title">

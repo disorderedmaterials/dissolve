@@ -171,6 +171,9 @@ AC_CONFIG_FILES(src/templates/Makefile)
 if test "$with_gui" = "yes"; then
   AC_CONFIG_FILES(src/gui/Makefile)
   AC_CONFIG_FILES(src/gui/qcustomplot/Makefile)
+  AC_CONFIG_FILES(src/modules/atomshake/gui/Makefile)
+  AC_CONFIG_FILES(src/modules/partials/gui/Makefile)
+  AC_CONFIG_FILES(src/modules/skeleton/gui/Makefile)
 fi
 AC_OUTPUT
 
