@@ -46,6 +46,12 @@ ModuleKeywordBase* ModuleKeywordList::find(const char* keyword)
 	return NULL;
 }
 
+// Return first keyword in list
+ModuleKeywordBase* ModuleKeywordList::keywords()
+{
+	return keywords_.first();
+}
+
 /*
  * Conversion
  */
