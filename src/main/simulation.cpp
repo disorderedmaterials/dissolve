@@ -64,7 +64,7 @@ bool DUQ::go(bool singleIteration)
 	 *  6)	Write data (master process only)
 	 */
 
-	do
+	while ((maxIterations_ < 0) || (iteration_ < maxIterations_))
 	{
 		// Increase iteration counter
 		++iteration_;
@@ -246,6 +246,9 @@ bool DUQ::go(bool singleIteration)
 		{
 			Messenger::banner("Write Data");
 
+			// Store the current iteration number in the processing module data
+			GenericListHelper<int>::realise(processingModuleData_, "Iteration", "DUQ", GenericItem::InRestartFileFlag) = iteration_;
+
 			/*
 			 * Restart File
 			 */
@@ -337,7 +340,6 @@ bool DUQ::go(bool singleIteration)
 		// If we are only performing a single iteration, break here
 		if (singleIteration) break;
 	}
-	while ((maxIterations_ < 0) || (iteration_ < maxIterations_));
 
 	return true;
 }
