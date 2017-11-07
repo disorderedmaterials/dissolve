@@ -1,6 +1,6 @@
 /*
-	*** AtomShake Module - GUI
-	*** src/modules/atomshake/gui/gui.cpp
+	*** Partials Module - GUI
+	*** src/modules/partials/gui/gui.cpp
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -19,10 +19,10 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/atomshake/atomshake.h"
+#include "modules/partials/partials.h"
 
 // Return a new widget controlling this Module
-QWidget* AtomShakeModule::createWidget(QWidget* parent)
+QWidget* PartialsModule::createWidget(QWidget* parent)
 {
 	return NULL;
 }

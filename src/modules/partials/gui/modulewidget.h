@@ -1,6 +1,6 @@
 /*
 	*** Module Widget
-	*** src/modules/atomshake/gui/modulewidget.h
+	*** src/modules/partials/gui/modulewidget.h
 	Copyright T. Youngs 2007-2017
 
 	This file is part of dUQ.
@@ -19,16 +19,16 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_ATOMSHAKEMODULEWIDGET_H
-#define DUQ_ATOMSHAKEMODULEWIDGET_H
+#ifndef DUQ_PARTIALSMODULEWIDGET_H
+#define DUQ_PARTIALSMODULEWIDGET_H
 
-#include "modules/atomshake/gui/ui_modulewidget.h"
+#include "modules/partials/gui/ui_modulewidget.h"
 
 // Forward Declarations (dUQ)
 class Module;
 
 // Module Widget
-class AtomShakeModuleWidget : public QWidget
+class PartialsModuleWidget : public QWidget
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
@@ -41,9 +41,9 @@ class AtomShakeModuleWidget : public QWidget
 
 	public:
 	// Constructor
-	AtomShakeModuleWidget(QWidget* parent, Module* module);
+	PartialsModuleWidget(QWidget* parent, Module* module);
 	// Main form declaration
-	Ui::AtomShakeModuleWidget ui;
+	Ui::PartialsModuleWidget ui;
 	// Update controls within widget
 	void updateControls();
 

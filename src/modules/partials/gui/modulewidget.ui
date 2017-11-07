@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>AtomShakeModuleWidget</class>
- <widget class="QWidget" name="AtomShakeModuleWidget">
+ <class>PartialsModuleWidget</class>
+ <widget class="QWidget" name="PartialsModuleWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>AtomShake Controls</string>
+   <string>Partials Controls</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>

@@ -1,6 +1,6 @@
 /*
-	*** AtomShake Module Widget - Functions
-	*** src/modules/atomshake/gui/modulewidget_funcs.cpp
+	*** Partials Module Widget - Functions
+	*** src/modules/partials/gui/modulewidget_funcs.cpp
 	Copyright T. Youngs 2007-2017
 
 	This file is part of dUQ.
@@ -19,10 +19,10 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/atomshake/gui/modulewidget.h"
+#include "modules/partials/gui/modulewidget.h"
 
 // Constructor
-AtomShakeModuleWidget::AtomShakeModuleWidget(QWidget* parent, Module* module) : QWidget(parent), module_(module)
+PartialsModuleWidget::PartialsModuleWidget(QWidget* parent, Module* module) : QWidget(parent), module_(module)
 {
 	// Set up user interface
 	ui.setupUi(this);
