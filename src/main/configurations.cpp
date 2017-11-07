@@ -28,6 +28,12 @@ Configuration* DUQ::addConfiguration()
 	return configurations_.add();
 }
 
+// Return first Configuration in list
+Configuration* DUQ::configurations()
+{
+	return configurations_.first();
+}
+
 // Find configuration by name
 Configuration* DUQ::findConfiguration(const char* name, bool useNiceName) const
 {
