@@ -526,6 +526,9 @@ bool DUQ::loadRestart(const char* filename)
 	
 	if (!error) Messenger::print("Finished reading restart file.\n");
 
+	// Perform any necessary immediate tasks
+	iteration_ = GenericListHelper<int>::retrieve(processingModuleData_, "Iteration", "DUQ", 0);
+
 	// Error encountered?
 	if (error)
 	{
@@ -547,7 +550,7 @@ bool DUQ::saveRestart(const char* filename)
 
 	if (!parser.openOutput(filename, true) || (!parser.isFileGoodForWriting()))
 	{
-		Messenger::error("Couldn't open resetart file '%s'.\n", filename);
+		Messenger::error("Couldn't open restart file '%s'.\n", filename);
 		return false;
 	}
 	
@@ -557,36 +560,25 @@ bool DUQ::saveRestart(const char* filename)
 	// Configuration Module Data
 	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
 	{
-		RefListIterator<Module,bool> configModuleIterator(cfg->modules().modules());
-		while (Module* module = configModuleIterator.iterate())
+		// Cycle over data store in the Configuration
+		for (GenericItem* item = cfg->moduleData().items(); item != NULL; item = item->next)
 		{
-			// For each Module, print all available data in the list (unless it is flagged not to)
-			RefList<GenericItem,bool> moduleData = cfg->moduleData().listWithPrefix(module->uniqueName());
-			for (RefListItem<GenericItem,bool>* ri = moduleData.first(); ri != NULL; ri = ri->next)
-			{
-				GenericItem* item = ri->item;
-				if (!(item->flags()&GenericItem::InRestartFileFlag)) continue;
+			// If it is not flagged to be saved in the restart file, skip it
+			if (!(item->flags()&GenericItem::InRestartFileFlag)) continue;
 
-				parser.writeLineF("Configuration  %s  %s  %s\n", cfg->name(), item->name(), GenericItem::itemClass(item->itemClass()));
-				if (GenericItemWriter(parser, item).failed()) return false;
-			}
+			parser.writeLineF("Configuration  %s  %s  %s\n", cfg->name(), item->name(), GenericItem::itemClass(item->itemClass()));
+			if (GenericItemWriter(parser, item).failed()) return false;
 		}
 	}
 
 	// Processing Module Data
-	RefListIterator<Module,bool> processModuleIterator(processingModules_.modules());
-	while (Module* module = processModuleIterator.iterate())
+	for (GenericItem* item = processingModuleData_.items(); item != NULL; item = item->next)
 	{
-		// For each Module, print all available data in the list (unless it is flagged not to)
-		RefList<GenericItem,bool> moduleData = processingModuleData_.listWithPrefix(module->uniqueName());
-		for (RefListItem<GenericItem,bool>* ri = moduleData.first(); ri != NULL; ri = ri->next)
-		{
-			GenericItem* item = ri->item;
-			if (!(item->flags()&GenericItem::InRestartFileFlag)) continue;
+		// If it is not flagged to be saved in the restart file, skip it
+		if (!(item->flags()&GenericItem::InRestartFileFlag)) continue;
 
-			parser.writeLineF("Processing  %s  %s\n", item->name(), GenericItem::itemClass(item->itemClass()));
-			if (GenericItemWriter(parser, item).failed()) return false;
-		}
+		parser.writeLineF("Processing  %s  %s\n", item->name(), GenericItem::itemClass(item->itemClass()));
+		if (GenericItemWriter(parser, item).failed()) return false;
 	}
 
 	parser.closeFiles();
