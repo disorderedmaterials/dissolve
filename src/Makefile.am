@@ -27,7 +27,7 @@ SUBDIRS += gui
 
 monitor_LDADD = libduq.la gui/libgui.la gui/qcustomplot/libqcustomplot.la @GUI_LDLIBS@
 
-monitor_CPPFLAGS = @DUQ_CFLAGS@ @GUI_CFLAGS@
+monitor_CPPFLAGS = @DUQ_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
 
 endif
 
