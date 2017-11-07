@@ -160,6 +160,12 @@ bool Module::updateDependentTargets(ModuleList& currentModuleList, bool autoAddD
  * Keywords
  */
 
+// Return list of recognised keywords
+ModuleKeywordBase* Module::keywords()
+{
+	return keywords_.keywords();
+}
+
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
 int Module::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix)
 {
@@ -352,4 +358,14 @@ RefList<Data,bool>& Module::targetData()
 void Module::reapAllInstances()
 {
 	for (Module* instance = instances().first(); instance != NULL; instance = instance->next) instance->reapData();
+}
+
+/*
+ * GUI Widget
+ */
+
+// Return a new widget controlling this Module
+QWidget* Module::createWidget(QWidget* parent)
+{
+	return NULL;
 }

@@ -33,6 +33,7 @@ class Configuration;
 class ProcessPool;
 class Data;
 class ModuleList;
+class QWidget;
 
 // Module
 class Module : public ListItem<Module>
@@ -116,6 +117,8 @@ class Module : public ListItem<Module>
 	virtual int parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix) = 0;
 
 	public:
+	// Return list of recognised keywords
+	ModuleKeywordBase* keywords();
 	// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
 	int parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix);
 
@@ -214,6 +217,14 @@ class Module : public ListItem<Module>
 	virtual void reapData() = 0;
 	// Reap data for all instances of this Module
 	void reapAllInstances();
+
+
+	/*
+	 * GUI Widget
+	 */
+	public:
+	// Return a new widget controlling this Module
+	virtual QWidget* createWidget(QWidget* parent);
 };
 
 #endif
