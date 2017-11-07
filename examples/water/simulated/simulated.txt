@@ -42,7 +42,7 @@ Module Partials 'H2O'
   Configuration  'Bulk'
   Isotopologue  'Bulk'  'Water'  'Natural'  1.0
   Averaging  10
-  AveragingScheme  Linear
+  AveragingScheme  Simple
   Save  on
 EndModule
 
@@ -76,5 +76,5 @@ PairPotentials
 EndPairPotentials
 
 Simulation
-  MaxIterations  500
+  MaxIterations  1000
 EndSimulation
