@@ -21,7 +21,7 @@
 
 #include "main/duq.h"
 #include "gui/mainwindow.h"
-#include "gui/modulecontrolwidget.h"
+#include "gui/browser.h"
 #include <QCloseEvent>
 #include <QTabWidget>
 
@@ -33,6 +33,9 @@ MonitorWindow::MonitorWindow(DUQ& duq) : QMainWindow(NULL), duq_(duq)
 
 	// Set up user interface
 	ui.setupUi(this);
+
+	// Add default subwindows
+	ui.MainArea->addSubWindow(new BrowserWindow(duq_));
 
 	refreshing_ = false;
 }
@@ -72,15 +75,15 @@ void MonitorWindow::resizeEvent(QResizeEvent* event)
 // Set up window after load
 void MonitorWindow::setUp()
 {
-	// Add controls for all processing modules
-	RefListIterator<Module,bool> moduleIterator(duq_.processingModules().modules());
-	while (Module* module = moduleIterator.iterate())
-	{
-		// Create a new ModuleWidget to use as the page for the tab
-		ModuleControlWidget* moduleControlWidget = new ModuleControlWidget(NULL, module);
-		ui.ProcessingModulesTab->addTab(moduleControlWidget, CharString("%s (%s)", module->name(), module->uniqueName()).get());
-		
-	}
+// 	// Add controls for all processing modules
+// 	RefListIterator<Module,bool> moduleIterator(duq_.processingModules().modules());
+// 	while (Module* module = moduleIterator.iterate())
+// 	{
+// 		// Create a new ModuleWidget to use as the page for the tab
+// 		ModuleControlWidget* moduleControlWidget = new ModuleControlWidget(NULL, module);
+// 		ui.ProcessingModulesTab->addTab(moduleControlWidget, CharString("%s (%s)", module->name(), module->uniqueName()).get());
+// 		
+// 	}
 }
 
 // Refresh specified aspects of the window
