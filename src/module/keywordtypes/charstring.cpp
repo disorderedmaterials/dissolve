@@ -32,7 +32,7 @@ CharStringModuleKeyword::CharStringModuleKeyword(CharString value, int nOptions,
 {
 	// Create an Array of the values first
 	Array<CharString> valueArray;
-	for (int n=0; n<nOptions; ++n) valueArray.add(options[n]);
+	for (int n=0; n<nOptions; ++n) valueArray.add(CharString(options[n]).lower());
 
 	setValidationList(valueArray);
 }
@@ -77,7 +77,7 @@ bool CharStringModuleKeyword::parseArguments(LineParser& parser, int startArg)
 		data_ = parser.argc(startArg);
 
 		// Check it against any defined validation limits
-		if (!isValid(data_))
+		if (!isValid(data_.lower()))
 		{
 			CharString validValues;
 			for (int n=0; n<allowedValues_.nItems(); ++n) validValues += CharString(n == 0 ? "%s" : ", %s", allowedValues_[n].get());
