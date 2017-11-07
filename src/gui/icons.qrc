@@ -1,0 +1,9 @@
+<RCC>
+  <qresource prefix="file">
+    <file>icons/file_close.svg</file>
+    <file>icons/file_new.svg</file>
+    <file>icons/file_open.svg</file>
+    <file>icons/file_save.svg</file>
+    <file>icons/file_saveas.svg</file>
+  </qresource>
+</RCC>

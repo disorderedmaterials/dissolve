@@ -23,7 +23,7 @@ SUFFIXES: .ui .hui .qrc
 clean-local:
 	-rm -f ui_* *.o moc_*.cpp icons.cpp
 
-libgui_la_SOURCES = mainwindow.ui mainwindow_funcs.cpp
+libgui_la_SOURCES = icons.qrc mainwindow.ui mainwindow_funcs.cpp
 
 noinst_HEADERS = mainwindow.h
 
