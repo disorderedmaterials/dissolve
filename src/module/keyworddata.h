@@ -91,6 +91,36 @@ template <class T> class ModuleKeywordData
 	}
 
 	public:
+	// Return whether a minimum validation limit has been set
+	bool hasValidationMin()
+	{
+		return minimumLimit_;
+	}
+	// Return validation minimum limit
+	T validationMin()
+	{
+		return min_;
+	}
+	// Return whether a maximum validation limit has been set
+	bool hasValidationMax()
+	{
+		return maximumLimit_;
+	}
+	// Return validation maximum limit
+	T validationMax()
+	{
+		return max_;
+	}
+	// Return whether a validation list has been set
+	bool hasValidationList()
+	{
+		return listLimit_;
+	}
+	// Return validation list
+	const Array<T>& validationList()
+	{
+		return allowedValues_;
+	}
 	// Validate supplied value
 	bool isValid(T value)
 	{
