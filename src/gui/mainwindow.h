@@ -22,13 +22,12 @@
 #ifndef DUQ_MAINWINDOW_H
 #define DUQ_MAINWINDOW_H
 
-#include <QButtonGroup>
-#include <QSettings>
-#include <QMenu>
 #include "gui/ui_mainwindow.h"
+#include "templates/reflist.h"
 
 // Forward Declarations
 class DUQ;
+class QMdiSubWindow;
 
 class MonitorWindow : public QMainWindow
 {
@@ -71,10 +70,18 @@ class MonitorWindow : public QMainWindow
 	bool refreshing_;
 	// Whether window has been shown
 	bool shown_;
+	// List of current data windows and their display target (as a pointer)
+	RefList<QMdiSubWindow,void*> currentWindows_;
 
 	public:
 	// Set up window after load
 	void setUp();
+	// Return window for specified data (as pointer), if it exists
+	QMdiSubWindow* currentWindow(void* windowContents);
+	// Add window for widget containing specified data (as pointer)
+	QMdiSubWindow* addWindow(QWidget* widget, void* windowContents, const char* windowTitle);
+	// Remove window for specified data (as pointer), removing it from the list
+	bool removeWindow(void* windowContents);
 
 	public slots:
 	// Refresh specified aspects of the window

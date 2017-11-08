@@ -23,7 +23,7 @@
 #include "gui/mainwindow.h"
 #include "gui/browser.h"
 #include <QCloseEvent>
-#include <QTabWidget>
+#include <QMdiSubWindow>
 
 // Constructor
 MonitorWindow::MonitorWindow(DUQ& duq) : QMainWindow(NULL), duq_(duq)
@@ -35,7 +35,7 @@ MonitorWindow::MonitorWindow(DUQ& duq) : QMainWindow(NULL), duq_(duq)
 	ui.setupUi(this);
 
 	// Add default subwindows
-	ui.MainArea->addSubWindow(new BrowserWindow(duq_));
+	ui.MainArea->addSubWindow(new BrowserWindow(*this, duq_));
 
 	refreshing_ = false;
 }
@@ -86,21 +86,54 @@ void MonitorWindow::setUp()
 // 	}
 }
 
+// Return window for specified data (as pointer), if it exists
+QMdiSubWindow* MonitorWindow::currentWindow(void* windowContents)
+{
+	RefListIterator<QMdiSubWindow,void*> windowIterator(currentWindows_);
+	while (QMdiSubWindow* window = windowIterator.iterate()) if (windowIterator.currentData() == windowContents) return window;
+
+	return NULL;
+}
+
+// Add window for specified data (as pointer)
+QMdiSubWindow* MonitorWindow::addWindow(QWidget* widget, void* windowContents, const char* windowTitle)
+{
+	// Check that the windowContents aren't currently in the list
+	QMdiSubWindow* window = currentWindow(windowContents);
+	if (window)
+	{
+		Messenger::print("Refused to add window contents %p to our list, as it is already present elsewhere.\n");
+		return window;
+	}
+
+	// Create a new QMdiSubWindow
+	window = ui.MainArea->addSubWindow(widget);
+	window->setWindowTitle(windowTitle);
+	window->show();
+
+	currentWindows_.add(window, windowContents);
+
+	return window;
+}
+
+// Remove window for specified data (as pointer), removing it from the list
+bool MonitorWindow::removeWindow(void* windowContents)
+{
+	// Find the windowContents the list
+	QMdiSubWindow* window = currentWindow(windowContents);
+	if (!window)
+	{
+		Messenger::print("Couldn't remove window contents %p from list, since it is not present.\n");
+		return false;
+	}
+
+	currentWindows_.remove(window);
+
+	return true;
+}
+
 // Refresh specified aspects of the window
 void MonitorWindow::updateWidgets(int targets)
 {
-	// Update Species tab...
-	// TODO
 
-	// Update Configurations & Modules tab...
-	// TODO
-
-	// Update Processing Modules tab...
-	// TODO
-
-	// Update Data Sources tab...
-	// TODO
-
-	// Update Pair Potentials tab...
-	// TODO
 }

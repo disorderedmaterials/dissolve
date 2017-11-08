@@ -20,7 +20,11 @@
 */
 
 #include "gui/modulecontrolwidget.h"
+#include "gui/keywordwidget_charstring.hui"
+#include "gui/keywordwidget_double.hui"
+#include "gui/keywordwidget_int.hui"
 #include "module/module.h"
+#include "classes/configuration.h"
 #include <QGridLayout>
 #include <QLabel>
 
@@ -29,6 +33,12 @@ ModuleControlWidget::ModuleControlWidget(QWidget* parent, Module* module) : QWid
 {
 	// Set up user interface
 	ui.setupUi(this);
+
+	// Set information panel contents
+	CharString topText("%s @ %s", module_->name(), module_->configurationLocal() && module_->targetConfigurations().first() ? module_->targetConfigurations().first()->item->name() : "[NO CONFIG?]");
+	ui.TopLabel->setText(topText.get());
+	CharString bottomText("%s", module_->uniqueName());
+	ui.BottomLabel->setText(bottomText.get());
 
 	// Set up options
 	setUpOptions();
@@ -59,6 +69,11 @@ void ModuleControlWidget::setUpOptions()
 
 		layout->addWidget(nameLabel, row, 0);
 
+		// The widget to create here depends on the data type of the keyword
+		if (keyword->type() == ModuleKeywordBase::IntegerData) layout->addWidget(new KeywordWidgetInt(NULL, keyword), row, 1);
+		else if (keyword->type() == ModuleKeywordBase::DoubleData) layout->addWidget(new KeywordWidgetDouble(NULL, keyword), row, 1);
+		else if (keyword->type() == ModuleKeywordBase::CharStringData) layout->addWidget(new KeywordWidgetCharString(NULL, keyword), row, 1);
+// 			ComplexData, BoolData, IntegerData, DoubleData, CharStringData, BroadeningFunctionData)
 		++row;
 	}
 

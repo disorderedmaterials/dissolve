@@ -186,7 +186,7 @@ int main(int argc, char **argv)
 	QApplication app(argc, argv);
 	QCoreApplication::setOrganizationName("ProjectAten");
 	QCoreApplication::setOrganizationDomain("www.projectaten.com");
-	QCoreApplication::setApplicationName("Aten");
+	QCoreApplication::setApplicationName("Monitor");
 
 	// Set native siblings attribute to prevent odd rendering artefacts on some systems
 	app.setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);

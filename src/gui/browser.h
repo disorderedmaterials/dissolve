@@ -26,6 +26,7 @@
 
 // Forward Declarations
 class DUQ;
+class MonitorWindow;
 
 class BrowserWindow : public QWidget
 {
@@ -34,9 +35,11 @@ class BrowserWindow : public QWidget
 
 	public:
 	// Constructor
-	BrowserWindow(DUQ& duq);
+	BrowserWindow(MonitorWindow& monitorWindow, DUQ& duq);
 	// Main form declaration
 	Ui::BrowserWindow ui;
+	// Browser Data Types
+	enum BrowserDataType { AtomTypeDataType=1000, ConfigurationDataType, ModuleDataType, SpeciesDataType };
 
 	private:
 	// Whether window is currently refreshing
@@ -52,11 +55,13 @@ class BrowserWindow : public QWidget
 
 
 	/*
-	 * DUQ Reference
+	 * Object References
 	 */
 	private:
 	// DUQ reference
 	DUQ& duq_;
+	// MonitorWindow reference
+	MonitorWindow& monitorWindow_;
 
 
 	/*
@@ -64,7 +69,9 @@ class BrowserWindow : public QWidget
 	 */
 	private:
 
-	public:
+	public slots:
+	// Object tree double-clicked
+	void on_BrowserTree_itemDoubleClicked(QTreeWidgetItem * item, int column);
 };
 
 #endif

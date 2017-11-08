@@ -10,6 +10,11 @@
     <height>944</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <pointsize>9</pointsize>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>Monitor</string>
   </property>
@@ -31,7 +36,13 @@
      <number>4</number>
     </property>
     <item>
-     <widget class="QMdiArea" name="MainArea"/>
+     <widget class="QMdiArea" name="MainArea">
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -41,7 +52,7 @@
      <x>0</x>
      <y>0</y>
      <width>1052</width>
-     <height>28</height>
+     <height>24</height>
     </rect>
    </property>
   </widget>

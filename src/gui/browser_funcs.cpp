@@ -20,13 +20,17 @@
 */
 
 #include "gui/browser.h"
+#include "gui/mainwindow.h"
+#include "gui/modulecontrolwidget.h"
 #include "main/duq.h"
 #include "classes/species.h"
+#include "templates/variantpointer.h"
+#include <QMdiSubWindow>
 #include <QCloseEvent>
 #include <QLabel>
 
 // Constructor
-BrowserWindow::BrowserWindow(DUQ& duq) : duq_(duq)
+BrowserWindow::BrowserWindow(MonitorWindow& monitorWindow, DUQ& duq) : duq_(duq), monitorWindow_(monitorWindow)
 {
 	// Set up user interface
 	ui.setupUi(this);
@@ -61,8 +65,9 @@ void BrowserWindow::updateWindow()
 	ui.BrowserTree->addTopLevelItem(topItem);
 	for (Species* sp = duq_.species(); sp != NULL; sp = sp->next)
 	{
-		item = new QTreeWidgetItem();
+		item = new QTreeWidgetItem(BrowserWindow::SpeciesDataType);
 		item->setText(0, sp->name());
+		item->setData(0, Qt::UserRole, VariantPointer<Species>(sp));
 		topItem->addChild(item);
 	}
 
@@ -72,16 +77,18 @@ void BrowserWindow::updateWindow()
 	ui.BrowserTree->addTopLevelItem(topItem);
 	for (Configuration* cfg = duq_.configurations(); cfg != NULL; cfg = cfg->next)
 	{
-		item = new QTreeWidgetItem();
+		item = new QTreeWidgetItem(BrowserWindow::ConfigurationDataType);
 		item->setText(0, cfg->name());
+		item->setData(0, Qt::UserRole, VariantPointer<Configuration>(cfg));
 		topItem->addChild(item);
 
 		// Add Module entries
 		RefListIterator<Module,bool> moduleIterator(cfg->modules().modules());
 		while (Module* module = moduleIterator.iterate())
 		{
-			subItem = new QTreeWidgetItem();
+			subItem = new QTreeWidgetItem(BrowserWindow::ModuleDataType);
 			subItem->setText(0, CharString("%s (%s)", module->name(), module->uniqueName()).get());
+			subItem->setData(0, Qt::UserRole, VariantPointer<Module>(module));
 			item->addChild(subItem);
 		}
 	}
@@ -91,3 +98,43 @@ void BrowserWindow::updateWindow()
  * Widgets / Functions
  */
 
+// Object tree double-clicked
+void BrowserWindow::on_BrowserTree_itemDoubleClicked(QTreeWidgetItem* item, int column)
+{
+	// Check the item pointer
+	if (!item) return;
+
+	QMdiSubWindow* window;
+
+	printf("type = %i\n", item->type());
+	// Now act on the data type of the item
+	switch (item->type())
+	{
+		case (BrowserWindow::ConfigurationDataType):
+			// Is the Configuration already displayed?
+			window = monitorWindow_.currentWindow(item->data(0, Qt::UserRole).data());
+			if (!window)
+			{
+				// Create the new Configuration viewer
+				// TODO
+			}
+			else window->setFocus();
+			break;
+		case (BrowserWindow::ModuleDataType):
+			// Is the Module already displayed?
+			window = monitorWindow_.currentWindow(item->data(0, Qt::UserRole).data());
+			if (!window)
+			{
+				Module* module = VariantPointer<Module>(item->data(0, Qt::UserRole));
+				// Create a new ModuleWidget
+				ModuleControlWidget* moduleControlWidget = new ModuleControlWidget(NULL, module);
+				window = monitorWindow_.addWindow(moduleControlWidget, module, CharString("%s (%s)", module->name(), module->uniqueName()));
+			}
+			else window->setFocus();
+			break;
+		case (BrowserWindow::SpeciesDataType):
+			break;
+		default:
+			Messenger::print("BrowserTree doesn't know what to do with data type '%i'\n", item->type());
+	}
+}
