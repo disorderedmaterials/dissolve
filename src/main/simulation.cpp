@@ -70,8 +70,8 @@ GenericList& DUQ::processingModuleData()
 	return processingModuleData_;
 }
 
-// Run Simulation
-bool DUQ::go(bool singleIteration)
+// Iterate main simulation
+bool DUQ::iterate(int nIterations)
 {
 	/*
 	 * This is the main program loop. We perform the following steps:
@@ -83,6 +83,8 @@ bool DUQ::go(bool singleIteration)
 	 *  5)	Run any Module post-processing tasks using all processes available (worldPool_)
 	 *  6)	Write data (master process only)
 	 */
+
+	int iterationsPerformed = 0;
 
 	while ((maxIterations_ < 0) || (iteration_ < maxIterations_))
 	{
@@ -357,8 +359,9 @@ bool DUQ::go(bool singleIteration)
 		Messenger::banner("END OF MAIN LOOP ITERATION %10i         %s", iteration_, DUQSys::currentTimeAndDate());
 
 
-		// If we are only performing a single iteration, break here
-		if (singleIteration) break;
+		// If we have performed the requested number of iterations, break here
+		++iterationsPerformed;
+		if ((nIterations > 0) && (iterationsPerformed == nIterations)) break;
 	}
 
 	return true;

@@ -239,7 +239,7 @@ int main(int argc, char **argv)
 #endif
 	
 	// Run main simulation
-	bool result = dUQ.go(singleIteration);
+	bool result = dUQ.iterate(singleIteration ? 1 : -1);
 
 	// Clear all data
 	dUQ.clear();

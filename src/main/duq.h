@@ -212,8 +212,8 @@ class DUQ
 	ModuleList& processingModules();
 	// Return data associated with main processing Modules
 	GenericList& processingModuleData();
-	// Run main simulation
-	bool go(bool singleIteration);
+	// Iterate main simulation
+	bool iterate(int nIterations = -1);
 	// Return current simulation step
 	int iteration();
 
