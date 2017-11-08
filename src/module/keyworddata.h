@@ -116,6 +116,17 @@ template <class T> class ModuleKeywordData
 
 		return true;
 	}
+	// Set value, validating as necessary
+	bool setValue(T value)
+	{
+		if (isValid(value))
+		{
+			data_ = value;
+			return true;
+		}
+
+		return false;
+	}
 };
 
 #endif
