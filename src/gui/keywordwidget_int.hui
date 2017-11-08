@@ -1,0 +1,76 @@
+/*
+	*** Keyword Widget - Integer
+	*** src/gui/keywordwidget_int.hui
+	Copyright T. Youngs 2012-2017
+
+	This file is part of DUQ.
+
+	DUQ is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	DUQ is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with DUQ.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#ifndef DUQ_KEYWORDWIDGETINT_H
+#define DUQ_KEYWORDWIDGETINT_H
+
+#include "module/keywordtypes/int.h"
+#include <QSpinBox>
+
+// Forward Declarations
+/* none */
+
+class KeywordWidgetInt : public QSpinBox
+{
+	// All Qt declarations must include this macro
+	Q_OBJECT
+
+	public:
+	// Constructor
+	KeywordWidgetInt(QWidget* parent, ModuleKeywordBase* keyword) : QSpinBox(parent)
+	{
+		// Cast the pointer up into the parent class type
+		keyword_ = dynamic_cast<IntegerModuleKeyword*>(keyword);
+		if (!keyword_) Messenger::error("Couldn't cast base module keyword into IntegerModuleKeyword.\n");
+		else
+		{
+			// Set minimum and maximum values
+			setRange(keyword_->hasValidationMin() ? keyword_->validationMin() : -1e6, keyword_->hasValidationMax() ? keyword_->validationMax() : 1e6);
+
+			// Set current value
+			setValue(keyword_->asInt());
+		}
+
+		// Connect the
+		connect(this, SIGNAL(valueChanged(int)), this, SLOT(myValueChanged(int)));
+	}
+
+
+	/*
+	 * Keyword
+	 */
+	private:
+	// Associated keyword
+	IntegerModuleKeyword* keyword_;
+
+
+	/*
+	 * Slots
+	 */
+	private slots:
+	// Spin box value changed
+	void myValueChanged(int newValue)
+	{
+		keyword_->setValue(newValue);
+	}
+};
+
+#endif

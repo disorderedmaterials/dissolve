@@ -25,7 +25,9 @@ clean-local:
 
 libgui_la_SOURCES = icons.qrc
 libgui_la_SOURCES += browser.ui mainwindow.ui modulecontrolwidget.ui
-libgui_la_SOURCES += browser_funcs.cpp mainwindow_funcs.cpp modulecontrolwidget_funcs.cpp
+libgui_la_SOURCES += browser_funcs.cpp
+libgui_la_SOURCES += keywordwidget_bool.hui keywordwidget_charstring.hui keywordwidget_double.hui keywordwidget_int.hui
+libgui_la_SOURCES += mainwindow_funcs.cpp modulecontrolwidget_funcs.cpp
 
 noinst_HEADERS = browser.h mainwindow.h modulecontrolwidget.h
 
