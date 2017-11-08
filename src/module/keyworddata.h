@@ -121,6 +121,12 @@ template <class T> class ModuleKeywordData
 	{
 		return allowedValues_;
 	}
+	// Return index of supplied value in validation list (if it is valid)
+	int indexOfValid(T value)
+	{
+		for (int n=0; n<allowedValues_.nItems(); ++n) if (value == allowedValues_[n]) return n;
+		return -1;
+	}
 	// Validate supplied value
 	bool isValid(T value)
 	{
