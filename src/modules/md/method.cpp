@@ -61,16 +61,16 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 	GenericList& moduleData = cfg->moduleData();
 
 	// Retrieve control parameters from Configuration
-	const double maxForce = GenericListHelper<double>::retrieve(cfg->moduleData(), "CapForces", uniqueName(), keywords_.asDouble("CapForces")) * 100.0;		// To convert from kJ/mol to 10 J/mol
-	double cutoffDistance = GenericListHelper<double>::retrieve(cfg->moduleData(), "CutoffDistance", uniqueName(), keywords_.asDouble("CutoffDistance"));
+	const double maxForce = keywords_.asDouble("CapForces") * 100.0;	// To convert from kJ/mol to 10 J/mol
+	double cutoffDistance = keywords_.asDouble("CutoffDistance");
 	if (cutoffDistance < 0.0) cutoffDistance = duq.pairPotentialRange();
 	const double cutoffSq = cutoffDistance * cutoffDistance;
 	double deltaT = GenericListHelper<double>::retrieve(cfg->moduleData(), "DeltaT", uniqueName(), keywords_.asDouble("DeltaT"));
-	const int energyFrequency = GenericListHelper<int>::retrieve(cfg->moduleData(), "EnergyFrequency", uniqueName(), keywords_.asInt("EnergyFrequency"));
-	const int nSteps = GenericListHelper<int>::retrieve(cfg->moduleData(), "NSteps", uniqueName(), keywords_.asInt("NSteps"));
-	const int outputFrequency = GenericListHelper<int>::retrieve(cfg->moduleData(), "OutputFrequency", uniqueName(), keywords_.asInt("OutputFrequency"));
-	bool randomVelocities = GenericListHelper<bool>::retrieve(cfg->moduleData(), "RandomVelocities", uniqueName(), keywords_.asBool("RandomVelocities"));
-	const int trajectoryFrequency = GenericListHelper<int>::retrieve(cfg->moduleData(), "TrajectoryFrequency", uniqueName(), keywords_.asInt("TrajectoryFrequency"));
+	const int energyFrequency = keywords_.asInt("EnergyFrequency");
+	const int nSteps = keywords_.asInt("NSteps");
+	const int outputFrequency = keywords_.asInt("OutputFrequency");
+	bool randomVelocities = keywords_.asBool("RandomVelocities");
+	const int trajectoryFrequency = keywords_.asInt("TrajectoryFrequency");
 	bool writeTraj = trajectoryFrequency > 0;
 	const double temperature = cfg->temperature();
 

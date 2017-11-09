@@ -43,6 +43,12 @@ void BroadeningFunctionModuleKeyword::duplicateInList(GenericList& targetList, c
 	GenericListHelper<BroadeningFunction>::realise(targetList, keyword(), prefix, genericItemFlags()) = data_;
 }
 
+// Return whether the current data value has ever been set
+bool BroadeningFunctionModuleKeyword::set()
+{
+	return set_;
+}
+
 /*
  * Arguments
  */
@@ -62,5 +68,18 @@ int BroadeningFunctionModuleKeyword::maxArguments()
 // Parse arguments from supplied LineParser, starting at argument offset specified
 bool BroadeningFunctionModuleKeyword::parseArguments(LineParser& parser, int startArg)
 {
-	return data_.set(parser, startArg);
+	bool result = data_.set(parser, startArg);
+	if (result) set_ = true;
+
+	return result;
+}
+
+/*
+ * Validation
+ */
+
+// Validate supplied value
+bool BroadeningFunctionModuleKeyword::isValid(BroadeningFunction value)
+{
+	return true;
 }

@@ -59,7 +59,7 @@ bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 	/*
 	 * Are the energies of all involved Configurations stable (if OnlyWhenStable option is on)
 	 */
-	if (GenericListHelper<bool>::retrieve(moduleData, "OnlyWhenStable", uniqueName(), keywords_.asBool("OnlyWhenStable")))
+	if (keywords_.asBool("OnlyWhenStable"))
 	{
 		bool anyFailed = false;
 		RefListIterator<Configuration,bool> configIterator(partialsModule->targetConfigurations());

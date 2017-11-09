@@ -71,10 +71,10 @@ bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		GenericList& moduleData = configurationLocal_ ? cfg->moduleData() : duq.processingModuleData();
 
 		// Retrieve control parameters from Configuration
-		double cutoffDistance = GenericListHelper<double>::retrieve(moduleData, "CutoffDistance", uniqueName(), keywords_.asDouble("CutoffDistance"));
+		double cutoffDistance = keywords_.asDouble("CutoffDistance");
 		if (cutoffDistance < 0.0) cutoffDistance = duq.pairPotentialRange();
-		const int nShakesPerAtom = GenericListHelper<int>::retrieve(moduleData, "ShakesPerAtom", uniqueName(), keywords_.asInt("ShakesPerAtom"));
-		const double targetAcceptanceRate = GenericListHelper<double>::retrieve(moduleData, "TargetAcceptanceRate", uniqueName(), keywords_.asDouble("TargetAcceptanceRate"));
+		const int nShakesPerAtom = keywords_.asInt("ShakesPerAtom");
+		const double targetAcceptanceRate = keywords_.asDouble("TargetAcceptanceRate");
 		double stepSize = GenericListHelper<double>::retrieve(moduleData, "StepSize", uniqueName(), keywords_.asDouble("StepSize"));
 		const double termScale = 1.0;
 		const double rRT = 1.0/(.008314472*cfg->temperature());

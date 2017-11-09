@@ -65,8 +65,8 @@ bool ChecksModule::process(DUQ& duq, ProcessPool& procPool)
 		GenericList& moduleData = configurationLocal_ ? cfg->moduleData() : duq.processingModuleData();
 
 		// Retrieve control parameters from Configuration
-		const double angleThreshold = GenericListHelper<double>::retrieve(moduleData, "AngleThreshold", uniqueName(), keywords_.asDouble("AngleThreshold"));
-		const double distanceThreshold = GenericListHelper<double>::retrieve(moduleData, "DistanceThreshold", uniqueName(), keywords_.asDouble("DistanceThreshold"));
+		const double angleThreshold = keywords_.asDouble("AngleThreshold");
+		const double distanceThreshold = keywords_.asDouble("DistanceThreshold");
 
 		Messenger::print("Checks: Threshold for distance checks is %f Angstroms\n", distanceThreshold);
 		Messenger::print("Checks: Threshold for angle checks is %f degrees\n", angleThreshold);

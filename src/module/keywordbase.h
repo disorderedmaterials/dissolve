@@ -71,6 +71,8 @@ class ModuleKeywordBase : public ListItem<ModuleKeywordBase>
 	const char* description();
 	// Return flags to apply if reinstated as a GenericListItem (i.e. in a Module)
 	int genericItemFlags();
+	// Return whether the data has ever been set
+	virtual bool set() = 0;
 
 
 	/*

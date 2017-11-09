@@ -43,6 +43,18 @@ void BoolModuleKeyword::duplicateInList(GenericList& targetList, const char* pre
 	GenericListHelper<bool>::realise(targetList, keyword(), prefix, genericItemFlags()) = data_;
 }
 
+// Return whether the current data value has ever been set
+bool BoolModuleKeyword::set()
+{
+	return set_;
+}
+
+// Validate supplied value
+bool BoolModuleKeyword::isValid(bool value)
+{
+	return true;
+}
+	
 /*
  * Arguments
  */
@@ -64,7 +76,8 @@ bool BoolModuleKeyword::parseArguments(LineParser& parser, int startArg)
 {
 	if (parser.hasArg(startArg))
 	{
-		data_ = parser.argb(startArg);
+		setData(parser.argb(startArg));
+
 		return true;
 	}
 	return false;

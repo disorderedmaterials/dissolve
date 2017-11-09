@@ -58,41 +58,41 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 	CharString varName;
 
 	GenericList& moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : duq.processingModuleData();
-	const bool allIntra = GenericListHelper<bool>::retrieve(moduleData, "AllIntra", uniqueName(), keywords_.asBool("AllIntra"));
-	const int averaging = GenericListHelper<int>::retrieve(moduleData, "Averaging", uniqueName(), keywords_.asInt("Averaging"));
-	PartialsModule::AveragingScheme averagingScheme = PartialsModule::averagingScheme(GenericListHelper<CharString>::retrieve(moduleData, "AveragingScheme", uniqueName_, keywords_.asString("AveragingScheme")));
+	const bool allIntra = keywords_.asBool("AllIntra");
+	const int averaging = keywords_.asInt("Averaging");
+	PartialsModule::AveragingScheme averagingScheme = PartialsModule::averagingScheme(keywords_.asString("AveragingScheme"));
 	if (averagingScheme == PartialsModule::nAveragingSchemes)
 	{
-		Messenger::error("Partials: Invalid averaging scheme '%s' found.\n", GenericListHelper<CharString>::retrieve(moduleData, "AveragingScheme", uniqueName_, keywords_.asString("AveragingScheme")).get());
+		Messenger::error("Partials: Invalid averaging scheme '%s' found.\n", keywords_.asString("AveragingScheme"));
 		return false;
 	}
-	const bool braggOn = GenericListHelper<bool>::retrieve(moduleData, "Bragg", uniqueName(), keywords_.asBool("Bragg"));
-	const BroadeningFunction& qBroadening = GenericListHelper<BroadeningFunction>::retrieve(moduleData, "QBroadening", uniqueName(), BroadeningFunction::unity());
-	PartialsModule::PartialsMethod method = PartialsModule::partialsMethod(GenericListHelper<CharString>::retrieve(moduleData, "Method", uniqueName_, keywords_.asString("Method")));
+	const bool braggOn = keywords_.asBool("Bragg");
+	const BroadeningFunction& qBroadening = KeywordListHelper<BroadeningFunction>::retrieve(keywords_, "QBroadening", BroadeningFunction::unity());
+	PartialsModule::PartialsMethod method = PartialsModule::partialsMethod(keywords_.asString("Method"));
 	if (method == PartialsModule::nPartialsMethods)
 	{
-		Messenger::error("Partials: Invalid calculation method '%s' found.\n", GenericListHelper<CharString>::retrieve(moduleData, "Method", uniqueName_, keywords_.asString("Method")).get());
+		Messenger::error("Partials: Invalid calculation method '%s' found.\n", keywords_.asString("Method"));
 		return false;
 	}
-	const bool internalTest = GenericListHelper<bool>::retrieve(moduleData, "InternalTest", uniqueName(), keywords_.asBool("InternalTest"));
-	PartialsModule::NormalisationType normalisation = normalisationType(GenericListHelper<CharString>::retrieve(moduleData, "Normalisation", uniqueName(), keywords_.asString("Normalisation")));
+	const bool internalTest = keywords_.asBool("InternalTest");
+	PartialsModule::NormalisationType normalisation = normalisationType(keywords_.asString("Normalisation"));
 	if (normalisation == PartialsModule::nNormalisationTypes)
 	{
-		Messenger::error("Partials: Invalid normalisation type '%s' found.\n", GenericListHelper<CharString>::retrieve(moduleData, "Normalisation", uniqueName_, keywords_.asString("Normalisation")).get());
+		Messenger::error("Partials: Invalid normalisation type '%s' found.\n", keywords_.asString("Normalisation"));
 	}
-	const double qDelta = GenericListHelper<double>::retrieve(moduleData, "QDelta", uniqueName(), keywords_.asDouble("QDelta"));
-	const double qMin = GenericListHelper<double>::retrieve(moduleData, "QMin", uniqueName(), keywords_.asDouble("QMin"));
-	double qMax = GenericListHelper<double>::retrieve(moduleData, "QMax", uniqueName(), keywords_.asDouble("QMax"));
+	const double qDelta = keywords_.asDouble("QDelta");
+	const double qMin = keywords_.asDouble("QMin");
+	double qMax = keywords_.asDouble("QMax");
 	if (qMax < 0.0) qMax = 30.0;
-	const bool saveData = GenericListHelper<bool>::retrieve(moduleData, "Save", uniqueName(), keywords_.asBool("Save"));
-	const int smoothing = GenericListHelper<int>::retrieve(moduleData, "Smoothing", uniqueName(), keywords_.asInt("Smoothing"));
-	const bool sqCalculation = GenericListHelper<bool>::retrieve(moduleData, "StructureFactor", uniqueName(), keywords_.asBool("StructureFactor"));
-	const bool testMode = GenericListHelper<bool>::retrieve(moduleData, "Test", uniqueName(), keywords_.asBool("Test"));
-	const double testThreshold = GenericListHelper<double>::retrieve(moduleData, "TestThreshold", uniqueName(), keywords_.asDouble("TestThreshold"));
-	PartialsModule::WeightingType weightsType = PartialsModule::weightingType(GenericListHelper<CharString>::retrieve(moduleData, "Weights", uniqueName_, keywords_.asString("Weights")));
+	const bool saveData = keywords_.asBool("Save");
+	const int smoothing = keywords_.asInt("Smoothing");
+	const bool sqCalculation = keywords_.asBool("StructureFactor");
+	const bool testMode = keywords_.asBool("Test");
+	const double testThreshold = keywords_.asDouble("TestThreshold");
+	PartialsModule::WeightingType weightsType = PartialsModule::weightingType(keywords_.asString("Weights"));
 	if (weightsType == PartialsModule::nWeightingTypes)
 	{
-		Messenger::error("Partials: Invalid weighting scheme '%s' found.\n", GenericListHelper<CharString>::retrieve(moduleData, "Weights", uniqueName_, keywords_.asString("Weights")).get());
+		Messenger::error("Partials: Invalid weighting scheme '%s' found.\n", keywords_.asString("Weights"));
 		return false;
 	}
 

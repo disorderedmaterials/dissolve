@@ -69,7 +69,7 @@ class KeywordWidgetDouble : public QDoubleSpinBox
 	// Spin box value changed
 	void myValueChanged(double newValue)
 	{
-		keyword_->setValue(newValue);
+		keyword_->setData(newValue);
 	}
 };
 

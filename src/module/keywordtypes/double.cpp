@@ -53,6 +53,42 @@ void DoubleModuleKeyword::duplicateInList(GenericList& targetList, const char* p
 	GenericListHelper<double>::realise(targetList, keyword(), prefix, genericItemFlags()) = data_;
 }
 
+// Return whether the current data value has ever been set
+bool DoubleModuleKeyword::set()
+{
+	return set_;
+}
+
+/*
+ * Data Validation
+ */
+
+// Validate supplied value
+bool DoubleModuleKeyword::isValid(double value)
+{
+	if (listLimit_)
+	{
+		for (int n=0; n<allowedValues_.nItems(); ++n) if (value == allowedValues_[n]) return true;
+		return false;
+	}
+	else
+	{
+		// Check minimum limit
+		if (minimumLimit_)
+		{
+			if (value < min_) return false;
+		}
+
+		// Check maximum limit
+		if (maximumLimit_)
+		{
+			if (value > max_) return false;
+		}
+	}
+
+	return true;
+}
+
 /*
  * Arguments
  */
@@ -74,11 +110,7 @@ bool DoubleModuleKeyword::parseArguments(LineParser& parser, int startArg)
 {
 	if (parser.hasArg(startArg))
 	{
-		// Grab data value
-		data_ = parser.argd(startArg);
-
-		// Check it against any defined validation limits
-		if (!isValid(data_))
+		if (!setData(parser.argd(startArg)))
 		{
 			if (listLimit_)
 			{
@@ -92,6 +124,8 @@ bool DoubleModuleKeyword::parseArguments(LineParser& parser, int startArg)
 
 			return false;
 		}
+
+		return true;
 	}
 	return false;
 }

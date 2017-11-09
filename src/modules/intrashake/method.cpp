@@ -67,22 +67,22 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		GenericList& moduleData = configurationLocal_ ? cfg->moduleData() : duq.processingModuleData();
 
 		// Retrieve control parameters from Configuration
-		bool adjustAngles = GenericListHelper<bool>::retrieve(moduleData, "AdjustAngles", uniqueName(), keywords_.asBool("AdjustAngles"));
-		bool adjustBonds = GenericListHelper<bool>::retrieve(moduleData, "AdjustBonds", uniqueName(), keywords_.asBool("AdjustBonds"));
-		bool adjustTorsions = GenericListHelper<bool>::retrieve(moduleData, "AdjustTorsions", uniqueName(), keywords_.asBool("AdjustTorsions"));
+		bool adjustAngles = keywords_.asBool("AdjustAngles");
+		bool adjustBonds = keywords_.asBool("AdjustBonds");
+		bool adjustTorsions = keywords_.asBool("AdjustTorsions");
 		double angleStepSize = GenericListHelper<double>::retrieve(moduleData, "AngleStepSize", uniqueName(), keywords_.asDouble("AngleStepSize"));
-		const double angleStepSizeMax = GenericListHelper<double>::retrieve(moduleData, "AngleStepSizeMax", uniqueName(), keywords_.asDouble("AngleStepSizeMax"));
-		const double angleStepSizeMin = GenericListHelper<double>::retrieve(moduleData, "AngleStepSizeMin", uniqueName(), keywords_.asDouble("AngleStepSizeMin"));
+		const double angleStepSizeMax = keywords_.asDouble("AngleStepSizeMax");
+		const double angleStepSizeMin = keywords_.asDouble("AngleStepSizeMin");
 		double bondStepSize = GenericListHelper<double>::retrieve(moduleData, "BondStepSize", uniqueName(), keywords_.asDouble("BondStepSize"));
-		const double bondStepSizeMax = GenericListHelper<double>::retrieve(moduleData, "BondStepSizeMax", uniqueName(), keywords_.asDouble("BondStepSizeMax"));
-		const double bondStepSizeMin = GenericListHelper<double>::retrieve(moduleData, "BondStepSizeMin", uniqueName(), keywords_.asDouble("BondStepSizeMin"));
-		double cutoffDistance = GenericListHelper<double>::retrieve(moduleData, "CutoffDistance", uniqueName(), keywords_.asDouble("CutoffDistance"));
+		const double bondStepSizeMax = keywords_.asDouble("BondStepSizeMax");
+		const double bondStepSizeMin = keywords_.asDouble("BondStepSizeMin");
+		double cutoffDistance = keywords_.asDouble("CutoffDistance");
 		if (cutoffDistance < 0.0) cutoffDistance = duq.pairPotentialRange();
-		const int nShakesPerTerm = GenericListHelper<int>::retrieve(moduleData, "ShakesPerTerm", uniqueName(), keywords_.asInt("ShakesPerTerm"));
-		const double targetAcceptanceRate = GenericListHelper<double>::retrieve(moduleData, "TargetAcceptanceRate", uniqueName(), keywords_.asDouble("TargetAcceptanceRate"));
+		const int nShakesPerTerm = keywords_.asInt("ShakesPerTerm");
+		const double targetAcceptanceRate = keywords_.asDouble("TargetAcceptanceRate");
 		double torsionStepSize = GenericListHelper<double>::retrieve(moduleData, "TorsionStepSize", uniqueName(), keywords_.asDouble("TorsionStepSize"));
-		const double torsionStepSizeMax = GenericListHelper<double>::retrieve(moduleData, "TorsionStepSizeMax", uniqueName(), keywords_.asDouble("TorsionStepSizeMax"));
-		const double torsionStepSizeMin = GenericListHelper<double>::retrieve(moduleData, "TorsionStepSizeMin", uniqueName(), keywords_.asDouble("TorsionStepSizeMin"));
+		const double torsionStepSizeMax = keywords_.asDouble("TorsionStepSizeMax");
+		const double torsionStepSizeMin = keywords_.asDouble("TorsionStepSizeMin");
 		const double rRT = 1.0/(.008314472*cfg->temperature());
 
 		// Print argument/parameter summary

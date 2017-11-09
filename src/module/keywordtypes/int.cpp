@@ -53,6 +53,42 @@ void IntegerModuleKeyword::duplicateInList(GenericList& targetList, const char* 
 	GenericListHelper<int>::realise(targetList, keyword(), prefix, genericItemFlags()) = data_;
 }
 
+// Return whether the current data value has ever been set
+bool IntegerModuleKeyword::set()
+{
+	return set_;
+}
+
+/*
+ * Data Validation
+ */
+
+// Validate supplied value
+bool IntegerModuleKeyword::isValid(int value)
+{
+	if (listLimit_)
+	{
+		for (int n=0; n<allowedValues_.nItems(); ++n) if (value == allowedValues_[n]) return true;
+		return false;
+	}
+	else
+	{
+		// Check minimum limit
+		if (minimumLimit_)
+		{
+			if (value < min_) return false;
+		}
+
+		// Check maximum limit
+		if (maximumLimit_)
+		{
+			if (value > max_) return false;
+		}
+	}
+
+	return true;
+}
+
 /*
  * Arguments
  */
@@ -74,11 +110,7 @@ bool IntegerModuleKeyword::parseArguments(LineParser& parser, int startArg)
 {
 	if (parser.hasArg(startArg))
 	{
-		// Grab data value
-		data_ = parser.argi(startArg);
-
-		// Check it against any defined validation limits
-		if (!isValid(data_))
+		if (!setData(parser.argi(startArg)))
 		{
 			if (listLimit_)
 			{

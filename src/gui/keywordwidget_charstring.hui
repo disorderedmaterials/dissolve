@@ -80,7 +80,7 @@ class KeywordWidgetCharString : public QComboBox
 	// Combo box text changed
 	void myCurrentTextChanged(const QString& text)
 	{
-		keyword_->setValue(qPrintable(text));
+		keyword_->setData(qPrintable(text));
 	}
 };
 

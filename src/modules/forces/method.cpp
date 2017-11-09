@@ -68,12 +68,12 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 		GenericList& moduleData = configurationLocal_ ? cfg->moduleData() : duq.processingModuleData();
 
 		// Retrieve control parameters from Configuration
-		const bool saveData = GenericListHelper<bool>::retrieve(moduleData, "Save", uniqueName(), keywords_.asBool("Save"));
-		const bool testMode = GenericListHelper<bool>::retrieve(moduleData, "Test", uniqueName(), keywords_.asBool("Test"));
-		const bool testAnalytic = GenericListHelper<bool>::retrieve(moduleData, "TestAnalytic", uniqueName(), keywords_.asBool("TestAnalytic"));
-		const bool testInter = GenericListHelper<bool>::retrieve(moduleData, "TestInter", uniqueName(), keywords_.asBool("TestInter"));
-		const bool testIntra = GenericListHelper<bool>::retrieve(moduleData, "TestIntra", uniqueName(), keywords_.asBool("TestIntra"));
-		const double testThreshold = GenericListHelper<double>::retrieve(moduleData, "TestThreshold", uniqueName(), keywords_.asDouble("TestThreshold"));
+		const bool saveData = keywords_.asBool("Save");
+		const bool testMode = keywords_.asBool("Test");
+		const bool testAnalytic = keywords_.asBool("TestAnalytic");
+		const bool testInter = keywords_.asBool("TestInter");
+		const bool testIntra = keywords_.asBool("TestIntra");
+		const double testThreshold = keywords_.asDouble("TestThreshold");
 
 		// Calculate the total forces
 		if (testMode)

@@ -69,7 +69,7 @@ class KeywordWidgetInt : public QSpinBox
 	// Spin box value changed
 	void myValueChanged(int newValue)
 	{
-		keyword_->setValue(newValue);
+		keyword_->setData(newValue);
 	}
 };
 

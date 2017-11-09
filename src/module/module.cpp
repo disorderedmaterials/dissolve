@@ -202,9 +202,6 @@ int Module::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList, 
 			Messenger::error("Failed to parse arguments for Module keyword '%s'.\n", keyword->keyword());
 			return 0;
 		}
-
-		// Add a copy of the data to the target list
-		keyword->duplicateInList(targetList, prefix);
 	}
 
 	return true;

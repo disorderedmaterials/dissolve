@@ -52,6 +52,12 @@ void CharStringModuleKeyword::duplicateInList(GenericList& targetList, const cha
 	GenericListHelper<CharString>::realise(targetList, keyword(), prefix, genericItemFlags()) = data_;
 }
 
+// Return whether the current data value has ever been set
+bool CharStringModuleKeyword::set()
+{
+	return set_;
+}
+
 /*
  * Arguments
  */
@@ -73,11 +79,7 @@ bool CharStringModuleKeyword::parseArguments(LineParser& parser, int startArg)
 {
 	if (parser.hasArg(startArg))
 	{
-		// Grab data value
-		data_ = parser.argc(startArg);
-
-		// Check it against any defined validation limits
-		if (!isValid(data_.lower()))
+		if (!setData(parser.argc(startArg)))
 		{
 			CharString validValues;
 			for (int n=0; n<allowedValues_.nItems(); ++n) validValues += CharString(n == 0 ? "%s" : ", %s", allowedValues_[n].get());
@@ -91,6 +93,35 @@ bool CharStringModuleKeyword::parseArguments(LineParser& parser, int startArg)
 	return false;
 }
 
+/*
+ * Validation
+ */
+
+// Validate supplied value
+bool CharStringModuleKeyword::isValid(CharString value)
+{
+	if (listLimit_)
+	{
+		for (int n=0; n<allowedValues_.nItems(); ++n) if (DUQSys::sameString(value,allowedValues_[n])) return true;
+		return false;
+	}
+	else
+	{
+		// Check minimum limit
+		if (minimumLimit_)
+		{
+			if (value < min_) return false;
+		}
+
+		// Check maximum limit
+		if (maximumLimit_)
+		{
+			if (value > max_) return false;
+		}
+	}
+
+	return true;
+}
 
 /*
  * Conversion

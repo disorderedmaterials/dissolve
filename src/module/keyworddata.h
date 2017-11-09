@@ -40,6 +40,7 @@ template <class T> class ModuleKeywordData
 		listLimit_ = false;
 		minimumLimit_ = false;
 		maximumLimit_ = false;
+		set_ = false;
 	}
 
 
@@ -47,8 +48,29 @@ template <class T> class ModuleKeywordData
 	 * Data
 	 */
 	protected:
-	// Data type (POD or otherwise) that is to be set by reading from an input file
+	// Data (POD or otherwise) that is to be set by reading from an input file
 	T data_;
+	// Whether the current data value has ever been set
+	bool set_;
+
+	public:
+	// Set data, validating as necessary
+	bool setData(T value)
+	{
+		if (isValid(value))
+		{
+			data_ = value;
+			set_ = true;
+			return true;
+		}
+
+		return false;
+	}
+	// Return data
+	T& data()
+	{
+		return data_;
+	}
 
 
 	/*
@@ -128,41 +150,7 @@ template <class T> class ModuleKeywordData
 		return -1;
 	}
 	// Validate supplied value
-	bool isValid(T value)
-	{
-		if (listLimit_)
-		{
-			for (int n=0; n<allowedValues_.nItems(); ++n) if (value == allowedValues_[n]) return true;
-			return false;
-		}
-		else
-		{
-			// Check minimum limit
-			if (minimumLimit_)
-			{
-				if (value < min_) return false;
-			}
-
-			// Check maximum limit
-			if (maximumLimit_)
-			{
-				if (value > max_) return false;
-			}
-		}
-
-		return true;
-	}
-	// Set value, validating as necessary
-	bool setValue(T value)
-	{
-		if (isValid(value))
-		{
-			data_ = value;
-			return true;
-		}
-
-		return false;
-	}
+	virtual bool isValid(T value) = 0;
 };
 
 #endif

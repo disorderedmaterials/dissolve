@@ -45,6 +45,16 @@ class BroadeningFunctionModuleKeyword : public ModuleKeywordBase, public ModuleK
 	public:
 	// Duplicate the keyword's data in the supplied GenericList
 	void duplicateInList(GenericList& targetList, const char* prefix);
+	// Return whether the current data value has ever been set
+	bool set();
+
+
+	/*
+	 * Data Validation
+	 */
+	public:
+	// Validate supplied value
+	bool isValid(BroadeningFunction value);
 
 
 	/*

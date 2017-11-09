@@ -44,6 +44,16 @@ class BoolModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<boo
 	public:
 	// Duplicate the keyword's data in the supplied GenericList
 	void duplicateInList(GenericList& targetList, const char* prefix);
+	// Return whether the current data value has ever been set
+	bool set();
+
+
+	/*
+	 * Data Validation
+	 */
+	public:
+	// Validate supplied value
+	bool isValid(bool value);
 
 
 	/*

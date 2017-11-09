@@ -56,7 +56,7 @@ ModuleKeywordBase* ModuleKeywordList::keywords()
  * Conversion
  */
 
-// Return simple default value (as bool)
+// Return simple keyword value (as bool)
 bool ModuleKeywordList::asBool(const char* keywordName)
 {
 	// Find the named keyword
@@ -70,7 +70,7 @@ bool ModuleKeywordList::asBool(const char* keywordName)
 	return keyword->asBool();
 }
 
-// Return simple default value (as int)
+// Return simple keyword value (as int)
 int ModuleKeywordList::asInt(const char* keywordName)
 {
 	// Find the named keyword
@@ -84,7 +84,7 @@ int ModuleKeywordList::asInt(const char* keywordName)
 	return keyword->asInt();
 }
 
-// Return simple default value (as double)
+// Return simple keyword value (as double)
 double ModuleKeywordList::asDouble(const char* keywordName)
 {
 	// Find the named keyword
@@ -98,7 +98,7 @@ double ModuleKeywordList::asDouble(const char* keywordName)
 	return keyword->asDouble();
 }
 
-// Return simple default value (as string)
+// Return simple keyword value (as string)
 const char* ModuleKeywordList::asString(const char* keywordName)
 {
 	// Find the named keyword
@@ -110,4 +110,18 @@ const char* ModuleKeywordList::asString(const char* keywordName)
 	}
 
 	return keyword->asString();
+}
+
+// Return whether the specified keyword data has ever been set
+bool ModuleKeywordList::set(const char* keywordName)
+{
+	// Find the named keyword
+	ModuleKeywordBase* keyword = find(keywordName);
+	if (!keyword)
+	{
+		Messenger::warn("No Module keyword named '%s' exists to probe for its default value. Returning 'false'...\n", keywordName);
+		return false;
+	}
+
+	return keyword->set();
 }

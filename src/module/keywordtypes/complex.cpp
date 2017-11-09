@@ -42,6 +42,18 @@ void ComplexModuleKeyword::duplicateInList(GenericList& targetList, const char* 
 {
 }
 
+// Return whether the current data value has ever been set
+bool ComplexModuleKeyword::set()
+{
+	return set_;
+}
+
+// Validate supplied value
+bool ComplexModuleKeyword::isValid(int value)
+{
+	return false;
+}
+
 /*
  * Arguments
  */
