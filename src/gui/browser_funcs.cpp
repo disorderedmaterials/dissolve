@@ -22,6 +22,7 @@
 #include "gui/browser.h"
 #include "gui/mainwindow.h"
 #include "gui/modulecontrolwidget.h"
+#include "gui/pairpotentialwidget.h"
 #include "main/duq.h"
 #include "classes/species.h"
 #include "templates/variantpointer.h"
@@ -92,6 +93,18 @@ void BrowserWindow::updateWindow()
 			item->addChild(subItem);
 		}
 	}
+
+	// Add PairPotentials entry
+	topItem = new QTreeWidgetItem();
+	topItem->setText(0, "Pair Potentials");
+	ui.BrowserTree->addTopLevelItem(topItem);
+	for (PairPotential* pp = duq_.pairPotentials(); pp != NULL; pp = pp->next)
+	{
+		item = new QTreeWidgetItem(BrowserWindow::PairPotentialType);
+		item->setText(0, CharString("%s-%s", pp->atomTypeNameI(), pp->atomTypeNameJ()).get());
+		item->setData(0, Qt::UserRole, VariantPointer<PairPotential>(pp));
+		topItem->addChild(item);
+	}
 }
 
 /*
@@ -129,6 +142,18 @@ void BrowserWindow::on_BrowserTree_itemDoubleClicked(QTreeWidgetItem* item, int 
 				// Create a new ModuleWidget
 				ModuleControlWidget* moduleControlWidget = new ModuleControlWidget(NULL, module);
 				window = monitorWindow_.addWindow(moduleControlWidget, module, CharString("%s (%s)", module->name(), module->uniqueName()));
+			}
+			else window->setFocus();
+			break;
+		case (BrowserWindow::PairPotentialType):
+			// Is the Module already displayed?
+			window = monitorWindow_.currentWindow(item->data(0, Qt::UserRole).data());
+			if (!window)
+			{
+				PairPotential* pp = VariantPointer<PairPotential>(item->data(0, Qt::UserRole));
+				// Create a new PairPotentialWidget
+				PairPotentialWidget* pairPotentialWidget = new PairPotentialWidget(NULL, pp);
+				window = monitorWindow_.addWindow(pairPotentialWidget, pp, CharString("Pair Potential %s-%s", pp->atomTypeNameI(), pp->atomTypeNameJ()));
 			}
 			else window->setFocus();
 			break;

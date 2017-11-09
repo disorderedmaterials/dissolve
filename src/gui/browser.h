@@ -39,7 +39,7 @@ class BrowserWindow : public QWidget
 	// Main form declaration
 	Ui::BrowserWindow ui;
 	// Browser Data Types
-	enum BrowserDataType { AtomTypeDataType=1000, ConfigurationDataType, ModuleDataType, SpeciesDataType };
+	enum BrowserDataType { AtomTypeDataType=1000, ConfigurationDataType, ModuleDataType, PairPotentialType, SpeciesDataType };
 
 	private:
 	// Whether window is currently refreshing
