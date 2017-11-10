@@ -40,8 +40,7 @@ PairPotentialWidget::PairPotentialWidget(QWidget* parent, PairPotential* pp) : Q
 // 	CharString bottomText("%s", module_->uniqueName());
 // 	ui.BottomLabel->setText(bottomText.get());
 
-	// Set up options
-// 	setUpOptions();
+	// 
 
 	refreshing_ = false;
 }
@@ -50,7 +49,26 @@ PairPotentialWidget::PairPotentialWidget(QWidget* parent, PairPotential* pp) : Q
  * Widgets / Functions
  */
 
-// Set up options
-void PairPotentialWidget::setUpOptions()
+void PairPotentialWidget::on_FullEnergyCheck_clicked(bool checked)
+{
+}
+
+void PairPotentialWidget::on_OriginalEnergyCheck_clicked(bool checked)
+{
+}
+
+void PairPotentialWidget::on_AdditionalEnergyCheck_clicked(bool checked)
+{
+}
+
+void PairPotentialWidget::on_FullForceCheck_clicked(bool checked)
+{
+}
+
+void PairPotentialWidget::on_OriginalForceCheck_clicked(bool checked)
+{
+}
+
+void PairPotentialWidget::on_AdditionalForceCheck_clicked(bool checked)
 {
 }

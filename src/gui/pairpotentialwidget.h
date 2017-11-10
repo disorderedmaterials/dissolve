@@ -63,6 +63,12 @@ class PairPotentialWidget : public QWidget
 	void setUpOptions();
 
 	private slots:
+	void on_FullEnergyCheck_clicked(bool checked);
+	void on_OriginalEnergyCheck_clicked(bool checked);
+	void on_AdditionalEnergyCheck_clicked(bool checked);
+	void on_FullForceCheck_clicked(bool checked);
+	void on_OriginalForceCheck_clicked(bool checked);
+	void on_AdditionalForceCheck_clicked(bool checked);
 };
 
 #endif
