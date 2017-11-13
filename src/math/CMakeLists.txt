@@ -1,5 +1,6 @@
 add_library(math
   broadeningfunction.cpp
+  cuboid.cpp
   doubleexp.cpp
   mathfunc.cpp
   matrix3.cpp
@@ -7,6 +8,7 @@ add_library(math
 
   broadeningfunction.h
   constants.h
+  cuboid.h
   doubleexp.h
   mathfunc.h
   matrix3.h
