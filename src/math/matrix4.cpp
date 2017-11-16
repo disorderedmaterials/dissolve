@@ -620,6 +620,52 @@ void Matrix4::applyRotationX(double angle)
 	matrix_[7] = temp[3];
 }
 
+// Apply rotation about Y axis
+void Matrix4::applyRotationY(double angle)
+{
+	double cosx, sinx, theta = angle/DEGRAD, temp[4];
+	cosx = cos(theta);
+	sinx = sin(theta);
+
+	temp[0] = matrix_[0]*cosx + matrix_[2]*-sinx;
+	temp[1] = matrix_[4]*cosx + matrix_[6]*-sinx;
+	temp[2] = matrix_[8]*cosx + matrix_[10]*-sinx;
+	temp[3] = matrix_[12]*cosx + matrix_[14]*-sinx;
+
+	matrix_[2] = matrix_[0]*sinx + matrix_[2]*cosx;
+	matrix_[6] = matrix_[4]*sinx + matrix_[6]*cosx;
+	matrix_[10] = matrix_[8]*sinx + matrix_[10]*cosx;
+	matrix_[14] = matrix_[12]*sinx + matrix_[14]*cosx;
+
+	matrix_[0] = temp[0];
+	matrix_[4] = temp[1];
+	matrix_[8] = temp[2];
+	matrix_[12] = temp[3];
+}
+
+// Apply rotation about Z axis
+void Matrix4::applyRotationZ(double angle)
+{
+	double cosx, sinx, theta = angle/DEGRAD, temp[4];
+	cosx = cos(theta);
+	sinx = sin(theta);
+
+	temp[0] = matrix_[0]*cosx + matrix_[1]*sinx;
+	temp[1] = matrix_[4]*cosx + matrix_[5]*sinx;
+	temp[2] = matrix_[8]*cosx + matrix_[9]*sinx;
+	temp[3] = matrix_[12]*cosx + matrix_[13]*sinx;
+
+	matrix_[1] = matrix_[0]*-sinx + matrix_[1]*cosx;
+	matrix_[5] = matrix_[4]*-sinx + matrix_[5]*cosx;
+	matrix_[9] = matrix_[8]*-sinx + matrix_[9]*cosx;
+	matrix_[13] = matrix_[12]*-sinx + matrix_[13]*cosx;
+
+	matrix_[0] = temp[0];
+	matrix_[4] = temp[1];
+	matrix_[8] = temp[2];
+	matrix_[12] = temp[3];
+}
+
 // Apply axis rotation quaternion
 void Matrix4::applyRotationAxis(double ax, double ay, double az, double angle, bool normalise)
 {
@@ -672,7 +718,7 @@ void Matrix4::applyRotationAxis(double ax, double ay, double az, double angle, b
  * Translations
  */
 
-// Apply a translation to the matrix (as glTranslated would do)
+// Create a translation matrix (as glTranslated would do)
 void Matrix4::createTranslation(double dx, double dy, double dz)
 {
 	matrix_[0] = 1.0;
@@ -691,6 +737,12 @@ void Matrix4::createTranslation(double dx, double dy, double dz)
 	matrix_[13] = dy;
 	matrix_[14] = dz;
 	matrix_[15] = 1.0;
+}
+
+// Create a translation matrix (as glTranslated would do)
+void Matrix4::createTranslation(Vec3<double> delta)
+{
+	createTranslation(delta.x, delta.y, delta.z);
 }
 
 // Apply a translation to the matrix (as glTranslated would do)
@@ -931,4 +983,39 @@ void Matrix4::copyTranslationAndScaling(Matrix4& source)
 	matrix_[12] = source.matrix_[12];
 	matrix_[13] = source.matrix_[13];
 	matrix_[14] = source.matrix_[14];
+}
+
+/*
+ * Shearing
+ */
+
+// Apply a shearing along X
+void Matrix4::applyShearX(double shearx)
+{
+// 	A[0] = 1.0
+// 	A[4] = 0.2;
+// 	A[5] = 1.0;
+// 	A[9] = 1.0;
+// 	A[15] = 1.0;
+// 	Matrix AB;
+// 	AB.matrix_[0] = matrix_[0];
+// 	AB.matrix_[1] = matrix_[1];
+// 	AB.matrix_[2] = matrix_[2];
+// 	AB.matrix_[3] = matrix_[3];
+
+	matrix_[4] += shearx*matrix_[0];
+	matrix_[5] += shearx*matrix_[1];
+	matrix_[6] += shearx*matrix_[2];
+	matrix_[7] += shearx*matrix_[3];
+
+// 	AB.matrix_[8] = matrix_[8]*B.matrix_[0] + matrix_[9]*B.matrix_[4] + matrix_[10]*B.matrix_[8] + matrix_[11]*B.matrix_[12];
+// 	AB.matrix_[9] = matrix_[8]*B.matrix_[1] + matrix_[9]*B.matrix_[5] + matrix_[10]*B.matrix_[9] + matrix_[11]*B.matrix_[13];
+// 	AB.matrix_[10] = matrix_[8]*B.matrix_[2] + matrix_[9]*B.matrix_[6] + matrix_[10]*B.matrix_[10] + matrix_[11]*B.matrix_[14];
+// 	AB.matrix_[11] = matrix_[8]*B.matrix_[3] + matrix_[9]*B.matrix_[7] + matrix_[10]*B.matrix_[11] + matrix_[11]*B.matrix_[15];
+// 
+// 	AB.matrix_[12] = matrix_[12]*B.matrix_[0] + matrix_[13]*B.matrix_[4] + matrix_[14]*B.matrix_[8] + matrix_[15]*B.matrix_[12];
+// 	AB.matrix_[13] = matrix_[12]*B.matrix_[1] + matrix_[13]*B.matrix_[5] + matrix_[14]*B.matrix_[9] + matrix_[15]*B.matrix_[13];
+// 	AB.matrix_[14] = matrix_[12]*B.matrix_[2] + matrix_[13]*B.matrix_[6] + matrix_[14]*B.matrix_[10] + matrix_[15]*B.matrix_[14];
+// 	AB.matrix_[15] = matrix_[12]*B.matrix_[3] + matrix_[13]*B.matrix_[7] + matrix_[14]*B.matrix_[11] + matrix_[15]*B.matrix_[15];
+// 	return AB;
 }

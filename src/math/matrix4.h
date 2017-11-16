@@ -46,7 +46,7 @@ class Matrix4
 
 
 	/*
-	// Operators
+	 * Operators
 	 */
 	public:
 	Matrix4 operator*(const Matrix4& B) const;
@@ -60,7 +60,7 @@ class Matrix4
 
 
 	/*
-	// Basic Set/Get
+	 * Basic Set/Get
 	 */
 	public:
 	// Reset the matrix to the identity
@@ -80,7 +80,7 @@ class Matrix4
 
 
 	/*
-	// Column Operations
+	 * Column Operations
 	 */
 	public:
 	// Copy column contents to supplied Vec3
@@ -116,7 +116,7 @@ class Matrix4
 
 
 	/*
-	// Rotations
+	 * Rotations
 	 */
 	public:
 	// Create rotation matrix about X
@@ -131,16 +131,22 @@ class Matrix4
 	void createRotationAxis(double ax, double ay, double az, double angle, bool normalise);
 	// Apply rotation about X axis
 	void applyRotationX(double angle);
+	// Apply rotation about Y axis
+	void applyRotationY(double angle);
+	// Apply rotation about Z axis
+	void applyRotationZ(double angle);
 	// Apply axis rotation quaternion
 	void applyRotationAxis(double ax, double ay, double az, double angle, bool normalise);
 
 
 	/*
-	// Translations
+	 * Translations
 	 */
 	public:
-	// Create a translation to the matrix (as glTranslated would do)
+	// Create a translation matrix (as glTranslated would do)
 	void createTranslation(double dx, double dy, double dz);
+	// Create a translation matrix (as glTranslated would do)
+	void createTranslation(Vec3<double> delta);
 	// Apply a translation to the matrix (as glTranslated would do)
 	void applyTranslation(double dx, double dy, double dz);
 	// Apply a translation to the matrix (as glTranslated would do)
@@ -162,7 +168,7 @@ class Matrix4
 
 
 	/*
-	// Scaling
+	 * Scaling
 	 */
 	public:
 	// Apply a general scaling to the matrix (as glScaled would to)
@@ -180,7 +186,7 @@ class Matrix4
 
 
 	/*
-	// Transforms
+	 * Transforms
 	 */
 	public:
 	// Transform coordinates supplied and return as Vec3<double>
@@ -201,6 +207,14 @@ class Matrix4
 	void removeTranslationAndScaling();
 	// Copy translation and scaling parts from specified matrix
 	void copyTranslationAndScaling(Matrix4& source);
+
+
+	/*
+	 * Shearing
+	 */
+	public:
+	// Apply a shearing along X
+	void applyShearX(double shearx);
 };
 
 #endif
