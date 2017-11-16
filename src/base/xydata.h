@@ -92,7 +92,7 @@ class XYData : public ListItem<XYData>
 	// Return x Array
 	Array<double>& arrayX();
 	// Return x Array (const)
-	Array<double>& constArrayX() const;
+	const Array<double>& constArrayX() const;
 	// Set y value
 	void setY(int index, double y);
 	// Add to y value
@@ -106,7 +106,7 @@ class XYData : public ListItem<XYData>
 	// Return y Array
 	Array<double>& arrayY();
 	// Return y Array (const)
-	Array<double>& constArrayY() const;
+	const Array<double>& constArrayY() const;
 	// Set z value
 	void setZ(double z);
 	// Return z value

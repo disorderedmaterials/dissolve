@@ -209,7 +209,7 @@ Array<double>& XYData::arrayX()
 }
 
 // Return x Array (const)
-const Array<double>& XYData::constArrayX()
+const Array<double>& XYData::constArrayX() const
 {
 	return x_;
 }
@@ -291,7 +291,7 @@ Array<double>& XYData::arrayY()
 }
 
 // Return y Array (const)
-const Array<double>& XYData::constArrayY()
+const Array<double>& XYData::constArrayY() const
 {
 	return y_;
 }
