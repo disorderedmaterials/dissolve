@@ -23,8 +23,22 @@
 #include <math.h>
 #include <stdio.h>
 #include <limits>
+#include <string.h>
 
-// Constructor
+// Constructors
+DoubleExp::DoubleExp()
+{
+	mantissa_ = 0.0;
+	exponent_ = 0.0;
+	recalculate();
+}
+
+DoubleExp::DoubleExp(double value)
+{
+	set(value);
+	recalculate();
+}
+
 DoubleExp::DoubleExp(double mantissa, int exponent)
 {
 	// Private variables
@@ -34,7 +48,7 @@ DoubleExp::DoubleExp(double mantissa, int exponent)
 }
 
 // Assignment from single value
-void DoubleExp::operator=(double d)
+DoubleExp& DoubleExp::operator=(double d)
 {
 	set(d);
 }
@@ -76,6 +90,28 @@ void DoubleExp::set(double value)
 	mantissa_ = value / pow(10.0,exponent_);
 	recalculate();
 // 	printf("Input value %f gives mantissa of %f and exponent of %i\n", value, mantissa_, exponent_);
+}
+
+// Set from supplied text
+void DoubleExp::set(const char* text)
+{
+	// Copy the string
+	static char s[128];
+	strcpy(s, text);
+
+	printf("DoubleExp::set(const char*) - Original string is '%s'\n", text);
+	// Use strtok to get first part of string, before any exponent
+	char* mant = strtok(s, "Ee");
+	mantissa_ = atof(mant);
+	printf("DoubleExp::set(const char*) - Mantissa is %f (%s)\n", mantissa_, mant);
+
+	// Call strtok a second time to see if we have an exponent
+	char* expo = strtok(NULL, "Ee");
+	if (expo) exponent_ = atoi(expo);
+	else exponent_ = 1;
+	printf("DoubleExp::set(const char*) - Exponent is %i (%s)\n", exponent_, expo ? expo : "NULL");
+
+	recalculate();
 }
 
 // Set mantissa

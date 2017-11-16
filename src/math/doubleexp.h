@@ -28,12 +28,25 @@
 class DoubleExp
 {
 	public:
-	// Constructor / Destructor
-	DoubleExp(double mantissa = 0.0, int exponent = 0);
-	// Operator =
-	void operator=(double d);
+	// Constructors
+	DoubleExp();
+	DoubleExp(double value);
+	DoubleExp(double mantissa, int exponent);
 	// Conversion (double)
 	operator double();
+
+
+	/*
+	 * Operators
+	 */
+	public:
+	// Assignment Operator
+	DoubleExp& operator=(double d);
+	// Equality Operator
+	bool operator==(const double other);
+	// Inequality Operator
+	bool operator!=(const double other);
+
 
 	/*
 	 * Data
@@ -45,6 +58,7 @@ class DoubleExp
 	int exponent_;
 	// Value
 	double value_;
+
 
 	/*
 	 * Functions
@@ -60,6 +74,8 @@ class DoubleExp
 	void set(double mantissa, int exponent);
 	// Set from normal value
 	void set(double value);
+	// Set from supplied text
+	void set(const char* text);
 	// Set mantissa
 	void setMantissa(double mantissa);
 	// Return mantissa
