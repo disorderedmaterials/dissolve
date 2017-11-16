@@ -59,6 +59,8 @@ class XYData : public ListItem<XYData>
 	Array<double> x_;
 	// Array of y values
 	Array<double> y_;
+	// Z value
+	double z_;
 	// Name
 	CharString name_;
 	
@@ -89,6 +91,8 @@ class XYData : public ListItem<XYData>
 	double x(int index) const;
 	// Return x Array
 	Array<double>& arrayX();
+	// Return x Array (const)
+	Array<double>& constArrayX() const;
 	// Set y value
 	void setY(int index, double y);
 	// Add to y value
@@ -101,6 +105,14 @@ class XYData : public ListItem<XYData>
 	double y(int index) const;
 	// Return y Array
 	Array<double>& arrayY();
+	// Return y Array (const)
+	Array<double>& constArrayY() const;
+	// Set z value
+	void setZ(double z);
+	// Return z value
+	double& z();
+	// Return z value (const)
+	double constZ() const;
 	// Add new data point
 	void addPoint(double x, double y);
 	// Set name of data
@@ -138,17 +150,17 @@ class XYData : public ListItem<XYData>
 	 */
 	public:
 	// Return minumum x value in data
-	double xMin();
+	double xMin() const;
 	// Return maxumum x value in data
-	double xMax();
+	double xMax() const;
 	// Return first x value in data
-	double xFirst();
+	double xFirst() const;
 	// Return last x value in data
-	double xLast();
+	double xLast() const;
 	// Return minumum y value in data
-	double yMin();
+	double yMin() const;
 	// Return maxumum y value in data
-	double yMax();
+	double yMax() const;
 	// Compute integral of the data
 	double integral();
 	// Compute absolute integral of the data

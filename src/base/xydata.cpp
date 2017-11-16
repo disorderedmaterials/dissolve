@@ -46,16 +46,7 @@ XYData::~XYData()
 // Copy Constructor
 XYData::XYData(const XYData& source)
 {
-	x_ = source.x_;
-	y_ = source.y_;
-	interpolationA_ = source.interpolationA_;
-	interpolationB_ = source.interpolationB_;
-	interpolationC_ = source.interpolationC_;
-	interpolationD_ = source.interpolationD_;
-	interpolationH_ = source.interpolationH_;
-	interpolationInterval_ = source.interpolationInterval_;
-	interpolationScheme_ = source.interpolationScheme_;
-	name_ = source.name_;
+	(*this) = source;
 }
 
 // Clear Data
@@ -88,6 +79,7 @@ void XYData::reset()
 {
 	for (int n=0; n<x_.nItems(); ++n) x_[n] = 0.0;
 	for (int n=0; n<y_.nItems(); ++n) y_[n] = 0.0;
+	z_ = 0.0;
 	interpolationInterval_ = -1;
 }
 
@@ -97,6 +89,7 @@ void XYData::initialise(int size)
 	clear();
 	x_.initialise(size);
 	y_.initialise(size);
+	z_ = 0.0;
 }
 
 // Create new X data and empty Y data
@@ -116,6 +109,7 @@ void XYData::copyData(XYData& source)
 {
 	x_ = source.x_;
 	y_ = source.y_;
+	z_ = source.z_;
 	interpolationA_ = source.interpolationA_;
 	interpolationB_ = source.interpolationB_;
 	interpolationC_ = source.interpolationC_;
@@ -214,6 +208,12 @@ Array<double>& XYData::arrayX()
 	return x_;
 }
 
+// Return x Array (const)
+const Array<double>& XYData::constArrayX()
+{
+	return x_;
+}
+
 // Set y value
 void XYData::setY(int index, double y)
 {
@@ -290,6 +290,30 @@ Array<double>& XYData::arrayY()
 	return y_;
 }
 
+// Return y Array (const)
+const Array<double>& XYData::constArrayY()
+{
+	return y_;
+}
+
+// Set z value
+void XYData::setZ(double z)
+{
+	z_ = z;
+}
+
+// Return z value
+double& XYData::z()
+{
+	return z_;
+}
+
+// Return z value (const)
+double XYData::constZ() const
+{
+	return z_;
+}
+
 // Add new data point
 void XYData::addPoint(double x, double y)
 {
@@ -319,6 +343,7 @@ void XYData::operator=(const XYData& source)
 {
 	x_ = source.x_;
 	y_ = source.y_;
+	z_ = source.z_;
 	interpolationA_ = source.interpolationA_;
 	interpolationB_ = source.interpolationB_;
 	interpolationC_ = source.interpolationC_;
@@ -483,50 +508,50 @@ void XYData::operator/=(const double factor)
  */
 
 // Return minumum x value in data
-double XYData::xMin()
+double XYData::xMin() const
 {
 	if (x_.nItems() == 0) return 0.0;
-	double result = x_[0];
-	for (int n=1; n<x_.nItems(); ++n) if (x_[n] < result) result = x_[n];
+	double result = x_.value(0);
+	for (int n=1; n<x_.nItems(); ++n) if (x_.value(n) < result) result = x_.value(n);
 	return result;
 }
 
 // Return maxumum x value in data
-double XYData::xMax()
+double XYData::xMax() const
 {
 	if (x_.nItems() == 0) return 0.0;
-	double result = x_[0];
-	for (int n=1; n<x_.nItems(); ++n) if (x_[n] > result) result = x_[n];
+	double result = x_.value(0);
+	for (int n=1; n<x_.nItems(); ++n) if (x_.value(n) > result) result = x_.value(n);
 	return result;
 }
 
 // Return first x value in data
-double XYData::xFirst()
+double XYData::xFirst() const
 {
-	return x_.first();
+	return x_.value(0);
 }
 
 // Return last x value in data
-double XYData::xLast()
+double XYData::xLast() const
 {
-	return x_.last();
+	return x_.value(x_.nItems()-1);
 }
 
 // Return minumum y value in data
-double XYData::yMin()
+double XYData::yMin() const
 {
 	if (y_.nItems() == 0) return 0.0;
-	double result = y_[0];
-	for (int n=1; n<y_.nItems(); ++n) if (y_[n] < result) result = y_[n];
+	double result = y_.value(0);
+	for (int n=1; n<y_.nItems(); ++n) if (y_.value(n) < result) result = y_.value(n);
 	return result;
 }
 
 // Return maxumum y value in data
-double XYData::yMax()
+double XYData::yMax() const
 {
 	if (y_.nItems() == 0) return 0.0;
-	double result = y_[0];
-	for (int n=1; n<y_.nItems(); ++n) if (y_[n] > result) result = y_[n];
+	double result = y_.value(0);
+	for (int n=1; n<y_.nItems(); ++n) if (y_.value(n) > result) result = y_.value(n);
 	return result;
 }
 
@@ -923,9 +948,10 @@ void XYData::dump()
 bool XYData::broadcast(ProcessPool& procPool, int rootRank)
 {
 #ifdef PARALLEL
-	// XY data
+	// XY(Z) data
 	if (!procPool.broadcast(x_, rootRank)) return false;
 	if (!procPool.broadcast(y_, rootRank)) return false;
+	if (!procPool.broadcast(z_, rootRank)) return false;
 
 	// Spline data
 	if (!procPool.broadcast(interpolationA_, rootRank)) return false;
