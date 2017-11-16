@@ -62,8 +62,6 @@ template <class T, class D> class RefList
 	public:
 	// Constructor
 	RefList<T,D>();
-// 	// List Constructor
-// 	RefList<T,D>(const List<T>& source, D startData);
 	// Destructor
 	~RefList();
 	// Copy Constructor
@@ -115,6 +113,8 @@ template <class T, class D> class RefList
 	void remove(RefListItem<T,D>* item);
 	// Delete the reference containing specified item from the list
 	void remove(T* item);
+        // Remove all items that match specified data value
+        void removeIfData(D value);
 	// Remove the first item in the list
 	void removeFirst();
 	// Remove the last item in the list
@@ -156,17 +156,6 @@ template <class T, class D> RefList<T,D>::RefList()
 	regenerate_ = 1;
 	nItems_ = 0;
 }
-
-// // List Constructor
-// template <class T, class D> RefList<T,D>::RefList(const List<T>& source, D startData)
-// {
-// 	listHead_ = NULL;
-// 	listTail_ = NULL;
-// 	items_ = NULL;
-// 	regenerate_ = 1;
-// 	nItems_ = 0;
-// 	createFromList(source.first(), startData);
-// }
 
 // Destructor
 template <class T, class D> RefList<T,D>::~RefList()
@@ -415,6 +404,19 @@ template <class T, class D> void RefList<T,D>::remove(T* xitem)
 	// Delete a specific item from the list
 	RefListItem<T,D>* r = contains(xitem);
 	if (r != NULL) remove(r);
+}
+
+// Remove all items that match specified data value
+template <class T, class D> void RefList<T,D>::removeIfData(D value)
+{
+	RefListItem<T,D>* ri = listHead_, *next;
+	while (ri)
+	{
+		// Store next pointer, in case we delete the current item
+		next = ri->next;
+		if (ri->data == value) remove(ri);
+		ri = next;
+	}
 }
 
 // Element access operator
