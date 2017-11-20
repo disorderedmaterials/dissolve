@@ -63,12 +63,10 @@ class XYData : public ListItem<XYData>
 	double z_;
 	// Name
 	CharString name_;
-	
-	private:
+
+	public:
 	// Reset arrays to zero
 	void reset();
-	
-	public:
 	// Initialise arrays to specified size
 	void initialise(int size);
 	// Create new X data and empty Y data
@@ -109,6 +107,8 @@ class XYData : public ListItem<XYData>
 	const Array<double>& constArrayY() const;
 	// Set z value
 	void setZ(double z);
+	// Add to z value
+	void addZ(double delta);
 	// Return z value
 	double& z();
 	// Return z value (const)

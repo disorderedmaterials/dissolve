@@ -302,6 +302,12 @@ void XYData::setZ(double z)
 	z_ = z;
 }
 
+// Add to z value
+void XYData::addZ(double delta)
+{
+	z_ += delta;
+}
+
 // Return z value
 double& XYData::z()
 {
