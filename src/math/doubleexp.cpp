@@ -53,6 +53,18 @@ DoubleExp& DoubleExp::operator=(double d)
 	set(d);
 }
 
+// Equality Operator
+bool DoubleExp::operator==(const double other)
+{
+	return value_ == other;
+}
+
+// Inequality Operator
+bool DoubleExp::operator!=(const double other)
+{
+	return value_ != other;
+}
+
 // Conversion operators
 DoubleExp::operator double()
 {
