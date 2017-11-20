@@ -1,0 +1,110 @@
+/*
+	*** Pane Organiser
+	*** src/gui/uchroma/gui/paneorganiser.hui
+	Copyright T. Youngs 2013-2014
+
+	This file is part of uChroma.
+
+	uChroma is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	uChroma is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#ifndef DUQ_UCHROMAPANEORGANISER_H
+#define DUQ_UCHROMAPANEORGANISER_H
+
+#include "gui/uchroma/classes/viewpane.h"
+#include <QWidget>
+
+// Forward declarations
+class ViewLayout;
+
+// Pane Organiser
+class PaneOrganiser : public QWidget
+{
+	Q_OBJECT
+
+	public:
+	// Constructor
+	PaneOrganiser(QWidget* parent);
+
+
+	/*
+	 * Layout
+	 */
+	private:
+	// Layout to display / organise
+	ViewLayout* viewLayout_;
+	// Local layout 'pixel' dimensions
+	int layoutPixelWidth_, layoutPixelHeight_;
+	// Margin to use in display
+	int paneMargin_;
+
+	private:
+	// Calculate pixel size based on current widget geometry
+	void calculateLayoutPixelSize();
+	// Return grid reference containing coordinates supplied
+	QPoint gridReference(QPoint point, bool nearest = false);
+
+	public:
+	// Set layout to display / organise
+	void setViewLayout(ViewLayout* layout);
+
+
+	/*
+	 * Interaction
+	 */
+	private:
+	// Interaction mode
+	enum InteractionMode { NoInteraction, DragInteraction, StretchInteraction };
+	// Pane currently under mouse
+	ViewPane* paneUnderMouse_;
+	// Grid coordinate currently under mouse
+	QPoint gridReferenceUnderMouse_;
+	// Pane currently being interacted with
+	ViewPane* interactionPane_;
+	// Current interaction mode
+	InteractionMode interactionMode_;
+	// Handle grabbed if stretching
+	ViewPane::PaneHandle stretchHandle_;
+	// Clicked grid reference
+	QPoint clickedGridReference_;
+
+	private:
+	// Update values under mouse
+	void updateUnderMouse(QPoint pos);
+
+	signals:
+	void currentPaneChanged(int gridX, int gridY);
+
+
+	/*
+	 * Signals / Slots
+	 */
+	protected:
+	void dragEnterEvent(QDragEnterEvent *event);
+	void dragLeaveEvent(QDragLeaveEvent *event);
+	void dragMoveEvent(QDragMoveEvent *event);
+	void dropEvent(QDropEvent *event);
+	void mousePressEvent(QMouseEvent *event);
+	void mouseMoveEvent(QMouseEvent *event);
+	void mouseReleaseEvent(QMouseEvent *event);
+	void resizeEvent(QResizeEvent* event);
+	void paintEvent(QPaintEvent *event);
+
+	signals:
+	// Main display update required
+	void updateMainDisplay();
+};
+
+#endif
+

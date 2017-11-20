@@ -1,0 +1,1599 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>UChromaFullWindow</class>
+ <widget class="QMainWindow" name="UChromaFullWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>947</width>
+    <height>664</height>
+   </rect>
+  </property>
+  <property name="font">
+   <font>
+    <pointsize>10</pointsize>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>uChroma</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="icons.qrc">
+    <normaloff>:/uchroma/icons/uchroma.png</normaloff>:/uchroma/icons/uchroma.png</iconset>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <property name="spacing">
+     <number>4</number>
+    </property>
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="QFrame" name="WindowFrame">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <property name="spacing">
+        <number>4</number>
+       </property>
+       <property name="leftMargin">
+        <number>4</number>
+       </property>
+       <property name="topMargin">
+        <number>4</number>
+       </property>
+       <property name="rightMargin">
+        <number>4</number>
+       </property>
+       <property name="bottomMargin">
+        <number>4</number>
+       </property>
+       <item>
+        <layout class="QHBoxLayout" name="InfoLayout">
+         <property name="spacing">
+          <number>4</number>
+         </property>
+         <item>
+          <widget class="QFrame" name="CollectionControlFrame">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Sunken</enum>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <property name="spacing">
+             <number>2</number>
+            </property>
+            <property name="leftMargin">
+             <number>4</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>4</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QPushButton" name="CollectionListButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>24</width>
+                <height>24</height>
+               </size>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="icons.qrc">
+                <normaloff>:/uchroma/icons/collection_collection.svg</normaloff>:/uchroma/icons/collection_collection.svg</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="CollectionFocusNextButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>24</width>
+                <height>24</height>
+               </size>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="icons.qrc">
+                <normaloff>:/uchroma/icons/collections_next.svg</normaloff>:/uchroma/icons/collections_next.svg</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="CollectionFocusPreviousButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>24</width>
+                <height>24</height>
+               </size>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="icons.qrc">
+                <normaloff>:/uchroma/icons/collections_prev.svg</normaloff>:/uchroma/icons/collections_prev.svg</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="CollectionNCollectionsLabel">
+              <property name="minimumSize">
+               <size>
+                <width>32</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>Number of master collections present in the current session</string>
+              </property>
+              <property name="text">
+               <string>(999)</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QFrame" name="InfoCurrentCollectionFrame">
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Sunken</enum>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <property name="spacing">
+             <number>4</number>
+            </property>
+            <property name="leftMargin">
+             <number>4</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>4</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="InfoCurrentCollectionIconLabel">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16</width>
+                <height>16</height>
+               </size>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="pixmap">
+               <pixmap resource="icons.qrc">:/uchroma/icons/collection_collection.svg</pixmap>
+              </property>
+              <property name="scaledContents">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="InfoCurrentCollectionLabel">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>CurrentCollection</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QFrame" name="InfoCoordinateFrame">
+           <property name="minimumSize">
+            <size>
+             <width>200</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Sunken</enum>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <property name="spacing">
+             <number>4</number>
+            </property>
+            <property name="leftMargin">
+             <number>4</number>
+            </property>
+            <property name="topMargin">
+             <number>4</number>
+            </property>
+            <property name="rightMargin">
+             <number>4</number>
+            </property>
+            <property name="bottomMargin">
+             <number>4</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="label_7">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="pixmap">
+               <pixmap resource="icons.qrc">:/uchroma/icons/info_interaction.svg</pixmap>
+              </property>
+              <property name="scaledContents">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="InfoCoordinateLabel">
+              <property name="text">
+               <string>{0,0,0}</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <property name="spacing">
+          <number>4</number>
+         </property>
+         <item>
+          <widget class="QWidget" name="LeftWidgetsWidget" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_2">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QGroupBox" name="CollectionsGroup">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="title">
+               <string>Collections</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout">
+               <property name="spacing">
+                <number>4</number>
+               </property>
+               <property name="leftMargin">
+                <number>4</number>
+               </property>
+               <property name="topMargin">
+                <number>4</number>
+               </property>
+               <property name="rightMargin">
+                <number>4</number>
+               </property>
+               <property name="bottomMargin">
+                <number>4</number>
+               </property>
+               <item>
+                <widget class="QTreeWidget" name="CollectionTree">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="contextMenuPolicy">
+                  <enum>Qt::CustomContextMenu</enum>
+                 </property>
+                 <property name="horizontalScrollBarPolicy">
+                  <enum>Qt::ScrollBarAlwaysOff</enum>
+                 </property>
+                 <property name="showDropIndicator" stdset="0">
+                  <bool>false</bool>
+                 </property>
+                 <attribute name="headerVisible">
+                  <bool>false</bool>
+                 </attribute>
+                 <column>
+                  <property name="text">
+                   <string notr="true">1</string>
+                  </property>
+                 </column>
+                </widget>
+               </item>
+               <item>
+                <layout class="QFormLayout" name="formLayout">
+                 <property name="fieldGrowthPolicy">
+                  <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+                 </property>
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="label_6">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>9</pointsize>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>nDataSets</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QLabel" name="CollectionNSlicesLabel">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>9</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>0</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="label">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>9</pointsize>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>nPoints</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
+                  <widget class="QLabel" name="CollectionNPointsLabel">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>9</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>0</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_12">
+                 <item>
+                  <spacer name="horizontalSpacer_13">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeType">
+                    <enum>QSizePolicy::Minimum</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="CollectionAddButton">
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>24</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string>Add</string>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="icons.qrc">
+                     <normaloff>:/uchroma/icons/plus.svg</normaloff>:/uchroma/icons/plus.svg</iconset>
+                   </property>
+                   <property name="iconSize">
+                    <size>
+                     <width>16</width>
+                     <height>16</height>
+                    </size>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="CollectionRemoveButton">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>128</width>
+                     <height>24</height>
+                    </size>
+                   </property>
+                   <property name="toolTip">
+                    <string>Remove selected collection</string>
+                   </property>
+                   <property name="text">
+                    <string>Remove</string>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="icons.qrc">
+                     <normaloff>:/uchroma/icons/minus.svg</normaloff>:/uchroma/icons/minus.svg</iconset>
+                   </property>
+                   <property name="iconSize">
+                    <size>
+                     <width>16</width>
+                     <height>16</height>
+                    </size>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QFrame" name="MainViewFrame">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>300</width>
+             <height>300</height>
+            </size>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Sunken</enum>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="Viewer" name="MainView" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>3</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="cursor">
+               <cursorShape>CrossCursor</cursorShape>
+              </property>
+              <property name="mouseTracking">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>947</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="actionFileNewSession"/>
+    <addaction name="actionFileLoadSession"/>
+    <addaction name="separator"/>
+    <addaction name="actionFileSaveSession"/>
+    <addaction name="actionFileSaveSessionAs"/>
+    <addaction name="separator"/>
+    <addaction name="actionFilePrint"/>
+    <addaction name="actionFileExportImage"/>
+    <addaction name="separator"/>
+    <addaction name="actionFileQuit"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <widget class="QMenu" name="menuView_Type">
+     <property name="title">
+      <string>View Type</string>
+     </property>
+     <addaction name="actionViewNormal"/>
+     <addaction name="separator"/>
+     <addaction name="actionViewAutoStretched3D"/>
+     <addaction name="separator"/>
+     <addaction name="actionViewFlatXY"/>
+     <addaction name="actionViewFlatXZ"/>
+     <addaction name="actionViewFlatZY"/>
+     <addaction name="separator"/>
+     <addaction name="actionViewLinked"/>
+    </widget>
+    <addaction name="actionViewReset"/>
+    <addaction name="actionViewShowAll"/>
+    <addaction name="separator"/>
+    <addaction name="actionDummyCurrentPane"/>
+    <addaction name="menuView_Type"/>
+    <addaction name="actionViewPerspective"/>
+    <addaction name="actionViewAxes"/>
+    <addaction name="separator"/>
+    <addaction name="actionViewChangeLayout"/>
+   </widget>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>&amp;Settings</string>
+    </property>
+    <widget class="QMenu" name="menuFont">
+     <property name="title">
+      <string>Font</string>
+     </property>
+     <addaction name="actionSettingsChooseFont"/>
+     <addaction name="actionSettingsResetFont"/>
+    </widget>
+    <addaction name="menuFont"/>
+   </widget>
+   <widget class="QMenu" name="menuCollection">
+    <property name="title">
+     <string>&amp;Collections</string>
+    </property>
+    <addaction name="actionCollectionFocusNext"/>
+    <addaction name="actionCollectionFocusPrevious"/>
+    <addaction name="separator"/>
+    <addaction name="actionCollectionNew"/>
+    <addaction name="actionCollectionCreate"/>
+    <addaction name="actionCollectionDuplicate"/>
+    <addaction name="actionCollectionPromoteToMaster"/>
+    <addaction name="separator"/>
+    <addaction name="actionCollectionStyle"/>
+    <addaction name="actionCollectionTransform"/>
+    <addaction name="separator"/>
+    <addaction name="actionCollectionDelete"/>
+    <addaction name="separator"/>
+    <addaction name="actionCollectionExport"/>
+   </widget>
+   <widget class="QMenu" name="menuData">
+    <property name="title">
+     <string>&amp;Data</string>
+    </property>
+    <addaction name="actionDataLoadXY"/>
+    <addaction name="actionDataImport"/>
+    <addaction name="actionDataReload"/>
+    <addaction name="separator"/>
+    <addaction name="actionDataView"/>
+   </widget>
+   <widget class="QMenu" name="menuAnalyse">
+    <property name="title">
+     <string>&amp;Analyse</string>
+    </property>
+    <addaction name="actionAnalyseNewFit"/>
+    <addaction name="actionAnalyseEditFit"/>
+    <addaction name="separator"/>
+    <addaction name="actionAnalyseUpdateFit"/>
+    <addaction name="actionAnalyseResetAndRestartFit"/>
+    <addaction name="separator"/>
+    <addaction name="actionAnalyseViewFitResults"/>
+   </widget>
+   <widget class="QMenu" name="menuOperations">
+    <property name="title">
+     <string>&amp;Operations</string>
+    </property>
+    <addaction name="actionOperateConstantBackgroundSubtraction"/>
+    <addaction name="actionOperateSetZValues"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>&amp;Edit</string>
+    </property>
+    <addaction name="actionEditUndo"/>
+    <addaction name="actionEditRedo"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuView"/>
+   <addaction name="menuCollection"/>
+   <addaction name="menuData"/>
+   <addaction name="menuOperations"/>
+   <addaction name="menuAnalyse"/>
+   <addaction name="menuSettings"/>
+  </widget>
+  <widget class="QStatusBar" name="StatusBar"/>
+  <widget class="QToolBar" name="FileToolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>20</width>
+     <height>20</height>
+    </size>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionFileNewSession"/>
+   <addaction name="actionFileLoadSession"/>
+   <addaction name="actionFileSaveSession"/>
+   <addaction name="actionFileSaveSessionAs"/>
+  </widget>
+  <widget class="QToolBar" name="ViewToolBar">
+   <property name="windowTitle">
+    <string>toolBar_2</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>20</width>
+     <height>20</height>
+    </size>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionViewReset"/>
+   <addaction name="actionViewShowAll"/>
+   <addaction name="separator"/>
+   <addaction name="actionViewPerspective"/>
+   <addaction name="separator"/>
+   <addaction name="actionViewNormal"/>
+   <addaction name="actionViewAutoStretched3D"/>
+   <addaction name="actionViewFlatXY"/>
+   <addaction name="actionViewFlatXZ"/>
+   <addaction name="actionViewFlatZY"/>
+   <addaction name="actionViewLinked"/>
+  </widget>
+  <widget class="QToolBar" name="InteractToolBar">
+   <property name="windowTitle">
+    <string>toolBar_3</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>20</width>
+     <height>20</height>
+    </size>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionInteractNone"/>
+   <addaction name="actionInteractX"/>
+   <addaction name="actionInteractY"/>
+   <addaction name="actionInteractZ"/>
+  </widget>
+  <widget class="QToolBar" name="WindowToolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>20</width>
+     <height>20</height>
+    </size>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionWindowAxes"/>
+   <addaction name="actionWindowData"/>
+   <addaction name="actionWindowLog"/>
+   <addaction name="actionWindowStyle"/>
+   <addaction name="actionWindowTransform"/>
+   <addaction name="actionWindowView"/>
+  </widget>
+  <action name="actionFileQuit">
+   <property name="text">
+    <string>&amp;Quit</string>
+   </property>
+  </action>
+  <action name="actionFileLoadSession">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/uchroma/icons/file_open.svg</normaloff>:/uchroma/icons/file_open.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Load Session</string>
+   </property>
+   <property name="toolTip">
+    <string>Load a session</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
+   </property>
+  </action>
+  <action name="actionFileSaveSession">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/uchroma/icons/file_save.svg</normaloff>:/uchroma/icons/file_save.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Save Session</string>
+   </property>
+   <property name="toolTip">
+    <string>Save the current session</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionViewReset">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/uchroma/icons/view_reset.svg</normaloff>:/uchroma/icons/view_reset.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Reset</string>
+   </property>
+   <property name="toolTip">
+    <string>Reset current view</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionFileSaveSessionAs">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/uchroma/icons/file_saveas.svg</normaloff>:/uchroma/icons/file_saveas.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Save Session &amp;As</string>
+   </property>
+   <property name="toolTip">
+    <string>Save current session under a new name</string>
+   </property>
+  </action>
+  <action name="actionFileExportImage">
+   <property name="text">
+    <string>Export Image</string>
+   </property>
+   <property name="toolTip">
+    <string>Export current view as an image</string>
+   </property>
+  </action>
+  <action name="actionDataImport">
+   <property name="text">
+    <string>&amp;Import</string>
+   </property>
+   <property name="toolTip">
+    <string>Import XY data</string>
+   </property>
+  </action>
+  <action name="actionFileNewSession">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/uchroma/icons/file_new.svg</normaloff>:/uchroma/icons/file_new.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;New Session</string>
+   </property>
+   <property name="toolTip">
+    <string>Start a new, empty session</string>
+   </property>
+  </action>
+  <action name="actionSettingsChooseFont">
+   <property name="text">
+    <string>Choose Font...</string>
+   </property>
+   <property name="toolTip">
+    <string>Choose Font</string>
+   </property>
+  </action>
+  <action name="actionAnalyseNewFit">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/uchroma/icons/windows_fit.svg</normaloff>:/uchroma/icons/windows_fit.svg</iconset>
+   </property>
+   <property name="text">
+    <string>New &amp;Fit Equation...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="actionViewAxes">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/uchroma/icons/windows_axes.svg</normaloff>:/uchroma/icons/windows_axes.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Edit &amp;Axes...</string>
+   </property>
+   <property name="toolTip">
+    <string>Adjust axis limits and axis style</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+A</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::WindowShortcut</enum>
+   </property>
+  </action>
+  <action name="actionCollectionStyle">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/uchroma/icons/windows_style.svg</normaloff>:/uchroma/icons/windows_style.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Change &amp;Style...</string>
+   </property>
+   <property name="toolTip">
+    <string>Set colour and visual style of current collection</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="actionCollectionTransform">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/uchroma/icons/windows_transform.svg</normaloff>:/uchroma/icons/windows_transform.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Set Global &amp;Transform...</string>
+   </property>
+   <property name="toolTip">
+    <string>Set x, y, and z data transforms for current collection</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+T</string>
+   </property>
+  </action>
+  <action name="actionDataView">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/uchroma/icons/windows_data.svg</normaloff>:/uchroma/icons/windows_data.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;View DataSets...</string>
+   </property>
+   <property name="toolTip">
+    <string>Add/remove data slices in current collection</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+D</string>
+   </property>
+  </action>
+  <action name="actionWindowView">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/uchroma/icons/windows_view.svg</normaloff>:/uchroma/icons/windows_view.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;View</string>
+   </property>
+  </action>
+  <action name="actionCollectionNew">
+   <property name="text">
+    <string>N&amp;ew</string>
+   </property>
+   <property name="toolTip">
+    <string>Create new, empty collection</string>
+   </property>
+  </action>
+  <action name="actionCollectionFocusNext">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/uchroma/icons/collections_next.svg</normaloff>:/uchroma/icons/collections_next.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Focus &amp;Next</string>
+   </property>
+   <property name="toolTip">
+    <string>Shift focus to next collection in list (PgDown)</string>
+   </property>
+   <property name="shortcut">
+    <string>PgDown</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::ApplicationShortcut</enum>
+   </property>
+  </action>
+  <action name="actionCollectionFocusPrevious">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/uchroma/icons/collections_prev.svg</normaloff>:/uchroma/icons/collections_prev.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Focus &amp;Previous</string>
+   </property>
+   <property name="toolTip">
+    <string>Shift focus to the previous collection in the list (PgUp)</string>
+   </property>
+   <property name="shortcut">
+    <string>PgUp</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::ApplicationShortcut</enum>
+   </property>
+  </action>
+  <action name="actionDataLoadXY">
+   <property name="text">
+    <string>&amp;Load XY Datasets</string>
+   </property>
+  </action>
+  <action name="actionViewShowAll">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/uchroma/icons/view_showall.svg</normaloff>:/uchroma/icons/view_showall.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show &amp;All</string>
+   </property>
+   <property name="iconText">
+    <string>ViewShowAll</string>
+   </property>
+   <property name="toolTip">
+    <string>Expand limits of axes in order to include all data</string>
+   </property>
+  </action>
+  <action name="actionDataReload">
+   <property name="text">
+    <string>Reload</string>
+   </property>
+   <property name="toolTip">
+    <string>Reload datasets from their associated files</string>
+   </property>
+  </action>
+  <action name="actionInteractX">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/uchroma/icons/interact_x.svg</normaloff>:/uchroma/icons/interact_x.svg</iconset>
+   </property>
+   <property name="text">
+    <string>InteractX</string>
+   </property>
+   <property name="toolTip">
+    <string>Select / monitor X axis</string>
+   </property>
+   <property name="shortcut">
+    <string>X</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::ApplicationShortcut</enum>
+   </property>
+  </action>
+  <action name="actionInteractY">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/uchroma/icons/interact_y.svg</normaloff>:/uchroma/icons/interact_y.svg</iconset>
+   </property>
+   <property name="text">
+    <string>InteractY</string>
+   </property>
+   <property name="toolTip">
+    <string>Select / monitor Y axis</string>
+   </property>
+   <property name="shortcut">
+    <string>Y</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::ApplicationShortcut</enum>
+   </property>
+  </action>
+  <action name="actionInteractZ">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/uchroma/icons/interact_z.svg</normaloff>:/uchroma/icons/interact_z.svg</iconset>
+   </property>
+   <property name="text">
+    <string>InteractZ</string>
+   </property>
+   <property name="toolTip">
+    <string>Select / monitor Z axis</string>
+   </property>
+   <property name="shortcut">
+    <string>Z</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::ApplicationShortcut</enum>
+   </property>
+  </action>
+  <action name="actionInteractNone">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/uchroma/icons/interact_none.svg</normaloff>:/uchroma/icons/interact_none.svg</iconset>
+   </property>
+   <property name="text">
+    <string>No Interaction</string>
+   </property>
+   <property name="shortcut">
+    <string>Esc</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::ApplicationShortcut</enum>
+   </property>
+   <property name="visible">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionAxesQuickLog">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Log</string>
+   </property>
+  </action>
+  <action name="actionCollectionCreate">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/uchroma/icons/windows_create.svg</normaloff>:/uchroma/icons/windows_create.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Create From Equation...</string>
+   </property>
+   <property name="toolTip">
+    <string>Create new collections from scratch</string>
+   </property>
+  </action>
+  <action name="actionViewChangeLayout">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/uchroma/icons/windows_layout.svg</normaloff>:/uchroma/icons/windows_layout.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Change &amp;Layout...</string>
+   </property>
+   <property name="toolTip">
+    <string>Adjust / modify pane number and layout</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+L</string>
+   </property>
+  </action>
+  <action name="actionViewFlatXY">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/uchroma/icons/view_flatxy.svg</normaloff>:/uchroma/icons/view_flatxy.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Flat XY</string>
+   </property>
+   <property name="toolTip">
+    <string>Flat view facing XY plane</string>
+   </property>
+  </action>
+  <action name="actionFilePrint">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Print</string>
+   </property>
+  </action>
+  <action name="actionDummyCurrentPane">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Current Pane</string>
+   </property>
+   <property name="font">
+    <font>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+  </action>
+  <action name="actionViewAutoStretched3D">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/uchroma/icons/view_autostretch.svg</normaloff>:/uchroma/icons/view_autostretch.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Autostretched &amp;3D</string>
+   </property>
+   <property name="toolTip">
+    <string>Normal 3D view with automatically-stretched axes to fit view</string>
+   </property>
+  </action>
+  <action name="actionCollectionDelete">
+   <property name="text">
+    <string>&amp;Delete Current</string>
+   </property>
+  </action>
+  <action name="actionCollectionDuplicate">
+   <property name="text">
+    <string>D&amp;uplicate Current</string>
+   </property>
+  </action>
+  <action name="actionAnalyseEditFit">
+   <property name="text">
+    <string>&amp;Edit Fit Equation...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+F</string>
+   </property>
+  </action>
+  <action name="actionAnalyseUpdateFit">
+   <property name="text">
+    <string>Continue/&amp;Update Fit</string>
+   </property>
+   <property name="shortcut">
+    <string>F9</string>
+   </property>
+  </action>
+  <action name="actionWindowStyle">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/uchroma/icons/windows_style.svg</normaloff>:/uchroma/icons/windows_style.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Toggle Style Window</string>
+   </property>
+   <property name="toolTip">
+    <string>Change colour and visual style of collections</string>
+   </property>
+  </action>
+  <action name="actionWindowAxes">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/uchroma/icons/windows_axes.svg</normaloff>:/uchroma/icons/windows_axes.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show Axes Window</string>
+   </property>
+   <property name="toolTip">
+    <string>Adjust axis limits and axis style</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::WindowShortcut</enum>
+   </property>
+  </action>
+  <action name="actionWindowLog">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/uchroma/icons/windows_log.svg</normaloff>:/uchroma/icons/windows_log.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Toggle Log Window</string>
+   </property>
+   <property name="toolTip">
+    <string>Show log window</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::WindowShortcut</enum>
+   </property>
+  </action>
+  <action name="actionWindowTransform">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/uchroma/icons/windows_transform.svg</normaloff>:/uchroma/icons/windows_transform.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Toggle Global &amp;Transform Window</string>
+   </property>
+   <property name="toolTip">
+    <string>Set x, y, and z data transforms for collections</string>
+   </property>
+  </action>
+  <action name="actionWindowData">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/uchroma/icons/windows_data.svg</normaloff>:/uchroma/icons/windows_data.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Toggle DataSets Window</string>
+   </property>
+   <property name="toolTip">
+    <string>View/edit data in the current collection</string>
+   </property>
+  </action>
+  <action name="actionViewFlatXZ">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/uchroma/icons/view_flatxz.svg</normaloff>:/uchroma/icons/view_flatxz.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Flat XZ</string>
+   </property>
+   <property name="toolTip">
+    <string>Flat view facing XZ plane</string>
+   </property>
+  </action>
+  <action name="actionViewFlatZY">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/uchroma/icons/view_flatyz.svg</normaloff>:/uchroma/icons/view_flatyz.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Flat ZY</string>
+   </property>
+   <property name="toolTip">
+    <string>Flat view facing ZY plane</string>
+   </property>
+  </action>
+  <action name="actionViewNormal">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/uchroma/icons/view_normal.svg</normaloff>:/uchroma/icons/view_normal.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Normal</string>
+   </property>
+   <property name="toolTip">
+    <string>Normal 3D view</string>
+   </property>
+  </action>
+  <action name="actionViewLinked">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/uchroma/icons/view_autostretch.svg</normaloff>:/uchroma/icons/view_autostretch.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Linked</string>
+   </property>
+   <property name="toolTip">
+    <string>Link view to another pane</string>
+   </property>
+  </action>
+  <action name="actionViewPerspective">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/uchroma/icons/view_perspective.svg</normaloff>:/uchroma/icons/view_perspective.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Perspective</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle perspective on 3D views</string>
+   </property>
+  </action>
+  <action name="actionCollectionPromoteToMaster">
+   <property name="text">
+    <string>Promote to &amp;Master</string>
+   </property>
+  </action>
+  <action name="actionAnalyseResetAndRestartFit">
+   <property name="text">
+    <string>&amp;Reset and Restart Fit</string>
+   </property>
+   <property name="shortcut">
+    <string>F10</string>
+   </property>
+  </action>
+  <action name="actionAnalyseViewFitResults">
+   <property name="text">
+    <string>View Fit Results...</string>
+   </property>
+   <property name="shortcut">
+    <string>F11</string>
+   </property>
+  </action>
+  <action name="actionOperateConstantBackgroundSubtraction">
+   <property name="text">
+    <string>Constant Background Subtraction</string>
+   </property>
+  </action>
+  <action name="actionOperateSetZValues">
+   <property name="text">
+    <string>Set Z Values</string>
+   </property>
+  </action>
+  <action name="actionEditUndo">
+   <property name="text">
+    <string>Undo</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
+   </property>
+  </action>
+  <action name="actionEditRedo">
+   <property name="text">
+    <string>Redo</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+Z</string>
+   </property>
+  </action>
+  <action name="actionCollectionExport">
+   <property name="text">
+    <string>E&amp;xport...</string>
+   </property>
+   <property name="toolTip">
+    <string>Export current collection</string>
+   </property>
+  </action>
+  <action name="actionSettingsResetFont">
+   <property name="text">
+    <string>Reset to Default</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Viewer</class>
+   <extends>QWidget</extends>
+   <header>gui/uchroma/gui/viewer.hui</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="icons.qrc"/>
+ </resources>
+ <connections/>
+</ui>

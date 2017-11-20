@@ -73,10 +73,17 @@ if test "$with_gui" = "yes"; then
   PKG_CHECK_MODULES(QTWIDGETS, Qt5Widgets >= 5.0.0)
   PKG_CHECK_MODULES(QTPRINT, Qt5PrintSupport >= 5.0.0)
 
+  # Make sure Yacc/Bison is available
+  AC_PROG_YACC
+
+  # Find Freetype and FTGL (with pkgconfig)
+  PKG_CHECK_MODULES(FREETYPE, freetype2 >= 2.0)
+  PKG_CHECK_MODULES(FTGL, ftgl >= 2.0)
+
   # Update CFLAGS, includes etc.
-  GUI_LDLIBS="$QTGUI_LIBS $QTOPENGL_LIBS $QTPRINT_LIBS"
+  GUI_LDLIBS="$QTGUI_LIBS $QTOPENGL_LIBS $QTPRINT_LIBS $FTGL_LIBS $FREETYPE_LIBS -lGL"
   GUI_CFLAGS="-fPIC"
-  GUI_INCLUDES=" $QTGUI_CFLAGS $QTWIDGETS_CFLAGS $QTPRINT_CFLAGS"
+  GUI_INCLUDES=" $QTGUI_CFLAGS $QTWIDGETS_CFLAGS $QTPRINT_CFLAGS $FTGL_CFLAGS"
 fi
 
 # Readline include dir
@@ -170,7 +177,13 @@ AC_CONFIG_FILES(src/modules/test/Makefile)
 AC_CONFIG_FILES(src/templates/Makefile)
 if test "$with_gui" = "yes"; then
   AC_CONFIG_FILES(src/gui/Makefile)
-  AC_CONFIG_FILES(src/gui/qcustomplot/Makefile)
+  AC_CONFIG_FILES(src/gui/uchroma/Makefile)
+  AC_CONFIG_FILES(src/gui/uchroma/classes/Makefile)
+  AC_CONFIG_FILES(src/gui/uchroma/expression/Makefile)
+  AC_CONFIG_FILES(src/gui/uchroma/gui/Makefile)
+  AC_CONFIG_FILES(src/gui/uchroma/kernels/Makefile)
+  AC_CONFIG_FILES(src/gui/uchroma/render/Makefile)
+  AC_CONFIG_FILES(src/gui/uchroma/session/Makefile)
   AC_CONFIG_FILES(src/modules/atomshake/gui/Makefile)
   AC_CONFIG_FILES(src/modules/partials/gui/Makefile)
   AC_CONFIG_FILES(src/modules/skeleton/gui/Makefile)

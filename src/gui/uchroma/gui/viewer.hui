@@ -1,0 +1,209 @@
+/*
+	*** OpenGL Viewer Widget (subclassing QOpenGLWidget)
+	*** src/gui/uchroma/gui/viewer.hui
+	Copyright T. Youngs 2013-2017
+
+	This file is part of uChroma.
+
+	uChroma is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	uChroma is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#ifndef DUQ_UCHROMAVIEWER_H
+#define DUQ_UCHROMAVIEWER_H
+
+#include <QOpenGLWidget>
+#include <QOpenGLFunctions>
+#include <QOffscreenSurface>
+#include <QObject>
+#include "gui/uchroma/render/primitive.h"
+#include "gui/uchroma/classes/axes.h"
+#include "gui/uchroma/classes/colourscale.h"
+#include "base/xydata.h"
+#include "templates/list.h"
+#include "templates/reflist.h"
+
+// Forward Declarations
+class ColourScale;
+class UChromaBase;
+class Collection;
+class DisplayDataSet;
+class ViewPane;
+
+// Base rendering widget
+class Viewer : public QOpenGLWidget, protected QOpenGLFunctions
+{
+	Q_OBJECT
+
+	public:
+	// Constructor / Destructor
+	Viewer(QWidget *parent);
+	~Viewer();
+
+
+	/*
+	 * Link to UChromaBase
+	 */
+	private:
+	// UChromaBase pointer
+	UChromaBase* uChromaBase_;
+	
+	public:
+	// Set UChromaBase pointer
+	void setUChromaBase(UChromaBase* uChromaBase);
+
+
+	/*
+	 * Context / Character
+	 */
+	private:
+	// Width, height, and aspect ratio of the context
+	GLsizei contextWidth_, contextHeight_;
+	// Flag to indicate whether we may draw to the context
+	bool valid_;
+	// Flag indicating if we are currently drawing to this context
+	bool drawing_;
+
+	protected:
+	// Initialise context widget (when created by Qt)
+	void initializeGL();
+	// General repaint callback
+	void paintGL();
+	// Resize function
+	void resizeGL(int, int);
+
+	public:
+	// Return the current height of the drawing area
+	GLsizei contextHeight() const;
+	// Return the current width of the drawing area
+	GLsizei contextWidth() const;
+	// Check for GL error
+	void checkGlError();
+	// Refresh widget / scene
+	void postRedisplay();
+
+
+	/*
+	 * Scene Rendering
+	 */
+	private:
+	// Flag specifying whether we are currently rendering offscreen
+	bool renderingOffScreen_;
+	// Line width scaling factor to use (to adjust line width when saving images)
+	double lineWidthScaling_;
+	// Collection to highlight in this pass
+	Collection* highlightCollection_;
+	// Offscreen context
+        QOpenGLContext offscreenContext_;
+	// Offscreen surface
+	QOffscreenSurface offscreenSurface_;
+
+	private:
+	// Setup basic GL properties
+	void setupGL();
+	// Draw full scene
+	void renderFullScene(int xOffset = 0, int yOffset = 0);
+
+	public:
+	// Set whether we are currently rendering offscreen
+	void setRenderingOffScreen(bool b);
+	// Set line width and text scaling to use
+	void setObjectScaling(double scaling);
+	// Set collection to highlight in this pass
+	void setHighlightCollection(Collection* collection);
+	// Grab current contents of framebuffer
+	QPixmap frameBuffer();
+	// Render current scene at supplied size
+	QPixmap generateImage(int imageWidth, int imageHeight);
+
+
+	/*
+	 * Object Querying
+	 */
+	public:
+	// Drawing object type
+	enum ViewObject { AxisTickLabelObject, AxisLineObject, AxisTitleLabelObject, CollectionObject, GridLineMinorObject, GridLineMajorObject, NoObject };
+
+	private:
+	// View coordinates to probe for objects at next redraw
+	int objectQueryX_, objectQueryY_;
+	// Width and height of area about clicked position
+	int objectQueryWidth_, objectQueryHeight_;
+	// Maximum depth value found at query pixel
+	GLfloat depthAtQueryCoordinates_;
+	// Type of object found at query coordinates
+	Viewer::ViewObject objectAtQueryCoordinates_;
+	// Information describing object at query coordinates
+	CharString infoAtQueryCoordinates_;
+
+	private:
+	// Update depth at query coordinates, returning whether it is closer
+	bool updateQueryDepth();
+	// Set information of query object
+	void setQueryObject(Viewer::ViewObject objectType, const char* info);
+
+	public:
+	// Set coordinates to query at next redraw
+	void setQueryCoordinates(int mouseX, int mouseY);
+	// Return object type at query coordinates
+	Viewer::ViewObject objectAtQueryCoordinates();
+	// Info for object at query coordinates
+	const char* infoAtQueryCoordinates();
+
+
+	/*
+	 * Mouse / Keyboard Input
+	 * (in viewer_input.cpp)
+	 */
+	private:
+	// Canvas coordinates of mouse down
+	Vec3<double> rMouseDown_;
+	// Canvas coordinates of mouse cursor
+	Vec3<double> rMouseLast_;
+	// Current state of mouse buttons
+	Qt::MouseButtons buttonState_;
+
+	protected:
+	// Qt Virtual (mouse press event)
+	void mousePressEvent(QMouseEvent*);
+	// Qt Virtual (mouse release event)
+	void mouseReleaseEvent(QMouseEvent*);
+	// Qt Virtual (mouse move event)
+	void mouseMoveEvent(QMouseEvent*);
+	// Qt Virtual (mouse wheel event)
+	void wheelEvent(QWheelEvent*);
+	// Qt Virtual (mouse double click event)
+	void mouseDoubleClickEvent(QMouseEvent* event);
+
+	public:
+	// Return mouse coordinates at last mousedown event
+	Vec3<double> rMouseDown();
+	// Return mouse coordinates at last mousemove event
+	Vec3<double> rMouseLast();
+
+	public slots:
+	// Qt Slot (key press event)
+	void keyPressEvent(QKeyEvent*);
+	// Qt Slot (key release event)
+	void keyReleaseEvent(QKeyEvent*);
+
+
+	/*
+	 * Signals
+	 */
+	signals:
+	// Return string containing time taken to do last render
+	QString renderComplete(QString timeTaken);
+};
+
+#endif

@@ -1,0 +1,56 @@
+add_library(classes
+  axes.cpp
+  collection.cpp
+  colourscale.cpp
+  data2d.cpp
+  dataset.cpp
+  dataspace.cpp
+  dataspacerange.cpp
+  displaydataset.cpp
+  equationvariable.cpp
+  indexdata.cpp
+  lineparser.cpp
+  messenger.cpp
+  namedvalue.cpp
+  numberformat.cpp
+  referencevariable.cpp
+  signal.cpp
+  sysfunc.cpp
+  targetdata.cpp
+  targetprimitive.cpp
+  transformer.cpp
+  viewlayout.cpp
+  viewpane.cpp
+  axes.h
+  collection.h
+  colourscale.h
+  data2d.h
+  dataset.h
+  dataspace.h
+  dataspacerange.h
+  displaydataset.h
+  equationvariable.h
+  indexdata.h
+  lineparser.h
+  messenger.h
+  namedvalue.h
+  numberformat.h
+  referencevariable.h
+  signal.h
+  sysfunc.h
+  targetdata.h
+  targetprimitive.h
+  transformer.h
+  viewlayout.h
+  viewpane.h
+)
+
+target_include_directories(classes PRIVATE
+  ${PROJECT_SOURCE_DIR}/src
+  ${PROJECT_BINARY_DIR}/src
+  ${Qt5Core_INCLUDE_DIRS}
+  ${Qt5Widgets_INCLUDE_DIRS}
+  ${Qt5Gui_INCLUDE_DIRS}
+  ${FREETYPE_INCLUDE_DIRS}
+  ${HDF5_INCLUDE_DIRS}
+)

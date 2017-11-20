@@ -21,11 +21,16 @@ if BUILDGUI
 
 bin_PROGRAMS += monitor
 
-monitor_SOURCES = monitor.cpp gui/messenger_printtext.cpp
+monitor_SOURCES = monitor.cpp
 
 SUBDIRS += gui
 
-monitor_LDADD = libduq.la modules/libmodulewidgets.la gui/libgui.la gui/qcustomplot/libqcustomplot.la @GUI_LDLIBS@
+noinst_LTLIBRARIES += libduqgui.la
+libduqgui_la_SOURCES = gui/messenger_printtext.cpp
+libduqgui_la_LIBADD = libduq.la modules/libmodulewidgets.la gui/libgui.la gui/uchroma/libuchroma.la libduq.la
+libduqgui_la_LDFLAGS = -static
+
+monitor_LDADD = libduqgui.la @GUI_LDLIBS@ @MPI_LDLIBS@
 
 monitor_CPPFLAGS = @DUQ_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
 

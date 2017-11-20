@@ -1,0 +1,120 @@
+/*
+	*** TExponentialSpin
+	*** src/gui/texponentialspin.hui
+	Copyright T. Youngs 2007-2017
+
+	This file is part of dUQ.
+
+	dUQ is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	dUQ is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#ifndef DUQ_TEXPONENTIALSPIN_H
+#define DUQ_TEXPONENTIALSPIN_H
+
+#include <QAbstractSpinBox>
+#include "math/doubleexp.h"
+
+class TExponentialSpin : public QAbstractSpinBox
+{
+	Q_OBJECT
+	
+	public:
+	// Constructor
+	TExponentialSpin(QWidget* parent = 0);
+
+
+	/*
+	 * Data
+	 */
+	private:
+	// Validator for data
+	QRegExpValidator validator_;
+	// Limits for value (if enabled)
+	double valueMin_, valueMax_;
+	// Whether limits are enabled
+	bool limitMinValue_, limitMaxValue_;
+	// Step value
+	double valueStep_;
+	// Mantissa/exponent representation of current value
+	DoubleExp value_;
+	// Number of decimals to use when converting to text
+	int decimals_;
+	// Suffix for value
+	QString suffix_;
+	// Whether text has changed (been edited)
+	bool textChanged_;
+
+	private:
+	// Clamp current value to allowable range
+	bool clamp();
+	// Create text from current value, and display in lineEdit
+	void updateTextFromValue(int precision = 4);
+
+	public:
+	// Return double value
+	double value();
+	// Set value
+	void setValue(double value);
+	// Set minimum limit
+	void setMinimum(double value);
+	// Set minimum limit
+	void setMaximum(double value);
+	// Set allowable range of value
+	void setRange(bool limitMin, double minValue, bool limitMax, double maxValue, int nSteps = -1);
+	// Remove range limits
+	void setUnlimitedRange();
+	// Set single step value
+	void setSingleStep(double step);
+	// Return number of decimals to use when converting to text
+	int decimals();
+	// Set number of decimals to use when converting to text
+	void setDecimals(int nDecimals);
+	// Return suffix for value
+	QString suffix();
+	// Set suffix for value
+	void setSuffix(QString suffix);
+
+
+	/*
+	 * Signals
+	 */
+	signals:
+	// Current value has changed
+	void valueChanged(double value);
+
+
+	/*
+	 * Slots
+	 */
+	private slots:
+	// Update value from current textEdit text
+	void updateValueFromText();
+	// Flag that the text has been modified since the last emit of valueChanged()
+	void textChanged(QString text);
+
+
+	/*
+	 * Virtual Overloads
+	 */
+	public:
+	// Step value by specified amount
+	void stepBy(int nSteps);
+
+	protected:
+	// Return which steps should be enabled
+	StepEnabled stepEnabled() const;
+};
+
+#endif
+

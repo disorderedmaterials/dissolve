@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:osb="http://www.openswatchbook.org/uri/2009/osb"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.0"
+   width="100"
+   height="100"
+   id="svg2"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="view_normal.svg">
+  <metadata
+     id="metadata3051">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1140"
+     id="namedview3049"
+     showgrid="false"
+     inkscape:zoom="0.59"
+     inkscape:cx="-781.80551"
+     inkscape:cy="-344.17945"
+     inkscape:window-x="1920"
+     inkscape:window-y="25"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2" />
+  <defs
+     id="defs4">
+    <linearGradient
+       id="linearGradient3929"
+       osb:paint="gradient">
+      <stop
+         style="stop-color:#b3b2b0;stop-opacity:1;"
+         offset="0"
+         id="stop3931" />
+      <stop
+         style="stop-color:#b3b2b0;stop-opacity:0;"
+         offset="1"
+         id="stop3933" />
+    </linearGradient>
+  </defs>
+  <g
+     id="g3778-8"
+     transform="matrix(0.50428467,0,-0.20522287,0.17501212,25.899257,33.162544)">
+    <g
+       transform="matrix(2.2087267,0,0,2.2444402,-23.789789,-26.650571)"
+       id="text3001-2"
+       style="font-size:20.22868538px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:none;stroke:#ffffff;stroke-width:2.26774526;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:Sans" />
+  </g>
+  <g
+     id="g3778"
+     transform="matrix(0.50428467,0,0,0.35545643,11.654759,41.001537)"
+     style="stroke:#000000;stroke-opacity:1;stroke-width:7.08582112;stroke-miterlimit:4;stroke-dasharray:none">
+    <rect
+       y="7.2203155"
+       x="5.3505397"
+       height="83.393387"
+       width="89.685493"
+       id="rect3794"
+       style="opacity:0.41628962000000003;fill:#005a94;fill-opacity:1;stroke:#000000;stroke-width:7.08582112;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+    <g
+       transform="matrix(2.2087267,0,0,2.2444402,-23.789789,-26.650571)"
+       id="text3001"
+       style="font-size:20.22868538000000171px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:none;stroke:#000000;stroke-width:3.18247627;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:Sans" />
+  </g>
+  <rect
+     y="58.517155"
+     x="89.698326"
+     height="29.416502"
+     width="45.22702"
+     id="rect3794-0"
+     style="opacity:0.41628962000000003;fill:#005a94;fill-opacity:1;stroke:#000000;stroke-width:4.25909079;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+     transform="matrix(1,0,-0.86823962,0.49614511,0,0)" />
+  <g
+     id="g3778-8-3"
+     transform="matrix(0.30477747,-0.17596335,0,0.35545643,57.060814,40.751542)"
+     style="stroke:#000000;stroke-opacity:1;stroke-width:9.1145795;stroke-miterlimit:4;stroke-dasharray:none">
+    <rect
+       y="7.2203155"
+       x="5.3505397"
+       height="83.393387"
+       width="89.685493"
+       id="rect3794-0-8"
+       style="opacity:0.41628962000000003;fill:#005a94;fill-opacity:1;stroke:#000000;stroke-width:9.1145795;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+    <g
+       transform="matrix(2.2087267,0,0,2.2444402,-23.789789,-26.650571)"
+       id="text3001-2-4"
+       style="font-size:20.22868538000000171px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:none;stroke:#000000;stroke-width:4.09365866;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:Sans" />
+  </g>
+</svg>
