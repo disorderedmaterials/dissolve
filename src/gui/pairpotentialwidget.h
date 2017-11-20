@@ -26,6 +26,7 @@
 
 // Forward Declarations
 class PairPotential;
+class UChromaViewWidget;
 
 // PairPotential Widget
 class PairPotentialWidget : public QWidget
@@ -36,6 +37,8 @@ class PairPotentialWidget : public QWidget
 	private:
 	// Associated PairPotential
 	PairPotential* pairPotential_;
+	// UChromaView contained within this widget
+	UChromaViewWidget* uChromaView_;
 	// Whether widget is currently refreshing
 	bool refreshing_;
 
@@ -46,7 +49,9 @@ class PairPotentialWidget : public QWidget
 	Ui::PairPotentialWidget ui;
 	// Update controls within widget
 	void updateControls();
-
+	// Displayed Data Types enum
+	enum DisplayData { FullEnergyData, OriginalEnergyData, AdditionalEnergyData, FullForceData };
+	
 
 	/*
 	 * Reimplementations
@@ -56,19 +61,23 @@ class PairPotentialWidget : public QWidget
 
 
 	/*
-	 * Widgets & Functions
+	 * General Functions
 	 */
 	private:
-	// Populate list of PairPotential Options
-	void setUpOptions();
+	// Add specified XYData to the plot, as the type specified
+	void addData(PairPotentialWidget::DisplayData type);
+	// Remove specified XYData from the plot
+	void removeData(PairPotentialWidget::DisplayData type);
 
+
+	/*
+	 * Widgets Slots
+	 */
 	private slots:
 	void on_FullEnergyCheck_clicked(bool checked);
 	void on_OriginalEnergyCheck_clicked(bool checked);
 	void on_AdditionalEnergyCheck_clicked(bool checked);
 	void on_FullForceCheck_clicked(bool checked);
-	void on_OriginalForceCheck_clicked(bool checked);
-	void on_AdditionalForceCheck_clicked(bool checked);
 };
 
 #endif
