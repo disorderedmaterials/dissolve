@@ -685,7 +685,42 @@ template <class T> class List
 	}
 };
 
-// List Iterator
+/*
+ * List with Parent references for items
+ */
+template <class T, class P> class ParentList : public List<T>
+{
+	public:
+	// Override the add() member function
+	T* add(P& parent)
+	{
+		T *newitem = new T(parent);
+		List<T>::own(newitem);
+		return newitem;
+	}
+	// Override the assignment operator
+	void operator=(const ParentList<T,P>& source)
+	{
+		// Clear any current data in the list...
+		List<T>::clear();
+		T *newitem, *olditem;
+		for (olditem = source.first(); olditem != NULL; olditem = olditem->next)
+		{
+			// To ensure that we don't mess around with the pointers of the old list, copy the object and then own it
+			newitem = new T(olditem->parent());
+			*newitem = *olditem;
+			newitem->prev = NULL;
+			newitem->next = NULL;
+			List<T>::own(newitem);
+		}
+		// Don't deep-copy the static list, just flag that it must be regenerated if required.
+		List<T>::regenerate_ = 1;
+	}
+};
+
+/*
+ * List Iterator
+ */
 template <class T> class ListIterator
 {
 	public:
