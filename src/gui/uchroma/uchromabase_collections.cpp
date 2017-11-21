@@ -92,6 +92,19 @@ Collection* UChromaBase::addCollection(const char* name, int listIndex)
 	return currentCollection_;
 }
 
+// Add new collection to the current view pane
+Collection* UChromaBase::addCollectionToCurrentViewPane(const char* name, int identifier)
+{
+	// Create the collection, calling our addCollection() function to do the work
+	Collection* collection = addCollection(name);
+	collection->setIdentifier(identifier);
+
+	if (currentViewPane_) currentViewPane_->addCollectionTarget(collection);
+	else Messenger::warn("Can't add new Collection to current view pane, since the currente view pane is NULL.\n");
+
+	return collection;
+}
+
 // Add new collection at the specified location
 Collection* UChromaBase::addCollectionFromLocator(const char* locator, Collection::CollectionType type, int listIndex)
 {
@@ -264,4 +277,32 @@ Collection* UChromaBase::currentCollection()
 bool UChromaBase::isCurrentCollection(Collection* collection)
 {
 	return (currentCollection_ == collection);
+}
+
+// Identify collection
+Collection* UChromaBase::identifyCollection(int id)
+{
+	// Loop over main collections, passing parts list
+	for (Collection* collection = collections_.first(); collection != NULL; collection = collection->next) if (collection->identifier() == id) return collection;
+
+	return NULL;
+}
+
+// Set identified collection visibility
+bool UChromaBase::setCollectionVisible(int identifier, bool visible)
+{
+	// Identify collection
+	Collection* collection = identifyCollection(identifier);
+
+	if (collection)
+	{
+		collection->setVisible(visible);
+
+		updateGUI();
+
+		return true;
+	}
+	else Messenger::warn("Collection with identifier %i could not be found.\n", identifier);
+
+	return false;
 }

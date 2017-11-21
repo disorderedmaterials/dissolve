@@ -300,6 +300,8 @@ class UChromaBase
 	void startNewSession(bool createDefaults);
 	// Add new collection
 	Collection* addCollection(const char* name = NULL, int index = -1);
+	// Add new collection to the current view pane
+	Collection* addCollectionToCurrentViewPane(const char* name = NULL, int identifier = -1);
 	// Add new collection at the specified location
 	Collection* addCollectionFromLocator(const char* locator, Collection::CollectionType type, int listIndex);
 	// Remove existing collection
@@ -326,6 +328,10 @@ class UChromaBase
 	Collection* currentCollection();
 	// Return whether specified collection is the current collection
 	bool isCurrentCollection(Collection* collection);
+	// Identify collection
+	Collection* identifyCollection(int id);
+	// Set identified collection visibility
+	bool setCollectionVisible(int identifier, bool visible);
 
 
 	/*
