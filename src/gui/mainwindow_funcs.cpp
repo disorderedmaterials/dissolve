@@ -28,8 +28,9 @@
 // Constructor
 MonitorWindow::MonitorWindow(DUQ& duq) : QMainWindow(NULL), duq_(duq)
 {
-	// Initialise Qt's icon resource
+	// Initialise resources
 	Q_INIT_RESOURCE(icons);
+	Q_INIT_RESOURCE(uchroma);
 
 	// Set up user interface
 	ui.setupUi(this);

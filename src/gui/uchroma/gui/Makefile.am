@@ -21,7 +21,7 @@ SUFFIXES: .ui .hui .qrc
 clean-local:
 	-rm -f ui_* moc_* *.o icons.cpp paneorganiser.cpp viewer.cpp 
 
-libgui_la_SOURCES = icons.qrc
+libgui_la_SOURCES = uchroma.qrc
 
 libgui_la_SOURCES += editdataset.ui editfitkernel.ui editfitresults.ui editlinestyle.ui editnumberformat.ui editreference.ui editviewlayout.ui
 libgui_la_SOURCES += selectequation.ui selectsymbol.ui selecttarget.ui

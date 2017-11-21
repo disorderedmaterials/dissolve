@@ -90,7 +90,7 @@ SET(gui_SRCS
 
 # Resources
 set(gui_RES_QRC
-  icons.qrc 
+  uchroma.qrc 
 )
 QT5_ADD_RESOURCES(gui_RES ${gui_RES_QRC})
 
