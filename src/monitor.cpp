@@ -25,9 +25,12 @@
 #include "module/registry.h"
 #include "base/processpool.h"
 #include "gui/mainwindow.h"
+#include "gui/uchroma/uchromabase.h"
+#include "gui/uchroma/render/fontinstance.h"
 #include <time.h>
 #include <ctime>
 #include <stdlib.h>
+#include <QMessageBox>
 
 int main(int argc, char **argv)
 {
@@ -201,6 +204,9 @@ int main(int argc, char **argv)
 	MonitorWindow duqWindow(dUQ);
 	duqWindow.setUp();
 	duqWindow.show();
+
+        // Load font - must do this after the main window is shown on some systems (e.g. OSX)
+	if (!FontInstance::setup(UChromaBase::viewerFontFileName())) QMessageBox::warning(0, "Font Error", QString("Failed to setup font '") + UChromaBase::viewerFontFileName() + "'.");
 
 	int result = app.exec();
 
