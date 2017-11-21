@@ -42,6 +42,7 @@ Collection::Collection() : ListItem<Collection>(), ObjectStore<Collection>(this,
 	dataMin_.zero();
 	dataMax_.set(10.0, 10.0, 10.0);
 	dataVersion_ = 0;
+	identifier_ = -1;
 
 	// Transform
 	transformMin_.zero();
@@ -225,6 +226,18 @@ const char* Collection::locator(const char* currentPath)
 	return result.get();
 }
 
+// Set identifier
+void Collection::setIdentifier(int identifier)
+{
+	identifier_ = identifier;
+}
+
+// Return identifier
+int Collection::identifier()
+{
+	return identifier_;
+}
+
 // Add dataset
 DataSet* Collection::addDataSet()
 {
@@ -251,14 +264,13 @@ DataSet* Collection::addDataSet(double z)
 	return dataSet;
 }
 
-// Add dataset from supplied XYData, with id specifiedi
-DataSet* Collection::addDataSet(int id, XYData& data, double z)
+// Add dataset from supplied XYData
+DataSet* Collection::addDataSet(XYData& data, double z)
 {
 	DataSet* dataSet = dataSets_.add();
 	dataSet->setParent(this);
 
 	dataSet->setData(data);
-	dataSet->setIdentifier(id);
 	setDataSetZ(dataSet, z);
 
 	uChromaBase_->setAsModified();

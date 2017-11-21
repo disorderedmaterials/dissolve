@@ -71,6 +71,8 @@ class Collection : public ListItem<Collection>, public ObjectStore<Collection>
 	QDir dataFileDirectory_;
 	// Extreme values of raw data
 	Vec3<double> dataMin_, dataMax_;
+	// Identifier
+	int identifier_;
 	// Version counter for changes to data
 	int dataVersion_;
 
@@ -81,12 +83,16 @@ class Collection : public ListItem<Collection>, public ObjectStore<Collection>
 	const char* name();
 	// Return collection locator
 	const char* locator(const char* currentPath = NULL);
+	// Set identifier
+	void setIdentifier(int identifier);
+	// Return identifier
+	int identifier();
 	// Add dataset
 	DataSet* addDataSet();
 	// Add dataset at specified z
 	DataSet* addDataSet(double z);
-	// Add dataset from supplied XYData, with id specifiedi
-	DataSet* addDataSet(int id, XYData& data, double z = 0.0);
+	// Add dataset from supplied XYData
+	DataSet* addDataSet(XYData& data, double z = 0.0);
 	// Add dataset, copying from supplied DataSet
 	void addDataSet(DataSet* source);
 	// Add dataset, copying from supplied DisplayDataSet

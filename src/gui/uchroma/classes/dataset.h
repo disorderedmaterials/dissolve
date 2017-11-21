@@ -24,11 +24,10 @@
 
 #include "base/xydata.h"
 #include "gui/uchroma/classes/transformer.h"
-#include "templates/list.h"
+#include "templates/listitem.h"
 #include <QDir>
 
 // Forward Declarations
-class QTreeWidgetItem;
 class Collection;
 
 // DataSet
@@ -80,8 +79,6 @@ class DataSet : public ListItem<DataSet>
 	CharString name_;
 	// Data
 	XYData data_;
-	// Identifier for data (if any)
-	int identifier_;
 	// Transformed data
 	XYData transformedData_;
 
@@ -104,10 +101,6 @@ class DataSet : public ListItem<DataSet>
 	void setData(XYData& source);
 	// Return data
 	const XYData& data() const;
-	// Set identifier for data (if any)
-	void setIdentifier(int id);
-	// Return identifier for data (if any)
-	int identifier();
 	// Return X array from data
 	const Array<double>& x() const;
 	// Return Y array from data

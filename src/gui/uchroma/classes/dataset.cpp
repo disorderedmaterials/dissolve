@@ -169,18 +169,6 @@ const XYData& DataSet::data() const
 	return data_;
 }
 
-// Set identifier for data (if any)
-void DataSet::setIdentifier(int id)
-{
-	identifier_ = id;
-}
-
-// Return identifier for data (if any)
-int DataSet::identifier()
-{
-	return identifier_;
-}
-
 // Return X array from data
 const Array<double>& DataSet::x() const
 {
