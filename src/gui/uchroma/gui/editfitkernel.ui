@@ -22,7 +22,7 @@
    <string>Fit Setup</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="icons.qrc">
+   <iconset resource="uchroma.qrc">
     <normaloff>:/uchroma/icons/windows_fit.svg</normaloff>:/uchroma/icons/windows_fit.svg</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -535,7 +535,7 @@
             <string>...</string>
            </property>
            <property name="icon">
-            <iconset resource="icons.qrc">
+            <iconset resource="uchroma.qrc">
              <normaloff>:/uchroma/icons/info_interaction.svg</normaloff>:/uchroma/icons/info_interaction.svg</iconset>
            </property>
            <property name="iconSize">
@@ -731,7 +731,7 @@
             <string>...</string>
            </property>
            <property name="icon">
-            <iconset resource="icons.qrc">
+            <iconset resource="uchroma.qrc">
              <normaloff>:/uchroma/icons/info_interaction.svg</normaloff>:/uchroma/icons/info_interaction.svg</iconset>
            </property>
            <property name="iconSize">
@@ -1188,7 +1188,7 @@
   <tabstop>OKButton</tabstop>
  </tabstops>
  <resources>
-  <include location="icons.qrc"/>
+  <include location="uchroma.qrc"/>
  </resources>
  <connections/>
 </ui>

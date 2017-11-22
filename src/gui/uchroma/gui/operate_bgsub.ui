@@ -22,7 +22,7 @@
    <string>Background Subtraction</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="icons.qrc">
+   <iconset resource="uchroma.qrc">
     <normaloff>:/uchroma/icons/windows_fit.svg</normaloff>:/uchroma/icons/windows_fit.svg</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -49,7 +49,7 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset resource="icons.qrc">
+        <iconset resource="uchroma.qrc">
          <normaloff>:/uchroma/icons/toupperlimit.svg</normaloff>:/uchroma/icons/toupperlimit.svg</iconset>
        </property>
        <property name="iconSize">
@@ -75,7 +75,7 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset resource="icons.qrc">
+        <iconset resource="uchroma.qrc">
          <normaloff>:/uchroma/icons/tolowerlimit.svg</normaloff>:/uchroma/icons/tolowerlimit.svg</iconset>
        </property>
        <property name="iconSize">
@@ -244,7 +244,7 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset resource="icons.qrc">
+        <iconset resource="uchroma.qrc">
          <normaloff>:/uchroma/icons/interact_valueselect.svg</normaloff>:/uchroma/icons/interact_valueselect.svg</iconset>
        </property>
        <property name="iconSize">
@@ -312,7 +312,7 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset resource="icons.qrc">
+        <iconset resource="uchroma.qrc">
          <normaloff>:/uchroma/icons/interact_rangeselect.svg</normaloff>:/uchroma/icons/interact_rangeselect.svg</iconset>
        </property>
        <property name="iconSize">
@@ -338,7 +338,7 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset resource="icons.qrc">
+        <iconset resource="uchroma.qrc">
          <normaloff>:/uchroma/icons/interact_rangeselect.svg</normaloff>:/uchroma/icons/interact_rangeselect.svg</iconset>
        </property>
        <property name="iconSize">
@@ -432,7 +432,7 @@
   <tabstop>ApplyButton</tabstop>
  </tabstops>
  <resources>
-  <include location="icons.qrc"/>
+  <include location="uchroma.qrc"/>
  </resources>
  <connections/>
 </ui>

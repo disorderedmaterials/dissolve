@@ -22,7 +22,7 @@
    <string>View Layout</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="icons.qrc">
+   <iconset resource="uchroma.qrc">
     <normaloff>:/uchroma/icons/windows_layout.svg</normaloff>:/uchroma/icons/windows_layout.svg</iconset>
   </property>
   <property name="modal">
@@ -178,7 +178,7 @@
              <string>Remove Pane</string>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="uchroma.qrc">
               <normaloff>:/uchroma/icons/minus.svg</normaloff>:/uchroma/icons/minus.svg</iconset>
             </property>
             <property name="iconSize">
@@ -201,7 +201,7 @@
              <string>Add Pane</string>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="uchroma.qrc">
               <normaloff>:/uchroma/icons/plus.svg</normaloff>:/uchroma/icons/plus.svg</iconset>
             </property>
             <property name="iconSize">
@@ -497,7 +497,7 @@
                <string>Add</string>
               </property>
               <property name="icon">
-               <iconset resource="icons.qrc">
+               <iconset resource="uchroma.qrc">
                 <normaloff>:/uchroma/icons/plus.svg</normaloff>:/uchroma/icons/plus.svg</iconset>
               </property>
               <property name="iconSize">
@@ -520,7 +520,7 @@
                <string>Remove</string>
               </property>
               <property name="icon">
-               <iconset resource="icons.qrc">
+               <iconset resource="uchroma.qrc">
                 <normaloff>:/uchroma/icons/minus.svg</normaloff>:/uchroma/icons/minus.svg</iconset>
               </property>
               <property name="iconSize">
@@ -669,7 +669,7 @@
   <tabstop>OKButton</tabstop>
  </tabstops>
  <resources>
-  <include location="icons.qrc"/>
+  <include location="uchroma.qrc"/>
  </resources>
  <connections/>
 </ui>

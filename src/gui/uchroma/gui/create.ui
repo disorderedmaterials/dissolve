@@ -19,7 +19,7 @@
    <string>Create Collection</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="icons.qrc">
+   <iconset resource="uchroma.qrc">
     <normaloff>:/uchroma/icons/windows_create.svg</normaloff>:/uchroma/icons/windows_create.svg</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -478,7 +478,7 @@
   <tabstop>EquationEdit</tabstop>
  </tabstops>
  <resources>
-  <include location="icons.qrc"/>
+  <include location="uchroma.qrc"/>
  </resources>
  <connections/>
 </ui>

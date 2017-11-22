@@ -25,7 +25,7 @@
    <string>Data</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="icons.qrc">
+   <iconset resource="uchroma.qrc">
     <normaloff>:/uchroma/icons/windows_data.svg</normaloff>:/uchroma/icons/windows_data.svg</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -251,7 +251,7 @@
            <string>Reload All</string>
           </property>
           <property name="icon">
-           <iconset resource="icons.qrc">
+           <iconset resource="uchroma.qrc">
             <normaloff>:/uchroma/icons/refresh.svg</normaloff>:/uchroma/icons/refresh.svg</iconset>
           </property>
           <property name="iconSize">
@@ -327,7 +327,7 @@
   <tabstop>EditDataSetButton</tabstop>
  </tabstops>
  <resources>
-  <include location="icons.qrc"/>
+  <include location="uchroma.qrc"/>
  </resources>
  <connections/>
 </ui>

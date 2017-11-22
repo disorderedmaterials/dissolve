@@ -79,7 +79,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="icons.qrc">:/uchroma/icons/info_interaction.svg</pixmap>
+         <pixmap resource="uchroma.qrc">:/uchroma/icons/info_interaction.svg</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -149,6 +149,9 @@
         <property name="mouseTracking">
          <bool>true</bool>
         </property>
+        <property name="focusPolicy">
+         <enum>Qt::WheelFocus</enum>
+        </property>
        </widget>
       </item>
      </layout>
@@ -162,7 +165,7 @@
   </action>
   <action name="actionFileLoadSession">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="uchroma.qrc">
      <normaloff>:/uchroma/icons/file_open.svg</normaloff>:/uchroma/icons/file_open.svg</iconset>
    </property>
    <property name="text">
@@ -177,7 +180,7 @@
   </action>
   <action name="actionFileSaveSession">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="uchroma.qrc">
      <normaloff>:/uchroma/icons/file_save.svg</normaloff>:/uchroma/icons/file_save.svg</iconset>
    </property>
    <property name="text">
@@ -192,7 +195,7 @@
   </action>
   <action name="actionViewReset">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="uchroma.qrc">
      <normaloff>:/uchroma/icons/view_reset.svg</normaloff>:/uchroma/icons/view_reset.svg</iconset>
    </property>
    <property name="text">
@@ -207,7 +210,7 @@
   </action>
   <action name="actionFileSaveSessionAs">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="uchroma.qrc">
      <normaloff>:/uchroma/icons/file_saveas.svg</normaloff>:/uchroma/icons/file_saveas.svg</iconset>
    </property>
    <property name="text">
@@ -235,7 +238,7 @@
   </action>
   <action name="actionFileNewSession">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="uchroma.qrc">
      <normaloff>:/uchroma/icons/file_new.svg</normaloff>:/uchroma/icons/file_new.svg</iconset>
    </property>
    <property name="text">
@@ -261,7 +264,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="uchroma.qrc">
      <normaloff>:/uchroma/icons/windows_fit.svg</normaloff>:/uchroma/icons/windows_fit.svg</iconset>
    </property>
    <property name="text">
@@ -276,7 +279,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="uchroma.qrc">
      <normaloff>:/uchroma/icons/windows_axes.svg</normaloff>:/uchroma/icons/windows_axes.svg</iconset>
    </property>
    <property name="text">
@@ -294,7 +297,7 @@
   </action>
   <action name="actionCollectionStyle">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="uchroma.qrc">
      <normaloff>:/uchroma/icons/windows_style.svg</normaloff>:/uchroma/icons/windows_style.svg</iconset>
    </property>
    <property name="text">
@@ -309,7 +312,7 @@
   </action>
   <action name="actionCollectionTransform">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="uchroma.qrc">
      <normaloff>:/uchroma/icons/windows_transform.svg</normaloff>:/uchroma/icons/windows_transform.svg</iconset>
    </property>
    <property name="text">
@@ -324,7 +327,7 @@
   </action>
   <action name="actionDataView">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="uchroma.qrc">
      <normaloff>:/uchroma/icons/windows_data.svg</normaloff>:/uchroma/icons/windows_data.svg</iconset>
    </property>
    <property name="text">
@@ -342,7 +345,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="uchroma.qrc">
      <normaloff>:/uchroma/icons/windows_view.svg</normaloff>:/uchroma/icons/windows_view.svg</iconset>
    </property>
    <property name="text">
@@ -359,7 +362,7 @@
   </action>
   <action name="actionCollectionFocusNext">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="uchroma.qrc">
      <normaloff>:/uchroma/icons/collections_next.svg</normaloff>:/uchroma/icons/collections_next.svg</iconset>
    </property>
    <property name="text">
@@ -377,7 +380,7 @@
   </action>
   <action name="actionCollectionFocusPrevious">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="uchroma.qrc">
      <normaloff>:/uchroma/icons/collections_prev.svg</normaloff>:/uchroma/icons/collections_prev.svg</iconset>
    </property>
    <property name="text">
@@ -400,7 +403,7 @@
   </action>
   <action name="actionViewShowAll">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="uchroma.qrc">
      <normaloff>:/uchroma/icons/view_showall.svg</normaloff>:/uchroma/icons/view_showall.svg</iconset>
    </property>
    <property name="text">
@@ -426,7 +429,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="uchroma.qrc">
      <normaloff>:/uchroma/icons/interact_x.svg</normaloff>:/uchroma/icons/interact_x.svg</iconset>
    </property>
    <property name="text">
@@ -447,7 +450,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="uchroma.qrc">
      <normaloff>:/uchroma/icons/interact_y.svg</normaloff>:/uchroma/icons/interact_y.svg</iconset>
    </property>
    <property name="text">
@@ -468,7 +471,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="uchroma.qrc">
      <normaloff>:/uchroma/icons/interact_z.svg</normaloff>:/uchroma/icons/interact_z.svg</iconset>
    </property>
    <property name="text">
@@ -489,7 +492,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="uchroma.qrc">
      <normaloff>:/uchroma/icons/interact_none.svg</normaloff>:/uchroma/icons/interact_none.svg</iconset>
    </property>
    <property name="text">
@@ -521,7 +524,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="uchroma.qrc">
      <normaloff>:/uchroma/icons/windows_create.svg</normaloff>:/uchroma/icons/windows_create.svg</iconset>
    </property>
    <property name="text">
@@ -533,7 +536,7 @@
   </action>
   <action name="actionViewChangeLayout">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="uchroma.qrc">
      <normaloff>:/uchroma/icons/windows_layout.svg</normaloff>:/uchroma/icons/windows_layout.svg</iconset>
    </property>
    <property name="text">
@@ -551,7 +554,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="uchroma.qrc">
      <normaloff>:/uchroma/icons/view_flatxy.svg</normaloff>:/uchroma/icons/view_flatxy.svg</iconset>
    </property>
    <property name="text">
@@ -588,7 +591,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="uchroma.qrc">
      <normaloff>:/uchroma/icons/view_autostretch.svg</normaloff>:/uchroma/icons/view_autostretch.svg</iconset>
    </property>
    <property name="text">
@@ -629,7 +632,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="uchroma.qrc">
      <normaloff>:/uchroma/icons/windows_style.svg</normaloff>:/uchroma/icons/windows_style.svg</iconset>
    </property>
    <property name="text">
@@ -647,7 +650,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="uchroma.qrc">
      <normaloff>:/uchroma/icons/windows_axes.svg</normaloff>:/uchroma/icons/windows_axes.svg</iconset>
    </property>
    <property name="text">
@@ -668,7 +671,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="uchroma.qrc">
      <normaloff>:/uchroma/icons/windows_log.svg</normaloff>:/uchroma/icons/windows_log.svg</iconset>
    </property>
    <property name="text">
@@ -686,7 +689,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="uchroma.qrc">
      <normaloff>:/uchroma/icons/windows_transform.svg</normaloff>:/uchroma/icons/windows_transform.svg</iconset>
    </property>
    <property name="text">
@@ -701,7 +704,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="uchroma.qrc">
      <normaloff>:/uchroma/icons/windows_data.svg</normaloff>:/uchroma/icons/windows_data.svg</iconset>
    </property>
    <property name="text">
@@ -716,7 +719,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="uchroma.qrc">
      <normaloff>:/uchroma/icons/view_flatxz.svg</normaloff>:/uchroma/icons/view_flatxz.svg</iconset>
    </property>
    <property name="text">
@@ -731,7 +734,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="uchroma.qrc">
      <normaloff>:/uchroma/icons/view_flatyz.svg</normaloff>:/uchroma/icons/view_flatyz.svg</iconset>
    </property>
    <property name="text">
@@ -746,7 +749,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="uchroma.qrc">
      <normaloff>:/uchroma/icons/view_normal.svg</normaloff>:/uchroma/icons/view_normal.svg</iconset>
    </property>
    <property name="text">
@@ -764,7 +767,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="uchroma.qrc">
      <normaloff>:/uchroma/icons/view_autostretch.svg</normaloff>:/uchroma/icons/view_autostretch.svg</iconset>
    </property>
    <property name="text">
@@ -779,7 +782,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="uchroma.qrc">
      <normaloff>:/uchroma/icons/view_perspective.svg</normaloff>:/uchroma/icons/view_perspective.svg</iconset>
    </property>
    <property name="text">
@@ -859,7 +862,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="icons.qrc"/>
+  <include location="uchroma.qrc"/>
  </resources>
  <connections/>
 </ui>

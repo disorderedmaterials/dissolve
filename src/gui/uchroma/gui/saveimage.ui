@@ -28,7 +28,7 @@
    <string>Save Image</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="icons.qrc">
+   <iconset resource="uchroma.qrc">
     <normaloff>:/uchroma/icons/uchroma.png</normaloff>:/uchroma/icons/uchroma.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -189,7 +189,7 @@
   <tabstop>SaveImageButton</tabstop>
  </tabstops>
  <resources>
-  <include location="icons.qrc"/>
+  <include location="uchroma.qrc"/>
  </resources>
  <connections/>
 </ui>

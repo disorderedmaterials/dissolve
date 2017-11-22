@@ -25,7 +25,7 @@
    <string>Style</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="icons.qrc">
+   <iconset resource="uchroma.qrc">
     <normaloff>:/uchroma/icons/windows_style.svg</normaloff>:/uchroma/icons/windows_style.svg</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -225,7 +225,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="uchroma.qrc">
               <normaloff>:/uchroma/icons/torightlimit.svg</normaloff>:/uchroma/icons/torightlimit.svg</iconset>
             </property>
             <property name="iconSize">
@@ -286,7 +286,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="uchroma.qrc">
               <normaloff>:/uchroma/icons/toleftlimit.svg</normaloff>:/uchroma/icons/toleftlimit.svg</iconset>
             </property>
             <property name="iconSize">
@@ -315,7 +315,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="uchroma.qrc">
               <normaloff>:/uchroma/icons/torightlimit.svg</normaloff>:/uchroma/icons/torightlimit.svg</iconset>
             </property>
             <property name="iconSize">
@@ -360,7 +360,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="uchroma.qrc">
               <normaloff>:/uchroma/icons/torightlimit.svg</normaloff>:/uchroma/icons/torightlimit.svg</iconset>
             </property>
             <property name="iconSize">
@@ -386,7 +386,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="uchroma.qrc">
               <normaloff>:/uchroma/icons/toleftlimit.svg</normaloff>:/uchroma/icons/toleftlimit.svg</iconset>
             </property>
             <property name="iconSize">
@@ -412,7 +412,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="uchroma.qrc">
               <normaloff>:/uchroma/icons/toleftlimit.svg</normaloff>:/uchroma/icons/toleftlimit.svg</iconset>
             </property>
             <property name="iconSize">
@@ -476,7 +476,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="uchroma.qrc">
               <normaloff>:/uchroma/icons/torightlimit.svg</normaloff>:/uchroma/icons/torightlimit.svg</iconset>
             </property>
             <property name="iconSize">
@@ -502,7 +502,7 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="uchroma.qrc">
               <normaloff>:/uchroma/icons/toleftlimit.svg</normaloff>:/uchroma/icons/toleftlimit.svg</iconset>
             </property>
             <property name="iconSize">
@@ -565,7 +565,7 @@
                  <string>Add</string>
                 </property>
                 <property name="icon">
-                 <iconset resource="icons.qrc">
+                 <iconset resource="uchroma.qrc">
                   <normaloff>:/uchroma/icons/plus.svg</normaloff>:/uchroma/icons/plus.svg</iconset>
                 </property>
                 <property name="iconSize">
@@ -585,7 +585,7 @@
                  <string>Remove</string>
                 </property>
                 <property name="icon">
-                 <iconset resource="icons.qrc">
+                 <iconset resource="uchroma.qrc">
                   <normaloff>:/uchroma/icons/minus.svg</normaloff>:/uchroma/icons/minus.svg</iconset>
                 </property>
                 <property name="iconSize">
@@ -956,7 +956,7 @@
   <tabstop>LineStippleCombo</tabstop>
  </tabstops>
  <resources>
-  <include location="icons.qrc"/>
+  <include location="uchroma.qrc"/>
  </resources>
  <connections/>
 </ui>
