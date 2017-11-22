@@ -154,6 +154,8 @@ class Axes : public ObjectStore<Axes>
 	bool inverted(int axis) const;
 	// Set whether axis is logarithmic
 	void setLogarithmic(int axis, bool b);
+	// Toggle whether axis is logarithmic
+	void toggleLogarithmic(int axis);
 	// Return whether axis is logarithmic
 	bool logarithmic(int axis) const;
 	// Set whether axis is visible

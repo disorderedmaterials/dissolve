@@ -486,6 +486,12 @@ void Axes::setLogarithmic(int axis, bool b)
 	parent_.recalculateView();
 }
 
+// Toggle whether axis is logarithmic
+void Axes::toggleLogarithmic(int axis)
+{
+	setLogarithmic(!logarithmic_[axis]);
+}
+	
 // Return whether axis is logarithmic
 bool Axes::logarithmic(int axis) const
 {
