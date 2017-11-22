@@ -1217,6 +1217,27 @@ void ViewPane::shiftFlatAxisLimits(double deltaH, double deltaV)
 	}
 }
 
+// Shift flat view axis limits by specified fractional amounts
+void ViewPane::shiftFlatAxisLimitsFractional(double fracH, double fracV)
+{
+	// Set indices for target axes
+	int axes[2];
+	axes[0] = 0;
+	axes[1] = 1;
+	if (viewType_ == ViewPane::FlatXZView) axes[1] = 2;
+	else if (viewType_ == ViewPane::FlatZYView)
+	{
+		axes[0] = 1;
+		axes[1] = 2;
+	}
+
+	// Determine deltas based on fractional amounts specified
+	double deltaH = (axes_.max(axes[0]) - axes_.min(axes[0])) * fracH;
+	double deltaV = (axes_.max(axes[1]) - axes_.min(axes[1])) * fracV;
+
+	shiftFlatAxisLimits(deltaH, deltaV);
+}
+
 // Update current slices for all collections displayed in this pane
 void ViewPane::collectionsUpdateCurrentSlices(int axis, double axisValue)
 {

@@ -292,6 +292,8 @@ class ViewPane : public ListItem<ViewPane>, public ObjectStore<ViewPane>
 	void updateAxisLimits();
 	// Shift flat view axis limits by specified amounts
 	void shiftFlatAxisLimits(double deltaH, double deltaV);
+	// Shift flat view axis limits by specified fractional amounts
+	void shiftFlatAxisLimitsFractional(double fracH, double fracV);
 	// Update current slices for all collections displayed in this pane
 	void collectionsUpdateCurrentSlices(int axis, double axisValue);
 
