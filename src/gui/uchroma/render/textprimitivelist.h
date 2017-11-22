@@ -30,6 +30,7 @@
 #include <QString>
 
 // Forward Declarations
+class FontInstance;
 class ViewPane;
 
 // Text Primitive List
@@ -47,11 +48,11 @@ class TextPrimitiveList
 	// Clear list
 	void clear();
 	// Add primitive to list
-	void add(QString text, Vec3<double> anchorPoint, TextPrimitive::TextAnchor anchorPosition, Vec3<double> adjustmentVector, Matrix4& rotation, double textSize, bool flat);
+	void add(FontInstance& fontInstance, QString text, Vec3<double> anchorPoint, TextPrimitive::TextAnchor anchorPosition, Vec3<double> adjustmentVector, Matrix4& rotation, double textSize, bool flat);
 	// Update global bounding cuboid for all text primitives in the list
-	Cuboid boundingCuboid(const Matrix4& viewMatrixInverse, double baseFontSize, Cuboid startingCuboid = Cuboid());
+	Cuboid boundingCuboid(FontInstance& fontInstance, const Matrix4& viewMatrixInverse, double baseFontSize, Cuboid startingCuboid = Cuboid());
 	// Render all primitives in list
-	void renderAll(const Matrix4& viewMatrix, const Matrix4& viewMatrixInverse, double baseFontSize);
+	void renderAll(FontInstance& fontInstance, const Matrix4& viewMatrix, const Matrix4& viewMatrixInverse, double baseFontSize);
 };
 
 #endif

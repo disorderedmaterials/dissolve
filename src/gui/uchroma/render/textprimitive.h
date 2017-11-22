@@ -34,7 +34,7 @@
 extern int TextPrimitiveParser_parse();
 
 // Forward Declarations
-/* none */
+class FontInstance;
 
 // Text Primitive
 class TextPrimitive : public ListItem<TextPrimitive>
@@ -46,13 +46,13 @@ class TextPrimitive : public ListItem<TextPrimitive>
 	// Text Anchors enum
 	enum TextAnchor { TopLeftAnchor, TopMiddleAnchor, TopRightAnchor, MiddleLeftAnchor, CentralAnchor, MiddleRightAnchor, BottomLeftAnchor, BottomMiddleAnchor, BottomRightAnchor, nTextAnchors };
 	// Convert text string to TextAnchor
-	static TextAnchor textAnchor(QString s);
+	static TextAnchor textAnchor(const char* s);
 	// Convert TextAnchor to text string
 	static const char* textAnchor(TextAnchor anchor);
 	// Escape Sequence enum
 	enum EscapeSequence { BoldEscape, ItalicEscape, NewLineEscape, SubScriptEscape, SuperScriptEscape, nEscapeSequences };
 	// Convert text string to EscapeSequence
-	static EscapeSequence escapeSequence(QString s);
+	static EscapeSequence escapeSequence(const char* s);
 
 
 	/*
@@ -80,13 +80,13 @@ class TextPrimitive : public ListItem<TextPrimitive>
 	// Set text scaling factor
 	static void setTextSizeScale(double textSizeScale);
 	// Set data
-	void set(QString text, Vec3<double> anchorPoint, TextAnchor anchorPosition, Vec3<double> adjustmentVector, Matrix4& localRotation, double textSize, bool flat);
+	void set(FontInstance& fontInstance, QString text, Vec3<double> anchorPoint, TextAnchor anchorPosition, Vec3<double> adjustmentVector, Matrix4& localRotation, double textSize, bool flat);
 	// Return transformation matrix to use when rendering (including fragment scale/translation if one is specified)
-	Matrix4 transformationMatrix(const Matrix4& viewMatrixInverse, double baseFontSize, TextFragment* fragment = NULL);
+	Matrix4 transformationMatrix(FontInstance& fontInstance, const Matrix4& viewMatrixInverse, double baseFontSize, TextFragment* fragment = NULL);
 	// Calculate bounding box of primitive
-	void boundingBox(Vec3<double>& lowerLeft, Vec3<double>& upperRight);
+	void boundingBox(FontInstance& fontInstance, Vec3<double>& lowerLeft, Vec3<double>& upperRight);
 	// Render primitive
-	void render(const Matrix4& viewMatrix, const Matrix4& viewMatrixInverse, double baseFontSize);
+	void render(FontInstance& fontInstance, const Matrix4& viewMatrix, const Matrix4& viewMatrixInverse, double baseFontSize);
 
 
 	/*
@@ -105,6 +105,8 @@ class TextPrimitive : public ListItem<TextPrimitive>
 	static void unGetChar();
 	// Current target for generation
 	static TextPrimitive* target_;
+	// Current FontInstance
+	static FontInstance* fontInstance_;
 	// Format stack, used when generating primitive
 	static List<TextFormat> formatStack_;
 	// Current horizontal position, used when generating primitive
@@ -114,8 +116,8 @@ class TextPrimitive : public ListItem<TextPrimitive>
 	// Parser lexer, called by yylex()
 	static int lex();
 	// Generate TextFragment data for specified TextPrimitive from supplied string
-	static bool generateFragments(TextPrimitive* target, QString inputString);
-	// Return current target
+	static bool generateFragments(FontInstance* fontInstance, TextPrimitive* target, QString inputString);
+	// Return current target TextPrimitive
 	static TextPrimitive* target();
 	// Add text fragment
 	bool addFragment(QString text);

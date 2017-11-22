@@ -22,14 +22,6 @@
 #include "gui/uchroma/render/fontinstance.h"
 #include "base/messenger.h"
 
-// Static Members
-QString FontInstance::fontFile_ = "";
-QResource* FontInstance::fontData_ = NULL;
-FTFont* FontInstance::font_ = NULL;
-double FontInstance::fontBaseHeight_ = 0.0;
-double FontInstance::fontFullHeight_ = 0.0;
-double FontInstance::dotWidth_ = 0.0;
-
 // Setup font specified
 bool FontInstance::setup(QString fontFileName)
 {

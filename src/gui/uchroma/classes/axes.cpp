@@ -1114,6 +1114,7 @@ void Axes::updateAxisPrimitives()
 	Matrix4 labelTransform, titleTransform;
 	Array<double> tickPositions[3];
 	Array<bool> tickIsMajor[3];
+	FontInstance& fontInstance = uChromaBase_->viewer()->fontInstance();
 
 	// Make sure coordinates are up-to-date
 	updateCoordinates();
@@ -1212,7 +1213,7 @@ void Axes::updateAxisPrimitives()
 						// Get formatted value text
 						s = numberFormat_[axis].format(value);
 
-						labelPrimitives_[axis].add(s, u+tickDir*tickSize_[axis], labelAnchor(axis), tickDir * labelOrientation(axis).z, labelTransform, parent_.labelPointSize(), parent_.flatLabels());
+						labelPrimitives_[axis].add(fontInstance, s, u+tickDir*tickSize_[axis], labelAnchor(axis), tickDir * labelOrientation(axis).z, labelTransform, parent_.labelPointSize(), parent_.flatLabels());
 					}
 				}
 
@@ -1258,7 +1259,7 @@ void Axes::updateAxisPrimitives()
 						// Get formatted label text
 						s = numberFormat_[axis].format(value);
 
-						labelPrimitives_[axis].add(s, u+tickDir*tickSize_[axis], labelAnchor(axis), tickDir * labelOrientation(axis).z, labelTransform, parent_.labelPointSize(), parent_.flatLabels());
+						labelPrimitives_[axis].add(fontInstance, s, u+tickDir*tickSize_[axis], labelAnchor(axis), tickDir * labelOrientation(axis).z, labelTransform, parent_.labelPointSize(), parent_.flatLabels());
 
 						tickIsMajor[axis].add(true);
 
@@ -1292,7 +1293,7 @@ void Axes::updateAxisPrimitives()
 		// -- Next step depends on whether we are automatically adjusting label positions
 		if ((useBestFlatView_ && parent_.isFlatView()) || autoPositionTitles_)
 		{
-			Cuboid cuboid = labelPrimitives_[axis].boundingCuboid(viewRotationInverse, parent_.textZScale());
+			Cuboid cuboid = labelPrimitives_[axis].boundingCuboid(fontInstance, viewRotationInverse, parent_.textZScale());
 			// Project tick direction onto cuboid width/height
 			// TODO This does not account for the fact that the bounding cuboid may only partly extend over the end of ths axis tick mark (e.g. as with in-plane rotations/TopMiddle anchors)...
 			Vec3<double> extent = cuboid.maxima() - cuboid.minima();
@@ -1302,14 +1303,14 @@ void Axes::updateAxisPrimitives()
 			// -- Create adjustment vector. Start by adding space between tickmark, label text, and title text
 			adjustment = tickDir * (labelOrientation(axis).z + 0.2);
 			// -- Add on label extent in the tickmark direction - we must undo the scaling on the bounding box arising from display scales etc.
-			adjustment += (tickDir * extent.magnitude()) / (FontInstance::fontBaseHeight() * parent_.labelPointSize() / parent_.textZScale());
+			adjustment += (tickDir * extent.magnitude()) / (fontInstance.fontBaseHeight() * parent_.labelPointSize() / parent_.textZScale());
 			// -- Scaling will be done by the title point size in TextPrimitive, but all our adjustments were done with label point size, so scale it...
 			adjustment *= parent_.labelPointSize() / parent_.titlePointSize();
 		}
 		else adjustment = tickDir * titleOrientation(axis).z;
 
 		// -- Add primitive
-		titlePrimitives_[axis].add(title_[axis].get(), u, titleAnchor(axis), adjustment, titleTransform, parent_.titlePointSize(), parent_.flatLabels());
+		titlePrimitives_[axis].add(fontInstance, title_[axis].get(), u, titleAnchor(axis), adjustment, titleTransform, parent_.titlePointSize(), parent_.flatLabels());
 	}
 
 	// GridLines

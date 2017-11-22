@@ -129,17 +129,17 @@ void Viewer::renderFullScene(int xOffset, int yOffset)
 		glDisable(GL_LIGHTING);
 
 		// Draw graduated background for current pane (only if rendering on-screen)
-		if ((pane == uChromaBase_->currentViewPane()) && (!renderingOffScreen_))
-		{
-			glBegin(GL_QUADS);
-			glColor4fv(colourBlue);
-			glVertex3i(0, 0, 0);
-			glVertex3i(pane->viewportMatrix()[2]-1, 0, 0);
-			glColor4fv(colourWhite);
-			glVertex3i(pane->viewportMatrix()[2]-1, pane->viewportMatrix()[3]*0.5, 0);
-			glVertex3i(0, pane->viewportMatrix()[3]*0.5, 0);
-			glEnd();
-		}
+// 		if ((pane == uChromaBase_->currentViewPane()) && (!renderingOffScreen_))
+// 		{
+// 			glBegin(GL_QUADS);
+// 			glColor4fv(colourBlue);
+// 			glVertex3i(0, 0, 0);
+// 			glVertex3i(pane->viewportMatrix()[2]-1, 0, 0);
+// 			glColor4fv(colourWhite);
+// 			glVertex3i(pane->viewportMatrix()[2]-1, pane->viewportMatrix()[3]*0.5, 0);
+// 			glVertex3i(0, pane->viewportMatrix()[3]*0.5, 0);
+// 			glEnd();
+// 		}
 
 		// Draw a box around the pane
 		if (!renderingOffScreen_)
@@ -176,14 +176,14 @@ void Viewer::renderFullScene(int xOffset, int yOffset)
 		// -- Render axis text
 		glEnable(GL_MULTISAMPLE);
 		glEnable(GL_BLEND);
-		if (FontInstance::fontOK())
+		if (fontInstance_.fontOK())
 		{
-			FontInstance::font()->FaceSize(1);
+			fontInstance_.font()->FaceSize(1);
 			for (axis=0; axis<3; ++axis) if (pane->axes().visible(axis) && (axis != skipAxis))
 			{
-				pane->axes().labelPrimitive(axis).renderAll(viewMatrix, viewRotationInverse, pane->textZScale());
+				pane->axes().labelPrimitive(axis).renderAll(fontInstance_, viewMatrix, viewRotationInverse, pane->textZScale());
 				if (updateQueryDepth()) setQueryObject(Viewer::AxisTickLabelObject, DUQSys::itoa(axis));
-				pane->axes().titlePrimitive(axis).renderAll(viewMatrix, viewRotationInverse, pane->textZScale());
+				pane->axes().titlePrimitive(axis).renderAll(fontInstance_, viewMatrix, viewRotationInverse, pane->textZScale());
 				if (updateQueryDepth()) setQueryObject(Viewer::AxisTitleLabelObject, DUQSys::itoa(axis));
 			}
 		}

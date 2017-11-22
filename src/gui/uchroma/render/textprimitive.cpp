@@ -23,9 +23,11 @@
 #include "gui/uchroma/render/textprimitive_grammar.hh"
 #include "gui/uchroma/render/fontinstance.h"
 #include "gui/uchroma/classes/viewpane.h"
+#include "base/sysfunc.h"
 
 // Static members
 TextPrimitive* TextPrimitive::target_ = NULL;
+FontInstance* TextPrimitive::fontInstance_ = NULL;
 QString TextPrimitive::stringSource_;
 int TextPrimitive::stringPos_, TextPrimitive::stringLength_;
 List<TextFormat> TextPrimitive::formatStack_;
@@ -46,9 +48,9 @@ TextPrimitive::~TextPrimitive()
 const char* TextAnchorKeywords[] = { "TopLeft", "TopMiddle", "TopRight", "MiddleLeft", "Central", "MiddleRight", "BottomLeft", "BottomMiddle", "BottomRight" };
 
 // Convert text string to TextAnchor
-TextPrimitive::TextAnchor TextPrimitive::textAnchor(QString s)
+TextPrimitive::TextAnchor TextPrimitive::textAnchor(const char* s)
 {
-	for (int n=0; n<TextPrimitive::nTextAnchors; ++n) if (s == TextAnchorKeywords[n]) return (TextPrimitive::TextAnchor) n;
+	for (int n=0; n<TextPrimitive::nTextAnchors; ++n) if (DUQSys::sameString(s, TextAnchorKeywords[n])) return (TextPrimitive::TextAnchor) n;
 	return TextPrimitive::nTextAnchors;
 }
 
@@ -62,9 +64,9 @@ const char* TextPrimitive::textAnchor(TextPrimitive::TextAnchor anchor)
 const char* EscapeSequenceKeywords[] = { "b", "it", "n", "sub", "sup" };
 
 // Convert text string to EscapeSequence
-TextPrimitive::EscapeSequence TextPrimitive::escapeSequence(QString s)
+TextPrimitive::EscapeSequence TextPrimitive::escapeSequence(const char* s)
 {
-	for (int n=0; n<TextPrimitive::nEscapeSequences; ++n) if (s == EscapeSequenceKeywords[n]) return (TextPrimitive::EscapeSequence) n;
+	for (int n=0; n<TextPrimitive::nEscapeSequences; ++n) if (DUQSys::sameString(s, EscapeSequenceKeywords[n])) return (TextPrimitive::EscapeSequence) n;
 	return TextPrimitive::nEscapeSequences;
 }
 
@@ -75,10 +77,10 @@ void TextPrimitive::setTextSizeScale(double textSizeScale)
 }
 
 // Set data
-void TextPrimitive::set(QString text, Vec3<double> anchorPoint, TextPrimitive::TextAnchor anchorPosition, Vec3<double> adjustmentVector, Matrix4& localRotation, double textSize, bool flat)
+void TextPrimitive::set(FontInstance& fontInstance, QString text, Vec3<double> anchorPoint, TextPrimitive::TextAnchor anchorPosition, Vec3<double> adjustmentVector, Matrix4& localRotation, double textSize, bool flat)
 {
 	// Call the parser
-	generateFragments(this, text);
+	generateFragments(&fontInstance, this, text);
 
 	anchorPoint_ = anchorPoint;
 	anchorPosition_ = anchorPosition;
@@ -89,16 +91,16 @@ void TextPrimitive::set(QString text, Vec3<double> anchorPoint, TextPrimitive::T
 }
 
 // Return transformation matrix to use when rendering the text
-Matrix4 TextPrimitive::transformationMatrix(const Matrix4& viewMatrixInverse, double baseFontSize, TextFragment* fragment)
+Matrix4 TextPrimitive::transformationMatrix(FontInstance& fontInstance, const Matrix4& viewMatrixInverse, double baseFontSize, TextFragment* fragment)
 {
 	Matrix4 textMatrix, A;
 	Vec3<double> lowerLeft, upperRight, anchorPos, anchorPosRotated, textCentre;
 
 	// Calculate scaling factor for font
-	double scale = FontInstance::fontBaseHeight() * textSizeScale_ * textSize_ / baseFontSize;
+	double scale = fontInstance.fontBaseHeight() * textSizeScale_ * textSize_ / baseFontSize;
 
 	// Calculate bounding box and anchor position on it
-	boundingBox(lowerLeft, upperRight);
+	boundingBox(fontInstance, lowerLeft, upperRight);
 	switch (anchorPosition_)
 	{
 		case (TextPrimitive::TopLeftAnchor):
@@ -164,10 +166,10 @@ Matrix4 TextPrimitive::transformationMatrix(const Matrix4& viewMatrixInverse, do
 }
 
 // Calculate bounding box of primitive
-void TextPrimitive::boundingBox(Vec3<double>& lowerLeft, Vec3<double>& upperRight)
+void TextPrimitive::boundingBox(FontInstance& fontInstance, Vec3<double>& lowerLeft, Vec3<double>& upperRight)
 {
 	// Set initial lowerLeft and upperRight from the first primitive in the list
-	if (fragments_.first()) FontInstance::boundingBox(fragments_.first()->text(), lowerLeft, upperRight);
+	if (fragments_.first()) fontInstance.boundingBox(fragments_.first()->text(), lowerLeft, upperRight);
 	else
 	{
 		// No fragments in list!
@@ -182,7 +184,7 @@ void TextPrimitive::boundingBox(Vec3<double>& lowerLeft, Vec3<double>& upperRigh
 	for (TextFragment* fragment = fragments_.first()->next; fragment != NULL; fragment = fragment->next)
 	{
 		// Get bounding box for this fragment
-		FontInstance::boundingBox(fragment->text(), ll, ur);
+		fontInstance.boundingBox(fragment->text(), ll, ur);
 
 		// Scale the box by the current scaling factor...
 		ur.x = ll.x + (ur.x - ll.x)*fragment->scale();
@@ -200,14 +202,14 @@ void TextPrimitive::boundingBox(Vec3<double>& lowerLeft, Vec3<double>& upperRigh
 }
 
 // Render primitive
-void TextPrimitive::render(const Matrix4& viewMatrix, const Matrix4& viewMatrixInverse, double baseFontSize)
+void TextPrimitive::render(FontInstance& fontInstance, const Matrix4& viewMatrix, const Matrix4& viewMatrixInverse, double baseFontSize)
 {
 	Matrix4 textMatrix;
 
 	// Loop over fragments
 	for (TextFragment* fragment = fragments_.first(); fragment != NULL; fragment = fragment->next)
 	{
-		textMatrix = viewMatrix * transformationMatrix(viewMatrixInverse, baseFontSize, fragment);
+		textMatrix = viewMatrix * transformationMatrix(fontInstance, viewMatrixInverse, baseFontSize, fragment);
 		glLoadMatrixd(textMatrix.matrix());
 
 		// Draw bounding boxes around each fragment
@@ -216,7 +218,7 @@ void TextPrimitive::render(const Matrix4& viewMatrix, const Matrix4& viewMatrixI
 			glDisable(GL_LINE_STIPPLE);
 			glLineWidth(1.0);
 			Vec3<double> ll, ur;
-			FontInstance::boundingBox(fragment->text(), ll, ur);
+			fontInstance.boundingBox(fragment->text(), ll, ur);
 			glBegin(GL_LINE_LOOP);
 			glVertex3d(ll.x, ll.y, 0.0);
 			glVertex3d(ur.x, ll.y, 0.0);
@@ -229,11 +231,11 @@ void TextPrimitive::render(const Matrix4& viewMatrix, const Matrix4& viewMatrixI
 		{
 			// Render the text twice - once with lines, and once with polygon fill
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			FontInstance::font()->Render(fragment->text().toUtf8());
+			fontInstance.font()->Render(fragment->text().toUtf8());
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-			FontInstance::font()->Render(fragment->text().toUtf8());
+			fontInstance.font()->Render(fragment->text().toUtf8());
 		}
-		else FontInstance::font()->Render(fragment->text().toUtf8());
+		else fontInstance.font()->Render(fragment->text().toUtf8());
 	}
 }
 
@@ -341,10 +343,11 @@ int TextPrimitive::lex()
 }
 
 // Generate TextFragment data for specified TextPrimitive from supplied string
-bool TextPrimitive::generateFragments(TextPrimitive* target, QString inputString)
+bool TextPrimitive::generateFragments(FontInstance* fontInstance, TextPrimitive* target, QString inputString)
 {
 	// Set / reset variables
 	target_ = target;
+	fontInstance_ = fontInstance;
 	stringPos_ = 0;
 	stringSource_ = inputString;
 	stringLength_ = stringSource_.length();
@@ -382,7 +385,7 @@ bool TextPrimitive::addFragment(QString text)
 	fragment->set(text, format->scale(), translation, format->italic(), format->bold());
 	
 	// We have just added some text, so update the horizontal position
-	horizontalPosition_ += FontInstance::boundingBoxWidth(text) * format->scale();
+	horizontalPosition_ += fontInstance_->boundingBoxWidth(text) * format->scale();
 
 	return true;
 }
@@ -413,12 +416,12 @@ bool TextPrimitive::addEscape(TextPrimitive::EscapeSequence escSeq)
 			break;
 		// Add subscript level - adjust baseline position and scale of current format
 		case (TextPrimitive::SubScriptEscape):
-			newFormat->adjustY( -FontInstance::fontBaseHeight() * newFormat->scale() * (1.0/3.0) );
+			newFormat->adjustY( -fontInstance_->fontBaseHeight() * newFormat->scale() * (1.0/3.0) );
 			newFormat->setScale( 0.583 * newFormat->scale() );
 			break;
 		// Add superscript level - adjust baseline position and scale of current format
 		case (TextPrimitive::SuperScriptEscape):
-			newFormat->adjustY( FontInstance::fontBaseHeight() * newFormat->scale() * (2.0/3.0) );
+			newFormat->adjustY( fontInstance_->fontBaseHeight() * newFormat->scale() * (2.0/3.0) );
 			newFormat->setScale( 0.583 * newFormat->scale() );
 			break;
 		default:

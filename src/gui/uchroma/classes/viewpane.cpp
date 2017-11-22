@@ -868,6 +868,7 @@ void ViewPane::recalculateView(bool force)
 	Matrix4 viewMat, B, viewMatrixInverse;
 	double tempMin, tempMax;
 	Vec3<double> coordMin[3], coordMax[3], labelMin, labelMax, a, b, globalMin, globalMax;
+	FontInstance& fontInstance = uChromaBase_->viewer()->fontInstance();
 
 	// Iterate for a few cycles
 	for (int cycle = 0; cycle < 5; ++cycle)
@@ -908,8 +909,8 @@ void ViewPane::recalculateView(bool force)
 
 			// Get bounding cuboid for axis text
 			Cuboid cuboid;
-			cuboid = axes_.labelPrimitive(axis).boundingCuboid(viewMatrixInverse, textZScale_);
-			cuboid = axes_.titlePrimitive(axis).boundingCuboid(viewMatrixInverse, textZScale_, cuboid);
+			cuboid = axes_.labelPrimitive(axis).boundingCuboid(fontInstance, viewMatrixInverse, textZScale_);
+			cuboid = axes_.titlePrimitive(axis).boundingCuboid(fontInstance, viewMatrixInverse, textZScale_, cuboid);
 
 			// Project cuboid extremes and store projected coordinates
 			a = modelToScreen(cuboid.minima(), tempProjection, viewMat);
@@ -1328,9 +1329,9 @@ bool ViewPane::flatLabels()
 // Return axis title at specified coordinates (if any)
 int ViewPane::axisTitleAt(int screenX, int screenY)
 {
-// 	printf("Coords=%i %i\n", screenX, screenY);
-	// Get view matrix inverse
+	// Get view matrix inverse and FontInstance
 	Matrix4 viewRotInverse = viewRotationInverse();
+	FontInstance& fontInstance = uChromaBase_->viewer()->fontInstance();
 
 	Vec3<double> labelMin, labelMax;
 	for (int axis=0; axis<3; ++axis)
@@ -1340,7 +1341,7 @@ int ViewPane::axisTitleAt(int screenX, int screenY)
 		labelMax = -labelMin;
 
 		// Calculate orthogonal bounding cuboid for this axis title (local coordinates)
-		Cuboid cuboid = axes_.titlePrimitive(axis).boundingCuboid(viewRotInverse, textZScale_);
+		Cuboid cuboid = axes_.titlePrimitive(axis).boundingCuboid(fontInstance, viewRotInverse, textZScale_);
 
 		// Determine whether the screen point specified is within the projected cuboid
 		if (cuboid.isPointWithinProjection(screenX, screenY, viewMatrix(), projectionMatrix_, viewportMatrix_)) return axis;

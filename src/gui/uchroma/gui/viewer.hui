@@ -29,6 +29,7 @@
 #include "gui/uchroma/render/primitive.h"
 #include "gui/uchroma/classes/axes.h"
 #include "gui/uchroma/classes/colourscale.h"
+#include "gui/uchroma/render/fontinstance.h"
 #include "base/xydata.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
@@ -73,6 +74,8 @@ class Viewer : public QOpenGLWidget, protected QOpenGLFunctions
 	bool valid_;
 	// Flag indicating if we are currently drawing to this context
 	bool drawing_;
+	// Font instance for this viewer
+	FontInstance fontInstance_;
 
 	protected:
 	// Initialise context widget (when created by Qt)
@@ -87,6 +90,10 @@ class Viewer : public QOpenGLWidget, protected QOpenGLFunctions
 	GLsizei contextHeight() const;
 	// Return the current width of the drawing area
 	GLsizei contextWidth() const;
+	// Setup font instance with supplied font
+	bool setupFont(const char* fontFileName = NULL);
+	// Return font instance
+	FontInstance& fontInstance();
 	// Check for GL error
 	void checkGlError();
 	// Refresh widget / scene

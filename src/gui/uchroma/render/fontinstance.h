@@ -35,37 +35,37 @@ class FontInstance
 {
 	private:
 	// Font file last passed to setupFont()
-	static QString fontFile_;
+	QString fontFile_;
 	// Font data
-	static QResource* fontData_;
+	QResource* fontData_;
 	// FTGL font for text
-	static FTFont* font_;
+	FTFont* font_;
 	// Font full height (from bottom of descender to top of ascender)
-	static double fontFullHeight_;
+	double fontFullHeight_;
 	// Font base height (from baseline to top of ascender)
-	static double fontBaseHeight_;
+	double fontBaseHeight_;
 	// Width of double dot (used for correction of width of strings with trailing spaces)
-	static double dotWidth_;
+	double dotWidth_;
 
 	public:
 	// Setup font specified
-	static bool setup(QString fontFileName);
+	bool setup(QString fontFileName);
 	// Return whether font exists and is ready for use
-	static bool fontOK();
+	bool fontOK();
 	// Return current font
-	static FTFont* font();
+	FTFont* font();
 	// Return full height of font
-	static double fontFullHeight();
+	double fontFullHeight();
 	// Return base height of font
-	static double fontBaseHeight();
+	double fontBaseHeight();
 	// Return bounding box for specified string
-	static FTBBox boundingBox(QString text);
+	FTBBox boundingBox(QString text);
 	// Calculate bounding box for specified string
-	static void boundingBox(QString text, Vec3<double>& lowerLeft, Vec3<double>& upperRight);
+	void boundingBox(QString text, Vec3<double>& lowerLeft, Vec3<double>& upperRight);
 	// Calculate bounding box width for specified string
-	static double boundingBoxWidth(QString text);
+	double boundingBoxWidth(QString text);
 	// Calculate bounding box height for specified string
-	static double boundingBoxHeight(QString text);
+	double boundingBoxHeight(QString text);
 };
 
 #endif

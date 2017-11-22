@@ -45,6 +45,9 @@ Viewer::Viewer(QWidget* parent) : QOpenGLWidget(parent)
 
 	// Prevent QPainter from autofilling widget background
 	setAutoFillBackground(false);
+
+        // Create our FTGL font instance
+	fontInstance_.setup("");
 }
 
 // Destructor
@@ -137,6 +140,18 @@ GLsizei Viewer::contextHeight() const
 GLsizei Viewer::contextWidth() const
 {
 	return contextWidth_;
+}
+
+// Setup font instance with supplied font
+bool Viewer::setupFont(const char* fontFileName)
+{
+	return fontInstance_.setup(fontFileName);
+}
+
+// Return font instance
+FontInstance& Viewer::fontInstance()
+{
+	return fontInstance_;
 }
 
 // Check for GL error

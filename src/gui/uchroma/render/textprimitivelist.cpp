@@ -34,14 +34,14 @@ void TextPrimitiveList::clear()
 }
 
 // Set data from literal coordinates and text
-void TextPrimitiveList::add(QString text, Vec3<double> anchorPoint, TextPrimitive::TextAnchor anchorPosition, Vec3<double> adjustmentVector, Matrix4& localRotation, double textSize, bool flat)
+void TextPrimitiveList::add(FontInstance& fontInstance, QString text, Vec3<double> anchorPoint, TextPrimitive::TextAnchor anchorPosition, Vec3<double> adjustmentVector, Matrix4& localRotation, double textSize, bool flat)
 {
 	TextPrimitive* primitive = textPrimitives_.add();
-	primitive->set(text, anchorPoint, anchorPosition, adjustmentVector, localRotation, textSize, flat);
+	primitive->set(fontInstance, text, anchorPoint, anchorPosition, adjustmentVector, localRotation, textSize, flat);
 }
 
 // Update global bounding cuboid for all text primitives in the list
-Cuboid TextPrimitiveList::boundingCuboid(const Matrix4& viewMatrixInverse, double baseFontSize, Cuboid startingCuboid)
+Cuboid TextPrimitiveList::boundingCuboid(FontInstance& fontInstance, const Matrix4& viewMatrixInverse, double baseFontSize, Cuboid startingCuboid)
 {
 	Cuboid result = startingCuboid;
 	Matrix4 textMatrix;
@@ -49,8 +49,8 @@ Cuboid TextPrimitiveList::boundingCuboid(const Matrix4& viewMatrixInverse, doubl
 	for (TextPrimitive* primitive = textPrimitives_.first(); primitive != NULL; primitive = primitive->next)
 	{
 		// Get transformation matrix and bounding box for text
-		textMatrix = primitive->transformationMatrix(viewMatrixInverse, baseFontSize);
-		primitive->boundingBox(corners[0], corners[1]);
+		textMatrix = primitive->transformationMatrix(fontInstance, viewMatrixInverse, baseFontSize);
+		primitive->boundingBox(fontInstance, corners[0], corners[1]);
 		corners[2].set(corners[0].x, corners[1].y, 0.0);
 		corners[3].set(corners[1].x, corners[0].y, 0.0);
 
@@ -67,8 +67,8 @@ Cuboid TextPrimitiveList::boundingCuboid(const Matrix4& viewMatrixInverse, doubl
 }
 
 // Render all primitives in list
-void TextPrimitiveList::renderAll(const Matrix4& viewMatrix, const Matrix4& viewMatrixInverse, double baseFontSize)
+void TextPrimitiveList::renderAll(FontInstance& fontInstance, const Matrix4& viewMatrix, const Matrix4& viewMatrixInverse, double baseFontSize)
 {
-	for (TextPrimitive* primitive = textPrimitives_.first(); primitive != NULL; primitive = primitive->next) primitive->render(viewMatrix, viewMatrixInverse, baseFontSize);
+	for (TextPrimitive* primitive = textPrimitives_.first(); primitive != NULL; primitive = primitive->next) primitive->render(fontInstance, viewMatrix, viewMatrixInverse, baseFontSize);
 }
 
