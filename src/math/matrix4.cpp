@@ -133,6 +133,33 @@ double &Matrix4::operator[](int index)
 	return matrix_[index];
 }
 
+// Pre-multiply this matrix by the supplied matrix
+void Matrix4::preMultiply(const Matrix4& B)
+{
+	// [ row(B).column(A|this) ]
+	Matrix4 AB;
+	AB.matrix_[0] = matrix_[0]*B.matrix_[0] + matrix_[1]*B.matrix_[4] + matrix_[2]*B.matrix_[8] + matrix_[3]*B.matrix_[12];
+	AB.matrix_[1] = matrix_[0]*B.matrix_[1] + matrix_[1]*B.matrix_[5] + matrix_[2]*B.matrix_[9] + matrix_[3]*B.matrix_[13];
+	AB.matrix_[2] = matrix_[0]*B.matrix_[2] + matrix_[1]*B.matrix_[6] + matrix_[2]*B.matrix_[10] + matrix_[3]*B.matrix_[14];
+	AB.matrix_[3] = matrix_[0]*B.matrix_[3] + matrix_[1]*B.matrix_[7] + matrix_[2]*B.matrix_[11] + matrix_[3]*B.matrix_[15];
+
+	AB.matrix_[4] = matrix_[4]*B.matrix_[0] + matrix_[5]*B.matrix_[4] + matrix_[6]*B.matrix_[8] + matrix_[7]*B.matrix_[12];
+	AB.matrix_[5] = matrix_[4]*B.matrix_[1] + matrix_[5]*B.matrix_[5] + matrix_[6]*B.matrix_[9] + matrix_[7]*B.matrix_[13];
+	AB.matrix_[6] = matrix_[4]*B.matrix_[2] + matrix_[5]*B.matrix_[6] + matrix_[6]*B.matrix_[10] + matrix_[7]*B.matrix_[14];
+	AB.matrix_[7] = matrix_[4]*B.matrix_[3] + matrix_[5]*B.matrix_[7] + matrix_[6]*B.matrix_[11] + matrix_[7]*B.matrix_[15];
+
+	AB.matrix_[8] = matrix_[8]*B.matrix_[0] + matrix_[9]*B.matrix_[4] + matrix_[10]*B.matrix_[8] + matrix_[11]*B.matrix_[12];
+	AB.matrix_[9] = matrix_[8]*B.matrix_[1] + matrix_[9]*B.matrix_[5] + matrix_[10]*B.matrix_[9] + matrix_[11]*B.matrix_[13];
+	AB.matrix_[10] = matrix_[8]*B.matrix_[2] + matrix_[9]*B.matrix_[6] + matrix_[10]*B.matrix_[10] + matrix_[11]*B.matrix_[14];
+	AB.matrix_[11] = matrix_[8]*B.matrix_[3] + matrix_[9]*B.matrix_[7] + matrix_[10]*B.matrix_[11] + matrix_[11]*B.matrix_[15];
+
+	AB.matrix_[12] = matrix_[12]*B.matrix_[0] + matrix_[13]*B.matrix_[4] + matrix_[14]*B.matrix_[8] + matrix_[15]*B.matrix_[12];
+	AB.matrix_[13] = matrix_[12]*B.matrix_[1] + matrix_[13]*B.matrix_[5] + matrix_[14]*B.matrix_[9] + matrix_[15]*B.matrix_[13];
+	AB.matrix_[14] = matrix_[12]*B.matrix_[2] + matrix_[13]*B.matrix_[6] + matrix_[14]*B.matrix_[10] + matrix_[15]*B.matrix_[14];
+	AB.matrix_[15] = matrix_[12]*B.matrix_[3] + matrix_[13]*B.matrix_[7] + matrix_[14]*B.matrix_[11] + matrix_[15]*B.matrix_[15];
+	*this = AB;
+}
+
 /*
  * Basic Set/Get
  */
@@ -714,6 +741,126 @@ void Matrix4::applyRotationAxis(double ax, double ay, double az, double angle, b
 	matrix_[7] = temp[7];
 }
 
+// Apply rotation about X axis, premultiplying with current matrix
+void Matrix4::applyPreRotationX(double angle)
+{
+	double cosx, sinx, theta = angle/DEGRAD, temp[4];
+	cosx = cos(theta);
+	sinx = sin(theta);
+
+	// Recalculate second column and store in temp array
+	temp[0] = matrix_[1]*cosx + matrix_[2]*sinx;
+	temp[1] = matrix_[5]*cosx + matrix_[6]*sinx;
+	temp[2] = matrix_[9]*cosx + matrix_[10]*sinx;
+	temp[3] = matrix_[13]*cosx + matrix_[14]*sinx;
+
+	// Set third column immediately
+	matrix_[2] = matrix_[1]*-sinx + matrix_[2]*cosx;
+	matrix_[6] = matrix_[5]*-sinx + matrix_[6]*cosx;
+	matrix_[10] = matrix_[9]*-sinx + matrix_[10]*cosx;
+	matrix_[14] = matrix_[13]*-sinx + matrix_[14]*cosx;
+
+	// Put temporary values back into first column
+	matrix_[1] = temp[0];
+	matrix_[5] = temp[1];
+	matrix_[9] = temp[2];
+	matrix_[13] = temp[3];
+}
+
+// Apply rotation about Y axis, premultiplying with current matrix
+void Matrix4::applyPreRotationY(double angle)
+{
+	double cosx, sinx, theta = angle/DEGRAD, temp[4];
+	cosx = cos(theta);
+	sinx = sin(theta);
+
+	temp[0] = matrix_[0]*cosx + matrix_[2]*-sinx;
+	temp[1] = matrix_[4]*cosx + matrix_[6]*-sinx;
+	temp[2] = matrix_[8]*cosx + matrix_[10]*-sinx;
+	temp[3] = matrix_[12]*cosx + matrix_[14]*-sinx;
+
+	matrix_[2] = matrix_[0]*sinx + matrix_[2]*cosx;
+	matrix_[6] = matrix_[4]*sinx + matrix_[6]*cosx;
+	matrix_[10] = matrix_[8]*sinx + matrix_[10]*cosx;
+	matrix_[14] = matrix_[12]*sinx + matrix_[14]*cosx;
+
+	matrix_[0] = temp[0];
+	matrix_[4] = temp[1];
+	matrix_[8] = temp[2];
+	matrix_[12] = temp[3];
+}
+
+// Apply rotation about Z axis, premultiplying with current matrix
+void Matrix4::applyPreRotationZ(double angle)
+{
+	double cosx, sinx, theta = angle/DEGRAD, temp[4];
+	cosx = cos(theta);
+	sinx = sin(theta);
+
+	temp[0] = matrix_[0]*cosx + matrix_[1]*sinx;
+	temp[1] = matrix_[4]*cosx + matrix_[5]*sinx;
+	temp[2] = matrix_[8]*cosx + matrix_[9]*sinx;
+	temp[3] = matrix_[12]*cosx + matrix_[13]*sinx;
+
+	matrix_[1] = matrix_[0]*-sinx + matrix_[1]*cosx;
+	matrix_[5] = matrix_[4]*-sinx + matrix_[5]*cosx;
+	matrix_[9] = matrix_[8]*-sinx + matrix_[9]*cosx;
+	matrix_[13] = matrix_[12]*-sinx + matrix_[13]*cosx;
+
+	matrix_[0] = temp[0];
+	matrix_[4] = temp[1];
+	matrix_[8] = temp[2];
+	matrix_[12] = temp[3];
+}
+
+// Apply axis rotation quaternion, premultiplying with current matrix
+void Matrix4::applyPreRotationAxis(double ax, double ay, double az, double angle, bool normalise)
+{
+	double cosx, sinx, theta = angle/DEGRAD, temp[8], multipliers[16];
+	if (normalise)
+	{
+		double mag = sqrt(ax*ax + ay*ay + az*az);
+		ax /= mag;
+		ay /= mag;
+		az /= mag;
+	}
+	cosx = cos(theta);
+	sinx = sin(theta);
+	multipliers[0] = ax*ax*(1.0-cosx) + cosx;
+	multipliers[1] = ax*ay*(1.0-cosx) + az*sinx;
+	multipliers[2] = ax*az*(1.0-cosx) - ay*sinx;
+	multipliers[4] = ax*ay*(1.0-cosx) - az*sinx;
+	multipliers[5] = ay*ay*(1.0-cosx) + cosx;
+	multipliers[6] = ay*az*(1.0-cosx) + ax*sinx;
+	multipliers[8] = ax*az*(1.0-cosx) + ay*sinx;
+	multipliers[9] = ay*az*(1.0-cosx) - ax*sinx;
+	multipliers[10] = az*az*(1.0-cosx) + cosx;
+
+	temp[0] = matrix_[0]*multipliers[0] + matrix_[1]*multipliers[4] + matrix_[2]*multipliers[8];
+	temp[1] = matrix_[4]*multipliers[0] + matrix_[5]*multipliers[4] + matrix_[6]*multipliers[8];
+	temp[2] = matrix_[8]*multipliers[0] + matrix_[9]*multipliers[4] + matrix_[10]*multipliers[8];
+	temp[3] = matrix_[12]*multipliers[0] + matrix_[13]*multipliers[4] + matrix_[14]*multipliers[8];
+
+	temp[4] = matrix_[0]*multipliers[1] + matrix_[1]*multipliers[5] + matrix_[2]*multipliers[9];
+	temp[5] = matrix_[4]*multipliers[1] + matrix_[5]*multipliers[5] + matrix_[6]*multipliers[9];
+	temp[6] = matrix_[8]*multipliers[1] + matrix_[9]*multipliers[5] + matrix_[10]*multipliers[9];
+	temp[7] = matrix_[12]*multipliers[1] + matrix_[13]*multipliers[5] + matrix_[14]*multipliers[9];
+
+	matrix_[2] = matrix_[0]*multipliers[2] + matrix_[1]*multipliers[6] + matrix_[2]*multipliers[10];
+	matrix_[6] = matrix_[4]*multipliers[2] + matrix_[5]*multipliers[6] + matrix_[6]*multipliers[10];
+	matrix_[10] = matrix_[8]*multipliers[2] + matrix_[9]*multipliers[6] + matrix_[10]*multipliers[10];
+	matrix_[14] = matrix_[12]*multipliers[2] + matrix_[13]*multipliers[6] + matrix_[14]*multipliers[10];
+
+	matrix_[0] = temp[0];
+	matrix_[4] = temp[1];
+	matrix_[8] = temp[2];
+	matrix_[12] = temp[3];
+	matrix_[1] = temp[4];
+	matrix_[5] = temp[5];
+	matrix_[9] = temp[6];
+	matrix_[13] = temp[7];
+}
+
 /*
  * Translations
  */
@@ -745,20 +892,46 @@ void Matrix4::createTranslation(Vec3<double> delta)
 	createTranslation(delta.x, delta.y, delta.z);
 }
 
-// Apply a translation to the matrix (as glTranslated would do)
-void Matrix4::applyTranslation(double dx, double dy, double dz)
+// // Apply a translation to the matrix (as glTranslated would do)
+// void Matrix4::applyTranslation(double dx, double dy, double dz)
+// {
+// 	matrix_[12] += matrix_[0]*dx + matrix_[4]*dy + matrix_[8]*dz;
+// 	matrix_[13] += matrix_[1]*dx + matrix_[5]*dy + matrix_[9]*dz;
+// 	matrix_[14] += matrix_[2]*dx + matrix_[6]*dy + matrix_[10]*dz;
+// }
+// 
+// // Apply a translation to the matrix (as glTranslated would to)
+// void Matrix4::applyTranslation(Vec3<double> vec)
+// {
+// 	matrix_[12] += matrix_[0]*vec.x + matrix_[4]*vec.y + matrix_[8]*vec.z;
+// 	matrix_[13] += matrix_[1]*vec.x + matrix_[5]*vec.y + matrix_[9]*vec.z;
+// 	matrix_[14] += matrix_[2]*vec.x + matrix_[6]*vec.y + matrix_[10]*vec.z;
+// }
+
+// Apply a translation, premultiplying with current matrix
+void Matrix4::applyPreTranslation(double dx, double dy, double dz)
 {
-	matrix_[12] += matrix_[0]*dx + matrix_[4]*dy + matrix_[8]*dz;
-	matrix_[13] += matrix_[1]*dx + matrix_[5]*dy + matrix_[9]*dz;
-	matrix_[14] += matrix_[2]*dx + matrix_[6]*dy + matrix_[10]*dz;
+	matrix_[0] += dx*matrix_[3];
+	matrix_[1] += dy*matrix_[3];
+	matrix_[2] += dz*matrix_[3];
+
+	matrix_[4] += dx*matrix_[7];
+	matrix_[5] += dy*matrix_[7];
+	matrix_[6] += dz*matrix_[7];
+
+	matrix_[8] += dx*matrix_[11];
+	matrix_[9] += dy*matrix_[11];
+	matrix_[10] += dz*matrix_[11];
+
+	matrix_[12] += dx;
+	matrix_[13] += dy;
+	matrix_[14] += dz;
 }
 
-// Apply a translation to the matrix (as glTranslated would to)
-void Matrix4::applyTranslation(Vec3<double> vec)
+// Apply a translation, premultiplying with current matrix
+void Matrix4::applyPreTranslation(Vec3<double> vec)
 {
-	matrix_[12] += matrix_[0]*vec.x + matrix_[4]*vec.y + matrix_[8]*vec.z;
-	matrix_[13] += matrix_[1]*vec.x + matrix_[5]*vec.y + matrix_[9]*vec.z;
-	matrix_[14] += matrix_[2]*vec.x + matrix_[6]*vec.y + matrix_[10]*vec.z;
+	applyPreTranslation(vec.x, vec.y, vec.z);
 }
 
 // Apply an X-translation to the matrix (as glTranslated would do)
@@ -821,7 +994,7 @@ void Matrix4::setTranslation(double x, double y, double z)
  * Scaling
  */
 
-// Apply a general scaling to the matrix (as glScaled would do)
+// Apply a general scaling to the matrix
 void Matrix4::applyScaling(double scalex, double scaley, double scalez)
 {
 	applyScalingX(scalex);
@@ -829,12 +1002,20 @@ void Matrix4::applyScaling(double scalex, double scaley, double scalez)
 	applyScalingZ(scalez);
 }
 
-// Apply a general scaling to the matrix (as glScaled would to)
+// Apply a general scaling to the matrix
 void Matrix4::applyScaling(Vec3<double> scaling)
 {
 	applyScalingX(scaling.x);
 	applyScalingY(scaling.y);
 	applyScalingZ(scaling.z);
+}
+
+// Apply a general scaling to the matrix
+void Matrix4::applyScaling(double scale)
+{
+	applyScalingX(scale);
+	applyScalingY(scale);
+	applyScalingZ(scale);
 }
 
 // Apply an xy-scaling to the matrix

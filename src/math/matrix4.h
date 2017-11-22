@@ -54,9 +54,11 @@ class Matrix4
 	Matrix4 operator+(const Matrix4& B) const;
 	Matrix4 operator-(const Matrix4& B) const;
 	Vec3<double> operator*(const Vec3<double>& v) const;
-	Vec4<double> operator*(const Vec4<double> &v) const;
+	Vec4<double> operator*(const Vec4<double>& v) const;
 	Matrix4& operator*=(const Matrix4& B);
-	double &operator[](int);
+	double& operator[](int);
+	// Pre-multiply this matrix by the supplied matrix
+	void preMultiply(const Matrix4& B);
 
 
 	/*
@@ -137,6 +139,14 @@ class Matrix4
 	void applyRotationZ(double angle);
 	// Apply axis rotation quaternion
 	void applyRotationAxis(double ax, double ay, double az, double angle, bool normalise);
+	// Apply rotation about X axis, premultiplying with current matrix
+	void applyPreRotationX(double angle);
+	// Apply rotation about Y axis, premultiplying with current matrix
+	void applyPreRotationY(double angle);
+	// Apply rotation about Z axis, premultiplying with current matrix
+	void applyPreRotationZ(double angle);
+	// Apply axis rotation quaternion, premultiplying with current matrix
+	void applyPreRotationAxis(double ax, double ay, double az, double angle, bool normalise);
 
 
 	/*
@@ -147,15 +157,19 @@ class Matrix4
 	void createTranslation(double dx, double dy, double dz);
 	// Create a translation matrix (as glTranslated would do)
 	void createTranslation(Vec3<double> delta);
-	// Apply a translation to the matrix (as glTranslated would do)
+	// Apply a translation to the matrix
 	void applyTranslation(double dx, double dy, double dz);
-	// Apply a translation to the matrix (as glTranslated would do)
+	// Apply a translation to the matrix
 	void applyTranslation(Vec3<double> vec);
-	// Apply an X-translation to the matrix (as glTranslated would do)
+	// Apply a translation, premultiplying with current matrix
+	void applyPreTranslation(double dx, double dy, double dz);
+	// Apply a translation, premultiplying with current matrix
+	void applyPreTranslation(Vec3<double> vec);
+	// Apply an X-translation to the matrix
 	void applyTranslationX(double dx);
-	// Apply an Y-translation to the matrix (as glTranslated would do)
+	// Apply an Y-translation to the matrix
 	void applyTranslationY(double dy);
-	// Apply an Z-translation to the matrix (as glTranslated would do)
+	// Apply an Z-translation to the matrix
 	void applyTranslationZ(double dz);
 	// Add a translation to the matrix
 	void addTranslation(Vec3<double> v);
@@ -171,10 +185,12 @@ class Matrix4
 	 * Scaling
 	 */
 	public:
-	// Apply a general scaling to the matrix (as glScaled would to)
+	// Apply a general scaling to the matrix
 	void applyScaling(double scalex, double scaley, double scalez);
-	// Apply a general scaling to the matrix (as glScaled would to)
+	// Apply a general scaling to the matrix
 	void applyScaling(Vec3<double> scaling);
+	// Apply a general scaling to the matrix
+	void applyScaling(double scale);
 	// Apply an xy-scaling to the matrix
 	void applyScalingXY(double scalex, double scaley);
 	// Apply an x-scaling to the matrix
