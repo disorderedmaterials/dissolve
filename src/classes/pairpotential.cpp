@@ -475,6 +475,12 @@ bool PairPotential::setUp(double maxR, double truncationWidth, double delta, boo
 	return true;
 }
 
+// Return range of potential
+double PairPotential::range() const
+{
+	return range_;
+}
+
 // (Re)generate potential from current parameters
 bool PairPotential::calculateUOriginal(bool recalculateUFull)
 {

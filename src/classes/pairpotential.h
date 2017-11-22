@@ -164,6 +164,8 @@ class PairPotential : public ListItem<PairPotential>
 	public:
 	// Set up and perform initial generation of potential
 	bool setUp(double maxR, double truncationWidth, double delta, bool includeCoulomb);
+	// Return range of potential
+	double range() const;
 	// (Re)generate original potential (uOriginal) from current parameters
 	bool calculateUOriginal(bool recalculateUFull = true);
 	// Return potential at specified r
