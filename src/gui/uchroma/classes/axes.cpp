@@ -1153,22 +1153,22 @@ void Axes::updateAxisPrimitives()
 		// Create tick label transformation matrix
 		labelTransform.setIdentity();
 		// -- 1) Apply axial rotation along label left-to-right direction
-		if (parent_.viewType() == ViewPane::FlatZYView) labelTransform.applyRotationY(labelOrientation(axis).x);
-		else labelTransform.applyRotationX(labelOrientation(axis).x);
+		if (parent_.viewType() == ViewPane::FlatZYView) labelTransform.applyPreRotationY(labelOrientation(axis).x);
+		else labelTransform.applyPreRotationX(labelOrientation(axis).x);
 		// -- 2) Perform in-plane rotation
-		if (inPlaneAxis == 0) labelTransform.applyRotationX(labelOrientation(axis).y);
-		else if (inPlaneAxis == 1) labelTransform.applyRotationY(labelOrientation(axis).y);
-		else labelTransform.applyRotationZ(labelOrientation(axis).y);
+		if (inPlaneAxis == 0) labelTransform.applyPreRotationX(labelOrientation(axis).y);
+		else if (inPlaneAxis == 1) labelTransform.applyPreRotationY(labelOrientation(axis).y);
+		else labelTransform.applyPreRotationZ(labelOrientation(axis).y);
 
 		// Create axis title transformation matrix
 		titleTransform.setIdentity();
 		// -- 1) Apply axial rotation along label left-to-right direction
-		if (parent_.viewType() == ViewPane::FlatZYView) titleTransform.applyRotationY(titleOrientation(axis).x);
-		else titleTransform.applyRotationX(titleOrientation(axis).x);
+		if (parent_.viewType() == ViewPane::FlatZYView) titleTransform.applyPreRotationY(titleOrientation(axis).x);
+		else titleTransform.applyPreRotationX(titleOrientation(axis).x);
 		// -- 2) Perform in-plane rotation
-		if (inPlaneAxis == 0) titleTransform.applyRotationX(titleOrientation(axis).y);
-		else if (inPlaneAxis == 1) titleTransform.applyRotationY(titleOrientation(axis).y);
-		else titleTransform.applyRotationZ(titleOrientation(axis).y);
+		if (inPlaneAxis == 0) titleTransform.applyPreRotationX(titleOrientation(axis).y);
+		else if (inPlaneAxis == 1) titleTransform.applyPreRotationY(titleOrientation(axis).y);
+		else titleTransform.applyPreRotationZ(titleOrientation(axis).y);
 
 		// Add axis labels
 		if (logarithmic_[axis])

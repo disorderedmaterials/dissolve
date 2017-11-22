@@ -580,8 +580,8 @@ void ViewPane::rotateView(double dx, double dy)
 	if ((viewType_ != ViewPane::NormalView) && (viewType_ != ViewPane::AutoStretchedView)) return;
 
 	Matrix4 A;
-	A.createRotationXY(dx, dy);
-	viewRotation_ *= A;
+	A.createRotationXY(dx, dy);	// TODO Create Matrix4::applyPreRotationXY() function.
+	viewRotation_.preMultiply(A);
 
 	++viewRotationPoint_;
 }
@@ -640,10 +640,10 @@ Matrix4 ViewPane::viewMatrix()
 	viewMatrix.createTranslation(-axes().coordCentre());
 
 	// Apply rotation matrix about this local centre
-	viewMatrix *= viewRotation_;
+	viewMatrix.preMultiply(viewRotation_);
 
 	// Apply translation to apply view shift and zoom (the latter only if using perspective)
-	viewMatrix.applyTranslation(viewTranslation_.x, viewTranslation_.y, hasPerspective_ ? viewTranslation_.z : 0.0 );
+	viewMatrix.applyPreTranslation(viewTranslation_.x, viewTranslation_.y, hasPerspective_ ? viewTranslation_.z : 0.0 );
 
 	return viewMatrix;
 }
@@ -702,7 +702,7 @@ Vec3<double> ViewPane::modelToScreen(Vec3<double> modelr, Matrix4 projectionMatr
 
 	// Get the world coordinates of the point - Multiply by modelview matrix 'view'
 	vmat = rotationMatrix;
-	vmat.applyTranslation(translation);
+	vmat.applyPreTranslation(translation);
 	worldr = vmat * pos;
 	screenr = projectionMatrix * worldr;
 	screenr.x /= screenr.w;
@@ -742,7 +742,7 @@ double ViewPane::calculateRequiredZoom(double xMax, double yMax, double fraction
 
 		// Project the point : worldr = P x M x modelr
 		viewMatrix.setIdentity();
-		viewMatrix.applyTranslation(translation);
+		viewMatrix.applyPreTranslation(translation);
 		rWorld = viewMatrix * rModel;
 		rScreen = projectionMatrix * rWorld;
 		rScreen.x /= rScreen.w;
@@ -875,8 +875,8 @@ void ViewPane::recalculateView(bool force)
 		// We will now calculate more accurate stretch factors to apply to the X and Y axes.
 		// Project the axis limits on to the screen using the relevant viewmatrix + coordinate centre translation
 		viewMat.createTranslation(-axes().coordCentre());
-		if (viewType_ == ViewPane::FlatXZView) viewMat.applyRotationX(90.0);
-		else if (viewType_ == ViewPane::FlatZYView) viewMat.applyRotationY(-90.0);
+		if (viewType_ == ViewPane::FlatXZView) viewMat.applyPreRotationX(90.0);
+		else if (viewType_ == ViewPane::FlatZYView) viewMat.applyPreRotationY(-90.0);
 
 		// Calculate view rotation matrix inverse
 		viewMatrixInverse = viewMat;
@@ -951,8 +951,8 @@ void ViewPane::recalculateView(bool force)
 	if (viewType_ > ViewPane::AutoStretchedView)
 	{
 		viewRotation_.setIdentity();
-		if (viewType_ == ViewPane::FlatXZView) viewRotation_.applyRotationX(90.0);
-		else if (viewType_ == ViewPane::FlatZYView) viewRotation_.applyRotationY(-90.0);
+		if (viewType_ == ViewPane::FlatXZView) viewRotation_.applyPreRotationX(90.0);
+		else if (viewType_ == ViewPane::FlatZYView) viewRotation_.applyPreRotationY(-90.0);
 
 		// Set a translation in order to set the margins as requested
 		// The viewTranslation_ is applied in 'normal' coordinate axes, so viewTranslation_.x is along screen x etc.

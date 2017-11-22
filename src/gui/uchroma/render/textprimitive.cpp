@@ -96,7 +96,7 @@ Matrix4 TextPrimitive::transformationMatrix(const Matrix4& viewMatrixInverse, do
 
 	// Calculate scaling factor for font
 	double scale = FontInstance::fontBaseHeight() * textSizeScale_ * textSize_ / baseFontSize;
-	
+
 	// Calculate bounding box and anchor position on it
 	boundingBox(lowerLeft, upperRight);
 	switch (anchorPosition_)
@@ -137,16 +137,20 @@ Matrix4 TextPrimitive::transformationMatrix(const Matrix4& viewMatrixInverse, do
 	anchorPosRotated = localRotation_ * (anchorPos - textCentre) * scale;
 
 	// Construct matrix
+
 	// -- Translate to centre of text bounding box (not rotated) accounting for fragment translation if one was specified
 	if (fragment) textCentre -= fragment->translation();
 	textMatrix.createTranslation(-textCentre);
+
 	// -- Apply scaled local rotation matrix (if not flat)
 	if (flat_) A = viewMatrixInverse;
 	else A = localRotation_;
 	A.applyScaling(scale, scale, scale);
-	textMatrix *= A;
+	textMatrix.preMultiply(A);
+
 	// -- Apply translation to text anchor point
-	textMatrix.applyTranslation(-anchorPosRotated+anchorPoint_+adjustmentVector_*scale);
+	textMatrix.applyPreTranslation(-anchorPosRotated+anchorPoint_+adjustmentVector_*scale);
+
 	// -- Apply fragment specific operations
 	if (fragment)
 	{
@@ -203,7 +207,7 @@ void TextPrimitive::render(const Matrix4& viewMatrix, const Matrix4& viewMatrixI
 	// Loop over fragments
 	for (TextFragment* fragment = fragments_.first(); fragment != NULL; fragment = fragment->next)
 	{
-		textMatrix = transformationMatrix(viewMatrixInverse, baseFontSize, fragment) * viewMatrix;
+		textMatrix = viewMatrix * transformationMatrix(viewMatrixInverse, baseFontSize, fragment);
 		glLoadMatrixd(textMatrix.matrix());
 
 		// Draw bounding boxes around each fragment
