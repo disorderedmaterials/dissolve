@@ -33,6 +33,10 @@
 // Static Font Instance
 class FontInstance
 {
+	public:
+	// Constructor
+	FontInstance();
+	
 	private:
 	// Font file last passed to setupFont()
 	QString fontFile_;
@@ -49,7 +53,7 @@ class FontInstance
 
 	public:
 	// Setup font specified
-	bool setup(QString fontFileName);
+	bool setup(QString fontFileName = QString());
 	// Return whether font exists and is ready for use
 	bool fontOK();
 	// Return current font

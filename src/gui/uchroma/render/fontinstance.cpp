@@ -22,6 +22,16 @@
 #include "gui/uchroma/render/fontinstance.h"
 #include "base/messenger.h"
 
+// Constructor
+FontInstance::FontInstance()
+{
+	fontData_ = NULL;
+	font_ = NULL;
+	fontBaseHeight_ = 0.0;
+	fontFullHeight_ = 0.0;
+	dotWidth_ = 0.0;
+}
+
 // Setup font specified
 bool FontInstance::setup(QString fontFileName)
 {
