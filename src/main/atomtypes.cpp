@@ -69,7 +69,6 @@ AtomType* DUQ::atomType(int n)
 // Generate unique AtomType name with base name provided
 const char* DUQ::uniqueAtomTypeName(const char* base, AtomType* exclude) const
 {
-	static CharString uniqueName;
 	CharString baseName = base;
 	AtomType* at;
 	int highest = -1;
@@ -83,6 +82,8 @@ const char* DUQ::uniqueAtomTypeName(const char* base, AtomType* exclude) const
 		if (strcmp(baseName, at->name()) == 0) highest = 0;
 		else if (strcmp(baseName,DUQSys::beforeLastChar(at->name(),'_')) == 0) highest = atoi(DUQSys::afterLastChar(at->name(), '_'));
 	}
+
+	static CharString uniqueName;
 	if (highest > -1) uniqueName.sprintf("%s_%i", baseName.get(), ++highest);
 	else uniqueName = baseName;
 	

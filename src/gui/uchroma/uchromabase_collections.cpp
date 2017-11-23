@@ -26,7 +26,9 @@
 // Return unique name based on supplied baseName
 const char* UChromaBase::uniqueCollectionName(const char* baseName)
 {
-	CharString testName = baseName;
+	static CharString testName;
+
+	testName = baseName;
 	int index = 0;
 	Collection* collection;
 	do
@@ -288,11 +290,11 @@ Collection* UChromaBase::identifyCollection(int id)
 	return NULL;
 }
 
-// Set identified collection visibility
-bool UChromaBase::setCollectionVisible(int identifier, bool visible)
+// Set collection visibility
+bool UChromaBase::setCollectionVisible(const char* name, bool visible)
 {
 	// Identify collection
-	Collection* collection = identifyCollection(identifier);
+	Collection* collection = locateCollection(name);
 
 	if (collection)
 	{
@@ -302,7 +304,7 @@ bool UChromaBase::setCollectionVisible(int identifier, bool visible)
 
 		return true;
 	}
-	else Messenger::warn("Collection with identifier %i could not be found.\n", identifier);
+	else Messenger::warn("Collection with name '%s' could not be found.\n", name);
 
 	return false;
 }

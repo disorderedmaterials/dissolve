@@ -438,7 +438,9 @@ int Collection::dataSetIndex(const char* name)
 // Return unique name based on supplied basename
 const char* Collection::uniqueDataSetName(const char* baseName)
 {
-	CharString testName = baseName;
+	static CharString testName;
+	
+	testName = baseName;
 	int index = 0;
 	do
 	{
@@ -447,7 +449,7 @@ const char* Collection::uniqueDataSetName(const char* baseName)
 		++index;
 	} while (dataSet(testName));
 
-	return testName.get();
+	return testName;
 }
 
 // Return number of slices with no data present
@@ -901,7 +903,9 @@ const char* Collection::iconString(bool isUsed)
 // Return locally-unique fit name based on basename provided
 const char* Collection::uniqueFitName(const char* baseName)
 {
-	CharString testName = baseName, suffix;
+	static CharString testName;
+	
+	testName = baseName;
 	int index = 0;
 	do
 	{
@@ -976,7 +980,9 @@ Collection* Collection::fit(const char* name)
 // Return locally-unique slice name based on basename provided
 const char* Collection::uniqueSliceName(const char* baseName)
 {
-	CharString testName = baseName, suffix;
+	static CharString testName;
+
+	testName = baseName;
 	int index = 0;
 	do
 	{

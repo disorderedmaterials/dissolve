@@ -286,7 +286,9 @@ void FitKernel::removeReference(ReferenceVariable* refVar)
 // Return unique reference name based on the supplied string
 const char* FitKernel::uniqueReferenceName(const char* baseName)
 {
-	CharString testName = baseName;
+	static CharString testName;
+	
+	testName = baseName;
 	int index = 0;
 	do
 	{

@@ -330,8 +330,8 @@ class UChromaBase
 	bool isCurrentCollection(Collection* collection);
 	// Identify collection
 	Collection* identifyCollection(int id);
-	// Set identified collection visibility
-	bool setCollectionVisible(int identifier, bool visible);
+	// Set collection visibility
+	bool setCollectionVisible(const char* name, bool visible);
 
 
 	/*
