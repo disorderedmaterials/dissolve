@@ -152,7 +152,7 @@ void ViewWindow::on_ViewFlatLabelsCheck_clicked(bool checked)
 	ViewPane* viewPane = uChromaBase_.currentViewPane();
 	if (!ViewPane::objectValid(viewPane, "view pane in ViewWindow::on_ViewBoundingBoxPlaneYSetMaximumButton_clicked")) return;
 
-	viewPane->setFlatLabels(checked);
+	viewPane->setFlatLabelsIn3D(checked);
 
 	// Update display
 	uChromaBase_.setAsModified();
@@ -222,7 +222,7 @@ void ViewWindow::updateControls(bool force)
 	// Label Options
 	ui.ViewLabelPointSizeSpin->setValue(viewPane->labelPointSize());
 	ui.ViewTitlePointSizeSpin->setValue(viewPane->titlePointSize());
-	ui.ViewFlatLabelsCheck->setChecked(viewPane->flatLabels());
+	ui.ViewFlatLabelsCheck->setChecked(viewPane->flatLabelsIn3D());
 
 	refreshing_ = false;
 }

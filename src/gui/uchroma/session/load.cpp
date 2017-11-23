@@ -800,7 +800,7 @@ bool UChromaBase::readViewPaneBlock(LineParser& parser, ViewPane* pane)
 				break;
 			// Flat labels flag
 			case (UChromaBase::FlatLabelsKeyword):
-				pane->setFlatLabels(parser.argb(1));
+				pane->setFlatLabelsIn3D(parser.argb(1));
 				break;
 			// Name
 			case (UChromaBase::GeometryKeyword):

@@ -256,7 +256,7 @@ bool UChromaBase::writeViewPaneBlock(LineParser& parser, ViewPane* pane)
 	for (int axis=0; axis < 3; ++axis) writeAxisBlock(parser, pane->axes(), axis);
 	parser.writeLineF("    %s %i\n", UChromaBase::viewPaneKeyword(UChromaBase::BoundingBoxKeyword), pane->boundingBox());
 	parser.writeLineF("    %s %f\n", UChromaBase::viewPaneKeyword(UChromaBase::BoundingBoxPlaneYKeyword), pane->boundingBoxPlaneY());
-	parser.writeLineF("    %s %s\n", UChromaBase::viewPaneKeyword(UChromaBase::FlatLabelsKeyword), stringBool(pane->flatLabels()));
+	parser.writeLineF("    %s %s\n", UChromaBase::viewPaneKeyword(UChromaBase::FlatLabelsKeyword), stringBool(pane->flatLabelsIn3D()));
 	parser.writeLineF("    %s %i %i %i %i\n", UChromaBase::viewPaneKeyword(UChromaBase::GeometryKeyword), pane->bottomEdge(), pane->leftEdge(), pane->width(), pane->height()); 
 	parser.writeLineF("    %s %f\n", UChromaBase::viewPaneKeyword(UChromaBase::LabelPointSizeKeyword), pane->labelPointSize());
 	parser.writeLineF("    %s %f\n", UChromaBase::viewPaneKeyword(UChromaBase::TitlePointSizeKeyword), pane->titlePointSize());

@@ -65,8 +65,9 @@ ViewPane::ViewPane(ViewLayout& parent) : ListItem<ViewPane>(), ObjectStore<ViewP
 	boundingBox_ = ViewPane::NoBox;
 	boundingBoxPlaneY_ = 0.0;
 	labelPointSize_ = 16.0;
-	titlePointSize_ = 20.0;
+	titlePointSize_ = 18.0;
 	textZScale_ = -1.0;
+	flatLabelsIn3D_ = false;
 
 	// GL
 	interactionPrimitive_.setNoInstances();
@@ -120,6 +121,7 @@ void ViewPane::operator=(const ViewPane& source)
 	labelPointSize_ = source.labelPointSize_;
 	titlePointSize_ = source.titlePointSize_;
 	textZScale_ = source.textZScale_;
+	flatLabelsIn3D_ = source.flatLabelsIn3D_;
 
 	// Role
 	role_ = source.role_;
@@ -1330,17 +1332,17 @@ double ViewPane::textZScale()
 }
 
 // Set whether axis text labels are drawn flat in 3D views
-void ViewPane::setFlatLabels(bool flat)
+void ViewPane::setFlatLabelsIn3D(bool flat)
 {
-	flatLabels_ = flat;
+	flatLabelsIn3D_ = flat;
 
 	axes_.setPrimitivesInvalid();
 }
 
 // Whether axis text labels are drawn flat in 3D views
-bool ViewPane::flatLabels()
+bool ViewPane::flatLabelsIn3D()
 {
-	return flatLabels_;
+	return flatLabelsIn3D_;
 }
 
 /*

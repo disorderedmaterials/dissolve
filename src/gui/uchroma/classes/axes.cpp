@@ -92,8 +92,8 @@ Axes::Axes(ViewPane& parent) : parent_(parent), ObjectStore<Axes>(this, UChromaB
 	gridLinesMinor_.set(false, false, false);
 
 	// Style override
-	useBestFlatView_ = true;
-	autoPositionTitles_ = false;
+	useBestFlatView_ = false;
+	autoPositionTitles_ = true;
 
 	// Versions
 	axesVersion_ = 0;
@@ -489,7 +489,7 @@ void Axes::setLogarithmic(int axis, bool b)
 // Toggle whether axis is logarithmic
 void Axes::toggleLogarithmic(int axis)
 {
-	setLogarithmic(!logarithmic_[axis]);
+	setLogarithmic(axis, !logarithmic_[axis]);
 }
 	
 // Return whether axis is logarithmic
@@ -1219,7 +1219,7 @@ void Axes::updateAxisPrimitives()
 						// Get formatted value text
 						s = numberFormat_[axis].format(value);
 
-						labelPrimitives_[axis].add(fontInstance, s, u+tickDir*tickSize_[axis], labelAnchor(axis), tickDir * labelOrientation(axis).z, labelTransform, parent_.labelPointSize(), parent_.flatLabels());
+						labelPrimitives_[axis].add(fontInstance, s, u+tickDir*tickSize_[axis], labelAnchor(axis), tickDir * labelOrientation(axis).z, labelTransform, parent_.labelPointSize(), parent_.isFlatView() ? false : parent_.flatLabelsIn3D());
 					}
 				}
 
@@ -1265,7 +1265,7 @@ void Axes::updateAxisPrimitives()
 						// Get formatted label text
 						s = numberFormat_[axis].format(value);
 
-						labelPrimitives_[axis].add(fontInstance, s, u+tickDir*tickSize_[axis], labelAnchor(axis), tickDir * labelOrientation(axis).z, labelTransform, parent_.labelPointSize(), parent_.flatLabels());
+						labelPrimitives_[axis].add(fontInstance, s, u+tickDir*tickSize_[axis], labelAnchor(axis), tickDir * labelOrientation(axis).z, labelTransform, parent_.labelPointSize(), parent_.isFlatView() ? false : parent_.flatLabelsIn3D());
 
 						tickIsMajor[axis].add(true);
 
@@ -1316,7 +1316,7 @@ void Axes::updateAxisPrimitives()
 		else adjustment = tickDir * titleOrientation(axis).z;
 
 		// -- Add primitive
-		titlePrimitives_[axis].add(fontInstance, title_[axis].get(), u, titleAnchor(axis), adjustment, titleTransform, parent_.titlePointSize(), parent_.flatLabels());
+		titlePrimitives_[axis].add(fontInstance, title_[axis].get(), u, titleAnchor(axis), adjustment, titleTransform, parent_.titlePointSize(), parent_.isFlatView() ? false : parent_.flatLabelsIn3D());
 	}
 
 	// GridLines
