@@ -42,79 +42,41 @@ PairPotentialWidget::PairPotentialWidget(QWidget* parent, PairPotential* pp) : Q
 	QVBoxLayout* layout = new QVBoxLayout;
 	uChromaView_ = new UChromaViewWidget;
 	layout->addWidget(uChromaView_);
-	uChromaView_->startNewSession(true);
 	ui.PlotWidget->setLayout(layout);
 
-	// Set up a Collection of data for the PlotWidget
-	Collection* collection = uChromaView_->addCollection();
-	DataSet* set = collection->addDataSet(PairPotentialWidget::FullEnergyData, pairPotential_->uFull());
+	// Start a new, empty session
+	uChromaView_->startNewSession(true);
+
+	// Set up Collections for the pair potential data, adding them to the default pane
+	Collection* collection;
+
+	collection = uChromaView_->addCollectionToCurrentViewPane("Full", PairPotentialWidget::FullEnergyData);
+	collection->addDataSet(pairPotential_->uFull());
+	collection->setColourSource(Collection::SingleColourSource);
+	collection->setColourScalePoint(Collection::SingleColourSource, Qt::black);
+
+	collection = uChromaView_->addCollectionToCurrentViewPane("Original", PairPotentialWidget::OriginalEnergyData);
+	collection->addDataSet(pairPotential_->uOriginal());
+	collection->setColourSource(Collection::SingleColourSource);
+	collection->setColourScalePoint(Collection::SingleColourSource, Qt::red);
+	collection->displayLineStyle().setStipple(LineStipple::HalfDashStipple);
+
+	collection = uChromaView_->addCollectionToCurrentViewPane("Additional", PairPotentialWidget::AdditionalEnergyData);
+	collection->addDataSet(pairPotential_->uAdditional());
+	collection->setColourSource(Collection::SingleColourSource);
+	collection->setColourScalePoint(Collection::SingleColourSource, Qt::blue);
+	collection->displayLineStyle().setStipple(LineStipple::DotStipple);
+
+	// Set up the view pane
+	ViewPane* viewPane = uChromaView_->currentViewPane();
+	viewPane->setViewType(ViewPane::FlatXYView);
+	viewPane->axes().setTitle(0, "r, Angstroms");
+	viewPane->axes().setMax(0, pairPotential_->range());
+	viewPane->axes().setTitle(1, "U(r), kJ mol\\sup{-1}");
+	viewPane->axes().setMin(1, -5.0);
+	viewPane->axes().setMax(1, 10.0);
 
 	refreshing_ = false;
-}
-
-/*
- * General Functions
- */
-
-// Add specified XYData to the plot, as the type specified
-void PairPotentialWidget::addData(PairPotentialWidget::DisplayData type)
-{
-	XYData* xyData;
-// 	PlotDataStyle style;
-	
-	switch (type)
-	{
-		case (PairPotentialWidget::FullEnergyData):
-			// Black solid line
-			xyData = &pairPotential_->uFull();
-// 			style.set(Qt::SolidLine, 0, 0, 0);
-			break;
-		case (PairPotentialWidget::OriginalEnergyData):
-			// Black dashed line
-			xyData = &pairPotential_->uOriginal();
-// 			style.set(Qt::DashLine, 0, 0, 0);
-			break;
-		case (PairPotentialWidget::AdditionalEnergyData):
-			// Black dotted line
-			xyData = &pairPotential_->uAdditional();
-// 			style.set(Qt::DotLine, 0, 0, 0);
-			break;
-		case (PairPotentialWidget::FullForceData):
-			// Red solid line
-			xyData = &pairPotential_->dUFull();
-// 			style.set(Qt::SolidLine, 255, 0, 0);
-			break;
-	}
-
-// 	ui.PlotWidget->addData(xyData, style);
-}
-
-// Remove specified XYData from the plot
-void PairPotentialWidget::removeData(PairPotentialWidget::DisplayData type)
-{
-	XYData* xyData;
-	
-	switch (type)
-	{
-		case (PairPotentialWidget::FullEnergyData):
-			// Black solid line
-			xyData = &pairPotential_->uFull();
-			break;
-		case (PairPotentialWidget::OriginalEnergyData):
-			// Black dashed line
-			xyData = &pairPotential_->uOriginal();
-			break;
-		case (PairPotentialWidget::AdditionalEnergyData):
-			// Black dotted line
-			xyData = &pairPotential_->uAdditional();
-			break;
-		case (PairPotentialWidget::FullForceData):
-			// Red solid line
-			xyData = &pairPotential_->dUFull();
-			break;
-	}
-
-// 	ui.PlotWidget->removeData(xyData);
 }
 
 /*
@@ -123,25 +85,20 @@ void PairPotentialWidget::removeData(PairPotentialWidget::DisplayData type)
 
 void PairPotentialWidget::on_FullEnergyCheck_clicked(bool checked)
 {
-	if (checked) addData(PairPotentialWidget::FullEnergyData);
-	else removeData(PairPotentialWidget::FullEnergyData);
+	uChromaView_->setCollectionVisible(PairPotentialWidget::FullEnergyData, checked);
 }
 
 void PairPotentialWidget::on_OriginalEnergyCheck_clicked(bool checked)
 {
-	if (checked) addData(PairPotentialWidget::OriginalEnergyData);
-	else removeData(PairPotentialWidget::OriginalEnergyData);
+	uChromaView_->setCollectionVisible(PairPotentialWidget::OriginalEnergyData, checked);
 }
 
 void PairPotentialWidget::on_AdditionalEnergyCheck_clicked(bool checked)
 {
-	if (checked) addData(PairPotentialWidget::AdditionalEnergyData);
-	else removeData(PairPotentialWidget::AdditionalEnergyData);
+	uChromaView_->setCollectionVisible(PairPotentialWidget::AdditionalEnergyData, checked);
 }
 
 void PairPotentialWidget::on_FullForceCheck_clicked(bool checked)
 {
-	if (checked) addData(PairPotentialWidget::FullForceData);
-	else removeData(PairPotentialWidget::FullForceData);
+	uChromaView_->setCollectionVisible(PairPotentialWidget::FullForceData, checked);
 }
-

@@ -25,6 +25,7 @@
 #include "gui/ui_pairpotentialwidget.h"
 
 // Forward Declarations
+class Collection;
 class PairPotential;
 class UChromaViewWidget;
 
@@ -63,11 +64,6 @@ class PairPotentialWidget : public QWidget
 	/*
 	 * General Functions
 	 */
-	private:
-	// Add specified XYData to the plot, as the type specified
-	void addData(PairPotentialWidget::DisplayData type);
-	// Remove specified XYData from the plot
-	void removeData(PairPotentialWidget::DisplayData type);
 
 
 	/*
