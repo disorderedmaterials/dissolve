@@ -158,34 +158,46 @@ Vec3<double> Viewer::rMouseLast()
 // Qt Slot (key press event)
 void Viewer::keyPressEvent(QKeyEvent *event)
 {
-	// Check datamodel...
-	bool refresh = false, ignore = true;
+	bool refresh = true, ignore = false;
 	Qt::KeyboardModifiers km = event->modifiers();
-	
-	switch (event->key())
+	ViewPane* viewPane = uChromaBase_->currentViewPane();
+	ViewPane::ViewType viewType = viewPane ? viewPane->viewType() : ViewPane::nViewTypes;
+
+	// Only attempt to process the key event if we have a current view pane
+	if (viewPane) switch (event->key())
 	{
 		case (Qt::Key_Left):
-			if (uChromaBase_->currentViewPane()) uChromaBase_->currentViewPane()->rotateView(0.0, km.testFlag(Qt::ShiftModifier) ? -1.0 : -10.0);
-			refresh = true;
-			ignore = false;
+			if (viewPane->isFlatView()) viewPane->shiftFlatAxisLimitsFractional(-0.1, 0.0);
+			else viewPane->rotateView(0.0, km.testFlag(Qt::ShiftModifier) ? -1.0 : -10.0);
 			break;
 		case (Qt::Key_Right):
-			if (uChromaBase_->currentViewPane()) uChromaBase_->currentViewPane()->rotateView(0.0, km.testFlag(Qt::ShiftModifier) ? 1.0 : 10.0);
-			refresh = true;
-			ignore = false;
+			if (viewPane->isFlatView()) viewPane->shiftFlatAxisLimitsFractional(0.1, 0.0);
+			else uChromaBase_->currentViewPane()->rotateView(0.0, km.testFlag(Qt::ShiftModifier) ? 1.0 : 10.0);
 			break;
 		case (Qt::Key_Up):
-			if (uChromaBase_->currentViewPane()) uChromaBase_->currentViewPane()->rotateView(km.testFlag(Qt::ShiftModifier) ? -1.0 : -10.0, 0.0);
-			refresh = true;
-			ignore = false;
+			if (viewPane->isFlatView()) viewPane->shiftFlatAxisLimitsFractional(0.0, -0.1);
+			else uChromaBase_->currentViewPane()->rotateView(km.testFlag(Qt::ShiftModifier) ? -1.0 : -10.0, 0.0);
 			break;
 		case (Qt::Key_Down):
-			if (uChromaBase_->currentViewPane()) uChromaBase_->currentViewPane()->rotateView(km.testFlag(Qt::ShiftModifier) ? 1.0 : 10.0, 0.0);
-			refresh = true;
-			ignore = false;
+			if (viewPane->isFlatView()) viewPane->shiftFlatAxisLimitsFractional(0.0, 0.1);
+			else uChromaBase_->currentViewPane()->rotateView(km.testFlag(Qt::ShiftModifier) ? 1.0 : 10.0, 0.0);
+			break;
+		case (Qt::Key_R):
+			viewPane->showAllData();
+			break;
+		case (Qt::Key_L):
+			if (km&Qt::ShiftModifier) viewPane->axes().toggleLogarithmic(viewType == ViewPane::FlatXZView ? 2 : 1);
+			else viewPane->axes().toggleLogarithmic(viewType == ViewPane::FlatZYView ? 2 : 0);
 			break;
 		default:
+			refresh = false;
+			ignore = true;
 			break;
+	}
+	else
+	{
+		refresh = false;
+		ignore = true;
 	}
 	
 	// Update display if necessary
