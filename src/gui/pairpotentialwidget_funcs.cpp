@@ -50,22 +50,28 @@ PairPotentialWidget::PairPotentialWidget(QWidget* parent, PairPotential* pp) : Q
 	// Set up Collections for the pair potential data, adding them to the default pane
 	Collection* collection;
 
-	collection = uChromaView_->addCollectionToCurrentViewPane("Full", PairPotentialWidget::FullEnergyData);
+	collection = uChromaView_->addCollectionToCurrentViewPane("Full");
 	collection->addDataSet(pairPotential_->uFull());
 	collection->setColourSource(Collection::SingleColourSource);
 	collection->setColourScalePoint(Collection::SingleColourSource, Qt::black);
 
-	collection = uChromaView_->addCollectionToCurrentViewPane("Original", PairPotentialWidget::OriginalEnergyData);
+	collection = uChromaView_->addCollectionToCurrentViewPane("Original");
 	collection->addDataSet(pairPotential_->uOriginal());
 	collection->setColourSource(Collection::SingleColourSource);
 	collection->setColourScalePoint(Collection::SingleColourSource, Qt::red);
 	collection->displayLineStyle().setStipple(LineStipple::HalfDashStipple);
 
-	collection = uChromaView_->addCollectionToCurrentViewPane("Additional", PairPotentialWidget::AdditionalEnergyData);
+	collection = uChromaView_->addCollectionToCurrentViewPane("Additional");
 	collection->addDataSet(pairPotential_->uAdditional());
 	collection->setColourSource(Collection::SingleColourSource);
 	collection->setColourScalePoint(Collection::SingleColourSource, Qt::blue);
 	collection->displayLineStyle().setStipple(LineStipple::DotStipple);
+
+	collection = uChromaView_->addCollectionToCurrentViewPane("Force");
+	collection->addDataSet(pairPotential_->dUFull());
+	collection->setColourSource(Collection::SingleColourSource);
+	collection->setColourScalePoint(Collection::SingleColourSource, Qt::green);
+	collection->setVisible(false);
 
 	// Set up the view pane
 	ViewPane* viewPane = uChromaView_->currentViewPane();
@@ -85,20 +91,20 @@ PairPotentialWidget::PairPotentialWidget(QWidget* parent, PairPotential* pp) : Q
 
 void PairPotentialWidget::on_FullEnergyCheck_clicked(bool checked)
 {
-	uChromaView_->setCollectionVisible(PairPotentialWidget::FullEnergyData, checked);
+	uChromaView_->setCollectionVisible("Full", checked);
 }
 
 void PairPotentialWidget::on_OriginalEnergyCheck_clicked(bool checked)
 {
-	uChromaView_->setCollectionVisible(PairPotentialWidget::OriginalEnergyData, checked);
+	uChromaView_->setCollectionVisible("Original", checked);
 }
 
 void PairPotentialWidget::on_AdditionalEnergyCheck_clicked(bool checked)
 {
-	uChromaView_->setCollectionVisible(PairPotentialWidget::AdditionalEnergyData, checked);
+	uChromaView_->setCollectionVisible("Additional", checked);
 }
 
 void PairPotentialWidget::on_FullForceCheck_clicked(bool checked)
 {
-	uChromaView_->setCollectionVisible(PairPotentialWidget::FullForceData, checked);
+	uChromaView_->setCollectionVisible("Force", checked);
 }

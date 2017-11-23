@@ -50,8 +50,6 @@ class PairPotentialWidget : public QWidget
 	Ui::PairPotentialWidget ui;
 	// Update controls within widget
 	void updateControls();
-	// Displayed Data Types enum
-	enum DisplayData { FullEnergyData, OriginalEnergyData, AdditionalEnergyData, FullForceData };
 	
 
 	/*
