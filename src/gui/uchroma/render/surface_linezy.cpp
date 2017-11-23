@@ -40,7 +40,7 @@ void Surface::constructLineZY(PrimitiveList& primitiveList, const Axes& axes, co
 	int nX = x.nItems();
 
 	// Resize primitive list so it's large enough for our needs
-	primitiveList.reinitialise(nX, true, GL_LINES, true);
+	primitiveList.reinitialise(nX, true, GL_LINE_STRIP, true);
 
 	// Temporary variables
 	Vec4<GLfloat> colour(0,0,0,1);

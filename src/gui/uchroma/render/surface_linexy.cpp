@@ -40,7 +40,7 @@ void Surface::constructLineXY(PrimitiveList& primitiveList, const Axes& axes, co
 	if (nX < 2) return;
 	
 	// Resize primitive list so it's large enough for our needs
-	primitiveList.reinitialise(nZ, true, GL_LINES, true);
+	primitiveList.reinitialise(nZ, true, GL_LINE_STRIP, true);
 
 	// Get some values from axes so we can calculate colours properly
 	bool yLogarithmic = axes.logarithmic(1);
