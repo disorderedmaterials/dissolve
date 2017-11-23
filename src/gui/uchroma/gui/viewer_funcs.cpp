@@ -47,7 +47,7 @@ Viewer::Viewer(QWidget* parent) : QOpenGLWidget(parent)
 	setAutoFillBackground(false);
 
         // Create our FTGL font instance
-	fontInstance_.setup("");
+	fontInstance_.setup();
 }
 
 // Destructor
