@@ -56,7 +56,7 @@ class PairPotentialWidget : public QWidget
 	 * Reimplementations
 	 */
 	protected:
-	// void hideEvent(QHideEvent* event) { TPopupWidget::hideEvent(event); }
+	void closeEvent(QCloseEvent* event);
 
 
 	/*

@@ -26,6 +26,7 @@
 
 // Forward Declarations (dUQ)
 class Module;
+class UChromaViewWidget;
 
 // Module Widget
 class PartialsModuleWidget : public QWidget
@@ -36,6 +37,8 @@ class PartialsModuleWidget : public QWidget
 	private:
 	// Associated Module
 	Module* module_;
+	// UChromaView contained within this widget
+	UChromaViewWidget* uChromaView_;
 	// Whether widget is currently refreshing
 	bool refreshing_;
 
@@ -52,6 +55,8 @@ class PartialsModuleWidget : public QWidget
 	 * Widgets / Functions
 	 */
 	private:
+	// Repopulate tree with source data
+	void repopulateSourceTree();
 
 	private slots:
 };

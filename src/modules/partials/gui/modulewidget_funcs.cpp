@@ -20,12 +20,31 @@
 */
 
 #include "modules/partials/gui/modulewidget.h"
+#include "gui/uchroma/gui/uchromaview.h"
 
 // Constructor
 PartialsModuleWidget::PartialsModuleWidget(QWidget* parent, Module* module) : QWidget(parent), module_(module)
 {
 	// Set up user interface
 	ui.setupUi(this);
+
+	// Add a UChromaWidget to the PlotWidget
+	QVBoxLayout* layout = new QVBoxLayout;
+	uChromaView_ = new UChromaViewWidget;
+	layout->addWidget(uChromaView_);
+	ui.PlotWidget->setLayout(layout);
+
+	// Start a new, empty session
+	uChromaView_->startNewSession(true);
+
+	// Set up the view pane
+	ViewPane* viewPane = uChromaView_->currentViewPane();
+	viewPane->setViewType(ViewPane::FlatXYView);
+	viewPane->axes().setTitle(0, "\\it{r}, Angstroms");
+	viewPane->axes().setMax(0, 10.0);
+	viewPane->axes().setTitle(1, "g(r) / S(Q)");
+	viewPane->axes().setMin(1, -1.0);
+	viewPane->axes().setMax(1, 1.0);
 
 	refreshing_ = false;
 }
@@ -34,3 +53,7 @@ PartialsModuleWidget::PartialsModuleWidget(QWidget* parent, Module* module) : QW
  * Widgets / Functions
  */
 
+// Repopulate tree with source data
+void PartialsModuleWidget::repopulateSourceTree()
+{
+}
