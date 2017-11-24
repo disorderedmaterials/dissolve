@@ -60,11 +60,6 @@ class PairPotentialWidget : public QWidget
 
 
 	/*
-	 * General Functions
-	 */
-
-
-	/*
 	 * Widget Signals / Slots
 	 */
 	signals:
