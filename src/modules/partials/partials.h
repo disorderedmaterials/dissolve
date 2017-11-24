@@ -179,7 +179,7 @@ class PartialsModule : public Module
 	 */
 	public:
 	// Return a new widget controlling this Module
-	QWidget* createWidget(QWidget* parent);
+	QWidget* createWidget(QWidget* parent, DUQ& dUQ);
 };
 
 #endif

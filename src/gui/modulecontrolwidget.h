@@ -25,6 +25,7 @@
 #include "gui/ui_modulecontrolwidget.h"
 
 // Forward Declarations
+class DUQ;
 class Module;
 
 // Module Control Widget
@@ -41,7 +42,7 @@ class ModuleControlWidget : public QWidget
 
 	public:
 	// Constructor / Destructor
-	ModuleControlWidget(QWidget* parent, Module* module);
+	ModuleControlWidget(QWidget* parent, Module* module, DUQ& dUQ);
 	// Main form declaration
 	Ui::ModuleControlWidget ui;
 	// Update controls within widget

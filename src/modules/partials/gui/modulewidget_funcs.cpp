@@ -56,4 +56,9 @@ PartialsModuleWidget::PartialsModuleWidget(QWidget* parent, Module* module) : QW
 // Repopulate tree with source data
 void PartialsModuleWidget::repopulateSourceTree()
 {
+	// Clear the tree
+	ui.SourcesTree->clear();
+
+	// Add on source data as appropriate - we will need to see what we can find in the Module
+	
 }

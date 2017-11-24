@@ -140,7 +140,7 @@ void BrowserWindow::on_BrowserTree_itemDoubleClicked(QTreeWidgetItem* item, int 
 			{
 				Module* module = VariantPointer<Module>(item->data(0, Qt::UserRole));
 				// Create a new ModuleWidget
-				ModuleControlWidget* moduleControlWidget = new ModuleControlWidget(NULL, module);
+				ModuleControlWidget* moduleControlWidget = new ModuleControlWidget(NULL, module, duq_);
 				window = monitorWindow_.addWindow(moduleControlWidget, module, CharString("%s (%s)", module->name(), module->uniqueName()));
 			}
 			else window->setFocus();

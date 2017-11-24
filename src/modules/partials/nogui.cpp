@@ -22,7 +22,7 @@
 #include "modules/partials/partials.h"
 
 // Return a new widget controlling this Module
-QWidget* PartialsModule::createWidget(QWidget* parent)
+QWidget* PartialsModule::createWidget(QWidget* parent, DUQ& dUQ)
 {
 	return NULL;
 }

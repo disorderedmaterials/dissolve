@@ -24,7 +24,8 @@
 
 #include "modules/atomshake/gui/ui_modulewidget.h"
 
-// Forward Declarations (dUQ)
+// Forward Declarations
+class DUQ;
 class Module;
 
 // Module Widget

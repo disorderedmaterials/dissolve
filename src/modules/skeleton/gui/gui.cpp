@@ -23,7 +23,7 @@
 #include "modules/skeleton/gui/modulewidget.h"
 
 // Return a new widget controlling this Module
-QWidget* SkeletonModule::createWidget(QWidget* parent)
+QWidget* SkeletonModule::createWidget(QWidget* parent, DUQ& dUQ)
 {
 	return new SkeletonModuleWidget(parent, this);
 }

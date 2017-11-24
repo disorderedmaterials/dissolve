@@ -24,7 +24,7 @@
 
 #include "modules/skeleton/gui/ui_modulewidget.h"
 
-// Forward Declarations (dUQ)
+// Forward Declarations
 class Module;
 
 // Module Widget
