@@ -80,10 +80,10 @@ class MonitorWindow : public QMainWindow
 	QMdiSubWindow* currentWindow(void* windowContents);
 	// Add window for widget containing specified data (as pointer)
 	QMdiSubWindow* addWindow(QWidget* widget, void* windowContents, const char* windowTitle);
-	// Remove window for specified data (as pointer), removing it from the list
-	bool removeWindow(void* windowContents);
 
 	public slots:
+	// Remove window for specified data (as pointer), removing it from the list
+	bool removeWindow(void* windowContents);
 	// Refresh specified aspects of the window
 	void updateWidgets(int targets = MonitorWindow::DefaultTarget);
 };

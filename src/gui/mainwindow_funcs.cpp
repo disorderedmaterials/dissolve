@@ -109,6 +109,7 @@ QMdiSubWindow* MonitorWindow::addWindow(QWidget* widget, void* windowContents, c
 
 	// Create a new QMdiSubWindow
 	window = ui.MainArea->addSubWindow(widget);
+	connect(widget, SIGNAL(windowClosed(void*)), this, SLOT(removeWindow(void*)));
 	window->setWindowTitle(windowTitle);
 	window->show();
 
