@@ -86,6 +86,15 @@ PairPotentialWidget::PairPotentialWidget(QWidget* parent, PairPotential* pp) : Q
 }
 
 /*
+ * Reimplementations
+ */
+
+void PairPotentialWidget::closeEvent(QCloseEvent* event)
+{
+	emit (windowClosed(pairPotential_));
+}
+
+/*
  * Widget Slots
  */
 

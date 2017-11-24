@@ -65,8 +65,11 @@ class PairPotentialWidget : public QWidget
 
 
 	/*
-	 * Widgets Slots
+	 * Widget Signals / Slots
 	 */
+	signals:
+	void windowClosed(void*);
+
 	private slots:
 	void on_FullEnergyCheck_clicked(bool checked);
 	void on_OriginalEnergyCheck_clicked(bool checked);
