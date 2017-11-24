@@ -51,7 +51,16 @@ ModuleControlWidget::ModuleControlWidget(QWidget* parent, Module* module, DUQ& d
 }
 
 /*
- * Widgets / Functions
+ * Reimplementations
+ */
+
+void ModuleControlWidget::closeEvent(QCloseEvent* event)
+{
+	emit (windowClosed(module_));
+}
+
+/*
+ * Functions
  */
 
 // Set up options

@@ -53,11 +53,18 @@ class ModuleControlWidget : public QWidget
 	 * Reimplementations
 	 */
 	protected:
-	// void hideEvent(QHideEvent* event) { TPopupWidget::hideEvent(event); }
+	void closeEvent(QCloseEvent* event);
 
 
 	/*
-	 * Widgets & Functions
+	 * Widget Signals / Slots
+	 */
+	signals:
+	void windowClosed(void*);
+
+
+	/*
+	 * Functions
 	 */
 	private:
 	// ModuleWidget displayed in this control widget
@@ -66,8 +73,6 @@ class ModuleControlWidget : public QWidget
 	private:
 	// Populate list of Module Options
 	void setUpOptions();
-
-	private slots:
 };
 
 #endif
