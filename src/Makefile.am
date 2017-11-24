@@ -5,7 +5,7 @@ duq_SOURCES = main.cpp base/messenger_printtext.cpp
 
 EXTRA_DIST = version.h
 
-SUBDIRS = base classes main math module modules templates
+SUBDIRS = base classes main math module templates
 
 noinst_LTLIBRARIES = libduq.la
 libduq_la_SOURCES = 
@@ -36,3 +36,5 @@ monitor_CPPFLAGS = @DUQ_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
 
 endif
 
+# Add on the 'modules' subdirectory target last, so it gets built after the 'gui' target on which it depends
+SUBDIRS += modules
