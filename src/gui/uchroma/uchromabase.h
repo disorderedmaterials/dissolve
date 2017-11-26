@@ -675,7 +675,6 @@ class UChromaBase
 	bool undo();
 	// Perform redo
 	bool redo();
-
 };
 
 #endif
