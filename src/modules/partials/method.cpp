@@ -58,6 +58,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 	CharString varName;
 
 	GenericList& moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : duq.processingModuleData();
+
 	const bool allIntra = keywords_.asBool("AllIntra");
 	const int averaging = keywords_.asInt("Averaging");
 	PartialsModule::AveragingScheme averagingScheme = PartialsModule::averagingScheme(keywords_.asString("AveragingScheme"));
