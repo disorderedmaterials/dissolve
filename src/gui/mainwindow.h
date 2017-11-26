@@ -71,10 +71,14 @@ class MonitorWindow : public QMainWindow
 	bool refreshing_;
 	// Whether window has been shown
 	bool shown_;
+	// QTextBrowser for GUI messaging
+	static QTextBrowser* messagesBrowser_;
 
 	public:
 	// Set up window after load
 	void setUp();
+	// Return QTextBrowser for GUI messaging
+	static QTextBrowser* messagesBrowser();
 
 	public slots:
 	// Refresh specified aspects of the window
@@ -101,6 +105,14 @@ class MonitorWindow : public QMainWindow
 	public slots:
 	// Remove window for specified data (as pointer), removing it from the list
 	bool removeWindow(void* windowContents);
+
+
+	/*
+	 * Widget Slots
+	 */
+	private slots:
+	void on_IterateButton_clicked(bool checked);
+	void on_IterateFiveButton_clicked(bool checked);
 };
 
 #endif

@@ -26,6 +26,9 @@
 #include <QCloseEvent>
 #include <QMdiSubWindow>
 
+// Static Members
+QTextBrowser* MonitorWindow::messagesBrowser_ = NULL;
+
 // Constructor
 MonitorWindow::MonitorWindow(DUQ& duq) : QMainWindow(NULL), duq_(duq)
 {
@@ -38,6 +41,9 @@ MonitorWindow::MonitorWindow(DUQ& duq) : QMainWindow(NULL), duq_(duq)
 
 	// Add default subwindows
 	ui.MainArea->addSubWindow(new BrowserWindow(*this, duq_));
+
+	// Store pointer to QTextBrowser used for messaging
+	messagesBrowser_ = ui.MessagesBrowser;
 
 	refreshing_ = false;
 }
@@ -88,10 +94,23 @@ void MonitorWindow::setUp()
 // 	}
 }
 
+// Return QTextBrowser for GUI messaging
+QTextBrowser* MonitorWindow::messagesBrowser()
+{
+	return messagesBrowser_;
+}
+
+
 // Refresh specified aspects of the window
 void MonitorWindow::updateWidgets(int targets)
 {
+	// Iteration Panel
+	ui.IterationNumberLabel->setText(DUQSys::itoa(duq_.iteration()));
+	ui.IterationLimitLabel->setText(duq_.maxIterations() == -1 ?  QString(QChar(0x221E)) : QString::number(duq_.maxIterations()));
 
+	// Sub-windows
+	ListIterator<SubWindow> subWindowIterator(subWindows_);
+	while (SubWindow* subWindow = subWindowIterator.iterate()) subWindow->subWidget()->updateControls();
 }
 
 /*
@@ -153,4 +172,22 @@ bool MonitorWindow::removeWindow(void* windowContents)
 	subWindows_.remove(window);
 
 	return true;
+}
+
+/*
+ * Widget Slots
+ */
+
+void MonitorWindow::on_IterateButton_clicked(bool checked)
+{
+	duq_.iterate(1);
+
+	updateWidgets();
+}
+
+void MonitorWindow::on_IterateFiveButton_clicked(bool checked)
+{
+	duq_.iterate(5);
+
+	updateWidgets();
 }

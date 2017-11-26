@@ -1,6 +1,6 @@
 /*
-	*** Messaging Routines - CLI Print Text
-	*** src/base/messenger_printtext.cpp
+	*** Messaging Routines - GUI Print Text
+	*** src/gui/messenger_printtext.cpp
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -21,13 +21,19 @@
 
 #include "base/messenger.h"
 #include "base/lineparser.h"
-#include <stdio.h>
+#include "gui/mainwindow.h"
 
 // Print text
 void Messenger::printText(const char* text)
 {
 	// Print the passed string
 	if (redirect_) parser_->writeLineF("%s", text);
+	else if (MonitorWindow::messagesBrowser())
+	{
+		QString s = text;
+		if (s.endsWith('\n')) s.chop(1);
+		MonitorWindow::messagesBrowser()->append(text);
+	}
 	else printf("%s", text);
 }
 
