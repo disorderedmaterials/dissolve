@@ -25,7 +25,9 @@
 #include "modules/partials/gui/ui_modulewidget.h"
 
 // Forward Declarations
+class DUQ;
 class Module;
+class PartialSet;
 class UChromaViewWidget;
 
 // Module Widget
@@ -39,22 +41,33 @@ class PartialsModuleWidget : public QWidget
 	Module* module_;
 	// UChromaView contained within this widget
 	UChromaViewWidget* uChromaView_;
+	// Reference to DUQ
+	DUQ& dUQ_;
 	// Whether widget is currently refreshing
 	bool refreshing_;
 
 	public:
-	// Constructor
-	PartialsModuleWidget(QWidget* parent, Module* module);
+	// Constructor / Destructor
+	PartialsModuleWidget(QWidget* parent, Module* module, DUQ& dUQ);
+	~PartialsModuleWidget();
 	// Main form declaration
 	Ui::PartialsModuleWidget ui;
 	// Update controls within widget
 	void updateControls();
+	// Data Type Enum
+	enum DataType { FullData=1, BoundData=2, UnboundData=3, BraggData=4,
+			UnweightedGRData=10, 
+			WeightedGRData=20, 
+			UnweightedSQData=30, 
+			WeightedSQData=40};
 
 
 	/*
 	 * Widgets / Functions
 	 */
 	private:
+	// Add data from PartialSet to tree
+	void addPartialSetToTree(PartialSet& partials, QTreeWidgetItem* topLevelItem, PartialsModuleWidget::DataType rootType, const char* rootTitle);
 	// Repopulate tree with source data
 	void repopulateSourceTree();
 

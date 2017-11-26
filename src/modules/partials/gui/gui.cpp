@@ -25,6 +25,6 @@
 // Return a new widget controlling this Module
 QWidget* PartialsModule::createWidget(QWidget* parent, DUQ& dUQ)
 {
-	return new PartialsModuleWidget(parent, this);
+	return new PartialsModuleWidget(parent, this, dUQ);
 }
 
