@@ -22,6 +22,7 @@
 #include "main/duq.h"
 #include "gui/mainwindow.h"
 #include "gui/browser.h"
+#include "gui/subwidget.h"
 #include <QCloseEvent>
 #include <QMdiSubWindow>
 
@@ -87,17 +88,36 @@ void MonitorWindow::setUp()
 // 	}
 }
 
+// Refresh specified aspects of the window
+void MonitorWindow::updateWidgets(int targets)
+{
+
+}
+
+/*
+ * Sub-window Managemnet
+ */
+
+// Find SubWindow from specified data pointer
+SubWindow* MonitorWindow::subWindow(void* data)
+{
+	ListIterator<SubWindow> subWindowIterator(subWindows_);
+	while (SubWindow* subWindow = subWindowIterator.iterate()) if (subWindow->data() == data) return subWindow;
+
+	return NULL;
+}
+
 // Return window for specified data (as pointer), if it exists
 QMdiSubWindow* MonitorWindow::currentWindow(void* windowContents)
 {
-	RefListIterator<QMdiSubWindow,void*> windowIterator(currentWindows_);
-	while (QMdiSubWindow* window = windowIterator.iterate()) if (windowIterator.currentData() == windowContents) return window;
+	ListIterator<SubWindow> subWindowIterator(subWindows_);
+	while (SubWindow* subWindow = subWindowIterator.iterate()) if (subWindow->data() == windowContents) return subWindow->window();
 
 	return NULL;
 }
 
 // Add window for specified data (as pointer)
-QMdiSubWindow* MonitorWindow::addWindow(QWidget* widget, void* windowContents, const char* windowTitle)
+QMdiSubWindow* MonitorWindow::addWindow(SubWidget* widget, void* windowContents, const char* windowTitle)
 {
 	// Check that the windowContents aren't currently in the list
 	QMdiSubWindow* window = currentWindow(windowContents);
@@ -113,7 +133,8 @@ QMdiSubWindow* MonitorWindow::addWindow(QWidget* widget, void* windowContents, c
 	window->setWindowTitle(windowTitle);
 	window->show();
 
-	currentWindows_.add(window, windowContents);
+	SubWindow* subWindow = new SubWindow(window, widget, windowContents);
+	subWindows_.own(subWindow);
 
 	return window;
 }
@@ -122,20 +143,14 @@ QMdiSubWindow* MonitorWindow::addWindow(QWidget* widget, void* windowContents, c
 bool MonitorWindow::removeWindow(void* windowContents)
 {
 	// Find the windowContents the list
-	QMdiSubWindow* window = currentWindow(windowContents);
+	SubWindow* window = subWindow(windowContents);
 	if (!window)
 	{
-		Messenger::print("Couldn't remove window contents %p from list, since it is not present.\n");
+		Messenger::print("Couldn't remove window containing contents %p from list, since it is not present.\n", windowContents);
 		return false;
 	}
 
-	currentWindows_.remove(window);
+	subWindows_.remove(window);
 
 	return true;
-}
-
-// Refresh specified aspects of the window
-void MonitorWindow::updateWidgets(int targets)
-{
-
 }

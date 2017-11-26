@@ -1,6 +1,6 @@
 /*
-	*** Module Control Widget
-	*** src/gui/modulecontrolwidget.h
+	*** SubWindow Widget
+	*** src/gui/subwidget.h
 	Copyright T. Youngs 2007-2017
 
 	This file is part of dUQ.
@@ -19,62 +19,34 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_MODULECONTROLWIDGET_H
-#define DUQ_MODULECONTROLWIDGET_H
+#ifndef DUQ_SUBWIDGET_H
+#define DUQ_SUBWIDGET_H
 
-#include "gui/ui_modulecontrolwidget.h"
-#include "gui/subwidget.h"
+#include <QWidget>
 
 // Forward Declarations
-class DUQ;
-class Module;
+/* none */
 
-// Module Control Widget
-class ModuleControlWidget : public SubWidget
+// Subwidget (root class for any widget to be displayed in a QMdiSubWindow)
+class SubWidget : public QWidget
 {
-	// All Qt declarations derived from QObject must include this macro
-	Q_OBJECT
-
 	private:
-	// Associated Module
-	Module* module_;
 	// Whether widget is currently refreshing
 	bool refreshing_;
 
 	public:
 	// Constructor / Destructor
-	ModuleControlWidget(QWidget* parent, Module* module, DUQ& dUQ);
-	~ModuleControlWidget();
-	// Main form declaration
-	Ui::ModuleControlWidget ui;
+	SubWidget(QWidget* parent);
+	virtual ~SubWidget();
 	// Update controls within widget
-	void updateControls();
+	virtual void updateControls() = 0;
 
 
 	/*
 	 * Reimplementations
 	 */
 	protected:
-	void closeEvent(QCloseEvent* event);
-
-
-	/*
-	 * Functions
-	 */
-	private:
-	// ModuleWidget displayed in this control widget
-	QWidget* moduleWidget_;
-
-	private:
-	// Populate list of Module Options
-	void setUpOptions();
-
-
-	/*
-	 * Widget Signals / Slots
-	 */
-	signals:
-	void windowClosed(void*);
+	virtual void closeEvent(QCloseEvent* event) = 0;
 };
 
 #endif

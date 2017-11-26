@@ -27,7 +27,7 @@
 #include <QLabel>
 
 // Constructor
-PairPotentialWidget::PairPotentialWidget(QWidget* parent, PairPotential* pp) : QWidget(parent), pairPotential_(pp)
+PairPotentialWidget::PairPotentialWidget(QWidget* parent, PairPotential* pp) : SubWidget(parent), pairPotential_(pp)
 {
 	// Set up user interface
 	ui.setupUi(this);
@@ -81,6 +81,18 @@ PairPotentialWidget::PairPotentialWidget(QWidget* parent, PairPotential* pp) : Q
 	viewPane->axes().setTitle(1, "U(r), kJ mol\\sup{-1}");
 	viewPane->axes().setMin(1, -5.0);
 	viewPane->axes().setMax(1, 10.0);
+
+	refreshing_ = false;
+}
+
+PairPotentialWidget::~PairPotentialWidget()
+{
+}
+
+// Update controls within widget
+void PairPotentialWidget::updateControls()
+{
+	refreshing_ = true;
 
 	refreshing_ = false;
 }

@@ -23,7 +23,8 @@
 #define DUQ_MAINWINDOW_H
 
 #include "gui/ui_mainwindow.h"
-#include "templates/reflist.h"
+#include "gui/subwindow.h"
+#include "templates/list.h"
 
 // Forward Declarations
 class DUQ;
@@ -70,22 +71,36 @@ class MonitorWindow : public QMainWindow
 	bool refreshing_;
 	// Whether window has been shown
 	bool shown_;
-	// List of current data windows and their display target (as a pointer)
-	RefList<QMdiSubWindow,void*> currentWindows_;
 
 	public:
 	// Set up window after load
 	void setUp();
+
+	public slots:
+	// Refresh specified aspects of the window
+	void updateWidgets(int targets = MonitorWindow::DefaultTarget);
+
+
+	/*
+	 * Sub-window Managemnet
+	 */
+	private:
+	// List of current MDI sub-windows
+	List<SubWindow> subWindows_;
+
+	private:
+	// Find SubWindow from specified data pointer
+	SubWindow* subWindow(void* data);
+
+	public:
 	// Return window for specified data (as pointer), if it exists
 	QMdiSubWindow* currentWindow(void* windowContents);
 	// Add window for widget containing specified data (as pointer)
-	QMdiSubWindow* addWindow(QWidget* widget, void* windowContents, const char* windowTitle);
+	QMdiSubWindow* addWindow(SubWidget* widget, void* windowContents, const char* windowTitle);
 
 	public slots:
 	// Remove window for specified data (as pointer), removing it from the list
 	bool removeWindow(void* windowContents);
-	// Refresh specified aspects of the window
-	void updateWidgets(int targets = MonitorWindow::DefaultTarget);
 };
 
 #endif

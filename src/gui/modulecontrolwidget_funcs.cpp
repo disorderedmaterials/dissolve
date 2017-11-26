@@ -29,7 +29,7 @@
 #include <QLabel>
 
 // Constructor
-ModuleControlWidget::ModuleControlWidget(QWidget* parent, Module* module, DUQ& dUQ) : QWidget(parent), module_(module)
+ModuleControlWidget::ModuleControlWidget(QWidget* parent, Module* module, DUQ& dUQ) : SubWidget(parent), module_(module)
 {
 	// Set up user interface
 	ui.setupUi(this);
@@ -48,6 +48,15 @@ ModuleControlWidget::ModuleControlWidget(QWidget* parent, Module* module, DUQ& d
 	if (moduleWidget_ == NULL) Messenger::warn("Module '%s' did not provide a valid controller widget.\n", module->name());
 
 	refreshing_ = false;
+}
+
+ModuleControlWidget::~ModuleControlWidget()
+{
+}
+
+// Update controls within widget
+void ModuleControlWidget::updateControls()
+{
 }
 
 /*

@@ -23,6 +23,7 @@
 #define DUQ_PAIRPOTENTIALWIDGET_H
 
 #include "gui/ui_pairpotentialwidget.h"
+#include "gui/subwidget.h"
 
 // Forward Declarations
 class Collection;
@@ -30,7 +31,7 @@ class PairPotential;
 class UChromaViewWidget;
 
 // PairPotential Widget
-class PairPotentialWidget : public QWidget
+class PairPotentialWidget : public SubWidget
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
@@ -46,11 +47,12 @@ class PairPotentialWidget : public QWidget
 	public:
 	// Constructor / Destructor
 	PairPotentialWidget(QWidget* parent, PairPotential* pp);
+	~PairPotentialWidget();
 	// Main form declaration
 	Ui::PairPotentialWidget ui;
 	// Update controls within widget
 	void updateControls();
-	
+
 
 	/*
 	 * Reimplementations
