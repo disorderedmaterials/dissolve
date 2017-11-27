@@ -32,7 +32,7 @@ CharStringModuleKeyword::CharStringModuleKeyword(CharString value, int nOptions,
 {
 	// Create an Array of the values first
 	Array<CharString> valueArray;
-	for (int n=0; n<nOptions; ++n) valueArray.add(CharString(options[n]).lower());
+	for (int n=0; n<nOptions; ++n) valueArray.add(options[n]);
 
 	setValidationList(valueArray);
 }
