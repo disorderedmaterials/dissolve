@@ -20,6 +20,7 @@
 */
 
 #include "gui/modulecontrolwidget.h"
+#include "gui/keywordwidget_bool.hui"
 #include "gui/keywordwidget_charstring.hui"
 #include "gui/keywordwidget_double.hui"
 #include "gui/keywordwidget_int.hui"
@@ -45,8 +46,12 @@ ModuleControlWidget::ModuleControlWidget(QWidget* parent, Module* module, DUQ& d
 	setUpOptions();
 
 	// Create module widget
+	QVBoxLayout* layout = new QVBoxLayout(ui.ControlsWidget);
+	layout->setContentsMargins(0,0,0,0);
+	layout->setSpacing(0);
 	moduleWidget_ = module_->createWidget(ui.ControlsWidget, dUQ);
 	if (moduleWidget_ == NULL) Messenger::warn("Module '%s' did not provide a valid controller widget.\n", module->name());
+	else layout->addWidget(moduleWidget_);
 
 	refreshing_ = false;
 }
@@ -79,6 +84,8 @@ void ModuleControlWidget::setUpOptions()
 {
 	// Create a new grid layout to put our widgets in
 	QGridLayout* layout = new QGridLayout(ui.OptionsGroup);
+	layout->setContentsMargins(4,4,4,4);
+	layout->setSpacing(4);
 	int row = 0;
 	for (ModuleKeywordBase* keyword = module_->keywords(); keyword != NULL; keyword = keyword->next)
 	{
@@ -93,6 +100,7 @@ void ModuleControlWidget::setUpOptions()
 		if (keyword->type() == ModuleKeywordBase::IntegerData) layout->addWidget(new KeywordWidgetInt(NULL, keyword), row, 1);
 		else if (keyword->type() == ModuleKeywordBase::DoubleData) layout->addWidget(new KeywordWidgetDouble(NULL, keyword), row, 1);
 		else if (keyword->type() == ModuleKeywordBase::CharStringData) layout->addWidget(new KeywordWidgetCharString(NULL, keyword), row, 1);
+		else if (keyword->type() == ModuleKeywordBase::BoolData) layout->addWidget(new KeywordWidgetBool(NULL, keyword), row, 1);
 // 			ComplexData, BoolData, IntegerData, DoubleData, CharStringData, BroadeningFunctionData)
 		++row;
 	}
