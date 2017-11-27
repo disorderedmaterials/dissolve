@@ -30,6 +30,16 @@ AtomShakeModuleWidget::AtomShakeModuleWidget(QWidget* parent, Module* module) : 
 	refreshing_ = false;
 }
 
+// Destructor
+AtomShakeModuleWidget::~AtomShakeModuleWidget()
+{
+}
+
+// Update controls within widget
+void AtomShakeModuleWidget::updateControls()
+{
+}
+
 /*
  * Widgets / Functions
  */

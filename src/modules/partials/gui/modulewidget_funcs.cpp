@@ -56,6 +56,11 @@ PartialsModuleWidget::~PartialsModuleWidget()
 {
 }
 
+// Update controls within widget
+void PartialsModuleWidget::updateControls()
+{
+}
+
 /*
  * Widgets / Functions
  */

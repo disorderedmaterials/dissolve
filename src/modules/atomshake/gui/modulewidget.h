@@ -40,8 +40,9 @@ class AtomShakeModuleWidget : public ModuleWidget
 	Module* module_;
 
 	public:
-	// Constructor
+	// Constructor / Destructor
 	AtomShakeModuleWidget(QWidget* parent, Module* module);
+	~AtomShakeModuleWidget();
 	// Main form declaration
 	Ui::AtomShakeModuleWidget ui;
 	// Update controls within widget
