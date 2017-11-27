@@ -58,7 +58,7 @@ class KeywordWidgetDouble : public QDoubleSpinBox, public KeywordWidgetBase
 	/*
 	 * Update
 	 */
-	private:
+	public:
 	// Update value displayed in widget, using specified source if necessary
 	void updateValue(GenericList& moduleData, const char* prefix);
 };

@@ -37,7 +37,7 @@ class KeywordWidgetBase : public ListItem<KeywordWidgetBase>
 	/*
 	 * Update
 	 */
-	private:
+	public:
 	// Update value displayed in widget, using specified source if necessary
 	virtual void updateValue(GenericList& moduleData, const char* prefix) = 0;
 };
