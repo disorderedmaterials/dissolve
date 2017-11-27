@@ -24,6 +24,8 @@
 
 #include "gui/ui_modulecontrolwidget.h"
 #include "gui/subwidget.h"
+#include "gui/keywordwidgets/base.h"
+#include "templates/list.h"
 
 // Forward Declarations
 class DUQ;
@@ -39,6 +41,8 @@ class ModuleControlWidget : public SubWidget
 	private:
 	// Associated Module
 	Module* module_;
+	// Reference to dUQ
+	DUQ& duq_;
 
 	public:
 	// Constructor / Destructor
@@ -63,10 +67,14 @@ class ModuleControlWidget : public SubWidget
 	private:
 	// ModuleWidget displayed in this control widget
 	ModuleWidget* moduleWidget_;
+	// List of keyword widgets displayed
+	List<KeywordWidgetBase> keywordWidgets_;
 
 	private:
 	// Populate list of Module options
 	void setUpOptions();
+	// Update Module keyword widgets from stored values
+	void updateKeywordOptions();
 
 
 	/*

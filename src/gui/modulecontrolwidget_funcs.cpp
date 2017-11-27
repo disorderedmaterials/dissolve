@@ -26,12 +26,13 @@
 #include "gui/keywordwidgets/int.hui"
 #include "gui/modulewidget.h"
 #include "module/module.h"
+#include "main/duq.h"
 #include "classes/configuration.h"
 #include <QGridLayout>
 #include <QLabel>
 
 // Constructor
-ModuleControlWidget::ModuleControlWidget(QWidget* parent, Module* module, DUQ& dUQ) : SubWidget(parent), module_(module)
+ModuleControlWidget::ModuleControlWidget(QWidget* parent, Module* module, DUQ& dUQ) : SubWidget(parent), module_(module), duq_(dUQ)
 {
 	// Set up user interface
 	ui.setupUi(this);
@@ -87,25 +88,62 @@ void ModuleControlWidget::setUpOptions()
 	layout->setContentsMargins(4,4,4,4);
 	layout->setSpacing(4);
 	int row = 0;
+	QWidget* widget;
+	KeywordWidgetBase* base;
+
 	for (ModuleKeywordBase* keyword = module_->keywords(); keyword != NULL; keyword = keyword->next)
 	{
 		QLabel* nameLabel = new QLabel(keyword->keyword());
 		nameLabel->setToolTip(keyword->description());
-// 		QWidget* control = XXX
+		layout->addWidget(nameLabel, row, 0);
+		// 		QWidget* control = XXX
 // 		control->setToolTip(keyword->description());
 
-		layout->addWidget(nameLabel, row, 0);
 
 		// The widget to create here depends on the data type of the keyword
-		if (keyword->type() == ModuleKeywordBase::IntegerData) layout->addWidget(new KeywordWidgetInt(NULL, keyword), row, 1);
-		else if (keyword->type() == ModuleKeywordBase::DoubleData) layout->addWidget(new KeywordWidgetDouble(NULL, keyword), row, 1);
-		else if (keyword->type() == ModuleKeywordBase::CharStringData) layout->addWidget(new KeywordWidgetCharString(NULL, keyword), row, 1);
-		else if (keyword->type() == ModuleKeywordBase::BoolData) layout->addWidget(new KeywordWidgetBool(NULL, keyword), row, 1);
+		if (keyword->type() == ModuleKeywordBase::IntegerData)
+		{
+			KeywordWidgetInt* intWidget = new KeywordWidgetInt(NULL, keyword);
+			widget = intWidget;
+			base = intWidget;
+		}
+		else if (keyword->type() == ModuleKeywordBase::DoubleData)
+		{
+			KeywordWidgetDouble* doubleWidget = new KeywordWidgetDouble(NULL, keyword);
+			widget = doubleWidget;
+			base = doubleWidget;
+		}
+		else if (keyword->type() == ModuleKeywordBase::CharStringData)
+		{
+			KeywordWidgetCharString* charWidget = new KeywordWidgetCharString(NULL, keyword);
+			widget = charWidget;
+			base = charWidget;
+		}
+		else if (keyword->type() == ModuleKeywordBase::BoolData)
+		{
+			KeywordWidgetBool* boolWidget = new KeywordWidgetBool(NULL, keyword);
+			widget = boolWidget;
+			base = boolWidget;
+		}
 // 			ComplexData, BoolData, IntegerData, DoubleData, CharStringData, BroadeningFunctionData)
+
+		// Set tooltip on widget, and add to the layout and our list of controls
+		layout->addWidget(widget, row, 1);
+		keywordWidgets_.own(base);
+
 		++row;
 	}
 
 	// Add a vertical spacer to the end to take up any extra space
 	layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding), row, 0);
+}
+
+// Update Module keyword widgets from stored values
+void ModuleControlWidget::updateKeywordOptions()
+{
+	// Select source list for keywords that have potentiall been replicated / updated there
+	GenericList& moduleData = module_->configurationLocal() ? module_->targetConfigurations().firstItem()->moduleData() : duq_.processingModuleData();
+	ListIterator<KeywordWidgetBase> keywordIterator(keywordWidgets_);
+	while (KeywordWidgetBase* keywordWidget = keywordIterator.iterate()) keywordWidget->updateValue(moduleData, module_->uniqueName());
 }
 
