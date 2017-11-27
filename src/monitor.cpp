@@ -179,6 +179,16 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
+	// Set up parallel comms / limits etc.
+	Messenger::banner("Setting Up Parallelism");
+	if (!dUQ.setUpMPIPools())
+	{
+		Messenger::print("Failed to set up parallel communications.\n");
+		ProcessPool::finalise();
+		Messenger::ceaseRedirect();
+		return 1;
+	}
+
 	/*
 	 * Create and launch GUI
 	 */
