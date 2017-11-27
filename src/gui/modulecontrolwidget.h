@@ -74,7 +74,7 @@ class ModuleControlWidget : public SubWidget
 	// Populate list of Module options
 	void setUpOptions();
 	// Update Module keyword widgets from stored values
-	void updateKeywordOptions();
+	void updateKeywordWidgets();
 
 
 	/*

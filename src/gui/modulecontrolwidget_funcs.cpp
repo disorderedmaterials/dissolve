@@ -64,7 +64,11 @@ ModuleControlWidget::~ModuleControlWidget()
 // Update controls within widget
 void ModuleControlWidget::updateControls()
 {
-	moduleWidget_->updateControls();
+	// Update keyword widgets
+	updateKeywordWidgets();
+
+	// Update control widget
+	if (moduleWidget_) moduleWidget_->updateControls();
 }
 
 /*
@@ -96,9 +100,6 @@ void ModuleControlWidget::setUpOptions()
 		QLabel* nameLabel = new QLabel(keyword->keyword());
 		nameLabel->setToolTip(keyword->description());
 		layout->addWidget(nameLabel, row, 0);
-		// 		QWidget* control = XXX
-// 		control->setToolTip(keyword->description());
-
 
 		// The widget to create here depends on the data type of the keyword
 		if (keyword->type() == ModuleKeywordBase::IntegerData)
@@ -125,11 +126,20 @@ void ModuleControlWidget::setUpOptions()
 			widget = boolWidget;
 			base = boolWidget;
 		}
-// 			ComplexData, BoolData, IntegerData, DoubleData, CharStringData, BroadeningFunctionData)
+		else
+		{
+			widget = NULL;
+			base = NULL;
+			// ComplexData, BroadeningFunctionData
+		}
 
 		// Set tooltip on widget, and add to the layout and our list of controls
-		layout->addWidget(widget, row, 1);
-		keywordWidgets_.own(base);
+		if (widget)
+		{
+			widget->setToolTip(keyword->description());
+			layout->addWidget(widget, row, 1);
+			keywordWidgets_.own(base);
+		}
 
 		++row;
 	}
@@ -139,7 +149,7 @@ void ModuleControlWidget::setUpOptions()
 }
 
 // Update Module keyword widgets from stored values
-void ModuleControlWidget::updateKeywordOptions()
+void ModuleControlWidget::updateKeywordWidgets()
 {
 	// Select source list for keywords that have potentiall been replicated / updated there
 	GenericList& moduleData = module_->configurationLocal() ? module_->targetConfigurations().firstItem()->moduleData() : duq_.processingModuleData();
