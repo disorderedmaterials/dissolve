@@ -114,7 +114,7 @@ void MonitorWindow::updateWidgets(int targets)
 }
 
 /*
- * Sub-window Managemnet
+ * Sub-window Management
  */
 
 // Find SubWindow from specified data pointer
