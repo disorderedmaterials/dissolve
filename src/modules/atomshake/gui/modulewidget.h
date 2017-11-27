@@ -23,13 +23,14 @@
 #define DUQ_ATOMSHAKEMODULEWIDGET_H
 
 #include "modules/atomshake/gui/ui_modulewidget.h"
+#include "gui/modulewidget.h"
 
 // Forward Declarations
 class DUQ;
 class Module;
 
 // Module Widget
-class AtomShakeModuleWidget : public QWidget
+class AtomShakeModuleWidget : public ModuleWidget
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
@@ -37,8 +38,6 @@ class AtomShakeModuleWidget : public QWidget
 	private:
 	// Associated Module
 	Module* module_;
-	// Whether widget is currently refreshing
-	bool refreshing_;
 
 	public:
 	// Constructor

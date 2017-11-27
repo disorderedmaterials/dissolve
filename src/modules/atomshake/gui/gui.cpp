@@ -23,7 +23,7 @@
 #include "modules/atomshake/gui/modulewidget.h"
 
 // Return a new widget controlling this Module
-QWidget* AtomShakeModule::createWidget(QWidget* parent, DUQ& dUQ)
+ModuleWidget* AtomShakeModule::createWidget(QWidget* parent, DUQ& dUQ)
 {
 	return new AtomShakeModuleWidget(parent, this);
 }

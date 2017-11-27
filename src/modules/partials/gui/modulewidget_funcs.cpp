@@ -26,7 +26,7 @@
 #include "templates/variantpointer.h"
 
 // Constructor
-PartialsModuleWidget::PartialsModuleWidget(QWidget* parent, Module* module, DUQ& dUQ) : module_(module), dUQ_(dUQ)
+PartialsModuleWidget::PartialsModuleWidget(QWidget* parent, Module* module, DUQ& dUQ) : ModuleWidget(parent), module_(module), dUQ_(dUQ)
 {
 	// Set up user interface
 	ui.setupUi(this);

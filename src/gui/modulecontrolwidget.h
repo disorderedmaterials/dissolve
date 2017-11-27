@@ -28,6 +28,7 @@
 // Forward Declarations
 class DUQ;
 class Module;
+class ModuleWidget;
 
 // Module Control Widget
 class ModuleControlWidget : public SubWidget
@@ -38,8 +39,6 @@ class ModuleControlWidget : public SubWidget
 	private:
 	// Associated Module
 	Module* module_;
-	// Whether widget is currently refreshing
-	bool refreshing_;
 
 	public:
 	// Constructor / Destructor
@@ -63,10 +62,10 @@ class ModuleControlWidget : public SubWidget
 	 */
 	private:
 	// ModuleWidget displayed in this control widget
-	QWidget* moduleWidget_;
+	ModuleWidget* moduleWidget_;
 
 	private:
-	// Populate list of Module Options
+	// Populate list of Module options
 	void setUpOptions();
 
 

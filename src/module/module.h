@@ -33,6 +33,7 @@ class Configuration;
 class ProcessPool;
 class Data;
 class ModuleList;
+class ModuleWidget;
 class QWidget;
 
 // Module
@@ -224,7 +225,7 @@ class Module : public ListItem<Module>
 	 */
 	public:
 	// Return a new widget controlling this Module
-	virtual QWidget* createWidget(QWidget* parent, DUQ& dUQ);
+	virtual ModuleWidget* createWidget(QWidget* parent, DUQ& dUQ);
 };
 
 #endif

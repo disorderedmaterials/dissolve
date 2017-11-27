@@ -41,8 +41,6 @@ class PairPotentialWidget : public SubWidget
 	PairPotential* pairPotential_;
 	// UChromaView contained within this widget
 	UChromaViewWidget* uChromaView_;
-	// Whether widget is currently refreshing
-	bool refreshing_;
 
 	public:
 	// Constructor / Destructor

@@ -1,7 +1,7 @@
 /*
-	*** Partials Module - GUI
-	*** src/modules/partials/gui/gui.cpp
-	Copyright T. Youngs 2012-2017
+	*** Module Widget
+	*** src/gui/modulewidget.cpp
+	Copyright T. Youngs 2007-2017
 
 	This file is part of dUQ.
 
@@ -19,12 +19,14 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/partials/partials.h"
-#include "modules/partials/gui/modulewidget.h"
+#include "gui/modulewidget.h"
 
-// Return a new widget controlling this Module
-ModuleWidget* PartialsModule::createWidget(QWidget* parent, DUQ& dUQ)
+// Constructor
+ModuleWidget::ModuleWidget(QWidget* parent) : QWidget(parent)
 {
-	return new PartialsModuleWidget(parent, this, dUQ);
+	refreshing_ = false;
 }
 
+ModuleWidget::~ModuleWidget()
+{
+}

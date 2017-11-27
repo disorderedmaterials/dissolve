@@ -362,7 +362,7 @@ void Module::reapAllInstances()
  */
 
 // Return a new widget controlling this Module
-QWidget* Module::createWidget(QWidget* parent, DUQ& dUQ)
+ModuleWidget* Module::createWidget(QWidget* parent, DUQ& dUQ)
 {
 	return NULL;
 }

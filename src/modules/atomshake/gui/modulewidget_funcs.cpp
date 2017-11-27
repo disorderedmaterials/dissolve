@@ -22,7 +22,7 @@
 #include "modules/atomshake/gui/modulewidget.h"
 
 // Constructor
-AtomShakeModuleWidget::AtomShakeModuleWidget(QWidget* parent, Module* module) : QWidget(parent), module_(module)
+AtomShakeModuleWidget::AtomShakeModuleWidget(QWidget* parent, Module* module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
 	ui.setupUi(this);

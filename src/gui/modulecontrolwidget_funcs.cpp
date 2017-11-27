@@ -23,6 +23,7 @@
 #include "gui/keywordwidget_charstring.hui"
 #include "gui/keywordwidget_double.hui"
 #include "gui/keywordwidget_int.hui"
+#include "gui/modulewidget.h"
 #include "module/module.h"
 #include "classes/configuration.h"
 #include <QGridLayout>
@@ -57,6 +58,7 @@ ModuleControlWidget::~ModuleControlWidget()
 // Update controls within widget
 void ModuleControlWidget::updateControls()
 {
+	moduleWidget_->updateControls();
 }
 
 /*
@@ -98,3 +100,4 @@ void ModuleControlWidget::setUpOptions()
 	// Add a vertical spacer to the end to take up any extra space
 	layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding), row, 0);
 }
+

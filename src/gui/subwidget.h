@@ -30,7 +30,7 @@
 // Subwidget (root class for any widget to be displayed in a QMdiSubWindow)
 class SubWidget : public QWidget
 {
-	private:
+	protected:
 	// Whether widget is currently refreshing
 	bool refreshing_;
 

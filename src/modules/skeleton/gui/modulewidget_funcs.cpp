@@ -22,7 +22,7 @@
 #include "modules/skeleton/gui/modulewidget.h"
 
 // Constructor
-SkeletonModuleWidget::SkeletonModuleWidget(QWidget* parent, Module* module) : QWidget(parent), module_(module)
+SkeletonModuleWidget::SkeletonModuleWidget(QWidget* parent, Module* module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
 	ui.setupUi(this);

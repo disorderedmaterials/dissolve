@@ -1,7 +1,7 @@
 /*
-	*** Partials Module - GUI
-	*** src/modules/partials/gui/gui.cpp
-	Copyright T. Youngs 2012-2017
+	*** Module Widget
+	*** src/gui/modulewidget.h
+	Copyright T. Youngs 2007-2017
 
 	This file is part of dUQ.
 
@@ -19,12 +19,27 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/partials/partials.h"
-#include "modules/partials/gui/modulewidget.h"
+#ifndef DUQ_MODULEWIDGET_H
+#define DUQ_MODULEWIDGET_H
 
-// Return a new widget controlling this Module
-ModuleWidget* PartialsModule::createWidget(QWidget* parent, DUQ& dUQ)
+#include <QWidget>
+
+// Forward Declarations
+/* none */
+
+// Subwidget (root class for any widget to be displayed in a QMdiSubWindow)
+class ModuleWidget : public QWidget
 {
-	return new PartialsModuleWidget(parent, this, dUQ);
-}
+	protected:
+	// Whether widget is currently refreshing
+	bool refreshing_;
 
+	public:
+	// Constructor / Destructor
+	ModuleWidget(QWidget* parent);
+	virtual ~ModuleWidget();
+	// Update controls within widget
+	virtual void updateControls() = 0;
+};
+
+#endif

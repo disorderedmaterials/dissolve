@@ -23,6 +23,7 @@
 #define DUQ_PARTIALSMODULEWIDGET_H
 
 #include "modules/partials/gui/ui_modulewidget.h"
+#include "gui/modulewidget.h"
 
 // Forward Declarations
 class DUQ;
@@ -31,7 +32,7 @@ class PartialSet;
 class UChromaViewWidget;
 
 // Module Widget
-class PartialsModuleWidget : public QWidget
+class PartialsModuleWidget : public ModuleWidget
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
@@ -43,8 +44,6 @@ class PartialsModuleWidget : public QWidget
 	UChromaViewWidget* uChromaView_;
 	// Reference to DUQ
 	DUQ& dUQ_;
-	// Whether widget is currently refreshing
-	bool refreshing_;
 
 	public:
 	// Constructor / Destructor

@@ -23,12 +23,13 @@
 #define DUQ_SKELETONMODULEWIDGET_H
 
 #include "modules/skeleton/gui/ui_modulewidget.h"
+#include "gui/modulewidget.h"
 
 // Forward Declarations
 class Module;
 
 // Module Widget
-class SkeletonModuleWidget : public QWidget
+class SkeletonModuleWidget : public ModuleWidget
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
@@ -36,8 +37,6 @@ class SkeletonModuleWidget : public QWidget
 	private:
 	// Associated Module
 	Module* module_;
-	// Whether widget is currently refreshing
-	bool refreshing_;
 
 	public:
 	// Constructor
