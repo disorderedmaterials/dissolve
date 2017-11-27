@@ -1,6 +1,6 @@
 /*
-	*** Keyword Widget - Bool
-	*** src/gui/keywordwidget_bool.hui
+	*** Keyword Widget - Double
+	*** src/gui/keywordwidgets/double.hui
 	Copyright T. Youngs 2012-2017
 
 	This file is part of DUQ.
@@ -19,36 +19,24 @@
 	along with DUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_KEYWORDWIDGETBOOL_H
-#define DUQ_KEYWORDWIDGETBOOL_H
+#ifndef DUQ_KEYWORDWIDGETDOUBLE_H
+#define DUQ_KEYWORDWIDGETDOUBLE_H
 
-#include "module/keywordtypes/bool.h"
-#include <QCheckBox>
+#include "module/keywordtypes/double.h"
+#include "gui/keywordwidgets/base.h"
+#include <QDoubleSpinBox>
 
 // Forward Declarations
 /* none */
 
-class KeywordWidgetBool : public QCheckBox
+class KeywordWidgetDouble : public QDoubleSpinBox, public KeywordWidgetBase
 {
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
 	public:
 	// Constructor
-	KeywordWidgetBool(QWidget* parent, ModuleKeywordBase* keyword) : QCheckBox(parent)
-	{
-		// Cast the pointer up into the parent class type
-		keyword_ = dynamic_cast<BoolModuleKeyword*>(keyword);
-		if (!keyword_) Messenger::error("Couldn't cast base module keyword into BoolModuleKeyword.\n");
-		else
-		{
-			// Set current value
-			setChecked(keyword_->asBool());
-		}
-
-		// Connect the
-		connect(this, SIGNAL(clicked(bool)), this, SLOT(myClicked(bool)));
-	}
+	KeywordWidgetDouble(QWidget* parent, ModuleKeywordBase* keyword);
 
 
 	/*
@@ -56,18 +44,23 @@ class KeywordWidgetBool : public QCheckBox
 	 */
 	private:
 	// Associated keyword
-	BoolModuleKeyword* keyword_;
+	DoubleModuleKeyword* keyword_;
 
 
 	/*
 	 * Slots
 	 */
 	private slots:
-	// Check box state changed
-	void myClicked(bool checked)
-	{
-		keyword_->setData(checked);
-	}
+	// Spin box value changed
+	void myValueChanged(double newValue);
+
+
+	/*
+	 * Update
+	 */
+	private:
+	// Update value displayed in widget, using specified source if necessary
+	void updateValue(GenericList& moduleData, const char* prefix);
 };
 
 #endif

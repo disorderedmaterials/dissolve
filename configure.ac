@@ -177,6 +177,7 @@ AC_CONFIG_FILES(src/modules/test/Makefile)
 AC_CONFIG_FILES(src/templates/Makefile)
 if test "$with_gui" = "yes"; then
   AC_CONFIG_FILES(src/gui/Makefile)
+  AC_CONFIG_FILES(src/gui/keywordwidgets/Makefile)
   AC_CONFIG_FILES(src/gui/uchroma/Makefile)
   AC_CONFIG_FILES(src/gui/uchroma/classes/Makefile)
   AC_CONFIG_FILES(src/gui/uchroma/expression/Makefile)

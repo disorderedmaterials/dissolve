@@ -20,10 +20,10 @@
 */
 
 #include "gui/modulecontrolwidget.h"
-#include "gui/keywordwidget_bool.hui"
-#include "gui/keywordwidget_charstring.hui"
-#include "gui/keywordwidget_double.hui"
-#include "gui/keywordwidget_int.hui"
+#include "gui/keywordwidgets/bool.hui"
+#include "gui/keywordwidgets/charstring.hui"
+#include "gui/keywordwidgets/double.hui"
+#include "gui/keywordwidgets/int.hui"
 #include "gui/modulewidget.h"
 #include "module/module.h"
 #include "classes/configuration.h"

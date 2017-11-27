@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = libgui.la
 
-SUBDIRS = uchroma
+SUBDIRS = keywordwidgets uchroma
 
 SUFFIXES: .ui .hui .qrc
 
@@ -24,8 +24,6 @@ clean-local:
 	-rm -f ui_* *.o moc_*.cpp colourbutton.cpp gradientbar.cpp icons.cpp texponentialspin.cpp
 
 libgui_la_SOURCES = icons.qrc
-
-libgui_la_SOURCES += keywordwidget_bool.hui keywordwidget_charstring.hui keywordwidget_double.hui keywordwidget_int.hui
 
 libgui_la_SOURCES += colourbutton.hui colourbutton_funcs.cpp
 libgui_la_SOURCES += gradientbar.hui gradientbar_funcs.cpp

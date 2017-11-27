@@ -1,6 +1,6 @@
 /*
 	*** Keyword Widget - Integer
-	*** src/gui/keywordwidget_int.hui
+	*** src/gui/keywordwidgets/int.hui
 	Copyright T. Youngs 2012-2017
 
 	This file is part of DUQ.
@@ -23,35 +23,20 @@
 #define DUQ_KEYWORDWIDGETINT_H
 
 #include "module/keywordtypes/int.h"
+#include "gui/keywordwidgets/base.h"
 #include <QSpinBox>
 
 // Forward Declarations
 /* none */
 
-class KeywordWidgetInt : public QSpinBox
+class KeywordWidgetInt : public QSpinBox, public KeywordWidgetBase
 {
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
 	public:
 	// Constructor
-	KeywordWidgetInt(QWidget* parent, ModuleKeywordBase* keyword) : QSpinBox(parent)
-	{
-		// Cast the pointer up into the parent class type
-		keyword_ = dynamic_cast<IntegerModuleKeyword*>(keyword);
-		if (!keyword_) Messenger::error("Couldn't cast base module keyword into IntegerModuleKeyword.\n");
-		else
-		{
-			// Set minimum and maximum values
-			setRange(keyword_->hasValidationMin() ? keyword_->validationMin() : -1e6, keyword_->hasValidationMax() ? keyword_->validationMax() : 1e6);
-
-			// Set current value
-			setValue(keyword_->asInt());
-		}
-
-		// Connect the
-		connect(this, SIGNAL(valueChanged(int)), this, SLOT(myValueChanged(int)));
-	}
+	KeywordWidgetInt(QWidget* parent, ModuleKeywordBase* keyword);
 
 
 	/*
@@ -67,10 +52,15 @@ class KeywordWidgetInt : public QSpinBox
 	 */
 	private slots:
 	// Spin box value changed
-	void myValueChanged(int newValue)
-	{
-		keyword_->setData(newValue);
-	}
+	void myValueChanged(int newValue);
+
+
+	/*
+	 * Update
+	 */
+	private:
+	// Update value displayed in widget, using specified source if necessary
+	void updateValue(GenericList& moduleData, const char* prefix);
 };
 
 #endif
