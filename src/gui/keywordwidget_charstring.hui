@@ -57,6 +57,7 @@ class KeywordWidgetCharString : public QComboBox
 			}
 			else
 			{
+				setCurrentText(keyword_->asString());
 			}
 		}
 
