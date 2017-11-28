@@ -79,8 +79,8 @@ class PartialSet : public ListItem<PartialSet>
 	void reset();
 	// Return number of AtomTypes used to generate matrices
 	int nAtomTypes() const;
-	// Return atom types array
-	AtomTypeList atomTypes() const;
+	// Return atom types list
+	const AtomTypeList& atomTypes() const;
 	// Set new fingerprint
 	void setFingerprint(const char* fingerprint);
 	// Return fingerprint of partials

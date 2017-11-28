@@ -178,8 +178,8 @@ int PartialSet::nAtomTypes() const
 	return atomTypes_.nItems();
 }
 
-// Return atom types array
-AtomTypeList PartialSet::atomTypes() const
+// Return atom types list
+const AtomTypeList& PartialSet::atomTypes() const
 {
 	return atomTypes_;
 }
