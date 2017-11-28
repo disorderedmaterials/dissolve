@@ -142,6 +142,11 @@ template <class T> class ObjectStore
 		// TODO Check for duplicates here?
 		objectInfo_.setResourceName(name);
 	}
+	// Return resource name for this object
+	const char* resourceName()
+	{
+		return objectInfo_.resourceName();
+	}
 
 
 	/*
