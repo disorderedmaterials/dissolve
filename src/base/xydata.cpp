@@ -30,8 +30,13 @@
 #include <string.h>
 using namespace std;
 
+// Static Members
+template<class Axes> RefList<Axes,int> ObjectStore<Axes>::objects_;
+template<class Axes> int ObjectStore<Axes>::objectCount_ = 0;
+template<class Axes> int ObjectStore<Axes>::objectType_ = ObjectInfo::UChromaAxesObject;
+
 // Constructor
-XYData::XYData() : ListItem<XYData>()
+XYData::XYData() : ListItem<XYData>(), ObjectStore<XYData>(this) 
 {
 	name_ = "Untitled";
 	interpolationInterval_ = -1;
@@ -44,7 +49,7 @@ XYData::~XYData()
 }
 
 // Copy Constructor
-XYData::XYData(const XYData& source)
+XYData::XYData(const XYData& source) : ObjectStore<XYData>(NULL)
 {
 	(*this) = source;
 }

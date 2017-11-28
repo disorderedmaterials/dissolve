@@ -25,6 +25,7 @@
 #include "base/charstring.h"
 #include "math/broadeningfunction.h"
 #include "templates/array.h"
+#include "templates/objectstore.h"
 
 #define OPTOLERANCE 1.0e-6
 
@@ -32,7 +33,7 @@
 class ProcessPool;
 
 // XYData
-class XYData : public ListItem<XYData>
+class XYData : public ListItem<XYData>, public ObjectStore<XYData>
 {
 	public:
 	// Constructor
