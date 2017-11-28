@@ -33,6 +33,8 @@ PartialsModuleWidget::PartialsModuleWidget(QWidget* parent, Module* module, DUQ&
 
 	// Add a UChromaWidget to the PlotWidget
 	QVBoxLayout* layout = new QVBoxLayout;
+	layout->setContentsMargins(0,0,0,0);
+	layout->setSpacing(4);
 	uChromaView_ = new UChromaViewWidget;
 	layout->addWidget(uChromaView_);
 	ui.PlotWidget->setLayout(layout);
@@ -59,6 +61,7 @@ PartialsModuleWidget::~PartialsModuleWidget()
 // Update controls within widget
 void PartialsModuleWidget::updateControls()
 {
+	repopulateSourceTree();
 }
 
 /*
@@ -86,24 +89,23 @@ void PartialsModuleWidget::addPartialSetToTree(PartialSet& partials, QTreeWidget
 			// Create item to contain full data
 			QTreeWidgetItem* fullItem = new QTreeWidgetItem(setItem, rootType+PartialsModuleWidget::FullData);
 			fullItem->setText(0, CharString("%s-%s", atd1->atomTypeName(), atd2->atomTypeName()).get());
-			fullItem->setData(0, Qt::UserRole, VariantPointer<XYData>(&partials.partial(n,m)));
+ 			fullItem->setData(0, Qt::UserRole, QString(partials.partial(n,m).resourceName()));
 
 			// Add subitems with other data
 			// -- Bound partial
 			QTreeWidgetItem* subItem = new QTreeWidgetItem(fullItem, rootType+PartialsModuleWidget::BoundData);
 			subItem->setText(0, "Bound");
-			subItem->setData(0, Qt::UserRole, VariantPointer<XYData>(&partials.boundPartial(n,m)));
+			subItem->setData(0, Qt::UserRole, QString(partials.boundPartial(n,m).resourceName()));
 			// -- Unbound partial
 			subItem = new QTreeWidgetItem(fullItem, rootType+PartialsModuleWidget::UnboundData);
 			subItem->setText(0, "Unbound");
-			subItem->setData(0, Qt::UserRole, VariantPointer<XYData>(&partials.unboundPartial(n,m)));
+			subItem->setData(0, Qt::UserRole, QString(partials.unboundPartial(n,m).resourceName()));
 			// -- Bragg partial
 			subItem = new QTreeWidgetItem(fullItem, rootType+PartialsModuleWidget::BraggData);
 			subItem->setText(0, "Bragg");
-			subItem->setData(0, Qt::UserRole, VariantPointer<XYData>(&partials.braggPartial(n,m)));
+			subItem->setData(0, Qt::UserRole, QString(partials.braggPartial(n,m).resourceName()));
 		}
 	}
-
 }
 
 // Repopulate tree with source data
@@ -122,7 +124,7 @@ void PartialsModuleWidget::repopulateSourceTree()
 	while (Configuration* cfg = configIterator.iterate())
 	{
 		// Add on an item for the Configuration, unless we are local to a configuration in which case we'll add items at the top level
-		if (module_->configurationLocal())
+		if (!module_->configurationLocal())
 		{
 			cfgItem = new QTreeWidgetItem();
 			cfgItem->setText(0, cfg->name());
@@ -148,5 +150,20 @@ void PartialsModuleWidget::repopulateSourceTree()
 			addPartialSetToTree(unweightedsq, cfgItem, PartialsModuleWidget::UnweightedSQData, "Unweighted S(Q)");
 		}
 	}
+}
 
+void PartialsModuleWidget::on_SourcesTree_itemDoubleClicked(QTreeWidgetItem* item, int column)
+{
+	if (item == NULL) return;
+
+	// Get current view pane
+	ViewPane* viewPane = uChromaView_->currentViewPane();
+	printf("ViewPane = %p\n", viewPane);
+
+	// Check the type of the item clicked
+	switch (item->type())
+	{
+		case (PartialsModuleWidget::FullData):
+			break;
+	}
 }

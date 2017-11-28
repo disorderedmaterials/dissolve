@@ -71,6 +71,7 @@ class PartialsModuleWidget : public ModuleWidget
 	void repopulateSourceTree();
 
 	private slots:
+	void on_SourcesTree_itemDoubleClicked(QTreeWidgetItem* item, int column);
 };
 
 #endif
