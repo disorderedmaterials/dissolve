@@ -25,7 +25,7 @@
 #include "gui/ui_modulecontrolwidget.h"
 #include "gui/subwidget.h"
 #include "gui/keywordwidgets/base.h"
-#include "templates/list.h"
+#include "templates/reflist.h"
 
 // Forward Declarations
 class DUQ;
@@ -68,7 +68,7 @@ class ModuleControlWidget : public SubWidget
 	// ModuleWidget displayed in this control widget
 	ModuleWidget* moduleWidget_;
 	// List of keyword widgets displayed
-	List<KeywordWidgetBase> keywordWidgets_;
+	RefList<KeywordWidgetBase,bool> keywordWidgets_;
 
 	private:
 	// Populate list of Module options

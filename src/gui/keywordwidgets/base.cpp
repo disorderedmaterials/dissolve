@@ -22,7 +22,7 @@
 #include "gui/keywordwidgets/base.h"
 
 // Constructor
-KeywordWidgetBase::KeywordWidgetBase() : ListItem<KeywordWidgetBase>()
+KeywordWidgetBase::KeywordWidgetBase()
 {
 }
 

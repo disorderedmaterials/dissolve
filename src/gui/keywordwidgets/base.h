@@ -27,7 +27,7 @@
 // Forward Declarations
 class GenericList;
 
-class KeywordWidgetBase : public ListItem<KeywordWidgetBase>
+class KeywordWidgetBase
 {
 	public:
 	// Constructor

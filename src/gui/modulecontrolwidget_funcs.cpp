@@ -138,7 +138,7 @@ void ModuleControlWidget::setUpOptions()
 		{
 			widget->setToolTip(keyword->description());
 			layout->addWidget(widget, row, 1);
-			keywordWidgets_.own(base);
+			keywordWidgets_.add(base);
 		}
 
 		++row;
@@ -151,9 +151,10 @@ void ModuleControlWidget::setUpOptions()
 // Update Module keyword widgets from stored values
 void ModuleControlWidget::updateKeywordWidgets()
 {
-	// Select source list for keywords that have potentiall been replicated / updated there
+	// Select source list for keywords that have potentially been replicated / updated there
 	GenericList& moduleData = module_->configurationLocal() ? module_->targetConfigurations().firstItem()->moduleData() : duq_.processingModuleData();
-	ListIterator<KeywordWidgetBase> keywordIterator(keywordWidgets_);
+
+	RefListIterator<KeywordWidgetBase,bool> keywordIterator(keywordWidgets_);
 	while (KeywordWidgetBase* keywordWidget = keywordIterator.iterate()) keywordWidget->updateValue(moduleData, module_->uniqueName());
 }
 
