@@ -146,12 +146,14 @@ QMdiSubWindow* MonitorWindow::addWindow(SubWidget* widget, void* windowContents,
 		return window;
 	}
 
-	// Create a new QMdiSubWindow
+	// Create a new QMdiSubWindow, show, and update controls
 	window = ui.MainArea->addSubWindow(widget);
 	connect(widget, SIGNAL(windowClosed(void*)), this, SLOT(removeWindow(void*)));
 	window->setWindowTitle(windowTitle);
 	window->show();
+	widget->updateControls();
 
+	// Store window / widget data in our list
 	SubWindow* subWindow = new SubWindow(window, widget, windowContents);
 	subWindows_.own(subWindow);
 
