@@ -317,6 +317,28 @@ bool PartialSet::save()
 	return total_.save(total_.name());
 }
 
+// Name all resources based on the supplied prefix
+void PartialSet::setResourceNames(const char* prefix)
+{
+	int typeI, typeJ;
+
+	int nTypes = atomTypes_.nItems();
+	AtomTypeData* at1 = atomTypes_.first(), *at2;
+	for (typeI=0; typeI<nTypes; ++typeI, at1 = at1->next)
+	{
+		at2 = at1;
+		for (typeJ=typeI; typeJ<nTypes; ++typeJ, at2 = at2->next)
+		{
+			partials_.ref(typeI,typeJ).setResourceName(CharString("%s//%s-%s//Full", prefix, at1->atomTypeName(), at2->atomTypeName()));
+			boundPartials_.ref(typeI,typeJ).setResourceName(CharString("%s//%s-%s//Bound", prefix, at1->atomTypeName(), at2->atomTypeName()));
+			unboundPartials_.ref(typeI,typeJ).setResourceName(CharString("%s//%s-%s//Unbound", prefix, at1->atomTypeName(), at2->atomTypeName()));
+			braggPartials_.ref(typeI,typeJ).setResourceName(CharString("%s//%s-%s//Bragg", prefix, at1->atomTypeName(), at2->atomTypeName()));
+		}
+	}
+
+	total_.setResourceName(CharString("%s//Total", prefix));
+}
+
 /*
  * Manipulation
  */

@@ -105,6 +105,8 @@ class PartialSet : public ListItem<PartialSet>
 	XYData& total();
 	// Save all partials and total
 	bool save();
+	// Name all resources based on the supplied prefix
+	void setResourceNames(const char* prefix);
 
 
 	/*
