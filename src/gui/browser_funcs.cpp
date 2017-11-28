@@ -105,6 +105,19 @@ void BrowserWindow::updateWindow()
 		item->setData(0, Qt::UserRole, VariantPointer<PairPotential>(pp));
 		topItem->addChild(item);
 	}
+
+	// Add Processing Modules entry
+	topItem = new QTreeWidgetItem();
+	topItem->setText(0, "Processing");
+	ui.BrowserTree->addTopLevelItem(topItem);
+	RefListIterator<Module,bool> moduleIterator(duq_.processingModules().modules());
+	while (Module* module = moduleIterator.iterate())
+	{
+		item = new QTreeWidgetItem(BrowserWindow::ModuleDataType);
+		item->setText(0, CharString("%s (%s)", module->name(), module->uniqueName()).get());
+		item->setData(0, Qt::UserRole, VariantPointer<Module>(module));
+		topItem->addChild(item);
+	}
 }
 
 /*
