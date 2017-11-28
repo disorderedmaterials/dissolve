@@ -138,6 +138,9 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		calculateUnweightedGR(procPool, cfg, method, allIntra, smoothing, alreadyUpToDate);
 		PartialSet& unweightedgr = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedGR", "Partials");
 
+		// Set names of resources (XYData) within the PartialSet
+		unweightedgr.setResourceNames(CharString("%s//%s//%s", cfg->niceName(), "Partials", "UnweightedGR"));
+
 		// Perform averaging of unweighted partials if requested, and if we're not already up-to-date
 		if ((averaging > 1) && (!alreadyUpToDate)) performGRAveraging(cfg->moduleData(), "UnweightedGR", "Partials", averaging, averagingScheme);
 
@@ -168,6 +171,11 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		{
 			if (!calculateUnweightedSQ(procPool, cfg, qMin, qDelta, qMax, cfg->atomicDensity(), duq.windowFunction(), qBroadening, braggOn)) return false;
 			PartialSet& unweightedsq = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedSQ", "Partials");
+
+			// Set names of resources (XYData) within the PartialSet
+			unweightedsq.setResourceNames(CharString("%s//%s//%s", cfg->niceName(), "Partials", "UnweightedSQ"));
+
+			// Save data if requested
 			if (saveData && configurationLocal_ && (!MPIRunMaster(procPool, unweightedsq.save()))) return false;
 
 			// If we are associated to a local Configuration, copy the partial data over to the processing module list
@@ -232,12 +240,17 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 
 			// Calculate weighted partials
 			PartialSet& weightedgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedGR", uniqueName_);
-			PartialSet& weightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedSQ", uniqueName_);
 			weightedgr.setUp(cfg, cfg->niceName(), "weighted", "rdf", "r, Angstroms");
 			calculateWeightedGR(unweightedgr, weightedgr, weights);
 
+			// Set names of resources (XYData) within the PartialSet
+			weightedgr.setResourceNames(CharString("%s//%s//%s", cfg->niceName(), "Partials", "WeightedGR"));
+
 			// If we are associated to a local Configuration, copy the partial data over to the processing module list
 			if (configurationLocal_) GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "WeightedGR", uniqueName_) = weightedgr;
+
+			// Save data if requested
+			if (saveData && configurationLocal_ && (!MPIRunMaster(procPool, weightedgr.save()))) return false;
 
 			// Test weighted g(r)?
 			if (testMode && configurationLocal_)
@@ -248,12 +261,19 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 
 			if (sqCalculation)
 			{
+				// Retrieve the unweighted S(Q), and realise the weighted S(Q)
 				PartialSet& unweightedsq = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedSQ", "Partials");
+				PartialSet& weightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedSQ", uniqueName_);
+
+				// Set up weighted S(Q) PartialSet from the weighted G(R) PartialSet, and calculate the weighted S(Q)
 				weightedsq.setUp(weightedgr.atomTypes(), cfg->niceName(), "weighted", "sq", "Q, 1/Angstroms");
 				calculateWeightedSQ(unweightedsq, weightedsq, weights, normalisation);
 
 				// If we are associated to a local Configuration, copy the partial data over to the processing module list
 				if (configurationLocal_) GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "WeightedSQ", uniqueName_) = weightedsq;
+
+				// Save data if requested
+				if (saveData && configurationLocal_ && (!MPIRunMaster(procPool, weightedsq.save()))) return false;
 
 				// Test weighted S(Q)?
 				if (testMode && configurationLocal_)
@@ -261,12 +281,6 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 					Messenger::print("\nTesting calculated weighted S(Q) data against supplied datasets (if any)...\n");
 					if (!testReferencePartials(moduleData, weightedsq, "TestReferenceSQ-weighted", testThreshold)) return false;
 				}
-			}
-
-			if (saveData && configurationLocal_)
-			{
-				if (!MPIRunMaster(procPool, weightedgr.save())) return false;
-				if (sqCalculation && (!MPIRunMaster(procPool, weightedsq.save()))) return false;
 			}
 		}
 
