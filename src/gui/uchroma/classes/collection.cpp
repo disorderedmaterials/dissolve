@@ -30,10 +30,11 @@
 // Static Members
 template<class Collection> RefList<Collection,int> ObjectStore<Collection>::objects_;
 template<class Collection> int ObjectStore<Collection>::objectCount_ = 0;
+template<class Collection> int ObjectStore<Collection>::objectType_ = ObjectInfo::UChromaCollectionObject;
 UChromaBase* Collection::uChromaBase_ = NULL;
 
 // Constructor
-Collection::Collection() : ListItem<Collection>(), ObjectStore<Collection>(this, UChromaBase::CollectionObject)
+Collection::Collection() : ListItem<Collection>(), ObjectStore<Collection>(this)
 {
 	// Set variable defaults
 	dataSets_.clear();
@@ -102,7 +103,7 @@ Collection::~Collection()
 }
 
 // Copy constructor
-Collection::Collection(const Collection& source) : ObjectStore<Collection>(NULL, UChromaBase::CollectionObject)
+Collection::Collection(const Collection& source) : ObjectStore<Collection>()
 {
 	(*this) = source;
 }

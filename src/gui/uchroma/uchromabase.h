@@ -96,21 +96,6 @@ class UChromaBase
 
 
 	/*
-	 * ObjectStore Objects
-	 */
-	public:
-	// Object type enum
-	enum PlotWidgetObjects
-	{
-		NoObject = 0,
-		AxesObject,
-		CollectionObject,
-		ViewPaneObject,
-		nPlotWidgetObjects
-	};
-
-
-	/*
 	 * Interaction
 	 */
 	public:

@@ -28,9 +28,10 @@
 // Static Members
 template<class Axes> RefList<Axes,int> ObjectStore<Axes>::objects_;
 template<class Axes> int ObjectStore<Axes>::objectCount_ = 0;
+template<class Axes> int ObjectStore<Axes>::objectType_ = ObjectInfo::UChromaAxesObject;
 
 // Constructor
-Axes::Axes(ViewPane& parent) : parent_(parent), ObjectStore<Axes>(this, UChromaBase::AxesObject)
+Axes::Axes(ViewPane& parent) : parent_(parent), ObjectStore<Axes>(this)
 {
 	// Definition
 	limitMin_.zero();
@@ -126,7 +127,7 @@ Axes::~Axes()
 }
 
 // Copy constructor
-Axes::Axes(const Axes& source) : parent_(parent_), ObjectStore<Axes>(NULL, UChromaBase::AxesObject)
+Axes::Axes(const Axes& source) : parent_(parent_), ObjectStore<Axes>(NULL)
 {
 	(*this) = source;
 }

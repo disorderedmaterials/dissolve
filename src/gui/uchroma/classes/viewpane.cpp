@@ -30,11 +30,12 @@
 // Static Members and constants
 template<class ViewPane> RefList<ViewPane,int> ObjectStore<ViewPane>::objects_;
 template<class ViewPane> int ObjectStore<ViewPane>::objectCount_;
+template<class ViewPane> int ObjectStore<ViewPane>::objectType_ = ObjectInfo::UChromaViewPaneObject;
 const double ViewPane::zOffset_ = -10.0;
 UChromaBase* ViewPane::uChromaBase_ = NULL;
 
 // Constructor
-ViewPane::ViewPane(ViewLayout& parent) : ListItem<ViewPane>(), ObjectStore<ViewPane>(this, UChromaBase::ViewPaneObject), parent_(parent), axes_(*this)
+ViewPane::ViewPane(ViewLayout& parent) : ListItem<ViewPane>(), ObjectStore<ViewPane>(this), parent_(parent), axes_(*this)
 {
 	// Geometry / position
 	bottomEdge_ = 0;
@@ -81,7 +82,7 @@ ViewPane::~ViewPane()
 }
 
 // Copy constructor
-ViewPane::ViewPane(const ViewPane& source) : ObjectStore<ViewPane>(NULL, UChromaBase::ViewPaneObject), parent_(parent_), axes_(*this)
+ViewPane::ViewPane(const ViewPane& source) : ObjectStore<ViewPane>(), parent_(parent_), axes_(*this)
 {
 	(*this) = source;
 }

@@ -23,6 +23,7 @@
 #define DUQ_OBJECTSTORE_H
 
 #include "templates/reflist.h"
+#include "base/sysfunc.h"
 #include <stdio.h>
 
 // Object Info
@@ -36,12 +37,24 @@ class ObjectInfo
 		type_ = 0;
 		id_ = -1;
 	}
+	// Object types
+	enum ObjectTypes
+	{
+		NoObject = 0,
+		XYDataObject,
+		UChromaAxesObject,
+		UChromaCollectionObject,
+		UChromaViewPaneObject,
+		nObjectTypes
+	};
 
 	private:
 	// Object target type
 	int type_;
 	// Target object id
 	int id_;
+	// Target object resource identifier
+	CharString identifier_;
 
 	public:
 	// Set object target type and id
@@ -60,6 +73,16 @@ class ObjectInfo
 	{
 		return id_;
 	}
+	// Set resource identifier
+	void setIdentifier(const char* identifier)
+	{
+		identifier_ = identifier;
+	}
+	// Return resource identifier
+	const char* identifier()
+	{
+		return identifier_.get();
+	}
 };
 
 // Object Store
@@ -67,14 +90,14 @@ template <class T> class ObjectStore
 {
 	public:
 	// Constructor
-	ObjectStore<T>(T* object, int objectType)
+	ObjectStore<T>(T* object = NULL)
 	{
 		// If the passed pointer is NULL, do not add anything to the list (we were probably called from a copy constructor)
 		if (object != NULL)
 		{
 			// Store the parent object pointer, and add it to the master list
 			object_ = object;
-			objectInfo_.set(objectType, objectCount_++);
+			objectInfo_.set(objectType_, objectCount_++);
 			objects_.add(object_, objectInfo_.id());
 		}
 	}
@@ -84,6 +107,8 @@ template <class T> class ObjectStore
 		// Remove our pointer from the master list
 		objects_.remove(object_);
 	}
+	// Object type identifier
+	static int objectType_;
 
 
 	/*
@@ -110,6 +135,12 @@ template <class T> class ObjectStore
 	ObjectInfo objectInfo()
 	{
 		return objectInfo_;
+	}
+	// Set identifier for this object
+	void setIdentifier(const char* identifier)
+	{
+		// TODO Check for duplicates here?
+		objectInfo_.setIdentifier(identifier);
 	}
 
 
@@ -184,6 +215,16 @@ template <class T> class ObjectStore
 		targetRefItem->data = id;
 
 		return true;
+	}
+	// Find specified resource
+	static T* findObject(const char* identifier)
+	{
+		for (RefListItem<T,int>* ri = objects_.first(); ri != NULL; ri = ri->next)
+		{
+			T* item = ri->item;
+			if (DUQSys::sameString(item->objectInfo()->identifier(), identifier, true)) return item;
+		}
+		return NULL;
 	}
 };
 

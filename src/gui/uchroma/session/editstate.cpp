@@ -167,11 +167,11 @@ bool EditState::makeChanges(bool revert)
 	bool result = false;
 	switch (targetObject_.type())
 	{
-		case (UChromaBase::AxesObject):
+		case (ObjectInfo::UChromaAxesObject):
 			Messenger::printVerbose("EDITSTATE: Axes - %s change type %i.\n", revert ? "reversing" : "applying", targetQuantity_);
 			result = changeAxes(revert ? oldData_ : newData_, revert);
 			break;
-		case (UChromaBase::CollectionObject):
+		case (ObjectInfo::UChromaCollectionObject):
 			Messenger::printVerbose("EDITSTATE: Collection - %s change type %i.\n", revert ? "reversing" : "applying", targetQuantity_);
 			// Check whether we need to add or remove collection
 			if ((targetQuantity_ == EditState::CollectionAddQuantity) || (targetQuantity_ == EditState::CollectionRemoveQuantity))
@@ -219,7 +219,7 @@ bool EditState::makeChanges(bool revert)
 			}
 			else result = changeCollection(revert ? oldData_ : newData_, revert);
 			break;
-		case (UChromaBase::ViewPaneObject):
+		case (ObjectInfo::UChromaViewPaneObject):
 			Messenger::printVerbose("EDITSTATE: ViewPane - %s change type %i.\n", revert ? "reversing" : "applying", targetQuantity_);
 			result = changeViewPane(revert ? oldData_ : newData_, revert);
 			break;
