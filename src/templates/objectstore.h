@@ -53,8 +53,8 @@ class ObjectInfo
 	int type_;
 	// Target object id
 	int id_;
-	// Target object resource identifier
-	CharString identifier_;
+	// Target object resource name
+	CharString resourceName_;
 
 	public:
 	// Set object target type and id
@@ -73,15 +73,15 @@ class ObjectInfo
 	{
 		return id_;
 	}
-	// Set resource identifier
-	void setIdentifier(const char* identifier)
+	// Set resource name
+	void setResourceName(const char* name)
 	{
-		identifier_ = identifier;
+		resourceName_ = name;
 	}
-	// Return resource identifier
-	const char* identifier()
+	// Return resource name
+	const char* resourceName()
 	{
-		return identifier_.get();
+		return resourceName_.get();
 	}
 };
 
@@ -136,11 +136,11 @@ template <class T> class ObjectStore
 	{
 		return objectInfo_;
 	}
-	// Set identifier for this object
-	void setIdentifier(const char* identifier)
+	// Set resource name for this object
+	void setResourceName(const char* name)
 	{
 		// TODO Check for duplicates here?
-		objectInfo_.setIdentifier(identifier);
+		objectInfo_.setResourceName(name);
 	}
 
 
@@ -217,12 +217,12 @@ template <class T> class ObjectStore
 		return true;
 	}
 	// Find specified resource
-	static T* findObject(const char* identifier)
+	static T* findResource(const char* resourceName)
 	{
 		for (RefListItem<T,int>* ri = objects_.first(); ri != NULL; ri = ri->next)
 		{
 			T* item = ri->item;
-			if (DUQSys::sameString(item->objectInfo()->identifier(), identifier, true)) return item;
+			if (DUQSys::sameString(item->objectInfo()->resourceName(), resourceName, true)) return item;
 		}
 		return NULL;
 	}
