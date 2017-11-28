@@ -106,7 +106,9 @@ class PartialSet : public ListItem<PartialSet>
 	// Save all partials and total
 	bool save();
 	// Name all resources based on the supplied prefix
-	void setResourceNames(const char* prefix);
+	void setResourceNames(const char* prefix, const char* suffix = NULL);
+	// Set resources name suffix, retaining original prefix
+	void setResourceNameSuffixes(const char* suffix);
 
 
 	/*

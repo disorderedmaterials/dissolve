@@ -318,10 +318,13 @@ bool PartialSet::save()
 }
 
 // Name all resources based on the supplied prefix
-void PartialSet::setResourceNames(const char* prefix)
+void PartialSet::setResourceNames(const char* prefix, const char* suffix)
 {
-	int typeI, typeJ;
+	// Set up suffix (if any)
+	CharString actualSuffix;
+	if (suffix != NULL) actualSuffix.sprintf("_%s", suffix);
 
+	int typeI, typeJ;
 	int nTypes = atomTypes_.nItems();
 	AtomTypeData* at1 = atomTypes_.first(), *at2;
 	for (typeI=0; typeI<nTypes; ++typeI, at1 = at1->next)
@@ -329,14 +332,33 @@ void PartialSet::setResourceNames(const char* prefix)
 		at2 = at1;
 		for (typeJ=typeI; typeJ<nTypes; ++typeJ, at2 = at2->next)
 		{
-			partials_.ref(typeI,typeJ).setResourceName(CharString("%s//%s-%s//Full", prefix, at1->atomTypeName(), at2->atomTypeName()));
-			boundPartials_.ref(typeI,typeJ).setResourceName(CharString("%s//%s-%s//Bound", prefix, at1->atomTypeName(), at2->atomTypeName()));
-			unboundPartials_.ref(typeI,typeJ).setResourceName(CharString("%s//%s-%s//Unbound", prefix, at1->atomTypeName(), at2->atomTypeName()));
-			braggPartials_.ref(typeI,typeJ).setResourceName(CharString("%s//%s-%s//Bragg", prefix, at1->atomTypeName(), at2->atomTypeName()));
+			partials_.ref(typeI,typeJ).setResourceName(CharString("%s//%s-%s//Full%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
+			boundPartials_.ref(typeI,typeJ).setResourceName(CharString("%s//%s-%s//Bound%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
+			unboundPartials_.ref(typeI,typeJ).setResourceName(CharString("%s//%s-%s//Unbound%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
+			braggPartials_.ref(typeI,typeJ).setResourceName(CharString("%s//%s-%s//Bragg%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
 		}
 	}
 
-	total_.setResourceName(CharString("%s//Total", prefix));
+	total_.setResourceName(CharString("%s//Total%s", prefix, actualSuffix.get()));
+}
+
+// Set resources name suffix, retaining original prefix
+void PartialSet::setResourceNameSuffixes(const char* suffix)
+{
+	// Retrieve original resource name - extract it from that of the total_ dat
+	CharString originalPrefix = total_.resourceName();
+	int lastDelimiter = originalPrefix.rFind('/') - 1;
+	if (lastDelimiter <= 0)
+	{
+		Messenger::warn("Couldn't set suffixes of resource names, since original prefix could not be retrieved.\n");
+		return;
+	}
+
+	// Remove the '//Total' part from the original prefix
+	originalPrefix.eraseFrom(lastDelimiter);
+
+	// Set new resource names
+	setResourceNames(originalPrefix, suffix);
 }
 
 /*
