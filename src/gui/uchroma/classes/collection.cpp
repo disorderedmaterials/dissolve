@@ -278,6 +278,20 @@ DataSet* Collection::addDataSet(XYData& data, double z)
 	return dataSet;
 }
 
+// Add dataset from supplied XYData
+DataSet* Collection::addDataSetWithReference(XYData* data, double z)
+{
+	DataSet* dataSet = dataSets_.add();
+	dataSet->setParent(this);
+
+	dataSet->setSourceData(data);
+	setDataSetZ(dataSet, z);
+
+	uChromaBase_->setAsModified();
+
+	return dataSet;
+}
+
 // Add dataset, copying from supplied DataSet
 void Collection::addDataSet(DataSet* source)
 {

@@ -42,7 +42,7 @@ class DataSet : public ListItem<DataSet>
 	// Assignment operator
 	void operator=(const DataSet& source);
 	// Data Sources
-	enum DataSource { FileSource, InternalSource, nDataSources };
+	enum DataSource { FileSource, InternalSource, XYDataSource, nDataSources };
 	// Convert text string to DataSource
 	static DataSource dataSource(const char* s);
 	// Convert DataSource to text string
@@ -81,6 +81,8 @@ class DataSet : public ListItem<DataSet>
 	XYData data_;
 	// Transformed data
 	XYData transformedData_;
+	// Source XYData, if any
+	XYData* sourceXYData_;
 
 	public:
 	// Set source of data
@@ -99,6 +101,10 @@ class DataSet : public ListItem<DataSet>
 	bool loadData(QDir sourceDir);
 	// Set data from supplied XYData
 	void setData(XYData& source);
+	// Set data from supplied XYData
+	void setSourceData(XYData* data);
+	// Return source XYData, if any
+	XYData* sourceXYData();
 	// Return data
 	const XYData& data() const;
 	// Return X array from data

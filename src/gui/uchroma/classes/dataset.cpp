@@ -23,7 +23,7 @@
 #include "gui/uchroma/classes/collection.h"
 
 // Data Sources
-const char* DataSourceKeywords[] = { "File", "Internal" };
+const char* DataSourceKeywords[] = { "File", "Internal", "XYData" };
 
 // Convert text string to SettingsKeyword
 DataSet::DataSource DataSet::dataSource(const char* s)
@@ -45,6 +45,7 @@ DataSet::DataSet() : ListItem<DataSet>()
 	dataSource_ = DataSet::InternalSource;
 	name_ = "New DataSet";
 	parent_ = NULL;
+	sourceXYData_ = NULL;
 }
 
 // Destructor
@@ -66,6 +67,7 @@ void DataSet::operator=(const DataSet& source)
 	data_ = source.data_;
 	transformedData_ = source.transformedData_;
 	dataSource_ = source.dataSource_;
+	sourceXYData_ = source.sourceXYData_;
 }
 
 /*
@@ -118,6 +120,12 @@ const char* DataSet::sourceFileName()
 	return sourceFileName_.get();
 }
 
+// Return source XYData, if any
+XYData* DataSet::sourceXYData()
+{
+	return sourceXYData_;
+}
+
 // Set associated data name
 void DataSet::setName(const char* name)
 {
@@ -161,6 +169,16 @@ void DataSet::setData(XYData& source)
 	data_ = source;
 
 	notifyParent();
+}
+
+// Set data from supplied XYData
+void DataSet::setSourceData(XYData* data)
+{
+	sourceXYData_ = data;
+
+	dataSource_ = DataSet::XYDataSource;
+
+	data_ = (*data);
 }
 
 // Return data
