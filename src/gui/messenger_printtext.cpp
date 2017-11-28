@@ -32,7 +32,7 @@ void Messenger::printText(const char* text)
 	{
 		QString s = text;
 		if (s.endsWith('\n')) s.chop(1);
-		MonitorWindow::messagesBrowser()->append(text);
+		MonitorWindow::messagesBrowser()->append(s);
 	}
 	else printf("%s", text);
 }
