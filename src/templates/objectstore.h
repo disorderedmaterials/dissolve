@@ -38,7 +38,7 @@ class ObjectInfo
 		id_ = -1;
 	}
 	// Object types
-	enum ObjectTypes
+	enum ObjectType
 	{
 		NoObject = 0,
 		XYDataObject,
