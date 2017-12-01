@@ -332,21 +332,21 @@ void PartialSet::setResourceNames(const char* prefix, const char* suffix)
 		at2 = at1;
 		for (typeJ=typeI; typeJ<nTypes; ++typeJ, at2 = at2->next)
 		{
-			partials_.ref(typeI,typeJ).setResourceName(CharString("%s//%s-%s//Full%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
-			boundPartials_.ref(typeI,typeJ).setResourceName(CharString("%s//%s-%s//Bound%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
-			unboundPartials_.ref(typeI,typeJ).setResourceName(CharString("%s//%s-%s//Unbound%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
-			braggPartials_.ref(typeI,typeJ).setResourceName(CharString("%s//%s-%s//Bragg%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
+			partials_.ref(typeI,typeJ).setObjectName(CharString("%s//%s-%s//Full%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
+			boundPartials_.ref(typeI,typeJ).setObjectName(CharString("%s//%s-%s//Bound%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
+			unboundPartials_.ref(typeI,typeJ).setObjectName(CharString("%s//%s-%s//Unbound%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
+			braggPartials_.ref(typeI,typeJ).setObjectName(CharString("%s//%s-%s//Bragg%s", prefix, at1->atomTypeName(), at2->atomTypeName(), actualSuffix.get()));
 		}
 	}
 
-	total_.setResourceName(CharString("%s//Total%s", prefix, actualSuffix.get()));
+	total_.setObjectName(CharString("%s//Total%s", prefix, actualSuffix.get()));
 }
 
 // Set resources name suffix, retaining original prefix
 void PartialSet::setResourceNameSuffixes(const char* suffix)
 {
-	// Retrieve original resource name - extract it from that of the total_ dat
-	CharString originalPrefix = total_.resourceName();
+	// Retrieve original resource name - extract it from that of the total_ data
+	CharString originalPrefix = total_.objectName();
 	int lastDelimiter = originalPrefix.rFind('/') - 1;
 	if (lastDelimiter <= 0)
 	{

@@ -89,21 +89,21 @@ void PartialsModuleWidget::addPartialSetToTree(PartialSet& partials, QTreeWidget
 			// Create item to contain full data
 			QTreeWidgetItem* fullItem = new QTreeWidgetItem(setItem, rootType+PartialsModuleWidget::FullData);
 			fullItem->setText(0, CharString("%s-%s", atd1->atomTypeName(), atd2->atomTypeName()).get());
- 			fullItem->setData(0, Qt::UserRole, QString(partials.partial(n,m).resourceName()));
+ 			fullItem->setData(0, Qt::UserRole, QString(partials.partial(n,m).objectName()));
 
 			// Add subitems with other data
 			// -- Bound partial
 			QTreeWidgetItem* subItem = new QTreeWidgetItem(fullItem, rootType+PartialsModuleWidget::BoundData);
 			subItem->setText(0, "Bound");
-			subItem->setData(0, Qt::UserRole, QString(partials.boundPartial(n,m).resourceName()));
+			subItem->setData(0, Qt::UserRole, QString(partials.boundPartial(n,m).objectName()));
 			// -- Unbound partial
 			subItem = new QTreeWidgetItem(fullItem, rootType+PartialsModuleWidget::UnboundData);
 			subItem->setText(0, "Unbound");
-			subItem->setData(0, Qt::UserRole, QString(partials.unboundPartial(n,m).resourceName()));
+			subItem->setData(0, Qt::UserRole, QString(partials.unboundPartial(n,m).objectName()));
 			// -- Bragg partial
 			subItem = new QTreeWidgetItem(fullItem, rootType+PartialsModuleWidget::BraggData);
 			subItem->setText(0, "Bragg");
-			subItem->setData(0, Qt::UserRole, QString(partials.braggPartial(n,m).resourceName()));
+			subItem->setData(0, Qt::UserRole, QString(partials.braggPartial(n,m).objectName()));
 		}
 	}
 }
