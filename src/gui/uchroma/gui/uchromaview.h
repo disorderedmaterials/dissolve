@@ -55,10 +55,19 @@ class UChromaViewWidget : public QWidget, public UChromaBase
 
 
 	/*
+	 * Drag / Drop Reimplementations
+	 */
+	public:
+	void dragEnterEvent(QDragEnterEvent* event);
+	void dropEvent(QDropEvent* event);
+
+
+	/*
 	 * File Actions
 	 */
 	private slots:
 	void on_actionFileExportImage_triggered(bool checked);
+
 
 	/*
 	 * Edit Actions

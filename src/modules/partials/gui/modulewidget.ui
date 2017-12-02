@@ -72,7 +72,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QTreeWidget" name="SourcesTree">
+       <widget class="ObjectTree" name="SourcesTree">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
           <horstretch>0</horstretch>
@@ -141,8 +141,14 @@
   </layout>
   <zorder>MainWidget</zorder>
   <zorder>ControlsWidget</zorder>
-  <zorder>PlotWidget</zorder>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ObjectTree</class>
+   <extends>QTreeWidget</extends>
+   <header>gui/objecttree.hui</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../../../gui/icons.qrc"/>
  </resources>

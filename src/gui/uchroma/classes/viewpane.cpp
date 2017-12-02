@@ -31,6 +31,7 @@
 template<class ViewPane> RefList<ViewPane,int> ObjectStore<ViewPane>::objects_;
 template<class ViewPane> int ObjectStore<ViewPane>::objectCount_;
 template<class ViewPane> int ObjectStore<ViewPane>::objectType_ = ObjectInfo::UChromaViewPaneObject;
+template<class ViewPane> const char* ObjectStore<ViewPane>::objectTypeName_ = "UChromaViewPane";
 const double ViewPane::zOffset_ = -10.0;
 UChromaBase* ViewPane::uChromaBase_ = NULL;
 

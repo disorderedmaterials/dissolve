@@ -31,6 +31,7 @@
 template<class Collection> RefList<Collection,int> ObjectStore<Collection>::objects_;
 template<class Collection> int ObjectStore<Collection>::objectCount_ = 0;
 template<class Collection> int ObjectStore<Collection>::objectType_ = ObjectInfo::UChromaCollectionObject;
+template<class Collection> const char* ObjectStore<Collection>::objectTypeName_ = "UChromaCollection";
 UChromaBase* Collection::uChromaBase_ = NULL;
 
 // Constructor

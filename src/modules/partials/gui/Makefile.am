@@ -16,7 +16,8 @@ SUFFIXES: .ui .hui
 clean-local:
 	-rm -f ui_* *.o moc_*.cpp
 
-libmodulewidget_la_SOURCES = modulewidget.ui gui.cpp modulewidget_funcs.cpp
+libmodulewidget_la_SOURCES = modulewidget.ui modulewidget_funcs.cpp
+libmodulewidget_la_SOURCES += gui.cpp 
 
 noinst_HEADERS = modulewidget.h
 

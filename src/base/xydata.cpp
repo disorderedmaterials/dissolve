@@ -31,14 +31,16 @@
 using namespace std;
 
 // Static Members
-template<class Axes> RefList<Axes,int> ObjectStore<Axes>::objects_;
-template<class Axes> int ObjectStore<Axes>::objectCount_ = 0;
-template<class Axes> int ObjectStore<Axes>::objectType_ = ObjectInfo::UChromaAxesObject;
+template<class XYData> RefList<XYData,int> ObjectStore<XYData>::objects_;
+template<class XYData> int ObjectStore<XYData>::objectCount_ = 0;
+template<class XYData> int ObjectStore<XYData>::objectType_ = ObjectInfo::XYDataObject;
+template<class XYData> const char* ObjectStore<XYData>::objectTypeName_ = "XYData";
 
 // Constructor
 XYData::XYData() : ListItem<XYData>(), ObjectStore<XYData>(this) 
 {
 	name_ = "Untitled";
+// 	setObjectName("");
 	interpolationInterval_ = -1;
 	interpolationScheme_ = NoInterpolation;
 }
@@ -60,7 +62,6 @@ void XYData::clear()
 	x_.clear();
 	y_.clear();
 	clearInterpolationArrays();
-
 }
 
 // Clear interpolation arrays

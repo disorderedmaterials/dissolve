@@ -38,7 +38,7 @@ class ObjectInfo
 		id_ = -1;
 	}
 	// Object types
-	enum ObjectTypes
+	enum ObjectType
 	{
 		NoObject = 0,
 		XYDataObject,
@@ -53,8 +53,8 @@ class ObjectInfo
 	int type_;
 	// Target object id
 	int id_;
-	// Target object resource name
-	CharString resourceName_;
+	// Target object name
+	CharString name_;
 
 	public:
 	// Set object target type and id
@@ -73,15 +73,15 @@ class ObjectInfo
 	{
 		return id_;
 	}
-	// Set resource name
-	void setResourceName(const char* name)
+	// Set object name
+	void setName(const char* name)
 	{
-		resourceName_ = name;
+		name_ = name;
 	}
-	// Return resource name
-	const char* resourceName()
+	// Return object name
+	const char* name()
 	{
-		return resourceName_.get();
+		return name_.get();
 	}
 };
 
@@ -98,6 +98,7 @@ template <class T> class ObjectStore
 			// Store the parent object pointer, and add it to the master list
 			object_ = object;
 			objectInfo_.set(objectType_, objectCount_++);
+			setObjectName("");
 			objects_.add(object_, objectInfo_.id());
 		}
 	}
@@ -109,10 +110,12 @@ template <class T> class ObjectStore
 	}
 	// Object type identifier
 	static int objectType_;
+	// Object type name
+	static const char* objectTypeName_;
 
 
 	/*
-	 * Object Pointer
+	 * Object Data
 	 */
 	private:
 	// Pointer to object that this ObjectStore was created with
@@ -131,21 +134,26 @@ template <class T> class ObjectStore
 	{
 		return objectInfo_.id();
 	}
-	// Return object type and id as an ObjectInfo
+	// Return object information
 	ObjectInfo objectInfo()
 	{
 		return objectInfo_;
 	}
-	// Set resource name for this object
-	void setResourceName(const char* name)
+	// Set name for this object, appending type name prefix
+	void setObjectName(const char* name)
 	{
 		// TODO Check for duplicates here?
-		objectInfo_.setResourceName(name);
+		objectInfo_.setName(CharString("%s@%s", objectTypeName_, name));
 	}
-	// Return resource name for this object
-	const char* resourceName()
+	// Return object name
+	const char* objectName()
 	{
-		return objectInfo_.resourceName();
+		return objectInfo_.name();
+	}
+	// Return whether object matches this name
+	bool objectNameIs(const char* name)
+	{
+		return (DUQSys::sameString(objectInfo_.name(), name, true));
 	}
 
 
@@ -221,13 +229,20 @@ template <class T> class ObjectStore
 
 		return true;
 	}
-	// Find specified resource
-	static T* findResource(const char* resourceName)
+	// Return whether the specified object name is an object of this type
+	static bool isObject(const char* objectName)
+	{
+		// Get part before '@', which denotes the type
+		const char* prefix = DUQSys::beforeChar(objectName, '@');
+		return DUQSys::sameString(prefix, objectTypeName_);
+	}
+	// Find specified object
+	static T* findObject(const char* objectName)
 	{
 		for (RefListItem<T,int>* ri = objects_.first(); ri != NULL; ri = ri->next)
 		{
 			T* item = ri->item;
-			if (DUQSys::sameString(item->objectInfo()->resourceName(), resourceName, true)) return item;
+			if (item->objectNameIs(objectName)) return item;
 		}
 		return NULL;
 	}

@@ -29,6 +29,7 @@
 template<class Axes> RefList<Axes,int> ObjectStore<Axes>::objects_;
 template<class Axes> int ObjectStore<Axes>::objectCount_ = 0;
 template<class Axes> int ObjectStore<Axes>::objectType_ = ObjectInfo::UChromaAxesObject;
+template<class Axes> const char* ObjectStore<Axes>::objectTypeName_ = "UChromaAxes";
 
 // Constructor
 Axes::Axes(ViewPane& parent) : parent_(parent), ObjectStore<Axes>(this)

@@ -21,9 +21,11 @@
 
 #include "gui/uchroma/gui/uchromaview.h"
 #include "gui/uchroma/render/fontinstance.h"
+#include "gui/objectdata.h"
 #include "templates/reflist.h"
 #include "templates/variantpointer.h"
 #include <QMessageBox>
+#include <QDragEnterEvent>
 #include <QSettings>
 
 // Constructor
@@ -34,6 +36,7 @@ UChromaViewWidget::UChromaViewWidget(QWidget* parent) : QWidget(parent), UChroma
 
 	// Call the main creation function
 	ui.setupUi(this);
+	setAcceptDrops(true);
 
 	// Set Viewer pointer
 	viewer_ = ui.MainView;
@@ -117,4 +120,44 @@ void UChromaViewWidget::saveSettings()
 
 	// Viewer font
 	settings.setValue("ViewerFont", viewerFontFileName());
+}
+
+/*
+ * Drag / Drop Reimplementations
+ */
+
+void UChromaViewWidget::dragEnterEvent(QDragEnterEvent* event)
+{
+	// Check that the event contains suitable data
+	if (event->mimeData()->hasFormat("duq/objectdata")) event->acceptProposedAction();
+}
+
+void UChromaViewWidget::dropEvent(QDropEvent* event)
+{
+	if (!event->mimeData()->hasFormat("duq/objectdata")) return;
+
+	// Cast into an ObjectData*
+	ObjectData* objectData = (ObjectData*) event->mimeData();
+	if (!objectData) return;
+
+	// Get ViewPane under drop point
+	ViewPane* viewPane = viewLayout_.paneAt(event->pos().x(), height() - event->pos().y());
+
+	// Loop over strings containing object data
+	foreach (const QString& objectName, objectData->objects())
+	{
+		printf("OBJECT DATA = %s\n", qPrintable(objectName));
+
+		// Check object type
+		if (XYData::isObject(qPrintable(objectName)))
+		{
+			// Locate object and add it to the ViewPane under the mouse
+			XYData* data = XYData::findObject(qPrintable(objectName));
+			if (!data) return;
+
+			// Add data 
+		}
+	}
+
+	event->acceptProposedAction();
 }

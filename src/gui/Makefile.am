@@ -27,6 +27,7 @@ libgui_la_SOURCES = icons.qrc
 
 libgui_la_SOURCES += colourbutton.hui colourbutton_funcs.cpp
 libgui_la_SOURCES += gradientbar.hui gradientbar_funcs.cpp
+libgui_la_SOURCES += objecttree.hui objectdata_funcs.cpp objecttree_funcs.cpp
 libgui_la_SOURCES += texponentialspin.hui texponentialspin_funcs.cpp
 
 libgui_la_SOURCES += browser.ui mainwindow.ui modulecontrolwidget.ui pairpotentialwidget.ui
@@ -36,6 +37,6 @@ libgui_la_SOURCES += modulewidget.cpp
 libgui_la_SOURCES += subwidget.cpp subwindow.cpp
 libgui_la_SOURCES += mainwindow_funcs.cpp
 
-noinst_HEADERS = browser.h mainwindow.h modulecontrolwidget.h modulewidget.h pairpotentialwidget.h subwidget.h subwindow.h
+noinst_HEADERS = browser.h mainwindow.h modulecontrolwidget.h modulewidget.h pairpotentialwidget.h objectdata.h subwidget.h subwindow.h
 
 AM_CPPFLAGS = -I$(top_srcdir)/src -I../ -I./ @DUQ_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
