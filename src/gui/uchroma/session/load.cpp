@@ -28,7 +28,7 @@
 #define CHECKIOFAIL { if (hardIOFail_) { return false; } else { break; } }
 
 // Parse AxisBlock keywords
-bool UChromaBase::readAxisBlock(LineParser& parser, Axes& axes, int axis)
+bool UChromaBase::readAxisBlock(LineParser& parser, Axes& axes, int axis, bool strictBlockEnd)
 {
 	TextPrimitive::TextAnchor anchor;
 	LineStipple::StippleType stipple;
@@ -38,7 +38,7 @@ bool UChromaBase::readAxisBlock(LineParser& parser, Axes& axes, int axis)
 	while (!parser.eofOrBlank())
 	{
 		// Get line from file
-		parser.getArgsDelim(LineParser::UseQuotes + LineParser::SkipBlanks);
+		parser.getArgsDelim(LineParser::UseQuotes + LineParser::SkipBlanks + LineParser::SemiColonLineBreaks);
 
 		// Get keyword and check number of arguments provided
 		UChromaBase::AxisKeyword axisKwd = UChromaBase::axisKeyword(parser.argc(0));
@@ -215,12 +215,28 @@ bool UChromaBase::readAxisBlock(LineParser& parser, Axes& axes, int axis)
 				break;
 		}
 	}
-	Messenger::print("Error : Unterminated 'Axis' block.\n");
-	return false;
+
+	if (strictBlockEnd)
+	{
+		Messenger::print("Error : Unterminated 'Axis' block.\n");
+		return false;
+	}
+
+	return true;
 }
 
 // Read CollectionBlock keywords
-bool UChromaBase::readCollectionBlock(LineParser& parser, Collection* collection)
+bool UChromaBase::readCollectionBlock(const char* block, Collection* collection)
+{
+	// Create a local LineParser and set hte source string
+	LineParser parser;
+	parser.openInputString(block);
+	
+	return readCollectionBlock(parser, collection, false);
+}
+
+// Read CollectionBlock keywords
+bool UChromaBase::readCollectionBlock(LineParser& parser, Collection* collection, bool strictBlockEnd)
 {
 	DataSet* dataSet;
 	int xyz;
@@ -233,7 +249,7 @@ bool UChromaBase::readCollectionBlock(LineParser& parser, Collection* collection
 	while (!parser.eofOrBlank())
 	{
 		// Get line from file
-		parser.getArgsDelim(LineParser::UseQuotes + LineParser::SkipBlanks);
+		parser.getArgsDelim(LineParser::UseQuotes + LineParser::SkipBlanks + LineParser::SemiColonLineBreaks);
 
 		// Get keyword and check number of arguments provided
 		UChromaBase::CollectionKeyword collectionKwd = collectionKeyword(parser.argc(0));
@@ -397,12 +413,18 @@ bool UChromaBase::readCollectionBlock(LineParser& parser, Collection* collection
 				break;
 		}
 	}
-	Messenger::print("Error : Unterminated 'Collection' block.\n");
-	return false;
+
+	if (strictBlockEnd)
+	{
+		Messenger::print("Error : Unterminated 'Collection' block.\n");
+		return false;
+	}
+
+	return true;
 }
 
 // Read DataSetBlock keywords
-bool UChromaBase::readDataSetBlock(LineParser& parser, DataSet* dataSet, Collection* collection)
+bool UChromaBase::readDataSetBlock(LineParser& parser, DataSet* dataSet, Collection* collection, bool strictBlockEnd)
 {
 	bool foundEnd;
 	DataSet::DataSource source;
@@ -410,7 +432,7 @@ bool UChromaBase::readDataSetBlock(LineParser& parser, DataSet* dataSet, Collect
 	while (!parser.eofOrBlank())
 	{
 		// Get line from file
-		parser.getArgsDelim(LineParser::UseQuotes + LineParser::SkipBlanks);
+		parser.getArgsDelim(LineParser::UseQuotes + LineParser::SkipBlanks + LineParser::SemiColonLineBreaks);
 
 		// Get keyword and check number of arguments provided
 		UChromaBase::DataSetKeyword dataSetKwd = dataSetKeyword(parser.argc(0));
@@ -473,12 +495,18 @@ bool UChromaBase::readDataSetBlock(LineParser& parser, DataSet* dataSet, Collect
 				break;
 		}
 	}
-	Messenger::print("Error : Unterminated 'DataSet' block.\n");
-	return false;
+
+	if (strictBlockEnd)
+	{
+		Messenger::print("Error : Unterminated 'DataSet' block.\n");
+		return false;
+	}
+
+	return true;
 }
 
 // Read FitParametersBlock keywords
-bool UChromaBase::readFitParametersBlock(LineParser& parser, FitKernel* fitKernel)
+bool UChromaBase::readFitParametersBlock(LineParser& parser, FitKernel* fitKernel, bool strictBlockEnd)
 {
 	FitKernel::RangeType rangeType;
 	IndexData::IndexType indexType;
@@ -488,7 +516,7 @@ bool UChromaBase::readFitParametersBlock(LineParser& parser, FitKernel* fitKerne
 	while (!parser.eofOrBlank())
 	{
 		// Get line from file
-		parser.getArgsDelim(LineParser::UseQuotes + LineParser::SkipBlanks);
+		parser.getArgsDelim(LineParser::UseQuotes + LineParser::SkipBlanks + LineParser::SemiColonLineBreaks);
 
 		// Get keyword and check number of arguments provided
 		UChromaBase::FitParametersKeyword fitParamsKwd = fitParametersKeyword(parser.argc(0));
@@ -612,17 +640,23 @@ bool UChromaBase::readFitParametersBlock(LineParser& parser, FitKernel* fitKerne
 				break;
 		}
 	}
-	Messenger::print("Error : Unterminated 'FitParameters' block.\n");
-	return false;
+
+	if (strictBlockEnd)
+	{
+		Messenger::print("Error : Unterminated 'FitParameters' block.\n");
+		return false;
+	}
+
+	return true;
 }
 
 // Read FitResultsBlock keywords
-bool UChromaBase::readFitResultsBlock(LineParser& parser, DataSpaceRange* dataSpaceRange)
+bool UChromaBase::readFitResultsBlock(LineParser& parser, DataSpaceRange* dataSpaceRange, bool strictBlockEnd)
 {
 	while (!parser.eofOrBlank())
 	{
 		// Get line from file
-		parser.getArgsDelim(LineParser::UseQuotes + LineParser::SkipBlanks);
+		parser.getArgsDelim(LineParser::UseQuotes + LineParser::SkipBlanks + LineParser::SemiColonLineBreaks);
 
 		// Get keyword and check number of arguments provided
 		UChromaBase::FitResultsKeyword fitParamsKwd = fitResultsKeyword(parser.argc(0));
@@ -647,18 +681,24 @@ bool UChromaBase::readFitResultsBlock(LineParser& parser, DataSpaceRange* dataSp
 				break;
 		}
 	}
-	Messenger::print("Error : Unterminated 'FitResults' block.\n");
-	return false;
+
+	if (strictBlockEnd)
+	{
+		Messenger::print("Error : Unterminated 'FitResults' block.\n");
+		return false;
+	}
+
+	return true;
 }
 
 // Read SettingsBlock keywords
-bool UChromaBase::readSettingsBlock(LineParser& parser)
+bool UChromaBase::readSettingsBlock(LineParser& parser, bool strictBlockEnd)
 {
 	UChromaBase::ImageFormat fmt;
 	while (!parser.eofOrBlank())
 	{
 		// Get line from file
-		parser.getArgsDelim(LineParser::UseQuotes + LineParser::SkipBlanks);
+		parser.getArgsDelim(LineParser::UseQuotes + LineParser::SkipBlanks + LineParser::SemiColonLineBreaks);
 
 		// Get keyword and check number of arguments provided
 		UChromaBase::SettingsKeyword settingsKwd = UChromaBase::settingsKeyword(parser.argc(0));
@@ -695,18 +735,24 @@ bool UChromaBase::readSettingsBlock(LineParser& parser)
 				break;
 		}
 	}
-	Messenger::print("Error : Unterminated 'Settings' block.\n");
-	return false;
+
+	if (strictBlockEnd)
+	{
+		Messenger::print("Error : Unterminated 'Settings' block.\n");
+		return false;
+	}
+
+	return true;
 }
 
 // Read ViewBlock keywords
-bool UChromaBase::readViewBlock(LineParser& parser)
+bool UChromaBase::readViewBlock(LineParser& parser, bool strictBlockEnd)
 {
 	ViewPane* pane;
 	while (!parser.eofOrBlank())
 	{
 		// Get line from file
-		parser.getArgsDelim(LineParser::UseQuotes + LineParser::SkipBlanks);
+		parser.getArgsDelim(LineParser::UseQuotes + LineParser::SkipBlanks + LineParser::SemiColonLineBreaks);
 
 		// Get keyword and check number of arguments provided
 		UChromaBase::ViewKeyword viewKwd = UChromaBase::viewKeyword(parser.argc(0));
@@ -739,12 +785,18 @@ bool UChromaBase::readViewBlock(LineParser& parser)
 				break;
 		}
 	}
-	Messenger::print("Error : Unterminated 'View' block.\n");
-	return false;
+
+	if (strictBlockEnd)
+	{
+		Messenger::print("Error : Unterminated 'View' block.\n");
+		return false;
+	}
+
+	return true;
 }
 
 // Read ViewPane keywords
-bool UChromaBase::readViewPaneBlock(LineParser& parser, ViewPane* pane)
+bool UChromaBase::readViewPaneBlock(LineParser& parser, ViewPane* pane, bool strictBlockEnd)
 {
 	int xyz, axis;
 	Collection* collection;
@@ -755,7 +807,7 @@ bool UChromaBase::readViewPaneBlock(LineParser& parser, ViewPane* pane)
 	while (!parser.eofOrBlank())
 	{
 		// Get line from file
-		parser.getArgsDelim(LineParser::UseQuotes + LineParser::SkipBlanks);
+		parser.getArgsDelim(LineParser::UseQuotes + LineParser::SkipBlanks + LineParser::SemiColonLineBreaks);
 
 		// Get keyword and check number of arguments provided
 		UChromaBase::ViewPaneKeyword viewPaneKwd = UChromaBase::viewPaneKeyword(parser.argc(0));
@@ -880,8 +932,14 @@ bool UChromaBase::readViewPaneBlock(LineParser& parser, ViewPane* pane)
 				break;
 		}
 	}
-	Messenger::print("Error : Unterminated 'ViewPane' block.\n");
-	return false;
+
+	if (strictBlockEnd)
+	{
+		Messenger::print("Error : Unterminated 'ViewPane' block.\n");
+		return false;
+	}
+
+	return true;
 }
 
 // Set whether to enforce hard fail on input file error
@@ -914,7 +972,7 @@ bool UChromaBase::loadSession(const char* fileName)
 	bool success;
 	while (!parser.eofOrBlank())
 	{
-		parser.getArgsDelim(LineParser::UseQuotes + LineParser::SkipBlanks);
+		parser.getArgsDelim(LineParser::UseQuotes + LineParser::SkipBlanks + LineParser::SemiColonLineBreaks);
 
 		// We expect a block keyword in this loop...
 		block = UChromaBase::inputBlock(parser.argc(0));

@@ -559,23 +559,25 @@ class UChromaBase
 	// Return minimum number of expected arguments
 	int viewPaneKeywordNArguments(ViewPaneKeyword kwd);
 
-	protected:
+	public:
 	// Read AxisBlock keywords
-	bool readAxisBlock(LineParser& parser, Axes& axes, int axis);
+	bool readAxisBlock(LineParser& parser, Axes& axes, int axis, bool strictBlockEnd = true);
 	// Read CollectionBlock keywords
-	bool readCollectionBlock(LineParser& parser, Collection* collection);
+	bool readCollectionBlock(const char* block, Collection* collection);
+	// Read CollectionBlock keywords
+	bool readCollectionBlock(LineParser& parser, Collection* collection, bool strictBlockEnd = true);
 	// Read DataSetBlock keywords
-	bool readDataSetBlock(LineParser& parser, DataSet* dataSet, Collection* collection);
+	bool readDataSetBlock(LineParser& parser, DataSet* dataSet, Collection* collection, bool strictBlockEnd = true);
 	// Read FitParametersBlock keywords
-	bool readFitParametersBlock(LineParser& parser, FitKernel* fitKernel);
+	bool readFitParametersBlock(LineParser& parser, FitKernel* fitKernel, bool strictBlockEnd = true);
 	// Read FitResultsBlock keywords
-	bool readFitResultsBlock(LineParser& parser, DataSpaceRange* range);
+	bool readFitResultsBlock(LineParser& parser, DataSpaceRange* range, bool strictBlockEnd = true);
 	// Read SettingsBlock keywords
-	bool readSettingsBlock(LineParser& parser);
+	bool readSettingsBlock(LineParser& parser, bool strictBlockEnd = true);
 	// Read ViewBlock keywords
-	bool readViewBlock(LineParser& parser);
+	bool readViewBlock(LineParser& parser, bool strictBlockEnd = true);
 	// Read ViewPaneBlock keywords
-	bool readViewPaneBlock(LineParser& parser, ViewPane* pane);
+	bool readViewPaneBlock(LineParser& parser, ViewPane* pane, bool strictBlockEnd = true);
 	// Write AxisBlock keywords
 	bool writeAxisBlock(LineParser& parser, Axes& axes, int axis);
 	// Write CollectionBlock keywords
