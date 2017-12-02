@@ -50,6 +50,14 @@ LineParser::~LineParser()
 	if (inputFile_ != NULL) delete inputFile_;
 	if (outputFile_ != NULL) delete outputFile_;
 	if (cachedFile_ != NULL) delete cachedFile_;
+	if (inputStrings_ != NULL) delete inputStrings_;
+}
+
+// Return current stream for input
+istream* LineParser::inputStream() const
+{
+	if (fileInput_) return inputFile_;
+	return inputStrings_;
 }
 
 // Reset data
@@ -64,6 +72,8 @@ void LineParser::reset()
 	inputFile_ = NULL;
 	outputFile_ = NULL;
 	cachedFile_ = NULL;
+	inputStrings_ = NULL;
+	fileInput_ = true;
 	directOutput_ = false;
 	arguments_.clear();
 }
@@ -119,6 +129,8 @@ bool LineParser::openInput(const char* filename)
 		}
 	}
 
+	fileInput_ = true;
+
 	// Master will open the file
 	bool result = true;
 	if ((!processPool_) || processPool_->isMaster())
@@ -139,6 +151,35 @@ bool LineParser::openInput(const char* filename)
 	inputFilename_ = filename;
 
 	return result;
+}
+
+// Open input string for reading
+bool LineParser::openInputString(const char* string)
+{
+	if (inputFile_ != NULL)
+	{
+		printf("Warning - LineParser already appears to have an open file...\n");
+		inputFile_->close();
+		delete inputFile_;
+		inputFile_ = NULL;
+	}
+	if (inputStrings_ != NULL)
+	{
+		printf("Warning - LineParser already appears to have open strings...\n");
+		delete inputStrings_;
+		inputStrings_ = NULL;
+	}
+
+	fileInput_ = false;
+
+	// Create a new stringstream and copy the input string to it
+	inputStrings_ = new stringstream;
+	(*inputStrings_) << string;
+	inputStrings_->seekg(ios_base::beg);
+
+	lastLineNo_ = 0;
+
+	return true;
 }
 
 // Open new stream for writing
@@ -229,14 +270,18 @@ void LineParser::closeFiles()
 		}
 	}
 
+	if (inputStrings_ != NULL) delete inputStrings_;
+
 	reset();
 }
 
 // Return whether current file source is good for reading
 bool LineParser::isFileGoodForReading() const
 {
-	if (inputFile_ == NULL) return false;
-	else if (!inputFile_->is_open()) return false;
+	if (fileInput_ && (inputFile_ == NULL)) return false;
+	else if (fileInput_ && (!inputFile_->is_open())) return false;
+	else if ((!fileInput_) && (!inputStrings_)) return false;
+
 	return true;
 }
 
@@ -255,15 +300,15 @@ bool LineParser::isFileGoodForWriting() const
 // Peek next character in input stream
 char LineParser::peek() const
 {
-	if (inputFile_ == NULL) return '\0';
-	return inputFile_->peek();
+	if (inputStream() == NULL) return '\0';
+	return inputStream()->peek();
 }
 
 // Tell current position of input stream
 streampos LineParser::tellg() const
 {
 	streampos result = 0;
-	if (inputFile_ != NULL) result = inputFile_->tellg();
+	if (inputStream() != NULL) result = inputStream()->tellg();
 	else printf("Warning: LineParser tried to tellg() on a non-existent input file.\n");
 	return result;
 }
@@ -273,8 +318,8 @@ void LineParser::seekg(streampos pos)
 {
 	if (inputFile_ != NULL)
 	{
-		if (inputFile_->eof()) inputFile_->clear();
-		inputFile_->seekg(pos);
+		if (inputStream()->eof()) inputStream()->clear();
+		inputStream()->seekg(pos);
 	}
 	else printf("Warning: LineParser tried to seekg() on a non-existent input file.\n");
 }
@@ -282,14 +327,14 @@ void LineParser::seekg(streampos pos)
 // Seek n bytes in specified direction in input stream
 void LineParser::seekg(streamoff off, ios_base::seekdir dir)
 {
-	if (inputFile_ != NULL) inputFile_->seekg(off, dir);
+	if (inputStream() != NULL) inputFile_->seekg(off, dir);
 	else printf("Warning: LineParser tried to seekg() on a non-existent input file.\n");
 }
 
 // Rewind input stream to start
 void LineParser::rewind()
 {
-	if (inputFile_ != NULL) inputFile_->seekg(0, ios::beg);
+	if (inputStream() != NULL) inputFile_->seekg(0, ios::beg);
 	else Messenger::print("No file currently open to rewind.\n");
 }
 
@@ -300,29 +345,31 @@ bool LineParser::eofOrBlank() const
 	bool result;
 	if ((!processPool_) || processPool_->isMaster())
 	{
-		if (inputFile_ == NULL) return true;
+		if (inputStream() == NULL) return true;
+
 		// Simple check first - is this the end of the file?
-		if (inputFile_->eof()) return true;
+		if (inputStream()->eof()) return true;
+
 		// Otherwise, store the current file position and search for a non-whitespace character (or end of file)
-		streampos pos = inputFile_->tellg();
+		streampos pos = inputStream()->tellg();
 		
 		// Skip through whitespace, searching for 'hard' character
 		char c;
 		result  = true;
 		do
 		{
-			inputFile_->get(c);
-			if (inputFile_->eof()) break;
+			inputStream()->get(c);
+			if (inputStream()->eof()) break;
 			// If a whitespace character then skip it....
 			if ((c == ' ') || (c == '\r') || ( c == '\n') || (c == '\t') || (c == '\0'))
 			{
-				if (inputFile_->eof()) break;
+				if (inputStream()->eof()) break;
 				else continue;
 			}
 			result = false;
 			break;
 		} while (1);
-		inputFile_->seekg(pos);
+		inputStream()->seekg(pos);
 	}
 
 	// Broadcast result to pool if it is defined
@@ -338,17 +385,18 @@ bool LineParser::eofOrBlank() const
 // Read single line from internal file source
 LineParser::ParseReturnValue LineParser::readNextLine(int optionMask)
 {
+	LineParser::ParseReturnValue result;
 	// Master will check the file and broadcast the result
-	LineParser::ParseReturnValue result = LineParser::Success;
+	result = LineParser::Success;
 	if ((!processPool_) || processPool_->isMaster())
 	{
 		// Returns : 0=ok, 1=error, -1=eof
-		if (inputFile_ == NULL)
+		if (fileInput_ && (inputFile_ == NULL))
 		{
 			printf("Error: No input file open for LineParser::readNextLine.\n");
 			result = LineParser::Fail;
 		}
-		else if (inputFile_->eof()) result = LineParser::EndOfFile;
+		else if (inputStream()->eof()) result = LineParser::EndOfFile;
 	}
 
 	// Broadcast result of file check
@@ -358,7 +406,7 @@ LineParser::ParseReturnValue LineParser::readNextLine(int optionMask)
 		if (result != LineParser::Success) return result;
 	}
 
-	// Master will read the line and broadcast the result of the read
+	// Master (if appropriate) will read the line and broadcast the result of the read
 	if ((!processPool_) || processPool_->isMaster())
 	{
 		// Loop until we get 'suitable' line from file
@@ -369,14 +417,16 @@ LineParser::ParseReturnValue LineParser::readNextLine(int optionMask)
 			char chr;
 			lineLength_ = 0;
 			result = LineParser::Fail;
-			while (inputFile_->get(chr).good())
+			while (inputStream()->get(chr).good())
 			{
 				if (chr == '\r')
 				{
-					if (inputFile_->peek() == '\n') inputFile_->ignore();
+					if (inputStream()->peek() == '\n') inputStream()->ignore();
 					break;
 				}
 				else if (chr == '\n') break;
+				else if ((chr == ';') && (optionMask&LineParser::SemiColonLineBreaks)) break;
+
 				line_[lineLength_++] = chr;
 
 				// Check here for overfilling the line_ buffer - perhaps it's a binary file?
@@ -405,8 +455,8 @@ LineParser::ParseReturnValue LineParser::readNextLine(int optionMask)
 				{
 					// Blank line - if we're at the end of the file, return EOF.
 					// Otherwise, read in another line.
-					if (inputFile_->eof()) result = LineParser::EndOfFile;
-					else if (inputFile_->fail()) result = LineParser::Fail;
+					if (inputStream()->eof()) result = LineParser::EndOfFile;
+					else if (inputStream()->fail()) result = LineParser::Fail;
 					else continue;
 				}
 				else result = LineParser::Success;
@@ -422,7 +472,7 @@ LineParser::ParseReturnValue LineParser::readNextLine(int optionMask)
 // 		printf("LineParser Returned line = [%s], length = %i\n",line_,lineLength_);
 	}
 
-	// Broadcast result of file check
+	// Broadcast result
 	if (processPool_)
 	{
 		if (!processPool_->broadcast(EnumCast<LineParser::ParseReturnValue>(result))) return LineParser::Fail;
@@ -666,7 +716,7 @@ bool LineParser::getRestDelim(CharString* destarg)
 bool LineParser::getArgDelim(int optionMask, CharString* destarg)
 {
 	bool result = getNextArg(optionMask, destarg);
-	printf("getArgDelim = %s [%s]\n", result ? "true" : "false", destarg->get());
+// 	printf("getArgDelim = %s [%s]\n", result ? "true" : "false", destarg->get());
 	return result;
 }
 
@@ -685,13 +735,13 @@ bool LineParser::getCharsDelim(CharString* destarg)
 	int length = 0;
 	bool result = true;
 	char c;
-	while (!inputFile_->eof())
+	while (!inputStream()->eof())
 	{
-		inputFile_->get(c);
+		inputStream()->get(c);
 		if ((c == '\n') || (c == '\t') || (c == '\r') || (c == ' '))
 		{
 			// Eat DOS-style line terminator
-			if ((c == '\r') && (inputFile_->peek() == '\n')) inputFile_->get(c);
+			if ((c == '\r') && (inputStream()->peek() == '\n')) inputStream()->get(c);
 			if (length != 0) break;
 			else continue;
 		}
@@ -812,7 +862,7 @@ bool LineParser::getCharsDelim(int optionMask, CharString* source, CharString* d
 	// Finalise argument
 	tempArg_[arglen] = '\0';
 	// Store the result in the desired destination
-	if (destarg != NULL) *destarg = tempArg_;
+	if (destarg != NULL) (*destarg) = tempArg_;
 	// Trim characters from source string
 	source->eraseStart(pos);
 	if (failed) return false;
@@ -834,22 +884,22 @@ const char* LineParser::getChars(int nchars, bool skipeol)
 	else if (nchars < 0)
 	{
 		tempArg_[0] = '\0';
-		for (int i=nchars; i<0; i++) inputFile_->unget();
+		for (int i=nchars; i<0; i++) inputStream()->unget();
 	}
 	else for (i=0; i < nchars; ++i)
 	{
-		inputFile_->get(c);
-		if (skipeol) while ((c == '\n') || (c == '\r')) { if (inputFile_->eof()) break; inputFile_->get(c); }
+		inputStream()->get(c);
+		if (skipeol) while ((c == '\n') || (c == '\r')) { if (inputStream()->eof()) break; inputStream()->get(c); }
 		tempArg_[i] = c;
-		if (inputFile_->eof()) break;
+		if (inputStream()->eof()) break;
 	}
 	tempArg_[i] = '\0';
-	if (inputFile_->eof())
+	if (inputStream()->eof())
 	{
 	//	closeFile();
 		return NULL;
 	}
-	if (inputFile_->fail())
+	if (inputStream()->fail())
 	{
 	//	closeFile();
 		return NULL;
@@ -867,14 +917,14 @@ bool LineParser::writeLine(const char* s) const
 			Messenger::print("Unable to delayed-writeLine - destination cache is not open.\n");
 			return false;
 		}
-		else* cachedFile_ << s;
+		else (*cachedFile_) << s;
 	}
 	else if (outputFile_ == NULL)
 	{
 		Messenger::print("Unable to direct-writeLine - destination file is not open.\n");
 		return false;
 	}
-	else* outputFile_ << s;
+	else (*outputFile_) << s;
 	return true;
 }
 
@@ -904,8 +954,8 @@ bool LineParser::writeLineF(const char* fmt, ...) const
 	va_start(arguments,fmt);
 	vsprintf(s,fmt,arguments);
 	va_end(arguments);
-	if (directOutput_) *outputFile_ << s;
-	else* cachedFile_ << s;
+	if (directOutput_) (*outputFile_) << s;
+	else (*cachedFile_) << s;
 	return true;
 }
 

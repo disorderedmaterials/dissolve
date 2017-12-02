@@ -48,15 +48,15 @@ class LineParser
 	// Parse Options Enum
 	enum ParseOption
 	{
-		Defaults = 0,		/* Default parsing behaviour */
-		StripComments = 1,	/* Automatically strip comments (beginning # or //) from files */
-		UseQuotes = 2,		/* Quoted text in files is retained as a single delimited argument */
-		SkipBlanks = 4,		/* Skip blank lines (those containing nothing or only whitespace) */
-		StripBrackets = 8,	/* Remove parentheses during parsing */
-		NoEscapes = 16,		/* Don't convert excaped characters */
-		UseBraces = 32,		/* Text inside curly brackets is retaind as a single argument */
-		NormalCommas = 64,	/* Don't treat commas as delimiting marks in files */
-		DummyOption = 128,
+		Defaults = 0,			/* Default parsing behaviour */
+		StripComments = 1,		/* Automatically strip comments (beginning # or //) from files */
+		UseQuotes = 2,			/* Quoted text in files is retained as a single delimited argument */
+		SkipBlanks = 4,			/* Skip blank lines (those containing nothing or only whitespace) */
+		StripBrackets = 8,		/* Remove parentheses during parsing */
+		NoEscapes = 16,			/* Don't convert excaped characters */
+		UseBraces = 32,			/* Text inside curly brackets is retaind as a single argument */
+		NormalCommas = 64,		/* Don't treat commas as delimiting marks in files */
+		SemiColonLineBreaks = 128,	/* Treat semicolons as line-breaks */
 		nParseOptions = 9
 	};
 	// Parse Return Value
@@ -88,10 +88,16 @@ class LineParser
 	int lastLineNo_;
 	// Source stream for reading
 	ifstream* inputFile_;
+	// Source string stream for reading
+	stringstream* inputStrings_;
 	// Target stream for writing
 	ofstream* outputFile_;
 	// Target stream for cached writing
 	stringstream* cachedFile_;
+
+	private:
+	// Return current stream for input
+	istream* inputStream() const;
 
 	public:
 	// Reset data
@@ -110,6 +116,8 @@ class LineParser
 	bool isFileReadOnly() const;
 	// Open new file for reading
 	bool openInput(const char* filename);
+	// Open input string for reading
+	bool openInputString(const char* string);
 	// Open new stream for writing
 	bool openOutput(const char* filename, bool directOutput = true);
 	// Open existing stream for writing
@@ -138,6 +146,8 @@ class LineParser
 	 * Read/Write Routines
 	 */
 	private:
+	// Whether input is from file or strings
+	bool fileInput_;
 	// Whether output is cached or direct
 	bool directOutput_;
 	// Gets all delimited args from internal line
