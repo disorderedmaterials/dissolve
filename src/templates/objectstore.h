@@ -115,7 +115,7 @@ template <class T> class ObjectStore
 
 
 	/*
-	 * Object Pointer
+	 * Object Data
 	 */
 	private:
 	// Pointer to object that this ObjectStore was created with
@@ -149,6 +149,11 @@ template <class T> class ObjectStore
 	const char* objectName()
 	{
 		return objectInfo_.name();
+	}
+	// Return whether object matches this name
+	bool objectNameIs(const char* name)
+	{
+		return (DUQSys::sameString(objectInfo_.name(), name, true));
 	}
 
 
@@ -224,13 +229,20 @@ template <class T> class ObjectStore
 
 		return true;
 	}
-	// Find specified resource
-	static T* findResource(const char* resourceName)
+	// Return whether the specified object name is an object of this type
+	static bool isObject(const char* objectName)
+	{
+		// Get part before '@', which denotes the type
+		const char* prefix = DUQSys::beforeChar(objectName, '@');
+		return DUQSys::sameString(prefix, objectTypeName_);
+	}
+	// Find specified object
+	static T* findObject(const char* objectName)
 	{
 		for (RefListItem<T,int>* ri = objects_.first(); ri != NULL; ri = ri->next)
 		{
 			T* item = ri->item;
-			if (DUQSys::sameString(item->objectInfo()->resourceName(), resourceName, true)) return item;
+			if (item->objectNameIs(objectName)) return item;
 		}
 		return NULL;
 	}
