@@ -195,10 +195,6 @@ class UChromaBase
 	EditFitKernelDialog editFitKernelDialog_;
 	// Save Image Dialog
 	SaveImageDialog saveImageDialog_;
-	// Statusbar info line label
-	QLabel* statusBarInfoLabel_;
-	// Statusbar rendering time label
-	QLabel* statusBarRenderingTimeLabel_;
 
 
 	/*

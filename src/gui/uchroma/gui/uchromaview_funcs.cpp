@@ -81,13 +81,6 @@ UChromaViewWidget::UChromaViewWidget(QWidget* parent) : QWidget(parent), UChroma
 	actionGroup->addAction(ui.actionInteractY);
 	actionGroup->addAction(ui.actionInteractZ);
 
-	// Add QLabel as a normal widget to the status bar
-	statusBarInfoLabel_ = new QLabel(this);
-	statusBarInfoLabel_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
-// 	ui.StatusBar->addWidget(statusBarInfoLabel_);
-	statusBarRenderingTimeLabel_ = new QLabel(this);
-// 	ui.StatusBar->addPermanentWidget(statusBarRenderingTimeLabel_);	
-
 	// Set initial interaction mode
 	setInteractionMode(UChromaBase::ViewInteraction, -1);
 }
@@ -161,3 +154,4 @@ void UChromaViewWidget::dropEvent(QDropEvent* event)
 
 	event->acceptProposedAction();
 }
+

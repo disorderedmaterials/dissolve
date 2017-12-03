@@ -33,9 +33,6 @@ void UChromaViewWidget::updateGUI()
 	updateDisplay();
 	updateUndoRedo();
 
-	// Update status bar label
-	statusBarInfoLabel_->setText(interactionModeHelp(interactionMode_));
-
 	refreshing_ = false;
 }
 
@@ -100,16 +97,11 @@ void UChromaViewWidget::updateUndoRedo()
 // Update coordinate info
 void UChromaViewWidget::updateCoordinateInfo()
 {
-	if (interactionAxis_ == -1) ui.InfoCoordinateLabel->setText("{--,--,--}");
-	else if (interactionAxis_ == 0) ui.InfoCoordinateLabel->setText("{"+QString::number(currentInteractionValue_)+",--,--}");
-	else if (interactionAxis_ == 1) ui.InfoCoordinateLabel->setText("{--,"+QString::number(currentInteractionValue_)+",--}");
-	else if (interactionAxis_ == 2) ui.InfoCoordinateLabel->setText("{--,--,"+QString::number(currentInteractionValue_)+"}");
 }
 
 // Update text of renderTimeLabel_ in statusbar
 void UChromaViewWidget::updateRenderTimeLabel(QString text)
 {
-	statusBarRenderingTimeLabel_->setText(text);
 }
 
 // Update title bar of main window

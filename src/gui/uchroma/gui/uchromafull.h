@@ -218,6 +218,12 @@ class UChromaFullWindow : public QMainWindow, public UChromaBase
 	/*
 	 * Update (satisfying virtuals in UChromaBase)
 	 */
+	private:
+	// Statusbar info line label
+	QLabel* statusBarInfoLabel_;
+	// Statusbar rendering time label
+	QLabel* statusBarRenderingTimeLabel_;
+
 	public slots:
 	// Update all aspects of GUI
 	void updateGUI();
