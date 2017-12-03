@@ -38,9 +38,15 @@ ModuleControlWidget::ModuleControlWidget(QWidget* parent, Module* module, DUQ& d
 	ui.setupUi(this);
 
 	// Set information panel contents
-	CharString topText("%s @ %s", module_->name(), module_->configurationLocal() && module_->targetConfigurations().first() ? module_->targetConfigurations().first()->item->name() : "[NO CONFIG?]");
+	CharString topText("%s (%s) @ %s", module_->name(), module_->uniqueName(), module_->configurationLocal() ? (module_->targetConfigurations().first() ? module_->targetConfigurations().first()->item->name() : "[NO CONFIG?]") : "Processing");
 	ui.TopLabel->setText(topText.get());
-	CharString bottomText("%s", module_->uniqueName());
+	CharString bottomText;
+	RefListIterator<Configuration,bool> configIterator(module_->targetConfigurations());
+	while (Configuration* cfg = configIterator.iterate())
+	{
+		if (bottomText.isEmpty()) bottomText.sprintf("Targets: %s", cfg->name());
+		else bottomText.strcatf(", %s", cfg->name());
+	}
 	ui.BottomLabel->setText(bottomText.get());
 
 	// Set up options
@@ -64,7 +70,11 @@ ModuleControlWidget::~ModuleControlWidget()
 // Update controls within widget
 void ModuleControlWidget::updateControls()
 {
-	// Update keyword widgets
+	// Update Control group
+	ui.EnabledCheck->setChecked(module_->enabled());
+	ui.FrequencySpin->setValue(module_->frequency());
+
+	// Update Module Keywords group
 	updateKeywordWidgets();
 
 	// Update control widget
@@ -156,5 +166,19 @@ void ModuleControlWidget::updateKeywordWidgets()
 
 	RefListIterator<KeywordWidgetBase,bool> keywordIterator(keywordWidgets_);
 	while (KeywordWidgetBase* keywordWidget = keywordIterator.iterate()) keywordWidget->updateValue(moduleData, module_->uniqueName());
+}
+
+/*
+ * Widget Slots
+ */
+
+void ModuleControlWidget::on_EnabledCheck_clicked(bool checked)
+{
+	module_->setEnabled(checked);
+}
+
+void ModuleControlWidget::on_FrequencySpin_valueChanged(int value)
+{
+	module_->setFrequency(value);
 }
 
