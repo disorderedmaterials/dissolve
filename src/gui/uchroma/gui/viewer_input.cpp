@@ -109,6 +109,8 @@ void Viewer::mouseMoveEvent(QMouseEvent* event)
 
 	rMouseLast_.set(event->x(), event->y(), 0.0);
 
+	rMouseLastLocal_ = uChromaBase_->screenToLocal(event->x(), event->y());
+
 	setFocus();
 
 	if (refresh) uChromaBase_->updateGUI();

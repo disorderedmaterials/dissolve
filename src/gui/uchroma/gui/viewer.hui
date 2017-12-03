@@ -177,18 +177,20 @@ class Viewer : public QOpenGLWidget, protected QOpenGLFunctions
 	Vec3<double> rMouseDown_;
 	// Canvas coordinates of mouse cursor
 	Vec3<double> rMouseLast_;
+	// Axis coordinates of mouse cursor
+	Vec3<double> rMouseLastLocal_;
 	// Current state of mouse buttons
 	Qt::MouseButtons buttonState_;
 
 	protected:
 	// Qt Virtual (mouse press event)
-	void mousePressEvent(QMouseEvent*);
+	void mousePressEvent(QMouseEvent* event);
 	// Qt Virtual (mouse release event)
-	void mouseReleaseEvent(QMouseEvent*);
+	void mouseReleaseEvent(QMouseEvent* event);
 	// Qt Virtual (mouse move event)
-	void mouseMoveEvent(QMouseEvent*);
+	void mouseMoveEvent(QMouseEvent* event);
 	// Qt Virtual (mouse wheel event)
-	void wheelEvent(QWheelEvent*);
+	void wheelEvent(QWheelEvent* event);
 	// Qt Virtual (mouse double click event)
 	void mouseDoubleClickEvent(QMouseEvent* event);
 

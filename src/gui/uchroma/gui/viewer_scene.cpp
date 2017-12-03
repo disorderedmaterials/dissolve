@@ -284,30 +284,6 @@ void Viewer::renderFullScene(int xOffset, int yOffset)
 		// Disable current clip planes
 		glDisable(GL_CLIP_PLANE0);
 		glDisable(GL_CLIP_PLANE1);
-
-		// Render toolbar?
-// 		// Setup an orthographic matrix
-// 		glMatrixMode(GL_PROJECTION);
-// 		glLoadIdentity();
-// 		glOrtho(0, pane->viewportMatrix()[2], 0, pane->viewportMatrix()[3], -10, 10);
-// 		glClear(GL_DEPTH_BUFFER_BIT);
-// 
-// 		glMatrixMode(GL_MODELVIEW);
-// 		glLoadIdentity();
-// 		glColor4fv(colourTransparentGray);
-// 		glBegin(GL_LINE_LOOP);
-// 		glVertex2i(pane->viewportMatrix()[2]-2, pane->viewportMatrix()[3]-2);
-// 		glVertex2i(pane->viewportMatrix()[2]-2, pane->viewportMatrix()[3]-16);
-// 		glVertex2i(pane->viewportMatrix()[2]-16, pane->viewportMatrix()[3]-16);
-// 		glVertex2i(pane->viewportMatrix()[2]-16, pane->viewportMatrix()[3]-2);
-// 		glEnd();
-// 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-// 		glBegin(GL_LINE_LOOP);
-// 		glVertex2i(pane->viewportMatrix()[2]-2, pane->viewportMatrix()[3]-2);
-// 		glVertex2i(pane->viewportMatrix()[2]-2, pane->viewportMatrix()[3]-6);
-// 		glVertex2i(pane->viewportMatrix()[2]-16, pane->viewportMatrix()[3]-6);
-// 		glVertex2i(pane->viewportMatrix()[2]-16, pane->viewportMatrix()[3]-2);
-// 		glEnd();
 	}
 }
 
