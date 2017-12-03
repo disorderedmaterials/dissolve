@@ -809,6 +809,51 @@ Vec3<double> ViewPane::screenToModel(int x, int y, double z)
 	return modelr;
 }
 
+// Calculate selection axis coordinate from supplied screen coordinates
+double ViewPane::screenToAxis(int axis, int x, int y, bool clamp)
+{
+	// Check for a valid axis
+	if (axis == -1) return 0.0;
+
+	// Mirror y-coordinate
+	y = viewportMatrix_[3] - y;
+
+// 	printf("Test: min=%f, max=%f\n", min_[0], max_[0]);
+// 	rMouseLast_.print();
+// 	axisCoordMin_[0].print();
+	// Project axis coordinates to get a screen-based yardstick
+	Vec3<double> axmin = modelToScreen(axes_.coordMin(axis));
+	Vec3<double> axmax = modelToScreen(axes_.coordMax(axis));
+// 	axmin.print();
+// 	axmax.print();
+
+	// Calculate vectors between axis minimum and mouse position (AM) and axis maximum (AB)
+	Vec3<double> ab(axmax.x - axmin.x, axmax.y - axmin.y, 0.0);
+	Vec3<double> am(x - axmin.x, y - axmin.y, 0.0);
+	Vec3<double> amNorm = am, abNorm = ab;
+	double ratio = am.magnitude() / ab.magnitude();
+	abNorm.normalise();
+	amNorm.normalise();
+// 	double angle = acos(abNorm.dp(amNorm));
+//	printf("Angle = %f, %f\n", angle, angle * DEGRAD);
+
+	// Calculate slice axis value - no need to account for inverted axes here, since this is accounted for in the vectors axmin and axmax
+	double axisValue;
+	if (axes_.logarithmic(axis)) axisValue = pow(10, abNorm.dp(amNorm)*ratio * (log10(axes_.max(axis)) - log10(axes_.min(axis))) + log10(axes_.min(axis)));
+	else axisValue = abNorm.dp(amNorm)*ratio * (axes_.max(axis) - axes_.min(axis)) + axes_.min(axis);
+//	printf("slicevalue = %f (%f)\n", axisValue, abNorm.dp(amNorm)*ratio);
+
+	// Clamp value to data range
+	if (clamp)
+	{
+		if (axisValue < axes_.min(axis)) axisValue = axes_.min(axis);
+		else if (axisValue > axes_.max(axis)) axisValue = axes_.max(axis);
+	// 	printf("ACMAG = %f, X = %f\n", ratio, axisValue);
+	}
+
+	return axisValue;
+}
+
 // Recalculate current view parameters (e.g. for 2D, autoStretched 3D etc.)
 void ViewPane::recalculateView(bool force)
 {

@@ -136,10 +136,6 @@ class UChromaBase
 	// Current interaction position on axis
 	double currentInteractionValue_;
 
-	protected:
-	// Calculate selection axis coordinate from supplied screen coordinates
-	double screenToAxis(int axis, int mouseX, int mouseY);
-
 	public:
 	// Return Viewer present in derived class
 	Viewer* viewer();
@@ -171,6 +167,8 @@ class UChromaBase
 	DataSet* currentSlice();
 	// Perform relevant double-click action, occurring at specified coordinate
 	void doubleClickInteraction(int mouseX, int mouseY);
+	// Calculate local coordinate from supplied screen coordinates
+	Vec3<double> screenToLocal(int mouseX, int mouseY);
 
 
 	/*

@@ -260,6 +260,8 @@ class ViewPane : public ListItem<ViewPane>, public ObjectStore<ViewPane>
 	double calculateRequiredZoom(double xMax, double yMax, double fraction);
 	// Convert screen coordinates into model space coordinates
 	Vec3<double> screenToModel(int x, int y, double z);
+	// Calculate selection axis coordinate from supplied screen coordinates
+	double screenToAxis(int axis, int x, int y, bool clamp);
 	// Recalculate current view parameters (e.g. for 2D, autostretched 3D etc.)
 	void recalculateView(bool force = false);
 	// Reset view matrix to face XY plane

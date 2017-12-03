@@ -56,54 +56,6 @@ const char* UChromaBase::interactionModeHelp(UChromaBase::InteractionMode mode)
 }
 
 /*
- * Private Functions
- */
-
-// Calculate interaction axis coordinate from supplied screen coordinates
-double UChromaBase::screenToAxis(int axis, int mouseX, int mouseY)
-{
-	// Check for a valid axis
-	if (axis == -1) return 0.0;
-
-	// Check for valid interaction pane
-	ViewPane* viewPane = currentViewPane();
-	if (viewPane == NULL) return 0.0;
-
-// 	printf("Test: min=%f, max=%f\n", min_[0], max_[0]);
-// 	rMouseLast_.print();
-// 	axisCoordMin_[0].print();
-	// Project axis coordinates to get a screen-based yardstick
-	Vec3<double> axmin = viewPane->modelToScreen(viewPane->axes().coordMin(axis));
-	Vec3<double> axmax = viewPane->modelToScreen(viewPane->axes().coordMax(axis));
-// 	axmin.print();
-// 	axmax.print();
-
-	// Calculate vectors between axis minimum and mouse position (AM) and axis maximum (AB)
-	Vec3<double> ab(axmax.x - axmin.x, axmax.y - axmin.y, 0.0);
-	Vec3<double> am(mouseX - axmin.x, mouseY - axmin.y, 0.0);
-	Vec3<double> amNorm = am, abNorm = ab;
-	double ratio = am.magnitude() / ab.magnitude();
-	abNorm.normalise();
-	amNorm.normalise();
-// 	double angle = acos(abNorm.dp(amNorm));
-//	printf("Angle = %f, %f\n", angle, angle * DEGRAD);
-
-	// Calculate slice axis value - no need to account for inverted axes here, since this is accounted for in the vectors axmin and axmax
-	Axes& axes = viewPane->axes();
-	double axisValue;
-	if (axes.logarithmic(axis)) axisValue = pow(10, abNorm.dp(amNorm)*ratio * (log10(axes.max(axis)) - log10(axes.min(axis))) + log10(axes.min(axis)));
-	else axisValue = abNorm.dp(amNorm)*ratio * (axes.max(axis) - axes.min(axis)) + axes.min(axis);
-//	printf("slicevalue = %f (%f)\n", axisValue, abNorm.dp(amNorm)*ratio);
-
-	// Clamp value to data range
-	if (axisValue < axes.min(axis)) axisValue = axes.min(axis);
-	else if (axisValue > axes.max(axis)) axisValue = axes.max(axis);
-// 	printf("ACMAG = %f, X = %f\n", ratio, axisValue);
-
-	return axisValue;
-}
-
-/*
  * Public Functions
  */
 
@@ -176,7 +128,7 @@ void UChromaBase::startInteraction(int mouseX, int mouseY, Qt::KeyboardModifiers
 	}
 
 	// Calculate axis value at start of interaction
-	clickedInteractionValue_ = screenToAxis(interactionAxis_, mouseX, mouseY);
+	clickedInteractionValue_ = currentViewPane()->screenToAxis(interactionAxis_, mouseX, mouseY, true);
 
 	// Store keyboard modifiers
 	clickedInteractionModifiers_ = modifiers;
@@ -203,7 +155,7 @@ void UChromaBase::updateInteractionPosition(int mouseX, int mouseY)
 	if (interactionAxis_ != -1)
 	{
 		// Calculate axis value
-		currentInteractionValue_ = screenToAxis(interactionAxis_, mouseX, mouseY);
+		currentInteractionValue_ = currentViewPane()->screenToAxis(interactionAxis_, mouseX, mouseY, true);
 
 		// Extract slice from collections in current pane (unless this is a SliceMonitor)
 		if (currentViewPane()->role() != ViewPane::SliceMonitorRole) currentViewPane()->collectionsUpdateCurrentSlices(interactionAxis_, currentInteractionValue_);
@@ -366,4 +318,19 @@ void UChromaBase::doubleClickInteraction(int mouseX, int mouseY)
 	// Reset clicked object info
 	clickedObject_ = Viewer::NoObject;
 	clickedObjectInfo_.clear();
+}
+
+// Calculate local coordinate from supplied screen coordinates
+Vec3<double> UChromaBase::screenToLocal(int mouseX, int mouseY)
+{
+	// Get ViewPane under mouse
+	ViewPane* viewPane = viewLayout_.paneAt(mouseX, mouseY);
+	if ((!viewPane) || (!viewPane->isFlatView())) return Vec3<double>();
+
+	Vec3<double> result;
+	if (viewPane->viewType() == ViewPane::FlatXYView) result.set(viewPane->screenToAxis(0, mouseX, mouseY, false), viewPane->screenToAxis(1, mouseX, mouseY, false), 0.0);
+	else if (viewPane->viewType() == ViewPane::FlatXZView) result.set(viewPane->screenToAxis(0, mouseX, mouseY, false), 0.0, viewPane->screenToAxis(2, mouseX, mouseY, false));
+	else if (viewPane->viewType() == ViewPane::FlatZYView) result.set(0.0, viewPane->screenToAxis(1, mouseX, mouseY, false), viewPane->screenToAxis(2, mouseX, mouseY, false));
+
+	return result;
 }
