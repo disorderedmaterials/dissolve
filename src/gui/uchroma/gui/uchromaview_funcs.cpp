@@ -116,7 +116,7 @@ void UChromaViewWidget::saveSettings()
 }
 
 /*
- * Drag / Drop Reimplementations
+ * Mouse Reimplementations
  */
 
 void UChromaViewWidget::dragEnterEvent(QDragEnterEvent* event)
@@ -153,5 +153,10 @@ void UChromaViewWidget::dropEvent(QDropEvent* event)
 	}
 
 	event->acceptProposedAction();
+}
+
+void UChromaViewWidget::mouseMoveEvent(QMouseEvent* event)
+{
+	
 }
 

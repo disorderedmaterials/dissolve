@@ -55,11 +55,12 @@ class UChromaViewWidget : public QWidget, public UChromaBase
 
 
 	/*
-	 * Drag / Drop Reimplementations
+	 * Mouse Reimplementations
 	 */
 	public:
 	void dragEnterEvent(QDragEnterEvent* event);
 	void dropEvent(QDropEvent* event);
+	void mouseMoveEvent(QMouseEvent* event);
 
 
 	/*
