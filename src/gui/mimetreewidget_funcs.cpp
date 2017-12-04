@@ -1,6 +1,6 @@
 /*
-	*** Object Tree
-	*** src/gui/objecttree_funcs.cpp
+	*** Mime Tree Widget
+	*** src/gui/mimetreewidget_funcs.cpp
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -19,59 +19,46 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/objecttree.hui"
-#include "gui/objectdata.h"
+#include "gui/mimetreewidget.hui"
+#include "gui/mimetreewidgetitem.h"
 #include <QMouseEvent>
 #include <QDrag>
 #include <QApplication>
 
 // Constructor
-ObjectTree::ObjectTree(QWidget* parent) : QTreeWidget(parent)
+MimeTreeWidget::MimeTreeWidget(QWidget* parent) : QTreeWidget(parent)
 {
 	setAcceptDrops(true);
-}
-
-/*
- * Object Data
- */
-
-// Set object data
-bool ObjectTree::addObjectData(ObjectData* data, QTreeWidgetItem* item, int column)
-{
-	if (!item) return false;
-
-	QString objectName = item->data(column, Qt::UserRole).toString();
-	data->addObject(qPrintable(objectName));
 }
 
 /*
  * Signals / Slots
  */
 
-void ObjectTree::dragEnterEvent(QDragEnterEvent *event)
+void MimeTreeWidget::dragEnterEvent(QDragEnterEvent *event)
 {
 	// Is the correct data type being dragged over us? No!
 	event->ignore();
 }
 
-void ObjectTree::dragLeaveEvent(QDragLeaveEvent *event)
+void MimeTreeWidget::dragLeaveEvent(QDragLeaveEvent *event)
 {
 	// Object has been dragged outside the organiser
 	update();
 	event->accept();
 }
 
-void ObjectTree::dragMoveEvent(QDragMoveEvent *event)
+void MimeTreeWidget::dragMoveEvent(QDragMoveEvent *event)
 {
 	event->ignore();
 }
 
-void ObjectTree::dropEvent(QDropEvent *event)
+void MimeTreeWidget::dropEvent(QDropEvent *event)
 {
 	event->ignore();
 }
 
-void ObjectTree::mousePressEvent(QMouseEvent* event)
+void MimeTreeWidget::mousePressEvent(QMouseEvent* event)
 {
 	// If the mouse press wasn't left button, ignore it
 	if (event->buttons().testFlag(Qt::LeftButton))
@@ -83,7 +70,7 @@ void ObjectTree::mousePressEvent(QMouseEvent* event)
 	QTreeWidget::mousePressEvent(event);
 }
 
-void ObjectTree::mouseMoveEvent(QMouseEvent* event)
+void MimeTreeWidget::mouseMoveEvent(QMouseEvent* event)
 {
 	// If the mouse press wasn't left button, ignore it
 	if (!event->buttons().testFlag(Qt::LeftButton))
@@ -103,9 +90,17 @@ void ObjectTree::mouseMoveEvent(QMouseEvent* event)
 	QTreeWidgetItem* item = itemAt(dragStartPos_);
 	if (!item) return;
 
-	// Construct mime data for drag event
-	ObjectData* mimeData = new ObjectData;
-	addObjectData(mimeData, item, 0);
+	// Cast the item into a MimeTreeWidgetItem
+	MimeTreeWidgetItem* mimeItem = (MimeTreeWidgetItem*) item;
+	if (!item)
+	{
+		printf("Failed to cast QTreeWidgetItem into MimeTreeWidgetItem.\n");
+		return;
+	}
+
+	// Construct mime data for drag event - copy MimeStrings object from MimeTreeWidget
+	MimeStrings* mimeData = new MimeStrings;
+	mimeData->add(mimeItem->mimeStrings());
 
 	QDrag *drag = new QDrag(this);
 	drag->setMimeData(mimeData);
@@ -122,7 +117,7 @@ void ObjectTree::mouseMoveEvent(QMouseEvent* event)
 	event->accept();
 }
 
-void ObjectTree::mouseReleaseEvent(QMouseEvent* event)
+void MimeTreeWidget::mouseReleaseEvent(QMouseEvent* event)
 {
 }
 

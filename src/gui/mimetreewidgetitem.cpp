@@ -1,6 +1,6 @@
 /*
-	*** Object Data
-	*** src/gui/objectdata_funcs.cpp
+	*** Mime Tree Widget Item
+	*** src/gui/mimetreewidgetitem.cpp
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -19,48 +19,25 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/objectdata.h"
+#include "gui/mimetreewidgetitem.h"
 
 // Constructor
-ObjectData::ObjectData()
+MimeTreeWidgetItem::MimeTreeWidgetItem(QTreeWidgetItem* parent, int type) : QTreeWidgetItem(parent, type)
 {
 }
 
 /*
- * Reimplementations
+ * Mime Data
  */
 
-bool ObjectData::hasFormat(const QString& mimeType) const
+// Add mime data of specified type
+void MimeTreeWidgetItem::addMimeString(MimeString::MimeStringType type, QString data)
 {
-	if (mimeType == "duq/objectdata") return true;
-
-	return false;
+	mimeStrings_.add(type, data);
 }
 
-QStringList ObjectData::formats() const
+// Return mime strings
+MimeStrings& MimeTreeWidgetItem::mimeStrings()
 {
-	return QStringList() << "duq/objectdata";
-}
-
-QVariant ObjectData::retrieveData(const QString& mimeType, QVariant::Type type) const
-{
-	if (mimeType == "duq/objectdata") return objects_;
-
-	return QVariant();
-}
-
-/*
- * ObjectData
- */
-
-// Add object item
-void ObjectData::addObject(const char* objectName)
-{
-	objects_ << objectName;
-}
-
-// Return object list
-QStringList ObjectData::objects()
-{
-	return objects_;
+	return mimeStrings_;
 }

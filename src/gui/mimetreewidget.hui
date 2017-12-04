@@ -1,6 +1,6 @@
 /*
-	*** Object Data
-	*** src/gui/objectdata.hui
+	*** Mime Tree Widget
+	*** src/gui/mimetreewidget.hui
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -19,45 +19,40 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_OBJECTDATA_H
-#define DUQ_OBJECTDATA_H
+#ifndef DUQ_MIMETREEWIDGET_H
+#define DUQ_MIMETREEWIDGET_H
 
-#include <QMimeData>
-#include "base/charstring.h"
-#include "templates/list.h"
+#include "gui/mimestrings.h"
+#include <QTreeWidget>
 
 // Forward declarations
 /* none */
 
-// Object Data
-class ObjectData : public QMimeData
+// Mime Tree Widget
+class MimeTreeWidget : public QTreeWidget
 {
+	Q_OBJECT
+
 	public:
 	// Constructor
-	ObjectData();
+	MimeTreeWidget(QWidget* parent);
 
-
-	/*
-	 * Reimplementations
-	 */
-	public:
-	bool hasFormat(const QString& mimeType) const;
-	QStringList formats() const;
-	QVariant retrieveData(const QString& mimeType, QVariant::Type type) const;
-
-
-	/*
-	 * ObjectData
-	 */
 	private:
-	// List of objects
-	QStringList objects_;
+	// Start of drag position
+	QPoint dragStartPos_;
 
-	public:
-	// Add object item
-	void addObject(const char* objectName);
-	// Return object list
-	QStringList objects();
+
+	/*
+	 * Signals / Slots
+	 */
+	protected:
+	void dragEnterEvent(QDragEnterEvent *event);
+	void dragLeaveEvent(QDragLeaveEvent *event);
+	void dragMoveEvent(QDragMoveEvent *event);
+	void dropEvent(QDropEvent *event);
+	void mousePressEvent(QMouseEvent *event);
+	void mouseMoveEvent(QMouseEvent *event);
+	void mouseReleaseEvent(QMouseEvent *event);
 };
 
 #endif
