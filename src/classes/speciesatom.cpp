@@ -102,7 +102,7 @@ void SpeciesAtom::setAtomType(AtomType* at)
 	// Check elements
 	if (at && (at->element() != element_))
 	{
-		Messenger::print("Warning: Refused to assign AtomType '%s' to SpeciesAtom, since their elements differ.\n", at->name());
+		Messenger::warn("Refused to assign AtomType '%s' to SpeciesAtom, since their elements differ.\n", at->name());
 	}
 	else atomType_ = at;
 }

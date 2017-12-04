@@ -21,7 +21,7 @@
 
 #include "gui/uchroma/gui/uchromaview.h"
 #include "gui/uchroma/render/fontinstance.h"
-#include "gui/objectdata.h"
+#include "gui/mimestrings.h"
 #include "templates/reflist.h"
 #include "templates/variantpointer.h"
 #include <QMessageBox>
@@ -122,33 +122,35 @@ void UChromaViewWidget::saveSettings()
 void UChromaViewWidget::dragEnterEvent(QDragEnterEvent* event)
 {
 	// Check that the event contains suitable data
-	if (event->mimeData()->hasFormat("duq/objectdata")) event->acceptProposedAction();
+	if (event->mimeData()->hasFormat("duq/mimestrings")) event->acceptProposedAction();
 }
 
 void UChromaViewWidget::dropEvent(QDropEvent* event)
 {
-	if (!event->mimeData()->hasFormat("duq/objectdata")) return;
+	if (!event->mimeData()->hasFormat("duq/mimestrings")) return;
 
-	// Cast into an ObjectData*
-	ObjectData* objectData = (ObjectData*) event->mimeData();
-	if (!objectData) return;
+	// Cast into a MimeStrings object
+	MimeStrings* mimeStrings = (MimeStrings*) event->mimeData();
+	if (!mimeStrings) return;
 
-	// Get ViewPane under drop point
+	// Set ViewPane under drop point as current
 	ViewPane* viewPane = viewLayout_.paneAt(event->pos().x(), height() - event->pos().y());
+	if (!viewPane) return;
+	setCurrentViewPane(viewPane);
 
-	// Loop over strings containing object data
-	foreach (const QString& objectName, objectData->objects())
+	// Loop over mime strings data
+	ListIterator<MimeString> mimeIterator(mimeStrings->mimeStrings());
+	while (MimeString* mimeString = mimeIterator.iterate())
 	{
-		printf("OBJECT DATA = %s\n", qPrintable(objectName));
-
-		// Check object type
-		if (XYData::isObject(qPrintable(objectName)))
+		switch (mimeString->type())
 		{
-			// Locate object and add it to the ViewPane under the mouse
-			XYData* data = XYData::findObject(qPrintable(objectName));
-			if (!data) return;
-
-			// Add data 
+			case (MimeString::UChromaCollectionBlockType):
+				addCollectionFromBlock(qPrintable(mimeString->data()));
+				updateDisplay();
+				break;
+			default:
+				Messenger::warn("Ignoring mime string data type %i, since we don't understand how to deal with it.\n", mimeString->type());
+				break;
 		}
 	}
 

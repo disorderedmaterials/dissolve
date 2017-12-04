@@ -248,7 +248,7 @@ bool DataSpaceRange::copyValues(IndexData xIndex, IndexData zIndex)
 			actualZ = displayDataSetStart_+z+zIndex.offset();
 			if ((actualZ < 0) || (actualZ >= dataSets.nItems()))
 			{
-				Messenger::print("Warning: Relative offset defined for Z reference when copying values, and %i is out of range (available indices are 1 through %i).\n", actualZ+1, dataSets.nItems());
+				Messenger::warn("Relative offset defined for Z reference when copying values, and %i is out of range (available indices are 1 through %i).\n", actualZ+1, dataSets.nItems());
 				dataSet = NULL;
 			}
 			else dataSet = dataSets[actualZ];
@@ -259,7 +259,7 @@ bool DataSpaceRange::copyValues(IndexData xIndex, IndexData zIndex)
 			actualZ = zIndex.index();
 			if ((actualZ < 0) || (actualZ >= dataSets.nItems()))
 			{
-				Messenger::print("Warning: Absolute index defined for Z reference when copying values, and %i is out of range (available indices are 1 through %i).\n", actualZ+1, dataSets.nItems());
+				Messenger::warn("Absolute index defined for Z reference when copying values, and %i is out of range (available indices are 1 through %i).\n", actualZ+1, dataSets.nItems());
 				dataSet = NULL;
 			}
 			else dataSet = dataSets[actualZ];

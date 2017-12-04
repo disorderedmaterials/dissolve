@@ -97,14 +97,14 @@ class DataSet : public ListItem<DataSet>
 	void setName(const char* name);
 	// Return name
 	const char* name();
-	// Load data from file
-	bool loadData(QDir sourceDir);
 	// Set data from supplied XYData
 	void setData(XYData& source);
 	// Set data from supplied XYData
 	void setSourceData(XYData* data);
 	// Return source XYData, if any
 	XYData* sourceXYData();
+	// Refresh source data (if not internal)
+	bool refreshData(QDir sourceDir = QDir());
 	// Return data
 	const XYData& data() const;
 	// Return X array from data

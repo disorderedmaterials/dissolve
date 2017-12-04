@@ -92,7 +92,7 @@ bool DataSpace::initialise(Collection* sourceCollection, int xIndexMin, int xInd
 	nDataSets_ = (displayDataSetEnd_ - displayDataSetStart_) + 1;
 	if ((displayDataSetStart_ < 0) || (displayDataSetEnd_ >= sourceCollection_->nDataSets()) || (nDataSets_ < 1))
 	{
-		Messenger::print("Error: Invalid dataset range used to generate DataSpace data : %i < n < %i (available range= 0 to %i).\n", displayDataSetStart_, displayDataSetEnd_, sourceCollection_->nDataSets()-1); 
+		Messenger::error("Invalid dataset range used to generate DataSpace data : %i < n < %i (available range= 0 to %i).\n", displayDataSetStart_, displayDataSetEnd_, sourceCollection_->nDataSets()-1); 
 		return false;
 	}
 	abscissaStart_ = xIndexMin;
@@ -100,7 +100,7 @@ bool DataSpace::initialise(Collection* sourceCollection, int xIndexMin, int xInd
 	nPoints_ = (abscissaEnd_ - abscissaStart_) + 1;
 	if ((abscissaStart_ < 0) || (abscissaEnd_ >= abscissa.nItems()) || (nPoints_ < 1))
 	{
-		Messenger::print("Error: Invalid abscissa range used to generate DataSpace data : %i < n < %i (available range= 0 to %i).\n", abscissaStart_, abscissaEnd_, abscissa.nItems()-1); 
+		Messenger::error("Invalid abscissa range used to generate DataSpace data : %i < n < %i (available range= 0 to %i).\n", abscissaStart_, abscissaEnd_, abscissa.nItems()-1); 
 		return false;
 	}
 
@@ -162,7 +162,7 @@ bool DataSpace::initialise(const DataSpace& source, bool referenceDataOnly)
 	nDataSets_ = (displayDataSetEnd_ - displayDataSetStart_) + 1;
 	if ((displayDataSetStart_ < 0) || (displayDataSetEnd_ >= sourceCollection_->nDataSets()) || (nDataSets_ < 1))
 	{
-		Messenger::print("Error: Invalid dataset range (from existing DataSpace) used to generate DataSpace data : %i < n < %i (available range= 0 to %i).\n", displayDataSetStart_, displayDataSetEnd_, sourceCollection_->nDataSets()-1); 
+		Messenger::error("Invalid dataset range (from existing DataSpace) used to generate DataSpace data : %i < n < %i (available range= 0 to %i).\n", displayDataSetStart_, displayDataSetEnd_, sourceCollection_->nDataSets()-1); 
 		return false;
 	}
 	const Array<double>& abscissa = sourceCollection_->displayAbscissa();
@@ -171,7 +171,7 @@ bool DataSpace::initialise(const DataSpace& source, bool referenceDataOnly)
 	nPoints_ = (abscissaEnd_ - abscissaStart_) + 1;
 	if ((abscissaStart_ < 0) || (abscissaEnd_ >= abscissa.nItems()) || (nPoints_ < 1))
 	{
-		Messenger::print("Error: Invalid abscissa range (from existing DataSpace) used to generate DataSpace data : %i < n < %i (available range= 0 to %i).\n", abscissaStart_, abscissaEnd_, abscissa.nItems()-1); 
+		Messenger::error("Invalid abscissa range (from existing DataSpace) used to generate DataSpace data : %i < n < %i (available range= 0 to %i).\n", abscissaStart_, abscissaEnd_, abscissa.nItems()-1); 
 		return false;
 	}
 

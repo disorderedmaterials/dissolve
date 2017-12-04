@@ -97,7 +97,7 @@ void CellDistributor::clearLocks(int cellIndex)
 	if (cellLocks_[cellIndex] != 0)
 	{
 		Vec3<int> gridRef = cellArray_.cell(cellIndex)->gridReference();
-		Messenger::print("Warning: Cleared existing locks (%i) from Cell id %i (%i,%i,%i).\n", cellLocks_[cellIndex], cellIndex, gridRef.x, gridRef.y, gridRef.z);
+		Messenger::warn("Cleared existing locks (%i) from Cell id %i (%i,%i,%i).\n", cellLocks_[cellIndex], cellIndex, gridRef.x, gridRef.y, gridRef.z);
 	}
 	cellLocks_[cellIndex] = 0;
 }

@@ -171,7 +171,7 @@ void Species::addAtomToGrain(SpeciesAtom* i, SpeciesGrain* gd)
 			// Is this the target GrainDefinition?
 			if (def == gd)
 			{
-				Messenger::print("Warning: Won't add duplicate of atom %i to grain '%s' in Species '%s'.\n", i->userIndex(), gd->name(), name());
+				Messenger::warn("Won't add duplicate of atom %i to grain '%s' in Species '%s'.\n", i->userIndex(), gd->name(), name());
 				return;
 			}
 			def->removeAtom(i);

@@ -533,14 +533,19 @@ bool Collection::loadDataSet(DataSet* dataSet)
 
 	uChromaBase_->setAsModified();
 
-	return dataSet->loadData(dataFileDirectory_);
+	return dataSet->refreshData(dataFileDirectory_);
 }
 
-// Reload data for all slices
-int Collection::loadAllDataSets()
+// Refresh (load or re-copy) data for all datasets
+int Collection::refreshDataSets()
 {
 	int nFailed = 0;
-	for (DataSet* dataSet = dataSets_.first(); dataSet != NULL; dataSet = dataSet->next) if (!dataSet->loadData(dataFileDirectory_)) ++nFailed;
+	for (DataSet* dataSet = dataSets_.first(); dataSet != NULL; dataSet = dataSet->next)
+	{
+		if (dataSet->dataSource() == DataSet::InternalSource) continue;
+
+		if (!dataSet->refreshData(dataFileDirectory_)) ++nFailed;
+	}
 
 	uChromaBase_->setAsModified();
 
@@ -1104,7 +1109,7 @@ Collection* Collection::currentSlice()
 // Add FitKernel, if one does not exist
 void Collection::addFitKernel()
 {
-	if (fitKernel_)	Messenger::print("Warning: Attempted to add a new FitKernel to collection '%s', but one already exists.\n", qPrintable(name_));
+	if (fitKernel_)	Messenger::warn("Attempted to add a new FitKernel to collection '%s', but one already exists.\n", qPrintable(name_));
 	else fitKernel_ = new FitKernel;
 	fitKernel_->setSourceCollection(parent_);
 	fitKernel_->setDestinationCollection(this);

@@ -41,7 +41,7 @@ SpeciesBond* Species::addBond(SpeciesAtom* i, SpeciesAtom* j)
 	// Check for existence of Bond already
 	if (hasBond(i, j))
 	{
-		Messenger::print("Warning: Refused to add a new Bond between atoms %i and %i in Species '%s' since it already exists.\n", i->userIndex(), j->userIndex(), name_.get());
+		Messenger::warn("Refused to add a new Bond between atoms %i and %i in Species '%s' since it already exists.\n", i->userIndex(), j->userIndex(), name_.get());
 		return NULL;
 	}
 	
@@ -120,7 +120,7 @@ SpeciesAngle* Species::addAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k)
 	// Check for existence of Angle already
 	if (hasAngle(i, j, k))
 	{
-		Messenger::print("Warning: Refused to add a new Angle between atoms %i, %i and %i in Species '%s' since it already exists.\n", i->userIndex(), j->userIndex(), k->userIndex(), name_.get());
+		Messenger::warn("Refused to add a new Angle between atoms %i, %i and %i in Species '%s' since it already exists.\n", i->userIndex(), j->userIndex(), k->userIndex(), name_.get());
 		return NULL;
 	}
 
@@ -206,7 +206,7 @@ SpeciesTorsion* Species::addTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom*
 	// Check for existence of Torsion already
 	if (hasTorsion(i, j, k, l))
 	{
-		Messenger::print("Warning: Refused to add a new Torsion between atoms %i, %i, %i and %i in Species '%s' since it already exists.\n", i->userIndex(), j->userIndex(), k->userIndex(), l->userIndex(), name_.get());
+		Messenger::warn("Refused to add a new Torsion between atoms %i, %i, %i and %i in Species '%s' since it already exists.\n", i->userIndex(), j->userIndex(), k->userIndex(), l->userIndex(), name_.get());
 		return NULL;
 	}
 

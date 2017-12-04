@@ -138,29 +138,34 @@ const char* DataSet::name()
 	return name_;
 }
 
-// Load data from file
-bool DataSet::loadData(QDir sourceDir)
+// Refresh source data (if not internal)
+bool DataSet::refreshData(QDir sourceDir)
 {
-	// Check that a fileName is specified - otherwise there is nothing to do
-	if (dataSource_ != DataSet::FileSource)
+	if (dataSource_ == DataSet::InternalSource) return false;
+	else if (dataSource_ == DataSet::FileSource)
 	{
-		Messenger::print("DataSet::loadData() - Datasource != FileSource\n");
-		return false;
+		// Clear any existing data
+		data_.arrayX().clear();
+		data_.arrayY().clear();
+
+		// Check file exists
+		if (!QFile::exists(sourceDir.absoluteFilePath(sourceFileName_.get())))
+		{
+			Messenger::error("File '%s' not found.\n", qPrintable(sourceFileName_));
+			return false;
+		}
+
+		// Read in the data
+		return data_.load(qPrintable(sourceDir.absoluteFilePath(sourceFileName_.get())));
+	}
+	else if (dataSource_ == DataSet::XYDataSource)
+	{
+		setData(*sourceXYData_);
+	
+		return true;
 	}
 
-	// Clear any existing data
-	data_.arrayX().clear();
-	data_.arrayY().clear();
-
-	// Check file exists
-	if (!QFile::exists(sourceDir.absoluteFilePath(sourceFileName_.get())))
-	{
-		Messenger::print("Error: File '%s' not found.\n", qPrintable(sourceFileName_));
-		return false;
-	}
-
-	// Read in the data
-	return data_.load(qPrintable(sourceDir.absoluteFilePath(sourceFileName_.get())));
+	return false;
 }
 
 // Set data from supplied XYData
@@ -179,6 +184,8 @@ void DataSet::setSourceData(XYData* data)
 	dataSource_ = DataSet::XYDataSource;
 
 	data_ = (*data);
+
+	notifyParent();
 }
 
 // Return data

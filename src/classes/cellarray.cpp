@@ -77,7 +77,7 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 	// How does the smalles length compare with the PairPotential range?
 	if (divisions.min() < minCellsPerSide)
 	{
-		Messenger::print("Warning: Box size only allows for %i whole divisions of the cell size (%f) along one or more axes, while we require at least %i.\n", divisions.min(), cellSize, minCellsPerSide);
+		Messenger::warn("Box size only allows for %i whole divisions of the cell size (%f) along one or more axes, while we require at least %i.\n", divisions.min(), cellSize, minCellsPerSide);
 		
 		// We must now take the shortest box length and divide by 3 to get the absolute maximum length to use on that side
 		minEl = boxLengths.minElement();

@@ -89,7 +89,7 @@ bool IsotopologueMix::addNextIsotopologue()
 	// Check to see if the are any Isotopologues available to add
 	if (mix_.nItems() == species_->nIsotopologues())
 	{
-		Messenger::print("Warning: Can't add another Isotopologue to the mixture since there are none left for Species '%s'.\n", species_->name());
+		Messenger::warn("Can't add another Isotopologue to the mixture since there are none left for Species '%s'.\n", species_->name());
 		return false;
 	}
 	

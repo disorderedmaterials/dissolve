@@ -135,8 +135,8 @@ class Collection : public ListItem<Collection>, public ObjectStore<Collection>
 	bool appendDataSet(const char* fileName);
 	// Load specified dataset
 	bool loadDataSet(DataSet* dataSet);
-	// Reload data for all dataset
-	int loadAllDataSets();
+	// Refresh (load or re-copy) data for all datasets
+	int refreshDataSets();
 	// Return data minima, calculating if necessary
 	Vec3<double> dataMin();
 	// Return data maxima, calculating if necessary

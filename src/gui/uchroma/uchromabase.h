@@ -283,6 +283,8 @@ class UChromaBase
 	Collection* addCollectionToCurrentViewPane(const char* name = NULL, int identifier = -1);
 	// Add new collection at the specified location
 	Collection* addCollectionFromLocator(const char* locator, Collection::CollectionType type, int listIndex);
+	// Add new Collection from Collection block data
+	Collection* addCollectionFromBlock(const char* blockData);
 	// Remove existing collection
 	void removeCollection(Collection* collection);
 	// Remove current collection
@@ -311,6 +313,8 @@ class UChromaBase
 	Collection* identifyCollection(int id);
 	// Set collection visibility
 	bool setCollectionVisible(const char* name, bool visible);
+	// Refresh referenced DataSets in all Collections
+	void refreshReferencedDataSets();
 
 
 	/*
@@ -331,6 +335,8 @@ class UChromaBase
 	void recalculateViewLayout(int contextWidth, int contextHeight);
 	// Set current view pane to the one under the specified screen coordinates
 	bool setCurrentViewPane(int layoutX, int layoutY);
+	// Set current view pane
+	bool setCurrentViewPane(ViewPane* viewPane);
 	// Return current view pane
 	ViewPane* currentViewPane();
 
@@ -557,8 +563,6 @@ class UChromaBase
 	// Read AxisBlock keywords
 	bool readAxisBlock(LineParser& parser, Axes& axes, int axis, bool strictBlockEnd = true);
 	// Read CollectionBlock keywords
-	bool readCollectionBlock(const char* block, Collection* collection);
-	// Read CollectionBlock keywords
 	bool readCollectionBlock(LineParser& parser, Collection* collection, bool strictBlockEnd = true);
 	// Read DataSetBlock keywords
 	bool readDataSetBlock(LineParser& parser, DataSet* dataSet, Collection* collection, bool strictBlockEnd = true);
@@ -600,6 +604,8 @@ class UChromaBase
 	const char* inputFile();
 	// Set whether to enforce hard fail on session file error
 	void setHardIOFail(bool hardFail);
+	// Parse main input blocks through specified parser
+	bool parseInputBlocks(LineParser& parser);
 	// Load session from file specified
 	bool loadSession(const char* fileName);
 	// Save session input to file specified

@@ -54,7 +54,7 @@ bool UChromaBase::readAxisBlock(LineParser& parser, Axes& axes, int axis, bool s
 				as = Axes::autoScaleMethod(parser.argc(1));
 				if (as == Axes::nAutoScaleMethods)
 				{
-					Messenger::print("Warning: Unrecognised autoscale method '%s'. Defaulting to '%s'.\n", parser.argc(1), Axes::autoScaleMethod(Axes::NoAutoScale));
+					Messenger::warn("Unrecognised autoscale method '%s'. Defaulting to '%s'.\n", parser.argc(1), Axes::autoScaleMethod(Axes::NoAutoScale));
 					as = Axes::NoAutoScale;
 					CHECKIOFAIL
 				}
@@ -88,7 +88,7 @@ bool UChromaBase::readAxisBlock(LineParser& parser, Axes& axes, int axis, bool s
 				stipple = LineStipple::stippleType(parser.argc(2));
 				if (stipple == LineStipple::nStippleTypes)
 				{
-					Messenger::print("Warning: Unrecognised line stipple type '%s'. Defaulting to 'NoStipple'.\n", parser.argc(2));
+					Messenger::warn("Unrecognised line stipple type '%s'. Defaulting to 'NoStipple'.\n", parser.argc(2));
 					stipple = LineStipple::NoStipple;
 					CHECKIOFAIL
 				}
@@ -101,7 +101,7 @@ bool UChromaBase::readAxisBlock(LineParser& parser, Axes& axes, int axis, bool s
 				stipple = LineStipple::stippleType(parser.argc(2));
 				if (stipple == LineStipple::nStippleTypes)
 				{
-					Messenger::print("Warning: Unrecognised line stipple type '%s'. Defaulting to 'NoStipple'.\n", parser.argc(2));
+					Messenger::warn("Unrecognised line stipple type '%s'. Defaulting to 'NoStipple'.\n", parser.argc(2));
 					stipple = LineStipple::NoStipple;
 					CHECKIOFAIL
 				}
@@ -117,7 +117,7 @@ bool UChromaBase::readAxisBlock(LineParser& parser, Axes& axes, int axis, bool s
 				anchor = TextPrimitive::textAnchor(parser.argc(1));
 				if (anchor == TextPrimitive::nTextAnchors)
 				{
-					Messenger::print("Warning: Unrecognised text anchor '%s'. Defaulting to '%s'.\n", parser.argc(1), TextPrimitive::textAnchor(TextPrimitive::TopMiddleAnchor));
+					Messenger::warn("Unrecognised text anchor '%s'. Defaulting to '%s'.\n", parser.argc(1), TextPrimitive::textAnchor(TextPrimitive::TopMiddleAnchor));
 					anchor = TextPrimitive::TopMiddleAnchor;
 					CHECKIOFAIL
 				}
@@ -147,7 +147,7 @@ bool UChromaBase::readAxisBlock(LineParser& parser, Axes& axes, int axis, bool s
 				ft = NumberFormat::formatType(parser.argc(1));
 				if (ft == NumberFormat::nNumberFormats)
 				{
-					Messenger::print("Warning: Unrecognised number format '%s'. Defaulting to '%s'.\n", parser.argc(1), NumberFormat::formatType(NumberFormat::DecimalFormat));
+					Messenger::warn("Unrecognised number format '%s'. Defaulting to '%s'.\n", parser.argc(1), NumberFormat::formatType(NumberFormat::DecimalFormat));
 					ft = NumberFormat::DecimalFormat;
 					CHECKIOFAIL
 				}
@@ -191,7 +191,7 @@ bool UChromaBase::readAxisBlock(LineParser& parser, Axes& axes, int axis, bool s
 				anchor = TextPrimitive::textAnchor(parser.argc(1));
 				if (anchor == TextPrimitive::nTextAnchors)
 				{
-					Messenger::print("Warning: Unrecognised text anchor '%s'. Defaulting to 'TopMiddle'.\n");
+					Messenger::warn("Unrecognised text anchor '%s'. Defaulting to 'TopMiddle'.\n");
 					anchor = TextPrimitive::TopMiddleAnchor;
 					CHECKIOFAIL
 				}
@@ -210,7 +210,7 @@ bool UChromaBase::readAxisBlock(LineParser& parser, Axes& axes, int axis, bool s
 				break;
 			// Unrecognised keyword
 			default:
-				Messenger::print("Warning: Unrecognised axis keyword: %s\n", parser.argc(0));
+				Messenger::warn("Unrecognised axis keyword: %s\n", parser.argc(0));
 				CHECKIOFAIL
 				break;
 		}
@@ -223,16 +223,6 @@ bool UChromaBase::readAxisBlock(LineParser& parser, Axes& axes, int axis, bool s
 	}
 
 	return true;
-}
-
-// Read CollectionBlock keywords
-bool UChromaBase::readCollectionBlock(const char* block, Collection* collection)
-{
-	// Create a local LineParser and set hte source string
-	LineParser parser;
-	parser.openInputString(block);
-	
-	return readCollectionBlock(parser, collection, false);
 }
 
 // Read CollectionBlock keywords
@@ -255,7 +245,7 @@ bool UChromaBase::readCollectionBlock(LineParser& parser, Collection* collection
 		UChromaBase::CollectionKeyword collectionKwd = collectionKeyword(parser.argc(0));
 		if ((collectionKwd != UChromaBase::nCollectionKeywords) && (collectionKeywordNArguments(collectionKwd) > (parser.nArgs()-1)))
 		{
-			Messenger::print("Error: Collection keyword '%s' requires %i arguments, but only %i have been provided.\n", collectionKeyword(collectionKwd), collectionKeywordNArguments(collectionKwd), parser.nArgs()-1);
+			Messenger::error("Collection keyword '%s' requires %i arguments, but only %i have been provided.\n", collectionKeyword(collectionKwd), collectionKeywordNArguments(collectionKwd), parser.nArgs()-1);
 			return false;
 		}
 		switch (collectionKwd)
@@ -265,7 +255,7 @@ bool UChromaBase::readCollectionBlock(LineParser& parser, Collection* collection
 				ac = Collection::alphaControl(parser.argc(1));
 				if (ac == Collection::nAlphaControls)
 				{
-					Messenger::print("Warning: Unrecognised alpha control type '%s'. Defaulting to '%s'.\n", parser.argc(1), Collection::alphaControl(Collection::OwnAlpha));
+					Messenger::warn("Unrecognised alpha control type '%s'. Defaulting to '%s'.\n", parser.argc(1), Collection::alphaControl(Collection::OwnAlpha));
 					ac = Collection::OwnAlpha;
 					CHECKIOFAIL
 				}
@@ -276,7 +266,7 @@ bool UChromaBase::readCollectionBlock(LineParser& parser, Collection* collection
 				alpha = parser.argd(1);
 				if ((alpha < 0.0) || (alpha > 1.0))
 				{
-					Messenger::print("Warning: Alpha value (%f) is out of range for %s keyword - it will be reset to 1.0.\n", alpha, collectionKeyword(collectionKwd));
+					Messenger::warn("Alpha value (%f) is out of range for %s keyword - it will be reset to 1.0.\n", alpha, collectionKeyword(collectionKwd));
 					alpha = 1.0;
 					CHECKIOFAIL
 				}
@@ -305,7 +295,7 @@ bool UChromaBase::readCollectionBlock(LineParser& parser, Collection* collection
 				cs = Collection::colourSource(parser.argc(1));
 				if (cs == Collection::nColourSources)
 				{
-					Messenger::print("Warning: Unrecognised colour source '%s'. Defaulting to '%s'.\n", parser.argc(1), Collection::colourSource(Collection::SingleColourSource));
+					Messenger::warn("Unrecognised colour source '%s'. Defaulting to '%s'.\n", parser.argc(1), Collection::colourSource(Collection::SingleColourSource));
 					cs = Collection::SingleColourSource;
 					CHECKIOFAIL
 				}
@@ -344,7 +334,7 @@ bool UChromaBase::readCollectionBlock(LineParser& parser, Collection* collection
 				// Check that a FitKernel exists in the current collection
 				if (!collection->fitKernel())
 				{
-					Messenger::print("Warning: No FitKernel exists in the collection '%s', but a FitParameters block was found.\nCreating a new one...\n", qPrintable(collection->name()));
+					Messenger::warn("No FitKernel exists in the collection '%s', but a FitParameters block was found.\nCreating a new one...\n", qPrintable(collection->name()));
 					collection->addFitKernel();
 				}
 				if (!readFitParametersBlock(parser, collection->fitKernel())) return false;
@@ -370,7 +360,7 @@ bool UChromaBase::readCollectionBlock(LineParser& parser, Collection* collection
 				stipple = LineStipple::stippleType(parser.argc(2));
 				if (stipple == LineStipple::nStippleTypes)
 				{
-					Messenger::print("Warning: Unrecognised line stipple type '%s'. Defaulting to 'NoStipple'.\n", parser.argc(2));
+					Messenger::warn("Unrecognised line stipple type '%s'. Defaulting to 'NoStipple'.\n", parser.argc(2));
 					stipple = LineStipple::NoStipple;
 					CHECKIOFAIL
 				}
@@ -389,7 +379,7 @@ bool UChromaBase::readCollectionBlock(LineParser& parser, Collection* collection
 				ds = Collection::displayStyle(parser.argc(1));
 				if (ds == Collection::nDisplayStyles)
 				{
-					Messenger::print("Warning: Unrecognised display style '%s'.\n", parser.argc(1));
+					Messenger::warn("Unrecognised display style '%s'.\n", parser.argc(1));
 					CHECKIOFAIL
 				}
 				collection->setDisplayStyle(ds);
@@ -408,7 +398,7 @@ bool UChromaBase::readCollectionBlock(LineParser& parser, Collection* collection
 				break;
 			// Unrecognised Keyword
 			default:
-				Messenger::print("Warning: Unrecognised collection keyword: %s\n", parser.argc(0));
+				Messenger::warn("Unrecognised collection keyword: %s\n", parser.argc(0));
 				CHECKIOFAIL
 				break;
 		}
@@ -468,7 +458,7 @@ bool UChromaBase::readDataSetBlock(LineParser& parser, DataSet* dataSet, Collect
 				source = DataSet::dataSource(parser.argc(1));
 				if (source == DataSet::nDataSources)
 				{
-					Messenger::print("Warning: Datasource for dataSet not recognised (%s)\n", parser.argc(1));
+					Messenger::warn("Datasource for dataSet not recognised (%s)\n", parser.argc(1));
 					CHECKIOFAIL
 					break;
 				}
@@ -479,9 +469,25 @@ bool UChromaBase::readDataSetBlock(LineParser& parser, DataSet* dataSet, Collect
 					if (parser.hasArg(2)) dataSet->setSourceFileName(parser.argc(2));
 					else
 					{
-						Messenger::print("Error: Expected data file name after 'Source File' declaration in dataSet '%s'.\n", qPrintable(dataSet->name()));
+						Messenger::error("Expected data file name after 'Source File' declaration in dataSet '%s'.\n", qPrintable(dataSet->name()));
 						return false;
 					}
+				}
+				else if (source == DataSet::XYDataSource)
+				{
+					if (!parser.hasArg(2))
+					{
+						Messenger::error("Object name for XYData expected, but none found.\n");
+						return false;
+					}
+					// Locate XYData
+					XYData* sourceXYData = XYData::findObject(parser.argc(2));
+					if (!sourceXYData)
+					{
+						Messenger::error("Couldn't locate specified XYData object.\n");
+						return false;
+					}
+					data = (*sourceXYData);
 				}
 				break;
 			case (UChromaBase::ZKeyword):
@@ -490,7 +496,7 @@ bool UChromaBase::readDataSetBlock(LineParser& parser, DataSet* dataSet, Collect
 				break;
 			// Unrecognised Keyword
 			default:
-				Messenger::print("Warning: Unrecognised DataSet keyword: %s\n", parser.argc(0));
+				Messenger::warn("Unrecognised DataSet keyword: %s\n", parser.argc(0));
 				CHECKIOFAIL
 				break;
 		}
@@ -536,12 +542,12 @@ bool UChromaBase::readFitParametersBlock(LineParser& parser, FitKernel* fitKerne
 			case (UChromaBase::FitResultsBlockKeyword):
 				// Make sure that the DataSpace has been initialised....
 				dataSpaceRange = NULL;
-				if (!fitKernel->initialiseDataSpace()) Messenger::print("Warning: Failed to create DataSpace for FitKernel, so cannot store FitResults.\n");
+				if (!fitKernel->initialiseDataSpace()) Messenger::warn("Failed to create DataSpace for FitKernel, so cannot store FitResults.\n");
 				else
 				{
 					// Get DataSpaceRange with index specified
 					dataSpaceRange = fitKernel->dataSpaceRange(parser.argi(1)-1);
-					if (dataSpaceRange == NULL) Messenger::print("Warning: Failed to get range with index %i in FitKernel. FitResults will be ignored.\n", parser.argi(1));
+					if (dataSpaceRange == NULL) Messenger::warn("Failed to get range with index %i in FitKernel. FitResults will be ignored.\n", parser.argi(1));
 				}
 				if (!readFitResultsBlock(parser, dataSpaceRange)) return false;
 				break;
@@ -561,7 +567,7 @@ bool UChromaBase::readFitParametersBlock(LineParser& parser, FitKernel* fitKerne
 				indexType = IndexData::indexType(parser.argc(2));
 				if (indexType == IndexData::nIndexTypes)
 				{
-					Messenger::print("Warning: Unrecognised type '%s' for reference '%s' - defaulting to 'Normal'.\n", parser.argc(2), parser.argc(1));
+					Messenger::warn("Unrecognised type '%s' for reference '%s' - defaulting to 'Normal'.\n", parser.argc(2), parser.argc(1));
 					CHECKIOFAIL
 				}
 				refVar->xIndex().setType(indexType);
@@ -570,7 +576,7 @@ bool UChromaBase::readFitParametersBlock(LineParser& parser, FitKernel* fitKerne
 				indexType = IndexData::indexType(parser.argc(5));
 				if (indexType == IndexData::nIndexTypes)
 				{
-					Messenger::print("Warning: Unrecognised type '%s' for reference '%s' - defaulting to 'Normal'.\n", parser.argc(5), parser.argc(1));
+					Messenger::warn("Unrecognised type '%s' for reference '%s' - defaulting to 'Normal'.\n", parser.argc(5), parser.argc(1));
 					CHECKIOFAIL
 				}
 				refVar->zIndex().setType(indexType);
@@ -583,7 +589,7 @@ bool UChromaBase::readFitParametersBlock(LineParser& parser, FitKernel* fitKerne
 				eqVar = fitKernel->variable(parser.argc(1));
 				if (!eqVar)
 				{
-					Messenger::print("Warning: Variable '%s' is not in fit equation, so will ignore settings in FitParameters.\n");
+					Messenger::warn("Variable '%s' is not in fit equation, so will ignore settings in FitParameters.\n");
 					CHECKIOFAIL
 				}
 				eqVar->setFit(parser.argb(2));
@@ -595,7 +601,7 @@ bool UChromaBase::readFitParametersBlock(LineParser& parser, FitKernel* fitKerne
 				rangeType = FitKernel::rangeType(parser.argc(1));
 				if (rangeType == FitKernel::nRangeTypes)
 				{
-					Messenger::print("Warning: Unrecognised range type '%s' given for X in fit. Defaulting to '%s'\n", parser.argc(1), FitKernel::rangeType(FitKernel::AbsoluteRange));
+					Messenger::warn("Unrecognised range type '%s' given for X in fit. Defaulting to '%s'\n", parser.argc(1), FitKernel::rangeType(FitKernel::AbsoluteRange));
 					rangeType = FitKernel::AbsoluteRange;
 					CHECKIOFAIL
 				}
@@ -616,7 +622,7 @@ bool UChromaBase::readFitParametersBlock(LineParser& parser, FitKernel* fitKerne
 				rangeType = FitKernel::rangeType(parser.argc(1));
 				if (rangeType == FitKernel::nRangeTypes)
 				{
-					Messenger::print("Warning: Unrecognised range type '%s' given for Z in fit. Defaulting to '%s'\n", parser.argc(1), FitKernel::rangeType(FitKernel::AbsoluteRange));
+					Messenger::warn("Unrecognised range type '%s' given for Z in fit. Defaulting to '%s'\n", parser.argc(1), FitKernel::rangeType(FitKernel::AbsoluteRange));
 					rangeType = FitKernel::AbsoluteRange;
 					CHECKIOFAIL
 				}
@@ -635,7 +641,7 @@ bool UChromaBase::readFitParametersBlock(LineParser& parser, FitKernel* fitKerne
 				break;
 			// Unrecognised Keyword
 			default:
-				Messenger::print("Warning: Unrecognised FitParameters keyword: %s\n", parser.argc(0));
+				Messenger::warn("Unrecognised FitParameters keyword: %s\n", parser.argc(0));
 				CHECKIOFAIL
 				break;
 		}
@@ -676,7 +682,7 @@ bool UChromaBase::readFitResultsBlock(LineParser& parser, DataSpaceRange* dataSp
 				break;
 			// Unrecognised Keyword
 			default:
-				Messenger::print("Warning: Unrecognised FitResults keyword: %s\n", parser.argc(0));
+				Messenger::warn("Unrecognised FitResults keyword: %s\n", parser.argc(0));
 				CHECKIOFAIL
 				break;
 		}
@@ -721,7 +727,7 @@ bool UChromaBase::readSettingsBlock(LineParser& parser, bool strictBlockEnd)
 				fmt = UChromaBase::imageFormat(parser.argc(4));
 				if (fmt == UChromaBase::nImageFormats)
 				{
-					Messenger::print("Warning: Unrecognised image format '%s'. Defaulting to '%s'.\n", parser.argc(4), UChromaBase::imageFormatExtension(UChromaBase::PNGFormat));
+					Messenger::warn("Unrecognised image format '%s'. Defaulting to '%s'.\n", parser.argc(4), UChromaBase::imageFormatExtension(UChromaBase::PNGFormat));
 					fmt = UChromaBase::PNGFormat;
 					CHECKIOFAIL
 				}
@@ -730,7 +736,7 @@ bool UChromaBase::readSettingsBlock(LineParser& parser, bool strictBlockEnd)
 				break;
 			// Unrecognised Keyword
 			default:
-				Messenger::print("Warning: Unrecognised settings keyword: %s\n", parser.argc(0));
+				Messenger::warn("Unrecognised settings keyword: %s\n", parser.argc(0));
 				CHECKIOFAIL
 				break;
 		}
@@ -780,7 +786,7 @@ bool UChromaBase::readViewBlock(LineParser& parser, bool strictBlockEnd)
 				break;
 			// Unrecognised Keyword
 			default:
-				Messenger::print("Warning: Unrecognised view keyword: %s\n", parser.argc(0));
+				Messenger::warn("Unrecognised view keyword: %s\n", parser.argc(0));
 				CHECKIOFAIL
 				break;
 		}
@@ -813,7 +819,7 @@ bool UChromaBase::readViewPaneBlock(LineParser& parser, ViewPane* pane, bool str
 		UChromaBase::ViewPaneKeyword viewPaneKwd = UChromaBase::viewPaneKeyword(parser.argc(0));
 		if ((viewPaneKwd != UChromaBase::nViewPaneKeywords) && (UChromaBase::viewPaneKeywordNArguments(viewPaneKwd) > (parser.nArgs()-1)))
 		{
-			Messenger::print("Error: ViewPane keyword '%s' requires %i arguments, but only %i have been provided.\n", UChromaBase::viewPaneKeyword(viewPaneKwd), UChromaBase::viewPaneKeywordNArguments(viewPaneKwd), parser.nArgs()-1);
+			Messenger::error("ViewPane keyword '%s' requires %i arguments, but only %i have been provided.\n", UChromaBase::viewPaneKeyword(viewPaneKwd), UChromaBase::viewPaneKeywordNArguments(viewPaneKwd), parser.nArgs()-1);
 			return false;
 		}
 		switch (viewPaneKwd)
@@ -828,7 +834,7 @@ bool UChromaBase::readViewPaneBlock(LineParser& parser, ViewPane* pane, bool str
 				axis = parser.argi(1);
 				if ((axis < 0) || (axis > 2))
 				{
-					Messenger::print("Warning: Axis index is out of range in input file. Defaults will be used.\n");
+					Messenger::warn("Axis index is out of range in input file. Defaults will be used.\n");
 					CHECKIOFAIL
 				}
 				if (!readAxisBlock(parser, pane->axes(), axis)) return false;
@@ -837,7 +843,7 @@ bool UChromaBase::readViewPaneBlock(LineParser& parser, ViewPane* pane, bool str
 			case (UChromaBase::BoundingBoxKeyword):
 				if ((parser.argi(1) < 0) || (parser.argi(1) >= ViewPane::nBoundingBoxes))
 				{
-					Messenger::print("Warning: Value is out of range for %s keyword.\n", UChromaBase::viewPaneKeyword(viewPaneKwd));
+					Messenger::warn("Value is out of range for %s keyword.\n", UChromaBase::viewPaneKeyword(viewPaneKwd));
 					CHECKIOFAIL
 				}
 				pane->setBoundingBox((ViewPane::BoundingBox) parser.argi(1));
@@ -879,7 +885,7 @@ bool UChromaBase::readViewPaneBlock(LineParser& parser, ViewPane* pane, bool str
 				role = ViewPane::paneRole(parser.argc(1));
 				if (role == ViewPane::nPaneRoles)
 				{
-					Messenger::print("Warning: Unrecognised role '%s' for pane '%s'. Defaulting to '%s'.\n", parser.argc(1), qPrintable(pane->name()), ViewPane::paneRole(ViewPane::StandardRole));
+					Messenger::warn("Unrecognised role '%s' for pane '%s'. Defaulting to '%s'.\n", parser.argc(1), qPrintable(pane->name()), ViewPane::paneRole(ViewPane::StandardRole));
 					role = ViewPane::StandardRole;
 					CHECKIOFAIL
 				}
@@ -891,7 +897,7 @@ bool UChromaBase::readViewPaneBlock(LineParser& parser, ViewPane* pane, bool str
 				collection = locateCollection(parser.argc(1));
 				if (!collection)
 				{
-					Messenger::print("Warning: Collection '%s' not found, and can't be associated to pane '%s'.\n", parser.argc(1), qPrintable(pane->name()));
+					Messenger::warn("Collection '%s' not found, and can't be associated to pane '%s'.\n", parser.argc(1), qPrintable(pane->name()));
 					CHECKIOFAIL
 				}
 				pane->addCollectionTarget(collection);
@@ -919,7 +925,7 @@ bool UChromaBase::readViewPaneBlock(LineParser& parser, ViewPane* pane, bool str
 				vt = ViewPane::viewType(parser.argc(1));
 				if (vt == ViewPane::nViewTypes)
 				{
-					Messenger::print("Warning: Unrecognised view type '%s'. Defaulting to '%s'.\n", parser.argc(1), ViewPane::viewType(ViewPane::NormalView));
+					Messenger::warn("Unrecognised view type '%s'. Defaulting to '%s'.\n", parser.argc(1), ViewPane::viewType(ViewPane::NormalView));
 					vt = ViewPane::NormalView;
 					CHECKIOFAIL
 				}
@@ -927,7 +933,7 @@ bool UChromaBase::readViewPaneBlock(LineParser& parser, ViewPane* pane, bool str
 				break;
 			// Unrecognised Keyword
 			default:
-				Messenger::print("Warning: Unrecognised ViewPane keyword: %s\n", parser.argc(0));
+				Messenger::warn("Unrecognised ViewPane keyword: %s\n", parser.argc(0));
 				CHECKIOFAIL
 				break;
 		}
@@ -966,60 +972,8 @@ bool UChromaBase::loadSession(const char* fileName)
 	// Set input file directory
 	sessionFileDirectory_ = fileName;
 
-	// Read line from file and decide what to do with it
-	UChromaBase::InputBlock block;
-	int nEmpty;
-	bool success;
-	while (!parser.eofOrBlank())
-	{
-		parser.getArgsDelim(LineParser::UseQuotes + LineParser::SkipBlanks + LineParser::SemiColonLineBreaks);
-
-		// We expect a block keyword in this loop...
-		block = UChromaBase::inputBlock(parser.argc(0));
-		switch (block)
-		{
-			// Collection Block
-			case (UChromaBase::CollectionBlock):
-				// Create new master Collection and set its title
-				currentCollection_ = addCollection(parser.argc(1));
-
-				// Load the collection data
-				success = readCollectionBlock(parser, currentCollection_);
-
-				// TODO Commented out 06/11/2015 - To Be Removed
-// 				// Check for empty slices
-// 				nEmpty = currentCollection_->nEmptyDataSets();
-// 				if (nEmpty != 0)
-// 				{
-// 					QMessageBox::StandardButton button = QMessageBox::warning(uChroma_, "Empty Data", QString("There are ") + QString::number(nEmpty) + " defined slices which contain no data in collection '" + currentCollection_->name() + "'.\nWould you like to reload these now from their source files?", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-// 					if (button == QMessageBox::Yes)
-// 					{
-// 						nEmpty = currentCollection_->loadAllDataSets();
-// 						
-// 						if (nEmpty > 0)
-// 						{
-// 							QMessageBox::warning(uChroma_, "Empty Data", QString("There are still ") + QString::number(nEmpty) + " defined slices which contain no data or whose original files could not be found.\nCheck the slice data directory, and/or the datafiles themselves.");
-// 						}
-// 					}
-// 				}
-				break;
-			// Settings
-			case (UChromaBase::SettingsBlock):
-				success = readSettingsBlock(parser);
-				break;
-			// View
-			case (UChromaBase::ViewBlock):
-				success = readViewBlock(parser);
-				break;
-			default:
-				Messenger::print("Warning: Unrecognised input block: %s\n", parser.argc(0));
-				CHECKIOFAIL
-				break;
-		}
-
-		// If we have failed for any reason, exit now
-		if (!success) break;
-	}
+	// Parse input blocks
+	bool success = parseInputBlocks(parser);
 	parser.closeFiles();
 
 	// Show a message if we encountered problems...
@@ -1036,4 +990,47 @@ bool UChromaBase::loadSession(const char* fileName)
 	setAsNotModified();
 
 	return true;
+}
+
+// Parse main input blocks through specified parser
+bool UChromaBase::parseInputBlocks(LineParser& parser)
+{
+	// Read line from file and decide what to do with it
+	UChromaBase::InputBlock block;
+	bool success = true;
+	while (!parser.eofOrBlank())
+	{
+		parser.getArgsDelim(LineParser::UseQuotes + LineParser::SkipBlanks + LineParser::SemiColonLineBreaks);
+
+		// We expect a block keyword in this loop...
+		block = UChromaBase::inputBlock(parser.argc(0));
+		switch (block)
+		{
+			// Collection Block
+			case (UChromaBase::CollectionBlock):
+				// Create new master Collection and set its title
+				currentCollection_ = addCollectionToCurrentViewPane(parser.argc(1));
+
+				// Load the collection data
+				success = readCollectionBlock(parser, currentCollection_);
+				break;
+			// Settings
+			case (UChromaBase::SettingsBlock):
+				success = readSettingsBlock(parser);
+				break;
+			// View
+			case (UChromaBase::ViewBlock):
+				success = readViewBlock(parser);
+				break;
+			default:
+				Messenger::warn("Unrecognised input block: %s\n", parser.argc(0));
+				CHECKIOFAIL
+				break;
+		}
+
+		// If we have failed for any reason, exit now
+		if (!success) break;
+	}
+
+	return success;
 }

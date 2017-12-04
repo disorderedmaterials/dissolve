@@ -21,6 +21,7 @@
 
 #include "modules/partials/gui/modulewidget.h"
 #include "gui/uchroma/gui/uchromaview.h"
+#include "gui/mimetreewidgetitem.h"
 #include "main/duq.h"
 #include "classes/atomtype.h"
 #include "templates/variantpointer.h"
@@ -61,7 +62,11 @@ PartialsModuleWidget::~PartialsModuleWidget()
 // Update controls within widget
 void PartialsModuleWidget::updateControls()
 {
+	// Repopulate source tree
 	repopulateSourceTree();
+
+	// Ensure that any displayed data is up-to-date
+	uChromaView_->refreshReferencedDataSets();
 }
 
 /*
@@ -87,23 +92,25 @@ void PartialsModuleWidget::addPartialSetToTree(PartialSet& partials, QTreeWidget
 		for (int m=n; m<partials.atomTypes().nItems(); ++m, atd2 = atd2->next)
 		{
 			// Create item to contain full data
-			QTreeWidgetItem* fullItem = new QTreeWidgetItem(setItem, rootType+PartialsModuleWidget::FullData);
+			MimeTreeWidgetItem* fullItem = new MimeTreeWidgetItem(setItem, rootType+PartialsModuleWidget::FullData);
 			fullItem->setText(0, CharString("%s-%s", atd1->atomTypeName(), atd2->atomTypeName()).get());
- 			fullItem->setData(0, Qt::UserRole, QString(partials.partial(n,m).objectName()));
+ 			fullItem->addMimeString(MimeString::UChromaCollectionBlockType, QString("Collection '%1'; ColourSource SingleColour; ColourSingle 0 0 0 255; LineStyle 1.0 Solid; DataSet 'Full'; Source XYData %2; Z 0.0; EndDataSet; EndCollection").arg(CharString("%s-%s", atd1->atomTypeName(), atd2->atomTypeName()).get(), partials.partial(n,m).objectName()));
 
 			// Add subitems with other data
 			// -- Bound partial
-			QTreeWidgetItem* subItem = new QTreeWidgetItem(fullItem, rootType+PartialsModuleWidget::BoundData);
+			MimeTreeWidgetItem* subItem = new MimeTreeWidgetItem(fullItem, rootType+PartialsModuleWidget::BoundData);
 			subItem->setText(0, "Bound");
-			subItem->setData(0, Qt::UserRole, QString(partials.boundPartial(n,m).objectName()));
+ 			subItem->addMimeString(MimeString::UChromaCollectionBlockType, QString("Collection '%1'; ColourSource SingleColour; ColourSingle 0 0 0 255; LineStyle 1.0 Dots; DataSet 'Bound'; Source XYData %2; Z 0.0; EndDataSet; EndCollection").arg(CharString("%s-%s Bnd", atd1->atomTypeName(), atd2->atomTypeName()).get(), partials.boundPartial(n,m).objectName()));
+
 			// -- Unbound partial
-			subItem = new QTreeWidgetItem(fullItem, rootType+PartialsModuleWidget::UnboundData);
+			subItem = new MimeTreeWidgetItem(fullItem, rootType+PartialsModuleWidget::UnboundData);
 			subItem->setText(0, "Unbound");
-			subItem->setData(0, Qt::UserRole, QString(partials.unboundPartial(n,m).objectName()));
+ 			subItem->addMimeString(MimeString::UChromaCollectionBlockType, QString("Collection '%1'; ColourSource SingleColour; ColourSingle 0 0 0 255; LineStyle 1.0 'Quarter Dash'; DataSet 'Unbound'; Source XYData %2; Z 0.0; EndDataSet; EndCollection").arg(CharString("%s-%s Unb", atd1->atomTypeName(), atd2->atomTypeName()).get(), partials.unboundPartial(n,m).objectName()));
+
 			// -- Bragg partial
-			subItem = new QTreeWidgetItem(fullItem, rootType+PartialsModuleWidget::BraggData);
+			subItem = new MimeTreeWidgetItem(fullItem, rootType+PartialsModuleWidget::BraggData);
 			subItem->setText(0, "Bragg");
-			subItem->setData(0, Qt::UserRole, QString(partials.braggPartial(n,m).objectName()));
+			subItem->addMimeString(MimeString::UChromaCollectionBlockType, QString("Collection '%1'; ColourSource SingleColour; ColourSingle 0 0 0 255; LineStyle 1.0 'Dot Dash 1'; DataSet 'Bragg'; Source XYData %2; Z 0.0; EndDataSet; EndCollection").arg(CharString("%s-%s Brg", atd1->atomTypeName(), atd2->atomTypeName()).get(), partials.partial(n,m).objectName()));
 		}
 	}
 }

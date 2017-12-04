@@ -176,7 +176,7 @@ bool ReferenceVariable::initialiseDataSpace(Collection* fitCollection, DataSpace
 	// Check that supplied target fitCollection is the same as the one we have stored
 	if (fitCollection != sourceCollection_)
 	{
-		Messenger::print("Error: Cannot currently use a reference Collection which is different from the target fit collection.\n");
+		Messenger::error("Cannot currently use a reference Collection which is different from the target fit collection.\n");
 		return false;
 	}
 

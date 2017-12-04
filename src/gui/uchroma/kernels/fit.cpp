@@ -252,7 +252,7 @@ ReferenceVariable* FitKernel::addReference(const char* name)
 	// Check that a reference of this name doesn't already exist
 	if (reference(name))
 	{
-		Messenger::print("Error: Tried to add a reference with the same name ('%s') as one that already exists.\n", name);
+		Messenger::error("Tried to add a reference with the same name ('%s') as one that already exists.\n", name);
 		return NULL;
 	}
 
@@ -836,7 +836,7 @@ bool FitKernel::fit(bool startFromUnity)
 	// Check number of variables to fit
 	if (usedVariables_.nItems() == 0)
 	{
-		Messenger::print("Error: No variables to fit!\n");
+		Messenger::error("No variables to fit!\n");
 		return false;
 	}
 	// Check source collection

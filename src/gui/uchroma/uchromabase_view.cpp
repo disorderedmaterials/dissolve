@@ -56,6 +56,17 @@ bool UChromaBase::setCurrentViewPane(int layoutX, int layoutY)
 	return true;
 }
 
+// Set current view pane
+bool UChromaBase::setCurrentViewPane(ViewPane* viewPane)
+{
+	currentViewPane_ = viewPane;
+
+	// Toolbars and subwindows now need updating
+	updateToolBars();
+
+	return true;
+}
+
 // Return current view pane
 ViewPane* UChromaBase::currentViewPane()
 {

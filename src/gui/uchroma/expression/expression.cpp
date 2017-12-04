@@ -382,7 +382,7 @@ double Expression::execute(bool& success)
 
 	// Print some final verbose output
 // 	Messenger::print("Final result from expression = %f\n", expressionResult);
-	if (!success) Messenger::print("Warning: Execution FAILED.\n");
+	if (!success) Messenger::warn("Execution FAILED.\n");
 
 	return expressionResult;
 }

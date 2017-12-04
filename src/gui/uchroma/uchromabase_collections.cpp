@@ -20,6 +20,7 @@
 */
 
 #include "gui/uchroma/uchromabase.h"
+#include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include <QStringList>
 
@@ -102,7 +103,7 @@ Collection* UChromaBase::addCollectionToCurrentViewPane(const char* name, int id
 	collection->setIdentifier(identifier);
 
 	if (currentViewPane_) currentViewPane_->addCollectionTarget(collection);
-	else Messenger::warn("Can't add new Collection to current view pane, since the currente view pane is NULL.\n");
+	else Messenger::warn("Can't add new Collection to current view pane, since the current view pane is NULL.\n");
 
 	return collection;
 }
@@ -139,6 +140,25 @@ Collection* UChromaBase::addCollectionFromLocator(const char* locator, Collectio
 		}
 	}
 	return NULL;
+}
+
+// Add new Collection from Collection block data
+Collection* UChromaBase::addCollectionFromBlock(const char* blockData)
+{
+	// Create a local LineParser and set the source string
+	LineParser parser;
+	parser.openInputString(blockData);
+
+	// Store current collection pointer
+	Collection* collection = currentCollection_;
+
+	// Parse the block
+	bool success = parseInputBlocks(parser);
+
+	// Set Collection to return
+	collection = (success && (collection != currentCollection_) ? currentCollection_ : NULL);
+
+	return collection;
 }
 
 // Remove existing collection
@@ -307,4 +327,14 @@ bool UChromaBase::setCollectionVisible(const char* name, bool visible)
 	else Messenger::warn("Collection with name '%s' could not be found.\n", name);
 
 	return false;
+}
+
+// Refresh referenced DataSets in all Collections
+void UChromaBase::refreshReferencedDataSets()
+{
+	// Loop over main collections, passing parts list
+	for (Collection* collection = collections_.first(); collection != NULL; collection = collection->next)
+	{
+		collection->refreshDataSets();
+	}
 }

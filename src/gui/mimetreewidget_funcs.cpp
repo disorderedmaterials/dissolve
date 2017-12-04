@@ -119,5 +119,5 @@ void MimeTreeWidget::mouseMoveEvent(QMouseEvent* event)
 
 void MimeTreeWidget::mouseReleaseEvent(QMouseEvent* event)
 {
+	QTreeWidget::mouseReleaseEvent(event);
 }
-
