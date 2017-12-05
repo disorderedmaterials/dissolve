@@ -23,6 +23,7 @@
 #define DUQ_UCHROMATARGETPRIMITIVE_H
 
 #include "gui/uchroma/render/primitivelist.h"
+#include "base/charstring.h"
 
 // Forward Declarations
 class Collection;
@@ -60,7 +61,7 @@ class TargetPrimitive : public ListItem<TargetPrimitive>
 	// Collection data version at which primitive was last created
 	int primitiveDataUsedAt_;
 	// Collection colour version at which primitive was last created
-	int primitiveColourUsedAt_;
+	CharString primitiveColourFingerprint_;
 	// ViewPane axes version at which primitive was last created
 	int primitiveAxesUsedAt_;
 	// Collection style version at which primitive was last created

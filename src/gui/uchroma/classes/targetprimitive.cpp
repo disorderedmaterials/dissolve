@@ -29,7 +29,7 @@ TargetPrimitive::TargetPrimitive() : ListItem<TargetPrimitive>()
 {
 	collection_ = NULL;
 	primitiveDataUsedAt_ = -1;
-	primitiveColourUsedAt_ = -1;
+	primitiveColourFingerprint_ = "";
 	primitiveStyleUsedAt_ = -1;
 	primitiveAxesUsedAt_ = -1;
 }
@@ -72,7 +72,7 @@ void TargetPrimitive::updateAndSendPrimitive(const Axes& axes, bool forceUpdate,
 	bool upToDate = true;
 	if (forceUpdate) upToDate = false;
 	else if (primitiveAxesUsedAt_ != axes.displayVersion()) upToDate = false;
-	else if (primitiveColourUsedAt_ != colour.colourVersion()) upToDate = false;
+	else if (!DUQSys::sameString(primitiveColourFingerprint_, CharString("%s%i", collection_->group(), colour.colourVersion()), true)) upToDate = false;
 	else if (primitiveDataUsedAt_ != collection_->dataVersion()) upToDate = false;
 	else if (primitiveStyleUsedAt_ != collection_->displayStyleVersion()) upToDate = false;
 
@@ -115,7 +115,7 @@ void TargetPrimitive::updateAndSendPrimitive(const Axes& axes, bool forceUpdate,
 
 	// Store version points for the up-to-date primitive
 	primitiveAxesUsedAt_ = axes.displayVersion();
-	primitiveColourUsedAt_ = colour.colourVersion();
+	primitiveColourFingerprint_.sprintf("%s%i", collection_->group(), colour.colourVersion());
 	primitiveDataUsedAt_ = collection_->dataVersion();
 	primitiveStyleUsedAt_ = collection_->displayStyleVersion();
 
