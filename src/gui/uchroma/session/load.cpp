@@ -340,6 +340,10 @@ bool UChromaBase::readCollectionBlock(LineParser& parser, Collection* collection
 				}
 				if (!readFitParametersBlock(parser, collection->fitKernel())) return false;
 				break;
+			// Group
+			case (UChromaBase::GroupKeyword):
+				collection->setGroup(parser.argc(1));
+				break;
 			// Interpolate flags
 			case (UChromaBase::InterpolateKeyword):
 				collection->setInterpolate(0, parser.argb(1));

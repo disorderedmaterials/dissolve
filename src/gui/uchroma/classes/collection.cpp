@@ -20,6 +20,7 @@
 */
 
 #include "gui/uchroma/classes/collection.h"
+#include "gui/uchroma/classes/collectiongroup.h"
 #include "gui/uchroma/classes/viewpane.h"
 #include "gui/uchroma/uchromabase.h"
 #include "gui/uchroma/kernels/fit.h"
@@ -1200,6 +1201,29 @@ void Collection::updateLimitsAndTransforms()
 }
 
 /*
+ * Group
+ */
+
+// Set group that this Collection is associated to
+void Collection::setGroup(const char* groupName)
+{
+	// TODO Do we need to check for an existing group here, and remove ourselves using the CollectionGroupManager?
+	group_ = groupName;
+}
+
+// Return whether this Collection is associated to a group
+bool Collection::hasGroup() const
+{
+	return (!group_.isEmpty());
+}
+
+// Return group name that this Collection is associated to
+const char* Collection::group() const
+{
+	return group_.get();
+}
+
+/*
  * Display
  */
 
@@ -1365,8 +1389,14 @@ ColourDefinition& Collection::colour()
 }
 
 // Return colour definition to use for display
-ColourDefinition& Collection::displayColour()
+const ColourDefinition& Collection::displayColour() const
 {
+	if (hasGroup())
+	{
+		CollectionGroup* group = CollectionGroupManager::group(group_.get());
+		if (group) return group->colour();
+	}
+
 	return colour_;
 }
 

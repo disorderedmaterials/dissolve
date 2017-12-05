@@ -27,6 +27,7 @@
 // Forward Declarations
 /* none */
 
+// Colour Definition
 class ColourDefinition
 {
 	public:
@@ -38,14 +39,14 @@ class ColourDefinition
 	ColourDefinition(const ColourDefinition& source);
 	// Assignment operator
 	void operator=(const ColourDefinition& source);
-	
+
 
 	/*
 	 * Enumerations
 	 */
 	public:
 	// Available colourscale sources
-	enum ColourSource { SingleColourSource, RGBGradientSource, HSVGradientSource, CustomGradientSource, GroupSource, nColourSources };
+	enum ColourSource { SingleColourSource, RGBGradientSource, HSVGradientSource, CustomGradientSource, nColourSources };
 	// Convert text string to ColourSource
 	static ColourSource colourSource(const char* s);
 	// Convert ColourSource to text string
@@ -56,6 +57,10 @@ class ColourDefinition
 	static AlphaControl alphaControl(const char* s);
 	// Convert AlphaControl to text string
 	static const char* alphaControl(ColourDefinition::AlphaControl as);
+	// Stock colours enum
+	enum StockColour { RedStockColour, GreenStockColour, BlueStockColour, BlackStockColour, nStockColours };
+	// Return stock colour (as QColor)
+	static QColor stockColour(StockColour colour);
 
 
 	/*
@@ -87,7 +92,7 @@ class ColourDefinition
 	// Set colourscale source to use
 	void setColourSource(ColourSource source);
 	// Return colourscale source to use
-	ColourSource colourSource();
+	ColourSource colourSource() const;
 	// Set colourscale point colour
 	void setColourScalePoint(ColourSource source, QColor colour, double value = 0.0, int index = -1);
 	// Return colourscale point specified
@@ -111,15 +116,15 @@ class ColourDefinition
 	// Set alpha control
 	void setAlphaControl(AlphaControl alpha);
 	// Return current alpha control
-	AlphaControl alphaControl();
+	AlphaControl alphaControl() const;
 	// Set fixed alpha value
 	void setFixedAlpha(double alpha);
 	// Return fixed alpha value
-	double fixedAlpha();
+	double fixedAlpha() const;
 	// Return current colourscale
 	const ColourScale& colourScale();
 	// Return colour version
-	int colourVersion();
+	int colourVersion() const;
 };
 
 #endif

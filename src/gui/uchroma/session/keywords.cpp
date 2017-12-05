@@ -78,10 +78,30 @@ int UChromaBase::axisKeywordNArguments(UChromaBase::AxisKeyword kwd)
  */
 
 // Collection Block Keywords
-const char* UChromaCollectionBlockKeywords[] = { "ColourAlphaControl", "ColourAlphaFixed", "ColourCustomGradient", "ColourLinearRGBA", "ColourLinearRGBB", "ColourLinearHSVA", "ColourLinearHSVB", "ColourSingle", "ColourSource", "DataDirectory", "DataSet", "EndCollection", "Fit", "FitParameters", "Interpolate", "InterpolateConstrain", "InterpolateStep", "LineStyle", "Shininess", "Slice", "Style", "TransformX", "TransformY", "TransformZ", "Visible" };
+const char* UChromaCollectionBlockKeywords[] = {
+	"ColourAlphaControl", "ColourAlphaFixed", "ColourCustomGradient", "ColourLinearRGBA", "ColourLinearRGBB", "ColourLinearHSVA", "ColourLinearHSVB", "ColourSingle", "ColourSource",
+	"DataDirectory", "DataSet",
+	"EndCollection",
+	"Fit", "FitParameters",
+	"Group",
+	"Interpolate", "InterpolateConstrain", "InterpolateStep",
+	"LineStyle",
+	"Shininess", "Slice", "Style",
+	"TransformX", "TransformY", "TransformZ",
+	"Visible" };
 
 // Collection Block NArguments
-int UChromaCollectionKeywordNArguments[] = { 1, 1, 5, 5, 5, 5, 5, 4, 1, 1, 1, 0, 1, 0, 2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 1 };
+int UChromaCollectionKeywordNArguments[] = {
+	1, 1, 5, 5, 5, 5, 5, 4, 1,
+	1, 1,
+	0,	
+	1, 0,
+	1,
+	2, 2, 2,
+	2,
+	1, 1, 1,
+	2, 2, 2,
+	1 };
 
 // Convert text string to CollectionKeyword
 UChromaBase::CollectionKeyword UChromaBase::collectionKeyword(const char* s)

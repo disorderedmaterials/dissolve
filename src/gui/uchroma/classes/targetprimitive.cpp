@@ -65,8 +65,8 @@ void TargetPrimitive::updateAndSendPrimitive(const Axes& axes, bool forceUpdate,
 	// Check collection validity
 	if (!Collection::objectValid(collection_, "collection in TargetPrimitive::updateAndSendPrimitive")) return;
 
-	// Grab relevant colour definition for this Collection
-	ColourDefinition& colour = collection_->displayColour();
+	// Grab copy of the relevant colour definition for this Collection
+	ColourDefinition colour = collection_->displayColour();
 
 	// Check whether the primitive for this collection needs updating
 	bool upToDate = true;

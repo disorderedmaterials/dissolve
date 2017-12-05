@@ -421,6 +421,7 @@ class UChromaBase
 		EndCollectionKeyword,
 		FitBlockKeyword,
 		FitParametersBlockKeyword,
+		GroupKeyword,
 		InterpolateKeyword,
 		InterpolateConstrainKeyword,
 		InterpolateStepKeyword,

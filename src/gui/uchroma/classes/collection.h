@@ -305,8 +305,10 @@ class Collection : public ListItem<Collection>, public ObjectStore<Collection>
 	public:
 	// Set group that this Collection is associated to
 	void setGroup(const char* groupName);
+	// Return whether this Collection is associated to a group
+	bool hasGroup() const;
 	// Return group name that this Collection is associated to
-	const char* group();
+	const char* group() const;
 
 
 	/*
@@ -348,7 +350,7 @@ class Collection : public ListItem<Collection>, public ObjectStore<Collection>
 	// Return local colour definition for display
 	ColourDefinition& colour();
 	// Return colour definition to use for display (from group if defined)
-	ColourDefinition& displayColour();
+	const ColourDefinition& displayColour() const;
 	// Set whether data is visible
 	void setVisible(bool visible);
 	// Return hether data is visible

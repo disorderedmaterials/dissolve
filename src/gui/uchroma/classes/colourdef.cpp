@@ -63,8 +63,8 @@ void ColourDefinition::operator=(const ColourDefinition& source)
 	customColourScale_ = source.customColourScale_;
 	alphaControl_ = source.alphaControl_;
 	fixedAlpha_ = source.fixedAlpha_;
-	colourVersion_ = 0;
-	colourScaleGeneratedAt_ = -1;
+	colourVersion_ = source.colourVersion_;
+	colourScaleGeneratedAt_ = source.colourScaleGeneratedAt_;
 }
 
 /*
@@ -101,6 +101,20 @@ ColourDefinition::AlphaControl ColourDefinition::alphaControl(const char* s)
 const char* ColourDefinition::alphaControl(ColourDefinition::AlphaControl as)
 {
 	return AlphaControlKeywords[as];
+}
+
+// Stock Colours
+QColor StockColours[] = {
+	QColor(200, 0, 0),	/* RedStockColour */
+	QColor(0, 200, 0),	/* GreenStockColour */
+	QColor(0, 0, 200),	/* BlueStockColour */
+	QColor(0, 0, 0),	/* BlackStockColour */
+};
+
+// Return stock colour (as QColor)
+QColor ColourDefinition::stockColour(ColourDefinition::StockColour colour)
+{
+	return StockColours[colour];
 }
 
 /*
@@ -143,7 +157,7 @@ void ColourDefinition::setColourSource(ColourSource source)
 }
 
 // Return colourscale source to use
-ColourDefinition::ColourSource ColourDefinition::colourSource()
+ColourDefinition::ColourSource ColourDefinition::colourSource() const
 {
 	return colourSource_;
 }
@@ -267,7 +281,7 @@ void ColourDefinition::setAlphaControl(ColourDefinition::AlphaControl alpha)
 }
 
 // Return current alpha control
-ColourDefinition::AlphaControl ColourDefinition::alphaControl()
+ColourDefinition::AlphaControl ColourDefinition::alphaControl() const
 {
 	return alphaControl_;
 }
@@ -281,7 +295,7 @@ void ColourDefinition::setFixedAlpha(double alpha)
 }
 
 // Return fixed alpha value
-double ColourDefinition::fixedAlpha()
+double ColourDefinition::fixedAlpha() const
 {
 	return fixedAlpha_;
 }
@@ -296,7 +310,7 @@ const ColourScale& ColourDefinition::colourScale()
 }
 
 // Return colour version
-int ColourDefinition::colourVersion()
+int ColourDefinition::colourVersion() const
 {
 	return colourVersion_;
 }

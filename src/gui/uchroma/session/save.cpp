@@ -135,6 +135,9 @@ bool UChromaBase::writeCollectionBlock(LineParser& parser, Collection* collectio
 	// Loop over datasets
 	for (DataSet* dataSet = collection->dataSets(); dataSet != NULL; dataSet = dataSet->next) writeDataSetBlock(parser, dataSet, indentLevel);
 
+	// Write Group if set
+	if (collection->hasGroup()) parser.writeLineF("%s  %s '%s'\n", indent, UChromaBase::collectionKeyword(UChromaBase::GroupKeyword), collection->group());
+
 	// Write FitKernel data if present
 	if (collection->fitKernel()) writeFitParametersBlock(parser, collection->fitKernel(), indentLevel);
 
