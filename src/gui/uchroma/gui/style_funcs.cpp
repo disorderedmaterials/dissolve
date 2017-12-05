@@ -100,7 +100,7 @@ void StyleWindow::on_ColourSingleColourRadio_clicked(bool checked)
 	Collection* currentCollection = uChromaBase_.currentCollection();
 	if (!Collection::objectValid(uChromaBase_.currentCollection(), "current collection in StyleWindow::on_ColourSingleColourRadio_clicked")) return;
 
-	currentCollection->setColourSource(Collection::SingleColourSource);
+	currentCollection->colour().setColourSource(ColourDefinition::SingleColourSource);
 
 	// Update gradient bar and display
 	updateGradientBar();
@@ -116,7 +116,7 @@ void StyleWindow::on_ColourSingleColourButton_clicked(bool checked)
 
 	if (ui.ColourSingleColourButton->selectColour())
 	{
-		currentCollection->setColourScalePoint(Collection::SingleColourSource, ui.ColourSingleColourButton->colour());
+		currentCollection->colour().setColourScalePoint(ColourDefinition::SingleColourSource, ui.ColourSingleColourButton->colour());
 
 		// Update gradient bar and display
 		updateGradientBar();
@@ -135,7 +135,7 @@ void StyleWindow::on_ColourRGBGradientRadio_clicked(bool checked)
 	Collection* currentCollection = uChromaBase_.currentCollection();
 	if (!Collection::objectValid(uChromaBase_.currentCollection(), "current collection in StyleWindow::on_ColourRGBGradientRadio_clicked")) return;
 
-	currentCollection->setColourSource(Collection::RGBGradientSource);
+	currentCollection->colour().setColourSource(ColourDefinition::RGBGradientSource);
 
 	// Update gradient bar and display
 	updateGradientBar();
@@ -151,7 +151,7 @@ void StyleWindow::on_ColourRGBGradientAButton_clicked(bool checked)
 
 	if (ui.ColourRGBGradientAButton->selectColour())
 	{
-		currentCollection->setColourScalePoint(Collection::RGBGradientSource, ui.ColourRGBGradientAButton->colour(), ui.ColourRGBGradientASpin->value(), 0);
+		currentCollection->colour().setColourScalePoint(ColourDefinition::RGBGradientSource, ui.ColourRGBGradientAButton->colour(), ui.ColourRGBGradientASpin->value(), 0);
 
 		// Update gradient bar and display
 		updateGradientBar();
@@ -168,7 +168,7 @@ void StyleWindow::on_ColourRGBGradientASpin_valueChanged(double value)
 	Collection* currentCollection = uChromaBase_.currentCollection();
 	if (!Collection::objectValid(uChromaBase_.currentCollection(), "current collection in StyleWindow::on_ColourRGBGradientASpin_valueChanged")) return;
 
-	currentCollection->setColourScalePoint(Collection::RGBGradientSource, ui.ColourRGBGradientAButton->colour(), ui.ColourRGBGradientASpin->value(), 0);
+	currentCollection->colour().setColourScalePoint(ColourDefinition::RGBGradientSource, ui.ColourRGBGradientAButton->colour(), ui.ColourRGBGradientASpin->value(), 0);
 
 	// Update gradient bar and display
 	updateGradientBar();
@@ -202,7 +202,7 @@ void StyleWindow::on_ColourRGBGradientBButton_clicked(bool checked)
 
 	if (ui.ColourRGBGradientBButton->selectColour())
 	{
-		currentCollection->setColourScalePoint(Collection::RGBGradientSource, ui.ColourRGBGradientBButton->colour(), ui.ColourRGBGradientBSpin->value(), 1);
+		currentCollection->colour().setColourScalePoint(ColourDefinition::RGBGradientSource, ui.ColourRGBGradientBButton->colour(), ui.ColourRGBGradientBSpin->value(), 1);
 
 		// Update gradient bar and display
 		updateGradientBar();
@@ -219,7 +219,7 @@ void StyleWindow::on_ColourRGBGradientBSpin_valueChanged(double value)
 	Collection* currentCollection = uChromaBase_.currentCollection();
 	if (!Collection::objectValid(uChromaBase_.currentCollection(), "current collection in StyleWindow::on_ColourRGBGradientBSpin_valueChanged")) return;
 
-	currentCollection->setColourScalePoint(Collection::RGBGradientSource, ui.ColourRGBGradientBButton->colour(), ui.ColourRGBGradientBSpin->value(), 1);
+	currentCollection->colour().setColourScalePoint(ColourDefinition::RGBGradientSource, ui.ColourRGBGradientBButton->colour(), ui.ColourRGBGradientBSpin->value(), 1);
 
 	// Update gradient bar and display
 	updateGradientBar();
@@ -257,7 +257,7 @@ void StyleWindow::on_ColourHSVGradientRadio_clicked(bool checked)
 	Collection* currentCollection = uChromaBase_.currentCollection();
 	if (!Collection::objectValid(uChromaBase_.currentCollection(), "current collection in StyleWindow::on_ColourHSVGradientRadio_clicked")) return;
 
-	currentCollection->setColourSource(Collection::HSVGradientSource);
+	currentCollection->colour().setColourSource(ColourDefinition::HSVGradientSource);
 
 	// Update gradient bar and display
 	updateGradientBar();
@@ -273,7 +273,7 @@ void StyleWindow::on_ColourHSVGradientAButton_clicked(bool checked)
 
 	if (ui.ColourHSVGradientAButton->selectColour())
 	{
-		currentCollection->setColourScalePoint(Collection::HSVGradientSource, ui.ColourHSVGradientAButton->colour(), ui.ColourHSVGradientASpin->value(), 0);
+		currentCollection->colour().setColourScalePoint(ColourDefinition::HSVGradientSource, ui.ColourHSVGradientAButton->colour(), ui.ColourHSVGradientASpin->value(), 0);
 
 		// Update gradient bar and display
 		updateGradientBar();
@@ -288,7 +288,7 @@ void StyleWindow::on_ColourHSVGradientASpin_valueChanged(double value)
 	Collection* currentCollection = uChromaBase_.currentCollection();
 	if (refreshing_ || (!Collection::objectValid(uChromaBase_.currentCollection(), "current collection in StyleWindow::on_ColourHSVGradientASpin_valueChanged"))) return;
 
-	currentCollection->setColourScalePoint(Collection::HSVGradientSource, ui.ColourHSVGradientAButton->colour(), ui.ColourHSVGradientASpin->value(), 0);
+	currentCollection->colour().setColourScalePoint(ColourDefinition::HSVGradientSource, ui.ColourHSVGradientAButton->colour(), ui.ColourHSVGradientASpin->value(), 0);
 
 	// Update gradient bar and display
 	updateGradientBar();
@@ -322,7 +322,7 @@ void StyleWindow::on_ColourHSVGradientBButton_clicked(bool checked)
 
 	if (ui.ColourHSVGradientBButton->selectColour())
 	{
-		currentCollection->setColourScalePoint(Collection::HSVGradientSource, ui.ColourHSVGradientBButton->colour(), ui.ColourHSVGradientBSpin->value(), 1);
+		currentCollection->colour().setColourScalePoint(ColourDefinition::HSVGradientSource, ui.ColourHSVGradientBButton->colour(), ui.ColourHSVGradientBSpin->value(), 1);
 
 		// Update gradient bar and display
 		updateGradientBar();
@@ -337,7 +337,7 @@ void StyleWindow::on_ColourHSVGradientBSpin_valueChanged(double value)
 	Collection* currentCollection = uChromaBase_.currentCollection();
 	if (refreshing_ || (!Collection::objectValid(uChromaBase_.currentCollection(), "current collection in StyleWindow::on_ColourHSVGradientBSpin_valueChanged"))) return;
 
-	currentCollection->setColourScalePoint(Collection::HSVGradientSource, ui.ColourHSVGradientBButton->colour(), ui.ColourHSVGradientBSpin->value(), 1);
+	currentCollection->colour().setColourScalePoint(ColourDefinition::HSVGradientSource, ui.ColourHSVGradientBButton->colour(), ui.ColourHSVGradientBSpin->value(), 1);
 
 	// Update gradient bar and display
 	updateGradientBar();
@@ -371,7 +371,7 @@ void StyleWindow::on_ColourCustomGradientRadio_clicked(bool checked)
 	Collection* currentCollection = uChromaBase_.currentCollection();
 	if (refreshing_ || (!Collection::objectValid(uChromaBase_.currentCollection(), "current collection in StyleWindow::on_ColourCustomGradientRadio_clicked"))) return;
 
-	currentCollection->setColourSource(Collection::CustomGradientSource);
+	currentCollection->colour().setColourSource(ColourDefinition::CustomGradientSource);
 
 	// Update gradient bar and display
 	updateGradientBar();
@@ -406,7 +406,7 @@ void StyleWindow::on_ColourCustomGradientTable_cellDoubleClicked(int row, int co
 	if (!valueItem) return;
 
 	// Update the colourscale point
-	currentCollection->setColourScalePoint(Collection::CustomGradientSource, newcol, valueItem->text().toDouble(), cspId);
+	currentCollection->colour().setColourScalePoint(ColourDefinition::CustomGradientSource, newcol, valueItem->text().toDouble(), cspId);
 
 	// Update table and refresh surface
 	item->setBackgroundColor(newcol);
@@ -434,7 +434,7 @@ void StyleWindow::on_ColourCustomGradientTable_cellChanged(int row, int column)
 	if (!valueItem) return;
 	
 	// Value of this point has changed, so must update the list and refresh the surface and necessary widgets
-	currentCollection->setColourScalePoint(Collection::CustomGradientSource, item->backgroundColor(), valueItem->text().toDouble(), cspId);
+	currentCollection->colour().setColourScalePoint(ColourDefinition::CustomGradientSource, item->backgroundColor(), valueItem->text().toDouble(), cspId);
 
 	// Update gradient bar and display
 	updateGradientBar();
@@ -448,7 +448,7 @@ void StyleWindow::on_ColourCustomGradientAddButton_clicked(bool checked)
 	Collection* currentCollection = uChromaBase_.currentCollection();
 	if (!Collection::objectValid(uChromaBase_.currentCollection(), "current collection in StyleWindow::on_ColourCustomGradientAddButton_clicked")) return;
 
-	currentCollection->addCustomColourScalePoint();
+	currentCollection->colour().addCustomColourScalePoint();
 
 	// Update gradient bar and display
 	updateGradientBar();
@@ -473,11 +473,11 @@ void StyleWindow::on_ColourCustomGradientRemoveButton_clicked(bool checked)
 		int cspId = item->data(Qt::UserRole).toInt();
 		if (lastId == cspId) continue;
 		lastId = cspId;
-		toDelete.addUnique(currentCollection->customColourScalePoint(cspId));
+		toDelete.addUnique(currentCollection->colour().customColourScalePoint(cspId));
 	}
 
 	// Now delete the points
-	for (RefListItem<ColourScalePoint,int>* ri = toDelete.first(); ri != NULL; ri = ri->next) currentCollection->removeCustomColourScalePoint(ri->item);
+	for (RefListItem<ColourScalePoint,int>* ri = toDelete.first(); ri != NULL; ri = ri->next) currentCollection->colour().removeCustomColourScalePoint(ri->item);
 
 	// Update gradient bar and display
 	updateGradientBar();
@@ -493,7 +493,7 @@ void StyleWindow::on_ColourAlphaOwnAlphaRadio_clicked(bool checked)
 	Collection* currentCollection = uChromaBase_.currentCollection();
 	if (refreshing_ || (!Collection::objectValid(uChromaBase_.currentCollection(), "current collection in StyleWindow::on_ColourAlphaOwnAlphaRadio_clicked"))) return;
 
-	currentCollection->setAlphaControl(Collection::OwnAlpha);
+	currentCollection->colour().setAlphaControl(ColourDefinition::OwnAlpha);
 
 	// Update display
 	uChromaBase_.setAsModified();
@@ -506,7 +506,7 @@ void StyleWindow::on_ColourAlphaFixedAlphaRadio_clicked(bool checked)
 	Collection* currentCollection = uChromaBase_.currentCollection();
 	if (refreshing_ || (!Collection::objectValid(uChromaBase_.currentCollection(), "current collection in StyleWindow::on_ColourAlphaFixedAlphaRadio_clicked"))) return;
 
-	currentCollection->setAlphaControl(Collection::FixedAlpha);
+	currentCollection->colour().setAlphaControl(ColourDefinition::FixedAlpha);
 
 	// Update display
 	uChromaBase_.setAsModified();
@@ -519,7 +519,7 @@ void StyleWindow::on_ColourAlphaFixedAlphaSpin_valueChanged(double value)
 	Collection* currentCollection = uChromaBase_.currentCollection();
 	if (refreshing_ || (!Collection::objectValid(uChromaBase_.currentCollection(), "current collection in StyleWindow::on_ColourAlphaFixedAlphaSpin_valueChanged"))) return;
 
-	currentCollection->setFixedAlpha(value);
+	currentCollection->colour().setFixedAlpha(value);
 
 	// Update display
 	uChromaBase_.setAsModified();
@@ -578,7 +578,7 @@ void StyleWindow::updateGradientBar()
 	Collection* currentCollection = uChromaBase_.currentCollection();
 	if (!currentCollection) return;
 	
-	ui.ColourGradient->setColourScale(currentCollection->colourScale());
+	ui.ColourGradient->setColourScale(currentCollection->colour().colourScale());
 }
 
 // Update controls and show window
@@ -605,32 +605,32 @@ void StyleWindow::updateControls(bool force)
 	ui.StyleCombo->setCurrentIndex(currentCollection->displayStyle());
 
 	// Single Colour
-	ui.ColourSingleColourButton->setColour(currentCollection->colourScalePointColour(Collection::SingleColourSource));
+	ui.ColourSingleColourButton->setColour(currentCollection->colour().colourScalePointColour(ColourDefinition::SingleColourSource));
 
 	// RGB Gradient
-	ui.ColourRGBGradientAButton->setColour(currentCollection->colourScalePointColour(Collection::RGBGradientSource, 0));
-	ui.ColourRGBGradientASpin->setValue(currentCollection->colourScalePointValue(Collection::RGBGradientSource, 0));
-	ui.ColourRGBGradientBButton->setColour(currentCollection->colourScalePointColour(Collection::RGBGradientSource, 1));
-	ui.ColourRGBGradientBSpin->setValue(currentCollection->colourScalePointValue(Collection::RGBGradientSource, 1));
+	ui.ColourRGBGradientAButton->setColour(currentCollection->colour().colourScalePointColour(ColourDefinition::RGBGradientSource, 0));
+	ui.ColourRGBGradientASpin->setValue(currentCollection->colour().colourScalePointValue(ColourDefinition::RGBGradientSource, 0));
+	ui.ColourRGBGradientBButton->setColour(currentCollection->colour().colourScalePointColour(ColourDefinition::RGBGradientSource, 1));
+	ui.ColourRGBGradientBSpin->setValue(currentCollection->colour().colourScalePointValue(ColourDefinition::RGBGradientSource, 1));
 
 	// HSV Gradient
-	ui.ColourHSVGradientAButton->setColour(currentCollection->colourScalePointColour(Collection::HSVGradientSource, 0));
-	ui.ColourHSVGradientASpin->setValue(currentCollection->colourScalePointValue(Collection::HSVGradientSource, 0));
-	ui.ColourHSVGradientBButton->setColour(currentCollection->colourScalePointColour(Collection::HSVGradientSource, 1));
-	ui.ColourHSVGradientBSpin->setValue(currentCollection->colourScalePointValue(Collection::HSVGradientSource, 1));
+	ui.ColourHSVGradientAButton->setColour(currentCollection->colour().colourScalePointColour(ColourDefinition::HSVGradientSource, 0));
+	ui.ColourHSVGradientASpin->setValue(currentCollection->colour().colourScalePointValue(ColourDefinition::HSVGradientSource, 0));
+	ui.ColourHSVGradientBButton->setColour(currentCollection->colour().colourScalePointColour(ColourDefinition::HSVGradientSource, 1));
+	ui.ColourHSVGradientBSpin->setValue(currentCollection->colour().colourScalePointValue(ColourDefinition::HSVGradientSource, 1));
 
 	// Custom Gradient - add points in reverse order so higher values appear at the top of the list
 	ui.ColourCustomGradientTable->clearContents();
-	ui.ColourCustomGradientTable->setRowCount(currentCollection->nCustomColourScalePoints());
+	ui.ColourCustomGradientTable->setRowCount(currentCollection->colour().nCustomColourScalePoints());
 	QTableWidgetItem *item;
 	int count = 0;
-	for (int n = currentCollection->nCustomColourScalePoints()-1; n>=0; --n)
+	for (int n = currentCollection->colour().nCustomColourScalePoints()-1; n>=0; --n)
 	{
-		item = new QTableWidgetItem(QString::number(currentCollection->colourScalePointValue(Collection::CustomGradientSource, n)));
+		item = new QTableWidgetItem(QString::number(currentCollection->colour().colourScalePointValue(ColourDefinition::CustomGradientSource, n)));
 		item->setData(Qt::UserRole, n);
 		ui.ColourCustomGradientTable->setItem(count, 0, item);
 		item = new QTableWidgetItem();
-		item->setBackgroundColor(currentCollection->colourScalePointColour(Collection::CustomGradientSource, n));
+		item->setBackgroundColor(currentCollection->colour().colourScalePointColour(ColourDefinition::CustomGradientSource, n));
 		item->setData(Qt::UserRole, n);
 		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable	);
 		ui.ColourCustomGradientTable->setItem(count, 1, item);
@@ -640,18 +640,16 @@ void StyleWindow::updateControls(bool force)
 	ui.ColourCustomGradientTable->setCurrentItem(0);
 	
 	// Set current colour source
-	if (currentCollection->colourSource() == Collection::SingleColourSource) ui.ColourSingleColourRadio->setChecked(true);
-	else if (currentCollection->colourSource() == Collection::RGBGradientSource) ui.ColourRGBGradientRadio->setChecked(true);
-	else if (currentCollection->colourSource() == Collection::HSVGradientSource) ui.ColourHSVGradientRadio->setChecked(true);
-	else if (currentCollection->colourSource() == Collection::CustomGradientSource) ui.ColourCustomGradientRadio->setChecked(true);
+	if (currentCollection->colour().colourSource() == ColourDefinition::SingleColourSource) ui.ColourSingleColourRadio->setChecked(true);
+	else if (currentCollection->colour().colourSource() == ColourDefinition::RGBGradientSource) ui.ColourRGBGradientRadio->setChecked(true);
+	else if (currentCollection->colour().colourSource() == ColourDefinition::HSVGradientSource) ui.ColourHSVGradientRadio->setChecked(true);
+	else if (currentCollection->colour().colourSource() == ColourDefinition::CustomGradientSource) ui.ColourCustomGradientRadio->setChecked(true);
 
 	// Update gradient bar
 	updateGradientBar();
 
-	// Set current alpha control
-	if (currentCollection->alphaControl() == Collection::OwnAlpha) ui.ColourAlphaOwnAlphaRadio->setChecked(true);
-	else if (currentCollection->alphaControl() == Collection::FixedAlpha) ui.ColourAlphaFixedAlphaRadio->setChecked(true);
-	ui.ColourAlphaFixedAlphaSpin->setValue(currentCollection->fixedAlpha());
+	// Set current alpha control;
+	ui.ColourAlphaFixedAlphaSpin->setValue(currentCollection->colour().fixedAlpha());
 
 	// Set surface options
 	ui.SurfaceShininessSpin->setValue(currentCollection->displaySurfaceShininess());

@@ -95,35 +95,36 @@ bool UChromaBase::writeCollectionBlock(LineParser& parser, Collection* collectio
 	parser.writeLineF("%s  %s %f %f\n", indent, UChromaBase::collectionKeyword(UChromaBase::InterpolateStepKeyword), collection->interpolationStep(0), collection->interpolationStep(2));
 
 	// Colour Setup
-	parser.writeLineF("%s  %s '%s'\n", indent, UChromaBase::collectionKeyword(UChromaBase::ColourSourceKeyword), Collection::colourSource(collection->colourSource()));
+	ColourDefinition& colourDef = collection->colour();
+	parser.writeLineF("%s  %s '%s'\n", indent, UChromaBase::collectionKeyword(UChromaBase::ColourSourceKeyword), ColourDefinition::colourSource(colourDef.colourSource()));
 	ColourScalePoint* csp;
 	QColor colour;
 	double value;
 	// -- Single Colour
-	colour = collection->colourScalePointColour(Collection::SingleColourSource);
+	colour = colourDef.colourScalePointColour(ColourDefinition::SingleColourSource);
 	parser.writeLineF("%s  %s %i %i %i %i\n", indent, UChromaBase::collectionKeyword(UChromaBase::ColourSingleKeyword), colour.red(), colour.green(), colour.blue(), colour.alpha());
 	// -- RGB Gradient
-	colour = collection->colourScalePointColour(Collection::RGBGradientSource, 0);
-	value = collection->colourScalePointValue(Collection::RGBGradientSource, 0);
+	colour = colourDef.colourScalePointColour(ColourDefinition::RGBGradientSource, 0);
+	value = colourDef.colourScalePointValue(ColourDefinition::RGBGradientSource, 0);
 	parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, UChromaBase::collectionKeyword(UChromaBase::ColourRGBGradientAKeyword), value, colour.red(), colour.green(), colour.blue(), colour.alpha());
-	colour = collection->colourScalePointColour(Collection::RGBGradientSource, 1);
-	value = collection->colourScalePointValue(Collection::RGBGradientSource, 1);
+	colour = colourDef.colourScalePointColour(ColourDefinition::RGBGradientSource, 1);
+	value = colourDef.colourScalePointValue(ColourDefinition::RGBGradientSource, 1);
 	parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, UChromaBase::collectionKeyword(UChromaBase::ColourRGBGradientBKeyword), value, colour.red(), colour.green(), colour.blue(), colour.alpha());
 	// -- HSV Gradient
-	colour = collection->colourScalePointColour(Collection::HSVGradientSource, 0);
-	value = collection->colourScalePointValue(Collection::HSVGradientSource, 0);
+	colour = colourDef.colourScalePointColour(ColourDefinition::HSVGradientSource, 0);
+	value = colourDef.colourScalePointValue(ColourDefinition::HSVGradientSource, 0);
 	parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, UChromaBase::collectionKeyword(UChromaBase::ColourHSVGradientAKeyword), value, colour.hue(), colour.saturation(), colour.value(), colour.alpha());
-	colour = collection->colourScalePointColour(Collection::HSVGradientSource, 1);
-	value = collection->colourScalePointValue(Collection::HSVGradientSource, 1);
+	colour = colourDef.colourScalePointColour(ColourDefinition::HSVGradientSource, 1);
+	value = colourDef.colourScalePointValue(ColourDefinition::HSVGradientSource, 1);
 	parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, UChromaBase::collectionKeyword(UChromaBase::ColourHSVGradientBKeyword), value, colour.hue(), colour.saturation(), colour.value(), colour.alpha());
 	// -- Custom Gradient
-	for (csp = collection->customColourScalePoints(); csp != NULL; csp = csp->next)
+	for (csp = colourDef.customColourScalePoints(); csp != NULL; csp = csp->next)
 	{
 		parser.writeLineF("%s  %s %f %i %i %i %i\n", indent, UChromaBase::collectionKeyword(UChromaBase::ColourCustomGradientKeyword), csp->value(), csp->colour().red(), csp->colour().green(), csp->colour().blue(), csp->colour().alpha());
 	}
 	// -- Alpha control
-	parser.writeLineF("%s  %s '%s'\n", indent, UChromaBase::collectionKeyword(UChromaBase::ColourAlphaControlKeyword), Collection::alphaControl(collection->alphaControl()));
-	parser.writeLineF("%s  %s %f\n", indent, UChromaBase::collectionKeyword(UChromaBase::ColourAlphaFixedKeyword), collection->fixedAlpha());
+	parser.writeLineF("%s  %s '%s'\n", indent, UChromaBase::collectionKeyword(UChromaBase::ColourAlphaControlKeyword), ColourDefinition::alphaControl(colourDef.alphaControl()));
+	parser.writeLineF("%s  %s %f\n", indent, UChromaBase::collectionKeyword(UChromaBase::ColourAlphaFixedKeyword), colourDef.fixedAlpha());
 
 	// Display
 	parser.writeLineF("%s  %s %f '%s'\n", indent, UChromaBase::collectionKeyword(UChromaBase::LineStyleKeyword), collection->displayLineStyle().width(), LineStipple::stipple[collection->displayLineStyle().stipple()].name);

@@ -25,7 +25,7 @@
 #include "gui/uchroma/classes/dataset.h"
 #include "gui/uchroma/classes/displaydataset.h"
 #include "gui/uchroma/classes/transformer.h"
-#include "gui/uchroma/classes/colourscale.h"
+#include "gui/uchroma/classes/colourdef.h"
 #include "gui/uchroma/render/linestyle.h"
 #include "gui/uchroma/render/primitivelist.h"
 #include "templates/objectstore.h"
@@ -296,81 +296,17 @@ class Collection : public ListItem<Collection>, public ObjectStore<Collection>
 
 
 	/*
-	 * Colours
+	 * Group
 	 */
-	public:
-	// Available colourscale sources
-	enum ColourSource { SingleColourSource, RGBGradientSource, HSVGradientSource, CustomGradientSource, nColourSources };
-	// Convert text string to ColourSource
-	static ColourSource colourSource(const char* s);
-	// Convert ColourSource to text string
-	static const char* colourSource(Collection::ColourSource cs);
-	// Alpha control options
-	enum AlphaControl { OwnAlpha, FixedAlpha, nAlphaControls };
-	// Convert text string to AlphaControl
-	static AlphaControl alphaControl(const char* s);
-	// Convert AlphaControl to text string
-	static const char* alphaControl(Collection::AlphaControl as);
-
 	private:
-	// Current colourscale source to use
-	ColourSource colourSource_;
-	// Points for SingleColour, RGBGradient and HSVGradient sources
-	ColourScalePoint colourSinglePoint_;
-	ColourScalePoint colourRGBGradientAPoint_, colourRGBGradientBPoint_;
-	ColourScalePoint colourHSVGradientAPoint_, colourHSVGradientBPoint_;
-	// Actual ColourScale used by surface
-	ColourScale colourScale_;
-	// Custom ColourScale source
-	ColourScale customColourScale_;
-	// Current alpha control
-	AlphaControl alphaControl_;
-	// Fixed alpha value (for FixedAlpha option)
-	double fixedAlpha_;
-	// Version for colourscale
-	int colourVersion_;
-	// Version at which the colourscale was last generated at
-	bool colourScaleGeneratedAt_;
+	// Name of group that this Collection is associated to (if any)
+	CharString group_;
 
 	public:
-	// Update colour scale
-	void updateColourScale();
-	// Set colourscale source to use
-	void setColourSource(ColourSource source);
-	// Return colourscale source to use
-	ColourSource colourSource();
-	// Set colourscale point colour
-	void setColourScalePoint(ColourSource source, QColor colour, double value = 0.0, int index = -1);
-	// Return colourscale point specified
-	const ColourScalePoint* colourScalePoint(ColourSource source, int index = -1);
-	// Return colour of point specified
-	QColor colourScalePointColour(ColourSource source, int index = -1);
-	// Retu5rn value of point specified
-	double colourScalePointValue(ColourSource source, int index = -1);
-	// Add empty point to end of custom colourscale
-	void addCustomColourScalePoint();
-	// Add point to custom colourscale
-	void addCustomColourScalePoint(double value, QColor colour);
-	// Return number of custom colourscale points
-	int nCustomColourScalePoints();
-	// Return first custom colourscale point in list
-	ColourScalePoint* customColourScalePoints();
-	// Return custom colourscale point with index specified
-	ColourScalePoint* customColourScalePoint(int id);
-	// Remove specified colourscale point
-	void removeCustomColourScalePoint(ColourScalePoint* point);
-	// Set alpha control
-	void setAlphaControl(AlphaControl alpha);
-	// Return current alpha control
-	AlphaControl alphaControl();
-	// Set fixed alpha value
-	void setFixedAlpha(double alpha);
-	// Return fixed alpha value
-	double fixedAlpha();
-	// Return current colourscale
-	const ColourScale& colourScale();
-	// Return colour version
-	int colourVersion();
+	// Set group that this Collection is associated to
+	void setGroup(const char* groupName);
+	// Return group name that this Collection is associated to
+	const char* group();
 
 
 	/*
@@ -385,6 +321,8 @@ class Collection : public ListItem<Collection>, public ObjectStore<Collection>
 	static const char* displayStyle(DisplayStyle kwd);
 
 	private:
+	// Colour definition for display
+	ColourDefinition colour_;
 	// Whether data is visible
 	bool visible_;
 	// Transformed data to display
@@ -407,6 +345,10 @@ class Collection : public ListItem<Collection>, public ObjectStore<Collection>
 	void updateDisplayData();
 
 	public:
+	// Return local colour definition for display
+	ColourDefinition& colour();
+	// Return colour definition to use for display (from group if defined)
+	ColourDefinition& displayColour();
 	// Set whether data is visible
 	void setVisible(bool visible);
 	// Return hether data is visible

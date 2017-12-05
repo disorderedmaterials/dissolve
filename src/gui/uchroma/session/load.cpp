@@ -231,8 +231,9 @@ bool UChromaBase::readCollectionBlock(LineParser& parser, Collection* collection
 	DataSet* dataSet;
 	int xyz;
 	double alpha;
-	Collection::AlphaControl ac;
-	Collection::ColourSource cs;
+	ColourDefinition::AlphaControl ac;
+	ColourDefinition::ColourSource cs;
+	ColourDefinition& colourDefinition = collection->colour();
 	Collection::DisplayStyle ds;
 	LineStipple::StippleType stipple;
 
@@ -252,14 +253,14 @@ bool UChromaBase::readCollectionBlock(LineParser& parser, Collection* collection
 		{
 			// Colour alpha control
 			case (UChromaBase::ColourAlphaControlKeyword):
-				ac = Collection::alphaControl(parser.argc(1));
-				if (ac == Collection::nAlphaControls)
+				ac = ColourDefinition::alphaControl(parser.argc(1));
+				if (ac == ColourDefinition::nAlphaControls)
 				{
-					Messenger::warn("Unrecognised alpha control type '%s'. Defaulting to '%s'.\n", parser.argc(1), Collection::alphaControl(Collection::OwnAlpha));
-					ac = Collection::OwnAlpha;
+					Messenger::warn("Unrecognised alpha control type '%s'. Defaulting to '%s'.\n", parser.argc(1), ColourDefinition::alphaControl(ColourDefinition::OwnAlpha));
+					ac = ColourDefinition::OwnAlpha;
 					CHECKIOFAIL
 				}
-				collection->setAlphaControl(ac);
+				colourDefinition.setAlphaControl(ac);
 				break;
 			// Colour alpha fixed value
 			case (UChromaBase::ColourAlphaFixedKeyword):
@@ -270,36 +271,36 @@ bool UChromaBase::readCollectionBlock(LineParser& parser, Collection* collection
 					alpha = 1.0;
 					CHECKIOFAIL
 				}
-				collection->setFixedAlpha(alpha);
+				colourDefinition.setFixedAlpha(alpha);
 				break;
 			// Colour Custom Gradient point definition
 			case (UChromaBase::ColourCustomGradientKeyword):
-				collection->addCustomColourScalePoint(parser.argd(1), QColor(parser.argi(2), parser.argi(3), parser.argi(4), parser.argi(5)));
+				colourDefinition.addCustomColourScalePoint(parser.argd(1), QColor(parser.argi(2), parser.argi(3), parser.argi(4), parser.argi(5)));
 				break;
 			// Colour Linear Gradient point definition
 			case (UChromaBase::ColourRGBGradientAKeyword):
 			case (UChromaBase::ColourRGBGradientBKeyword):
-				collection->setColourScalePoint(Collection::RGBGradientSource, QColor(parser.argi(2), parser.argi(3), parser.argi(4), parser.argi(5)), parser.argd(1), collectionKwd == UChromaBase::ColourRGBGradientAKeyword ? 0 : 1);
+				colourDefinition.setColourScalePoint(ColourDefinition::RGBGradientSource, QColor(parser.argi(2), parser.argi(3), parser.argi(4), parser.argi(5)), parser.argd(1), collectionKwd == UChromaBase::ColourRGBGradientAKeyword ? 0 : 1);
 				break;
 			// Colour Linear HSV Gradient point definition
 			case (UChromaBase::ColourHSVGradientAKeyword):
 			case (UChromaBase::ColourHSVGradientBKeyword):
-				collection->setColourScalePoint(Collection::HSVGradientSource, QColor::fromHsv(parser.argi(2), parser.argi(3), parser.argi(4), parser.argi(5)), parser.argd(1), collectionKwd == UChromaBase::ColourHSVGradientAKeyword ? 0 : 1);
+				colourDefinition.setColourScalePoint(ColourDefinition::HSVGradientSource, QColor::fromHsv(parser.argi(2), parser.argi(3), parser.argi(4), parser.argi(5)), parser.argd(1), collectionKwd == UChromaBase::ColourHSVGradientAKeyword ? 0 : 1);
 				break;
 			// Colour single colour definition
 			case (UChromaBase::ColourSingleKeyword):
-				collection->setColourScalePoint(Collection::SingleColourSource, QColor(parser.argi(1), parser.argi(2), parser.argi(3), parser.argi(4)));
+				colourDefinition.setColourScalePoint(ColourDefinition::SingleColourSource, QColor(parser.argi(1), parser.argi(2), parser.argi(3), parser.argi(4)));
 				break;
 			// Colour source
 			case (UChromaBase::ColourSourceKeyword):
-				cs = Collection::colourSource(parser.argc(1));
-				if (cs == Collection::nColourSources)
+				cs = ColourDefinition::colourSource(parser.argc(1));
+				if (cs == ColourDefinition::nColourSources)
 				{
-					Messenger::warn("Unrecognised colour source '%s'. Defaulting to '%s'.\n", parser.argc(1), Collection::colourSource(Collection::SingleColourSource));
-					cs = Collection::SingleColourSource;
+					Messenger::warn("Unrecognised colour source '%s'. Defaulting to '%s'.\n", parser.argc(1), ColourDefinition::colourSource(ColourDefinition::SingleColourSource));
+					cs = ColourDefinition::SingleColourSource;
 					CHECKIOFAIL
 				}
-				collection->setColourSource(cs);
+				colourDefinition.setColourSource(cs);
 				break;
 			// Dataset directory
 			case (UChromaBase::DataDirectoryKeyword):

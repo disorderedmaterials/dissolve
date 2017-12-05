@@ -61,20 +61,6 @@ Collection::Collection() : ListItem<Collection>(), ObjectStore<Collection>(this)
 	interpolateConstrained_.set(false, false, false);
 	interpolationStep_.set(1.0, 1.0, 1.0);
 
-	// Colours
-	colourScale_.clear();
-	colourSinglePoint_.set(0.0, QColor(0,0,0));
-	colourRGBGradientAPoint_.set(0.0, QColor(255,255,255));
-	colourRGBGradientBPoint_.set(1.0, QColor(0,0,255));
-	colourHSVGradientAPoint_.set(0.0, QColor(255,0,0));
-	colourHSVGradientBPoint_.set(1.0, QColor(100,40,255));
-	customColourScale_.clear();
-	colourSource_ = SingleColourSource;
-	alphaControl_ = Collection::OwnAlpha;
-	fixedAlpha_ = 0.5;
-	colourVersion_ = 0;
-	colourScaleGeneratedAt_ = -1;
-
 	// Associated data
 	parent_ = NULL;
 	type_ = Collection::MasterCollection;
@@ -133,19 +119,8 @@ void Collection::operator=(const Collection& source)
 	interpolationStep_ = source.interpolationStep_;
 	limitsAndTransformsVersion_ = source.limitsAndTransformsVersion_;
 
-	// Colours
-	colourSource_ = source.colourSource_;
-	colourSinglePoint_ = source.colourSinglePoint_;
-	colourRGBGradientAPoint_ = source.colourRGBGradientAPoint_;
-	colourRGBGradientBPoint_ = source.colourRGBGradientBPoint_;
-	colourHSVGradientAPoint_ = source.colourHSVGradientAPoint_;
-	colourHSVGradientBPoint_ = source.colourHSVGradientBPoint_;
-	colourScale_ = source.colourScale_;
-	customColourScale_ = source.customColourScale_;
-	alphaControl_ = source.alphaControl_;
-	fixedAlpha_ = source.fixedAlpha_;
-	colourVersion_ = 0;
-	colourScaleGeneratedAt_ = -1;
+	// Group
+	group_ = source.group_;
 
 	// Associated data
 	parent_ = source.parent_;
@@ -180,6 +155,7 @@ void Collection::operator=(const Collection& source)
 
 	// Display
 	visible_ = source.visible_;
+	colour_ = source.colour_;
 	displayData_.clear();
 	displayDataGeneratedAt_ = -1;
 	displayStyle_ = source.displayStyle_;
@@ -1224,236 +1200,6 @@ void Collection::updateLimitsAndTransforms()
 }
 
 /*
- * Colours
- */
-
-// ColourSource Keywords
-const char* ColourSourceKeywords[] = { "SingleColour", "RGBGradient", "HSVGradient", "CustomGradient" };
-
-// Convert text string to ColourSource
-Collection::ColourSource Collection::colourSource(const char* s)
-{
-	for (int n=0; n<Collection::nColourSources; ++n) if (DUQSys::sameString(s, ColourSourceKeywords[n])) return (Collection::ColourSource) n;
-	return Collection::nColourSources;
-}
-
-// Convert ColourSource to text string
-const char* Collection::colourSource(ColourSource cs)
-{
-	return ColourSourceKeywords[cs];
-}
-
-// AlphaControl keywords
-const char* AlphaControlKeywords[] = { "OwnAlpha", "FixedAlpha" };
-
-// Convert text string to AlphaControl
-Collection::AlphaControl Collection::alphaControl(const char* s)
-{
-	for (int n=0; n<Collection::nAlphaControls; ++n) if (DUQSys::sameString(s, AlphaControlKeywords[n])) return (Collection::AlphaControl) n;
-	return Collection::nAlphaControls;
-}
-
-// Convert AlphaControl to text string
-const char* Collection::alphaControl(Collection::AlphaControl as)
-{
-	return AlphaControlKeywords[as];
-}
-
-// Update colour scale
-void Collection::updateColourScale()
-{
-	if (colourVersion_ == colourScaleGeneratedAt_) return;
-
-	colourScale_.clear();
-	if (colourSource_ == Collection::SingleColourSource) colourScale_.addPoint(0.0, colourSinglePoint_.colour());
-	else if (colourSource_ == Collection::RGBGradientSource)
-	{
-		colourScale_.setUseHSV(false);
-		colourScale_.addPoint(colourRGBGradientAPoint_.value(), colourRGBGradientAPoint_.colour());
-		colourScale_.addPoint(colourRGBGradientBPoint_.value(), colourRGBGradientBPoint_.colour());
-	}
-	else if (colourSource_ == Collection::HSVGradientSource)
-	{
-		colourScale_.setUseHSV(true);
-		colourScale_.addPoint(colourHSVGradientAPoint_.value(), colourHSVGradientAPoint_.colour());
-		colourScale_.addPoint(colourHSVGradientBPoint_.value(), colourHSVGradientBPoint_.colour());
-	}
-	else if (colourSource_ == Collection::CustomGradientSource) colourScale_ = customColourScale_;
-
-	// Set alpha value for all points if alphaControl_ == FixedAlpha
-	if (alphaControl_ == Collection::FixedAlpha) colourScale_.setAllAlpha(fixedAlpha_);
-
-	colourScaleGeneratedAt_ = colourVersion_;
-}
-
-// Set colourscale source to use
-void Collection::setColourSource(ColourSource source)
-{
-	colourSource_ = source;
-
-	++colourVersion_;
-}
-
-// Return colourscale source to use
-Collection::ColourSource Collection::colourSource()
-{
-	return colourSource_;
-}
-
-// Set colourscale point colour
-void Collection::setColourScalePoint(ColourSource source, QColor colour, double value, int index)
-{
-	switch (source)
-	{
-		case (Collection::SingleColourSource):
-			colourSinglePoint_.setColour(colour);
-			break;
-		case (Collection::RGBGradientSource):
-			if (index == 0) colourRGBGradientAPoint_.set(value, colour);
-			else colourRGBGradientBPoint_.set(value, colour);
-			break;
-		case (Collection::HSVGradientSource):
-			if (index == 0) colourHSVGradientAPoint_.set(value, colour);
-			else colourHSVGradientBPoint_.set(value, colour);
-			break;
-		case (Collection::CustomGradientSource):
-			customColourScale_.setPoint(index, value, colour);
-			break;
-		default:
-			Messenger::print("Unhandled ColourSoruce in Collection::setColourScalePoint().\n");
-	}
-
-	// Update colourscale?
-	if (source == colourSource_) ++colourVersion_;
-}
-
-// Return colourscale point specified
-const ColourScalePoint* Collection::colourScalePoint(ColourSource source, int index)
-{
-	switch (source)
-	{
-		case (Collection::SingleColourSource):
-			return &colourSinglePoint_;
-			break;
-		case (Collection::RGBGradientSource):
-			return (index == 0 ? &colourRGBGradientAPoint_ : &colourRGBGradientBPoint_);
-			break;
-		case (Collection::HSVGradientSource):
-			return (index == 0 ? &colourHSVGradientAPoint_ : &colourHSVGradientBPoint_);
-			break;
-		case (Collection::CustomGradientSource):
-			return customColourScale_.point(index);
-			break;
-		default:
-			Messenger::print("Unhandled ColourSoruce in Collection::colourScalePoint().\n");
-	}
-
-	return NULL;
-}
-
-// Return colour of point specified
-QColor Collection::colourScalePointColour(ColourSource source, int index)
-{
-	const ColourScalePoint* point = colourScalePoint(source, index);
-	if (point) return point->colour();
-	else return Qt::black;
-}
-
-// Return value of point specified
-double Collection::colourScalePointValue(ColourSource source, int index)
-{
-	const ColourScalePoint* point = colourScalePoint(source, index);
-	if (point) return point->value();
-	else return 0.0;
-}
-
-// Add point to custom colour scale
-void Collection::addCustomColourScalePoint()
-{
-	customColourScale_.addPoint(customColourScale_.lastPoint() ? customColourScale_.lastPoint()->value() + 1.0 : 0.0, Qt::white);
-
-	// Update colourscale?
-	if (colourSource_ == Collection::CustomGradientSource) ++colourVersion_;
-}
-
-// Add point to custom colourscale
-void Collection::addCustomColourScalePoint(double value, QColor colour)
-{
-	customColourScale_.addPoint(value, colour);
-}
-
-// Return number of custom colourscale points
-int Collection::nCustomColourScalePoints()
-{
-	return customColourScale_.nPoints();
-}
-
-// Return first custom colourscale point in list
-ColourScalePoint* Collection::customColourScalePoints()
-{
-	return customColourScale_.firstPoint();
-}
-
-// Return custom colourscale point with index specified
-ColourScalePoint* Collection::customColourScalePoint(int id)
-{
-	return customColourScale_.point(id);
-}
-
-// Remove specified colourscale point
-void Collection::removeCustomColourScalePoint(ColourScalePoint* point)
-{
-	customColourScale_.removePoint(point);
-
-	// Update colourscale?
-	if (colourSource_ == Collection::CustomGradientSource) ++colourVersion_;
-}
-
-// Set alpha control
-void Collection::setAlphaControl(Collection::AlphaControl alpha)
-{
-
-	alphaControl_ = alpha;
-
-	++colourVersion_;
-}
-
-// Return current alpha control
-Collection::AlphaControl Collection::alphaControl()
-{
-	return alphaControl_;
-}
-
-// Set fixed alpha value
-void Collection::setFixedAlpha(double alpha)
-{
-	fixedAlpha_ = alpha;
-
-	++colourVersion_;
-}
-
-// Return fixed alpha value
-double Collection::fixedAlpha()
-{
-	return fixedAlpha_;
-}
-
-// Return current colourscale
-const ColourScale& Collection::colourScale()
-{
-	// Does the colourscale need updating first?
-	updateColourScale();
-	
-	return colourScale_;
-}
-
-// Return colour version
-int Collection::colourVersion()
-{
-	return colourVersion_;
-}
-
-/*
  * Display
  */
 
@@ -1610,6 +1356,18 @@ void Collection::updateDisplayData()
 	
 	// Store new version 
 	displayDataGeneratedAt_ = dataVersion_;
+}
+
+// Return local colour definition for display
+ColourDefinition& Collection::colour()
+{
+	return colour_;
+}
+
+// Return colour definition to use for display
+ColourDefinition& Collection::displayColour()
+{
+	return colour_;
 }
 
 // Set whether data is visible

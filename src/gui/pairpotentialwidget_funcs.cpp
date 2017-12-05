@@ -52,25 +52,25 @@ PairPotentialWidget::PairPotentialWidget(QWidget* parent, PairPotential* pp) : S
 
 	collection = uChromaView_->addCollectionToCurrentViewPane("Full");
 	collection->addDataSet(pairPotential_->uFull());
-	collection->setColourSource(Collection::SingleColourSource);
-	collection->setColourScalePoint(Collection::SingleColourSource, Qt::black);
+	collection->colour().setColourSource(ColourDefinition::SingleColourSource);
+	collection->colour().setColourScalePoint(ColourDefinition::SingleColourSource, Qt::black);
 
 	collection = uChromaView_->addCollectionToCurrentViewPane("Original");
 	collection->addDataSet(pairPotential_->uOriginal());
-	collection->setColourSource(Collection::SingleColourSource);
-	collection->setColourScalePoint(Collection::SingleColourSource, Qt::red);
+	collection->colour().setColourSource(ColourDefinition::SingleColourSource);
+	collection->colour().setColourScalePoint(ColourDefinition::SingleColourSource, Qt::red);
 	collection->displayLineStyle().setStipple(LineStipple::HalfDashStipple);
 
 	collection = uChromaView_->addCollectionToCurrentViewPane("Additional");
 	collection->addDataSet(pairPotential_->uAdditional());
-	collection->setColourSource(Collection::SingleColourSource);
-	collection->setColourScalePoint(Collection::SingleColourSource, Qt::blue);
+	collection->colour().setColourSource(ColourDefinition::SingleColourSource);
+	collection->colour().setColourScalePoint(ColourDefinition::SingleColourSource, Qt::blue);
 	collection->displayLineStyle().setStipple(LineStipple::DotStipple);
 
 	collection = uChromaView_->addCollectionToCurrentViewPane("Force");
 	collection->addDataSet(pairPotential_->dUFull());
-	collection->setColourSource(Collection::SingleColourSource);
-	collection->setColourScalePoint(Collection::SingleColourSource, Qt::green);
+	collection->colour().setColourSource(ColourDefinition::SingleColourSource);
+	collection->colour().setColourScalePoint(ColourDefinition::SingleColourSource, Qt::green);
 	collection->setVisible(false);
 
 	// Set up the view pane

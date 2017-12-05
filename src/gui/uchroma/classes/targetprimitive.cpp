@@ -65,11 +65,14 @@ void TargetPrimitive::updateAndSendPrimitive(const Axes& axes, bool forceUpdate,
 	// Check collection validity
 	if (!Collection::objectValid(collection_, "collection in TargetPrimitive::updateAndSendPrimitive")) return;
 
+	// Grab relevant colour definition for this Collection
+	ColourDefinition& colour = collection_->displayColour();
+
 	// Check whether the primitive for this collection needs updating
 	bool upToDate = true;
 	if (forceUpdate) upToDate = false;
 	else if (primitiveAxesUsedAt_ != axes.displayVersion()) upToDate = false;
-	else if (primitiveColourUsedAt_ != collection_->colourVersion()) upToDate = false;
+	else if (primitiveColourUsedAt_ != colour.colourVersion()) upToDate = false;
 	else if (primitiveDataUsedAt_ != collection_->dataVersion()) upToDate = false;
 	else if (primitiveStyleUsedAt_ != collection_->displayStyleVersion()) upToDate = false;
 
@@ -80,17 +83,17 @@ void TargetPrimitive::updateAndSendPrimitive(const Axes& axes, bool forceUpdate,
 		switch (collection_->displayStyle())
 		{
 			case (Collection::LineXYStyle):
-				Surface::constructLineXY(primitive_, axes, collection_->displayAbscissa(), collection_->displayData(), collection_->colourScale());
+				Surface::constructLineXY(primitive_, axes, collection_->displayAbscissa(), collection_->displayData(), colour.colourScale());
 				break;
 			case (Collection::LineZYStyle):
-				Surface::constructLineZY(primitive_, axes, collection_->displayAbscissa(), collection_->displayData(), collection_->colourScale());
+				Surface::constructLineZY(primitive_, axes, collection_->displayAbscissa(), collection_->displayData(), colour.colourScale());
 				break;
 			case (Collection::GridStyle):
-				Surface::constructGrid(primitive_, axes, collection_->displayAbscissa(), collection_->displayData(), collection_->colourScale());
+				Surface::constructGrid(primitive_, axes, collection_->displayAbscissa(), collection_->displayData(), colour.colourScale());
 				break;
 			case (Collection::SurfaceStyle):
 			case (Collection::UnlitSurfaceStyle):
-				Surface::constructFull(primitive_, axes, collection_->displayAbscissa(), collection_->displayData(), collection_->colourScale());
+				Surface::constructFull(primitive_, axes, collection_->displayAbscissa(), collection_->displayData(), colour.colourScale());
 				break;
 			default:
 				printf("Internal Error: Display style %i not accounted for in TargetPrimitive::updateAndSendPrimitive().\n", collection_->displayStyle());
@@ -112,7 +115,7 @@ void TargetPrimitive::updateAndSendPrimitive(const Axes& axes, bool forceUpdate,
 
 	// Store version points for the up-to-date primitive
 	primitiveAxesUsedAt_ = axes.displayVersion();
-	primitiveColourUsedAt_ = collection_->colourVersion();
+	primitiveColourUsedAt_ = colour.colourVersion();
 	primitiveDataUsedAt_ = collection_->dataVersion();
 	primitiveStyleUsedAt_ = collection_->displayStyleVersion();
 
