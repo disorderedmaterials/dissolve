@@ -1207,8 +1207,11 @@ void Collection::updateLimitsAndTransforms()
 // Set group that this Collection is associated to
 void Collection::setGroup(const char* groupName)
 {
-	// TODO Do we need to check for an existing group here, and remove ourselves using the CollectionGroupManager?
+	// Check for an existing name - if there is one, we must remove ourselves from that group first
+	if (hasGroup()) CollectionGroupManager::removeFromGroup(this);
+
 	group_ = groupName;
+	CollectionGroupManager::addToGroup(this);
 }
 
 // Return whether this Collection is associated to a group
