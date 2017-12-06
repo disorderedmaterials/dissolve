@@ -161,9 +161,9 @@ bool Module::updateDependentTargets(ModuleList& currentModuleList, bool autoAddD
  */
 
 // Return list of recognised keywords
-ModuleKeywordBase* Module::keywords()
+ModuleKeywordList& Module::keywords()
 {
-	return keywords_.keywords();
+	return keywords_;
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised

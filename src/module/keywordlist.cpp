@@ -47,9 +47,9 @@ ModuleKeywordBase* ModuleKeywordList::find(const char* keyword)
 }
 
 // Return first keyword in list
-ModuleKeywordBase* ModuleKeywordList::keywords()
+List<ModuleKeywordBase>& ModuleKeywordList::keywords()
 {
-	return keywords_.first();
+	return keywords_;
 }
 
 /*

@@ -47,7 +47,7 @@ class ModuleKeywordList
 	// Find named keyword
 	ModuleKeywordBase* find(const char* keyword);
 	// Return first keyword in list
-	ModuleKeywordBase* keywords();
+	List<ModuleKeywordBase>& keywords();
 
 
 	/*

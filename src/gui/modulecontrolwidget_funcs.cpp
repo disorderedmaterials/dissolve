@@ -105,7 +105,8 @@ void ModuleControlWidget::setUpOptions()
 	QWidget* widget;
 	KeywordWidgetBase* base;
 
-	for (ModuleKeywordBase* keyword = module_->keywords(); keyword != NULL; keyword = keyword->next)
+	ListIterator<ModuleKeywordBase> keywordIterator(module_->keywords().keywords());
+	while (ModuleKeywordBase* keyword = keywordIterator.iterate())
 	{
 		QLabel* nameLabel = new QLabel(keyword->keyword());
 		nameLabel->setToolTip(keyword->description());

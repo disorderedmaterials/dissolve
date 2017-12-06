@@ -119,7 +119,7 @@ class Module : public ListItem<Module>
 
 	public:
 	// Return list of recognised keywords
-	ModuleKeywordBase* keywords();
+	ModuleKeywordList& keywords();
 	// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
 	int parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix);
 
