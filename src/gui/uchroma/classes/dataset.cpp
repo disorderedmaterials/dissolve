@@ -121,9 +121,9 @@ const char* DataSet::sourceFileName()
 }
 
 // Return source XYData, if any
-XYData* DataSet::sourceXYData()
+const char* DataSet::sourceXYData() const
 {
-	return sourceXYData_;
+	return sourceXYData_.get();
 }
 
 // Set associated data name
@@ -160,7 +160,26 @@ bool DataSet::refreshData(QDir sourceDir)
 	}
 	else if (dataSource_ == DataSet::XYDataSource)
 	{
-		setData(*sourceXYData_);
+		printf("Here we are...\n");
+		// Locate the data...
+		XYData* sourceData = XYData::findObject(sourceXYData_);
+		printf("SourceData = %p\n", sourceData);
+		if (sourceData)
+		{
+			// Store the current z, copy the data, then re-set z
+			double z = data_.z();
+			setData(*sourceData);
+			data_.setZ(z);
+		}
+		else
+		{
+			Messenger::warn("Couldn't locate data '%s' for display.\n", sourceXYData_.get());
+			data_.arrayX().clear();
+			data_.arrayY().clear();
+
+			notifyParent();
+		}
+		printf("Done.\n");
 	
 		return true;
 	}
@@ -177,15 +196,13 @@ void DataSet::setData(XYData& source)
 }
 
 // Set data from supplied XYData
-void DataSet::setSourceData(XYData* data)
+void DataSet::setSourceData(const char* xyDataObjectName)
 {
-	sourceXYData_ = data;
+	sourceXYData_ = xyDataObjectName;
 
 	dataSource_ = DataSet::XYDataSource;
 
-	data_ = (*data);
-
-	notifyParent();
+	refreshData();
 }
 
 // Return data

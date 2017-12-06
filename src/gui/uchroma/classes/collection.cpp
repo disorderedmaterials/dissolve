@@ -263,7 +263,7 @@ DataSet* Collection::addDataSetWithReference(XYData* data, double z)
 	DataSet* dataSet = dataSets_.add();
 	dataSet->setParent(this);
 
-	dataSet->setSourceData(data);
+	dataSet->setSourceData(data->objectName());
 	setDataSetZ(dataSet, z);
 
 	uChromaBase_->setAsModified();

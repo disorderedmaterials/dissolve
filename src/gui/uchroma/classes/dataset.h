@@ -81,8 +81,8 @@ class DataSet : public ListItem<DataSet>
 	XYData data_;
 	// Transformed data
 	XYData transformedData_;
-	// Source XYData, if any
-	XYData* sourceXYData_;
+	// Source XYData object name
+	CharString sourceXYData_;
 
 	public:
 	// Set source of data
@@ -100,9 +100,9 @@ class DataSet : public ListItem<DataSet>
 	// Set data from supplied XYData
 	void setData(XYData& source);
 	// Set data from supplied XYData
-	void setSourceData(XYData* data);
+	void setSourceData(const char* xyDataObjectName);
 	// Return source XYData, if any
-	XYData* sourceXYData();
+	const char* sourceXYData() const;
 	// Refresh source data (if not internal)
 	bool refreshData(QDir sourceDir = QDir());
 	// Return data
