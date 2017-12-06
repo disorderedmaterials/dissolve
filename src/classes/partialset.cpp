@@ -324,6 +324,8 @@ void PartialSet::setResourceNames(const char* prefix, const char* suffix)
 	CharString actualSuffix;
 	if (suffix != NULL) actualSuffix.sprintf("_%s", suffix);
 
+	resourcePrefix_ = prefix;
+
 	int typeI, typeJ;
 	int nTypes = atomTypes_.nItems();
 	AtomTypeData* at1 = atomTypes_.first(), *at2;
@@ -342,23 +344,10 @@ void PartialSet::setResourceNames(const char* prefix, const char* suffix)
 	total_.setObjectName(CharString("%s//Total%s", prefix, actualSuffix.get()));
 }
 
-// Set resources name suffix, retaining original prefix
-void PartialSet::setResourceNameSuffixes(const char* suffix)
+// Return resource name prefix
+const char* PartialSet::resourcePrefix() const
 {
-	// Retrieve original resource name - extract it from that of the total_ data
-	CharString originalPrefix = total_.objectName();
-	int lastDelimiter = originalPrefix.rFind('/') - 1;
-	if (lastDelimiter <= 0)
-	{
-		Messenger::warn("Couldn't set suffixes of resource names, since original prefix could not be retrieved.\n");
-		return;
-	}
-
-	// Remove the '//Total' part from the original prefix
-	originalPrefix.eraseFrom(lastDelimiter);
-
-	// Set new resource names
-	setResourceNames(originalPrefix, suffix);
+	return resourcePrefix_.get();
 }
 
 /*
@@ -488,6 +477,7 @@ bool PartialSet::broadcast(ProcessPool& procPool, int rootRank)
 		}
 	}
 	total_.broadcast(procPool, rootRank);
+	if (!procPool.broadcast(resourcePrefix_)) return false;
 #endif
 	return true;
 }
