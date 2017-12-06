@@ -40,7 +40,6 @@ template<class XYData> const char* ObjectStore<XYData>::objectTypeName_ = "XYDat
 XYData::XYData() : ListItem<XYData>(), ObjectStore<XYData>(this) 
 {
 	name_ = "Untitled";
-// 	setObjectName("");
 	interpolationInterval_ = -1;
 	interpolationScheme_ = NoInterpolation;
 }
