@@ -99,6 +99,16 @@ class AtomTypeData : public MPIListItem<AtomTypeData>
 
 
 	/*
+	 * I/O
+	 */
+	public:
+	// Write data through specified LineParser
+	bool write(LineParser& parser);
+	// Read data through specified LineParser
+	bool read(LineParser& parser);
+
+
+	/*
 	 * Parallel Comms
 	 */
 	public:

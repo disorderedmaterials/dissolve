@@ -21,6 +21,7 @@
 
 #include "classes/isotopedata.h"
 #include "base/isotope.h"
+#include "base/lineparser.h"
 #include "base/messenger.h"
 #include "base/ptable.h"
 #include "base/processpool.h"
@@ -105,13 +106,33 @@ double IsotopeData::fraction() const
 }
 
 /*
+ * I/O
+ */
+
+// Write data through specified LineParser
+bool IsotopeData::write(LineParser& parser)
+{
+	return parser.writeLineF("%i %i %i %s\n", isotope_->element()->z(), isotope_->A(), population_, fraction_);
+}
+
+// Read data through specified LineParser
+bool IsotopeData::read(LineParser& parser)
+{
+	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+	isotope_ = PeriodicTable::element(parser.argi(0)).hasIsotope(parser.argi(1));
+	population_ = parser.argi(2);
+	fraction_ = parser.argd(3);
+	return true;
+}
+
+/*
  * Parallel Comms
  */
 
 // Broadcast data from Master to all Slaves
 bool IsotopeData::broadcast(ProcessPool& procPool, int root)
 {
-// #ifdef PARALLEL
+#ifdef PARALLEL
 	// For isotope_, need to broadcast element Z and isotope A
 	int Z, A;
 	if (procPool.poolRank() == root)
@@ -125,6 +146,6 @@ bool IsotopeData::broadcast(ProcessPool& procPool, int root)
 
 	procPool.broadcast(population_, root);
 	procPool.broadcast(fraction_, root);
-// #endif
+#endif
 	return true;
 }

@@ -58,7 +58,7 @@ bool PartialSet::setUp(const AtomTypeList& atomTypes, double rdfRange, double bi
 {
 	abscissaUnits_ = abscissaUnits;
 
-	// Construct a matrix based on the usedAtomTypes_ list of the Configuration, since this reflects all our possible partials
+	// Construct a matrix based on the provided AtomTypeList
 	int n, m;
 	atomTypes_ = atomTypes;
 	int nTypes = atomTypes_.nItems();
@@ -458,6 +458,52 @@ void PartialSet::calculateRDF(XYData& destination, Histogram& histogram, double 
 }
 
 /*
+ * I/O
+ */
+
+// Write data through specified LineParser
+bool PartialSet::write(LineParser& parser)
+{
+	// Write out AtomTypes first
+	atomTypes_.write(parser);
+	int nTypes = atomTypes_.nItems();
+	// Write individual XYData
+	for (int typeI=0; typeI<nTypes; ++typeI)
+	{
+		for (int typeJ=typeI; typeJ<nTypes; ++typeJ)
+		{
+			if (!partials_.ref(typeI, typeJ).write(parser)) return false;
+			if (!boundPartials_.ref(typeI, typeJ).write(parser)) return false;
+			if (!unboundPartials_.ref(typeI, typeJ).write(parser)) return false;
+			if (!braggPartials_.ref(typeI, typeJ).write(parser)) return false;
+		}
+	}
+	if (!total_.write(parser)) return false;
+	return true;
+}
+
+// Read data through specified LineParser
+bool PartialSet::read(LineParser& parser)
+{
+	atomTypes_.clear();
+	if (!atomTypes_.read(parser)) return false;
+	int nTypes = atomTypes_.nItems();
+	// Read individual XYData
+	for (int typeI=0; typeI<nTypes; ++typeI)
+	{
+		for (int typeJ=typeI; typeJ<nTypes; ++typeJ)
+		{
+			if (!partials_.ref(typeI, typeJ).read(parser)) return false;
+			if (!boundPartials_.ref(typeI, typeJ).read(parser)) return false;
+			if (!unboundPartials_.ref(typeI, typeJ).read(parser)) return false;
+			if (!braggPartials_.ref(typeI, typeJ).read(parser)) return false;
+		}
+	}
+	if (!total_.read(parser)) return false;
+	return true;
+}
+
+/*
  * Parallel Comms
  */
 
@@ -474,6 +520,7 @@ bool PartialSet::broadcast(ProcessPool& procPool, int rootRank)
 			partials_.ref(typeI, typeJ).broadcast(procPool, rootRank);
 			boundPartials_.ref(typeI, typeJ).broadcast(procPool, rootRank);
 			unboundPartials_.ref(typeI, typeJ).broadcast(procPool, rootRank);
+			braggPartials_.ref(typeI, typeJ).broadcast(procPool, rootRank);
 		}
 	}
 	total_.broadcast(procPool, rootRank);

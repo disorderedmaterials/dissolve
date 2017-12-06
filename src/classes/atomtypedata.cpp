@@ -24,9 +24,11 @@
 #include "classes/isotopedata.h"
 #include "base/constants.h"
 #include "base/isotope.h"
+#include "base/lineparser.h"
 #include "base/messenger.h"
 #include "base/ptable.h"
 #include "base/processpool.h"
+#include "base/sysfunc.h"
 #include "templates/broadcastlist.h"
 #include <string.h>
 
@@ -196,6 +198,40 @@ double AtomTypeData::boundCoherent() const
 const char* AtomTypeData::atomTypeName() const
 {
 	return atomType_->name();
+}
+
+/*
+ * I/O
+ */
+
+// Write data through specified LineParser
+bool AtomTypeData::write(LineParser& parser)
+{
+	// Line Contains: AtomType name, exchangeable flag, population, fraction, boundCoherent, and nIsotopes
+	if (!parser.writeLineF("%s %s %i %f %f %i\n", atomType_->name(), DUQSys::btoa(exchangeable_), population_, fraction_, boundCoherent_, isotopes_.nItems())) return false;
+	ListIterator<IsotopeData> isotopeIterator(isotopes_);
+	while (IsotopeData* topeData = isotopeIterator.iterate()) if (!topeData->write(parser)) return false;
+	return true;
+}
+
+// Read data through specified LineParser
+bool AtomTypeData::read(LineParser& parser)
+{
+	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+	for (atomType_ = List<AtomType>::masterInstance()->first(); atomType_ != NULL; atomType_ = atomType_->next) if (DUQSys::sameString(atomType_->name(), parser.argc(0))) break;
+	if (!atomType_) return false;
+	exchangeable_ = parser.argb(1);
+	population_ = parser.argi(2);
+	fraction_ = parser.argd(3);
+	boundCoherent_ = parser.argd(4);
+	isotopes_.clear();
+	int nIso = parser.argi(5);
+	for (int n = 0; n<nIso; ++n)
+	{
+		IsotopeData* tope = isotopes_.add();
+		if (!tope->read(parser)) return false;
+	}
+	return true;
 }
 
 /*

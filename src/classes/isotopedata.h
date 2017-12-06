@@ -26,6 +26,7 @@
 
 // Forward Declarations
 class Isotope;
+class LineParser;
 
 /*
  * IsotopeData Definition
@@ -67,6 +68,16 @@ class IsotopeData : public MPIListItem<IsotopeData>
 	int population() const;
 	// Return local fractional population (e.g. within an AtomTypeData)
 	double fraction() const;
+
+
+	/*
+	 * I/O
+	 */
+	public:
+	// Write data through specified LineParser
+	bool write(LineParser& parser);
+	// Read data through specified LineParser
+	bool read(LineParser& parser);
 
 
 	/*

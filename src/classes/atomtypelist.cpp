@@ -22,6 +22,7 @@
 #include "classes/atomtypelist.h"
 #include "classes/atomtype.h"
 #include "classes/isotopedata.h"
+#include "base/lineparser.h"
 #include "base/ptable.h"
 #include "base/processpool.h"
 #include "templates/broadcastlist.h"
@@ -236,6 +237,33 @@ AtomTypeData* AtomTypeList::operator[](int n)
 	}
 #endif
 	return types_[n];
+}
+
+/*
+ * I/O
+ */
+
+// Write data through specified LineParser
+bool AtomTypeList::write(LineParser& parser)
+{
+	if (!parser.writeLineF("%i  # nAtomTypes\n", types_.nItems())) return false;
+	ListIterator<AtomTypeData> atomTypeIterator(types_);
+	while (AtomTypeData* atd = atomTypeIterator.iterate()) if (!atd->write(parser)) return false;
+	return true;
+}
+
+// Read data through specified LineParser
+bool AtomTypeList::read(LineParser& parser)
+{
+	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+	types_.clear();
+	int nAt = parser.argi(0);
+	for (int n=0; n<nAt; ++n)
+	{
+		AtomTypeData* atd = types_.add();
+		if (!atd->read(parser)) return false;
+	}
+	return true;
 }
 
 /*

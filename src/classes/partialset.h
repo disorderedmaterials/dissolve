@@ -27,13 +27,12 @@
 #include "base/xydata.h"
 #include "templates/list.h"
 #include "templates/array2d.h"
-#include "templates/genericitembaseio.h"
 
 // Forward Declarations
 class Configuration;
 
 // Set of Partials
-class PartialSet : public ListItem<PartialSet>,  public GenericItemBaseIO
+class PartialSet : public ListItem<PartialSet>
 {
 	public:
 	// Constructor
@@ -126,6 +125,16 @@ class PartialSet : public ListItem<PartialSet>,  public GenericItemBaseIO
 	void reweightPartials(double factor);
 	// Calculate RDF from supplied Histogram and normalisation data
 	static void calculateRDF(XYData& destination, Histogram& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier, XYData& boxNormalisation);
+
+
+	/*
+	 * I/O
+	 */
+	public:
+	// Write data through specified LineParser
+	bool write(LineParser& parser);
+	// Read data through specified LineParser
+	bool read(LineParser& parser);
 
 
 	/*
