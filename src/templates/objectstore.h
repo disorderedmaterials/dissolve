@@ -108,6 +108,16 @@ template <class T> class ObjectStore
 		// Remove our pointer from the master list
 		objects_.remove(object_);
 	}
+	// Copy Constructor
+	ObjectStore<T>(const ObjectStore<T>& source)
+	{
+		// ObjectStore<T> members are *not* copied, since a named object should be unique.
+	}
+	// Assignment Operator
+	void operator=(const ObjectStore<T>& source)
+	{
+		// ObjectStore<T> members are *not* copied, since a named object should be unique.
+	}
 	// Object type identifier
 	static int objectType_;
 	// Object type name
