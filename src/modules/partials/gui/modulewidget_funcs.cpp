@@ -76,7 +76,7 @@ void PartialsModuleWidget::updateControls()
  */
 
 // Add data from PartialSet to tree
-void PartialsModuleWidget::addPartialSetToTree(PartialSet& partials, QTreeWidgetItem* topLevelItem, PartialsModuleWidget::DataType rootType, const char* rootTitle)
+void PartialsModuleWidget::addPartialSetToTree(PartialSet& partials, QTreeWidgetItem* topLevelItem, PartialsModuleWidget::DataType rootType, const char* rootTitle, int addAverageContributions)
 {
 	// Create item to contain data
 	QTreeWidgetItem* setItem = new QTreeWidgetItem(rootType);
@@ -100,23 +100,35 @@ void PartialsModuleWidget::addPartialSetToTree(PartialSet& partials, QTreeWidget
 			// Create item to contain full data
 			MimeTreeWidgetItem* fullItem = new MimeTreeWidgetItem(setItem, rootType+PartialsModuleWidget::FullData);
 			fullItem->setText(0, groupName.get());
- 			fullItem->addMimeString(MimeString::UChromaCollectionBlockType, QString("Collection '%1'; Group '%1'; ColourSource SingleColour; ColourSingle 0 0 0 255; LineStyle 1.0 Solid; DataSet 'Full'; Source XYData %2; Z 0.0; EndDataSet; EndCollection").arg(groupName.get(), partials.partial(n,m).objectName()));
+ 			fullItem->addMimeString(MimeString::UChromaCollectionBlockType, QString("Collection '%1'; Group '%1'; LineStyle 1.0 Solid; DataSet 'Full'; Source XYData %2; EndDataSet; EndCollection").arg(groupName.get(), partials.partial(n,m).objectName()));
 
 			// Add subitems with other data
 			// -- Bound partial
 			MimeTreeWidgetItem* subItem = new MimeTreeWidgetItem(fullItem, rootType+PartialsModuleWidget::BoundData);
 			subItem->setText(0, "Bound");
- 			subItem->addMimeString(MimeString::UChromaCollectionBlockType, QString("Collection '%1 Bnd'; Group '%1'; ColourSource SingleColour; ColourSingle 0 0 0 255; LineStyle 1.0 Dots; DataSet 'Bound'; Source XYData %2; Z 0.0; EndDataSet; EndCollection").arg(groupName.get(), partials.boundPartial(n,m).objectName()));
+ 			subItem->addMimeString(MimeString::UChromaCollectionBlockType, QString("Collection '%1 Bnd'; Group '%1'; LineStyle 1.0 Dots; DataSet 'Bound'; Source XYData %2; EndDataSet; EndCollection").arg(groupName.get(), partials.boundPartial(n,m).objectName()));
 
 			// -- Unbound partial
 			subItem = new MimeTreeWidgetItem(fullItem, rootType+PartialsModuleWidget::UnboundData);
 			subItem->setText(0, "Unbound");
- 			subItem->addMimeString(MimeString::UChromaCollectionBlockType, QString("Collection '%1 Unb'; Group '%1'; ColourSource SingleColour; ColourSingle 0 0 0 255; LineStyle 1.0 'Quarter Dash'; DataSet 'Unbound'; Source XYData %2; Z 0.0; EndDataSet; EndCollection").arg(groupName.get(), partials.unboundPartial(n,m).objectName()));
+ 			subItem->addMimeString(MimeString::UChromaCollectionBlockType, QString("Collection '%1 Unb'; Group '%1'; LineStyle 1.0 'Quarter Dash'; DataSet 'Unbound'; Source XYData %2; EndDataSet; EndCollection").arg(groupName.get(), partials.unboundPartial(n,m).objectName()));
 
 			// -- Bragg partial
 			subItem = new MimeTreeWidgetItem(fullItem, rootType+PartialsModuleWidget::BraggData);
 			subItem->setText(0, "Bragg");
-			subItem->addMimeString(MimeString::UChromaCollectionBlockType, QString("Collection '%1 Brg'; Group '%1'; ColourSource SingleColour; ColourSingle 0 0 0 255; LineStyle 1.0 'Dot Dash 1'; DataSet 'Bragg'; Source XYData %2; Z 0.0; EndDataSet; EndCollection").arg(groupName.get(), partials.partial(n,m).objectName()));
+			subItem->addMimeString(MimeString::UChromaCollectionBlockType, QString("Collection '%1 Brg'; Group '%1'; LineStyle 1.0 'Dot Dash 1'; DataSet 'Bragg'; Source XYData %2; EndDataSet; EndCollection").arg(groupName.get(), partials.partial(n,m).objectName()));
+
+			// -- Partials forming full average
+			if (addAverageContributions > 0)
+			{
+				// Construct the Collection block
+				QString block = QString("Collection '%1 Avg'; Group '%1'; LineStyle 1.0 Solid;").arg(groupName.get());
+				for (int avg=1; avg<addAverageContributions; ++avg) block += QString(" DataSet 'Average %1'; Source XYData %2; Z %3; EndDataSet;").arg(avg).arg(partials.partial(n,m).objectName()).arg(avg*1.0);
+				block += " EndCollection";
+				subItem = new MimeTreeWidgetItem(fullItem, rootType+PartialsModuleWidget::FullData);
+				subItem->setText(0, "Avg");
+				subItem->addMimeString(MimeString::UChromaCollectionBlockType, block);
+			}
 		}
 	}
 }
@@ -132,7 +144,7 @@ void PartialsModuleWidget::repopulateSourceTree()
 
 	QTreeWidgetItem* cfgItem, *setItem, *fullItem, *subItem;
 
-	// Loop over Configurations targetted by Module
+	// Loop over Configurations targeted by Module
 	RefListIterator<Configuration,bool> configIterator(module_->targetConfigurations());
 	while (Configuration* cfg = configIterator.iterate())
 	{
@@ -145,13 +157,16 @@ void PartialsModuleWidget::repopulateSourceTree()
 		}
 		else cfgItem = NULL;
 
+		// Grab averaging integer
+		const int maxSetsInAverage = module_->keywords().asInt("Averaging");
+
 		// Unweighted partial g(r)
 		if (cfg->moduleData().contains("UnweightedGR", "Partials"))
 		{
 			// Get the PartialSet
 			PartialSet& unweightedgr = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedGR", "Partials");
 
-			addPartialSetToTree(unweightedgr, cfgItem, PartialsModuleWidget::UnweightedGRData, "Unweighted g(r)");
+			addPartialSetToTree(unweightedgr, cfgItem, PartialsModuleWidget::UnweightedGRData, "Unweighted g(r)", maxSetsInAverage);
 		}
 
 		// Unweighted partial S(Q)

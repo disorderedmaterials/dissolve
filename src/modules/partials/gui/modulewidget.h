@@ -66,7 +66,7 @@ class PartialsModuleWidget : public ModuleWidget
 	 */
 	private:
 	// Add data from PartialSet to tree
-	void addPartialSetToTree(PartialSet& partials, QTreeWidgetItem* topLevelItem, PartialsModuleWidget::DataType rootType, const char* rootTitle);
+	void addPartialSetToTree(PartialSet& partials, QTreeWidgetItem* topLevelItem, PartialsModuleWidget::DataType rootType, const char* rootTitle, int addAverageContributions = 0);
 	// Repopulate tree with source data
 	void repopulateSourceTree();
 

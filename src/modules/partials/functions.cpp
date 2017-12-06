@@ -422,12 +422,14 @@ bool PartialsModule::performGRAveraging(GenericList& moduleData, const char* nam
 
 			// Grab it, and rename the resources within
 			PartialSet& previousPartials = GenericListHelper<PartialSet>::retrieve(moduleData, CharString("%s_%i", name, n+1), prefix);
-			previousPartials.setResourceNameSuffixes(DUQSys::itoa(n+1));
+			previousPartials.setResourceNames(currentPartials.resourcePrefix(), CharString("Avg%i", n+1));
 		}
 
 		// Store the current PartialSet as the earliest data (1)
 		// TODO Not currently saved in restart file.
-		GenericListHelper<PartialSet>::realise(moduleData, CharString("%s_1", name), prefix) = currentPartials;
+		PartialSet& recentPartials = GenericListHelper<PartialSet>::realise(moduleData, CharString("%s_1", name), prefix);
+		recentPartials = currentPartials;
+		recentPartials.setResourceNames(currentPartials.resourcePrefix(), "Avg1");
 		++nStored;
 	}
 
