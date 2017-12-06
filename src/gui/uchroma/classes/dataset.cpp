@@ -160,10 +160,8 @@ bool DataSet::refreshData(QDir sourceDir)
 	}
 	else if (dataSource_ == DataSet::XYDataSource)
 	{
-		printf("Here we are...\n");
 		// Locate the data...
 		XYData* sourceData = XYData::findObject(sourceXYData_);
-		printf("SourceData = %p\n", sourceData);
 		if (sourceData)
 		{
 			// Store the current z, copy the data, then re-set z
@@ -178,13 +176,12 @@ bool DataSet::refreshData(QDir sourceDir)
 			data_.arrayY().clear();
 
 			notifyParent();
+
+			return false;
 		}
-		printf("Done.\n");
-	
-		return true;
 	}
 
-	return false;
+	return true;
 }
 
 // Set data from supplied XYData
