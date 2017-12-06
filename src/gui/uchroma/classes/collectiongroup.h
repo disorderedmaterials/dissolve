@@ -25,6 +25,7 @@
 #include "gui/uchroma/classes/colourdef.h"
 #include "base/charstring.h"
 #include "base/sysfunc.h"
+#include "templates/array.h"
 #include "templates/list.h"
 #include "templates/listitem.h"
 #include "templates/reflist.h"
@@ -77,7 +78,7 @@ class CollectionGroupManager
 	// List of current CollectionGroups in use
 	static List<CollectionGroup> collectionGroups_;
 	// Usage counters for stock colours
-	static int* stockColourUsageCount_;
+	static Array<int> stockColourUsageCount_;
 
 	public:
 	// Add Collection to its specified group, creating / associating if necessary

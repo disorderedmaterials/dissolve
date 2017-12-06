@@ -79,7 +79,7 @@ bool CollectionGroup::isEmpty()
 
 // Static Members
 List<CollectionGroup> CollectionGroupManager::collectionGroups_;
-int* CollectionGroupManager::stockColourUsageCount_ = new int[ColourDefinition::nStockColours];
+Array<int> CollectionGroupManager::stockColourUsageCount_ = Array<int>(ColourDefinition::nStockColours);
 
 // Constructor
 CollectionGroupManager::CollectionGroupManager()
