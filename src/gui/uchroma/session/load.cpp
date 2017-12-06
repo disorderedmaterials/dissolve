@@ -453,10 +453,11 @@ bool UChromaBase::readDataSetBlock(LineParser& parser, DataSet* dataSet, Collect
 					Messenger::print("Error : Unterminated 'Data' block in dataSet '%s'.\n", qPrintable(dataSet->name()));
 					return false;
 				}
+				// Set the Z of the newly-read data (in case it has already been set in the DataSet) and copy
+				data.setZ(dataSet->z());
+				dataSet->setData(data);
 				break;
 			case (UChromaBase::EndDataSetKeyword):
-				// Store acquired data before we return
-				dataSet->setData(data);
 				return true;
 				break;
 			case (UChromaBase::SourceKeyword):
@@ -492,7 +493,7 @@ bool UChromaBase::readDataSetBlock(LineParser& parser, DataSet* dataSet, Collect
 						Messenger::error("Couldn't locate specified XYData object.\n");
 						return false;
 					}
-					data = (*sourceXYData);
+					dataSet->setSourceData(parser.argc(2));
 				}
 				break;
 			case (UChromaBase::ZKeyword):
