@@ -1,6 +1,6 @@
 /*
-	*** Main Window
-	*** src/gui/mainwindow.h
+	*** Monitor Window
+	*** src/gui/monitor.h
 	Copyright T. Youngs 2007-2017
 
 	This file is part of DUQ.
@@ -19,10 +19,10 @@
 	along with DUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_MAINWINDOW_H
-#define DUQ_MAINWINDOW_H
+#ifndef DUQ_MONITORWINDOW_H
+#define DUQ_MONITORWINDOW_H
 
-#include "gui/ui_mainwindow.h"
+#include "gui/ui_monitor.h"
 #include "gui/subwindow.h"
 #include "templates/list.h"
 

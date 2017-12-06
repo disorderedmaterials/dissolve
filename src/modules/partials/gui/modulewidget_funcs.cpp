@@ -67,6 +67,8 @@ void PartialsModuleWidget::updateControls()
 
 	// Ensure that any displayed data is up-to-date
 	uChromaView_->refreshReferencedDataSets();
+
+	uChromaView_->updateDisplay();
 }
 
 /*

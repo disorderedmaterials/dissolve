@@ -21,7 +21,7 @@
 
 #include "base/messenger.h"
 #include "base/lineparser.h"
-#include "gui/mainwindow.h"
+#include "gui/monitor.h"
 
 // Print text
 void Messenger::printText(const char* text)

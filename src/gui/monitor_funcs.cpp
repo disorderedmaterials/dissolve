@@ -1,6 +1,6 @@
 /*
-	*** Main Window - Functions
-	*** src/gui/mainwindow_funcs.cpp
+	*** Monitor Window - Functions
+	*** src/gui/monitor_funcs.cpp
 	Copyright T. Youngs 2007-2017
 
 	This file is part of dUQ.
@@ -20,7 +20,7 @@
 */
 
 #include "main/duq.h"
-#include "gui/mainwindow.h"
+#include "gui/monitor.h"
 #include "gui/browser.h"
 #include "gui/subwidget.h"
 #include <QCloseEvent>

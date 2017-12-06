@@ -20,7 +20,7 @@
 */
 
 #include "gui/browser.h"
-#include "gui/mainwindow.h"
+#include "gui/monitor.h"
 #include "gui/modulecontrolwidget.h"
 #include "gui/pairpotentialwidget.h"
 #include "main/duq.h"

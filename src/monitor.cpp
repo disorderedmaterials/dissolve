@@ -24,7 +24,7 @@
 #include "main/duq.h"
 #include "module/registry.h"
 #include "base/processpool.h"
-#include "gui/mainwindow.h"
+#include "gui/monitor.h"
 #include <time.h>
 #include <ctime>
 #include <stdlib.h>

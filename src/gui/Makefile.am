@@ -30,13 +30,13 @@ libgui_la_SOURCES += gradientbar.hui gradientbar_funcs.cpp
 libgui_la_SOURCES += mimestrings.cpp mimetreewidget.hui mimetreewidget_funcs.cpp mimetreewidgetitem.cpp
 libgui_la_SOURCES += texponentialspin.hui texponentialspin_funcs.cpp
 
-libgui_la_SOURCES += browser.ui mainwindow.ui modulecontrolwidget.ui pairpotentialwidget.ui
+libgui_la_SOURCES += browser.ui monitor.ui modulecontrolwidget.ui pairpotentialwidget.ui
 
 libgui_la_SOURCES += browser_funcs.cpp modulecontrolwidget_funcs.cpp pairpotentialwidget_funcs.cpp 
 libgui_la_SOURCES += modulewidget.cpp
 libgui_la_SOURCES += subwidget.cpp subwindow.cpp
-libgui_la_SOURCES += mainwindow_funcs.cpp
+libgui_la_SOURCES += monitor_funcs.cpp
 
-noinst_HEADERS = browser.h mainwindow.h mimestrings.h mimetreewidgetitem.h modulecontrolwidget.h modulewidget.h pairpotentialwidget.h subwidget.h subwindow.h
+noinst_HEADERS = browser.h monitor.h mimestrings.h mimetreewidgetitem.h modulecontrolwidget.h modulewidget.h pairpotentialwidget.h subwidget.h subwindow.h
 
 AM_CPPFLAGS = -I$(top_srcdir)/src -I../ -I./ @DUQ_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
