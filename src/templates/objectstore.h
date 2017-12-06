@@ -25,6 +25,7 @@
 #include "templates/reflist.h"
 #include "base/sysfunc.h"
 #include <stdio.h>
+#include <string.h>
 
 // Object Info
 // -- Object type_ should be set from a local enum, for instance, containing all object types relevant in the use case.
@@ -152,7 +153,17 @@ template <class T> class ObjectStore
 	// Set name for this object, appending type name prefix
 	void setObjectName(const char* name)
 	{
-		// TODO Check for duplicates here?
+#ifdef CHECKS
+		// Check for duplicate value already in list
+		if (strlen(name) > 0)
+		{
+			T* object = findObject(CharString("%s@%s", objectTypeName_, name));
+			if (object && (object != this))
+			{
+				Messenger::warn("ObjectStore<%s>::setObjectName() - The object '%s@%s' already exists in the ObjectStore. Behaviour will be undefined...\n", objectTypeName_, objectTypeName_, name);
+			}
+		}
+#endif
 		objectInfo_.setName(CharString("%s@%s", objectTypeName_, name));
 	}
 	// Return object name
