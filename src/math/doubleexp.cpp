@@ -111,17 +111,17 @@ void DoubleExp::set(const char* text)
 	static char s[128];
 	strcpy(s, text);
 
-	printf("DoubleExp::set(const char*) - Original string is '%s'\n", text);
+// 	printf("DoubleExp::set(const char*) - Original string is '%s'\n", text);
 	// Use strtok to get first part of string, before any exponent
 	char* mant = strtok(s, "Ee");
 	mantissa_ = atof(mant);
-	printf("DoubleExp::set(const char*) - Mantissa is %f (%s)\n", mantissa_, mant);
+// 	printf("DoubleExp::set(const char*) - Mantissa is %f (%s)\n", mantissa_, mant);
 
 	// Call strtok a second time to see if we have an exponent
 	char* expo = strtok(NULL, "Ee");
 	if (expo) exponent_ = atoi(expo);
 	else exponent_ = 1;
-	printf("DoubleExp::set(const char*) - Exponent is %i (%s)\n", exponent_, expo ? expo : "NULL");
+// 	printf("DoubleExp::set(const char*) - Exponent is %i (%s)\n", exponent_, expo ? expo : "NULL");
 
 	recalculate();
 }
@@ -155,5 +155,5 @@ int DoubleExp::exponent() const
 // Return value as string
 CharString DoubleExp::asString()
 {
-	return CharString("%f%i", mantissa_, exponent_);
+	return CharString("%fe%i", mantissa_, exponent_);
 }
