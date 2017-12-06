@@ -23,7 +23,7 @@
 #include "templates/genericlist.h"
 
 // Constructor
-KeywordWidgetDouble::KeywordWidgetDouble(QWidget* parent, ModuleKeywordBase* keyword) : QDoubleSpinBox(parent), KeywordWidgetBase()
+KeywordWidgetDouble::KeywordWidgetDouble(QWidget* parent, ModuleKeywordBase* keyword) : TExponentialSpin(parent), KeywordWidgetBase()
 {
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<DoubleModuleKeyword*>(keyword);
@@ -31,7 +31,7 @@ KeywordWidgetDouble::KeywordWidgetDouble(QWidget* parent, ModuleKeywordBase* key
 	else
 	{
 		// Set minimum and maximum values
-		setRange(keyword_->hasValidationMin() ? keyword_->validationMin() : -1.0e6, keyword_->hasValidationMax() ? keyword_->validationMax() : 1.0e6);
+		setRange(keyword_->hasValidationMin(), keyword_->validationMin(), keyword_->hasValidationMax(), keyword_->validationMax());
 
 		// Set current value
 		setValue(keyword_->asDouble());

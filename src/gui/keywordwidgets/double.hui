@@ -24,12 +24,12 @@
 
 #include "module/keywordtypes/double.h"
 #include "gui/keywordwidgets/base.h"
-#include <QDoubleSpinBox>
+#include "gui/texponentialspin.hui"
 
 // Forward Declarations
 /* none */
 
-class KeywordWidgetDouble : public QDoubleSpinBox, public KeywordWidgetBase
+class KeywordWidgetDouble : public TExponentialSpin, public KeywordWidgetBase
 {
 	// All Qt declarations must include this macro
 	Q_OBJECT
