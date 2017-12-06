@@ -26,7 +26,6 @@
 #include "math/broadeningfunction.h"
 #include "templates/array.h"
 #include "templates/objectstore.h"
-#include "templates/genericitembaseio.h"
 
 #define OPTOLERANCE 1.0e-6
 
@@ -34,7 +33,7 @@
 class ProcessPool;
 
 // XYData
-class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public GenericItemBaseIO
+class XYData : public ListItem<XYData>, public ObjectStore<XYData>
 {
 	public:
 	// Constructor
@@ -279,6 +278,16 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	double interpolated(double xvalue);
 	// Return interpolated y value for supplied x, specifying containing interval
 	double interpolated(double xvalue, int interval);
+
+
+	/*
+	 * I/O
+	 */
+	public:
+	// Write data through specified LineParser
+	bool write(LineParser& parser);
+	// Read data through specified LineParser
+	bool read(LineParser& parser);
 
 
 	/*

@@ -952,6 +952,41 @@ void XYData::dump()
 }
 
 /*
+ * I/O
+ */
+
+// Write data through specified LineParser
+bool XYData::write(LineParser& parser)
+{
+	if (!parser.writeLineF("%s\n", name_.get())) return false;
+	if (!parser.writeLineF("%s\n", objectName())) return false;
+	if (!parser.writeLineF("%16.9e\n", z_)) return false;
+	if (!parser.writeLineF("%i\n", nPoints())) return false;
+	for (int n=0; n<nPoints(); ++n) if (!parser.writeLineF("%16.9e %16.9e\n", x_.value(n), y_.value(n))) return false;
+	return true;
+}
+
+// Read data through specified LineParser
+bool XYData::read(LineParser& parser)
+{
+	clear();
+	if (parser.readNextLine(LineParser::Defaults) != LineParser::Success) return false;
+	name_ = parser.line();
+	if (parser.readNextLine(LineParser::Defaults) != LineParser::Success) return false;
+	setObjectName(parser.line());
+	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+	z_ = parser.argd(0);
+	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+	int np = parser.argi(0);
+	for (int n=0; n<np; ++n)
+	{
+		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+		addPoint(parser.argd(0), parser.argd(1));
+	}
+	return true;
+}
+
+/*
  * Parallel Comms
  */
 
