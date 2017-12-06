@@ -25,12 +25,13 @@
 #include "templates/mpilistitem.h"
 #include "templates/vector3.h"
 #include "templates/array.h"
+#include "templates/genericitembaseio.h"
 
 // Forward Declarations
 class BraggPeak;
 
 // K-Vector
-class KVector : public MPIListItem<KVector>
+class KVector : public MPIListItem<KVector>,  public GenericItemBaseIO
 {
 	public:
 	// Constructor

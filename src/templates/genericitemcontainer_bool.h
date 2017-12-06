@@ -23,7 +23,7 @@
 #define DUQ_GENERICITEMCONTAINER_BOOL_H
 
 #include "templates/genericitemcontainer.h"
-#include "base/sysfunc.h"
+#include "base/lineparser.h"
 
 // GenericItemContainer<bool>
 template <> class GenericItemContainer<bool> : public GenericItem
@@ -36,6 +36,24 @@ template <> class GenericItemContainer<bool> : public GenericItem
 	}
 	// Data item
 	bool data;
+
+
+	/*
+	 * I/O
+	 */
+	public:
+	// Write data through specified parser
+	bool write(LineParser& parser)
+	{
+		return parser.writeLineF("%s\n", DUQSys::btoa(data));
+	}
+	// Read data through specified parser
+	bool read(LineParser& parser)
+	{
+		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+		data = parser.argb(0);
+		return true;
+	}
 
 
 	/*

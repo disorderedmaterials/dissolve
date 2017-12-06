@@ -38,6 +38,24 @@ template <> class GenericItemContainer< Vec3<int> > : public GenericItem
 
 
 	/*
+	 * I/O
+	 */
+	public:
+	// Write data through specified parser
+	bool write(LineParser& parser)
+	{
+		return parser.writeLineF("%i  %i  %i\n", data.x, data.y, data.z);
+	}
+	// Read data through specified parser
+	bool read(LineParser& parser)
+	{
+		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+		data = parser.arg3i(0);
+		return true;
+	}
+
+
+	/*
 	 * Parallel Comms
 	 */
 	public:

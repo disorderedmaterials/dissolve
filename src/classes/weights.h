@@ -26,12 +26,13 @@
 #include "classes/isotopologuemix.h"
 #include "templates/list.h"
 #include "templates/array2d.h"
+#include "templates/genericitembaseio.h"
 
 // Forward Declarations
 /* none */
 
 // Weights Container
-class Weights
+class Weights : public GenericItemBaseIO
 {
 	public:
 	// Constructor

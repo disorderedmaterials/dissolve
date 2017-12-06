@@ -24,12 +24,13 @@
 
 #include "templates/array2d.h"
 #include "templates/mpilistitem.h"
+#include "templates/genericitembaseio.h"
 
 // Forward Declarations
 /* none */
 
 // BraggPeak Class
-class BraggPeak : public MPIListItem<BraggPeak>
+class BraggPeak : public MPIListItem<BraggPeak>,  public GenericItemBaseIO
 {
 	/*
 	 *  BraggPeak acts as a 'bin' for collecting contributions arising from a set of KVectors which occur at the same Q value.

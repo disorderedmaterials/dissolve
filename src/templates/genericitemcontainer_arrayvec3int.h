@@ -38,6 +38,36 @@ template <> class GenericItemContainer< Array< Vec3<int> > > : public GenericIte
 
 
 	/*
+	 * I/O
+	 */
+	public:
+	// Write data through specified parser
+	bool write(LineParser& parser)
+	{
+		parser.writeLineF("%i\n", data.nItems());
+		Vec3<int>* array = data.array();
+		for (int n=0; n<data.nItems(); ++n)
+		{
+			if (!parser.writeLineF("%i %i %i\n", array[n].x, array[n].y, array[n].z)) return false;
+		}
+		return true;
+	}
+	// Read data through specified parser
+	bool read(LineParser& parser)
+	{
+		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+		int nItems = parser.argi(0);
+		data.createEmpty(nItems);
+		for (int n=0; n<nItems; ++n)
+		{
+			if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+			data.add(parser.arg3i(0));
+		}
+		return true;
+	}
+
+
+	/*
 	 * Parallel Comms
 	 */
 	public:

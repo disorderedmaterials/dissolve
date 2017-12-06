@@ -26,8 +26,6 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "version.h"
-#include "templates/genericitemreader.h"
-#include "templates/genericitemwriter.h"
 #include <string.h>
 
 // Load datafiles
@@ -519,7 +517,7 @@ bool DUQ::loadRestart(const char* filename)
 		GenericItem* item = moduleData.create(parser.argc(nameIndex), itemClass);
 
 		// Read in the data
-		if (GenericItemReader(parser, item).failed())
+		if (!item->read(parser))
 		{
 			Messenger::error("Failed to read item data '%s' from restart file.\n", item->name());
 			error = true;
@@ -570,7 +568,7 @@ bool DUQ::saveRestart(const char* filename)
 			if (!(item->flags()&GenericItem::InRestartFileFlag)) continue;
 
 			parser.writeLineF("Configuration  %s  %s  %s\n", cfg->name(), item->name(), GenericItem::itemClass(item->itemClass()));
-			if (GenericItemWriter(parser, item).failed()) return false;
+			if (item->write(parser)) return false;
 		}
 	}
 
@@ -581,7 +579,7 @@ bool DUQ::saveRestart(const char* filename)
 		if (!(item->flags()&GenericItem::InRestartFileFlag)) continue;
 
 		parser.writeLineF("Processing  %s  %s\n", item->name(), GenericItem::itemClass(item->itemClass()));
-		if (GenericItemWriter(parser, item).failed()) return false;
+		if (!item->write(parser)) return false;
 	}
 
 	parser.closeFiles();

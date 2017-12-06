@@ -38,6 +38,43 @@ template <> class GenericItemContainer< Array2D<double> > : public GenericItem
 
 
 	/*
+	 * I/O
+	 */
+	public:
+	// Write data through specified parser
+	bool write(LineParser& parser)
+	{
+		parser.writeLineF("%i  %i\n", data.nRows(), data.nColumns());
+		for (int row=0; row<data.nRows(); ++row)
+		{
+			for (int column=0; column<data.nColumns(); ++column)
+			{
+				if (!parser.writeLineF("%16.9e\n", data.value(row, column))) return false;
+			}
+		}
+		return true;
+	}
+	// Read data through specified parser
+	bool read(LineParser& parser)
+	{
+		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+		int nRows = parser.argi(0), nColumns = parser.argi(1);
+		data.initialise(nRows, nColumns);
+
+		// Read in data
+		for (int row=0; row<nRows; ++row)
+		{
+			for (int column=0; column<nColumns; ++column)
+			{
+				if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+				data.ref(row, column) = parser.argd(0);
+			}
+		}
+		return true;
+	}
+
+
+	/*
 	 * Parallel Comms
 	 */
 	public:

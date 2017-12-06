@@ -27,12 +27,13 @@
 #include "base/xydata.h"
 #include "templates/list.h"
 #include "templates/array2d.h"
+#include "templates/genericitembaseio.h"
 
 // Forward Declarations
 class Configuration;
 
 // Set of Partials
-class PartialSet : public ListItem<PartialSet>
+class PartialSet : public ListItem<PartialSet>,  public GenericItemBaseIO
 {
 	public:
 	// Constructor

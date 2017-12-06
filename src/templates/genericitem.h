@@ -135,6 +135,16 @@ class GenericItem
 
 
 	/*
+	 * I/O
+	 */
+	public:
+	// Write data through specified parser
+	virtual bool write(LineParser& parser) = 0;
+	// Read data through specified parser
+	virtual bool read(LineParser& parser) = 0;
+
+
+	/*
 	 * Parallel Comms
 	 */
 	public:

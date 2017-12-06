@@ -339,6 +339,27 @@ BroadeningFunction& BroadeningFunction::unity()
 }
 
 /*
+ * I/O
+ */
+
+// Write data through specified LineParser
+bool BroadeningFunction::write(LineParser& parser)
+{
+	CharString line("%s", functionType(function_));
+	for (int n=0; n<nFunctionParameters(function_); ++n) line.strcatf(" %16.9e", parameters_[n]);
+	return parser.writeLine(line.get());
+}
+
+// Read data through specified LineParser
+bool BroadeningFunction::read(LineParser& parser)
+{
+	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+	function_ = functionType(parser.argc(0));
+	for (int n=0; n<nFunctionParameters(function_); ++n) parameters_[n] = parser.argd(n+1);
+	return true;
+}
+
+/*
  * Parallel Comms
  */
 

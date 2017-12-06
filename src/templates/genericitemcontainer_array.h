@@ -39,6 +39,39 @@ template <class T> class GenericItemContainer< Array<T> > : public GenericItem
 
 
 	/*
+	 * I/O
+	 */
+	public:
+	// Write data through specified parser
+	bool write(LineParser& parser)
+	{
+		parser.writeLineF("%i\n", data.nItems());
+		T* array = data.array();
+		for (int n=0; n<data.nItems(); ++n)
+		{
+			if (!array[n].write(parser)) return false;
+		}
+		return true;
+	}
+	// Read data through specified parser
+	bool read(LineParser& parser)
+	{
+		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+		int nItems = parser.argi(0);
+		data.createEmpty(nItems);
+
+		// TODO - How can this be effectively templated through the class instances in the array
+		return false;
+// 		for (int n=0; n<nItems; ++n)
+// 		{
+// 			if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+// 			data.add(parser.argd(0));
+// 		}
+		return true;
+	}
+
+
+	/*
 	 * Parallel Comms
 	 */
 	public:

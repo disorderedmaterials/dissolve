@@ -1,6 +1,6 @@
 /*
-	*** Generic Item Container
-	*** src/templates/genericitemcontainer.h
+	*** Generic Item Base I/O
+	*** src/templates/genericitembaseio.h
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -19,24 +19,18 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_GENERICITEMCONTAINER_H
-#define DUQ_GENERICITEMCONTAINER_H
+#ifndef DUQ_GENERICITEMBASEIO_H
+#define DUQ_GENERICITEMBASEIO_H
 
-#include "base/processpool.h"
-#include "templates/genericitem.h"
+#include "base/messenger.h"
 
-// GenericItemContainer Template Class
-template <class T> class GenericItemContainer : public GenericItem
+// Forward Declarations
+/* none */
+
+// Base IO functions for a GenericItem
+// Subclass this if read/write is not needed by the class.
+class GenericItemBaseIO
 {
-	public:
-	// Constructor
-	GenericItemContainer<T>(const char* name, int flags = 0) : GenericItem(name, flags)
-	{
-	}
-	// Data item
-	T data;
-
-
 	/*
 	 * I/O
 	 */
@@ -44,23 +38,14 @@ template <class T> class GenericItemContainer : public GenericItem
 	// Write data through specified parser
 	bool write(LineParser& parser)
 	{
-		return data.write(parser);
+		Messenger::error("Tried to write() a class that doesn't support it.\n");
+		return false;
 	}
 	// Read data through specified parser
 	bool read(LineParser& parser)
 	{
-		return data.read(parser);
-	}
-
-
-	/*
-	 * Parallel Comms
-	 */
-	public:
-	// Broadcast item contents
-	bool broadcast(ProcessPool& procPool, int root)
-	{
-		return data.broadcast(procPool, root);
+		Messenger::error("Tried to read() a class that doesn't support it.\n");
+		return false;
 	}
 };
 
