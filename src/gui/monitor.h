@@ -62,10 +62,6 @@ class MonitorWindow : public QMainWindow
 	/*
 	 * Update Functions
 	 */
-	public:
-	// Update Targets 
-	enum UpdateTarget { DefaultTarget = 0, AllTargets = 65535 };
-
 	private:
 	// Whether window is currently refreshing
 	bool refreshing_;
@@ -75,14 +71,12 @@ class MonitorWindow : public QMainWindow
 	static QTextBrowser* messagesBrowser_;
 
 	public:
-	// Set up window after load
-	void setUp();
 	// Return QTextBrowser for GUI messaging
 	static QTextBrowser* messagesBrowser();
 
 	public slots:
 	// Refresh specified aspects of the window
-	void updateWidgets(int targets = MonitorWindow::DefaultTarget);
+	void updateWidgets();
 
 
 	/*

@@ -80,20 +80,6 @@ void MonitorWindow::resizeEvent(QResizeEvent* event)
  * Update Functions
  */
 
-// Set up window after load
-void MonitorWindow::setUp()
-{
-// 	// Add controls for all processing modules
-// 	RefListIterator<Module,bool> moduleIterator(duq_.processingModules().modules());
-// 	while (Module* module = moduleIterator.iterate())
-// 	{
-// 		// Create a new ModuleWidget to use as the page for the tab
-// 		ModuleControlWidget* moduleControlWidget = new ModuleControlWidget(NULL, module);
-// 		ui.ProcessingModulesTab->addTab(moduleControlWidget, CharString("%s (%s)", module->name(), module->uniqueName()).get());
-// 		
-// 	}
-}
-
 // Return QTextBrowser for GUI messaging
 QTextBrowser* MonitorWindow::messagesBrowser()
 {
@@ -102,7 +88,7 @@ QTextBrowser* MonitorWindow::messagesBrowser()
 
 
 // Refresh specified aspects of the window
-void MonitorWindow::updateWidgets(int targets)
+void MonitorWindow::updateWidgets()
 {
 	// Iteration Panel
 	ui.IterationNumberLabel->setText(DUQSys::itoa(duq_.iteration()));
