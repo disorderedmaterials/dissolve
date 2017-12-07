@@ -1,6 +1,6 @@
 /*
-	*** dUQ - Datas
-	*** src/main/datas.cpp
+	*** dUQ - Data
+	*** src/main/data.cpp
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
