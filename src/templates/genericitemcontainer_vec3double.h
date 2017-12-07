@@ -31,13 +31,6 @@ template <> class GenericItemContainer< Vec3<double> > : public GenericItem
 	// Constructor
 	GenericItemContainer< Vec3<double> >(const char* name, int flags = 0) : GenericItem(name, flags)
 	{
-		// Add reference GenericItem class to GenericItem::itemClasses_ list to enable recognition-by-name of class type
-		static bool addedToItemClasses_ = false;
-		if (!addedToItemClasses_)
-		{
-			addedToItemClasses_ = true;
-			itemClasses_.own(newItem(itemClassName()));
-		}
 	}
 	// Data item
 	Vec3<double> data;

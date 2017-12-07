@@ -43,10 +43,11 @@ GenericItem* GenericList::create(const char* name, const char* itemClassName)
 	if (!newItem)
 	{
 		Messenger::error("GenericList::create() doesn't know how to create an item of type '%s'\n", itemClassName);
+		return NULL;
 	}
 
 	// Add the new item to our list
-	if (newItem) add(newItem);
+	add(newItem);
 
 	return newItem;
 }

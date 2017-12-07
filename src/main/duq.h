@@ -49,6 +49,8 @@ class DUQ
 	~DUQ();
 	// Clear all data
 	void clear();
+	// Register GenericItems
+	void registerGenericItems();
 
 
 	/*

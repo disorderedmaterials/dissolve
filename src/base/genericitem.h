@@ -58,6 +58,8 @@ class GenericItem
 	public:
 	// Return class name contained in item
 	virtual const char* itemClassName() = 0;
+	// Add class to list of representative itemClasses_
+	static void addItemClass(GenericItem* item);
 	// Return new, empty GenericItem containing the class specified
 	static GenericItem* newItem(const char* className, const char* name, int flags = 0);
 

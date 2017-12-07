@@ -22,6 +22,9 @@
 #include "main/duq.h"
 #include "classes/species.h"
 #include "classes/atomtype.h"
+#include "classes/kvector.h"
+#include "base/genericitem.h"
+#include "templates/genericitems.h"
 
 // List<T> Master Instance
 template<class T> List<T>* List<T>::masterInstance_ = NULL;
@@ -55,6 +58,9 @@ DUQ::DUQ()
 	// Master Instances
 	List<AtomType>::setMasterInstance(&atomTypes_);
 	List<Species>::setMasterInstance(&species_);
+
+	// Register GenericItems
+	registerGenericItems();
 }
 
 // Destructor
@@ -82,3 +88,27 @@ void DUQ::clear()
 	filename_.clear();
 }
 
+// Register GenericItems
+void DUQ::registerGenericItems()
+{
+	GenericItem::addItemClass(new GenericItemContainer<bool>("bool"));
+	GenericItem::addItemClass(new GenericItemContainer<int>("int"));
+	GenericItem::addItemClass(new GenericItemContainer<double>("double"));
+	GenericItem::addItemClass(new GenericItemContainer<CharString>("CharString"));
+
+	GenericItem::addItemClass(new GenericItemContainer< Vec3<int> >("Vec3<int>"));
+	GenericItem::addItemClass(new GenericItemContainer< Vec3<double> >("Vec3<double>"));
+
+	GenericItem::addItemClass(new GenericItemContainer< Array2D<double> >("Array2D<double>"));
+
+	GenericItem::addItemClass(new GenericItemContainer< Array<int> >("Array<int>"));
+	GenericItem::addItemClass(new GenericItemContainer< Array<double> >("Array<double>"));
+// 	GenericItem::addItemClass(new GenericItemContainer<Array<T>(""));
+	GenericItem::addItemClass(new GenericItemContainer< Array< Vec3<int> > >("Array<Vec3<int>>"));
+	GenericItem::addItemClass(new GenericItemContainer< Array< Vec3<double> > >("Array<Vec3<double>>"));
+
+	GenericItem::addItemClass(new GenericItemContainer<BraggPeak>(BraggPeak::itemClassName()));
+	GenericItem::addItemClass(new GenericItemContainer<KVector>(KVector::itemClassName()));
+	GenericItem::addItemClass(new GenericItemContainer<PartialSet>(PartialSet::itemClassName()));
+	GenericItem::addItemClass(new GenericItemContainer<XYData>(XYData::itemClassName()));
+}

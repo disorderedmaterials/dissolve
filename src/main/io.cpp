@@ -508,9 +508,9 @@ bool DUQ::loadRestart(const char* filename)
 		GenericItem* item = moduleData.create(parser.argc(nameIndex), parser.argc(classIndex));
 
 		// Read in the data
-		if (!item->read(parser))
+		if ((!item) || (!item->read(parser)))
 		{
-			Messenger::error("Failed to read item data '%s' from restart file.\n", item->name());
+			Messenger::error("Failed to read item data '%s' from restart file.\n", parser.argc(nameIndex));
 			error = true;
 			break;
 		}

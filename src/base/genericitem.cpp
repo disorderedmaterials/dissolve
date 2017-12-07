@@ -37,10 +37,15 @@ GenericItem::~GenericItem()
 {
 };
 
-
 /*
  * Item Class
  */
+
+// Add class to list of representative itemClasses_
+void GenericItem::addItemClass(GenericItem* item)
+{
+	itemClasses_.own(item);
+}
 
 // Return new, empty GenericItem containing the class specified
 GenericItem* GenericItem::newItem(const char* className, const char* name, int flags)
@@ -49,7 +54,6 @@ GenericItem* GenericItem::newItem(const char* className, const char* name, int f
 	for (GenericItem* item = itemClasses_.first(); item != NULL; item = item->next) if (DUQSys::sameString(item->itemClassName(), className)) return item->newItem(name, flags);
 	return NULL;
 }
-
 
 /*
  * Item Contents
