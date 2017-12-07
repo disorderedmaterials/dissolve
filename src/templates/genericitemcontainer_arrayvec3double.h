@@ -31,10 +31,34 @@ template <> class GenericItemContainer< Array< Vec3<double> > > : public Generic
 	// Constructor
 	GenericItemContainer< Array< Vec3<double> > >(const char* name, int flags = 0) : GenericItem(name, flags)
 	{
-		itemClass_ = GenericItem::ArrayVec3DoubleClass;
+		// Add reference GenericItem class to GenericItem::itemClasses_ list to enable recognition-by-name of class type
+		static bool addedToItemClasses_ = false;
+		if (!addedToItemClasses_)
+		{
+			addedToItemClasses_ = true;
+			itemClasses_.own(newItem(itemClassName()));
+		}
 	}
 	// Data item
 	Array< Vec3<double> > data;
+
+
+	/*
+	 * Item Class
+	 */
+	protected:
+	// Create a new GenericItem containing same class as current type
+	GenericItem* newItem(const char* name, int flags = 0)
+	{
+		return new GenericItemContainer< Array< Vec3<double> > >(name, flags);
+	}
+
+	public:
+	// Return class name contained in item
+	const char* itemClassName()
+	{
+		return "Array<Vec3<double>>";
+	}
 
 
 	/*

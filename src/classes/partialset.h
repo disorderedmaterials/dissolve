@@ -32,7 +32,7 @@
 class Configuration;
 
 // Set of Partials
-class PartialSet : public ListItem<PartialSet>
+class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 {
 	public:
 	// Constructor
@@ -128,9 +128,11 @@ class PartialSet : public ListItem<PartialSet>
 
 
 	/*
-	 * I/O
+	 * GenericItemBase Implementations
 	 */
 	public:
+	// Return class name
+	static const char* itemClassName();
 	// Write data through specified LineParser
 	bool write(LineParser& parser);
 	// Read data through specified LineParser

@@ -30,6 +30,7 @@
 #include "classes/weights.h"
 #include "math/broadeningfunction.h"
 #include "templates/array3d.h"
+#include "templates/genericlisthelper.h"
 
 /*
  * Private Functions
@@ -426,8 +427,7 @@ bool PartialsModule::performGRAveraging(GenericList& moduleData, const char* nam
 		}
 
 		// Store the current PartialSet as the earliest data (1)
-		// TODO Not currently saved in restart file.
-		PartialSet& recentPartials = GenericListHelper<PartialSet>::realise(moduleData, CharString("%s_1", name), prefix);
+		PartialSet& recentPartials = GenericListHelper<PartialSet>::realise(moduleData, CharString("%s_1", name), prefix, GenericItem::InRestartFileFlag);
 		recentPartials = currentPartials;
 		recentPartials.setResourceNames(currentPartials.resourcePrefix(), "Avg1");
 		++nStored;
@@ -469,7 +469,7 @@ bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration*
 {
 	// Does a PartialSet already exist for this Configuration?
 	bool wasCreated;
-	PartialSet& partialgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedGR", "Partials", GenericItem::NoFlag, &wasCreated);
+	PartialSet& partialgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedGR", "Partials", GenericItem::InRestartFileFlag, &wasCreated);
 	if (wasCreated) partialgr.setUp(cfg, cfg->niceName(), "unweighted", "rdf", "r, Angstroms");
 
 	// Is the PartialSet already up-to-date?

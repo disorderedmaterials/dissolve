@@ -34,7 +34,7 @@
 #include "module/list.h"
 #include "base/xydata.h"
 #include "base/processpool.h"
-#include "templates/genericlist.h"
+#include "base/genericlist.h"
 #include "templates/vector3.h"
 #include "templates/orderedlist.h"
 #include "templates/array.h"

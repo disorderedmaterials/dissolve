@@ -20,7 +20,7 @@
 */
 
 #include "gui/keywordwidgets/charstring.hui"
-#include "templates/genericlist.h"
+#include "templates/genericlisthelper.h"
 
 // Constructor
 KeywordWidgetCharString::KeywordWidgetCharString(QWidget* parent, ModuleKeywordBase* keyword) : QComboBox(parent), KeywordWidgetBase()

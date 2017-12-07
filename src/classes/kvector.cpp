@@ -171,6 +171,16 @@ double KVector::intensity(int typeI, int typeJ)
 }
 
 /*
+ * GenericItemBase Implementations
+ */
+
+// Return class name
+const char* KVector::itemClassName()
+{
+	return "KVector";
+}
+
+/*
  * Parallel Comms
  */
 

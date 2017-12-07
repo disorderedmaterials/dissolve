@@ -20,7 +20,7 @@
 */
 
 #include "gui/keywordwidgets/double.hui"
-#include "templates/genericlist.h"
+#include "templates/genericlisthelper.h"
 
 // Constructor
 KeywordWidgetDouble::KeywordWidgetDouble(QWidget* parent, ModuleKeywordBase* keyword) : TExponentialSpin(parent), KeywordWidgetBase()

@@ -952,9 +952,14 @@ void XYData::dump()
 }
 
 /*
- * I/O
+ * GenericItemBase Implementations
  */
 
+// Return class name
+const char* XYData::itemClassName()
+{
+	return "XYData";
+}
 // Write data through specified LineParser
 bool XYData::write(LineParser& parser)
 {

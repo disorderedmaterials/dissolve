@@ -26,13 +26,13 @@
 #include "classes/isotopologuemix.h"
 #include "templates/list.h"
 #include "templates/array2d.h"
-#include "templates/genericitembaseio.h"
+#include "base/genericitembase.h"
 
 // Forward Declarations
 /* none */
 
 // Weights Container
-class Weights : public GenericItemBaseIO
+class Weights : public GenericItemBase
 {
 	public:
 	// Constructor
@@ -97,6 +97,14 @@ class Weights : public GenericItemBaseIO
 	double boundCoherentSquareOfAverage();
 	// Return bound coherent squared average scattering (<b**2>)
 	double boundCoherentAverageOfSquares();
+
+
+	/*
+	 * GenericItemBase Implementations
+	 */
+	public:
+	// Return class name
+	static const char* itemClassName();
 
 
 	/*

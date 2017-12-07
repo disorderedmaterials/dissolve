@@ -338,9 +338,16 @@ BroadeningFunction& BroadeningFunction::unity()
 	return unity;
 }
 
+
 /*
- * I/O
+ * GenericItemBase Implementations
  */
+
+// Return class name
+const char* BroadeningFunction::itemClassName()
+{
+	return "BroadeningFunction";
+}
 
 // Write data through specified LineParser
 bool BroadeningFunction::write(LineParser& parser)

@@ -25,6 +25,7 @@
 #include "classes/weights.h"
 #include "classes/atomtype.h"
 #include "base/sysfunc.h"
+#include "templates/genericlisthelper.h"
 
 // Perform set up tasks for module
 bool TestModule::setUp(ProcessPool& procPool)

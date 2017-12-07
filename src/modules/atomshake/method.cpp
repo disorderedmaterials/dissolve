@@ -29,6 +29,7 @@
 #include "classes/energykernel.h"
 #include "base/processpool.h"
 #include "base/timer.h"
+#include "templates/genericlisthelper.h"
 
 // Perform set up tasks for module
 bool AtomShakeModule::setUp(ProcessPool& procPool)

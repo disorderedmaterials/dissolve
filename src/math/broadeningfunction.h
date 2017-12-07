@@ -25,13 +25,14 @@
 #define MAXFUNCTIONPARAMS 6
 
 #include "base/charstring.h"
+#include "base/genericitembase.h"
 
 // Forward Declarations
 class LineParser;
 class ProcessPool;
 
 // Broadening Function
-class BroadeningFunction
+class BroadeningFunction : public GenericItemBase
 {
 	public:
 	// Constructor
@@ -87,9 +88,11 @@ class BroadeningFunction
 
 
 	/*
-	 * I/O
+	 * GenericItemBase Implementations
 	 */
 	public:
+	// Return class name
+	static const char* itemClassName();
 	// Write data through specified LineParser
 	bool write(LineParser& parser);
 	// Read data through specified LineParser

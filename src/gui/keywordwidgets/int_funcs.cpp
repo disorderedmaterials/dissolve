@@ -20,7 +20,7 @@
 */
 
 #include "gui/keywordwidgets/int.hui"
-#include "templates/genericlist.h"
+#include "templates/genericlisthelper.h"
 
 // Constructor
 KeywordWidgetInt::KeywordWidgetInt(QWidget* parent, ModuleKeywordBase* keyword) : QSpinBox(parent), KeywordWidgetBase()

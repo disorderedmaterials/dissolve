@@ -25,6 +25,7 @@
 #include "classes/species.h"
 #include "base/lineparser.h"
 #include "templates/enumhelpers.h"
+#include "templates/genericlisthelper.h"
 
 // Partial Calculation Method enum
 const char* PartialsMethodKeywords[] = { "Auto", "Test", "Simple", "Cells" };

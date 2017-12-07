@@ -458,8 +458,14 @@ void PartialSet::calculateRDF(XYData& destination, Histogram& histogram, double 
 }
 
 /*
- * I/O
+ * GenericItemBase Implementations
  */
+
+// Return class name
+const char* PartialSet::itemClassName()
+{
+	return "PartialSet";
+}
 
 // Write data through specified LineParser
 bool PartialSet::write(LineParser& parser)

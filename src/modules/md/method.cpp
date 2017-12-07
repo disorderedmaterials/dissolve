@@ -27,6 +27,7 @@
 #include "classes/forcekernel.h"
 #include "base/timer.h"
 #include "base/lineparser.h"
+#include "templates/genericlisthelper.h"
 
 // Perform set up tasks for module
 bool MDModule::setUp(ProcessPool& procPool)

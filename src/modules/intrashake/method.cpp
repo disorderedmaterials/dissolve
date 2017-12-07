@@ -25,6 +25,7 @@
 #include "classes/energykernel.h"
 #include "classes/box.h"
 #include "base/sysfunc.h"
+#include "templates/genericlisthelper.h"
 
 // Perform set up tasks for module
 bool IntraShakeModule::setUp(ProcessPool& procPool)

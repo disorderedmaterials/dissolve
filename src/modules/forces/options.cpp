@@ -24,6 +24,7 @@
 #include "module/keywordtypes.h"
 #include "main/duq.h"
 #include "base/lineparser.h"
+#include "templates/genericlisthelper.h"
 
 // Set up keywords for Module
 void ForcesModule::setUpKeywords()

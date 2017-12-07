@@ -240,8 +240,14 @@ AtomTypeData* AtomTypeList::operator[](int n)
 }
 
 /*
- * I/O
+ * GenericItemBase Implementations
  */
+
+// Return class name
+const char* AtomTypeList::itemClassName()
+{
+	return "AtomTypeList";
+}
 
 // Write data through specified LineParser
 bool AtomTypeList::write(LineParser& parser)

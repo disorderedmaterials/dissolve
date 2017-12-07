@@ -33,7 +33,7 @@
 class ProcessPool;
 
 // XYData
-class XYData : public ListItem<XYData>, public ObjectStore<XYData>
+class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public GenericItemBase
 {
 	public:
 	// Constructor
@@ -281,9 +281,11 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>
 
 
 	/*
-	 * I/O
+	 * GenericItemBase Implementations
 	 */
 	public:
+	// Return class name
+	static const char* itemClassName();
 	// Write data through specified LineParser
 	bool write(LineParser& parser);
 	// Read data through specified LineParser

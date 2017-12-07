@@ -1,6 +1,6 @@
 /*
-	*** Generic Item Base I/O
-	*** src/templates/genericitembaseio.h
+	*** Generic Item Base
+	*** src/templates/genericitembase.h
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -19,34 +19,33 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_GENERICITEMBASEIO_H
-#define DUQ_GENERICITEMBASEIO_H
+#ifndef DUQ_GENERICITEMBASE_H
+#define DUQ_GENERICITEMBASE_H
 
 #include "base/messenger.h"
 
 // Forward Declarations
 /* none */
 
-// Base IO functions for a GenericItem
-// Subclass this if read/write is not needed by the class.
-class GenericItemBaseIO
+// Base function templates for a Class that is to be used as a GenericItem
+class GenericItemBase
 {
+	/*
+	 * Item Class
+	 */
+	public:
+	// Return class name
+	static const char* itemClassName();
+
+
 	/*
 	 * I/O
 	 */
 	public:
 	// Write data through specified parser
-	bool write(LineParser& parser)
-	{
-		Messenger::error("Tried to write() a class that doesn't support it.\n");
-		return false;
-	}
+	virtual bool write(LineParser& parser);
 	// Read data through specified parser
-	bool read(LineParser& parser)
-	{
-		Messenger::error("Tried to read() a class that doesn't support it.\n");
-		return false;
-	}
+	virtual bool read(LineParser& parser);
 };
 
 #endif

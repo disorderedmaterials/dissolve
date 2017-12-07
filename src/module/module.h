@@ -24,7 +24,7 @@
 
 #include "base/messenger.h"
 #include "module/keywordlist.h"
-#include "templates/genericlist.h"
+#include "base/genericlist.h"
 #include "templates/reflist.h"
 
 // Forward Declarations

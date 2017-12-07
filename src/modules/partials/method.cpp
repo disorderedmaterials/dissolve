@@ -25,6 +25,7 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "classes/weights.h"
+#include "templates/genericlisthelper.h"
 
 // Perform set up tasks for module
 bool PartialsModule::setUp(ProcessPool& procPool)

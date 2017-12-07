@@ -26,6 +26,7 @@
 #include "classes/box.h"
 #include "base/sysfunc.h"
 #include "base/lineparser.h"
+#include "templates/genericlisthelper.h"
 
 // Perform set up tasks for module
 bool ForcesModule::setUp(ProcessPool& procPool)

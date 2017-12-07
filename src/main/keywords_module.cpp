@@ -24,6 +24,7 @@
 #include "classes/species.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
+#include "templates/genericlisthelper.h"
 
 // Module Block Keywords
 KeywordData ModuleBlockData[] = {

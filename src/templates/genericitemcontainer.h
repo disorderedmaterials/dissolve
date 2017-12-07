@@ -23,7 +23,7 @@
 #define DUQ_GENERICITEMCONTAINER_H
 
 #include "base/processpool.h"
-#include "templates/genericitem.h"
+#include "base/genericitem.h"
 
 // GenericItemContainer Template Class
 template <class T> class GenericItemContainer : public GenericItem
@@ -32,9 +32,34 @@ template <class T> class GenericItemContainer : public GenericItem
 	// Constructor
 	GenericItemContainer<T>(const char* name, int flags = 0) : GenericItem(name, flags)
 	{
+		// Add reference GenericItem class to GenericItem::itemClasses_ list to enable recognition-by-name of class type
+		static bool addedToItemClasses_ = false;
+		if (!addedToItemClasses_)
+		{
+			addedToItemClasses_ = true;
+			itemClasses_.own(newItem(itemClassName()));
+		}
 	}
 	// Data item
 	T data;
+
+
+	/*
+	 * Item Class
+	 */
+	protected:
+	// Create a new GenericItem containing same class as current type
+	GenericItem* newItem(const char* name, int flags = 0)
+	{
+		return new GenericItemContainer<T>(name, flags);
+	}
+
+	public:
+	// Return class name contained in item
+	virtual const char* itemClassName()
+	{
+		return T::itemClassName();
+	}
 
 
 	/*

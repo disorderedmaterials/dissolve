@@ -32,10 +32,35 @@ template <class T> class GenericItemContainer< Array<T> > : public GenericItem
 	// Constructor
 	GenericItemContainer< Array<T> >(const char* name, int flags = 0) : GenericItem(name, flags)
 	{
-		itemClass_ = GenericItem::ArrayIntClass;
+		// Add reference GenericItem class to GenericItem::itemClasses_ list to enable recognition-by-name of class type
+		static bool addedToItemClasses_ = false;
+		if (!addedToItemClasses_)
+		{
+			addedToItemClasses_ = true;
+			itemClasses_.own(newItem(itemClassName()));
+		}
 	}
 	// Data item
 	Array<T> data;
+
+
+	/*
+	 * Item Class
+	 */
+	protected:
+	// Create a new GenericItem containing same class as current type
+	GenericItem* newItem(const char* name, int flags = 0)
+	{
+		return new GenericItemContainer< Array<T> >(name, flags);
+	}
+
+	public:
+	// Return class name contained in item
+	const char* itemClassName()
+	{
+		static CharString className("Array<%s>", T::itemClassName());
+		return "Array<T>";
+	}
 
 
 	/*

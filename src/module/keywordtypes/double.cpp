@@ -21,7 +21,7 @@
 
 #include "module/keywordtypes/double.h"
 #include "base/lineparser.h"
-#include "templates/genericlist.h"
+#include "templates/genericlisthelper.h"
 
 // Constructors
 DoubleModuleKeyword::DoubleModuleKeyword(double value) : ModuleKeywordBase(ModuleKeywordBase::DoubleData), ModuleKeywordData<double>(value)

@@ -23,7 +23,7 @@
 #include "classes/weights.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include "templates/genericlist.h"
+#include "templates/genericlisthelper.h"
 
 // Constructor
 Data::Data() : ListItem<Data>()

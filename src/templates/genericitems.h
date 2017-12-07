@@ -24,7 +24,8 @@
 
 /*
  * This file should be included if the use of GenericItems is required.
- * It simply includes all other GenericItemContainers and specialisations.
+ * It simply includes all other GenericItemContainer specialisations,
+ * followed by the templated GenericItemContainer.
  */
 
 #include "templates/genericitemcontainer_bool.h"
@@ -42,9 +43,6 @@
 #include "templates/genericitemcontainer_arrayvec3int.h"
 #include "templates/genericitemcontainer_arrayvec3double.h"
 
-#include "templates/genericitemcontainer_list.h"
-#include "templates/genericitemcontainer_orderedlist.h"
-
-#include "templates/genericitemcontainer_enumcontainer.h"
+#include "templates/genericitemcontainer.h"
 
 #endif

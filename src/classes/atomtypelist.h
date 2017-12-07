@@ -25,6 +25,7 @@
 #include "classes/atomtypedata.h"
 #include "templates/list.h"
 #include "templates/array.h"
+#include "base/genericitembase.h"
 
 // Forward Declarations
 class AtomType;
@@ -35,7 +36,7 @@ class Isotope;
  * 
  * Contains a list of AtomTypes referenced using a List<> of AtomTypData, and optionally containing Isotope and population information.
  */
-class AtomTypeList
+class AtomTypeList : public GenericItemBase
 {
 	public:
 	// Constructor
@@ -95,9 +96,11 @@ class AtomTypeList
 
 
 	/*
-	 * I/O
+	 * GenericItemBase Implementations
 	 */
 	public:
+	// Return class name
+	static const char* itemClassName();
 	// Write data through specified LineParser
 	bool write(LineParser& parser);
 	// Read data through specified LineParser

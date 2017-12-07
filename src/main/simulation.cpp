@@ -20,9 +20,10 @@
 */
 
 #include "main/duq.h"
+#include "modules/export/export.h"
 #include "base/sysfunc.h"
 #include "base/lineparser.h"
-#include "modules/export/export.h"
+#include "templates/genericlisthelper.h"
 
 /*
  * Private Functions

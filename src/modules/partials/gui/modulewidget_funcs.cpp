@@ -25,6 +25,7 @@
 #include "main/duq.h"
 #include "classes/atomtype.h"
 #include "templates/variantpointer.h"
+#include "templates/genericlisthelper.h"
 
 // Constructor
 PartialsModuleWidget::PartialsModuleWidget(QWidget* parent, Module* module, DUQ& dUQ) : ModuleWidget(parent), module_(module), dUQ_(dUQ)

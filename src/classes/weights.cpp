@@ -222,6 +222,16 @@ double Weights::boundCoherentAverageOfSquares()
 }
 
 /*
+ * GenericItemBase Implementations
+ */
+
+// Return class name
+const char* Weights::itemClassName()
+{
+	return "Weights";
+}
+
+/*
  * Parallel Comms
  */
 

@@ -25,6 +25,7 @@
 #include "classes/species.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
+#include "templates/genericlisthelper.h"
 #include "version.h"
 #include <string.h>
 
@@ -462,7 +463,6 @@ bool DUQ::loadRestart(const char* filename)
 
 	// Variables
 	Configuration* cfg;
-	GenericItem::ItemClass itemClass;
 	int classIndex, nameIndex;
 	bool error = false;
 
@@ -500,21 +500,12 @@ bool DUQ::loadRestart(const char* filename)
 		// Get reference to correct target moduleData
 		GenericList& moduleData = (cfg == NULL ? processingModuleData_ : cfg->moduleData());
 
-		// If a Configuration target, third arg is data name and fourth is class. Otherwise second arg is data name and third is class.
-		itemClass = GenericItem::itemClass(parser.argc(classIndex));
-		if (itemClass == GenericItem::nItemClasses)
-		{
-			Messenger::error("Unrecognised item class '%s' given for module data '%s'.\n", parser.argc(classIndex), parser.argc(nameIndex));
-			error = true;
-			break;
-		}
-
 		// Let the user know what we are doing
-		if (cfg) Messenger::print("--> Reading item '%s' (%s) into Configuration '%s'...\n", parser.argc(nameIndex), GenericItem::itemClass(itemClass), cfg->name());
-		else Messenger::print("--> Reading item '%s' (%s) into processing module data...\n", parser.argc(nameIndex), GenericItem::itemClass(itemClass));
+		if (cfg) Messenger::print("--> Reading item '%s' (%s) into Configuration '%s'...\n", parser.argc(nameIndex), parser.argc(classIndex), cfg->name());
+		else Messenger::print("--> Reading item '%s' (%s) into processing module data...\n", parser.argc(nameIndex), parser.argc(classIndex));
 
 		// Realise the item in the list
-		GenericItem* item = moduleData.create(parser.argc(nameIndex), itemClass);
+		GenericItem* item = moduleData.create(parser.argc(nameIndex), parser.argc(classIndex));
 
 		// Read in the data
 		if (!item->read(parser))
@@ -567,8 +558,8 @@ bool DUQ::saveRestart(const char* filename)
 			// If it is not flagged to be saved in the restart file, skip it
 			if (!(item->flags()&GenericItem::InRestartFileFlag)) continue;
 
-			parser.writeLineF("Configuration  %s  %s  %s\n", cfg->name(), item->name(), GenericItem::itemClass(item->itemClass()));
-			if (item->write(parser)) return false;
+			parser.writeLineF("Configuration  %s  %s  %s\n", cfg->name(), item->name(), item->itemClassName());
+			if (!item->write(parser)) return false;
 		}
 	}
 
@@ -578,7 +569,7 @@ bool DUQ::saveRestart(const char* filename)
 		// If it is not flagged to be saved in the restart file, skip it
 		if (!(item->flags()&GenericItem::InRestartFileFlag)) continue;
 
-		parser.writeLineF("Processing  %s  %s\n", item->name(), GenericItem::itemClass(item->itemClass()));
+		parser.writeLineF("Processing  %s  %s\n", item->name(), item->itemClassName());
 		if (!item->write(parser)) return false;
 	}
 

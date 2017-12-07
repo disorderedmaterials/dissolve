@@ -125,6 +125,16 @@ int BraggPeak::nKVectors()
 }
 
 /*
+ * GenericItemBase Implementations
+ */
+
+// Return class name
+const char* BraggPeak::itemClassName()
+{
+	return "BraggPeak";
+}
+
+/*
  * Parallel Comms
  */
 

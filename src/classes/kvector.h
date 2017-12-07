@@ -25,13 +25,13 @@
 #include "templates/mpilistitem.h"
 #include "templates/vector3.h"
 #include "templates/array.h"
-#include "templates/genericitembaseio.h"
+#include "base/genericitembase.h"
 
 // Forward Declarations
 class BraggPeak;
 
 // K-Vector
-class KVector : public MPIListItem<KVector>,  public GenericItemBaseIO
+class KVector : public MPIListItem<KVector>,  public GenericItemBase
 {
 	public:
 	// Constructor
@@ -80,6 +80,14 @@ class KVector : public MPIListItem<KVector>,  public GenericItemBaseIO
 	void calculateIntensities(BraggPeak* peakArray);
 	// Return specified intensity
 	double intensity(int typeI, int typeJ);
+
+
+	/*
+	 * GenericItemBase Implementations
+	 */
+	public:
+	// Return class name
+	static const char* itemClassName();
 
 
 	/*
