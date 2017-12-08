@@ -960,6 +960,7 @@ const char* XYData::itemClassName()
 {
 	return "XYData";
 }
+
 // Write data through specified LineParser
 bool XYData::write(LineParser& parser)
 {
@@ -975,8 +976,7 @@ bool XYData::write(LineParser& parser)
 bool XYData::read(LineParser& parser)
 {
 	clear();
-	if (parser.readNextLine(LineParser::Defaults) != LineParser::Success) return false;
-	name_ = parser.line();
+	if (parser.readNextLine(LineParser::Defaults, name_) != LineParser::Success) return false;
 	if (parser.readNextLine(LineParser::Defaults) != LineParser::Success) return false;
 	setObjectName(parser.line());
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
