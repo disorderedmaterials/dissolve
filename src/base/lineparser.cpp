@@ -494,6 +494,15 @@ LineParser::ParseReturnValue LineParser::readNextLine(int optionMask)
 	return LineParser::Success;
 }
 
+// Read next line from internal source file, setting as parsing source and storing in specified CharString
+LineParser::ParseReturnValue LineParser::readNextLine(int optionMask, CharString& dest)
+{
+	LineParser::ParseReturnValue result = readNextLine(optionMask);
+	if (result != LineParser::Success) return result;
+	dest = line_;
+	return result;
+}
+
 // Gets next delimited arg from internal line
 bool LineParser::getNextArg(int optionMask, CharString* destarg)
 {

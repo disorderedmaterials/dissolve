@@ -170,6 +170,8 @@ class LineParser
 	bool getCharsDelim(int optionMask, CharString* source, CharString* destarg);
 	// Read next line from internal source file, setting as parsing source
 	ParseReturnValue readNextLine(int optionMask);
+	// Read next line from internal source file, setting as parsing source and storing in specified CharString
+	ParseReturnValue readNextLine(int optionMask, CharString& dest);
 	// Skip 'n' lines from internal file
 	ParseReturnValue skipLines(int nskip);
 	// Get next delimited argument from internal line
