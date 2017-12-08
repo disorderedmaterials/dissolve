@@ -56,61 +56,19 @@ bool PartialSet::setUp(Configuration* cfg, const char* prefix, const char* tag, 
 // Set up PartialSet
 bool PartialSet::setUp(const AtomTypeList& atomTypes, double rdfRange, double binWidth, const char* prefix, const char* tag, const char* suffix, const char* abscissaUnits)
 {
-	abscissaUnits_ = abscissaUnits;
+	// Set up partial arrays
+	if (!setUpPartials(atomTypes, prefix, tag, suffix, abscissaUnits)) return false;
 
-	// Construct a matrix based on the provided AtomTypeList
-	int n, m;
-	atomTypes_ = atomTypes;
-	int nTypes = atomTypes_.nItems();
-
-	Messenger::printVerbose("  --> Creating matrices (%ix%i)...\n", nTypes, nTypes);
-
-	fullHistograms_.initialise(nTypes, nTypes, true);
-	boundHistograms_.initialise(nTypes, nTypes, true);
-	unboundHistograms_.initialise(nTypes, nTypes, true);
-
-	partials_.initialise(nTypes, nTypes, true);
-	boundPartials_.initialise(nTypes, nTypes, true);
-	unboundPartials_.initialise(nTypes, nTypes, true);
-	braggPartials_.initialise(nTypes, nTypes, true);
-
-	// Set up array matrices for partials
-	CharString title;
-	AtomTypeData* at1 = atomTypes_.first(), *at2;
-	Messenger::printVerbose("  --> Creating lists of partials and linking into matrices...\n");
-	for (n=0; n<nTypes; ++n, at1 = at1->next)
-	{
-		at2 = at1;
-		for (m=n; m<nTypes; ++m, at2 = at2->next)
-		{
-			// Histogram arrays for g(r)
-			fullHistograms_.ref(n,m).initialise(0.0, rdfRange, binWidth);
-			boundHistograms_.ref(n,m).initialise(0.0, rdfRange, binWidth);
-			unboundHistograms_.ref(n,m).initialise(0.0, rdfRange, binWidth);
-
-			// Partials
-			title.sprintf("%s-%s-%s-%s.%s", prefix, tag, at1->atomTypeName(), at2->atomTypeName(), suffix);
-			partials_.ref(n,m).setName(title.get());
-			boundPartials_.ref(n,m).setName(title.get());
-			unboundPartials_.ref(n,m).setName(title.get());
-			braggPartials_.ref(n,m).setName(title.get());
-		}
-	}
-
-	// Set up array for total
-	int nBins = fullHistograms_.ref(0,0).nBins();
-	total_.initialise(nBins);
-	for (n=0; n<nBins; ++n) total_.setX(n, (n+0.5)*binWidth);
-	title.sprintf("%s-%s-total.%s", prefix, tag, suffix);
-	total_.setName(title);
+	// Initialise histograms for g(r) calcultion
+	setUpHistograms(rdfRange, binWidth);
 
 	fingerprint_.clear();
 
 	return true;
 }
 
-// Set up PartialSet without initialising arrays
-bool PartialSet::setUp(const AtomTypeList& atomTypes, const char* prefix, const char* tag, const char* suffix, const char* abscissaUnits)
+// Set up PartialSet without initialising histogram arrays
+bool PartialSet::setUpPartials(const AtomTypeList& atomTypes, const char* prefix, const char* tag, const char* suffix, const char* abscissaUnits)
 {
 	abscissaUnits_ = abscissaUnits;
 
@@ -147,6 +105,27 @@ bool PartialSet::setUp(const AtomTypeList& atomTypes, const char* prefix, const 
 	fingerprint_.clear();
 
 	return true;
+}
+
+// Set up histogram arrays for g(r) calculation
+void PartialSet::setUpHistograms(double rdfRange, double binWidth)
+{
+	int nTypes = atomTypes_.nItems();
+
+	fullHistograms_.initialise(nTypes, nTypes, true);
+	boundHistograms_.initialise(nTypes, nTypes, true);
+	unboundHistograms_.initialise(nTypes, nTypes, true);
+
+	for (int n=0; n<nTypes; ++n)
+	{
+		for (int m=n; m<nTypes; ++m)
+		{
+			// Histogram arrays for g(r)
+			fullHistograms_.ref(n,m).initialise(0.0, rdfRange, binWidth);
+			boundHistograms_.ref(n,m).initialise(0.0, rdfRange, binWidth);
+			unboundHistograms_.ref(n,m).initialise(0.0, rdfRange, binWidth);
+		}
+	}
 }
 
 // Reset partial arrays
@@ -470,6 +449,10 @@ const char* PartialSet::itemClassName()
 // Write data through specified LineParser
 bool PartialSet::write(LineParser& parser)
 {
+	if (!parser.writeLineF("%s\n", resourcePrefix_.get())) return false;
+	if (!parser.writeLineF("%s\n", abscissaUnits_.get())) return false;
+	if (!parser.writeLineF("%s\n", fingerprint_.get())) return false;
+
 	// Write out AtomTypes first
 	atomTypes_.write(parser);
 	int nTypes = atomTypes_.nItems();
@@ -491,9 +474,18 @@ bool PartialSet::write(LineParser& parser)
 // Read data through specified LineParser
 bool PartialSet::read(LineParser& parser)
 {
+	if (parser.readNextLine(LineParser::Defaults, resourcePrefix_) != LineParser::Success) return false;
+	if (parser.readNextLine(LineParser::Defaults, abscissaUnits_) != LineParser::Success) return false;
+	if (parser.readNextLine(LineParser::Defaults, fingerprint_) != LineParser::Success) return false;
+
 	atomTypes_.clear();
 	if (!atomTypes_.read(parser)) return false;
 	int nTypes = atomTypes_.nItems();
+	partials_.initialise(nTypes, nTypes, true);
+	boundPartials_.initialise(nTypes, nTypes, true);
+	unboundPartials_.initialise(nTypes, nTypes, true);
+	braggPartials_.initialise(nTypes, nTypes, true);
+
 	// Read individual XYData
 	for (int typeI=0; typeI<nTypes; ++typeI)
 	{

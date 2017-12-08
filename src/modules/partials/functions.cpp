@@ -485,9 +485,10 @@ bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration*
 	Messenger::print("Partials: Calculating partial g(r) for Configuration '%s'...\n", cfg->name());
 
 	/*
-	 * Reset any existing data
+	 * Make sure histograms are set up, and reset any existing data
 	 */
 
+	partialgr.setUpHistograms(cfg->rdfRange(), cfg->rdfBinWidth());
 	partialgr.reset();
 
 	/*
@@ -693,7 +694,7 @@ bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration*
 	// Does a PartialSet already exist for this Configuration?
 	bool wasCreated;
 	PartialSet& partialsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", "Partials", GenericItem::NoFlag, &wasCreated);
-	if (wasCreated) partialsq.setUp(partialgr.atomTypes(), cfg->niceName(), "unweighted", "sq", "Q, 1/Angstroms");
+	if (wasCreated) partialsq.setUpPartials(partialgr.atomTypes(), cfg->niceName(), "unweighted", "sq", "Q, 1/Angstroms");
 
 	// Is the PartialSet already up-to-date?
 	if (DUQSys::sameString(partialsq.fingerprint(), CharString("%i", cfg->coordinateIndex())))
