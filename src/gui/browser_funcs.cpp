@@ -25,31 +25,36 @@
 #include "gui/pairpotentialwidget.h"
 #include "main/duq.h"
 #include "classes/species.h"
+#include "base/lineparser.h"
 #include "templates/variantpointer.h"
 #include <QMdiSubWindow>
 #include <QCloseEvent>
 #include <QLabel>
 
 // Constructor
-BrowserWindow::BrowserWindow(MonitorWindow& monitorWindow, DUQ& duq) : duq_(duq), monitorWindow_(monitorWindow)
+BrowserWidget::BrowserWidget(QWidget* parent, MonitorWindow& monitorWindow, DUQ& duq) : SubWidget(parent), duq_(duq), monitorWindow_(monitorWindow)
 {
 	// Set up user interface
 	ui.setupUi(this);
 
 	refreshing_ = false;
 
-	updateWindow();
+	updateControls();
 }
 
+/*
+ * SubWidget Reimplementations / Definitions
+ */
+
 // Window close event
-void BrowserWindow::closeEvent(QCloseEvent* event)
+void BrowserWidget::closeEvent(QCloseEvent* event)
 {
 	hide();
 	event->accept();
 }
 
 // Update window contents
-void BrowserWindow::updateWindow()
+void BrowserWidget::updateControls()
 {
 	ui.BrowserTree->clear();
 
@@ -66,7 +71,7 @@ void BrowserWindow::updateWindow()
 	ui.BrowserTree->addTopLevelItem(topItem);
 	for (Species* sp = duq_.species(); sp != NULL; sp = sp->next)
 	{
-		item = new QTreeWidgetItem(BrowserWindow::SpeciesDataType);
+		item = new QTreeWidgetItem(BrowserWidget::SpeciesDataType);
 		item->setText(0, sp->name());
 		item->setData(0, Qt::UserRole, VariantPointer<Species>(sp));
 		topItem->addChild(item);
@@ -78,7 +83,7 @@ void BrowserWindow::updateWindow()
 	ui.BrowserTree->addTopLevelItem(topItem);
 	for (Configuration* cfg = duq_.configurations(); cfg != NULL; cfg = cfg->next)
 	{
-		item = new QTreeWidgetItem(BrowserWindow::ConfigurationDataType);
+		item = new QTreeWidgetItem(BrowserWidget::ConfigurationDataType);
 		item->setText(0, cfg->name());
 		item->setData(0, Qt::UserRole, VariantPointer<Configuration>(cfg));
 		topItem->addChild(item);
@@ -87,7 +92,7 @@ void BrowserWindow::updateWindow()
 		RefListIterator<Module,bool> moduleIterator(cfg->modules().modules());
 		while (Module* module = moduleIterator.iterate())
 		{
-			subItem = new QTreeWidgetItem(BrowserWindow::ModuleDataType);
+			subItem = new QTreeWidgetItem(BrowserWidget::ModuleDataType);
 			subItem->setText(0, CharString("%s (%s)", module->name(), module->uniqueName()).get());
 			subItem->setData(0, Qt::UserRole, VariantPointer<Module>(module));
 			item->addChild(subItem);
@@ -100,7 +105,7 @@ void BrowserWindow::updateWindow()
 	ui.BrowserTree->addTopLevelItem(topItem);
 	for (PairPotential* pp = duq_.pairPotentials(); pp != NULL; pp = pp->next)
 	{
-		item = new QTreeWidgetItem(BrowserWindow::PairPotentialType);
+		item = new QTreeWidgetItem(BrowserWidget::PairPotentialType);
 		item->setText(0, CharString("%s-%s", pp->atomTypeNameI(), pp->atomTypeNameJ()).get());
 		item->setData(0, Qt::UserRole, VariantPointer<PairPotential>(pp));
 		topItem->addChild(item);
@@ -113,11 +118,29 @@ void BrowserWindow::updateWindow()
 	RefListIterator<Module,bool> moduleIterator(duq_.processingModules().modules());
 	while (Module* module = moduleIterator.iterate())
 	{
-		item = new QTreeWidgetItem(BrowserWindow::ModuleDataType);
+		item = new QTreeWidgetItem(BrowserWidget::ModuleDataType);
 		item->setText(0, CharString("%s (%s)", module->name(), module->uniqueName()).get());
 		item->setData(0, Qt::UserRole, VariantPointer<Module>(module));
 		topItem->addChild(item);
 	}
+}
+
+// Return string specifying widget type
+const char* BrowserWidget::widgetType()
+{
+	return "Browser";
+}
+
+// Write widget state through specified LineParser
+bool BrowserWidget::writeState(LineParser& parser)
+{
+	return true;
+}
+
+// Read widget state through specified LineParser
+bool BrowserWidget::readState(LineParser& parser)
+{
+	return true;
 }
 
 /*
@@ -125,7 +148,7 @@ void BrowserWindow::updateWindow()
  */
 
 // Object tree double-clicked
-void BrowserWindow::on_BrowserTree_itemDoubleClicked(QTreeWidgetItem* item, int column)
+void BrowserWidget::on_BrowserTree_itemDoubleClicked(QTreeWidgetItem* item, int column)
 {
 	// Check the item pointer
 	if (!item) return;
@@ -136,7 +159,7 @@ void BrowserWindow::on_BrowserTree_itemDoubleClicked(QTreeWidgetItem* item, int 
 	// Now act on the data type of the item
 	switch (item->type())
 	{
-		case (BrowserWindow::ConfigurationDataType):
+		case (BrowserWidget::ConfigurationDataType):
 			// Is the Configuration already displayed?
 			window = monitorWindow_.currentWindow(item->data(0, Qt::UserRole).data());
 			if (!window)
@@ -146,7 +169,7 @@ void BrowserWindow::on_BrowserTree_itemDoubleClicked(QTreeWidgetItem* item, int 
 			}
 			else window->setFocus();
 			break;
-		case (BrowserWindow::ModuleDataType):
+		case (BrowserWidget::ModuleDataType):
 			// Is the Module already displayed?
 			window = monitorWindow_.currentWindow(item->data(0, Qt::UserRole).data());
 			if (!window)
@@ -158,19 +181,19 @@ void BrowserWindow::on_BrowserTree_itemDoubleClicked(QTreeWidgetItem* item, int 
 			}
 			else window->setFocus();
 			break;
-		case (BrowserWindow::PairPotentialType):
+		case (BrowserWidget::PairPotentialType):
 			// Is the Module already displayed?
 			window = monitorWindow_.currentWindow(item->data(0, Qt::UserRole).data());
 			if (!window)
 			{
 				PairPotential* pp = VariantPointer<PairPotential>(item->data(0, Qt::UserRole));
 				// Create a new PairPotentialWidget
-				PairPotentialWidget* pairPotentialWidget = new PairPotentialWidget(NULL, pp);
+				PairPotentialWidget* pairPotentialWidget = new PairPotentialWidget(NULL, pp, duq_);
 				window = monitorWindow_.addWindow(pairPotentialWidget, pp, CharString("Pair Potential %s-%s", pp->atomTypeNameI(), pp->atomTypeNameJ()));
 			}
 			else window->setFocus();
 			break;
-		case (BrowserWindow::SpeciesDataType):
+		case (BrowserWidget::SpeciesDataType):
 			break;
 		default:
 			Messenger::print("BrowserTree doesn't know what to do with data type '%i'\n", item->type());

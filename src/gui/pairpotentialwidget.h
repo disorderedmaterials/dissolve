@@ -27,6 +27,7 @@
 
 // Forward Declarations
 class Collection;
+class DUQ;
 class PairPotential;
 class UChromaViewWidget;
 
@@ -39,24 +40,39 @@ class PairPotentialWidget : public SubWidget
 	private:
 	// Associated PairPotential
 	PairPotential* pairPotential_;
+	// Reference to dUQ
+	DUQ& duq_;
 	// UChromaView contained within this widget
 	UChromaViewWidget* uChromaView_;
 
+
 	public:
 	// Constructor / Destructor
-	PairPotentialWidget(QWidget* parent, PairPotential* pp);
+	PairPotentialWidget(QWidget* parent, PairPotential* pp, DUQ& dUQ);
 	~PairPotentialWidget();
 	// Main form declaration
 	Ui::PairPotentialWidget ui;
-	// Update controls within widget
-	void updateControls();
+	// Initialise window
+	void initialiseWindow(PairPotential* pp);
+	// Initialise controls
+	void initialiseControls(PairPotential* pp, bool addDefaults);
 
 
 	/*
-	 * Reimplementations
+	 * SubWidget Reimplementations / Definitions
 	 */
 	protected:
 	void closeEvent(QCloseEvent* event);
+
+	public:
+	// Update controls within widget
+	void updateControls();
+	// Return string specifying widget type
+	const char* widgetType();
+	// Write widget state through specified LineParser
+	bool writeState(LineParser& parser);
+	// Read widget state through specified LineParser
+	bool readState(LineParser& parser);
 
 
 	/*

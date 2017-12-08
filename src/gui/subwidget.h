@@ -25,7 +25,8 @@
 #include <QWidget>
 
 // Forward Declarations
-/* none */
+class LineParser;
+class SubWindow;
 
 // Subwidget (root class for any widget to be displayed in a QMdiSubWindow)
 class SubWidget : public QWidget
@@ -40,6 +41,38 @@ class SubWidget : public QWidget
 	virtual ~SubWidget();
 	// Update controls within widget
 	virtual void updateControls() = 0;
+
+
+	/*
+	 * SubWindow Parent
+	 */
+	protected:
+	// SubWindow in which this widget is displayed
+	SubWindow* subWindow_;
+
+	public:
+	// Set SubWindow in which this widget is displayed
+	void setSubWindow(SubWindow* subWindow);
+	// Return SubWindow in which this widget is displayed
+	SubWindow* subWindow();
+
+
+	/*
+	 * Identification
+	 */
+	public:
+	// Return string specifying widget type
+	virtual const char* widgetType() = 0;
+
+
+	/*
+	 * State
+	 */
+	public:
+	// Write widget state through specified LineParser
+	virtual bool writeState(LineParser& parser) = 0;
+	// Read widget state through specified LineParser
+	virtual bool readState(LineParser& parser) = 0;
 
 
 	/*

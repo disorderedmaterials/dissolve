@@ -24,6 +24,7 @@
 
 #include "gui/ui_monitor.h"
 #include "gui/subwindow.h"
+#include "base/charstring.h"
 #include "templates/list.h"
 
 // Forward Declarations
@@ -99,6 +100,20 @@ class MonitorWindow : public QMainWindow
 	public slots:
 	// Remove window for specified data (as pointer), removing it from the list
 	bool removeWindow(void* windowContents);
+
+
+	/*
+	 * Window State
+	 */
+	private:
+	// Filename containing current window state
+	CharString windowStateFilename_;
+
+	public:
+	// Save current window state
+	bool saveWindowState();
+	// Load window state
+	bool loadWindowState();
 
 
 	/*

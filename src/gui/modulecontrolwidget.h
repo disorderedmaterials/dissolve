@@ -50,15 +50,23 @@ class ModuleControlWidget : public SubWidget
 	~ModuleControlWidget();
 	// Main form declaration
 	Ui::ModuleControlWidget ui;
-	// Update controls within widget
-	void updateControls();
 
 
 	/*
-	 * Reimplementations
+	 * SubWidget Reimplementations / Definitions
 	 */
 	protected:
 	void closeEvent(QCloseEvent* event);
+
+	public:
+	// Update controls within widget
+	void updateControls();
+	// Return string specifying widget type
+	const char* widgetType();
+	// Write widget state through specified LineParser
+	bool writeState(LineParser& parser);
+	// Read widget state through specified LineParser
+	bool readState(LineParser& parser);
 
 
 	/*
@@ -80,12 +88,12 @@ class ModuleControlWidget : public SubWidget
 	/*
 	 * Widget Signals / Slots
 	 */
+	signals:
+	void windowClosed(void*);
+
 	public slots:
 	void on_EnabledCheck_clicked(bool checked);
 	void on_FrequencySpin_valueChanged(int value);
-
-	signals:
-	void windowClosed(void*);
 };
 
 #endif

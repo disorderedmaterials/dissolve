@@ -20,6 +20,7 @@
 */
 
 #include "gui/subwindow.h"
+#include "gui/subwidget.h"
 
 // Constructor
 SubWindow::SubWindow(QMdiSubWindow* window, SubWidget* widget, void* data)
@@ -27,6 +28,8 @@ SubWindow::SubWindow(QMdiSubWindow* window, SubWidget* widget, void* data)
 	window_ = window;
 	subWidget_ = widget;
 	data_ = data;
+
+	if (subWidget_) subWidget_->setSubWindow(this);
 }
 
 // Return QMdiSubWindow containing the SubWidget displaying the data
@@ -41,9 +44,14 @@ SubWidget* SubWindow::subWidget()
 	return subWidget_;
 }
 
+// Set data which is the display target in the SubWidget
+void SubWindow::setData(void* data)
+{
+	data_ = data;
+}
+
 // Return data which is the display target in the SubWidget
 void* SubWindow::data()
 {
 	return data_;
 }
-

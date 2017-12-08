@@ -102,8 +102,12 @@ Collection* UChromaBase::addCollectionToCurrentViewPane(const char* name, int id
 	Collection* collection = addCollection(name);
 	collection->setIdentifier(identifier);
 
+	/*
+	 * If there is a current ViewPane (i.e. we are adding a Collection to display that already has a view) then
+	 * add the new Collection as a target. If there is no current pane, we are probably reading from session data
+	 * and so there is nothing to add to yet.
+	 */
 	if (currentViewPane_) currentViewPane_->addCollectionTarget(collection);
-	else Messenger::warn("Can't add new Collection to current view pane, since the current view pane is NULL.\n");
 
 	return collection;
 }

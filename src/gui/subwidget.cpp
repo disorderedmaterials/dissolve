@@ -24,9 +24,36 @@
 // Constructor
 SubWidget::SubWidget(QWidget* parent) : QWidget(parent)
 {
+	subWindow_ = NULL;
 	refreshing_ = false;
 }
 
 SubWidget::~SubWidget()
 {
+}
+
+/*
+ * SubWindow Parent
+ */
+
+// Set SubWindow in which this widget is displayed
+void SubWidget::setSubWindow(SubWindow* subWindow)
+{
+	subWindow_ = subWindow;
+}
+
+// Return SubWindow in which this widget is displayed
+SubWindow* SubWidget::subWindow()
+{
+	return subWindow_;
+}
+
+/*
+ * Identification
+ */
+
+// Return string specifying widget type
+const char* SubWidget::widgetType()
+{
+	return "NULL";
 }

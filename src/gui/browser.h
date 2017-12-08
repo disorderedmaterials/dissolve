@@ -23,21 +23,22 @@
 #define DUQ_BROWSERWINDOW_H
 
 #include "gui/ui_browser.h"
+#include "gui/subwidget.h"
 
 // Forward Declarations
 class DUQ;
 class MonitorWindow;
 
-class BrowserWindow : public QWidget
+class BrowserWidget : public SubWidget
 {
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
 	public:
 	// Constructor
-	BrowserWindow(MonitorWindow& monitorWindow, DUQ& duq);
+	BrowserWidget(QWidget* parent, MonitorWindow& monitorWindow, DUQ& duq);
 	// Main form declaration
-	Ui::BrowserWindow ui;
+	Ui::BrowserWidget ui;
 	// Browser Data Types
 	enum BrowserDataType { AtomTypeDataType=1000, ConfigurationDataType, ModuleDataType, PairPotentialType, SpeciesDataType };
 
@@ -45,13 +46,22 @@ class BrowserWindow : public QWidget
 	// Whether window is currently refreshing
 	bool refreshing_;
 
+
+	/*
+	 * SubWidget Reimplementations / Definitions
+	 */
 	protected:
-	// Window close event
 	void closeEvent(QCloseEvent* event);
 
 	public:
-	// Update window contents
-	void updateWindow();
+	// Update controls within widget
+	void updateControls();
+	// Return string specifying widget type
+	const char* widgetType();
+	// Write widget state through specified LineParser
+	bool writeState(LineParser& parser);
+	// Read widget state through specified LineParser
+	bool readState(LineParser& parser);
 
 
 	/*
@@ -67,7 +77,8 @@ class BrowserWindow : public QWidget
 	/*
 	 * Widgets / Functions
 	 */
-	private:
+	signals:
+	void windowClosed(void*);
 
 	public slots:
 	// Object tree double-clicked

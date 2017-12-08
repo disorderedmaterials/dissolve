@@ -22,7 +22,10 @@
 #include "main/duq.h"
 #include "gui/monitor.h"
 #include "gui/browser.h"
+#include "gui/modulecontrolwidget.h"
+#include "gui/pairpotentialwidget.h"
 #include "gui/subwidget.h"
+#include "base/lineparser.h"
 #include <QCloseEvent>
 #include <QMdiSubWindow>
 
@@ -39,8 +42,18 @@ MonitorWindow::MonitorWindow(DUQ& duq) : QMainWindow(NULL), duq_(duq)
 	// Set up user interface
 	ui.setupUi(this);
 
-	// Add default subwindows
-	ui.MainArea->addSubWindow(new BrowserWindow(*this, duq_));
+	// Set window state filename
+	windowStateFilename_.sprintf("%s.mon", duq_.filename());
+
+	// Try to load in the window state file
+	if (!loadWindowState())
+	{
+		// Create a new BrowserWidget
+		BrowserWidget* browserWidget = new BrowserWidget(NULL, *this, duq_);
+		addWindow(browserWidget, &duq_, "Browser");
+// 		// Add default subwindows
+// 		ui.MainArea->addSubWindow(new BrowserWindow(*this, duq_));
+	}
 
 	// Store pointer to QTextBrowser used for messaging
 	messagesBrowser_ = ui.MessagesBrowser;
@@ -62,13 +75,9 @@ DUQ& MonitorWindow::duq()
 // Catch window close event
 void MonitorWindow::closeEvent(QCloseEvent* event)
 {
-	/* if (saveBeforeClose())
-	{
-		saveSettings();
-		event->accept();
-	}
-	else event->ignore();
-	*/
+	// Save the state before we go...
+	saveWindowState();
+
 	event->accept();
 }
 
@@ -125,7 +134,7 @@ QMdiSubWindow* MonitorWindow::currentWindow(void* windowContents)
 QMdiSubWindow* MonitorWindow::addWindow(SubWidget* widget, void* windowContents, const char* windowTitle)
 {
 	// Check that the windowContents aren't currently in the list
-	QMdiSubWindow* window = currentWindow(windowContents);
+	QMdiSubWindow* window = windowContents ? currentWindow(windowContents) : NULL;
 	if (window)
 	{
 		Messenger::print("Refused to add window contents %p to our list, as it is already present elsewhere.\n");
@@ -158,6 +167,85 @@ bool MonitorWindow::removeWindow(void* windowContents)
 	}
 
 	subWindows_.remove(window);
+
+	return true;
+}
+
+/*
+ * Window State
+ */
+
+// Save current window state
+bool MonitorWindow::saveWindowState()
+{
+	// Open file for writing
+	LineParser stateParser;
+	stateParser.openOutput(windowStateFilename_);
+	if (!stateParser.isFileGoodForWriting()) return false;
+
+	// Loop over our subwindow list
+	ListIterator<SubWindow> subWindowIterator(subWindows_);
+	while (SubWindow* subWindow = subWindowIterator.iterate())
+	{
+		// Write window geometry / state
+		if (!stateParser.writeLineF("%s '%s'\n", subWindow->subWidget()->widgetType(), qPrintable(subWindow->window()->windowTitle()))) return false;
+		QRect geometry = subWindow->window()->geometry();
+		if (!stateParser.writeLineF("%i %i %i %i %s %s\n", geometry.x(), geometry.y(), geometry.width(), geometry.height(), DUQSys::btoa(subWindow->window()->isMaximized()), DUQSys::btoa(subWindow->window()->isShaded()))) return false;
+		if (!subWindow->subWidget()->writeState(stateParser)) return false;
+	}
+
+	stateParser.closeFiles();
+
+	return true;
+}
+
+// Load window state
+bool MonitorWindow::loadWindowState()
+{
+	// Open file for reading
+	LineParser stateParser;
+	stateParser.openInput(windowStateFilename_);
+	if (!stateParser.isFileGoodForReading()) return false;
+
+	while (!stateParser.eofOrBlank())
+	{
+		// Parse the line
+		if (stateParser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+
+		SubWidget* subWidget = NULL;
+		QMdiSubWindow* subWindow = NULL;
+
+		// The only argument on the line should be the name of the widget we should create in a subwindow
+		if (DUQSys::sameString(stateParser.argc(0), "Browser"))
+		{
+			BrowserWidget* browserWidget = new BrowserWidget(NULL, *this, duq_);
+			subWindow = addWindow(browserWidget, &duq_, stateParser.argc(1));
+			subWidget = browserWidget;
+		}
+		else if (DUQSys::sameString(stateParser.argc(0), "PairPotential"))
+		{
+			PairPotentialWidget* ppWidget = new PairPotentialWidget(NULL, NULL, duq_);
+			subWindow = addWindow(ppWidget, NULL, stateParser.argc(1));
+			subWidget = ppWidget;
+		}
+
+		// Did we recognise the widget?
+		if (!subWidget)
+		{
+			Messenger::error("Couldn't read state information - unrecognised widget type '%s' encountered.\n", stateParser.argc(0));
+			return false;
+		}
+
+		// Read in the widget's geometry / state
+		if (stateParser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+		subWindow->setGeometry(stateParser.argi(0), stateParser.argi(1), stateParser.argi(2), stateParser.argi(3));
+		// -- Is the window maximised, or shaded?
+		if (stateParser.argb(4)) subWindow->showMaximized();
+		else if (stateParser.argb(5)) subWindow->showShaded();
+
+		// Now call the widget's local readState()
+		if (!subWidget->readState(stateParser)) return false;
+	}
 
 	return true;
 }

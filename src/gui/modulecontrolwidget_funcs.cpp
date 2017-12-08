@@ -67,6 +67,15 @@ ModuleControlWidget::~ModuleControlWidget()
 {
 }
 
+/*
+ * SubWidget Reimplementations / Definitions
+ */
+
+void ModuleControlWidget::closeEvent(QCloseEvent* event)
+{
+	emit (windowClosed(module_));
+}
+
 // Update controls within widget
 void ModuleControlWidget::updateControls()
 {
@@ -81,13 +90,22 @@ void ModuleControlWidget::updateControls()
 	if (moduleWidget_) moduleWidget_->updateControls();
 }
 
-/*
- * Reimplementations
- */
-
-void ModuleControlWidget::closeEvent(QCloseEvent* event)
+// Return string specifying widget type
+const char* ModuleControlWidget::widgetType()
 {
-	emit (windowClosed(module_));
+	return "ModuleControl";
+}
+
+// Write widget state through specified LineParser
+bool ModuleControlWidget::writeState(LineParser& parser)
+{
+	return true;
+}
+
+// Read widget state through specified LineParser
+bool ModuleControlWidget::readState(LineParser& parser)
+{
+	return true;
 }
 
 /*
