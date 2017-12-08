@@ -1120,7 +1120,6 @@ void Collection::updateLimitsAndTransforms()
 		double mmin, mmax;
 		for (dataSet = dataSet->next; dataSet != NULL; dataSet = dataSet->next)
 		{
-// 			printf("Z = %f\n", dataSet->data().constZ());
 			mmin = dataSet->data().xMin();
 			mmax = dataSet->data().xMax();
 			if (mmin < dataMin_.x) dataMin_.x = mmin;
