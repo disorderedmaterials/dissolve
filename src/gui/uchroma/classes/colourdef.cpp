@@ -182,7 +182,7 @@ void ColourDefinition::setColourScalePoint(ColourSource source, QColor colour, d
 			customColourScale_.setPoint(index, value, colour);
 			break;
 		default:
-			Messenger::print("Unhandled ColourSoruce in ColourDefinition::setColourScalePoint().\n");
+			Messenger::print("Unhandled ColourSource in ColourDefinition::setColourScalePoint().\n");
 	}
 
 	// Update colourscale?
@@ -207,7 +207,7 @@ const ColourScalePoint* ColourDefinition::colourScalePoint(ColourSource source, 
 			return customColourScale_.point(index);
 			break;
 		default:
-			Messenger::print("Unhandled ColourSoruce in ColourDefinition::colourScalePoint().\n");
+			Messenger::print("Unhandled ColourSource in ColourDefinition::colourScalePoint().\n");
 	}
 
 	return NULL;
@@ -274,7 +274,6 @@ void ColourDefinition::removeCustomColourScalePoint(ColourScalePoint* point)
 // Set alpha control
 void ColourDefinition::setAlphaControl(ColourDefinition::AlphaControl alpha)
 {
-
 	alphaControl_ = alpha;
 
 	++colourVersion_;

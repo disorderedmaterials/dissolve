@@ -84,7 +84,7 @@ class ColourDefinition
 	// Version for colourscale
 	int colourVersion_;
 	// Version at which the colourscale was last generated at
-	bool colourScaleGeneratedAt_;
+	int colourScaleGeneratedAt_;
 
 	public:
 	// Update colour scale
