@@ -153,18 +153,29 @@ template <class T> class ObjectStore
 	// Set name for this object, appending type name prefix
 	void setObjectName(const char* name)
 	{
+		// Get actual name of object - does the supplied name already contain a type prefix?
+		CharString nameOfObject;
+		if (strchr(name, '@'))
+		{
+			CharString typePrefix = DUQSys::beforeChar(name, '@');
+			nameOfObject = DUQSys::afterChar(name, '@');
+
+			// Do a sanity check on the type prefix...
+			if (!DUQSys::sameString(typePrefix, objectTypeName_)) Messenger::error("Setting an object name (%s) with a string that contains the wrong type prefix ('%s', while this class is '%s').\n", name, typePrefix.get(), objectTypeName_);
+		}
+		else nameOfObject = name;
 #ifdef CHECKS
 		// Check for duplicate value already in list
-		if (strlen(name) > 0)
+		if (!nameOfObject.isEmpty())
 		{
-			T* object = findObject(CharString("%s@%s", objectTypeName_, name));
+			T* object = findObject(CharString("%s@%s", objectTypeName_, nameOfObject.get()));
 			if (object && (object != this))
 			{
-				Messenger::warn("ObjectStore<%s>::setObjectName() - The object '%s@%s' already exists in the ObjectStore. Behaviour will be undefined...\n", objectTypeName_, objectTypeName_, name);
+				Messenger::warn("ObjectStore<%s>::setObjectName() - The object '%s@%s' already exists in the ObjectStore. Behaviour will be undefined...\n", objectTypeName_, objectTypeName_, nameOfObject.get());
 			}
 		}
 #endif
-		objectInfo_.setName(CharString("%s@%s", objectTypeName_, name));
+		objectInfo_.setName(CharString("%s@%s", objectTypeName_, nameOfObject.get()));
 	}
 	// Return object name
 	const char* objectName()
@@ -260,10 +271,25 @@ template <class T> class ObjectStore
 	// Find specified object
 	static T* findObject(const char* objectName)
 	{
-		for (RefListItem<T,int>* ri = objects_.first(); ri != NULL; ri = ri->next)
+		// Does the supplied name already contain a type prefix?
+		CharString typePrefix = DUQSys::beforeChar(objectName, '@');
+		if (typePrefix.isEmpty())
 		{
-			T* item = ri->item;
-			if (item->objectNameIs(objectName)) return item;
+			// Add on our own type prefix and search
+			CharString name("%s@%s", objectTypeName_, objectName);
+			for (RefListItem<T,int>* ri = objects_.first(); ri != NULL; ri = ri->next)
+			{
+				T* item = ri->item;
+				if (item->objectNameIs(name)) return item;
+			}
+		}
+		else
+		{
+			for (RefListItem<T,int>* ri = objects_.first(); ri != NULL; ri = ri->next)
+			{
+				T* item = ri->item;
+				if (item->objectNameIs(objectName)) return item;
+			}
 		}
 		return NULL;
 	}
