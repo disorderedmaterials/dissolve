@@ -57,6 +57,7 @@ UChromaBase::UChromaBase(QWidget* parent) : parent_(parent),
 	imageExportWidth_ = 800;
 	imageExportHeight_ = 600;
 	imageExportMaintainAspect_ = true;
+	imageExportFormat_ = UChromaBase::PNGFormat;
 
 	// Collections
 	currentCollection_ = NULL;
