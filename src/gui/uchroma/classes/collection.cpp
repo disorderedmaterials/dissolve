@@ -1235,7 +1235,7 @@ const char* SurfaceStyleKeywords[] = { "LineXY", "LineZY", "Grid", "Surface", "U
 // Convert text string to DisplayStyle
 Collection::DisplayStyle Collection::displayStyle(const char* s)
 {
-	for (int n=0; n<nDisplayStyles; ++n) if (s == SurfaceStyleKeywords[n]) return (Collection::DisplayStyle) n;
+	for (int n=0; n<nDisplayStyles; ++n) if (DUQSys::sameString(s, SurfaceStyleKeywords[n])) return (Collection::DisplayStyle) n;
 	return nDisplayStyles;
 }
 
