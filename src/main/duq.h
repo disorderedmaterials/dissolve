@@ -153,6 +153,8 @@ class DUQ
 	PairPotential* pairPotential(int n);
 	// Return whether specified PairPotential is defined
 	PairPotential* pairPotential(AtomType* at1, AtomType* at2) const;
+	// Return whether specified PairPotential is defined
+	PairPotential* pairPotential(const char* at1, const char* at2) const;
 	// Save all PairPotentials
 	bool savePairPotentials(const char* baseName) const;
 	// Return map for PairPotentials

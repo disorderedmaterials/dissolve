@@ -121,6 +121,17 @@ PairPotential* DUQ::pairPotential(AtomType* at1, AtomType* at2) const
 	return NULL;
 }
 
+// Return whether specified PairPotential is defined
+PairPotential* DUQ::pairPotential(const char* at1, const char* at2) const
+{
+	for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next)
+	{
+		if (DUQSys::sameString(pot->atomTypeNameI(), at1) && DUQSys::sameString(pot->atomTypeNameJ(), at2)) return pot;
+		if (DUQSys::sameString(pot->atomTypeNameI(), at2) && DUQSys::sameString(pot->atomTypeNameJ(), at1)) return pot;
+	}
+	return NULL;
+}
+
 // Save all PairPotentials
 bool DUQ::savePairPotentials(const char* baseName) const
 {
