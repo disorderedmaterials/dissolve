@@ -42,6 +42,7 @@ XYData::XYData() : ListItem<XYData>(), ObjectStore<XYData>(this)
 	name_ = "Untitled";
 	interpolationInterval_ = -1;
 	interpolationScheme_ = NoInterpolation;
+	z_ = 0.0;
 }
 
 // Destructor
@@ -966,7 +967,7 @@ bool XYData::write(LineParser& parser)
 {
 	if (!parser.writeLineF("%s\n", name_.get())) return false;
 	if (!parser.writeLineF("%s\n", objectName())) return false;
-	if (!parser.writeLineF("%16.9e\n", z_)) return false;
+	if (!parser.writeLineF("%f\n", z_)) return false;
 	if (!parser.writeLineF("%i\n", nPoints())) return false;
 	for (int n=0; n<nPoints(); ++n) if (!parser.writeLineF("%16.9e %16.9e\n", x_.value(n), y_.value(n))) return false;
 	return true;
