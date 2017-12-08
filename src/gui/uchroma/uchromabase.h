@@ -357,6 +357,7 @@ class UChromaBase
 	enum InputBlock
 	{
 		CollectionBlock,
+		EndUChromaBlock,
 		SettingsBlock,
 		ViewBlock,
 		nInputBlocks
@@ -611,6 +612,10 @@ class UChromaBase
 	bool loadSession(const char* fileName);
 	// Save session input to file specified
 	bool saveSession(const char* fileName);
+	// Read session through parser specified
+	bool readSession(LineParser& parser);
+	// Write session through parser specified
+	bool writeSession(LineParser& parser);
 
 
 	/*

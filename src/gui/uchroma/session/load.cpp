@@ -995,7 +995,7 @@ bool UChromaBase::loadSession(const char* fileName)
 	setInputFile(fileName);
 	setAsNotModified();
 
-	return true;
+	return success;
 }
 
 // Parse main input blocks through specified parser
@@ -1020,6 +1020,10 @@ bool UChromaBase::parseInputBlocks(LineParser& parser)
 				// Load the collection data
 				success = readCollectionBlock(parser, currentCollection_);
 				break;
+			// End of UChroma Input
+			case (UChromaBase::EndUChromaBlock):
+				return true;
+				break;
 			// Settings
 			case (UChromaBase::SettingsBlock):
 				success = readSettingsBlock(parser);
@@ -1037,6 +1041,28 @@ bool UChromaBase::parseInputBlocks(LineParser& parser)
 		// If we have failed for any reason, exit now
 		if (!success) break;
 	}
+
+	return success;
+}
+
+// Read session through parser specified
+bool UChromaBase::readSession(LineParser& parser)
+{
+	// Clear existing data
+	startNewSession(false);
+
+	// Parse input blocks
+	bool success = parseInputBlocks(parser);
+	parser.closeFiles();
+
+	// Show a message if we encountered problems...
+	if (!success) Messenger::warn("Errors were encountered while reading the session data.\n");
+
+	// Set necessary variables
+	currentViewPane_ = viewLayout_.panes();
+
+	// Set current project data
+	setAsNotModified();
 
 	return success;
 }

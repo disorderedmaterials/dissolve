@@ -308,3 +308,21 @@ bool UChromaBase::saveSession(const char* fileName)
 	parser.closeFiles();
 	return true;
 }
+
+// Write session through parser specified
+bool UChromaBase::writeSession(LineParser& parser)
+{
+	// Write Settings Data
+	if (!writeSettingsBlock(parser)) return false;
+
+	// Write Collection Data
+	for (Collection* collection = collections_.first(); collection != NULL; collection = collection->next) if (!writeCollectionBlock(parser, collection)) return false;
+
+	// Write View Data
+	if (!writeViewBlock(parser)) return false;
+
+	// Write end of UChroma input marker
+	if (!parser.writeLineF("EndUChroma\n")) return false;
+
+	return true;
+}
