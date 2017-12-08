@@ -74,7 +74,7 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 
 	Messenger::print("--> Initial divisions based on cell size are (x,y,z) = (%i,%i,%i)\n", divisions.x, divisions.y, divisions.z);
 	
-	// How does the smalles length compare with the PairPotential range?
+	// How does the smallest length compare with the PairPotential range?
 	if (divisions.min() < minCellsPerSide)
 	{
 		Messenger::warn("Box size only allows for %i whole divisions of the cell size (%f) along one or more axes, while we require at least %i.\n", divisions.min(), cellSize, minCellsPerSide);
