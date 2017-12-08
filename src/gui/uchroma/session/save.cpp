@@ -162,11 +162,15 @@ bool UChromaBase::writeDataSetBlock(LineParser& parser, DataSet* dataSet, int in
 
 	parser.writeLineF("%s  %s '%s'\n", indent, UChromaBase::collectionKeyword(UChromaBase::DataSetDefinitionKeyword), qPrintable(dataSet->name()));
 	if (dataSet->dataSource() == DataSet::FileSource) parser.writeLineF("%s    %s %s '%s'\n", indent, UChromaBase::dataSetKeyword(UChromaBase::SourceKeyword), DataSet::dataSource(dataSet->dataSource()), qPrintable(dataSet->sourceFileName()));
+	else if (dataSet->dataSource() == DataSet::XYDataSource)  parser.writeLineF("%s    %s %s '%s'\n", indent, UChromaBase::dataSetKeyword(UChromaBase::SourceKeyword), DataSet::dataSource(dataSet->dataSource()), qPrintable(dataSet->sourceXYData()));
 	else parser.writeLineF("%s    %s %s\n", indent, UChromaBase::dataSetKeyword(UChromaBase::SourceKeyword), DataSet::dataSource(dataSet->dataSource()));
 	parser.writeLineF("%s    %s %f\n", indent, UChromaBase::dataSetKeyword(UChromaBase::ZKeyword), dataSet->data().constZ());
-	parser.writeLineF("%s    %s\n", indent, UChromaBase::dataSetKeyword(UChromaBase::DataKeyword));
-	for (int n=0; n< dataSet->data().nPoints(); ++n) parser.writeLineF("%s      %f  %f\n", indent, dataSet->data().x(n), dataSet->data().y(n));
-	parser.writeLineF("%s    End%s\n", indent, UChromaBase::dataSetKeyword(UChromaBase::DataKeyword));
+	if (dataSet->dataSource() == DataSet::InternalSource)
+	{
+		parser.writeLineF("%s    %s\n", indent, UChromaBase::dataSetKeyword(UChromaBase::DataKeyword));
+		for (int n=0; n< dataSet->data().nPoints(); ++n) parser.writeLineF("%s      %f  %f\n", indent, dataSet->data().x(n), dataSet->data().y(n));
+		parser.writeLineF("%s    End%s\n", indent, UChromaBase::dataSetKeyword(UChromaBase::DataKeyword));
+	}
 	parser.writeLineF("%s  %s\n", indent, UChromaBase::dataSetKeyword(UChromaBase::EndDataSetKeyword));
 
 	return true;
