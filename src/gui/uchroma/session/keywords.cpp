@@ -29,7 +29,7 @@
  */
 
 // Input File Block Keywords
-const char* UChromaInputBlockKeywords[] = { "Collection", "Settings", "View" };
+const char* UChromaInputBlockKeywords[] = { "Collection", "EndUChroma", "Settings", "View" };
 
 // Convert text string to InputBlock
 UChromaBase::InputBlock UChromaBase::inputBlock(const char* s)
