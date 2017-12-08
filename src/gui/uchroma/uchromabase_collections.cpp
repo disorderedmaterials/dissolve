@@ -329,6 +329,15 @@ bool UChromaBase::setCollectionVisible(const char* name, bool visible)
 	return false;
 }
 
+// Return collection visibility
+bool UChromaBase::collectionVisible(const char* name)
+{
+	// Identify collection
+	Collection* collection = locateCollection(name);
+
+	return (collection ? collection->visible() : false);
+}
+
 // Refresh referenced DataSets in all Collections
 void UChromaBase::refreshReferencedDataSets()
 {

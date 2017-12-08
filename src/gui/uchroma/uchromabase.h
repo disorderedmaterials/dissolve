@@ -313,6 +313,8 @@ class UChromaBase
 	Collection* identifyCollection(int id);
 	// Set collection visibility
 	bool setCollectionVisible(const char* name, bool visible);
+	// Return collection visibility
+	bool collectionVisible(const char* name);
 	// Refresh referenced DataSets in all Collections
 	void refreshReferencedDataSets();
 
