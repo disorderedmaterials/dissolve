@@ -31,6 +31,22 @@ SkeletonModuleWidget::SkeletonModuleWidget(QWidget* parent, Module* module) : Mo
 }
 
 /*
+ * ModuleWidget Implementations
+ */
+
+// Write widget state through specified LineParser
+bool SkeletonModuleWidget::writeState(LineParser& parser)
+{
+	return false;
+}
+
+// Read widget state through specified LineParser
+bool SkeletonModuleWidget::readState(LineParser& parser)
+{
+	return false;
+}
+
+/*
  * Widgets / Functions
  */
 

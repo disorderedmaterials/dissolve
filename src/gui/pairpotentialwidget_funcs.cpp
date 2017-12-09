@@ -86,7 +86,6 @@ void PairPotentialWidget::initialiseControls(PairPotential* pp, bool addDefaults
 
 		CharString blockData;
 
-		printf("PANTS\n");
 		// Full potential
 		blockData.sprintf("Collection 'Full'; ColourSingle 0 0 0 255; LineStyle 1.0 Solid; DataSet 'Full'; Source XYData %s; EndDataSet; EndCollection", pp->uFull().objectName());
 		uChromaView_->addCollectionFromBlock(blockData);
@@ -102,7 +101,6 @@ void PairPotentialWidget::initialiseControls(PairPotential* pp, bool addDefaults
 		// Full potential
 		blockData.sprintf("Collection 'Force'; Visible False; ColourSingle 0 200 0 255; LineStyle 1.0 Solid; DataSet 'Full'; Source XYData %s; EndDataSet; EndCollection", pp->dUFull().objectName());
 		uChromaView_->addCollectionFromBlock(blockData);
-		printf("PANTS END\n");
 	}
 
 	refreshing_ = true;

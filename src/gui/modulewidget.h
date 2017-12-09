@@ -25,9 +25,9 @@
 #include <QWidget>
 
 // Forward Declarations
-/* none */
+class LineParser;
 
-// Subwidget (root class for any widget to be displayed in a QMdiSubWindow)
+// ModuleWidget, base class for any Module-specific widget displayed in a ModuleControlWidget
 class ModuleWidget : public QWidget
 {
 	protected:
@@ -40,6 +40,16 @@ class ModuleWidget : public QWidget
 	virtual ~ModuleWidget();
 	// Update controls within widget
 	virtual void updateControls() = 0;
+
+
+	/*
+	 * State I/O
+	 */
+	public:
+	// Write widget state through specified LineParser
+	virtual bool writeState(LineParser& parser) = 0;
+	// Read widget state through specified LineParser
+	virtual bool readState(LineParser& parser) = 0;
 };
 
 #endif

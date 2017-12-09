@@ -25,9 +25,11 @@
 #include "gui/keywordwidgets/double.hui"
 #include "gui/keywordwidgets/int.hui"
 #include "gui/modulewidget.h"
+#include "gui/subwindow.h"
 #include "module/module.h"
 #include "main/duq.h"
 #include "classes/configuration.h"
+#include "base/lineparser.h"
 #include <QGridLayout>
 #include <QLabel>
 
@@ -37,28 +39,9 @@ ModuleControlWidget::ModuleControlWidget(QWidget* parent, Module* module, DUQ& d
 	// Set up user interface
 	ui.setupUi(this);
 
-	// Set information panel contents
-	CharString topText("%s (%s) @ %s", module_->name(), module_->uniqueName(), module_->configurationLocal() ? (module_->targetConfigurations().first() ? module_->targetConfigurations().first()->item->name() : "[NO CONFIG?]") : "Processing");
-	ui.TopLabel->setText(topText.get());
-	CharString bottomText;
-	RefListIterator<Configuration,bool> configIterator(module_->targetConfigurations());
-	while (Configuration* cfg = configIterator.iterate())
-	{
-		if (bottomText.isEmpty()) bottomText.sprintf("Targets: %s", cfg->name());
-		else bottomText.strcatf(", %s", cfg->name());
-	}
-	ui.BottomLabel->setText(bottomText.get());
+	initialiseWindow(module_);
 
-	// Set up options
-	setUpOptions();
-
-	// Create module widget
-	QVBoxLayout* layout = new QVBoxLayout(ui.ControlsWidget);
-	layout->setContentsMargins(0,0,0,0);
-	layout->setSpacing(0);
-	moduleWidget_ = module_->createWidget(ui.ControlsWidget, dUQ);
-	if (moduleWidget_ == NULL) Messenger::warn("Module '%s' did not provide a valid controller widget.\n", module->name());
-	else layout->addWidget(moduleWidget_);
+	initialiseControls(module_);
 
 	refreshing_ = false;
 }
@@ -67,68 +50,49 @@ ModuleControlWidget::~ModuleControlWidget()
 {
 }
 
-/*
- * SubWidget Reimplementations / Definitions
- */
-
-void ModuleControlWidget::closeEvent(QCloseEvent* event)
+// Initialise window
+void ModuleControlWidget::initialiseWindow(Module* module)
 {
-	emit (windowClosed(module_));
+	// Set information panel contents
+	if (module)
+	{
+		CharString topText("%s (%s) @ %s", module->name(), module->uniqueName(), module->configurationLocal() ? (module->targetConfigurations().first() ? module->targetConfigurations().first()->item->name() : "[NO CONFIG?]") : "Processing");
+		ui.TopLabel->setText(topText.get());
+		CharString bottomText;
+		RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
+		while (Configuration* cfg = configIterator.iterate())
+		{
+			if (bottomText.isEmpty()) bottomText.sprintf("Targets: %s", cfg->name());
+			else bottomText.strcatf(", %s", cfg->name());
+		}
+		ui.BottomLabel->setText(bottomText.get());
+	}
+	else
+	{
+		ui.TopLabel->setText("? (?) @ ?");
+		ui.BottomLabel->setText("Targets: ?");
+	}
 }
 
-// Update controls within widget
-void ModuleControlWidget::updateControls()
+// Initialise controls
+void ModuleControlWidget::initialiseControls(Module* module)
 {
-	// Update Control group
-	ui.EnabledCheck->setChecked(module_->enabled());
-	ui.FrequencySpin->setValue(module_->frequency());
+	if (!module) return;
 
-	// Update Module Keywords group
-	updateKeywordWidgets();
-
-	// Update control widget
-	if (moduleWidget_) moduleWidget_->updateControls();
-}
-
-// Return string specifying widget type
-const char* ModuleControlWidget::widgetType()
-{
-	return "ModuleControl";
-}
-
-// Write widget state through specified LineParser
-bool ModuleControlWidget::writeState(LineParser& parser)
-{
-	return true;
-}
-
-// Read widget state through specified LineParser
-bool ModuleControlWidget::readState(LineParser& parser)
-{
-	return true;
-}
-
-/*
- * Functions
- */
-
-// Set up options
-void ModuleControlWidget::setUpOptions()
-{
-	// Create a new grid layout to put our widgets in
-	QGridLayout* layout = new QGridLayout(ui.OptionsGroup);
-	layout->setContentsMargins(4,4,4,4);
-	layout->setSpacing(4);
+	// Create keyword widgets in a new grid layout
+	QGridLayout* keywordsLayout = new QGridLayout(ui.OptionsGroup);
+	keywordsLayout->setContentsMargins(4,4,4,4);
+	keywordsLayout->setSpacing(4);
 	int row = 0;
 	QWidget* widget;
 	KeywordWidgetBase* base;
 
-	ListIterator<ModuleKeywordBase> keywordIterator(module_->keywords().keywords());
+	ListIterator<ModuleKeywordBase> keywordIterator(module->keywords().keywords());
 	while (ModuleKeywordBase* keyword = keywordIterator.iterate())
 	{
 		QLabel* nameLabel = new QLabel(keyword->keyword());
 		nameLabel->setToolTip(keyword->description());
-		layout->addWidget(nameLabel, row, 0);
+		keywordsLayout->addWidget(nameLabel, row, 0);
 
 		// The widget to create here depends on the data type of the keyword
 		if (keyword->type() == ModuleKeywordBase::IntegerData)
@@ -166,7 +130,7 @@ void ModuleControlWidget::setUpOptions()
 		if (widget)
 		{
 			widget->setToolTip(keyword->description());
-			layout->addWidget(widget, row, 1);
+			keywordsLayout->addWidget(widget, row, 1);
 			keywordWidgets_.add(base);
 		}
 
@@ -174,17 +138,79 @@ void ModuleControlWidget::setUpOptions()
 	}
 
 	// Add a vertical spacer to the end to take up any extra space
-	layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding), row, 0);
+	keywordsLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding), row, 0);
+
+	// Create module widget
+	QVBoxLayout* widgetLayout = new QVBoxLayout(ui.ControlsWidget);
+	widgetLayout->setContentsMargins(0,0,0,0);
+	widgetLayout->setSpacing(0);
+	moduleWidget_ = module->createWidget(ui.ControlsWidget, duq_);
+	if (moduleWidget_ == NULL) Messenger::warn("Module '%s' did not provide a valid controller widget.\n", module->name());
+	else widgetLayout->addWidget(moduleWidget_);
 }
 
-// Update Module keyword widgets from stored values
-void ModuleControlWidget::updateKeywordWidgets()
+/*
+ * SubWidget Reimplementations / Definitions
+ */
+
+void ModuleControlWidget::closeEvent(QCloseEvent* event)
 {
+	emit (windowClosed(module_));
+}
+
+// Update controls within widget
+void ModuleControlWidget::updateControls()
+{
+	if (!module_) return;
+
+	// Update Control group
+	ui.EnabledCheck->setChecked(module_->enabled());
+	ui.FrequencySpin->setValue(module_->frequency());
+
 	// Select source list for keywords that have potentially been replicated / updated there
 	GenericList& moduleData = module_->configurationLocal() ? module_->targetConfigurations().firstItem()->moduleData() : duq_.processingModuleData();
 
 	RefListIterator<KeywordWidgetBase,bool> keywordIterator(keywordWidgets_);
 	while (KeywordWidgetBase* keywordWidget = keywordIterator.iterate()) keywordWidget->updateValue(moduleData, module_->uniqueName());
+
+	// Update control widget
+	if (moduleWidget_) moduleWidget_->updateControls();
+}
+
+// Return string specifying widget type
+const char* ModuleControlWidget::widgetType()
+{
+	return "ModuleControl";
+}
+
+// Write widget state through specified LineParser
+bool ModuleControlWidget::writeState(LineParser& parser)
+{
+	// Write Module target
+	if (!parser.writeLineF("%s\n", module_->uniqueName())) return false;
+
+	// Write state data from ModuleWidget
+	if (!moduleWidget_->writeState(parser)) return false;
+
+	return true;
+}
+
+// Read widget state through specified LineParser
+bool ModuleControlWidget::readState(LineParser& parser)
+{
+	// Read PairPotential target
+	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+	module_ = ModuleList::findInstanceByUniqueName(parser.argc(0));
+
+	// Need to set the data target in the SubWindow, and initialise (create) the right controls in the widget
+	subWindow_->setData(module_);
+	initialiseWindow(module_);
+	initialiseControls(module_);
+
+	// Write state data from ModuleWidget
+	if (!moduleWidget_->readState(parser)) return false;
+
+	return true;
 }
 
 /*
@@ -200,4 +226,3 @@ void ModuleControlWidget::on_FrequencySpin_valueChanged(int value)
 {
 	module_->setFrequency(value);
 }
-

@@ -228,6 +228,12 @@ bool MonitorWindow::loadWindowState()
 			subWindow = addWindow(ppWidget, NULL, stateParser.argc(1));
 			subWidget = ppWidget;
 		}
+		else if (DUQSys::sameString(stateParser.argc(0), "ModuleControl"))
+		{
+			ModuleControlWidget* moduleWidget = new ModuleControlWidget(NULL, NULL, duq_);
+			subWindow = addWindow(moduleWidget, NULL, stateParser.argc(1));
+			subWidget = moduleWidget;
+		}
 
 		// Did we recognise the widget?
 		if (!subWidget)

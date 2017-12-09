@@ -41,6 +41,22 @@ void AtomShakeModuleWidget::updateControls()
 }
 
 /*
+ * ModuleWidget Implementations
+ */
+
+// Write widget state through specified LineParser
+bool AtomShakeModuleWidget::writeState(LineParser& parser)
+{
+	return true;
+}
+
+// Read widget state through specified LineParser
+bool AtomShakeModuleWidget::readState(LineParser& parser)
+{
+	return true;
+}
+
+/*
  * Widgets / Functions
  */
 

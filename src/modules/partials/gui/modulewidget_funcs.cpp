@@ -73,6 +73,28 @@ void PartialsModuleWidget::updateControls()
 }
 
 /*
+ * ModuleWidget Implementations
+ */
+
+// Write widget state through specified LineParser
+bool PartialsModuleWidget::writeState(LineParser& parser)
+{
+	// Write UChromaWidget session
+	if (!uChromaView_->writeSession(parser)) return false;
+
+	return true;
+}
+
+// Read widget state through specified LineParser
+bool PartialsModuleWidget::readState(LineParser& parser)
+{
+	// Read UChromaWidget session
+	if (!uChromaView_->readSession(parser)) return false;
+	
+	return true;
+}
+
+/*
  * Widgets / Functions
  */
 

@@ -50,6 +50,10 @@ class ModuleControlWidget : public SubWidget
 	~ModuleControlWidget();
 	// Main form declaration
 	Ui::ModuleControlWidget ui;
+	// Initialise window
+	void initialiseWindow(Module* module);
+	// Initialise controls
+	void initialiseControls(Module* module);
 
 
 	/*
@@ -77,12 +81,6 @@ class ModuleControlWidget : public SubWidget
 	ModuleWidget* moduleWidget_;
 	// List of keyword widgets displayed
 	RefList<KeywordWidgetBase,bool> keywordWidgets_;
-
-	private:
-	// Populate list of Module options
-	void setUpOptions();
-	// Update Module keyword widgets from stored values
-	void updateKeywordWidgets();
 
 
 	/*
