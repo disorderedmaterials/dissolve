@@ -58,7 +58,7 @@ class ColourDefinition
 	// Convert AlphaControl to text string
 	static const char* alphaControl(ColourDefinition::AlphaControl as);
 	// Stock colours enum
-	enum StockColour { RedStockColour, GreenStockColour, BlueStockColour, BlackStockColour, nStockColours };
+	enum StockColour { BlackStockColour, RedStockColour, GreenStockColour, BlueStockColour, PurpleStockColour, CyanStockColour, OrangeStockColour, PinkStockColour, LightRedStockColour, LightGreenStockColour, LightBlueStockColour, SilverStockColour, GoldStockColour, nStockColours };
 	// Return stock colour (as QColor)
 	static QColor stockColour(StockColour colour);
 
