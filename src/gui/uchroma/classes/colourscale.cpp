@@ -402,6 +402,14 @@ void ColourScale::colour(double value, Vec4<GLfloat>& target) const
 	points_.last()->colour(target);
 }
 
+// Apply colour associated with value
+void ColourScale::applyColour(double value) const
+{
+	Vec4<GLfloat> newColour;
+	colour(value, newColour);
+	glColor4f(newColour.x, newColour.y, newColour.z, newColour.w);
+}
+
 // Return number of points in colourscale
 int ColourScale::nPoints() const
 {

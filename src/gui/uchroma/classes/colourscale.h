@@ -61,7 +61,7 @@ class ColourScalePoint : public ListItem<ColourScalePoint>
 	void colour(Vec4<GLfloat>& target) const;
 };
 
-// Colour scale delta
+// Colour Scale Delta
 class ColourScaleDelta : public ListItem<ColourScaleDelta>
 {
 	public:
@@ -106,8 +106,8 @@ class ColourScale
 
 
 	/*
-	// Style
-	*/
+	 * Style
+	 */
 	private:
 	// Whether colours are interpolated between points in the scale
 	bool interpolated_;
@@ -126,8 +126,8 @@ class ColourScale
 
 
 	/*
-	// Colour Points
-	*/
+	 * Colour Points
+	 */
 	private:
 	// List of points in the colourscale
 	List<ColourScalePoint> points_;
@@ -165,6 +165,8 @@ class ColourScale
 	QColor colour(double value) const;
 	// Get colour associated with value supplied (as Vec4<GLfloat>)
 	void colour(double value, Vec4<GLfloat>& target) const;
+	// Apply colour associated with value
+	void applyColour(double value) const;
 	// Set all alpha values to that specified
 	void setAllAlpha(double alpha);
 };
