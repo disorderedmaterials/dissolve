@@ -60,8 +60,8 @@ void UChromaBase::startNewSession(bool createDefaults)
 		currentViewPane_ = viewLayout_.setDefault();
 
 		// Add an empty collection, and add it to the current view pane
-		currentViewPane_->addCollectionTarget(addCollection());
-		currentViewPane_->translateView(0.0, 0.0, -15.0);
+// 		currentViewPane_->addCollectionTarget(addCollection());
+// 		currentViewPane_->translateView(0.0, 0.0, -15.0);
 	}
 
 	// Set current project data
