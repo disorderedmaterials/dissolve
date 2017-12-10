@@ -284,9 +284,78 @@ void Viewer::renderFullScene(int xOffset, int yOffset)
 		// Disable current clip planes
 		glDisable(GL_CLIP_PLANE0);
 		glDisable(GL_CLIP_PLANE1);
+
+		/*
+		 * Draw legend in top-right corner
+		 */
+
+		// Setup an orthographic matrix
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(0, pane->viewportMatrix()[2], 0, pane->viewportMatrix()[3], -10, 10);
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glDisable(GL_LIGHTING);
+
+		// Create RefList of legend entries
+		RefList<Collection,double> legendEntries;
+		double legendTextSize = 12.0;
+		double legendLineLength = 10.0;
+		double legendSpacing = 2.0;
+		double maxTextWidth = -1.0;
+		// Render pane data - loop over collection targets
+		for (TargetData* target = pane->collectionTargets(); target != NULL; target = target->next)
+		{
+			if (!target->collection()->visible()) continue;
+			double textWidth = fontInstance_.boundingBoxWidth(target->collection()->name()) * legendTextSize;
+			legendEntries.add(target->collection(), textWidth);
+			if (textWidth > maxTextWidth) maxTextWidth = textWidth;
+		}
+
+		// Simple column layout - set the render position to be the left-hand edge of the longest text item
+		glColor3d(0.0, 0.0, 0.0);
+		glTranslated(pane->viewportMatrix()[2] - maxTextWidth - legendSpacing, pane->viewportMatrix()[3] - legendTextSize - legendSpacing, 0);
+
+		// Loop over legend entries
+		Vec4<float> colour;
+		RefListIterator<Collection,double> legendEntryIterator(legendEntries);
+		while (Collection* collection = legendEntryIterator.iterate())
+		{
+			// Grab copy of the relevant colour definition for this Collection
+			ColourDefinition colourDefinition = collection->displayColour();
+
+			// Draw line indicator
+			glPushMatrix();
+			glTranslated(-legendSpacing, (legendTextSize/2.0) - (collection->displayLineStyle().width()/2.0), 0.0);
+			// -- What are we drawing for the line indicator?
+			if (colourDefinition.colourSource() == ColourDefinition::SingleColourSource)
+			{
+				collection->displayLineStyle().apply();
+				GLfloat lineWidth;
+				glGetFloatv(GL_LINE_WIDTH, &lineWidth);
+				glLineWidth(lineWidth*2.0);
+				colourDefinition.colourScale().applyColour(0.0);
+				glBegin(GL_LINES);
+				glVertex2i(0.0, 0.0);
+				glVertex2i(-legendLineLength, 0.0);
+				glEnd();
+				collection->displayLineStyle().revert();
+			}
+			glPopMatrix();
+
+			// Draw text
+			glPushMatrix();
+			glColor3d(0.0, 0.0, 0.0);
+			glScaled(legendTextSize, legendTextSize, legendTextSize);
+			fontInstance_.font()->Render(collection->name());
+			glPopMatrix();
+
+			// Shift to next position
+			glTranslated(0.0, -(legendTextSize + legendSpacing), 0.0);
+		}
 	}
 }
-
 
 // Set whether we are currently rendering offscreen
 void Viewer::setRenderingOffScreen(bool b)
