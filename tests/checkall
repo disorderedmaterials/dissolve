@@ -1,6 +1,6 @@
 #!/bin/bash -l
 
-# Run and check all tests
+# Run and check all functional tests
 
 NFAILED=0
 EXITONFAIL="TRUE"
