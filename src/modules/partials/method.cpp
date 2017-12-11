@@ -245,7 +245,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 			calculateWeightedGR(unweightedgr, weightedgr, weights);
 
 			// Set names of resources (XYData) within the PartialSet
-			weightedgr.setResourceNames(CharString("%s//%s//%s", cfg->niceName(), "Partials", "WeightedGR"));
+			weightedgr.setResourceNames(CharString("%s//%s//%s", cfg->niceName(), uniqueName_.get(), "WeightedGR"));
 
 			// If we are associated to a local Configuration, copy the partial data over to the processing module list
 			if (configurationLocal_) GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "WeightedGR", uniqueName_) = weightedgr;
@@ -269,6 +269,9 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 				// Set up weighted S(Q) PartialSet from the weighted G(R) PartialSet, and calculate the weighted S(Q)
 				weightedsq.setUpPartials(weightedgr.atomTypes(), cfg->niceName(), "weighted", "sq", "Q, 1/Angstroms");
 				calculateWeightedSQ(unweightedsq, weightedsq, weights, normalisation);
+
+				// Set names of resources (XYData) within the PartialSet
+				weightedsq.setResourceNames(CharString("%s//%s//%s", cfg->niceName(), uniqueName_.get(), "WeightedSQ"));
 
 				// If we are associated to a local Configuration, copy the partial data over to the processing module list
 				if (configurationLocal_) GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "WeightedSQ", uniqueName_) = weightedsq;
