@@ -97,7 +97,7 @@ void TestModuleWidget::initialiseControls(TestModule* module)
 {
 	if (!module) return;
 
-	// Add reference data, calculated data, and difference to the dataGraph_
+	// Add reference data, calculated data to the dataGraph_
 	RefListIterator<Data,bool> dataIterator(module->targetData());
 	while (Data* data = dataIterator.iterate())
 	{
@@ -108,8 +108,21 @@ void TestModuleWidget::initialiseControls(TestModule* module)
 		// Calculated data (total S(Q) from associated module
 		if (data->associatedModule())
 		{
-			CharString blockData("Collection '%s'; Group '%s'; LineStyle 1.0 'Half Dash'; DataSet 'Calculated'; Source XYData '%s//WeightedSQ//Total'; EndDataSet; EndCollection", data->name(), data->associatedModule()->uniqueName());
+			CharString blockData("Collection '%s'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated'; Source XYData '%s//WeightedSQ//Total'; EndDataSet; EndCollection", data->name(), data->associatedModule()->uniqueName());
 			dataGraph_->addCollectionFromBlock(blockData);
+		}
+	}
+
+	// Add experimentally-determined partials, calculated partials, and differences to the partialsGraph_
+	int nTypes = dUQ_.atomTypeList().nItems();
+// 	Array2D<XYData> differences(nTypes, nTypes, true);
+	int n = 0;
+	for (AtomType* at1 = dUQ_.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++n)
+	{
+		int m = n;
+		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
+		{
+			
 		}
 	}
 }

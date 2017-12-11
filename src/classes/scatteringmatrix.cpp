@@ -78,10 +78,13 @@ void ScatteringMatrix::print()
 }
 
 // Generate partials from reference data using the inverse coefficients matrix
-void ScatteringMatrix::generatePartials()
+void ScatteringMatrix::generatePartials(Array2D<XYData>& generatedSQ)
 {
+	// Get linear array from generatedSQ
+	XYData* partials = generatedSQ.linearArray();
+
 	// Clear current partials
-	for (int n=0; n<partials_.nItems(); ++n) partials_[n].clear();
+	for (int n=0; n<generatedSQ.linearArraySize(); ++n) partials[n].clear();
 
 	// Loop over rows in A_ / data_
 	int row = 0;
@@ -92,30 +95,13 @@ void ScatteringMatrix::generatePartials()
 		for (int n=0; n<A_.nColumns(); ++n)
 		{
 			// Add data to relevant partial
-			partials_[n].addInterpolated(data->data(), inverseA_.value(row, n));
+			partials[n].addInterpolated(data->data(), inverseA_.value(row, n));
 		}
 
 		++row;
 	}
 
-	for (int n=0; n<partials_.nItems(); ++n) partials_[n].save(partials_[n].name());
-}
-
-// Return partial for specified AtomType pair
-const XYData& ScatteringMatrix::partial(AtomType* typeI, AtomType* typeJ)
-{
-	int index = 0;
-	for (Pair<AtomType*,AtomType*>* pair = typePairs_.first(); pair != NULL; pair = pair->next)
-	{
-		if ((pair->a == typeI) && (pair->b == typeJ)) return partials_[index];
-		if ((pair->a == typeJ) && (pair->b == typeI)) return partials_[index];
-		++index;
-	}
-
-	// Not found - return dummy value
-	Messenger::warn("Partial between types %s and %s was not found in ScatteringMatrix.\n", typeI->name(), typeJ->name());
-	static XYData dummy;
-	return dummy;
+	for (int n=0; n<generatedSQ.linearArraySize(); ++n) partials[n].save(partials[n].name());
 }
 
 /*
@@ -123,7 +109,7 @@ const XYData& ScatteringMatrix::partial(AtomType* typeI, AtomType* typeJ)
  */
 
 // Initialise from supplied list of AtomTypes
-void ScatteringMatrix::initialise(const List<AtomType>& types)
+void ScatteringMatrix::initialise(const List<AtomType>& types, Array2D<XYData>& generatedSQ, const char* objectNamePrefix)
 {
 	// Copy atom types
 	typePairs_.clear();
@@ -143,11 +129,13 @@ void ScatteringMatrix::initialise(const List<AtomType>& types)
 	inverseA_.clear();
 
 	// Create partials array
-	partials_.initialise(typePairs_.nItems());
+	generatedSQ.initialise(types.nItems(), types.nItems(), true);
+	XYData* partials = generatedSQ.linearArray();
 	int index = 0;
 	for (Pair<AtomType*,AtomType*>* pair = typePairs_.first(); pair != NULL; pair = pair->next)
 	{
-		partials_[index].setName(CharString("ScatteringMatrixPartial-%s-%s.sq", pair->a->name(), pair->b->name()));
+		partials[index].setName(CharString("ScatteringMatrixPartial-%s-%s.sq", pair->a->name(), pair->b->name()));
+		partials[index].setObjectName(CharString("%s//GeneratedSQ//%s-%s", objectNamePrefix, pair->a->name(), pair->b->name()));
 		++index;
 	}
 }

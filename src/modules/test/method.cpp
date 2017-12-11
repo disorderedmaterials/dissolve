@@ -121,8 +121,10 @@ bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 	/*
 	 * Construct our full, square, scattering matrix, using the master AtomTypes list
 	 */
+	// Realise the generatedSQ array
+	Array2D<XYData>& generatedSQ = GenericListHelper< Array2D<XYData> >::realise(duq.processingModuleData(), "GeneratedSQ", uniqueName_, GenericItem::InRestartFileFlag);
 	ScatteringMatrix scatteringMatrix;
-	scatteringMatrix.initialise(duq.atomTypeList());
+	scatteringMatrix.initialise(duq.atomTypeList(), generatedSQ, uniqueName_);
 
 	// For each Data, get the associated Weights from the associated Partials module
 	dataIterator.restart();
@@ -154,24 +156,27 @@ bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 	/*
 	 * Use the ScatteringMatrix to generate partials from the supplied reference data
 	 */
-	scatteringMatrix.generatePartials();
+	scatteringMatrix.generatePartials(generatedSQ);
 
 	/*
 	 * Construct difference matrix of partials
 	 */
 	int nTypes = duq.atomTypeList().nItems();
-	Array2D<XYData> differences(nTypes, nTypes, true);
+	bool created;
+	Array2D<XYData>& deltaSQ = GenericListHelper< Array2D<XYData> >::realise(duq.processingModuleData(), "DeltaSQ", uniqueName_, GenericItem::InRestartFileFlag, &created);
+	if (created) deltaSQ.initialise(nTypes, nTypes, true);
 	int n = 0;
 	for (AtomType* at1 = duq.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++n)
 	{
 		int m = n;
 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
 		{
-			// Grab difference partial
-			XYData& partial = differences.ref(n, m);
+			// Grab difference partial and make sure its object name is set
+			XYData& partial = deltaSQ.ref(n, m);
+			partial.setObjectName(CharString("%s//DeltaSQ//%s-%s", uniqueName_.get(), at1->name(), at2->name()));
 
 			// Copy our partial S(Q) generated from the experimental datasets
-			partial = scatteringMatrix.partial(at1, at2);
+			partial = generatedSQ.ref(n,m);
 
 			// Subtract the simulated unweighted S(Q) from the difference partial
 			partial.addInterpolated(unweightedSQ.partial(n, m), -1.0);
@@ -198,7 +203,7 @@ bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
 		{
 			// Grab difference partial, now back-transformed into a difference g(r)
-			XYData& diffgr = differences.ref(n, m);
+			XYData& diffgr = deltaSQ.ref(n, m);
 
 			// Process the addition a little?
 			// TODO

@@ -57,8 +57,6 @@ class ScatteringMatrix
 	Array2D<double> A_;
 	// Inverse of coefficients matrix
 	Array2D<double> inverseA_;
-	// Partials matrix (X) (n * 1)
-	Array<XYData> partials_;
 	// Reference data (B) (n * 1)
 	RefList<Data,bool> data_;
 
@@ -70,9 +68,7 @@ class ScatteringMatrix
 	// Print the matrix
 	void print();
 	// Generate partials from reference data using inverse matrix
-	void generatePartials();
-	// Return partial for specified AtomType pair
-	const XYData& partial(AtomType* typeI, AtomType* typeJ);
+	void generatePartials(Array2D<XYData>& generatedSQ);
 
 
 	/*
@@ -80,7 +76,7 @@ class ScatteringMatrix
 	 */
 	public:
 	// Initialise from supplied list of AtomTypes
-	void initialise(const List<AtomType>& types);
+	void initialise(const List<AtomType>& types, Array2D<XYData>& generatedSQ, const char* objectNamePrefix);
 	// Finalise
 	bool finalise();
 	// Add reference data
