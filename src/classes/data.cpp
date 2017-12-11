@@ -51,6 +51,8 @@ void Data::setName(const char* name)
 {
 	name_ = name;
 	niceName_ = DUQSys::niceName(name);
+
+	data_.setObjectName(CharString("Data//%s", niceName_.get()));
 }
 
 // Return name of the Data
