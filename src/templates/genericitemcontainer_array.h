@@ -52,7 +52,7 @@ template <class T> class GenericItemContainer< Array<T> > : public GenericItem
 	const char* itemClassName()
 	{
 		static CharString className("Array<%s>", T::itemClassName());
-		return "Array<T>";
+		return className.get();
 	}
 
 
