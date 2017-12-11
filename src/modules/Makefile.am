@@ -41,6 +41,7 @@ libmodules_la_LIBADD += skeleton/libskeleton.la
 libmoduledummywidgets_la_LIBADD += skeleton/libmodulewidget.la
 SUBDIRS += test
 libmodules_la_LIBADD += test/libtest.la
+libmoduledummywidgets_la_LIBADD += test/libmodulewidget.la
 
 # GUI targets for modules
 if BUILDGUI
@@ -56,6 +57,7 @@ libmodulewidgets_CPPFLAGS = -I../ -I../../ @DUQ_CFLAGS@ @DUQ_READLINE@ @GUI_INCL
 libmodulewidgets_la_LIBADD += atomshake/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += partials/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += skeleton/gui/libmodulewidget.la
+libmodulewidgets_la_LIBADD += test/gui/libmodulewidget.la
 
 endif
 

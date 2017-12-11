@@ -109,7 +109,7 @@ bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 	}
 
 	/*
-	 * First, make sure that all of the associated Data is set up
+	 * First, make sure that all of the associated Data are set up
 	 */
 	RefListIterator<Data,bool> dataIterator(targetData_);
 	while (Data* data = dataIterator.iterate())

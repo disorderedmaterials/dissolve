@@ -188,6 +188,7 @@ if test "$with_gui" = "yes"; then
   AC_CONFIG_FILES(src/modules/atomshake/gui/Makefile)
   AC_CONFIG_FILES(src/modules/partials/gui/Makefile)
   AC_CONFIG_FILES(src/modules/skeleton/gui/Makefile)
+  AC_CONFIG_FILES(src/modules/test/gui/Makefile)
 fi
 AC_OUTPUT
 
