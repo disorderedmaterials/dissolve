@@ -423,13 +423,13 @@ bool PartialsModule::performGRAveraging(GenericList& moduleData, const char* nam
 
 			// Grab it, and rename the resources within
 			PartialSet& previousPartials = GenericListHelper<PartialSet>::retrieve(moduleData, CharString("%s_%i", name, n+1), prefix);
-			previousPartials.setResourceNames(currentPartials.resourcePrefix(), CharString("Avg%i", n+1));
+			previousPartials.setObjectNames(currentPartials.objectNamePrefix(), CharString("Avg%i", n+1));
 		}
 
 		// Store the current PartialSet as the earliest data (1)
 		PartialSet& recentPartials = GenericListHelper<PartialSet>::realise(moduleData, CharString("%s_1", name), prefix, GenericItem::InRestartFileFlag);
 		recentPartials = currentPartials;
-		recentPartials.setResourceNames(currentPartials.resourcePrefix(), "Avg1");
+		recentPartials.setObjectNames(currentPartials.objectNamePrefix(), "Avg1");
 		++nStored;
 	}
 

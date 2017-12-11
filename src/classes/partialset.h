@@ -67,8 +67,8 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	Array2D<XYData> braggPartials_;
 	// Total function
 	XYData total_;
-	// Prefix applied to resource names
-	CharString resourcePrefix_;
+	// Prefix applied to object names
+	CharString objectNamePrefix_;
 
 	public:
 	// Set up using supplied Configuration
@@ -109,10 +109,10 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	XYData& total();
 	// Save all partials and total
 	bool save();
-	// Name all resources based on the supplied prefix
-	void setResourceNames(const char* prefix, const char* suffix = NULL);
-	// Return prefix applied to resource names
-	const char* resourcePrefix() const;
+	// Name all object based on the supplied prefix
+	void setObjectNames(const char* prefix, const char* suffix = NULL);
+	// Return prefix applied to object names
+	const char* objectNamePrefix() const;
 
 
 	/*

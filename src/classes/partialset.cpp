@@ -296,14 +296,14 @@ bool PartialSet::save()
 	return total_.save(total_.name());
 }
 
-// Name all resources based on the supplied prefix
-void PartialSet::setResourceNames(const char* prefix, const char* suffix)
+// Name all object based on the supplied prefix
+void PartialSet::setObjectNames(const char* prefix, const char* suffix)
 {
 	// Set up suffix (if any)
 	CharString actualSuffix;
 	if (suffix != NULL) actualSuffix.sprintf("_%s", suffix);
 
-	resourcePrefix_ = prefix;
+	objectNamePrefix_ = prefix;
 
 	int typeI, typeJ;
 	int nTypes = atomTypes_.nItems();
@@ -323,10 +323,10 @@ void PartialSet::setResourceNames(const char* prefix, const char* suffix)
 	total_.setObjectName(CharString("%s//Total%s", prefix, actualSuffix.get()));
 }
 
-// Return resource name prefix
-const char* PartialSet::resourcePrefix() const
+// Return prefix applied to object names
+const char* PartialSet::objectNamePrefix() const
 {
-	return resourcePrefix_.get();
+	return objectNamePrefix_.get();
 }
 
 /*
@@ -449,7 +449,7 @@ const char* PartialSet::itemClassName()
 // Write data through specified LineParser
 bool PartialSet::write(LineParser& parser)
 {
-	if (!parser.writeLineF("%s\n", resourcePrefix_.get())) return false;
+	if (!parser.writeLineF("%s\n", objectNamePrefix_.get())) return false;
 	if (!parser.writeLineF("%s\n", abscissaUnits_.get())) return false;
 	if (!parser.writeLineF("%s\n", fingerprint_.get())) return false;
 
@@ -474,7 +474,7 @@ bool PartialSet::write(LineParser& parser)
 // Read data through specified LineParser
 bool PartialSet::read(LineParser& parser)
 {
-	if (parser.readNextLine(LineParser::Defaults, resourcePrefix_) != LineParser::Success) return false;
+	if (parser.readNextLine(LineParser::Defaults, objectNamePrefix_) != LineParser::Success) return false;
 	if (parser.readNextLine(LineParser::Defaults, abscissaUnits_) != LineParser::Success) return false;
 	if (parser.readNextLine(LineParser::Defaults, fingerprint_) != LineParser::Success) return false;
 
@@ -522,7 +522,7 @@ bool PartialSet::broadcast(ProcessPool& procPool, int rootRank)
 		}
 	}
 	total_.broadcast(procPool, rootRank);
-	if (!procPool.broadcast(resourcePrefix_)) return false;
+	if (!procPool.broadcast(objectNamePrefix_)) return false;
 #endif
 	return true;
 }
