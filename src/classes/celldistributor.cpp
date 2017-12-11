@@ -284,8 +284,9 @@ int CellDistributor::nextAvailableCell(ProcessPool& procPool)
 
 	++lastCellDistributed_;
 	++nCellsDistributed_;
-	cells_[lastCellDistributed_].lock(willBeModified);
-	cellStatus_[lastCellDistributed_] = true;
+	lockForDistribution(lastCellDistributed_);
+// 	cells_[lastCellDistributed_].lock(willBeModified);
+// 	cellStatus_[lastCellDistributed_] = true;
 
 	return lastCellDistributed_;
 #endif
