@@ -53,6 +53,9 @@ void UChromaBase::startNewSession(bool createDefaults)
 	viewLayout_.clear();
 	currentViewPane_ = NULL;
 
+	// Clear editstates
+	clearEditStates();
+
 	// Create defaults if requested
 	if (createDefaults)
 	{
@@ -218,6 +221,18 @@ void UChromaBase::removeCollection(Collection* collection)
 	}
 
 	setAsModified();
+}
+
+// Clear all collections
+void UChromaBase::clearCollections()
+{
+	collections_.clear();
+
+	clearEditStates();
+
+	setAsModified();
+
+	updateGUI();
 }
 
 // Remove current collection

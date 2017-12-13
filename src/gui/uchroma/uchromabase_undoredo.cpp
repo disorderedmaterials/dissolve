@@ -196,6 +196,15 @@ EditStateGroup* UChromaBase::editStateGroups()
 	return editStateGroups_.first();
 }
 
+// Clear all edit state data
+void UChromaBase::clearEditStates()
+{
+	editStateGroups_.clear();
+	currentEditStateGroup_ = NULL;
+	currentEditState_ = NULL;
+	undoEditStateGroup_ = NULL;
+}
+
 // Perform undo
 bool UChromaBase::undo()
 {

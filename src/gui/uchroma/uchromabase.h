@@ -287,6 +287,8 @@ class UChromaBase
 	Collection* addCollectionFromBlock(const char* blockData);
 	// Remove existing collection
 	void removeCollection(Collection* collection);
+	// Clear all collections
+	void clearCollections();
 	// Remove current collection
 	void removeCurrentCollection();
 	// Return number of collections
@@ -666,6 +668,8 @@ class UChromaBase
 	EditStateGroup* undoEditStateGroup();
 	// Return first in list of EditStateGroups
 	EditStateGroup* editStateGroups();
+	// Clear all edit state data
+	void clearEditStates();
 	// Perform undo
 	bool undo();
 	// Perform redo
