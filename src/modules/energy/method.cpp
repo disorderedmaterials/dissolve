@@ -298,40 +298,50 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 			Messenger::print("Energy: Intramolecular contributions are - bonds = %15.9e kJ/mol, angles = %15.9e kJ/mol, torsions = %15.9e kJ/mol.\n", bondEnergy, angleEnergy, torsionEnergy);
 
 			// Store current energies in the Configuration in case somebody else needs them
-			GenericListHelper< Array<double> >::realise(cfg->moduleData(), "Inter", uniqueName(), GenericItem::InRestartFileFlag).add(interEnergy);
-			GenericListHelper< Array<double> >::realise(cfg->moduleData(), "Intra", uniqueName(), GenericItem::InRestartFileFlag).add(intraEnergy);
-			GenericListHelper< Array<double> >::realise(cfg->moduleData(), "Bond", uniqueName(), GenericItem::InRestartFileFlag).add(bondEnergy);
-			GenericListHelper< Array<double> >::realise(cfg->moduleData(), "Angle", uniqueName(), GenericItem::InRestartFileFlag).add(angleEnergy);
-			GenericListHelper< Array<double> >::realise(cfg->moduleData(), "Torsion", uniqueName(), GenericItem::InRestartFileFlag).add(torsionEnergy);
+			XYData& interData = GenericListHelper<XYData>::realise(cfg->moduleData(), "Inter", uniqueName(), GenericItem::InRestartFileFlag);
+			interData.addPoint(duq.iteration(), interEnergy);
+			interData.setObjectName(CharString("%s//%s//Inter", cfg->niceName(), uniqueName()));
+			XYData& intraData = GenericListHelper<XYData>::realise(cfg->moduleData(), "Intra", uniqueName(), GenericItem::InRestartFileFlag);
+			intraData.addPoint(duq.iteration(), intraEnergy);
+			intraData.setObjectName(CharString("%s//%s//Intra", cfg->niceName(), uniqueName()));
+			XYData& bondData = GenericListHelper<XYData>::realise(cfg->moduleData(), "Bond", uniqueName(), GenericItem::InRestartFileFlag);
+			bondData.addPoint(duq.iteration(), bondEnergy);
+			bondData.setObjectName(CharString("%s//%s//Bond", cfg->niceName(), uniqueName()));
+			XYData& angleData = GenericListHelper<XYData>::realise(cfg->moduleData(), "Angle", uniqueName(), GenericItem::InRestartFileFlag);
+			angleData.addPoint(duq.iteration(), angleEnergy);
+			angleData.setObjectName(CharString("%s//%s//Angle", cfg->niceName(), uniqueName()));
+			XYData& torsionData = GenericListHelper<XYData>::realise(cfg->moduleData(), "Torsion", uniqueName(), GenericItem::InRestartFileFlag);
+			torsionData.addPoint(duq.iteration(), torsionEnergy);
+			torsionData.setObjectName(CharString("%s//%s//Torsion", cfg->niceName(), uniqueName()));
 
 			// Append to arrays of total energies
-			Array<double>& totalEnergyArray = GenericListHelper< Array<double> >::realise(cfg->moduleData(), "Total", uniqueName(), GenericItem::InRestartFileFlag);
-			totalEnergyArray.add(interEnergy+intraEnergy);
+			XYData& totalEnergyArray = GenericListHelper<XYData>::realise(cfg->moduleData(), "Total", uniqueName(), GenericItem::InRestartFileFlag);
+			totalEnergyArray.addPoint(duq.iteration(), interEnergy+intraEnergy);
 
 			// Determine stability of energy
 			// Check number of points already stored for the Configuration
 			double grad = 0.0;
 			bool stable = false;
-			if (stabilityWindow > totalEnergyArray.nItems()) Messenger::print("Energy: Too few points to assess stability.\n");
+			if (stabilityWindow > totalEnergyArray.nPoints()) Messenger::print("Energy: Too few points to assess stability.\n");
 			else
 			{
 				// Work out standard deviation of energy points
 				double Sx = 0.0, Sy = 0.0, Sxy = 0.0;
 				double xBar = 0.0, yBar = 0.0;
 				// -- Calculate mean values
-				for (int n=totalEnergyArray.nItems()-stabilityWindow; n<totalEnergyArray.nItems(); ++n)
+				for (int n=totalEnergyArray.nPoints()-stabilityWindow; n<totalEnergyArray.nPoints(); ++n)
 				{
 					xBar += n;
-					yBar += totalEnergyArray.value(n);
+					yBar += totalEnergyArray.y(n);
 				}
 				xBar /= stabilityWindow;
 				yBar /= stabilityWindow;
 				// -- Determine Sx, Sy, and Sxy
-				for (int n=totalEnergyArray.nItems()-stabilityWindow; n<totalEnergyArray.nItems(); ++n)
+				for (int n=totalEnergyArray.nPoints()-stabilityWindow; n<totalEnergyArray.nPoints(); ++n)
 				{
 					Sx += (n - xBar)*(n - xBar);
-					Sy += (totalEnergyArray.value(n) - yBar)*(totalEnergyArray.value(n) - yBar);
-					Sxy += (n - xBar) * (totalEnergyArray.value(n) - yBar);
+					Sy += (totalEnergyArray.y(n) - yBar)*(totalEnergyArray.y(n) - yBar);
+					Sxy += (n - xBar) * (totalEnergyArray.y(n) - yBar);
 				}
 				grad = Sxy / Sx;
 				double thresholdValue = fabs(stabilityThreshold*yBar);
@@ -342,6 +352,7 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 
 			// Set variable in Configuration
 			GenericListHelper<bool>::realise(cfg->moduleData(), "EnergyStable", "", GenericItem::InRestartFileFlag) = stable;
+			GenericListHelper<XYData>::realise(cfg->moduleData(), "EnergyStability", "", GenericItem::InRestartFileFlag).addPoint(duq.iteration(), stable);
 
 			// If writing to a file, append it here
 			if (saveData)
