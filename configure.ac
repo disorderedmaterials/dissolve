@@ -186,6 +186,7 @@ if test "$with_gui" = "yes"; then
   AC_CONFIG_FILES(src/gui/uchroma/render/Makefile)
   AC_CONFIG_FILES(src/gui/uchroma/session/Makefile)
   AC_CONFIG_FILES(src/modules/atomshake/gui/Makefile)
+  AC_CONFIG_FILES(src/modules/energy/gui/Makefile)
   AC_CONFIG_FILES(src/modules/partials/gui/Makefile)
   AC_CONFIG_FILES(src/modules/skeleton/gui/Makefile)
   AC_CONFIG_FILES(src/modules/test/gui/Makefile)

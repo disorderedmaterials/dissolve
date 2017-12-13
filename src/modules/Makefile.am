@@ -21,6 +21,7 @@ SUBDIRS += checks
 libmodules_la_LIBADD += checks/libchecks.la
 SUBDIRS += energy
 libmodules_la_LIBADD += energy/libenergy.la
+libmoduledummywidgets_la_LIBADD += energy/libmodulewidget.la
 SUBDIRS += export
 libmodules_la_LIBADD += export/libexport.la
 SUBDIRS += forces
@@ -55,6 +56,7 @@ libmodulewidgets_la_LDFLAGS = -static
 libmodulewidgets_CPPFLAGS = -I../ -I../../ @DUQ_CFLAGS@ @DUQ_READLINE@ @GUI_INCLUDES@
 
 libmodulewidgets_la_LIBADD += atomshake/gui/libmodulewidget.la
+libmodulewidgets_la_LIBADD += energy/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += partials/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += skeleton/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += test/gui/libmodulewidget.la
