@@ -25,7 +25,7 @@
 // Set up keywords for Module
 void EnergyModule::setUpKeywords()
 {
-	keywords_.add(new BoolModuleKeyword(true), "Save", "Save calculate energy points to the file '<name>.energy.txt'");
+	keywords_.add(new BoolModuleKeyword(false), "Save", "Save calculate energy points to the file '<name>.energy.txt'");
 	keywords_.add(new IntegerModuleKeyword(10), "StabilityWindow", "Number of points over which to assess the stability of the energy (per Configuration)");
 	keywords_.add(new DoubleModuleKeyword(0.0025), "StabilityThreshold", "Threshold value at which energy is deemed stable over the defined windowing period", "<value[0.0-1.0]>");
 	keywords_.add(new BoolModuleKeyword(false), "Test", "Test parallel energy routines against simplified, serial ones");
