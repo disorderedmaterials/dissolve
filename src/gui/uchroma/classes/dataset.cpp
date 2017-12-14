@@ -171,7 +171,7 @@ bool DataSet::refreshData(QDir sourceDir)
 		}
 		else
 		{
-			Messenger::warn("Couldn't locate data '%s' for display.\n", sourceXYData_.get());
+			Messenger::printVerbose("Couldn't locate data '%s' for display.\n", sourceXYData_.get());
 			data_.arrayX().clear();
 			data_.arrayY().clear();
 

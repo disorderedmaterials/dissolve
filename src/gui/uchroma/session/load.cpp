@@ -488,11 +488,7 @@ bool UChromaBase::readDataSetBlock(LineParser& parser, DataSet* dataSet, Collect
 					}
 					// Locate XYData
 					XYData* sourceXYData = XYData::findObject(parser.argc(2));
-					if (!sourceXYData)
-					{
-						Messenger::error("Couldn't locate specified XYData object.\n");
-						return false;
-					}
+					if (!sourceXYData) Messenger::printVerbose("Couldn't locate specified XYData object (%s).\n", parser.argc(2));
 					dataSet->setSourceData(parser.argc(2));
 				}
 				break;
