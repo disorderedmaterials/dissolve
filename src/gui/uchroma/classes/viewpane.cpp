@@ -778,9 +778,6 @@ Vec3<double> ViewPane::screenToModel(int x, int y, double z)
 	Matrix4 itransform = viewMatrix();
 	itransform.invert();
 
-	// Mirror y-coordinate
-	y = viewportMatrix_[3] - y;
-
 	// Project points at guide z-position and two other points along literal x and y to get scaling factors for screen coordinates
 	worldr.set(0.0,0.0,z, 1.0);
 	temp = projectionMatrix_ * worldr;
@@ -814,9 +811,6 @@ double ViewPane::screenToAxis(int axis, int x, int y, bool clamp)
 {
 	// Check for a valid axis
 	if (axis == -1) return 0.0;
-
-	// Mirror y-coordinate
-	y = viewportMatrix_[3] - y;
 
 // 	printf("Test: min=%f, max=%f\n", min_[0], max_[0]);
 // 	rMouseLast_.print();
