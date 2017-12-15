@@ -163,9 +163,9 @@ class Viewer : public QOpenGLWidget, protected QOpenGLFunctions
 	// Set coordinates to query at next redraw
 	void setQueryCoordinates(int mouseX, int mouseY);
 	// Return object type at query coordinates
-	Viewer::ViewObject objectAtQueryCoordinates();
+	Viewer::ViewObject objectAtQueryCoordinates() const;
 	// Info for object at query coordinates
-	const char* infoAtQueryCoordinates();
+	const char* infoAtQueryCoordinates() const;
 
 
 	/*
@@ -177,8 +177,6 @@ class Viewer : public QOpenGLWidget, protected QOpenGLFunctions
 	Vec3<double> rMouseDown_;
 	// Canvas coordinates of mouse cursor
 	Vec3<double> rMouseLast_;
-	// Axis coordinates of mouse cursor
-	Vec3<double> rMouseLastLocal_;
 	// Current state of mouse buttons
 	Qt::MouseButtons buttonState_;
 
@@ -196,9 +194,9 @@ class Viewer : public QOpenGLWidget, protected QOpenGLFunctions
 
 	public:
 	// Return mouse coordinates at last mousedown event
-	Vec3<double> rMouseDown();
+	Vec3<double> rMouseDown() const;
 	// Return mouse coordinates at last mousemove event
-	Vec3<double> rMouseLast();
+	Vec3<double> rMouseLast() const;
 
 	public slots:
 	// Qt Slot (key press event)

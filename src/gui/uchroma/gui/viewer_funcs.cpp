@@ -255,13 +255,13 @@ void Viewer::setQueryCoordinates(int mouseX, int mouseY)
 }
 
 // Return object type at query coordinates
-Viewer::ViewObject Viewer::objectAtQueryCoordinates()
+Viewer::ViewObject Viewer::objectAtQueryCoordinates() const
 {
 	return objectAtQueryCoordinates_;
 }
 
 // Info for object at query coordinates
-const char* Viewer::infoAtQueryCoordinates()
+const char* Viewer::infoAtQueryCoordinates() const
 {
-	return infoAtQueryCoordinates_;
+	return infoAtQueryCoordinates_.get();
 }

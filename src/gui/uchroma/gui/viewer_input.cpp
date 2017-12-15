@@ -109,8 +109,6 @@ void Viewer::mouseMoveEvent(QMouseEvent* event)
 
 	rMouseLast_.set(event->x(), event->y(), 0.0);
 
-	rMouseLastLocal_ = uChromaBase_->screenToLocal(event->x(), event->y());
-
 	setFocus();
 
 	if (refresh) uChromaBase_->updateGUI();
@@ -142,13 +140,13 @@ void Viewer::mouseDoubleClickEvent(QMouseEvent* event)
 }
 
 // Return mouse coordinates at last mousedown event
-Vec3<double> Viewer::rMouseDown()
+Vec3<double> Viewer::rMouseDown() const
 {
 	return rMouseDown_;
 }
 
 // Return mouse coordinates at last mousemove event
-Vec3<double> Viewer::rMouseLast()
+Vec3<double> Viewer::rMouseLast() const
 {
 	return rMouseLast_;
 }
@@ -184,7 +182,7 @@ void Viewer::keyPressEvent(QKeyEvent *event)
 			if (viewPane->isFlatView()) viewPane->shiftFlatAxisLimitsFractional(0.0, 0.1);
 			else uChromaBase_->currentViewPane()->rotateView(km.testFlag(Qt::ShiftModifier) ? 1.0 : 10.0, 0.0);
 			break;
-		case (Qt::Key_R):
+		case (Qt::Key_A):
 			viewPane->showAllData();
 			break;
 		case (Qt::Key_L):
