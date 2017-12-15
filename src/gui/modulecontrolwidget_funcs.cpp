@@ -190,7 +190,7 @@ bool ModuleControlWidget::writeState(LineParser& parser)
 	if (!parser.writeLineF("%s\n", module_->uniqueName())) return false;
 
 	// Write state data from ModuleWidget
-	if (!moduleWidget_->writeState(parser)) return false;
+	if (moduleWidget_ && (!moduleWidget_->writeState(parser))) return false;
 
 	return true;
 }
