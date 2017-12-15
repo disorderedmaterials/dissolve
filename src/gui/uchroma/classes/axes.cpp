@@ -345,6 +345,19 @@ double Axes::max(int axis) const
 	return max_.get(axis);
 }
 
+// Set range of specified axis
+void Axes::setRange(int axis, double minValue, double maxValue)
+{
+	uChromaBase_->addEditState(objectInfo(), EditState::AxesMinimumQuantity, min_[axis], minValue, axis);
+	uChromaBase_->addEditState(objectInfo(), EditState::AxesMaximumQuantity, max_[axis], maxValue, axis);
+
+	min_[axis] = minValue;
+	max_[axis] = maxValue;
+
+	++axesVersion_;
+	++displayVersion_;
+}
+
 // Return real axis range (accounting for log axes)
 double Axes::realRange(int axis) const
 {

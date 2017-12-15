@@ -124,6 +124,8 @@ class Axes : public ObjectStore<Axes>
 	void setMax(int axis, double value);
 	// Return maximum value for specified axis
 	double max(int axis) const;
+	// Set range of specified axis
+	void setRange(int axis, double minValue, double maxValue);
 	// Return real axis range (accounting for log axes)
 	double realRange(int axis) const;
 	// Return real axis minimum (accounting for log axes)
