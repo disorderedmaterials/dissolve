@@ -269,8 +269,18 @@ bool DUQ::iterate(int nIterations)
 		{
 			Messenger::banner("Write Data");
 
-			// Store the current iteration number in the processing module data
+			/*
+			 * Flag other data for inclusion in restart file
+			 */
+			
+			// Iteration number
 			GenericListHelper<int>::realise(processingModuleData_, "Iteration", "DUQ", GenericItem::InRestartFileFlag) = iteration_;
+
+			// Pair Potentials
+			for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next)
+			{
+				GenericListHelper<XYData>::realise(processingModuleData_, CharString("Potential_%s-%s_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ()), "DUQ", GenericItem::InRestartFileFlag) = pot->uAdditional();
+			}
 
 			/*
 			 * Restart File
@@ -329,21 +339,7 @@ bool DUQ::iterate(int nIterations)
 						ensembleParser.closeFiles();
 						worldPool_.stop();
 						return false;
-					}				}
-			}
-
-			/*
-			 * Pair Potentials
-			 */
-
-			for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next)
-			{
-				CharString filename("potential-%s-%s.txt", pot->atomTypeNameI(), pot->atomTypeNameJ());
-				if (!pot->save(filename))
-				{
-					Messenger::error("Failed to write PairPotential output file.\n");
-					worldPool_.stop();
-					return false;
+					}
 				}
 			}
 
