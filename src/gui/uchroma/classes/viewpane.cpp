@@ -1057,6 +1057,33 @@ void ViewPane::showAllData()
 	}
 }
 
+// Zoom to specified region
+void ViewPane::zoomTo(Vec3<double> limit1, Vec3<double> limit2)
+{
+	// The provided limits should be in local axis coordinates, and may not be in min/max order
+	Vec3<double> newMin(std::min(limit1.x, limit2.x), std::min(limit1.y, limit2.y), std::min(limit1.z, limit2.z));
+	Vec3<double> newMax(std::max(limit1.x, limit2.x), std::max(limit1.y, limit2.y), std::max(limit1.z, limit2.z));
+
+	// Check the view type and set relevant coordinates
+	if (isFlatView())
+	{
+		int axisX = 0, axisY = 1;
+		if (viewType_ == ViewPane::FlatXZView) axisY = 2;
+		else if (viewType_ == ViewPane::FlatZYView) axisX = 2;
+		axes_.setRange(axisX, newMin.get(axisX), newMax.get(axisX));
+		axes_.setRange(axisY, newMin.get(axisY), newMax.get(axisY));
+	}
+	else
+	{
+		// 3D view, so set all three axes
+		for (int axis = 0; axis < 3; ++axis)
+		{
+			axes_.setMin(axis, newMin.get(axis));
+			axes_.setMax(axis, newMax.get(axis));
+		}
+	}
+}
+
 /*
  * Axes
  */

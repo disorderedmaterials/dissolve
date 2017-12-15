@@ -268,6 +268,8 @@ class ViewPane : public ListItem<ViewPane>, public ObjectStore<ViewPane>
 	void resetViewMatrix();
 	// Set display limits to show all available data
 	void showAllData();
+	// Zoom to specified region
+	void zoomTo(Vec3<double> limit1, Vec3<double> limit2);
 
 
 	/*
