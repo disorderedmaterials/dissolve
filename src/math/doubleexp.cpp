@@ -99,6 +99,7 @@ void DoubleExp::set(double mantissa, int exponent)
 void DoubleExp::set(double value)
 {
 	exponent_ = floor(log10(fabs(value)+std::numeric_limits<double>::min()));
+	if (exponent_ == floor(log10(std::numeric_limits<double>::min()))) exponent_ = 0;
 	mantissa_ = value / pow(10.0,exponent_);
 	recalculate();
 // 	printf("Input value %f gives mantissa of %f and exponent of %i\n", value, mantissa_, exponent_);
