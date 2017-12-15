@@ -50,8 +50,14 @@ void GenericItem::addItemClass(GenericItem* item)
 // Return new, empty GenericItem containing the class specified
 GenericItem* GenericItem::newItem(const char* className, const char* name, int flags)
 {
-	// Search through item classes list for one matching the class name provided
-	for (GenericItem* item = itemClasses_.first(); item != NULL; item = item->next) if (DUQSys::sameString(item->itemClassName(), className)) return item->newItem(name, flags);
+	// Search through registered item classes list for one matching the class name provided
+	for (GenericItem* item = itemClasses_.first(); item != NULL; item = item->next)
+	{
+		// See if the item can create a GenericItem of the desired type. If it can't, move on
+		GenericItem* newItem = item->createItem(className, name, flags);
+		if (newItem != NULL) return newItem;
+	}
+
 	return NULL;
 }
 

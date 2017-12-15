@@ -41,9 +41,10 @@ template <class T> class GenericItemContainer< Array2D<T> > : public GenericItem
 	 */
 	protected:
 	// Create a new GenericItem containing same class as current type
-	GenericItem* newItem(const char* name, int flags = 0)
+	GenericItem* createItem(const char* className, const char* name, int flags = 0)
 	{
-		return new GenericItemContainer< Array2D<T> >(name, flags);
+		if (DUQSys::sameString(className, itemClassName())) return new GenericItemContainer< Array2D<T> >(name, flags);
+		return NULL;
 	}
 
 	public:
@@ -98,13 +99,41 @@ template <class T> class GenericItemContainer< Array2D<T> > : public GenericItem
 	// Broadcast item contents
 	bool broadcast(ProcessPool& procPool, int root)
 	{
-		for (int row=0; row<data.nRows(); ++row)
+#ifdef PARALLEL
+		int nRows, nColumns;
+		bool half;
+		if (procPool.poolRank() == root)
 		{
-			for (int column=0; column<data.nColumns(); ++column)
+			// Broadcast array size first...
+			nRows = data.nRows();
+			if (!procPool.broadcast(nRows, root)) return false;
+			nColumns = data.nColumns();
+			if (!procPool.broadcast(nColumns, root)) return false;
+			half = data.halved();
+			if (!procPool.broadcast(half, root)) return false;
+			
+			// Now broadcast Array data
+			if ((nRows*nColumns) > 0)
 			{
-				if (!data.ref(row, column).broadcast(procPool, root)) return false;
+				for (int n=0; n<data.linearArraySize(); ++n) if (!data.linearArray()[n].broadcast(procPool, root)) return false;
 			}
 		}
+		else
+		{
+			// Slaves receive the size, and then create and receive the array
+			if (!procPool.broadcast(nRows, root)) return false;
+			if (!procPool.broadcast(nColumns, root)) return false;
+			if (!procPool.broadcast(half, root)) return false;
+	
+			// Resize and receive array
+			data.initialise(nRows, nColumns, half);
+			if ((nRows*nColumns) > 0)
+			{
+				for (int n=0; n<data.linearArraySize(); ++n) if (!data.linearArray()[n].broadcast(procPool, root)) return false;
+			}
+			else data.clear();
+		}
+#endif
 		return true;
 	}
 };

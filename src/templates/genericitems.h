@@ -36,8 +36,9 @@
 #include "templates/genericitemcontainer_vec3int.h"
 #include "templates/genericitemcontainer_vec3double.h"
 
-#include "templates/genericitemcontainer_array2ddouble.h"
 #include "templates/genericitemcontainer_array2d.h"
+#include "templates/genericitemcontainer_array2ddouble.h"
+#include "templates/genericitemcontainer_array2ddummy.h"
 #include "templates/genericitemcontainer_arraydouble.h"
 #include "templates/genericitemcontainer_arrayint.h"
 #include "templates/genericitemcontainer_arrayvec3int.h"

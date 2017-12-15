@@ -42,9 +42,10 @@ template <class T> class GenericItemContainer< Array<T> > : public GenericItem
 	 */
 	protected:
 	// Create a new GenericItem containing same class as current type
-	GenericItem* newItem(const char* name, int flags = 0)
+	GenericItem* createItem(const char* className, const char* name, int flags = 0)
 	{
-		return new GenericItemContainer< Array<T> >(name, flags);
+		if (DUQSys::sameString(className, itemClassName())) return new GenericItemContainer< Array<T> >(name, flags);
+		return NULL;
 	}
 
 	public:

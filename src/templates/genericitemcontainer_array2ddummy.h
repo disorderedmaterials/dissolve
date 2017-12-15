@@ -1,6 +1,6 @@
 /*
-	*** Generic Item Container - CharString
-	*** src/templates/genericitemcontainer_charstring.h
+	*** Generic Item Container - Array2D<DummyClass>
+	*** src/templates/genericitemcontainer_array2ddummy.h
 	Copyright T. Youngs 2012-2017
 
 	This file is part of dUQ.
@@ -19,21 +19,21 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_GENERICITEMCONTAINER_CHARSTRING_H
-#define DUQ_GENERICITEMCONTAINER_CHARSTRING_H
+#ifndef DUQ_GENERICITEMCONTAINER_ARRAY2DDUMMY_H
+#define DUQ_GENERICITEMCONTAINER_ARRAY2DDUMMY_H
 
 #include "templates/genericitemcontainer.h"
+#include "base/dummyclass.h"
+#include "base/xydata.h"
 
-// GenericItemContainer<CharString>
-template <> class GenericItemContainer<CharString> : public GenericItem
+// GenericItemContainer< Array2D<DummyClass> >
+template <> class GenericItemContainer< Array2D<DummyClass> > : public GenericItem
 {
 	public:
 	// Constructor
-	GenericItemContainer<CharString>(const char* name, int flags = 0) : GenericItem(name, flags)
+	GenericItemContainer< Array2D<DummyClass> >(const char* name, int flags = 0) : GenericItem(name, flags)
 	{
 	}
-	// Data item
-	CharString data;
 
 
 	/*
@@ -43,7 +43,7 @@ template <> class GenericItemContainer<CharString> : public GenericItem
 	// Create a new GenericItem containing same class as current type
 	GenericItem* createItem(const char* className, const char* name, int flags = 0)
 	{
-		if (DUQSys::sameString(className, itemClassName())) return new GenericItemContainer<CharString>(name, flags);
+		if (DUQSys::sameString(className, "Array2D<XYData>")) return new GenericItemContainer< Array2D<XYData> >(name, flags);
 		return NULL;
 	}
 
@@ -51,7 +51,7 @@ template <> class GenericItemContainer<CharString> : public GenericItem
 	// Return class name contained in item
 	const char* itemClassName()
 	{
-		return "CharString";
+		return "Array2D<DummyClass>";
 	}
 
 
@@ -62,14 +62,12 @@ template <> class GenericItemContainer<CharString> : public GenericItem
 	// Write data through specified parser
 	bool write(LineParser& parser)
 	{
-		return parser.writeLineF("%s\n", data.get());
+		return false;
 	}
 	// Read data through specified parser
 	bool read(LineParser& parser)
 	{
-		if (parser.readNextLine(LineParser::Defaults) == LineParser::Success) return false;
-		data = parser.line();
-		return true;
+		return false;
 	}
 
 
@@ -80,7 +78,7 @@ template <> class GenericItemContainer<CharString> : public GenericItem
 	// Broadcast item contents
 	bool broadcast(ProcessPool& procPool, int root)
 	{
-		return procPool.broadcast(data, root);
+		return false;
 	}
 };
 

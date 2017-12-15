@@ -100,6 +100,7 @@ void DUQ::registerGenericItems()
 	GenericItem::addItemClass(new GenericItemContainer< Vec3<double> >("Vec3<double>"));
 
 	GenericItem::addItemClass(new GenericItemContainer< Array2D<double> >("Array2D<double>"));
+	GenericItem::addItemClass(new GenericItemContainer< Array2D<DummyClass> >("Array2D<DummyClass>"));
 
 	GenericItem::addItemClass(new GenericItemContainer< Array<int> >("Array<int>"));
 	GenericItem::addItemClass(new GenericItemContainer< Array<double> >("Array<double>"));

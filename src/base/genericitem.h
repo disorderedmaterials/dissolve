@@ -53,7 +53,7 @@ class GenericItem
 
 	protected:
 	// Create a new GenericItem containing same class as current type
-	virtual GenericItem* newItem(const char* name, int flags = 0) = 0;
+	virtual GenericItem* createItem(const char* className, const char* name, int flags = 0) = 0;
 
 	public:
 	// Return class name contained in item
