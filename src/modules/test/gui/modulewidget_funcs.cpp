@@ -108,7 +108,7 @@ void TestModuleWidget::initialiseControls(TestModule* module)
 		// Calculated data (total S(Q) from associated module
 		if (data->associatedModule())
 		{
-			CharString blockData("Collection '%s'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated'; Source XYData '%s//WeightedSQ//Total'; EndDataSet; EndCollection", data->name(), data->associatedModule()->uniqueName());
+			CharString blockData("Collection '%s'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated'; Source XYData '%s//WeightedSQ//Total'; EndDataSet; EndCollection", data->name(), data->name(), data->associatedModule()->uniqueName());
 			dataGraph_->addCollectionFromBlock(blockData);
 		}
 	}
