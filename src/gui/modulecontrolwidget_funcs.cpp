@@ -145,7 +145,7 @@ void ModuleControlWidget::initialiseControls(Module* module)
 	widgetLayout->setContentsMargins(0,0,0,0);
 	widgetLayout->setSpacing(0);
 	moduleWidget_ = module->createWidget(ui.ControlsWidget, duq_);
-	if (moduleWidget_ == NULL) Messenger::warn("Module '%s' did not provide a valid controller widget.\n", module->name());
+	if (moduleWidget_ == NULL) Messenger::printVerbose("Module '%s' did not provide a valid controller widget.\n", module->name());
 	else widgetLayout->addWidget(moduleWidget_);
 }
 
