@@ -355,6 +355,37 @@ void Viewer::renderFullScene(int xOffset, int yOffset)
 			glTranslated(0.0, -(legendTextSize + legendSpacing), 0.0);
 		}
 	}
+
+	// Draw 2D interaction primitives
+	glViewport(xOffset, yOffset, contextWidth_, contextHeight_);
+
+	// Setup an orthographic matrix
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, contextWidth_, 0, contextHeight_, -10, 10);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glDisable(GL_LIGHTING);
+
+	if (uChromaBase_->interactionMode() == UChromaBase::ViewInteraction)
+	{
+		// Draw selection box, if the interaction has started
+		if (uChromaBase_->interactionStarted())
+		{
+			glColor3d(0.0, 0.0, 0.0);
+			glLineWidth(1.0);
+			glEnable(GL_LINE_STIPPLE);
+			glLineStipple(1, 0xf0f0);
+			glBegin(GL_LINE_LOOP);
+			glVertex2d(rMouseDown_.x, contextHeight_-rMouseDown_.y);
+			glVertex2d(rMouseLast_.x, contextHeight_-rMouseDown_.y);
+			glVertex2d(rMouseLast_.x, contextHeight_-rMouseLast_.y);
+			glVertex2d(rMouseDown_.x, contextHeight_-rMouseLast_.y);
+			glEnd();
+			glDisable(GL_LINE_STIPPLE);
+		}
+	}
 }
 
 // Set whether we are currently rendering offscreen

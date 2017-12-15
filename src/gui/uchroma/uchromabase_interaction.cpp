@@ -76,19 +76,19 @@ void UChromaBase::setInteractionMode(UChromaBase::InteractionMode mode, int axis
 }
 
 // Return interaction mode
-UChromaBase::InteractionMode UChromaBase::interactionMode()
+UChromaBase::InteractionMode UChromaBase::interactionMode() const
 {
 	return interactionMode_;
 }
 
 // Return current axis target for interaction
-int UChromaBase::interactionAxis()
+int UChromaBase::interactionAxis() const
 {
 	return interactionAxis_;
 }
 
 // Return whether interaction has started (i.e. mouse is down)
-bool UChromaBase::interactionStarted()
+bool UChromaBase::interactionStarted() const
 {
 	return interactionStarted_;
 }
@@ -121,44 +121,44 @@ void UChromaBase::cancelInteraction()
 void UChromaBase::startInteraction(int mouseX, int mouseY, Qt::KeyboardModifiers modifiers)
 {
 	// Check interaction pane
-	if (!ViewPane::objectValid(currentViewPane()))
+	if (!ViewPane::objectValid(currentViewPane_))
 	{
 		Messenger::print("Internal Error: Invalid interaction pane - refusing to start interaction.\n");
 		return;
 	}
 
+	rClicked_.set(mouseX, mouseY, 0.0);
+
+	// If a 2D view, store the clicked coordinate
+	if (currentViewPane_->isFlatView()) rClickedLocal_ = screenToLocal(mouseX, mouseY);
+
 	// Calculate axis value at start of interaction
-	clickedInteractionValue_ = currentViewPane()->screenToAxis(interactionAxis_, mouseX, mouseY, true);
+	if (interactionAxis_ != -1) clickedInteractionValue_ = currentViewPane_->screenToAxis(interactionAxis_, mouseX, mouseY, true);
 
 	// Store keyboard modifiers
 	clickedInteractionModifiers_ = modifiers;
 
-	// Get the clicked object (if interaction mode is ViewInteraction)
-	if (interactionMode_ == UChromaBase::ViewInteraction)
-	{
-		viewer_->setQueryCoordinates(mouseX, mouseY);
-		viewer_->repaint();
-		clickedObject_ = viewer_->objectAtQueryCoordinates();
-		clickedObjectInfo_ = viewer_->infoAtQueryCoordinates();
-		if (clickedObject_ == Viewer::CollectionObject)
-		{
-			viewer_->setHighlightCollection(locateCollection(clickedObjectInfo_));
-		}
-	}
-
 	interactionStarted_ = true;
 }
 
-// Update current interaction position
-void UChromaBase::updateInteractionPosition(int mouseX, int mouseY)
+// Update current interaction position / coordinate, returning if a refresh of the display is necessary
+bool UChromaBase::updateInteractionPosition(int mouseX, int mouseY)
 {
+	bool refresh = false;
+
+	// If a 2D view, store the coordinate
+	if (currentViewPane_->isFlatView()) rCurrentLocal_ = screenToLocal(mouseX, mouseY);
+
+	// Are we interacting with an axis?
 	if (interactionAxis_ != -1)
 	{
 		// Calculate axis value
-		currentInteractionValue_ = currentViewPane()->screenToAxis(interactionAxis_, mouseX, mouseY, true);
+		currentInteractionValue_ = currentViewPane_->screenToAxis(interactionAxis_, mouseX, mouseY, true);
 
 		// Extract slice from collections in current pane (unless this is a SliceMonitor)
-		if (currentViewPane()->role() != ViewPane::SliceMonitorRole) currentViewPane()->collectionsUpdateCurrentSlices(interactionAxis_, currentInteractionValue_);
+		if (currentViewPane_->role() != ViewPane::SliceMonitorRole) currentViewPane_->collectionsUpdateCurrentSlices(interactionAxis_, currentInteractionValue_);
+
+		refresh = true;
 	}
 	else
 	{
@@ -168,13 +168,15 @@ void UChromaBase::updateInteractionPosition(int mouseX, int mouseY)
 
 	// Update the displayed coordinate box informstion
 	updateCoordinateInfo();
+
+	return refresh;
 }
 
 // End interaction at the specified screen coordinates
 void UChromaBase::endInteraction(int mouseX, int mouseY)
 {
 	// Check interaction pane
-	if (!ViewPane::objectValid(currentViewPane()))
+	if (!ViewPane::objectValid(currentViewPane_))
 	{
 		Messenger::print("Internal Error: Invalid interaction pane - refusing to end interaction.\n");
 		return;
@@ -206,6 +208,33 @@ void UChromaBase::endInteraction(int mouseX, int mouseY)
 			OperateBGSubDialog(*this, parent_).updateAndExec();
 			break;
 		case (UChromaBase::ViewInteraction):
+			// Check the pixel area of the clicked region and determine whether this was a targeted click or a click-drag
+			if ((viewer_->rMouseDown() - viewer_->rMouseLast()).magnitude() < 9.0)
+			{
+				// Get the clicked object (if interaction mode is ViewInteraction)
+				viewer_->setQueryCoordinates(mouseX, mouseY);
+				viewer_->repaint();
+				clickedObject_ = viewer_->objectAtQueryCoordinates();
+				clickedObjectInfo_ = viewer_->infoAtQueryCoordinates();
+				if (clickedObject_ == Viewer::CollectionObject)
+				{
+					viewer_->setHighlightCollection(locateCollection(clickedObjectInfo_));
+				}
+			}
+			else
+			{
+				// Click-drag
+				// Single, targetted click
+				if (currentViewPane_->isFlatView())
+				{
+					// Zoom to the specified coordinate range
+					currentViewPane_->zoomTo(rClickedLocal_, rCurrentLocal_);
+				}
+				else
+				{
+				}
+			}
+
 			if (clickedObject_ == Viewer::CollectionObject)
 			{
 				viewer_->setHighlightCollection(NULL);
@@ -229,8 +258,8 @@ void UChromaBase::endInteraction(int mouseX, int mouseY)
 				double newMax = std::max(clickedInteractionValue_, currentInteractionValue_);
 				if ((newMax-newMin) > 1.0e-10)
 				{
-					currentViewPane()->axes().setMin(interactionAxis_, newMin);
-					currentViewPane()->axes().setMax(interactionAxis_, newMax);
+					currentViewPane_->axes().setMin(interactionAxis_, newMin);
+					currentViewPane_->axes().setMax(interactionAxis_, newMax);
 					axesWindow_.updateControls();
 				}
 			}
@@ -265,9 +294,9 @@ double UChromaBase::clickedInteractionCoordinate()
 	if (interactionAxis_ == -1) return 0.0;
 
 	// Check for valid view pane
-	if (currentViewPane() == NULL) return 0.0;
+	if (currentViewPane_ == NULL) return 0.0;
 
-	Axes& axes = currentViewPane()->axes();
+	Axes& axes = currentViewPane_->axes();
 	if (axes.logarithmic(interactionAxis_)) return (axes.inverted(interactionAxis_) ? log10(axes.max(interactionAxis_)/clickedInteractionValue_) : log10(clickedInteractionValue_));
 	else return (axes.inverted(interactionAxis_) ? axes.max(interactionAxis_) - clickedInteractionValue_ : clickedInteractionValue_);
 }
@@ -279,9 +308,9 @@ double UChromaBase::currentInteractionCoordinate()
 	if (interactionAxis_ == -1) return 0.0;
 
 	// Check for valid view pane
-	if (currentViewPane() == NULL) return 0.0;
+	if (currentViewPane_ == NULL) return 0.0;
 
-	Axes& axes = currentViewPane()->axes();
+	Axes& axes = currentViewPane_->axes();
 	if (axes.logarithmic(interactionAxis_)) return (axes.inverted(interactionAxis_) ? log10(axes.max(interactionAxis_)/currentInteractionValue_) : log10(currentInteractionValue_));
 	else return (axes.inverted(interactionAxis_) ? axes.max(interactionAxis_) - currentInteractionValue_ : currentInteractionValue_);
 }

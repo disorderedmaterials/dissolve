@@ -51,14 +51,13 @@ void Viewer::mousePressEvent(QMouseEvent* event)
 // Qt Signal (mouse release event)
 void Viewer::mouseReleaseEvent(QMouseEvent* event)
 {
-	// Handle button releases (button up) from the mouse
-	buttonState_ = event->buttons();
-// 	Qt::KeyboardModifiers km = event->modifiers();
-
-	// Notify uChroma that the mouse button has been released
+	// Notify uChroma that the mouse button has been released (if relevant)
 	if (buttonState_&Qt::LeftButton) uChromaBase_->endInteraction(event->x(), contextHeight_-event->y());
 
 	uChromaBase_->updateGUI();
+
+	// Clear button state
+	buttonState_ = 0;
 }
 
 // Qt Signal (mouse move event)
@@ -76,7 +75,19 @@ void Viewer::mouseMoveEvent(QMouseEvent* event)
 	ViewPane* targetPane = uChromaBase_->currentViewPane();
 	if (ViewPane::objectValid(targetPane, "ViewPane in Viewer::MouseMoveEvent"))
 	{
-		if (buttonState_&Qt::RightButton)
+		if (buttonState_&Qt::LeftButton)
+		{
+			// What we do here depends on the current mode, and whether interaction has started
+			switch (uChromaBase_->interactionMode())
+			{
+				case (UChromaBase::ViewInteraction):
+					if (uChromaBase_->interactionStarted()) refresh = true;
+					break;
+				default:
+					break;
+			}
+		}
+		else if (buttonState_&Qt::RightButton)
 		{
 			// View manipulation
 			if (km&Qt::ShiftModifier)
@@ -101,11 +112,7 @@ void Viewer::mouseMoveEvent(QMouseEvent* event)
 	}
 	
 	// Update interaction position
-	if (uChromaBase_->interactionAxis() != -1)
-	{
-		uChromaBase_->updateInteractionPosition(event->x(), contextHeight_-event->y());
-		refresh = true;
-	}
+	if (uChromaBase_->updateInteractionPosition(event->x(), contextHeight_-event->y())) refresh = true;
 
 	rMouseLast_.set(event->x(), event->y(), 0.0);
 

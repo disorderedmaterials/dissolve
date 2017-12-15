@@ -135,6 +135,12 @@ class UChromaBase
 	CharString clickedObjectInfo_;
 	// Current interaction position on axis
 	double currentInteractionValue_;
+	// Clicked local coordinate under mouse in 2D view
+	Vec3<double> rClickedLocal_;
+	// Current local coordinate under mouse in 2D view
+	Vec3<double> rCurrentLocal_;
+	// Clicked mouse coordinate at start of interaction
+	Vec3<double> rClicked_;
 
 	public:
 	// Return Viewer present in derived class
@@ -142,17 +148,17 @@ class UChromaBase
 	// Set interaction mode and target axis
 	void setInteractionMode(UChromaBase::InteractionMode mode, int axis);
 	// Return interaction mode
-	UChromaBase::InteractionMode interactionMode();
+	UChromaBase::InteractionMode interactionMode() const;
 	// Return current axis target for interaction
-	int interactionAxis();
+	int interactionAxis() const;
 	// Return whether interaction has started (i.e. mouse is down)
-	bool interactionStarted();
+	bool interactionStarted() const;
 	// Cancel current interaction
 	void cancelInteraction();
 	// Start interaction at the specified screen coordinates
 	void startInteraction(int mouseX, int mouseY, Qt::KeyboardModifiers modifiers);
 	// Update current interaction value
-	void updateInteractionPosition(int mouseX, int mouseY);
+	bool updateInteractionPosition(int mouseX, int mouseY);
 	// End interaction at the specified screen coordinates
 	void endInteraction(int mouseX, int mouseY);
 	// Return clicked interaction value on axis
