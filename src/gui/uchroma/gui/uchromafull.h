@@ -42,6 +42,7 @@ class UChromaFullWindow : public QMainWindow, public UChromaBase
 	public:
 	// Constructor / Destructor
 	UChromaFullWindow(QMainWindow *parent = 0);
+	~UChromaFullWindow();
 	// Main form declaration
 	Ui::UChromaFullWindow ui;
 	// Return centre coordinate of main window

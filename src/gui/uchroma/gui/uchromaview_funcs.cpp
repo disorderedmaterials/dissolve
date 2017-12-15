@@ -85,6 +85,11 @@ UChromaViewWidget::UChromaViewWidget(QWidget* parent) : QWidget(parent), UChroma
 	setInteractionMode(UChromaBase::ViewInteraction, -1);
 }
 
+// Destructor
+UChromaViewWidget::~UChromaViewWidget()
+{
+}
+
 /*
  * Window Functions
  */

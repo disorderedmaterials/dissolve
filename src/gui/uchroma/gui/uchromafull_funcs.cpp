@@ -95,6 +95,11 @@ UChromaFullWindow::UChromaFullWindow(QMainWindow *parent) : UChromaBase(this), Q
 	setInteractionMode(UChromaBase::ViewInteraction, -1);
 }
 
+// Destructor
+UChromaFullWindow::~UChromaFullWindow()
+{
+}
+
 /*
  * Window Functions
  */

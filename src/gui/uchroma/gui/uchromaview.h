@@ -42,6 +42,7 @@ class UChromaViewWidget : public QWidget, public UChromaBase
 	public:
 	// Constructor / Destructor
 	UChromaViewWidget(QWidget* parent = 0);
+	~UChromaViewWidget();
 	// Main form declaration
 	Ui::UChromaViewWidget ui;
 	// Return centre coordinate of main window
