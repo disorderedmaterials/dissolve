@@ -190,6 +190,8 @@ class PairPotential : public ListItem<PairPotential>
 	XYData& uAdditional();
 	// Zero additional potential
 	void resetUAdditional();
+	// Set additional potential
+	void setUAdditional(XYData& newUAdditional);
 	// Adjust additional potential, and recalculate UFull and dUFull
 	void adjustUAdditional(XYData& u, double factor = 1.0);
 
