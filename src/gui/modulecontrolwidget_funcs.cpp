@@ -189,7 +189,7 @@ bool ModuleControlWidget::writeState(LineParser& parser)
 	// Write Module target
 	if (!parser.writeLineF("%s\n", module_->uniqueName())) return false;
 
-	// Write state data from ModuleWidget
+	// Write state data from ModuleWidget (if one exists)
 	if (moduleWidget_ && (!moduleWidget_->writeState(parser))) return false;
 
 	return true;
@@ -207,8 +207,8 @@ bool ModuleControlWidget::readState(LineParser& parser)
 	initialiseWindow(module_);
 	initialiseControls(module_);
 
-	// Write state data from ModuleWidget
-	if (!moduleWidget_->readState(parser)) return false;
+	// Write state data from ModuleWidget (if one exists)
+	if (moduleWidget_ && (!moduleWidget_->readState(parser))) return false;
 
 	return true;
 }
