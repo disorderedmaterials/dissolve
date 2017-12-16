@@ -1049,7 +1049,6 @@ bool UChromaBase::readSession(LineParser& parser)
 
 	// Parse input blocks
 	bool success = parseInputBlocks(parser);
-	parser.closeFiles();
 
 	// Show a message if we encountered problems...
 	if (!success) Messenger::warn("Errors were encountered while reading the session data.\n");
