@@ -271,11 +271,11 @@ template <class T> class ObjectStore
 	// Find specified object
 	static T* findObject(const char* objectName)
 	{
-		// Does the supplied name already contain a type prefix?
+		// Does the supplied name contain a type prefix? If so, check it and then strip it
 		CharString typePrefix = DUQSys::beforeChar(objectName, '@');
 		if (typePrefix.isEmpty())
 		{
-			// Add on our own type prefix and search
+			// No type prefix, so add ours and do the search
 			CharString name("%s@%s", objectTypeName_, objectName);
 			for (RefListItem<T,int>* ri = objects_.first(); ri != NULL; ri = ri->next)
 			{
@@ -285,6 +285,12 @@ template <class T> class ObjectStore
 		}
 		else
 		{
+			// Check the type prefix
+			if (!DUQSys::sameString(typePrefix, objectTypeName_))
+			{
+				Messenger::error("Searched for object '%s' in a store containing objects of type '%s'.\n", typePrefix.get(), objectTypeName_);
+				return false;
+			}
 			for (RefListItem<T,int>* ri = objects_.first(); ri != NULL; ri = ri->next)
 			{
 				T* item = ri->item;
