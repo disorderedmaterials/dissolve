@@ -115,20 +115,20 @@ bool DUQSys::sameString(const char* s1, const char* s2, bool caseSensitive)
 	return true;
 }
 
-// Get characters before first occurrence of designated character
+// Get characters before first occurrence of designated character, or NULL if the character does not exist
 const char* DUQSys::beforeChar(const char* s, char delim)
 {
 	static CharString result(1024);
 	result.clear();
 	for (int i = 0; s[i] != '\0'; i++)
 	{
-		if (s[i] == delim) break;
+		if (s[i] == delim) return result;
 		result += s[i];
 	}
-	return result;
+	return NULL;
 }
 
-// Get characters after first occurrence of designated character
+// Get characters after first occurrence of designated character, or NULL if the character does not exist
 const char* DUQSys::afterChar(const char* s, char delim)
 {
 	static CharString result(1024);
@@ -139,7 +139,7 @@ const char* DUQSys::afterChar(const char* s, char delim)
 		if (found) result += s[i];
 		if (s[i] == delim) found = true;
 	}
-	return result;
+	return (found ? result.get() : NULL);
 }
 
 // Get characters after last occurrence of designated character
