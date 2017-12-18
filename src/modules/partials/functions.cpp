@@ -693,7 +693,7 @@ bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration*
 
 	// Does a PartialSet already exist for this Configuration?
 	bool wasCreated;
-	PartialSet& partialsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", "Partials", GenericItem::NoFlag, &wasCreated);
+	PartialSet& partialsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", "Partials", GenericItem::InRestartFileFlag, &wasCreated);
 	if (wasCreated) partialsq.setUpPartials(partialgr.atomTypes(), cfg->niceName(), "unweighted", "sq", "Q, 1/Angstroms");
 
 	// Is the PartialSet already up-to-date?

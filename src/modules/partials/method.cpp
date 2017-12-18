@@ -180,7 +180,12 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 			if (saveData && configurationLocal_ && (!MPIRunMaster(procPool, unweightedsq.save()))) return false;
 
 			// If we are associated to a local Configuration, copy the partial data over to the processing module list
-			if (configurationLocal_) GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedSQ", uniqueName_) = unweightedsq;
+			if (configurationLocal_)
+			{
+				PartialSet newSet = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
+				newSet = unweightedsq;
+				newSet.setObjectNames(CharString("%s//UnweightedSQ", uniqueName_.get()));
+			}
 
 			// Test unweighted S(Q)?
 			if (testMode && configurationLocal_)
@@ -350,8 +355,9 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		if (sqCalculation)
 		{
 			// Realise a PartialSQ set
-			PartialSet& unweightedsq = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedSQ", uniqueName_);
+			PartialSet& unweightedsq = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
 			unweightedsq.setUpPartials(unweightedgr.atomTypes(), uniqueName(), "unweighted", "sq", "Q, 1/Angstroms");
+			unweightedsq.setObjectNames(CharString("%s//UnweightedSQ", uniqueName_.get()));
 
 			// Sum in unweighted S(Q) partials
 			configIterator.restart();
