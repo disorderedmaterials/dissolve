@@ -91,6 +91,9 @@ void Viewer::setupGL()
 // Draw full scene
 void Viewer::renderFullScene(int xOffset, int yOffset)
 {
+	// If the Viewer has not been correctly set up, return here
+	if (!valid_) return;
+
 	int axis;
 
 	// Set colour mode
