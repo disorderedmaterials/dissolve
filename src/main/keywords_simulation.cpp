@@ -32,7 +32,7 @@ KeywordData SimulationBlockData[] = {
 	{ "ParallelStrategy",			1, 	"Determines the distribution of processes across Configurations" },
 	{ "Seed",				1,	"Random seed to use" },
 	{ "WindowFunction",			1,	"Window function to use in all Fourier transforms" },
-	{ "WriteIterationData",			1,	"Write various data at the end of each iteration" }
+	{ "WriteFrequency",			1,	"Frequency with which to write restart file and configuration data (0 = never)" }
 };
 
 // Convert text string to SimulationKeyword
@@ -106,9 +106,9 @@ bool SimulationBlock::parse(LineParser& parser, DUQ* duq)
 				}
 				else duq->setWindowFunction(XYData::windowFunction(parser.argc(1)));
 				break;
-			case (SimulationBlock::WriteIterationDataKeyword):
-				duq->setWriteIterationData(parser.argb(1));
-				Messenger::print("Data will be written to disk after each iteration.\n");
+			case (SimulationBlock::WriteFrequencyKeyword):
+				duq->setWriteFrequency(parser.argi(1));
+				Messenger::print("Restart data will be written to disk every %i iteration(s).\n", duq->writeFrequency());
 				break;
 			case (SimulationBlock::nSimulationKeywords):
 				Messenger::print("Unrecognised %s block keyword '%s' found.\n", InputBlocks::inputBlock(InputBlocks::SimulationBlock), parser.argc(0));

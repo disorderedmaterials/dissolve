@@ -38,16 +38,16 @@ DUQ::DUQ()
 	pairPotentialTruncationWidth_ = 2.0;
 	pairPotentialsIncludeCoulomb_ = true;
 
-	// Set up
+	// Simulation
+	iteration_ = 0;
+
+	// Simulation Setup
 	nBoxNormalisationPoints_ = 500000000;
 	seed_ = -1;
 	maxIterations_ = -1;
 	windowFunction_ = XYData::NoWindow;
 	allIntra_ = false;
-
-	// Simulation
-	iteration_ = 0;
-	writeIterationData_ = true;
+	writeFrequency_ = 1;
 
 	// Parallel Comms
 	parallelStrategy_ = DUQ::SequentialConfigStrategy;

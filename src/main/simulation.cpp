@@ -265,7 +265,7 @@ bool DUQ::iterate(int nIterations)
 		/*
 		 *  6)	Write data
 		 */
-		if (worldPool_.isMaster() && writeIterationData_)
+		if (worldPool_.isMaster() && (iteration_%writeFrequency_ == 0))
 		{
 			Messenger::banner("Write Data");
 
@@ -346,7 +346,7 @@ bool DUQ::iterate(int nIterations)
 			// All good. Carry on!
 			worldPool_.proceed();
 		}
-		else if (worldPool_.isSlave() && writeIterationData_ && (!worldPool_.decision())) return false;
+		else if (worldPool_.isSlave() && (iteration_%writeFrequency_ == 0) && (!worldPool_.decision())) return false;
 
 		// Sync up all processes
 		Messenger::printVerbose("Waiting for other processes at end of data write section...\n");

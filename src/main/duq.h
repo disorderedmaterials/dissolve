@@ -223,7 +223,7 @@ class DUQ
 
 
 	/*
-	 * Simulation Set up
+	 * Simulation Setup
 	 */
 	private:
 	// Number of test points to use when calculating Box normalisation arrays
@@ -235,7 +235,7 @@ class DUQ
 	// Window function to use for all Fourier transforms
 	XYData::WindowFunction windowFunction_;
 	// Whether to write various data after each iteration
-	bool writeIterationData_;
+	int writeFrequency_;
 	// Whether all intramolecular interactions contribute to intra partials
 	bool allIntra_;
 
@@ -256,10 +256,10 @@ class DUQ
 	void setWindowFunction(XYData::WindowFunction wf);
 	// Return window function to use for all Fourier transforms
 	XYData::WindowFunction windowFunction();
-	// Set whether to write various data after each iteration
-	void setWriteIterationData(bool b);
-	// Return whether to write various data after each iteration
-	bool writeIterationData();
+	// Set frequency with which to write various iteration dat
+	void setWriteFrequency(int n);
+	// Return frequency with which to write various iteration dat
+	bool writeFrequency();
 	// Set up all simulation data, checking it as we go
 	bool setUpSimulation();
 

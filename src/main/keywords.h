@@ -213,7 +213,7 @@ namespace SimulationBlock
 		ParallelStrategyKeyword,	/* 'ParallelStrategy' - Determines the distribution of processes across Configurations */
 		SeedKeyword,			/* 'Seed' - Random seed to use */
 		WindowFunctionKeyword,		/* 'WindowFunction' - Window function to use in all Fourier transforms */
-		WriteIterationDataKeyword,	/* 'WriteIterationData' - Write various data at the end of each iteration */
+		WriteFrequencyKeyword,		/* 'WriteFrequency' - Write various data at the end of each iteration */
 		nSimulationKeywords		/* Number of keywords defined for this block */
 	};
 	// Convert text string to SimulationKeyword
