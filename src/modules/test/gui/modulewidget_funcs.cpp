@@ -49,9 +49,9 @@ TestModuleWidget::TestModuleWidget(QWidget* parent, Module* module, DUQ& dUQ) : 
 	dataGraph_->startNewSession(true);
 	viewPane = dataGraph_->currentViewPane();
 	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "\\it{r}, Angstroms");
+	viewPane->axes().setTitle(0, "\\it{Q}, Angstroms\\sup{-1}");
 	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "g(r) / S(Q)");
+	viewPane->axes().setTitle(1, "S(Q)");
 	viewPane->axes().setMin(1, -1.0);
 	viewPane->axes().setMax(1, 1.0);
 
@@ -66,9 +66,9 @@ TestModuleWidget::TestModuleWidget(QWidget* parent, Module* module, DUQ& dUQ) : 
 	partialsGraph_->startNewSession(true);
 	viewPane = partialsGraph_->currentViewPane();
 	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "\\it{r}, Angstroms");
+	viewPane->axes().setTitle(0, "\\it{Q}, Angstroms\\sup{-1}");
 	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "g(r) / S(Q)");
+	viewPane->axes().setTitle(1, "S(Q)");
 	viewPane->axes().setMin(1, -1.0);
 	viewPane->axes().setMax(1, 1.0);
 
@@ -97,32 +97,43 @@ void TestModuleWidget::initialiseControls(TestModule* module)
 {
 	if (!module) return;
 
+	CharString blockData;
+
 	// Add reference data, calculated data to the dataGraph_
 	RefListIterator<Data,bool> dataIterator(module->targetData());
 	while (Data* data = dataIterator.iterate())
 	{
 		// Reference data
-		CharString blockData("Collection '%s'; Group '%s'; LineStyle 1.0 Solid; DataSet 'Reference'; Source XYData '%s'; EndDataSet; EndCollection", data->name(), data->name(), data->data().objectName());
+		blockData.sprintf("Collection '%s Exp'; Group '%s'; LineStyle 1.0 Solid; DataSet 'Reference'; Source XYData '%s'; EndDataSet; EndCollection", data->name(), data->name(), data->data().objectName());
 		dataGraph_->addCollectionFromBlock(blockData);
 
-		// Calculated data (total S(Q) from associated module
+		// Calculated data (total S(Q)) from associated module
 		if (data->associatedModule())
 		{
-			CharString blockData("Collection '%s'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated'; Source XYData '%s//WeightedSQ//Total'; EndDataSet; EndCollection", data->name(), data->name(), data->associatedModule()->uniqueName());
+			blockData.sprintf("Collection '%s Calc'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated'; Source XYData '%s//WeightedSQ//Total'; EndDataSet; EndCollection", data->name(), data->name(), data->associatedModule()->uniqueName());
 			dataGraph_->addCollectionFromBlock(blockData);
 		}
 	}
 
+	// Get pointer to PartialsModule which contains the unweighted S(Q) data
+	Module* partialsModule = module_->dependentModule("Partials");
+	CharString partialsModuleName = partialsModule ? partialsModule->uniqueName() : "Partials???";
+
 	// Add experimentally-determined partials, calculated partials, and differences to the partialsGraph_
 	int nTypes = dUQ_.atomTypeList().nItems();
-// 	Array2D<XYData> differences(nTypes, nTypes, true);
 	int n = 0;
 	for (AtomType* at1 = dUQ_.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++n)
 	{
 		int m = n;
 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
 		{
-			
+			// Experimentally-determined unweighted partial
+			blockData.sprintf("Collection '%s-%s Exp'; Group '%s-%s'; DataSet 'Experimental %s-%s'; Source XYData '%s//GeneratedSQ//%s-%s'; EndDataSet; EndCollection", at1->name(), at2->name(), at1->name(), at2->name(), at1->name(), at2->name(), module_->uniqueName(), at1->name(), at2->name());
+			partialsGraph_->addCollectionFromBlock(blockData);
+
+			// Calculated partial
+			blockData.sprintf("Collection '%s-%s Calc'; Group '%s-%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated %s-%s'; Source XYData '%s//UnweightedSQ//%s-%s//Full'; EndDataSet; EndCollection", at1->name(), at2->name(), at1->name(), at2->name(), at1->name(), at2->name(), partialsModuleName.get(), at1->name(), at2->name());
+			partialsGraph_->addCollectionFromBlock(blockData);
 		}
 	}
 }

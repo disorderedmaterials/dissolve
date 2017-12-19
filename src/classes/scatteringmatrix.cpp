@@ -86,22 +86,31 @@ void ScatteringMatrix::generatePartials(Array2D<XYData>& generatedSQ)
 	// Clear current partials
 	for (int n=0; n<generatedSQ.linearArraySize(); ++n) partials[n].clear();
 
-	// Loop over rows in A_ / data_
-	int row = 0;
-	RefListIterator<Data,bool> dataIterator(data_);
-	while (Data* data = dataIterator.iterate())
+	/*
+	 * Currently our scattering matrix / data look as follows:
+	 * 
+	 * [ c11 c12 ... c1N ] [ P1 ]   [ D1 ]
+	 * [ c21 c22 ... c2N ] [ P2 ] = [ D2 ]		N is number of partials
+	 * [         ...     ] [ .. ]   [ .. ]		M is number of data (where M >= N)
+	 * [ cM1 cM2 ... cMN ] [ PN ]   [ DM ]
+	 * 
+	 * ... where the coefficients in the matrix are the partial weights, P are the (unknown) partial S(Q), and D are the (known) data.
+	 * 
+	 * Take the matrix inverse and multiply it by the known data to generate the estimated partials.
+	 */
+
+	// Generate new partials (nPartials = nColumns)
+	for (int n=0; n<A_.nColumns(); ++n)
 	{
-		// Loop over columns
-		for (int n=0; n<A_.nColumns(); ++n)
+		// Add in contribution from each datset (row)
+		RefListIterator<Data,bool> dataIterator(data_);
+		int m = 0;
+		while (Data* data = dataIterator.iterate())
 		{
-			// Add data to relevant partial
-			partials[n].addInterpolated(data->data(), inverseA_.value(row, n));
+			partials[n].addInterpolated(data->data(), inverseA_.value(n, m));
+			++m;
 		}
-
-		++row;
 	}
-
-	for (int n=0; n<generatedSQ.linearArraySize(); ++n) partials[n].save(partials[n].name());
 }
 
 /*

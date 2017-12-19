@@ -112,11 +112,7 @@ bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 	 * First, make sure that all of the associated Data are set up
 	 */
 	RefListIterator<Data,bool> dataIterator(targetData_);
-	while (Data* data = dataIterator.iterate())
-	{
-		if (!data->setUp(duq.processingModuleData())) return false;
-		data->data().save(CharString("%s-setup.txt", data->name()));
-	}
+	while (Data* data = dataIterator.iterate()) if (!data->setUp(duq.processingModuleData())) return false;
 
 	/*
 	 * Construct our full, square, scattering matrix, using the master AtomTypes list
@@ -183,11 +179,9 @@ bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 
 			// Perform some judicious smoothing on the data
 			partial.smooth(10);
-			partial.save("sub.sq");
 
 			// Do the inverse FT
 			partial.broadenedSineFT(1.0 / (2 * PI * rho), 0.05, 0.01, 30.0, broadening, true, XYData::HannWindow);
-			partial.save("transformed.gr");
 		}
 	}
 
