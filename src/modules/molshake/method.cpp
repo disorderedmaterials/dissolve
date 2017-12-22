@@ -74,16 +74,22 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		double cutoffDistance = keywords_.asDouble("CutoffDistance");
 		if (cutoffDistance < 0.0) cutoffDistance = duq.pairPotentialRange();
 		double rotationStepSize = GenericListHelper<double>::retrieve(moduleData, "RotationStepSize", uniqueName(), keywords_.asDouble("RotationStepSize"));
+		const double rotationStepSizeMax = keywords_.asDouble("RotationStepSizeMax");
+		const double rotationStepSizeMin = keywords_.asDouble("RotationStepSizeMin");
+
 		const int nShakesPerMolecule = keywords_.asInt("ShakesPerMolecule");
 		const double targetAcceptanceRate = keywords_.asDouble("TargetAcceptanceRate");
 		double translationStepSize = GenericListHelper<double>::retrieve(moduleData, "TranslationStepSize", uniqueName(), keywords_.asDouble("TranslationStepSize"));
+		const double translationStepSizeMax = keywords_.asDouble("TranslationStepSizeMax");
+		const double translationStepSizeMin = keywords_.asDouble("TranslationStepSizeMin");
 		const double termScale = 1.0;
 		const double rRT = 1.0/(.008314472*cfg->temperature());
 
 		// Print argument/parameter summary
 		Messenger::print("MolShake: Cutoff distance is %f\n", cutoffDistance);
 		Messenger::print("MolShake: Performing %i shake(s) per Molecule\n", nShakesPerMolecule);
-		Messenger::print("MolShake: Translation step is %f Angstroms, rotation step is %f degrees, target acceptance rate is %f.\n", translationStepSize, rotationStepSize, targetAcceptanceRate);
+		Messenger::print("MolShake: Step size for translation adjustments is %f Angstroms (allowed range is %f <= delta <= %f).\n", translationStepSize, translationStepSizeMin, translationStepSizeMax);
+		Messenger::print("MolShake: Step size for rotation adjustments is %f degrees (allowed range is %f <= delta <= %f).\n", rotationStepSize, rotationStepSizeMin, rotationStepSizeMax);
 
 		// Create a local ChangeStore and EnergyKernel
 		ChangeStore changeStore(procPool);
@@ -212,15 +218,22 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		Messenger::print("MolShake: Overall translation acceptance rate was %4.2f% (%i of %i attempted moves)\n", 100.0*transRate, nTranslationsAccepted, nTranslationAttempts);
 		Messenger::print("MolShake: Overall rotation acceptance rate was %4.2f% (%i of %i attempted moves)\n", 100.0*rotRate, nRotationsAccepted, nRotationAttempts);
 
-		// Adjust translation step size - if no moves were accepted, just decrease the current stepSize by a constant factor
-		translationStepSize *= (nTranslationsAccepted == 0) ? 0.8 : transRate /targetAcceptanceRate;
-		rotationStepSize *= (nRotationsAccepted == 0) ? 0.8 : rotRate /targetAcceptanceRate;
+		// Update and set translation step size
+		translationStepSize *= (nTranslationsAccepted == 0) ? 0.8 : transRate/targetAcceptanceRate;
+		if (translationStepSize < translationStepSizeMin) translationStepSize = translationStepSizeMin;
+		else if (translationStepSize > translationStepSizeMax) translationStepSize = translationStepSizeMax;
 
-		// Store updated parameter values
-		GenericListHelper<double>::realise(cfg->moduleData(), "TranslationStepSize", uniqueName(), GenericItem::InRestartFileFlag) = translationStepSize;
-		GenericListHelper<double>::realise(cfg->moduleData(), "RotationStepSize", uniqueName(), GenericItem::InRestartFileFlag) = rotationStepSize;
-		Messenger::print("MolShake: Updated translation step is %f Angstroms, rotation step is %f degrees.\n", translationStepSize, rotationStepSize);
-		
+		Messenger::print("MolShake: Updated step size for translations is %f Angstroms.\n", translationStepSize); 
+		GenericListHelper<double>::realise(moduleData, "TranslationStepSize", uniqueName(), GenericItem::InRestartFileFlag) = translationStepSize;
+
+		// Update and set rotation step size
+		rotationStepSize *= (nRotationsAccepted == 0) ? 0.8 : rotRate/targetAcceptanceRate;
+		if (rotationStepSize < rotationStepSizeMin) rotationStepSize = rotationStepSizeMin;
+		else if (rotationStepSize > rotationStepSizeMax) rotationStepSize = rotationStepSizeMax;
+
+		Messenger::print("MolShake: Updated step size for rotations is %f Angstroms.\n", rotationStepSize); 
+		GenericListHelper<double>::realise(moduleData, "RotationStepSize", uniqueName(), GenericItem::InRestartFileFlag) = rotationStepSize;
+
 		// Increment configuration changeCount_
 		if ((nRotationsAccepted > 0) || (nTranslationsAccepted > 0)) cfg->incrementCoordinateIndex();
 
