@@ -1046,9 +1046,9 @@ void ViewPane::resetViewMatrix()
 }
 
 // Set display limits to show all available data
-void ViewPane::showAllData()
+void ViewPane::showAllData(double xFrac, double yFrac, double zFrac)
 {
-	updateAxisLimits();
+	updateAxisLimits(xFrac, yFrac, zFrac);
 
 	for (int axis = 0; axis < 3; ++axis)
 	{
@@ -1211,7 +1211,7 @@ Axes& ViewPane::axes()
 }
 
 // Update axis limits to represent data extent of associated collections
-void ViewPane::updateAxisLimits()
+void ViewPane::updateAxisLimits(double xFrac, double yFrac, double zFrac)
 {
 	// Get transformed data extents
 	Vec3<double> dataMin = transformedDataMinima();
@@ -1219,10 +1219,28 @@ void ViewPane::updateAxisLimits()
 	Vec3<double> dataMinPositive = transformedDataPositiveMinima();
 	Vec3<double> dataMaxPositive = transformedDataPositiveMaxima();
 
+	// The fractional values we've been passed tell us how much of the 'data' to include in the limits
+	// A positive value, 0.0 < f < 1.0, tells us to shrink the maximum limit.
+	// A negative value, -1.0 < f < 0.0, tells us to increase the minimum limit
+
+	// Store the fractional values in a temporary Vector to make things easier
+	Vec3<double> fractions(xFrac, yFrac, zFrac);
+
 	// Loop over axes
 	for (int axis = 0; axis < 3; ++axis)
 	{
-// 		if (
+		// Adjust limits
+		if (fractions[axis] > 0.0)
+		{
+			dataMax[axis] = dataMin[axis] + (dataMax[axis] - dataMin[axis])*fractions[axis];
+			dataMaxPositive[axis] = dataMinPositive[axis] + (dataMaxPositive[axis] - dataMinPositive[axis])*fractions[axis];
+		}
+		else
+		{
+			dataMin[axis] = dataMax[axis] - (dataMin[axis] - dataMax[axis])*fractions[axis];
+			dataMinPositive[axis] = dataMaxPositive[axis] - (dataMinPositive[axis] - dataMaxPositive[axis])*fractions[axis];
+		}
+
 		// Set allowable range to avoid negative numbers if axis is now logarithmic
 		if (axes_.logarithmic(axis))
 		{

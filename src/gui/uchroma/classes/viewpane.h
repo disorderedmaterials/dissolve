@@ -267,7 +267,7 @@ class ViewPane : public ListItem<ViewPane>, public ObjectStore<ViewPane>
 	// Reset view matrix to face XY plane
 	void resetViewMatrix();
 	// Set display limits to show all available data
-	void showAllData();
+	void showAllData(double xFrac =1.0, double yFrac = 1.0, double zFrac = 1.0);
 	// Zoom to specified region
 	void zoomTo(Vec3<double> limit1, Vec3<double> limit2);
 
@@ -293,7 +293,7 @@ class ViewPane : public ListItem<ViewPane>, public ObjectStore<ViewPane>
 	// Return axes for this pane
 	Axes& axes();
 	// Update axis limits to represent data extent of associated collections
-	void updateAxisLimits();
+	void updateAxisLimits(double xFrac =1.0, double yFrac = 1.0, double zFrac = 1.0);
 	// Shift flat view axis limits by specified amounts
 	void shiftFlatAxisLimits(double deltaH, double deltaV);
 	// Shift flat view axis limits by specified fractional amounts

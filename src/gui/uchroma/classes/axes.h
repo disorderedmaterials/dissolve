@@ -133,7 +133,7 @@ class Axes : public ObjectStore<Axes>
 	// Return real axis maximum (accounting for log axes)
 	double realMax(int axis) const;
 	// Set axis to extreme limit
-	void setToLimit(int axis, bool minLim);
+	void setToLimit(int axis, bool minimumLimit);
 	// Set axis minimum limit for specified axis
 	void setLimitMin(int axis, double limit);
 	// Return axis minimum limit for specified axis

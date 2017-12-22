@@ -190,7 +190,14 @@ void Viewer::keyPressEvent(QKeyEvent *event)
 			else uChromaBase_->currentViewPane()->rotateView(km.testFlag(Qt::ShiftModifier) ? 1.0 : 10.0, 0.0);
 			break;
 		case (Qt::Key_A):
-			viewPane->showAllData();
+			if (km&Qt::ShiftModifier)
+			{
+				// Show only top 20% of vertical axis
+				if (viewPane->viewType() == ViewPane::FlatXYView) viewPane->showAllData(1.0, 0.2);
+				else if (viewPane->viewType() == ViewPane::FlatXZView) viewPane->showAllData(1.0, 1.0, 0.2);
+				else if (viewPane->viewType() == ViewPane::FlatZYView) viewPane->showAllData(1.0, 0.2);
+			}
+			else viewPane->showAllData();
 			break;
 		case (Qt::Key_L):
 			if (km&Qt::ShiftModifier) viewPane->axes().toggleLogarithmic(viewType == ViewPane::FlatXZView ? 2 : 1);
