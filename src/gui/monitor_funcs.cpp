@@ -210,12 +210,12 @@ bool MonitorWindow::loadWindowState()
 	while (!stateParser.eofOrBlank())
 	{
 		// Parse the line
-		if (stateParser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+		if (stateParser.getArgsDelim(LineParser::UseQuotes) != LineParser::Success) return false;
 
 		SubWidget* subWidget = NULL;
 		QMdiSubWindow* subWindow = NULL;
 
-		// The only argument on the line should be the name of the widget we should create in a subwindow
+		// The line should contain the name of the widget we should create in a subwindow, and the subwindow title
 		if (DUQSys::sameString(stateParser.argc(0), "Browser"))
 		{
 			BrowserWidget* browserWidget = new BrowserWidget(NULL, *this, duq_);
