@@ -521,15 +521,6 @@ bool DUQ::loadRestart(const char* filename)
 	// Set current iteration number
 	iteration_ = GenericListHelper<int>::retrieve(processingModuleData_, "Iteration", "DUQ", 0);
 
-	// Retrieve additional potentials
-	for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next)
-	{
-		CharString itemName("Potential_%s-%s_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ());
-
-		if (!processingModuleData_.contains(itemName, "DUQ")) continue;
-		pot->setUAdditional(GenericListHelper<XYData>::retrieve(processingModuleData_, itemName, "DUQ", XYData()));
-	}
-
 	// Error encountered?
 	if (error)
 	{

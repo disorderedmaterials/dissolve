@@ -22,6 +22,7 @@
 #include "main/duq.h"
 #include "classes/atomtype.h"
 #include "classes/species.h"
+#include "templates/genericlisthelper.h"
 
 // Set number of test points to use when calculating Box normalisation arrays
 void DUQ::setNBoxNormalisationPoints(int nPoints)
@@ -131,12 +132,19 @@ bool DUQ::setUpSimulation()
 				++nMissingPots;
 			}
 
-			// Set up PairPotential
+			// Setup PairPotential
 			if (!pot->setUp(pairPotentialRange_, pairPotentialTruncationWidth_, pairPotentialDelta_, pairPotentialsIncludeCoulomb_))
 			{
 				Messenger::error("Failed to set up PairPotential between AtomTypes '%s' and '%s'.\n", at1->name(), at2->name());
 				return false;
 			}
+
+			// Retrieve additional potential from the processing module data, if present
+			CharString itemName("Potential_%s-%s_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ());
+
+			if (!processingModuleData_.contains(itemName, "DUQ")) continue;
+			pot->setUAdditional(GenericListHelper<XYData>::retrieve(processingModuleData_, itemName, "DUQ", XYData()));
+
 		}
 	}
 	if (nMissingPots > 0) return false;
