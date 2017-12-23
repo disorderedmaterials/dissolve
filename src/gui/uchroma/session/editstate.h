@@ -38,18 +38,6 @@ class EditState : public ListItem<EditState>
 
 
 	/*
-	 * Link to UChromaBase
-	 */
-	private:
-	// Link to UChromaBase
-	static UChromaBase* uChromaBase_;
-
-	public:
-	// Set link to UChromaBase
-	static void setUChromaBase(UChromaBase* uChromaBase);
-
-
-	/*
 	 * Target Object
 	 */
 	private:
@@ -162,7 +150,7 @@ class EditState : public ListItem<EditState>
 
 	public:
 	// Apply changes
-	bool makeChanges(bool revert);
+	bool makeChanges(UChromaBase* uChromaBase, bool revert);
 };
 
 #endif

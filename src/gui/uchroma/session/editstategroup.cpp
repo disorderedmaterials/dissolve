@@ -61,27 +61,27 @@ EditState* EditStateGroup::addEditState(ObjectInfo& target, int quantity)
  */
 
 // Apply change (old -> new)
-bool EditStateGroup::apply()
+bool EditStateGroup::apply(UChromaBase* uChromaBase)
 {
 	Messenger::printVerbose("EDITSTATEGROUP: applying group '%s'.\n", qPrintable(title_));
 
 	// Loop over edit states
 	for (EditState* state = editStates_.first(); state != NULL; state = state->next)
 	{
-		if (!state->makeChanges(false)) return false;
+		if (!state->makeChanges(uChromaBase, false)) return false;
 	}
 	return true;
 }
 
 // Revert change (new -> old)
-bool EditStateGroup::revert()
+bool EditStateGroup::revert(UChromaBase* uChromaBase)
 {
 	Messenger::printVerbose("EDITSTATEGROUP: reverting group '%s'.\n", qPrintable(title_));
 
 	// Loop over edit states
 	for (EditState* state = editStates_.last(); state != NULL; state = state->prev)
 	{
-		if (!state->makeChanges(true)) return false;
+		if (!state->makeChanges(uChromaBase, true)) return false;
 	}
 	return true;
 }

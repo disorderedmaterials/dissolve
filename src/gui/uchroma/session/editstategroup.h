@@ -27,7 +27,7 @@
 #include "gui/uchroma/session/editstatedata.h"
 
 // Forward Declarations
-/* none */
+class UChromaBase;
 
 // Edit State Group
 class EditStateGroup : public ListItem<EditStateGroup>
@@ -61,9 +61,9 @@ class EditStateGroup : public ListItem<EditStateGroup>
 	 */
 	public:
 	// Apply change (old -> new)
-	bool apply();
+	bool apply(UChromaBase* uChromaBase);
 	// Revert change (new -> old)
-	bool revert();
+	bool revert(UChromaBase* uChromaBase);
 };
 
 #endif

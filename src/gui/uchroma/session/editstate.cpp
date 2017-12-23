@@ -23,9 +23,6 @@
 #include "base/messenger.h"
 #include "gui/uchroma/uchromabase.h"
 
-// Static Members
-UChromaBase* EditState::uChromaBase_ = NULL;
-
 // Constructor
 EditState::EditState(ObjectInfo target, int quantity) : targetObject_(target)
 {
@@ -33,16 +30,6 @@ EditState::EditState(ObjectInfo target, int quantity) : targetObject_(target)
 	targetQuantity_ = quantity;
 	targetIndex_ = -1;
 	targetSubIndex_ = -1;
-}
-
-/*
- * Link to UChromaBase
- */
-
-// Set link to UChromaBase
-void EditState::setUChromaBase(UChromaBase* uChromaBase)
-{
-	uChromaBase_ = uChromaBase;
 }
 
 /*
@@ -161,7 +148,7 @@ EditStateData* EditState::addNewData()
 // Add : OLD=NULL, NEW=COLLECTION
 // Remove : OLD=COLLECTION, NEW=NULL
 // Apply change (old -> new)
-bool EditState::makeChanges(bool revert)
+bool EditState::makeChanges(UChromaBase* uChromaBase, bool revert)
 {
 	// What is the target data type?
 	bool result = false;
@@ -189,7 +176,7 @@ bool EditState::makeChanges(bool revert)
 						return false;
 					}
 					Messenger::printVerbose("EDITSTATE: Collection - removing collection '%s'\n", qPrintable(toDelete->name()));
-					uChromaBase_->removeCollection(toDelete);
+					uChromaBase->removeCollection(toDelete);
 				}
 				else
 				{
@@ -209,7 +196,7 @@ bool EditState::makeChanges(bool revert)
 						Messenger::printVerbose("Internal Error - Couldn't retrieve locator string or position for recreation of collection.\n");
 						return false;
 					}
-					Collection* newCollection = uChromaBase_->addCollectionFromLocator(locator, collection.type(), position);
+					Collection* newCollection = uChromaBase->addCollectionFromLocator(locator, collection.type(), position);
 					(*newCollection) = collection;
 					Messenger::printVerbose("EDITSTATE: Collection - changing object id to %i\n", targetObject_.id());
 					Collection::setObjectId(newCollection, targetObject_.id());

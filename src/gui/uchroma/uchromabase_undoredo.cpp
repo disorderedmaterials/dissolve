@@ -212,7 +212,7 @@ bool UChromaBase::undo()
 	if (undoEditStateGroup_)
 	{
 		// Revert changes in current group
-		result = undoEditStateGroup_->revert();
+		result = undoEditStateGroup_->revert(this);
 
 		// Set new current undo state
 		undoEditStateGroup_ = undoEditStateGroup_->prev;
@@ -233,7 +233,7 @@ bool UChromaBase::redo()
 	if (redoState)
 	{
 		// Apply changes in redoState
-		result = redoState->apply();
+		result = redoState->apply(this);
 
 		// Set new current undo state
 		undoEditStateGroup_ = redoState;
