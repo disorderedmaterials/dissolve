@@ -449,6 +449,8 @@ const char* PartialSet::itemClassName()
 // Write data through specified LineParser
 bool PartialSet::write(LineParser& parser)
 {
+	// TODO To reduce filesize we could write abscissa first, and then each Y datset afterwards since they all share a common scale
+
 	if (!parser.writeLineF("%s\n", objectNamePrefix_.get())) return false;
 	if (!parser.writeLineF("%s\n", abscissaUnits_.get())) return false;
 	if (!parser.writeLineF("%s\n", fingerprint_.get())) return false;
