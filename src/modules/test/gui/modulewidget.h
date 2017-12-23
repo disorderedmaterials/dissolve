@@ -42,7 +42,7 @@ class TestModuleWidget : public ModuleWidget
 	// Associated Module
 	TestModule* module_;
 	// UChromaViews contained within this widget
-	UChromaViewWidget* dataGraph_, *partialsGraph_;
+	UChromaViewWidget* dataGraph_, *partialSQGraph_, *perturbationsGraph_;
 	// Reference to DUQ
 	DUQ& dUQ_;
 

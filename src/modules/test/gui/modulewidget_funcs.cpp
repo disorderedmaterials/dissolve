@@ -38,6 +38,8 @@ TestModuleWidget::TestModuleWidget(QWidget* parent, Module* module, DUQ& dUQ) : 
 	ViewPane* viewPane;
 	QVBoxLayout* layout;
 
+	// Data Graph
+
 	layout = new QVBoxLayout;
 	layout->setContentsMargins(0,0,0,0);
 	layout->setSpacing(4);
@@ -55,20 +57,41 @@ TestModuleWidget::TestModuleWidget(QWidget* parent, Module* module, DUQ& dUQ) : 
 	viewPane->axes().setMin(1, -1.0);
 	viewPane->axes().setMax(1, 1.0);
 
+	// Partial S(Q) Graph
+	
 	layout = new QVBoxLayout;
 	layout->setContentsMargins(0,0,0,0);
 	layout->setSpacing(4);
-	partialsGraph_ = new UChromaViewWidget;
-	layout->addWidget(partialsGraph_);
-	ui.PartialsPlotWidget->setLayout(layout);
+	partialSQGraph_ = new UChromaViewWidget;
+	layout->addWidget(partialSQGraph_);
+	ui.PartialSQPlotWidget->setLayout(layout);
 
 	// Start a new, empty session
-	partialsGraph_->startNewSession(true);
-	viewPane = partialsGraph_->currentViewPane();
+	partialSQGraph_->startNewSession(true);
+	viewPane = partialSQGraph_->currentViewPane();
 	viewPane->setViewType(ViewPane::FlatXYView);
 	viewPane->axes().setTitle(0, "\\it{Q}, Angstroms\\sup{-1}");
 	viewPane->axes().setMax(0, 10.0);
 	viewPane->axes().setTitle(1, "S(Q)");
+	viewPane->axes().setMin(1, -1.0);
+	viewPane->axes().setMax(1, 1.0);
+
+	// Perturbations Graph
+
+	layout = new QVBoxLayout;
+	layout->setContentsMargins(0,0,0,0);
+	layout->setSpacing(4);
+	perturbationsGraph_ = new UChromaViewWidget;
+	layout->addWidget(perturbationsGraph_);
+	ui.PerturbationsPlotWidget->setLayout(layout);
+
+	// Start a new, empty session
+	perturbationsGraph_->startNewSession(true);
+	viewPane = perturbationsGraph_->currentViewPane();
+	viewPane->setViewType(ViewPane::FlatXYView);
+	viewPane->axes().setTitle(0, "\\it{r}, Angstroms");
+	viewPane->axes().setMax(0, 10.0);
+	viewPane->axes().setTitle(1, "?");
 	viewPane->axes().setMin(1, -1.0);
 	viewPane->axes().setMax(1, 1.0);
 
@@ -86,10 +109,10 @@ void TestModuleWidget::updateControls()
 {
 	// Ensure that any displayed data is up-to-date
 	dataGraph_->refreshReferencedDataSets();
-	partialsGraph_->refreshReferencedDataSets();
+	partialSQGraph_->refreshReferencedDataSets();
 
 	dataGraph_->updateDisplay();
-	partialsGraph_->updateDisplay();
+	partialSQGraph_->updateDisplay();
 }
 
 // Initialise controls
@@ -119,7 +142,7 @@ void TestModuleWidget::initialiseControls(TestModule* module)
 	Module* partialsModule = module_->dependentModule("Partials");
 	CharString partialsModuleName = partialsModule ? partialsModule->uniqueName() : "Partials???";
 
-	// Add experimentally-determined partials, calculated partials, and differences to the partialsGraph_
+	// Add experimentally-determined partials, calculated partials, and differences to the partialSQGraph_
 	int nTypes = dUQ_.atomTypeList().nItems();
 	int n = 0;
 	for (AtomType* at1 = dUQ_.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++n)
@@ -129,11 +152,15 @@ void TestModuleWidget::initialiseControls(TestModule* module)
 		{
 			// Experimentally-determined unweighted partial
 			blockData.sprintf("Collection '%s-%s Exp'; Group '%s-%s'; DataSet 'Experimental %s-%s'; Source XYData '%s//GeneratedSQ//%s-%s'; EndDataSet; EndCollection", at1->name(), at2->name(), at1->name(), at2->name(), at1->name(), at2->name(), module_->uniqueName(), at1->name(), at2->name());
-			partialsGraph_->addCollectionFromBlock(blockData);
+			partialSQGraph_->addCollectionFromBlock(blockData);
 
 			// Calculated partial
 			blockData.sprintf("Collection '%s-%s Calc'; Group '%s-%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated %s-%s'; Source XYData '%s//UnweightedSQ//%s-%s//Full'; EndDataSet; EndCollection", at1->name(), at2->name(), at1->name(), at2->name(), at1->name(), at2->name(), partialsModuleName.get(), at1->name(), at2->name());
-			partialsGraph_->addCollectionFromBlock(blockData);
+			partialSQGraph_->addCollectionFromBlock(blockData);
+
+			// Difference
+			blockData.sprintf("Collection '%s-%s Diff'; Group '%s-%s'; LineStyle 1.0 'Dots'; DataSet 'Difference %s-%s'; Source XYData '%s//DeltaSQ//%s-%s'; EndDataSet; EndCollection", at1->name(), at2->name(), at1->name(), at2->name(), at1->name(), at2->name(), module_->uniqueName(), at1->name(), at2->name());
+			partialSQGraph_->addCollectionFromBlock(blockData);
 		}
 	}
 }
@@ -147,7 +174,7 @@ bool TestModuleWidget::writeState(LineParser& parser)
 {
 	// Write UChromaWidget sessions
 	if (!dataGraph_->writeSession(parser)) return false;
-	if (!partialsGraph_->writeSession(parser)) return false;
+	if (!partialSQGraph_->writeSession(parser)) return false;
 
 	return true;
 }
@@ -157,7 +184,7 @@ bool TestModuleWidget::readState(LineParser& parser)
 {
 	// Read UChromaWidget sessions
 	if (!dataGraph_->readSession(parser)) return false;
-	if (!partialsGraph_->readSession(parser)) return false;
+	if (!partialSQGraph_->readSession(parser)) return false;
 
 	return true;
 }
