@@ -269,7 +269,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 			{
 				// Retrieve the unweighted S(Q), and realise the weighted S(Q)
 				PartialSet& unweightedsq = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedSQ", "Partials");
-				PartialSet& weightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedSQ", uniqueName_);
+				PartialSet& weightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
 
 				// Set up weighted S(Q) PartialSet from the weighted G(R) PartialSet, and calculate the weighted S(Q)
 				weightedsq.setUpPartials(weightedgr.atomTypes(), cfg->niceName(), "weighted", "sq", "Q, 1/Angstroms");
@@ -337,7 +337,8 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		density /= volume;
 		unweightedgr.setFingerprint(fingerprint);
 
-		// Now must normalise our partials to the overall weight of the source configurations // TODO This will not be correct...
+		// Now must normalise our partials to the overall weight of the source configurations
+		// TODO This will not be correct - need to do proper weighting of configurations
 		unweightedgr.reweightPartials(1.0 / totalWeight);
 		if (saveData) if (!MPIRunMaster(procPool, unweightedgr.save())) return false;
 
@@ -421,8 +422,9 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 			if (sqCalculation)
 			{
 				// Realise a PartialSQ set
-				PartialSet& weightedsq = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "WeightedSQ", uniqueName_);
+				PartialSet& weightedsq = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "WeightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
 				weightedsq.setUpPartials(unweightedgr.atomTypes(), uniqueName(), "weighted", "sq", "Q, 1/Angstroms");
+				weightedsq.setObjectNames(CharString("%s//WeightedSQ", uniqueName_.get()));
 
 				// Sum in weighted S(Q) partials
 				configIterator.restart();
