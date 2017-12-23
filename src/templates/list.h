@@ -450,7 +450,7 @@ template <class T> class List
 	{
 		if (!regenerate_) return items_;
 		
-		// Delete old atom list (if there is one)
+		// Delete old item array (if there is one)
 		if (items_ != NULL) delete[] items_;
 		items_ = NULL;
 
