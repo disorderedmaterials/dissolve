@@ -77,6 +77,7 @@ Collection* UChromaBase::addCollection(const char* name, int listIndex)
 {
 	// Add an empty collection
 	currentCollection_ = (listIndex == -1 ? collections_.add() : collections_.addAt(listIndex));
+	currentCollection_->setUChromaBase(this);
 
 	// Create EditState data
 	if (UChromaBase::addEditState(currentCollection_->objectInfo(), EditState::CollectionAddQuantity))

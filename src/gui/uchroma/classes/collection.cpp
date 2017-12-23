@@ -33,11 +33,12 @@ template<class Collection> RefList<Collection,int> ObjectStore<Collection>::obje
 template<class Collection> int ObjectStore<Collection>::objectCount_ = 0;
 template<class Collection> int ObjectStore<Collection>::objectType_ = ObjectInfo::UChromaCollectionObject;
 template<class Collection> const char* ObjectStore<Collection>::objectTypeName_ = "UChromaCollection";
-UChromaBase* Collection::uChromaBase_ = NULL;
 
 // Constructor
 Collection::Collection() : ListItem<Collection>(), ObjectStore<Collection>(this)
 {
+	uChromaBase_ = NULL;
+
 	// Set variable defaults
 	dataSets_.clear();
 	dataFileDirectory_ = getenv("PWD");
@@ -99,6 +100,8 @@ Collection::Collection(const Collection& source) : ObjectStore<Collection>()
 // Assignment operator
 void Collection::operator=(const Collection& source)
 {
+	uChromaBase_ = source.uChromaBase_;
+
 	// Basic Data
 	name_ = source.name_;
 	dataSets_ = source.dataSets_;
@@ -130,12 +133,14 @@ void Collection::operator=(const Collection& source)
 	for (Collection* fit = source.fits_.first(); fit != NULL; fit = fit->next)
 	{
 		Collection* newFit = fits_.add();
+		newFit->setUChromaBase(uChromaBase_);
 		(*newFit) = (*fit);
 	}
 	slices_.clear();
 	for (Collection* slice = source.slices_.first(); slice != NULL; slice = slice->next)
 	{
 		Collection* newSlice = slices_.add();
+		newSlice->setUChromaBase(uChromaBase_);
 		(*newSlice) = (*slice);
 	}
 	if (currentSlice_) delete currentSlice_;
@@ -919,6 +924,7 @@ const char* Collection::uniqueFitName(const char* baseName)
 Collection* Collection::addFit(const char* name, int position)
 {
 	Collection* newFit = fits_.add();
+	newFit->setUChromaBase(uChromaBase_);
 	newFit->type_ = Collection::FitCollection;
 	newFit->setParent(this);
 

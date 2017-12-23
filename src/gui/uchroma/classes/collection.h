@@ -1,5 +1,5 @@
 /*
-	*** Data Collection
+	*** Collection
 	*** src/gui/uchroma/classes/collection.h
 	Copyright T. Youngs 2013-2017
 
@@ -48,15 +48,15 @@ class Collection : public ListItem<Collection>, public ObjectStore<Collection>
 	
 
 	/*
-	 * Link to UChromaBase
+	 * Link to UChroma
 	 */
 	private:
-	// Link to UChromaBase
-	static UChromaBase* uChromaBase_;
+	// Pointer to UChromaBase
+	UChromaBase* uChromaBase_;
 
 	public:
 	// Set link to UChromaBase
-	static void setUChromaBase(UChromaBase* uChromaBase);
+	void setUChromaBase(UChromaBase* uChromaBase);
 
 
 	/*
