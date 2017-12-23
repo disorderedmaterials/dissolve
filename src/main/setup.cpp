@@ -1,5 +1,5 @@
 /*
-	*** dUQ - Set up
+	*** dUQ - Setup
 	*** src/main/setup.cpp
 	Copyright T. Youngs 2012-2017
 
