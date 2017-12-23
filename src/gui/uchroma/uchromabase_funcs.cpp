@@ -72,7 +72,6 @@ UChromaBase::UChromaBase(QWidget* parent) : parent_(parent), viewLayout_(*this),
 
 	// Set pointers in dependent classes
 	EditState::setUChromaBase(this);
-	Axes::setUChromaBase(this);
 	Collection::setUChromaBase(this);
 	FitKernel::setUChromaBase(this);
 }
