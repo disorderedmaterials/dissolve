@@ -22,7 +22,7 @@
 #include "gui/uchroma/classes/viewlayout.h"
 
 // Constructor
-ViewLayout::ViewLayout() : ListItem<ViewLayout>()
+ViewLayout::ViewLayout(UChromaBase& uChromaBase) : ListItem<ViewLayout>(), uChromaBase_(uChromaBase)
 {
 	nColumns_ = 1;
 	nRows_ = 1;
@@ -42,7 +42,7 @@ ViewLayout::~ViewLayout()
 }
 
 // Copy constructor
-ViewLayout::ViewLayout(const ViewLayout& source)
+ViewLayout::ViewLayout(const ViewLayout& source) : uChromaBase_(source.uChromaBase_)
 {
 	(*this) = source;
 }
@@ -72,6 +72,16 @@ void ViewLayout::operator=(const ViewLayout& source)
 		ViewPane* newPane = panes_.add(*this);
 		(*newPane) = (*pane);
 	}
+}
+
+/*
+ * Link to UChromaBase
+ */
+
+// Return reference to UChromaBase
+UChromaBase& ViewLayout::uChromaBase()
+{
+	return uChromaBase_;
 }
 
 /*

@@ -55,18 +55,6 @@ class ViewPane : public ListItem<ViewPane>, public ObjectStore<ViewPane>
 
 
 	/*
-	 * Link to UChromaBase
-	 */
-	private:
-	// Link to UChromaBase
-	static UChromaBase* uChromaBase_;
-
-	public:
-	// Set link to UChromaBase
-	static void setUChromaBase(UChromaBase* uChromaBase);
-
-
-	/*
 	 * Parent
 	 */
 	private:

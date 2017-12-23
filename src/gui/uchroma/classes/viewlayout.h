@@ -35,12 +35,24 @@ class ViewLayout : public ListItem<ViewLayout>
 {
 	public:
 	// Constructor / Destructor
-	ViewLayout();
+	ViewLayout(UChromaBase& uChromaBase);
 	~ViewLayout();
 	// Copy constructor
 	ViewLayout(const ViewLayout& source);
 	// Assignment operator
 	void operator=(const ViewLayout& source);
+
+
+	/*
+	 * Link to UChromaBase
+	 */
+	private:
+	// Link to UChromaBase
+	UChromaBase& uChromaBase_;
+
+	public:
+	// Return reference to UChromaBase
+	UChromaBase& uChromaBase();
 
 
 	/*

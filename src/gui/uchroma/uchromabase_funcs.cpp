@@ -25,7 +25,7 @@
 CharString UChromaBase::viewerFontFileName_;
 
 // Constructor
-UChromaBase::UChromaBase(QWidget* parent) : parent_(parent),
+UChromaBase::UChromaBase(QWidget* parent) : parent_(parent), viewLayout_(*this),
 	axesWindow_(*this, parent),
 	dataWindow_(*this, parent),
 	styleWindow_(*this, parent),
@@ -74,7 +74,6 @@ UChromaBase::UChromaBase(QWidget* parent) : parent_(parent),
 	EditState::setUChromaBase(this);
 	Axes::setUChromaBase(this);
 	Collection::setUChromaBase(this);
-	ViewPane::setUChromaBase(this);
 	FitKernel::setUChromaBase(this);
 }
 

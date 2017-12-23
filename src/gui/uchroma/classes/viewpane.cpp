@@ -33,7 +33,6 @@ template<class ViewPane> int ObjectStore<ViewPane>::objectCount_;
 template<class ViewPane> int ObjectStore<ViewPane>::objectType_ = ObjectInfo::UChromaViewPaneObject;
 template<class ViewPane> const char* ObjectStore<ViewPane>::objectTypeName_ = "UChromaViewPane";
 const double ViewPane::zOffset_ = -10.0;
-UChromaBase* ViewPane::uChromaBase_ = NULL;
 
 // Constructor
 ViewPane::ViewPane(ViewLayout& parent) : ListItem<ViewPane>(), ObjectStore<ViewPane>(this), parent_(parent), axes_(*this)
@@ -137,16 +136,6 @@ void ViewPane::operator=(const ViewPane& source)
 
 	// Additional / Generated data
 	// -- Should be handled by performing re-addition of target collections above
-}
-
-/*
- * Link to UChromaBase
- */
-
-// Set link to UChromaBase
-void ViewPane::setUChromaBase(UChromaBase* uChromaBase)
-{
-	uChromaBase_ = uChromaBase;
 }
 
 /*
@@ -406,7 +395,7 @@ void ViewPane::addCollectionTarget(Collection* collection)
 	TargetData* target = collectionTargets_.add(*this);
 	target->initialise(collection);
 
-	if (uChromaBase_->currentEditStateGroup()) uChromaBase_->addEditState(objectInfo(), EditState::ViewPaneAddCollectionTargetQuantity, collection->objectId(), collection->objectId(), -1, -1);
+	if (parent_.uChromaBase().currentEditStateGroup()) parent_.uChromaBase().addEditState(objectInfo(), EditState::ViewPaneAddCollectionTargetQuantity, collection->objectId(), collection->objectId(), -1, -1);
 
 	paneChanged();
 }
@@ -421,7 +410,7 @@ void ViewPane::removeCollectionTarget(Collection* collection)
 		return;
 	}
 
-	if (uChromaBase_->currentEditStateGroup()) uChromaBase_->addEditState(objectInfo(), EditState::ViewPaneRemoveCollectionTargetQuantity, collection->objectId(), collection->objectId(), -1, -1);
+	if (parent_.uChromaBase().currentEditStateGroup()) parent_.uChromaBase().addEditState(objectInfo(), EditState::ViewPaneRemoveCollectionTargetQuantity, collection->objectId(), collection->objectId(), -1, -1);
 
 	// Remove the target
 	collectionTargets_.remove(target);
@@ -911,7 +900,7 @@ void ViewPane::recalculateView(bool force)
 	Matrix4 viewMat, B, viewMatrixInverse;
 	double tempMin, tempMax;
 	Vec3<double> coordMin[3], coordMax[3], labelMin, labelMax, a, b, globalMin, globalMax;
-	FontInstance& fontInstance = uChromaBase_->viewer()->fontInstance();
+	FontInstance& fontInstance = parent_.uChromaBase().viewer()->fontInstance();
 
 	// Iterate for a few cycles
 	for (int cycle = 0; cycle < 5; ++cycle)
@@ -1440,7 +1429,7 @@ int ViewPane::axisTitleAt(int screenX, int screenY)
 {
 	// Get view matrix inverse and FontInstance
 	Matrix4 viewRotInverse = viewRotationInverse();
-	FontInstance& fontInstance = uChromaBase_->viewer()->fontInstance();
+	FontInstance& fontInstance = parent_.uChromaBase().viewer()->fontInstance();
 
 	Vec3<double> labelMin, labelMax;
 	for (int axis=0; axis<3; ++axis)
