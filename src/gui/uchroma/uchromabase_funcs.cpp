@@ -69,9 +69,6 @@ UChromaBase::UChromaBase(QWidget* parent) : parent_(parent), viewLayout_(*this),
 	currentEditStateGroup_ = NULL;
 	undoEditStateGroup_ = NULL;
 	currentEditState_ = NULL;
-
-	// Set pointers in dependent classes
-	FitKernel::setUChromaBase(this);
 }
 
 // Virtual Destructor

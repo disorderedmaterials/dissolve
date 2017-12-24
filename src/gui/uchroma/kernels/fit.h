@@ -42,7 +42,7 @@ class FitKernel
 {
 	public:
 	// Constructor
-	FitKernel();
+	FitKernel(UChromaBase& uChromaBase);
 	// Destructor
 	~FitKernel();
 	// Copy Constructor
@@ -52,15 +52,11 @@ class FitKernel
 
 
 	/*
-	 * Link to UChromaBase
+	 * Reference to UChromaBase
 	 */
 	private:
-	// Link to UChromaBase
-	static UChromaBase* uChromaBase_;
-
-	public:
-	// Set link to UChromaBase
-	static void setUChromaBase(UChromaBase* uChromaBase);
+	// Reference to UChromaBase
+	UChromaBase& uChromaBase_;
 
 
 	/*

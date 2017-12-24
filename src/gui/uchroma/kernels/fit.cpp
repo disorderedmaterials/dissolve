@@ -26,11 +26,8 @@
 #include "base/sysfunc.h"
 #include "templates/variantpointer.h"
 
-// Static members
-UChromaBase* FitKernel::uChromaBase_ = NULL;
-
 // Constructor
-FitKernel::FitKernel()
+FitKernel::FitKernel(UChromaBase& uChromaBase) : uChromaBase_(uChromaBase)
 {
 	// Equation and Variable Data
 	nVariablesUsed_ = 0;
@@ -75,7 +72,7 @@ FitKernel::~FitKernel()
 }
 
 // Copy Constructor
-FitKernel::FitKernel(const FitKernel& source)
+FitKernel::FitKernel(const FitKernel& source) : uChromaBase_(source.uChromaBase_)
 {
 	(*this) = source;
 }
@@ -116,16 +113,6 @@ void FitKernel::operator=(const FitKernel& source)
 
 	// Set equation
 	setEquation(source.equationText_.get());
-}
-
-/*
- * Link to UChromaBase
- */
-
-// Set link to UChromaBase
-void FitKernel::setUChromaBase(UChromaBase* uChromaBase)
-{
-	uChromaBase_ = uChromaBase;
 }
 
 /*
@@ -197,7 +184,7 @@ bool FitKernel::setEquation(const char* equation)
 
 	updateVariables();
 
-	uChromaBase_->setAsModified();
+	uChromaBase_.setAsModified();
 
 	return equationValid_;
 }
@@ -344,7 +331,7 @@ void FitKernel::setXRange(FitKernel::RangeType range)
 {
 	xRange_ = range;
 
-	uChromaBase_->setAsModified();
+	uChromaBase_.setAsModified();
 }
 
 // Return type of x source range
@@ -352,7 +339,7 @@ FitKernel::RangeType FitKernel::xRange()
 {
 	return xRange_;
 
-	uChromaBase_->setAsModified();
+	uChromaBase_.setAsModified();
 }
 
 // Return minimum absolute x value to use for fitting
@@ -372,7 +359,7 @@ void FitKernel::setAbsoluteXMax(double value)
 {
 	absoluteXMax_ = value;
 
-	uChromaBase_->setAsModified();
+	uChromaBase_.setAsModified();
 }
 
 // Return maximum absolute x value to use for fitting
@@ -386,7 +373,7 @@ void FitKernel::setIndexXMin(int index)
 {
 	indexXMin_ = index;
 
-	uChromaBase_->setAsModified();
+	uChromaBase_.setAsModified();
 }
 
 // Return minimum x point index to use for fitting
@@ -400,7 +387,7 @@ void FitKernel::setIndexXMax(int index)
 {
 	indexXMax_ = index;
 
-	uChromaBase_->setAsModified();
+	uChromaBase_.setAsModified();
 }
 
 // Return maximum x point index to use for fitting
@@ -414,7 +401,7 @@ void FitKernel::setIndexXSingle(int index)
 {
 	indexXSingle_ = index;
 
-	uChromaBase_->setAsModified();
+	uChromaBase_.setAsModified();
 }
 
 // Return single x point index to use for fitting
@@ -428,7 +415,7 @@ void FitKernel::setZRange(FitKernel::RangeType range)
 {
 	zRange_ = range;
 
-	uChromaBase_->setAsModified();
+	uChromaBase_.setAsModified();
 }
 
 // Return type of z source range
@@ -442,7 +429,7 @@ void FitKernel::setAbsoluteZMin(double value)
 {
 	absoluteZMin_ = value;
 
-	uChromaBase_->setAsModified();
+	uChromaBase_.setAsModified();
 }
 
 // Return minimum absolute z value to use for fitting
@@ -456,7 +443,7 @@ void FitKernel::setAbsoluteZMax(double value)
 {
 	absoluteZMax_ = value;
 
-	uChromaBase_->setAsModified();
+	uChromaBase_.setAsModified();
 }
 
 // Return maximum absolute z value to use for fitting
@@ -470,7 +457,7 @@ void FitKernel::setIndexZMin(int index)
 {
 	indexZMin_ = index;
 
-	uChromaBase_->setAsModified();
+	uChromaBase_.setAsModified();
 }
 
 // Return minimum z dataset index to use for fitting
@@ -484,7 +471,7 @@ void FitKernel::setIndexZMax(int index)
 {
 	indexZMax_ = index;
 
-	uChromaBase_->setAsModified();
+	uChromaBase_.setAsModified();
 }
 
 // Return maximum z dataset index to use for fitting
@@ -498,7 +485,7 @@ void FitKernel::setIndexZSingle(int index)
 {
 	indexZSingle_ = index;
 
-	uChromaBase_->setAsModified();
+	uChromaBase_.setAsModified();
 }
 
 // Return single z dataset index to use for fitting
@@ -512,7 +499,7 @@ void FitKernel::setOrthogonal(bool orthogonal)
 {
 	orthogonal_ = orthogonal;
 
-	uChromaBase_->setAsModified();
+	uChromaBase_.setAsModified();
 }
 
 // Return whether fit is to be performed across ZY rather than XY
@@ -526,7 +513,7 @@ void FitKernel::setGlobal(bool global)
 {
 	global_ = global;
 
-	uChromaBase_->setAsModified();
+	uChromaBase_.setAsModified();
 }
 
 // Return whether all available datasets are to be fit simultaneously
@@ -554,7 +541,7 @@ void FitKernel::setSourceCollection(Collection* collection)
 	indexZSingle_ = 0;
 	if (sourceCollection_->nDataSets() == 1) zRange_ = FitKernel::SinglePointRange;
 
-	uChromaBase_->setAsModified();
+	uChromaBase_.setAsModified();
 }
 
 // Return source collection

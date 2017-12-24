@@ -146,7 +146,7 @@ void Collection::operator=(const Collection& source)
 	currentSlice_ = NULL;
 	if (source.fitKernel_)
 	{
-		if (!fitKernel_) fitKernel_ = new FitKernel;
+		if (!fitKernel_) fitKernel_ = new FitKernel(*uChromaBase_);
 		(*fitKernel_) = (*source.fitKernel_);
 	}
 	else
@@ -1092,7 +1092,7 @@ Collection* Collection::currentSlice()
 void Collection::addFitKernel()
 {
 	if (fitKernel_)	Messenger::warn("Attempted to add a new FitKernel to collection '%s', but one already exists.\n", qPrintable(name_));
-	else fitKernel_ = new FitKernel;
+	else fitKernel_ = new FitKernel(*uChromaBase_);
 	fitKernel_->setSourceCollection(parent_);
 	fitKernel_->setDestinationCollection(this);
 
