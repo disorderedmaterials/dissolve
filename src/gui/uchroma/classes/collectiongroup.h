@@ -63,6 +63,8 @@ class CollectionGroup : public ListItem<CollectionGroup>
 	void associateCollection(Collection* collection);
 	// Remove Collection from group (if it exists)
 	void removeCollection(Collection* collection);
+	// Return whether the group is used by the specified collection
+	bool usedByCollection(Collection* collection);
 	// Return whether the group is empty
 	bool isEmpty();
 };
@@ -74,19 +76,32 @@ class CollectionGroupManager
 	// Constructor
 	CollectionGroupManager();
 
+	/*
+	 * Group Management
+	 */
 	private:
 	// List of current CollectionGroups in use
-	static List<CollectionGroup> collectionGroups_;
+	List<CollectionGroup> collectionGroups_;
 	// Usage counters for stock colours
-	static Array<int> stockColourUsageCount_;
+	Array<int> stockColourUsageCount_;
 
 	public:
 	// Add Collection to its specified group, creating / associating if necessary
-	static CollectionGroup* addToGroup(Collection* collection);
+	CollectionGroup* addToGroup(Collection* collection);
 	// Return named group, if it exists
-	static CollectionGroup* group(const char* name);
+	CollectionGroup* group(const char* name);
+	// Return group for specified Collection, if one has been assigned
+	CollectionGroup* group(Collection* collection);
 	// Remove Collection from its specified group
-	static void removeFromGroup(Collection* collection);
+	void removeFromGroup(Collection* collection);
+
+
+	/*
+	 * Properties
+	 */
+	public:
+	// Return colour definition for specified Collection
+	const ColourDefinition& colourDefinition(Collection* collection);
 };
 
 #endif

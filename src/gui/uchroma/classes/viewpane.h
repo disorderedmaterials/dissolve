@@ -24,6 +24,7 @@
 
 #include "gui/uchroma/classes/axes.h"
 #include "gui/uchroma/classes/collection.h"
+#include "gui/uchroma/classes/collectiongroup.h"
 #include "gui/uchroma/classes/targetdata.h"
 #include "gui/uchroma/classes/signal.h"
 #include "math/matrix4.h"
@@ -310,6 +311,8 @@ class ViewPane : public ListItem<ViewPane>, public ObjectStore<ViewPane>
 	double textZScale_;
 	// Whether axis text labels are drawn flat in 3D views
 	bool flatLabelsIn3D_;
+	// Collection group manager for this ViewPane
+	CollectionGroupManager collectionGroupManager_;
 
 	private:
 	// Calculate font scaling factor
@@ -338,6 +341,8 @@ class ViewPane : public ListItem<ViewPane>, public ObjectStore<ViewPane>
 	void setFlatLabelsIn3D(bool flat);
 	// Whether axis text labels are drawn flat in 3D views
 	bool flatLabelsIn3D();
+	// Return collection group manager for this ViewPane
+	CollectionGroupManager& collectionGroupManager();
 
 
 	/*

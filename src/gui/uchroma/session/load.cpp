@@ -342,7 +342,7 @@ bool UChromaBase::readCollectionBlock(LineParser& parser, Collection* collection
 				break;
 			// Group
 			case (UChromaBase::GroupKeyword):
-				collection->setGroup(parser.argc(1));
+				collection->setGroupName(parser.argc(1));
 				break;
 			// Interpolate flags
 			case (UChromaBase::InterpolateKeyword):

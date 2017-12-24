@@ -31,6 +31,7 @@
 #include "templates/objectstore.h"
 
 // Forward Declarations
+class CollectionGroupManager;
 class FitKernel;
 class UChromaBase;
 
@@ -300,15 +301,15 @@ class Collection : public ListItem<Collection>, public ObjectStore<Collection>
 	 */
 	private:
 	// Name of group that this Collection is associated to (if any)
-	CharString group_;
+	CharString groupName_;
 
 	public:
 	// Set group that this Collection is associated to
-	void setGroup(const char* groupName);
+	void setGroupName(const char* groupName);
 	// Return whether this Collection is associated to a group
-	bool hasGroup() const;
+	bool hasGroupName() const;
 	// Return group name that this Collection is associated to
-	const char* group() const;
+	const char* groupName() const;
 
 
 	/*
@@ -349,8 +350,6 @@ class Collection : public ListItem<Collection>, public ObjectStore<Collection>
 	public:
 	// Return local colour definition for display
 	ColourDefinition& colour();
-	// Return colour definition to use for display (from group if defined)
-	const ColourDefinition& displayColour() const;
 	// Set whether data is visible
 	void setVisible(bool visible);
 	// Return hether data is visible

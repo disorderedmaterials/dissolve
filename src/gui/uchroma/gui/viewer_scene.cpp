@@ -275,7 +275,7 @@ void Viewer::renderFullScene(int xOffset, int yOffset)
 			for (TargetPrimitive* primitive = target->displayPrimitives(); primitive != NULL; primitive = primitive->next)
 			{
 				// Make sure the primitive is up to date and send it to GL
-				primitive->updateAndSendPrimitive(pane->axes(), renderingOffScreen_, renderingOffScreen_, context());
+				primitive->updateAndSendPrimitive(pane, renderingOffScreen_, renderingOffScreen_, context());
 			}
 
 			// Update query
@@ -326,7 +326,7 @@ void Viewer::renderFullScene(int xOffset, int yOffset)
 		while (Collection* collection = legendEntryIterator.iterate())
 		{
 			// Grab copy of the relevant colour definition for this Collection
-			ColourDefinition colourDefinition = collection->displayColour();
+			ColourDefinition colourDefinition = pane->collectionGroupManager().colourDefinition(collection);
 
 			// Draw line indicator
 			glPushMatrix();

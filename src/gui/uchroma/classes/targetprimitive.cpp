@@ -22,6 +22,7 @@
 #include "gui/uchroma/classes/targetprimitive.h"
 #include "gui/uchroma/classes/axes.h"
 #include "gui/uchroma/classes/collection.h"
+#include "gui/uchroma/classes/viewpane.h"
 #include "gui/uchroma/render/surface.h"
 
 // Constructor
@@ -60,19 +61,22 @@ Collection* TargetPrimitive::collection()
  */
 
 // Update and send primitive
-void TargetPrimitive::updateAndSendPrimitive(const Axes& axes, bool forceUpdate, bool pushAndPop, const QOpenGLContext* context)
+void TargetPrimitive::updateAndSendPrimitive(ViewPane* pane, bool forceUpdate, bool pushAndPop, const QOpenGLContext* context)
 {
 	// Check collection validity
 	if (!Collection::objectValid(collection_, "collection in TargetPrimitive::updateAndSendPrimitive")) return;
 
+	// Grab axes for the target ViewPane
+	const Axes& axes = pane->axes();
+
 	// Grab copy of the relevant colour definition for this Collection
-	ColourDefinition colour = collection_->displayColour();
+	ColourDefinition colour = pane->collectionGroupManager().colourDefinition(collection_);
 
 	// Check whether the primitive for this collection needs updating
 	bool upToDate = true;
 	if (forceUpdate) upToDate = false;
 	else if (primitiveAxesUsedAt_ != axes.displayVersion()) upToDate = false;
-	else if (!DUQSys::sameString(primitiveColourFingerprint_, CharString("%s%i", collection_->group(), colour.colourVersion()), true)) upToDate = false;
+	else if (!DUQSys::sameString(primitiveColourFingerprint_, CharString("%s%i", collection_->groupName(), colour.colourVersion()), true)) upToDate = false;
 	else if (primitiveDataUsedAt_ != collection_->dataVersion()) upToDate = false;
 	else if (primitiveStyleUsedAt_ != collection_->displayStyleVersion()) upToDate = false;
 
@@ -115,7 +119,7 @@ void TargetPrimitive::updateAndSendPrimitive(const Axes& axes, bool forceUpdate,
 
 	// Store version points for the up-to-date primitive
 	primitiveAxesUsedAt_ = axes.displayVersion();
-	primitiveColourFingerprint_.sprintf("%s%i", collection_->group(), colour.colourVersion());
+	primitiveColourFingerprint_.sprintf("%s%i", collection_->groupName(), colour.colourVersion());
 	primitiveDataUsedAt_ = collection_->dataVersion();
 	primitiveStyleUsedAt_ = collection_->displayStyleVersion();
 

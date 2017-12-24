@@ -67,6 +67,12 @@ void CollectionGroup::removeCollection(Collection* collection)
 	collections_.remove(collection);
 }
 
+// Return whether the group is used by the specified collection
+bool CollectionGroup::usedByCollection(Collection* collection)
+{
+	return collections_.contains(collection);
+}
+
 // Return whether the group is empty
 bool CollectionGroup::isEmpty()
 {
@@ -77,23 +83,21 @@ bool CollectionGroup::isEmpty()
  * Collection Group Manager
  */
 
-// Static Members
-List<CollectionGroup> CollectionGroupManager::collectionGroups_;
-Array<int> CollectionGroupManager::stockColourUsageCount_ = Array<int>(ColourDefinition::nStockColours);
 
 // Constructor
 CollectionGroupManager::CollectionGroupManager()
 {
+	stockColourUsageCount_.initialise(ColourDefinition::nStockColours);
 }
 
 // Add Collection to its specified group, creating / associating if necessary
 CollectionGroup* CollectionGroupManager::addToGroup(Collection* collection)
 {
 	// If group name specified in Collection is empty, nothing more to do here
-	if (!collection->hasGroup()) return NULL;
+	if (!collection->hasGroupName()) return NULL;
 
 	// Does a group with this name already exist?
-	CollectionGroup* collectionGroup = group(collection->group());
+	CollectionGroup* collectionGroup = group(collection->groupName());
 	if (!collectionGroup)
 	{
 		// No existing group, so must add a new one
@@ -105,7 +109,7 @@ CollectionGroup* CollectionGroupManager::addToGroup(Collection* collection)
 		}
 
 		// TODO This will create inconsistencies in colouring if we do not EditState this change
-		collectionGroup = new CollectionGroup(collection->group(), (ColourDefinition::StockColour) lowestId);
+		collectionGroup = new CollectionGroup(collection->groupName(), (ColourDefinition::StockColour) lowestId);
 		collectionGroups_.own(collectionGroup);
 		++stockColourUsageCount_[lowestId];
 	}
@@ -122,14 +126,21 @@ CollectionGroup* CollectionGroupManager::group(const char* name)
 	return NULL;
 }
 
+// Return group for specified Collection, if one has been assigned
+CollectionGroup* CollectionGroupManager::group(Collection* collection)
+{
+	for (CollectionGroup* group = collectionGroups_.first(); group != NULL; group = group->next) if (group->usedByCollection(collection)) return group;
+	return NULL;
+}
+
 // Remove Collection from its specified group
 void CollectionGroupManager::removeFromGroup(Collection* collection)
 {
 	// If group name specified in Collection is empty, nothing more to do here
-	if (!collection->hasGroup()) return;
+	if (!collection->hasGroupName()) return;
 
 	// Does a group with this name already exist?
-	CollectionGroup* collectionGroup = group(collection->group());
+	CollectionGroup* collectionGroup = group(collection->groupName());
 	if (!collectionGroup) return;
 
 	collectionGroup->removeCollection(collection);
@@ -141,4 +152,11 @@ void CollectionGroupManager::removeFromGroup(Collection* collection)
 		--stockColourUsageCount_[collectionGroup->stockColour()];
 		collectionGroups_.remove(collectionGroup);
 	}
+}
+
+// Return colour definition for specified Collection
+const ColourDefinition& CollectionGroupManager::colourDefinition(Collection* collection)
+{
+	CollectionGroup* collectionGroup = group(collection);
+	return (collectionGroup ? collectionGroup->colour() : collection->colour());
 }

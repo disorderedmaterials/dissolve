@@ -20,7 +20,6 @@
 */
 
 #include "gui/uchroma/classes/collection.h"
-#include "gui/uchroma/classes/collectiongroup.h"
 #include "gui/uchroma/classes/viewpane.h"
 #include "gui/uchroma/uchromabase.h"
 #include "gui/uchroma/kernels/fit.h"
@@ -124,7 +123,7 @@ void Collection::operator=(const Collection& source)
 	limitsAndTransformsVersion_ = source.limitsAndTransformsVersion_;
 
 	// Group
-	group_ = source.group_;
+	groupName_ = source.groupName_;
 
 	// Associated data
 	parent_ = source.parent_;
@@ -1210,25 +1209,21 @@ void Collection::updateLimitsAndTransforms()
  */
 
 // Set group that this Collection is associated to
-void Collection::setGroup(const char* groupName)
+void Collection::setGroupName(const char* groupName)
 {
-	// Check for an existing name - if there is one, we must remove ourselves from that group first
-	if (hasGroup()) CollectionGroupManager::removeFromGroup(this);
-
-	group_ = groupName;
-	CollectionGroupManager::addToGroup(this);
+	groupName_ = groupName;
 }
 
 // Return whether this Collection is associated to a group
-bool Collection::hasGroup() const
+bool Collection::hasGroupName() const
 {
-	return (!group_.isEmpty());
+	return (!groupName_.isEmpty());
 }
 
 // Return group name that this Collection is associated to
-const char* Collection::group() const
+const char* Collection::groupName() const
 {
-	return group_.get();
+	return groupName_.get();
 }
 
 /*
@@ -1393,18 +1388,6 @@ void Collection::updateDisplayData()
 // Return local colour definition for display
 ColourDefinition& Collection::colour()
 {
-	return colour_;
-}
-
-// Return colour definition to use for display
-const ColourDefinition& Collection::displayColour() const
-{
-	if (hasGroup())
-	{
-		CollectionGroup* group = CollectionGroupManager::group(group_.get());
-		if (group) return group->colour();
-	}
-
 	return colour_;
 }
 

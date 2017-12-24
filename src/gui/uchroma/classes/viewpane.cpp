@@ -397,6 +397,9 @@ void ViewPane::addCollectionTarget(Collection* collection)
 
 	if (parent_.uChromaBase().currentEditStateGroup()) parent_.uChromaBase().addEditState(objectInfo(), EditState::ViewPaneAddCollectionTargetQuantity, collection->objectId(), collection->objectId(), -1, -1);
 
+	// Add collection to a group, if it has a group name
+	if (collection->hasGroupName()) collectionGroupManager_.addToGroup(collection);
+
 	paneChanged();
 }
 
@@ -412,8 +415,11 @@ void ViewPane::removeCollectionTarget(Collection* collection)
 
 	if (parent_.uChromaBase().currentEditStateGroup()) parent_.uChromaBase().addEditState(objectInfo(), EditState::ViewPaneRemoveCollectionTargetQuantity, collection->objectId(), collection->objectId(), -1, -1);
 
-	// Remove the target
+	// Remove the target from our list
 	collectionTargets_.remove(target);
+
+	// Remove the Collection from its group
+	collectionGroupManager_.removeFromGroup(collection);
 
 	paneChanged();
 }
@@ -1418,6 +1424,12 @@ void ViewPane::setFlatLabelsIn3D(bool flat)
 bool ViewPane::flatLabelsIn3D()
 {
 	return flatLabelsIn3D_;
+}
+
+// Return collection group manager for this ViewPane
+CollectionGroupManager& ViewPane::collectionGroupManager()
+{
+	return collectionGroupManager_;
 }
 
 /*

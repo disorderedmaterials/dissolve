@@ -27,7 +27,7 @@
 
 // Forward Declarations
 class Collection;
-class Axes;
+class ViewPane;
 
 // TargetPrimitive
 class TargetPrimitive : public ListItem<TargetPrimitive>
@@ -69,7 +69,7 @@ class TargetPrimitive : public ListItem<TargetPrimitive>
 
 	public:
 	// Update primitive for target collection, returning if data was changed
-	void updateAndSendPrimitive(const Axes& axes, bool forceUpdate, bool pushAndPop, const QOpenGLContext* context);
+	void updateAndSendPrimitive(ViewPane* pane, bool forceUpdate, bool pushAndPop, const QOpenGLContext* context);
 	// Send primitive to GL
 	void sendToGL();
 };
