@@ -1,6 +1,6 @@
 /*
-	*** Signal
-	*** src/gui/uchroma/classes/signal.cpp
+	*** UChromaBase - Signalling
+	*** src/gui/uchroma/uchromabase_signal.cpp
 	Copyright T. Youngs 2013-2017
 
 	This file is part of uChroma.
@@ -19,35 +19,15 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/uchroma/classes/signal.h"
 #include "gui/uchroma/uchromabase.h"
 
-/*
- * Link to UChromaBase
- */
-
-// Static members
-UChromaBase* UChromaSignal::uChromaBase_ = NULL;
-
-// Set link to UChromaBase
-void UChromaSignal::setUChromaBase(UChromaBase* uChromaBase)
-{
-	uChromaBase_ = uChromaBase;
-}
-
-/*
- * Signalling
- */
-
 // Send Collection-related signal
-UChromaSignal::SignalAction UChromaSignal::send(UChromaSignal::CollectionSignal signal, Collection* collection)
+UChromaSignal::SignalAction UChromaBase::sendSignal(UChromaSignal::CollectionSignal signal, Collection* collection)
 {
-	if (!uChromaBase_) return UChromaSignal::IgnoreSignal;
-
 	// Send to ViewPanes in current ViewLayout....
 	int nAccepted = 0;
 	bool unique = false;
-	for (ViewPane* pane = uChromaBase_->viewLayout().panes(); pane != NULL; pane = pane->next)
+	for (ViewPane* pane = viewLayout_.panes(); pane != NULL; pane = pane->next)
 	{
 		UChromaSignal::SignalAction result = pane->processCollectionSignal(signal, collection);
 		if (result == UChromaSignal::IgnoreSignal) continue;

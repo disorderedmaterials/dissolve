@@ -25,6 +25,7 @@
 #include "base/charstring.h"
 
 #include "gui/uchroma/classes/collection.h"
+#include "gui/uchroma/classes/signal.h"
 #include "gui/uchroma/classes/viewlayout.h"
 #include "gui/uchroma/session/editstategroup.h"
 #include "gui/uchroma/gui/viewer.hui"
@@ -680,6 +681,14 @@ class UChromaBase
 	bool undo();
 	// Perform redo
 	bool redo();
+
+
+	/*
+	 * Signalling
+	 */
+	public:
+	// Send signal out
+	UChromaSignal::SignalAction sendSignal(UChromaSignal::CollectionSignal signal, Collection* collection);
 };
 
 #endif

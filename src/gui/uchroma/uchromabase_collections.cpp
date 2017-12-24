@@ -92,7 +92,7 @@ Collection* UChromaBase::addCollection(const char* name, int listIndex)
 	else currentCollection_->setName(uniqueCollectionName(name));
 
 	// Send a signal out
-	UChromaSignal::send(UChromaSignal::CollectionCreatedSignal, currentCollection_);
+	sendSignal(UChromaSignal::CollectionCreatedSignal, currentCollection_);
 
 	setAsModified();
 
@@ -183,7 +183,7 @@ void UChromaBase::removeCollection(Collection* collection)
 		else currentCollection_ = collection->prev;
 
 		// Send a signal out before we finalise deletion
-		UChromaSignal::send(UChromaSignal::CollectionDeletedSignal, collection);
+		sendSignal(UChromaSignal::CollectionDeletedSignal, collection);
 
 		// Create EditState data
 		if (UChromaBase::addEditState(collection->objectInfo(), EditState::CollectionRemoveQuantity))

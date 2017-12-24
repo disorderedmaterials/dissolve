@@ -941,7 +941,7 @@ Collection* Collection::addFit(const char* name, int position)
 	newFit->setName(uniqueFitName(name));
 
 	// Send a signal out
-	UChromaSignal::send(UChromaSignal::CollectionCreatedSignal, newFit);
+	uChromaBase_->sendSignal(UChromaSignal::CollectionCreatedSignal, newFit);
 
 	uChromaBase_->setAsModified();
 
@@ -952,7 +952,7 @@ Collection* Collection::addFit(const char* name, int position)
 void Collection::removeFit(Collection* collection)
 {
 	// Send a signal out before we finalise deletion
-	UChromaSignal::send(UChromaSignal::CollectionDeletedSignal, collection);
+	uChromaBase_->sendSignal(UChromaSignal::CollectionDeletedSignal, collection);
 
 	// Create editstate data
 	if (uChromaBase_->addEditState(collection->objectInfo(), EditState::CollectionRemoveQuantity))
@@ -1016,7 +1016,7 @@ Collection* Collection::addSlice(const char* name, int position)
 	newSlice->setName(uniqueSliceName(name));
 
 	// Send a signal out
-	UChromaSignal::send(UChromaSignal::CollectionCreatedSignal, newSlice);
+	uChromaBase_->sendSignal(UChromaSignal::CollectionCreatedSignal, newSlice);
 
 	uChromaBase_->setAsModified();
 
@@ -1027,7 +1027,7 @@ Collection* Collection::addSlice(const char* name, int position)
 void Collection::removeSlice(Collection* collection)
 {
 	// Send a signal out before we finalise deletion
-	UChromaSignal::send(UChromaSignal::CollectionDeletedSignal, collection);
+	uChromaBase_->sendSignal(UChromaSignal::CollectionDeletedSignal, collection);
 
 	// Create editstate data
 	if (uChromaBase_->addEditState(collection->objectInfo(), EditState::CollectionRemoveQuantity))
@@ -1060,7 +1060,7 @@ void Collection::updateCurrentSlice(int axis, double axisValue)
 {
 	getSlice(axis, closestBin(axis, axisValue));
 
-	UChromaSignal::send(UChromaSignal::CollectionSliceChangedSignal, this);
+	uChromaBase_->sendSignal(UChromaSignal::CollectionSliceChangedSignal, this);
 }
 
 // Extract current slice based on specified axis and value
@@ -1071,7 +1071,7 @@ void Collection::extractCurrentSlice(int axis, double axisValue)
 	Collection* newSlice = addSlice(currentSlice_->name());
 	newSlice->addDataSet(currentSlice_->dataSets());
 
-	UChromaSignal::send(UChromaSignal::CollectionSliceExtractedSignal, newSlice);
+	uChromaBase_->sendSignal(UChromaSignal::CollectionSliceExtractedSignal, newSlice);
 }
 
 // Return current slice

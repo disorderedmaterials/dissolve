@@ -23,27 +23,11 @@
 #define DUQ_UCHROMASIGNAL_H
 
 // Forward Declarations
-class Collection;
-class UChromaBase;
+/* none */
 
 // Signals
 class UChromaSignal
 {
-	/*
-	 * Link to UChromaBase
-	 */
-	private:
-	// Link to UChromaBase
-	static UChromaBase* uChromaBase_;
-
-	public:
-	// Set link to UChromaBase
-	static void setUChromaBase(UChromaBase* uChromaBase);
-
-
-	/*
-	 * Signalling
-	 */
 	public:
 	// Signal actions
 	enum SignalAction { IgnoreSignal, AcceptSignal, UniqueAcceptSignal };
@@ -56,10 +40,6 @@ class UChromaSignal
 		CollectionSliceExtractedSignal,
 		CollectionDataChangedSignal
 	};
-
-	public:
-	// Send signal out
-	static SignalAction send(CollectionSignal signal, Collection* collection);
 };
 
 #endif

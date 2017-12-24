@@ -14,7 +14,6 @@ add_library(classes
   namedvalue.cpp
   numberformat.cpp
   referencevariable.cpp
-  signal.cpp
   sysfunc.cpp
   targetdata.cpp
   targetprimitive.cpp
