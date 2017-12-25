@@ -203,6 +203,9 @@ void Viewer::keyPressEvent(QKeyEvent *event)
 			if (km&Qt::ShiftModifier) viewPane->axes().toggleLogarithmic(viewType == ViewPane::FlatXZView ? 2 : 1);
 			else viewPane->axes().toggleLogarithmic(viewType == ViewPane::FlatZYView ? 2 : 0);
 			break;
+		case (Qt::Key_S):
+			viewPane->collectionGroupManager().cycleVerticalShifts();
+			break;
 		default:
 			refresh = false;
 			ignore = true;

@@ -49,8 +49,14 @@ class CollectionGroup : public ListItem<CollectionGroup>
 	ColourDefinition::StockColour stockColour_;
 	// Colour definition for this group
 	ColourDefinition colour_;
-	// Shift in vertical axis to apply to Collections
-	// TODO
+	// Whether vertical shifting is enabled in this group
+	bool hasVerticalShift_;
+	// Shift (in vertical axis) to apply to Collections
+	double verticalShift_;
+
+	private:
+	// Set vertical shift in all Collections in the group via their transform equations
+	void setVerticalShiftInCollections();
 
 	public:
 	// Return name of group
@@ -67,6 +73,12 @@ class CollectionGroup : public ListItem<CollectionGroup>
 	bool usedByCollection(Collection* collection);
 	// Return whether the group is empty
 	bool isEmpty();
+	// Whether vertical shifting is enabled in this group
+	bool setVerticalShift(bool enabled, double verticalShift);
+	// Whether vertical shifting is enabled in this group
+	bool hasVerticalShift();
+	// Return shift (in vertical axis) to apply to Collections
+	double verticalShift();
 };
 
 // Collection Group Manager
@@ -99,9 +111,21 @@ class CollectionGroupManager
 	/*
 	 * Properties
 	 */
+	private:
+	// Current vertical shift delta index being applied to groups
+	int verticalShiftIndex_;
+
+	private:
+	// Set vertical shifts for current CollectionGroups
+	void setCollectionGroupShifts();
+
 	public:
 	// Return colour definition for specified Collection
 	const ColourDefinition& colourDefinition(Collection* collection);
+	// Cycle vertical shift applied to CollectionGroups
+	int cycleVerticalShifts();
+	// Remove all vertical shifts from CollectionGroups
+	void removeVerticalShifts();
 };
 
 #endif

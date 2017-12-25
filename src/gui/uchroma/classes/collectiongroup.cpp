@@ -31,10 +31,23 @@ CollectionGroup::CollectionGroup(const char* name, ColourDefinition::StockColour
 {
 	name_ = name;
 	stockColour_ = colour;
+	hasVerticalShift_ = false;
+	verticalShift_ = 0.0;
 
 	// Set up the ColourDefinition to be single (stock) colour
 	colour_.setColourSource(ColourDefinition::SingleColourSource);
 	colour_.setColourScalePoint(ColourDefinition::SingleColourSource, ColourDefinition::stockColour(stockColour_));
+}
+
+// Set vertical shift in all Collections in the group via their transform equations
+void CollectionGroup::setVerticalShiftInCollections()
+{
+	RefListIterator<Collection,int> collectionIterator(collections_);
+	while (Collection* collection = collectionIterator.iterate())
+	{
+		collection->setTransformEnabled(1, hasVerticalShift_);
+		collection->setTransformEquation(1, CharString("y+%f", verticalShift_));
+	}
 }
 
 // Return name of group
@@ -59,11 +72,25 @@ const ColourDefinition& CollectionGroup::colour() const
 void CollectionGroup::associateCollection(Collection* collection)
 {
 	collections_.addUnique(collection);
+
+	// Apply vertical shift to the collection if necessary
+	if (hasVerticalShift_)
+	{
+		collection->setTransformEnabled(1, true);
+		collection->setTransformEquation(1, CharString("y+%f", verticalShift_));
+	}
 }
 
 // Remove Collection from group (if it exists)
 void CollectionGroup::removeCollection(Collection* collection)
 {
+	// Remove shift from the collection first, if one is being applied
+	if (hasVerticalShift_ && collections_.contains(collection))
+	{
+		collection->setTransformEnabled(1, false);
+		collection->setTransformEquation(1, "y");
+	}
+
 	collections_.remove(collection);
 }
 
@@ -79,15 +106,36 @@ bool CollectionGroup::isEmpty()
 	return collections_.nItems() == 0;
 }
 
+// Whether vertical shifting is enabled in this group
+bool CollectionGroup::setVerticalShift(bool enabled, double verticalShift)
+{
+	hasVerticalShift_ = enabled;
+	verticalShift_ = verticalShift;
+
+	setVerticalShiftInCollections();
+}
+
+// Whether vertical shifting is enabled in this group
+bool CollectionGroup::hasVerticalShift()
+{
+	return hasVerticalShift_;
+}
+
+// Return shift (in vertical axis) to apply to Collections
+double CollectionGroup::verticalShift()
+{
+	return verticalShift_;
+}
+
 /*
  * Collection Group Manager
  */
-
 
 // Constructor
 CollectionGroupManager::CollectionGroupManager()
 {
 	stockColourUsageCount_.initialise(ColourDefinition::nStockColours);
+	verticalShiftIndex_ = 0;
 }
 
 // Add Collection to its specified group, creating / associating if necessary
@@ -154,9 +202,43 @@ void CollectionGroupManager::removeFromGroup(Collection* collection)
 	}
 }
 
+// Vertical shifts
+int nVerticalShiftAmounts = 4;
+double VerticalShiftAmounts[] = { 0.0, 0.5, 1.0, 2.0 };
+
+// Set vertical shifts for current CollectionGroups
+void CollectionGroupManager::setCollectionGroupShifts()
+{
+	// Loop over CollectionGroups
+	double verticalShift = 0.0;
+	for (CollectionGroup* group = collectionGroups_.first(); group != NULL; group = group->next)
+	{
+		group->setVerticalShift(verticalShiftIndex_ > 0, verticalShift);
+
+		// Increase shift amount for the next group
+		verticalShift += VerticalShiftAmounts[verticalShiftIndex_];
+	}
+}
+
 // Return colour definition for specified Collection
 const ColourDefinition& CollectionGroupManager::colourDefinition(Collection* collection)
 {
 	CollectionGroup* collectionGroup = group(collection);
 	return (collectionGroup ? collectionGroup->colour() : collection->colour());
+}
+
+// Cycle vertical shift applied to CollectionGroups
+int CollectionGroupManager::cycleVerticalShifts()
+{
+	verticalShiftIndex_ = (verticalShiftIndex_+1)%nVerticalShiftAmounts;
+
+	setCollectionGroupShifts();
+}
+
+// Remove all vertical shifts from CollectionGroups
+void CollectionGroupManager::removeVerticalShifts()
+{
+	verticalShiftIndex_ = 0;
+
+	setCollectionGroupShifts();
 }
