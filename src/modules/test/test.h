@@ -105,6 +105,14 @@ class TestModule : public Module
 
 
 	/*
+	 * Functions
+	 */
+	private:
+	// Calculate c(r) from supplied S(Q)
+	XYData calculateCR(const XYData& sq, double normFactor, double rMin, double rStep, double rMax, const BroadeningFunction& broadening = BroadeningFunction::unity(), bool unbroaden = false, XYData::WindowFunction wf = XYData::NoWindow);
+
+
+	/*
 	 * Local Data
 	 */
 	private:

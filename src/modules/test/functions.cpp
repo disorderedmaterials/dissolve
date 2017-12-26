@@ -21,3 +21,42 @@
 
 #include "modules/test/test.h"
 
+// Calculate c(r) from supplied sq
+XYData TestModule::calculateCR(const XYData& sq, double normFactor, double rMin, double rStep, double rMax, const BroadeningFunction& broadening, bool unbroaden, XYData::WindowFunction wf)
+{
+	// Create working array
+	XYData cr;
+
+	// Assume deltQ is the difference between the first two points
+	double deltaQ = sq.x(1) - sq.x(0);
+	int nQ = sq.nPoints();
+
+	// Perform Fourier sine transform, apply general and omega-dependent broadening, as well as window function
+	double ft, windowPos, broaden;
+	double omega = rMin;
+	while (omega <= rMax)
+	{
+		ft = 0.0;
+		for (int m=0; m<nQ; ++m)
+		{
+			// Get window value at this position in the function
+			windowPos = double(m) / double(nQ-1);
+
+			// Calculate broadening
+			broaden = (unbroaden ? 1.0 / broadening.yFT(sq.x(m), omega) : broadening.yFT(sq.x(m), omega));
+
+			ft += broaden * XYData::window(wf, windowPos) * sq.y(m) * deltaQ * ((sin(sq.x(m)*omega) * sq.x(m)) / sq.y(m));
+		}
+
+		// Normalise
+		if (omega > 0.0) ft /= omega;
+		cr.addPoint(omega, ft);
+		
+		omega += rStep;
+	}
+
+	// Apply normalisation factor
+	cr.arrayY() *= normFactor;
+
+	return cr;
+}

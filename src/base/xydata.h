@@ -225,10 +225,10 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	private:
 	// Make some checks before doing transform
 	bool checkBeforeTransform();
-	// Return value of window function at specified position (in range 0 - 1.0)
-	double window(XYData::WindowFunction wf, double pos);
 
 	public:
+	// Return value of window function at specified position (in range 0 - 1.0)
+	static double window(XYData::WindowFunction wf, double pos);
 	// Perform plain Fourier transform of real data
 	bool fourierTransformReal(bool forwardTransform = true, XYData::WindowFunction wf = XYData::NoWindow);
 	// Perform Fourier sine transform of current distribution function, over range specified, and with specified broadening functions (applied in Q space) and window applied (if requested)

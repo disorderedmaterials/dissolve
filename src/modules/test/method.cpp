@@ -114,6 +114,17 @@ bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 	RefListIterator<Data,bool> dataIterator(targetData_);
 	while (Data* data = dataIterator.iterate()) if (!data->setUp(duq.processingModuleData())) return false;
 
+	// TEST
+	XYData cr = calculateCR(targetData_.firstItem()->data(), 1.0 / (2.0*3.14159*rho), 0.05, 0.01, 30.0);
+	cr.save("CR.txt");
+	XYData gr = targetData_.firstItem()->data();
+	gr.broadenedSineFT(1.0 / (2 * PI * rho), 0.05, 0.01, 30.0);
+	gr.save("GR.txt");
+	XYData py;
+	for (int n=0; n<gr.nPoints(); ++n) py.addPoint(gr.x(n), BOLTZMANN*77.0*log(1.0 - cr.y(n)/gr.y(n)));
+	py.save("py.txt");
+	return false;
+
 	/*
 	 * Construct our full, square, scattering matrix, using the master AtomTypes list
 	 */
