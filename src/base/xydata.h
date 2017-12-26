@@ -235,8 +235,6 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	bool broadenedSineFT(double normFactor, double wMin, double wStep, double wMax, const BroadeningFunction& broadening = BroadeningFunction::unity(), bool unbroaden = false, XYData::WindowFunction wf = XYData::NoWindow);
 	// Fourier transform current data, applying line-width broadening in real-space using the modified Lorch function
 	bool transformLorch(double atomicDensity, double step, double rMax, double beta, double delta0, bool qToR);
-	// Calculate S(Q) correlation function
-	bool correlateSQ(double atomicDensity);
 
 
 	/*
