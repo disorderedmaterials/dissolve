@@ -335,9 +335,9 @@ bool ViewPane::containsGridReference(int gridX, int gridY)
 const char* RoleKeywords[ViewPane::nPaneRoles] = { "Extractor", "SliceMonitor", "Standard" };
 
 // Convert text string to PaneRole
-ViewPane::PaneRole ViewPane::paneRole(QString s)
+ViewPane::PaneRole ViewPane::paneRole(const char* s)
 {
-	for (int n=0; n<ViewPane::nPaneRoles; ++n) if (s == RoleKeywords[n]) return (ViewPane::PaneRole) n;
+	for (int n=0; n<ViewPane::nPaneRoles; ++n) if (DUQSys::sameString(s, RoleKeywords[n])) return (ViewPane::PaneRole) n;
 	return ViewPane::nPaneRoles;
 }
 

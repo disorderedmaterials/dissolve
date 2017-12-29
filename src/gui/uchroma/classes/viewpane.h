@@ -130,7 +130,7 @@ class ViewPane : public ListItem<ViewPane>, public ObjectStore<ViewPane>
 	// Role of pane
 	enum PaneRole { ExtractorRole, SliceMonitorRole, StandardRole, nPaneRoles };
 	// Convert text string to PaneRole
-	static PaneRole paneRole(QString s);
+	static PaneRole paneRole(const char* s);
 	// Convert PaneRole to text string
 	static const char* paneRole(PaneRole role);
 
