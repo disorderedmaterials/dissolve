@@ -114,17 +114,6 @@ bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 	RefListIterator<Data,bool> dataIterator(targetData_);
 	while (Data* data = dataIterator.iterate()) if (!data->setUp(duq.processingModuleData())) return false;
 
-	// TEST
-	XYData cr = calculateCR(targetData_.firstItem()->data(), 1.0 / (2.0*3.14159*rho), 0.05, 0.01, 30.0);
-	cr.save("CR.txt");
-	XYData gr = targetData_.firstItem()->data();
-	gr.broadenedSineFT(1.0 / (2 * PI * rho), 0.05, 0.01, 30.0);
-	gr.save("GR.txt");
-	XYData py;
-	for (int n=0; n<gr.nPoints(); ++n) py.addPoint(gr.x(n), BOLTZMANN*77.0*log(1.0 - cr.y(n)/gr.y(n)));
-	py.save("py.txt");
-	return false;
-
 	/*
 	 * Construct our full, square, scattering matrix, using the master AtomTypes list
 	 */
@@ -133,7 +122,7 @@ bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 	ScatteringMatrix scatteringMatrix;
 	scatteringMatrix.initialise(duq.atomTypeList(), generatedSQ, uniqueName_);
 
-	// For each Data, get the associated Weights from the associated Partials module
+	// For each Data, get the Weights from the associated Partials module
 	dataIterator.restart();
 	while (Data* data = dataIterator.iterate())
 	{
@@ -157,7 +146,6 @@ bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 		Messenger::error("TestModule: Failed to set up scattering matrix.\n");
 		return false;
 	}
-
 	scatteringMatrix.print();
 
 	/*
@@ -187,45 +175,125 @@ bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 
 			// Subtract the simulated unweighted S(Q) from the difference partial
 			partial.addInterpolated(unweightedSQ.partial(n, m), -1.0);
-
-			// Perform some judicious smoothing on the data
-			partial.smooth(10);
-
-			// Do the inverse FT
-			partial.broadenedSineFT(1.0 / (2 * PI * rho), 0.05, 0.01, 30.0, broadening, true, XYData::HannWindow);
 		}
 	}
 
 	/*
-	 * Generate a correction to the potential
+	 * Create perturbations to interatomic potentials
 	 */
-	const double maxInt = 0.25;
-	double weight;
+	TestModule::PotentialGenerationType generationType = TestModule::potentialGenerationType(keywords_.asString("PotentialGeneration"));
+	const double weighting = keywords_.asDouble("Weighting");
+	Array2D<XYData>& deltaPhiR = GenericListHelper< Array2D<XYData> >::realise(duq.processingModuleData(), "DeltaPhiR", uniqueName_, GenericItem::InRestartFileFlag, &created);
+	if (created) deltaPhiR.initialise(nTypes, nTypes, true);
+	Array2D<XYData>& deltaGR = GenericListHelper< Array2D<XYData> >::realise(duq.processingModuleData(), "DeltaGR", uniqueName_, GenericItem::InRestartFileFlag, &created);
+	if (created) deltaGR.initialise(nTypes, nTypes, true);
+
+	double weight, absInt;
+	XYData cr;
 	n = 0;
 	for (AtomType* at1 = duq.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++n)
 	{
 		int m = n;
 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
 		{
-			// Grab difference partial, now back-transformed into a difference g(r)
-			XYData& diffgr = deltaSQ.ref(n, m);
-
-			// Process the addition a little?
-			// TODO
-
-			// Decide on the weight of the difference we will apply
-			double absInt = diffgr.absIntegral();
-			weight = absInt > maxInt ? -maxInt / absInt : -absInt;
-			printf("ABSInt = %f, weight = %f\n", absInt, weight);
-
-			// Grab and modify pair potential
+			// Grab pointer to the relevant pair potential
 			PairPotential* pp = duq.pairPotential(at1, at2);
 			if (!pp)
 			{
 				Messenger::error("Failed to find PairPotential for AtomTypes '%s' and '%s'.\n", at1->name(), at2->name());
 				return false;
 			}
-			pp->adjustUAdditional(diffgr, weight);
+
+			// Grab potential perturbation container, clear it, and make sure its object name is set
+			XYData& dPhiR = deltaPhiR.ref(n, m);
+			dPhiR.clear();
+			dPhiR.setObjectName(CharString("%s//DeltaPhiR//%s-%s", uniqueName_.get(), at1->name(), at2->name()));
+
+			// Grab delta g(r) container and make sure its object name is set
+			XYData& dGR = deltaGR.ref(n, m);
+			dGR.setObjectName(CharString("%s//DeltaGR//%s-%s", uniqueName_.get(), at1->name(), at2->name()));
+
+			// Copy the delta S(Q) and do the inverse FT to ger the delta [g(r) - 1]
+			dGR = deltaSQ.ref(n,m);
+// 			partial.smooth(10);
+			dGR.broadenedSineFT(1.0 / (2 * PI * PI * rho), 0.0, 0.01, 30.0, broadening, true);
+
+			// Set the default weighting factor for the pair potential addition
+			weight = weighting;
+
+			// Create a perturbation
+			switch (generationType)
+			{
+				case (TestModule::DirectPotentialGeneration):
+					// Decide on the weight of the difference we will apply
+					absInt = dGR.absIntegral();
+					weight = absInt > weight ? -weight / absInt : -absInt;
+// 					printf("ABSInt = %f, weight = %f\n", absInt, weight);
+					dPhiR = dGR;
+					break;
+				case (TestModule::PercusYevickPotentialGeneration):
+					/*
+					 * The original Percus-Yevick closure relationship for solving the Ornstein-Zernike equation is:
+					 * 
+					 *  phi(r) = ln(1.0 - c(r)/g(r))
+					 * 
+					 * The relationship assumes that the g(r) is well-behaved, but our delta g(r) may be anything but.
+					 * Specifically, troughs in the delta g(r), which we interpret as indicating atoms need to be forced apart
+					 * at these distances, are over-exagerrated compared to peaks because of the use of ln. Also, it is possible
+					 * to have large dips in the delta g(r) that force the ratio c(r)/g(r) above 1.0, and create NaNs in the
+					 * resulting function.
+					 * 
+					 * To account for this, we employ a slight modification of the relationship:
+					 * 
+					 * phi(r) = ln(1.0 - c(r) / [|g(r)-1.0| + 1.0])
+					 * 
+					 */
+
+					// Calculate c(r) from the delta S(Q)
+					cr = calculateCR(deltaSQ.ref(n,m), 1.0 / (2.0*PI*PI*rho), 0.0, 0.01, 30.0);
+// 					cr.save("CR.txt");
+
+					// dGR contains the FT of the delta S(Q), and oscillates around zero. 
+					// Original PY
+// 					for (int n=0; n<deltaGR.nPoints(); ++n) dU.addPoint(deltaGR.x(n), log(1.0 - cr.y(n)/(deltaGR.y(n)+1.0));
+
+					// Modified PY
+					for (int n=0; n<dGR.nPoints(); ++n) dPhiR.addPoint(dGR.x(n), log(1.0 - cr.y(n) / (fabs(dGR.y(n)-1.0)+1.0)));
+
+// 					dU.save("py.txt");
+// 					XYData hnc;
+// 					for (int n=0; n<gr.nPoints(); ++n) hnc.addPoint(gr.x(n), (gr.y(n) - cr.y(n) - 1.0 - log(gr.y(n))));
+// 					hnc.save("hnc.txt");
+// 					return false;
+					break;
+				default:
+					return false;
+			}
+
+			// Apply the perturbation
+			dPhiR.arrayY() *= weight;
+			pp->adjustUAdditional(dPhiR);
+
+
+			// TEST
+		// 	XYData gr = targetData_.firstItem()->data();
+			// TEST - Normalise to 1.0 - this would already be the case for the predicted partials
+		// 	gr.arrayY() /= 6.2001;
+		// 	gr.save("SQ.txt");
+
+// 			XYData cr = calculateCR(gr, 1.0 / (2.0*PI*PI*rho), 0.05, 0.01, 30.0);
+// 			cr.save("CR.txt");
+// 			gr.broadenedSineFT(1.0 / (2 * PI * PI * rho), 0.05, 0.01, 30.0, BroadeningFunction::unity(), false);
+// 			gr.arrayY() += 1.0;
+// 			gr.save("GR.txt");
+// 			XYData py;
+// 			for (int n=0; n<gr.nPoints(); ++n) py.addPoint(gr.x(n),  log(1.0 - cr.y(n)/gr.y(n)));
+// 			py.save("py.txt");
+// 			XYData hnc;
+// 			for (int n=0; n<gr.nPoints(); ++n) hnc.addPoint(gr.x(n), (gr.y(n) - cr.y(n) - 1.0 - log(gr.y(n))));
+// 			hnc.save("hnc.txt");
+// 			return false;
+
 		}
 	}
 

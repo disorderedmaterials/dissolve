@@ -83,6 +83,20 @@ class TestModule : public Module
 	/*
 	 * Options
 	 */
+	public:
+	// Potential Generation Type Enum
+	enum PotentialGenerationType
+	{
+		DirectPotentialGeneration,		/* Invert delta S(Q) and treat as addition to potential */
+		PercusYevickPotentialGeneration,	/* Use Percus-Yevick closure to generate potential from delta S(Q) */
+		HypernettedChainPotentialGeneration,	/* Use the hypernetted chain closure to generate potential from delta S(Q) */
+		nPotentialGenerationTypes
+	};
+	// Convert text string to PotentialGenerationType
+	static PotentialGenerationType potentialGenerationType(const char* s);
+	// Convert PotentialGenerationType to text string
+	static const char* potentialGenerationType(PotentialGenerationType pgt);
+
 	protected:
 	// Set up options for Module
 	void setUpKeywords();

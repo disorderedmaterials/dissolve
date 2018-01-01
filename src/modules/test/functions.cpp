@@ -45,7 +45,7 @@ XYData TestModule::calculateCR(const XYData& sq, double normFactor, double rMin,
 			// Calculate broadening
 			broaden = (unbroaden ? 1.0 / broadening.yFT(sq.x(m), omega) : broadening.yFT(sq.x(m), omega));
 
-			ft += broaden * XYData::window(wf, windowPos) * sq.y(m) * deltaQ * ((sin(sq.x(m)*omega) * sq.x(m)) / sq.y(m));
+			ft += broaden * XYData::window(wf, windowPos) * sq.y(m) * deltaQ * ((sin(sq.x(m)*omega) * sq.x(m)) / (sq.y(m)+1.0));
 		}
 
 		// Normalise

@@ -24,11 +24,28 @@
 #include "module/keywordtypes.h"
 #include "base/lineparser.h"
 
+// Potential Generation Type
+const char* PotentialGenerationTypeKeywords[] = { "Direct", "PY", "HNC" };
+
+// Convert text string to PotentialGenerationType
+TestModule::PotentialGenerationType TestModule::potentialGenerationType(const char* s)
+{
+	for (int n=0; n<TestModule::nPotentialGenerationTypes; ++n) if (DUQSys::sameString(s, PotentialGenerationTypeKeywords[n])) return (TestModule::PotentialGenerationType) n;
+	return TestModule::nPotentialGenerationTypes;
+}
+
+// Convert PotentialGenerationType to text string
+const char* TestModule::potentialGenerationType(TestModule::PotentialGenerationType pgt)
+{
+	return PotentialGenerationTypeKeywords[pgt];
+}
+
 // Set up keywords for Module
 void TestModule::setUpKeywords()
 {
-// 	keywords_.add(new CharStringModuleKeyword("<Undefined>"), "Partials", "Partials Module from which to get simulated partial data");
-	keywords_.add(new BoolModuleKeyword(true), "OnlyWhenStable", "Assesses the energy of the Configurations contributing to the Partials, refining the potential only when all energies are stable");
+	keywords_.add(new BoolModuleKeyword(true), "OnlyWhenStable", "Assesses the energy of the Configurations contributing to the Partials, refining the potential only when all related Configuration energies are stable");
+	keywords_.add(new CharStringModuleKeyword("PY", TestModule::nPotentialGenerationTypes, PotentialGenerationTypeKeywords), "PotentialGeneration", "Pair potential generation method to employ");
+	keywords_.add(new DoubleModuleKeyword(0.25, 0.01, 1.0), "Weighting", "Fractional (maximal) amounts of generated perturbations to apply to pair potentials");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised

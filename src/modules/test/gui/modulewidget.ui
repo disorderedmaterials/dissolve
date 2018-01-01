@@ -48,7 +48,7 @@
       </font>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="DataTab">
       <attribute name="title">
@@ -132,9 +132,9 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="PerturbationTab">
+     <widget class="QWidget" name="PotentialsTab">
       <attribute name="title">
-       <string>Perturbation</string>
+       <string>Additional Potentials</string>
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout_4">
        <property name="spacing">
@@ -153,7 +153,7 @@
         <number>4</number>
        </property>
        <item>
-        <widget class="QFrame" name="PerturbationsPlotWidget">
+        <widget class="QFrame" name="PotentialsPlotWidget">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>

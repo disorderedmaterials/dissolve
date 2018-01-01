@@ -76,22 +76,23 @@ TestModuleWidget::TestModuleWidget(QWidget* parent, Module* module, DUQ& dUQ) : 
 	viewPane->axes().setMin(1, -1.0);
 	viewPane->axes().setMax(1, 1.0);
 
-	// Perturbations Graph
+	// Potentials Graph
 
 	layout = new QVBoxLayout;
 	layout->setContentsMargins(0,0,0,0);
 	layout->setSpacing(4);
-	perturbationsGraph_ = new UChromaViewWidget;
-	layout->addWidget(perturbationsGraph_);
-	ui.PerturbationsPlotWidget->setLayout(layout);
+	potentialsGraph_ = new UChromaViewWidget;
+	layout->addWidget(potentialsGraph_);
+	ui.PotentialsPlotWidget->setLayout(layout);
 
 	// Start a new, empty session
-	perturbationsGraph_->startNewSession(true);
-	viewPane = perturbationsGraph_->currentViewPane();
+	potentialsGraph_->startNewSession(true);
+	viewPane = potentialsGraph_->currentViewPane();
 	viewPane->setViewType(ViewPane::FlatXYView);
 	viewPane->axes().setTitle(0, "\\it{r}, Angstroms");
 	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "?");
+	// TODO Add escape sequence to add special character - e.g. \\sym{Delta}
+	viewPane->axes().setTitle(1, "Delta \\it{r}, Delta phi \\it{r}");
 	viewPane->axes().setMin(1, -1.0);
 	viewPane->axes().setMax(1, 1.0);
 
@@ -142,8 +143,8 @@ void TestModuleWidget::initialiseControls(TestModule* module)
 	Module* partialsModule = module_->dependentModule("Partials");
 	CharString partialsModuleName = partialsModule ? partialsModule->uniqueName() : "Partials???";
 
-	// Add experimentally-determined partials, calculated partials, and differences to the partialSQGraph_
-	int nTypes = dUQ_.atomTypeList().nItems();
+	// Add experimentally-determined partial S(Q), calculated partial S(Q), and delta S(Q) to the partialSQGraph_
+	const int nTypes = dUQ_.atomTypeList().nItems();
 	int n = 0;
 	for (AtomType* at1 = dUQ_.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++n)
 	{
@@ -158,9 +159,26 @@ void TestModuleWidget::initialiseControls(TestModule* module)
 			blockData.sprintf("Collection '%s-%s Calc'; Group '%s-%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated %s-%s'; Source XYData '%s//UnweightedSQ//%s-%s//Full'; EndDataSet; EndCollection", at1->name(), at2->name(), at1->name(), at2->name(), at1->name(), at2->name(), partialsModuleName.get(), at1->name(), at2->name());
 			partialSQGraph_->addCollectionFromBlock(blockData);
 
-			// Difference
-			blockData.sprintf("Collection '%s-%s Diff'; Group '%s-%s'; LineStyle 1.0 'Dots'; DataSet 'Difference %s-%s'; Source XYData '%s//DeltaSQ//%s-%s'; EndDataSet; EndCollection", at1->name(), at2->name(), at1->name(), at2->name(), at1->name(), at2->name(), module_->uniqueName(), at1->name(), at2->name());
+			// Deltas
+			blockData.sprintf("Collection '%s-%s Diff'; Group '%s-%s'; LineStyle 1.0 'Dots'; DataSet 'Delta %s-%s'; Source XYData '%s//DeltaSQ//%s-%s'; EndDataSet; EndCollection", at1->name(), at2->name(), at1->name(), at2->name(), at1->name(), at2->name(), module_->uniqueName(), at1->name(), at2->name());
 			partialSQGraph_->addCollectionFromBlock(blockData);
+		}
+	}
+
+	// Add delta g(r) and resulting pair potential additions to the potentialsGraph_
+	n = 0;
+	for (AtomType* at1 = dUQ_.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++n)
+	{
+		int m = n;
+		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
+		{
+			// Delta g(r)
+			blockData.sprintf("Collection '%s-%s \it{dg(r)}'; Group '%s-%s'; DataSet '%s-%s Delta g(r)'; Source XYData '%s//DeltaGR//%s-%s'; EndDataSet; EndCollection", at1->name(), at2->name(), at1->name(), at2->name(), at1->name(), at2->name(), module_->uniqueName(), at1->name(), at2->name());
+			potentialsGraph_->addCollectionFromBlock(blockData);
+
+			// Generated potential
+			blockData.sprintf("Collection '%s-%s dphi(r)'; Group '%s-%s'; LineStyle 1.0 'Quarter Dash'; DataSet '%s-%s dphi(r)'; Source XYData '%s//DeltaPhiR//%s-%s'; EndDataSet; EndCollection", at1->name(), at2->name(), at1->name(), at2->name(), at1->name(), at2->name(), module_->uniqueName(), at1->name(), at2->name());
+			potentialsGraph_->addCollectionFromBlock(blockData);
 		}
 	}
 }
