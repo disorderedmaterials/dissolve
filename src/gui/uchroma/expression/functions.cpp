@@ -1,7 +1,7 @@
 /*
 	*** Expression Functions
 	*** src/gui/uchroma/expression/functions.cpp
-	Copyright T. Youngs 2010-2015
+	Copyright T. Youngs 2010-2018
 
 	This file is part of uChroma.
 

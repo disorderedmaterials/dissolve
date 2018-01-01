@@ -1,7 +1,7 @@
 /*
 	*** 3-Component vector class
 	*** src/templates/vector3.h
-	Copyright T. Youngs 2012-2017
+	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
 

@@ -1,7 +1,7 @@
 /*
 	*** Save Image Dialog
 	*** src/gui/uchroma/gui/saveimage_funcs.cpp
-	Copyright T. Youngs 2013-2017
+	Copyright T. Youngs 2013-2018
 
 	This file is part of uChroma.
 

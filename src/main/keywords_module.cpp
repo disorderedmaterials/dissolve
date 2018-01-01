@@ -1,7 +1,7 @@
 /*
 	*** Keyword Parsing - Module Block
 	*** src/main/keywords_module.cpp
-	Copyright T. Youngs 2012-2017
+	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
 

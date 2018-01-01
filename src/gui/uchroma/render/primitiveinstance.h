@@ -1,7 +1,7 @@
 /*
 	*** Rendering Primitive Instance
 	*** src/gui/uchroma/render/primitiveinstance.h
-	Copyright T. Youngs 2013-2017
+	Copyright T. Youngs 2013-2018
 
 	This file is part of uChroma.
 

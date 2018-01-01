@@ -1,7 +1,7 @@
 /*
 	*** Keyword Widget - Double
 	*** src/gui/keywordwidgets/double_funcs.cpp
-	Copyright T. Youngs 2012-2017
+	Copyright T. Youngs 2012-2018
 
 	This file is part of DUQ.
 

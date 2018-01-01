@@ -1,7 +1,7 @@
 /*
 	*** Species Atom Definition
 	*** src/classes/speciesatom.h
-	Copyright T. Youngs 2012-2017
+	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
 

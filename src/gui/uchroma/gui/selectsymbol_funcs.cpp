@@ -1,7 +1,7 @@
 /*
 	*** Select Symbol Functions
 	*** src/gui/uchroma/gui/selectsymbol_funcs.cpp
-	Copyright T. Youngs 2012-2015
+	Copyright T. Youngs 2012-2018
 
 	This file is part of uChroma.
 

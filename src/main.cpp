@@ -1,7 +1,7 @@
 /*
 	*** dUQ Main
 	*** src/main.cpp
-	Copyright T. Youngs 2012-2017
+	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
 
@@ -52,9 +52,9 @@ int main(int argc, char **argv)
 			{
 				case ('h'):
 #ifdef PARALLEL
-					printf("dUQ PARALLEL version %s, Copyright (C) 2012-2017 T. Youngs.\n\n", DUQVERSION);
+					printf("dUQ PARALLEL version %s, Copyright (C) 2012-2018 T. Youngs.\n\n", DUQVERSION);
 #else
-					printf("dUQ SERIAL version %s, Copyright (C) 2012-2017 T. Youngs.\n\n", DUQVERSION);
+					printf("dUQ SERIAL version %s, Copyright (C) 2012-2018 T. Youngs.\n\n", DUQVERSION);
 #endif
 					printf("Recognised CLI options are:\n\n");
 					printf("\t-a\t\tAuto-add dependent Modules if they are not present already\n");
@@ -133,9 +133,9 @@ int main(int argc, char **argv)
 
 	// Print GPL license information
 #ifdef PARALLEL
-	Messenger::print("dUQ PARALLEL version %s, Copyright (C) 2012-2017 T. Youngs.\n", DUQVERSION);
+	Messenger::print("dUQ PARALLEL version %s, Copyright (C) 2012-2018 T. Youngs.\n", DUQVERSION);
 #else
-	Messenger::print("dUQ SERIAL version %s, Copyright (C) 2012-2017 T. Youngs.\n", DUQVERSION);
+	Messenger::print("dUQ SERIAL version %s, Copyright (C) 2012-2018 T. Youngs.\n", DUQVERSION);
 #endif
 	Messenger::print("Source repository: %s.\n", DUQREPO);
 	Messenger::print("dUQ comes with ABSOLUTELY NO WARRANTY.\n");

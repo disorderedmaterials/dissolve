@@ -1,7 +1,7 @@
 /*
 	*** Select Equation Dialog
 	*** src/gui/uchroma/gui/selectequation.h
-	Copyright T. Youngs 2012-2017.
+	Copyright T. Youngs 2012-2018.
 
 	This file is part of uChroma.
 

@@ -1,7 +1,7 @@
 /*
 	*** FitKernel - Simplex Minimiser
 	*** src/gui/uchroma/kernels/fit_simplex.cpp
-	Copyright T. Youngs 2012-2015
+	Copyright T. Youngs 2012-2018
 
 	This file is part of uChroma.
 

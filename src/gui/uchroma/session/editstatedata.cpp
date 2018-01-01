@@ -1,7 +1,7 @@
 /*
 	*** EditStateDataData
 	*** src/gui/uchroma/session/editstatedata.cpp
-	Copyright T. Youngs 2013-2017
+	Copyright T. Youngs 2013-2018
 
 	This file is part of uChroma.
 

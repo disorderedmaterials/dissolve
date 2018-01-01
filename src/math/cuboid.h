@@ -1,7 +1,7 @@
 /*
 	*** Orthogonal Cuboid Class
 	*** src/math/cuboid.h
-	Copyright T. Youngs 2013-2015
+	Copyright T. Youngs 2013-2018
 
 	This file is part of dUQ.
 

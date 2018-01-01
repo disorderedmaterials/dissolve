@@ -1,7 +1,7 @@
 /*
 	*** Messaging Routines - CLI Print Text
 	*** src/base/messenger_printtext.cpp
-	Copyright T. Youngs 2012-2017
+	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
 
