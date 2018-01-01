@@ -51,6 +51,8 @@ class DUQMath
 	static int power(int i, int p);
 	// Sign function
 	static int sgn(int x);
+	// Sign function
+	static int sgn(double x);
 	// Return the cyclic permutation of the integer 'i', span 3
 	static int cp3(int i);
 };
