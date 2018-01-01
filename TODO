@@ -11,6 +11,7 @@ o Establish proper limit for switching between RDF calculation methods
 o Rework Configuration::setup() to account for all types of initailisation - random config, loaded coordinates, or loaded atoms/coordinates/connectivity.
 o Adding intramolecular connections with Configuration::addBond(), for instance, only adds involved Atoms to Atom exclusion list, whereas strictly-speaking we should exclude 1-3 and scale 1-4 interactions, even if there is no explicit potential term defined across those atoms.
 o By default, add 'Natural' isotopologue to all Species?
+o Option to generate full PY or HNC pair potentials from input data, and use these as the starting reference potential?
 
 -------------------------------------------
 Ideas / Notes / Weird Algorithm Suggestions
