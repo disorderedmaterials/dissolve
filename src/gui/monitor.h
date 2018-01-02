@@ -76,7 +76,7 @@ class MonitorWindow : public QMainWindow
 	static QTextBrowser* messagesBrowser();
 
 	public slots:
-	// Refresh specified aspects of the window
+	// Refresh all displayed widgets
 	void updateWidgets();
 
 
@@ -122,6 +122,12 @@ class MonitorWindow : public QMainWindow
 	private slots:
 	void on_IterateButton_clicked(bool checked);
 	void on_IterateFiveButton_clicked(bool checked);
+
+
+	/*
+	 * Widget Signals
+	 */
+	signals:
 };
 
 #endif
