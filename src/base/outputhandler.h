@@ -1,6 +1,6 @@
 /*
-	*** Messaging Routines - GUI Print Text
-	*** src/gui/messenger_printtext.cpp
+	*** Output Handler
+	*** src/base/outputhandler.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -19,21 +19,24 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "base/messenger.h"
-#include "base/lineparser.h"
-#include "gui/monitor.h"
+#ifndef DUQ_OUTPUTHANDLER_H
+#define DUQ_OUTPUTHANDLER_H
 
-// Print text
-void Messenger::printText(const char* text)
+// Forward Declarations
+/* none */
+
+// Messenger output handler
+class OutputHandler
 {
-	// Print the passed string
-	if (redirect_) parser_->writeLineF("%s", text);
-	else if (MonitorWindow::messagesBrowser())
-	{
-		QString s = text;
-		if (s.endsWith('\n')) s.chop(1);
-		MonitorWindow::messagesBrowser()->append(s);
-	}
-	else printf("%s", text);
-}
+	public:
+	// Constructor
+	OutputHandler();
+	// Destructor
+	virtual ~OutputHandler();
 
+	public:
+	// Output text to device
+	virtual void outputText(const char* text) = 0;
+};
+
+#endif

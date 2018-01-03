@@ -35,29 +35,16 @@ bool Messenger::masterOnly_ = false;
 LineParser* Messenger::parser_ = new LineParser;
 char Messenger::text_[8096];
 char Messenger::workingText_[8096];
+OutputHandler* Messenger::outputHandler_ = NULL;
 
 // Constructor
 Messenger::Messenger()
 {
 }
 
-// Set status of quiet mode
-void Messenger::setQuiet(bool b)
-{
-	quiet_ = b;
-}
-
-// Set status of verbose mode
-void Messenger::setVerbose(bool b)
-{
-	verbose_ = b;
-}
-
-// Set status of master-only mode
-void Messenger::setMasterOnly(bool b)
-{
-	masterOnly_ = b;
-}
+/*
+ * General Print Routines (Private)
+ */
 
 // Master text creation / formatting routine
 void Messenger::createText(const char* indentText, const char* format, va_list arguments)
@@ -110,7 +97,7 @@ void Messenger::createAndPrintText(const char* indentText, const char* format, v
 
 	createText(indentText, format, arguments);
 
-	printText(text_);
+	outputText(text_);
 }
 
 // Create and print text (simple)
@@ -124,7 +111,29 @@ void Messenger::createAndPrintText(const char* text)
 	if (redirect_ || (ProcessPool::nWorldProcesses() == 1)) sprintf(text_, "%s\n", text);
 	else sprintf(text_, "[%i] %s\n", ProcessPool::worldRank(), text);
 
-	printText(text_);
+	outputText(text_);
+}
+
+/*
+ * General Print Routines
+ */
+
+// Set status of quiet mode
+void Messenger::setQuiet(bool b)
+{
+	quiet_ = b;
+}
+
+// Set status of verbose mode
+void Messenger::setVerbose(bool b)
+{
+	verbose_ = b;
+}
+
+// Set status of master-only mode
+void Messenger::setMasterOnly(bool b)
+{
+	masterOnly_ = b;
 }
 
 // Print standard message
@@ -155,11 +164,11 @@ void Messenger::error(const char* fmt, ...)
 	va_list arguments;
 	va_start(arguments,fmt);
 
-	printText("\n");
+	outputText("\n");
 	createAndPrintText("***  ERROR");
 	createAndPrintText("***  ERROR    ", fmt, arguments);
 	createAndPrintText("***  ERROR");
-	printText("\n");
+	outputText("\n");
 
 	va_end(arguments);
 }
@@ -169,9 +178,9 @@ void Messenger::warn(const char* fmt, ...)
 {
 	va_list arguments;
 	va_start(arguments, fmt);
-	printText("\n!!! WARNING\n");
+	outputText("\n!!! WARNING\n");
 	createAndPrintText("!!! WARNING   ", fmt, arguments);
-	printText("!!! WARNING\n\n");
+	outputText("!!! WARNING\n\n");
 	va_end(arguments);
 }
 
@@ -200,9 +209,9 @@ void Messenger::banner(const char* fmt, ...)
 	sprintf(bannerFormat, "%%s\n%%c%%%is%%s%%%is%%c\n%%s", leftPad, rightPad);
 
 	// Finally, print the banner
-	printText("\n");
+	outputText("\n");
 	print(bannerFormat, bannerChars.get(), '*', " ", bannerText.get(), " ", '*', bannerChars.get());
-	printText("\n");
+	outputText("\n");
 }
 
 // Print heading message
@@ -229,10 +238,33 @@ void Messenger::heading(const char* fmt, ...)
 	char bannerFormat[64];
 	sprintf(bannerFormat, "%%%is%%s%%%is", leftPad, rightPad);
 
-	printText("\n");
+	outputText("\n");
 	print(bannerFormat, " ", bannerText.get(), " ");
 	print("%s\n", bannerChars.get());
-	printText("\n");
+	outputText("\n");
+}
+
+/*
+ * Text Output Routine
+ */
+
+// Set output handler
+void Messenger::setOutputHandler(OutputHandler* outputHandler)
+{
+	outputHandler_ = outputHandler;
+}
+
+// Print text
+void Messenger::outputText(const char* text)
+{
+	// If we are redirecting to files, use the parser_
+	if (redirect_) parser_->writeLineF("%s", text);
+	else
+	{
+		// Not redirecting - has an OutputHandler been defined?
+		if (outputHandler_) outputHandler_->outputText(text);
+		else printf("%s", text);
+	}
 }
 
 /*

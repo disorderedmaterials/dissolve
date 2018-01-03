@@ -34,6 +34,7 @@ libgui_la_SOURCES += browser.ui monitor.ui modulecontrolwidget.ui pairpotentialw
 
 libgui_la_SOURCES += browser_funcs.cpp modulecontrolwidget_funcs.cpp pairpotentialwidget_funcs.cpp 
 libgui_la_SOURCES += modulewidget.cpp
+libgui_la_SOURCES += outputhandler.hui outputhandler_funcs.cpp
 libgui_la_SOURCES += subwidget.cpp subwindow.cpp
 libgui_la_SOURCES += thread.hui thread_funcs.cpp
 libgui_la_SOURCES += monitor_funcs.cpp

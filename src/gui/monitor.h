@@ -24,6 +24,7 @@
 
 #include "gui/ui_monitor.h"
 #include "gui/subwindow.h"
+#include "gui/outputhandler.hui"
 #include "base/charstring.h"
 #include "templates/list.h"
 
@@ -68,12 +69,8 @@ class MonitorWindow : public QMainWindow
 	bool refreshing_;
 	// Whether window has been shown
 	bool shown_;
-	// QTextBrowser for GUI messaging
-	static QTextBrowser* messagesBrowser_;
-
-	public:
-	// Return QTextBrowser for GUI messaging
-	static QTextBrowser* messagesBrowser();
+	// Output handler for messaging in GUI
+	GUIOutputHandler outputHandler_;
 
 	public slots:
 	// Refresh all displayed widgets

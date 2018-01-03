@@ -23,6 +23,7 @@
 #define DUQ_MESSENGER_H
 
 #include <stdarg.h>
+#include "base/outputhandler.h"
 
 // Forward Declarations
 class LineParser;
@@ -36,7 +37,7 @@ class Messenger
 
 
 	/*
-	 * Print Routines
+	 * General Print Routines
 	 */
 	private:
 	// Quiet mode
@@ -45,18 +46,16 @@ class Messenger
 	static bool verbose_;
 	// Master-only mode
 	static bool masterOnly_;
-
-	private:
 	// Storage for text to print
 	static char text_[8096];
 	// Working storage for text to print
 	static char workingText_[8096];
+
+	private:
 	// Master text creation / formatting routine
 	static void createText(const char* indentText, const char* format, va_list arguments);
 	// Master text creation / formatting routine (indent text only, for banners etc.)
 	static void createText(const char* indentText);
-	// Print text
-	static void printText(const char* text);
 	// Create and print text
 	static void createAndPrintText(const char* indentText, const char* format, va_list arguments);
 	// Create and print text (simple)
@@ -81,6 +80,20 @@ class Messenger
 	static void banner(const char* fmt, ...);
 	// Print heading message
 	static void heading(const char* fmt, ...);
+
+
+	/*
+	 * Text Output Routine
+	 */
+	private:
+	// Output handler (if any)
+	static OutputHandler* outputHandler_;
+
+	public:
+	// Set output handler
+	static void setOutputHandler(OutputHandler* outputHandler);
+	// Print text
+	static void outputText(const char* text);
 
 
 	/*

@@ -1,7 +1,7 @@
 # Target 'duq'
 bin_PROGRAMS = duq
 
-duq_SOURCES = main.cpp base/messenger_printtext.cpp
+duq_SOURCES = main.cpp
 
 EXTRA_DIST = version.h
 
@@ -26,7 +26,7 @@ monitor_SOURCES = monitor.cpp
 SUBDIRS += gui
 
 noinst_LTLIBRARIES += libduqgui.la
-libduqgui_la_SOURCES = gui/messenger_printtext.cpp
+libduqgui_la_SOURCES =
 libduqgui_la_LIBADD = libduq.la modules/libmodulewidgets.la gui/libgui.la gui/keywordwidgets/libkeywordwidgets.la gui/uchroma/libuchroma.la libduq.la
 libduqgui_la_LDFLAGS = -static
 libduqgui_la_CPPFLAGS = @DUQ_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@

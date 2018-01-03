@@ -5,6 +5,7 @@ add_library(base
   isotope.cpp
   lineparser.cpp
   messenger.cpp
+  outputhandler.cpp
   parameters.cpp
   plainvalue.cpp
   plainvaluelist.cpp
@@ -24,6 +25,7 @@ add_library(base
   isotope.h
   lineparser.h
   messenger.h
+  outputhandler.h
   parameters.h
   plainvalue.h
   plainvaluelist.h

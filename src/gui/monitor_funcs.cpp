@@ -30,9 +30,6 @@
 #include <QCloseEvent>
 #include <QMdiSubWindow>
 
-// Static Members
-QTextBrowser* MonitorWindow::messagesBrowser_ = NULL;
-
 // Constructor
 MonitorWindow::MonitorWindow(DUQ& duq) : QMainWindow(NULL), duq_(duq)
 {
@@ -56,9 +53,9 @@ MonitorWindow::MonitorWindow(DUQ& duq) : QMainWindow(NULL), duq_(duq)
 // 		ui.MainArea->addSubWindow(new BrowserWindow(*this, duq_));
 	}
 
-	// Store pointer to QTextBrowser used for messaging
-	messagesBrowser_ = ui.MessagesBrowser;
-	connect(this, SIGNAL(appendMessageToBrowser(const QString&)), ui.MessagesBrowser, SLOT(append(const QString&)));
+	// Link our output handler to the Messenger, and connect up signals/slots
+	Messenger::setOutputHandler(&outputHandler_);
+	connect(&outputHandler_, SIGNAL(printText(const QString&)), ui.MessagesBrowser, SLOT(append(const QString&)));
 
 	refreshing_ = false;
 }
@@ -90,13 +87,6 @@ void MonitorWindow::resizeEvent(QResizeEvent* event)
 /*
  * Update Functions
  */
-
-// Return QTextBrowser for GUI messaging
-QTextBrowser* MonitorWindow::messagesBrowser()
-{
-	return messagesBrowser_;
-}
-
 
 // Refresh all displayed widgets
 void MonitorWindow::updateWidgets()
@@ -262,11 +252,6 @@ bool MonitorWindow::loadWindowState()
  * Widget Slots
  */
 
-// void MonitorWindow::appendMessage(const QString& s)
-// {
-// 	emit appendMessageToBrowser(s);
-// }
-
 void MonitorWindow::on_IterateButton_clicked(bool checked)
 {
 	duq_.iterate(1);
@@ -279,8 +264,6 @@ void MonitorWindow::on_IterateFiveButton_clicked(bool checked)
 	DUQThread* thread = new DUQThread(NULL, duq_);
 	connect(thread, SIGNAL(iterated()), this, SLOT(updateWidgets()), Qt::BlockingQueuedConnection);
 	thread->iterate(5);
-
-// 	duq_.iterate(5);
 
 	updateWidgets();
 }
