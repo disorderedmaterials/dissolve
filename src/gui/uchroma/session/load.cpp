@@ -1011,10 +1011,13 @@ bool UChromaBase::parseInputBlocks(LineParser& parser)
 			// Collection Block
 			case (UChromaBase::CollectionBlock):
 				// Create new master Collection and set its title
-				currentCollection_ = addCollectionToCurrentViewPane(parser.argc(1));
+				currentCollection_ = addCollection(parser.argc(1));
 
 				// Load the collection data
 				success = readCollectionBlock(parser, currentCollection_);
+
+				// Set it for display in the current ViewPane
+				if (currentViewPane_) currentViewPane_->addCollectionTarget(currentCollection_);
 				break;
 			// End of UChroma Input
 			case (UChromaBase::EndUChromaBlock):
