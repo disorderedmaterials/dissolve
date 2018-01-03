@@ -72,6 +72,16 @@ void PartialsModuleWidget::updateControls()
 	uChromaView_->updateDisplay();
 }
 
+// Disable sensitive controls within widget, ready for main code to run
+void PartialsModuleWidget::disableSensitiveControls()
+{
+}
+
+// Enable sensitive controls within widget, ready for main code to run
+void PartialsModuleWidget::enableSensitiveControls()
+{
+}
+
 /*
  * ModuleWidget Implementations
  */

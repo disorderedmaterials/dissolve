@@ -20,33 +20,79 @@
 */
 
 #include "gui/thread.hui"
+#include "gui/monitor.h"
 #include "main/duq.h"
 
+/*
+ * DUQ Thread Worker
+ */
+
 // Constructor
-DUQThread::DUQThread(QObject* parent, DUQ& duq) : QThread(parent), duq_(duq)
+DUQThreadWorker::DUQThreadWorker(DUQ& duq) : duq_(duq)
 {
 	nIterationsToRun_ = 1;
 }
 
-// Destructor
-DUQThread::~DUQThread()
+// Perform the specified number of iterations (or -1 to keep going)
+void DUQThreadWorker::beginIterating(int nIterations)
 {
-}
-
-void DUQThread::run()
-{
-	while (nIterationsToRun_ > 0)
+	nIterationsToRun_ = nIterations;
+	keepIterating_ = true;
+	while (keepIterating_)
 	{
 		duq_.iterate(1);
 		if (nIterationsToRun_ > 0) --nIterationsToRun_;
+		if (nIterationsToRun_ == 0) keepIterating_ = false;
+
 		emit iterated();
+
+		QCoreApplication::processEvents();
 	}
 
 	emit iterationsComplete();
 }
 
-void DUQThread::iterate(int nIterations)
+// Stop iterating as soon as possible
+void DUQThreadWorker::stopIterating()
 {
-	nIterationsToRun_ = nIterations;
-	start();
+	keepIterating_ = false;
 }
+
+/*
+ * DUQ Thread Controller
+ */
+
+// Constructor
+DUQThreadController::DUQThreadController(MonitorWindow* parentWindow, DUQ& duq, int nIterations)
+{
+	DUQThreadWorker* worker = new DUQThreadWorker(duq);
+	worker->moveToThread(&workerThread_);
+
+	// Connect signals / slots
+	connect(&workerThread_, SIGNAL(finished()), worker, SLOT(deleteLater()));
+	connect(this, SIGNAL(workerIterate(int)), worker, SLOT(beginIterating(int)));
+	connect(this, SIGNAL(workerStop()), worker, SLOT(stopIterating()));
+	connect(worker, SIGNAL(iterated()), parentWindow, SLOT(updateWidgets()));
+	connect(worker, SIGNAL(iterationsComplete()), parentWindow, SLOT(iterationsComplete()));
+
+	workerThread_.start();
+}
+
+// Destructor
+DUQThreadController::~DUQThreadController()
+{
+	workerThread_.quit();
+	workerThread_.wait();
+}
+
+// Perform the specified number of main loop iterations
+void DUQThreadController::iterate(int nIterations)
+{
+	emit workerIterate(nIterations);
+}
+
+// Pause any current iterating
+void DUQThreadController::stopIterating()
+{
+	emit workerStop();
+}	

@@ -173,7 +173,7 @@ void TestModuleWidget::initialiseControls(TestModule* module)
 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
 		{
 			// Delta g(r)
-			blockData.sprintf("Collection '%s-%s \it{dg(r)}'; Group '%s-%s'; DataSet '%s-%s Delta g(r)'; Source XYData '%s//DeltaGR//%s-%s'; EndDataSet; EndCollection", at1->name(), at2->name(), at1->name(), at2->name(), at1->name(), at2->name(), module_->uniqueName(), at1->name(), at2->name());
+			blockData.sprintf("Collection '%s-%s dg(r)'; Group '%s-%s'; DataSet '%s-%s Delta g(r)'; Source XYData '%s//DeltaGR//%s-%s'; EndDataSet; EndCollection", at1->name(), at2->name(), at1->name(), at2->name(), at1->name(), at2->name(), module_->uniqueName(), at1->name(), at2->name());
 			potentialsGraph_->addCollectionFromBlock(blockData);
 
 			// Generated potential
@@ -181,6 +181,16 @@ void TestModuleWidget::initialiseControls(TestModule* module)
 			potentialsGraph_->addCollectionFromBlock(blockData);
 		}
 	}
+}
+
+// Disable sensitive controls within widget, ready for main code to run
+void TestModuleWidget::disableSensitiveControls()
+{
+}
+
+// Enable sensitive controls within widget, ready for main code to run
+void TestModuleWidget::enableSensitiveControls()
+{
 }
 
 /*

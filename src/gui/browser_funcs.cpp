@@ -125,6 +125,18 @@ void BrowserWidget::updateControls()
 	}
 }
 
+// Disable sensitive controls within widget, ready for main code to run
+void BrowserWidget::disableSensitiveControls()
+{
+	ui.BrowserTree->setEnabled(false);
+}
+
+// Enable sensitive controls within widget, ready for main code to run
+void BrowserWidget::enableSensitiveControls()
+{
+	ui.BrowserTree->setEnabled(true);
+}
+
 // Return string specifying widget type
 const char* BrowserWidget::widgetType()
 {

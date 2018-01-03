@@ -30,6 +30,21 @@ SkeletonModuleWidget::SkeletonModuleWidget(QWidget* parent, Module* module) : Mo
 	refreshing_ = false;
 }
 
+// Update controls within widget
+void SkeletonModuleWidget::updateControls()
+{
+}
+
+// Disable sensitive controls within widget, ready for main code to run
+void SkeletonModuleWidget::disableSensitiveControls()
+{
+}
+
+// Enable sensitive controls within widget, ready for main code to run
+void SkeletonModuleWidget::enableSensitiveControls()
+{
+}
+
 /*
  * ModuleWidget Implementations
  */

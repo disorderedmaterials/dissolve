@@ -25,6 +25,7 @@
 #include "gui/ui_monitor.h"
 #include "gui/subwindow.h"
 #include "gui/outputhandler.hui"
+#include "gui/thread.hui"
 #include "base/charstring.h"
 #include "templates/list.h"
 
@@ -78,6 +79,26 @@ class MonitorWindow : public QMainWindow
 
 
 	/*
+	 * Run Control
+	 */
+	private:
+	// Thread controller
+	DUQThreadController threadController_;
+
+	public slots:
+	// Set widgets ready for the main code to be run
+	void setWidgetsForRun();
+	// Set widgets after the main code has been run
+	void setWidgetsAfterRun();
+	// All iterations requested are complete
+	void iterationsComplete();
+
+	signals:
+	void iterate(int);
+	void stopIterating();
+
+
+	/*
 	 * Sub-window Managemnet
 	 */
 	private:
@@ -117,14 +138,11 @@ class MonitorWindow : public QMainWindow
 	 * Widget Slots
 	 */
 	private slots:
-	void on_IterateButton_clicked(bool checked);
-	void on_IterateFiveButton_clicked(bool checked);
-
-
-	/*
-	 * Widget Signals
-	 */
-	signals:
+	void on_ControlRunButton_clicked(bool checked);
+	void on_ControlStepButton_clicked(bool checked);
+	void on_ControlStepFiveButton_clicked(bool checked);
+	void on_ControlPauseButton_clicked(bool checked);
+	void on_ControlReloadButton_clicked(bool checked);
 };
 
 #endif

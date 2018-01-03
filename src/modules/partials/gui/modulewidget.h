@@ -53,6 +53,10 @@ class PartialsModuleWidget : public ModuleWidget
 	Ui::PartialsModuleWidget ui;
 	// Update controls within widget
 	void updateControls();
+	// Disable sensitive controls within widget, ready for main code to run
+	void disableSensitiveControls();
+	// Enable sensitive controls within widget, ready for main code to run
+	void enableSensitiveControls();
 	// Data Type Enum
 	enum DataType { FullData=1, BoundData=2, UnboundData=3, BraggData=4,
 			UnweightedGRData=10, 

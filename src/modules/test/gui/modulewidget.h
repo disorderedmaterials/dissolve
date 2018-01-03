@@ -56,6 +56,11 @@ class TestModuleWidget : public ModuleWidget
 	void updateControls();
 	// Initialise controls
 	void initialiseControls(TestModule* module);
+	// Disable sensitive controls within widget, ready for main code to run
+	void disableSensitiveControls();
+	// Enable sensitive controls within widget, ready for main code to run
+	void enableSensitiveControls();
+
 
 	/*
 	 * ModuleWidget Implementations

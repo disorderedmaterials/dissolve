@@ -31,7 +31,7 @@
 #include <QMdiSubWindow>
 
 // Constructor
-MonitorWindow::MonitorWindow(DUQ& duq) : QMainWindow(NULL), duq_(duq)
+MonitorWindow::MonitorWindow(DUQ& duq) : QMainWindow(NULL), duq_(duq), threadController_(this, duq)
 {
 	// Initialise resources
 	Q_INIT_RESOURCE(icons);
@@ -56,6 +56,10 @@ MonitorWindow::MonitorWindow(DUQ& duq) : QMainWindow(NULL), duq_(duq)
 	// Link our output handler to the Messenger, and connect up signals/slots
 	Messenger::setOutputHandler(&outputHandler_);
 	connect(&outputHandler_, SIGNAL(printText(const QString&)), ui.MessagesBrowser, SLOT(append(const QString&)));
+
+	// Connect signals to thread controller
+	connect(this, SIGNAL(iterate(int)), &threadController_, SLOT(iterate(int)));
+	connect(this, SIGNAL(stopIterating()), &threadController_, SLOT(stopIterating()));
 
 	refreshing_ = false;
 }
@@ -98,6 +102,40 @@ void MonitorWindow::updateWidgets()
 	// Sub-windows
 	ListIterator<SubWindow> subWindowIterator(subWindows_);
 	while (SubWindow* subWindow = subWindowIterator.iterate()) subWindow->subWidget()->updateControls();
+}
+
+// Set widgets ready for the main code to be run
+void MonitorWindow::setWidgetsForRun()
+{
+	// Disable run and step buttons, and enable pause button
+	ui.ControlRunButton->setEnabled(false);
+	ui.ControlStepButton->setEnabled(false);
+	ui.ControlStepFiveButton->setEnabled(false);
+	ui.ControlPauseButton->setEnabled(true);
+
+	// Disable necessary controls in subwindows
+	ListIterator<SubWindow> subWindowIterator(subWindows_);
+	while (SubWindow* subWindow = subWindowIterator.iterate()) subWindow->subWidget()->disableSensitiveControls();
+}
+
+// Set widgets after the main code has been run
+void MonitorWindow::setWidgetsAfterRun()
+{
+	// Enable run and step buttons, and disable pause button
+	ui.ControlRunButton->setEnabled(true);
+	ui.ControlStepButton->setEnabled(true);
+	ui.ControlStepFiveButton->setEnabled(true);
+	ui.ControlPauseButton->setEnabled(false);
+
+	// Enable necessary controls in subwindows
+	ListIterator<SubWindow> subWindowIterator(subWindows_);
+	while (SubWindow* subWindow = subWindowIterator.iterate()) subWindow->subWidget()->enableSensitiveControls();
+}
+
+// All iterations requested are complete
+void MonitorWindow::iterationsComplete()
+{
+	setWidgetsAfterRun();
 }
 
 /*
@@ -252,18 +290,35 @@ bool MonitorWindow::loadWindowState()
  * Widget Slots
  */
 
-void MonitorWindow::on_IterateButton_clicked(bool checked)
+void MonitorWindow::on_ControlRunButton_clicked(bool checked)
 {
-	duq_.iterate(1);
+	// Prepare the GUI
+	setWidgetsForRun();
 
-	updateWidgets();
+	emit iterate(-1);
 }
 
-void MonitorWindow::on_IterateFiveButton_clicked(bool checked)
+void MonitorWindow::on_ControlStepButton_clicked(bool checked)
 {
-	DUQThread* thread = new DUQThread(NULL, duq_);
-	connect(thread, SIGNAL(iterated()), this, SLOT(updateWidgets()), Qt::BlockingQueuedConnection);
-	thread->iterate(5);
+	// Prepare the GUI
+	setWidgetsForRun();
 
-	updateWidgets();
+	emit iterate(1);
+}
+
+void MonitorWindow::on_ControlStepFiveButton_clicked(bool checked)
+{
+	// Prepare the GUI
+	setWidgetsForRun();
+
+	emit iterate(5);
+}
+
+void MonitorWindow::on_ControlPauseButton_clicked(bool checked)
+{
+	emit stopIterating();
+}
+
+void MonitorWindow::on_ControlReloadButton_clicked(bool checked)
+{
 }

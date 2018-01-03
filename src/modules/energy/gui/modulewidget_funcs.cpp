@@ -83,6 +83,16 @@ void EnergyModuleWidget::initialiseControls(EnergyModule* module)
 	while (Configuration* config = configIterator.iterate()) ui.TargetCombo->addItem(config->name(), VariantPointer<Configuration>(config));
 }
 
+// Disable sensitive controls within widget, ready for main code to run
+void EnergyModuleWidget::disableSensitiveControls()
+{
+}
+
+// Enable sensitive controls within widget, ready for main code to run
+void EnergyModuleWidget::enableSensitiveControls()
+{
+}
+
 /*
  * ModuleWidget Implementations
  */

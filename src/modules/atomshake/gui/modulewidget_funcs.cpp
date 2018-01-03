@@ -40,6 +40,16 @@ void AtomShakeModuleWidget::updateControls()
 {
 }
 
+// Disable sensitive controls within widget, ready for main code to run
+void AtomShakeModuleWidget::disableSensitiveControls()
+{
+}
+
+// Enable sensitive controls within widget, ready for main code to run
+void AtomShakeModuleWidget::enableSensitiveControls()
+{
+}
+
 /*
  * ModuleWidget Implementations
  */

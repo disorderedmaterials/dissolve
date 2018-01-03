@@ -132,6 +132,19 @@ void PairPotentialWidget::updateControls()
 	refreshing_ = false;
 }
 
+
+// Disable sensitive controls within widget, ready for main code to run
+void PairPotentialWidget::disableSensitiveControls()
+{
+	ui.ControlsFrame->setEnabled(false);
+}
+
+// Enable sensitive controls within widget, ready for main code to run
+void PairPotentialWidget::enableSensitiveControls()
+{
+	ui.ControlsFrame->setEnabled(true);
+}
+
 // Return string specifying widget type
 const char* PairPotentialWidget::widgetType()
 {

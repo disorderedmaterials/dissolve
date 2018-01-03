@@ -56,6 +56,10 @@ class BrowserWidget : public SubWidget
 	public:
 	// Update controls within widget
 	void updateControls();
+	// Disable sensitive controls within widget, ready for main code to run
+	void disableSensitiveControls();
+	// Enable sensitive controls within widget, ready for main code to run
+	void enableSensitiveControls();
 	// Return string specifying widget type
 	const char* widgetType();
 	// Write widget state through specified LineParser

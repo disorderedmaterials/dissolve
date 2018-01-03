@@ -45,6 +45,10 @@ class SkeletonModuleWidget : public ModuleWidget
 	Ui::SkeletonModuleWidget ui;
 	// Update controls within widget
 	void updateControls();
+	// Disable sensitive controls within widget, ready for main code to run
+	void disableSensitiveControls();
+	// Enable sensitive controls within widget, ready for main code to run
+	void enableSensitiveControls();
 
 
 	/*

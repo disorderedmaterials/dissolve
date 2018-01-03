@@ -41,6 +41,10 @@ class SubWidget : public QWidget
 	virtual ~SubWidget();
 	// Update controls within widget
 	virtual void updateControls() = 0;
+	// Disable sensitive controls within widget, ready for main code to run
+	virtual void disableSensitiveControls() = 0;
+	// Enable sensitive controls within widget, ready for main code to run
+	virtual void enableSensitiveControls() = 0;
 
 
 	/*

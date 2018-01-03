@@ -177,6 +177,24 @@ void ModuleControlWidget::updateControls()
 	if (moduleWidget_) moduleWidget_->updateControls();
 }
 
+// Disable sensitive controls within widget, ready for main code to run
+void ModuleControlWidget::disableSensitiveControls()
+{
+	ui.ControlGroup->setEnabled(false);
+	ui.OptionsGroup->setEnabled(false);
+
+	if (moduleWidget_) moduleWidget_->disableSensitiveControls();
+}
+
+// Enable sensitive controls within widget, ready for main code to run
+void ModuleControlWidget::enableSensitiveControls()
+{
+	ui.ControlGroup->setEnabled(true);
+	ui.OptionsGroup->setEnabled(true);
+
+	if (moduleWidget_) moduleWidget_->enableSensitiveControls();
+}
+
 // Return string specifying widget type
 const char* ModuleControlWidget::widgetType()
 {
