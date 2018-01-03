@@ -139,7 +139,7 @@ bool LineParser::openInput(const char* filename)
 		if (!inputFile_->is_open())
 		{
 			closeFiles();
-			Messenger::error("Failed to open file '%s' for reading.\n", filename);
+			Messenger::warn("Failed to open file '%s' for reading.\n", filename);
 			result = false;
 		}
 	}
