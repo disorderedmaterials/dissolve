@@ -273,27 +273,6 @@ bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 			// Apply the perturbation
 			dPhiR.arrayY() *= weight;
 			pp->adjustUAdditional(dPhiR);
-
-
-			// TEST
-		// 	XYData gr = targetData_.firstItem()->data();
-			// TEST - Normalise to 1.0 - this would already be the case for the predicted partials
-		// 	gr.arrayY() /= 6.2001;
-		// 	gr.save("SQ.txt");
-
-// 			XYData cr = calculateCR(gr, 1.0 / (2.0*PI*PI*rho), 0.05, 0.01, 30.0);
-// 			cr.save("CR.txt");
-// 			gr.broadenedSineFT(1.0 / (2 * PI * PI * rho), 0.05, 0.01, 30.0, BroadeningFunction::unity(), false);
-// 			gr.arrayY() += 1.0;
-// 			gr.save("GR.txt");
-// 			XYData py;
-// 			for (int n=0; n<gr.nPoints(); ++n) py.addPoint(gr.x(n),  log(1.0 - cr.y(n)/gr.y(n)));
-// 			py.save("py.txt");
-// 			XYData hnc;
-// 			for (int n=0; n<gr.nPoints(); ++n) hnc.addPoint(gr.x(n), (gr.y(n) - cr.y(n) - 1.0 - log(gr.y(n))));
-// 			hnc.save("hnc.txt");
-// 			return false;
-
 		}
 	}
 
