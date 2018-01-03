@@ -56,6 +56,7 @@ TestModuleWidget::TestModuleWidget(QWidget* parent, Module* module, DUQ& dUQ) : 
 	viewPane->axes().setTitle(1, "S(Q)");
 	viewPane->axes().setMin(1, -1.0);
 	viewPane->axes().setMax(1, 1.0);
+	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::HalfVerticalShift);
 
 	// Partial S(Q) Graph
 	
@@ -75,6 +76,7 @@ TestModuleWidget::TestModuleWidget(QWidget* parent, Module* module, DUQ& dUQ) : 
 	viewPane->axes().setTitle(1, "S(Q)");
 	viewPane->axes().setMin(1, -1.0);
 	viewPane->axes().setMax(1, 1.0);
+	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::HalfVerticalShift);
 
 	// Potentials Graph
 
@@ -94,6 +96,7 @@ TestModuleWidget::TestModuleWidget(QWidget* parent, Module* module, DUQ& dUQ) : 
 	viewPane->axes().setTitle(1, "\\sym{Delta}g(r), \\sym{Delta}\\sym{phi}(\\it{r})");
 	viewPane->axes().setMin(1, -1.0);
 	viewPane->axes().setMax(1, 1.0);
+	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::HalfVerticalShift);
 
 	initialiseControls(module_);
 
