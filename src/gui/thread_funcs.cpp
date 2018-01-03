@@ -72,7 +72,7 @@ DUQThreadController::DUQThreadController(MonitorWindow* parentWindow, DUQ& duq, 
 	connect(&workerThread_, SIGNAL(finished()), worker, SLOT(deleteLater()));
 	connect(this, SIGNAL(workerIterate(int)), worker, SLOT(beginIterating(int)));
 	connect(this, SIGNAL(workerStop()), worker, SLOT(stopIterating()));
-	connect(worker, SIGNAL(iterated()), parentWindow, SLOT(updateWidgets()));
+	connect(worker, SIGNAL(iterated()), parentWindow, SLOT(updateWidgets()), Qt::BlockingQueuedConnection);
 	connect(worker, SIGNAL(iterationsComplete()), parentWindow, SLOT(iterationsComplete()));
 
 	workerThread_.start();
