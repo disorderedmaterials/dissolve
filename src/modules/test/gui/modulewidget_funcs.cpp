@@ -51,7 +51,7 @@ TestModuleWidget::TestModuleWidget(QWidget* parent, Module* module, DUQ& dUQ) : 
 	dataGraph_->startNewSession(true);
 	viewPane = dataGraph_->currentViewPane();
 	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "\\it{Q}, Angstroms\\sup{-1}");
+	viewPane->axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
 	viewPane->axes().setMax(0, 10.0);
 	viewPane->axes().setTitle(1, "S(Q)");
 	viewPane->axes().setMin(1, -1.0);
@@ -70,7 +70,7 @@ TestModuleWidget::TestModuleWidget(QWidget* parent, Module* module, DUQ& dUQ) : 
 	partialSQGraph_->startNewSession(true);
 	viewPane = partialSQGraph_->currentViewPane();
 	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "\\it{Q}, Angstroms\\sup{-1}");
+	viewPane->axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
 	viewPane->axes().setMax(0, 10.0);
 	viewPane->axes().setTitle(1, "S(Q)");
 	viewPane->axes().setMin(1, -1.0);
@@ -89,10 +89,9 @@ TestModuleWidget::TestModuleWidget(QWidget* parent, Module* module, DUQ& dUQ) : 
 	potentialsGraph_->startNewSession(true);
 	viewPane = potentialsGraph_->currentViewPane();
 	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "\\it{r}, Angstroms");
+	viewPane->axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	viewPane->axes().setMax(0, 10.0);
-	// TODO Add escape sequence to add special character - e.g. \\sym{Delta}
-	viewPane->axes().setTitle(1, "Delta \\it{r}, Delta phi \\it{r}");
+	viewPane->axes().setTitle(1, "\\sym{Delta}g(r), \\sym{Delta}\\sym{phi}(\\it{r})");
 	viewPane->axes().setMin(1, -1.0);
 	viewPane->axes().setMax(1, 1.0);
 

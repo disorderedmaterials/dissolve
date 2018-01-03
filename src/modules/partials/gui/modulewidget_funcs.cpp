@@ -47,7 +47,7 @@ PartialsModuleWidget::PartialsModuleWidget(QWidget* parent, Module* module, DUQ&
 	// Set up the view pane
 	ViewPane* viewPane = uChromaView_->currentViewPane();
 	viewPane->setViewType(ViewPane::FlatXYView);
-	viewPane->axes().setTitle(0, "\\it{r}, Angstroms");
+	viewPane->axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	viewPane->axes().setMax(0, 10.0);
 	viewPane->axes().setTitle(1, "g(r) / S(Q)");
 	viewPane->axes().setMin(1, -1.0);

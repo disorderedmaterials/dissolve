@@ -78,7 +78,7 @@ void PairPotentialWidget::initialiseControls(PairPotential* pp, bool addDefaults
 		// Set up the view pane
 		ViewPane* viewPane = uChromaView_->currentViewPane();
 		viewPane->setViewType(ViewPane::FlatXYView);
-		viewPane->axes().setTitle(0, "r, Angstroms");
+		viewPane->axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 		viewPane->axes().setMax(0, pp ? pp->range() : 15.0);
 		viewPane->axes().setTitle(1, "U(r), kJ mol\\sup{-1}");
 		viewPane->axes().setMin(1, -5.0);
