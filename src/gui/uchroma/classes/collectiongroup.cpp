@@ -160,6 +160,9 @@ CollectionGroup* CollectionGroupManager::addToGroup(Collection* collection)
 		collectionGroup = new CollectionGroup(collection->groupName(), (ColourDefinition::StockColour) lowestId);
 		collectionGroups_.own(collectionGroup);
 		++stockColourUsageCount_[lowestId];
+
+		// Need to update vertical shifts
+		setCollectionGroupShifts();
 	}
 
 	// Add unique Collection reference to the group
@@ -203,7 +206,6 @@ void CollectionGroupManager::removeFromGroup(Collection* collection)
 }
 
 // Vertical shifts
-int nVerticalShiftAmounts = 4;
 double VerticalShiftAmounts[] = { 0.0, 0.5, 1.0, 2.0 };
 
 // Set vertical shifts for current CollectionGroups
@@ -230,7 +232,15 @@ const ColourDefinition& CollectionGroupManager::colourDefinition(Collection* col
 // Cycle vertical shift applied to CollectionGroups
 int CollectionGroupManager::cycleVerticalShifts()
 {
-	verticalShiftIndex_ = (verticalShiftIndex_+1)%nVerticalShiftAmounts;
+	verticalShiftIndex_ = (verticalShiftIndex_+1)%nVerticalShifts;
+
+	setCollectionGroupShifts();
+}
+
+// Set vertical shift applied to CollectionGroups
+void CollectionGroupManager::setVerticalShift(VerticalShift shiftType)
+{
+	verticalShiftIndex_ = shiftType;
 
 	setCollectionGroupShifts();
 }

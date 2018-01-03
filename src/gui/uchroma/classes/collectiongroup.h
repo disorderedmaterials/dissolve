@@ -111,6 +111,17 @@ class CollectionGroupManager
 	/*
 	 * Properties
 	 */
+	public:
+	// Vertical shifts enum
+	enum VerticalShift
+	{
+		NoVerticalShift,
+		HalfVerticalShift,
+		OneVerticalShift,
+		TwoVerticalShift,
+		nVerticalShifts
+	};
+
 	private:
 	// Current vertical shift delta index being applied to groups
 	int verticalShiftIndex_;
@@ -124,6 +135,8 @@ class CollectionGroupManager
 	const ColourDefinition& colourDefinition(Collection* collection);
 	// Cycle vertical shift applied to CollectionGroups
 	int cycleVerticalShifts();
+	// Set vertical shift applied to CollectionGroups
+	void setVerticalShift(VerticalShift shiftType);
 	// Remove all vertical shifts from CollectionGroups
 	void removeVerticalShifts();
 };
