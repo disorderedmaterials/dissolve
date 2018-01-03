@@ -317,6 +317,7 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 			// Append to arrays of total energies
 			XYData& totalEnergyArray = GenericListHelper<XYData>::realise(cfg->moduleData(), "Total", uniqueName(), GenericItem::InRestartFileFlag);
 			totalEnergyArray.addPoint(duq.iteration(), interEnergy+intraEnergy);
+			totalEnergyArray.setObjectName(CharString("%s//%s//Total", cfg->niceName(), uniqueName()));
 
 			// Determine stability of energy
 			// Check number of points already stored for the Configuration
