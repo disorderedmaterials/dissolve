@@ -23,6 +23,7 @@
 #include "gui/uchroma/render/textprimitive_grammar.hh"
 #include "gui/uchroma/render/fontinstance.h"
 #include "gui/uchroma/classes/viewpane.h"
+#include "gui/uchroma/classes/symbol.h"
 #include "base/sysfunc.h"
 
 // Static members
@@ -61,7 +62,7 @@ const char* TextPrimitive::textAnchor(TextPrimitive::TextAnchor anchor)
 }
 
 // Escape Sequence Keywords
-const char* EscapeSequenceKeywords[] = { "b", "it", "n", "sub", "sup" };
+const char* EscapeSequenceKeywords[] = { "b", "it", "n", "sub", "sup", "sym" };
 
 // Convert text string to EscapeSequence
 TextPrimitive::EscapeSequence TextPrimitive::escapeSequence(const char* s)
@@ -381,11 +382,20 @@ bool TextPrimitive::addFragment(QString text)
 	TextFormat* format = formatStack_.last();
 
 	// Set fragment info
-	Vec3<double> translation(horizontalPosition_, format->y(), 0.0); 
-	fragment->set(text, format->scale(), translation, format->italic(), format->bold());
+	Vec3<double> translation(horizontalPosition_, format->y(), 0.0);
+	QString textToAdd;
+	if (!format->symbol()) textToAdd = text;
+	else
+	{
+		// Must convert the supplied text into a symbol - use '??' if we don't recognise it
+		SymbolData* symbol = SymbolData::symbol(text);
+		if (symbol) textToAdd = symbol->character;
+		else textToAdd = "<?>";
+	}
+	fragment->set(textToAdd, format->scale(), translation, format->italic(), format->bold());
 	
 	// We have just added some text, so update the horizontal position
-	horizontalPosition_ += fontInstance_->boundingBoxWidth(text) * format->scale();
+	horizontalPosition_ += fontInstance_->boundingBoxWidth(textToAdd) * format->scale();
 
 	return true;
 }
@@ -424,6 +434,10 @@ bool TextPrimitive::addEscape(TextPrimitive::EscapeSequence escSeq)
 			newFormat->adjustY( fontInstance_->fontBaseHeight() * newFormat->scale() * (2.0/3.0) );
 			newFormat->setScale( 0.583 * newFormat->scale() );
 			break;
+		// Add a symbol (flags that any text added to it should be converted to a named symbol)
+		case (TextPrimitive::SymbolEscape):
+			newFormat->setSymbol(true);
+			break;
 		default:
 			Messenger::print("Escape %i not handled in TextPrimitive::addEscape().\n", escSeq);
 			return false;
@@ -432,7 +446,6 @@ bool TextPrimitive::addEscape(TextPrimitive::EscapeSequence escSeq)
 
 	return true;
 }
-
 
 // Remove escape code
 void TextPrimitive::removeEscape()

@@ -28,7 +28,7 @@ SymbolData SymbolData::symbols[] = {
 	{ 0x212B,	"angstrom",	"Angstrom" },
 	{ 0x00B0,	"degree",	"Degree" },
 	{ 0x03B1,	"alpha",	"Greek Small Letter Alpha" },
-	{ 0x03B2,	"beta	",	"Greek Small Letter Beta" },
+	{ 0x03B2,	"beta",		"Greek Small Letter Beta" },
 	{ 0x03B3,	"gamma",	"Greek Small Letter Gamma" },
 	{ 0x03B4,	"delta",	"Greek Small Letter Delta" },
 	{ 0x03B5,	"epsilon",	"Greek Small Letter Epsilon" },
@@ -77,3 +77,10 @@ SymbolData SymbolData::symbols[] = {
 	{ 0x03A9,	"Omega",	"Greek Capital Letter Omega" }
 };
 
+// Return named symbol
+SymbolData* SymbolData::symbol(QString name)
+{
+	for (int n=0; n<nSymbols; ++n) if (name == symbols[n].name) return &symbols[n];
+
+	return NULL;
+}

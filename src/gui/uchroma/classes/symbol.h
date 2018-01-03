@@ -102,6 +102,8 @@ class SymbolData
 	public:
 	// Static list of symbols
 	static SymbolData symbols[];
+	// Return named symbol
+	static SymbolData* symbol(QString name);
 };
 
 #endif

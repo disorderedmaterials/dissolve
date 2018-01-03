@@ -50,7 +50,7 @@ class TextPrimitive : public ListItem<TextPrimitive>
 	// Convert TextAnchor to text string
 	static const char* textAnchor(TextAnchor anchor);
 	// Escape Sequence enum
-	enum EscapeSequence { BoldEscape, ItalicEscape, NewLineEscape, SubScriptEscape, SuperScriptEscape, nEscapeSequences };
+	enum EscapeSequence { BoldEscape, ItalicEscape, NewLineEscape, SubScriptEscape, SuperScriptEscape, SymbolEscape, nEscapeSequences };
 	// Convert text string to EscapeSequence
 	static EscapeSequence escapeSequence(const char* s);
 

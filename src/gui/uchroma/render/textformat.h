@@ -52,6 +52,8 @@ class TextFormat : public ListItem<TextFormat>
 	bool italic_;
 	// Whether text is bold
 	bool bold_;
+	// Whether text is actually a symbol
+	bool symbol_;
 
 	public:
 	// Set vertical (bottom-edge) position
@@ -72,6 +74,10 @@ class TextFormat : public ListItem<TextFormat>
 	void setBold(bool bold);
 	// Return whether text is bold
 	bool bold();
+	// Set whether text is actually a symbol
+	void setSymbol(bool symbol);
+	// Return whether text is actually a symbol
+	bool symbol();
 };
 
 #endif

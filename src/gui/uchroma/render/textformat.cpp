@@ -28,6 +28,7 @@ TextFormat::TextFormat() :  ListItem<TextFormat>()
 	scale_ = 1.0;
 	italic_ = false;
 	bold_ = false;
+	symbol_ = false;
 }
 
 // Desctructor
@@ -48,6 +49,7 @@ void TextFormat::operator=(const TextFormat& source)
 	scale_ = source.scale_;
 	italic_ = source.italic_;
 	bold_ = source.bold_;
+	symbol_ = source.symbol_;
 }
 
 // Set vertical (bottom-edge) position
@@ -101,4 +103,16 @@ void TextFormat::setBold(bool bold)
 bool TextFormat::bold()
 {
 	return bold_;
+}
+
+// Set whether text is actually a symbol
+void TextFormat::setSymbol(bool symbol)
+{
+	symbol_ = symbol;
+}
+
+// Return whether text is actually a symbol
+bool TextFormat::symbol()
+{
+	return symbol_;
 }
