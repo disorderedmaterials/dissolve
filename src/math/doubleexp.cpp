@@ -156,5 +156,27 @@ int DoubleExp::exponent() const
 // Return value as string
 CharString DoubleExp::asString()
 {
-	return CharString("%fe%i", mantissa_, exponent_);
+	// If the exponent is zero, just return '0.0#
+	if (exponent_ == 0) return CharString("0.0");
+
+	// Print the mantissa value to a formatted string, and strip any trailing zeroes
+	CharString mantissaString("%f", mantissa_);
+	int dot = mantissaString.find('.');
+	if (dot != -1)
+	{
+		int nZeroesAtEnd = 0;
+		// Start the search at [dot+2], skipping the dot and the first char after it - we will always allow one lone zero after the decimal point
+		for (int n=dot+2; n<mantissaString.length(); ++n)
+		{
+			// If this character is '0', increase our counter
+			// If anything else, reset the counter
+			if (mantissaString[n] == '0') ++nZeroesAtEnd;
+			else nZeroesAtEnd = 0;
+		}
+		mantissaString.eraseEnd(nZeroesAtEnd);
+	}
+
+	// If the exponent is 1, omit the 'e'
+	if (exponent_ == 1) return mantissaString;
+	else return CharString("%se%i", mantissaString.get(), exponent_);
 }
