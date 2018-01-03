@@ -54,7 +54,7 @@ CubicBox::~CubicBox()
 Vec3<double> CubicBox::minimumImage(const Atom* i, const Atom* ref) const
 {
 	/*
-	 * This, and all other routines, use an ternary if/else test and an int() cast in order to calculate minimum image vectors, distances, and coordinates,
+	 * This, and all other routines, use a ternary if/else test and an int() cast in order to calculate minimum image vectors, distances, and coordinates,
 	 * since this is about 25-30% faster than using floor().
 	 */
 	Vec3<double> mimVec = i->r();
@@ -242,14 +242,6 @@ double CubicBox::minimumDistanceSquared(const Atom* i, const Vec3<double>& j) co
 // Return minimum image distance from 'i' to 'j'
 double CubicBox::minimumDistanceSquared(const Vec3<double>& i, const Vec3<double>& j) const
 {
-// 	Vec3<double> mimVec = j;
-// 	mimVec -= i;
-// 
-// 	mimVec.x -= int(mimVec.x*ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5))*a_;
-// 	mimVec.y -= int(mimVec.y*ra_ + (mimVec.y < 0.0 ? -0.5 : 0.5))*a_;
-// 	mimVec.z -= int(mimVec.z*ra_ + (mimVec.z < 0.0 ? -0.5 : 0.5))*a_;
-// 
-// 	return mimVec.magnitudeSq();
 	double x = j.x-i.x, y = j.y-i.y, z = j.z-i.z;
 
 	x -= int(x*ra_ + (x < 0.0 ? -0.5 : 0.5))*a_;
@@ -257,7 +249,6 @@ double CubicBox::minimumDistanceSquared(const Vec3<double>& i, const Vec3<double
 	z -= int(z*ra_ + (z < 0.0 ? -0.5 : 0.5))*a_;
 
 	return (x*x + y*y + z*z);
-
 }
 
 /*
@@ -282,10 +273,10 @@ Vec3<double> CubicBox::fold(const Vec3<double>& r) const
 	frac.set(r.x*ra_, r.y*ra_, r.z*ra_);
 	
 	// Fold into Box
-	// TODO Convert to standard int() cast, rather than using floor()
 	frac.x -= floor(frac.x);
 	frac.y -= floor(frac.y);
 	frac.z -= floor(frac.z);
+
 	return frac*a_;
 }
 
@@ -297,10 +288,10 @@ Vec3<double> CubicBox::foldFrac(const Vec3<double>& r) const
 	frac.set(r.x*ra_, r.y*ra_, r.z*ra_);
 	
 	// Fold into Box
-	// TODO Convert to standard int() cast, rather than using floor()
 	frac.x -= floor(frac.x);
 	frac.y -= floor(frac.y);
 	frac.z -= floor(frac.z);
+
 	return frac;
 }
 
