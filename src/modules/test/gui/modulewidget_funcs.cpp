@@ -111,9 +111,11 @@ void TestModuleWidget::updateControls()
 	// Ensure that any displayed data is up-to-date
 	dataGraph_->refreshReferencedDataSets();
 	partialSQGraph_->refreshReferencedDataSets();
+	potentialsGraph_->refreshReferencedDataSets();
 
 	dataGraph_->updateDisplay();
 	partialSQGraph_->updateDisplay();
+	potentialsGraph_->updateDisplay();
 }
 
 // Initialise controls
