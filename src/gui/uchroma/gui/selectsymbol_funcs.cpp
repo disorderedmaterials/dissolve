@@ -20,64 +20,9 @@
 */
 
 #include "gui/uchroma/gui/selectsymbol.h"
+#include "gui/uchroma/classes/symbol.h"
 #include "templates/variantpointer.h"
 #include <QScrollBar>
-
-// Static list of symbols
-Symbol Symbol::symbols[] = {
-	{ 0x00D7,	"mult", 	"Multiplication Sign" },
-	{ 0x00F7,	"div", 		"Division Sign" },
-	{ 0x212B,	"angstrom",	"Angstrom" },
-	{ 0x00B0,	"degree",	"Degree" },
-	{ 0x03B1,	"alpha",	"Greek Small Letter Alpha" },
-	{ 0x03B2,	"beta	",	"Greek Small Letter Beta" },
-	{ 0x03B3,	"gamma",	"Greek Small Letter Gamma" },
-	{ 0x03B4,	"delta",	"Greek Small Letter Delta" },
-	{ 0x03B5,	"epsilon",	"Greek Small Letter Epsilon" },
-	{ 0x03B6,	"zeta",		"Greek Small Letter Zeta" },
-	{ 0x03B7,	"eta",		"Greek Small Letter Eta" },
-	{ 0x03B8,	"theta",	"Greek Small Letter Theta" },
-	{ 0x03B9,	"iota",		"Greek Small Letter Iota" },
-	{ 0x03BA,	"kappa",	"Greek Small Letter Kappa" },
-	{ 0x03BB,	"lambda",	"Greek Small Letter Lambda" },
-	{ 0x03BC,	"mu",		"Greek Small Letter Mu" },
-	{ 0x03BD,	"nu",		"Greek Small Letter Nu" },
-	{ 0x03BE,	"xi",		"Greek Small Letter Xi" },
-	{ 0x03BF,	"omicron",	"Greek Small Letter Omicron" },
-	{ 0x03C0,	"pi",		"Greek Small Letter Pi" },
-	{ 0x03C1,	"rho",		"Greek Small Letter Rho" },
-	{ 0x03C3,	"sigma",	"Greek Small Letter Sigma" },
-	{ 0x03C4,	"tau",		"Greek Small Letter Tau" },
-	{ 0x03C5,	"upsilon",	"Greek Small Letter Upsilon" },
-	{ 0x03C6,	"phi",		"Greek Small Letter Phi" },
-	{ 0x03C7,	"chi",		"Greek Small Letter Chi" },
-	{ 0x03C8,	"psi",		"Greek Small Letter Psi" },
-	{ 0x03C9,	"omega",	"Greek Small Letter Omega" },
-	{ 0x0391,	"Alpha",	"Greek Capital Letter Alpha" },
-	{ 0x0392,	"Beta	",	"Greek Capital Letter Beta" },
-	{ 0x0393,	"Gamma",	"Greek Capital Letter Gamma" },
-	{ 0x0394,	"Delta",	"Greek Capital Letter Delta" },
-	{ 0x0395,	"Epsilon",	"Greek Capital Letter Epsilon" },
-	{ 0x0396,	"Zeta",		"Greek Capital Letter Zeta" },
-	{ 0x0397,	"Eta",		"Greek Capital Letter Eta" },
-	{ 0x0398,	"Theta",	"Greek Capital Letter Theta" },
-	{ 0x0399,	"Iota",		"Greek Capital Letter Iota" },
-	{ 0x039A,	"Kappa",	"Greek Capital Letter Kappa" },
-	{ 0x039B,	"Lambda",	"Greek Capital Letter Lambda" },
-	{ 0x039C,	"Mu",		"Greek Capital Letter Mu" },
-	{ 0x039D,	"Nu",		"Greek Capital Letter Nu" },
-	{ 0x039E,	"Xi",		"Greek Capital Letter Xi" },
-	{ 0x039F,	"Omicron",	"Greek Capital Letter Omicron" },
-	{ 0x03A0,	"Pi",		"Greek Capital Letter Pi" },
-	{ 0x03A1,	"Rho",		"Greek Capital Letter Rho" },
-	{ 0x03A3,	"Sigma",	"Greek Capital Letter Sigma" },
-	{ 0x03A4,	"Tau",		"Greek Capital Letter Tau" },
-	{ 0x03A5,	"Upsilon",	"Greek Capital Letter Upsilon" },
-	{ 0x03A6,	"Phi",		"Greek Capital Letter Phi" },
-	{ 0x03A7,	"Chi",		"Greek Capital Letter Chi" },
-	{ 0x03A8,	"Psi",		"Greek Capital Letter Psi" },
-	{ 0x03A9,	"Omega",	"Greek Capital Letter Omega" }
-};
 
 // Constructor
 SelectSymbolDialog::SelectSymbolDialog(QWidget* parent) : QDialog(parent), itemSize_(32)
@@ -123,8 +68,8 @@ void SelectSymbolDialog::on_SearchEdit_textChanged(QString text)
 
 	// See if a symbol description matches our search string
 	int symbol;
-	for (symbol = 0; symbol < Symbol::nSymbols; ++symbol) if (Symbol::symbols[symbol].description.contains(text, Qt::CaseInsensitive)) break;
-	if (symbol == Symbol::nSymbols) return;
+	for (symbol = 0; symbol < SymbolData::nSymbols; ++symbol) if (SymbolData::symbols[symbol].description.contains(text, Qt::CaseInsensitive)) break;
+	if (symbol == SymbolData::nSymbols) return;
 
 	// Found a match, so highlight the relevant item in the table
 	ui.SymbolTable->clearSelection();
@@ -151,7 +96,7 @@ void SelectSymbolDialog::on_SymbolTable_itemSelectionChanged()
 	if (!item) return;
 
 	// Get the Symbol pointer from the selected item
-	Symbol* symbol = VariantPointer<Symbol>(item->data(Qt::UserRole));
+	SymbolData* symbol = VariantPointer<SymbolData>(item->data(Qt::UserRole));
 	if (symbol)
 	{
 		selectedSymbol_ = symbol->character;
@@ -197,7 +142,7 @@ void SelectSymbolDialog::updateTable(bool force)
 	int scrollBarWidth = (scrollBar ? scrollBar->width() : 0);
 	int nDisplayColumns = (ui.SymbolTable->width() - scrollBarWidth) / itemSize_;
 	int widthRemainder = (ui.SymbolTable->width() - scrollBarWidth) - nDisplayColumns * itemSize_;
-	int nNeededRows = Symbol::nSymbols/nDisplayColumns + (Symbol::nSymbols%nDisplayColumns == 0 ? 0 : 1);
+	int nNeededRows = SymbolData::nSymbols/nDisplayColumns + (SymbolData::nSymbols%nDisplayColumns == 0 ? 0 : 1);
 
 	if ((nDisplayColumns != oldNColumns) || force)
 	{
@@ -211,13 +156,13 @@ void SelectSymbolDialog::updateTable(bool force)
 		// Populate the symbols list
 		QTableWidgetItem* item;
 		QSize itemSize(itemSize_, itemSize_);
-		for (int n=0; n<Symbol::nSymbols; ++n)
+		for (int n=0; n<SymbolData::nSymbols; ++n)
 		{
 			item = new QTableWidgetItem();
 			item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-			item->setText(Symbol::symbols[n].character);
+			item->setText(SymbolData::symbols[n].character);
 			item->setTextAlignment(Qt::AlignCenter);
-			item->setData(Qt::UserRole, VariantPointer<Symbol>(&Symbol::symbols[n]));
+			item->setData(Qt::UserRole, VariantPointer<SymbolData>(&SymbolData::symbols[n]));
 			item->setSizeHint(itemSize);
 			ui.SymbolTable->setItem(n/nDisplayColumns, n%nDisplayColumns, item);
 		}

@@ -14,7 +14,7 @@ add_library(classes
   namedvalue.cpp
   numberformat.cpp
   referencevariable.cpp
-  sysfunc.cpp
+  symbol.cpp
   targetdata.cpp
   targetprimitive.cpp
   transformer.cpp
@@ -36,7 +36,7 @@ add_library(classes
   numberformat.h
   referencevariable.h
   signal.h
-  sysfunc.h
+  symbol.h
   targetdata.h
   targetprimitive.h
   transformer.h
