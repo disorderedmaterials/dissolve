@@ -73,13 +73,13 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		// Retrieve control parameters from Configuration
 		double cutoffDistance = keywords_.asDouble("CutoffDistance");
 		if (cutoffDistance < 0.0) cutoffDistance = duq.pairPotentialRange();
-		double rotationStepSize = GenericListHelper<double>::retrieve(moduleData, "RotationStepSize", uniqueName(), keywords_.asDouble("RotationStepSize"));
+		double rotationStepSize = GenericListHelper<double>::retrieve(cfg->moduleData(), "RotationStepSize", uniqueName(), keywords_.asDouble("RotationStepSize"));
 		const double rotationStepSizeMax = keywords_.asDouble("RotationStepSizeMax");
 		const double rotationStepSizeMin = keywords_.asDouble("RotationStepSizeMin");
 
 		const int nShakesPerMolecule = keywords_.asInt("ShakesPerMolecule");
 		const double targetAcceptanceRate = keywords_.asDouble("TargetAcceptanceRate");
-		double translationStepSize = GenericListHelper<double>::retrieve(moduleData, "TranslationStepSize", uniqueName(), keywords_.asDouble("TranslationStepSize"));
+		double translationStepSize = GenericListHelper<double>::retrieve(cfg->moduleData(), "TranslationStepSize", uniqueName(), keywords_.asDouble("TranslationStepSize"));
 		const double translationStepSizeMax = keywords_.asDouble("TranslationStepSizeMax");
 		const double translationStepSizeMin = keywords_.asDouble("TranslationStepSizeMin");
 		const double termScale = 1.0;
@@ -224,7 +224,7 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		else if (translationStepSize > translationStepSizeMax) translationStepSize = translationStepSizeMax;
 
 		Messenger::print("MolShake: Updated step size for translations is %f Angstroms.\n", translationStepSize); 
-		GenericListHelper<double>::realise(moduleData, "TranslationStepSize", uniqueName(), GenericItem::InRestartFileFlag) = translationStepSize;
+		GenericListHelper<double>::realise(cfg->moduleData(), "TranslationStepSize", uniqueName(), GenericItem::InRestartFileFlag) = translationStepSize;
 
 		// Update and set rotation step size
 		rotationStepSize *= (nRotationsAccepted == 0) ? 0.8 : rotRate/targetAcceptanceRate;
@@ -232,7 +232,7 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		else if (rotationStepSize > rotationStepSizeMax) rotationStepSize = rotationStepSizeMax;
 
 		Messenger::print("MolShake: Updated step size for rotations is %f Angstroms.\n", rotationStepSize); 
-		GenericListHelper<double>::realise(moduleData, "RotationStepSize", uniqueName(), GenericItem::InRestartFileFlag) = rotationStepSize;
+		GenericListHelper<double>::realise(cfg->moduleData(), "RotationStepSize", uniqueName(), GenericItem::InRestartFileFlag) = rotationStepSize;
 
 		// Increment configuration changeCount_
 		if ((nRotationsAccepted > 0) || (nTranslationsAccepted > 0)) cfg->incrementCoordinateIndex();
