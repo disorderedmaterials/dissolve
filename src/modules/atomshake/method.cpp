@@ -76,7 +76,7 @@ bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		if (cutoffDistance < 0.0) cutoffDistance = duq.pairPotentialRange();
 		const int nShakesPerAtom = keywords_.asInt("ShakesPerAtom");
 		const double targetAcceptanceRate = keywords_.asDouble("TargetAcceptanceRate");
-		double stepSize = GenericListHelper<double>::retrieve(moduleData, "StepSize", uniqueName(), keywords_.asDouble("StepSize"));
+		double stepSize = GenericListHelper<double>::retrieve(cfg->moduleData(), "StepSize", uniqueName(), keywords_.asDouble("StepSize"));
 		const double termScale = 1.0;
 		const double rRT = 1.0/(.008314472*cfg->temperature());
 
