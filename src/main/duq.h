@@ -219,7 +219,7 @@ class DUQ
 	// Iterate main simulation
 	bool iterate(int nIterations = -1);
 	// Return current simulation step
-	int iteration();
+	int iteration() const;
 
 
 	/*
@@ -247,19 +247,19 @@ class DUQ
 	// Set random seed
 	void setSeed(int seed);
 	// Return random seed
-	int seed();
+	int seed() const;
 	// Set maximum number of main loop iterations to perform
 	void setMaxIterations(int nIterations);
 	// Return maximum number of main loop iterations to perform
-	int maxIterations();
+	int maxIterations() const;
 	// Set window function to use for all Fourier transforms
 	void setWindowFunction(XYData::WindowFunction wf);
 	// Return window function to use for all Fourier transforms
 	XYData::WindowFunction windowFunction();
 	// Set frequency with which to write various iteration dat
 	void setWriteFrequency(int n);
-	// Return frequency with which to write various iteration dat
-	bool writeFrequency();
+	// Return frequency with which to write various iteration data
+	int writeFrequency() const;
 	// Set up all simulation data, checking it as we go
 	bool setUpSimulation();
 

@@ -365,8 +365,7 @@ bool DUQ::iterate(int nIterations)
 }
 
 // Return current simulation step
-int DUQ::iteration()
+int DUQ::iteration() const
 {
 	return iteration_;
 }
-

@@ -43,7 +43,7 @@ void DUQ::setSeed(int seed)
 }
 
 // Return random seed
-int DUQ::seed()
+int DUQ::seed() const
 {
 	return seed_;
 }
@@ -55,7 +55,7 @@ void DUQ::setMaxIterations(int nIterations)
 }
 
 // Return maximum number of main loop iterations to perform
-int DUQ::maxIterations()
+int DUQ::maxIterations() const
 {
 	return maxIterations_;
 }
@@ -79,7 +79,7 @@ void DUQ::setWriteFrequency(int n)
 }
 
 // Return frequency with which to write various iteration dat
-bool DUQ::writeFrequency()
+int DUQ::writeFrequency() const
 {
 	return writeFrequency_;
 }
