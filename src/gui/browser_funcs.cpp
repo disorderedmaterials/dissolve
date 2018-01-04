@@ -20,7 +20,7 @@
 */
 
 #include "gui/browser.h"
-#include "gui/monitor.h"
+#include "gui/gui.h"
 #include "gui/modulecontrolwidget.h"
 #include "gui/pairpotentialwidget.h"
 #include "main/duq.h"
@@ -32,7 +32,7 @@
 #include <QLabel>
 
 // Constructor
-BrowserWidget::BrowserWidget(QWidget* parent, MonitorWindow& monitorWindow, DUQ& duq) : SubWidget(parent), duq_(duq), monitorWindow_(monitorWindow)
+BrowserWidget::BrowserWidget(QWidget* parent, DUQWindow& monitorWindow, DUQ& duq) : SubWidget(parent), duq_(duq), monitorWindow_(monitorWindow)
 {
 	// Set up user interface
 	ui.setupUi(this);

@@ -19,9 +19,9 @@ duq_CPPFLAGS = @DUQ_CFLAGS@
 # Target 'monitor'
 if BUILDGUI
 
-bin_PROGRAMS += monitor
+bin_PROGRAMS += duq-gui
 
-monitor_SOURCES = monitor.cpp
+duq_gui_SOURCES = duq-gui.cpp
 
 SUBDIRS += gui
 
@@ -31,9 +31,9 @@ libduqgui_la_LIBADD = libduq.la modules/libmodulewidgets.la gui/libgui.la gui/ke
 libduqgui_la_LDFLAGS = -static
 libduqgui_la_CPPFLAGS = @DUQ_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
 
-monitor_LDADD = libduqgui.la @GUI_LDLIBS@ @MPI_LDLIBS@
+duq_gui_LDADD = libduqgui.la @GUI_LDLIBS@ @MPI_LDLIBS@
 
-monitor_CPPFLAGS = @DUQ_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
+duq_gui_CPPFLAGS = @DUQ_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
 
 endif
 

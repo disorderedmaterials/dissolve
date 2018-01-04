@@ -22,7 +22,7 @@
 #ifndef DUQ_MONITORWINDOW_H
 #define DUQ_MONITORWINDOW_H
 
-#include "gui/ui_monitor.h"
+#include "gui/ui_gui.h"
 #include "gui/subwindow.h"
 #include "gui/outputhandler.hui"
 #include "gui/thread.hui"
@@ -33,17 +33,17 @@
 class DUQ;
 class QMdiSubWindow;
 
-class MonitorWindow : public QMainWindow
+class DUQWindow : public QMainWindow
 {
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
 	public:
 	// Constructor / Destructor
-	MonitorWindow(DUQ& duq);
-	~MonitorWindow();
+	DUQWindow(DUQ& duq);
+	~DUQWindow();
 	// Main form declaration
-	Ui::MonitorWindow ui;
+	Ui::DUQWindow ui;
 
 	protected:
 	void closeEvent(QCloseEvent* event);

@@ -4,11 +4,11 @@
 # Meta-Objects
 SET(gui_MOC_HDRS
   browser.h
+  gui.h
   mimestrings.h
   mimetreewidgetitem.h
   modulecontrolwidget.h
   modulewidget.h
-  monitor.h
   pairpotentialwidget.h
   subwidget.h
   subwindow.h
@@ -25,8 +25,8 @@ QT5_WRAP_CPP(gui_MOC_SRCS ${gui_MOC_HDRS})
 # User Interface Files
 SET(gui_UIS
   browser.ui
+  gui.ui
   modulecontrolwidget.ui
-  monitor.ui
   pairpotentialwidget.ui
 )
 QT5_WRAP_UI(gui_UIS_H ${gui_UIS})
@@ -35,13 +35,13 @@ QT5_WRAP_UI(gui_UIS_H ${gui_UIS})
 SET(gui_SRCS
   browser_funcs.cpp
   colourbutton_funcs.cpp
+  gui_funcs.cpp
   gradientbar_funcs.cpp
   mimestrings.cpp
   mimetreewidget_funcs.cpp
   mimetreewidgetitem.cpp
   modulecontrolwidget_funcs.cpp
   modulewidget.cpp
-  monitor_funcs.cpp
   outputhandler_funcs.cpp
   pairpotentialwidget_funcs.cpp
   subwidget.cpp

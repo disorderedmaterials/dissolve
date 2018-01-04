@@ -22,11 +22,9 @@ stamp-h1
 ui_*
 moc_*
 src/duq
-src/monitor
-Aten.desktop
+src/duq-gui
 .kdev4/
 build/
-src/gui/qcustomplot/tplotwidget.cpp
 
 # Miscellaneous
 *swp

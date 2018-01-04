@@ -20,7 +20,7 @@
 */
 
 #include "main/duq.h"
-#include "gui/monitor.h"
+#include "gui/gui.h"
 #include "gui/browser.h"
 #include "gui/modulecontrolwidget.h"
 #include "gui/pairpotentialwidget.h"
@@ -31,7 +31,7 @@
 #include <QMdiSubWindow>
 
 // Constructor
-MonitorWindow::MonitorWindow(DUQ& duq) : QMainWindow(NULL), duq_(duq), threadController_(this, duq)
+DUQWindow::DUQWindow(DUQ& duq) : QMainWindow(NULL), duq_(duq), threadController_(this, duq)
 {
 	// Initialise resources
 	Q_INIT_RESOURCE(icons);
@@ -65,18 +65,18 @@ MonitorWindow::MonitorWindow(DUQ& duq) : QMainWindow(NULL), duq_(duq), threadCon
 }
 
 // Destructor
-MonitorWindow::~MonitorWindow()
+DUQWindow::~DUQWindow()
 {
 }
 
 // Return reference to dUQ
-DUQ& MonitorWindow::duq()
+DUQ& DUQWindow::duq()
 {
 	return duq_;
 }
 
 // Catch window close event
-void MonitorWindow::closeEvent(QCloseEvent* event)
+void DUQWindow::closeEvent(QCloseEvent* event)
 {
 	// Save the state before we go...
 	saveWindowState();
@@ -84,7 +84,7 @@ void MonitorWindow::closeEvent(QCloseEvent* event)
 	event->accept();
 }
 
-void MonitorWindow::resizeEvent(QResizeEvent* event)
+void DUQWindow::resizeEvent(QResizeEvent* event)
 {
 }
 
@@ -93,7 +93,7 @@ void MonitorWindow::resizeEvent(QResizeEvent* event)
  */
 
 // Refresh all displayed widgets
-void MonitorWindow::updateWidgets()
+void DUQWindow::updateWidgets()
 {
 	// Iteration Panel
 	ui.IterationNumberLabel->setText(DUQSys::itoa(duq_.iteration()));
@@ -105,7 +105,7 @@ void MonitorWindow::updateWidgets()
 }
 
 // Set widgets ready for the main code to be run
-void MonitorWindow::setWidgetsForRun()
+void DUQWindow::setWidgetsForRun()
 {
 	// Disable run and step buttons, and enable pause button
 	ui.ControlRunButton->setEnabled(false);
@@ -119,7 +119,7 @@ void MonitorWindow::setWidgetsForRun()
 }
 
 // Set widgets after the main code has been run
-void MonitorWindow::setWidgetsAfterRun()
+void DUQWindow::setWidgetsAfterRun()
 {
 	// Enable run and step buttons, and disable pause button
 	ui.ControlRunButton->setEnabled(true);
@@ -133,7 +133,7 @@ void MonitorWindow::setWidgetsAfterRun()
 }
 
 // All iterations requested are complete
-void MonitorWindow::iterationsComplete()
+void DUQWindow::iterationsComplete()
 {
 	setWidgetsAfterRun();
 }
@@ -143,7 +143,7 @@ void MonitorWindow::iterationsComplete()
  */
 
 // Find SubWindow from specified data pointer
-SubWindow* MonitorWindow::subWindow(void* data)
+SubWindow* DUQWindow::subWindow(void* data)
 {
 	ListIterator<SubWindow> subWindowIterator(subWindows_);
 	while (SubWindow* subWindow = subWindowIterator.iterate()) if (subWindow->data() == data) return subWindow;
@@ -152,7 +152,7 @@ SubWindow* MonitorWindow::subWindow(void* data)
 }
 
 // Return window for specified data (as pointer), if it exists
-QMdiSubWindow* MonitorWindow::currentWindow(void* windowContents)
+QMdiSubWindow* DUQWindow::currentWindow(void* windowContents)
 {
 	ListIterator<SubWindow> subWindowIterator(subWindows_);
 	while (SubWindow* subWindow = subWindowIterator.iterate()) if (subWindow->data() == windowContents) return subWindow->window();
@@ -161,7 +161,7 @@ QMdiSubWindow* MonitorWindow::currentWindow(void* windowContents)
 }
 
 // Add window for specified data (as pointer)
-QMdiSubWindow* MonitorWindow::addWindow(SubWidget* widget, void* windowContents, const char* windowTitle)
+QMdiSubWindow* DUQWindow::addWindow(SubWidget* widget, void* windowContents, const char* windowTitle)
 {
 	// Check that the windowContents aren't currently in the list
 	QMdiSubWindow* window = windowContents ? currentWindow(windowContents) : NULL;
@@ -186,7 +186,7 @@ QMdiSubWindow* MonitorWindow::addWindow(SubWidget* widget, void* windowContents,
 }
 
 // Remove window for specified data (as pointer), removing it from the list
-bool MonitorWindow::removeWindow(void* windowContents)
+bool DUQWindow::removeWindow(void* windowContents)
 {
 	// Find the windowContents the list
 	SubWindow* window = subWindow(windowContents);
@@ -206,7 +206,7 @@ bool MonitorWindow::removeWindow(void* windowContents)
  */
 
 // Save current window state
-bool MonitorWindow::saveWindowState()
+bool DUQWindow::saveWindowState()
 {
 	// Open file for writing
 	LineParser stateParser;
@@ -230,7 +230,7 @@ bool MonitorWindow::saveWindowState()
 }
 
 // Load window state
-bool MonitorWindow::loadWindowState()
+bool DUQWindow::loadWindowState()
 {
 	// Open file for reading
 	LineParser stateParser;
@@ -290,7 +290,7 @@ bool MonitorWindow::loadWindowState()
  * Widget Slots
  */
 
-void MonitorWindow::on_ControlRunButton_clicked(bool checked)
+void DUQWindow::on_ControlRunButton_clicked(bool checked)
 {
 	// Prepare the GUI
 	setWidgetsForRun();
@@ -298,7 +298,7 @@ void MonitorWindow::on_ControlRunButton_clicked(bool checked)
 	emit iterate(-1);
 }
 
-void MonitorWindow::on_ControlStepButton_clicked(bool checked)
+void DUQWindow::on_ControlStepButton_clicked(bool checked)
 {
 	// Prepare the GUI
 	setWidgetsForRun();
@@ -306,7 +306,7 @@ void MonitorWindow::on_ControlStepButton_clicked(bool checked)
 	emit iterate(1);
 }
 
-void MonitorWindow::on_ControlStepFiveButton_clicked(bool checked)
+void DUQWindow::on_ControlStepFiveButton_clicked(bool checked)
 {
 	// Prepare the GUI
 	setWidgetsForRun();
@@ -314,11 +314,11 @@ void MonitorWindow::on_ControlStepFiveButton_clicked(bool checked)
 	emit iterate(5);
 }
 
-void MonitorWindow::on_ControlPauseButton_clicked(bool checked)
+void DUQWindow::on_ControlPauseButton_clicked(bool checked)
 {
 	emit stopIterating();
 }
 
-void MonitorWindow::on_ControlReloadButton_clicked(bool checked)
+void DUQWindow::on_ControlReloadButton_clicked(bool checked)
 {
 }

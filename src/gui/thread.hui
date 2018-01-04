@@ -26,7 +26,7 @@
 
 // Forward Declarations
 class DUQ;
-class MonitorWindow;
+class DUQWindow;
 
 // DUQ Thread Worker Class
 class DUQThreadWorker : public QObject
@@ -67,7 +67,7 @@ class DUQThreadController : public QObject
 	
 	public:
 	// Constructor
-	DUQThreadController(MonitorWindow* parentWindow, DUQ& duq, int nIterations = -1);
+	DUQThreadController(DUQWindow* parentWindow, DUQ& duq, int nIterations = -1);
 	// Destructor
 	~DUQThreadController();
 

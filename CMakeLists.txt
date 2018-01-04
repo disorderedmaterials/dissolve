@@ -140,7 +140,7 @@ target_include_directories(${target_name} PRIVATE
 if(GUI)
   add_executable(${gui_target_name}
     MACOSX_BUNDLE
-    ${SRCS}/monitor.cpp 
+    ${SRCS}/duq-gui.cpp 
   )
 
   # Request C++11 Standard Support (Required for Qt 5.7)

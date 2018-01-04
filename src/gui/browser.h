@@ -27,7 +27,7 @@
 
 // Forward Declarations
 class DUQ;
-class MonitorWindow;
+class DUQWindow;
 
 class BrowserWidget : public SubWidget
 {
@@ -36,7 +36,7 @@ class BrowserWidget : public SubWidget
 
 	public:
 	// Constructor
-	BrowserWidget(QWidget* parent, MonitorWindow& monitorWindow, DUQ& duq);
+	BrowserWidget(QWidget* parent, DUQWindow& monitorWindow, DUQ& duq);
 	// Main form declaration
 	Ui::BrowserWidget ui;
 	// Browser Data Types
@@ -74,8 +74,8 @@ class BrowserWidget : public SubWidget
 	private:
 	// DUQ reference
 	DUQ& duq_;
-	// MonitorWindow reference
-	MonitorWindow& monitorWindow_;
+	// DUQWindow reference
+	DUQWindow& monitorWindow_;
 
 
 	/*

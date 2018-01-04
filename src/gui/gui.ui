@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MonitorWindow</class>
- <widget class="QMainWindow" name="MonitorWindow">
+ <class>DUQWindow</class>
+ <widget class="QMainWindow" name="DUQWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -16,7 +16,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>Monitor</string>
+   <string>DUQ GUI</string>
   </property>
   <widget class="QWidget" name="Centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">

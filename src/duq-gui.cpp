@@ -1,6 +1,6 @@
 /*
-	*** Monitor Main
-	*** src/monitor.cpp
+	*** dUQ GUI Main
+	*** src/duq-gui.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -24,7 +24,7 @@
 #include "main/duq.h"
 #include "module/registry.h"
 #include "base/processpool.h"
-#include "gui/monitor.h"
+#include "gui/gui.h"
 #include <time.h>
 #include <ctime>
 #include <stdlib.h>
@@ -197,7 +197,7 @@ int main(int argc, char **argv)
 	QApplication app(argc, argv);
 	QCoreApplication::setOrganizationName("ProjectAten");
 	QCoreApplication::setOrganizationDomain("www.projectaten.com");
-	QCoreApplication::setApplicationName("Monitor");
+	QCoreApplication::setApplicationName("DUQ GUI");
 
 	// Tweak the default QSurfaceFormat
 	QSurfaceFormat surfaceFormat;
@@ -214,7 +214,7 @@ int main(int argc, char **argv)
 	setlocale(LC_NUMERIC,"C");
 
 	// Create the main window
-	MonitorWindow duqWindow(dUQ);
+	DUQWindow duqWindow(dUQ);
 	duqWindow.updateWidgets();
 	duqWindow.show();
 

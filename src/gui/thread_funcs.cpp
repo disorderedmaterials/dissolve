@@ -20,7 +20,7 @@
 */
 
 #include "gui/thread.hui"
-#include "gui/monitor.h"
+#include "gui/gui.h"
 #include "main/duq.h"
 
 /*
@@ -63,7 +63,7 @@ void DUQThreadWorker::stopIterating()
  */
 
 // Constructor
-DUQThreadController::DUQThreadController(MonitorWindow* parentWindow, DUQ& duq, int nIterations)
+DUQThreadController::DUQThreadController(DUQWindow* parentWindow, DUQ& duq, int nIterations)
 {
 	DUQThreadWorker* worker = new DUQThreadWorker(duq);
 	worker->moveToThread(&workerThread_);
