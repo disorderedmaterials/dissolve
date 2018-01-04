@@ -71,38 +71,46 @@ grep 'm4_define(\[DUQ_VERSION\]' ./configure.ac | sed -e 's/m4_define(\[DUQ_VERS
 #if [ "$TEST" = "false" ]
 #then
 #  echo "Writing new specfile..."
-#  sed -i -e "s/Version: [0-9a-z\.]\+/Version: $MAJOR.$MINOR.$PATCH/g" extra/OpenSuSE13.2/aten.spec
-#  grep "Version:" extra/OpenSuSE13.2/aten.spec
+#  sed -i -e "s/Version: [0-9a-z\.]\+/Version: $MAJOR.$MINOR.$PATCH/g" extra/OpenSuSE13.2/duq.spec
+#  grep "Version:" extra/OpenSuSE13.2/duq.spec
 #else
 #  echo -n "                          Specfile : "
-#  grep "Version:" extra/OpenSuSE13.2/aten.spec | sed -e 's/Version: \([0-9a-z\.]\+\)/\1/g'
+#  grep "Version:" extra/OpenSuSE13.2/duq.spec | sed -e 's/Version: \([0-9a-z\.]\+\)/\1/g'
 #fi
 
 # Debian build files
 #echo -n "       *.control (Program Version) : "
 #if [ "$TEST" = "false" ]
 #then
-#  sed -i -e "s/Version: \([0-9a-z\.]\+\)/Version: $MAJOR.$MINOR.$PATCH/g" -e "s/^ \([a-z0-9]*\) \([0-9]*\) .*/ \1 \2 aten-$MAJOR.$MINOR.$PATCH.tar.gz/g" ./extra/*/control
+#  sed -i -e "s/Version: \([0-9a-z\.]\+\)/Version: $MAJOR.$MINOR.$PATCH/g" -e "s/^ \([a-z0-9]*\) \([0-9]*\) .*/ \1 \2 duq-$MAJOR.$MINOR.$PATCH.tar.gz/g" ./extra/*/control
 #fi
 #grep 'Version:' ./extra/*/control | sed -e 's/Version: \([0-9a-z\.]\+\)/\1/g'
 
 # OSX build files
-#echo -n "    aten.dmginfo (Program Version) : "
-#if [ "$TEST" = "false" ]
-#then
-#  sed -i -e "s/APP_VERSION=\"\([0-9a-z\.]\+\)\"/APP_VERSION=\"$MAJOR.$MINOR.$PATCH\"/g" ./extra/OSX/aten.dmginfo
-#fi
-#grep 'APP_VERSION=' ./extra/OSX/aten.dmginfo | sed -e 's/APP_VERSION=\"\([0-9a-z\.]\+\)\"/\1/g'
+echo -n "    duq.dmginfo (Program Version) : "
+if [ "$TEST" = "false" ]
+then
+  sed -i -e "s/APP_VERSION=\"\([0-9a-z\.]\+\)\"/APP_VERSION=\"$MAJOR.$MINOR.$PATCH\"/g" ./extra/OSX/duq.dmginfo
+fi
+grep 'APP_VERSION=' ./extra/OSX/duq.dmginfo | sed -e 's/APP_VERSION=\"\([0-9a-z\.]\+\)\"/\1/g'
 
 # Windows build files
-#if [ "$TEST" = "false" ]
-#then
-#  sed -i -e "s/#define MyAppVersion \"[0-9\.]*\"/#define MyAppVersion \"$MAJOR.$MINOR.$PATCH\"/g" -e "s/OutputBaseFilename=Aten-[0-9\.]*/OutputBaseFilename=Aten-$MAJOR.$MINOR.$PATCH/g" extra/Win32/aten.iss
-#fi
-#echo -n "        aten.iss (Program Version) : "
-#grep 'define MyAppVersion' extra/Win32/aten.iss | sed -e 's/#define MyAppVersion \"\([0-9\.]*\)\"/\1/g'
-#echo -n "        aten.iss (Output Filename) : "
-#grep 'OutputBaseFilename' extra/Win32/aten.iss | sed -e 's/OutputBaseFilename=Aten-\([0-9\.]*\)/\1/g'
+if [ "$TEST" = "false" ]
+then
+  sed -i -e "s/#define MyAppVersion \"[0-9\.]*\"/#define MyAppVersion \"$MAJOR.$MINOR.$PATCH\"/g" -e "s/OutputBaseFilename=dUQ-[0-9\.]*/OutputBaseFilename=dUQ-$MAJOR.$MINOR.$PATCH/g" extra/Win32/duq.iss
+fi
+echo -n "        duq.iss (Program Version) : "
+grep 'define MyAppVersion' extra/Win32/duq.iss | sed -e 's/#define MyAppVersion \"\([0-9\.]*\)\"/\1/g'
+echo -n "        duq.iss (Output Filename) : "
+grep 'OutputBaseFilename' extra/Win32/duq.iss | sed -e 's/OutputBaseFilename=dUQ-\([0-9\.]*\)/\1/g'
+
+# AppImage build files
+if [ "$TEST" = "false" ]
+then
+  sed -i -e "s/Version=[0-9\.]*/Version=$MAJOR.$MINOR.$PATCH/g" extra/appimage/usr/share/applications/com.projectaten.dUQ.desktop
+fi
+echo -n "appimage.desktop (Program Version) : "
+grep 'Version=' extra/appimage/usr/share/applications/com.projectaten.dUQ.desktop | sed -e 's/Version=\([0-9\.]*\)/\1/g'
 
 exit 0
 

@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=0.33.6
+Encoding=UTF-8
+Comment=dUQ - Potential-based refinement of neutron scattering data
+Exec=duq-gui %f
+GenericName=dUQ
+Icon=duq
+Name=dUQ
+StartupNotify=false
+Terminal=0
+Type=Application
+Categories=Education;Chemistry;Physics;
+X-SuSE-translate=false

@@ -1,0 +1,47 @@
+# dmginfo file for dUQ
+# For use with 'mkdmg'
+
+# /-------------------------\
+# | Define application data |
+# \-------------------------/
+
+# -- APP : The name of the app being packaged
+APP_NAME=dUQ
+
+# -- APP_VERSION : Should contain the version / revision number of the package (for renaming purposes)
+APP_VERSION="0.33.6"
+
+# -- APP_BIN : List of binaries (space-separated, with paths) to include in the bundle
+APP_BIN="bin/dUQ.app/Contents/MacOS/dUQ"
+
+# -- APP_PLIST : Specify the Info.plist file to use in the bundle
+APP_PLIST="bin/dUQ.app/Contents/Info.plist"
+
+# -- APP_ICON : A 1024x1024 png file from which to create an icon set
+APP_ICON="../extra/duq1024.png"
+
+# -- APP_LICENSE : License information file to put in the bundle
+APP_LICENSE="../COPYING"
+
+# -- APP_EXTRA : Directory containing additional files to contain in bundle (or NONE)
+APP_EXTRA="../data/"
+
+# -- APP_DSSTORE : Specifies a directory containing DS_Store and background image for dmg (or NONE)
+APP_DSSTORE="NONE"
+
+# -- USE_QT : Set to TRUE if this is a Qt app, and macdeployqt should be used
+USE_QT="TRUE"
+QT_NO_DYLIBS="TRUE"
+QT_EXTRA_FRAMEWORKS="QtSvg QtXml"
+QT_EXTRA_IMAGEFORMATS="libqsvg.dylib"
+
+# -- EXTRA_DYLIBS : Extra dylibs to be copied in to the bundle (or NONE)
+# --              : Format is "<input dylib | NONE>,<input dylib | NONE>,<output dylib>"
+#EXTRA_DYLIBS="/usr/local/gfortran/lib/i386/libgfortran.3.dylib,/usr/local/gfortran/lib/libgfortran.3.dylib,libgfortran.3.dylib" 
+#EXTRA_DYLIBS="$EXTRA_DYLIBS /usr/local/gfortran/lib/i386/libquadmath.0.dylib,/usr/local/gfortran/lib/libquadmath.0.dylib,libquadmath.0.dylib" 
+#EXTRA_DYLIBS="$EXTRA_DYLIBS /usr/local/gfortran/lib/i386/libstdc++.6.dylib,/usr/local/gfortran/lib/libstdc++.6.dylib,libstdc++.6.dylib" 
+EXTRA_DYLIBS="$EXTRA_DYLIBS /usr/local/lib/libftgl.2.dylib,NONE,libftgl.2.dylib"
+EXTRA_DYLIBS="$EXTRA_DYLIBS /usr/local/lib/libfreetype.6.dylib,NONE,libfreetype.6.dylib"
+#EXTRA_DYLIBS="$EXTRA_DYLIBS /usr/local/gfortran/lib/libgcc_s.1.dylib,NONE,libgcc_s.1.dylib" 
+#EXTRA_DYLIBS="$EXTRA_DYLIBS /usr/local/szip-2.1/lib/libsz.2.dylib,NONE,libsz.2.dylib"
+
