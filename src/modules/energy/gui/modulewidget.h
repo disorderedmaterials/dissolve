@@ -26,6 +26,7 @@
 #include "gui/modulewidget.h"
 
 // Forward Declarations
+class Configuration;
 class DUQ;
 class Module;
 class PartialSet;
@@ -76,6 +77,8 @@ class EnergyModuleWidget : public ModuleWidget
 	 * Widgets / Functions
 	 */
 	private:
+	// Current Configuration whose data is being displayed
+	Configuration* currentConfiguration_;
 
 	private slots:
 	void on_TargetCombo_currentIndexChanged(int index);

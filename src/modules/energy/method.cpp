@@ -352,6 +352,7 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 			}
 
 			// Set variable in Configuration
+			GenericListHelper<double>::realise(cfg->moduleData(), "EnergyGradient", "", GenericItem::InRestartFileFlag) = grad;
 			GenericListHelper<bool>::realise(cfg->moduleData(), "EnergyStable", "", GenericItem::InRestartFileFlag) = stable;
 			GenericListHelper<XYData>::realise(cfg->moduleData(), "EnergyStability", "", GenericItem::InRestartFileFlag).addPoint(duq.iteration(), stable);
 
