@@ -1,6 +1,6 @@
 /*
 	*** Module Widget
-	*** src/modules/test/gui/modulewidget.h
+	*** src/modules/refine/gui/modulewidget.h
 	Copyright T. Youngs 2007-2018
 
 	This file is part of dUQ.
@@ -22,25 +22,25 @@
 #ifndef DUQ_TESTMODULEWIDGET_H
 #define DUQ_TESTMODULEWIDGET_H
 
-#include "modules/test/gui/ui_modulewidget.h"
+#include "modules/refine/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
 
 // Forward Declarations
 class DUQ;
 class Module;
 class PartialSet;
-class TestModule;
+class RefineModule;
 class UChromaViewWidget;
 
 // Module Widget
-class TestModuleWidget : public ModuleWidget
+class RefineModuleWidget : public ModuleWidget
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
 	private:
 	// Associated Module
-	TestModule* module_;
+	RefineModule* module_;
 	// UChromaViews contained within this widget
 	UChromaViewWidget* dataGraph_, *partialSQGraph_, *potentialsGraph_;
 	// Reference to DUQ
@@ -48,14 +48,14 @@ class TestModuleWidget : public ModuleWidget
 
 	public:
 	// Constructor / Destructor
-	TestModuleWidget(QWidget* parent, Module* module, DUQ& dUQ);
-	~TestModuleWidget();
+	RefineModuleWidget(QWidget* parent, Module* module, DUQ& dUQ);
+	~RefineModuleWidget();
 	// Main form declaration
-	Ui::TestModuleWidget ui;
+	Ui::RefineModuleWidget ui;
 	// Update controls within widget
 	void updateControls();
 	// Initialise controls
-	void initialiseControls(TestModule* module);
+	void initialiseControls(RefineModule* module);
 	// Disable sensitive controls within widget, ready for main code to run
 	void disableSensitiveControls();
 	// Enable sensitive controls within widget, ready for main code to run

@@ -1,6 +1,6 @@
 /*
-	*** Test Module - Core
-	*** src/modules/test/core.cpp
+	*** Refine Module - Core
+	*** src/modules/refine/core.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -19,17 +19,17 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/test/test.h"
+#include "modules/refine/refine.h"
 
 // Static Members
-List<Module> TestModule::instances_;
+List<Module> RefineModule::instances_;
 
 /*
  * Constructor / Destructor
  */
 
 // Constructor
-TestModule::TestModule() : Module()
+RefineModule::RefineModule() : Module()
 {
 	// Add to instances list and set unique name for this instance
 	instances_.own(this);
@@ -40,7 +40,7 @@ TestModule::TestModule() : Module()
 }
 
 // Destructor
-TestModule::~TestModule()
+RefineModule::~RefineModule()
 {
 }
 
@@ -49,13 +49,13 @@ TestModule::~TestModule()
  */
 
 // Create instance of this module
-List<Module>& TestModule::instances()
+List<Module>& RefineModule::instances()
 {
 	return instances_;
 }
 
 // Create instance of this module
-Module* TestModule::createInstance()
+Module* RefineModule::createInstance()
 {
-	return new TestModule;
+	return new RefineModule;
 }

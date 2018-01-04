@@ -1,6 +1,6 @@
 /*
-	*** Test Module - Data
-	*** src/modules/test/data.cpp
+	*** Refine Module - GUI
+	*** src/modules/refine/gui/gui.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -19,10 +19,12 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/test/test.h"
+#include "modules/refine/refine.h"
+#include "modules/refine/gui/modulewidget.h"
 
-// Reap data for this Module instance
-void TestModule::reapData()
+// Return a new widget controlling this Module
+ModuleWidget* RefineModule::createWidget(QWidget* parent, DUQ& dUQ)
 {
+	return new RefineModuleWidget(parent, this, dUQ);
 }
 

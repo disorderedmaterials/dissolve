@@ -1,6 +1,6 @@
 /*
-	*** Test Module - Functions
-	*** src/modules/test/functions.cpp
+	*** Refine Module - Functions
+	*** src/modules/refine/functions.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -19,10 +19,10 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/test/test.h"
+#include "modules/refine/refine.h"
 
 // Calculate c(r) from supplied sq
-XYData TestModule::calculateCR(const XYData& sq, double normFactor, double rMin, double rStep, double rMax, const BroadeningFunction& broadening, bool unbroaden, XYData::WindowFunction wf)
+XYData RefineModule::calculateCR(const XYData& sq, double normFactor, double rMin, double rStep, double rMax, const BroadeningFunction& broadening, bool unbroaden, XYData::WindowFunction wf)
 {
 	// Create working array
 	XYData cr;

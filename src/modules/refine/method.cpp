@@ -1,6 +1,6 @@
 /*
-	*** Test Module - Method
-	*** src/modules/test/method.cpp
+	*** Refine Module - Method
+	*** src/modules/refine/method.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -19,7 +19,7 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/test/test.h"
+#include "modules/refine/refine.h"
 #include "main/duq.h"
 #include "classes/scatteringmatrix.h"
 #include "classes/weights.h"
@@ -28,19 +28,19 @@
 #include "templates/genericlisthelper.h"
 
 // Perform set up tasks for module
-bool TestModule::setUp(ProcessPool& procPool)
+bool RefineModule::setUp(ProcessPool& procPool)
 {
 	return true;
 }
 
 // Execute pre-processing stage
-bool TestModule::preProcess(DUQ& duq, ProcessPool& procPool)
+bool RefineModule::preProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return false;
 }
 
 // Execute Method
-bool TestModule::process(DUQ& duq, ProcessPool& procPool)
+bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 {
 	/*
 	 * Grab dependent Module pointers
@@ -48,7 +48,7 @@ bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 	Module* partialsModule = dependentModule("Partials");
 	if (!partialsModule)
 	{
-		Messenger::error("No Partials Module associated to TestModule '%s'.\n", uniqueName());
+		Messenger::error("No Partials Module associated to RefineModule '%s'.\n", uniqueName());
 		return false;
 	}
 
@@ -73,7 +73,7 @@ bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 				bool stable = GenericListHelper<bool>::retrieve(cfg->moduleData(), "EnergyStable", "");
 				if (!stable)
 				{
-					Messenger::print("TestModule: Energy for Configuration '%s' is not yet stable. No potential refinement will be performed this iteration.\n", cfg->name());
+					Messenger::print("RefineModule: Energy for Configuration '%s' is not yet stable. No potential refinement will be performed this iteration.\n", cfg->name());
 					anyFailed = true;
 				}
 			}
@@ -98,7 +98,7 @@ bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 	}
 
 	BroadeningFunction broadening = GenericListHelper<BroadeningFunction>::retrieve(duq.processingModuleData(), "QBroadening", partialsModule->uniqueName(), BroadeningFunction::unity(), &found);
-	if (!found) Messenger::print("TestModule: No 'QBroadening' specified in PartialsModule '%s', so no un-broadening will be performed.\n", partialsModule->uniqueName());
+	if (!found) Messenger::print("RefineModule: No 'QBroadening' specified in PartialsModule '%s', so no un-broadening will be performed.\n", partialsModule->uniqueName());
 	broadening.setInverted(true);
 
 	double rho = GenericListHelper<double>::retrieve(duq.processingModuleData(), "Density", partialsModule->uniqueName(), 0.0, &found);
@@ -130,20 +130,20 @@ bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 		Weights& weights = GenericListHelper<Weights>::retrieve(duq.processingModuleData(), "FullWeights", data->associatedModule()->uniqueName(), Weights(), &found);
 		if (!found)
 		{
-			Messenger::error("TestModule: Couldn't find FullWeights for Data '%s', and so can't construct scattering matrix.\n", data->name());
+			Messenger::error("RefineModule: Couldn't find FullWeights for Data '%s', and so can't construct scattering matrix.\n", data->name());
 			return false;
 		}
 
 		// Set the next row of the scattering matrix with the weights of the supplied data.
 		if (!scatteringMatrix.addReferenceData(data, weights))
 		{
-			Messenger::error("TestModule: Failed to initialise reference Data.\n");
+			Messenger::error("RefineModule: Failed to initialise reference Data.\n");
 			return false;
 		}
 	}
 	if (!scatteringMatrix.finalise())
 	{
-		Messenger::error("TestModule: Failed to set up scattering matrix.\n");
+		Messenger::error("RefineModule: Failed to set up scattering matrix.\n");
 		return false;
 	}
 	scatteringMatrix.print();
@@ -181,7 +181,7 @@ bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 	/*
 	 * Create perturbations to interatomic potentials
 	 */
-	TestModule::PotentialGenerationType generationType = TestModule::potentialGenerationType(keywords_.asString("PotentialGeneration"));
+	RefineModule::PotentialGenerationType generationType = RefineModule::potentialGenerationType(keywords_.asString("PotentialGeneration"));
 	const double weighting = keywords_.asDouble("Weighting");
 	Array2D<XYData>& deltaPhiR = GenericListHelper< Array2D<XYData> >::realise(duq.processingModuleData(), "DeltaPhiR", uniqueName_, GenericItem::InRestartFileFlag, &created);
 	if (created) deltaPhiR.initialise(nTypes, nTypes, true);
@@ -224,14 +224,14 @@ bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 			// Create a perturbation
 			switch (generationType)
 			{
-				case (TestModule::DirectPotentialGeneration):
+				case (RefineModule::DirectPotentialGeneration):
 					// Decide on the weight of the difference we will apply
 					absInt = dGR.absIntegral();
 					weight = absInt > weight ? -weight / absInt : -absInt;
 // 					printf("ABSInt = %f, weight = %f\n", absInt, weight);
 					dPhiR = dGR;
 					break;
-				case (TestModule::PercusYevickPotentialGeneration):
+				case (RefineModule::PercusYevickPotentialGeneration):
 					/*
 					 * The original Percus-Yevick closure relationship for solving the Ornstein-Zernike equation is:
 					 * 
@@ -280,7 +280,7 @@ bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 }
 
 // Execute post-processing stage
-bool TestModule::postProcess(DUQ& duq, ProcessPool& procPool)
+bool RefineModule::postProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return false;
 }

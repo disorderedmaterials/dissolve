@@ -172,8 +172,8 @@ AC_CONFIG_FILES(src/modules/intrashake/Makefile)
 AC_CONFIG_FILES(src/modules/md/Makefile)
 AC_CONFIG_FILES(src/modules/molshake/Makefile)
 AC_CONFIG_FILES(src/modules/partials/Makefile)
+AC_CONFIG_FILES(src/modules/refine/Makefile)
 AC_CONFIG_FILES(src/modules/skeleton/Makefile)
-AC_CONFIG_FILES(src/modules/test/Makefile)
 AC_CONFIG_FILES(src/templates/Makefile)
 if test "$with_gui" = "yes"; then
   AC_CONFIG_FILES(src/gui/Makefile)
@@ -188,8 +188,8 @@ if test "$with_gui" = "yes"; then
   AC_CONFIG_FILES(src/modules/atomshake/gui/Makefile)
   AC_CONFIG_FILES(src/modules/energy/gui/Makefile)
   AC_CONFIG_FILES(src/modules/partials/gui/Makefile)
+  AC_CONFIG_FILES(src/modules/refine/gui/Makefile)
   AC_CONFIG_FILES(src/modules/skeleton/gui/Makefile)
-  AC_CONFIG_FILES(src/modules/test/gui/Makefile)
 fi
 AC_OUTPUT
 

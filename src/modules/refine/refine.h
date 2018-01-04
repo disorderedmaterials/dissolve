@@ -1,6 +1,6 @@
 /*
-	*** Test Module
-	*** src/modules/test/test.h
+	*** Refine Module
+	*** src/modules/refine/refine.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -28,8 +28,8 @@
 // Forward Declarations
 /* none */
 
-// Test Module
-class TestModule : public Module
+// Refine Module
+class RefineModule : public Module
 {
 	/*
 	 * Module for testing various functions
@@ -37,9 +37,9 @@ class TestModule : public Module
 
 	public:
 	// Constructor
-	TestModule();
+	RefineModule();
 	// Destructor
-	~TestModule();
+	~RefineModule();
 
 
 	/*

@@ -29,7 +29,7 @@
 #include "modules/md/md.h"
 #include "modules/molshake/molshake.h"
 #include "modules/partials/partials.h"
-#include "modules/test/test.h"
+#include "modules/refine/refine.h"
 
 /*
  * Module Registration
@@ -49,5 +49,5 @@ ModuleRegistry::ModuleRegistry()
 	ModuleRegistrar<MDModule> mdRegistrar;
 	ModuleRegistrar<MolShakeModule> molShakeRegistrar;
 	ModuleRegistrar<PartialsModule> partailsRegistrar;
-	ModuleRegistrar<TestModule> testRegistrar;
+	ModuleRegistrar<RefineModule> testRegistrar;
 }

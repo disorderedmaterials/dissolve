@@ -1,6 +1,6 @@
 /*
-	*** Test Module Widget - Functions
-	*** src/modules/test/gui/modulewidget_funcs.cpp
+	*** Refine Module Widget - Functions
+	*** src/modules/refine/gui/modulewidget_funcs.cpp
 	Copyright T. Youngs 2007-2018
 
 	This file is part of dUQ.
@@ -19,17 +19,17 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/test/gui/modulewidget.h"
+#include "modules/refine/gui/modulewidget.h"
 #include "gui/uchroma/gui/uchromaview.h"
 #include "gui/mimetreewidgetitem.h"
 #include "main/duq.h"
-#include "modules/test/test.h"
+#include "modules/refine/refine.h"
 #include "classes/atomtype.h"
 #include "templates/variantpointer.h"
 #include "templates/genericlisthelper.h"
 
 // Constructor
-TestModuleWidget::TestModuleWidget(QWidget* parent, Module* module, DUQ& dUQ) : ModuleWidget(parent), module_((TestModule*) module), dUQ_(dUQ)
+RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, DUQ& dUQ) : ModuleWidget(parent), module_((RefineModule*) module), dUQ_(dUQ)
 {
 	// Set up user interface
 	ui.setupUi(this);
@@ -103,12 +103,12 @@ TestModuleWidget::TestModuleWidget(QWidget* parent, Module* module, DUQ& dUQ) : 
 	refreshing_ = false;
 }
 
-TestModuleWidget::~TestModuleWidget()
+RefineModuleWidget::~RefineModuleWidget()
 {
 }
 
 // Update controls within widget
-void TestModuleWidget::updateControls()
+void RefineModuleWidget::updateControls()
 {
 	// Ensure that any displayed data is up-to-date
 	dataGraph_->refreshReferencedDataSets();
@@ -121,7 +121,7 @@ void TestModuleWidget::updateControls()
 }
 
 // Initialise controls
-void TestModuleWidget::initialiseControls(TestModule* module)
+void RefineModuleWidget::initialiseControls(RefineModule* module)
 {
 	if (!module) return;
 
@@ -188,12 +188,12 @@ void TestModuleWidget::initialiseControls(TestModule* module)
 }
 
 // Disable sensitive controls within widget, ready for main code to run
-void TestModuleWidget::disableSensitiveControls()
+void RefineModuleWidget::disableSensitiveControls()
 {
 }
 
 // Enable sensitive controls within widget, ready for main code to run
-void TestModuleWidget::enableSensitiveControls()
+void RefineModuleWidget::enableSensitiveControls()
 {
 }
 
@@ -202,7 +202,7 @@ void TestModuleWidget::enableSensitiveControls()
  */
 
 // Write widget state through specified LineParser
-bool TestModuleWidget::writeState(LineParser& parser)
+bool RefineModuleWidget::writeState(LineParser& parser)
 {
 	// Write UChromaWidget sessions
 	if (!dataGraph_->writeSession(parser)) return false;
@@ -212,7 +212,7 @@ bool TestModuleWidget::writeState(LineParser& parser)
 }
 
 // Read widget state through specified LineParser
-bool TestModuleWidget::readState(LineParser& parser)
+bool RefineModuleWidget::readState(LineParser& parser)
 {
 	// Read UChromaWidget sessions
 	if (!dataGraph_->readSession(parser)) return false;

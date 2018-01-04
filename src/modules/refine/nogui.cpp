@@ -1,6 +1,6 @@
 /*
-	*** Test Module - GUI
-	*** src/modules/test/gui/gui.cpp
+	*** Refine Module - GUI
+	*** src/modules/refine/nogui.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -19,12 +19,11 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/test/test.h"
-#include "modules/test/gui/modulewidget.h"
+#include "modules/refine/refine.h"
 
 // Return a new widget controlling this Module
-ModuleWidget* TestModule::createWidget(QWidget* parent, DUQ& dUQ)
+ModuleWidget* RefineModule::createWidget(QWidget* parent, DUQ& dUQ)
 {
-	return new TestModuleWidget(parent, this, dUQ);
+	return NULL;
 }
 

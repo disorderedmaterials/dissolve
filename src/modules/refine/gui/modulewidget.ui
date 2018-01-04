@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>TestModuleWidget</class>
- <widget class="QWidget" name="TestModuleWidget">
+ <class>RefineModuleWidget</class>
+ <widget class="QWidget" name="RefineModuleWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -22,7 +22,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>Test Controls</string>
+   <string>Refine Controls</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <property name="spacing">
@@ -48,7 +48,7 @@
       </font>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="DataTab">
       <attribute name="title">
