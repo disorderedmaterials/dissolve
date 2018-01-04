@@ -192,6 +192,7 @@ target_link_libraries( ${target_name}
   energymodulenogui
   partialsmodulenogui
   refinemodulenogui
+  skeletonmodulenogui
 
   -Wl,-no-whole-archive
 

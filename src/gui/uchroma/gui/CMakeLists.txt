@@ -29,6 +29,9 @@ SET(uchromagui_MOC_HDRS
   style.h
   transform.h
   view.h
+
+  uchromafull.h
+  uchromaview.h
 )
 QT5_WRAP_CPP(uchromagui_MOC_SRCS ${uchromagui_MOC_HDRS})
 
@@ -103,9 +106,6 @@ SET(uchromagui_SRCS
   uchromaview_funcs.cpp
   uchromaview_slots.cpp
   uchromaview_update.cpp
-
-  uchromafull.h
-  uchromaview.h
 )
 
 # Resources
