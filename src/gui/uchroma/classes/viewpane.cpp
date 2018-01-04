@@ -61,6 +61,7 @@ ViewPane::ViewPane(ViewLayout& parent) : ListItem<ViewPane>(), ObjectStore<ViewP
 	// Role
 	role_ = ViewPane::StandardRole;
 	viewType_ = ViewPane::AutoStretchedView;
+	autoFollowType_ = ViewPane::NoAutoFollow;
 
 	// Style
 	boundingBox_ = ViewPane::NoBox;
@@ -455,6 +456,22 @@ ViewPane::ViewType ViewPane::viewType(QString s)
 const char* ViewPane::viewType(ViewPane::ViewType vt)
 {
 	return ViewTypeKeywords[vt];
+}
+
+// AutoFollow types
+const char* AutoFollowTypeKeywords[ViewPane::nAutoFollowTypes] = { "None", "All", "X" };
+
+// Convert text string to AutoFollowType
+ViewPane::AutoFollowType ViewPane::autoFollowType(QString s)
+{
+	for (int n=0; n<ViewPane::nAutoFollowTypes; ++n) if (s == AutoFollowTypeKeywords[n]) return (ViewPane::AutoFollowType) n;
+	return ViewPane::nAutoFollowTypes;
+}
+
+// Convert AutoFollowType to text string
+const char* ViewPane::autoFollowType(ViewPane::AutoFollowType aft)
+{
+	return AutoFollowTypeKeywords[aft];
 }
 
 // Return calculated projection matrix
@@ -1076,6 +1093,83 @@ void ViewPane::zoomTo(Vec3<double> limit1, Vec3<double> limit2)
 			axes_.setMin(axis, newMin.get(axis));
 			axes_.setMax(axis, newMax.get(axis));
 		}
+	}
+}
+
+// Set auto-follow type in effect
+void ViewPane::setAutoFollowType(AutoFollowType aft)
+{
+	autoFollowType_ = aft;
+}
+
+// Cycle auto-follow type in effect
+void ViewPane::cycleAutoFollowType()
+{
+	autoFollowType_ = (ViewPane::AutoFollowType) ((autoFollowType_+1)%nAutoFollowTypes);
+}
+
+// Auto-follow type in effect
+ViewPane::AutoFollowType ViewPane::autoFollowType()
+{
+	return autoFollowType_;
+}
+
+// Set axis limits based on current auto-follow type
+void ViewPane::autoFollowData()
+{
+	if (autoFollowType_ == ViewPane::NoAutoFollow) return;
+	else if (autoFollowType_ == ViewPane::AllAutoFollow) showAllData();
+	else if (autoFollowType_ == ViewPane::XFollow)
+	{
+		// This is the window x 'width' we will follow
+		const double width = 20.0;
+
+		// Establish min / max limits on x axis
+		double xMin = transformedDataMinima().x;
+		double xMax = transformedDataMaxima().x;
+		if ((xMax - xMin) > width) xMin = xMax - width;
+
+		// Get y range over the horizontal range we've established
+		bool first = true;
+		double yMin, yMax, yMinTest, yMaxTest;
+		for (TargetData* target = collectionTargets_.first(); target != NULL; target = target->next)
+		{
+			// Loop over display targets
+			for (TargetPrimitive* prim = target->displayPrimitives(); prim != NULL; prim = prim->next)
+			{
+				// Get limits for the associated collection
+				prim->collection()->yRangeOverX(xMin, xMax, yMinTest, yMaxTest);
+				if (first)
+				{
+					yMin = yMinTest;
+					yMax = yMaxTest;
+					first = false;
+				}
+				else
+				{
+					if (yMinTest < yMin) yMin = yMinTest;
+					if (yMaxTest > yMax) yMax = yMaxTest;
+				}
+			}
+		}
+
+		// If we didn't have any data to work with, return the current axis limits
+		if (first)
+		{
+			yMax = axes_.limitMax(1);
+			yMin = axes_.limitMin(1);
+		}
+		else
+		{
+			// Increase the range by 5% either way
+			double yDelta = (yMax - yMin)*0.05;
+			yMax += yDelta;
+			yMin -= yDelta;
+		}
+	
+		// Set new limits
+		axes_.setRange(0, xMin, xMax);
+		axes_.setRange(1, yMin, yMax);
 	}
 }
 

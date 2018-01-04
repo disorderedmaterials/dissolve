@@ -199,6 +199,9 @@ void Viewer::keyPressEvent(QKeyEvent *event)
 			}
 			else viewPane->showAllData();
 			break;
+		case (Qt::Key_F):
+			viewPane->cycleAutoFollowType();
+			break;
 		case (Qt::Key_L):
 			if (km&Qt::ShiftModifier) viewPane->axes().toggleLogarithmic(viewType == ViewPane::FlatXZView ? 2 : 1);
 			else viewPane->axes().toggleLogarithmic(viewType == ViewPane::FlatZYView ? 2 : 0);

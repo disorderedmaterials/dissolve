@@ -115,6 +115,9 @@ void Viewer::renderFullScene(int xOffset, int yOffset)
 	GLdouble clipPlaneBottom[4] = { 0.0, 1.0, 0.0, 0.0 }, clipPlaneTop[4] = { 0.0, -1.0, 0.0, 0.0 };
 	for (ViewPane* pane = uChromaBase_->viewLayout().panes(); pane != NULL; pane = pane->next)
 	{
+		// If we are auto-following, set the axis limits here
+		if (pane->autoFollowType() != ViewPane::NoAutoFollow) pane->autoFollowData();
+		
 		// Before we do anything else, make sure the view is up to date
 		pane->recalculateView();
 

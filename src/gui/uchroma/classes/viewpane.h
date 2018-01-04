@@ -175,6 +175,12 @@ class ViewPane : public ListItem<ViewPane>, public ObjectStore<ViewPane>
 	static ViewType viewType(QString s);
 	// Convert ViewType to text string
 	static const char* viewType(ViewType vt);
+	// AutoFollow type
+	enum AutoFollowType { NoAutoFollow, AllAutoFollow, XFollow, nAutoFollowTypes };
+	// Convert text string to AutoFollowType
+	static AutoFollowType autoFollowType(QString s);
+	// Convert AutoFollowType to text string
+	static const char* autoFollowType(AutoFollowType aft);
 
 	private:
 	// Type of view to use
@@ -201,6 +207,8 @@ class ViewPane : public ListItem<ViewPane>, public ObjectStore<ViewPane>
 	int viewAxesUsedAt_;
 	// Viewport version at which view matrix was last calculated
 	int viewViewportUsedAt_;
+	// Auto-follow type in effect
+	AutoFollowType autoFollowType_;
 
 	private:
 	// Return calculated projection matrix
@@ -256,9 +264,17 @@ class ViewPane : public ListItem<ViewPane>, public ObjectStore<ViewPane>
 	// Reset view matrix to face XY plane
 	void resetViewMatrix();
 	// Set display limits to show all available data
-	void showAllData(double xFrac =1.0, double yFrac = 1.0, double zFrac = 1.0);
+	void showAllData(double xFrac = 1.0, double yFrac = 1.0, double zFrac = 1.0);
 	// Zoom to specified region
 	void zoomTo(Vec3<double> limit1, Vec3<double> limit2);
+	// Set auto-follow type in effect
+	void setAutoFollowType(AutoFollowType aft);
+	// Cycle auto-follow type in effect
+	void cycleAutoFollowType();
+	// Auto-follow type in effect
+	AutoFollowType autoFollowType();
+	// Set axis limits based on current auto-follow type
+	void autoFollowData();
 
 
 	/*

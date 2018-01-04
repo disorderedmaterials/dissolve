@@ -202,6 +202,8 @@ class Collection : public ListItem<Collection>, public ObjectStore<Collection>
 	public:
 	// Add to specified axis value`
 	void addConstantValue(int axis, double value);
+	// Calculate min/max y value over specified x range
+	void yRangeOverX(double xMin, double xMax, double& yMin, double& yMax);
 
 
 	/*

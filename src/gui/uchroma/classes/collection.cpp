@@ -706,6 +706,33 @@ void Collection::addConstantValue(int axis, double value)
 	updateLimitsAndTransforms();
 }
 
+// Calculate min/max y value over specified x range
+void Collection::yRangeOverX(double xMin, double xMax, double& yMin, double& yMax)
+{
+	bool first = true;
+	for (DataSet* dataSet = dataSets_.first(); dataSet != NULL; dataSet = dataSet->next)
+	{
+		XYData& data = dataSet->transformedData();
+		for (int n=0; n<data.nPoints(); ++n)
+		{
+			if (data.x(n) < xMin) continue;
+			else if (data.x(n) > xMax) break;
+
+			if (first)
+			{
+				yMin = data.y(n);
+				yMax = yMin;
+				first = false;
+			}
+			else
+			{
+				if (data.y(n) < yMin) yMin = data.y(n);
+				else if (data.y(n) > yMax) yMax = data.y(n);
+			}
+		}
+	}
+}
+
 /*
  * Associated Data
  */
