@@ -5,7 +5,8 @@ SUFFIXES: .dt
 .dt.desktop:
 	sed -e "s:PREFIX:@INSTALLDIR@:" -e "s:VERSION:@VERSION@:" $< > $@
 
-EXTRA_DIST = TODO CMakeLists.txt src/CMakeLists.txt src/*/CMakeLists.txt
+EXTRA_DIST = TODO CMakeLists.txt src/CMakeLists.txt src/*/CMakeLists.txt src/gui/*/CMakeLists.txt src/gui/uchroma/*/CMakeLists.txt
+EXTRA_DIST += src/gui/icons/*.* src/gui/uchroma/gui/icons/* src/gui/uchroma/gui/freefont/*
 
 #epsrdir = $(datadir)/epsr
 #epsr_DATA = extra/epsr.png

@@ -11,8 +11,7 @@ noinst_HEADERS += objectstore.h orderedlist.h orderedpointerdatalist.h orderedpo
 noinst_HEADERS += pair.h
 noinst_HEADERS += reflist.h
 noinst_HEADERS += simplex.h
-noinst_HEADERS += vector3.h
-noinst_HEADERS += vector4.h
+noinst_HEADERS += variantpointer.h vector3.h vector4.h
 
 AM_CPPFLAGS = -I../ @DUQ_CFLAGS@
 
