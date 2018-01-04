@@ -5,7 +5,7 @@
 
 /* Includes */
 
-#include "render/textprimitive.h"
+#include "gui/uchroma/render/textprimitive.h"
 #include "base/messenger.h"
 
 /* Prototypes */

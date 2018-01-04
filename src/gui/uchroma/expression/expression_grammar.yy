@@ -7,9 +7,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#include "expression/expression.h"
-#include "expression/functions.h"
-#include "expression/variable.h"
+#include "gui/uchroma/expression/expression.h"
+#include "gui/uchroma/expression/functions.h"
+#include "gui/uchroma/expression/variable.h"
 #include "base/messenger.h"
 
 /* Prototypes */
