@@ -147,12 +147,6 @@ bool Data::setUp(GenericList& processingModuleData)
 	// If we're already set up return now 
 	if (setUp_) return true;
 
-	// Find associated Module, if one is specified
-	if (!associatedModuleName_.isEmpty())
-	{
-		
-	}
-
 	// Subtract average level from data?
 	if (subtractAverageLevel_ >= 0.0)
 	{
@@ -211,6 +205,12 @@ bool Data::setUp(GenericList& processingModuleData)
 	setUp_ = true;
 
 	return true;
+}
+
+// Return whether data is set up
+bool Data::isSetUp() const
+{
+	return setUp_;
 }
 
 /*

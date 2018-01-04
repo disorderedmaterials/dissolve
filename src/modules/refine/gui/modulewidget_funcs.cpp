@@ -131,8 +131,9 @@ void RefineModuleWidget::initialiseControls(RefineModule* module)
 	RefListIterator<Data,bool> dataIterator(module->targetData());
 	while (Data* data = dataIterator.iterate())
 	{
-		// Reference data
-		blockData.sprintf("Collection '%s Exp'; Group '%s'; LineStyle 1.0 Solid; DataSet 'Reference'; Source XYData '%s'; EndDataSet; EndCollection", data->name(), data->name(), data->data().objectName());
+		// Reference data (accounting for whether it is set up or not)
+		if (data->isSetUp()) blockData.sprintf("Collection '%s Exp'; Group '%s'; LineStyle 1.0 Solid; DataSet 'Reference'; Source XYData '%s'; EndDataSet; EndCollection", data->name(), data->name(), data->data().objectName());
+		else blockData.sprintf("Collection '%s Exp (not set up)'; Group '%s'; LineStyle 1.0 Solid; DataSet 'Reference'; Source XYData '%s'; EndDataSet; EndCollection", data->name(), data->name(), data->data().objectName());
 		dataGraph_->addCollectionFromBlock(blockData);
 
 		// Calculated data (total S(Q)) from associated module
