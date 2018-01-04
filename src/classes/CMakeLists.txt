@@ -30,6 +30,7 @@ add_library(classes
   grain.cpp
   histogram.cpp
   intra.cpp
+  isotopedata.cpp
   isotopologue.cpp
   isotopologuemix.cpp
   kvector.cpp
@@ -76,6 +77,7 @@ add_library(classes
   grain.h
   histogram.h
   intra.h
+  isotopedata.h
   isotopologue.h
   isotopologuemix.h
   kernelflags.h

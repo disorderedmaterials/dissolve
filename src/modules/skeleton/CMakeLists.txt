@@ -1,3 +1,4 @@
+# Main Module Library
 add_library(skeletonmodule
   core.cpp
   data.cpp
@@ -8,6 +9,16 @@ add_library(skeletonmodule
 
   skeleton.h
 )
+
+# 'nogui' library
+add_library(skeletonmodulenogui
+  nogui.cpp
+)
+
+# gui library
+if(GUI)
+  add_subdirectory(gui)
+endif(GUI)
 
 include_directories(
 ../../

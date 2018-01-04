@@ -23,10 +23,56 @@ set(CMAKE_AUTOMOC OFF)
 # Set policy for automatic linkage of Qt libs to project
 CMAKE_POLICY(SET CMP0020 NEW)
 
+# Catch defines
+if(PARALLEL)
+  ADD_DEFINITIONS("-DPARALLEL")
+  find_package(MPI REQUIRED)
+  include_directories(${MPI_INCLUDE_PATH})
+  set(EXTRA_LINK_LIBS ${EXTRA_LINK_LIBS} ${MPI_LIBRARIES})
+endif(PARALLEL)
+
+if(CHECKS)
+  ADD_DEFINITIONS("-DCHECKS")
+endif(CHECKS)
+
+if(GUI)
+  # Add extra functions
+  LIST(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
+  include(FindBISON)
+  include(FindFTGL)
+  include(FindGLEXT)
+  find_package(Qt5Widgets REQUIRED)
+  find_package(Qt5Core REQUIRED)
+  find_package(Qt5Gui REQUIRED)
+  find_package(Qt5PrintSupport REQUIRED)
+  # -- Force first look for Bison to be /usr/local/bin, since version provided by XCode on OSX is too old (v2.3) 
+  find_package(BISON PATHS /usr/local/bin NO_DEFAULT_PATH QUIET)
+  find_package(BISON REQUIRED)
+  find_package(OpenGL REQUIRED)
+  find_package(FTGL REQUIRED)
+  find_package(Freetype REQUIRED)
+  find_package(GLEXT REQUIRED)
+
+  # Make sure CMake won't try to generate rules for moc (we will do it ourselves)
+  set(CMAKE_AUTOMOC OFF)
+
+  # Set policy for automatic linkage of Qt libs to project
+  CMAKE_POLICY(SET CMP0020 NEW)
+endif(GUI)
+
 # Perform system-specific setup
 # -- Windows
 if(WIN32)
   set (target_name dUQ)
+  set (gui_target_name dUQ-gui)
+
+  # Adjust external include directories for GUI
+  if(GUI)
+    include_directories(
+      ${FTGL_INCLUDE_DIRS}
+      ${GLEXT_INCLUDE_DIRS}
+    )
+  endif(GUI)
  
   # Add global NOMINMAX define for Windows systems, and inhibit console creation
   ADD_DEFINITIONS("-DNOMINMAX")
@@ -39,13 +85,24 @@ endif(WIN32)
 # -- Unix
 if(UNIX)
   set (target_name duq)
+  set (gui_target_name duq-gui)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 endif(UNIX)
 
 # -- OSX
 if(APPLE)
   set (target_name duq)
+  set (gui_target_name duq-gui)
   set(CMAKE_OSX_ARCHITECTURES "x86_64")
   ADD_DEFINITIONS(-D_MAC)
+
+  if(GUI)
+    # Set some specific C++11 related options here (set_property below does not seem to persist)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+
+    # Find GLUT
+    find_package(GLUT REQUIRED)
+  endif(GUI)
 endif(APPLE)
 
 set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
@@ -66,6 +123,7 @@ endif(APPLE)
 # Process CMakeLists in subdirs
 add_subdirectory(${SRCS})
 
+# Add executable target(s)
 add_executable(${target_name}
   MACOSX_BUNDLE
   ${SRCS}/main.cpp 
@@ -76,11 +134,39 @@ target_include_directories(${target_name} PRIVATE
   ${PROJECT_SOURCE_DIR}/src
   ${PROJECT_BINARY_DIR}/src
   ${FREETYPE_INCLUDE_DIRS}
-  ${HDF5_INCLUDE_DIRS}
 )
 
-# Perform final link
-target_link_libraries( ${target_name}
+# Add GUI target
+if(GUI)
+  add_executable(${gui_target_name}
+    MACOSX_BUNDLE
+    ${SRCS}/monitor.cpp 
+  )
+
+  # Request C++11 Standard Support (Required for Qt 5.7)
+  if(GUI)
+    set_property(TARGET ${gui_target_name} PROPERTY CXX_STANDARD 11)
+  endif(GUI)
+
+  # Set project-local include directories for target
+  target_include_directories(${gui_target_name} PRIVATE
+    ${PROJECT_SOURCE_DIR}/src
+    ${PROJECT_BINARY_DIR}/src
+    ${FREETYPE_INCLUDE_DIRS}
+    ${Qt5Core_INCLUDE_DIRS}
+    ${Qt5Gui_INCLUDE_DIRS}
+    ${Qt5Widgets_INCLUDE_DIRS}
+  )
+
+endif(GUI)
+
+# Set basic link libs for executables
+set(BASIC_LINK_LIBS
+
+  # Main libs
+  main classes module keywordtypes base math
+
+  # Modules
   atomshakemodule
   checksmodule
   energymodule
@@ -91,10 +177,63 @@ target_link_libraries( ${target_name}
   mdmodule
   molshakemodule
   partialsmodule
+  refinemodule
   skeletonmodule
-  testmodule
-  main classes module keywordtypes base math
 )
+
+# Build CLI target executable
+target_link_libraries( ${target_name}
+  -Wl,-whole-archive
+
+  ${BASIC_LINK_LIBS}
+
+  # Module 'nogui' libs
+  atomshakemodulenogui
+  energymodulenogui
+  partialsmodulenogui
+  refinemodulenogui
+
+  -Wl,-no-whole-archive
+
+  ${EXTRA_LINK_LIBS}
+)
+
+# Build GUI target executable
+if(GUI)
+  target_link_libraries( ${gui_target_name}
+    -Wl,-whole-archive
+
+    ${BASIC_LINK_LIBS}
+
+    # Module gui libs
+    atomshakemodulegui
+    energymodulegui
+    partialsmodulegui
+    refinemodulegui
+    skeletonmodulegui
+
+    # Main gui libs
+    uchromagui
+    uchroma
+    uchromaclasses
+    uchromarender
+    uchromaexpression
+    uchromakernels
+    uchromasession
+    keywordwidgets
+    gui
+
+    -Wl,-no-whole-archive
+
+    # External libs
+    Qt5::Widgets Qt5::Core Qt5::PrintSupport
+    ${FTGL_LIBRARIES}
+    ${OPENGL_LIBRARIES}
+    ${FREETYPE_LIBRARIES}
+
+    ${EXTRA_LINK_LIBS}
+  )
+endif(GUI)
 
 # Install target for unix
 #if(UNIX AND NOT APPLE)

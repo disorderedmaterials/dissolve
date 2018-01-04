@@ -1,6 +1,6 @@
 bison_target(TextPrimitiveParser textprimitive_grammar.yy ${CMAKE_CURRENT_BINARY_DIR}/textprimitive_grammar.cc COMPILE_FLAGS -y )
 
-add_library(render
+add_library(uchromarender
   ${BISON_TextPrimitiveParser_OUTPUTS}
   fontinstance.cpp
   linestipple.cpp
@@ -18,6 +18,7 @@ add_library(render
   textfragment.cpp
   textprimitive.cpp
   textprimitivelist.cpp
+
   fontinstance.h
   linestipple.h
   linestyle.h
@@ -32,7 +33,7 @@ add_library(render
   textprimitivelist.h
 )
 
-target_include_directories(render PRIVATE
+target_include_directories(uchromarender PRIVATE
   ${PROJECT_SOURCE_DIR}/src
   ${PROJECT_BINARY_DIR}/src
   ${Qt5Core_INCLUDE_DIRS}

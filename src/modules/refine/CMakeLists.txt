@@ -1,4 +1,5 @@
-add_library(testmodule
+# Main Module Library
+add_library(refinemodule
   core.cpp
   data.cpp
   definition.cpp
@@ -6,8 +7,18 @@ add_library(testmodule
   method.cpp
   options.cpp
 
-  test.h
+  refine.h
 )
+
+# 'nogui' library
+add_library(refinemodulenogui
+  nogui.cpp
+)
+
+# gui library
+if(GUI)
+  add_subdirectory(gui)
+endif(GUI)
 
 include_directories(
 ../../

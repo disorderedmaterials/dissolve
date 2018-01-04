@@ -1,3 +1,4 @@
+# Main Module Library
 add_library(energymodule
   core.cpp
   data.cpp
@@ -8,6 +9,16 @@ add_library(energymodule
 
   energy.h
 )
+
+# 'nogui' library
+add_library(energymodulenogui
+  nogui.cpp
+)
+
+# gui library
+if(GUI)
+  add_subdirectory(gui)
+endif(GUI)
 
 include_directories(
 ../../

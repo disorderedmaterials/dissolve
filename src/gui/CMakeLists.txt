@@ -1,0 +1,74 @@
+# Don't forget to include output directory, otherwise
+# the UI file won't be wrapped!
+
+# Meta-Objects
+SET(gui_MOC_HDRS
+  browser.h
+  mimestrings.h
+  mimetreewidgetitem.h
+  modulecontrolwidget.h
+  modulewidget.h
+  monitor.h
+  pairpotentialwidget.h
+  subwidget.h
+  subwindow.h
+
+  colourbutton.hui
+  gradientbar.hui
+  mimetreewidget.hui
+  outputhandler.hui
+  texponentialspin.hui
+  thread.hui
+)
+QT5_WRAP_CPP(gui_MOC_SRCS ${gui_MOC_HDRS})
+
+# User Interface Files
+SET(gui_UIS
+  browser.ui
+  modulecontrolwidget.ui
+  monitor.ui
+  pairpotentialwidget.ui
+)
+QT5_WRAP_UI(gui_UIS_H ${gui_UIS})
+
+# Source files (not Qt UI files or custom .h [uih])
+SET(gui_SRCS
+  browser_funcs.cpp
+  colourbutton_funcs.cpp
+  gradientbar_funcs.cpp
+  mimestrings.cpp
+  mimetreewidget_funcs.cpp
+  mimetreewidgetitem.cpp
+  modulecontrolwidget_funcs.cpp
+  modulewidget.cpp
+  monitor_funcs.cpp
+  outputhandler_funcs.cpp
+  pairpotentialwidget_funcs.cpp
+  subwidget.cpp
+  subwindow.cpp
+  texponentialspin_funcs.cpp
+  thread_funcs.cpp
+)
+
+# Resources
+set(gui_RES_QRC
+  icons.qrc 
+)
+QT5_ADD_RESOURCES(gui_RES ${gui_RES_QRC})
+
+# Target 'gui'
+add_library(gui
+  ${gui_RES}
+  ${gui_UIS_H}
+  ${gui_SRCS}
+  ${gui_MOC_SRCS}
+)
+target_include_directories(gui PRIVATE
+  ${PROJECT_SOURCE_DIR}/src
+  ${PROJECT_BINARY_DIR}/src
+  ${Qt5Widgets_INCLUDE_DIRS}
+  ${FREETYPE_INCLUDE_DIRS}
+)
+
+add_subdirectory(keywordwidgets)
+add_subdirectory(uchroma)

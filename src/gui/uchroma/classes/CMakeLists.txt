@@ -1,16 +1,15 @@
-add_library(classes
+add_library(uchromaclasses
   axes.cpp
   collection.cpp
+  collectiongroup.cpp
+  colourdef.cpp
   colourscale.cpp
-  data2d.cpp
   dataset.cpp
   dataspace.cpp
   dataspacerange.cpp
   displaydataset.cpp
   equationvariable.cpp
   indexdata.cpp
-  lineparser.cpp
-  messenger.cpp
   namedvalue.cpp
   numberformat.cpp
   referencevariable.cpp
@@ -20,18 +19,18 @@ add_library(classes
   transformer.cpp
   viewlayout.cpp
   viewpane.cpp
+
   axes.h
   collection.h
+  collectiongroup.h
+  colourdef.h
   colourscale.h
-  data2d.h
   dataset.h
   dataspace.h
   dataspacerange.h
   displaydataset.h
   equationvariable.h
   indexdata.h
-  lineparser.h
-  messenger.h
   namedvalue.h
   numberformat.h
   referencevariable.h
@@ -44,12 +43,11 @@ add_library(classes
   viewpane.h
 )
 
-target_include_directories(classes PRIVATE
+target_include_directories(uchromaclasses PRIVATE
   ${PROJECT_SOURCE_DIR}/src
   ${PROJECT_BINARY_DIR}/src
   ${Qt5Core_INCLUDE_DIRS}
   ${Qt5Widgets_INCLUDE_DIRS}
   ${Qt5Gui_INCLUDE_DIRS}
   ${FREETYPE_INCLUDE_DIRS}
-  ${HDF5_INCLUDE_DIRS}
 )

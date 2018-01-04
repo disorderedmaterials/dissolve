@@ -4,3 +4,7 @@ add_subdirectory(main)
 add_subdirectory(math)
 add_subdirectory(module)
 add_subdirectory(modules)
+
+if(GUI)
+  add_subdirectory(gui)
+endif(GUI)

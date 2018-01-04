@@ -2,7 +2,8 @@
 # the UI file won't be wrapped!
 
 # Meta-Objects
-SET(gui_MOC_HDRS
+SET(uchromagui_MOC_HDRS
+  paneorganiser.hui
   viewer.hui
 
   editdataset.h
@@ -11,6 +12,7 @@ SET(gui_MOC_HDRS
   editlinestyle.h
   editnumberformat.h
   editreference.h
+  editviewlayout.h
 
   operate_setz.h
   operate_bgsub.h
@@ -23,21 +25,22 @@ SET(gui_MOC_HDRS
   create.h
   data.h
   import.h
-  log.h
   saveimage.h
   style.h
+  transform.h
   view.h
 )
-QT5_WRAP_CPP(gui_MOC_SRCS ${gui_MOC_HDRS})
+QT5_WRAP_CPP(uchromagui_MOC_SRCS ${uchromagui_MOC_HDRS})
 
 # User Interface Files
-SET(gui_UIS
+SET(uchromagui_UIS
   editdataset.ui
   editfitkernel.ui
   editfitresults.ui
   editlinestyle.ui
   editnumberformat.ui
   editreference.ui
+  editviewlayout.ui
 
   operate_bgsub.ui
   operate_setz.ui
@@ -50,24 +53,30 @@ SET(gui_UIS
   create.ui
   data.ui
   import.ui
-  log.ui
   saveimage.ui
   style.ui
+  transform.ui
   view.ui
+
+  uchromafull.ui
+  uchromaview.ui
 )
-QT5_WRAP_UI(gui_UIS_H ${gui_UIS})
+QT5_WRAP_UI(uchromagui_UIS_H ${uchromagui_UIS})
 
 # Source files (not Qt UI files or custom .h [uih])
-SET(gui_SRCS
+SET(uchromagui_SRCS
   editdataset_funcs.cpp
   editfitkernel_funcs.cpp
   editfitresults_funcs.cpp
   editlinestyle_funcs.cpp
   editnumberformat_funcs.cpp
   editreference_funcs.cpp
+  editviewlayout_funcs.cpp
 
   operate_setz_funcs.cpp
   operate_bgsub_funcs.cpp
+
+  paneorganiser_funcs.cpp
 
   selectequation_funcs.cpp
   selectsymbol_funcs.cpp
@@ -82,28 +91,40 @@ SET(gui_SRCS
   data_funcs.cpp
   import_funcs.cpp
   import_seqxy.cpp
-  log_funcs.cpp
   saveimage_funcs.cpp
   style_funcs.cpp
+  transform_funcs.cpp
   view_funcs.cpp
+
+  uchromafull_collection.cpp
+  uchromafull_funcs.cpp
+  uchromafull_slots.cpp
+  uchromafull_update.cpp
+  uchromaview_funcs.cpp
+  uchromaview_slots.cpp
+  uchromaview_update.cpp
+
+  uchromafull.h
+  uchromaview.h
 )
 
 # Resources
-set(gui_RES_QRC
+set(uchromagui_RES_QRC
   uchroma.qrc 
 )
-QT5_ADD_RESOURCES(gui_RES ${gui_RES_QRC})
+QT5_ADD_RESOURCES(uchromagui_RES ${uchromagui_RES_QRC})
 
 # Target 'gui'
-add_library(gui
-${gui_RES}
-${gui_UIS_H}
-${gui_SRCS}
-${gui_MOC_SRCS}
+add_library(uchromagui
+  ${uchromagui_RES}
+  ${uchromagui_UIS_H}
+  ${uchromagui_SRCS}
+  ${uchromagui_MOC_SRCS}
 )
-target_include_directories(gui PRIVATE
+target_include_directories(uchromagui PRIVATE
   ${PROJECT_SOURCE_DIR}/src
   ${PROJECT_BINARY_DIR}/src
   ${Qt5Widgets_INCLUDE_DIRS}
   ${FREETYPE_INCLUDE_DIRS}
 )
+
