@@ -147,6 +147,12 @@ bool Data::setUp(GenericList& processingModuleData)
 	// If we're already set up return now 
 	if (setUp_) return true;
 
+	// Find associated Module, if one is specified
+	if (!associatedModuleName_.isEmpty())
+	{
+		
+	}
+
 	// Subtract average level from data?
 	if (subtractAverageLevel_ >= 0.0)
 	{
@@ -210,6 +216,24 @@ bool Data::setUp(GenericList& processingModuleData)
 /*
  * Associated Module
  */
+
+// Set associated  name
+void Data::setAssociatedModuleName(const char* name)
+{
+	associatedModuleName_ = name;
+}
+
+// Return whether an associated Module name has been set
+bool Data::hasAssociatedModuleName() const
+{
+	return (!associatedModuleName_.isEmpty());
+}
+
+// Return associated Module name
+const char* Data::associatedModuleName() const
+{
+	return associatedModuleName_.get();
+}
 
 // Set associated Module
 void Data::setAssociatedModule(Module* module)

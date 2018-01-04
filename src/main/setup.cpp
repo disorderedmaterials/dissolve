@@ -114,6 +114,29 @@ bool DUQ::setUpSimulation()
 	}
 
 	/*
+	 * Associate Modules to Data
+	 */
+	Messenger::print("\n");
+	Messenger::print("*** Linking associated Modules to Data...\n");
+	for (Data* data = data_.first(); data != NULL; data = data->next)
+	{
+		Messenger::print("*** Data %2i: '%s'\n", index, data->name());
+
+		if (data->hasAssociatedModuleName())
+		{
+			// Find the specified Module
+			Module* module = ModuleList::findInstanceByUniqueName(data->associatedModuleName());
+			if (!module)
+			{
+				Messenger::error("Failed to find Module '%s' for association with Data '%s'.\n", data->associatedModuleName(), data->name());
+				return false;
+			}
+			data->setAssociatedModule(module);
+		}
+		else Messenger::print("  -> No Module associated to this Data.\n");
+	}
+
+	/*
 	 * Pair Potentials
 	 * We expect a PairPotential to have been defined for every combination of AtomType used in the system
 	 */

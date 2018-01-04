@@ -78,14 +78,8 @@ bool DataBlock::parse(LineParser& parser, DUQ* duq, Data* data)
 		switch (dataKeyword)
 		{
 			case (DataBlock::AssociatedToKeyword):
-				// Find the specified Module
-				module = ModuleList::findInstanceByUniqueName(parser.argc(1));
-				if (!module)
-				{
-					Messenger::error("Failed to find Module '%s' for association with Data '%s'.\n", parser.argc(1), data->name());
-					return false;
-				}
-				data->setAssociatedModule(module);
+				// Store the Module name for now - it will be searched for once the input file has been fully loaded
+				data->setAssociatedModuleName(parser.argc(1));
 				break;
 			case (DataBlock::EndDataKeyword):
 				Messenger::print("Found end of %s block.\n", InputBlocks::inputBlock(InputBlocks::DataBlock));

@@ -102,10 +102,18 @@ class Data : public ListItem<Data>
 	 * Associated Module
 	 */
 	private:
+	// Name of associated Module for data, if any
+	CharString associatedModuleName_;
 	// Associated Module for data, if any
 	Module* associatedModule_;
 
 	public:
+	// Set associated  name
+	void setAssociatedModuleName(const char* name);
+	// Return whether an associated Module name has been set
+	bool hasAssociatedModuleName() const;
+	// Return associated Module name
+	const char* associatedModuleName() const;
 	// Set associated Module
 	void setAssociatedModule(Module* module);
 	// Return associated Module
