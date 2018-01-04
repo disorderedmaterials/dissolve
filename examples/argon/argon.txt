@@ -1,6 +1,9 @@
 # Liquid Argon Example
 
-# Species Definitions
+#----------------------#
+# Define Argon Species #
+#----------------------#
+
 Species 'Argon'
   # Atoms
   Atom    1   Ar     0.000    0.000    0.000    'Ar'
@@ -9,26 +12,28 @@ Species 'Argon'
   Isotopologue  'Ar36'  Ar=36
 EndSpecies
 
-# Define Configuration
+#----------------------#
+#   Pair Potentials    #
+#----------------------#
+
+PairPotentials
+  GenerateAll  'LJ'
+EndPairPotentials
+
+#----------------------#
+# Define Configuration #
+#----------------------#
+
 Configuration 'liquid'
   Multiplier  10000
   Density  0.021300  atoms/A3
   SpeciesInfo  'Argon'  1.0
   UseOutputAsInput
-  Module AtomShake
-  EndModule
 EndConfiguration
 
-Module Partials 'Yarnell-85K'
-  Save true
-  Configuration  'liquid'
-  Weights neutron
-  Isotopologue  'liquid'  'Argon'  'Ar36'  1.0
-  StructureFactor  on
-  Averaging  5
-  AveragingScheme  Exponential
-  Frequency 1
-EndModule
+#-----------------------#
+# Define Reference Data #
+#-----------------------#
 
 # Experimental data taken from Table 1 of Yarnell, Katz, Wenzel, and Koenig, Phys. Rev. A 7, 2130 (1973).
 # Liquid Ar36 at 85 K. Data are normalised to <b2>, and oscillate around 1.0.
@@ -39,17 +44,35 @@ Data  'Yarnell-85K'
   AssociatedTo  'Yarnell-85K'
 EndData
 
-Module Test
-  # Define targets
-  Data  'Yarnell-85K'
-  Frequency  1
+#----------------------#
+#      Processing      #
+#----------------------#
+
+# 1) Move atoms with an MC atom 'shake'
+Module AtomShake
+  Configuration  'liquid'
 EndModule
 
-# Pair Potentials
-PairPotentials
-  Generate  'LJ'  'Ar'  'Ar'
-EndPairPotentials
+# 2) Calculate total energy of system, so we can assess the stability (i.e. equilibrium) of the configuration
+Module Energy
+  Configuration 'liquid'
+EndModule
 
-Simulation
-  MaxIterations  100
-EndSimulation
+# 3) Calculate partials (every five iterations)
+Module Partials 'Yarnell-85K'
+  Configuration  'liquid'
+  Weights neutron
+  Isotopologue  'liquid'  'Argon'  'Ar36'  1.0
+  StructureFactor  on
+  Averaging  5
+  AveragingScheme  Simple
+  Frequency 5
+EndModule
+
+# 4) Apply potential refinement (every 25 iterations)
+Module Refine
+  Data  'Yarnell-85K'
+  Frequency  25
+  OnlyWhenStable  True
+EndModule
+
