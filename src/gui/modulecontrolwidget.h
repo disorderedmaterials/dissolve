@@ -94,6 +94,7 @@ class ModuleControlWidget : public SubWidget
 	void windowClosed(void*);
 
 	public slots:
+	void on_ControlRunButton_clicked(bool checked);
 	void on_EnabledCheck_clicked(bool checked);
 	void on_FrequencySpin_valueChanged(int value);
 };

@@ -166,6 +166,7 @@ void ModuleControlWidget::updateControls()
 	// Update Control group
 	ui.EnabledCheck->setChecked(module_->enabled());
 	ui.FrequencySpin->setValue(module_->frequency());
+	ui.RunsInLabel->setText(module_->frequencyDetails(duq_.iteration()));
 
 	// Select source list for keywords that have potentially been replicated / updated there
 	GenericList& moduleData = module_->configurationLocal() ? module_->targetConfigurations().firstItem()->moduleData() : duq_.processingModuleData();
@@ -180,6 +181,10 @@ void ModuleControlWidget::updateControls()
 // Disable sensitive controls within widget, ready for main code to run
 void ModuleControlWidget::disableSensitiveControls()
 {
+	// Disable control buttons
+	ui.ControlRunButton->setEnabled(false);
+
+	// Disable groups
 	ui.ControlGroup->setEnabled(false);
 	ui.OptionsGroup->setEnabled(false);
 
@@ -189,6 +194,10 @@ void ModuleControlWidget::disableSensitiveControls()
 // Enable sensitive controls within widget, ready for main code to run
 void ModuleControlWidget::enableSensitiveControls()
 {
+	// Enable control buttons
+	ui.ControlRunButton->setEnabled(true);
+
+	// Enable groups
 	ui.ControlGroup->setEnabled(true);
 	ui.OptionsGroup->setEnabled(true);
 
@@ -234,6 +243,13 @@ bool ModuleControlWidget::readState(LineParser& parser)
 /*
  * Widget Slots
  */
+
+void ModuleControlWidget::on_ControlRunButton_clicked(bool checked)
+{
+	module_->process(duq_, duq_.worldPool());
+
+	updateControls();
+}
 
 void ModuleControlWidget::on_EnabledCheck_clicked(bool checked)
 {
