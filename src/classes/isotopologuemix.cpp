@@ -199,7 +199,7 @@ const char* IsotopologueMix::itemClassName()
 bool IsotopologueMix::write(LineParser& parser)
 {
 	// Write Species name, integer population, and number of isotopologues in the mix
-	if (!parser.writeLineF("'%s'  %i\n", species_->name(), speciesPopulation_, mix_.nItems())) return false;
+	if (!parser.writeLineF("'%s'  %i  %i\n", species_->name(), speciesPopulation_, mix_.nItems())) return false;
 
 	// Write Isotopologues
 	RefListIterator<Isotopologue,double> mixIterator(mix_);

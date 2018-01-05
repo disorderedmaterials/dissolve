@@ -265,9 +265,6 @@ bool Weights::read(LineParser& parser)
 	// Read IsotopologueMix-tures
 	if (!ListIO<IsotopologueMix>::read(isotopologueMixtures_, parser)) return false;
 
-	// Read Isotopologues List
-	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-
 	// Read arrays using static methods in the relevant GenericItemContainer
 	if (!GenericItemContainer< Array2D<double> >::read(concentrationMatrix_, parser)) return false;
 	if (!GenericItemContainer< Array2D<double> >::read(boundCoherentMatrix_, parser)) return false;
