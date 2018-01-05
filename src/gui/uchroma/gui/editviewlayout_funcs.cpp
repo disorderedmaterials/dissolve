@@ -174,7 +174,7 @@ void EditViewLayoutDialog::on_PaneNameEdit_textChanged(QString text)
 {
 	if (refreshing_) return;
 
-	if (currentPane_) currentPane_->setName(text);
+	if (currentPane_) currentPane_->setName(qPrintable(text));
 	ui.Organiser->update();
 }
 
@@ -322,7 +322,7 @@ void EditViewLayoutDialog::updateControls()
 		for (RefListItem<ViewPane,bool>* ri = currentPane_->paneTargets(); ri != NULL; ri = ri->next)
 		{
 			item = new QListWidgetItem(ui.PaneTargetsList);
-			item->setText("(P) " + ri->item->name());
+			item->setText(QString("(P) ") + ri->item->name());
 			item->setData(Qt::UserRole, VariantPointer<ViewPane>(ri->item));
 		}
 		for (TargetData* target = currentPane_->collectionTargets(); target != NULL; target = target->next)

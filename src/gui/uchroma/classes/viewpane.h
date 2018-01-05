@@ -35,7 +35,6 @@
 #else
 #include <OpenGL/gl3.h>
 #endif
-#include <QString>
 
 // Forward Declarations
 class ViewLayout;
@@ -74,7 +73,7 @@ class ViewPane : public ListItem<ViewPane>, public ObjectStore<ViewPane>
 	 */
 	private:
 	// Name of pane
-	QString name_;
+	CharString name_;
 	// Top edge position (row index)
 	int bottomEdge_;
 	// Left edge position (column index)
@@ -92,21 +91,21 @@ class ViewPane : public ListItem<ViewPane>, public ObjectStore<ViewPane>
 
 	public:
 	// Set name of pane
-	void setName(QString name);
+	void setName(const char* name);
 	// Return name of pane
-	QString name();
+	const char* name() const;
 	// Set bottom left position
 	void setBottomLeft(int bottom, int left);
 	// Return bottom edge of pane
-	int bottomEdge();
+	int bottomEdge() const;
 	// Return left edge of pane
-	int leftEdge();
+	int leftEdge() const;
 	// Set pane size (in terms of columns and rows)
 	void setSize(int w, int h);
 	// Return width of pane (in columns)
-	int width();
+	int width() const;
 	// Return height of pane (in rows)
-	int height();
+	int height() const;
 	// Move specified handle by specified amount
 	void moveHandle(PaneHandle handle, int deltaX, int deltaY);
 	// Return geometry that would result after moving the specified handle
@@ -116,7 +115,7 @@ class ViewPane : public ListItem<ViewPane>, public ObjectStore<ViewPane>
 	// Translate viewport by specified pixel amounts
 	void translateViewport(int deltaX, int deltaY);
 	// Return viewport matrix
-	GLuint* viewportMatrix();
+	const GLuint* viewportMatrix() const;
 	// Return whether the specified coordinate is in this pane
 	bool containsCoordinate(int mouseX, int mouseY);
 	// Return whether the specified grid reference is in this pane
@@ -146,7 +145,7 @@ class ViewPane : public ListItem<ViewPane>, public ObjectStore<ViewPane>
 	// Set role of this pane
 	void setRole(PaneRole role);
 	// Return role of this pane
-	PaneRole role();
+	PaneRole role() const;
 	// Add target pane for role
 	void addPaneTarget(ViewPane* pane);
 	// Remove target pane for role
@@ -172,13 +171,13 @@ class ViewPane : public ListItem<ViewPane>, public ObjectStore<ViewPane>
 	// View type
 	enum ViewType { NormalView, AutoStretchedView, FlatXYView, FlatXZView, FlatZYView, LinkedView, nViewTypes };
 	// Convert text string to ViewType
-	static ViewType viewType(QString s);
+	static ViewType viewType(const char* s);
 	// Convert ViewType to text string
 	static const char* viewType(ViewType vt);
 	// AutoFollow type
 	enum AutoFollowType { NoAutoFollow, AllAutoFollow, XFollow, nAutoFollowTypes };
 	// Convert text string to AutoFollowType
-	static AutoFollowType autoFollowType(QString s);
+	static AutoFollowType autoFollowType(const char* s);
 	// Convert AutoFollowType to text string
 	static const char* autoFollowType(AutoFollowType aft);
 
@@ -222,7 +221,7 @@ class ViewPane : public ListItem<ViewPane>, public ObjectStore<ViewPane>
 	// Return view type
 	ViewPane::ViewType viewType() const;
 	// Return whether view type is flat
-	bool isFlatView();
+	bool isFlatView() const;
 	// Return projection matrix
 	Matrix4 projectionMatrix() const;
 	// Set whether this pane uses perspective
@@ -271,8 +270,8 @@ class ViewPane : public ListItem<ViewPane>, public ObjectStore<ViewPane>
 	void setAutoFollowType(AutoFollowType aft);
 	// Cycle auto-follow type in effect
 	void cycleAutoFollowType();
-	// Auto-follow type in effect
-	AutoFollowType autoFollowType();
+	// Return auto-follow type in effect
+	AutoFollowType autoFollowType() const;
 	// Set axis limits based on current auto-follow type
 	void autoFollowData();
 

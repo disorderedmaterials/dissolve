@@ -161,7 +161,7 @@ void ViewPane::paneChanged()
  */
 
 // Set name of pane
-void ViewPane::setName(QString name)
+void ViewPane::setName(const char* name)
 {
 	name_ = name;
 
@@ -169,9 +169,9 @@ void ViewPane::setName(QString name)
 }
 
 // Return name of pane
-QString ViewPane::name()
+const char* ViewPane::name() const
 {
-	return name_;
+	return name_.get();
 }
 
 // Set bottom left position
@@ -184,13 +184,13 @@ void ViewPane::setBottomLeft(int bottom, int left)
 }
 
 // Return bottom edge of pane
-int ViewPane::bottomEdge()
+int ViewPane::bottomEdge() const
 {
 	return bottomEdge_;
 }
 
 // Return left edge of pane
-int ViewPane::leftEdge()
+int ViewPane::leftEdge() const
 {
 	return leftEdge_;
 }
@@ -205,13 +205,13 @@ void ViewPane::setSize(int w, int h)
 }
 
 // Return width of pane (in columns)
-int ViewPane::width()
+int ViewPane::width() const
 {
 	return width_;
 }
 
 // Return height of pane (in rows)
-int ViewPane::height()
+int ViewPane::height() const
 {
 	return height_;
 }
@@ -303,7 +303,7 @@ void ViewPane::translateViewport(int deltaX, int deltaY)
 }
 
 // Return viewport matrix
-GLuint* ViewPane::viewportMatrix()
+const GLuint* ViewPane::viewportMatrix() const
 {
 	return viewportMatrix_;
 }
@@ -357,7 +357,7 @@ void ViewPane::setRole(ViewPane::PaneRole role)
 }
 
 // Return role of this pane
-ViewPane::PaneRole ViewPane::role()
+ViewPane::PaneRole ViewPane::role() const
 {
 	return role_;
 }
@@ -446,9 +446,9 @@ TargetData* ViewPane::collectionTargets()
 const char* ViewTypeKeywords[ViewPane::nViewTypes] = { "Normal", "AutoStretched", "FlatXY", "FlatXZ", "FlatZY", "Linked" };
 
 // Convert text string to ViewType
-ViewPane::ViewType ViewPane::viewType(QString s)
+ViewPane::ViewType ViewPane::viewType(const char* s)
 {
-	for (int n=0; n<ViewPane::nViewTypes; ++n) if (s == ViewTypeKeywords[n]) return (ViewPane::ViewType) n;
+	for (int n=0; n<ViewPane::nViewTypes; ++n) if (DUQSys::sameString(s, ViewTypeKeywords[n])) return (ViewPane::ViewType) n;
 	return ViewPane::nViewTypes;
 }
 
@@ -462,9 +462,9 @@ const char* ViewPane::viewType(ViewPane::ViewType vt)
 const char* AutoFollowTypeKeywords[ViewPane::nAutoFollowTypes] = { "None", "All", "X" };
 
 // Convert text string to AutoFollowType
-ViewPane::AutoFollowType ViewPane::autoFollowType(QString s)
+ViewPane::AutoFollowType ViewPane::autoFollowType(const char* s)
 {
-	for (int n=0; n<ViewPane::nAutoFollowTypes; ++n) if (s == AutoFollowTypeKeywords[n]) return (ViewPane::AutoFollowType) n;
+	for (int n=0; n<ViewPane::nAutoFollowTypes; ++n) if (DUQSys::sameString(s, AutoFollowTypeKeywords[n])) return (ViewPane::AutoFollowType) n;
 	return ViewPane::nAutoFollowTypes;
 }
 
@@ -540,7 +540,7 @@ ViewPane::ViewType ViewPane::viewType() const
 }
 
 // Return whether view type is flat
-bool ViewPane::isFlatView()
+bool ViewPane::isFlatView() const
 {
 	return ((viewType_ >= ViewPane::FlatXYView) && (viewType_ <= ViewPane::FlatZYView));
 }
@@ -653,7 +653,7 @@ Matrix4 ViewPane::viewMatrix()
 	Matrix4 viewMatrix;
 
 	// Apply translation to centre of axes coordinates
-	viewMatrix.createTranslation(-axes().coordCentre());
+	viewMatrix.createTranslation(-axes_.coordCentre());
 
 	// Apply rotation matrix about this local centre
 	viewMatrix.preMultiply(viewRotation_);
@@ -1109,7 +1109,7 @@ void ViewPane::cycleAutoFollowType()
 }
 
 // Auto-follow type in effect
-ViewPane::AutoFollowType ViewPane::autoFollowType()
+ViewPane::AutoFollowType ViewPane::autoFollowType() const
 {
 	return autoFollowType_;
 }

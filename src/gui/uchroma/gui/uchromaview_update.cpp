@@ -58,7 +58,7 @@ void UChromaViewWidget::updateSubWindows()
 		transformWindow_.setWindowTitle(QString("Transform (") + collection->name() + ")");
 		viewWindow_.setWindowTitle(QString("View (") + collection->name() + ")");
 	}
-	if (ViewPane::objectValid(viewPane, "view pane in UChromaViewWidget::updateSubWindows()")) axesWindow_.setWindowTitle("Axes (" + viewPane->name() + ")");
+	if (ViewPane::objectValid(viewPane, "view pane in UChromaViewWidget::updateSubWindows()")) axesWindow_.setWindowTitle(QString("Axes (") + viewPane->name() + ")");
 }
 
 // Update tool bars
