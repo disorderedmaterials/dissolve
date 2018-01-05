@@ -135,7 +135,7 @@ double CollectionGroup::verticalShift()
 CollectionGroupManager::CollectionGroupManager()
 {
 	stockColourUsageCount_.initialise(ColourDefinition::nStockColours);
-	verticalShiftIndex_ = 0;
+	verticalShift_ = NoVerticalShift;
 }
 
 // Add Collection to its specified group, creating / associating if necessary
@@ -215,10 +215,10 @@ void CollectionGroupManager::setCollectionGroupShifts()
 	double verticalShift = 0.0;
 	for (CollectionGroup* group = collectionGroups_.first(); group != NULL; group = group->next)
 	{
-		group->setVerticalShift(verticalShiftIndex_ > 0, verticalShift);
+		group->setVerticalShift(verticalShift_ > 0, verticalShift);
 
 		// Increase shift amount for the next group
-		verticalShift += VerticalShiftAmounts[verticalShiftIndex_];
+		verticalShift += VerticalShiftAmounts[verticalShift_];
 	}
 }
 
@@ -232,7 +232,7 @@ const ColourDefinition& CollectionGroupManager::colourDefinition(Collection* col
 // Cycle vertical shift applied to CollectionGroups
 int CollectionGroupManager::cycleVerticalShifts()
 {
-	verticalShiftIndex_ = (verticalShiftIndex_+1)%nVerticalShifts;
+	verticalShift_ = (CollectionGroupManager::VerticalShift) ((verticalShift_+1)%nVerticalShifts);
 
 	setCollectionGroupShifts();
 }
@@ -240,15 +240,21 @@ int CollectionGroupManager::cycleVerticalShifts()
 // Set vertical shift applied to CollectionGroups
 void CollectionGroupManager::setVerticalShift(VerticalShift shiftType)
 {
-	verticalShiftIndex_ = shiftType;
+	verticalShift_ = shiftType;
 
 	setCollectionGroupShifts();
+}
+
+// Return current vertical shift type
+CollectionGroupManager::VerticalShift CollectionGroupManager::verticalShift() const
+{
+	return verticalShift_;
 }
 
 // Remove all vertical shifts from CollectionGroups
 void CollectionGroupManager::removeVerticalShifts()
 {
-	verticalShiftIndex_ = 0;
+	verticalShift_ = NoVerticalShift;
 
 	setCollectionGroupShifts();
 }

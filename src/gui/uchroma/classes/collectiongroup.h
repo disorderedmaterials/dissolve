@@ -124,7 +124,7 @@ class CollectionGroupManager
 
 	private:
 	// Current vertical shift delta index being applied to groups
-	int verticalShiftIndex_;
+	VerticalShift verticalShift_;
 
 	private:
 	// Set vertical shifts for current CollectionGroups
@@ -137,6 +137,8 @@ class CollectionGroupManager
 	int cycleVerticalShifts();
 	// Set vertical shift applied to CollectionGroups
 	void setVerticalShift(VerticalShift shiftType);
+	// Return current vertical shift type
+	VerticalShift verticalShift() const;
 	// Remove all vertical shifts from CollectionGroups
 	void removeVerticalShifts();
 };
