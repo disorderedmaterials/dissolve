@@ -66,7 +66,7 @@ void PartialsModuleWidget::updateControls()
 	// Repopulate source tree
 	repopulateSourceTree();
 
-	// Ensure that any displayed data is up-to-date
+	// Ensure that any displayed data are up-to-date
 	uChromaView_->refreshReferencedDataSets();
 
 	uChromaView_->updateDisplay();

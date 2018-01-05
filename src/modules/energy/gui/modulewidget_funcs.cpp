@@ -104,7 +104,7 @@ void EnergyModuleWidget::updateControls()
 	}
 	ui.StableLabel->setPalette(labelPalette);
 
-	// Ensure that any displayed data is up-to-date
+	// Ensure that any displayed data are up-to-date
 	energyGraph_->refreshReferencedDataSets();
 	energyGraph_->updateDisplay();
 }
