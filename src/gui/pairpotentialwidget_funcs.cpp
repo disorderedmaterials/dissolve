@@ -127,6 +127,8 @@ void PairPotentialWidget::updateControls()
 {
 	refreshing_ = true;
 
+	// Ensure that any displayed data are up-to-date
+	uChromaView_->refreshReferencedDataSets();
 	uChromaView_->updateDisplay();
 
 	refreshing_ = false;
@@ -136,13 +138,13 @@ void PairPotentialWidget::updateControls()
 // Disable sensitive controls within widget, ready for main code to run
 void PairPotentialWidget::disableSensitiveControls()
 {
-	ui.ControlsFrame->setEnabled(false);
+// 	ui.ControlsFrame->setEnabled(false);
 }
 
 // Enable sensitive controls within widget, ready for main code to run
 void PairPotentialWidget::enableSensitiveControls()
 {
-	ui.ControlsFrame->setEnabled(true);
+// 	ui.ControlsFrame->setEnabled(true);
 }
 
 // Return string specifying widget type
