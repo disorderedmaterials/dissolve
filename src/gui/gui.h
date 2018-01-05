@@ -40,7 +40,7 @@ class DUQWindow : public QMainWindow
 
 	public:
 	// Constructor / Destructor
-	DUQWindow(DUQ& duq);
+	DUQWindow(DUQ& duq, bool ignoreLayoutFile);
 	~DUQWindow();
 	// Main form declaration
 	Ui::DUQWindow ui;
@@ -124,14 +124,14 @@ class DUQWindow : public QMainWindow
 	 * Window State
 	 */
 	private:
-	// Filename containing current window state
-	CharString windowStateFilename_;
+	// Filename containing current window layout
+	CharString windowLayoutFilename_;
 
 	public:
-	// Save current window state
-	bool saveWindowState();
+	// Save current window layout
+	bool saveWindowLayout();
 	// Load window state
-	bool loadWindowState();
+	bool loadWindowLayout();
 
 
 	/*

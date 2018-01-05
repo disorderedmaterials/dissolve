@@ -43,7 +43,7 @@ int main(int argc, char **argv)
 	// Parse CLI options...
 	int n = 1;
 	CharString inputFile;
-	bool ignoreRestart = false;
+	bool ignoreRestart = false, ignoreLayout = false;
 	while (n < argc)
 	{
 		if (argv[n][0] == '-')
@@ -66,6 +66,10 @@ int main(int argc, char **argv)
 				case ('i'):
 					Messenger::print("Restart file (if it exists) will be ignored.\n");
 					ignoreRestart = true;
+					break;
+				case ('I'):
+					Messenger::print("GUI layout file (if it exists) will be ignored.\n");
+					ignoreLayout = true;
 					break;
 				case ('q'):
 					Messenger::setQuiet(true);
@@ -214,7 +218,7 @@ int main(int argc, char **argv)
 	setlocale(LC_NUMERIC,"C");
 
 	// Create the main window
-	DUQWindow duqWindow(dUQ);
+	DUQWindow duqWindow(dUQ, ignoreLayout);
 	duqWindow.updateWidgets();
 	duqWindow.show();
 

@@ -31,7 +31,7 @@
 #include <QMdiSubWindow>
 
 // Constructor
-DUQWindow::DUQWindow(DUQ& duq) : QMainWindow(NULL), duq_(duq), threadController_(this, duq)
+DUQWindow::DUQWindow(DUQ& duq, bool ignoreLayoutFile) : QMainWindow(NULL), duq_(duq), threadController_(this, duq)
 {
 	// Initialise resources
 	Q_INIT_RESOURCE(icons);
@@ -41,16 +41,14 @@ DUQWindow::DUQWindow(DUQ& duq) : QMainWindow(NULL), duq_(duq), threadController_
 	ui.setupUi(this);
 
 	// Set window state filename
-	windowStateFilename_.sprintf("%s.mon", duq_.filename());
+	windowLayoutFilename_.sprintf("%s.state", duq_.filename());
 
 	// Try to load in the window state file
-	if (!loadWindowState())
+	if (ignoreLayoutFile || (!loadWindowLayout()))
 	{
 		// Create a new BrowserWidget
 		BrowserWidget* browserWidget = new BrowserWidget(NULL, *this, duq_);
 		addWindow(browserWidget, &duq_, "Browser");
-// 		// Add default subwindows
-// 		ui.MainArea->addSubWindow(new BrowserWindow(*this, duq_));
 	}
 
 	// Link our output handler to the Messenger, and connect up signals/slots
@@ -79,7 +77,7 @@ DUQ& DUQWindow::duq()
 void DUQWindow::closeEvent(QCloseEvent* event)
 {
 	// Save the state before we go...
-	saveWindowState();
+	saveWindowLayout();
 
 	event->accept();
 }
@@ -205,12 +203,12 @@ bool DUQWindow::removeWindow(void* windowContents)
  * Window State
  */
 
-// Save current window state
-bool DUQWindow::saveWindowState()
+// Save current window layout
+bool DUQWindow::saveWindowLayout()
 {
 	// Open file for writing
 	LineParser stateParser;
-	stateParser.openOutput(windowStateFilename_);
+	stateParser.openOutput(windowLayoutFilename_);
 	if (!stateParser.isFileGoodForWriting()) return false;
 
 	// Loop over our subwindow list
@@ -229,12 +227,12 @@ bool DUQWindow::saveWindowState()
 	return true;
 }
 
-// Load window state
-bool DUQWindow::loadWindowState()
+// Load window layout
+bool DUQWindow::loadWindowLayout()
 {
 	// Open file for reading
 	LineParser stateParser;
-	stateParser.openInput(windowStateFilename_);
+	stateParser.openInput(windowLayoutFilename_);
 	if (!stateParser.isFileGoodForReading()) return false;
 
 	while (!stateParser.eofOrBlank())
