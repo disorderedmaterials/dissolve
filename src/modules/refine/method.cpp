@@ -58,9 +58,26 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	GenericList& moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : duq.processingModuleData();
 
 	/*
+	 * Get Keyword Options
+	 */
+
+	bool onlyWhenStable = keywords_.asBool("OnlyWhenStable");
+	XYData::WindowFunction windowFunction = XYData::windowFunction(keywords_.asString("WindowFunction"));
+	if (windowFunction == XYData::nWindowFunctions)
+	{
+		Messenger::error("Refine: Unrecognised window function '%s' found.\n", keywords_.asString("WindowFunction"));
+		return false;
+	}
+
+	// Print option summary
+	if (onlyWhenStable) Messenger::print("Refine: Potential refinement will only be attempted if all related Configuration energies are stable.\n");
+	if (windowFunction == XYData::nWindowFunctions) Messenger::print("Refine: No window function will be employed in Fourier transforms.\n");
+	else Messenger::print("Refine: '%s' window function will be employed in Fourier transforms.\n", XYData::windowFunction(windowFunction));
+
+	/*
 	 * Are the energies of all involved Configurations stable (if OnlyWhenStable option is on)
 	 */
-	if (keywords_.asBool("OnlyWhenStable"))
+	if (onlyWhenStable)
 	{
 		bool anyFailed = false;
 		RefListIterator<Configuration,bool> configIterator(partialsModule->targetConfigurations());
@@ -73,7 +90,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 				bool stable = GenericListHelper<bool>::retrieve(cfg->moduleData(), "EnergyStable", "");
 				if (!stable)
 				{
-					Messenger::print("RefineModule: Energy for Configuration '%s' is not yet stable. No potential refinement will be performed this iteration.\n", cfg->name());
+					Messenger::print("Refine: Energy for Configuration '%s' is not yet stable. No potential refinement will be performed this iteration.\n", cfg->name());
 					anyFailed = true;
 				}
 			}
@@ -98,7 +115,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	}
 
 	BroadeningFunction broadening = GenericListHelper<BroadeningFunction>::retrieve(duq.processingModuleData(), "QBroadening", partialsModule->uniqueName(), BroadeningFunction::unity(), &found);
-	if (!found) Messenger::print("RefineModule: No 'QBroadening' specified in PartialsModule '%s', so no un-broadening will be performed.\n", partialsModule->uniqueName());
+	if (!found) Messenger::print("Refine: No 'QBroadening' specified in PartialsModule '%s', so no un-broadening will be performed.\n", partialsModule->uniqueName());
 	broadening.setInverted(true);
 
 	double rho = GenericListHelper<double>::retrieve(duq.processingModuleData(), "Density", partialsModule->uniqueName(), 0.0, &found);
@@ -130,20 +147,20 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 		Weights& weights = GenericListHelper<Weights>::retrieve(duq.processingModuleData(), "FullWeights", data->associatedModule()->uniqueName(), Weights(), &found);
 		if (!found)
 		{
-			Messenger::error("RefineModule: Couldn't find FullWeights for Data '%s', and so can't construct scattering matrix.\n", data->name());
+			Messenger::error("Refine: Couldn't find FullWeights for Data '%s', and so can't construct scattering matrix.\n", data->name());
 			return false;
 		}
 
 		// Set the next row of the scattering matrix with the weights of the supplied data.
 		if (!scatteringMatrix.addReferenceData(data, weights))
 		{
-			Messenger::error("RefineModule: Failed to initialise reference Data.\n");
+			Messenger::error("Refine: Failed to initialise reference Data.\n");
 			return false;
 		}
 	}
 	if (!scatteringMatrix.finalise())
 	{
-		Messenger::error("RefineModule: Failed to set up scattering matrix.\n");
+		Messenger::error("Refine: Failed to set up scattering matrix.\n");
 		return false;
 	}
 	scatteringMatrix.print();
@@ -160,21 +177,21 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	bool created;
 	Array2D<XYData>& deltaSQ = GenericListHelper< Array2D<XYData> >::realise(duq.processingModuleData(), "DeltaSQ", uniqueName_, GenericItem::InRestartFileFlag, &created);
 	if (created) deltaSQ.initialise(nTypes, nTypes, true);
-	int n = 0;
-	for (AtomType* at1 = duq.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++n)
+	int i = 0;
+	for (AtomType* at1 = duq.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
 	{
-		int m = n;
-		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
+		int j = i;
+		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 		{
 			// Grab difference partial and make sure its object name is set
-			XYData& partial = deltaSQ.ref(n, m);
+			XYData& partial = deltaSQ.ref(i, j);
 			partial.setObjectName(CharString("%s//DeltaSQ//%s-%s", uniqueName_.get(), at1->name(), at2->name()));
 
 			// Copy our partial S(Q) generated from the experimental datasets
-			partial = generatedSQ.ref(n,m);
+			partial = generatedSQ.ref(i, j);
 
 			// Subtract the simulated unweighted S(Q) from the difference partial
-			partial.addInterpolated(unweightedSQ.partial(n, m), -1.0);
+			partial.addInterpolated(unweightedSQ.partial(i, j), -1.0);
 		}
 	}
 
@@ -188,13 +205,13 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	Array2D<XYData>& deltaGR = GenericListHelper< Array2D<XYData> >::realise(duq.processingModuleData(), "DeltaGR", uniqueName_, GenericItem::InRestartFileFlag, &created);
 	if (created) deltaGR.initialise(nTypes, nTypes, true);
 
-	double weight, absInt;
+	double weight, absInt, scaleFactor;
 	XYData cr;
-	n = 0;
-	for (AtomType* at1 = duq.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++n)
+	i = 0;
+	for (AtomType* at1 = duq.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
 	{
-		int m = n;
-		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
+		int j = i;
+		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 		{
 			// Grab pointer to the relevant pair potential
 			PairPotential* pp = duq.pairPotential(at1, at2);
@@ -205,18 +222,18 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 			}
 
 			// Grab potential perturbation container, clear it, and make sure its object name is set
-			XYData& dPhiR = deltaPhiR.ref(n, m);
+			XYData& dPhiR = deltaPhiR.ref(i, j);
 			dPhiR.clear();
 			dPhiR.setObjectName(CharString("%s//DeltaPhiR//%s-%s", uniqueName_.get(), at1->name(), at2->name()));
 
 			// Grab delta g(r) container and make sure its object name is set
-			XYData& dGR = deltaGR.ref(n, m);
+			XYData& dGR = deltaGR.ref(i, j);
 			dGR.setObjectName(CharString("%s//DeltaGR//%s-%s", uniqueName_.get(), at1->name(), at2->name()));
 
-			// Copy the delta S(Q) and do the inverse FT to ger the delta [g(r) - 1]
-			dGR = deltaSQ.ref(n,m);
-// 			partial.smooth(10);
-			dGR.broadenedSineFT(1.0 / (2 * PI * PI * rho), 0.0, 0.01, 30.0, broadening, true);
+			// Copy the delta S(Q) and do the inverse FT to get the delta [g(r) - 1]
+			dGR = deltaSQ.ref(i, j);
+// 			dGR.smooth(10);
+			dGR.broadenedSineFT(1.0 / (2 * PI * PI * rho), 0.0, 0.01, 30.0, broadening, true, windowFunction);
 
 			// Set the default weighting factor for the pair potential addition
 			weight = weighting;
@@ -245,22 +262,30 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 					 * 
 					 * To account for this, we employ a slight modification of the relationship:
 					 * 
-					 * phi(r) = ln(1.0 - c(r) / [|g(r)-1.0| + 1.0])
+					 *  phi(r) = ln(1.0 - c(r) / [|g(r)-1.0| + 1.0])
 					 * 
 					 */
 
 					// Calculate c(r) from the delta S(Q)
-					cr = calculateCR(deltaSQ.ref(n,m), 1.0 / (2.0*PI*PI*rho), 0.0, 0.01, 30.0);
-// 					cr.save("CR.txt");
+					cr = calculateCR(deltaSQ.ref(i, j), 1.0 / (2.0*PI*PI*rho), 0.0, 0.01, 30.0, BroadeningFunction::unity(), true, windowFunction);
 
-					// dGR contains the FT of the delta S(Q), and oscillates around zero. 
+					// dGR contains the FT of the delta S(Q), and oscillates around zero.
+					// Scale the data to have a maximum deviation from zero of 1.0, so that we avoid any possibility to get NaNs when taking the ln later on
+					scaleFactor = dGR.arrayY().maxAbs();
+					if (scaleFactor < 1.0) scaleFactor = 1.0;
+					dGR.arrayY() /= scaleFactor;
+					cr.arrayY() /= scaleFactor;
+
 					// Original PY
 // 					for (int n=0; n<deltaGR.nPoints(); ++n) dU.addPoint(deltaGR.x(n), log(1.0 - cr.y(n)/(deltaGR.y(n)+1.0));
 
 					// Modified PY
 					for (int n=0; n<dGR.nPoints(); ++n) dPhiR.addPoint(dGR.x(n), log(1.0 - cr.y(n) / (fabs(dGR.y(n)-1.0)+1.0)));
 
-// 					dU.save("py.txt");
+					// Rescale the resulting potential to account for the reduction we made earlier
+					dPhiR.arrayY() *= scaleFactor;
+
+// 					dPhiR.save(CharString("py%i%i.txt", i, j));
 // 					XYData hnc;
 // 					for (int n=0; n<gr.nPoints(); ++n) hnc.addPoint(gr.x(n), (gr.y(n) - cr.y(n) - 1.0 - log(gr.y(n))));
 // 					hnc.save("hnc.txt");

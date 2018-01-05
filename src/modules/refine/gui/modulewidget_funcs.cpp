@@ -57,6 +57,7 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, DUQ& dUQ
 	viewPane->axes().setMin(1, -1.0);
 	viewPane->axes().setMax(1, 1.0);
 	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::HalfVerticalShift);
+	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
 
 	// Partial S(Q) Graph
 	
@@ -76,7 +77,8 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, DUQ& dUQ
 	viewPane->axes().setTitle(1, "S(Q)");
 	viewPane->axes().setMin(1, -1.0);
 	viewPane->axes().setMax(1, 1.0);
-	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::HalfVerticalShift);
+	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
+	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
 
 	// Potentials Graph
 
@@ -96,7 +98,8 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, DUQ& dUQ
 	viewPane->axes().setTitle(1, "\\sym{Delta}g(r), \\sym{Delta}\\sym{phi}(\\it{r})");
 	viewPane->axes().setMin(1, -1.0);
 	viewPane->axes().setMax(1, 1.0);
-	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::HalfVerticalShift);
+	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
+	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
 
 	initialiseControls(module_);
 
@@ -110,12 +113,12 @@ RefineModuleWidget::~RefineModuleWidget()
 // Update controls within widget
 void RefineModuleWidget::updateControls()
 {
-	// Ensure that any displayed data is up-to-date
+	// Ensure that any displayed data are up-to-date
 	dataGraph_->refreshReferencedDataSets();
 	partialSQGraph_->refreshReferencedDataSets();
 	potentialsGraph_->refreshReferencedDataSets();
 
-	dataGraph_->updateDisplay();
+	dataGraph_->updateDisplay();;
 	partialSQGraph_->updateDisplay();
 	potentialsGraph_->updateDisplay();
 }
