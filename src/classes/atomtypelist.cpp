@@ -26,6 +26,7 @@
 #include "base/ptable.h"
 #include "base/processpool.h"
 #include "templates/broadcastlist.h"
+#include "templates/listio.h"
 #include <string.h>
 
 // Constructor
@@ -252,24 +253,13 @@ const char* AtomTypeList::itemClassName()
 // Write data through specified LineParser
 bool AtomTypeList::write(LineParser& parser)
 {
-	if (!parser.writeLineF("%i  # nAtomTypes\n", types_.nItems())) return false;
-	ListIterator<AtomTypeData> atomTypeIterator(types_);
-	while (AtomTypeData* atd = atomTypeIterator.iterate()) if (!atd->write(parser)) return false;
-	return true;
+	return ListIO<AtomTypeData>::write(types_, parser);
 }
 
 // Read data through specified LineParser
 bool AtomTypeList::read(LineParser& parser)
 {
-	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-	types_.clear();
-	int nAt = parser.argi(0);
-	for (int n=0; n<nAt; ++n)
-	{
-		AtomTypeData* atd = types_.add();
-		if (!atd->read(parser)) return false;
-	}
-	return true;
+	return ListIO<AtomTypeData>::read(types_, parser);
 }
 
 /*
