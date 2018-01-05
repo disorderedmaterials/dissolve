@@ -22,6 +22,7 @@
 #ifndef DUQ_ISOTOPOLOGUEMIX_H
 #define DUQ_ISOTOPOLOGUEMIX_H
 
+#include "base/genericitembase.h"
 #include "templates/mpilistitem.h"
 #include "templates/reflist.h"
 
@@ -29,11 +30,12 @@
 class Species;
 class Isotopologue;
 class ProcessPool;
+class LineParser;
 
 /*
  * IsotopologueMix Definition
  */
-class IsotopologueMix : public MPIListItem<IsotopologueMix>
+class IsotopologueMix : public MPIListItem<IsotopologueMix>, public GenericItemBase
 {
 	public:
 	// Constructor
@@ -82,6 +84,18 @@ class IsotopologueMix : public MPIListItem<IsotopologueMix>
 	double totalRelative() const;
 	// Normalise total relative population to 1.0
 	void normalise();
+
+
+	/*
+	 * GenericItemBase Implementations
+	 */
+	public:
+	// Return class name
+	static const char* itemClassName();
+	// Write data through specified LineParser
+	bool write(LineParser& parser);
+	// Read data through specified LineParser
+	bool read(LineParser& parser);
 
 
 	/*

@@ -62,21 +62,31 @@ template <> class GenericItemContainer< Array2D<double> > : public GenericItem
 	// Write data through specified parser
 	bool write(LineParser& parser)
 	{
-		parser.writeLineF("%i  %i  %s\n", data.nRows(), data.nColumns(), DUQSys::btoa(data.halved()));
-		for (int n=0; n<data.linearArraySize(); ++n) if (!parser.writeLineF("%16.9e\n", data.linearArray()[n])) return false;
-		return true;
+		return write(data, parser);
 	}
 	// Read data through specified parser
 	bool read(LineParser& parser)
 	{
+		return read(data, parser);
+	}
+	// Write specified data through specified parser
+	static bool write(Array2D<double>& thisData, LineParser& parser)
+	{
+		parser.writeLineF("%i  %i  %s\n", thisData.nRows(), thisData.nColumns(), DUQSys::btoa(thisData.halved()));
+		for (int n=0; n<thisData.linearArraySize(); ++n) if (!parser.writeLineF("%16.9e\n", thisData.linearArray()[n])) return false;
+		return true;
+	}
+	// Read specified data through specified parser
+	static bool read(Array2D<double>& thisData, LineParser& parser)
+	{
 		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 		int nRows = parser.argi(0), nColumns = parser.argi(1);
-		data.initialise(nRows, nColumns, parser.argb(2));
+		thisData.initialise(nRows, nColumns, parser.argb(2));
 
-		for (int n=0; n<data.linearArraySize(); ++n)
+		for (int n=0; n<thisData.linearArraySize(); ++n)
 		{
 			if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-			data.linearArray()[n] = parser.argd(0);
+			thisData.linearArray()[n] = parser.argd(0);
 		}
 		return true;
 	}

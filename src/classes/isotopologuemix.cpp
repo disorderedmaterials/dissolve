@@ -22,6 +22,8 @@
 #include "classes/isotopologuemix.h"
 #include "classes/species.h"
 #include "base/processpool.h"
+#include "base/lineparser.h"
+#include "base/sysfunc.h"
 
 // Constructor
 IsotopologueMix::IsotopologueMix() : MPIListItem<IsotopologueMix>()
@@ -181,6 +183,59 @@ void IsotopologueMix::normalise()
 {
 	double total = totalRelative();
 	for (RefListItem<Isotopologue,double>* ri = mix_.first(); ri != NULL; ri = ri->next) ri->data /= total;
+}
+
+/*
+ * GenericItemBase Implementations
+ */
+
+// Return class name
+const char* IsotopologueMix::itemClassName()
+{
+	return "IsotopologueMix";
+}
+
+// Write data through specified LineParser
+bool IsotopologueMix::write(LineParser& parser)
+{
+	// Write Species name, integer population, and number of isotopologues in the mix
+	if (!parser.writeLineF("'%s'  %i\n", species_->name(), speciesPopulation_, mix_.nItems())) return false;
+
+	// Write Isotopologues
+	RefListIterator<Isotopologue,double> mixIterator(mix_);
+	while (Isotopologue* top = mixIterator.iterate()) if (!parser.writeLineF("%s  %f\n", top->name(), mixIterator.currentData())) return false;
+
+	return true;
+}
+
+// Read data through specified LineParser
+bool IsotopologueMix::read(LineParser& parser)
+{
+	// Read Species name
+	if (parser.getArgsDelim(LineParser::UseQuotes) != LineParser::Success) return false;
+	for (species_ = List<Species>::masterInstance()->first(); species_ != NULL; species_ = species_->next) if (DUQSys::sameString(species_->name(), parser.argc(0))) break;
+	if (species_ == NULL)
+	{
+		Messenger::error("Failed to find Species '%s' while reading IsotopologueMix.\n", parser.argc(0));
+		return false;
+	}
+	speciesPopulation_ = parser.argi(1);
+	int nIso = parser.argi(2);
+	mix_.clear();
+	for (int n=0; n<nIso; ++n)
+	{
+		if (parser.getArgsDelim(LineParser::UseQuotes) != LineParser::Success) return false;
+		// Search for the named Isotopologue in the Species
+		Isotopologue* top = species_->findIsotopologue(parser.argc(0));
+		if (!top)
+		{
+			Messenger::error("Failed to find Isotopologue '%s' for Species '%s' while reading IsotopologueMix.\n", parser.argc(0), species_->name());
+			return false;
+		}
+		mix_.add(top, parser.argd(1));
+	}
+
+	return true;
 }
 
 /*

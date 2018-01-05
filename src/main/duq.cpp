@@ -23,6 +23,7 @@
 #include "classes/species.h"
 #include "classes/atomtype.h"
 #include "classes/kvector.h"
+#include "classes/weights.h"
 #include "base/genericitem.h"
 #include "templates/genericitems.h"
 
@@ -110,6 +111,8 @@ void DUQ::registerGenericItems()
 
 	GenericItem::addItemClass(new GenericItemContainer<BraggPeak>(BraggPeak::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<KVector>(KVector::itemClassName()));
+	GenericItem::addItemClass(new GenericItemContainer<IsotopologueMix>(IsotopologueMix::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<PartialSet>(PartialSet::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<XYData>(XYData::itemClassName()));
+	GenericItem::addItemClass(new GenericItemContainer<Weights>(Weights::itemClassName()));
 }

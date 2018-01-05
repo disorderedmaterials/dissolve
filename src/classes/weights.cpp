@@ -23,7 +23,10 @@
 #include "classes/species.h"
 #include "classes/atomtype.h"
 #include "base/processpool.h"
+#include "base/lineparser.h"
+#include "templates/listio.h"
 #include "templates/broadcastlist.h"
+#include "templates/genericitemcontainer_array2ddouble.h"
 
 // Constructor
 Weights::Weights()
@@ -229,6 +232,53 @@ double Weights::boundCoherentAverageOfSquares()
 const char* Weights::itemClassName()
 {
 	return "Weights";
+}
+
+// Write data through specified LineParser
+bool Weights::write(LineParser& parser)
+{
+	// Write AtomTypeList
+	if (!atomTypes_.write(parser)) return false;
+
+	// Write IsotopologueMix-tures
+	if (!ListIO<IsotopologueMix>::write(isotopologueMixtures_, parser)) return false;
+
+	// Write arrays using static methods in the relevant GenericItemContainer
+	if (!GenericItemContainer< Array2D<double> >::write(concentrationMatrix_, parser)) return false;
+	if (!GenericItemContainer< Array2D<double> >::write(boundCoherentMatrix_, parser)) return false;
+	if (!GenericItemContainer< Array2D<double> >::write(fullMatrix_, parser)) return false;
+
+	// Write averages
+	if (!parser.writeLineF("%f %f\n", boundCoherentAverageOfSquares_, boundCoherentSquareOfAverage_)) return false;
+
+	return true;
+}
+
+// Read data through specified LineParser
+bool Weights::read(LineParser& parser)
+{
+	clear();
+
+	// Read AtomTypeList
+	if (!atomTypes_.read(parser)) return false;
+
+	// Read IsotopologueMix-tures
+	if (!ListIO<IsotopologueMix>::read(isotopologueMixtures_, parser)) return false;
+
+	// Read Isotopologues List
+	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+
+	// Read arrays using static methods in the relevant GenericItemContainer
+	if (!GenericItemContainer< Array2D<double> >::read(concentrationMatrix_, parser)) return false;
+	if (!GenericItemContainer< Array2D<double> >::read(boundCoherentMatrix_, parser)) return false;
+	if (!GenericItemContainer< Array2D<double> >::read(fullMatrix_, parser)) return false;
+
+	// Read averages
+	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+	boundCoherentAverageOfSquares_ = parser.argd(0);
+	boundCoherentSquareOfAverage_ = parser.argd(1);
+
+	return true;
 }
 
 /*
