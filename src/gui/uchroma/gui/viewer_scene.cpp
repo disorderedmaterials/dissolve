@@ -291,37 +291,58 @@ void Viewer::renderFullScene(int xOffset, int yOffset)
 		glDisable(GL_CLIP_PLANE0);
 		glDisable(GL_CLIP_PLANE1);
 
+
 		/*
-		 * Draw legend in top-right corner
+		 * Set orthographic, one-to-one pixel view
 		 */
 
 		// Setup an orthographic matrix
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		glOrtho(0, pane->viewportMatrix()[2], 0, pane->viewportMatrix()[3], -10, 10);
+		glOrtho(0, pane->viewportMatrix()[2], 0, pane->viewportMatrix()[3], -1, 1);
 
 		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
 		glDisable(GL_LIGHTING);
+
+		const double overlaySpacing = 2.0;
+		const double overlayTextSize = 12.0;
+		const double legendLineLength = 10.0;
+
+		/*
+		 * Draw indicators in top-left corner
+		 */
+
+		CharString indicatorText;
+		if (pane->autoFollowType() == ViewPane::AllAutoFollow) indicatorText += "|A| ";
+		else if (pane->autoFollowType() == ViewPane::XFollow) indicatorText += "A\\sub{X} ";
+		if (pane->collectionGroupManager().verticalShift() > 0) indicatorText.strcatf("S\\sub{%i}", pane->collectionGroupManager().verticalShift());
+		TextPrimitive indicatorPrimitive;
+		indicatorPrimitive.set(fontInstance_, indicatorText.get(), Vec3<double>(overlaySpacing, pane->viewportMatrix()[3] - overlaySpacing,0.0), TextPrimitive::TopLeftAnchor, Vec3<double>(), Matrix4(), overlayTextSize, false);
+		glColor3d(0.0, 0.0, 0.0);
+		Matrix4 identity;
+		indicatorPrimitive.render(fontInstance_, identity, identity, 1.0);
+
+		/*
+		 * Draw legend in top-right corner
+		 */
 
 		// Create RefList of legend entries
 		RefList<Collection,double> legendEntries;
-		double legendTextSize = 12.0;
-		double legendLineLength = 10.0;
-		double legendSpacing = 2.0;
+
 		double maxTextWidth = -1.0;
 		// Render pane data - loop over collection targets
 		for (TargetData* target = pane->collectionTargets(); target != NULL; target = target->next)
 		{
 			if (!target->collection()->visible()) continue;
-			double textWidth = fontInstance_.boundingBoxWidth(target->collection()->name()) * legendTextSize;
+			double textWidth = fontInstance_.boundingBoxWidth(target->collection()->name()) * overlayTextSize;
 			legendEntries.add(target->collection(), textWidth);
 			if (textWidth > maxTextWidth) maxTextWidth = textWidth;
 		}
 
 		// Simple column layout - set the render position to be the left-hand edge of the longest text item
 		glColor3d(0.0, 0.0, 0.0);
-		glTranslated(pane->viewportMatrix()[2] - maxTextWidth - legendSpacing, pane->viewportMatrix()[3] - legendTextSize - legendSpacing, 0);
+		glLoadIdentity();
+		glTranslated(pane->viewportMatrix()[2] - maxTextWidth - overlaySpacing, pane->viewportMatrix()[3] - overlayTextSize - overlaySpacing, 0);
 
 		// Loop over legend entries
 		Vec4<float> colour;
@@ -333,7 +354,7 @@ void Viewer::renderFullScene(int xOffset, int yOffset)
 
 			// Draw line indicator
 			glPushMatrix();
-			glTranslated(-legendSpacing, (legendTextSize/2.0) - (collection->displayLineStyle().width()/2.0), 0.0);
+			glTranslated(-overlaySpacing, (overlayTextSize/2.0) - (collection->displayLineStyle().width()/2.0), 0.0);
 			// -- What are we drawing for the line indicator?
 			if (colourDefinition.colourSource() == ColourDefinition::SingleColourSource)
 			{
@@ -353,12 +374,12 @@ void Viewer::renderFullScene(int xOffset, int yOffset)
 			// Draw text
 			glPushMatrix();
 			glColor3d(0.0, 0.0, 0.0);
-			glScaled(legendTextSize, legendTextSize, legendTextSize);
+			glScaled(overlayTextSize, overlayTextSize, overlayTextSize);
 			fontInstance_.font()->Render(collection->name());
 			glPopMatrix();
 
 			// Shift to next position
-			glTranslated(0.0, -(legendTextSize + legendSpacing), 0.0);
+			glTranslated(0.0, -(overlayTextSize + overlaySpacing), 0.0);
 		}
 	}
 
