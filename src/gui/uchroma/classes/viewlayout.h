@@ -25,7 +25,6 @@
 #include "gui/uchroma/classes/viewpane.h"
 #include "gui/uchroma/classes/collection.h"
 #include "templates/list.h"
-#include <QString>
 
 // Forward Declarations
 /* none */
@@ -60,7 +59,7 @@ class ViewLayout : public ListItem<ViewLayout>
 	 */
 	private:
 	// Layout name
-	QString name_;
+	CharString name_;
 	// Number of columns in layout
 	int nColumns_;
 	// Number of rows in layout
@@ -96,7 +95,7 @@ class ViewLayout : public ListItem<ViewLayout>
 	// Set default layout data
 	ViewPane* setDefault();
 	// Set name
-	void setName(QString name);
+	void setName(const char* name);
 	// Set number of rows and columns
 	void setGrid(int nColumns, int nRows);
 	// Return number of columns in layout
@@ -118,9 +117,9 @@ class ViewLayout : public ListItem<ViewLayout>
 
 	public:
 	// Return unique pane name based on name supplied
-	QString uniqueViewPaneName(QString basename);
+	CharString uniqueViewPaneName(const char* basename);
 	// Add pane to layout
-	ViewPane* addPane(QString name = QString(), int left = 0, int top = 0, int width = 1, int height = 1);
+	ViewPane* addPane(const char* name = NULL, int left = 0, int top = 0, int width = 1, int height = 1);
 	// Remove pane from layout
 	void removePane(ViewPane* pane);
 	// Return first pane in list
@@ -128,7 +127,7 @@ class ViewLayout : public ListItem<ViewLayout>
 	// Return last pane in list
 	ViewPane* lastPane();
 	// Return named pane (if it exists)
-	ViewPane* pane(QString name);
+	ViewPane* pane(const char* name);
 	// Return index of specified pane in list
 	int paneIndex(ViewPane* pane);
 	// Return reflist of all panes of specified type

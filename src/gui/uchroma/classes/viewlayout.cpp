@@ -129,7 +129,7 @@ ViewPane* ViewLayout::setDefault()
 }
 
 // Set name
-void ViewLayout::setName(QString name)
+void ViewLayout::setName(const char* name)
 {
 	name_ = name;
 }
@@ -178,14 +178,14 @@ void ViewLayout::recalculate(int contextWidth, int contextHeight)
  */
 
 // Return unique name based on supplied basename
-QString ViewLayout::uniqueViewPaneName(QString baseName)
+CharString ViewLayout::uniqueViewPaneName(const char* baseName)
 {
-	QString testName = baseName, suffix;
+	CharString testName = baseName, suffix;
 	int index = 0;
 	do
 	{
 		// Add on suffix (if index > 0)
-		if (index > 0) testName = baseName + " ("+QString::number(index)+")";
+		if (index > 0) testName.sprintf("%s (%i)", baseName, index);
 		++index;
 	} while (pane(testName));
 
@@ -193,7 +193,7 @@ QString ViewLayout::uniqueViewPaneName(QString baseName)
 }
 
 // Add pane to layout
-ViewPane* ViewLayout::addPane(QString name, int left, int top, int width, int height)
+ViewPane* ViewLayout::addPane(const char* name, int left, int top, int width, int height)
 {
 	ViewPane* pane = panes_.add(*this);
 	pane->setName(uniqueViewPaneName(name));
@@ -229,9 +229,9 @@ ViewPane* ViewLayout::lastPane()
 }
 
 // Return named pane (if it exists)
-ViewPane* ViewLayout::pane(QString name)
+ViewPane* ViewLayout::pane(const char* name)
 {
-	for (ViewPane* pane = panes_.first(); pane != NULL; pane = pane->next) if (pane->name() == name) return pane;
+	for (ViewPane* pane = panes_.first(); pane != NULL; pane = pane->next) if (DUQSys::sameString(pane->name(), name)) return pane;
 	return NULL;
 }
 
