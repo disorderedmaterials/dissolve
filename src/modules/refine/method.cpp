@@ -205,6 +205,8 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	Array2D<XYData>& deltaGR = GenericListHelper< Array2D<XYData> >::realise(duq.processingModuleData(), "DeltaGR", uniqueName_, GenericItem::InRestartFileFlag, &created);
 	if (created) deltaGR.initialise(nTypes, nTypes, true);
 
+	const double ppRange = duq.pairPotentialRange();
+	const double ppDelta = duq.pairPotentialDelta();
 	double weight, absInt, scaleFactor;
 	XYData cr;
 	i = 0;
@@ -232,8 +234,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 
 			// Copy the delta S(Q) and do the inverse FT to get the delta [g(r) - 1]
 			dGR = deltaSQ.ref(i, j);
-// 			dGR.smooth(10);
-			dGR.broadenedSineFT(1.0 / (2 * PI * PI * rho), 0.0, 0.01, 30.0, broadening, true, windowFunction);
+			dGR.broadenedSineFT(1.0 / (2 * PI * PI * rho), ppDelta, ppDelta, ppRange, broadening, true, windowFunction);
 
 			// Set the default weighting factor for the pair potential addition
 			weight = weighting;
@@ -267,7 +268,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 					 */
 
 					// Calculate c(r) from the delta S(Q)
-					cr = calculateCR(deltaSQ.ref(i, j), 1.0 / (2.0*PI*PI*rho), 0.0, 0.01, 30.0, BroadeningFunction::unity(), true, windowFunction);
+					cr = calculateCR(deltaSQ.ref(i, j), 1.0 / (2.0*PI*PI*rho), ppDelta, ppDelta, ppRange, BroadeningFunction::unity(), true, windowFunction);
 
 					// dGR contains the FT of the delta S(Q), and oscillates around zero.
 					// Scale the data to have a maximum deviation from zero of 1.0, so that we avoid any possibility to get NaNs when taking the ln later on
