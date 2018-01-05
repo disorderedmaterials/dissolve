@@ -112,7 +112,7 @@ double IsotopeData::fraction() const
 // Write data through specified LineParser
 bool IsotopeData::write(LineParser& parser)
 {
-	return parser.writeLineF("%i %i %i %s\n", isotope_->element()->z(), isotope_->A(), population_, fraction_);
+	return parser.writeLineF("%i %i %i %f\n", isotope_->element()->z(), isotope_->A(), population_, fraction_);
 }
 
 // Read data through specified LineParser
