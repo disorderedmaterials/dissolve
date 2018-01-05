@@ -60,18 +60,6 @@ int DUQ::maxIterations() const
 	return maxIterations_;
 }
 
-// Set window function to use for all Fourier transforms
-void DUQ::setWindowFunction(XYData::WindowFunction wf)
-{
-	windowFunction_ = wf;
-}
-
-// Return window function to use for all Fourier transforms
-XYData::WindowFunction DUQ::windowFunction()
-{
-	return windowFunction_;
-}
-
 // Set frequency with which to write various iteration dat
 void DUQ::setWriteFrequency(int n)
 {

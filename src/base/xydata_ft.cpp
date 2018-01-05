@@ -41,6 +41,12 @@ const char* XYData::windowFunction(XYData::WindowFunction wf)
 	return WindowFunctionKeywords[wf];
 }
 
+// Return list of possible window function keywords
+const char** XYData::windowFunctionKeywords()
+{
+	return WindowFunctionKeywords;
+}
+
 // Make some checks before doing transform
 bool XYData::checkBeforeTransform()
 {

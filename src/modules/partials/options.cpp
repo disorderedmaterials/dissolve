@@ -116,6 +116,7 @@ void PartialsModule::setUpKeywords()
 	keywords_.add(new ComplexModuleKeyword(2,4), "TestReference", "Specify g(r)/S(Q) test reference data", "<filename> <target> [xcol] [ycol]");
 	keywords_.add(new DoubleModuleKeyword(0.1, 1.0e-5), "TestThreshold", "Test threshold (%%error) above which test fails", "<threshold[0.1]>");
 	keywords_.add(new CharStringModuleKeyword("None", PartialsModule::nWeightingTypes, WeightingTypeKeywords), "Weights", "Weighting scheme to use for calculated partials (None,Neutron)");
+	keywords_.add(new CharStringModuleKeyword("None", XYData::nWindowFunctions, XYData::windowFunctionKeywords()), "WindowFunction", "Window function to apply when Fourier-transforming g(r) to S(Q)");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised

@@ -46,7 +46,6 @@ DUQ::DUQ()
 	nBoxNormalisationPoints_ = 500000000;
 	seed_ = -1;
 	maxIterations_ = -1;
-	windowFunction_ = XYData::NoWindow;
 	allIntra_ = false;
 	writeFrequency_ = 1;
 

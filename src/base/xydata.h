@@ -221,6 +221,8 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	static WindowFunction windowFunction(const char* s);
 	// Covert WindowFunction to text string
 	static const char* windowFunction(XYData::WindowFunction wf);
+	// Return list of possible window function keywords
+	static const char** windowFunctionKeywords();
 
 	private:
 	// Make some checks before doing transform

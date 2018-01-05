@@ -232,8 +232,6 @@ class DUQ
 	int seed_;
 	// Maximum number of main loop iterations to perform
 	int maxIterations_;
-	// Window function to use for all Fourier transforms
-	XYData::WindowFunction windowFunction_;
 	// Whether to write various data after each iteration
 	int writeFrequency_;
 	// Whether all intramolecular interactions contribute to intra partials
@@ -252,10 +250,6 @@ class DUQ
 	void setMaxIterations(int nIterations);
 	// Return maximum number of main loop iterations to perform
 	int maxIterations() const;
-	// Set window function to use for all Fourier transforms
-	void setWindowFunction(XYData::WindowFunction wf);
-	// Return window function to use for all Fourier transforms
-	XYData::WindowFunction windowFunction();
 	// Set frequency with which to write various iteration dat
 	void setWriteFrequency(int n);
 	// Return frequency with which to write various iteration data

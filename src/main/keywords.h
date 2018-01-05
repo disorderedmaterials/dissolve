@@ -212,7 +212,6 @@ namespace SimulationBlock
 		MaxIterationsKeyword,		/* 'MaxIterations' - Maximum number of main loop iterations to perform, or -1 for no limit */
 		ParallelStrategyKeyword,	/* 'ParallelStrategy' - Determines the distribution of processes across Configurations */
 		SeedKeyword,			/* 'Seed' - Random seed to use */
-		WindowFunctionKeyword,		/* 'WindowFunction' - Window function to use in all Fourier transforms */
 		WriteFrequencyKeyword,		/* 'WriteFrequency' - Write various data at the end of each iteration */
 		nSimulationKeywords		/* Number of keywords defined for this block */
 	};

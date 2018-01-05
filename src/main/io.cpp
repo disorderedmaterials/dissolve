@@ -446,7 +446,6 @@ bool DUQ::saveInput(const char* filename)
 	parser.writeLineF("%s\n", InputBlocks::inputBlock(InputBlocks::SimulationBlock));
 	parser.writeLineF("  %s  %i\n", SimulationBlock::keyword(SimulationBlock::BoxNormalisationPointsKeyword), nBoxNormalisationPoints_);
 	parser.writeLineF("  %s  %i\n", SimulationBlock::keyword(SimulationBlock::SeedKeyword), seed_);
-	parser.writeLineF("  %s  %s\n", SimulationBlock::keyword(SimulationBlock::WindowFunctionKeyword), XYData::windowFunction(windowFunction_));
 	parser.writeLineF("%s\n\n", SimulationBlock::keyword(SimulationBlock::EndSimulationKeyword));
 
 	parser.closeFiles();

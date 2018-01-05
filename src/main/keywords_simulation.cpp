@@ -31,7 +31,6 @@ KeywordData SimulationBlockData[] = {
 	{ "MaxIterations",			1,	"Maximum number of main loop iterations to perform, or -1 for no limit" },
 	{ "ParallelStrategy",			1, 	"Determines the distribution of processes across Configurations" },
 	{ "Seed",				1,	"Random seed to use" },
-	{ "WindowFunction",			1,	"Window function to use in all Fourier transforms" },
 	{ "WriteFrequency",			1,	"Frequency with which to write restart file and configuration data (0 = never)" }
 };
 
@@ -97,14 +96,6 @@ bool SimulationBlock::parse(LineParser& parser, DUQ* duq)
 			case (SimulationBlock::SeedKeyword):
 				duq->setSeed(parser.argi(1));
 				Messenger::print("Random seed set to %i.\n", duq->seed());
-				break;
-			case (SimulationBlock::WindowFunctionKeyword):
-				if (XYData::windowFunction(parser.argc(1)) == XYData::nWindowFunctions)
-				{
-					Messenger::error("Unrecognised window function '%s'.\n", parser.argc(1));
-					error = true;
-				}
-				else duq->setWindowFunction(XYData::windowFunction(parser.argc(1)));
 				break;
 			case (SimulationBlock::WriteFrequencyKeyword):
 				duq->setWriteFrequency(parser.argi(1));

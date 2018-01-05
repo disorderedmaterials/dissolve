@@ -97,6 +97,12 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		Messenger::error("Partials: Invalid weighting scheme '%s' found.\n", keywords_.asString("Weights"));
 		return false;
 	}
+	XYData::WindowFunction windowFunction = XYData::windowFunction(keywords_.asString("WindowFunction"));
+	if (windowFunction == XYData::nWindowFunctions)
+	{
+		Messenger::error("Partials: Unrecognised window function '%s' found.\n", keywords_.asString("WindowFunction"));
+		return false;
+	}
 
 	// Print argument/parameter summary
 	Messenger::print("Partials: Use of all pairs in intramolecular partials is %s.\n", DUQSys::onOff(allIntra));
@@ -108,6 +114,8 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 	if (sqCalculation)
 	{
 		Messenger::print("Partials: Calculating S(Q)/F(Q) over %f < Q < %f Angstroms**-1 using step size of %f Angstroms**-1.\n", qMin, qMax, qDelta);
+		if (windowFunction == XYData::nWindowFunctions) Messenger::print("Partials: No window function will be employed in Fourier transforms.\n");
+		else Messenger::print("Partials: '%s' window function will be employed in Fourier transforms.\n", XYData::windowFunction(windowFunction));
 		if (normalisation == PartialsModule::NoNormalisation) Messenger::print("Partials: No normalisation will be applied to total F(Q).\n");
 		else if (normalisation == PartialsModule::AverageOfSquaresNormalisation) Messenger::print("Partials: Total F(Q) will be normalised to <b>**2");
 		else if (normalisation == PartialsModule::SquareOfAverageNormalisation) Messenger::print("Partials: Total F(Q) will be normalised to <b**2>");
@@ -170,7 +178,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		// Calculate S(Q) if requested
 		if (sqCalculation)
 		{
-			if (!calculateUnweightedSQ(procPool, cfg, qMin, qDelta, qMax, cfg->atomicDensity(), duq.windowFunction(), qBroadening, braggOn)) return false;
+			if (!calculateUnweightedSQ(procPool, cfg, qMin, qDelta, qMax, cfg->atomicDensity(), windowFunction, qBroadening, braggOn)) return false;
 			PartialSet& unweightedsq = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedSQ", "Partials");
 
 			// Set names of resources (XYData) within the PartialSet
