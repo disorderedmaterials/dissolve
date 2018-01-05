@@ -92,6 +92,7 @@ class ModuleControlWidget : public SubWidget
 	 */
 	signals:
 	void windowClosed(void*);
+	void moduleRun();
 
 	public slots:
 	void on_ControlRunButton_clicked(bool checked);

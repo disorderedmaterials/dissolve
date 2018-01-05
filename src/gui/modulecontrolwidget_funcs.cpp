@@ -248,7 +248,7 @@ void ModuleControlWidget::on_ControlRunButton_clicked(bool checked)
 {
 	module_->process(duq_, duq_.worldPool());
 
-	updateControls();
+	emit moduleRun();
 }
 
 void ModuleControlWidget::on_EnabledCheck_clicked(bool checked)

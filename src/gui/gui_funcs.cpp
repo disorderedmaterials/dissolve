@@ -261,6 +261,7 @@ bool DUQWindow::loadWindowState()
 		else if (DUQSys::sameString(stateParser.argc(0), "ModuleControl"))
 		{
 			ModuleControlWidget* moduleWidget = new ModuleControlWidget(NULL, NULL, duq_);
+			connect(moduleWidget, SIGNAL(moduleRun()), this, SLOT(updateWidgets()));
 			subWindow = addWindow(moduleWidget, NULL, stateParser.argc(1));
 			subWidget = moduleWidget;
 		}
