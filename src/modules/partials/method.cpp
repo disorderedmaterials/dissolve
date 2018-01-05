@@ -343,7 +343,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		if (saveData) if (!MPIRunMaster(procPool, unweightedgr.save())) return false;
 
 		// Store the blended density of our partials
-		GenericListHelper<double>::realise(duq.processingModuleData(), "Density", uniqueName_) = density;
+		GenericListHelper<double>::realise(duq.processingModuleData(), "Density", uniqueName_, GenericItem::InRestartFileFlag) = density;
 
 		// Test unweighted g(r)?
 		if (testMode)
@@ -390,7 +390,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 			Messenger::print("Partials: Isotopologue and isotope composition over all Configurations used in '%s':\n\n", uniqueName_.get());
 			combinedWeights.finalise(combinedExchangeableAtoms);
 			combinedWeights.print();
-			GenericListHelper<Weights>::realise(duq.processingModuleData(), "FullWeights", uniqueName_) = combinedWeights;
+			GenericListHelper<Weights>::realise(duq.processingModuleData(), "FullWeights", uniqueName_, GenericItem::InRestartFileFlag) = combinedWeights;
 
 			PartialSet& weightedgr = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "WeightedGR", uniqueName_);
 			weightedgr.setUp(combinedAtomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), uniqueName(), "weighted", "rdf", "r, Angstroms");
