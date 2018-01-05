@@ -78,7 +78,7 @@ void TextPrimitive::setTextSizeScale(double textSizeScale)
 }
 
 // Set data
-void TextPrimitive::set(FontInstance& fontInstance, QString text, Vec3<double> anchorPoint, TextPrimitive::TextAnchor anchorPosition, Vec3<double> adjustmentVector, Matrix4& localRotation, double textSize, bool flat)
+void TextPrimitive::set(FontInstance& fontInstance, QString text, Vec3<double> anchorPoint, TextPrimitive::TextAnchor anchorPosition, Vec3<double> adjustmentVector, Matrix4 localRotation, double textSize, bool flat)
 {
 	// Call the parser
 	generateFragments(&fontInstance, this, text);

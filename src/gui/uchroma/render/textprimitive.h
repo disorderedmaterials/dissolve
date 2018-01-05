@@ -80,7 +80,7 @@ class TextPrimitive : public ListItem<TextPrimitive>
 	// Set text scaling factor
 	static void setTextSizeScale(double textSizeScale);
 	// Set data
-	void set(FontInstance& fontInstance, QString text, Vec3<double> anchorPoint, TextAnchor anchorPosition, Vec3<double> adjustmentVector, Matrix4& localRotation, double textSize, bool flat);
+	void set(FontInstance& fontInstance, QString text, Vec3<double> anchorPoint, TextAnchor anchorPosition, Vec3<double> adjustmentVector, Matrix4 localRotation, double textSize, bool flat);
 	// Return transformation matrix to use when rendering (including fragment scale/translation if one is specified)
 	Matrix4 transformationMatrix(FontInstance& fontInstance, const Matrix4& viewMatrixInverse, double baseFontSize, TextFragment* fragment = NULL);
 	// Calculate bounding box of primitive
