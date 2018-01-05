@@ -79,15 +79,15 @@ bool UChromaBase::writeCollectionBlock(LineParser& parser, Collection* collectio
 	for (int n=0; n<indentLevel*2; ++n) indent[n] = ' ';
 	indent[indentLevel*2] = '\0';
 
-	if (type == Collection::MasterCollection) parser.writeLineF("%s%s '%s'\n", indent, UChromaBase::inputBlock(UChromaBase::CollectionBlock), qPrintable(collection->name()));
-	else if (type == Collection::FitCollection) parser.writeLineF("%s%s '%s'\n", indent, UChromaBase::collectionKeyword(UChromaBase::FitBlockKeyword), qPrintable(collection->name()));
-	else if (type == Collection::ExtractedCollection) parser.writeLineF("%s%s '%s'\n", indent, UChromaBase::collectionKeyword(UChromaBase::SliceBlockKeyword), qPrintable(collection->name()));
+	if (type == Collection::MasterCollection) parser.writeLineF("%s%s '%s'\n", indent, UChromaBase::inputBlock(UChromaBase::CollectionBlock), collection->name());
+	else if (type == Collection::FitCollection) parser.writeLineF("%s%s '%s'\n", indent, UChromaBase::collectionKeyword(UChromaBase::FitBlockKeyword), collection->name());
+	else if (type == Collection::ExtractedCollection) parser.writeLineF("%s%s '%s'\n", indent, UChromaBase::collectionKeyword(UChromaBase::SliceBlockKeyword), collection->name());
 	parser.writeLineF("%s  %s \"%s\"\n", indent, UChromaBase::collectionKeyword(UChromaBase::DataDirectoryKeyword), qPrintable(collection->dataFileDirectory().absolutePath()));
 
 	// -- Transforms
-	parser.writeLineF("%s  %s %s %s\n", indent, UChromaBase::collectionKeyword(UChromaBase::TransformXKeyword), stringBool(collection->transformEnabled(0)), qPrintable(collection->transformEquation(0)));
-	parser.writeLineF("%s  %s %s %s\n", indent, UChromaBase::collectionKeyword(UChromaBase::TransformYKeyword), stringBool(collection->transformEnabled(1)), qPrintable(collection->transformEquation(1)));
-	parser.writeLineF("%s  %s %s %s\n", indent, UChromaBase::collectionKeyword(UChromaBase::TransformZKeyword), stringBool(collection->transformEnabled(2)), qPrintable(collection->transformEquation(2)));
+	parser.writeLineF("%s  %s %s %s\n", indent, UChromaBase::collectionKeyword(UChromaBase::TransformXKeyword), stringBool(collection->transformEnabled(0)), collection->transformEquation(0));
+	parser.writeLineF("%s  %s %s %s\n", indent, UChromaBase::collectionKeyword(UChromaBase::TransformYKeyword), stringBool(collection->transformEnabled(1)), collection->transformEquation(1));
+	parser.writeLineF("%s  %s %s %s\n", indent, UChromaBase::collectionKeyword(UChromaBase::TransformZKeyword), stringBool(collection->transformEnabled(2)), collection->transformEquation(2));
 
 	// -- Interpolation
 	parser.writeLineF("%s  %s %s %s\n", indent, UChromaBase::collectionKeyword(UChromaBase::InterpolateKeyword), stringBool(collection->interpolate(0)), stringBool(collection->interpolate(2)));
@@ -160,9 +160,9 @@ bool UChromaBase::writeDataSetBlock(LineParser& parser, DataSet* dataSet, int in
 	for (int n=0; n<indentLevel*2; ++n) indent[n] = ' ';
 	indent[indentLevel*2] = '\0';
 
-	parser.writeLineF("%s  %s '%s'\n", indent, UChromaBase::collectionKeyword(UChromaBase::DataSetDefinitionKeyword), qPrintable(dataSet->name()));
-	if (dataSet->dataSource() == DataSet::FileSource) parser.writeLineF("%s    %s %s '%s'\n", indent, UChromaBase::dataSetKeyword(UChromaBase::SourceKeyword), DataSet::dataSource(dataSet->dataSource()), qPrintable(dataSet->sourceFileName()));
-	else if (dataSet->dataSource() == DataSet::XYDataSource)  parser.writeLineF("%s    %s %s '%s'\n", indent, UChromaBase::dataSetKeyword(UChromaBase::SourceKeyword), DataSet::dataSource(dataSet->dataSource()), qPrintable(dataSet->sourceXYData()));
+	parser.writeLineF("%s  %s '%s'\n", indent, UChromaBase::collectionKeyword(UChromaBase::DataSetDefinitionKeyword), dataSet->name());
+	if (dataSet->dataSource() == DataSet::FileSource) parser.writeLineF("%s    %s %s '%s'\n", indent, UChromaBase::dataSetKeyword(UChromaBase::SourceKeyword), DataSet::dataSource(dataSet->dataSource()), dataSet->sourceFileName());
+	else if (dataSet->dataSource() == DataSet::XYDataSource)  parser.writeLineF("%s    %s %s '%s'\n", indent, UChromaBase::dataSetKeyword(UChromaBase::SourceKeyword), DataSet::dataSource(dataSet->dataSource()), dataSet->sourceXYData());
 	else parser.writeLineF("%s    %s %s\n", indent, UChromaBase::dataSetKeyword(UChromaBase::SourceKeyword), DataSet::dataSource(dataSet->dataSource()));
 	parser.writeLineF("%s    %s %f\n", indent, UChromaBase::dataSetKeyword(UChromaBase::ZKeyword), dataSet->data().constZ());
 	if (dataSet->dataSource() == DataSet::InternalSource)
@@ -188,16 +188,16 @@ bool UChromaBase::writeFitParametersBlock(LineParser& parser, FitKernel* fitKern
 	for (RefListItem<ReferenceVariable,bool>* ri = fitKernel->usedReferences(); ri != NULL; ri = ri->next)
 	{
 		ReferenceVariable* refVar = ri->item;
-		parser.writeLineF("%s    %s %s %s %i %i %s %i %i '%s'\n", indent, UChromaBase::fitParametersKeyword(UChromaBase::ReferenceKeyword), qPrintable(refVar->name()), IndexData::indexType(refVar->xIndex().type()), refVar->xIndex().index(), refVar->xIndex().offset(), IndexData::indexType(refVar->zIndex().type()), refVar->zIndex().index(), refVar->zIndex().offset(), qPrintable(refVar->zDataSetName()));
+		parser.writeLineF("%s    %s %s %s %i %i %s %i %i '%s'\n", indent, UChromaBase::fitParametersKeyword(UChromaBase::ReferenceKeyword), refVar->name(), IndexData::indexType(refVar->xIndex().type()), refVar->xIndex().index(), refVar->xIndex().offset(), IndexData::indexType(refVar->zIndex().type()), refVar->zIndex().index(), refVar->zIndex().offset(), refVar->zDataSetName());
 	}
-	parser.writeLineF("%s    %s '%s'\n", indent, UChromaBase::fitParametersKeyword(UChromaBase::EquationKeyword), qPrintable(fitKernel->equationText()));
+	parser.writeLineF("%s    %s '%s'\n", indent, UChromaBase::fitParametersKeyword(UChromaBase::EquationKeyword), fitKernel->equationText());
 	parser.writeLineF("%s    %s %s\n", indent, UChromaBase::fitParametersKeyword(UChromaBase::GlobalKeyword), stringBool(fitKernel->global()));
 	parser.writeLineF("%s    %s %s\n", indent, UChromaBase::fitParametersKeyword(UChromaBase::OrthogonalKeyword), stringBool(fitKernel->orthogonal()));
 	parser.writeLineF("%s    %s %f\n", indent, UChromaBase::fitParametersKeyword(UChromaBase::LimitStrengthKeyword), fitKernel->limitStrength());
 	for (RefListItem<EquationVariable,bool>* ri = fitKernel->usedVariables(); ri != NULL; ri = ri->next)
 	{
 		EquationVariable* eqVar = ri->item;
-		parser.writeLineF("%s    %s %s %s %f %s %f %s %f\n", indent, UChromaBase::fitParametersKeyword(UChromaBase::VariableKeyword), qPrintable(eqVar->name()), stringBool(eqVar->fit()), eqVar->value(), stringBool(eqVar->maximumLimitEnabled()), eqVar->minimumLimit(), stringBool(eqVar->maximumLimitEnabled()), eqVar->maximumLimit());
+		parser.writeLineF("%s    %s %s %s %f %s %f %s %f\n", indent, UChromaBase::fitParametersKeyword(UChromaBase::VariableKeyword), eqVar->name(), stringBool(eqVar->fit()), eqVar->value(), stringBool(eqVar->maximumLimitEnabled()), eqVar->minimumLimit(), stringBool(eqVar->maximumLimitEnabled()), eqVar->maximumLimit());
 	}
 	parser.writeLineF("%s    %s %s\n", indent, UChromaBase::fitParametersKeyword(UChromaBase::XRangeTypeKeyword), FitKernel::rangeType(fitKernel->xRange()));
 	parser.writeLineF("%s    %s %f %f\n", indent, UChromaBase::fitParametersKeyword(UChromaBase::XRangeAbsoluteKeyword), fitKernel->absoluteXMin(), fitKernel->absoluteXMax());
@@ -226,7 +226,7 @@ bool UChromaBase::writeFitResultsBlock(LineParser& parser, DataSpaceRange* range
 	indent[indentLevel*2] = '\0';
 
 	parser.writeLineF("%s  %s %i\n", indent, UChromaBase::fitParametersKeyword(UChromaBase::FitResultsBlockKeyword), rangeID);
-	for (NamedValue* value = range->fittedValues(); value != NULL; value = value->next) parser.writeLineF("%s    %s %s %e\n", indent, UChromaBase::fitResultsKeyword(UChromaBase::FittedValueKeyword), qPrintable(value->name()), value->value());
+	for (NamedValue* value = range->fittedValues(); value != NULL; value = value->next) parser.writeLineF("%s    %s %s %e\n", indent, UChromaBase::fitResultsKeyword(UChromaBase::FittedValueKeyword), value->name(), value->value());
 	parser.writeLineF("%s  %s\n", indent, UChromaBase::fitResultsKeyword(UChromaBase::EndFitResultsKeyword));
 
 	return true;
@@ -236,7 +236,7 @@ bool UChromaBase::writeFitResultsBlock(LineParser& parser, DataSpaceRange* range
 bool UChromaBase::writeSettingsBlock(LineParser& parser)
 {
 	parser.writeLineF("%s\n", UChromaBase::inputBlock(UChromaBase::SettingsBlock));
-	parser.writeLineF("  %s \"%s\" %i %i %s %i\n", UChromaBase::settingsKeyword(UChromaBase::ImageExportKeyword), qPrintable(imageExportFileName_), imageExportWidth_, imageExportHeight_, UChromaBase::imageFormatExtension(imageExportFormat_), imageExportMaintainAspect_);
+	parser.writeLineF("  %s \"%s\" %i %i %s %i\n", UChromaBase::settingsKeyword(UChromaBase::ImageExportKeyword), imageExportFileName_.get(), imageExportWidth_, imageExportHeight_, UChromaBase::imageFormatExtension(imageExportFormat_), imageExportMaintainAspect_);
 	parser.writeLineF("%s\n", UChromaBase::settingsKeyword(UChromaBase::EndSettingsKeyword));
 
 	return true;
@@ -259,7 +259,8 @@ bool UChromaBase::writeViewBlock(LineParser& parser)
 // Write ViewPaneBlock keywords
 bool UChromaBase::writeViewPaneBlock(LineParser& parser, ViewPane* pane)
 {
-	parser.writeLineF("  %s '%s'\n", UChromaBase::viewKeyword(UChromaBase::ViewPaneBlockKeyword), qPrintable(pane->name()));
+	parser.writeLineF("  %s '%s'\n", UChromaBase::viewKeyword(UChromaBase::ViewPaneBlockKeyword), pane->name());
+	parser.writeLineF("    %s %s\n", UChromaBase::viewPaneKeyword(UChromaBase::AutoFollowTypeKeyword), ViewPane::autoFollowType(pane->autoFollowType()));
 	parser.writeLineF("    %s %s\n", UChromaBase::viewPaneKeyword(UChromaBase::AutoPositionTitlesKeyword), stringBool(pane->axes().autoPositionTitles()));
 	for (int axis=0; axis < 3; ++axis) writeAxisBlock(parser, pane->axes(), axis);
 	parser.writeLineF("    %s %i\n", UChromaBase::viewPaneKeyword(UChromaBase::BoundingBoxKeyword), pane->boundingBox());
@@ -279,10 +280,11 @@ bool UChromaBase::writeViewPaneBlock(LineParser& parser, ViewPane* pane)
 	for (TargetData* target = pane->collectionTargets(); target != NULL; target = target->next)
 	{
 		if (!Collection::objectValid(target->collection(), "collection in UChromaBase::writeViewPaneBlock")) continue;
-		parser.writeLineF("    %s '%s'\n", UChromaBase::viewPaneKeyword(UChromaBase::RoleTargetCollectionKeyword), qPrintable(target->collection()->locator()));
+		parser.writeLineF("    %s '%s'\n", UChromaBase::viewPaneKeyword(UChromaBase::RoleTargetCollectionKeyword), target->collection()->locator());
 	}
-	for (RefListItem<ViewPane,bool>* ri = pane->paneTargets(); ri != NULL; ri = ri->next) parser.writeLineF("    %s '%s'\n", UChromaBase::viewPaneKeyword(UChromaBase::RoleTargetPaneKeyword), qPrintable(ri->item->name()));
+	for (RefListItem<ViewPane,bool>* ri = pane->paneTargets(); ri != NULL; ri = ri->next) parser.writeLineF("    %s '%s'\n", UChromaBase::viewPaneKeyword(UChromaBase::RoleTargetPaneKeyword), ri->item->name());
 	parser.writeLineF("    %s %s\n", UChromaBase::viewPaneKeyword(UChromaBase::UseBestFlatViewKeyword), stringBool(pane->axes().useBestFlatView()));
+	parser.writeLineF("    %s %i\n", UChromaBase::viewPaneKeyword(UChromaBase::VerticalShiftKeyword), pane->collectionGroupManager().verticalShift());
 	parser.writeLineF("    %s '%s'\n", UChromaBase::viewPaneKeyword(UChromaBase::ViewTypeKeyword), ViewPane::viewType(pane->viewType()));
 	parser.writeLineF("  %s\n", UChromaBase::viewPaneKeyword(UChromaBase::EndViewPaneKeyword));
 

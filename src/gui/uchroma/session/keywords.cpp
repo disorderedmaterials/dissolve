@@ -272,10 +272,10 @@ int UChromaBase::viewKeywordNArguments(UChromaBase::ViewKeyword kwd)
  */
 
 // ViewPane Block Keywords
-const char* UChromaViewPaneBlockKeywords[] = { "AutoPositionTitles", "Axis", "BoundingBox", "BoundingBoxPlaneY", "EndViewPane", "FlatLabels", "Geometry", "LabelPointSize", "Perspective", "Role", "RoleTargetCollection", "RoleTargetPane", "RotationX", "RotationY", "RotationZ", "TitlePointSize", "Translation", "UseBestFlatView", "ViewType" };
+const char* UChromaViewPaneBlockKeywords[] = { "AutoFollowType", "AutoPositionTitles", "Axis", "BoundingBox", "BoundingBoxPlaneY", "EndViewPane", "FlatLabels", "Geometry", "LabelPointSize", "Perspective", "Role", "RoleTargetCollection", "RoleTargetPane", "RotationX", "RotationY", "RotationZ", "TitlePointSize", "Translation", "UseBestFlatView", "VerticalShift", "ViewType" };
 
 // ViewPane Block NArguments
-int UChromaViewPaneKeywordNArguments[] = { 1, 1, 1, 1, 0, 1, 4, 1, 1, 1, 1, 1, 3, 3, 3, 1, 3, 1, 1 };
+int UChromaViewPaneKeywordNArguments[] = { 1, 1, 1, 1, 1, 0, 1, 4, 1, 1, 1, 1, 1, 3, 3, 3, 1, 3, 1, 1, 1 };
 
 // Convert text string to ViewPaneKeyword
 UChromaBase::ViewPaneKeyword UChromaBase::viewPaneKeyword(const char* s)

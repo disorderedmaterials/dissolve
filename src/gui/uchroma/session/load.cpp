@@ -812,6 +812,7 @@ bool UChromaBase::readViewPaneBlock(LineParser& parser, ViewPane* pane, bool str
 	ViewPane* associatedPane;
 	ViewPane::PaneRole role;
 	ViewPane::ViewType vt;
+	ViewPane::AutoFollowType aft;
 	while (!parser.eofOrBlank())
 	{
 		// Get line from file
@@ -826,6 +827,16 @@ bool UChromaBase::readViewPaneBlock(LineParser& parser, ViewPane* pane, bool str
 		}
 		switch (viewPaneKwd)
 		{
+			// Auto-follow type
+			case (UChromaBase::AutoFollowTypeKeyword):
+				aft = ViewPane::autoFollowType(parser.argc(1));
+				if (aft == ViewPane::nAutoFollowTypes)
+				{
+					Messenger::warn("Unrecognised auto-follow type '%s' for pane '%s'. Defaulting to 'None'.\n", parser.argc(1), pane->name());
+					CHECKIOFAIL
+				}
+				pane->setAutoFollowType(aft);
+				break;
 			// Auto Position Axis Titles
 			case (UChromaBase::AutoPositionTitlesKeyword):
 				pane->axes().setAutoPositionTitles(parser.argb(1));
@@ -921,6 +932,10 @@ bool UChromaBase::readViewPaneBlock(LineParser& parser, ViewPane* pane, bool str
 			// Use best flat view
 			case (UChromaBase::UseBestFlatViewKeyword):
 				pane->axes().setUseBestFlatView(parser.argb(1));
+				break;
+			// Vertical shift (collection group manager)
+			case (UChromaBase::VerticalShiftKeyword):
+				pane->collectionGroupManager().setVerticalShift((CollectionGroupManager::VerticalShift) parser.argi(1));
 				break;
 			// View Type
 			case (UChromaBase::ViewTypeKeyword):

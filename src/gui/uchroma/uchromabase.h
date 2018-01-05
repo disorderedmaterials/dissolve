@@ -544,6 +544,7 @@ class UChromaBase
 	// ViewPane Block Keyword Enum
 	enum ViewPaneKeyword
 	{
+		AutoFollowTypeKeyword,
 		AutoPositionTitlesKeyword,
 		AxisBlockKeyword,
 		BoundingBoxKeyword,
@@ -562,6 +563,7 @@ class UChromaBase
 		TitlePointSizeKeyword,
 		TranslationKeyword,
 		UseBestFlatViewKeyword,
+		VerticalShiftKeyword,
 		ViewTypeKeyword,
 		nViewPaneKeywords
 	};
