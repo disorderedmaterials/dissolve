@@ -19,8 +19,8 @@
 	along with DUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_MONITORWINDOW_H
-#define DUQ_MONITORWINDOW_H
+#ifndef DUQ_MAINWINDOW_H
+#define DUQ_MAINWINDOW_H
 
 #include "gui/ui_gui.h"
 #include "gui/subwindow.h"
@@ -30,6 +30,7 @@
 #include "templates/list.h"
 
 // Forward Declarations
+class BrowserWidget;
 class DUQ;
 class QMdiSubWindow;
 
@@ -81,9 +82,24 @@ class DUQWindow : public QMainWindow
 	/*
 	 * Run Control
 	 */
+	public:
+	// dUQ State Enum
+	enum DUQState {
+		RunningState,		/* dUQ is currently running in the GUI */
+		StoppedState,		/* dUQ is currently stopped in the GUI */
+		MonitoringState,	/* dUQ is running in the background, and we are monitoring it */
+		nDUQStates
+	};
+
 	private:
 	// Thread controller
 	DUQThreadController threadController_;
+	// Current state of dUQ
+	DUQState duqState_;
+
+	public:
+	// Return current state of dUQ
+	DUQState duqState() const;
 
 	public slots:
 	// Set widgets ready for the main code to be run
@@ -102,6 +118,8 @@ class DUQWindow : public QMainWindow
 	 * Sub-window Managemnet
 	 */
 	private:
+	// Browser widget
+	BrowserWidget* browserWidget_;
 	// List of current MDI sub-windows
 	List<SubWindow> subWindows_;
 

@@ -47,8 +47,8 @@ DUQWindow::DUQWindow(DUQ& duq, bool ignoreLayoutFile) : QMainWindow(NULL), duq_(
 	if (ignoreLayoutFile || (!loadWindowLayout()))
 	{
 		// Create a new BrowserWidget
-		BrowserWidget* browserWidget = new BrowserWidget(NULL, *this, duq_);
-		addWindow(browserWidget, &duq_, "Browser");
+		browserWidget_ = new BrowserWidget(NULL, *this, duq_);
+		addWindow(browserWidget_, &duq_, "Browser");
 	}
 
 	// Link our output handler to the Messenger, and connect up signals/slots
@@ -58,6 +58,8 @@ DUQWindow::DUQWindow(DUQ& duq, bool ignoreLayoutFile) : QMainWindow(NULL), duq_(
 	// Connect signals to thread controller
 	connect(this, SIGNAL(iterate(int)), &threadController_, SLOT(iterate(int)));
 	connect(this, SIGNAL(stopIterating()), &threadController_, SLOT(stopIterating()));
+
+	duqState_ = StoppedState;
 
 	refreshing_ = false;
 }
@@ -97,9 +99,19 @@ void DUQWindow::updateWidgets()
 	ui.IterationNumberLabel->setText(DUQSys::itoa(duq_.iteration()));
 	ui.IterationLimitLabel->setText(duq_.maxIterations() == -1 ?  QString(QChar(0x221E)) : QString::number(duq_.maxIterations()));
 
-	// Sub-windows
+	// Sub-windows - update everything but the Browser window
 	ListIterator<SubWindow> subWindowIterator(subWindows_);
-	while (SubWindow* subWindow = subWindowIterator.iterate()) subWindow->subWidget()->updateControls();
+	while (SubWindow* subWindow = subWindowIterator.iterate()) if (subWindow->subWidget() != browserWidget_) subWindow->subWidget()->updateControls();
+}
+
+/*
+ * Run Control
+ */
+
+// Return current state of dUQ
+DUQWindow::DUQState DUQWindow::duqState() const
+{
+	return duqState_;
 }
 
 // Set widgets ready for the main code to be run
@@ -246,9 +258,9 @@ bool DUQWindow::loadWindowLayout()
 		// The line should contain the name of the widget we should create in a subwindow, and the subwindow title
 		if (DUQSys::sameString(stateParser.argc(0), "Browser"))
 		{
-			BrowserWidget* browserWidget = new BrowserWidget(NULL, *this, duq_);
-			subWindow = addWindow(browserWidget, &duq_, stateParser.argc(1));
-			subWidget = browserWidget;
+			browserWidget_ = new BrowserWidget(NULL, *this, duq_);
+			subWindow = addWindow(browserWidget_, &duq_, stateParser.argc(1));
+			subWidget = browserWidget_;
 		}
 		else if (DUQSys::sameString(stateParser.argc(0), "PairPotential"))
 		{
@@ -294,6 +306,8 @@ void DUQWindow::on_ControlRunButton_clicked(bool checked)
 	// Prepare the GUI
 	setWidgetsForRun();
 
+	duqState_ = DUQWindow::RunningState;
+
 	emit iterate(-1);
 }
 
@@ -301,6 +315,8 @@ void DUQWindow::on_ControlStepButton_clicked(bool checked)
 {
 	// Prepare the GUI
 	setWidgetsForRun();
+
+	duqState_ = DUQWindow::RunningState;
 
 	emit iterate(1);
 }
@@ -310,11 +326,15 @@ void DUQWindow::on_ControlStepFiveButton_clicked(bool checked)
 	// Prepare the GUI
 	setWidgetsForRun();
 
+	duqState_ = DUQWindow::RunningState;
+
 	emit iterate(5);
 }
 
 void DUQWindow::on_ControlPauseButton_clicked(bool checked)
 {
+	duqState_ = DUQWindow::StoppedState;
+
 	emit stopIterating();
 }
 
