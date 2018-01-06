@@ -75,7 +75,7 @@ class BrowserWidget : public SubWidget
 	// DUQ reference
 	DUQ& duq_;
 	// DUQWindow reference
-	DUQWindow& monitorWindow_;
+	DUQWindow& duqWindow_;
 
 
 	/*
