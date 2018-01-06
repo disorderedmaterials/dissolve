@@ -121,7 +121,7 @@ void DoubleExp::set(const char* text)
 	// Call strtok a second time to see if we have an exponent
 	char* expo = strtok(NULL, "Ee");
 	if (expo) exponent_ = atoi(expo);
-	else exponent_ = 1;
+	else exponent_ = 0;
 // 	printf("DoubleExp::set(const char*) - Exponent is %i (%s)\n", exponent_, expo ? expo : "NULL");
 
 	recalculate();
@@ -156,9 +156,6 @@ int DoubleExp::exponent() const
 // Return value as string
 CharString DoubleExp::asString()
 {
-	// If the exponent is zero, just return '0.0#
-	if (exponent_ == 0) return CharString("0.0");
-
 	// Print the mantissa value to a formatted string, and strip any trailing zeroes
 	CharString mantissaString("%f", mantissa_);
 	int dot = mantissaString.find('.');
@@ -176,7 +173,7 @@ CharString DoubleExp::asString()
 		mantissaString.eraseEnd(nZeroesAtEnd);
 	}
 
-	// If the exponent is 1, omit the 'e'
-	if (exponent_ == 1) return mantissaString;
+	// If the exponent is 0, omit the 'e'
+	if (exponent_ == 0) return mantissaString;
 	else return CharString("%se%i", mantissaString.get(), exponent_);
 }
