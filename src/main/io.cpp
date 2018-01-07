@@ -509,7 +509,7 @@ bool DUQ::loadRestart(const char* filename)
 		// Read in the data
 		if ((!item) || (!item->read(parser)))
 		{
-			Messenger::error("Failed to read item data '%s' from restart file.\n", parser.argc(nameIndex));
+			Messenger::error("Failed to read item data '%s' from restart file.\n", item->name());
 			error = true;
 			break;
 		}
