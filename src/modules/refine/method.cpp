@@ -60,7 +60,8 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	/*
 	 * Get Keyword Options
 	 */
-
+	const double truncationWidth = keywords_.asDouble("TruncationWidth");
+	const double minimumRadius = keywords_.asDouble("MinimumRadius");
 	bool onlyWhenStable = keywords_.asBool("OnlyWhenStable");
 	XYData::WindowFunction windowFunction = XYData::windowFunction(keywords_.asString("WindowFunction"));
 	if (windowFunction == XYData::nWindowFunctions)
@@ -130,6 +131,32 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	 */
 	RefListIterator<Data,bool> dataIterator(targetData_);
 	while (Data* data = dataIterator.iterate()) if (!data->setUp(duq.processingModuleData())) return false;
+
+	/*
+	 * Calculate current percentage errors in calculated vs experimental S(Q)
+	 */
+	dataIterator.restart();
+	while (Data* data = dataIterator.iterate())
+	{
+		// Must have an associated Module from which to get the total S(Q)
+		if (!data->associatedModule()) continue;
+
+		// Retrieve the PartialSet from the module
+		bool found = false;
+		PartialSet& calcSQ = GenericListHelper<PartialSet>::retrieve(duq.processingModuleData(), "WeightedSQ", partialsModule->uniqueName(), PartialSet(), &found);
+		if (!found)
+		{
+			Messenger::warn("Could not locate associated PartialSet for Data '%s'.\n", data->name());
+			continue;
+		}
+
+		// Realise the error array and make sure its object name is set
+		XYData& errors = GenericListHelper<XYData>::realise(duq.processingModuleData(), CharString("%s_Error", data->niceName()), uniqueName_, GenericItem::InRestartFileFlag);
+		errors.setObjectName(CharString("%s//%s//Error", uniqueName_.get(), data->niceName()));
+
+		// Calculate and store the percentage error
+		errors.addPoint(duq.iteration(), data->data().error(calcSQ.total()));
+	}
 
 	/*
 	 * Construct our full, square, scattering matrix, using the master AtomTypes list
@@ -274,8 +301,8 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 					// Scale the data to have a maximum deviation from zero of 1.0, so that we avoid any possibility to get NaNs when taking the ln later on
 					scaleFactor = dGR.arrayY().maxAbs();
 					if (scaleFactor < 1.0) scaleFactor = 1.0;
-					dGR.arrayY() /= scaleFactor;
-					cr.arrayY() /= scaleFactor;
+					dGR.arrayY() /= scaleFactor*2.0;
+					cr.arrayY() /= scaleFactor*2.0;
 
 					// Original PY
 // 					for (int n=0; n<deltaGR.nPoints(); ++n) dU.addPoint(deltaGR.x(n), log(1.0 - cr.y(n)/(deltaGR.y(n)+1.0));
@@ -294,6 +321,18 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 					break;
 				default:
 					return false;
+			}
+
+			// Apply smooth zeroing of potential up to the minimum distance
+			const double truncationStart = minimumRadius - truncationWidth;
+			double r;
+			Array<double>& y = dPhiR.arrayY();
+			for (int n=0; n<dPhiR.nPoints(); ++n)
+			{
+				r = dPhiR.x(n);
+				if (r < truncationStart) y[n] = 0.0;
+				else if (r > minimumRadius) break;
+				else y[n] *= 0.5 - 0.5*cos(PI*0.5*(r-truncationStart)/(truncationWidth*0.5));
 			}
 
 			// Apply the perturbation

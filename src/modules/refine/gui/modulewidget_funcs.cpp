@@ -101,6 +101,26 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, DUQ& dUQ
 	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
 	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
 
+	// Errors Graph
+
+	layout = new QVBoxLayout;
+	layout->setContentsMargins(0,0,0,0);
+	layout->setSpacing(4);
+	errorsGraph_ = new UChromaViewWidget;
+	layout->addWidget(errorsGraph_);
+	ui.ErrorsPlotWidget->setLayout(layout);
+
+	// Start a new, empty session
+	errorsGraph_->startNewSession(true);
+	viewPane = errorsGraph_->currentViewPane();
+	viewPane->setViewType(ViewPane::FlatXYView);
+	viewPane->axes().setTitle(0, "Iteration");
+	viewPane->axes().setMax(0, 10.0);
+	viewPane->axes().setTitle(1, "%Error");
+	viewPane->axes().setMin(1, 0.0);
+	viewPane->axes().setMax(1, 100.0);
+	viewPane->setAutoFollowType(ViewPane::XFollow);
+
 	initialiseControls(module_);
 
 	refreshing_ = false;
@@ -117,10 +137,12 @@ void RefineModuleWidget::updateControls()
 	dataGraph_->refreshReferencedDataSets();
 	partialSQGraph_->refreshReferencedDataSets();
 	potentialsGraph_->refreshReferencedDataSets();
+	errorsGraph_->refreshReferencedDataSets();
 
 	dataGraph_->updateDisplay();;
 	partialSQGraph_->updateDisplay();
 	potentialsGraph_->updateDisplay();
+	errorsGraph_->updateDisplay();
 }
 
 // Initialise controls
@@ -130,7 +152,7 @@ void RefineModuleWidget::initialiseControls(RefineModule* module)
 
 	CharString blockData;
 
-	// Add reference data, calculated data to the dataGraph_
+	// Add reference data & calculated data to the dataGraph_, and percentage errors to the errorsGraph_
 	RefListIterator<Data,bool> dataIterator(module->targetData());
 	while (Data* data = dataIterator.iterate())
 	{
@@ -143,6 +165,9 @@ void RefineModuleWidget::initialiseControls(RefineModule* module)
 		{
 			blockData.sprintf("Collection '%s Calc'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated'; Source XYData '%s//WeightedSQ//Total'; EndDataSet; EndCollection", data->name(), data->name(), data->associatedModule()->uniqueName());
 			dataGraph_->addCollectionFromBlock(blockData);
+
+			blockData.sprintf("Collection '%s Calc'; Group '%s'; DataSet '%s Error'; Source XYData '%s//%s//Error'; EndDataSet; EndCollection", data->name(), data->name(), data->name(), module->uniqueName(), data->niceName());
+			errorsGraph_->addCollectionFromBlock(blockData);
 		}
 	}
 
@@ -179,12 +204,12 @@ void RefineModuleWidget::initialiseControls(RefineModule* module)
 		int m = n;
 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
 		{
-			// Delta g(r)
-			blockData.sprintf("Collection '%s-%s dg(r)'; Group '%s-%s'; DataSet '%s-%s Delta g(r)'; Source XYData '%s//DeltaGR//%s-%s'; EndDataSet; EndCollection", at1->name(), at2->name(), at1->name(), at2->name(), at1->name(), at2->name(), module_->uniqueName(), at1->name(), at2->name());
+			// Generated potential
+			blockData.sprintf("Collection '%s-%s dphi(r)'; Group '%s-%s'; DataSet '%s-%s dphi(r)'; Source XYData '%s//DeltaPhiR//%s-%s'; EndDataSet; EndCollection", at1->name(), at2->name(), at1->name(), at2->name(), at1->name(), at2->name(), module_->uniqueName(), at1->name(), at2->name());
 			potentialsGraph_->addCollectionFromBlock(blockData);
 
-			// Generated potential
-			blockData.sprintf("Collection '%s-%s dphi(r)'; Group '%s-%s'; LineStyle 1.0 'Quarter Dash'; DataSet '%s-%s dphi(r)'; Source XYData '%s//DeltaPhiR//%s-%s'; EndDataSet; EndCollection", at1->name(), at2->name(), at1->name(), at2->name(), at1->name(), at2->name(), module_->uniqueName(), at1->name(), at2->name());
+			// Delta g(r)
+			blockData.sprintf("Collection '%s-%s dg(r)'; Group '%s-%s'; LineStyle 1.0 'Quarter Dash'; DataSet '%s-%s Delta g(r)'; Source XYData '%s//DeltaGR//%s-%s'; EndDataSet; EndCollection", at1->name(), at2->name(), at1->name(), at2->name(), at1->name(), at2->name(), module_->uniqueName(), at1->name(), at2->name());
 			potentialsGraph_->addCollectionFromBlock(blockData);
 		}
 	}

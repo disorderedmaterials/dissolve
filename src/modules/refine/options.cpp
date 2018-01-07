@@ -43,11 +43,12 @@ const char* RefineModule::potentialGenerationType(RefineModule::PotentialGenerat
 // Set up keywords for Module
 void RefineModule::setUpKeywords()
 {
+	keywords_.add(new DoubleModuleKeyword(0.9, 0.0, 5.0), "MinimumRadius", "Minimum value of r at which additional potential takes effect (neglecting width of truncation strip)");
 	keywords_.add(new BoolModuleKeyword(true), "OnlyWhenStable", "Assesses the energy of the Configurations contributing to the Partials, refining the potential only when all related Configuration energies are stable");
 	keywords_.add(new CharStringModuleKeyword("PY", RefineModule::nPotentialGenerationTypes, PotentialGenerationTypeKeywords), "PotentialGeneration", "Pair potential generation method to employ");
+	keywords_.add(new DoubleModuleKeyword(0.2, 0.01, 1.0), "TruncationWidth", "Width of truncation zone, below the minimum radius, over which additional potential smoothly decreases to zero");
 	keywords_.add(new DoubleModuleKeyword(0.25, 0.01, 1.0), "Weighting", "Fractional (maximal) amounts of generated perturbations to apply to pair potentials");
 	keywords_.add(new CharStringModuleKeyword("None", XYData::nWindowFunctions, XYData::windowFunctionKeywords()), "WindowFunction", "Window function to apply when Fourier-transforming delta S(Q) to delta g(r)");
-
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
