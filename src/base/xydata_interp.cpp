@@ -80,9 +80,9 @@ void XYData::interpolateSpline()
 	 * 
 	 * 
 	 * 	b(i) + 2 c(i)h(i) + 3 d(i)h(i)**2 = b(i+1)	==>	
-	 * 	( y(i+1) - y(i)   m(i)	     m(i+1) - m(i)	)		 m(i+1) - m(i)		 ( y(i+2) - y(i+1)   m(i+1)	     m(i+2 - m(i+1)       )
-	 * 	( ------------- - --- h(i) - ------------- h(i) ) + m(i)h(i) + 3 ------------- h(i)**2 = ( --------------- - ------ h(i+1) - ------------- h(i+1) )
-	 * 	(      h(i)	   2	           6		)		     6 h(i)		 (      h(i+1)	        2	            6	          ) 
+	 * 	( y(i+1) - y(i)   m(i)	     m(i+1) - m(i)	)		 m(i+1) - m(i)		 ( y(i+2) - y(i+1)   m(i+1)	     m(i+2) - m(i+1)        )
+	 * 	( ------------- - --- h(i) - ------------- h(i) ) + m(i)h(i) + 3 ------------- h(i)**2 = ( --------------- - ------ h(i+1) - --------------- h(i+1) )
+	 * 	(      h(i)	   2	           6		)		     6 h(i)		 (      h(i+1)	        2	            6	            ) 
 	 * 
 	 * 								      ( y(i+2) - y(i+1)   y(i+1) - y(i) )
 	 * 	==>	h(i)m(i) + 2 (h(i) + h(i+1))m(i+1) + h(i+1)m(i+2) = 6 ( --------------- - ------------- )
@@ -93,7 +93,7 @@ void XYData::interpolateSpline()
 	 * 	[ 1		0		0		0	...	0 ] [  m(0)  ]     [			0			 ]
 	 * 	[ h(0)		2(h(0) + h(1))	h(1)		0	...	0 ] [  m(1)  ]     [ (y(2) - y(1)) / h(1) - (y(1) - y(0)) / h(0) ]
 	 * 	[ 0		h(1)		2(h(1) + h(2))	h(2)	...	0 ] [  m(2)  ] = 6 [ (y(3) - y(2)) / h(2) - (y(2) - y(1)) / h(1) ]
-	 * 	[			...				...	  ] [  ...   ]     [
+	 * 	[			...				...	  ] [  ...   ]     [						 ]
 	 * 	[ 0		0		0		0	...	1 ] [ m(N-1) ]     [ 			0			 ]
 	 * 
 	 * Once solved, we have the set of m() and can thus determine a, b, c, and d as follows:
@@ -312,7 +312,7 @@ double XYData::interpolated(double xvalue, int interval)
 
 	if (interpolationScheme_ == XYData::SplineInterpolation)
 	{
-		if (interval >= (x_.nItems()-1)) return y_.last();
+		if (xvalue >= x_.last()) return y_.last();
 
 		double h = xvalue - x_[interval];
 		double hh = h*h;
