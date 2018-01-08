@@ -227,6 +227,9 @@ void UChromaBase::endInteraction(int mouseX, int mouseY)
 				// Single, targetted click
 				if (currentViewPane_->isFlatView())
 				{
+					// Make sure any autofollowing is turned off...
+					currentViewPane_->setAutoFollowType(ViewPane::NoAutoFollow);
+
 					// Zoom to the specified coordinate range
 					currentViewPane_->zoomTo(rClickedLocal_, rCurrentLocal_);
 				}
