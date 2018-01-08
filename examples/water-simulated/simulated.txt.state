@@ -1,0 +1,1687 @@
+Browser 'Browser'
+0 0 264 220 False False
+ModuleControl 'Energy (Energy01)'
+25 422 513 436 False False
+Energy01
+Settings
+  ImageExport "image.png" 800 600 png 1
+EndSettings
+Collection 'Total'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY false y+0.000000
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 0 0 0 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Solid'
+  Shininess 128.000000
+  Style LineXY
+  Visible true
+  DataSet 'Total'
+    Source XYData 'XYData@Bulk//Energy01//Total'
+    Z 0.000000
+  EndDataSet
+  Group 'Total'
+EndCollection
+Collection 'Inter'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY false y+0.000000
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 0 0 0 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Solid'
+  Shininess 128.000000
+  Style LineXY
+  Visible true
+  DataSet 'Inter'
+    Source XYData 'XYData@Bulk//Energy01//Inter'
+    Z 0.000000
+  EndDataSet
+  Group 'Inter'
+EndCollection
+Collection 'Intra'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY false y+0.000000
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 0 0 0 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Solid'
+  Shininess 128.000000
+  Style LineXY
+  Visible true
+  DataSet 'Intra'
+    Source XYData 'XYData@Bulk//Energy01//Intra'
+    Z 0.000000
+  EndDataSet
+  Group 'Intra'
+EndCollection
+Collection 'Bond'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY false y+0.000000
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 0 0 0 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Solid'
+  Shininess 128.000000
+  Style LineXY
+  Visible true
+  DataSet 'Bond'
+    Source XYData 'XYData@Bulk//Energy01//Bond'
+    Z 0.000000
+  EndDataSet
+  Group 'Bond'
+EndCollection
+Collection 'Angle'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY false y+0.000000
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 0 0 0 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Solid'
+  Shininess 128.000000
+  Style LineXY
+  Visible true
+  DataSet 'Angle'
+    Source XYData 'XYData@Bulk//Energy01//Angle'
+    Z 0.000000
+  EndDataSet
+  Group 'Angle'
+EndCollection
+Collection 'Torsion'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY false y+0.000000
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 0 0 0 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Solid'
+  Shininess 128.000000
+  Style LineXY
+  Visible true
+  DataSet 'Torsion'
+    Source XYData 'XYData@Bulk//Energy01//Torsion'
+    Z 0.000000
+  EndDataSet
+  Group 'Torsion'
+EndCollection
+View
+  Grid 4 4
+  ViewPane 'Main view'
+    AutoFollowType X
+    AutoPositionTitles true
+    Axis 0
+      AutoScale None
+      AutoTicks true
+      FirstTick 9.000000
+      FractionalPositioning true
+      GridLines false false false
+      GridLineMajorStyle 1.000000 'Solid' 0.500008 0.500008 0.500008 1.000000
+      GridLineMinorStyle 1.000000 'Quarter Dash' 0.749996 0.749996 0.749996 1.000000
+      Invert false
+      LabelAnchor TopMiddle
+      LabelOrientation 0.000000 0.000000 0.200000
+      Limits 10.000000 30.000000
+      Logarithmic false
+      MinorTicks 1
+      NumberFormat 'Decimal' 0 true false
+      PositionFractional 0.000000 0.000000 0.000000
+      PositionReal 0.000000 0.000000 0.000000
+      Stretch 0.227192
+      TickDelta 3.000000
+      TickDirection 0.000000 -1.000000 0.000000
+      TitleAnchor TopMiddle
+      Title 'Iteration'
+      TitleOrientation 0.000000 0.000000 1.200000 0.500000
+      Visible true
+    EndAxis
+    Axis 1
+      AutoScale None
+      AutoTicks true
+      FirstTick -21000.000000
+      FractionalPositioning true
+      GridLines false false false
+      GridLineMajorStyle 1.000000 'Solid' 0.500008 0.500008 0.500008 1.000000
+      GridLineMinorStyle 1.000000 'Quarter Dash' 0.749996 0.749996 0.749996 1.000000
+      Invert false
+      LabelAnchor MiddleRight
+      LabelOrientation 0.000000 0.000000 0.200000
+      Limits -22896.774558 6231.560898
+      Logarithmic false
+      MinorTicks 1
+      NumberFormat 'Decimal' 3 true false
+      PositionFractional 0.000000 0.000000 0.000000
+      PositionReal 0.000000 0.000000 0.000000
+      Stretch 0.000206
+      TickDelta 3000.000000
+      TickDirection -1.000000 0.000000 0.000000
+      TitleAnchor BottomMiddle
+      Title 'Energy, kJ mol\sup{-1}'
+      TitleOrientation 0.000000 270.000000 1.200000 0.500000
+      Visible true
+    EndAxis
+    Axis 2
+      AutoScale None
+      AutoTicks true
+      FirstTick 0.000000
+      FractionalPositioning true
+      GridLines false false false
+      GridLineMajorStyle 1.000000 'Solid' 0.500008 0.500008 0.500008 1.000000
+      GridLineMinorStyle 1.000000 'Quarter Dash' 0.749996 0.749996 0.749996 1.000000
+      Invert false
+      LabelAnchor MiddleRight
+      LabelOrientation 90.000000 0.000000 0.200000
+      Limits 0.000000 0.000000
+      Logarithmic false
+      MinorTicks 1
+      NumberFormat 'Decimal' 3 true false
+      PositionFractional 0.000000 0.000000 0.000000
+      PositionReal 0.000000 0.000000 0.000000
+      Stretch 1.000000
+      TickDelta 1.000000
+      TickDirection -1.000000 0.000000 0.000000
+      TitleAnchor TopMiddle
+      Title 'Z Axis'
+      TitleOrientation 90.000000 90.000000 1.200000 0.500000
+      Visible true
+    EndAxis
+    BoundingBox 0
+    BoundingBoxPlaneY 0.000000
+    FlatLabels false
+    Geometry 0 0 4 4
+    LabelPointSize 16.000000
+    TitlePointSize 18.000000
+    RotationX 1.000000 0.000000 0.000000
+    RotationY 0.000000 1.000000 0.000000
+    RotationZ 0.000000 0.000000 1.000000
+    Translation 0.965497 0.348967 0.000000
+    Perspective false
+    Role 'Standard'
+    RoleTargetCollection 'Total'
+    RoleTargetCollection 'Inter'
+    RoleTargetCollection 'Intra'
+    RoleTargetCollection 'Bond'
+    RoleTargetCollection 'Angle'
+    RoleTargetCollection 'Torsion'
+    UseBestFlatView false
+    VerticalShift 0
+    ViewType 'FlatXY'
+  EndViewPane
+EndView
+EndUChroma
+ModuleControl 'Partials (H2O)'
+603 0 765 739 False False
+H2O
+Settings
+  ImageExport "image.png" 800 600 png 1
+EndSettings
+Collection 'OW-OW'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY true y+0.000000
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 0 0 0 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Solid'
+  Shininess 128.000000
+  Style LineXY
+  Visible true
+  DataSet 'Full'
+    Source XYData 'XYData@Bulk//Partials//UnweightedGR//OW-OW//Full'
+    Z 0.000000
+  EndDataSet
+  Group 'OW-OW'
+EndCollection
+Collection 'OW-HW'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY true y+2.000000
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 0 0 0 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Solid'
+  Shininess 128.000000
+  Style LineXY
+  Visible true
+  DataSet 'Full'
+    Source XYData 'XYData@Bulk//Partials//UnweightedGR//OW-HW//Full'
+    Z 0.000000
+  EndDataSet
+  Group 'OW-HW'
+EndCollection
+Collection 'HW-HW'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY true y+4.000000
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 0 0 0 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Solid'
+  Shininess 128.000000
+  Style LineXY
+  Visible true
+  DataSet 'Full'
+    Source XYData 'XYData@Bulk//Partials//UnweightedGR//HW-HW//Full'
+    Z 0.000000
+  EndDataSet
+  Group 'HW-HW'
+EndCollection
+View
+  Grid 4 4
+  ViewPane 'Main view'
+    AutoFollowType All
+    AutoPositionTitles true
+    Axis 0
+      AutoScale None
+      AutoTicks true
+      FirstTick 0.000000
+      FractionalPositioning true
+      GridLines false false false
+      GridLineMajorStyle 1.000000 'Solid' 0.500008 0.500008 0.500008 1.000000
+      GridLineMinorStyle 1.000000 'Quarter Dash' 0.749996 0.749996 0.749996 1.000000
+      Invert false
+      LabelAnchor TopMiddle
+      LabelOrientation 0.000000 0.000000 0.200000
+      Limits 0.012500 15.512500
+      Logarithmic false
+      MinorTicks 1
+      NumberFormat 'Decimal' 3 true false
+      PositionFractional 0.000000 0.000000 0.000000
+      PositionReal 0.000000 0.000000 0.000000
+      Stretch 0.220612
+      TickDelta 2.000000
+      TickDirection 0.000000 -1.000000 0.000000
+      TitleAnchor TopMiddle
+      Title '\it{r}, \sym{angstrom}'
+      TitleOrientation 0.000000 0.000000 1.200000 0.500000
+      Visible true
+    EndAxis
+    Axis 1
+      AutoScale None
+      AutoTicks true
+      FirstTick 0.000000
+      FractionalPositioning true
+      GridLines false false false
+      GridLineMajorStyle 1.000000 'Solid' 0.500008 0.500008 0.500008 1.000000
+      GridLineMinorStyle 1.000000 'Quarter Dash' 0.749996 0.749996 0.749996 1.000000
+      Invert false
+      LabelAnchor MiddleRight
+      LabelOrientation 0.000000 0.000000 0.200000
+      Limits 0.000000 31.061231
+      Logarithmic false
+      MinorTicks 1
+      NumberFormat 'Decimal' 3 true false
+      PositionFractional 0.000000 0.000000 0.000000
+      PositionReal 0.000000 0.000000 0.000000
+      Stretch 0.211096
+      TickDelta 4.000000
+      TickDirection -1.000000 0.000000 0.000000
+      TitleAnchor BottomMiddle
+      Title 'g(r) / S(Q)'
+      TitleOrientation 0.000000 270.000000 1.200000 0.500000
+      Visible true
+    EndAxis
+    Axis 2
+      AutoScale None
+      AutoTicks true
+      FirstTick 0.000000
+      FractionalPositioning true
+      GridLines false false false
+      GridLineMajorStyle 1.000000 'Solid' 0.500008 0.500008 0.500008 1.000000
+      GridLineMinorStyle 1.000000 'Quarter Dash' 0.749996 0.749996 0.749996 1.000000
+      Invert false
+      LabelAnchor MiddleRight
+      LabelOrientation 90.000000 0.000000 0.200000
+      Limits 0.000000 0.000000
+      Logarithmic false
+      MinorTicks 1
+      NumberFormat 'Decimal' 3 true false
+      PositionFractional 0.000000 0.000000 0.000000
+      PositionReal 0.000000 0.000000 0.000000
+      Stretch 1.000000
+      TickDelta 1.000000
+      TickDirection -1.000000 0.000000 0.000000
+      TitleAnchor TopMiddle
+      Title 'Z Axis'
+      TitleOrientation 90.000000 90.000000 1.200000 0.500000
+      Visible true
+    EndAxis
+    BoundingBox 0
+    BoundingBoxPlaneY 0.000000
+    FlatLabels false
+    Geometry 0 0 4 4
+    LabelPointSize 16.000000
+    TitlePointSize 18.000000
+    RotationX 1.000000 0.000000 0.000000
+    RotationY 0.000000 1.000000 0.000000
+    RotationZ 0.000000 0.000000 1.000000
+    Translation 0.389786 0.250123 0.000000
+    Perspective false
+    Role 'Standard'
+    RoleTargetCollection 'OW-OW'
+    RoleTargetCollection 'OW-HW'
+    RoleTargetCollection 'HW-HW'
+    UseBestFlatView false
+    VerticalShift 3
+    ViewType 'FlatXY'
+  EndViewPane
+EndView
+EndUChroma
+PairPotential 'Pair Potential OW-OW'
+1441 0 336 508 False False
+OW OW
+Settings
+  ImageExport "image.png" 800 600 png 1
+EndSettings
+Collection 'Full'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY false y
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 0 0 0 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Solid'
+  Shininess 128.000000
+  Style LineXY
+  Visible true
+  DataSet 'Full'
+    Source XYData 'XYData@PairPotential//OW-OW//Full'
+    Z 0.000000
+  EndDataSet
+EndCollection
+Collection 'Original'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY false y
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 200 0 0 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Half Dash'
+  Shininess 128.000000
+  Style LineXY
+  Visible true
+  DataSet 'Full'
+    Source XYData 'XYData@PairPotential//OW-OW//Original'
+    Z 0.000000
+  EndDataSet
+EndCollection
+Collection 'Additional'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY false y
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 0 0 200 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Dots'
+  Shininess 128.000000
+  Style LineXY
+  Visible true
+  DataSet 'Full'
+    Source XYData 'XYData@PairPotential//OW-OW//Additional'
+    Z 0.000000
+  EndDataSet
+EndCollection
+Collection 'Force'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY false y
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 0 200 0 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Solid'
+  Shininess 128.000000
+  Style LineXY
+  Visible false
+  DataSet 'Full'
+    Source XYData 'XYData@PairPotential//OW-OW//Force'
+    Z 0.000000
+  EndDataSet
+EndCollection
+View
+  Grid 4 4
+  ViewPane 'Main view'
+    AutoFollowType None
+    AutoPositionTitles true
+    Axis 0
+      AutoScale None
+      AutoTicks true
+      FirstTick 0.000000
+      FractionalPositioning true
+      GridLines false false false
+      GridLineMajorStyle 1.000000 'Solid' 0.500008 0.500008 0.500008 1.000000
+      GridLineMinorStyle 1.000000 'Quarter Dash' 0.749996 0.749996 0.749996 1.000000
+      Invert false
+      LabelAnchor TopMiddle
+      LabelOrientation 0.000000 0.000000 0.200000
+      Limits 0.000000 15.000000
+      Logarithmic false
+      MinorTicks 1
+      NumberFormat 'Decimal' 3 true false
+      PositionFractional 0.000000 0.000000 0.000000
+      PositionReal 0.000000 0.000000 0.000000
+      Stretch 0.345567
+      TickDelta 2.000000
+      TickDirection 0.000000 -1.000000 0.000000
+      TitleAnchor TopMiddle
+      Title '\it{r}, \sym{angstrom}'
+      TitleOrientation 0.000000 0.000000 1.200000 0.500000
+      Visible true
+    EndAxis
+    Axis 1
+      AutoScale None
+      AutoTicks true
+      FirstTick -4.000000
+      FractionalPositioning true
+      GridLines false false false
+      GridLineMajorStyle 1.000000 'Solid' 0.500008 0.500008 0.500008 1.000000
+      GridLineMinorStyle 1.000000 'Quarter Dash' 0.749996 0.749996 0.749996 1.000000
+      Invert false
+      LabelAnchor MiddleRight
+      LabelOrientation 0.000000 0.000000 0.200000
+      Limits -5.000000 10.000000
+      Logarithmic false
+      MinorTicks 1
+      NumberFormat 'Decimal' 3 true false
+      PositionFractional 0.000000 0.000000 0.000000
+      PositionReal 0.000000 0.000000 0.000000
+      Stretch 0.388664
+      TickDelta 2.000000
+      TickDirection -1.000000 0.000000 0.000000
+      TitleAnchor BottomMiddle
+      Title 'U(r), kJ mol\sup{-1}'
+      TitleOrientation 0.000000 270.000000 1.200000 0.500000
+      Visible true
+    EndAxis
+    Axis 2
+      AutoScale None
+      AutoTicks true
+      FirstTick 0.000000
+      FractionalPositioning true
+      GridLines false false false
+      GridLineMajorStyle 1.000000 'Solid' 0.500008 0.500008 0.500008 1.000000
+      GridLineMinorStyle 1.000000 'Quarter Dash' 0.749996 0.749996 0.749996 1.000000
+      Invert false
+      LabelAnchor MiddleRight
+      LabelOrientation 90.000000 0.000000 0.200000
+      Limits 0.000000 10.000000
+      Logarithmic false
+      MinorTicks 1
+      NumberFormat 'Decimal' 3 true false
+      PositionFractional 0.000000 0.000000 0.000000
+      PositionReal 0.000000 0.000000 0.000000
+      Stretch 0.727940
+      TickDelta 2.000000
+      TickDirection -1.000000 0.000000 0.000000
+      TitleAnchor TopMiddle
+      Title 'Z Axis'
+      TitleOrientation 90.000000 90.000000 1.200000 0.500000
+      Visible true
+    EndAxis
+    BoundingBox 0
+    BoundingBoxPlaneY 0.000000
+    FlatLabels false
+    Geometry 0 0 4 4
+    LabelPointSize 16.000000
+    TitlePointSize 18.000000
+    RotationX 1.000000 0.000000 0.000000
+    RotationY 0.000000 1.000000 0.000000
+    RotationZ 0.000000 0.000000 1.000000
+    Translation 0.719292 0.379490 0.000000
+    Perspective false
+    Role 'Standard'
+    RoleTargetCollection 'Full'
+    RoleTargetCollection 'Original'
+    RoleTargetCollection 'Additional'
+    RoleTargetCollection 'Force'
+    UseBestFlatView false
+    VerticalShift 0
+    ViewType 'FlatXY'
+  EndViewPane
+EndView
+EndUChroma
+PairPotential 'Pair Potential OW-HW'
+1576 456 336 508 False False
+OW HW
+Settings
+  ImageExport "image.png" 800 600 png 1
+EndSettings
+Collection 'Full'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY false y
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 0 0 0 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Solid'
+  Shininess 128.000000
+  Style LineXY
+  Visible true
+  DataSet 'Full'
+    Source XYData 'XYData@PairPotential//OW-HW//Full'
+    Z 0.000000
+  EndDataSet
+EndCollection
+Collection 'Original'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY false y
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 200 0 0 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Half Dash'
+  Shininess 128.000000
+  Style LineXY
+  Visible true
+  DataSet 'Full'
+    Source XYData 'XYData@PairPotential//OW-HW//Original'
+    Z 0.000000
+  EndDataSet
+EndCollection
+Collection 'Additional'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY false y
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 0 0 200 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Dots'
+  Shininess 128.000000
+  Style LineXY
+  Visible true
+  DataSet 'Full'
+    Source XYData 'XYData@PairPotential//OW-HW//Additional'
+    Z 0.000000
+  EndDataSet
+EndCollection
+Collection 'Force'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY false y
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 0 200 0 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Solid'
+  Shininess 128.000000
+  Style LineXY
+  Visible false
+  DataSet 'Full'
+    Source XYData 'XYData@PairPotential//OW-HW//Force'
+    Z 0.000000
+  EndDataSet
+EndCollection
+View
+  Grid 4 4
+  ViewPane 'Main view'
+    AutoFollowType None
+    AutoPositionTitles true
+    Axis 0
+      AutoScale None
+      AutoTicks true
+      FirstTick 0.000000
+      FractionalPositioning true
+      GridLines false false false
+      GridLineMajorStyle 1.000000 'Solid' 0.500008 0.500008 0.500008 1.000000
+      GridLineMinorStyle 1.000000 'Quarter Dash' 0.749996 0.749996 0.749996 1.000000
+      Invert false
+      LabelAnchor TopMiddle
+      LabelOrientation 0.000000 0.000000 0.200000
+      Limits 1.648012 16.648012
+      Logarithmic false
+      MinorTicks 1
+      NumberFormat 'Decimal' 3 true false
+      PositionFractional 0.000000 0.000000 0.000000
+      PositionReal 0.000000 0.000000 0.000000
+      Stretch 0.341678
+      TickDelta 2.000000
+      TickDirection 0.000000 -1.000000 0.000000
+      TitleAnchor TopMiddle
+      Title '\it{r}, \sym{angstrom}'
+      TitleOrientation 0.000000 0.000000 1.200000 0.500000
+      Visible true
+    EndAxis
+    Axis 1
+      AutoScale None
+      AutoTicks true
+      FirstTick -6.000000
+      FractionalPositioning true
+      GridLines false false false
+      GridLineMajorStyle 1.000000 'Solid' 0.500008 0.500008 0.500008 1.000000
+      GridLineMinorStyle 1.000000 'Quarter Dash' 0.749996 0.749996 0.749996 1.000000
+      Invert false
+      LabelAnchor MiddleRight
+      LabelOrientation 0.000000 0.000000 0.200000
+      Limits -7.229407 7.770593
+      Logarithmic false
+      MinorTicks 1
+      NumberFormat 'Decimal' 3 true false
+      PositionFractional 0.000000 0.000000 0.000000
+      PositionReal 0.000000 0.000000 0.000000
+      Stretch 0.395395
+      TickDelta 2.000000
+      TickDirection -1.000000 0.000000 0.000000
+      TitleAnchor BottomMiddle
+      Title 'U(r), kJ mol\sup{-1}'
+      TitleOrientation 0.000000 270.000000 1.200000 0.500000
+      Visible true
+    EndAxis
+    Axis 2
+      AutoScale None
+      AutoTicks true
+      FirstTick 0.000000
+      FractionalPositioning true
+      GridLines false false false
+      GridLineMajorStyle 1.000000 'Solid' 0.500008 0.500008 0.500008 1.000000
+      GridLineMinorStyle 1.000000 'Quarter Dash' 0.749996 0.749996 0.749996 1.000000
+      Invert false
+      LabelAnchor MiddleRight
+      LabelOrientation 90.000000 0.000000 0.200000
+      Limits 0.000000 10.000000
+      Logarithmic false
+      MinorTicks 1
+      NumberFormat 'Decimal' 3 true false
+      PositionFractional 0.000000 0.000000 0.000000
+      PositionReal 0.000000 0.000000 0.000000
+      Stretch 0.727940
+      TickDelta 2.000000
+      TickDirection -1.000000 0.000000 0.000000
+      TitleAnchor TopMiddle
+      Title 'Z Axis'
+      TitleOrientation 90.000000 90.000000 1.200000 0.500000
+      Visible true
+    EndAxis
+    BoundingBox 0
+    BoundingBoxPlaneY 0.000000
+    FlatLabels false
+    Geometry 0 0 4 4
+    LabelPointSize 16.000000
+    TitlePointSize 18.000000
+    RotationX 1.000000 0.000000 0.000000
+    RotationY 0.000000 1.000000 0.000000
+    RotationZ 0.000000 0.000000 1.000000
+    Translation 0.624184 0.429967 0.000000
+    Perspective false
+    Role 'Standard'
+    RoleTargetCollection 'Full'
+    RoleTargetCollection 'Original'
+    RoleTargetCollection 'Additional'
+    RoleTargetCollection 'Force'
+    UseBestFlatView false
+    VerticalShift 0
+    ViewType 'FlatXY'
+  EndViewPane
+EndView
+EndUChroma
+PairPotential 'Pair Potential HW-HW'
+1241 455 336 508 False False
+HW HW
+Settings
+  ImageExport "image.png" 800 600 png 1
+EndSettings
+Collection 'Full'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY false y
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 0 0 0 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Solid'
+  Shininess 128.000000
+  Style LineXY
+  Visible true
+  DataSet 'Full'
+    Source XYData 'XYData@PairPotential//HW-HW//Full'
+    Z 0.000000
+  EndDataSet
+EndCollection
+Collection 'Original'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY false y
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 200 0 0 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Half Dash'
+  Shininess 128.000000
+  Style LineXY
+  Visible true
+  DataSet 'Full'
+    Source XYData 'XYData@PairPotential//HW-HW//Original'
+    Z 0.000000
+  EndDataSet
+EndCollection
+Collection 'Additional'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY false y
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 0 0 200 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Dots'
+  Shininess 128.000000
+  Style LineXY
+  Visible true
+  DataSet 'Full'
+    Source XYData 'XYData@PairPotential//HW-HW//Additional'
+    Z 0.000000
+  EndDataSet
+EndCollection
+Collection 'Force'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY false y
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 0 200 0 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Solid'
+  Shininess 128.000000
+  Style LineXY
+  Visible false
+  DataSet 'Full'
+    Source XYData 'XYData@PairPotential//HW-HW//Force'
+    Z 0.000000
+  EndDataSet
+EndCollection
+View
+  Grid 4 4
+  ViewPane 'Main view'
+    AutoFollowType None
+    AutoPositionTitles true
+    Axis 0
+      AutoScale None
+      AutoTicks true
+      FirstTick 0.000000
+      FractionalPositioning true
+      GridLines false false false
+      GridLineMajorStyle 1.000000 'Solid' 0.500008 0.500008 0.500008 1.000000
+      GridLineMinorStyle 1.000000 'Quarter Dash' 0.749996 0.749996 0.749996 1.000000
+      Invert false
+      LabelAnchor TopMiddle
+      LabelOrientation 0.000000 0.000000 0.200000
+      Limits 0.184948 15.184948
+      Logarithmic false
+      MinorTicks 1
+      NumberFormat 'Decimal' 3 true false
+      PositionFractional 0.000000 0.000000 0.000000
+      PositionReal 0.000000 0.000000 0.000000
+      Stretch 0.354959
+      TickDelta 2.000000
+      TickDirection 0.000000 -1.000000 0.000000
+      TitleAnchor TopMiddle
+      Title '\it{r}, \sym{angstrom}'
+      TitleOrientation 0.000000 0.000000 1.200000 0.500000
+      Visible true
+    EndAxis
+    Axis 1
+      AutoScale None
+      AutoTicks true
+      FirstTick -6.000000
+      FractionalPositioning true
+      GridLines false false false
+      GridLineMajorStyle 1.000000 'Solid' 0.500008 0.500008 0.500008 1.000000
+      GridLineMinorStyle 1.000000 'Quarter Dash' 0.749996 0.749996 0.749996 1.000000
+      Invert false
+      LabelAnchor MiddleRight
+      LabelOrientation 0.000000 0.000000 0.200000
+      Limits -6.480293 8.519707
+      Logarithmic false
+      MinorTicks 1
+      NumberFormat 'Decimal' 3 true false
+      PositionFractional 0.000000 0.000000 0.000000
+      PositionReal 0.000000 0.000000 0.000000
+      Stretch 0.395395
+      TickDelta 2.000000
+      TickDirection -1.000000 0.000000 0.000000
+      TitleAnchor BottomMiddle
+      Title 'U(r), kJ mol\sup{-1}'
+      TitleOrientation 0.000000 270.000000 1.200000 0.500000
+      Visible true
+    EndAxis
+    Axis 2
+      AutoScale None
+      AutoTicks true
+      FirstTick 0.000000
+      FractionalPositioning true
+      GridLines false false false
+      GridLineMajorStyle 1.000000 'Solid' 0.500008 0.500008 0.500008 1.000000
+      GridLineMinorStyle 1.000000 'Quarter Dash' 0.749996 0.749996 0.749996 1.000000
+      Invert false
+      LabelAnchor MiddleRight
+      LabelOrientation 90.000000 0.000000 0.200000
+      Limits 0.000000 10.000000
+      Logarithmic false
+      MinorTicks 1
+      NumberFormat 'Decimal' 3 true false
+      PositionFractional 0.000000 0.000000 0.000000
+      PositionReal 0.000000 0.000000 0.000000
+      Stretch 0.727940
+      TickDelta 2.000000
+      TickDirection -1.000000 0.000000 0.000000
+      TitleAnchor TopMiddle
+      Title 'Z Axis'
+      TitleOrientation 90.000000 90.000000 1.200000 0.500000
+      Visible true
+    EndAxis
+    BoundingBox 0
+    BoundingBoxPlaneY 0.000000
+    FlatLabels false
+    Geometry 0 0 4 4
+    LabelPointSize 16.000000
+    TitlePointSize 18.000000
+    RotationX 1.000000 0.000000 0.000000
+    RotationY 0.000000 1.000000 0.000000
+    RotationZ 0.000000 0.000000 1.000000
+    Translation 0.723823 0.429967 0.000000
+    Perspective false
+    Role 'Standard'
+    RoleTargetCollection 'Full'
+    RoleTargetCollection 'Original'
+    RoleTargetCollection 'Additional'
+    RoleTargetCollection 'Force'
+    UseBestFlatView false
+    VerticalShift 0
+    ViewType 'FlatXY'
+  EndViewPane
+EndView
+EndUChroma
+ModuleControl 'Refine (Refine01)'
+187 65 873 761 False False
+Refine01
+Settings
+  ImageExport "image.png" 800 600 png 1
+EndSettings
+Collection 'Simulated-H2O Exp'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY true y+0.000000
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 0 0 0 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Solid'
+  Shininess 128.000000
+  Style LineXY
+  Visible true
+  DataSet 'Reference'
+    Source XYData 'XYData@Data//Simulated-H2O'
+    Z 0.000000
+  EndDataSet
+  Group 'Simulated-H2O'
+EndCollection
+Collection 'Simulated-H2O Calc'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY true y+0.000000
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 0 0 0 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Quarter Dash'
+  Shininess 128.000000
+  Style LineXY
+  Visible true
+  DataSet 'Calculated'
+    Source XYData 'H2O//WeightedSQ//Total'
+    Z 0.000000
+  EndDataSet
+  Group 'Simulated-H2O'
+EndCollection
+Collection 'Simulated-D2O Exp'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY true y+0.500000
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 0 0 0 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Solid'
+  Shininess 128.000000
+  Style LineXY
+  Visible true
+  DataSet 'Reference'
+    Source XYData 'XYData@Data//Simulated-D2O'
+    Z 0.000000
+  EndDataSet
+  Group 'Simulated-D2O'
+EndCollection
+Collection 'Simulated-D2O Calc'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY true y+0.500000
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 0 0 0 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Quarter Dash'
+  Shininess 128.000000
+  Style LineXY
+  Visible true
+  DataSet 'Calculated'
+    Source XYData 'D2O//WeightedSQ//Total'
+    Z 0.000000
+  EndDataSet
+  Group 'Simulated-D2O'
+EndCollection
+Collection 'Simulated-HDO Exp'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY true y+1.000000
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 0 0 0 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Solid'
+  Shininess 128.000000
+  Style LineXY
+  Visible true
+  DataSet 'Reference'
+    Source XYData 'XYData@Data//Simulated-HDO'
+    Z 0.000000
+  EndDataSet
+  Group 'Simulated-HDO'
+EndCollection
+Collection 'Simulated-HDO Calc'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY true y+1.000000
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 0 0 0 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Quarter Dash'
+  Shininess 128.000000
+  Style LineXY
+  Visible true
+  DataSet 'Calculated'
+    Source XYData 'HDO//WeightedSQ//Total'
+    Z 0.000000
+  EndDataSet
+  Group 'Simulated-HDO'
+EndCollection
+View
+  Grid 4 4
+  ViewPane 'Main view'
+    AutoFollowType All
+    AutoPositionTitles true
+    Axis 0
+      AutoScale None
+      AutoTicks true
+      FirstTick 0.000000
+      FractionalPositioning true
+      GridLines false false false
+      GridLineMajorStyle 1.000000 'Solid' 0.500008 0.500008 0.500008 1.000000
+      GridLineMinorStyle 1.000000 'Quarter Dash' 0.749996 0.749996 0.749996 1.000000
+      Invert false
+      LabelAnchor TopMiddle
+      LabelOrientation 0.000000 0.000000 0.200000
+      Limits 0.000000 29.950000
+      Logarithmic false
+      MinorTicks 1
+      NumberFormat 'Decimal' 3 true false
+      PositionFractional 0.000000 0.000000 0.000000
+      PositionReal 0.000000 0.000000 0.000000
+      Stretch 0.215930
+      TickDelta 3.000000
+      TickDirection 0.000000 -1.000000 0.000000
+      TitleAnchor TopMiddle
+      Title '\it{Q}, \sym{angstrom}\sup{-1}'
+      TitleOrientation 0.000000 0.000000 1.200000 0.500000
+      Visible true
+    EndAxis
+    Axis 1
+      AutoScale None
+      AutoTicks true
+      FirstTick -0.200000
+      FractionalPositioning true
+      GridLines false false false
+      GridLineMajorStyle 1.000000 'Solid' 0.500008 0.500008 0.500008 1.000000
+      GridLineMinorStyle 1.000000 'Quarter Dash' 0.749996 0.749996 0.749996 1.000000
+      Invert false
+      LabelAnchor MiddleRight
+      LabelOrientation 0.000000 0.000000 0.200000
+      Limits -0.243522 1.087692
+      Logarithmic false
+      MinorTicks 1
+      NumberFormat 'Decimal' 3 true false
+      PositionFractional 0.000000 0.000000 0.000000
+      PositionReal 0.000000 0.000000 0.000000
+      Stretch 4.913132
+      TickDelta 0.200000
+      TickDirection -1.000000 0.000000 0.000000
+      TitleAnchor BottomMiddle
+      Title 'S(Q)'
+      TitleOrientation 0.000000 270.000000 1.200000 0.500000
+      Visible true
+    EndAxis
+    Axis 2
+      AutoScale None
+      AutoTicks true
+      FirstTick 0.000000
+      FractionalPositioning true
+      GridLines false false false
+      GridLineMajorStyle 1.000000 'Solid' 0.500008 0.500008 0.500008 1.000000
+      GridLineMinorStyle 1.000000 'Quarter Dash' 0.749996 0.749996 0.749996 1.000000
+      Invert false
+      LabelAnchor MiddleRight
+      LabelOrientation 90.000000 0.000000 0.200000
+      Limits 0.000000 0.000000
+      Logarithmic false
+      MinorTicks 1
+      NumberFormat 'Decimal' 3 true false
+      PositionFractional 0.000000 0.000000 0.000000
+      PositionReal 0.000000 0.000000 0.000000
+      Stretch 1.000000
+      TickDelta 1.000000
+      TickDirection -1.000000 0.000000 0.000000
+      TitleAnchor TopMiddle
+      Title 'Z Axis'
+      TitleOrientation 90.000000 90.000000 1.200000 0.500000
+      Visible true
+    EndAxis
+    BoundingBox 0
+    BoundingBoxPlaneY 0.000000
+    FlatLabels false
+    Geometry 0 0 4 4
+    LabelPointSize 16.000000
+    TitlePointSize 18.000000
+    RotationX 1.000000 0.000000 0.000000
+    RotationY 0.000000 1.000000 0.000000
+    RotationZ 0.000000 0.000000 1.000000
+    Translation 0.383464 0.254851 0.000000
+    Perspective false
+    Role 'Standard'
+    RoleTargetCollection 'Simulated-H2O Exp'
+    RoleTargetCollection 'Simulated-H2O Calc'
+    RoleTargetCollection 'Simulated-D2O Exp'
+    RoleTargetCollection 'Simulated-D2O Calc'
+    RoleTargetCollection 'Simulated-HDO Exp'
+    RoleTargetCollection 'Simulated-HDO Calc'
+    UseBestFlatView false
+    VerticalShift 1
+    ViewType 'FlatXY'
+  EndViewPane
+EndView
+EndUChroma
+Settings
+  ImageExport "image.png" 800 600 png 1
+EndSettings
+Collection 'OW-OW Exp'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY true y+0.000000
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 0 0 0 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Solid'
+  Shininess 128.000000
+  Style LineXY
+  Visible true
+  DataSet 'Experimental OW-OW'
+    Source XYData 'Refine01//GeneratedSQ//OW-OW'
+    Z 0.000000
+  EndDataSet
+  Group 'OW-OW'
+EndCollection
+Collection 'OW-OW Calc'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY true y+0.000000
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 0 0 0 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Quarter Dash'
+  Shininess 128.000000
+  Style LineXY
+  Visible true
+  DataSet 'Calculated OW-OW'
+    Source XYData 'H2O//UnweightedSQ//OW-OW//Full'
+    Z 0.000000
+  EndDataSet
+  Group 'OW-OW'
+EndCollection
+Collection 'OW-OW Diff'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY true y+0.000000
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 0 0 0 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Dots'
+  Shininess 128.000000
+  Style LineXY
+  Visible true
+  DataSet 'Delta OW-OW'
+    Source XYData 'Refine01//DeltaSQ//OW-OW'
+    Z 0.000000
+  EndDataSet
+  Group 'OW-OW'
+EndCollection
+Collection 'OW-HW Exp'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY true y+2.000000
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 0 0 0 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Solid'
+  Shininess 128.000000
+  Style LineXY
+  Visible true
+  DataSet 'Experimental OW-HW'
+    Source XYData 'Refine01//GeneratedSQ//OW-HW'
+    Z 0.000000
+  EndDataSet
+  Group 'OW-HW'
+EndCollection
+Collection 'OW-HW Calc'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY true y+2.000000
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 0 0 0 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Quarter Dash'
+  Shininess 128.000000
+  Style LineXY
+  Visible true
+  DataSet 'Calculated OW-HW'
+    Source XYData 'H2O//UnweightedSQ//OW-HW//Full'
+    Z 0.000000
+  EndDataSet
+  Group 'OW-HW'
+EndCollection
+Collection 'OW-HW Diff'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY true y+2.000000
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 0 0 0 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Dots'
+  Shininess 128.000000
+  Style LineXY
+  Visible true
+  DataSet 'Delta OW-HW'
+    Source XYData 'Refine01//DeltaSQ//OW-HW'
+    Z 0.000000
+  EndDataSet
+  Group 'OW-HW'
+EndCollection
+Collection 'HW-HW Exp'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY true y+4.000000
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 0 0 0 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Solid'
+  Shininess 128.000000
+  Style LineXY
+  Visible true
+  DataSet 'Experimental HW-HW'
+    Source XYData 'Refine01//GeneratedSQ//HW-HW'
+    Z 0.000000
+  EndDataSet
+  Group 'HW-HW'
+EndCollection
+Collection 'HW-HW Calc'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY true y+4.000000
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 0 0 0 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Quarter Dash'
+  Shininess 128.000000
+  Style LineXY
+  Visible true
+  DataSet 'Calculated HW-HW'
+    Source XYData 'H2O//UnweightedSQ//HW-HW//Full'
+    Z 0.000000
+  EndDataSet
+  Group 'HW-HW'
+EndCollection
+Collection 'HW-HW Diff'
+  DataDirectory "/home/tris/src/duq/examples/water"
+  TransformX false x
+  TransformY true y+4.000000
+  TransformZ false z
+  Interpolate false false
+  InterpolateConstrain false false
+  InterpolateStep 1.000000 1.000000
+  ColourSource 'SingleColour'
+  ColourSingle 0 0 0 255
+  ColourLinearRGBA 0.000000 255 255 255 255
+  ColourLinearRGBB 1.000000 0 0 255 255
+  ColourLinearHSVA 0.000000 0 255 255 255
+  ColourLinearHSVB 1.000000 256 215 255 255
+  ColourAlphaControl 'OwnAlpha'
+  ColourAlphaFixed 0.500000
+  LineStyle 1.000000 'Dots'
+  Shininess 128.000000
+  Style LineXY
+  Visible true
+  DataSet 'Delta HW-HW'
+    Source XYData 'Refine01//DeltaSQ//HW-HW'
+    Z 0.000000
+  EndDataSet
+  Group 'HW-HW'
+EndCollection
+View
+  Grid 4 4
+  ViewPane 'Main view'
+    AutoFollowType All
+    AutoPositionTitles true
+    Axis 0
+      AutoScale None
+      AutoTicks true
+      FirstTick 0.000000
+      FractionalPositioning true
+      GridLines false false false
+      GridLineMajorStyle 1.000000 'Solid' 0.500008 0.500008 0.500008 1.000000
+      GridLineMinorStyle 1.000000 'Quarter Dash' 0.749996 0.749996 0.749996 1.000000
+      Invert false
+      LabelAnchor TopMiddle
+      LabelOrientation 0.000000 0.000000 0.200000
+      Limits 0.000000 10.000000
+      Logarithmic false
+      MinorTicks 1
+      NumberFormat 'Decimal' 3 true false
+      PositionFractional 0.000000 0.000000 0.000000
+      PositionReal 0.000000 0.000000 0.000000
+      Stretch 1.000000
+      TickDelta 1.000000
+      TickDirection 0.000000 -1.000000 0.000000
+      TitleAnchor TopMiddle
+      Title '\it{Q}, \sym{angstrom}\sup{-1}'
+      TitleOrientation 0.000000 0.000000 1.200000 0.500000
+      Visible true
+    EndAxis
+    Axis 1
+      AutoScale None
+      AutoTicks true
+      FirstTick 0.000000
+      FractionalPositioning true
+      GridLines false false false
+      GridLineMajorStyle 1.000000 'Solid' 0.500008 0.500008 0.500008 1.000000
+      GridLineMinorStyle 1.000000 'Quarter Dash' 0.749996 0.749996 0.749996 1.000000
+      Invert false
+      LabelAnchor MiddleRight
+      LabelOrientation 0.000000 0.000000 0.200000
+      Limits -1.000000 1.000000
+      Logarithmic false
+      MinorTicks 1
+      NumberFormat 'Decimal' 3 true false
+      PositionFractional 0.000000 0.000000 0.000000
+      PositionReal 0.000000 0.000000 0.000000
+      Stretch 1.000000
+      TickDelta 1.000000
+      TickDirection -1.000000 0.000000 0.000000
+      TitleAnchor BottomMiddle
+      Title 'S(Q)'
+      TitleOrientation 0.000000 270.000000 1.200000 0.500000
+      Visible true
+    EndAxis
+    Axis 2
+      AutoScale None
+      AutoTicks true
+      FirstTick 0.000000
+      FractionalPositioning true
+      GridLines false false false
+      GridLineMajorStyle 1.000000 'Solid' 0.500008 0.500008 0.500008 1.000000
+      GridLineMinorStyle 1.000000 'Quarter Dash' 0.749996 0.749996 0.749996 1.000000
+      Invert false
+      LabelAnchor MiddleRight
+      LabelOrientation 90.000000 0.000000 0.200000
+      Limits 0.000000 10.000000
+      Logarithmic false
+      MinorTicks 1
+      NumberFormat 'Decimal' 3 true false
+      PositionFractional 0.000000 0.000000 0.000000
+      PositionReal 0.000000 0.000000 0.000000
+      Stretch 1.000000
+      TickDelta 1.000000
+      TickDirection -1.000000 0.000000 0.000000
+      TitleAnchor TopMiddle
+      Title 'Z Axis'
+      TitleOrientation 90.000000 90.000000 1.200000 0.500000
+      Visible true
+    EndAxis
+    BoundingBox 0
+    BoundingBoxPlaneY 0.000000
+    FlatLabels false
+    Geometry 0 0 4 4
+    LabelPointSize 16.000000
+    TitlePointSize 18.000000
+    RotationX 1.000000 0.000000 0.000000
+    RotationY 0.000000 1.000000 0.000000
+    RotationZ 0.000000 0.000000 1.000000
+    Translation 0.000000 0.000000 -10.000000
+    Perspective false
+    Role 'Standard'
+    RoleTargetCollection 'OW-OW Exp'
+    RoleTargetCollection 'OW-OW Calc'
+    RoleTargetCollection 'OW-OW Diff'
+    RoleTargetCollection 'OW-HW Exp'
+    RoleTargetCollection 'OW-HW Calc'
+    RoleTargetCollection 'OW-HW Diff'
+    RoleTargetCollection 'HW-HW Exp'
+    RoleTargetCollection 'HW-HW Calc'
+    RoleTargetCollection 'HW-HW Diff'
+    UseBestFlatView false
+    VerticalShift 3
+    ViewType 'FlatXY'
+  EndViewPane
+EndView
+EndUChroma

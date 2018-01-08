@@ -1,6 +1,12 @@
-# Minimal Example: Water
+# Bulk Water
+# Refinement against experimental H2O, D2O, and H2O:D2O 50:50 mixtures, measured on SANDALS in 2001.
 
-# Define Water Molecule
+# Starting potential uses LJ parameters of 0.6503/3.165492 and q(O) of -0.82.
+
+#------------------------#
+#     Define Species     #
+#------------------------#
+
 Species 'Water'
   # Atoms
   Atom    1    O     0.015   -0.009   -0.373   'OW'
@@ -8,57 +14,118 @@ Species 'Water'
   Atom    3    H    -0.771   -0.003    0.157   'HW'
 
   # Intramolecular Terms
-  Bond   Harmonic  1    2     3000.000  0.995
-  Bond   Harmonic  1    3     3000.000  0.995
-  Angle  Harmonic   2    1    3   400.000   109.45
+  Bond   Harmonic  1    2    3000.000   0.995
+  Bond   Harmonic  1    3    3000.000   0.995
+  Angle  Harmonic  2    1    3   400.0   109.500
 
   # Isotopologues
   Isotopologue  'Natural'  OW=0  HW=0
   Isotopologue  'Deuteriated'  OW=0  HW=2
 EndSpecies
 
-# Define Configuration
+#------------------------#
+#     Pair Potentials    #
+#------------------------#
+
+PairPotentials
+  Range  15.000000
+  Delta  0.050000
+  TruncationWidth  2.000000
+  Parameters  'OW'  -0.82      0.65	3.165492
+  Parameters  'HW'  0.41       0.0      0.0
+  GenerateAll  'LJ'
+EndPairPotentials
+
+#------------------------#
+#  Define Configuration  #
+#------------------------#
+
 Configuration  'Bulk'
   Density  9.99999642E-02 atoms/A3
   Multiplier  1000
-  SpeciesInfo 'Water'  1.0
+  SpeciesInfo  'Water'  1.0
 
-  OutputCoordinates 'Bulk.xyz'
   UseOutputAsInput
 
-  Module MolShake
-  EndModule
-  Module IntraShake
-  EndModule
 EndConfiguration
 
-# Structure Factors
+#------------------------#
+#  Define Data Targets   #
+#------------------------#
+
+Data  'Simulated-D2O'
+  File  'data/SLS18502-D2O.mdcs01'
+  AssociatedTo  'D2O'
+EndData
+
+Data  'Simulated-H2O'
+  File  'data/SLS18498-H2O.mdcs01'
+  AssociatedTo  'H2O'
+EndData
+
+Data  'Simulated-HDO'
+  File  'data/SLS18500-HDO5050.mdcs01'
+  AssociatedTo  'HDO'
+EndData
+
+#------------------------#
+#   Define Processing    #
+#------------------------#
+
+# 1) Perform whole-molecule MC
+Module MolShake
+  Configuration  'Bulk'
+EndModule
+
+# 2) Perform intramolecular shake of bonds and angles
+Module IntraShake
+  Configuration  'Bulk'
+  Frequency  5
+EndModule
+
+# 3) Calculate partials for the H2O sample
+#    The averaging we specify here will apply to all other Partials modules since they
+#    will take the already-calculated partial g(r) from here.
 Module Partials 'H2O'
   StructureFactor  on
+  Weights  Neutron
   QBroadening  QDependentGaussian  0.02
   Configuration  'Bulk'
   Isotopologue  'Bulk'  'Water'  'Natural'  1.0
+  Averaging  10
+  AveragingScheme  Simple
 EndModule
 
+# 4) Calculate partials for the HDO sample
 Module Partials 'HDO'
   StructureFactor  on
+  Weights  Neutron
   QBroadening  QDependentGaussian  0.02
   Configuration  'Bulk'
   Isotopologue  'Bulk'  'Water'  'Deuteriated'  0.5
   Isotopologue  'Bulk'  'Water'  'Natural'  0.5
 EndModule
 
+# 5) Calculate partials for the D2O sample
 Module Partials 'D2O'
   StructureFactor  on
+  Weights  Neutron
   QBroadening  QDependentGaussian  0.02
   Configuration  'Bulk'
   Isotopologue  'Bulk'  'Water'  'Deuteriated'  1.0
 EndModule
 
-# Pair Potentials
-PairPotentials
-  Range  15.000000
-  Delta  0.050000
-  TruncationWidth  2.000000
-  GenerateAll  'LJ'
-EndPairPotentials
+# 6) Calculate energy of the Configuration
+Module Energy
+  Configuration  'Bulk'
+EndModule
+
+# 7) Refine potentials
+Module  Refine
+  Disabled
+  Data  'Simulated-H2O'
+  Data  'Simulated-D2O'
+  Data  'Simulated-HDO'
+  Frequency  5
+EndModule
+

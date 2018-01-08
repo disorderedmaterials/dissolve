@@ -1,6 +1,10 @@
 # Bulk Water
 # Refinement against simulated S(Q)
 
+# Reference data use LJ parameters of 0.6503/3.165492 and q(O) of -0.82.
+# Starting potential here uses 0.2503/3.0 and q(O) of -0.60.
+# Intramolecular terms are the same for both.
+
 #------------------------#
 #     Define Species     #
 #------------------------#
@@ -29,7 +33,7 @@ PairPotentials
   Range  15.000000
   Delta  0.050000
   TruncationWidth  2.000000
-  Parameters  'OW'  -0.60      0.2503    3.1
+  Parameters  'OW'  -0.60      0.2503    3.0
   Parameters  'HW'  0.30       0.0       0.0
   GenerateAll  'LJ'
 EndPairPotentials
@@ -52,17 +56,17 @@ EndConfiguration
 #------------------------#
 
 Data  'Simulated-D2O'
-  File  'simulated/D2O-weighted-total.sq'
+  File  'data/D2O-simulated.sq'
   AssociatedTo  'D2O'
 EndData
 
 Data  'Simulated-H2O'
-  File  'simulated/H2O-weighted-total.sq'
+  File  'data/H2O-simulated.sq'
   AssociatedTo  'H2O'
 EndData
 
 Data  'Simulated-HDO'
-  File  'simulated/HDO-weighted-total.sq'
+  File  'data/HDO-simulated.sq'
   AssociatedTo  'HDO'
 EndData
 
