@@ -1,6 +1,6 @@
 /*
-	*** Function
-	*** src/base/function.cpp
+	*** Broadening Function
+	*** src/math/broadeningfunction.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
