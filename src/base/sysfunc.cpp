@@ -22,6 +22,7 @@
 #include "base/sysfunc.h"
 #include "base/messenger.h"
 #include "base/charstring.h"
+#include <ctime>
 #include <fstream>
 #include <iostream>
 #include <string.h>
