@@ -89,7 +89,7 @@ EndModule
 Module Partials 'H2O'
   StructureFactor  on
   Weights  Neutron
-  QBroadening  QDependentGaussian  0.02
+  QBroadening  OmegaDependentGaussian  0.02
   Configuration  'Bulk'
   Isotopologue  'Bulk'  'Water'  'Natural'  1.0
   Averaging  10
@@ -100,7 +100,7 @@ EndModule
 Module Partials 'HDO'
   StructureFactor  on
   Weights  Neutron
-  QBroadening  QDependentGaussian  0.02
+  QBroadening  OmegaDependentGaussian  0.02
   Configuration  'Bulk'
   Isotopologue  'Bulk'  'Water'  'Deuteriated'  0.5
   Isotopologue  'Bulk'  'Water'  'Natural'  0.5
@@ -110,7 +110,7 @@ EndModule
 Module Partials 'D2O'
   StructureFactor  on
   Weights  Neutron
-  QBroadening  QDependentGaussian  0.02
+  QBroadening  OmegaDependentGaussian  0.02
   Configuration  'Bulk'
   Isotopologue  'Bulk'  'Water'  'Deuteriated'  1.0
 EndModule
