@@ -123,7 +123,7 @@ class RefineModule : public Module
 	 */
 	private:
 	// Calculate c(r) from supplied S(Q)
-	XYData calculateCR(const XYData& sq, double normFactor, double rMin, double rStep, double rMax, const BroadeningFunction& broadening = BroadeningFunction::unity(), bool unbroaden = false, XYData::WindowFunction wf = XYData::NoWindow);
+	XYData calculateCR(const XYData& sq, double normFactor, double rMin, double rStep, double rMax, WindowFunction windowFunction = WindowFunction(), BroadeningFunction broadening = BroadeningFunction(), bool unbroaden = false);
 
 
 	/*

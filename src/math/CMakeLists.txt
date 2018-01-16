@@ -5,6 +5,7 @@ add_library(math
   mathfunc.cpp
   matrix3.cpp
   matrix4.cpp
+  windowfunction.cpp
 
   broadeningfunction.h
   constants.h
@@ -13,6 +14,7 @@ add_library(math
   mathfunc.h
   matrix3.h
   matrix4.h
+  windowfunction.h
 )
 
 include_directories(

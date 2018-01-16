@@ -69,7 +69,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		return false;
 	}
 	const bool braggOn = keywords_.asBool("Bragg");
-	const BroadeningFunction& qBroadening = KeywordListHelper<BroadeningFunction>::retrieve(keywords_, "QBroadening", BroadeningFunction::unity());
+	const BroadeningFunction& qBroadening = KeywordListHelper<BroadeningFunction>::retrieve(keywords_, "QBroadening", BroadeningFunction());
 	PartialsModule::PartialsMethod method = PartialsModule::partialsMethod(keywords_.asString("Method"));
 	if (method == PartialsModule::nPartialsMethods)
 	{
@@ -97,12 +97,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		Messenger::error("Partials: Invalid weighting scheme '%s' found.\n", keywords_.asString("Weights"));
 		return false;
 	}
-	XYData::WindowFunction windowFunction = XYData::windowFunction(keywords_.asString("WindowFunction"));
-	if (windowFunction == XYData::nWindowFunctions)
-	{
-		Messenger::error("Partials: Unrecognised window function '%s' found.\n", keywords_.asString("WindowFunction"));
-		return false;
-	}
+	const WindowFunction& windowFunction = KeywordListHelper<WindowFunction>::retrieve(keywords_, "WindowFunction", WindowFunction());
 
 	// Print argument/parameter summary
 	Messenger::print("Partials: Use of all pairs in intramolecular partials is %s.\n", DUQSys::onOff(allIntra));
@@ -114,8 +109,8 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 	if (sqCalculation)
 	{
 		Messenger::print("Partials: Calculating S(Q)/F(Q) over %f < Q < %f Angstroms**-1 using step size of %f Angstroms**-1.\n", qMin, qMax, qDelta);
-		if (windowFunction == XYData::nWindowFunctions) Messenger::print("Partials: No window function will be employed in Fourier transforms.\n");
-		else Messenger::print("Partials: '%s' window function will be employed in Fourier transforms.\n", XYData::windowFunction(windowFunction));
+		if (windowFunction.function() == WindowFunction::UnityWindow) Messenger::print("Partials: No window function will be applied in Fourier transforms of g(r) to S(Q).");
+		else Messenger::print("Partials: Window function to be applied in Fourier transforms is %s (%s).", WindowFunction::functionType(windowFunction.function()), windowFunction.parameterSummary().get());
 		if (normalisation == PartialsModule::NoNormalisation) Messenger::print("Partials: No normalisation will be applied to total F(Q).\n");
 		else if (normalisation == PartialsModule::AverageOfSquaresNormalisation) Messenger::print("Partials: Total F(Q) will be normalised to <b>**2");
 		else if (normalisation == PartialsModule::SquareOfAverageNormalisation) Messenger::print("Partials: Total F(Q) will be normalised to <b**2>");

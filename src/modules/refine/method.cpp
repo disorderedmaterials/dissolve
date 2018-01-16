@@ -63,17 +63,12 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	const double truncationWidth = keywords_.asDouble("TruncationWidth");
 	const double minimumRadius = keywords_.asDouble("MinimumRadius");
 	bool onlyWhenStable = keywords_.asBool("OnlyWhenStable");
-	XYData::WindowFunction windowFunction = XYData::windowFunction(keywords_.asString("WindowFunction"));
-	if (windowFunction == XYData::nWindowFunctions)
-	{
-		Messenger::error("Refine: Unrecognised window function '%s' found.\n", keywords_.asString("WindowFunction"));
-		return false;
-	}
+	const WindowFunction& windowFunction = KeywordListHelper<WindowFunction>::retrieve(keywords_, "WindowFunction", WindowFunction());
 
 	// Print option summary
 	if (onlyWhenStable) Messenger::print("Refine: Potential refinement will only be attempted if all related Configuration energies are stable.\n");
-	if (windowFunction == XYData::nWindowFunctions) Messenger::print("Refine: No window function will be employed in Fourier transforms.\n");
-	else Messenger::print("Refine: '%s' window function will be employed in Fourier transforms.\n", XYData::windowFunction(windowFunction));
+	if (windowFunction.function() == WindowFunction::UnityWindow) Messenger::print("Refine: No window function will be applied in Fourier transforms.");
+	else Messenger::print("Refine: Window function to be applied in Fourier transforms is %s (%s).", WindowFunction::functionType(windowFunction.function()), windowFunction.parameterSummary().get());
 
 	/*
 	 * Are the energies of all involved Configurations stable (if OnlyWhenStable option is on)
@@ -115,7 +110,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 		return false;
 	}
 
-	BroadeningFunction broadening = GenericListHelper<BroadeningFunction>::retrieve(duq.processingModuleData(), "QBroadening", partialsModule->uniqueName(), BroadeningFunction::unity(), &found);
+	BroadeningFunction broadening = GenericListHelper<BroadeningFunction>::retrieve(duq.processingModuleData(), "QBroadening", partialsModule->uniqueName(), BroadeningFunction(), &found);
 	if (!found) Messenger::print("Refine: No 'QBroadening' specified in PartialsModule '%s', so no un-broadening will be performed.\n", partialsModule->uniqueName());
 	broadening.setInverted(true);
 
@@ -179,6 +174,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 		}
 
 		// Set the next row of the scattering matrix with the weights of the supplied data.
+		// TODO Need to take care that added reference data span consistent ranges in Q
 		if (!scatteringMatrix.addReferenceData(data, weights))
 		{
 			Messenger::error("Refine: Failed to initialise reference Data.\n");
@@ -218,7 +214,9 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 			partial = generatedSQ.ref(i, j);
 
 			// Subtract the simulated unweighted S(Q) from the difference partial
+			// Truncate the partial at the Q value of the shortest data
 			partial.addInterpolated(unweightedSQ.partial(i, j), -1.0);
+
 		}
 	}
 
@@ -236,6 +234,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	const double ppDelta = duq.pairPotentialDelta();
 	double weight, absInt, scaleFactor;
 	XYData cr;
+	Array<double> crgr;
 	i = 0;
 	for (AtomType* at1 = duq.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
 	{
@@ -261,7 +260,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 
 			// Copy the delta S(Q) and do the inverse FT to get the delta [g(r) - 1]
 			dGR = deltaSQ.ref(i, j);
-			dGR.broadenedSineFT(1.0 / (2 * PI * PI * rho), ppDelta, ppDelta, ppRange, broadening, true, windowFunction);
+			dGR.sineFT(1.0 / (2 * PI * PI * rho), ppDelta, ppDelta, ppRange, windowFunction, broadening, true);
 
 			// Set the default weighting factor for the pair potential addition
 			weight = weighting;
@@ -295,29 +294,47 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 					 */
 
 					// Calculate c(r) from the delta S(Q)
-					cr = calculateCR(deltaSQ.ref(i, j), 1.0 / (2.0*PI*PI*rho), ppDelta, ppDelta, ppRange, BroadeningFunction::unity(), true, windowFunction);
+					cr = calculateCR(deltaSQ.ref(i, j), 1.0 / (2.0*PI*PI*rho), 0.0, ppDelta, ppRange, windowFunction, broadening, true);
 
 					// dGR contains the FT of the delta S(Q), and oscillates around zero.
 					// Scale the data to have a maximum deviation from zero of 1.0, so that we avoid any possibility to get NaNs when taking the ln later on
-					scaleFactor = dGR.arrayY().maxAbs();
-					if (scaleFactor < 1.0) scaleFactor = 1.0;
-					dGR.arrayY() /= scaleFactor*2.0;
-					cr.arrayY() /= scaleFactor*2.0;
+
+					for (int n=0; n<dGR.nPoints(); ++n) crgr.add(cr.y(n) / (fabs(dGR.y(n)-1.0)+1.0));
+					
+					scaleFactor = crgr.maxAbs() * 1.01;
+					if (scaleFactor < 1.0) scaleFactor = 1.01;
+// 					dGR.arrayY() /= scaleFactor;
+// 					cr.arrayY() /= scaleFactor;
+					crgr /= scaleFactor;
 
 					// Original PY
 // 					for (int n=0; n<deltaGR.nPoints(); ++n) dU.addPoint(deltaGR.x(n), log(1.0 - cr.y(n)/(deltaGR.y(n)+1.0));
 
 					// Modified PY
-					for (int n=0; n<dGR.nPoints(); ++n) dPhiR.addPoint(dGR.x(n), log(1.0 - cr.y(n) / (fabs(dGR.y(n)-1.0)+1.0)));
+					for (int n=0; n<dGR.nPoints(); ++n) dPhiR.addPoint(dGR.x(n), log(1.0 - crgr[n])); //cr.y(n) / (fabs(dGR.y(n)-1.0)+1.0)));
 
 					// Rescale the resulting potential to account for the reduction we made earlier
 					dPhiR.arrayY() *= scaleFactor;
+					break;
+				case (RefineModule::HypernettedChainPotentialGeneration):
+					/*
+					 * The original hypernetted chain closure relationship for solving the Ornstein-Zernike equation is:
+					 * 
+					 *  phi(r) = g(r) - c(r) - 1.0 - ln(g(r))
+					 * 
+					 * As with the Percus-Yevick closure above, we must adjust the relationship slightly...
+					 * 
+					 */
 
-// 					dPhiR.save(CharString("py%i%i.txt", i, j));
-// 					XYData hnc;
-// 					for (int n=0; n<gr.nPoints(); ++n) hnc.addPoint(gr.x(n), (gr.y(n) - cr.y(n) - 1.0 - log(gr.y(n))));
-// 					hnc.save("hnc.txt");
-// 					return false;
+					// Calculate c(r) from the delta S(Q)
+					cr = calculateCR(deltaSQ.ref(i, j), 1.0 / (2.0*PI*PI*rho), ppDelta, ppDelta, ppRange, windowFunction, BroadeningFunction(), true);
+
+					scaleFactor = dGR.arrayY().maxAbs() * 0.75;
+					if (scaleFactor < 1.0) scaleFactor = 1.0;
+					dGR.arrayY() /= scaleFactor;
+					cr.arrayY() /= scaleFactor;
+
+					for (int n=0; n<dGR.nPoints(); ++n) dPhiR.addPoint(dGR.x(n), dGR.y(n) - cr.y(n) - 1.0 - log(dGR.y(n) + 1.0));
 					break;
 				default:
 					return false;

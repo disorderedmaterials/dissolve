@@ -5,6 +5,7 @@ add_library(keywordtypes
   complex.cpp
   double.cpp
   int.cpp
+  windowfunction.cpp
 
   bool.h
   broadeningfunction.h
@@ -12,6 +13,7 @@ add_library(keywordtypes
   complex.h
   double.h
   int.h
+  windowfunction.h
 )
 
 include_directories(

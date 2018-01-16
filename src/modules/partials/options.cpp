@@ -106,7 +106,7 @@ void PartialsModule::setUpKeywords()
 	keywords_.add(new CharStringModuleKeyword("Auto", PartialsModule::nPartialsMethods, PartialsMethodKeywords), "Method", "Calculation method for partial radial distribution functions");
 	keywords_.add(new CharStringModuleKeyword("None", PartialsModule::nNormalisationTypes, NormalisationTypeKeywords), "Normalisation", "Normalisation to apply to total weighted F(Q)");
 	keywords_.add(new DoubleModuleKeyword(0.05, 1.0e-5), "QDelta", "Step size in Q for S(Q) calculation");
-	keywords_.add(new BroadeningFunctionModuleKeyword(BroadeningFunction::unity()), "QBroadening", "Instrument broadening function to apply when calculating S(Q)");
+	keywords_.add(new BroadeningFunctionModuleKeyword(BroadeningFunction()), "QBroadening", "Instrument broadening function to apply when calculating S(Q)");
 	keywords_.add(new DoubleModuleKeyword(-1.0, -1.0), "QMax", "Maximum Q for calculated S(Q)");
 	keywords_.add(new DoubleModuleKeyword(0.0, 0.0), "QMin", "Minimum Q for calculated S(Q)");
 	keywords_.add(new BoolModuleKeyword(false), "Save", "Whether to save partials to disk after calculation", "<True|False>");
@@ -116,7 +116,7 @@ void PartialsModule::setUpKeywords()
 	keywords_.add(new ComplexModuleKeyword(2,4), "TestReference", "Specify g(r)/S(Q) test reference data", "<filename> <target> [xcol] [ycol]");
 	keywords_.add(new DoubleModuleKeyword(0.1, 1.0e-5), "TestThreshold", "Test threshold (%%error) above which test fails", "<threshold[0.1]>");
 	keywords_.add(new CharStringModuleKeyword("None", PartialsModule::nWeightingTypes, WeightingTypeKeywords), "Weights", "Weighting scheme to use for calculated partials (None,Neutron)");
-	keywords_.add(new CharStringModuleKeyword("None", XYData::nWindowFunctions, XYData::windowFunctionKeywords()), "WindowFunction", "Window function to apply when Fourier-transforming g(r) to S(Q)");
+	keywords_.add(new WindowFunctionModuleKeyword(WindowFunction()), "WindowFunction", "Window function to apply when Fourier-transforming g(r) to S(Q)");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised

@@ -25,28 +25,6 @@
 // Static Members
 bool XYData::useFFT_ = false;
 
-// Window Function keywords
-const char* WindowFunctionKeywords[] = { "None", "Bartlett", "Hann", "Lanczos", "Nuttall", "Sine" };
-
-// Convert text string to WindowFunction
-XYData::WindowFunction XYData::windowFunction(const char* s)
-{
-	for (int n=0; n<XYData::nWindowFunctions; ++n) if (DUQSys::sameString(s,WindowFunctionKeywords[n])) return (XYData::WindowFunction) n;
-	return XYData::nWindowFunctions;
-}
-
-// Convert WindowFunction to text string
-const char* XYData::windowFunction(XYData::WindowFunction wf)
-{
-	return WindowFunctionKeywords[wf];
-}
-
-// Return list of possible window function keywords
-const char** XYData::windowFunctionKeywords()
-{
-	return WindowFunctionKeywords;
-}
-
 // Make some checks before doing transform
 bool XYData::checkBeforeTransform()
 {
@@ -75,95 +53,8 @@ bool XYData::checkBeforeTransform()
 	return true;
 }
 
-// Return value of window function at specified position (in range 0.0 - 1.0 inclusive)
-double XYData::window(XYData::WindowFunction wf, double x)
-{
-#ifdef CHECKS
-	if ((x < 0.0) || (x > 1.0)) Messenger::warn("Position for window function is out of range (%f).\n", x);
-#endif
-	switch (wf)
-	{
-		case (XYData::NoWindow):
-			return 1.0;
-			break;
-		case (XYData::BartlettWindow):
-			return (1.0 - fabs( (x-0.5)/0.5 ));
-			break;
-		case (XYData::HannWindow):
-			return 0.5*(1.0-cos(2*PI*x));
-			break;
-		case (XYData::LanczosWindow):
-			return sin(PI*(2*x-1.0))/(PI*(2*x-1.0));
-			break;
-		case (XYData::NuttallWindow):
-			return (0.355768 - 0.487396*cos(2.0*PI*x) + 0.144232*cos(4.0*PI*x) - 0.012604*cos(6.0*PI*x));
-			break;
-		case (XYData::SineWindow):
-			return sin(PI*x);
-			break;
-		default:
-			Messenger::error("Window function %i not implemented.\n", wf);
-	}
-	return 0.0;
-}
-
-// Perform plain Fourier transform of real data
-bool XYData::fourierTransformReal(bool forwardTransform, XYData::WindowFunction wf)
-{
-	// Okay to continue with transform?
-	if (!checkBeforeTransform()) return false;
-
-	// Assume that the entire dataset constitutes one period of the function...
-	double factor = (forwardTransform ? 1.0 : -1.0);
-	double lambda = x_.last() - x_.first();
-	double k = TWOPI / lambda;
-	double deltaX = x_[1] - x_[0];
-	Messenger::printVerbose("In XYData::fourierTransformReal(), period of function is %f, real deltaX is %f, and wavenumber is %f\n", lambda, deltaX, k);
-
-	// Create working arrays
-	Array<double> real(x_.nItems()), imaginary(x_.nItems());
-	real = 0.0;
-	imaginary = 0.0;
-	
-	// Calculate complex Fourier coefficients
-	double b, cosb, sinb, winFunc;
-	int n, m, nPoints = x_.nItems();
-	for (n=0; n<nPoints; ++n)
-	{
-		for (m=0; m<nPoints; ++m)
-		{
-			b = n * TWOPI * m / nPoints;
-			winFunc = window(wf, double(m) / nPoints);
-
-			cosb = cos(b);
-			sinb = sin(b) * factor;
-			real[n] += y_[m] * winFunc * cosb;
-			imaginary[n] -= y_[m] * winFunc * sinb;
-		}
-	}
-
-	// Normalise coefficients (forward transform only)
-	if (forwardTransform)
-	{
-		// All but zeroth term are multiplied by 2.0
-		real[0] = real[0] / nPoints;
-		imaginary[0] = imaginary[0] / nPoints;
-		for (n=1; n<nPoints; ++n)
-		{
-			real[n] = 2.0 * real[n] / nPoints;
-			imaginary[n] = 2.0 * imaginary[n] / nPoints;
-		}
-	}
-
-	// Copy transform data over initial data
-	for (n=0; n<nPoints; ++n) x_[n] = (n*0.5)*k;
-	y_ = real;
-	interpolationInterval_ = -1;
-	return true;
-}
-
-// Perform Fourier sine transform of current distribution function, over range specified, and with specified broadening function (in omege space) and window applied (if requested)
-bool XYData::broadenedSineFT(double normFactor, double wMin, double wStep, double wMax, const BroadeningFunction& broadening, bool unbroaden, XYData::WindowFunction wf)
+// Perform Fourier sine transform of current distribution function, over range specified, and with specified broadening function, modification function, and window applied (if requested)
+bool XYData::sineFT(double normFactor, double wMin, double wStep, double wMax, WindowFunction windowFunction, BroadeningFunction broadening, bool unbroaden)
 {
 	/*
 	 * Perform sine Fourier transform of current data. Function has no notion of forward or backwards transforms - normalisation and broadening functions must
@@ -184,9 +75,12 @@ bool XYData::broadenedSineFT(double normFactor, double wMin, double wStep, doubl
 	// Okay to continue with transform?
 	if (!checkBeforeTransform()) return false;
 
+	// Set up window function for the present data
+	windowFunction.setUp(*this);
+
 	int n, m;
 	const int nX = x_.nItems();
-	double windowPos, broaden;
+	double window, broaden;
 
 	if (XYData::useFFT_)
 	{
@@ -307,12 +201,12 @@ bool XYData::broadenedSineFT(double normFactor, double wMin, double wStep, doubl
 			for (m=0; m<nX; ++m)
 			{
 				// Get window value at this position in the function
-				windowPos = double(m) / double(nX-1);
+				window = windowFunction.y(x_[m], omega);
 
 				// Calculate broadening
 				broaden = (unbroaden ? 1.0 / broadening.yFT(x_[m], omega) : broadening.yFT(x_[m], omega));
 
-				ft += sin(x_[m]*omega) * x_[m] * broaden * window(wf, windowPos) * y_[m] * deltaX;
+				ft += sin(x_[m]*omega) * x_[m] * broaden * window * y_[m] * deltaX;
 			}
 
 			// Normalise
@@ -334,71 +228,71 @@ bool XYData::broadenedSineFT(double normFactor, double wMin, double wStep, doubl
 	return true;
 }
 
-// Fourier transform current data, applying line-width broadening in real-space using the modified Lorch function
-bool XYData::transformLorch(double atomicDensity, double step, double rMax, double beta, double delta0, bool qToR)
-{
-	/*
-	 * Fourier transforms from Q to r-space, or r to Q-space, employing the modified Lorch function as described by Soper in
-	 * XXX TODO.
-	 * XXX TODO Only valid when input x_[] values are bin boundaries, not centre-bin values.
-	 */
-
-	// Okay to continue with transform?
-	if (!checkBeforeTransform()) return false;
-
-	double deltaIn = x_[1] - x_[0];
-	double deltar, width, r, factor, norm, ftx, qr, j1qr, j2qr;
-	int n, m, nPts = x_.nItems();
-
-	// Create working arrays
-	Array<double> result;
-	r = step * 0.5;
-
-	// Set up correct factor, depending on whether we are going from Q -> r or r -> Q
-	if (qToR) factor = 1.0 / (2.0 * PI * PI * atomicDensity);
-	else factor = 4.0 * PI * atomicDensity;
-	
-	// Perform Fourier sine transform
-	while (r <= rMax)
-	{
-		// Reset sum, and calculate r-dependent values
-		ftx = 0.0;
-		norm = factor / (r*r*r);
-		deltar = delta0 * (1.0 + pow(r, beta));
-
-		// Calculate first argument at left-hand bin boundary
-		qr = r * x_[0];
-		j1qr = sin(qr) - qr * cos(qr);
-
-		for (m=0; m<nPts-1; ++m)
-		{
-			// Calculate second argument at right-hand bin boundary
-			qr = r * x_[m+1];
-			j2qr = sin(qr) - qr * cos(qr);
-
-			// Calculate 'width' at centre of bin
-			width = 0.5 * (x_[m]+x_[m+1]) * deltar;
-            
-			// Form integral of (Q sin Qr)/r from r1 to r2 (as detailed in equation 3.86 in reference above)
-			// Modified Lorch function is constructed and applied if the width is non-zero and positive
-			if (width < 0.0) ftx += y_[m] * (j2qr - j1qr);
-			else ftx += y_[m] * (j2qr - j1qr) * (3.0/(width*width*width)) * (sin(width) - width*cos(width));
-
-			// Overwrite first Lorch argument
-			j1qr = j2qr;
-		}
-
-		// Sum
-		result.add(ftx * norm);
-		
-		r += step;
-	}
-
-	// Copy transform data over initial data
-	y_ = result;
-	x_.forgetData();
-	for (n=0; n<y_.nItems(); ++n) x_.add((n+0.5)*step);
-	interpolationInterval_ = -1;
-
-	return true;
-}
+// // Fourier transform current data, applying line-width broadening in real-space using the modified Lorch function
+// bool XYData::transformLorch(double atomicDensity, double step, double rMax, double beta, double delta0, bool qToR)
+// {
+// 	/*
+// 	 * Fourier transforms from Q to r-space, or r to Q-space, employing the modified Lorch function as described by Soper in
+// 	 * XXX TODO.
+// 	 * XXX TODO Only valid when input x_[] values are bin boundaries, not centre-bin values.
+// 	 */
+// 
+// 	// Okay to continue with transform?
+// 	if (!checkBeforeTransform()) return false;
+// 
+// 	double deltaIn = x_[1] - x_[0];
+// 	double deltar, width, r, factor, norm, ftx, qr, j1qr, j2qr;
+// 	int n, m, nPts = x_.nItems();
+// 
+// 	// Create working arrays
+// 	Array<double> result;
+// 	r = step * 0.5;
+// 
+// 	// Set up correct factor, depending on whether we are going from Q -> r or r -> Q
+// 	if (qToR) factor = 1.0 / (2.0 * PI * PI * atomicDensity);
+// 	else factor = 4.0 * PI * atomicDensity;
+// 	
+// 	// Perform Fourier sine transform
+// 	while (r <= rMax)
+// 	{
+// 		// Reset sum, and calculate r-dependent values
+// 		ftx = 0.0;
+// 		norm = factor / (r*r*r);
+// 		deltar = delta0 * (1.0 + pow(r, beta));
+// 
+// 		// Calculate first argument at left-hand bin boundary
+// 		qr = r * x_[0];
+// 		j1qr = sin(qr) - qr * cos(qr);
+// 
+// 		for (m=0; m<nPts-1; ++m)
+// 		{
+// 			// Calculate second argument at right-hand bin boundary
+// 			qr = r * x_[m+1];
+// 			j2qr = sin(qr) - qr * cos(qr);
+// 
+// 			// Calculate 'width' at centre of bin
+// 			width = 0.5 * (x_[m]+x_[m+1]) * deltar;
+//             
+// 			// Form integral of (Q sin Qr)/r from r1 to r2 (as detailed in equation 3.86 in reference above)
+// 			// Modified Lorch function is constructed and applied if the width is non-zero and positive
+// 			if (width < 0.0) ftx += y_[m] * (j2qr - j1qr);
+// 			else ftx += y_[m] * (j2qr - j1qr) * (3.0/(width*width*width)) * (sin(width) - width*cos(width));
+// 
+// 			// Overwrite first Lorch argument
+// 			j1qr = j2qr;
+// 		}
+// 
+// 		// Sum
+// 		result.add(ftx * norm);
+// 		
+// 		r += step;
+// 	}
+// 
+// 	// Copy transform data over initial data
+// 	y_ = result;
+// 	x_.forgetData();
+// 	for (n=0; n<y_.nItems(); ++n) x_.add((n+0.5)*step);
+// 	interpolationInterval_ = -1;
+// 
+// 	return true;
+// }

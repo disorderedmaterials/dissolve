@@ -24,6 +24,7 @@
 
 #include "base/charstring.h"
 #include "math/broadeningfunction.h"
+#include "math/windowfunction.h"
 #include "templates/array.h"
 #include "templates/objectstore.h"
 
@@ -205,38 +206,13 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	/*
 	 * Fourier Transforms
 	 */
-	public:
-	// Window Functions
-	enum WindowFunction
-	{
-		NoWindow,		/* Don't use any window */
-		BartlettWindow,		/* Bartlett (triangular) window */
-		HannWindow,		/* von Hann (Hanning) window */
-		LanczosWindow,		/* Lanczos window */
-		NuttallWindow,		/* Nuttall window (continuous first derivatives over range) */
-		SineWindow,		/* Sine Window */
-		nWindowFunctions	/* Number of defined WindowFunctions */
-	};
-	// Convert text string to WindowFunction
-	static WindowFunction windowFunction(const char* s);
-	// Covert WindowFunction to text string
-	static const char* windowFunction(XYData::WindowFunction wf);
-	// Return list of possible window function keywords
-	static const char** windowFunctionKeywords();
-
 	private:
 	// Make some checks before doing transform
 	bool checkBeforeTransform();
 
 	public:
-	// Return value of window function at specified position (in range 0 - 1.0)
-	static double window(XYData::WindowFunction wf, double pos);
-	// Perform plain Fourier transform of real data
-	bool fourierTransformReal(bool forwardTransform = true, XYData::WindowFunction wf = XYData::NoWindow);
-	// Perform Fourier sine transform of current distribution function, over range specified, and with specified broadening functions (applied in Q space) and window applied (if requested)
-	bool broadenedSineFT(double normFactor, double wMin, double wStep, double wMax, const BroadeningFunction& broadening = BroadeningFunction::unity(), bool unbroaden = false, XYData::WindowFunction wf = XYData::NoWindow);
-	// Fourier transform current data, applying line-width broadening in real-space using the modified Lorch function
-	bool transformLorch(double atomicDensity, double step, double rMax, double beta, double delta0, bool qToR);
+	// Perform Fourier sine transform of current distribution function, over range specified, and with specified window and broadening functions applied
+	bool sineFT(double normFactor, double wMin, double wStep, double wMax, WindowFunction windowFunction = WindowFunction(), BroadeningFunction broadening = BroadeningFunction(), bool unbroaden = false);
 
 
 	/*

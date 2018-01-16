@@ -19,8 +19,8 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_KEYWORDS_H
-#define DUQ_KEYWORDS_H
+#ifndef DUQ_KEYWORDTYPES_H
+#define DUQ_KEYWORDTYPES_H
 
 /*
  * This file should be included if the use of Module Keywords is required.
@@ -38,5 +38,6 @@
 // Classes
 #include "module/keywordtypes/charstring.h"
 #include "module/keywordtypes/broadeningfunction.h"
+#include "module/keywordtypes/windowfunction.h"
 
 #endif
