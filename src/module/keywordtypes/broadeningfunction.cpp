@@ -1,6 +1,6 @@
 /*
-	*** Module Keyword - Function
-	*** src/modules/modulekeyword_function.cpp
+	*** Module Keyword - Broadening Function
+	*** src/modules/keywordtypes/broadeningfunction.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.

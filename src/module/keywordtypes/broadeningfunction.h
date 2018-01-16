@@ -1,6 +1,6 @@
 /*
-	*** Module Keyword - Function
-	*** src/modules/modulekeyword_function.h
+	*** Module Keyword - Broadening Function
+	*** src/modules/keywordtypes/broadeningfunction.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -19,8 +19,8 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_MODULEKEYWORDFUNCTION_H
-#define DUQ_MODULEKEYWORDFUNCTION_H
+#ifndef DUQ_MODULEKEYWORD_BROADENINGFUNCTION_H
+#define DUQ_MODULEKEYWORD_BROADENINGFUNCTION_H
 
 #include "module/keyworddata.h"
 #include "module/keywordbase.h"
@@ -29,7 +29,7 @@
 // Forward Declarations
 /* none */
 
-// Keyword with Function Data
+// Keyword with BroadeningFunction Data
 class BroadeningFunctionModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<BroadeningFunction>
 {
 	public:
