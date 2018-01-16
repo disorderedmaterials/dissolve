@@ -26,10 +26,10 @@
 #include "templates/enumhelpers.h"
 
 // Constructor
-BroadeningFunction::BroadeningFunction()
+BroadeningFunction::BroadeningFunction(BroadeningFunction::FunctionType function, double p1, double p2, double p3, double p4, double p5, double p6)
 {
-	function_ = BroadeningFunction::UnityFunction;
-	for (int n=0; n<MAXFUNCTIONPARAMS; ++n) parameters_[n] = 0.0;
+	set(function, p1, p2, p3, p4, p5, p6);
+
 	inverted_ = false;
 }
 
@@ -46,7 +46,7 @@ BroadeningFunction::~BroadeningFunction()
 {
 }
 
-const char* BroadeningFunctionKeywords[] = { "Unity", "Gaussian", "QDependentGaussian", "GaussianC2" };
+const char* BroadeningFunctionKeywords[] = { "Unity", "Gaussian", "OmegaDependentGaussian", "GaussianC2" };
 int BroadeningFunctionNParameters[] = { 0, 1, 1, 2 };
 
 // Return FunctionType from supplied string
@@ -79,7 +79,7 @@ const char* BroadeningFunction::functionDescription(FunctionType func)
 		case (BroadeningFunction::GaussianFunction):
 			return "Gaussian (no prefactor, unnormalised)";
 			break;
-		case (BroadeningFunction::QDependentGaussianFunction):
+		case (BroadeningFunction::OmegaDependentGaussianFunction):
 			return "Gaussian (no prefactor, unnormalised, omega dependent FWHM)";
 			break;
 		case (BroadeningFunction::GaussianC2Function):
@@ -132,7 +132,7 @@ bool BroadeningFunction::set(LineParser& parser, int startArg)
 		case (BroadeningFunction::UnityFunction):
 			break;
 		case (BroadeningFunction::GaussianFunction):
-		case (BroadeningFunction::QDependentGaussianFunction):
+		case (BroadeningFunction::OmegaDependentGaussianFunction):
 			// FWHM
 			parameters_[0] = parser.argd(startArg+1);
 			// c (calculated from FWHM)
@@ -177,7 +177,7 @@ CharString BroadeningFunction::parameterSummary() const
 			return "1.0";
 			break;
 		case (BroadeningFunction::GaussianFunction):
-		case (BroadeningFunction::QDependentGaussianFunction):
+		case (BroadeningFunction::OmegaDependentGaussianFunction):
 			return CharString("FWHM=%f", parameters_[0]);
 			break;
 		case (BroadeningFunction::GaussianC2Function):
@@ -197,20 +197,20 @@ void BroadeningFunction::setInverted(bool state)
 	inverted_ = state;
 }
 
-// Return value of function given parameters x and Q
-double BroadeningFunction::y(double x, double Q) const
+// Return value of function given parameters x and omega
+double BroadeningFunction::y(double x, double omega) const
 {
-	return (inverted_ ? yFTActual(x, Q) : yActual(x, Q));
+	return (inverted_ ? yFTActual(x, omega) : yActual(x, omega));
 }
 
-// Return value of Fourier transform of function, given parameters x and Q
-double BroadeningFunction::yFT(double x, double Q) const
+// Return value of Fourier transform of function, given parameters x and omega
+double BroadeningFunction::yFT(double x, double omega) const
 {
-	return (inverted_ ? yActual(x, Q) : yFTActual(x, Q));
+	return (inverted_ ? yActual(x, omega) : yFTActual(x, omega));
 }
 
-// Return value of function given parameters x and Q, regardless of inversion state
-double BroadeningFunction::yActual(double x, double Q) const
+// Return value of function given parameters x and omega, regardless of inversion state
+double BroadeningFunction::yActual(double x, double omega) const
 {
 	switch (function_)
 	{
@@ -231,7 +231,7 @@ double BroadeningFunction::yActual(double x, double Q) const
 			 */
 			return exp(-(0.5 * x*x * parameters_[2]*parameters_[2]));
 			break;
-		case (BroadeningFunction::QDependentGaussianFunction):
+		case (BroadeningFunction::OmegaDependentGaussianFunction):
 			/*
 			 * Unnormalised Gaussian with no prefactor, centred at zero, with variable FWHM
 			 * 
@@ -239,11 +239,11 @@ double BroadeningFunction::yActual(double x, double Q) const
 			 * 		1 = c     	(precalculated from FWHM)
 			 * 		2 = 1.0 / c
 			 * 
-			 * 	      (       x * x     )		     FWHM
-			 * f(x) = exp ( - ------------- )      where c = --------------
-			 * 	      (   2 * (c*Q)**2 )		 2 sqrt(2 ln 2) 
+			 * 	      (         x * x      )		        FWHM
+			 * f(x) = exp ( - ---------------- )      where c = --------------
+			 * 	      (   2 * (c*omega)**2 )		    2 sqrt(2 ln 2) 
 			 */
-			return exp(-(0.5 * x*x * (parameters_[2]*Q) * (parameters_[2]*Q)));
+			return exp(-(0.5 * x*x * (parameters_[2]*omega) * (parameters_[2]*omega)));
 			break;
 		case (BroadeningFunction::GaussianC2Function):
 			/*
@@ -260,7 +260,7 @@ double BroadeningFunction::yActual(double x, double Q) const
 			 * f(x) = exp ( - ------------------- )      where cn = --------------
 			 * 	      (   2 * (c1 + c2*a2)**2 )		       2 sqrt(2 ln 2) 
 			 */
-			return exp(-(x*x)/(2.0 * (parameters_[2] + parameters_[3]*Q) * (parameters_[2] + parameters_[3]*Q)));
+			return exp(-(x*x)/(2.0 * (parameters_[2] + parameters_[3]*omega) * (parameters_[2] + parameters_[3]*omega)));
 			break;
 		default:
 			Messenger::warn("BroadeningFunction::value() - Function id %i not accounted for.\n", function_);
@@ -270,8 +270,8 @@ double BroadeningFunction::yActual(double x, double Q) const
 	return 0.0;
 }
 
-// Return value of Fourier transform of function, given parameters x and Q, regardless of inversion state
-double BroadeningFunction::yFTActual(double x, double Q) const
+// Return value of Fourier transform of function, given parameters x and omega, regardless of inversion state
+double BroadeningFunction::yFTActual(double x, double omega) const
 {
 	switch (function_)
 	{
@@ -292,7 +292,7 @@ double BroadeningFunction::yFTActual(double x, double Q) const
 			 */
 			return exp(-(0.5 * x*x * parameters_[1]*parameters_[1]));
 			break;
-		case (BroadeningFunction::QDependentGaussianFunction):
+		case (BroadeningFunction::OmegaDependentGaussianFunction):
 			/*
 			 * Unnormalised Gaussian with no prefactor, centred at zero, with variable FWHM
 			 * 
@@ -300,11 +300,11 @@ double BroadeningFunction::yFTActual(double x, double Q) const
 			 * 		1 = c     	(precalculated from FWHM1)
 			 * 		2 = 1.0 / c
 			 * 
-			 * 	      (   x*x * (c*Q)**2 ) 		      FWHM
-			 * f(x) = exp ( - -------------- )      where c = --------------
-			 * 	      (         2        )	          2 sqrt(2 ln 2) 
+			 * 	      (   x*x * (c*omega)**2 ) 		           FWHM
+			 * f(x) = exp ( - ------------------ )      where c = --------------
+			 * 	      (		   2         )	              2 sqrt(2 ln 2) 
 			 */
-			return exp(-(0.5 * x*x * (parameters_[1]*Q) * (parameters_[1]*Q)));
+			return exp(-(0.5 * x*x * (parameters_[1]*omega) * (parameters_[1]*omega)));
 			break;
 		case (BroadeningFunction::GaussianC2Function):
 			/*
@@ -317,11 +317,11 @@ double BroadeningFunction::yFTActual(double x, double Q) const
 			 * 		4 = 1.0 / c1
 			 * 		5 = 1.0 / c2
 			 * 
-			 * 	      (   x * x * (c1 + c2*Q)**2 ) 		       FWHMn
-			 * f(x) = exp ( - ---------------------- )      where cn = --------------
-			 * 	      (             2            )	           2 sqrt(2 ln 2) 
+			 * 	      (   x * x * (c1 + c2*omega)**2 ) 		           FWHMn
+			 * f(x) = exp ( - -------------------------- )      where cn = --------------
+			 * 	      (                2             )	               2 sqrt(2 ln 2) 
 			 */
-			return exp(-(0.5 * x*x * (parameters_[2] + parameters_[3]*Q) * (parameters_[2] + parameters_[3]*Q)));
+			return exp(-(0.5 * x*x * (parameters_[2] + parameters_[3]*omega) * (parameters_[2] + parameters_[3]*omega)));
 			break;
 		default:
 			Messenger::warn("BroadeningFunction::ft() - Function id %i not accounted for.\n", function_);
@@ -330,14 +330,6 @@ double BroadeningFunction::yFTActual(double x, double Q) const
 
 	return 0.0;
 }
-
-// Return unity function
-BroadeningFunction& BroadeningFunction::unity()
-{
-	static BroadeningFunction unity;
-	return unity;
-}
-
 
 /*
  * GenericItemBase Implementations

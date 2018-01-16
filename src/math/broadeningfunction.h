@@ -35,14 +35,8 @@ class ProcessPool;
 class BroadeningFunction : public GenericItemBase
 {
 	public:
-	// Constructor
-	BroadeningFunction();
-	// Destructor
-	~BroadeningFunction();
-	// Assignment Operator
-	void operator=(const BroadeningFunction& source);
 	// Function Types
-	enum FunctionType { UnityFunction, GaussianFunction, QDependentGaussianFunction, GaussianC2Function, nFunctionTypes };
+	enum FunctionType { UnityFunction, GaussianFunction, OmegaDependentGaussianFunction, GaussianC2Function, nFunctionTypes };
 	// Return FunctionType from supplied string
 	static FunctionType functionType(const char* s);
 	// Return FunctionType name
@@ -51,6 +45,14 @@ class BroadeningFunction : public GenericItemBase
 	static int nFunctionParameters(FunctionType func);
 	// Return description for FunctionType
 	static const char* functionDescription(FunctionType func);
+
+	public:
+	// Constructor
+	BroadeningFunction(FunctionType function = UnityFunction, double p1 = 0.0, double p2 = 0.0, double p3 = 0.0, double p4 = 0.0, double p5 = 0.0, double p6 = 0.0);
+	// Destructor
+	~BroadeningFunction();
+	// Assignment Operator
+	void operator=(const BroadeningFunction& source);
 
 
 	/*
@@ -75,16 +77,14 @@ class BroadeningFunction : public GenericItemBase
 	CharString parameterSummary() const;
 	// Set inversion state
 	void setInverted(bool state);
-	// Return value of function given parameters x and Q
-	double y(double x, double Q) const;
-	// Return value of Fourier transform of function, given parameters x and Q
-	double yFT(double x, double Q) const;
-	// Return value of function given parameters x and Q, regardless of inversion state
-	double yActual(double x, double Q) const;
-	// Return value of Fourier transform of function, given parameters x and Q, regardless of inversion state
-	double yFTActual(double x, double Q) const;
-	// Return unity function
-	static BroadeningFunction& unity();
+	// Return value of function given parameters x and omega
+	double y(double x, double omega) const;
+	// Return value of Fourier transform of function, given parameters x and omega
+	double yFT(double x, double omega) const;
+	// Return value of function given parameters x and omega, regardless of inversion state
+	double yActual(double x, double omega) const;
+	// Return value of Fourier transform of function, given parameters x and omega, regardless of inversion state
+	double yFTActual(double x, double omega) const;
 
 
 	/*
