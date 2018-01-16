@@ -47,7 +47,7 @@ class IntegerModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<
 	// Duplicate the keyword's data in the supplied GenericList
 	void duplicateInList(GenericList& targetList, const char* prefix);
 	// Return whether the current data value has ever been set
-	bool set();
+	bool isSet();
 
 
 	/*

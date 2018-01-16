@@ -74,9 +74,9 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 		const bool testAnalytic = keywords_.asBool("TestAnalytic");
 		const bool testMode = keywords_.asBool("Test");
 		const double testThreshold = keywords_.asDouble("TestThreshold");
-		bool hasReferenceInter = keywords_.set("TestReferenceInter");
+		bool hasReferenceInter = keywords_.isSet("TestReferenceInter");
 		const double testReferenceInter = keywords_.asDouble("TestReferenceInter");
-		bool hasReferenceIntra = keywords_.set("TestReferenceIntra");
+		bool hasReferenceIntra = keywords_.isSet("TestReferenceIntra");
 		const double testReferenceIntra = keywords_.asDouble("TestReferenceIntra");
 
 		// Calculate the total energy

@@ -44,7 +44,7 @@ void BoolModuleKeyword::duplicateInList(GenericList& targetList, const char* pre
 }
 
 // Return whether the current data value has ever been set
-bool BoolModuleKeyword::set()
+bool BoolModuleKeyword::isSet()
 {
 	return set_;
 }

@@ -63,7 +63,7 @@ class ModuleKeywordList
 	// Return simple keyword value (as string)
 	const char* asString(const char* keywordName);
 	// Return whether the specified keyword data has ever been set
-	bool set(const char* keywordName);
+	bool isSet(const char* keywordName);
 };
 
 // Keyword List Helper

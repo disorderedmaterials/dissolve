@@ -44,7 +44,7 @@ void BroadeningFunctionModuleKeyword::duplicateInList(GenericList& targetList, c
 }
 
 // Return whether the current data value has ever been set
-bool BroadeningFunctionModuleKeyword::set()
+bool BroadeningFunctionModuleKeyword::isSet()
 {
 	return set_;
 }

@@ -43,7 +43,7 @@ void ComplexModuleKeyword::duplicateInList(GenericList& targetList, const char* 
 }
 
 // Return whether the current data value has ever been set
-bool ComplexModuleKeyword::set()
+bool ComplexModuleKeyword::isSet()
 {
 	return set_;
 }

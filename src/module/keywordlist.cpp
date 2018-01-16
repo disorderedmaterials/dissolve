@@ -113,7 +113,7 @@ const char* ModuleKeywordList::asString(const char* keywordName)
 }
 
 // Return whether the specified keyword data has ever been set
-bool ModuleKeywordList::set(const char* keywordName)
+bool ModuleKeywordList::isSet(const char* keywordName)
 {
 	// Find the named keyword
 	ModuleKeywordBase* keyword = find(keywordName);
@@ -123,5 +123,5 @@ bool ModuleKeywordList::set(const char* keywordName)
 		return false;
 	}
 
-	return keyword->set();
+	return keyword->isSet();
 }

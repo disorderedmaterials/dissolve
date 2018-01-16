@@ -53,7 +53,7 @@ void CharStringModuleKeyword::duplicateInList(GenericList& targetList, const cha
 }
 
 // Return whether the current data value has ever been set
-bool CharStringModuleKeyword::set()
+bool CharStringModuleKeyword::isSet()
 {
 	return set_;
 }

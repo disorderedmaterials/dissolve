@@ -24,6 +24,7 @@
 #include "gui/keywordwidgets/charstring.hui"
 #include "gui/keywordwidgets/double.hui"
 #include "gui/keywordwidgets/int.hui"
+#include "gui/keywordwidgets/windowfunction.hui"
 #include "gui/modulewidget.h"
 #include "gui/subwindow.h"
 #include "module/module.h"
@@ -118,6 +119,12 @@ void ModuleControlWidget::initialiseControls(Module* module)
 			KeywordWidgetBool* boolWidget = new KeywordWidgetBool(NULL, keyword);
 			widget = boolWidget;
 			base = boolWidget;
+		}
+		else if (keyword->type() == ModuleKeywordBase::WindowFunctionData)
+		{
+			KeywordWidgetWindowFunction* windowFunctionWidget = new KeywordWidgetWindowFunction(NULL, keyword);
+			widget = windowFunctionWidget;
+			base = windowFunctionWidget;
 		}
 		else
 		{

@@ -54,7 +54,7 @@ void DoubleModuleKeyword::duplicateInList(GenericList& targetList, const char* p
 }
 
 // Return whether the current data value has ever been set
-bool DoubleModuleKeyword::set()
+bool DoubleModuleKeyword::isSet()
 {
 	return set_;
 }

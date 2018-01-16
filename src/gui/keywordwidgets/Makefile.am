@@ -26,6 +26,7 @@ libkeywordwidgets_la_SOURCES += bool.hui bool_funcs.cpp
 libkeywordwidgets_la_SOURCES += charstring.hui charstring_funcs.cpp
 libkeywordwidgets_la_SOURCES += double.hui double_funcs.cpp
 libkeywordwidgets_la_SOURCES += int.hui int_funcs.cpp
+libkeywordwidgets_la_SOURCES += windowfunction.hui windowfunction_funcs.cpp
 
 noinst_HEADERS = base.h
 

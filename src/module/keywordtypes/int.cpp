@@ -54,7 +54,7 @@ void IntegerModuleKeyword::duplicateInList(GenericList& targetList, const char* 
 }
 
 // Return whether the current data value has ever been set
-bool IntegerModuleKeyword::set()
+bool IntegerModuleKeyword::isSet()
 {
 	return set_;
 }

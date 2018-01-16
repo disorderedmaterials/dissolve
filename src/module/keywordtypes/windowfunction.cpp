@@ -44,7 +44,7 @@ void WindowFunctionModuleKeyword::duplicateInList(GenericList& targetList, const
 }
 
 // Return whether the current data value has ever been set
-bool WindowFunctionModuleKeyword::set()
+bool WindowFunctionModuleKeyword::isSet()
 {
 	return set_;
 }

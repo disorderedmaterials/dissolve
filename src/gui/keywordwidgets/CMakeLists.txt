@@ -7,6 +7,7 @@ SET(keywordwidgets_MOC_HDRS
   charstring.hui
   double.hui
   int.hui
+  windowfunction.hui
 )
 QT5_WRAP_CPP(keywordwidgets_MOC_SRCS ${keywordwidgets_MOC_HDRS})
 
@@ -18,6 +19,7 @@ SET(keywordwidgets_SRCS
   charstring_funcs.cpp
   double_funcs.cpp
   int_funcs.cpp
+  windowfunction_funcs.cpp
 
   base.h
 )
