@@ -15,7 +15,7 @@
    width="100"
    height="100"
    id="svg2"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="collections_prev.svg">
   <metadata
      id="metadata3051">
@@ -39,14 +39,14 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:window-width="1920"
-     inkscape:window-height="1140"
+     inkscape:window-height="1016"
      id="namedview3049"
      showgrid="false"
      inkscape:zoom="4.72"
-     inkscape:cx="22.986771"
+     inkscape:cx="-14.725093"
      inkscape:cy="77.455555"
-     inkscape:window-x="1920"
-     inkscape:window-y="25"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg2" />
   <defs
@@ -85,39 +85,6 @@
          offset="1"
          id="stop3933" />
     </linearGradient>
-    <radialGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient5375"
-       id="radialGradient4417"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1.3065417,0,0,0.36743317,-28.821559,68.644574)"
-       cx="60.328388"
-       cy="19.332626"
-       fx="60.328388"
-       fy="19.332626"
-       r="31.07839" />
-    <radialGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient5375"
-       id="radialGradient4420"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1.3065417,0,0,0.36743317,-28.821559,42.896551)"
-       cx="60.328388"
-       cy="19.332626"
-       fx="60.328388"
-       fy="19.332626"
-       r="31.07839" />
-    <radialGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient5375"
-       id="radialGradient4423"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1.3065417,0,0,0.36743317,-28.821559,17.148527)"
-       cx="60.328388"
-       cy="19.332626"
-       fx="60.328388"
-       fy="19.332626"
-       r="31.07839" />
     <radialGradient
        cx="50.059151"
        cy="48.853989"
@@ -182,68 +149,6 @@
        fx="49.744884"
        fy="59.433193"
        r="37.726524" />
-    <radialGradient
-       cx="50.059151"
-       cy="48.853989"
-       r="42.138134"
-       fx="50.059151"
-       fy="48.853989"
-       id="radialGradient3199"
-       xlink:href="#linearGradient3197-3"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0,1.0028545,3.1360946,0,-16.160719,-17.816339)" />
-    <linearGradient
-       id="linearGradient3197-3">
-      <stop
-         id="stop3199-2"
-         style="stop-color:#e4e1e1;stop-opacity:1"
-         offset="0" />
-      <stop
-         id="stop3201-5"
-         style="stop-color:#e4af00;stop-opacity:1"
-         offset="1" />
-    </linearGradient>
-    <radialGradient
-       cx="50.059151"
-       cy="48.853989"
-       r="42.138134"
-       fx="50.059151"
-       fy="48.853989"
-       id="radialGradient3201"
-       xlink:href="#linearGradient3189"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0,1.0028545,3.1360946,0,-16.160719,-17.816339)" />
-    <linearGradient
-       id="linearGradient3189">
-      <stop
-         id="stop3191"
-         style="stop-color:#000000;stop-opacity:1"
-         offset="0" />
-      <stop
-         id="stop3193"
-         style="stop-color:#000000;stop-opacity:0"
-         offset="1" />
-    </linearGradient>
-    <radialGradient
-       cx="50.059151"
-       cy="48.853989"
-       r="42.138134"
-       fx="50.059151"
-       fy="48.853989"
-       id="radialGradient3203"
-       xlink:href="#linearGradient3197-3"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0,1.0028545,3.1360946,0,-16.16072,-2.0899635)" />
-    <radialGradient
-       cx="50.059151"
-       cy="48.853989"
-       r="42.138134"
-       fx="50.059151"
-       fy="48.853989"
-       id="radialGradient3205"
-       xlink:href="#linearGradient3189"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0,1.0028545,3.1360946,0,-16.16072,-2.0899635)" />
     <radialGradient
        inkscape:collect="always"
        xlink:href="#linearGradient5375"
