@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>384</width>
-    <height>352</height>
+    <width>317</width>
+    <height>333</height>
    </rect>
   </property>
   <property name="font">
@@ -34,6 +34,64 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
+   <item>
+    <widget class="QFrame" name="ToolBarFrame">
+     <property name="font">
+      <font>
+       <pointsize>8</pointsize>
+      </font>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Sunken</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <property name="spacing">
+       <number>4</number>
+      </property>
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>288</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="CoordinateLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>0,0</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
    <item>
     <widget class="QFrame" name="MainViewFrame">
      <property name="sizePolicy">

@@ -97,6 +97,30 @@ void UChromaViewWidget::updateUndoRedo()
 // Update coordinate info
 void UChromaViewWidget::updateCoordinateInfo()
 {
+	// Update controls related to current ViewPane
+	ViewPane* viewPane = currentViewPane();
+	if (ViewPane::objectValid(viewPane))
+	{
+		CharString text;
+		switch (viewPane->viewType())
+		{
+			case (ViewPane::FlatXYView):
+				text.sprintf("(x,y) = (%e,%e)", rCurrentLocal_.x, rCurrentLocal_.y);
+				break;
+			case (ViewPane::FlatXZView):
+				text.sprintf("(x,z) = (%e,%e)", rCurrentLocal_.x, rCurrentLocal_.z);
+				break;
+			case (ViewPane::FlatZYView):
+				text.sprintf("(z,y) = (%e,%e)", rCurrentLocal_.z, rCurrentLocal_.y);
+				break;
+			default:
+				text.sprintf("(x,y,z) = (%e,%e,%e)", rCurrentLocal_.x, rCurrentLocal_.y, rCurrentLocal_.z);
+				break;
+		}
+
+		ui.CoordinateLabel->setText(text.get());
+	}
+	else ui.CoordinateLabel->setText("(x,y) = (0,0)");
 }
 
 // Update text of renderTimeLabel_ in statusbar
