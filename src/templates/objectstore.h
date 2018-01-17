@@ -210,12 +210,12 @@ template <class T> class ObjectStore
 	{
 		if (object == NULL)
 		{
-			printf("Invalid Object: Specified %s is NULL.\n", objectDescription);
+			Messenger::printVerbose("Invalid Object: Specified %s is NULL.\n", objectDescription);
 			return false;
 		}
 		else if (!objects_.contains(object))
 		{
-			printf("Invalid Object: Specified %s no longer exists (original pointer was %p).\n", objectDescription, object);
+			Messenger::printVerbose("Invalid Object: Specified %s no longer exists (original pointer was %p).\n", objectDescription, object);
 			return false;
 		}
 		return true;
