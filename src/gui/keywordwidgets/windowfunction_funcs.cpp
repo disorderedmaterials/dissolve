@@ -31,10 +31,10 @@ KeywordWidgetWindowFunction::KeywordWidgetWindowFunction(QWidget* parent, Module
 	QHBoxLayout* layout = new QHBoxLayout(this);
 	layout->setContentsMargins(0,0,0,0);
 	layout->setSpacing(4);
-	QComboBox* combo = new QComboBox;
-	for (int n=0; n<WindowFunction::nFunctionTypes; ++n) combo->addItem(WindowFunction::functionType( (WindowFunction::FunctionType) n));
-	layout->addWidget(combo);
-	connect(combo, SIGNAL(currentTextChanged(QString&)), this, SLOT(functionComboChanged(QString&)));
+	functionCombo_ = new QComboBox;
+	for (int n=0; n<WindowFunction::nFunctionTypes; ++n) functionCombo_->addItem(WindowFunction::functionType( (WindowFunction::FunctionType) n));
+	layout->addWidget(functionCombo_);
+	connect(functionCombo_, SIGNAL(currentTextChanged(QString)), this, SLOT(functionComboChanged(QString)));
 
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<WindowFunctionModuleKeyword*>(keyword);
@@ -80,4 +80,5 @@ void KeywordWidgetWindowFunction::updateValue(GenericList& moduleData, const cha
 // Set widgets from supplied object
 void KeywordWidgetWindowFunction::setWidgets(WindowFunction& windowFunction)
 {
+	functionCombo_->setCurrentIndex(windowFunction.function());
 }

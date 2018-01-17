@@ -27,7 +27,7 @@
 #include <QWidget>
 
 // Forward Declarations
-/* none */
+class QComboBox;
 
 class KeywordWidgetWindowFunction : public QWidget, public KeywordWidgetBase
 {
@@ -48,8 +48,12 @@ class KeywordWidgetWindowFunction : public QWidget, public KeywordWidgetBase
 
 
 	/*
-	 * Slots
+	 * Widgets / Slots
 	 */
+	private:
+	// Function type Combo
+	QComboBox* functionCombo_;
+
 	private slots:
 	// Function type combo changed
 	void functionComboChanged(const QString& text);
