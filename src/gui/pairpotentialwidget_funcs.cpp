@@ -28,6 +28,7 @@
 #include "base/lineparser.h"
 #include <QGridLayout>
 #include <QLabel>
+#include <QMessageBox>
 
 // Constructor
 PairPotentialWidget::PairPotentialWidget(QWidget* parent, PairPotential* pp, DUQ& dUQ) : SubWidget(parent), pairPotential_(pp), duq_(dUQ)
@@ -213,4 +214,31 @@ void PairPotentialWidget::on_AdditionalEnergyCheck_clicked(bool checked)
 void PairPotentialWidget::on_FullForceCheck_clicked(bool checked)
 {
 	uChromaView_->setCollectionVisible("Force", checked);
+}
+
+void PairPotentialWidget::on_ResetGraphButton_clicked(bool checked)
+{
+	ViewPane* viewPane = uChromaView_->currentViewPane();
+	viewPane->axes().setRange(0, 0.0, pairPotential_ ? pairPotential_->range() : 15.0);
+	viewPane->axes().setRange(1, -10.0, 10.0);
+
+	uChromaView_->updateDisplay();
+}
+
+void PairPotentialWidget::on_ZeroUAdditionalButton_clicked(bool checked)
+{
+	QMessageBox queryBox;
+	queryBox.setText(CharString("You are about to set the %s-%s additional potential to zero.", pairPotential_->atomTypeNameI(), pairPotential_->atomTypeNameJ()).get());
+	queryBox.setInformativeText("Are you sure you want to do this?");
+	queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+	queryBox.setDefaultButton(QMessageBox::No);
+	int ret = queryBox.exec();
+
+	if (ret == QMessageBox::Yes)
+	{
+		pairPotential_->resetUAdditional();
+
+		uChromaView_->refreshReferencedDataSets();
+		uChromaView_->updateDisplay();
+	}
 }

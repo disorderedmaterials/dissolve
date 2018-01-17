@@ -90,6 +90,8 @@ class PairPotentialWidget : public SubWidget
 	void on_OriginalEnergyCheck_clicked(bool checked);
 	void on_AdditionalEnergyCheck_clicked(bool checked);
 	void on_FullForceCheck_clicked(bool checked);
+	void on_ResetGraphButton_clicked(bool checked);
+	void on_ZeroUAdditionalButton_clicked(bool checked);
 };
 
 #endif
