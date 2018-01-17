@@ -38,7 +38,7 @@ WindowFunction::WindowFunction(WindowFunction::FunctionType function, double p1,
 void WindowFunction::operator=(const WindowFunction& source)
 {
 	function_ = source.function_;
-	for (int n=0; n<MAXFUNCTIONPARAMS; ++n) parameters_[n] = source.parameters_[n];
+	for (int n=0; n<MAXWINDOWFUNCTIONPARAMS; ++n) parameters_[n] = source.parameters_[n];
 
 	xMax_ = source.xMax_;
 }
@@ -49,7 +49,7 @@ WindowFunction::~WindowFunction()
 }
 
 // Window Function keywords
-const char* WindowFunctionKeywords[] = { "Unity", "Bartlett", "Hann", "Lanczos", "Nuttall", "Sine", "Lorch0" };
+const char* WindowFunctionKeywords[] = { "None", "Bartlett", "Hann", "Lanczos", "Nuttall", "Sine", "Lorch0" };
 
 int WindowFunctionNParameters[] = { 0, 0, 0, 0, 0, 0, 0 };
 
@@ -77,8 +77,8 @@ const char* WindowFunction::functionDescription(FunctionType func)
 {
 	switch (func)
 	{
-		case (WindowFunction::UnityWindow):
-			return "Rectangular window (always 1.0)";
+		case (WindowFunction::NoWindow):
+			return "No window";
 			break;
 		case (WindowFunction::BartlettWindow):
 			return "Bartlett (triangular) window";
@@ -142,7 +142,7 @@ bool WindowFunction::set(LineParser& parser, int startArg)
 	function_ = funcType;
 	switch (function_)
 	{
-		case (WindowFunction::UnityWindow):
+		case (WindowFunction::NoWindow):
 		case (WindowFunction::BartlettWindow):
 		case (WindowFunction::HannWindow):
 		case (WindowFunction::LanczosWindow):
@@ -170,7 +170,7 @@ CharString WindowFunction::parameterSummary() const
 {
 	switch (function_)
 	{
-		case (WindowFunction::UnityWindow):
+		case (WindowFunction::NoWindow):
 		case (WindowFunction::BartlettWindow):
 		case (WindowFunction::HannWindow):
 		case (WindowFunction::LanczosWindow):
@@ -179,7 +179,7 @@ CharString WindowFunction::parameterSummary() const
 			return "No Parameters";
 			break;
 		case (WindowFunction::Lorch0Window):
-			return CharString("Delta0=%f", parameters_[0]);
+			return "Delta0=PI/xMax";
 			break;
 		default:
 			Messenger::warn("WindowFunction::value(x) - Function id %i not accounted for.\n", function_);
@@ -197,7 +197,7 @@ bool WindowFunction::setUp(const XYData& data)
 
 	switch (function_)
 	{
-		case (WindowFunction::UnityWindow):
+		case (WindowFunction::NoWindow):
 		case (WindowFunction::BartlettWindow):
 		case (WindowFunction::HannWindow):
 		case (WindowFunction::LanczosWindow):
@@ -206,7 +206,7 @@ bool WindowFunction::setUp(const XYData& data)
 			break;
 		case (WindowFunction::Lorch0Window):
 			// Set Delta0 from the high x limit of the data
-			parameters_[0] = PI /  data.xLast();
+			parameters_[0] = PI /  xMax_;
 			break;
 		default:
 			Messenger::warn("WindowFunction::value(x) - Function id %i not accounted for.\n", function_);
@@ -220,7 +220,7 @@ bool WindowFunction::setUp(const XYData& data)
 double WindowFunction::y(double x, double omega) const
 {
 	// Determine current fractional x value (from our stored xMax_)
-	double chi = x / xMax_;
+	const double chi = x / xMax_;
 
 #ifdef CHECKS
 	if ((chi < 0.0) || (chi > 1.0)) Messenger::warn("Position for window function is out of range (%f).\n", chi);
@@ -228,7 +228,7 @@ double WindowFunction::y(double x, double omega) const
 
 	switch (function_)
 	{
-		case (WindowFunction::UnityWindow):
+		case (WindowFunction::NoWindow):
 			return 1.0;
 			break;
 		case (WindowFunction::BartlettWindow):
@@ -256,7 +256,7 @@ double WindowFunction::y(double x, double omega) const
 			 * f(x) = ---------------
 			 * 	    x * delta0
 			 */
-			return sin(chi*parameters_[0]) / (chi*parameters_[0]);
+			return sin(x*parameters_[0]) / (x*parameters_[0]);
 			break;
 		default:
 			Messenger::warn("WindowFunction::value() - Function id %i not accounted for.\n", function_);
@@ -302,7 +302,8 @@ bool WindowFunction::broadcast(ProcessPool& procPool, int root)
 {
 #ifdef PARALLEL
 	if (!procPool.broadcast(EnumCast<WindowFunction::FunctionType>(function_), root)) return false;
-	if (!procPool.broadcast(parameters_, MAXFUNCTIONPARAMS, root)) return false;
+	if (!procPool.broadcast(parameters_, MAXWINDOWFUNCTIONPARAMS, root)) return false;
+	if (!procPool.broadcast(xMax_, root)) return false;
 #endif
 	return true;
 }

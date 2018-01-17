@@ -38,7 +38,7 @@ class WindowFunction : public GenericItemBase
 	public:
 	// Function Types
 	enum FunctionType {
-		UnityWindow,		/* Unity window (rectangular window) */
+		NoWindow,		/* No window */
 		BartlettWindow,		/* Bartlett (triangular) window */
 		HannWindow,		/* von Hann (Hanning) window */
 		LanczosWindow,		/* Lanczos window */
@@ -58,7 +58,7 @@ class WindowFunction : public GenericItemBase
 
 	public:
 	// Constructor
-	WindowFunction(FunctionType function = UnityWindow, double p1 = 0.0, double p2 = 0.0, double p3 = 0.0, double p4 = 0.0, double p5 = 0.0, double p6 = 0.0);
+	WindowFunction(FunctionType function = NoWindow, double p1 = 0.0, double p2 = 0.0, double p3 = 0.0, double p4 = 0.0, double p5 = 0.0, double p6 = 0.0);
 	// Destructor
 	~WindowFunction();
 	// Assignment Operator
