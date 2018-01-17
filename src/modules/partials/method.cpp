@@ -109,7 +109,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 	if (sqCalculation)
 	{
 		Messenger::print("Partials: Calculating S(Q)/F(Q) over %f < Q < %f Angstroms**-1 using step size of %f Angstroms**-1.\n", qMin, qMax, qDelta);
-		if (windowFunction.function() == WindowFunction::UnityWindow) Messenger::print("Partials: No window function will be applied in Fourier transforms of g(r) to S(Q).");
+		if (windowFunction.function() == WindowFunction::NoWindow) Messenger::print("Partials: No window function will be applied in Fourier transforms of g(r) to S(Q).");
 		else Messenger::print("Partials: Window function to be applied in Fourier transforms is %s (%s).", WindowFunction::functionType(windowFunction.function()), windowFunction.parameterSummary().get());
 		if (normalisation == PartialsModule::NoNormalisation) Messenger::print("Partials: No normalisation will be applied to total F(Q).\n");
 		else if (normalisation == PartialsModule::AverageOfSquaresNormalisation) Messenger::print("Partials: Total F(Q) will be normalised to <b>**2");
