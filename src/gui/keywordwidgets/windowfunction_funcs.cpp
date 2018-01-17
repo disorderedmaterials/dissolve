@@ -25,7 +25,7 @@
 #include <QComboBox>
 
 // Constructor
-KeywordWidgetWindowFunction::KeywordWidgetWindowFunction(QWidget* parent, ModuleKeywordBase* keyword) : QWidget(parent), KeywordWidgetBase()
+WindowFunctionKeywordWidget::WindowFunctionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword) : QWidget(parent), KeywordWidgetBase()
 {
 	// Create the necessary subwidgets
 	QHBoxLayout* layout = new QHBoxLayout(this);
@@ -51,7 +51,7 @@ KeywordWidgetWindowFunction::KeywordWidgetWindowFunction(QWidget* parent, Module
  */
 
 // Check box state changed
-void KeywordWidgetWindowFunction::functionComboChanged(const QString& text)
+void WindowFunctionKeywordWidget::functionComboChanged(const QString& text)
 {
 	// Grab the target WindowFunction
 	WindowFunction& windowFunction = keyword_->data();
@@ -66,7 +66,7 @@ void KeywordWidgetWindowFunction::functionComboChanged(const QString& text)
  */
 
 // Update value displayed in widget, using specified source if necessary
-void KeywordWidgetWindowFunction::updateValue(GenericList& moduleData, const char* prefix)
+void WindowFunctionKeywordWidget::updateValue(GenericList& moduleData, const char* prefix)
 {
 	// Check to see if the associated Keyword may have been stored/updated in the specified moduleData
 	if ((keyword_->genericItemFlags()&GenericItem::InRestartFileFlag) && moduleData.contains(keyword_->keyword(), prefix))
@@ -78,7 +78,7 @@ void KeywordWidgetWindowFunction::updateValue(GenericList& moduleData, const cha
 }
 
 // Set widgets from supplied object
-void KeywordWidgetWindowFunction::setWidgets(WindowFunction& windowFunction)
+void WindowFunctionKeywordWidget::setWidgets(WindowFunction& windowFunction)
 {
 	functionCombo_->setCurrentIndex(windowFunction.function());
 }

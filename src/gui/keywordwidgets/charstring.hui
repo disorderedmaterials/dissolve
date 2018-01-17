@@ -19,8 +19,8 @@
 	along with DUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_KEYWORDWIDGETCHARSTRING_H
-#define DUQ_KEYWORDWIDGETCHARSTRING_H
+#ifndef DUQ_CHARSTRINGKEYWORDWIDGET_H
+#define DUQ_CHARSTRINGKEYWORDWIDGET_H
 
 #include "module/keywordtypes/charstring.h"
 #include "gui/keywordwidgets/base.h"
@@ -29,14 +29,14 @@
 // Forward Declarations
 /* none */
 
-class KeywordWidgetCharString : public QComboBox, public KeywordWidgetBase
+class CharStringKeywordWidget : public QComboBox, public KeywordWidgetBase
 {
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
 	public:
 	// Constructor
-	KeywordWidgetCharString(QWidget* parent, ModuleKeywordBase* keyword);
+	CharStringKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword);
 
 
 	/*

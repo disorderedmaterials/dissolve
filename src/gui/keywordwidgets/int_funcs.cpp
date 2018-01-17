@@ -23,7 +23,7 @@
 #include "templates/genericlisthelper.h"
 
 // Constructor
-KeywordWidgetInt::KeywordWidgetInt(QWidget* parent, ModuleKeywordBase* keyword) : QSpinBox(parent), KeywordWidgetBase()
+IntegerKeywordWidget::IntegerKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword) : QSpinBox(parent), KeywordWidgetBase()
 {
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<IntegerModuleKeyword*>(keyword);
@@ -47,7 +47,7 @@ KeywordWidgetInt::KeywordWidgetInt(QWidget* parent, ModuleKeywordBase* keyword) 
  */
 
 // Spin box value changed
-void KeywordWidgetInt::myValueChanged(int newValue)
+void IntegerKeywordWidget::myValueChanged(int newValue)
 {
 	keyword_->setData(newValue);
 }
@@ -57,7 +57,7 @@ void KeywordWidgetInt::myValueChanged(int newValue)
  */
 
 // Update value displayed in widget, using specified source if necessary
-void KeywordWidgetInt::updateValue(GenericList& moduleData, const char* prefix)
+void IntegerKeywordWidget::updateValue(GenericList& moduleData, const char* prefix)
 {
 	// Check to see if the associated Keyword may have been stored/updated in the specified moduleData
 	if ((keyword_->genericItemFlags()&GenericItem::InRestartFileFlag) && moduleData.contains(keyword_->keyword(), prefix))

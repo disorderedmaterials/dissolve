@@ -98,31 +98,31 @@ void ModuleControlWidget::initialiseControls(Module* module)
 		// The widget to create here depends on the data type of the keyword
 		if (keyword->type() == ModuleKeywordBase::IntegerData)
 		{
-			KeywordWidgetInt* intWidget = new KeywordWidgetInt(NULL, keyword);
+			IntegerKeywordWidget* intWidget = new IntegerKeywordWidget(NULL, keyword);
 			widget = intWidget;
 			base = intWidget;
 		}
 		else if (keyword->type() == ModuleKeywordBase::DoubleData)
 		{
-			KeywordWidgetDouble* doubleWidget = new KeywordWidgetDouble(NULL, keyword);
+			DoubleKeywordWidget* doubleWidget = new DoubleKeywordWidget(NULL, keyword);
 			widget = doubleWidget;
 			base = doubleWidget;
 		}
 		else if (keyword->type() == ModuleKeywordBase::CharStringData)
 		{
-			KeywordWidgetCharString* charWidget = new KeywordWidgetCharString(NULL, keyword);
+			CharStringKeywordWidget* charWidget = new CharStringKeywordWidget(NULL, keyword);
 			widget = charWidget;
 			base = charWidget;
 		}
 		else if (keyword->type() == ModuleKeywordBase::BoolData)
 		{
-			KeywordWidgetBool* boolWidget = new KeywordWidgetBool(NULL, keyword);
+			BoolKeywordWidget* boolWidget = new BoolKeywordWidget(NULL, keyword);
 			widget = boolWidget;
 			base = boolWidget;
 		}
 		else if (keyword->type() == ModuleKeywordBase::WindowFunctionData)
 		{
-			KeywordWidgetWindowFunction* windowFunctionWidget = new KeywordWidgetWindowFunction(NULL, keyword);
+			WindowFunctionKeywordWidget* windowFunctionWidget = new WindowFunctionKeywordWidget(NULL, keyword);
 			widget = windowFunctionWidget;
 			base = windowFunctionWidget;
 		}

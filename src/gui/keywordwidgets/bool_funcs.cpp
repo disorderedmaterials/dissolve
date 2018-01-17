@@ -23,7 +23,7 @@
 #include "templates/genericlisthelper.h"
 
 // Constructor
-KeywordWidgetBool::KeywordWidgetBool(QWidget* parent, ModuleKeywordBase* keyword) : QCheckBox(parent), KeywordWidgetBase()
+BoolKeywordWidget::BoolKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword) : QCheckBox(parent), KeywordWidgetBase()
 {
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<BoolModuleKeyword*>(keyword);
@@ -43,7 +43,7 @@ KeywordWidgetBool::KeywordWidgetBool(QWidget* parent, ModuleKeywordBase* keyword
  */
 
 // Check box state changed
-void KeywordWidgetBool::myClicked(bool checked)
+void BoolKeywordWidget::myClicked(bool checked)
 {
 	keyword_->setData(checked);
 }
@@ -53,7 +53,7 @@ void KeywordWidgetBool::myClicked(bool checked)
  */
 
 // Update value displayed in widget, using specified source if necessary
-void KeywordWidgetBool::updateValue(GenericList& moduleData, const char* prefix)
+void BoolKeywordWidget::updateValue(GenericList& moduleData, const char* prefix)
 {
 	// Check to see if the associated Keyword may have been stored/updated in the specified moduleData
 	if ((keyword_->genericItemFlags()&GenericItem::InRestartFileFlag) && moduleData.contains(keyword_->keyword(), prefix))

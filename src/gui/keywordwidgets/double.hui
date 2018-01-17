@@ -19,8 +19,8 @@
 	along with DUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_KEYWORDWIDGETDOUBLE_H
-#define DUQ_KEYWORDWIDGETDOUBLE_H
+#ifndef DUQ_DOUBLEKEYWORDWIDGET_H
+#define DUQ_DOUBLEKEYWORDWIDGET_H
 
 #include "module/keywordtypes/double.h"
 #include "gui/keywordwidgets/base.h"
@@ -29,14 +29,14 @@
 // Forward Declarations
 /* none */
 
-class KeywordWidgetDouble : public TExponentialSpin, public KeywordWidgetBase
+class DoubleKeywordWidget : public TExponentialSpin, public KeywordWidgetBase
 {
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
 	public:
 	// Constructor
-	KeywordWidgetDouble(QWidget* parent, ModuleKeywordBase* keyword);
+	DoubleKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword);
 
 
 	/*

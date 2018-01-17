@@ -19,8 +19,8 @@
 	along with DUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_KEYWORDWIDGETWINDOWFUNCTION_H
-#define DUQ_KEYWORDWIDGETWINDOWFUNCTION_H
+#ifndef DUQ_WINDOWFUNCTIONKEYWORDWIDGET_H
+#define DUQ_WINDOWFUNCTIONKEYWORDWIDGET_H
 
 #include "module/keywordtypes/windowfunction.h"
 #include "gui/keywordwidgets/base.h"
@@ -29,14 +29,14 @@
 // Forward Declarations
 class QComboBox;
 
-class KeywordWidgetWindowFunction : public QWidget, public KeywordWidgetBase
+class WindowFunctionKeywordWidget : public QWidget, public KeywordWidgetBase
 {
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
 	public:
 	// Constructor
-	KeywordWidgetWindowFunction(QWidget* parent, ModuleKeywordBase* keyword);
+	WindowFunctionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword);
 
 
 	/*
