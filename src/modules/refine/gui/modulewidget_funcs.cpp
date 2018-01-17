@@ -115,6 +115,7 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, DUQ& dUQ
 	viewPane = errorsGraph_->currentViewPane();
 	viewPane->setViewType(ViewPane::FlatXYView);
 	viewPane->axes().setTitle(0, "Iteration");
+	viewPane->axes().numberFormat(0).setNDecimals(0);
 	viewPane->axes().setMax(0, 10.0);
 	viewPane->axes().setTitle(1, "%Error");
 	viewPane->axes().setMin(1, 0.0);
