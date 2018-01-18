@@ -97,7 +97,7 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 				if (parser.argc(1)[0] == '@')
 				{
 					// Search through master Angle parameters to see if this name exists
-					SpeciesAngle* master = duq->hasMasterAngle(parser.argc(1));
+					MasterIntra* master = duq->hasMasterAngle(parser.argc(1));
 					if (!master)
 					{
 						Messenger::error("No master Angle parameters named '%s' exist.\n", &parser.argc(1)[1]);
@@ -185,7 +185,7 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 				if (parser.argc(1)[0] == '@')
 				{
 					// Search through master Bond parameters to see if this name exists
-					SpeciesBond* master = duq->hasMasterBond(parser.argc(1));
+					MasterIntra* master = duq->hasMasterBond(parser.argc(1));
 					if (!master)
 					{
 						Messenger::error("No master Bond parameters named '%s' exist.\n", &parser.argc(1)[1]);
@@ -306,7 +306,7 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 				if (parser.argc(1)[0] == '@')
 				{
 					// Search through master Torsion parameters to see if this name exists
-					SpeciesTorsion* master = duq->hasMasterTorsion(parser.argc(1));
+					MasterIntra* master = duq->hasMasterTorsion(parser.argc(1));
 					if (!master)
 					{
 						Messenger::error("No master Torsion parameters named '%s' exist.\n", &parser.argc(1)[1]);

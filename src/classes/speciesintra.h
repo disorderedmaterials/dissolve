@@ -28,6 +28,7 @@
 
 // Forward Declarations
 class Species;
+class MasterIntra;
 
 /*
  * SpeciesIntra Definition
@@ -47,18 +48,12 @@ class SpeciesIntra
 	protected:
 	// Parent Species
 	Species* parent_;
-	// Name for interaction (if relevant)
-	CharString name_;
 
 	public:
 	// Set parent Species
 	void setParent(Species* parent);
 	// Return parent Species
 	Species* parent() const;
-	// Set name for interaction (if relevant)
-	void setName(const char* name);
-	// Return name for interaction
-	const char* name();
 
 
 	/*
@@ -66,7 +61,7 @@ class SpeciesIntra
 	 */
 	protected:
 	// Linked master from which parameters should be taken (if relevant)
-	SpeciesIntra* masterParameters_;
+	MasterIntra* masterParameters_;
 	// Index of functional form of interaction
 	int form_;
 	// Parameters for interaction
@@ -74,9 +69,9 @@ class SpeciesIntra
 
 	public:
 	// Set linked master from which parameters should be taken
-	void setMasterParameters(SpeciesIntra* master);
+	void setMasterParameters(MasterIntra* master);
 	// Return linked master from which parameters should be taken
-	SpeciesIntra* masterParameters();
+	MasterIntra* masterParameters();
 	// Set functional form index of interaction
 	void setForm(int form);
 	// Return functional form index of interaction

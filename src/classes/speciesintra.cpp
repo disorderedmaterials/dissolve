@@ -20,6 +20,7 @@
 */
 
 #include "classes/speciesintra.h"
+#include "classes/masterintra.h"
 #include "base/messenger.h"
 
 // Constructor
@@ -51,30 +52,18 @@ Species* SpeciesIntra::parent() const
 	return parent_;
 }
 
-// Set name for interaction (if relevant)
-void SpeciesIntra::setName(const char* name)
-{
-	name_ = name;
-}
-
-// Return name for interaction
-const char* SpeciesIntra::name()
-{
-	return name_.get();
-}
-
 /*
  * Interaction Parameters
  */
 
 // Set linked master from which parameters should be taken
-void SpeciesIntra::setMasterParameters(SpeciesIntra* master)
+void SpeciesIntra::setMasterParameters(MasterIntra* master)
 {
 	masterParameters_ = master;
 }
 
 // Return linked master from which parameters should be taken
-SpeciesIntra* SpeciesIntra::masterParameters()
+MasterIntra* SpeciesIntra::masterParameters()
 {
 	return masterParameters_;
 }

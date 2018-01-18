@@ -61,10 +61,7 @@ bool MasterBlock::parse(LineParser& parser, DUQ* duq)
 	CharString arg1, arg2;
 	AtomType* at;
 	Parameters* params;
-	SpeciesAngle* a;
-	SpeciesAtom* i;
-	SpeciesBond* b;
-	SpeciesTorsion* t;
+	MasterIntra* masterIntra;
 	SpeciesGrain* sg;
 	SpeciesBond::BondFunction bf;
 	SpeciesAngle::AngleFunction af;
@@ -95,11 +92,11 @@ bool MasterBlock::parse(LineParser& parser, DUQ* duq)
 					break;
 				}
 				// Create a new master angle definition
-				a = duq->addMasterAngle(parser.argc(1));
-				if (a)
+				masterIntra= duq->addMasterAngle(parser.argc(1));
+				if (masterIntra)
 				{
-					a->setName(parser.argc(1));
-					a->setForm(af);
+					masterIntra->setName(parser.argc(1));
+					masterIntra->setForm(af);
 					for (int n=0; n<SpeciesAngle::nFunctionParameters(af); ++n)
 					{
 						if (!parser.hasArg(n+3))
@@ -108,7 +105,7 @@ bool MasterBlock::parse(LineParser& parser, DUQ* duq)
 							error = true;
 							break;
 						}
-						a->setParameter(n, parser.argd(n+3));
+						masterIntra->setParameter(n, parser.argd(n+3));
 					}
 				}
 				else error = true;
@@ -123,10 +120,10 @@ bool MasterBlock::parse(LineParser& parser, DUQ* duq)
 					break;
 				}
 				// Create a new master bond definition
-				b = duq->addMasterBond(parser.argc(1));
-				if (b)
+				masterIntra = duq->addMasterBond(parser.argc(1));
+				if (masterIntra)
 				{
-					b->setForm(bf);
+					masterIntra->setForm(bf);
 					for (int n=0; n<SpeciesBond::nFunctionParameters(bf); ++n)
 					{
 						if (!parser.hasArg(n+3))
@@ -135,7 +132,7 @@ bool MasterBlock::parse(LineParser& parser, DUQ* duq)
 							error = true;
 							break;
 						}
-						b->setParameter(n, parser.argd(n+3));
+						masterIntra->setParameter(n, parser.argd(n+3));
 					}
 				}
 				else error = true;
@@ -154,11 +151,10 @@ bool MasterBlock::parse(LineParser& parser, DUQ* duq)
 					break;
 				}
 				// Create a new master torsion definition
-				t = duq->addMasterTorsion(parser.argc(1));
-				if (t)
+				masterIntra = duq->addMasterTorsion(parser.argc(1));
+				if (masterIntra)
 				{
-					t->setName(parser.argc(1));
-					t->setForm(tf);
+					masterIntra->setForm(tf);
 					for (int n=0; n<SpeciesTorsion::nFunctionParameters(tf); ++n)
 					{
 						if (!parser.hasArg(n+3))
@@ -167,7 +163,7 @@ bool MasterBlock::parse(LineParser& parser, DUQ* duq)
 							error = true;
 							break;
 						}
-						t->setParameter(n, parser.argd(n+3));
+						masterIntra->setParameter(n, parser.argd(n+3));
 					}
 				}
 				else error = true;

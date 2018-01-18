@@ -20,6 +20,7 @@
 */
 
 #include "classes/species.h"
+#include "classes/masterintra.h"
 #include "classes/atomtype.h"
 #include "classes/box.h"
 #include "base/lineparser.h"

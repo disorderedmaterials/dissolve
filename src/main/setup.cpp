@@ -283,7 +283,7 @@ bool DUQ::setUpSimulation()
 		Messenger::print("\n  Bond Masters:\n");
 		Messenger::print("     Name        Form            Parameters\n");
 		Messenger::print("    --------------------------------------------------------------------------\n");
-		for (SpeciesBond* b = masterBonds_.first(); b != NULL; b = b->next)
+		for (MasterIntra* b = masterBonds_.first(); b != NULL; b = b->next)
 		{
 			CharString s("     %-10s  %-12s", b->name(), SpeciesBond::bondFunction( (SpeciesBond::BondFunction) b->form()));
 			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", b->parameter(n));
@@ -296,7 +296,7 @@ bool DUQ::setUpSimulation()
 		Messenger::print("\n  Angle Masters:\n");
 		Messenger::print("     Name        Form            Parameters\n");
 		Messenger::print("    --------------------------------------------------------------------------\n");
-		for (SpeciesAngle* a = masterAngles_.first(); a != NULL; a = a->next)
+		for (MasterIntra* a = masterAngles_.first(); a != NULL; a = a->next)
 		{
 			CharString s("     %-10s  %-12s", a->name(), SpeciesAngle::angleFunction( (SpeciesAngle::AngleFunction) a->form()));
 			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", a->parameter(n));
@@ -309,7 +309,7 @@ bool DUQ::setUpSimulation()
 		Messenger::print("\n  Torsion Masters:\n");
 		Messenger::print("     Name        Form            Parameters\n");
 		Messenger::print("    --------------------------------------------------------------------------\n");
-		for (SpeciesTorsion* t = masterTorsions_.first(); t != NULL; t = t->next)
+		for (MasterIntra* t = masterTorsions_.first(); t != NULL; t = t->next)
 		{
 			CharString s("     %-10s  %-12s", t->name(), SpeciesTorsion::torsionFunction( (SpeciesTorsion::TorsionFunction) t->form()));
 			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", t->parameter(n));

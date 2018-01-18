@@ -34,6 +34,7 @@ add_library(classes
   isotopologue.cpp
   isotopologuemix.cpp
   kvector.cpp
+  masterintra.cpp
   molecule.cpp
   pairpotential.cpp
   potentialmap.cpp
@@ -82,6 +83,7 @@ add_library(classes
   isotopologuemix.h
   kernelflags.h
   kvector.h
+  masterintra.h
   molecule.h
   pairpotential.h
   potentialmap.h
