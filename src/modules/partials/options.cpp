@@ -97,6 +97,7 @@ void PartialsModule::setUpKeywords()
 	frequency_ = 5;
 	keywords_.add(new BoolModuleKeyword(false), "AllIntra", "Consider all intramolecular pairs in intra partials", "<True|False*>");
 	keywords_.add(new IntegerModuleKeyword(5, 0), "Averaging", "Number of historical partial sets to combine into final partials", "<N[5]>");
+	keywords_.add(new ComplexModuleKeyword(2,2), "ConfigurationWeight", "Sets the relative weight of the specified Configuration in construction of the partials", "<Configuration Name> <weight>");
 	keywords_.add(new ComplexModuleKeyword(1), "Exchangeable", "Define an exchangeable group of atoms", "<AtomType> [AtomType ...]");
 	keywords_.add(new CharStringModuleKeyword("Exponential", PartialsModule::nAveragingSchemes, AveragingSchemeKeywords), "AveragingScheme", "Weighting scheme to use when averaging partials", "<scheme[Exponential]>");
 	keywords_.add(new BoolModuleKeyword(false), "Bragg", "Enable calculation of Bragg scattering", "<True|False*>");
@@ -122,7 +123,27 @@ void PartialsModule::setUpKeywords()
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
 int PartialsModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix)
 {
-	if (DUQSys::sameString(parser.argc(0), "Exchangeable"))
+	if (DUQSys::sameString(parser.argc(0), "ConfigurationWeight"))
+	{
+		// Sets the weight of a specified Configuration in construction of the partials
+		// Find target Configuration
+		Configuration* targetCfg = duq->findConfiguration(parser.argc(1));
+		if (!targetCfg)
+		{
+			Messenger::error("Error setting Configuration weight - no Configuration named '%s' exists.\n", parser.argc(1));
+			return false;
+		}
+
+		// Raise an error if this Configuration is not targetted by the Module
+		if (!isTargetConfiguration(targetCfg)) 
+		{
+			Messenger::error("Configuration '%s' is not targetted by the Module '%s', so setting its weight is irrelevant.\n", targetCfg->name(), name());
+			return false;
+		}
+
+		GenericListHelper<double>::add(targetList, CharString("%s_Weight", targetCfg->niceName()), uniqueName()) = parser.argd(2);
+	}
+	else if (DUQSys::sameString(parser.argc(0), "Exchangeable"))
 	{
 		// Define an exchangeable group of atoms
 		// Loop over all provided arguments (which are atom type names) and add them to our list

@@ -325,7 +325,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 			fingerprint += fingerprint.isEmpty() ? CharString("%i", cfg->coordinateIndex()) : CharString("_%i", cfg->coordinateIndex());
 
 			// Get weighting factor for this Configuration to contribute to the summed partials
-			double weight = GenericListHelper<double>::retrieve(moduleData, CharString("%s_Weight", cfg->name()), uniqueName_, 1.0);
+			double weight = GenericListHelper<double>::retrieve(moduleData, CharString("%s_Weight", cfg->niceName()), uniqueName_, 1.0);
 			totalWeight += weight;
 			Messenger::print("Partials: Weight for Configuration '%s' is %f (total weight is now %f).\n", cfg->name(), weight, totalWeight);
 
@@ -369,7 +369,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 			{
 				// Get unweighted S(Q) for this Configuration and their overall weight
 				PartialSet& cfgunweightedsq = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedSQ", "Partials");
-				double weight = GenericListHelper<double>::retrieve(moduleData, CharString("%s_Weight", cfg->name()), uniqueName_, 1.0);
+				double weight = GenericListHelper<double>::retrieve(moduleData, CharString("%s_Weight", cfg->niceName()), uniqueName_, 1.0);
 
 				// Add into our set
 				unweightedsq.addPartials(cfgunweightedsq, weight);
@@ -405,7 +405,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 			{
 				// Grab weighted partials for this Configuration and their associated weight
 				PartialSet& cfgweightedgr = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "WeightedGR", uniqueName_);
-				double weight = GenericListHelper<double>::retrieve(moduleData, CharString("%s_Weight", cfg->name()), uniqueName_, 1.0);
+				double weight = GenericListHelper<double>::retrieve(moduleData, CharString("%s_Weight", cfg->niceName()), uniqueName_, 1.0);
 
 				weightedgr.addPartials(cfgweightedgr, weight);
 			}
@@ -435,7 +435,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 				{
 					// Get unweighted SQ for this Configuration and their overall weight
 					PartialSet& cfgweightedsq = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "WeightedSQ", uniqueName_);
-					double weight = GenericListHelper<double>::retrieve(moduleData, CharString("%s_Weight", cfg->name()), uniqueName_, 1.0);
+					double weight = GenericListHelper<double>::retrieve(moduleData, CharString("%s_Weight", cfg->niceName()), uniqueName_, 1.0);
 
 					// Add into our set
 					weightedsq.addPartials(cfgweightedsq, weight);

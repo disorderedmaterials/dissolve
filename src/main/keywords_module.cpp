@@ -99,12 +99,6 @@ bool ModuleBlock::parse(LineParser& parser, DUQ* duq, Module* module, GenericLis
 					error = true;
 					break;
 				}
-
-				// Add a weight variable (optional second parameter)
-				// Name of the variable depends on the context of the list
-				if (!moduleInConfiguration) varName.sprintf("%s_Weight", targetCfg->name());
-				else varName = "Weight";
-				GenericListHelper<double>::add(targetList, varName, module->uniqueName()) = parser.hasArg(2) ? parser.argd(2) : 1.0;
 				break;
 			case (ModuleBlock::DataKeyword):
 				// Was a specific name for the Data provided? If so, we assume we are linking, and don't attempt to parse a block
