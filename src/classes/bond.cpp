@@ -88,7 +88,7 @@ void Bond::setSpeciesBond(SpeciesBond* bondRef)
 	speciesBond_ = bondRef;
 }
 
-// Return parent Species
+// Return parent SpeciesBond
 SpeciesBond* Bond::speciesBond() const
 {
 	return speciesBond_;

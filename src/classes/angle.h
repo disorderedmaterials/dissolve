@@ -75,6 +75,8 @@ class Angle : public Intra, public DynamicArrayObject<Angle>
 	public:
 	// Set SpeciesAngle reference
 	void setSpeciesAngle(SpeciesAngle* angleRef);
+	// Return SpeciesAngle reference
+	SpeciesAngle* speciesAngle() const;
 	// Return energy for specified angle
 	double energy(double angleInDegrees) const;
 	// Return force multiplier for specified angle

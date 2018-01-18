@@ -91,6 +91,12 @@ void Angle::setSpeciesAngle(SpeciesAngle* angleRef)
 	speciesAngle_ = angleRef;
 }
 
+// Return SpeciesAngle reference
+SpeciesAngle* Angle::speciesAngle() const
+{
+	return speciesAngle_;
+}
+
 // Return energy for specified angle
 double Angle::energy(double angleInDegrees) const
 {

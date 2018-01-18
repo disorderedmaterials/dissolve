@@ -73,7 +73,7 @@ class Bond : public Intra, public DynamicArrayObject<Bond>
 	public:
 	// Set SpeciesBond reference
 	void setSpeciesBond(SpeciesBond* bondRef);
-	// Return parent Species
+	// Return SpeciesBond reference
 	SpeciesBond* speciesBond() const;
 	// Return energy for specified distance
 	double energy(double distance) const;
