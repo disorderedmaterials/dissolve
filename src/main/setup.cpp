@@ -106,7 +106,8 @@ bool DUQ::setUpSimulation()
 	 */
 	Messenger::print("\n");
 	Messenger::print("*** Linking associated Modules to Data...\n");
-	for (Data* data = data_.first(); data != NULL; data = data->next)
+	index = 0;
+	for (Data* data = data_.first(); data != NULL; data = data->next, ++index)
 	{
 		Messenger::print("*** Data %2i: '%s'\n", index, data->name());
 
