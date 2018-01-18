@@ -85,13 +85,13 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, DUQ& dUQ
 	layout = new QVBoxLayout;
 	layout->setContentsMargins(0,0,0,0);
 	layout->setSpacing(4);
-	potentialsGraph_ = new UChromaViewWidget;
-	layout->addWidget(potentialsGraph_);
-	ui.PotentialsPlotWidget->setLayout(layout);
+	deltaURGraph_ = new UChromaViewWidget;
+	layout->addWidget(deltaURGraph_);
+	ui.DeltaURPlotWidget->setLayout(layout);
 
 	// Start a new, empty session
-	potentialsGraph_->startNewSession(true);
-	viewPane = potentialsGraph_->currentViewPane();
+	deltaURGraph_->startNewSession(true);
+	viewPane = deltaURGraph_->currentViewPane();
 	viewPane->setViewType(ViewPane::FlatXYView);
 	viewPane->axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	viewPane->axes().setMax(0, 10.0);
@@ -137,12 +137,12 @@ void RefineModuleWidget::updateControls()
 	// Ensure that any displayed data are up-to-date
 	dataGraph_->refreshReferencedDataSets();
 	partialSQGraph_->refreshReferencedDataSets();
-	potentialsGraph_->refreshReferencedDataSets();
+	deltaURGraph_->refreshReferencedDataSets();
 	errorsGraph_->refreshReferencedDataSets();
 
 	dataGraph_->updateDisplay();;
 	partialSQGraph_->updateDisplay();
-	potentialsGraph_->updateDisplay();
+	deltaURGraph_->updateDisplay();
 	errorsGraph_->updateDisplay();
 }
 
@@ -198,7 +198,7 @@ void RefineModuleWidget::initialiseControls(RefineModule* module)
 		}
 	}
 
-	// Add delta g(r) and resulting pair potential additions to the potentialsGraph_
+	// Add delta g(r) and resulting pair potential additions to the deltaURGraph_
 	n = 0;
 	for (AtomType* at1 = dUQ_.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++n)
 	{
@@ -207,11 +207,11 @@ void RefineModuleWidget::initialiseControls(RefineModule* module)
 		{
 			// Generated potential
 			blockData.sprintf("Collection '%s-%s dphi(r)'; Group '%s-%s'; DataSet '%s-%s dphi(r)'; Source XYData '%s//DeltaPhiR//%s-%s'; EndDataSet; EndCollection", at1->name(), at2->name(), at1->name(), at2->name(), at1->name(), at2->name(), module_->uniqueName(), at1->name(), at2->name());
-			potentialsGraph_->addCollectionFromBlock(blockData);
+			deltaURGraph_->addCollectionFromBlock(blockData);
 
 			// Delta g(r)
 			blockData.sprintf("Collection '%s-%s dg(r)'; Group '%s-%s'; LineStyle 1.0 'Quarter Dash'; DataSet '%s-%s Delta g(r)'; Source XYData '%s//DeltaGR//%s-%s'; EndDataSet; EndCollection", at1->name(), at2->name(), at1->name(), at2->name(), at1->name(), at2->name(), module_->uniqueName(), at1->name(), at2->name());
-			potentialsGraph_->addCollectionFromBlock(blockData);
+			deltaURGraph_->addCollectionFromBlock(blockData);
 		}
 	}
 }
