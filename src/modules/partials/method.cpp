@@ -312,7 +312,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 
 		// Set up partial set using the AtomTypeList we have just constructed.
 		Configuration* refConfig = targetConfigurations_.firstItem();
-		PartialSet& unweightedgr = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedGR", uniqueName_);
+		PartialSet& unweightedgr = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedGR", uniqueName_, GenericItem::InRestartFileFlag);
 		unweightedgr.setUp(combinedAtomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), uniqueName(), "unweighted", "rdf", "r, Angstroms");
 
 		// Loop over Configurations again, summing into the PartialSet we have just set up
@@ -341,7 +341,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		unweightedgr.setFingerprint(fingerprint);
 
 		// Now must normalise our partials to the overall weight of the source configurations
-		// TODO This will not be correct - need to do proper weighting of configurations
+		// TODO This will not be correct - need to do proper weighting of configurations, unfolding g(r) normalisation etc.
 		unweightedgr.reweightPartials(1.0 / totalWeight);
 		if (saveData) if (!MPIRunMaster(procPool, unweightedgr.save())) return false;
 
