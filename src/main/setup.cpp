@@ -104,6 +104,7 @@ bool DUQ::setUpSimulation()
 	/*
 	 * Associate Modules to Data
 	 */
+
 	Messenger::print("\n");
 	Messenger::print("*** Linking associated Modules to Data...\n");
 	index = 0;
@@ -164,6 +165,105 @@ bool DUQ::setUpSimulation()
 	// Create PairPotential matrix
 	Messenger::print("--> Creating PairPotential matrix (%ix%i)...\n", atomTypes_.nItems(), atomTypes_.nItems());
 	if (!potentialMap_.initialise(atomTypes_, pairPotentials_, pairPotentialRange_)) return false;
+
+	/*
+	 * Master Intramolecular Terms
+	 */
+
+	Messenger::print("\n");
+	Messenger::print("*** Setting up Master Intramolecular Terms...\n");
+
+	// All master intramolecular terms must first be initialised with the number of AtomTypes present in the system
+	for (MasterIntra* b = masterBonds_.first(); b != NULL; b = b->next) b->initialiseUsageArray(atomTypes_.nItems());
+	for (MasterIntra* a = masterAngles_.first(); a != NULL; a = a->next) a->initialiseUsageArray(atomTypes_.nItems());
+	for (MasterIntra* t = masterTorsions_.first(); t != NULL; t = t->next) t->initialiseUsageArray(atomTypes_.nItems());
+
+	// Loop over Configurations, flagging any initial usage of master terms in the relevant MasterIntra usage array
+	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next, ++index)
+	{
+		// Bonds
+		DynamicArrayIterator<Bond> bondIterator(cfg->bonds());
+		while (Bond* b = bondIterator.iterate()) if (b->speciesBond()->masterParameters()) b->speciesBond()->masterParameters()->registerUsage(b->i()->masterTypeIndex(), b->j()->masterTypeIndex());
+
+		// Angles
+		DynamicArrayIterator<Angle> angleIterator(cfg->angles());
+		while (Angle* a = angleIterator.iterate()) if (a->speciesAngle()->masterParameters()) a->speciesAngle()->masterParameters()->registerUsage(a->i()->masterTypeIndex(), a->k()->masterTypeIndex());
+	}
+
+	if (nMasterBonds() > 0)
+	{
+		Messenger::print("\n  Bond Masters:\n");
+		Messenger::print("     Name        Form            Parameters\n");
+		Messenger::print("    --------------------------------------------------------------------------\n");
+		for (MasterIntra* b = masterBonds_.first(); b != NULL; b = b->next)
+		{
+			CharString s("     %-10s  %-12s", b->name(), SpeciesBond::bondFunction( (SpeciesBond::BondFunction) b->form()));
+			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", b->parameter(n));
+			Messenger::print("%s\n", s.get());
+		}
+
+		Messenger::print("\n     Name        Usage Count\n");
+		Messenger::print("    --------------------------------------------------------------------------\n");
+		for (MasterIntra* b = masterBonds_.first(); b != NULL; b = b->next)
+		{
+			bool first = true;
+			for (int n=0; n<atomTypes_.nItems(); ++n)
+			{
+				for (int m=n; m<atomTypes_.nItems(); ++m)
+				{
+					if (b->usageCount(n, m) == 0) continue;
+					if (first) Messenger::print("     %-10s   %5s-%-5s   %i", b->name(), atomTypes_[n]->name(), atomTypes_[m]->name(), b->usageCount(n, m));
+					else Messenger::print("                  %5s-%-5s   %i", atomTypes_[n]->name(), atomTypes_[m]->name(), b->usageCount(n, m));
+					first = false;
+				}
+			}
+			if (first) Messenger::print("      [[ No Uses ]]\n");
+		}
+	}
+
+	if (nMasterAngles() > 0)
+	{
+		Messenger::print("\n  Angle Masters:\n");
+		Messenger::print("     Name        Form            Parameters\n");
+		Messenger::print("    --------------------------------------------------------------------------\n");
+		for (MasterIntra* a = masterAngles_.first(); a != NULL; a = a->next)
+		{
+			CharString s("     %-10s  %-12s", a->name(), SpeciesAngle::angleFunction( (SpeciesAngle::AngleFunction) a->form()));
+			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", a->parameter(n));
+			Messenger::print("%s\n", s.get());
+		}
+
+		Messenger::print("\n     Name        Usage Count\n");
+		Messenger::print("    --------------------------------------------------------------------------\n");
+		for (MasterIntra* a = masterAngles_.first(); a != NULL; a = a->next)
+		{
+			bool first = true;
+			for (int n=0; n<atomTypes_.nItems(); ++n)
+			{
+				for (int m=n; m<atomTypes_.nItems(); ++m)
+				{
+					if (a->usageCount(n, m) == 0) continue;
+					if (first) Messenger::print("     %-10s   %5s-?-%-5s   %i", a->name(), atomTypes_[n]->name(), atomTypes_[m]->name(), a->usageCount(n, m));
+					else Messenger::print("                  %5s-?-%-5s   %i", atomTypes_[n]->name(), atomTypes_[m]->name(), a->usageCount(n, m));
+					first = false;
+				}
+			}
+			if (first) Messenger::print("      [[ No Uses ]]\n");
+		}
+	}
+
+	if (nMasterTorsions() > 0)
+	{
+		Messenger::print("\n  Torsion Masters:\n");
+		Messenger::print("     Name        Form            Parameters\n");
+		Messenger::print("    --------------------------------------------------------------------------\n");
+		for (MasterIntra* t = masterTorsions_.first(); t != NULL; t = t->next)
+		{
+			CharString s("     %-10s  %-12s", t->name(), SpeciesTorsion::torsionFunction( (SpeciesTorsion::TorsionFunction) t->form()));
+			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", t->parameter(n));
+			Messenger::print("%s\n", s.get());
+		}
+	}
 
 	/*
 	 * Construct Pre/Post-Process Lists
@@ -273,47 +373,6 @@ bool DUQ::setUpSimulation()
 			Messenger::print("      %i Configuration %s:\n", module->nConfigurationTargets(), module->nConfigurationTargets() == 1 ? "target" : "targets");
 			RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
 			while (Configuration* cfg = configIterator.iterate()) Messenger::print("      --> %s\n", cfg->name());
-		}
-	}
-
-	/* Print Species information for reference */
-
-	if (nMasterBonds() > 0)
-	{
-		Messenger::print("\n  Bond Masters:\n");
-		Messenger::print("     Name        Form            Parameters\n");
-		Messenger::print("    --------------------------------------------------------------------------\n");
-		for (MasterIntra* b = masterBonds_.first(); b != NULL; b = b->next)
-		{
-			CharString s("     %-10s  %-12s", b->name(), SpeciesBond::bondFunction( (SpeciesBond::BondFunction) b->form()));
-			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", b->parameter(n));
-			Messenger::print("%s\n", s.get());
-		}
-	}
-
-	if (nMasterAngles() > 0)
-	{
-		Messenger::print("\n  Angle Masters:\n");
-		Messenger::print("     Name        Form            Parameters\n");
-		Messenger::print("    --------------------------------------------------------------------------\n");
-		for (MasterIntra* a = masterAngles_.first(); a != NULL; a = a->next)
-		{
-			CharString s("     %-10s  %-12s", a->name(), SpeciesAngle::angleFunction( (SpeciesAngle::AngleFunction) a->form()));
-			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", a->parameter(n));
-			Messenger::print("%s\n", s.get());
-		}
-	}
-
-	if (nMasterTorsions() > 0)
-	{
-		Messenger::print("\n  Torsion Masters:\n");
-		Messenger::print("     Name        Form            Parameters\n");
-		Messenger::print("    --------------------------------------------------------------------------\n");
-		for (MasterIntra* t = masterTorsions_.first(); t != NULL; t = t->next)
-		{
-			CharString s("     %-10s  %-12s", t->name(), SpeciesTorsion::torsionFunction( (SpeciesTorsion::TorsionFunction) t->form()));
-			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", t->parameter(n));
-			Messenger::print("%s\n", s.get());
 		}
 	}
 

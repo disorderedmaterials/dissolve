@@ -20,6 +20,7 @@
 */
 
 #include "classes/masterintra.h"
+#include "classes/atom.h"
 #include "base/messenger.h"
 
 // Constructor
@@ -59,14 +60,23 @@ const char* MasterIntra::name()
 void MasterIntra::initialiseUsageArray(int nAtomTypes)
 {
 	usageCounts_.initialise(nAtomTypes, nAtomTypes, true);
+	usageCounts_ = 0;
+}
+
+// Return usage between specified pair of AtomType indices
+int MasterIntra::usageCount(int idI, int idJ)
+{
+	return usageCounts_.value(idI, idJ);
 }
 
 // Register single usage of this term by the specified AtomType pair
-void MasterIntra::registerUsage(AtomType* at1, AtomType* at2)
+void MasterIntra::registerUsage(int idI, int idJ)
 {
+	++usageCounts_.ref(idI, idJ);
 }
 
 // Unregister single usage of this term by the specified AtomType pair
-void MasterIntra::unregisterUsage(AtomType* at1, AtomType* at2)
+void MasterIntra::unregisterUsage(int idI, int idJ)
 {
+	--usageCounts_.ref(idI, idJ);
 }

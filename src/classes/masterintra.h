@@ -28,9 +28,7 @@
 #include "templates/listitem.h"
 
 // Forward Declarations
-class AtomType;
-class AtomTypeList;
-class Species;
+/* none */
 
 /*
  * MasterIntra Definition
@@ -68,10 +66,12 @@ class MasterIntra : public SpeciesIntra, public ListItem<MasterIntra>
 	public:
 	// Initialise usage count array
 	void initialiseUsageArray(int nAtomTypes);
-	// Register single usage of this term by the specified AtomType pair
-	void registerUsage(AtomType* at1, AtomType* at2);
-	// Unregister single usage of this term by the specified AtomType pair
-	void unregisterUsage(AtomType* at1, AtomType* at2);
+	// Return usage between specified pair of AtomType indices
+	int usageCount(int idI, int idJ);
+	// Register single usage of this term by the specified pair of AtomType indices
+	void registerUsage(int idI, int idJ);
+	// Unregister single usage of this term by the specified pair of AtomType indices
+	void unregisterUsage(int idI, int idJ);
 };
 
 #endif
