@@ -58,6 +58,7 @@ namespace InputBlocks
 	{
 		ConfigurationBlock,		/* 'Configuration' - Defines a single Configuration for use in the simulation */
 		DataBlock,			/* 'Data' - Links a reference dataset to a calculated value */
+		MasterBlock,			/* 'Master' - Contains master intramolecular terms for use in Species */
 		ModuleBlock,			/* 'Module' - Sets up a Module to run after Configuration processing */
 		PairPotentialsBlock,		/* 'PairPotentials' - Contains definitions of the PairPotentials for the simulation */
 		SimulationBlock,		/* 'Simulation' - Setting of simulation variables affecting the calculation */
@@ -140,6 +141,31 @@ namespace DataBlock
 	int nArguments(DataKeyword id);
 	// Parse Data block
 	bool parse(LineParser& parser, DUQ* duq, Data* data);
+};
+
+
+/*
+ * Master Block Keywords
+ */
+namespace MasterBlock
+{
+	// Master Block Keyword Enum
+	enum MasterKeyword
+	{
+		AngleKeyword,			/* 'Angle' - Define master Angle parameters that can be referred to */
+		BondKeyword,			/* 'Bond' - Define master Bond parameters that can be referred to */
+		EndMasterKeyword,		/* 'EndModule' - Signals the end of the Module block */
+		TorsionKeyword,			/* 'Torsion' - Define master Torsion parameters that can be referred to */
+		nMasterKeywords			/* Number of keywords defined for this block */
+	};
+	// Convert text string to MasterKeyword
+	MasterKeyword keyword(const char* s);
+	// Convert MasterKeyword to text string
+	const char* keyword(MasterKeyword id);
+	// Return expected number of expected arguments
+	int nArguments(MasterKeyword id);
+	// Parse Module block
+	bool parse(LineParser& parser, DUQ* duq);
 };
 
 
@@ -242,9 +268,6 @@ namespace SpeciesBlock
 		EndSpeciesKeyword,		/* 'EndSpecies' - Signals the end of the current Species */
 		GrainKeyword,			/* 'Grain' - Defines a Grain containing a number of Atoms */
 		IsotopologueKeyword,		/* 'Isotopologue' - Add an isotopologue to the Species */
-		MasterAngleKeyword,		/* 'MasterAngle' - Define master Angle parameters that can be referred to */
-		MasterBondKeyword,		/* 'MasterBond' - Define master Bond parameters that can be referred to */
-		MasterTorsionKeyword,		/* 'MasterTorsion' - Define master Torsion parameters that can be referred to */
 		TorsionKeyword,			/* 'Torsion' - Define a Torsion interaction between four atoms */
 		nSpeciesKeywords		/* Number of keywords defined for this block */
 	};

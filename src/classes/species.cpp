@@ -189,19 +189,6 @@ void Species::print()
 		Messenger::print("    %4i  %3s  %4s (%2i)  %12.4e  %12.4e  %12.4e\n", n+1, PeriodicTable::element(i->element()).symbol(), i->atomType()->name(), i->atomType()->index(), i->r().x, i->r().y, i->r().z);
 	}
 
-	if (nMasterBonds() > 0)
-	{
-		Messenger::print("\n  Bond Masters:\n");
-		Messenger::print("     Name        Form            Parameters\n");
-		Messenger::print("    --------------------------------------------------------------------------\n");
-		for (SpeciesBond* b = masterBonds_.first(); b != NULL; b = b->next)
-		{
-			CharString s("     %-10s  %-12s", b->name(), SpeciesBond::bondFunction( (SpeciesBond::BondFunction) b->form()));
-			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", b->parameter(n));
-			Messenger::print("%s\n", s.get());
-		}
-	}
-
 	if (nBonds() > 0)
 	{
 		Messenger::print("\n  Bonds:\n");
@@ -219,19 +206,6 @@ void Species::print()
 		}
 	}
 
-	if (nMasterAngles() > 0)
-	{
-		Messenger::print("\n  Angle Masters:\n");
-		Messenger::print("     Name        Form            Parameters\n");
-		Messenger::print("    --------------------------------------------------------------------------\n");
-		for (SpeciesAngle* a = masterAngles_.first(); a != NULL; a = a->next)
-		{
-			CharString s("     %-10s  %-12s", a->name(), SpeciesAngle::angleFunction( (SpeciesAngle::AngleFunction) a->form()));
-			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", a->parameter(n));
-			Messenger::print("%s\n", s.get());
-		}
-	}
-
 	if (nAngles() > 0)
 	{
 		Messenger::print("\n  Angles:\n");
@@ -246,19 +220,6 @@ void Species::print()
 				for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", a->parameter(n));
 				Messenger::print("%s\n", s.get());
 			}
-		}
-	}
-
-	if (nMasterTorsions() > 0)
-	{
-		Messenger::print("\n  Torsion Masters:\n");
-		Messenger::print("     Name        Form            Parameters\n");
-		Messenger::print("    --------------------------------------------------------------------------\n");
-		for (SpeciesTorsion* t = masterTorsions_.first(); t != NULL; t = t->next)
-		{
-			CharString s("     %-10s  %-12s", t->name(), SpeciesTorsion::torsionFunction( (SpeciesTorsion::TorsionFunction) t->form()));
-			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", t->parameter(n));
-			Messenger::print("%s\n", s.get());
 		}
 	}
 

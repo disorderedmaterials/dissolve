@@ -36,9 +36,6 @@ KeywordData SpeciesBlockData[] = {
 	{ "EndSpecies",			0,	"Ends the current Species definition" },
 	{ "Grain",			1,	"Define a Grain within the Species " },
 	{ "Isotopologue",		1,	"Add an isotopologue to the Species" },
-	{ "MasterAngle",		3,	"Define master Angle parameters that can be referred to" },
-	{ "MasterBond",			2,	"Define master Bond parameters that can be referred to" },
-	{ "MasterTorsion",		4,	"Define master Torsion parameters that can be referred to" },
 	{ "Torsion",			5,	"Define a torsion interaction within the Species" }
 };
 
@@ -100,10 +97,10 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 				if (parser.argc(1)[0] == '@')
 				{
 					// Search through master Angle parameters to see if this name exists
-					SpeciesAngle* master = species->hasMasterAngle(parser.argc(1));
+					SpeciesAngle* master = duq->hasMasterAngle(parser.argc(1));
 					if (!master)
 					{
-						Messenger::error("Species '%s' contains no master Angle parameters named '%s'.\n", species->name(), &parser.argc(1)[1]);
+						Messenger::error("No master Angle parameters named '%s' exist.\n", &parser.argc(1)[1]);
 						error = true;
 						break;
 					}
@@ -188,10 +185,10 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 				if (parser.argc(1)[0] == '@')
 				{
 					// Search through master Bond parameters to see if this name exists
-					SpeciesBond* master = species->hasMasterBond(parser.argc(1));
+					SpeciesBond* master = duq->hasMasterBond(parser.argc(1));
 					if (!master)
 					{
-						Messenger::error("Species '%s' contains no master Bond parameters named '%s'.\n", species->name(), &parser.argc(1)[1]);
+						Messenger::error("No master Bond parameters named '%s' exist.\n", &parser.argc(1)[1]);
 						error = true;
 						break;
 					}
@@ -304,98 +301,15 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 					}
 				}
 				break;
-			case (SpeciesBlock::MasterAngleKeyword):
-				// Check the functional form specified
-				af = SpeciesAngle::angleFunction(parser.argc(2));
-				if (af == SpeciesAngle::nAngleFunctions)
-				{
-					Messenger::error("Functional form of angle (%s) not recognised.\n", parser.argc(1));
-					error = true;
-					break;
-				}
-				// Create a new master angle definition
-				a = species->addMasterAngle(parser.argc(1));
-				if (a)
-				{
-					a->setName(parser.argc(1));
-					a->setForm(af);
-					for (int n=0; n<SpeciesAngle::nFunctionParameters(af); ++n)
-					{
-						if (!parser.hasArg(n+3))
-						{
-							Messenger::error("Angle function type '%s' requires %i parameters\n", SpeciesAngle::angleFunction(af), SpeciesAngle::nFunctionParameters(af));
-							error = true;
-							break;
-						}
-						a->setParameter(n, parser.argd(n+3));
-					}
-				}
-				else error = true;
-				break;
-			case (SpeciesBlock::MasterBondKeyword):
-				// Check the functional form specified
-				bf = SpeciesBond::bondFunction(parser.argc(2));
-				if (bf == SpeciesBond::nBondFunctions)
-				{
-					Messenger::error("Functional form of bond (%s) not recognised.\n", parser.argc(1));
-					error = true;
-					break;
-				}
-				// Create a new master bond definition
-				b = species->addMasterBond(parser.argc(1));
-				if (b)
-				{
-					b->setForm(bf);
-					for (int n=0; n<SpeciesBond::nFunctionParameters(bf); ++n)
-					{
-						if (!parser.hasArg(n+3))
-						{
-							Messenger::error("Bond function type '%s' requires %i parameters\n", SpeciesBond::bondFunction(bf), SpeciesBond::nFunctionParameters(bf));
-							error = true;
-							break;
-						}
-						b->setParameter(n, parser.argd(n+3));
-					}
-				}
-				else error = true;
-				break;
-			case (SpeciesBlock::MasterTorsionKeyword):
-				// Check the functional form specified
-				tf = SpeciesTorsion::torsionFunction(parser.argc(2));
-				if (tf == SpeciesTorsion::nTorsionFunctions)
-				{
-					Messenger::error("Functional form of torsion (%s) not recognised.\n", parser.argc(1));
-					error = true;
-					break;
-				}
-				// Create a new master torsion definition
-				t = species->addMasterTorsion(parser.argc(1));
-				if (t)
-				{
-					t->setName(parser.argc(1));
-					t->setForm(tf);
-					for (int n=0; n<SpeciesTorsion::nFunctionParameters(tf); ++n)
-					{
-						if (!parser.hasArg(n+3))
-						{
-							Messenger::error("Torsion function type '%s' requires %i parameters\n", SpeciesTorsion::torsionFunction(tf), SpeciesTorsion::nFunctionParameters(tf));
-							error = true;
-							break;
-						}
-						t->setParameter(n, parser.argd(n+3));
-					}
-				}
-				else error = true;
-				break;
 			case (SpeciesBlock::TorsionKeyword):
 				// Check the functional form specified - if it starts with '@' it is a reference to master parameters
 				if (parser.argc(1)[0] == '@')
 				{
 					// Search through master Torsion parameters to see if this name exists
-					SpeciesTorsion* master = species->hasMasterTorsion(parser.argc(1));
+					SpeciesTorsion* master = duq->hasMasterTorsion(parser.argc(1));
 					if (!master)
 					{
-						Messenger::error("Species '%s' contains no master Torsion parameters named '%s'.\n", species->name(), &parser.argc(1)[1]);
+						Messenger::error("No master Torsion parameters named '%s' exist.\n", &parser.argc(1)[1]);
 						error = true;
 						break;
 					}

@@ -1,32 +1,34 @@
 add_library(main
-atomtypes.cpp
-comms.cpp
-configurations.cpp
-data.cpp
-duq.cpp
-energy.cpp
-forces.cpp
-io.cpp
-keywords.cpp
-keywords_configuration.cpp
-keywords_data.cpp
-keywords_module.cpp
-keywords_pairpotentials.cpp
-keywords_simulation.cpp
-keywords_species.cpp
-keywords_speciesinfo.cpp
-pairpotentials.cpp
-setup.cpp
-simulation.cpp
-species.cpp
+  atomtypes.cpp
+  comms.cpp
+  configurations.cpp
+  data.cpp
+  duq.cpp
+  energy.cpp
+  forces.cpp
+  io.cpp
+  keywords.cpp
+  keywords_configuration.cpp
+  keywords_data.cpp
+  keywords_master.cpp
+  keywords_module.cpp
+  keywords_pairpotentials.cpp
+  keywords_simulation.cpp
+  keywords_species.cpp
+  keywords_speciesinfo.cpp
+  masterterms.cpp
+  pairpotentials.cpp
+  setup.cpp
+  simulation.cpp
+  species.cpp
 
-duq.h
-keywords.h
+  duq.h
+  keywords.h
 )
 
 include_directories(
-../
-${CMAKE_SOURCE_DIR}
-${CMAKE_BINARY_DIR}
-${CMAKE_BINARY_DIR}/src
+  ../
+  ${CMAKE_SOURCE_DIR}
+  ${CMAKE_BINARY_DIR}
+  ${CMAKE_BINARY_DIR}/src
 )

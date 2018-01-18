@@ -134,6 +134,9 @@ bool DUQ::loadInput(const char* filename)
 				Messenger::print("Created Data '%s'...\n", data->name());
 				if (!DataBlock::parse(parser, this, data)) error = true;
 				break;
+			case (InputBlocks::MasterBlock):
+				if (!MasterBlock::parse(parser, this)) error = true;
+				break;
 			case (InputBlocks::ModuleBlock):
 				// The argument following the keyword is the module name
 				masterInstance = ModuleList::findMasterInstance(parser.argc(1));
