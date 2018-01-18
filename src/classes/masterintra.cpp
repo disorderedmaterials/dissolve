@@ -24,7 +24,7 @@
 #include "base/messenger.h"
 
 // Constructor
-MasterIntra::MasterIntra()
+MasterIntra::MasterIntra() : SpeciesIntra(), ListItem<MasterIntra>()
 {
 	parent_ = NULL;
 	masterParameters_ = NULL;
