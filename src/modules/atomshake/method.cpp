@@ -76,7 +76,7 @@ bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		if (cutoffDistance < 0.0) cutoffDistance = duq.pairPotentialRange();
 		const int nShakesPerAtom = keywords_.asInt("ShakesPerAtom");
 		const double targetAcceptanceRate = keywords_.asDouble("TargetAcceptanceRate");
-		double stepSize = GenericListHelper<double>::retrieve(cfg->moduleData(), "StepSize", uniqueName(), keywords_.asDouble("StepSize"));
+		double stepSize = GenericListHelper<double>::retrieve(moduleData, "StepSize", uniqueName(), keywords_.asDouble("StepSize"));
 		const double termScale = 1.0;
 		const double rRT = 1.0/(.008314472*cfg->temperature());
 
@@ -209,7 +209,7 @@ bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
 
 		// Store updated parameter values
 		if (!procPool.broadcast(&stepSize, 1, 0, ProcessPool::Group)) return false;
-		GenericListHelper<double>::realise(cfg->moduleData(), "StepSize", uniqueName(), GenericItem::InRestartFileFlag) = stepSize;
+		GenericListHelper<double>::realise(moduleData, "StepSize", uniqueName(), GenericItem::InRestartFileFlag) = stepSize;
 		Messenger::print("AtomShake: Updated translation step is %f Angstroms.\n", stepSize);
 		
 		// Increment configuration changeCount_
