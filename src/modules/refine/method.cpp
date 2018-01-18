@@ -42,6 +42,8 @@ bool RefineModule::preProcess(DUQ& duq, ProcessPool& procPool)
 // Execute Method
 bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 {
+	int i, j;
+
 	/*
 	 * Grab dependent Module pointers
 	 */
@@ -60,14 +62,25 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	/*
 	 * Get Keyword Options
 	 */
-	const double truncationWidth = keywords_.asDouble("TruncationWidth");
-	const double minimumRadius = keywords_.asDouble("MinimumRadius");
+	const bool autoMinimumRadii = keywords_.asBool("AutoMinimumRadius");
+	const bool smearSQ = keywords_.asBool("DeltaSQSmearing");
+	const double sqSmearingDelta = keywords_.asDouble("DeltaSQSmearDelta");
+	const double sqSmearingWindow = keywords_.asDouble("DeltaSQSmearWindow");
+	const bool smearUR = keywords_.asBool("DeltaURSmearing");
+	const double urSmearingDelta = keywords_.asDouble("DeltaURSmearDelta");
+	const double urSmearingWindow = keywords_.asDouble("DeltaURSmearWindow");
+	const double globalMinimumRadius = keywords_.asDouble("MinimumRadius");
 	bool onlyWhenStable = keywords_.asBool("OnlyWhenStable");
+	const double truncationWidth = keywords_.asDouble("TruncationWidth");
 	const WindowFunction& windowFunction = KeywordListHelper<WindowFunction>::retrieve(keywords_, "WindowFunction", WindowFunction());
 
 	// Print option summary
+	if (autoMinimumRadii) Messenger::print("Refine: Minimum radii of generated potentials will be determined automatically.\n");
+	else Messenger::print("Refine: Minimum radius of %f Angstroms will be applied to all generated potentials.\n", globalMinimumRadius);
+	if (smearSQ) Messenger::print("Refine: Generated difference S(Q) will be smeared (delta spacing = %f Angstroms**-1, window = %f Angstroms**-1).\n", sqSmearingDelta, sqSmearingWindow);
+	if (smearUR) Messenger::print("Refine: Generated delta U(r) will be smeared (delta spacing = %f Angstroms, window = %f Angstroms).\n", urSmearingDelta, urSmearingWindow);
 	if (onlyWhenStable) Messenger::print("Refine: Potential refinement will only be attempted if all related Configuration energies are stable.\n");
-	if (windowFunction.function() == WindowFunction::UnityWindow) Messenger::print("Refine: No window function will be applied in Fourier transforms.");
+	if (windowFunction.function() == WindowFunction::NoWindow) Messenger::print("Refine: No window function will be applied in Fourier transforms.");
 	else Messenger::print("Refine: Window function to be applied in Fourier transforms is %s (%s).", WindowFunction::functionType(windowFunction.function()), windowFunction.parameterSummary().get());
 
 	/*
@@ -200,23 +213,78 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	bool created;
 	Array2D<XYData>& deltaSQ = GenericListHelper< Array2D<XYData> >::realise(duq.processingModuleData(), "DeltaSQ", uniqueName_, GenericItem::InRestartFileFlag, &created);
 	if (created) deltaSQ.initialise(nTypes, nTypes, true);
-	int i = 0;
+
+	i = 0;
+	double x;
 	for (AtomType* at1 = duq.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
 	{
-		int j = i;
+		j = i;
 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 		{
 			// Grab difference partial and make sure its object name is set
-			XYData& partial = deltaSQ.ref(i, j);
-			partial.setObjectName(CharString("%s//DeltaSQ//%s-%s", uniqueName_.get(), at1->name(), at2->name()));
+			XYData& dSQ = deltaSQ.ref(i, j);
+			dSQ.setObjectName(CharString("%s//DeltaSQ//%s-%s", uniqueName_.get(), at1->name(), at2->name()));
 
-			// Copy our partial S(Q) generated from the experimental datasets
-			partial = generatedSQ.ref(i, j);
+			// Reset the difference partial
+			dSQ.clear();
 
-			// Subtract the simulated unweighted S(Q) from the difference partial
-			// Truncate the partial at the Q value of the shortest data
-			partial.addInterpolated(unweightedSQ.partial(i, j), -1.0);
+			// Create the difference partial, over the range permitted by both datasets
+			const Array<double> x1 = generatedSQ.ref(i, j).constArrayX();
+			const Array<double> y1 = generatedSQ.ref(i, j).constArrayY();
+			XYData& simulatedSQ = unweightedSQ.partial(i,j);
+			const double x2min = 0.5; //simulatedSQ.xFirst();
+			const double x2max = simulatedSQ.xLast();
 
+			for (int n=0; n<x1.nItems(); ++n)
+			{
+				x = x1.value(n);
+				if (x < x2min) continue;
+				if (x > x2max) break;
+
+				dSQ.addPoint(x, y1.value(n) - simulatedSQ.interpolated(x));
+			}
+
+			// Generate smeared representation of difference S(Q)
+			if (smearSQ)
+			{
+				XYData smearedSQ;
+				double r = 0.0;
+				while (r <= x2max)
+				{
+					if (r < 0.5)
+					{
+						smearedSQ.addPoint(r, 0.0);
+						r += sqSmearingDelta;
+						continue;
+					}
+
+					// Assess the difference function around the coarse point
+					double avg = 0.0;
+					int nPoints = 0;
+					for (int n = 0; n<dSQ.nPoints(); ++n)
+					{
+						if (dSQ.x(n) < (r-0.5*sqSmearingWindow)) continue;
+						if (dSQ.x(n) > (r+0.5*sqSmearingWindow)) break;
+
+						avg += dSQ.y(n);
+						++nPoints;
+					}
+
+					smearedSQ.addPoint(r, nPoints > 0 ? (1.0 - (r/x2max)) * avg / nPoints : 0.0);
+
+					r += sqSmearingDelta;
+				}
+
+				// Generate interpolated, smooth function in original XYData object
+				double deltaR = dSQ.x(1) - dSQ.x(0);
+				dSQ.clear();
+				r = 0.0;
+				while (r <= x2max)
+				{
+					dSQ.addPoint(r, smearedSQ.interpolated(r));
+					r += deltaR;
+				}
+			}
 		}
 	}
 
@@ -230,6 +298,50 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	Array2D<XYData>& deltaGR = GenericListHelper< Array2D<XYData> >::realise(duq.processingModuleData(), "DeltaGR", uniqueName_, GenericItem::InRestartFileFlag, &created);
 	if (created) deltaGR.initialise(nTypes, nTypes, true);
 
+	// Set up / updated minimum radii array
+	Array2D<double>& minimumRadii = GenericListHelper< Array2D<double> >::realise(duq.processingModuleData(), "MinimumRadii", uniqueName_, GenericItem::InRestartFileFlag, &created);
+	if (created) minimumRadii.initialise(nTypes, nTypes, true);
+	if (autoMinimumRadii)
+	{
+		// Get calculated g(r), from which we will determine the minimum radius to employ in the generated pair potential
+		bool found;
+		PartialSet& unweightedGR = GenericListHelper<PartialSet>::retrieve(duq.processingModuleData(), "UnweightedGR", partialsModule->uniqueName(), PartialSet(), &found);
+		if (!found)
+		{
+			Messenger::error("Couldn't locate 'UnweightedGR' data in PartialsModule '%s'.\n", partialsModule->uniqueName());
+			return false;
+		}
+
+		// Define a fraction of the determined g(r) non-zero point that will become our radius limit
+		const double rFraction = 0.8;
+
+		// Set ourselves a sensible maximum radius, in case we have a situation were the g(r) is only nonzero at large r
+		const double hardRadiusLimit = 2.0 / rFraction;
+
+		const double thresholdValue = 0.1;
+		i = 0;
+		for (AtomType* at1 = duq.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+		{
+			int j = i;
+			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
+			{
+				// Grab g(r)
+				XYData& gr = unweightedGR.partial(i, j);
+
+				// Find first non-zero (above the threshold value) point in g(r)
+				int n;
+				for (n=0; n<gr.nPoints(); ++n) if (gr.y(n) > thresholdValue) break;
+				if ((n < gr.nPoints()) && (gr.x(n) < hardRadiusLimit)) minimumRadii.ref(i,j) = gr.x(n);
+				else minimumRadii.ref(i,j) = hardRadiusLimit;
+
+				minimumRadii.ref(i,j) *= rFraction;
+
+				Messenger::print("Minimum radius for %s-%s interaction determined to be %f Angstroms.\n", at1->name(), at2->name(), minimumRadii.value(i,j));
+			}
+		}
+	}
+	else minimumRadii = globalMinimumRadius;
+	
 	const double ppRange = duq.pairPotentialRange();
 	const double ppDelta = duq.pairPotentialDelta();
 	double weight, absInt, scaleFactor;
@@ -260,7 +372,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 
 			// Copy the delta S(Q) and do the inverse FT to get the delta [g(r) - 1]
 			dGR = deltaSQ.ref(i, j);
-			dGR.sineFT(1.0 / (2 * PI * PI * rho), ppDelta, ppDelta, ppRange, windowFunction, broadening, true);
+			dGR.sineFT(1.0 / (2 * PI * PI * rho), 0.0, ppDelta, ppRange, windowFunction, broadening, true);
 
 			// Set the default weighting factor for the pair potential addition
 			weight = weighting;
@@ -340,7 +452,8 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 					return false;
 			}
 
-			// Apply smooth zeroing of potential up to the minimum distance
+			// Apply smooth zeroing of potential up to the minimum distance, and truncate at the end
+			double minimumRadius = minimumRadii.value(i,j);
 			const double truncationStart = minimumRadius - truncationWidth;
 			double r;
 			Array<double>& y = dPhiR.arrayY();
@@ -352,7 +465,45 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 				else y[n] *= 0.5 - 0.5*cos(PI*0.5*(r-truncationStart)/(truncationWidth*0.5));
 			}
 
-			// Apply the perturbation
+			for (int n=0; n<dPhiR.nPoints(); ++n) y[n] *= 1.0 - double(n)/(dPhiR.nPoints()-1);
+
+			// Generate smeared representation of modification to potential
+			if (smearUR)
+			{
+				XYData smearedUR;
+				r = 0.0;
+				while (r <= ppRange)
+				{
+					if (r < minimumRadius)
+					{
+						smearedUR.addPoint(r, 0.0);
+						r += urSmearingDelta;
+						continue;
+					}
+
+					// Assess the potential around the coarse point
+					double avg = 0.0;
+					int nPoints = 0;
+					for (int n = 0; n<dPhiR.nPoints(); ++n)
+					{
+						if (dPhiR.x(n) < (r-0.5*urSmearingWindow)) continue;
+						if (dPhiR.x(n) > (r+0.5*urSmearingWindow)) break;
+
+						avg += dPhiR.y(n);
+						++nPoints;
+					}
+
+					printf("At r = %f, sum = %f and npouints = %i\n", r, avg, nPoints);
+					smearedUR.addPoint(r, nPoints > 0 ? avg / nPoints : 0.0);
+
+					r += urSmearingDelta;
+				}
+
+				// Make sure we go smoothly to zero at the limit of the potential
+				for (int n=0; n<dPhiR.nPoints(); ++n) dPhiR.setY(n, smearedUR.interpolated(dPhiR.x(n)) * (1.0 - double(n)/(dPhiR.nPoints()-1)));
+			}
+
+			// Apply the perturbation to the PairPotential
 			dPhiR.arrayY() *= weight;
 			pp->adjustUAdditional(dPhiR);
 		}
