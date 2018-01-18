@@ -100,7 +100,7 @@ double Atom::charge() const
 void Atom::setLocalTypeIndex(int id)
 {
 #ifdef CHECKS
-	if (localTypeIndex_ != -1) Messenger::warn("Overwriting local AtomType index for atom '%p'.\n", this);
+	if (localTypeIndex_ != -1) Messenger::warn("Overwriting local AtomType index for Atom '%p'.\n", this);
 #endif
 	localTypeIndex_ = id;
 }
@@ -109,7 +109,7 @@ void Atom::setLocalTypeIndex(int id)
 int Atom::localTypeIndex() const
 {
 #ifdef CHECKS
-	if (localTypeIndex_ == -1) Messenger::warn("Local AtomType index has not yet been set for atom '%p'.\n", this);
+	if (localTypeIndex_ == -1) Messenger::warn("Local AtomType index has not yet been set for Atom '%p'.\n", this);
 #endif
 	return localTypeIndex_;
 }
@@ -117,7 +117,7 @@ int Atom::localTypeIndex() const
 // Set master AtomType index 
 void Atom::setMasterTypeIndex(int id)
 {
-	if (masterTypeIndex_ != -1) Messenger::warn("Warning: Overwriting master AtomType index for atom '%p'.\n", this);
+	if (masterTypeIndex_ != -1) Messenger::warn("Warning: Overwriting master AtomType index for Atom '%p'.\n", this);
 	masterTypeIndex_ = id;
 }
 
@@ -125,7 +125,7 @@ void Atom::setMasterTypeIndex(int id)
 int Atom::masterTypeIndex() const
 {
 #ifdef CHECKS
-	if (masterTypeIndex_ == -1) Messenger::warn("Global AtomType index has not yet been set for atom '%p'.\n", this);
+	if (masterTypeIndex_ == -1) Messenger::warn("Global AtomType index has not yet been set for Atom '%p'.\n", this);
 #endif
 	return masterTypeIndex_;
 }
