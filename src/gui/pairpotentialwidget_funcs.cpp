@@ -139,13 +139,13 @@ void PairPotentialWidget::updateControls()
 // Disable sensitive controls within widget, ready for main code to run
 void PairPotentialWidget::disableSensitiveControls()
 {
-// 	ui.ControlsFrame->setEnabled(false);
+	ui.ZeroUAdditionalButton->setEnabled(false);
 }
 
 // Enable sensitive controls within widget, ready for main code to run
 void PairPotentialWidget::enableSensitiveControls()
 {
-// 	ui.ControlsFrame->setEnabled(true);
+	ui.ZeroUAdditionalButton->setEnabled(true);
 }
 
 // Return string specifying widget type
