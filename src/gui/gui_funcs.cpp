@@ -177,7 +177,8 @@ QMdiSubWindow* DUQWindow::addWindow(SubWidget* widget, void* windowContents, con
 	QMdiSubWindow* window = windowContents ? currentWindow(windowContents) : NULL;
 	if (window)
 	{
-		Messenger::print("Refused to add window contents %p to our list, as it is already present elsewhere.\n");
+		Messenger::printVerbose("Refused to add window contents %p to our list, as it is already present elsewhere. It will be raised instead.\n");
+		window->raise();
 		return window;
 	}
 
