@@ -22,24 +22,36 @@
  *   LC: QA402.5.B74.
  */
 
+#ifndef DUQ_PRAXIS_H
+#define DUQ_PRAXIS_H
+
 #include <iomanip>
 
 template <class T> class Praxis
 {
+	// Command pointer typedef
+	typedef double (T::*PraxisCostFunction)(double x[], int n);
+
 	public:
 	// Constructor
-	Praxis<T>(T& object) : object_(object)
+	Praxis<T>(T& object, PraxisCostFunction func) : object_(object), costFunction_(func)
 	{
 	}
 
 	private:
 	// Object used to call specified function
 	T& object_;
+	// Pointer to cost function
+	PraxisCostFunction costFunction_;
+	// Pointers to double values to be fit
+	Array<double*> targets_;
+	// Local values for fitting
+	Array<double> values_;
 
 	private:
 	//****************************************************************************80
 	
-	double flin ( int n, int jsearch, double l, double (T::*f) ( double x[], int n ), 
+	double flin ( int n, int jsearch, double l, PraxisCostFunction f, 
 		double x[], int &nf, double v[], double q0[], double q1[], double &qd0, 
 		double &qd1, double &qa, double &qb, double &qc )
 	
@@ -585,7 +597,7 @@ template <class T> class Praxis
 	//****************************************************************************80
 	
 	void minny ( int n, int jsearch, int nits, double &d2, double &x1, double &f1, 
-		bool fk, double (T::*f) ( double x[], int n ), double x[], double t, double h, 
+		bool fk, PraxisCostFunction f, double x[], double t, double h, 
 		double v[], double q0[], double q1[], int &nl, int &nf, double dmin, 
 		double ldt, double &fx, double &qa, double &qb, double &qc, double &qd0, 
 		double &qd1 )
@@ -970,7 +982,7 @@ template <class T> class Praxis
 	}
 	//****************************************************************************80
 	
-	void quad ( int n, double (T::*f) ( double x[], int n ), double x[], double t, 
+	void quad ( int n, PraxisCostFunction f, double x[], double t, 
 		double h, double v[], double q0[], double q1[], int &nl, int &nf, double dmin, 
 		double ldt, double &fx, double &qf1, double &qa, double &qb, double &qc, 
 		double &qd0, double &qd1 )
@@ -1990,10 +2002,8 @@ template <class T> class Praxis
 	}
 	//****************************************************************************80
 
-	public:
-	double praxis ( double t0, double h0, int n, int prin, double x[], 
-		double (T::*f) ( double x[], int n ) )
-	
+	double praxis ( double t0, double h0, int n, int prin, double x[], PraxisCostFunction f )
+
 	//****************************************************************************80
 	//
 	//  Purpose:
@@ -2647,5 +2657,24 @@ template <class T> class Praxis
 	
 		return fx;
 	}
+
+	public:
+	// Add pointer to double value to be fit
+	void addTarget(double& var)
+	{
+		targets_.add(&var);
+		values_.add(var);
+	}
+	// Perform minimisation
+	double minimise(double tolerance = 1.0e-5, double maxStep = 0.01, int printLevel = 0)
+	{
+		double value = praxis(tolerance, maxStep, values_.nItems(), printLevel, values_.array(), costFunction_);
+
+		// Set minimised values back into their original variables
+		for (int n=0; n<targets_.nItems(); ++n) (*targets_[n]) = values_[n];
+	
+		return value;
+	}
 };
-	// R8VEC_SWAP swaps the entries of two R8VEC's.
+
+#endif
