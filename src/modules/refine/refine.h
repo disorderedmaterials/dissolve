@@ -26,7 +26,7 @@
 #include "base/xydata.h"
 
 // Forward Declarations
-/* none */
+class AtomType;
 
 // Refine Module
 class RefineModule : public Module
@@ -122,8 +122,22 @@ class RefineModule : public Module
 	 * Functions
 	 */
 	private:
+	// Current data being fitted by modifyBondTerms
+	XYData fitData_;
+	// Starting position and maximum delta to allow on the x-intercept while fitting
+	double xCentreStart_, xCentreDeltaLimit_;
+
+	private:
 	// Calculate c(r) from supplied S(Q)
 	XYData calculateCR(const XYData& sq, double normFactor, double rMin, double rStep, double rMax, WindowFunction windowFunction = WindowFunction(), BroadeningFunction broadening = BroadeningFunction(), bool unbroaden = false);
+	// Determine modification to bonds based on supplied delta g(r), returning features extracted from deltaGR
+	bool modifyBondTerms(DUQ& duq, const XYData& deltaGR, AtomType* typeI, AtomType* typeJ, XYData& deltaBond);
+	// Return value of fit equation given specified parameters
+	inline double fitEquation(double x, double xCentre, double delta, double widthSquared, double AL, double AC, double AR);
+	// Cost function for modifyBondTerms() fitting
+	double costFunction(double x[], int n);
+	// Sum fitting equation with the specified parameters into the specified XYData
+	void sumFitEquation(XYData& target, double xCentre, double delta, double widthSquared, double AL, double AC, double AR);
 
 
 	/*

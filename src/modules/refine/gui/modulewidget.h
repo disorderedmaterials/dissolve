@@ -19,8 +19,8 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_TESTMODULEWIDGET_H
-#define DUQ_TESTMODULEWIDGET_H
+#ifndef DUQ_REFINEMODULEWIDGET_H
+#define DUQ_REFINEMODULEWIDGET_H
 
 #include "modules/refine/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
@@ -42,7 +42,7 @@ class RefineModuleWidget : public ModuleWidget
 	// Associated Module
 	RefineModule* module_;
 	// UChromaViews contained within this widget
-	UChromaViewWidget* dataGraph_, *partialSQGraph_, *deltaURGraph_, *errorsGraph_;
+	UChromaViewWidget* dataGraph_, *partialSQGraph_, *partialGRGraph_, *deltaPhiRGraph_, *errorsGraph_;
 	// Reference to DUQ
 	DUQ& dUQ_;
 

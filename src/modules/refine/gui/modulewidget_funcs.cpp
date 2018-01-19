@@ -80,18 +80,39 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, DUQ& dUQ
 	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
 	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
 
-	// Potentials Graph
+	// Partial g(r) Graph
+	
+	layout = new QVBoxLayout;
+	layout->setContentsMargins(0,0,0,0);
+	layout->setSpacing(4);
+	partialGRGraph_ = new UChromaViewWidget;
+	layout->addWidget(partialGRGraph_);
+	ui.PartialGRPlotWidget->setLayout(layout);
+
+	// Start a new, empty session
+	partialGRGraph_->startNewSession(true);
+	viewPane = partialGRGraph_->currentViewPane();
+	viewPane->setViewType(ViewPane::FlatXYView);
+	viewPane->axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+	viewPane->axes().setMax(0, 10.0);
+	viewPane->axes().setTitle(1, "g(r)");
+	viewPane->axes().setMin(1, -1.0);
+	viewPane->axes().setMax(1, 1.0);
+	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
+	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
+
+	// Delta phi(r) Graph
 
 	layout = new QVBoxLayout;
 	layout->setContentsMargins(0,0,0,0);
 	layout->setSpacing(4);
-	deltaURGraph_ = new UChromaViewWidget;
-	layout->addWidget(deltaURGraph_);
-	ui.DeltaURPlotWidget->setLayout(layout);
+	deltaPhiRGraph_ = new UChromaViewWidget;
+	layout->addWidget(deltaPhiRGraph_);
+	ui.DeltaPhiRPlotWidget->setLayout(layout);
 
 	// Start a new, empty session
-	deltaURGraph_->startNewSession(true);
-	viewPane = deltaURGraph_->currentViewPane();
+	deltaPhiRGraph_->startNewSession(true);
+	viewPane = deltaPhiRGraph_->currentViewPane();
 	viewPane->setViewType(ViewPane::FlatXYView);
 	viewPane->axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	viewPane->axes().setMax(0, 10.0);
@@ -137,12 +158,14 @@ void RefineModuleWidget::updateControls()
 	// Ensure that any displayed data are up-to-date
 	dataGraph_->refreshReferencedDataSets();
 	partialSQGraph_->refreshReferencedDataSets();
-	deltaURGraph_->refreshReferencedDataSets();
+	partialGRGraph_->refreshReferencedDataSets();
+	deltaPhiRGraph_->refreshReferencedDataSets();
 	errorsGraph_->refreshReferencedDataSets();
 
-	dataGraph_->updateDisplay();;
+	dataGraph_->updateDisplay();
 	partialSQGraph_->updateDisplay();
-	deltaURGraph_->updateDisplay();
+	partialGRGraph_->updateDisplay();
+	deltaPhiRGraph_->updateDisplay();
 	errorsGraph_->updateDisplay();
 }
 
@@ -151,6 +174,8 @@ void RefineModuleWidget::initialiseControls(RefineModule* module)
 {
 	if (!module) return;
 
+	const int nTypes = dUQ_.atomTypeList().nItems();
+	int n, m;
 	CharString blockData;
 
 	// Add reference data & calculated data to the dataGraph_, and percentage errors to the errorsGraph_
@@ -177,11 +202,10 @@ void RefineModuleWidget::initialiseControls(RefineModule* module)
 	CharString partialsModuleName = partialsModule ? partialsModule->uniqueName() : "Partials???";
 
 	// Add experimentally-determined partial S(Q), calculated partial S(Q), and delta S(Q) to the partialSQGraph_
-	const int nTypes = dUQ_.atomTypeList().nItems();
-	int n = 0;
+	n = 0;
 	for (AtomType* at1 = dUQ_.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++n)
 	{
-		int m = n;
+		m = n;
 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
 		{
 			// Experimentally-determined unweighted partial
@@ -198,7 +222,24 @@ void RefineModuleWidget::initialiseControls(RefineModule* module)
 		}
 	}
 
-	// Add delta g(r) and resulting pair potential additions to the deltaURGraph_
+	// Add experimentally-determined partial g(r) and calculated partial g(r) to the partialGRGraph_
+	n = 0;
+	for (AtomType* at1 = dUQ_.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++n)
+	{
+		m = n;
+		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
+		{
+			// Experimentally-determined unweighted partial
+			blockData.sprintf("Collection '%s-%s Exp'; Group '%s-%s'; DataSet 'Experimental %s-%s'; Source XYData '%s//GeneratedGR//%s-%s'; EndDataSet; EndCollection", at1->name(), at2->name(), at1->name(), at2->name(), at1->name(), at2->name(), module_->uniqueName(), at1->name(), at2->name());
+			partialGRGraph_->addCollectionFromBlock(blockData);
+
+			// Calculated partial
+			blockData.sprintf("Collection '%s-%s Calc'; Group '%s-%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated %s-%s'; Source XYData '%s//UnweightedGR//%s-%s//Full'; EndDataSet; EndCollection", at1->name(), at2->name(), at1->name(), at2->name(), at1->name(), at2->name(), partialsModuleName.get(), at1->name(), at2->name());
+			partialGRGraph_->addCollectionFromBlock(blockData);
+		}
+	}
+
+	// Add delta g(r) and resulting pair potential additions to the deltaPhiRGraph_
 	n = 0;
 	for (AtomType* at1 = dUQ_.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++n)
 	{
@@ -207,11 +248,15 @@ void RefineModuleWidget::initialiseControls(RefineModule* module)
 		{
 			// Generated potential
 			blockData.sprintf("Collection '%s-%s dphi(r)'; Group '%s-%s'; DataSet '%s-%s dphi(r)'; Source XYData '%s//DeltaPhiR//%s-%s'; EndDataSet; EndCollection", at1->name(), at2->name(), at1->name(), at2->name(), at1->name(), at2->name(), module_->uniqueName(), at1->name(), at2->name());
-			deltaURGraph_->addCollectionFromBlock(blockData);
+			deltaPhiRGraph_->addCollectionFromBlock(blockData);
 
 			// Delta g(r)
 			blockData.sprintf("Collection '%s-%s dg(r)'; Group '%s-%s'; LineStyle 1.0 'Quarter Dash'; DataSet '%s-%s Delta g(r)'; Source XYData '%s//DeltaGR//%s-%s'; EndDataSet; EndCollection", at1->name(), at2->name(), at1->name(), at2->name(), at1->name(), at2->name(), module_->uniqueName(), at1->name(), at2->name());
-			deltaURGraph_->addCollectionFromBlock(blockData);
+			deltaPhiRGraph_->addCollectionFromBlock(blockData);
+
+			// Delta g(r)
+			blockData.sprintf("Collection '%s-%s dBound(r)'; Group '%s-%s'; LineStyle 1.0 'Dots'; DataSet '%s-%s Delta Bound g(r)'; Source XYData '%s//DeltaGRBond//%s-%s'; EndDataSet; EndCollection", at1->name(), at2->name(), at1->name(), at2->name(), at1->name(), at2->name(), module_->uniqueName(), at1->name(), at2->name());
+			deltaPhiRGraph_->addCollectionFromBlock(blockData);
 		}
 	}
 }

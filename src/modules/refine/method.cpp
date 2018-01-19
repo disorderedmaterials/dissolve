@@ -63,13 +63,15 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	 * Get Keyword Options
 	 */
 	const bool autoMinimumRadii = keywords_.asBool("AutoMinimumRadius");
+	const bool smearPhiR = keywords_.asBool("DeltaPhiRSmearing");
+	const double phiRSmearingDelta = keywords_.asDouble("DeltaPhiRSmearDelta");
+	const double phiRSmearingWindow = keywords_.asDouble("DeltaPhiRSmearWindow");
 	const bool smearSQ = keywords_.asBool("DeltaSQSmearing");
 	const double sqSmearingDelta = keywords_.asDouble("DeltaSQSmearDelta");
 	const double sqSmearingWindow = keywords_.asDouble("DeltaSQSmearWindow");
-	const bool smearUR = keywords_.asBool("DeltaURSmearing");
-	const double urSmearingDelta = keywords_.asDouble("DeltaURSmearDelta");
-	const double urSmearingWindow = keywords_.asDouble("DeltaURSmearWindow");
 	const double globalMinimumRadius = keywords_.asDouble("MinimumRadius");
+	const double globalMaximumRadius = keywords_.asDouble("MaximumRadius");
+	const bool modifyBonds = keywords_.asBool("ModifyBonds");
 	bool onlyWhenStable = keywords_.asBool("OnlyWhenStable");
 	const double truncationWidth = keywords_.asDouble("TruncationWidth");
 	const WindowFunction& windowFunction = KeywordListHelper<WindowFunction>::retrieve(keywords_, "WindowFunction", WindowFunction());
@@ -78,10 +80,11 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	if (autoMinimumRadii) Messenger::print("Refine: Minimum radii of generated potentials will be determined automatically.\n");
 	else Messenger::print("Refine: Minimum radius of %f Angstroms will be applied to all generated potentials.\n", globalMinimumRadius);
 	if (smearSQ) Messenger::print("Refine: Generated difference S(Q) will be smeared (delta spacing = %f Angstroms**-1, window = %f Angstroms**-1).\n", sqSmearingDelta, sqSmearingWindow);
-	if (smearUR) Messenger::print("Refine: Generated delta U(r) will be smeared (delta spacing = %f Angstroms, window = %f Angstroms).\n", urSmearingDelta, urSmearingWindow);
+	if (smearPhiR) Messenger::print("Refine: Generated delta U(r) will be smeared (delta spacing = %f Angstroms, window = %f Angstroms).\n", phiRSmearingDelta, phiRSmearingWindow);
+	if (modifyBonds) Messenger::print("Refine: Equilibrium master bond distances will be modified.\n");
 	if (onlyWhenStable) Messenger::print("Refine: Potential refinement will only be attempted if all related Configuration energies are stable.\n");
-	if (windowFunction.function() == WindowFunction::NoWindow) Messenger::print("Refine: No window function will be applied in Fourier transforms.");
-	else Messenger::print("Refine: Window function to be applied in Fourier transforms is %s (%s).", WindowFunction::functionType(windowFunction.function()), windowFunction.parameterSummary().get());
+	if (windowFunction.function() == WindowFunction::NoWindow) Messenger::print("Refine: No window function will be applied in Fourier transforms of S(Q) to g(r)");
+	else Messenger::print("Refine: Window function to be applied in Fourier transforms of S(Q) to g(r) is %s (%s).", WindowFunction::functionType(windowFunction.function()), windowFunction.parameterSummary().get());
 
 	/*
 	 * Are the energies of all involved Configurations stable (if OnlyWhenStable option is on)
@@ -151,7 +154,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 
 		// Retrieve the PartialSet from the module
 		bool found = false;
-		PartialSet& calcSQ = GenericListHelper<PartialSet>::retrieve(duq.processingModuleData(), "WeightedSQ", partialsModule->uniqueName(), PartialSet(), &found);
+		PartialSet& calcSQ = GenericListHelper<PartialSet>::retrieve(duq.processingModuleData(), "WeightedSQ", data->associatedModule()->uniqueName(), PartialSet(), &found);
 		if (!found)
 		{
 			Messenger::warn("Could not locate associated PartialSet for Data '%s'.\n", data->name());
@@ -169,6 +172,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	/*
 	 * Construct our full, square, scattering matrix, using the master AtomTypes list
 	 */
+
 	// Realise the generatedSQ array
 	Array2D<XYData>& generatedSQ = GenericListHelper< Array2D<XYData> >::realise(duq.processingModuleData(), "GeneratedSQ", uniqueName_, GenericItem::InRestartFileFlag);
 	ScatteringMatrix scatteringMatrix;
@@ -207,6 +211,28 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	scatteringMatrix.generatePartials(generatedSQ);
 
 	/*
+	 * Calculate g(r) from generatedSQ
+	 */
+	Array2D<XYData>& generatedGR = GenericListHelper< Array2D<XYData> >::realise(duq.processingModuleData(), "GeneratedGR", uniqueName_, GenericItem::InRestartFileFlag);
+	generatedGR.initialise(duq.atomTypeList().nItems(), duq.atomTypeList().nItems(), true);
+	i = 0;
+	for (AtomType* at1 = duq.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+	{
+		j = i;
+		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
+		{
+			// Grab experimental g(r) contained and make sure its object name is set
+			XYData& expGR = generatedGR.ref(i,j);
+			expGR.setObjectName(CharString("%s//GeneratedGR//%s-%s", uniqueName_.get(), at1->name(), at2->name()));
+
+			// Copy experimental S(Q) and FT it
+			expGR = generatedSQ.ref(i,j);
+			expGR.sineFT(1.0 / (2 * PI * PI * rho), 0.0, 0.05, 30.0, windowFunction, broadening, true);
+			expGR.arrayY() += 1.0;
+		}
+	}
+
+	/*
 	 * Construct difference matrix of partials
 	 */
 	int nTypes = duq.atomTypeList().nItems();
@@ -215,7 +241,6 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	if (created) deltaSQ.initialise(nTypes, nTypes, true);
 
 	i = 0;
-	double x;
 	for (AtomType* at1 = duq.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
 	{
 		j = i;
@@ -235,6 +260,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 			const double x2min = 0.5; //simulatedSQ.xFirst();
 			const double x2max = simulatedSQ.xLast();
 
+			double x;
 			for (int n=0; n<x1.nItems(); ++n)
 			{
 				x = x1.value(n);
@@ -297,6 +323,11 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	if (created) deltaPhiR.initialise(nTypes, nTypes, true);
 	Array2D<XYData>& deltaGR = GenericListHelper< Array2D<XYData> >::realise(duq.processingModuleData(), "DeltaGR", uniqueName_, GenericItem::InRestartFileFlag, &created);
 	if (created) deltaGR.initialise(nTypes, nTypes, true);
+	if (modifyBonds)
+	{
+		Array2D<XYData>& deltaGRBond = GenericListHelper< Array2D<XYData> >::realise(duq.processingModuleData(), "DeltaGRBond", uniqueName_, GenericItem::InRestartFileFlag, &created);
+		if (created) deltaGRBond.initialise(nTypes, nTypes, true);
+	}
 
 	// Set up / updated minimum radii array
 	Array2D<double>& minimumRadii = GenericListHelper< Array2D<double> >::realise(duq.processingModuleData(), "MinimumRadii", uniqueName_, GenericItem::InRestartFileFlag, &created);
@@ -313,10 +344,10 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 		}
 
 		// Define a fraction of the determined g(r) non-zero point that will become our radius limit
-		const double rFraction = 0.8;
+		const double rFraction = 0.95;
 
 		// Set ourselves a sensible maximum radius, in case we have a situation were the g(r) is only nonzero at large r
-		const double hardRadiusLimit = 2.0 / rFraction;
+		const double hardRadiusLimit = globalMaximumRadius / rFraction;
 
 		const double thresholdValue = 0.1;
 		i = 0;
@@ -325,8 +356,8 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 			int j = i;
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 			{
-				// Grab g(r)
-				XYData& gr = unweightedGR.partial(i, j);
+				// Grab unbound g(r)
+				XYData& gr = unweightedGR.unboundPartial(i, j);
 
 				// Find first non-zero (above the threshold value) point in g(r)
 				int n;
@@ -336,7 +367,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 
 				minimumRadii.ref(i,j) *= rFraction;
 
-				Messenger::print("Minimum radius for %s-%s interaction determined to be %f Angstroms.\n", at1->name(), at2->name(), minimumRadii.value(i,j));
+				Messenger::print("Minimum radius for %s-%s interatomic potential determined to be %f Angstroms.\n", at1->name(), at2->name(), minimumRadii.value(i,j));
 			}
 		}
 	}
@@ -376,6 +407,19 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 
 			// Set the default weighting factor for the pair potential addition
 			weight = weighting;
+
+			// If we are modifying bond equlibrium distances, search for signatures in the deltaGR, do this now.
+			// Such signatures will be removed from the final dGR, and will thus not contribute to the PairPotential addition.
+			if (modifyBonds)
+			{
+				// Grab the deltaGRBond container and make sure its object name is set
+				Array2D<XYData>& deltaGRBonds = GenericListHelper< Array2D<XYData> >::retrieve(duq.processingModuleData(), "DeltaGRBond", uniqueName_);
+				XYData& deltaGRBond = deltaGRBonds.ref(i,j);
+				deltaGRBond.setObjectName(CharString("%s//DeltaGRBond//%s-%s", uniqueName_.get(), at1->name(), at2->name()));
+
+				if (!modifyBondTerms(duq, dGR, at1, at2, deltaGRBond)) return false;
+				dGR.addInterpolated(deltaGRBond, -1.0);
+			}
 
 			// Create a perturbation
 			switch (generationType)
@@ -468,16 +512,16 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 			for (int n=0; n<dPhiR.nPoints(); ++n) y[n] *= 1.0 - double(n)/(dPhiR.nPoints()-1);
 
 			// Generate smeared representation of modification to potential
-			if (smearUR)
+			if (smearPhiR)
 			{
-				XYData smearedUR;
+				XYData smearedPhiR;
 				r = 0.0;
 				while (r <= ppRange)
 				{
 					if (r < minimumRadius)
 					{
-						smearedUR.addPoint(r, 0.0);
-						r += urSmearingDelta;
+						smearedPhiR.addPoint(r, 0.0);
+						r += phiRSmearingDelta;
 						continue;
 					}
 
@@ -486,21 +530,20 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 					int nPoints = 0;
 					for (int n = 0; n<dPhiR.nPoints(); ++n)
 					{
-						if (dPhiR.x(n) < (r-0.5*urSmearingWindow)) continue;
-						if (dPhiR.x(n) > (r+0.5*urSmearingWindow)) break;
+						if (dPhiR.x(n) < (r-0.5*phiRSmearingWindow)) continue;
+						if (dPhiR.x(n) > (r+0.5*phiRSmearingWindow)) break;
 
 						avg += dPhiR.y(n);
 						++nPoints;
 					}
 
-					printf("At r = %f, sum = %f and npouints = %i\n", r, avg, nPoints);
-					smearedUR.addPoint(r, nPoints > 0 ? avg / nPoints : 0.0);
+					smearedPhiR.addPoint(r, nPoints > 0 ? avg / nPoints : 0.0);
 
-					r += urSmearingDelta;
+					r += phiRSmearingDelta;
 				}
 
 				// Make sure we go smoothly to zero at the limit of the potential
-				for (int n=0; n<dPhiR.nPoints(); ++n) dPhiR.setY(n, smearedUR.interpolated(dPhiR.x(n)) * (1.0 - double(n)/(dPhiR.nPoints()-1)));
+				for (int n=0; n<dPhiR.nPoints(); ++n) dPhiR.setY(n, smearedPhiR.interpolated(dPhiR.x(n)) * (1.0 - double(n)/(dPhiR.nPoints()-1)));
 			}
 
 			// Apply the perturbation to the PairPotential
