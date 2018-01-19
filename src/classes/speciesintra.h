@@ -23,6 +23,7 @@
 #define DUQ_SPECIESINTRA_H
 
 #include "base/charstring.h"
+#include "templates/array.h"
 
 #define MAXINTRAPARAMS 4
 
@@ -82,6 +83,10 @@ class SpeciesIntra
 	double parameter(int id) const;
 	// Return array of parameters
 	const double* parameters() const;
+	// Return parameters as Array<double>
+	Array<double> parametersAsArray() const;
+	// Set parameters from Array<double>
+	void setParametersFromArray(Array<double> params);
 };
 
 #endif

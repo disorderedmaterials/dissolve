@@ -121,3 +121,21 @@ const double* SpeciesIntra::parameters() const
 {
 	return masterParameters_ ? masterParameters_->parameters() : parameters_;
 }
+
+// Return parameters as Array<double>
+Array<double> SpeciesIntra::parametersAsArray() const
+{
+	Array<double> params;
+	for (int n=0; n<MAXINTRAPARAMS; ++n) params.add(parameters_[n]);
+	return params;
+}
+
+// Set parameters from Array<double>
+void SpeciesIntra::setParametersFromArray(Array<double> params)
+{
+	for (int n=0; n<MAXINTRAPARAMS; ++n)
+	{
+		if (params.nItems() <= n) break;
+		parameters_[n] = params[n];
+	}
+}
