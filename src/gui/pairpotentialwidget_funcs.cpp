@@ -132,6 +132,8 @@ void PairPotentialWidget::updateControls()
 	uChromaView_->refreshReferencedDataSets();
 	uChromaView_->updateDisplay();
 
+	ui.UAdditionalMagnitudeLabel->setText(pairPotential_ ? QString("%1 kJ/mol %2").arg(pairPotential_->uAdditional().absIntegral()).arg(QChar(0xc5)) : "N/A");
+
 	refreshing_ = false;
 }
 

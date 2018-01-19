@@ -12,7 +12,7 @@
   </property>
   <property name="font">
    <font>
-    <pointsize>9</pointsize>
+    <pointsize>8</pointsize>
    </font>
   </property>
   <property name="windowTitle">
@@ -221,11 +221,17 @@
          </property>
          <item>
           <widget class="QCheckBox" name="FullEnergyCheck">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="toolTip">
             <string>Display the full interatomic potential, including any additional generated potential</string>
            </property>
            <property name="text">
-            <string>Full (including additional)</string>
+            <string>Full (U(r) + φ(r))</string>
            </property>
            <property name="checked">
             <bool>true</bool>
@@ -238,7 +244,7 @@
             <string>Display the full, original interatomic potential</string>
            </property>
            <property name="text">
-            <string>Original</string>
+            <string>Original (U(r))</string>
            </property>
            <property name="checked">
             <bool>true</bool>
@@ -251,7 +257,7 @@
             <string>Display the additional generated potential</string>
            </property>
            <property name="text">
-            <string>Additional</string>
+            <string>Additional (φ(r))</string>
            </property>
            <property name="checked">
             <bool>true</bool>
@@ -264,7 +270,7 @@
             <string>Display the full interatomic potential, including any additional generated potential</string>
            </property>
            <property name="text">
-            <string>Force (full)</string>
+            <string>Force (dU(r) +dφ(r))</string>
            </property>
           </widget>
          </item>
@@ -272,11 +278,34 @@
        </widget>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_4">
-        <property name="spacing">
-         <number>4</number>
-        </property>
-        <item>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="2" column="0">
+         <widget class="QLabel" name="label">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>φ(r) Magnitude: </string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLabel" name="UAdditionalMagnitudeLabel">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>0.0</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0" colspan="2">
          <widget class="QPushButton" name="ResetGraphButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -289,7 +318,7 @@
           </property>
          </widget>
         </item>
-        <item>
+        <item row="1" column="0" colspan="2">
          <widget class="QPushButton" name="ZeroUAdditionalButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -298,22 +327,9 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>Zero uAdditional</string>
+           <string>Zero φ(r)</string>
           </property>
          </widget>
-        </item>
-        <item>
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
         </item>
        </layout>
       </item>
