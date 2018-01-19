@@ -99,7 +99,7 @@ void PartialsModule::setUpKeywords()
 	keywords_.add(new IntegerModuleKeyword(5, 0), "Averaging", "Number of historical partial sets to combine into final partials", "<N[5]>");
 	keywords_.add(new ComplexModuleKeyword(2,2), "ConfigurationWeight", "Sets the relative weight of the specified Configuration in construction of the partials", "<Configuration Name> <weight>");
 	keywords_.add(new ComplexModuleKeyword(1), "Exchangeable", "Define an exchangeable group of atoms", "<AtomType> [AtomType ...]");
-	keywords_.add(new CharStringModuleKeyword("Exponential", PartialsModule::nAveragingSchemes, AveragingSchemeKeywords), "AveragingScheme", "Weighting scheme to use when averaging partials", "<scheme[Exponential]>");
+	keywords_.add(new CharStringModuleKeyword("Simple", PartialsModule::nAveragingSchemes, AveragingSchemeKeywords), "AveragingScheme", "Weighting scheme to use when averaging partials", "<scheme[Exponential]>");
 	keywords_.add(new BoolModuleKeyword(false), "Bragg", "Enable calculation of Bragg scattering", "<True|False*>");
 	keywords_.add(new DoubleModuleKeyword(0.001), "BraggQResolution", "Binwidth in Q to use when calculating Bragg peaks");
 	keywords_.add(new BoolModuleKeyword(false), "InternalTest", "Perform internal check of calculated partials (relative to Test method)");
@@ -117,7 +117,7 @@ void PartialsModule::setUpKeywords()
 	keywords_.add(new ComplexModuleKeyword(2,4), "TestReference", "Specify g(r)/S(Q) test reference data", "<filename> <target> [xcol] [ycol]");
 	keywords_.add(new DoubleModuleKeyword(0.1, 1.0e-5), "TestThreshold", "Test threshold (%%error) above which test fails", "<threshold[0.1]>");
 	keywords_.add(new CharStringModuleKeyword("None", PartialsModule::nWeightingTypes, WeightingTypeKeywords), "Weights", "Weighting scheme to use for calculated partials (None,Neutron)");
-	keywords_.add(new WindowFunctionModuleKeyword(WindowFunction()), "WindowFunction", "Window function to apply when Fourier-transforming g(r) to S(Q)");
+	keywords_.add(new WindowFunctionModuleKeyword(WindowFunction(WindowFunction::Lorch0Window)), "WindowFunction", "Window function to apply when Fourier-transforming g(r) to S(Q)");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
