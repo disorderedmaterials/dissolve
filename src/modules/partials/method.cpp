@@ -314,6 +314,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		Configuration* refConfig = targetConfigurations_.firstItem();
 		PartialSet& unweightedgr = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedGR", uniqueName_, GenericItem::InRestartFileFlag);
 		unweightedgr.setUp(combinedAtomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), uniqueName(), "unweighted", "rdf", "r, Angstroms");
+		unweightedgr.setObjectNames(CharString("%s//UnweightedGR", uniqueName_.get()));
 
 		// Loop over Configurations again, summing into the PartialSet we have just set up
 		// We will keep a running total of the weights associated with each Configuration, and re-weight the entire set of partials at the end.
