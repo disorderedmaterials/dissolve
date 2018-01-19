@@ -523,6 +523,23 @@ bool DUQ::loadRestart(const char* filename)
 	// Set current iteration number
 	iteration_ = GenericListHelper<int>::retrieve(processingModuleData_, "Iteration", "DUQ", 0);
 
+	// Read in parameters for Master terms
+	for (MasterIntra* masterBond = masterBonds_.first(); masterBond != NULL; masterBond = masterBond->next)
+	{
+		if (!processingModuleData_.contains(CharString("MasterBond_%s", masterBond->name()), "DUQ")) continue;
+		masterBond->setParametersFromArray(GenericListHelper< Array<double> >::retrieve(processingModuleData_, CharString("MasterBond_%s", masterBond->name()), "DUQ"));
+	}
+	for (MasterIntra* masterAngle = masterAngles_.first(); masterAngle != NULL; masterAngle = masterAngle->next)
+	{
+		if (!processingModuleData_.contains(CharString("MasterAngle_%s", masterAngle->name()), "DUQ")) continue;
+		masterAngle->setParametersFromArray(GenericListHelper< Array<double> >::retrieve(processingModuleData_, CharString("MasterAngle_%s", masterAngle->name()), "DUQ"));
+	}
+	for (MasterIntra* masterTorsion = masterTorsions_.first(); masterTorsion != NULL; masterTorsion = masterTorsion->next)
+	{
+		if (!processingModuleData_.contains(CharString("MasterTorsion_%s", masterTorsion->name()), "DUQ")) continue;
+		masterTorsion->setParametersFromArray(GenericListHelper< Array<double> >::retrieve(processingModuleData_, CharString("MasterTorsion_%s", masterTorsion->name()), "DUQ"));
+	}
+
 	// Error encountered?
 	if (error)
 	{
