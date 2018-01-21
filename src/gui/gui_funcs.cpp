@@ -22,6 +22,7 @@
 #include "main/duq.h"
 #include "gui/gui.h"
 #include "gui/browser.h"
+#include "gui/mastertermswidget.h"
 #include "gui/modulecontrolwidget.h"
 #include "gui/pairpotentialwidget.h"
 #include "gui/subwidget.h"
@@ -170,6 +171,15 @@ QMdiSubWindow* DUQWindow::currentWindow(void* windowContents)
 	return NULL;
 }
 
+// Return window with specified title, if it exists
+QMdiSubWindow* DUQWindow::currentWindow(const char* title)
+{
+	ListIterator<SubWindow> subWindowIterator(subWindows_);
+	while (SubWindow* subWindow = subWindowIterator.iterate()) if (subWindow->window()->windowTitle() == title) return subWindow->window();
+
+	return NULL;
+}
+
 // Add window for specified data (as pointer)
 QMdiSubWindow* DUQWindow::addWindow(SubWidget* widget, void* windowContents, const char* windowTitle)
 {
@@ -268,6 +278,12 @@ bool DUQWindow::loadWindowLayout()
 			PairPotentialWidget* ppWidget = new PairPotentialWidget(NULL, NULL, duq_);
 			subWindow = addWindow(ppWidget, NULL, stateParser.argc(1));
 			subWidget = ppWidget;
+		}
+		else if (DUQSys::sameString(stateParser.argc(0), "MasterTerms"))
+		{
+			MasterTermsWidget* masterTermsWidget = new MasterTermsWidget(NULL, duq_);
+			subWindow = addWindow(masterTermsWidget, NULL, stateParser.argc(1));
+			subWidget = masterTermsWidget;
 		}
 		else if (DUQSys::sameString(stateParser.argc(0), "ModuleControl"))
 		{

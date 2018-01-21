@@ -21,6 +21,7 @@
 
 #include "gui/browser.h"
 #include "gui/gui.h"
+#include "gui/mastertermswidget.h"
 #include "gui/modulecontrolwidget.h"
 #include "gui/pairpotentialwidget.h"
 #include "main/duq.h"
@@ -64,6 +65,23 @@ void BrowserWidget::updateControls()
 	topItem = new QTreeWidgetItem();
 	topItem->setText(0, "Atom Types");
 	ui.BrowserTree->addTopLevelItem(topItem);
+
+	// Add on MasterTerms entry
+	topItem = new QTreeWidgetItem(BrowserWidget::MasterTermsDataType);
+	topItem->setText(0, "Master Terms");
+	ui.BrowserTree->addTopLevelItem(topItem);
+
+	// Add Species entry
+	topItem = new QTreeWidgetItem();
+	topItem->setText(0, "Species");
+	ui.BrowserTree->addTopLevelItem(topItem);
+	for (Species* sp = duq_.species(); sp != NULL; sp = sp->next)
+	{
+		item = new QTreeWidgetItem(BrowserWidget::SpeciesDataType);
+		item->setText(0, sp->name());
+		item->setData(0, Qt::UserRole, VariantPointer<Species>(sp));
+		topItem->addChild(item);
+	}
 
 	// Add Species entry
 	topItem = new QTreeWidgetItem();
@@ -179,7 +197,7 @@ void BrowserWidget::on_BrowserTree_itemDoubleClicked(QTreeWidgetItem* item, int 
 				// Create the new Configuration viewer
 				// TODO
 			}
-			else window->setFocus();
+			else window->raise();
 			break;
 		case (BrowserWidget::ModuleDataType):
 			// Is the Module already displayed?
@@ -193,10 +211,10 @@ void BrowserWidget::on_BrowserTree_itemDoubleClicked(QTreeWidgetItem* item, int 
 				subWidget = moduleControlWidget;
 				window = duqWindow_.addWindow(moduleControlWidget, module, CharString("%s (%s)", module->name(), module->uniqueName()));
 			}
-			else window->setFocus();
+			else window->raise();
 			break;
 		case (BrowserWidget::PairPotentialType):
-			// Is the Module already displayed?
+			// Is this PairPotential already displayed?
 			window = duqWindow_.currentWindow(item->data(0, Qt::UserRole).data());
 			if (!window)
 			{
@@ -206,9 +224,22 @@ void BrowserWidget::on_BrowserTree_itemDoubleClicked(QTreeWidgetItem* item, int 
 				window = duqWindow_.addWindow(pairPotentialWidget, pp, CharString("Pair Potential %s-%s", pp->atomTypeNameI(), pp->atomTypeNameJ()));
 				subWidget = pairPotentialWidget;
 			}
-			else window->setFocus();
+			else window->raise();
 			break;
 		case (BrowserWidget::SpeciesDataType):
+			break;
+		case (BrowserWidget::MasterTermsDataType):
+			// Is the Module already displayed?
+			window = duqWindow_.currentWindow("Master Terms");
+			if (!window)
+			{
+				// Create a new PairPotentialWidget
+				MasterTermsWidget* masterTermsWidget = new MasterTermsWidget(NULL, duq_);
+				window = duqWindow_.addWindow(masterTermsWidget, masterTermsWidget, "Master Terms");
+				subWidget = masterTermsWidget;
+			}
+			else window->raise();
+			break;
 			break;
 		default:
 			Messenger::print("BrowserTree doesn't know what to do with data type '%i'\n", item->type());

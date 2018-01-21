@@ -7,6 +7,7 @@ SET(gui_MOC_HDRS
   gui.h
   mimestrings.h
   mimetreewidgetitem.h
+  mastertermswidget.h
   modulecontrolwidget.h
   modulewidget.h
   pairpotentialwidget.h
@@ -18,6 +19,7 @@ SET(gui_MOC_HDRS
   mimetreewidget.hui
   outputhandler.hui
   texponentialspin.hui
+  texponentialspindelegate.hui
   thread.hui
 )
 QT5_WRAP_CPP(gui_MOC_SRCS ${gui_MOC_HDRS})
@@ -26,6 +28,7 @@ QT5_WRAP_CPP(gui_MOC_SRCS ${gui_MOC_HDRS})
 SET(gui_UIS
   browser.ui
   gui.ui
+  mastertermswidget.ui
   modulecontrolwidget.ui
   pairpotentialwidget.ui
 )
@@ -40,6 +43,7 @@ SET(gui_SRCS
   mimestrings.cpp
   mimetreewidget_funcs.cpp
   mimetreewidgetitem.cpp
+  mastertermswidget_funcs.cpp
   modulecontrolwidget_funcs.cpp
   modulewidget.cpp
   outputhandler_funcs.cpp
@@ -47,6 +51,7 @@ SET(gui_SRCS
   subwidget.cpp
   subwindow.cpp
   texponentialspin_funcs.cpp
+  texponentialspindelgate_funcs.cpp
   thread_funcs.cpp
 )
 

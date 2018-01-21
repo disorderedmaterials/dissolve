@@ -130,6 +130,8 @@ class DUQWindow : public QMainWindow
 	public:
 	// Return window for specified data (as pointer), if it exists
 	QMdiSubWindow* currentWindow(void* windowContents);
+	// Return window with specified title, if it exists
+	QMdiSubWindow* currentWindow(const char* title);
 	// Add window for widget containing specified data (as pointer)
 	QMdiSubWindow* addWindow(SubWidget* widget, void* windowContents, const char* windowTitle);
 
