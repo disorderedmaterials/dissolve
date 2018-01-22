@@ -75,6 +75,8 @@ class MasterTermsWidget : public SubWidget
 	void windowClosed(void*);
 
 	private slots:
+        void bondFunctionChanged(int index);
+        void on_BondsTable_itemChanged(QTableWidgetItem* w);
 	void on_NewBondTermButton_clicked(bool checked);
 	void on_RemoveBondTermButton_clicked(bool checked);
 };

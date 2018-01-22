@@ -111,6 +111,7 @@ void MasterTermsWidget::updateControls()
 			for (int n=0; n<SpeciesBond::nBondFunctions; ++n) forms << SpeciesBond::bondFunction( (SpeciesBond::BondFunction) n);
 			combo->addItems(forms);
 			combo->setItemData(Qt::UserRole, VariantPointer<MasterIntra>(masterBond));
+			QObject::connect(combo, SIGNAL(activated(int)), this, SLOT(bondFunctionChanged(int)));
 			ui.BondsTable->setCellWidget(currentRow, 1, combo);
 
 			// Parameters
@@ -164,6 +165,48 @@ bool MasterTermsWidget::readState(LineParser& parser)
 /*
  * Widget Slots
  */
+
+void MasterTermsWidget::bondFunctionChanged(int index)
+{
+	// Cast the sender into our QComboBox
+	QComboBox* combo = (QComboBox*) sender();
+
+	// Get target MasterIntra from the passed widget
+	MasterIntra* masterIntra = combo ? VariantPointer<MasterIntra>(combo->itemData(Qt::UserRole)) : NULL;
+	if (!masterIntra) return;
+
+	masterIntra->setForm((SpeciesBond::BondFunction) index);
+}
+
+void MasterTermsWidget::on_BondsTable_itemChanged(QTableWidgetItem* w)
+{
+	// Get target MasterIntra from the passed widget
+	MasterIntra* masterIntra = w ? VariantPointer<MasterIntra>(w->data(Qt::UserRole)) : NULL;
+	if (!masterIntra) return;
+
+	// Column of passed item tells us the type of data we need to change
+	switch (w->column())
+	{
+		// Name
+		case (0):
+			masterIntra->setName(qPrintable(w->text()));
+			break;
+		// Form of interaction
+		case (1):
+			// Handled by bondFunctionChanged()
+			break;
+		// Parameters
+		case (2):
+		case (3):
+		case (4):
+		case (5):
+			masterIntra->setParameter(w->column() - 2, w->text().toDouble());
+			break;
+		default:
+			Messenger::error("Don't know what to do with data from column %i of BondsTable.\n", w->column());
+			break;
+	}
+}
 
 void MasterTermsWidget::on_NewBondTermButton_clicked(bool checked)
 {
