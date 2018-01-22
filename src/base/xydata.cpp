@@ -719,26 +719,46 @@ void XYData::rebin(double deltaX)
 	(*this) = rebinnedData;
 }
 
-// Smooth data
-void XYData::smooth(int avgSize, int skip)
+// Perform moving average smoothing
+void XYData::movingAverage(int avgSize)
 {
-	// First, create a new dataset using Y-averages of the current data
-	XYData avg;
-	double y;
+	// Make sure avgSize is odd
+	if (avgSize%2 == 0) --avgSize;
+
+	Array<double> newY(x_.nItems());
+	newY = 0.0;
 	int n, m, i = avgSize/2;
-	for (n=i; n < x_.nItems()-i; n += (1+skip))
+
+	// Left-most region of data
+	for (n=0; n<i; ++n)
 	{
-		y = 0.0;
-		for (m=n-i; m <= n+i; ++m) y += y_[m];
-		y /= avgSize;
-		
-		avg.addPoint(x_[n], y);
+		for (m=0; m<=n+i; ++m) newY[n] += y_[m];
+		newY[n] /= (i + 1 + n);
 	}
 
-	avg.interpolate(XYData::SplineInterpolation);
+	// Central region (full average width available)
+	for (n=i; n < x_.nItems()-i; ++n)
+	{
+		for (m=n-i; m <= n+i; ++m) newY[n] += y_[m];
+		newY[n] /= avgSize;
+	}
 
-	// Now go through old data, setting new Y values from the interpolation
-	for (n=0; n<x_.nItems(); ++n) y_[n] = avg.interpolated(x_[n]);
+	// Right-most region of data
+	for (n=x_.nItems()-i; n<x_.nItems(); ++n)
+	{
+		for (m=n-i; m<x_.nItems(); ++m) newY[n] += y_[m];
+		newY[n] /= (x_.nItems() - n + i + 1);
+	}
+
+	y_ = newY;
+
+	interpolationInterval_ = -1;
+}
+
+// Apply Kolmogorov–Zurbenko filter
+void XYData::kolmogorovZurbenkoFilter(int k, int m)
+{
+	for (int iteration=0; iteration<k; ++iteration) movingAverage(m);
 }
 
 // Add interpolated data

@@ -621,9 +621,9 @@ bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration*
 		{
 			for (typeJ=typeI; typeJ<partialgr.nAtomTypes(); ++typeJ)
 			{
-				partialgr.partial(typeI,typeJ).smooth(smoothing*2+1);
-				partialgr.boundPartial(typeI,typeJ).smooth(smoothing*2+1);
-				partialgr.unboundPartial(typeI,typeJ).smooth(smoothing*2+1);
+				partialgr.partial(typeI,typeJ).movingAverage(smoothing);
+				partialgr.boundPartial(typeI,typeJ).movingAverage(smoothing);
+				partialgr.unboundPartial(typeI,typeJ).movingAverage(smoothing);
 			}
 		}
 	}

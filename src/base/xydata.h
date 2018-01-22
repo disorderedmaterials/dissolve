@@ -177,8 +177,10 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	void trim(double minX, double maxX);
 	// Rebin data onto uniform x axis
 	void rebin(double deltaX = -1.0);
-	// Smooth data
-	void smooth(int avgSize, int skip = 0);
+	// Perform moving average smoothing
+	void movingAverage(int avgSize);
+	// Apply Kolmogorov–Zurbenko filter
+	void kolmogorovZurbenkoFilter(int k, int m);
 	// Add interpolated data
 	void addInterpolated(XYData& source, double weighting = 1.0);
 	// Return RMSE of current data with (interpolated) reference data
