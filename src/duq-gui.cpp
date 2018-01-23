@@ -227,6 +227,9 @@ int main(int argc, char **argv)
 	// Clear all data
 	dUQ.clear();
 
+	// End parallel communication
+	ProcessPool::finalise();
+
 	// Done.
 	return result;
 }
