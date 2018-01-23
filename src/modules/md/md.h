@@ -104,6 +104,16 @@ class MDModule : public Module
 
 
 	/*
+	 * Functions
+	 */
+	private:
+	// Cap forces in Configuration
+	int capForces(Configuration* cfg, double maxForceSq, Array<double>& fx, Array<double>& fy, Array<double>& fz);
+	// Determine timestep based on maximal force component
+	double determineTimeStep(const Array<double>& fx, const Array<double>& fy, const Array<double>& fz);
+
+
+	/*
 	 * Data Access
 	 */
 	public:

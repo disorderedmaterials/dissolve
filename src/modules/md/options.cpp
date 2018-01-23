@@ -25,7 +25,8 @@
 // Set up keywords for Module
 void MDModule::setUpKeywords()
 {
-	keywords_.add(new DoubleModuleKeyword(1.0e7), "CapForces", "Set cap on allowable force (kJ/mol) per atom per axis (or -ve to inhibit)");
+	keywords_.add(new BoolModuleKeyword(false), "CapForces", "Control whether atomic forces are capped every step");
+	keywords_.add(new DoubleModuleKeyword(1.0e7), "CapForcesAt", "Set cap on allowable force (kJ/mol/Angstrom**2) per atom");
 	keywords_.add(new DoubleModuleKeyword(-1.0), "CutoffDistance", "Interatomic cutoff distance to employ");
 	keywords_.add(new DoubleModuleKeyword(1.0e-4), "DeltaT", "Timestep (ps) to use in MD simulation");
 	keywords_.add(new IntegerModuleKeyword(10), "EnergyFrequency", "Frequency at which to calculate total system energy (or 0 to inhibit)");
@@ -33,6 +34,7 @@ void MDModule::setUpKeywords()
 	keywords_.add(new IntegerModuleKeyword(5), "OutputFrequency", "Frequency at which to output step information (or 0 to inhibit)");
 	keywords_.add(new BoolModuleKeyword(false), "RandomVelocities", "Whether random velocities should always be assigned before beginning MD simulation");
 	keywords_.add(new IntegerModuleKeyword(0), "TrajectoryFrequency", "Write frequency for trajectory file (or 0 to inhibit)");
+	keywords_.add(new BoolModuleKeyword(true), "VariableTimestep", "Whether a variable timestep should be used, determined from the maximal force vector");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
