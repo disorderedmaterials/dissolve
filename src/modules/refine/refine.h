@@ -134,8 +134,10 @@ class RefineModule : public Module
 	bool modifyBondTerms(DUQ& duq, const XYData& deltaGR, AtomType* typeI, AtomType* typeJ, XYData& deltaBond);
 	// Return value of fit equation given specified parameters
 	inline double fitEquation(double x, double xCentre, double delta, double widthSquared, double AL, double AC, double AR);
-	// Cost function for modifyBondTerms() fitting
-	double costFunction(double x[], int n);
+	// Two-exponential, 5-parameter cost function for modifyBondTerms() fitting
+	double costFunction2Exp(double x[], int n);
+	// Three-exponential, 6-parameter cost function for modifyBondTerms() fitting
+	double costFunction3Exp(double x[], int n);
 	// Sum fitting equation with the specified parameters into the specified XYData
 	void sumFitEquation(XYData& target, double xCentre, double delta, double widthSquared, double AL, double AC, double AR);
 

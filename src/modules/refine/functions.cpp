@@ -95,14 +95,23 @@ bool RefineModule::modifyBondTerms(DUQ& duq, const XYData& deltaGR, AtomType* ty
 	
 	// Create a minimiser, and add our target variables - the order here is important, as the costFunction() is just
 	// provided with an array of doubles in the same order.
-	Praxis<RefineModule> minimiser(*this, &RefineModule::costFunction);
 	double xCentre, delta, width, AL, AC, AR;
-	minimiser.addTarget(xCentre);
-	minimiser.addTarget(delta);
-	minimiser.addTarget(width);
-	minimiser.addTarget(AL);
-	minimiser.addTarget(AC);
-	minimiser.addTarget(AR);
+	Praxis<RefineModule> minimiserLCR(*this, &RefineModule::costFunction3Exp);
+	minimiserLCR.addTarget(xCentre);
+	minimiserLCR.addTarget(delta);
+	minimiserLCR.addTarget(width);
+	minimiserLCR.addTarget(AL);
+	minimiserLCR.addTarget(AC);
+	minimiserLCR.addTarget(AR);
+
+	Praxis<RefineModule> minimiserLR(*this, &RefineModule::costFunction2Exp);
+	minimiserLR.addTarget(xCentre);
+	minimiserLR.addTarget(delta);
+	minimiserLR.addTarget(width);
+	minimiserLR.addTarget(AL);
+	minimiserLR.addTarget(AC);
+	minimiserLR.addTarget(AR);
+
 	fitData_ = deltaGR;
 	xCentreDeltaLimit_ = 0.1;
 
@@ -129,45 +138,71 @@ bool RefineModule::modifyBondTerms(DUQ& duq, const XYData& deltaGR, AtomType* ty
 		AR = 1.0;
 
 		Messenger::print("Examining master bond term '%s' - current equilibrium value is %f Angstroms...\n", masterIntra->name(), xCentre);
-		double fitValue = minimiser.minimise();
+		double fitValue = minimiserLCR.minimise();
 		Messenger::print("Fit (cost = %f): x = %f, delta = %f, width = %f, AL = %f, AC = %f, AR = %f\n", fitValue, xCentre, delta, width, AL, AC, AR);
 
 		// Check the final fit value
-		if (fitValue > 5.0)
+		if (fitValue <= 5.0)
 		{
-			Messenger::print("Final cost value is above threshold (cost = %f) so no modification will be performed.\n", fitValue);
-			continue;
-		}
-
-		// Fit is OK - try to work out what it means!
-		if (DUQMath::sgn(AL) != DUQMath::sgn(AR))
-		{
-			// AL and AR have opposite signs which probably means a sine-like curve indicating a mismatch of peak positions
-			// Check the magnitude of AC - if it is sufficiently small we will assume this is the case
-			if (fabs(AC) < 0.05*fabs(AL))
+			// Fit is OK - try to work out what it means!
+			if (DUQMath::sgn(AL) != DUQMath::sgn(AR))
 			{
-				// Adjust the equilibrium bond length...
-				double newEq = xCentreStart_ + 0.1 * (xCentre-xCentreStart_);
-				Messenger::print("Fitting suggests mismatch of equilibrium bond lengths - adjusting from %f to %f Angstroms.\n", xCentreStart_, newEq);				
-				if (masterIntra->form() == SpeciesBond::HarmonicForm) masterIntra->setParameter(1, newEq);
-			}
-			else continue;
+				// AL and AR have opposite signs which probably means a sine-like curve indicating a mismatch of peak positions
+				// Check the magnitude of AC - if it is sufficiently small we will assume this is the case
+				if (fabs(AC) < 0.05*fabs(AL))
+				{
+					// Adjust the equilibrium bond length...
+					double newEq = xCentreStart_ + 0.1 * (xCentre-xCentreStart_);
+					Messenger::print("Fitting suggests mismatch of equilibrium bond lengths - adjusting from %f to %f Angstroms.\n", xCentreStart_, newEq);				
+					if (masterIntra->form() == SpeciesBond::HarmonicForm) masterIntra->setParameter(1, newEq);
+				}
+				else continue;
 
-			Messenger::print("Resulting magnitude of fit is below threshold (A = %f), so no modification will be performed.\n", AL);
-			continue;
-		}
-		else if (DUQMath::sgn(AC) != DUQMath::sgn(AL))
-		{
-			// AL and AR have the same sign, and AC is different, which may indicate the force constant is wrong
-			if (fabs(AC) > fabs(AL))
-			{
-				// Adjust the bond force constant...
-				double newK;
-				if (masterIntra->form() == SpeciesBond::HarmonicForm) newK = masterIntra->parameter(0)* 0.9;
-				Messenger::print("Fitting suggests wrong force constant - adjusting to %f kJ/mol/A**2.\n", newK);				
-				if (masterIntra->form() == SpeciesBond::HarmonicForm) masterIntra->setParameter(0, newK);
+				Messenger::print("Resulting magnitude of fit is below threshold (A = %f), so no modification will be performed.\n", AL);
+				continue;
 			}
-			else continue;
+			else if (DUQMath::sgn(AC) != DUQMath::sgn(AL))
+			{
+				// AL and AR have the same sign, and AC is different, which may indicate the force constant is wrong
+				if (fabs(AC) > fabs(AL))
+				{
+					// Adjust the bond force constant...
+					double newK;
+					if (masterIntra->form() == SpeciesBond::HarmonicForm) newK = masterIntra->parameter(0)* 0.9;
+					Messenger::print("Fitting suggests wrong force constant - adjusting to %f kJ/mol/A**2.\n", newK);				
+					if (masterIntra->form() == SpeciesBond::HarmonicForm) masterIntra->setParameter(0, newK);
+				}
+				else continue;
+			}
+		}
+		else
+		{
+			// Try again, but with a two-exponential fit
+
+			// Set our variables ready for the fit
+			if (masterIntra->form() == SpeciesBond::HarmonicForm) xCentre = masterIntra->parameter(1);
+			else
+			{
+				Messenger::error("Functional form of MasterIntra '%s' not recognised, so can't extract equilibrium value.\n", masterIntra->name());
+				return false;
+			}
+			delta = 0.1;
+			width = 0.01;
+			AL = -1.0;
+			AC = 0.0;
+			AR = 1.0;
+			fitValue = minimiserLR.minimise();
+
+			if (fitValue > 5.0)
+			{
+				Messenger::print("Final cost value is above threshold (cost = %f) so no modification will be performed.\n", fitValue);
+				continue;
+			}
+
+			// Adjust the equilibrium bond length...
+			double newEq = xCentreStart_ + 0.1 * (xCentre-xCentreStart_);
+			Messenger::print("Exp2 fitting suggests mismatch of equilibrium bond lengths - adjusting from %f to %f Angstroms.\n", xCentreStart_, newEq);				
+			if (masterIntra->form() == SpeciesBond::HarmonicForm) masterIntra->setParameter(1, newEq);
 		}
 
 		// One of our masterbonds has provided a good fit to the data - we may as well stop here
@@ -184,30 +219,31 @@ bool RefineModule::modifyBondTerms(DUQ& duq, const XYData& deltaGR, AtomType* ty
 double RefineModule::fitEquation(double x, double xCentre, double delta, double width, double AL, double AC, double AR)
 {
 	/*
-	 * Fit equation is essentially the difference of two offset Gaussians:
+	 * Fit equation the of sum of two offset Gaussians around a central Gaussian:
 	 * 
-	 *	      [     -((x - xI) - delta)**2	 -((x - xI) + delta)**2 ]
-	 * f(x) = A * [ exp ---------------------- - exp ---------------------- ]
-	 * 	      [		   width**2			width**2	]
+	 * 		   -((x - xI) - delta)**2	     -(x - xI)**2	     -((x - xI) + delta)**2
+	 * f(x) = AL * exp ---------------------- + AC * exp ------------ + AR * exp ----------------------
+	 * 	     		  width**2		       width**2			    width**2
 	 * 
 	 */
 
 	const double dx = x - xCentre;
 	const double widthSquared = width * width;
-// 	return A * (exp(-((dx-delta)*(dx-delta))/widthSquared) - exp(-((dx+delta)*(dx+delta))/widthSquared));
 	return AL*exp(-((dx-delta)*(dx-delta))/widthSquared) + AC*exp(-(dx*dx)/widthSquared) + AR*exp(-((dx+delta)*(dx+delta))/widthSquared);
 }
 
-// Cost function for modifyBondTerms() fitting
-double RefineModule::costFunction(double params[], int n)
+// Three-exponential, 6-parameter cost function for modifyBondTerms() fitting
+double RefineModule::costFunction3Exp(double params[], int n)
 {
 	/*
 	 * params[] are as follows:
 	 *
 	 * params[0] = x intercept of function
-	 * params[1] = position difference about centrepoint of inflection, delta
+	 * params[1] = position difference about x intercept, delta
 	 * params[2] = width-squared of function lobes
-	 * params[3] = amplitude of function lobes
+	 * params[3] = amplitude of left function lobe
+	 * params[4] = amplitude of central function lobe
+	 * params[5] = amplitude of right function lobe
 	 * 
 	 */
 
@@ -242,6 +278,21 @@ double RefineModule::costFunction(double params[], int n)
 	}
 
 	return sos;
+}
+
+// Two-exponential, 5-parameter cost function for modifyBondTerms() fitting
+double RefineModule::costFunction2Exp(double params[], int n)
+{
+	// Copy parameters, adding in zero for AC
+	double x[6];
+	x[0] = params[0];
+	x[1] = params[1];
+	x[2] = params[2];
+	x[3] = params[3];
+	x[4] = 0.0;
+	x[5] = params[4];
+
+	return costFunction3Exp(x, 6);
 }
 
 // Sum fitting equation with the specified parameters into the specified XYData
