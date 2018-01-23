@@ -105,6 +105,9 @@ void BroadeningFunction::set(BroadeningFunction::FunctionType function, double p
 	parameters_[3] = p4;
 	parameters_[4] = p5;
 	parameters_[5] = p6;
+
+	// Set up any necessary dependent parameters
+	setUpDependentParameters();
 }
 
 // Set function data from LineParser source
@@ -125,7 +128,7 @@ bool BroadeningFunction::set(LineParser& parser, int startArg)
 		return false;
 	}
 
-	// Set up function
+	// Set up function and basic parameters
 	function_ = funcType;
 	switch (function_)
 	{
@@ -135,16 +138,40 @@ bool BroadeningFunction::set(LineParser& parser, int startArg)
 		case (BroadeningFunction::OmegaDependentGaussianFunction):
 			// FWHM
 			parameters_[0] = parser.argd(startArg+1);
-			// c (calculated from FWHM)
-			parameters_[1] = parameters_[0] / (2.0 * sqrt(2.0 * log(2.0)));
-			// 1/c
-			parameters_[2] = 1.0 / parameters_[1];
 			break;
 		case (BroadeningFunction::GaussianC2Function):
 			// FWHM1
 			parameters_[0] = parser.argd(startArg+1);
 			// FWHM2
 			parameters_[1] = parser.argd(startArg+2);
+			break;
+		default:
+			Messenger::error("Function form '%s' not accounted for in set(LineParser&,int).\n", BroadeningFunction::functionType(funcType));
+			return false;
+	}
+
+	// Set up any necessary dependent parameters
+	setUpDependentParameters();
+}
+
+// Set up any dependent parameters based on the input set of parameters
+void BroadeningFunction::setUpDependentParameters()
+{
+	switch (function_)
+	{
+		case (BroadeningFunction::UnityFunction):
+			break;
+		case (BroadeningFunction::GaussianFunction):
+		case (BroadeningFunction::OmegaDependentGaussianFunction):
+			// parameters_[0] = FWHM
+			// c (calculated from FWHM)
+			parameters_[1] = parameters_[0] / (2.0 * sqrt(2.0 * log(2.0)));
+			// 1/c
+			parameters_[2] = 1.0 / parameters_[1];
+			break;
+		case (BroadeningFunction::GaussianC2Function):
+			// parameters_[0] = FWHM1
+			// parameters_[1] = FWHM2
 			// c1 (calculated from FWHM1)
 			parameters_[2] = parameters_[0] / (2.0 * sqrt(2.0 * log(2.0)));
 			// c2 (calculated from FWHM2)
@@ -155,11 +182,8 @@ bool BroadeningFunction::set(LineParser& parser, int startArg)
 			parameters_[5] = 1.0 / parameters_[3];
 			break;
 		default:
-			Messenger::error("Function form '%s' not accounted for in set(LineParser&,int).\n", BroadeningFunction::functionType(funcType));
-			return false;
+			Messenger::error("Function form '%s' not accounted for in setUpDependentParameters().\n", BroadeningFunction::functionType(function_));
 	}
-
-	return true;
 }
 
 // Return function type
@@ -243,7 +267,9 @@ double BroadeningFunction::yActual(double x, double omega) const
 			 * f(x) = exp ( - ---------------- )      where c = --------------
 			 * 	      (   2 * (c*omega)**2 )		    2 sqrt(2 ln 2) 
 			 */
-			return exp(-(0.5 * x*x * (parameters_[2]*omega) * (parameters_[2]*omega)));
+// 			return exp(-(0.5 * x*x * (parameters_[2]*omega) * (parameters_[2]*omega)));
+// printf("Returning (%f,%f)=%f\n", x, omega, exp(-(x*x)/(2.0*(parameters_[1]*omega)*(parameters_[1]*omega))));
+			return exp(-(x*x)/(2.0*(parameters_[1]*omega)*(parameters_[1]*omega)));
 			break;
 		case (BroadeningFunction::GaussianC2Function):
 			/*

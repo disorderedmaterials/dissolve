@@ -66,6 +66,10 @@ class BroadeningFunction : public GenericItemBase
 	// Whether function is inverted - y returns yFT, and vice versa
 	bool inverted_;
 
+	private:
+	// Set up any dependent parameters based on the input set of parameters
+	void setUpDependentParameters();
+
 	public:
 	// Set function data
 	void set(FunctionType function, double p1 = 0.0, double p2 = 0.0, double p3 = 0.0, double p4 = 0.0, double p5 = 0.0, double p6 = 0.0);
