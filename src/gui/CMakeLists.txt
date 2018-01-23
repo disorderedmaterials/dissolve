@@ -13,6 +13,7 @@ SET(gui_MOC_HDRS
   pairpotentialwidget.h
   subwidget.h
   subwindow.h
+  tmenubuttongroup.h
 
   colourbutton.hui
   gradientbar.hui
@@ -21,6 +22,8 @@ SET(gui_MOC_HDRS
   texponentialspin.hui
   texponentialspindelegate.hui
   thread.hui
+  tmenubutton.hui
+  tpopupwidget.hui
 )
 QT5_WRAP_CPP(gui_MOC_SRCS ${gui_MOC_HDRS})
 
@@ -53,6 +56,9 @@ SET(gui_SRCS
   texponentialspin_funcs.cpp
   texponentialspindelgate_funcs.cpp
   thread_funcs.cpp
+  tmenubutton_funcs.cpp
+  tmenubuttongroup.cpp
+  tpopupwidget_funcs.cpp
 )
 
 # Resources
