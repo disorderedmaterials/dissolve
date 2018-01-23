@@ -83,18 +83,6 @@ void BrowserWidget::updateControls()
 		topItem->addChild(item);
 	}
 
-	// Add Species entry
-	topItem = new QTreeWidgetItem();
-	topItem->setText(0, "Species");
-	ui.BrowserTree->addTopLevelItem(topItem);
-	for (Species* sp = duq_.species(); sp != NULL; sp = sp->next)
-	{
-		item = new QTreeWidgetItem(BrowserWidget::SpeciesDataType);
-		item->setText(0, sp->name());
-		item->setData(0, Qt::UserRole, VariantPointer<Species>(sp));
-		topItem->addChild(item);
-	}
-
 	// Add Configurations entry
 	topItem = new QTreeWidgetItem();
 	topItem->setText(0, "Configurations");
