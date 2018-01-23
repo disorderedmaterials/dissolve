@@ -21,6 +21,7 @@
 
 #include "modules/md/md.h"
 #include "main/duq.h"
+#include "modules/energy/energy.h"
 #include "classes/grain.h"
 #include "classes/box.h"
 #include "classes/cell.h"
@@ -260,8 +261,8 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 				// Include total energy term?
 				if ((energyFrequency > 0) && (step%energyFrequency == 0))
 				{
-					peInter = duq.interatomicEnergy(procPool, cfg);
-					peIntra = duq.intramolecularEnergy(procPool, cfg);
+					peInter = EnergyModule::interatomicEnergy(procPool, cfg, duq.potentialMap());
+					peIntra = EnergyModule::intramolecularEnergy(procPool, cfg, duq.potentialMap());
 					Messenger::print("MD:  %-10i    %10.3e   %10.3e   %10.3e   %10.3e   %10.3e   %10.3e\n", step, tInstant, ke, peInter, peIntra, ke+peIntra+peInter, deltaT);
 				}
 				else Messenger::print("MD:  %-10i    %10.3e   %10.3e                                          %10.3e\n", step, tInstant, ke, deltaT);

@@ -4,7 +4,6 @@ add_library(main
   configurations.cpp
   data.cpp
   duq.cpp
-  energy.cpp
   forces.cpp
   io.cpp
   keywords.cpp

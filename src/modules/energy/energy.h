@@ -25,7 +25,7 @@
 #include "module/module.h"
 
 // Forward Declarations
-/* none */
+class PotentialMap;
 
 // Energy Module
 class EnergyModule : public Module
@@ -101,6 +101,18 @@ class EnergyModule : public Module
 	bool process(DUQ& duq, ProcessPool& procPool);
 	// Execute post-processing stage
 	bool postProcess(DUQ& duq, ProcessPool& procPool);
+
+
+	/* 
+	 * Functions
+	 */
+	public:
+	// Return total intramolecular energy
+	static double intramolecularEnergy(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap);
+	// Return total intramolecular energy, storing components in provided variables
+	static double intramolecularEnergy(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, double& bondEnergy, double& angleEnergy, double& torsionEnergy);
+	// Return total interatomic energy
+	static double interatomicEnergy(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap);
 
 
 	/*
