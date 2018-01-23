@@ -307,7 +307,7 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 		// Close trajectory file
 		if (writeTraj && procPool.isMaster()) trajParser.closeFiles();
 
-		if (maxForce > 0) Messenger::print("MD: A total of %i forces were capped over the course of the dynamics (%9.3e per step).\n", nCapped, double(nCapped) / nSteps);
+		if (capForce) Messenger::print("MD: A total of %i forces were capped over the course of the dynamics (%9.3e per step).\n", nCapped, double(nCapped) / nSteps);
 		Messenger::print("MD: %i steps performed (%s work, %s comms)\n", nSteps, timer.totalTimeString(), procPool.accumulatedTimeString());
 
 		// Increment configuration changeCount
