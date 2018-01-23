@@ -87,8 +87,8 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 	else Messenger::print("MD: Energy will be not be calculated.\n");
 	if (outputFrequency > 0) Messenger::print("MD: Summary will be written every %i step(s).\n", outputFrequency);
 	else Messenger::print("MD: Summary will not be written.\n");
-	if (variableTimestep) Messenger::print("Variable timestep will be employed.");
-	else Messenger::print("Constant timestep of %e ps will be used.\n", deltaT);
+	if (variableTimestep) Messenger::print("MD: Variable timestep will be employed.");
+	else Messenger::print("MD: Constant timestep of %e ps will be used.\n", deltaT);
 
 	RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
 	while (Configuration* cfg = configIterator.iterate())
