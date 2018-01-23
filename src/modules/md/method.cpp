@@ -22,6 +22,7 @@
 #include "modules/md/md.h"
 #include "main/duq.h"
 #include "modules/energy/energy.h"
+#include "modules/forces/forces.h"
 #include "classes/grain.h"
 #include "classes/box.h"
 #include "classes/cell.h"
@@ -62,7 +63,7 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 
 	// Get control parameters
 	const bool capForce = keywords_.asBool("CapForces");
-	const double maxForce = keywords_.asDouble("CapForcesAt") * 100.0;	// To convert from kJ/mol/Angstrom**2 to 10 J/mol/Angstrom**2
+	const double maxForce = keywords_.asDouble("CapForcesAt") * 100.0;	// To convert from kJ/mol to 10 J/mol
 	double cutoffDistance = keywords_.asDouble("CutoffDistance");
 	if (cutoffDistance < 0.0) cutoffDistance = duq.pairPotentialRange();
 	const double cutoffSq = cutoffDistance * cutoffDistance;
@@ -81,7 +82,7 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 	Messenger::print("MD: Timestep = %10.3e ps\n", deltaT);
 	if (writeTraj) Messenger::print("MD: Trajectory file will be appended every %i step(s).\n", trajectoryFrequency);
 	else Messenger::print("MD: Trajectory file off.\n");
-	if (capForce) Messenger::print("MD: Forces will be capped to %10.3e kJ/mol/Angstrom**2 per atom per axis.\n", maxForce / 100.0);
+	if (capForce) Messenger::print("MD: Forces will be capped to %10.3e kJ/mol per atom per axis.\n", maxForce / 100.0);
 	if (energyFrequency > 0) Messenger::print("MD: Energy will be calculated every %i step(s).\n", energyFrequency);
 	else Messenger::print("MD: Energy will be not be calculated.\n");
 	if (outputFrequency > 0) Messenger::print("MD: Summary will be written every %i step(s).\n", outputFrequency);
@@ -192,7 +193,7 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 		procPool.resetAccumulatedTime();
 
 		// Variable timestep requires forces to be available immediately
-		if (variableTimestep) duq.totalForces(procPool, cfg, fx, fy, fz);
+		if (variableTimestep) ForcesModule::totalForces(procPool, cfg, duq.potentialMap(), fx, fy, fz);
 
 		// Ready to do MD propagation of system
 		for (int step=1; step<=nSteps; ++step)
@@ -221,7 +222,7 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 			fx = 0.0;
 			fy = 0.0;
 			fz = 0.0;
-			duq.totalForces(procPool, cfg, fx, fy, fz);
+			ForcesModule::totalForces(procPool, cfg, duq.potentialMap(), fx, fy, fz);
 			fx *= 100.0;
 			fy *= 100.0;
 			fz *= 100.0;

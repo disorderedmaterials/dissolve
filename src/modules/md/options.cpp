@@ -26,7 +26,7 @@
 void MDModule::setUpKeywords()
 {
 	keywords_.add(new BoolModuleKeyword(false), "CapForces", "Control whether atomic forces are capped every step");
-	keywords_.add(new DoubleModuleKeyword(1.0e7), "CapForcesAt", "Set cap on allowable force (kJ/mol/Angstrom**2) per atom");
+	keywords_.add(new DoubleModuleKeyword(1.0e7), "CapForcesAt", "Set cap on allowable force (kJ/mol) per atom");
 	keywords_.add(new DoubleModuleKeyword(-1.0), "CutoffDistance", "Interatomic cutoff distance to employ");
 	keywords_.add(new DoubleModuleKeyword(1.0e-4), "DeltaT", "Timestep (ps) to use in MD simulation");
 	keywords_.add(new IntegerModuleKeyword(10), "EnergyFrequency", "Frequency at which to calculate total system energy (or 0 to inhibit)");
