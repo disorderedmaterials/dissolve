@@ -134,6 +134,9 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 	RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
 	while (Configuration* cfg = configIterator.iterate())
 	{
+		// Set up process pool - must do this to ensure we are using all available processes
+		procPool.assignProcessesToGroups(cfg->processPool());
+
 		// Update total AtomTypeList
 		combinedAtomTypes.add(cfg->usedAtomTypesList());
 
