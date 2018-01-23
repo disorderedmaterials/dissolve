@@ -20,4 +20,111 @@
 */
 
 #include "modules/forces/forces.h"
+#include "classes/configuration.h"
+#include "classes/forcekernel.h"
 
+// Calculate total intramolecular forces
+void ForcesModule::intramolecularForces(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, Array<double>& fx, Array<double>& fy, Array<double>& fz)
+{
+	/*
+	 * Calculate the total intramolecular forces within the system, arising from Bond, Angle, and Torsion
+	 * terms in all molecules.
+	 * 
+	 * Calculated forces are added in to the provided arrays. Assembly of the arrays over processes must be performed by the
+	 * calling function.
+	 * 
+	 * This is a parallel routine.
+	 */
+
+	// Create a ForceKernel
+	ForceKernel kernel(procPool, cfg, potentialMap, fx, fy, fz);
+
+	// Set start/stride for parallel loop
+	int start = procPool.interleavedLoopStart(ProcessPool::OverPoolProcesses);
+	int stride = procPool.interleavedLoopStride(ProcessPool::OverPoolProcesses);
+
+	// Loop over Bonds
+	Bond** bonds = cfg->bonds().array();
+	for (int m=start; m<cfg->nBonds(); m += stride) kernel.forces(bonds[m]);
+
+	// Loop over Angles
+	Angle** angles = cfg->angles().array();
+	for (int m=start; m<cfg->nAngles(); m += stride) kernel.forces(angles[m]);
+
+	// Loop over Torsions
+	Torsion** torsions = cfg->torsions().array();
+	for (int m=start; m<cfg->nTorsions(); m += stride) kernel.forces(torsions[m]);
+}
+
+// Calculate interatomic forces within the system
+void ForcesModule::interatomicForces(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, Array<double>& fx, Array<double>& fy, Array<double>& fz)
+{
+	/*
+	 * Calculates the interatomic forces in the system arising from contributions from PairPotential
+	 * interactions between individual atoms, and accounting for intramolecular terms
+	 * 
+	 * This is a parallel routine, with processes operating as process groups.
+	 */
+
+	// Grab the Cell array
+	const CellArray& cellArray = cfg->cells();
+
+	// Create a ForceKernel
+	ForceKernel kernel(procPool, cfg, potentialMap, fx, fy, fz);
+
+	Cell* cell;
+
+	// Set start/stride for parallel loop
+	int start = procPool.interleavedLoopStart(ProcessPool::OverGroups);
+	int stride = procPool.interleavedLoopStride(ProcessPool::OverGroups);
+
+	for (int cellId = start; cellId<cellArray.nCells(); cellId += stride)
+	{
+		cell = cellArray.cell(cellId);
+
+		/*
+		 * Calculation Begins
+		 */
+
+		// This cell with itself
+		kernel.forces(cell, cell, false, true, ProcessPool::OverGroupProcesses);
+
+		// Interatomic interactions between atoms in this cell and its neighbours
+		kernel.forces(cell, true, ProcessPool::OverGroupProcesses);
+
+		/*
+		 * Calculation End
+		 */
+	}
+}
+
+// Calculate total forces within the system
+void ForcesModule::totalForces(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, Array<double>& fx, Array<double>& fy, Array<double>& fz)
+{
+	/*
+	 * Calculates the total forces within the system, arising from inter-Grain PairPotential interactions
+	 * and intramolecular contributions.
+	 * 
+	 * This is a serial routine (subroutines called from within are parallel).
+	 */
+
+	// Create a Timer
+	Timer timer;
+
+	// Calculate interatomic forces
+	timer.start();
+	interatomicForces(procPool, cfg, potentialMap, fx, fy, fz);
+	timer.stop();
+	Messenger::printVerbose("Time to do interatomic forces was %s.\n", timer.totalTimeString());
+
+	// Calculate intramolecular forces
+	timer.start();
+	intramolecularForces(procPool, cfg, potentialMap, fx, fy, fz);
+	timer.stop();
+	Messenger::printVerbose("Time to do intramolecular forces was %s.\n", timer.totalTimeString());
+
+	// Gather forces together over all processes
+	if (!procPool.allSum(fx, cfg->nAtoms())) return;
+	if (!procPool.allSum(fy, cfg->nAtoms())) return;
+	if (!procPool.allSum(fz, cfg->nAtoms())) return;
+}

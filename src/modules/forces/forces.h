@@ -25,7 +25,7 @@
 #include "module/module.h"
 
 // Forward Declarations
-/* none */
+class PotentialMap;
 
 // Forces Module
 class ForcesModule : public Module
@@ -101,6 +101,18 @@ class ForcesModule : public Module
 	bool process(DUQ& duq, ProcessPool& procPool);
 	// Execute post-processing stage
 	bool postProcess(DUQ& duq, ProcessPool& procPool);
+
+
+	/*
+	 * Force Methods
+	 */
+	public:
+	// Calculate total intramolecular forces
+	static void intramolecularForces(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, Array<double>& fx, Array<double>& fy, Array<double>& fz);
+	// Calculate interatomic forces within the specified Configuration
+	static void interatomicForces(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, Array<double>& fx, Array<double>& fy, Array<double>& fz);
+	// Calculate total forces within the system
+	static void totalForces(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, Array<double>& fx, Array<double>& fy, Array<double>& fz);
 
 
 	/*

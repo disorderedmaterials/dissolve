@@ -371,7 +371,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 				Timer interTimer;
 				interTimer.start();
 
-				duq.interatomicForces(procPool, cfg, checkInterFx, checkInterFy, checkInterFz);
+				interatomicForces(procPool, cfg, duq.potentialMap(), checkInterFx, checkInterFy, checkInterFz);
 				if (!procPool.allSum(checkInterFx, cfg->nAtoms())) return false;
 				if (!procPool.allSum(checkInterFy, cfg->nAtoms())) return false;
 				if (!procPool.allSum(checkInterFz, cfg->nAtoms())) return false;
@@ -386,7 +386,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 				Timer intraTimer;
 				intraTimer.start();
 
-				duq.intramolecularForces(procPool, cfg, checkIntraFx, checkIntraFy, checkIntraFz);
+				intramolecularForces(procPool, cfg, duq.potentialMap(), checkIntraFx, checkIntraFy, checkIntraFz);
 				if (!procPool.allSum(checkIntraFx, cfg->nAtoms())) return false;
 				if (!procPool.allSum(checkIntraFy, cfg->nAtoms())) return false;
 				if (!procPool.allSum(checkIntraFz, cfg->nAtoms())) return false;
@@ -554,14 +554,14 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 			// Calculate interatomic forces
 			Timer interTimer;
 			interTimer.start();
-			duq.interatomicForces(procPool, cfg, fx, fy, fz);
+			interatomicForces(procPool, cfg, duq.potentialMap(), fx, fy, fz);
 			interTimer.stop();
 			Messenger::printVerbose("Forces: Time to do interatomic forces was %s.\n", interTimer.totalTimeString());
 			
 			// Calculate intramolecular forces
 			Timer intraTimer;
 			intraTimer.start();
-			duq.intramolecularForces(procPool, cfg, fx, fy, fz);
+			intramolecularForces(procPool, cfg, duq.potentialMap(), fx, fy, fz);
 			intraTimer.stop();
 
 			Messenger::print("Forces: Time to do interatomic forces was %s, intramolecular forces was %s.\n", interTimer.totalTimeString(), intraTimer.totalTimeString());
