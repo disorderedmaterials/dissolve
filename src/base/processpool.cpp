@@ -515,7 +515,7 @@ bool ProcessPool::assignProcessesToGroups(ProcessPool& groupsSource)
 	// First check that we are allowed to modify the groups within this pool
 	if (!groupsModifiable_)
 	{
-		Messenger::error("Tried to modify the group contents of a ProcessPool in which it has explicitly been fixed.\n");
+		Messenger::error("Tried to modify the group contents of a ProcessPool in which they have explicitly been fixed.\n");
 		return false;
 	}
 
