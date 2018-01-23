@@ -60,11 +60,9 @@ bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
 	}
 
 	// Loop over target Configurations
-	for (RefListItem<Configuration,bool>* ri = targetConfigurations_.first(); ri != NULL; ri = ri->next)
+	RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
+	while (Configuration* cfg = configIterator.iterate())
 	{
-		// Grab Configuration pointer
-		Configuration* cfg = ri->item;
-
 		// Set up process pool - must do this to ensure we are using all available processes
 		procPool.assignProcessesToGroups(cfg->processPool());
 
