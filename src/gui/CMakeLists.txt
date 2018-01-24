@@ -14,6 +14,7 @@ SET(gui_MOC_HDRS
   subwidget.h
   subwindow.h
   tmenubuttongroup.h
+  tablewidgetupdater.h
 
   colourbutton.hui
   gradientbar.hui

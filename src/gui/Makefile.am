@@ -40,6 +40,6 @@ libgui_la_SOURCES += outputhandler.hui outputhandler_funcs.cpp
 libgui_la_SOURCES += subwidget.cpp subwindow.cpp
 libgui_la_SOURCES += thread.hui thread_funcs.cpp
 
-noinst_HEADERS = browser.h gui.h mimestrings.h mimetreewidgetitem.h mastertermswidget.h modulecontrolwidget.h modulewidget.h pairpotentialwidget.h subwidget.h subwindow.h tmenubuttongroup.h
+noinst_HEADERS = browser.h gui.h mimestrings.h mimetreewidgetitem.h mastertermswidget.h modulecontrolwidget.h modulewidget.h pairpotentialwidget.h subwidget.h subwindow.h tmenubuttongroup.h tablewidgetupdater.h
 
 AM_CPPFLAGS = -I$(top_srcdir)/src -I../ -I./ @DUQ_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
