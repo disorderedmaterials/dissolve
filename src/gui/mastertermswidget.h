@@ -27,6 +27,7 @@
 
 // Forward Declarations
 class DUQ;
+class MasterIntra;
 
 // MasterTerms Widget
 class MasterTermsWidget : public SubWidget
@@ -69,8 +70,16 @@ class MasterTermsWidget : public SubWidget
 
 
 	/*
-	 * Widget Signals / Slots
+	 * Widget Functions, Signals, and Slots
 	 */
+	private:
+	// Row update function for BondsTable
+	void updateBondsTableRow(int row, MasterIntra* masterBond, bool createItems);
+	// Row update function for AnglesTable
+	void updateAnglesTableRow(int row, MasterIntra* masterAngle, bool createItems);
+	// Row update function for TorsionsTable
+	void updateTorsionsTableRow(int row, MasterIntra* masterTorsion, bool createItems);
+
 	signals:
 	void windowClosed(void*);
 
@@ -79,6 +88,14 @@ class MasterTermsWidget : public SubWidget
         void on_BondsTable_itemChanged(QTableWidgetItem* w);
 	void on_NewBondTermButton_clicked(bool checked);
 	void on_RemoveBondTermButton_clicked(bool checked);
+        void angleFunctionChanged(int index);
+        void on_AnglesTable_itemChanged(QTableWidgetItem* w);
+	void on_NewAngleTermButton_clicked(bool checked);
+	void on_RemoveAngleTermButton_clicked(bool checked);
+        void torsionFunctionChanged(int index);
+        void on_TorsionsTable_itemChanged(QTableWidgetItem* w);
+	void on_NewTorsionTermButton_clicked(bool checked);
+	void on_RemoveTorsionTermButton_clicked(bool checked);
 };
 
 #endif
