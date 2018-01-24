@@ -144,6 +144,8 @@ void UChromaBase::startInteraction(int mouseX, int mouseY, Qt::KeyboardModifiers
 // Update current interaction position / coordinate, returning if a refresh of the display is necessary
 bool UChromaBase::updateInteractionPosition(int mouseX, int mouseY)
 {
+	if (!currentViewPane_) return false;
+
 	bool refresh = false;
 
 	// If a 2D view, store the coordinate
