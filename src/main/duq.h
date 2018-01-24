@@ -95,7 +95,7 @@ class DUQ
 	// Return number of master Bond parameters in list
 	int nMasterBonds() const;
 	// Return list of master Bond parameters
-	MasterIntra* masterBonds() const;
+	const List<MasterIntra>& masterBonds() const;
 	// Return nth master Bond 
 	MasterIntra* masterBond(int n);
 	// Return whether named master Bond parameters exist
@@ -105,7 +105,7 @@ class DUQ
 	// Return number of master Angles parameters in list
 	int nMasterAngles() const;
 	// Return list of master Angle parameters
-	MasterIntra* masterAngles() const;
+	const List<MasterIntra>& masterAngles() const;
 	// Return nth master Angle parameters
 	MasterIntra* masterAngle(int n);
 	// Return whether named master Angle parameters exist
@@ -115,7 +115,7 @@ class DUQ
 	// Return number of master Torsions parameters in list
 	int nMasterTorsions() const;
 	// Return list of master Torsion parameters
-	MasterIntra* masterTorsions() const;
+	const List<MasterIntra>& masterTorsions() const;
 	// Return nth master Torsion parameters
 	MasterIntra* masterTorsion(int n);
 	// Return whether named master Torsion parameters exist

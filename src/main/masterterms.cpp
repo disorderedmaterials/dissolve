@@ -48,9 +48,9 @@ int DUQ::nMasterBonds() const
 }
 
 // Return list of master Bond parameters
-MasterIntra* DUQ::masterBonds() const
+const List<MasterIntra>& DUQ::masterBonds() const
 {
-	return masterBonds_.first();
+	return masterBonds_;
 }
 
 // Return nth master Bond parameters
@@ -93,9 +93,9 @@ int DUQ::nMasterAngles() const
 }
 
 // Return list of master Angle parameters
-MasterIntra* DUQ::masterAngles() const
+const List<MasterIntra>& DUQ::masterAngles() const
 {
-	return masterAngles_.first();
+	return masterAngles_;
 }
 
 // Return nth master Angle parameters
@@ -138,9 +138,9 @@ int DUQ::nMasterTorsions() const
 }
 
 // Return list of master Torsion parameters
-MasterIntra* DUQ::masterTorsions() const
+const List<MasterIntra>& DUQ::masterTorsions() const
 {
-	return masterTorsions_.first();
+	return masterTorsions_;
 }
 
 // Return nth master Torsion parameters
