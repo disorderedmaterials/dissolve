@@ -22,7 +22,7 @@
 #include "gui/workspacetab.h"
 
 // Constructor / Destructor
-WorkspaceTab::WorkspaceTab(DUQ& dUQ, QTabWidget* parent, const char* title) : MainTab(dUQ, parent, name)
+WorkspaceTab::WorkspaceTab(DUQ& dUQ, QTabWidget* parent, const char* title) : MainTab(dUQ, parent, title)
 {
 }
 

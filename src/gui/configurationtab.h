@@ -43,6 +43,13 @@ class ConfigurationTab : public QWidget, public MainTab
 
 
 	/*
+	 * Target
+	 */
+	private:
+	Configuration* configuration_;
+
+
+	/*
 	 * Data
 	 */
 	public:

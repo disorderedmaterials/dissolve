@@ -22,8 +22,9 @@
 #include "gui/configurationtab.h"
 
 // Constructor / Destructor
-ConfigurationTab::ConfigurationTab(DUQ& dUQ, QTabWidget* parent, const char* title) : MainTab(dUQ, parent, name)
+ConfigurationTab::ConfigurationTab(DUQ& dUQ, QTabWidget* parent, const char* title, Configuration* cfg) : MainTab(dUQ, parent, title)
 {
+	configuration_ = cfg;
 }
 
 ConfigurationTab::~ConfigurationTab()
@@ -37,7 +38,7 @@ ConfigurationTab::~ConfigurationTab()
 // Return MDI area available in tab (if any)
 QMdiArea* ConfigurationTab::mdiArea()
 {
-	return ui.WorkspaceArea;
+	return ui.SubWidgetArea;
 }
 
 /*
