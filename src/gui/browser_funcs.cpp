@@ -1,7 +1,7 @@
 /*
 	*** Browser Window - Functions
 	*** src/gui/browser_funcs.cpp
-	Copyright T. Youngs 2007-2018
+	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
 
@@ -174,64 +174,64 @@ void BrowserWidget::on_BrowserTree_itemDoubleClicked(QTreeWidgetItem* item, int 
 	QMdiSubWindow* window;
 	SubWidget* subWidget = NULL;
 
-	// Now act on the data type of the item
-	switch (item->type())
-	{
-		case (BrowserWidget::ConfigurationDataType):
-			// Is the Configuration already displayed?
-			window = duqWindow_.currentWindow(item->data(0, Qt::UserRole).data());
-			if (!window)
-			{
-				// Create the new Configuration viewer
-				// TODO
-			}
-			else window->raise();
-			break;
-		case (BrowserWidget::ModuleDataType):
-			// Is the Module already displayed?
-			window = duqWindow_.currentWindow(item->data(0, Qt::UserRole).data());
-			if (!window)
-			{
-				Module* module = VariantPointer<Module>(item->data(0, Qt::UserRole));
-				// Create a new ModuleWidget
-				ModuleControlWidget* moduleControlWidget = new ModuleControlWidget(NULL, module, duq_);
-				connect(moduleControlWidget, SIGNAL(moduleRun()), &duqWindow_, SLOT(updateWidgets()));
-				subWidget = moduleControlWidget;
-				window = duqWindow_.addWindow(moduleControlWidget, module, CharString("%s (%s)", module->name(), module->uniqueName()));
-			}
-			else window->raise();
-			break;
-		case (BrowserWidget::PairPotentialType):
-			// Is this PairPotential already displayed?
-			window = duqWindow_.currentWindow(item->data(0, Qt::UserRole).data());
-			if (!window)
-			{
-				PairPotential* pp = VariantPointer<PairPotential>(item->data(0, Qt::UserRole));
-				// Create a new PairPotentialWidget
-				PairPotentialWidget* pairPotentialWidget = new PairPotentialWidget(NULL, pp, duq_);
-				window = duqWindow_.addWindow(pairPotentialWidget, pp, CharString("Pair Potential %s-%s", pp->atomTypeNameI(), pp->atomTypeNameJ()));
-				subWidget = pairPotentialWidget;
-			}
-			else window->raise();
-			break;
-		case (BrowserWidget::SpeciesDataType):
-			break;
-		case (BrowserWidget::MasterTermsDataType):
-			// Is the Module already displayed?
-			window = duqWindow_.currentWindow("Master Terms");
-			if (!window)
-			{
-				// Create a new PairPotentialWidget
-				MasterTermsWidget* masterTermsWidget = new MasterTermsWidget(NULL, duq_);
-				window = duqWindow_.addWindow(masterTermsWidget, masterTermsWidget, "Master Terms");
-				subWidget = masterTermsWidget;
-			}
-			else window->raise();
-			break;
-			break;
-		default:
-			Messenger::print("BrowserTree doesn't know what to do with data type '%i'\n", item->type());
-	}
+// 	// Now act on the data type of the item
+// 	switch (item->type())
+// 	{
+// 		case (BrowserWidget::ConfigurationDataType):
+// 			// Is the Configuration already displayed?
+// 			window = duqWindow_.currentWindow(item->data(0, Qt::UserRole).data());
+// 			if (!window)
+// 			{
+// 				// Create the new Configuration viewer
+// 				// TODO
+// 			}
+// 			else window->raise();
+// 			break;
+// 		case (BrowserWidget::ModuleDataType):
+// 			// Is the Module already displayed?
+// 			window = duqWindow_.currentWindow(item->data(0, Qt::UserRole).data());
+// 			if (!window)
+// 			{
+// 				Module* module = VariantPointer<Module>(item->data(0, Qt::UserRole));
+// 				// Create a new ModuleWidget
+// 				ModuleControlWidget* moduleControlWidget = new ModuleControlWidget(NULL, module, duq_);
+// 				connect(moduleControlWidget, SIGNAL(moduleRun()), &duqWindow_, SLOT(updateControls()));
+// 				subWidget = moduleControlWidget;
+// 				window = duqWindow_.addWindow(moduleControlWidget, module, CharString("%s (%s)", module->name(), module->uniqueName()));
+// 			}
+// 			else window->raise();
+// 			break;
+// 		case (BrowserWidget::PairPotentialType):
+// 			// Is this PairPotential already displayed?
+// 			window = duqWindow_.currentWindow(item->data(0, Qt::UserRole).data());
+// 			if (!window)
+// 			{
+// 				PairPotential* pp = VariantPointer<PairPotential>(item->data(0, Qt::UserRole));
+// 				// Create a new PairPotentialWidget
+// 				PairPotentialWidget* pairPotentialWidget = new PairPotentialWidget(NULL, pp, duq_);
+// 				window = duqWindow_.addWindow(pairPotentialWidget, pp, CharString("Pair Potential %s-%s", pp->atomTypeNameI(), pp->atomTypeNameJ()));
+// 				subWidget = pairPotentialWidget;
+// 			}
+// 			else window->raise();
+// 			break;
+// 		case (BrowserWidget::SpeciesDataType):
+// 			break;
+// 		case (BrowserWidget::MasterTermsDataType):
+// 			// Is the Module already displayed?
+// 			window = duqWindow_.currentWindow("Master Terms");
+// 			if (!window)
+// 			{
+// 				// Create a new PairPotentialWidget
+// 				MasterTermsWidget* masterTermsWidget = new MasterTermsWidget(NULL, duq_);
+// 				window = duqWindow_.addWindow(masterTermsWidget, masterTermsWidget, "Master Terms");
+// 				subWidget = masterTermsWidget;
+// 			}
+// 			else window->raise();
+// 			break;
+// 			break;
+// 		default:
+// 			Messenger::print("BrowserTree doesn't know what to do with data type '%i'\n", item->type());
+// 	}
 
 	// If we created a new subwidget, make sure it is created in the correct 'state'
 	if (subWidget)

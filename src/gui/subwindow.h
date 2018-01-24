@@ -1,7 +1,7 @@
 /*
 	*** SubWindow
 	*** src/gui/subwindow.h
-	Copyright T. Youngs 2007-2018
+	Copyright T. Youngs 2012-2018
 
 	This file is part of DUQ.
 

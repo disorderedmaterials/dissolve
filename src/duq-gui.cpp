@@ -135,64 +135,6 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	// Load input file
-	// If no input file was provided, exit here
-	Messenger::banner("Parse Input File");
-	if (inputFile.isEmpty())
-	{
-		Messenger::error("No input file provided.\n");
-		ProcessPool::finalise();
-		return 1;
-	}
-	if (!dUQ.loadInput(inputFile))
-	{
-		Messenger::error("Input file contained errors.\n");
-		ProcessPool::finalise();
-		return 1;
-	}
-
-	// Load restart file if it exists
-	Messenger::banner("Parse Restart File");
-	if (!ignoreRestart)
-	{
-		CharString restartFile("%s.restart", inputFile.get());
-		if (DUQSys::fileExists(restartFile))
-		{
-			Messenger::print("\nRestart file '%s' exists and will be loaded.\n", restartFile.get());
-			if (!dUQ.loadRestart(restartFile.get()))
-			{
-				Messenger::error("Restart file contained errors.\n");
-				ProcessPool::finalise();
-				return 1;
-			}
-		}
-		else Messenger::print("\nRestart file '%s' does not exist.\n", restartFile.get());
-	}
-	else Messenger::print("\nRestart file (if it exists) will be ignored.\n");
-
-	// Initialise random seed
-	if (dUQ.seed() == -1) srand( (unsigned)time( NULL ) );
-	else srand(dUQ.seed());
-
-	// Perform simulation set up (all processes)
-	Messenger::banner("Setting Up Simulation");
-	if (!dUQ.setUpSimulation())
-	{
-		Messenger::print("Failed to set up simulation.\n");
-		ProcessPool::finalise();
-		return 1;
-	}
-
-	// Set up parallel comms / limits etc.
-	Messenger::banner("Setting Up Parallelism");
-	if (!dUQ.setUpMPIPools())
-	{
-		Messenger::print("Failed to set up parallel communications.\n");
-		ProcessPool::finalise();
-		Messenger::ceaseRedirect();
-		return 1;
-	}
-
 	/*
 	 * Create and launch GUI
 	 */
@@ -218,8 +160,18 @@ int main(int argc, char **argv)
 	setlocale(LC_NUMERIC,"C");
 
 	// Create the main window
-	DUQWindow duqWindow(dUQ, ignoreLayout);
-	duqWindow.updateWidgets();
+	DUQWindow duqWindow(dUQ);
+
+	// If an input file was specified, load it here
+	if (!inputFile.isEmpty())
+	if (!duqWindow.openFile(inputFile, ignoreRestart, ignoreLayout))
+	{
+		ProcessPool::finalise();
+		return 1;
+	}
+
+	// Update and show the main window
+	duqWindow.updateControls();
 	duqWindow.show();
 
 	int result = app.exec();

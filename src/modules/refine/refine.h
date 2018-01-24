@@ -130,7 +130,7 @@ class RefineModule : public Module
 	private:
 	// Calculate c(r) from supplied S(Q)
 	XYData calculateCR(const XYData& sq, double normFactor, double rMin, double rStep, double rMax, WindowFunction windowFunction = WindowFunction(), BroadeningFunction broadening = BroadeningFunction(), bool unbroaden = false);
-	// Determine modification to bonds based on supplied delta g(r), returning features extracted from deltaGR
+	// Determine modification to bonds based on supplied delta g(r)
 	bool modifyBondTerms(DUQ& duq, const XYData& deltaGR, AtomType* typeI, AtomType* typeJ, XYData& deltaBond);
 	// Return value of fit equation given specified parameters
 	inline double fitEquation(double x, double xCentre, double delta, double widthSquared, double AL, double AC, double AR);

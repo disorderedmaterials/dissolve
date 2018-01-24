@@ -1,7 +1,7 @@
 /*
 	*** SubWindow Widget
 	*** src/gui/subwidget.h
-	Copyright T. Youngs 2007-2018
+	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
 

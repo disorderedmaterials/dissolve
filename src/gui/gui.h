@@ -1,7 +1,7 @@
 /*
 	*** Monitor Window
 	*** src/gui/monitor.h
-	Copyright T. Youngs 2007-2018
+	Copyright T. Youngs 2012-2018
 
 	This file is part of DUQ.
 
@@ -26,6 +26,7 @@
 #include "gui/subwindow.h"
 #include "gui/outputhandler.hui"
 #include "gui/thread.hui"
+#include "gui/maintab.h"
 #include "base/charstring.h"
 #include "templates/list.h"
 
@@ -41,7 +42,7 @@ class DUQWindow : public QMainWindow
 
 	public:
 	// Constructor / Destructor
-	DUQWindow(DUQ& duq, bool ignoreLayoutFile);
+	DUQWindow(DUQ& duq);
 	~DUQWindow();
 	// Main form declaration
 	Ui::DUQWindow ui;
@@ -64,6 +65,13 @@ class DUQWindow : public QMainWindow
 
 
 	/*
+	* File
+	*/
+	public:
+	bool openFile(const char* inputFile, bool ignoreRestartFile, bool ignoreLayoutFile);
+
+
+	/*
 	 * Update Functions
 	 */
 	private:
@@ -75,8 +83,8 @@ class DUQWindow : public QMainWindow
 	GUIOutputHandler outputHandler_;
 
 	public slots:
-	// Refresh all displayed widgets
-	void updateWidgets();
+	// Refresh all controls
+	void updateControls();
 
 
 	/*
@@ -115,29 +123,28 @@ class DUQWindow : public QMainWindow
 
 
 	/*
-	 * Sub-window Managemnet
+	 * Tab Management
 	 */
 	private:
-	// Browser widget
-	BrowserWidget* browserWidget_;
-	// List of current MDI sub-windows
-	List<SubWindow> subWindows_;
+	// List of all displayed tabs
+	List<MainTab> tabs_;
 
 	private:
-	// Find SubWindow from specified data pointer
-	SubWindow* subWindow(void* data);
+	// Clear all tabs
+	void clearAllTabs();
+	// Add setup tab
+	void addSetupTab();
+	// Add on tabs for all current Configurations
+	void addConfigurationTabs();
+	// Add on an empty workspace tab
+	MainTab* addWorkspaceTab(const char* name);
+	// Find named tab
+	MainTab* findTab(const char* name);
 
-	public:
-	// Return window for specified data (as pointer), if it exists
-	QMdiSubWindow* currentWindow(void* windowContents);
-	// Return window with specified title, if it exists
-	QMdiSubWindow* currentWindow(const char* title);
-	// Add window for widget containing specified data (as pointer)
-	QMdiSubWindow* addWindow(SubWidget* widget, void* windowContents, const char* windowTitle);
 
-	public slots:
-	// Remove window for specified data (as pointer), removing it from the list
-	bool removeWindow(void* windowContents);
+	/*
+	 * Sub-window Management
+	 */
 
 
 	/*
@@ -157,7 +164,7 @@ class DUQWindow : public QMainWindow
 	/*
 	 * Widget Slots
 	 */
-	private slots:
+	private slots: 
 	void on_ControlRunButton_clicked(bool checked);
 	void on_ControlStepButton_clicked(bool checked);
 	void on_ControlStepFiveButton_clicked(bool checked);

@@ -1,7 +1,7 @@
 /*
 	*** SubWindow Widget
 	*** src/gui/subwidget.cpp
-	Copyright T. Youngs 2007-2018
+	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
 
@@ -20,6 +20,7 @@
 */
 
 #include "gui/subwidget.h"
+#include <stdio.h>
 
 // Constructor
 SubWidget::SubWidget(QWidget* parent) : QWidget(parent)
@@ -30,6 +31,7 @@ SubWidget::SubWidget(QWidget* parent) : QWidget(parent)
 
 SubWidget::~SubWidget()
 {
+	printf("FIX ME - THIS NEEDS TO REMOVE THE WINDOW FROM THE SUBWINDOW PARENT'S LIST!\n");
 }
 
 /*

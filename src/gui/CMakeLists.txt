@@ -5,6 +5,7 @@
 SET(gui_MOC_HDRS
   browser.h
   gui.h
+  maintab.h
   mimestrings.h
   mimetreewidgetitem.h
   mastertermswidget.h
@@ -15,6 +16,7 @@ SET(gui_MOC_HDRS
   subwindow.h
   tmenubuttongroup.h
   tablewidgetupdater.h
+  workspacetab.h
 
   colourbutton.hui
   gradientbar.hui
@@ -35,6 +37,7 @@ SET(gui_UIS
   mastertermswidget.ui
   modulecontrolwidget.ui
   pairpotentialwidget.ui
+  workspacetab.ui
 )
 QT5_WRAP_UI(gui_UIS_H ${gui_UIS})
 
@@ -44,6 +47,7 @@ SET(gui_SRCS
   colourbutton_funcs.cpp
   gui_funcs.cpp
   gradientbar_funcs.cpp
+  maintab.cpp
   mimestrings.cpp
   mimetreewidget_funcs.cpp
   mimetreewidgetitem.cpp
@@ -60,6 +64,7 @@ SET(gui_SRCS
   tmenubutton_funcs.cpp
   tmenubuttongroup.cpp
   tpopupwidget_funcs.cpp
+  workspacetab_funcs.cpp
 )
 
 # Resources

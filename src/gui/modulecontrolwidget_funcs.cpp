@@ -1,7 +1,7 @@
 /*
 	*** Module Control Widget - Functions
 	*** src/gui/modulecontrolwidget_funcs.cpp
-	Copyright T. Youngs 2007-2018
+	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
 

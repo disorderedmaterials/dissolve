@@ -1,7 +1,7 @@
 /*
 	*** Monitor Window - Functions
 	*** src/gui/monitor_funcs.cpp
-	Copyright T. Youngs 2007-2018
+	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
 
@@ -27,12 +27,13 @@
 #include "gui/pairpotentialwidget.h"
 #include "gui/subwidget.h"
 #include "gui/thread.hui"
+#include "gui/workspacetab.h"
 #include "base/lineparser.h"
 #include <QCloseEvent>
 #include <QMdiSubWindow>
 
 // Constructor
-DUQWindow::DUQWindow(DUQ& duq, bool ignoreLayoutFile) : QMainWindow(NULL), duq_(duq), threadController_(this, duq)
+DUQWindow::DUQWindow(DUQ& duq) : QMainWindow(NULL), duq_(duq), threadController_(this, duq)
 {
 	// Initialise resources
 	Q_INIT_RESOURCE(icons);
@@ -40,17 +41,6 @@ DUQWindow::DUQWindow(DUQ& duq, bool ignoreLayoutFile) : QMainWindow(NULL), duq_(
 
 	// Set up user interface
 	ui.setupUi(this);
-
-	// Set window state filename
-	windowLayoutFilename_.sprintf("%s.state", duq_.filename());
-
-	// Try to load in the window state file
-	if (ignoreLayoutFile || (!loadWindowLayout()))
-	{
-		// Create a new BrowserWidget
-		browserWidget_ = new BrowserWidget(NULL, *this, duq_);
-		addWindow(browserWidget_, &duq_, "Browser");
-	}
 
 	// Link our output handler to the Messenger, and connect up signals/slots
 	Messenger::setOutputHandler(&outputHandler_);
@@ -90,19 +80,97 @@ void DUQWindow::resizeEvent(QResizeEvent* event)
 }
 
 /*
+ * File
+ */
+
+bool DUQWindow::openFile(const char* inputFile, bool ignoreRestartFile, bool ignoreLayoutFile)
+{
+	// Clear any existing tabs etc.
+	clearAllTabs();
+
+	// Clear duq itself
+	duq_.clear();
+
+	// Load the input file
+
+	// Load input file
+	// If no input file was provided, exit here
+	Messenger::banner("Parse Input File");
+	if (!duq_.loadInput(inputFile))
+	{
+		Messenger::error("Input file contained errors.\n");
+		duq_.clear();
+		return false;
+	}
+
+	// Load restart file if it exists
+	Messenger::banner("Parse Restart File");
+	if (!ignoreRestartFile)
+	{
+		CharString restartFile("%s.restart", inputFile);
+		if (DUQSys::fileExists(restartFile))
+		{
+			Messenger::print("\nRestart file '%s' exists and will be loaded.\n", restartFile.get());
+			if (!duq_.loadRestart(restartFile.get()))
+			{
+				Messenger::error("Restart file contained errors.\n");
+				ProcessPool::finalise();
+				return 1;
+			}
+		}
+		else Messenger::print("\nRestart file '%s' does not exist.\n", restartFile.get());
+	}
+	else Messenger::print("\nRestart file (if it exists) will be ignored.\n");
+
+	// Initialise random seed
+	if (duq_.seed() == -1) srand( (unsigned)time( NULL ) );
+	else srand(duq_.seed());
+
+	// Perform simulation set up (all processes)
+	Messenger::banner("Setting Up Simulation");
+	if (!duq_.setUpSimulation())
+	{
+		Messenger::print("Failed to set up simulation.\n");
+		ProcessPool::finalise();
+		return 1;
+	}
+
+	// Set up parallel comms / limits etc.
+	Messenger::banner("Setting Up Parallelism");
+	if (!duq_.setUpMPIPools())
+	{
+		Messenger::print("Failed to set up parallel communications.\n");
+		ProcessPool::finalise();
+		Messenger::ceaseRedirect();
+		return 1;
+	}
+
+	// Add on expected tabs
+	addSetupTab();
+	addConfigurationTabs();
+
+	// Does a window state exist for this input file?
+	windowLayoutFilename_.sprintf("%s.state", duq_.filename());
+
+	// Try to load in the window state file
+	if (!ignoreLayoutFile) loadWindowLayout();
+
+	return true;
+}
+
+/*
  * Update Functions
  */
 
 // Refresh all displayed widgets
-void DUQWindow::updateWidgets()
+void DUQWindow::updateControls()
 {
 	// Iteration Panel
 	ui.IterationNumberLabel->setText(DUQSys::itoa(duq_.iteration()));
 	ui.IterationLimitLabel->setText(duq_.maxIterations() == -1 ?  QString(QChar(0x221E)) : QString::number(duq_.maxIterations()));
 
-	// Sub-windows - update everything but the Browser window
-	ListIterator<SubWindow> subWindowIterator(subWindows_);
-	while (SubWindow* subWindow = subWindowIterator.iterate()) if (subWindow->subWidget() != browserWidget_) subWindow->subWidget()->updateControls();
+	// Loop over tabs
+	for (MainTab* tab = tabs_.first(); tab != NULL; tab = tab->next) tab->updateControls();
 }
 
 /*
@@ -124,9 +192,8 @@ void DUQWindow::setWidgetsForRun()
 	ui.ControlStepFiveButton->setEnabled(false);
 	ui.ControlPauseButton->setEnabled(true);
 
-	// Disable necessary controls in subwindows
-	ListIterator<SubWindow> subWindowIterator(subWindows_);
-	while (SubWindow* subWindow = subWindowIterator.iterate()) subWindow->subWidget()->disableSensitiveControls();
+	// Disable sensitive controls in tabs
+	for (MainTab* tab = tabs_.first(); tab != NULL; tab = tab->next) tab->disableSensitiveControls();
 }
 
 // Set widgets after the main code has been run
@@ -138,9 +205,8 @@ void DUQWindow::setWidgetsAfterRun()
 	ui.ControlStepFiveButton->setEnabled(true);
 	ui.ControlPauseButton->setEnabled(false);
 
-	// Enable necessary controls in subwindows
-	ListIterator<SubWindow> subWindowIterator(subWindows_);
-	while (SubWindow* subWindow = subWindowIterator.iterate()) subWindow->subWidget()->enableSensitiveControls();
+	// Enable necessary controls in tabs
+	for (MainTab* tab = tabs_.first(); tab != NULL; tab = tab->next) tab->enableSensitiveControls();
 }
 
 // All iterations requested are complete
@@ -150,76 +216,43 @@ void DUQWindow::iterationsComplete()
 }
 
 /*
- * Sub-window Management
+ * Tab Management
  */
 
-// Find SubWindow from specified data pointer
-SubWindow* DUQWindow::subWindow(void* data)
+// Clear all tabs, except the "Setup" tab
+void DUQWindow::clearAllTabs()
 {
-	ListIterator<SubWindow> subWindowIterator(subWindows_);
-	while (SubWindow* subWindow = subWindowIterator.iterate()) if (subWindow->data() == data) return subWindow;
+	// Delete all our referenced tabs - removal of the tab and widget will be handled by the destructor
+	tabs_.clear();
+}
+
+// Add setup tab
+void DUQWindow::addSetupTab()
+{
+}
+
+// Add on tabs for all current Configurations
+void DUQWindow::addConfigurationTabs()
+{
+}
+
+// Add on an empty workspace tab
+MainTab* DUQWindow::addWorkspaceTab(const char* name)
+{
+	// Check that a tab of this name doesn't already exist
+	MainTab* tab = findTab(name);
+	if (!tab) tab = new WorkspaceTab(duq_, ui.MainTabs, name);
+	else Messenger::printVerbose("Tab '%s' already exists, so returning that instead...\n", name);
+
+	return tab;
+}
+
+// Find named tab
+MainTab* DUQWindow::findTab(const char* name)
+{
+	for (MainTab* tab = tabs_.first() ; tab != NULL; tab = tab->next) if (DUQSys::sameString(name, tab->name())) return tab;
 
 	return NULL;
-}
-
-// Return window for specified data (as pointer), if it exists
-QMdiSubWindow* DUQWindow::currentWindow(void* windowContents)
-{
-	ListIterator<SubWindow> subWindowIterator(subWindows_);
-	while (SubWindow* subWindow = subWindowIterator.iterate()) if (subWindow->data() == windowContents) return subWindow->window();
-
-	return NULL;
-}
-
-// Return window with specified title, if it exists
-QMdiSubWindow* DUQWindow::currentWindow(const char* title)
-{
-	ListIterator<SubWindow> subWindowIterator(subWindows_);
-	while (SubWindow* subWindow = subWindowIterator.iterate()) if (subWindow->window()->windowTitle() == title) return subWindow->window();
-
-	return NULL;
-}
-
-// Add window for specified data (as pointer)
-QMdiSubWindow* DUQWindow::addWindow(SubWidget* widget, void* windowContents, const char* windowTitle)
-{
-	// Check that the windowContents aren't currently in the list
-	QMdiSubWindow* window = windowContents ? currentWindow(windowContents) : NULL;
-	if (window)
-	{
-		Messenger::printVerbose("Refused to add window contents %p to our list, as it is already present elsewhere. It will be raised instead.\n");
-		window->raise();
-		return window;
-	}
-
-	// Create a new QMdiSubWindow, show, and update controls
-	window = ui.MainArea->addSubWindow(widget);
-	connect(widget, SIGNAL(windowClosed(void*)), this, SLOT(removeWindow(void*)));
-	window->setWindowTitle(windowTitle);
-	window->show();
-	widget->updateControls();
-
-	// Store window / widget data in our list
-	SubWindow* subWindow = new SubWindow(window, widget, windowContents);
-	subWindows_.own(subWindow);
-
-	return window;
-}
-
-// Remove window for specified data (as pointer), removing it from the list
-bool DUQWindow::removeWindow(void* windowContents)
-{
-	// Find the windowContents the list
-	SubWindow* window = subWindow(windowContents);
-	if (!window)
-	{
-		Messenger::print("Couldn't remove window containing contents %p from list, since it is not present.\n", windowContents);
-		return false;
-	}
-
-	subWindows_.remove(window);
-
-	return true;
 }
 
 /*
@@ -234,16 +267,8 @@ bool DUQWindow::saveWindowLayout()
 	stateParser.openOutput(windowLayoutFilename_);
 	if (!stateParser.isFileGoodForWriting()) return false;
 
-	// Loop over our subwindow list
-	ListIterator<SubWindow> subWindowIterator(subWindows_);
-	while (SubWindow* subWindow = subWindowIterator.iterate())
-	{
-		// Write window geometry / state
-		if (!stateParser.writeLineF("%s '%s'\n", subWindow->subWidget()->widgetType(), qPrintable(subWindow->window()->windowTitle()))) return false;
-		QRect geometry = subWindow->window()->geometry();
-		if (!stateParser.writeLineF("%i %i %i %i %s %s\n", geometry.x(), geometry.y(), geometry.width(), geometry.height(), DUQSys::btoa(subWindow->window()->isMaximized()), DUQSys::btoa(subWindow->window()->isShaded()))) return false;
-		if (!subWindow->subWidget()->writeState(stateParser)) return false;
-	}
+	// Loop over tabs
+	for (MainTab* tab = tabs_.first(); tab != NULL; tab = tab->next) if (tab->writeState(stateParser)) return false;
 
 	stateParser.closeFiles();
 
@@ -266,30 +291,36 @@ bool DUQWindow::loadWindowLayout()
 		SubWidget* subWidget = NULL;
 		QMdiSubWindow* subWindow = NULL;
 
-		// The line should contain the name of the widget we should create in a subwindow, and the subwindow title
-		if (DUQSys::sameString(stateParser.argc(0), "Browser"))
+		// The line should contain the name of the target mdiArea, the type of the widget we should create in a subwindow, and the subwindow title
+		MainTab* targetTab = findTab(stateParser.argc(0));
+		if (!targetTab)
 		{
-			browserWidget_ = new BrowserWidget(NULL, *this, duq_);
-			subWindow = addWindow(browserWidget_, &duq_, stateParser.argc(1));
-			subWidget = browserWidget_;
+			Messenger::printVerbose("Tab named '%s' does not yet exist, so we will create it now...\n");
+			targetTab = addWorkspaceTab(stateParser.argc(0));
 		}
-		else if (DUQSys::sameString(stateParser.argc(0), "PairPotential"))
+		if (DUQSys::sameString(stateParser.argc(1), "Browser"))
+		{
+// 			browserWidget_ = new BrowserWidget(NULL, *this, duq_);
+// 			subWindow = targetTab->addWindowToMDIArea(browserWidget_, &duq_, stateParser.argc(2));
+// 			subWidget = browserWidget_;
+		}
+		else if (DUQSys::sameString(stateParser.argc(1), "PairPotential"))
 		{
 			PairPotentialWidget* ppWidget = new PairPotentialWidget(NULL, NULL, duq_);
-			subWindow = addWindow(ppWidget, NULL, stateParser.argc(1));
+			subWindow = targetTab->addWindowToMDIArea(ppWidget, NULL, stateParser.argc(2));
 			subWidget = ppWidget;
 		}
-		else if (DUQSys::sameString(stateParser.argc(0), "MasterTerms"))
+		else if (DUQSys::sameString(stateParser.argc(1), "MasterTerms"))
 		{
 			MasterTermsWidget* masterTermsWidget = new MasterTermsWidget(NULL, duq_);
-			subWindow = addWindow(masterTermsWidget, NULL, stateParser.argc(1));
+			subWindow = targetTab->addWindowToMDIArea(masterTermsWidget, NULL, stateParser.argc(2));
 			subWidget = masterTermsWidget;
 		}
-		else if (DUQSys::sameString(stateParser.argc(0), "ModuleControl"))
+		else if (DUQSys::sameString(stateParser.argc(1), "ModuleControl"))
 		{
 			ModuleControlWidget* moduleWidget = new ModuleControlWidget(NULL, NULL, duq_);
-			connect(moduleWidget, SIGNAL(moduleRun()), this, SLOT(updateWidgets()));
-			subWindow = addWindow(moduleWidget, NULL, stateParser.argc(1));
+			connect(moduleWidget, SIGNAL(moduleRun()), this, SLOT(updateControls()));
+			subWindow = targetTab->addWindowToMDIArea(moduleWidget, NULL, stateParser.argc(2));
 			subWidget = moduleWidget;
 		}
 

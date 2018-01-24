@@ -1,7 +1,7 @@
 /*
 	*** Thread
 	*** src/gui/thread_funcs.cpp
-	Copyright T. Youngs 2007-2018
+	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
 
@@ -72,7 +72,7 @@ DUQThreadController::DUQThreadController(DUQWindow* parentWindow, DUQ& duq, int 
 	connect(&workerThread_, SIGNAL(finished()), worker, SLOT(deleteLater()));
 	connect(this, SIGNAL(workerIterate(int)), worker, SLOT(beginIterating(int)));
 	connect(this, SIGNAL(workerStop()), worker, SLOT(stopIterating()));
-	connect(worker, SIGNAL(iterated()), parentWindow, SLOT(updateWidgets()), Qt::BlockingQueuedConnection);
+	connect(worker, SIGNAL(iterated()), parentWindow, SLOT(updateControls()), Qt::BlockingQueuedConnection);
 	connect(worker, SIGNAL(iterationsComplete()), parentWindow, SLOT(iterationsComplete()));
 
 	workerThread_.start();

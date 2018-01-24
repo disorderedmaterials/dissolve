@@ -82,7 +82,7 @@ bool RefineModule::modifyBondTerms(DUQ& duq, const XYData& deltaGR, AtomType* ty
 	const int idI = typeI->index();
 	const int idJ = typeJ->index();
 	RefList<MasterIntra,double> masterBonds;
-	for (MasterIntra* b = duq.masterBonds(); b != NULL; b = b->next) if (b->usageCount(idI, idJ) > 0) masterBonds.add(b);
+	for (MasterIntra* b = duq.masterBonds().first(); b != NULL; b = b->next) if (b->usageCount(idI, idJ) > 0) masterBonds.add(b);
 
 	/*
 	 * We now have a reference list of MasterIntra bond terms that involve these two AtomTypes.

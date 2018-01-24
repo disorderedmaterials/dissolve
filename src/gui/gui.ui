@@ -12,7 +12,7 @@
   </property>
   <property name="font">
    <font>
-    <pointsize>9</pointsize>
+    <pointsize>8</pointsize>
    </font>
   </property>
   <property name="windowTitle">
@@ -273,21 +273,19 @@
      </widget>
     </item>
     <item>
-     <widget class="QSplitter" name="splitter">
+     <widget class="QSplitter" name="MainSplitter">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
-      <widget class="QMdiArea" name="MainArea">
-       <property name="font">
-        <font>
-         <pointsize>9</pointsize>
-        </font>
+      <widget class="QTabWidget" name="MainTabs">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>10</verstretch>
+        </sizepolicy>
        </property>
-       <property name="verticalScrollBarPolicy">
-        <enum>Qt::ScrollBarAsNeeded</enum>
-       </property>
-       <property name="horizontalScrollBarPolicy">
-        <enum>Qt::ScrollBarAsNeeded</enum>
+       <property name="currentIndex">
+        <number>-1</number>
        </property>
       </widget>
       <widget class="QTextBrowser" name="MessagesBrowser">
@@ -302,17 +300,41 @@
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menubar">
+  <widget class="QMenuBar" name="MainMenu">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
      <width>1052</width>
-     <height>24</height>
+     <height>23</height>
     </rect>
    </property>
+   <widget class="QMenu" name="FileMenu">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="FileOpenAction"/>
+    <addaction name="FileSaveAction"/>
+    <addaction name="separator"/>
+    <addaction name="FileQuitAction"/>
+   </widget>
+   <addaction name="FileMenu"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
+  <action name="FileOpenAction">
+   <property name="text">
+    <string>&amp;Open...</string>
+   </property>
+  </action>
+  <action name="FileSaveAction">
+   <property name="text">
+    <string>&amp;Save</string>
+   </property>
+  </action>
+  <action name="FileQuitAction">
+   <property name="text">
+    <string>&amp;Quit</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="icons.qrc"/>
