@@ -217,7 +217,7 @@ class DUQ
 	// Add new Configuration
 	Configuration* addConfiguration();
 	// Return first Configuration in list
-	Configuration* configurations();
+	const List<Configuration>& configurations() const;
 	// Find configuration by name
 	Configuration* findConfiguration(const char* name, bool useNiceName = false) const;
 

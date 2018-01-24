@@ -29,9 +29,9 @@ Configuration* DUQ::addConfiguration()
 }
 
 // Return first Configuration in list
-Configuration* DUQ::configurations()
+const List<Configuration>& DUQ::configurations() const
 {
-	return configurations_.first();
+	return configurations_;
 }
 
 // Find configuration by name

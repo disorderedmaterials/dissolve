@@ -87,7 +87,8 @@ void BrowserWidget::updateControls()
 	topItem = new QTreeWidgetItem();
 	topItem->setText(0, "Configurations");
 	ui.BrowserTree->addTopLevelItem(topItem);
-	for (Configuration* cfg = duq_.configurations(); cfg != NULL; cfg = cfg->next)
+	ListIterator<Configuration> configIterator(duq_.configurations());
+	while (Configuration* cfg = configIterator.iterate())
 	{
 		item = new QTreeWidgetItem(BrowserWidget::ConfigurationDataType);
 		item->setText(0, cfg->name());
