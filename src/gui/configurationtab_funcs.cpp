@@ -1,6 +1,6 @@
 /*
-	*** WorkspaceTab Functions
-	*** src/gui/workspacetab_funcs.cpp
+	*** ConfigurationTab Functions
+	*** src/gui/configurationtab_funcs.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -19,14 +19,14 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/workspacetab.h"
+#include "gui/configurationtab.h"
 
 // Constructor / Destructor
-WorkspaceTab::WorkspaceTab(DUQ& dUQ, QTabWidget* parent, const char* title) : MainTab(dUQ, parent, name)
+ConfigurationTab::ConfigurationTab(DUQ& dUQ, QTabWidget* parent, const char* title) : MainTab(dUQ, parent, name)
 {
 }
 
-WorkspaceTab::~WorkspaceTab()
+ConfigurationTab::~ConfigurationTab()
 {
 }
 
@@ -35,7 +35,7 @@ WorkspaceTab::~WorkspaceTab()
  */
 
 // Return MDI area available in tab (if any)
-QMdiArea* WorkspaceTab::mdiArea()
+QMdiArea* ConfigurationTab::mdiArea()
 {
 	return ui.WorkspaceArea;
 }
@@ -45,16 +45,16 @@ QMdiArea* WorkspaceTab::mdiArea()
  */
 
 // Update controls in page
-void WorkspaceTab::updatePage()
+void ConfigurationTab::updatePage()
 {
 }
 
 // Disable sensitive controls within page, ready for main code to run
-void WorkspaceTab::disableSensitiveControlsInPage()
+void ConfigurationTab::disableSensitiveControlsInPage()
 {
 }
 
 // Enable sensitive controls within page, ready for main code to run
-void WorkspaceTab::enableSensitiveControlsInPage()
+void ConfigurationTab::enableSensitiveControlsInPage()
 {
 }

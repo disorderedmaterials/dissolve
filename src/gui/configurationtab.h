@@ -1,6 +1,6 @@
 /*
-	*** Workspace Tab
-	*** src/gui/workspacetab.h
+	*** Configuration Tab
+	*** src/gui/configurationtab.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -19,27 +19,27 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_WORKSPACETAB_H
-#define DUQ_WORKSPACETAB_H
+#ifndef DUQ_CONFIGURATIONTAB_H
+#define DUQ_CONFIGURATIONTAB_H
 
-#include "gui/ui_workspacetab.h"
+#include "gui/ui_configurationtab.h"
 #include "gui/maintab.h"
 
 // Forward Declarations
-/* none */
+class Configuration;
 
-// Workspace Tab
-class WorkspaceTab : public QWidget, public MainTab
+// Configuration Tab
+class ConfigurationTab : public QWidget, public MainTab
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
 	public:
 	// Constructor / Destructor
-	WorkspaceTab(DUQ& dUQ, QTabWidget* parent, const char* title);
-	~WorkspaceTab();
+	ConfigurationTab(DUQ& dUQ, QTabWidget* parent, const char* title, Configuration* cfg);
+	~ConfigurationTab();
 	// Main form declaration
-	Ui::WorkspaceTab ui;
+	Ui::ConfigurationTab ui;
 
 
 	/*

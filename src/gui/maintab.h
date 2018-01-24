@@ -39,7 +39,7 @@ class MainTab : public ListItem<MainTab>
 {
 	public:
 	// Constructor / Destructor
-	MainTab(DUQ& duq, QTabWidget* parent, const char* name);
+	MainTab(DUQ& duq, QTabWidget* parent, const char* title);
 	virtual ~MainTab();
 
 
