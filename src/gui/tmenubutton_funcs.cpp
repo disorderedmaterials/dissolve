@@ -21,7 +21,6 @@
 
 #include "gui/tmenubutton.hui"
 #include "gui/tpopupwidget.hui"
-#include "gui/gui.h"
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QStyle>

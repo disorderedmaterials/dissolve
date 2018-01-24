@@ -21,7 +21,6 @@
 
 #include "gui/tmenubuttongroup.h"
 #include "gui/tmenubutton.hui"
-#include "gui/gui.h"
 #include <QButtonGroup>
 
 // Constructor
