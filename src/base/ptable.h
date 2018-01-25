@@ -64,7 +64,7 @@ class PeriodicTable
 	// Return number of defined elements
 	static int nElements();
 	// Return element specified
-	static Element &element(int z);
+	static Element& element(int z);
 	
 	
 	/*
@@ -72,7 +72,7 @@ class PeriodicTable
 	 */
 	private:
 	// Element counts array
-	static int *elementCount_;
+	static int* elementCount_;
 
 	public:
 	// Clear counts array

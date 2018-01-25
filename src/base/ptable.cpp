@@ -319,7 +319,7 @@ int PeriodicTable::nElements()
 }
 
 // Return element specified
-Element &PeriodicTable::element(int z)
+Element& PeriodicTable::element(int z)
 {
 #ifdef CHECKS
 	if ((z < 0) || (z > nElements_))
