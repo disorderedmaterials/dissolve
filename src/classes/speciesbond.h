@@ -76,6 +76,8 @@ class SpeciesBond : public SpeciesIntra, public ListItem<SpeciesBond>
 	enum BondFunction
 	{
 		HarmonicForm,
+		EPSRForm,
+		SoftHarmonicForm,
 		nBondFunctions
 	};
 	// Convert string to functional form
@@ -86,6 +88,8 @@ class SpeciesBond : public SpeciesIntra, public ListItem<SpeciesBond>
 	static int nFunctionParameters(BondFunction func);
 
 	public:
+	// Set up any necessary parameters
+	void setUp();
 	// Return energy for specified distance
 	double energy(double distance) const;
 	// Return force multiplier for specified distance

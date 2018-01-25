@@ -143,6 +143,9 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 						a->setParameter(n, parser.argd(n+5));
 					}
 				}
+
+				// Perform any final setup on the Angle
+				a->setUp();
 				break;
 			case (SpeciesBlock::AtomKeyword):
 				el = PeriodicTable::find(parser.argc(2));
@@ -232,6 +235,9 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 						b->setParameter(n, parser.argd(n+4));
 					}
 				}
+
+				// Perform any final setup on the Bond
+				b->setUp();
 				break;
 			case (SpeciesBlock::ChargeKeyword):
 				i = species->atom(parser.argi(1) - 1);
@@ -353,6 +359,9 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 						t->setParameter(n, parser.argd(n+6));
 					}
 				}
+
+				// Perform any final setup on the Torsion
+				t->setUp();
 				break;
 			case (SpeciesBlock::nSpeciesKeywords):
 				Messenger::error("Unrecognised %s block keyword '%s' found.\n", InputBlocks::inputBlock(InputBlocks::SpeciesBlock), parser.argc(0));

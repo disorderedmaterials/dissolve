@@ -87,6 +87,8 @@ class SpeciesIntra
 	Array<double> parametersAsArray() const;
 	// Set parameters from Array<double>
 	void setParametersFromArray(Array<double> params);
+	// Set up any necessary parameters
+	virtual void setUp();
 };
 
 #endif

@@ -21,6 +21,7 @@
 
 #include "classes/speciesbond.h"
 #include "classes/speciesatom.h"
+#include "base/ptable.h"
 #include "base/processpool.h"
 #include "base/sysfunc.h"
 #include "templates/enumhelpers.h"
@@ -111,8 +112,8 @@ bool SpeciesBond::matches(SpeciesAtom* i, SpeciesAtom* j) const
  */
 
 // Bond function keywords
-const char* BondFunctionKeywords[] = { "Harmonic" };
-int BondFunctionNParameters[] = { 2 };
+const char* BondFunctionKeywords[] = { "Harmonic", "EPSR", "SoftHarmonic" };
+int BondFunctionNParameters[] = { 2, 2, 3 };
 
 // Convert string to functional form
 SpeciesBond::BondFunction SpeciesBond::bondFunction(const char* s)
@@ -133,6 +134,29 @@ int SpeciesBond::nFunctionParameters(SpeciesBond::BondFunction func)
 	return BondFunctionNParameters[func];
 }
 
+// Set up any necessary parameters
+void SpeciesBond::setUp()
+{
+	// Get pointer to relevant parameters array
+	const double* params = parameters();
+
+	/*
+	 * Depending on the form, we may have other dependent parameters to set up
+	 * These are always stored in the *local* SpeciesIntra array, rather than those in any associated master parameters
+	 * This way, we can reference both general master parameters as well as others which depend on the atoms involved, for instance
+	 */
+	if (form() == SpeciesBond::EPSRForm)
+	{
+		// Work out omega-squared(ab)
+		parameters_[2] = params[1] / sqrt((periodicTable.element(i_->element()).z() + periodicTable.element(j_->element()).z()) / (periodicTable.element(i_->element()).z() * periodicTable.element(j_->element()).z()));
+	}
+	else if (form() == SpeciesBond::SoftHarmonicForm)
+	{
+		// Work out omega-squared(ab)
+		parameters_[3] = params[1] / sqrt((periodicTable.element(i_->element()).z() + periodicTable.element(j_->element()).z()) / (periodicTable.element(i_->element()).z() * periodicTable.element(j_->element()).z()));
+	}
+}
+
 // Return energy for specified distance
 double SpeciesBond::energy(double distance) const
 {
@@ -148,6 +172,34 @@ double SpeciesBond::energy(double distance) const
 		 */
 		double delta = distance - params[1];
 		return 0.5*params[0]*delta*delta;
+	}
+	else if (form() == SpeciesBond::EPSRForm)
+	{
+		/*
+		 * Basically a harmonic oscillator metered by the mass of the atoms (encapsulated in the omegaSquared parameter
+		 * 
+		 * Parameters:
+		 * 0 : general force constant C / 2.0
+		 * 1 : equilibrium distance
+		 * 2 : omega squared (LOCAL parameter)
+		 */
+		double delta = distance - params[1];
+		return params[0] * (delta*delta) / parameters_[2];
+	}
+	else if (form() == SpeciesBond::SoftHarmonicForm)
+	{
+		/*
+		 * Around the equilibrium position (up to +/- range), it is a harmonic oscillator metered by the mass of the atoms
+		 * a la EPSR, but outside of this range we apply an additional harmonic potential a factor of 100 greater
+		 * 
+		 * Parameters:
+		 * 0 : general force constant C / 2.0
+		 * 1 : equilibrium distance
+		 * 2 : range
+		 * 3 : omega squared (LOCAL parameter)
+		 */
+		double delta = distance - params[1];
+		return params[0] * (delta*delta) / parameters_[2];
 	}
 
 	Messenger::error("Functional form of SpeciesBond term not set, so can't calculate energy.\n");
@@ -168,6 +220,34 @@ double SpeciesBond::force(double distance) const
 		 * 1 : equilibrium distance
 		 */
 		return -params[0]*(distance-params[1]);
+	}
+	else if (form() == SpeciesBond::EPSRForm)
+	{
+		/*
+		 * Basically a harmonic oscillator metered by the mass of the atoms (encapsulated in the omegaSquared parameter
+		 * 
+		 * Parameters:
+		 * 0 : general force constant C / 2.0
+		 * 1 : equilibrium distance
+		 * 2 : omega squared (LOCAL parameter)
+		 */
+		return -2.0 * params[0] * (distance - params[1]);
+	}
+	else if (form() == SpeciesBond::SoftHarmonicForm)
+	{
+		/*
+		 * Around the equilibrium position (up to +/- range), it is a harmonic oscillator metered by the mass of the atoms
+		 * a la EPSR, but outside of this range we apply an additional harmonic potential a factor of 100 greater
+		 * 
+		 * Parameters:
+		 * 0 : general force constant C / 2.0
+		 * 1 : equilibrium distance
+		 * 2 : range
+		 * 3 : omega squared (LOCAL parameter)
+		 */
+		double delta = distance - params[1];
+		if (fabs(delta) < params[2]) return params[0] * delta / parameters_[2];
+		else return (params[0] * delta / parameters_[2]) + 100.0 * params[0] * (delta - params[2]);
 	}
 
 	Messenger::error("Functional form of SpeciesBond term not set, so can't calculate force.\n");
