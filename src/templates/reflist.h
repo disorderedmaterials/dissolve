@@ -629,6 +629,16 @@ template <class T, class D> class RefListIterator
 		finished_ = false;
 		currentItem_ = NULL;
 	}
+	// Return whether we are on the first item in the list
+	bool first()
+	{
+		return (currentItem_ == targetRefList_.first());
+	}
+	// Return whether we are on the last item in the list
+	bool last()
+	{
+		return (currentItem_ == targetRefList_.last());
+	}
 };
 
 #endif
