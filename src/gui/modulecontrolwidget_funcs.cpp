@@ -73,6 +73,9 @@ void ModuleControlWidget::initialiseWindow(Module* module)
 		ui.TopLabel->setText("? (?) @ ?");
 		ui.BottomLabel->setText("Targets: ?");
 	}
+
+	// Set widget toggle button state
+	ui.ToggleModuleWidgetButton->setChecked(ui.ControlsWidget->isVisible());
 }
 
 // Initialise controls
@@ -256,6 +259,11 @@ void ModuleControlWidget::on_ControlRunButton_clicked(bool checked)
 	module_->process(duq_, duq_.worldPool());
 
 	emit moduleRun();
+}
+
+void ModuleControlWidget::on_ToggleModuleWidgetButton_clicked(bool checked)
+{
+	ui.ControlsWidget->setVisible(checked);
 }
 
 void ModuleControlWidget::on_EnabledCheck_clicked(bool checked)

@@ -6,6 +6,9 @@
     <file>icons/file_save.svg</file>
     <file>icons/file_saveas.svg</file>
   </qresource>
+  <qresource prefix="module">
+    <file>icons/module_togglepanel.svg</file>
+  </qresource>
   <qresource prefix="control">
     <file>icons/control_pause.svg</file>
     <file>icons/control_run.svg</file>
