@@ -22,8 +22,10 @@
 #include "gui/configurationtab.h"
 #include "gui/gui.h"
 #include "gui/modulecontrolwidget.h"
-#include "classes/configuration.h"
 #include "module/module.h"
+#include "classes/configuration.h"
+#include "base/lineparser.h"
+#include <QFrame>
 
 // Constructor / Destructor
 ConfigurationTab::ConfigurationTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const char* title, Configuration* cfg) : MainTab(duq, parent, CharString("Configuration: %s", title), this)
@@ -36,6 +38,13 @@ ConfigurationTab::ConfigurationTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* p
 	RefListIterator<Module,bool> moduleIterator(cfg->modules().modules());
 	while (Module* module = moduleIterator.iterate())
 	{
+		if (!moduleIterator.first())
+		{
+			QFrame* frame = new QFrame;
+			frame->setFrameShape(QFrame::VLine);
+			ui.ModuleWidgetLayout->addWidget(frame);
+		}
+
 		ModuleControlWidget* moduleWidget = new ModuleControlWidget(NULL, module, duq_, CharString("%s (%s)", module->name(), module->uniqueName()));
 		connect(moduleWidget, SIGNAL(moduleRun()), duqWindow, SLOT(updateControls()));
 		ui.ModuleWidgetLayout->addWidget(moduleWidget);
@@ -78,16 +87,25 @@ SubWidget* ConfigurationTab::findSubWidget(const char* widgetTitle)
 // Update controls in tab
 void ConfigurationTab::updateControls()
 {
+	// Loop over our SubWidgets
+	ListIterator<SubWidget> subWidgetIterator(subWidgets_);
+	while (SubWidget* subWidget = subWidgetIterator.iterate()) subWidget->updateControls();
 }
 
 // Disable sensitive controls within tab, ready for main code to run
 void ConfigurationTab::disableSensitiveControls()
 {
+	// Disable sensitive controls in SubWidgets
+	ListIterator<SubWidget> subWidgetIterator(subWidgets_);
+	while (SubWidget* subWidget = subWidgetIterator.iterate()) subWidget->disableSensitiveControls();
 }
 
 // Enable sensitive controls within tab, ready for main code to run
 void ConfigurationTab::enableSensitiveControls()
 {
+	// Enable sensitive controls in SubWidgets
+	ListIterator<SubWidget> subWidgetIterator(subWidgets_);
+	while (SubWidget* subWidget = subWidgetIterator.iterate()) subWidget->enableSensitiveControls();
 }
 
 /*
@@ -97,5 +115,15 @@ void ConfigurationTab::enableSensitiveControls()
 // Write widget state through specified LineParser
 bool ConfigurationTab::writeState(LineParser& parser)
 {
+	// Loop over our SubWidgets
+	ListIterator<SubWidget> subWidgetIterator(subWidgets_);
+	while (SubWidget* subWidget = subWidgetIterator.iterate())
+	{
+		// Write window state
+		if (!parser.writeLineF("'%s'  %s  '%s'\n", title_.get(), subWidget->widgetType(), subWidget->title())) return false;
+		if (!parser.writeLineF("0\n")) return false;
+		if (!subWidget->writeState(parser)) return false;
+	}
+
 	return true;
 }

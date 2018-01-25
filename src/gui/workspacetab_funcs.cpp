@@ -116,7 +116,7 @@ bool WorkspaceTab::writeState(LineParser& parser)
 	while (SubWindow* subWindow = subWindowIterator.iterate())
 	{
 		// Write window geometry / state
-		if (!parser.writeLineF("%s  %s '%s'\n", title_.get(), subWindow->subWidget()->widgetType(), subWindow->subWidget()->title())) return false;
+		if (!parser.writeLineF("'%s'  %s  '%s'\n", title_.get(), subWindow->subWidget()->widgetType(), subWindow->subWidget()->title())) return false;
 		QRect geometry = subWindow->window()->geometry();
 		if (!parser.writeLineF("%i %i %i %i %s %s\n", geometry.x(), geometry.y(), geometry.width(), geometry.height(), DUQSys::btoa(subWindow->window()->isMaximized()), DUQSys::btoa(subWindow->window()->isShaded()))) return false;
 		if (!subWindow->subWidget()->writeState(parser)) return false;
@@ -124,7 +124,6 @@ bool WorkspaceTab::writeState(LineParser& parser)
 
 	return true;
 }
-
 
 /*
  * MDI SubWindow Management

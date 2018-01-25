@@ -1,6 +1,6 @@
 /*
 	*** ProcessingTab Functions
-	*** src/gui/configurationtab_funcs.cpp
+	*** src/gui/processingtab_funcs.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -25,6 +25,7 @@
 #include "main/duq.h"
 #include "module/module.h"
 #include "classes/configuration.h"
+#include "base/lineparser.h"
 
 // Constructor / Destructor
 ProcessingTab::ProcessingTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const char* title) : MainTab(duq, parent, CharString("Processing", title), this)
@@ -35,6 +36,13 @@ ProcessingTab::ProcessingTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent,
 	RefListIterator<Module,bool> moduleIterator(duq.processingModules().modules());
 	while (Module* module = moduleIterator.iterate())
 	{
+		if (!moduleIterator.first())
+		{
+			QFrame* frame = new QFrame;
+			frame->setFrameShape(QFrame::VLine);
+			ui.ModuleWidgetLayout->addWidget(frame);
+		}
+
 		ModuleControlWidget* moduleWidget = new ModuleControlWidget(NULL, module, duq_, CharString("%s (%s)", module->name(), module->uniqueName()));
 		connect(moduleWidget, SIGNAL(moduleRun()), duqWindow, SLOT(updateControls()));
 		ui.ModuleWidgetLayout->addWidget(moduleWidget);
@@ -77,16 +85,25 @@ SubWidget* ProcessingTab::findSubWidget(const char* widgetTitle)
 // Update controls in tab
 void ProcessingTab::updateControls()
 {
+	// Loop over our SubWidgets
+	ListIterator<SubWidget> subWidgetIterator(subWidgets_);
+	while (SubWidget* subWidget = subWidgetIterator.iterate()) subWidget->updateControls();
 }
 
 // Disable sensitive controls within tab, ready for main code to run
 void ProcessingTab::disableSensitiveControls()
 {
+	// Disable sensitive controls in SubWidgets
+	ListIterator<SubWidget> subWidgetIterator(subWidgets_);
+	while (SubWidget* subWidget = subWidgetIterator.iterate()) subWidget->disableSensitiveControls();
 }
 
 // Enable sensitive controls within tab, ready for main code to run
 void ProcessingTab::enableSensitiveControls()
 {
+	// Enable sensitive controls in SubWidgets
+	ListIterator<SubWidget> subWidgetIterator(subWidgets_);
+	while (SubWidget* subWidget = subWidgetIterator.iterate()) subWidget->enableSensitiveControls();
 }
 
 /*
@@ -96,5 +113,15 @@ void ProcessingTab::enableSensitiveControls()
 // Write widget state through specified LineParser
 bool ProcessingTab::writeState(LineParser& parser)
 {
+	// Loop over our SubWidgets
+	ListIterator<SubWidget> subWidgetIterator(subWidgets_);
+	while (SubWidget* subWidget = subWidgetIterator.iterate())
+	{
+		// Write window state
+		if (!parser.writeLineF("'%s'  %s  '%s'\n", title_.get(), subWidget->widgetType(), subWidget->title())) return false;
+		if (!parser.writeLineF("0\n")) return false;
+		if (!subWidget->writeState(parser)) return false;
+	}
+
 	return true;
 }
