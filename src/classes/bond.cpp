@@ -97,11 +97,19 @@ SpeciesBond* Bond::speciesBond() const
 // Return energy for specified distance
 double Bond::energy(double distance) const
 {
+#ifdef CHECKS
+	if (speciesBond_ == NULL) Messenger::warn("Bond:energy() - Bond has no SpeciesBond set - returning 0.0.\n");
+	return 0.0;
+#endif
 	return speciesBond_->energy(distance);
 }
 
 // Return force multiplier for specified distance
 double Bond::force(double distance) const
 {
+#ifdef CHECKS
+	if (speciesBond_ == NULL) Messenger::warn("Bond:force() - Bond has no SpeciesBond set - returning 0.0.\n");
+	return 0.0;
+#endif
 	return speciesBond_->force(distance);
 }
