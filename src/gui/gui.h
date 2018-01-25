@@ -91,6 +91,17 @@ class DUQWindow : public QMainWindow
 
 
 	/*
+	 * Main Menu
+	 */
+	private slots:
+	void menuItemTriggered(bool);
+
+	public:
+	// Update menu items (after change in Modules etc.)
+	void updateMenuItems();
+
+
+	/*
 	 * Run Control
 	 */
 	public:
@@ -138,6 +149,9 @@ class DUQWindow : public QMainWindow
 	private:
 	// List of all displayed tabs
 	List<MainTab> tabs_;
+
+	private slots:
+	void on_MainTabs_currentChanged(int index);
 
 	private:
 	// Clear all tabs

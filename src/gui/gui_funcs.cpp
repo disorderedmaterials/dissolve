@@ -141,16 +141,21 @@ bool DUQWindow::openFile(const char* inputFile, bool ignoreRestartFile, bool ign
 		return 1;
 	}
 
+	refreshing_ = true;
+
 	// Add on necessary tabs
 	addSetupTab();
 	ListIterator<Configuration> configIterator(duq_.configurations());
 	while (Configuration* cfg = configIterator.iterate()) addConfigurationTab(cfg);
+	addProcessingTab();
+
+	refreshing_ = false;
 
 	// Does a window state exist for this input file?
 	windowLayoutFilename_.sprintf("%s.state", duq_.filename());
 
 	// Try to load in the window state file
-	if (!ignoreLayoutFile) loadWindowLayout();
+	if (DUQSys::fileExists(windowLayoutFilename_) && (!ignoreLayoutFile)) loadWindowLayout();
 
 	return true;
 }
@@ -177,6 +182,38 @@ void DUQWindow::addOutputHandler()
 	connect(&outputHandler_, SIGNAL(printText(const QString&)), ui.MessagesBrowser, SLOT(append(const QString&)));
 }
 
+/*
+ * Main Menu
+ */
+
+void DUQWindow::menuItemTriggered(bool checked)
+{
+	// Get the sender QAction
+	QAction* action = (QAction*) sender();
+	if (!action) return;
+
+	printf("Action = %p\n");
+}
+
+// Update menu items (after change in Modules etc.)
+void DUQWindow::updateMenuItems()
+{
+	// Update the WorkSpaceAddWidget submenu
+	QAction* subMenuAction = ui.WorkspaceAddWidgetAction->menuAction();
+	if (subMenuAction) ui.WorkspaceAddWidgetAction->removeAction(subMenuAction);
+
+	QFont italicFont = ui.WorkspaceAddWidgetAction->font();
+	italicFont.setItalic(true);
+
+	// General widgets, not associated to a module
+	QMenu* subMenu = new QMenu;
+	QAction* menuItem = subMenu->addAction("General");
+	menuItem->setFont(italicFont);
+	menuItem->setEnabled(false);
+	menuItem = subMenu->addAction("PairPotential");
+	connect(menuItem, SIGNAL(triggered(bool)), this, SLOT(menuItemTriggered(bool)));
+	
+}
 
 /*
  * Run Control
@@ -265,6 +302,26 @@ void DUQWindow::iterationsComplete()
 /*
  * Tab Management
  */
+
+void DUQWindow::on_MainTabs_currentChanged(int index)
+{
+	if (refreshing_) return;
+
+	// Current tab index changed
+	if (index >= tabs_.nItems())
+	{
+		Messenger::error("Something has gone wrong - tab index changed to %i, but there are only %i in the list.\n", index, tabs_.nItems());
+		return;
+	}
+
+	MainTab* currentTab = tabs_[index];
+
+	// Set controls in Workspace menu
+	// -- Workspace name
+	ui.WorkspaceCurrentAction->setText(index == -1 ? "<No Current Workspace>" : tabs_[index]->title());
+	// -- Disable controls if the current tab has no valid SubWindow (MDI) area
+	ui.WorkspaceAddWidgetAction->setEnabled(currentTab->hasSubWindowArea());
+}
 
 // Clear all tabs, except the "Setup" tab
 void DUQWindow::clearAllTabs()

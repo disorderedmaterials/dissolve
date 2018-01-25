@@ -319,14 +319,30 @@
     <addaction name="FileQuitAction"/>
    </widget>
    <widget class="QMenu" name="WorkspaceMenu">
+    <property name="font">
+     <font>
+      <pointsize>8</pointsize>
+     </font>
+    </property>
     <property name="title">
      <string>&amp;Workspace</string>
     </property>
+    <widget class="QMenu" name="WorkspaceAddWidgetAction">
+     <property name="title">
+      <string>Add &amp;Widget...</string>
+     </property>
+    </widget>
     <addaction name="WorkspaceAddNewAction"/>
     <addaction name="separator"/>
     <addaction name="WorkspaceCurrentAction"/>
+    <addaction name="WorkspaceAddWidgetAction"/>
    </widget>
    <widget class="QMenu" name="SimulationMenu">
+    <property name="font">
+     <font>
+      <pointsize>8</pointsize>
+     </font>
+    </property>
     <property name="title">
      <string>S&amp;imulation</string>
     </property>
@@ -359,7 +375,7 @@
   </action>
   <action name="WorkspaceAddNewAction">
    <property name="text">
-    <string>&amp;Add New</string>
+    <string>Add &amp;New</string>
    </property>
   </action>
   <action name="WorkspaceCurrentAction">
@@ -378,6 +394,24 @@
   <action name="SimulationAddConfigurationAction">
    <property name="text">
     <string>Configuration</string>
+   </property>
+  </action>
+  <action name="WorkspaceAddWidgetGeneralAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>General</string>
+   </property>
+   <property name="font">
+    <font>
+     <italic>true</italic>
+    </font>
+   </property>
+  </action>
+  <action name="WorkspaceAddWidgetPairPotential">
+   <property name="text">
+    <string>Pair Potential</string>
    </property>
   </action>
  </widget>
