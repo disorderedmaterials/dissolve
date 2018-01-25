@@ -20,10 +20,16 @@
 */
 
 #include "gui/workspacetab.h"
+#include "gui/subwidget.h"
+#include "base/lineparser.h"
+#include "base/sysfunc.h"
+#include <QMdiArea>
+#include <QMdiSubWindow>
 
 // Constructor / Destructor
-WorkspaceTab::WorkspaceTab(DUQ& dUQ, QTabWidget* parent, const char* title) : MainTab(dUQ, parent, title)
+WorkspaceTab::WorkspaceTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const char* title) : MainTab(duq, parent, title, this)
 {
+	ui.setupUi(this);
 }
 
 WorkspaceTab::~WorkspaceTab()
@@ -31,30 +37,138 @@ WorkspaceTab::~WorkspaceTab()
 }
 
 /*
- * Data
+ * SubWidget / SubWindow Handling
  */
 
-// Return MDI area available in tab (if any)
-QMdiArea* WorkspaceTab::mdiArea()
+// Return whether the tab has a SubWindow area
+bool WorkspaceTab::hasSubWindowArea()
 {
-	return ui.WorkspaceArea;
+	return true;
+}
+
+// Add SubWindow for widget containing specified data (as pointer)
+QMdiSubWindow* WorkspaceTab::addSubWindow(SubWidget* widget, void* windowContents, const char* windowTitle)
+{
+	// Check that the windowContents aren't currently in the list
+	QMdiSubWindow* window = windowContents ? findMDIWindow(windowContents) : NULL;
+	if (window)
+	{
+		Messenger::printVerbose("Refused to add window contents %p to our list, as it is already present elsewhere. It will be raised instead.\n");
+		window->raise();
+		return window;
+	}
+
+	// Create a new QMdiSubWindow, show, and update controls
+	window = ui.WorkspaceArea->addSubWindow(widget);
+	window->setWindowTitle(windowTitle);
+	window->show();
+	widget->updateControls();
+
+	// Store window / widget data in our list
+	SubWindow* subWindow = new SubWindow(window, widget, windowContents);
+	subWindows_.own(subWindow);
+
+	return window;
+}
+
+// Find and return named SubWidget
+SubWidget* WorkspaceTab::findSubWidget(const char* widgetName)
+{
 }
 
 /*
  * Update
  */
 
-// Update controls in page
-void WorkspaceTab::updatePage()
+// Update controls in tab
+void WorkspaceTab::updateControls()
 {
+	// Update our MDI subwindows
+	ListIterator<SubWindow> subWindowIterator(subWindows_);
+	while (SubWindow* subWindow = subWindowIterator.iterate()) subWindow->subWidget()->updateControls();
 }
 
-// Disable sensitive controls within page, ready for main code to run
-void WorkspaceTab::disableSensitiveControlsInPage()
+// Disable sensitive controls within tab, ready for main code to run
+void WorkspaceTab::disableSensitiveControls()
 {
+	// Disable sensitive controls in subwindows
+	ListIterator<SubWindow> subWindowIterator(subWindows_);
+	while (SubWindow* subWindow = subWindowIterator.iterate()) subWindow->subWidget()->disableSensitiveControls();
 }
 
-// Enable sensitive controls within page, ready for main code to run
-void WorkspaceTab::enableSensitiveControlsInPage()
+// Enable sensitive controls within tab, ready for main code to run
+void WorkspaceTab::enableSensitiveControls()
 {
+	// Enable sensitive controls in subwindows
+	ListIterator<SubWindow> subWindowIterator(subWindows_);
+	while (SubWindow* subWindow = subWindowIterator.iterate()) subWindow->subWidget()->enableSensitiveControls();
+}
+
+/*
+ * State
+ */
+
+// Write widget state through specified LineParser
+bool WorkspaceTab::writeState(LineParser& parser)
+{
+	// Loop over our subwindow list
+	ListIterator<SubWindow> subWindowIterator(subWindows_);
+	while (SubWindow* subWindow = subWindowIterator.iterate())
+	{
+		// Write window geometry / state
+		if (!parser.writeLineF("%s  %s '%s'\n", title_.get(), subWindow->subWidget()->widgetType(), qPrintable(subWindow->window()->windowTitle()))) return false;
+		QRect geometry = subWindow->window()->geometry();
+		if (!parser.writeLineF("%i %i %i %i %s %s\n", geometry.x(), geometry.y(), geometry.width(), geometry.height(), DUQSys::btoa(subWindow->window()->isMaximized()), DUQSys::btoa(subWindow->window()->isShaded()))) return false;
+		if (!subWindow->subWidget()->writeState(parser)) return false;
+	}
+
+	return true;
+}
+
+
+/*
+ * MDI SubWindow Management
+ */
+
+// Find SubWindow from specified data pointer
+SubWindow* WorkspaceTab::subWindow(void* data)
+{
+	ListIterator<SubWindow> subWindowIterator(subWindows_);
+	while (SubWindow* subWindow = subWindowIterator.iterate()) if (subWindow->data() == data) return subWindow;
+
+	return NULL;
+}
+
+// Return window for specified data (as pointer), if it exists
+QMdiSubWindow* WorkspaceTab::findMDIWindow(void* windowContents)
+{
+	ListIterator<SubWindow> subWindowIterator(subWindows_);
+	while (SubWindow* subWindow = subWindowIterator.iterate()) if (subWindow->data() == windowContents) return subWindow->window();
+
+	return NULL;
+}
+
+// Return window with specified title, if it exists
+QMdiSubWindow* WorkspaceTab::findMDIWindow(const char* title)
+{
+	ListIterator<SubWindow> subWindowIterator(subWindows_);
+	while (SubWindow* subWindow = subWindowIterator.iterate()) if (subWindow->window()->windowTitle() == title) return subWindow->window();
+
+	return NULL;
+}
+
+// Remove window for specified data (as pointer), removing it from the list
+bool WorkspaceTab::removeWindowFromMDIArea(void* windowContents)
+{
+	// Find the windowContents the list
+	SubWindow* window = subWindow(windowContents);
+	if (!window)
+	{
+		Messenger::print("Couldn't remove window containing contents %p from list, since it is not present.\n", windowContents);
+		return false;
+	}
+
+	subWindows_.remove(window);
+
+	return true;
 }

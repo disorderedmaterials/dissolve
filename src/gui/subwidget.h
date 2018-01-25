@@ -22,6 +22,7 @@
 #ifndef DUQ_SUBWIDGET_H
 #define DUQ_SUBWIDGET_H
 
+#include "templates/listitem.h"
 #include <QWidget>
 
 // Forward Declarations
@@ -29,7 +30,7 @@ class LineParser;
 class SubWindow;
 
 // Subwidget (root class for any widget to be displayed in a QMdiSubWindow)
-class SubWidget : public QWidget
+class SubWidget : public QWidget, public ListItem<SubWidget>
 {
 	protected:
 	// Whether widget is currently refreshing

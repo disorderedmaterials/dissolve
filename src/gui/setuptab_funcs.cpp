@@ -22,8 +22,9 @@
 #include "gui/setuptab.h"
 
 // Constructor / Destructor
-SetupTab::SetupTab(DUQ& dUQ, QTabWidget* parent, const char* title) : MainTab(dUQ, parent, title)
+SetupTab::SetupTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const char* title) : MainTab(duq, parent, title, this)
 {
+	ui.setupUi(this);
 }
 
 SetupTab::~SetupTab()
@@ -31,30 +32,30 @@ SetupTab::~SetupTab()
 }
 
 /*
- * Data
- */
-
-// Return MDI area available in tab (if any)
-QMdiArea* SetupTab::mdiArea()
-{
-	return NULL;
-}
-
-/*
  * Update
  */
 
-// Update controls in page
-void SetupTab::updatePage()
+// Update controls in tab
+void SetupTab::updateControls()
 {
 }
 
-// Disable sensitive controls within page, ready for main code to run
-void SetupTab::disableSensitiveControlsInPage()
+// Disable sensitive controls within tab, ready for main code to run
+void SetupTab::disableSensitiveControls()
 {
 }
 
-// Enable sensitive controls within page, ready for main code to run
-void SetupTab::enableSensitiveControlsInPage()
+// Enable sensitive controls within tab, ready for main code to run
+void SetupTab::enableSensitiveControls()
 {
+}
+
+/*
+ * State
+ */
+
+// Write widget state through specified LineParser
+bool SetupTab::writeState(LineParser& parser)
+{
+	return true;
 }

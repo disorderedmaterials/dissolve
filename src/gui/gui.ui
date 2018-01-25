@@ -311,14 +311,36 @@
    </property>
    <widget class="QMenu" name="FileMenu">
     <property name="title">
-     <string>&amp;File</string>
+     <string>&amp;Session</string>
     </property>
     <addaction name="FileOpenAction"/>
     <addaction name="FileSaveAction"/>
     <addaction name="separator"/>
     <addaction name="FileQuitAction"/>
    </widget>
+   <widget class="QMenu" name="WorkspaceMenu">
+    <property name="title">
+     <string>&amp;Workspace</string>
+    </property>
+    <addaction name="WorkspaceAddNewAction"/>
+    <addaction name="separator"/>
+    <addaction name="WorkspaceCurrentAction"/>
+   </widget>
+   <widget class="QMenu" name="SimulationMenu">
+    <property name="title">
+     <string>S&amp;imulation</string>
+    </property>
+    <widget class="QMenu" name="SimulationAddAction">
+     <property name="title">
+      <string>Add...</string>
+     </property>
+     <addaction name="SimulationAddConfigurationAction"/>
+    </widget>
+    <addaction name="SimulationAddAction"/>
+   </widget>
    <addaction name="FileMenu"/>
+   <addaction name="SimulationMenu"/>
+   <addaction name="WorkspaceMenu"/>
   </widget>
   <action name="FileOpenAction">
    <property name="text">
@@ -333,6 +355,29 @@
   <action name="FileQuitAction">
    <property name="text">
     <string>&amp;Quit</string>
+   </property>
+  </action>
+  <action name="WorkspaceAddNewAction">
+   <property name="text">
+    <string>&amp;Add New</string>
+   </property>
+  </action>
+  <action name="WorkspaceCurrentAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Current Workspace</string>
+   </property>
+   <property name="font">
+    <font>
+     <italic>true</italic>
+    </font>
+   </property>
+  </action>
+  <action name="SimulationAddConfigurationAction">
+   <property name="text">
+    <string>Configuration</string>
    </property>
   </action>
  </widget>

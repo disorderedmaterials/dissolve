@@ -1,6 +1,6 @@
 /*
-	*** Monitor Window - Functions
-	*** src/gui/monitor_funcs.cpp
+	*** dUQ Main Window - Functions
+	*** src/gui/gui_funcs.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -22,9 +22,11 @@
 #include "main/duq.h"
 #include "gui/gui.h"
 #include "gui/browser.h"
+#include "gui/configurationtab.h"
 #include "gui/mastertermswidget.h"
 #include "gui/modulecontrolwidget.h"
 #include "gui/pairpotentialwidget.h"
+#include "gui/setuptab.h"
 #include "gui/subwidget.h"
 #include "gui/thread.hui"
 #include "gui/workspacetab.h"
@@ -145,9 +147,10 @@ bool DUQWindow::openFile(const char* inputFile, bool ignoreRestartFile, bool ign
 		return 1;
 	}
 
-	// Add on expected tabs
+	// Add on necessary tabs
 	addSetupTab();
-	addConfigurationTabs();
+	ListIterator<Configuration> configIterator(duq_.configurations());
+	while (Configuration* cfg = configIterator.iterate()) addConfigurationTab(cfg);
 
 	// Does a window state exist for this input file?
 	windowLayoutFilename_.sprintf("%s.state", duq_.filename());
@@ -229,28 +232,36 @@ void DUQWindow::clearAllTabs()
 // Add setup tab
 void DUQWindow::addSetupTab()
 {
+	MainTab* tab = new SetupTab(this, duq_, ui.MainTabs, "Setup");
+	tabs_.own(tab);
 }
 
-// Add on tabs for all current Configurations
-void DUQWindow::addConfigurationTabs()
+// Add tab for specified Configuration target
+void DUQWindow::addConfigurationTab(Configuration* cfg)
 {
+	MainTab* tab = new ConfigurationTab(this, duq_, ui.MainTabs, cfg->name(), cfg);
+	tabs_.own(tab);
 }
 
 // Add on an empty workspace tab
-MainTab* DUQWindow::addWorkspaceTab(const char* name)
+MainTab* DUQWindow::addWorkspaceTab(const char* title)
 {
-	// Check that a tab of this name doesn't already exist
-	MainTab* tab = findTab(name);
-	if (!tab) tab = new WorkspaceTab(duq_, ui.MainTabs, name);
-	else Messenger::printVerbose("Tab '%s' already exists, so returning that instead...\n", name);
+	// Check that a tab with this title doesn't already exist
+	MainTab* tab = findTab(title);
+	if (!tab)
+	{
+		tab = new WorkspaceTab(this, duq_, ui.MainTabs, title);
+		tabs_.own(tab);
+	}
+	else Messenger::printVerbose("Tab '%s' already exists, so returning that instead...\n", title);
 
 	return tab;
 }
 
-// Find named tab
-MainTab* DUQWindow::findTab(const char* name)
+// Find tab with title specified
+MainTab* DUQWindow::findTab(const char* title)
 {
-	for (MainTab* tab = tabs_.first() ; tab != NULL; tab = tab->next) if (DUQSys::sameString(name, tab->name())) return tab;
+	for (MainTab* tab = tabs_.first() ; tab != NULL; tab = tab->next) if (DUQSys::sameString(title, tab->title())) return tab;
 
 	return NULL;
 }
@@ -291,38 +302,40 @@ bool DUQWindow::loadWindowLayout()
 		SubWidget* subWidget = NULL;
 		QMdiSubWindow* subWindow = NULL;
 
-		// The line should contain the name of the target mdiArea, the type of the widget we should create in a subwindow, and the subwindow title
+		// The line should contain the title of the target mdiArea, the type of the widget we should create in a subwindow, and the subwindow title
 		MainTab* targetTab = findTab(stateParser.argc(0));
 		if (!targetTab)
 		{
-			Messenger::printVerbose("Tab named '%s' does not yet exist, so we will create it now...\n");
+			Messenger::printVerbose("Tab titled '%s' does not yet exist, so we will create it now...\n");
 			targetTab = addWorkspaceTab(stateParser.argc(0));
 		}
-		if (DUQSys::sameString(stateParser.argc(1), "Browser"))
+
+		// We now check the availability of an area for SubWindows in the tab.
+		// If there is one then we must create the window and add it to the tab before reading its state.
+		// If not, we search for the named sub *widget*, which should already exist in the tab.
+		if (targetTab->hasSubWindowArea())
 		{
-// 			browserWidget_ = new BrowserWidget(NULL, *this, duq_);
-// 			subWindow = targetTab->addWindowToMDIArea(browserWidget_, &duq_, stateParser.argc(2));
-// 			subWidget = browserWidget_;
+			if (DUQSys::sameString(stateParser.argc(1), "PairPotential"))
+			{
+				PairPotentialWidget* ppWidget = new PairPotentialWidget(NULL, NULL, duq_);
+				subWindow = targetTab->addWindowToMDIArea(ppWidget, NULL, stateParser.argc(2));
+				subWidget = ppWidget;
+			}
+			else if (DUQSys::sameString(stateParser.argc(1), "MasterTerms"))
+			{
+				MasterTermsWidget* masterTermsWidget = new MasterTermsWidget(NULL, duq_);
+				subWindow = targetTab->addWindowToMDIArea(masterTermsWidget, NULL, stateParser.argc(2));
+				subWidget = masterTermsWidget;
+			}
+			else if (DUQSys::sameString(stateParser.argc(1), "ModuleControl"))
+			{
+				ModuleControlWidget* moduleWidget = new ModuleControlWidget(NULL, NULL, duq_);
+				connect(moduleWidget, SIGNAL(moduleRun()), this, SLOT(updateControls()));
+				subWindow = targetTab->addWindowToMDIArea(moduleWidget, NULL, stateParser.argc(2));
+				subWidget = moduleWidget;
+			}
 		}
-		else if (DUQSys::sameString(stateParser.argc(1), "PairPotential"))
-		{
-			PairPotentialWidget* ppWidget = new PairPotentialWidget(NULL, NULL, duq_);
-			subWindow = targetTab->addWindowToMDIArea(ppWidget, NULL, stateParser.argc(2));
-			subWidget = ppWidget;
-		}
-		else if (DUQSys::sameString(stateParser.argc(1), "MasterTerms"))
-		{
-			MasterTermsWidget* masterTermsWidget = new MasterTermsWidget(NULL, duq_);
-			subWindow = targetTab->addWindowToMDIArea(masterTermsWidget, NULL, stateParser.argc(2));
-			subWidget = masterTermsWidget;
-		}
-		else if (DUQSys::sameString(stateParser.argc(1), "ModuleControl"))
-		{
-			ModuleControlWidget* moduleWidget = new ModuleControlWidget(NULL, NULL, duq_);
-			connect(moduleWidget, SIGNAL(moduleRun()), this, SLOT(updateControls()));
-			subWindow = targetTab->addWindowToMDIArea(moduleWidget, NULL, stateParser.argc(2));
-			subWidget = moduleWidget;
-		}
+
 
 		// Did we recognise the widget?
 		if (!subWidget)

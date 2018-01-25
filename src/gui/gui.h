@@ -32,6 +32,7 @@
 
 // Forward Declarations
 class BrowserWidget;
+class Configuration;
 class DUQ;
 class QMdiSubWindow;
 
@@ -134,17 +135,12 @@ class DUQWindow : public QMainWindow
 	void clearAllTabs();
 	// Add setup tab
 	void addSetupTab();
-	// Add on tabs for all current Configurations
-	void addConfigurationTabs();
+	// Add tab for specified Configuration target
+	void addConfigurationTab(Configuration* cfg);
 	// Add on an empty workspace tab
-	MainTab* addWorkspaceTab(const char* name);
-	// Find named tab
-	MainTab* findTab(const char* name);
-
-
-	/*
-	 * Sub-window Management
-	 */
+	MainTab* addWorkspaceTab(const char* title);
+	// Find tab with title specified
+	MainTab* findTab(const char* title);
 
 
 	/*

@@ -24,6 +24,7 @@
 
 #include "gui/ui_configurationtab.h"
 #include "gui/maintab.h"
+#include "gui/subwidget.h"
 
 // Forward Declarations
 class Configuration;
@@ -36,7 +37,7 @@ class ConfigurationTab : public QWidget, public MainTab
 
 	public:
 	// Constructor / Destructor
-	ConfigurationTab(DUQ& dUQ, QTabWidget* parent, const char* title, Configuration* cfg);
+	ConfigurationTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const char* title, Configuration* cfg);
 	~ConfigurationTab();
 	// Main form declaration
 	Ui::ConfigurationTab ui;
@@ -50,23 +51,39 @@ class ConfigurationTab : public QWidget, public MainTab
 
 
 	/*
-	 * Data
+	 * SubWidget / SubWindow Handling
 	 */
+	private:
+	// List of module subwidgets
+	List<SubWidget> subWidgets_;
+
 	public:
-	// Return MDI area available in tab (if any)
-	QMdiArea* mdiArea();
+	// Return whether the tab has a SubWindow area
+	bool hasSubWindowArea();
+	// Add SubWindow for widget containing specified data (as pointer)
+	QMdiSubWindow* addSubWindow(SubWidget* widget, void* windowContents, const char* windowTitle);
+	// Find and return named SubWidget
+	SubWidget* findSubWidget(const char* widgetName);
 
 
 	/*
 	 * Update
 	 */
 	protected:
-	// Update controls in page
-	void updatePage();
-	// Disable sensitive controls within page, ready for main code to run
-	void disableSensitiveControlsInPage();
-	// Enable sensitive controls within page, ready for main code to run
-	void enableSensitiveControlsInPage();
+	// Update controls in tab
+	void updateControls();
+	// Disable sensitive controls within tab, ready for main code to run
+	void disableSensitiveControls();
+	// Enable sensitive controls within tab, ready for main code to run
+	void enableSensitiveControls();
+
+
+	/*
+	 * State
+	 */
+	public:
+	// Write widget state through specified LineParser
+	bool writeState(LineParser& parser);
 };
 
 #endif

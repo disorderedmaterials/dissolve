@@ -20,11 +20,26 @@
 */
 
 #include "gui/configurationtab.h"
+#include "gui/gui.h"
+#include "gui/modulecontrolwidget.h"
+#include "classes/configuration.h"
+#include "module/module.h"
 
 // Constructor / Destructor
-ConfigurationTab::ConfigurationTab(DUQ& dUQ, QTabWidget* parent, const char* title, Configuration* cfg) : MainTab(dUQ, parent, title)
+ConfigurationTab::ConfigurationTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const char* title, Configuration* cfg) : MainTab(duq, parent, CharString("Configuration: %s", title), this)
 {
+	ui.setupUi(this);
+
 	configuration_ = cfg;
+
+	// Add module widgets to scroll area
+	RefListIterator<Module,bool> moduleIterator(cfg->modules().modules());
+	while (Module* module = moduleIterator.iterate())
+	{
+		ModuleControlWidget* moduleWidget = new ModuleControlWidget(NULL, module, duq_);
+		connect(moduleWidget, SIGNAL(moduleRun()), duqWindow, SLOT(updateControls()));
+		ui.ModuleWidgetLayout->addWidget(moduleWidget);
+	}
 }
 
 ConfigurationTab::~ConfigurationTab()
@@ -32,30 +47,52 @@ ConfigurationTab::~ConfigurationTab()
 }
 
 /*
- * Data
+ * SubWidget / SubWindow Handling
  */
 
-// Return MDI area available in tab (if any)
-QMdiArea* ConfigurationTab::mdiArea()
+// Return whether the tab has a SubWindow area
+bool ConfigurationTab::hasSubWindowArea()
 {
-	return ui.SubWidgetArea;
+	return false;
+}
+
+// Add SubWindow for widget containing specified data (as pointer)
+QMdiSubWindow* ConfigurationTab::addSubWindow(SubWidget* widget, void* windowContents, const char* windowTitle)
+{
+	Messenger::error("ConfigurationtTab doesn't have an MDI area, so don't try teo add a SubWindow!\n");
+	return NULL;
+}
+
+// Find and return named SubWidget
+SubWidget* ConfigurationTab::findSubWidget(const char* widgetName)
+{
 }
 
 /*
  * Update
  */
 
-// Update controls in page
-void ConfigurationTab::updatePage()
+// Update controls in tab
+void ConfigurationTab::updateControls()
 {
 }
 
-// Disable sensitive controls within page, ready for main code to run
-void ConfigurationTab::disableSensitiveControlsInPage()
+// Disable sensitive controls within tab, ready for main code to run
+void ConfigurationTab::disableSensitiveControls()
 {
 }
 
-// Enable sensitive controls within page, ready for main code to run
-void ConfigurationTab::enableSensitiveControlsInPage()
+// Enable sensitive controls within tab, ready for main code to run
+void ConfigurationTab::enableSensitiveControls()
 {
+}
+
+/*
+ * State
+ */
+
+// Write widget state through specified LineParser
+bool ConfigurationTab::writeState(LineParser& parser)
+{
+	return true;
 }

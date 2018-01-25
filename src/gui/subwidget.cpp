@@ -23,7 +23,7 @@
 #include <stdio.h>
 
 // Constructor
-SubWidget::SubWidget(QWidget* parent) : QWidget(parent)
+SubWidget::SubWidget(QWidget* parent) : QWidget(parent), ListItem<SubWidget>()
 {
 	subWindow_ = NULL;
 	refreshing_ = false;
