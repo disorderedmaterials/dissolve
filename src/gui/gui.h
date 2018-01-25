@@ -146,6 +146,8 @@ class DUQWindow : public QMainWindow
 	void addSetupTab();
 	// Add tab for specified Configuration target
 	void addConfigurationTab(Configuration* cfg);
+	// Add processing workspace
+	void addProcessingTab();
 	// Add on an empty workspace tab
 	MainTab* addWorkspaceTab(const char* title);
 	// Find tab with title specified

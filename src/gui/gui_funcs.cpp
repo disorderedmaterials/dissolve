@@ -26,6 +26,7 @@
 #include "gui/mastertermswidget.h"
 #include "gui/modulecontrolwidget.h"
 #include "gui/pairpotentialwidget.h"
+#include "gui/processingtab.h"
 #include "gui/setuptab.h"
 #include "gui/subwidget.h"
 #include "gui/thread.hui"
@@ -283,6 +284,13 @@ void DUQWindow::addSetupTab()
 void DUQWindow::addConfigurationTab(Configuration* cfg)
 {
 	MainTab* tab = new ConfigurationTab(this, duq_, ui.MainTabs, cfg->name(), cfg);
+	tabs_.own(tab);
+}
+
+// Add processing workspace
+void DUQWindow::addProcessingTab()
+{
+	MainTab* tab = new ProcessingTab(this, duq_, ui.MainTabs, "Processing");
 	tabs_.own(tab);
 }
 
