@@ -112,6 +112,13 @@ class DUQWindow : public QMainWindow
 	// Return current state of dUQ
 	DUQState duqState() const;
 
+	private slots: 
+	void on_ControlRunButton_clicked(bool checked);
+	void on_ControlStepButton_clicked(bool checked);
+	void on_ControlStepFiveButton_clicked(bool checked);
+	void on_ControlPauseButton_clicked(bool checked);
+	void on_ControlReloadButton_clicked(bool checked);
+
 	public slots:
 	// Set widgets ready for the main code to be run
 	void setWidgetsForRun();
@@ -144,6 +151,8 @@ class DUQWindow : public QMainWindow
 	// Find tab with title specified
 	MainTab* findTab(const char* title);
 
+	
+
 
 	/*
 	 * Window State
@@ -157,17 +166,6 @@ class DUQWindow : public QMainWindow
 	bool saveWindowLayout();
 	// Load window state
 	bool loadWindowLayout();
-
-
-	/*
-	 * Widget Slots
-	 */
-	private slots: 
-	void on_ControlRunButton_clicked(bool checked);
-	void on_ControlStepButton_clicked(bool checked);
-	void on_ControlStepFiveButton_clicked(bool checked);
-	void on_ControlPauseButton_clicked(bool checked);
-	void on_ControlReloadButton_clicked(bool checked);
 };
 
 #endif

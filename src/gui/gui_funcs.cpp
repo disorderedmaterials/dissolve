@@ -187,6 +187,48 @@ DUQWindow::DUQState DUQWindow::duqState() const
 	return duqState_;
 }
 
+
+void DUQWindow::on_ControlRunButton_clicked(bool checked)
+{
+	// Prepare the GUI
+	setWidgetsForRun();
+
+	duqState_ = DUQWindow::RunningState;
+
+	emit iterate(-1);
+}
+
+void DUQWindow::on_ControlStepButton_clicked(bool checked)
+{
+	// Prepare the GUI
+	setWidgetsForRun();
+
+	duqState_ = DUQWindow::RunningState;
+
+	emit iterate(1);
+}
+
+void DUQWindow::on_ControlStepFiveButton_clicked(bool checked)
+{
+	// Prepare the GUI
+	setWidgetsForRun();
+
+	duqState_ = DUQWindow::RunningState;
+
+	emit iterate(5);
+}
+
+void DUQWindow::on_ControlPauseButton_clicked(bool checked)
+{
+	duqState_ = DUQWindow::StoppedState;
+
+	emit stopIterating();
+}
+
+void DUQWindow::on_ControlReloadButton_clicked(bool checked)
+{
+}
+
 // Set widgets ready for the main code to be run
 void DUQWindow::setWidgetsForRun()
 {
@@ -373,49 +415,4 @@ bool DUQWindow::loadWindowLayout()
 	}
 
 	return true;
-}
-
-/*
- * Widget Slots
- */
-
-void DUQWindow::on_ControlRunButton_clicked(bool checked)
-{
-	// Prepare the GUI
-	setWidgetsForRun();
-
-	duqState_ = DUQWindow::RunningState;
-
-	emit iterate(-1);
-}
-
-void DUQWindow::on_ControlStepButton_clicked(bool checked)
-{
-	// Prepare the GUI
-	setWidgetsForRun();
-
-	duqState_ = DUQWindow::RunningState;
-
-	emit iterate(1);
-}
-
-void DUQWindow::on_ControlStepFiveButton_clicked(bool checked)
-{
-	// Prepare the GUI
-	setWidgetsForRun();
-
-	duqState_ = DUQWindow::RunningState;
-
-	emit iterate(5);
-}
-
-void DUQWindow::on_ControlPauseButton_clicked(bool checked)
-{
-	duqState_ = DUQWindow::StoppedState;
-
-	emit stopIterating();
-}
-
-void DUQWindow::on_ControlReloadButton_clicked(bool checked)
-{
 }
