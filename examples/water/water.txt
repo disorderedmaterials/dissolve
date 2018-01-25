@@ -21,7 +21,7 @@
 #------------------------#
 
 Master
-  Bond   OH   Harmonic  4431.53  1.0
+  Bond   OH   SoftHarmonic  65.0  1.0  0.4
   Angle  HOH  Harmonic  317.5656 113.24
 EndMaster
 

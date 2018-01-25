@@ -94,7 +94,14 @@ class DUQWindow : public QMainWindow
 	 * Main Menu
 	 */
 	private slots:
-	void menuItemTriggered(bool);
+	// Session
+	void on_FileOpenAction_triggered(bool checked);
+	void on_FileSaveAction_triggered(bool checked);
+	void on_FileQuitAction_triggered(bool checked);
+	// Simulation
+	// Workspace
+	void on_WorkspaceAddNewAction_triggered(bool checked);
+	void addWidgetMenuItemTriggered(bool checked);
 
 	public:
 	// Update menu items (after change in Modules etc.)
@@ -166,8 +173,6 @@ class DUQWindow : public QMainWindow
 	MainTab* addWorkspaceTab(const char* title);
 	// Find tab with title specified
 	MainTab* findTab(const char* title);
-
-	
 
 
 	/*

@@ -34,6 +34,7 @@
 #include "base/lineparser.h"
 #include <QCloseEvent>
 #include <QMdiSubWindow>
+#include <QInputDialog>
 
 // Constructor
 DUQWindow::DUQWindow(DUQ& duq) : QMainWindow(NULL), duq_(duq), threadController_(this, duq)
@@ -186,13 +187,35 @@ void DUQWindow::addOutputHandler()
  * Main Menu
  */
 
-void DUQWindow::menuItemTriggered(bool checked)
+void DUQWindow::on_FileOpenAction_triggered(bool checked)
+{
+}
+
+void DUQWindow::on_FileSaveAction_triggered(bool checked)
+{
+}
+
+void DUQWindow::on_FileQuitAction_triggered(bool checked)
+{
+}
+
+void DUQWindow::addWidgetMenuItemTriggered(bool checked)
 {
 	// Get the sender QAction
 	QAction* action = (QAction*) sender();
 	if (!action) return;
 
 	printf("Action = %p\n");
+}
+
+void DUQWindow::on_WorkspaceAddNewAction_triggered(bool checked)
+{
+	// Add a new workspace
+	bool ok;
+	QString text = QInputDialog::getText(this, "New Workspace", "Enter the name of the new workspace", QLineEdit::Normal, "New Workspace", &ok);
+	if (!ok || text.isEmpty()) return;
+
+	addWorkspaceTab(qPrintable(text));
 }
 
 // Update menu items (after change in Modules etc.)
@@ -211,8 +234,9 @@ void DUQWindow::updateMenuItems()
 	menuItem->setFont(italicFont);
 	menuItem->setEnabled(false);
 	menuItem = subMenu->addAction("PairPotential");
-	connect(menuItem, SIGNAL(triggered(bool)), this, SLOT(menuItemTriggered(bool)));
-	
+	connect(menuItem, SIGNAL(triggered(bool)), this, SLOT(addWidgetMenuItemTriggered(bool)));
+
+	ui.WorkspaceAddWidgetAction->addMenu(subMenu);
 }
 
 /*
