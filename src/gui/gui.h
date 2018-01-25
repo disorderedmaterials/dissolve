@@ -86,6 +86,8 @@ class DUQWindow : public QMainWindow
 	public slots:
 	// Refresh all controls
 	void updateControls();
+	// Link output handler in to the Messenger
+	void addOutputHandler();
 
 
 	/*

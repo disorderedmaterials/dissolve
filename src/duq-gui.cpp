@@ -171,6 +171,7 @@ int main(int argc, char **argv)
 
 	// Update and show the main window
 	duqWindow.updateControls();
+	duqWindow.addOutputHandler();
 	duqWindow.show();
 
 	int result = app.exec();

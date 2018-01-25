@@ -44,10 +44,6 @@ DUQWindow::DUQWindow(DUQ& duq) : QMainWindow(NULL), duq_(duq), threadController_
 	// Set up user interface
 	ui.setupUi(this);
 
-	// Link our output handler to the Messenger, and connect up signals/slots
-	Messenger::setOutputHandler(&outputHandler_);
-	connect(&outputHandler_, SIGNAL(printText(const QString&)), ui.MessagesBrowser, SLOT(append(const QString&)));
-
 	// Connect signals to thread controller
 	connect(this, SIGNAL(iterate(int)), &threadController_, SLOT(iterate(int)));
 	connect(this, SIGNAL(stopIterating()), &threadController_, SLOT(stopIterating()));
@@ -175,6 +171,14 @@ void DUQWindow::updateControls()
 	// Loop over tabs
 	for (MainTab* tab = tabs_.first(); tab != NULL; tab = tab->next) tab->updateControls();
 }
+
+// Link output handler in to the Messenger
+void DUQWindow::addOutputHandler()
+{
+	Messenger::setOutputHandler(&outputHandler_);
+	connect(&outputHandler_, SIGNAL(printText(const QString&)), ui.MessagesBrowser, SLOT(append(const QString&)));
+}
+
 
 /*
  * Run Control
