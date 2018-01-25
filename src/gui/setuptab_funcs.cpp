@@ -32,6 +32,29 @@ SetupTab::~SetupTab()
 }
 
 /*
+ * SubWidget / SubWindow Handling
+ */
+
+// Return whether the tab has a SubWindow area
+bool SetupTab::hasSubWindowArea()
+{
+	return false;
+}
+
+// Add SubWindow for widget containing specified data (as pointer)
+QMdiSubWindow* SetupTab::addSubWindow(SubWidget* widget, void* windowContents)
+{
+	Messenger::error("ConfigurationTab doesn't have an MDI area, so don't try to add a SubWindow!\n");
+	return NULL;
+}
+
+// Find and return named SubWidget
+SubWidget* SetupTab::findSubWidget(const char* widgetTitle)
+{
+	return NULL;
+}
+
+/*
  * Update
  */
 

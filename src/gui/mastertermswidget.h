@@ -42,7 +42,7 @@ class MasterTermsWidget : public SubWidget
 
 	public:
 	// Constructor / Destructor
-	MasterTermsWidget(QWidget* parent, DUQ& dUQ);
+	MasterTermsWidget(QWidget* parent, DUQ& dUQ, const char* title);
 	~MasterTermsWidget();
 	// Main form declaration
 	Ui::MasterTermsWidget ui;

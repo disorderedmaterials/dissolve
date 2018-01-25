@@ -33,7 +33,7 @@
 #include <QComboBox>
 
 // Constructor
-MasterTermsWidget::MasterTermsWidget(QWidget* parent, DUQ& dUQ) : SubWidget(parent), duq_(dUQ)
+MasterTermsWidget::MasterTermsWidget(QWidget* parent, DUQ& dUQ, const char* title) : SubWidget(parent, title), duq_(dUQ)
 {
 	// Set up user interface
 	ui.setupUi(this);

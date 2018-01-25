@@ -46,7 +46,7 @@ class ModuleControlWidget : public SubWidget
 
 	public:
 	// Constructor / Destructor
-	ModuleControlWidget(QWidget* parent, Module* module, DUQ& dUQ);
+	ModuleControlWidget(QWidget* parent, Module* module, DUQ& dUQ, const char* title);
 	~ModuleControlWidget();
 	// Main form declaration
 	Ui::ModuleControlWidget ui;

@@ -33,7 +33,7 @@
 #include <QLabel>
 
 // Constructor
-BrowserWidget::BrowserWidget(QWidget* parent, DUQWindow& monitorWindow, DUQ& duq) : SubWidget(parent), duq_(duq), duqWindow_(monitorWindow)
+BrowserWidget::BrowserWidget(QWidget* parent, DUQWindow& monitorWindow, DUQ& duq, const char* title) : SubWidget(parent, title), duq_(duq), duqWindow_(monitorWindow)
 {
 	// Set up user interface
 	ui.setupUi(this);

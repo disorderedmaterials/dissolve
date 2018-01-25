@@ -67,9 +67,9 @@ class MainTab : public ListItem<MainTab>
 	// Return whether the tab has a SubWindow area
 	virtual bool hasSubWindowArea() = 0;
 	// Add SubWindow for widget containing specified data (as pointer)
-	virtual QMdiSubWindow* addSubWindow(SubWidget* widget, void* windowContents, const char* windowTitle) = 0;
+	virtual QMdiSubWindow* addSubWindow(SubWidget* widget, void* windowContents) = 0;
 	// Find and return named SubWidget
-	virtual SubWidget* findSubWidget(const char* widgetName) = 0;
+	virtual SubWidget* findSubWidget(const char* widgetTitle) = 0;
 
 
 	/*

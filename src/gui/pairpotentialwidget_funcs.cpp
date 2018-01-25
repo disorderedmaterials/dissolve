@@ -31,7 +31,7 @@
 #include <QMessageBox>
 
 // Constructor
-PairPotentialWidget::PairPotentialWidget(QWidget* parent, PairPotential* pp, DUQ& dUQ) : SubWidget(parent), pairPotential_(pp), duq_(dUQ)
+PairPotentialWidget::PairPotentialWidget(QWidget* parent, PairPotential* pp, DUQ& dUQ, const char* title) : SubWidget(parent, title), pairPotential_(pp), duq_(dUQ)
 {
 	// Set up user interface
 	ui.setupUi(this);

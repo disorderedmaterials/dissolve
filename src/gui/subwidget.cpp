@@ -23,8 +23,9 @@
 #include <stdio.h>
 
 // Constructor
-SubWidget::SubWidget(QWidget* parent) : QWidget(parent), ListItem<SubWidget>()
+SubWidget::SubWidget(QWidget* parent, const char* title) : QWidget(parent), ListItem<SubWidget>()
 {
+	title_ = title;
 	subWindow_ = NULL;
 	refreshing_ = false;
 }
@@ -53,6 +54,18 @@ SubWindow* SubWidget::subWindow()
 /*
  * Identification
  */
+
+// Set title of widget
+void SubWidget::setTitle(const char* title)
+{
+	title_ = title;
+}
+
+// Return title of widget (and associated window title, if in a window)
+const char* SubWidget::title()
+{
+	return title_.get();
+}
 
 // Return string specifying widget type
 const char* SubWidget::widgetType()

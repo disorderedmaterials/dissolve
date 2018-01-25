@@ -36,7 +36,7 @@ ConfigurationTab::ConfigurationTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* p
 	RefListIterator<Module,bool> moduleIterator(cfg->modules().modules());
 	while (Module* module = moduleIterator.iterate())
 	{
-		ModuleControlWidget* moduleWidget = new ModuleControlWidget(NULL, module, duq_);
+		ModuleControlWidget* moduleWidget = new ModuleControlWidget(NULL, module, duq_, CharString("%s (%s)", module->name(), module->uniqueName()));
 		connect(moduleWidget, SIGNAL(moduleRun()), duqWindow, SLOT(updateControls()));
 		ui.ModuleWidgetLayout->addWidget(moduleWidget);
 	}
@@ -57,15 +57,18 @@ bool ConfigurationTab::hasSubWindowArea()
 }
 
 // Add SubWindow for widget containing specified data (as pointer)
-QMdiSubWindow* ConfigurationTab::addSubWindow(SubWidget* widget, void* windowContents, const char* windowTitle)
+QMdiSubWindow* ConfigurationTab::addSubWindow(SubWidget* widget, void* windowContents)
 {
-	Messenger::error("ConfigurationtTab doesn't have an MDI area, so don't try teo add a SubWindow!\n");
+	Messenger::error("ConfigurationTab doesn't have an MDI area, so don't try to add a SubWindow!\n");
 	return NULL;
 }
 
 // Find and return named SubWidget
-SubWidget* ConfigurationTab::findSubWidget(const char* widgetName)
+SubWidget* ConfigurationTab::findSubWidget(const char* widgetTitle)
 {
+	ListIterator<SubWidget> widgetIterator(subWidgets_);
+	while (SubWidget* subWidget = widgetIterator.iterate()) if (DUQSys::sameString(widgetTitle, subWidget->title())) return subWidget;
+	return NULL;
 }
 
 /*

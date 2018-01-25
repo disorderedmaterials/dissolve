@@ -47,7 +47,7 @@ bool WorkspaceTab::hasSubWindowArea()
 }
 
 // Add SubWindow for widget containing specified data (as pointer)
-QMdiSubWindow* WorkspaceTab::addSubWindow(SubWidget* widget, void* windowContents, const char* windowTitle)
+QMdiSubWindow* WorkspaceTab::addSubWindow(SubWidget* widget, void* windowContents)
 {
 	// Check that the windowContents aren't currently in the list
 	QMdiSubWindow* window = windowContents ? findMDIWindow(windowContents) : NULL;
@@ -60,7 +60,7 @@ QMdiSubWindow* WorkspaceTab::addSubWindow(SubWidget* widget, void* windowContent
 
 	// Create a new QMdiSubWindow, show, and update controls
 	window = ui.WorkspaceArea->addSubWindow(widget);
-	window->setWindowTitle(windowTitle);
+	window->setWindowTitle(widget->title());
 	window->show();
 	widget->updateControls();
 
@@ -72,7 +72,7 @@ QMdiSubWindow* WorkspaceTab::addSubWindow(SubWidget* widget, void* windowContent
 }
 
 // Find and return named SubWidget
-SubWidget* WorkspaceTab::findSubWidget(const char* widgetName)
+SubWidget* WorkspaceTab::findSubWidget(const char* widgetTitle)
 {
 }
 
@@ -116,7 +116,7 @@ bool WorkspaceTab::writeState(LineParser& parser)
 	while (SubWindow* subWindow = subWindowIterator.iterate())
 	{
 		// Write window geometry / state
-		if (!parser.writeLineF("%s  %s '%s'\n", title_.get(), subWindow->subWidget()->widgetType(), qPrintable(subWindow->window()->windowTitle()))) return false;
+		if (!parser.writeLineF("%s  %s '%s'\n", title_.get(), subWindow->subWidget()->widgetType(), subWindow->subWidget()->title())) return false;
 		QRect geometry = subWindow->window()->geometry();
 		if (!parser.writeLineF("%i %i %i %i %s %s\n", geometry.x(), geometry.y(), geometry.width(), geometry.height(), DUQSys::btoa(subWindow->window()->isMaximized()), DUQSys::btoa(subWindow->window()->isShaded()))) return false;
 		if (!subWindow->subWidget()->writeState(parser)) return false;

@@ -91,7 +91,7 @@ bool DUQ::loadInput(const char* filename)
 
 	// Clear all existing data before we begin
 	clear();
-	
+
 	// Variables
 	Configuration* cfg;
 	Data* data;
@@ -213,7 +213,7 @@ bool DUQ::loadInput(const char* filename)
 		// Error encountered?
 		if (error) break;
 	}
-	
+
 	if (!error) Messenger::print("Finished reading input file.\n");
 	filename_ = filename;
 

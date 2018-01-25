@@ -35,7 +35,7 @@
 #include <QLabel>
 
 // Constructor
-ModuleControlWidget::ModuleControlWidget(QWidget* parent, Module* module, DUQ& dUQ) : SubWidget(parent), module_(module), duq_(dUQ)
+ModuleControlWidget::ModuleControlWidget(QWidget* parent, Module* module, DUQ& dUQ, const char* title) : SubWidget(parent, title), module_(module), duq_(dUQ)
 {
 	// Set up user interface
 	ui.setupUi(this);

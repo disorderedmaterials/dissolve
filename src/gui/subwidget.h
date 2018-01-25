@@ -22,6 +22,7 @@
 #ifndef DUQ_SUBWIDGET_H
 #define DUQ_SUBWIDGET_H
 
+#include "base/charstring.h"
 #include "templates/listitem.h"
 #include <QWidget>
 
@@ -38,7 +39,7 @@ class SubWidget : public QWidget, public ListItem<SubWidget>
 
 	public:
 	// Constructor / Destructor
-	SubWidget(QWidget* parent);
+	SubWidget(QWidget* parent, const char* title);
 	virtual ~SubWidget();
 	// Update controls within widget
 	virtual void updateControls() = 0;
@@ -52,7 +53,7 @@ class SubWidget : public QWidget, public ListItem<SubWidget>
 	 * SubWindow Parent
 	 */
 	protected:
-	// SubWindow in which this widget is displayed
+	// SubWindow in which this widget is displayed (if any)
 	SubWindow* subWindow_;
 
 	public:
@@ -65,7 +66,15 @@ class SubWidget : public QWidget, public ListItem<SubWidget>
 	/*
 	 * Identification
 	 */
+	private:
+	// Title of widget
+	CharString title_;
+
 	public:
+	// Set title of widget
+	void setTitle(const char* title);
+	// Return title of widget
+	const char* title();
 	// Return string specifying widget type
 	virtual const char* widgetType() = 0;
 

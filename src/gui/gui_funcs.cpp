@@ -90,9 +90,6 @@ bool DUQWindow::openFile(const char* inputFile, bool ignoreRestartFile, bool ign
 	duq_.clear();
 
 	// Load the input file
-
-	// Load input file
-	// If no input file was provided, exit here
 	Messenger::banner("Parse Input File");
 	if (!duq_.loadInput(inputFile))
 	{
@@ -321,39 +318,55 @@ bool DUQWindow::loadWindowLayout()
 		{
 			if (DUQSys::sameString(stateParser.argc(1), "PairPotential"))
 			{
-				PairPotentialWidget* ppWidget = new PairPotentialWidget(NULL, NULL, duq_);
-				subWindow = targetTab->addWindowToMDIArea(ppWidget, NULL, stateParser.argc(2));
+				PairPotentialWidget* ppWidget = new PairPotentialWidget(NULL, NULL, duq_, stateParser.argc(2));
+				subWindow = targetTab->addSubWindow(ppWidget, NULL);
 				subWidget = ppWidget;
 			}
 			else if (DUQSys::sameString(stateParser.argc(1), "MasterTerms"))
 			{
-				MasterTermsWidget* masterTermsWidget = new MasterTermsWidget(NULL, duq_);
-				subWindow = targetTab->addWindowToMDIArea(masterTermsWidget, NULL, stateParser.argc(2));
+				MasterTermsWidget* masterTermsWidget = new MasterTermsWidget(NULL, duq_, stateParser.argc(2));
+				subWindow = targetTab->addSubWindow(masterTermsWidget, NULL);
 				subWidget = masterTermsWidget;
 			}
 			else if (DUQSys::sameString(stateParser.argc(1), "ModuleControl"))
 			{
-				ModuleControlWidget* moduleWidget = new ModuleControlWidget(NULL, NULL, duq_);
+				ModuleControlWidget* moduleWidget = new ModuleControlWidget(NULL, NULL, duq_, stateParser.argc(2));
 				connect(moduleWidget, SIGNAL(moduleRun()), this, SLOT(updateControls()));
-				subWindow = targetTab->addWindowToMDIArea(moduleWidget, NULL, stateParser.argc(2));
+				subWindow = targetTab->addSubWindow(moduleWidget, NULL);
 				subWidget = moduleWidget;
+			}
+			else
+			{
+				Messenger::error("Couldn't read state information - unrecognised widget type '%s' encountered.\n", stateParser.argc(1));
+				return false;
+			}
+		}
+		else
+		{
+			// No SubWindow area, so just try to find the named widget (which should already exist)
+			subWidget = targetTab->findSubWidget(stateParser.argc(2));
+			if (!subWidget)
+			{
+				Messenger::error("Couldn't read state information - widget '%s' not found in tab '%s'.\n", stateParser.argc(2), stateParser.argc(0));
+				return false;
 			}
 		}
 
 
-		// Did we recognise the widget?
-		if (!subWidget)
+		// Read in the widget's geometry / state / flags (depending on whether it went into a new SubWindow or is just a SubWidget)
+		if (targetTab->hasSubWindowArea())
 		{
-			Messenger::error("Couldn't read state information - unrecognised widget type '%s' encountered.\n", stateParser.argc(0));
-			return false;
+			if (stateParser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+			subWindow->setGeometry(stateParser.argi(0), stateParser.argi(1), stateParser.argi(2), stateParser.argi(3));
+			// -- Is the window maximised, or shaded?
+			if (stateParser.argb(4)) subWindow->showMaximized();
+			else if (stateParser.argb(5)) subWindow->showShaded();
 		}
-
-		// Read in the widget's geometry / state
-		if (stateParser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-		subWindow->setGeometry(stateParser.argi(0), stateParser.argi(1), stateParser.argi(2), stateParser.argi(3));
-		// -- Is the window maximised, or shaded?
-		if (stateParser.argb(4)) subWindow->showMaximized();
-		else if (stateParser.argb(5)) subWindow->showShaded();
+		else
+		{
+			// Discard line, which is not currently used (left in for future use)
+			if (stateParser.skipLines(1) != LineParser::Success) return false;
+		}
 
 		// Now call the widget's local readState()
 		if (!subWidget->readState(stateParser)) return false;

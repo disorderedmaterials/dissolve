@@ -41,7 +41,7 @@ class SubWindow : public ListItem<SubWindow>
 	SubWidget* subWidget_;
 	// Data which is the display target in the SubWidget
 	void* data_;
-	
+
 	public:
 	// Return QMdiSubWindow containing the SubWidget displaying the data
 	QMdiSubWindow* window();

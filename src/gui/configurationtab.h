@@ -61,9 +61,9 @@ class ConfigurationTab : public QWidget, public MainTab
 	// Return whether the tab has a SubWindow area
 	bool hasSubWindowArea();
 	// Add SubWindow for widget containing specified data (as pointer)
-	QMdiSubWindow* addSubWindow(SubWidget* widget, void* windowContents, const char* windowTitle);
+	QMdiSubWindow* addSubWindow(SubWidget* widget, void* windowContents);
 	// Find and return named SubWidget
-	SubWidget* findSubWidget(const char* widgetName);
+	SubWidget* findSubWidget(const char* widgetTitle);
 
 
 	/*

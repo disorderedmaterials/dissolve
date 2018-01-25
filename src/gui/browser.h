@@ -36,7 +36,7 @@ class BrowserWidget : public SubWidget
 
 	public:
 	// Constructor
-	BrowserWidget(QWidget* parent, DUQWindow& monitorWindow, DUQ& duq);
+	BrowserWidget(QWidget* parent, DUQWindow& monitorWindow, DUQ& duq, const char* title);
 	// Main form declaration
 	Ui::BrowserWidget ui;
 	// Browser Data Types
