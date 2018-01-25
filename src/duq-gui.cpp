@@ -163,8 +163,7 @@ int main(int argc, char **argv)
 	DUQWindow duqWindow(dUQ);
 
 	// If an input file was specified, load it here
-	if (!inputFile.isEmpty())
-	if (!duqWindow.openFile(inputFile, ignoreRestart, ignoreLayout))
+	if ((!inputFile.isEmpty()) && (!duqWindow.openFile(inputFile, ignoreRestart, ignoreLayout)))
 	{
 		ProcessPool::finalise();
 		return 1;
