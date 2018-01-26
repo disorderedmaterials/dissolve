@@ -51,6 +51,8 @@ class SubWindow : public ListItem<SubWindow>
 	void setData(void* data);
 	// Return data which is the display target in the SubWidget
 	void* data();
+	// Raise the window
+	void raise();
 };
 
 #endif

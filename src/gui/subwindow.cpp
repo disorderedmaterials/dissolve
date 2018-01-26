@@ -55,3 +55,9 @@ void* SubWindow::data()
 {
 	return data_;
 }
+
+// Raise the window
+void SubWindow::raise()
+{
+	if (window_) window_->raise();
+}
