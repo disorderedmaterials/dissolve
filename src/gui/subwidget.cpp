@@ -32,7 +32,6 @@ SubWidget::SubWidget(QWidget* parent, const char* title) : QWidget(parent), List
 
 SubWidget::~SubWidget()
 {
-	printf("FIX ME - THIS NEEDS TO REMOVE THE WINDOW FROM THE SUBWINDOW PARENT'S LIST!\n");
 }
 
 /*
