@@ -14,7 +14,7 @@
    width="100"
    height="100"
    id="svg2"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="symbol.svg">
   <metadata
      id="metadata3024">
@@ -61,17 +61,6 @@
          offset="1"
          id="stop5379" />
     </linearGradient>
-    <radialGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient5375"
-       id="radialGradient4439"
-       cx="49.999458"
-       cy="50.000538"
-       fx="49.999458"
-       fy="50.000538"
-       r="41.323971"
-       gradientTransform="matrix(1,0,0,1.0014657,0,-0.07328491)"
-       gradientUnits="userSpaceOnUse" />
     <radialGradient
        inkscape:collect="always"
        xlink:href="#linearGradient5375"

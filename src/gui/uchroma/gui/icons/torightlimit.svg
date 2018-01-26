@@ -14,8 +14,8 @@
    width="100"
    height="100"
    id="svg2"
-   inkscape:version="0.48.4 r9939"
-   sodipodi:docname="toleftlimit.svg">
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="torightlimit.svg">
   <metadata
      id="metadata3024">
     <rdf:RDF>
@@ -24,7 +24,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -83,47 +83,6 @@
          style="stop-color:#000000;stop-opacity:0"
          offset="1" />
     </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3189-6"
-       id="linearGradient3073"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0.40460195,0,0,1.4001883,18.724781,-20.994296)"
-       x1="-8.8983049"
-       y1="50.703388"
-       x2="16.31356"
-       y2="50.703388" />
-    <radialGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3189-6-8"
-       id="radialGradient3075"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(-1.6403062,0,0,1.8955931,151.90153,10.248659)"
-       cx="50.059151"
-       cy="48.853989"
-       fx="50.059151"
-       fy="48.853989"
-       r="42.138134" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient5210"
-       id="linearGradient5218"
-       x1="27.899555"
-       y1="50"
-       x2="67.863152"
-       y2="50"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1.2761653,0,0,1.3107218,-11.528254,-15.53609)" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient5210"
-       id="linearGradient5226"
-       x1="4.101069"
-       y1="50"
-       x2="32.111431"
-       y2="50"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0.43711909,0,0,1,12.310307,0)" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient5210"

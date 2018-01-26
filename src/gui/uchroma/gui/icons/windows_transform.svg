@@ -15,7 +15,7 @@
    width="100"
    height="100"
    id="svg2"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="windows_transform.svg">
   <metadata
      id="metadata3051">
@@ -80,17 +80,6 @@
        id="radialGradient4417"
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(1.3065417,0,0,0.36743317,-128.39358,76.753778)"
-       cx="60.328388"
-       cy="19.332626"
-       fx="60.328388"
-       fy="19.332626"
-       r="31.07839" />
-    <radialGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient5375"
-       id="radialGradient4420"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1.3065417,0,0,0.36743317,-124.02762,-32.008828)"
        cx="60.328388"
        cy="19.332626"
        fx="60.328388"

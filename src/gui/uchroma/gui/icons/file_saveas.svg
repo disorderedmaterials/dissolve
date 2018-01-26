@@ -14,7 +14,7 @@
    width="100"
    height="100"
    id="svg2"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="file_saveas.svg">
   <metadata
      id="metadata3127">
@@ -68,15 +68,6 @@
        y2="25.952555"
        id="linearGradient2188"
        xlink:href="#linearGradient5064"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1.3811257,0,0,1.3811271,-15.878927,-12.888674)" />
-    <linearGradient
-       x1="15.350921"
-       y1="46.012268"
-       x2="80.354599"
-       y2="46.012268"
-       id="linearGradient2191"
-       xlink:href="#linearGradient3921"
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(1.3811257,0,0,1.3811271,-15.878927,-12.888674)" />
     <linearGradient

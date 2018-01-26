@@ -15,7 +15,7 @@
    width="100"
    height="100"
    id="svg2"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="windows_axes.svg">
   <metadata
      id="metadata3051">
@@ -80,39 +80,6 @@
        id="radialGradient3880"
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(1.1700236,0,0,1.4202163,-9.8335622,9.7786895)"
-       cx="60.328388"
-       cy="19.332626"
-       fx="60.328388"
-       fy="19.332626"
-       r="31.07839" />
-    <radialGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient5375"
-       id="radialGradient3883"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0.95411802,0,0,1.1581425,-20.119262,21.524857)"
-       cx="60.328388"
-       cy="19.332626"
-       fx="60.328388"
-       fy="19.332626"
-       r="31.07839" />
-    <radialGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient5375"
-       id="radialGradient3886"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1.5361454,0,0,0.43684306,-139.28333,-127.60667)"
-       cx="60.328388"
-       cy="19.332626"
-       fx="60.328388"
-       fy="19.332626"
-       r="31.07839" />
-    <radialGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient5375"
-       id="radialGradient4308"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0.95411802,0,0,1.1581425,-113.58763,-5.4124796)"
        cx="60.328388"
        cy="19.332626"
        fx="60.328388"

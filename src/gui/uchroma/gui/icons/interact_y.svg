@@ -15,8 +15,8 @@
    width="100"
    height="100"
    id="svg2"
-   inkscape:version="0.48.4 r9939"
-   sodipodi:docname="axes_interacty.svg">
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="interact_y.svg">
   <metadata
      id="metadata3051">
     <rdf:RDF>
@@ -77,31 +77,9 @@
     <radialGradient
        inkscape:collect="always"
        xlink:href="#linearGradient5375"
-       id="radialGradient4417"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1.3065417,0,0,0.36743317,-28.821559,68.644574)"
-       cx="60.328388"
-       cy="19.332626"
-       fx="60.328388"
-       fy="19.332626"
-       r="31.07839" />
-    <radialGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient5375"
        id="radialGradient4420"
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(1.3065417,0,0,0.26112137,-28.821558,-91.302364)"
-       cx="60.328388"
-       cy="19.332626"
-       fx="60.328388"
-       fy="19.332626"
-       r="31.07839" />
-    <radialGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient5375"
-       id="radialGradient4423"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1.3065417,0,0,0.36743317,-28.821559,17.148527)"
        cx="60.328388"
        cy="19.332626"
        fx="60.328388"
