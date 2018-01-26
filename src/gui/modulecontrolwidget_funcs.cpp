@@ -239,11 +239,6 @@ bool ModuleControlWidget::readState(LineParser& parser)
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 	module_ = ModuleList::findInstanceByUniqueName(parser.argc(0));
 
-	// Need to set the data target in the SubWindow, and initialise (create) the right controls in the widget
-	subWindow_->setData(module_);
-	initialiseWindow(module_);
-	initialiseControls(module_);
-
 	// Write state data from ModuleWidget (if one exists)
 	if (moduleWidget_ && (!moduleWidget_->readState(parser))) return false;
 
