@@ -34,6 +34,8 @@ CreateCollectionDialog::CreateCollectionDialog(UChromaBase& uChromaBase, QWidget
 	zVariable_ = equation_.createVariable("z", NULL, true);
 	equation_.setGenerateMissingVariables(true);
 
+	refreshing_ = true;
+
 	// Set default values in some widgets
 	ui.GridSpecifyXMinSpin->setValue(0.0);
 	ui.GridSpecifyXMaxSpin->setValue(10.0);
@@ -45,6 +47,7 @@ CreateCollectionDialog::CreateCollectionDialog(UChromaBase& uChromaBase, QWidget
 	ui.GridSpecifyZDeltaSpin->setMinimum(1.0e-5);
 
 	refreshing_ = false;
+
 	resetEquation();
 	ui.EquationEdit->setText("cos(x)*A");
 	equationValid_ = equation_.generate("cos(x)*A");
