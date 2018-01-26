@@ -40,7 +40,7 @@ class MainTab : public ListItem<MainTab>
 {
 	public:
 	// Constructor / Destructor
-	MainTab(DUQ& duq, QTabWidget* parent, const char* title, QWidget* page);
+	MainTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const char* title, QWidget* page);
 	virtual ~MainTab();
 
 
@@ -50,6 +50,8 @@ class MainTab : public ListItem<MainTab>
 	protected:
 	// Reference to dUQ
 	DUQ& duq_;
+	// Pointer to main window
+	DUQWindow* duqWindow_;
 	// Tab widget in which this tab is contained
 	QTabWidget* tabWidget_;
 	// Unique titla (name) of tab

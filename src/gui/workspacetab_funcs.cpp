@@ -27,7 +27,7 @@
 #include <QMdiSubWindow>
 
 // Constructor / Destructor
-WorkspaceTab::WorkspaceTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const char* title) : MainTab(duq, parent, title, this)
+WorkspaceTab::WorkspaceTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const char* title) : MainTab(duqWindow, duq, parent, title, this)
 {
 	ui.setupUi(this);
 }

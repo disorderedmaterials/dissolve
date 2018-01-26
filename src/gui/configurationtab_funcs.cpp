@@ -28,7 +28,7 @@
 #include <QFrame>
 
 // Constructor / Destructor
-ConfigurationTab::ConfigurationTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const char* title, Configuration* cfg) : MainTab(duq, parent, CharString("Configuration: %s", title), this)
+ConfigurationTab::ConfigurationTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const char* title, Configuration* cfg) : MainTab(duqWindow, duq, parent, CharString("Configuration: %s", title), this)
 {
 	ui.setupUi(this);
 

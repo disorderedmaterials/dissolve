@@ -28,8 +28,9 @@
 #include <QTabWidget>
 
 // Constructor / Destructor
-MainTab::MainTab(DUQ& duq, QTabWidget* tabWidget, const char* title, QWidget* page) : ListItem<MainTab>(), duq_(duq)
+MainTab::MainTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* tabWidget, const char* title, QWidget* page) : ListItem<MainTab>(), duq_(duq)
 {
+	duqWindow_ = duqWindow;
 	tabWidget_ = tabWidget;
 	title_ = title;
 

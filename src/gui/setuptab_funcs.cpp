@@ -22,7 +22,7 @@
 #include "gui/setuptab.h"
 
 // Constructor / Destructor
-SetupTab::SetupTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const char* title) : MainTab(duq, parent, title, this)
+SetupTab::SetupTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const char* title) : MainTab(duqWindow, duq, parent, title, this)
 {
 	ui.setupUi(this);
 }
