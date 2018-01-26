@@ -20,10 +20,7 @@
 */
 
 #include "gui/processingtab.h"
-#include "gui/gui.h"
-#include "gui/modulecontrolwidget.h"
 #include "main/duq.h"
-#include "module/module.h"
 #include "classes/configuration.h"
 #include "base/lineparser.h"
 
@@ -32,21 +29,7 @@ ProcessingTab::ProcessingTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent,
 {
 	ui.setupUi(this);
 
-	// Add module widgets to scroll area
-	RefListIterator<Module,bool> moduleIterator(duq.processingModules().modules());
-	while (Module* module = moduleIterator.iterate())
-	{
-		if (!moduleIterator.first())
-		{
-			QFrame* frame = new QFrame;
-			frame->setFrameShape(QFrame::VLine);
-			ui.ModuleWidgetLayout->addWidget(frame);
-		}
-
-		ModuleControlWidget* moduleWidget = new ModuleControlWidget(NULL, module, duq_, CharString("%s (%s)", module->name(), module->uniqueName()));
-		connect(moduleWidget, SIGNAL(moduleRun()), duqWindow, SLOT(updateControls()));
-		ui.ModuleWidgetLayout->addWidget(moduleWidget);
-	}
+	addModuleWidgets(duq_.processingModules().modules(), subWidgets_, ui.ModuleWidgetLayout);
 }
 
 ProcessingTab::~ProcessingTab()

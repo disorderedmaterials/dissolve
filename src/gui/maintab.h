@@ -23,6 +23,7 @@
 #define DUQ_MAINTAB_H
 
 #include "gui/subwindow.h"
+#include "module/module.h"
 #include "base/charstring.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
@@ -31,6 +32,7 @@
 class DUQ;
 class DUQWindow;
 class LineParser;
+class QLayout;
 class QMdiArea;
 class QTabWidget;
 class QWidget;
@@ -92,6 +94,14 @@ class MainTab : public ListItem<MainTab>
 	public:
 	// Write widget state through specified LineParser
 	virtual bool writeState(LineParser& parser) = 0;
+
+
+	/*
+	 * Helper Functions
+	 */
+	public:
+	// Add module widgets to specified layout
+	void addModuleWidgets(const RefList<Module,bool>& modules, List<SubWidget>& widgets, QLayout* layout);
 };
 
 #endif

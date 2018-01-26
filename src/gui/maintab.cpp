@@ -20,11 +20,16 @@
 */
 
 #include "gui/maintab.h"
+#include "gui/gui.h"
+#include "gui/modulecontrolwidget.h"
 #include "gui/subwindow.h"
 #include "gui/subwidget.h"
+#include "module/module.h"
 #include "base/lineparser.h"
 #include "base/messenger.h"
 #include "base/sysfunc.h"
+#include <QFrame>
+#include <QLayout>
 #include <QTabWidget>
 
 // Constructor / Destructor
@@ -57,4 +62,28 @@ MainTab::~MainTab()
 const char* MainTab::title() const
 {
 	return title_.get();
+}
+
+/*
+ * Helper Functions
+ */
+
+// Add module widgets to specified layout
+void MainTab::addModuleWidgets(const RefList<Module,bool>& modules, List<SubWidget>& widgets, QLayout* layout)
+{
+	RefListIterator<Module,bool> moduleIterator(modules);
+	while (Module* module = moduleIterator.iterate())
+	{
+		if (!moduleIterator.first())
+		{
+			QFrame* frame = new QFrame;
+			frame->setFrameShape(QFrame::VLine);
+			layout->addWidget(frame);
+		}
+
+		ModuleControlWidget* moduleWidget = new ModuleControlWidget(NULL, module, duq_, CharString("%s (%s)", module->name(), module->uniqueName()));
+		QObject::connect(moduleWidget, SIGNAL(moduleRun()), duqWindow_, SLOT(updateControls()));
+		layout->addWidget(moduleWidget);
+		widgets.own(moduleWidget);
+	}
 }

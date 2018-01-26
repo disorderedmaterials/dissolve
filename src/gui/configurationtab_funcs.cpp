@@ -20,12 +20,8 @@
 */
 
 #include "gui/configurationtab.h"
-#include "gui/gui.h"
-#include "gui/modulecontrolwidget.h"
-#include "module/module.h"
 #include "classes/configuration.h"
 #include "base/lineparser.h"
-#include <QFrame>
 
 // Constructor / Destructor
 ConfigurationTab::ConfigurationTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const char* title, Configuration* cfg) : MainTab(duqWindow, duq, parent, CharString("Configuration: %s", title), this)
@@ -34,21 +30,7 @@ ConfigurationTab::ConfigurationTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* p
 
 	configuration_ = cfg;
 
-	// Add module widgets to scroll area
-	RefListIterator<Module,bool> moduleIterator(cfg->modules().modules());
-	while (Module* module = moduleIterator.iterate())
-	{
-		if (!moduleIterator.first())
-		{
-			QFrame* frame = new QFrame;
-			frame->setFrameShape(QFrame::VLine);
-			ui.ModuleWidgetLayout->addWidget(frame);
-		}
-
-		ModuleControlWidget* moduleWidget = new ModuleControlWidget(NULL, module, duq_, CharString("%s (%s)", module->name(), module->uniqueName()));
-		connect(moduleWidget, SIGNAL(moduleRun()), duqWindow, SLOT(updateControls()));
-		ui.ModuleWidgetLayout->addWidget(moduleWidget);
-	}
+	addModuleWidgets(configuration_->modules().modules(), subWidgets_, ui.ModuleWidgetLayout);
 }
 
 ConfigurationTab::~ConfigurationTab()
