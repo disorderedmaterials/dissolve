@@ -69,6 +69,9 @@ DUQ& DUQWindow::duq()
 // Catch window close event
 void DUQWindow::closeEvent(QCloseEvent* event)
 {
+	// Mark the window as refreshing, so we don't try to update any more widgets
+	refreshing_ = true;
+
 	// Save the state before we go...
 	saveWindowLayout();
 
@@ -411,7 +414,7 @@ bool DUQWindow::saveWindowLayout()
 	if (!stateParser.isFileGoodForWriting()) return false;
 
 	// Loop over tabs
-	for (MainTab* tab = tabs_.first(); tab != NULL; tab = tab->next) if (tab->writeState(stateParser)) return false;
+	for (MainTab* tab = tabs_.first(); tab != NULL; tab = tab->next) if (!tab->writeState(stateParser)) return false;
 
 	stateParser.closeFiles();
 
