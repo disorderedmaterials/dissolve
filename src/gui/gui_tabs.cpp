@@ -25,6 +25,7 @@
 #include "gui/setuptab.h"
 #include "gui/workspacetab.h"
 #include "classes/configuration.h"
+#include <QInputDialog>
 
 void DUQWindow::on_MainTabs_currentChanged(int index)
 {
@@ -44,6 +45,27 @@ void DUQWindow::on_MainTabs_currentChanged(int index)
 	ui.WorkspaceCurrentAction->setText(index == -1 ? "<No Current Workspace>" : tabs_[index]->title());
 	// -- Disable controls if the current tab has no valid SubWindow (MDI) area
 	ui.WorkspaceAddWidgetAction->setEnabled(currentTab->subWindowArea());
+}
+
+void DUQWindow::mainTabsDoubleClicked(int index)
+{
+	if (index == -1) return;
+
+	// We can only rename workspace-type tabs
+	MainTab* tab = tabs_[index];
+	if (!tab) return;
+
+	// Rename the current workspace
+	bool ok;
+	QString text = QInputDialog::getText(this, "Rename Workspace", "Enter the new name of the workspace", QLineEdit::Normal, tab->title(), &ok);
+	if (!ok || text.isEmpty()) return;
+
+	// Ensure that the name provided is unique
+	CharString newName = qPrintable(text);
+	int count = 0;
+	while (findTab(newName)) newName.sprintf("%s%02i", ++count);
+
+	tab->setTitle(newName);
 }
 
 // Clear all tabs, except the "Setup" tab

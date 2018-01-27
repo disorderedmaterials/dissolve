@@ -43,6 +43,14 @@ class WorkspaceTab : public QWidget, public MainTab
 
 
 	/*
+	 * Data
+	 */
+	public:
+	// Return whether the title of the tab can be changed
+	bool canChangeTitle();
+
+
+	/*
 	 * SubWidget / SubWindow Handling
 	 */
 	public:

@@ -61,10 +61,34 @@ MainTab::~MainTab()
  * Data
  */
 
+// Set title of tab
+void MainTab::setTitle(const char* title)
+{
+	if (canChangeTitle())
+	{
+		// Find ourselves in the tab widget
+		int index = tabWidget_->indexOf(page_);
+		if (index == -1)
+		{
+			Messenger::print("Couldn't rename tab '%s' since its page widget could not be found.\n", title_.get());
+			return;
+		}
+		title_ = title;
+		tabWidget_->setTabText(index, title);
+	}
+	else Messenger::warn("Refusing to change title of tab currently named '%s', since it is fixed.\n", title_.get());
+}
+
 // Return title of tab
 const char* MainTab::title() const
 {
 	return title_.get();
+}
+
+// Return whether the title of the tab can be changed
+bool MainTab::canChangeTitle()
+{
+	return false;
 }
 
 /*

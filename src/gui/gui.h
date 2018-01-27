@@ -159,6 +159,7 @@ class DUQWindow : public QMainWindow
 
 	private slots:
 	void on_MainTabs_currentChanged(int index);
+	void mainTabsDoubleClicked(int index);
 
 	private:
 	// Clear all tabs

@@ -37,6 +37,16 @@ WorkspaceTab::~WorkspaceTab()
 }
 
 /*
+ * Data
+ */
+
+// Return whether the title of the tab can be changed
+bool WorkspaceTab::canChangeTitle()
+{
+	return true;
+}
+
+/*
  * SubWidget / SubWindow Handling
  */
 

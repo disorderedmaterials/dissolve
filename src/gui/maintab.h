@@ -62,8 +62,12 @@ class MainTab : public ListItem<MainTab>
 	CharString title_;
 
 	public:
+	// Set title of tab
+	void setTitle(const char* title);
 	// Return title of tab
 	const char* title() const;
+	// Return whether the title of the tab can be changed
+	virtual bool canChangeTitle();
 
 
 	/*
