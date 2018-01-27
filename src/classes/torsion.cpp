@@ -121,8 +121,11 @@ SpeciesTorsion* Torsion::speciesTorsion()
 double Torsion::energy(double torsionInDegrees) const
 {
 #ifdef CHECKS
-	if (speciesTorsion_ == NULL) Messenger::warn("Torsion:energy() - Torsion has no SpeciesTorsion set - returning 0.0.\n");
-	return 0.0;
+	if (speciesTorsion_ == NULL)
+	{
+		Messenger::warn("Torsion:energy() - Torsion has no SpeciesTorsion set - returning 0.0.\n");
+		return 0.0;
+	}
 #endif
 	return speciesTorsion_->energy(torsionInDegrees);
 }
@@ -131,8 +134,11 @@ double Torsion::energy(double torsionInDegrees) const
 double Torsion::force(double torsionInDegrees) const
 {
 #ifdef CHECKS
-	if (speciesTorsion_ == NULL) Messenger::warn("Torsion:force() - Torsion has no SpeciesTorsion set - returning 0.0.\n");
-	return 0.0;
+	if (speciesTorsion_ == NULL)
+	{
+		Messenger::warn("Torsion:force() - Torsion has no SpeciesTorsion set - returning 0.0.\n");
+		return 0.0;
+	}
 #endif
 	return speciesTorsion_->force(torsionInDegrees);
 }

@@ -101,8 +101,11 @@ SpeciesAngle* Angle::speciesAngle() const
 double Angle::energy(double angleInDegrees) const
 {
 #ifdef CHECKS
-	if (speciesAngle_ == NULL) Messenger::warn("Angle:energy() - Angle has no SpeciesAngle set - returning 0.0.\n");
-	return 0.0;
+	if (speciesAngle_ == NULL)
+	{
+		Messenger::warn("Angle:energy() - Angle has no SpeciesAngle set - returning 0.0.\n");
+		return 0.0;
+	}
 #endif
 	return speciesAngle_->energy(angleInDegrees);
 }
@@ -111,8 +114,11 @@ double Angle::energy(double angleInDegrees) const
 double Angle::force(double angleInDegrees) const
 {
 #ifdef CHECKS
-	if (speciesAngle_ == NULL) Messenger::warn("Angle:force() - Angle has no SpeciesAngle set - returning 0.0.\n");
-	return 0.0;
+	if (speciesAngle_ == NULL)
+	{
+		Messenger::warn("Angle:force() - Angle has no SpeciesAngle set - returning 0.0.\n");
+		return 0.0;
+	}
 #endif
 	return speciesAngle_->force(angleInDegrees);
 }
