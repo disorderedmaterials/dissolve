@@ -354,21 +354,21 @@
     </widget>
     <addaction name="SimulationAddAction"/>
    </widget>
-   <addaction name="FileMenu"/>
+   <addaction name="SessionMenu"/>
    <addaction name="SimulationMenu"/>
    <addaction name="WorkspaceMenu"/>
   </widget>
-  <action name="FileOpenAction">
+  <action name="SessionOpenAction">
    <property name="text">
     <string>&amp;Open...</string>
    </property>
   </action>
-  <action name="FileSaveAction">
+  <action name="SessionSaveAction">
    <property name="text">
     <string>&amp;Save</string>
    </property>
   </action>
-  <action name="FileQuitAction">
+  <action name="SessionQuitAction">
    <property name="text">
     <string>&amp;Quit</string>
    </property>
