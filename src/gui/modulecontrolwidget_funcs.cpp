@@ -245,9 +245,10 @@ bool ModuleControlWidget::readState(LineParser& parser)
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 	module_ = ModuleList::findInstanceByUniqueName(parser.argc(0));
 
+	// If we didn't previously have a module, but now we do, initialise the window and its controls
+	// This will also create the moduleWidget_ (in initialiseControls())
 	if (module_ && (!moduleSet))
 	{
-		moduleWidget_ = module_->createWidget(ui.ControlsWidget, duq_);
 		initialiseWindow(module_);
 		initialiseControls(module_);
 	}
