@@ -56,7 +56,9 @@ class MainTab : public ListItem<MainTab>
 	DUQWindow* duqWindow_;
 	// Tab widget in which this tab is contained
 	QTabWidget* tabWidget_;
-	// Unique titla (name) of tab
+	// Page widget
+	QWidget* page_;
+	// Unique title (name) of tab
 	CharString title_;
 
 	public:

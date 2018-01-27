@@ -39,17 +39,18 @@ MainTab::MainTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* tabWidget, const ch
 {
 	duqWindow_ = duqWindow;
 	tabWidget_ = tabWidget;
+	page_ = page;
 	title_ = title;
 
 	// Add tab to the parent tabwidget
-	if (tabWidget_) tabWidget_->addTab(page, title_.get());
+	if (tabWidget_) tabWidget_->addTab(page_, title_.get());
 }
 
 MainTab::~MainTab()
 {
 	// Delete the tab from the tabwidget first - find its index (based on our, the page's, pointer) and remove that
-	int index = tabWidget_->indexOf( (QWidget*) this);
-	if (index == -1) Messenger::print("Couldn't remove tab '%s' since its page widget could not be found.\n", title_.get());
+	int index = tabWidget_->indexOf(page_);
+	if (index == -1) printf("Couldn't remove tab '%s' since its page widget could not be found.\n", title_.get());
 	else
 	{
 		tabWidget_->removeTab(index);
