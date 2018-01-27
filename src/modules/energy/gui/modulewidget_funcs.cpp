@@ -52,7 +52,9 @@ EnergyModuleWidget::EnergyModuleWidget(QWidget* parent, Module* module, DUQ& dUQ
 	viewPane->axes().setTitle(1, "Energy, kJ mol\\sup{-1}");
 	viewPane->axes().setMin(1, -1.0);
 	viewPane->axes().setMax(1, 1.0);
-	viewPane->axes().numberFormat(0).setUseENotation(true);
+	viewPane->axes().numberFormat(1).setType(NumberFormat::ScientificFormat);
+	viewPane->axes().numberFormat(1).setUseENotation(true);
+	viewPane->setAutoFollowType(ViewPane::XFollow);
 
 	currentConfiguration_ = NULL;
 
