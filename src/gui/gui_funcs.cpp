@@ -222,6 +222,10 @@ bool DUQWindow::saveWindowLayout()
 	stateParser.openOutput(windowLayoutFilename_);
 	if (!stateParser.isFileGoodForWriting()) return false;
 
+	// Main GUI elemnets
+	// -- Current tab
+	if (!stateParser.writeLineF("%i\n", ui.MainTabs->currentIndex())) return false;
+
 	// Loop over tabs
 	for (MainTab* tab = tabs_.first(); tab != NULL; tab = tab->next) if (!tab->writeState(stateParser)) return false;
 
@@ -238,6 +242,12 @@ bool DUQWindow::loadWindowLayout()
 	stateParser.openInput(windowLayoutFilename_);
 	if (!stateParser.isFileGoodForReading()) return false;
 
+	// Main GUI elemnets
+	// -- Current tab - it may not yet exist, so store it now and set it later
+	if (stateParser.getArgsDelim(LineParser::UseQuotes) != LineParser::Success) return false;
+	int currentTab = stateParser.argi(0);
+
+	// Remainder of file references widgets / modules in some order
 	while (!stateParser.eofOrBlank())
 	{
 		// Parse the line
@@ -298,6 +308,9 @@ bool DUQWindow::loadWindowLayout()
 		// Now call the widget's local readState()
 		if (!subWidget->readState(stateParser)) return false;
 	}
+
+	// Set current tab (we store the index earlier)
+	ui.MainTabs->setCurrentIndex(currentTab);
 
 	return true;
 }
