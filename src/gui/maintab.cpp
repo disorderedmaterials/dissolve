@@ -30,6 +30,8 @@
 #include "base/sysfunc.h"
 #include <QFrame>
 #include <QLayout>
+#include <QMdiArea>
+#include <QMdiSubWindow>
 #include <QTabWidget>
 
 // Constructor / Destructor
@@ -62,6 +64,69 @@ MainTab::~MainTab()
 const char* MainTab::title() const
 {
 	return title_.get();
+}
+
+/*
+ * SubWidget / SubWindow Handling
+ */
+
+// Find SubWindow by title
+SubWindow* MainTab::findSubWindow(const char* title)
+{
+	ListIterator<SubWindow> subWindowIterator(subWindows_);
+	while (SubWindow* subWindow = subWindowIterator.iterate()) if (DUQSys::sameString(subWindow->subWidget()->title(), title)) return subWindow;
+
+	return NULL;
+}
+
+// Find SubWindow by data content
+SubWindow* MainTab::findSubWindow(void* windowContents)
+{
+	ListIterator<SubWindow> subWindowIterator(subWindows_);
+	while (SubWindow* subWindow = subWindowIterator.iterate()) if (subWindow->data() == windowContents) return subWindow;
+
+	return NULL;
+}
+
+// Add SubWindow for widget containing specified data (as pointer)
+SubWindow* MainTab::addSubWindow(SubWidget* widget, void* windowContents)
+{
+	// Make sure that the tab has a SubWindow area
+	QMdiArea* mdiArea = subWindowArea();
+	if (!mdiArea)
+	{
+		Messenger::error("This tab doesn't have a SubWidget area, so can't add a new SubWindow.\n");
+		return NULL;
+	}
+
+	// Check that the windowContents aren't currently in the list
+	SubWindow* subWindow = windowContents ? findSubWindow(windowContents) : NULL;
+	if (subWindow)
+	{
+		Messenger::printVerbose("Refused to add window contents %p to our list, as it is already present elsewhere. It will be raised instead.\n");
+		subWindow->window()->raise();
+		return subWindow;
+	}
+
+	// Create a new QMdiSubWindow, show, and update controls
+	QMdiSubWindow* newMDIWindow = subWindowArea()->addSubWindow(widget);
+	newMDIWindow->setWindowTitle(widget->title());
+	newMDIWindow->show();
+	widget->updateControls();
+
+	// Store window / widget data in our list
+	subWindow = new SubWindow(newMDIWindow, widget, windowContents);
+	subWindows_.own(subWindow);
+
+	return subWindow ;
+}
+
+// Find and return named SubWidget
+SubWidget* MainTab::findSubWidget(const char* widgetTitle)
+{
+	ListIterator<SubWidget> widgetIterator(subWidgets_);
+	while (SubWidget* subWidget = widgetIterator.iterate()) if (DUQSys::sameString(widgetTitle, subWidget->title())) return subWidget;
+	return NULL;
 }
 
 /*

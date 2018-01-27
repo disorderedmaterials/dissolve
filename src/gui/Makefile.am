@@ -27,17 +27,16 @@ libgui_la_SOURCES = icons.qrc
 
 libgui_la_SOURCES += colourbutton.hui colourbutton_funcs.cpp
 libgui_la_SOURCES += gradientbar.hui gradientbar_funcs.cpp
-libgui_la_SOURCES += maintab.cpp
 libgui_la_SOURCES += mimestrings.cpp mimetreewidget.hui mimetreewidget_funcs.cpp mimetreewidgetitem.cpp
 libgui_la_SOURCES += texponentialspin.hui texponentialspindelegate.hui texponentialspin_funcs.cpp texponentialspindelegate_funcs.cpp
 libgui_la_SOURCES += tmenubutton.hui tpopupwidget.hui tmenubutton_funcs.cpp tmenubuttongroup.cpp tpopupwidget_funcs.cpp
 
-libgui_la_SOURCES += browser.ui configurationtab.ui gui.ui mastertermswidget.ui modulecontrolwidget.ui pairpotentialwidget.ui processingtab.ui setuptab.ui workspacetab.ui
+libgui_la_SOURCES += gui.ui browser.ui configurationtab.ui mastertermswidget.ui modulecontrolwidget.ui pairpotentialwidget.ui processingtab.ui setuptab.ui workspacetab.ui
 
 libgui_la_SOURCES += browser_funcs.cpp
 libgui_la_SOURCES += configurationtab_funcs.cpp
-libgui_la_SOURCES += gui_funcs.cpp
-libgui_la_SOURCES += mastertermswidget_funcs.cpp modulecontrolwidget_funcs.cpp modulewidget.cpp
+libgui_la_SOURCES += gui_funcs.cpp gui_menu.cpp gui_run.cpp gui_tabs.cpp
+libgui_la_SOURCES += maintab.cpp mastertermswidget_funcs.cpp modulecontrolwidget_funcs.cpp modulewidget.cpp
 libgui_la_SOURCES += outputhandler.hui outputhandler_funcs.cpp
 libgui_la_SOURCES += pairpotentialwidget_funcs.cpp processingtab_funcs.cpp
 libgui_la_SOURCES += setuptab_funcs.cpp subwidget.cpp subwindow.cpp

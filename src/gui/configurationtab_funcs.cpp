@@ -41,25 +41,16 @@ ConfigurationTab::~ConfigurationTab()
  * SubWidget / SubWindow Handling
  */
 
-// Return whether the tab has a SubWindow area
-bool ConfigurationTab::hasSubWindowArea()
+// Return the tab's SubWindow area, if it has one
+QMdiArea* ConfigurationTab::subWindowArea()
 {
-	return false;
-}
-
-// Add SubWindow for widget containing specified data (as pointer)
-QMdiSubWindow* ConfigurationTab::addSubWindow(SubWidget* widget, void* windowContents)
-{
-	Messenger::error("ConfigurationTab doesn't have an MDI area, so don't try to add a SubWindow!\n");
 	return NULL;
 }
 
-// Find and return named SubWidget
-SubWidget* ConfigurationTab::findSubWidget(const char* widgetTitle)
+// Return the tab's SubWidget layout, if it has one
+QLayout* ConfigurationTab::subWidgetLayout()
 {
-	ListIterator<SubWidget> widgetIterator(subWidgets_);
-	while (SubWidget* subWidget = widgetIterator.iterate()) if (DUQSys::sameString(widgetTitle, subWidget->title())) return subWidget;
-	return NULL;
+	return ui.ModuleWidgetLayout;
 }
 
 /*

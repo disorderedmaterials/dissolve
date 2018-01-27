@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/uchroma">
+    <file>icons/windows_create.svg</file>
     <file>icons/interact_rangeselect.svg</file>
     <file>icons/interact_valueselect.svg</file>
     <file>icons/tolowerlimit.svg</file>
@@ -26,7 +27,6 @@
     <file>icons/interact_y.svg</file>
     <file>icons/interact_z.svg</file>
     <file>icons/collections_new.svg</file>
-    <file>icons/windows_create.svg</file>
     <file>icons/collections_next.svg</file>
     <file>icons/collections_prev.svg</file>
     <file>icons/view_reset.svg</file>

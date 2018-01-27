@@ -53,17 +53,11 @@ class ConfigurationTab : public QWidget, public MainTab
 	/*
 	 * SubWidget / SubWindow Handling
 	 */
-	private:
-	// List of module subwidgets
-	List<SubWidget> subWidgets_;
-
 	public:
-	// Return whether the tab has a SubWindow area
-	bool hasSubWindowArea();
-	// Add SubWindow for widget containing specified data (as pointer)
-	QMdiSubWindow* addSubWindow(SubWidget* widget, void* windowContents);
-	// Find and return named SubWidget
-	SubWidget* findSubWidget(const char* widgetTitle);
+	// Return the tab's SubWindow area, if it has one
+	QMdiArea* subWindowArea();
+	// Return the tab's SubWidget layout, if it has one
+	QLayout* subWidgetLayout();
 
 
 	/*

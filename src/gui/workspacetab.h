@@ -46,12 +46,10 @@ class WorkspaceTab : public QWidget, public MainTab
 	 * SubWidget / SubWindow Handling
 	 */
 	public:
-	// Return whether the tab has a SubWindow area
-	bool hasSubWindowArea();
-	// Add SubWindow for widget containing specified data (as pointer)
-	QMdiSubWindow* addSubWindow(SubWidget* widget, void* windowContents);
-	// Find and return named SubWidget
-	SubWidget* findSubWidget(const char* widgetTitle);
+	// Return the tab's SubWindow area, if it has one
+	QMdiArea* subWindowArea();
+	// Return the tab's SubWidget layout, if it has one
+	QLayout* subWidgetLayout();
 
 
 	/*
@@ -80,8 +78,6 @@ class WorkspaceTab : public QWidget, public MainTab
 	private:
 	// List of all current MDI sub-windows over all tabs
 	RefList<SubWindow,bool> allSubWindows_;
-	// List of all current MDI sub-windows in this tab
-	List<SubWindow> subWindows_;
 
 	private:
 	// Find SubWindow from specified data pointer
@@ -92,8 +88,6 @@ class WorkspaceTab : public QWidget, public MainTab
 	bool removeWindowFromMDIArea(void* windowContents);
 	// Return window for specified data (as pointer) in this widget's MDI area, if it exists
 	QMdiSubWindow* findMDIWindow(void* windowContents);
-	// Return window with specified title in this widget's MDI area, if it exists
-	QMdiSubWindow* findMDIWindow(const char* title);
 };
 
 #endif

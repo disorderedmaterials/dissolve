@@ -21,6 +21,7 @@
 
 #include "gui/subwindow.h"
 #include "gui/subwidget.h"
+#include <QMdiSubWindow>
 
 // Constructor
 SubWindow::SubWindow(QMdiSubWindow* window, SubWidget* widget, void* data)

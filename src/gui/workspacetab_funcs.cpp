@@ -40,40 +40,16 @@ WorkspaceTab::~WorkspaceTab()
  * SubWidget / SubWindow Handling
  */
 
-// Return whether the tab has a SubWindow area
-bool WorkspaceTab::hasSubWindowArea()
+// Return the tab's SubWindow area, if it has one
+QMdiArea* WorkspaceTab::subWindowArea()
 {
-	return true;
+	return ui.WorkspaceArea;
 }
 
-// Add SubWindow for widget containing specified data (as pointer)
-QMdiSubWindow* WorkspaceTab::addSubWindow(SubWidget* widget, void* windowContents)
+// Return the tab's SubWidget layout, if it has one
+QLayout* WorkspaceTab::subWidgetLayout()
 {
-	// Check that the windowContents aren't currently in the list
-	QMdiSubWindow* window = windowContents ? findMDIWindow(windowContents) : NULL;
-	if (window)
-	{
-		Messenger::printVerbose("Refused to add window contents %p to our list, as it is already present elsewhere. It will be raised instead.\n");
-		window->raise();
-		return window;
-	}
-
-	// Create a new QMdiSubWindow, show, and update controls
-	window = ui.WorkspaceArea->addSubWindow(widget);
-	window->setWindowTitle(widget->title());
-	window->show();
-	widget->updateControls();
-
-	// Store window / widget data in our list
-	SubWindow* subWindow = new SubWindow(window, widget, windowContents);
-	subWindows_.own(subWindow);
-
-	return window;
-}
-
-// Find and return named SubWidget
-SubWidget* WorkspaceTab::findSubWidget(const char* widgetTitle)
-{
+	return NULL;
 }
 
 /*
@@ -143,15 +119,6 @@ QMdiSubWindow* WorkspaceTab::findMDIWindow(void* windowContents)
 {
 	ListIterator<SubWindow> subWindowIterator(subWindows_);
 	while (SubWindow* subWindow = subWindowIterator.iterate()) if (subWindow->data() == windowContents) return subWindow->window();
-
-	return NULL;
-}
-
-// Return window with specified title, if it exists
-QMdiSubWindow* WorkspaceTab::findMDIWindow(const char* title)
-{
-	ListIterator<SubWindow> subWindowIterator(subWindows_);
-	while (SubWindow* subWindow = subWindowIterator.iterate()) if (subWindow->window()->windowTitle() == title) return subWindow->window();
 
 	return NULL;
 }

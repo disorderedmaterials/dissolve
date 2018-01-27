@@ -1,6 +1,6 @@
 /*
-	*** Monitor Window
-	*** src/gui/monitor.h
+	*** dUQ Main Window
+	*** src/gui/gui.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of DUQ.
@@ -95,13 +95,13 @@ class DUQWindow : public QMainWindow
 	 */
 	private slots:
 	// Session
-	void on_FileOpenAction_triggered(bool checked);
-	void on_FileSaveAction_triggered(bool checked);
-	void on_FileQuitAction_triggered(bool checked);
+	void on_SessionOpenAction_triggered(bool checked);
+	void on_SessionSaveAction_triggered(bool checked);
+	void on_SessionQuitAction_triggered(bool checked);
 	// Simulation
 	// Workspace
 	void on_WorkspaceAddNewAction_triggered(bool checked);
-	void addWidgetMenuItemTriggered(bool checked);
+	void addWidgetToCurrentWorkspace(bool checked);
 
 	public:
 	// Update menu items (after change in Modules etc.)
@@ -173,6 +173,21 @@ class DUQWindow : public QMainWindow
 	MainTab* addWorkspaceTab(const char* title);
 	// Find tab with title specified
 	MainTab* findTab(const char* title);
+	// Return current tab
+	MainTab* currentTab();
+	// Make specified tab the current one
+	void setCurrentTab(MainTab* tab);
+	// Make specified tab the current one (by index)
+	void setCurrentTab(int tabIndex);
+	// Create widget with supplied name
+
+	
+	/*
+	 * SubWidgets
+	 */
+	private:
+	// Create named SubWidget
+	SubWidget* createSubWidget(const char* widgetName, const char* title);
 
 
 	/*

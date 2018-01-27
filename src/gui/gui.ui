@@ -309,14 +309,14 @@
      <height>23</height>
     </rect>
    </property>
-   <widget class="QMenu" name="FileMenu">
+   <widget class="QMenu" name="SessionMenu">
     <property name="title">
      <string>&amp;Session</string>
     </property>
-    <addaction name="FileOpenAction"/>
-    <addaction name="FileSaveAction"/>
+    <addaction name="SessionOpenAction"/>
+    <addaction name="SessionSaveAction"/>
     <addaction name="separator"/>
-    <addaction name="FileQuitAction"/>
+    <addaction name="SessionQuitAction"/>
    </widget>
    <widget class="QMenu" name="WorkspaceMenu">
     <property name="font">

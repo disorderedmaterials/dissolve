@@ -21,20 +21,12 @@
 
 #include "main/duq.h"
 #include "gui/gui.h"
-#include "gui/browser.h"
-#include "gui/configurationtab.h"
 #include "gui/mastertermswidget.h"
 #include "gui/modulecontrolwidget.h"
 #include "gui/pairpotentialwidget.h"
-#include "gui/processingtab.h"
-#include "gui/setuptab.h"
-#include "gui/subwidget.h"
-#include "gui/thread.hui"
-#include "gui/workspacetab.h"
 #include "base/lineparser.h"
 #include <QCloseEvent>
 #include <QMdiSubWindow>
-#include <QInputDialog>
 
 // Constructor
 DUQWindow::DUQWindow(DUQ& duq) : QMainWindow(NULL), duq_(duq), threadController_(this, duq)
@@ -187,218 +179,33 @@ void DUQWindow::addOutputHandler()
 }
 
 /*
- * Main Menu
+ * SubWidgets
  */
 
-void DUQWindow::on_FileOpenAction_triggered(bool checked)
+// Create named SubWidget
+SubWidget* DUQWindow::createSubWidget(const char* widgetName, const char* title)
 {
-}
+	SubWidget* subWidget = NULL;
 
-void DUQWindow::on_FileSaveAction_triggered(bool checked)
-{
-}
-
-void DUQWindow::on_FileQuitAction_triggered(bool checked)
-{
-}
-
-void DUQWindow::addWidgetMenuItemTriggered(bool checked)
-{
-	// Get the sender QAction
-	QAction* action = (QAction*) sender();
-	if (!action) return;
-
-	printf("Action = %p\n");
-}
-
-void DUQWindow::on_WorkspaceAddNewAction_triggered(bool checked)
-{
-	// Add a new workspace
-	bool ok;
-	QString text = QInputDialog::getText(this, "New Workspace", "Enter the name of the new workspace", QLineEdit::Normal, "New Workspace", &ok);
-	if (!ok || text.isEmpty()) return;
-
-	addWorkspaceTab(qPrintable(text));
-}
-
-// Update menu items (after change in Modules etc.)
-void DUQWindow::updateMenuItems()
-{
-	// Update the WorkSpaceAddWidget submenu
-	QAction* subMenuAction = ui.WorkspaceAddWidgetAction->menuAction();
-	if (subMenuAction) ui.WorkspaceAddWidgetAction->removeAction(subMenuAction);
-
-	QFont italicFont = ui.WorkspaceAddWidgetAction->font();
-	italicFont.setItalic(true);
-
-	// General widgets, not associated to a module
-	QMenu* subMenu = new QMenu;
-	QAction* menuItem = subMenu->addAction("General");
-	menuItem->setFont(italicFont);
-	menuItem->setEnabled(false);
-	menuItem = subMenu->addAction("PairPotential");
-	connect(menuItem, SIGNAL(triggered(bool)), this, SLOT(addWidgetMenuItemTriggered(bool)));
-
-	ui.WorkspaceAddWidgetAction->addMenu(subMenu);
-}
-
-/*
- * Run Control
- */
-
-// Return current state of dUQ
-DUQWindow::DUQState DUQWindow::duqState() const
-{
-	return duqState_;
-}
-
-
-void DUQWindow::on_ControlRunButton_clicked(bool checked)
-{
-	// Prepare the GUI
-	setWidgetsForRun();
-
-	duqState_ = DUQWindow::RunningState;
-
-	emit iterate(-1);
-}
-
-void DUQWindow::on_ControlStepButton_clicked(bool checked)
-{
-	// Prepare the GUI
-	setWidgetsForRun();
-
-	duqState_ = DUQWindow::RunningState;
-
-	emit iterate(1);
-}
-
-void DUQWindow::on_ControlStepFiveButton_clicked(bool checked)
-{
-	// Prepare the GUI
-	setWidgetsForRun();
-
-	duqState_ = DUQWindow::RunningState;
-
-	emit iterate(5);
-}
-
-void DUQWindow::on_ControlPauseButton_clicked(bool checked)
-{
-	duqState_ = DUQWindow::StoppedState;
-
-	emit stopIterating();
-}
-
-void DUQWindow::on_ControlReloadButton_clicked(bool checked)
-{
-}
-
-// Set widgets ready for the main code to be run
-void DUQWindow::setWidgetsForRun()
-{
-	// Disable run and step buttons, and enable pause button
-	ui.ControlRunButton->setEnabled(false);
-	ui.ControlStepButton->setEnabled(false);
-	ui.ControlStepFiveButton->setEnabled(false);
-	ui.ControlPauseButton->setEnabled(true);
-
-	// Disable sensitive controls in tabs
-	for (MainTab* tab = tabs_.first(); tab != NULL; tab = tab->next) tab->disableSensitiveControls();
-}
-
-// Set widgets after the main code has been run
-void DUQWindow::setWidgetsAfterRun()
-{
-	// Enable run and step buttons, and disable pause button
-	ui.ControlRunButton->setEnabled(true);
-	ui.ControlStepButton->setEnabled(true);
-	ui.ControlStepFiveButton->setEnabled(true);
-	ui.ControlPauseButton->setEnabled(false);
-
-	// Enable necessary controls in tabs
-	for (MainTab* tab = tabs_.first(); tab != NULL; tab = tab->next) tab->enableSensitiveControls();
-}
-
-// All iterations requested are complete
-void DUQWindow::iterationsComplete()
-{
-	setWidgetsAfterRun();
-}
-
-/*
- * Tab Management
- */
-
-void DUQWindow::on_MainTabs_currentChanged(int index)
-{
-	if (refreshing_) return;
-
-	// Current tab index changed
-	if (index >= tabs_.nItems())
+	if (DUQSys::sameString(widgetName, "PairPotential"))
 	{
-		Messenger::error("Something has gone wrong - tab index changed to %i, but there are only %i in the list.\n", index, tabs_.nItems());
-		return;
+		PairPotentialWidget* ppWidget = new PairPotentialWidget(NULL, NULL, duq_, title);
+		subWidget = ppWidget;
 	}
-
-	MainTab* currentTab = tabs_[index];
-
-	// Set controls in Workspace menu
-	// -- Workspace name
-	ui.WorkspaceCurrentAction->setText(index == -1 ? "<No Current Workspace>" : tabs_[index]->title());
-	// -- Disable controls if the current tab has no valid SubWindow (MDI) area
-	ui.WorkspaceAddWidgetAction->setEnabled(currentTab->hasSubWindowArea());
-}
-
-// Clear all tabs, except the "Setup" tab
-void DUQWindow::clearAllTabs()
-{
-	// Delete all our referenced tabs - removal of the tab and widget will be handled by the destructor
-	tabs_.clear();
-}
-
-// Add setup tab
-void DUQWindow::addSetupTab()
-{
-	MainTab* tab = new SetupTab(this, duq_, ui.MainTabs, "Setup");
-	tabs_.own(tab);
-}
-
-// Add tab for specified Configuration target
-void DUQWindow::addConfigurationTab(Configuration* cfg)
-{
-	MainTab* tab = new ConfigurationTab(this, duq_, ui.MainTabs, cfg->name(), cfg);
-	tabs_.own(tab);
-}
-
-// Add processing workspace
-void DUQWindow::addProcessingTab()
-{
-	MainTab* tab = new ProcessingTab(this, duq_, ui.MainTabs, "Processing");
-	tabs_.own(tab);
-}
-
-// Add on an empty workspace tab
-MainTab* DUQWindow::addWorkspaceTab(const char* title)
-{
-	// Check that a tab with this title doesn't already exist
-	MainTab* tab = findTab(title);
-	if (!tab)
+	else if (DUQSys::sameString(widgetName, "MasterTerms"))
 	{
-		tab = new WorkspaceTab(this, duq_, ui.MainTabs, title);
-		tabs_.own(tab);
+		MasterTermsWidget* masterTermsWidget = new MasterTermsWidget(NULL, duq_, title);
+		subWidget = masterTermsWidget;
 	}
-	else Messenger::printVerbose("Tab '%s' already exists, so returning that instead...\n", title);
+	else if (DUQSys::sameString(widgetName, "ModuleControl"))
+	{
+		ModuleControlWidget* moduleWidget = new ModuleControlWidget(NULL, NULL, duq_, title);
+		connect(moduleWidget, SIGNAL(moduleRun()), this, SLOT(updateControls()));
+		subWidget = moduleWidget;
+	}
+	else Messenger::error("Don't know how to create SubWidget of type '%s'.\n", widgetName);
 
-	return tab;
-}
-
-// Find tab with title specified
-MainTab* DUQWindow::findTab(const char* title)
-{
-	for (MainTab* tab = tabs_.first() ; tab != NULL; tab = tab->next) if (DUQSys::sameString(title, tab->title())) return tab;
-
-	return NULL;
+	return subWidget;
 }
 
 /*
@@ -435,7 +242,7 @@ bool DUQWindow::loadWindowLayout()
 		if (stateParser.getArgsDelim(LineParser::UseQuotes) != LineParser::Success) return false;
 
 		SubWidget* subWidget = NULL;
-		QMdiSubWindow* subWindow = NULL;
+		SubWindow* subWindow = NULL;
 
 		// The line should contain the title of the target mdiArea, the type of the widget we should create in a subwindow, and the subwindow title
 		MainTab* targetTab = findTab(stateParser.argc(0));
@@ -448,27 +255,11 @@ bool DUQWindow::loadWindowLayout()
 		// We now check the availability of an area for SubWindows in the tab.
 		// If there is one then we must create the window and add it to the tab before reading its state.
 		// If not, we search for the named sub *widget*, which should already exist in the tab.
-		if (targetTab->hasSubWindowArea())
+		if (targetTab->subWindowArea())
 		{
-			if (DUQSys::sameString(stateParser.argc(1), "PairPotential"))
-			{
-				PairPotentialWidget* ppWidget = new PairPotentialWidget(NULL, NULL, duq_, stateParser.argc(2));
-				subWindow = targetTab->addSubWindow(ppWidget, NULL);
-				subWidget = ppWidget;
-			}
-			else if (DUQSys::sameString(stateParser.argc(1), "MasterTerms"))
-			{
-				MasterTermsWidget* masterTermsWidget = new MasterTermsWidget(NULL, duq_, stateParser.argc(2));
-				subWindow = targetTab->addSubWindow(masterTermsWidget, NULL);
-				subWidget = masterTermsWidget;
-			}
-			else if (DUQSys::sameString(stateParser.argc(1), "ModuleControl"))
-			{
-				ModuleControlWidget* moduleWidget = new ModuleControlWidget(NULL, NULL, duq_, stateParser.argc(2));
-				connect(moduleWidget, SIGNAL(moduleRun()), this, SLOT(updateControls()));
-				subWindow = targetTab->addSubWindow(moduleWidget, NULL);
-				subWidget = moduleWidget;
-			}
+			subWidget = createSubWidget(stateParser.argc(1), stateParser.argc(2));
+
+			if (subWidget) subWindow = targetTab->addSubWindow(subWidget, NULL);
 			else
 			{
 				Messenger::error("Couldn't read state information - unrecognised widget type '%s' encountered.\n", stateParser.argc(1));
@@ -486,15 +277,15 @@ bool DUQWindow::loadWindowLayout()
 			}
 		}
 
-
 		// Read in the widget's geometry / state / flags (depending on whether it went into a new SubWindow or is just a SubWidget)
-		if (targetTab->hasSubWindowArea())
+		if (targetTab->subWindowArea())
 		{
 			if (stateParser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-			subWindow->setGeometry(stateParser.argi(0), stateParser.argi(1), stateParser.argi(2), stateParser.argi(3));
+			QMdiSubWindow* window = subWindow->window();
+			window->setGeometry(stateParser.argi(0), stateParser.argi(1), stateParser.argi(2), stateParser.argi(3));
 			// -- Is the window maximised, or shaded?
-			if (stateParser.argb(4)) subWindow->showMaximized();
-			else if (stateParser.argb(5)) subWindow->showShaded();
+			if (stateParser.argb(4)) window->showMaximized();
+			else if (stateParser.argb(5)) window->showShaded();
 		}
 		else
 		{

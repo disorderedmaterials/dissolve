@@ -40,6 +40,8 @@ ModuleControlWidget::ModuleControlWidget(QWidget* parent, Module* module, DUQ& d
 	// Set up user interface
 	ui.setupUi(this);
 
+	moduleWidget_ = NULL;
+
 	initialiseWindow(module_);
 
 	initialiseControls(module_);
@@ -235,11 +237,22 @@ bool ModuleControlWidget::writeState(LineParser& parser)
 // Read widget state through specified LineParser
 bool ModuleControlWidget::readState(LineParser& parser)
 {
+	// First check if there is a current module pointer
+	// It is possible that one has not yet been set, e.g. if we are reading in a SubWindow.
+	bool moduleSet = module_;
+
 	// Read PairPotential target
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 	module_ = ModuleList::findInstanceByUniqueName(parser.argc(0));
 
-	// Write state data from ModuleWidget (if one exists)
+	if (module_ && (!moduleSet))
+	{
+		moduleWidget_ = module_->createWidget(ui.ControlsWidget, duq_);
+		initialiseWindow(module_);
+		initialiseControls(module_);
+	}
+
+	// Read state data from ModuleWidget (if one exists)
 	if (moduleWidget_ && (!moduleWidget_->readState(parser))) return false;
 
 	return true;

@@ -67,13 +67,25 @@ class MainTab : public ListItem<MainTab>
 	/*
 	 * SubWidget / SubWindow Handling
 	 */
+	protected:
+	// List of all current MDI SubWindows in this tab, if it has an MDI area
+	List<SubWindow> subWindows_;
+	// List of module SubWidgets, if there is no MDI area
+	List<SubWidget> subWidgets_;
+
 	public:
-	// Return whether the tab has a SubWindow area
-	virtual bool hasSubWindowArea() = 0;
+	// Return the tab's SubWindow area, if it has one
+	virtual QMdiArea* subWindowArea() = 0;
+	// Return the tab's SubWidget layout, if it has one
+	virtual QLayout* subWidgetLayout() = 0;
+	// Find SubWindow by title
+	SubWindow* findSubWindow(const char* title);
+	// Find SubWindow by data content
+	SubWindow* findSubWindow(void* windowContents);
 	// Add SubWindow for widget containing specified data (as pointer)
-	virtual QMdiSubWindow* addSubWindow(SubWidget* widget, void* windowContents) = 0;
+	SubWindow* addSubWindow(SubWidget* widget, void* windowContents);
 	// Find and return named SubWidget
-	virtual SubWidget* findSubWidget(const char* widgetTitle) = 0;
+	SubWidget* findSubWidget(const char* widgetTitle);
 
 
 	/*

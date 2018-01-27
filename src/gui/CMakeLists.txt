@@ -53,6 +53,9 @@ SET(gui_SRCS
   configurationtab_funcs.cpp
   colourbutton_funcs.cpp
   gui_funcs.cpp
+  gui_menu.cpp
+  gui_run.cpp
+  gui_tabs.cpp
   gradientbar_funcs.cpp
   maintab.cpp
   mimestrings.cpp
