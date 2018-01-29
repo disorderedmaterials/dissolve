@@ -282,11 +282,6 @@ bool DUQ::iterate(int nIterations)
 				GenericListHelper<XYData>::realise(processingModuleData_, CharString("Potential_%s-%s_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ()), "DUQ", GenericItem::InRestartFileFlag) = pot->uAdditional();
 			}
 
-			// Master terms
-			for (MasterIntra* masterBond = masterBonds_.first(); masterBond != NULL; masterBond = masterBond->next) GenericListHelper< Array<double> >::realise(processingModuleData_, CharString("MasterBond_%s", masterBond->name()), "DUQ", GenericItem::InRestartFileFlag) = masterBond->parametersAsArray();
-			for (MasterIntra* masterAngle = masterAngles_.first(); masterAngle != NULL; masterAngle = masterAngle->next) GenericListHelper< Array<double> >::realise(processingModuleData_, CharString("MasterAngle_%s", masterAngle->name()), "DUQ", GenericItem::InRestartFileFlag) = masterAngle->parametersAsArray();
-			for (MasterIntra* masterTorsion = masterTorsions_.first(); masterTorsion != NULL; masterTorsion = masterTorsion->next) GenericListHelper< Array<double> >::realise(processingModuleData_, CharString("MasterTorsion_%s", masterTorsion->name()), "DUQ", GenericItem::InRestartFileFlag) = masterTorsion->parametersAsArray();
-
 			/*
 			 * Restart File
 			 */
