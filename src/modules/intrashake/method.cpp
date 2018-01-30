@@ -81,6 +81,7 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		if (cutoffDistance < 0.0) cutoffDistance = duq.pairPotentialRange();
 		const int nShakesPerTerm = keywords_.asInt("ShakesPerTerm");
 		const double targetAcceptanceRate = keywords_.asDouble("TargetAcceptanceRate");
+		const bool termEnergyOnly = keywords_.asBool("TermEnergyOnly");
 		double torsionStepSize = GenericListHelper<double>::retrieve(moduleData, "TorsionStepSize", uniqueName(), keywords_.asDouble("TorsionStepSize"));
 		const double torsionStepSizeMax = keywords_.asDouble("TorsionStepSizeMax");
 		const double torsionStepSizeMin = keywords_.asDouble("TorsionStepSizeMin");
@@ -93,6 +94,7 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		if (adjustAngles) Messenger::print("IntraShake: Angle step size for angle adjustments is %f degrees (allowed range is %f <= delta <= %f).\n", angleStepSize, angleStepSizeMin, angleStepSizeMax);
 		if (adjustTorsions) Messenger::print("IntraShake: Rotation step size for torsion adjustments is %f degrees (allowed range is %f <= delta <= %f).\n", torsionStepSize, torsionStepSizeMin, torsionStepSizeMax);
 		Messenger::print("IntraShake: Target acceptance rate is %f.\n", targetAcceptanceRate);
+		if (termEnergyOnly) Messenger::print("IntraShake: Only term energy will be considered (interatomic contributions with the system will be excluded).\n");
 
 		// Create a local ChangeStore and EnergyKernel
 		ChangeStore changeStore(procPool);
@@ -124,7 +126,7 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 			changeStore.add(mol);
 
 			// Calculate reference pairpotential energy for Molecule
-			ppEnergy = kernel.energy(mol, ProcessPool::OverPoolProcesses);
+			ppEnergy = termEnergyOnly ? 0.0 : kernel.energy(mol, ProcessPool::OverPoolProcesses);
 
 			// Loop over defined Bonds
 			if (adjustBonds) for (int n=0; n<mol->nBonds(); ++n)
@@ -150,7 +152,7 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 					mol->translate(vji, b->nAttached(terminus), b->attached(terminus));
 
 					// Calculate new energy
-					newPPEnergy = kernel.energy(mol, ProcessPool::OverPoolProcesses);
+					newPPEnergy = termEnergyOnly ? 0.0 : kernel.energy(mol, ProcessPool::OverPoolProcesses);
 					newIntraEnergy = kernel.energy(b);
 					
 					// Trial the transformed Molecule
@@ -199,7 +201,7 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 					mol->transform(box, transform, a->j()->r(), a->nAttached(terminus), a->attached(terminus));
 
 					// Calculate new energy
-					newPPEnergy = kernel.energy(mol, ProcessPool::OverPoolProcesses);
+					newPPEnergy = termEnergyOnly ? 0.0 : kernel.energy(mol, ProcessPool::OverPoolProcesses);
 					newIntraEnergy = kernel.energy(a);
 					
 					// Trial the transformed Molecule
@@ -246,7 +248,7 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 					mol->transform(box, transform, terminus == 0 ? t->j()->r() : t->k()->r(), t->nAttached(terminus), t->attached(terminus));
 
 					// Calculate new energy
-					newPPEnergy = kernel.energy(mol, ProcessPool::OverPoolProcesses);
+					newPPEnergy = termEnergyOnly ? 0.0 : kernel.energy(mol, ProcessPool::OverPoolProcesses);
 					newIntraEnergy = kernel.energy(t);
 					
 					// Trial the transformed Molecule

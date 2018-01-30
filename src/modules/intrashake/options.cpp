@@ -37,6 +37,7 @@ void IntraShakeModule::setUpKeywords()
 	keywords_.add(new DoubleModuleKeyword(-1.0), "CutoffDistance", "Interatomic cutoff distance to employ", "<distance>");
 	keywords_.add(new IntegerModuleKeyword(1), "ShakesPerTerm", "Number of shakes per term", "<n>");
 	keywords_.add(new DoubleModuleKeyword(0.33), "TargetAcceptanceRate", "Target acceptance rate for Monte Carlo moves", "<rate (0.0-1.0)>");
+	keywords_.add(new BoolModuleKeyword(false), "TermEnergyOnly", "Whether only the energy of the intramolecular term is calculated and assessed");
 	keywords_.add(new DoubleModuleKeyword(10.0), "TorsionStepSize", "Step size for Torsion adjustments (degrees)", "<stepsize>", GenericItem::InRestartFileFlag);
 	keywords_.add(new DoubleModuleKeyword(45.0), "TorsionStepSizeMax", "Maximum step size for Torsion adjustments (degrees)", "<stepsize>");
 	keywords_.add(new DoubleModuleKeyword(0.5), "TorsionStepSizeMin", "Minimum step size for Torsion adjustments (degrees)", "<stepsize>");
