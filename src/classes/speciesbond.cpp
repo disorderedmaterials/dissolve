@@ -147,13 +147,17 @@ void SpeciesBond::setUp()
 	 */
 	if (form() == SpeciesBond::EPSRForm)
 	{
-		// Work out omega-squared(ab)
-		parameters_[2] = params[1] / sqrt((periodicTable.element(i_->element()).z() + periodicTable.element(j_->element()).z()) / (periodicTable.element(i_->element()).z() * periodicTable.element(j_->element()).z()));
+		// Work out omega-squared(ab) from mass of natural isotopes
+		double massI = periodicTable.element(i_->element()).isotope(0)->atomicWeight();
+		double massJ = periodicTable.element(j_->element()).isotope(0)->atomicWeight();
+		parameters_[2] = params[1] / sqrt((massI + massJ) / (massI * massJ));
 	}
 	else if (form() == SpeciesBond::SoftHarmonicForm)
 	{
-		// Work out omega-squared(ab)
-		parameters_[3] = params[1] / sqrt((periodicTable.element(i_->element()).z() + periodicTable.element(j_->element()).z()) / (periodicTable.element(i_->element()).z() * periodicTable.element(j_->element()).z()));
+		// Work out omega-squared(ab) from mass of natural isotopes
+		double massI = periodicTable.element(i_->element()).isotope(0)->atomicWeight();
+		double massJ = periodicTable.element(j_->element()).isotope(0)->atomicWeight();
+		parameters_[3] = params[1] / sqrt((massI + massJ) / (massI * massJ));
 	}
 }
 
@@ -198,8 +202,9 @@ double SpeciesBond::energy(double distance) const
 		 * 2 : range
 		 * 3 : omega squared (LOCAL parameter)
 		 */
-		double delta = distance - params[1];
-		return params[0] * (delta*delta) / parameters_[2];
+		double delta = fabs(distance - params[1]);
+		if (delta < params[2]) return params[0] * (delta*delta) / parameters_[3];
+		else return params[0] * (delta*delta) / parameters_[3] + 3000.0 * ((delta - params[2])*(delta - params[2]));
 	}
 
 	Messenger::error("Functional form of SpeciesBond term not set, so can't calculate energy.\n");
@@ -246,8 +251,9 @@ double SpeciesBond::force(double distance) const
 		 * 3 : omega squared (LOCAL parameter)
 		 */
 		double delta = distance - params[1];
-		if (fabs(delta) < params[2]) return params[0] * delta / parameters_[2];
-		else return (params[0] * delta / parameters_[2]) + 100.0 * params[0] * (delta - params[2]);
+		if (fabs(delta) < params[2]) return -params[0] * delta / parameters_[2];
+		else if (delta < 0) return -2.0 * ((params[0] * delta / parameters_[3]) + 3000.0 * params[0] * (delta + params[2]));
+		else return -2.0 * ((params[0] * delta / parameters_[3]) + 3000.0 * params[0] * (delta - params[2]));
 	}
 
 	Messenger::error("Functional form of SpeciesBond term not set, so can't calculate force.\n");
