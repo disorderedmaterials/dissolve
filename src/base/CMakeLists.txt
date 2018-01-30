@@ -1,5 +1,6 @@
 add_library(base
   charstring.cpp
+  doublesample.cpp
   element.cpp
   genericitem.cpp
   genericitembase.cpp
@@ -23,6 +24,7 @@ add_library(base
   
   charstring.h
   constants.h
+  doublesample.h
   element.h
   genericitem.h
   genericitembase.h
