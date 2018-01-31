@@ -1,6 +1,6 @@
 /*
-	*** DoubleSample
-	*** src/base/doublesample.cpp
+	*** SampledDouble
+	*** src/base/sampleddouble.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -19,11 +19,11 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "base/doublesample.h"
+#include "base/sampleddouble.h"
 #include <math.h>
 
 // Constructor
-DoubleSample::DoubleSample()
+SampledDouble::SampledDouble()
 {
 	value_ = 0.0;
 	count_ = 0;
@@ -36,13 +36,13 @@ DoubleSample::DoubleSample()
  */
 
 // Return current value
-double DoubleSample::value() const
+double SampledDouble::value() const
 {
 	return value_;
 }
 
 // Accumulate current value into statistics
-void DoubleSample::accumulate()
+void SampledDouble::accumulate()
 {
 	++count_;
 	double delta = value_ - mean_;
@@ -51,25 +51,25 @@ void DoubleSample::accumulate()
 }
 
 // Return number of samples contributing to averages etc.
-int DoubleSample::count() const
+int SampledDouble::count() const
 {
 	return count_;
 }
 
 // Return mean of sampled data
-double DoubleSample::mean() const
+double SampledDouble::mean() const
 {
 	return mean_;
 }
 
 // Return variance of sampled data
-double DoubleSample::variance() const
+double SampledDouble::variance() const
 {
 	return (count_ < 2 ? 0.0 : m2_ / (count_ - 1));
 }
 
 // Return standard deviation of sampled data
-double DoubleSample::stDev() const
+double SampledDouble::stDev() const
 {
 	return (count_ < 2 ? 0.0 : sqrt(m2_ / count_ - 1));
 }
@@ -79,13 +79,13 @@ double DoubleSample::stDev() const
  */
 
 // Conversion (double)
-DoubleSample::operator double&()
+SampledDouble::operator double&()
 {
 	return value_;
 }
 
 // <<
-void DoubleSample::operator<<(double x)
+void SampledDouble::operator<<(double x)
 {
 	value_ = x;
 	accumulate();

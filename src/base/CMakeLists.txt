@@ -1,6 +1,5 @@
 add_library(base
   charstring.cpp
-  doublesample.cpp
   element.cpp
   genericitem.cpp
   genericitembase.cpp
@@ -16,6 +15,7 @@ add_library(base
   processgroup.cpp
   processpool.cpp
   ptable.cpp
+  sampleddouble.cpp
   sysfunc.cpp
   timer.cpp
   xydata.cpp
@@ -24,7 +24,6 @@ add_library(base
   
   charstring.h
   constants.h
-  doublesample.h
   element.h
   genericitem.h
   genericitembase.h
@@ -40,6 +39,7 @@ add_library(base
   processgroup.h
   processpool.h
   ptable.h
+  sampleddouble.h
   sysfunc.h
   timer.h
   xydata.h

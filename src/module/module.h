@@ -211,6 +211,13 @@ class Module : public ListItem<Module>
 
 
 	/*
+	 * Timing
+	 */
+	private:
+	// Accumulated timing information for this module
+// 	SampledDouble
+	
+	/*
 	 * GUI Widget
 	 */
 	public:

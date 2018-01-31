@@ -1,6 +1,6 @@
 /*
-	*** DoubleSample
-	*** src/base/doublesample.h
+	*** SampledDouble
+	*** src/base/sampleddouble.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -19,17 +19,17 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_DOUBLESAMPLE_H
-#define DUQ_DOUBLESAMPLE_H
+#ifndef DUQ_SAMPLEDDOUBLE_H
+#define DUQ_SAMPLEDDOUBLE_H
 
 #include <ctime>
 
 // Double value with sampling
-class DoubleSample
+class SampledDouble
 {
 	public:
 	// Constructor
-	DoubleSample();
+	SampledDouble();
 
 
 	/*
