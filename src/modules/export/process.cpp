@@ -1,6 +1,6 @@
 /*
-	*** Export Module - Method
-	*** src/modules/export/method.cpp
+	*** Export Module - Processing
+	*** src/modules/export/process.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -27,19 +27,13 @@
 #include "base/sysfunc.h"
 #include "base/lineparser.h"
 
-// Perform set up tasks for module
-bool ExportModule::setUp(ProcessPool& procPool)
-{
-	return true;
-}
-
-// Execute pre-processing stage
+// Run pre-processing stage
 bool ExportModule::preProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return false;
 }
 
-// Execute Method
+// Run main processing
 bool ExportModule::process(DUQ& duq, ProcessPool& procPool)
 {
 	/*
@@ -106,7 +100,7 @@ bool ExportModule::process(DUQ& duq, ProcessPool& procPool)
 	return true;
 }
 
-// Execute post-processing stage
+// Run post-processing stage
 bool ExportModule::postProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return false;

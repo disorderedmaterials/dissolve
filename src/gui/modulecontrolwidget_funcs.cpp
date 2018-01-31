@@ -265,7 +265,7 @@ bool ModuleControlWidget::readState(LineParser& parser)
 
 void ModuleControlWidget::on_ControlRunButton_clicked(bool checked)
 {
-	module_->process(duq_, duq_.worldPool());
+	module_->executeMainProcessing(duq_, duq_.worldPool());
 
 	emit moduleRun();
 }

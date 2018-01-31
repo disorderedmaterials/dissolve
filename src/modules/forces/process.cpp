@@ -1,6 +1,6 @@
 /*
-	*** Forces Module - Method
-	*** src/modules/forces/method.cpp
+	*** Forces Module - Processing
+	*** src/modules/forces/process.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -28,19 +28,13 @@
 #include "base/lineparser.h"
 #include "templates/genericlisthelper.h"
 
-// Perform set up tasks for module
-bool ForcesModule::setUp(ProcessPool& procPool)
-{
-	return true;
-}
-
-// Execute pre-processing stage
+// Run pre-processing stage
 bool ForcesModule::preProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return false;
 }
 
-// Execute Method
+// Run main processing
 bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 {
 	/*
@@ -585,7 +579,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 	return true;
 }
 
-// Execute post-processing stage
+// Run post-processing stage
 bool ForcesModule::postProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return false;

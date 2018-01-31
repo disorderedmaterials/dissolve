@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = libpartials.la libmodulewidget.la
 
-libpartials_la_SOURCES = core.cpp definition.cpp functions.cpp method.cpp options.cpp
+libpartials_la_SOURCES = core.cpp definition.cpp functions.cpp options.cpp process.cpp
 libmodulewidget_la_SOURCES = nogui.cpp
 
 noinst_HEADERS = partials.h

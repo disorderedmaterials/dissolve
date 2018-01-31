@@ -1,6 +1,6 @@
 /*
-	*** Energy Module - Method
-	*** src/modules/energy/method.cpp
+	*** Energy Module - Processing
+	*** src/modules/energy/process.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -27,19 +27,13 @@
 #include "base/lineparser.h"
 #include "templates/genericlisthelper.h"
 
-// Perform set up tasks for module
-bool EnergyModule::setUp(ProcessPool& procPool)
-{
-	return true;
-}
-
-// Execute pre-processing stage
+// Run pre-processing stage
 bool EnergyModule::preProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return false;
 }
 
-// Execute Method
+// Run main processing
 bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 {
 	/*
@@ -378,7 +372,7 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 	return true;
 }
 
-// Execute post-processing stage
+// Run post-processing stage
 bool EnergyModule::postProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return false;

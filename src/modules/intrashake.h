@@ -63,10 +63,10 @@ class AtomShake : public Module
 
 
 	/*
-	 * Method
+	 * Processing
 	 */
 	protected:
-	// Execute method
+	// Run main processing
 	bool execute(DUQ& duq);
 };
 

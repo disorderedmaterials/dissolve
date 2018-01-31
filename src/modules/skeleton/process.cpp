@@ -1,6 +1,6 @@
 /*
-	*** Skeleton Module - Method
-	*** src/modules/skeleton/method.cpp
+	*** Skeleton Module - Processing
+	*** src/modules/skeleton/process.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -23,19 +23,13 @@
 #include "main/duq.h"
 #include "base/sysfunc.h"
 
-// Perform set up tasks for module
-bool SkeletonModule::setUp(ProcessPool& procPool)
-{
-	return true;
-}
-
-// Execute pre-processing stage
+// Run pre-processing stage
 bool SkeletonModule::preProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return false;
 }
 
-// Execute Method
+// Run main processing
 bool SkeletonModule::process(DUQ& duq, ProcessPool& procPool)
 {
 	/*
@@ -65,7 +59,7 @@ bool SkeletonModule::process(DUQ& duq, ProcessPool& procPool)
 	return false;
 }
 
-// Execute post-processing stage
+// Run post-processing stage
 bool SkeletonModule::postProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return false;

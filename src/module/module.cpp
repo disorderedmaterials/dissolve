@@ -348,6 +348,41 @@ RefList<Data,bool>& Module::targetData()
 }
 
 /*
+ * Processing
+ */
+
+// Run pre-processing stage
+bool Module::executePreProcessing(DUQ& duq, ProcessPool& procPool)
+{
+	// No pre-run hooks, and no post-run hooks as-yet, so just return result
+	return preProcess(duq, procPool);
+}
+
+// Run main processing stage
+bool Module::executeMainProcessing(DUQ& duq, ProcessPool& procPool)
+{
+	// Begin timer
+	Timer timer;
+	timer.start();
+
+	// Run main processing routine
+	bool result = process(duq, procPool);
+
+	// Accumulate timing information
+	timer.stop();
+	processTimes_ << timer.secondsElapsed();
+
+	return result;
+}
+
+// Run post-processing stage
+bool Module::executePostProcessing(DUQ& duq, ProcessPool& procPool)
+{
+	// No pre-run hooks, and no post-run hooks as-yet, so just return result
+	return postProcess(duq, procPool);
+}
+
+/*
  * GUI Widget
  */
 

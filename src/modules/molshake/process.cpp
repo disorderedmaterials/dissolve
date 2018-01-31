@@ -1,6 +1,6 @@
 /*
-	*** MolShake Module - Method
-	*** src/modules/molshake/method.cpp
+	*** MolShake Module - Processing
+	*** src/modules/molshake/process.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -30,19 +30,13 @@
 #include "base/timer.h"
 #include "templates/genericlisthelper.h"
 
-// Perform set up tasks for module
-bool MolShakeModule::setUp(ProcessPool& procPool)
-{
-	return true;
-}
-
-// Execute pre-processing stage
+// Run pre-processing stage
 bool MolShakeModule::preProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return false;
 }
 
-// Execute Method
+// Run main processing
 bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 {
 	/*
@@ -245,7 +239,7 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 	return true;
 }
 
-// Execute post-processing stage
+// Run post-processing stage
 bool MolShakeModule::postProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return true;

@@ -1,6 +1,6 @@
 /*
-	*** Molecular Dynamics Module - Method
-	*** src/modules/md/method.cpp
+	*** Molecular Dynamics Module - Processing
+	*** src/modules/md/process.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -31,19 +31,13 @@
 #include "base/lineparser.h"
 #include "templates/genericlisthelper.h"
 
-// Perform set up tasks for module
-bool MDModule::setUp(ProcessPool& procPool)
-{
-	return true;
-}
-
-// Execute pre-processing stage
+// Run pre-processing stage
 bool MDModule::preProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return false;
 }
 
-// Execute Method
+// Run main processing
 bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 {
 	/*
@@ -321,7 +315,7 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 	return true;
 }
 
-// Execute post-processing stage
+// Run post-processing stage
 bool MDModule::postProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return false;

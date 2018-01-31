@@ -78,10 +78,10 @@ Module::ModuleType GrainShakeModule::type()
 }
 
 /*
- * Method
+ * Processing
  */
 
-// Execute Method
+// Run main processing
 
 bool GrainShakeModule::execute(DUQ& duq)
 {

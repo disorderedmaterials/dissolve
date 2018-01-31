@@ -1,6 +1,6 @@
 /*
-	*** Checks Module - Method
-	*** src/modules/checks/method.cpp
+	*** Checks Module - Processing
+	*** src/modules/checks/process.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -24,19 +24,13 @@
 #include "classes/box.h"
 #include "base/sysfunc.h"
 
-// Perform set up tasks for module
-bool ChecksModule::setUp(ProcessPool& procPool)
-{
-	return true;
-}
-
-// Execute pre-processing stage
+// Run pre-processing stage
 bool ChecksModule::preProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return false;
 }
 
-// Execute Method
+// Run main processing
 bool ChecksModule::process(DUQ& duq, ProcessPool& procPool)
 {
 	/*
@@ -120,7 +114,7 @@ bool ChecksModule::process(DUQ& duq, ProcessPool& procPool)
 	return true;
 }
 
-// Execute post-processing stage
+// Run post-processing stage
 bool ChecksModule::postProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return false;

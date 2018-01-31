@@ -4,8 +4,8 @@ add_library(importmodule
   definition.cpp
   functions_coordinates.cpp
   functions_forces.cpp
-  method.cpp
   options.cpp
+  process.cpp
 
   import.h
 )

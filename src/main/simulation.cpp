@@ -136,7 +136,7 @@ bool DUQ::iterate(int nIterations)
 			Messenger::heading("'%s'", module->name());
 
 			// Execute the pre-processing stage
-			if (!module->preProcess(*this, worldPool_))
+			if (!module->executePreProcessing(*this, worldPool_))
 			{
 				Messenger::error("Module '%s' experienced errors. Exiting now.\n", module->name());
 				return false;
@@ -181,7 +181,7 @@ bool DUQ::iterate(int nIterations)
 
 				Messenger::heading("%s (%s)", module->name(), module->uniqueName());
 
-				result = module->process(*this, cfg->processPool());
+				result = module->executeMainProcessing(*this, cfg->processPool());
 
 				if (!result) return false;
 			}
@@ -223,7 +223,7 @@ bool DUQ::iterate(int nIterations)
 
 			Messenger::heading("%s (%s)", module->name(), module->uniqueName());
 
-			result = module->process(*this, worldPool_);
+			result = module->executeMainProcessing(*this, worldPool_);
 
 			if (!result)
 			{
@@ -250,7 +250,7 @@ bool DUQ::iterate(int nIterations)
 			Messenger::print("--> Module '%s'\n", module->name());
 
 			// Execute the post-processing stage
-			if (!module->postProcess(*this, worldPool_))
+			if (!module->executePostProcessing(*this, worldPool_))
 			{
 				Messenger::error("Module '%s' experienced errors. Exiting now.\n", module->name());
 				return false;

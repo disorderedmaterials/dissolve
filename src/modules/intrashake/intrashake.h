@@ -90,16 +90,14 @@ class IntraShakeModule : public Module
 
 
 	/*
-	 * Method
+	 * Processing
 	 */
-	public:
-	// Perform set up tasks for module
-	bool setUp(ProcessPool& procPool);
-	// Execute pre-processing stage
+	private:
+	// Run pre-processing stage
 	bool preProcess(DUQ& duq, ProcessPool& procPool);
-	// Execute method on the specified config
+	// Run main processing
 	bool process(DUQ& duq, ProcessPool& procPool);
-	// Execute post-processing stage
+	// Run post-processing stage
 	bool postProcess(DUQ& duq, ProcessPool& procPool);
 };
 

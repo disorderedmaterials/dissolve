@@ -3,8 +3,8 @@ add_library(intrashakemodule
   core.cpp
   definition.cpp
   functions.cpp
-  method.cpp
   options.cpp
+  process.cpp
 
   intrashake.h
 )

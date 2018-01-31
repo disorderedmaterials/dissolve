@@ -27,19 +27,13 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Perform set up tasks for module
-bool ImportModule::setUp(ProcessPool& procPool)
-{
-	return true;
-}
-
-// Execute pre-processing stage
+// Run pre-processing stage
 bool ImportModule::preProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return false;
 }
 
-// Execute Method
+// Run main processing
 bool ImportModule::process(DUQ& duq, ProcessPool& procPool)
 {
 	/*
@@ -105,7 +99,7 @@ bool ImportModule::process(DUQ& duq, ProcessPool& procPool)
 	return true;
 }
 
-// Execute post-processing stage
+// Run post-processing stage
 bool ImportModule::postProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return false;

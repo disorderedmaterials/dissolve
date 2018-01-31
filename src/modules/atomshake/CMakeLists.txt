@@ -3,8 +3,8 @@ add_library(atomshakemodule
   core.cpp
   definition.cpp
   functions.cpp
-  method.cpp
   options.cpp
+  process.cpp
 
   atomshake.h
 )

@@ -23,8 +23,9 @@
 #define DUQ_MODULE_H
 
 #include "base/messenger.h"
-#include "module/keywordlist.h"
 #include "base/genericlist.h"
+#include "base/sampleddouble.h"
+#include "module/keywordlist.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
@@ -183,17 +184,23 @@ class Module : public ListItem<Module>
 
 
 	/*
-	 * Method
+	 * Processing
 	 */
-	public:
-	// Perform set up tasks for Module
-	virtual bool setUp(ProcessPool& procPool) = 0;
-	// Execute pre-processing stage
+	private:
+	// Run pre-processing stage
 	virtual bool preProcess(DUQ& duq, ProcessPool& procPool) = 0;
-	// Execute method
+	// Run main processing
 	virtual bool process(DUQ& duq, ProcessPool& procPool) = 0;
-	// Execute post-processing stage
+	// Run post-processing stage
 	virtual bool postProcess(DUQ& duq, ProcessPool& procPool) = 0;
+
+	public:
+	// Run pre-processing stage
+	bool executePreProcessing(DUQ& duq, ProcessPool& procPool);
+	// Run main processing stage
+	bool executeMainProcessing(DUQ& duq, ProcessPool& procPool);
+	// Run post-processing stage
+	bool executePostProcessing(DUQ& duq, ProcessPool& procPool);
 
 
 	/*
@@ -214,9 +221,14 @@ class Module : public ListItem<Module>
 	 * Timing
 	 */
 	private:
-	// Accumulated timing information for this module
-// 	SampledDouble
-	
+	// Accumulated timing information (in seconds) for this Module
+	SampledDouble processTimes_;
+
+	public:
+	// Return timing information (in seconds) for this Module
+	SampledDouble processTimes();
+
+
 	/*
 	 * GUI Widget
 	 */

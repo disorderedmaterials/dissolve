@@ -1,6 +1,6 @@
 /*
-	*** Partials Module - Method
-	*** src/modules/partials/method.cpp
+	*** Partials Module - Processing
+	*** src/modules/partials/process.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -27,19 +27,13 @@
 #include "classes/weights.h"
 #include "templates/genericlisthelper.h"
 
-// Perform set up tasks for module
-bool PartialsModule::setUp(ProcessPool& procPool)
-{
-	return false;
-}
-
-// Execute pre-processing stage
+// Run pre-processing stage
 bool PartialsModule::preProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return false;
 }
 
-// Execute Method
+// Run main processing
 bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 {
 	/*
@@ -462,7 +456,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 	return true;
 }
 
-// Execute post-processing stage
+// Run post-processing stage
 bool PartialsModule::postProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return false;

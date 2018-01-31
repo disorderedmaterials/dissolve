@@ -1,6 +1,6 @@
 /*
-	*** AtomShake Module - Method
-	*** src/modules/atomshake/method.cpp
+	*** AtomShake Module - Processing
+	*** src/modules/atomshake/process.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -31,19 +31,13 @@
 #include "base/timer.h"
 #include "templates/genericlisthelper.h"
 
-// Perform set up tasks for module
-bool AtomShakeModule::setUp(ProcessPool& procPool)
-{
-	return true;
-}
-
-// Execute pre-processing stage
+// Run pre-processing stage
 bool AtomShakeModule::preProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return false;
 }
 
-// Execute Method
+// Run main processing
 bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
 {
 	/*
@@ -333,7 +327,7 @@ bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
 // 	cfg->accumulateEnergyChange();
 // }
 
-// Execute post-processing stage
+// Run post-processing stage
 bool AtomShakeModule::postProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return true;

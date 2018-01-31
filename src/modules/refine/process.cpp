@@ -1,6 +1,6 @@
 /*
-	*** Refine Module - Method
-	*** src/modules/refine/method.cpp
+	*** Refine Module - Processing
+	*** src/modules/refine/process.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -27,19 +27,13 @@
 #include "base/sysfunc.h"
 #include "templates/genericlisthelper.h"
 
-// Perform set up tasks for module
-bool RefineModule::setUp(ProcessPool& procPool)
-{
-	return true;
-}
-
-// Execute pre-processing stage
+// Run pre-processing stage
 bool RefineModule::preProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return false;
 }
 
-// Execute Method
+// Run main processing
 bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 {
 	int i, j;
@@ -531,7 +525,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	return true;
 }
 
-// Execute post-processing stage
+// Run post-processing stage
 bool RefineModule::postProcess(DUQ& duq, ProcessPool& procPool)
 {
 	return false;

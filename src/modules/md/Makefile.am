@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = libmd.la
 
-libmd_la_SOURCES = core.cpp definition.cpp functions.cpp method.cpp options.cpp
+libmd_la_SOURCES = core.cpp definition.cpp functions.cpp options.cpp process.cpp
 
 noinst_HEADERS = md.h
 
