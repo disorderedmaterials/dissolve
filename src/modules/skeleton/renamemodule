@@ -27,7 +27,7 @@ echo "Renaming class..."
 sed -i "s/SkeletonModule/${NAME}Module/g" *.cpp ${LCASE}.h gui/*.cpp gui/modulewidget.h gui/modulewidget.ui
 
 echo "Adjusting include / header paths..."
-sed -i "s/skeleton/${LCASE}/g" *.cpp ${LCASE}.h gui/modulewidget.h
+sed -i "s/skeleton/${LCASE}/g" *.cpp ${LCASE}.h gui/modulewidget.h gui/*.cpp
 
 echo "Adjusting makefiles..."
 sed -i "s/skeleton/${LCASE}/g" CMakeLists.txt Makefile.am gui/Makefile.am
