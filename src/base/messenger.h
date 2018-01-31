@@ -73,7 +73,7 @@ class Messenger
 	// Print verbose message
 	static void printVerbose(const char* fmt, ...);
 	// Print error message
-	static void error(const char* fmt, ...);
+	static bool error(const char* fmt, ...);
 	// Print warn message
 	static void warn(const char* fmt, ...);
 	// Print banner message

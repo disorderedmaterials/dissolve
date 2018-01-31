@@ -159,7 +159,7 @@ void Messenger::printVerbose(const char* fmt, ...)
 }
 
 // Print error message
-void Messenger::error(const char* fmt, ...)
+bool Messenger::error(const char* fmt, ...)
 {
 	va_list arguments;
 	va_start(arguments,fmt);
@@ -171,6 +171,8 @@ void Messenger::error(const char* fmt, ...)
 	outputText("\n");
 
 	va_end(arguments);
+
+	return false;
 }
 
 // Print warning message
