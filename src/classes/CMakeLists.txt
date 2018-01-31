@@ -22,7 +22,6 @@ add_library(classes
   configuration_box.cpp
   configuration_composition.cpp
   configuration_contents.cpp
-  configuration_energy.cpp
   configuration_upkeep.cpp
   data.cpp
   energykernel.cpp

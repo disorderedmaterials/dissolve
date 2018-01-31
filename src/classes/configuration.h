@@ -338,26 +338,6 @@ class Configuration : public ListItem<Configuration>
 
 
 	/*
-	 * Total Energy  (TO ENERGY MODULE????)
-	 */
-	private:
-	// Configuration energy data
-	XYData energyData_;
-	// Energy change since last point added to energyData_
-	double energyChange_;
-	// Whether energy has changed since the last point was added
-	bool energyChanged_;
-
-	public:
-	// Register a change in the total energy of the configuration
-	void registerEnergyChange(double deltaE);
-	// Accumulate current energy change into energyData_
-	void accumulateEnergyChange();
-	// Set absolute energy of system, after total energy calculation
-	void setAbsoluteEnergy(double energy);
-
-
-	/*
 	 * Upkeep
 	 */
 	public:

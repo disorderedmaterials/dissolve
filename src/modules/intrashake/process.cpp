@@ -322,10 +322,6 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 
 		// Increment configuration changeCount_
 		if ((nBondAccepted > 0) || (nAngleAccepted > 0) || (nTorsionAccepted > 0)) cfg->incrementCoordinateIndex();
-
-		// Update total energy
-		cfg->registerEnergyChange(totalDelta);
-		cfg->accumulateEnergyChange();
 	}
 
 	return true;

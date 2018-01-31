@@ -230,10 +230,6 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 
 		// Increment configuration changeCount_
 		if ((nRotationsAccepted > 0) || (nTranslationsAccepted > 0)) cfg->incrementCoordinateIndex();
-
-		// Update total energy
-		cfg->registerEnergyChange(totalDelta);
-		cfg->accumulateEnergyChange();
 	}
 
 	return true;

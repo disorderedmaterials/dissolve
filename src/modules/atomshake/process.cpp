@@ -206,10 +206,6 @@ bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		
 		// Increment configuration changeCount_
 		if (nAccepted > 0) cfg->incrementCoordinateIndex();
-
-		// Update total energy
-		cfg->registerEnergyChange(totalDelta);
-		cfg->accumulateEnergyChange();
 	}
 
 	return true;
