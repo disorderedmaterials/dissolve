@@ -166,10 +166,10 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 				if ((!trajParser.appendOutput(trajectoryFile)) || (!trajParser.isFileGoodForWriting()))
 				{
 					Messenger::error("Failed to open MD trajectory output file '%s'.\n", trajectoryFile.get());
-					procPool.stop();
+					procPool.decideFalse();
 					return false;
 				}
-				procPool.proceed();
+				procPool.decideTrue();
 			}
 			else if (!procPool.decision()) return false;
 		}
@@ -276,7 +276,7 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 					if ((energyFrequency > 0) && (step%energyFrequency == 0)) header.strcatf(", inter = %10.3e, intra = %10.3e, tot = %10.3e", peInter, peIntra, ke+peInter+peIntra);
 					if (!trajParser.writeLineF("%s\n", header.get()))
 					{
-						procPool.stop();
+						procPool.decideFalse();
 						return false;
 					}
 
@@ -286,12 +286,12 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 						Atom* i = atoms[n];
 						if (!trajParser.writeLineF("%-3s   %10.3f  %10.3f  %10.3f\n", PeriodicTable::element(i->element()).symbol(), i->r().x, i->r().y, i->r().z))
 						{
-							procPool.stop();
+							procPool.decideFalse();
 							return false;
 						}
 					}
 
-					procPool.proceed();
+					procPool.decideTrue();
 				}
 				else if (!procPool.decision()) return false;
 			}

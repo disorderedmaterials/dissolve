@@ -78,18 +78,18 @@ bool ExportModule::process(DUQ& duq, ProcessPool& procPool)
 				if (!parser.openOutput(filename))
 				{
 					parser.closeFiles();
-					procPool.stop();
+					procPool.decideFalse();
 					return false;
 				}
 				else if (!writeConfigurationDLPOLY(parser, cfg, cfg->name()))
 				{
 					Messenger::print("Export: Failed to export DL_POLY CONFIG file.\n");
 					parser.closeFiles();
-					procPool.stop();
+					procPool.decideFalse();
 					return false;
 				}
 
-				procPool.proceed();
+				procPool.decideTrue();
 			}
 			else if (!procPool.decision()) return false;
 

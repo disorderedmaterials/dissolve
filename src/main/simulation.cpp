@@ -293,7 +293,7 @@ bool DUQ::iterate(int nIterations)
 			if (!saveRestart(CharString("%s.restart", filename_.get())))
 			{
 				Messenger::error("Failed to write restart file.\n");
-				worldPool_.stop();
+				worldPool_.decideFalse();
 				return false;
 			}
 
@@ -313,14 +313,14 @@ bool DUQ::iterate(int nIterations)
 				if (!parser.openOutput(cfg->outputCoordinatesFile(), true))
 				{
 					parser.closeFiles();
-					worldPool_.stop();
+					worldPool_.decideFalse();
 					return false;
 				}
 				else if (!ExportModule::writeConfigurationXYZ(parser, cfg, cfg->name()))
 				{
 					Messenger::print("Export: Failed to write Configuration output file.\n");
 					parser.closeFiles();
-					worldPool_.stop();
+					worldPool_.decideFalse();
 					return false;
 				}
 
@@ -334,21 +334,21 @@ bool DUQ::iterate(int nIterations)
 					if (!ensembleParser.appendOutput(ensembleFile.get()))
 					{
 						ensembleParser.closeFiles();
-						worldPool_.stop();
+						worldPool_.decideFalse();
 						return false;
 					}
 					else if (!ExportModule::writeConfigurationXYZ(ensembleParser, cfg, cfg->name()))
 					{
 						Messenger::print("Export: Failed to append Configuration ensemble output file.\n");
 						ensembleParser.closeFiles();
-						worldPool_.stop();
+						worldPool_.decideFalse();
 						return false;
 					}
 				}
 			}
 
 			// All good. Carry on!
-			worldPool_.proceed();
+			worldPool_.decideTrue();
 		}
 		else if (worldPool_.isSlave() && (writeFrequency_ > 0) && (iteration_%writeFrequency_ == 0) && (!worldPool_.decision())) return false;
 

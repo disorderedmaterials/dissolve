@@ -1632,10 +1632,10 @@ bool ProcessPool::assemble(Array<double>& array, int nData, Array<double>& rootD
 		if (rootDest.size() < rootMaxData)
 		{
 			Messenger::error("Destination Array<double> in ProcessPool::assemble() is not large enough.");
-			stop(rootRank, commType);
+			decideFalse(rootRank, commType);
 			return false;
 		}
-		else proceed(rootRank, commType);
+		else decideTrue(rootRank, commType);
 	}
 	else if (!decision(rootRank, commType)) return false;
 
@@ -1647,8 +1647,8 @@ bool ProcessPool::assemble(Array<double>& array, int nData, Array<double>& rootD
  * Decisions
  */
 
-// Broadcast logical decision to proceed to all processes (Master only)
-void ProcessPool::proceed(int rootRank, ProcessPool::CommunicatorType commType)
+// Broadcast logical 'true' decision to all processes (Master only)
+void ProcessPool::decideTrue(int rootRank, ProcessPool::CommunicatorType commType)
 {
 	bool decision = true;
 #ifdef PARALLEL
@@ -1656,8 +1656,8 @@ void ProcessPool::proceed(int rootRank, ProcessPool::CommunicatorType commType)
 #endif
 }
 
-// Broadcast logical decision to stop to all processes (Master only)
-void ProcessPool::stop(int rootRank, ProcessPool::CommunicatorType commType)
+// Broadcast logical 'false' decision to all processes (Master only)
+void ProcessPool::decideFalse(int rootRank, ProcessPool::CommunicatorType commType)
 {
 	bool decision = false;
 #ifdef PARALLEL

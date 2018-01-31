@@ -306,10 +306,10 @@ class ProcessPool
 	 * Decisions
 	 */
 	public:
-	// Broadcast logical decision to proceed to processes (Master only)
-	void proceed(int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
-	// Broadcast logical decision to stop to processes (Master only)
-	void stop(int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	// Broadcast logical 'true' decision to processes (Master only)
+	void decideTrue(int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	// Broadcast logical 'false' decision to processes (Master only)
+	void decideFalse(int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Receive logical decision from master (Slaves only)
 	bool decision(int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Test the supplied condition over all processes, returning true only if they all report truth
@@ -381,7 +381,7 @@ class ProcessPool
  * }
  */
 #ifdef PARALLEL
-#define MPIRunMaster(pool,x) (pool.isMaster() ? (x ? (pool.proceed(),true) : (pool.stop(),false)) : pool.decision())
+#define MPIRunMaster(pool,x) (pool.isMaster() ? (x ? (pool.decideTrue(),true) : (pool.decideFalse(),false)) : pool.decision())
 #else
 #define MPIRunMaster(pool,x) x
 #endif
