@@ -26,6 +26,7 @@
 Timer::Timer()
 {
 	totalTime_ = 0;
+	running_ = false;
 	start();
 }
 
@@ -51,6 +52,7 @@ const char* Timer::timeString(clock_t ticks)
 // Start timer
 void Timer::start()
 {
+	running_ = true;
 	startTime_ = clock();
 }
 
@@ -58,6 +60,7 @@ void Timer::start()
 void Timer::stop()
 {
 	totalTime_ = clock() - startTime_;
+	running_ = false;
 }
 
 // Accumulate time since last start
@@ -75,11 +78,19 @@ void Timer::zero()
 // Return current elapsed time as a time string
 const char* Timer::elapsedTimeString()
 {
-	return timeString(clock() - startTime_);
+	if (running_) return timeString(clock() - startTime_);
+	else return timeString(totalTime_);
 }
 
 // Return total time (after stop()) as a time string
 const char* Timer::totalTimeString()
 {
 	return timeString(totalTime_);
+}
+
+// Return number of seconds elapsed
+double Timer::secondsElapsed()
+{
+	if (running_) return (clock() - startTime_) / double(CLOCKS_PER_SEC);
+	else return totalTime_ / double(CLOCKS_PER_SEC);
 }

@@ -46,6 +46,8 @@ class Timer
 	clock_t totalTime_;
 	// Local string storage
 	CharString timeString_;
+	// Whether the timer is running or not
+	bool running_;
 
 	private:
 	// Return time string based on provided tick count
@@ -64,6 +66,8 @@ class Timer
 	const char* elapsedTimeString();
 	// Return total time (after stop()) as a time string
 	const char* totalTimeString();
+	// Return number of seconds elapsed
+	double secondsElapsed();
 };
 
 #endif
