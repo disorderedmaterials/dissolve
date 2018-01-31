@@ -116,14 +116,6 @@ class EnergyModule : public Module
 
 
 	/*
-	 * Data Access
-	 */
-	public:
-	// Reap data for this Module instance
-	void reapData();
-
-
-	/*
 	 * GUI Widget
 	 */
 	public:

@@ -211,16 +211,6 @@ class Module : public ListItem<Module>
 
 
 	/*
-	 * Data Access
-	 */
-	public:
-	// Reap data for this Module instance
-	virtual void reapData() = 0;
-	// Reap data for all instances of this Module
-	void reapAllInstances();
-
-
-	/*
 	 * GUI Widget
 	 */
 	public:

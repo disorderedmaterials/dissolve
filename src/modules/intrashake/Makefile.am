@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = libintrashake.la
 
-libintrashake_la_SOURCES = core.cpp data.cpp definition.cpp functions.cpp method.cpp options.cpp
+libintrashake_la_SOURCES = core.cpp definition.cpp functions.cpp method.cpp options.cpp
 
 noinst_HEADERS = intrashake.h
 

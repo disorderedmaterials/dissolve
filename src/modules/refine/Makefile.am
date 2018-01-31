@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = librefine.la libmodulewidget.la
 
-librefine_la_SOURCES = core.cpp data.cpp definition.cpp functions.cpp method.cpp options.cpp
+librefine_la_SOURCES = core.cpp definition.cpp functions.cpp method.cpp options.cpp
 libmodulewidget_la_SOURCES = nogui.cpp
 
 noinst_HEADERS = refine.h

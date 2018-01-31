@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = libforces.la
 
-libforces_la_SOURCES = core.cpp data.cpp definition.cpp functions.cpp method.cpp options.cpp
+libforces_la_SOURCES = core.cpp definition.cpp functions.cpp method.cpp options.cpp
 
 noinst_HEADERS = forces.h
 

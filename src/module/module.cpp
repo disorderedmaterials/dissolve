@@ -348,16 +348,6 @@ RefList<Data,bool>& Module::targetData()
 }
 
 /*
- * Data Reaping
- */
-
-// Reap data for all instances of this Module
-void Module::reapAllInstances()
-{
-	for (Module* instance = instances().first(); instance != NULL; instance = instance->next) instance->reapData();
-}
-
-/*
  * GUI Widget
  */
 

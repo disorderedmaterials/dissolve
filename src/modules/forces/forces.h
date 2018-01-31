@@ -113,14 +113,6 @@ class ForcesModule : public Module
 	static void interatomicForces(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, Array<double>& fx, Array<double>& fy, Array<double>& fz);
 	// Calculate total forces within the system
 	static void totalForces(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, Array<double>& fx, Array<double>& fy, Array<double>& fz);
-
-
-	/*
-	 * Data Access
-	 */
-	public:
-	// Reap data for this Module instance
-	void reapData();
 };
 
 #endif

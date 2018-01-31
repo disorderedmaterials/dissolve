@@ -1,6 +1,6 @@
 noinst_LTLIBRARIES = libskeleton.la libmodulewidget.la
 
-libskeleton_la_SOURCES = core.cpp data.cpp definition.cpp functions.cpp method.cpp options.cpp
+libskeleton_la_SOURCES = core.cpp definition.cpp functions.cpp method.cpp options.cpp
 libmodulewidget_la_SOURCES = nogui.cpp
 
 noinst_HEADERS = skeleton.h

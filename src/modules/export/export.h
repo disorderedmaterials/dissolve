@@ -111,14 +111,6 @@ class ExportModule : public Module
 	static bool writeConfigurationXYZ(LineParser& parser, Configuration* cfg, const char* header);
 	// Write Configuration as DL_POLY CONFIG
 	static bool writeConfigurationDLPOLY(LineParser& parser, Configuration* cfg, const char* header);
-
-
-	/*
-	 * Data Access
-	 */
-	public:
-	// Reap data for this Module instance
-	void reapData();
 };
 
 #endif

@@ -1,7 +1,6 @@
 # Main Module Library
 add_library(refinemodule
   core.cpp
-  data.cpp
   definition.cpp
   functions.cpp
   method.cpp

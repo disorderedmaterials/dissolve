@@ -1,7 +1,6 @@
 # Main Module Library
 add_library(importmodule
   core.cpp
-  data.cpp
   definition.cpp
   functions_coordinates.cpp
   functions_forces.cpp

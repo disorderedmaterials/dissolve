@@ -105,14 +105,6 @@ class ChecksModule : public Module
 
 
 	/*
-	 * Data Access
-	 */
-	public:
-	// Reap data for this Module instance
-	void reapData();
-
-
-	/*
 	 * Checks
 	 */
 	private:
