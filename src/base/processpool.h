@@ -317,6 +317,18 @@ class ProcessPool
 
 
 	/*
+	 * Equality Operations
+	 */
+	public:
+	// Check equality of bool value across involved processes
+	bool equality(bool b, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	// Check equality of integer value across involved processes
+	bool equality(int i, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	// Check equality of double value across involved processes
+	bool equality(double x, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+
+
+	/*
 	 * Buffered Random Numbers
 	 */
 	private:

@@ -1690,6 +1690,82 @@ bool ProcessPool::allTrue(bool value, ProcessPool::CommunicatorType commType)
 }
 
 /*
+ * Equality Operations
+ */
+
+// Check equality of bool value across involved processes
+bool ProcessPool::equality(bool b, ProcessPool::CommunicatorType commType)
+{
+#ifdef PARALLEL
+	// First, sum all bool values of the processes in the pool
+	int summedResult = (b ? 1 : 0);
+	if (!allSum(&summedResult, 1, commType)) return false;
+	if (commType == ProcessPool::Leaders) return (summedResult == groupLeaders_.nItems());
+	else return (summedResult == nProcesses());
+#endif
+	return true;
+}
+
+// Check equality of integer value across involved processes
+bool ProcessPool::equality(int i, ProcessPool::CommunicatorType commType)
+{
+#ifdef PARALLEL
+	bool result;
+	if (poolRank_ != 0)
+	{
+		if (!send(i, 0, commType)) return false;
+		return decision(0, commType);
+	}
+	else
+	{
+		int j;
+		for (int n = 1; n<nProcesses(); ++n)
+		{
+			if (!receive(j, n, commType)) return false;
+			if (i != j)
+			{
+				decideFalse(0, commType);
+				return false;
+			}
+		}
+		decideTrue(0, commType);
+	}
+	
+#endif
+	return true;
+}
+
+// Check equality of double value across involved processes
+bool ProcessPool::equality(double x, ProcessPool::CommunicatorType commType)
+{
+#ifdef PARALLEL
+	bool result;
+	if (poolRank_ != 0)
+	{
+		if (!send(x, 0, commType)) return false;
+		return decision(0, commType);
+	}
+	else
+	{
+		double y;
+		for (int n = 1; n<nProcesses(); ++n)
+		{
+			if (!receive(y, n, commType)) return false;
+			// TODO This is a terrible test for small numbers - replace with something better
+			if (fabs(x - y) > 1.0e-8)
+			{
+				decideFalse();
+				return false;
+			}
+		}
+		decideTrue(0, commType);
+	}
+	
+#endif
+	return true;
+}
+
+/*
  * Buffered Random Numbers
  */
 
