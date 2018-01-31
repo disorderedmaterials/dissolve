@@ -383,6 +383,16 @@ bool Module::executePostProcessing(DUQ& duq, ProcessPool& procPool)
 }
 
 /*
+ * Timing
+ */
+
+// Return timing information (in seconds) for this Module
+SampledDouble Module::processTimes() const
+{
+	return processTimes_;
+}
+
+/*
  * GUI Widget
  */
 

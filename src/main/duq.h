@@ -249,6 +249,10 @@ class DUQ
 	RefList<Module,bool> postProcessingTasks_;
 	// Current simulation step
 	int iteration_;
+	// Number of iterations performed
+	int nIterationsPerformed_;
+	// Main loop timer
+	Timer mainLoopTimer_;
 
 	private:
 	// Find first occurrence of named Module in pre-processing tasks
@@ -265,6 +269,8 @@ class DUQ
 	bool iterate(int nIterations = -1);
 	// Return current simulation step
 	int iteration() const;
+	// Print timing information
+	void printTiming();
 
 
 	/*

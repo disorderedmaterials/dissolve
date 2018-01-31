@@ -41,6 +41,7 @@ DUQ::DUQ()
 
 	// Simulation
 	iteration_ = 0;
+	nIterationsPerformed_ = 0;
 
 	// Simulation Setup
 	nBoxNormalisationPoints_ = 500000000;

@@ -85,12 +85,16 @@ bool DUQ::iterate(int nIterations)
 	 *  6)	Write data (master process only)
 	 */
 
+	mainLoopTimer_.zero();
+	mainLoopTimer_.start();
+
 	int iterationsPerformed = 0;
 
 	while ((maxIterations_ < 0) || (iteration_ < maxIterations_))
 	{
-		// Increase iteration counter
+		// Increase iteration counters
 		++iteration_;
+		++nIterationsPerformed_;
 
 		Messenger::banner("MAIN LOOP ITERATION %10i / %-10s    %s", iteration_, maxIterations_ == -1 ? "(no limit)" : DUQSys::itoa(maxIterations_), DUQSys::currentTimeAndDate());
 
@@ -361,6 +365,8 @@ bool DUQ::iterate(int nIterations)
 		if ((nIterations > 0) && (iterationsPerformed == nIterations)) break;
 	}
 
+	mainLoopTimer_.stop();
+
 	return true;
 }
 
@@ -368,4 +374,38 @@ bool DUQ::iterate(int nIterations)
 int DUQ::iteration() const
 {
 	return iteration_;
+}
+
+// Print timing information
+void DUQ::printTiming()
+{
+	Messenger::banner("Timing Information");
+
+	Messenger::print("Configuration Processing:\n");
+	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
+	{
+		if (cfg->nModules() == 0) continue;
+
+		Messenger::print("   * '%s'\n", cfg->name());
+		RefListIterator<Module,bool> modIterator(cfg->modules().modules());
+		while (Module* module = modIterator.iterate())
+		{
+			SampledDouble timingInfo = module->processTimes();
+			Messenger::print("      --> %30s  %6.1f s/iteration (%i iterations)\n", CharString("%s (%s)", module->name(), module->uniqueName()).get(), timingInfo.mean(), timingInfo.count());
+		}
+	}
+	Messenger::print("\n");
+
+	Messenger::print("Main Processing:\n");
+	RefListIterator<Module,bool> processingIterator(processingModules_.modules());
+	while (Module* module = processingIterator.iterate())
+	{
+		SampledDouble timingInfo = module->processTimes();
+		Messenger::print("      --> %30s  %6.1f s/iteration (%i iterations)\n", CharString("%s (%s)", module->name(), module->uniqueName()).get(), timingInfo.mean(), timingInfo.count());
+	}
+	Messenger::print("\n");
+
+	Messenger::print("Total time taken for %i iterations was %s (%s / iteration).\n", nIterationsPerformed_, mainLoopTimer_.elapsedTimeString(), Timer::timeString(mainLoopTimer_.secondsElapsed() / nIterationsPerformed_));
+
+	Messenger::print("\n");
 }

@@ -94,3 +94,19 @@ double Timer::secondsElapsed()
 	if (running_) return (clock() - startTime_) / double(CLOCKS_PER_SEC);
 	else return totalTime_ / double(CLOCKS_PER_SEC);
 }
+
+// Return time string for number of seconds provided
+const char* Timer::timeString(double seconds)
+{
+	static CharString result;
+
+	int hours = int(seconds) / 3600;
+	seconds -= hours * 3600;
+	int minutes = int(seconds) / 60;
+	seconds -= minutes * 60;
+	
+	if (hours != 0) result.sprintf("%i hours, %i minutes, and %0.1f seconds", hours, minutes, seconds);
+	else if (minutes != 0) result.sprintf("%i minutes and %0.1f seconds", minutes, seconds);
+	else result.sprintf("%0.1f seconds", seconds);
+	return result.get();
+}

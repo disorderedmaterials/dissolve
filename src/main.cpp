@@ -241,6 +241,9 @@ int main(int argc, char **argv)
 	// Run main simulation
 	bool result = dUQ.iterate(singleIteration ? 1 : -1);
 
+	// Print timing information
+	dUQ.printTiming();
+
 	// Clear all data
 	dUQ.clear();
 
