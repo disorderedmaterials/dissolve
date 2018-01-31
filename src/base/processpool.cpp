@@ -1648,21 +1648,23 @@ bool ProcessPool::assemble(Array<double>& array, int nData, Array<double>& rootD
  */
 
 // Broadcast logical 'true' decision to all processes (Master only)
-void ProcessPool::decideTrue(int rootRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::decideTrue(int rootRank, ProcessPool::CommunicatorType commType)
 {
 	bool decision = true;
 #ifdef PARALLEL
-	if (!broadcast(decision, rootRank, commType)) Messenger::print("Error telling processes to proceed.\n");
+	if (!broadcast(decision, rootRank, commType)) return Messenger::error("Error telling processes to proceed.\n");
 #endif
+	return true;
 }
 
 // Broadcast logical 'false' decision to all processes (Master only)
-void ProcessPool::decideFalse(int rootRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::decideFalse(int rootRank, ProcessPool::CommunicatorType commType)
 {
 	bool decision = false;
 #ifdef PARALLEL
-	if (!broadcast(decision, rootRank, commType)) Messenger::print("Error telling processes to stop.\n");
+	if (!broadcast(decision, rootRank, commType)) return Messenger::error("Error telling processes to stop.\n");
 #endif
+	return true;
 }
 
 // Receive logical decision from master (Slaves only)
@@ -1761,6 +1763,17 @@ bool ProcessPool::equality(double x, ProcessPool::CommunicatorType commType)
 		decideTrue(0, commType);
 	}
 	
+#endif
+	return true;
+}
+
+// Check equality of Vec3<double> value across involved processes
+bool ProcessPool::equality(Vec3<double> v, ProcessPool::CommunicatorType commType)
+{
+#ifdef PARALLEL
+	if (!equality(v.x, commType)) return false;
+	if (!equality(v.y, commType)) return false;
+	if (!equality(v.z, commType)) return false;
 #endif
 	return true;
 }

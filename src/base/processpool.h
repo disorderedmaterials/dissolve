@@ -307,9 +307,9 @@ class ProcessPool
 	 */
 	public:
 	// Broadcast logical 'true' decision to processes (Master only)
-	void decideTrue(int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	bool decideTrue(int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Broadcast logical 'false' decision to processes (Master only)
-	void decideFalse(int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	bool decideFalse(int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Receive logical decision from master (Slaves only)
 	bool decision(int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Test the supplied condition over all processes, returning true only if they all report truth
@@ -326,6 +326,8 @@ class ProcessPool
 	bool equality(int i, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Check equality of double value across involved processes
 	bool equality(double x, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	// Check equality of Vec3<double> value across involved processes
+	bool equality(Vec3<double> v, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 
 
 	/*
