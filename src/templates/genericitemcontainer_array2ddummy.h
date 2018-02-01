@@ -80,6 +80,11 @@ template <> class GenericItemContainer< Array2D<DummyClass> > : public GenericIt
 	{
 		return false;
 	}
+	// Return equality between items
+	bool equality(ProcessPool& procPool)
+	{
+		return false;
+	}
 };
 
 #endif

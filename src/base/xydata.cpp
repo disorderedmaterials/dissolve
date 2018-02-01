@@ -1038,3 +1038,19 @@ bool XYData::broadcast(ProcessPool& procPool, int rootRank)
 #endif
 	return true;
 }
+
+// Check item equality
+bool XYData::equality(ProcessPool& procPool)
+{
+#ifdef PARALLEL
+	// Check number of items in arrays first
+	if (!procPool.equality(nPoints())) return Messenger::error("Number of points is not equivalent (process %i has %i).\n", procPool.poolRank(), nPoints());
+	for (int n=0; n<nPoints(); +n)
+	{
+		if (!procPool.equality(x_[n])) return Messenger::error("X value %i is not equivalent (process %i has %e).\n", n, procPool.poolRank(), x_[n]);
+		if (!procPool.equality(y_[n])) return Messenger::error("Y value %i is not equivalent (process %i has %e).\n", n, procPool.poolRank(), y_[n]);
+	}
+	if (!procPool.equality(z_)) return Messenger::error("Z value is not equivalent (process %i has %e).\n", procPool.poolRank(), z_);
+#endif
+	return true;
+}

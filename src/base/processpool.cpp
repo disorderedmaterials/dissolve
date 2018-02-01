@@ -22,6 +22,7 @@
 #include "base/processpool.h"
 #include "base/messenger.h"
 #include "base/constants.h"
+#include "base/sysfunc.h"
 #include <string.h>
 
 // Static Members
@@ -1767,8 +1768,32 @@ bool ProcessPool::equality(double x, ProcessPool::CommunicatorType commType)
 	return true;
 }
 
+// Check equality of CharString value across involved processes
+bool ProcessPool::equality(const char* s, ProcessPool::CommunicatorType commType)
+{
+#ifdef PARALLEL
+	// Root process of the pool will broadcast the string for comparison
+	CharString testString;
+	if (poolRank_ == 0) testString = s;
+	if (!broadcast(testString)) return false;
+	if (!allTrue(DUQSys::sameString(testString, s))) return Messenger::error("Strings are not equal - '%s' vs '%s'.\n", testString.get(), s);
+#endif
+	return true;
+}
+
 // Check equality of Vec3<double> value across involved processes
 bool ProcessPool::equality(Vec3<double> v, ProcessPool::CommunicatorType commType)
+{
+#ifdef PARALLEL
+	if (!equality(v.x, commType)) return false;
+	if (!equality(v.y, commType)) return false;
+	if (!equality(v.z, commType)) return false;
+#endif
+	return true;
+}
+
+// Check equality of Vec3<int> value across involved processes
+bool ProcessPool::equality(Vec3<int> v, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
 	if (!equality(v.x, commType)) return false;

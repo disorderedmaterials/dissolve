@@ -81,6 +81,11 @@ template <class T> class GenericItemContainer : public GenericItem
 	{
 		return data.broadcast(procPool, root);
 	}
+	// Check for equality
+	bool equality(ProcessPool& procPool)
+	{
+		return data.equality(procPool);
+	}
 };
 
 #endif

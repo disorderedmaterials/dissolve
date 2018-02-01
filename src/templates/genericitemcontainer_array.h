@@ -101,6 +101,11 @@ template <class T> class GenericItemContainer< Array<T> > : public GenericItem
 		BroadcastArray<T>(procPool, root, data, success);
 		return success;
 	}
+	// Return equality between items
+	bool equality(ProcessPool& procPool)
+	{
+		return false;
+	}
 };
 
 #endif

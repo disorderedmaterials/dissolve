@@ -173,6 +173,7 @@ AC_CONFIG_FILES(src/modules/md/Makefile)
 AC_CONFIG_FILES(src/modules/molshake/Makefile)
 AC_CONFIG_FILES(src/modules/partials/Makefile)
 AC_CONFIG_FILES(src/modules/refine/Makefile)
+AC_CONFIG_FILES(src/modules/sanitycheck/Makefile)
 AC_CONFIG_FILES(src/modules/skeleton/Makefile)
 AC_CONFIG_FILES(src/templates/Makefile)
 if test "$with_gui" = "yes"; then

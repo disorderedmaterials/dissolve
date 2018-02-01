@@ -82,6 +82,14 @@ template <> class GenericItemContainer< Vec3<int> > : public GenericItem
 	{
 		return procPool.broadcast(data, root);
 	}
+	// Check item equality
+	bool equality(ProcessPool& procPool)
+	{
+		if (!procPool.equality(data.x)) return false;
+		if (!procPool.equality(data.y)) return false;
+		if (!procPool.equality(data.z)) return false;
+		return true;
+	}
 };
 
 #endif

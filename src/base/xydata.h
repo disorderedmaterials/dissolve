@@ -276,6 +276,8 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	public:
 	// Broadcast data
 	bool broadcast(ProcessPool& procPool, int rootRank = 0);
+	// Check item equality
+	bool equality(ProcessPool& procPool);
 };
 
 #endif

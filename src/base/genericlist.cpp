@@ -140,6 +140,10 @@ bool GenericList::rename(const char* oldName, const char* oldPrefix, const char*
 	return true;
 }
 
+/*
+ * Parallel Comms
+ */
+
 // Broadcast all data
 bool GenericList::broadcast(ProcessPool& procPool, int root)
 {
@@ -151,3 +155,82 @@ bool GenericList::broadcast(ProcessPool& procPool, int root)
 	return true;
 }
 
+// Check equality of all data
+bool GenericList::equality(ProcessPool& procPool)
+{
+	// Loop over processes - the target process will loop over its module data, sending out the name to the slaves.
+	// If found, we note that we've already done this data, check it for equality, and move on.
+	// If we can't find the data, we'll complain but move on.
+	RefList<GenericItem,bool> checkedItems;
+	CharString itemName, itemClassName;
+	int nFailed = 0;
+	for (int n=0; n<procPool.nProcesses(); ++n)
+	{
+		// The master process - rank 'n' - will control the loop
+		if (procPool.poolRank() == n)
+		{
+			// Loop over GenericItems in list
+			for (GenericItem* item = items_.first(); item != NULL; item = item->next)
+			{
+				// If we have already checked this item, move on...
+				if (checkedItems.contains(item)) continue;
+
+				// Found an item that hasn't already been checked, so flag to the slaves that we will be sending another name to check
+				if (!procPool.decideTrue(n)) return false;
+
+				// Send name of item - slaves will try to find it, so we need to check that everybody does...
+				itemName = item->name();
+				if (!procPool.broadcast(itemName, n)) return false;
+				if (!procPool.allTrue(true))
+				{
+					Messenger::error("GenericList equality check failed - item '%s' is not present on all processes.\n", item->name());
+					++nFailed;
+					continue;
+				}
+
+				// Send class name of item - slaves will check it, and everybody must agree
+				itemClassName = item->itemClassName();
+				if (!procPool.broadcast(itemClassName, n)) return false;
+				if (!procPool.allTrue(true))
+				{
+					Messenger::error("GenericList equality check failed - item '%s' is not of the same type (%s) on all processes.\n", item->name(), item->itemClassName());
+					++nFailed;
+					continue;
+				}
+
+				// Check the item for equality
+// 				if (!item->equal(procPool)) return Messenger::error("Failed sanity check at Configuration '%s' module data '%s'.\n", cfg->name(), item->name());
+
+				// Add the item to our checked list
+				checkedItems.add(item);
+			}
+		}
+		else while (procPool.decision(n))
+		{
+			// Receive the name of the item we're targetting
+			if (!procPool.broadcast(itemName, n)) return false;
+
+			// Do we have an item of this name?
+			GenericItem* item = find(itemName);
+			if (!procPool.allTrue(item))
+			{
+				Messenger::error("GenericList equality check failed - item '%s' not found on process %i.\n", item->name(), procPool.poolRank());
+				++nFailed;
+				continue;
+			}
+
+			// Receive the class name of the item and check it against ours
+			if (!procPool.broadcast(itemClassName, n)) return false;
+			if (!procPool.allTrue(DUQSys::sameString(item->itemClassName(), itemClassName)))
+			{
+				Messenger::error("GenericList equality check failed - item '%s' not of the correct type (is %s) on process %i.\n", item->name(), item->itemClassName(), procPool.poolRank());
+				++nFailed;
+				continue;
+			}
+
+		}
+	}
+
+	// Did we succeed?
+	return (nFailed == 0);
+}

@@ -326,8 +326,12 @@ class ProcessPool
 	bool equality(int i, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Check equality of double value across involved processes
 	bool equality(double x, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	// Check equality of CharString value across involved processes
+	bool equality(const char* s, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Check equality of Vec3<double> value across involved processes
 	bool equality(Vec3<double> v, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	// Check equality of Vec3<int> value across involved processes
+	bool equality(Vec3<int> v, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 
 
 	/*

@@ -55,8 +55,16 @@ class GenericList
 	bool remove(const char* name, const char* prefix);
 	// Rename item
 	bool rename(const char* oldName, const char* oldPrefix, const char* newName, const char* newPrefix);
+
+
+	/*
+	 * Parallel Comms
+	 */
+	public:
 	// Broadcast all data
 	bool broadcast(ProcessPool& procPool, int root);
+	// Check equality of all data
+	bool equality(ProcessPool& procPool);
 };
 
 #endif
