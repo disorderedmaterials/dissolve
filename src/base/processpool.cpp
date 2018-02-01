@@ -1703,7 +1703,10 @@ bool ProcessPool::equality(bool b, ProcessPool::CommunicatorType commType)
 	// First, sum all bool values of the processes in the pool
 	int summedResult = (b ? 1 : 0);
 	if (!allSum(&summedResult, 1, commType)) return false;
-	if (commType == ProcessPool::Leaders) return (summedResult == groupLeaders_.nItems());
+	// Now check the sum - if it's zero, then everything must have been 'false'.
+	// Otherwise, it must be equal to the relevant number of processes
+	if (summedResult == 0) return true;
+	else if (commType == ProcessPool::Leaders) return (summedResult == groupLeaders_.nItems());
 	else return (summedResult == nProcesses());
 #endif
 	return true;
@@ -1717,7 +1720,7 @@ bool ProcessPool::equality(int i, ProcessPool::CommunicatorType commType)
 	if (poolRank_ != 0)
 	{
 		if (!send(i, 0, commType)) return false;
-		return decision(0, commType);
+		if (!decision(0, commType)) return Messenger::error("Integer value is not equivalent (process %i has %i).\n", poolRank_, i);
 	}
 	else
 	{
@@ -1728,7 +1731,7 @@ bool ProcessPool::equality(int i, ProcessPool::CommunicatorType commType)
 			if (i != j)
 			{
 				decideFalse(0, commType);
-				return false;
+				return Messenger::error("Integer value is not equivalent (process %i has %i).\n", poolRank_, i);
 			}
 		}
 		decideTrue(0, commType);
@@ -1746,7 +1749,7 @@ bool ProcessPool::equality(double x, ProcessPool::CommunicatorType commType)
 	if (poolRank_ != 0)
 	{
 		if (!send(x, 0, commType)) return false;
-		return decision(0, commType);
+		if (!decision(0, commType)) return Messenger::error("Double value is not equivalent (process %i has %e).\n", poolRank_, x);
 	}
 	else
 	{
@@ -1758,7 +1761,7 @@ bool ProcessPool::equality(double x, ProcessPool::CommunicatorType commType)
 			if (fabs(x - y) > 1.0e-8)
 			{
 				decideFalse();
-				return false;
+				return Messenger::error("Double value is not equivalent (process %i has %e).\n", poolRank_, x);
 			}
 		}
 		decideTrue(0, commType);
