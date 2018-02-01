@@ -21,6 +21,7 @@
 
 #include "modules/sanitycheck/sanitycheck.h"
 #include "main/duq.h"
+#include "classes/atomtype.h"
 #include "base/sysfunc.h"
 
 // Run pre-processing stage
@@ -52,7 +53,9 @@ bool SanityCheckModule::process(DUQ& duq, ProcessPool& procPool)
 			}
 
 			// Check for equality
-			if (!pp->equality(procPool)) return Messenger::error("Sanity check failed at PairPotential %s-%s.\n", at1->name(), at2->name());
+			if (!pp->uOriginal().equality(procPool)) return Messenger::error("Sanity check failed - PairPotential %s-%s uOriginal are not equal.\n", at1->name(), at2->name());
+			if (!pp->uFull().equality(procPool)) return Messenger::error("Sanity check failed - PairPotential %s-%s uFull are not equal.\n", at1->name(), at2->name());
+			if (!pp->uAdditional().equality(procPool)) return Messenger::error("Sanity check failed - PairPotential %s-%s uAdditional are not equal.\n", at1->name(), at2->name());
 		}
 	}
 
@@ -73,7 +76,9 @@ bool SanityCheckModule::process(DUQ& duq, ProcessPool& procPool)
 		if (!cfg->moduleData().equality(procPool)) return Messenger::error("Failed sanity check for Configuration '%s' module data.\n", cfg->name());
 	}
 
+	// Processing module data
 	return true;
+	if (!duq.processingModuleData().equality(procPool)) return Messenger::error("Failed sanity check for processing module data.\n");
 }
 
 // Run post-processing stage

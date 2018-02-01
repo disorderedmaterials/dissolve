@@ -149,3 +149,15 @@ bool BraggPeak::broadcast(ProcessPool& procPool, int rootRank)
 #endif
 	return true;
 }
+
+// Check item equality
+bool BraggPeak::equality(ProcessPool& procPool)
+{
+#ifdef PARALLEL
+	if (!procPool.equality(q_)) return Messenger::error("BraggPeak Q value is not equivalent (process %i has %e).\n", procPool.poolRank(), q_);
+	if (!procPool.equality(index_)) return Messenger::error("BraggPeak index is not equivalent (process %i has %i).\n", procPool.poolRank(), index_);
+	if (!procPool.equality(nKVectors_)) return Messenger::error("BraggPeak nKVectors is not equivalent (process %i has %i).\n", procPool.poolRank(), nKVectors_);
+	if (!procPool.equality(intensities_)) return Messenger::error("BraggPeak intensities are not equivalent.\n");
+#endif
+	return true;
+}

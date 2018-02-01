@@ -397,3 +397,13 @@ bool BroadeningFunction::broadcast(ProcessPool& procPool, int root)
 #endif
 	return true;
 }
+
+// Check item equality
+bool BroadeningFunction::equality(ProcessPool& procPool)
+{
+#ifdef PARALLEL
+	if (!procPool.equality(EnumCast<BroadeningFunction::FunctionType>(function_))) return Messenger::error("BroadeningFunction function type is not equivalent (process %i has %i).\n", procPool.poolRank(), function_);
+	if (!procPool.equality(parameters_, MAXFUNCTIONPARAMS)) return Messenger::error("BroadeningFunction parameters are not equivalent.\n");
+#endif
+	return true;
+}

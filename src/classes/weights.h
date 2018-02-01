@@ -117,6 +117,8 @@ class Weights : public GenericItemBase
 	public:
 	// Broadcast item contents
 	bool broadcast(ProcessPool& procPool, int root);
+	// Check item equality
+	bool equality(ProcessPool& procPool);
 };
 
 #endif

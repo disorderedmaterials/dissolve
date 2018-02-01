@@ -528,3 +528,23 @@ bool PartialSet::broadcast(ProcessPool& procPool, int rootRank)
 #endif
 	return true;
 }
+
+// Check item equality
+bool PartialSet::equality(ProcessPool& procPool)
+{
+#ifdef PARALLEL
+	int nTypes = atomTypes_.nItems();
+	for (int typeI=0; typeI<nTypes; ++typeI)
+	{
+		for (int typeJ=typeI; typeJ<nTypes; ++typeJ)
+		{
+			if (!partials_.ref(typeI, typeJ).equality(procPool)) return Messenger::error("PartialSet full partial %i-%i is not equivalent.\n", typeI, typeJ);
+			if (!boundPartials_.ref(typeI, typeJ).equality(procPool)) return Messenger::error("PartialSet bound partial %i-%i is not equivalent.\n", typeI, typeJ);
+			if (!unboundPartials_.ref(typeI, typeJ).equality(procPool)) return Messenger::error("PartialSet unbound partial %i-%i is not equivalent.\n", typeI, typeJ);
+			if (!braggPartials_.ref(typeI, typeJ).equality(procPool)) return Messenger::error("PartialSet Bragg partial %i-%i is not equivalent.\n", typeI, typeJ);
+		}
+	}
+	if (!total_.equality(procPool)) return Messenger::error("PartialSet total sum is not equivalent.\n");
+#endif
+	return true;
+}

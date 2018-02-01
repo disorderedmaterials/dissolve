@@ -104,6 +104,8 @@ class IsotopologueMix : public MPIListItem<IsotopologueMix>, public GenericItemB
 	public:
 	// Broadcast data
 	bool broadcast(ProcessPool& procPool, int root);
+	// Check item equality
+	bool equality(ProcessPool& procPool);
 };
 
 #endif

@@ -265,3 +265,25 @@ bool AtomTypeData::broadcast(ProcessPool& procPool, int root)
 #endif
 	return true;
 }
+
+// Check item equality
+bool AtomTypeData::equality(ProcessPool& procPool)
+{
+#ifdef PARALLEL
+	if (!procPool.equality(atomTypeName())) return Messenger::error("AtomTypeData atom type name is not equivalent (process %i has '%s').\n", procPool.poolRank(), atomTypeName());
+	if (!procPool.equality(population_)) return Messenger::error("AtomTypeData population is not equivalent (process %i has %i).\n", procPool.poolRank(), population_);
+	if (!procPool.equality(fraction_)) return Messenger::error("AtomTypeData fraction is not equivalent (process %i has %e).\n", procPool.poolRank(), fraction_);
+	if (!procPool.equality(boundCoherent_)) return Messenger::error("AtomTypeData bound coherent is not equivalent (process %i has %e).\n", procPool.poolRank(), boundCoherent_);
+
+	// Number of isotopes
+	if (!procPool.equality(isotopes_.nItems())) return Messenger::error("AtomTypeData number of isotopes is not equivalent (process %i has %i).\n", procPool.poolRank(), isotopes_.nItems());
+	ListIterator<IsotopeData> isotopeIterator(isotopes_);
+	int count = 0;
+	while (IsotopeData* topeData = isotopeIterator.iterate())
+	{
+		if (!topeData->equality(procPool)) return Messenger::error("AtomTypeData entry for isotope data %i is not equivalent.\n", count);
+		++count;
+	}
+#endif
+	return true;
+}

@@ -74,7 +74,7 @@ void IsotopeData::add(int nAdd)
 	population_ += nAdd;
 }
 
-// Finalise, calculating local fractional population (e.g. within an AtomTypeData)
+// Finalise, calculating local fractional population (e.g. within an IsotopeData)
 void IsotopeData::finalise(int totalAtoms)
 {
 	fraction_ = double(population_) / double(totalAtoms);
@@ -146,6 +146,18 @@ bool IsotopeData::broadcast(ProcessPool& procPool, int root)
 
 	procPool.broadcast(population_, root);
 	procPool.broadcast(fraction_, root);
+#endif
+	return true;
+}
+
+// Check item equality
+bool IsotopeData::equality(ProcessPool& procPool)
+{
+#ifdef PARALLEL
+	if (!procPool.equality(isotope_->element()->z())) return Messenger::error("IsotopeData element z is not equivalent (process %i has '%s').\n", procPool.poolRank(), isotope_->element()->z());
+	if (!procPool.equality(isotope_->A())) return Messenger::error("IsotopeData isotope A is not equivalent (process %i has %i).\n", procPool.poolRank(), isotope_->A());
+	if (!procPool.equality(population_)) return Messenger::error("IsotopeData population is not equivalent (process %i has %i).\n", procPool.poolRank(), population_);
+	if (!procPool.equality(fraction_)) return Messenger::error("IsotopeData fraction is not equivalent (process %i has %e).\n", procPool.poolRank(), fraction_);
 #endif
 	return true;
 }

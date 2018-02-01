@@ -307,3 +307,13 @@ bool WindowFunction::broadcast(ProcessPool& procPool, int root)
 #endif
 	return true;
 }
+
+// Check item equality
+bool WindowFunction::equality(ProcessPool& procPool)
+{
+#ifdef PARALLEL
+	if (!procPool.equality(EnumCast<WindowFunction::FunctionType>(function_))) return Messenger::error("WindowFunction function type is not equivalent (process %i has %i).\n", procPool.poolRank(), function_);
+	if (!procPool.equality(parameters_, MAXWINDOWFUNCTIONPARAMS)) return Messenger::error("WindowFunction parameters are not equivalent.\n");
+#endif
+	return true;
+}

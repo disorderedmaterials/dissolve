@@ -147,6 +147,8 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	public:
 	// Broadcast data from root to all other processes
 	bool broadcast(ProcessPool& procPool, int rootRank);
+	// Check item equality
+	bool equality(ProcessPool& procPool);
 };
 
 #endif

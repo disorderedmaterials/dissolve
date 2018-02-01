@@ -114,6 +114,8 @@ class AtomTypeData : public MPIListItem<AtomTypeData>
 	public:
 	// Broadcast data from Master to all Slaves
 	bool broadcast(ProcessPool& procPool, int root = 0);
+	// Check item equality
+	bool equality(ProcessPool& procPool);
 };
 
 #endif

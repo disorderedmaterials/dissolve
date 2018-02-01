@@ -195,3 +195,15 @@ bool KVector::broadcast(ProcessPool& procPool, int rootRank)
 #endif
 	return true;
 }
+
+// Check item equality
+bool KVector::equality(ProcessPool& procPool)
+{
+#ifdef PARALLEL
+	if (!procPool.equality(hkl_)) return Messenger::error("KVector hkl value is not equivalent.\n");
+	if (!procPool.equality(braggPeakIndex_)) return Messenger::error("KVector bragg peak index is not equivalent (process %i has %i).\n", procPool.poolRank(), braggPeakIndex_);
+	if (!procPool.equality(cosTerms_)) return Messenger::error("KVector cos terms are not equivalent.\n");
+	if (!procPool.equality(sinTerms_)) return Messenger::error("KVector sin terms are not equivalent.\n");
+#endif
+	return true;
+}

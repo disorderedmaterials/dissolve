@@ -295,3 +295,23 @@ bool IsotopologueMix::broadcast(ProcessPool& procPool, int root)
 	return true;
 }
 
+// Check item equality
+bool IsotopologueMix::equality(ProcessPool& procPool)
+{
+#ifdef PARALLEL
+	if (!procPool.equality(species_->name())) return Messenger::error("IsotopologueMix species is not equivalent (process %i has '%s').\n", procPool.poolRank(), species_->name());
+	if (!procPool.equality(speciesPopulation_)) return Messenger::error("IsotopologueMix species population is not equivalent (process %i has %i).\n", procPool.poolRank(), speciesPopulation_);
+	// Check number of isotopologues in mix
+	if (!procPool.equality(mix_.nItems())) return Messenger::error("IsotopologueMix mix nItems is not equivalent (process %i has %i).\n", procPool.poolRank(), mix_.nItems());
+	RefListIterator<Isotopologue,double> mixIterator(mix_);
+	int count = 0;
+	while (Isotopologue* top = mixIterator.iterate())
+	{
+		// Just check the name and the relative population
+		if (!procPool.equality(top->name())) return Messenger::error("IsotopologueMix isotopologue %i name is not equivalent (process %i has '%s').\n", count, procPool.poolRank(), top->name());
+		if (!procPool.equality(mixIterator.currentData())) return Messenger::error("IsotopologueMix isotopologue %i relative population is not equivalent (process %i has '%s').\n", count, procPool.poolRank(), mixIterator.currentData());
+		++count;
+	}
+#endif
+	return true;
+}

@@ -297,3 +297,16 @@ bool Weights::broadcast(ProcessPool& procPool, int root)
 #endif
 	return true;
 }
+
+// Check item equality
+bool Weights::equality(ProcessPool& procPool)
+{
+#ifdef PARALLEL
+	if (!procPool.equality(concentrationMatrix_)) return Messenger::error("Weights concentration matrix is not equivalent.\n");
+	if (!procPool.equality(boundCoherentMatrix_)) return Messenger::error("Weights bound coherent matrix is not equivalent.\n");
+	if (!procPool.equality(fullMatrix_)) return Messenger::error("Weights full matrix is not equivalent.\n");
+	if (!procPool.equality(boundCoherentAverageOfSquares_)) return Messenger::error("Weights bound coherent average of squares is not equivalent (process %i has %e).\n", procPool.poolRank(), boundCoherentAverageOfSquares_);
+	if (!procPool.equality(boundCoherentSquareOfAverage_)) return Messenger::error("Weights bound coherent square of average is not equivalent (process %i has %e).\n", procPool.poolRank(), boundCoherentSquareOfAverage_);
+#endif
+	return true;
+}

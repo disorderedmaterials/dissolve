@@ -104,13 +104,7 @@ template <> class GenericItemContainer< Array2D<double> > : public GenericItem
 	// Return equality between items
 	bool equality(ProcessPool& procPool)
 	{
-		// Verify array size and state first
-		if (!procPool.equality(data.nRows())) return Messenger::error("Array2D<double> nRows are not equal.\n");
-		if (!procPool.equality(data.nColumns())) return Messenger::error("Array2D<double> nColumns are not equal.\n");
-		if (!procPool.equality(data.halved())) return Messenger::error("Array2D<double> half-status are not equivalent.\n");
-		// Keep it simple (and slow) and check/send one value at a time
-		for (int n=0; n<data.linearArraySize(); ++n) if (!procPool.equality(data.linearArray()[n])) return false;
-		return true;
+		return procPool.equality(data);
 	}
 };
 
