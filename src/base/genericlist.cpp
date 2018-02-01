@@ -178,6 +178,8 @@ bool GenericList::equality(ProcessPool& procPool)
 				// Found an item that hasn't already been checked, so flag to the slaves that we will be sending another name to check
 				if (!procPool.decideTrue(n)) return false;
 
+				Messenger::printVerbose("Checking equality of item '%s'...\n", item->name());
+
 				// Send name of item - slaves will try to find it, so we need to check that everybody does...
 				itemName = item->name();
 				if (!procPool.broadcast(itemName, n)) return false;
@@ -199,16 +201,21 @@ bool GenericList::equality(ProcessPool& procPool)
 				}
 
 				// Check the item for equality
-// 				if (!item->equal(procPool)) return Messenger::error("Failed sanity check at Configuration '%s' module data '%s'.\n", cfg->name(), item->name());
+				if (!item->equality(procPool)) return Messenger::error("Failed equality check for module data '%s'.\n", item->name());
 
 				// Add the item to our checked list
 				checkedItems.add(item);
 			}
+
+			// No more items, so send the 'false' signal
+			if (!procPool.decideFalse(n)) return false;
 		}
 		else while (procPool.decision(n))
 		{
 			// Receive the name of the item we're targetting
 			if (!procPool.broadcast(itemName, n)) return false;
+
+			Messenger::printVerbose("Checking equality of item '%s'...\n", itemName.get());
 
 			// Do we have an item of this name?
 			GenericItem* item = find(itemName);
@@ -228,6 +235,11 @@ bool GenericList::equality(ProcessPool& procPool)
 				continue;
 			}
 
+			// Check the item for equality
+			if (!item->equality(procPool)) return Messenger::error("Failed equality check for module data '%s'.\n", item->name());
+
+			// Add the item to our checked list
+			checkedItems.add(item);
 		}
 	}
 
