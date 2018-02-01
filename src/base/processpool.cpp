@@ -1803,6 +1803,15 @@ bool ProcessPool::equality(Vec3<int> v, ProcessPool::CommunicatorType commType)
 	return true;
 }
 
+// Check equality of double array across involved processes
+bool ProcessPool::equality(double* xArray, int nx, ProcessPool::CommunicatorType commType)
+{
+#ifdef PARALLEL
+	for (int n=0; n<nx; ++n) if (!equality(xArray[n], commType)) return Messenger::error("Value %i of double array is not equivalent (process %i has %e).\n", n, poolRank_, xArray[n]);
+#endif
+	return true;
+}
+
 // Check equality of Array<int> across involved processes
 bool ProcessPool::equality(Array<int> array, ProcessPool::CommunicatorType commType)
 {

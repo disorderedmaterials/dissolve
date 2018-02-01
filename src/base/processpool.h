@@ -332,6 +332,8 @@ class ProcessPool
 	bool equality(Vec3<double> v, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Check equality of Vec3<int> value across involved processes
 	bool equality(Vec3<int> v, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
+	// Check equality of double array across involved processes
+	bool equality(double* xArray, int nx, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Check equality of Array<int> across involved processes
 	bool equality(Array<int> array, ProcessPool::CommunicatorType commType = ProcessPool::Pool);
 	// Check equality of Array<double> across involved processes
