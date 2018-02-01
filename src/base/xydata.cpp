@@ -1045,7 +1045,7 @@ bool XYData::equality(ProcessPool& procPool)
 #ifdef PARALLEL
 	// Check number of items in arrays first
 	if (!procPool.equality(nPoints())) return Messenger::error("XYData number of points is not equivalent (process %i has %i).\n", procPool.poolRank(), nPoints());
-	for (int n=0; n<nPoints(); +n)
+	for (int n=0; n<nPoints(); ++n)
 	{
 		if (!procPool.equality(x_[n])) return Messenger::error("XYData x value %i is not equivalent (process %i has %e).\n", n, procPool.poolRank(), x_[n]);
 		if (!procPool.equality(y_[n])) return Messenger::error("XYData y value %i is not equivalent (process %i has %e).\n", n, procPool.poolRank(), y_[n]);
