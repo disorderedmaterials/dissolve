@@ -99,14 +99,6 @@ class SanityCheckModule : public Module
 	bool process(DUQ& duq, ProcessPool& procPool);
 	// Run post-processing stage
 	bool postProcess(DUQ& duq, ProcessPool& procPool);
-
-
-	/*
-	 * GUI Widget
-	 */
-	public:
-	// Return a new widget controlling this Module
-	ModuleWidget* createWidget(QWidget* parent, DUQ& dUQ);
 };
 
 #endif

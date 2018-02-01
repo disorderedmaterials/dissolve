@@ -30,6 +30,7 @@
 #include "modules/molshake/molshake.h"
 #include "modules/partials/partials.h"
 #include "modules/refine/refine.h"
+#include "modules/sanitycheck/sanitycheck.h"
 
 /*
  * Module Registration
@@ -50,4 +51,5 @@ ModuleRegistry::ModuleRegistry()
 	ModuleRegistrar<MolShakeModule> molShakeRegistrar;
 	ModuleRegistrar<PartialsModule> partailsRegistrar;
 	ModuleRegistrar<RefineModule> testRegistrar;
+	ModuleRegistrar<SanityCheckModule> sanityCheckRegistrar;
 }

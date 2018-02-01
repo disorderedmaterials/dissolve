@@ -30,7 +30,7 @@ const char* SanityCheckModule::name()
 // Return brief description of module
 const char* SanityCheckModule::brief()
 {
-	return "Perform dat sanity checks across all processes";
+	return "Perform data sanity checks across all processes";
 }
 
 // Return instance type for module
