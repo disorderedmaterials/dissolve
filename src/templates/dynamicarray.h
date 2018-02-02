@@ -258,7 +258,7 @@ template <class T> class DynamicArray
 		}
 
 		// Couldn't find it!
-		printf("Internal Error - Tried to return an object to an ObjectFactory which didn't produce it.\n");
+		printf("Internal Error - Tried to return an object to an DynamicArray chunk which didn't produce it.\n");
 	}
 
 
