@@ -22,8 +22,6 @@
 #ifndef DUQ_ARRAY2D_H
 #define DUQ_ARRAY2D_H
 
-#define CHUNKSIZE 128
-
 #include "base/messenger.h"
 #include "templates/list.h"
 #include "templates/vector3.h"
