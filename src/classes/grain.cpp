@@ -29,6 +29,7 @@
 Grain::Grain()
 {
 	molecule_ = NULL;
+	atoms_.setChunkSize(4);
 }
 
 // Destructor
