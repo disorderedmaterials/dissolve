@@ -41,6 +41,10 @@ Atom::Atom()
 	molecule_ = NULL;
 	grain_ = NULL;
 	cell_ = NULL;
+
+	// Connectivity
+	// -- Need to set default chunk size of the exclusions array
+	exclusions_.setChunkSize(4);
 }
 
 // Destructor
