@@ -130,6 +130,13 @@ template <class T, class D> class OrderedPointerDataList
 	// Array regeneration flags
 	bool regenerateItemArray_, regenerateObjectArray_;
 
+	public:
+	// Set chunksize to use in ObjectFactory
+	void setChunkSize(int size)
+	{
+		factory_.setChunkSize(size);
+	}
+
 
 	/*
 	 * Access / Manipulation

@@ -27,8 +27,6 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#define FACTORYCHUNKSIZE 512
-
 // Object Chunk
 template <class T> class ObjectChunk
 {
@@ -37,15 +35,15 @@ template <class T> class ObjectChunk
 	 */
 	public:
 	// Constructor
-	ObjectChunk<T>()
+	ObjectChunk<T>(int size) : nObjects_(size)
 	{
-		objectArray_ = new T[FACTORYCHUNKSIZE];
-		objectUsed_ = new bool[FACTORYCHUNKSIZE];
+		objectArray_ = new T[nObjects_];
+		objectUsed_ = new bool[nObjects_];
 		objectSize_ = sizeof(T);
-		for (int n=0; n<FACTORYCHUNKSIZE; ++n) objectUsed_[n] = false;
+		for (int n=0; n<nObjects_; ++n) objectUsed_[n] = false;
 		nextAvailableObject_ = 0;
-		nUnusedObjects_ = FACTORYCHUNKSIZE;
-		
+		nUnusedObjects_ = nObjects_;
+
 		prev = NULL;
 		next = NULL;
 	}
@@ -63,6 +61,8 @@ template <class T> class ObjectChunk
 	 * Chunk Data
 	 */
 	private:
+	// Number of objects in chunk
+	const int nObjects_;
 	// Size of individual object
 	int objectSize_;
 	// Object array
@@ -83,7 +83,7 @@ template <class T> class ObjectChunk
 	// 	printf("Offset = %li\n", offset);
 		if (offset < 0) return -1;
 		int index = offset / objectSize_;
-		return (index < FACTORYCHUNKSIZE ? index : -1);
+		return (index < nObjects_ ? index : -1);
 	}
 
 	public:
@@ -105,7 +105,7 @@ template <class T> class ObjectChunk
 		// Search for next available object before we return the object
 		int nextFree = nextAvailableObject_ + 1;
 		// -- First part - search to end of current array
-		while (nextFree < FACTORYCHUNKSIZE)
+		while (nextFree < nObjects_)
 		{
 			if (!objectUsed_[nextFree])
 			{
@@ -165,6 +165,7 @@ template <class T> class ObjectFactory
 	ObjectFactory<T>()
 	{
 		currentChunk_ = NULL;
+		chunkSize_ = 256;
 	}
 
 
@@ -172,10 +173,19 @@ template <class T> class ObjectFactory
 	 * Object Store
 	 */
 	private:
+	// Chunk size
+	int chunkSize_;
 	// List of object chunks maintained by this factory
 	List< ObjectChunk<T> > objectChunks_;
 	// Current chunk from which objects are being taken
 	ObjectChunk<T>* currentChunk_;
+
+	public:
+	// Set chunksize to use when creating new chunks
+	void setChunkSize(int chunkSize)
+	{
+		chunkSize_ = chunkSize;
+	}
 
 
 	/*
@@ -187,7 +197,8 @@ template <class T> class ObjectFactory
 	{
 		if (currentChunk_ == NULL)
 		{
-			currentChunk_ = objectChunks_.add();
+			currentChunk_ = new ObjectChunk<T>(chunkSize_);
+			objectChunks_.own(currentChunk_);
 			return currentChunk_->nextAvailable();
 		}
 		else if (currentChunk_->hasUnusedObjects()) return currentChunk_->nextAvailable();
@@ -205,7 +216,8 @@ template <class T> class ObjectFactory
 			}
 
 			// No dice - make a new chunk
-			currentChunk_ = objectChunks_.add();
+			currentChunk_ = new ObjectChunk<T>(chunkSize_);
+			objectChunks_.own(currentChunk_);
 			return currentChunk_->nextAvailable();
 		}
 
