@@ -92,11 +92,11 @@ class EnergyKernel
 	// Return PairPotential energy between atoms provided (as pointers)
 	double energy(const Atom* i, const Atom* j, bool applyMim, bool excludeIgeJ = false);
 	// Return PairPotential energy between two cells
-	double energy(Cell* cell, Cell* otherCell, bool applyMim, bool excludeIgeJ = false, ProcessPool::LoopContext loopContext = ProcessPool::Individual, bool sumOverProcesses = false);
+	double energy(Cell* cell, Cell* otherCell, bool applyMim, bool excludeIgeJ = false, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
 	// Return PairPotential energy between Cell and its neighbours
-	double energy(Cell* cell, bool excludeIgeJ = false, ProcessPool::LoopContext loopContext = ProcessPool::Individual, bool sumOverProcesses = false);
+	double energy(Cell* cell, bool excludeIgeJ = false, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
 	// Return PairPotential energy between Atom and Cell
-	double energy(const Atom* i, Cell* cell, int flags = KernelFlags::NoFlags, ProcessPool::LoopContext loopContext = ProcessPool::Individual, bool sumOverProcesses = false);
+	double energy(const Atom* i, Cell* cell, int flags = KernelFlags::NoFlags, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
 	// Return PairPotential energy of atom with world
 	double energy(const Atom* i, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
 	// Return PairPotential energy of grain with world

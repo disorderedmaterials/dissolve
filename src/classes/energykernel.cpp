@@ -191,7 +191,7 @@ double EnergyKernel::energy(const Atom* i, const Atom* j, bool applyMim, bool ex
 }
 
 // Return PairPotential energy between atoms in supplied cells
-double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, bool excludeIgeJ, ProcessPool::LoopContext loopContext, bool sumOverProcesses)
+double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, bool excludeIgeJ, ProcessPool::LoopContext loopContext)
 {
 #ifdef CHECKS
 	if (centralCell == NULL)
@@ -280,17 +280,14 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 	}
 
 	// Sum over processes if necessary
-	if (sumOverProcesses)
-	{
-		if (loopContext == ProcessPool::OverGroupProcesses) processPool_.allSum(&totalEnergy, 1, ProcessPool::Group);
-		else if (loopContext == ProcessPool::OverPoolProcesses) processPool_.allSum(&totalEnergy, 1);
-	}
+	if (loopContext == ProcessPool::OverGroupProcesses) processPool_.allSum(&totalEnergy, 1, ProcessPool::Group);
+	else if (loopContext == ProcessPool::OverPoolProcesses) processPool_.allSum(&totalEnergy, 1);
 
 	return totalEnergy;
 }
 
 // Return PairPotential energy between cell and atomic neighbours
-double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::LoopContext loopContext, bool sumOverProcesses)
+double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::LoopContext loopContext)
 {
 	double totalEnergy = 0.0;
 	Atom** centralAtoms = centralCell->atoms().objects();
@@ -379,17 +376,14 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::Lo
 	}
 
 	// Sum over processes if necessary
-	if (sumOverProcesses)
-	{
-		if (loopContext == ProcessPool::OverGroupProcesses) processPool_.allSum(&totalEnergy, 1, ProcessPool::Group);
-		else if (loopContext == ProcessPool::OverPoolProcesses) processPool_.allSum(&totalEnergy, 1);
-	}
+	if (loopContext == ProcessPool::OverGroupProcesses) processPool_.allSum(&totalEnergy, 1, ProcessPool::Group);
+	else if (loopContext == ProcessPool::OverPoolProcesses) processPool_.allSum(&totalEnergy, 1);
 
 	return totalEnergy;
 }
 
 // Return PairPotential energy between Atom and Cell contents
-double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::LoopContext loopContext, bool sumOverProcesses)
+double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::LoopContext loopContext)
 {
 #ifdef CHECKS
 	if (i == NULL)
@@ -583,11 +577,8 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::L
 	}
 
 	// Sum over processes if necessary
-	if (sumOverProcesses)
-	{
-		if (loopContext == ProcessPool::OverGroupProcesses) processPool_.allSum(&totalEnergy, 1, ProcessPool::Group);
-		else if (loopContext == ProcessPool::OverPoolProcesses) processPool_.allSum(&totalEnergy, 1);
-	}
+	if (loopContext == ProcessPool::OverGroupProcesses) processPool_.allSum(&totalEnergy, 1, ProcessPool::Group);
+	else if (loopContext == ProcessPool::OverPoolProcesses) processPool_.allSum(&totalEnergy, 1);
 
 	return totalEnergy;
 }
