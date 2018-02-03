@@ -25,6 +25,7 @@
 #include "templates/list.h"
 #include "base/messenger.h"
 #include <new>
+#include <stdint.h>
 
 using namespace std;
 
@@ -350,6 +351,17 @@ template <class T> class DynamicArray
 		}
 #endif
 		return array_[index];
+	}
+	// Const element access
+	const T* constValue(int index) const
+	{
+		if ((index < 0) || (index >= array_.nItems()))
+		{
+			Messenger::error("Array index %i is out of bounds (array size = %i).\n", index, array_.nItems());
+			return NULL;
+		}
+
+		return array_.value(index);
 	}
 };
 
