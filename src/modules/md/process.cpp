@@ -245,7 +245,12 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 			// Rescale velocities for desired temperature
 			tInstant = ke * 2.0 / (3.0 * cfg->nAtoms() * kb);
 			tScale = sqrt(temperature / tInstant);
-			v *= tScale;
+			for (n=0; n<cfg->nAtoms(); ++n)
+			{
+				v[n].x *= tScale;
+				v[n].y *= tScale;
+				v[n].z *= tScale;
+			}
 
 			// Convert ke from 10J/mol to kJ/mol
 			ke *= 0.01;
