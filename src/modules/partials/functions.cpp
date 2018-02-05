@@ -610,7 +610,7 @@ bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration*
 		}
 	}
 
-	// Transform histogram data into radial ditribution functions
+	// Transform histogram data into radial distribution functions
 	XYData boxNorm = cfg->boxNormalisation();
 	partialgr.formPartials(box->volume(), boxNorm);
 
@@ -670,15 +670,6 @@ bool PartialsModule::calculateWeightedGR(PartialSet& unweightedgr, PartialSet& w
 
 	return true;
 }
-
-// 	// Perform FT of reference data (if present)
-// 	if (referenceData_.nPoints() > 0)
-// 	{
-// 		referenceDataFT_ = referenceData_;
-// // 		referenceDataFT_.rebin();
-// 		referenceDataFT_.transformLorch(rho, 0.025, 50.0, 0.5, 0.08, true);
-// 	}
-
 
 // Generate S(Q) from supplied g(r)
 bool PartialsModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration* cfg, double qMin, double qDelta, double qMax, double rho, const WindowFunction& windowFunction, const BroadeningFunction& broadening, bool braggOn)
