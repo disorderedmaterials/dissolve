@@ -24,6 +24,7 @@ add_library(classes
   configuration_contents.cpp
   configuration_upkeep.cpp
   data.cpp
+  distributor.cpp
   energykernel.cpp
   forcekernel.cpp
   grain.cpp
@@ -35,6 +36,7 @@ add_library(classes
   kvector.cpp
   masterintra.cpp
   molecule.cpp
+  moleculedistributor.cpp
   pairpotential.cpp
   potentialmap.cpp
   partialset.cpp
@@ -72,6 +74,7 @@ add_library(classes
   changestore.h
   configuration.h
   data.h
+  distributor.h
   energykernel.h
   forcekernel.h
   grain.h
@@ -84,6 +87,7 @@ add_library(classes
   kvector.h
   masterintra.h
   molecule.h
+  moleculedistributor.h
   pairpotential.h
   potentialmap.h
   partialset.h

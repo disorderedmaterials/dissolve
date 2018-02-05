@@ -55,7 +55,7 @@ bool DUQ::twist(Configuration& cfg, double cutoffDistance, int nTwistsPerTerm)
 	EnergyKernel kernel(cfg, potentialMap_);
 
 	// Initialise the random number buffer
-	Comm.initialiseRandomBuffer(ProcessPool::Pool);
+	Comm.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
 
 	// TODO This can be rewritten to calculate a local reference energy for each Grain in the Molecule and a Molecular inter-Grain energy.
 	// Then, as atoms are selected and twisted all we need to calculate is the difference in energy for the Grains that have moved, and the
@@ -70,7 +70,7 @@ bool DUQ::twist(Configuration& cfg, double cutoffDistance, int nTwistsPerTerm)
 		changeStore.add(mol);
 
 		// Calculate reference energy for the Molecule
-		currentEnergy = kernel.energy(mol, ProcessPool::Pool);
+		currentEnergy = kernel.energy(mol, ProcessPool::PoolProcessesCommunicator);
 
 		// Grab the index of the first Atom in this Molecule
 		rootIndex = mol->atom(0)->index();
@@ -106,7 +106,7 @@ bool DUQ::twist(Configuration& cfg, double cutoffDistance, int nTwistsPerTerm)
 			}
 
 			// Test energy again
-			newEnergy = kernel.energy(mol, ProcessPool::Pool);
+			newEnergy = kernel.energy(mol, ProcessPool::PoolProcessesCommunicator);
 			delta = newEnergy - currentEnergy;
 			
 			if ((delta < 0) || (Comm.random() < exp(-delta*rRT)))
@@ -148,7 +148,7 @@ bool DUQ::twist(Configuration& cfg, double cutoffDistance, int nTwistsPerTerm)
 // 		Messenger::print("New steps = %f %f\n", translationStep_, rotationStep_);
 	}
 
-	// Increment configuration changeCount_
+	// Increase coordinate index in Configuration
 	if (nAccepted > 0) cfg.incrementCoordinateIndex();
 
 	return true;

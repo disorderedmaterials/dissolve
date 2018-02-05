@@ -191,7 +191,7 @@ double EnergyKernel::energy(const Atom* i, const Atom* j, bool applyMim, bool ex
 }
 
 // Return PairPotential energy between atoms in supplied cells
-double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, bool excludeIgeJ, ProcessPool::LoopContext loopContext)
+double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy, bool performSum)
 {
 #ifdef CHECKS
 	if (centralCell == NULL)
@@ -214,8 +214,8 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 	double rSq, scale;
 
 	// Get start/stride for specified loop context
-	int start = processPool_.interleavedLoopStart(loopContext);
-	int stride = processPool_.interleavedLoopStride(loopContext);
+	int start = processPool_.interleavedLoopStart(strategy);
+	int stride = processPool_.interleavedLoopStride(strategy);
 
 	// Loop over central cell atoms
 	if (applyMim)
@@ -279,15 +279,14 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 		}
 	}
 
-	// Sum over processes if necessary
-	if (loopContext == ProcessPool::OverGroupProcesses) processPool_.allSum(&totalEnergy, 1, ProcessPool::Group);
-	else if (loopContext == ProcessPool::OverPoolProcesses) processPool_.allSum(&totalEnergy, 1);
+	// Perform relevant sum if requested
+	if (performSum) processPool_.allSum(&totalEnergy, 1, strategy);
 
 	return totalEnergy;
 }
 
 // Return PairPotential energy between cell and atomic neighbours
-double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::LoopContext loopContext)
+double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy, bool performSum)
 {
 	double totalEnergy = 0.0;
 	Atom** centralAtoms = centralCell->atoms().objects();
@@ -300,8 +299,8 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::Lo
 	double rSq, scale;
 
 	// Get start/stride for specified loop context
-	int start = processPool_.interleavedLoopStart(loopContext);
-	int stride = processPool_.interleavedLoopStride(loopContext);
+	int start = processPool_.interleavedLoopStart(strategy);
+	int stride = processPool_.interleavedLoopStride(strategy);
 
 	// Straight loop over Cells *not* requiring mim
 	Cell** neighbours = centralCell->cellNeighbours();
@@ -375,15 +374,14 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::Lo
 		}
 	}
 
-	// Sum over processes if necessary
-	if (loopContext == ProcessPool::OverGroupProcesses) processPool_.allSum(&totalEnergy, 1, ProcessPool::Group);
-	else if (loopContext == ProcessPool::OverPoolProcesses) processPool_.allSum(&totalEnergy, 1);
+	// Perform relevant sum if requested
+	if (performSum) processPool_.allSum(&totalEnergy, 1, strategy);
 
 	return totalEnergy;
 }
 
 // Return PairPotential energy between Atom and Cell contents
-double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::LoopContext loopContext)
+double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::DivisionStrategy strategy, bool performSum)
 {
 #ifdef CHECKS
 	if (i == NULL)
@@ -409,8 +407,8 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::L
 	const Vec3<double> rI = i->r();
 
 	// Get start/stride for specified loop context
-	int start = processPool_.interleavedLoopStart(loopContext);
-	int stride = processPool_.interleavedLoopStride(loopContext);
+	int start = processPool_.interleavedLoopStart(strategy);
+	int stride = processPool_.interleavedLoopStride(strategy);
 
 	// Loop over cell atoms
 	if (flags&KernelFlags::ApplyMinimumImageFlag)
@@ -576,15 +574,14 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::L
 		}
 	}
 
-	// Sum over processes if necessary
-	if (loopContext == ProcessPool::OverGroupProcesses) processPool_.allSum(&totalEnergy, 1, ProcessPool::Group);
-	else if (loopContext == ProcessPool::OverPoolProcesses) processPool_.allSum(&totalEnergy, 1);
+	// Perform relevant sum if requested
+	if (performSum) processPool_.allSum(&totalEnergy, 1, strategy);
 
 	return totalEnergy;
 }
 
 // Return PairPotential energy of Atom with world
-double EnergyKernel::energy(const Atom* i, ProcessPool::LoopContext loopContext)
+double EnergyKernel::energy(const Atom* i, ProcessPool::DivisionStrategy strategy, bool performSum)
 {
 #ifdef CHECKS
 	if (i == NULL)
@@ -596,21 +593,24 @@ double EnergyKernel::energy(const Atom* i, ProcessPool::LoopContext loopContext)
 	Cell* cellI = i->cell();
 
 	// This Atom with its own Cell
-	double totalEnergy = energy(i, cellI, KernelFlags::ExcludeSelfFlag, loopContext);
+	double totalEnergy = energy(i, cellI, KernelFlags::ExcludeSelfFlag, strategy, false);
 
 	// Cell neighbours not requiring minimum image
 	Cell** neighbours = cellI->cellNeighbours();
-	for (int n=0; n<cellI->nCellNeighbours(); ++n) totalEnergy += energy(i, neighbours[n], KernelFlags::NoFlags, loopContext);
+	for (int n=0; n<cellI->nCellNeighbours(); ++n) totalEnergy += energy(i, neighbours[n], KernelFlags::NoFlags, strategy, false);
 
 	// Cell neighbours requiring minimum image
 	Cell** mimNeighbours = cellI->mimCellNeighbours();
-	for (int n=0; n<cellI->nMimCellNeighbours(); ++n) totalEnergy += energy(i, mimNeighbours[n], KernelFlags::ApplyMinimumImageFlag, loopContext);
+	for (int n=0; n<cellI->nMimCellNeighbours(); ++n) totalEnergy += energy(i, mimNeighbours[n], KernelFlags::ApplyMinimumImageFlag, strategy, false);
+
+	// Perform relevant sum if requested
+	if (performSum) processPool_.allSum(&totalEnergy, 1, strategy);
 
 	return totalEnergy;
 }
 
 // Return PairPotential energy of Grain with world
-double EnergyKernel::energy(const Grain* grain, bool excludeIgtJ, ProcessPool::LoopContext loopContext)
+double EnergyKernel::energy(const Grain* grain, bool excludeIgtJ, ProcessPool::DivisionStrategy strategy, bool performSum)
 {
 	// If no Grain is given, return zero
 	if (grain == NULL) return 0.0;
@@ -630,15 +630,15 @@ double EnergyKernel::energy(const Grain* grain, bool excludeIgtJ, ProcessPool::L
 		cellI = ii->cell();
 
 		// This Atom with its own Cell
-		totalEnergy = energy(ii, cellI, KernelFlags::ExcludeIGEJFlag, loopContext);
+		totalEnergy = energy(ii, cellI, KernelFlags::ExcludeIGEJFlag, strategy, false);
 
 		// Cell neighbours not requiring minimum image
 		Cell** neighbours = cellI->cellNeighbours();
-		for (int n=0; n<cellI->nCellNeighbours(); ++n) totalEnergy += energy(ii, neighbours[n], KernelFlags::ExcludeIGEJFlag, loopContext);
+		for (int n=0; n<cellI->nCellNeighbours(); ++n) totalEnergy += energy(ii, neighbours[n], KernelFlags::ExcludeIGEJFlag, strategy, false);
 
 		// Cell neighbours requiring minimum image
 		Cell** mimNeighbours = cellI->mimCellNeighbours();
-		for (int n=0; n<cellI->nMimCellNeighbours(); ++n) totalEnergy += energy(ii, mimNeighbours[n], KernelFlags::ApplyMinimumImageFlag | KernelFlags::ExcludeIGEJFlag, loopContext);
+		for (int n=0; n<cellI->nMimCellNeighbours(); ++n) totalEnergy += energy(ii, mimNeighbours[n], KernelFlags::ApplyMinimumImageFlag | KernelFlags::ExcludeIGEJFlag, strategy, false);
 	}
 	else for (i = 0; i<grain->nAtoms(); ++i)
 	{
@@ -646,22 +646,25 @@ double EnergyKernel::energy(const Grain* grain, bool excludeIgtJ, ProcessPool::L
 		cellI = ii->cell();
 
 		// This Atom with its own Cell
-		totalEnergy = energy(ii, cellI, KernelFlags::ExcludeSelfFlag, loopContext);
+		totalEnergy = energy(ii, cellI, KernelFlags::ExcludeSelfFlag, strategy, false);
 
 		// Cell neighbours not requiring minimum image
 		Cell** neighbours = cellI->cellNeighbours();
-		for (int n=0; n<cellI->nCellNeighbours(); ++n) totalEnergy += energy(ii, neighbours[n], KernelFlags::NoFlags, loopContext);
+		for (int n=0; n<cellI->nCellNeighbours(); ++n) totalEnergy += energy(ii, neighbours[n], KernelFlags::NoFlags, strategy, false);
 
 		// Cell neighbours requiring minimum image
 		Cell** mimNeighbours = cellI->mimCellNeighbours();
-		for (int n=0; n<cellI->nMimCellNeighbours(); ++n) totalEnergy += energy(ii, mimNeighbours[n], KernelFlags::ApplyMinimumImageFlag, loopContext);
+		for (int n=0; n<cellI->nMimCellNeighbours(); ++n) totalEnergy += energy(ii, mimNeighbours[n], KernelFlags::ApplyMinimumImageFlag, strategy, false);
 	}
+
+	// Perform relevant sum if requested
+	if (performSum) processPool_.allSum(&totalEnergy, 1, strategy);
 
 	return totalEnergy;
 }
 
 // Return PairPotential energy of Molecule with world
-double EnergyKernel::energy(const Molecule* mol, ProcessPool::LoopContext loopContext)
+double EnergyKernel::energy(const Molecule* mol, ProcessPool::DivisionStrategy strategy, bool performSum)
 {
 	Atom* ii;
 	Cell* cellI;
@@ -673,16 +676,19 @@ double EnergyKernel::energy(const Molecule* mol, ProcessPool::LoopContext loopCo
 		cellI = ii->cell();
 
 		// This Atom with its own Cell
-		totalEnergy += energy(ii, cellI, KernelFlags::ExcludeIntraIGEJFlag, loopContext);
+		totalEnergy += energy(ii, cellI, KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
 
 		// Cell neighbours not requiring minimum image
 		Cell** neighbours = cellI->cellNeighbours();
-		for (int n=0; n<cellI->nCellNeighbours(); ++n) totalEnergy += energy(ii, neighbours[n], KernelFlags::ExcludeIntraIGEJFlag, loopContext);
+		for (int n=0; n<cellI->nCellNeighbours(); ++n) totalEnergy += energy(ii, neighbours[n], KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
 
 		// Cell neighbours requiring minimum image
 		Cell** mimNeighbours = cellI->mimCellNeighbours();
-		for (int n=0; n<cellI->nMimCellNeighbours(); ++n) totalEnergy += energy(ii, mimNeighbours[n], KernelFlags::ApplyMinimumImageFlag | KernelFlags::ExcludeIntraIGEJFlag, loopContext);
+		for (int n=0; n<cellI->nMimCellNeighbours(); ++n) totalEnergy += energy(ii, mimNeighbours[n], KernelFlags::ApplyMinimumImageFlag | KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
 	}
+
+	// Perform relevant sum if requested
+	if (performSum) processPool_.allSum(&totalEnergy, 1, strategy);
 
 	return totalEnergy;
 }

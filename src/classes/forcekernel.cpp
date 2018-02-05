@@ -218,7 +218,7 @@ void ForceKernel::forces(const Atom* i, const Atom* j, bool applyMim, bool exclu
 }
 
 // Calculate forces between atoms in supplied cells
-void ForceKernel::forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool excludeIgeJ, ProcessPool::LoopContext loopContext)
+void ForceKernel::forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy)
 {
 #ifdef CHECKS
 	if (centralCell == NULL)
@@ -240,8 +240,8 @@ void ForceKernel::forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool
 	double scale;
 
 	// Get start/stride for specified loop context
-	int start = processPool_.interleavedLoopStart(loopContext);
-	int stride = processPool_.interleavedLoopStride(loopContext);
+	int start = processPool_.interleavedLoopStart(strategy);
+	int stride = processPool_.interleavedLoopStride(strategy);
 
 	// Loop over central cell atoms
 	if (applyMim)
@@ -299,7 +299,7 @@ void ForceKernel::forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool
 }
 
 // Calculate forces between Cell and its neighbours
-void ForceKernel::forces(Cell* cell, bool excludeIgeJ, ProcessPool::LoopContext loopContext)
+void ForceKernel::forces(Cell* cell, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy)
 {
 	Atom** centralAtoms = cell->atoms().objects();
 	Atom** otherAtoms;
@@ -311,16 +311,12 @@ void ForceKernel::forces(Cell* cell, bool excludeIgeJ, ProcessPool::LoopContext 
 	Molecule* molJ;
 	double scale;
 
-	// Get start/stride for specified loop context
-	int start = processPool_.interleavedLoopStart(loopContext);
-	int stride = processPool_.interleavedLoopStride(loopContext);
-
-		// Straight loop over Cells *not* requiring mim
+	// Straight loop over Cells *not* requiring mim
 	Cell** neighbours = cell->cellNeighbours();
 	for (int n = 0; n<cell->nCellNeighbours(); ++n)
 	{
 		otherCell = neighbours[n];
-		forces(cell, otherCell, false, excludeIgeJ, loopContext);
+		forces(cell, otherCell, false, excludeIgeJ, strategy);
 	}
 
 	// Straight loop over Cells requiring mim
@@ -328,12 +324,12 @@ void ForceKernel::forces(Cell* cell, bool excludeIgeJ, ProcessPool::LoopContext 
 	for (int n = 0; n<cell->nMimCellNeighbours(); ++n)
 	{
 		otherCell = mimNeighbours[n];
-		forces(cell, otherCell, true, excludeIgeJ, loopContext);
+		forces(cell, otherCell, true, excludeIgeJ, strategy);
 	}
 }
 
 // Calculate forces between Atom and Cell
-void ForceKernel::forces(const Atom* i, Cell* cell, int flags, ProcessPool::LoopContext loopContext)
+void ForceKernel::forces(const Atom* i, Cell* cell, int flags, ProcessPool::DivisionStrategy strategy)
 {
 #ifdef CHECKS
 	if (i == NULL)
@@ -355,8 +351,8 @@ void ForceKernel::forces(const Atom* i, Cell* cell, int flags, ProcessPool::Loop
 	int nOtherAtoms = cell->nAtoms();
 
 	// Get start/stride for specified loop context
-	int start = processPool_.interleavedLoopStart(loopContext);
-	int stride = processPool_.interleavedLoopStride(loopContext);
+	int start = processPool_.interleavedLoopStart(strategy);
+	int stride = processPool_.interleavedLoopStride(strategy);
 
 	// Loop over cell atoms
 	if (flags&KernelFlags::ApplyMinimumImageFlag)
@@ -492,7 +488,7 @@ void ForceKernel::forces(const Atom* i, Cell* cell, int flags, ProcessPool::Loop
 }
 
 // Calculate forces between atom and world
-void ForceKernel::forces(const Atom* i, ProcessPool::LoopContext loopContext)
+void ForceKernel::forces(const Atom* i, ProcessPool::DivisionStrategy strategy)
 {
 #ifdef CHECKS
 	if (i == NULL)
@@ -504,19 +500,19 @@ void ForceKernel::forces(const Atom* i, ProcessPool::LoopContext loopContext)
 	Cell* cellI = i->cell();
 
 	// This Atom with other Atoms in the same Cell
-	forces(i, cellI, KernelFlags::ExcludeSelfFlag, loopContext);
+	forces(i, cellI, KernelFlags::ExcludeSelfFlag, strategy);
 
 	// This Atom with other Atoms in neighbour Cells
 	Cell** neighbours = cellI->cellNeighbours();
-	for (int n=0; n<cellI->nCellNeighbours(); ++n) forces(i, neighbours[n], KernelFlags::NoFlags, loopContext);
+	for (int n=0; n<cellI->nCellNeighbours(); ++n) forces(i, neighbours[n], KernelFlags::NoFlags, strategy);
 
 	// This Atom with other Atoms in neighbour Cells which require minimum image
 	Cell** mimNeighbours = cellI->mimCellNeighbours();
-	for (int n=0; n<cellI->nMimCellNeighbours(); ++n) forces(i, mimNeighbours[n], KernelFlags::ApplyMinimumImageFlag, loopContext);
+	for (int n=0; n<cellI->nMimCellNeighbours(); ++n) forces(i, mimNeighbours[n], KernelFlags::ApplyMinimumImageFlag, strategy);
 }
 
 // Calculate forces between grain and world
-void ForceKernel::forces(const Grain* grain, bool excludeIgtJ, ProcessPool::LoopContext loopContext)
+void ForceKernel::forces(const Grain* grain, bool excludeIgtJ, ProcessPool::DivisionStrategy strategy)
 {
 #ifdef CHECKS
 	if (grain == NULL)
@@ -540,15 +536,15 @@ void ForceKernel::forces(const Grain* grain, bool excludeIgtJ, ProcessPool::Loop
 		cellI = ii->cell();
 
 		// This Atom with its own Cell
-		forces(ii, cellI, KernelFlags::ExcludeIGEJFlag, loopContext);
+		forces(ii, cellI, KernelFlags::ExcludeIGEJFlag, strategy);
 
 		// Cell neighbours not requiring minimum image
 		Cell** neighbours = cellI->cellNeighbours();
-		for (int n=0; n<cellI->nCellNeighbours(); ++n) forces(ii, neighbours[n], KernelFlags::ExcludeIGEJFlag, loopContext);
+		for (int n=0; n<cellI->nCellNeighbours(); ++n) forces(ii, neighbours[n], KernelFlags::ExcludeIGEJFlag, strategy);
 
 		// Cell neighbours requiring minimum image
 		Cell** mimNeighbours = cellI->mimCellNeighbours();
-		for (int n=0; n<cellI->nMimCellNeighbours(); ++n) forces(ii, mimNeighbours[n], KernelFlags::ApplyMinimumImageFlag | KernelFlags::ExcludeIGEJFlag, loopContext);
+		for (int n=0; n<cellI->nMimCellNeighbours(); ++n) forces(ii, mimNeighbours[n], KernelFlags::ApplyMinimumImageFlag | KernelFlags::ExcludeIGEJFlag, strategy);
 	}
 	else for (i = 0; i<grain->nAtoms(); ++i)
 	{
@@ -556,15 +552,15 @@ void ForceKernel::forces(const Grain* grain, bool excludeIgtJ, ProcessPool::Loop
 		cellI = ii->cell();
 		
 		// This Atom with its own Cell
-		forces(ii, cellI, KernelFlags::ExcludeSelfFlag, loopContext);
+		forces(ii, cellI, KernelFlags::ExcludeSelfFlag, strategy);
 
 		// Cell neighbours not requiring minimum image
 		Cell** neighbours = cellI->cellNeighbours();
-		for (int n=0; n<cellI->nCellNeighbours(); ++n) forces(ii, neighbours[n], KernelFlags::NoFlags, loopContext);
+		for (int n=0; n<cellI->nCellNeighbours(); ++n) forces(ii, neighbours[n], KernelFlags::NoFlags, strategy);
 
 		// Cell neighbours requiring minimum image
 		Cell** mimNeighbours = cellI->mimCellNeighbours();
-		for (int n=0; n<cellI->nMimCellNeighbours(); ++n) forces(ii, mimNeighbours[n], KernelFlags::ApplyMinimumImageFlag, loopContext);
+		for (int n=0; n<cellI->nMimCellNeighbours(); ++n) forces(ii, mimNeighbours[n], KernelFlags::ApplyMinimumImageFlag, strategy);
 	}
 }
 

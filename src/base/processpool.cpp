@@ -94,9 +94,9 @@ void ProcessPool::operator=(const ProcessPool& source)
 // Return communicator specified
 MPI_Comm ProcessPool::communicator(ProcessPool::CommunicatorType commType)
 {
-	if (commType == ProcessPool::Group) return groupCommunicator_;
-	else if (commType == ProcessPool::Leaders) return leaderCommunicator_;
-	else if (commType == ProcessPool::Pool) return poolCommunicator_;
+	if (commType == ProcessPool::GroupProcessesCommunicator) return groupCommunicator_;
+	else if (commType == ProcessPool::GroupLeadersCommunicator) return leaderCommunicator_;
+	else if (commType == ProcessPool::PoolProcessesCommunicator) return poolCommunicator_;
 	Messenger::print("BAD_USAGE - CommunicatorType %i is not valid in ProcessPool::communicator().\n", commType);
 
 	return MPI_COMM_WORLD;
@@ -185,71 +185,72 @@ const char* ProcessPool::accumulatedTimeString()
  */
 
 // Return local rank of this process in the pool
-int ProcessPool::poolRank()
+int ProcessPool::poolRank() const
 {
 	return poolRank_;
 }
 
 // Return whether this process is the master for the specified communicator
-bool ProcessPool::isMaster(ProcessPool::CommunicatorType commType)
+bool ProcessPool::isMaster(ProcessPool::CommunicatorType commType) const
 {
-	if (commType == ProcessPool::Pool) return (poolRank_ == 0);
-	else if (commType == ProcessPool::Group) return (groupLeaders_[groupIndex_] == poolRank_);
-	else if (commType == ProcessPool::Leaders) return (groupLeaders_[0] == poolRank_);
+	if (commType == ProcessPool::PoolProcessesCommunicator) return (poolRank_ == 0);
+	else if (commType == ProcessPool::GroupProcessesCommunicator) return (groupLeaders_.value(groupIndex_) == poolRank_);
+	else if (commType == ProcessPool::GroupLeadersCommunicator) return (groupLeaders_.value(0) == poolRank_);
 
 	return false;
 }
 
 // Return whether this process is a local slave for the specified communicatyr
-bool ProcessPool::isSlave(ProcessPool::CommunicatorType commType)
+bool ProcessPool::isSlave(ProcessPool::CommunicatorType commType) const
 {
-	if (commType == ProcessPool::Pool) return (poolRank_ != 0);
-	else if (commType == ProcessPool::Group) return (groupLeaders_[groupIndex_] != poolRank_);
-	else if (commType == ProcessPool::Leaders) return (groupLeaders_[0] != poolRank_);
+	if (commType == ProcessPool::PoolProcessesCommunicator) return (poolRank_ != 0);
+	else if (commType == ProcessPool::GroupProcessesCommunicator) return (groupLeaders_.value(groupIndex_) != poolRank_);
+	else if (commType == ProcessPool::GroupLeadersCommunicator) return (groupLeaders_.value(0) != poolRank_);
 
 	return true;
 }
 
 // Return whether this process is the pool index specified
-bool ProcessPool::isMe(int poolIndex)
+bool ProcessPool::isMe(int poolIndex) const
 {
 	return (poolRank_ == poolIndex);
 }
 
 // Return whether this pool involves this process
-bool ProcessPool::involvesMe()
+bool ProcessPool::involvesMe() const
 {
 	for (int n=0; n<worldRanks_.nItems(); ++n) if (worldRanks_.value(n) == worldRank_) return true;
 	return false;
 }
 
 // Return group index in which this process exists
-int ProcessPool::groupIndex()
+int ProcessPool::groupIndex() const
 {
 	return groupIndex_;
 }
 
 // Return local group in which this process exists
-ProcessGroup* ProcessPool::myGroup()
+ProcessGroup& ProcessPool::myGroup()
 {
 #ifdef CHECKS
 	if ((groupIndex_ < 0) || (groupIndex_ >= processGroups_.nItems()))
 	{
+		static ProcessGroup dummyGroup;
 		Messenger::print("OUT_OF_RANGE - Local group index for this process (%i) is out of range in ProcessPool::localGroupSize() (nProcessGroups = %i).\n", groupIndex_, processGroups_.nItems());
-		return NULL;
+		return dummyGroup;
 	}
 #endif
 	return processGroups_[groupIndex_];
 }
 
 // Return rank of this process in its local group
-int ProcessPool::groupRank()
+int ProcessPool::groupRank() const
 {
 	return groupRank_;
 }
 
 // Return whether this process is a group leader
-bool ProcessPool::groupLeader()
+bool ProcessPool::groupLeader() const
 {
 	return (groupRank_ == 0);
 }
@@ -308,15 +309,15 @@ const char* ProcessPool::name()
 }
 
 // Return total number of processes in pool
-int ProcessPool::nProcesses()
+int ProcessPool::nProcesses() const
 {
 	return worldRanks_.nItems();
 }
 
 // Return root (first) world rank of this pool
-int ProcessPool::rootWorldRank()
+int ProcessPool::rootWorldRank() const
 {
-	return worldRanks_.first();
+	return worldRanks_.value(0);
 }
 
 // Determine how many simultaneous processes (groups) we can have at once, based on the Cell divisions
@@ -414,7 +415,7 @@ bool ProcessPool::assignProcessesToGroups()
 	for (int n=0; n<maxProcessGroups_; ++n)
 	{
 		// Create nth process group and add a (currently null) entry to the groupLeaders_ array
-		group = processGroups_.add();
+		ProcessGroup group;
 		groupLeaders_.add(-1);
 		Messenger::printVerbose("--> Created process group %i\n", n);
 
@@ -425,19 +426,20 @@ bool ProcessPool::assignProcessesToGroups()
 		for (int localRank=firstRank; localRank<=lastRank; ++localRank)
 		{
 			int wr = worldRanks_[localRank];
-			group->addProcess(localRank, wr);
+			group.addProcess(localRank, wr);
 			rankString.strcatf(" %i", wr);
 
 			// If this process is the current worldRank_ we are considering, set its group membership
 			if (wr == worldRank_) groupIndex_ = n;
 		}
-		Messenger::printVerbose("--> Group will contain %i processes (world ranks:%s).\n", group->nProcesses(), rankString.get());
+		Messenger::printVerbose("--> Group will contain %i processes (world ranks:%s).\n", group.nProcesses(), rankString.get());
+		processGroups_.add(group);
 	}
 
 	// Create local group and communicator - each process will only create and be involved in one group communicator (groupGroup_)
 	MPI_Group origGroup;
 	MPI_Comm_group(MPI_COMM_WORLD, &origGroup);
-	if (MPI_Group_incl(origGroup, myGroup()->nProcesses(), myGroup()->worldRanks().array(), &groupGroup_) != MPI_SUCCESS) return false;
+	if (MPI_Group_incl(origGroup, myGroup().nProcesses(), myGroup().worldRanks().array(), &groupGroup_) != MPI_SUCCESS) return false;
 	if (MPI_Comm_create(MPI_COMM_WORLD, groupGroup_, &groupCommunicator_) != MPI_SUCCESS) return false;
 	MPI_Group_rank(groupGroup_, &groupRank_);
 	Messenger::printVerbose("--> ... Process with pool rank %i (world rank %i) has local group %i (%i), group rank %i, and is a process group %s\n", poolRank_, worldRank_, groupIndex_, groupGroup_, groupRank_, groupLeader() ? "leader" : "slave");
@@ -453,7 +455,7 @@ bool ProcessPool::assignProcessesToGroups()
 			// Query each process in the group to see if it is the leader...
 			for (int n=0; n<nProcessesInGroup(group); ++n)
 			{
-				int prank = processGroups_[group]->poolRank(n);
+				int prank = processGroups_[group].poolRank(n);
 
 				// Is this us, the master process?
 				if (prank == poolRank_) leader = groupLeader();
@@ -557,20 +559,21 @@ int ProcessPool::nProcessGroups() const
 }
 
 // Return nth process group
-ProcessGroup* ProcessPool::processGroup(int n)
+ProcessGroup& ProcessPool::processGroup(int n)
 {
 #ifdef CHECKS
 	if ((n < 0) || (n >= processGroups_.nItems()))
 	{
+		static ProcessGroup dummyGroup;
 		Messenger::print("OUT_OF_RANGE - Specified groupId (%i) is out of range in ProcessPool::processGroup() (nProcessGroups = %i).\n", n, processGroups_.nItems());
-		return 0;
+		return dummyGroup;
 	}
 #endif
 	return processGroups_[n];
 }
 
 // Return number of processes in specified group
-int ProcessPool::nProcessesInGroup(int groupId)
+int ProcessPool::nProcessesInGroup(int groupId) const
 {
 #ifdef CHECKS
 	if ((groupId < 0) || (groupId >= processGroups_.nItems()))
@@ -579,11 +582,11 @@ int ProcessPool::nProcessesInGroup(int groupId)
 		return 0;
 	}
 #endif
-	return processGroups_[groupId]->nProcesses();
+	return processGroups_.value(groupId).nProcesses();
 }
 
 // Return array of pool ranks in specified group
-int* ProcessPool::poolRanksInGroup(int groupId)
+int* ProcessPool::poolRanksInGroup(int groupId) const
 {
 #ifdef CHECKS
 	if ((groupId < 0) || (groupId >= processGroups_.nItems()))
@@ -592,11 +595,11 @@ int* ProcessPool::poolRanksInGroup(int groupId)
 		return 0;
 	}
 #endif
-	return processGroups_[groupId]->poolRanks().array();
+	return processGroups_.value(groupId).poolRanks().array();
 }
 
 // Return whether group data is modifiable
-bool ProcessPool::groupsModifiable()
+bool ProcessPool::groupsModifiable() const
 {
 	return groupsModifiable_;
 }
@@ -607,12 +610,96 @@ void ProcessPool::setGroupsFixed()
 	groupsModifiable_ = false;
 }
 
+// Return maximum number of simultaneous, single-Cell-modifying process groups 
+int ProcessPool::maxProcessGroups() const
+{
+	return maxProcessGroups_;
+}
+
 /*
- * Process Limits
+ * Strategy / Limits
  */
 
+// Return sub-strategy for specified dividion of labour strategy
+ProcessPool::DivisionStrategy ProcessPool::subDivisionStrategy(ProcessPool::DivisionStrategy strategy)
+{
+	switch (strategy)
+	{
+		case (GroupsStrategy):
+			return GroupProcessesStrategy;
+		case (GroupProcessesStrategy):
+			Messenger::error("Strategy is GroupProcessesStrategy, and so can't subdivide any further. Results may be incorrect!\n");
+			return GroupProcessesStrategy;
+		case (PoolStrategy):
+			return PoolProcessesStrategy;
+		case (PoolProcessesStrategy):
+			Messenger::error("Strategy is PoolProcessesStrategy, and so can't subdivide any further. Results may be incorrect!\n");
+			return PoolProcessesStrategy;
+	}
+}
+
+// Return starting index for loop using specified strategy
+int ProcessPool::interleavedLoopStart(ProcessPool::DivisionStrategy strategy) const
+{
+	if (strategy == ProcessPool::GroupsStrategy) return groupIndex_;
+	else if (strategy == ProcessPool::GroupProcessesStrategy) return groupRank_;
+	else if (strategy == ProcessPool::PoolStrategy) return poolRank_;
+
+	// PoolProcessesStrategy
+	return 0;
+}
+
+// Return stride for general outer loop using specified strategy
+int ProcessPool::interleavedLoopStride(ProcessPool::DivisionStrategy strategy) const
+{
+	if (strategy == ProcessPool::GroupsStrategy) return processGroups_.nItems();
+	else if (strategy == ProcessPool::GroupProcessesStrategy) return nProcessesInGroup(groupIndex_);
+	else if (strategy == ProcessPool::PoolStrategy) return worldRanks_.nItems();
+
+	// PoolProcessesStrategy
+	return 1;
+}
+
+// Return 'size' for specified strategy
+int ProcessPool::strategyNDivisions(ProcessPool::DivisionStrategy strategy) const
+{
+	switch (strategy)
+	{
+		case (GroupsStrategy):
+			return nProcessGroups();
+		case (GroupProcessesStrategy):
+			return nProcessesInGroup(groupIndex());
+		case (PoolStrategy):
+			return nProcesses();
+		case (PoolProcessesStrategy):
+			return 1;
+	}
+}
+
+// Return index of this process within the specified strategy
+int ProcessPool::strategyProcessIndex(ProcessPool::DivisionStrategy strategy) const
+{
+	switch (strategy)
+	{
+		case (GroupsStrategy):
+			return groupIndex_;
+		case (GroupProcessesStrategy):
+			return groupRank_;
+		case (PoolStrategy):
+			return poolRank_;
+		case (PoolProcessesStrategy):
+			return 0;
+	}
+}
+
+// Return best strategy (by process or by pool) for this process pool
+ProcessPool::DivisionStrategy ProcessPool::bestStrategy() const
+{
+	return (worldRanks_.nItems() > maxProcessGroups_ ? ProcessPool::GroupsStrategy: ProcessPool::PoolStrategy);
+}
+
 // Return starting outer loop index for a two-body interaction calculation where only the upper half (i >= j) is required
-int ProcessPool::twoBodyLoopStart(int nItems)
+int ProcessPool::twoBodyLoopStart(int nItems) const
 {
 	// TODO Optimise calculation of limit
 	// Don't do anything if this pool doesn't involve us
@@ -647,7 +734,7 @@ int ProcessPool::twoBodyLoopStart(int nItems)
 }
 
 // Return ending outer loop index for a two-body interaction calculation where only the upper half (i >= j) is required
-int ProcessPool::twoBodyLoopEnd(int nItems)
+int ProcessPool::twoBodyLoopEnd(int nItems) const
 {
 	// TODO Optimise calculation of limit
 	// Don't do anything if this pool doesn't involve us
@@ -679,26 +766,6 @@ int ProcessPool::twoBodyLoopEnd(int nItems)
 	}
 	
 	return -1;
-}
-
-// Return starting index for general loop
-int ProcessPool::interleavedLoopStart(ProcessPool::LoopContext loopContext)
-{
-	if (loopContext == ProcessPool::OverPoolProcesses) return poolRank_;
-	else if (loopContext == ProcessPool::OverGroupProcesses) return groupRank_;
-	else if (loopContext == ProcessPool::OverGroups) return groupIndex_;
-
-	return 0;
-}
-
-// Return stride for general loop
-int ProcessPool::interleavedLoopStride(ProcessPool::LoopContext loopContext)
-{
-	if (loopContext == ProcessPool::OverPoolProcesses) return worldRanks_.nItems();
-	else if (loopContext == ProcessPool::OverGroupProcesses) return nProcessesInGroup(groupIndex_);
-	else if (loopContext == ProcessPool::OverGroups) return processGroups_.nItems();
-
-	return 1;
 }
 
 /*
@@ -1460,7 +1527,7 @@ bool ProcessPool::sum(double* source, int count, int rootRank, ProcessPool::Comm
 #ifdef PARALLEL
 	timer_.start();
 	// If we are the target process then we need to construct a temporary buffer to store the received data in.
-	if ((commType == ProcessPool::Leaders) && (!groupLeader())) return true;
+	if ((commType == ProcessPool::GroupLeadersCommunicator) && (!groupLeader())) return true;
 	if (poolRank_ == rootRank)
 	{
 		double buffer[count];
@@ -1484,7 +1551,7 @@ bool ProcessPool::sum(int* source, int count, int rootRank, ProcessPool::Communi
 #ifdef PARALLEL
 	timer_.start();
 	// If we are the target process then we need to construct a temporary buffer to store the received data in.
-	if ((commType == ProcessPool::Leaders) && (!groupLeader())) return true;
+	if ((commType == ProcessPool::GroupLeadersCommunicator) && (!groupLeader())) return true;
 	if (poolRank_ == rootRank)
 	{
 		int buffer[count];
@@ -1508,7 +1575,7 @@ bool ProcessPool::allSum(double* source, int count, ProcessPool::CommunicatorTyp
 #ifdef PARALLEL
 	timer_.start();
 	double buffer[count];
-	if ((commType == ProcessPool::Leaders) && (!groupLeader())) return true;
+	if ((commType == ProcessPool::GroupLeadersCommunicator) && (!groupLeader())) return true;
 	if (MPI_Allreduce(source, &buffer, count, MPI_DOUBLE, MPI_SUM, communicator(commType)) != MPI_SUCCESS) return false;
 	// Put reduced data back into original buffer
 	for (int n=0; n<count; ++n) source[n] = buffer[n];
@@ -1523,10 +1590,68 @@ bool ProcessPool::allSum(int* source, int count, ProcessPool::CommunicatorType c
 #ifdef PARALLEL
 	timer_.start();
 	int buffer[count];
-	if ((commType == ProcessPool::Leaders) && (!groupLeader())) return true;
+	if ((commType == ProcessPool::GroupLeadersCommunicator) && (!groupLeader())) return true;
 	if (MPI_Allreduce(source, &buffer, count, MPI_INTEGER, MPI_SUM, communicator(commType)) != MPI_SUCCESS) return false;
 	// Put reduced data back into original buffer
 	for (int n=0; n<count; ++n) source[n] = buffer[n];
+	timer_.accumulate();
+#endif
+	return true;
+}
+
+// Reduce (sum) double data over processes relevant to specifeid strategy
+bool ProcessPool::allSum(double* source, int count, ProcessPool::DivisionStrategy strategy)
+{
+#ifdef PARALLEL
+	timer_.start();
+	if (strategy == ProcessPool::GroupsStrategy)
+	{
+		// Sum values from group leaders, then broadcast to other processes in their respective groups
+		if (!allSum(source, count, ProcessPool::GroupLeadersCommunicator)) return false;
+		return broadcast(source, count, 0, ProcessPool::GroupProcessesCommunicator);
+	}
+	else if (strategy == ProcessPool::GroupProcessesStrategy)
+	{
+		// Sum values over processes within group
+		return allSum(source, count, ProcessPool::GroupProcessesCommunicator);
+	}
+	else if (strategy == ProcessPool::PoolStrategy)
+	{
+		return allSum(source, count, ProcessPool::PoolProcessesCommunicator);
+	}
+	else if (strategy == ProcessPool::PoolProcessesStrategy)
+	{
+		// No need to perform any summation
+	}
+	timer_.accumulate();
+#endif
+	return true;
+}
+
+// Reduce (sum) int data over processes relevant to specified strategy
+bool ProcessPool::allSum(int* source, int count, ProcessPool::DivisionStrategy strategy)
+{
+#ifdef PARALLEL
+	timer_.start();
+	if (strategy == ProcessPool::GroupsStrategy)
+	{
+		// Sum values from group leaders, then broadcast to other processes in their respective groups
+		if (!allSum(source, count, ProcessPool::GroupLeadersCommunicator)) return false;
+		return broadcast(source, count, 0, ProcessPool::GroupProcessesCommunicator);
+	}
+	else if (strategy == ProcessPool::GroupProcessesStrategy)
+	{
+		// Sum values over processes within group
+		return allSum(source, count, ProcessPool::GroupProcessesCommunicator);
+	}
+	else if (strategy == ProcessPool::PoolStrategy)
+	{
+		return allSum(source, count, ProcessPool::PoolProcessesCommunicator);
+	}
+	else if (strategy == ProcessPool::PoolProcessesStrategy)
+	{
+		// No need to perform any summation
+	}
 	timer_.accumulate();
 #endif
 	return true;
@@ -1686,7 +1811,7 @@ bool ProcessPool::allTrue(bool value, ProcessPool::CommunicatorType commType)
 	// First, sum all bool values of the processes in the pool
 	int summedResult = (value ? 1 : 0);
 	if (!allSum(&summedResult, 1, commType)) return false;
-	if (commType == ProcessPool::Leaders) return (summedResult == groupLeaders_.nItems());
+	if (commType == ProcessPool::GroupLeadersCommunicator) return (summedResult == groupLeaders_.nItems());
 	else return (summedResult == nProcesses());
 #endif
 	return value;
@@ -1706,7 +1831,7 @@ bool ProcessPool::equality(bool b, ProcessPool::CommunicatorType commType)
 	// Now check the sum - if it's zero, then everything must have been 'false'.
 	// Otherwise, it must be equal to the relevant number of processes
 	if (summedResult == 0) return true;
-	else if (commType == ProcessPool::Leaders) return (summedResult == groupLeaders_.nItems());
+	else if (commType == ProcessPool::GroupLeadersCommunicator) return (summedResult == groupLeaders_.nItems());
 	else return (summedResult == nProcesses());
 #endif
 	return true;
@@ -1883,7 +2008,7 @@ void ProcessPool::refillRandomBuffer()
 	randomBufferIndex_ = 0;
 	
 	// Generate new random numbers in array
-	if (randomBufferCommGroup_ == ProcessPool::Pool)
+	if (randomBufferCommGroup_ == ProcessPool::PoolProcessesCommunicator)
 	{
 		// Master creates buffer and sends to slaves
 		Messenger::printVerbose("Random Buffer - Pool parallel, so master (%s) will create and send array.\n", isMaster() ? "me" : "not me");
@@ -1894,7 +2019,18 @@ void ProcessPool::refillRandomBuffer()
 		}
 		else broadcast(randomBuffer_, RANDBUFFERSIZE, 0, randomBufferCommGroup_);
 	}
-	else if (randomBufferCommGroup_ == ProcessPool::Group)
+	else if (randomBufferCommGroup_ == ProcessPool::GroupLeadersCommunicator)
+	{
+		// Master creates buffer and sends to slaves
+		Messenger::printVerbose("Random Buffer - Group leaders parallel, so master (%s) will create and send array.\n", isMaster() ? "me" : "not me");
+		if (isMaster())
+		{
+			for (int n=0; n<RANDBUFFERSIZE; ++n) randomBuffer_[n] = DUQMath::random();
+			broadcast(randomBuffer_, RANDBUFFERSIZE, 0, randomBufferCommGroup_);
+		}
+		else broadcast(randomBuffer_, RANDBUFFERSIZE, 0, randomBufferCommGroup_);
+	}
+	else if (randomBufferCommGroup_ == ProcessPool::GroupProcessesCommunicator)
 	{
 		// Group leader creates buffer and sends to slaves
 		Messenger::printVerbose("Random Buffer - Group parallel, so process leader (%s) will create and send array.\n", groupLeader() ? "me" : "not me");
@@ -1918,6 +2054,23 @@ void ProcessPool::refillRandomBuffer()
 void ProcessPool::initialiseRandomBuffer(ProcessPool::CommunicatorType commType)
 {
 	randomBufferCommGroup_ = commType;
+	refillRandomBuffer();
+}
+
+// Initialise random number buffer for processes
+void ProcessPool::initialiseRandomBuffer(ProcessPool::DivisionStrategy strategy)
+{
+	switch (strategy)
+	{
+		case (GroupsStrategy):
+			randomBufferCommGroup_ = ProcessPool::GroupLeadersCommunicator;
+		case (GroupProcessesStrategy):
+			randomBufferCommGroup_ = ProcessPool::GroupProcessesCommunicator;
+		case (PoolStrategy):
+			randomBufferCommGroup_ = ProcessPool::PoolProcessesCommunicator;
+		case (PoolProcessesStrategy):
+			randomBufferCommGroup_ = ProcessPool::NoCommunicator;
+	}
 	refillRandomBuffer();
 }
 

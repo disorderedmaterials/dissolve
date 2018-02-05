@@ -90,19 +90,19 @@ class EnergyKernel
 	 */
 	public:
 	// Return PairPotential energy between atoms provided (as pointers)
-	double energy(const Atom* i, const Atom* j, bool applyMim, bool excludeIgeJ = false);
+	double energy(const Atom* i, const Atom* j, bool applyMim, bool excludeIgeJ);
 	// Return PairPotential energy between two cells
-	double energy(Cell* cell, Cell* otherCell, bool applyMim, bool excludeIgeJ = false, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
+	double energy(Cell* cell, Cell* otherCell, bool applyMim, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy, bool performSum);
 	// Return PairPotential energy between Cell and its neighbours
-	double energy(Cell* cell, bool excludeIgeJ = false, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
+	double energy(Cell* cell, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy, bool performSum);
 	// Return PairPotential energy between Atom and Cell
-	double energy(const Atom* i, Cell* cell, int flags = KernelFlags::NoFlags, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
+	double energy(const Atom* i, Cell* cell, int flags, ProcessPool::DivisionStrategy strategy, bool performSum);
 	// Return PairPotential energy of atom with world
-	double energy(const Atom* i, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
+	double energy(const Atom* i, ProcessPool::DivisionStrategy strategy, bool performSum);
 	// Return PairPotential energy of grain with world
-	double energy(const Grain* grain, bool excludeIgtJ, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
+	double energy(const Grain* grain, bool excludeIgtJ, ProcessPool::DivisionStrategy strategy, bool performSum);
 	// Return PairPotential energy of Molecule with world
-	double energy(const Molecule* mol, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
+	double energy(const Molecule* mol, ProcessPool::DivisionStrategy strategy, bool performSum);
 	// Return molecular correction energy related to intramolecular terms involving supplied atom
 	double correct(const Atom* i);
 

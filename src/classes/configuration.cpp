@@ -248,7 +248,7 @@ bool Configuration::setUp(ProcessPool& procPool, double pairPotentialRange, int 
 	Messenger::print("--> Setting up Molecules...\n");
 
 	bool randomise = randomConfiguration_ && ((!useOutputCoordinatesAsInput_) || outputCoordinatesFile_.isEmpty() || (!DUQSys::fileExists(outputCoordinatesFile_)));
-	if (randomise) procPool.initialiseRandomBuffer(ProcessPool::Pool);
+	if (randomise) procPool.initialiseRandomBuffer(ProcessPool::PoolProcessesCommunicator);
 	Vec3<double> r, cog, newCentre, fr;
 	Matrix3 transform;
 

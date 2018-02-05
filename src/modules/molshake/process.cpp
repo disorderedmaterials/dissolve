@@ -26,6 +26,7 @@
 #include "classes/changestore.h"
 #include "classes/configuration.h"
 #include "classes/energykernel.h"
+#include "classes/moleculedistributor.h"
 #include "base/processpool.h"
 #include "base/timer.h"
 #include "templates/genericlisthelper.h"
@@ -85,12 +86,18 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		Messenger::print("MolShake: Step size for translation adjustments is %f Angstroms (allowed range is %f <= delta <= %f).\n", translationStepSize, translationStepSizeMin, translationStepSizeMax);
 		Messenger::print("MolShake: Step size for rotation adjustments is %f degrees (allowed range is %f <= delta <= %f).\n", rotationStepSize, rotationStepSizeMin, rotationStepSizeMax);
 
+		ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
+
+		// Create a Molecule distributor
+		DynamicArray<Molecule>& moleculeArray = cfg->molecules();
+		MoleculeDistributor distributor(moleculeArray, cfg->cells(), procPool, strategy, false);
+
 		// Create a local ChangeStore and EnergyKernel
 		ChangeStore changeStore(procPool);
 		EnergyKernel kernel(procPool, cfg, duq.potentialMap(), cutoffDistance);
 
 		// Initialise the random number buffer
-		procPool.initialiseRandomBuffer(ProcessPool::Pool);
+		procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
 
 		int shake, nRotationAttempts = 0, nTranslationAttempts = 0, nRotationsAccepted = 0, nTranslationsAccepted = 0, nGeneralAttempts = 0;
 		bool accept;
@@ -104,26 +111,44 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		 * a rotation, 10% using only translations, and 10% using only rotations.
 		 */
 
+		int molId;
+
 		// Set initial random offset for our counter determining whether to perform R+T, R, or T.
 		int count = procPool.random()*10;
-		bool rotate, translate;
+		bool rotate, translate, changesBroadcastRequired;
 
 		Timer timer;
 		procPool.resetAccumulatedTime();
-		for (int m = 0; m < cfg->nMolecules(); ++m)
+		while (molId = distributor.nextAvailableObject(changesBroadcastRequired), molId != Distributor::AllComplete)
 		{
+			// Upkeep - Do we need to broadcast changes before we begin the calculation?
+			if (changesBroadcastRequired)
+			{
+				changeStore.distributeAndApply(cfg);
+				changeStore.reset();
+			}
+
+			// Check for valid molecule
+			if (molId == Distributor::NoneAvailable)
+			{
+				distributor.finishedWithObject();
+				continue;
+			}
+
 			/*
 			 * Calculation Begins
 			 */
 
 			// Get Molecule pointer
-			Molecule* mol = cfg->molecule(m);
+			Molecule* mol = cfg->molecule(molId);
+
+			Messenger::printVerbose("MolShake: Molecule %i now the target on process %s and contains %i Atoms.\n", molId, procPool.processInfo(), mol->nAtoms());
 
 			// Set current atom targets in ChangeStore (entire cell contents)
 			changeStore.add(mol);
 
 			// Calculate reference energy for Molecule, including intramolecular terms
-			currentEnergy = kernel.energy(mol, ProcessPool::OverPoolProcesses);
+			currentEnergy = kernel.energy(mol, ProcessPool::subDivisionStrategy(strategy), true);
 
 			// Loop over number of shakes per atom
 			for (shake=0; shake<nShakesPerMolecule; ++shake)
@@ -160,11 +185,10 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 				}
 
 				// Calculate new energy
-				newEnergy = kernel.energy(mol, ProcessPool::OverPoolProcesses);
+				newEnergy = kernel.energy(mol, ProcessPool::subDivisionStrategy(strategy), true);
 				
 				// Trial the transformed atom position
 				delta = newEnergy - currentEnergy;
-// 				printf("delta = %f\n", delta);
 				accept = delta < 0 ? true : (procPool.random() < exp(-delta*rRT));
 
 				if (accept)
@@ -196,10 +220,23 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 			* Calculation End
 			*/
 
-			// Distribute coordinate changes to all processes
-			changeStore.distributeAndApply(cfg);
-			changeStore.reset();
+			// Tell the distributor we are done
+			distributor.finishedWithObject();
+
 		}
+
+		// Make sure any remaining changes are broadcast
+		changeStore.distributeAndApply(cfg);
+		changeStore.reset();
+
+		// Collect statistics across all processe
+		if (!procPool.allSum(&totalDelta, 1, strategy)) return false;
+		if (!procPool.allSum(&nGeneralAttempts, 1, strategy)) return false;
+		if (!procPool.allSum(&nTranslationAttempts, 1, strategy)) return false;
+		if (!procPool.allSum(&nTranslationsAccepted, 1, strategy)) return false;
+		if (!procPool.allSum(&nRotationAttempts, 1, strategy)) return false;
+		if (!procPool.allSum(&nRotationsAccepted, 1, strategy)) return false;
+
 		timer.stop();
 
 		Messenger::print("MolShake: Total energy delta was %10.4e kJ/mol.\n", totalDelta);
@@ -208,7 +245,6 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		double transRate = double(nTranslationsAccepted)/nTranslationAttempts;
 		double rotRate = double(nRotationsAccepted)/nRotationAttempts;
 		Messenger::print("MolShake: Total number of attempted moves was %i (%s work, %s comms)\n", nGeneralAttempts, timer.totalTimeString(), procPool.accumulatedTimeString());
-
 		Messenger::print("MolShake: Overall translation acceptance rate was %4.2f% (%i of %i attempted moves)\n", 100.0*transRate, nTranslationsAccepted, nTranslationAttempts);
 		Messenger::print("MolShake: Overall rotation acceptance rate was %4.2f% (%i of %i attempted moves)\n", 100.0*rotRate, nRotationsAccepted, nRotationAttempts);
 
@@ -228,7 +264,7 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		Messenger::print("MolShake: Updated step size for rotations is %f Angstroms.\n", rotationStepSize); 
 		GenericListHelper<double>::realise(moduleData, "RotationStepSize", uniqueName(), GenericItem::InRestartFileFlag) = rotationStepSize;
 
-		// Increment configuration changeCount_
+		// Increase coordinate index in Configuration
 		if ((nRotationsAccepted > 0) || (nTranslationsAccepted > 0)) cfg->incrementCoordinateIndex();
 	}
 

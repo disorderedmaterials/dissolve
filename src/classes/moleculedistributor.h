@@ -1,6 +1,6 @@
 /*
-	*** Cell Distributor
-	*** src/classes/celldistributor.h
+	*** Molecule Distributor
+	*** src/classes/moleculedistributor.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -19,30 +19,32 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_CELLDISTRIBUTOR_H
-#define DUQ_CELLDISTRIBUTOR_H
+#ifndef DUQ_MOLECULEDISTRIBUTOR_H
+#define DUQ_MOLECULEDISTRIBUTOR_H
 
 #include "classes/distributor.h"
+#include "classes/molecule.h"
+#include "templates/dynamicarray.h"
 
 // Forward Declarations
 /* none */
 
-// Cell Distributor
-class CellDistributor : public Distributor
+// Molecule Distributor
+class MoleculeDistributor : public Distributor
 {
 	public:
 	// Constructor
-	CellDistributor(const CellArray& cellArray, ProcessPool& procPool, ProcessPool::DivisionStrategy strategy, bool repeatsAllowed);
+	MoleculeDistributor(const DynamicArray<Molecule>& moleculeArray, const CellArray& cellArray, ProcessPool& procPool, ProcessPool::DivisionStrategy strategy, bool repeatsAllowed);
 	// Destructor
-	~CellDistributor();
+	~MoleculeDistributor();
 
 
 	/*
 	 * Data
 	 */
 	private:
-	// Source CellArray
-	const CellArray& cells_;
+	// Source Molecule Array
+	const DynamicArray<Molecule>& moleculeArray_;
 
 
 	/*

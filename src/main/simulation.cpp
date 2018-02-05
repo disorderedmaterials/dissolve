@@ -149,7 +149,7 @@ bool DUQ::iterate(int nIterations)
 
 		// Sync up all processes
 		Messenger::printVerbose("Waiting for other processes at end of pre-processing...\n");
-		worldPool_.wait(ProcessPool::Pool);
+		worldPool_.wait(ProcessPool::PoolProcessesCommunicator);
 
 
 		/*
@@ -194,7 +194,7 @@ bool DUQ::iterate(int nIterations)
 
 		// Sync up all processes
 		Messenger::printVerbose("Waiting for other processes at end of Configuration processing...\n");
-		worldPool_.wait(ProcessPool::Pool);
+		worldPool_.wait(ProcessPool::PoolProcessesCommunicator);
 
 
 		/*
@@ -213,7 +213,7 @@ bool DUQ::iterate(int nIterations)
 
 		// Sync up all processes
 		Messenger::printVerbose("Waiting for other processes at end of data reassembly...\n");
-		worldPool_.wait(ProcessPool::Pool);
+		worldPool_.wait(ProcessPool::PoolProcessesCommunicator);
 
 	
 		/*
@@ -238,7 +238,7 @@ bool DUQ::iterate(int nIterations)
 
 		// Sync up all processes
 		Messenger::printVerbose("Waiting for other processes at end of main processing...\n");
-		worldPool_.wait(ProcessPool::Pool);
+		worldPool_.wait(ProcessPool::PoolProcessesCommunicator);
 
 
 		/*
@@ -263,7 +263,7 @@ bool DUQ::iterate(int nIterations)
 
 		// Sync up all processes
 		Messenger::printVerbose("Waiting for other processes at end of post-processing...\n");
-		worldPool_.wait(ProcessPool::Pool);
+		worldPool_.wait(ProcessPool::PoolProcessesCommunicator);
 
 
 		/*
@@ -354,7 +354,7 @@ bool DUQ::iterate(int nIterations)
 
 		// Sync up all processes
 		Messenger::printVerbose("Waiting for other processes at end of data write section...\n");
-		worldPool_.wait(ProcessPool::Pool);
+		worldPool_.wait(ProcessPool::PoolProcessesCommunicator);
 
 
 		Messenger::banner("END OF MAIN LOOP ITERATION %10i         %s", iteration_, DUQSys::currentTimeAndDate());

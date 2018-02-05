@@ -48,9 +48,11 @@ double EnergyModule::intramolecularEnergy(ProcessPool& procPool, Configuration* 
 	angleEnergy = 0;
 	torsionEnergy = 0;
 
+	ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
+
 	// Set start/stride for parallel loop
-	int start = procPool.interleavedLoopStart(ProcessPool::OverPoolProcesses);
-	int stride = procPool.interleavedLoopStride(ProcessPool::OverPoolProcesses);
+	int start = procPool.interleavedLoopStart(strategy);
+	int stride = procPool.interleavedLoopStride(strategy);
 
 	// Loop over defined Bonds
 	Bond** bonds = cfg->bonds().array();
@@ -73,7 +75,7 @@ double EnergyModule::intramolecularEnergy(ProcessPool& procPool, Configuration* 
 	values[0] = bondEnergy;
 	values[1] = angleEnergy;
 	values[2] = torsionEnergy;
-	procPool.allSum(values, 3);
+	procPool.allSum(values, 3, strategy);
 	bondEnergy = values[0];
 	angleEnergy = values[1];
 	torsionEnergy = values[2];
@@ -104,9 +106,11 @@ double EnergyModule::interatomicEnergy(ProcessPool& procPool, Configuration* cfg
 	Cell* cell;
 	double totalEnergy = 0.0;
 
+	ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
+
 	// Set start/stride for parallel loop
-	int start = procPool.interleavedLoopStart(ProcessPool::OverGroups);
-	int stride = procPool.interleavedLoopStride(ProcessPool::OverGroups);
+	int start = procPool.interleavedLoopStart(strategy);
+	int stride = procPool.interleavedLoopStride(strategy);
 
 	for (int cellId = start; cellId<cellArray.nCells(); cellId += stride)
 	{
@@ -117,10 +121,10 @@ double EnergyModule::interatomicEnergy(ProcessPool& procPool, Configuration* cfg
 		 */
 
 		// This cell with itself
-		totalEnergy += kernel.energy(cell, cell, false, true, ProcessPool::OverGroupProcesses);
+		totalEnergy += kernel.energy(cell, cell, false, true, ProcessPool::subDivisionStrategy(strategy), false);
 
 		// Interatomic interactions between atoms in this cell and its neighbours
-		totalEnergy += kernel.energy(cell, true, ProcessPool::OverGroupProcesses);
+		totalEnergy += kernel.energy(cell, true, ProcessPool::subDivisionStrategy(strategy), false);
 
 		/*
 		 * Calculation End
@@ -131,7 +135,7 @@ double EnergyModule::interatomicEnergy(ProcessPool& procPool, Configuration* cfg
 	Messenger::printVerbose("Interatomic Energy (Local) is %15.9e\n", totalEnergy);
 
 	// Sum energy over all processes in the pool and print
-	procPool.allSum(&totalEnergy, 1);
+	procPool.allSum(&totalEnergy, 1, strategy);
 	Messenger::printVerbose("Interatomic Energy (World) is %15.9e\n", totalEnergy);
 
 	return totalEnergy;

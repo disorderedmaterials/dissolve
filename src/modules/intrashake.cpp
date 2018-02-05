@@ -48,7 +48,7 @@ bool DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 	EnergyKernel kernel(cfg, potentialMap_);
 
 	// Initialise the random number buffer
-	Comm.initialiseRandomBuffer(ProcessPool::Pool);
+	Comm.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
 
 	// Loop over Molecules
 	Comm.resetAccumulatedTime();
@@ -59,7 +59,7 @@ bool DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 		changeStore.add(mol);
 
 		// Calculate reference energy for the Molecule
-		currentEnergy = kernel.energy(mol, ProcessPool::Pool);
+		currentEnergy = kernel.energy(mol, ProcessPool::PoolProcessesCommunicator);
 
 		/*
 		// Bonds
@@ -98,7 +98,7 @@ bool DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 		}
 		
 		// Test energy again
-		newEnergy = kernel.energy(mol, ProcessPool::Pool);
+		newEnergy = kernel.energy(mol, ProcessPool::PoolProcessesCommunicator);
 		delta = newEnergy - currentEnergy;
 		
 		if ((delta < 0) || (Comm.random() < exp(-delta*rRT)))
@@ -160,7 +160,7 @@ bool DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 			}
 
 			// Test energy again
-			newEnergy = kernel.energy(mol, ProcessPool::Pool);
+			newEnergy = kernel.energy(mol, ProcessPool::PoolProcessesCommunicator);
 			delta = newEnergy - currentEnergy;
 			
 			if ((delta < 0) || (Comm.random() < exp(-delta*rRT)))
@@ -205,7 +205,7 @@ bool DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 	cfg.registerEnergyChange(totalDelta);
 	cfg.accumulateEnergyChange();
 
-	// Increment configuration changeCount_
+	// Increase coordinate index in Configuration
 	if (nAccepted > 0) cfg.incrementCoordinateIndex();
 
 	return true;
@@ -370,7 +370,7 @@ bool DUQ::interShake(Configuration& cfg)
 // 		Messenger::print("New steps = %f %f\n", translationStep_, rotationStep_);
 	}
 
-	// Increment configuration changeCount_
+	// Increase coordinate index in Configuration
 	if (nAccepted > 0) cfg.incrementCoordinateIndex();
 
 	return true;
@@ -562,7 +562,7 @@ bool DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 	cfg.registerEnergyChange(totalDelta);
 	cfg.accumulateEnergyChange();
 
-	// Increment configuration changeCount_
+	// Increase coordinate index in Configuration
 	if (nAccepted > 0) cfg.incrementCoordinateIndex();
 
 	return true;

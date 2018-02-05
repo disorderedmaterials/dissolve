@@ -228,8 +228,8 @@ bool PartialsModule::calculateGRSimple(ProcessPool& procPool, Configuration* cfg
 	double rbin = 1.0 / cfg->rdfBinWidth();
 
 	// Loop context is to use all processes in Pool as one group
-	int start = procPool.interleavedLoopStart(ProcessPool::OverPoolProcesses);
-	int stride = procPool.interleavedLoopStride(ProcessPool::OverPoolProcesses);
+	int start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
+	int stride = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
 
 	Messenger::printVerbose("Self terms..\n");
 	
@@ -299,8 +299,8 @@ bool PartialsModule::calculateGRCells(ProcessPool& procPool, Configuration* cfg,
 	CellArray& cellArray = cfg->cells();
 
 	// Loop context is to use all processes in Pool as one group
-	int start = procPool.interleavedLoopStart(ProcessPool::OverPoolProcesses);
-	int stride = procPool.interleavedLoopStride(ProcessPool::OverPoolProcesses);
+	int start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
+	int stride = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
 
 	for (n = start; n<cellArray.nCells(); n += stride)
 	{
@@ -517,8 +517,8 @@ bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration*
 	CellArray& cellArray = cfg->cells();
 
 	// Set start/stride for parallel loop (pool solo)
-	int start = (method == PartialsModule::TestMethod ? 0 : procPool.interleavedLoopStart(ProcessPool::OverPoolProcesses));
-	int stride = (method == PartialsModule::TestMethod ? 1 : procPool.interleavedLoopStride(ProcessPool::OverPoolProcesses));
+	int start = (method == PartialsModule::TestMethod ? 0 : procPool.interleavedLoopStart(ProcessPool::PoolStrategy));
+	int stride = (method == PartialsModule::TestMethod ? 1 : procPool.interleavedLoopStride(ProcessPool::PoolStrategy));
 
 	timer.start();
 

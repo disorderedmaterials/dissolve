@@ -90,17 +90,17 @@ class ForceKernel
 	 */
 	public:
 	// Calculate forces between atoms provided (as pointers)
-	void forces(const Atom* i, const Atom* j, bool applyMim, bool excludeIgeJ = false);
+	void forces(const Atom* i, const Atom* j, bool applyMim, bool excludeIgeJ);
 	// Calculate forces between two cells
-	void forces(Cell* cell, Cell* otherCell, bool applyMim, bool excludeIgeJ = false, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
+	void forces(Cell* cell, Cell* otherCell, bool applyMim, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy);
 	// Calculate forces between Cell and its neighbours
-	void forces(Cell* cell, bool excludeIgeJ = false, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
+	void forces(Cell* cell, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy);
 	// Calculate forces between Atom and Cell
-	void forces(const Atom* i, Cell* cell, int flags = KernelFlags::NoFlags, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
+	void forces(const Atom* i, Cell* cell, int flags, ProcessPool::DivisionStrategy strategy);
 	// Calculate forces between atom and world
-	void forces(const Atom* i, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
+	void forces(const Atom* i, ProcessPool::DivisionStrategy strategy);
 	// Calculate forces between grain and world
-	void forces(const Grain* grain, bool excludeIgtJ, ProcessPool::LoopContext loopContext = ProcessPool::Individual);
+	void forces(const Grain* grain, bool excludeIgtJ, ProcessPool::DivisionStrategy strategy);
 
 
 	/*

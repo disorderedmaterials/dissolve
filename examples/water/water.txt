@@ -99,12 +99,13 @@ EndData
 # 1) Perform whole-molecule MC
 Module MolShake
   Configuration  'Bulk'
+  Disabled
 EndModule
 
 # 2) Perform intramolecular shake of bonds and angles
 Module IntraShake
   Configuration  'Bulk'
-  Frequency  5
+  Frequency  1
 EndModule
 
 # 3) Calculate partials for the H2O sample

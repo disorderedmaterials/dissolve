@@ -40,8 +40,8 @@ void ForcesModule::intramolecularForces(ProcessPool& procPool, Configuration* cf
 	ForceKernel kernel(procPool, cfg, potentialMap, fx, fy, fz);
 
 	// Set start/stride for parallel loop
-	int start = procPool.interleavedLoopStart(ProcessPool::OverPoolProcesses);
-	int stride = procPool.interleavedLoopStride(ProcessPool::OverPoolProcesses);
+	int start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
+	int stride = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
 
 	// Loop over Bonds
 	Bond** bonds = cfg->bonds().array();
@@ -74,9 +74,11 @@ void ForcesModule::interatomicForces(ProcessPool& procPool, Configuration* cfg, 
 
 	Cell* cell;
 
+	ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
+
 	// Set start/stride for parallel loop
-	int start = procPool.interleavedLoopStart(ProcessPool::OverGroups);
-	int stride = procPool.interleavedLoopStride(ProcessPool::OverGroups);
+	int start = procPool.interleavedLoopStart(strategy);
+	int stride = procPool.interleavedLoopStride(strategy);
 
 	for (int cellId = start; cellId<cellArray.nCells(); cellId += stride)
 	{
@@ -87,10 +89,10 @@ void ForcesModule::interatomicForces(ProcessPool& procPool, Configuration* cfg, 
 		 */
 
 		// This cell with itself
-		kernel.forces(cell, cell, false, true, ProcessPool::OverGroupProcesses);
+		kernel.forces(cell, cell, false, true, ProcessPool::subDivisionStrategy(strategy));
 
 		// Interatomic interactions between atoms in this cell and its neighbours
-		kernel.forces(cell, true, ProcessPool::OverGroupProcesses);
+		kernel.forces(cell, true, ProcessPool::subDivisionStrategy(strategy));
 
 		/*
 		 * Calculation End

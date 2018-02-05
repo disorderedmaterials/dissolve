@@ -24,6 +24,7 @@
 #include "classes/changestore.h"
 #include "classes/energykernel.h"
 #include "classes/box.h"
+#include "classes/moleculedistributor.h"
 #include "base/sysfunc.h"
 #include "templates/genericlisthelper.h"
 
@@ -90,16 +91,22 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		Messenger::print("IntraShake: Target acceptance rate is %f.\n", targetAcceptanceRate);
 		if (termEnergyOnly) Messenger::print("IntraShake: Only term energy will be considered (interatomic contributions with the system will be excluded).\n");
 
+		ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
+
+		// Create a Molecule distributor
+		DynamicArray<Molecule>& moleculeArray = cfg->molecules();
+		MoleculeDistributor distributor(moleculeArray, cfg->cells(), procPool, strategy, false);
+
 		// Create a local ChangeStore and EnergyKernel
 		ChangeStore changeStore(procPool);
 		EnergyKernel kernel(procPool, cfg, duq.potentialMap(), cutoffDistance);
 
 		// Initialise the random number buffer
-		procPool.initialiseRandomBuffer(ProcessPool::Pool);
+		procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
 
 		int shake, nBondAttempts = 0, nAngleAttempts = 0, nTorsionAttempts = 0, nBondAccepted = 0, nAngleAccepted = 0, nTorsionAccepted = 0;
-		int terminus;
-		bool accept;
+		int molId, terminus;
+		bool accept, changesBroadcastRequired;
 		double ppEnergy, newPPEnergy, intraEnergy, newIntraEnergy, delta, totalDelta = 0.0;
 		Vec3<double> vji, vjk, v;
 		Matrix3 transform;
@@ -107,20 +114,34 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 
 		Timer timer;
 		procPool.resetAccumulatedTime();
-		for (int m = 0; m<cfg->nMolecules(); ++m)
+		while (molId = distributor.nextAvailableObject(changesBroadcastRequired), molId != Distributor::AllComplete)
 		{
+			// Upkeep - Do we need to broadcast changes before we begin the calculation?
+			if (changesBroadcastRequired)
+			{
+				changeStore.distributeAndApply(cfg);
+				changeStore.reset();
+			}
+
+			// Check for valid molecule
+			if (molId == Distributor::NoneAvailable)
+			{
+				distributor.finishedWithObject();
+				continue;
+			}
+
 			/*
 			 * Calculation Begins
 			 */
 
 			// Get Molecule pointer
-			Molecule* mol = cfg->molecule(m);
+			Molecule* mol = cfg->molecule(molId);
 
 			// Set current atom targets in ChangeStore (entire cell contents)
 			changeStore.add(mol);
 
 			// Calculate reference pairpotential energy for Molecule
-			ppEnergy = termEnergyOnly ? 0.0 : kernel.energy(mol, ProcessPool::OverPoolProcesses);
+			ppEnergy = termEnergyOnly ? 0.0 : kernel.energy(mol, ProcessPool::subDivisionStrategy(strategy), true);
 
 			// Loop over defined Bonds
 			if (adjustBonds) for (int n=0; n<mol->nBonds(); ++n)
@@ -146,7 +167,7 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 					mol->translate(vji, b->nAttached(terminus), b->attached(terminus));
 
 					// Calculate new energy
-					newPPEnergy = termEnergyOnly ? 0.0 : kernel.energy(mol, ProcessPool::OverPoolProcesses);
+					newPPEnergy = termEnergyOnly ? 0.0 : kernel.energy(mol, ProcessPool::subDivisionStrategy(strategy), true);
 					newIntraEnergy = kernel.energy(b);
 					
 					// Trial the transformed Molecule
@@ -195,7 +216,7 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 					mol->transform(box, transform, a->j()->r(), a->nAttached(terminus), a->attached(terminus));
 
 					// Calculate new energy
-					newPPEnergy = termEnergyOnly ? 0.0 : kernel.energy(mol, ProcessPool::OverPoolProcesses);
+					newPPEnergy = termEnergyOnly ? 0.0 : kernel.energy(mol, ProcessPool::subDivisionStrategy(strategy), true);
 					newIntraEnergy = kernel.energy(a);
 					
 					// Trial the transformed Molecule
@@ -242,7 +263,7 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 					mol->transform(box, transform, terminus == 0 ? t->j()->r() : t->k()->r(), t->nAttached(terminus), t->attached(terminus));
 
 					// Calculate new energy
-					newPPEnergy = termEnergyOnly ? 0.0 : kernel.energy(mol, ProcessPool::OverPoolProcesses);
+					newPPEnergy = termEnergyOnly ? 0.0 : kernel.energy(mol, ProcessPool::subDivisionStrategy(strategy), true);
 					newIntraEnergy = kernel.energy(t);
 					
 					// Trial the transformed Molecule
@@ -271,11 +292,23 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 			* Calculation End
 			*/
 
-			// Distribute coordinate changes to all processes
-			changeStore.distributeAndApply(cfg);
-			changeStore.reset();
+			// Tell the distributor we are done
+			distributor.finishedWithObject();
 		}
 		timer.stop();
+
+		// Make sure any remaining changes are broadcast
+		changeStore.distributeAndApply(cfg);
+		changeStore.reset();
+
+		// Collect statistics across all processe
+		if (!procPool.allSum(&totalDelta, 1, strategy)) return false;
+		if (!procPool.allSum(&nBondAttempts, 1, strategy)) return false;
+		if (!procPool.allSum(&nBondAccepted, 1, strategy)) return false;
+		if (!procPool.allSum(&nAngleAttempts, 1, strategy)) return false;
+		if (!procPool.allSum(&nAngleAccepted, 1, strategy)) return false;
+		if (!procPool.allSum(&nTorsionAttempts, 1, strategy)) return false;
+		if (!procPool.allSum(&nTorsionAccepted, 1, strategy)) return false;
 
 		Messenger::print("IntraShake: Total energy delta was %10.4e kJ/mol.\n", totalDelta);
 		Messenger::print("IntraShake: Total number of attempted moves was %i (%s work, %s comms).\n", nBondAttempts+nAngleAttempts+nTorsionAttempts, timer.totalTimeString(), procPool.accumulatedTimeString());
@@ -320,7 +353,7 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 			GenericListHelper<double>::realise(moduleData, "TorsionStepSize", uniqueName(), GenericItem::InRestartFileFlag) = torsionStepSize;
 		}
 
-		// Increment configuration changeCount_
+		// Increase coordinate index in Configuration
 		if ((nBondAccepted > 0) || (nAngleAccepted > 0) || (nTorsionAccepted > 0)) cfg->incrementCoordinateIndex();
 	}
 

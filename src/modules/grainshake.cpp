@@ -248,7 +248,7 @@ bool GrainShakeModule::execute(DUQ& duq)
 	cfg->registerEnergyChange(totalDelta);
 	cfg->accumulateEnergyChange();
 
-	// Increment configuration changeCount_
+	// Increase coordinate index in Configuration
 	if (nAccepted > 0) cfg->incrementCoordinateIndex();
 
 	return true;
