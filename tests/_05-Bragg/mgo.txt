@@ -26,7 +26,7 @@ Configuration  'Box'
     Isotopologue  'Box'  'O'  'Natural'  1.0
     Frequency  1
     StructureFactor  on
-    QBroadening  QDependentGaussian  0.02
+    QBroadening  OmegaDependentGaussian  0.02
     Weights  Neutron
     Bragg  On
     #QDelta 0.001
@@ -51,6 +51,9 @@ Configuration  'Box'
   EndModule
 EndConfiguration
 
+Module SanityCheck
+EndModule
+
 # Pair Potentials
 PairPotentials
   Range  10.000000
@@ -61,6 +64,6 @@ EndPairPotentials
 
 Simulation
   MaxIterations  1
-  WriteIterationData  false
+  WriteFrequency  -1
 EndSimulation
 

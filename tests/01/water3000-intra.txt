@@ -38,6 +38,9 @@ Configuration  'Bulk'
   EndModule
 EndConfiguration
 
+Module SanityCheck
+EndModule
+
 # Pair Potentials
 PairPotentials
   Range  15.000000
@@ -52,5 +55,5 @@ EndPairPotentials
 
 Simulation
   MaxIterations  1
-  WriteIterationData  false
+  WriteFrequency  -1
 EndSimulation

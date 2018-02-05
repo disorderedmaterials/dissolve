@@ -23,9 +23,13 @@ Module Partials
   Isotopologue  'liquid'  'Argon'  'Ar36'  1.0
   StructureFactor  on
   QBroadening  Gaussian  0.1
+  WindowFunction  None
   Frequency  1
   Test  On
   TestReference  'epsr_qindep0.1/argon.EPSR.u01'  SQ-weighted-total  1  2
+EndModule
+
+Module SanityCheck
 EndModule
 
 PairPotentials
@@ -34,5 +38,5 @@ EndPairPotentials
 
 Simulation
   MaxIterations 1
-  WriteIterationData  False
+  WriteFrequency  -1
 EndSimulation

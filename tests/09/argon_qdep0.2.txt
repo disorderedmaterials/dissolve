@@ -22,11 +22,15 @@ Module Partials
   Weights  neutron
   Isotopologue  'liquid'  'Argon'  'Ar36'  1.0
   StructureFactor  on
-  QBroadening  QDependentGaussian  0.2
+  QBroadening  OmegaDependentGaussian  0.2
+  WindowFunction  None
   Frequency  1
   TestThreshold  0.03
   Test  On
   TestReference  'epsr_qdep0.2/argon.EPSR.u01'  SQ-weighted-total  1  2
+EndModule
+
+Module SanityCheck
 EndModule
 
 PairPotentials
@@ -35,5 +39,5 @@ EndPairPotentials
 
 Simulation
   MaxIterations 1
-  WriteIterationData  False
+  WriteFrequency  -1
 EndSimulation

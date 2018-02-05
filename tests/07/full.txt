@@ -153,6 +153,9 @@ Module Forces
   TestThreshold  0.1
 EndModule
 
+Module SanityCheck
+EndModule
+
 # Pair Potentials
 PairPotentials
   Range  12.000000
@@ -167,6 +170,6 @@ EndPairPotentials
 
 Simulation
   MaxIterations  1
-  WriteIterationData  false
+  WriteFrequency  -1
 EndSimulation
 

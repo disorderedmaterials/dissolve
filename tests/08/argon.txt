@@ -91,6 +91,9 @@ Configuration 'liquid'
   EndModule
 EndConfiguration
 
+Module SanityCheck
+EndModule
+
 # Pair Potentials
 PairPotentials
   Generate  'LJ'  'Ar'  'Ar'
@@ -99,6 +102,6 @@ EndPairPotentials
 Simulation
   MaxIterations 1
   Seed  123456789
-  WriteIterationData  False
+  WriteFrequency  -1
 EndSimulation
 

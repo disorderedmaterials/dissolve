@@ -126,7 +126,8 @@ Configuration  'Mix'
     # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
     AllIntra  true
     QMin 0.05
-    QBroadening  QDependentGaussian  0.02    # For SLS
+    QBroadening  OmegaDependentGaussian  0.02    # For SLS
+    WindowFunction  None
     Weights  neutron
     Isotopologue  'Mix'  'Water'  'Protiated'  1.0
     Isotopologue  'Mix'  'Methanol'  'Protiated'  1.0
@@ -194,7 +195,8 @@ Configuration  'Mix'
     # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
     AllIntra  true
     QMin 0.05
-    QBroadening  QDependentGaussian  0.02    # For SLS
+    QBroadening  OmegaDependentGaussian  0.02    # For SLS
+    WindowFunction  None
     Weights  neutron
     Isotopologue  'Mix'  'Water'  'Protiated'  1.0
     Isotopologue  'Mix'  'Methanol'  'Protiated'  0.5
@@ -216,7 +218,8 @@ Configuration  'Mix'
     # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
     AllIntra  true
     QMin 0.05
-    QBroadening  QDependentGaussian  0.02    # For SLS
+    QBroadening  OmegaDependentGaussian  0.02    # For SLS
+    WindowFunction  None
     Weights  neutron
     Isotopologue  'Mix'  'Water'  'Deuteriated'  1.0
     Isotopologue  'Mix'  'Methanol'  'Protiated'  1.0
@@ -237,7 +240,8 @@ Configuration  'Mix'
     # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
     AllIntra  true
     QMin 0.05
-    QBroadening  QDependentGaussian  0.02    # For SLS
+    QBroadening  OmegaDependentGaussian  0.02    # For SLS
+    WindowFunction  None
     Weights  neutron
     Isotopologue  'Mix'  'Water'  'Protiated'  1.0
     Isotopologue  'Mix'  'Methanol'  'OD-MethylH'  1.0
@@ -258,7 +262,8 @@ Configuration  'Mix'
     # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
     AllIntra  true
     QMin 0.05
-    QBroadening  QDependentGaussian  0.02    # For SLS
+    QBroadening  OmegaDependentGaussian  0.02    # For SLS
+    WindowFunction  None
     Weights  neutron
     Isotopologue  'Mix'  'Water'  'Protiated'  1.0
     Isotopologue  'Mix'  'Methanol'  'MethylD-OH'  1.0
@@ -279,7 +284,8 @@ Configuration  'Mix'
     # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
     AllIntra  true
     QMin 0.05
-    QBroadening  QDependentGaussian  0.02    # For SLS
+    QBroadening  OmegaDependentGaussian  0.02    # For SLS
+    WindowFunction  None
     Weights  neutron
     Isotopologue  'Mix'  'Water'  'Deuteriated'  1.0
     Isotopologue  'Mix'  'Methanol'  'OD-MethylH'  1.0
@@ -300,7 +306,8 @@ Configuration  'Mix'
     # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
     AllIntra  true
     QMin 0.05
-    QBroadening  QDependentGaussian  0.02    # For SLS
+    QBroadening  OmegaDependentGaussian  0.02    # For SLS
+    WindowFunction  None
     Weights  neutron
     Isotopologue  'Mix'  'Water'  'Protiated'  1.0
     Isotopologue  'Mix'  'Methanol'  'Deuteriated'  1.0
@@ -321,7 +328,8 @@ Configuration  'Mix'
     # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
     AllIntra  true
     QMin 0.05
-    QBroadening  QDependentGaussian  0.02    # For SLS
+    QBroadening  OmegaDependentGaussian  0.02    # For SLS
+    WindowFunction  None
     Weights  neutron
     Isotopologue  'Mix'  'Water'  'Deuteriated'  1.0
     Isotopologue  'Mix'  'Methanol'  'Deuteriated'  1.0
@@ -338,6 +346,9 @@ Configuration  'Mix'
   EndModule
 EndConfiguration
 
+Module SanityCheck
+EndModule
+
 # Pair Potentials
 PairPotentials
   Range  15.000000
@@ -348,6 +359,6 @@ EndPairPotentials
 
 Simulation
   MaxIterations  1
-  WriteIterationData  false
+  WriteFrequency  -1
 EndSimulation
 

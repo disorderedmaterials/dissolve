@@ -51,7 +51,8 @@ EndModule
 Module Partials 'D2O'
   StructureFactor  on
   QMin 0.05
-  QBroadening  QDependentGaussian  0.02    # For SLS
+  QBroadening  OmegaDependentGaussian  0.02    # For SLS
+  WindowFunction  None
   Configuration  'Bulk'
   Weights  neutron
   Isotopologue  'Bulk'  'Water'  'Deuteriated'  1.0
@@ -73,7 +74,8 @@ EndModule
 Module Partials 'H2O'
   StructureFactor  on
   QMin 0.05
-  QBroadening  QDependentGaussian  0.02    # For SLS
+  QBroadening  OmegaDependentGaussian  0.02    # For SLS
+  WindowFunction  None
   Configuration  'Bulk'
   Weights  neutron
   Isotopologue  'Bulk'  'Water'  'Protiated'  1.0
@@ -88,7 +90,8 @@ EndModule
 Module Partials 'HDO'
   StructureFactor  on
   QMin 0.05
-  QBroadening  QDependentGaussian  0.02    # For SLS
+  QBroadening  OmegaDependentGaussian  0.02    # For SLS
+  WindowFunction  None
   Configuration  'Bulk'
   Weights  neutron
   Isotopologue  'Bulk'  'Water'  'Protiated'  0.5
@@ -100,6 +103,9 @@ Module Partials 'HDO'
   Test  on
   # -- Total neutron-weighted S(Q)
   TestReference  'epsr/water.EPSR.u01'  SQ-weighted-total  1  6
+EndModule
+
+Module SanityCheck
 EndModule
 
 # Pair Potentials
@@ -114,6 +120,6 @@ EndPairPotentials
 
 Simulation
    MaxIterations  1
-   WriteIterationData  false
+   WriteFrequency  -1
 EndSimulation
 
