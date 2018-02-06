@@ -46,7 +46,7 @@ BroadeningFunction::~BroadeningFunction()
 {
 }
 
-const char* BroadeningFunctionKeywords[] = { "Unity", "Gaussian", "OmegaDependentGaussian", "GaussianC2" };
+const char* BroadeningFunctionKeywords[] = { "Unity", "Gaussian", "ScaledGaussian", "OmegaDependentGaussian", "GaussianC2" };
 int BroadeningFunctionNParameters[] = { 0, 1, 1, 2 };
 
 // Return FunctionType from supplied string
@@ -78,6 +78,9 @@ const char* BroadeningFunction::functionDescription(FunctionType func)
 			break;
 		case (BroadeningFunction::GaussianFunction):
 			return "Gaussian (no prefactor, unnormalised)";
+			break;
+		case (BroadeningFunction::ScaledGaussianFunction):
+			return "Gaussian with prefactor";
 			break;
 		case (BroadeningFunction::OmegaDependentGaussianFunction):
 			return "Gaussian (no prefactor, unnormalised, omega dependent FWHM)";
@@ -139,6 +142,12 @@ bool BroadeningFunction::set(LineParser& parser, int startArg)
 			// FWHM
 			parameters_[0] = parser.argd(startArg+1);
 			break;
+		case (BroadeningFunction::ScaledGaussianFunction):
+			// Prefactor A
+			parameters_[0] = parser.argd(startArg+1);
+			// FWHM
+			parameters_[1] = parser.argd(startArg+2);
+			break;
 		case (BroadeningFunction::GaussianC2Function):
 			// FWHM1
 			parameters_[0] = parser.argd(startArg+1);
@@ -169,6 +178,14 @@ void BroadeningFunction::setUpDependentParameters()
 			// 1/c
 			parameters_[2] = 1.0 / parameters_[1];
 			break;
+		case (BroadeningFunction::ScaledGaussianFunction):
+			// parameters_[0] = A
+			// parameters_[1] = FWHM
+			// c (calculated from FWHM)
+			parameters_[2] = parameters_[1] / (2.0 * sqrt(2.0 * log(2.0)));
+			// 1/c
+			parameters_[3] = 1.0 / parameters_[2];
+			break;
 		case (BroadeningFunction::GaussianC2Function):
 			// parameters_[0] = FWHM1
 			// parameters_[1] = FWHM2
@@ -192,6 +209,12 @@ BroadeningFunction::FunctionType BroadeningFunction::function() const
 	return function_;
 }
 
+// Return specified parameter
+double BroadeningFunction::parameter(int index) const
+{
+	return parameters_[index];
+}
+
 // Return short summary of function parameters
 CharString BroadeningFunction::parameterSummary() const
 {
@@ -203,6 +226,9 @@ CharString BroadeningFunction::parameterSummary() const
 		case (BroadeningFunction::GaussianFunction):
 		case (BroadeningFunction::OmegaDependentGaussianFunction):
 			return CharString("FWHM=%f", parameters_[0]);
+			break;
+		case (BroadeningFunction::ScaledGaussianFunction):
+			return CharString("A=%f, FWHM=%f", parameters_[0], parameters_[1]);
 			break;
 		case (BroadeningFunction::GaussianC2Function):
 			return CharString("FWHM1=%f, FWHM2=%f", parameters_[0], parameters_[1]);
@@ -255,6 +281,21 @@ double BroadeningFunction::yActual(double x, double omega) const
 			 */
 			return exp(-(0.5 * x*x * parameters_[2]*parameters_[2]));
 			break;
+		case (BroadeningFunction::ScaledGaussianFunction):
+			/*
+			 * Gaussian with prefactor, centred at zero
+			 * 
+			 * Parameters:  0 = A, prefactor
+			 * 		1 = FWHM
+			 * 		2 = c     	(precalculated from FWHM)
+			 * 		3 = 1.0 / c
+			 * 
+			 * 	        (     x * x   ) 		    FWHM
+			 * f(x) = A exp ( - --------- )      where c = --------------
+			 * 	        (   2 * c * c )		       2 sqrt(2 ln 2) 
+			 */
+			return parameters_[0] * exp(-(0.5 * x*x * parameters_[3]*parameters_[3]));
+			break;
 		case (BroadeningFunction::OmegaDependentGaussianFunction):
 			/*
 			 * Unnormalised Gaussian with no prefactor, centred at zero, with variable FWHM
@@ -267,8 +308,6 @@ double BroadeningFunction::yActual(double x, double omega) const
 			 * f(x) = exp ( - ---------------- )      where c = --------------
 			 * 	      (   2 * (c*omega)**2 )		    2 sqrt(2 ln 2) 
 			 */
-// 			return exp(-(0.5 * x*x * (parameters_[2]*omega) * (parameters_[2]*omega)));
-// printf("Returning (%f,%f)=%f\n", x, omega, exp(-(x*x)/(2.0*(parameters_[1]*omega)*(parameters_[1]*omega))));
 			return exp(-(x*x)/(2.0*(parameters_[1]*omega)*(parameters_[1]*omega)));
 			break;
 		case (BroadeningFunction::GaussianC2Function):
@@ -312,11 +351,26 @@ double BroadeningFunction::yFTActual(double x, double omega) const
 			 * 		1 = c     	(precalculated from FWHM)
 			 * 		2 = 1.0 / c
 			 * 
-			 * 	      (   a * a * c * c ) 		      FWHM
+			 * 	      (   x * x * c * c ) 		      FWHM
 			 * f(x) = exp ( - ------------- )      where c = --------------
 			 * 	      (         2       )	         2 sqrt(2 ln 2) 
 			 */
 			return exp(-(0.5 * x*x * parameters_[1]*parameters_[1]));
+			break;
+		case (BroadeningFunction::ScaledGaussianFunction):
+			/*
+			 * Gaussian with prefactor, centred at zero
+			 * 
+			 * Parameters:  0 = A, prefactor
+			 * 		1 = FWHM
+			 * 		2 = c     	(precalculated from FWHM)
+			 * 		3 = 1.0 / c
+			 * 
+			 * 	        (   x * x * c * c ) 		        FWHM
+			 * f(x) = A exp ( - ------------- )      where c = --------------
+			 * 	        (	  2	  )		   2 sqrt(2 ln 2) 
+			 */
+			return parameters_[0] * exp(-(0.5 * x*x * parameters_[2]*parameters_[2]));
 			break;
 		case (BroadeningFunction::OmegaDependentGaussianFunction):
 			/*

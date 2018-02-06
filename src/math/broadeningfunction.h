@@ -36,7 +36,7 @@ class BroadeningFunction : public GenericItemBase
 {
 	public:
 	// Function Types
-	enum FunctionType { UnityFunction, GaussianFunction, OmegaDependentGaussianFunction, GaussianC2Function, nFunctionTypes };
+	enum FunctionType { UnityFunction, GaussianFunction, ScaledGaussianFunction, OmegaDependentGaussianFunction, GaussianC2Function, nFunctionTypes };
 	// Return FunctionType from supplied string
 	static FunctionType functionType(const char* s);
 	// Return FunctionType name
@@ -77,6 +77,8 @@ class BroadeningFunction : public GenericItemBase
 	bool set(LineParser& parser, int startArg);
 	// Return function type
 	FunctionType function() const;
+	// Return specified parameter
+	double parameter(int index) const;
 	// Return short summary of function parameters
 	CharString parameterSummary() const;
 	// Set inversion state
