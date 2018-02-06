@@ -169,10 +169,8 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	double absIntegral();
 	// Apply median filter to data
 	void medianFilter(int length);
-	// Convolute this data with the supplied data
-	bool convolute(XYData& data);
-	// Convolute this data with the supplied data, by products
-	bool convoluteProduct(XYData& data);
+	// Perform point-wise convolution of this data with the supplied BroadeningFunction
+	bool convolute(BroadeningFunction function);
 	// Trim data to X-range specified
 	void trim(double minX, double maxX);
 	// Rebin data onto uniform x axis

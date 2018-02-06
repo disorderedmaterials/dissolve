@@ -644,34 +644,27 @@ void XYData::medianFilter(int length)
 	y_ = newY;
 }
 
-// Convolute this data with the supplied data
-bool XYData::convolute(XYData& data)
+// Perform point-wise convolution of this data with the supplied BroadeningFunction
+bool XYData::convolute(BroadeningFunction function)
 {
-	Messenger::error("Point-wise convolution of XYData sets is not yet implemented.\n");
-	return false;
-}
+	Array<double> newY(y_.nItems());
 
-// Convolute this data with the supplied data, by products
-bool XYData::convoluteProduct(XYData& data)
-{
-	// Check compatibility of datasets
-	if (data.nPoints() != nPoints())
+	// Outer loop over existing data points
+	double xCentre, xBroad;
+	for (int n=0; n<x_.nItems(); ++n)
 	{
-		Messenger::error("Refusing to convolute by product two datasets of different sizes.\n");
-		return false;
-	}
-	for (int n=0; n<nPoints(); ++n)
-	{
-		if (fabs(data.x(n) - x_[n]) > 1.0e-5)
+		// Grab current x value as our current xCentre
+		xCentre = x_[n];
+
+		// Inner loop over new values array
+		for (int m=0; m<x_.nItems(); ++m)
 		{
-			Messenger::error("Refusing to convolute by product two datasets with different x-values.\n");
-			return false;
+			xBroad = x_[m] - xCentre;
+			newY[m] += y_[n] * function.y(xBroad, 0.0);
 		}
 	}
 
-	// Ready to go...
-	for (int n=0; n<nPoints(); ++n) y_[n] *= data.y(n);
-	
+	y_ = newY;
 	return true;
 }
 
