@@ -21,10 +21,10 @@
 #------------------------#
 
 Master
-#  Bond   OH   Harmonic  4431.53  1.0		# SPC/Fw
-  Bond   OH   EPSR  65.0  0.975 		# EPSR
-# Angle  HOH  Harmonic  317.5656 113.24		# SPC/Fw
-  Angle  HOH  Harmonic  150.5656 104.0		# Optimal
+  Bond   OH   Harmonic  4431.53  1.0		# SPC/Fw
+# Bond   OH   Harmonic  4431.53  0.975 		# Optimal
+  Angle  HOH  Harmonic  317.5656 113.24		# SPC/Fw
+# Angle  HOH  Harmonic  150.5656 104.0		# Optimal
 EndMaster
 
 #------------------------#
@@ -99,13 +99,12 @@ EndData
 # 1) Perform whole-molecule MC
 Module MolShake
   Configuration  'Bulk'
-  Disabled
 EndModule
 
 # 2) Perform intramolecular shake of bonds and angles
 Module IntraShake
   Configuration  'Bulk'
-  Frequency  1
+  Frequency  5
 EndModule
 
 # 3) Calculate partials for the H2O sample
