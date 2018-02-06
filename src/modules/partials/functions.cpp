@@ -465,7 +465,7 @@ bool PartialsModule::performGRAveraging(GenericList& moduleData, const char* nam
  */
 
 // Calculate unweighted partials for the specified Configuration
-bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg, PartialsModule::PartialsMethod method, bool allIntra, int smoothing, bool& alreadyUpToDate)
+bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration* cfg, PartialsModule::PartialsMethod method, bool allIntra, int smoothing, BroadeningFunction intraBroadening, bool& alreadyUpToDate)
 {
 	// Does a PartialSet already exist for this Configuration?
 	bool wasCreated;
@@ -613,6 +613,25 @@ bool PartialsModule::calculateUnweightedGR(ProcessPool& procPool, Configuration*
 	// Transform histogram data into radial distribution functions
 	XYData boxNorm = cfg->boxNormalisation();
 	partialgr.formPartials(box->volume(), boxNorm);
+
+	// Broaden bound partials?
+	if (intraBroadening.function() != BroadeningFunction::NoFunction)
+	{
+		for (typeI=0; typeI<partialgr.nAtomTypes(); ++typeI)
+		{
+			for (typeJ=typeI; typeJ<partialgr.nAtomTypes(); ++typeJ)
+			{
+				// Remove bound part from full partial
+				partialgr.partial(typeI, typeJ).addInterpolated(partialgr.boundPartial(typeI, typeJ), -1.0);
+
+				// Convolute the bound partial with the broadening function
+				partialgr.boundPartial(typeI, typeJ).convolute(intraBroadening);
+
+				// Add the broadened bound partial back into the full partial array
+				partialgr.partial(typeI, typeJ).addInterpolated(partialgr.boundPartial(typeI, typeJ), 1.0);
+			}
+		}
+	}
 
 	// Smooth partials if requested
 	if (smoothing > 0)

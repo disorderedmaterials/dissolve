@@ -63,7 +63,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		return false;
 	}
 	const bool braggOn = keywords_.asBool("Bragg");
-	const BroadeningFunction& qBroadening = KeywordListHelper<BroadeningFunction>::retrieve(keywords_, "QBroadening", BroadeningFunction());
+	const BroadeningFunction& intraBroadening = KeywordListHelper<BroadeningFunction>::retrieve(keywords_, "IntraBroadening", BroadeningFunction());
 	PartialsModule::PartialsMethod method = PartialsModule::partialsMethod(keywords_.asString("Method"));
 	if (method == PartialsModule::nPartialsMethods)
 	{
@@ -76,6 +76,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 	{
 		Messenger::error("Partials: Invalid normalisation type '%s' found.\n", keywords_.asString("Normalisation"));
 	}
+	const BroadeningFunction& qBroadening = KeywordListHelper<BroadeningFunction>::retrieve(keywords_, "QBroadening", BroadeningFunction());
 	const double qDelta = keywords_.asDouble("QDelta");
 	const double qMin = keywords_.asDouble("QMin");
 	double qMax = keywords_.asDouble("QMax");
@@ -136,7 +137,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 
 		// Calculate unweighted partials for this Configuration (under generic Module name 'Partials', rather than the uniqueName_)
 		bool alreadyUpToDate;
-		calculateUnweightedGR(procPool, cfg, method, allIntra, smoothing, alreadyUpToDate);
+		calculateUnweightedGR(procPool, cfg, method, allIntra, smoothing, intraBroadening, alreadyUpToDate);
 		PartialSet& unweightedgr = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedGR", "Partials");
 
 		// Set names of resources (XYData) within the PartialSet
@@ -156,7 +157,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		{
 			// Copy the already-calculated g(r), then calculate a new set using the Test method
 			PartialSet referencePartials = unweightedgr;
-			calculateUnweightedGR(procPool, cfg, PartialsModule::TestMethod, allIntra, smoothing, alreadyUpToDate);
+			calculateUnweightedGR(procPool, cfg, PartialsModule::TestMethod, allIntra, smoothing, intraBroadening, alreadyUpToDate);
 			if (!testReferencePartials(referencePartials, unweightedgr, 1.0e-6)) return false;
 		}
 

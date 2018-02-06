@@ -103,6 +103,7 @@ void PartialsModule::setUpKeywords()
 	keywords_.add(new BoolModuleKeyword(false), "Bragg", "Enable calculation of Bragg scattering", "<True|False*>");
 	keywords_.add(new DoubleModuleKeyword(0.001), "BraggQResolution", "Binwidth in Q to use when calculating Bragg peaks");
 	keywords_.add(new BoolModuleKeyword(false), "InternalTest", "Perform internal check of calculated partials (relative to Test method)");
+	keywords_.add(new BroadeningFunctionModuleKeyword(BroadeningFunction()), "IntraBroadening", "Broadening function to apply to intramolecular g(r)");
 	keywords_.add(new ComplexModuleKeyword(4,4), "Isotopologue", "Set Isotopologue (and its population) to use for a particular Species in a given Configuration");
 	keywords_.add(new CharStringModuleKeyword("Auto", PartialsModule::nPartialsMethods, PartialsMethodKeywords), "Method", "Calculation method for partial radial distribution functions");
 	keywords_.add(new CharStringModuleKeyword("None", PartialsModule::nNormalisationTypes, NormalisationTypeKeywords), "Normalisation", "Normalisation to apply to total weighted F(Q)");
