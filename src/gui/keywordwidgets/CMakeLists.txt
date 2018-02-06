@@ -3,6 +3,7 @@
 
 # Meta-Objects
 SET(keywordwidgets_MOC_HDRS
+  broadeningfunction.ui
   dropdown.ui
 
   bool.hui
@@ -19,6 +20,7 @@ SET(keywordwidgets_SRCS
   base.cpp
 
   bool_funcs.cpp
+  broadeningfunction_funcs.cpp
   charstring_funcs.cpp
   double_funcs.cpp
   dropdown_funcs.cpp
@@ -27,6 +29,7 @@ SET(keywordwidgets_SRCS
   windowfunction_funcs.cpp
 
   base.h
+  broadeningfunction.h
   dropdown.h
 )
 

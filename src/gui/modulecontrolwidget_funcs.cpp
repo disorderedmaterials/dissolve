@@ -24,6 +24,7 @@
 #include "gui/keywordwidgets/charstring.hui"
 #include "gui/keywordwidgets/double.hui"
 #include "gui/keywordwidgets/int.hui"
+#include "gui/keywordwidgets/broadeningfunction.h"
 #include "gui/keywordwidgets/windowfunction.hui"
 #include "gui/modulewidget.h"
 #include "gui/subwindow.h"
@@ -124,6 +125,12 @@ void ModuleControlWidget::initialiseControls(Module* module)
 			BoolKeywordWidget* boolWidget = new BoolKeywordWidget(NULL, keyword);
 			widget = boolWidget;
 			base = boolWidget;
+		}
+		else if (keyword->type() == ModuleKeywordBase::BroadeningFunctionData)
+		{
+			BroadeningFunctionKeywordWidget* broadeningFunctionWidget = new BroadeningFunctionKeywordWidget(NULL, keyword);
+			widget = broadeningFunctionWidget;
+			base = broadeningFunctionWidget;
 		}
 		else if (keyword->type() == ModuleKeywordBase::WindowFunctionData)
 		{

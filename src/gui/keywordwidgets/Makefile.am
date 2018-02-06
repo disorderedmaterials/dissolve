@@ -25,11 +25,12 @@ libkeywordwidgets_la_SOURCES = base.cpp
 libkeywordwidgets_la_SOURCES += dropdown.ui dropwidget.hui dropdown_funcs.cpp dropwidget_funcs.cpp
 
 libkeywordwidgets_la_SOURCES += bool.hui bool_funcs.cpp
+libkeywordwidgets_la_SOURCES += broadeningfunction.ui broadeningfunction_funcs.cpp
 libkeywordwidgets_la_SOURCES += charstring.hui charstring_funcs.cpp
 libkeywordwidgets_la_SOURCES += double.hui double_funcs.cpp
 libkeywordwidgets_la_SOURCES += int.hui int_funcs.cpp
 libkeywordwidgets_la_SOURCES += windowfunction.hui windowfunction_funcs.cpp
 
-noinst_HEADERS = base.h dropdown.h
+noinst_HEADERS = base.h broadeningfunction.h dropdown.h
 
 AM_CPPFLAGS = -I$(top_srcdir)/src @DUQ_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@

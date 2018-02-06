@@ -37,6 +37,10 @@ class KeywordWidgetBase
 	/*
 	 * Update
 	 */
+	protected:
+	// Whether the widget is currently refreshing
+	bool refreshing_;
+
 	public:
 	// Update value displayed in widget, using specified source if necessary
 	virtual void updateValue(GenericList& moduleData, const char* prefix) = 0;

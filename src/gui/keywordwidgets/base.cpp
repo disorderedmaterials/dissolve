@@ -24,5 +24,6 @@
 // Constructor
 KeywordWidgetBase::KeywordWidgetBase()
 {
+	refreshing_ = false;
 }
 
