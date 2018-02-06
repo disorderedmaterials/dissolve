@@ -64,3 +64,14 @@ void KeywordDropDown::dropWidgetHidden()
 	// Need to store data from widget, in case it has changed
 	updateKeywordData();
 }
+
+/*
+ * Update
+ */
+
+// Set summary text on call button
+void KeywordDropDown::setSummaryText(const char* text)
+{
+	ui.CallDropWidgetButton->setText(text);
+}
+

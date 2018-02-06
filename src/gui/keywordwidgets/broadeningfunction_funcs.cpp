@@ -96,6 +96,10 @@ void BroadeningFunctionKeywordWidget::setWidgets(const BroadeningFunction& broad
 {
 	refreshing_ = true;
 
+	// Summary text on KeywordDropDown button
+	setSummaryText(BroadeningFunction::functionType(broadeningFunction.function()));
+
+	// Widgets in DropWidget
 	ui.FunctionCombo->setCurrentIndex(broadeningFunction.function());
 	ui.FunctionDescriptionLabel->setText(BroadeningFunction::functionDescription(broadeningFunction.function()));
 	ui.ParameterSummaryLabel->setText(broadeningFunction.parameterSummary().get());
