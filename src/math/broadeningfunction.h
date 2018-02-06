@@ -22,7 +22,7 @@
 #ifndef DUQ_BROADENINGFUNCTION_H
 #define DUQ_BROADENINGFUNCTION_H
 
-#define MAXFUNCTIONPARAMS 6
+#define MAXBROADENINGFUNCTIONPARAMS 6
 
 #include "base/charstring.h"
 #include "base/genericitembase.h"
@@ -51,6 +51,8 @@ class BroadeningFunction : public GenericItemBase
 	BroadeningFunction(FunctionType function = UnityFunction, double p1 = 0.0, double p2 = 0.0, double p3 = 0.0, double p4 = 0.0, double p5 = 0.0, double p6 = 0.0);
 	// Destructor
 	~BroadeningFunction();
+	// Copy Constructor
+	BroadeningFunction(const BroadeningFunction& source);
 	// Assignment Operator
 	void operator=(const BroadeningFunction& source);
 
@@ -62,7 +64,7 @@ class BroadeningFunction : public GenericItemBase
 	// Function Type
 	FunctionType function_;
 	// Parameters
-	double parameters_[MAXFUNCTIONPARAMS];
+	double parameters_[MAXBROADENINGFUNCTIONPARAMS];
 	// Whether function is inverted - y returns yFT, and vice versa
 	bool inverted_;
 

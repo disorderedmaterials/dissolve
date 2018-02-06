@@ -62,7 +62,7 @@ int BroadeningFunctionModuleKeyword::minArguments()
 // Return maximum number of arguments accepted
 int BroadeningFunctionModuleKeyword::maxArguments()
 {
-	return MAXFUNCTIONPARAMS;
+	return MAXBROADENINGFUNCTIONPARAMS;
 }
 
 // Parse arguments from supplied LineParser, starting at argument offset specified

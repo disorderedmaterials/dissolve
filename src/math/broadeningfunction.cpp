@@ -33,21 +33,28 @@ BroadeningFunction::BroadeningFunction(BroadeningFunction::FunctionType function
 	inverted_ = false;
 }
 
-// Assignment operator
-void BroadeningFunction::operator=(const BroadeningFunction& source)
-{
-	function_ = source.function_;
-	for (int n=0; n<MAXFUNCTIONPARAMS; ++n) parameters_[n] = source.parameters_[n];
-	inverted_ = source.inverted_;
-}
-
 // Destructor
 BroadeningFunction::~BroadeningFunction()
 {
 }
 
+// Copy Constructor
+BroadeningFunction::BroadeningFunction(const BroadeningFunction& source)
+{
+	(*this) = source;
+}
+
+// Assignment operator
+void BroadeningFunction::operator=(const BroadeningFunction& source)
+{
+	function_ = source.function_;
+	for (int n=0; n<MAXBROADENINGFUNCTIONPARAMS; ++n) parameters_[n] = source.parameters_[n];
+	inverted_ = source.inverted_;
+
+}
+
 const char* BroadeningFunctionKeywords[] = { "Unity", "Gaussian", "ScaledGaussian", "OmegaDependentGaussian", "GaussianC2" };
-int BroadeningFunctionNParameters[] = { 0, 1, 1, 2 };
+int BroadeningFunctionNParameters[] = { 0, 1, 1, 1, 2 };
 
 // Return FunctionType from supplied string
 BroadeningFunction::FunctionType BroadeningFunction::functionType(const char* s)
@@ -116,6 +123,9 @@ void BroadeningFunction::set(BroadeningFunction::FunctionType function, double p
 // Set function data from LineParser source
 bool BroadeningFunction::set(LineParser& parser, int startArg)
 {
+	// Zero all parameters before we start
+	for (int n=0; n<MAXBROADENINGFUNCTIONPARAMS; ++n) parameters_[n] = 0.0;
+
 	// First argument is the form of the function
 	BroadeningFunction::FunctionType funcType = BroadeningFunction::functionType(parser.argc(startArg));
 	if (funcType == BroadeningFunction::nFunctionTypes)
@@ -161,6 +171,8 @@ bool BroadeningFunction::set(LineParser& parser, int startArg)
 
 	// Set up any necessary dependent parameters
 	setUpDependentParameters();
+
+	return true;
 }
 
 // Set up any dependent parameters based on the input set of parameters
@@ -221,7 +233,7 @@ CharString BroadeningFunction::parameterSummary() const
 	switch (function_)
 	{
 		case (BroadeningFunction::UnityFunction):
-			return "1.0";
+			return "<no parameters>";
 			break;
 		case (BroadeningFunction::GaussianFunction):
 		case (BroadeningFunction::OmegaDependentGaussianFunction):
@@ -447,7 +459,7 @@ bool BroadeningFunction::broadcast(ProcessPool& procPool, int root)
 {
 #ifdef PARALLEL
 	if (!procPool.broadcast(EnumCast<BroadeningFunction::FunctionType>(function_), root)) return false;
-	if (!procPool.broadcast(parameters_, MAXFUNCTIONPARAMS, root)) return false;
+	if (!procPool.broadcast(parameters_, MAXBROADENINGFUNCTIONPARAMS, root)) return false;
 #endif
 	return true;
 }
@@ -457,7 +469,7 @@ bool BroadeningFunction::equality(ProcessPool& procPool)
 {
 #ifdef PARALLEL
 	if (!procPool.equality(EnumCast<BroadeningFunction::FunctionType>(function_))) return Messenger::error("BroadeningFunction function type is not equivalent (process %i has %i).\n", procPool.poolRank(), function_);
-	if (!procPool.equality(parameters_, MAXFUNCTIONPARAMS)) return Messenger::error("BroadeningFunction parameters are not equivalent.\n");
+	if (!procPool.equality(parameters_, MAXBROADENINGFUNCTIONPARAMS)) return Messenger::error("BroadeningFunction parameters are not equivalent.\n");
 #endif
 	return true;
 }
