@@ -642,6 +642,8 @@ void XYData::medianFilter(int length)
 	
 	// Store new values
 	y_ = newY;
+
+	interpolationInterval_ = -1;
 }
 
 // Perform point-wise convolution of this data with the supplied BroadeningFunction
@@ -665,6 +667,9 @@ bool XYData::convolute(BroadeningFunction function)
 	}
 
 	y_ = newY;
+
+	interpolationInterval_ = -1;
+
 	return true;
 }
 
@@ -682,6 +687,8 @@ void XYData::trim(double minX, double maxX)
 		if (oldX[n] > maxX) break;
 		addPoint(oldX[n], oldY[n]);
 	}
+
+	interpolationInterval_ = -1;
 }
 
 // Rebin data onto uniform x axis
@@ -710,6 +717,8 @@ void XYData::rebin(double deltaX)
 
 	// Overwrite old data
 	(*this) = rebinnedData;
+
+	interpolationInterval_ = -1;
 }
 
 // Perform moving average smoothing
