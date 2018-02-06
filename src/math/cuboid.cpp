@@ -25,6 +25,8 @@
 // Constructor
 Cuboid::Cuboid()
 {
+	minima_.zero();
+	maxima_.zero();
 	minimaSet_ = false;
 	maximaSet_ = false;
 }
