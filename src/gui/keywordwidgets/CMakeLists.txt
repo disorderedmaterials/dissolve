@@ -3,9 +3,12 @@
 
 # Meta-Objects
 SET(keywordwidgets_MOC_HDRS
+  dropdown.ui
+
   bool.hui
   charstring.hui
   double.hui
+  dropwidget.hui
   int.hui
   windowfunction.hui
 )
@@ -18,10 +21,13 @@ SET(keywordwidgets_SRCS
   bool_funcs.cpp
   charstring_funcs.cpp
   double_funcs.cpp
+  dropdown_funcs.cpp
+  dropwidget_funcs.cpp
   int_funcs.cpp
   windowfunction_funcs.cpp
 
   base.h
+  dropdown.h
 )
 
 # Target 'keywordwidgets'
