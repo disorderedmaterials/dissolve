@@ -108,7 +108,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		if (normalisation == PartialsModule::NoNormalisation) Messenger::print("Partials: No normalisation will be applied to total F(Q).\n");
 		else if (normalisation == PartialsModule::AverageOfSquaresNormalisation) Messenger::print("Partials: Total F(Q) will be normalised to <b>**2");
 		else if (normalisation == PartialsModule::SquareOfAverageNormalisation) Messenger::print("Partials: Total F(Q) will be normalised to <b**2>");
-		if (qBroadening.function() == BroadeningFunction::UnityFunction) Messenger::print("Partials: No broadening will be applied to calculated S(Q).");
+		if (qBroadening.function() == BroadeningFunction::NoFunction) Messenger::print("Partials: No broadening will be applied to calculated S(Q).");
 		else Messenger::print("Partials: Broadening to be applied in calculated S(Q) is %s (%s).", BroadeningFunction::functionType(qBroadening.function()), qBroadening.parameterSummary().get());
 		Messenger::print("Partials: Bragg calculation is %s.\n", DUQSys::onOff(braggOn));
 		if (braggOn)

@@ -53,7 +53,7 @@ void BroadeningFunction::operator=(const BroadeningFunction& source)
 
 }
 
-const char* BroadeningFunctionKeywords[] = { "Unity", "Gaussian", "ScaledGaussian", "OmegaDependentGaussian", "GaussianC2" };
+const char* BroadeningFunctionKeywords[] = { "None", "Gaussian", "ScaledGaussian", "OmegaDependentGaussian", "GaussianC2" };
 int BroadeningFunctionNParameters[] = { 0, 1, 1, 1, 2 };
 
 // Return FunctionType from supplied string
@@ -80,7 +80,7 @@ const char* BroadeningFunction::functionDescription(FunctionType func)
 {
 	switch (func)
 	{
-		case (BroadeningFunction::UnityFunction):
+		case (BroadeningFunction::NoFunction):
 			return "Function that always returns 1.0";
 			break;
 		case (BroadeningFunction::GaussianFunction):
@@ -145,7 +145,7 @@ bool BroadeningFunction::set(LineParser& parser, int startArg)
 	function_ = funcType;
 	switch (function_)
 	{
-		case (BroadeningFunction::UnityFunction):
+		case (BroadeningFunction::NoFunction):
 			break;
 		case (BroadeningFunction::GaussianFunction):
 		case (BroadeningFunction::OmegaDependentGaussianFunction):
@@ -180,7 +180,7 @@ void BroadeningFunction::setUpDependentParameters()
 {
 	switch (function_)
 	{
-		case (BroadeningFunction::UnityFunction):
+		case (BroadeningFunction::NoFunction):
 			break;
 		case (BroadeningFunction::GaussianFunction):
 		case (BroadeningFunction::OmegaDependentGaussianFunction):
@@ -232,7 +232,7 @@ CharString BroadeningFunction::parameterSummary() const
 {
 	switch (function_)
 	{
-		case (BroadeningFunction::UnityFunction):
+		case (BroadeningFunction::NoFunction):
 			return "<no parameters>";
 			break;
 		case (BroadeningFunction::GaussianFunction):
@@ -276,7 +276,7 @@ double BroadeningFunction::yActual(double x, double omega) const
 {
 	switch (function_)
 	{
-		case (BroadeningFunction::UnityFunction):
+		case (BroadeningFunction::NoFunction):
 			return 1.0;
 			break;
 		case (BroadeningFunction::GaussianFunction):
@@ -352,7 +352,7 @@ double BroadeningFunction::yFTActual(double x, double omega) const
 {
 	switch (function_)
 	{
-		case (BroadeningFunction::UnityFunction):
+		case (BroadeningFunction::NoFunction):
 			return 1.0;
 			break;
 		case (BroadeningFunction::GaussianFunction):

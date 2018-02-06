@@ -127,7 +127,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	}
 
 	BroadeningFunction broadening = KeywordListHelper<BroadeningFunction>::retrieve(partialsModule->keywords(), "QBroadening", BroadeningFunction());
-	if (broadening.function() == BroadeningFunction::UnityFunction) Messenger::print("Refine: No 'QBroadening' specified in PartialsModule '%s', so no un-broadening will be performed.\n", partialsModule->uniqueName());
+	if (broadening.function() == BroadeningFunction::NoFunction) Messenger::print("Refine: No 'QBroadening' specified in PartialsModule '%s', so no un-broadening will be performed.\n", partialsModule->uniqueName());
 	else Messenger::print("Refine: QBroadening specified in PartialsModule '%s' (%s) will be removed when Fourier transforming the data.\n", partialsModule->uniqueName(), BroadeningFunction::functionType(broadening.function()));
 	broadening.setInverted(true);
 
