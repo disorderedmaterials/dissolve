@@ -54,7 +54,7 @@ void BroadeningFunction::operator=(const BroadeningFunction& source)
 }
 
 const char* BroadeningFunctionKeywords[] = { "None", "Gaussian", "ScaledGaussian", "OmegaDependentGaussian", "GaussianC2" };
-int BroadeningFunctionNParameters[] = { 0, 1, 1, 1, 2 };
+int BroadeningFunctionNParameters[] = { 0, 1, 2, 1, 2 };
 
 // Return FunctionType from supplied string
 BroadeningFunction::FunctionType BroadeningFunction::functionType(const char* s)
