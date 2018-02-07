@@ -493,8 +493,9 @@ bool ProcessPool::assignProcessesToGroups()
 	if (MPI_Comm_create(MPI_COMM_WORLD, leaderGroup_, &leaderCommunicator_) != MPI_SUCCESS) return false;
 #else
 	// No MPI, but must still set up a dummy process group
-	ProcessGroup* group = processGroups_.add();
-	group->addProcess(0, 0);
+	ProcessGroup group;
+	group.addProcess(0, 0);
+	processGroups_.add(group);
 	groupIndex_ = 0;
 	groupRank_ = 0;
 #endif
