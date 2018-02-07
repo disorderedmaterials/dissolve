@@ -25,6 +25,8 @@
 #ifndef DUQ_PRAXIS_H
 #define DUQ_PRAXIS_H
 
+#include "base/messenger.h"
+
 #include <iomanip>
 
 template <class T> class Praxis
@@ -432,10 +434,8 @@ template <class T> class Praxis
 				if ( kt_max < kt )
 				{
 					e[k-1] = 0.0;
-					cerr << "\n";
-					cerr << "MINFIT - Fatal error!\n";
-					cerr << "  The QR algorithm failed to converge.\n";
-					exit ( 1 );
+					Messenger::error("MINFIT - Fatal error! - The QR algorithm failed to converge.\n");
+					return;
 				}
 	
 				skip = 0;
@@ -968,10 +968,9 @@ template <class T> class Praxis
 	//    Input, int NL, the number of linear searches.
 	//
 	{
-		cout << "\n";
-		cout << "  Linear searches = " << nl << "\n";
-		cout << "  Function evaluations " << nf << "\n";
-		cout << "  Function value FX = " << fx << "\n";
+		Messenger::print("Linear searches = %i\n", nl);
+		Messenger::print("Function evaluations = %i\n", nf);
+		Messenger::print("Function value FX = %e\n", fx);
 	
 		if ( n <= 4 || 2 < prin )
 		{
@@ -1383,10 +1382,8 @@ template <class T> class Praxis
 	
 		if ( seed == 0 )
 		{
-			cerr << "\n";
-			cerr << "R8_UNIFORM_01 - Fatal error!\n";
-			cerr << "  Input value of SEED = 0.\n";
-			exit ( 1 );
+			Messenger::error("R8_UNIFORM_01 - Fatal error! - Input value of SEED = 0.\n");
+			return 0.0;
 		}
 	
 		k = seed / 127773;
@@ -1403,7 +1400,7 @@ template <class T> class Praxis
 	}
 	//****************************************************************************80
 	
-	void r8mat_print ( int m, int n, double a[], string title )
+	void r8mat_print ( int m, int n, double a[], const char* title )
 	
 	//****************************************************************************80
 	//
@@ -1448,7 +1445,7 @@ template <class T> class Praxis
 	//****************************************************************************80
 	
 	void r8mat_print_some ( int m, int n, double a[], int ilo, int jlo, int ihi,
-		int jhi, string title )
+		int jhi, const char* title )
 	
 	//****************************************************************************80
 	//
@@ -1498,13 +1495,11 @@ template <class T> class Praxis
 		int j2hi;
 		int j2lo;
 	
-		cout << "\n";
-		cout << title << "\n";
+		Messenger::print("%s\n", title);
 	
 		if ( m <= 0 || n <= 0 )
 		{
-			cout << "\n";
-			cout << "  (None)\n";
+			Messenger::print("  (None)\n");
 			return;
 		}
 	//
@@ -1521,20 +1516,19 @@ template <class T> class Praxis
 			{
 				j2hi = jhi;
 			}
-			cout << "\n";
+			Messenger::print("\n");
 	//
 	//  For each column J in the current range...
 	//
 	//  Write the header.
 	//
-			cout << "  Col:    ";
+			Messenger::print("  Col:    ");
 			for ( j = j2lo; j <= j2hi; j++ )
 			{
-				cout << setw(7) << j - 1 << "       ";
+				Messenger::print("%10i   ", j - 1);
 			}
-			cout << "\n";
-			cout << "  Row\n";
-			cout << "\n";
+			Messenger::print("\n");
+			Messenger::print("  Row\n");
 	//
 	//  Determine the range of the rows in this strip.
 	//
@@ -1560,12 +1554,12 @@ template <class T> class Praxis
 	//
 	//  Print out (up to) 5 entries in row I, that lie in the current strip.
 	//
-				cout << setw(5) << i - 1 << ": ";
+				Messenger::print("%fi: ", i - 1);
 				for ( j = j2lo; j <= j2hi; j++ )
 				{
-					cout << setw(12) << a[i-1+(j-1)*m] << "  ";
+					Messenger::print("%12.4e  ", a[i-1+(j-1)*m]);
 				}
-				cout << "\n";
+				Messenger::print("\n");
 			}
 		}
 	
@@ -1817,7 +1811,7 @@ template <class T> class Praxis
 	}
 	//****************************************************************************80
 	
-	void r8vec_print ( int n, double a[], string title )
+	void r8vec_print ( int n, double a[], const char* title )
 	
 	//****************************************************************************80
 	//
@@ -1852,13 +1846,10 @@ template <class T> class Praxis
 	{
 		int i;
 	
-		cout << "\n";
-		cout << title << "\n";
-		cout << "\n";
+		Messenger::print("%s\n", title);
 		for ( i = 0; i < n; i++ )
 		{
-			cout << "  " << setw(8)  << i
-					 << ": " << setw(14) << a[i]  << "\n";
+			Messenger::print("  %8i: %14.6e\n", i, a[i]);
 		}
 	
 		return;
@@ -1995,7 +1986,7 @@ template <class T> class Praxis
 	
 		len = std::strftime ( time_buffer, TIME_SIZE, "%d %B %Y %I:%M:%S %p", tm_ptr );
 	
-		std::cout << time_buffer << "\n";
+		Messenger::print("%s\n", time_buffer);
 	
 		return;
 	# undef TIME_SIZE
