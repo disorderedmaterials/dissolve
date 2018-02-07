@@ -48,6 +48,12 @@ Viewer::Viewer(QWidget* parent) : QOpenGLWidget(parent)
 
         // Create our FTGL font instance
 	fontInstance_.setup();
+
+	// Set custom context menu policy
+	setContextMenuPolicy(Qt::CustomContextMenu);
+
+	// Connect signals / slots
+	connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
 }
 
 // Destructor

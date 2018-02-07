@@ -203,14 +203,8 @@ class Viewer : public QOpenGLWidget, protected QOpenGLFunctions
 	void keyPressEvent(QKeyEvent*);
 	// Qt Slot (key release event)
 	void keyReleaseEvent(QKeyEvent*);
-
-
-	/*
-	 * Signals
-	 */
-	signals:
-	// Return string containing time taken to do last render
-	QString renderComplete(QString timeTaken);
+	// Show context menu
+	void showContextMenu(const QPoint& pos);
 };
 
 #endif

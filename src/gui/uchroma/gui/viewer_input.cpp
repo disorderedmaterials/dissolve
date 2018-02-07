@@ -252,3 +252,9 @@ void Viewer::keyReleaseEvent(QKeyEvent *event)
 	if (ignore) event->ignore();
 	else event->accept();
 }
+
+// Show context menu
+void Viewer::showContextMenu(const QPoint& pos)
+{
+	
+}

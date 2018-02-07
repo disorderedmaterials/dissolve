@@ -53,9 +53,6 @@ UChromaFullWindow::UChromaFullWindow(QMainWindow *parent) : UChromaBase(this), Q
 	// Set UChroma pointers in widgets/dialogs where necessary
 	ui.MainView->setUChromaBase(this);
 
-	// Connect signals / slots between the Viewer and uChroma
-	connect(ui.MainView, SIGNAL(renderComplete(QString)), this, SLOT(updateRenderTimeLabel(QString)));
-
 	// Hide LeftWidgets (Collection list etc.) initially
 	ui.LeftWidgetsWidget->setVisible(false);
 
