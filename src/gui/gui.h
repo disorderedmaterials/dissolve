@@ -106,6 +106,8 @@ class DUQWindow : public QMainWindow
 	public:
 	// Update menu items (after change in Modules etc.)
 	void updateMenuItems();
+	// Create Module menu with specified QAction as parent
+	void createModuleMenu(QMenu* parent);
 
 
 	/*

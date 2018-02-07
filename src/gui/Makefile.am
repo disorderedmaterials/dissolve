@@ -21,7 +21,7 @@ SUFFIXES: .ui .hui .qrc
 	rm $*.cpp
 
 clean-local:
-	-rm -f ui_* *.o moc_*.cpp colourbutton.cpp gradientbar.cpp icons.cpp texponentialspin.cpp
+	-rm -f ui_* *.o moc_*.cpp colourbutton.cpp gradientbar.cpp icons.cpp texponentialspin.cpp tmdiarea.cpp
 
 libgui_la_SOURCES = icons.qrc
 
@@ -29,6 +29,7 @@ libgui_la_SOURCES += colourbutton.hui colourbutton_funcs.cpp
 libgui_la_SOURCES += gradientbar.hui gradientbar_funcs.cpp
 libgui_la_SOURCES += mimestrings.cpp mimetreewidget.hui mimetreewidget_funcs.cpp mimetreewidgetitem.cpp
 libgui_la_SOURCES += texponentialspin.hui texponentialspindelegate.hui texponentialspin_funcs.cpp texponentialspindelegate_funcs.cpp
+libgui_la_SOURCES += tmdiarea.hui tmdiarea_funcs.cpp
 libgui_la_SOURCES += tmenubutton.hui tpopupwidget.hui tmenubutton_funcs.cpp tmenubuttongroup.cpp tpopupwidget_funcs.cpp
 
 libgui_la_SOURCES += gui.ui browser.ui configurationtab.ui mastertermswidget.ui modulecontrolwidget.ui pairpotentialwidget.ui processingtab.ui setuptab.ui workspacetab.ui

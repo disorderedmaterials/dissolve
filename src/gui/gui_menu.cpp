@@ -107,24 +107,30 @@ void DUQWindow::updateMenuItems()
 	// Update the WorkSpaceAddWidget submenu
 	ui.WorkspaceAddWidgetAction->clear();
 
-	QFont italicFont = ui.WorkspaceAddWidgetAction->font();
+	createModuleMenu(ui.WorkspaceAddWidgetAction);
+}
+
+// Create Module menu with specified QAction as parent
+void DUQWindow::createModuleMenu(QMenu* parent)
+{
+	QFont italicFont = parent->font();
 	italicFont.setItalic(true);
 
 	// General widgets, not associated to a module
-	QAction* menuItem = ui.WorkspaceAddWidgetAction->addAction("General");
+	QAction* menuItem = parent->addAction("General");
 	menuItem->setFont(italicFont);
 	menuItem->setEnabled(false);
-	menuItem = ui.WorkspaceAddWidgetAction->addAction("PairPotential");
+	menuItem = parent->addAction("PairPotential");
 	connect(menuItem, SIGNAL(triggered(bool)), this, SLOT(addWidgetToCurrentWorkspace(bool)));
 
 	// Modules within Configurations
-	menuItem = ui.WorkspaceAddWidgetAction->addAction("Configurations");
+	menuItem = parent->addAction("Configurations");
 	menuItem->setFont(italicFont);
 	menuItem->setEnabled(false);
 	ListIterator<Configuration> configIterator(duq_.configurations());
 	while (Configuration* cfg = configIterator.iterate())
 	{
-		QMenu* cfgMenu = ui.WorkspaceAddWidgetAction->addMenu(cfg->name());
+		QMenu* cfgMenu = parent->addMenu(cfg->name());
 		if (cfg->nModules() == 0)
 		{
 			QAction* moduleItem = cfgMenu->addAction("No Local Modules");
@@ -141,19 +147,19 @@ void DUQWindow::updateMenuItems()
 	}
 
 	// Processing Modules
-	menuItem = ui.WorkspaceAddWidgetAction->addAction("Processing");
+	menuItem = parent->addAction("Processing");
 	menuItem->setFont(italicFont);
 	menuItem->setEnabled(false);
 	if (duq_.processingModules().nModules() == 0)
 	{
-		QAction* moduleItem = ui.WorkspaceAddWidgetAction->addAction("None");
+		QAction* moduleItem = parent->addAction("None");
 		moduleItem->setFont(italicFont);
 		moduleItem->setEnabled(false);
 	}
 	RefListIterator<Module,bool> moduleIterator(duq_.processingModules().modules());
 	while (Module* module = moduleIterator.iterate())
 	{
-		QAction* moduleItem = ui.WorkspaceAddWidgetAction->addAction(CharString("%s (%s)", module->name(), module->uniqueName()).get());
+		QAction* moduleItem = parent->addAction(CharString("%s (%s)", module->name(), module->uniqueName()).get());
 		moduleItem->setData(VariantPointer<Module>(module));
 		connect(moduleItem, SIGNAL(triggered(bool)), this, SLOT(addWidgetToCurrentWorkspace(bool)));
 	}

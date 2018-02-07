@@ -26,7 +26,7 @@
 #include "gui/maintab.h"
 
 // Forward Declarations
-/* none */
+class TMdiArea;
 
 // Workspace Tab
 class WorkspaceTab : public QWidget, public MainTab
@@ -84,6 +84,8 @@ class WorkspaceTab : public QWidget, public MainTab
 	 * MDI SubWindow Management
 	 */
 	private:
+	// MDI area widget
+	TMdiArea* mdiArea_;
 	// List of all current MDI sub-windows over all tabs
 	RefList<SubWindow,bool> allSubWindows_;
 

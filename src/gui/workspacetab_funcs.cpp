@@ -20,6 +20,7 @@
 */
 
 #include "gui/workspacetab.h"
+#include "gui/tmdiarea.hui"
 #include "gui/subwidget.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
@@ -30,6 +31,10 @@
 WorkspaceTab::WorkspaceTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const char* title) : MainTab(duqWindow, duq, parent, title, this)
 {
 	ui.setupUi(this);
+
+	// Add a TMdiArea to the main layout
+	mdiArea_ = new TMdiArea(duqWindow);
+	ui.verticalLayout->addWidget(mdiArea_);
 }
 
 WorkspaceTab::~WorkspaceTab()
@@ -53,7 +58,7 @@ bool WorkspaceTab::canChangeTitle()
 // Return the tab's SubWindow area, if it has one
 QMdiArea* WorkspaceTab::subWindowArea()
 {
-	return ui.WorkspaceArea;
+	return mdiArea_;
 }
 
 // Return the tab's SubWidget layout, if it has one

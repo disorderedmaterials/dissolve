@@ -28,6 +28,7 @@ SET(gui_MOC_HDRS
   texponentialspin.hui
   texponentialspindelegate.hui
   thread.hui
+  tmdiarea.hui
   tmenubutton.hui
   tpopupwidget.hui
 )
@@ -72,6 +73,7 @@ SET(gui_SRCS
   subwindow.cpp
   texponentialspin_funcs.cpp
   texponentialspindelgate_funcs.cpp
+  tmdiarea_funcs.cpp
   thread_funcs.cpp
   tmenubutton_funcs.cpp
   tmenubuttongroup.cpp
