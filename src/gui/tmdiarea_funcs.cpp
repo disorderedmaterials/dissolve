@@ -28,7 +28,11 @@ TMdiArea::TMdiArea(DUQWindow* duqWindow, QWidget* parent) : QMdiArea(parent)
 {
 	duqWindow_ = duqWindow;
 
+	setFont(duqWindow_->font());
+
 	// Set up the area
+	setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+	setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 	setContextMenuPolicy(Qt::CustomContextMenu);
 
 	connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
