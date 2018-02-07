@@ -63,7 +63,7 @@ void DUQWindow::mainTabsDoubleClicked(int index)
 	// Ensure that the name provided is unique
 	CharString newName = qPrintable(text);
 	int count = 0;
-	while (findTab(newName)) newName.sprintf("%s%02i", ++count);
+	while (findTab(newName)) newName.sprintf("%s%02i", qPrintable(text), ++count);
 
 	tab->setTitle(newName);
 }
