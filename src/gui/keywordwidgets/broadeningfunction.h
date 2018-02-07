@@ -65,8 +65,8 @@ class BroadeningFunctionKeywordWidget : public KeywordDropDown, public KeywordWi
 	public:
 	// Update value displayed in widget, using specified source if necessary
 	void updateValue(GenericList& moduleData, const char* prefix);
-	// Set widgets from supplied object
-	void setWidgets(const BroadeningFunction& broadeningFunction);
+	// Update widget values data based on keyword data
+	void updateWidgetValues();
 	// Update keyword data based on widget values
 	void updateKeywordData();
 };
