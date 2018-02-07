@@ -61,11 +61,11 @@ class KVector : public MPIListItem<KVector>,  public GenericItemBase
 	// Return hkl indices
 	const Vec3<int>& hkl() const;
 	// Return h index
-	const int h() const;
+	int h() const;
 	// Return k index
-	const int k() const;
+	int k() const;
 	// Return l index
-	const int l() const;
+	int l() const;
 	// Set BraggPeak index 
 	void setBraggPeakIndex(int index);
 	// Return associated BraggPeak index

@@ -64,7 +64,7 @@ void BraggPeak::initialise(double q, int index, int nTypes)
 }
 
 // Return Q value
-const double BraggPeak::q() const
+double BraggPeak::q() const
 {
 	return q_;
 }
@@ -76,7 +76,7 @@ void BraggPeak::setIndex(int index)
 }
 
 // Return index
-const int BraggPeak::index() const
+int BraggPeak::index() const
 {
 	return index_;
 }

@@ -76,19 +76,19 @@ const Vec3<int>& KVector::hkl() const
 }
 
 // Return h index
-const int KVector::h() const
+int KVector::h() const
 {
 	return hkl_.x;
 }
 
 // Return k index
-const int KVector::k() const
+int KVector::k() const
 {
 	return hkl_.y;
 }
 
 // Return l index
-const int KVector::l() const
+int KVector::l() const
 {
 	return hkl_.z;
 }

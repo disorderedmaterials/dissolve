@@ -63,11 +63,11 @@ class BraggPeak : public MPIListItem<BraggPeak>,  public GenericItemBase
 	// Initialise arrays
 	void initialise(double q, int index, int nTypes);
 	// Return Q value of peak
-	const double q() const;
+	double q() const;
 	// Set index 
 	void setIndex(int index);
 	// Return index
-	const int index() const;
+	int index() const;
 	// Reset stored intensities
 	void resetIntensities();
 	// Add intensity between specified atomtypes from k-vector
