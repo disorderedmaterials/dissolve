@@ -201,7 +201,7 @@ Cell* Atom::cell() const
 // Add specified Bond to Atom
 void Atom::addBond(Bond* bond)
 {
-	bonds_.add(bond);
+	bonds_.append(bond);
 
 	// Insert the pointer to the 'other' Atom into the exclusions_ list
 	exclusions_.addExclusive(bond->partner(this));
@@ -223,7 +223,7 @@ Bond* Atom::findBond(Atom* j)
 // Add specified Angle to Atom
 void Atom::addAngle(Angle* angle)
 {
-	angles_.add(angle);
+	angles_.append(angle);
 
 	// Insert the pointers to the other Atoms into the exclusions_ list
 	if (angle->i() != this) exclusions_.addExclusive(angle->i());
@@ -240,7 +240,7 @@ const PointerArray<Angle>& Atom::angles() const
 // Add specified Torsion to Atom
 void Atom::addTorsion(Torsion* torsion, double scaling14)
 {
-	torsions_.add(torsion);
+	torsions_.append(torsion);
 
 	// Insert the pointers to the other Atoms into the exclusions_ list
 	if (torsion->i() == this)

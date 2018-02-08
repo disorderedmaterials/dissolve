@@ -145,7 +145,7 @@ template <class T> class PointerArray
 	 */
 	public:
 	// Append an item to the list
-	void add(T* ptr)
+	void append(T* ptr)
 	{
 		// If there is no space for the new item we must resize the array
 		if (nItems_ == arraySize_)
