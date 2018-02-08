@@ -26,6 +26,7 @@
 #include "templates/reflist.h"
 #include "templates/orderedpointerdatalist.h"
 #include "templates/dynamicarrayobject.h"
+#include "templates/pointerarray.h"
 
 // Forward Declarations
 class Angle;
@@ -119,29 +120,29 @@ class Atom : public DynamicArrayObject<Atom>
 	 */
 	private:
 	// Reference list of Bonds in which this Atom exists
-	RefList<Bond,bool> bonds_;
+	PointerArray<Bond> bonds_;
 	// Reference list of Angles in which this Atom exists
-	RefList<Angle,bool> angles_;
+	PointerArray<Angle> angles_;
 	// Reference list of Torsions in which this Atom exists
-	RefList<Torsion,double> torsions_;
+	PointerArray<Torsion> torsions_;
 	// Ordered list of Atoms with scaled or excluded interactions
 	OrderedPointerDataList<Atom,double> exclusions_;
 
 	public:
 	// Add specified Bond to Atom
 	void addBond(Bond* bond);
-	// Return reference list of Bonds
-	const RefList<Bond,bool>& bonds() const;
+	// Return array of Bonds in which the Atom is involved
+	const PointerArray<Bond>& bonds() const;
 	// Return Bond (if it exists) between this Atom and the Atom specified
 	Bond* findBond(Atom* j);
 	// Add specified Angle to Atom
 	void addAngle(Angle* angle);
-	// Return reference list of Angles
-	const RefList<Angle,bool>& angles() const;
+	// Return array of Angles in which the Atom is involved
+	const PointerArray<Angle>& angles() const;
 	// Add specified Torsion to Atom
 	void addTorsion(Torsion* torsion, double scaling14);
-	// Return reference list of Torsions
-	const RefList<Torsion,double>& torsions() const;
+	// Return array of Torsions in which the Atom is involved
+	const PointerArray<Torsion>& torsions() const;
 	// Return scaling factor to employ with specified Atom
 	double scaling(Atom* j) const;
 

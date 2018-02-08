@@ -31,11 +31,11 @@
 Molecule::Molecule() : DynamicArrayObject<Molecule>()
 {
 	// Set sensible defaults for Arrays
-	atoms_.setChunkSize(8);
-	grains_.setChunkSize(8);
-	bonds_.setChunkSize(8);
-	angles_.setChunkSize(8);
-	torsions_.setChunkSize(8);
+	atoms_.setChunkSize(2);
+	grains_.setChunkSize(2);
+	bonds_.setChunkSize(2);
+	angles_.setChunkSize(2);
+	torsions_.setChunkSize(2);
 }
 
 // Destructor
@@ -207,14 +207,16 @@ void Molecule::selectFromAtom(Atom* i, RefList<Atom,bool>& selectedAtoms, Bond* 
 
 	// Loop over Bonds on this Atom
 	Atom* j;
-	for (RefListItem<Bond,bool>* refBond = i->bonds().first(); refBond != NULL; refBond = refBond->next)
+	for (int n=0; n<i->bonds().nItems(); ++n)
 	{
+		Bond* bond = i->bonds().value(n);
+
 		// Is this an excluded Bond?
-		if (excludedBond1 == refBond->item) continue;
-		if (excludedBond2 == refBond->item) continue;
+		if (excludedBond1 == bond) continue;
+		if (excludedBond2 == bond) continue;
 
 		// Get Bond partner Atom and begin selection from it unless it's already in the list
-		j = refBond->item->partner(i);
+		j = bond->partner(i);
 		if (selectedAtoms.contains(j)) continue;
 		selectFromAtom(j, selectedAtoms, excludedBond1, excludedBond2);
 	}

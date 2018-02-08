@@ -781,16 +781,16 @@ double EnergyKernel::intraEnergy(const Atom* i)
 	double intraEnergy = 0.0;
 
 	// Add energy from Bond terms
-	RefListIterator<Bond,bool> bondIterator(i->bonds());
-	while (Bond* b = bondIterator.iterate()) intraEnergy += energy(b);
+	const PointerArray<Bond>& bonds = i->bonds();
+	for (int n=0; n<bonds.nItems(); ++n) intraEnergy += energy(bonds.value(n));
 
 	// Add energy from Angle terms
-	RefListIterator<Angle,bool> angleIterator(i->angles());
-	while (Angle* a = angleIterator.iterate()) intraEnergy += energy(a);
+	const PointerArray<Angle>& angles = i->angles();
+	for (int n=0; n<angles.nItems(); ++n) intraEnergy += energy(angles.value(n));
 
 	// Add energy from Torsion terms
-	RefListIterator<Torsion,double> torsionIterator(i->torsions());
-	while (Torsion* t = torsionIterator.iterate()) intraEnergy += energy(t);
+	const PointerArray<Torsion>& torsions = i->torsions();
+	for (int n=0; n<torsions.nItems(); ++n) intraEnergy += energy(torsions.value(n));
 
 	return intraEnergy;
 }

@@ -207,8 +207,8 @@ void Atom::addBond(Bond* bond)
 	exclusions_.addExclusive(bond->partner(this));
 }
 
-// Return reference list of Bonds
-const RefList<Bond,bool>& Atom::bonds() const
+// Return array of Bonds in which the Atom is involved
+const PointerArray<Bond>& Atom::bonds() const
 {
 	return bonds_;
 }
@@ -216,7 +216,7 @@ const RefList<Bond,bool>& Atom::bonds() const
 // Return Bond (if it exists) between this Atom and the Atom specified
 Bond* Atom::findBond(Atom* j)
 {
-	for (RefListItem<Bond,bool>* ri = bonds_.first(); ri != NULL; ri = ri->next) if (ri->item->partner(this) == j) return ri->item;
+	for (int n=0; n<bonds_.nItems(); ++n) if (bonds_[n]->partner(this) == j) return bonds_[n];
 	return NULL;
 }
 
@@ -231,8 +231,8 @@ void Atom::addAngle(Angle* angle)
 	if (angle->k() != this) exclusions_.addExclusive(angle->k());
 }
 
-// Return reference list of Angles
-const RefList<Angle,bool>& Atom::angles() const
+// Return array of Angles in which the Atom is involved
+const PointerArray<Angle>& Atom::angles() const
 {
 	return angles_;
 }
@@ -264,8 +264,8 @@ void Atom::addTorsion(Torsion* torsion, double scaling14)
 	}
 }
 
-// Return reference list of Torsions
-const RefList<Torsion,double>& Atom::torsions() const
+// Return array of Torsions in which the Atom is involved
+const PointerArray<Torsion>& Atom::torsions() const
 {
 	return torsions_;
 }
