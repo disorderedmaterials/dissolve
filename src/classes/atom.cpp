@@ -41,10 +41,6 @@ Atom::Atom()
 	molecule_ = NULL;
 	grain_ = NULL;
 	cell_ = NULL;
-
-	// Connectivity
-	// -- Need to set default chunk size of the exclusions array
-	exclusions_.setChunkSize(4);
 }
 
 // Destructor
@@ -204,7 +200,7 @@ void Atom::addBond(Bond* bond)
 	bonds_.append(bond);
 
 	// Insert the pointer to the 'other' Atom into the exclusions_ list
-	exclusions_.addExclusive(bond->partner(this));
+	exclusions_.add(bond->partner(this));
 }
 
 // Return array of Bonds in which the Atom is involved
@@ -226,9 +222,9 @@ void Atom::addAngle(Angle* angle)
 	angles_.append(angle);
 
 	// Insert the pointers to the other Atoms into the exclusions_ list
-	if (angle->i() != this) exclusions_.addExclusive(angle->i());
-	if (angle->j() != this) exclusions_.addExclusive(angle->j());
-	if (angle->k() != this) exclusions_.addExclusive(angle->k());
+	if (angle->i() != this) exclusions_.add(angle->i());
+	if (angle->j() != this) exclusions_.add(angle->j());
+	if (angle->k() != this) exclusions_.add(angle->k());
 }
 
 // Return array of Angles in which the Atom is involved
@@ -245,22 +241,22 @@ void Atom::addTorsion(Torsion* torsion, double scaling14)
 	// Insert the pointers to the other Atoms into the exclusions_ list
 	if (torsion->i() == this)
 	{
-		exclusions_.addExclusive(torsion->j());
-		exclusions_.addExclusive(torsion->k());
-		exclusions_.addExclusive(torsion->l(), scaling14);
+		exclusions_.add(torsion->j());
+		exclusions_.add(torsion->k());
+		exclusions_.add(torsion->l(), scaling14);
 	}
 	else if (torsion->l() == this)
 	{
-		exclusions_.addExclusive(torsion->i(), scaling14);
-		exclusions_.addExclusive(torsion->j());
-		exclusions_.addExclusive(torsion->k());
+		exclusions_.add(torsion->i(), scaling14);
+		exclusions_.add(torsion->j());
+		exclusions_.add(torsion->k());
 	}
 	else
 	{
-		exclusions_.addExclusive(torsion->i());
-		exclusions_.addExclusive(torsion->l());
-		if (torsion->j() != this) exclusions_.addExclusive(torsion->j());
-		if (torsion->k() != this) exclusions_.addExclusive(torsion->k());
+		exclusions_.add(torsion->i());
+		exclusions_.add(torsion->l());
+		if (torsion->j() != this) exclusions_.add(torsion->j());
+		if (torsion->k() != this) exclusions_.add(torsion->k());
 	}
 }
 
@@ -274,14 +270,13 @@ const PointerArray<Torsion>& Atom::torsions() const
 double Atom::scaling(Atom* j) const
 {
 	// Look through our ordered list of excluded Atom interactions
-	OrderedPointerDataListIterator<Atom,double> exclusionIterator(exclusions_);
-	while (Atom* excluded = exclusionIterator.iterate())
+	for (int n=0; n<exclusions_.nItems(); ++n)
 	{
-		// If the pointer of the item is greater than our test Atom 'j', we can exit the loop now since it is not in the list
-		if (excluded > j) return 1.0;
-
 		// If the current item matches our Atom 'j', we have found a match
-		if (excluded == j) return exclusionIterator.currentData();
+		if (exclusions_.pointer(n) == j) return exclusions_.data(n);
+
+		// If the pointer of the item is greater than our test Atom 'j', we can exit the loop now since it is not in the list
+		if (exclusions_.pointer(n) > j) return 1.0;
 	}
 
 	return 1.0;

@@ -24,9 +24,9 @@
 
 #include "templates/vector3.h"
 #include "templates/reflist.h"
-#include "templates/orderedpointerdatalist.h"
 #include "templates/dynamicarrayobject.h"
 #include "templates/pointerarray.h"
+#include "templates/orderedpointerdataarray.h"
 
 // Forward Declarations
 class Angle;
@@ -126,7 +126,7 @@ class Atom : public DynamicArrayObject<Atom>
 	// Reference list of Torsions in which this Atom exists
 	PointerArray<Torsion> torsions_;
 	// Ordered list of Atoms with scaled or excluded interactions
-	OrderedPointerDataList<Atom,double> exclusions_;
+	OrderedPointerDataArray<Atom,double> exclusions_;
 
 	public:
 	// Add specified Bond to Atom
