@@ -9,7 +9,7 @@
 APP_NAME=dUQ
 
 # -- APP_VERSION : Should contain the version / revision number of the package (for renaming purposes)
-APP_VERSION="0.33.6"
+APP_VERSION="0.33.7"
 
 # -- APP_BIN : List of binaries (space-separated, with paths) to include in the bundle
 APP_BIN="bin/dUQ.app/Contents/MacOS/dUQ"
