@@ -39,7 +39,7 @@ libgui_la_SOURCES += uchromaview_funcs.cpp uchromaview_slots.cpp uchromaview_upd
 
 libgui_la_SOURCES += paneorganiser.hui paneorganiser_funcs.cpp
 
-libgui_la_SOURCES += viewer.hui viewer_funcs.cpp viewer_input.cpp viewer_scene.cpp
+libgui_la_SOURCES += viewer.hui viewer_context.cpp viewer_funcs.cpp viewer_input.cpp viewer_scene.cpp
 
 noinst_HEADERS = axes.h create.h data.h import.h saveimage.h style.h transform.h view.h
 noinst_HEADERS += editdataset.h editfitkernel.h editfitresults.h editlinestyle.h editnumberformat.h editreference.h editviewlayout.h

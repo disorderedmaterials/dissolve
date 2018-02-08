@@ -119,7 +119,7 @@ class UChromaBase
 
 	protected:
 	// Viewer present in derived class
-	Viewer* viewer_;
+	UChromaViewer* viewer_;
 	// Current interaction mode
 	UChromaBase::InteractionMode interactionMode_;
 	// Current axis target for interaction
@@ -131,7 +131,7 @@ class UChromaBase
 	// Starting (clicked) keyboard modifiers when interacting
 	Qt::KeyboardModifiers clickedInteractionModifiers_;
 	// Object at clicked position (if ViewInteraction)
-	Viewer::ViewObject clickedObject_;
+	UChromaViewer::ViewObject clickedObject_;
 	// Info for object at clicked position (if ViewInteraction)
 	CharString clickedObjectInfo_;
 	// Current interaction position on axis
@@ -145,7 +145,7 @@ class UChromaBase
 
 	public:
 	// Return Viewer present in derived class
-	Viewer* viewer();
+	UChromaViewer* viewer();
 	// Set interaction mode and target axis
 	void setInteractionMode(UChromaBase::InteractionMode mode, int axis);
 	// Return interaction mode
@@ -200,6 +200,12 @@ class UChromaBase
 	EditFitKernelDialog editFitKernelDialog_;
 	// Save Image Dialog
 	SaveImageDialog saveImageDialog_;
+
+	public:
+	// Dialog enum
+	enum DialogWindow { UChromaAxesWindow, UChromaDataWindow, UChromaStyleWindow, UChromaTransformWindow, UChromaViewWindow, UChromaCreateCollectionDialog, UChromaImportDialog, UChromaEditFitKernelDialog, UChromaSaveImageDialog };
+	// Show specified window / dialog
+	void showDialog(int window);
 
 
 	/*

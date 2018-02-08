@@ -29,7 +29,7 @@
 #include <QProgressDialog>
 
 // Setup basic GL properties (called each time before renderScene())
-void Viewer::setupGL()
+void UChromaViewer::setupGL()
 {
 	// Define colours etc.
 	GLfloat backgroundColour[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -89,7 +89,7 @@ void Viewer::setupGL()
 }
 
 // Draw full scene
-void Viewer::renderFullScene(int xOffset, int yOffset)
+void UChromaViewer::renderFullScene(int xOffset, int yOffset)
 {
 	// If the Viewer has not been correctly set up, return here
 	if (!valid_) return;
@@ -188,9 +188,9 @@ void Viewer::renderFullScene(int xOffset, int yOffset)
 			for (axis=0; axis<3; ++axis) if (pane->axes().visible(axis) && (axis != skipAxis))
 			{
 				pane->axes().labelPrimitive(axis).renderAll(fontInstance_, viewMatrix, viewRotationInverse, pane->textZScale());
-				if (updateQueryDepth()) setQueryObject(Viewer::AxisTickLabelObject, DUQSys::itoa(axis));
+				if (updateQueryDepth()) setQueryObject(UChromaViewer::AxisTickLabelObject, DUQSys::itoa(axis));
 				pane->axes().titlePrimitive(axis).renderAll(fontInstance_, viewMatrix, viewRotationInverse, pane->textZScale());
-				if (updateQueryDepth()) setQueryObject(Viewer::AxisTitleLabelObject, DUQSys::itoa(axis));
+				if (updateQueryDepth()) setQueryObject(UChromaViewer::AxisTitleLabelObject, DUQSys::itoa(axis));
 			}
 		}
 
@@ -202,19 +202,19 @@ void Viewer::renderFullScene(int xOffset, int yOffset)
 		{
 			pane->axes().gridLineMinorStyle(axis).apply();
 			pane->axes().gridLineMinorPrimitive(axis).sendToGL();
-			if (updateQueryDepth()) setQueryObject(Viewer::GridLineMinorObject, DUQSys::itoa(axis));
+			if (updateQueryDepth()) setQueryObject(UChromaViewer::GridLineMinorObject, DUQSys::itoa(axis));
 		}
 		for (axis=0; axis<3; ++axis) if (pane->axes().visible(axis) && (axis != skipAxis))
 		{
 			pane->axes().gridLineMajorStyle(axis).apply();
 			pane->axes().gridLineMajorPrimitive(axis).sendToGL();
-			if (updateQueryDepth()) setQueryObject(Viewer::GridLineMajorObject, DUQSys::itoa(axis));
+			if (updateQueryDepth()) setQueryObject(UChromaViewer::GridLineMajorObject, DUQSys::itoa(axis));
 		}
 		LineStyle::revert();
 		for (axis=0; axis<3; ++axis) if (pane->axes().visible(axis) && (axis != skipAxis))
 		{
 			pane->axes().axisPrimitive(axis).sendToGL();
-			if (updateQueryDepth()) setQueryObject(Viewer::AxisLineObject, DUQSys::itoa(axis));
+			if (updateQueryDepth()) setQueryObject(UChromaViewer::AxisLineObject, DUQSys::itoa(axis));
 		}
 		glEnable(GL_LIGHTING);
 		glDisable(GL_LINE_SMOOTH);
@@ -282,7 +282,7 @@ void Viewer::renderFullScene(int xOffset, int yOffset)
 			}
 
 			// Update query
-			if (updateQueryDepth()) setQueryObject(Viewer::CollectionObject, target->collection()->locator());
+			if (updateQueryDepth()) setQueryObject(UChromaViewer::CollectionObject, target->collection()->locator());
 
 			glEnable(GL_COLOR_MATERIAL);
 		}
@@ -416,13 +416,13 @@ void Viewer::renderFullScene(int xOffset, int yOffset)
 }
 
 // Set whether we are currently rendering offscreen
-void Viewer::setRenderingOffScreen(bool b)
+void UChromaViewer::setRenderingOffScreen(bool b)
 {
 	renderingOffScreen_ = b;
 }
 
 // Set line width and text scaling to use
-void Viewer::setObjectScaling(double scaling)
+void UChromaViewer::setObjectScaling(double scaling)
 {
 	lineWidthScaling_ = scaling;
 
@@ -432,13 +432,13 @@ void Viewer::setObjectScaling(double scaling)
 }
 
 // Grab current contents of framebuffer
-QPixmap Viewer::frameBuffer()
+QPixmap UChromaViewer::frameBuffer()
 {
 	return QPixmap::fromImage(grabFramebuffer());
 }
 
 // Render or grab image
-QPixmap Viewer::generateImage(int imageWidth, int imageHeight)
+QPixmap UChromaViewer::generateImage(int imageWidth, int imageHeight)
 {
 	// Flag that we are rendering offscreen, and that we want high quality primitives
 	renderingOffScreen_ = true;
@@ -528,7 +528,7 @@ QPixmap Viewer::generateImage(int imageWidth, int imageHeight)
 }
 
 // Set collection to highlight in this pass
-void Viewer::setHighlightCollection(Collection* collection)
+void UChromaViewer::setHighlightCollection(Collection* collection)
 {
 	highlightCollection_ = collection;
 }

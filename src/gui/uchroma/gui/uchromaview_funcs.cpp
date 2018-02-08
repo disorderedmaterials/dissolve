@@ -46,7 +46,7 @@ UChromaViewWidget::UChromaViewWidget(QWidget* parent) : QWidget(parent), UChroma
 	interactionAxis_ = -1;
 	interactionStarted_ = false;
 	clickedInteractionValue_ = 0.0;
-	clickedObject_ = Viewer::NoObject;
+	clickedObject_ = UChromaViewer::NoObject;
 	currentInteractionValue_ = 0.0;
 	refreshing_ = false;
 

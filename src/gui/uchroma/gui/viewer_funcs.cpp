@@ -25,7 +25,7 @@
 #include "gui/uchroma/render/fontinstance.h"
 
 // Constructor
-Viewer::Viewer(QWidget* parent) : QOpenGLWidget(parent)
+UChromaViewer::UChromaViewer(QWidget* parent) : QOpenGLWidget(parent)
 {
 	uChromaBase_ = NULL;
 
@@ -41,7 +41,7 @@ Viewer::Viewer(QWidget* parent) : QOpenGLWidget(parent)
 	objectQueryX_ = -1;
 	objectQueryY_ = -1;
 	depthAtQueryCoordinates_ = 1.0;
-	objectAtQueryCoordinates_ = Viewer::NoObject;
+	objectAtQueryCoordinates_ = UChromaViewer::NoObject;
 
 	// Prevent QPainter from autofilling widget background
 	setAutoFillBackground(false);
@@ -49,20 +49,19 @@ Viewer::Viewer(QWidget* parent) : QOpenGLWidget(parent)
         // Create our FTGL font instance
 	fontInstance_.setup();
 
-	// Set custom context menu policy
+	// Set up context menu
 	setContextMenuPolicy(Qt::CustomContextMenu);
-
-	// Connect signals / slots
+	initialiseContextMenu();
 	connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
 }
 
 // Destructor
-Viewer::~Viewer()
+UChromaViewer::~UChromaViewer()
 {
 }
 
 // Set UChromaBase pointer
-void Viewer::setUChromaBase(UChromaBase* uChromaBase)
+void UChromaViewer::setUChromaBase(UChromaBase* uChromaBase)
 {
 	uChromaBase_ = uChromaBase;
 }
@@ -72,7 +71,7 @@ void Viewer::setUChromaBase(UChromaBase* uChromaBase)
  */
 
 // Initialise context widget (when created by Qt)
-void Viewer::initializeGL()
+void UChromaViewer::initializeGL()
 {
 	// Setup function pointers to OpenGL extension functions
 	initializeOpenGLFunctions();
@@ -99,7 +98,7 @@ void Viewer::initializeGL()
 	uChromaBase_->recalculateViewLayout(contextWidth_, contextHeight_);
 }
 
-void Viewer::paintGL()
+void UChromaViewer::paintGL()
 {
 	// Do nothing if the canvas is not valid, or we are still drawing from last time, or the uChroma pointer has not been set
 	if ((!valid_) || drawing_ || (!uChromaBase_)) return;
@@ -122,7 +121,7 @@ void Viewer::paintGL()
 }
 
 // Resize function
-void Viewer::resizeGL(int newwidth, int newheight)
+void UChromaViewer::resizeGL(int newwidth, int newheight)
 {
 	// Store the new width and height of the widget
 	contextWidth_ = (GLsizei) newwidth;
@@ -137,31 +136,31 @@ void Viewer::resizeGL(int newwidth, int newheight)
 */
 
 // Return the current height of the drawing area
-GLsizei Viewer::contextHeight() const
+GLsizei UChromaViewer::contextHeight() const
 {
 	return contextHeight_;
 }
 
 // Return the current width of the drawing area
-GLsizei Viewer::contextWidth() const
+GLsizei UChromaViewer::contextWidth() const
 {
 	return contextWidth_;
 }
 
 // Setup font instance with supplied font
-bool Viewer::setupFont(const char* fontFileName)
+bool UChromaViewer::setupFont(const char* fontFileName)
 {
 	return fontInstance_.setup(fontFileName);
 }
 
 // Return font instance
-FontInstance& Viewer::fontInstance()
+FontInstance& UChromaViewer::fontInstance()
 {
 	return fontInstance_;
 }
 
 // Check for GL error
-void Viewer::checkGlError()
+void UChromaViewer::checkGlError()
 {
 	GLenum glerr = GL_NO_ERROR;
 	do
@@ -183,7 +182,7 @@ void Viewer::checkGlError()
 }
 
 // Refresh widget / scene
-void Viewer::postRedisplay()
+void UChromaViewer::postRedisplay()
 {
 	if ((!valid_) || drawing_) return;
 	update();
@@ -194,7 +193,7 @@ void Viewer::postRedisplay()
  */
 
 // Update depth at query coordinates, returning whether it is closer
-bool Viewer::updateQueryDepth()
+bool UChromaViewer::updateQueryDepth()
 {
 	// Return immediately if we are not querying
 	if (objectQueryX_ == -1) return false;
@@ -219,17 +218,17 @@ bool Viewer::updateQueryDepth()
 }
 
 // Set information of query object
-void Viewer::setQueryObject(Viewer::ViewObject objectType, const char* info)
+void UChromaViewer::setQueryObject(UChromaViewer::ViewObject objectType, const char* info)
 {
 	objectAtQueryCoordinates_ = objectType;
 	infoAtQueryCoordinates_ = info;
 }
 
 // Set coordinates to query at next redraw
-void Viewer::setQueryCoordinates(int mouseX, int mouseY)
+void UChromaViewer::setQueryCoordinates(int mouseX, int mouseY)
 {
 	depthAtQueryCoordinates_ = 1.0;
-	objectAtQueryCoordinates_ = Viewer::NoObject;
+	objectAtQueryCoordinates_ = UChromaViewer::NoObject;
 	infoAtQueryCoordinates_.clear();
 
 	// Check for invalid coordinates
@@ -261,13 +260,13 @@ void Viewer::setQueryCoordinates(int mouseX, int mouseY)
 }
 
 // Return object type at query coordinates
-Viewer::ViewObject Viewer::objectAtQueryCoordinates() const
+UChromaViewer::ViewObject UChromaViewer::objectAtQueryCoordinates() const
 {
 	return objectAtQueryCoordinates_;
 }
 
 // Info for object at query coordinates
-const char* Viewer::infoAtQueryCoordinates() const
+const char* UChromaViewer::infoAtQueryCoordinates() const
 {
 	return infoAtQueryCoordinates_.get();
 }

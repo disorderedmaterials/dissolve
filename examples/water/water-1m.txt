@@ -69,8 +69,6 @@ Configuration  'Bulk'
   Multiplier  333334
   SpeciesInfo  'Water'  1.0
 
-  InputCoordinates  xyz  bigstart.xyz
-
 EndConfiguration
 
 #------------------------#

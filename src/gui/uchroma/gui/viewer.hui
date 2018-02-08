@@ -26,6 +26,7 @@
 #include <QOpenGLFunctions>
 #include <QOffscreenSurface>
 #include <QObject>
+#include <QMenu>
 #include "gui/uchroma/render/primitive.h"
 #include "gui/uchroma/classes/axes.h"
 #include "gui/uchroma/classes/colourscale.h"
@@ -42,14 +43,14 @@ class DisplayDataSet;
 class ViewPane;
 
 // Base rendering widget
-class Viewer : public QOpenGLWidget, protected QOpenGLFunctions
+class UChromaViewer : public QOpenGLWidget, protected QOpenGLFunctions
 {
 	Q_OBJECT
 
 	public:
 	// Constructor / Destructor
-	Viewer(QWidget *parent);
-	~Viewer();
+	UChromaViewer(QWidget *parent);
+	~UChromaViewer();
 
 
 	/*
@@ -149,7 +150,7 @@ class Viewer : public QOpenGLWidget, protected QOpenGLFunctions
 	// Maximum depth value found at query pixel
 	GLfloat depthAtQueryCoordinates_;
 	// Type of object found at query coordinates
-	Viewer::ViewObject objectAtQueryCoordinates_;
+	UChromaViewer::ViewObject objectAtQueryCoordinates_;
 	// Information describing object at query coordinates
 	CharString infoAtQueryCoordinates_;
 
@@ -157,13 +158,13 @@ class Viewer : public QOpenGLWidget, protected QOpenGLFunctions
 	// Update depth at query coordinates, returning whether it is closer
 	bool updateQueryDepth();
 	// Set information of query object
-	void setQueryObject(Viewer::ViewObject objectType, const char* info);
+	void setQueryObject(UChromaViewer::ViewObject objectType, const char* info);
 
 	public:
 	// Set coordinates to query at next redraw
 	void setQueryCoordinates(int mouseX, int mouseY);
 	// Return object type at query coordinates
-	Viewer::ViewObject objectAtQueryCoordinates() const;
+	UChromaViewer::ViewObject objectAtQueryCoordinates() const;
 	// Info for object at query coordinates
 	const char* infoAtQueryCoordinates() const;
 
@@ -203,6 +204,33 @@ class Viewer : public QOpenGLWidget, protected QOpenGLFunctions
 	void keyPressEvent(QKeyEvent*);
 	// Qt Slot (key release event)
 	void keyReleaseEvent(QKeyEvent*);
+
+
+	/*
+	 * Context Menu
+	 * (in viewer_context.cpp)
+	 */
+	private:
+	// Context menu for display
+	QMenu contextMenu_;
+	// Special QActions
+	QAction* currentPaneAction_;
+	// Special QMenu items
+	QMenu* currentCollectionsMenu_;
+
+	private:
+	// Initialise context menu
+	void initialiseContextMenu();
+	// Update dynamic aspects of context menu before display
+	void updateContextMenu();
+
+	private slots:
+	// Show dialog
+	void showDialog(bool checked);
+	// Set display status of Collection target
+	void setCollectionDisplayed(bool checked);
+
+	public slots:
 	// Show context menu
 	void showContextMenu(const QPoint& pos);
 };

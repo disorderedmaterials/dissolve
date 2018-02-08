@@ -22,13 +22,14 @@
 #include "gui/uchroma/gui/viewer.hui"
 #include "gui/uchroma/uchromabase.h"
 #include <QMouseEvent>
+#include <QMenu>
 
 /*
  * Mouse Input
  */
 
 // Qt Signal (mouse press event)
-void Viewer::mousePressEvent(QMouseEvent* event)
+void UChromaViewer::mousePressEvent(QMouseEvent* event)
 {
 	// Handle button presses (button down) from the mouse
 	buttonState_ = event->buttons();
@@ -49,7 +50,7 @@ void Viewer::mousePressEvent(QMouseEvent* event)
 }
 
 // Qt Signal (mouse release event)
-void Viewer::mouseReleaseEvent(QMouseEvent* event)
+void UChromaViewer::mouseReleaseEvent(QMouseEvent* event)
 {
 	// Notify uChroma that the mouse button has been released (if relevant)
 	if (buttonState_&Qt::LeftButton) uChromaBase_->endInteraction(event->x(), contextHeight_-event->y());
@@ -61,7 +62,7 @@ void Viewer::mouseReleaseEvent(QMouseEvent* event)
 }
 
 // Qt Signal (mouse move event)
-void Viewer::mouseMoveEvent(QMouseEvent* event)
+void UChromaViewer::mouseMoveEvent(QMouseEvent* event)
 {
 	Vec3<double> delta;
 
@@ -73,7 +74,7 @@ void Viewer::mouseMoveEvent(QMouseEvent* event)
 
 	// Is the current view pane valid?
 	ViewPane* targetPane = uChromaBase_->currentViewPane();
-	if (ViewPane::objectValid(targetPane, "ViewPane in Viewer::MouseMoveEvent"))
+	if (ViewPane::objectValid(targetPane, "ViewPane in UChromaViewer::MouseMoveEvent"))
 	{
 		if (buttonState_&Qt::LeftButton)
 		{
@@ -122,7 +123,7 @@ void Viewer::mouseMoveEvent(QMouseEvent* event)
 }
 
 // Qt Signal (mouse wheel event)
-void Viewer::wheelEvent(QWheelEvent *event)
+void UChromaViewer::wheelEvent(QWheelEvent *event)
 {
 	bool scrollup = event->delta() > 0;
 
@@ -141,19 +142,20 @@ void Viewer::wheelEvent(QWheelEvent *event)
 }
 
 // Qt Virtual (mouse double click event)
-void Viewer::mouseDoubleClickEvent(QMouseEvent* event)
+void UChromaViewer::mouseDoubleClickEvent(QMouseEvent* event)
 {
+	printf("Mouse double-click event has occurred!\n");
 	uChromaBase_->doubleClickInteraction(event->x(), height()-event->y());
 }
 
 // Return mouse coordinates at last mousedown event
-Vec3<double> Viewer::rMouseDown() const
+Vec3<double> UChromaViewer::rMouseDown() const
 {
 	return rMouseDown_;
 }
 
 // Return mouse coordinates at last mousemove event
-Vec3<double> Viewer::rMouseLast() const
+Vec3<double> UChromaViewer::rMouseLast() const
 {
 	return rMouseLast_;
 }
@@ -163,7 +165,7 @@ Vec3<double> Viewer::rMouseLast() const
  */
 
 // Qt Slot (key press event)
-void Viewer::keyPressEvent(QKeyEvent *event)
+void UChromaViewer::keyPressEvent(QKeyEvent *event)
 {
 	bool refresh = true, ignore = false;
 	Qt::KeyboardModifiers km = event->modifiers();
@@ -227,7 +229,7 @@ void Viewer::keyPressEvent(QKeyEvent *event)
 }
 
 // Qt Slot (key release event)
-void Viewer::keyReleaseEvent(QKeyEvent *event)
+void UChromaViewer::keyReleaseEvent(QKeyEvent *event)
 {
 	// Check datamodel...
 	bool refresh = false, ignore = true;
@@ -251,10 +253,4 @@ void Viewer::keyReleaseEvent(QKeyEvent *event)
 	if (refresh) postRedisplay();
 	if (ignore) event->ignore();
 	else event->accept();
-}
-
-// Show context menu
-void Viewer::showContextMenu(const QPoint& pos)
-{
-	
 }

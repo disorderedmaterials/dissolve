@@ -64,22 +64,6 @@
        <number>0</number>
       </property>
       <item>
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Expanding</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>288</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
        <widget class="QLabel" name="CoordinateLabel">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -89,6 +73,9 @@
         </property>
         <property name="text">
          <string>0,0</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
@@ -132,7 +119,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="Viewer" name="MainView" native="true">
+       <widget class="UChromaViewer" name="MainView" native="true">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
           <horstretch>0</horstretch>
@@ -851,7 +838,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>Viewer</class>
+   <class>UChromaViewer</class>
    <extends>QWidget</extends>
    <header>gui/uchroma/gui/viewer.hui</header>
    <container>1</container>

@@ -45,7 +45,7 @@ UChromaBase::UChromaBase(QWidget* parent) : parent_(parent), viewLayout_(*this),
 	interactionAxis_ = -1;
 	interactionStarted_ = false;
 	clickedInteractionValue_ = 0.0;
-	clickedObject_ = Viewer::NoObject;
+	clickedObject_ = UChromaViewer::NoObject;
 	currentInteractionValue_ = 0.0;
 // 	setInteractionMode(interactionMode_, -1);
 
@@ -86,8 +86,8 @@ QWidget* UChromaBase::parent()
  * Window Functions
  */
 
-// Return Viewer present in derived class
-Viewer* UChromaBase::viewer()
+// Return UChromaViewer present in derived class
+UChromaViewer* UChromaBase::viewer()
 {
 	return viewer_;
 }
@@ -120,6 +120,48 @@ void UChromaBase::setInputFile(const char* fileName)
 const char* UChromaBase::inputFile()
 {
 	return inputFile_;
+}
+
+/*
+ * Tool Windows / Dialogs
+ */
+
+// Show specified window / dialog
+void UChromaBase::showDialog(int window)
+{
+	switch (window)
+	{
+		case (UChromaAxesWindow):
+			axesWindow_.show();
+			break;
+		case (UChromaDataWindow):
+			dataWindow_.show();
+			break;
+		case (UChromaStyleWindow):
+			styleWindow_.show();
+			break;
+		case (UChromaTransformWindow):
+			transformWindow_.show();
+			break;
+		case (UChromaViewWindow):
+			viewWindow_.show();
+			break;
+		case (UChromaCreateCollectionDialog):
+			createCollectionDialog_.show();
+			break;
+		case (UChromaImportDialog):
+			importDialog_.show();
+			break;
+		case (UChromaEditFitKernelDialog):
+			editFitKernelDialog_.show();
+			break;
+		case (UChromaSaveImageDialog):
+			saveImageDialog_.show();
+			break;
+		default:
+			Messenger::error("UChromaBase::callDialog(%i) - Window type not recognised.\n", window);
+			break;
+	}
 }
 
 /*

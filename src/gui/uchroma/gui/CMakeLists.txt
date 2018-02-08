@@ -85,6 +85,7 @@ SET(uchromagui_SRCS
   selectsymbol_funcs.cpp
   selecttarget_funcs.cpp
 
+  viewer_context.cpp
   viewer_funcs.cpp
   viewer_input.cpp
   viewer_scene.cpp

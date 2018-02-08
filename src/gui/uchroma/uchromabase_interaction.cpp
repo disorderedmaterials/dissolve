@@ -218,7 +218,7 @@ void UChromaBase::endInteraction(int mouseX, int mouseY)
 				viewer_->repaint();
 				clickedObject_ = viewer_->objectAtQueryCoordinates();
 				clickedObjectInfo_ = viewer_->infoAtQueryCoordinates();
-				if (clickedObject_ == Viewer::CollectionObject)
+				if (clickedObject_ == UChromaViewer::CollectionObject)
 				{
 					viewer_->setHighlightCollection(locateCollection(clickedObjectInfo_));
 				}
@@ -240,7 +240,7 @@ void UChromaBase::endInteraction(int mouseX, int mouseY)
 				}
 			}
 
-			if (clickedObject_ == Viewer::CollectionObject)
+			if (clickedObject_ == UChromaViewer::CollectionObject)
 			{
 				viewer_->setHighlightCollection(NULL);
 				Collection* collection = locateCollection(clickedObjectInfo_);
@@ -276,7 +276,7 @@ void UChromaBase::endInteraction(int mouseX, int mouseY)
 	}
 
 	interactionStarted_ = false;
-	clickedObject_ = Viewer::NoObject;
+	clickedObject_ = UChromaViewer::NoObject;
 	clickedObjectInfo_.clear();
 }
 
@@ -331,26 +331,26 @@ void UChromaBase::doubleClickInteraction(int mouseX, int mouseY)
 	int i;
 	switch (clickedObject_)
 	{
-		case (Viewer::AxisLineObject):
+		case (UChromaViewer::AxisLineObject):
 			i = clickedObjectInfo_.asInteger();
 // 			axesWindow_.updateAndShow();
 // 			axesWindow_.ui.AxesTabs->setCurrentIndex(i);
 // 			axesWindow_.ui.
 			break;
-		case (Viewer::AxisTickLabelObject):
+		case (UChromaViewer::AxisTickLabelObject):
 			break;
-		case (Viewer::AxisTitleLabelObject):
+		case (UChromaViewer::AxisTitleLabelObject):
 			break;
-		case (Viewer::CollectionObject):
+		case (UChromaViewer::CollectionObject):
 			break;
-		case (Viewer::GridLineMajorObject):
+		case (UChromaViewer::GridLineMajorObject):
 			break;
-		case (Viewer::GridLineMinorObject):
+		case (UChromaViewer::GridLineMinorObject):
 			break;
 	}
 
 	// Reset clicked object info
-	clickedObject_ = Viewer::NoObject;
+	clickedObject_ = UChromaViewer::NoObject;
 	clickedObjectInfo_.clear();
 }
 
