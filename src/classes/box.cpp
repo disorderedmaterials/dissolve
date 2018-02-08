@@ -113,7 +113,7 @@ void Box::setUp(double volume)
 	reciprocalAxes_.columnMultiply(2, TWOPI / volume_);
 	reciprocalVolume_ = (reciprocalAxes_.columnAsVec3(1) * reciprocalAxes_.columnAsVec3(2)).dp(reciprocalAxes_.columnAsVec3(0));
 
-	Messenger::print("--> Final box volume is %f cubic Angstroms (reciprocal volume = %f)\n", volume_, reciprocalVolume_);
+	Messenger::print("--> Final box volume is %f cubic Angstroms (reciprocal volume = %e)\n", volume_, reciprocalVolume_);
 }
 
 // Return volume
