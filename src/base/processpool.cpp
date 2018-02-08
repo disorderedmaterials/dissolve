@@ -536,11 +536,11 @@ bool ProcessPool::assignProcessesToGroups(ProcessPool& groupsSource)
 	leaderCommunicator_ = 0;
 	groupRank_ = -1;
 	groupIndex_ = -1;
+#endif
 
 	// Reset the groupLeaders and processGroups arrays
 	groupLeaders_.clear();
 	processGroups_.clear();
-#endif
 
 	// Copy over the number of allowable groups from the source ProcessPool
 	maxProcessGroups_ = groupsSource.maxProcessGroups_;
