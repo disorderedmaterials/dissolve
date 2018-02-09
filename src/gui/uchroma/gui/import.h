@@ -27,6 +27,7 @@
 
 // Forward Declarations
 class UChromaBase;
+class ViewPane;
 
 class ImportDialog : public QDialog
 {
@@ -54,6 +55,9 @@ class ImportDialog : public QDialog
 	// Window close event
 	void closeEvent(QCloseEvent *event);
 
+	public:
+	// Execute the dialog
+	bool execute(Collection* currentCollection, ViewPane* targetViewPane);
 
 	/*
 	 * Import Functions
@@ -63,20 +67,12 @@ class ImportDialog : public QDialog
 	QDir currentDirectory_;
 	// List of imported datasets
 	List<DataSet> importedDataSets_;
+	// Target view pane for new Collection, if any
+	ViewPane* targetViewPane_;
 
 	private:
 	// Import sequential XY data
 	bool importSequentialXY();
-
-	public:
-	// Run the import, showing the dialog
-	bool import();
-	// Return first imported slice
-	DataSet* importedSlices();
-	// Return selected filename
-	QString filename();
-	// Return whether a new collection should be created for the imported data
-	bool createNewCollection();
 
 
 	/*

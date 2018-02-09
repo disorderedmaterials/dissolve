@@ -150,7 +150,7 @@ void UChromaBase::showDialog(int window)
 			createCollectionDialog_.show();
 			break;
 		case (UChromaImportDialog):
-			importDialog_.show();
+			importDialog_.execute(currentCollection_, currentViewPane());
 			break;
 		case (UChromaEditFitKernelDialog):
 			editFitKernelDialog_.show();

@@ -48,36 +48,17 @@ void ImportDialog::closeEvent(QCloseEvent *event)
 	reject();
 }
 
-/*
- * Data Import
- */
-
-// Run the import, showing the dialog
-bool ImportDialog::import()
+// Execute the dialog
+bool ImportDialog::execute(Collection* currentCollection, ViewPane* targetViewPane)
 {
+	ui.ImportIntoCurrentCollectionRadio->setEnabled(currentCollection);
+	if (!currentCollection) ui.ImportIntoNewCollectionRadio->setChecked(true);
+
 	importedDataSets_.clear();
+	targetViewPane_ = targetViewPane;
 
 	int result = exec();
 	return result;
-}
-
-
-// Return first imported slice
-DataSet* ImportDialog::importedSlices()
-{
-	return importedDataSets_.first();
-}
-
-// Return selected filename
-QString ImportDialog::filename()
-{
-	return ui.DataFileEdit->text();
-}
-
-// Return whether a new collection should be created for the imported data
-bool ImportDialog::createNewCollection()
-{
-	return ui.ImportIntoNewCollectionRadio->isChecked();
 }
 
 /*
@@ -103,10 +84,38 @@ void ImportDialog::on_DataFileEdit_textChanged(QString text)
 
 void ImportDialog::on_ImportButton_clicked(bool checked)
 {
-	// Based on the current data type selected, call the correct import function
-	bool result;
-	if (ui.DataTypeList->currentRow() == 0) result = importSequentialXY();
-	
+	// Get data from the specified file
+	bool result = importSequentialXY();
+
+	// Create new Collection if requested
+	Collection* collection = NULL;
+	if (ui.ImportIntoNewCollectionRadio->isChecked())
+	{
+		// Start edit state group
+		uChromaBase_.beginEditStateGroup("import data into new collection");
+
+		collection = uChromaBase_.addCollection();
+
+		// No need to capture additional undo information
+		uChromaBase_.endEditStateGroup();
+
+		// Set name of collection
+		collection->setName(qPrintable(ui.DataFileEdit->text()));
+
+		// Add pane to specified view pane
+		if (targetViewPane_) targetViewPane_->addCollectionTarget(collection);
+	}
+	else collection = uChromaBase_.currentCollection();
+
+	// Check current Collection
+	if (!Collection::objectValid(collection, "collection in UChromaFullWindow::on_actionDataImport_triggered()")) return;
+
+	// Loop over list of imported slices and copy them to our local list
+	for (DataSet* dataSet = importedDataSets_.first(); dataSet != NULL; dataSet = dataSet->next) collection->addDataSet(dataSet);
+
+	// Update everything
+	uChromaBase_.updateGUI();
+
 	if (result) accept();
 	else reject();
 }

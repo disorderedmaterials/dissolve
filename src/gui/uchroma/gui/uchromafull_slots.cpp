@@ -470,36 +470,7 @@ void UChromaFullWindow::on_actionDataLoadXY_triggered(bool checked)
 
 void UChromaFullWindow::on_actionDataImport_triggered(bool checked)
 {
-	// Raise the Data Import dialog
-	bool result = importDialog_.import();
-	if (!result) return;
-
-	// Create new Collection if requested
-	Collection* collection = NULL;
-	if (importDialog_.createNewCollection())
-	{
-		// Start edit state group
-		beginEditStateGroup("import data into new collection");
-
-		collection = addCollection();
-
-		// No need to capture additional undo information
-		endEditStateGroup();
-
-		// Set name of collection
-		collection->setName(qPrintable(importDialog_.filename()));
-	}
-	else collection = currentCollection();
-
-	// Check current Collection
-	
-	if (!Collection::objectValid(collection, "collection in UChromaFullWindow::on_actionDataImport_triggered()")) return;
-
-	// Loop over list of imported slices and copy them to our local list
-	for (DataSet* dataSet = importDialog_.importedSlices(); dataSet != NULL; dataSet = dataSet->next) collection->addDataSet(dataSet);
-
-	// Update everything
-	updateGUI();
+	importDialog_.execute(currentCollection_, currentViewPane());
 }
 
 void UChromaFullWindow::on_actionDataReload_triggered(bool checked)
