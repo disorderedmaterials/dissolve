@@ -275,6 +275,8 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 
 			Messenger::print("Energy: Calculating total energy for Configuration '%s'...\n", cfg->name());
 
+			procPool.resetAccumulatedTime();
+
 			// Calculate Grain energy
 			Timer interTimer;
 			double interEnergy = interatomicEnergy(procPool, cfg, duq.potentialMap());
@@ -286,7 +288,7 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 			double intraEnergy = intramolecularEnergy(procPool, cfg, duq.potentialMap(), bondEnergy, angleEnergy, torsionEnergy);
 			intraTimer.stop();
 
-			Messenger::print("Energy: Time to do interatomic energy was %s, intramolecular energy was %s.\n", interTimer.totalTimeString(), intraTimer.totalTimeString());
+			Messenger::print("Energy: Time to do interatomic energy was %s, intramolecular energy was %s (%s comms).\n", interTimer.totalTimeString(), intraTimer.totalTimeString(), procPool.accumulatedTimeString());
 			Messenger::print("Energy: Total Energy (World) is %15.9e kJ/mol (%15.9e kJ/mol interatomic + %15.9e kJ/mol intramolecular).\n", interEnergy + intraEnergy, interEnergy, intraEnergy);
 			Messenger::print("Energy: Intramolecular contributions are - bonds = %15.9e kJ/mol, angles = %15.9e kJ/mol, torsions = %15.9e kJ/mol.\n", bondEnergy, angleEnergy, torsionEnergy);
 

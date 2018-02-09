@@ -545,6 +545,8 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 			fy.initialise(cfg->nAtoms());
 			fz.initialise(cfg->nAtoms());
 
+			procPool.resetAccumulatedTime();
+
 			// Calculate interatomic forces
 			Timer interTimer;
 			interTimer.start();
@@ -558,7 +560,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 			intramolecularForces(procPool, cfg, duq.potentialMap(), fx, fy, fz);
 			intraTimer.stop();
 
-			Messenger::print("Forces: Time to do interatomic forces was %s, intramolecular forces was %s.\n", interTimer.totalTimeString(), intraTimer.totalTimeString());
+			Messenger::print("Forces: Time to do interatomic forces was %s, intramolecular forces was %s (%s comms).\n", interTimer.totalTimeString(), intraTimer.totalTimeString(), procPool.accumulatedTimeString());
 
 			// If writing to a file, append it here
 			if (saveData)
