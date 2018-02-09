@@ -38,6 +38,7 @@ Distributor::Distributor(int nObjects, const CellArray& cellArray, ProcessPool& 
 	objectStatus_ = Distributor::WaitingFlag;
 	nObjectsDistributed_ = 0;
 	nUnavailableInstances_ = 0;
+	nChangeBroadcastsRequired_ = 0;
 
 	nProcessesOrGroups_ = processPool_.strategyNDivisions(divisionStrategy_);
 	processOrGroupIndex_ = processPool_.strategyProcessIndex(divisionStrategy_);
@@ -359,6 +360,7 @@ int Distributor::nextAvailableObject(bool& changesBroadcastRequired)
 
 						// It's been modified by someone else, so we will need to distribute changes
 						changesBroadcastRequired = true;
+						++nChangeBroadcastsRequired_;
 						Messenger::printVerbose("Changes broadcast required - Cell %i is required by process/group %i, and process/group %i has modified it.\n", cellIndex, processOrGroup, cellContentsModifiedBy_[cellIndex]);
 
 						// Reset the modified by flags here - this makes the assumption that the calling routine will honour the truth of 'changesBroadcastRequired'
@@ -440,4 +442,16 @@ bool Distributor::finishedWithObject()
 	}
 
 	return true;
+}
+
+// Return number of instances where no viable object was available
+int Distributor::nUnavailableInstances() const
+{
+	return nUnavailableInstances_;
+}
+
+// Return number of times a change broadcast was required
+int Distributor::nChangeBroadcastsRequired() const
+{
+	return nChangeBroadcastsRequired_;
 }

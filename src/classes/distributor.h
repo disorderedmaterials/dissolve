@@ -107,14 +107,20 @@ class Distributor
 	Array<int> lastObjectDistributed_;
 	// Arrays of cells that were hard-locked in the last distribution (per process/group)
 	Array<Cell*>* lastHardLockedCells_;
-	// Count of number of instances where no viable object was available
+	// Number of instances where no viable object was available
 	int nUnavailableInstances_;
+	// Number of times a change broadcast was required
+	int nChangeBroadcastsRequired_;
 
 	public:
 	// Return next available object for calculation
 	int nextAvailableObject(bool& changesBroadcastRequired);
 	// Let the distributor know that the object is now finished with
 	bool finishedWithObject();
+	// Return number of instances where no viable object was available
+	int nUnavailableInstances() const;
+	// Return number of times a change broadcast was required
+	int nChangeBroadcastsRequired() const;
 };
 
 #endif

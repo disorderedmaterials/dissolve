@@ -244,7 +244,7 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		// Calculate and print acceptance rates
 		double transRate = double(nTranslationsAccepted)/nTranslationAttempts;
 		double rotRate = double(nRotationsAccepted)/nRotationAttempts;
-		Messenger::print("MolShake: Total number of attempted moves was %i (%s work, %s comms)\n", nGeneralAttempts, timer.totalTimeString(), procPool.accumulatedTimeString());
+		Messenger::print("MolShake: Total number of attempted moves was %i (%s work, %s comms, %i nodists, %i broadcasts)\n", nGeneralAttempts, timer.totalTimeString(), procPool.accumulatedTimeString(), distributor.nUnavailableInstances(), distributor.nChangeBroadcastsRequired());
 		Messenger::print("MolShake: Overall translation acceptance rate was %4.2f% (%i of %i attempted moves)\n", 100.0*transRate, nTranslationsAccepted, nTranslationAttempts);
 		Messenger::print("MolShake: Overall rotation acceptance rate was %4.2f% (%i of %i attempted moves)\n", 100.0*rotRate, nRotationsAccepted, nRotationAttempts);
 
