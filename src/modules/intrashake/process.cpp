@@ -311,7 +311,7 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		if (!procPool.allSum(&nTorsionAccepted, 1, strategy)) return false;
 
 		Messenger::print("IntraShake: Total energy delta was %10.4e kJ/mol.\n", totalDelta);
-		Messenger::print("IntraShake: Total number of attempted moves was %i (%s work, %s comms).\n", nBondAttempts+nAngleAttempts+nTorsionAttempts, timer.totalTimeString(), procPool.accumulatedTimeString());
+		Messenger::print("IntraShake: Total number of attempted moves was %i (%s work, %s comms, %i nodists, %i broadcasts).\n", nBondAttempts+nAngleAttempts+nTorsionAttempts, timer.totalTimeString(), procPool.accumulatedTimeString(), distributor.nUnavailableInstances(), distributor.nChangeBroadcastsRequired());
 
 		// Calculate and report acceptance rates and adjust step sizes - if no moves were accepted, just decrease the current stepSize by a constant factor
 		if (adjustBonds && (nBondAttempts > 0))
