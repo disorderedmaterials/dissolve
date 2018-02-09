@@ -140,7 +140,7 @@ void FitKernel::updateVariables()
 		Variable* var = ri->item;
 
 		// Is this variable one of 'x' or 'z'? Must compare by name since the pointers are not permanent...
-		if ((var->name() == "x") || (var->name() == "z")) continue;
+		if (DUQSys::sameString(var->name(), "x") || DUQSys::sameString(var->name(), "z")) continue;
 
 		// Is it one of the reference variables that we created?
 		ReferenceVariable* refVar = reference(var->name());

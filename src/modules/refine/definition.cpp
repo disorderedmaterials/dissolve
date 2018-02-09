@@ -74,7 +74,7 @@ const char* RefineModule::dependentModules()
 // Set up supplied dependent module (only if it has been auto-added)
 bool RefineModule::setUpDependentModule(Module* depMod)
 {
-	if (depMod->name() == "Energy")
+	if (DUQSys::sameString(depMod->name(), "Energy"))
 	{
 		// Must add all Configuration targets in the associated Partials Module
 		Module* partialsModule = dependentModule("Partials");
