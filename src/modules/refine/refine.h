@@ -19,8 +19,8 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_TESTMODULE_H
-#define DUQ_TESTMODULE_H
+#ifndef DUQ_REFINEMODULE_H
+#define DUQ_REFINEMODULE_H
 
 #include "module/module.h"
 #include "base/xydata.h"
