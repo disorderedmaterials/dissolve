@@ -62,13 +62,15 @@ class ScatteringMatrix
 
 	public:
 	// Return number of reference AtomType pairs
-	int nPairs();
+	int nPairs() const;
 	// Return index of specified AtomType pair
-	int pairIndex(AtomType* typeI, AtomType* typeJ);
+	int pairIndex(AtomType* typeI, AtomType* typeJ) const;
 	// Print the matrix
-	void print();
+	void print() const;
 	// Generate partials from reference data using inverse matrix
 	void generatePartials(Array2D<XYData>& generatedSQ);
+	// Return if the scattering matrix is incomplete (i.e. has fewer rows than there are columns)
+	bool incomplete() const;
 
 
 	/*

@@ -34,13 +34,13 @@ ScatteringMatrix::ScatteringMatrix()
  */
 
 // Return number of reference AtomType pairs
-int ScatteringMatrix::nPairs()
+int ScatteringMatrix::nPairs() const
 {
 	return typePairs_.nItems();
 }
 
 // Return index of specified AtomType pair
-int ScatteringMatrix::pairIndex(AtomType* typeI, AtomType* typeJ)
+int ScatteringMatrix::pairIndex(AtomType* typeI, AtomType* typeJ) const
 {
 	int index = 0;
 	for (Pair<AtomType*,AtomType*>* pair = typePairs_.first(); pair != NULL; pair = pair->next)
@@ -54,7 +54,7 @@ int ScatteringMatrix::pairIndex(AtomType* typeI, AtomType* typeJ)
 }
 
 // Print the matrix
-void ScatteringMatrix::print()
+void ScatteringMatrix::print() const
 {
 	// Write header
 	CharString text, line;
@@ -111,6 +111,12 @@ void ScatteringMatrix::generatePartials(Array2D<XYData>& generatedSQ)
 			++m;
 		}
 	}
+}
+
+// Return if the scattering matrix is incomplete (i.e. has fewer rows than there are columns)
+bool ScatteringMatrix::incomplete() const
+{
+	return (data_.nItems() < A_.nColumns());
 }
 
 /*
