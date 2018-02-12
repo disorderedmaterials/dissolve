@@ -24,6 +24,7 @@
 
 #include "classes/histogram.h"
 #include "classes/atomtypelist.h"
+#include "classes/weights.h"
 #include "base/xydata.h"
 #include "templates/list.h"
 #include "templates/array2d.h"
@@ -127,6 +128,8 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	void reweightPartials(double factor);
 	// Calculate RDF from supplied Histogram and normalisation data
 	static void calculateRDF(XYData& destination, Histogram& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier, XYData& boxNormalisation);
+	// Generate total, weighted correlation function from supplied partials and Weights
+	XYData generateTotal(Weights& weights);
 
 
 	/*

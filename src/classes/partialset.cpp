@@ -436,6 +436,34 @@ void PartialSet::calculateRDF(XYData& destination, Histogram& histogram, double 
 	}
 }
 
+// Generate total, weighted correlation function from supplied partials and Weights
+XYData PartialSet::generateTotal(Weights& weights)
+{
+	XYData total;
+
+	int nTypes = atomTypes_.nItems();
+	if (nTypes == 0)
+	{
+		total.clear();
+		return total;
+	}
+
+	// Copy x and y arrays from one of the partials, and zero the latter
+	total.templateFrom(partials_.ref(0,0));
+	total.arrayY() = 0.0;
+
+	int typeI, typeJ;
+	for (typeI=0; typeI<nTypes; ++typeI)
+	{
+		for (typeJ=typeI; typeJ<nTypes; ++typeJ)
+		{
+			total.addY(partials_.ref(typeI,typeJ).arrayY(), weights.fullWeight(typeI, typeJ));
+		}
+	}
+
+	return total;
+}
+
 /*
  * GenericItemBase Implementations
  */
