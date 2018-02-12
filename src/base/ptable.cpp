@@ -202,14 +202,22 @@ bool PeriodicTable::loadIsotopes(const char* filename)
 	// Go through Elements and check for no natural isotope defined (and add it if necessary)
 	for (int n=0; n<nElements_; ++n)
 	{
-		// Search defined isotopes for natural definition (A = 0)
-		for (isotope = elements_[n].isotopes(); isotope != NULL; isotope = isotope->next) if (isotope->A() == 0) break;
+		// Search defined isotopes for natural definition
+		for (isotope = elements_[n].isotopes(); isotope != NULL; isotope = isotope->next) if (isotope->A() == Isotope::NaturalIsotope) break;
 		if (isotope != NULL) Messenger::printVerbose("Found natural isotope for element %i (%s) - bc = %f\n", n, elements_[n].name(), isotope->boundCoherent());
 		else
 		{
 			Messenger::printVerbose("Creating natural isotope for element %i (%s) with bc = 0.0.\n", n, elements_[n].name());
 			isotope = elements_[n].addIsotope();
 		}
+
+		// Add on 'inverse' natural isotope for the element
+		Isotope* inverseNatural = elements_[n].addIsotope();
+		inverseNatural->set(Isotope::InverseIsotope, isotope->atomicWeight(), -isotope->boundCoherent(), isotope->boundIncoherent(), isotope->boundCoherentXS(), isotope->boundIncoherentXS(), isotope->totalXS(), isotope->absorptionXS());
+
+		// Add on 'zero' isotope for the elemnet, with A = -2
+		Isotope* zero  = elements_[n].addIsotope();
+		zero->set(Isotope::ZeroIsotope, isotope->atomicWeight(), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 	}
 
 	return true;

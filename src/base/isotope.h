@@ -36,6 +36,8 @@ class Isotope : public MPIListItem<Isotope>
 	Isotope(Element* parent = NULL);
 	// Destructor
 	~Isotope();
+	// Special isotope indices
+	enum SpecialIsotope { NaturalIsotope=0, InverseIsotope=-1, ZeroIsotope=-2 };
 
 
 	/*
