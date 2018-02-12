@@ -253,6 +253,20 @@ template <class A> class Array2D
 
 
 	/*
+	 * Operators
+	 */
+	public:
+	// Operator+= (add to all)
+	void operator+=(const A value) { for (int n=0; n<linearSize_; ++n) array_[n] += value; }
+	// Operator-= (subtract from all)
+	void operator-=(const A value) { for (int n=0; n<linearSize_; ++n) array_[n] -= value; }
+	// Operator*= (multiply all)
+	void operator*=(const A value) { for (int n=0; n<linearSize_; ++n) array_[n] *= value; }
+	// Operator/= (divide all)
+	void operator/=(const A value) { for (int n=0; n<linearSize_; ++n) array_[n] /= value; }
+
+
+	/*
 	 * Functions
 	 */
 	public:
