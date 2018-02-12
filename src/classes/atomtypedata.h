@@ -76,14 +76,18 @@ class AtomTypeData : public MPIListItem<AtomTypeData>
 	int listIndex() const;
 	// Return reference AtomType
 	AtomType* atomType() const;
-	// Set whether this atom is exchangeable
+	// Set whether this AtomType is exchangeable
 	void setExchangeable(bool b);
-	// Return whether this atom is exchangeable
+	// Return whether this AtomType is exchangeable
 	bool exchangeable() const;
 	// Finalise, calculating fractional populations etc.
 	void finalise(int nWorldAtoms);
+	// Remove any existing isotopes, and add only the natural isotope
+	void naturalise();
 	// Return if specified Isotope is already in the list
 	bool hasIsotope(Isotope* tope);
+	// Set this AtomType to have only the single Isotope provided
+	void setSingleIsotope(Isotope* tope);
 	// Return first IsotopeData
 	IsotopeData* isotopeData();
 	// Return total population over all isotopes

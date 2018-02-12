@@ -91,6 +91,13 @@ void AtomTypeList::addIsotope(AtomType* atomType, Isotope* tope, int popAdd, boo
 	if (tope != NULL) atd->add(tope, popAdd);
 }
 
+// Make all AtomTypeData in the list reference only their natural isotope
+void AtomTypeList::naturalise()
+{
+	// Loop over AtomTypes in the source list
+	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next) atd->naturalise();
+}
+
 // Add the AtomTypes in the supplied list into this one, increasing populations etc.
 void AtomTypeList::add(const AtomTypeList& source)
 {
@@ -105,7 +112,7 @@ void AtomTypeList::add(const AtomTypeList& source)
 }
 
 // Check for presence of AtomType in list
-bool AtomTypeList::contains(AtomType* atomType)
+bool AtomTypeList::contains(AtomType* atomType) const
 {
 	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next) if (atd->atomType() == atomType) return true;
 
@@ -225,6 +232,14 @@ AtomType* AtomTypeList::atomType(int n)
 	}
 #endif
 	return types_[n]->atomType();
+}
+
+// Return AtomTypeData for specified AtomType
+AtomTypeData* AtomTypeList::atomTypeData(AtomType* atomType)
+{
+	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next) if (atomType == atd->atomType()) return atd;
+
+	return NULL;
 }
 
 // Array access operator

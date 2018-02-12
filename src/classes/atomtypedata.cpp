@@ -156,12 +156,35 @@ void AtomTypeData::finalise(int totalAtoms)
 	for (IsotopeData* topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next) boundCoherent_ += topeData->fraction()*topeData->isotope()->boundCoherent();
 }
 
+// Remove any existing isotopes, and add only the natural isotope
+void AtomTypeData::naturalise()
+{
+	// Clear the isotopes list and add on the natural isotope, keeping the current population
+	isotopes_.clear();
+	IsotopeData* topeData = isotopes_.add();
+	topeData->initialise(PeriodicTable::element(atomType_->element()).hasIsotope(Isotope::NaturalIsotope));
+	topeData->add(population_);
+	topeData->finalise(population_);
+	boundCoherent_ = topeData->isotope()->boundCoherent();
+}
+
 // Return if specified Isotope is already in the list
 bool AtomTypeData::hasIsotope(Isotope* tope)
 {
 	for (IsotopeData* topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next) if (topeData->isotope() == tope) return true;
 
 	return false;
+}
+
+// Set this AtomType to have only the single Isotope provided
+void AtomTypeData::setSingleIsotope(Isotope* tope)
+{
+	isotopes_.clear();
+	IsotopeData* topeData = isotopes_.add();
+	topeData->initialise(tope);
+	topeData->add(population_);
+	topeData->finalise(population_);
+	boundCoherent_ = topeData->isotope()->boundCoherent();
 }
 
 // Return Isotope
