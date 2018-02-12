@@ -33,6 +33,7 @@ Weights::Weights()
 {
 	boundCoherentSquareOfAverage_ = 0.0;
 	boundCoherentAverageOfSquares_ = 0.0;
+	valid_ = false;
 }
 
 // Copy Constructor
@@ -52,6 +53,7 @@ void Weights::operator=(const Weights& source)
 	fullMatrix_ = source.fullMatrix_;
 	boundCoherentSquareOfAverage_ = source.boundCoherentSquareOfAverage_;
 	boundCoherentAverageOfSquares_ = source.boundCoherentAverageOfSquares_;
+	valid_ = source.valid_;
 }
 
 /*
@@ -63,8 +65,12 @@ void Weights::clear()
 {
 	isotopologueMixtures_.clear();
 	atomTypes_.clear();
+	concentrationMatrix_.clear();
+	boundCoherentMatrix_.clear();
+	fullMatrix_.clear();
 	boundCoherentSquareOfAverage_ = 0.0;
 	boundCoherentAverageOfSquares_ = 0.0;
+	valid_ = false;
 }
 
 // Add Isotopologue for Species
@@ -117,33 +123,12 @@ void Weights::print() const
 }
 
 /*
- * Calculated Data
+ * Data
  */
 
-// Finalise lists and matrices based on IsotopologueMix information
-void Weights::finalise(AtomTypeList exchangeableTypes)
+// Calculate weighting matrices based on current AtomType / Isotope information
+void Weights::calculateWeightingMatrices()
 {
-	// Loop over IsotopologueMix entries and ensure relative populations of Isotopologues sum to 1.0
-	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next) mix->normalise();
-
-	// Fill atomTypes_ list with AtomType populations, based on IsotopologueMix relative populations and associated Species populations
-	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next)
-	{
-		// We must now loop over the Isotopologues in the mixture
-		for (RefListItem<Isotopologue,double>* tope = mix->isotopologues(); tope != NULL; tope = tope->next)
-		{
-			// Loop over Atoms in the Species, searching for the AtomType/Isotope entry in the isotopes list of the Isotopologue
-			for (SpeciesAtom* i = mix->species()->atoms(); i != NULL; i = i->next)
-			{
-				bool exchangeable = exchangeableTypes.contains(i->atomType());
-
-				Isotope* iso = tope->item->atomTypeIsotope(i->atomType());
-				atomTypes_.addIsotope(i->atomType(), iso, tope->data*mix->speciesPopulation(), exchangeable);
-			}
-		}
-	}
-	atomTypes_.finalise();
-
 	// Create weights matrices and calculate average scattering lengths
 	// Note: Multiplier of 0.1 on b terms converts from units of fm (1e-11 m) to barn (1e-12 m)
 	concentrationMatrix_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
@@ -173,7 +158,71 @@ void Weights::finalise(AtomTypeList exchangeableTypes)
 			fullMatrix_.ref(typeI,typeJ) = ci * cj * bi * bj * (typeI == typeJ ? 1 : 2);
 		}
 	}
+
 	boundCoherentSquareOfAverage_ *= boundCoherentSquareOfAverage_;
+}
+
+// Finalise lists and matrices based on IsotopologueMix information
+void Weights::finalise(const AtomTypeList& exchangeableTypes)
+{
+	// Loop over IsotopologueMix entries and ensure relative populations of Isotopologues sum to 1.0
+	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next) mix->normalise();
+
+	// Fill atomTypes_ list with AtomType populations, based on IsotopologueMix relative populations and associated Species populations
+	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next)
+	{
+		// We must now loop over the Isotopologues in the mixture
+		for (RefListItem<Isotopologue,double>* tope = mix->isotopologues(); tope != NULL; tope = tope->next)
+		{
+			// Loop over Atoms in the Species, searching for the AtomType/Isotope entry in the isotopes list of the Isotopologue
+			for (SpeciesAtom* i = mix->species()->atoms(); i != NULL; i = i->next)
+			{
+				bool exchangeable = exchangeableTypes.contains(i->atomType());
+
+				Isotope* iso = tope->item->atomTypeIsotope(i->atomType());
+				atomTypes_.addIsotope(i->atomType(), iso, tope->data*mix->speciesPopulation(), exchangeable);
+			}
+		}
+	}
+	atomTypes_.finalise();
+
+	calculateWeightingMatrices();
+
+	valid_ = true;
+}
+
+// Reduce data to be naturally-weighted
+void Weights::naturalise()
+{
+	atomTypes_.naturalise();
+
+	calculateWeightingMatrices();
+
+	valid_ = true;
+}
+
+// Set (sole) Isotope for specified AtomType and recalculate matrices
+bool Weights::setAtomTypeIsotope(AtomType* atomType, Isotope* isotope)
+{
+	// TEST
+	atomType = atomTypes_.atomType(0);
+
+	// First, make sure the AtomType is in our list
+	AtomTypeData* atd = atomTypes_.atomTypeData(atomType);
+	if (!atd) return Messenger::error("AtomType '%s' is not in the Weights' list.\n", atomType->name());
+
+	// Make sure the Isotope specified is related to the AtomType's element
+	if (!PeriodicTable::element(atomType->element()).hasIsotope(isotope->A())) return Messenger::error("Specified AtomType (%s) and Isotope (A = %i) are incompatible.\n", atomType->name(), isotope->A());
+
+	// Set a single Isotope for this AtomType, maintaining the population
+	atd->setSingleIsotope(isotope);
+
+	atd = atomTypes_.atomTypeData(atomTypes_.atomType(1));
+	atd->setSingleIsotope(PeriodicTable::element(atd->atomType()->element()).hasIsotope(-2));
+
+	calculateWeightingMatrices();
+
+	return true;
 }
 
 // Return AtomTypeList
@@ -222,6 +271,12 @@ double Weights::boundCoherentSquareOfAverage()
 double Weights::boundCoherentAverageOfSquares()
 {
 	return boundCoherentAverageOfSquares_;
+}
+
+// Return whether the structure is valid (i.e. has been finalised)
+bool Weights::isValid()
+{
+	return valid_;
 }
 
 /*
@@ -294,6 +349,7 @@ bool Weights::broadcast(ProcessPool& procPool, int root)
 	if (!procPool.broadcast(fullMatrix_, root)) return false;
 	if (!procPool.broadcast(boundCoherentAverageOfSquares_, root)) return false;
 	if (!procPool.broadcast(boundCoherentSquareOfAverage_, root)) return false;
+	if (!procPool.broadcast(valid_, root)) return false;
 #endif
 	return true;
 }
@@ -302,11 +358,13 @@ bool Weights::broadcast(ProcessPool& procPool, int root)
 bool Weights::equality(ProcessPool& procPool)
 {
 #ifdef PARALLEL
+	if (!atomTypes_.equality(procPool)) return Messenger::error("Weights AtomTypes are not equivalent.\n");
 	if (!procPool.equality(concentrationMatrix_)) return Messenger::error("Weights concentration matrix is not equivalent.\n");
 	if (!procPool.equality(boundCoherentMatrix_)) return Messenger::error("Weights bound coherent matrix is not equivalent.\n");
 	if (!procPool.equality(fullMatrix_)) return Messenger::error("Weights full matrix is not equivalent.\n");
 	if (!procPool.equality(boundCoherentAverageOfSquares_)) return Messenger::error("Weights bound coherent average of squares is not equivalent (process %i has %e).\n", procPool.poolRank(), boundCoherentAverageOfSquares_);
 	if (!procPool.equality(boundCoherentSquareOfAverage_)) return Messenger::error("Weights bound coherent square of average is not equivalent (process %i has %e).\n", procPool.poolRank(), boundCoherentSquareOfAverage_);
+	if (!procPool.equality(valid_)) return Messenger::error("Weights validity is not equivalent (process %i has %i).\n", procPool.poolRank(), valid_);
 #endif
 	return true;
 }

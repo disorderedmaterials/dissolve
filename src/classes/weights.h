@@ -77,10 +77,20 @@ class Weights : public GenericItemBase
 	double boundCoherentSquareOfAverage_;
 	// Bound coherent squared average scattering (<b**2>)
 	double boundCoherentAverageOfSquares_;
+	// Whether the structure is valid (i.e. has been finalised)
+	bool valid_;
+
+	private:
+	// Calculate weighting matrices based on current AtomType / Isotope information
+	void calculateWeightingMatrices();
 
 	public:
 	// Finalise lists and matrices based on IsotopologueMix information
-	void finalise(AtomTypeList exchangeableTypes = AtomTypeList());
+	void finalise(const AtomTypeList& exchangeableTypes);
+	// Reduce data to be naturally-weighted
+	void naturalise();
+	// Set (sole) Isotope for specified AtomType and recalculate matrices
+	bool setAtomTypeIsotope(AtomType* atomType, Isotope* isotope);
 	// Return AtomTypeList
 	AtomTypeList& atomTypes();
 	// Return number of used AtomTypes
@@ -89,7 +99,7 @@ class Weights : public GenericItemBase
 	double concentrationWeight(int i, int j);
 	// Return bound coherent scattering weighting for types i and j
 	double boundCoherentWeight(int i, int j);
-	// Return full weighting, including atomic concentration, bound coherent scattering weights, and i !+ j weighting for types i and j
+	// Return full weighting, including atomic concentration, bound coherent scattering weights, and i != j weighting for types i and j
 	double fullWeight(int i, int j);
 	// Return full scattering weights matrix (ci * cj * bi * bj * (i == j ? 1 : 2))
 	Array2D<double>& fullWeightsMatrix();
@@ -97,6 +107,8 @@ class Weights : public GenericItemBase
 	double boundCoherentSquareOfAverage();
 	// Return bound coherent squared average scattering (<b**2>)
 	double boundCoherentAverageOfSquares();
+	// Return whether the structure is valid (i.e. has been finalised)
+	bool isValid();
 
 
 	/*
