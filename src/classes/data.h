@@ -24,6 +24,7 @@
 
 #include "base/charstring.h"
 #include "base/xydata.h"
+#include "classes/weights.h"
 #include "templates/listitem.h"
 #include "modules/partials/partials.h"
 
@@ -78,6 +79,8 @@ class Data : public ListItem<Data>
 	double subtractAverageLevel_;
 	// Normalisation style of laoded neutron data
 	PartialsModule::NormalisationType neutronNormalisation_;
+	// Weights matrix for scattering data
+	Weights scatteringWeights_;
 
 	public:
 	// Type of supplied data
@@ -96,6 +99,8 @@ class Data : public ListItem<Data>
 	void setNeutronNormalisation(PartialsModule::NormalisationType normalisation);
 	// Return normalisation type for neutron data
 	PartialsModule::NormalisationType neutronNormalisation();
+	// Return weights matrix for scattering data
+	Weights& scatteringWeights();
 
 
 	/*

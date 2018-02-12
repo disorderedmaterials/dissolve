@@ -137,6 +137,12 @@ PartialsModule::NormalisationType Data::neutronNormalisation()
 	return neutronNormalisation_;
 }
 
+// Return weights matrix for scattering data
+Weights& Data::scatteringWeights()
+{
+	return scatteringWeights_;
+}
+
 /*
  * Set up
  */
