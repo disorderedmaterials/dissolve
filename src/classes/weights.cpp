@@ -232,27 +232,27 @@ AtomTypeList& Weights::atomTypes()
 }
 
 // Return number of used AtomTypes
-int Weights::nUsedTypes()
+int Weights::nUsedTypes() const
 {
 	return atomTypes_.nItems();
 }
 
 // Return concentration weighting for types i and j
-double Weights::concentrationWeight(int i, int j)
+double Weights::concentrationWeight(int i, int j) const
 {
-	return concentrationMatrix_.ref(i, j);
+	return concentrationMatrix_.value(i, j);
 }
 
-// Return full weighting, including atomic concentration, bound coherent scattering weights, and i !+ j weighting for types i and j
-double Weights::fullWeight(int i, int j)
+// Return full weighting, including atomic concentration, bound coherent scattering weights, and i != j weighting for types i and j
+double Weights::fullWeight(int i, int j) const
 {
-	return fullMatrix_.ref(i, j);
+	return fullMatrix_.value(i, j);
 }
 
 // Return bound coherent scattering weighting for types i and j
-double Weights::boundCoherentWeight(int i, int j)
+double Weights::boundCoherentWeight(int i, int j) const
 {
-	return boundCoherentMatrix_.ref(i, j);
+	return boundCoherentMatrix_.value(i, j);
 }
 
 // Return full scattering weights matrix (ci * cj * bi * bj * (i == j ? 1 : 2))
@@ -262,19 +262,19 @@ Array2D<double>& Weights::fullWeightsMatrix()
 }
 
 // Return bound coherent average squared scattering (<b>**2)
-double Weights::boundCoherentSquareOfAverage()
+double Weights::boundCoherentSquareOfAverage() const
 {
 	return boundCoherentSquareOfAverage_;
 }
 
 // Return bound coherent squared average scattering (<b**2>)
-double Weights::boundCoherentAverageOfSquares()
+double Weights::boundCoherentAverageOfSquares() const
 {
 	return boundCoherentAverageOfSquares_;
 }
 
 // Return whether the structure is valid (i.e. has been finalised)
-bool Weights::isValid()
+bool Weights::isValid() const
 {
 	return valid_;
 }

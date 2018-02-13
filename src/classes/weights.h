@@ -94,21 +94,21 @@ class Weights : public GenericItemBase
 	// Return AtomTypeList
 	AtomTypeList& atomTypes();
 	// Return number of used AtomTypes
-	int nUsedTypes();
+	int nUsedTypes() const;
 	// Return concentration weighting for types i and j
-	double concentrationWeight(int i, int j);
+	double concentrationWeight(int i, int j) const;
 	// Return bound coherent scattering weighting for types i and j
-	double boundCoherentWeight(int i, int j);
+	double boundCoherentWeight(int i, int j) const;
 	// Return full weighting, including atomic concentration, bound coherent scattering weights, and i != j weighting for types i and j
-	double fullWeight(int i, int j);
+	double fullWeight(int i, int j) const;
 	// Return full scattering weights matrix (ci * cj * bi * bj * (i == j ? 1 : 2))
 	Array2D<double>& fullWeightsMatrix();
 	// Return bound coherent average squared scattering (<b>**2)
-	double boundCoherentSquareOfAverage();
+	double boundCoherentSquareOfAverage() const;
 	// Return bound coherent squared average scattering (<b**2>)
-	double boundCoherentAverageOfSquares();
+	double boundCoherentAverageOfSquares() const;
 	// Return whether the structure is valid (i.e. has been finalised)
-	bool isValid();
+	bool isValid() const;
 
 
 	/*
