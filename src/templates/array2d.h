@@ -23,6 +23,7 @@
 #define DUQ_ARRAY2D_H
 
 #include "base/messenger.h"
+#include "base/charstring.h"
 #include "templates/list.h"
 #include "templates/vector3.h"
 
@@ -264,12 +265,50 @@ template <class A> class Array2D
 	void operator*=(const A value) { for (int n=0; n<linearSize_; ++n) array_[n] *= value; }
 	// Operator/= (divide all)
 	void operator/=(const A value) { for (int n=0; n<linearSize_; ++n) array_[n] /= value; }
+	// Operator* (matrix multiply)
+	Array2D<A> operator*(const Array2D<A>& B)
+	{
+		// Check array sizes are compatible
+		if (nRows_ != B.nColumns_)
+		{
+			Messenger::error("Can't multiply matrices together, as they have incompatible sizes (%ix%i and %ix%i, RxC)\n", nRows_, nColumns_, B.nRows_, B.nColumns_);
+			return Array2D<A>();
+		}
+
+		Array2D<A> C(nColumns_, B.nRows_);
+		int colC, i;
+		double x;
+		for (int rowC = 0; rowC < nColumns_; ++rowC)
+		{
+			for (int colC = 0; colC < B.nRows_; ++colC)
+			{
+				// Calculate dot product of row 'colC' in matrix A (this) and column 'rowC' in matrix B 
+				x = 0.0;
+				for (int i = 0; i<nRows_; ++i) x += value(colC, i) * B.value(i, rowC);
+				C.ref(rowC, colC) = x;
+			}
+		}
+
+		return C;
+	}
 
 
 	/*
 	 * Functions
 	 */
 	public:
+	// Print matrix
+	void print() const
+	{
+		Messenger::print("Array2D<A> : %i rows x %i columns:\n", nRows_, nColumns_);
+		CharString line;
+		for (int row = 0; row < nRows_; ++row)
+		{
+			line.sprintf("R%2i :", row);
+			for (int column = 0; column < nColumns_; ++column) line.strcatf(" %e", value(row, column));
+			Messenger::print("%s\n", line.get());
+		}
+	}
 	// Invert matrix
 	bool invert()
 	{
