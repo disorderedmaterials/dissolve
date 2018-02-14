@@ -22,6 +22,7 @@
 #include "gui/uchroma/gui/viewer.hui"
 #include "gui/uchroma/uchromabase.h"
 #include "templates/variantpointer.h"
+#include <QClipboard>
 
 /*
  * Private Funtions
@@ -31,7 +32,9 @@
 void UChromaViewer::initialiseContextMenu()
 {
 	// Set font for menu, and create italic version
-	contextMenu_.setFont(font());
+	QFont menuFont = font();
+	menuFont.setPointSize(8);
+	contextMenu_.setFont(menuFont);
 	QFont italicFont = font();
 	italicFont.setItalic(true);
 
@@ -45,6 +48,10 @@ void UChromaViewer::initialiseContextMenu()
 	action->setData(UChromaBase::UChromaImportDialog);
 	connect(action, SIGNAL(triggered(bool)), this, SLOT(showDialog(bool)));
 
+	// View-wide functions
+	contextMenu_.addSeparator();
+	action = contextMenu_.addAction("Copy image");
+	connect(action, SIGNAL(triggered(bool)), this, SLOT(copyViewToClipboard(bool)));
 }
 
 // Update dynamic aspects of context menu before display
@@ -96,6 +103,17 @@ void UChromaViewer::setCollectionDisplayed(bool checked)
 	else viewPane->removeCollectionTarget(collection);
 
 	postRedisplay();
+}
+
+// Copy current view image to clipboard
+void UChromaViewer::copyViewToClipboard(bool checked)
+{
+	// Generate image of current view
+	QPixmap pixmap = frameBuffer();
+
+	// Copy image to clipboard
+	QClipboard* clipboard = QApplication::clipboard();
+	clipboard->setImage(pixmap.toImage());
 }
 
 /*

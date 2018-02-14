@@ -229,6 +229,8 @@ class UChromaViewer : public QOpenGLWidget, protected QOpenGLFunctions
 	void showDialog(bool checked);
 	// Set display status of Collection target
 	void setCollectionDisplayed(bool checked);
+	// Copy current view image to clipboard
+	void copyViewToClipboard(bool checked);
 
 	public slots:
 	// Show context menu
