@@ -191,7 +191,7 @@ SubWidget* DUQWindow::createSubWidget(const char* widgetName, const char* title)
 
 	if (DUQSys::sameString(widgetName, "PairPotential"))
 	{
-		PairPotentialWidget* ppWidget = new PairPotentialWidget(NULL, NULL, duq_, title);
+		PairPotentialWidget* ppWidget = new PairPotentialWidget(NULL, duq_, title);
 		subWidget = ppWidget;
 	}
 	else if (DUQSys::sameString(widgetName, "MasterTerms"))

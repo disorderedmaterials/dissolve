@@ -31,18 +31,16 @@
 #include <QMessageBox>
 
 // Constructor
-PairPotentialWidget::PairPotentialWidget(QWidget* parent, PairPotential* pp, DUQ& dUQ, const char* title) : SubWidget(parent, title), pairPotential_(pp), duq_(dUQ)
+PairPotentialWidget::PairPotentialWidget(QWidget* parent, DUQ& dUQ, const char* title) : SubWidget(parent, title), duq_(dUQ)
 {
 	// Set up user interface
 	ui.setupUi(this);
 
-	// Add a UChromaWidget to the PlotWidget
-	QVBoxLayout* layout = new QVBoxLayout;
-	uChromaView_ = new UChromaViewWidget;
-	layout->addWidget(uChromaView_);
-	ui.PlotWidget->setLayout(layout);
+	// Grab our UChromaWidget pointer
+	uChromaView_ = ui.PlotWidget;
 
 	// Initialise window contents
+	pairPotential_ = duq_.pairPotentials();
 	initialiseWindow(pairPotential_);
 	initialiseControls(pairPotential_, true);
 
@@ -59,12 +57,20 @@ void PairPotentialWidget::initialiseWindow(PairPotential* pp)
 	// Set information panel contents
 	if (pp)
 	{
-		CharString topText("%s-%s / %s", pairPotential_->atomTypeNameI(), pairPotential_->atomTypeNameJ(), PairPotential::shortRangeType(pairPotential_->shortRangeType()));
+		CharString topText("%s-%s", pairPotential_->atomTypeNameI(), pairPotential_->atomTypeNameJ());
 		ui.TopLabel->setText(topText.get());
+
+		CharString bottomText("%s %s", PairPotential::shortRangeType(pairPotential_->shortRangeType()), pairPotential_->includeCoulomb() ? "+ charges" : "(no charges)");
+		ui.BottomLabel->setText(bottomText.get());
 	}
-	else ui.TopLabel->setText("?-? / ?");
-// 	CharString bottomText("%s", module_->uniqueName());
-// 	ui.BottomLabel->setText(bottomText.get());
+	else
+	{
+		ui.TopLabel->setText("?-? / ?");
+		ui.BottomLabel->setText("??");
+	}
+
+	ui.PreviousPotentialButton->setEnabled(pp && (duq_.nPairPotentials() > 1));
+	ui.NextPotentialButton->setEnabled(pp && (duq_.nPairPotentials() > 1));
 }
 
 // Initialise controls
@@ -85,6 +91,27 @@ void PairPotentialWidget::initialiseControls(PairPotential* pp, bool addDefaults
 		viewPane->axes().setMin(1, -5.0);
 		viewPane->axes().setMax(1, 10.0);
 
+		setDataTargets(pp);
+	}
+
+	refreshing_ = true;
+
+	ui.FullEnergyCheck->setChecked(uChromaView_->collectionVisible("Full"));
+	ui.OriginalEnergyCheck->setChecked(uChromaView_->collectionVisible("Original"));
+	ui.AdditionalEnergyCheck->setChecked(uChromaView_->collectionVisible("Additional"));
+	ui.FullForceCheck->setChecked(uChromaView_->collectionVisible("Force"));
+
+	refreshing_ = false;
+}
+
+// Set data targets for specified PairPotential in UChromaView
+void PairPotentialWidget::setDataTargets(PairPotential* pp)
+{
+	// Clear any old collections
+	uChromaView_->clearCollections();
+
+	if (pp)
+	{
 		CharString blockData;
 
 		// Full potential
@@ -103,15 +130,6 @@ void PairPotentialWidget::initialiseControls(PairPotential* pp, bool addDefaults
 		blockData.sprintf("Collection 'Force'; Visible False; ColourSingle 0 200 0 255; LineStyle 1.0 Solid; DataSet 'Full'; Source XYData %s; EndDataSet; EndCollection", pp->dUFull().objectName());
 		uChromaView_->addCollectionFromBlock(blockData);
 	}
-
-	refreshing_ = true;
-
-	ui.FullEnergyCheck->setChecked(uChromaView_->collectionVisible("Full"));
-	ui.OriginalEnergyCheck->setChecked(uChromaView_->collectionVisible("Original"));
-	ui.AdditionalEnergyCheck->setChecked(uChromaView_->collectionVisible("Additional"));
-	ui.FullForceCheck->setChecked(uChromaView_->collectionVisible("Force"));
-
-	refreshing_ = false;
 }
 
 /*
@@ -175,11 +193,11 @@ bool PairPotentialWidget::readState(LineParser& parser)
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 	pairPotential_ = duq_.pairPotential(parser.argc(0), parser.argc(1));
 
-	// Need to set the data target in the SubWindow
-	subWindow_->setData(pairPotential_);
-
 	// Initialise window
 	initialiseWindow(pairPotential_);
+
+	// Reset UChromaView
+	uChromaView_->startNewSession(false);
 
 	// We will read the UChroma data from the file, unless the PairPotential could not be found
 	if (!pairPotential_)
@@ -197,6 +215,28 @@ bool PairPotentialWidget::readState(LineParser& parser)
 /*
  * Widget Slots
  */
+
+void PairPotentialWidget::on_PreviousPotentialButton_clicked(bool checked)
+{
+	if (!pairPotential_) return;
+
+	pairPotential_ = pairPotential_->prev;
+	if (pairPotential_ == NULL) pairPotential_ = duq_.pairPotential(duq_.nPairPotentials()-1);
+
+	setDataTargets(pairPotential_);
+	initialiseWindow(pairPotential_);
+}
+
+void PairPotentialWidget::on_NextPotentialButton_clicked(bool checked)
+{
+	if (!pairPotential_) return;
+
+	pairPotential_ = pairPotential_->next;
+	if (pairPotential_ == NULL) pairPotential_ = duq_.pairPotentials();
+
+	setDataTargets(pairPotential_);
+	initialiseWindow(pairPotential_);
+}
 
 void PairPotentialWidget::on_FullEnergyCheck_clicked(bool checked)
 {

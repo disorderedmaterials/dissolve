@@ -45,10 +45,13 @@ class PairPotentialWidget : public SubWidget
 	// UChromaView contained within this widget
 	UChromaViewWidget* uChromaView_;
 
+	private:
+	// Set data targets for specified PairPotential in UChromaView
+	void setDataTargets(PairPotential* pp);
 
 	public:
 	// Constructor / Destructor
-	PairPotentialWidget(QWidget* parent, PairPotential* pp, DUQ& dUQ, const char* title);
+	PairPotentialWidget(QWidget* parent, DUQ& dUQ, const char* title);
 	~PairPotentialWidget();
 	// Main form declaration
 	Ui::PairPotentialWidget ui;
@@ -86,6 +89,8 @@ class PairPotentialWidget : public SubWidget
 	void windowClosed(void*);
 
 	private slots:
+	void on_PreviousPotentialButton_clicked(bool checked);
+	void on_NextPotentialButton_clicked(bool checked);
 	void on_FullEnergyCheck_clicked(bool checked);
 	void on_OriginalEnergyCheck_clicked(bool checked);
 	void on_AdditionalEnergyCheck_clicked(bool checked);
