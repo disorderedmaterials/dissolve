@@ -36,16 +36,10 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, DUQ& dUQ
 
 	// Add UChromaWidgets to the two PlotWidgets
 	ViewPane* viewPane;
-	QVBoxLayout* layout;
 
 	// Data Graph
 
-	layout = new QVBoxLayout;
-	layout->setContentsMargins(0,0,0,0);
-	layout->setSpacing(4);
-	dataGraph_ = new UChromaViewWidget;
-	layout->addWidget(dataGraph_);
-	ui.DataPlotWidget->setLayout(layout);
+	dataGraph_ = ui.DataPlotWidget;
 
 	// Start a new, empty session
 	dataGraph_->startNewSession(true);
@@ -61,12 +55,7 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, DUQ& dUQ
 
 	// Partial S(Q) Graph
 	
-	layout = new QVBoxLayout;
-	layout->setContentsMargins(0,0,0,0);
-	layout->setSpacing(4);
-	partialSQGraph_ = new UChromaViewWidget;
-	layout->addWidget(partialSQGraph_);
-	ui.PartialSQPlotWidget->setLayout(layout);
+	partialSQGraph_ = ui.PartialSQPlotWidget;
 
 	// Start a new, empty session
 	partialSQGraph_->startNewSession(true);
@@ -82,12 +71,7 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, DUQ& dUQ
 
 	// Partial g(r) Graph
 	
-	layout = new QVBoxLayout;
-	layout->setContentsMargins(0,0,0,0);
-	layout->setSpacing(4);
-	partialGRGraph_ = new UChromaViewWidget;
-	layout->addWidget(partialGRGraph_);
-	ui.PartialGRPlotWidget->setLayout(layout);
+	partialGRGraph_ = ui.PartialGRPlotWidget;
 
 	// Start a new, empty session
 	partialGRGraph_->startNewSession(true);
@@ -103,12 +87,7 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, DUQ& dUQ
 
 	// Delta phi(r) Graph
 
-	layout = new QVBoxLayout;
-	layout->setContentsMargins(0,0,0,0);
-	layout->setSpacing(4);
-	deltaPhiRGraph_ = new UChromaViewWidget;
-	layout->addWidget(deltaPhiRGraph_);
-	ui.DeltaPhiRPlotWidget->setLayout(layout);
+	deltaPhiRGraph_ = ui.DeltaPhiRPlotWidget;
 
 	// Start a new, empty session
 	deltaPhiRGraph_->startNewSession(true);
@@ -124,12 +103,7 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, DUQ& dUQ
 
 	// Errors Graph
 
-	layout = new QVBoxLayout;
-	layout->setContentsMargins(0,0,0,0);
-	layout->setSpacing(4);
-	errorsGraph_ = new UChromaViewWidget;
-	layout->addWidget(errorsGraph_);
-	ui.ErrorsPlotWidget->setLayout(layout);
+	errorsGraph_ = ui.ErrorsPlotWidget;
 
 	// Start a new, empty session
 	errorsGraph_->startNewSession(true);

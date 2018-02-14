@@ -33,13 +33,8 @@ PartialsModuleWidget::PartialsModuleWidget(QWidget* parent, Module* module, DUQ&
 	// Set up user interface
 	ui.setupUi(this);
 
-	// Add a UChromaWidget to the PlotWidget
-	QVBoxLayout* layout = new QVBoxLayout;
-	layout->setContentsMargins(0,0,0,0);
-	layout->setSpacing(4);
-	uChromaView_ = new UChromaViewWidget;
-	layout->addWidget(uChromaView_);
-	ui.PlotWidget->setLayout(layout);
+	// Grab our UChroma widget
+	uChromaView_ = ui.PlotWidget;
 
 	// Start a new, empty session
 	uChromaView_->startNewSession(true);

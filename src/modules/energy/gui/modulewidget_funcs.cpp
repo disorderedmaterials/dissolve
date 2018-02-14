@@ -34,13 +34,8 @@ EnergyModuleWidget::EnergyModuleWidget(QWidget* parent, Module* module, DUQ& dUQ
 	// Set up user interface
 	ui.setupUi(this);
 
-	// Add UChromaWidget to the PlotWidget
-	QVBoxLayout* layout = new QVBoxLayout;
-	layout->setContentsMargins(0,0,0,0);
-	layout->setSpacing(4);
-	energyGraph_ = new UChromaViewWidget;
-	layout->addWidget(energyGraph_);
-	ui.PlotWidget->setLayout(layout);
+	// Grab our UChroma widget
+	energyGraph_ = ui.PlotWidget;
 
 	// Start a new, empty session
 	energyGraph_->startNewSession(true);

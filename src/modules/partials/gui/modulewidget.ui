@@ -122,7 +122,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QFrame" name="PlotWidget">
+       <widget class="QFrame" name="PlotWidgetFrame">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
           <horstretch>0</horstretch>
@@ -138,6 +138,26 @@
         <property name="frameShadow">
          <enum>QFrame::Sunken</enum>
         </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="UChromaViewWidget" name="PlotWidget" native="true"/>
+         </item>
+        </layout>
        </widget>
       </item>
      </layout>
@@ -152,6 +172,12 @@
    <class>MimeTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>gui/mimetreewidget.hui</header>
+  </customwidget>
+  <customwidget>
+   <class>UChromaViewWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/uchroma/gui/uchromaview.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

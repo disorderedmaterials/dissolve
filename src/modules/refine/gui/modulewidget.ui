@@ -71,7 +71,7 @@
         <number>4</number>
        </property>
        <item>
-        <widget class="QFrame" name="DataPlotWidget">
+        <widget class="QFrame" name="DataPlotFrame">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -87,6 +87,26 @@
          <property name="frameShadow">
           <enum>QFrame::Sunken</enum>
          </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="UChromaViewWidget" name="DataPlotWidget" native="true"/>
+          </item>
+         </layout>
         </widget>
        </item>
       </layout>
@@ -112,7 +132,7 @@
         <number>4</number>
        </property>
        <item>
-        <widget class="QFrame" name="PartialSQPlotWidget">
+        <widget class="QFrame" name="PartialSQPlotFrame">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -128,6 +148,26 @@
          <property name="frameShadow">
           <enum>QFrame::Sunken</enum>
          </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_8">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="UChromaViewWidget" name="PartialSQPlotWidget" native="true"/>
+          </item>
+         </layout>
         </widget>
        </item>
       </layout>
@@ -153,7 +193,7 @@
         <number>4</number>
        </property>
        <item>
-        <widget class="QFrame" name="PartialGRPlotWidget">
+        <widget class="QFrame" name="PartialGRPlotFrame">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -169,6 +209,26 @@
          <property name="frameShadow">
           <enum>QFrame::Sunken</enum>
          </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_9">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="UChromaViewWidget" name="PartialGRPlotWidget" native="true"/>
+          </item>
+         </layout>
         </widget>
        </item>
       </layout>
@@ -194,7 +254,7 @@
         <number>4</number>
        </property>
        <item>
-        <widget class="QFrame" name="DeltaPhiRPlotWidget">
+        <widget class="QFrame" name="DeltaPhiRPlotFrame">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -210,6 +270,23 @@
          <property name="frameShadow">
           <enum>QFrame::Sunken</enum>
          </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_10">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="UChromaViewWidget" name="DeltaPhiRPlotWidget" native="true"/>
+          </item>
+         </layout>
         </widget>
        </item>
       </layout>
@@ -235,7 +312,7 @@
         <number>4</number>
        </property>
        <item>
-        <widget class="QFrame" name="ErrorsPlotWidget">
+        <widget class="QFrame" name="ErrorsPlotFrame">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -251,6 +328,26 @@
          <property name="frameShadow">
           <enum>QFrame::Sunken</enum>
          </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_11">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="UChromaViewWidget" name="ErrorsPlotWidget" native="true"/>
+          </item>
+         </layout>
         </widget>
        </item>
       </layout>
@@ -259,6 +356,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>UChromaViewWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/uchroma/gui/uchromaview.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../../../gui/icons.qrc"/>
  </resources>

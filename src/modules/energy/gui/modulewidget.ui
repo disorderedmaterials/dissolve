@@ -44,7 +44,7 @@
     <widget class="QComboBox" name="TargetCombo"/>
    </item>
    <item>
-    <widget class="QFrame" name="PlotWidget">
+    <widget class="QFrame" name="PlotWidgetFrame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -60,6 +60,26 @@
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="UChromaViewWidget" name="PlotWidget" native="true"/>
+      </item>
+     </layout>
     </widget>
    </item>
    <item>
@@ -164,6 +184,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>UChromaViewWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/uchroma/gui/uchromaview.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../../../gui/icons.qrc"/>
  </resources>
