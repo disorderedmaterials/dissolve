@@ -227,7 +227,7 @@ void UChromaBase::removeCollection(Collection* collection)
 // Clear all collections
 void UChromaBase::clearCollections()
 {
-	collections_.clear();
+	while (currentCollection_) removeCurrentCollection();
 
 	clearEditStates();
 
