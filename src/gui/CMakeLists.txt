@@ -3,7 +3,6 @@
 
 # Meta-Objects
 SET(gui_MOC_HDRS
-  browser.h
   configurationtab.h
   gui.h
   maintab.h
@@ -36,7 +35,6 @@ QT5_WRAP_CPP(gui_MOC_SRCS ${gui_MOC_HDRS})
 
 # User Interface Files
 SET(gui_UIS
-  browser.ui
   configurationtab.ui
   gui.ui
   mastertermswidget.ui
@@ -50,7 +48,6 @@ QT5_WRAP_UI(gui_UIS_H ${gui_UIS})
 
 # Source files (not Qt UI files or custom .h [uih])
 SET(gui_SRCS
-  browser_funcs.cpp
   configurationtab_funcs.cpp
   colourbutton_funcs.cpp
   gui_funcs.cpp
