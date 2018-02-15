@@ -107,6 +107,12 @@ int DUQMath::sgn(double x)
 	return (x < 0.0 ? -1 : x > 0.0);
 }
 
+// Apply sign of second argument to first
+double DUQMath::sgn(double a, double signOf)
+{
+	return signOf >= 0.0 ? fabs(a) : -fabs(a);
+}
+
 // Return the cyclic permutation of the integer 'i', span 3
 int DUQMath::cp3(int i)
 {

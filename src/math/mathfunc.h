@@ -22,6 +22,9 @@
 #ifndef DUQ_MATHFUNC_H
 #define DUQ_MATHFUNC_H
 
+// Forward Declarations
+template <class A> class Array2D;
+
 // Mathematical functions
 class DUQMath
 {
@@ -53,8 +56,24 @@ class DUQMath
 	static int sgn(int x);
 	// Sign function
 	static int sgn(double x);
+	// Apply sign of second argument to first
+	static double sgn(double a, double signOf);
 	// Return the cyclic permutation of the integer 'i', span 3
 	static int cp3(int i);
+
+
+	/*
+	 * Matrix Math
+	 */
+	public:
+	// Perform Gauss-Jordan inversion of the supplied Array2D<double>
+	static bool gjInvert(Array2D<double>& A);
+	// Perform single value decomposition of the supplied matrix A, putting left-orthogonal (U), diagonal single-value (S), and right-orthogonal (V) matrices into the supplied Arrays
+	static bool svd(const Array2D<double>& A, Array2D<double>& U, Array2D<double>& S, Array2D<double>& Vt);
+	// Test SVD
+	static bool svdTest();
+	// Compute in-place pseudoinverse of supplied matrix
+	static bool pseudoinverse(Array2D<double>& A);
 };
 
 #endif

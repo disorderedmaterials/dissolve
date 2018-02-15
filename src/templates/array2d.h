@@ -269,23 +269,24 @@ template <class A> class Array2D
 	Array2D<A> operator*(const Array2D<A>& B)
 	{
 		// Check array sizes are compatible
-		if (nRows_ != B.nColumns_)
+		if (nColumns_ != B.nRows_)
 		{
 			Messenger::error("Can't multiply matrices together, as they have incompatible sizes (%ix%i and %ix%i, RxC)\n", nRows_, nColumns_, B.nRows_, B.nColumns_);
 			return Array2D<A>();
 		}
 
-		Array2D<A> C(nColumns_, B.nRows_);
-		int colC, i;
+		Array2D<A> C(nRows_, B.nColumns_);
+		int colB, i;
 		double x;
-		for (int rowC = 0; rowC < nColumns_; ++rowC)
+		for (int rowA = 0; rowA < nRows_; ++rowA)
 		{
-			for (int colC = 0; colC < B.nRows_; ++colC)
+			for (colB = 0; colB < B.nColumns_; ++colB)
 			{
-				// Calculate dot product of row 'colC' in matrix A (this) and column 'rowC' in matrix B 
+				// Calculate dot product of rowA (in matrix A (this)) and columnB in matrix B
+				// The number of elements equals nColumns in A (== nRows in B)
 				x = 0.0;
-				for (int i = 0; i<nRows_; ++i) x += value(colC, i) * B.value(i, rowC);
-				C.ref(rowC, colC) = x;
+				for (i = 0; i<nColumns_; ++i) x += value(rowA, i) * B.value(i, colB);
+				C.ref(rowA, colB) = x;
 			}
 		}
 
@@ -298,9 +299,9 @@ template <class A> class Array2D
 	 */
 	public:
 	// Print matrix
-	void print() const
+	void print(const char* title = "Array2D<A>") const
 	{
-		Messenger::print("Array2D<A> : %i rows x %i columns:\n", nRows_, nColumns_);
+		Messenger::print("'%s' : %i rows x %i columns:\n", title, nRows_, nColumns_);
 		CharString line;
 		for (int row = 0; row < nRows_; ++row)
 		{
@@ -309,101 +310,20 @@ template <class A> class Array2D
 			Messenger::print("%s\n", line.get());
 		}
 	}
-	// Invert matrix
-	bool invert()
+	// Transpose (in-place) the current array
+	void transpose()
 	{
-		// Perform Gauss-Jordan inversion of the matrix.
-		// Matrix must be square, and not stored as a half-matrix
-		if (nRows_ != nColumns_)
+		*this = transposed();
+	}
+	// Return transpose of the current array
+	Array2D<A> transposed() const
+	{
+		Array2D<A> result(nColumns_, nRows_);
+		for (int r=0; r<nRows_; ++r)
 		{
-			Messenger::error("Can't invert this matrix since it is not square.\n");
-			return false;
+			for (int c=0; c<nColumns_; ++c) result.ref(c,r) = value(r,c);
 		}
-		if (half_)
-		{
-			Messenger::error("Can't invert this matrix since it is stored as a half-matrix.\n");
-			return false;
-		}
-
-		const int rank = nRows_;
-
-		int pivotrows[rank], pivotcols[rank], pivotrow = 0, pivotcol = 0;
-		bool pivoted[rank];
-		int row, col, n, m;
-		double large, element;
-		for (n=0; n<rank; ++n)
-		{
-			pivotrows[n] = 0;
-			pivotcols[n] = 0;
-			pivoted[n] = false;
-		}
-		// Loop over columns to be reduced
-		for (n=0; n<rank; ++n)
-		{
-			// Locate suitable pivot element - find largest value in the matrix A
-			large = 0.0;
-			for (row=0; row<rank; ++row)
-			{
-				// Only search this row if it has not previously contained a pivot element
-				if (pivoted[row]) continue;
-				for (col=0; col<rank; ++col)
-				{
-					// Similarly, only look at the column element if the column hasn't been pivoted yet.
-					if (pivoted[col]) continue;
-					// Check the size of the element...
-					element = fabs(array_[row*rank+col]);
-					if (element > large)
-					{
-						large = element;
-						pivotrow = row;
-						pivotcol = col;
-					}
-				}
-			}
-			
-			// Mark the pivot row/column as changed
-			pivoted[pivotcol] = true;
-			pivotrows[n] = pivotrow;
-			pivotcols[n] = pivotcol;
-			
-			// Exchange rows to put pivot element on the diagonal
-			if (pivotrow != pivotcol)
-			{
-				for (m=0; m<rank; ++m)
-				{
-					element = array_[pivotrow*rank+m];
-					array_[pivotrow*rank+m] = array_[pivotcol*rank+m];
-					array_[pivotcol*rank+m] = element;
-				}
-			}
-			
-			// Now ready to divide through row elements.
-			element = 1.0 / array_[pivotcol*rank+pivotcol];
-			array_[pivotcol*rank+pivotcol] = 1.0;
-			for (m=0; m<rank; ++m) array_[pivotcol*rank+m] *= element;
-			
-			// Divide through other rows by the relevant multiple of the pivot row
-			for (row=0; row<rank; ++row)
-			{
-				if (row == pivotcol) continue;
-				element = array_[row*rank + pivotcol];
-				array_[row*rank + pivotcol] = 0.0;
-				for (m=0; m<rank; ++m) array_[row*rank+m] = array_[row*rank+m] - array_[pivotcol*rank+m] * element;
-			}
-		}
-
-		// Rearrange columns to undo row exchanges performed earlier
-		for (n=rank-1; n>=0; --n)
-		{
-			if (pivotrows[n] != pivotcols[n]) for (m=0; m<rank; ++m)
-			{
-				element = array_[m*rank+pivotrows[n]];
-				array_[m*rank+pivotrows[n]] = array_[m*rank+pivotcols[n]];
-				array_[m*rank+pivotcols[n]] = element;
-			}
-		}
-	
-		return true;
+		return result;
 	}
 };
 

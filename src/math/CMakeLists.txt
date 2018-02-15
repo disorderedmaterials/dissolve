@@ -3,6 +3,8 @@ add_library(math
   cuboid.cpp
   doubleexp.cpp
   mathfunc.cpp
+  mathfunc_gj.cpp
+  mathfunc_svd.cpp
   matrix3.cpp
   matrix4.cpp
   windowfunction.cpp
