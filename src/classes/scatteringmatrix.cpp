@@ -166,19 +166,26 @@ bool ScatteringMatrix::finalise()
 	}
 
 	inverseA_ = A_;
-	if (!inverseA_.invert()) return false;
+	if (!DUQMath::pseudoinverse(inverseA_)) return false;
 
 	return true;
 }
 
 // Add reference data
-bool ScatteringMatrix::addReferenceData(Data* data, Weights& weights)
+bool ScatteringMatrix::addReferenceData(Data* data)
 {
 	// Check current list size
 	if (data_.nItems() == typePairs_.nItems())
 	{
 		Messenger::error("Can't add reference data to ScatteringMatrix - rowsize exceeded.\n");
 		return false;
+	}
+
+	// Make sure that there are valid scattering weights in the supplied Data
+	Weights& weights = data->scatteringWeights();
+	if (!weights.isValid())
+	{
+		return Messenger::error("Data '%s' does not have valid scattering weights.\n", data->name());
 	}
 
 	// Set coefficients in A_ - size of reference data array data_ gives us our target row index
