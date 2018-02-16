@@ -129,7 +129,7 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	// Calculate RDF from supplied Histogram and normalisation data
 	static void calculateRDF(XYData& destination, Histogram& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier, XYData& boxNormalisation);
 	// Generate total, weighted correlation function from supplied partials and Weights
-	XYData generateTotal(Weights& weights);
+	XYData generateTotal(Weights& weights) const;
 
 
 	/*
