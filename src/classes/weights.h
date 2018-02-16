@@ -85,8 +85,8 @@ class Weights : public GenericItemBase
 	void calculateWeightingMatrices();
 
 	public:
-	// Finalise lists and matrices based on IsotopologueMix information
-	void finalise(const AtomTypeList& exchangeableTypes);
+	// Create AtomType list and matrices based on stored IsotopologueMix information
+	void createFromIsotopologues();
 	// Reduce data to be naturally-weighted
 	void naturalise();
 	// Set (sole) Isotope for specified AtomType and recalculate matrices

@@ -206,6 +206,7 @@ namespace PairPotentialsBlock
 		CoulombTruncationKeyword,	/* 'CoulombTruncation' - Truncation scheme to apply to Coulomb potential */
 		DeltaKeyword,			/* 'Delta' - Gives the spacing between points in the tabulated potentials */
 		EndPairPotentialsKeyword,	/* 'EndPairPotentials' - Signals the end of the PairPotentials block */
+		ExchangeableKeyword,		/* 'Exchangeable' - Set AtomTypes that exchange with others */
 		GenerateKeyword,		/* 'Generate' - Generates a single PairPotential with the specified contributions */
 		GenerateAllKeyword,		/* 'GenerateAll' - Generates all required PairPotentials with the specified contributions */
 		IncludeCoulombKeyword,		/* 'IncludeCoulomb' - Include Coulomb term in tabulated pair potentials" */

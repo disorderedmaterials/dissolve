@@ -36,7 +36,6 @@
 AtomTypeData::AtomTypeData() : MPIListItem<AtomTypeData>()
 {
 	atomType_ = NULL;
-	exchangeable_ = false;
 	population_ = 0;
 	fraction_ = 0.0;
 	boundCoherent_ = 0.0;
@@ -52,7 +51,6 @@ AtomTypeData::AtomTypeData(const AtomTypeData& source)
 void AtomTypeData::operator=(const AtomTypeData& source)
 {
 	atomType_ = source.atomType_;
-	exchangeable_ = source.exchangeable_;
 	isotopes_ = source.isotopes_;
 	population_ = source.population_;
 	fraction_ = source.fraction_;
@@ -130,16 +128,10 @@ AtomType* AtomTypeData::atomType() const
 	return atomType_;
 }
 
-// Set whether this atom is exchangeable
-void AtomTypeData::setExchangeable(bool b)
-{
-	exchangeable_ = b;
-}
-
-// Return whether this atom is exchangeable
+// Return whether the associated AtomType is exchangeable
 bool AtomTypeData::exchangeable() const
 {
-	return exchangeable_;
+	return atomType_ ? atomType_->exchangeable() : false;
 }
 
 // Finalise, calculating fractional populations etc.
@@ -231,7 +223,7 @@ const char* AtomTypeData::atomTypeName() const
 bool AtomTypeData::write(LineParser& parser)
 {
 	// Line Contains: AtomType name, exchangeable flag, population, fraction, boundCoherent, and nIsotopes
-	if (!parser.writeLineF("%s %s %i %f %f %i\n", atomType_->name(), DUQSys::btoa(exchangeable_), population_, fraction_, boundCoherent_, isotopes_.nItems())) return false;
+	if (!parser.writeLineF("%s %i %f %f %i\n", atomType_->name(), population_, fraction_, boundCoherent_, isotopes_.nItems())) return false;
 	ListIterator<IsotopeData> isotopeIterator(isotopes_);
 	while (IsotopeData* topeData = isotopeIterator.iterate()) if (!topeData->write(parser)) return false;
 	return true;
@@ -243,12 +235,11 @@ bool AtomTypeData::read(LineParser& parser)
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 	for (atomType_ = List<AtomType>::masterInstance()->first(); atomType_ != NULL; atomType_ = atomType_->next) if (DUQSys::sameString(atomType_->name(), parser.argc(0))) break;
 	if (!atomType_) return false;
-	exchangeable_ = parser.argb(1);
-	population_ = parser.argi(2);
-	fraction_ = parser.argd(3);
-	boundCoherent_ = parser.argd(4);
+	population_ = parser.argi(1);
+	fraction_ = parser.argd(2);
+	boundCoherent_ = parser.argd(3);
 	isotopes_.clear();
-	int nIso = parser.argi(5);
+	int nIso = parser.argi(4);
 	for (int n = 0; n<nIso; ++n)
 	{
 		IsotopeData* tope = isotopes_.add();

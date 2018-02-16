@@ -64,7 +64,6 @@ Configuration  'Mix'
     AllIntra  true
     Isotopologue  'Mix'  'Water'  'Protiated'  1.0
     Isotopologue  'Mix'  'Methanol'  'Protiated'  1.0
-    Exchangeable  HW  HO
     # Save  On
     Frequency  1
     Method  Cells
@@ -131,7 +130,6 @@ Configuration  'Mix'
     Weights  neutron
     Isotopologue  'Mix'  'Water'  'Protiated'  1.0
     Isotopologue  'Mix'  'Methanol'  'Protiated'  1.0
-    Exchangeable  HW  HO
     # Save  On
     Frequency  1
     Method  Cells
@@ -201,7 +199,6 @@ Configuration  'Mix'
     Isotopologue  'Mix'  'Water'  'Protiated'  1.0
     Isotopologue  'Mix'  'Methanol'  'Protiated'  0.5
     Isotopologue  'Mix'  'Methanol'  'OD-MethylH'  0.5
-    Exchangeable  HW  HO
     #  Save  On
     Frequency  1
   
@@ -223,7 +220,6 @@ Configuration  'Mix'
     Weights  neutron
     Isotopologue  'Mix'  'Water'  'Deuteriated'  1.0
     Isotopologue  'Mix'  'Methanol'  'Protiated'  1.0
-    Exchangeable  HW  HO
     #  Save  On
     Frequency  1
   
@@ -245,7 +241,6 @@ Configuration  'Mix'
     Weights  neutron
     Isotopologue  'Mix'  'Water'  'Protiated'  1.0
     Isotopologue  'Mix'  'Methanol'  'OD-MethylH'  1.0
-    Exchangeable  HW  HO
     #  Save  On
     Frequency  1
   
@@ -267,7 +262,6 @@ Configuration  'Mix'
     Weights  neutron
     Isotopologue  'Mix'  'Water'  'Protiated'  1.0
     Isotopologue  'Mix'  'Methanol'  'MethylD-OH'  1.0
-    Exchangeable  HW  HO
     #  Save  On
     Frequency  1
   
@@ -289,7 +283,6 @@ Configuration  'Mix'
     Weights  neutron
     Isotopologue  'Mix'  'Water'  'Deuteriated'  1.0
     Isotopologue  'Mix'  'Methanol'  'OD-MethylH'  1.0
-    Exchangeable  HW  HO
     #  Save  On
     Frequency  1
   
@@ -311,7 +304,6 @@ Configuration  'Mix'
     Weights  neutron
     Isotopologue  'Mix'  'Water'  'Protiated'  1.0
     Isotopologue  'Mix'  'Methanol'  'Deuteriated'  1.0
-    Exchangeable  HW  HO
     #  Save  On
     Frequency  1
   
@@ -333,7 +325,6 @@ Configuration  'Mix'
     Weights  neutron
     Isotopologue  'Mix'  'Water'  'Deuteriated'  1.0
     Isotopologue  'Mix'  'Methanol'  'Deuteriated'  1.0
-    Exchangeable  HW  HO
     #  Save  On
     Frequency  1
   
@@ -355,6 +346,7 @@ PairPotentials
   Delta  0.050000
   TruncationWidth  2.000000
   GenerateAll  'LJ'
+  Exchangeable  HW  HO
 EndPairPotentials
 
 Simulation

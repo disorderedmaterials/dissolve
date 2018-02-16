@@ -30,6 +30,7 @@ KeywordData PairPotentialsBlockData[] = {
 	{ "CoulombTruncation",		1,	"Truncation scheme to apply to Coulomb potential" },
 	{ "Delta",			1,	"Delta (in r-squared) of tabulated potential" },
 	{ "EndPairPotentials",		0,	"Signals the end of the PairPotentials block" },
+	{ "Exchangeable",		1,	"Set AtomTypes that exchange with others" },
 	{ "Generate",			3,	"Generate a pair potential of the specified form, according to internal parameters (or those supplied with 'Parameters')" },
 	{ "GenerateAll",		1,	"Generate all (remaining) potentials according to internal atomtype parameters (or those supplied with 'Parameters')" },
 	{ "IncludeCoulomb",		1,	"Include Coulomb term in tabulated pair potentials" },
@@ -97,6 +98,19 @@ bool PairPotentialsBlock::parse(LineParser& parser, DUQ* duq)
 			case (PairPotentialsBlock::EndPairPotentialsKeyword):
 				Messenger::print("Found end of %s block.\n", InputBlocks::inputBlock(InputBlocks::PairPotentialsBlock));
 				blockDone = true;
+				break;
+			case (PairPotentialsBlock::ExchangeableKeyword):
+				// Loop over all provided arguments (which are atom type names) and set flags in those atom types
+				for (int n=1; n<parser.nArgs(); ++n)
+				{
+					AtomType* atomType = duq->findAtomType(parser.argc(n));
+					if (!atomType)
+					{
+						Messenger::error("Unrecognised AtomType '%s' given to Exchangeable keyword.\n", parser.argc(n));
+						return false;
+					}
+					atomType->setExchangeable(true);
+				}
 				break;
 			case (PairPotentialsBlock::GenerateKeyword):
 				// Get short-range type

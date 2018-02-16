@@ -51,6 +51,8 @@ class AtomType : public MPIListItem<AtomType>
 	int element_;
 	// Associated Parameters
 	Parameters* parameters_;
+	// Whether this AtomType is exchangeable
+	bool exchangeable_;
 	// Index of this type in the master type index
 	int index_;
 
@@ -67,6 +69,10 @@ class AtomType : public MPIListItem<AtomType>
 	void setParameters(Parameters* params);
 	// Return associated Parameters
 	Parameters* parameters() const;
+	// Set whether this AtomType is exchangeable
+	void setExchangeable(bool b);
+	// Return whether this AtomType is exchangeable
+	bool exchangeable() const;
 	// Set index of this type in the master type index
 	void setIndex(int id);
 	// Return index of this type in the master type index

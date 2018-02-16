@@ -98,7 +98,6 @@ void PartialsModule::setUpKeywords()
 	keywords_.add(new BoolModuleKeyword(false), "AllIntra", "Consider all intramolecular pairs in intra partials", "<True|False*>");
 	keywords_.add(new IntegerModuleKeyword(5, 0), "Averaging", "Number of historical partial sets to combine into final partials", "<N[5]>");
 	keywords_.add(new ComplexModuleKeyword(2,2), "ConfigurationWeight", "Sets the relative weight of the specified Configuration in construction of the partials", "<Configuration Name> <weight>");
-	keywords_.add(new ComplexModuleKeyword(1), "Exchangeable", "Define an exchangeable group of atoms", "<AtomType> [AtomType ...]");
 	keywords_.add(new CharStringModuleKeyword("Simple", PartialsModule::nAveragingSchemes, AveragingSchemeKeywords), "AveragingScheme", "Weighting scheme to use when averaging partials", "<scheme[Exponential]>");
 	keywords_.add(new BoolModuleKeyword(false), "Bragg", "Enable calculation of Bragg scattering", "<True|False*>");
 	keywords_.add(new DoubleModuleKeyword(0.001), "BraggQResolution", "Binwidth in Q to use when calculating Bragg peaks");
@@ -143,24 +142,6 @@ int PartialsModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& 
 		}
 
 		GenericListHelper<double>::add(targetList, CharString("%s_Weight", targetCfg->niceName()), uniqueName()) = parser.argd(2);
-	}
-	else if (DUQSys::sameString(parser.argc(0), "Exchangeable"))
-	{
-		// Define an exchangeable group of atoms
-		// Loop over all provided arguments (which are atom type names) and add them to our list
-		AtomTypeList exchangeableAtoms;
-		for (int n=1; n<parser.nArgs(); ++n)
-		{
-			AtomType* atomType = duq->findAtomType(parser.argc(n));
-			if (!atomType)
-			{
-				Messenger::error("Unrecognised AtomType '%s' given in Exchangeable keyword.\n", parser.argc(n));
-				return false;
-			}
-			exchangeableAtoms.add(atomType);
-		}
-
-		GenericListHelper<AtomTypeList>::add(targetList, "Exchangeable", uniqueName()) = exchangeableAtoms;
 	}
 	else if (DUQSys::sameString(parser.argc(0), "Isotopologue"))
 	{

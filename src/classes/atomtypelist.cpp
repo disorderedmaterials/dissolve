@@ -62,7 +62,7 @@ void AtomTypeList::clear()
 }
 
 // Add the specified AtomType to the list, returning the index of the AtomType in the list
-AtomTypeData* AtomTypeList::add(AtomType* atomType, int population, bool exchangeable)
+AtomTypeData* AtomTypeList::add(AtomType* atomType, int population)
 {
 	// Search the list for the AtomType provided.
 	AtomTypeData* atd = NULL;
@@ -73,7 +73,6 @@ AtomTypeData* AtomTypeList::add(AtomType* atomType, int population, bool exchang
 	{
 		atd = types_.add();
 		atd->initialise(types_.nItems()-1, atomType, 0);
-		atd->setExchangeable(exchangeable);
 	}
 
 	// Increase general (non-isotopic) population
@@ -83,9 +82,9 @@ AtomTypeData* AtomTypeList::add(AtomType* atomType, int population, bool exchang
 }
 
 // Add/increase this AtomType/Isotope pair
-void AtomTypeList::addIsotope(AtomType* atomType, Isotope* tope, int popAdd, bool exchangeable)
+void AtomTypeList::addIsotope(AtomType* atomType, Isotope* tope, int popAdd)
 {
-	AtomTypeData* atd = add(atomType, 0, exchangeable);
+	AtomTypeData* atd = add(atomType, 0);
 	
 	// Add / increase isotope population
 	if (tope != NULL) atd->add(tope, popAdd);
@@ -211,14 +210,14 @@ void AtomTypeList::finalise()
 	double totalFraction = 0.0, boundCoherent = 0.0;
 	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next)
 	{
-		if (!atd->exchangeable()) continue;
+		if (!atd->atomType()->exchangeable()) continue;
 		totalFraction += atd->fraction();
 		boundCoherent += atd->fraction() * atd->boundCoherent();
 	}
 	boundCoherent /= totalFraction;
 
 	// Now go back through the list and set the new scattering length for exchangeable components
-	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next) if (atd->exchangeable()) atd->setBoundCoherent(boundCoherent);
+	for (AtomTypeData* atd = types_.first(); atd != NULL; atd = atd->next) if (atd->atomType()->exchangeable()) atd->setBoundCoherent(boundCoherent);
 }
 
 // Return nth referenced AtomType

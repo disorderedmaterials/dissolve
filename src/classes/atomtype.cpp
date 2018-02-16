@@ -30,6 +30,7 @@ AtomType::AtomType() : MPIListItem<AtomType>()
 	element_ = 0;
 	parameters_ = NULL;
 	name_ = "XX";
+	exchangeable_ = false;
 }
 
 // Destructor
@@ -77,6 +78,19 @@ Parameters* AtomType::parameters() const
 	return parameters_;
 }
 
+
+// Set whether this AtomType is exchangeable
+void AtomType::setExchangeable(bool b)
+{
+	exchangeable_ = b;
+}
+
+// Return whether this AtomType is exchangeable
+bool AtomType::exchangeable() const
+{
+	return exchangeable_;
+}
+
 // Set index of this type in the main type index
 void AtomType::setIndex(int id)
 {
@@ -103,12 +117,15 @@ bool AtomType::broadcast(ProcessPool& procPool, int root)
 	procPool.broadcast(name_, root);
 	
 	// Send element
-	procPool.broadcast(&element_, 1, root);
+	procPool.broadcast(element_,root);
 	
 	// Get index of Parameters, 
 	if (procPool.isMaster()) index = PeriodicTable::element(element_).indexOfParameters(parameters_);
-	procPool.broadcast(&index, 1, root);
+	procPool.broadcast(index, root);
 	parameters_ = PeriodicTable::element(element_).parameters(index);
+
+	// Send exchangeable flag
+	procPool.broadcast(exchangeable_, root);
 #endif
 	return true;
 }

@@ -60,9 +60,9 @@ class AtomTypeList : public GenericItemBase
 	// Clear all data
 	void clear();
 	// Add the specified AtomType to the list, returning the AtomTypeData
-	AtomTypeData* add(AtomType* atomType, int popAdd = 0, bool exchangeable = false);
+	AtomTypeData* add(AtomType* atomType, int popAdd = 0);
 	// Add/increase this AtomType/Isotope pair, returning the index of the AtomType in the list
-	void addIsotope(AtomType* atomType, Isotope* tope = NULL, int popAdd = 0, bool exchangeable = false);
+	void addIsotope(AtomType* atomType, Isotope* tope = NULL, int popAdd = 0);
 	// Make all AtomTypeData in the list reference only their natural isotope
 	void naturalise();
 	// Add the AtomTypes in the supplied list into this one, increasing populations etc.

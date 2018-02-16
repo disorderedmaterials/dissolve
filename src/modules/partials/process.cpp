@@ -125,7 +125,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 	 * we must loop over the specified targetConfigurations_ and calculate the partials for each.
 	 */
 	Weights combinedWeights;
-	AtomTypeList combinedAtomTypes, combinedExchangeableAtoms;
+	AtomTypeList combinedAtomTypes;
 	RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
 	while (Configuration* cfg = configIterator.iterate())
 	{
@@ -231,14 +231,9 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 				return false;
 			}
 
-			// Grab exchangeable atoms list if it is present (in the Module data, rather than the local Configuration data)
-			// This is passed to Weights::finalise(), which uses the contained information when finalising its AtomTypeList
-			AtomTypeList exchangeableAtoms = GenericListHelper<AtomTypeList>::retrieve(moduleData, "Exchangeable", uniqueName());
-			combinedExchangeableAtoms.add(exchangeableAtoms);
-
-			// Finalise, print, and store weights
+			// Create, print, and store weights
 			Messenger::print("Partials: Isotopologue and isotope composition for Configuration '%s':\n\n", cfg->name());
-			weights.finalise(exchangeableAtoms);
+			weights.createFromIsotopologues();
 			weights.print();
 			GenericListHelper<Weights>::realise(cfg->moduleData(), "FullWeights", uniqueName_) = weights;
 
@@ -390,7 +385,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		if (weightsType != PartialsModule::NoWeighting)
 		{
 			Messenger::print("Partials: Isotopologue and isotope composition over all Configurations used in '%s':\n\n", uniqueName_.get());
-			combinedWeights.finalise(combinedExchangeableAtoms);
+			combinedWeights.createFromIsotopologues();
 			combinedWeights.print();
 			GenericListHelper<Weights>::realise(duq.processingModuleData(), "FullWeights", uniqueName_, GenericItem::InRestartFileFlag) = combinedWeights;
 

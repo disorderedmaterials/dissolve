@@ -162,8 +162,8 @@ void Weights::calculateWeightingMatrices()
 	boundCoherentSquareOfAverage_ *= boundCoherentSquareOfAverage_;
 }
 
-// Finalise lists and matrices based on IsotopologueMix information
-void Weights::finalise(const AtomTypeList& exchangeableTypes)
+// Create AtomType list and matrices based on stored IsotopologueMix information
+void Weights::createFromIsotopologues()
 {
 	// Loop over IsotopologueMix entries and ensure relative populations of Isotopologues sum to 1.0
 	for (IsotopologueMix* mix = isotopologueMixtures_.first(); mix != NULL; mix = mix->next) mix->normalise();
@@ -177,10 +177,8 @@ void Weights::finalise(const AtomTypeList& exchangeableTypes)
 			// Loop over Atoms in the Species, searching for the AtomType/Isotope entry in the isotopes list of the Isotopologue
 			for (SpeciesAtom* i = mix->species()->atoms(); i != NULL; i = i->next)
 			{
-				bool exchangeable = exchangeableTypes.contains(i->atomType());
-
 				Isotope* iso = tope->item->atomTypeIsotope(i->atomType());
-				atomTypes_.addIsotope(i->atomType(), iso, tope->data*mix->speciesPopulation(), exchangeable);
+				atomTypes_.addIsotope(i->atomType(), iso, tope->data*mix->speciesPopulation());
 			}
 		}
 	}
