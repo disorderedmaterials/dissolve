@@ -172,7 +172,7 @@ bool ScatteringMatrix::finalise()
 }
 
 // Add reference data
-bool ScatteringMatrix::addReferenceData(Data* data)
+bool ScatteringMatrix::addReferenceData(Data* data, double factor)
 {
 	// Check current list size
 	if (data_.nItems() == typePairs_.nItems())
@@ -203,7 +203,7 @@ bool ScatteringMatrix::addReferenceData(Data* data)
 			}
 
 			// Now have the local column index of the AtomType pair in our matrix A_...
-			A_.ref(row, index) = weights.fullWeight(n, m);
+			A_.ref(row, index) = weights.fullWeight(n, m) * factor;
 		}
 	}
 

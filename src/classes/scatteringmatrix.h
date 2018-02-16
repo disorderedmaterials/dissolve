@@ -82,7 +82,7 @@ class ScatteringMatrix
 	// Finalise
 	bool finalise();
 	// Add reference data
-	bool addReferenceData(Data* data);
+	bool addReferenceData(Data* data, double factor = 1.0);
 };
 
 #endif
