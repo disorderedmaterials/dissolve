@@ -114,7 +114,7 @@ Module Partials 'H2O'
   StructureFactor  on
   WindowFunction  Lorch0
   Weights  Neutron
-  IntraBroadening  ScaledGaussian  0.1  0.3
+  IntraBroadening  ScaledGaussian  0.105  0.25
   QBroadening  OmegaDependentGaussian  0.02
   Configuration  'Bulk'
   Isotopologue  'Bulk'  'Water'  'Natural'  1.0
