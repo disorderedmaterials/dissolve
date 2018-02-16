@@ -113,8 +113,8 @@ void ScatteringMatrix::generatePartials(Array2D<XYData>& generatedSQ)
 	}
 }
 
-// Return if the scattering matrix is incomplete (i.e. has fewer rows than there are columns)
-bool ScatteringMatrix::incomplete() const
+// Return if the scattering matrix is underdetermined
+bool ScatteringMatrix::underDetermined() const
 {
 	return (data_.nItems() < A_.nColumns());
 }

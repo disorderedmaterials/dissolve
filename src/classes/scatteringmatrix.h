@@ -69,8 +69,8 @@ class ScatteringMatrix
 	void print() const;
 	// Generate partials from reference data using inverse matrix
 	void generatePartials(Array2D<XYData>& generatedSQ);
-	// Return if the scattering matrix is incomplete (i.e. has fewer rows than there are columns)
-	bool incomplete() const;
+	// Return if the scattering matrix is underdetermined
+	bool underDetermined() const;
 
 
 	/*
