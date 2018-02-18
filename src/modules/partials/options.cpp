@@ -109,7 +109,7 @@ void PartialsModule::setUpKeywords()
 	keywords_.add(new DoubleModuleKeyword(0.05, 1.0e-5), "QDelta", "Step size in Q for S(Q) calculation");
 	keywords_.add(new BroadeningFunctionModuleKeyword(BroadeningFunction()), "QBroadening", "Instrument broadening function to apply when calculating S(Q)");
 	keywords_.add(new DoubleModuleKeyword(-1.0, -1.0), "QMax", "Maximum Q for calculated S(Q)");
-	keywords_.add(new DoubleModuleKeyword(0.0, 0.0), "QMin", "Minimum Q for calculated S(Q)");
+	keywords_.add(new DoubleModuleKeyword(0.01, 0.0), "QMin", "Minimum Q for calculated S(Q)");
 	keywords_.add(new BoolModuleKeyword(false), "Save", "Whether to save partials to disk after calculation", "<True|False>");
 	keywords_.add(new IntegerModuleKeyword(0, 0, 100), "Smoothing", "Specifies the degree of smoothing 'n' to apply to calculated g(r), where 2n+1 controls the length in the applied Spline smooth");
 	keywords_.add(new BoolModuleKeyword(false), "StructureFactor", "Determines whether S(Q) are to be calculated from F.T. of the g(r)", "<True|False>");
