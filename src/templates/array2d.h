@@ -157,6 +157,39 @@ template <class A> class Array2D
 		if ((nrows > 0) && (ncolumns > 0)) resize(nrows, ncolumns);
 // 		else printf("BAD_USAGE - Zero or negative row/column size(s) given to Array2D::initialise() (r=%i, c=%i)\n", nrows, ncolumns);
 	}
+	// Add empty row to array
+	void addRow(int nCols = -1)
+	{
+		// Copy current Array
+		Array2D<A> oldArray = *this;
+
+		// Check current column count
+		if (nColumns_ == 0)
+		{
+			// Must have been supplied the column size if we currently have no data
+			if (nCols == -1)
+			{
+				Messenger::error("Array2D<A>::addRow() - Array is currently empty, so column size must be provided.\n");
+				return;
+			}
+
+		}
+		else nCols = nColumns_;
+
+		// Reinitialise the present matrix to the new size
+		if (half_ && (nRows_ == nCols))
+		{
+			Messenger::warn("Adding a row to this Array2D<A> will force it to be rectangular, so it will no longer be halved.\n");
+			initialise(nRows_+1, nCols, false);
+		}
+		else initialise(nRows_+1, nCols, half_);
+
+		// Copy old data back in
+		for (int n=0; n<oldArray.nRows_; ++n)
+		{
+			for (int m=0; m<oldArray.nColumns_; ++m) ref(n,m) = oldArray.value(n,m);
+		}
+	}
 	// Return specified element as reference
 	A& ref(int row, int column)
 	{
