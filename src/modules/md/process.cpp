@@ -105,8 +105,8 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 		double fMax, fTemp;
 
 		/*
-		* Calculation Begins
-		*/
+		 * Calculation Begins
+		 */
 		
 		// Read in or assign random velocities
 		// Realise the velocity array from the moduleData
@@ -187,7 +187,14 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 		procPool.resetAccumulatedTime();
 
 		// Variable timestep requires forces to be available immediately
-		if (variableTimestep) ForcesModule::totalForces(procPool, cfg, duq.potentialMap(), fx, fy, fz);
+		if (variableTimestep)
+		{
+			ForcesModule::totalForces(procPool, cfg, duq.potentialMap(), fx, fy, fz);
+			// Must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
+			fx *= 100.0;
+			fy *= 100.0;
+			fz *= 100.0;
+		}
 
 		// Ready to do MD propagation of system
 		for (int step=1; step<=nSteps; ++step)
@@ -313,8 +320,8 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 		cfg->incrementCoordinateIndex();
 
 		/*
-		* Calculation End
-		*/
+		 * Calculation End
+		 */
 	}
 
 	return true;
