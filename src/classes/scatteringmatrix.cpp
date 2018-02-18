@@ -126,8 +126,13 @@ bool ScatteringMatrix::underDetermined() const
 // Initialise from supplied list of AtomTypes
 void ScatteringMatrix::initialise(const List<AtomType>& types, Array2D<XYData>& generatedSQ, const char* objectNamePrefix)
 {
-	// Copy atom types
+	// Clear coefficients matrix and its inverse_, and empty our typePairs_ and data_ lists
+	A_.clear();
+	inverseA_.clear();
+	data_.clear();
 	typePairs_.clear();
+
+	// Copy atom types
 	for (AtomType* at1 = types.first(); at1 != NULL; at1 = at1->next)
 	{
 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next)
@@ -137,11 +142,6 @@ void ScatteringMatrix::initialise(const List<AtomType>& types, Array2D<XYData>& 
 			pair->b = at2;
 		}
 	}
-
-	// Create and zero coefficients matrix
-	A_.initialise(typePairs_.nItems(), typePairs_.nItems());
-	A_ = 0.0;
-	inverseA_.clear();
 
 	// Create partials array
 	generatedSQ.initialise(types.nItems(), types.nItems(), true);
@@ -159,7 +159,7 @@ void ScatteringMatrix::initialise(const List<AtomType>& types, Array2D<XYData>& 
 bool ScatteringMatrix::finalise()
 {
 	// Check that we have the correct number of reference data to be able to invert the matrix
-	if (data_.nItems() != A_.nRows())
+	if (data_.nItems() < A_.nColumns())
 	{
 		Messenger::error("Can't finalise this scattering matrix, since there are not enough reference data (%i) compared to rows in the matrix (%i).\n", data_.nItems(), A_.nColumns());
 		return false;
@@ -174,13 +174,6 @@ bool ScatteringMatrix::finalise()
 // Add reference data
 bool ScatteringMatrix::addReferenceData(Data* data, double factor)
 {
-	// Check current list size
-	if (data_.nItems() == typePairs_.nItems())
-	{
-		Messenger::error("Can't add reference data to ScatteringMatrix - rowsize exceeded.\n");
-		return false;
-	}
-
 	// Make sure that there are valid scattering weights in the supplied Data
 	Weights& weights = data->scatteringWeights();
 	if (!weights.isValid())
@@ -188,27 +181,51 @@ bool ScatteringMatrix::addReferenceData(Data* data, double factor)
 		return Messenger::error("Data '%s' does not have valid scattering weights.\n", data->name());
 	}
 
-	// Set coefficients in A_ - size of reference data array data_ gives us our target row index
-	const int row = data_.nItems(), nUsedTypes = weights.nUsedTypes();
+	// Extend the scattering matrix by one row
+	A_.addRow(typePairs_.nItems());
+	const int rowIndex = A_.nRows() - 1;
+
+	// Set coefficients in A_
+	const int nUsedTypes = weights.nUsedTypes();
 	AtomTypeList& usedTypes = weights.atomTypes();
 	for (int n=0; n<nUsedTypes; ++n)
 	{
 		for (int m=n; m<nUsedTypes; ++m)
 		{
-			int index = pairIndex(usedTypes.atomType(n), usedTypes.atomType(m));
-			if (index == -1)
+			int colIndex = pairIndex(usedTypes.atomType(n), usedTypes.atomType(m));
+			if (colIndex == -1)
 			{
 				Messenger::error("Weights associated to reference Data contain one or more unknown AtomTypes ('%s' and/or '%s').\n", usedTypes.atomType(n)->name(), usedTypes.atomType(m)->name());
 				return false;
 			}
 
 			// Now have the local column index of the AtomType pair in our matrix A_...
-			A_.ref(row, index) = weights.fullWeight(n, m) * factor;
+			A_.ref(rowIndex, colIndex) = weights.fullWeight(n, m) * factor;
 		}
 	}
 
 	// Add reference data
 	data_.add(data);
+
+	return true;
+}
+
+// Add reference partial data between specified AtomTypes
+bool ScatteringMatrix::addPartialReferenceData(Data* data, AtomType* at1, AtomType* at2, double weight)
+{
+	// Extend the scattering matrix by one row
+	A_.addRow(typePairs_.nItems());
+	const int rowIndex = A_.nRows() - 1;
+
+	int colIndex = pairIndex(at1, at2);
+	if (colIndex == -1)
+	{
+		Messenger::error("Weights associated to reference Data contain one or more unknown AtomTypes ('%s' and/or '%s').\n", at1->name(), at2->name());
+		return false;
+	}
+
+	// Now have the local column index of the AtomType pair in our matrix A_...
+	A_.ref(rowIndex, colIndex) = weight;
 
 	return true;
 }

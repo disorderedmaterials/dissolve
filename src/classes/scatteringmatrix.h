@@ -81,8 +81,10 @@ class ScatteringMatrix
 	void initialise(const List<AtomType>& types, Array2D<XYData>& generatedSQ, const char* objectNamePrefix);
 	// Finalise
 	bool finalise();
-	// Add reference data
+	// Add reference data using its associated Weights, applying optional factor to those weights
 	bool addReferenceData(Data* data, double factor = 1.0);
+	// Add reference partial data between specified AtomTypes
+	bool addPartialReferenceData(Data* data, AtomType* at1, AtomType* at2, double weight);
 };
 
 #endif
