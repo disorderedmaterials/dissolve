@@ -97,6 +97,12 @@ SpeciesBond* Species::hasBond(SpeciesAtom* i, SpeciesAtom* j) const
 	return NULL;
 }
 
+// Return index of specified Bond
+int Species::bondIndex(SpeciesBond* spb)
+{
+	return bonds_.indexOf(spb);
+}
+
 // Add new angle definition (from supplied atom pointers)
 SpeciesAngle* Species::addAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k)
 {
@@ -176,6 +182,12 @@ bool Species::hasAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const
 {
 	for (SpeciesAngle* a = angles_.first(); a != NULL; a = a->next) if (a->matches(i, j, k)) return true;
 	return false;
+}
+
+// Return index of specified Angle
+int Species::angleIndex(SpeciesAngle* spa)
+{
+	return angles_.indexOf(spa);
 }
 
 // Add new torsion definition (from supplied atom pointers)
@@ -268,4 +280,10 @@ bool Species::hasTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, Species
 {
 	for (SpeciesTorsion* t = torsions_.first(); t != NULL; t = t->next) if (t->matches(i, j, k, l)) return true;
 	return false;
+}
+
+// Return index of specified Torsion
+int Species::torsionIndex(SpeciesTorsion* spt)
+{
+	return torsions_.indexOf(spt);
 }

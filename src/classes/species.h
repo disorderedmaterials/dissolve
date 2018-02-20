@@ -129,6 +129,8 @@ class Species : public ListItem<Species>
 	SpeciesBond* bond(int n);
 	// Return whether Bond between Atoms exists
 	SpeciesBond* hasBond(SpeciesAtom* i, SpeciesAtom* j) const;
+	// Return index of specified Bond
+	int bondIndex(SpeciesBond* spb);
 	// Add new Angle definition
 	SpeciesAngle* addAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k);
 	// Add new Angle definition
@@ -141,6 +143,8 @@ class Species : public ListItem<Species>
 	SpeciesAngle* angle(int n);
 	// Return whether Angle between Atoms exists
 	bool hasAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const;
+	// Return index of specified Angle
+	int angleIndex(SpeciesAngle* spa);
 	// Add new Torsion definition (from SpeciesAtom*)
 	SpeciesTorsion* addTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l);
 	// Add new Torsion definition
@@ -153,6 +157,8 @@ class Species : public ListItem<Species>
 	SpeciesTorsion* torsion(int n);
 	// Return whether Torsion between Atoms exists
 	bool hasTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const;
+	// Return index of specified Torsion
+	int torsionIndex(SpeciesTorsion* spt);
 
 
 	/*
