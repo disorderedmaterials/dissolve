@@ -71,8 +71,14 @@ class Atom : public DynamicArrayObject<Atom>
 	void setElement(int el);
 	// Return atomic element
 	int element() const;
-	// Return coordinates (read-only)
+	// Return coordinates
 	const Vec3<double>& r() const;
+	// Return x-coordinate
+	double x() const;
+	// Return y-coordinate
+	double y() const;
+	// Return z-coordinate
+	double z() const;
 	// Set charge of atom
 	void setCharge(double charge);
 	// Return charge of atom

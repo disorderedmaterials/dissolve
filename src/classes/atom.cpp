@@ -84,6 +84,24 @@ const Vec3<double>& Atom::r() const
 	return r_;
 }
 
+// Return x-coordinate
+double Atom::x() const
+{
+	return r_.x;
+}
+
+// Return y-coordinate
+double Atom::y() const
+{
+	return r_.y;
+}
+
+// Return z-coordinate
+double Atom::z() const
+{
+	return r_.z;
+}
+
 // Set charge of atom
 void Atom::setCharge(double charge)
 {
