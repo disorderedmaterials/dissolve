@@ -127,6 +127,8 @@ template <class T, class D> class RefList
 	RefListItem<T,D>* item(int n) const;
 	// Search references for item
 	RefListItem<T,D>* contains(T* item) const;
+	// Search references for item and data
+	RefListItem<T,D>* contains(T* item, D data) const;
 	// Search references for data
 	RefListItem<T,D>* containsData(D data) const;
 	// Clear the list of all references
@@ -445,6 +447,7 @@ template <class T, class D> RefListItem<T,D>* RefList<T,D>::item(int n) const
 #endif
 	int count = -1;
 	for (RefListItem<T,D>* r = listHead_; r != NULL; r = r->next) if (++count == n) return r;
+
 	return NULL;
 }
 
@@ -453,6 +456,16 @@ template <class T, class D> RefListItem<T,D>* RefList<T,D>::contains(T* xitem) c
 {
 	// Search references for specified item
 	for (RefListItem<T,D>* r = listHead_; r != NULL; r = r->next) if (r->item == xitem) return r;
+
+	return NULL;
+}
+
+// Search for item and data
+template <class T, class D> RefListItem<T,D>* RefList<T,D>::contains(T* xitem, D data) const
+{
+	// Search references for specified item
+	for (RefListItem<T,D>* r = listHead_; r != NULL; r = r->next) if ((r->item == xitem) && (r->data == data)) return r;
+
 	return NULL;
 }
 
