@@ -97,8 +97,38 @@ bool DUQ::setUpSimulation()
 	{
 		Messenger::print("*** Configuration %2i: '%s'\n", index, cfg->name());
 
-		// If we are creating a random configuration 
-		if (!cfg->setUp(worldPool_, pairPotentialRange_, nBoxNormalisationPoints_)) return false;
+		// If the restart file exists, we will take our coordinates from it - no need to set anything up here.
+		// However, if the inputCoordinatesFile_ is set, we create our config from the Species definition and load the coordinates.
+		// Otherwise, if the restart file does not exist, and the inputCoordinatesFile_ is not set, generate a random configuration.
+		if (cfg->hasInputCoordinatesFile())
+		{
+			if (DUQSys::fileExists(cfg->inputCoordinatesFile()))
+			{
+				// Set up the Configuration from the Species populations
+				if (!cfg->initialise(worldPool_, false, pairPotentialRange_, nBoxNormalisationPoints_)) return false;
+
+				Messenger::print("Loading initial coordinates from file '%s'...\n", cfg->inputCoordinatesFile());
+				LineParser inputFileParser(&worldPool_);
+				if (!inputFileParser.openInput(cfg->inputCoordinatesFile())) return false;
+				if (!cfg->loadCoordinates(inputFileParser, cfg->inputCoordinatesFormat())) return false;
+				inputFileParser.closeFiles();
+
+			}
+			else return Messenger::error("Input coordinates file '%s' specified, but it does not exist.\n", cfg->inputCoordinatesFile());
+		}
+		else if (cfg->nAtoms() == 0)
+		{
+			// Set up the Configuration from the Species populations
+			if (!cfg->initialise(worldPool_, true, pairPotentialRange_, nBoxNormalisationPoints_)) return false;
+		}
+		else
+		{
+			Messenger::print("Configuration loaded from the restart file.\n");
+			if (!cfg->setUpBox(worldPool_, pairPotentialRange_, -1, nBoxNormalisationPoints_)) return false;
+		}
+
+		// Update Cell contents / Atom locations
+		cfg->updateCellContents();
 	}
 
 	/*

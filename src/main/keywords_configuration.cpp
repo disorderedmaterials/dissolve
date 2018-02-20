@@ -43,12 +43,10 @@ KeywordData ConfigurationBlockData[] = {
 	{ "Module",			1,	"Starts the set up of a Module for this Configuration" },
 	{ "Multiplier",			1,	"Factor by which relative populations are multiplied when generating the Configuration data" },
 	{ "NonPeriodic",		0,	"States that the simulation should be treated as non-periodic" },
-	{ "OutputCoordinates",		1,	"File which should contain output coordinates, followed by the (optional) output frequency" },
 	{ "RDFBinWidth",		1,	"Bin width for all radial distribution functions" },
 	{ "RDFRange",			1,	"Requested extent for calculated radial distribution functions" },
 	{ "SpeciesInfo",		1,	"Specify a Species to add to this Configuration" },
-	{ "Temperature",		1,	"Simulation temperature of the Configuration" },
-	{ "UseOutputAsInput",		0,	"Use output coordinates file as input (if it exists)" }
+	{ "Temperature",		1,	"Simulation temperature of the Configuration" }
 };
 
 // Convert text string to ConfigurationKeyword
@@ -139,8 +137,7 @@ bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
 			case (ConfigurationBlock::InputCoordinatesKeyword):
 				cfg->setInputCoordinatesFormat(parser.argc(1));
 				cfg->setInputCoordinatesFile(parser.argc(2));
-				cfg->setRandomConfiguration(false);
-				Messenger::print("--> Initial coordinates will be loaded from file '%s' (format: %s)\n", cfg->inputCoordinatesFile(), cfg->inputCoordinatesFormat());
+				Messenger::print("Initial coordinates will be loaded from file '%s' (format: %s)\n", cfg->inputCoordinatesFile(), cfg->inputCoordinatesFormat());
 				break;
 			case (ConfigurationBlock::ModuleKeyword):
 				// The argument following the keyword is the module name
@@ -204,12 +201,6 @@ bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
 				cfg->setNonPeriodic(true);
 				Messenger::print("--> Flag set for a non-periodic calculation.\n");
 				break;
-			case (ConfigurationBlock::OutputCoordinatesKeyword):
-				cfg->setOutputCoordinatesFile(parser.argc(1));
-				if (parser.hasArg(2)) cfg->setCoordinatesOutputFrequency(parser.argi(2));
-				if (cfg->coordinatesOutputFrequency() == 1) Messenger::print("--> Output coordinates will be saved to file '%s' every iteration.\n", parser.argc(1));
-				else Messenger::print("--> Output coordinates will be saved to file '%s' every %i iterations.\n", parser.argc(1), cfg->coordinatesOutputFrequency());
-				break;
 			case (ConfigurationBlock::RDFBinWidthKeyword):
 				cfg->setRDFBinWidth(parser.argd(1));
 				break;
@@ -250,9 +241,6 @@ bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
 				break;
 			case (ConfigurationBlock::TemperatureKeyword):
 				cfg->setTemperature(parser.argd(1));
-				break;
-			case (ConfigurationBlock::UseOutputAsInputKeyword):
-				cfg->setUseOutputCoordinatesAsInput(true);
 				break;
 			case (ConfigurationBlock::nConfigurationKeywords):
 				Messenger::error("Unrecognised %s block keyword '%s' found.\n", InputBlocks::inputBlock(InputBlocks::ConfigurationBlock), parser.argc(0));

@@ -88,12 +88,12 @@ void Box::setUp(double volume)
 {
 	if (volume > 0.0)
 	{
-		Messenger::print("--> Current box volume is %f cubic Angstroms, requested = %f\n", axes_.determinant(), volume);
+		Messenger::print("Current box volume is %f cubic Angstroms, requested = %f\n", axes_.determinant(), volume);
 		double factor = pow(volume,1.0/3.0) / pow(axes_.determinant(),1.0/3.0);
-		Messenger::print("--> Scaling factor = %f\n", factor);
+		Messenger::print("Scaling factor = %f\n", factor);
 		axes_.applyScaling(factor, factor, factor);
 	}
-	else Messenger::print("--> Current box volume is %f cubic Angstroms and will not be altered.\n", axes_.determinant());
+	else Messenger::print("Current box volume is %f cubic Angstroms and will not be altered.\n", axes_.determinant());
 
 	// Calculate box volume
 	volume_ = axes_.determinant();
@@ -113,7 +113,7 @@ void Box::setUp(double volume)
 	reciprocalAxes_.columnMultiply(2, TWOPI / volume_);
 	reciprocalVolume_ = (reciprocalAxes_.columnAsVec3(1) * reciprocalAxes_.columnAsVec3(2)).dp(reciprocalAxes_.columnAsVec3(0));
 
-	Messenger::print("--> Final box volume is %f cubic Angstroms (reciprocal volume = %e)\n", volume_, reciprocalVolume_);
+	Messenger::print("Final box volume is %f cubic Angstroms (reciprocal volume = %e)\n", volume_, reciprocalVolume_);
 }
 
 // Return volume

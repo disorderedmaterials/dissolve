@@ -332,8 +332,6 @@ bool DUQ::saveInput(const char* filename)
 		parser.writeLineF("  %s  %f  %f  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::CellAnglesKeyword), cfg->boxAngles().x, cfg->boxAngles().y, cfg->boxAngles().z);
 		if (cfg->nonPeriodic()) parser.writeLineF("  %s\n", ConfigurationBlock::keyword(ConfigurationBlock::NonPeriodicKeyword));
 		if (!DUQSys::isEmpty(cfg->inputCoordinatesFile())) parser.writeLineF("  %s  '%s'\n", ConfigurationBlock::keyword(ConfigurationBlock::InputCoordinatesKeyword), cfg->inputCoordinatesFile());
-		if (!DUQSys::isEmpty(cfg->outputCoordinatesFile())) parser.writeLineF("  %s  '%s'  %i\n", ConfigurationBlock::keyword(ConfigurationBlock::OutputCoordinatesKeyword), cfg->outputCoordinatesFile(), cfg->coordinatesOutputFrequency());
-		if (cfg->useOutputCoordinatesAsInput()) parser.writeLineF("  %s  '%s'\n", ConfigurationBlock::keyword(ConfigurationBlock::UseOutputAsInputKeyword), DUQSys::btoa(true));
 
 		// Species
 		parser.writeLineF("\n  # Species Information\n");
@@ -465,7 +463,6 @@ bool DUQ::loadRestart(const char* filename)
 
 	// Variables
 	Configuration* cfg;
-	int classIndex, nameIndex;
 	bool error = false;
 
 	while (!parser.eofOrBlank())
@@ -474,48 +471,62 @@ bool DUQ::loadRestart(const char* filename)
 		if (parser.getArgsDelim(LineParser::SkipBlanks+LineParser::StripComments+LineParser::UseQuotes) != 0) break;
 
 		// First component of line indicates the destination for the module data
-		if (DUQSys::sameString(parser.argc(0), "Configuration"))
-		{
+		if (DUQSys::sameString(parser.argc(0), "Local"))
+ 		{
 			cfg = findConfiguration(parser.argc(1));
 			if (!cfg)
 			{
 				Messenger::error("No Configuration named '%s' exists.\n", parser.argc(1));
 				error = true;
-				break;
 			}
-			nameIndex = 2;
-			classIndex = 3;
+
+			// Let the user know what we are doing
+			Messenger::print("--> Reading item '%s' (%s) into Configuration '%s'...\n", parser.argc(2), parser.argc(3), cfg->name());
+
+			// Realise the item in the list
+			GenericItem* item = cfg->moduleData().create(parser.argc(2), parser.argc(3));
+
+			// Read in the data
+			if ((!item) || (!item->read(parser)))
+			{
+				Messenger::error("Failed to read item data '%s' from restart file.\n", item->name());
+				error = true;
+			}
 		}
 		else if (DUQSys::sameString(parser.argc(0), "Processing"))
 		{
-			cfg = NULL;
-			nameIndex = 1;
-			classIndex = 2;
+			// Let the user know what we are doing
+			Messenger::print("--> Reading item '%s' (%s) into processing module data...\n", parser.argc(1), parser.argc(2));
+
+			// Realise the item in the list
+			GenericItem* item = processingModuleData_.create(parser.argc(1), parser.argc(2));
+
+			// Read in the data
+			if ((!item) || (!item->read(parser)))
+			{
+				Messenger::error("Failed to read item data '%s' from restart file.\n", item->name());
+				error = true;
+			}
+		}
+		else if (DUQSys::sameString(parser.argc(0), "Configuration"))
+		{
+			// Find the named Configuration
+			cfg = findConfiguration(parser.argc(1));
+			if (!cfg)
+			{
+				Messenger::error("No Configuration named '%s' exists.\n", parser.argc(1));
+				error = true;
+			}
+			if (!readConfiguration(cfg, parser)) error = true;
 		}
 		else
 		{
-			Messenger::error("Unrecognised target '%s' for module data '%s'.\n", parser.argc(0), parser.argc(1));
+			Messenger::error("Unrecognised '%s' entry in restart file.\n", parser.argc(0));
 			error = true;
-			break;
 		}
 
-		// Get reference to correct target moduleData
-		GenericList& moduleData = (cfg == NULL ? processingModuleData_ : cfg->moduleData());
-
-		// Let the user know what we are doing
-		if (cfg) Messenger::print("--> Reading item '%s' (%s) into Configuration '%s'...\n", parser.argc(nameIndex), parser.argc(classIndex), cfg->name());
-		else Messenger::print("--> Reading item '%s' (%s) into processing module data...\n", parser.argc(nameIndex), parser.argc(classIndex));
-
-		// Realise the item in the list
-		GenericItem* item = moduleData.create(parser.argc(nameIndex), parser.argc(classIndex));
-
-		// Read in the data
-		if ((!item) || (!item->read(parser)))
-		{
-			Messenger::error("Failed to read item data '%s' from restart file.\n", item->name());
-			error = true;
-			break;
-		}
+		// Error encounterd?
+		if (error) break;
 	}
 	
 	if (!error) Messenger::print("Finished reading restart file.\n");
@@ -549,7 +560,7 @@ bool DUQ::saveRestart(const char* filename)
 	}
 	
 	// Write title comment
-	parser.writeLineF("# Restart file written by dUQ v%s at %s.\n", DUQVERSION, DUQSys::currentTimeAndDate());
+	if (!parser.writeLineF("# Restart file written by dUQ v%s at %s.\n", DUQVERSION, DUQSys::currentTimeAndDate())) return false;
 
 	// Configuration Module Data
 	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
@@ -560,7 +571,7 @@ bool DUQ::saveRestart(const char* filename)
 			// If it is not flagged to be saved in the restart file, skip it
 			if (!(item->flags()&GenericItem::InRestartFileFlag)) continue;
 
-			parser.writeLineF("Configuration  %s  %s  %s\n", cfg->name(), item->name(), item->itemClassName());
+			parser.writeLineF("Local  %s  %s  %s\n", cfg->name(), item->name(), item->itemClassName());
 			if (!item->write(parser)) return false;
 		}
 	}
@@ -571,8 +582,15 @@ bool DUQ::saveRestart(const char* filename)
 		// If it is not flagged to be saved in the restart file, skip it
 		if (!(item->flags()&GenericItem::InRestartFileFlag)) continue;
 
-		parser.writeLineF("Processing  %s  %s\n", item->name(), item->itemClassName());
+		if (!parser.writeLineF("Processing  %s  %s\n", item->name(), item->itemClassName())) return false;
 		if (!item->write(parser)) return false;
+	}
+
+	// Configurations
+	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
+	{
+		if (!parser.writeLineF("Configuration  '%s'\n", cfg->name())) return false;
+		if (!writeConfiguration(cfg, parser)) return false;
 	}
 
 	parser.closeFiles();

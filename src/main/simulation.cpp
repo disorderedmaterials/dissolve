@@ -304,31 +304,11 @@ bool DUQ::iterate(int nIterations)
 			// Keep track of number of Configurations saved / to save
 			for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
 			{
-				if (iteration_%cfg->coordinatesOutputFrequency() != 0) continue;
-
-				Messenger::print("Writing Configuration output file '%s'...\n", cfg->outputCoordinatesFile());
-
-				// Open the file and use the Export module to write the Configuration data as xyz
-				LineParser parser;
-				if (!parser.openOutput(cfg->outputCoordinatesFile(), true))
-				{
-					parser.closeFiles();
-					worldPool_.decideFalse();
-					return false;
-				}
-				else if (!ExportModule::writeConfigurationXYZ(parser, cfg, cfg->name()))
-				{
-					Messenger::print("Export: Failed to write Configuration output file.\n");
-					parser.closeFiles();
-					worldPool_.decideFalse();
-					return false;
-				}
-
 				// Append ensemble file
-				if (cfg->appendEnsemble())
+				if (cfg->appendEnsemble() && (iteration_%cfg->ensembleFrequency() != 0))
 				{
 					CharString ensembleFile("%s.xyz.ensemble", cfg->name());
-					Messenger::print("Appending Configuration output file '%s'...\n", ensembleFile.get());
+					Messenger::print("Appending Configuration ensemble file '%s'...\n", ensembleFile.get());
 
 					LineParser ensembleParser;
 					if (!ensembleParser.appendOutput(ensembleFile.get()))

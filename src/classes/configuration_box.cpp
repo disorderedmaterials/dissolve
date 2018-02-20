@@ -67,8 +67,8 @@ void Configuration::setRequestedCellDivisionLength(double a)
 	requestedCellDivisionLength_ = a;
 }
 
-// Return equested side length for individual Cell
-double Configuration::requestedCellDivisionLength()
+// Return requested side length for individual Cell
+double Configuration::requestedCellDivisionLength() const
 {
 	return requestedCellDivisionLength_;
 }
@@ -80,7 +80,7 @@ const Box* Configuration::box() const
 }
 
 // Set up periodic Box
-bool Configuration::setUpBox(double ppRange, int nExpectedAtoms)
+bool Configuration::setUpBox(ProcessPool& procPool, double ppRange, int nExpectedAtoms, int boxNormalisationNPoints)
 {
 	// Remove old box if present
 	if (box_ != NULL)
@@ -121,11 +121,14 @@ bool Configuration::setUpBox(double ppRange, int nExpectedAtoms)
 	// Need to calculate atomic density if it wasn't provided
 	if (density_ < 0.0) density_ = nExpectedAtoms / box_->volume();
 
-	Messenger::print("--> %s box created for system.\n", Box::boxType(box_->type()));
+	// Store box axis lengths as new relativeBoxLengths_
+	relativeBoxLengths_.set(box_->axisLength(0), box_->axisLength(1), box_->axisLength(2));
+
+	Messenger::print("%s box created for Configuration '%s':\n", Box::boxType(box_->type()), name());
 	Matrix3 axes = box_->axes();
-	Messenger::print("--> Axes Matrix : A = %10.4e %10.4e %10.4e, length = %10.4e Angstroms\n", axes[0], axes[1], axes[2], box_->axisLength(0));
-	Messenger::print("-->               B = %10.4e %10.4e %10.4e, length = %10.4e Angstroms\n", axes[3], axes[4], axes[5], box_->axisLength(1));
-	Messenger::print("-->               C = %10.4e %10.4e %10.4e, length = %10.4e Angstroms\n", axes[6], axes[7], axes[8], box_->axisLength(2));
+	Messenger::print("Axes Matrix : A = %10.4e %10.4e %10.4e, length = %10.4e Angstroms\n", axes[0], axes[1], axes[2], relativeBoxLengths_.x);
+	Messenger::print("              B = %10.4e %10.4e %10.4e, length = %10.4e Angstroms\n", axes[3], axes[4], axes[5], relativeBoxLengths_.y);
+	Messenger::print("              C = %10.4e %10.4e %10.4e, length = %10.4e Angstroms\n", axes[6], axes[7], axes[8], relativeBoxLengths_.z);
 
 	// Check cell lengths against pair potential range
 	if (ppRange > box_->inscribedSphereRadius())
@@ -136,7 +139,105 @@ bool Configuration::setUpBox(double ppRange, int nExpectedAtoms)
 
 	// Generate cells within unit cell
 	cells_.generate(box_, requestedCellDivisionLength_, ppRange, atomicDensity());
-	 
+
+	// Determine maximal extent of RDF (from origin to centre of box)
+	Vec3<double> half = box()->axes() * Vec3<double>(0.5,0.5,0.5);
+	double maxR = half.magnitude(), inscribedSphereRadius = box()->inscribedSphereRadius();
+	Messenger::print("\n");
+	Messenger::print("Maximal extent for g(r) is %f Angstrom (half cell diagonal distance).\n", maxR);
+	Messenger::print("Inscribed sphere radius (maximum RDF range avoiding periodic images) is %f Angstroms.\n", inscribedSphereRadius);
+	if (requestedRDFRange_ < -1.5)
+	{
+		Messenger::print("Using maximal non-minimum image range for g(r).\n");
+		rdfRange_ = inscribedSphereRadius;
+	}
+	else if (requestedRDFRange_ < -0.5)
+	{
+		Messenger::print("Using 90%% of maximal extent for g(r).\n");
+		rdfRange_ = 0.90*maxR;
+	}
+	else
+	{
+		Messenger::print("Specific RDF range supplied (%f Angstroms).\n", requestedRDFRange_);
+		rdfRange_ = requestedRDFRange_;
+		if (rdfRange_ < 0.0)
+		{
+			Messenger::error("Negative RDF range requested.\n");
+			return false;
+		}
+		else if (rdfRange_ > maxR)
+		{
+			Messenger::error("Requested RDF range is greater then the maximum possible extent for the Box.\n");
+			return false;
+		}
+		else if (rdfRange_ > (0.90*maxR)) Messenger::warn("Requested RDF range is greater than 90%% of the maximum possible extent for the Box. FT may be suspect!\n");
+	}
+	// 'Snap' rdfRange_ to nearest bin width...
+	rdfRange_ = int(rdfRange_/rdfBinWidth_) * rdfBinWidth_;
+	Messenger::print("RDF range (snapped to bin width) is %f Angstroms.\n", rdfRange_);
+
+	/*
+	 * Load or calculate Box normalisation file (if we need one)
+	 */
+	if (rdfRange_ <= inscribedSphereRadius)
+	{
+		Messenger::print("No need for Box normalisation array since rdfRange is within periodic range.\n");
+		boxNormalisation_.clear();
+		double x = rdfBinWidth_*0.5;
+		while (x < rdfRange_)
+		{
+			boxNormalisation_.addPoint(x, 1.0);
+			x += rdfBinWidth_;
+		}
+	}
+	else
+	{
+		// Attempt to load existing Box normalisation file
+		if (!boxNormalisationFileName_.isEmpty())
+		{
+			// Master will open file and attempt to read it...
+			bool loadResult;
+			if (procPool.isMaster()) loadResult = boxNormalisation_.load(boxNormalisationFileName_);
+			if (!procPool.broadcast(loadResult)) return false;
+
+			// Did we successfully load the file?
+			if (loadResult)
+			{
+				Messenger::print("Successfully loaded box normalisation data from file '%s'.\n", boxNormalisationFileName_.get());
+				if (!boxNormalisation_.broadcast(procPool)) return false;
+			}
+			else Messenger::print("Couldn't load Box normalisation data - it will be calculated.\n");
+		}
+
+		// Did we successfully load the file?
+		if (boxNormalisation_.nPoints() <= 1)
+		{
+			// Only calculate if RDF range is greater than the inscribed sphere radius
+			if (rdfRange_ <= inscribedSphereRadius)
+			{
+				Messenger::print("No need to calculate Box normalisation array since rdfRange is within periodic range.\n");
+				boxNormalisation_.clear();
+				double x = rdfBinWidth_*0.5;
+				while (x < rdfRange_)
+				{
+					boxNormalisation_.addPoint(x, 1.0);
+					x += rdfBinWidth_;
+				}
+			}
+			else
+			{
+				Messenger::print("Calculating box normalisation array for g(r)...\n");
+				if (!box()->calculateRDFNormalisation(procPool, boxNormalisation_, rdfRange_, rdfBinWidth_, boxNormalisationNPoints)) return false;
+				
+				// Save normalisation file so we don't have to recalculate it next time
+				if (procPool.isMaster()) boxNormalisation_.save(boxNormalisationFileName_);
+			}
+		}
+
+		// Interpolate the Box normalisation array
+		boxNormalisation_.interpolate(XYData::LinearInterpolation);
+	}
+
 	return true;
 }
 

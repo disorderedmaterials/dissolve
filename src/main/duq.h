@@ -220,6 +220,10 @@ class DUQ
 	const List<Configuration>& configurations() const;
 	// Find configuration by name
 	Configuration* findConfiguration(const char* name, bool useNiceName = false) const;
+	// Write Configuration through specified LineParser
+	bool writeConfiguration(Configuration* cfg, LineParser& parser);
+	// Read Configuration through specified LineParser
+	bool readConfiguration(Configuration* cfg, LineParser& parser);
 
 
 	/*

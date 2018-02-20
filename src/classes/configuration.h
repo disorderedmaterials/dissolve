@@ -43,8 +43,8 @@
 // Forward Declarations
 class Atom;
 class Box;
-class Grain;
 class Cell;
+class Grain;
 class Species;
 
 // Configuration
@@ -75,18 +75,10 @@ class Configuration : public ListItem<Configuration>
 	double density_;
 	// Whether the density is in atomic units (atoms/A3) or chemistry units (g/cm3)
 	bool densityIsAtomic_;
-	// Whether a random config should be generated (as opposed to loading one from a file)
-	bool randomConfiguration_;
 	// File containing input coordinates
 	CharString inputCoordinatesFile_;
 	// Format of input coordinates file
 	CharString inputCoordinatesFormat_;
-	// File containing output coordinates
-	CharString outputCoordinatesFile_;
-	// Flag specifying to use output coordinates file as input coordinates (if it exists)
-	bool useOutputCoordinatesAsInput_;
-	// Frequency with which to write output coordinates
-	int coordinatesOutputFrequency_;
 	// Temperature of this configuration (K)
 	double temperature_;
 
@@ -119,38 +111,22 @@ class Configuration : public ListItem<Configuration>
 	bool densityIsAtomic() const;
 	// Return the atomic density of the system
 	double atomicDensity() const;
-	// Set whether a random config should be generated (as opposed to loading one from a file)
-	void setRandomConfiguration(bool b);
-	// Return whether a random config should be generated (as opposed to loading one from a file)
-	bool randomConfiguration();
 	// Set file containing input coordinates
 	void setInputCoordinatesFile(const char* filename);
 	// Return file containing input coordinates
-	const char* inputCoordinatesFile();
+	const char* inputCoordinatesFile() const;
+	// Return whether a file containing input coordinates has been set
+	bool hasInputCoordinatesFile() const;
 	// Set input coordinates file format
 	void setInputCoordinatesFormat(const char* format);
 	// Return input coordinates file format
 	const char* inputCoordinatesFormat();
-	// Set file containing output coordinates
-	void setOutputCoordinatesFile(const char* filename);
-	// Return file containing output coordinates
-	const char* outputCoordinatesFile();
-	// Set whether to use output coordinates file as input coordinates (if it exists)
-	void setUseOutputCoordinatesAsInput(bool b);
-	// Return whether to use output coordinates file as input coordinates (if it exists)
-	bool useOutputCoordinatesAsInput();
-	// Set frequency with which to write output coordinates
-	void setCoordinatesOutputFrequency(int freq);
-	// Return frequency with which to write output coordinates
-	int coordinatesOutputFrequency();
 	// Set configuration temperature
 	void setTemperature(double t);
 	// Return configuration temperature
 	double temperature();
 	// Clear all data
 	void clear();
-	// Set up configuration
-	bool setUp(ProcessPool& procPool, double pairPotentialRange, int boxNormalisationNPoints);
 
 
 	/*
@@ -175,6 +151,10 @@ class Configuration : public ListItem<Configuration>
 	int coordinateIndex_;
 
 	public:
+	// Initialise empty Molecule and Grain arrays
+	void initialise(int nMolecules, int nGrains);
+	// Initialise from assigned Species populations
+	bool initialise(ProcessPool& procPool, bool randomise, double pairPotentialRange, int boxNormalisationNPoints);
 	// Add Molecule to Configuration based on the supplied Species
 	Molecule* addMolecule(Species* sp);
 	// Return number of Molecules in Configuration
@@ -193,6 +173,8 @@ class Configuration : public ListItem<Configuration>
 	Grain* grain(int n);
 	// Add new Atom to Configuration, with Molecule and Grain parents specified
 	Atom* addAtom(Molecule* molecule, Grain* grain = NULL);
+	// Add new Atom with full data
+	Atom* addAtom(Molecule* molecule, Grain* grain, AtomType* atomType, Vec3<double> r, double charge);
 	// Return number of Atoms in Configuration
 	int nAtoms() const;
 	// Return Atom array
@@ -201,6 +183,8 @@ class Configuration : public ListItem<Configuration>
 	Atom* atom(int n);
 	// Add new Bond to Configuration, with Molecule parent specified
 	Bond* addBond(Molecule* molecule, Atom* i, Atom* j);
+	// Add new Bond to Configuration, with Molecule parent specified, from Atom indices
+	Bond* addBond(Molecule* molecule, int i, int j);
 	// Return number of Bonds in Configuration
 	int nBonds() const;
 	// Return Bond array
@@ -209,6 +193,8 @@ class Configuration : public ListItem<Configuration>
 	Bond* bond(int n);
 	// Add new Angle to Configuration, with Molecule parent specified
 	Angle* addAngle(Molecule* molecule, Atom* i, Atom* j, Atom* k);
+	// Add new Angle to Configuration, with Molecule parent specified, from Atom indices
+	Angle* addAngle(Molecule* molecule, int i, int j, int k);
 	// Return number of Angles in Configuration
 	int nAngles() const;
 	// Return Angle array
@@ -217,6 +203,8 @@ class Configuration : public ListItem<Configuration>
 	Angle* angle(int n);
 	// Add new Torsion to Configuration, with Molecule parent specified
 	Torsion* addTorsion(Molecule* molecule, Atom* i, Atom* j, Atom* k, Atom* l);
+	// Add new Torsion to Configuration, with Molecule parent specified, from Atom indices
+	Torsion* addTorsion(Molecule* molecule, int i, int j, int k, int l);
 	// Return number of Torsions in Configuration
 	int nTorsions() const;
 	// Return Torsion array
@@ -276,11 +264,11 @@ class Configuration : public ListItem<Configuration>
 	// Set requested side length for individual Cell
 	void setRequestedCellDivisionLength(double a);
 	// Return requested side length for individual Cell
-	double requestedCellDivisionLength();
+	double requestedCellDivisionLength() const;
 	// Return Box
 	const Box* box() const;
 	// Set up periodic Box
-	bool setUpBox(double ppRange, int nExpectedAtoms);
+	bool setUpBox(ProcessPool& procPool, double ppRange, int nExpectedAtoms, int boxNormalisationNPoints);
 	// Generate Cells for Box
 	bool generateCells(double cellSize, double pairPotentialRange, double atomicDensity);
 	// Set box normalisation array to load/save for this configuration
@@ -380,11 +368,11 @@ class Configuration : public ListItem<Configuration>
 	// Set whether ensemble file is to be appended
 	void setAppendEnsemble(bool b);
 	// Return whether ensemble file is to be appended
-	bool appendEnsemble();
+	bool appendEnsemble() const;
 	// Return frequency at which to append ensemble
 	int setEnsembleFrequency(int frequency);
 	// Return frequency at which to append ensemble
-	int ensembleFrequency();
+	int ensembleFrequency() const;
 
 
 	/*

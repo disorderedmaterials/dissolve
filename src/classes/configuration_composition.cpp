@@ -30,9 +30,7 @@ void Configuration::setName(const char* name)
 	// Generate a nice name (i.e. no spaces, slashes etc.)
 	niceName_ = DUQSys::niceName(name_);
 
-	// Set initial filenames based on Configuration name
-	outputCoordinatesFile_ = niceName_;
-	outputCoordinatesFile_.strcat(".xyz");
+	// Set box normalisation filename based on Configuration name
 	boxNormalisationFileName_ = niceName_;
 	boxNormalisationFileName_.strcat(".boxnorm");
 }
@@ -151,18 +149,6 @@ double Configuration::atomicDensity() const
 	return rho;
 }
 
-// Set whether a random config should be generated (as opposed to loading one from a file)
-void Configuration::setRandomConfiguration(bool b)
-{
-	randomConfiguration_ = b;
-}
-
-// Return whether a random config should be generated (as opposed to loading one from a file)
-bool Configuration::randomConfiguration()
-{
-	return randomConfiguration_;
-}
-
 // Set file containing input coordinates
 void Configuration::setInputCoordinatesFile(const char* filename)
 {
@@ -170,9 +156,15 @@ void Configuration::setInputCoordinatesFile(const char* filename)
 }
 
 // Return file containing input coordinates
-const char* Configuration::inputCoordinatesFile()
+const char* Configuration::inputCoordinatesFile() const
 {
 	return inputCoordinatesFile_.get();
+}
+
+// Return whether a file containing input coordinates has been set
+bool Configuration::hasInputCoordinatesFile() const
+{
+	return (!inputCoordinatesFile_.isEmpty());
 }
 
 // Set input coordinates file format
@@ -185,42 +177,6 @@ void Configuration::setInputCoordinatesFormat(const char* format)
 const char* Configuration::inputCoordinatesFormat()
 {
 	return inputCoordinatesFormat_.get();
-}
-
-// Set file containing output coordinates
-void Configuration::setOutputCoordinatesFile(const char* filename)
-{
-	outputCoordinatesFile_ = filename;
-}
-
-// Return file containing output coordinates
-const char* Configuration::outputCoordinatesFile()
-{
-	return outputCoordinatesFile_.get();
-}
-
-// Set whether to use output coordinates file as input coordinates (if it exists)
-void Configuration::setUseOutputCoordinatesAsInput(bool b)
-{
-	useOutputCoordinatesAsInput_ = b;
-}
-
-// Return whether to use output coordinates file as input coordinates (if it exists)
-bool Configuration::useOutputCoordinatesAsInput()
-{
-	return useOutputCoordinatesAsInput_;
-}
-
-// Set frequency with which to write output coordinates
-void Configuration::setCoordinatesOutputFrequency(int freq)
-{
-	coordinatesOutputFrequency_ = freq;
-}
-
-// Return frequency with which to write output coordinates
-int Configuration::coordinatesOutputFrequency()
-{
-	return coordinatesOutputFrequency_;
 }
 
 // Set configuration temperature

@@ -28,6 +28,109 @@
 #include "base/processpool.h"
 #include "modules/import/import.h"
 
+// Initialise all content arrays
+void Configuration::initialise(int nMolecules, int nGrains)
+{
+	// Clear current contents
+	clear();
+
+	molecules_.initialise(nMolecules);
+	grains_.initialise(nGrains);
+}
+
+// Initialise from assigned Species populations
+bool Configuration::initialise(ProcessPool& procPool, bool randomise, double pairPotentialRange, int boxNormalisationNPoints)
+{
+	Messenger::print("--> Setting up Configuration from Species / multiplier definition...\n");
+
+	/*
+	 * Check Species populations, and calculate total number of expected Atoms
+	 */
+	if (multiplier_ < 1)
+	{
+		Messenger::error("Configuration multiplier is zero or negative (%i).\n", multiplier_);
+		return false;
+	}
+	int nExpectedAtoms = 0;
+	for (SpeciesInfo* spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next)
+	{
+		// Get Species pointer
+		Species* sp = spInfo->species();
+
+		// Determine the number of molecules of this component
+		int count =  spInfo->population() * multiplier_;
+
+		// Check for zero count
+		if (count == 0)
+		{
+			Messenger::error("Relative population for Species '%s' is too low (%e) to provide any Molecules in this Configuration.\n",  sp->name(),  spInfo->population());
+			return false;
+		}
+
+		nExpectedAtoms += count * sp->nAtoms();
+	}
+
+	/*
+	 * Create a Box to contain the system
+	 */
+	Messenger::print("--> Creating periodic Box and Cell partitioning...\n");
+	if (!setUpBox(procPool, pairPotentialRange, nExpectedAtoms, boxNormalisationNPoints))
+	{
+		Messenger::error("Failed to set up Box/Cells for Configuration.\n");
+		return false;
+	}
+
+	/*
+	 * Create Molecules
+	 */
+	Messenger::print("--> Setting up random Molecules...\n");
+
+	procPool.initialiseRandomBuffer(ProcessPool::PoolProcessesCommunicator);
+	Vec3<double> r, cog, newCentre, fr;
+	Matrix3 transform;
+
+	ListIterator<SpeciesInfo> speciesInfoIterator(usedSpecies_);
+	while (SpeciesInfo* spInfo = speciesInfoIterator.iterate())
+	{
+		// Determine the number of molecules of this component
+		int count = spInfo->population() * multiplier_;
+
+		// Add copies of Species as Molecules
+		for (int n=0; n<count; ++n)
+		{
+			// Add the Molecule
+			Molecule* mol = addMolecule(spInfo->species());
+
+			// Generate random positions and orientations if needed
+			if (randomise)
+			{
+				// Generate a new random centre of geometry for the molecule
+				if (spInfo->translateOnInsertion())
+				{
+					fr.set(procPool.random(), procPool.random(), procPool.random());
+					newCentre = box_->fracToReal(fr);
+					mol->setCentreOfGeometry(box_, newCentre);
+				}
+			
+				// Generate and apply a random rotation matrix
+				if (spInfo->rotateOnInsertion())
+				{
+					transform.createRotationXY(procPool.randomPlusMinusOne()*180.0, procPool.randomPlusMinusOne()*180.0);
+					mol->transform(box_, transform);
+				}
+
+				// Explore conformation space within the molecule by rotating bonds
+				// TODO
+			}
+		}
+	}
+
+	// Set fractional populations in usedAtomTypes_
+	usedAtomTypes_.finalise();
+
+	return true;
+}
+
 // Add Molecule to Configuration based on the supplied Species
 Molecule* Configuration::addMolecule(Species* sp)
 {
@@ -180,6 +283,26 @@ Atom* Configuration::addAtom(Molecule* molecule, Grain* grain)
 	return newAtom;
 }
 
+// Add new Atom with full data
+Atom* Configuration::addAtom(Molecule* molecule, Grain* grain, AtomType* atomType, Vec3<double> r, double charge)
+{
+	// Create new Atom object
+	Atom* newAtom = atoms_.add();
+	molecule->addAtom(newAtom);
+	newAtom->setGrain(grain);
+
+	// Set coordinates and charge
+	newAtom->setCoordinates(r);
+	newAtom->setCharge(charge);
+
+	// Update our typeIndex (non-isotopic) and set local and master type indices
+	AtomTypeData* atd = usedAtomTypes_.add(atomType, 1);
+	newAtom->setLocalTypeIndex(atd->listIndex());
+	newAtom->setMasterTypeIndex(atomType->index());
+
+	return newAtom;
+}
+
 // Return number of Atoms in Configuration
 int Configuration::nAtoms() const
 {
@@ -220,6 +343,12 @@ Bond* Configuration::addBond(Molecule* molecule, Atom* i, Atom* j)
 	return newBond;
 }
 
+// Add new Bond to Configuration, with Molecule parent specified, from Atom indices
+Bond* Configuration::addBond(Molecule* molecule, int i, int j)
+{
+	return addBond(molecule, atoms_[i], atoms_[j]);
+}
+
 // Return number of Bonds in Configuration
 int Configuration::nBonds() const
 {
@@ -252,6 +381,12 @@ Angle* Configuration::addAngle(Molecule* molecule, Atom* i, Atom* j, Atom* k)
 	k->addAngle(newAngle);
 
 	return newAngle;
+}
+
+// Add new Angle to Configuration, with Molecule parent specified, from Atom indices
+Angle* Configuration::addAngle(Molecule* molecule, int i, int j, int k)
+{
+	return addAngle(molecule, atoms_[i], atoms_[j], atoms_[k]);
 }
 
 // Return number of Angles in Configuration
@@ -287,6 +422,12 @@ Torsion* Configuration::addTorsion(Molecule* molecule, Atom* i, Atom* j, Atom* k
 	l->addTorsion(newTorsion, 0.5);
 
 	return newTorsion;
+}
+
+// Add new Torsion to Configuration, with Molecule parent specified, from Atom indices
+Torsion* Configuration::addTorsion(Molecule* molecule, int i, int j, int k, int l)
+{
+	return addTorsion(molecule, atoms_[i], atoms_[j], atoms_[k], atoms_[l]);
 }
 
 // Return number of Torsions in Configuration
