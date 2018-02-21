@@ -58,12 +58,13 @@ bool ExportModule::process(DUQ& duq, ProcessPool& procPool)
 		procPool.assignProcessesToGroups(cfg->processPool());
 
 		// Retrieve control parameters from Configuration
-		bool writeConfig = keywords_.asBool("WriteConfig");
+		bool writeDLPOLY = keywords_.asBool("WriteDLPOLY");
+		bool writeXYZ = keywords_.asBool("WriteXYZ");
 
 		/*
-		 * Write DL_POLY Config
+		 * Write DL_POLY CONFIG
 		 */
-		if (writeConfig)
+		if (writeDLPOLY)
 		{
 			Messenger::print("Export: Writing DL_POLY CONFIG file for Configuration '%s'...\n", cfg->name());
 
@@ -95,6 +96,43 @@ bool ExportModule::process(DUQ& duq, ProcessPool& procPool)
 
 			Messenger::print("Export: Finished writing DL_POLY CONFIG file.\n");
 		}
+
+		/*
+		 * Write XYZ
+		 */
+		if (writeXYZ)
+		{
+			Messenger::print("Export: Writing XYZ file for Configuration '%s'...\n", cfg->name());
+
+			// Only the pool master saves the data
+			if (procPool.isMaster())
+			{
+				// Construct the filename
+				CharString filename("%s.xyz", cfg->niceName());
+
+				// Open the file
+				LineParser parser;
+				if (!parser.openOutput(filename))
+				{
+					parser.closeFiles();
+					procPool.decideFalse();
+					return false;
+				}
+				else if (!writeConfigurationXYZ(parser, cfg, cfg->name()))
+				{
+					Messenger::print("Export: Failed to export XYZ file.\n");
+					parser.closeFiles();
+					procPool.decideFalse();
+					return false;
+				}
+
+				procPool.decideTrue();
+			}
+			else if (!procPool.decision()) return false;
+
+			Messenger::print("Export: Finished writing XYZ file.\n");
+		}
+
 	}
 
 	return true;

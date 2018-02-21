@@ -25,7 +25,8 @@
 // Set up options for Module
 void ExportModule::setUpKeywords()
 {
-	keywords_.add(new BoolModuleKeyword(false), "WriteConfig", "Write a DL_POLY CONFIG file of the Configuration");
+	keywords_.add(new BoolModuleKeyword(false), "WriteDLPOLY", "Write DL_POLY CONFIG files for the Configuration targets");
+	keywords_.add(new BoolModuleKeyword(false), "WriteXYZ", "Write XYZ files for the Configuration targets");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
