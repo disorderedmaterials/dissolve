@@ -306,7 +306,8 @@ Atom* Configuration::addAtom(Molecule* molecule, Grain* grain, AtomType* atomTyp
 	molecule->addAtom(newAtom);
 	newAtom->setGrain(grain);
 
-	// Set coordinates and charge
+	// Set element (from AtomType), coordinates and charge
+	newAtom->setElement(atomType->element());
 	newAtom->setCoordinates(r);
 	newAtom->setCharge(charge);
 
