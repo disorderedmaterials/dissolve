@@ -517,6 +517,7 @@ bool DUQ::loadRestart(const char* filename)
 				Messenger::error("No Configuration named '%s' exists.\n", parser.argc(1));
 				error = true;
 			}
+
 			if (!readConfiguration(cfg, parser)) error = true;
 		}
 		else

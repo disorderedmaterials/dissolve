@@ -156,7 +156,7 @@ class Configuration : public ListItem<Configuration>
 	// Initialise from assigned Species populations
 	bool initialise(ProcessPool& procPool, bool randomise, double pairPotentialRange, int boxNormalisationNPoints);
 	// Finalise Configuration after loading contents from restart file
-	bool finaliseAfterLoad();
+	bool finaliseAfterLoad(ProcessPool& procPool, double pairPotentialRange, int boxNormalisationNPoints);
 	// Add Molecule to Configuration based on the supplied Species
 	Molecule* addMolecule(Species* sp);
 	// Return number of Molecules in Configuration

@@ -132,8 +132,11 @@ bool Configuration::initialise(ProcessPool& procPool, bool randomise, double pai
 }
 
 // Finalise Configuration after loading contents from restart file
-bool Configuration::finaliseAfterLoad()
+bool Configuration::finaliseAfterLoad(ProcessPool& procPool, double pairPotentialRange, int boxNormalisationNPoints)
 {
+	// Set up Box and Cells
+	if (!setUpBox(procPool, pairPotentialRange, -1, boxNormalisationNPoints)) return false;
+
 	// Finalise used AtomType list
 	usedAtomTypes_.finalise();
 	
