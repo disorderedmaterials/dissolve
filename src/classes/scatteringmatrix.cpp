@@ -66,7 +66,7 @@ void ScatteringMatrix::print() const
 	Messenger::print("%s", line.get());
 
 	// Loop over reference data
-	RefListIterator<Data,bool> dataIterator(data_);
+	RefListIterator<Data,double> dataIterator(data_);
 	int row = 0;
 	while (Data* data = dataIterator.iterate())
 	{
@@ -102,12 +102,13 @@ void ScatteringMatrix::generatePartials(Array2D<XYData>& generatedSQ)
 	// Generate new partials (nPartials = nColumns)
 	for (int n=0; n<A_.nColumns(); ++n)
 	{
-		// Add in contribution from each datset (row)
-		RefListIterator<Data,bool> dataIterator(data_);
+		// Add in contribution from each datset (row).
+		// We multiply any contribution by the stored factor (in the RefList's data variable).
+		RefListIterator<Data,double> dataIterator(data_);
 		int m = 0;
 		while (Data* data = dataIterator.iterate())
 		{
-			partials[n].addInterpolated(data->data(), inverseA_.value(n, m));
+			partials[n].addInterpolated(data->data(), inverseA_.value(n, m) * dataIterator.currentData());
 			++m;
 		}
 	}
@@ -205,7 +206,7 @@ bool ScatteringMatrix::addReferenceData(Data* data, double factor)
 	}
 
 	// Add reference data
-	data_.add(data);
+	data_.add(data, factor);
 
 	return true;
 }
@@ -225,7 +226,11 @@ bool ScatteringMatrix::addPartialReferenceData(Data* data, AtomType* at1, AtomTy
 	}
 
 	// Now have the local column index of the AtomType pair in our matrix A_...
+	A_.setRow(rowIndex, 0.0);
 	A_.ref(rowIndex, colIndex) = weight;
+
+	// Add reference data
+	data_.add(data, 1.0);
 
 	return true;
 }

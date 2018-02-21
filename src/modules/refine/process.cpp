@@ -56,6 +56,8 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	/*
 	 * Get Keyword Options
 	 */
+	const RefineModule::MatrixAugmentationStyle augmentationStyle = RefineModule::matrixAugmentationStyle(keywords_.asString("Augmentation"));
+	const double augmentationParam = keywords_.asDouble("AugmentationParam");
 	const bool autoMinimumRadii = keywords_.asBool("AutoMinimumRadius");
 	const bool smoothPhiR = keywords_.asBool("DeltaPhiRSmoothing");
 	const int phiRSmoothK = keywords_.asDouble("DeltaPhiRSmoothK");
@@ -73,6 +75,8 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	const WindowFunction& windowFunction = KeywordListHelper<WindowFunction>::retrieve(keywords_, "WindowFunction", WindowFunction());
 
 	// Print option summary
+	if (augmentationStyle == RefineModule::NoAugmentation) Messenger::print("Refine: No augmentation of scattering matrix will be performed.\n");
+	else Messenger::print("Refine: Augmentation of scattering matrix will be performed (style = '%s', parameter = %e).\n", RefineModule::matrixAugmentationStyle(augmentationStyle), augmentationParam);
 	if (autoMinimumRadii) Messenger::print("Refine: Minimum radii of generated potentials will be determined automatically (min/max = %f/%f Angstroms).\n", globalMinimumRadius, globalMaximumRadius);
 	else Messenger::print("Refine: Minimum radius of %f Angstroms will be applied to all generated potentials.\n", globalMinimumRadius);
 	if (smoothSQ) Messenger::print("Refine: Generated difference S(Q) will be smoothed using KZ filter (k = %i, m = %i).\n", sqSmoothK, sqSmoothM);
@@ -116,7 +120,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	}
 
 	/*
-	 * Get calculated S(Q), broadening function (which we will 'invert' for the backtransform) and density of the source Configuration(s)
+	 * Get calculated S(Q) and density of the source Configuration(s)
 	 */
 	bool found;
 	PartialSet& unweightedSQ = GenericListHelper<PartialSet>::retrieve(duq.processingModuleData(), "UnweightedSQ", partialsModule->uniqueName(), PartialSet(), &found);
@@ -125,11 +129,6 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 		Messenger::error("Couldn't locate 'UnweightedSQ' data in PartialsModule '%s'.\n", partialsModule->uniqueName());
 		return false;
 	}
-
-	BroadeningFunction broadening = KeywordListHelper<BroadeningFunction>::retrieve(partialsModule->keywords(), "QBroadening", BroadeningFunction());
-	if (broadening.function() == BroadeningFunction::NoFunction) Messenger::print("Refine: No 'QBroadening' specified in PartialsModule '%s', so no un-broadening will be performed.\n", partialsModule->uniqueName());
-	else Messenger::print("Refine: QBroadening specified in PartialsModule '%s' (%s) will be removed when Fourier transforming the data.\n", partialsModule->uniqueName(), BroadeningFunction::functionType(broadening.function()));
-	broadening.setInverted(true);
 
 	double rho = GenericListHelper<double>::retrieve(duq.processingModuleData(), "Density", partialsModule->uniqueName(), 0.0, &found);
 	if (!found)
@@ -141,6 +140,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	/*
 	 * First, make sure that all of the associated Data are set up
 	 */
+	if (targetData_.nItems() == 0) return Messenger::error("No reference data provided to refine against.\n");
 	RefListIterator<Data,bool> dataIterator(targetData_);
 	while (Data* data = dataIterator.iterate()) if (!data->setUp(duq.processingModuleData())) return false;
 
@@ -171,45 +171,14 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	}
 
 	/*
-	 * Construct our full, square, scattering matrix, using the master AtomTypes list
+	 * Update our full scattering matrix, and use it to generate partials from the supplied reference data
 	 */
+
+	if (!createScatteringMatrix(duq, unweightedSQ, augmentationStyle, augmentationParam)) return false;
 
 	// Realise the generatedSQ array
 	Array2D<XYData>& generatedSQ = GenericListHelper< Array2D<XYData> >::realise(duq.processingModuleData(), "GeneratedSQ", uniqueName_, GenericItem::InRestartFileFlag);
-	ScatteringMatrix scatteringMatrix;
-	scatteringMatrix.initialise(duq.atomTypeList(), generatedSQ, uniqueName_);
-
-	// For each Data, get the Weights from the associated Partials module
-	dataIterator.restart();
-	while (Data* data = dataIterator.iterate())
-	{
-		bool found;
-		Weights& weights = GenericListHelper<Weights>::retrieve(duq.processingModuleData(), "FullWeights", data->associatedModule()->uniqueName(), Weights(), &found);
-		if (!found)
-		{
-			Messenger::error("Refine: Couldn't find FullWeights for Data '%s', and so can't construct scattering matrix.\n", data->name());
-			return false;
-		}
-
-		// Set the next row of the scattering matrix with the weights of the supplied data.
-		// TODO Need to take care that added reference data span consistent ranges in Q
-		if (!scatteringMatrix.addReferenceData(data, weights))
-		{
-			Messenger::error("Refine: Failed to initialise reference Data.\n");
-			return false;
-		}
-	}
-	if (!scatteringMatrix.finalise())
-	{
-		Messenger::error("Refine: Failed to set up scattering matrix.\n");
-		return false;
-	}
-	scatteringMatrix.print();
-
-	/*
-	 * Use the ScatteringMatrix to generate partials from the supplied reference data
-	 */
-	scatteringMatrix.generatePartials(generatedSQ);
+	scatteringMatrix_.generatePartials(generatedSQ);
 
 	/*
 	 * Calculate g(r) from generatedSQ

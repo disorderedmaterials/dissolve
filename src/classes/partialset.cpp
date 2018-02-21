@@ -199,6 +199,12 @@ XYData& PartialSet::partial(int i, int j)
 	return partials_.ref(i, j);
 }
 
+// Return copy of full atom-atom partial specified
+XYData PartialSet::constPartial(int i, int j) const
+{
+	return partials_.value(i, j);
+}
+
 // Return atom-atom partial for pairs not joined by bonds or angles
 XYData& PartialSet::unboundPartial(int i, int j)
 {

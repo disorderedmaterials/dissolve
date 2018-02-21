@@ -57,8 +57,8 @@ class ScatteringMatrix
 	Array2D<double> A_;
 	// Inverse of coefficients matrix
 	Array2D<double> inverseA_;
-	// Reference data (B) (n * 1)
-	RefList<Data,bool> data_;
+	// Reference data (B) (n * 1) and associated scaling factors
+	RefList<Data,double> data_;
 
 	public:
 	// Return number of reference AtomType pairs

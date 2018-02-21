@@ -190,6 +190,11 @@ template <class A> class Array2D
 			for (int m=0; m<oldArray.nColumns_; ++m) ref(n,m) = oldArray.value(n,m);
 		}
 	}
+	// Set row
+	void setRow(int row, A value)
+	{
+		for (int n=0; n<nColumns_; ++n) ref(row, n) = value;
+	}
 	// Return specified element as reference
 	A& ref(int row, int column)
 	{

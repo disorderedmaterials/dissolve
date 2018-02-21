@@ -98,6 +98,8 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	Histogram& unboundHistogram(int i, int j);
 	// Return full atom-atom partial specified
 	XYData& partial(int i, int j);
+	// Return copy of full atom-atom partial specified
+	XYData constPartial(int i, int j) const;
 	// Return atom-atom partial for pairs not joined by bonds or angles
 	XYData& unboundPartial(int i, int j);
 	// Return atom-atom partial for pairs joined by bonds or angles

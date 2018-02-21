@@ -23,7 +23,8 @@
 #define DUQ_REFINEMODULE_H
 
 #include "module/module.h"
-#include "base/xydata.h"
+#include "classes/data.h"
+#include "classes/scatteringmatrix.h"
 
 // Forward Declarations
 class AtomType;
@@ -96,6 +97,17 @@ class RefineModule : public Module
 	static PotentialGenerationType potentialGenerationType(const char* s);
 	// Convert PotentialGenerationType to text string
 	static const char* potentialGenerationType(PotentialGenerationType pgt);
+	// Matrix Augmentation Style
+	enum MatrixAugmentationStyle
+	{
+		NoAugmentation,				/* Do not supplement the scattering matrix with any additional data */
+		PartialsAugmentation,			/* Augment scattering matrix with individual partial S(Q), as EPSR does */
+		nMatrixAugmentationStyles
+	};
+	// Convert text string to MatrixAugmentationStyle
+	static MatrixAugmentationStyle matrixAugmentationStyle(const char* s);
+	// Convert MatrixAugmentationStyle to text string
+	static const char* matrixAugmentationStyle(MatrixAugmentationStyle mas);
 
 	protected:
 	// Set up options for Module
@@ -126,6 +138,8 @@ class RefineModule : public Module
 	double xCentreStart_, xCentreDeltaLimit_;
 
 	private:
+	// Create full scattering matrix
+	bool createScatteringMatrix(DUQ& duq, const PartialSet& unweightedSQ, MatrixAugmentationStyle augmentationStyle, double augmentationParam);
 	// Calculate c(r) from supplied S(Q)
 	XYData calculateCR(const XYData& sq, double normFactor, double rMin, double rStep, double rMax, WindowFunction windowFunction = WindowFunction(), BroadeningFunction broadening = BroadeningFunction(), bool unbroaden = false);
 	// Determine modification to bonds based on supplied delta g(r)
@@ -144,8 +158,10 @@ class RefineModule : public Module
 	 * Local Data
 	 */
 	private:
-	// Weights matrix for partials / target data
-	Array2D<double> partialWeights_;
+	// Full scattering matrix containing reference dat
+	ScatteringMatrix scatteringMatrix_;
+	// Simulated data added as reference data
+	List<Data> simulatedReferenceData_;
 
 
 	/*

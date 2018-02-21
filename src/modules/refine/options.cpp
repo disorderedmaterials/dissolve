@@ -40,9 +40,27 @@ const char* RefineModule::potentialGenerationType(RefineModule::PotentialGenerat
 	return PotentialGenerationTypeKeywords[pgt];
 }
 
+// Matrix Augmentation Style
+const char* MatrixAugmentationStyleKeywords[] = { "None", "Partials" };
+
+// Convert text string to MatrixAugmentationStyle
+RefineModule::MatrixAugmentationStyle RefineModule::matrixAugmentationStyle(const char* s)
+{
+	for (int n=0; n<RefineModule::nMatrixAugmentationStyles; ++n) if (DUQSys::sameString(s, MatrixAugmentationStyleKeywords[n])) return (RefineModule::MatrixAugmentationStyle) n;
+	return RefineModule::nMatrixAugmentationStyles;
+}
+
+// Convert MatrixAugmentationStyle to text string
+const char* RefineModule::matrixAugmentationStyle(RefineModule::MatrixAugmentationStyle mas)
+{
+	return MatrixAugmentationStyleKeywords[mas];
+}
+
 // Set up keywords for Module
 void RefineModule::setUpKeywords()
 {
+	keywords_.add(new CharStringModuleKeyword("Partials", RefineModule::nMatrixAugmentationStyles, MatrixAugmentationStyleKeywords), "Augmentation", "Style used to augment (overdetermine) scattering matrix");
+	keywords_.add(new DoubleModuleKeyword(0.9), "AugmentationParam", "Parameter used to in augmentation (overdetermination) of scattering matrix (dependent on augmentation style selected)");
 	keywords_.add(new BoolModuleKeyword(true), "AutoMinimumRadius", "Automatically determine minimum radii between atom types for potential generation");
 	keywords_.add(new BoolModuleKeyword(true), "DeltaPhiRSmoothing", "Whether to smooth generated phi(r)");
 	keywords_.add(new IntegerModuleKeyword(5, 1, 10), "DeltaPhiRSmoothK", "Iterations of KZ smoothing to apply");

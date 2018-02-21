@@ -23,8 +23,121 @@
 #include "modules/refine/refine.h"
 #include "classes/atomtype.h"
 #include "classes/masterintra.h"
+#include "classes/scatteringmatrix.h"
 #include "classes/speciesbond.h"
 #include "templates/praxis.h"
+#include "templates/genericlisthelper.h"
+
+// Create full scattering matrix
+bool RefineModule::createScatteringMatrix(DUQ& duq, const PartialSet& unweightedSQ, MatrixAugmentationStyle augmentationStyle, double augmentationParam)
+{
+	bool found;
+
+	// Realise the generatedSQ array
+	Array2D<XYData>& generatedSQ = GenericListHelper< Array2D<XYData> >::realise(duq.processingModuleData(), "GeneratedSQ", uniqueName_, GenericItem::InRestartFileFlag);
+
+	scatteringMatrix_.initialise(duq.atomTypeList(), generatedSQ, uniqueName_);
+
+	// Grab the PartialsModule associated to the module, retrieve its weights, and naturalise them
+	Module* partialsModule = dependentModule("Partials");
+	Weights naturalWeights = GenericListHelper<Weights>::retrieve(duq.processingModuleData(), "FullWeights", partialsModule->uniqueName(), Weights(), &found);
+	if (!found) return Messenger::error("Dependent PartialsModule '%s' has no FullWeights.\n", partialsModule->uniqueName());
+	naturalWeights.naturalise();
+
+	// For each Data, get the Weights from the associated Partials module
+	RefListIterator<Data,bool> dataIterator(targetData_);
+	while (Data* data = dataIterator.iterate())
+	{
+		data->scatteringWeights() = GenericListHelper<Weights>::retrieve(duq.processingModuleData(), "FullWeights", data->associatedModule()->uniqueName(), Weights(), &found);
+		if (!found)
+		{
+			Messenger::error("Refine: Couldn't find FullWeights for Data '%s', and so can't construct scattering matrix.\n", data->name());
+			return false;
+		}
+	}
+
+	// Clear simulated data
+	simulatedReferenceData_.clear();
+
+	// Add data to the scattering matrix - exactly what we do here depends on the augmentation style selected
+	AtomTypeData* atd1, *atd2;
+	switch (augmentationStyle)
+	{
+		// No augmentation - add only the target data
+		case (RefineModule::NoAugmentation):
+			dataIterator.restart();
+			while (Data* data = dataIterator.iterate()) if (!scatteringMatrix_.addReferenceData(data)) return Messenger::error("Failed to add reference Data '%s'.\n", data->name());
+
+			// If the matrix is underdetermined, must raise an error here
+			if (scatteringMatrix_.underDetermined()) return Messenger::error("Can't proceed with an underdetermined scattering matrix. Select an augmentation style other than 'None'.\n");
+			break;
+		// EPSR-style augmentation - simulated partials
+		case (RefineModule::PartialsAugmentation):
+			// Add all reference data, applying the weighting factor stored as augmentationParam
+			dataIterator.restart();
+			while (Data* data = dataIterator.iterate()) if (!scatteringMatrix_.addReferenceData(data, augmentationParam)) return Messenger::error("Failed to add reference Data '%s'.\n", data->name());
+
+			// Loop over partials
+			atd1 = naturalWeights.atomTypes().first();
+			for (int n=0; n<naturalWeights.atomTypes().nItems(); ++n, atd1 = atd1->next)
+			{
+				atd2 = atd1;
+				for (int m=n; m<naturalWeights.atomTypes().nItems(); ++m, atd2 = atd2->next)
+				{
+					// Create new Data storage
+					Data* data = simulatedReferenceData_.add();
+					data->setName(CharString("Simulated Partial %s-%s", atd1->atomTypeName(), atd2->atomTypeName()));
+
+					data->data() = unweightedSQ.constPartial(n,m);
+					data->data().arrayY() *= (1.0 - augmentationParam);
+
+					if (!scatteringMatrix_.addPartialReferenceData(data, atd1->atomType(), atd2->atomType(), naturalWeights.fullWeight(n,m) * (1.0 - augmentationParam))) return Messenger::error("Refine: Failed to initialise simulated reference Data.\n");
+				}
+			}
+			break;
+		default:
+			Messenger::error("Slap the developer - he hasn't implemented this augmentation option yet.\n");
+			return false;
+			// TEST Generate some new data
+// 			// Get the Weights from the first Data, and naturalise the weighting to form our reference weights
+// 			Weights naturalWeights = targetData_.firstItem()->scatteringWeights();
+// 			naturalWeights.naturalise();
+// 			Data* data = simulatedReferenceData_.add();
+// 			data->data() = targetData_[0]->item->data();
+// 			data->data().addInterpolated(targetData_[1]->item->data(), targetData_[0]->item->scatteringWeights().fullWeight(1,1));
+// 
+// 			// TODO Need to work out here which atomtypes have been substituted in provision of the reference data so far
+// 			while (scatteringMatrix.incomplete())
+// 			{
+// 				// Create new Data storage
+// 				Data* data = simulatedReferenceData_.add();
+// 
+// 				// Construct a fakes weights matrix using our negative natural isotope
+// 				data->scatteringWeights() = naturalWeights;
+// 				if (!data->scatteringWeights().setAtomTypeIsotope(NULL, PeriodicTable::element(8).hasIsotope(-1))) return false;
+// 				data->scatteringWeights().print();
+// 
+// 				// Generate new total structure factor using these weights
+// 				data->data() = unweightedSQ.generateTotal(data->scatteringWeights());
+// 
+// 				if (!scatteringMatrix.addReferenceData(data))
+// 				{
+// 					Messenger::error("Refine: Failed to initialise simulated reference Data.\n");
+// 					return false;
+// 				}
+// 			}
+	}
+
+	// Finalise the matrix
+	if (!scatteringMatrix_.finalise())
+	{
+		Messenger::error("Refine: Failed to set up scattering matrix.\n");
+		return false;
+	}
+	scatteringMatrix_.print();
+
+	return true;
+}
 
 // Calculate c(r) from supplied S(Q)
 XYData RefineModule::calculateCR(const XYData& sq, double normFactor, double rMin, double rStep, double rMax, WindowFunction windowFunction, BroadeningFunction broadening, bool unbroaden)
