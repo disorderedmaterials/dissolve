@@ -83,7 +83,7 @@ bool Configuration::initialise(ProcessPool& procPool, bool randomise, double pai
 	/*
 	 * Create Molecules
 	 */
-	Messenger::print("--> Setting up random Molecules...\n");
+	Messenger::print("--> Setting up Molecules...\n");
 
 	procPool.initialiseRandomBuffer(ProcessPool::PoolProcessesCommunicator);
 	Vec3<double> r, cog, newCentre, fr;
@@ -127,6 +127,18 @@ bool Configuration::initialise(ProcessPool& procPool, bool randomise, double pai
 
 	// Set fractional populations in usedAtomTypes_
 	usedAtomTypes_.finalise();
+
+	return true;
+}
+
+// Finalise Configuration after loading contents from restart file
+bool Configuration::finaliseAfterLoad()
+{
+	// Finalise used AtomType list
+	usedAtomTypes_.finalise();
+	
+	// Assemble attached Atom lists for all Molecules
+	for (int n=0; n<nMolecules(); ++n) molecules_[n]->updateAttachedAtomLists();
 
 	return true;
 }
