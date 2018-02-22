@@ -24,6 +24,7 @@
 #include "base/sysfunc.h"
 #include "base/lineparser.h"
 #include "templates/genericlisthelper.h"
+#include <cstdio>
 
 /*
  * Private Functions
@@ -288,7 +289,27 @@ bool DUQ::iterate(int nIterations)
 			 * Restart File
 			 */
 
-			if (!saveRestart(CharString("%s.restart", filename_.get())))
+			CharString restartFile("%s.restart", filename_.get());
+			CharString restartFileBackup("%s.restart.prev", filename_.get());
+
+			// Check and remove restart file backup
+			if (DUQSys::fileExists(restartFileBackup) && (remove(restartFileBackup) != 0))
+			{
+				Messenger::error("Could not remove old restart file backup.\n");
+				worldPool_.decideFalse();
+				return false;
+			}
+
+			// Rename current restart file (if it exists)
+			if (DUQSys::fileExists(restartFile) && (rename(restartFile, restartFileBackup) != 0))
+			{
+				Messenger::error("Could not rename current restart file.\n");
+				worldPool_.decideFalse();
+				return false;
+			}
+
+			// Save new restart file
+			if (!saveRestart(restartFile))
 			{
 				Messenger::error("Failed to write restart file.\n");
 				worldPool_.decideFalse();
