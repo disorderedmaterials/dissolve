@@ -97,6 +97,10 @@ class MainTab : public ListItem<MainTab>
 	/*
 	 * Update
 	 */
+	protected:
+	// Whether the tab is currently refreshing
+	bool refreshing_;
+
 	public:
 	// Update controls in tab
 	virtual void updateControls() = 0;
