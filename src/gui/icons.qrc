@@ -10,6 +10,8 @@
     <file>icons/general_options.svg</file>
     <file>icons/general_arrowdown.svg</file>
     <file>icons/general_arrowleft.svg</file>
+    <file>icons/general_add.svg</file>
+    <file>icons/general_remove.svg</file>
     <file>icons/general_arrowright.svg</file>
     <file>icons/general_arrowup.svg</file>
   </qresource>
@@ -18,7 +20,7 @@
   </qresource>
   <qresource prefix="control">
     <file>icons/control_pause.svg</file>
-    <file>icons/control_run.svg</file>
+    <file>icons/control_play.svg</file>
     <file>icons/control_step5.svg</file>
     <file>icons/control_reload.svg</file>
     <file>icons/control_step.svg</file>
