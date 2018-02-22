@@ -79,26 +79,6 @@
       <property name="verticalSpacing">
        <number>0</number>
       </property>
-      <item row="0" column="0">
-       <widget class="QToolButton" name="ControlRunButton">
-        <property name="toolTip">
-         <string>Run this module now</string>
-        </property>
-        <property name="text">
-         <string>...</string>
-        </property>
-        <property name="icon">
-         <iconset resource="icons.qrc">
-          <normaloff>:/control/icons/control_run.svg</normaloff>:/control/icons/control_run.svg</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>12</width>
-          <height>12</height>
-         </size>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="1">
        <widget class="QLabel" name="TopLabel">
         <property name="sizePolicy">
@@ -115,33 +95,10 @@
          </font>
         </property>
         <property name="text">
-         <string>Name / Location</string>
+         <string>Top Info</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QToolButton" name="toolButton_2">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="toolTip">
-         <string>&lt;Not currently implemented&gt;</string>
-        </property>
-        <property name="text">
-         <string>...</string>
-        </property>
-        <property name="icon">
-         <iconset resource="icons.qrc">
-          <normaloff>:/control/icons/control_reload.svg</normaloff>:/control/icons/control_reload.svg</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>12</width>
-          <height>12</height>
-         </size>
         </property>
        </widget>
       </item>
@@ -155,14 +112,40 @@
          </font>
         </property>
         <property name="text">
-         <string>UniqueName</string>
+         <string>Bottom Info</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
-      <item row="0" column="2">
+      <item row="0" column="0" rowspan="2">
+       <widget class="QToolButton" name="ControlRunButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>Run this module now</string>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="icon">
+         <iconset resource="icons.qrc">
+          <normaloff>:/control/icons/control_play.svg</normaloff>:/control/icons/control_play.svg</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>16</width>
+          <height>16</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2" rowspan="2">
        <widget class="QToolButton" name="ToggleModuleWidgetButton">
         <property name="toolTip">
          <string>Toggle additional module control panel</string>
@@ -176,8 +159,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>12</width>
-          <height>12</height>
+          <width>16</width>
+          <height>16</height>
          </size>
         </property>
         <property name="checkable">
