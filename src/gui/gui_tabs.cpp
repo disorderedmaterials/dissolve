@@ -45,6 +45,9 @@ void DUQWindow::on_MainTabs_currentChanged(int index)
 	ui.WorkspaceCurrentAction->setText(index == -1 ? "<No Current Workspace>" : tabs_[index]->title());
 	// -- Disable controls if the current tab has no valid SubWindow (MDI) area
 	ui.WorkspaceAddWidgetAction->setEnabled(currentTab->subWindowArea());
+
+	// Update contents
+	currentTab->updateControls();
 }
 
 void DUQWindow::mainTabsDoubleClicked(int index)
