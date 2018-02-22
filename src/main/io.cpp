@@ -599,40 +599,6 @@ bool DUQ::saveRestart(const char* filename)
 	return true;
 }
 
-// Dump additional system data
-void DUQ::dump()
-{
-	Messenger::print("\n");
-
-	// Configurations
-	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
-	{
-		Messenger::print("\n# Configuration: '%s'\n", cfg->name());
-		Messenger::print("# Atomic coordinates\n");
-		Atom** atoms = cfg->atoms().array();
-		for (int n=0; n<cfg->nAtoms(); ++n)
-		{
-			Messenger::print("%10i  %5s  %10.4e  %10.4e  %10.4e  %i  %i\n", n+1, PeriodicTable::element(atoms[n]->element()).symbol(), atoms[n]->r().x, atoms[n]->r().y, atoms[n]->r().z, atoms[n]->localTypeIndex(), atoms[n]->masterTypeIndex());
-		}
-
-		Messenger::print("# Box normalisation\n");
-		XYData boxNorm = cfg->boxNormalisation();
-		boxNorm.dump();
-	}
-
-	// PairPotentials
-	for (PairPotential* pp = pairPotentials_.first(); pp != NULL; pp = pp->next)
-	{
-		Messenger::print("\n# PairPotential between atomtypes %s and %s:\n", pp->atomTypeNameI(), pp->atomTypeNameJ());
-		Messenger::print("# Original:\n");
-		pp->uOriginal().dump();
-		Messenger::print("# Current (Full):\n");
-		pp->uFull().dump();
-		Messenger::print("# Current (Full, Derivative):\n");
-		pp->dUFull().dump();
-	}
-}
-
 // Return whether a filename has been set
 bool DUQ::hasFileName() const
 {

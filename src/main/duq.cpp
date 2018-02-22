@@ -46,9 +46,7 @@ DUQ::DUQ()
 	// Simulation Setup
 	nBoxNormalisationPoints_ = 500000000;
 	seed_ = -1;
-	maxIterations_ = -1;
-	allIntra_ = false;
-	writeFrequency_ = 1;
+	restartFileFrequency_ = 10;
 
 	// Parallel Comms
 	parallelStrategy_ = DUQ::SequentialConfigStrategy;

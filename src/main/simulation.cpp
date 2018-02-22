@@ -88,15 +88,13 @@ bool DUQ::iterate(int nIterations)
 	mainLoopTimer_.zero();
 	mainLoopTimer_.start();
 
-	int iterationsPerformed = 0;
-
-	while ((maxIterations_ < 0) || (iteration_ < maxIterations_))
+	for (int iter = 0; iter < nIterations; ++iter)
 	{
 		// Increase iteration counters
 		++iteration_;
 		++nIterationsPerformed_;
 
-		Messenger::banner("MAIN LOOP ITERATION %10i / %-10s    %s", iteration_, maxIterations_ == -1 ? "(no limit)" : DUQSys::itoa(maxIterations_), DUQSys::currentTimeAndDate());
+		Messenger::banner(" START MAIN LOOP ITERATION %10i         %s", iteration_, DUQSys::currentTimeAndDate());
 
 		/*
 		 *  0)	Print schedule of tasks to run
@@ -269,7 +267,7 @@ bool DUQ::iterate(int nIterations)
 		/*
 		 *  6)	Write data
 		 */
-		if (worldPool_.isMaster() && (writeFrequency_ > 0) && (iteration_%writeFrequency_ == 0))
+		if (worldPool_.isMaster() && (restartFileFrequency_ > 0) && (iteration_%restartFileFrequency_ == 0))
 		{
 			Messenger::banner("Write Data");
 
@@ -330,7 +328,7 @@ bool DUQ::iterate(int nIterations)
 			// All good. Carry on!
 			worldPool_.decideTrue();
 		}
-		else if (worldPool_.isSlave() && (writeFrequency_ > 0) && (iteration_%writeFrequency_ == 0) && (!worldPool_.decision())) return false;
+		else if (worldPool_.isSlave() && (restartFileFrequency_ > 0) && (iteration_%restartFileFrequency_ == 0) && (!worldPool_.decision())) return false;
 
 		// Sync up all processes
 		Messenger::printVerbose("Waiting for other processes at end of data write section...\n");
@@ -338,11 +336,6 @@ bool DUQ::iterate(int nIterations)
 
 
 		Messenger::banner("END OF MAIN LOOP ITERATION %10i         %s", iteration_, DUQSys::currentTimeAndDate());
-
-
-		// If we have performed the requested number of iterations, break here
-		++iterationsPerformed;
-		if ((nIterations > 0) && (iterationsPerformed == nIterations)) break;
 	}
 
 	mainLoopTimer_.stop();

@@ -285,12 +285,8 @@ class DUQ
 	int nBoxNormalisationPoints_;
 	// Random seed
 	int seed_;
-	// Maximum number of main loop iterations to perform
-	int maxIterations_;
-	// Whether to write various data after each iteration
-	int writeFrequency_;
-	// Whether all intramolecular interactions contribute to intra partials
-	bool allIntra_;
+	// Frequency at which to write restart file
+	int restartFileFrequency_;
 
 	public:
 	// Set number of test points to use when calculating Box normalisation arrays
@@ -301,14 +297,10 @@ class DUQ
 	void setSeed(int seed);
 	// Return random seed
 	int seed() const;
-	// Set maximum number of main loop iterations to perform
-	void setMaxIterations(int nIterations);
-	// Return maximum number of main loop iterations to perform
-	int maxIterations() const;
 	// Set frequency with which to write various iteration dat
-	void setWriteFrequency(int n);
-	// Return frequency with which to write various iteration data
-	int writeFrequency() const;
+	void setRestartFileFrequency(int n);
+	// Return frequency with which to write restart file
+	int restartFileFrequency() const;
 	// Set up all simulation data, checking it as we go
 	bool setUpSimulation();
 
@@ -335,8 +327,6 @@ class DUQ
 	bool loadRestart(const char* filename);
 	// Save restart file
 	bool saveRestart(const char* filename);
-	// Dump additional data
-	void dump();
 	// Return whether a filename has been set
 	bool hasFileName() const;
 	// Return filename of current input file

@@ -28,10 +28,9 @@
 KeywordData SimulationBlockData[] = {
 	{ "BoxNormalisationPoints",		1,	"Number of random insertions to use when generating the normalisation array" },
 	{ "EndSimulation",			0,	"Signals the end of the Simulation block" },
-	{ "MaxIterations",			1,	"Maximum number of main loop iterations to perform, or -1 for no limit" },
 	{ "ParallelStrategy",			1, 	"Determines the distribution of processes across Configurations" },
-	{ "Seed",				1,	"Random seed to use" },
-	{ "WriteFrequency",			1,	"Frequency with which to write restart file and configuration data (0 = never)" }
+	{ "RestartFileFrequency",		1,	"Frequency with which to write restart file (0 = never)" },
+	{ "Seed",				1,	"Random seed to use" }
 };
 
 // Convert text string to SimulationKeyword
@@ -81,10 +80,6 @@ bool SimulationBlock::parse(LineParser& parser, DUQ* duq)
 				Messenger::print("Found end of %s block.\n", InputBlocks::inputBlock(InputBlocks::SimulationBlock));
 				blockDone = true;
 				break;
-			case (SimulationBlock::MaxIterationsKeyword):
-				duq->setMaxIterations(parser.argi(1));
-				Messenger::print("Maximum number of main loop iterations set to %i.\n", duq->maxIterations());
-				break;
 			case (SimulationBlock::ParallelStrategyKeyword):
 				if (DUQ::parallelStrategy(parser.argc(1)) == DUQ::nParallelStrategies)
 				{
@@ -93,13 +88,13 @@ bool SimulationBlock::parse(LineParser& parser, DUQ* duq)
 				}
 				else duq->setParallelStrategy(DUQ::parallelStrategy(parser.argc(1)));
 				break;
+			case (SimulationBlock::RestartFileFrequencyKeyword):
+				duq->setRestartFileFrequency(parser.argi(1));
+				Messenger::print("Restart data will be written to disk every %i iteration(s).\n", duq->restartFileFrequency());
+				break;
 			case (SimulationBlock::SeedKeyword):
 				duq->setSeed(parser.argi(1));
 				Messenger::print("Random seed set to %i.\n", duq->seed());
-				break;
-			case (SimulationBlock::WriteFrequencyKeyword):
-				duq->setWriteFrequency(parser.argi(1));
-				Messenger::print("Restart data will be written to disk every %i iteration(s).\n", duq->writeFrequency());
 				break;
 			case (SimulationBlock::nSimulationKeywords):
 				Messenger::print("Unrecognised %s block keyword '%s' found.\n", InputBlocks::inputBlock(InputBlocks::SimulationBlock), parser.argc(0));

@@ -41,8 +41,8 @@ int main(int argc, char **argv)
 	// Parse CLI options...
 	int n = 1;
 	CharString inputFile, redirectFileName;
-	int dumpData = 0;
-	bool singleIteration = false, ignoreRestart = false;
+	int nIterations = 5;
+	bool ignoreRestart = false;
 	while (n < argc)
 	{
 		if (argv[n][0] == '-')
@@ -58,9 +58,10 @@ int main(int argc, char **argv)
 #endif
 					printf("Recognised CLI options are:\n\n");
 					printf("\t-a\t\tAuto-add dependent Modules if they are not present already\n");
-					printf("\t-d\t\tPerform dump of system data from all processes and quit\n");
+					printf("\t-c\t\tCheck input and set-up only - don't perform any main-loop iterations\n");
 					printf("\t-i\t\tIgnore restart file\n");
 					printf("\t-m\t\tRestrict output to be from the master process alone (parallel code only)\n");
+					printf("\t-n <iterations>\tRun for the specified number of main loop iterations, then stop\n");
 					printf("\t-q\t\tQuiet mode - print no output\n");
 					printf("\t-r <file>\tRedirect output from all process to 'file.N', where N is the process rank\n");
 					printf("\t-s\t\tPerform single main loop iteration and then quit\n");
@@ -72,9 +73,9 @@ int main(int argc, char **argv)
 				case ('a'):
 					dUQ.setAutoAddDependentModules(true);
 					break;
-				case ('d'):
-					Messenger::print("Full dump of system set up across all processes enabled.\n");
-					dumpData = true;
+				case ('c'):
+					nIterations = 0;
+					Messenger::print("System input and set-up will be checked, then dUQ will exit.\n");
 					break;
 				case ('i'):
 					Messenger::print("Restart file (if it exists) will be ignored.\n");
@@ -82,6 +83,17 @@ int main(int argc, char **argv)
 					break;
 				case ('m'):
 					Messenger::setMasterOnly(true);
+					break;
+				case ('n'):
+					++n;
+					if (n == argc)
+					{
+						Messenger::error("Expected number of iterations.\n");
+						Messenger::ceaseRedirect();
+						return 1;
+					}
+					nIterations = atoi(argv[n]);
+					Messenger::print("%i main-loop iterations will be performed, then dUQ will exit.\n");
 					break;
 				case ('q'):
 					Messenger::setQuiet(true);
@@ -100,7 +112,7 @@ int main(int argc, char **argv)
 					break;
 				case ('s'):
 					Messenger::print("Single main-loop iteration will be performed, then dUQ will exit.\n");
-					singleIteration = true;
+					nIterations = 1;
 					break;
 				case ('v'):
 					Messenger::setVerbose(true);
@@ -231,15 +243,12 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	// Full system dump?
-	if (dumpData) dUQ.dump();
-
 #ifdef PARALLEL
 	Messenger::print("This is process rank %i of %i processes total.\n", ProcessPool::worldRank(), ProcessPool::nWorldProcesses());
 #endif
 	
 	// Run main simulation
-	bool result = dUQ.iterate(singleIteration ? 1 : -1);
+	bool result = dUQ.iterate(nIterations);
 
 	// Print timing information
 	dUQ.printTiming();

@@ -167,7 +167,6 @@ void DUQWindow::updateControls()
 {
 	// Iteration Panel
 	ui.IterationNumberLabel->setText(DUQSys::itoa(duq_.iteration()));
-	ui.IterationLimitLabel->setText(duq_.maxIterations() == -1 ?  QString(QChar(0x221E)) : QString::number(duq_.maxIterations()));
 
 	// Loop over tabs
 	for (MainTab* tab = tabs_.first(); tab != NULL; tab = tab->next) tab->updateControls();

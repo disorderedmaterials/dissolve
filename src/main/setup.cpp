@@ -48,28 +48,16 @@ int DUQ::seed() const
 	return seed_;
 }
 
-// Set maximum number of main loop iterations to perform
-void DUQ::setMaxIterations(int nIterations)
-{
-	maxIterations_ = nIterations;
-}
-
-// Return maximum number of main loop iterations to perform
-int DUQ::maxIterations() const
-{
-	return maxIterations_;
-}
-
 // Set frequency with which to write various iteration dat
-void DUQ::setWriteFrequency(int n)
+void DUQ::setRestartFileFrequency(int n)
 {
-	writeFrequency_ = n;
+	restartFileFrequency_ = n;
 }
 
-// Return frequency with which to write various iteration dat
-int DUQ::writeFrequency() const
+// Return frequency with which to write restart file
+int DUQ::restartFileFrequency() const
 {
-	return writeFrequency_;
+	return restartFileFrequency_;
 }
 
 // Set up all simulation data, checking it as we go

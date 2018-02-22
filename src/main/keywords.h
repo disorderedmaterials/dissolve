@@ -234,10 +234,9 @@ namespace SimulationBlock
 	{
 		BoxNormalisationPointsKeyword,	/* 'BoxNormalisationPoints' - Number of random insertions to use when generating the normalisation array */
 		EndSimulationKeyword,		/* 'EndSimulation' - Signals the end of the Simulation block */
-		MaxIterationsKeyword,		/* 'MaxIterations' - Maximum number of main loop iterations to perform, or -1 for no limit */
 		ParallelStrategyKeyword,	/* 'ParallelStrategy' - Determines the distribution of processes across Configurations */
+		RestartFileFrequencyKeyword,	/* 'RestartFileFrequency' - Frequency at which to write restart file */
 		SeedKeyword,			/* 'Seed' - Random seed to use */
-		WriteFrequencyKeyword,		/* 'WriteFrequency' - Write various data at the end of each iteration */
 		nSimulationKeywords		/* Number of keywords defined for this block */
 	};
 	// Convert text string to SimulationKeyword
