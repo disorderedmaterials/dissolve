@@ -136,8 +136,8 @@ class DUQ
 	void removeSpecies(Species* sp);
 	// Return number of defined Species
 	int nSpecies() const;
-	// Return first Species in the list
-	Species* species() const;
+	// Return Species list
+	List<Species>& species();
 	// Return nth Species in the list
 	Species* species(int n);
 	// Search for Species by name

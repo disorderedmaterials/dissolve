@@ -82,9 +82,11 @@ class Species : public ListItem<Species>
 	// Return the number of atoms in the species
 	int nAtoms() const;
 	// Return the first atom in the Species
-	SpeciesAtom* atoms() const;
+	SpeciesAtom* firstAtom() const;
 	// Return the nth atom in the Species
 	SpeciesAtom* atom(int n);
+	// Return the list of SpeciesAtoms
+	List<SpeciesAtom>& atoms();
 	// Clear current Atom selection
 	void clearAtomSelection();
 	// Add Atom to selection

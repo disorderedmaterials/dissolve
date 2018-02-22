@@ -96,7 +96,7 @@ void Isotopologue::update(const List<AtomType>& atomTypes)
 	}
 	
 	// Loop over Atoms in species, get their assigned AtomTypes, and searching for them in the oldItems list
-	for (SpeciesAtom* i = parent_->atoms(); i != NULL; i = i->next)
+	for (SpeciesAtom* i = parent_->firstAtom(); i != NULL; i = i->next)
 	{
 		AtomType* at = i->atomType();
 		if (at == NULL)

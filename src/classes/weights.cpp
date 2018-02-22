@@ -175,7 +175,7 @@ void Weights::createFromIsotopologues()
 		for (RefListItem<Isotopologue,double>* tope = mix->isotopologues(); tope != NULL; tope = tope->next)
 		{
 			// Loop over Atoms in the Species, searching for the AtomType/Isotope entry in the isotopes list of the Isotopologue
-			for (SpeciesAtom* i = mix->species()->atoms(); i != NULL; i = i->next)
+			for (SpeciesAtom* i = mix->species()->firstAtom(); i != NULL; i = i->next)
 			{
 				Isotope* iso = tope->item->atomTypeIsotope(i->atomType());
 				atomTypes_.addIsotope(i->atomType(), iso, tope->data*mix->speciesPopulation());

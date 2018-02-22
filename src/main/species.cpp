@@ -46,10 +46,10 @@ int DUQ::nSpecies() const
 	return species_.nItems();
 }
 
-// Return first Species in the list
-Species* DUQ::species() const
+// Return Species list
+List<Species>& DUQ::species()
 {
-	return species_.first();
+	return species_;
 }
 
 // Return nth Species in the list

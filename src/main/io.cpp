@@ -254,7 +254,7 @@ bool DUQ::saveInput(const char* filename)
 		// Atoms
 		parser.writeLineF("  # Atoms\n");
 		int count = 0;
-		for (SpeciesAtom* i = sp->atoms(); i != NULL; i = i->next)
+		for (SpeciesAtom* i = sp->firstAtom(); i != NULL; i = i->next)
 		{
 			++count;
 			parser.writeLineF("  %s  %3i  %3s  %8.3f %8.3f %8.3f %8.3f '%s'\n", SpeciesBlock::keyword(SpeciesBlock::AtomKeyword), count, periodicTable.element(i->element()).symbol(), i->r().x, i->r().y, i->r().z, i->charge(), i->atomType() == NULL ? "???" : i->atomType()->name());

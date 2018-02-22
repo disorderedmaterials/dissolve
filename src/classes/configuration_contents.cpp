@@ -153,7 +153,7 @@ Molecule* Configuration::addMolecule(Species* sp)
 	Molecule* newMolecule = molecules_.add();
 
 	// Add Atoms from Species to the Molecule
-	SpeciesAtom* spi = sp->atoms();
+	SpeciesAtom* spi = sp->firstAtom();
 	for (int n=0; n<sp->nAtoms(); ++n, spi = spi->next)
 	{
 		// Create new Atom

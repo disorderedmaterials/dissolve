@@ -38,7 +38,7 @@ int Species::nAtoms() const
 }
 
 // Return the first Atom in the Species
-SpeciesAtom* Species::atoms() const
+SpeciesAtom* Species::firstAtom() const
 {
 	return atoms_.first();
 }
@@ -47,6 +47,12 @@ SpeciesAtom* Species::atoms() const
 SpeciesAtom* Species::atom(int n)
 {
 	return atoms_[n];
+}
+
+// Return the list of SpeciesAtoms
+List<SpeciesAtom>& Species::atoms()
+{
+	return atoms_;
 }
 
 // Clear current Atom selection
