@@ -144,7 +144,7 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 
 			Messenger::printVerbose("MolShake: Molecule %i now the target on process %s and contains %i Atoms.\n", molId, procPool.processInfo(), mol->nAtoms());
 
-			// Set current atom targets in ChangeStore (entire cell contents)
+			// Set current atom targets in ChangeStore (whole molecule)
 			changeStore.add(mol);
 
 			// Calculate reference energy for Molecule, including intramolecular terms

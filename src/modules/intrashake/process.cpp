@@ -137,7 +137,7 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 			// Get Molecule pointer
 			Molecule* mol = cfg->molecule(molId);
 
-			// Set current atom targets in ChangeStore (entire cell contents)
+			// Set current atom targets in ChangeStore (whole molecule)
 			changeStore.add(mol);
 
 			// Calculate reference pairpotential energy for Molecule
