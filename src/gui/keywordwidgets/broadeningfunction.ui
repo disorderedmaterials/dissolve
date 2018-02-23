@@ -75,7 +75,7 @@
   <customwidget>
    <class>TExponentialSpin</class>
    <extends>QDoubleSpinBox</extends>
-   <header>gui/texponentialspin.hui</header>
+   <header>gui/widgets/texponentialspin.hui</header>
   </customwidget>
  </customwidgets>
  <resources/>

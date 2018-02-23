@@ -1,0 +1,175 @@
+/*
+	*** ComboList Delegate
+	*** src/gui/delegates/combolist.hui
+	Copyright T. Youngs 2012-2012
+
+	This file is part of dUQ.
+
+	dUQ is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	dUQ is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#ifndef DUQ_COMBOLISTDELEGATE_H
+#define DUQ_COMBOLISTDELEGATE_H
+
+#include <QtWidgets/QItemDelegate>
+#include <QModelIndex>
+#include <QObject>
+#include <QComboBox>
+#include "templates/list.h"
+
+// Base class for source List
+class ComboListItems
+{
+	/*
+	 * Access
+	 */
+	public:
+	// Return number of items in list
+	virtual int nItems() = 0;
+	// Restart list iteration
+	virtual void restartIterator() = 0;
+	// Move to next item in list
+	virtual bool nextItem() = 0;
+	// Return text entry for nth item
+	virtual const char* currentItemText() = 0;
+};
+
+// Enum-Access Item Source
+class ComboListEnumItems : public ComboListItems
+{
+	public:
+	// Constructor
+	ComboListEnumItems(int nItems, const char** items)
+	{
+		nItems_ = nItems;
+		items_ = items;
+		currentItem_ = -1;
+	}
+
+	private:
+	// Number of items in array
+	int nItems_;
+	// Array of items
+	const char** items_;
+	// Current item index in array
+	int currentItem_;
+
+
+	/*
+	 * Access
+	 */
+	public:
+	// Return number of items in list
+	int nItems()
+	{
+		return nItems_;
+	}
+	// Restart list iteration
+	void restartIterator()
+	{
+		currentItem_ = -1;
+	}
+	// Move to next item in list
+	bool nextItem()
+	{
+		// If already at the end of the list (== -2) return false immediately
+		if (currentItem_ == -2) return false;
+		++currentItem_;
+
+		// If this is a valid index, return true
+		if (currentItem_ < nItems_) return true;
+
+		// Not a vlaid index, so set item index to -2 (end of list) and return false
+		currentItem_ = -2;
+		return false;
+	}
+	// Return text entry for nth item
+	const char* currentItemText()
+	{
+		return (currentItem_ < 0 ? "NULL" : items_[currentItem_]);
+	}
+};
+
+// Templated Item Source for ComboList (utilising T's name())
+template <class T> class ComboNameListItems : public ComboListItems
+{
+	public:
+	// Constructor
+	ComboNameListItems(const List<T>& items) : items_(items), iterator_(items)
+	{
+	}
+
+	private:
+	// Associated item list
+	const List<T>& items_;
+	// List iterator
+	ListIterator<T> iterator_;
+	// Current iteration item
+	T* currentItem_;
+
+
+	/*
+	 * Access
+	 */
+	public:
+	// Return number of items in list
+	int nItems()
+	{
+		return items_.nItems();
+	}
+	// Restart list iteration
+	void restartIterator()
+	{
+		iterator_.restart();
+	}
+	// Move to next item in list
+	bool nextItem()
+	{
+		currentItem_ = iterator_.iterate();
+		return currentItem_;
+	}
+	// Return text entry for nth item
+	const char* currentItemText()
+	{
+		return (currentItem_ ? currentItem_->name() : "NULL");
+	}
+};
+
+// Delegate class, providing list of name()s in a QComboBox
+class ComboListDelegate : public QItemDelegate
+{
+	Q_OBJECT
+
+	private:
+	// Associated item list
+	ComboListItems* items_;
+	// Parameters for editor
+	bool allowNewItems_;
+
+	public:
+	// Constructor
+	ComboListDelegate(QObject* parent, ComboListItems* items, bool allowNewItems = false);
+	// Destructor
+	virtual ~ComboListDelegate();
+	// Reimplemented virtual function to create editing widget
+	QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+	// Set the data to appear when the editor is called
+	void setEditorData(QWidget* editor, const QModelIndex &index) const;
+	// Extract data from editor, and place back into source model
+	void setModelData(QWidget* editor, QAbstractItemModel *model, const QModelIndex &index) const;
+	// Resize editor
+	void updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+};
+
+#endif

@@ -502,7 +502,7 @@
   <customwidget>
    <class>TExponentialSpin</class>
    <extends>QWidget</extends>
-   <header>gui/texponentialspin.hui</header>
+   <header>gui/widgets/texponentialspin.hui</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

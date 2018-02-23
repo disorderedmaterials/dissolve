@@ -136,6 +136,8 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 	 * Coordinate Manipulation
 	 */
 	public:
+	// Set coordinate
+	void setCoordinate(int index, double value);
 	// Set coordinates
 	void setCoordinates(const Vec3<double>& newr);
 	// Translate coordinates

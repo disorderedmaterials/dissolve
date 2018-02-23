@@ -88,6 +88,8 @@ class SpeciesAngle : public SpeciesIntra, public ListItem<SpeciesAngle>
 	static AngleFunction angleFunction(const char* s);
 	// Return functional form text
 	static const char* angleFunction(AngleFunction func);
+	// Return functional form array
+	static const char** angleFunctions();
 	// Return number of parameters required for functional form
 	static int nFunctionParameters(AngleFunction func);
 

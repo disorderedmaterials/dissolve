@@ -22,7 +22,8 @@
 #include "gui/gui.h"
 #include "gui/configurationtab.h"
 #include "gui/processingtab.h"
-#include "gui/setuptab.h"
+#include "gui/speciestab.h"
+#include "gui/systemtab.h"
 #include "gui/workspacetab.h"
 #include "classes/configuration.h"
 #include <QInputDialog>
@@ -78,11 +79,14 @@ void DUQWindow::clearAllTabs()
 	tabs_.clear();
 }
 
-// Add setup tab
-void DUQWindow::addSetupTab()
+// Add core tabs
+void DUQWindow::addCoreTabs()
 {
-	MainTab* tab = new SetupTab(this, duq_, ui.MainTabs, "Setup");
-	tabs_.own(tab);
+	MainTab* systemTab = new SystemTab(this, duq_, ui.MainTabs, "System");
+	tabs_.own(systemTab);
+
+	MainTab* speciesTab = new SpeciesTab(this, duq_, ui.MainTabs, "Species");
+	tabs_.own(speciesTab);
 }
 
 // Add tab for specified Configuration target

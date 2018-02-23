@@ -27,7 +27,7 @@
 #include "gui/keywordwidgets/broadeningfunction.h"
 #include "gui/keywordwidgets/windowfunction.hui"
 #include "gui/modulewidget.h"
-#include "gui/subwindow.h"
+#include "gui/widgets/subwindow.h"
 #include "module/module.h"
 #include "main/duq.h"
 #include "classes/configuration.h"

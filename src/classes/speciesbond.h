@@ -84,6 +84,8 @@ class SpeciesBond : public SpeciesIntra, public ListItem<SpeciesBond>
 	static BondFunction bondFunction(const char* s);
 	// Return functional form text
 	static const char* bondFunction(BondFunction func);
+	// Return functional form array
+	static const char** bondFunctions();
 	// Return number of parameters required for functional form
 	static int nFunctionParameters(BondFunction func);
 

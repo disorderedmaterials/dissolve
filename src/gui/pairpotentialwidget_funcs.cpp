@@ -21,7 +21,7 @@
 
 #include "gui/pairpotentialwidget.h"
 #include "gui/uchroma/gui/uchromaview.h"
-#include "gui/subwindow.h"
+#include "gui/widgets/subwindow.h"
 #include "main/duq.h"
 #include "classes/pairpotential.h"
 #include "classes/configuration.h"
@@ -225,6 +225,8 @@ void PairPotentialWidget::on_PreviousPotentialButton_clicked(bool checked)
 
 	setDataTargets(pairPotential_);
 	initialiseWindow(pairPotential_);
+
+	updateControls();
 }
 
 void PairPotentialWidget::on_NextPotentialButton_clicked(bool checked)
@@ -236,6 +238,8 @@ void PairPotentialWidget::on_NextPotentialButton_clicked(bool checked)
 
 	setDataTargets(pairPotential_);
 	initialiseWindow(pairPotential_);
+
+	updateControls();
 }
 
 void PairPotentialWidget::on_FullEnergyCheck_clicked(bool checked)

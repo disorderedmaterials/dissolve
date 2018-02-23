@@ -23,7 +23,7 @@
 #define DUQ_PAIRPOTENTIALWIDGET_H
 
 #include "gui/ui_pairpotentialwidget.h"
-#include "gui/subwidget.h"
+#include "gui/widgets/subwidget.h"
 
 // Forward Declarations
 class Collection;

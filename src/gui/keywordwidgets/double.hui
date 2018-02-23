@@ -24,7 +24,7 @@
 
 #include "module/keywordtypes/double.h"
 #include "gui/keywordwidgets/base.h"
-#include "gui/texponentialspin.hui"
+#include "gui/widgets/texponentialspin.hui"
 
 // Forward Declarations
 /* none */

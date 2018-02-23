@@ -128,6 +128,12 @@ const char* SpeciesBond::bondFunction(SpeciesBond::BondFunction func)
 	return BondFunctionKeywords[func];
 }
 
+// Return functional form array
+const char** SpeciesBond::bondFunctions()
+{
+	return BondFunctionKeywords;
+}
+
 // Return number of parameters required for functional form
 int SpeciesBond::nFunctionParameters(SpeciesBond::BondFunction func)
 {

@@ -23,7 +23,7 @@
 #define DUQ_MAINWINDOW_H
 
 #include "gui/ui_gui.h"
-#include "gui/subwindow.h"
+#include "gui/widgets/subwindow.h"
 #include "gui/outputhandler.hui"
 #include "gui/thread.hui"
 #include "gui/maintab.h"
@@ -66,8 +66,8 @@ class DUQWindow : public QMainWindow
 
 
 	/*
-	* File
-	*/
+	 * File
+	 */
 	public:
 	bool openFile(const char* inputFile, bool ignoreRestartFile, bool ignoreLayoutFile);
 
@@ -166,8 +166,8 @@ class DUQWindow : public QMainWindow
 	private:
 	// Clear all tabs
 	void clearAllTabs();
-	// Add setup tab
-	void addSetupTab();
+	// Add core tabs
+	void addCoreTabs();
 	// Add tab for specified Configuration target
 	void addConfigurationTab(Configuration* cfg);
 	// Add processing workspace
@@ -182,7 +182,6 @@ class DUQWindow : public QMainWindow
 	void setCurrentTab(MainTab* tab);
 	// Make specified tab the current one (by index)
 	void setCurrentTab(int tabIndex);
-	// Create widget with supplied name
 
 	
 	/*

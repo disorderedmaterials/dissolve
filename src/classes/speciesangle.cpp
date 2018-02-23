@@ -144,6 +144,12 @@ const char* SpeciesAngle::angleFunction(SpeciesAngle::AngleFunction func)
 	return AngleFunctionKeywords[func];
 }
 
+// Return functional form text
+const char** SpeciesAngle::angleFunctions()
+{
+	return AngleFunctionKeywords;
+}
+
 // Return number of parameters required for functional form
 int SpeciesAngle::nFunctionParameters(AngleFunction func)
 {

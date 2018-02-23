@@ -23,7 +23,7 @@
 #define DUQ_MODULECONTROLWIDGET_H
 
 #include "gui/ui_modulecontrolwidget.h"
-#include "gui/subwidget.h"
+#include "gui/widgets/subwidget.h"
 #include "gui/keywordwidgets/base.h"
 #include "templates/reflist.h"
 

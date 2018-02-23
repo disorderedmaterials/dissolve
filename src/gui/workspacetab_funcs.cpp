@@ -21,10 +21,9 @@
 
 #include "gui/workspacetab.h"
 #include "gui/tmdiarea.hui"
-#include "gui/subwidget.h"
+#include "gui/widgets/subwidget.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include <QMdiArea>
 #include <QMdiSubWindow>
 
 // Constructor / Destructor

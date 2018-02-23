@@ -176,6 +176,12 @@ const char* SpeciesTorsion::torsionFunction(SpeciesTorsion::TorsionFunction func
 	return TorsionFunctionKeywords[func];
 }
 
+// Return functional form array
+const char** SpeciesTorsion::torsionFunctions()
+{
+	return TorsionFunctionKeywords;
+}
+
 // Return number of parameters required for functional form
 int SpeciesTorsion::nFunctionParameters(SpeciesTorsion::TorsionFunction func)
 {

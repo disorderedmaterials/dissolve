@@ -22,7 +22,7 @@
 #ifndef DUQ_MAINTAB_H
 #define DUQ_MAINTAB_H
 
-#include "gui/subwindow.h"
+#include "gui/widgets/subwindow.h"
 #include "module/module.h"
 #include "base/charstring.h"
 #include "templates/list.h"

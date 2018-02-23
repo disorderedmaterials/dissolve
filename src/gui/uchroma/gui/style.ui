@@ -907,18 +907,18 @@
   <customwidget>
    <class>TExponentialSpin</class>
    <extends>QWidget</extends>
-   <header>gui/texponentialspin.hui</header>
+   <header>gui/widgets/texponentialspin.hui</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>ColourButton</class>
    <extends>QPushButton</extends>
-   <header>gui/colourbutton.hui</header>
+   <header>gui/widgets/colourbutton.hui</header>
   </customwidget>
   <customwidget>
    <class>GradientBar</class>
    <extends>QWidget</extends>
-   <header>gui/gradientbar.hui</header>
+   <header>gui/widgets/gradientbar.hui</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

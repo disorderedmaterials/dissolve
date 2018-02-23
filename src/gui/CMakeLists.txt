@@ -6,30 +6,17 @@ SET(gui_MOC_HDRS
   configurationtab.h
   gui.h
   maintab.h
-  mimestrings.h
-  mimetreewidgetitem.h
-  mastertermswidget.h
   modulecontrolwidget.h
   modulewidget.h
   pairpotentialwidget.h
   processingtab.h
-  setuptab.h
-  subwidget.h
-  subwindow.h
-  tmenubuttongroup.h
-  tablewidgetupdater.h
+  speciestab.h
+  systemtab.h
   workspacetab.h
 
-  colourbutton.hui
-  gradientbar.hui
-  mimetreewidget.hui
   outputhandler.hui
-  texponentialspin.hui
-  texponentialspindelegate.hui
-  thread.hui
   tmdiarea.hui
-  tmenubutton.hui
-  tpopupwidget.hui
+  thread.hui
 )
 QT5_WRAP_CPP(gui_MOC_SRCS ${gui_MOC_HDRS})
 
@@ -37,11 +24,11 @@ QT5_WRAP_CPP(gui_MOC_SRCS ${gui_MOC_HDRS})
 SET(gui_UIS
   configurationtab.ui
   gui.ui
-  mastertermswidget.ui
   modulecontrolwidget.ui
   pairpotentialwidget.ui
   processingtab.ui
-  setuptab.ui
+  speciestab.ui
+  systemtab.ui
   workspacetab.ui
 )
 QT5_WRAP_UI(gui_UIS_H ${gui_UIS})
@@ -49,32 +36,20 @@ QT5_WRAP_UI(gui_UIS_H ${gui_UIS})
 # Source files (not Qt UI files or custom .h [uih])
 SET(gui_SRCS
   configurationtab_funcs.cpp
-  colourbutton_funcs.cpp
   gui_funcs.cpp
   gui_menu.cpp
   gui_run.cpp
   gui_tabs.cpp
-  gradientbar_funcs.cpp
   maintab.cpp
-  mimestrings.cpp
-  mimetreewidget_funcs.cpp
-  mimetreewidgetitem.cpp
-  mastertermswidget_funcs.cpp
   modulecontrolwidget_funcs.cpp
   modulewidget.cpp
   outputhandler_funcs.cpp
   pairpotentialwidget_funcs.cpp
   processingtab_funcs.cpp
-  setuptab_funcs.cpp
-  subwidget.cpp
-  subwindow.cpp
-  texponentialspin_funcs.cpp
-  texponentialspindelgate_funcs.cpp
-  tmdiarea_funcs.cpp
+  speciestab_funcs.cpp
+  systemtab_funcs.cpp
   thread_funcs.cpp
-  tmenubutton_funcs.cpp
-  tmenubuttongroup.cpp
-  tpopupwidget_funcs.cpp
+  tmdiarea_funcs.cpp
   workspacetab_funcs.cpp
 )
 
@@ -98,5 +73,7 @@ target_include_directories(gui PRIVATE
   ${FREETYPE_INCLUDE_DIRS}
 )
 
+add_subdirectory(delegates)
 add_subdirectory(keywordwidgets)
 add_subdirectory(uchroma)
+add_subdirectory(widgets)

@@ -97,6 +97,8 @@ class SpeciesTorsion : public SpeciesIntra, public ListItem<SpeciesTorsion>
 	static TorsionFunction torsionFunction(const char* s);
 	// Return functional form text
 	static const char* torsionFunction(TorsionFunction func);
+	// Return functional form array
+	static const char** torsionFunctions();
 	// Return number of parameters required for functional form
 	static int nFunctionParameters(TorsionFunction func);
 

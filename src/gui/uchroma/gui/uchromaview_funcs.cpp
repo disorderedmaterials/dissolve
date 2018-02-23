@@ -21,7 +21,7 @@
 
 #include "gui/uchroma/gui/uchromaview.h"
 #include "gui/uchroma/render/fontinstance.h"
-#include "gui/mimestrings.h"
+#include "gui/widgets/mimestrings.h"
 #include "templates/reflist.h"
 #include "templates/variantpointer.h"
 #include <QMessageBox>

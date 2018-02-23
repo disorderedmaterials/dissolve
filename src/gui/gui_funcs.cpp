@@ -21,7 +21,6 @@
 
 #include "main/duq.h"
 #include "gui/gui.h"
-#include "gui/mastertermswidget.h"
 #include "gui/modulecontrolwidget.h"
 #include "gui/pairpotentialwidget.h"
 #include "base/lineparser.h"
@@ -142,7 +141,7 @@ bool DUQWindow::openFile(const char* inputFile, bool ignoreRestartFile, bool ign
 	refreshing_ = true;
 
 	// Add on necessary tabs
-	addSetupTab();
+	addCoreTabs();
 	ListIterator<Configuration> configIterator(duq_.configurations());
 	while (Configuration* cfg = configIterator.iterate()) addConfigurationTab(cfg);
 	addProcessingTab();
@@ -192,11 +191,6 @@ SubWidget* DUQWindow::createSubWidget(const char* widgetName, const char* title)
 	{
 		PairPotentialWidget* ppWidget = new PairPotentialWidget(NULL, duq_, title);
 		subWidget = ppWidget;
-	}
-	else if (DUQSys::sameString(widgetName, "MasterTerms"))
-	{
-		MasterTermsWidget* masterTermsWidget = new MasterTermsWidget(NULL, duq_, title);
-		subWidget = masterTermsWidget;
 	}
 	else if (DUQSys::sameString(widgetName, "ModuleControl"))
 	{

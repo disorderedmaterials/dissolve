@@ -192,6 +192,12 @@ SpeciesBond* SpeciesAtom::hasBond(SpeciesAtom* j)
  * Coordinate Manipulation
  */
 
+// Set coordinate
+void SpeciesAtom::setCoordinate(int index, double value)
+{
+	r_.set(index, value);
+}
+
 // Set coordinates of atom
 void SpeciesAtom::setCoordinates(const Vec3<double>& newr)
 {

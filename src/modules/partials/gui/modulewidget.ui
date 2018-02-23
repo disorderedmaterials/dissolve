@@ -171,7 +171,7 @@
   <customwidget>
    <class>MimeTreeWidget</class>
    <extends>QTreeWidget</extends>
-   <header>gui/mimetreewidget.hui</header>
+   <header>gui/widgets/mimetreewidget.hui</header>
   </customwidget>
   <customwidget>
    <class>UChromaViewWidget</class>
