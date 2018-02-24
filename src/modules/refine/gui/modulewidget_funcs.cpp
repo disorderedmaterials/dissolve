@@ -21,7 +21,7 @@
 
 #include "modules/refine/gui/modulewidget.h"
 #include "gui/uchroma/gui/uchromaview.h"
-#include "gui/mimetreewidgetitem.h"
+#include "gui/widgets/mimetreewidgetitem.h"
 #include "main/duq.h"
 #include "modules/refine/refine.h"
 #include "classes/atomtype.h"
