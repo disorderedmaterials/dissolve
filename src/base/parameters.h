@@ -27,7 +27,7 @@
 #include "templates/mpilistitem.h"
 #include "base/charstring.h"
 
-// Short-Range Interaction Prameters Definition
+// Short-Range Interaction Parameters Definition
 class Parameters : public MPIListItem<Parameters>
 {
 	public:
