@@ -28,7 +28,6 @@
 AtomType::AtomType() : MPIListItem<AtomType>()
 {
 	element_ = 0;
-	parameters_ = NULL;
 	name_ = "XX";
 	exchangeable_ = false;
 }
@@ -66,14 +65,8 @@ int AtomType::element() const
 	return element_;
 }
 
-// Set associated Parameters
-void AtomType::setParameters(Parameters* params)
-{
-	parameters_ = params;
-}
-
-// Return associated Parameters
-Parameters* AtomType::parameters() const
+// Return interaction Parameters
+Parameters& AtomType::parameters()
 {
 	return parameters_;
 }
@@ -111,18 +104,14 @@ int AtomType::index() const
 bool AtomType::broadcast(ProcessPool& procPool, int root)
 {
 #ifdef PARALLEL
-	int index;
-
 	// Send name
 	procPool.broadcast(name_, root);
 	
 	// Send element
 	procPool.broadcast(element_,root);
 	
-	// Get index of Parameters, 
-	if (procPool.isMaster()) index = PeriodicTable::element(element_).indexOfParameters(parameters_);
-	procPool.broadcast(index, root);
-	parameters_ = PeriodicTable::element(element_).parameters(index);
+	// Send Parameters
+	parameters_.broadcast(procPool, root);
 
 	// Send exchangeable flag
 	procPool.broadcast(exchangeable_, root);

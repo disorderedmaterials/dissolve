@@ -66,7 +66,6 @@ bool PairPotentialsBlock::parse(LineParser& parser, DUQ* duq)
 	PairPotential* pot;
 	PairPotential::ShortRangeType srType;
 	PairPotential::TruncationScheme cTrunc = PairPotential::ShiftedTruncation;
-	Parameters* params;
 	bool blockDone = false, error = false;
 
 	while (!parser.eofOrBlank())
@@ -139,14 +138,6 @@ bool PairPotentialsBlock::parse(LineParser& parser, DUQ* duq)
 					pot = duq->addPairPotential(at1, at2);
 				}
 
-				// Check Parameters for AtomTypes
-				if ((!at1->parameters()) || (!at2->parameters()))
-				{
-					Messenger::error("Parameters for AtomType '%s' don't yet exist, so can't set up a PairPotential.\n", at1->parameters() ? parser.argc(3) : parser.argc(2));
-					error = true;
-					break;
-				}
-
 				pot->setShortRangeType(srType);
 				if (!pot->setParameters(at1, at2)) error = true;
 				break;
@@ -179,14 +170,6 @@ bool PairPotentialsBlock::parse(LineParser& parser, DUQ* duq)
 							pot = duq->addPairPotential(at1, at2);
 						}
 
-						// Check Parameters for AtomTypes
-						if ((!at1->parameters()) || (!at2->parameters()))
-						{
-							Messenger::error("Parameters for AtomType '%s' don't exist, so can't set up a PairPotential.\n", at1->parameters() ? at2->name() : at1->name());
-							error = true;
-							break;
-						}
-
 						pot->setShortRangeType(srType);
 						pot->setParameters(at1, at2);
 					}
@@ -206,18 +189,9 @@ bool PairPotentialsBlock::parse(LineParser& parser, DUQ* duq)
 					break;
 				}
 
-				// Do we need to create some new parameters for the AtomType?
-				if (!at1->parameters())
-				{
-					params = PeriodicTable::element(at1->element()).addParameters();
-					params->setName(at1->name());
-					at1->setParameters(params);
-				}
-
-				// Get Parameters pointer and set values
-				params = at1->parameters();
-				params->setCharge(parser.argd(2));
-				for (int n=3; n<parser.nArgs(); ++n) params->setParameter(n-3, parser.argd(n));
+				// Set parameter values
+				at1->parameters().setCharge(parser.argd(2));
+				for (int n=3; n<parser.nArgs(); ++n) at1->parameters().setParameter(n-3, parser.argd(n));
 				break;
 			case (PairPotentialsBlock::RangeKeyword):
 				duq->setPairPotentialRange(parser.argd(1));

@@ -166,15 +166,6 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 					Messenger::print("Creating AtomType '%s'...\n", parser.argc(6));
 					at = duq->addAtomType(el);
 					at->setName(parser.argc(6));
-
-					// Check to see if some named potential parameters exist, corrsponding to the AtomType name
-					params = PeriodicTable::element(el).findParameters(parser.argc(6));
-					if (params)
-					{
-						at->setParameters(params);
-						Messenger::print("Initial parameters set for AtomType '%s' : charge=%f, param1=%f, param2=%f, param3=%f, param4=%f.\n", parser.argc(6), params->charge(), params->parameter(0), params->parameter(1), params->parameter(2), params->parameter(3));
-					}
-					else Messenger::print("No Parameters called '%s' exist to associate to AtomType - they must be added in a PairPotentials block.\n", parser.argc(6));
 				}
 
 				// Finally, set AtomType for the Atom

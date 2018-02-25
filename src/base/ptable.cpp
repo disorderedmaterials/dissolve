@@ -224,80 +224,80 @@ bool PeriodicTable::loadIsotopes(const char* filename)
 }
 
 // Load atomtype information from file specified
-bool PeriodicTable::loadParameters(const char* filename)
-{
-	Messenger::print("Loading atomtypes from file '%s'\n", filename);
-	
-	// Open the specified file...
-	LineParser parser;
-	parser.openInput(filename);
-	if (!parser.isFileGoodForReading())
-	{
-		Messenger::print("Couldn't open atomtypes file.\n");
-		return false;
-	}
-	
-	// First line contains number of comment lines to follow
-	parser.getArgsDelim(LineParser::Defaults);
-	int nSkip = parser.argi(0);
-	Messenger::printVerbose("Skipping %i lines at start of atomtypes definitions file...\n", nSkip);
-	parser.skipLines(nSkip);
-	
-	// Read data until EOF
-	int Z, count = 0;
-	Parameters* params;
-	bool failed = false;
-	while (parser.getArgsDelim(LineParser::SkipBlanks | LineParser::StripComments | LineParser::UseQuotes) == 0)
-	{
-		// First, convert argument 1 into an element
-		Z = find(parser.argc(0));
-		if (Z == 0)
-		{
-			Messenger::error("Element '%s' unrecognised in atomtype definitions file.\n", parser.argc(0));
-			parser.closeFiles();
-			return false;
-		}
-
-		// Did we succeed?
-		if (failed)
-		{
-			Messenger::error("Error reading atomtype data from file, line = '%s'.\n", parser.line());
-			parser.closeFiles();
-			return false;
-		}
-		
-		// Create new isotope definition for target element
-		params = elements_[Z].addParameters();
-		params->setName(parser.argc(1));
-		params->setCharge(parser.argd(2));
-		params->setParameter(0, parser.argd(3));
-		params->setParameter(1, parser.argd(4));
-		params->setDescription(parser.argc(5));
-
-		++count;
-
-		if (parser.eofOrBlank()) break;;
-	}
-	parser.closeFiles();
-	
-	Messenger::print("Loaded %i atomtype definitions from file.\n", count);
-	
-	// Go through Elements and check for no atomtype definitions, adding a basic one if necessary
-	for (Z=0; Z<nElements_; ++Z)
-	{
-		// Search defined isotopes for natural definition (A = 0)
-		if (elements_[Z].nParameters() != 0) continue;
-
-		Messenger::printVerbose("Creating generic atomtype for element %i (%s).\n", Z, elements_[Z].name());
-		params = elements_[Z].addParameters();
-		params->setName(elements_[Z].symbol());
-		params->setDescription(elements_[Z].name());
-		params->setParameter(0, 0.1);
-		params->setParameter(1, 3.0);
-	}
-
-	return true;
-}
+// bool PeriodicTable::loadParameters(const char* filename)
+// {
+// 	Messenger::print("Loading atomtypes from file '%s'\n", filename);
+// 	
+// 	// Open the specified file...
+// 	LineParser parser;
+// 	parser.openInput(filename);
+// 	if (!parser.isFileGoodForReading())
+// 	{
+// 		Messenger::print("Couldn't open atomtypes file.\n");
+// 		return false;
+// 	}
+// 	
+// 	// First line contains number of comment lines to follow
+// 	parser.getArgsDelim(LineParser::Defaults);
+// 	int nSkip = parser.argi(0);
+// 	Messenger::printVerbose("Skipping %i lines at start of atomtypes definitions file...\n", nSkip);
+// 	parser.skipLines(nSkip);
+// 	
+// 	// Read data until EOF
+// 	int Z, count = 0;
+// 	Parameters* params;
+// 	bool failed = false;
+// 	while (parser.getArgsDelim(LineParser::SkipBlanks | LineParser::StripComments | LineParser::UseQuotes) == 0)
+// 	{
+// 		// First, convert argument 1 into an element
+// 		Z = find(parser.argc(0));
+// 		if (Z == 0)
+// 		{
+// 			Messenger::error("Element '%s' unrecognised in atomtype definitions file.\n", parser.argc(0));
+// 			parser.closeFiles();
+// 			return false;
+// 		}
+// 
+// 		// Did we succeed?
+// 		if (failed)
+// 		{
+// 			Messenger::error("Error reading atomtype data from file, line = '%s'.\n", parser.line());
+// 			parser.closeFiles();
+// 			return false;
+// 		}
+// 		
+// 		// Create new isotope definition for target element
+// 		params = elements_[Z].addParameters();
+// 		params->setName(parser.argc(1));
+// 		params->setCharge(parser.argd(2));
+// 		params->setParameter(0, parser.argd(3));
+// 		params->setParameter(1, parser.argd(4));
+// 		params->setDescription(parser.argc(5));
+// 
+// 		++count;
+// 
+// 		if (parser.eofOrBlank()) break;;
+// 	}
+// 	parser.closeFiles();
+// 	
+// 	Messenger::print("Loaded %i atomtype definitions from file.\n", count);
+// 	
+// 	// Go through Elements and check for no atomtype definitions, adding a basic one if necessary
+// 	for (Z=0; Z<nElements_; ++Z)
+// 	{
+// 		// Search defined isotopes for natural definition (A = 0)
+// 		if (elements_[Z].nParameters() != 0) continue;
+// 
+// 		Messenger::printVerbose("Creating generic atomtype for element %i (%s).\n", Z, elements_[Z].name());
+// 		params = elements_[Z].addParameters();
+// 		params->setName(elements_[Z].symbol());
+// 		params->setDescription(elements_[Z].name());
+// 		params->setParameter(0, 0.1);
+// 		params->setParameter(1, 3.0);
+// 	}
+// 
+// 	return true;
+// }
 
 // Return atomic number of element in string
 int PeriodicTable::find(const char* query)

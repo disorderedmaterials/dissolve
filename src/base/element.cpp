@@ -121,47 +121,6 @@ Isotope* Element::hasIsotope(int A) const
 }
 
 /*
- * Parameters
- */
-
-// Add new Parameters to this element
-Parameters* Element::addParameters()
-{
-	return parameters_.add();
-}
-
-// Return first Parameters
-Parameters* Element::parameters() const
-{
-	return parameters_.first();
-}
-
-// Return nth Parameters
-Parameters* Element::parameters(int n)
-{
-	return parameters_[n];
-}
-
-// Return number of Parameters in list
-int Element::nParameters() const
-{
-	return parameters_.nItems();
-}
-
-// Find Parameters with name specified
-Parameters* Element::findParameters(const char* name) const
-{
-	for (Parameters* params = parameters_.first(); params != NULL; params = params->next) if (strcmp(params->name(),name) == 0) return params;
-	return NULL;
-}
-
-// Return index of specified parameters
-int Element::indexOfParameters(Parameters* p) const
-{
-	return parameters_.indexOf(p);
-}
-
-/*
  * Parallel Comms
  */
 
@@ -181,14 +140,6 @@ bool Element::broadcast(ProcessPool& procPool)
 	if (isotopeBroadcaster.failed())
 	{
 		Messenger::print("Failed to broadcast Isotope data for element '%s'.\n", name_.get());
-		return false;
-	}
-
-	// Add parameters
-	BroadcastList<Parameters> parameterBroadcaster(procPool, 0, parameters_);
-	if (parameterBroadcaster.failed())
-	{
-		Messenger::print("Failed to broadcast Parameter data for element '%s'.\n", name_.get());
 		return false;
 	}
 #endif

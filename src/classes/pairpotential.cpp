@@ -169,13 +169,8 @@ bool PairPotential::setParameters(AtomType* typeI, AtomType* typeJ)
 	atomTypeI_ = typeI;
 	atomTypeJ_ = typeJ;
 	setXYDataNames();
-	Parameters* paramsI = atomTypeI_->parameters();
-	Parameters* paramsJ = atomTypeJ_->parameters();
-	if ((paramsI == NULL) || (paramsJ == NULL))
-	{
-		Messenger::error("NULL_POINTER - One or both AtomTypes ('%s' and '%s') given to PairPotential::setParameters() contain a NULL Parameters pointer.\n", atomTypeI_->name(), atomTypeJ_->name());
-		return false;
-	}
+	Parameters& paramsI = atomTypeI_->parameters();
+	Parameters& paramsJ = atomTypeJ_->parameters();
 
 	// Combine / set parameters as necessary, depending on the sr interaction type of this PairPotential
 	switch (shortRangeType_)
@@ -188,10 +183,10 @@ bool PairPotential::setParameters(AtomType* typeI, AtomType* typeJ)
 			 * Parameter 0 = Epsilon
 			 * Parameter 1 = Sigma
 			 */
-			parameters_[0] = sqrt(paramsI->parameter(0) * paramsJ->parameter(0));
-			parameters_[1] = (paramsI->parameter(1) + paramsJ->parameter(1))*0.5;
-			chargeI_ = paramsI->charge();
-			chargeJ_ = paramsJ->charge();
+			parameters_[0] = sqrt(paramsI.parameter(0) * paramsJ.parameter(0));
+			parameters_[1] = (paramsI.parameter(1) + paramsJ.parameter(1))*0.5;
+			chargeI_ = paramsI.charge();
+			chargeJ_ = paramsJ.charge();
 			break;
 		case (PairPotential::LennardJonesGeometricType):
 			/*
@@ -199,10 +194,10 @@ bool PairPotential::setParameters(AtomType* typeI, AtomType* typeJ)
 			 * Parameter 0 = Epsilon
 			 * Parameter 1 = Sigma
 			 */
-			parameters_[0] = sqrt(paramsI->parameter(0) * paramsJ->parameter(0));
-			parameters_[1] = sqrt(paramsI->parameter(1) * paramsJ->parameter(1));
-			chargeI_ = paramsI->charge();
-			chargeJ_ = paramsJ->charge();
+			parameters_[0] = sqrt(paramsI.parameter(0) * paramsJ.parameter(0));
+			parameters_[1] = sqrt(paramsI.parameter(1) * paramsJ.parameter(1));
+			chargeI_ = paramsI.charge();
+			chargeJ_ = paramsJ.charge();
 			break;
 		default:
 			Messenger::error("Short-range type %i is not accounted for in PairPotential::setParameters().\n", shortRangeType_);

@@ -23,10 +23,10 @@
 #define DUQ_ATOMTYPE_H
 
 #include "base/charstring.h"
+#include "base/parameters.h"
 #include "templates/mpilistitem.h"
 
 // Forward Declarations
-class Parameters;
 class Isotope;
 
 /*
@@ -49,8 +49,8 @@ class AtomType : public MPIListItem<AtomType>
 	CharString name_;
 	// Associated Element
 	int element_;
-	// Associated Parameters
-	Parameters* parameters_;
+	// Interaction Parameters
+	Parameters parameters_;
 	// Whether this AtomType is exchangeable
 	bool exchangeable_;
 	// Index of this type in the master type index
@@ -63,12 +63,10 @@ class AtomType : public MPIListItem<AtomType>
 	const char* name() const;
 	// Set atomic element
 	void setElement(int el);
-	// Return atomic element
+	// Return atomic Element
 	int element() const;
-	// Set associated Parameters
-	void setParameters(Parameters* params);
-	// Return associated Parameters
-	Parameters* parameters() const;
+	// Return interaction Parameters
+	Parameters& parameters();
 	// Set whether this AtomType is exchangeable
 	void setExchangeable(bool b);
 	// Return whether this AtomType is exchangeable
