@@ -40,7 +40,7 @@ PairPotentialWidget::PairPotentialWidget(QWidget* parent, DUQ& dUQ, const char* 
 	uChromaView_ = ui.PlotWidget;
 
 	// Initialise window contents
-	pairPotential_ = duq_.pairPotentials();
+	pairPotential_ = duq_.pairPotentials().first();
 	initialiseWindow(pairPotential_);
 	initialiseControls(pairPotential_, true);
 
@@ -234,7 +234,7 @@ void PairPotentialWidget::on_NextPotentialButton_clicked(bool checked)
 	if (!pairPotential_) return;
 
 	pairPotential_ = pairPotential_->next;
-	if (pairPotential_ == NULL) pairPotential_ = duq_.pairPotentials();
+	if (pairPotential_ == NULL) pairPotential_ = duq_.pairPotentials().first();
 
 	setDataTargets(pairPotential_);
 	initialiseWindow(pairPotential_);

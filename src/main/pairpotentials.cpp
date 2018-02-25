@@ -99,9 +99,9 @@ PairPotential* DUQ::addPairPotential(AtomType* at1, AtomType* at2)
 }
 
 // Return first PaiPotential in list
-PairPotential* DUQ::pairPotentials() const
+const List<PairPotential>& DUQ::pairPotentials() const
 {
-	return pairPotentials_.first();
+	return pairPotentials_;
 }
 
 // Return nth PairPotential in list

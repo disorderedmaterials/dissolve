@@ -192,8 +192,8 @@ class DUQ
 	int nPairPotentials() const;
 	// Add new pair potential to list
 	PairPotential* addPairPotential(AtomType* at1, AtomType* at2);
-	// Return first PairPotential in list
-	PairPotential* pairPotentials() const;
+	// Return PairPotentials list
+	const List<PairPotential>& pairPotentials() const;
 	// Return nth PairPotential in list
 	PairPotential* pairPotential(int n);
 	// Return whether specified PairPotential is defined
