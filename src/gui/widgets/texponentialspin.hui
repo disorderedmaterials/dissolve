@@ -98,10 +98,12 @@ class TExponentialSpin : public QAbstractSpinBox
 	 * Slots
 	 */
 	private slots:
-	// Update value from current textEdit text
-	void updateValueFromText();
 	// Flag that the text has been modified since the last emit of valueChanged()
 	void textChanged(QString text);
+
+	public slots:
+	// Update value from current textEdit text
+	void updateValueFromText();
 
 
 	/*

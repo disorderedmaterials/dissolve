@@ -20,7 +20,7 @@
 */
 
 #include "gui/delegates/texponentialspin.hui"
-
+#include <stdio.h>
 TExponentialSpinDelegate::TExponentialSpinDelegate(QObject *parent, double vmin, double vmax, double vstep, double nDecimals) : QItemDelegate(parent)
 {
 	// Private variables
@@ -31,7 +31,7 @@ TExponentialSpinDelegate::TExponentialSpinDelegate(QObject *parent, double vmin,
 }
 
 // Create editor
-QWidget* TExponentialSpinDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
+QWidget* TExponentialSpinDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
 	// Create editor widget (in this case a double spin box) and set some properties
 	TExponentialSpin* editor = new TExponentialSpin(parent);
@@ -44,7 +44,7 @@ QWidget* TExponentialSpinDelegate::createEditor(QWidget* parent, const QStyleOpt
 }
 
 // Set initial value in editor
-void TExponentialSpinDelegate::setEditorData(QWidget* editor, const QModelIndex &index) const
+void TExponentialSpinDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const
 {
 	double value = index.model()->data(index, Qt::EditRole).toDouble();
 
@@ -53,17 +53,19 @@ void TExponentialSpinDelegate::setEditorData(QWidget* editor, const QModelIndex 
 }
 
 // Get value from editing widget, and set back in model
-void TExponentialSpinDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex &index) const
+void TExponentialSpinDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const
 {
 	TExponentialSpin* spinBox = static_cast<TExponentialSpin*>(editor);
-	spinBox->interpretText();
+
+	// Make sure the value in the spinBox has been updated from the current text
+	spinBox->updateValueFromText();
 	double value = spinBox->value();
 
 	model->setData(index, value, Qt::EditRole);
 }
 
 // Update widget geometry
-void TExponentialSpinDelegate::updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
+void TExponentialSpinDelegate::updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
 	editor->setGeometry(option.rect);
 }
