@@ -156,7 +156,8 @@ bool DUQ::loadInput(const char* filename)
 				if (parser.hasArg(2))
 				{
 					niceName = DUQSys::niceName(parser.argc(2));
-					if (ModuleList::findInstanceByUniqueName(niceName))
+					Module* existingModule = ModuleList::findInstanceByUniqueName(niceName);
+					if (existingModule && (existingModule != module))
 					{
 						Messenger::error("A Module with the unique name '%s' already exist.\n", niceName.get());
 						error = true;
