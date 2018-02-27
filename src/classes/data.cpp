@@ -33,6 +33,9 @@ Data::Data() : ListItem<Data>()
 	neutronNormalisation_ = PartialsModule::NoNormalisation;
 	type_ = Data::NeutronData;
 
+	// Associated Module
+	associatedModule_ = NULL;
+
 	// Setup
 	setUp_ = false;
 }
