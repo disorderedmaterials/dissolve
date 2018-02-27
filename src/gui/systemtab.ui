@@ -834,7 +834,7 @@
          <item row="4" column="0" colspan="2">
           <widget class="QCheckBox" name="CoulombIncludeCheck">
            <property name="text">
-            <string>Include Coulomb in PairPotential</string>
+            <string>Include Coulomb terms</string>
            </property>
           </widget>
          </item>
@@ -921,6 +921,28 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_6">
            <item>
+            <widget class="QToolButton" name="RegenerateAllPairPotentialsButton">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Regenerate All</string>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>16</width>
+               <height>16</height>
+              </size>
+             </property>
+             <property name="toolButtonStyle">
+              <enum>Qt::ToolButtonTextBesideIcon</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
             <spacer name="horizontalSpacer_5">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
@@ -934,7 +956,7 @@
             </spacer>
            </item>
            <item>
-            <widget class="QToolButton" name="RegenerateAllPairPotentialsButton">
+            <widget class="QToolButton" name="UpdatePairPotentialsButton">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -942,7 +964,7 @@
               </sizepolicy>
              </property>
              <property name="text">
-              <string>Regenerate All</string>
+              <string>Update All</string>
              </property>
              <property name="icon">
               <iconset resource="icons.qrc">
@@ -969,10 +991,6 @@
              </property>
              <property name="text">
               <string>Generate Missing</string>
-             </property>
-             <property name="icon">
-              <iconset resource="icons.qrc">
-               <normaloff>:/general/icons/general_repeat.svg</normaloff>:/general/icons/general_repeat.svg</iconset>
              </property>
              <property name="iconSize">
               <size>

@@ -212,8 +212,10 @@ class DUQ
 	bool savePairPotentials(const char* baseName) const;
 	// Return map for PairPotentials
 	const PotentialMap& potentialMap();
-	// Regenerate all currently-defined PairPotentials
-	void regeneratePairPotentials();
+	// Regenerate all PairPotentials, replacing those currently defined
+	void regeneratePairPotentials(PairPotential::ShortRangeType srType);
+	// Update all currently-defined PairPotentials
+	void updateCurrentPairPotentials();
 	// Generate any missing PairPotentials using the supplied short-range form
 	void generateMissingPairPotentials(PairPotential::ShortRangeType srType);
 

@@ -168,7 +168,7 @@
             <bool>true</bool>
            </property>
            <property name="columnCount">
-            <number>5</number>
+            <number>6</number>
            </property>
            <attribute name="horizontalHeaderVisible">
             <bool>true</bool>
@@ -200,6 +200,11 @@
            <column>
             <property name="text">
              <string>Z</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Charge</string>
             </property>
            </column>
            <column>

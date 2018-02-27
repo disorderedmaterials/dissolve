@@ -84,12 +84,19 @@ class SystemTab : public QWidget, public MainTab
 	private:
 
 	private slots:
+	// Atom Types
+	void on_AtomTypeAddButton_clicked(bool checked);
+	void on_AtomTypeRemoveButton_clicked(bool checked);
+	void on_AtomTypeLibraryButton_clicked(bool checked);
+	void on_AtomTypesTable_itemChanged(QTableWidgetItem* w);
+	// Pair Potentials
 	void on_PairPotentialRangeSpin_valueChanged(double value);
 	void on_PairPotentialDeltaSpin_valueChanged(double value);
 	void on_CoulombIncludeCheck_clicked(bool checked);
 	void on_ShortRangeTruncationCombo_currentIndexChanged(int index);
 	void on_CoulombTruncationCombo_currentIndexChanged(int index);
 	void on_RegenerateAllPairPotentialsButton_clicked(bool checked);
+	void on_UpdatePairPotentialsButton_clicked(bool checked);
 	void on_GenerateMissingPairPotentialsButton_clicked(bool checked);
 	void on_PairPotentialsTable_itemChanged(QTableWidgetItem* w);
 

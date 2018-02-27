@@ -142,7 +142,16 @@ const PotentialMap& DUQ::potentialMap()
 }
 
 // Regenerate all currently-defined PairPotentials
-void DUQ::regeneratePairPotentials()
+void DUQ::regeneratePairPotentials(PairPotential::ShortRangeType srType)
+{
+	potentialMap_.clear();
+	pairPotentials_.clear();
+
+	generateMissingPairPotentials(srType);
+}
+
+// Update all currently-defined PairPotentials
+void DUQ::updateCurrentPairPotentials()
 {
 	for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next) pot->setUp(pairPotentialRange_, pairPotentialDelta_, pairPotentialsIncludeCoulomb_);
 }

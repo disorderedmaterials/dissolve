@@ -34,6 +34,8 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, DUQ& dUQ
 	// Set up user interface
 	ui.setupUi(this);
 
+	refreshing_ = true;
+
 	// Add UChromaWidgets to the two PlotWidgets
 	ViewPane* viewPane;
 

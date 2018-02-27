@@ -37,6 +37,8 @@ SystemTab::SystemTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const c
 {
 	ui.setupUi(this);
 
+	refreshing_ = true;
+
 	/*
 	 * Master Terms
 	 */
@@ -86,6 +88,8 @@ SystemTab::SystemTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const c
 
 	// -- Charges / Parameters
 	for (int n=3; n<9; ++n) ui.PairPotentialsTable->setItemDelegateForColumn(n, new TExponentialSpinDelegate(this));
+
+	refreshing_ = false;
 }
 
 SystemTab::~SystemTab()
@@ -403,6 +407,58 @@ void SystemTab::enableSensitiveControls()
  * Signals / Slots
  */
 
+void SystemTab::on_AtomTypeAddButton_clicked(bool checked)
+{
+}
+
+void SystemTab::on_AtomTypeRemoveButton_clicked(bool checked)
+{
+}
+
+void SystemTab::on_AtomTypeLibraryButton_clicked(bool checked)
+{
+}
+
+void SystemTab::on_AtomTypesTable_itemChanged(QTableWidgetItem* w)
+{
+	if (refreshing_) return;
+
+	// Get target AtomType from the passed widget
+	AtomType* atomType = w ? VariantPointer<AtomType>(w->data(Qt::UserRole)) : NULL;
+	if (!atomType) return;
+
+	// Column of passed item tells us the type of data we need to change
+	switch (w->column())
+	{
+		// Name
+		case (0):
+			atomType->setName(qPrintable(w->text()));
+			duqWindow_->setModified();
+			break;
+		// Exchangeable flag
+		case (1):
+			atomType->setExchangeable(w->checkState() == Qt::Checked);
+			duqWindow_->setModified();
+			break;
+		// Charge
+		case (2):
+			atomType->parameters().setCharge(w->text().toDouble());
+			duqWindow_->setModified();
+			break;
+		// Parameters
+		case (3):
+		case (4):
+		case (5):
+		case (6):
+			atomType->parameters().setParameter(w->column()-3, w->text().toDouble());
+			duqWindow_->setModified();
+			break;
+		default:
+			Messenger::error("Don't know what to do with data from column %i of AtomTypes table.\n", w->column());
+			break;
+	}
+}
+
 void SystemTab::on_PairPotentialRangeSpin_valueChanged(double value)
 {
 	if (refreshing_) return;
@@ -451,11 +507,40 @@ void SystemTab::on_CoulombTruncationCombo_currentIndexChanged(int index)
 
 void SystemTab::on_RegenerateAllPairPotentialsButton_clicked(bool checked)
 {
-	duq_.regeneratePairPotentials();
+	duq_.regeneratePairPotentials((PairPotential::ShortRangeType) ui.ShortRangeFormCombo->currentIndex());
+
+	refreshing_ = true;
+
+	TableWidgetUpdater<SystemTab,PairPotential> ppUpdater(ui.PairPotentialsTable, duq_.pairPotentials(), this, &SystemTab::updatePairPotentialsTableRow);
+	ui.PairPotentialsTable->resizeColumnsToContents();
+
+	refreshing_ = false;
+}
+
+void SystemTab::on_UpdatePairPotentialsButton_clicked(bool checked)
+{
+	duq_.updateCurrentPairPotentials();
+
+	updateControls();
+
+	refreshing_ = true;
+
+	TableWidgetUpdater<SystemTab,PairPotential> ppUpdater(ui.PairPotentialsTable, duq_.pairPotentials(), this, &SystemTab::updatePairPotentialsTableRow);
+	ui.PairPotentialsTable->resizeColumnsToContents();
+
+	refreshing_ = false;
 }
 
 void SystemTab::on_GenerateMissingPairPotentialsButton_clicked(bool checked)
 {
+	duq_.generateMissingPairPotentials((PairPotential::ShortRangeType) ui.ShortRangeFormCombo->currentIndex());
+
+	refreshing_ = true;
+
+	TableWidgetUpdater<SystemTab,PairPotential> ppUpdater(ui.PairPotentialsTable, duq_.pairPotentials(), this, &SystemTab::updatePairPotentialsTableRow);
+	ui.PairPotentialsTable->resizeColumnsToContents();
+
+	refreshing_ = false;
 }
 
 void SystemTab::on_PairPotentialsTable_itemChanged(QTableWidgetItem* w)

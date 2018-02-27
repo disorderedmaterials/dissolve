@@ -35,11 +35,15 @@ SpeciesTab::SpeciesTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const
 {
 	ui.setupUi(this);
 
+	refreshing_ = true;
+
 	// SpeciesAtomTable
-	for (int n=1; n<4; ++n) ui.SpeciesAtomTable->setItemDelegateForColumn(n, new TExponentialSpinDelegate(this));
-	ui.SpeciesAtomTable->setItemDelegateForColumn(4, new ComboListDelegate(this, new ComboNameListItems<AtomType>(duq_.atomTypeList())));
-	ui.SpeciesAtomTable->setHorizontalHeaderLabels(QStringList() << "E" << "X" << "Y" << "Z" << "AtomType");
+	for (int n=1; n<5; ++n) ui.SpeciesAtomTable->setItemDelegateForColumn(n, new TExponentialSpinDelegate(this));
+	ui.SpeciesAtomTable->setItemDelegateForColumn(5, new ComboListDelegate(this, new ComboNameListItems<AtomType>(duq_.atomTypeList())));
+// 	ui.SpeciesAtomTable->setHorizontalHeaderLabels(QStringList() << "E" << "X" << "Y" << "Z" << "AtomType");
 	ui.SpeciesAtomTable->horizontalHeader()->setFont(duqWindow->font());
+
+	refreshing_ = false;
 }
 
 SpeciesTab::~SpeciesTab()
@@ -71,7 +75,14 @@ void SpeciesTab::updateControls()
 {
 	refreshing_ = true;
 
+	// Species List
 	ListWidgetUpdater<SpeciesTab,Species> speciesUpdater(ui.SpeciesList, duq_.species(), this, &SpeciesTab::updateSpeciesListRow);
+
+	Species* species = currentSpecies();
+
+	// SpeciesAtom Table
+	if (!species) ui.SpeciesAtomTable->clear();
+	else TableWidgetUpdater<SpeciesTab,SpeciesAtom> speciesUpdater(ui.SpeciesAtomTable, species->atoms(), this, &SpeciesTab::updateSpeciesAtomTableRow);
 
 	refreshing_ = false;
 }
@@ -142,7 +153,7 @@ void SpeciesTab::updateSpeciesAtomTableRow(int row, SpeciesAtom* speciesAtom, bo
 		item->setText(QString::number(speciesAtom->r().get(n)));
 	}
 
-	// AtomTypes
+	// Charge
 	if (createItems)
 	{
 		item = new QTableWidgetItem;
@@ -150,20 +161,27 @@ void SpeciesTab::updateSpeciesAtomTableRow(int row, SpeciesAtom* speciesAtom, bo
 		ui.SpeciesAtomTable->setItem(row, 4, item);
 	}
 	else item = ui.SpeciesAtomTable->item(row, 4);
-	item->setText(speciesAtom->atomType() ? speciesAtom->atomType()->name() : "");
+	item->setText(QString::number(speciesAtom->charge()));
 
+	// AtomTypes
+	if (createItems)
+	{
+		item = new QTableWidgetItem;
+		item->setData(Qt::UserRole, VariantPointer<SpeciesAtom>(speciesAtom));
+		ui.SpeciesAtomTable->setItem(row, 5, item);
+	}
+	else item = ui.SpeciesAtomTable->item(row, 5);
+	item->setText(speciesAtom->atomType() ? speciesAtom->atomType()->name() : "");
 }
 
 void SpeciesTab::on_SpeciesList_currentRowChanged(int row)
 {
+	if (refreshing_) return;
+
+	// Clear relevant tables here to make things more efficient
 	ui.SpeciesAtomTable->clear();
 
-	Species* species = currentSpecies();
-	if (!species) return;
-
-	// Update data
-// 	ui.SpeciesAtomTable->setColumnCount();
-	TableWidgetUpdater<SpeciesTab,SpeciesAtom> speciesUpdater(ui.SpeciesAtomTable, species->atoms(), this, &SpeciesTab::updateSpeciesAtomTableRow);	
+	updateControls();
 }
 
 void SpeciesTab::on_SpeciesAtomTable_itemChanged(QTableWidgetItem* w)
@@ -188,8 +206,13 @@ void SpeciesTab::on_SpeciesAtomTable_itemChanged(QTableWidgetItem* w)
 			speciesAtom->setCoordinate(w->column()-1, w->text().toDouble());
 			duqWindow_->setModified();
 			break;
-		// AtomType
+		// Charge
 		case (4):
+			speciesAtom->setCharge(w->text().toDouble());
+			duqWindow_->setModified();
+			break;
+		// AtomType
+		case (5):
 			// Check the text to see if it is an existing AtomType - if not, we should create it
 			atomType = duq_.findAtomType(qPrintable(w->text()));
 			if (!atomType)
