@@ -48,11 +48,15 @@ class BoolKeywordWidget : public QCheckBox, public KeywordWidgetBase
 
 
 	/*
-	 * Slots
+	 * Signals / Slots
 	 */
 	private slots:
 	// Check box state changed
 	void myClicked(bool checked);
+
+	signals:
+	// Keyword value changed
+	void keywordValueChanged();
 
 
 	/*

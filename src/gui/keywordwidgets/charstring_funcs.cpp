@@ -55,13 +55,17 @@ CharStringKeywordWidget::CharStringKeywordWidget(QWidget* parent, ModuleKeywordB
 
 
 /*
- * Slots
+ * Signals / Slots
  */
 
 // Combo box text changed
 void CharStringKeywordWidget::myCurrentTextChanged(const QString& text)
 {
+	if (refreshing_) return;
+
 	keyword_->setData(qPrintable(text));
+
+	emit(keywordValueChanged());
 }
 
 /*
@@ -71,6 +75,8 @@ void CharStringKeywordWidget::myCurrentTextChanged(const QString& text)
 // Update value displayed in widget, using specified source if necessary
 void CharStringKeywordWidget::updateValue(GenericList& moduleData, const char* prefix)
 {
+	refreshing_ = true;
+
 	CharString newValue;
 	// Check to see if the associated Keyword may have been stored/updated in the specified moduleData
 	if ((keyword_->genericItemFlags()&GenericItem::InRestartFileFlag) && moduleData.contains(keyword_->keyword(), prefix))
@@ -82,5 +88,7 @@ void CharStringKeywordWidget::updateValue(GenericList& moduleData, const char* p
 
 	// Set the new index
 	int index = keyword_->indexOfValid(newValue);
+
+	refreshing_ = false;
 }
 

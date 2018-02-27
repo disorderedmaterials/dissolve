@@ -51,7 +51,7 @@ class PairPotentialWidget : public SubWidget
 
 	public:
 	// Constructor / Destructor
-	PairPotentialWidget(QWidget* parent, DUQ& dUQ, const char* title);
+	PairPotentialWidget(DUQWindow* duqWindow, const char* title);
 	~PairPotentialWidget();
 	// Main form declaration
 	Ui::PairPotentialWidget ui;

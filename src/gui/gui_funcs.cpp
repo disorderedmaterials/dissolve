@@ -46,11 +46,22 @@ DUQWindow::DUQWindow(DUQ& duq) : QMainWindow(NULL), duq_(duq), threadController_
 	duqState_ = StoppedState;
 
 	refreshing_ = false;
+	modified_ = false;
+
+	updateStatus();
 }
 
 // Destructor
 DUQWindow::~DUQWindow()
 {
+}
+
+// Flag that data has been modified via the GUI
+void DUQWindow::setModified()
+{
+	modified_ = true;
+
+	updateStatus();
 }
 
 // Return reference to dUQ
@@ -126,10 +137,14 @@ bool DUQWindow::openFile(const char* inputFile, bool ignoreRestartFile, bool ign
 	refreshing_ = false;
 
 	// Does a window state exist for this input file?
-	windowLayoutFilename_.sprintf("%s.state", duq_.filename());
+	windowLayoutFilename_.sprintf("%s.state", duq_.inputFilename());
 
 	// Try to load in the window state file
 	if (DUQSys::fileExists(windowLayoutFilename_) && (!ignoreLayoutFile)) loadWindowLayout();
+
+	updateControls();
+
+	updateStatus();
 
 	return true;
 }
@@ -146,6 +161,13 @@ void DUQWindow::updateControls()
 
 	// Loop over tabs
 	for (MainTab* tab = tabs_.first(); tab != NULL; tab = tab->next) tab->updateControls();
+}
+
+// Update status
+void DUQWindow::updateStatus()
+{
+	QString title = QString("%1%2").arg(duq_.hasInputFileName() ? duq_.inputFilename() : "<untitled>", modified_ ? "(*)" : ""); 
+	setWindowTitle(title);
 }
 
 // Link output handler in to the Messenger
@@ -166,12 +188,12 @@ SubWidget* DUQWindow::createSubWidget(const char* widgetName, const char* title)
 
 	if (DUQSys::sameString(widgetName, "PairPotential"))
 	{
-		PairPotentialWidget* ppWidget = new PairPotentialWidget(NULL, duq_, title);
+		PairPotentialWidget* ppWidget = new PairPotentialWidget(this, title);
 		subWidget = ppWidget;
 	}
 	else if (DUQSys::sameString(widgetName, "ModuleControl"))
 	{
-		ModuleControlWidget* moduleWidget = new ModuleControlWidget(NULL, NULL, duq_, title);
+		ModuleControlWidget* moduleWidget = new ModuleControlWidget(this, NULL, title);
 		connect(moduleWidget, SIGNAL(moduleRun()), this, SLOT(updateControls()));
 		subWidget = moduleWidget;
 	}

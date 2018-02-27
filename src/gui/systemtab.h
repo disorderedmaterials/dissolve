@@ -27,6 +27,8 @@
 
 // Forward Declarations
 class MasterIntra;
+class AtomType;
+class PairPotential;
 
 // System Tab
 class SystemTab : public QWidget, public MainTab
@@ -62,6 +64,10 @@ class SystemTab : public QWidget, public MainTab
 	void updateAnglesTableRow(int row, MasterIntra* masterAngle, bool createItems);
 	// Row update function for TorsionsTable
 	void updateTorsionsTableRow(int row, MasterIntra* masterTorsion, bool createItems);
+	// Row update function for AtomTypesTable
+	void updateAtomTypesTableRow(int row, AtomType* atomType, bool createItems);
+	// Row update function for PairPotentialsTable
+	void updatePairPotentialsTableRow(int row, PairPotential* pairPotential, bool createItems);
 
 	protected:
 	// Update controls in tab
@@ -78,6 +84,14 @@ class SystemTab : public QWidget, public MainTab
 	private:
 
 	private slots:
+	void on_PairPotentialRangeSpin_valueChanged(double value);
+	void on_PairPotentialDeltaSpin_valueChanged(double value);
+	void on_CoulombIncludeCheck_clicked(bool checked);
+	void on_ShortRangeTruncationCombo_currentIndexChanged(int index);
+	void on_CoulombTruncationCombo_currentIndexChanged(int index);
+	void on_RegenerateAllPairPotentialsButton_clicked(bool checked);
+	void on_GenerateMissingPairPotentialsButton_clicked(bool checked);
+	void on_PairPotentialsTable_itemChanged(QTableWidgetItem* w);
 
 
 	/*

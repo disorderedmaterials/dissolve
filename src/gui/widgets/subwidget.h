@@ -27,6 +27,7 @@
 #include <QWidget>
 
 // Forward Declarations
+class DUQWindow;
 class LineParser;
 class SubWindow;
 
@@ -34,12 +35,14 @@ class SubWindow;
 class SubWidget : public QWidget, public ListItem<SubWidget>
 {
 	protected:
+	// Pointer to DUQWindow
+	DUQWindow* duqWindow_;
 	// Whether widget is currently refreshing
 	bool refreshing_;
 
 	public:
 	// Constructor / Destructor
-	SubWidget(QWidget* parent, const char* title);
+	SubWidget(DUQWindow* duqWindow, const char* title);
 	virtual ~SubWidget();
 	// Update controls within widget
 	virtual void updateControls() = 0;

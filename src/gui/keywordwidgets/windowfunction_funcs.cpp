@@ -47,18 +47,22 @@ WindowFunctionKeywordWidget::WindowFunctionKeywordWidget(QWidget* parent, Module
 }
 
 /*
- * Slots
+ * Signals / Slots
  */
 
 // Check box state changed
 void WindowFunctionKeywordWidget::functionComboChanged(const QString& text)
 {
-	// Grab the target WindowFunction
-	WindowFunction& windowFunction = keyword_->data();
+	if (refreshing_) return;
 
 	// Get widget data, and set the function type
+	WindowFunction windowFunction;
 	WindowFunction::FunctionType func = WindowFunction::functionType(qPrintable(text));
 	windowFunction.set(func);
+
+	keyword_->setData(windowFunction);
+
+	emit(keywordValueChanged());
 }
 
 /*
@@ -80,5 +84,9 @@ void WindowFunctionKeywordWidget::updateValue(GenericList& moduleData, const cha
 // Set widgets from supplied object
 void WindowFunctionKeywordWidget::setWidgets(WindowFunction& windowFunction)
 {
+	refreshing_ = true;
+
 	functionCombo_->setCurrentIndex(windowFunction.function());
+
+	refreshing_ = false;
 }

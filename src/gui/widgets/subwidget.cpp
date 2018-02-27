@@ -23,8 +23,9 @@
 #include <stdio.h>
 
 // Constructor
-SubWidget::SubWidget(QWidget* parent, const char* title) : QWidget(parent), ListItem<SubWidget>()
+SubWidget::SubWidget(DUQWindow* duqWindow, const char* title) : QWidget(NULL), ListItem<SubWidget>()
 {
+	duqWindow_ = duqWindow;
 	title_ = title;
 	subWindow_ = NULL;
 	refreshing_ = false;

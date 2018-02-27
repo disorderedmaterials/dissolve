@@ -43,13 +43,17 @@ IntegerKeywordWidget::IntegerKeywordWidget(QWidget* parent, ModuleKeywordBase* k
 
 
 /*
- * Slots
+ * Signals / Slots
  */
 
 // Spin box value changed
 void IntegerKeywordWidget::myValueChanged(int newValue)
 {
+	if (refreshing_) return;
+
 	keyword_->setData(newValue);
+
+	emit(keywordValueChanged());
 }
 
 /*
@@ -59,6 +63,8 @@ void IntegerKeywordWidget::myValueChanged(int newValue)
 // Update value displayed in widget, using specified source if necessary
 void IntegerKeywordWidget::updateValue(GenericList& moduleData, const char* prefix)
 {
+	refreshing_ = true;
+
 	// Check to see if the associated Keyword may have been stored/updated in the specified moduleData
 	if ((keyword_->genericItemFlags()&GenericItem::InRestartFileFlag) && moduleData.contains(keyword_->keyword(), prefix))
 	{
@@ -66,4 +72,6 @@ void IntegerKeywordWidget::updateValue(GenericList& moduleData, const char* pref
 		setValue(GenericListHelper<int>::retrieve(moduleData, keyword_->keyword(), prefix));
 	}
 	else setValue(keyword_->asInt());
+
+	refreshing_ = false;
 }

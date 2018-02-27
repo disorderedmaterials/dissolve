@@ -59,6 +59,12 @@ class DUQWindow : public QMainWindow
 	private:
 	// DUQ reference
 	DUQ& duq_;
+	// Whether any data has been modified in the GUI
+	bool modified_;
+
+	public slots:
+	// Flag that data has been modified via the GUI
+	void setModified();
 
 	public:
 	// Return reference to DUQ
@@ -69,6 +75,7 @@ class DUQWindow : public QMainWindow
 	 * File
 	 */
 	public:
+	// Open specified input file
 	bool openFile(const char* inputFile, bool ignoreRestartFile, bool ignoreLayoutFile);
 
 
@@ -86,6 +93,8 @@ class DUQWindow : public QMainWindow
 	public slots:
 	// Refresh all controls
 	void updateControls();
+	// Update status
+	void updateStatus();
 	// Link output handler in to the Messenger
 	void addOutputHandler();
 

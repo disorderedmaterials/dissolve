@@ -48,11 +48,15 @@ class CharStringKeywordWidget : public QComboBox, public KeywordWidgetBase
 
 
 	/*
-	 * Slots
+	 * Signals / Slots
 	 */
 	private slots:
 	// Combo box text changed
 	void myCurrentTextChanged(const QString& text);
+
+	signals:
+	// Keyword value changed
+	void keywordValueChanged();
 
 
 	/*

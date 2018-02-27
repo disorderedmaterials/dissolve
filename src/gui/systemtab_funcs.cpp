@@ -24,6 +24,7 @@
 #include "gui/delegates/combolist.hui"
 #include "gui/delegates/texponentialspin.hui"
 #include "main/duq.h"
+#include "classes/atomtype.h"
 #include "classes/speciesbond.h"
 #include "classes/speciesangle.h"
 #include "classes/speciestorsion.h"
@@ -36,9 +37,15 @@ SystemTab::SystemTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const c
 {
 	ui.setupUi(this);
 
+	/*
+	 * Master Terms
+	 */
+	
 	// Set item delegates for tables
 	// -- Functional Forms
 	ui.MasterBondsTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboListEnumItems(SpeciesBond::nBondFunctions, SpeciesBond::bondFunctions())));
+	ui.MasterAnglesTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboListEnumItems(SpeciesAngle::nAngleFunctions, SpeciesAngle::angleFunctions())));
+	ui.MasterTorsionsTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboListEnumItems(SpeciesTorsion::nTorsionFunctions, SpeciesTorsion::torsionFunctions())));
 
 	// -- Parameters
 	for (int n=2; n<6; ++n)
@@ -52,6 +59,33 @@ SystemTab::SystemTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const c
 	ui.MasterBondsTable->horizontalHeader()->setFont(font());
 	ui.MasterAnglesTable->horizontalHeader()->setFont(font());
 	ui.MasterTorsionsTable->horizontalHeader()->setFont(font());
+
+	/*
+	 * Atom Types
+	 */
+
+	// Set item delegates for tables
+	// -- Charge / Parameters
+	for (int n=2; n<7; ++n) ui.AtomTypesTable->setItemDelegateForColumn(n, new TExponentialSpinDelegate(this));
+
+	// Ensure fonts for table headers are set correctly
+	ui.AtomTypesTable->horizontalHeader()->setFont(font());
+
+	/*
+	 * Pair Potentials
+	 */
+	
+	for (int n=0; n<PairPotential::nShortRangeTypes; ++n) ui.ShortRangeFormCombo->addItem(PairPotential::shortRangeType( (PairPotential::ShortRangeType) n));
+	for (int n=0; n<PairPotential::nCoulombTruncationSchemes; ++n) ui.CoulombTruncationCombo->addItem(PairPotential::coulombTruncationScheme( (PairPotential::CoulombTruncationScheme) n));
+	for (int n=0; n<PairPotential::nShortRangeTruncationSchemes; ++n) ui.ShortRangeTruncationCombo->addItem(PairPotential::shortRangeTruncationScheme( (PairPotential::ShortRangeTruncationScheme) n));
+
+
+	// Set delegates for table
+	// -- Functional Forms
+	ui.PairPotentialsTable->setItemDelegateForColumn(2, new ComboListDelegate(this, new ComboListEnumItems(PairPotential::nShortRangeTypes, PairPotential::shortRangeTypes())));
+
+	// -- Charges / Parameters
+	for (int n=3; n<9; ++n) ui.PairPotentialsTable->setItemDelegateForColumn(n, new TExponentialSpinDelegate(this));
 }
 
 SystemTab::~SystemTab()
@@ -197,6 +231,127 @@ void SystemTab::updateTorsionsTableRow(int row, MasterIntra* masterTorsion, bool
 	}
 }
 
+// Row update function for AtomTypesTable
+void SystemTab::updateAtomTypesTableRow(int row, AtomType* atomType, bool createItems)
+{
+	QTableWidgetItem* item;
+
+	// Name
+	if (createItems)
+	{
+		item = new QTableWidgetItem;
+		item->setData(Qt::UserRole, VariantPointer<AtomType>(atomType));
+		ui.AtomTypesTable->setItem(row, 0, item);
+	}
+	else item = ui.AtomTypesTable->item(row, 0);
+	item->setText(atomType->name());
+
+	// Exchangeable flag
+	if (createItems)
+	{
+		item = new QTableWidgetItem;
+		item->setData(Qt::UserRole, VariantPointer<AtomType>(atomType));
+		item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
+		ui.AtomTypesTable->setItem(row, 1, item);
+	}
+	else item = ui.AtomTypesTable->item(row, 1);
+	item->setCheckState(atomType->exchangeable() ? Qt::Checked : Qt::Unchecked);
+
+	// Charge
+	if (createItems)
+	{
+		item = new QTableWidgetItem;
+		item->setData(Qt::UserRole, VariantPointer<AtomType>(atomType));
+		ui.AtomTypesTable->setItem(row, 2, item);
+	}
+	else item = ui.AtomTypesTable->item(row, 2);
+	item->setText(QString::number(atomType->parameters().charge()));
+
+	// Parameters
+	for (int n=0; n<MAXINTRAPARAMS; ++n)
+	{
+		if (createItems)
+		{
+			item = new QTableWidgetItem;
+			item->setData(Qt::UserRole, VariantPointer<AtomType>(atomType));
+			ui.AtomTypesTable->setItem(row, n+3, item);
+		}
+		else item = ui.AtomTypesTable->item(row, n+3);
+		item->setText(QString::number(atomType->parameters().parameter(n)));
+	}
+}
+
+// Row update function for PairPotentialsTable
+void SystemTab::updatePairPotentialsTableRow(int row, PairPotential* pairPotential, bool createItems)
+{
+	QTableWidgetItem* item;
+
+	// Type I
+	if (createItems)
+	{
+		item = new QTableWidgetItem;
+		item->setData(Qt::UserRole, VariantPointer<PairPotential>(pairPotential));
+		item->setFlags(Qt::ItemIsSelectable);
+		ui.PairPotentialsTable->setItem(row, 0, item);
+	}
+	else item = ui.PairPotentialsTable->item(row, 0);
+	item->setText(pairPotential->atomTypeNameI());
+
+	// Type J
+	if (createItems)
+	{
+		item = new QTableWidgetItem;
+		item->setData(Qt::UserRole, VariantPointer<PairPotential>(pairPotential));
+		item->setFlags(Qt::ItemIsSelectable);
+		ui.PairPotentialsTable->setItem(row, 1, item);
+	}
+	else item = ui.PairPotentialsTable->item(row, 1);
+	item->setText(pairPotential->atomTypeNameJ());
+
+	// Short-Range Form
+	if (createItems)
+	{
+		item = new QTableWidgetItem;
+		item->setData(Qt::UserRole, VariantPointer<PairPotential>(pairPotential));
+		ui.PairPotentialsTable->setItem(row, 2, item);
+	}
+	else item = ui.PairPotentialsTable->item(row, 2);
+	item->setText(PairPotential::shortRangeType( (PairPotential::ShortRangeType) pairPotential->shortRangeType()));
+
+	// Charge I
+	if (createItems)
+	{
+		item = new QTableWidgetItem;
+		item->setData(Qt::UserRole, VariantPointer<PairPotential>(pairPotential));
+		ui.PairPotentialsTable->setItem(row, 3, item);
+	}
+	else item = ui.PairPotentialsTable->item(row, 3);
+	item->setText(QString::number(pairPotential->chargeI()));
+
+	// Charge I
+	if (createItems)
+	{
+		item = new QTableWidgetItem;
+		item->setData(Qt::UserRole, VariantPointer<PairPotential>(pairPotential));
+		ui.PairPotentialsTable->setItem(row, 4, item);
+	}
+	else item = ui.PairPotentialsTable->item(row, 4);
+	item->setText(QString::number(pairPotential->chargeJ()));
+
+	// Parameters
+	for (int n=0; n<MAXINTRAPARAMS; ++n)
+	{
+		if (createItems)
+		{
+			item = new QTableWidgetItem;
+			item->setData(Qt::UserRole, VariantPointer<PairPotential>(pairPotential));
+			ui.PairPotentialsTable->setItem(row, n+5, item);
+		}
+		else item = ui.PairPotentialsTable->item(row, n+5);
+		item->setText(QString::number(pairPotential->parameter(n)));
+	}
+}
+
 // Update controls in tab
 void SystemTab::updateControls()
 {
@@ -204,12 +359,32 @@ void SystemTab::updateControls()
 
 	// Master Bonds Table
 	TableWidgetUpdater<SystemTab,MasterIntra> bondsUpdater(ui.MasterBondsTable, duq_.masterBonds(), this, &SystemTab::updateBondsTableRow);
+	ui.MasterBondsTable->resizeColumnsToContents();
 
 	// Master Angles Table
 	TableWidgetUpdater<SystemTab,MasterIntra> anglesUpdater(ui.MasterAnglesTable, duq_.masterAngles(), this, &SystemTab::updateAnglesTableRow);
+	ui.MasterAnglesTable->resizeColumnsToContents();
 
 	// Torsions Table
 	TableWidgetUpdater<SystemTab,MasterIntra> torsionsUpdater(ui.MasterTorsionsTable, duq_.masterTorsions(), this, &SystemTab::updateTorsionsTableRow);
+	ui.MasterTorsionsTable->resizeColumnsToContents();
+
+	// AtomTypes Table
+	TableWidgetUpdater<SystemTab,AtomType> atomTypesUpdater(ui.AtomTypesTable, duq_.atomTypeList(), this, &SystemTab::updateAtomTypesTableRow);
+	ui.AtomTypesTable->resizeColumnsToContents();
+
+	// PairPotentials
+	ui.PairPotentialRangeSpin->setValue(duq_.pairPotentialRange());
+	ui.PairPotentialDeltaSpin->setValue(duq_.pairPotentialDelta());
+	ui.ShortRangeFormCombo->setCurrentIndex(PairPotential::LennardJonesType);
+	ui.CoulombIncludeCheck->setChecked(duq_.pairPotentialsIncludeCoulomb());
+	ui.ShortRangeTruncationCombo->setCurrentIndex(PairPotential::shortRangeTruncationScheme());
+	ui.ShortRangeTruncationWidthSpin->setValue(PairPotential::shortRangeTruncationWidth());
+	ui.ShortRangeTruncationWidthSpin->setEnabled(PairPotential::shortRangeTruncationScheme() == PairPotential::CosineShortRangeTruncation);
+	ui.CoulombTruncationCombo->setCurrentIndex(PairPotential::coulombTruncationScheme());
+	// -- Table
+	TableWidgetUpdater<SystemTab,PairPotential> ppUpdater(ui.PairPotentialsTable, duq_.pairPotentials(), this, &SystemTab::updatePairPotentialsTableRow);
+	ui.PairPotentialsTable->resizeColumnsToContents();
 
 	refreshing_ = false;
 }
@@ -227,6 +402,101 @@ void SystemTab::enableSensitiveControls()
 /*
  * Signals / Slots
  */
+
+void SystemTab::on_PairPotentialRangeSpin_valueChanged(double value)
+{
+	if (refreshing_) return;
+
+	duq_.setPairPotentialRange(value);
+	
+	duqWindow_->setModified();
+}
+
+void SystemTab::on_PairPotentialDeltaSpin_valueChanged(double value)
+{
+	if (refreshing_) return;
+
+	duq_.setPairPotentialDelta(value);
+	
+	duqWindow_->setModified();
+}
+
+void SystemTab::on_CoulombIncludeCheck_clicked(bool checked)
+{
+	if (refreshing_) return;
+
+	duq_.setPairPotentialsIncludeCoulomb(checked);
+	
+	duqWindow_->setModified();
+}
+
+void SystemTab::on_ShortRangeTruncationCombo_currentIndexChanged(int index)
+{
+	if (refreshing_) return;
+
+	PairPotential::setShortRangeTruncationScheme( (PairPotential::ShortRangeTruncationScheme) index );
+	ui.ShortRangeTruncationWidthSpin->setEnabled(PairPotential::shortRangeTruncationScheme() == PairPotential::CosineShortRangeTruncation);
+	
+	duqWindow_->setModified();
+}
+
+void SystemTab::on_CoulombTruncationCombo_currentIndexChanged(int index)
+{
+	if (refreshing_) return;
+
+	PairPotential::setCoulombTruncationScheme( (PairPotential::CoulombTruncationScheme) index );
+
+	duqWindow_->setModified();
+}
+
+void SystemTab::on_RegenerateAllPairPotentialsButton_clicked(bool checked)
+{
+	duq_.regeneratePairPotentials();
+}
+
+void SystemTab::on_GenerateMissingPairPotentialsButton_clicked(bool checked)
+{
+}
+
+void SystemTab::on_PairPotentialsTable_itemChanged(QTableWidgetItem* w)
+{
+	if (refreshing_) return;
+
+	// Get target PairPotential from the passed widget
+	PairPotential* pairPotential = w ? VariantPointer<PairPotential>(w->data(Qt::UserRole)) : NULL;
+	if (!pairPotential) return;
+
+	// Column of passed item tells us the type of data we need to change
+	switch (w->column())
+	{
+		// Functional form
+		case (2):
+			pairPotential->setShortRangeType(PairPotential::shortRangeType(qPrintable(w->text())));
+			duqWindow_->setModified();
+			break;
+		// Charge I
+		case (3):
+			pairPotential->setChargeI(w->text().toDouble());
+			duqWindow_->setModified();
+			break;
+		// Charge J
+		case (4):
+			pairPotential->setChargeJ(w->text().toDouble());
+			duqWindow_->setModified();
+			break;
+		// Parameters
+		case (5):
+		case (6):
+		case (7):
+		case (8):
+			pairPotential->setParameter(w->column()-5, w->text().toDouble());
+			duqWindow_->setModified();
+			break;
+		default:
+			Messenger::error("Don't know what to do with data from column %i of PairPotentials table.\n", w->column());
+			break;
+	}
+}
 
 /*
  * State

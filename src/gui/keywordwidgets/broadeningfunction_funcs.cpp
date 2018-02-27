@@ -31,11 +31,7 @@ BroadeningFunctionKeywordWidget::BroadeningFunctionKeywordWidget(QWidget* parent
 	// Create and set up the UI for our widget in the drop-down's widget container
 	ui.setupUi(dropWidget());
 
-	refreshing_ = true;
-
 	for (int n=0; n<BroadeningFunction::nFunctionTypes; ++n) ui.FunctionCombo->addItem(BroadeningFunction::functionType( (BroadeningFunction::FunctionType) n));
-
-	refreshing_ = false;
 
 	// Connect signals / slots
 	connect(ui.FunctionCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(functionComboChanged(int)));
@@ -62,6 +58,8 @@ void BroadeningFunctionKeywordWidget::functionComboChanged(int index)
 	updateKeywordData();
 
 	updateWidgetValues();
+
+	emit(keywordValueChanged());
 }
 
 /*
@@ -71,12 +69,16 @@ void BroadeningFunctionKeywordWidget::functionComboChanged(int index)
 // Update value displayed in widget, using specified source if necessary
 void BroadeningFunctionKeywordWidget::updateValue(GenericList& moduleData, const char* prefix)
 {
+	refreshing_ = true;
+
 	// Check to see if the associated Keyword may have been stored/updated in the specified moduleData
 	if ((keyword_->genericItemFlags()&GenericItem::InRestartFileFlag) && moduleData.contains(keyword_->keyword(), prefix))
 	{
 		// Retrieve the item from the list and set our widgets
 		keyword_->data() = GenericListHelper<BroadeningFunction>::retrieve(moduleData, keyword_->keyword(), prefix);
 	}
+
+	refreshing_ = false;
 
 	updateWidgetValues();
 }
@@ -116,10 +118,10 @@ void BroadeningFunctionKeywordWidget::updateWidgetValues()
 // Update keyword data based on widget values
 void BroadeningFunctionKeywordWidget::updateKeywordData()
 {
-	// Grab the target BroadeningFunction
-	BroadeningFunction& broadeningFunction = keyword_->data();
-
 	// Get widget data
+	BroadeningFunction broadeningFunction;
 	BroadeningFunction::FunctionType func = (BroadeningFunction::FunctionType) ui.FunctionCombo->currentIndex();
 	broadeningFunction.set(func, ui.Parameter0Spin->value(), ui.Parameter1Spin->value(), ui.Parameter2Spin->value(), ui.Parameter3Spin->value(), ui.Parameter4Spin->value(), ui.Parameter5Spin->value());
+
+	keyword_->setData(broadeningFunction);
 }

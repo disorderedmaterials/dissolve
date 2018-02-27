@@ -340,9 +340,9 @@ class DUQ
 	// Save restart file
 	bool saveRestart(const char* filename);
 	// Return whether a filename has been set
-	bool hasFileName() const;
+	bool hasInputFileName() const;
 	// Return filename of current input file
-	const char* filename() const;
+	const char* inputFilename() const;
 	// Set whether to automatically add dependent Modules if they have not been defined
 	void setAutoAddDependentModules(bool b);
 	// Return whether to automatically add dependent Modules if they have not been defined

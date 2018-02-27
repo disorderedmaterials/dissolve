@@ -39,13 +39,17 @@ BoolKeywordWidget::BoolKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword
 }
 
 /*
- * Slots
+ * Signals / Slots
  */
 
 // Check box state changed
 void BoolKeywordWidget::myClicked(bool checked)
 {
+	if (refreshing_) return;
+
 	keyword_->setData(checked);
+
+	emit(keywordValueChanged());
 }
 
 /*
@@ -55,6 +59,8 @@ void BoolKeywordWidget::myClicked(bool checked)
 // Update value displayed in widget, using specified source if necessary
 void BoolKeywordWidget::updateValue(GenericList& moduleData, const char* prefix)
 {
+	refreshing_ = true;
+
 	// Check to see if the associated Keyword may have been stored/updated in the specified moduleData
 	if ((keyword_->genericItemFlags()&GenericItem::InRestartFileFlag) && moduleData.contains(keyword_->keyword(), prefix))
 	{
@@ -62,4 +68,6 @@ void BoolKeywordWidget::updateValue(GenericList& moduleData, const char* prefix)
 		setChecked(GenericListHelper<bool>::retrieve(moduleData, keyword_->keyword(), prefix));
 	}
 	else setChecked(keyword_->asBool());
+
+	refreshing_ = false;
 }

@@ -58,6 +58,10 @@ class BroadeningFunctionKeywordWidget : public KeywordDropDown, public KeywordWi
 	// Function type combo changed
 	void functionComboChanged(int index);
 
+	signals:
+	// Keyword value changed
+	void keywordValueChanged();
+
 
 	/*
 	 * Update

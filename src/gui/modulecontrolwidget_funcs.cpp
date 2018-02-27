@@ -20,6 +20,7 @@
 */
 
 #include "gui/modulecontrolwidget.h"
+#include "gui/gui.h"
 #include "gui/keywordwidgets/bool.hui"
 #include "gui/keywordwidgets/charstring.hui"
 #include "gui/keywordwidgets/double.hui"
@@ -36,7 +37,7 @@
 #include <QLabel>
 
 // Constructor
-ModuleControlWidget::ModuleControlWidget(QWidget* parent, Module* module, DUQ& dUQ, const char* title) : SubWidget(parent, title), module_(module), duq_(dUQ)
+ModuleControlWidget::ModuleControlWidget(DUQWindow* duqWindow, Module* module, const char* title) : SubWidget(duqWindow, title), module_(module), duqWindow_(duqWindow), duq_(duqWindow->duq())
 {
 	// Set up user interface
 	ui.setupUi(this);
@@ -105,36 +106,42 @@ void ModuleControlWidget::initialiseControls(Module* module)
 		if (keyword->type() == ModuleKeywordBase::IntegerData)
 		{
 			IntegerKeywordWidget* intWidget = new IntegerKeywordWidget(NULL, keyword);
+			connect(intWidget, SIGNAL(keywordValueChanged()), duqWindow_, SLOT(setModified()));
 			widget = intWidget;
 			base = intWidget;
 		}
 		else if (keyword->type() == ModuleKeywordBase::DoubleData)
 		{
 			DoubleKeywordWidget* doubleWidget = new DoubleKeywordWidget(NULL, keyword);
+			connect(doubleWidget, SIGNAL(keywordValueChanged()), duqWindow_, SLOT(setModified()));
 			widget = doubleWidget;
 			base = doubleWidget;
 		}
 		else if (keyword->type() == ModuleKeywordBase::CharStringData)
 		{
 			CharStringKeywordWidget* charWidget = new CharStringKeywordWidget(NULL, keyword);
+			connect(charWidget, SIGNAL(keywordValueChanged()), duqWindow_, SLOT(setModified()));
 			widget = charWidget;
 			base = charWidget;
 		}
 		else if (keyword->type() == ModuleKeywordBase::BoolData)
 		{
 			BoolKeywordWidget* boolWidget = new BoolKeywordWidget(NULL, keyword);
+			connect(boolWidget, SIGNAL(keywordValueChanged()), duqWindow_, SLOT(setModified()));
 			widget = boolWidget;
 			base = boolWidget;
 		}
 		else if (keyword->type() == ModuleKeywordBase::BroadeningFunctionData)
 		{
 			BroadeningFunctionKeywordWidget* broadeningFunctionWidget = new BroadeningFunctionKeywordWidget(NULL, keyword);
+			connect(broadeningFunctionWidget, SIGNAL(keywordValueChanged()), duqWindow_, SLOT(setModified()));
 			widget = broadeningFunctionWidget;
 			base = broadeningFunctionWidget;
 		}
 		else if (keyword->type() == ModuleKeywordBase::WindowFunctionData)
 		{
 			WindowFunctionKeywordWidget* windowFunctionWidget = new WindowFunctionKeywordWidget(NULL, keyword);
+			connect(windowFunctionWidget, SIGNAL(keywordValueChanged()), duqWindow_, SLOT(setModified()));
 			widget = windowFunctionWidget;
 			base = windowFunctionWidget;
 		}
@@ -182,6 +189,8 @@ void ModuleControlWidget::updateControls()
 {
 	if (!module_) return;
 
+	refreshing_ = true;
+
 	// Update Control group
 	ui.EnabledCheck->setChecked(module_->enabled());
 	ui.FrequencySpin->setValue(module_->frequency());
@@ -195,6 +204,8 @@ void ModuleControlWidget::updateControls()
 
 	// Update control widget
 	if (moduleWidget_) moduleWidget_->updateControls();
+
+	refreshing_ = false;
 }
 
 // Disable sensitive controls within widget, ready for main code to run
@@ -284,10 +295,18 @@ void ModuleControlWidget::on_ToggleModuleWidgetButton_clicked(bool checked)
 
 void ModuleControlWidget::on_EnabledCheck_clicked(bool checked)
 {
+	if (refreshing_) return;
+
 	module_->setEnabled(checked);
+
+	duqWindow_->setModified();
 }
 
 void ModuleControlWidget::on_FrequencySpin_valueChanged(int value)
 {
+	if (refreshing_) return;
+
 	module_->setFrequency(value);
+
+	duqWindow_->setModified();
 }

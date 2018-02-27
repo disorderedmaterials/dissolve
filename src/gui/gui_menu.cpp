@@ -35,6 +35,12 @@ void DUQWindow::on_SessionOpenAction_triggered(bool checked)
 
 void DUQWindow::on_SessionSaveAction_triggered(bool checked)
 {
+	// Attempt to save the file (TEST)
+	duq_.saveInput("shitty.txt");
+
+	modified_ = false;
+
+	updateStatus();
 }
 
 void DUQWindow::on_SessionQuitAction_triggered(bool checked)
@@ -66,7 +72,7 @@ void DUQWindow::addWidgetToCurrentWorkspace(bool checked)
 		if (!window)
 		{
 			// Create a new ModuleWidget
-			ModuleControlWidget* moduleControlWidget = new ModuleControlWidget(NULL, module, duq_, CharString("%s (%s)", module->name(), module->uniqueName()));
+			ModuleControlWidget* moduleControlWidget = new ModuleControlWidget(this, module, CharString("%s (%s)", module->name(), module->uniqueName()));
 			connect(moduleControlWidget, SIGNAL(moduleRun()), this, SLOT(updateControls()));
 			window = tab->addSubWindow(moduleControlWidget, module);
 		}

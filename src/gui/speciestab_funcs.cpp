@@ -186,6 +186,7 @@ void SpeciesTab::on_SpeciesAtomTable_itemChanged(QTableWidgetItem* w)
 		case (2):
 		case (3):
 			speciesAtom->setCoordinate(w->column()-1, w->text().toDouble());
+			duqWindow_->setModified();
 			break;
 		// AtomType
 		case (4):
@@ -197,9 +198,10 @@ void SpeciesTab::on_SpeciesAtomTable_itemChanged(QTableWidgetItem* w)
 				atomType->setName(qPrintable(w->text()));
 			}
 			speciesAtom->setAtomType(atomType);
+			duqWindow_->setModified();
 			break;
 		default:
-			Messenger::error("Don't know what to do with data from column %i of BondsTable.\n", w->column());
+			Messenger::error("Don't know what to do with data from column %i of SpeciesAtom table.\n", w->column());
 			break;
 	}
 }

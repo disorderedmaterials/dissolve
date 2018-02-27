@@ -48,11 +48,15 @@ class DoubleKeywordWidget : public TExponentialSpin, public KeywordWidgetBase
 
 
 	/*
-	 * Slots
+	 * Signals / Slots
 	 */
 	private slots:
 	// Spin box value changed
 	void myValueChanged(double newValue);
+
+	signals:
+	// Keyword value changed
+	void keywordValueChanged();
 
 
 	/*

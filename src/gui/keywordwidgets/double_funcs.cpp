@@ -49,7 +49,11 @@ DoubleKeywordWidget::DoubleKeywordWidget(QWidget* parent, ModuleKeywordBase* key
 // Spin box value changed
 void DoubleKeywordWidget::myValueChanged(double newValue)
 {
+	if (refreshing_) return;
+
 	keyword_->setData(newValue);
+
+	emit(keywordValueChanged());
 }
 
 /*
@@ -59,6 +63,8 @@ void DoubleKeywordWidget::myValueChanged(double newValue)
 // Update value displayed in widget, using specified source if necessary
 void DoubleKeywordWidget::updateValue(GenericList& moduleData, const char* prefix)
 {
+	refreshing_ = true;
+
 	// Check to see if the associated Keyword may have been stored/updated in the specified moduleData
 	if ((keyword_->genericItemFlags()&GenericItem::InRestartFileFlag) && moduleData.contains(keyword_->keyword(), prefix))
 	{
@@ -66,4 +72,6 @@ void DoubleKeywordWidget::updateValue(GenericList& moduleData, const char* prefi
 		setValue(GenericListHelper<double>::retrieve(moduleData, keyword_->keyword(), prefix));
 	}
 	else setValue(keyword_->asDouble());
+
+	refreshing_ = false;
 }

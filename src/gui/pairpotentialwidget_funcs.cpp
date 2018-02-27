@@ -20,6 +20,7 @@
 */
 
 #include "gui/pairpotentialwidget.h"
+#include "gui/gui.h"
 #include "gui/uchroma/gui/uchromaview.h"
 #include "gui/widgets/subwindow.h"
 #include "main/duq.h"
@@ -31,7 +32,7 @@
 #include <QMessageBox>
 
 // Constructor
-PairPotentialWidget::PairPotentialWidget(QWidget* parent, DUQ& dUQ, const char* title) : SubWidget(parent, title), duq_(dUQ)
+PairPotentialWidget::PairPotentialWidget(DUQWindow* duqWindow, const char* title) : SubWidget(duqWindow, title), duq_(duqWindow->duq())
 {
 	// Set up user interface
 	ui.setupUi(this);

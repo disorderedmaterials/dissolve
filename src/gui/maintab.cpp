@@ -171,7 +171,7 @@ void MainTab::addModuleWidgets(const RefList<Module,bool>& modules, List<SubWidg
 			layout->addWidget(frame);
 		}
 
-		ModuleControlWidget* moduleWidget = new ModuleControlWidget(NULL, module, duq_, CharString("%s (%s)", module->name(), module->uniqueName()));
+		ModuleControlWidget* moduleWidget = new ModuleControlWidget(duqWindow_, module, CharString("%s (%s)", module->name(), module->uniqueName()));
 		QObject::connect(moduleWidget, SIGNAL(moduleRun()), duqWindow_, SLOT(updateControls()));
 		layout->addWidget(moduleWidget);
 		widgets.own(moduleWidget);

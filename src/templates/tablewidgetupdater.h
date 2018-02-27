@@ -56,6 +56,7 @@ template <class T, class I> class TableWidgetUpdater
 					// Update the current row and quit the loop
 					(functionParent->*updateRow)(currentRow, dataItem, false);
 
+// 					++currentRow;
 					break;
 				}
 				else table->removeRow(currentRow);
@@ -71,12 +72,11 @@ template <class T, class I> class TableWidgetUpdater
 				(functionParent->*updateRow)(currentRow, dataItem, true);
 
 				// Increase counter
-				++currentRow;
+// 				++currentRow;
 			}
-		}
 
-		// Finally, we set make sure the number of rows in the table matches the number of terms in the list (any extras will thus be deleted)
-		table->setRowCount(data.nItems());
+			++currentRow;
+		}
 	}
 };
 

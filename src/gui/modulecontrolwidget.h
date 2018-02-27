@@ -29,6 +29,7 @@
 
 // Forward Declarations
 class DUQ;
+class DUQWindow;
 class Module;
 class ModuleWidget;
 
@@ -41,12 +42,14 @@ class ModuleControlWidget : public SubWidget
 	private:
 	// Associated Module
 	Module* module_;
+	// Pointer to DUQWindow
+	DUQWindow* duqWindow_;
 	// Reference to dUQ
 	DUQ& duq_;
 
 	public:
 	// Constructor / Destructor
-	ModuleControlWidget(QWidget* parent, Module* module, DUQ& dUQ, const char* title);
+	ModuleControlWidget(DUQWindow* duqWindow, Module* module, const char* title);
 	~ModuleControlWidget();
 	// Main form declaration
 	Ui::ModuleControlWidget ui;

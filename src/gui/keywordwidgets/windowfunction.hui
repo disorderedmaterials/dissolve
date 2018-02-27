@@ -48,7 +48,7 @@ class WindowFunctionKeywordWidget : public QWidget, public KeywordWidgetBase
 
 
 	/*
-	 * Widgets / Slots
+	 * Widgets / Signals / Slots
 	 */
 	private:
 	// Function type Combo
@@ -57,6 +57,10 @@ class WindowFunctionKeywordWidget : public QWidget, public KeywordWidgetBase
 	private slots:
 	// Function type combo changed
 	void functionComboChanged(const QString& text);
+
+	signals:
+	// Keyword value changed
+	void keywordValueChanged();
 
 
 	/*

@@ -240,13 +240,44 @@ bool DUQ::saveInput(const char* filename)
 	}
 	
 	// Write title comment
-	parser.writeLineF("# Input file written by dUQ v%s at %s.\n", DUQVERSION, DUQSys::currentTimeAndDate());
-	
+	parser.writeLineF("# Input file written by dUQ v%s at %s.\n\n", DUQVERSION, DUQSys::currentTimeAndDate());
+
+	// Write master terms
+	if (masterBonds_.nItems() || masterAngles_.nItems() || masterTorsions_.nItems())
+	{
+		parser.writeBannerComment("Master Terms");
+		parser.writeLineF("\n%s\n", InputBlocks::inputBlock(InputBlocks::MasterBlock));
+				  
+		for (MasterIntra* b = masterBonds_.first(); b != NULL; b = b->next)
+		{
+			CharString s("  %s  '%s'  %s", MasterBlock::keyword(MasterBlock::BondKeyword), b->name(), SpeciesBond::bondFunction( (SpeciesBond::BondFunction) b->form()));
+			for (int n=0; n<SpeciesBond::nFunctionParameters( (SpeciesBond::BondFunction) b->form()); ++n) s.strcatf("  %8.3f", b->parameter(n));
+			parser.writeLineF("%s\n", s.get());
+		}
+
+		for (MasterIntra* a = masterAngles_.first(); a != NULL; a = a->next)
+		{
+			CharString s("  %s  '%s'  %s", MasterBlock::keyword(MasterBlock::AngleKeyword), a->name(), SpeciesAngle::angleFunction( (SpeciesAngle::AngleFunction) a->form()));
+			for (int n=0; n<SpeciesAngle::nFunctionParameters( (SpeciesAngle::AngleFunction) a->form()); ++n) s.strcatf("  %8.3f", a->parameter(n));
+			parser.writeLineF("%s\n", s.get());
+		}
+
+		for (MasterIntra* t = masterTorsions_.first(); t != NULL; t = t->next)
+		{
+			CharString s("  %s  '%s'  %s", MasterBlock::keyword(MasterBlock::TorsionKeyword), t->name(), SpeciesTorsion::torsionFunction( (SpeciesTorsion::TorsionFunction) t->form()));
+			for (int n=0; n<SpeciesTorsion::nFunctionParameters( (SpeciesTorsion::TorsionFunction) t->form()); ++n) s.strcatf("  %8.3f", t->parameter(n));
+			parser.writeLineF("%s\n", s.get());
+		}
+
+		// Done with the master terms
+		parser.writeLineF("%s\n", MasterBlock::keyword(MasterBlock::EndMasterKeyword));
+	}
+
 	// Write Species data
-	parser.writeLineF("# Species Definitions\n");
+	parser.writeBannerComment("Define Species");
 	for (Species* sp = species_.first(); sp != NULL; sp = sp->next)
 	{
-		parser.writeLineF("%s '%s'\n", InputBlocks::inputBlock(InputBlocks::SpeciesBlock), sp->name());
+		parser.writeLineF("\n%s '%s'\n", InputBlocks::inputBlock(InputBlocks::SpeciesBlock), sp->name());
 		
 		// Atoms
 		parser.writeLineF("  # Atoms\n");
@@ -254,7 +285,8 @@ bool DUQ::saveInput(const char* filename)
 		for (SpeciesAtom* i = sp->firstAtom(); i != NULL; i = i->next)
 		{
 			++count;
-			parser.writeLineF("  %s  %3i  %3s  %8.3f %8.3f %8.3f %8.3f '%s'\n", SpeciesBlock::keyword(SpeciesBlock::AtomKeyword), count, periodicTable.element(i->element()).symbol(), i->r().x, i->r().y, i->r().z, i->charge(), i->atomType() == NULL ? "???" : i->atomType()->name());
+			if (pairPotentialsIncludeCoulomb_) parser.writeLineF("  %s  %3i  %3s  %8.3f  %8.3f  %8.3f  '%s'\n", SpeciesBlock::keyword(SpeciesBlock::AtomKeyword), count, periodicTable.element(i->element()).symbol(), i->r().x, i->r().y, i->r().z, i->atomType() == NULL ? "???" : i->atomType()->name());
+			else parser.writeLineF("  %s  %3i  %3s  %8.3f  %8.3f  %8.3f  '%s'  %8.3f\n", SpeciesBlock::keyword(SpeciesBlock::AtomKeyword), count, periodicTable.element(i->element()).symbol(), i->r().x, i->r().y, i->r().z, i->atomType() == NULL ? "???" : i->atomType()->name(), i->charge());
 		}
 
 		// Bonds
@@ -263,9 +295,13 @@ bool DUQ::saveInput(const char* filename)
 			parser.writeLineF("\n  # Bonds\n");
 			for (SpeciesBond* b = sp->bonds(); b != NULL; b = b->next)
 			{
-				CharString s("  %s  %3i  %3i", SpeciesBlock::keyword(SpeciesBlock::BondKeyword), SpeciesBond::bondFunction( (SpeciesBond::BondFunction) b->form()), b->indexI()+1, b->indexJ()+1);
-				for (int n=0; n<SpeciesBond::nFunctionParameters( (SpeciesBond::BondFunction) b->form()); ++n) s.strcatf("  8.3f", b->parameter(n));
-				parser.writeLineF("%s\n", s.get());
+				if (b->masterParameters()) parser.writeLineF("  %s  @%s  %3i  %3i\n", SpeciesBlock::keyword(SpeciesBlock::BondKeyword), b->masterParameters()->name(), b->indexI()+1, b->indexJ()+1);
+				else
+				{
+					CharString s("  %s  %s  %3i  %3i", SpeciesBlock::keyword(SpeciesBlock::BondKeyword), SpeciesBond::bondFunction( (SpeciesBond::BondFunction) b->form()), b->indexI()+1, b->indexJ()+1);
+					for (int n=0; n<SpeciesBond::nFunctionParameters( (SpeciesBond::BondFunction) b->form()); ++n) s.strcatf("  %8.3f", b->parameter(n));
+					parser.writeLineF("%s\n", s.get());
+				}
 			}
 		}
 
@@ -275,9 +311,13 @@ bool DUQ::saveInput(const char* filename)
 			parser.writeLineF("\n  # Angles\n");
 			for (SpeciesAngle* a = sp->angles(); a != NULL; a = a->next)
 			{
-				CharString s("  %s  %3i  %3i  %3i", SpeciesBlock::keyword(SpeciesBlock::AngleKeyword), SpeciesAngle::angleFunction( (SpeciesAngle::AngleFunction) a->form()), a->indexI()+1, a->indexJ()+1, a->indexK()+1);
-				for (int n=0; n<SpeciesAngle::nFunctionParameters( (SpeciesAngle::AngleFunction) a->form()); ++n) s.strcatf("  8.3f", a->parameter(n));
-				parser.writeLineF("%s\n", s.get());
+				if (a->masterParameters()) parser.writeLineF("  %s  @%s  %3i  %3i  %3i\n", SpeciesBlock::keyword(SpeciesBlock::AngleKeyword), a->masterParameters()->name(), a->indexI()+1, a->indexJ()+1, a->indexK()+1);
+				else
+				{
+					CharString s("  %s  %s  %3i  %3i  %3i", SpeciesBlock::keyword(SpeciesBlock::AngleKeyword), SpeciesAngle::angleFunction( (SpeciesAngle::AngleFunction) a->form()), a->indexI()+1, a->indexJ()+1, a->indexK()+1);
+					for (int n=0; n<SpeciesAngle::nFunctionParameters( (SpeciesAngle::AngleFunction) a->form()); ++n) s.strcatf("  %8.3f", a->parameter(n));
+					parser.writeLineF("%s\n", s.get());
+				}
 			}
 		}
 
@@ -287,9 +327,13 @@ bool DUQ::saveInput(const char* filename)
 			parser.writeLineF("\n  # Torsions\n");
 			for (SpeciesTorsion* t = sp->torsions(); t != NULL; t = t->next)
 			{
-				CharString s("  %s  %3i  %3i  %3i", SpeciesBlock::keyword(SpeciesBlock::TorsionKeyword), SpeciesTorsion::torsionFunction( (SpeciesTorsion::TorsionFunction) t->form()), t->indexI()+1, t->indexJ()+1, t->indexK()+1, t->indexL()+1);
-				for (int n=0; n<SpeciesTorsion::nFunctionParameters( (SpeciesTorsion::TorsionFunction) t->form()); ++n) s.strcatf("  8.3f", t->parameter(n));
-				parser.writeLineF("%s\n", s.get());
+				if (t->masterParameters()) parser.writeLineF("  %s  @%s  %3i  %3i  %3i  %3i\n", SpeciesBlock::keyword(SpeciesBlock::TorsionKeyword), t->masterParameters()->name(), t->indexI()+1, t->indexJ()+1, t->indexK()+1, t->indexL()+1);
+				else
+				{
+					CharString s("  %s  %s  %3i  %3i  %3i", SpeciesBlock::keyword(SpeciesBlock::TorsionKeyword), SpeciesTorsion::torsionFunction( (SpeciesTorsion::TorsionFunction) t->form()), t->indexI()+1, t->indexJ()+1, t->indexK()+1, t->indexL()+1);
+					for (int n=0; n<SpeciesTorsion::nFunctionParameters( (SpeciesTorsion::TorsionFunction) t->form()); ++n) s.strcatf("  %8.3f", t->parameter(n));
+					parser.writeLineF("%s\n", s.get());
+				}
 			}
 		}
 
@@ -315,14 +359,41 @@ bool DUQ::saveInput(const char* filename)
 		}
 		
 		// Done with this species
-		parser.writeLineF("%s\n\n", SpeciesBlock::keyword(SpeciesBlock::EndSpeciesKeyword));
+		parser.writeLineF("%s\n", SpeciesBlock::keyword(SpeciesBlock::EndSpeciesKeyword));
 	}
 
+	// Write PairPotentials block
+	parser.writeBannerComment("Pair Potentials");
+	parser.writeLineF("\n%s\n", InputBlocks::inputBlock(InputBlocks::PairPotentialsBlock));
+
+	// Atom Type Parameters
+	parser.writeLineF("  # Atom Type Parameters\n");
+	parser.writeLineF("  # Note: These are for reference only (unless GenerateAll is used).\n");
+	parser.writeLineF("  # If you wish to modify the potential, change the relevant Generate lines below.\n");
+	for (AtomType* atomType = atomTypes_.first(); atomType != NULL; atomType = atomType->next)
+	{
+		CharString s("  %s  %s  %12.6e", PairPotentialsBlock::keyword(PairPotentialsBlock::ParametersKeyword), atomType->name(), atomType->parameters().charge());
+		for (int n=0; n<MAXSRPARAMETERS; ++n) s.strcatf("  %12.6e", atomType->parameters().parameter(n));
+		if (!parser.writeLineF("%s\n", s.get())) return false;
+	}
+
+	parser.writeLineF("  %s  %f\n", PairPotentialsBlock::keyword(PairPotentialsBlock::RangeKeyword), pairPotentialRange_);
+	parser.writeLineF("  %s  %f\n", PairPotentialsBlock::keyword(PairPotentialsBlock::DeltaKeyword), pairPotentialDelta_);
+	parser.writeLineF("  %s  %s\n", PairPotentialsBlock::keyword(PairPotentialsBlock::CoulombTruncationKeyword), PairPotential::coulombTruncationScheme(PairPotential::coulombTruncationScheme()));
+	parser.writeLineF("  %s  %s\n", PairPotentialsBlock::keyword(PairPotentialsBlock::ShortRangeTruncationKeyword), PairPotential::shortRangeTruncationScheme(PairPotential::shortRangeTruncationScheme()));
+	for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next)
+	{
+		CharString s("  %s  %s  %s  %s  %12.6e  %12.6e", PairPotentialsBlock::keyword(PairPotentialsBlock::GenerateKeyword), PairPotential::shortRangeType(pot->shortRangeType()), pot->atomTypeI()->name(), pot->atomTypeJ()->name(), pot->chargeI(), pot->chargeJ());
+		for (int n=0; n<MAXSRPARAMETERS; ++n) s.strcatf("  %12.6e", pot->parameter(n));
+		if (!parser.writeLineF("%s\n", s.get())) return false;
+	}
+	parser.writeLineF("%s\n", PairPotentialsBlock::keyword(PairPotentialsBlock::EndPairPotentialsKeyword));
+
 	// Write Configurations
-	parser.writeLineF("# Configurations\n");
+	parser.writeBannerComment("Define Configurations");
 	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
 	{
-		parser.writeLineF("%s  '%s'\n", InputBlocks::inputBlock(InputBlocks::ConfigurationBlock), cfg->name());
+		parser.writeLineF("\n%s  '%s'\n", InputBlocks::inputBlock(InputBlocks::ConfigurationBlock), cfg->name());
 		parser.writeLineF("  %s  %i\n", ConfigurationBlock::keyword(ConfigurationBlock::MultiplierKeyword), cfg->multiplier());
 		parser.writeLineF("  %s  %f  %s\n", ConfigurationBlock::keyword(ConfigurationBlock::DensityKeyword), cfg->density(), cfg->densityIsAtomic() ? "atoms/A3" : "g/cm3");
 		parser.writeLineF("  %s  %f  %f  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::CellLengthsKeyword), cfg->relativeBoxLengths().x, cfg->relativeBoxLengths().y, cfg->relativeBoxLengths().z);
@@ -335,12 +406,24 @@ bool DUQ::saveInput(const char* filename)
 		for (SpeciesInfo* spInfo = cfg->usedSpecies().first(); spInfo != NULL; spInfo = spInfo->next)
 		{
 			Species* sp = spInfo->species();
-
 			parser.writeLineF("  %s  '%s'\n", ConfigurationBlock::keyword(ConfigurationBlock::SpeciesInfoKeyword), sp->name());
+
 			parser.writeLineF("    %s  %f\n", SpeciesInfoBlock::keyword(SpeciesInfoBlock::PopulationKeyword), spInfo->population());
 			if (!spInfo->rotateOnInsertion()) parser.writeLineF("    %s  %s\n", SpeciesInfoBlock::keyword(SpeciesInfoBlock::NoRotationKeyword), DUQSys::btoa(false));
 			if (!spInfo->translateOnInsertion()) parser.writeLineF("    %s  %s\n", SpeciesInfoBlock::keyword(SpeciesInfoBlock::NoTranslationKeyword), DUQSys::btoa(false));
+
+			parser.writeLineF("  %s\n", SpeciesInfoBlock::keyword(SpeciesInfoBlock::EndSpeciesInfoKeyword));
 		}
+
+
+		parser.writeLineF("\n");
+		if (cfg->boxNormalisation().nPoints() != 0) parser.writeLineF("  %s  '%s'\n", ConfigurationBlock::keyword(ConfigurationBlock::BoxNormalisationFileKeyword), cfg->boxNormalisationFileName());
+		parser.writeLineF("  %s  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::BraggQMaxKeyword), cfg->braggQMax());
+		parser.writeLineF("  %s  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::BraggQMinKeyword), cfg->braggQMin());
+		parser.writeLineF("  %s  %i %i %i\n", ConfigurationBlock::keyword(ConfigurationBlock::BraggMultiplicityKeyword), cfg->braggMultiplicity().x, cfg->braggMultiplicity().y, cfg->braggMultiplicity().z);
+		parser.writeLineF("  %s  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::RDFBinWidthKeyword), cfg->rdfBinWidth());
+		parser.writeLineF("  %s  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::RDFRangeKeyword), cfg->rdfRange());
+		parser.writeLineF("  %s  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::TemperatureKeyword), cfg->temperature());
 
 		// Modules
 		parser.writeLineF("\n  # Modules\n");
@@ -350,98 +433,49 @@ bool DUQ::saveInput(const char* filename)
 		{
 			parser.writeLineF("  %s  %s  '%s'\n", ConfigurationBlock::keyword(ConfigurationBlock::ModuleKeyword), module->name(), module->uniqueName());
 
-			// For each Module, print all available options
-			parser.writeLineF("XXX Writing of Module Keyword options in input files is currently broken.\n");
-// 			// Write value set in Configuration if it exists
-// 			for (PlainValue* option = module->options().values(); option != NULL; option = option->next)
-// 			{
-// 				// Search the Configuration's module data for the option - if it doesn't exist then it wasn't set and the default value is relevant, so don't bother writing the option out
-// 				if (!cfg->moduleData().contains(option->name(), module->uniqueName())) continue;
-// 
-// 				switch (option->type())
-// 				{
-// 					case (PlainValue::BooleanType):
-// 						parser.writeLineF("    %s  %s\n", option->name(), DUQSys::btoa(GenericListHelper<bool>::retrieve(cfg->moduleData(), option->name(), module->uniqueName(), option->asBool())));
-// 						break;
-// 					case (PlainValue::IntegerType):
-// 						parser.writeLineF("    %s  %i\n", option->name(), GenericListHelper<int>::retrieve(cfg->moduleData(), option->name(), module->uniqueName(), option->asInt()));
-// 						break;
-// 					case (PlainValue::DoubleType):
-// 						parser.writeLineF("    %s  %12.6e\n", option->name(), GenericListHelper<double>::retrieve(cfg->moduleData(), option->name(), module->uniqueName(), option->asDouble()));
-// 						break;
-// 					case (PlainValue::StringType):
-// 						parser.writeLineF("    %s  '%s'\n", option->name(), GenericListHelper<CharString>::retrieve(cfg->moduleData(), option->name(), module->uniqueName(), option->asString()).get());
-// 						break;
-// 				}
-// 			}
+			// Print keyword options
+			ListIterator<ModuleKeywordBase> keywordIterator(module->keywords().keywords());
+			while (ModuleKeywordBase* keyword = keywordIterator.iterate())
+			{
+				// If the keyword has never been set (i.e. it still has its default value) don't bother to write it
+				if (!keyword->isSet()) continue;
+
+				if (!keyword->write(parser, "    ")) return false;
+			}
 
 			parser.writeLineF("  %s\n", ModuleBlock::keyword(ModuleBlock::EndModuleKeyword));
 		}
 
-		parser.writeLineF("\n");
-		parser.writeLineF("  %s  '%s'\n", ConfigurationBlock::keyword(ConfigurationBlock::BoxNormalisationFileKeyword), cfg->boxNormalisationFileName());
-		parser.writeLineF("  %s  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::BraggQMaxKeyword), cfg->braggQMax());
-		parser.writeLineF("  %s  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::BraggQMinKeyword), cfg->braggQMin());
-		parser.writeLineF("  %s  %i %i %i\n", ConfigurationBlock::keyword(ConfigurationBlock::BraggMultiplicityKeyword), cfg->braggMultiplicity().x, cfg->braggMultiplicity().y, cfg->braggMultiplicity().z);
-		parser.writeLineF("  %s  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::RDFBinWidthKeyword), cfg->rdfBinWidth());
-		parser.writeLineF("  %s  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::RDFRangeKeyword), cfg->rdfRange());
-		parser.writeLineF("  %s  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::TemperatureKeyword), cfg->temperature());
-
-		parser.writeLineF("%s\n\n", ConfigurationBlock::keyword(ConfigurationBlock::EndConfigurationKeyword));
+		parser.writeLineF("%s\n", ConfigurationBlock::keyword(ConfigurationBlock::EndConfigurationKeyword));
 	}
 
 	// Write processing Module blocks
-	parser.writeLineF("# Processing Modules\n");
+	parser.writeBannerComment("Processing Modules");
 	RefListIterator<Module,bool> processingIterator(processingModules_.modules());
 	while (Module* module = processingIterator.iterate())
 	{
-		parser.writeLineF("%s  %s  '%s'\n", InputBlocks::inputBlock(InputBlocks::ModuleBlock), module->name(), module->uniqueName());
+		parser.writeLineF("\n%s  %s  '%s'\n", InputBlocks::inputBlock(InputBlocks::ModuleBlock), module->name(), module->uniqueName());
 
-		// For each Module, print all available options
+		// Write Configuration target(s)
+		RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
+		while (Configuration* cfg = configIterator.iterate()) parser.writeLineF("  %s  '%s'\n", ModuleBlock::keyword(ModuleBlock::ConfigurationKeyword), cfg->name());
 
-		parser.writeLineF("XXX Writing of Module Keyword options in input files is currently broken.\n");
-// 		// Write value set in Configuration if it exists
-// 		for (PlainValue* option = module->options().values(); option != NULL; option = option->next)
-// 		{
-// 			// Search the master's processing module data for the option - if it doesn't exist then it wasn't set and the default value is relevant, so don't bother writing the option out
-// 			if (!processingModuleData_.contains(option->name(), module->uniqueName())) continue;
-// 			
-// 			switch (option->type())
-// 			{
-// 				case (PlainValue::BooleanType):
-// 					parser.writeLineF("  %s  %s\n", option->name(), DUQSys::btoa(GenericListHelper<bool>::retrieve(processingModuleData_, option->name(), module->uniqueName(), option->asBool())));
-// 					break;
-// 				case (PlainValue::IntegerType):
-// 					parser.writeLineF("  %s  %i\n", option->name(), GenericListHelper<int>::retrieve(processingModuleData_, option->name(), module->uniqueName(), option->asInt()));
-// 					break;
-// 				case (PlainValue::DoubleType):
-// 					parser.writeLineF("  %s  %12.6e\n", option->name(), GenericListHelper<double>::retrieve(processingModuleData_, option->name(), module->uniqueName(), option->asDouble()));
-// 					break;
-// 				case (PlainValue::StringType):
-// 					parser.writeLineF("  %s  '%s'\n", option->name(), GenericListHelper<CharString>::retrieve(processingModuleData_, option->name(), module->uniqueName(), option->asString()).get());
-// 					break;
-// 			}
-// 		}
+		// Print keyword options
+		ListIterator<ModuleKeywordBase> keywordIterator(module->keywords().keywords());
+		while (ModuleKeywordBase* keyword = keywordIterator.iterate())
+		{
+			// If the keyword has never been set (i.e. it still has its default value) don't bother to write it
+			if (!keyword->isSet()) continue;
+
+			if (!keyword->write(parser, "  ")) return false;
+		}
 
 		parser.writeLineF("%s\n", ModuleBlock::keyword(ModuleBlock::EndModuleKeyword));
 	}
-	parser.writeLine("");
-
-	// Write PairPotentials block
-	parser.writeLineF("# Pair Potentials\n");
-	parser.writeLineF("%s\n", InputBlocks::inputBlock(InputBlocks::PairPotentialsBlock));
-	parser.writeLineF("  %s  %f\n", PairPotentialsBlock::keyword(PairPotentialsBlock::RangeKeyword), pairPotentialRange_);
-	parser.writeLineF("  %s  %f\n", PairPotentialsBlock::keyword(PairPotentialsBlock::DeltaKeyword), pairPotentialDelta_);
-	parser.writeLineF("  %s  %f\n", PairPotentialsBlock::keyword(PairPotentialsBlock::TruncationWidthKeyword), pairPotentialTruncationWidth_);
-	for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next)
-	{
-		parser.writeLineF("  %s  '%s'  '%s'  '%s'\n", PairPotentialsBlock::keyword(PairPotentialsBlock::GenerateKeyword), PairPotential::shortRangeType(pot->shortRangeType()), pot->atomTypeI()->name(), pot->atomTypeJ()->name());
-	}
-	parser.writeLineF("%s\n\n", PairPotentialsBlock::keyword(PairPotentialsBlock::EndPairPotentialsKeyword));
 
 	// Write Simulation block
-	parser.writeLineF("# Simulation\n");
-	parser.writeLineF("%s\n", InputBlocks::inputBlock(InputBlocks::SimulationBlock));
+	parser.writeBannerComment("Simulation");
+	parser.writeLineF("\n%s\n", InputBlocks::inputBlock(InputBlocks::SimulationBlock));
 	parser.writeLineF("  %s  %i\n", SimulationBlock::keyword(SimulationBlock::BoxNormalisationPointsKeyword), nBoxNormalisationPoints_);
 	parser.writeLineF("  %s  %i\n", SimulationBlock::keyword(SimulationBlock::SeedKeyword), seed_);
 	parser.writeLineF("%s\n\n", SimulationBlock::keyword(SimulationBlock::EndSimulationKeyword));
@@ -597,13 +631,13 @@ bool DUQ::saveRestart(const char* filename)
 }
 
 // Return whether a filename has been set
-bool DUQ::hasFileName() const
+bool DUQ::hasInputFileName() const
 {
 	return (!filename_.isEmpty());
 }
 
 // Return filename of current input file
-const char* DUQ::filename() const
+const char* DUQ::inputFilename() const
 {
 	return filename_.get();
 }
