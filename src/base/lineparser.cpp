@@ -968,6 +968,40 @@ bool LineParser::writeLineF(const char* fmt, ...) const
 	return true;
 }
 
+// Print banner comment of fixed width
+bool LineParser::writeBannerComment(const char* fmt, ...)
+{
+	static CharString bannerChars;
+	const int width = 80;
+	if (bannerChars.length() < width)
+	{
+		bannerChars.createEmpty(width+1);
+		bannerChars.fill('-');
+		bannerChars[0] = '#';
+		bannerChars[width-1] = '#';
+	}
+
+	// First, create the text using vsprintf
+	va_list arguments;
+	va_start(arguments, fmt);
+	vsprintf(workingText_, fmt, arguments);
+	va_end(arguments);
+	CharString bannerText = workingText_;
+
+	// Now, get the length of the banner text and create a format for printing it into a line 80 chars wide
+	int leftPad = (width - bannerText.length()) / 2 - 1;
+	int rightPad = width - bannerText.length() - leftPad - 2;
+	char bannerFormat[64];
+	sprintf(bannerFormat, "%%s\n%%c%%%is%%s%%%is%%c\n%%s", leftPad, rightPad);
+
+	// Finally, print the banner
+	if (!writeLineF("\n")) return false;
+	if (!writeLineF(bannerFormat, bannerChars.get(), '#', " ", bannerText.get(), " ", '#', bannerChars.get())) return false;;
+	if (!writeLineF("\n")) return false;
+
+	return true;
+}
+
 // Write int argument as single line
 bool LineParser::writeArg(int i) const
 {

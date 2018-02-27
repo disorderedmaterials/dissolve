@@ -152,6 +152,8 @@ class LineParser
 	bool directOutput_;
 	// Gets all delimited args from internal line
 	void getAllArgsDelim(int optionMask);
+	// Working storage for text to write
+	char workingText_[8096];
 
 	public:
 	// Gets next delimited arg from internal line
@@ -182,6 +184,8 @@ class LineParser
 	bool writeLine(const char* s) const;
 	// Write formatted line to file
 	bool writeLineF(const char* fmt, ...) const;
+	// Print banner comment of fixed width
+	bool writeBannerComment(const char* fmt, ...);
 	// Write int argument as single line
 	bool writeArg(int i) const;
 	// Write double argument as single line
