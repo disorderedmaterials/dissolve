@@ -19,7 +19,7 @@ SUFFIXES: .ui .hui .qrc
 	rm $*.cpp
 
 clean-local:
-	-rm -f ui_* *.o moc_*.cpp
+	-rm -f ui_* *.o moc_*.cpp bool.cpp charstring.cpp double.cpp int.cpp windowfunction.cpp
 
 libkeywordwidgets_la_SOURCES = base.cpp
 libkeywordwidgets_la_SOURCES += dropdown.ui dropwidget.hui dropdown_funcs.cpp dropwidget_funcs.cpp
