@@ -165,6 +165,12 @@ WindowFunction::FunctionType WindowFunction::function() const
 	return function_;
 }
 
+// Return parameter specified
+double WindowFunction::parameter(int n) const
+{
+	return parameters_[n];
+}
+
 // Return short summary of function parameters
 CharString WindowFunction::parameterSummary() const
 {

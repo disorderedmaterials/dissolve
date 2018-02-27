@@ -83,6 +83,8 @@ class WindowFunction : public GenericItemBase
 	bool set(LineParser& parser, int startArg);
 	// Return function type
 	FunctionType function() const;
+	// Return parameter specified
+	double parameter(int n) const;
 	// Return short summary of function parameters
 	CharString parameterSummary() const;
 	// Set-up function for specified data
