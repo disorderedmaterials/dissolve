@@ -74,6 +74,14 @@ bool BroadeningFunctionModuleKeyword::parseArguments(LineParser& parser, int sta
 	return result;
 }
 
+// Write keyword data to specified LineParser
+bool BroadeningFunctionModuleKeyword::write(LineParser& parser, const char* prefix)
+{
+	CharString params;
+	for (int n=0; n<BroadeningFunction::nFunctionParameters(data_.function()); ++n) params.strcatf("  %f", data_.parameter(n));
+	return parser.writeLineF("%s%s  '%s'%s\n", prefix, keyword(), BroadeningFunction::functionType(data_.function()), params.get());
+}
+
 /*
  * Validation
  */

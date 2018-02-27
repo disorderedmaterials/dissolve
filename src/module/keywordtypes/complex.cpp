@@ -75,3 +75,10 @@ bool ComplexModuleKeyword::parseArguments(LineParser& parser, int startArg)
 {
 	return false;
 }
+
+// Write keyword data to specified LineParser
+bool ComplexModuleKeyword::write(LineParser& parser, const char* prefix)
+{
+	Messenger::print("Tried to write a ComplexModuleKeyword - remove this horrible class!\n");
+	return true;
+}

@@ -93,6 +93,8 @@ class ModuleKeywordBase : public ListItem<ModuleKeywordBase>
 	virtual int maxArguments() = 0;
 	// Parse arguments from supplied LineParser, starting at argument offset specified
 	virtual bool parseArguments(LineParser& parser, int startArg) = 0;
+	// Write keyword data to specified LineParser
+	virtual bool write(LineParser& parser, const char* prefix) = 0;
 
 
 	/*

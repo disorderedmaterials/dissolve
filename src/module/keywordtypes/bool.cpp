@@ -83,6 +83,12 @@ bool BoolModuleKeyword::parseArguments(LineParser& parser, int startArg)
 	return false;
 }
 
+// Write keyword data to specified LineParser
+bool BoolModuleKeyword::write(LineParser& parser, const char* prefix)
+{
+	return parser.writeLineF("%s%s  %s\n", prefix, keyword(), DUQSys::btoa(data_));
+}
+
 /*
  * Conversion
  */

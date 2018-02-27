@@ -130,6 +130,11 @@ bool IntegerModuleKeyword::parseArguments(LineParser& parser, int startArg)
 	return false;
 }
 
+// Write keyword data to specified LineParser
+bool IntegerModuleKeyword::write(LineParser& parser, const char* prefix)
+{
+	return parser.writeLineF("%s%s  %i\n", prefix, keyword(), data_);
+}
 
 /*
  * Conversion

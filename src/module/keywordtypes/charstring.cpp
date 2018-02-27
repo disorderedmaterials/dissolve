@@ -93,6 +93,12 @@ bool CharStringModuleKeyword::parseArguments(LineParser& parser, int startArg)
 	return false;
 }
 
+// Write keyword data to specified LineParser
+bool CharStringModuleKeyword::write(LineParser& parser, const char* prefix)
+{
+	return parser.writeLineF("%s%s  '%s'\n", prefix, keyword(), data_.get());
+}
+
 /*
  * Validation
  */

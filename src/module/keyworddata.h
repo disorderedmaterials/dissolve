@@ -71,6 +71,11 @@ template <class T> class ModuleKeywordData
 	{
 		return data_;
 	}
+	// Flag that data has been set by some other means
+	void dataHasBeenSet()
+	{
+		set_ = true;
+	}
 
 
 	/*

@@ -66,6 +66,8 @@ class BoolModuleKeyword : public ModuleKeywordBase, public ModuleKeywordData<boo
 	int maxArguments();
 	// Parse arguments from supplied LineParser, starting at argument offset specified
 	bool parseArguments(LineParser& parser, int startArg);
+	// Write keyword data to specified LineParser
+	bool write(LineParser& parser, const char* prefix);
 
 
 	/*

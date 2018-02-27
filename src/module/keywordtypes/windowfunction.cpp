@@ -74,6 +74,14 @@ bool WindowFunctionModuleKeyword::parseArguments(LineParser& parser, int startAr
 	return result;
 }
 
+// Write keyword data to specified LineParser
+bool WindowFunctionModuleKeyword::write(LineParser& parser, const char* prefix)
+{
+	CharString params;
+	for (int n=0; n<WindowFunction::nFunctionParameters(data_.function()); ++n) params.strcatf("  %f", data_.parameter(n));
+	return parser.writeLineF("%s%s  '%s'%s\n", prefix, keyword(), WindowFunction::functionType(data_.function()), params.get());
+}
+
 /*
  * Validation
  */
