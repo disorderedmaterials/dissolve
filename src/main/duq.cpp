@@ -42,6 +42,7 @@ DUQ::DUQ()
 	// Simulation
 	iteration_ = 0;
 	nIterationsPerformed_ = 0;
+	setUp_ = false;
 
 	// Simulation Setup
 	nBoxNormalisationPoints_ = 500000000;
@@ -68,6 +69,10 @@ DUQ::~DUQ()
 	clear();
 }
 
+/*
+ * Core
+ */
+
 // Clear all data
 void DUQ::clear()
 {
@@ -85,6 +90,8 @@ void DUQ::clear()
 
 	Messenger::printVerbose("Clearing misc...\n");
 	filename_.clear();
+
+	setUp_ = false;
 }
 
 // Register GenericItems
@@ -113,4 +120,40 @@ void DUQ::registerGenericItems()
 	GenericItem::addItemClass(new GenericItemContainer<PartialSet>(PartialSet::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<XYData>(XYData::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<Weights>(Weights::itemClassName()));
+}
+
+// Set up everything needed to run the simulation
+bool DUQ::setUp()
+{
+	setUp_ = false;
+
+	// Initialise random seed
+	if (seed_ == -1) srand( (unsigned)time( NULL ) );
+	else srand(seed_);
+
+	// Perform simulation set up (all processes)
+	Messenger::banner("Setting Up Simulation");
+	if (!setUpSimulation())
+	{
+		Messenger::print("Failed to set up simulation.\n");
+		return false;
+	}
+
+	// Set up parallel comms / limits etc.
+	Messenger::banner("Setting Up Parallelism");
+	if (!setUpMPIPools())
+	{
+		Messenger::print("Failed to set up parallel communications.\n");
+		return false;
+	}
+
+	setUp_ = true;
+
+	return true;
+}
+
+// Return whether the simulation has been set up
+bool DUQ::isSetUp() const
+{
+	return setUp_;
 }

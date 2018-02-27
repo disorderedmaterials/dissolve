@@ -219,25 +219,9 @@ int main(int argc, char **argv)
 	}
 	else Messenger::print("Restart file (if it exists) will be ignored.\n");
 
-	// Initialise random seed
-	if (dUQ.seed() == -1) srand( (unsigned)time( NULL ) );
-	else srand(dUQ.seed());
-
-	// Perform simulation set up (all processes)
-	Messenger::banner("Setting Up Simulation");
-	if (!dUQ.setUpSimulation())
+	// Prepare for run
+	if (!dUQ.setUp())
 	{
-		Messenger::print("Failed to set up simulation.\n");
-		ProcessPool::finalise();
-		Messenger::ceaseRedirect();
-		return 1;
-	}
-
-	// Set up parallel comms / limits etc.
-	Messenger::banner("Setting Up Parallelism");
-	if (!dUQ.setUpMPIPools())
-	{
-		Messenger::print("Failed to set up parallel communications.\n");
 		ProcessPool::finalise();
 		Messenger::ceaseRedirect();
 		return 1;

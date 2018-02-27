@@ -86,6 +86,8 @@ bool DUQ::iterate(int nIterations)
 	 *  6)	Write data (master process only)
 	 */
 
+	if (!setUp_) return Messenger::error("Simulation has not been set up.\n");
+
 	mainLoopTimer_.zero();
 	mainLoopTimer_.start();
 

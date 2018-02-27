@@ -31,6 +31,9 @@ DUQWindow::DUQState DUQWindow::duqState() const
 
 void DUQWindow::on_ControlRunButton_clicked(bool checked)
 {
+	// Make sure everything is set-up
+	if ((!duq_.isSetUp()) && (!duq_.setUp())) return;
+
 	// Prepare the GUI
 	setWidgetsForRun();
 
@@ -41,6 +44,9 @@ void DUQWindow::on_ControlRunButton_clicked(bool checked)
 
 void DUQWindow::on_ControlStepButton_clicked(bool checked)
 {
+	// Make sure everything is set-up
+	if ((!duq_.isSetUp()) && (!duq_.setUp())) return;
+
 	// Prepare the GUI
 	setWidgetsForRun();
 
@@ -51,6 +57,9 @@ void DUQWindow::on_ControlStepButton_clicked(bool checked)
 
 void DUQWindow::on_ControlStepFiveButton_clicked(bool checked)
 {
+	// Make sure everything is set-up
+	if ((!duq_.isSetUp()) && (!duq_.setUp())) return;
+
 	// Prepare the GUI
 	setWidgetsForRun();
 

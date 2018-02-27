@@ -48,10 +48,24 @@ class DUQ
 	DUQ();
 	// Destructor
 	~DUQ();
+
+
+	/*
+	 * Core
+	 */
+	private:
+	// Whether we are set up, ready for simulation
+	bool setUp_;
+
+	public:
 	// Clear all data
 	void clear();
 	// Register GenericItems
 	void registerGenericItems();
+	// Set up everything needed to run the simulation
+	bool setUp();
+	// Return whether the simulation has been set up
+	bool isSetUp() const;
 
 
 	/*
@@ -278,7 +292,7 @@ class DUQ
 
 
 	/*
-	 * Simulation Setup
+	 * Simulation
 	 */
 	private:
 	// Number of test points to use when calculating Box normalisation arrays

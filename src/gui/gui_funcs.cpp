@@ -115,29 +115,6 @@ bool DUQWindow::openFile(const char* inputFile, bool ignoreRestartFile, bool ign
 	}
 	else Messenger::print("\nRestart file (if it exists) will be ignored.\n");
 
-	// Initialise random seed
-	if (duq_.seed() == -1) srand( (unsigned)time( NULL ) );
-	else srand(duq_.seed());
-
-	// Perform simulation set up (all processes)
-	Messenger::banner("Setting Up Simulation");
-	if (!duq_.setUpSimulation())
-	{
-		Messenger::print("Failed to set up simulation.\n");
-		ProcessPool::finalise();
-		return 1;
-	}
-
-	// Set up parallel comms / limits etc.
-	Messenger::banner("Setting Up Parallelism");
-	if (!duq_.setUpMPIPools())
-	{
-		Messenger::print("Failed to set up parallel communications.\n");
-		ProcessPool::finalise();
-		Messenger::ceaseRedirect();
-		return 1;
-	}
-
 	refreshing_ = true;
 
 	// Add on necessary tabs
