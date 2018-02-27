@@ -69,6 +69,8 @@ class CharString : public ListItem<CharString>
 	bool isEmpty() const;
 	// Return last character of string (before '\0')
 	char lastChar() const;
+	// Return char at specified position
+	char at(int n) const;
 
 	
 	/*
@@ -108,7 +110,7 @@ class CharString : public ListItem<CharString>
 	// Inequality operator
 	bool operator!=(const CharString&) const;
 	// Array subscript operator
-	char operator[](int) const;
+	char& operator[](int);
 	// Character addition operator
 	void operator+=(char);
 	// String addition operator

@@ -162,6 +162,17 @@ char CharString::lastChar() const
 	return (endPosition_ == 0 ? '\0' : data_[endPosition_-1]);
 }
 
+// Return reference to char at specified position
+char CharString::at(int n) const
+{
+	if ((n < 0) || (n >= endPosition_))
+	{
+		printf("Character %i is out of range.\n", n);
+		return 0;
+	}
+	return data_[n];
+}
+
 /*
  * Erase / Cut
  */
@@ -287,12 +298,13 @@ bool CharString::operator!=(const CharString &s) const
 }
 
 // Subscript operator
-char CharString::operator[](int n) const
+char& CharString::operator[](int n)
 {
 	if ((n < 0) || (n >= size_))
 	{
 		std::printf("CharString::operator[] <<<< Array subscript %i out of range (0-%i) >>>>\n",n,size_-1);
-		return 0;
+		static char dummy;
+		return dummy;
 	}
 	return data_[n];
 }
