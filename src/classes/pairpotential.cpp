@@ -32,7 +32,9 @@
 #include <string.h>
 
 // Static members
-PairPotential::TruncationScheme PairPotential::coulombTruncationScheme_ = PairPotential::ShiftedTruncation;
+PairPotential::CoulombTruncationScheme PairPotential::coulombTruncationScheme_ = PairPotential::ShiftedCoulombTruncation;
+PairPotential::ShortRangeTruncationScheme PairPotential::shortRangeTruncationScheme_ = PairPotential::ShiftedShortRangeTruncation;
+double PairPotential::shortRangeTruncationWidth_ = 2.0;
 
 // Constructor
 PairPotential::PairPotential() : ListItem<PairPotential>()
@@ -63,20 +65,54 @@ const char* PairPotential::shortRangeType(PairPotential::ShortRangeType id)
 	return ShortRangeTypeKeywords[id];
 }
 
-// Truncation Scheme Keywords
-const char* TruncationSchemeKeywords[] = { "None", "Shifted" };
-
-// Convert text string to TruncationScheme
-PairPotential::TruncationScheme PairPotential::truncationScheme(const char* s)
+// Return ShortRangeTypes array
+const char** PairPotential::shortRangeTypes()
 {
-	for (int n=0; n<PairPotential::nTruncationSchemes; ++n) if (DUQSys::sameString(s,TruncationSchemeKeywords[n])) return (PairPotential::TruncationScheme) n;
-	return PairPotential::nTruncationSchemes;
+	return ShortRangeTypeKeywords;
 }
 
-// Convert TruncationScheme to text string
-const char* PairPotential::truncationScheme(TruncationScheme id)
+// Coulomb Truncation Scheme Keywords
+const char* CoulombTruncationSchemeKeywords[] = { "None", "Shifted" };
+
+// Convert text string to TruncationScheme
+PairPotential::CoulombTruncationScheme PairPotential::coulombTruncationScheme(const char* s)
 {
-	return TruncationSchemeKeywords[id];
+	for (int n=0; n<PairPotential::nCoulombTruncationSchemes; ++n) if (DUQSys::sameString(s,CoulombTruncationSchemeKeywords[n])) return (PairPotential::CoulombTruncationScheme) n;
+	return PairPotential::nCoulombTruncationSchemes;
+}
+
+// Convert CoulombTruncationScheme to text string
+const char* PairPotential::coulombTruncationScheme(CoulombTruncationScheme id)
+{
+	return CoulombTruncationSchemeKeywords[id];
+}
+
+// Return CoulombTruncationScheme array
+const char** PairPotential::coulombTruncationSchemes()
+{
+	return CoulombTruncationSchemeKeywords;
+}
+
+// Short-Range Truncation Scheme Keywords
+const char* ShortRangeTruncationSchemeKeywords[] = { "None", "Shifted", "Cosine" };
+
+// Convert text string to ShortRangeTruncationScheme
+PairPotential::ShortRangeTruncationScheme PairPotential::shortRangeTruncationScheme(const char* s)
+{
+	for (int n=0; n<PairPotential::nShortRangeTruncationSchemes; ++n) if (DUQSys::sameString(s,ShortRangeTruncationSchemeKeywords[n])) return (PairPotential::ShortRangeTruncationScheme) n;
+	return PairPotential::nShortRangeTruncationSchemes;
+}
+
+// Convert ShortRangeTruncationScheme to text string
+const char* PairPotential::shortRangeTruncationScheme(ShortRangeTruncationScheme id)
+{
+	return ShortRangeTruncationSchemeKeywords[id];
+}
+
+// Return ShortRangeTruncationScheme array
+const char** PairPotential::shortRangeTruncationSchemes()
+{
+	return ShortRangeTruncationSchemeKeywords;
 }
 
 /*
@@ -95,6 +131,30 @@ PairPotential::ShortRangeType PairPotential::shortRangeType() const
 	return shortRangeType_;
 }
 
+// Set short-ranged truncation scheme
+void PairPotential::setShortRangeTruncationScheme(PairPotential::ShortRangeTruncationScheme scheme)
+{
+	shortRangeTruncationScheme_ = scheme;
+}
+
+// Return short-ranged truncation scheme
+PairPotential::ShortRangeTruncationScheme PairPotential::shortRangeTruncationScheme()
+{
+	return shortRangeTruncationScheme_;
+}
+
+// Set width of short-range potential over which to truncate (if scheme = Cosine)
+void PairPotential::setShortRangeTruncationWidth(double width)
+{
+	shortRangeTruncationWidth_ = width;
+}
+
+// Return width of short-range potential over which to truncate (if scheme = Cosine)
+double PairPotential::shortRangeTruncationWidth()
+{
+	return shortRangeTruncationWidth_;
+}
+
 // Set whether Coulomb term should be included in the generated potential
 void PairPotential::setIncludeCoulomb(bool b)
 {
@@ -108,13 +168,13 @@ bool PairPotential::includeCoulomb()
 }
 
 // Set Coulomb truncation scheme
-void PairPotential::setCoulombTruncationScheme(PairPotential::TruncationScheme scheme)
+void PairPotential::setCoulombTruncationScheme(PairPotential::CoulombTruncationScheme scheme)
 {
 	coulombTruncationScheme_ = scheme;
 }
 
 // Return Coulomb truncation scheme
-PairPotential::TruncationScheme PairPotential::coulombTruncationScheme()
+PairPotential::CoulombTruncationScheme PairPotential::coulombTruncationScheme()
 {
 	return coulombTruncationScheme_;
 }
@@ -276,8 +336,8 @@ void PairPotential::setParameter(int index, double value)
 	 parameters_[index] = value;
 }
 
-// Return parameter with index specified
-double PairPotential::parameter(int index)
+// Return short-range parameter with index specified
+double PairPotential::parameter(int index) const
 {
 #ifdef CHECKS
 	if ((index < 0) || (index >= MAXSRPARAMETERS))
@@ -318,7 +378,7 @@ double PairPotential::chargeJ() const
  */
 
 // Return analytic short range potential energy
-double PairPotential::analyticShortRangeEnergy(double r, PairPotential::ShortRangeType type)
+double PairPotential::analyticShortRangeEnergy(double r, PairPotential::ShortRangeType type, PairPotential::ShortRangeTruncationScheme truncation)
 {
 	if (type == PairPotential::NoInteractionType) return 0.0;
 	else if ((type == PairPotential::LennardJonesType) || (type == PairPotential::LennardJonesGeometricType))
@@ -333,12 +393,20 @@ double PairPotential::analyticShortRangeEnergy(double r, PairPotential::ShortRan
 		double sigmar12 = sigmar6*sigmar6;
 		double energy = 4.0 * parameters_[0] * ( sigmar12 - sigmar6 );
 		
-		// Are we into the truncation strip?
-		double truncr = r - (range_-truncationWidth_);
-		if (truncr >= 0)
+		// Apply the selected truncation scheme
+		if (truncation == PairPotential::ShiftedShortRangeTruncation)
 		{
-			// Simple truncation scheme - (cos(x)+1)*0.5, mapping the truncation region to {0,Pi}
-			energy *= (cos(PI*(truncr/truncationWidth_))+1)*0.5;
+			energy += -(r - range_)*shortRangeForceAtCutoff_ - shortRangeEnergyAtCutoff_;
+		}
+		else if (truncation == PairPotential::CosineShortRangeTruncation)
+		{
+			// Are we into the truncation strip?
+			double truncr = r - (range_-shortRangeTruncationWidth_);
+			if (truncr >= 0)
+			{
+				// Simple truncation scheme - (cos(x)+1)*0.5, mapping the truncation region to {0,Pi}
+				energy *= (cos(PI*(truncr/shortRangeTruncationWidth_))+1)*0.5;
+			}
 		}
 
 		return energy;
@@ -350,7 +418,7 @@ double PairPotential::analyticShortRangeEnergy(double r, PairPotential::ShortRan
 }
 
 // Return analytic short range force
-double PairPotential::analyticShortRangeForce(double r, PairPotential::ShortRangeType type)
+double PairPotential::analyticShortRangeForce(double r, PairPotential::ShortRangeType type, PairPotential::ShortRangeTruncationScheme truncation)
 {
 	if (type == PairPotential::NoInteractionType) return 0.0;
 	else if ((type == PairPotential::LennardJonesType) || (type == PairPotential::LennardJonesGeometricType))
@@ -366,21 +434,27 @@ double PairPotential::analyticShortRangeForce(double r, PairPotential::ShortRang
 		double sigmar = parameters_[1] / r;
 		double sigmar6 = pow(sigmar, 6.0);
 		double sigmar12 = sigmar6*sigmar6;
-		double force;
 
-		// Are we into the truncation strip?
-		double truncr = r - (range_-truncationWidth_);
-		if (truncr >= 0)
+		// Apply the selected truncation scheme
+		if (truncation == PairPotential::NoShortRangeTruncation) return 48.0*parameters_[0] * sigmar6 * (-sigmar6 + 0.5) / r;
+		else if (truncation == PairPotential::ShiftedShortRangeTruncation)
 		{
-			// Simple truncation scheme - (cos(x)+1)*0.5, mapping the truncation region to {0,Pi}
-			// d/dx = -PI*sin((PI*truncr)/truncationWidth_) / truncationWidth_
-			double de_t = (-48.0 * parameters_[0] * ( (sigmar12 / pow(r, 13.0)) - 0.5 * (sigmar6 / pow(r, 7.0)) )) * (cos(PI*(truncr/truncationWidth_))+1)*0.5;
-			double e_dt = (4.0 * parameters_[0] * ( sigmar12 - sigmar6 )) * -PI*sin((PI*truncr)/truncationWidth_) / truncationWidth_;
-			force = de_t * e_dt;
+			return (48.0*parameters_[0] * sigmar6 * (-sigmar6 + 0.5) / r) - shortRangeForceAtCutoff_;
 		}
-		else force = 48.0*parameters_[0] * sigmar6 * (-sigmar6 + 0.5) / r;
-
-		return force;
+		else if (truncation == PairPotential::CosineShortRangeTruncation)
+		{
+			// Are we into the truncation strip?
+			double truncr = r - (range_-shortRangeTruncationWidth_);
+			if (truncr >= 0)
+			{
+				// Simple truncation scheme - (cos(x)+1)*0.5, mapping the truncation region to {0,Pi}
+				// d/dx = -PI*sin((PI*truncr)/shortRangeTruncationWidth_) / shortRangeTruncationWidth_
+				double de_t = (-48.0 * parameters_[0] * ( (sigmar12 / pow(r, 13.0)) - 0.5 * (sigmar6 / pow(r, 7.0)) )) * (cos(PI*(truncr/shortRangeTruncationWidth_))+1)*0.5;
+				double e_dt = (4.0 * parameters_[0] * ( sigmar12 - sigmar6 )) * -PI*sin((PI*truncr)/shortRangeTruncationWidth_) / shortRangeTruncationWidth_;
+				return de_t * e_dt;
+			}
+			else return 48.0*parameters_[0] * sigmar6 * (-sigmar6 + 0.5) / r;
+		}
 	}
 
 	Messenger::error("Short-range interaction type %i is not accounted for in PairPotential::analyticShortRangeForce(). Returning 0.0...\n", type);
@@ -440,7 +514,7 @@ void PairPotential::calculateDUFull()
 }
 
 // Set up and generate initial potential
-bool PairPotential::setUp(double maxR, double truncationWidth, double delta, bool includeCoulomb)
+bool PairPotential::setUp(double maxR, double delta, bool includeCoulomb)
 {
 	// Check that AtomType pointers were set at some pointer
 	if ((atomTypeI_ == NULL) || (atomTypeJ_ == NULL))
@@ -453,9 +527,14 @@ bool PairPotential::setUp(double maxR, double truncationWidth, double delta, boo
 	delta_ = delta;
 	rDelta_ = 1.0/delta_;
 	range_ = maxR;
-	truncationWidth_ = truncationWidth;
 	includeCoulomb_ = includeCoulomb;
 	nPoints_ = range_ / delta_;
+
+	// Calculate energies and forces at the cutoff distance, for later use in truncation schemes
+	shortRangeEnergyAtCutoff_ = analyticShortRangeEnergy(range_, shortRangeType_, PairPotential::NoShortRangeTruncation);
+	shortRangeForceAtCutoff_ = analyticShortRangeForce(range_, shortRangeType_, PairPotential::NoShortRangeTruncation);
+	coulombEnergyAtCutoff_ = analyticCoulombEnergy(chargeI_*chargeJ_, range_, PairPotential::NoCoulombTruncation);
+	coulombForceAtCutoff_ = analyticCoulombForce(chargeI_*chargeJ_, range_, PairPotential::NoCoulombTruncation);
 
 	// Initialise original and additional potential arrays, and calculate original potential
 	uOriginal_.initialise(nPoints_);
@@ -540,11 +619,11 @@ double PairPotential::analyticEnergy(double r)
 }
 
 // Return analytic coulomb potential energy of specified charges
-double PairPotential::analyticCoulombEnergy(double qiqj, double r)
+double PairPotential::analyticCoulombEnergy(double qiqj, double r, PairPotential::CoulombTruncationScheme truncation)
 {
 	// Calculate based on truncation scheme
-	if (coulombTruncationScheme_ == PairPotential::NoTruncation) return COULCONVERT * qiqj / r;
-	else if (coulombTruncationScheme_ == PairPotential::ShiftedTruncation) return COULCONVERT * qiqj * (1.0/r + r/(range_*range_) - 2.0/range_);
+	if (truncation == PairPotential::NoCoulombTruncation) return COULCONVERT * qiqj / r;
+	else if (truncation == PairPotential::ShiftedCoulombTruncation) return COULCONVERT * qiqj * (1.0/r + r/(range_*range_) - 2.0/range_);
 
 	return 0.0;
 }
@@ -580,11 +659,11 @@ double PairPotential::analyticForce(double r)
 }
 
 // Return analytic coulomb force of specified charges
-double PairPotential::analyticCoulombForce(double qiqj, double r)
+double PairPotential::analyticCoulombForce(double qiqj, double r, PairPotential::CoulombTruncationScheme truncation)
 {
 	// Calculate based on truncation scheme
-	if (coulombTruncationScheme_ == PairPotential::NoTruncation) return -COULCONVERT * qiqj / (r*r);
-	else if (coulombTruncationScheme_ == PairPotential::ShiftedTruncation) return -COULCONVERT * qiqj * (1.0/(r*r) - 1.0/(range_*range_));
+	if (truncation == PairPotential::NoCoulombTruncation) return -COULCONVERT * qiqj / (r*r);
+	else if (truncation == PairPotential::ShiftedCoulombTruncation) return -COULCONVERT * qiqj * (1.0/(r*r) - 1.0/(range_*range_));
 
 	return 0.0;
 }
@@ -698,7 +777,6 @@ bool PairPotential::broadcast(ProcessPool& procPool, int root)
 
 	// Tabulation Parameters
 	if (!procPool.broadcast(range_, root)) return false;
-	if (!procPool.broadcast(truncationWidth_, root)) return false;
 	if (!procPool.broadcast(nPoints_, root)) return false;
 	if (!procPool.broadcast(delta_, root)) return false;
 	if (!procPool.broadcast(rDelta_, root)) return false;

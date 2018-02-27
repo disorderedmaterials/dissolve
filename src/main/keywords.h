@@ -208,9 +208,10 @@ namespace PairPotentialsBlock
 		GenerateKeyword,		/* 'Generate' - Generates a single PairPotential with the specified contributions */
 		GenerateAllKeyword,		/* 'GenerateAll' - Generates all required PairPotentials with the specified contributions */
 		IncludeCoulombKeyword,		/* 'IncludeCoulomb' - Include Coulomb term in tabulated pair potentials" */
-		ParametersKeyword,		/* 'Parameters' - Sets or re-sets the LJ and charge parameters for a specific AtomType */
+		ParametersKeyword,		/* 'Parameters' - Sets or re-sets the short-range and charge parameters for a specific AtomType */
 		RangeKeyword,			/* 'Range' - Specifies the total range (inc. truncation width) over which to generate potentials */
-		TruncationWidthKeyword,		/* 'TruncationWidth' - Width of potential tail over which to reduce LJ term to zero */
+		ShortRangeTruncationKeyword,	/* 'ShortRangeTruncation' - Truncation scheme to apply to short-range potential */
+		ShortRangeTruncationWidthKeyword,/* 'ShortRangeTruncationWidth' - Width of potential tail over which to reduce short-range term to zero */
 		nPairPotentialsKeywords		/* Number of keywords defined for this block */
 	};
 	// Convert text string to PairPotentialKeyword

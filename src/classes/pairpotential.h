@@ -47,17 +47,35 @@ class PairPotential : public ListItem<PairPotential>
 	static ShortRangeType shortRangeType(const char* s);
 	// Convert ShortRangeType to text string
 	static const char* shortRangeType(ShortRangeType id);
-	// Truncation Scheme enum
-	enum TruncationScheme
+	// Return ShortRangeTypes array
+	static const char** shortRangeTypes();
+	// Coulomb Truncation Scheme enum
+	enum CoulombTruncationScheme
 	{
-		NoTruncation,			/* No truncation scheme */
-		ShiftedTruncation,		/* Shifted and truncated */
-		nTruncationSchemes		/* Number of truncation schemes */
+		NoCoulombTruncation,			/* No truncation scheme */
+		ShiftedCoulombTruncation,		/* Shifted and truncated */
+		nCoulombTruncationSchemes		/* Number of Coulomb truncation schemes */
 	};
-	// Convert text string to TruncationScheme
-	static TruncationScheme truncationScheme(const char* s);
-	// Convert TruncationScheme to text string
-	static const char* truncationScheme(TruncationScheme id);
+	// Convert text string to CoulombTruncationScheme
+	static CoulombTruncationScheme coulombTruncationScheme(const char* s);
+	// Convert CoulombTruncationScheme to text string
+	static const char* coulombTruncationScheme(CoulombTruncationScheme id);
+	// Return CoulombTruncationScheme array
+	static const char** coulombTruncationSchemes();
+	// Short-Range Truncation Scheme enum
+	enum ShortRangeTruncationScheme
+	{
+		NoShortRangeTruncation,			/* No truncation scheme */
+		ShiftedShortRangeTruncation,		/* Shifted and truncated */
+		CosineShortRangeTruncation,		/* Cosine-multiplied truncation */
+		nShortRangeTruncationSchemes		/* Number of Short-Range truncation schemes */
+	};
+	// Convert text string to ShortRangeTruncationScheme
+	static ShortRangeTruncationScheme shortRangeTruncationScheme(const char* s);
+	// Convert ShortRangeTruncationScheme to text string
+	static const char* shortRangeTruncationScheme(ShortRangeTruncationScheme id);
+	// Return ShortRangeTruncationScheme array
+	static const char** shortRangeTruncationSchemes();
 
 
 	/*
@@ -66,24 +84,44 @@ class PairPotential : public ListItem<PairPotential>
 	private:
 	// Short range type
 	ShortRangeType shortRangeType_;
+	// Truncation scheme to apply to short-range part of potential
+	static ShortRangeTruncationScheme shortRangeTruncationScheme_;
+	// Width of short-range potential over which to truncate (if scheme = Cosine)
+	static double shortRangeTruncationWidth_;
+	// Short-range energy at cutoff distance (used by truncation scheme)
+	double shortRangeEnergyAtCutoff_;
+	// Short-range force at cutoff distance (used by truncation scheme)
+	double shortRangeForceAtCutoff_;
 	// Whether Coulomb term should be included in the generated potential
 	bool includeCoulomb_;
-	// Truncation scheme to apply to generated Coulomb potential
-	static TruncationScheme coulombTruncationScheme_;
-	
+	// Truncation scheme to apply to Coulomb part of potential
+	static CoulombTruncationScheme coulombTruncationScheme_;
+	// Coulomb energy at cutoff distance (used by truncation scheme)
+	double coulombEnergyAtCutoff_;
+	// Coulomb force at cutoff distance (used by truncation scheme)
+	double coulombForceAtCutoff_;
+
 	public:
 	// Set short-ranged type
 	void setShortRangeType(ShortRangeType type);
 	// Return short-ranged type
 	ShortRangeType shortRangeType() const;
+	// Set short-ranged truncation scheme
+	static void setShortRangeTruncationScheme(ShortRangeTruncationScheme scheme);
+	// Return short-ranged truncation scheme
+	static ShortRangeTruncationScheme shortRangeTruncationScheme();
+	// Set width of short-range potential over which to truncate (if scheme = Cosine)
+	static void setShortRangeTruncationWidth(double width);
+	// Return width of short-range potential over which to truncate (if scheme = Cosine)
+	static double shortRangeTruncationWidth();
 	// Set whether Coulomb term should be included in the generated potential
 	void setIncludeCoulomb(bool b);
 	// Return whether Coulomb term should be included in the generated potential
 	bool includeCoulomb();
 	// Set Coulomb truncation scheme
-	static void setCoulombTruncationScheme(TruncationScheme scheme);
+	static void setCoulombTruncationScheme(CoulombTruncationScheme scheme);
 	// Return Coulomb truncation scheme
-	static TruncationScheme coulombTruncationScheme();
+	static CoulombTruncationScheme coulombTruncationScheme();
 
 
 	/*
@@ -92,7 +130,7 @@ class PairPotential : public ListItem<PairPotential>
 	private:
 	// Original source AtomTypes
 	AtomType* atomTypeI_, *atomTypeJ_;
-	// Parameters (determined from source AtomTypes
+	// Parameters for short-range potential
 	double parameters_[MAXSRPARAMETERS];
 	// Charge on I (taken from AtomType)
 	double chargeI_;
@@ -118,8 +156,8 @@ class PairPotential : public ListItem<PairPotential>
 	AtomType* atomTypeJ() const;
 	// Set parameter specified
 	void setParameter(int index, double value);
-	// Return parameter specified
-	double parameter(int index);
+	// Return short-range parameter specified
+	double parameter(int index) const;
 	// Set charge I
 	void setChargeI(double value);
 	// Return charge I
@@ -140,8 +178,6 @@ class PairPotential : public ListItem<PairPotential>
 	double range_;
 	// Distance between points in tabulated potentials
 	double delta_, rDelta_;
-	// Truncation width for LJ part of potential
-	double truncationWidth_;
 	// Tabulated original potential, calculated from AtomType parameters
 	XYData uOriginal_;
 	// Additional potential, generated by some means
@@ -153,9 +189,9 @@ class PairPotential : public ListItem<PairPotential>
 	
 	private:
 	// Return analytic short range potential energy
-	double analyticShortRangeEnergy(double r, PairPotential::ShortRangeType type);
+	double analyticShortRangeEnergy(double r, PairPotential::ShortRangeType type, PairPotential::ShortRangeTruncationScheme truncation = PairPotential::shortRangeTruncationScheme());
 	// Return analytic short range force
-	double analyticShortRangeForce(double r, PairPotential::ShortRangeType type);
+	double analyticShortRangeForce(double r, PairPotential::ShortRangeType type, PairPotential::ShortRangeTruncationScheme truncation = PairPotential::shortRangeTruncationScheme());
 	// Calculate full potential
 	void calculateUFull();
 	// Calculate derivative of potential
@@ -163,7 +199,7 @@ class PairPotential : public ListItem<PairPotential>
 
 	public:
 	// Set up and perform initial generation of potential
-	bool setUp(double maxR, double truncationWidth, double delta, bool includeCoulomb);
+	bool setUp(double maxR, double delta, bool includeCoulomb);
 	// Return range of potential
 	double range() const;
 	// (Re)generate original potential (uOriginal) from current parameters
@@ -173,13 +209,13 @@ class PairPotential : public ListItem<PairPotential>
 	// Return analytic potential at specified r
 	double analyticEnergy(double r);
 	// Return analytic coulomb potential energy of specified charge product
-	double analyticCoulombEnergy(double qiqj, double r);
+	double analyticCoulombEnergy(double qiqj, double r, PairPotential::CoulombTruncationScheme truncation = PairPotential::coulombTruncationScheme());
 	// Return derivative of potential at specified r
 	double force(double r);
 	// Return analytic derivative of potential at specified r
 	double analyticForce(double r);
 	// Return analytic coulomb force of specified charge product
-	double analyticCoulombForce(double qiqj, double r);
+	double analyticCoulombForce(double qiqj, double r, PairPotential::CoulombTruncationScheme truncation = PairPotential::coulombTruncationScheme());
 	// Return full tabulated potential (original plus additional)
 	XYData& uFull();
 	// Return full tabulated derivative

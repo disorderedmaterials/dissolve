@@ -31,12 +31,13 @@ KeywordData PairPotentialsBlockData[] = {
 	{ "Delta",			1,	"Delta (in r-squared) of tabulated potential" },
 	{ "EndPairPotentials",		0,	"Signals the end of the PairPotentials block" },
 	{ "Exchangeable",		1,	"Set AtomTypes that exchange with others" },
-	{ "Generate",			3,	"Generate a pair potential of the specified form, according to internal parameters (or those supplied with 'Parameters')" },
-	{ "GenerateAll",		1,	"Generate all (remaining) potentials according to internal atomtype parameters (or those supplied with 'Parameters')" },
+	{ "Generate",			3,	"Generate a pair potential of the specified form and with the supplied parameters" },
+	{ "GenerateAll",		1,	"Generate all (remaining) potentials according to current AtomType parameters" },
 	{ "IncludeCoulomb",		1,	"Include Coulomb term in tabulated pair potentials" },
 	{ "Parameters",			4,	"Set the atomic charge and short-range interaction parameters for the named atomtype" },
 	{ "Range",			1,	"Maximal range of the pair potential (in r)" },
-	{ "TruncationWidth",		1,	"Width of the truncation region applied to the short-range potential" }
+	{ "ShortRangeTruncation",	1,	"Truncation scheme to apply to short-range potential" },
+	{ "ShortRangeTruncationWidth",	1,	"Width of the truncation region applied to the short-range potential (Cosine truncation only)" }
 };
 
 // Convert text string to PairPotentialsKeyword
@@ -65,7 +66,8 @@ bool PairPotentialsBlock::parse(LineParser& parser, DUQ* duq)
 	AtomType* at1, *at2;
 	PairPotential* pot;
 	PairPotential::ShortRangeType srType;
-	PairPotential::TruncationScheme cTrunc = PairPotential::ShiftedTruncation;
+	PairPotential::CoulombTruncationScheme cTrunc;
+	PairPotential::ShortRangeTruncationScheme srTrunc;
 	bool blockDone = false, error = false;
 
 	while (!parser.eofOrBlank())
@@ -82,10 +84,10 @@ bool PairPotentialsBlock::parse(LineParser& parser, DUQ* duq)
 		switch (ppKeyword)
 		{
 			case (PairPotentialsBlock::CoulombTruncationKeyword):
-				cTrunc = PairPotential::truncationScheme(parser.argc(1));
-				if (cTrunc == PairPotential::nTruncationSchemes)
+				cTrunc = PairPotential::coulombTruncationScheme(parser.argc(1));
+				if (cTrunc == PairPotential::nCoulombTruncationSchemes)
 				{
-					Messenger::error("Unknown short-range interaction type '%s' used in PairPotentials block.\n", parser.argc(1));
+					Messenger::error("Unknown Coulomb truncation scheme '%s' used in PairPotentials block.\n", parser.argc(1));
 					error = true;
 					break;
 				}
@@ -138,8 +140,25 @@ bool PairPotentialsBlock::parse(LineParser& parser, DUQ* duq)
 					pot = duq->addPairPotential(at1, at2);
 				}
 
+				// Now set the short-range type
 				pot->setShortRangeType(srType);
-				if (!pot->setParameters(at1, at2)) error = true;
+
+				// If more parameters were supplied, these will for the basis for the potential. Otherwise, generate from existing AtomType parameters.
+				if (parser.nArgs() == 4)
+				{
+					Messenger::print("No parameters supplied to Generate keyword for pair potential between '%s' and '%s', so AtomType parameters will be used.", at1->name(), at2->name());
+					if (!pot->setParameters(at1, at2)) error = true;
+				}
+				else
+				{
+					// Read in the parameters - qi, qj, p1, p2, ...
+					if (parser.hasArg(4)) pot->setChargeI(parser.argd(4));
+					if (parser.hasArg(5)) pot->setChargeJ(parser.argd(5));
+					for (int n=6; n<parser.nArgs(); ++n) pot->setParameter(n-6, parser.argd(n));
+					CharString s("q(I)=%f, q(J)=%f", pot->chargeI(), pot->chargeJ());
+					for (int n=0; n<MAXSRPARAMETERS; ++n) s.strcatf(", p%i=%f", n+1, pot->parameter(n));
+					Messenger::print("Pair potential between '%s' and '%s' will be generated from parameters : %s\n", at1->name(), at2->name(), s.get());
+				}
 				break;
 			case (PairPotentialsBlock::GenerateAllKeyword):
 				Messenger::print("Generating all missing pair potentials...\n");
@@ -153,28 +172,7 @@ bool PairPotentialsBlock::parse(LineParser& parser, DUQ* duq)
 					break;
 				}
 
-				// Loop over all atomtype pairs and generate any missing potentials
-				for (at1 = duq->atomTypes(); at1 != NULL; at1 = at1->next)
-				{
-					for (at2 = at1; at2 != NULL; at2 = at2->next)
-					{
-						pot = duq->pairPotential(at1, at2);
-						if (pot)
-						{
-							Messenger::print("PairPotential already exists for interaction between '%s' and '%s'...\n", at1->name(), at2->name());
-							continue;
-						}
-						else
-						{
-							Messenger::print("Adding PairPotential for interaction between '%s' and '%s'...\n", at1->name(), at2->name());
-							pot = duq->addPairPotential(at1, at2);
-						}
-
-						pot->setShortRangeType(srType);
-						pot->setParameters(at1, at2);
-					}
-					if (error) break;
-				}
+				duq->generateMissingPairPotentials(srType);
 				break;
 			case (PairPotentialsBlock::IncludeCoulombKeyword):
 				duq->setPairPotentialsIncludeCoulomb(parser.argb(1));
@@ -196,8 +194,18 @@ bool PairPotentialsBlock::parse(LineParser& parser, DUQ* duq)
 			case (PairPotentialsBlock::RangeKeyword):
 				duq->setPairPotentialRange(parser.argd(1));
 				break;
-			case (PairPotentialsBlock::TruncationWidthKeyword):
-				duq->setPairPotentialTruncationWidth(parser.argd(1));
+			case (PairPotentialsBlock::ShortRangeTruncationKeyword):
+				srTrunc = PairPotential::shortRangeTruncationScheme(parser.argc(1));
+				if (srTrunc == PairPotential::nShortRangeTruncationSchemes)
+				{
+					Messenger::error("Unknown short-range truncation scheme '%s' used in PairPotentials block.\n", parser.argc(1));
+					error = true;
+					break;
+				}
+				PairPotential::setShortRangeTruncationScheme(srTrunc);
+				break;
+			case (PairPotentialsBlock::ShortRangeTruncationWidthKeyword):
+				PairPotential::setShortRangeTruncationWidth(parser.argd(1));
 				break;
 			case (PairPotentialsBlock::nPairPotentialsKeywords):
 				Messenger::error("Unrecognised %s block keyword '%s' found.\n", InputBlocks::inputBlock(InputBlocks::PairPotentialsBlock), parser.argc(0));

@@ -170,8 +170,6 @@ class DUQ
 	double pairPotentialRange_;
 	// Maximum squared distance for tabulated PairPotentials
 	double pairPotentialRangeSquared_;
-	// Width of PairPotential tail over which to truncate
-	double pairPotentialTruncationWidth_;
 	// Delta to use in tabulation
 	double pairPotentialDelta_;
 	// Whether Coulomb terms are included in generated PairPotentials
@@ -188,10 +186,6 @@ class DUQ
 	double pairPotentialRange() const;
 	// Return maximum squared distance for tabulated PairPotentials
 	double pairPotentialRangeSquared() const;
-	// Set width of PairPotential tail over which to truncate
-	void setPairPotentialTruncationWidth(double width);
-	// Return width of PairPotential tail over which to truncate
-	double pairPotentialTruncationWidth() const;
 	// Set delta to use in tabulations
 	void setPairPotentialDelta(double delta);
 	// Return delta to use in tabulations
@@ -218,6 +212,10 @@ class DUQ
 	bool savePairPotentials(const char* baseName) const;
 	// Return map for PairPotentials
 	const PotentialMap& potentialMap();
+	// Regenerate all currently-defined PairPotentials
+	void regeneratePairPotentials();
+	// Generate any missing PairPotentials using the supplied short-range form
+	void generateMissingPairPotentials(PairPotential::ShortRangeType srType);
 
 
 	/*

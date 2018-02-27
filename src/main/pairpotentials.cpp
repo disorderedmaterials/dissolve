@@ -41,18 +41,6 @@ double DUQ::pairPotentialRangeSquared() const
 	return pairPotentialRangeSquared_;
 }
 
-// Set width of PairPotential tail over which to truncate
-void DUQ::setPairPotentialTruncationWidth(double width)
-{
-	pairPotentialTruncationWidth_ = width;
-}
-
-// Return width of PairPotential tail over which to truncate
-double DUQ::pairPotentialTruncationWidth() const
-{
-	return pairPotentialTruncationWidth_;
-}
-
 // Set delta to use in tabulations
 void DUQ::setPairPotentialDelta(double delta)
 {
@@ -151,4 +139,36 @@ bool DUQ::savePairPotentials(const char* baseName) const
 const PotentialMap& DUQ::potentialMap()
 {
 	return potentialMap_;
+}
+
+// Regenerate all currently-defined PairPotentials
+void DUQ::regeneratePairPotentials()
+{
+	for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next) pot->setUp(pairPotentialRange_, pairPotentialDelta_, pairPotentialsIncludeCoulomb_);
+}
+
+// Generate any missing PairPotentials using the supplied short-range form
+void DUQ::generateMissingPairPotentials(PairPotential::ShortRangeType srType)
+{
+	// Loop over all atomtype pairs and generate any missing potentials
+	for (AtomType* at1 = atomTypes_.first(); at1 != NULL; at1 = at1->next)
+	{
+		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next)
+		{
+			PairPotential* pot = pairPotential(at1, at2);
+			if (pot)
+			{
+				Messenger::print("PairPotential already exists for interaction between '%s' and '%s'...\n", at1->name(), at2->name());
+				continue;
+			}
+			else
+			{
+				Messenger::print("Adding PairPotential for interaction between '%s' and '%s'...\n", at1->name(), at2->name());
+				pot = addPairPotential(at1, at2);
+			}
+
+			pot->setShortRangeType(srType);
+			pot->setParameters(at1, at2);
+		}
+	}
 }
