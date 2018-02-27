@@ -165,8 +165,23 @@ void DUQWindow::updateControls()
 // Update status
 void DUQWindow::updateStatus()
 {
+	// Window Title
 	QString title = QString("%1%2").arg(duq_.hasInputFileName() ? duq_.inputFilename() : "<untitled>", modified_ ? "(*)" : ""); 
 	setWindowTitle(title);
+
+	// dUQ Status
+	QPalette labelPalette = ui.SetUpLabel->palette();
+	if (duq_.isSetUp())
+	{
+		labelPalette.setColor(QPalette::WindowText, Qt::darkGreen);
+		ui.SetUpLabel->setText("Set Up & Ready");
+	}
+	else
+	{
+		labelPalette.setColor(QPalette::WindowText, Qt::darkRed);
+		ui.SetUpLabel->setText("Not Set Up");
+	}
+	ui.SetUpLabel->setPalette(labelPalette);
 }
 
 // Link output handler in to the Messenger
