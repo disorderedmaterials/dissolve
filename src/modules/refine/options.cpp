@@ -83,10 +83,5 @@ void RefineModule::setUpKeywords()
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
 int RefineModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix)
 {
-	if (DUQSys::sameString("__", parser.argc(0)))
-	{
-	}
-	else return -1;
-
-	return true;
+	return -1;
 }
