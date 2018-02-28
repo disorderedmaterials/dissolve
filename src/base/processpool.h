@@ -50,6 +50,8 @@ class ProcessPool
 	ProcessPool(const ProcessPool& source);
 	// Assignment Operator
 	void operator=(const ProcessPool& source);
+	// Clear all data
+	void clear();
 	// Communicator Types (for subroutines)
 	enum CommunicatorType
 	{

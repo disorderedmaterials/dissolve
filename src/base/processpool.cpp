@@ -37,19 +37,7 @@ int ProcessPool::RESULT;
 // Constructor
 ProcessPool::ProcessPool()
 {
-	poolRank_ = -1;
-	groupIndex_ = -1;
-	groupRank_ = -1;
-	maxProcessGroups_ = 0;
-	groupsModifiable_ = true;
-#ifdef PARALLEL
-	groupGroup_ = 0;
-	groupCommunicator_ = 0;
-	leaderGroup_ = 0;
-	leaderCommunicator_ = 0;
-	poolGroup_ = 0;
-	poolCommunicator_ = 0;
-#endif
+	clear();
 }
 
 // Copy Constructor
@@ -89,6 +77,26 @@ void ProcessPool::operator=(const ProcessPool& source)
 	// ???
 }
 
+// Clear all data
+void ProcessPool::clear()
+{
+	poolRank_ = -1;
+	groupIndex_ = -1;
+	groupRank_ = -1;
+	worldRanks_.clear();
+	processGroups_.clear();
+	maxProcessGroups_ = 0;
+	groupLeaders_.clear();
+	groupsModifiable_ = true;
+#ifdef PARALLEL
+	groupGroup_ = 0;
+	groupCommunicator_ = 0;
+	leaderGroup_ = 0;
+	leaderCommunicator_ = 0;
+	poolGroup_ = 0;
+	poolCommunicator_ = 0;
+#endif
+}
 
 #ifdef PARALLEL
 // Return communicator specified
@@ -271,6 +279,8 @@ const char* ProcessPool::processInfo()
 // Set up pool with world ranks specified
 bool ProcessPool::setUp(const char* name, Array<int> worldRanks)
 {
+	clear();
+
 	name_ = name;
 
 	Messenger::print("--> Setting up process pool '%s'...\n", name_.get());
