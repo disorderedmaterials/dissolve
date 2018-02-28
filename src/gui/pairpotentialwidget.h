@@ -38,10 +38,12 @@ class PairPotentialWidget : public SubWidget
 	Q_OBJECT
 
 	private:
-	// Associated PairPotential
-	PairPotential* pairPotential_;
 	// Reference to dUQ
 	DUQ& duq_;
+	// Index of displayed PairPotential
+	int pairPotentialIndex_;
+	// Last displayed pair potential
+	PairPotential* lastPairPotential_;
 	// UChromaView contained within this widget
 	UChromaViewWidget* uChromaView_;
 

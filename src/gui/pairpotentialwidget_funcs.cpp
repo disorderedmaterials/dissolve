@@ -41,9 +41,10 @@ PairPotentialWidget::PairPotentialWidget(DUQWindow* duqWindow, const char* title
 	uChromaView_ = ui.PlotWidget;
 
 	// Initialise window contents
-	pairPotential_ = duq_.pairPotentials().first();
-	initialiseWindow(pairPotential_);
-	initialiseControls(pairPotential_, true);
+	lastPairPotential_ = duq_.pairPotentials().first();
+	pairPotentialIndex_ = (lastPairPotential_ ? 0 : -1);
+	initialiseWindow(lastPairPotential_);
+	initialiseControls(lastPairPotential_, true);
 
 	refreshing_ = false;
 }
@@ -58,10 +59,10 @@ void PairPotentialWidget::initialiseWindow(PairPotential* pp)
 	// Set information panel contents
 	if (pp)
 	{
-		CharString topText("%s-%s", pairPotential_->atomTypeNameI(), pairPotential_->atomTypeNameJ());
+		CharString topText("%s-%s", pp->atomTypeNameI(), pp->atomTypeNameJ());
 		ui.TopLabel->setText(topText.get());
 
-		CharString bottomText("%s %s", PairPotential::shortRangeType(pairPotential_->shortRangeType()), pairPotential_->includeCoulomb() ? "+ charges" : "(no charges)");
+		CharString bottomText("%s %s", PairPotential::shortRangeType(pp->shortRangeType()), pp->includeCoulomb() ? "+ charges" : "(no charges)");
 		ui.BottomLabel->setText(bottomText.get());
 	}
 	else
@@ -139,7 +140,7 @@ void PairPotentialWidget::setDataTargets(PairPotential* pp)
 
 void PairPotentialWidget::closeEvent(QCloseEvent* event)
 {
-	emit (windowClosed(pairPotential_));
+	emit (windowClosed(this));
 }
 
 // Update controls within widget
@@ -151,7 +152,16 @@ void PairPotentialWidget::updateControls()
 	uChromaView_->refreshReferencedDataSets();
 	uChromaView_->updateDisplay();
 
-	ui.UAdditionalMagnitudeLabel->setText(pairPotential_ ? QString("%1 kJ/mol %2").arg(pairPotential_->uAdditional().absIntegral()).arg(QChar(0xc5)) : "N/A");
+	// Compare current pair potential being displayed with that retrieved from the main list
+	if (lastPairPotential_ != duq_.pairPotential(pairPotentialIndex_))
+	{
+		lastPairPotential_ = pairPotentialIndex_ < 0 ? NULL : duq_.pairPotential(pairPotentialIndex_);
+
+		setDataTargets(lastPairPotential_);
+		initialiseWindow(lastPairPotential_);
+	}
+
+	ui.UAdditionalMagnitudeLabel->setText(lastPairPotential_ ? QString("%1 kJ/mol %2").arg(lastPairPotential_->uAdditional().absIntegral()).arg(QChar(0xc5)) : "N/A");
 
 	refreshing_ = false;
 }
@@ -178,8 +188,15 @@ const char* PairPotentialWidget::widgetType()
 // Write widget state through specified LineParser
 bool PairPotentialWidget::writeState(LineParser& parser)
 {
-	// Write PairPotential target
-	if (!parser.writeLineF("%s %s\n", pairPotential_->atomTypeNameI(), pairPotential_->atomTypeNameJ())) return false;
+	// Check validity of current pair potential
+	PairPotential* pp = duq_.pairPotential(pairPotentialIndex_);
+
+	// Write PairPotential target (if there is one)
+	if (pp)
+	{
+		if (!parser.writeLineF("%s %s\n", pp->atomTypeNameI(), pp->atomTypeNameJ())) return false;
+	}
+	else if (!parser.writeLineF("None\n")) return false;
 
 	// Write uChromaView state
 	if (!uChromaView_->writeSession(parser)) return false;
@@ -192,23 +209,30 @@ bool PairPotentialWidget::readState(LineParser& parser)
 {
 	// Read PairPotential target
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-	pairPotential_ = duq_.pairPotential(parser.argc(0), parser.argc(1));
+	lastPairPotential_ = NULL;
+	pairPotentialIndex_ = -1;
+	if ((parser.nArgs() != 1) && (!DUQSys::sameString(parser.argc(0), "None")))
+	{
+		// Locate the pair potential
+		lastPairPotential_ = duq_.pairPotential(parser.argc(0), parser.argc(1));
+		if (lastPairPotential_) pairPotentialIndex_ = duq_.pairPotentials().indexOf(lastPairPotential_);
+	}
 
 	// Initialise window
-	initialiseWindow(pairPotential_);
+	initialiseWindow(lastPairPotential_);
 
 	// Reset UChromaView
 	uChromaView_->startNewSession(false);
 
 	// We will read the UChroma data from the file, unless the PairPotential could not be found
-	if (!pairPotential_)
+	if (!lastPairPotential_)
 	{
 		initialiseControls(NULL, false);
 		return false;
 	}
 	if (!uChromaView_->readSession(parser)) return false;
 
-	initialiseControls(pairPotential_, false);
+	initialiseControls(lastPairPotential_, false);
 
 	return true;
 }
@@ -219,26 +243,38 @@ bool PairPotentialWidget::readState(LineParser& parser)
 
 void PairPotentialWidget::on_PreviousPotentialButton_clicked(bool checked)
 {
-	if (!pairPotential_) return;
+	// Decrease index of PP
+	--pairPotentialIndex_;
+	if ((pairPotentialIndex_ < 0) || (pairPotentialIndex_ >= duq_.nPairPotentials()))
+	{
+		// Out-of-range, one way or another, so select the last in the list
+		pairPotentialIndex_ = duq_.nPairPotentials() - 1;
+	}
 
-	pairPotential_ = pairPotential_->prev;
-	if (pairPotential_ == NULL) pairPotential_ = duq_.pairPotential(duq_.nPairPotentials()-1);
+	lastPairPotential_ = pairPotentialIndex_ == -1 ? NULL : duq_.pairPotential(pairPotentialIndex_);
 
-	setDataTargets(pairPotential_);
-	initialiseWindow(pairPotential_);
+	setDataTargets(lastPairPotential_);
+	initialiseWindow(lastPairPotential_);
 
 	updateControls();
 }
 
 void PairPotentialWidget::on_NextPotentialButton_clicked(bool checked)
 {
-	if (!pairPotential_) return;
+	// Increase index of PP
+	if (duq_.nPairPotentials() == 0) pairPotentialIndex_ = -1;
+	else ++pairPotentialIndex_;
 
-	pairPotential_ = pairPotential_->next;
-	if (pairPotential_ == NULL) pairPotential_ = duq_.pairPotentials().first();
+	if (pairPotentialIndex_ >= duq_.nPairPotentials())
+	{
+		// Out-of-range, so cycle back to first item in list
+		pairPotentialIndex_ = 0;
+	}
 
-	setDataTargets(pairPotential_);
-	initialiseWindow(pairPotential_);
+	lastPairPotential_ = pairPotentialIndex_ == -1 ? NULL : duq_.pairPotential(pairPotentialIndex_);
+
+	setDataTargets(lastPairPotential_);
+	initialiseWindow(lastPairPotential_);
 
 	updateControls();
 }
@@ -266,7 +302,7 @@ void PairPotentialWidget::on_FullForceCheck_clicked(bool checked)
 void PairPotentialWidget::on_ResetGraphButton_clicked(bool checked)
 {
 	ViewPane* viewPane = uChromaView_->currentViewPane();
-	viewPane->axes().setRange(0, 0.0, pairPotential_ ? pairPotential_->range() : 15.0);
+	viewPane->axes().setRange(0, 0.0, duqWindow_->duq().pairPotentialRange());
 	viewPane->axes().setRange(1, -10.0, 10.0);
 
 	uChromaView_->updateDisplay();
@@ -274,8 +310,15 @@ void PairPotentialWidget::on_ResetGraphButton_clicked(bool checked)
 
 void PairPotentialWidget::on_ZeroUAdditionalButton_clicked(bool checked)
 {
+	// Compare current pair potential being displayed with that retrieved from the main list
+	if (lastPairPotential_ != duq_.pairPotential(pairPotentialIndex_))
+	{
+		lastPairPotential_ = pairPotentialIndex_ < 0 ? NULL : duq_.pairPotential(pairPotentialIndex_);
+	}
+	if (!lastPairPotential_) return;
+
 	QMessageBox queryBox;
-	queryBox.setText(CharString("You are about to set the %s-%s additional potential to zero.", pairPotential_->atomTypeNameI(), pairPotential_->atomTypeNameJ()).get());
+	queryBox.setText(CharString("You are about to set the %s-%s additional potential to zero.", lastPairPotential_->atomTypeNameI(), lastPairPotential_->atomTypeNameJ()).get());
 	queryBox.setInformativeText("Are you sure you want to do this?");
 	queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
 	queryBox.setDefaultButton(QMessageBox::No);
@@ -283,7 +326,7 @@ void PairPotentialWidget::on_ZeroUAdditionalButton_clicked(bool checked)
 
 	if (ret == QMessageBox::Yes)
 	{
-		pairPotential_->resetUAdditional();
+		lastPairPotential_->resetUAdditional();
 
 		uChromaView_->refreshReferencedDataSets();
 		uChromaView_->updateDisplay();
