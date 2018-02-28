@@ -23,7 +23,6 @@
 #include "classes/species.h"
 #include "classes/atomtype.h"
 #include "base/sysfunc.h"
-#include <string.h>
 
 /*
  * Atom Types
@@ -38,6 +37,8 @@ AtomType* DUQ::addAtomType(int el)
 	at->setName(uniqueAtomTypeName(PeriodicTable::element(el).symbol()));
 	at->setElement(el);
 	at->setIndex(atomTypes_.nItems() - 1);
+
+	setUp_ = false;
 
 	return at;
 }

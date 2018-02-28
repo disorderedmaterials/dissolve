@@ -28,7 +28,11 @@
 // Add new Configuration
 Configuration* DUQ::addConfiguration()
 {
-	return configurations_.add();
+	Configuration* cfg = configurations_.add();
+
+	setUp_ = false;
+
+	return cfg;
 }
 
 // Return first Configuration in list

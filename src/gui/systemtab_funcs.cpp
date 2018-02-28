@@ -515,6 +515,8 @@ void SystemTab::on_RegenerateAllPairPotentialsButton_clicked(bool checked)
 	ui.PairPotentialsTable->resizeColumnsToContents();
 
 	refreshing_ = false;
+
+	duqWindow_->updateStatus();
 }
 
 void SystemTab::on_UpdatePairPotentialsButton_clicked(bool checked)
@@ -529,6 +531,8 @@ void SystemTab::on_UpdatePairPotentialsButton_clicked(bool checked)
 	ui.PairPotentialsTable->resizeColumnsToContents();
 
 	refreshing_ = false;
+
+	duqWindow_->updateStatus();
 }
 
 void SystemTab::on_GenerateMissingPairPotentialsButton_clicked(bool checked)
@@ -541,6 +545,8 @@ void SystemTab::on_GenerateMissingPairPotentialsButton_clicked(bool checked)
 	ui.PairPotentialsTable->resizeColumnsToContents();
 
 	refreshing_ = false;
+
+	duqWindow_->updateStatus();
 }
 
 void SystemTab::on_PairPotentialsTable_itemChanged(QTableWidgetItem* w)

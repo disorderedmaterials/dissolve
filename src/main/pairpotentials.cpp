@@ -27,6 +27,8 @@ void DUQ::setPairPotentialRange(double range)
 {
 	pairPotentialRange_ = range;
 	pairPotentialRangeSquared_ = range*range;
+
+	setUp_ = false;
 }
 
 // Return maximum distance for tabulated PairPotentials
@@ -45,6 +47,8 @@ double DUQ::pairPotentialRangeSquared() const
 void DUQ::setPairPotentialDelta(double delta)
 {
 	pairPotentialDelta_ = delta;
+
+	setUp_ = false;
 }
 
 // Return delta to use in tabulations
@@ -57,6 +61,8 @@ double DUQ::pairPotentialDelta() const
 void DUQ::setPairPotentialsIncludeCoulomb(bool b)
 {
 	pairPotentialsIncludeCoulomb_ = b;
+
+	setUp_ = false;
 }
 
 // Return whether Coulomb term should be included in generated PairPotentials
@@ -82,6 +88,8 @@ PairPotential* DUQ::addPairPotential(AtomType* at1, AtomType* at2)
 {
 	PairPotential* pp = pairPotentials_.add();
 	pp->setAtomTypes(at1, at2);
+
+	setUp_ = false;
 
 	return pp;
 }
