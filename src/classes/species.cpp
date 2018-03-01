@@ -182,19 +182,19 @@ bool Species::checkSetup(const List<AtomType>& atomTypes)
 void Species::print()
 {
 	Messenger::print("  Atoms:\n");
-	Messenger::print("      ID   El  Type (ID)        X           Y           Z      \n");
-	Messenger::print("    -------------------------------------------------------------\n");
+	Messenger::print("      ID   El  Type (ID)        X             Y             Z             Q\n");
+	Messenger::print("    ----------------------------------------------------------------------------\n");
 	for (int n=0; n<nAtoms(); ++n)
 	{
 		SpeciesAtom* i = atoms_[n];
-		Messenger::print("    %4i  %3s  %4s (%2i)  %12.4e  %12.4e  %12.4e\n", n+1, PeriodicTable::element(i->element()).symbol(), i->atomType()->name(), i->atomType()->index(), i->r().x, i->r().y, i->r().z);
+		Messenger::print("    %4i  %3s  %4s (%2i)  %12.4e  %12.4e  %12.4e  %12.4e\n", n+1, PeriodicTable::element(i->element()).symbol(), i->atomType()->name(), i->atomType()->index(), i->r().x, i->r().y, i->r().z, i->charge());
 	}
 
 	if (nBonds() > 0)
 	{
 		Messenger::print("\n  Bonds:\n");
-		Messenger::print("      I     J    Form          Parameters\n");
-		Messenger::print("    --------------------------------------------------------------------------\n");
+		Messenger::print("      I     J    Form            Parameters\n");
+		Messenger::print("    ---------------------------------------------------------------------------------\n");
 		for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next)
 		{
 			if (b->masterParameters()) Messenger::print("   %4i  %4i    @%-12s\n", b->indexI()+1, b->indexJ()+1, b->masterParameters()->name());
@@ -210,8 +210,8 @@ void Species::print()
 	if (nAngles() > 0)
 	{
 		Messenger::print("\n  Angles:\n");
-		Messenger::print("      I     J     K    Form          Parameters\n");
-		Messenger::print("    --------------------------------------------------------------------------\n");
+		Messenger::print("      I     J     K    Form            Parameters\n");
+		Messenger::print("    ---------------------------------------------------------------------------------------\n");
 		for (SpeciesAngle* a = angles_.first(); a != NULL; a = a->next)
 		{
 			if (a->masterParameters()) Messenger::print("   %4i  %4i  %4i    @%-12s\n", a->indexI()+1, a->indexJ()+1, a->indexK()+1, a->masterParameters()->name());
@@ -227,8 +227,8 @@ void Species::print()
 	if (nTorsions() > 0)
 	{
 		Messenger::print("\n  Torsions:\n");
-		Messenger::print("      I     J     K     L    Form          Parameters\n");
-		Messenger::print("    --------------------------------------------------------------------------\n");
+		Messenger::print("      I     J     K     L    Form            Parameters\n");
+		Messenger::print("    ---------------------------------------------------------------------------------------------\n");
 		for (SpeciesTorsion* t = torsions_.first(); t != NULL; t = t->next)
 		{
 			if (t->masterParameters()) Messenger::print("   %4i  %4i  %4i  %4i    %-12s", t->indexI()+1, t->indexJ()+1, t->indexK()+1, t->indexL()+1, t->masterParameters()->name());
