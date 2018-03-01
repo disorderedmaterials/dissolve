@@ -232,6 +232,15 @@ bool PairPotential::setParameters(AtomType* typeI, AtomType* typeJ)
 	Parameters& paramsI = atomTypeI_->parameters();
 	Parameters& paramsJ = atomTypeJ_->parameters();
 
+	// Sanity check - are either of the parameter sets empty (i.e. have never been set with useful data)?
+	if (paramsI.empty() || paramsJ.empty())
+	{
+		if (paramsI.empty() && paramsJ.empty()) Messenger::error("Can't set parameters for PairPotential since neither AtomType (%s and %s) contain any parameters.\n", atomTypeI_->name(), atomTypeJ_->name());
+		else if (paramsI.empty()) Messenger::error("Can't set parameters for PairPotential since AtomType %s contains no parameters.\n", atomTypeI_->name());
+		else Messenger::error("Can't set parameters for PairPotential since AtomType %s contains no parameters.\n", atomTypeJ_->name());
+		return false;
+	}
+
 	// Combine / set parameters as necessary, depending on the sr interaction type of this PairPotential
 	switch (shortRangeType_)
 	{

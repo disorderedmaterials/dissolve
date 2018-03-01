@@ -27,6 +27,7 @@ Parameters::Parameters() : MPIListItem<Parameters>()
 {
 	for (int n=0; n<MAXSRPARAMETERS; ++n) parameters_[n] = 0.0;
 	charge_ = 0.0;
+	empty_ = true;
 }
 
 // Destructor
@@ -66,6 +67,12 @@ const char* Parameters::description() const
  * Potential Parameters
  */
 
+// Return whether the parameters / charge are empty (none have never been set)
+bool Parameters::empty()
+{
+	return empty_;
+}
+
 // Set parameter with index specified
 void Parameters::setParameter(int index, double value)
 {
@@ -77,6 +84,8 @@ void Parameters::setParameter(int index, double value)
 	}
 #endif
 	 parameters_[index] = value;
+
+	 empty_ = false;
 }
 
 // Return parameter with index specified
@@ -96,6 +105,8 @@ double Parameters::parameter(int index)
 void Parameters::setCharge(double charge)
 {
 	charge_ = charge;
+
+	empty_ = false;
 }
 
 // Return atomic charge
@@ -115,7 +126,8 @@ bool Parameters::broadcast(ProcessPool& procPool, int root)
 	if (!procPool.broadcast(name_, root)) return false;
 	if (!procPool.broadcast(description_, root)) return false;
 	if (!procPool.broadcast(parameters_, MAXSRPARAMETERS, root)) return false;
-	if (!procPool.broadcast(&charge_, 1, root)) return false;
+	if (!procPool.broadcast(charge_, root)) return false;
+	if (!procPool.broadcast(empty_, root)) return false;
 #endif
 	return true;
 }

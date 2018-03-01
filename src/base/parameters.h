@@ -61,12 +61,16 @@ class Parameters : public MPIListItem<Parameters>
 	 * Potential Parameters
 	 */
 	private:
+	// Whether the parameters / charge are empty (none have never been set)
+	bool empty_;
 	// Parameter array
 	double parameters_[MAXSRPARAMETERS];
 	// Atomic charge
 	double charge_;
 
 	public:
+	// Return whether the parameters / charge are empty (none have never been set)
+	bool empty();
 	// Set parameter with index specified
 	void setParameter(int index, double value);
 	// Return parameter with index specified
