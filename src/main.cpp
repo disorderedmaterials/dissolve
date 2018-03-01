@@ -93,7 +93,7 @@ int main(int argc, char **argv)
 						return 1;
 					}
 					nIterations = atoi(argv[n]);
-					Messenger::print("%i main-loop iterations will be performed, then dUQ will exit.\n");
+					Messenger::print("%i main-loop iterations will be performed, then dUQ will exit.\n", nIterations);
 					break;
 				case ('q'):
 					Messenger::setQuiet(true);
