@@ -70,6 +70,14 @@ do
 	# Loop over all input files (*.txt)
 	for input in *.txt
 	do
+		# Are there specific arguments for the test?
+		if [ -e ${input%.txt}.args ]
+		then
+			ARGS=$(<${input%.txt}.args)
+		else
+			ARGS="-s"
+		fi
+
 		for nprocs in $TARGETPROCS
 		do
 			# Set output filename path
@@ -77,11 +85,13 @@ do
 			then
 				output=../${test}.${input%.txt}.out
 				echo -e "\nRunning test \"${input}\" (serial)..."
-				../$DUQ $input > $output
+				echo "Arguments are: $ARGS"
+				../$DUQ $ARGS $input > $output
 			else
 				output=../${test}.${input%.txt}.${nprocs}.out
 				echo -e "\nRunning test \"${input}\" (${nprocs} processes)..."
-				mpirun -np $nprocs ../$DUQ $input -r $output > $output
+				echo "Arguments are: $ARGS"
+				mpirun -np $nprocs ../$DUQ $ARGS $input -r $output > $output
 			fi
 
 			if [ "$?" -eq "0" ]

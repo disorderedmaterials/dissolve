@@ -42,7 +42,7 @@ EndModule
 PairPotentials
   Range  15.000000
   Delta  0.005
-  TruncationWidth  0.0
+  ShortRangeTruncation  None
   Parameters  'OW'  -0.82      0.6503    3.165492
   Parameters  'HW'  0.41       0.0       0.0
   IncludeCoulomb  False
@@ -50,6 +50,5 @@ PairPotentials
 EndPairPotentials
 
 Simulation
-  MaxIterations 100
-  WriteFrequency  -1
+  RestartFileFrequency  -1
 EndSimulation

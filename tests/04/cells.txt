@@ -32,12 +32,10 @@ EndModule
 PairPotentials
   Range  15.000000
   Delta  0.050000
-  TruncationWidth  2.000000
   GenerateAll  'LJ'
 EndPairPotentials
 
 Simulation
-  MaxIterations  1
-  WriteFrequency  -1
+  RestartFileFrequency  -1
 EndSimulation
 

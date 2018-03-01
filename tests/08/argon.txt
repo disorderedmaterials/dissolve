@@ -23,70 +23,70 @@ Configuration 'liquid'
   EndModule
   Module  Energy
     Test  On
-    TestReferenceInter  2.963155030e+16
+    TestReferenceInter  3.374750298e+16
     TestThreshold  1.0e7
   EndModule
   Module AtomShake
   EndModule
   Module  Energy
     Test  On
-    TestReferenceInter  2.813288157e+16
+    TestReferenceInter  6.388017890e+15
     TestThreshold  1.0e7
   EndModule
   Module AtomShake
   EndModule
   Module  Energy
     Test  On
-    TestReferenceInter  7.771067908e+14
+    TestReferenceInter  1.574483625e+15
+    TestThreshold  1.0e6
+  EndModule
+  Module AtomShake
+  EndModule
+  Module  Energy
+    Test  On
+    TestReferenceInter  2.045578410e+14
     TestThreshold  1.0e5
   EndModule
   Module AtomShake
   EndModule
   Module  Energy
     Test  On
-    TestReferenceInter  2.363090501e+14
-    TestThreshold  1.0e5
-  EndModule
-  Module AtomShake
-  EndModule
-  Module  Energy
-    Test  On
-    TestReferenceInter  4.409316564e+13
+    TestReferenceInter  5.522570381e+13
     TestThreshold  1.0e4
   EndModule
   Module AtomShake
   EndModule
   Module  Energy
     Test  On
-    TestReferenceInter  2.664743050e+13
+    TestReferenceInter  1.447086222e+13
     TestThreshold  1.0e4
   EndModule
   Module AtomShake
   EndModule
   Module  Energy
     Test  On
-    TestReferenceInter  2.318272628e+13
+    TestReferenceInter  7.862046768e+12
     TestThreshold  1.0e4
   EndModule
   Module AtomShake
   EndModule
   Module  Energy
     Test  On
-    TestReferenceInter  9.152616812e+12
+    TestReferenceInter  4.110301241e+12
     TestThreshold  1.0e3
   EndModule
   Module AtomShake
   EndModule
   Module  Energy
     Test  On
-    TestReferenceInter  8.116318000e+12
+    TestReferenceInter  2.344777412e+12
     TestThreshold  1.0e3
   EndModule
   Module AtomShake
   EndModule
   Module  Energy
     Test  On
-    TestReferenceInter  1.755766478e+12
+    TestReferenceInter  1.203471374e+12
     TestThreshold  1.0e3
   EndModule
 EndConfiguration
@@ -96,12 +96,11 @@ EndModule
 
 # Pair Potentials
 PairPotentials
-  Generate  'LJ'  'Ar'  'Ar'
+  Generate  LJ  Ar  Ar  0.0  0.0  0.979   3.401
 EndPairPotentials
 
 Simulation
-  MaxIterations 1
   Seed  123456789
-  WriteFrequency  -1
+  RestartFileFrequency  -1
 EndSimulation
 

@@ -34,10 +34,9 @@ Module SanityCheck
 EndModule
 
 PairPotentials
-  Generate  'LJ'  'Ar'  'Ar'
+  Generate  LJ  Ar  Ar  0.0  0.0  0.979   3.401
 EndPairPotentials
 
 Simulation
-  MaxIterations 1
-  WriteFrequency  -1
+  RestartFileFrequency  -1
 EndSimulation

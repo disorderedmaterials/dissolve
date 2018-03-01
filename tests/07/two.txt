@@ -143,14 +143,15 @@ Module Energy
   Test  On
   Configuration  'Liquid'
   TestReferenceIntra  130.636420	# Bond (33.91651) + Angle (72.22392) + Torsion (24.49599)
-  TestReferenceInter  26.743373		# LJ (5.2003) + Coul (2.1523) - LJCorrect (-0.0200732)
+  TestReferenceInter  26.743373		# LJ (5.2003) + Coul (21.523) - LJCorrect (-0.0200732)
+  TestThreshold  0.15
 EndModule
 
 Module Forces
   Test  On
   Configuration  'Liquid'
   TestReference  dlpoly  'dlpoly_two/REVCON'
-  TestThreshold  0.25
+  TestThreshold  0.37
 EndModule
 
 Module SanityCheck
@@ -159,8 +160,7 @@ EndModule
 # Pair Potentials
 PairPotentials
   Range  12.000000
-  Delta  0.05000
-  TruncationWidth  2.000000
+  Delta  0.01000
   Parameters  'CT'   0.0       0.276144      3.500000  
   Parameters  'HC'   0.0       0.125520      2.500000 
   GenerateAll  'LJGeometric'
@@ -169,7 +169,6 @@ PairPotentials
 EndPairPotentials
 
 Simulation
-  MaxIterations  1
-  WriteFrequency  -1
+  RestartFileFrequency  -1
 EndSimulation
 

@@ -112,14 +112,12 @@ EndModule
 PairPotentials
   Range  15.000000
   Delta  0.050000
-  TruncationWidth  2.000000
-  Generate  'LJ'  'OW'  'OW'
-  Generate  'LJ'  'OW'  'HW'
-  Generate  'LJ'  'HW'  'HW'
+  Parameters  'OW'  -0.82      0.6503    3.165492
+  Parameters  'HW'  0.41       0.0       0.0
+  GenerateAll  LJ
 EndPairPotentials
 
 Simulation
-   MaxIterations  1
-   WriteFrequency  -1
+   RestartFileFrequency  -1
 EndSimulation
 
