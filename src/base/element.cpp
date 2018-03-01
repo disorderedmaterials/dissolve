@@ -90,7 +90,8 @@ const float *Element::colour() const
 // Add new Isotope to this Element
 Isotope* Element::addIsotope()
 {
-	Isotope* newIsotope = new Isotope(this);
+	Isotope* newIsotope = new Isotope();
+	newIsotope->setElement(this);
 	isotopes_.own(newIsotope);
 	return newIsotope;
 }

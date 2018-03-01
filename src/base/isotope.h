@@ -33,7 +33,7 @@ class Isotope : public MPIListItem<Isotope>
 {
 	public:
 	// Constructor
-	Isotope(Element* parent = NULL);
+	Isotope();
 	// Destructor
 	~Isotope();
 	// Special isotope indices
@@ -66,6 +66,8 @@ class Isotope : public MPIListItem<Isotope>
 	public:
 	// Set Isotope information
 	void set(int A, double weight, double bc, double bi, double sc, double si, double totalxs, double absxs);
+	// Set paremt Element of Isotope
+	void setElement(Element* parent);
 	// Return parent Element of Isotope
 	Element* element() const;
 	// Mass number (A) of Isotope

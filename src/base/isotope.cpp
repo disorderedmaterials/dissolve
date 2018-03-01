@@ -20,12 +20,13 @@
 */
 
 #include "base/isotope.h"
+#include "base/ptable.h"
 #include "base/processpool.h"
 
 // Constructor
-Isotope::Isotope(Element* parent) : MPIListItem<Isotope>()
+Isotope::Isotope() : MPIListItem<Isotope>()
 {
-	element_ = parent;
+	element_ = NULL;
 	A_ = 0;
 	atomicWeight_ = 0.0;
 	boundCoherent_ = 0.0;
@@ -56,6 +57,12 @@ void Isotope::set(int A, double weight, double bc, double bi, double sc, double 
 	boundIncoherentXS_ = si;
 	totalXS_ = totalxs;
 	absorptionXS_ = absxs;
+}
+
+// Set paremt Element of Isotope
+void Isotope::setElement(Element* parent)
+{
+	element_ = parent;
 }
 
 // Return parent Element of Isotope
@@ -120,6 +127,19 @@ double Isotope::absorptionXS() const
 bool Isotope::broadcast(ProcessPool& procPool, int root)
 {
 #ifdef PARALLEL
+	// Get Z of parent and broadcast that
+	int Z;
+	if (procPool.poolRank() == root)
+	{
+		Z = element_->z();
+		if (!procPool.broadcast(Z, root)) return false;
+	}
+	else
+	{
+		if (!procPool.broadcast(Z, root)) return false;
+		element_ = &PeriodicTable::element(Z);
+	}
+
 	// Send isotope info
 	if (!procPool.broadcast(A_, root)) return false;
 	if (!procPool.broadcast(atomicWeight_, root)) return false;
