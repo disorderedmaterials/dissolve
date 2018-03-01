@@ -184,6 +184,17 @@ template <class T, class D> class OrderedPointerDataArray
 	// Add an item to the list
 	void add(T* ptr, D ptrData = D())
 	{
+		// Loop over pointers, searching for the first existing item that has a higher pointer address.
+		// If we find the same pointer address in the list, return immediately.
+		int insertAt, n;
+		for (insertAt = 0; insertAt<nItems_; ++insertAt)
+		{
+			if (items_[insertAt] == ptr) return;
+			if (items_[insertAt] > ptr) break;
+		}
+
+		// The pointer is not currently in the list, and we have the position at which it should be inserted in 'insertAt'.
+		// If there is no more space, resize the array and copy the old items, inserting our new pointer at the correct position.
 		// If there is no space for the new item we must resize the array
 		if (nItems_ == arraySize_)
 		{
@@ -191,45 +202,46 @@ template <class T, class D> class OrderedPointerDataArray
 			T** newItems = new T*[arraySize_+2];
 			D* newData = new D[arraySize_+2];
 
-			// Copy the existing pointers over
-			// TODO Add the new pointer at the same time as copying the existing ones
-			for (int n=0; n<arraySize_; ++n)
+			// Copy existing pointers/data up to 'insertAt'
+			for (n=0; n<insertAt; ++n)
 			{
 				newItems[n] = items_[n];
 				newData[n] = data_[n];
 			}
 
-			// Delete the old arrays
+			// Place our new pointer/data here
+			newItems[insertAt] = ptr;
+			newData[insertAt] = ptrData;
+
+			// Copy the remaining pointers/data, shifting them one place up in the new list
+			for (n=insertAt; n<nItems_; ++n)
+			{
+				newItems[n+1] = items_[n];
+				newData[n+1] = data_[n];
+			}
+
+			// Delete the old arrays if they exist
 			if (items_) delete[] items_;
 			if (data_) delete[] data_;
 
-			// Set the new arrays
+			// Set the new arrays and array size
 			items_ = newItems;
 			data_ = newData;
 			arraySize_ += 2;
 		}
-
-		// Loop over pointers, searching for the first existing item that has a higher pointer address.
-		// If we find the same pointer address in the list, return immediately.
-		int insertAt;
-		for (insertAt = 0; insertAt<nItems_; ++insertAt)
+		else
 		{
-			if (items_[insertAt] == ptr) return;
-			if (items_[insertAt] > ptr) break;
-		}
-		if (insertAt < nItems_)
-		{
-			// Shuffle items from the insertion point up one place in the array (to higher indices)
-			for (int n=insertAt; n<nItems_; ++n)
+			// Shuffle items from the insertion point up one place in the array (to higher indices), working backwards to avoid overwriting data
+			for (n=nItems_-1; n>=insertAt; --n)
 			{
 				items_[n+1] = items_[n];
 				data_[n+1] = data_[n];
 			}
-		}
 
-		// Now put the new item into the 'insertAt' position
-		items_[insertAt] = ptr;
-		data_[insertAt] = ptrData;
+			// Now put the new item into the 'insertAt' position
+			items_[insertAt] = ptr;
+			data_[insertAt] = ptrData;
+		}
 
 		++nItems_;
 	}

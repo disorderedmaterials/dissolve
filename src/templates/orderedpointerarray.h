@@ -1,6 +1,6 @@
 /*
-	*** Simple Ordered Pointer w/Data Array Class
-	*** src/templates/orderedpointerdataarray.h
+	*** Simple Ordered Pointer Array Class
+	*** src/templates/orderedpointerarray.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -19,8 +19,8 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_ORDEREDPOINTERDATAARRAY_H
-#define DUQ_ORDEREDPOINTERDATAARRAY_H
+#ifndef DUQ_ORDEREDPOINTERARRAY_H
+#define DUQ_ORDEREDPOINTERARRAY_H
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -148,40 +148,48 @@ template <class T> class OrderedPointerArray
 	// Add an item to the list
 	void add(T* ptr)
 	{
-		// If there is no space for the new item we must resize the array
-		if (nItems_ == arraySize_)
-		{
-			// Create a new array with some more item space
-			T** newArray = new T*[arraySize_+2];
-
-			// Copy the existing pointers over
-			// TODO Add the new pointer at the same time as copying the existing ones
-			for (int n=0; n<arraySize_; ++n) newArray[n] = items_[n];
-
-			// Delete the old array
-			if (items_) delete[] items_;
-
-			// Set the new array
-			items_ = newArray;
-			arraySize_ += 2;
-		}
-
 		// Loop over pointers, searching for the first existing item that has a higher pointer address.
 		// If we find the same pointer address in the list, return immediately.
-		int insertAt;
+		int insertAt, n;
 		for (insertAt = 0; insertAt<nItems_; ++insertAt)
 		{
 			if (items_[insertAt] == ptr) return;
 			if (items_[insertAt] > ptr) break;
 		}
-		if (insertAt < nItems_)
+
+		// The pointer is not currently in the list, and we have the position at which it should be inserted in 'insertAt'.
+		// If there is no more space, resize the array and copy the old items, inserting our new pointer at the correct position.
+		// If there is no space for the new item we must resize the array
+		if (nItems_ == arraySize_)
 		{
-			// Shuffle all pointers from the insertion point up in the list, towards higher indices
-			for (int n=startIndex; n<nItems_; ++n) items_[n+1] = items_[n];
+			// Create a new array with some more item space
+			T** newItems = new T*[arraySize_+2];
+
+			// Copy existing pointers up to 'insertAt'
+			for (n=0; n<insertAt; ++n) newItems[n] = items_[n];
+
+			// Place our new pointer here
+			newItems[insertAt] = ptr;
+
+			// Copy the remaining pointers, shifting them one place up in the new list
+			for (n=insertAt; n<nItems_; ++n) newItems[n+1] = items_[n];
+
+			// Delete the old arrays if they exist
+			if (items_) delete[] items_;
+
+			// Set the new arrays and array size
+			items_ = newItems;
+			arraySize_ += 2;
+		}
+		else
+		{
+			// Shuffle items from the insertion point up one place in the array (to higher indices), working backwards to avoid overwriting data
+			for (n=nItems_-1; n>=insertAt; --n) items_[n+1] = items_[n];
+
+			// Now put the new item into the 'insertAt' position
+			items_[insertAt] = ptr;
 		}
 
-		// Now put the new item into the 'insertAt' position
-		items_[insertAt] = ptr;
 		++nItems_;
 	}
 	// Remove an item from the array, leaving the remaining items contiguous in memory
