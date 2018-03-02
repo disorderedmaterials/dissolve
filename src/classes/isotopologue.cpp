@@ -121,7 +121,7 @@ void Isotopologue::update(const List<AtomType>& atomTypes)
 			oldItems.cut(rli);
 			isotopes_.own(rli);
 		}
-		else isotopes_.add(at, PeriodicTable::element(at->element()).isotopes());
+		else isotopes_.add(at, PeriodicTable::element(at->element()).isotope(Isotope::NaturalIsotope));
 	}
 }
 
@@ -135,7 +135,7 @@ bool Isotopologue::setAtomTypeIsotope(AtomType* at, Isotope* isotope)
 		return false;
 	}
 
-	// Find the requested Atom in the list
+	// Find the requested AtomType in the list
 	RefListItem<AtomType,Isotope*>* rli = isotopes_.contains(at);
 	if (!rli)
 	{

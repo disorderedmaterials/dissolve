@@ -240,6 +240,7 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 				}
 				break;
 			case (SpeciesBlock::EndSpeciesKeyword):
+				species->addNaturalIsotopologue();
 				species->updateGrains();
 				species->centreAtOrigin();
 				species->orderAtomsWithinGrains();
@@ -263,7 +264,6 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 				break;
 			case (SpeciesBlock::IsotopologueKeyword):
 				iso = species->addIsotopologue(species->uniqueIsotopologueName(parser.argc(1)));
-				duq->updateIsotopologues(species, iso);
 				Messenger::print("--> Added Isotopologue '%s' to Species '%s'\n", iso->name(), species->name());
 				// Each parser argument is a string of the form ATOMTYPE=ISO
 				for (int n=2; n<parser.nArgs(); ++n)

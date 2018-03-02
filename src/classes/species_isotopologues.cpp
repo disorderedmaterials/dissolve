@@ -32,11 +32,26 @@ void Species::updateIsotopologues(const List<AtomType>& atomTypes)
 // Add a new Isotopologue to this species
 Isotopologue* Species::addIsotopologue(const char* baseName)
 {
-	Isotopologue* itp = isotopologues_.add();
-	itp->setParent(this);
-	itp->setName(uniqueIsotopologueName(baseName));
+	Isotopologue* iso = isotopologues_.add();
+	iso->setParent(this);
+	iso->setName(uniqueIsotopologueName(baseName));
+	iso->update(List<AtomType>::masterInstance());
 
-	return itp;
+	return iso;
+}
+
+// Add natural isotopologue to this species, if it hasn't already been defined
+Isotopologue* Species::addNaturalIsotopologue()
+{
+	Isotopologue* natural = findIsotopologue("Natural");
+	if (natural)
+	{
+		Messenger::print("Natural isotopologue for Species '%s' is already defined, so we will not add our own.\n", name());
+		return natural;
+	}
+
+	// Create the new Isotopologue
+	return addIsotopologue("Natural");
 }
 
 // Remove specified Isotopologue from this Species

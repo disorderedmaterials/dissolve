@@ -73,7 +73,6 @@ bool DUQ::loadSpecies(const char* filename)
 	// Add the default (natural) Isotopologue
 	Messenger::print("Adding natural isotopologue...\n");
 	Isotopologue* iso = newSpecies->addIsotopologue("Natural");
-	updateIsotopologues(newSpecies, iso);
 
 	return true;
 }
