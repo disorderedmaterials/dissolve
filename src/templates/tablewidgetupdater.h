@@ -76,4 +76,54 @@ template <class T, class I> class TableWidgetUpdater
 	}
 };
 
+// TableWidgetRefListUpdater - Constructor-only template class to update contents of a QTableWidget from a RefList, preserving original items as much as possible
+template <class T, class I, class D> class TableWidgetRefListUpdater
+{
+	// Typedefs for passed functions
+	typedef void (T::*TableWidgetRowUpdateFunction)(int row, I* item, D data, bool createItems);
+
+	public:
+	// Constructor
+	TableWidgetRefListUpdater(QTableWidget* table, const RefList<I,D>& data, T* functionParent, TableWidgetRowUpdateFunction updateRow)
+	{
+		QTableWidgetItem* tableItem;
+
+		int currentRow = 0;
+
+		RefListIterator<I,D> itemIterator(data);
+		while (I* item = itemIterator.iterate())
+		{
+			// Our table may or may not be populated, and with different items to those in the list.
+
+			// If there is an item already on this row, check it
+			// If it represents the current pointer data, just update it and move on. Otherwise, delete it and check again
+			while (currentRow < table->rowCount())
+			{
+				tableItem = table->item(currentRow, 0);
+				I* rowData = (tableItem ? VariantPointer<I>(tableItem->data(Qt::UserRole)) : NULL);
+				if (rowData == item)
+				{
+					// Update the current row and quit the loop
+					(functionParent->*updateRow)(currentRow, item, itemIterator.currentData(), false);
+
+					break;
+				}
+				else table->removeRow(currentRow);
+			}
+
+			// If the current row index is (now) out of range, add a new row to the table
+			if (currentRow == table->rowCount())
+			{
+				// Increase row count
+				table->setRowCount(currentRow+1);
+
+				// Create new items
+				(functionParent->*updateRow)(currentRow, item, itemIterator.currentData(), true);
+			}
+
+			++currentRow;
+		}
+	}
+};
+
 #endif
