@@ -131,6 +131,6 @@ void Species::changeAtomElement(SpeciesAtom* i, int el, AtomType* at)
 double Species::mass() const
 {
 	double m = 0.0;
-	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next) m += PeriodicTable::element(i->element()).isotopes()->atomicWeight();
+	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next) m += PeriodicTable::element(i->element()).isotope(Isotope::NaturalIsotope)->atomicWeight();
 	return m;
 }

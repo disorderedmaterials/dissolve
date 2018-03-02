@@ -96,10 +96,10 @@ Isotope* Element::addIsotope()
 	return newIsotope;
 }
 
-// Return first Isotope
-Isotope* Element::isotopes() const
+// Return Isotopes for Element
+const List<Isotope>& Element::isotopes() const
 {
-	return isotopes_.first();
+	return isotopes_;
 }
 
 // Return nth Isotope

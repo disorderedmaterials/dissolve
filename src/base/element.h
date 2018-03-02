@@ -75,8 +75,8 @@ class Element
 	public:
 	// Add new Isotope to this element
 	Isotope* addIsotope();
-	// Return first Isotope
-	Isotope* isotopes() const;
+	// Return Isotopes for Element
+	const List<Isotope>& isotopes() const;
 	// Return nth Isotope
 	Isotope* isotope(int n);
 	// Return number of Isotopes in list

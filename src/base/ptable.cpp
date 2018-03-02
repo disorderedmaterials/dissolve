@@ -203,7 +203,7 @@ bool PeriodicTable::loadIsotopes(const char* filename)
 	for (int n=0; n<nElements_; ++n)
 	{
 		// Search defined isotopes for natural definition
-		for (isotope = elements_[n].isotopes(); isotope != NULL; isotope = isotope->next) if (isotope->A() == Isotope::NaturalIsotope) break;
+		for (isotope = elements_[n].isotopes().first(); isotope != NULL; isotope = isotope->next) if (isotope->A() == Isotope::NaturalIsotope) break;
 		if (isotope != NULL) Messenger::printVerbose("Found natural isotope for element %i (%s) - bc = %f\n", n, elements_[n].name(), isotope->boundCoherent());
 		else
 		{
