@@ -38,49 +38,43 @@ template <class T, class I> class ListWidgetUpdater
 	{
 		QListWidgetItem* listWidgetItem;
 
+		int currentRow = 0;
+
 		ListIterator<I> dataIterator(data);
 		while (I* dataItem = dataIterator.iterate())
 		{
 			// Our table may or may not be populated, and with different items to those in the list.
-			int currentRow = 0;
+
+			// If there is an item already on this row, check it
+			// If it represents the current pointer data, just update it and move on. Otherwise, delete it and check again
+			while (currentRow < listWidget->count())
 			{
-				// If there is an item already on this row, check it
-				// If it represents the current pointer data, just update it and move on. Otherwise, delete it and check again
-				while (currentRow < listWidget->count())
+				listWidgetItem = listWidget->item(currentRow);
+				I* rowData = (listWidgetItem ? VariantPointer<I>(listWidgetItem->data(Qt::UserRole)) : NULL);
+				if (rowData == dataItem)
 				{
-					listWidgetItem = listWidget->item(currentRow);
-					I* rowData = (listWidgetItem ? VariantPointer<I>(listWidgetItem->data(Qt::UserRole)) : NULL);
-					if (rowData == dataItem)
-					{
-						// Update the current row and quit the loop
-						(functionParent->*updateRow)(currentRow, dataItem, false);
+					// Update the current row and quit the loop
+					(functionParent->*updateRow)(currentRow, dataItem, false);
 
-						break;
-					}
-					else
-					{
-						QListWidgetItem* oldItem = listWidget->takeItem(currentRow);
-						if (oldItem) delete oldItem;
-					}
+					break;
 				}
-
-				// If the current row index is (now) out of range, add a new row to the list
-				if (currentRow == listWidget->count())
+				else
 				{
-					// Increase row count
-// 					listWidget->setRowCount(currentRow+1);
-
-					// Create new items
-					(functionParent->*updateRow)(currentRow, dataItem, true);
-
-					// Increase counter
-					++currentRow;
+					QListWidgetItem* oldItem = listWidget->takeItem(currentRow);
+					if (oldItem) delete oldItem;
 				}
 			}
-		}
 
-		// Finally, we set make sure the number of rows in the table matches the number of terms in the list (any extras will thus be deleted)
-// 		listWidget->setRowCount(data.nItems());
+			// If the current row index is (now) out of range, add a new row to the list
+			if (currentRow == listWidget->count())
+			{
+				// Create new items
+				(functionParent->*updateRow)(currentRow, dataItem, true);
+			}
+
+			++currentRow;
+
+		}
 	}
 };
 
