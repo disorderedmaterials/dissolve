@@ -56,7 +56,6 @@ template <class T, class I> class TableWidgetUpdater
 					// Update the current row and quit the loop
 					(functionParent->*updateRow)(currentRow, dataItem, false);
 
-// 					++currentRow;
 					break;
 				}
 				else table->removeRow(currentRow);
@@ -70,9 +69,6 @@ template <class T, class I> class TableWidgetUpdater
 
 				// Create new items
 				(functionParent->*updateRow)(currentRow, dataItem, true);
-
-				// Increase counter
-// 				++currentRow;
 			}
 
 			++currentRow;
