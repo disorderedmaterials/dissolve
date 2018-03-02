@@ -213,7 +213,7 @@ bool IsotopologueMix::read(LineParser& parser)
 {
 	// Read Species name
 	if (parser.getArgsDelim(LineParser::UseQuotes) != LineParser::Success) return false;
-	for (species_ = List<Species>::masterInstance()->first(); species_ != NULL; species_ = species_->next) if (DUQSys::sameString(species_->name(), parser.argc(0))) break;
+	for (species_ = List<Species>::masterInstance().first(); species_ != NULL; species_ = species_->next) if (DUQSys::sameString(species_->name(), parser.argc(0))) break;
 	if (species_ == NULL)
 	{
 		Messenger::error("Failed to find Species '%s' while reading IsotopologueMix.\n", parser.argc(0));
@@ -246,16 +246,10 @@ bool IsotopologueMix::read(LineParser& parser)
 bool IsotopologueMix::broadcast(ProcessPool& procPool, int root)
 {
 #ifdef PARALLEL
-	// Broadcast Species info
-	if (!List<Species>::hasMasterInstance())
-	{
-		Messenger::error("Master List<Species> instance has not been set, so IsotopologueMix::broadcast() is not possible.\n");
-		return false;
-	}
 	int speciesIndex;
-	if (procPool.poolRank() == root) speciesIndex = List<Species>::masterInstance()->indexOf(species_);
+	if (procPool.poolRank() == root) speciesIndex = List<Species>::masterInstance().indexOf(species_);
 	procPool.broadcast(speciesIndex, root);
-	species_ = List<Species>::masterInstance()->item(speciesIndex);
+	species_ = List<Species>::masterInstance().item(speciesIndex);
 
 	if (!procPool.broadcast(speciesPopulation_, root)) return false;
 

@@ -233,7 +233,7 @@ bool AtomTypeData::write(LineParser& parser)
 bool AtomTypeData::read(LineParser& parser)
 {
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-	for (atomType_ = List<AtomType>::masterInstance()->first(); atomType_ != NULL; atomType_ = atomType_->next) if (DUQSys::sameString(atomType_->name(), parser.argc(0))) break;
+	for (atomType_ = List<AtomType>::masterInstance().first(); atomType_ != NULL; atomType_ = atomType_->next) if (DUQSys::sameString(atomType_->name(), parser.argc(0))) break;
 	if (!atomType_) return false;
 	population_ = parser.argi(1);
 	fraction_ = parser.argd(2);
@@ -256,18 +256,11 @@ bool AtomTypeData::read(LineParser& parser)
 bool AtomTypeData::broadcast(ProcessPool& procPool, int root)
 {
 #ifdef PARALLEL
-	// Must have a master instance to proceed
-	if (!List<AtomType>::hasMasterInstance())
-	{
-		Messenger::error("Master List<AtomType> instance has not been set, so AtomTypeData::broadcast() is not possible.\n");
-		return false;
-	}
-
 	// For atomType_, use the master instance of List<AtomType> to find the index (*not* the local listIndex_) and broadcast it
 	int typeIndex;
-	if (procPool.poolRank() == root) typeIndex = List<AtomType>::masterInstance()->indexOf(atomType_);
+	if (procPool.poolRank() == root) typeIndex = List<AtomType>::masterInstance().indexOf(atomType_);
 	procPool.broadcast(typeIndex, root);
-	atomType_ = List<AtomType>::masterInstance()->item(typeIndex);
+	atomType_ = List<AtomType>::masterInstance().item(typeIndex);
 
 	// Broadcast the IsotopeData list
 	BroadcastList<IsotopeData> topeBroadcaster(procPool, root, isotopes_);

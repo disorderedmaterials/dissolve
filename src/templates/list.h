@@ -95,23 +95,28 @@ template <class T> class List
 	 */
 	private:
 	// Static master instance for this List<T>
-	static List<T>* masterInstance_;
+	static List<T> masterInstance_;
 
 	public:
-	// Set master instance for this List<T>
-	static void setMasterInstance(List<T>* master)
+	// Return reference to master instance for this List<T> (non-const)
+	static List<T>& master()
 	{
-		masterInstance_ = master;
-	}
-	// Set master instance for this List<T>
-	static List<T>* masterInstance()
-	{
+		static bool retrieved = false;
+		if (retrieved)
+		{
+			Messenger::error("Master list for this type has already been retrieved, so refusing to give it out again.\n");
+			static List<T> dummy;
+			return dummy;
+		}
+
+		retrieved = true;
+
 		return masterInstance_;
 	}
-	// Return whether a master instance has been set for this List<T>
-	static bool hasMasterInstance()
+	// Return reference to master instance for this List<T>
+	static const List<T>& masterInstance()
 	{
-		return (masterInstance_ != NULL);
+		return masterInstance_;
 	}
 
 

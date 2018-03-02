@@ -27,11 +27,11 @@
 #include "base/genericitem.h"
 #include "templates/genericitems.h"
 
-// List<T> Master Instance
-template<class T> List<T>* List<T>::masterInstance_ = NULL;
+// List<T> Master Instances
+template <class T> List<T> List<T>::masterInstance_;
 
 // Constructor
-DUQ::DUQ()
+DUQ::DUQ() : atomTypes_(List<AtomType>::master()), species_(List<Species>::master())
 {
 	// PairPotentials
 	pairPotentialDelta_ = 0.005;
@@ -53,10 +53,6 @@ DUQ::DUQ()
 
 	// I/O
 	autoAddDependentModules_ = false;
-
-	// Master Instances
-	List<AtomType>::setMasterInstance(&atomTypes_);
-	List<Species>::setMasterInstance(&species_);
 
 	// Register GenericItems
 	registerGenericItems();

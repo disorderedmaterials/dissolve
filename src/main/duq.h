@@ -72,8 +72,8 @@ class DUQ
 	 * Atom Types
 	 */
 	private:
-	// Master list of allowed AtomTypes for all Species
-	List<AtomType> atomTypes_;
+	// Master list of allowed AtomTypes for all Species (referenced from List<T>::masterInstance_)
+	List<AtomType>& atomTypes_;
 	
 	public:
 	// Add AtomType
@@ -140,8 +140,8 @@ class DUQ
 	 * Species Definitions
 	 */
 	private:
-	// List of defined Species
-	List<Species> species_;
+	// Master List of defined Species (referenced from List<T>::masterInstance_)
+	List<Species>& species_;
 	
 	public:
 	// Add a new Species to the list

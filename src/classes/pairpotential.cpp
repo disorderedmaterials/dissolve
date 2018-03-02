@@ -765,8 +765,7 @@ bool PairPotential::broadcast(ProcessPool& procPool, int root)
 {
 #ifdef PARALLEL
 	// Need the master AtomType list ot proceed
-	List<AtomType>* masterAtomTypes = List<AtomType>::masterInstance();
-	if (masterAtomTypes == NULL) return false;
+	const List<AtomType>& masterAtomTypes = List<AtomType>::masterInstance();
 
 	// PairPotential type
 	if (!procPool.broadcast(EnumCast<PairPotential::ShortRangeType>(shortRangeType_), root)) return false;
@@ -774,12 +773,12 @@ bool PairPotential::broadcast(ProcessPool& procPool, int root)
 
 	// Source Parameters - Master needs to determine AtomType indices
 	int index;
-	if (procPool.isMaster()) index = masterAtomTypes->indexOf(atomTypeI_);
+	if (procPool.isMaster()) index = masterAtomTypes.indexOf(atomTypeI_);
 	if (!procPool.broadcast(index, root)) return false;
-	atomTypeI_ = masterAtomTypes->item(index);
-	if (procPool.isMaster()) index = masterAtomTypes->indexOf(atomTypeJ_);
+	atomTypeI_ = masterAtomTypes.item(index);
+	if (procPool.isMaster()) index = masterAtomTypes.indexOf(atomTypeJ_);
 	if (!procPool.broadcast(index, root)) return false;
-	atomTypeJ_ = masterAtomTypes->item(index);
+	atomTypeJ_ = masterAtomTypes.item(index);
 	if (!procPool.broadcast(parameters_, MAXSRPARAMETERS, root)) return false;
 	if (!procPool.broadcast(chargeI_, root)) return false;
 	if (!procPool.broadcast(chargeJ_, root)) return false;
