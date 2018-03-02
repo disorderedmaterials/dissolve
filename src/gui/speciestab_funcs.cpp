@@ -81,8 +81,8 @@ void SpeciesTab::updateControls()
 	Species* species = currentSpecies();
 
 	// SpeciesAtom Table
-	if (!species) ui.SpeciesAtomTable->clear();
-	else TableWidgetUpdater<SpeciesTab,SpeciesAtom> speciesUpdater(ui.SpeciesAtomTable, species->atoms(), this, &SpeciesTab::updateSpeciesAtomTableRow);
+	if (!species) ui.SpeciesAtomTable->clearContents();
+	else TableWidgetUpdater<SpeciesTab,SpeciesAtom> speciesAtomUpdater(ui.SpeciesAtomTable, species->atoms(), this, &SpeciesTab::updateSpeciesAtomTableRow);
 
 	refreshing_ = false;
 }
