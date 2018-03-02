@@ -121,6 +121,14 @@ Isotope* Element::hasIsotope(int A) const
 	return NULL;
 }
 
+// Return index of specified Isotope (or -1 if it does not exist)
+int Element::isotopeIndex(Isotope* isotope)
+{
+	int index = 0;
+	for (Isotope* tope = isotopes_.first(); tope != NULL; tope = tope->next, ++index) if (tope == isotope) return index;
+	return -1;
+}
+
 /*
  * Parallel Comms
  */

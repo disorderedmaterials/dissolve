@@ -26,6 +26,9 @@
 #include "gui/maintab.h"
 
 // Forward Declarations
+class AtomType;
+class Isotope;
+class Isotopologue;
 class Species;
 class SpeciesAtom;
 
@@ -71,14 +74,18 @@ class SpeciesTab : public QWidget, public MainTab
 	private:
 	// Return currently-selected Species
 	Species* currentSpecies();
-	// SpeciesList row update function
-	void updateSpeciesListRow(int row, Species* species, bool createItem);
+	// Return currently-selected Isotopologue
+	Isotopologue* currentIsotopologue();
 	// SpeciesAtomTable row update function
-	void updateSpeciesAtomTableRow(int row, SpeciesAtom* speciesAtom, bool createItem);
+	void updateSpeciesAtomTableRow(int row, SpeciesAtom* speciesAtom, bool createItems);
+	// IsotopologuesIsotopesTable row update function
+	void updateIsotopeTableRow(int row, AtomType* atomType, Isotope* isotope, bool createItems);
 
 	private slots:
 	void on_SpeciesList_currentRowChanged(int row);
 	void on_SpeciesAtomTable_itemChanged(QTableWidgetItem* w);
+	void on_IsotopologueList_currentRowChanged(int row);
+	void on_IsotopesTable_itemChanged(QTableWidgetItem* w);
 
 
 	/*

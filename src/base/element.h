@@ -83,6 +83,8 @@ class Element
 	int nIsotopes() const;
 	// Return Isotope with specified A (if it exists)
 	Isotope* hasIsotope(int A) const;
+	// Return index of specified Isotope (or -1 if it does not exist)
+	int isotopeIndex(Isotope* isotope);
 
 
 	/*

@@ -22,6 +22,7 @@
 #include "gui/speciestab.h"
 #include "gui/gui.h"
 #include "gui/delegates/combolist.hui"
+#include "gui/delegates/isotopecombo.hui"
 #include "gui/delegates/texponentialspin.hui"
 #include "main/duq.h"
 #include "classes/atomtype.h"
@@ -40,8 +41,9 @@ SpeciesTab::SpeciesTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const
 	// SpeciesAtomTable
 	for (int n=1; n<5; ++n) ui.SpeciesAtomTable->setItemDelegateForColumn(n, new TExponentialSpinDelegate(this));
 	ui.SpeciesAtomTable->setItemDelegateForColumn(5, new ComboListDelegate(this, new ComboNameListItems<AtomType>(duq_.atomTypeList())));
-// 	ui.SpeciesAtomTable->setHorizontalHeaderLabels(QStringList() << "E" << "X" << "Y" << "Z" << "AtomType");
 	ui.SpeciesAtomTable->horizontalHeader()->setFont(duqWindow->font());
+
+	ui.IsotopesTable->setItemDelegateForColumn(1, new IsotopeComboDelegate(this));
 
 	refreshing_ = false;
 }
@@ -76,13 +78,23 @@ void SpeciesTab::updateControls()
 	refreshing_ = true;
 
 	// Species List
-	ListWidgetUpdater<SpeciesTab,Species> speciesUpdater(ui.SpeciesList, duq_.species(), this, &SpeciesTab::updateSpeciesListRow);
+	ListWidgetUpdater<SpeciesTab,Species> speciesUpdater(ui.SpeciesList, duq_.species());
 
 	Species* species = currentSpecies();
 
 	// SpeciesAtom Table
 	if (!species) ui.SpeciesAtomTable->clearContents();
 	else TableWidgetUpdater<SpeciesTab,SpeciesAtom> speciesAtomUpdater(ui.SpeciesAtomTable, species->atoms(), this, &SpeciesTab::updateSpeciesAtomTableRow);
+
+	// Isotopologues List
+	if (!species) ui.IsotopologueList->clear();
+	else ListWidgetUpdater<SpeciesTab,Isotopologue> isotopologueUpdater(ui.IsotopologueList, species->isotopologues());
+
+	Isotopologue* isotopologue = currentIsotopologue();
+
+	// Isotopologue AtomType/Isotopes Table
+	if (!isotopologue) ui.IsotopesTable->clearContents();
+	else TableWidgetRefListUpdater<SpeciesTab,AtomType,Isotope*> isotopeUpdater(ui.IsotopesTable, isotopologue->isotopes(), this, &SpeciesTab::updateIsotopeTableRow);
 
 	refreshing_ = false;
 }
@@ -109,20 +121,12 @@ Species* SpeciesTab::currentSpecies()
 	return (Species*) VariantPointer<Species>(item->data(Qt::UserRole));
 }
 
-// SpeciesList row update function
-void SpeciesTab::updateSpeciesListRow(int row, Species* species, bool createItem)
+// Return currently-selected Isotopologue
+Isotopologue* SpeciesTab::currentIsotopologue()
 {
-	QListWidgetItem* item;
-
-	if (createItem)
-	{
-		item = new QListWidgetItem;
-		ui.SpeciesList->addItem(item);
-		item->setData(Qt::UserRole, VariantPointer<Species>(species));
-	}
-	else item = ui.SpeciesList->item(row);
-
-	item->setText(species->name());
+	QListWidgetItem* item = ui.IsotopologueList->currentItem();
+	if (!item) return NULL;
+	return (Isotopologue*) VariantPointer<Isotopologue>(item->data(Qt::UserRole));
 }
 
 // SpeciesAtomTable row update function
@@ -149,7 +153,7 @@ void SpeciesTab::updateSpeciesAtomTableRow(int row, SpeciesAtom* speciesAtom, bo
 			item->setData(Qt::UserRole, VariantPointer<SpeciesAtom>(speciesAtom));
 			ui.SpeciesAtomTable->setItem(row, n+1, item);
 		}
-		else item = ui.SpeciesAtomTable->item(row, n+2);
+		else item = ui.SpeciesAtomTable->item(row, n+1);
 		item->setText(QString::number(speciesAtom->r().get(n)));
 	}
 
@@ -174,12 +178,41 @@ void SpeciesTab::updateSpeciesAtomTableRow(int row, SpeciesAtom* speciesAtom, bo
 	item->setText(speciesAtom->atomType() ? speciesAtom->atomType()->name() : "");
 }
 
+// IsotopologuesIsotopesTable row update function
+void SpeciesTab::updateIsotopeTableRow(int row, AtomType* atomType, Isotope* isotope, bool createItems)
+{
+	QTableWidgetItem* item;
+
+	// AtomType
+	if (createItems)
+	{
+		item = new QTableWidgetItem;
+		item->setData(Qt::UserRole, VariantPointer<AtomType>(atomType));
+		item->setFlags(Qt::NoItemFlags);
+		ui.IsotopesTable->setItem(row, 0, item);
+	}
+	else item = ui.IsotopesTable->item(row, 0);
+	item->setText(atomType->name());
+
+	// Isotope
+	if (createItems)
+	{
+		item = new QTableWidgetItem;
+		item->setData(Qt::UserRole, VariantPointer<Isotope>(isotope));
+		ui.IsotopesTable->setItem(row, 1, item);
+	}
+	else item = ui.IsotopesTable->item(row, 1);
+	item->setText(IsotopeComboDelegate::textForIsotope(isotope));
+}
+
 void SpeciesTab::on_SpeciesList_currentRowChanged(int row)
 {
 	if (refreshing_) return;
 
 	// Clear relevant tables here to make things more efficient
-	ui.SpeciesAtomTable->clear();
+	ui.SpeciesAtomTable->clearContents();
+	ui.IsotopologueList->clear();
+	ui.IsotopesTable->clearContents();
 
 	updateControls();
 }
@@ -225,6 +258,57 @@ void SpeciesTab::on_SpeciesAtomTable_itemChanged(QTableWidgetItem* w)
 			break;
 		default:
 			Messenger::error("Don't know what to do with data from column %i of SpeciesAtom table.\n", w->column());
+			break;
+	}
+}
+
+void SpeciesTab::on_IsotopologueList_currentRowChanged(int row)
+{
+	if (refreshing_) return;
+
+	Isotopologue* isotopologue = currentIsotopologue();
+
+	refreshing_ = true;
+
+	// Isotopologue AtomType/Isotopes Table
+	if (!isotopologue) ui.IsotopesTable->clearContents();
+	else TableWidgetRefListUpdater<SpeciesTab,AtomType,Isotope*> isotopeUpdater(ui.IsotopesTable, isotopologue->isotopes(), this, &SpeciesTab::updateIsotopeTableRow);
+
+	refreshing_ = false;
+}
+
+void SpeciesTab::on_IsotopesTable_itemChanged(QTableWidgetItem* w)
+{
+	if (refreshing_) return;
+
+	// Get current Isotopologue
+	Isotopologue* iso = currentIsotopologue();
+	if (!iso) return;
+
+	// Get row from the passed widget, and get target AtomType from column 0
+	QTableWidgetItem* item = ui.IsotopesTable->item(w->row(), 0);
+	if (!item) return;
+	
+	AtomType* atomType = VariantPointer<AtomType>(item->data(Qt::UserRole));
+	if (!atomType) return;
+
+	// Column of passed item tells us the type of data we need to change
+	Isotope* isotope;
+	switch (w->column())
+	{
+		// Element
+		case (0):
+			// Should never be called
+			break;
+		// Isotope
+		case (1):
+			// The new Isotope should have been set in the model data for the column
+			isotope = VariantPointer<Isotope>(w->data(Qt::UserRole));
+			if (isotope) iso->setAtomTypeIsotope(atomType, isotope);
+			duqWindow_->setModified();
+			break;
+		default:
+			Messenger::error("Don't know what to do with data from column %i of Isotopes table.\n", w->column());
 			break;
 	}
 }

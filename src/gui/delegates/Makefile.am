@@ -14,9 +14,10 @@ SUFFIXES: .ui .hui .qrc
 	rm $*.cpp
 
 clean-local:
-	-rm -f ui_* *.o moc_*.cpp combolist.cpp texponentialspin.cpp
+	-rm -f ui_* *.o moc_*.cpp combolist.cpp isotopecombo.cpp texponentialspin.cpp
 
 libdelegates_la_SOURCES = combolist.hui combolist_funcs.cpp
+libdelegates_la_SOURCES += isotopecombo.hui isotopecombo_funcs.cpp
 libdelegates_la_SOURCES += texponentialspin.hui texponentialspin_funcs.cpp
 
 AM_CPPFLAGS = -I$(top_srcdir)/src -I../ -I./ @DUQ_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@

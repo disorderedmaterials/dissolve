@@ -4,6 +4,7 @@
 # Meta-Objects
 SET(delegates_MOC_HDRS
   combolist.hui
+  isotopecombo.hui
   texponentialspin.hui
 )
 QT5_WRAP_CPP(delegates_MOC_SRCS ${delegates_MOC_HDRS})
@@ -16,6 +17,7 @@ QT5_WRAP_CPP(delegates_MOC_SRCS ${delegates_MOC_HDRS})
 # Source files (not Qt UI files or custom .h [uih])
 SET(delegates_SRCS
   combolist_funcs.cpp
+  isotopecombo_funcs.cpp
   texponentialspin_funcs.cpp
 )
 
