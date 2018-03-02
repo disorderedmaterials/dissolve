@@ -87,8 +87,8 @@ bool DataBlock::parse(LineParser& parser, DUQ* duq, Data* data)
 				break;
 			case (DataBlock::FileKeyword):
 				// Were column arguments given?
-				xcol = parser.nArgs() == 4 ? parser.argi(2) : 0;
-				ycol = parser.nArgs() == 4 ? parser.argi(3) : 1;
+				xcol = parser.nArgs() == 4 ? parser.argi(2)-1 : 0;
+				ycol = parser.nArgs() == 4 ? parser.argi(3)-1 : 1;
 				if (!data->loadData(duq->worldPool(), parser.argc(1), xcol, ycol)) error = true;
 				break;
 			case (DataBlock::NeutronNormalisationKeyword):
