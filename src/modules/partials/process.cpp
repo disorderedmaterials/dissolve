@@ -209,7 +209,7 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 				int speciesPopulation = spInfo->population() * cfg->multiplier();
 
 				// Loop over available Isotopologues for Species
-				for (Isotopologue* availableIso = sp->isotopologues(); availableIso != NULL; availableIso = availableIso->next)
+				for (Isotopologue* availableIso = sp->isotopologues().first(); availableIso != NULL; availableIso = availableIso->next)
 				{
 					// Construct variable name that we expect to find if the tope was used in the Module (variable is defined in the associated Configuration)
 					varName.sprintf("Isotopologue/%s/%s", sp->name(), availableIso->name());

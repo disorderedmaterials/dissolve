@@ -155,21 +155,22 @@ bool Species::checkSetup(const List<AtomType>& atomTypes)
 	}
 	else for (Isotopologue* iso = isotopologues_.first(); iso != NULL; iso = iso->next)
 	{
-		for (RefListItem<AtomType,Isotope*>* ri = iso->isotopes(); ri != NULL; ri = ri->next)
+		RefListIterator<AtomType,Isotope*> isotopeIterator(iso->isotopes());
+		while (AtomType* atomType = isotopeIterator.iterate())
 		{
-			if (!atomTypes.contains(ri->item))
+			if (!atomTypes.contains(atomType))
 			{
 				Messenger::error("Isotopologue '%s' refers to an unknown AtomType.\n", iso->name());
 				++nErrors;
 			}
-			else if (ri->data == NULL)
+			else if (isotopeIterator.currentData() == NULL)
 			{
-				Messenger::error("Isotopologue '%s' does not refer to an elemental Isotope for AtomType '%s'.\n", iso->name(), ri->item->name());
+				Messenger::error("Isotopologue '%s' does not refer to an elemental Isotope for AtomType '%s'.\n", iso->name(), atomType->name());
 				++nErrors;
 			}
-			else if (!PeriodicTable::element(ri->item->element()).hasIsotope(ri->data->A()))
+			else if (!PeriodicTable::element(atomType->element()).hasIsotope(isotopeIterator.currentData()->A()))
 			{
-				Messenger::error("Isotopologue '%s' does not refer to a suitable Isotope for AtomType '%s'.\n", iso->name(), ri->item->name());
+				Messenger::error("Isotopologue '%s' does not refer to a suitable Isotope for AtomType '%s'.\n", iso->name(), atomType->name());
 				++nErrors;
 			}
 		}

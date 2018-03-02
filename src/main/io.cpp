@@ -347,12 +347,12 @@ bool DUQ::saveInput(const char* filename)
 
 		// Isotopologues
 		parser.writeLineF("\n  # Isotopologues\n");
-		for (Isotopologue* iso = sp->isotopologues(); iso != NULL; iso = iso->next)
+		for (Isotopologue* iso = sp->isotopologues().first(); iso != NULL; iso = iso->next)
 		{
-			parser.writeLineF("  %s  '%s'", SpeciesBlock::keyword(SpeciesBlock::IsotopologueKeyword), iso->name());
-			for (RefListItem<AtomType,Isotope*>* ri = iso->isotopes(); ri != NULL; ri = ri->next)
+			RefListIterator<AtomType,Isotope*> isotopeIterator(iso->isotopes());
+			while (AtomType* atomType = isotopeIterator.iterate())
 			{
-				parser.writeLineF("  %s=%i", ri->item->name(), ri->data->A());
+				parser.writeLineF("  %s=%i", atomType->name(), isotopeIterator.currentData()->A());
 			}
 			parser.writeLineF("\n");
 		}

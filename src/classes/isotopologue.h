@@ -76,8 +76,8 @@ class Isotopologue : public ListItem<Isotopologue>
 	bool setAtomTypeIsotope(AtomType* at, Isotope* isotope);
 	// Return Isotope for specified AtomType
 	Isotope* atomTypeIsotope(AtomType* at) const;
-	// Return first AtomType/Isotope pair
-	RefListItem<AtomType,Isotope*>* isotopes() const;
+	// Return AtomType/Isotope pairs list
+	const RefList<AtomType,Isotope*>& isotopes() const;
 	// Return nth Atom/Isotope pair
 	RefListItem<AtomType,Isotope*>* isotope(int n);
 

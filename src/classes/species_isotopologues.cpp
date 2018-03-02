@@ -78,10 +78,10 @@ int Species::nIsotopologues() const
 	return isotopologues_.nItems();
 }
 
-// Return first Isotopologue defined
-Isotopologue* Species::isotopologues() const
+// Return Isotopologue List
+const List<Isotopologue>& Species::isotopologues() const
 {
-	return isotopologues_.first();
+	return isotopologues_;
 }
 
 // Return nth Isotopologue defined
