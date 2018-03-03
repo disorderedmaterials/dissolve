@@ -111,6 +111,7 @@ class DUQWindow : public QMainWindow
 	// Workspace
 	void on_WorkspaceAddNewAction_triggered(bool checked);
 	void addWidgetToCurrentWorkspace(bool checked);
+	void removeWidgetFromCurrentWorkspace(QString windowTitle);
 
 	public:
 	// Update menu items (after change in Modules etc.)

@@ -88,7 +88,7 @@ class PairPotentialWidget : public SubWidget
 	 * Widget Signals / Slots
 	 */
 	signals:
-	void windowClosed(void*);
+	void windowClosed(QString windowTitle);
 
 	private slots:
 	void on_PreviousPotentialButton_clicked(bool checked);

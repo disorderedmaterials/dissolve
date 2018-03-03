@@ -94,7 +94,7 @@ class ModuleControlWidget : public SubWidget
 	 * Widget Signals / Slots
 	 */
 	signals:
-	void windowClosed(void*);
+	void windowClosed(QString windowTitle);
 	void moduleRun();
 
 	public slots:
