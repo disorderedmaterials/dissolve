@@ -77,15 +77,15 @@ class SpeciesTab : public QWidget, public MainTab
 	// Return currently-selected Isotopologue
 	Isotopologue* currentIsotopologue();
 	// SpeciesAtomTable row update function
-	void updateSpeciesAtomTableRow(int row, SpeciesAtom* speciesAtom, bool createItems);
+	void updateAtomTableRow(int row, SpeciesAtom* speciesAtom, bool createItems);
 	// IsotopologuesIsotopesTable row update function
 	void updateIsotopeTableRow(int row, AtomType* atomType, Isotope* isotope, bool createItems);
 
 	private slots:
 	void on_SpeciesList_currentRowChanged(int row);
-	void on_SpeciesAtomTable_itemChanged(QTableWidgetItem* w);
+	void on_AtomTable_itemChanged(QTableWidgetItem* w);
 	void on_IsotopologueList_currentRowChanged(int row);
-	void on_IsotopesTable_itemChanged(QTableWidgetItem* w);
+	void on_IsotopeTable_itemChanged(QTableWidgetItem* w);
 
 
 	/*
