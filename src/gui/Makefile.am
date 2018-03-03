@@ -25,9 +25,10 @@ clean-local:
 
 libgui_la_SOURCES = icons.qrc
 
-libgui_la_SOURCES += gui.ui configurationtab.ui modulecontrolwidget.ui pairpotentialwidget.ui processingtab.ui speciestab.ui systemtab.ui workspacetab.ui
+libgui_la_SOURCES += gui.ui configurationtab.ui forcefieldtab.ui modulecontrolwidget.ui pairpotentialwidget.ui processingtab.ui speciestab.ui systemtab.ui workspacetab.ui
 
 libgui_la_SOURCES += configurationtab_funcs.cpp
+libgui_la_SOURCES += forcefieldtab_funcs.cpp
 libgui_la_SOURCES += gui_funcs.cpp gui_menu.cpp gui_run.cpp gui_tabs.cpp
 libgui_la_SOURCES += maintab.cpp modulecontrolwidget_funcs.cpp modulewidget.cpp
 libgui_la_SOURCES += outputhandler.hui outputhandler_funcs.cpp
@@ -38,6 +39,7 @@ libgui_la_SOURCES += tmdiarea.hui tmdiarea_funcs.cpp
 libgui_la_SOURCES += workspacetab_funcs.cpp
 
 noinst_HEADERS = configurationtab.h
+noinst_HEADERS += forcefieldtab.h
 noinst_HEADERS += gui.h
 noinst_HEADERS += maintab.h modulecontrolwidget.h modulewidget.h
 noinst_HEADERS += pairpotentialwidget.h processingtab.h

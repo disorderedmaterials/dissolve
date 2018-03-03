@@ -21,6 +21,7 @@
 
 #include "gui/gui.h"
 #include "gui/configurationtab.h"
+#include "gui/forcefieldtab.h"
 #include "gui/processingtab.h"
 #include "gui/speciestab.h"
 #include "gui/systemtab.h"
@@ -82,11 +83,14 @@ void DUQWindow::clearAllTabs()
 // Add core tabs
 void DUQWindow::addCoreTabs()
 {
-	MainTab* systemTab = new SystemTab(this, duq_, ui.MainTabs, "System");
-	tabs_.own(systemTab);
+	MainTab* forcefieldTab = new ForcefieldTab(this, duq_, ui.MainTabs, "Forcefield");
+	tabs_.own(forcefieldTab);
 
 	MainTab* speciesTab = new SpeciesTab(this, duq_, ui.MainTabs, "Species");
 	tabs_.own(speciesTab);
+
+	MainTab* systemTab = new SystemTab(this, duq_, ui.MainTabs, "System");
+	tabs_.own(systemTab);
 }
 
 // Add tab for specified Configuration target

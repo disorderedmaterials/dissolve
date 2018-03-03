@@ -59,15 +59,7 @@ class SystemTab : public QWidget, public MainTab
 	 */
 	private:
 	// Row update function for BondsTable
-	void updateBondsTableRow(int row, MasterIntra* masterBond, bool createItems);
-	// Row update function for AnglesTable
-	void updateAnglesTableRow(int row, MasterIntra* masterAngle, bool createItems);
-	// Row update function for TorsionsTable
-	void updateTorsionsTableRow(int row, MasterIntra* masterTorsion, bool createItems);
-	// Row update function for AtomTypesTable
-	void updateAtomTypesTableRow(int row, AtomType* atomType, bool createItems);
-	// Row update function for PairPotentialsTable
-	void updatePairPotentialsTableRow(int row, PairPotential* pairPotential, bool createItems);
+	void XXXupdateBondsTableRow(int row, MasterIntra* masterBond, bool createItems);
 
 	protected:
 	// Update controls in tab
@@ -84,21 +76,6 @@ class SystemTab : public QWidget, public MainTab
 	private:
 
 	private slots:
-	// Atom Types
-	void on_AtomTypeAddButton_clicked(bool checked);
-	void on_AtomTypeRemoveButton_clicked(bool checked);
-	void on_AtomTypeLibraryButton_clicked(bool checked);
-	void on_AtomTypesTable_itemChanged(QTableWidgetItem* w);
-	// Pair Potentials
-	void on_PairPotentialRangeSpin_valueChanged(double value);
-	void on_PairPotentialDeltaSpin_valueChanged(double value);
-	void on_CoulombIncludeCheck_clicked(bool checked);
-	void on_ShortRangeTruncationCombo_currentIndexChanged(int index);
-	void on_CoulombTruncationCombo_currentIndexChanged(int index);
-	void on_RegenerateAllPairPotentialsButton_clicked(bool checked);
-	void on_UpdatePairPotentialsButton_clicked(bool checked);
-	void on_GenerateMissingPairPotentialsButton_clicked(bool checked);
-	void on_PairPotentialsTable_itemChanged(QTableWidgetItem* w);
 
 
 	/*
