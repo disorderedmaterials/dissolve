@@ -180,7 +180,7 @@ bool DUQ::setUpSimulation()
 	if (nMissingPots > 0) return false;
 
 	// Create PairPotential matrix
-	Messenger::print("--> Creating PairPotential matrix (%ix%i)...\n", atomTypes_.nItems(), atomTypes_.nItems());
+	Messenger::print("Creating PairPotential matrix (%ix%i)...\n", atomTypes_.nItems(), atomTypes_.nItems());
 	if (!potentialMap_.initialise(atomTypes_, pairPotentials_, pairPotentialRange_)) return false;
 
 	/*
@@ -348,8 +348,8 @@ bool DUQ::setUpSimulation()
 		}
 	}
 
-	if (preProcessingTasks_.nItems() == 0) Messenger::print("--> No pre-processing tasks found.\n");
-	else Messenger::print("--> %i pre-processing %s found.\n", preProcessingTasks_.nItems(), preProcessingTasks_.nItems() == 1 ? "task" : "tasks");
+	if (preProcessingTasks_.nItems() == 0) Messenger::print("No pre-processing tasks found.\n");
+	else Messenger::print("%i pre-processing %s found.\n", preProcessingTasks_.nItems(), preProcessingTasks_.nItems() == 1 ? "task" : "tasks");
 	RefListIterator<Module,bool> preProcessingIterator(preProcessingTasks_);
 	while (Module* module = preProcessingIterator.iterate())
 	{
@@ -363,8 +363,8 @@ bool DUQ::setUpSimulation()
 		}
 	}
 
-	if (processingModules_.nModules() == 0) Messenger::print("--> No main processing Modules found.\n");
-	else Messenger::print("--> %i main processing %s found.\n", processingModules_.nModules(), processingModules_.nModules() == 1 ? "Module" : "Modules");
+	if (processingModules_.nModules() == 0) Messenger::print("No main processing Modules found.\n");
+	else Messenger::print("%i main processing %s found.\n", processingModules_.nModules(), processingModules_.nModules() == 1 ? "Module" : "Modules");
 	RefListIterator<Module,bool> mainProcessingIterator(processingModules_.modules());
 	while (Module* module = mainProcessingIterator.iterate())
 	{
@@ -378,8 +378,8 @@ bool DUQ::setUpSimulation()
 		}
 	}
 
-	if (postProcessingTasks_.nItems() == 0) Messenger::print("--> No post-processing tasks found.\n");
-	else Messenger::print("--> %i post-processing %s found.\n", postProcessingTasks_.nItems(), postProcessingTasks_.nItems() == 1 ? "task" : "tasks");
+	if (postProcessingTasks_.nItems() == 0) Messenger::print("No post-processing tasks found.\n");
+	else Messenger::print("%i post-processing %s found.\n", postProcessingTasks_.nItems(), postProcessingTasks_.nItems() == 1 ? "task" : "tasks");
 	RefListIterator<Module,bool> postProcessingIterator(postProcessingTasks_);
 	while (Module* module = postProcessingIterator.iterate())
 	{

@@ -41,7 +41,7 @@ void Configuration::initialise(int nMolecules, int nGrains)
 // Initialise from assigned Species populations
 bool Configuration::initialise(ProcessPool& procPool, bool randomise, double pairPotentialRange, int boxNormalisationNPoints)
 {
-	Messenger::print("--> Setting up Configuration from Species / multiplier definition...\n");
+	Messenger::print("Setting up Configuration from Species / multiplier definition...\n");
 
 	/*
 	 * Check Species populations, and calculate total number of expected Atoms
@@ -73,7 +73,7 @@ bool Configuration::initialise(ProcessPool& procPool, bool randomise, double pai
 	/*
 	 * Create a Box to contain the system
 	 */
-	Messenger::print("--> Creating periodic Box and Cell partitioning...\n");
+	Messenger::print("Creating periodic Box and Cell partitioning...\n");
 	if (!setUpBox(procPool, pairPotentialRange, nExpectedAtoms, boxNormalisationNPoints))
 	{
 		Messenger::error("Failed to set up Box/Cells for Configuration.\n");
@@ -83,7 +83,7 @@ bool Configuration::initialise(ProcessPool& procPool, bool randomise, double pai
 	/*
 	 * Create Molecules
 	 */
-	Messenger::print("--> Setting up Molecules...\n");
+	Messenger::print("Setting up Molecules...\n");
 
 	procPool.initialiseRandomBuffer(ProcessPool::PoolProcessesCommunicator);
 	Vec3<double> r, cog, newCentre, fr;

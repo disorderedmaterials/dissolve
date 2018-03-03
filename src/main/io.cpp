@@ -511,7 +511,7 @@ bool DUQ::loadRestart(const char* filename)
 			}
 
 			// Let the user know what we are doing
-			Messenger::print("--> Reading item '%s' (%s) into Configuration '%s'...\n", parser.argc(2), parser.argc(3), cfg->name());
+			Messenger::print("Reading item '%s' (%s) into Configuration '%s'...\n", parser.argc(2), parser.argc(3), cfg->name());
 
 			// Realise the item in the list
 			GenericItem* item = cfg->moduleData().create(parser.argc(2), parser.argc(3));
@@ -526,7 +526,7 @@ bool DUQ::loadRestart(const char* filename)
 		else if (DUQSys::sameString(parser.argc(0), "Processing"))
 		{
 			// Let the user know what we are doing
-			Messenger::print("--> Reading item '%s' (%s) into processing module data...\n", parser.argc(1), parser.argc(2));
+			Messenger::print("Reading item '%s' (%s) into processing module data...\n", parser.argc(1), parser.argc(2));
 
 			// Realise the item in the list
 			GenericItem* item = processingModuleData_.create(parser.argc(1), parser.argc(2));

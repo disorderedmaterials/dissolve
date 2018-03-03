@@ -279,7 +279,7 @@ bool PartialSet::save()
 		{
 			// Open file and check that we're OK to proceed writing to it
 			const char* filename = partials_.ref(typeI, typeJ).name();
-			Messenger::printVerbose("--> Writing partial file '%s'...\n", filename);
+			Messenger::printVerbose("Writing partial file '%s'...\n", filename);
 
 			parser.openOutput(filename, true);
 			if (!parser.isFileGoodForWriting())
@@ -298,7 +298,7 @@ bool PartialSet::save()
 		}
 	}
 
-	Messenger::printVerbose("--> Writing total file '%s'...\n", total_.name());
+	Messenger::printVerbose("Writing total file '%s'...\n", total_.name());
 	return total_.save(total_.name());
 }
 

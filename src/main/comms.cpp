@@ -90,7 +90,7 @@ bool DUQ::setUpMPIPools()
 	int cfgIndex = 0;
 	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
 	{
-		Messenger::print("--> Configuration '%s':\n", cfg->name());
+		Messenger::print("Configuration '%s':\n", cfg->name());
 
 		if (parallelStrategy_ == DUQ::SequentialConfigStrategy)
 		{

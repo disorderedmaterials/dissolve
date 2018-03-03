@@ -253,7 +253,7 @@ bool Configuration::broadcastCoordinates(ProcessPool& procPool, int rootRank)
 	// Master assembles Atom coordinate arrays...
 	if (procPool.poolRank() == rootRank)
 	{
-		Messenger::printVerbose("--> Process rank %i is assembling coordinate data...\n", procPool.poolRank());
+		Messenger::printVerbose("Process rank %i is assembling coordinate data...\n", procPool.poolRank());
 		for (int n=0; n<atoms_.nItems(); ++n)
 		{
 			x[n] = atoms_[n]->r().x;

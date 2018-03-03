@@ -81,12 +81,12 @@ bool PotentialMap::initialise(const List<AtomType>& masterAtomTypes, const List<
 		// Store PairPotential pointer
 		if (indexI == indexJ)
 		{
-			Messenger::print("--> Linking self-interaction PairPotential for '%s' (index %i,%i in matrix).\n", pot->atomTypeI()->name(), indexI, indexJ);
+			Messenger::print("Linking self-interaction PairPotential for '%s' (index %i,%i in matrix).\n", pot->atomTypeI()->name(), indexI, indexJ);
 			potentialMatrix_.ref(indexI,indexI) = pot;
 		}
 		else
 		{
-			Messenger::print("--> Linking PairPotential between '%s' and '%s' (indices %i,%i and %i,%i in matrix).\n", pot->atomTypeI()->name(), pot->atomTypeJ()->name(), indexI, indexJ, indexJ, indexI);
+			Messenger::print("Linking PairPotential between '%s' and '%s' (indices %i,%i and %i,%i in matrix).\n", pot->atomTypeI()->name(), pot->atomTypeJ()->name(), indexI, indexJ, indexJ, indexI);
 			potentialMatrix_.ref(indexI, indexJ) = pot;
 			potentialMatrix_.ref(indexJ, indexI) = pot;
 		}

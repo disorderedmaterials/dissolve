@@ -102,13 +102,13 @@ bool DUQ::iterate(int nIterations)
 		/*
 		 *  0)	Print schedule of tasks to run
 		 */
-		Messenger::print("--> Pre-Processing\n");
+		Messenger::print("Pre-Processing\n");
 		if (preProcessingTasks_.nItems() == 0) Messenger::print("  (( No Tasks ))\n");
 		RefListIterator<Module,bool> preIterator(preProcessingTasks_);
 		while (Module* module = preIterator.iterate()) Messenger::print("      --> %-20s  (%s)\n", module->name(), module->frequencyDetails(iteration_));
 		Messenger::print("\n");
 
-		Messenger::print("--> Configuration Processing\n");
+		Messenger::print("Configuration Processing\n");
 		for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
 		{
 			Messenger::print("   * '%s'\n", cfg->name());
@@ -118,12 +118,12 @@ bool DUQ::iterate(int nIterations)
 		}
 		Messenger::print("\n");
 
-		Messenger::print("--> Main Processing\n");
+		Messenger::print("Main Processing\n");
 		RefListIterator<Module,bool> processingIterator(processingModules_.modules());
 		while (Module* module = processingIterator.iterate()) Messenger::print("      --> %20s  (%s)\n", module->name(), module->frequencyDetails(iteration_));
 		Messenger::print("\n");
 
-		Messenger::print("--> Post-Processing\n");
+		Messenger::print("Post-Processing\n");
 		if (postProcessingTasks_.nItems() == 0) Messenger::print("  (( No Tasks ))\n");
 		RefListIterator<Module,bool> postIterator(postProcessingTasks_);
 		while (Module* module = postIterator.iterate()) Messenger::print("      --> %-20s  (%s)\n", module->name(), module->frequencyDetails(iteration_));
@@ -252,7 +252,7 @@ bool DUQ::iterate(int nIterations)
 			if (!module->runThisIteration(iteration_)) continue;
 
 			Messenger::print("\n");
-			Messenger::print("--> Module '%s'\n", module->name());
+			Messenger::print("Module '%s'\n", module->name());
 
 			// Execute the post-processing stage
 			if (!module->executePostProcessing(*this, worldPool_))

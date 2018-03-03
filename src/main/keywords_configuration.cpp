@@ -196,11 +196,11 @@ bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
 				break;
 			case (ConfigurationBlock::MultiplierKeyword):
 				cfg->setMultiplier(parser.argd(1));
-				Messenger::print("--> Set Configuration contents multiplier to %i.\n", cfg->multiplier());
+				Messenger::print("Set Configuration contents multiplier to %i.\n", cfg->multiplier());
 				break;
 			case (ConfigurationBlock::NonPeriodicKeyword):
 				cfg->setNonPeriodic(true);
-				Messenger::print("--> Flag set for a non-periodic calculation.\n");
+				Messenger::print("Flag set for a non-periodic calculation.\n");
 				break;
 			case (ConfigurationBlock::RDFBinWidthKeyword):
 				cfg->setRDFBinWidth(parser.argd(1));
@@ -237,7 +237,7 @@ bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
 						}
 					}
 
-					Messenger::print("--> Set composition for Species '%s' (relative population = %f).\n", sp->name(), spInfo->population());
+					Messenger::print("Set composition for Species '%s' (relative population = %f).\n", sp->name(), spInfo->population());
 				}
 				break;
 			case (ConfigurationBlock::TemperatureKeyword):

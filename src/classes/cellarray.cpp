@@ -63,7 +63,7 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 	
 	box_ = box;
 
-	Messenger::print("--> Generating cells for box - minimum cells per side is %i, cell size is %f...\n", minCellsPerSide, cellSize);
+	Messenger::print("Generating cells for box - minimum cells per side is %i, cell size is %f...\n", minCellsPerSide, cellSize);
 
 	// Get Box axis lengths and divide through by cellSize
 	Vec3<double> boxLengths(box_->axisLength(0), box_->axisLength(1),  box_->axisLength(2));
@@ -72,7 +72,7 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 	divisions_.zero();
 	realCellSize_.zero();
 
-	Messenger::print("--> Initial divisions based on cell size are (x,y,z) = (%i,%i,%i)\n", divisions.x, divisions.y, divisions.z);
+	Messenger::print("Initial divisions based on cell size are (x,y,z) = (%i,%i,%i)\n", divisions.x, divisions.y, divisions.z);
 	
 	// How does the smallest length compare with the PairPotential range?
 	if (divisions.min() < minCellsPerSide)
@@ -93,7 +93,7 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 		divisions_[minEl] = divisions[minEl];
 	}
 	
-	Messenger::print("--> Shortest side (axis %i) will have cell length of %f Angstroms.\n", minEl, realCellSize_[minEl]);
+	Messenger::print("Shortest side (axis %i) will have cell length of %f Angstroms.\n", minEl, realCellSize_[minEl]);
 
 	// Now, set our other cellLengths_ based on the minimum value we have just set
 	// We try to get all lengths as similar as possible
@@ -109,20 +109,20 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 		{
 			divisions_[el] = int(x) + 1;
 			realCellSize_[el] = boxLengths[el] / divisions_[el];
-			Messenger::print("--> Accepted cell length of %f Angstroms (%i divisions) for axis %i, since it was within tolerance (-%e).\n", realCellSize_[minEl], divisions_[el], el, remainder);
+			Messenger::print("Accepted cell length of %f Angstroms (%i divisions) for axis %i, since it was within tolerance (-%e).\n", realCellSize_[minEl], divisions_[el], el, remainder);
 		}
 		else if (remainder < tolerance)
 		{
 			divisions_[el] = int(x);
 			realCellSize_[el] = boxLengths[el] / divisions_[el];
-			Messenger::print("--> Accepted cell length of %f Angstroms (%i divisions) for axis %i, since it was within tolerance (+%e).\n", realCellSize_[minEl], divisions_[el], el, remainder);
+			Messenger::print("Accepted cell length of %f Angstroms (%i divisions) for axis %i, since it was within tolerance (+%e).\n", realCellSize_[minEl], divisions_[el], el, remainder);
 		}
 		else if (remainder < 0.5)
 		{
 			// Can't fit more than half another cell in, so reduce number of divisions...
 			divisions_[el] = int(x);
 			realCellSize_[el] = boxLengths[el] / divisions_[el];
-			Messenger::print("--> Decreased cell length for axis %i to %f Angstroms (%i divisions).\n", el, realCellSize_[el], divisions_[el]);
+			Messenger::print("Decreased cell length for axis %i to %f Angstroms (%i divisions).\n", el, realCellSize_[el], divisions_[el]);
 		}
 		else
 		{
@@ -133,21 +133,21 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 			{
 				--divisions_[el];
 				realCellSize_[el] = boxLengths[el] / divisions_[el];
-				Messenger::print("--> Forced decrease of cell length for axis %i to %f Angstroms (%i divisions) since increasing it gave a length larger than the cell size.\n", el, realCellSize_[el], divisions_[el]);
+				Messenger::print("Forced decrease of cell length for axis %i to %f Angstroms (%i divisions) since increasing it gave a length larger than the cell size.\n", el, realCellSize_[el], divisions_[el]);
 			}
-			else Messenger::print("--> Increased cell length for axis %i to %f Angstroms (%i divisions).\n", el, realCellSize_[el], divisions_[el]);
+			else Messenger::print("Increased cell length for axis %i to %f Angstroms (%i divisions).\n", el, realCellSize_[el], divisions_[el]);
 		}
 	}
 
 	// Summarise
 	fractionalCellSize_.set(1.0 / divisions_.x, 1.0 / divisions_.y, 1.0 / divisions_.z);
-	Messenger::print("--> Final cell partitioning is (x,y,z) = (%i,%i,%i), giving %i cells in total.\n", divisions_.x, divisions_.y, divisions_.z, divisions_.x*divisions_.y*divisions_.z);
-	Messenger::print("--> Fractional cell size is (%f,%f,%f).\n", fractionalCellSize_.x, fractionalCellSize_.y, fractionalCellSize_.z);
+	Messenger::print("Final cell partitioning is (x,y,z) = (%i,%i,%i), giving %i cells in total.\n", divisions_.x, divisions_.y, divisions_.z, divisions_.x*divisions_.y*divisions_.z);
+	Messenger::print("Fractional cell size is (%f,%f,%f).\n", fractionalCellSize_.x, fractionalCellSize_.y, fractionalCellSize_.z);
 
 	// Construct Cell arrays
 	clear();
 	nCells_ = divisions_.x*divisions_.y*divisions_.z;
-	Messenger::print("--> Constructing array of %i cells...\n", nCells_);
+	Messenger::print("Constructing array of %i cells...\n", nCells_);
 	cells_ = new Cell[nCells_];
 	Vec3<double> fracCentre_(fractionalCellSize_.x*0.5, 0.0, 0.0);
 	int count = 0;
@@ -175,7 +175,7 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 	axes_.columnMultiply(fractionalCellSize_);
 
 	// Construct Cell neighbour lists
-	Messenger::print("--> Creating cell neighbour lists...\n");
+	Messenger::print("Creating cell neighbour lists...\n");
 	// Make a list of integer vectors which we'll then use to pick Cells for the neighbour lists
 	Vec3<double> r;
 	Matrix3 cellAxes = box_->axes();
@@ -193,14 +193,14 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 			r = cellAxes * r;
 		} while (r[n] < pairPotentialRange);
 	}
-	Messenger::print("--> Cell extents required to cover PairPotential range are (x,y,z) = (%i,%i,%i).\n", extents_.x, extents_.y, extents_.z);
+	Messenger::print("Cell extents required to cover PairPotential range are (x,y,z) = (%i,%i,%i).\n", extents_.x, extents_.y, extents_.z);
 	
 	// Check Cell extents, comparing with the actual number of Cells available in each direction.
 	for (n=0; n<3; ++n)
 	{
 		if ((extents_[n]*2+1) > divisions_[n])
 		{
-			Messenger::warn("--> Cells required along axis %i is %i (2*%i + 1) exceeds number of available cells (%i). Parallelism will be affected!\n", n, extents_[n]*2+1, extents_[n], divisions_[n]);
+			Messenger::warn("Cells required along axis %i is %i (2*%i + 1) exceeds number of available cells (%i). Parallelism will be affected!\n", n, extents_[n]*2+1, extents_[n], divisions_[n]);
 			// We do not decrease the value of extents_, even though there are not enough cells along one or more sides of the box to satisfy that required for the pairPotentialRange.
 			// When constructing, the loops below check the negative extents_ indices for overlap which would cause the same cell to be added to the list twice.
 		}
@@ -244,10 +244,10 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 			}
 		}
 	}
-	Messenger::print("--> Added %i Cells to representative neighbour list.\n", neighbourIndices_.nItems());
+	Messenger::print("Added %i Cells to representative neighbour list.\n", neighbourIndices_.nItems());
 
 	// Finally, loop over Cells and set neighbours, and construct neighbour matrix
-	Messenger::print("--> Constructing neighbour lists for individual Cells...\n");
+	Messenger::print("Constructing neighbour lists for individual Cells...\n");
 	bool mimRequired;
 	OrderedPointerList<Cell> neighbours, mimNeighbours;
 	Vec3<int> gridRef;

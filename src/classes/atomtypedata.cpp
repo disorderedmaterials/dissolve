@@ -76,7 +76,7 @@ bool AtomTypeData::initialise(int listIndex, AtomType* atomType, int population)
 	fraction_ = 0.0;
 	boundCoherent_ = 0.0;
 
-	// 	Messenger::print("--> Initialised AtomType index entry with AtomType '%s', Isotope %i (bc = %7.3f)\n", atomType->name(), tope->A(), tope->boundCoherent());
+	// 	Messenger::print("Initialised AtomType index entry with AtomType '%s', Isotope %i (bc = %7.3f)\n", atomType->name(), tope->A(), tope->boundCoherent());
 	return true;
 }
 

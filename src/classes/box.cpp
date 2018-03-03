@@ -224,7 +224,7 @@ bool Box::calculateRDFNormalisation(ProcessPool& procPool, XYData& boxNorm, doub
 
 	// Divide points over processes
 	const int nPointsPerProcess = nPoints / procPool.nProcesses();
-	Messenger::print("--> Number of insertion points per process is %i, total is %i\n", nPointsPerProcess, nPointsPerProcess*procPool.nProcesses());
+	Messenger::print("Number of insertion points per process is %i, total is %i\n", nPointsPerProcess, nPointsPerProcess*procPool.nProcesses());
 
 	// Pre-waste random numbers so that the random number generators in all processes line up
 	for (int n=0; n<nPointsPerProcess*procPool.poolRank(); ++n) randomCoordinate();

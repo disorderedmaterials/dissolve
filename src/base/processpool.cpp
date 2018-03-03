@@ -283,7 +283,7 @@ bool ProcessPool::setUp(const char* name, Array<int> worldRanks)
 
 	name_ = name;
 
-	Messenger::print("--> Setting up process pool '%s'...\n", name_.get());
+	Messenger::print("Setting up process pool '%s'...\n", name_.get());
 
 	// Set rank list
 	worldRanks_ = worldRanks;
@@ -294,12 +294,12 @@ bool ProcessPool::setUp(const char* name, Array<int> worldRanks)
 		if (worldRank_ == worldRanks_[n])
 		{
 			poolRank_ = n;
-			Messenger::print("--> Process with world rank %i added to pool '%s' with local rank %i.\n", worldRanks_[n], name_.get(), n);
+			Messenger::print("Process with world rank %i added to pool '%s' with local rank %i.\n", worldRanks_[n], name_.get(), n);
 			break;
 		}
 	}
 
-	Messenger::print("--> There are %i processes in pool '%s'.\n", worldRanks_.nItems(), name_.get());
+	Messenger::print("There are %i processes in pool '%s'.\n", worldRanks_.nItems(), name_.get());
 
 #ifdef PARALLEL
 	// Create pool group and communicator
@@ -337,7 +337,7 @@ void ProcessPool::determineMaxProcessGroups(const Vec3<int>& divisions, const Ve
 	// Check that this pool actually involves us - if not we can leave now
 	if (!involvesMe())
 	{
-		Messenger::print("--> ... Process with world rank %i is not involved in the process pool '%s', so we will ignore its setup.\n", worldRank_, name_.get());
+		Messenger::print("... Process with world rank %i is not involved in the process pool '%s', so we will ignore its setup.\n", worldRank_, name_.get());
 		return;
 	}
 
@@ -399,12 +399,12 @@ void ProcessPool::determineMaxProcessGroups(const Vec3<int>& divisions, const Ve
 			}
 		}
 	}
-	Messenger::print("--> For the current Cell division and extent values, a maximum of %i simultaneous Cell-modifying processes are possible.\n", maxProcessGroups_);
+	Messenger::print("For the current Cell division and extent values, a maximum of %i simultaneous Cell-modifying processes are possible.\n", maxProcessGroups_);
 	// Maximum number of groups possible is the number of processes available, but we want all groups to contain the same number
 	// of processes...
 	while (worldRanks_.nItems()%maxProcessGroups_ != 0) --maxProcessGroups_;
 	
-	Messenger::print("--> Processes will be divided into %i groups.\n", maxProcessGroups_);
+	Messenger::print("Processes will be divided into %i groups.\n", maxProcessGroups_);
 #endif
 }
 
@@ -427,7 +427,7 @@ bool ProcessPool::assignProcessesToGroups()
 		// Create nth process group and add a (currently null) entry to the groupLeaders_ array
 		ProcessGroup group;
 		groupLeaders_.add(-1);
-		Messenger::printVerbose("--> Created process group %i\n", n);
+		Messenger::printVerbose("Created process group %i\n", n);
 
 		// Create array of ranks to put in new group
 		int firstRank = baseAlloc * n + (n < remainder ? n : remainder);
@@ -442,7 +442,7 @@ bool ProcessPool::assignProcessesToGroups()
 			// If this process is the current worldRank_ we are considering, set its group membership
 			if (wr == worldRank_) groupIndex_ = n;
 		}
-		Messenger::printVerbose("--> Group will contain %i processes (world ranks:%s).\n", group.nProcesses(), rankString.get());
+		Messenger::printVerbose("Group will contain %i processes (world ranks:%s).\n", group.nProcesses(), rankString.get());
 		processGroups_.add(group);
 	}
 
@@ -452,7 +452,7 @@ bool ProcessPool::assignProcessesToGroups()
 	if (MPI_Group_incl(origGroup, myGroup().nProcesses(), myGroup().worldRanks().array(), &groupGroup_) != MPI_SUCCESS) return false;
 	if (MPI_Comm_create(MPI_COMM_WORLD, groupGroup_, &groupCommunicator_) != MPI_SUCCESS) return false;
 	MPI_Group_rank(groupGroup_, &groupRank_);
-	Messenger::printVerbose("--> ... Process with pool rank %i (world rank %i) has local group %i (%i), group rank %i, and is a process group %s\n", poolRank_, worldRank_, groupIndex_, groupGroup_, groupRank_, groupLeader() ? "leader" : "slave");
+	Messenger::printVerbose("... Process with pool rank %i (world rank %i) has local group %i (%i), group rank %i, and is a process group %s\n", poolRank_, worldRank_, groupIndex_, groupGroup_, groupRank_, groupLeader() ? "leader" : "slave");
 
 	// Master now assembles list of group leaders
 	bool leader;
@@ -491,8 +491,8 @@ bool ProcessPool::assignProcessesToGroups()
 
 	// Broadcast group leader list
 	if (!broadcast(groupLeaders_)) return false;
-	Messenger::printVerbose("--> Group leader processes are :\n");
-	for (int group=0; group<processGroups_.nItems(); ++group) Messenger::printVerbose("-->    Group %3i : process rank %i\n", group, groupLeaders_[group]);
+	Messenger::printVerbose("Group leader processes are :\n");
+	for (int group=0; group<processGroups_.nItems(); ++group) Messenger::printVerbose("   Group %3i : process rank %i\n", group, groupLeaders_[group]);
 
 	// Create group leader communicator
 	// Must first convert local pool ranks of the group leaders into world ranks, before passing this to MPI_Group_incl
@@ -733,7 +733,7 @@ int ProcessPool::twoBodyLoopStart(int nItems) const
 		// Store limits for this process (if it is us)
 		if (process == poolRank_)
 		{
-			Messenger::printVerbose("--> Assigned two-body outer loop start index of %i for process with pool rank %i.\n", startAtom, process);
+			Messenger::printVerbose("Assigned two-body outer loop start index of %i for process with pool rank %i.\n", startAtom, process);
 			return startAtom;
 		}
 
@@ -768,7 +768,7 @@ int ProcessPool::twoBodyLoopEnd(int nItems) const
 		// Store limits for this process (if it is us)
 		if (process == poolRank_)
 		{
-			Messenger::printVerbose("--> Assigned two-body outer loop final index of %i for process with pool rank %i.\n", finishAtom, process);
+			Messenger::printVerbose("Assigned two-body outer loop final index of %i for process with pool rank %i.\n", finishAtom, process);
 			return finishAtom;
 		}
 
