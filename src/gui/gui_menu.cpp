@@ -74,6 +74,7 @@ void DUQWindow::addWidgetToCurrentWorkspace(bool checked)
 			// Create a new ModuleWidget
 			ModuleControlWidget* moduleControlWidget = new ModuleControlWidget(this, module, CharString("%s (%s)", module->name(), module->uniqueName()));
 			connect(moduleControlWidget, SIGNAL(moduleRun()), this, SLOT(updateControls()));
+			connect(moduleControlWidget, SIGNAL(windowClosed(void*)), this, SLOT(removeWidgetFromCurrentWorkspace(void*)));
 			window = tab->addSubWindow(moduleControlWidget, module);
 		}
 		else window->raise();
@@ -93,6 +94,22 @@ void DUQWindow::addWidgetToCurrentWorkspace(bool checked)
 			Messenger::error("Couldn't add widget to current workspace - unrecognised widget type '%s' encountered.\n", qPrintable(action->text()));
 		}
 	}
+}
+
+void DUQWindow::removeWidgetFromCurrentWorkspace(QString windowTitle)
+{
+	// Get current tab and check it has an MDI area
+	MainTab* tab = currentTab();
+	if (!tab) return;
+	if (!tab->subWindowArea())
+	{
+		Messenger::error("No SubWindow (MDI) workspace, so can't remove a widget from it.\n");
+		return;
+	}
+
+	// First, assume the passed windowData is the actual window data displayed.
+	SubWindow* window = tab->findSubWindow(qPrintable(windowTitle));
+	if (window) tab->removeSubWindow(window);
 }
 
 void DUQWindow::on_WorkspaceAddNewAction_triggered(bool checked)

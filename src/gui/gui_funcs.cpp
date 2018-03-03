@@ -203,13 +203,15 @@ SubWidget* DUQWindow::createSubWidget(const char* widgetName, const char* title)
 	if (DUQSys::sameString(widgetName, "PairPotential"))
 	{
 		PairPotentialWidget* ppWidget = new PairPotentialWidget(this, title);
+		connect(ppWidget, SIGNAL(windowClosed(QString)), this, SLOT(removeWidgetFromCurrentWorkspace(QString)));
 		subWidget = ppWidget;
 	}
 	else if (DUQSys::sameString(widgetName, "ModuleControl"))
 	{
-		ModuleControlWidget* moduleWidget = new ModuleControlWidget(this, NULL, title);
-		connect(moduleWidget, SIGNAL(moduleRun()), this, SLOT(updateControls()));
-		subWidget = moduleWidget;
+		ModuleControlWidget* moduleControlWidget = new ModuleControlWidget(this, NULL, title);
+		connect(moduleControlWidget, SIGNAL(moduleRun()), this, SLOT(updateControls()));
+		connect(moduleControlWidget, SIGNAL(windowClosed(QString)), this, SLOT(removeWidgetFromCurrentWorkspace(QString)));
+		subWidget = moduleControlWidget;
 	}
 	else Messenger::error("Don't know how to create SubWidget of type '%s'.\n", widgetName);
 

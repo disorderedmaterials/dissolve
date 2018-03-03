@@ -104,12 +104,29 @@ SubWindow* MainTab::findSubWindow(const char* title)
 	return NULL;
 }
 
-// Find SubWindow by data content
-SubWindow* MainTab::findSubWindow(void* windowContents)
+// Find SubWindow by SubWidget
+SubWindow* MainTab::findSubWindow(SubWidget* subWidget)
 {
 	ListIterator<SubWindow> subWindowIterator(subWindows_);
-	while (SubWindow* subWindow = subWindowIterator.iterate()) if (subWindow->data() == windowContents) return subWindow;
+	while (SubWindow* subWindow = subWindowIterator.iterate()) if (subWindow->data() == subWidget) return subWindow;
 
+	return NULL;
+}
+
+// Find SubWindow by data content
+SubWindow* MainTab::findSubWindow(void* windowData)
+{
+	ListIterator<SubWindow> subWindowIterator(subWindows_);
+	while (SubWindow* subWindow = subWindowIterator.iterate()) if (subWindow->data() == windowData) return subWindow;
+
+	return NULL;
+}
+
+// Find and return named SubWidget
+SubWidget* MainTab::findSubWidget(const char* widgetTitle)
+{
+	ListIterator<SubWidget> widgetIterator(subWidgets_);
+	while (SubWidget* subWidget = widgetIterator.iterate()) if (DUQSys::sameString(widgetTitle, subWidget->title())) return subWidget;
 	return NULL;
 }
 
@@ -146,12 +163,10 @@ SubWindow* MainTab::addSubWindow(SubWidget* widget, void* windowContents)
 	return subWindow ;
 }
 
-// Find and return named SubWidget
-SubWidget* MainTab::findSubWidget(const char* widgetTitle)
+// Remove SubWindow specifiedf
+void MainTab::removeSubWindow(SubWindow* window)
 {
-	ListIterator<SubWidget> widgetIterator(subWidgets_);
-	while (SubWidget* subWidget = widgetIterator.iterate()) if (DUQSys::sameString(widgetTitle, subWidget->title())) return subWidget;
-	return NULL;
+	subWindows_.remove(window);
 }
 
 /*

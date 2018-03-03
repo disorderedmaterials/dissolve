@@ -181,7 +181,7 @@ void ModuleControlWidget::initialiseControls(Module* module)
 
 void ModuleControlWidget::closeEvent(QCloseEvent* event)
 {
-	emit (windowClosed(module_));
+	emit (windowClosed(title()));
 }
 
 // Update controls within widget

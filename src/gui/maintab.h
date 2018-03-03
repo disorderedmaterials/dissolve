@@ -86,12 +86,16 @@ class MainTab : public ListItem<MainTab>
 	virtual QLayout* subWidgetLayout() = 0;
 	// Find SubWindow by title
 	SubWindow* findSubWindow(const char* title);
+	// Find SubWindow by SubWidget
+	SubWindow* findSubWindow(SubWidget* subWidget);
 	// Find SubWindow by data content
-	SubWindow* findSubWindow(void* windowContents);
-	// Add SubWindow for widget containing specified data (as pointer)
-	SubWindow* addSubWindow(SubWidget* widget, void* windowContents);
+	SubWindow* findSubWindow(void* windowData);
 	// Find and return named SubWidget
 	SubWidget* findSubWidget(const char* widgetTitle);
+	// Add SubWindow for widget containing specified data (as pointer)
+	SubWindow* addSubWindow(SubWidget* widget, void* windowContents);
+	// Remove SubWindow specified
+	void removeSubWindow(SubWindow* window);
 
 
 	/*

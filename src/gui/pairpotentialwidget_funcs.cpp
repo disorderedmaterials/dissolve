@@ -140,7 +140,7 @@ void PairPotentialWidget::setDataTargets(PairPotential* pp)
 
 void PairPotentialWidget::closeEvent(QCloseEvent* event)
 {
-	emit (windowClosed(this));
+	emit (windowClosed(title()));
 }
 
 // Update controls within widget
