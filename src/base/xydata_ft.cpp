@@ -22,9 +22,6 @@
 #include "base/xydata.h"
 #include "base/sysfunc.h"
 
-// Static Members
-bool XYData::useFFT_ = false;
-
 // Make some checks before doing transform
 bool XYData::checkBeforeTransform()
 {
@@ -42,14 +39,6 @@ bool XYData::checkBeforeTransform()
 		return false;
 	}
 
-	// Check spacing of data...
-	double deltaX = x_[1] - x_[0], tolerance = 0.001;
-	for (int n=2; n<x_.nItems(); ++n) if (fabs((x_[n] - x_[n-1])-deltaX) > tolerance)
-	{
-		Messenger::error("Data are unevenly spaced in XYData. Can't do transform.\n");
-		return false;
-	}
-	
 	return true;
 }
 
@@ -82,143 +71,39 @@ bool XYData::sineFT(double normFactor, double wMin, double wStep, double wMax, W
 	const int nX = x_.nItems();
 	double window, broaden;
 
-	if (XYData::useFFT_)
+	// Create working array
+	XYData sineft;
+
+	// Assume deltaX is the difference between the first two points
+	double deltaX = x_[1] - x_[0];
+
+	// Perform Fourier sine transform, apply general and omega-dependent broadening, as well as window function
+	double ft;
+	double omega = wMin;
+	while (omega <= wMax)
 	{
-		// Pad input data up to power of 2 and bit-reverse data
-		int n, i, j, bit, N = pow( 2, ceil( log( x_.nItems() ) / log( 2 ) ) );
-		printf("Original input size = %i, pow2 = %i\n", x_.nItems(), N);
-		double temp;
-		Array<double> yin(N), xin(N);
-		for (n=0; n<y_.nItems(); ++n)
+		ft = 0.0;
+		for (m=0; m<nX-1; ++m)
 		{
-			yin[n] = y_[n]; // * window(wf, double(n)/y_.nItems());
-			xin[n] = x_[n];
-		}
-		for (n=y_.nItems(); n<N; ++n)
-		{
-			yin[n] = 0.0;
-			xin[n] = 0.0;
-		}
-		// -- Perform bit-reverse in-place in real[]
-		j = 0;
-		for (i=0; i<N; ++i)
-		{
-			// Swap values only if i < j, avoiding unnecessary symmetric and equivalent (i == j) swaps
-			if (i < j)
-			{
-// 				printf("Swapping i = ");
-// 				for (int m=1; m<=N; m<<=1) printf("%i", (i & m) ? 1 : 0); printf("  (%i) for j = ", i);
-// 				for (int m=1; m<=N; m<<=1) printf("%i", (j & m) ? 1 : 0); printf("  (%i)\n", j);
-				temp = yin[i];
-				yin[i] = yin[j];
-				yin[j] = temp;
-				temp = xin[i];
-				xin[i] = xin[j];
-				xin[j] = temp;
-			}
-			// Increment j in bit-reversed order
-			bit = N;
-			do
-			{
-				bit >>= 1;
-				j ^= bit;
-			} while( (j & bit) == 0 && bit != 1 );
+			deltaX = x_[m+1] - x_[m];
+			// Get window value at this position in the function
+			window = windowFunction.y(x_[m], omega);
+
+			// Calculate broadening
+			broaden = broadening.yFT(x_[m], omega);
+
+			ft += sin(x_[m]*omega) * x_[m] * broaden * window * y_[m] * deltaX;
 		}
 
-// 		for (n=0; n<N; ++n) printf("Array[%i] : Orig = %f   new = %f\n", n, y_[n], yin[n]);
-
-		// Perform FFT
-		int npoint=1, istep, m;
-		double theta, wpr, wr, wi, tempr, wpi, wtemp;
-// 		double b, cosb, tempr;
-		// -- Loop over successive N-point transforms, up to and including N/2
-		while (npoint < N)
-		{
-			// Determine spacing to use between points in array
-			istep = 2*npoint;
-// 			printf("MMax = %i, IStep = %i\n", npoint, istep); 
-
-			// Calculate current theta
-			theta = 1.0*(TWOPI/istep);
-			// Initialize the trigonometric recurrence.
-			wtemp = sin(0.5*theta);
-			wpr = -2.0*wtemp*wtemp;
-			wr = 1.0;
-
-			// Loop over 
-			for (m=0; m<npoint; ++m)
-			{
-// 				printf("Middle loop : m = %i, W = %f\n", m+1, wr);
-				wr = cos(m*TWOPI/istep);
-				// Here are the two nested inner loops.
-				for (i=m; i<N; i+=istep)
-				{
-// 					b = (m+0.5)*npoint*k*xin[i];
-
-					j = i+npoint;
-// 					printf("  inner loop i = %i j = %i, f(i) = %f\n", i+1, j+1, yin[i]);
-					// This is the Danielson-Lanczos formula:
-// 					tempr=wr*data[j]-wi*data[j+1];
-// 					tempi=wr*data[j+1]+wi*data[j];
-					tempr = wr * yin[j];
-// 					cosb = cosb) * yin[j];
-					yin[j] = yin[i]-tempr;
-// 					data[j+1]=data[i+1]-tempi;
-					yin[i] += tempr;
-// 					data[i+1] += tempi;
-				}
-				wr = wr*wpr + wr;
-// 				wr = wr - wr * 2.0 * (0.5 - 0.5 * cos(TWOPI/m));
-// 				wr *= cos(TWOPI/npoint);
-				// Trigonometric recurrence.
-// 				wi=wi*wpr+wtemp*wpi+wi;
-			}
-			npoint = istep;
-		}
-
-// 		for (n=0; n<N; ++n) printf("FFT = %f\n", yin[n]);
+		// Normalise
+		if (omega > 0.0) ft /= omega;
+		sineft.addPoint(omega, ft);
 		
-		// Copy transform data over initial data
-// 		for (n=0; n<x_.nItems(); ++n) x_[n] = (n+0.5)*k;  k not defined anymore
-		for (n=0; n<x_.nItems(); ++n) y_[n] = yin[n];
-		y_ *= 2.0 / x_.nItems();
-		y_[0] / 2.0;
+		omega += wStep;
 	}
-	else
-	{
-		// Create working array
-		XYData sineft;
 
-		// Assume deltaX is the difference between the first two points
-		double deltaX = x_[1] - x_[0];
-
-		// Perform Fourier sine transform, apply general and omega-dependent broadening, as well as window function
-		double ft;
-		double omega = wMin;
-		while (omega <= wMax)
-		{
-			ft = 0.0;
-			for (m=0; m<nX; ++m)
-			{
-				// Get window value at this position in the function
-				window = windowFunction.y(x_[m], omega);
-
-				// Calculate broadening
-				broaden = broadening.yFT(x_[m], omega);
-
-				ft += sin(x_[m]*omega) * x_[m] * broaden * window * y_[m] * deltaX;
-			}
-
-			// Normalise
-			if (omega > 0.0) ft /= omega;
-			sineft.addPoint(omega, ft);
-			
-			omega += wStep;
-		}
-
-		// Transfer working arrays to this object
-		copyData(sineft);
-	}
+	// Transfer working arrays to this object
+	copyData(sineft);
 
 	// Apply normalisation factor
 	y_ *= normFactor;

@@ -48,10 +48,6 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	// Clear interpolation arrays
 	void clearInterpolationArrays();
 	
-	private:
-	// Whether to use local FFT code over DFT
-	static bool useFFT_;
-
 
 	/*
 	 * Data
