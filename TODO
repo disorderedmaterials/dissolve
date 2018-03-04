@@ -6,16 +6,18 @@ o Dynamic load-balancing when running Configurations in parallel - assess time t
 o Allow for Fixed atoms:
 	- Checks for fixed Atoms with GrainDefinitions - this should not be allowed since a Grain will be mobile.
 	- Provision for pre-calculation of RDF/F(Q) data between fixed atoms, and introduction of this into final RDF/F(Q) data for speed?
-o Accumulate timing information for each module, displaying averages and total in schedule at each step?
 o Establish proper limit for switching between RDF calculation methods
-o Rework Configuration::setup() to account for all types of initailisation - random config, loaded coordinates, or loaded atoms/coordinates/connectivity.
 o Adding intramolecular connections with Configuration::addBond(), for instance, only adds involved Atoms to Atom exclusion list, whereas strictly-speaking we should exclude 1-3 and scale 1-4 interactions, even if there is no explicit potential term defined across those atoms.
-o By default, add 'Natural' isotopologue to all Species?
 o Option to generate full PY or HNC pair potentials from input data, and use these as the starting reference potential?
+o Allow Configuration 'checkpoints' to be stored in restart file, e.g. allowing coordinates before refinement to be stored etc.
 
 -------------------------------------------
 Ideas / Notes / Weird Algorithm Suggestions
 -------------------------------------------
+
+** Potential Refinement
+o Generate dphi(r) as a reference point - don't generate dphi(r) again for some number of cycles or until some criterion is met. Instead, adjust magnitude of application to potential perturbation, e.g. through fitting of Gaussians and subsequent modification of amplitudes (Gaussian fitting could proceed along lines of detecting largest peak in data, fitting Gaussian to this data, subtracting from data, repeating additive fitting of more Gaussians until remaining function is reduced below some threshold, or some max Gaussians is reached, or until amplitude of Gaussian is below some threshold?). Fix addition to potential, generate new dphi(r), and repeat at periodic intervals.
+o From initial experimental S(Q), calculate phi(r) from PY or HNC. Do the difference of *this* with the current potential somehow?
 
 ** Monte Carlo Energy Check SpeedUp
 It is likely that the most severe energy penalties / gains arising from MC moves will be from 'local' atoms - i.e. those in the same cell(s) as the target atom(s) or those in the 26 which immediately surround it. A cutoff energy could be provided to various EnergyKernel routines which, if exceeded by the time the immediate cell neighbours have been considered, could return early.
@@ -32,9 +34,6 @@ o Indivdiual molecules could be treated with 'rough' MD, only taking account of 
 
 ** Directional MC Moves
 Could allow definition of displacement vectors (based on molecular axes) for species, and have a module which attempts MC moves along those vectors.
-
-** Averaging of Calculated Partials
-Options in Partials module to allow either stacking and averaging of RDFs (requiring additional storage inside PartialSet) or blending of current calculated values with previous values in some percentage (easier, but real, actual partials are unavailable). Can use the moduleData() lists and store datasets to be averaged as additional data.
 
 ** Allow Chemical Units When Specifying Quantities
 If density for specific Isotopologues can be provided, we can allow gram quantities of them to be added (in Partials/Spatials definitions, for instance) and converted automatically to relative molar amounts (which is what we need). Will need to set a tolerance on the resulting relative populations between species for this method, since we need to ensure some kind of consistency between the exact, specified composition of the Configuration(s) and the Sample information.
