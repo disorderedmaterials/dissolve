@@ -84,7 +84,7 @@ class ScatteringMatrix
 	// Add reference data using its associated Weights, applying optional factor to those weights
 	bool addReferenceData(Data* data, double factor = 1.0);
 	// Add reference partial data between specified AtomTypes
-	bool addPartialReferenceData(Data* data, AtomType* at1, AtomType* at2, double weight);
+	bool addPartialReferenceData(Data* data, AtomType* at1, AtomType* at2, double weight, double factor);
 };
 
 #endif

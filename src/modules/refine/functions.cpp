@@ -77,7 +77,8 @@ bool RefineModule::createScatteringMatrix(DUQ& duq, const PartialSet& unweighted
 			dataIterator.restart();
 			while (Data* data = dataIterator.iterate()) if (!scatteringMatrix_.addReferenceData(data, augmentationParam)) return Messenger::error("Failed to add reference Data '%s'.\n", data->name());
 
-			// Loop over partials
+			// Loop over partials, adding each as we go.
+			// We have the unweighted partials in 'unweightedSQ', so we will scale each to the correct neutron weight to form our data.
 			atd1 = naturalWeights.atomTypes().first();
 			for (int n=0; n<naturalWeights.atomTypes().nItems(); ++n, atd1 = atd1->next)
 			{
@@ -89,9 +90,9 @@ bool RefineModule::createScatteringMatrix(DUQ& duq, const PartialSet& unweighted
 					data->setName(CharString("Simulated Partial %s-%s", atd1->atomTypeName(), atd2->atomTypeName()));
 
 					data->data() = unweightedSQ.constPartial(n,m);
-					data->data().arrayY() *= (1.0 - augmentationParam);
+					data->data().arrayY() *= naturalWeights.fullWeight(n,m) * (1.0 - augmentationParam);
 
-					if (!scatteringMatrix_.addPartialReferenceData(data, atd1->atomType(), atd2->atomType(), naturalWeights.fullWeight(n,m) * (1.0 - augmentationParam))) return Messenger::error("Refine: Failed to initialise simulated reference Data.\n");
+					if (!scatteringMatrix_.addPartialReferenceData(data, atd1->atomType(), atd2->atomType(), naturalWeights.fullWeight(n,m), (1.0 - augmentationParam))) return Messenger::error("Refine: Failed to initialise simulated reference Data.\n");
 				}
 			}
 			break;

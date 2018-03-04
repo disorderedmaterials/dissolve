@@ -212,7 +212,7 @@ bool ScatteringMatrix::addReferenceData(Data* data, double factor)
 }
 
 // Add reference partial data between specified AtomTypes
-bool ScatteringMatrix::addPartialReferenceData(Data* data, AtomType* at1, AtomType* at2, double weight)
+bool ScatteringMatrix::addPartialReferenceData(Data* data, AtomType* at1, AtomType* at2, double weight, double factor)
 {
 	// Extend the scattering matrix by one row
 	A_.addRow(typePairs_.nItems());
@@ -227,10 +227,10 @@ bool ScatteringMatrix::addPartialReferenceData(Data* data, AtomType* at1, AtomTy
 
 	// Now have the local column index of the AtomType pair in our matrix A_...
 	A_.setRow(rowIndex, 0.0);
-	A_.ref(rowIndex, colIndex) = weight;
+	A_.ref(rowIndex, colIndex) = weight * factor;
 
 	// Add reference data
-	data_.add(data, 1.0);
+	data_.add(data, factor);
 
 	return true;
 }
