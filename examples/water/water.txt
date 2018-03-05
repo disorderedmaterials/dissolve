@@ -54,7 +54,6 @@ EndSpecies
 PairPotentials
   Range  15.000000
   Delta  0.050000
-  TruncationWidth  2.000000
   Parameters  'OW'  -0.82      0.65	3.165492
   Parameters  'HW'  0.41       0.0      0.0
   GenerateAll  'LJ'
