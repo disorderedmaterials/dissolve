@@ -501,7 +501,7 @@ void Configuration::incrementCoordinateIndex()
 }
 
 // Load coordinates from file
-bool Configuration::loadCoordinates(LineParser& parser, const char* format)
+bool Configuration::loadCoordinates(LineParser& parser, ImportModuleFormats::CoordinateFormat format)
 {
 	// Load coordinates into temporary array
 	Array< Vec3<double> > r;

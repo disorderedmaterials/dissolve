@@ -32,6 +32,7 @@
 #include "classes/histogram.h"
 #include "classes/speciesinfo.h"
 #include "module/list.h"
+#include "modules/import/formats.h"
 #include "base/xydata.h"
 #include "base/processpool.h"
 #include "base/genericlist.h"
@@ -78,7 +79,7 @@ class Configuration : public ListItem<Configuration>
 	// File containing input coordinates
 	CharString inputCoordinatesFile_;
 	// Format of input coordinates file
-	CharString inputCoordinatesFormat_;
+	ImportModuleFormats::CoordinateFormat inputCoordinatesFormat_;
 	// Temperature of this configuration (K)
 	double temperature_;
 
@@ -118,9 +119,9 @@ class Configuration : public ListItem<Configuration>
 	// Return whether a file containing input coordinates has been set
 	bool hasInputCoordinatesFile() const;
 	// Set input coordinates file format
-	void setInputCoordinatesFormat(const char* format);
+	void setInputCoordinatesFormat(ImportModuleFormats::CoordinateFormat format);
 	// Return input coordinates file format
-	const char* inputCoordinatesFormat();
+	ImportModuleFormats::CoordinateFormat inputCoordinatesFormat();
 	// Set configuration temperature
 	void setTemperature(double t);
 	// Return configuration temperature
@@ -226,7 +227,7 @@ class Configuration : public ListItem<Configuration>
 	// Increment current coordinate index
 	void incrementCoordinateIndex();
 	// Load coordinates from specified parser
-	bool loadCoordinates(LineParser& parser, const char* format);
+	bool loadCoordinates(LineParser& parser, ImportModuleFormats::CoordinateFormat format);
 
 
 	/*

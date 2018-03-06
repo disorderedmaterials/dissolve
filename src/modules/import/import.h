@@ -23,6 +23,7 @@
 #define DUQ_IMPORTMODULE_H
 
 #include "module/module.h"
+#include "modules/import/formats.h"
 
 // Forward Declarations
 /* none */
@@ -30,10 +31,6 @@
 // Import Module
 class ImportModule : public Module
 {
-	/*
-	 * Calculates the total energy of the system by one of several methods
-	 */
-
 	public:
 	// Constructor
 	ImportModule();
@@ -106,7 +103,7 @@ class ImportModule : public Module
 	 */
 	public:
 	// Read coordinates in specified format
-	static bool readCoordinates(const char* format, LineParser& parser, Array< Vec3<double> >& r);
+	static bool readCoordinates(ImportModuleFormats::CoordinateFormat format, LineParser& parser, Array< Vec3<double> >& r);
 	// Read xyz coordinates from specified file
 	static bool readXYZCoordinates(LineParser& parser, Array< Vec3<double> >& r);
 	// Read DL_POLY coordinates from specified file
@@ -120,7 +117,7 @@ class ImportModule : public Module
 	 */
 	public:
 	// Read forces in specified format
-	static bool readForces(const char* format, LineParser& parser, Array<double>& fx, Array<double>& fy, Array<double>& fz);
+	static bool readForces(ImportModuleFormats::ForceFormat format, LineParser& parser, Array<double>& fx, Array<double>& fy, Array<double>& fz);
 	// Read simple forces from specified file
 	static bool readSimpleForces(LineParser& parser, Array<double>& fx, Array<double>& fy, Array<double>& fz);
 	// Read DL_POLY forces from specified file

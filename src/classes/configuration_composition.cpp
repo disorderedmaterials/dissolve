@@ -168,15 +168,15 @@ bool Configuration::hasInputCoordinatesFile() const
 }
 
 // Set input coordinates file format
-void Configuration::setInputCoordinatesFormat(const char* format)
+void Configuration::setInputCoordinatesFormat(ImportModuleFormats::CoordinateFormat format)
 {
 	inputCoordinatesFormat_ = format;
 }
 
 // Return input coordinates file format
-const char* Configuration::inputCoordinatesFormat()
+ImportModuleFormats::CoordinateFormat Configuration::inputCoordinatesFormat()
 {
-	return inputCoordinatesFormat_.get();
+	return inputCoordinatesFormat_;
 }
 
 // Set configuration temperature

@@ -43,7 +43,7 @@ Configuration::Configuration() : ListItem<Configuration>()
 	boxAngles_.set(90.0, 90.0, 90.0);
 	relativeBoxLengths_.set(1.0, 1.0, 1.0);
 	nonPeriodic_ = false;
-	inputCoordinatesFormat_ = "xyz";
+	inputCoordinatesFormat_ = ImportModuleFormats::XYZCoordinates;
 
 	// Box / Cells
 	box_ = NULL;
