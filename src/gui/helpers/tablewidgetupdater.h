@@ -1,6 +1,6 @@
 /*
 	*** TableWidgetUpdater
-	*** src/gui/tablewidgetupdater.h
+	*** src/gui/helpers/tablewidgetupdater.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.

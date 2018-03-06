@@ -24,11 +24,11 @@
 #include "gui/delegates/combolist.hui"
 #include "gui/delegates/isotopecombo.hui"
 #include "gui/delegates/texponentialspin.hui"
+#include "gui/helpers/listwidgetupdater.h"
+#include "gui/helpers/tablewidgetupdater.h"
 #include "main/duq.h"
 #include "classes/atomtype.h"
 #include "classes/species.h"
-#include "templates/listwidgetupdater.h"
-#include "templates/tablewidgetupdater.h"
 #include <QListWidgetItem>
 
 // Constructor / Destructor

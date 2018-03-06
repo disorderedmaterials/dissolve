@@ -23,13 +23,13 @@
 #include "gui/gui.h"
 #include "gui/delegates/combolist.hui"
 #include "gui/delegates/texponentialspin.hui"
+#include "gui/helpers/listwidgetupdater.h"
+#include "gui/helpers/tablewidgetupdater.h"
 #include "main/duq.h"
 #include "classes/atomtype.h"
 #include "classes/speciesbond.h"
 #include "classes/speciesangle.h"
 #include "classes/speciestorsion.h"
-#include "templates/listwidgetupdater.h"
-#include "templates/tablewidgetupdater.h"
 #include <QListWidgetItem>
 
 // Constructor / Destructor

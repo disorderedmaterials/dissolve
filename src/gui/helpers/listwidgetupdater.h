@@ -1,6 +1,6 @@
 /*
 	*** ListWidgetUpdater
-	*** src/gui/listwidgetupdater.h
+	*** src/gui/helpers/listwidgetupdater.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
