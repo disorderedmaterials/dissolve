@@ -64,11 +64,12 @@ void DUQWindow::addWidgetToCurrentWorkspace(bool checked)
 
 	// If the QAction's data is valid then it should indicate a specific Module.
 	// Otherwise we add a new widget by the name of the QAction.
+	SubWindow* window = NULL;
 	Module* module = VariantPointer<Module>(action->data());
 	if (module)
 	{
 		// Is the Module already displayed?
-		SubWindow* window = tab->findSubWindow(CharString("%s (%s)", module->name(), module->uniqueName()));
+		window = tab->findSubWindow(CharString("%s (%s)", module->name(), module->uniqueName()));
 		if (!window)
 		{
 			// Create a new ModuleWidget
@@ -88,12 +89,15 @@ void DUQWindow::addWidgetToCurrentWorkspace(bool checked)
 
 		SubWidget* subWidget = createSubWidget(qPrintable(action->text()), title);
 
-		if (subWidget) tab->addSubWindow(subWidget, NULL);
+		if (subWidget) window = tab->addSubWindow(subWidget, NULL);
 		else
 		{
 			Messenger::error("Couldn't add widget to current workspace - unrecognised widget type '%s' encountered.\n", qPrintable(action->text()));
 		}
 	}
+
+	// If we are currently running, we need to disable sensitive controls in the newly-created widget
+	if ((duqState_ != DUQWindow::StoppedState) && window && window->subWidget()) window->subWidget()->disableSensitiveControls();
 }
 
 void DUQWindow::removeWidgetFromCurrentWorkspace(QString windowTitle)
