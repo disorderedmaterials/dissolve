@@ -45,6 +45,9 @@ libmodules_la_LIBADD += sanitycheck/libsanitycheck.la
 SUBDIRS += skeleton
 libmodules_la_LIBADD += skeleton/libskeleton.la
 libmoduledummywidgets_la_LIBADD += skeleton/libmodulewidget.la
+SUBDIRS += test
+libmodules_la_LIBADD += test/libtest.la
+libmoduledummywidgets_la_LIBADD += test/libmodulewidget.la
 
 # GUI targets for modules
 if BUILDGUI
@@ -62,6 +65,7 @@ libmodulewidgets_la_LIBADD += energy/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += partials/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += refine/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += skeleton/gui/libmodulewidget.la
+libmodulewidgets_la_LIBADD += test/gui/libmodulewidget.la
 
 endif
 

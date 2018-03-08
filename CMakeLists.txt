@@ -179,6 +179,7 @@ set(BASIC_LINK_LIBS
   partialsmodule
   refinemodule
   skeletonmodule
+  testmodule
 )
 
 # Build CLI target executable
@@ -193,6 +194,7 @@ target_link_libraries( ${target_name}
   partialsmodulenogui
   refinemodulenogui
   skeletonmodulenogui
+  testmodulenogui
 
   -Wl,-no-whole-archive
 
@@ -212,6 +214,7 @@ if(GUI)
     partialsmodulegui
     refinemodulegui
     skeletonmodulegui
+    testmodulegui
 
     # Main gui libs
     uchromagui
