@@ -145,7 +145,7 @@ bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
 				}
 				cfg->setInputCoordinatesFormat(cf);
 				cfg->setInputCoordinatesFile(parser.argc(2));
-				Messenger::print("Initial coordinates will be loaded from file '%s' (format: %s)\n", cfg->inputCoordinatesFile(), cfg->inputCoordinatesFormat());
+				Messenger::print("Initial coordinates will be loaded from file '%s' (format: %s)\n", cfg->inputCoordinatesFile(), ImportModuleFormats::coordinateFormat(cfg->inputCoordinatesFormat()));
 				break;
 			case (ConfigurationBlock::ModuleKeyword):
 				// The argument following the keyword is the module name
