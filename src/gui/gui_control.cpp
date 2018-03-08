@@ -1,6 +1,6 @@
 /*
-	*** dUQ Main Window - Run Control
-	*** src/gui/gui_run.cpp
+	*** dUQ Main Window - Control
+	*** src/gui/gui_control.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -28,6 +28,19 @@ DUQWindow::DUQState DUQWindow::duqState() const
 	return duqState_;
 }
 
+void DUQWindow::on_ControlSetUpButton_clicked(bool checked)
+{
+	// Are we already set-up?
+	if (duq_.isSetUp())
+	{
+		Messenger::print("Everything is already set-up and ready to go.\n");
+		return;
+	}
+
+	duq_.setUp();
+
+	updateStatus();
+}
 
 void DUQWindow::on_ControlRunButton_clicked(bool checked)
 {

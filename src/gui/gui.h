@@ -143,6 +143,7 @@ class DUQWindow : public QMainWindow
 	DUQState duqState() const;
 
 	private slots: 
+	void on_ControlSetUpButton_clicked(bool checked);
 	void on_ControlRunButton_clicked(bool checked);
 	void on_ControlStepButton_clicked(bool checked);
 	void on_ControlStepFiveButton_clicked(bool checked);

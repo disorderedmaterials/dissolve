@@ -39,9 +39,9 @@ QT5_WRAP_UI(gui_UIS_H ${gui_UIS})
 SET(gui_SRCS
   configurationtab_funcs.cpp
   forcefieldtab_funcs.cpp
+  gui_control.cpp
   gui_funcs.cpp
   gui_menu.cpp
-  gui_run.cpp
   gui_tabs.cpp
   maintab.cpp
   modulecontrolwidget_funcs.cpp

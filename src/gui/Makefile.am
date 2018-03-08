@@ -29,7 +29,7 @@ libgui_la_SOURCES += gui.ui configurationtab.ui forcefieldtab.ui modulecontrolwi
 
 libgui_la_SOURCES += configurationtab_funcs.cpp
 libgui_la_SOURCES += forcefieldtab_funcs.cpp
-libgui_la_SOURCES += gui_funcs.cpp gui_menu.cpp gui_run.cpp gui_tabs.cpp
+libgui_la_SOURCES += gui_control.cpp gui_funcs.cpp gui_menu.cpp gui_tabs.cpp
 libgui_la_SOURCES += maintab.cpp modulecontrolwidget_funcs.cpp modulewidget.cpp
 libgui_la_SOURCES += outputhandler.hui outputhandler_funcs.cpp
 libgui_la_SOURCES += pairpotentialwidget_funcs.cpp processingtab_funcs.cpp
