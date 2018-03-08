@@ -327,6 +327,8 @@ class DUQ
 	CharString filename_;
 	// Whether to automatically add dependent Modules if they have not been defined
 	bool autoAddDependentModules_;
+	// Accumulated timing information for saving restart file
+	SampledDouble saveRestartTimes_;
 
 	public:
 	// Load datafiles

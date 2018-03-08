@@ -83,7 +83,7 @@ bool DUQ::iterate(int nIterations)
 	 *  3)	Reassemble Configuration data on all processes
 	 *  4)	Run all processing Modules using all processes available (worldPool_)
 	 *  5)	Run any Module post-processing tasks using all processes available (worldPool_)
-	 *  6)	Write data (master process only)
+	 *  6)	Write restart file (master process only)
 	 */
 
 	if (!setUp_) return Messenger::error("Simulation has not been set up.\n");
@@ -268,11 +268,11 @@ bool DUQ::iterate(int nIterations)
 
 
 		/*
-		 *  6)	Write data
+		 *  6)	Write restart file
 		 */
 		if (worldPool_.isMaster() && (restartFileFrequency_ > 0) && (iteration_%restartFileFrequency_ == 0))
 		{
-			Messenger::banner("Write Data");
+			Messenger::banner("Write Restart File");
 
 			/*
 			 * Flag other data for inclusion in restart file
@@ -311,12 +311,18 @@ bool DUQ::iterate(int nIterations)
 			}
 
 			// Save new restart file
+			Timer saveRestartTimer;
+			saveRestartTimer.start();
+
 			if (!saveRestart(restartFile))
 			{
 				Messenger::error("Failed to write restart file.\n");
 				worldPool_.decideFalse();
 				return false;
 			}
+
+			saveRestartTimer.stop();
+			saveRestartTimes_ << saveRestartTimer.secondsElapsed();
 
 			/*
 			 * Configuration Data
@@ -399,7 +405,9 @@ void DUQ::printTiming()
 		SampledDouble timingInfo = module->processTimes();
 		Messenger::print("      --> %30s  %6.1f s/iteration (%i iterations)\n", CharString("%s (%s)", module->name(), module->uniqueName()).get(), timingInfo.mean(), timingInfo.count());
 	}
+	Messenger::print("      --> %30s  %6.1f s/write     (%i writes)\n", "Restart File", saveRestartTimes_.mean(), saveRestartTimes_.count());
 	Messenger::print("\n");
+
 
 	Messenger::print("Total time taken for %i iterations was %s (%s / iteration).\n", nIterationsPerformed_, mainLoopTimer_.elapsedTimeString(), Timer::timeString(mainLoopTimer_.secondsElapsed() / nIterationsPerformed_));
 
