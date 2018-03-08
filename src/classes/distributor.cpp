@@ -317,6 +317,7 @@ int Distributor::nextAvailableObject(bool& changesBroadcastRequired)
 
 		// If there is only one process/group, no need to establish lock status etc., just set object counter
 		// Perform a straight loop from zero to nObjects_, adding it to the startIndex to get our new test index
+		bool hardCellModified;
 		int nextObject = Distributor::NoneAvailable;
 		if (nProcessesOrGroups_ == 1)
 		{
@@ -338,6 +339,20 @@ int Distributor::nextAvailableObject(bool& changesBroadcastRequired)
 				// First, get the Cells that we need to hard-lock if the object is to be modifeid
 				hardLocksRequired = cellsToBeModifiedForObject(index);
 
+				// If any of these Cells have been modified by a process other than this one, continue the search
+				// TODO Should we just broadcast changes instead of continuing the search?
+				hardCellModified = false;
+				for (int i = 0; i<hardLocksRequired.nItems(); ++i)
+				{
+					if (cellContentsModifiedBy_[hardLocksRequired[i]->index()] == -1) continue;
+					if (cellContentsModifiedBy_[hardLocksRequired[i]->index()] != processOrGroup)
+					{
+						hardCellModified = true;
+						break;
+					}
+				}
+				if (hardCellModified) continue;
+
 				// If we can't hard-lock these Cells, move on
 				if (!canHardLock(hardLocksRequired)) continue;
 
@@ -358,7 +373,7 @@ int Distributor::nextAvailableObject(bool& changesBroadcastRequired)
 						// If this Cell has been modified by the present process/group, that's OK, since it will have the new coordinates already
 						if (cellContentsModifiedBy_[cellIndex] == processOrGroup) continue;
 
-						// It's been modified by someone else, so we will need to distribute changes
+						// It's been modified by someone else, so we will need to distribute changes before the calculation begins
 						changesBroadcastRequired = true;
 						++nChangeBroadcastsRequired_;
 						Messenger::printVerbose("Changes broadcast required - Cell %i is required by process/group %i, and process/group %i has modified it.\n", cellIndex, processOrGroup, cellContentsModifiedBy_[cellIndex]);
@@ -391,7 +406,6 @@ int Distributor::nextAvailableObject(bool& changesBroadcastRequired)
 		}
 		else
 		{
-
 			// We have found a viable object for this process / group
 			Messenger::printVerbose("Next object for process/group %i is %i (number already distributed = %i).\n", processOrGroup, nextObject, nObjectsDistributed_);
 			lastObjectDistributed_[processOrGroup] = nextObject;
