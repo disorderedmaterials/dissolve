@@ -55,7 +55,7 @@ int MasterBlock::nArguments(MasterBlock::MasterKeyword id)
 // Parse Master block
 bool MasterBlock::parse(LineParser& parser, DUQ* duq)
 {
-	Messenger::print("\nParsing %s\n", InputBlocks::inputBlock(InputBlocks::MasterBlock));
+	Messenger::print("\nParsing %s block...\n", InputBlocks::inputBlock(InputBlocks::MasterBlock));
 
 	int el;
 	CharString arg1, arg2;
@@ -87,7 +87,7 @@ bool MasterBlock::parse(LineParser& parser, DUQ* duq)
 				af = SpeciesAngle::angleFunction(parser.argc(2));
 				if (af == SpeciesAngle::nAngleFunctions)
 				{
-					Messenger::error("Functional form of angle (%s) not recognised.\n", parser.argc(1));
+					Messenger::error("Functional form of angle (%s) not recognised.\n", parser.argc(2));
 					error = true;
 					break;
 				}
@@ -115,7 +115,7 @@ bool MasterBlock::parse(LineParser& parser, DUQ* duq)
 				bf = SpeciesBond::bondFunction(parser.argc(2));
 				if (bf == SpeciesBond::nBondFunctions)
 				{
-					Messenger::error("Functional form of bond (%s) not recognised.\n", parser.argc(1));
+					Messenger::error("Functional form of bond (%s) not recognised.\n", parser.argc(2));
 					error = true;
 					break;
 				}
@@ -146,7 +146,7 @@ bool MasterBlock::parse(LineParser& parser, DUQ* duq)
 				tf = SpeciesTorsion::torsionFunction(parser.argc(2));
 				if (tf == SpeciesTorsion::nTorsionFunctions)
 				{
-					Messenger::error("Functional form of torsion (%s) not recognised.\n", parser.argc(1));
+					Messenger::error("Functional form of torsion (%s) not recognised.\n", parser.argc(2));
 					error = true;
 					break;
 				}
