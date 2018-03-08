@@ -1,6 +1,6 @@
 /*
 	*** IsotopeCombo Functions
-	*** src/gui/delegates/combolist_funcs.cpp
+	*** src/gui/delegates/isotopecombo_funcs.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -35,7 +35,7 @@ IsotopeComboDelegate::~IsotopeComboDelegate()
 }
 
 // Create editor
-QWidget* IsotopeComboDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
+QWidget* IsotopeComboDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
 	// Create editor widget (in this case a combo box) and add the available options
 	QComboBox* editor = new QComboBox(parent);
@@ -55,7 +55,7 @@ QWidget* IsotopeComboDelegate::createEditor(QWidget* parent, const QStyleOptionV
 }
 
 // Set initial value in editor
-void IsotopeComboDelegate::setEditorData(QWidget* editor, const QModelIndex &index) const
+void IsotopeComboDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const
   {
 	// Grab (cast) the QComboBox
 	QComboBox* comboBox = static_cast<QComboBox*>(editor);
@@ -71,7 +71,7 @@ void IsotopeComboDelegate::setEditorData(QWidget* editor, const QModelIndex &ind
 }
 
 // Get value from editing widget, and set back in model
-void IsotopeComboDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex &index) const
+void IsotopeComboDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const
 {
 	// Grab (cast) the QComboBox
 	QComboBox* comboBox = static_cast<QComboBox*>(editor);
@@ -91,7 +91,7 @@ void IsotopeComboDelegate::setModelData(QWidget* editor, QAbstractItemModel* mod
 }
 
 // Update widget geometry
-void IsotopeComboDelegate::updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
+void IsotopeComboDelegate::updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
 	editor->setGeometry(option.rect);
 }

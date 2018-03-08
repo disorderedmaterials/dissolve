@@ -44,7 +44,7 @@ SpeciesAngle::~SpeciesAngle()
  * Atom Information
  */
 
-// Set Atoms involved in Angle
+// Set SpeciesAtoms involved in interaction
 void SpeciesAngle::setAtoms(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k)
 {
 	i_ = i;
@@ -57,19 +57,19 @@ void SpeciesAngle::setAtoms(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k)
 #endif
 }
 
-// Return first SpeciesAtom involved in Angle
+// Return first SpeciesAtom
 SpeciesAtom* SpeciesAngle::i() const
 {
 	return i_;
 }
 
-// Return second (central) SpeciesAtom involved in Angle
+// Return second (central) SpeciesAtom
 SpeciesAtom* SpeciesAngle::j() const
 {
 	return j_;
 }
 
-// Return third SpeciesAtom involved in Angle
+// Return third SpeciesAtom
 SpeciesAtom* SpeciesAngle::k() const
 {
 	return k_;
@@ -112,6 +112,17 @@ int SpeciesAngle::indexK() const
 	}
 #endif
 	return k_->index();
+}
+
+// Return index (in parent Species) of nth SpeciesAtom in interaction
+int SpeciesAngle::index(int n) const
+{
+	if (n == 0) return indexI();
+	else if (n == 1) return indexJ();
+	else if (n == 2) return indexK();
+
+	Messenger::error("SpeciesAtom index %i is out of range in SpeciesAngle::index(int). Returning 0...\n");
+	return 0;
 }
 
 // Return whether Atoms in Angle match those specified

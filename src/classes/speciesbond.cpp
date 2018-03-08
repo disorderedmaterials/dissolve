@@ -55,7 +55,7 @@ void SpeciesBond::setAtoms(SpeciesAtom* i, SpeciesAtom* j)
 #endif
 }
 
-// Return first SpeciesAtom involved in SpeciesBond
+// Return first SpeciesAtom involved in interaction
 SpeciesAtom* SpeciesBond::i() const
 {
 	return i_;
@@ -97,6 +97,16 @@ int SpeciesBond::indexJ() const
 	}
 #endif
 	return j_->index();
+}
+
+// Return index (in parent Species) of nth SpeciesAtom in interaction
+int SpeciesBond::index(int n) const
+{
+	if (n == 0) return indexI();
+	else if (n == 1) return indexJ();
+
+	Messenger::error("SpeciesAtom index %i is out of range in SpeciesBond::index(int). Returning 0...\n");
+	return 0;
 }
 
 // Return whether SpeciesAtoms in Angle match those specified

@@ -31,6 +31,9 @@ class Isotope;
 class Isotopologue;
 class Species;
 class SpeciesAtom;
+class SpeciesBond;
+class SpeciesAngle;
+class SpeciesTorsion;
 
 // Species Tab
 class SpeciesTab : public QWidget, public MainTab
@@ -59,6 +62,18 @@ class SpeciesTab : public QWidget, public MainTab
 	/*
 	 * Update
 	 */
+	private:
+	// SpeciesAtomTable row update function
+	void updateAtomTableRow(int row, SpeciesAtom* speciesAtom, bool createItems);
+	// IsotopologuesIsotopesTable row update function
+	void updateIsotopeTableRow(int row, AtomType* atomType, Isotope* isotope, bool createItems);
+	// SpeciesBondTable row update function
+	void updateBondTableRow(int row, SpeciesBond* speciesBond, bool createItems);
+	// SpeciesAngleTable row update function
+	void updateAngleTableRow(int row, SpeciesAngle* speciesAngle, bool createItems);
+	// SpeciesTorsionTable row update function
+	void updateTorsionTableRow(int row, SpeciesTorsion* speciesTorsion, bool createItems);
+
 	protected:
 	// Update controls in tab
 	void updateControls();
@@ -76,16 +91,15 @@ class SpeciesTab : public QWidget, public MainTab
 	Species* currentSpecies();
 	// Return currently-selected Isotopologue
 	Isotopologue* currentIsotopologue();
-	// SpeciesAtomTable row update function
-	void updateAtomTableRow(int row, SpeciesAtom* speciesAtom, bool createItems);
-	// IsotopologuesIsotopesTable row update function
-	void updateIsotopeTableRow(int row, AtomType* atomType, Isotope* isotope, bool createItems);
 
 	private slots:
 	void on_SpeciesList_currentRowChanged(int row);
 	void on_AtomTable_itemChanged(QTableWidgetItem* w);
 	void on_IsotopologueList_currentRowChanged(int row);
 	void on_IsotopeTable_itemChanged(QTableWidgetItem* w);
+	void on_BondTable_itemChanged(QTableWidgetItem* w);
+	void on_AngleTable_itemChanged(QTableWidgetItem* w);
+	void on_TorsionTable_itemChanged(QTableWidgetItem* w);
 
 
 	/*

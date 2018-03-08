@@ -119,47 +119,59 @@ class Species : public ListItem<Species>
 	List<SpeciesTorsion> torsions_;
 
 	public:
-	// Add new Bond definition (from SpeciesAtom*)
+	// Add new SpeciesBond definition (from SpeciesAtom*)
 	SpeciesBond* addBond(SpeciesAtom* i, SpeciesAtom* j);
-	// Add new Bond definition
+	// Add new SpeciesBond definition
 	SpeciesBond* addBond(int i, int j);
-	// Return number of Bonds in list
+	// Reconnect existing SpeciesBond
+	bool reconnectBond(SpeciesBond* bond, SpeciesAtom* i, SpeciesAtom* j);
+	// Reconnect existing SpeciesBond
+	bool reconnectBond(SpeciesBond* bond, int i, int j);
+	// Return number of SpeciesBonds defined
 	int nBonds() const;
-	// Return list of Bonds
-	SpeciesBond* bonds() const;
-	// Return nth Bond
+	// Return list of SpeciesBond
+	const List<SpeciesBond>& bonds() const;
+	// Return nth SpeciesBond
 	SpeciesBond* bond(int n);
-	// Return whether Bond between Atoms exists
+	// Return whether SpeciesBond between SpeciesAtomss exists
 	SpeciesBond* hasBond(SpeciesAtom* i, SpeciesAtom* j) const;
-	// Return index of specified Bond
+	// Return index of specified SpeciesBond
 	int bondIndex(SpeciesBond* spb);
-	// Add new Angle definition
+	// Add new SpeciesAngle definition
 	SpeciesAngle* addAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k);
-	// Add new Angle definition
+	// Add new SpeciesAngle definition
 	SpeciesAngle* addAngle(int i, int j, int k);
-	// Return number of Angles in list
+	// Reconnect existing SpeciesAngle
+	bool reconnectAngle(SpeciesAngle* angle, SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k);
+	// Reconnect existing SpeciesAngle
+	bool reconnectAngle(SpeciesAngle* angle, int i, int j, int k);
+	// Return number of SpeciesAngle defined
 	int nAngles() const;
-	// Return list of Angles
-	SpeciesAngle* angles() const;
-	// Return nth Angle
+	// Return list of SpeciesAngle
+	const List<SpeciesAngle>& angles() const;
+	// Return nth SpeciesAngle
 	SpeciesAngle* angle(int n);
-	// Return whether Angle between Atoms exists
+	// Return whether SpeciesAngle between SpeciesAtoms exists
 	bool hasAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const;
-	// Return index of specified Angle
+	// Return index of specified SpeciesAngle
 	int angleIndex(SpeciesAngle* spa);
-	// Add new Torsion definition (from SpeciesAtom*)
+	// Add new SpeciesTorsion definition (from SpeciesAtom*)
 	SpeciesTorsion* addTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l);
-	// Add new Torsion definition
+	// Add new SpeciesTorsion definition
 	SpeciesTorsion* addTorsion(int i, int j, int k, int l);
-	// Return number of Torsions in list
+	// Reconnect existing SpeciesTorsion
+	bool reconnectTorsion(SpeciesTorsion* torsion, SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l);
+	// Reconnect existing SpeciesTorsion
+	bool reconnectTorsion(SpeciesTorsion* torsion, int i, int j, int k, int l);
+	// Return number of SpeciesTorsion defined
 	int nTorsions() const;
-	// Return list of Torsions
-	SpeciesTorsion* torsions() const;
-	// Return nth Torsion
+	// Return list of SpeciesTorsion
+	const List<SpeciesTorsion>& torsions() const;
+	// Return nth SpeciesTorsion
 	SpeciesTorsion* torsion(int n);
-	// Return whether Torsion between Atoms exists
+	// Return whether SpeciesTorsion between SpeciesAtoms exists
 	bool hasTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const;
-	// Return index of specified Torsion
+	// Return index of specified SpeciesTorsion
 	int torsionIndex(SpeciesTorsion* spt);
 
 

@@ -60,25 +60,25 @@ void SpeciesTorsion::setAtoms(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, Sp
 #endif
 }
 
-// Return first SpeciesAtom involved in Torsion
+// Return first SpeciesAtom
 SpeciesAtom* SpeciesTorsion::i() const
 {
 	return i_;
 }
 
-// Return second (central) SpeciesAtom involved in Torsion
+// Return second SpeciesAtom
 SpeciesAtom* SpeciesTorsion::j() const
 {
 	return j_;
 }
 
-// Return third SpeciesAtom involved in Torsion
+// Return third SpeciesAtom
 SpeciesAtom* SpeciesTorsion::k() const
 {
 	return k_;
 }
 
-// Return fourth SpeciesAtom involved in Torsion
+// Return fourth SpeciesAtom
 SpeciesAtom* SpeciesTorsion::l() const
 {
 	return l_;
@@ -134,6 +134,18 @@ int SpeciesTorsion::indexL() const
 	}
 #endif
 	return l_->index();
+}
+
+// Return index (in parent Species) of nth SpeciesAtom in interaction
+int SpeciesTorsion::index(int n) const
+{
+	if (n == 0) return indexI();
+	else if (n == 1) return indexJ();
+	else if (n == 2) return indexK();
+	else if (n == 3) return indexL();
+
+	Messenger::error("SpeciesAtom index %i is out of range in SpeciesTorsion::index(int). Returning 0...\n");
+	return 0;
 }
 
 // Return whether Atoms in Torsion match those specified

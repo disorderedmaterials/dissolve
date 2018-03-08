@@ -252,17 +252,21 @@ class Configuration : public ListItem<Configuration>
 	CellArray cells_;
 
 	public:
-	// Set relative box lengths
+	// Set relative Box lengths
 	void setRelativeBoxLengths(const Vec3<double> lengths);
-	// Return relative box lengths
+	// Set relative Box length
+	void setRelativeBoxLength(int index, double length);
+	// Return relative Box lengths
 	Vec3<double> relativeBoxLengths() const;
-	// Set box angles
+	// Set Box angles
 	void setBoxAngles(const Vec3<double> angles);
-	// Return box angles
+	// Set Box angle
+	void setBoxAngle(int index, double angle);
+	// Return Box angles
 	Vec3<double> boxAngles() const;
-	// Set whether the box is non-periodic
+	// Set whether the Box is non-periodic
 	void setNonPeriodic(bool b);
-	// Return whether the box is non-periodic
+	// Return whether the Box is non-periodic
 	bool nonPeriodic() const;
 	// Set requested side length for individual Cell
 	void setRequestedCellDivisionLength(double a);

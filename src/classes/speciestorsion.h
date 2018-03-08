@@ -48,35 +48,37 @@ class SpeciesTorsion : public SpeciesIntra, public ListItem<SpeciesTorsion>
 	 * Atom Information
 	 */
 	private:
-	// First Atom in Torsion
+	// First SpeciesAtom in interaction
 	SpeciesAtom* i_;
-	// Second Atom in Torsion
+	// Second SpeciesAtom in interaction
 	SpeciesAtom* j_;
-	// Third Atom in Torsion
+	// Third SpeciesAtom in interaction
 	SpeciesAtom* k_;
-	// Fourth Atom in Torsion
+	// Fourth SpeciesAtom in interaction
 	SpeciesAtom* l_;
 
 	public:
 	// Set Atoms involved in Torsion
 	void setAtoms(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l);
-	// Return first Atom involved in Torsion
+	// Return first SpeciesAtom
 	SpeciesAtom* i() const;
-	// Return second Atom involved in Torsion
+	// Return second SpeciesAtom
 	SpeciesAtom* j() const;
-	// Return third Atom involved in Torsion
+	// Return third SpeciesAtom
 	SpeciesAtom* k() const;
-	// Return fourth Atom involved in Torsion
+	// Return fourth SpeciesAtom
 	SpeciesAtom* l() const;
-	// Return index (in parent Species) of first Atom
+	// Return index (in parent Species) of first SpeciesAtom
 	int indexI() const;
-	// Return index (in parent Species) of second Atom
+	// Return index (in parent Species) of second SpeciesAtom
 	int indexJ() const;
-	// Return index (in parent Species) of third Atom
+	// Return index (in parent Species) of third SpeciesAtom
 	int indexK() const;
-	// Return index (in parent Species) of fourth Atom
+	// Return index (in parent Species) of fourth SpeciesAtom
 	int indexL() const;
-	// Return whether Atoms in Torsion match those specified
+	// Return index (in parent Species) of nth SpeciesAtom in interaction
+	int index(int n) const;
+	// Return whether SpeciesAtoms match those specified
 	bool matches(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const;
 
 

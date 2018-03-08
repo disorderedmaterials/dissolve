@@ -21,6 +21,7 @@
 
 #include "gui/delegates/texponentialspin.hui"
 #include <stdio.h>
+
 TExponentialSpinDelegate::TExponentialSpinDelegate(QObject *parent, double vmin, double vmax, double vstep, double nDecimals) : QItemDelegate(parent)
 {
 	// Private variables

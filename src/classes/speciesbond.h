@@ -46,25 +46,27 @@ class SpeciesBond : public SpeciesIntra, public ListItem<SpeciesBond>
 	 * SpeciesAtom Information
 	 */
 	private:
-	// First SpeciesAtom in SpeciesBond
+	// First SpeciesAtom in interaction
 	SpeciesAtom* i_;
-	// Second SpeciesAtom in SpeciesBond
+	// Second SpeciesAtom in interaction
 	SpeciesAtom* j_;
 
 	public:
-	// Set SpeciesAtoms involved in SpeciesBond
+	// Set SpeciesAtoms involved in interaction
 	void setAtoms(SpeciesAtom* i, SpeciesAtom* j);
-	// Return first SpeciesAtom involved in SpeciesBond
+	// Return first SpeciesAtom
 	SpeciesAtom* i() const;
-	// Return second SpeciesAtom involved in SpeciesBond
+	// Return second SpeciesAtom
 	SpeciesAtom* j() const;
-	// Return the 'other' SpeciesAtom in the SpeciesBond
+	// Return the 'other' SpeciesAtom
 	SpeciesAtom* partner(SpeciesAtom* i) const;
 	// Return index (in parent Species) of first SpeciesAtom
 	int indexI() const;
 	// Return index (in parent Species) of second SpeciesAtom
 	int indexJ() const;
-	// Return whether SpeciesAtoms in SpeciesBond match those specified
+	// Return index (in parent Species) of nth SpeciesAtom
+	int index(int n) const;
+	// Return whether SpeciesAtoms match those specified
 	bool matches(SpeciesAtom* i, SpeciesAtom* j) const;
 
 

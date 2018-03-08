@@ -31,6 +31,12 @@ void Configuration::setRelativeBoxLengths(const Vec3<double> lengths)
 	relativeBoxLengths_ = lengths;
 }
 
+// Set relative Box length
+void Configuration::setRelativeBoxLength(int index, double length)
+{
+	relativeBoxLengths_[index] = length;
+}
+
 // Return relative box lengths
 Vec3<double> Configuration::relativeBoxLengths() const
 {
@@ -41,6 +47,12 @@ Vec3<double> Configuration::relativeBoxLengths() const
 void Configuration::setBoxAngles(const Vec3<double> angles)
 {
 	boxAngles_ = angles;
+}
+
+// Set Box angle
+void Configuration::setBoxAngle(int index, double angle)
+{
+	boxAngles_[index] = angle;
 }
 
 // Return box angles

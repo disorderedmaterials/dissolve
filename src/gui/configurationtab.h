@@ -28,6 +28,7 @@
 
 // Forward Declarations
 class Configuration;
+class SpeciesInfo;
 
 // Configuration Tab
 class ConfigurationTab : public QWidget, public MainTab
@@ -63,6 +64,10 @@ class ConfigurationTab : public QWidget, public MainTab
 	/*
 	 * Update
 	 */
+	private:
+	// Row update function for BondsTable
+	void updateSpeciesInfoTableRow(int row, SpeciesInfo* speciesInfo, bool createItems);
+
 	protected:
 	// Update controls in tab
 	void updateControls();
@@ -70,6 +75,34 @@ class ConfigurationTab : public QWidget, public MainTab
 	void disableSensitiveControls();
 	// Enable sensitive controls within tab, ready for main code to run
 	void enableSensitiveControls();
+
+
+	/*
+	 * Signals / Slots
+	 */
+	private:
+
+	private slots:
+	// Definition
+	void on_NameEdit_textChanged(QString text);
+	void on_TemperatureSpin_valueChanged(double value);
+	// Box
+	void on_BoxASpin_valueChanged(double value);
+	void on_BoxBSpin_valueChanged(double value);
+	void on_BoxCSpin_valueChanged(double value);
+	void on_BoxAlphaSpin_valueChanged(double value);
+	void on_BoxBetaSpin_valueChanged(double value);
+	void on_BoxGammaSpin_valueChanged(double value);
+	// Contents
+	void on_MultiplierSpin_valueChanged(int value);
+	void on_DensitySpin_valueChanged(double value);
+	void on_SpeciesInfoAddButton_clicked(bool checked);
+	void on_SpeciesInfoRemoveButton_clicked(bool checked);
+	void on_DensityUnitsCombo_currentIndexChanged(int index);
+	void on_SpeciesInfoTable_itemChanged(QTableWidgetItem* w);
+	// Initial Coordinates
+	void on_CoordinatesFileEdit_textChanged(QString text);
+	void on_CoordinatesFileSelectButton_clicked(bool checked);
 
 
 	/*

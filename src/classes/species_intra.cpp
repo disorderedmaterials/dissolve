@@ -23,25 +23,25 @@
 #include "classes/box.h"
 #include "base/sysfunc.h"
 
-// Add new Bond definition (from Atoms*)
+// Add new SpeciesBond definition (from SpeciesAtoms*)
 SpeciesBond* Species::addBond(SpeciesAtom* i, SpeciesAtom* j)
 {
 	// Check ownership of these Atoms
 	if (!atoms_.contains(i))
 	{
-		Messenger::print("BAD_OWNERSHIP - Atom 'i' is not owned by Species '%s' in Species::addBond.\n", name_.get());
+		Messenger::print("BAD_OWNERSHIP - SpeciesAtom 'i' is not owned by Species '%s' in Species::addBond().\n", name_.get());
 		return NULL;
 	}
 	if (!atoms_.contains(j))
 	{
-		Messenger::print("BAD_OWNERSHIP - Atom 'j' is not owned by Species '%s' in Species::addBond.\n", name_.get());
+		Messenger::print("BAD_OWNERSHIP - SpeciesAtom 'j' is not owned by Species '%s' in Species::addBond().\n", name_.get());
 		return NULL;
 	}
 
 	// Check for existence of Bond already
 	if (hasBond(i, j))
 	{
-		Messenger::warn("Refused to add a new Bond between atoms %i and %i in Species '%s' since it already exists.\n", i->userIndex(), j->userIndex(), name_.get());
+		Messenger::warn("Refused to add a new SpeciesBond between atoms %i and %i in Species '%s' since it already exists.\n", i->userIndex(), j->userIndex(), name_.get());
 		return NULL;
 	}
 	
@@ -55,71 +55,113 @@ SpeciesBond* Species::addBond(SpeciesAtom* i, SpeciesAtom* j)
 	return b;
 }
 
-// Add new Bond definition
+// Add new SpeciesBond definition
 SpeciesBond* Species::addBond(int i, int j)
 {
 	if ((i < 0) || (i >= atoms_.nItems()))
 	{
-		Messenger::print("OUT_OF_RANGE - Internal index 'i' supplied to Species::addBond() is out of range (%i) for Species '%s'\n", i, name_.get());
+		Messenger::print("OUT_OF_RANGE - Internal index 'i' supplied to Species::addBond() is out of range (%i) for Species '%s'.\n", i, name_.get());
 		return false;
 	}
 	if ((j < 0) || (j >= atoms_.nItems()))
 	{
-		Messenger::print("OUT_OF_RANGE - Internal index 'j' supplied to Species::addBond() is out of range (%i) for Species '%s'\n", j, name_.get());
+		Messenger::print("OUT_OF_RANGE - Internal index 'j' supplied to Species::addBond() is out of range (%i) for Species '%s'.\n", j, name_.get());
 		return false;
 	}
 
 	return addBond(atoms_[i], atoms_[j]);
 }
 
-// Return number of bonds in list
+// Reconnect existing SpeciesBond
+bool Species::reconnectBond(SpeciesBond* bond, SpeciesAtom* i, SpeciesAtom* j)
+{
+	// Check ownership of the SpeciesBond
+	if (!bonds_.contains(bond)) return Messenger::error("BAD_OWNERSHIP - Bond is not owned by Species '%s' in Species::reconnectBond().\n", name_.get());
+
+	// Check ownership of these Atoms
+	if (!atoms_.contains(i)) return Messenger::error("BAD_OWNERSHIP - SpeciesAtom 'i' is not owned by Species '%s' in Species::reconnectBond().\n", name_.get());
+	if (!atoms_.contains(j)) return Messenger::error("BAD_OWNERSHIP - SpeciesAtom 'j' is not owned by Species '%s' in Species::reconnectBond().\n", name_.get());
+
+	// If a Bond already exists between these Atoms, refuse to add it
+	if (hasBond(i, j)) return Messenger::error("A bond between atoms %i and %i already exists in Species '%s', so refusing to reconnect a duplicate.\n", i->userIndex(), j->userIndex(), name_.get());
+
+	// Disconnect the existing Bond
+	i->removeBond(bond);
+	j->removeBond(bond);
+
+	// Add the new Bond
+	bond->setAtoms(i, j);
+	i->addBond(bond);
+	j->addBond(bond);
+
+	return true;
+}
+
+// Reconnect existing SpeciesBond
+bool Species::reconnectBond(SpeciesBond* bond, int i, int j)
+{
+	if ((i < 0) || (i >= atoms_.nItems()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'i' supplied to Species::reconnectBond() is out of range (%i) for Species '%s'.\n", i, name_.get());
+		return false;
+	}
+	if ((j < 0) || (j >= atoms_.nItems()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'j' supplied to Species::reconnectBond() is out of range (%i) for Species '%s'.\n", j, name_.get());
+		return false;
+	}
+
+	return reconnectBond(bond, atoms_[i], atoms_[j]);
+}
+
+// Return number of SpeciesBonds defined
 int Species::nBonds() const
 {
 	return bonds_.nItems();
 }
 
-// Return list of bonds
-SpeciesBond* Species::bonds() const
+// Return list of SpeciesBond
+const List<SpeciesBond>& Species::bonds() const
 {
-	return bonds_.first();
+	return bonds_;
 }
 
-// Return nth bond
+// Return nth SpeciesBond
 SpeciesBond* Species::bond(int n)
 {
 	return bonds_[n];
 }
 
-// Return whether bond between atoms exists
+// Return whether SpeciesBond between specified SpeciesAtoms exists
 SpeciesBond* Species::hasBond(SpeciesAtom* i, SpeciesAtom* j) const
 {
 	for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next) if (b->matches(i, j)) return b;
 	return NULL;
 }
 
-// Return index of specified Bond
+// Return index of specified SpeciesBond
 int Species::bondIndex(SpeciesBond* spb)
 {
 	return bonds_.indexOf(spb);
 }
 
-// Add new angle definition (from supplied atom pointers)
+// Add new SpeciesAngle definition (from supplied SpeciesAtom pointers)
 SpeciesAngle* Species::addAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k)
 {
 	// Check ownership of these Atoms
 	if (!atoms_.contains(i))
 	{
-		Messenger::print("BAD_OWNERSHIP - Atom 'i' is not owned by Species '%s' in Species::addAngle.\n", name_.get());
+		Messenger::print("BAD_OWNERSHIP - SpeciesAtom 'i' is not owned by Species '%s' in Species::addAngle().\n", name_.get());
 		return NULL;
 	}
 	if (!atoms_.contains(j))
 	{
-		Messenger::print("BAD_OWNERSHIP - Atom 'j' is not owned by Species '%s' in Species::addAngle.\n", name_.get());
+		Messenger::print("BAD_OWNERSHIP - SpeciesAtom 'j' is not owned by Species '%s' in Species::addAngle().\n", name_.get());
 		return NULL;
 	}
 	if (!atoms_.contains(k))
 	{
-		Messenger::print("BAD_OWNERSHIP - Atom 'k' is not owned by Species '%s' in Species::addAngle.\n", name_.get());
+		Messenger::print("BAD_OWNERSHIP - SpeciesAtom 'k' is not owned by Species '%s' in Species::addAngle().\n", name_.get());
 		return NULL;
 	}
 
@@ -138,7 +180,7 @@ SpeciesAngle* Species::addAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k)
 	return a;
 }
 
-// Add new angle definition
+// Add new SpeciesAngle definition
 SpeciesAngle* Species::addAngle(int i, int j, int k)
 {
 	if ((i < 0) || (i >= atoms_.nItems()))
@@ -156,62 +198,105 @@ SpeciesAngle* Species::addAngle(int i, int j, int k)
 		Messenger::print("OUT_OF_RANGE - Internal index 'k' supplied to Species::addAngle() is out of range (%i) for Species '%s'\n", k, name_.get());
 		return false;
 	}
+
 	return addAngle(atoms_[i], atoms_[j], atoms_[k]);
 }
 
-// Return number of angles in list
+// Reconnect existing SpeciesAngle
+bool Species::reconnectAngle(SpeciesAngle* angle, SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k)
+{
+	// Check ownership of the SpeciesAngle
+	if (!angles_.contains(angle)) return Messenger::error("BAD_OWNERSHIP - SpeciesAngle is not owned by Species '%s' in Species::reconnectAngle().\n", name_.get());
+
+	// Check ownership of these Atoms
+	if (!atoms_.contains(i)) return Messenger::error("BAD_OWNERSHIP - SpeciesAtom 'i' is not owned by Species '%s' in Species::reconnectAngle().\n", name_.get());
+	if (!atoms_.contains(j)) return Messenger::error("BAD_OWNERSHIP - SpeciesAtom 'j' is not owned by Species '%s' in Species::reconnectAngle().\n", name_.get());
+	if (!atoms_.contains(k)) return Messenger::error("BAD_OWNERSHIP - SpeciesAtom 'k' is not owned by Species '%s' in Species::reconnectAngle().\n", name_.get());
+
+	// If an angle already exists between these Atoms, refuse to add it
+	if (hasAngle(i, j, k)) return Messenger::error("An angle between atoms %i-%i-%i already exists in Species '%s', so refusing to reconnect a duplicate.\n", i->userIndex(), j->userIndex(), k->userIndex(), name_.get());
+
+	// Set the new angle atoms
+	angle->setAtoms(i, j, k);
+
+	return true;
+}
+
+// Reconnect existing SpeciesAngle
+bool Species::reconnectAngle(SpeciesAngle* angle, int i, int j, int k)
+{
+	if ((i < 0) || (i >= atoms_.nItems()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'i' supplied to Species::reconnectAngle() is out of range (%i) for Species '%s'\n", i, name_.get());
+		return false;
+	}
+	if ((j < 0) || (j >= atoms_.nItems()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'j' supplied to Species::reconnectAngle() is out of range (%i) for Species '%s'\n", j, name_.get());
+		return false;
+	}
+	if ((k < 0) || (k >= atoms_.nItems()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'k' supplied to Species::reconnectAngle() is out of range (%i) for Species '%s'\n", k, name_.get());
+		return false;
+	}
+
+	return reconnectAngle(angle, atoms_[i], atoms_[j], atoms_[k]);
+}
+
+// Return number of SpeciesAngles defined
 int Species::nAngles() const
 {
 	return angles_.nItems();
 }
 
-// Return list of angles
-SpeciesAngle* Species::angles() const
+// Return list of SpeciesAngle
+const List<SpeciesAngle>& Species::angles() const
 {
-	return angles_.first();
+	return angles_;
 }
 
-// Return nth angle
+// Return nth SpeciesAngle
 SpeciesAngle* Species::angle(int n)
 {
 	return angles_[n];
 }
 
-// Return whether angle between atoms exists
+// Return whether SpeciesAngle between SpeciesAtoms exists
 bool Species::hasAngle(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const
 {
 	for (SpeciesAngle* a = angles_.first(); a != NULL; a = a->next) if (a->matches(i, j, k)) return true;
 	return false;
 }
 
-// Return index of specified Angle
+// Return index of specified SpeciesAngle
 int Species::angleIndex(SpeciesAngle* spa)
 {
 	return angles_.indexOf(spa);
 }
 
-// Add new torsion definition (from supplied atom pointers)
+// Add new SpeciesTorsion definition (from supplied SpeciesAtom pointers)
 SpeciesTorsion* Species::addTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l)
 {
 	// Check ownership of these Atoms
 	if (!atoms_.contains(i))
 	{
-		Messenger::print("BAD_OWNERSHIP - Atom 'i' is not owned by Species '%s' in Species::addTorsion.\n", name_.get());
+		Messenger::print("BAD_OWNERSHIP - SpeciesAtom 'i' is not owned by Species '%s' in Species::addTorsion.\n", name_.get());
 		return NULL;
 	}
 	if (!atoms_.contains(j))
 	{
-		Messenger::print("BAD_OWNERSHIP - Atom 'j' is not owned by Species '%s' in Species::addTorsion.\n", name_.get());
+		Messenger::print("BAD_OWNERSHIP - SpeciesAtom 'j' is not owned by Species '%s' in Species::addTorsion.\n", name_.get());
 		return NULL;
 	}
 	if (!atoms_.contains(k))
 	{
-		Messenger::print("BAD_OWNERSHIP - Atom 'k' is not owned by Species '%s' in Species::addTorsion.\n", name_.get());
+		Messenger::print("BAD_OWNERSHIP - SpeciesAtom 'k' is not owned by Species '%s' in Species::addTorsion.\n", name_.get());
 		return NULL;
 	}
 	if (!atoms_.contains(l))
 	{
-		Messenger::print("BAD_OWNERSHIP - Atom 'l' is not owned by Species '%s' in Species::addTorsion.\n", name_.get());
+		Messenger::print("BAD_OWNERSHIP - SpeciesAtom 'l' is not owned by Species '%s' in Species::addTorsion.\n", name_.get());
 		return NULL;
 	}
 
@@ -230,7 +315,7 @@ SpeciesTorsion* Species::addTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom*
 	return t;
 }
 
-// Add new torsion definition
+// Add new SpeciesTorsion definition
 SpeciesTorsion* Species::addTorsion(int i, int j, int k, int l)
 {
 	if ((i < 0) || (i >= atoms_.nItems()))
@@ -257,32 +342,80 @@ SpeciesTorsion* Species::addTorsion(int i, int j, int k, int l)
 	return addTorsion(atoms_[i], atoms_[j], atoms_[k], atoms_[l]);
 }
 
-// Return number of torsions in list
+// Reconnect existing SpeciesTorsion
+bool Species::reconnectTorsion(SpeciesTorsion* torsion, SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l)
+{
+	// Check ownership of the SpeciesTorsion
+	if (!torsions_.contains(torsion)) return Messenger::error("BAD_OWNERSHIP - SpeciesTorsion is not owned by Species '%s' in Species::reconnectTorsion().\n", name_.get());
+
+	// Check ownership of these Atoms
+	if (!atoms_.contains(i)) return Messenger::error("BAD_OWNERSHIP - SpeciesAtom 'i' is not owned by Species '%s' in Species::reconnectTorsion().\n", name_.get());
+	if (!atoms_.contains(j)) return Messenger::error("BAD_OWNERSHIP - SpeciesAtom 'j' is not owned by Species '%s' in Species::reconnectTorsion().\n", name_.get());
+	if (!atoms_.contains(k)) return Messenger::error("BAD_OWNERSHIP - SpeciesAtom 'k' is not owned by Species '%s' in Species::reconnectTorsion().\n", name_.get());
+	if (!atoms_.contains(l)) return Messenger::error("BAD_OWNERSHIP - SpeciesAtom 'l' is not owned by Species '%s' in Species::reconnectTorsion().\n", name_.get());
+
+	// If a torsion already exists between these Atoms, refuse to add it
+	if (hasTorsion(i, j, k, l)) return Messenger::error("A torsion between atoms %i-%i-%i-%i already exists in Species '%s', so refusing to reconnect a duplicate.\n", i->userIndex(), j->userIndex(), k->userIndex(), l->userIndex(), name_.get());
+
+	// Set the new angle atoms
+	torsion->setAtoms(i, j, k, l);
+
+	return true;
+}
+
+// Reconnect existing SpeciesTorsion
+bool Species::reconnectTorsion(SpeciesTorsion* torsion, int i, int j, int k, int l)
+{
+	if ((i < 0) || (i >= atoms_.nItems()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'i' supplied to Species::reconnectTorsion() is out of range (%i) for Species '%s'\n", i, name_.get());
+		return false;
+	}
+	if ((j < 0) || (j >= atoms_.nItems()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'j' supplied to Species::reconnectTorsion() is out of range (%i) for Species '%s'\n", j, name_.get());
+		return false;
+	}
+	if ((k < 0) || (k >= atoms_.nItems()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'k' supplied to Species::reconnectTorsion() is out of range (%i) for Species '%s'\n", k, name_.get());
+		return false;
+	}
+	if ((l < 0) || (l >= atoms_.nItems()))
+	{
+		Messenger::print("OUT_OF_RANGE - Internal index 'l' supplied to Species::reconnectTorsion() is out of range (%i) for Species '%s'\n", l, name_.get());
+		return false;
+	}
+
+	return reconnectTorsion(torsion, atoms_[i], atoms_[j], atoms_[k], atoms_[l]);
+}
+
+// Return number of SpeciesTorsions defined
 int Species::nTorsions() const
 {
 	return torsions_.nItems();
 }
 
-// Return list of torsions
-SpeciesTorsion* Species::torsions() const
+// Return list of SpeciesTorsions
+const List<SpeciesTorsion>& Species::torsions() const
 {
-	return torsions_.first();
+	return torsions_;
 }
 
-// Return nth torsion
+// Return nth SpeciesTorsion
 SpeciesTorsion* Species::torsion(int n)
 {
 	return torsions_[n];
 }
 
-// Return whether torsion between atoms exists
+// Return whether SpeciesTorsion between SpeciesAtoms exists
 bool Species::hasTorsion(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k, SpeciesAtom* l) const
 {
 	for (SpeciesTorsion* t = torsions_.first(); t != NULL; t = t->next) if (t->matches(i, j, k, l)) return true;
 	return false;
 }
 
-// Return index of specified Torsion
+// Return index of specified SpeciesTorsion
 int Species::torsionIndex(SpeciesTorsion* spt)
 {
 	return torsions_.indexOf(spt);

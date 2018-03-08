@@ -185,7 +185,7 @@ Molecule* Configuration::addMolecule(Species* sp)
 	}
 
 	// Add Bonds
-	SpeciesBond* spb = sp->bonds();
+	SpeciesBond* spb = sp->bonds().first();
 	for (int n = 0; n<sp->nBonds(); ++n, spb = spb->next)
 	{
 		// Get Atom pointers involved in Bond
@@ -198,7 +198,7 @@ Molecule* Configuration::addMolecule(Species* sp)
 	}
 
 	// Add Angles
-	SpeciesAngle* spa = sp->angles();
+	SpeciesAngle* spa = sp->angles().first();
 	for (int n = 0; n<sp->nAngles(); ++n, spa = spa->next)
 	{
 		// Get Atom pointers involved in Angle
@@ -212,7 +212,7 @@ Molecule* Configuration::addMolecule(Species* sp)
 	}
 
 	// Add Torsions
-	SpeciesTorsion* spt = sp->torsions();
+	SpeciesTorsion* spt = sp->torsions().first();
 	for (int n = 0; n<sp->nTorsions(); ++n, spt = spt->next)
 	{
 		// Get Atom pointers involved in Torsion

@@ -32,9 +32,7 @@ class SpeciesAtom;
 class Species;
 class ProcessPool;
 
-/*
- * Angle Definition
- */
+// SpeciesAngle Definition
 class SpeciesAngle : public SpeciesIntra, public ListItem<SpeciesAngle>
 {
 	public:
@@ -45,32 +43,34 @@ class SpeciesAngle : public SpeciesIntra, public ListItem<SpeciesAngle>
 
 
 	/*
-	 * Atom Information
+	 * SpeciesAtom Information
 	 */
 	private:
-	// First Atom in Angle
+	// First SpeciesAtom in interaction
 	SpeciesAtom* i_;
-	// Second (central) Atom in Angle
+	// Second (central) SpeciesAtom in interaction
 	SpeciesAtom* j_;
-	// Third Atom in Angle
+	// Third SpeciesAtom in interaction
 	SpeciesAtom* k_;
 
 	public:
-	// Set Atoms involved in Angle
+	// Set SpeciesAtoms involved in interaction
 	void setAtoms(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k);
-	// Return first Atom involved in Angle
+	// Return first SpeciesAtom
 	SpeciesAtom* i() const;
-	// Return second (central) Atom involved in Angle
+	// Return second (central) SpeciesAtom
 	SpeciesAtom* j() const;
-	// Return third Atom involved in Angle
+	// Return third SpeciesAtom
 	SpeciesAtom* k() const;
-	// Return index (in parent Species) of first Atom
+	// Return index (in parent Species) of first SpeciesAtom
 	int indexI() const;
-	// Return index (in parent Species) of second (central) Atom
+	// Return index (in parent Species) of second (central) SpeciesAtom
 	int indexJ() const;
-	// Return index (in parent Species) of third Atom
+	// Return index (in parent Species) of third SpeciesAtom
 	int indexK() const;
-	// Return whether Atoms in Angle match those specified
+	// Return index (in parent Species) of nth SpeciesAtom
+	int index(int n) const;
+	// Return whether SpeciesAtom match those specified
 	bool matches(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const;
 
 

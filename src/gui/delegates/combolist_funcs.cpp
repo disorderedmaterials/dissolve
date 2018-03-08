@@ -36,7 +36,7 @@ ComboListDelegate::~ComboListDelegate()
 }
 
 // Create editor
-QWidget* ComboListDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
+QWidget* ComboListDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
 	// Create editor widget (in this case a combo box) and add the available options
 	QComboBox* editor = new QComboBox(parent);
@@ -48,7 +48,7 @@ QWidget* ComboListDelegate::createEditor(QWidget* parent, const QStyleOptionView
 }
 
 // Set initial value in editor
-void ComboListDelegate::setEditorData(QWidget* editor, const QModelIndex &index) const
+void ComboListDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const
 {
 	QString value = index.model()->data(index, Qt::EditRole).toString();
 
@@ -66,7 +66,7 @@ void ComboListDelegate::setEditorData(QWidget* editor, const QModelIndex &index)
 }
 
 // Get value from editing widget, and set back in model
-void ComboListDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex &index) const
+void ComboListDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const
 {
 	QComboBox* comboBox = static_cast<QComboBox*>(editor);
 	QString value = comboBox->currentText();
@@ -75,7 +75,7 @@ void ComboListDelegate::setModelData(QWidget* editor, QAbstractItemModel* model,
 }
 
 // Update widget geometry
-void ComboListDelegate::updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
+void ComboListDelegate::updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
 	editor->setGeometry(option.rect);
 }
