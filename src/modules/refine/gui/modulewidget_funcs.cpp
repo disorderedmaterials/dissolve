@@ -131,6 +131,14 @@ RefineModuleWidget::~RefineModuleWidget()
 // Update controls within widget
 void RefineModuleWidget::updateControls()
 {
+	refreshing_ = true;
+
+	// Set controls on Overview page
+	double phiLevel = 0.0;
+	ListIterator<PairPotential> ppIterator(dUQ_.pairPotentials());
+	while (PairPotential* pp = ppIterator.iterate()) phiLevel += pp->uAdditional().absIntegral();
+	ui.PhiLevelSpin->setValue(phiLevel);
+
 	// Ensure that any displayed data are up-to-date
 	dataGraph_->refreshReferencedDataSets();
 	partialSQGraph_->refreshReferencedDataSets();
@@ -143,6 +151,8 @@ void RefineModuleWidget::updateControls()
 	partialGRGraph_->updateDisplay();
 	deltaPhiRGraph_->updateDisplay();
 	errorsGraph_->updateDisplay();
+
+	refreshing_ = false;
 }
 
 // Initialise controls
@@ -162,10 +172,10 @@ void RefineModuleWidget::initialiseControls(RefineModule* module)
 		blockData.sprintf("Collection '%s Exp'; Group '%s'; LineStyle 1.0 Solid; DataSet 'Reference'; Source XYData '%s'; EndDataSet; EndCollection", data->name(), data->name(), data->data().objectName());
 		dataGraph_->addCollectionFromBlock(blockData);
 
-		// Calculated data (total S(Q)) from associated module
-		if (data->associatedModule())
+		// Calculated data (total S(Q)) from associated module (provided one is set
+		if (data->hasAssociatedModuleName())
 		{
-			blockData.sprintf("Collection '%s Calc'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated'; Source XYData '%s//WeightedSQ//Total'; EndDataSet; EndCollection", data->name(), data->name(), data->associatedModule()->uniqueName());
+			blockData.sprintf("Collection '%s Calc'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated'; Source XYData '%s//WeightedSQ//Total'; EndDataSet; EndCollection", data->name(), data->name(), data->associatedModuleName());
 			dataGraph_->addCollectionFromBlock(blockData);
 
 			blockData.sprintf("Collection '%s Calc'; Group '%s'; DataSet '%s Error'; Source XYData '%s//%s//Error'; EndDataSet; EndCollection", data->name(), data->name(), data->name(), module->uniqueName(), data->niceName());
