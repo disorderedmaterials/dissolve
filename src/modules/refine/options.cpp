@@ -63,11 +63,11 @@ void RefineModule::setUpKeywords()
 	keywords_.add(new DoubleModuleKeyword(0.9), "AugmentationParam", "Parameter used to in augmentation (overdetermination) of scattering matrix (dependent on augmentation style selected)");
 	keywords_.add(new BoolModuleKeyword(true), "AutoMinimumRadius", "Automatically determine minimum radii between atom types for potential generation");
 	keywords_.add(new BoolModuleKeyword(true), "DeltaPhiRSmoothing", "Whether to smooth generated phi(r)");
-	keywords_.add(new IntegerModuleKeyword(5, 1, 10), "DeltaPhiRSmoothK", "Iterations of KZ smoothing to apply");
-	keywords_.add(new IntegerModuleKeyword(5, 3, 9), "DeltaPhiRSmoothM", "Smoothing length for moving average calculation in KZ filter");
+	keywords_.add(new IntegerModuleKeyword(5, 1, 10), "DeltaPhiRSmoothK", "Iterations of KZ smoothing to apply to generated potentials");
+	keywords_.add(new IntegerModuleKeyword(5, 3, 9), "DeltaPhiRSmoothM", "Smoothing length for moving average calculation in KZ filter applied to generated potentials");
 	keywords_.add(new BoolModuleKeyword(false), "DeltaSQSmoothing", "Whether to smooth generated S(Q) difference functions");
-	keywords_.add(new IntegerModuleKeyword(5, 1, 10), "DeltaSQSmoothK", "Iterations of KZ smoothing to apply");
-	keywords_.add(new IntegerModuleKeyword(5, 3, 9), "DeltaSQSmoothM", "Smoothing length for moving average calculation in KZ filter");
+	keywords_.add(new IntegerModuleKeyword(5, 1, 10), "DeltaSQSmoothK", "Iterations of KZ smoothing to apply to delta S(Q)");
+	keywords_.add(new IntegerModuleKeyword(5, 3, 9), "DeltaSQSmoothM", "Smoothing length for moving average calculation in KZ filter applied to delta S(Q)");
 	keywords_.add(new DoubleModuleKeyword(0.9, 0.0, 5.0), "MinimumRadius", "Minimum value of r at which additional potential is allowed to take effect (neglecting width of truncation strip)");
 	keywords_.add(new DoubleModuleKeyword(3.0, 0.0, 100.0), "MaximumRadius", "Maximum value of r (if AutoMinimumRadii = true) at which additional potential is zeroed");
 	keywords_.add(new BoolModuleKeyword(false), "ModifyBonds", "Modify equilibrium distances of bonds based on signatures in difference functions");
