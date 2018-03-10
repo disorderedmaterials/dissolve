@@ -24,13 +24,13 @@
 // Return name of module
 const char* TestModule::name()
 {
-	return "Skeleton";
+	return "Test";
 }
 
 // Return brief description of module
 const char* TestModule::brief()
 {
-	return "Empty Module providing skeletal structure for new Module development";
+	return "Development Module";
 }
 
 // Return instance type for module
