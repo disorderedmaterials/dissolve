@@ -360,7 +360,7 @@ bool DUQ::saveInput(const char* filename)
 
 				parser.writeLineF("  %s=%i", atomType->name(), isotopeIterator.currentData()->A());
 			}
-			if (parser.writeLineF("\n");
+			parser.writeLineF("\n");
 		}
 
 		// Done with this species
