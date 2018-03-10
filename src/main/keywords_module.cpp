@@ -142,6 +142,7 @@ bool ModuleBlock::parse(LineParser& parser, DUQ* duq, Module* module, GenericLis
 			if (result != 1)
 			{
 				if (result == -1) Messenger::error("Unrecognised %s block keyword '%s' found, and the Module '%s' contains no option with this name.\n", InputBlocks::inputBlock(InputBlocks::ModuleBlock), parser.argc(0), module->name());
+				module->printValidKeywords();
 				error = true;
 			}
 		}

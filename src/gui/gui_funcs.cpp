@@ -102,7 +102,6 @@ bool DUQWindow::openFile(const char* inputFile, bool ignoreRestartFile, bool ign
 	Messenger::banner("Parse Input File");
 	if (!duq_.loadInput(inputFile))
 	{
-		Messenger::error("Input file contained errors.\n");
 		duq_.clear();
 		return false;
 	}

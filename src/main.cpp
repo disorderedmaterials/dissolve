@@ -193,7 +193,6 @@ int main(int argc, char **argv)
 	}
 	if (!dUQ.loadInput(inputFile))
 	{
-		Messenger::error("Input file contained errors.\n");
 		ProcessPool::finalise();
 		Messenger::ceaseRedirect();
 		return 1;

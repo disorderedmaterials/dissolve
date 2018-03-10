@@ -174,6 +174,7 @@ bool DUQ::loadInput(const char* filename)
 				// Parse rest of Module block
 				module->setConfigurationLocal(false);
 				if (!ModuleBlock::parse(parser, this, module, processingModuleData_, false)) error = true;
+				if (error) break;
 
 				// Now finished parsing the Module block, so must update targets and auto-add Modules if necessary
 				if (!module->updateDependentTargets(processingModules_, autoAddDependentModules_, processingModuleData_)) error = true;
@@ -216,7 +217,7 @@ bool DUQ::loadInput(const char* filename)
 	// Error encountered?
 	if (error)
 	{
-		Messenger::print("Errors encountered while loading input file.\nLoad aborted.\n");
+		Messenger::print("\nErrors encountered while loading input file.\nLoad aborted.\n");
 		clear();
 	}
 	
@@ -574,7 +575,7 @@ bool DUQ::loadRestart(const char* filename)
 	// Error encountered?
 	if (error)
 	{
-		Messenger::print("Errors encountered while loading restart file.\nLoad aborted.\n");
+		Messenger::print("\nErrors encountered while loading restart file.\nLoad aborted.\n");
 		clear();
 	}
 	

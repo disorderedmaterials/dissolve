@@ -207,6 +207,15 @@ int Module::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList, 
 	return true;
 }
 
+// Print valid keywords
+void Module::printValidKeywords()
+{
+	Messenger::print("Valid keywords for '%s' Module are:\n", name());
+
+	ListIterator<ModuleKeywordBase> keywordIterator(keywords_.keywords());
+	while (ModuleKeywordBase* keyword = keywordIterator.iterate()) Messenger::print("  %30s  %s\n", keyword->keyword(), keyword->description());
+}
+
 /*
  * Control
  */
