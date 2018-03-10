@@ -89,9 +89,11 @@ bool RefineModule::createScatteringMatrix(DUQ& duq, const PartialSet& unweighted
 					Data* data = simulatedReferenceData_.add();
 					data->setName(CharString("Simulated Partial %s-%s", atd1->atomTypeName(), atd2->atomTypeName()));
 
+					// Multiply unweightedSQ by natural weight
 					data->data() = unweightedSQ.constPartial(n,m);
-					data->data().arrayY() *= naturalWeights.fullWeight(n,m) * (1.0 - augmentationParam);
+					data->data().arrayY() *= naturalWeights.fullWeight(n,m);
 
+					// Add this partial data to the scattering matrix
 					if (!scatteringMatrix_.addPartialReferenceData(data, atd1->atomType(), atd2->atomType(), naturalWeights.fullWeight(n,m), (1.0 - augmentationParam))) return Messenger::error("Refine: Failed to initialise simulated reference Data.\n");
 				}
 			}
