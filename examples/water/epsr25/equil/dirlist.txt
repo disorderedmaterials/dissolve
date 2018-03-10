@@ -1,0 +1,1 @@
+/home/tris/src/duq/examples/water/epsr25/equil/water-noxray.EPSR.inp

@@ -21,10 +21,8 @@
 #------------------------#
 
 Master
-  Bond   OH   Harmonic  4431.53  1.0		# SPC/Fw
-#  Bond   OH   EPSR  65.0  0.975 		# EPSR
- Angle  HOH  Harmonic  317.5656 113.24		# SPC/Fw
-#  Angle  HOH  Harmonic  150.5656 104.0		# Optimal
+  Bond   OH   Harmonic  4431.53   1.0
+  Angle  HOH  Harmonic  317.5656  113.24
 EndMaster
 
 #------------------------#
@@ -76,17 +74,17 @@ EndConfiguration
 #------------------------#
 
 Data  'Simulated-D2O'
-  File  'data/SLS18502-D2O.mdcs01'
+  File  'SANDALS/SLS18502-D2O.mdcs01'
   AssociatedTo  'D2O'
 EndData
 
 Data  'Simulated-H2O'
-  File  'data/SLS18498-H2O.mdcs01'
+  File  'SANDALS/SLS18498-H2O.mdcs01'
   AssociatedTo  'H2O'
 EndData
 
 Data  'Simulated-HDO'
-  File  'data/SLS18500-HDO5050.mdcs01'
+  File  'SANDALS/SLS18500-HDO5050.mdcs01'
   AssociatedTo  'HDO'
 EndData
 
