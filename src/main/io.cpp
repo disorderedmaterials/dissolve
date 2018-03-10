@@ -337,26 +337,30 @@ bool DUQ::saveInput(const char* filename)
 		}
 
 		// Grains
-		parser.writeLineF("\n  # Grain Definitions\n");
-		for (SpeciesGrain* sg = sp->grains(); sg != NULL; sg = sg->next)
+		if (sp->nGrains() > 0)
 		{
-			parser.writeLineF("  %s  '%s'", SpeciesBlock::keyword(SpeciesBlock::GrainKeyword), sg->name());
-			for (RefListItem<SpeciesAtom,int>* ri = sg->atoms(); ri != NULL; ri = ri->next) parser.writeLineF("  %i", ri->item->userIndex());
-			parser.writeLineF("\n");
+			parser.writeLineF("\n  # Grain Definitions\n");
+			for (SpeciesGrain* sg = sp->grains(); sg != NULL; sg = sg->next)
+			{
+				parser.writeLineF("  %s  '%s'", SpeciesBlock::keyword(SpeciesBlock::GrainKeyword), sg->name());
+				for (RefListItem<SpeciesAtom,int>* ri = sg->atoms(); ri != NULL; ri = ri->next) parser.writeLineF("  %i", ri->item->userIndex());
+				parser.writeLineF("\n");
+			}
 		}
 
 		// Isotopologues
-		parser.writeLineF("\n  # Isotopologues\n");
 		for (Isotopologue* iso = sp->isotopologues().first(); iso != NULL; iso = iso->next)
 		{
-			parser.writeLineF("    %s", SpeciesBlock::keyword(SpeciesBlock::IsotopologueKeyword));
+			parser.writeLineF("    %s  '%s'  ", SpeciesBlock::keyword(SpeciesBlock::IsotopologueKeyword), iso->name());
 			RefListIterator<AtomType,Isotope*> isotopeIterator(iso->isotopes());
 			while (AtomType* atomType = isotopeIterator.iterate())
 			{
 				// No need to write anything that's the natural isotope...
-				if (isotopeIterator.currentData()->A() != 0) parser.writeLineF("  %s=%i", atomType->name(), isotopeIterator.currentData()->A());
+				if (isotopeIterator.currentData()->A() == 0) continue;
+
+				parser.writeLineF("  %s=%i", atomType->name(), isotopeIterator.currentData()->A());
 			}
-			parser.writeLineF("\n");
+			if (parser.writeLineF("\n");
 		}
 
 		// Done with this species
