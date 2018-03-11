@@ -1,0 +1,81 @@
+# Amorphous Silica
+# Data are lifted from EPSR, the original source being XXX. The data are normalised to <b>**2
+
+#-----------------------#
+# Define Silica Species #
+#-----------------------#
+
+Species 'Si'
+  Atom    1   Si     0.000    0.000    0.000    'Si'
+EndSpecies
+
+Species 'O'
+  Atom    1   O      0.000    0.000    0.000    'O'
+EndSpecies
+
+#----------------------#
+#   Pair Potentials    #
+#----------------------#
+
+PairPotentials
+  Parameters  Si  4.0  0.8   0.76
+  Parameters  O  -2.0  0.65  3.69
+  GenerateAll  'LJ'
+EndPairPotentials
+
+#----------------------#
+# Define Configuration #
+#----------------------#
+
+Configuration 'silica'
+  Multiplier  1000
+  Density  0.0664  atoms/A3
+  SpeciesInfo  'Si'  1.0
+  SpeciesInfo  'O'  2.0
+  Temperature 10000.0
+EndConfiguration
+
+#-----------------------#
+# Define Reference Data #
+#-----------------------#
+
+Data  'Experiment'
+  File  'data/NeutronSiO2sq.dat'  2  3
+  NeutronNormalisation  AverageSquared
+  AssociatedTo  'natural'
+EndData
+
+#----------------------#
+#      Processing      #
+#----------------------#
+
+# 1) Move atoms with an MC atom 'shake'
+Module AtomShake
+  Configuration  'silica'
+EndModule
+
+# 2) Calculate total energy of system, so we can assess the stability (i.e. equilibrium) of the configuration
+Module Energy
+  Configuration 'silica'
+EndModule
+
+# 3) Calculate partials (every five iterations)
+Module Partials 'natural'
+  Configuration  'silica'
+  Weights neutron
+  Isotopologue  'silica'  'Si'  'Natural'  1.0
+  Isotopologue  'silica'  'O'  'Natural'  1.0
+  StructureFactor  on
+  Frequency 5
+EndModule
+
+# 4) Apply potential refinement (every 5 iterations)
+Module Refine
+  Disabled
+  AugmentationParam  0.9
+  PhiLimit 1000.0
+  Data  'Experiment'
+  Frequency  5
+  OnlyWhenStable  True
+EndModule
+
