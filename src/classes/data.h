@@ -134,7 +134,7 @@ class Data : public ListItem<Data>
 
 	public:
 	// Perform necessary tasks (normalisation etc.) on supplied data
-	bool setUp(GenericList& processingModuleData);
+	bool setUp(GenericList& processingModuleData, bool strict = true);
 	// Return whether data is set up
 	bool isSetUp() const;
 

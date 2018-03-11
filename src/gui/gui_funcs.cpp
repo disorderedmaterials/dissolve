@@ -125,6 +125,9 @@ bool DUQWindow::openFile(const char* inputFile, bool ignoreRestartFile, bool ign
 	}
 	else Messenger::print("\nRestart file (if it exists) will be ignored.\n");
 
+	// Try to set-up simulation
+	duq_.setUp();
+
 	refreshing_ = true;
 
 	// Add on necessary tabs

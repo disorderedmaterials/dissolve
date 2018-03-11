@@ -151,7 +151,7 @@ Weights& Data::scatteringWeights()
  */
 
 // Perform necessary tasks (normalisation etc.) on supplied data
-bool Data::setUp(GenericList& processingModuleData)
+bool Data::setUp(GenericList& processingModuleData, bool strict)
 {
 	// If we're already set up return now 
 	if (setUp_) return true;
@@ -189,11 +189,12 @@ bool Data::setUp(GenericList& processingModuleData)
 				Weights& weights = GenericListHelper<Weights>::retrieve(processingModuleData, "FullWeights", associatedModule_->uniqueName(), Weights(), &found);
 				if (!found)
 				{
-					Messenger::error("Couldn't find FullWeights for Data '%s', and so can't perform requested normalisation.\n", name_.get());
+					if (strict) Messenger::error("Couldn't find FullWeights for Data '%s', and so can't perform requested normalisation.\n", name_.get());
+					else Messenger::print("Couldn't find FullWeights for Data '%s', and so can't perform requested normalisation.\n", name_.get());
 					return false;
 				}
 
-				// Undo normalisation of data
+				// Remove normalisation of data
 				if (neutronNormalisation_ == PartialsModule::AverageOfSquaresNormalisation)
 				{
 					data_.arrayY() *= weights.boundCoherentAverageOfSquares();

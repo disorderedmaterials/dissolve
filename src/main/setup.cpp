@@ -139,6 +139,9 @@ bool DUQ::setUpSimulation()
 				return false;
 			}
 			data->setAssociatedModule(module);
+
+			// Try to set-up the data here, so any normalisation etc. is performed now if it is possible to do so
+			data->setUp(processingModuleData_, false);
 		}
 		else Messenger::print("  -> No Module associated to this Data.\n");
 	}
