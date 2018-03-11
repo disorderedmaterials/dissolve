@@ -110,9 +110,15 @@
             </spacer>
            </item>
            <item row="0" column="1">
-            <widget class="QDoubleSpinBox" name="PhiLevelSpin">
+            <widget class="TExponentialSpin" name="PhiLevelSpin">
              <property name="enabled">
               <bool>false</bool>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
              </property>
              <property name="buttonSymbols">
               <enum>QAbstractSpinBox::NoButtons</enum>
@@ -445,6 +451,11 @@
    <extends>QWidget</extends>
    <header>gui/uchroma/gui/uchromaview.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>TExponentialSpin</class>
+   <extends>QDoubleSpinBox</extends>
+   <header>gui/widgets/texponentialspin.hui</header>
   </customwidget>
  </customwidgets>
  <resources>
