@@ -107,7 +107,7 @@ void ConfigurationTab::updateSpeciesInfoTableRow(int row, SpeciesInfo* speciesIn
 	{
 		item = new QTableWidgetItem;
 		item->setData(Qt::UserRole, VariantPointer<SpeciesInfo>(speciesInfo));
-		item->setFlags(Qt::ItemIsUserCheckable);
+		item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
 		ui.SpeciesInfoTable->setItem(row, 2, item);
 	}
 	else item = ui.SpeciesInfoTable->item(row, 2);
