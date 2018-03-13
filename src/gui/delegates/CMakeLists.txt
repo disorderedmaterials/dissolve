@@ -7,7 +7,9 @@ SET(delegates_MOC_HDRS
   integerspin.hui
   intraformcombo.hui
   isotopecombo.hui
+  isotopologuecombo.hui
   texponentialspin.hui
+  usedspeciescombo.hui
 )
 QT5_WRAP_CPP(delegates_MOC_SRCS ${delegates_MOC_HDRS})
 
@@ -22,7 +24,9 @@ SET(delegates_SRCS
   integerspin_funcs.cpp
   intraformcombo_funcs.cpp
   isotopecombo_funcs.cpp
+  isotopologuecombo_funcs.cpp
   texponentialspin_funcs.cpp
+  usedspeciescombo_funcs.cpp
 )
 
 # Target 'delegates'

@@ -32,7 +32,7 @@ ModuleKeywordBase::~ModuleKeywordBase()
 }
 
 // Value Keyword Data Type Keywords
-const char* KeywordDataTypeKeywords[] = { "Complex", "Bool", "Integer", "Double", "CharString", "BroadeningFunction", "WindowFunction" };
+const char* KeywordDataTypeKeywords[] = { "Complex", "Bool", "Integer", "Double", "CharString", "BroadeningFunction", "IsotopologueList", "WindowFunction" };
 
 // Return ValueType name
 const char* ModuleKeywordBase::keywordDataType(KeywordDataType kdt)

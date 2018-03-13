@@ -24,6 +24,7 @@
 
 #include "module/module.h"
 #include "classes/partialset.h"
+#include "classes/isotopologuereference.h"
 #include "classes/braggpeak.h"
 
 // Forward Declarations
@@ -87,6 +88,10 @@ class PartialsModule : public Module
 	/*
 	 * Options
 	 */
+	private:
+	// Isotopologue references
+	List<IsotopologueReference> isotopologues_;
+
 	protected:
 	// Set up keywords for Module
 	void setUpKeywords();

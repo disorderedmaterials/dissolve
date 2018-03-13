@@ -34,7 +34,7 @@ BroadeningFunctionKeywordWidget::BroadeningFunctionKeywordWidget(QWidget* parent
 	for (int n=0; n<BroadeningFunction::nFunctionTypes; ++n) ui.FunctionCombo->addItem(BroadeningFunction::functionType( (BroadeningFunction::FunctionType) n));
 
 	// Connect signals / slots
-	connect(ui.FunctionCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(functionComboChanged(int)));
+	connect(ui.FunctionCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(functionCombo_currentIndexChanged(int)));
 
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<BroadeningFunctionModuleKeyword*>(keyword);
@@ -51,7 +51,7 @@ BroadeningFunctionKeywordWidget::BroadeningFunctionKeywordWidget(QWidget* parent
  */
 
 // Function type combo changed
-void BroadeningFunctionKeywordWidget::functionComboChanged(int index)
+void BroadeningFunctionKeywordWidget::functionCombo_currentIndexChanged(int index)
 {
 	if (refreshing_) return;
 

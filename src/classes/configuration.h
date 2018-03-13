@@ -92,6 +92,8 @@ class Configuration : public ListItem<Configuration>
 	const char* niceName();
 	// Add Species to list of those used by the Configuration
 	SpeciesInfo* addUsedSpecies(Species* sp, double relativePopulation);
+	// Return SpeciesInfo for specified Species
+	SpeciesInfo* usedSpeciesInfo(Species* sp);
 	// Return list of SpeciesInfo for the Configuration
 	List<SpeciesInfo>& usedSpecies();
 	// Return if the specifeid Species is present in the usedSpecies list

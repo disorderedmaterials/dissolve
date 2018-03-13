@@ -38,6 +38,7 @@
 // Classes
 #include "module/keywordtypes/charstring.h"
 #include "module/keywordtypes/broadeningfunction.h"
+#include "module/keywordtypes/isotopologuelist.h"
 #include "module/keywordtypes/windowfunction.h"
 
 #endif

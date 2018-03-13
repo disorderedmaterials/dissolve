@@ -224,8 +224,8 @@ class DUQ
 	 * Configurations
 	 */
 	private:
-	// List of all atomic configurations
-	List<Configuration> configurations_;
+	// Master lst of all atomic configurations (referenced from List<T>::masterInstance_)
+	List<Configuration>& configurations_;
 
 	public:
 	// Add new Configuration

@@ -103,7 +103,7 @@ void PartialsModule::setUpKeywords()
 	keywords_.add(new DoubleModuleKeyword(0.001), "BraggQResolution", "Binwidth in Q to use when calculating Bragg peaks");
 	keywords_.add(new BoolModuleKeyword(false), "InternalTest", "Perform internal check of calculated partials (relative to Test method)");
 	keywords_.add(new BroadeningFunctionModuleKeyword(BroadeningFunction()), "IntraBroadening", "Broadening function to apply to intramolecular g(r)");
-	keywords_.add(new ComplexModuleKeyword(4,4), "Isotopologue", "Set Isotopologue (and its population) to use for a particular Species in a given Configuration");
+	keywords_.add(new IsotopologueListModuleKeyword(isotopologues_), "Isotopologue", "Set Isotopologue (and its population) to use for a particular Species in a given Configuration");
 	keywords_.add(new CharStringModuleKeyword("Auto", PartialsModule::nPartialsMethods, PartialsMethodKeywords), "Method", "Calculation method for partial radial distribution functions");
 	keywords_.add(new CharStringModuleKeyword("None", PartialsModule::nNormalisationTypes, NormalisationTypeKeywords), "Normalisation", "Normalisation to apply to total weighted F(Q)");
 	keywords_.add(new DoubleModuleKeyword(0.05, 1.0e-5), "QDelta", "Step size in Q for S(Q) calculation");
@@ -142,50 +142,6 @@ int PartialsModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& 
 		}
 
 		GenericListHelper<double>::add(targetList, CharString("%s_Weight", targetCfg->niceName()), uniqueName()) = parser.argd(2);
-	}
-	else if (DUQSys::sameString(parser.argc(0), "Isotopologue"))
-	{
-		// Essentially a shortcut for setting a variable in a target Configuration / Sample
-		// Find target Configuration
-		Configuration* targetCfg = duq->findConfiguration(parser.argc(1));
-		if (!targetCfg)
-		{
-			Messenger::error("Error defining Isotopologue - no Configuration named '%s' exists.\n", parser.argc(1));
-			return false;
-		}
-
-		// Raise an error if this Configuration is not targetted by the Module
-		if (!isTargetConfiguration(targetCfg)) 
-		{
-			Messenger::error("Configuration '%s' is not targetted by the Module '%s'.\n", targetCfg->name(), name());
-			return false;
-		}
-
-		// Find specified Species - must be present in the target Configuration
-		Species* sp = duq->findSpecies(parser.argc(2));
-		if (!sp)
-		{
-			Messenger::error("Error defining Isotopologue - no Species named '%s' exists.\n", parser.argc(2));
-			return false;
-		}
-
-		if (!targetCfg->hasUsedSpecies(sp))
-		{
-			Messenger::error("Error defining Isotopologue - Species '%s' is not present in Configuration '%s'.\n", sp->name(), targetCfg->name());
-			return false;
-		}
-
-		// Finally, locate isotopologue definition for species
-		Isotopologue* tope = sp->findIsotopologue(parser.argc(3));
-		if (!tope)
-		{
-			Messenger::error("Error defining Isotopologue - no Isotopologue named '%s' exists for Species '%s'.\n", parser.argc(3), sp->name());
-			return false;
-		}
-
-		// Ready - add a suitable variable to the Configuration
-		CharString varName("Isotopologue/%s/%s", sp->name(), tope->name());
-		GenericListHelper<double>::add(targetList, varName, uniqueName()) = parser.argd(4);
 	}
 	else if (DUQSys::sameString(parser.argc(0), "TestReference"))
 	{

@@ -31,7 +31,7 @@
 template <class T> List<T> List<T>::masterInstance_;
 
 // Constructor
-DUQ::DUQ() : atomTypes_(List<AtomType>::master()), species_(List<Species>::master())
+DUQ::DUQ() : atomTypes_(List<AtomType>::master()), species_(List<Species>::master()), configurations_(List<Configuration>::master())
 {
 	// PairPotentials
 	pairPotentialDelta_ = 0.005;

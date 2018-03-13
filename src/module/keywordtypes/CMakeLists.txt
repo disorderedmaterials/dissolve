@@ -5,6 +5,7 @@ add_library(keywordtypes
   complex.cpp
   double.cpp
   int.cpp
+  isotopologuelist.cpp
   windowfunction.cpp
 
   bool.h
@@ -13,6 +14,7 @@ add_library(keywordtypes
   complex.h
   double.h
   int.h
+  isotopologuelist.h
   windowfunction.h
 )
 

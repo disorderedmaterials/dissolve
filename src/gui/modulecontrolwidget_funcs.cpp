@@ -26,6 +26,7 @@
 #include "gui/keywordwidgets/double.hui"
 #include "gui/keywordwidgets/int.hui"
 #include "gui/keywordwidgets/broadeningfunction.h"
+#include "gui/keywordwidgets/isotopologuelist.h"
 #include "gui/keywordwidgets/windowfunction.hui"
 #include "gui/modulewidget.h"
 #include "gui/widgets/subwindow.h"
@@ -139,6 +140,13 @@ void ModuleControlWidget::initialiseControls(Module* module)
 			connect(broadeningFunctionWidget, SIGNAL(keywordValueChanged()), duqWindow_, SLOT(setModified()));
 			widget = broadeningFunctionWidget;
 			base = broadeningFunctionWidget;
+		}
+		else if (keyword->type() == ModuleKeywordBase::IsotopologueListData)
+		{
+			IsotopologueListKeywordWidget* isotopologueListWidget = new IsotopologueListKeywordWidget(NULL, keyword);
+			connect(isotopologueListWidget, SIGNAL(keywordValueChanged()), duqWindow_, SLOT(setModified()));
+			widget = isotopologueListWidget;
+			base = isotopologueListWidget;
 		}
 		else if (keyword->type() == ModuleKeywordBase::WindowFunctionData)
 		{
