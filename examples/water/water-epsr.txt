@@ -92,12 +92,8 @@ EndModule
 # 2) Perform intramolecular shake of bonds and angles
 Module IntraShake
   Configuration  'Bulk'
+  TermEnergyOnly  True
   Frequency  5
-EndModule
-
-Module Export
-  Configuration  'Bulk'
-  WriteDLPOLY  True
 EndModule
 
 # 3) Calculate partials for the H2O sample
@@ -142,5 +138,6 @@ Module  Refine
   Data  'Simulated-D2O'
   Data  'Simulated-HDO'
   Frequency  5
+  PhiLimit  30.0
 EndModule
 
