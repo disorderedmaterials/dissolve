@@ -65,6 +65,14 @@ SpeciesInfo* Configuration::addUsedSpecies(Species* sp, double relativePopulatio
 	return spInfo;
 }
 
+// Return SpeciesInfo for specified Species
+SpeciesInfo* Configuration::usedSpeciesInfo(Species* sp)
+{
+	for (SpeciesInfo* spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next) if (spInfo->species() == sp) return spInfo;
+
+	return NULL;
+}
+
 // Return list of SpeciesInfo for the Configuration
 List<SpeciesInfo>& Configuration::usedSpecies()
 {

@@ -1,6 +1,6 @@
 /*
-	*** Keyword Widget - BroadeningFunction
-	*** src/gui/keywordwidgets/broadeningfunction.h
+	*** Keyword Widget - IsotopologueList
+	*** src/gui/keywordwidgets/isotopologuelist.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of DUQ.
@@ -19,28 +19,28 @@
 	along with DUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_BROADENINGFUNCTIONKEYWORDWIDGET_H
-#define DUQ_BROADENINGFUNCTIONKEYWORDWIDGET_H
+#ifndef DUQ_ISOTOPOLOGUELISTKEYWORDWIDGET_H
+#define DUQ_ISOTOPOLOGUELISTKEYWORDWIDGET_H
 
-#include "gui/keywordwidgets/ui_broadeningfunction.h"
+#include "gui/keywordwidgets/ui_isotopologuelist.h"
 #include "gui/keywordwidgets/dropdown.h"
-#include "module/keywordtypes/broadeningfunction.h"
+#include "module/keywordtypes/isotopologuelist.h"
 #include "gui/keywordwidgets/base.h"
 #include <QWidget>
 
 // Forward Declarations
 class QComboBox;
 
-class BroadeningFunctionKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
+class IsotopologueListKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
 {
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
 	public:
 	// Constructor
-	BroadeningFunctionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword);
+	IsotopologueListKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword);
         // Main form declaration
-        Ui::BroadeningFunctionWidget ui;
+        Ui::IsotopologueListWidget ui;
 
 
 	/*
@@ -48,15 +48,16 @@ class BroadeningFunctionKeywordWidget : public KeywordDropDown, public KeywordWi
 	 */
 	private:
 	// Associated keyword
-	BroadeningFunctionModuleKeyword* keyword_;
+	IsotopologueListModuleKeyword* keyword_;
 
 
 	/*
 	 * Signals / Slots
 	 */
-	public slots:
-	// Function type combo changed
-	void functionCombo_currentIndexChanged(int index);
+	private slots:
+	void addButton_clicked(bool checked);
+	void removeButton_clicked(bool checked);
+	void isotopologueTable_itemChanged(QTableWidgetItem* w);
 
 	signals:
 	// Keyword value changed
@@ -66,6 +67,10 @@ class BroadeningFunctionKeywordWidget : public KeywordDropDown, public KeywordWi
 	/*
 	 * Update
 	 */
+	private:
+	// Table row update function
+	void updateTableRow(int row, IsotopologueReference* isoRef, bool createItems);
+
 	public:
 	// Update value displayed in widget, using specified source if necessary
 	void updateValue(GenericList& moduleData, const char* prefix);

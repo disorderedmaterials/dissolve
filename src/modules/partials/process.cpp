@@ -201,30 +201,23 @@ bool PartialsModule::process(DUQ& duq, ProcessPool& procPool)
 		{
 			// Construct weights matrix based on Isotopologue specifications in some Module (specified by mixSource) and the populations of AtomTypes in the Configuration
 			Weights weights;
-			ListIterator<SpeciesInfo> speciesInfoIterator(cfg->usedSpecies());
-			while (SpeciesInfo* spInfo = speciesInfoIterator.iterate())
+			ListIterator<IsotopologueReference> refIterator(isotopologues_);
+			while (IsotopologueReference* ref = refIterator.iterate())
 			{
-				Species* sp = spInfo->species();
+				// If this reference does not target the current Configuration we are considering, continue the loop
+				if (ref->configuration() != cfg) continue;
 
+				// Find the referenced Species in our SpeciesInfo list
+				SpeciesInfo* spInfo = cfg->usedSpeciesInfo(ref->species());
 				int speciesPopulation = spInfo->population() * cfg->multiplier();
 
-				// Loop over available Isotopologues for Species
-				for (Isotopologue* availableIso = sp->isotopologues().first(); availableIso != NULL; availableIso = availableIso->next)
-				{
-					// Construct variable name that we expect to find if the tope was used in the Module (variable is defined in the associated Configuration)
-					varName.sprintf("Isotopologue/%s/%s", sp->name(), availableIso->name());
-					if (moduleData.contains(varName, uniqueName_))
-					{
-						// This isotopologue is defined as being used, so add it (in the isotopic proportions defined in the Isotopologue) to the Weights.
-						double proportion = GenericListHelper<double>::retrieve(moduleData, varName, uniqueName_);
-						weights.addIsotopologue(sp, speciesPopulation, availableIso, proportion);
-						combinedWeights.addIsotopologue(sp, speciesPopulation, availableIso, proportion);
-					}
-				}
+				// Add the isotopologue, in the isotopic proportions defined in the Isotopologue, to the weights.
+				weights.addIsotopologue(ref->species(), speciesPopulation, ref->isotopologue(), ref->weight());
+				combinedWeights.addIsotopologue(ref->species(), speciesPopulation, ref->isotopologue(), ref->weight());
 			}
 
 			// We will complain strongly if a species in the Configuration is not covered by at least one Isotopologue definition
-			speciesInfoIterator.restart();
+			ListIterator<SpeciesInfo> speciesInfoIterator(cfg->usedSpecies());
 			while (SpeciesInfo* spInfo = speciesInfoIterator.iterate()) if (!weights.hasSpeciesIsotopologueMixture(spInfo->species())) 
 			{
 				Messenger::error("Isotopologue specification for Species '%s' in Configuration '%s' is missing.\n", spInfo->species()->name(), cfg->name());

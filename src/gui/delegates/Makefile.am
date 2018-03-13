@@ -20,6 +20,8 @@ libdelegates_la_SOURCES = combolist.hui combolist_funcs.cpp
 libdelegates_la_SOURCES += integerspin.hui integerspin_funcs.cpp
 libdelegates_la_SOURCES += intraformcombo.hui intraformcombo_funcs.cpp
 libdelegates_la_SOURCES += isotopecombo.hui isotopecombo_funcs.cpp
+libdelegates_la_SOURCES += isotopologuecombo.hui isotopologuecombo_funcs.cpp
 libdelegates_la_SOURCES += texponentialspin.hui texponentialspin_funcs.cpp
+libdelegates_la_SOURCES += usedspeciescombo.hui usedspeciescombo_funcs.cpp
 
 AM_CPPFLAGS = -I$(top_srcdir)/src -I../ -I./ @DUQ_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@

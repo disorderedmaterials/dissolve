@@ -5,6 +5,7 @@
 SET(keywordwidgets_MOC_HDRS
   broadeningfunction.ui
   dropdown.ui
+  isotopologuelist.ui
 
   bool.hui
   charstring.hui
@@ -26,10 +27,12 @@ SET(keywordwidgets_SRCS
   dropdown_funcs.cpp
   dropwidget_funcs.cpp
   int_funcs.cpp
+  isotopologuelist_funcs.cpp
   windowfunction_funcs.cpp
 
   base.h
   broadeningfunction.h
+  isotopologuelist.h
   dropdown.h
 )
 
