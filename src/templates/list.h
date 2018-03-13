@@ -767,6 +767,11 @@ template <class T> class ListIterator
 		finished_ = false;
 		currentItem_ = NULL;
 	}
+	// Return whether we are on the first item in the list
+	bool first()
+	{
+		return (currentItem_ == targetList_.first());
+	}
 };
 
 #endif

@@ -168,7 +168,7 @@ Vec3<int> Configuration::braggMultiplicity()
 // Add Module (or an instance of it) to the Configuration
 Module* Configuration::addModule(Module* masterInstance)
 {
-	return modules_.addModule(masterInstance, moduleData_);
+	return modules_.add(masterInstance, this);
 }
 
 // Return number of Modules associated to this Configuration

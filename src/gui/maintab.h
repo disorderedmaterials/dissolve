@@ -24,6 +24,7 @@
 
 #include "gui/widgets/subwindow.h"
 #include "module/module.h"
+#include "module/reference.h"
 #include "base/charstring.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
@@ -127,7 +128,7 @@ class MainTab : public ListItem<MainTab>
 	 */
 	public:
 	// Add module widgets to specified layout
-	void addModuleWidgets(const RefList<Module,bool>& modules, List<SubWidget>& widgets, QLayout* layout, bool allowShiftAndRemove);
+	void addModuleWidgets(const List<ModuleReference>& modules, List<SubWidget>& widgets, QLayout* layout, bool allowShiftAndRemove);
 };
 
 #endif

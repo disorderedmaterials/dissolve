@@ -294,9 +294,11 @@ bool DUQ::setUpSimulation()
 	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
 	{
 		// Loop over Modules, checking for those that have pre- or post-processing steps
-		RefListIterator<Module,bool> moduleIterator(cfg->modules().modules());
-		while (Module* module = moduleIterator.iterate())
+		ListIterator<ModuleReference> moduleIterator(cfg->modules().modules());
+		while (ModuleReference* modRef = moduleIterator.iterate())
 		{
+			Module* module = modRef->module();
+
 			// Pre-Processing
 			if (module->hasPreProcessing())
 			{
@@ -323,9 +325,11 @@ bool DUQ::setUpSimulation()
 		}
 	}
 	// Loop over processing modules and add pre/post tasks
-	RefListIterator<Module,bool> processingIterator(processingModules_.modules());
-	while (Module* module = processingIterator.iterate())
+	ListIterator<ModuleReference> processingIterator(processingModules_.modules());
+	while (ModuleReference* modRef = processingIterator.iterate())
 	{
+		Module* module = modRef->module();
+
 		// Pre-Processing
 		if (module->hasPreProcessing())
 		{
@@ -351,11 +355,13 @@ bool DUQ::setUpSimulation()
 		}
 	}
 
-	if (preProcessingTasks_.nItems() == 0) Messenger::print("No pre-processing tasks found.\n");
-	else Messenger::print("%i pre-processing %s found.\n", preProcessingTasks_.nItems(), preProcessingTasks_.nItems() == 1 ? "task" : "tasks");
-	RefListIterator<Module,bool> preProcessingIterator(preProcessingTasks_);
-	while (Module* module = preProcessingIterator.iterate())
+	if (preProcessingTasks_.nModules() == 0) Messenger::print("No pre-processing tasks found.\n");
+	else Messenger::print("%i pre-processing %s found.\n", preProcessingTasks_.nModules(), preProcessingTasks_.nModules() == 1 ? "task" : "tasks");
+	ListIterator<ModuleReference> preProcessingIterator(preProcessingTasks_.modules());
+	while (ModuleReference* modRef = preProcessingIterator.iterate())
 	{
+		Module* module = modRef->module();
+
 		Messenger::print("    %s:\n", module->name());
 		if (module->nConfigurationTargets() == 0) Messenger::print("      No Configuration targets.\n");
 		else
@@ -368,9 +374,11 @@ bool DUQ::setUpSimulation()
 
 	if (processingModules_.nModules() == 0) Messenger::print("No main processing Modules found.\n");
 	else Messenger::print("%i main processing %s found.\n", processingModules_.nModules(), processingModules_.nModules() == 1 ? "Module" : "Modules");
-	RefListIterator<Module,bool> mainProcessingIterator(processingModules_.modules());
-	while (Module* module = mainProcessingIterator.iterate())
+	ListIterator<ModuleReference> mainProcessingIterator(processingModules_.modules());
+	while (ModuleReference* modRef = mainProcessingIterator.iterate())
 	{
+		Module* module = modRef->module();
+
 		Messenger::print("    %s:\n", module->name());
 		if (module->nConfigurationTargets() == 0) Messenger::print("      No Configuration targets.\n");
 		else
@@ -381,11 +389,13 @@ bool DUQ::setUpSimulation()
 		}
 	}
 
-	if (postProcessingTasks_.nItems() == 0) Messenger::print("No post-processing tasks found.\n");
-	else Messenger::print("%i post-processing %s found.\n", postProcessingTasks_.nItems(), postProcessingTasks_.nItems() == 1 ? "task" : "tasks");
-	RefListIterator<Module,bool> postProcessingIterator(postProcessingTasks_);
-	while (Module* module = postProcessingIterator.iterate())
+	if (postProcessingTasks_.nModules() == 0) Messenger::print("No post-processing tasks found.\n");
+	else Messenger::print("%i post-processing %s found.\n", postProcessingTasks_.nModules(), postProcessingTasks_.nModules() == 1 ? "task" : "tasks");
+	ListIterator<ModuleReference> postProcessingIterator(postProcessingTasks_.modules());
+	while (ModuleReference* modRef = postProcessingIterator.iterate())
 	{
+		Module* module = modRef->module();
+
 		Messenger::print("    %s:\n", module->name());
 		if (module->nConfigurationTargets() == 0) Messenger::print("      No Configuration targets.\n");
 		else

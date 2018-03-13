@@ -110,7 +110,7 @@ bool Module::updateDependentTargets(ModuleList& currentModuleList, bool autoAddD
 		}
 
 		// Find the named dependentModule in the current list
-		Module* existingModule = currentModuleList.findModule(dependentModule->name());
+		Module* existingModule = currentModuleList.find(dependentModule->name());
 		if (existingModule)
 		{
 			addDependentModule(existingModule, false);
@@ -122,7 +122,7 @@ bool Module::updateDependentTargets(ModuleList& currentModuleList, bool autoAddD
 			if (autoAddDependents)
 			{
 				Messenger::warn("Auto-adding the Module '%s', since the Module '%s' depends on it.\nDefault parameters will be used.\nFor better control, add the Module by hand to the input file.\n", dependentModule->name(), name());
-				Module* autoAddedModule = currentModuleList.addModule(dependentModule, currentModuleData, this);
+				Module* autoAddedModule = currentModuleList.add(dependentModule, configurationLocal_ ? dependentModule->targetConfigurations().firstItem() : NULL, this);
 				if (!autoAddedModule) return false;
 				addDependentModule(autoAddedModule, true);
 			}
@@ -328,7 +328,7 @@ void Module::copyTargetConfigurations(Module* sourceModule)
 // Set whether this module is a local Module in a Configuration
 void Module::setConfigurationLocal(bool b)
 {
-	configurationLocal_ = b;
+	 configurationLocal_ = b;
 }
 
 // Return whether this module is a local Module in a Configuration

@@ -143,7 +143,7 @@ bool DUQ::loadInput(const char* filename)
 				}
 
 				// Try to add this module (or an instance of it) to the main processing Module list
-				module = processingModules_.addModule(masterInstance, processingModuleData_);
+				module = processingModules_.add(masterInstance);
 				if (!module)
 				{
 					Messenger::error("Failed to add Module '%s' as main processing task.\n", parser.argc(1));
@@ -434,9 +434,11 @@ bool DUQ::saveInput(const char* filename)
 		// Modules
 		parser.writeLineF("\n  # Modules\n");
 		if (cfg->nModules() == 0) parser.writeLineF("  # -- None\n");
-		RefListIterator<Module,bool> moduleIterator(cfg->modules().modules());
-		while (Module* module = moduleIterator.iterate())
+		ListIterator<ModuleReference> moduleIterator(cfg->modules().modules());
+		while (ModuleReference* modRef = moduleIterator.iterate())
 		{
+			Module* module = modRef->module();
+
 			parser.writeLineF("  %s  %s  '%s'\n", ConfigurationBlock::keyword(ConfigurationBlock::ModuleKeyword), module->name(), module->uniqueName());
 
 			// Print keyword options
@@ -457,9 +459,11 @@ bool DUQ::saveInput(const char* filename)
 
 	// Write processing Module blocks
 	parser.writeBannerComment("Processing Modules");
-	RefListIterator<Module,bool> processingIterator(processingModules_.modules());
-	while (Module* module = processingIterator.iterate())
+	ListIterator<ModuleReference> processingIterator(processingModules_.modules());
+	while (ModuleReference* modRef = processingIterator.iterate())
 	{
+		Module* module = modRef->module();
+
 		parser.writeLineF("\n%s  %s  '%s'\n", InputBlocks::inputBlock(InputBlocks::ModuleBlock), module->name(), module->uniqueName());
 
 		// Write Configuration target(s)

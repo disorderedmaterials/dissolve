@@ -3,6 +3,7 @@ add_library(module
   keywordbase.cpp
   keywordlist.cpp
   list.cpp
+  reference.cpp
   registry.cpp
 
   module.h
@@ -12,6 +13,7 @@ add_library(module
   keyworddata.h
   keywordlist.h
   list.h
+  reference.h
   registry.h
   keywordtypes.h
 )

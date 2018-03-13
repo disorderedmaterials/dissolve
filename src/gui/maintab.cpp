@@ -174,11 +174,13 @@ void MainTab::removeSubWindow(SubWindow* window)
  */
 
 // Add module widgets to specified layout
-void MainTab::addModuleWidgets(const RefList<Module,bool>& modules, List<SubWidget>& widgets, QLayout* layout, bool allowShiftAndRemove)
+void MainTab::addModuleWidgets(const List<ModuleReference>& modules, List<SubWidget>& widgets, QLayout* layout, bool allowShiftAndRemove)
 {
-	RefListIterator<Module,bool> moduleIterator(modules);
-	while (Module* module = moduleIterator.iterate())
+	ListIterator<ModuleReference> moduleIterator(modules);
+	while (ModuleReference* refMod = moduleIterator.iterate())
 	{
+		Module* module = refMod->module();
+
 		if (!moduleIterator.first())
 		{
 			QFrame* frame = new QFrame;

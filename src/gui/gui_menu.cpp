@@ -164,9 +164,11 @@ void DUQWindow::createModuleMenu(QMenu* parent)
 			moduleItem->setFont(italicFont);
 			moduleItem->setEnabled(false);
 		}
-		RefListIterator<Module,bool> moduleIterator(cfg->modules().modules());
-		while (Module* module = moduleIterator.iterate())
+		ListIterator<ModuleReference> moduleIterator(cfg->modules().modules());
+		while (ModuleReference* modRef = moduleIterator.iterate())
 		{
+			Module* module = modRef->module();
+
 			QAction* moduleItem = cfgMenu->addAction(CharString("%s (%s)", module->name(), module->uniqueName()).get());
 			moduleItem->setData(VariantPointer<Module>(module));
 			connect(moduleItem, SIGNAL(triggered(bool)), this, SLOT(addWidgetToCurrentWorkspace(bool)));
@@ -183,9 +185,11 @@ void DUQWindow::createModuleMenu(QMenu* parent)
 		moduleItem->setFont(italicFont);
 		moduleItem->setEnabled(false);
 	}
-	RefListIterator<Module,bool> moduleIterator(duq_.processingModules().modules());
-	while (Module* module = moduleIterator.iterate())
+	ListIterator<ModuleReference> moduleIterator(duq_.processingModules().modules());
+	while (ModuleReference* modRef = moduleIterator.iterate())
 	{
+		Module* module = modRef->module();
+
 		QAction* moduleItem = parent->addAction(CharString("%s (%s)", module->name(), module->uniqueName()).get());
 		moduleItem->setData(VariantPointer<Module>(module));
 		connect(moduleItem, SIGNAL(triggered(bool)), this, SLOT(addWidgetToCurrentWorkspace(bool)));

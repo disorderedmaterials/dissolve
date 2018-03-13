@@ -258,13 +258,13 @@ class DUQ
 	 */
 	private:
 	// List of Modules with pre-processing tasks to perform
-	RefList<Module,bool> preProcessingTasks_;
+	ModuleList preProcessingTasks_;
 	// List of main processing Modules to run
 	ModuleList processingModules_;
 	// Data associated with main processing Modules
 	GenericList processingModuleData_;
 	// List of Modules with post-processing tasks to perform
-	RefList<Module,bool> postProcessingTasks_;
+	ModuleList postProcessingTasks_;
 	// Current simulation step
 	int iteration_;
 	// Number of iterations performed

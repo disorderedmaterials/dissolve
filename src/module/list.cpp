@@ -1,5 +1,5 @@
 /*
-	*** dUQ Module List
+	*** Module List
 	*** src/module/list.cpp
 	Copyright T. Youngs 2012-2018
 
@@ -25,8 +25,8 @@
 #include "base/lineparser.h"
 
 // Static Members
-RefList<Module,bool> ModuleList::masterInstances_;
-RefList<Module,bool> ModuleList::failedRegistrations_;
+List<ModuleReference> ModuleList::masterInstances_;
+List<ModuleReference> ModuleList::failedRegistrations_;
 
 // Constructor
 ModuleList::ModuleList()
@@ -43,7 +43,7 @@ ModuleList::~ModuleList()
  */
 
 // Add module to list
-Module* ModuleList::addModule(Module* module, GenericList& moduleData, Module* addBeforeThis)
+Module* ModuleList::add(Module* module, Configuration* location, Module* addBeforeThis)
 {
 	Module* moduleToAdd = NULL;
 
@@ -56,7 +56,7 @@ Module* ModuleList::addModule(Module* module, GenericList& moduleData, Module* a
 	else if (module->instanceType() == Module::SingleInstance)
 	{
 		// Single instance modules are one-per-parent, so must see if it is already in the relevant list...
-		Module* existingModule = findModule(module->name());
+		Module* existingModule = find(module->name());
 		if (existingModule) moduleToAdd = existingModule;
 		else moduleToAdd = module->createInstance();
 	}
@@ -67,28 +67,43 @@ Module* ModuleList::addModule(Module* module, GenericList& moduleData, Module* a
 	}
 
 	// Add the module pointer to the list
-	RefListItem<Module, bool>* newModuleItem;
+	ModuleReference* newModuleItem;
 	if (addBeforeThis)
 	{
 		// Find the specified Module in the list
-		RefListItem<Module,bool>* ri = modules_.contains(addBeforeThis);
-		if (!ri)
+		ModuleReference* modRef = contains(addBeforeThis);
+		if (!modRef)
 		{
 			Messenger::error("ModuleList doesn't contain the Module pointer given as 'addBeforeThis'.\n");
 			return NULL;
 		}
-		else newModuleItem = modules_.addBefore(ri, moduleToAdd);
+		else newModuleItem = modules_.insertBefore(modRef);
 	}
-	else newModuleItem = modules_.add(moduleToAdd);
+	else newModuleItem = modules_.add();
+	newModuleItem->set(moduleToAdd, location);
 
 	return moduleToAdd;
 }
 
 // Find associated module by name
-Module* ModuleList::findModule(const char* name) const
+Module* ModuleList::find(const char* name) const
 {
-	RefListIterator<Module,bool> moduleIterator(modules_);
-	while (Module* module = moduleIterator.iterate()) if (DUQSys::sameString(module->name(),name)) return module;
+	ListIterator<ModuleReference> moduleIterator(modules_);
+	while (ModuleReference* modRef = moduleIterator.iterate())
+	{
+		Module* module = modRef->module();
+
+		if (DUQSys::sameString(module->name(),name)) return module;
+	}
+
+	return NULL;
+}
+
+// Find ModuleReference for specified Module
+ModuleReference* ModuleList::contains(Module* module)
+{
+	ListIterator<ModuleReference> moduleIterator(modules_);
+	while (ModuleReference* modRef = moduleIterator.iterate()) if (modRef->module() == module) return modRef;
 
 	return NULL;
 }
@@ -100,7 +115,7 @@ int ModuleList::nModules() const
 }
 
 // Return Modules associated to Configuration
-RefList<Module,bool>& ModuleList::modules()
+List<ModuleReference>& ModuleList::modules()
 {
 	return modules_;
 }
@@ -112,26 +127,35 @@ RefList<Module,bool>& ModuleList::modules()
 // Register master Module isntance
 void ModuleList::registerMasterInstance(Module* mainInstance)
 {
-	// Do sanity check on names
-	RefListIterator<Module,bool> moduleIterator(masterInstances_);
-	while (Module* module = moduleIterator.iterate())
+	// Do sanity check on name
+	ListIterator<ModuleReference> moduleIterator(masterInstances_);
+	while (ModuleReference* modRef = moduleIterator.iterate())
 	{
+		Module* module = modRef->module();
+
 		if (DUQSys::sameString(module->name(), mainInstance->name()))
 		{
 			Messenger::error("Two modules cannot have the same name (%s).\n", module->name());
-			failedRegistrations_.add(module);
+			ModuleReference* failedRef = failedRegistrations_.add();
+			failedRef->set(module);
 			return;
 		}
 	}
 
-	masterInstances_.add(mainInstance);
+	ModuleReference* masterRef = masterInstances_.add();
+	masterRef->set(mainInstance);
 }
 
 // Find master instance of named Module
 Module* ModuleList::findMasterInstance(const char* name)
 {
-	RefListIterator<Module,bool> moduleIterator(masterInstances_);
-	while (Module* masterInstance = moduleIterator.iterate()) if (DUQSys::sameString(masterInstance->name(), name)) return masterInstance;
+	ListIterator<ModuleReference> moduleIterator(masterInstances_);
+	while (ModuleReference* modRef = moduleIterator.iterate())
+	{
+		Module* masterInstance = modRef->module();
+		
+		if (DUQSys::sameString(masterInstance->name(), name)) return masterInstance;
+	}
 
 	return NULL;
 }
@@ -140,9 +164,11 @@ Module* ModuleList::findMasterInstance(const char* name)
 bool ModuleList::printMasterModuleInformation()
 {
 	Messenger::print("Module Information (%i available):\n", masterInstances_.nItems());
-	RefListIterator<Module,bool> moduleIterator(masterInstances_);
-	while (Module* masterInstance = moduleIterator.iterate())
+	ListIterator<ModuleReference> moduleIterator(masterInstances_);
+	while (ModuleReference* modRef = moduleIterator.iterate())
 	{
+		Module* masterInstance = modRef->module();
+
 		Messenger::print(" --> %s\n", masterInstance->name());
 		Messenger::print("     %s\n", masterInstance->brief());
 	}
@@ -151,15 +177,20 @@ bool ModuleList::printMasterModuleInformation()
 	{
 		Messenger::print("\n");
 		Messenger::print("Failed module registrations (%i):\n\n", failedRegistrations_.nItems());
-		RefListIterator<Module,bool> moduleIterator(failedRegistrations_);
-		while (Module* failedInstance = moduleIterator.iterate()) Messenger::print(" --> %s\n", failedInstance->name());
+		ListIterator<ModuleReference> moduleIterator(failedRegistrations_);
+		while (ModuleReference* modRef = moduleIterator.iterate())
+		{
+			Module* failedInstance = modRef->module();
+
+			Messenger::print(" --> %s\n", failedInstance->name());
+		}
 	}
 
 	return (failedRegistrations_.nItems() == 0);
 }
 
 // Return list of all master instances
-RefList<Module,bool>& ModuleList::masterInstances()
+List<ModuleReference>& ModuleList::masterInstances()
 {
 	return masterInstances_;
 }
@@ -167,9 +198,11 @@ RefList<Module,bool>& ModuleList::masterInstances()
 // Search for any instance of any module with the specified unique name
 Module* ModuleList::findInstanceByUniqueName(const char* uniqueName)
 {
-	RefListIterator<Module,bool> moduleIterator(masterInstances_);
-	while (Module* masterInstance = moduleIterator.iterate())
+	ListIterator<ModuleReference> moduleIterator(masterInstances_);
+	while (ModuleReference* modRef = moduleIterator.iterate())
 	{
+		Module* masterInstance = modRef->module();
+
 		// Master instance itself?
 		if (DUQSys::sameString(masterInstance->uniqueName(), uniqueName)) return masterInstance;
 

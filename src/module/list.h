@@ -1,5 +1,5 @@
 /*
-	*** dUQ Module List
+	*** Module List
 	*** src/module/list.h
 	Copyright T. Youngs 2012-2018
 
@@ -22,7 +22,8 @@
 #ifndef DUQ_MODULELIST_H
 #define DUQ_MODULELIST_H
 
-#include "templates/reflist.h"
+#include "module/reference.h"
+#include "templates/list.h"
 
 // Forward Declarations
 class Module;
@@ -42,18 +43,20 @@ class ModuleList
 	 * Module List
 	 */
 	private:
-	// List of Modules
-	RefList<Module,bool> modules_;
+	// List of Module References
+	List<ModuleReference> modules_;
 
 	public:
 	// Associate Module to list
-	Module* addModule(Module* module, GenericList& moduleData, Module* addBeforeThis = 0);
+	Module* add(Module* module, Configuration* location = NULL, Module* addBeforeThis = NULL);
 	// Find associated Module by name
-	Module* findModule(const char* name) const;
+	Module* find(const char* name) const;
+	// Find ModuleReference for specified Module
+	ModuleReference* contains(Module* module);
 	// Return number of Modules in the list
 	int nModules() const;
-	// Return Modules associated to list
-	RefList<Module,bool>& modules();
+	// Return list of ModuleReferences
+	List<ModuleReference>& modules();
 
 
 	/*
@@ -61,9 +64,9 @@ class ModuleList
 	 */
 	private:
 	// List of master Module instances
-	static RefList<Module,bool> masterInstances_;
+	static List<ModuleReference> masterInstances_;
 	// List of Modules that failed to register
-	static RefList<Module,bool> failedRegistrations_;
+	static List<ModuleReference> failedRegistrations_;
 
 	public:
 	// Register Module
@@ -73,7 +76,7 @@ class ModuleList
 	// Print out registered module information, and return false if any registration errors were encountered
 	static bool printMasterModuleInformation();
 	// Return list of all master instances
-	static RefList<Module,bool>& masterInstances();
+	static List<ModuleReference>& masterInstances();
 	// Search for any instance of any module with the specified unique name
 	static Module* findInstanceByUniqueName(const char* uniqueName);
 };
