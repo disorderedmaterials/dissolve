@@ -174,7 +174,7 @@ void MainTab::removeSubWindow(SubWindow* window)
  */
 
 // Add module widgets to specified layout
-void MainTab::addModuleWidgets(const RefList<Module,bool>& modules, List<SubWidget>& widgets, QLayout* layout)
+void MainTab::addModuleWidgets(const RefList<Module,bool>& modules, List<SubWidget>& widgets, QLayout* layout, bool allowShiftAndRemove)
 {
 	RefListIterator<Module,bool> moduleIterator(modules);
 	while (Module* module = moduleIterator.iterate())
@@ -186,8 +186,13 @@ void MainTab::addModuleWidgets(const RefList<Module,bool>& modules, List<SubWidg
 			layout->addWidget(frame);
 		}
 
-		ModuleControlWidget* moduleWidget = new ModuleControlWidget(duqWindow_, module, CharString("%s (%s)", module->name(), module->uniqueName()));
+		ModuleControlWidget* moduleWidget = new ModuleControlWidget(duqWindow_, module, CharString("%s (%s)", module->name(), module->uniqueName()), allowShiftAndRemove);
 		QObject::connect(moduleWidget, SIGNAL(moduleRun()), duqWindow_, SLOT(updateControls()));
+		if (allowShiftAndRemove)
+		{
+			// TODO
+			// QObject::connect(moduleWidget, SIGNAL(shiftModuleLeft(void*)), duqWindow_, SLOT(shiftModuleLeft(void*)));
+		}
 		layout->addWidget(moduleWidget);
 		widgets.own(moduleWidget);
 	}

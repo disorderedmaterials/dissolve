@@ -21,9 +21,7 @@
     <file>icons/general_arrowright.svg</file>
     <file>icons/general_arrowup.svg</file>
   </qresource>
-  <qresource prefix="module">
-    <file>icons/module_togglepanel.svg</file>
-  </qresource>
+  <qresource prefix="module"/>
   <qresource prefix="control">
     <file>icons/control_pause.svg</file>
     <file>icons/control_locked.svg</file>

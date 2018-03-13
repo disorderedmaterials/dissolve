@@ -210,7 +210,7 @@ SubWidget* DUQWindow::createSubWidget(const char* widgetName, const char* title)
 	}
 	else if (DUQSys::sameString(widgetName, "ModuleControl"))
 	{
-		ModuleControlWidget* moduleControlWidget = new ModuleControlWidget(this, NULL, title);
+		ModuleControlWidget* moduleControlWidget = new ModuleControlWidget(this, NULL, title, false);
 		connect(moduleControlWidget, SIGNAL(moduleRun()), this, SLOT(updateControls()));
 		connect(moduleControlWidget, SIGNAL(windowClosed(QString)), this, SLOT(removeWidgetFromCurrentWorkspace(QString)));
 		subWidget = moduleControlWidget;

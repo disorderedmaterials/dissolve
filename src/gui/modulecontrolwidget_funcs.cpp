@@ -37,12 +37,17 @@
 #include <QLabel>
 
 // Constructor
-ModuleControlWidget::ModuleControlWidget(DUQWindow* duqWindow, Module* module, const char* title) : SubWidget(duqWindow, title), module_(module), duqWindow_(duqWindow), duq_(duqWindow->duq())
+ModuleControlWidget::ModuleControlWidget(DUQWindow* duqWindow, Module* module, const char* title, bool showTopControls) : SubWidget(duqWindow, title), module_(module), duqWindow_(duqWindow), duq_(duqWindow->duq())
 {
 	// Set up user interface
 	ui.setupUi(this);
 
+	// Hide the top controls, allowing shift and removal of the Module, if requested
+	if (!showTopControls) ui.TopControlsFrame->setVisible(false);
+
 	moduleWidget_ = NULL;
+
+	panelState_ = ModuleControlWidget::ControlsAndWidgetVisible;
 
 	initialiseWindow(module_);
 
@@ -77,9 +82,6 @@ void ModuleControlWidget::initialiseWindow(Module* module)
 		ui.TopLabel->setText("? (?) @ ?");
 		ui.BottomLabel->setText("Targets: ?");
 	}
-
-	// Set widget toggle button state
-	ui.ToggleModuleWidgetButton->setChecked(ui.ControlsWidget->isVisible());
 }
 
 // Initialise controls
@@ -167,10 +169,10 @@ void ModuleControlWidget::initialiseControls(Module* module)
 	keywordsLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding), row, 0);
 
 	// Create module widget
-	QVBoxLayout* widgetLayout = new QVBoxLayout(ui.ControlsWidget);
+	QVBoxLayout* widgetLayout = new QVBoxLayout(ui.WidgetWidget);
 	widgetLayout->setContentsMargins(0,0,0,0);
 	widgetLayout->setSpacing(0);
-	moduleWidget_ = module->createWidget(ui.ControlsWidget, duq_);
+	moduleWidget_ = module->createWidget(ui.WidgetWidget, duq_);
 	if (moduleWidget_ == NULL) Messenger::printVerbose("Module '%s' did not provide a valid controller widget.\n", module->name());
 	else widgetLayout->addWidget(moduleWidget_);
 }
@@ -212,11 +214,12 @@ void ModuleControlWidget::updateControls()
 void ModuleControlWidget::disableSensitiveControls()
 {
 	// Disable control buttons
-	ui.ControlRunButton->setEnabled(false);
+	ui.RunButton->setEnabled(false);
 
 	// Disable groups
 	ui.ControlGroup->setEnabled(false);
 	ui.OptionsGroup->setEnabled(false);
+	ui.TopControlsFrame->setEnabled(false);
 
 	if (moduleWidget_) moduleWidget_->disableSensitiveControls();
 }
@@ -225,11 +228,12 @@ void ModuleControlWidget::disableSensitiveControls()
 void ModuleControlWidget::enableSensitiveControls()
 {
 	// Enable control buttons
-	ui.ControlRunButton->setEnabled(true);
+	ui.RunButton->setEnabled(true);
 
 	// Enable groups
 	ui.ControlGroup->setEnabled(true);
 	ui.OptionsGroup->setEnabled(true);
+	ui.TopControlsFrame->setEnabled(true);
 
 	if (moduleWidget_) moduleWidget_->enableSensitiveControls();
 }
@@ -278,19 +282,59 @@ bool ModuleControlWidget::readState(LineParser& parser)
 }
 
 /*
+ * Functions
+ */
+
+// Set panel visibility state
+void ModuleControlWidget::setPanelState(ModuleControlWidget::PanelState state)
+{
+	// If there is no Module widget, disallow the 'widget only' state
+	if ((state == ModuleControlWidget::OnlyWidgetVisible) && (!moduleWidget_)) state = ModuleControlWidget::ControlsAndWidgetVisible;
+
+	panelState_ = state;
+
+	// Set visibility of panels
+	ui.ControlsWidget->setVisible((panelState_ == ModuleControlWidget::ControlsAndWidgetVisible) || (panelState_ == ModuleControlWidget::OnlyControlsVisible));
+	ui.WidgetWidget->setVisible((panelState_ == ModuleControlWidget::ControlsAndWidgetVisible) || (panelState_ == ModuleControlWidget::OnlyWidgetVisible));
+
+	// Set icon in toggle button
+	QPixmap pixmap;
+	if (panelState_ == ModuleControlWidget::ControlsAndWidgetVisible) pixmap = QPixmap(":/general/icons/general_bothon.svg");
+	else if (panelState_ == ModuleControlWidget::OnlyControlsVisible) pixmap = QPixmap(":/general/icons/general_lefton.svg");
+	else if (panelState_ == ModuleControlWidget::OnlyWidgetVisible) pixmap = QPixmap(":/general/icons/general_righton.svg");
+	QIcon icon(pixmap);
+	ui.TogglePanelsButton->setIcon(icon);
+}
+
+/*
  * Widget Slots
  */
 
-void ModuleControlWidget::on_ControlRunButton_clicked(bool checked)
+void ModuleControlWidget::on_ShiftLeftButton_clicked(bool checked)
+{
+	emit (shiftModuleLeft(module_));
+}
+
+void ModuleControlWidget::on_ShiftRightButton_clicked(bool checked)
+{
+	emit (shiftModuleRight(module_));
+}
+
+void ModuleControlWidget::on_RemoveButton_clicked(bool checked)
+{
+	emit (removeModule(module_));
+}
+
+void ModuleControlWidget::on_RunButton_clicked(bool checked)
 {
 	module_->executeMainProcessing(duq_, duq_.worldPool());
 
 	emit moduleRun();
 }
 
-void ModuleControlWidget::on_ToggleModuleWidgetButton_clicked(bool checked)
+void ModuleControlWidget::on_TogglePanelsButton_clicked(bool checked)
 {
-	ui.ControlsWidget->setVisible(checked);
+	setPanelState((ModuleControlWidget::PanelState) ((panelState_+1)%ModuleControlWidget::nPanelStates));
 }
 
 void ModuleControlWidget::on_EnabledCheck_clicked(bool checked)

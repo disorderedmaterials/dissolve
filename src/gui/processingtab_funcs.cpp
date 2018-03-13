@@ -29,7 +29,7 @@ ProcessingTab::ProcessingTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent,
 {
 	ui.setupUi(this);
 
-	addModuleWidgets(duq_.processingModules().modules(), subWidgets_, ui.ModuleWidgetLayout);
+	addModuleWidgets(duq_.processingModules().modules(), subWidgets_, ui.ModuleWidgetLayout, true);
 }
 
 ProcessingTab::~ProcessingTab()

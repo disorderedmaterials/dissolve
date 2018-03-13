@@ -127,7 +127,7 @@ class MainTab : public ListItem<MainTab>
 	 */
 	public:
 	// Add module widgets to specified layout
-	void addModuleWidgets(const RefList<Module,bool>& modules, List<SubWidget>& widgets, QLayout* layout);
+	void addModuleWidgets(const RefList<Module,bool>& modules, List<SubWidget>& widgets, QLayout* layout, bool allowShiftAndRemove);
 };
 
 #endif

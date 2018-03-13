@@ -50,7 +50,7 @@ ConfigurationTab::ConfigurationTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* p
 	ComboPopulator(ui.CoordinatesFileFormatCombo, ImportModuleFormats::nCoordinateFormats, ImportModuleFormats::niceCoordinateFormats());
 
 	// Add current Module widgets to layout
-	addModuleWidgets(configuration_->modules().modules(), subWidgets_, ui.ModuleWidgetLayout);
+	addModuleWidgets(configuration_->modules().modules(), subWidgets_, ui.ModuleWidgetLayout, true);
 }
 
 ConfigurationTab::~ConfigurationTab()

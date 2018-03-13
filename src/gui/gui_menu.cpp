@@ -73,7 +73,7 @@ void DUQWindow::addWidgetToCurrentWorkspace(bool checked)
 		if (!window)
 		{
 			// Create a new ModuleWidget
-			ModuleControlWidget* moduleControlWidget = new ModuleControlWidget(this, module, CharString("%s (%s)", module->name(), module->uniqueName()));
+			ModuleControlWidget* moduleControlWidget = new ModuleControlWidget(this, module, CharString("%s (%s)", module->name(), module->uniqueName()), false);
 			connect(moduleControlWidget, SIGNAL(moduleRun()), this, SLOT(updateControls()));
 			connect(moduleControlWidget, SIGNAL(windowClosed(QString)), this, SLOT(removeWidgetFromCurrentWorkspace(QString)));
 			window = tab->addSubWindow(moduleControlWidget, module);

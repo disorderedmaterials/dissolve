@@ -49,7 +49,7 @@ class ModuleControlWidget : public SubWidget
 
 	public:
 	// Constructor / Destructor
-	ModuleControlWidget(DUQWindow* duqWindow, Module* module, const char* title);
+	ModuleControlWidget(DUQWindow* duqWindow, Module* module, const char* title, bool showTopControls);
 	~ModuleControlWidget();
 	// Main form declaration
 	Ui::ModuleControlWidget ui;
@@ -83,11 +83,21 @@ class ModuleControlWidget : public SubWidget
 	/*
 	 * Functions
 	 */
+	public:
+	// Panel visibility states
+	enum PanelState { OnlyControlsVisible, OnlyWidgetVisible, ControlsAndWidgetVisible, nPanelStates };
+
 	private:
+	// Current panel visibility
+	PanelState panelState_;
 	// ModuleWidget displayed in this control widget
 	ModuleWidget* moduleWidget_;
 	// List of keyword widgets displayed
 	RefList<KeywordWidgetBase,bool> keywordWidgets_;
+
+	public:
+	// Set panel visibility state
+	void setPanelState(PanelState state);
 
 
 	/*
@@ -95,11 +105,17 @@ class ModuleControlWidget : public SubWidget
 	 */
 	signals:
 	void windowClosed(QString windowTitle);
+	void shiftModuleLeft(void* module);
+	void shiftModuleRight(void* module);
+	void removeModule(void* module);
 	void moduleRun();
 
 	public slots:
-	void on_ControlRunButton_clicked(bool checked);
-	void on_ToggleModuleWidgetButton_clicked(bool checked);
+	void on_ShiftLeftButton_clicked(bool checked);
+	void on_ShiftRightButton_clicked(bool checked);
+	void on_RemoveButton_clicked(bool checked);
+	void on_RunButton_clicked(bool checked);
+	void on_TogglePanelsButton_clicked(bool checked);
 	void on_EnabledCheck_clicked(bool checked);
 	void on_FrequencySpin_valueChanged(int value);
 };
