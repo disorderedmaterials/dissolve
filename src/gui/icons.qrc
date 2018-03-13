@@ -8,6 +8,10 @@
   </qresource>
   <qresource prefix="general">
     <file>icons/general_options.svg</file>
+    <file>icons/general_bothon.svg</file>
+    <file>icons/general_cross.svg</file>
+    <file>icons/general_lefton.svg</file>
+    <file>icons/general_righton.svg</file>
     <file>icons/general_arrowdown.svg</file>
     <file>icons/general_arrowleft.svg</file>
     <file>icons/general_library.svg</file>
