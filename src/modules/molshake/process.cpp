@@ -21,11 +21,12 @@
 
 #include "modules/molshake/molshake.h"
 #include "main/duq.h"
+#include "modules/energy/energy.h"
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/changestore.h"
 #include "classes/configuration.h"
-#include "classes/energykernel.h"
+#include "classes/scaledenergykernel.h"
 #include "classes/moleculedistributor.h"
 #include "base/processpool.h"
 #include "base/timer.h"
@@ -43,7 +44,7 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 	/*
 	 * Perform a Molecule shake
 	 * 
-	 * This is a parallel routine, with processes operating as one pool.
+	 * This is a parallel routine, with processes operating as groups.
 	 */
 
 	// Check for zero Configuration targets
@@ -71,18 +72,18 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		double rotationStepSize = GenericListHelper<double>::retrieve(moduleData, "RotationStepSize", uniqueName(), keywords_.asDouble("RotationStepSize"));
 		const double rotationStepSizeMax = keywords_.asDouble("RotationStepSizeMax");
 		const double rotationStepSizeMin = keywords_.asDouble("RotationStepSizeMin");
-
 		const int nShakesPerMolecule = keywords_.asInt("ShakesPerMolecule");
+		double sizeFactor = GenericListHelper<double>::retrieve(moduleData, "SizeFactor", uniqueName(), keywords_.asDouble("SizeFactor"));
 		const double targetAcceptanceRate = keywords_.asDouble("TargetAcceptanceRate");
 		double translationStepSize = GenericListHelper<double>::retrieve(moduleData, "TranslationStepSize", uniqueName(), keywords_.asDouble("TranslationStepSize"));
 		const double translationStepSizeMax = keywords_.asDouble("TranslationStepSizeMax");
 		const double translationStepSizeMin = keywords_.asDouble("TranslationStepSizeMin");
-		const double termScale = 1.0;
 		const double rRT = 1.0/(.008314472*cfg->temperature());
 
 		// Print argument/parameter summary
-		Messenger::print("MolShake: Cutoff distance is %f\n", cutoffDistance);
-		Messenger::print("MolShake: Performing %i shake(s) per Molecule\n", nShakesPerMolecule);
+		Messenger::print("MolShake: Cutoff distance is %f.\n", cutoffDistance);
+		Messenger::print("MolShake: Performing %i shake(s) per Molecule.\n", nShakesPerMolecule);
+		if (sizeFactor < 1.0) Messenger::print("MolShake: Size factor is %f.\n", sizeFactor);
 		Messenger::print("MolShake: Step size for translation adjustments is %f Angstroms (allowed range is %f <= delta <= %f).\n", translationStepSize, translationStepSizeMin, translationStepSizeMax);
 		Messenger::print("MolShake: Step size for rotation adjustments is %f degrees (allowed range is %f <= delta <= %f).\n", rotationStepSize, rotationStepSizeMin, rotationStepSizeMax);
 
@@ -92,9 +93,11 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		DynamicArray<Molecule>& moleculeArray = cfg->molecules();
 		MoleculeDistributor distributor(moleculeArray, cfg->cells(), procPool, strategy, false);
 
-		// Create a local ChangeStore and EnergyKernel
+		// Create a local ChangeStore and a suitable EnergyKernel
 		ChangeStore changeStore(procPool);
-		EnergyKernel kernel(procPool, cfg, duq.potentialMap(), cutoffDistance);
+		EnergyKernel normalKernel(procPool, cfg, duq.potentialMap(), cutoffDistance);
+		ScaledEnergyKernel scaledKernel(sizeFactor, procPool, cfg, duq.potentialMap(), cutoffDistance);
+		EnergyKernel& kernel = sizeFactor < 1.0 ? scaledKernel : normalKernel;
 
 		// Initialise the random number buffer
 		procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
@@ -102,8 +105,8 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		int shake, nRotationAttempts = 0, nTranslationAttempts = 0, nRotationsAccepted = 0, nTranslationsAccepted = 0, nGeneralAttempts = 0;
 		bool accept;
 		double currentEnergy, newEnergy, delta, totalDelta = 0.0;
-		Vec3<double> rDelta;
 		Matrix3 transform;
+		Vec3<double> rDelta;
 		const Box* box = cfg->box();
 
 		/*
@@ -193,7 +196,6 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 
 				if (accept)
 				{
-// 					Messenger::print("Accepts move with delta %f\n", delta);
 					// Accept new (current) position of target Atom
 					changeStore.updateAll();
 					currentEnergy = newEnergy;
@@ -261,8 +263,21 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		if (rotationStepSize < rotationStepSizeMin) rotationStepSize = rotationStepSizeMin;
 		else if (rotationStepSize > rotationStepSizeMax) rotationStepSize = rotationStepSizeMax;
 
-		Messenger::print("MolShake: Updated step size for rotations is %f Angstroms.\n", rotationStepSize); 
+		Messenger::print("MolShake: Updated step size for rotations is %f degrees.\n", rotationStepSize); 
 		GenericListHelper<double>::realise(moduleData, "RotationStepSize", uniqueName(), GenericItem::InRestartFileFlag) = rotationStepSize;
+
+		// If sizeFactor is less than 1.0, check the total energy 
+		if (sizeFactor < 1.0)
+		{
+			if (EnergyModule::interatomicEnergy(procPool, cfg, duq.potentialMap()) < 0.0)
+			{
+				sizeFactor *= 1.2;
+				if (sizeFactor > 1.0) sizeFactor = 1.0;
+				Messenger::print("MolShake: Total energy now negative, so increasing sizeFactor to %f.\n", sizeFactor);
+				GenericListHelper<double>::realise(moduleData, "SizeFactor", uniqueName(), GenericItem::InRestartFileFlag) = sizeFactor;
+			}
+			else Messenger::print("MolShake: Total energy is positive, so sizeFactor will remain at %f.\n", sizeFactor);
+		}
 
 		// Increase coordinate index in Configuration
 		if ((nRotationsAccepted > 0) || (nTranslationsAccepted > 0)) cfg->incrementCoordinateIndex();
