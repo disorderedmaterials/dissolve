@@ -65,15 +65,17 @@ void DUQWindow::addWidgetToCurrentWorkspace(bool checked)
 	// If the QAction's data is valid then it should indicate a specific Module.
 	// Otherwise we add a new widget by the name of the QAction.
 	SubWindow* window = NULL;
-	Module* module = VariantPointer<Module>(action->data());
-	if (module)
+	ModuleReference* modRef = VariantPointer<ModuleReference>(action->data());
+	if (modRef)
 	{
+		Module* module = modRef->module();
+
 		// Is the Module already displayed?
 		window = tab->findSubWindow(CharString("%s (%s)", module->name(), module->uniqueName()));
 		if (!window)
 		{
 			// Create a new ModuleWidget
-			ModuleControlWidget* moduleControlWidget = new ModuleControlWidget(this, module, CharString("%s (%s)", module->name(), module->uniqueName()), false);
+			ModuleControlWidget* moduleControlWidget = new ModuleControlWidget(this, modRef, CharString("%s (%s)", module->name(), module->uniqueName()), false);
 			connect(moduleControlWidget, SIGNAL(moduleRun()), this, SLOT(updateControls()));
 			connect(moduleControlWidget, SIGNAL(windowClosed(QString)), this, SLOT(removeWidgetFromCurrentWorkspace(QString)));
 			window = tab->addSubWindow(moduleControlWidget, module);
@@ -170,7 +172,7 @@ void DUQWindow::createModuleMenu(QMenu* parent)
 			Module* module = modRef->module();
 
 			QAction* moduleItem = cfgMenu->addAction(CharString("%s (%s)", module->name(), module->uniqueName()).get());
-			moduleItem->setData(VariantPointer<Module>(module));
+			moduleItem->setData(VariantPointer<ModuleReference>(modRef));
 			connect(moduleItem, SIGNAL(triggered(bool)), this, SLOT(addWidgetToCurrentWorkspace(bool)));
 		}
 	}
@@ -191,7 +193,7 @@ void DUQWindow::createModuleMenu(QMenu* parent)
 		Module* module = modRef->module();
 
 		QAction* moduleItem = parent->addAction(CharString("%s (%s)", module->name(), module->uniqueName()).get());
-		moduleItem->setData(VariantPointer<Module>(module));
+		moduleItem->setData(VariantPointer<ModuleReference>(modRef));
 		connect(moduleItem, SIGNAL(triggered(bool)), this, SLOT(addWidgetToCurrentWorkspace(bool)));
 	}
 }

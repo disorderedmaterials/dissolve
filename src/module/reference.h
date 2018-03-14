@@ -22,11 +22,13 @@
 #ifndef DUQ_MODULEREFERENCE_H
 #define DUQ_MODULEREFERENCE_H
 
+#include "templates/list.h"
 #include "templates/listitem.h"
 
 // Forward Declarations
-class Module;
 class Configuration;
+class Module;
+class ModuleList;
 
 // Module Reference
 class ModuleReference : public ListItem<ModuleReference>
@@ -36,8 +38,6 @@ class ModuleReference : public ListItem<ModuleReference>
 	ModuleReference();
 	// Destructor
 	~ModuleReference();
-	// Conversion to Module*
-	operator Module*();
 
 
 	/*
@@ -48,12 +48,16 @@ class ModuleReference : public ListItem<ModuleReference>
 	Module* module_;
 	// Configuration location of Module (if relevant)
 	Configuration* configuration_;
+	// Parent ModuleList
+	ModuleList* parentList_;
 
 	public:
 	// Set Module and location
-	void set(Module* module, Configuration* cfg = NULL);
+	void set(Module* module, ModuleList* parentList, Configuration* cfg);
 	// Return referenced Module
 	Module* module();
+	// Return parent ModuleList
+	ModuleList* parentList();
 	// Return referenced Configuration
 	Configuration* configuration();
 	// Return whether the Module is a processing Module (i.e. is not in a Configuration)

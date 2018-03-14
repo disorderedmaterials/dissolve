@@ -220,6 +220,28 @@ SubWidget* DUQWindow::createSubWidget(const char* widgetName, const char* title)
 	return subWidget;
 }
 
+// Shift ModuleReference up in its list
+void DUQWindow::shiftModuleUp(void* moduleReference)
+{
+	// Cast the pointer into a valid ModuleReference*
+	ModuleReference* modRef = static_cast<ModuleReference*>(moduleReference);
+	if (!modRef) return;
+
+	// Make sure the reference contains a ModuleList pointer
+	if (!modRef->parentList()) return;
+	
+}
+
+// Shift ModuleReference down in its list
+void DUQWindow::shiftModuleDown(void* moduleReference)
+{
+}
+
+// Remove Module(Reference)
+void DUQWindow::removeModule(void* moduleReference)
+{
+}
+
 /*
  * Window State
  */

@@ -38,7 +38,7 @@
 #include <QLabel>
 
 // Constructor
-ModuleControlWidget::ModuleControlWidget(DUQWindow* duqWindow, Module* module, const char* title, bool showTopControls) : SubWidget(duqWindow, title), module_(module), duqWindow_(duqWindow), duq_(duqWindow->duq())
+ModuleControlWidget::ModuleControlWidget(DUQWindow* duqWindow, ModuleReference* modRef, const char* title, bool showTopControls) : SubWidget(duqWindow, title), duqWindow_(duqWindow), duq_(duqWindow->duq())
 {
 	// Set up user interface
 	ui.setupUi(this);
@@ -48,11 +48,13 @@ ModuleControlWidget::ModuleControlWidget(DUQWindow* duqWindow, Module* module, c
 
 	moduleWidget_ = NULL;
 
+	moduleReference_ = modRef;
+
 	panelState_ = ModuleControlWidget::ControlsAndWidgetVisible;
 
-	initialiseWindow(module_);
+	initialiseWindow(moduleReference_ ? moduleReference_->module() : NULL);
 
-	initialiseControls(module_);
+	initialiseControls(moduleReference_ ? moduleReference_->module() : NULL);
 
 	refreshing_ = false;
 }
@@ -159,7 +161,6 @@ void ModuleControlWidget::initialiseControls(Module* module)
 		{
 			widget = NULL;
 			base = NULL;
-			// ComplexData, BroadeningFunctionData
 		}
 
 		// Set tooltip on widget, and add to the layout and our list of controls
@@ -183,6 +184,13 @@ void ModuleControlWidget::initialiseControls(Module* module)
 	moduleWidget_ = module->createWidget(ui.WidgetWidget, duq_);
 	if (moduleWidget_ == NULL) Messenger::printVerbose("Module '%s' did not provide a valid controller widget.\n", module->name());
 	else widgetLayout->addWidget(moduleWidget_);
+
+	// Set and disable the panel toggle button if there is no Module widget
+	if (!moduleWidget_)
+	{
+		setPanelState(ModuleControlWidget::OnlyControlsVisible);
+		ui.TogglePanelsButton->setEnabled(false);
+	}
 }
 
 /*
@@ -197,20 +205,22 @@ void ModuleControlWidget::closeEvent(QCloseEvent* event)
 // Update controls within widget
 void ModuleControlWidget::updateControls()
 {
-	if (!module_) return;
+	if (!moduleReference_) return;
+
+	Module* module = moduleReference_->module();
 
 	refreshing_ = true;
 
 	// Update Control group
-	ui.EnabledCheck->setChecked(module_->enabled());
-	ui.FrequencySpin->setValue(module_->frequency());
-	ui.RunsInLabel->setText(module_->frequencyDetails(duq_.iteration()));
+	ui.EnabledCheck->setChecked(module->enabled());
+	ui.FrequencySpin->setValue(module->frequency());
+	ui.RunsInLabel->setText(module->frequencyDetails(duq_.iteration()));
 
 	// Select source list for keywords that have potentially been replicated / updated there
-	GenericList& moduleData = module_->configurationLocal() ? module_->targetConfigurations().firstItem()->moduleData() : duq_.processingModuleData();
+	GenericList& moduleData = module->configurationLocal() ? module->targetConfigurations().firstItem()->moduleData() : duq_.processingModuleData();
 
 	RefListIterator<KeywordWidgetBase,bool> keywordIterator(keywordWidgets_);
-	while (KeywordWidgetBase* keywordWidget = keywordIterator.iterate()) keywordWidget->updateValue(moduleData, module_->uniqueName());
+	while (KeywordWidgetBase* keywordWidget = keywordIterator.iterate()) keywordWidget->updateValue(moduleData, module->uniqueName());
 
 	// Update control widget
 	if (moduleWidget_) moduleWidget_->updateControls();
@@ -255,8 +265,11 @@ const char* ModuleControlWidget::widgetType()
 // Write widget state through specified LineParser
 bool ModuleControlWidget::writeState(LineParser& parser)
 {
+	Module* module = moduleReference_ ? moduleReference_->module() : NULL;
+	if (!module) return false;
+
 	// Write Module target
-	if (!parser.writeLineF("%s\n", module_->uniqueName())) return false;
+	if (!parser.writeLineF("%s\n", module->uniqueName())) return false;
 
 	// Write state data from ModuleWidget (if one exists)
 	if (moduleWidget_ && (!moduleWidget_->writeState(parser))) return false;
@@ -267,20 +280,22 @@ bool ModuleControlWidget::writeState(LineParser& parser)
 // Read widget state through specified LineParser
 bool ModuleControlWidget::readState(LineParser& parser)
 {
+
 	// First check if there is a current module pointer
 	// It is possible that one has not yet been set, e.g. if we are reading in a SubWindow.
-	bool moduleSet = module_;
+	Module* module = moduleReference_ ? moduleReference_->module() : NULL;
+	bool moduleSet = module;
 
-	// Read PairPotential target
+	// Read Module target
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-	module_ = ModuleList::findInstanceByUniqueName(parser.argc(0));
+	module = ModuleList::findInstanceByUniqueName(parser.argc(0));
 
 	// If we didn't previously have a module, but now we do, initialise the window and its controls
 	// This will also create the moduleWidget_ (in initialiseControls())
-	if (module_ && (!moduleSet))
+	if (module && (!moduleSet))
 	{
-		initialiseWindow(module_);
-		initialiseControls(module_);
+		initialiseWindow(module);
+		initialiseControls(module);
 	}
 
 	// Read state data from ModuleWidget (if one exists)
@@ -320,22 +335,25 @@ void ModuleControlWidget::setPanelState(ModuleControlWidget::PanelState state)
 
 void ModuleControlWidget::on_ShiftLeftButton_clicked(bool checked)
 {
-	emit (shiftModuleLeft(module_));
+	emit (shiftModuleUp(moduleReference_));
 }
 
 void ModuleControlWidget::on_ShiftRightButton_clicked(bool checked)
 {
-	emit (shiftModuleRight(module_));
+	emit (shiftModuleDown(moduleReference_));
 }
 
 void ModuleControlWidget::on_RemoveButton_clicked(bool checked)
 {
-	emit (removeModule(module_));
+	emit (removeModule(moduleReference_));
 }
 
 void ModuleControlWidget::on_RunButton_clicked(bool checked)
 {
-	module_->executeMainProcessing(duq_, duq_.worldPool());
+	Module* module = moduleReference_ ? moduleReference_->module() : NULL;
+	if (!module) return;
+
+	module->executeMainProcessing(duq_, duq_.worldPool());
 
 	emit moduleRun();
 }
@@ -349,7 +367,10 @@ void ModuleControlWidget::on_EnabledCheck_clicked(bool checked)
 {
 	if (refreshing_) return;
 
-	module_->setEnabled(checked);
+	Module* module = moduleReference_ ? moduleReference_->module() : NULL;
+	if (!module) return;
+
+	module->setEnabled(checked);
 
 	duqWindow_->setModified();
 }
@@ -358,7 +379,10 @@ void ModuleControlWidget::on_FrequencySpin_valueChanged(int value)
 {
 	if (refreshing_) return;
 
-	module_->setFrequency(value);
+	Module* module = moduleReference_ ? moduleReference_->module() : NULL;
+	if (!module) return;
+	
+	module->setFrequency(value);
 
 	duqWindow_->setModified();
 }

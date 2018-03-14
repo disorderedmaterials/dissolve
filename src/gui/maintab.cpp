@@ -177,9 +177,10 @@ void MainTab::removeSubWindow(SubWindow* window)
 void MainTab::addModuleWidgets(const List<ModuleReference>& modules, List<SubWidget>& widgets, QLayout* layout, bool allowShiftAndRemove)
 {
 	ListIterator<ModuleReference> moduleIterator(modules);
-	while (ModuleReference* refMod = moduleIterator.iterate())
+	while (ModuleReference* modRef = moduleIterator.iterate())
 	{
-		Module* module = refMod->module();
+		Module* module = modRef->module();
+		printf("Adding ModuleRef %p, containing module %p\n", modRef, modRef->module());
 
 		if (!moduleIterator.first())
 		{
@@ -188,12 +189,13 @@ void MainTab::addModuleWidgets(const List<ModuleReference>& modules, List<SubWid
 			layout->addWidget(frame);
 		}
 
-		ModuleControlWidget* moduleWidget = new ModuleControlWidget(duqWindow_, module, CharString("%s (%s)", module->name(), module->uniqueName()), allowShiftAndRemove);
+		ModuleControlWidget* moduleWidget = new ModuleControlWidget(duqWindow_, modRef, CharString("%s (%s)", module->name(), module->uniqueName()), allowShiftAndRemove);
 		QObject::connect(moduleWidget, SIGNAL(moduleRun()), duqWindow_, SLOT(updateControls()));
 		if (allowShiftAndRemove)
 		{
-			// TODO
-			// QObject::connect(moduleWidget, SIGNAL(shiftModuleLeft(void*)), duqWindow_, SLOT(shiftModuleLeft(void*)));
+			QObject::connect(moduleWidget, SIGNAL(shiftModuleUp(void*)), duqWindow_, SLOT(shiftModuleUp(void*)));
+			QObject::connect(moduleWidget, SIGNAL(shiftModuleDown(void*)), duqWindow_, SLOT(shiftModuleDown(void*)));
+			QObject::connect(moduleWidget, SIGNAL(removeModule(void*)), duqWindow_, SLOT(removeModule(void*)));
 		}
 		layout->addWidget(moduleWidget);
 		widgets.own(moduleWidget);

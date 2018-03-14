@@ -202,6 +202,14 @@ class DUQWindow : public QMainWindow
 	// Create named SubWidget
 	SubWidget* createSubWidget(const char* widgetName, const char* title);
 
+	public slots:
+	// Shift ModuleReference up in its list
+	void shiftModuleUp(void* moduleReference);
+	// Shift ModuleReference down in its list
+	void shiftModuleDown(void* moduleReference);
+	// Remove Module(Reference)
+	void removeModule(void* moduleReference);
+
 
 	/*
 	 * Window State

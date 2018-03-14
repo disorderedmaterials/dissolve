@@ -80,7 +80,7 @@ Module* ModuleList::add(Module* module, Configuration* location, Module* addBefo
 		else newModuleItem = modules_.insertBefore(modRef);
 	}
 	else newModuleItem = modules_.add();
-	newModuleItem->set(moduleToAdd, location);
+	newModuleItem->set(moduleToAdd, this, location);
 
 	return moduleToAdd;
 }
@@ -137,13 +137,13 @@ void ModuleList::registerMasterInstance(Module* mainInstance)
 		{
 			Messenger::error("Two modules cannot have the same name (%s).\n", module->name());
 			ModuleReference* failedRef = failedRegistrations_.add();
-			failedRef->set(module);
+			failedRef->set(module, NULL, NULL);
 			return;
 		}
 	}
 
 	ModuleReference* masterRef = masterInstances_.add();
-	masterRef->set(mainInstance);
+	masterRef->set(mainInstance, NULL, NULL);
 }
 
 // Find master instance of named Module

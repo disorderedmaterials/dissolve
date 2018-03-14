@@ -22,10 +22,11 @@
 #include "module/reference.h"
 
 // Constructor
-ModuleReference::ModuleReference()
+ModuleReference::ModuleReference() : ListItem<ModuleReference>()
 {
 	module_ = NULL;
 	configuration_ = NULL;
+	parentList_ = NULL;
 }
 
 // Destructor
@@ -33,20 +34,15 @@ ModuleReference::~ModuleReference()
 {
 }
 
-// Conversion to Module*
-ModuleReference::operator Module*()
-{
-	return module_;
-}
-
 /*
  * Data
  */
 
 // Set Module and location
-void ModuleReference::set(Module* module, Configuration* cfg)
+void ModuleReference::set(Module* module, ModuleList* parentList, Configuration* cfg)
 {
 	module_ = module;
+	parentList_ = parentList;
 	configuration_ = cfg;
 }
 
@@ -60,6 +56,12 @@ Module* ModuleReference::module()
 Configuration* ModuleReference::configuration()
 {
 	return configuration_;
+}
+
+// Return parent ModuleList
+ModuleList* ModuleReference::parentList()
+{
+	return parentList_;
 }
 
 // Return whether the Module is a processing Module (i.e. is not in a Configuration)

@@ -31,6 +31,7 @@
 class DUQ;
 class DUQWindow;
 class Module;
+class ModuleReference;
 class ModuleWidget;
 
 // Module Control Widget
@@ -41,7 +42,7 @@ class ModuleControlWidget : public SubWidget
 
 	private:
 	// Associated Module
-	Module* module_;
+	ModuleReference* moduleReference_;
 	// Pointer to DUQWindow
 	DUQWindow* duqWindow_;
 	// Reference to dUQ
@@ -49,7 +50,7 @@ class ModuleControlWidget : public SubWidget
 
 	public:
 	// Constructor / Destructor
-	ModuleControlWidget(DUQWindow* duqWindow, Module* module, const char* title, bool showTopControls);
+	ModuleControlWidget(DUQWindow* duqWindow, ModuleReference* moduleReference, const char* title, bool showTopControls);
 	~ModuleControlWidget();
 	// Main form declaration
 	Ui::ModuleControlWidget ui;
@@ -105,8 +106,8 @@ class ModuleControlWidget : public SubWidget
 	 */
 	signals:
 	void windowClosed(QString windowTitle);
-	void shiftModuleLeft(void* module);
-	void shiftModuleRight(void* module);
+	void shiftModuleUp(void* module);
+	void shiftModuleDown(void* module);
 	void removeModule(void* module);
 	void moduleRun();
 
