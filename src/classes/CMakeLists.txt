@@ -41,6 +41,7 @@ add_library(classes
   pairpotential.cpp
   potentialmap.cpp
   partialset.cpp
+  scaledenergykernel.cpp
   scatteringmatrix.cpp
   speciesangle.cpp
   speciesatom.cpp
@@ -93,6 +94,7 @@ add_library(classes
   pairpotential.h
   potentialmap.h
   partialset.h
+  scaledenergykernel.h
   scatteringmatrix.h
   species.h
   speciesangle.h

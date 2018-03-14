@@ -46,11 +46,16 @@ EnergyKernel::~EnergyKernel()
  * Internal Routines
  */
 
+// Return PairPotential energy between atoms provided as pointers, at the distance specified
+double EnergyKernel::pairPotentialEnergy(const Atom* i, const Atom* j, double r)
+{
+	return potentialMap_.energy(i, j, r);
+}
+
 // Return PairPotential energy between atoms provided as pointers (no minimum image calculation)
 double EnergyKernel::energyWithoutMim(const Atom* i, const Atom* j)
 {
-// 	printf("EnergyKernel:;atoms(*,*) - energy %i-%i is %f at %f lit\n", min(i->arrayIndex(),j->arrayIndex()), max(i->arrayIndex(),j->arrayIndex()), potentialMap_.energy(i->masterTypeIndex(), j->masterTypeIndex(), (i->r() - j->r()).magnitude()), (i->r() - j->r()).magnitude());
-	return potentialMap_.energy(i, j, (i->r() - j->r()).magnitude());
+	return pairPotentialEnergy(i, j, (i->r() - j->r()).magnitude());
 }
 
 // Return PairPotential energy between atom (pointer) and grain provided (no minimum image calculation)
@@ -104,8 +109,8 @@ double EnergyKernel::energyWithoutMim(const Grain* grainI, const Grain* grainJ)
 // Return PairPotential energy between atoms provided as pointers (minimum image calculation)
 double EnergyKernel::energyWithMim(const Atom* i, const Atom* j)
 {
-// 	Messenger::print("EnergyKernel::atoms(*,*) - energy %i-%i is %f at %f mim\n", min(i->arrayIndex(),j->arrayIndex()), max(i->arrayIndex(),j->arrayIndex()), potentialMap_.energy(i->masterTypeIndex(), j->masterTypeIndex(), box_->minimumDistance(j, i)), box_->minimumDistance(j, i));
-	return potentialMap_.energy(i, j, box_->minimumDistance(j, i));
+// 	Messenger::print("EnergyKernel::atoms(*,*) - energy %i-%i is %f at %f mim\n", min(i->arrayIndex(),j->arrayIndex()), max(i->arrayIndex(),j->arrayIndex()), pairPotentialEnergy(i->masterTypeIndex(), j->masterTypeIndex(), box_->minimumDistance(j, i)), box_->minimumDistance(j, i));
+	return pairPotentialEnergy(i, j, box_->minimumDistance(j, i));
 }
 
 // Return PairPotential energy between atom (pointer) and grain provided (minimum image calculation)
@@ -239,11 +244,11 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 				if (rSq > cutoffDistanceSquared_) continue;
 
 				// Check for atoms in the same species
-				if (molI != jj->molecule()) totalEnergy += potentialMap_.energy(ii, jj, sqrt(rSq));
+				if (molI != jj->molecule()) totalEnergy += pairPotentialEnergy(ii, jj, sqrt(rSq));
 				else
 				{
 					scale = ii->scaling(jj);
-					if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(ii, jj, sqrt(rSq)) * scale;
+					if (scale > 1.0e-3) totalEnergy += pairPotentialEnergy(ii, jj, sqrt(rSq)) * scale;
 				}
 			}
 		}
@@ -269,11 +274,11 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 				if (rSq > cutoffDistanceSquared_) continue;
 
 				// Check for atoms in the same molecule
-				if (molI != jj->molecule()) totalEnergy += potentialMap_.energy(ii, jj, sqrt(rSq));
+				if (molI != jj->molecule()) totalEnergy += pairPotentialEnergy(ii, jj, sqrt(rSq));
 				else
 				{
 					scale = ii->scaling(jj);
-					if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(ii, jj, sqrt(rSq)) * scale;
+					if (scale > 1.0e-3) totalEnergy += pairPotentialEnergy(ii, jj, sqrt(rSq)) * scale;
 				}
 			}
 		}
@@ -328,11 +333,11 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::Di
 				if (rSq > cutoffDistanceSquared_) continue;
 
 				// Check for atoms in the same species
-				if (ii->molecule() != molJ) totalEnergy += potentialMap_.energy(jj, ii, sqrt(rSq));
+				if (ii->molecule() != molJ) totalEnergy += pairPotentialEnergy(jj, ii, sqrt(rSq));
 				else
 				{
 					scale = ii->scaling(jj);
-					if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(jj, ii, sqrt(rSq)) * scale;
+					if (scale > 1.0e-3) totalEnergy += pairPotentialEnergy(jj, ii, sqrt(rSq)) * scale;
 				}
 			}
 		}
@@ -364,11 +369,11 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::Di
 				if (rSq > cutoffDistanceSquared_) continue;
 
 				// Check for atoms in the same species
-				if (ii->molecule() != molJ) totalEnergy += potentialMap_.energy(jj, ii, sqrt(rSq));
+				if (ii->molecule() != molJ) totalEnergy += pairPotentialEnergy(jj, ii, sqrt(rSq));
 				else
 				{
 					scale = ii->scaling(jj);
-					if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(jj, ii, sqrt(rSq)) * scale;
+					if (scale > 1.0e-3) totalEnergy += pairPotentialEnergy(jj, ii, sqrt(rSq)) * scale;
 				}
 			}
 		}
@@ -427,11 +432,11 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::D
 			if (rSq > cutoffDistanceSquared_) continue;
 
 			// Check for atoms in the same species
-			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(i, jj, sqrt(rSq));
+			if (moleculeI != jj->molecule()) totalEnergy += pairPotentialEnergy(i, jj, sqrt(rSq));
 			else
 			{
 				scale = i->scaling(jj);
-				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(i, jj, sqrt(rSq)) * scale;
+				if (scale > 1.0e-3) totalEnergy += pairPotentialEnergy(i, jj, sqrt(rSq)) * scale;
 			}
 		}
 		else if (flags&KernelFlags::ExcludeIGEJFlag) for (j=start; j<nOtherAtoms; j += stride)
@@ -447,11 +452,11 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::D
 			if (rSq > cutoffDistanceSquared_) continue;
 
 			// Check for atoms in the same species
-			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(i, jj, sqrt(rSq));
+			if (moleculeI != jj->molecule()) totalEnergy += pairPotentialEnergy(i, jj, sqrt(rSq));
 			else
 			{
 				scale = i->scaling(jj);
-				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(i, jj, sqrt(rSq)) * scale;
+				if (scale > 1.0e-3) totalEnergy += pairPotentialEnergy(i, jj, sqrt(rSq)) * scale;
 			}
 		}
 		else if (flags&KernelFlags::ExcludeIntraIGEJFlag) for (j=start; j<nOtherAtoms; j += stride)
@@ -464,14 +469,14 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::D
 			if (rSq > cutoffDistanceSquared_) continue;
 
 			// Check for atoms in the same species
-			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(i, jj, sqrt(rSq));
+			if (moleculeI != jj->molecule()) totalEnergy += pairPotentialEnergy(i, jj, sqrt(rSq));
 			else
 			{
 				// Pointer comparison for i >= jj
 				if (i >= jj) continue;
 
 				scale = i->scaling(jj);
-				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(i, jj, sqrt(rSq)) * scale;
+				if (scale > 1.0e-3) totalEnergy += pairPotentialEnergy(i, jj, sqrt(rSq)) * scale;
 			}
 		}
 		else for (j=start; j<nOtherAtoms; j += stride)
@@ -484,11 +489,11 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::D
 			if (rSq > cutoffDistanceSquared_) continue;
 
 			// Check for atoms in the same species
-			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(i, jj, sqrt(rSq));
+			if (moleculeI != jj->molecule()) totalEnergy += pairPotentialEnergy(i, jj, sqrt(rSq));
 			else
 			{
 				scale = i->scaling(jj);
-				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(i, jj, sqrt(rSq)) * scale;
+				if (scale > 1.0e-3) totalEnergy += pairPotentialEnergy(i, jj, sqrt(rSq)) * scale;
 			}
 		}
 	}
@@ -508,11 +513,11 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::D
 			if (rSq > cutoffDistanceSquared_) continue;
 
 			// Check for atoms in the same species
-			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(i, jj, sqrt(rSq));
+			if (moleculeI != jj->molecule()) totalEnergy += pairPotentialEnergy(i, jj, sqrt(rSq));
 			else
 			{
 				scale = i->scaling(jj);
-				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(i, jj, sqrt(rSq)) * scale;
+				if (scale > 1.0e-3) totalEnergy += pairPotentialEnergy(i, jj, sqrt(rSq)) * scale;
 			}
 		}
 		else if (flags&KernelFlags::ExcludeIGEJFlag) for (j=start; j<nOtherAtoms; j += stride)
@@ -528,11 +533,11 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::D
 			if (rSq > cutoffDistanceSquared_) continue;
 
 			// Check for atoms in the same species
-			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(i, jj, sqrt(rSq));
+			if (moleculeI != jj->molecule()) totalEnergy += pairPotentialEnergy(i, jj, sqrt(rSq));
 			else
 			{
 				scale = i->scaling(jj);
-				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(i, jj, sqrt(rSq)) * scale;
+				if (scale > 1.0e-3) totalEnergy += pairPotentialEnergy(i, jj, sqrt(rSq)) * scale;
 			}
 		}
 		else if (flags&KernelFlags::ExcludeIntraIGEJFlag) for (j=start; j<nOtherAtoms; j += stride)
@@ -545,14 +550,14 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::D
 			if (rSq > cutoffDistanceSquared_) continue;
 
 			// Check for atoms in the same species
-			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(i, jj, sqrt(rSq));
+			if (moleculeI != jj->molecule()) totalEnergy += pairPotentialEnergy(i, jj, sqrt(rSq));
 			else
 			{
 				// Pointer comparison for i >= jj
 				if (i >= jj) continue;
 
 				scale = i->scaling(jj);
-				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(i, jj, sqrt(rSq)) * scale;
+				if (scale > 1.0e-3) totalEnergy += pairPotentialEnergy(i, jj, sqrt(rSq)) * scale;
 			}
 		}
 		else for (j=start; j<nOtherAtoms; j += stride)
@@ -565,11 +570,11 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::D
 			if (rSq > cutoffDistanceSquared_) continue;
 
 			// Check for atoms in the same species
-			if (moleculeI != jj->molecule()) totalEnergy += potentialMap_.energy(i, jj, sqrt(rSq));
+			if (moleculeI != jj->molecule()) totalEnergy += pairPotentialEnergy(i, jj, sqrt(rSq));
 			else
 			{
 				scale = i->scaling(jj);
-				if (scale > 1.0e-3) totalEnergy += potentialMap_.energy(i, jj, sqrt(rSq)) * scale;
+				if (scale > 1.0e-3) totalEnergy += pairPotentialEnergy(i, jj, sqrt(rSq)) * scale;
 			}
 		}
 	}
@@ -710,7 +715,7 @@ double EnergyKernel::correct(const Atom* i)
 		if (scale > 1.0e-3)
 		{
 			r = box_->minimumDistance(rI, j->r());
-			correctionEnergy += potentialMap_.energy(i, j, r) * scale;
+			correctionEnergy += pairPotentialEnergy(i, j, r) * scale;
 		}
 	}
 

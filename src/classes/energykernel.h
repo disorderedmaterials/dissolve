@@ -54,7 +54,7 @@ class EnergyKernel
 	/*
 	 * Source Data
 	 */
-	private:
+	protected:
 	// Source Configuration
 	const Configuration* configuration_;
 	// Source Box (from Configuration)
@@ -71,6 +71,8 @@ class EnergyKernel
 	 * Internal Routines
 	 */
 	private:
+	// Return PairPotential energy between atoms provided as pointers, at the distance specified
+	virtual double pairPotentialEnergy(const Atom* i, const Atom* j, double r);
 	// Return PairPotential energy between atoms provided as pointers (no minimum image calculation)
 	double energyWithoutMim(const Atom* i, const Atom* j);
 	// Return PairPotential energy between atom (pointer) and grain provided (no minimum image calculation)

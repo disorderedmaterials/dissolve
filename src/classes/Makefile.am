@@ -12,7 +12,7 @@ libclasses_la_SOURCES += intra.cpp isotopedata.cpp isotopologue.cpp isotopologue
 libclasses_la_SOURCES += kvector.cpp
 libclasses_la_SOURCES += masterintra.cpp molecule.cpp moleculedistributor.cpp
 libclasses_la_SOURCES += pairpotential.cpp potentialmap.cpp partialset.cpp
-libclasses_la_SOURCES += scatteringmatrix.cpp species.cpp species_atomic.cpp species_grains.cpp species_intra.cpp species_io.cpp species_isotopologues.cpp species_transform.cpp speciesangle.cpp speciesatom.cpp speciesbond.cpp speciesgrain.cpp speciesinfo.cpp speciesintra.cpp speciestorsion.cpp species_io.cpp
+libclasses_la_SOURCES += scaledenergykernel.cpp scatteringmatrix.cpp species.cpp species_atomic.cpp species_grains.cpp species_intra.cpp species_io.cpp species_isotopologues.cpp species_transform.cpp speciesangle.cpp speciesatom.cpp speciesbond.cpp speciesgrain.cpp speciesinfo.cpp speciesintra.cpp speciestorsion.cpp species_io.cpp
 libclasses_la_SOURCES += torsion.cpp
 libclasses_la_SOURCES += weights.cpp
 
@@ -28,7 +28,7 @@ noinst_HEADERS += intra.h isotopedata.h isotopologue.h isotopologuemix.h isotopo
 noinst_HEADERS += kernelflags.h kvector.h
 noinst_HEADERS += masterintra.h molecule.h moleculedistributor.h
 noinst_HEADERS += pairpotential.h potentialmap.h partialset.h
-noinst_HEADERS += scatteringmatrix.h species.h speciesangle.h speciesatom.h speciesbond.h speciesgrain.h speciesinfo.h speciesintra.h speciestorsion.h
+noinst_HEADERS += scaledenergykernel.h scatteringmatrix.h species.h speciesangle.h speciesatom.h speciesbond.h speciesgrain.h speciesinfo.h speciesintra.h speciestorsion.h
 noinst_HEADERS += torsion.h
 noinst_HEADERS += weights.h
 
