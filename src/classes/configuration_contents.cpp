@@ -43,6 +43,9 @@ bool Configuration::initialise(ProcessPool& procPool, bool randomise, double pai
 {
 	Messenger::print("Setting up Configuration from Species / multiplier definition...\n");
 
+	// Clear current contents
+	clear();
+
 	/*
 	 * Check Species populations, and calculate total number of expected Atoms
 	 */

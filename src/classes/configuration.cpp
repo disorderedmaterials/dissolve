@@ -89,6 +89,8 @@ void Configuration::clear()
 	if (box_ != NULL) delete box_;
 	box_ = NULL;
 	cells_.clear();
+
+	coordinateIndex_ = 0;
 }
 
 /*
