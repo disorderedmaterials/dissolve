@@ -187,7 +187,7 @@ void Molecule::addTorsion(Torsion* torsion)
 {
 	torsions_.add(torsion);
 
-	if (torsion->molecule() != NULL) Messenger::warn("Molecule parent is already set in Torsionid %i, and we are about to overwrite it...\n", torsion->arrayIndex());
+	if (torsion->molecule() != NULL) Messenger::warn("Molecule parent is already set in Torsion id %i, and we are about to overwrite it...\n", torsion->arrayIndex());
 	torsion->setMolecule(this);
 }
 
