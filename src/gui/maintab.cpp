@@ -180,7 +180,6 @@ void MainTab::addModuleWidgets(const List<ModuleReference>& modules, List<SubWid
 	while (ModuleReference* modRef = moduleIterator.iterate())
 	{
 		Module* module = modRef->module();
-		printf("Adding ModuleRef %p, containing module %p\n", modRef, modRef->module());
 
 		if (!moduleIterator.first())
 		{
