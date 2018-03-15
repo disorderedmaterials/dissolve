@@ -415,7 +415,6 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::D
 	int start = processPool_.interleavedLoopStart(strategy);
 	int stride = processPool_.interleavedLoopStride(strategy);
 
-	// Loop over cell atoms
 	if (flags&KernelFlags::ApplyMinimumImageFlag)
 	{
 		// Loop over other Atoms
