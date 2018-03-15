@@ -50,3 +50,9 @@ void Configuration::updateCellLocation(Atom* i)
 		cell->addAtom(i);
 	}
 }
+
+// Update Cell location of specified Molecule
+void Configuration::updateCellLocation(Molecule* mol)
+{
+	for (int n = 0; n < mol->nAtoms(); ++n) updateCellLocation(mol->atom(n));
+}
