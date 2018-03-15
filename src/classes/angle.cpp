@@ -27,14 +27,29 @@
 // Constructor
 Angle::Angle() : Intra(), DynamicArrayObject<Angle>()
 {
-	i_ = NULL;
-	j_ = NULL;
-	k_ = NULL;
+	clear();
 }
 
 // Destructor
 Angle::~Angle()
 {
+}
+
+/*
+ * DynamicArrayObject Virtuals
+ */
+
+// Clear object, ready for re-use
+void Angle::clear()
+{
+	speciesAngle_ = NULL;
+	i_ = NULL;
+	j_ = NULL;
+	k_ = NULL;
+
+	// Intra
+	deleteAttachedAtomArrays();
+	molecule_ = NULL;
 }
 
 /*

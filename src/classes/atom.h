@@ -48,6 +48,14 @@ class Atom : public DynamicArrayObject<Atom>
 
 
 	/*
+	 * DynamicArrayObject Virtuals
+	 */
+	public:
+	// Clear object, ready for re-use
+	void clear();
+
+
+	/*
 	 * Properties
 	 */
 	private:

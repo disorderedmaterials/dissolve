@@ -110,7 +110,7 @@ template <class T> class ArrayChunk
 		}
 		catch (bad_alloc& alloc)
 		{
-			Messenger::error("ArrayChunk<T>() - Failed to allocate sufficient memory for objectArray_. Exception was : %s\n", alloc.what());
+			Messenger::error("ArrayChunk<T>() - Failed to allocate sufficient memory for objectUsed_. Exception was : %s\n", alloc.what());
 			return false;
 		}
 
@@ -120,6 +120,17 @@ template <class T> class ArrayChunk
 		nUnusedObjects_ = nObjects_;
 
 		return true;
+	}
+	// Clear entire chunk
+	void clear()
+	{
+		for (int n=0; n<nObjects_; ++n)
+		{
+			objectArray_[n].clear();
+			objectUsed_[n] = false;
+		}
+		nextAvailableObject_ = 0;
+		nUnusedObjects_ = nObjects_;
 	}
 	// Return next available object
 	T* nextAvailable()
@@ -171,8 +182,9 @@ template <class T> class ArrayChunk
 		int offset = objectOffset(object);
 		if (offset == -1) return false;
 		
-		// Mark the object as unused, and increase the unused counter
+		// Mark the object as unused, clear it, and increase the unused counter
 		objectUsed_[offset] = false;
+		object->clear();
 
 		++nUnusedObjects_;
 		if (nextAvailableObject_ == -1) nextAvailableObject_ = offset;
@@ -274,8 +286,12 @@ template <class T> class DynamicArray
 	// Clear array, returning all objects to the pool
 	void clear()
 	{
-		for (int n = 0; n<array_.nItems(); ++n) returnObject(array_[n]);
+		// Clear array
 		array_.clear();
+
+		// Clear chunks
+		for (ArrayChunk<T>* chunk = arrayChunks_.first(); chunk != NULL; chunk = chunk->next) chunk->clear();
+		currentChunk_ = arrayChunks_.first();
 	}
 	// Initialise array to specified size, creating objects from factory
 	bool initialise(int nItems)

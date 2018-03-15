@@ -30,6 +30,21 @@
 // Constructor
 Atom::Atom()
 {
+	clear();
+}
+
+// Destructor
+Atom::~Atom()
+{
+}
+
+/*
+ * DynamicArrayObject Virtuals
+ */
+
+// Clear object, ready for re-use
+void Atom::clear()
+{
 	// Properties
 	element_ = 0;
 	charge_ = 0.0;
@@ -41,11 +56,6 @@ Atom::Atom()
 	molecule_ = NULL;
 	grain_ = NULL;
 	cell_ = NULL;
-}
-
-// Destructor
-Atom::~Atom()
-{
 }
 
 /*

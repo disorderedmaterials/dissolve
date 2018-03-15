@@ -55,6 +55,14 @@ class Molecule : public DynamicArrayObject<Molecule>
 
 
 	/*
+	 * DynamicArrayObject Virtuals
+	 */
+	public:
+	// Clear object, ready for re-use
+	void clear();
+
+
+	/*
 	 * Contents
 	 */
 	private:

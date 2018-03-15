@@ -27,16 +27,30 @@
 // Constructor
 Torsion::Torsion() : Intra(), DynamicArrayObject<Torsion>()
 {
-	speciesTorsion_ = NULL;
-	i_ = NULL;
-	j_ = NULL;
-	k_ = NULL;
-	l_ = NULL;
+	clear();
 }
 
 // Destructor
 Torsion::~Torsion()
 {
+}
+
+/*
+ * DynamicArrayObject Virtuals
+ */
+
+// Clear object, ready for re-use
+void Torsion::clear()
+{
+	speciesTorsion_ = NULL;
+	i_ = NULL;
+	j_ = NULL;
+	k_ = NULL;
+	l_ = NULL;
+
+	// Intra
+	deleteAttachedAtomArrays();
+	molecule_ = NULL;
 }
 
 /*

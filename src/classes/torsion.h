@@ -42,6 +42,14 @@ class Torsion : public Intra, public DynamicArrayObject<Torsion>
 
 
 	/*
+	 * DynamicArrayObject Virtuals
+	 */
+	public:
+	// Clear object, ready for re-use
+	void clear();
+
+
+	/*
 	 * Atom Information
 	 */
 	private:

@@ -42,6 +42,14 @@ class Angle : public Intra, public DynamicArrayObject<Angle>
 
 
 	/*
+	 * DynamicArrayObject Virtuals
+	 */
+	public:
+	// Clear object, ready for re-use
+	void clear();
+
+
+	/*
 	 * Atom Information
 	 */
 	private:

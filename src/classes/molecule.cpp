@@ -44,6 +44,20 @@ Molecule::~Molecule()
 }
 
 /*
+ * DynamicArrayObject Virtuals
+ */
+
+// Clear object, ready for re-use
+void Molecule::clear()
+{
+	atoms_.clear();
+	grains_.clear();
+	bonds_.clear();
+	angles_.clear();
+	torsions_.clear();
+}
+
+/*
  * Atoms / Grains
  */
 

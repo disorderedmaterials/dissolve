@@ -27,14 +27,28 @@
 // Constructor
 Bond::Bond() : Intra(), DynamicArrayObject<Bond>()
 {
-	speciesBond_ = NULL;
-	i_ = NULL;
-	j_ = NULL;
+	clear();
 }
 
 // Destructor
 Bond::~Bond()
 {
+}
+
+/*
+ * DynamicArrayObject Virtuals
+ */
+
+// Clear object, ready for re-use
+void Bond::clear()
+{
+	speciesBond_ = NULL;
+	i_ = NULL;
+	j_ = NULL;
+
+	// Intra
+	deleteAttachedAtomArrays();
+	molecule_ = NULL;
 }
 
 /*

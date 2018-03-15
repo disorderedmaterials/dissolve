@@ -53,6 +53,8 @@ template <class T> class DynamicArrayObject : public DynamicArrayObjectBase<T>
 	friend class DynamicArray<T>;
 
 	protected:
+	// Clear object, ready for re-use
+	virtual void clear() = 0;
 	// Return index of object within parent DynamicArray
 	void setArrayIndex(int index)
 	{
