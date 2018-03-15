@@ -103,6 +103,9 @@ class ConfigurationTab : public QWidget, public MainTab
 	// Initial Coordinates
 	void on_CoordinatesFileEdit_textChanged(QString text);
 	void on_CoordinatesFileSelectButton_clicked(bool checked);
+	// Actions
+	void on_RegenerateNowButton_clicked(bool checked);
+	void on_ExportButton_clicked(bool checked);
 
 
 	/*

@@ -26,10 +26,12 @@
 #include "gui/helpers/combopopulator.h"
 #include "gui/helpers/tablewidgetupdater.h"
 #include "main/duq.h"
+#include "modules/export/export.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
 #include "templates/variantpointer.h"
+#include <QMessageBox>
 
 // Constructor / Destructor
 ConfigurationTab::ConfigurationTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const char* title, Configuration* cfg) : MainTab(duqWindow, duq, parent, CharString("Configuration: %s", title), this)
@@ -312,6 +314,30 @@ void ConfigurationTab::on_CoordinatesFileEdit_textChanged(QString text)
 void ConfigurationTab::on_CoordinatesFileSelectButton_clicked(bool checked)
 {
 	if (refreshing_) return;
+}
+
+void ConfigurationTab::on_RegenerateNowButton_clicked(bool checked)
+{
+	// Are we sure that's what we want to do?
+	QMessageBox queryBox;
+	queryBox.setText(QString("This will erase the contents of the Configuration '%1'.").arg(configuration_->name()));
+	queryBox.setInformativeText("Proceed?");
+	queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+	queryBox.setDefaultButton(QMessageBox::No);
+	int ret = queryBox.exec();
+
+	if (ret == QMessageBox::Yes)
+	{
+		configuration_->initialise(duq_.worldPool(), true, duq_.pairPotentialRange(), duq_.nBoxNormalisationPoints());
+	}
+}
+
+void ConfigurationTab::on_ExportButton_clicked(bool checked)
+{
+	LineParser parser;
+	parser.openOutput(CharString("%s.xyz", configuration_->niceName()));
+	ExportModule::writeConfigurationXYZ(parser, configuration_, CharString("Configuration '%s'", configuration_->name()));
+	parser.closeFiles();
 }
 
 /*
