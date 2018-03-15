@@ -74,13 +74,13 @@ int Cell::index() const
 	return index_;
 }
 
-// Set real-space cell centre
+// Set real-space Cell centre
 void Cell::setCentre(Vec3<double> r)
 {
 	centre_ = r;
 }
 
-// Return real-space cell centre
+// Return real-space Cell centre
 const Vec3< double >& Cell::centre() const
 {
 	return centre_;
@@ -190,49 +190,49 @@ void Cell::addCellNeighbours(OrderedPointerList<Cell>& neighbours, OrderedPointe
 	}
 }
 
-// Return number of adjacent cell neighbours
+// Return number of adjacent Cell neighbours
 int Cell::nCellNeighbours() const
 {
 	return nCellNeighbours_;
 }
 
-// Return total number of cell neighbours
+// Return total number of Cell neighbours requiring minimum image calculation
 int Cell::nMimCellNeighbours() const
 {
 	return nMimCellNeighbours_;
 }
 
-// Return total number of cell neighbours
+// Return total number of Cell neighbours
 int Cell::nTotalCellNeighbours() const
 {
 	return nCellNeighbours_ + nMimCellNeighbours_;
 }
 
-// Return cell neighbour list
+// Return adjacent Cell neighbour list
 Cell** Cell::cellNeighbours()
 {
 	return cellNeighbours_;
 }
 
-// Return specified cell neighbour
+// Return specified adjacent Cell neighbour
 Cell* Cell::cellNeighbour(int id) const
 {
 	return cellNeighbours_[id];
 }
 
-// Return cell neighbour list requiring mim
+// Return list of Cell neighbours requiring minimum image calculation
 Cell** Cell::mimCellNeighbours()
 {
 	return mimCellNeighbours_;
 }
 
-// Return specified cell neighbour
+// Return specified Cell neighbour, requiring minimum image calculation
 Cell* Cell::mimCellNeighbour(int id) const
 {
 	return mimCellNeighbours_[id];
 }
 
-// Return list of all cell neighbours
+// Return list of all Cell neighbours
 CellNeighbour* Cell::allCellNeighbours()
 {
 	return allCellNeighbours_;

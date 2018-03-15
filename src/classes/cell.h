@@ -65,9 +65,9 @@ class Cell
 	void setIndex(int id);
 	// Return unique index
 	int index() const;
-	// Set real-space cell centre
+	// Set real-space Cell centre
 	void setCentre(Vec3<double> r);
-	// Return real-space cell centre
+	// Return real-space Cell centre
 	const Vec3<double>& centre() const;
 
 
@@ -103,21 +103,21 @@ class Cell
 	public:
 	// Add Cell neighbours
 	void addCellNeighbours(OrderedPointerList<Cell>& neighbours, OrderedPointerList<Cell>& mimNeighbours, int allCells);
-	// Return number of normal cell neighbours
+	// Return number of adjacent Cell neighbours
 	int nCellNeighbours() const;
-	// Return number of mim cell neighbours
+	// Return number of Cell neighbours requiring minimum image calculation
 	int nMimCellNeighbours() const;
-	// Return total number of cell neighbours
+	// Return total number of Cell neighbours
 	int nTotalCellNeighbours() const;
-	// Return cell neighbour list, not requiring mim
+	// Return adjacent Cell neighbour list
 	Cell** cellNeighbours();
-	// Return specified cell neighbour
+	// Return specified adjacent Cell neighbour
 	Cell* cellNeighbour(int id) const;
-	// Return cell neighbour list requiring mim
+	// Return list of Cell neighbours requiring minimum image calculation
 	Cell** mimCellNeighbours();
-	// Return specified mim cell neighbour
+	// Return specified Cell neighbour, requiring minimum image calculation
 	Cell* mimCellNeighbour(int id) const;
-	// Return list of all cell neighbours
+	// Return list of all Cell neighbours
 	CellNeighbour* allCellNeighbours();
 };
 
