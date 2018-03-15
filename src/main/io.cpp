@@ -551,6 +551,9 @@ bool DUQ::loadRestart(const char* filename)
 		}
 		else if (DUQSys::sameString(parser.argc(0), "Configuration"))
 		{
+			// Let the user know what we are doing
+			Messenger::print("Reading Configuration '%s'...\n", parser.argc(1));
+
 			// Find the named Configuration
 			cfg = findConfiguration(parser.argc(1));
 			if (!cfg)
