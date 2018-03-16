@@ -25,7 +25,7 @@
 #include "classes/grain.h"
 #include "templates/vector3.h"
 #include "templates/reflist.h"
-#include "templates/orderedpointerlist.h"
+#include "templates/orderedpointerarray.h"
 
 // Forward Declarations
 class Box;
@@ -53,8 +53,6 @@ class Cell
 	int index_;
 	// Real-space coordinates at the centre of this cell
 	Vec3<double> centre_;
-	// Number of locks on this Cell (-1 indicates subject of calculation)
-	int lockCount_;
 
 	public:
 	// Set grid reference
@@ -75,13 +73,13 @@ class Cell
 	 * Contents
 	 */
 	private:
-	// List of Atoms contained in this Cell
-	OrderedPointerList<Atom> atoms_;
+	// Array of Atoms contained in this Cell
+	OrderedPointerArray<Atom> atoms_;
 
 	public:
-	// Return list of contained Atoms
-	OrderedPointerList<Atom>& atoms();
-	// Return number of Atoms in list
+	// Return array of contained Atoms
+	OrderedPointerArray<Atom>& atoms();
+	// Return number of Atoms in array
 	int nAtoms() const;
 	// Add atom to Cell
 	bool addAtom(Atom* atom);
@@ -97,13 +95,15 @@ class Cell
 	Cell** cellNeighbours_, **mimCellNeighbours_;
 	// Array of all neighbouring cells
 	CellNeighbour* allCellNeighbours_;
+	// Array of adjacent Cell neighbours
+	Array<Cell*> adjacentCellNeighbours_;
 	// Number of cells in cell arrays
 	int nCellNeighbours_, nMimCellNeighbours_;
 
 	public:
 	// Add Cell neighbours
-	void addCellNeighbours(OrderedPointerList<Cell>& neighbours, OrderedPointerList<Cell>& mimNeighbours, int allCells);
-	// Return number of adjacent Cell neighbours
+	void addCellNeighbours(OrderedPointerArray<Cell>& nearNeighbours, OrderedPointerArray<Cell>& mimNeighbours, OrderedPointerArray<Cell>& adjacentNeighbours);
+	// Return number of Cell near-neighbours, not requiring minimum image calculation
 	int nCellNeighbours() const;
 	// Return number of Cell neighbours requiring minimum image calculation
 	int nMimCellNeighbours() const;
@@ -119,6 +119,8 @@ class Cell
 	Cell* mimCellNeighbour(int id) const;
 	// Return list of all Cell neighbours
 	CellNeighbour* allCellNeighbours();
+	// Return array of adjacent Cell neighbours
+	const Array<Cell*>& adjacentCellNeighbours();
 };
 
 #endif

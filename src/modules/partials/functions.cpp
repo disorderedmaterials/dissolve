@@ -289,7 +289,6 @@ bool PartialsModule::calculateGRCells(ProcessPool& procPool, Configuration* cfg,
 {
 	Atom* i, *j;
 	int n, m, ii, jj, nI, nJ, typeI, typeJ;
-	Atom** atomsI, **atomsJ;
 	Cell* cellI, *cellJ;
 	double distance, rdfRange = cfg->rdfRange();
 	Vec3<double> rI;
@@ -305,8 +304,8 @@ bool PartialsModule::calculateGRCells(ProcessPool& procPool, Configuration* cfg,
 	for (n = start; n<cellArray.nCells(); n += stride)
 	{
 		cellI = cellArray.cell(n);
-		atomsI = cellI->atoms().objects();
-		nI = cellI->nAtoms();
+		OrderedPointerArray<Atom>& atomsI = cellI->atoms();
+		nI = atomsI.nItems();
 
 		// Add contributions between atoms in cellI
 		for (ii = 0; ii < nI-1; ++ii)
@@ -331,8 +330,8 @@ bool PartialsModule::calculateGRCells(ProcessPool& procPool, Configuration* cfg,
 			cellJ = cellArray.cell(m);
 			if (!cellArray.withinRange(cellI, cellJ, rdfRange)) continue;
 
-			atomsJ = cellJ->atoms().objects();
-			nJ = cellJ->nAtoms();
+			OrderedPointerArray<Atom>& atomsJ = cellJ->atoms();
+			nJ = atomsJ.nItems();
 
 			// Only perform mim on atom pairs if we really need to...
 			if (cellArray.useMim(cellI,cellJ))

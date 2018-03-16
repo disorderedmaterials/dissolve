@@ -28,7 +28,6 @@
 Cell::Cell()
 {
 	index_ = -1;
-	lockCount_ = 0;
 	cellNeighbours_ = NULL;
 	mimCellNeighbours_ = NULL;
 	allCellNeighbours_ = NULL;
@@ -90,8 +89,8 @@ const Vec3< double >& Cell::centre() const
  * Contents
  */
 
-// Return Atom list
-OrderedPointerList<Atom>& Cell::atoms()
+// Return array of contained Atoms
+OrderedPointerArray<Atom>& Cell::atoms()
 {
 	return atoms_;
 }
@@ -112,7 +111,7 @@ bool Cell::addAtom(Atom* i)
 		return false;
 	}
 #endif
-	// Add Atom to our OrderedPointerList 
+	// Add Atom to our array
 	atoms_.add(i);
 
 	if (i->cell()) Messenger::warn("About to set Cell pointer in Atom %i, but this will overwrite an existing value.\n", i->arrayIndex());
@@ -132,7 +131,7 @@ bool Cell::removeAtom(Atom* i)
 	}
 #endif
 	// Remove atom from this cell
-	if (atoms_.removeIfPresent(i)) i->setCell(NULL);
+	if (atoms_.remove(i)) i->setCell(NULL);
 	else
 	{
 		Messenger::error("Tried to remove Atom %i from Cell %i, but it was not present.\n", i->arrayIndex(), index_);
@@ -147,50 +146,36 @@ bool Cell::removeAtom(Atom* i)
  */
 
 // Add Cell neighbours
-void Cell::addCellNeighbours(OrderedPointerList<Cell>& neighbours, OrderedPointerList<Cell>& mimNeighbours, int allCells)
+void Cell::addCellNeighbours(OrderedPointerArray<Cell>& nearNeighbours, OrderedPointerArray<Cell>& mimNeighbours, OrderedPointerArray<Cell>& adjacentNeighbours)
 {
-	int n, m, count, indexN, indexM;
+	int n;
 
-	// Create normal (non-mim) neighbour array
-	nCellNeighbours_ = neighbours.nItems();
+	// Create near-neighbour array of Cells not requiring minimum image to be applied
+	nCellNeighbours_ = nearNeighbours.nItems();
 	cellNeighbours_ = new Cell*[nCellNeighbours_];
-	for (n=0; n<nCellNeighbours_; ++n) cellNeighbours_[n] = neighbours.objects()[n];
+	for (n=0; n<nCellNeighbours_; ++n) cellNeighbours_[n] = nearNeighbours[n];
 
-	// Create mim'd neighbour array
+	// Create array of neighbours that require minimum image calculation
 	nMimCellNeighbours_ = mimNeighbours.nItems();
 	mimCellNeighbours_ = new Cell*[nMimCellNeighbours_];
-	for (n=0; n<nMimCellNeighbours_; ++n) mimCellNeighbours_[n] = mimNeighbours.objects()[n];
+	for (n=0; n<nMimCellNeighbours_; ++n) mimCellNeighbours_[n] = mimNeighbours[n];
 
 	// Create ordered list of CellNeighbours (including cells from both lists)
-	allCellNeighbours_ = new CellNeighbour[nCellNeighbours_+nMimCellNeighbours_];
-	n = 0;
-	m = 0;
-	indexN = (nCellNeighbours_ > 0 ? cellNeighbours_[0]->index() : allCells);
-	indexM = (nMimCellNeighbours_ > 0 ? mimCellNeighbours_[0]->index() : allCells);
-	count = 0;
-	while (count < nCellNeighbours_+nMimCellNeighbours_)
-	{
-		if (indexN < indexM)
-		{
-			allCellNeighbours_[count++].set(cellNeighbours_[n++], false);
-			indexN = (n == nCellNeighbours_ ? allCells : cellNeighbours_[n]->index());
-			continue;
-		}
-		if (indexM < indexN)
-		{
-			allCellNeighbours_[count++].set(mimCellNeighbours_[m++], true);
-			indexM = (m == nMimCellNeighbours_ ? allCells : mimCellNeighbours_[m]->index());
-			continue;
-		}
-		if (indexN == indexM)
-		{
-			Messenger::error("Cell neighbour lists are corrupt - same cell found in both near and mim lists.\n");
-			return;
-		}
-	}
+	OrderedPointerDataArray<Cell,bool> allCells;
+	for (n=0; n<nearNeighbours.nItems(); ++n) allCells.add(nearNeighbours[n], false);
+	for (n=0; n<mimNeighbours.nItems(); ++n) allCells.add(mimNeighbours[n], true);
+
+	if (allCells.nItems() != (nCellNeighbours_+nMimCellNeighbours_)) Messenger::error("Cell neighbour lists are corrupt - same cell found in both near and mim lists.\n");
+	allCellNeighbours_ = new CellNeighbour[allCells.nItems()];
+	for (n=0; n<allCells.nItems(); ++n) allCellNeighbours_[n].set(allCells.pointer(n), allCells.data(n));
+
+	// Create adjacent neighbours array
+	adjacentCellNeighbours_.initialise(26);
+	if (adjacentNeighbours.nItems() != 26) Messenger::error("Wrong number of adjacent Cell neighbours (%i) passed to Cell.\n", adjacentNeighbours.nItems());
+	for (n=0; n<adjacentNeighbours.nItems(); ++n) adjacentCellNeighbours_.add(adjacentNeighbours[n]);
 }
 
-// Return number of adjacent Cell neighbours
+// Return number of Cell near-neighbours, not requiring minimum image calculation
 int Cell::nCellNeighbours() const
 {
 	return nCellNeighbours_;
@@ -236,4 +221,10 @@ Cell* Cell::mimCellNeighbour(int id) const
 CellNeighbour* Cell::allCellNeighbours()
 {
 	return allCellNeighbours_;
+}
+
+// Return array of adjacent Cell neighbours
+const Array<Cell*>& Cell::adjacentCellNeighbours()
+{
+	return adjacentCellNeighbours_;
 }

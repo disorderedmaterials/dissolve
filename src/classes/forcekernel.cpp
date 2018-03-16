@@ -223,16 +223,17 @@ void ForceKernel::forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool
 #ifdef CHECKS
 	if (centralCell == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL central Cell pointer passed to ForceKernel::forces(Cell,Cell,bool,bool).\n");
+		Messenger::error("NULL_POINTER - NULL central Cell pointer passed to ForceKernel::forces(Cell,Cell,bool,bool,DivisionStrategy).\n");
 		return;
 	}
 	if (otherCell == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL other Cell pointer passed to ForceKernel::forces(Cell,Cell,bool,bool).\n");
+		Messenger::error("NULL_POINTER - NULL other Cell pointer passed to ForceKernel::forces(Cell,Cell,bool,bool,DivisionStrategy).\n");
 		return;
 	}
 #endif
-	Atom** centralAtoms = centralCell->atoms().objects(), **otherAtoms = otherCell->atoms().objects();
+	OrderedPointerArray<Atom>& centralAtoms = centralCell->atoms();
+	OrderedPointerArray<Atom>& otherAtoms = otherCell->atoms();
 	Atom* ii, *jj;
 	Vec3<double> rI;
 	Molecule* molI;
@@ -246,14 +247,14 @@ void ForceKernel::forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool
 	// Loop over central cell atoms
 	if (applyMim)
 	{
-		for (i = start; i < centralCell->atoms().nItems(); i += stride)
+		for (i = start; i < centralAtoms.nItems(); i += stride)
 		{
 			ii = centralAtoms[i];
 			molI = ii->molecule();
 			rI = ii->r();
 
 			// Straight loop over other cell atoms
-			for (j = 0; j < otherCell->atoms().nItems(); ++j)
+			for (j = 0; j < otherAtoms.nItems(); ++j)
 			{
 				jj = otherAtoms[j];
 
@@ -301,15 +302,9 @@ void ForceKernel::forces(Cell* centralCell, Cell* otherCell, bool applyMim, bool
 // Calculate forces between Cell and its neighbours
 void ForceKernel::forces(Cell* cell, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy)
 {
-	Atom** centralAtoms = cell->atoms().objects();
-	Atom** otherAtoms;
-	Atom* ii, *jj;
+	OrderedPointerArray<Atom>& centralAtoms = cell->atoms();
 	Vec3<double> rJ, v;
-	double rSq, r;
-	int i, j;
 	Cell* otherCell;
-	Molecule* molJ;
-	double scale;
 
 	// Straight loop over Cells *not* requiring mim
 	Cell** neighbours = cell->cellNeighbours();
@@ -334,7 +329,7 @@ void ForceKernel::forces(const Atom* i, Cell* cell, int flags, ProcessPool::Divi
 #ifdef CHECKS
 	if (i == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL atom pointer passed to ForceKernel::forces(Atom,OrderedPointerList,int,CommGroup).\n");
+		Messenger::error("NULL_POINTER - NULL atom pointer passed to ForceKernel::forces(Atom,Cell,int,DivisionStrategy).\n");
 		return;
 	}
 #endif
@@ -347,7 +342,7 @@ void ForceKernel::forces(const Atom* i, Cell* cell, int flags, ProcessPool::Divi
 	const Vec3<double> rI = i->r();
 
 	// Grab the array of Atoms in the supplied Cell
-	Atom** otherAtoms = cell->atoms().objects();
+	OrderedPointerArray<Atom>& otherAtoms = cell->atoms();
 	int nOtherAtoms = cell->nAtoms();
 
 	// Get start/stride for specified loop context
@@ -493,7 +488,7 @@ void ForceKernel::forces(const Atom* i, ProcessPool::DivisionStrategy strategy)
 #ifdef CHECKS
 	if (i == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL Atom pointer passed to ForceKernel::forces(Atom,ParallelStyle).\n");
+		Messenger::error("NULL_POINTER - NULL Atom pointer passed to ForceKernel::forces(Atom,DivisionStrategy).\n");
 		return;
 	}
 #endif
@@ -517,7 +512,7 @@ void ForceKernel::forces(const Grain* grain, bool excludeIgtJ, ProcessPool::Divi
 #ifdef CHECKS
 	if (grain == NULL)
 	{
-		Messenger::error("NULL_POINTER - NULL Grain pointer passed to ForceKernel::forces(Grain,ParallelStyle).\n");
+		Messenger::error("NULL_POINTER - NULL Grain pointer passed to ForceKernel::forces(Grain,DivisionStrategy).\n");
 		return;
 	}
 #endif

@@ -22,8 +22,6 @@
 #include "classes/cellarray.h"
 #include "classes/box.h"
 #include "classes/cell.h"
-// #include "classes/grain.h"
-// #include "base/processpool.h"
 
 // Constructor
 CellArray::CellArray()
@@ -249,7 +247,7 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 	// Finally, loop over Cells and set neighbours, and construct neighbour matrix
 	Messenger::print("Constructing neighbour lists for individual Cells...\n");
 	bool mimRequired;
-	OrderedPointerList<Cell> neighbours, mimNeighbours;
+	OrderedPointerArray<Cell> nearNeighbours, mimNeighbours, adjacentNeighbours;
 	Vec3<int> gridRef;
 	for (n=0; n<nCells_; ++n)
 	{
@@ -257,8 +255,9 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 		gridRef = cells_[n].gridReference();
 
 		// Clear neighbour lists
-		neighbours.clear();
+		nearNeighbours.clear();
 		mimNeighbours.clear();
+		adjacentNeighbours.clear();
 
 		// Loop over list of (relative) neighbour cell indices
 		for (ListVec3<int>* item = neighbourIndices_.first(); item != NULL; item = item->next)
@@ -267,11 +266,14 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 			nbr = cell(gridRef.x+item->x, gridRef.y+item->y, gridRef.z+item->z);
 			mimRequired = box_->type() == Box::NonPeriodicBox ? false : useMim(&cells_[n], nbr);
 			if (mimRequired) mimNeighbours.add(nbr);
-			else neighbours.add(nbr);
+			else nearNeighbours.add(nbr);
+
+			// Add to adjacent Cells list, if it is adjacent
+			if (item->absMax() < 2) adjacentNeighbours.add(nbr);
 		}
 
 		// Set up lists in the cell
-		cells_[n].addCellNeighbours(neighbours, mimNeighbours, nCells_);
+		cells_[n].addCellNeighbours(nearNeighbours, mimNeighbours, adjacentNeighbours);
 	}
 
 	return true;

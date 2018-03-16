@@ -30,7 +30,7 @@ class CellNeighbour
 {
 	/*
 	 * Simple class encapsulating a pointer to a Cell, and a flag indicating whether or not mimimum image calculations should be applied when 
-	 * considering the contents of this cell with the cell which owns the OrderedPointerList in which it appears.
+	 * considering the contents of this cell with the cell which owns the array in which it appears.
 	 */
 	public:
 	// Constructor

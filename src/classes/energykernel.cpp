@@ -211,11 +211,12 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 	}
 #endif
 	double totalEnergy = 0.0;
-	Atom** centralAtoms = centralCell->atoms().objects(), **otherAtoms = otherCell->atoms().objects();
+	OrderedPointerArray<Atom>& centralAtoms = centralCell->atoms();
+	OrderedPointerArray<Atom>& otherAtoms = otherCell->atoms();
 	Atom* ii, *jj;
 	Vec3<double> rI;
 	Molecule* molI;
-	int i, typeI, indexI, j;
+	int i, j;
 	double rSq, scale;
 
 	// Get start/stride for specified loop context
@@ -225,7 +226,7 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 	// Loop over central cell atoms
 	if (applyMim)
 	{
-		for (i = start; i < centralCell->atoms().nItems(); i += stride)
+		for (i = start; i < centralAtoms.nItems(); i += stride)
 		{
 			ii = centralAtoms[i];
 			molI = ii->molecule();
@@ -294,7 +295,7 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy, bool performSum)
 {
 	double totalEnergy = 0.0;
-	Atom** centralAtoms = centralCell->atoms().objects();
+	OrderedPointerArray<Atom>& centralAtoms = centralCell->atoms();
 	Atom** otherAtoms;
 	Atom* ii, *jj;
 	Vec3<double> rJ;
@@ -312,16 +313,16 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::Di
 	for (int n = 0; n<centralCell->nCellNeighbours(); ++n)
 	{
 		otherCell = neighbours[n];
-		otherAtoms = otherCell->atoms().objects();
+		OrderedPointerArray<Atom>& otherAtoms = otherCell->atoms();
 
-		for (j = 0; j < otherCell->nAtoms(); ++j)
+		for (j = 0; j < otherAtoms.nItems(); ++j)
 		{
 			jj = otherAtoms[j];
 			molJ = jj->molecule();
 			rJ = jj->r();
 
 			// Loop over central cell atoms
-			for (i = start; i < centralCell->atoms().nItems(); i += stride)
+			for (i = start; i < centralAtoms.nItems(); i += stride)
 			{
 				ii = centralAtoms[i];
 
@@ -348,16 +349,16 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::Di
 	for (int n = 0; n<centralCell->nMimCellNeighbours(); ++n)
 	{
 		otherCell = mimNeighbours[n];
-		otherAtoms = otherCell->atoms().objects();
+		OrderedPointerArray<Atom>& otherAtoms = otherCell->atoms();
 
-		for (j = 0; j < otherCell->nAtoms(); ++j)
+		for (j = 0; j < otherAtoms.nItems(); ++j)
 		{
 			jj = otherAtoms[j];
 			molJ = jj->molecule();
 			rJ = jj->r();
 
 			// Loop over central cell atoms
-			for (i = start; i < centralCell->atoms().nItems(); i += stride)
+			for (i = start; i < centralAtoms.nItems(); i += stride)
 			{
 				ii = centralAtoms[i];
 
@@ -404,7 +405,7 @@ double EnergyKernel::energy(const Atom* i, Cell* cell, int flags, ProcessPool::D
 	Atom* jj;
 	int j;
 	double rSq, scale;
-	Atom** otherAtoms = cell->atoms().objects();
+	OrderedPointerArray<Atom>& otherAtoms = cell->atoms();
 	int nOtherAtoms = cell->nAtoms();
 	
 	// Grab some information on the supplied Atom

@@ -128,8 +128,8 @@ bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
 			changeStore.add(cell);
 
 			// Loop over atoms in this cell
-			cellAtoms = cell->atoms().objects();
-			for (n = 0; n < cell->atoms().nItems(); ++n)
+			OrderedPointerArray<Atom>& cellAtoms = cell->atoms();
+			for (n = 0; n < cellAtoms.nItems(); ++n)
 			{
 				// Grab Atom pointer
 				Atom* i = cellAtoms[n];
@@ -151,12 +151,10 @@ bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
 					
 					// Trial the transformed atom position
 					delta = (newEnergy + newIntraEnergy) - (currentEnergy + intraEnergy);
-	// 				printf("delta = %f\n", delta);
 					accept = delta < 0 ? true : (procPool.random() < exp(-delta*rRT));
 
 					if (accept)
 					{
-	// 					Messenger::print("Accepts move with delta %f\n", delta);
 						// Accept new (current) position of target Atom
 						changeStore.updateAtom(n);
 						currentEnergy = newEnergy;
