@@ -144,8 +144,9 @@ bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
 					// Create a random translation vector
 					rDelta.set(procPool.randomPlusMinusOne()*stepSize, procPool.randomPlusMinusOne()*stepSize, procPool.randomPlusMinusOne()*stepSize);
 
-					// Translate atom and calculate new energy
+					// Translate atom, update Cell if necssary, and calculate new energy
 					i->translateCoordinates(rDelta);
+					cfg->updateCellLocation(i);
 					newEnergy = kernel.energy(i, ProcessPool::subDivisionStrategy(strategy), true);
 					newIntraEnergy = kernel.intraEnergy(i) * termScale;
 					

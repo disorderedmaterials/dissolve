@@ -187,6 +187,9 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 					mol->transform(box, transform);
 				}
 
+				// Update cell positions of Atoms in the molecule
+				cfg->updateCellLocation(mol);
+
 				// Calculate new energy
 				newEnergy = kernel.energy(mol, ProcessPool::subDivisionStrategy(strategy), true);
 				
@@ -196,12 +199,13 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 
 				if (accept)
 				{
-					// Accept new (current) position of target Atom
+					// Accept new (current) position of target Atoms
 					changeStore.updateAll();
 					currentEnergy = newEnergy;
 					totalDelta += delta;
 					if (rotate) ++nRotationsAccepted;
 					if (translate) ++nTranslationsAccepted;
+
 				}
 				else changeStore.revertAll();
 
@@ -224,7 +228,6 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 
 			// Tell the distributor we are done
 			distributor.finishedWithObject();
-
 		}
 
 		// Make sure any remaining changes are broadcast
