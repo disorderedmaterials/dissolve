@@ -27,6 +27,7 @@
 
 // Forward Declarations
 class Atom;
+class Cell;
 
 // Change Data
 class ChangeData : public ListItem<ChangeData>
@@ -46,8 +47,10 @@ class ChangeData : public ListItem<ChangeData>
 	Atom* atom_;
 	// Flag indicating whether Atom has moved
 	bool moved_;
-	// Current coordinates of Atom (either original or newly-accepted)
+	// Stored coordinates of Atom
 	Vec3<double> r_;
+	// Stored Cell of Atom
+	Cell* cell_;
 
 	public:
 	// Set target Atom
