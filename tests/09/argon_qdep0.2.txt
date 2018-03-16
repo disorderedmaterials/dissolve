@@ -25,7 +25,7 @@ Module Partials
   QBroadening  OmegaDependentGaussian  0.2
   WindowFunction  None
   Frequency  1
-  TestThreshold  0.03
+  TestThreshold  0.036
   Test  On
   TestReference  'epsr_qdep0.2/argon.EPSR.u01'  SQ-weighted-total  1  2
 EndModule
