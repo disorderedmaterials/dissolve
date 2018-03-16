@@ -118,8 +118,8 @@ template <class T> class OrderedPointerList
 	void insertBefore(OrderedPointerListItem<T>* item, OrderedPointerListItem<T>* beforeThis);
 	// Remove an item from the list
 	void remove(OrderedPointerListItem< T >* xitem);
-	// Return whether the item is owned by the list
-	OrderedPointerListItem<T>* contains(T* object) const;
+	// Return list item for the specified object, if it exists
+	OrderedPointerListItem<T>* objectInList(T* object) const;
 	// Cut item from list
 	void cut(OrderedPointerListItem<T>* item);
 	// Find and return the item with the next highest index to the index specified
@@ -146,14 +146,14 @@ template <class T> class OrderedPointerList
 	OrderedPointerListItem<T>* first() const;
 	// Returns the list tail
 	OrderedPointerListItem<T>* last() const;
+	// Return whether the specified pointer is present in the list
+	bool contains(T* object) const;
 	// Generate (if necessary) and return item array
 	OrderedPointerListItem<T>** items();
 	// Generate (if necessary) and return object array
 	T** objects();
 	// Invalidate current item and object arrays, forcing them to be recreated
 	void invalidateLists();
-	// Given a second list, generate new lists containing unique items to each list, and those that appear in both
-	void difference(OrderedPointerList<T>& listB, OrderedPointerList<T>& uniqueToA, OrderedPointerList<T>& uniqueToB, OrderedPointerList<T>& commonItems);
 
 
 	/*
@@ -297,8 +297,8 @@ template <class T> void OrderedPointerList<T>::remove(OrderedPointerListItem<T>*
 	regenerateObjectArray_ = 1;
 }
 
-// Return whether item index is in the list
-template <class T> OrderedPointerListItem<T>* OrderedPointerList<T>::contains(T* object) const
+// Return list item for the specified object, if it exists
+template <class T> OrderedPointerListItem<T>* OrderedPointerList<T>::objectInList(T* object) const
 {
 	// TODO This can probably be made much faster - bisection?
 	OrderedPointerListItem<T>* item = listHead_;
@@ -407,8 +407,8 @@ template <class T> void OrderedPointerList<T>::addExclusive(T* object)
 	OrderedPointerListItem<T>* nextLargest = listHead_;
 	while (nextLargest)
 	{
-		if (nextLargest->objectIndex() > object->index()) break;
-		else if (nextLargest->objectIndex() == object->index()) return;
+		if (nextLargest->object() > object) break;
+		else if (nextLargest->object() == object) return;
 		nextLargest = nextLargest->next;
 	}
 
@@ -435,8 +435,8 @@ template <class T> void OrderedPointerList<T>::addAtEnd(T* object)
 // Remove item reference from list
 template <class T> void OrderedPointerList<T>::remove(T* object)
 {
-	// Get item for specified objectIndex
-	OrderedPointerListItem<T>* item = contains(object);
+	// Get item for specified object
+	OrderedPointerListItem<T>* item = objectInList(object);
 #ifdef CHECKS
 	if (item == NULL)
 	{
@@ -451,7 +451,7 @@ template <class T> void OrderedPointerList<T>::remove(T* object)
 template <class T> bool OrderedPointerList<T>::removeIfPresent(T* object)
 {
 	// Get item for specified object
-	OrderedPointerListItem<T>* item = contains(object);
+	OrderedPointerListItem<T>* item = objectInList(object);
 	if (item == NULL) return false;
 	remove(item);
 	return true;
@@ -460,8 +460,8 @@ template <class T> bool OrderedPointerList<T>::removeIfPresent(T* object)
 // Move specified item to target list
 template <class T> void OrderedPointerList<T>::move(T* object, OrderedPointerList<T>& targetList)
 {
-	// Get item for specified objectIndex
-	OrderedPointerListItem<T>* item = contains(object);
+	// Get item for specified object
+	OrderedPointerListItem<T>* item = objectInList(object);
 #ifdef CHECKS
 	if (item == NULL)
 	{
@@ -484,6 +484,20 @@ template <class T> OrderedPointerListItem<T>* OrderedPointerList<T>::first() con
 template <class T> OrderedPointerListItem<T>* OrderedPointerList<T>::last() const
 {
 	return listTail_;
+}
+
+// Return whether the specified pointer is present in the list
+template <class T> bool OrderedPointerList<T>::contains(T* object) const
+{
+	// TODO This can probably be made much faster - bisection?
+	OrderedPointerListItem<T>* item = listHead_;
+	while (item)
+	{
+		if (item->object() > object) return false;
+		if (item->object() == object) return true;
+		item = item->next;
+	}
+	return false;
 }
 
 // Create (or just return) the item array
@@ -537,65 +551,6 @@ template <class T> void OrderedPointerList<T>::invalidateLists()
 {
 	regenerateItemArray_ = 1;
 	regenerateObjectArray_ = 1;
-}
-
-// Given a second list, generate new lists containing unique items to each list, and those that appear in both
-template <class T> void OrderedPointerList<T>::difference(OrderedPointerList<T>& listB, OrderedPointerList<T>& uniqueToA, OrderedPointerList<T>& uniqueToB, OrderedPointerList<T>& commonItems)
-{
-	// Clear supplied results lists
-	uniqueToA.clear();
-	uniqueToB.clear();
-	commonItems.clear();
-
-	// Check here for either list being empty
-	if (nItems_ == 0)
-	{
-		// Add all items in listB to uniqueToB, and we're done
-		uniqueToB = listB;
-		return;
-	}
-	if (listB.nItems_ == 0)
-	{
-		// Add all items in this_ list to uniqueToA, and we're done
-		uniqueToA = (*this);
-		return;
-	}
-
-	// Traverse the lists simultaneously, comparing indices at each turn
-	int indexA = 0, indexB = 0;
-	T** itemsA = objects(), **itemsB = listB.objects();
-	T* objectA = itemsA[indexA], *objectB = itemsB[indexB];
-	while ((indexA < nItems_) && (indexB < listB.nItems_))
-	{
-		// If objectAndexA is less than objectIndexB, then the item in this_ list at indexA is unique
-		if (objectA < objectB)
-		{
-			uniqueToA.addAtEnd(itemsA[indexA]);
-			++indexA;
-			objectA = itemsA[indexA]->objectIndex();
-			continue;
-		}
-
-		// If indexB is less than indexA, then the item in listB at indexB is unique
-		if (objectB < objectA)
-		{
-			uniqueToB.addAtEnd(itemsB[indexB]);
-			++indexB;
-			objectB = itemsB[indexB];
-			continue;
-		}
-
-		// The indices are the same, so this is common element to both lists
-		commonItems.addAtEnd(itemsA[indexA]);
-		++indexA;
-		objectA = itemsA[indexA]->object();
-		++indexB;
-		objectB = itemsB[indexB]->object();
-	}
-
-	// If we have not yet gone through all the items in either list, add them to the relevant unique results list
-	for (int n = indexA; n<nItems_; ++n) uniqueToA.addAtEnd(itemsA[n]);
-	for (int n = indexB; n<listB.nItems_; ++n) uniqueToB.addAtEnd(itemsB[n]);
 }
 
 /*
