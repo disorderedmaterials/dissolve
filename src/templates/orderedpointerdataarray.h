@@ -246,27 +246,29 @@ template <class T, class D> class OrderedPointerDataArray
 		++nItems_;
 	}
 	// Remove an item from the array, leaving the remaining items contiguous in memory
-	void remove(T* ptr)
+	bool remove(T* ptr)
 	{
 		// Step through the items until we find the specified pointer
 		for (int n=0; n<nItems_; ++n)
 		{
+			if (items_[n] > ptr) return false;
 			if (items_[n] == ptr)
 			{
-				// Found it. If it is at the end of the list, just decrease nItems_.
-				// If not, switch the current last item into this slot, and then decrease nItems_.
-				if (n < (nItems_-1))
+				// Found it. Move all items from this point forward back one place
+				for (int m=n+1; m<nItems_; ++m)
 				{
-					items_[n] = items_[nItems_-1];
-					items_[nItems_-1] = NULL;
-					data_[n] = data_[nItems_-1];
-					data_[nItems_-1] = D();
+					items_[m-1] = items_[m];
+					data_[m-1] = data_[m];
 				}
+				items_[nItems_-1] = NULL;
+				data_[nItems_-1] = D();
 				--nItems_;
-				return;
+
+				return true;
 			}
 		}
 		Messenger::print("OrderedPointerDataArray<T,D>::remove(%p) - Couldn't find pointer in array.\n", ptr);
+		return false;
 	}
 	// Return array index of pointer within the list
 	int indexOf(T* ptr) const
