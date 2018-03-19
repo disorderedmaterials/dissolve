@@ -27,7 +27,7 @@
 #include "classes/changestore.h"
 #include "classes/configuration.h"
 #include "classes/scaledenergykernel.h"
-#include "classes/moleculedistributor.h"
+#include "classes/regionaldistributor.h"
 #include "base/processpool.h"
 #include "base/timer.h"
 #include "templates/genericlisthelper.h"
@@ -91,7 +91,7 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 
 		// Create a Molecule distributor
 		DynamicArray<Molecule>& moleculeArray = cfg->molecules();
-		MoleculeDistributor distributor(moleculeArray, cfg->cells(), procPool, strategy, false);
+		RegionalDistributor distributor(moleculeArray, cfg->cells(), procPool, strategy);
 
 		// Create a local ChangeStore and a suitable EnergyKernel
 		ChangeStore changeStore(procPool);
@@ -118,129 +118,137 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 
 		// Set initial random offset for our counter determining whether to perform R+T, R, or T.
 		int count = procPool.random()*10;
-		bool rotate, translate, changesBroadcastRequired;
+		bool rotate, translate;
 
 		Timer timer;
 		procPool.resetAccumulatedTime();
-		while (molId = distributor.nextAvailableObject(changesBroadcastRequired), molId != Distributor::AllComplete)
+		while (distributor.cycle())
 		{
-			// Upkeep - Do we need to broadcast changes before we begin the calculation?
-			if (changesBroadcastRequired)
+			// Get next set of Molecule targets from the distributor
+			Array<int> targetMolecules = distributor.assignedMolecules();
+
+			// Switch parallel strategy if necessary
+			if (distributor.currentStrategy() != strategy)
 			{
-				changeStore.distributeAndApply(cfg);
-				changeStore.reset();
+				// Set the new strategy
+				strategy = distributor.currentStrategy();
+
+				// Re-initialise the random buffer
+				procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
 			}
 
-			// Check for valid molecule
-			if (molId == Distributor::NoneAvailable)
+			// Loop over target Molecule
+			for (int n = 0; n<targetMolecules.nItems(); ++n)
 			{
-				distributor.finishedWithObject();
-				continue;
+				/*
+				 * Calculation Begins
+				 */
+
+				// Get Molecule index and pointer
+				molId = targetMolecules[n];
+				Molecule* mol = cfg->molecule(molId);
+
+				// Set current atom targets in ChangeStore (whole molecule)
+				changeStore.add(mol);
+
+				// Calculate reference energy for Molecule, including intramolecular terms
+				currentEnergy = kernel.energy(mol, ProcessPool::subDivisionStrategy(strategy), true);
+
+				// Loop over number of shakes per atom
+				for (shake=0; shake<nShakesPerMolecule; ++shake)
+				{
+					// Determine what move(s) will we attempt
+					if (count == 0)
+					{
+						rotate = true;
+						translate = false;
+					}
+					else if (count == 1)
+					{
+						rotate = false;
+						translate = true;
+					}
+					else
+					{
+						rotate = true;
+						translate = true;
+					}
+
+					// Create a random translation vector and apply it to the Molecule's centre
+					if (translate)
+					{
+						rDelta.set(procPool.randomPlusMinusOne()*translationStepSize, procPool.randomPlusMinusOne()*translationStepSize, procPool.randomPlusMinusOne()*translationStepSize);
+						mol->translate(rDelta);
+					}
+
+					// Create a random rotation matrix and apply it to the Molecule
+					if (rotate)
+					{
+						transform.createRotationXY(procPool.randomPlusMinusOne()*rotationStepSize, procPool.randomPlusMinusOne()*rotationStepSize);
+						mol->transform(box, transform);
+					}
+
+					// Update Cell positions of Atoms in the Molecule
+					cfg->updateCellLocation(mol);
+
+					// Calculate new energy
+					newEnergy = kernel.energy(mol, ProcessPool::subDivisionStrategy(strategy), true);
+					
+					// Trial the transformed atom position
+					delta = newEnergy - currentEnergy;
+					accept = delta < 0 ? true : (procPool.random() < exp(-delta*rRT));
+
+					if (accept)
+					{
+						// Accept new (current) position of target Atoms
+						changeStore.updateAll();
+						currentEnergy = newEnergy;
+					}
+					else changeStore.revertAll();
+
+					// Increase attempt counters
+					// The strategy in force at any one time may vary, so use the distributor's helper functions.
+					if (distributor.collectStatistics())
+					{
+						if (accept) totalDelta += delta;
+						if (rotate)
+						{
+							if (accept) ++nRotationsAccepted;
+							++nRotationAttempts;
+						}
+						if (translate)
+						{
+							if (accept) ++nTranslationsAccepted;
+							++nTranslationAttempts;
+						}
+						++nGeneralAttempts;
+					}
+
+					// Increase and fold move type counter
+					++count;
+					if (count > 9) count = 0;
+				}
+
+				// Store modifications to Atom positions ready for broadcast
+				changeStore.storeAndReset();
+
+				/*
+				 * Calculation End
+				 */
 			}
 
-			/*
-			 * Calculation Begins
-			 */
-
-			// Get Molecule pointer
-			Molecule* mol = cfg->molecule(molId);
-
-			Messenger::printVerbose("MolShake: Molecule %i now the target on process %s and contains %i Atoms.\n", molId, procPool.processInfo(), mol->nAtoms());
-
-			// Set current atom targets in ChangeStore (whole molecule)
-			changeStore.add(mol);
-
-			// Calculate reference energy for Molecule, including intramolecular terms
-			currentEnergy = kernel.energy(mol, ProcessPool::subDivisionStrategy(strategy), true);
-
-			// Loop over number of shakes per atom
-			for (shake=0; shake<nShakesPerMolecule; ++shake)
-			{
-				// Determine what move(s) will we attempt
-				if (count == 0)
-				{
-					rotate = true;
-					translate = false;
-				}
-				else if (count == 1)
-				{
-					rotate = false;
-					translate = true;
-				}
-				else
-				{
-					rotate = true;
-					translate = true;
-				}
-
-				// Create a random translation vector and apply it to the Molecule's centre
-				if (translate)
-				{
-					rDelta.set(procPool.randomPlusMinusOne()*translationStepSize, procPool.randomPlusMinusOne()*translationStepSize, procPool.randomPlusMinusOne()*translationStepSize);
-					mol->translate(rDelta);
-				}
-
-				// Create a random rotation matrix and apply it to the Molecule
-				if (rotate)
-				{
-					transform.createRotationXY(procPool.randomPlusMinusOne()*rotationStepSize, procPool.randomPlusMinusOne()*rotationStepSize);
-					mol->transform(box, transform);
-				}
-
-				// Update cell positions of Atoms in the molecule
-				cfg->updateCellLocation(mol);
-
-				// Calculate new energy
-				newEnergy = kernel.energy(mol, ProcessPool::subDivisionStrategy(strategy), true);
-				
-				// Trial the transformed atom position
-				delta = newEnergy - currentEnergy;
-				accept = delta < 0 ? true : (procPool.random() < exp(-delta*rRT));
-
-				if (accept)
-				{
-					// Accept new (current) position of target Atoms
-					changeStore.updateAll();
-					currentEnergy = newEnergy;
-					totalDelta += delta;
-					if (rotate) ++nRotationsAccepted;
-					if (translate) ++nTranslationsAccepted;
-
-				}
-				else changeStore.revertAll();
-
-				// Increase attempt counters
-				if (rotate) ++nRotationAttempts;
-				if (translate) ++nTranslationAttempts;
-				++nGeneralAttempts;
-
-				// Increase and fold move type counter
-				++count;
-				if (count > 9) count = 0;
-			}
-
-			// Store modifications to Atom positions ready for broadcast
-			changeStore.storeAndReset();
-
-			/*
-			* Calculation End
-			*/
-
-			// Tell the distributor we are done
-			distributor.finishedWithObject();
+			// Now all target Molecules have been processes, broadcast the changes made
+			changeStore.distributeAndApply(cfg);
+			changeStore.reset();
 		}
 
-		// Make sure any remaining changes are broadcast
-		changeStore.distributeAndApply(cfg);
-		changeStore.reset();
-
-		// Collect statistics across all processe
-		if (!procPool.allSum(&totalDelta, 1, strategy)) return false;
-		if (!procPool.allSum(&nGeneralAttempts, 1, strategy)) return false;
-		if (!procPool.allSum(&nTranslationAttempts, 1, strategy)) return false;
-		if (!procPool.allSum(&nTranslationsAccepted, 1, strategy)) return false;
-		if (!procPool.allSum(&nRotationAttempts, 1, strategy)) return false;
-		if (!procPool.allSum(&nRotationsAccepted, 1, strategy)) return false;
+		// Collect statistics across all processes
+		if (!procPool.allSum(&totalDelta, 1)) return false;
+		if (!procPool.allSum(&nGeneralAttempts, 1)) return false;
+		if (!procPool.allSum(&nTranslationAttempts, 1)) return false;
+		if (!procPool.allSum(&nTranslationsAccepted, 1)) return false;
+		if (!procPool.allSum(&nRotationAttempts, 1)) return false;
+		if (!procPool.allSum(&nRotationsAccepted, 1)) return false;
 
 		timer.stop();
 
@@ -249,7 +257,7 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		// Calculate and print acceptance rates
 		double transRate = double(nTranslationsAccepted)/nTranslationAttempts;
 		double rotRate = double(nRotationsAccepted)/nRotationAttempts;
-		Messenger::print("MolShake: Total number of attempted moves was %i (%s work, %s comms, %i nodists, %i broadcasts)\n", nGeneralAttempts, timer.totalTimeString(), procPool.accumulatedTimeString(), distributor.nUnavailableInstances(), distributor.nChangeBroadcastsRequired());
+		Messenger::print("MolShake: Total number of attempted moves was %i (%s work, %s comms)\n", nGeneralAttempts, timer.totalTimeString(), procPool.accumulatedTimeString());
 		Messenger::print("MolShake: Overall translation acceptance rate was %4.2f% (%i of %i attempted moves)\n", 100.0*transRate, nTranslationsAccepted, nTranslationAttempts);
 		Messenger::print("MolShake: Overall rotation acceptance rate was %4.2f% (%i of %i attempted moves)\n", 100.0*rotRate, nRotationsAccepted, nRotationAttempts);
 
