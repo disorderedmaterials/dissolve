@@ -170,7 +170,7 @@ void Cell::addCellNeighbours(OrderedPointerArray<Cell>& nearNeighbours, OrderedP
 	for (n=0; n<allCells.nItems(); ++n) allCellNeighbours_[n].set(allCells.pointer(n), allCells.data(n));
 
 	// Create adjacent neighbours array
-	adjacentCellNeighbours_.initialise(26);
+	adjacentCellNeighbours_.createEmpty(26);
 	if (adjacentNeighbours.nItems() != 26) Messenger::error("Wrong number of adjacent Cell neighbours (%i) passed to Cell.\n", adjacentNeighbours.nItems());
 	for (n=0; n<adjacentNeighbours.nItems(); ++n) adjacentCellNeighbours_.add(adjacentNeighbours[n]);
 }
