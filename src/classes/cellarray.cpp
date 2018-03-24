@@ -350,7 +350,7 @@ Cell* CellArray::cell(const Vec3<double> r) const
 }
 
 // Return whether two Cells need minimum image calculation
-bool CellArray::useMim(Cell* a, Cell* b) const
+bool CellArray::useMim(const Cell* a, const Cell* b) const
 {
 	/*
 	 * Since we partition the simulation Box up into subcells, for speed we can determine and store whether any

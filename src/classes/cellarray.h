@@ -84,7 +84,7 @@ class CellArray
 	// Return Cell which contains specified coordinate
 	Cell* cell(const Vec3<double> r) const;
 	// Return whether two Cells need minimum image calculation
-	bool useMim(Cell* a, Cell* b) const;
+	bool useMim(const Cell* a, const Cell* b) const;
 	// Return if any Atoms in the supplied Cells are within the range supplied
 	bool withinRange(Cell* a, Cell* b, double distance);
 };
