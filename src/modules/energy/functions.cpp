@@ -97,39 +97,15 @@ double EnergyModule::interatomicEnergy(ProcessPool& procPool, Configuration* cfg
 	 * This is a parallel routine, with processes operating as process groups.
 	 */
 
-	// Grab the Cell array
-	const CellArray& cellArray = cfg->cells();
-
 	// Create an EnergyKernel
 	EnergyKernel kernel(procPool, cfg, potentialMap);
 
-	Cell* cell;
-	double totalEnergy = 0.0;
-
+	// Set the strategy
 	ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
 
-	// Set start/stride for parallel loop
-	int start = procPool.interleavedLoopStart(strategy);
-	int stride = procPool.interleavedLoopStride(strategy);
-
-	for (int cellId = start; cellId<cellArray.nCells(); cellId += stride)
-	{
-		cell = cellArray.cell(cellId);
-
-		/*
-		 * Calculation Begins
-		 */
-
-		// This cell with itself
-		totalEnergy += kernel.energy(cell, cell, false, true, ProcessPool::subDivisionStrategy(strategy), false);
-
-		// Interatomic interactions between atoms in this cell and its neighbours
-		totalEnergy += kernel.energy(cell, true, ProcessPool::subDivisionStrategy(strategy), false);
-
-		/*
-		 * Calculation End
-		 */
-	}
+	// Grab the Cell array and calculate total energy
+	const CellArray& cellArray = cfg->cells();
+	double totalEnergy = kernel.energy(cellArray, strategy, false);
 
 	// Print process-local energy
 	Messenger::printVerbose("Interatomic Energy (Local) is %15.9e\n", totalEnergy);
