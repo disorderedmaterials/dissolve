@@ -258,6 +258,7 @@ void Molecule::updateAttachedAtomLists()
 			Messenger::printVerbose("Bond between Atoms %i-%i is present in a cycle, so a minimal set of attached atoms will be used.\n", b->i()->arrayIndex(), b->j()->arrayIndex());
 			b->setAttachedAtoms(0, b->i());
 			b->setAttachedAtoms(1, b->j());
+			b->setInCycle(true);
 			continue;
 		}
 		else b->setAttachedAtoms(0, selectedAtoms);
@@ -292,6 +293,7 @@ void Molecule::updateAttachedAtomLists()
 			Messenger::printVerbose("Angle between Atoms %i-%i-%i is present in a cycle, so a minimal set of attached atoms will be used.\n", a->i()->arrayIndex(), a->j()->arrayIndex(), a->k()->arrayIndex());
 			a->setAttachedAtoms(0, a->i());
 			a->setAttachedAtoms(1, a->k());
+			a->setInCycle(true);
 			continue;
 		}
 		else a->setAttachedAtoms(0, selectedAtoms);
@@ -328,6 +330,7 @@ void Molecule::updateAttachedAtomLists()
 			Messenger::printVerbose("Torsion between Atoms %i-%i-%i-%i is present in a cycle, so a minimal set of attached atoms will be used.\n", t->i()->arrayIndex(), t->j()->arrayIndex(), t->k()->arrayIndex(), t->l()->arrayIndex());
 			t->setAttachedAtoms(0, t->i());
 			t->setAttachedAtoms(1, t->l());
+			t->setInCycle(true);
 			continue;
 		}
 		else t->setAttachedAtoms(0, selectedAtoms);

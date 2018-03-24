@@ -32,6 +32,7 @@ Intra::Intra()
 	attached_[1] = NULL;
 	arraySize_[0] = 0;
 	arraySize_[1] = 0;
+	inCycle_ = false;
 }
 
 // Destructor
@@ -110,4 +111,16 @@ int Intra::nAttached(int terminus) const
 Atom** Intra::attached(int terminus) const
 {
 	return attached_[terminus];
+}
+
+// Set whether the term is contained within a cycle
+void Intra::setInCycle(bool b)
+{
+	inCycle_ = b;
+}
+
+// Return whether the term is contained within a cycle
+bool Intra::inCycle() const
+{
+	return inCycle_;
 }

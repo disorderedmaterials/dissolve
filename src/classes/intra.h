@@ -64,6 +64,8 @@ class Intra
 	Atom** attached_[2];
 	// Size of attached_ Atoms arrays (maximum number of items that may be stored)
 	int arraySize_[2];
+	// Whether the term is contained within a cycle
+	bool inCycle_;
 
 	public:
 	// Clear and delete all arrays
@@ -76,6 +78,11 @@ class Intra
 	int nAttached(int terminus) const;
 	// Return array of attached Atoms for terminus specified
 	Atom** attached(int terminus) const;
+	// Set whether the term is contained within a cycle
+	void setInCycle(bool b);
+	// Return whether the term is contained within a cycle
+	bool inCycle() const;
+
 };
 
 #endif
