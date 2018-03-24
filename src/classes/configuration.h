@@ -344,6 +344,8 @@ class Configuration : public ListItem<Configuration>
 	void updateCellLocation(Atom* i);
 	// Update Cell location of specified Molecule
 	void updateCellLocation(Molecule* mol);
+	// Update Cell location of specified Atoms (in array)
+	void updateCellLocation(int nAtoms, Atom** atoms);
 
 
 	/*

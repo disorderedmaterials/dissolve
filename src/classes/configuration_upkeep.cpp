@@ -56,3 +56,9 @@ void Configuration::updateCellLocation(Molecule* mol)
 {
 	for (int n = 0; n < mol->nAtoms(); ++n) updateCellLocation(mol->atom(n));
 }
+
+// Update Cell location of specified Atoms (in array)
+void Configuration::updateCellLocation(int nAtoms, Atom** atoms)
+{
+	for (int n = 0; n < nAtoms; ++n) updateCellLocation(atoms[n]);
+}
