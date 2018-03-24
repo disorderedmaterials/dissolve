@@ -32,7 +32,7 @@ class ScaledEnergyKernel : public EnergyKernel
 {
 	public:
 	// Constructor
-	ScaledEnergyKernel(double ppRScale, ProcessPool& procPool, Configuration* config, const PotentialMap& potentialMap, double energyCutoff = -1.0);
+	ScaledEnergyKernel(double interMoleculeRScale, double intraMoleculeEScale, ProcessPool& procPool, Configuration* config, const PotentialMap& potentialMap, double energyCutoff = -1.0);
 	// Destructor
 	~ScaledEnergyKernel();
 	// Clear all data
@@ -43,8 +43,10 @@ class ScaledEnergyKernel : public EnergyKernel
 	 * Scale Factor
 	 */
 	private:
-	// Scale factor to apply to distances used when calculating pair-potential energies
-	double pairPotentialRScale_;
+	// Scale factor to apply to Molecule distances used when calculating interatomic PairPotential energies
+	double interMoleculeRScale_;
+	// Scale factor to apply to intermolecular PairPotential energies arising from interatomic interactions within the same Molecule
+	double intraMoleculeEScale_;
 
 
 	/*

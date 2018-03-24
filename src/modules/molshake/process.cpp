@@ -83,7 +83,7 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		// Print argument/parameter summary
 		Messenger::print("MolShake: Cutoff distance is %f.\n", cutoffDistance);
 		Messenger::print("MolShake: Performing %i shake(s) per Molecule.\n", nShakesPerMolecule);
-		if (sizeFactor < 1.0) Messenger::print("MolShake: Size factor is %f.\n", sizeFactor);
+		if (sizeFactor > 1.0) Messenger::print("MolShake: Size factor is %f.\n", sizeFactor);
 		Messenger::print("MolShake: Step size for translation adjustments is %f Angstroms (allowed range is %f <= delta <= %f).\n", translationStepSize, translationStepSizeMin, translationStepSizeMax);
 		Messenger::print("MolShake: Step size for rotation adjustments is %f degrees (allowed range is %f <= delta <= %f).\n", rotationStepSize, rotationStepSizeMin, rotationStepSizeMax);
 
@@ -96,8 +96,8 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		// Create a local ChangeStore and a suitable EnergyKernel
 		ChangeStore changeStore(procPool);
 		EnergyKernel normalKernel(procPool, cfg, duq.potentialMap(), cutoffDistance);
-		ScaledEnergyKernel scaledKernel(sizeFactor, procPool, cfg, duq.potentialMap(), cutoffDistance);
-		EnergyKernel& kernel = sizeFactor < 1.0 ? scaledKernel : normalKernel;
+		ScaledEnergyKernel scaledKernel(sizeFactor, 0.0, procPool, cfg, duq.potentialMap(), cutoffDistance);
+		EnergyKernel& kernel = sizeFactor > 1.0 ? scaledKernel : normalKernel;
 
 		// Initialise the random number buffer
 		procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
@@ -278,16 +278,17 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		GenericListHelper<double>::realise(moduleData, "RotationStepSize", uniqueName(), GenericItem::InRestartFileFlag) = rotationStepSize;
 
 		// If sizeFactor is less than 1.0, check the total energy 
-		if (sizeFactor < 1.0)
+		if (sizeFactor > 1.0)
 		{
-			if (EnergyModule::interatomicEnergy(procPool, cfg, duq.potentialMap()) < 0.0)
+			double scaledInterEnergy = kernel.energy(cfg->cells(), procPool.bestStrategy(), true);
+			if (scaledInterEnergy < 0.0)
 			{
-				sizeFactor *= 1.2;
-				if (sizeFactor > 1.0) sizeFactor = 1.0;
-				Messenger::print("MolShake: Total energy now negative, so increasing sizeFactor to %f.\n", sizeFactor);
+				sizeFactor *= 0.8;
+				if (sizeFactor < 1.0) sizeFactor = 1.0;
+				Messenger::print("MolShake: Interatomic scaled energy is now negative (%e), so increasing sizeFactor to %f.\n", scaledInterEnergy, sizeFactor);
 				GenericListHelper<double>::realise(moduleData, "SizeFactor", uniqueName(), GenericItem::InRestartFileFlag) = sizeFactor;
 			}
-			else Messenger::print("MolShake: Total energy is positive, so sizeFactor will remain at %f.\n", sizeFactor);
+			else Messenger::print("MolShake: Interatomic scaled energy is positive (%e), so sizeFactor will remain at %f.\n", scaledInterEnergy, sizeFactor);
 		}
 
 		// Increase coordinate index in Configuration
