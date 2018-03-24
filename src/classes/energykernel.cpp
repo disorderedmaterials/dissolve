@@ -722,6 +722,32 @@ double EnergyKernel::correct(const Atom* i)
 	return -correctionEnergy;
 }
 
+// Return total interatomic PairPotential energy of the system
+double EnergyKernel::energy(const CellArray& cellArray, ProcessPool::DivisionStrategy strategy, bool performSum)
+{
+	// Get sub-strategy to use
+	ProcessPool::DivisionStrategy subStrategy = ProcessPool::subDivisionStrategy(strategy);
+
+	// Set start/stride for parallel loop
+	int start = processPool_.interleavedLoopStart(strategy);
+	int stride = processPool_.interleavedLoopStride(strategy);
+
+	double totalEnergy = 0.0;
+	Cell* cell;
+	for (int cellId = start; cellId<cellArray.nCells(); cellId += stride)
+	{
+		cell = cellArray.cell(cellId);
+
+		// This cell with itself
+		totalEnergy += energy(cell, cell, false, true, subStrategy, performSum);
+
+		// Interatomic interactions between atoms in this cell and its neighbours
+		totalEnergy += energy(cell, true, subStrategy, performSum);
+	}
+
+	return totalEnergy;
+}
+
 /*
  * Intramolecular Terms
  */

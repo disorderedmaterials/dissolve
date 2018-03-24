@@ -107,6 +107,8 @@ class EnergyKernel
 	double energy(const Molecule* mol, ProcessPool::DivisionStrategy strategy, bool performSum);
 	// Return molecular correction energy related to intramolecular terms involving supplied atom
 	double correct(const Atom* i);
+	// Return total interatomic PairPotential energy of the system
+	double energy(const CellArray& cellArray, ProcessPool::DivisionStrategy strategy, bool performSum);
 
 
 	/*
