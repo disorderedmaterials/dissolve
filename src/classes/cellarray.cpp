@@ -248,7 +248,7 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 	Messenger::print("Constructing neighbour lists for individual Cells...\n");
 	bool mimRequired;
 	OrderedPointerArray<Cell> nearNeighbours, mimNeighbours, adjacentNeighbours;
-	Vec3<int> gridRef;
+	Vec3<int> gridRef, delta;
 	for (n=0; n<nCells_; ++n)
 	{
 		// Grab grid reference of central cell
@@ -269,7 +269,8 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 			else nearNeighbours.add(nbr);
 
 			// Add to adjacent Cells list, if it is adjacent
-			if (item->absMax() < 2) adjacentNeighbours.add(nbr);
+			delta = mimGridDelta(&cells_[n], nbr);
+			if (delta.absMax() < 2) adjacentNeighbours.add(nbr);
 		}
 
 		// Set up lists in the cell
@@ -389,7 +390,7 @@ bool CellArray::useMim(const Cell* a, const Cell* b) const
 }
 
 // Return if any Atoms in the supplied Cells are within the range supplied
-bool CellArray::withinRange(Cell* a, Cell* b, double distance)
+bool CellArray::withinRange(const Cell* a, const Cell* b, double distance)
 {
 	/*
 	 * For the supplied Cells, check whether it is possible for the contained Atoms to be within the specified distance.
@@ -409,13 +410,7 @@ bool CellArray::withinRange(Cell* a, Cell* b, double distance)
 #endif
 
 	// We need both the minimum image centroid-centroid distance, as well as the integer mim grid-reference delta
-	Vec3<int> u = b->gridReference() - a->gridReference();
-	if (u.x > divisions_.x*0.5) u.x -= divisions_.x;
-	else if (u.x < -divisions_.x*0.5) u.x += divisions_.x;
-	if (u.y > divisions_.y*0.5) u.y -= divisions_.y;
-	else if (u.y < -divisions_.y*0.5) u.y += divisions_.y;
-	if (u.z > divisions_.z*0.5) u.z -= divisions_.z;
-	else if (u.z < -divisions_.z*0.5) u.z += divisions_.z;
+	Vec3<int> u = mimGridDelta(a, b);
 
 	/*
 	 * We now have the minimum image integer grid vector from Cell a to Cell b.
@@ -433,3 +428,15 @@ bool CellArray::withinRange(Cell* a, Cell* b, double distance)
 	return (v.magnitude() <= distance);
 }
 
+// Return the minimum image grid delta between the two specified Cells
+Vec3<int> CellArray::mimGridDelta(const Cell* a, const Cell* b) const
+{
+	Vec3<int> u = b->gridReference() - a->gridReference();
+	if (u.x > divisions_.x*0.5) u.x -= divisions_.x;
+	else if (u.x < -divisions_.x*0.5) u.x += divisions_.x;
+	if (u.y > divisions_.y*0.5) u.y -= divisions_.y;
+	else if (u.y < -divisions_.y*0.5) u.y += divisions_.y;
+	if (u.z > divisions_.z*0.5) u.z -= divisions_.z;
+	else if (u.z < -divisions_.z*0.5) u.z += divisions_.z;
+	return u;
+}

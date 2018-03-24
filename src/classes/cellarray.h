@@ -86,7 +86,9 @@ class CellArray
 	// Return whether two Cells need minimum image calculation
 	bool useMim(const Cell* a, const Cell* b) const;
 	// Return if any Atoms in the supplied Cells are within the range supplied
-	bool withinRange(Cell* a, Cell* b, double distance);
+	bool withinRange(const Cell* a, const Cell* b, double distance);
+	// Return the minimum image grid delta between the two specified Cells
+	Vec3<int> mimGridDelta(const Cell* a, const Cell* b) const;
 };
 
 #endif
