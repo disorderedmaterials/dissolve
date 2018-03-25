@@ -504,6 +504,7 @@ bool DUQ::loadRestart(const char* filename)
 
 	// Variables
 	Configuration* cfg;
+	Module* module;
 	bool error = false;
 
 	while (!parser.eofOrBlank())
@@ -561,8 +562,20 @@ bool DUQ::loadRestart(const char* filename)
 				Messenger::error("No Configuration named '%s' exists.\n", parser.argc(1));
 				error = true;
 			}
+			else if (!readConfiguration(cfg, parser)) error = true;
+		}
+		else if (DUQSys::sameString(parser.argc(0), "Timing"))
+		{
+			// Let the user know what we are doing
+			Messenger::print("Reading timing information for Module '%s'...\n", parser.argc(1));
 
-			if (!readConfiguration(cfg, parser)) error = true;
+			module = ModuleList::findInstanceByUniqueName(parser.argc(1));
+			if (!module)
+			{
+				Messenger::error("No Module with unique name '%s' exists.\n", parser.argc(1));
+				error = true;
+			}
+			else if (!module->readProcessTimes(parser)) error = false;
 		}
 		else
 		{
@@ -636,6 +649,40 @@ bool DUQ::saveRestart(const char* filename)
 	{
 		if (!parser.writeLineF("Configuration  '%s'\n", cfg->name())) return false;
 		if (!writeConfiguration(cfg, parser)) return false;
+	}
+
+	// Module timing information
+	RefList<Module,bool> writtenModules;
+	// -- Configuration Modules
+	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
+	{
+		ListIterator<ModuleReference> moduleIterator(cfg->modules().modules());
+		while (ModuleReference* modRef = moduleIterator.iterate())
+		{
+			Module* module = modRef->module();
+
+			// In the case of unique-instance modules, don't write timing information more than once...
+			if (writtenModules.contains(module)) continue;
+
+			if (!parser.writeLineF("Timing  %s\n", module->uniqueName())) return false;
+			if (!module->processTimes().write(parser)) return false;
+
+			writtenModules.add(module);
+		}
+	}
+	// -- Processing
+	ListIterator<ModuleReference> procModIterator(processingModules_.modules());
+	while (ModuleReference* modRef = procModIterator.iterate())
+	{
+		Module* module = modRef->module();
+
+		// In the case of unique-instance modules, don't write timing information more than once...
+		if (writtenModules.contains(module)) continue;
+
+		if (!parser.writeLineF("Timing  %s\n", module->uniqueName())) return false;
+		if (!module->processTimes().write(parser)) return false;
+
+		writtenModules.add(module);
 	}
 
 	parser.closeFiles();

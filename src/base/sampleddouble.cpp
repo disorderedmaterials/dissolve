@@ -20,6 +20,7 @@
 */
 
 #include "base/sampleddouble.h"
+#include "base/lineparser.h"
 #include <math.h>
 
 // Constructor
@@ -89,4 +90,32 @@ void SampledDouble::operator<<(double x)
 {
 	value_ = x;
 	accumulate();
+}
+
+/*
+ * GenericItemBase Implementations
+ */
+
+// Return class name
+const char* SampledDouble::itemClassName()
+{
+	return "SampledDouble";
+}
+
+// Write data through specified LineParser
+bool SampledDouble::write(LineParser& parser)
+{
+	return parser.writeLineF("%f  %i  %f  %f\n", value_, count_, mean_, m2_);
+}
+
+// Read data through specified LineParser
+bool SampledDouble::read(LineParser& parser)
+{
+	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+	value_ = parser.argd(0);
+	count_ = parser.argi(1);
+	mean_ = parser.argd(2);
+	m2_ = parser.argd(3);
+
+	return true;
 }

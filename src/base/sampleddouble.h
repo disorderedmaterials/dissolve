@@ -22,10 +22,11 @@
 #ifndef DUQ_SAMPLEDDOUBLE_H
 #define DUQ_SAMPLEDDOUBLE_H
 
+#include "base/genericitembase.h"
 #include <ctime>
 
 // Double value with sampling
-class SampledDouble
+class SampledDouble : public GenericItemBase
 {
 	public:
 	// Constructor
@@ -70,6 +71,18 @@ class SampledDouble
 	operator double&();
 	// <<
 	void operator<<(double x);
+
+
+	/*
+	 * GenericItemBase Implementations
+	 */
+	public:
+	// Return class name
+	static const char* itemClassName();
+	// Write data through specified LineParser
+	bool write(LineParser& parser);
+	// Read data through specified LineParser
+	bool read(LineParser& parser);
 };
 
 #endif

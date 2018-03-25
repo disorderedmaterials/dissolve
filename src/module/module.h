@@ -229,6 +229,8 @@ class Module : public ListItem<Module>
 	public:
 	// Return timing information (in seconds) for this Module
 	SampledDouble processTimes() const;
+	// Read timing information through specified parser
+	bool readProcessTimes(LineParser& parser);
 
 
 	/*
