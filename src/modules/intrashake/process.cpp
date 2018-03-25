@@ -24,7 +24,7 @@
 #include "classes/changestore.h"
 #include "classes/energykernel.h"
 #include "classes/box.h"
-#include "classes/moleculedistributor.h"
+#include "classes/regionaldistributor.h"
 #include "base/sysfunc.h"
 #include "templates/genericlisthelper.h"
 
@@ -95,7 +95,7 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 
 		// Create a Molecule distributor
 		DynamicArray<Molecule>& moleculeArray = cfg->molecules();
-		MoleculeDistributor distributor(moleculeArray, cfg->cells(), procPool, strategy, false);
+		RegionalDistributor distributor(moleculeArray, cfg->cells(), procPool, strategy);
 
 		// Create a local ChangeStore and EnergyKernel
 		ChangeStore changeStore(procPool);
@@ -114,192 +114,203 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 
 		Timer timer;
 		procPool.resetAccumulatedTime();
-		while (molId = distributor.nextAvailableObject(changesBroadcastRequired), molId != Distributor::AllComplete)
+		while (distributor.cycle())
 		{
-			// Upkeep - Do we need to broadcast changes before we begin the calculation?
-			if (changesBroadcastRequired)
+			// Get next set of Molecule targets from the distributor
+			Array<int> targetMolecules = distributor.assignedMolecules();
+
+			// Switch parallel strategy if necessary
+			if (distributor.currentStrategy() != strategy)
 			{
-				changeStore.distributeAndApply(cfg);
-				changeStore.reset();
+				// Set the new strategy
+				strategy = distributor.currentStrategy();
+
+				// Re-initialise the random buffer
+				procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
 			}
 
-			// Check for valid molecule
-			if (molId == Distributor::NoneAvailable)
+			// Loop over target Molecule
+			int termId;
+			for (int n = 0; n<targetMolecules.nItems(); ++n)
 			{
-				distributor.finishedWithObject();
-				continue;
-			}
+				/*
+				* Calculation Begins
+				*/
 
-			/*
-			 * Calculation Begins
-			 */
+				// Get Molecule index and pointer
+				molId = targetMolecules[n];
+				Molecule* mol = cfg->molecule(molId);
 
-			// Get Molecule pointer
-			Molecule* mol = cfg->molecule(molId);
+				// Set current atom targets in ChangeStore (whole molecule)
+				changeStore.add(mol);
 
-			// Set current atom targets in ChangeStore (whole molecule)
-			changeStore.add(mol);
+				// Calculate reference pairpotential energy for Molecule
+				ppEnergy = termEnergyOnly ? 0.0 : kernel.energy(mol, ProcessPool::subDivisionStrategy(strategy), true);
 
-			// Calculate reference pairpotential energy for Molecule
-			ppEnergy = termEnergyOnly ? 0.0 : kernel.energy(mol, ProcessPool::subDivisionStrategy(strategy), true);
-
-			// Loop over defined Bonds
-			if (adjustBonds) for (int n=0; n<mol->nBonds(); ++n)
-			{
-				// Grab Bond pointer
-				Bond* b = mol->bond(n);
-
-				// Store current energy of this intramolecular term
-				intraEnergy = kernel.energy(b);
-
-				// Select random terminus
-				terminus = procPool.random() > 0.5 ? 1 : 0;
-
-				// Loop over number of shakes per term
-				for (shake=0; shake<nShakesPerTerm; ++shake)
+				// Loop over defined Bonds
+				if (adjustBonds) for (termId=0; termId<mol->nBonds(); ++termId)
 				{
-					// Get translation vector, normalise, and apply random delta
-					vji = box->minimumVector(b->i(), b->j());
-					vji.normalise();
-					vji *= procPool.randomPlusMinusOne() * bondStepSize;
+					// Grab Bond pointer
+					Bond* b = mol->bond(termId);
 
-					// Adjust the Atoms attached to the selected terminus
-					mol->translate(vji, b->nAttached(terminus), b->attached(terminus));
+					// Store current energy of this intramolecular term, or the whole Molecule if it is present in a cycle
+					intraEnergy = b->inCycle() ? kernel.intraEnergy(mol) : kernel.energy(b);
 
-					// Calculate new energy
-					newPPEnergy = termEnergyOnly ? 0.0 : kernel.energy(mol, ProcessPool::subDivisionStrategy(strategy), true);
-					newIntraEnergy = kernel.energy(b);
-					
-					// Trial the transformed Molecule
-					delta = (newPPEnergy + newIntraEnergy) - (ppEnergy + intraEnergy);
-					accept = delta < 0 ? true : (procPool.random() < exp(-delta*rRT));
+					// Select random terminus
+					terminus = procPool.random() > 0.5 ? 1 : 0;
 
-					// Accept new (current) positions of the Molecule's Atoms?
-					if (accept)
+					// Loop over number of shakes per term
+					for (shake=0; shake<nShakesPerTerm; ++shake)
 					{
-						changeStore.updateAll();
-						ppEnergy = newPPEnergy;
-						intraEnergy = newIntraEnergy;
-						totalDelta += delta;
-						++nBondAccepted;
+						// Get translation vector, normalise, and apply random delta
+						vji = box->minimumVector(b->i(), b->j());
+						vji.normalise();
+						vji *= procPool.randomPlusMinusOne() * bondStepSize;
+
+						// Adjust the Atoms attached to the selected terminus
+						mol->translate(vji, b->nAttached(terminus), b->attached(terminus));
+
+						// Update Cell positions of the adjusted Atoms
+						cfg->updateCellLocation(b->nAttached(terminus), b->attached(terminus));
+
+						// Calculate new energy
+						newPPEnergy = termEnergyOnly ? 0.0 : kernel.energy(mol, ProcessPool::subDivisionStrategy(strategy), true);
+						newIntraEnergy = b->inCycle() ? kernel.intraEnergy(mol) : kernel.energy(b);
+						
+						// Trial the transformed Molecule
+						delta = (newPPEnergy + newIntraEnergy) - (ppEnergy + intraEnergy);
+						accept = delta < 0 ? true : (procPool.random() < exp(-delta*rRT));
+
+						// Accept new (current) positions of the Molecule's Atoms?
+						if (accept)
+						{
+							changeStore.updateAll();
+							ppEnergy = newPPEnergy;
+							intraEnergy = newIntraEnergy;
+							distributor.increase(totalDelta, delta);
+							distributor.increment(nBondAccepted);
+						}
+						else changeStore.revertAll();
+
+						distributor.increment(nBondAttempts);
 					}
-					else changeStore.revertAll();
-
-					++nBondAttempts;
 				}
-			}
 
-			// Loop over defined Angles
-			if (adjustAngles) for (int n=0; n<mol->nAngles(); ++n)
-			{
-				// Grab Angle pointer
-				Angle* a = mol->angle(n);
-
-				// Store current energy of this intramolecular term
-				intraEnergy = kernel.energy(a);
-
-				// Select random terminus
-				terminus = procPool.random() > 0.5 ? 1 : 0;
-
-				// Loop over number of shakes per term
-				for (shake=0; shake<nShakesPerTerm; ++shake)
+				// Loop over defined Angles
+				if (adjustAngles) for (termId=0; termId<mol->nAngles(); ++termId)
 				{
-					// Get bond vectors and calculate cross product to get rotation axis
-					vji = box->minimumVector(a->j(), a->i());
-					vjk = box->minimumVector(a->j(), a->k());
-					v = vji * vjk;
+					// Grab Angle pointer
+					Angle* a = mol->angle(termId);
 
-					// Create suitable transformation matrix
-					transform.createRotationAxis(v.x, v.y, v.z, procPool.randomPlusMinusOne()*angleStepSize, true);
+					// Store current energy of this intramolecular term
+					intraEnergy = a->inCycle() ? kernel.intraEnergy(mol) : kernel.energy(a);
 
-					// Adjust the Atoms attached to the selected terminus
-					mol->transform(box, transform, a->j()->r(), a->nAttached(terminus), a->attached(terminus));
+					// Select random terminus
+					terminus = procPool.random() > 0.5 ? 1 : 0;
 
-					// Calculate new energy
-					newPPEnergy = termEnergyOnly ? 0.0 : kernel.energy(mol, ProcessPool::subDivisionStrategy(strategy), true);
-					newIntraEnergy = kernel.energy(a);
-					
-					// Trial the transformed Molecule
-					delta = (newPPEnergy + newIntraEnergy) - (ppEnergy + intraEnergy);
-					accept = delta < 0 ? true : (procPool.random() < exp(-delta*rRT));
-
-					// Accept new (current) positions of the Molecule's Atoms?
-					if (accept)
+					// Loop over number of shakes per term
+					for (shake=0; shake<nShakesPerTerm; ++shake)
 					{
-						changeStore.updateAll();
-						ppEnergy = newPPEnergy;
-						intraEnergy = newIntraEnergy;
-						totalDelta += delta;
-						++nAngleAccepted;
+						// Get bond vectors and calculate cross product to get rotation axis
+						vji = box->minimumVector(a->j(), a->i());
+						vjk = box->minimumVector(a->j(), a->k());
+						v = vji * vjk;
+
+						// Create suitable transformation matrix
+						transform.createRotationAxis(v.x, v.y, v.z, procPool.randomPlusMinusOne()*angleStepSize, true);
+
+						// Adjust the Atoms attached to the selected terminus
+						mol->transform(box, transform, a->j()->r(), a->nAttached(terminus), a->attached(terminus));
+
+						// Update Cell positions of the adjusted Atoms
+						cfg->updateCellLocation(a->nAttached(terminus), a->attached(terminus));
+
+						// Calculate new energy
+						newPPEnergy = termEnergyOnly ? 0.0 : kernel.energy(mol, ProcessPool::subDivisionStrategy(strategy), true);
+						newIntraEnergy = a->inCycle() ? kernel.intraEnergy(mol) : kernel.energy(a);
+						
+						// Trial the transformed Molecule
+						delta = (newPPEnergy + newIntraEnergy) - (ppEnergy + intraEnergy);
+						accept = delta < 0 ? true : (procPool.random() < exp(-delta*rRT));
+
+						// Accept new (current) positions of the Molecule's Atoms?
+						if (accept)
+						{
+							changeStore.updateAll();
+							ppEnergy = newPPEnergy;
+							intraEnergy = newIntraEnergy;
+							distributor.increase(totalDelta, delta);
+							distributor.increment(nAngleAccepted);
+						}
+						else changeStore.revertAll();
+
+						distributor.increment(nAngleAttempts);
 					}
-					else changeStore.revertAll();
-
-					++nAngleAttempts;
 				}
-			}
 
-			// Loop over defined Torsions
-			if (adjustTorsions) for (int n=0; n<mol->nTorsions(); ++n)
-			{
-				// Grab Torsion pointer
-				Torsion* t = mol->torsion(n);
-
-				// Store current energy of this intramolecular term
-				intraEnergy = kernel.energy(t);
-
-				// Select random terminus
-				terminus = procPool.random() > 0.5 ? 1 : 0;
-
-				// Loop over number of shakes per term
-				for (shake=0; shake<nShakesPerTerm; ++shake)
+				// Loop over defined Torsions
+				if (adjustTorsions) for (int termId=0; termId<mol->nTorsions(); ++termId)
 				{
-					// Get bond vectors j-k to get rotation axis
-					vjk = box->minimumVector(t->j(), t->k());
+					// Grab Torsion pointer
+					Torsion* t = mol->torsion(termId);
 
-					// Create suitable transformation matrix
-					transform.createRotationAxis(vjk.x, vjk.y, vjk.z, procPool.randomPlusMinusOne()*torsionStepSize, true);
+					// Store current energy of this intramolecular term
+					intraEnergy = t->inCycle() ? kernel.intraEnergy(mol) : kernel.energy(t);
 
-					// Adjust the Atoms attached to the selected terminus
-					mol->transform(box, transform, terminus == 0 ? t->j()->r() : t->k()->r(), t->nAttached(terminus), t->attached(terminus));
+					// Select random terminus
+					terminus = procPool.random() > 0.5 ? 1 : 0;
 
-					// Calculate new energy
-					newPPEnergy = termEnergyOnly ? 0.0 : kernel.energy(mol, ProcessPool::subDivisionStrategy(strategy), true);
-					newIntraEnergy = kernel.energy(t);
-					
-					// Trial the transformed Molecule
-					delta = (newPPEnergy + newIntraEnergy) - (ppEnergy + intraEnergy);
-					accept = delta < 0 ? true : (procPool.random() < exp(-delta*rRT));
-
-					// Accept new (current) positions of the Molecule's Atoms?
-					if (accept)
+					// Loop over number of shakes per term
+					for (shake=0; shake<nShakesPerTerm; ++shake)
 					{
-						changeStore.updateAll();
-						ppEnergy = newPPEnergy;
-						intraEnergy = newIntraEnergy;
-						totalDelta += delta;
-						++nTorsionAccepted;
+						// Get bond vectors j-k to get rotation axis
+						vjk = box->minimumVector(t->j(), t->k());
+
+						// Create suitable transformation matrix
+						transform.createRotationAxis(vjk.x, vjk.y, vjk.z, procPool.randomPlusMinusOne()*torsionStepSize, true);
+
+						// Adjust the Atoms attached to the selected terminus
+						mol->transform(box, transform, terminus == 0 ? t->j()->r() : t->k()->r(), t->nAttached(terminus), t->attached(terminus));
+
+						// Update Cell positions of the adjusted Atoms
+						cfg->updateCellLocation(t->nAttached(terminus), t->attached(terminus));
+
+						// Calculate new energy
+						newPPEnergy = termEnergyOnly ? 0.0 : kernel.energy(mol, ProcessPool::subDivisionStrategy(strategy), true);
+						newIntraEnergy = t->inCycle() ? kernel.intraEnergy(mol) : kernel.energy(t);
+						
+						// Trial the transformed Molecule
+						delta = (newPPEnergy + newIntraEnergy) - (ppEnergy + intraEnergy);
+						accept = delta < 0 ? true : (procPool.random() < exp(-delta*rRT));
+
+						// Accept new (current) positions of the Molecule's Atoms?
+						if (accept)
+						{
+							changeStore.updateAll();
+							ppEnergy = newPPEnergy;
+							intraEnergy = newIntraEnergy;
+							distributor.increase(totalDelta, delta);
+							distributor.increment(nTorsionAccepted);
+						}
+						else changeStore.revertAll();
+
+						distributor.increment(nTorsionAttempts);
 					}
-					else changeStore.revertAll();
-
-					++nTorsionAttempts;
 				}
+
+				// Store modifications to Atom positions ready for broadcast
+				changeStore.storeAndReset();
+
+				/*
+				* Calculation End
+				*/
 			}
-
-			// Store modifications to Atom positions ready for broadcast
-			changeStore.storeAndReset();
-
-			/*
-			* Calculation End
-			*/
-
-			// Tell the distributor we are done
-			distributor.finishedWithObject();
+			
+			// Now all target Molecules have been processes, broadcast the changes made
+			changeStore.distributeAndApply(cfg);
+			changeStore.reset();
 		}
 		timer.stop();
-
-		// Make sure any remaining changes are broadcast
-		changeStore.distributeAndApply(cfg);
-		changeStore.reset();
 
 		// Collect statistics across all processe
 		if (!procPool.allSum(&totalDelta, 1, strategy)) return false;
@@ -311,7 +322,7 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		if (!procPool.allSum(&nTorsionAccepted, 1, strategy)) return false;
 
 		Messenger::print("IntraShake: Total energy delta was %10.4e kJ/mol.\n", totalDelta);
-		Messenger::print("IntraShake: Total number of attempted moves was %i (%s work, %s comms, %i nodists, %i broadcasts).\n", nBondAttempts+nAngleAttempts+nTorsionAttempts, timer.totalTimeString(), procPool.accumulatedTimeString(), distributor.nUnavailableInstances(), distributor.nChangeBroadcastsRequired());
+		Messenger::print("IntraShake: Total number of attempted moves was %i (%s work, %s comms).\n", nBondAttempts+nAngleAttempts+nTorsionAttempts, timer.totalTimeString(), procPool.accumulatedTimeString());
 
 		// Calculate and report acceptance rates and adjust step sizes - if no moves were accepted, just decrease the current stepSize by a constant factor
 		if (adjustBonds && (nBondAttempts > 0))
