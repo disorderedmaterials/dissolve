@@ -36,7 +36,7 @@ class CharStringKeywordWidget : public QComboBox, public KeywordWidgetBase
 
 	public:
 	// Constructor
-	CharStringKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword);
+	CharStringKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, GenericList& moduleData, const char* prefix);
 
 
 	/*
@@ -64,7 +64,7 @@ class CharStringKeywordWidget : public QComboBox, public KeywordWidgetBase
 	 */
 	public:
 	// Update value displayed in widget, using specified source if necessary
-	void updateValue(GenericList& moduleData, const char* prefix);
+	void updateValue();
 };
 
 #endif

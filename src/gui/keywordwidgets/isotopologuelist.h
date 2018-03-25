@@ -38,7 +38,7 @@ class IsotopologueListKeywordWidget : public KeywordDropDown, public KeywordWidg
 
 	public:
 	// Constructor
-	IsotopologueListKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword);
+	IsotopologueListKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, GenericList& moduleData, const char* prefix);
         // Main form declaration
         Ui::IsotopologueListWidget ui;
 
@@ -73,7 +73,7 @@ class IsotopologueListKeywordWidget : public KeywordDropDown, public KeywordWidg
 
 	public:
 	// Update value displayed in widget, using specified source if necessary
-	void updateValue(GenericList& moduleData, const char* prefix);
+	void updateValue();
 	// Update widget values data based on keyword data
 	void updateWidgetValues();
 	// Update keyword data based on widget values

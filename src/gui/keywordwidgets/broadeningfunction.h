@@ -38,7 +38,7 @@ class BroadeningFunctionKeywordWidget : public KeywordDropDown, public KeywordWi
 
 	public:
 	// Constructor
-	BroadeningFunctionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword);
+	BroadeningFunctionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, GenericList& moduleData, const char* prefix);
         // Main form declaration
         Ui::BroadeningFunctionWidget ui;
 
@@ -68,7 +68,7 @@ class BroadeningFunctionKeywordWidget : public KeywordDropDown, public KeywordWi
 	 */
 	public:
 	// Update value displayed in widget, using specified source if necessary
-	void updateValue(GenericList& moduleData, const char* prefix);
+	void updateValue();
 	// Update widget values data based on keyword data
 	void updateWidgetValues();
 	// Update keyword data based on widget values

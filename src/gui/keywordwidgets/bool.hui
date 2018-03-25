@@ -36,7 +36,7 @@ class BoolKeywordWidget : public QCheckBox, public KeywordWidgetBase
 
 	public:
 	// Constructor
-	BoolKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword);
+	BoolKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, GenericList& moduleData, const char* prefix);
 
 
 	/*
@@ -64,7 +64,7 @@ class BoolKeywordWidget : public QCheckBox, public KeywordWidgetBase
 	 */
 	public:
 	// Update value displayed in widget, using specified source if necessary
-	void updateValue(GenericList& moduleData, const char* prefix);
+	void updateValue();
 };
 
 #endif

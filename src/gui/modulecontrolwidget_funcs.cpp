@@ -100,6 +100,9 @@ void ModuleControlWidget::initialiseControls(Module* module)
 	QWidget* widget;
 	KeywordWidgetBase* base;
 
+	// Select source list for keywords that have potentially been replicated / updated there
+	GenericList& moduleData = module->configurationLocal() ? module->targetConfigurations().firstItem()->moduleData() : duq_.processingModuleData();
+
 	ListIterator<ModuleKeywordBase> keywordIterator(module->keywords().keywords());
 	while (ModuleKeywordBase* keyword = keywordIterator.iterate())
 	{
@@ -110,49 +113,49 @@ void ModuleControlWidget::initialiseControls(Module* module)
 		// The widget to create here depends on the data type of the keyword
 		if (keyword->type() == ModuleKeywordBase::IntegerData)
 		{
-			IntegerKeywordWidget* intWidget = new IntegerKeywordWidget(NULL, keyword);
+			IntegerKeywordWidget* intWidget = new IntegerKeywordWidget(NULL, keyword, moduleData, module->uniqueName());
 			connect(intWidget, SIGNAL(keywordValueChanged()), duqWindow_, SLOT(setModified()));
 			widget = intWidget;
 			base = intWidget;
 		}
 		else if (keyword->type() == ModuleKeywordBase::DoubleData)
 		{
-			DoubleKeywordWidget* doubleWidget = new DoubleKeywordWidget(NULL, keyword);
+			DoubleKeywordWidget* doubleWidget = new DoubleKeywordWidget(NULL, keyword, moduleData, module->uniqueName());
 			connect(doubleWidget, SIGNAL(keywordValueChanged()), duqWindow_, SLOT(setModified()));
 			widget = doubleWidget;
 			base = doubleWidget;
 		}
 		else if (keyword->type() == ModuleKeywordBase::CharStringData)
 		{
-			CharStringKeywordWidget* charWidget = new CharStringKeywordWidget(NULL, keyword);
+			CharStringKeywordWidget* charWidget = new CharStringKeywordWidget(NULL, keyword, moduleData, module->uniqueName());
 			connect(charWidget, SIGNAL(keywordValueChanged()), duqWindow_, SLOT(setModified()));
 			widget = charWidget;
 			base = charWidget;
 		}
 		else if (keyword->type() == ModuleKeywordBase::BoolData)
 		{
-			BoolKeywordWidget* boolWidget = new BoolKeywordWidget(NULL, keyword);
+			BoolKeywordWidget* boolWidget = new BoolKeywordWidget(NULL, keyword, moduleData, module->uniqueName());
 			connect(boolWidget, SIGNAL(keywordValueChanged()), duqWindow_, SLOT(setModified()));
 			widget = boolWidget;
 			base = boolWidget;
 		}
 		else if (keyword->type() == ModuleKeywordBase::BroadeningFunctionData)
 		{
-			BroadeningFunctionKeywordWidget* broadeningFunctionWidget = new BroadeningFunctionKeywordWidget(NULL, keyword);
+			BroadeningFunctionKeywordWidget* broadeningFunctionWidget = new BroadeningFunctionKeywordWidget(NULL, keyword, moduleData, module->uniqueName());
 			connect(broadeningFunctionWidget, SIGNAL(keywordValueChanged()), duqWindow_, SLOT(setModified()));
 			widget = broadeningFunctionWidget;
 			base = broadeningFunctionWidget;
 		}
 		else if (keyword->type() == ModuleKeywordBase::IsotopologueListData)
 		{
-			IsotopologueListKeywordWidget* isotopologueListWidget = new IsotopologueListKeywordWidget(NULL, keyword);
+			IsotopologueListKeywordWidget* isotopologueListWidget = new IsotopologueListKeywordWidget(NULL, keyword, moduleData, module->uniqueName());
 			connect(isotopologueListWidget, SIGNAL(keywordValueChanged()), duqWindow_, SLOT(setModified()));
 			widget = isotopologueListWidget;
 			base = isotopologueListWidget;
 		}
 		else if (keyword->type() == ModuleKeywordBase::WindowFunctionData)
 		{
-			WindowFunctionKeywordWidget* windowFunctionWidget = new WindowFunctionKeywordWidget(NULL, keyword);
+			WindowFunctionKeywordWidget* windowFunctionWidget = new WindowFunctionKeywordWidget(NULL, keyword, moduleData, module->uniqueName());
 			connect(windowFunctionWidget, SIGNAL(keywordValueChanged()), duqWindow_, SLOT(setModified()));
 			widget = windowFunctionWidget;
 			base = windowFunctionWidget;
@@ -216,11 +219,8 @@ void ModuleControlWidget::updateControls()
 	ui.FrequencySpin->setValue(module->frequency());
 	ui.RunsInLabel->setText(module->frequencyDetails(duq_.iteration()));
 
-	// Select source list for keywords that have potentially been replicated / updated there
-	GenericList& moduleData = module->configurationLocal() ? module->targetConfigurations().firstItem()->moduleData() : duq_.processingModuleData();
-
 	RefListIterator<KeywordWidgetBase,bool> keywordIterator(keywordWidgets_);
-	while (KeywordWidgetBase* keywordWidget = keywordIterator.iterate()) keywordWidget->updateValue(moduleData, module->uniqueName());
+	while (KeywordWidgetBase* keywordWidget = keywordIterator.iterate()) keywordWidget->updateValue();
 
 	// Update control widget
 	if (moduleWidget_) moduleWidget_->updateControls();

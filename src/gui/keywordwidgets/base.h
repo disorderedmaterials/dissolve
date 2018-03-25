@@ -31,7 +31,17 @@ class KeywordWidgetBase
 {
 	public:
 	// Constructor
-	KeywordWidgetBase();
+	KeywordWidgetBase(GenericList& moduleData, const char* prefix);
+
+
+	/*
+	 * Module List
+	 */
+	protected:
+	// Module data list to be searched for reading/setting existing widget value
+	GenericList& moduleData_;
+	// Module prefix to use when searching module data list
+	const char* modulePrefix_;
 
 
 	/*
@@ -42,8 +52,8 @@ class KeywordWidgetBase
 	bool refreshing_;
 
 	public:
-	// Update value displayed in widget, using specified source if necessary
-	virtual void updateValue(GenericList& moduleData, const char* prefix) = 0;
+	// Update value displayed in widget
+	virtual void updateValue() = 0;
 };
 
 #endif

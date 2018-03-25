@@ -23,7 +23,7 @@
 #include "templates/genericlisthelper.h"
 
 // Constructor
-CharStringKeywordWidget::CharStringKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword) : QComboBox(parent), KeywordWidgetBase()
+CharStringKeywordWidget::CharStringKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, GenericList& moduleData, const char* prefix) : QComboBox(parent), KeywordWidgetBase(moduleData, prefix)
 {
 	// Cast the pointer up into the parent class type
 	keyword_ = dynamic_cast<CharStringModuleKeyword*>(keyword);
@@ -73,16 +73,16 @@ void CharStringKeywordWidget::myCurrentTextChanged(const QString& text)
  */
 
 // Update value displayed in widget, using specified source if necessary
-void CharStringKeywordWidget::updateValue(GenericList& moduleData, const char* prefix)
+void CharStringKeywordWidget::updateValue()
 {
 	refreshing_ = true;
 
 	CharString newValue;
 	// Check to see if the associated Keyword may have been stored/updated in the specified moduleData
-	if ((keyword_->genericItemFlags()&GenericItem::InRestartFileFlag) && moduleData.contains(keyword_->keyword(), prefix))
+	if ((keyword_->genericItemFlags()&GenericItem::InRestartFileFlag) && moduleData_.contains(keyword_->keyword(), modulePrefix_))
 	{
 		// Retrieve the item from the list
-		newValue = GenericListHelper<double>::retrieve(moduleData, keyword_->keyword(), prefix);
+		newValue = GenericListHelper<double>::retrieve(moduleData_, keyword_->keyword(), modulePrefix_);
 	}
 	else newValue = keyword_->asString();
 

@@ -26,7 +26,7 @@
 #include <QComboBox>
 
 // Constructor
-BroadeningFunctionKeywordWidget::BroadeningFunctionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword) : KeywordDropDown(this), KeywordWidgetBase()
+BroadeningFunctionKeywordWidget::BroadeningFunctionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, GenericList& moduleData, const char* prefix) : KeywordDropDown(this), KeywordWidgetBase(moduleData, prefix)
 {
 	// Create and set up the UI for our widget in the drop-down's widget container
 	ui.setupUi(dropWidget());
@@ -67,15 +67,15 @@ void BroadeningFunctionKeywordWidget::functionCombo_currentIndexChanged(int inde
  */
 
 // Update value displayed in widget, using specified source if necessary
-void BroadeningFunctionKeywordWidget::updateValue(GenericList& moduleData, const char* prefix)
+void BroadeningFunctionKeywordWidget::updateValue()
 {
 	refreshing_ = true;
 
 	// Check to see if the associated Keyword may have been stored/updated in the specified moduleData
-	if ((keyword_->genericItemFlags()&GenericItem::InRestartFileFlag) && moduleData.contains(keyword_->keyword(), prefix))
+	if ((keyword_->genericItemFlags()&GenericItem::InRestartFileFlag) && moduleData_.contains(keyword_->keyword(), modulePrefix_))
 	{
 		// Retrieve the item from the list and set our widgets
-		keyword_->data() = GenericListHelper<BroadeningFunction>::retrieve(moduleData, keyword_->keyword(), prefix);
+		keyword_->data() = GenericListHelper<BroadeningFunction>::retrieve(moduleData_, keyword_->keyword(), modulePrefix_);
 	}
 
 	refreshing_ = false;

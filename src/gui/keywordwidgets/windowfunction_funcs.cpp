@@ -25,7 +25,7 @@
 #include <QComboBox>
 
 // Constructor
-WindowFunctionKeywordWidget::WindowFunctionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword) : QWidget(parent), KeywordWidgetBase()
+WindowFunctionKeywordWidget::WindowFunctionKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, GenericList& moduleData, const char* prefix) : QWidget(parent), KeywordWidgetBase(moduleData, prefix)
 {
 	// Create the necessary subwidgets
 	QHBoxLayout* layout = new QHBoxLayout(this);
@@ -70,13 +70,13 @@ void WindowFunctionKeywordWidget::functionComboChanged(const QString& text)
  */
 
 // Update value displayed in widget, using specified source if necessary
-void WindowFunctionKeywordWidget::updateValue(GenericList& moduleData, const char* prefix)
+void WindowFunctionKeywordWidget::updateValue()
 {
 	// Check to see if the associated Keyword may have been stored/updated in the specified moduleData
-	if ((keyword_->genericItemFlags()&GenericItem::InRestartFileFlag) && moduleData.contains(keyword_->keyword(), prefix))
+	if ((keyword_->genericItemFlags()&GenericItem::InRestartFileFlag) && moduleData_.contains(keyword_->keyword(), modulePrefix_))
 	{
 		// Retrieve the item from the list and set our widgets
-		setWidgets(GenericListHelper<WindowFunction>::retrieve(moduleData, keyword_->keyword(), prefix));
+		setWidgets(GenericListHelper<WindowFunction>::retrieve(moduleData_, keyword_->keyword(), modulePrefix_));
 	}
 	else setWidgets(keyword_->data());
 }

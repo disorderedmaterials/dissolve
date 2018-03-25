@@ -32,7 +32,7 @@
 #include "templates/variantpointer.h"
 
 // Constructor
-IsotopologueListKeywordWidget::IsotopologueListKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword) : KeywordDropDown(this), KeywordWidgetBase()
+IsotopologueListKeywordWidget::IsotopologueListKeywordWidget(QWidget* parent, ModuleKeywordBase* keyword, GenericList& moduleData, const char* prefix) : KeywordDropDown(this), KeywordWidgetBase(moduleData, prefix)
 {
 	// Create and set up the UI for our widget in the drop-down's widget container
 	ui.setupUi(dropWidget());
@@ -205,7 +205,7 @@ void IsotopologueListKeywordWidget::updateTableRow(int row, IsotopologueReferenc
 }
 
 // Update value displayed in widget, using specified source if necessary
-void IsotopologueListKeywordWidget::updateValue(GenericList& moduleData, const char* prefix)
+void IsotopologueListKeywordWidget::updateValue()
 {
 	updateWidgetValues();
 }
