@@ -36,6 +36,9 @@ if(CHECKS)
 endif(CHECKS)
 
 if(GUI)
+  # Request C++11 standard (for Qt5)
+  set (CMAKE_CXX_STANDARD 11)
+
   # Add extra functions
   LIST(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
   include(FindBISON)
