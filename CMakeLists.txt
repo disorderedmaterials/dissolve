@@ -178,6 +178,7 @@ set(BASIC_LINK_LIBS
   molshakemodule
   partialsmodule
   refinemodule
+  sanitycheckmodule
   skeletonmodule
   testmodule
 )
@@ -224,7 +225,9 @@ if(GUI)
     uchromaexpression
     uchromakernels
     uchromasession
+    widgets
     keywordwidgets
+    delegates
     gui
 
     -Wl,-no-whole-archive

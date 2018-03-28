@@ -3,9 +3,9 @@
 
 # Meta-Objects
 SET(keywordwidgets_MOC_HDRS
-  broadeningfunction.ui
-  dropdown.ui
-  isotopologuelist.ui
+  broadeningfunction.h
+  isotopologuelist.h
+  dropdown.h
 
   bool.hui
   charstring.hui
@@ -15,6 +15,14 @@ SET(keywordwidgets_MOC_HDRS
   windowfunction.hui
 )
 QT5_WRAP_CPP(keywordwidgets_MOC_SRCS ${keywordwidgets_MOC_HDRS})
+
+# User Interface Files
+SET(keywordwidgets_UIS
+  broadeningfunction.ui
+  dropdown.ui
+  isotopologuelist.ui
+)
+QT5_WRAP_UI(keywordwidgets_UIS_H ${keywordwidgets_UIS})
 
 # Source files (not Qt UI files or custom .h [uih])
 SET(keywordwidgets_SRCS
@@ -31,13 +39,11 @@ SET(keywordwidgets_SRCS
   windowfunction_funcs.cpp
 
   base.h
-  broadeningfunction.h
-  isotopologuelist.h
-  dropdown.h
 )
 
 # Target 'keywordwidgets'
 add_library(keywordwidgets
+  ${keywordwidgets_UIS_H}
   ${keywordwidgets_SRCS}
   ${keywordwidgets_MOC_SRCS}
 )
