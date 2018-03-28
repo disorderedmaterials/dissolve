@@ -177,11 +177,13 @@ void DUQWindow::updateStatus()
 	{
 		labelPalette.setColor(QPalette::WindowText, Qt::darkGreen);
 		ui.SetUpLabel->setText("Set Up & Ready");
+		ui.ControlSetUpButton->setEnabled(false);
 	}
 	else
 	{
 		labelPalette.setColor(QPalette::WindowText, Qt::darkRed);
 		ui.SetUpLabel->setText("Not Set Up");
+		ui.ControlSetUpButton->setEnabled(true);
 	}
 	ui.SetUpLabel->setPalette(labelPalette);
 }
