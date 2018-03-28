@@ -82,7 +82,7 @@ bool UChromaBase::writeCollectionBlock(LineParser& parser, Collection* collectio
 	if (type == Collection::MasterCollection) parser.writeLineF("%s%s '%s'\n", indent, UChromaBase::inputBlock(UChromaBase::CollectionBlock), collection->name());
 	else if (type == Collection::FitCollection) parser.writeLineF("%s%s '%s'\n", indent, UChromaBase::collectionKeyword(UChromaBase::FitBlockKeyword), collection->name());
 	else if (type == Collection::ExtractedCollection) parser.writeLineF("%s%s '%s'\n", indent, UChromaBase::collectionKeyword(UChromaBase::SliceBlockKeyword), collection->name());
-	parser.writeLineF("%s  %s \"%s\"\n", indent, UChromaBase::collectionKeyword(UChromaBase::DataDirectoryKeyword), qPrintable(collection->dataFileDirectory().absolutePath()));
+	if (!collection->dataFileDirectory().path().isEmpty()) parser.writeLineF("%s  %s \"%s\"\n", indent, UChromaBase::collectionKeyword(UChromaBase::DataDirectoryKeyword), qPrintable(collection->dataFileDirectory().absolutePath()));
 
 	// -- Transforms
 	parser.writeLineF("%s  %s %s %s\n", indent, UChromaBase::collectionKeyword(UChromaBase::TransformXKeyword), stringBool(collection->transformEnabled(0)), collection->transformEquation(0));

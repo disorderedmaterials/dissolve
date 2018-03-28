@@ -40,7 +40,7 @@ Collection::Collection() : ListItem<Collection>(), ObjectStore<Collection>(this)
 
 	// Set variable defaults
 	dataSets_.clear();
-	dataFileDirectory_ = getenv("PWD");
+	dataFileDirectory_ = QDir();
 	name_ = "Empty Collection";
 	dataMin_.zero();
 	dataMax_.set(10.0, 10.0, 10.0);
