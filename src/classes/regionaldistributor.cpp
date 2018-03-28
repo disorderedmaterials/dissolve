@@ -71,6 +71,8 @@ bool RegionalDistributor::setProcessOrGroupLimits(ProcessPool::DivisionStrategy 
 {
 	nProcessesOrGroups_ = processPool_.strategyNDivisions(strategy);
 	processOrGroupIndex_ = processPool_.strategyProcessIndex(strategy);
+
+	return false;
 }
 
 // Set up next distribution of Molecules amongst processes/groups, returning false if there are no more Molecules to distribute

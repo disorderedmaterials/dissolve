@@ -294,7 +294,7 @@ template <class T> class DynamicArray
 		currentChunk_ = arrayChunks_.first();
 	}
 	// Initialise array to specified size, creating objects from factory
-	bool initialise(int nItems)
+	void initialise(int nItems)
 	{
 		array_.initialise(nItems);
 		T* newItem;

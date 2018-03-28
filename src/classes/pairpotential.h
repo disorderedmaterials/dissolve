@@ -203,7 +203,7 @@ class PairPotential : public ListItem<PairPotential>
 	// Return range of potential
 	double range() const;
 	// (Re)generate original potential (uOriginal) from current parameters
-	bool calculateUOriginal(bool recalculateUFull = true);
+	void calculateUOriginal(bool recalculateUFull = true);
 	// Return potential at specified r
 	double energy(double r);
 	// Return analytic potential at specified r
