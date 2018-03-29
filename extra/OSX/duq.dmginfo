@@ -18,7 +18,7 @@ APP_BIN="duq-gui.app/Contents/MacOS/duq-gui duq.app/Contents/MacOS/duq duq-seria
 APP_PLIST="duq-gui.app/Contents/Info.plist"
 
 # -- APP_ICON : A 1024x1024 png file from which to create an icon set
-APP_ICON="../extra/duq1024.png"
+APP_ICON="../extra/logo1024.png"
 
 # -- APP_LICENSE : License information file to put in the bundle
 APP_LICENSE="../COPYING"
