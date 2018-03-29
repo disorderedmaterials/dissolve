@@ -23,6 +23,24 @@
 #include "templates/list.h"
 #include "templates/variantpointer.h"
 
+/*
+ * ComboListItems
+ */
+
+// Constructor
+ComboListItems::ComboListItems()
+{
+}
+
+// Destructor
+ComboListItems::~ComboListItems()
+{
+}
+
+/*
+ * ComboListDelegate
+ */
+
 ComboListDelegate::ComboListDelegate(QObject* parent, ComboListItems* items, bool allowNewItems) : QItemDelegate(parent), items_(items)
 {
 	// Private variables
