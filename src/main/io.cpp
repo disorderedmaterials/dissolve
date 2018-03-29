@@ -33,13 +33,19 @@
 bool DUQ::loadDataFiles()
 {
 	// Get basic path for data files
-	CharString filename, dataPath = getenv("DUQDATA");
-	if (dataPath.isEmpty())
+	CharString dataPath;
+	if (!getenv("DUQDATA"))
 	{
 		Messenger::print("Environment variable DUQDATA not set - using './data' as the default.\n");
 		dataPath = "./data";
 	}
-	else Messenger::print("Looking for datafiles in '%s'...\n", dataPath.get());
+	else
+	{
+		dataPath = getenv("DUQDATA");
+		Messenger::print("Looking for datafiles in '%s'...\n", dataPath.get());
+	}
+
+	CharString filename;
 
 	// Load elements data
 	filename.sprintf("%s/elements.txt", dataPath.get());
