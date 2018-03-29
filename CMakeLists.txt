@@ -66,8 +66,12 @@ endif(GUI)
 # Perform system-specific setup
 # -- Windows
 if(WIN32)
-  set (target_name dUQ)
-  set (gui_target_name dUQ-gui)
+  if(PARALLEL)
+    set (target_name duq)
+  else(PARALLEL)
+    set (target_name dUQ-serial)
+    set (gui_target_name dUQ-gui)
+  endif(PARALLEL)
 
   # Adjust external include directories for GUI
   if(GUI)
