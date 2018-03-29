@@ -568,7 +568,7 @@ double PairPotential::range() const
 }
 
 // (Re)generate potential from current parameters
-bool PairPotential::calculateUOriginal(bool recalculateUFull)
+void PairPotential::calculateUOriginal(bool recalculateUFull)
 {
 	double r;
 

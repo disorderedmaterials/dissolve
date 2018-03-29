@@ -13,7 +13,6 @@ SET(widgets_MOC_HDRS
   gradientbar.hui
   mimetreewidget.hui
   texponentialspin.hui
-  texponentialspindelegate.hui
   tmenubutton.hui
   tpopupwidget.hui
 )
@@ -34,7 +33,6 @@ SET(widgets_SRCS
   subwidget.cpp
   subwindow.cpp
   texponentialspin_funcs.cpp
-  texponentialspindelgate_funcs.cpp
   tmenubutton_funcs.cpp
   tmenubuttongroup.cpp
   tpopupwidget_funcs.cpp

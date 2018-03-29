@@ -94,6 +94,8 @@ void DUQWindow::on_ControlPauseButton_clicked(bool checked)
 	updateStatus();
 
 	emit stopIterating();
+
+	ui.ControlPauseButton->setEnabled(false);
 }
 
 void DUQWindow::on_ControlReloadButton_clicked(bool checked)
@@ -103,7 +105,7 @@ void DUQWindow::on_ControlReloadButton_clicked(bool checked)
 // Set widgets ready for the main code to be run
 void DUQWindow::setWidgetsForRun()
 {
-	// Disable run and step buttons, and enable pause button
+	// Disable / enable controls
 	ui.ControlRunButton->setEnabled(false);
 	ui.ControlStepButton->setEnabled(false);
 	ui.ControlStepFiveButton->setEnabled(false);
@@ -116,7 +118,7 @@ void DUQWindow::setWidgetsForRun()
 // Set widgets after the main code has been run
 void DUQWindow::setWidgetsAfterRun()
 {
-	// Enable run and step buttons, and disable pause button
+	// Disable / enable controls
 	ui.ControlRunButton->setEnabled(true);
 	ui.ControlStepButton->setEnabled(true);
 	ui.ControlStepFiveButton->setEnabled(true);

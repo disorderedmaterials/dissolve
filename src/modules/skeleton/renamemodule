@@ -30,7 +30,7 @@ echo "Adjusting include / header paths..."
 sed -i "s/skeleton/${LCASE}/g" *.cpp ${LCASE}.h gui/modulewidget.h gui/*.cpp
 
 echo "Adjusting makefiles..."
-sed -i "s/skeleton/${LCASE}/g" CMakeLists.txt Makefile.am gui/Makefile.am
+sed -i "s/skeleton/${LCASE}/g" CMakeLists.txt Makefile.am gui/Makefile.am gui/CMakeLists.txt
 
 echo "Adjusting header text..."
 sed -i "s/Skeleton Module/${NAME} Module/g" *.cpp ${LCASE}.h gui/*.cpp gui/modulewidget.h

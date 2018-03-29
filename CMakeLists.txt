@@ -8,7 +8,7 @@ set(VERSION_PATCH "8")
 
 set(CMAKE_BUILD_TYPE "Release")
 
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.1)
 
 if(COMMAND cmake_policy)
   cmake_policy(VERSION 2.6)
@@ -22,6 +22,9 @@ set(CMAKE_AUTOMOC OFF)
 
 # Set policy for automatic linkage of Qt libs to project
 CMAKE_POLICY(SET CMP0020 NEW)
+
+# Request C++11 Standard Support (Required for Qt 5.7)
+set(CMAKE_CXX_STANDARD 11)
 
 # Catch defines
 if(PARALLEL)
@@ -84,22 +87,31 @@ endif(WIN32)
 
 # -- Unix
 if(UNIX)
-  set (target_name duq)
-  set (gui_target_name duq-gui)
+  if(PARALLEL)
+    set (target_name duq)
+  else(PARALLEL)
+    set (target_name duq-serial)
+    set (gui_target_name duq-gui)
+  endif(PARALLEL)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 endif(UNIX)
 
 # -- OSX
 if(APPLE)
-  set (target_name duq)
-  set (gui_target_name duq-gui)
+  # Set some specific C++11 related options here (set_property below does not seem to persist)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+
+  if(PARALLEL)
+    set (target_name duq)
+  else(PARALLEL)
+    set (target_name duq-serial)
+    set (gui_target_name duq-gui)
+  endif(PARALLEL)
+
   set(CMAKE_OSX_ARCHITECTURES "x86_64")
   ADD_DEFINITIONS(-D_MAC)
-
+ 
   if(GUI)
-    # Set some specific C++11 related options here (set_property below does not seem to persist)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
-
     # Find GLUT
     find_package(GLUT REQUIRED)
   endif(GUI)
@@ -143,11 +155,6 @@ if(GUI)
     ${SRCS}/duq-gui.cpp 
   )
 
-  # Request C++11 Standard Support (Required for Qt 5.7)
-  if(GUI)
-    set_property(TARGET ${gui_target_name} PROPERTY CXX_STANDARD 11)
-  endif(GUI)
-
   # Set project-local include directories for target
   target_include_directories(${gui_target_name} PRIVATE
     ${PROJECT_SOURCE_DIR}/src
@@ -178,13 +185,23 @@ set(BASIC_LINK_LIBS
   molshakemodule
   partialsmodule
   refinemodule
+  sanitycheckmodule
   skeletonmodule
   testmodule
 )
 
+# Set linker options for complete/no archive
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  set(WHOLE_ARCHIVE_FLAG "-Wl,-all_load")
+  set(NO_WHOLE_ARCHIVE_FLAG "-Wl,-noall_load")
+else()
+  set(WHOLE_ARCHIVE_FLAG "-Wl,-whole-archive")
+  set(NO_WHOLE_ARCHIVE_FLAG "-Wl,-no-whole-archive")
+endif()
+
 # Build CLI target executable
 target_link_libraries( ${target_name}
-  -Wl,-whole-archive
+  ${WHOLE_ARCHIVE_FLAG}
 
   ${BASIC_LINK_LIBS}
 
@@ -196,7 +213,7 @@ target_link_libraries( ${target_name}
   skeletonmodulenogui
   testmodulenogui
 
-  -Wl,-no-whole-archive
+  ${NO_WHOLE_ARCHIVE_FLAG}
 
   ${EXTRA_LINK_LIBS}
 )
@@ -204,7 +221,7 @@ target_link_libraries( ${target_name}
 # Build GUI target executable
 if(GUI)
   target_link_libraries( ${gui_target_name}
-    -Wl,-whole-archive
+    ${WHOLE_ARCHIVE_FLAG}
 
     ${BASIC_LINK_LIBS}
 
@@ -224,10 +241,12 @@ if(GUI)
     uchromaexpression
     uchromakernels
     uchromasession
+    widgets
     keywordwidgets
+    delegates
     gui
 
-    -Wl,-no-whole-archive
+    ${NO_WHOLE_ARCHIVE_FLAG}
 
     # External libs
     Qt5::Widgets Qt5::Core Qt5::PrintSupport

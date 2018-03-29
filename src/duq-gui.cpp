@@ -27,6 +27,7 @@
 #include "gui/gui.h"
 #include <time.h>
 #include <ctime>
+#include <clocale>
 #include <stdlib.h>
 #include <QSurfaceFormat>
 

@@ -1,7 +1,6 @@
-# Target 'duq'
-bin_PROGRAMS = duq
-
-duq_SOURCES = main.cpp
+#
+# Target libduq
+#
 
 EXTRA_DIST = version.h
 
@@ -12,9 +11,31 @@ libduq_la_SOURCES =
 libduq_la_LIBADD = main/libmain.la module/libmodule.la module/keywordtypes/libkeywordtypes.la modules/libmodules.la classes/libclasses.la base/libbase.la math/libmath.la @MPI_LDLIBS@
 libduq_la_LDFLAGS = -static
 
+#
+# Target 'duq' or 'duq-serial'
+#
+
+if BUILDPARALLEL
+
+bin_PROGRAMS = duq
+
+duq_SOURCES = main.cpp
+
 duq_LDADD = libduq.la modules/libmoduledummywidgets.la
 
 duq_CPPFLAGS = @DUQ_CFLAGS@
+
+else
+
+bin_PROGRAMS = duq-serial
+
+duq_serial_SOURCES = main.cpp
+
+duq_serial_LDADD = libduq.la modules/libmoduledummywidgets.la
+
+duq_serial_CPPFLAGS = @DUQ_CFLAGS@
+
+endif
 
 # Target 'monitor'
 if BUILDGUI

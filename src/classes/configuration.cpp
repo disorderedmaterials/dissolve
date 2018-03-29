@@ -207,8 +207,8 @@ bool Configuration::appendEnsemble() const
 	return appendEnsemble_;
 }
 
-// Return frequency at which to append ensemble
-int Configuration::setEnsembleFrequency(int frequency)
+// Set frequency at which to append ensemble
+void Configuration::setEnsembleFrequency(int frequency)
 {
 	ensembleFrequency_ = frequency;
 }

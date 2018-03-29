@@ -382,8 +382,8 @@ class Configuration : public ListItem<Configuration>
 	void setAppendEnsemble(bool b);
 	// Return whether ensemble file is to be appended
 	bool appendEnsemble() const;
-	// Return frequency at which to append ensemble
-	int setEnsembleFrequency(int frequency);
+	// Set frequency at which to append ensemble
+	void setEnsembleFrequency(int frequency);
 	// Return frequency at which to append ensemble
 	int ensembleFrequency() const;
 
