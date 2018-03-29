@@ -182,9 +182,18 @@ set(BASIC_LINK_LIBS
   testmodule
 )
 
+# Set linker options for complete/no archive
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  set(WHOLE_ARCHIVE_FLAG "-Wl,-all_load")
+  set(NO_WHOLE_ARCHIVE_FLAG "-Wl,-noall_load")
+else()
+  set(WHOLE_ARCHIVE_FLAG "-Wl,-whole-archive")
+  set(NO_WHOLE_ARCHIVE_FLAG "-Wl,-no-whole-archive")
+endif()
+
 # Build CLI target executable
 target_link_libraries( ${target_name}
-  -Wl,-whole-archive
+  ${WHOLE_ARCHIVE_FLAG}
 
   ${BASIC_LINK_LIBS}
 
@@ -196,7 +205,7 @@ target_link_libraries( ${target_name}
   skeletonmodulenogui
   testmodulenogui
 
-  -Wl,-no-whole-archive
+  ${NO_WHOLE_ARCHIVE_FLAG}
 
   ${EXTRA_LINK_LIBS}
 )
@@ -204,7 +213,7 @@ target_link_libraries( ${target_name}
 # Build GUI target executable
 if(GUI)
   target_link_libraries( ${gui_target_name}
-    -Wl,-whole-archive
+    ${WHOLE_ARCHIVE_FLAG}
 
     ${BASIC_LINK_LIBS}
 
@@ -229,7 +238,7 @@ if(GUI)
     delegates
     gui
 
-    -Wl,-no-whole-archive
+    ${NO_WHOLE_ARCHIVE_FLAG}
 
     # External libs
     Qt5::Widgets Qt5::Core Qt5::PrintSupport

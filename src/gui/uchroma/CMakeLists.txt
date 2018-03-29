@@ -1,10 +1,3 @@
-add_subdirectory(classes)
-add_subdirectory(expression)
-add_subdirectory(gui)
-add_subdirectory(kernels)
-add_subdirectory(render)
-add_subdirectory(session)
-
 add_library(uchroma
   uchromabase_collections.cpp
   uchromabase_funcs.cpp
@@ -26,3 +19,11 @@ target_include_directories(uchroma PRIVATE
   ${FREETYPE_INCLUDE_DIRS}
 )
 
+add_subdirectory(classes)
+add_subdirectory(expression)
+add_subdirectory(gui)
+add_subdirectory(kernels)
+add_subdirectory(render)
+add_subdirectory(session)
+
+target_link_libraries(uchroma uchromagui)
