@@ -40,8 +40,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "..\..\build\bin\dUQ-serial.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "..\..\build\bin\dUQ-gui.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "..\..\build\dUQ-serial.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "..\..\build\dUQ-gui.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "..\..\examples\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dUQ.ico"; DestDir: "{app}\bin"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
