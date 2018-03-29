@@ -87,19 +87,27 @@ endif(WIN32)
 
 # -- Unix
 if(UNIX)
-  set (target_name duq)
-  set (gui_target_name duq-gui)
+  if(PARALLEL)
+    set (target_name duq)
+  else(PARALLEL)
+    set (target_name duq-serial)
+    set (gui_target_name duq-gui)
+  endif(PARALLEL)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 endif(UNIX)
 
 # -- OSX
 if(APPLE)
-  set (target_name duq)
-
   # Set some specific C++11 related options here (set_property below does not seem to persist)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
 
-  set (gui_target_name duq-gui)
+  if(PARALLEL)
+    set (target_name duq)
+  else(PARALLEL)
+    set (target_name duq-serial)
+    set (gui_target_name duq-gui)
+  endif(PARALLEL)
+
   set(CMAKE_OSX_ARCHITECTURES "x86_64")
   ADD_DEFINITIONS(-D_MAC)
  
