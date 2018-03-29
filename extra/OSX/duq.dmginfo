@@ -12,10 +12,10 @@ APP_NAME=dUQ
 APP_VERSION="0.33.8"
 
 # -- APP_BIN : List of binaries (space-separated, with paths) to include in the bundle
-APP_BIN="duq.app/Contents/MacOS/duq"
+APP_BIN="duq-gui.app/Contents/MacOS/duq-gui duq.app/Contents/MacOS/duq duq-serial.app/Contents/MacOS/duq-serial"
 
 # -- APP_PLIST : Specify the Info.plist file to use in the bundle
-APP_PLIST="duq.app/Contents/Info.plist"
+APP_PLIST="duq-gui.app/Contents/Info.plist"
 
 # -- APP_ICON : A 1024x1024 png file from which to create an icon set
 APP_ICON="../extra/duq1024.png"
@@ -30,16 +30,18 @@ APP_EXTRA="../data/"
 APP_DSSTORE="NONE"
 
 # -- USE_QT : Set to TRUE if this is a Qt app, and macdeployqt should be used
-USE_QT="FALSE"
+USE_QT="TRUE"
 QT_NO_DYLIBS="TRUE"
+QT_EXTRA_FRAMEWORKS="QtSvg QtXml"
+QT_EXTRA_IMAGEFORMATS="libqsvg.dylib"
 
 # -- EXTRA_DYLIBS : Extra dylibs to be copied in to the bundle (or NONE)
 # --              : Format is "<input dylib | NONE>,<input dylib | NONE>,<output dylib>"
 #EXTRA_DYLIBS="/usr/local/gfortran/lib/i386/libgfortran.3.dylib,/usr/local/gfortran/lib/libgfortran.3.dylib,libgfortran.3.dylib" 
 #EXTRA_DYLIBS="$EXTRA_DYLIBS /usr/local/gfortran/lib/i386/libquadmath.0.dylib,/usr/local/gfortran/lib/libquadmath.0.dylib,libquadmath.0.dylib" 
 #EXTRA_DYLIBS="$EXTRA_DYLIBS /usr/local/gfortran/lib/i386/libstdc++.6.dylib,/usr/local/gfortran/lib/libstdc++.6.dylib,libstdc++.6.dylib" 
-#EXTRA_DYLIBS="$EXTRA_DYLIBS /usr/local/lib/libftgl.2.dylib,NONE,libftgl.2.dylib"
-#EXTRA_DYLIBS="$EXTRA_DYLIBS /usr/local/lib/libfreetype.6.dylib,NONE,libfreetype.6.dylib"
+EXTRA_DYLIBS="$EXTRA_DYLIBS /usr/local/lib/libftgl.2.dylib,NONE,libftgl.2.dylib"
+EXTRA_DYLIBS="$EXTRA_DYLIBS /usr/local/lib/libfreetype.6.dylib,NONE,libfreetype.6.dylib"
 #EXTRA_DYLIBS="$EXTRA_DYLIBS /usr/local/gfortran/lib/libgcc_s.1.dylib,NONE,libgcc_s.1.dylib" 
 #EXTRA_DYLIBS="$EXTRA_DYLIBS /usr/local/szip-2.1/lib/libsz.2.dylib,NONE,libsz.2.dylib"
 
