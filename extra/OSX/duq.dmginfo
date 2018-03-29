@@ -37,10 +37,7 @@ QT_EXTRA_IMAGEFORMATS="libqsvg.dylib"
 
 # -- EXTRA_DYLIBS : Extra dylibs to be copied in to the bundle (or NONE)
 # --              : Format is "<input dylib | NONE>,<input dylib | NONE>,<output dylib>"
-#EXTRA_DYLIBS="/usr/local/gfortran/lib/i386/libgfortran.3.dylib,/usr/local/gfortran/lib/libgfortran.3.dylib,libgfortran.3.dylib" 
-#EXTRA_DYLIBS="$EXTRA_DYLIBS /usr/local/gfortran/lib/i386/libquadmath.0.dylib,/usr/local/gfortran/lib/libquadmath.0.dylib,libquadmath.0.dylib" 
-#EXTRA_DYLIBS="$EXTRA_DYLIBS /usr/local/gfortran/lib/i386/libstdc++.6.dylib,/usr/local/gfortran/lib/libstdc++.6.dylib,libstdc++.6.dylib" 
-EXTRA_DYLIBS="$EXTRA_DYLIBS /usr/local/lib/libftgl.2.dylib,NONE,libftgl.2.dylib"
+EXTRA_DYLIBS="/usr/local/lib/libftgl.2.dylib,NONE,libftgl.2.dylib"
 EXTRA_DYLIBS="$EXTRA_DYLIBS /usr/local/lib/libfreetype.6.dylib,NONE,libfreetype.6.dylib"
 #EXTRA_DYLIBS="$EXTRA_DYLIBS /usr/local/gfortran/lib/libgcc_s.1.dylib,NONE,libgcc_s.1.dylib" 
 #EXTRA_DYLIBS="$EXTRA_DYLIBS /usr/local/szip-2.1/lib/libsz.2.dylib,NONE,libsz.2.dylib"
