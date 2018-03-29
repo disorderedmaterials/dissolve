@@ -1,4 +1,4 @@
-# dmginfo file for dUQ
+# dmginfo file for dUQ (GUI)
 # For use with 'mkdmg'
 
 # /-------------------------\
@@ -6,7 +6,7 @@
 # \-------------------------/
 
 # -- APP : The name of the app being packaged
-APP_NAME=dUQ
+APP_NAME=dUQ-GUI
 
 # -- APP_VERSION : Should contain the version / revision number of the package (for renaming purposes)
 APP_VERSION="0.33.8"
