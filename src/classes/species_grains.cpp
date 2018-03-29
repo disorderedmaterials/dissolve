@@ -79,7 +79,7 @@ void Species::autoAddGrains()
 // 	grains_.clear();
 // 	
 	// Make a list of bonds for each atom
-	RefList<SpeciesBond,int> bondList[atoms_.nItems()];
+	Array< RefList<SpeciesBond,int> > bondList(atoms_.nItems());
 	for (SpeciesBond* b = bonds_.first(); b != NULL; b = b->next)
 	{
 		bondList[b->indexI()].add(b,1);
