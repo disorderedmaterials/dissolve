@@ -22,6 +22,7 @@ GUI_INCLUDES=""
 
 # Determine C++ compiler - Parallel Build?
 AC_ARG_WITH([parallel], [AC_HELP_STRING([--with-parallel], [Request parallel code (requires mpic++ in path) [default="no"]])], [with_parallel="yes"], [with_parallel="no"])
+AM_CONDITIONAL([BUILDPARALLEL], [test "$with_parallel" = "yes"])
 if test "$with_parallel" = "yes"; then
   AC_DEFINE([PARALLEL], [1], [Parallel code enabled])
   if test "x$CXX" = "x"; then
@@ -64,7 +65,7 @@ if test "$with_checks" = "yes"; then
 fi
 
 # Compile GUI elements (which require Qt)
-AC_ARG_WITH([gui], [AC_HELP_STRING([--with-gui], [Enable build of GUI elements plugin [default="no"]])], [with_gui="yes"], [with_gui="no"])
+AC_ARG_WITH([gui], [AC_HELP_STRING([--with-gui], [Enable building of GUI [default="no"]])], [with_gui="yes"], [with_gui="no"])
 AM_CONDITIONAL([BUILDGUI], [test "$with_gui" = "yes"])
 if test "$with_gui" = "yes"; then
   # Check for required Qt packages
