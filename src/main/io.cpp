@@ -696,6 +696,34 @@ bool DUQ::saveRestart(const char* filename)
 	return true;
 }
 
+// Save heartbeat file
+bool DUQ::saveHeartBeat(const char* filename, double estimatedNSecs)
+{
+	// Open file
+	LineParser parser;
+	if (!parser.openOutput(filename, true) || (!parser.isFileGoodForWriting()))
+	{
+		Messenger::error("Couldn't open heartbeat file '%s'.\n", filename);
+		return false;
+	}
+	
+	// Write title comment
+	if (!parser.writeLineF("# Heartbeat file written by dUQ v%s at %s.\n", DUQVERSION, DUQSys::currentTimeAndDate())) return false;
+
+	// Write current date and time
+	if (!parser.writeLineF("%s\n", DUQSys::currentTimeAndDate())) return false;
+
+	// Write current iteration number
+	if (!parser.writeLineF("%i\n", iteration_)) return false;
+
+	// Write estimated number of seconds this iteration will take
+	if (!parser.writeLineF("%f\n", estimatedNSecs)) return false;
+
+	parser.closeFiles();
+
+	return true;
+}
+
 // Return whether a filename has been set
 bool DUQ::hasInputFileName() const
 {

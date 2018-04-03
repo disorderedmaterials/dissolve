@@ -86,8 +86,9 @@ bool DUQ::iterate(int nIterations)
 		Messenger::banner(" START MAIN LOOP ITERATION %10i         %s", iteration_, DUQSys::currentTimeAndDate());
 
 		/*
-		 *  0)	Print schedule of tasks to run
+		 *  0)	Print schedule of tasks to run, and write heartbeat file
 		 */
+		double thisTime = 0.0;
 		Messenger::print("Pre-Processing\n");
 		if (preProcessingTasks_.nModules() == 0) Messenger::print("  (( No Tasks ))\n");
 		ListIterator<ModuleReference> preIterator(preProcessingTasks_.modules());
@@ -96,6 +97,8 @@ bool DUQ::iterate(int nIterations)
 			Module* module = modRef->module();
 
 			Messenger::print("      --> %-20s  (%s)\n", module->name(), module->frequencyDetails(iteration_));
+
+			thisTime += module->processTimes().mean();
 		}
 		Messenger::print("\n");
 
@@ -110,6 +113,9 @@ bool DUQ::iterate(int nIterations)
 				Module* module = modRef->module();
 
 				Messenger::print("      --> %20s  (%s)\n", module->name(), module->enabled() ? module->frequencyDetails(iteration_) : "Disabled");
+
+				// TODO This will estimate wrongly for anything other than Sequential Processing
+				thisTime += module->processTimes().mean();
 			}
 		}
 		Messenger::print("\n");
@@ -121,6 +127,8 @@ bool DUQ::iterate(int nIterations)
 			Module* module = modRef->module();
 			
 			Messenger::print("      --> %20s  (%s)\n", module->name(), module->frequencyDetails(iteration_));
+
+			thisTime += module->processTimes().mean();
 		}
 		Messenger::print("\n");
 
@@ -132,6 +140,18 @@ bool DUQ::iterate(int nIterations)
 			Module* module = modRef->module();
 			
 			Messenger::print("      --> %-20s  (%s)\n", module->name(), module->frequencyDetails(iteration_));
+
+			thisTime += module->processTimes().mean();
+		}
+
+		// Write heartbeat file
+		if (worldPool_.isMaster())
+		{
+			Messenger::print("Write heartbeat file...");
+
+			CharString heartBeatFile("%s.beat", filename_.get());
+
+			saveHeartBeat(heartBeatFile, thisTime);
 		}
 
 

@@ -343,6 +343,8 @@ class DUQ
 	bool loadRestart(const char* filename);
 	// Save restart file
 	bool saveRestart(const char* filename);
+	// Save heartbeat file
+	bool saveHeartBeat(const char* filename, double estimatedNSecs);
 	// Return whether a filename has been set
 	bool hasInputFileName() const;
 	// Return filename of current input file
