@@ -278,8 +278,6 @@ class Configuration : public ListItem<Configuration>
 	const Box* box() const;
 	// Set up periodic Box
 	bool setUpBox(ProcessPool& procPool, double ppRange, int nExpectedAtoms, int boxNormalisationNPoints);
-	// Generate Cells for Box
-	bool generateCells(double cellSize, double pairPotentialRange, double atomicDensity);
 	// Set box normalisation array to load/save for this configuration
 	void setBoxNormalisationFile(const char* filename);
 	// Return box normalisation file to load/save for this configuration
@@ -382,7 +380,7 @@ class Configuration : public ListItem<Configuration>
 	void setAppendEnsemble(bool b);
 	// Return whether ensemble file is to be appended
 	bool appendEnsemble() const;
-	// Set frequency at which to append ensemble
+	// Set  frequency at which to append ensemble
 	void setEnsembleFrequency(int frequency);
 	// Return frequency at which to append ensemble
 	int ensembleFrequency() const;
