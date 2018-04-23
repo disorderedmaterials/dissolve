@@ -23,6 +23,7 @@ ui_*
 moc_*
 src/duq
 src/duq-gui
+src/duq-serial
 .kdev4/
 build/
 
