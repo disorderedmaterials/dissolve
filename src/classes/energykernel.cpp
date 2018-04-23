@@ -196,7 +196,7 @@ double EnergyKernel::energy(const Atom* i, const Atom* j, bool applyMim, bool ex
 }
 
 // Return PairPotential energy between atoms in supplied cells
-double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy, bool performSum)
+double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, bool excludeIgeJ, bool interMolecular, ProcessPool::DivisionStrategy strategy, bool performSum)
 {
 #ifdef CHECKS
 	if (centralCell == NULL)
@@ -246,7 +246,7 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 
 				// Check for atoms in the same species
 				if (molI != jj->molecule()) totalEnergy += pairPotentialEnergy(ii, jj, sqrt(rSq));
-				else
+				else if (!interMolecular)
 				{
 					scale = ii->scaling(jj);
 					if (scale > 1.0e-3) totalEnergy += pairPotentialEnergy(ii, jj, sqrt(rSq)) * scale;
@@ -276,7 +276,7 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 
 				// Check for atoms in the same molecule
 				if (molI != jj->molecule()) totalEnergy += pairPotentialEnergy(ii, jj, sqrt(rSq));
-				else
+				else if (!interMolecular)
 				{
 					scale = ii->scaling(jj);
 					if (scale > 1.0e-3) totalEnergy += pairPotentialEnergy(ii, jj, sqrt(rSq)) * scale;
@@ -292,11 +292,10 @@ double EnergyKernel::energy(Cell* centralCell, Cell* otherCell, bool applyMim, b
 }
 
 // Return PairPotential energy between cell and atomic neighbours
-double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy, bool performSum)
+double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, bool interMolecular, ProcessPool::DivisionStrategy strategy, bool performSum)
 {
 	double totalEnergy = 0.0;
 	OrderedPointerArray<Atom>& centralAtoms = centralCell->atoms();
-	Atom** otherAtoms;
 	Atom* ii, *jj;
 	Vec3<double> rJ;
 	int i, j;
@@ -335,7 +334,7 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::Di
 
 				// Check for atoms in the same species
 				if (ii->molecule() != molJ) totalEnergy += pairPotentialEnergy(jj, ii, sqrt(rSq));
-				else
+				else if (!interMolecular)
 				{
 					scale = ii->scaling(jj);
 					if (scale > 1.0e-3) totalEnergy += pairPotentialEnergy(jj, ii, sqrt(rSq)) * scale;
@@ -371,7 +370,7 @@ double EnergyKernel::energy(Cell* centralCell, bool excludeIgeJ, ProcessPool::Di
 
 				// Check for atoms in the same species
 				if (ii->molecule() != molJ) totalEnergy += pairPotentialEnergy(jj, ii, sqrt(rSq));
-				else
+				else if (!interMolecular)
 				{
 					scale = ii->scaling(jj);
 					if (scale > 1.0e-3) totalEnergy += pairPotentialEnergy(jj, ii, sqrt(rSq)) * scale;
@@ -723,7 +722,7 @@ double EnergyKernel::correct(const Atom* i)
 }
 
 // Return total interatomic PairPotential energy of the system
-double EnergyKernel::energy(const CellArray& cellArray, ProcessPool::DivisionStrategy strategy, bool performSum)
+double EnergyKernel::energy(const CellArray& cellArray, bool interMolecular, ProcessPool::DivisionStrategy strategy, bool performSum)
 {
 	// Get sub-strategy to use
 	ProcessPool::DivisionStrategy subStrategy = ProcessPool::subDivisionStrategy(strategy);
@@ -739,10 +738,10 @@ double EnergyKernel::energy(const CellArray& cellArray, ProcessPool::DivisionStr
 		cell = cellArray.cell(cellId);
 
 		// This cell with itself
-		totalEnergy += energy(cell, cell, false, true, subStrategy, performSum);
+		totalEnergy += energy(cell, cell, false, true, interMolecular, subStrategy, performSum);
 
 		// Interatomic interactions between atoms in this cell and its neighbours
-		totalEnergy += energy(cell, true, subStrategy, performSum);
+		totalEnergy += energy(cell, true, interMolecular, subStrategy, performSum);
 	}
 
 	return totalEnergy;

@@ -92,7 +92,7 @@ double EnergyModule::interAtomicEnergy(ProcessPool& procPool, Configuration* cfg
 {
 	/*
 	 * Calculates the total interatomic energy of the system, i.e. the energy contributions from PairPotential
-	 * interactions between individual atoms, accounting for intramolecular terms
+	 * interactions between individual Atoms, accounting for intramolecular terms
 	 * 
 	 * This is a parallel routine, with processes operating as process groups.
 	 */
@@ -105,7 +105,7 @@ double EnergyModule::interAtomicEnergy(ProcessPool& procPool, Configuration* cfg
 
 	// Grab the Cell array and calculate total energy
 	const CellArray& cellArray = cfg->cells();
-	double totalEnergy = kernel.energy(cellArray, strategy, false);
+	double totalEnergy = kernel.energy(cellArray, false, strategy, false);
 
 	// Print process-local energy
 	Messenger::printVerbose("Interatomic Energy (Local) is %15.9e\n", totalEnergy);
@@ -113,6 +113,36 @@ double EnergyModule::interAtomicEnergy(ProcessPool& procPool, Configuration* cfg
 	// Sum energy over all processes in the pool and print
 	procPool.allSum(&totalEnergy, 1, strategy);
 	Messenger::printVerbose("Interatomic Energy (World) is %15.9e\n", totalEnergy);
+
+	return totalEnergy;
+}
+
+// Return total intermolecular energy
+double EnergyModule::interMolecularEnergy(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap)
+{
+	/*
+	 * Calculates the total intermolecular energy of the system, i.e. the energy contributions from PairPotential
+	 * interactions between individual Atoms of different Molecules, thus neglecting intramolecular terms
+	 * 
+	 * This is a parallel routine, with processes operating as process groups.
+	 */
+
+	// Create an EnergyKernel
+	EnergyKernel kernel(procPool, cfg, potentialMap);
+
+	// Set the strategy
+	ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
+
+	// Grab the Cell array and calculate total energy
+	const CellArray& cellArray = cfg->cells();
+	double totalEnergy = kernel.energy(cellArray, true, strategy, false);
+
+	// Print process-local energy
+	Messenger::printVerbose("Intermolecular Energy (Local) is %15.9e\n", totalEnergy);
+
+	// Sum energy over all processes in the pool and print
+	procPool.allSum(&totalEnergy, 1, strategy);
+	Messenger::printVerbose("Intermolecular Energy (World) is %15.9e\n", totalEnergy);
 
 	return totalEnergy;
 }

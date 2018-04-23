@@ -94,9 +94,9 @@ class EnergyKernel
 	// Return PairPotential energy between atoms provided (as pointers)
 	double energy(const Atom* i, const Atom* j, bool applyMim, bool excludeIgeJ);
 	// Return PairPotential energy between two cells
-	double energy(Cell* cell, Cell* otherCell, bool applyMim, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy, bool performSum);
+	double energy(Cell* cell, Cell* otherCell, bool applyMim, bool excludeIgeJ, bool interMolecular, ProcessPool::DivisionStrategy strategy, bool performSum);
 	// Return PairPotential energy between Cell and its neighbours
-	double energy(Cell* cell, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy, bool performSum);
+	double energy(Cell* cell, bool excludeIgeJ, bool interMolecular, ProcessPool::DivisionStrategy strategy, bool performSum);
 	// Return PairPotential energy between Atom and Cell
 	double energy(const Atom* i, Cell* cell, int flags, ProcessPool::DivisionStrategy strategy, bool performSum);
 	// Return PairPotential energy of atom with world
@@ -108,7 +108,7 @@ class EnergyKernel
 	// Return molecular correction energy related to intramolecular terms involving supplied atom
 	double correct(const Atom* i);
 	// Return total interatomic PairPotential energy of the system
-	double energy(const CellArray& cellArray, ProcessPool::DivisionStrategy strategy, bool performSum);
+	double energy(const CellArray& cellArray, bool interMolecular, ProcessPool::DivisionStrategy strategy, bool performSum);
 
 
 	/*
