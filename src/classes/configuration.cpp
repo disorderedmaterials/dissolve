@@ -238,7 +238,7 @@ bool Configuration::prepare(const PotentialMap& potentialMap)
 	// If the current applied size factor is greater than 1.0, check the current interatomic energy to see if its negative.
 	if (appliedSizeFactor_ > 1.0)
 	{
-		double interEnergy = EnergyModule::interatomicEnergy(processPool_, this, potentialMap);
+		double interEnergy = EnergyModule::interAtomicEnergy(processPool_, this, potentialMap);
 		if (interEnergy < 0.0)
 		{
 			sizeFactor_ /= sqrt(2.0);

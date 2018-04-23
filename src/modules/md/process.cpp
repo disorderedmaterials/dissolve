@@ -268,8 +268,8 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 				// Include total energy term?
 				if ((energyFrequency > 0) && (step%energyFrequency == 0))
 				{
-					peInter = EnergyModule::interatomicEnergy(procPool, cfg, duq.potentialMap());
-					peIntra = EnergyModule::intramolecularEnergy(procPool, cfg, duq.potentialMap());
+					peInter = EnergyModule::interAtomicEnergy(procPool, cfg, duq.potentialMap());
+					peIntra = EnergyModule::intraMolecularEnergy(procPool, cfg, duq.potentialMap());
 					Messenger::print("MD:  %-10i    %10.3e   %10.3e   %10.3e   %10.3e   %10.3e   %10.3e\n", step, tInstant, ke, peInter, peIntra, ke+peIntra+peInter, deltaT);
 				}
 				else Messenger::print("MD:  %-10i    %10.3e   %10.3e                                          %10.3e\n", step, tInstant, ke, deltaT);

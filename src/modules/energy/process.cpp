@@ -210,12 +210,12 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 
 			// Calculate interatomic energy
 			Timer interTimer;
-			double interEnergy = interatomicEnergy(procPool, cfg, duq.potentialMap());
+			double interEnergy = interAtomicEnergy(procPool, cfg, duq.potentialMap());
 			interTimer.stop();
 
 			// Calculate intramolecular energy
 			Timer intraTimer;
-			double intraEnergy = intramolecularEnergy(procPool, cfg, duq.potentialMap());
+			double intraEnergy = intraMolecularEnergy(procPool, cfg, duq.potentialMap());
 			intraTimer.stop();
 
 			Messenger::print("Energy: Production interatomic pairpotential energy is %15.9e kJ/mol\n", interEnergy);
@@ -279,13 +279,13 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 
 			// Calculate Grain energy
 			Timer interTimer;
-			double interEnergy = interatomicEnergy(procPool, cfg, duq.potentialMap());
+			double interEnergy = interAtomicEnergy(procPool, cfg, duq.potentialMap());
 			interTimer.stop();
 
 			// Calculate intramolecular and interGrain correction energy
 			Timer intraTimer;
 			double bondEnergy, angleEnergy, torsionEnergy;
-			double intraEnergy = intramolecularEnergy(procPool, cfg, duq.potentialMap(), bondEnergy, angleEnergy, torsionEnergy);
+			double intraEnergy = intraMolecularEnergy(procPool, cfg, duq.potentialMap(), bondEnergy, angleEnergy, torsionEnergy);
 			intraTimer.stop();
 
 			Messenger::print("Energy: Time to do interatomic energy was %s, intramolecular energy was %s (%s comms).\n", interTimer.totalTimeString(), intraTimer.totalTimeString(), procPool.accumulatedTimeString());

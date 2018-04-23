@@ -24,15 +24,15 @@
 #include "classes/energykernel.h"
 
 // Return total intramolecular energy
-double EnergyModule::intramolecularEnergy(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap)
+double EnergyModule::intraMolecularEnergy(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap)
 {
 	double bondEnergy, angleEnergy, torsionEnergy;
 
-	return intramolecularEnergy(procPool, cfg, potentialMap, bondEnergy, angleEnergy, torsionEnergy);
+	return intraMolecularEnergy(procPool, cfg, potentialMap, bondEnergy, angleEnergy, torsionEnergy);
 }
 
 // Return total intramolecular energy, storing components in provided variables
-double EnergyModule::intramolecularEnergy(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, double& bondEnergy, double& angleEnergy, double& torsionEnergy)
+double EnergyModule::intraMolecularEnergy(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, double& bondEnergy, double& angleEnergy, double& torsionEnergy)
 {
 	/*
 	 * Calculate the total intramolecular energy of the system, arising from Bond, Angle, and Torsion
@@ -88,7 +88,7 @@ double EnergyModule::intramolecularEnergy(ProcessPool& procPool, Configuration* 
 }
 
 // Return total interatomic energy
-double EnergyModule::interatomicEnergy(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap)
+double EnergyModule::interAtomicEnergy(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap)
 {
 	/*
 	 * Calculates the total interatomic energy of the system, i.e. the energy contributions from PairPotential
