@@ -122,6 +122,12 @@ double Box::volume() const
 	return volume_;
 }
 
+// Return axis lengths
+Vec3<double> Box::axisLengths() const
+{
+	return Vec3<double>(axes_.columnMagnitude(0), axes_.columnMagnitude(1), axes_.columnMagnitude(2));
+}
+
 // Return axis length specified
 double Box::axisLength(int n) const
 {
@@ -133,6 +139,12 @@ double Box::axisLength(int n) const
 	}
 #endif
 	return axes_.columnMagnitude(n);
+}
+
+// Return axis angles
+Vec3<double> Box::axisAngles() const
+{
+	return Vec3<double>(axisAngle(0), axisAngle(1), axisAngle(2));
 }
 
 // Return axis angle specified
@@ -182,6 +194,41 @@ Vec3<double> Box::reciprocalAxisLengths() const
 const Matrix3& Box::reciprocalAxes() const
 {
 	return reciprocalAxes_;
+}
+
+// Scale Box by specified factor
+void Box::scale(double factor)
+{
+	// Scale lengths
+	a_ *= factor;
+	b_ *= factor;
+	c_ *= factor;
+	ra_ = 1.0 / a_;
+	rb_ = 1.0 / b_;
+	rc_ = 1.0 / c_;
+	
+	// Scale axes
+	axes_.columnMultiply(0, factor);
+	axes_.columnMultiply(1, factor);
+	axes_.columnMultiply(2, factor);
+
+	// Calculate box volume
+	volume_ = axes_.determinant();
+
+	// Calculate inverse axes
+	inverseAxes_ = axes_;
+	inverseAxes_.invert();
+
+	// Calculate reciprocal axes and volume
+	// Reciprocal cell vectors are perpendicular to normal cell axes.
+	// Calculate from cross products of normal cell vectors
+	reciprocalAxes_.setColumn(0, axes_.columnAsVec3(1) * axes_.columnAsVec3(2));
+	reciprocalAxes_.setColumn(1, axes_.columnAsVec3(2) * axes_.columnAsVec3(0));
+	reciprocalAxes_.setColumn(2, axes_.columnAsVec3(0) * axes_.columnAsVec3(1));
+	reciprocalAxes_.columnMultiply(0, TWOPI / volume_);
+	reciprocalAxes_.columnMultiply(1, TWOPI / volume_);
+	reciprocalAxes_.columnMultiply(2, TWOPI / volume_);
+	reciprocalVolume_ = (reciprocalAxes_.columnAsVec3(1) * reciprocalAxes_.columnAsVec3(2)).dp(reciprocalAxes_.columnAsVec3(0));
 }
 
 /*

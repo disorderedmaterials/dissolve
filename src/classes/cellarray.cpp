@@ -280,6 +280,13 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 	return true;
 }
 
+// Scale Cells sizes by supplied factor
+void CellArray::scale(double factor)
+{
+	realCellSize_ *= factor;
+	fractionalCellSize_ /= factor;
+}
+
 // Return number of Cells for box
 int CellArray::nCells() const
 {

@@ -29,19 +29,20 @@
 #include "base/lineparser.h"
 #include "base/processpool.h"
 #include "base/sysfunc.h"
+#include "modules/energy/energy.h"
 #include "modules/export/export.h"
 
 // Constructor
 Configuration::Configuration() : ListItem<Configuration>()
 {
-	// Contents
-
 	// Composition
 	multiplier_ = 1;
 	density_ = -1.0;
 	densityIsAtomic_ = true;
 	boxAngles_.set(90.0, 90.0, 90.0);
 	relativeBoxLengths_.set(1.0, 1.0, 1.0);
+	sizeFactor_ = 1.0;
+	appliedSizeFactor_ = 1.0;
 	nonPeriodic_ = false;
 	inputCoordinatesFormat_ = ImportModuleFormats::XYZCoordinates;
 
@@ -217,6 +218,85 @@ void Configuration::setEnsembleFrequency(int frequency)
 int Configuration::ensembleFrequency() const
 {
 	return ensembleFrequency_;
+}
+
+/*
+ * Preparation
+ */
+
+// Perform any pre-processing tasks for the Configuration
+bool Configuration::prepare(const PotentialMap& potentialMap)
+{
+	/*
+	 * Size Factor Scaling
+	 * 
+	 * Scale Box, Cells, and Molecule geometric centres according to current sizeFactor_
+	 */
+
+// 	TODO implement post-process as well, checking energy and reducing sizeFactor> Needs to be at end of iteration, rather than end of Configuration processing.
+
+	// If the current applied size factor is greater than 1.0, check the current interatomic energy to see if its negative.
+	if (appliedSizeFactor_ > 1.0)
+	{
+		double interEnergy = EnergyModule::interatomicEnergy(processPool_, this, potentialMap);
+		if (interEnergy < 0.0)
+		{
+			sizeFactor_ /= sqrt(2.0);
+			Messenger::print("Size factor of %f applied: interatomic energy is negative, so reducing factor to %f.\n", appliedSizeFactor_, sizeFactor_);
+		}
+		else Messenger::print("Size factor of %f applied: interatomic energy is positive, so no reduction in factor will be applied.\n", appliedSizeFactor_);
+	}
+
+	// If the current size factor ratio is not 1.0, scale Box, Cells, and Molecule geometric centres
+	const double sizeFactorRatio = sizeFactor_ / appliedSizeFactor_;
+	if (fabs(sizeFactorRatio - 1.0) > 1.0e-5)
+	{
+		Messenger::print("Requested SizeFactor for Configuration is %f, current SizeFactor is %f, so scaling Box contents.\n", sizeFactor_, appliedSizeFactor_);
+
+		/*
+		 * Recalculate all Atom positions, molecule-by-molecule
+		 * 
+		 * First, work out the centre of geometry of the Molecule, and fold it into the Box.
+		 * Calculate the scaled centre of geometry coordinate by dividing by the old scale factor, and multiplying by the new one.
+		 * Calculate the minimum image delta between each Atom and the original center of geometry.
+		 * Add this delta on to the new centre of geometry to get the new Atom coordinate.
+		 */
+		Vec3<double> oldCog, newCog, newPos;
+		for (int n=0; n<molecules_.nItems(); ++n)
+		{
+			// Get Molecule pointer
+			Molecule* mol = molecules_[n];
+
+			// Calculate current and new centre of geometry
+			oldCog = mol->centreOfGeometry(box());
+			newCog = oldCog * sizeFactorRatio;
+
+			// Loop over Atoms in Molecule, setting new coordinates as we go. Remove Atom from its current Cell at the same time
+			for (int m=0; m<mol->nAtoms(); ++m)
+			{
+				// Get Atom pointer
+				Atom* i = mol->atom(m);
+
+				// Remove from its current Cell
+				if (i->cell()) i->cell()->removeAtom(i);
+
+				// Calculate and set new position
+				newPos = newCog + (i->r() - oldCog);
+				i->setCoordinates(newPos);
+			}
+		}
+
+		// Now scale the Box and its Cells
+		scaleBox(sizeFactorRatio);
+
+		// Re-assign all Atoms to Cells
+		updateCellContents();
+
+		// Store new size factors
+		appliedSizeFactor_ = sizeFactor_;
+	}
+
+	return true;
 }
 
 /*

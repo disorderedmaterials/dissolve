@@ -50,11 +50,13 @@ ModuleControlWidget::ModuleControlWidget(DUQWindow* duqWindow, ModuleReference* 
 
 	moduleReference_ = modRef;
 
+	module_ = moduleReference_ ? moduleReference_->module() : NULL;
+
 	panelState_ = ModuleControlWidget::ControlsAndWidgetVisible;
 
-	initialiseWindow(moduleReference_ ? moduleReference_->module() : NULL);
+	initialiseWindow(module_);
 
-	initialiseControls(moduleReference_ ? moduleReference_->module() : NULL);
+	initialiseControls(module_);
 
 	refreshing_ = false;
 }
@@ -208,16 +210,14 @@ void ModuleControlWidget::closeEvent(QCloseEvent* event)
 // Update controls within widget
 void ModuleControlWidget::updateControls()
 {
-	if (!moduleReference_) return;
-
-	Module* module = moduleReference_->module();
+	if (!module_) return;
 
 	refreshing_ = true;
 
 	// Update Control group
-	ui.EnabledCheck->setChecked(module->enabled());
-	ui.FrequencySpin->setValue(module->frequency());
-	ui.RunsInLabel->setText(module->frequencyDetails(duq_.iteration()));
+	ui.EnabledCheck->setChecked(module_->enabled());
+	ui.FrequencySpin->setValue(module_->frequency());
+	ui.RunsInLabel->setText(module_->frequencyDetails(duq_.iteration()));
 
 	RefListIterator<KeywordWidgetBase,bool> keywordIterator(keywordWidgets_);
 	while (KeywordWidgetBase* keywordWidget = keywordIterator.iterate()) keywordWidget->updateValue();
@@ -265,11 +265,10 @@ const char* ModuleControlWidget::widgetType()
 // Write widget state through specified LineParser
 bool ModuleControlWidget::writeState(LineParser& parser)
 {
-	Module* module = moduleReference_ ? moduleReference_->module() : NULL;
-	if (!module) return false;
+	if (!module_) return false;
 
 	// Write Module target
-	if (!parser.writeLineF("%s\n", module->uniqueName())) return false;
+	if (!parser.writeLineF("%s\n", module_->uniqueName())) return false;
 
 	// Write state data from ModuleWidget (if one exists)
 	if (moduleWidget_ && (!moduleWidget_->writeState(parser))) return false;
@@ -280,22 +279,20 @@ bool ModuleControlWidget::writeState(LineParser& parser)
 // Read widget state through specified LineParser
 bool ModuleControlWidget::readState(LineParser& parser)
 {
-
 	// First check if there is a current module pointer
 	// It is possible that one has not yet been set, e.g. if we are reading in a SubWindow.
-	Module* module = moduleReference_ ? moduleReference_->module() : NULL;
-	bool moduleSet = module;
+	bool moduleSet = module_;
 
 	// Read Module target
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-	module = ModuleList::findInstanceByUniqueName(parser.argc(0));
+	module_ = ModuleList::findInstanceByUniqueName(parser.argc(0));
 
 	// If we didn't previously have a module, but now we do, initialise the window and its controls
 	// This will also create the moduleWidget_ (in initialiseControls())
-	if (module && (!moduleSet))
+	if (module_ && (!moduleSet))
 	{
-		initialiseWindow(module);
-		initialiseControls(module);
+		initialiseWindow(module_);
+		initialiseControls(module_);
 	}
 
 	// Read state data from ModuleWidget (if one exists)
@@ -350,10 +347,9 @@ void ModuleControlWidget::on_RemoveButton_clicked(bool checked)
 
 void ModuleControlWidget::on_RunButton_clicked(bool checked)
 {
-	Module* module = moduleReference_ ? moduleReference_->module() : NULL;
-	if (!module) return;
+	if (!module_) return;
 
-	module->executeMainProcessing(duq_, duq_.worldPool());
+	module_->executeMainProcessing(duq_, duq_.worldPool());
 
 	emit moduleRun();
 }
@@ -367,10 +363,9 @@ void ModuleControlWidget::on_EnabledCheck_clicked(bool checked)
 {
 	if (refreshing_) return;
 
-	Module* module = moduleReference_ ? moduleReference_->module() : NULL;
-	if (!module) return;
+	if (!module_) return;
 
-	module->setEnabled(checked);
+	module_->setEnabled(checked);
 
 	duqWindow_->setModified();
 }
@@ -379,10 +374,9 @@ void ModuleControlWidget::on_FrequencySpin_valueChanged(int value)
 {
 	if (refreshing_) return;
 
-	Module* module = moduleReference_ ? moduleReference_->module() : NULL;
-	if (!module) return;
+	if (!module_) return;
 	
-	module->setFrequency(value);
+	module_->setFrequency(value);
 
 	duqWindow_->setModified();
 }

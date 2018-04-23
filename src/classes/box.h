@@ -88,8 +88,12 @@ class Box
 	void setUp(double volume);
 	// Return volume
 	double volume() const;
+	// Return axis lengths
+	Vec3<double> axisLengths() const;
 	// Return axis length specified
 	double axisLength(int n) const;
+	// Return axis angles
+	Vec3<double> axisAngles() const;
 	// Return axis angle specified
 	double axisAngle(int n) const;
 	// Return axis matrix
@@ -102,6 +106,8 @@ class Box
 	Vec3<double> reciprocalAxisLengths() const;
 	// Return reciprocal axes matrix
 	const Matrix3& reciprocalAxes() const;
+	// Scale Box by specified factor
+	void scale(double factor);
 
 
 	/*

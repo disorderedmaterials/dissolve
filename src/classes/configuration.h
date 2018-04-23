@@ -46,6 +46,7 @@ class Atom;
 class Box;
 class Cell;
 class Grain;
+class PotentialMap;
 class Species;
 
 // Configuration
@@ -240,15 +241,19 @@ class Configuration : public ListItem<Configuration>
 	Vec3<double> relativeBoxLengths_;
 	// Box angles
 	Vec3<double> boxAngles_;
-	// Whether the configuration is non-periodic
+	// Current size factor for Box
+	double sizeFactor_;
+	// Last size factor applied to Box / Cells
+	double appliedSizeFactor_;
+	// Whether the Configuration is non-periodic
 	bool nonPeriodic_;
-	// Periodic Box definition for the Model
+	// Periodic Box definition for the Configuration
 	Box* box_;
 	// Requested side length for individual Cell
 	double requestedCellDivisionLength_;
 	// Box normalisation array to load/save for this configuration
 	CharString boxNormalisationFileName_;
-	// RDF Normalisation function for Box shape/extent
+	// Normalisation function for Box shape/extent in radial distribution functions
 	XYData boxNormalisation_;
 	// Cell array
 	CellArray cells_;
@@ -266,6 +271,10 @@ class Configuration : public ListItem<Configuration>
 	void setBoxAngle(int index, double angle);
 	// Return Box angles
 	Vec3<double> boxAngles() const;
+	// Set requested size factor for Box
+	void setSizeFactor(double factor);
+	// Return requested size factor for Box
+	double sizeFactor();
 	// Set whether the Box is non-periodic
 	void setNonPeriodic(bool b);
 	// Return whether the Box is non-periodic
@@ -278,6 +287,8 @@ class Configuration : public ListItem<Configuration>
 	const Box* box() const;
 	// Set up periodic Box
 	bool setUpBox(ProcessPool& procPool, double ppRange, int nExpectedAtoms, int boxNormalisationNPoints);
+	// Scale Box (and associated Cells) by specified factor
+	void scaleBox(double factor);
 	// Set box normalisation array to load/save for this configuration
 	void setBoxNormalisationFile(const char* filename);
 	// Return box normalisation file to load/save for this configuration
@@ -364,6 +375,14 @@ class Configuration : public ListItem<Configuration>
 	ModuleList& modules();
 	// Return list of variables set by Modules
 	GenericList& moduleData();
+
+
+	/*
+	 * Preparation
+	 */
+	public:
+	// Perform any preparative tasks for the Configuration, before Module processing begins
+	bool prepare(const PotentialMap& potentialMap);
 
 
 	/*

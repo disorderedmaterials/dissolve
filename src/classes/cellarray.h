@@ -65,6 +65,8 @@ class CellArray
 	public:
 	// Generate array for provided Box
 	bool generate(const Box* box, double cellSize, double pairPotentialRange, double atomicDensity);
+	// Scale Cells sizes by supplied factor
+	void scale(double factor);
 	// Clear Cell arrays
 	void clear();
 	// Return number of Cells for box

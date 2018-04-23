@@ -206,6 +206,9 @@ bool DUQ::iterate(int nIterations)
 				continue;
 			}
 
+			// Perform any necessary actions before we start processing this Configuration's Modules
+			if (!cfg->prepare(potentialMap_)) return false;
+
 			// Loop over Modules defined in the Configuration
 			ListIterator<ModuleReference> moduleIterator(cfg->modules().modules());
 			while (ModuleReference* modRef = moduleIterator.iterate())
