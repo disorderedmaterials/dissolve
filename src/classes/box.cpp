@@ -338,7 +338,6 @@ double Box::angleInDegrees(const Atom* i, const Atom* j, const Atom* k) const
 
 	// Determine Angle energy
 	return angleInDegrees(vecji, vecjk);
-
 }
 
 // Return angle (in degrees, no MIM) between coordinates
