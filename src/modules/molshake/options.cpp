@@ -30,7 +30,6 @@ void MolShakeModule::setUpKeywords()
 	keywords_.add(new DoubleModuleKeyword(90.0), "RotationStepSizeMax", "Maximum step size for rotations (degrees)", "<stepsize>");
 	keywords_.add(new DoubleModuleKeyword(0.01), "RotationStepSizeMin", "Minimum step size for rotations (degrees)", "<stepsize>");
 	keywords_.add(new IntegerModuleKeyword(1), "ShakesPerMolecule", "Number of shakes per Molecule", "<n>");
-	keywords_.add(new DoubleModuleKeyword(1.0), "SizeFactor", "Scaling factor to apply to distances in energy calculation", "<rFactor>", GenericItem::InRestartFileFlag);
 	keywords_.add(new DoubleModuleKeyword(0.33), "TargetAcceptanceRate", "Target acceptance rate for Monte Carlo moves", "<rate (0.0 - 1.0)>");
 	keywords_.add(new DoubleModuleKeyword(0.05), "TranslationStepSize", "Step size for translational component of Monte Carlo move (Angstroms)", "<stepsize>", GenericItem::InRestartFileFlag);
 	keywords_.add(new DoubleModuleKeyword(3.0), "TranslationStepSizeMax", "Maximum step size for translations (Angstroms)", "<stepsize>");

@@ -73,7 +73,6 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		const double rotationStepSizeMax = keywords_.asDouble("RotationStepSizeMax");
 		const double rotationStepSizeMin = keywords_.asDouble("RotationStepSizeMin");
 		const int nShakesPerMolecule = keywords_.asInt("ShakesPerMolecule");
-		double sizeFactor = GenericListHelper<double>::retrieve(moduleData, "SizeFactor", uniqueName(), keywords_.asDouble("SizeFactor"));
 		const double targetAcceptanceRate = keywords_.asDouble("TargetAcceptanceRate");
 		double translationStepSize = GenericListHelper<double>::retrieve(moduleData, "TranslationStepSize", uniqueName(), keywords_.asDouble("TranslationStepSize"));
 		const double translationStepSizeMax = keywords_.asDouble("TranslationStepSizeMax");
@@ -83,7 +82,6 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		// Print argument/parameter summary
 		Messenger::print("MolShake: Cutoff distance is %f.\n", cutoffDistance);
 		Messenger::print("MolShake: Performing %i shake(s) per Molecule.\n", nShakesPerMolecule);
-		if (sizeFactor > 1.0) Messenger::print("MolShake: Size factor is %f.\n", sizeFactor);
 		Messenger::print("MolShake: Step size for translation adjustments is %f Angstroms (allowed range is %f <= delta <= %f).\n", translationStepSize, translationStepSizeMin, translationStepSizeMax);
 		Messenger::print("MolShake: Step size for rotation adjustments is %f degrees (allowed range is %f <= delta <= %f).\n", rotationStepSize, rotationStepSizeMin, rotationStepSizeMax);
 
@@ -95,9 +93,7 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 
 		// Create a local ChangeStore and a suitable EnergyKernel
 		ChangeStore changeStore(procPool);
-		EnergyKernel normalKernel(procPool, cfg, duq.potentialMap(), cutoffDistance);
-		ScaledEnergyKernel scaledKernel(sizeFactor, 0.0, procPool, cfg, duq.potentialMap(), cutoffDistance);
-		EnergyKernel& kernel = sizeFactor > 1.0 ? scaledKernel : normalKernel;
+		EnergyKernel kernel(procPool, cfg, duq.potentialMap(), cutoffDistance);
 
 		// Initialise the random number buffer
 		procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
@@ -276,20 +272,6 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 
 		Messenger::print("MolShake: Updated step size for rotations is %f degrees.\n", rotationStepSize); 
 		GenericListHelper<double>::realise(moduleData, "RotationStepSize", uniqueName(), GenericItem::InRestartFileFlag) = rotationStepSize;
-
-		// If sizeFactor is less than 1.0, check the total energy 
-		if (sizeFactor > 1.0)
-		{
-			double scaledInterEnergy = kernel.energy(cfg->cells(), procPool.bestStrategy(), true);
-			if (scaledInterEnergy < 0.0)
-			{
-				sizeFactor *= 0.8;
-				if (sizeFactor < 1.0) sizeFactor = 1.0;
-				Messenger::print("MolShake: Interatomic scaled energy is now negative (%e), so increasing sizeFactor to %f.\n", scaledInterEnergy, sizeFactor);
-				GenericListHelper<double>::realise(moduleData, "SizeFactor", uniqueName(), GenericItem::InRestartFileFlag) = sizeFactor;
-			}
-			else Messenger::print("MolShake: Interatomic scaled energy is positive (%e), so sizeFactor will remain at %f.\n", scaledInterEnergy, sizeFactor);
-		}
 
 		// Increase coordinate index in Configuration
 		if ((nRotationsAccepted > 0) || (nTranslationsAccepted > 0)) cfg->incrementCoordinateIndex();
