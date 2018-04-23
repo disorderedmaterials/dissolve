@@ -41,7 +41,9 @@ class ModuleControlWidget : public SubWidget
 	Q_OBJECT
 
 	private:
-	// Associated Module
+	// Associated Module (taken from either moduleReference on Construction or determined in readState())
+	Module* module_;
+	// Reference for associated Module (if available)
 	ModuleReference* moduleReference_;
 	// Pointer to DUQWindow
 	DUQWindow* duqWindow_;
