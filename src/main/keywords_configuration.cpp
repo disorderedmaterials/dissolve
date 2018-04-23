@@ -45,6 +45,7 @@ KeywordData ConfigurationBlockData[] = {
 	{ "NonPeriodic",		0,	"States that the simulation should be treated as non-periodic" },
 	{ "RDFBinWidth",		1,	"Bin width for all radial distribution functions" },
 	{ "RDFRange",			1,	"Requested extent for calculated radial distribution functions" },
+	{ "SizeFactor",			1,	"Scaling factor for Box lengths, Cell size, and Molecule centres-of-geometry" },
 	{ "SpeciesInfo",		1,	"Specify a Species to add to this Configuration" },
 	{ "Temperature",		1,	"Simulation temperature of the Configuration" }
 };
@@ -215,6 +216,9 @@ bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
 				break;
 			case (ConfigurationBlock::RDFRangeKeyword):
 				cfg->setRequestedRDFRange(parser.argd(1));
+				break;
+			case (ConfigurationBlock::SizeFactorKeyword):
+				cfg->setSizeFactor(parser.argd(1));
 				break;
 			case (ConfigurationBlock::SpeciesInfoKeyword):
 				sp = duq->findSpecies(parser.argc(1));

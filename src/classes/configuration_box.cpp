@@ -61,6 +61,18 @@ Vec3<double> Configuration::boxAngles() const
 	return boxAngles_;
 }
 
+// Set size factor for Box
+void Configuration::setSizeFactor(double factor)
+{
+	sizeFactor_ = factor;
+}
+
+// Return size factor for Box
+double Configuration::sizeFactor()
+{
+	return sizeFactor_;
+}
+
 // Set whether the configuration is non-periodic
 void Configuration::setNonPeriodic(bool b)
 {
@@ -251,6 +263,16 @@ bool Configuration::setUpBox(ProcessPool& procPool, double ppRange, int nExpecte
 	}
 
 	return true;
+}
+
+// Scale Box lengths (and associated Cells) by specified factor
+void Configuration::scaleBox(double factor)
+{
+	// Scale Box
+	box_->scale(factor);
+
+	// Apply factor to Cells
+	cells_.scale(factor);
 }
 
 // Set box normalisation array to load/save for this configuration
