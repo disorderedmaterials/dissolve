@@ -233,67 +233,81 @@ bool Configuration::prepare(const PotentialMap& potentialMap)
 	 * Scale Box, Cells, and Molecule geometric centres according to current sizeFactor_
 	 */
 
-// 	TODO implement post-process as well, checking energy and reducing sizeFactor> Needs to be at end of iteration, rather than end of Configuration processing.
+	const double reductionFactor = 0.95;
 
-	// If the current applied size factor is greater than 1.0, check the current interatomic energy to see if its negative.
-	if (appliedSizeFactor_ > 1.0)
+	while (true)
 	{
-		double interEnergy = EnergyModule::interMolecularEnergy(processPool_, this, potentialMap);
-		if (interEnergy < 0.0)
+		// Calculate ratio between current and applied size factors for use later on
+		const double sizeFactorRatio = sizeFactor_ / appliedSizeFactor_;
+
+		// Check current vs applied size factors (via the ratio) - if unequal, perform scaling and set the new applied size factor
+		if (fabs(sizeFactorRatio - 1.0) > 1.0e-5)
 		{
-			sizeFactor_ /= sqrt(2.0);
-			Messenger::print("Size factor of %f applied: interatomic energy is negative, so reducing factor to %f.\n", appliedSizeFactor_, sizeFactor_);
-		}
-		else Messenger::print("Size factor of %f applied: interatomic energy is positive, so no reduction in factor will be applied.\n", appliedSizeFactor_);
-	}
+			Messenger::print("Requested SizeFactor for Configuration is %f, current SizeFactor is %f, so scaling Box contents.\n", sizeFactor_, appliedSizeFactor_);
 
-	// If the current size factor ratio is not 1.0, scale Box, Cells, and Molecule geometric centres
-	const double sizeFactorRatio = sizeFactor_ / appliedSizeFactor_;
-	if (fabs(sizeFactorRatio - 1.0) > 1.0e-5)
-	{
-		Messenger::print("Requested SizeFactor for Configuration is %f, current SizeFactor is %f, so scaling Box contents.\n", sizeFactor_, appliedSizeFactor_);
+			/*
+			 * Recalculate all Atom positions, molecule-by-molecule
+			 * 
+			 * First, work out the centre of geometry of the Molecule, and fold it into the Box.
+			 * Calculate the scaled centre of geometry coordinate by dividing by the old scale factor, and multiplying by the new one.
+			 * Calculate the minimum image delta between each Atom and the original center of geometry.
+			 * Add this delta on to the new centre of geometry to get the new Atom coordinate.
+			 */
 
-		/*
-		 * Recalculate all Atom positions, molecule-by-molecule
-		 * 
-		 * First, work out the centre of geometry of the Molecule, and fold it into the Box.
-		 * Calculate the scaled centre of geometry coordinate by dividing by the old scale factor, and multiplying by the new one.
-		 * Calculate the minimum image delta between each Atom and the original center of geometry.
-		 * Add this delta on to the new centre of geometry to get the new Atom coordinate.
-		 */
-		Vec3<double> oldCog, newCog, newPos;
-		for (int n=0; n<molecules_.nItems(); ++n)
-		{
-			// Get Molecule pointer
-			Molecule* mol = molecules_[n];
-
-			// Calculate current and new centre of geometry
-			oldCog = mol->centreOfGeometry(box());
-			newCog = oldCog * sizeFactorRatio;
-
-			// Loop over Atoms in Molecule, setting new coordinates as we go. Remove Atom from its current Cell at the same time
-			for (int m=0; m<mol->nAtoms(); ++m)
+			Vec3<double> oldCog, newCog, newPos;
+			for (int n=0; n<molecules_.nItems(); ++n)
 			{
-				// Get Atom pointer
-				Atom* i = mol->atom(m);
+				// Get Molecule pointer
+				Molecule* mol = molecules_[n];
 
-				// Remove from its current Cell
-				if (i->cell()) i->cell()->removeAtom(i);
+				// Calculate current and new centre of geometry
+				oldCog = mol->centreOfGeometry(box());
+				newCog = oldCog * sizeFactorRatio;
 
-				// Calculate and set new position
-				newPos = newCog + (i->r() - oldCog);
-				i->setCoordinates(newPos);
+				// Loop over Atoms in Molecule, setting new coordinates as we go. Remove Atom from its current Cell at the same time
+				for (int m=0; m<mol->nAtoms(); ++m)
+				{
+					// Get Atom pointer
+					Atom* i = mol->atom(m);
+
+					// Remove from its current Cell
+					if (i->cell()) i->cell()->removeAtom(i);
+
+					// Calculate and set new position
+					newPos = newCog + box()->minimumVector(i->r(), oldCog);
+					i->setCoordinates(newPos);
+				}
 			}
+
+			// Now scale the Box and its Cells
+			scaleBox(sizeFactorRatio);
+
+			// Re-assign all Atoms to Cells
+			updateCellContents();
+
+			// Store new size factors
+			appliedSizeFactor_ = sizeFactor_;
+
+			// Can now break out of the loop
+			break;
 		}
 
-		// Now scale the Box and its Cells
-		scaleBox(sizeFactorRatio);
-
-		// Re-assign all Atoms to Cells
-		updateCellContents();
-
-		// Store new size factors
-		appliedSizeFactor_ = sizeFactor_;
+		// Now check the current sizeFactor or energy
+		//  -- If the current sizeFactor is 1.0, break
+		//  -- Otherwise, check energy - if it is negative, reduce requested size factor and loop
+		//  -- If energy is positive, break
+		if (fabs(sizeFactor_ - 1.0) < 1.0e-5) break;
+		else if (EnergyModule::interMolecularEnergy(processPool_, this, potentialMap) < 0.0)
+		{
+			sizeFactor_ *= reductionFactor;
+			if (sizeFactor_ < 1.0) sizeFactor_ = 1.0;
+			Messenger::print("Intermolecular energy is negative, so reducing SizeFactor to %f\n", sizeFactor_);
+		}
+		else
+		{
+			Messenger::print("Intermolecular energy is positive, so SizeFactor remains at %f\n", sizeFactor_);
+			break;
+		}
 	}
 
 	return true;
