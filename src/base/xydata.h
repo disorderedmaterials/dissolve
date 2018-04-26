@@ -144,7 +144,7 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 
 
 	/*
-	 * General Functions
+	 * Limits
 	 */
 	public:
 	// Return minumum x value in data
@@ -159,24 +159,48 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	double yMin() const;
 	// Return maxumum y value in data
 	double yMax() const;
+	// Trim data to X-range specified
+	void trim(double minX, double maxX);
+
+
+	/*
+	 * Integration
+	 */
+	public:
 	// Compute integral of the data
 	double integral();
 	// Compute absolute integral of the data
 	double absIntegral();
+
+
+	/*
+	 * Filtering
+	 */
+	public:
 	// Apply median filter to data
 	void medianFilter(int length);
-	// Perform point-wise convolution of this data with the supplied BroadeningFunction
-	bool convolute(BroadeningFunction function);
-	// Trim data to X-range specified
-	void trim(double minX, double maxX);
 	// Rebin data onto uniform x axis
 	void rebin(double deltaX = -1.0);
 	// Perform moving average smoothing
 	void movingAverage(int avgSize);
 	// Apply Kolmogorov–Zurbenko filter
 	void kolmogorovZurbenkoFilter(int k, int m);
+
+
+	/*
+	 * Manipulation
+	 */
+	public:
+	// Perform point-wise convolution of this data with the supplied BroadeningFunction
+	bool convolute(BroadeningFunction function);
 	// Add interpolated data
 	void addInterpolated(XYData& source, double weighting = 1.0);
+
+
+	/*
+	 * Similarity
+	 */
+	public:
 	// Return RMSE of current data with (interpolated) reference data
 	double rmse(XYData ref);
 	// Return percentage error between this and reference data

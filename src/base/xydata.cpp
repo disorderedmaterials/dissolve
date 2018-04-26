@@ -516,7 +516,7 @@ void XYData::operator/=(const double factor)
 }
 
 /*
- * General Functions
+ * Limits
  */
 
 // Return minumum x value in data
@@ -567,6 +567,28 @@ double XYData::yMax() const
 	return result;
 }
 
+// Trim data to X-range specified
+void XYData::trim(double minX, double maxX)
+{
+	// Copy old data first...
+	Array<double> oldX = x_;
+	Array<double> oldY = y_;
+	x_.forgetData();
+	y_.forgetData();
+	for (int n=0; n<oldX.nItems(); ++n)
+	{
+		if (oldX[n] < minX) continue;
+		if (oldX[n] > maxX) break;
+		addPoint(oldX[n], oldY[n]);
+	}
+
+	interpolationInterval_ = -1;
+}
+
+/*
+ * Integration
+ */
+
 // Compute integral of the data
 double XYData::integral()
 {
@@ -597,6 +619,10 @@ double XYData::absIntegral()
 	}
 	return total;
 }
+
+/*
+ * Filtering
+ */
 
 // Apply median filter to data
 void XYData::medianFilter(int length)
@@ -642,51 +668,6 @@ void XYData::medianFilter(int length)
 	
 	// Store new values
 	y_ = newY;
-
-	interpolationInterval_ = -1;
-}
-
-// Perform point-wise convolution of this data with the supplied BroadeningFunction
-bool XYData::convolute(BroadeningFunction function)
-{
-	Array<double> newY(y_.nItems());
-
-	// Outer loop over existing data points
-	double xCentre, xBroad;
-	for (int n=0; n<x_.nItems(); ++n)
-	{
-		// Grab current x value as our current xCentre
-		xCentre = x_[n];
-
-		// Inner loop over new values array
-		for (int m=0; m<x_.nItems(); ++m)
-		{
-			xBroad = x_[m] - xCentre;
-			newY[m] += y_[n] * function.y(xBroad, 0.0);
-		}
-	}
-
-	y_ = newY;
-
-	interpolationInterval_ = -1;
-
-	return true;
-}
-
-// Trim data to X-range specified
-void XYData::trim(double minX, double maxX)
-{
-	// Copy old data first...
-	Array<double> oldX = x_;
-	Array<double> oldY = y_;
-	x_.forgetData();
-	y_.forgetData();
-	for (int n=0; n<oldX.nItems(); ++n)
-	{
-		if (oldX[n] < minX) continue;
-		if (oldX[n] > maxX) break;
-		addPoint(oldX[n], oldY[n]);
-	}
 
 	interpolationInterval_ = -1;
 }
@@ -763,6 +744,37 @@ void XYData::kolmogorovZurbenkoFilter(int k, int m)
 	for (int iteration=0; iteration<k; ++iteration) movingAverage(m);
 }
 
+/*
+ * Manipulation
+ */
+
+// Perform point-wise convolution of this data with the supplied BroadeningFunction
+bool XYData::convolute(BroadeningFunction function)
+{
+	Array<double> newY(y_.nItems());
+
+	// Outer loop over existing data points
+	double xCentre, xBroad;
+	for (int n=0; n<x_.nItems(); ++n)
+	{
+		// Grab current x value as our current xCentre
+		xCentre = x_[n];
+
+		// Inner loop over new values array
+		for (int m=0; m<x_.nItems(); ++m)
+		{
+			xBroad = x_[m] - xCentre;
+			newY[m] += y_[n] * function.y(xBroad, 0.0);
+		}
+	}
+
+	y_ = newY;
+
+	interpolationInterval_ = -1;
+
+	return true;
+}
+
 // Add interpolated data
 void XYData::addInterpolated(XYData& source, double weighting)
 {
@@ -775,6 +787,10 @@ void XYData::addInterpolated(XYData& source, double weighting)
 	}
 	else for (int n=0; n<x_.nItems(); ++n) addY(n, source.interpolated(x_.value(n)) * weighting);
 }
+
+/*
+ * Similarity
+ */
 
 // Return RMSE of current data with (interpolated) reference data
 double XYData::rmse(XYData ref)
@@ -857,7 +873,7 @@ double XYData::error(XYData ref)
 	if (sumf > 0.0) denominator = sumf;
 	else denominator = 1.0;
 	double mape = sume / denominator;
-	Messenger::print("MAPE between datasets is %7.3f%% over %15.9e < x < %15.9e (%i points), d(|Y|)/sum(|Y|) = %7.3f%%.\n", mape, firstX, lastX, nPointsConsidered, sume/sumy);
+	Messenger::printVerbose("MAPE between datasets is %7.3f%% over %15.9e < x < %15.9e (%i points), d(|Y|)/sum(|Y|) = %7.3f%%.\n", mape, firstX, lastX, nPointsConsidered, sume/sumy);
 
 	return max(mape,sume/sumy);
 }
