@@ -793,30 +793,33 @@ void XYData::addInterpolated(XYData& source, double weighting)
  */
 
 // Return RMSE of current data with (interpolated) reference data
-double XYData::rmse(XYData ref)
+double XYData::rmse(XYData ref) const
 {
 	// First, generate interpolation of reference data if it needs it
 	if (ref.interpolationScheme_ == XYData::NoInterpolation) ref.interpolate(XYData::SplineInterpolation);
 
 	// Generate RMSE over actual values of our data
 	double rmse = 0.0, delta;
-	double firstX = 0.0, lastX = 0.0;
+	double firstX = 0.0, lastX = 0.0, x;
 	int nPointsConsidered = 0;
 	for (int n=0; n<x_.nItems(); ++n)
 	{
+		// Grab x value
+		x = x_.value(n);
+
 		// Is our x value lower than the lowest x value of the reference data?
-		if (x_[n] < ref.xFirst()) continue;
+		if (x < ref.xFirst()) continue;
 
 		// Is our x value higher than the last x value of the reference data?
-		if (x_[n] > ref.xLast()) break;
+		if (x > ref.xLast()) break;
 
 		// Is this the first point considered?
-		if (nPointsConsidered == 0) firstX = x_[n];
+		if (nPointsConsidered == 0) firstX = x;
 
 		// Sum squared error
-		delta = y_[n] - ref.interpolated(x_[n]);
+		delta = y_.value(n) - ref.interpolated(x);
 		rmse += delta*delta;
-		lastX = x_[n];
+		lastX = x;
 		++nPointsConsidered;
 	}
 
@@ -828,7 +831,7 @@ double XYData::rmse(XYData ref)
 }
 
 // Return percentage error between this and reference data
-double XYData::error(XYData ref)
+double XYData::error(XYData ref) const
 {
 	// First, generate interpolation of reference data if it needs it
 	if (ref.interpolationScheme_ == XYData::NoInterpolation) ref.interpolate(XYData::SplineInterpolation);
@@ -841,28 +844,33 @@ double XYData::error(XYData ref)
 	 */
 	
 	double sume = 0.0, sumf = 0.0, sumy = 0.0;
-	double firstX = 0.0, lastX = 0.0;
+	double firstX = 0.0, lastX = 0.0, x, y;
 	int nPointsConsidered = 0;
 	for (int n=0; n<x_.nItems(); ++n)
 	{
+		// Grab x value
+		x = x_.value(n);
+
 		// Is our x value lower than the lowest x value of the reference data?
-		if (x_[n] < ref.xFirst()) continue;
+		if (x < ref.xFirst()) continue;
 
 		// Is our x value higher than the last x value of the reference data?
-		if (x_[n] > ref.xLast()) break;
+		if (x > ref.xLast()) break;
 
 		// Is this the first point considered?
-		if (nPointsConsidered == 0) firstX = x_[n];
+		if (nPointsConsidered == 0) firstX = x;
+
+		y = y_.value(n);
 
 		// Accumulate numerator - sum of forecast errors
-		sume += fabs(y_[n] - ref.interpolated(x_[n]));
-		sumy += fabs(ref.interpolated(x_[n]));
+		sume += fabs(y - ref.interpolated(x));
+		sumy += fabs(ref.interpolated(x));
 
 		// Accumulate denominator - one-step naive forecast (backwards forecast for first point)
-		if (nPointsConsidered > 0) sumf += fabs(y_[n] - y_[n-1]);
-		else if (n < x_.nItems()-1) sumf += fabs(y_[n] - y_[n+1]);
+		if (nPointsConsidered > 0) sumf += fabs(y - y_.value(n-1));
+		else if (n < x_.nItems()-1) sumf += fabs(y - y_.value(n+1));
 
-		lastX = x_[n];
+		lastX = x;
 		++nPointsConsidered;
 	}
 

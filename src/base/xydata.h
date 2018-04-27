@@ -202,9 +202,9 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	 */
 	public:
 	// Return RMSE of current data with (interpolated) reference data
-	double rmse(XYData ref);
+	double rmse(XYData ref) const;
 	// Return percentage error between this and reference data
-	double error(XYData ref);
+	double error(XYData ref) const;
 
 
 	/*
