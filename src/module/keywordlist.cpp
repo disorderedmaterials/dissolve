@@ -63,7 +63,7 @@ bool ModuleKeywordList::asBool(const char* keywordName)
 	ModuleKeywordBase* keyword = find(keywordName);
 	if (!keyword)
 	{
-		Messenger::warn("No Module keyword named '%s' exists top return as a bool. Returning 'false'...\n", keywordName);
+		Messenger::warn("No Module keyword named '%s' exists to return as a bool. Returning 'false'...\n", keywordName);
 		return false;
 	}
 
