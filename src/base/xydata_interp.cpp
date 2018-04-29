@@ -278,7 +278,7 @@ void XYData::interpolate(XYData::InterpolationScheme scheme)
 }
 
 // Return spline interpolated y value for supplied x
-double XYData::interpolated(double xvalue)
+double XYData::interpolated(double xValue)
 {
 	// Do we need to (re)generate the interpolation?
 	if (interpolationInterval_ == -1)
@@ -298,29 +298,29 @@ double XYData::interpolated(double xvalue)
 	while ((right-interpolationInterval_) > 1)
 	{
 		i = (right+interpolationInterval_) / 2;
-		if (x_[i] > xvalue) right = i;
+		if (x_[i] > xValue) right = i;
 		else interpolationInterval_ = i;
 	}
 
-	return interpolated(xvalue, interpolationInterval_);
+	return interpolated(xValue, interpolationInterval_);
 }
 
 // Return spline interpolated y value for supplied x, specifying containing interval
-double XYData::interpolated(double xvalue, int interval)
+double XYData::interpolated(double xValue, int interval)
 {
 	if (interval < 0) return y_.first();
 
 	if (interpolationScheme_ == XYData::SplineInterpolation)
 	{
-		if (xvalue >= x_.last()) return y_.last();
+		if (xValue >= x_.last()) return y_.last();
 
-		double h = xvalue - x_[interval];
+		double h = xValue - x_[interval];
 		double hh = h*h;
 		return interpolationA_[interval] + interpolationB_[interval]*h + interpolationC_[interval]*hh + interpolationD_[interval]*hh*h;
 	}
 //	else if (interpolationScheme_ == XYData::ConstrainedSplineInterpolation)
 //	{
-//		double h = xvalue;
+//		double h = xValue;
 //		double hh = h*h;
 //		return interpolationA_[interval] + interpolationB_[interval]*h + interpolationC_[interval]*hh + interpolationD_[interval]*hh*h;
 //	}
@@ -328,26 +328,52 @@ double XYData::interpolated(double xvalue, int interval)
 	{
 		if (interval >= (x_.nItems()-1)) return y_.last();
 
-		double delta = (xvalue - x_.value(interval)) / interpolationH_.value(interval);
+		double delta = (xValue - x_.value(interval)) / interpolationH_.value(interval);
 		return y_.value(interval) + delta * interpolationA_.value(interval);
 	}
 	else if (interpolationScheme_ == XYData::ThreePointInterpolation)
 	{
 		if (interval >= (x_.nItems()-3)) return y_.last();
 
-//             interval=int(rrr*rdr)
-		double rXdelta = 1.0 / interpolationH_.value(0);
-		double ppp = xvalue*rXdelta - double(interval);
+		double ppp = (xValue - x_.value(interval)) / interpolationH_.value(interval);
 
 		double vk0 = y_.value(interval);
 		double vk1 = y_.value(interval+1);
 		double vk2 = y_.value(interval+2);
 		double t1=vk0+(vk1-vk0)*ppp;
 		double t2=vk1+(vk2-vk1)*(ppp-1.0);
-// 		printf("%f %20.14e %20.14e %20.14e %20.14e %20.14e\n", xvalue, vk0, vk1, vk2, ppp, t1+(t2-t1)*ppp*0.5); 
+// 		printf("%f %20.14e %20.14e %20.14e %20.14e %20.14e\n", xValue, vk0, vk1, vk2, ppp, t1+(t2-t1)*ppp*0.5); 
 		return t1+(t2-t1)*ppp*0.5;
 	}
 
 	return 0.0;
 }
 
+// Approximate data at specified x value using three-point interpolation
+double XYData::approximate(double xValue) const
+{
+	if (xValue < x_.first()) return y_.first();
+	if (xValue > x_.last()) return y_.last();
+
+	// Perform binary chop search
+	int left = 0;
+	int i, right = x_.nItems() - 1;
+	while ((right-left) > 1)
+	{
+		i = (right+left) / 2;
+		if (x_.value(i) > xValue) right = i;
+		else left = i;
+	}
+// 	printf("L/R = %i/%i : %f < %f < %f\n", left, right, x_.value(left), xValue, x_.value(right));
+
+	double ppp = (xValue - x_.value(left)) / (x_.value(right) - x_.value(left));
+
+	double vk0 = y_.value(left);
+	double vk1 = y_.value(left+1);
+	double vk2 = y_.value(left+2);
+
+	double t1=vk0+(vk1-vk0)*ppp;
+	double t2=vk1+(vk2-vk1)*(ppp-1.0);
+// 		printf("%f %20.14e %20.14e %20.14e %20.14e %20.14e\n", xValue, vk0, vk1, vk2, ppp, t1+(t2-t1)*ppp*0.5); 
+	return t1+(t2-t1)*ppp*0.5;
+}

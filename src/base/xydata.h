@@ -271,9 +271,11 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	// Calculate interpolation of current data using the supplied scheme
 	void interpolate(InterpolationScheme scheme);
 	// Return interpolated y value for supplied x
-	double interpolated(double xvalue);
+	double interpolated(double xValue);
 	// Return interpolated y value for supplied x, specifying containing interval
-	double interpolated(double xvalue, int interval);
+	double interpolated(double xValue, int interval);
+	// Approximate data at specified x value using three-point interpolation
+	double approximate(double xValue) const;
 
 
 	/*
