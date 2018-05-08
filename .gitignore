@@ -30,3 +30,9 @@ build/
 # Miscellaneous
 *swp
 changes
+
+# Example files
+*.beat
+*.restart
+*.restart.prev
+*.state
