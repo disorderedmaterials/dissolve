@@ -1,0 +1,140 @@
+# Bulk Water
+# Refinement against experimental H2O, D2O, and H2O:D2O 50:50 mixtures, measured on SANDALS in 2001.
+
+# Starting potential uses SPC/Fw parameters:
+# 
+# Yujie Wu, Harald L. Tepper and Gregory A. Voth
+# "Flexible simple point-charge water model with improved liquid-state properties", Journal of Chemical Physics 124 024503 (2006)
+# http://dx.doi.org/10.1063/1.2136877
+# 
+#	  sigma(O) =    3.165492 Angstroms
+#	epsilon(O) =    0.6503	 kJ/mol
+#	 charge(O) =   -0.82	 e
+#	 charge(H) =    0.41	 e
+#	    k(O-H) = 4431.53	 kJ mol-1 Angstrom-2
+#	    r(O-H) =    1.0	 Angstroms
+#	  k(H-O-H) =  317.5656	 kJ mol-1 radian-2
+#     theta(H-O-H) =  113.24	 degrees
+
+#------------------------#
+#  Define Master Terms   #
+#------------------------#
+
+Master
+# Bond   OH   Harmonic  4431.53  1.0		# SPC/Fw
+  Bond   OH   Harmonic  4431.53  0.975 		# Optimal
+# Angle  HOH  Harmonic  317.5656 113.24		# SPC/Fw
+  Angle  HOH  Harmonic  317.5656 104.0		# Optimal
+EndMaster
+
+#------------------------#
+#     Define Species     #
+#------------------------#
+
+Species 'Water'
+  # Atoms
+  Atom    1    O     0.015   -0.009   -0.373   'OW'
+  Atom    2    H     0.757    0.013    0.217   'HW'
+  Atom    3    H    -0.771   -0.003    0.157   'HW'
+
+  # Intramolecular Terms
+  Bond  1    2  @OH
+  Bond  1    3  @OH
+  Angle 2    1    3  @HOH
+
+  # Isotopologues
+  Isotopologue  'Natural'  OW=0  HW=0
+  Isotopologue  'Deuteriated'  OW=0  HW=2
+EndSpecies
+
+#------------------------#
+#     Pair Potentials    #
+#------------------------#
+
+PairPotentials
+  Range  15.000000
+  Delta  0.050000
+  Parameters  'OW'  -0.82      0.65	3.165492
+  Parameters  'HW'  0.41       0.0      0.0
+  GenerateAll  'LJ'
+EndPairPotentials
+
+#------------------------#
+#  Define Configuration  #
+#------------------------#
+
+Configuration  'Bulk'
+  Density  9.99999642E-02 atoms/A3
+  Multiplier  1000
+  SpeciesInfo  'Water'  1.0
+  InputCoordinates  epsr  'epsr25/single-potref/waterbox.ato'
+EndConfiguration
+
+#------------------------#
+#  Define Data Targets   #
+#------------------------#
+
+Data  'Simulated-D2O'
+  File  'data/SLS18502-D2O.mdcs01'
+  AssociatedTo  'D2O'
+EndData
+
+Data  'Simulated-H2O'
+  File  'data/SLS18498-H2O.mdcs01'
+  AssociatedTo  'H2O'
+EndData
+
+Data  'Simulated-HDO'
+  File  'data/SLS18500-HDO5050.mdcs01'
+  AssociatedTo  'HDO'
+EndData
+
+#------------------------#
+#   Define Processing    #
+#------------------------#
+
+# 3) Calculate partials for the H2O sample
+#    The averaging we specify here will apply to all other Partials modules since they
+#    will take the already-calculated partial g(r) from here.
+Module Partials 'H2O'
+  StructureFactor  on
+  WindowFunction  Lorch0
+  Weights  Neutron
+  IntraBroadening  ScaledGaussian  0.105  0.25
+  QBroadening  OmegaDependentGaussian  0.02
+  Configuration  'Bulk'
+  Isotopologue  'Bulk'  'Water'  'Natural'  1.0
+  Frequency  1
+EndModule
+
+# 4) Calculate partials for the HDO sample
+Module Partials 'HDO'
+  StructureFactor  on
+  Weights  Neutron
+  QBroadening  OmegaDependentGaussian  0.02
+  Configuration  'Bulk'
+  Isotopologue  'Bulk'  'Water'  'Deuteriated'  0.5
+  Isotopologue  'Bulk'  'Water'  'Natural'  0.5
+  Frequency  1
+EndModule
+
+# 5) Calculate partials for the D2O sample
+Module Partials 'D2O'
+  StructureFactor  on
+  Weights  Neutron
+  QBroadening  OmegaDependentGaussian  0.02
+  Configuration  'Bulk'
+  Isotopologue  'Bulk'  'Water'  'Deuteriated'  1.0
+  Frequency  1
+EndModule
+
+# 7) Refine potentials
+Module  Refine
+  Data  'Simulated-H2O'
+  Data  'Simulated-D2O'
+  Data  'Simulated-HDO'
+  OnlyWhenStable  False
+  #DeltaSQSmoothing  True
+  Frequency  1
+EndModule
+
