@@ -237,7 +237,7 @@ void RefineModuleWidget::initialiseControls(RefineModule* module)
 			deltaPhiRGraph_->addCollectionFromBlock(blockData);
 
 			// Delta g(r)
-			blockData.sprintf("Collection '%s-%s dg(r)'; Group '%s-%s'; LineStyle 1.0 'Quarter Dash'; DataSet '%s-%s Delta g(r)'; Source XYData '%s//DeltaGR//%s-%s'; EndDataSet; EndCollection", at1->name(), at2->name(), at1->name(), at2->name(), at1->name(), at2->name(), module_->uniqueName(), at1->name(), at2->name());
+			blockData.sprintf("Collection '%s-%s dg(r)'; Group '%s-%s'; LineStyle 1.0 'Quarter Dash'; DataSet '%s-%s Delta g(r)'; Source XYData '%s//Inversion//%s-%s'; EndDataSet; EndCollection", at1->name(), at2->name(), at1->name(), at2->name(), at1->name(), at2->name(), module_->uniqueName(), at1->name(), at2->name());
 			deltaPhiRGraph_->addCollectionFromBlock(blockData);
 
 			// Delta g(r)

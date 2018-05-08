@@ -2,6 +2,7 @@ add_library(math
   broadeningfunction.cpp
   cuboid.cpp
   doubleexp.cpp
+  gaussfit.cpp
   mathfunc.cpp
   mathfunc_gj.cpp
   mathfunc_svd.cpp
@@ -13,6 +14,7 @@ add_library(math
   constants.h
   cuboid.h
   doubleexp.h
+  gaussfit.h
   mathfunc.h
   matrix3.h
   matrix4.h

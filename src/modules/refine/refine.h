@@ -85,18 +85,19 @@ class RefineModule : public Module
 	 * Options
 	 */
 	public:
-	// Potential Generation Type Enum
-	enum PotentialGenerationType
+	// Potential Inversion Method Enum
+	enum PotentialInversionMethod
 	{
-		DirectPotentialGeneration,		/* Invert delta S(Q) and treat as addition to potential */
-		PercusYevickPotentialGeneration,	/* Use Percus-Yevick closure to generate potential from delta S(Q) */
-		HypernettedChainPotentialGeneration,	/* Use the hypernetted chain closure to generate potential from delta S(Q) */
-		nPotentialGenerationTypes
+		DirectFourierPotentialInversion,	/* Invert delta S(Q) by direct FT, and treat as addition to potential */
+		DirectGaussianPotentialInversion,	/* Invert delta S(Q) by approximating with Gaussians, and treat as addition to potential */
+		PercusYevickPotentialInversion,		/* Use Percus-Yevick closure to generate potential from delta S(Q) */
+		HypernettedChainPotentialInversion,	/* Use the hypernetted chain closure to generate potential from delta S(Q) */
+		nPotentialInversionMethods
 	};
-	// Convert text string to PotentialGenerationType
-	static PotentialGenerationType potentialGenerationType(const char* s);
-	// Convert PotentialGenerationType to text string
-	static const char* potentialGenerationType(PotentialGenerationType pgt);
+	// Convert text string to PotentialInversionMethod
+	static PotentialInversionMethod potentialInversionMethod(const char* s);
+	// Convert PotentialInversionMethod to text string
+	static const char* potentialInversionMethod(PotentialInversionMethod pim);
 	// Matrix Augmentation Style
 	enum MatrixAugmentationStyle
 	{
@@ -162,7 +163,8 @@ class RefineModule : public Module
 	ScatteringMatrix scatteringMatrix_;
 	// Simulated data added as reference data
 	List<Data> simulatedReferenceData_;
-
+	double TESTgaussCost3(double* alpha, int nAlpha);
+double TESTgaussCost2(double* alpha, int nAlpha);
 
 	/*
 	 * GUI Widget
