@@ -377,3 +377,32 @@ double XYData::approximate(double xValue) const
 // 		printf("%f %20.14e %20.14e %20.14e %20.14e %20.14e\n", xValue, vk0, vk1, vk2, ppp, t1+(t2-t1)*ppp*0.5); 
 	return t1+(t2-t1)*ppp*0.5;
 }
+
+// Expand the current data, adding n interpolated points in-between the original values
+void XYData::expand(int nExtraPoints)
+{
+	Array<double> newX, newY;
+
+	int nDivisions = nExtraPoints + 1;
+	double range, delta, x;
+
+	for (int n=0; n<x_.nItems()-1; ++n)
+	{
+		range = x_[n+1] - x_[n];
+		delta = range / nDivisions;
+
+		// Add points
+		x = x_[n];
+		for (int m=0; m<nDivisions; ++m)
+		{
+			newX.add(x);
+			newY.add(interpolated(x));
+			x += delta;
+		}
+	}
+
+	// Copy new data over existing
+	x_ = newX;
+	y_ = newY;
+	interpolationInterval_ = 0;
+}

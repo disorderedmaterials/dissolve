@@ -276,6 +276,8 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	double interpolated(double xValue, int interval);
 	// Approximate data at specified x value using three-point interpolation
 	double approximate(double xValue) const;
+	// Expand the current data, adding n interpolated points in-between the original values
+	void expand(int nExtraPoints);
 
 
 	/*
