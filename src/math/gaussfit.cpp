@@ -20,6 +20,7 @@
 */
 
 #include "base/xydata.h"
+#include "base/lineparser.h"
 #include "math/gaussfit.h"
 #include "templates/praxis.h"
 
@@ -277,6 +278,20 @@ const Array<double>& GaussFit::A() const
 const Array<double>& GaussFit::c() const
 {
 	return c_;
+}
+
+// Save coefficients to specified file
+bool GaussFit::saveCoefficients(const char* filename) const
+{
+	LineParser parser;
+	if (!parser.openOutput(filename)) return false;
+
+	parser.writeLineF("#  x  A  c\n");
+	for (int n=0; n<nGaussians_; ++n) parser.writeLineF("%f  %f  %f\n", x_.value(n), A_.value(n), c_.value(n));
+
+	parser.closeFiles();
+
+	return true;
 }
 
 // Return approximate function

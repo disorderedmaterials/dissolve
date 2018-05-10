@@ -77,6 +77,8 @@ class GaussFit
 	const Array<double>& A() const;
 	// Return current C values
 	const Array<double>& c() const;
+	// Save coefficients to specified file
+	bool saveCoefficients(const char* filename) const;
 
 
 	/*
