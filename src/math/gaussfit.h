@@ -54,7 +54,7 @@ class GaussFit
 
 	private:
 	// Generate full data and FT from current parameters, ignoring all Gaussians whose width coefficient is below the provided value
-	void generateData(double cMin = 0.1);
+	void generateData(double cMin = -1.0);
 
 	public:
 	// Perform initial fit to source data, specifying number of Gaussians to use uniformly across source data range
@@ -66,7 +66,7 @@ class GaussFit
 	// Return approximate function
 	const XYData& approximation() const;
 	// Return Fourier transform of approximate function, ignoring all Gaussians whose width coefficient is below the provided value
-	XYData fourierTransform(double xMin, double xStep, double xMax, double cMin = 0.1) const;
+	XYData fourierTransform(double xMin, double xStep, double xMax, double cMin = -1.0) const;
 	// Set current parameters
 	bool set(const Array<double>& x, const Array<double>& A, const Array<double>& c);
 	// Return number of Gaussians in fit
@@ -101,12 +101,8 @@ class GaussFit
 	double costAmplitudeWidthStaticTrial(double* alpha, int nAlpha);
 	// Three-parameter cost function over full sourceData, using current approximateData_ and alpha array containing new trial x, A and c values
 	double costAmplitudeWidthXCentreStaticTrial(double* alpha, int nAlpha);
-	// Two-parameter cost function over full sourceData, with alpha array containing A and c values
-	double costAmplitudeWidthFull(double* alpha, int nAlpha);
 	// Two-parameter cost function, with alpha array containing A and c values
 	double costAmplitudeWidth(double* alpha, int nAlpha);
-	// Three-parameter cost function, with alpha array containing A, c, and xCentre values
-	double costAmplitudeWidthXCentre(double* alpha, int nAlpha);
 };
 
 #endif

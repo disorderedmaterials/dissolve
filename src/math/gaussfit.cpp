@@ -213,9 +213,6 @@ double GaussFit::construct(double requiredError, int maxGaussians)
 			lastSign = DUQMath::sgn(gradient);
 		}
 
-		// Perform a global fit on all the current Gaussians
-	// 	reFit();
-
 		// Check on error
 		if (currentError <= requiredError)
 		{
@@ -359,7 +356,6 @@ double GaussFit::reFit()
 			{
 				gaussMinimiser.addTarget(A_[g]);
 				gaussMinimiser.addTarget(c_[g]);
-// 				gaussMinimiser.addTarget(x_[g]);
 				fitX_.add(x_[g]);
 
 				// Increase Gaussian index - if that was the last one, break now
@@ -392,7 +388,7 @@ double GaussFit::costAmplitudeWidthStaticTrial(double* alpha, int nAlpha)
 
 	double sose = 0.0, x, y, dy;
 
-	// Add dumb, but effective, check for c2 becoming zero
+	// Dumb, but effective, check for c2 becoming zero
 	if (c2 == 0.0) return 100.0;
 
 	for (int n=0; n<sourceData_.nPoints(); ++n)
@@ -417,8 +413,11 @@ double GaussFit::costAmplitudeWidthXCentreStaticTrial(double* alpha, int nAlpha)
 
 	double sose = 0.0, x, y, dy;
 
-	// Add dumb, but effective, check for c2 becoming zero
+	// Dumb, but effective, check for c2 becoming zero
 	if (c2 == 0.0) return 100.0;
+
+	// Ensure xCentre never goes below zero
+	if (xCentre < 0.0) return 100.0;
 
 	for (int n=0; n<sourceData_.nPoints(); ++n)
 	{
@@ -433,29 +432,6 @@ double GaussFit::costAmplitudeWidthXCentreStaticTrial(double* alpha, int nAlpha)
 	}
 
 	return sose;
-}
-
-// Two-parameter cost function over full sourceData, with alpha array containing A and c values
-double GaussFit::costAmplitudeWidthFull(double* alpha, int nAlpha)
-{
-	int nGauss = nAlpha / 2;
-
-	// Construct working array of x values
-	XYData sum;
-	sum.templateFrom(sourceData_);
-	
-	double A, c, c2, xCentre;
-	for (int n=0; n<nGauss; ++n)
-	{
-		A = alpha[n*2];
-		c = alpha[n*2+1];
-		c2 = c*c;
-		xCentre = fitX_[n];
-
-		for (int m=0; m<sum.nPoints(); ++m) sum.addY(m, A * exp(-((sum.x(m)-xCentre)*(sum.x(m)-xCentre))/(2*c2)));
-	}
-
-	return sourceData_.error(sum);
 }
 
 // Two-parameter cost function, with alpha array containing A and c values
@@ -481,36 +457,6 @@ double GaussFit::costAmplitudeWidth(double* alpha, int nAlpha)
 		xCentre = fitX_[n];
 
 		for (int m=0; m<sum.nPoints(); ++m) sum.addY(m, A * exp(-((sum.x(m)-xCentre)*(sum.x(m)-xCentre))/(2*c2)));
-	}
-
-	return sourceData_.error(sum);
-}
-
-// Three-parameter cost function, with alpha array containing A, c, and xCentre values
-double GaussFit::costAmplitudeWidthXCentre(double* alpha, int nAlpha)
-{
-	int nGauss = nAlpha / 3;
-	
-	// Construct working array of x values
-	XYData sum;
-	for (int m=0; m<sourceData_.nPoints(); ++m)
-	{
-// 		if (TESTrefSQ_.x(m) < (alpha[2]-fabs(alpha[1]))) continue;
-		sum.addPoint(sourceData_.x(m), 0.0);
-// 		if (TESTrefSQ_.x(m) > (alpha[(nGauss-1)*3+2] + fabs(alpha[(nGauss-1)*3+1]))) break;
-	}
-	
-	double A, c, c2, xCentre;
-	for (int n=0; n<nGauss; ++n)
-	{
-		A = alpha[n*3];
-		c = alpha[n*3+1];
-		c2 = c*c;
-		xCentre = alpha[n*3+2];
-		for (int m=0; m<sum.nPoints(); ++m)
-		{
-			sum.addY(m, A * exp(-((sum.x(m)-xCentre)*(sum.x(m)-xCentre))/(2*c2)));
-		}
 	}
 
 	return sourceData_.error(sum);
