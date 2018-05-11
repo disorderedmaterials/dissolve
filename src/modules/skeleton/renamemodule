@@ -23,6 +23,9 @@ mv -v skeleton.h ${LCASE}.h
 echo "Changing boilerplate in main header..."
 sed -i "s/SKELETON/${UCASE}/g" ${LCASE}.h gui/modulewidget.h
 
+echo "Changing name in definition..."
+sed -i "s/Skeleton/${NAME}/g" definition.cpp
+
 echo "Renaming class..."
 sed -i "s/SkeletonModule/${NAME}Module/g" *.cpp ${LCASE}.h gui/*.cpp gui/modulewidget.h gui/modulewidget.ui
 
