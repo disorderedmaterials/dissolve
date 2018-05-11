@@ -65,13 +65,14 @@ void RefineModule::setUpKeywords()
 	keywords_.add(new BoolModuleKeyword(true), "DeltaPhiRSmoothing", "Whether to smooth generated phi(r)");
 	keywords_.add(new IntegerModuleKeyword(5, 1, 10), "DeltaPhiRSmoothK", "Iterations of KZ smoothing to apply to generated potentials");
 	keywords_.add(new IntegerModuleKeyword(5, 3, 9), "DeltaPhiRSmoothM", "Smoothing length for moving average calculation in KZ filter applied to generated potentials");
+	keywords_.add(new DoubleModuleKeyword(0.5, 0.01, 100.0), "GaussianAccuracy", "Requested percentage error of Gaussian approximation (if InversionMethod == Gaussian)");
+	keywords_.add(new CharStringModuleKeyword("Gaussian", RefineModule::nPotentialInversionMethods, PotentialInversionMethodKeywords), "InversionMethod", "Potential inversion method to employ");
 	keywords_.add(new DoubleModuleKeyword(0.9, 0.0, 5.0), "MinimumRadius", "Minimum value of r at which additional potential is allowed to take effect (neglecting width of truncation strip)");
 	keywords_.add(new DoubleModuleKeyword(3.0, 0.0, 100.0), "MaximumRadius", "Maximum value of r (if AutoMinimumRadii = true) at which additional potential is zeroed");
 // 	keywords_.add(new BoolModuleKeyword(false), "ModifyBonds", "Modify equilibrium distances of bonds based on signatures in difference functions");
 	keywords_.add(new BoolModuleKeyword(true), "ModifyPotential", "Whether to apply generated perturbations to interatomic potentials");
 	keywords_.add(new BoolModuleKeyword(true), "OnlyWhenStable", "Assesses the energy of the Configurations contributing to the Partials, refining the potential only when all related Configuration energies are stable");
 	keywords_.add(new DoubleModuleKeyword(3.0, -1.0), "PhiLimit", "Limit of magnitude of additional potential (summed over all pair potentials");
-	keywords_.add(new CharStringModuleKeyword("Gaussian", RefineModule::nPotentialInversionMethods, PotentialInversionMethodKeywords), "InversionMethod", "Potential inversion method to employ");
 	keywords_.add(new DoubleModuleKeyword(0.2, 0.01, 1.0), "TruncationWidth", "Width of truncation zone, below the minimum radius, over which additional potential smoothly decreases to zero");
 	keywords_.add(new DoubleModuleKeyword(1.0, 0.0, 10.0), "Weighting", "Fractional (maximal) amounts of generated perturbations to apply to pair potentials");
 	keywords_.add(new WindowFunctionModuleKeyword(WindowFunction(WindowFunction::SineWindow)), "WindowFunction", "Window function to apply when back-transforming delta S(Q) to g(r)");

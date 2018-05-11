@@ -63,6 +63,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	const bool smoothPhiR = keywords_.asBool("DeltaPhiRSmoothing");
 	const int phiRSmoothK = keywords_.asDouble("DeltaPhiRSmoothK");
 	const int phiRSmoothM = keywords_.asDouble("DeltaPhiRSmoothM");
+	const double gaussianAccuracy = keywords_.asDouble("GaussianAccuracy");
 	const RefineModule::PotentialInversionMethod inversionMethod = RefineModule::potentialInversionMethod(keywords_.asString("InversionMethod"));
 	const double globalMinimumRadius = keywords_.asDouble("MinimumRadius");
 	const double globalMaximumRadius = keywords_.asDouble("MaximumRadius");
@@ -195,7 +196,6 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 
 			// Copy experimental S(Q) and FT it
 			// TODO This is performed every time (wasteful)
-			// TODO Use Gaussian Approximation here?
 			expGR = generatedSQ.ref(i,j);
 			expGR.sineFT(1.0 / (2 * PI * PI * rho), 0.0, 0.05, 30.0, WindowFunction(WindowFunction::Lorch0Window));
 			expGR.arrayY() += 1.0;
@@ -358,68 +358,42 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 			}
 			else if (inversionMethod == RefineModule::DirectGaussianPotentialInversion)
 			{
-				// Copy the delta S(Q), perform a Gaussian and do the inverse FT to get the delta [g(r) - 1]
+				// Copy the delta S(Q), perform a Gaussian fit and do the inverse FT to get the delta [g(r) - 1]
 				inversion = deltaSQ.ref(i, j);
-				inversion.save(CharString("%s-%s.inver", at1->name(), at2->name()));
 
-				// If the fit parameter arrays already exist in the module data, retrieve and set them now.
-				bool xCreated, ACreated, cCreated;
-				Array<double>& fitX = GenericListHelper< Array<double> >::realise(duq.processingModuleData(), CharString("%s-%s-GaussianX", at1->name(), at2->name()), uniqueName_, GenericItem::InRestartFileFlag, &xCreated);
-				Array<double>& fitA = GenericListHelper< Array<double> >::realise(duq.processingModuleData(), CharString("%s-%s-GaussianA", at1->name(), at2->name()), uniqueName_, GenericItem::InRestartFileFlag, &ACreated);
-				Array<double>& fitC = GenericListHelper< Array<double> >::realise(duq.processingModuleData(), CharString("%s-%s-GaussianC", at1->name(), at2->name()), uniqueName_, GenericItem::InRestartFileFlag, &cCreated);
-
-				// Construct the fitting object
+				// Fit the delta S(Q)
 				GaussFit gaussFit(inversion);
-
-				// Do we have existing fit parameters to start from?
-				double error;
-				if (xCreated || ACreated || cCreated)
-				{
-					Messenger::print("Initialising Gaussian population for fitting to %s-%s delta S(Q).\n", at1->name(), at2->name());
-// 					error = gaussFit.initialise(0.25, 0.1);
-					error = gaussFit.construct(0.5);
-				}
-				else
-				{
-					Messenger::print("Using existing Gaussian parameters for fit to %s-%s delta S(Q).\n", at1->name(), at2->name());
-					gaussFit.set(fitX, fitA, fitC);
-					error = gaussFit.construct(0.5);
-				}
-
+				double error = gaussFit.construct(0.5);
 				Messenger::print("Fitted function has error of %f%% with original delta S(Q) (nGaussians = %i).\n", error, gaussFit.nGaussians());
 
 				// Store fitted parameters
-				fitX = gaussFit.x();
-				fitA = gaussFit.A();
-				fitC = gaussFit.c();
-				gaussFit.approximation().save(CharString("%s-%s.approx", at1->name(), at2->name()));
-				LineParser parser;
-				parser.openOutput(CharString("%s-%s.coeff", at1->name(), at2->name()));
-				for (int n=0; n<fitX.nItems(); ++n) parser.writeLineF("%f  %f  %f\n", fitX[n], fitA[n], fitC[n]);
-				parser.closeFiles();
-				inversion = gaussFit.fourierTransform(ppDelta, ppDelta, ppRange, 0.1);
+				// If the fit parameter arrays already exist in the module data, retrieve and set them now.
+				GenericListHelper< Array<double> >::realise(duq.processingModuleData(), CharString("%s-%s-GaussianX", at1->name(), at2->name()), uniqueName_, GenericItem::InRestartFileFlag) = gaussFit.x();
+				GenericListHelper< Array<double> >::realise(duq.processingModuleData(), CharString("%s-%s-GaussianA", at1->name(), at2->name()), uniqueName_, GenericItem::InRestartFileFlag) = gaussFit.A();
+				GenericListHelper< Array<double> >::realise(duq.processingModuleData(), CharString("%s-%s-GaussianC", at1->name(), at2->name()), uniqueName_, GenericItem::InRestartFileFlag) = gaussFit.c();
 
-				dPhiR = inversion;
+				// Fourier transform the approximation, and store this as our inversion
+				dPhiR = gaussFit.fourierTransform(ppDelta, ppDelta, ppRange);
 				dPhiR.arrayY() *= -1.0;
 			}
 			else if (inversionMethod == RefineModule::PercusYevickPotentialInversion)
 			{
 				/*
-					* The original Percus-Yevick closure relationship for solving the Ornstein-Zernike equation is:
-					* 
-					*  phi(r) = ln(1.0 - c(r)/g(r))
-					* 
-					* The relationship assumes that the g(r) is well-behaved, but our delta g(r) may be anything but.
-					* Specifically, troughs in the delta g(r), which we interpret as indicating atoms need to be forced apart
-					* at these distances, are over-exagerrated compared to peaks because of the use of ln. Also, it is possible
-					* to have large dips in the delta g(r) that force the ratio c(r)/g(r) above 1.0, and create NaNs in the
-					* resulting function.
-					* 
-					* To account for this, we employ a slight modification of the relationship:
-					* 
-					*  phi(r) = ln(1.0 - c(r) / [|g(r)-1.0| + 1.0])
-					* 
-					*/
+				 * The original Percus-Yevick closure relationship for solving the Ornstein-Zernike equation is:
+				 * 
+				 *  phi(r) = ln(1.0 - c(r)/g(r))
+				 * 
+				 * The relationship assumes that the g(r) is well-behaved, but our delta g(r) may be anything but.
+				 * Specifically, troughs in the delta g(r), which we interpret as indicating atoms need to be forced apart
+				 * at these distances, are over-exagerrated compared to peaks because of the use of ln. Also, it is possible
+				 * to have large dips in the delta g(r) that force the ratio c(r)/g(r) above 1.0, and create NaNs in the
+				 * resulting function.
+				 * 
+				 * To account for this, we employ a slight modification of the relationship:
+				 * 
+				 *  phi(r) = ln(1.0 - c(r) / [|g(r)-1.0| + 1.0])
+				 * 
+				 */
 
 				// Calculate c(r) from the delta S(Q)
 				cr = calculateCR(deltaSQ.ref(i, j), 1.0 / (2.0*PI*PI*rho), ppDelta, ppDelta, ppRange, windowFunction);
@@ -496,9 +470,6 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 				dPhiR.arrayY() *= weight;
 				pp->adjustUAdditional(dPhiR);
 			}
-
-			// TEST
-			dPhiR.save(CharString("%s-%s.dgr", at1->name(), at2->name())); 
 		}
 	}
 
