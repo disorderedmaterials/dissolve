@@ -81,6 +81,8 @@ class BroadeningFunction : public GenericItemBase
 	FunctionType function() const;
 	// Return specified parameter
 	double parameter(int index) const;
+	// Return specified parameter name
+	const char* parameterName(int index) const;
 	// Return short summary of function parameters
 	CharString parameterSummary() const;
 	// Set inversion state

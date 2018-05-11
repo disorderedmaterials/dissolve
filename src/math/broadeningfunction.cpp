@@ -56,6 +56,14 @@ void BroadeningFunction::operator=(const BroadeningFunction& source)
 const char* BroadeningFunctionKeywords[] = { "None", "Gaussian", "ScaledGaussian", "OmegaDependentGaussian", "GaussianC2" };
 int BroadeningFunctionNParameters[] = { 0, 1, 2, 1, 2 };
 
+const char* BroadeningFunctionParameters[][MAXBROADENINGFUNCTIONPARAMS] = {
+	{ "", "", "", "", "", "",},
+	{ "FWHM", "", "", "", "", "",},
+	{ "A", "FWHM", "", "", "", "",},
+	{ "FWHM", "", "", "", "", "",},
+	{ "FWHM1", "FWHM2", "", "", "", "",}
+};
+
 // Return FunctionType from supplied string
 BroadeningFunction::FunctionType BroadeningFunction::functionType(const char* s)
 {
@@ -227,30 +235,25 @@ double BroadeningFunction::parameter(int index) const
 	return parameters_[index];
 }
 
+// Return specified parameter name
+const char* BroadeningFunction::parameterName(int index) const
+{
+	return BroadeningFunctionParameters[function_][index];
+}
+
 // Return short summary of function parameters
 CharString BroadeningFunction::parameterSummary() const
 {
-	switch (function_)
+	if (BroadeningFunctionNParameters[function_] == 0) return "<No Parameters>";
+
+	CharString result;
+	for (int n=0; n<BroadeningFunctionNParameters[function_]; ++n)
 	{
-		case (BroadeningFunction::NoFunction):
-			return "<no parameters>";
-			break;
-		case (BroadeningFunction::GaussianFunction):
-		case (BroadeningFunction::OmegaDependentGaussianFunction):
-			return CharString("FWHM=%f", parameters_[0]);
-			break;
-		case (BroadeningFunction::ScaledGaussianFunction):
-			return CharString("A=%f, FWHM=%f", parameters_[0], parameters_[1]);
-			break;
-		case (BroadeningFunction::GaussianC2Function):
-			return CharString("FWHM1=%f, FWHM2=%f", parameters_[0], parameters_[1]);
-			break;
-		default:
-			Messenger::warn("BroadeningFunction::value(x) - Function id %i not accounted for.\n", function_);
-			break;
+		if (n == 0) result.strcatf("%s=%f", BroadeningFunctionParameters[function_][n], parameters_[n]);
+		else result.strcatf(", %s=%f", BroadeningFunctionParameters[function_][n], parameters_[n]);
 	}
 
-	return "NULL";
+	return result;
 }
 
 // Set inversion state
