@@ -123,6 +123,8 @@ class Data : public ListItem<Data>
 	void setAssociatedModule(Module* module);
 	// Return associated Module
 	Module* associatedModule();
+	// Return whether the associated Module is of the type specified
+	bool isAssociatedModule(const char* moduleName);
 
 
 	/*

@@ -257,6 +257,14 @@ Module* Data::associatedModule()
 	return associatedModule_;
 }
 
+// Return whether the associated Module is of the type specified
+bool Data::isAssociatedModule(const char* moduleName)
+{
+	if (!associatedModule_) return false;
+
+	return DUQSys::sameString(associatedModule_->name(), moduleName);
+}
+
 /*
  * Parallel Comms
  */
