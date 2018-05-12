@@ -241,19 +241,6 @@ class DUQ
 
 
 	/*
-	 * Data
-	 */
-	private:
-	List<Data> data_;
-
-	public:
-	// Add new Data
-	Data* addData();
-	// Find Data by name
-	Data* findData(const char* name, bool useNiceName = false) const;
-
-
-	/*
 	 * Simulation
 	 */
 	private:

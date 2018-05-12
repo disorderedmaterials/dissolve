@@ -33,9 +33,6 @@ void InputBlocks::printValidKeywords(InputBlocks::InputBlock block)
 		case (InputBlocks::ConfigurationBlock):
 			for (n=0; n<ConfigurationBlock::nConfigurationKeywords; ++n) Messenger::print("  %s", ConfigurationBlock::keyword( (ConfigurationBlock::ConfigurationKeyword) n ));
 			break;
-		case (InputBlocks::DataBlock):
-			for (n=0; n<DataBlock::nDataKeywords; ++n) Messenger::print("  %s", DataBlock::keyword( (DataBlock::DataKeyword) n ));
-			break;
 		case (InputBlocks::MasterBlock):
 			for (n=0; n<MasterBlock::nMasterKeywords; ++n) Messenger::print("  %s", MasterBlock::keyword( (MasterBlock::MasterKeyword) n ));
 			break;
@@ -66,7 +63,7 @@ void InputBlocks::printValidKeywords(InputBlocks::InputBlock block)
  */
 
 // Input File Block Keywords
-const char* InputBlockKeywords[] = { "Configuration", "Data", "Master", "Module", "PairPotentials", "Simulation", "Species", "SpeciesInfo" };
+const char* InputBlockKeywords[] = { "Configuration", "Master", "Module", "PairPotentials", "Simulation", "Species", "SpeciesInfo" };
 
 // Convert text string to InputBlock
 InputBlocks::InputBlock InputBlocks::inputBlock(const char* s)

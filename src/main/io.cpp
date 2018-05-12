@@ -122,19 +122,6 @@ bool DUQ::loadInput(const char* filename)
 				Messenger::print("Created Configuration '%s'...\n", cfg->name());
 				if (!ConfigurationBlock::parse(parser, this, cfg)) error = true;
 				break;
-			case (InputBlocks::DataBlock):
-				// Check to see if a Data with this name already exists...
-				if (findData(parser.argc(1)))
-				{
-					Messenger::error("Redefinition of Data '%s'.\n", parser.argc(1));
-					error = true;
-					break;
-				}
-				data = data_.add();
-				data->setName(parser.argc(1));
-				Messenger::print("Created Data '%s'...\n", data->name());
-				if (!DataBlock::parse(parser, this, data)) error = true;
-				break;
 			case (InputBlocks::MasterBlock):
 				if (!MasterBlock::parse(parser, this)) error = true;
 				break;

@@ -23,7 +23,6 @@ add_library(classes
   configuration_composition.cpp
   configuration_contents.cpp
   configuration_upkeep.cpp
-  data.cpp
   distributor.cpp
   energykernel.cpp
   forcekernel.cpp
@@ -63,7 +62,7 @@ add_library(classes
   
   angle.h
   atom.h
-  atomtypedata.h
+  atomtypeddata.h
   atomtype.h
   atomtypelist.h
   bond.h
@@ -76,7 +75,6 @@ add_library(classes
   changedata.h
   changestore.h
   configuration.h
-  data.h
   distributor.h
   energykernel.h
   forcekernel.h

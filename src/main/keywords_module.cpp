@@ -29,7 +29,6 @@
 // Module Block Keywords
 KeywordData ModuleBlockData[] = {
 	{ "Configuration",		1,	"Associates the named Configuration to this Module" },
-	{ "Data",			0,	"Data block that we are associating directly with this Module" },
 	{ "Disabled",			0,	"Specifies that the Module should never be run" },
 	{ "EndModule",			0,	"Marks the end of a Module block" },
 	{ "Frequency",			1,	"Frequency, relative to the main loop, at which this Module is run" },
@@ -98,23 +97,6 @@ bool ModuleBlock::parse(LineParser& parser, DUQ* duq, Module* module, GenericLis
 					Messenger::error("Failed to add Configuration target in Module '%s'.\n", module->name());
 					error = true;
 					break;
-				}
-				break;
-			case (ModuleBlock::DataKeyword):
-				// Was a specific name for the Data provided? If so, we assume we are linking, and don't attempt to parse a block
-				dataName = parser.hasArg(1) ? parser.argc(1) : module->uniqueName();
-				data = duq->findData(dataName);
-				if (data)
-				{
-					module->addDataTarget(data);
-					Messenger::print("Added existing Data target '%s' to Module '%s'.\n", data->name(), module->name());
-				}
-				else
-				{
-					// Create new Data structure and parse it
-					data = duq->addData();
-					data->setAssociatedModule(module);
-					if (!DataBlock::parse(parser, duq, data)) return false;
 				}
 				break;
 			case (ModuleBlock::DisableKeyword):

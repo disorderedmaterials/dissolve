@@ -57,7 +57,6 @@ namespace InputBlocks
 	enum InputBlock
 	{
 		ConfigurationBlock,		/* 'Configuration' - Defines a single Configuration for use in the simulation */
-		DataBlock,			/* 'Data' - Links a reference dataset to a calculated value */
 		MasterBlock,			/* 'Master' - Contains master intramolecular terms for use in Species */
 		ModuleBlock,			/* 'Module' - Sets up a Module to run after Configuration processing */
 		PairPotentialsBlock,		/* 'PairPotentials' - Contains definitions of the PairPotentials for the simulation */
@@ -176,7 +175,6 @@ namespace ModuleBlock
 	enum ModuleKeyword
 	{
 		ConfigurationKeyword,		/* 'Configuration' - Associates the specified Configuration to this Module */
-		DataKeyword,			/* 'Data' - Define / link Data that we are targetting for use by this Module */
 		DisableKeyword,			/* 'Disable' - Disables the module, preventing it from running */
 		EndModuleKeyword,		/* 'EndModule' - Signals the end of the Module block */
 		FrequencyKeyword,		/* 'Frequency' - Frequency at which the Module is run */

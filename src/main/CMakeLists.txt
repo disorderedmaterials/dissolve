@@ -2,12 +2,10 @@ add_library(main
   atomtypes.cpp
   comms.cpp
   configurations.cpp
-  data.cpp
   duq.cpp
   io.cpp
   keywords.cpp
   keywords_configuration.cpp
-  keywords_data.cpp
   keywords_master.cpp
   keywords_module.cpp
   keywords_pairpotentials.cpp
