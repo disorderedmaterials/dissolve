@@ -4,7 +4,7 @@ SUFFIXES: .ui .hui
 
 .ui.lo:
 	$(QTUIC) -o ui_$*.h $<
-	$(QTMOC) -o moc_$*.cpp $(top_srcdir)/src/modules/refine/gui/$*.h
+	$(QTMOC) -o moc_$*.cpp $(builddir)/$*.h
 	${LIBTOOL} --tag=CXX --mode=compile ${CXX} -I./ ${AM_CPPFLAGS} -c moc_$*.cpp -o $@
 	rm moc_$*.cpp
 

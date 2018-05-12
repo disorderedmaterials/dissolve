@@ -127,7 +127,6 @@ namespace DataBlock
 		AssociatedToKeyword,		/* 'AssociatedTo' - Name of Module to which this data is associated, if any */
 		EndDataKeyword,			/* 'EndData' - Signals the end of the Data block */
 		FileKeyword,			/* 'File' - Datafile containing reference data */
-		NeutronNormalisationKeyword,	/* 'NeutronNormalisation' - Normalisation to apply to reference neutron data */
 		SubtractAverageLevelKeyword,	/* 'SubtractAverageLevel' - Minimum x value from which to calculate and subtract mean value from y data */
 		TypeKeyword,			/* 'Type' - Type of the supplied reference data */
 		nDataKeywords			/* Number of keywords defined for this block */

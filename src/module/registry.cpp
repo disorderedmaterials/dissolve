@@ -28,9 +28,11 @@
 #include "modules/intrashake/intrashake.h"
 #include "modules/md/md.h"
 #include "modules/molshake/molshake.h"
-#include "modules/partials/partials.h"
+#include "modules/qfit/qfit.h"
+#include "modules/rdf/rdf.h"
 #include "modules/refine/refine.h"
 #include "modules/sanitycheck/sanitycheck.h"
+#include "modules/neutronsq/neutronsq.h"
 #include "modules/test/test.h"
 
 /*
@@ -50,8 +52,10 @@ ModuleRegistry::ModuleRegistry()
 	ModuleRegistrar<IntraShakeModule> intraShakeRegistrar;
 	ModuleRegistrar<MDModule> mdRegistrar;
 	ModuleRegistrar<MolShakeModule> molShakeRegistrar;
-	ModuleRegistrar<PartialsModule> partailsRegistrar;
+	ModuleRegistrar<QFitModule> qFitRegistrar;
+	ModuleRegistrar<RDFModule> rdfRegistrar;
 	ModuleRegistrar<RefineModule> refineRegistrar;
 	ModuleRegistrar<SanityCheckModule> sanityCheckRegistrar;
+	ModuleRegistrar<NeutronSQModule> neutronSQRegistrar;
 	ModuleRegistrar<TestModule> testRegistrar;
 }

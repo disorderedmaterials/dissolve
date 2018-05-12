@@ -39,13 +39,13 @@ Module Partials 'RDFs'
 
   Test  on
   # -- Partial g(r) (unbound terms), unweighted
-  TestReference  'epsr/water.EPSR.g01'  GR-unweighted-OW-OW-unbound  1  2
-  TestReference  'epsr/water.EPSR.g01'  GR-unweighted-OW-HW-unbound  1  4
-  TestReference  'epsr/water.EPSR.g01'  GR-unweighted-HW-HW-unbound  1  6
+  TestReference  'epsr/water.EPSR.g01'  GR-original-OW-OW-unbound  1  2
+  TestReference  'epsr/water.EPSR.g01'  GR-original-OW-HW-unbound  1  4
+  TestReference  'epsr/water.EPSR.g01'  GR-original-HW-HW-unbound  1  6
   # -- Partial g(r) (intramolecular terms), unweighted
-  TestReference  'epsr/water.EPSR.y01'  GR-unweighted-OW-OW-bound  1  2
-  TestReference  'epsr/water.EPSR.y01'  GR-unweighted-OW-HW-bound  1  4
-  TestReference  'epsr/water.EPSR.y01'  GR-unweighted-HW-HW-bound  1  6
+  TestReference  'epsr/water.EPSR.y01'  GR-original-OW-OW-bound  1  2
+  TestReference  'epsr/water.EPSR.y01'  GR-original-OW-HW-bound  1  4
+  TestReference  'epsr/water.EPSR.y01'  GR-original-HW-HW-bound  1  6
 EndModule
 
 Module Partials 'D2O'

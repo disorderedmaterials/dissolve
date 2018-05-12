@@ -30,7 +30,6 @@ Data::Data() : ListItem<Data>()
 {
 	// Data
 	subtractAverageLevel_ = -1.0;
-	neutronNormalisation_ = PartialsModule::NoNormalisation;
 	type_ = Data::NeutronData;
 
 	// Associated Module
@@ -128,18 +127,6 @@ double Data::subtractAverageLevel()
 	return subtractAverageLevel_;
 }
 
-// Set normalisation type for neutron data
-void Data::setNeutronNormalisation(PartialsModule::NormalisationType normalisation)
-{
-	neutronNormalisation_ = normalisation;
-}
-
-// Return normalisation type for neutron data
-PartialsModule::NormalisationType Data::neutronNormalisation()
-{
-	return neutronNormalisation_;
-}
-
 // Return weights matrix for scattering data
 Weights& Data::scatteringWeights()
 {
@@ -171,45 +158,6 @@ bool Data::setUp(GenericList& processingModuleData, bool strict)
 		}
 		data_.arrayY() -= sum / nPoints;
 		Messenger::print("Removed average level from Data '%s': from x >= %f, value = %f.\n", name_.get(), subtractAverageLevel_, sum / nPoints);
-	}
-
-	// Perform type-specific normalisation of contained data
-	switch (type_)
-	{
-		case (Data::NeutronData):
-			if (neutronNormalisation_ != PartialsModule::NoNormalisation)
-			{
-				// Probe the associated Module for Weights data
-				if (!associatedModule_)
-				{
-					Messenger::error("No associated Module set for Data '%s', so can't perform normalisation of neutron data.\n", name_.get());
-					return false;
-				}
-				bool found;
-				Weights& weights = GenericListHelper<Weights>::retrieve(processingModuleData, "FullWeights", associatedModule_->uniqueName(), Weights(), &found);
-				if (!found)
-				{
-					if (strict) Messenger::error("Couldn't find FullWeights for Data '%s', and so can't perform requested normalisation.\n", name_.get());
-					else Messenger::print("Couldn't find FullWeights for Data '%s', and so can't perform requested normalisation.\n", name_.get());
-					return false;
-				}
-
-				// Remove normalisation of data
-				if (neutronNormalisation_ == PartialsModule::AverageOfSquaresNormalisation)
-				{
-					data_.arrayY() *= weights.boundCoherentAverageOfSquares();
-					Messenger::print("Removed <b>**2 normalisation from Data '%s', factor = %f.\n", name_.get(), weights.boundCoherentAverageOfSquares());
-				}
-				else if (neutronNormalisation_ == PartialsModule::SquareOfAverageNormalisation)
-				{
-					data_.arrayY() *= weights.boundCoherentSquareOfAverage();
-					Messenger::print("Removed <b**2> normalisation from Data '%s', factor = %f.\n", name_.get(), weights.boundCoherentSquareOfAverage());
-				}
-			}
-			break;
-		default:
-			Messenger::error("No handler defined for set up of this type of data (%s)\n", name_.get());
-			return false;
 	}
 
 	setUp_ = true;

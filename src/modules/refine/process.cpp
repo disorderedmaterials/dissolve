@@ -25,6 +25,7 @@
 #include "classes/scatteringmatrix.h"
 #include "classes/weights.h"
 #include "classes/atomtype.h"
+#include "classes/partialset.h"
 #include "base/sysfunc.h"
 #include "templates/genericlisthelper.h"
 

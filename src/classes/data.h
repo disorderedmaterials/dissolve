@@ -25,8 +25,8 @@
 #include "base/charstring.h"
 #include "base/xydata.h"
 #include "classes/weights.h"
+#include "module/module.h"
 #include "templates/listitem.h"
-#include "modules/partials/partials.h"
 
 // Forward Declarations
 class ProcessPool;
@@ -77,8 +77,6 @@ class Data : public ListItem<Data>
 	XYData data_;
 	// X value from which to calculate and subtract average Y level, if any
 	double subtractAverageLevel_;
-	// Normalisation style of laoded neutron data
-	PartialsModule::NormalisationType neutronNormalisation_;
 	// Weights matrix for scattering data
 	Weights scatteringWeights_;
 
@@ -95,10 +93,6 @@ class Data : public ListItem<Data>
 	void setSubtractAverageLevel(double xMin);
 	// Return X value from which to calculate and subtract average Y level, if any
 	double subtractAverageLevel();
-	// Set normalisation type for neutron data
-	void setNeutronNormalisation(PartialsModule::NormalisationType normalisation);
-	// Return normalisation type for neutron data
-	PartialsModule::NormalisationType neutronNormalisation();
 	// Return weights matrix for scattering data
 	Weights& scatteringWeights();
 

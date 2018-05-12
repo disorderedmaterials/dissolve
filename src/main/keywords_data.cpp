@@ -29,7 +29,6 @@ KeywordData DataBlockData[] = {
 	{ "AssociatedTo",			1,	"Name of Module to which this data is associated, if any" },
 	{ "EndData",				0,	"Signals the end of the Data block" },
 	{ "File",				1,	"Datafile containing reference data" },
-	{ "NeutronNormalisation",		1,	"Normalisation to apply to reference neutron data" },
 	{ "SubtractAverageLevel",		1,	"Minimum x value from which to calculate and subtract mean value from y data" },
 	{ "Type",				1, 	"Type of supplied reference data" }
 };
@@ -59,7 +58,6 @@ bool DataBlock::parse(LineParser& parser, DUQ* duq, Data* data)
 	Messenger::print("\nParsing %s block '%s'...\n", InputBlocks::inputBlock(InputBlocks::DataBlock), data->name());
 
 	bool blockDone = false, error = false;
-	PartialsModule::NormalisationType neutronNormType;
 	Data::DataType dt;
 	Module* module;
 	int xcol = 0, ycol = 1;
@@ -90,16 +88,6 @@ bool DataBlock::parse(LineParser& parser, DUQ* duq, Data* data)
 				xcol = parser.nArgs() == 4 ? parser.argi(2)-1 : 0;
 				ycol = parser.nArgs() == 4 ? parser.argi(3)-1 : 1;
 				if (!data->loadData(duq->worldPool(), parser.argc(1), xcol, ycol)) error = true;
-				break;
-			case (DataBlock::NeutronNormalisationKeyword):
-				neutronNormType = PartialsModule::normalisationType(parser.argc(1));
-				if (neutronNormType == PartialsModule::nNormalisationTypes)
-				{
-					Messenger::error("Unrecognised normalisation type (%s) given for Data '%s'.\n", parser.argc(1), data->name());
-					return false;
-				}
-				data->setNeutronNormalisation(neutronNormType);
-				Messenger::print("Neutron normalisation for Data set to '%s'.", PartialsModule::normalisationType(neutronNormType));
 				break;
 			case (DataBlock::SubtractAverageLevelKeyword):
 				data->setSubtractAverageLevel(parser.argd(1));

@@ -188,6 +188,7 @@ set(BASIC_LINK_LIBS
   mdmodule
   molshakemodule
   partialsmodule
+  qfitmodule
   refinemodule
   sanitycheckmodule
   skeletonmodule
@@ -213,6 +214,7 @@ target_link_libraries( ${target_name}
   atomshakemodulenogui
   energymodulenogui
   partialsmodulenogui
+  qfitmodulenogui
   refinemodulenogui
   skeletonmodulenogui
   testmodulenogui

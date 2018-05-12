@@ -40,9 +40,9 @@ Configuration  'Box'
     #                                            2        4        6
 
     # Partial g(r)
-    TestReference  'epsr/mgo.EPSR.g01'  GR-unweighted-Mg-Mg-unbound  1  2
-    TestReference  'epsr/mgo.EPSR.g01'  GR-unweighted-Mg-OX-unbound  1  4
-    TestReference  'epsr/mgo.EPSR.g01'  GR-unweighted-OX-OX-unbound  1  6
+    TestReference  'epsr/mgo.EPSR.g01'  GR-original-Mg-Mg-unbound  1  2
+    TestReference  'epsr/mgo.EPSR.g01'  GR-original-Mg-OX-unbound  1  4
+    TestReference  'epsr/mgo.EPSR.g01'  GR-original-OX-OX-unbound  1  6
 
     # Partial S(Q)
     TestReference  'epsr/mgo.EPSR.f01'  SQ-unweighted-Mg-Mg-unbound  1  2

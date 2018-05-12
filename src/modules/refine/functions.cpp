@@ -25,6 +25,7 @@
 #include "classes/masterintra.h"
 #include "classes/scatteringmatrix.h"
 #include "classes/speciesbond.h"
+#include "classes/partialset.h"
 #include "templates/praxis.h"
 #include "templates/genericlisthelper.h"
 

@@ -67,8 +67,8 @@ bool RefineModule::hasPostProcessing()
 const char* RefineModule::dependentModules()
 {
 	// If the 'OnlyWhenStable' keyword is 'true', we require the Energy module
-	if (keywords_.asBool("OnlyWhenStable")) return "Partials,Energy";
-	else return "Partials";
+	if (keywords_.asBool("OnlyWhenStable")) return "Energy";
+	else return "";
 }
 
 // Set up supplied dependent module (only if it has been auto-added)

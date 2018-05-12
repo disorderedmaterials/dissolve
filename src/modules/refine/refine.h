@@ -28,6 +28,7 @@
 
 // Forward Declarations
 class AtomType;
+class PartialSet;
 
 // Refine Module
 class RefineModule : public Module
