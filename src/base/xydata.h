@@ -195,6 +195,8 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	bool convolute(BroadeningFunction function);
 	// Add interpolated data
 	void addInterpolated(XYData& source, double weighting = 1.0);
+	// Subtract average level from data, forming average from supplied x value
+	double subtractAverage(double xStart);
 
 
 	/*

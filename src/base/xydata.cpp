@@ -788,6 +788,24 @@ void XYData::addInterpolated(XYData& source, double weighting)
 	else for (int n=0; n<x_.nItems(); ++n) addY(n, source.interpolated(x_.value(n)) * weighting);
 }
 
+// Subtract average level from data, forming average from supplied x value
+double XYData::subtractAverage(double xStart)
+{
+	double sum = 0.0;
+	int nPoints = 0;
+	for (int n=0; n<x_.nItems(); ++n)
+	{
+		if (x(n) >= xStart)
+		{
+			sum += y(n);
+			++nPoints;
+		}
+	}
+	y_ -= sum / nPoints;
+
+	return sum / nPoints;
+}
+
 /*
  * Similarity
  */
