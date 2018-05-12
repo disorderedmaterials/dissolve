@@ -164,8 +164,7 @@ class RefineModule : public Module
 	ScatteringMatrix scatteringMatrix_;
 	// Simulated data added as reference data
 	List<Data> simulatedReferenceData_;
-	double TESTgaussCost3(double* alpha, int nAlpha);
-double TESTgaussCost2(double* alpha, int nAlpha);
+
 
 	/*
 	 * GUI Widget
