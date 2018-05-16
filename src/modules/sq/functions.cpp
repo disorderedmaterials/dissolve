@@ -80,7 +80,7 @@ bool SQModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration* cfg, 
 	unweightedsq.formTotal(true);
 
 	timer.stop();
-	Messenger::print("SQ: Finished Fourier transform and summation of partial g(r) into partial S(Q) (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
+	Messenger::print("Finished Fourier transform and summation of partial g(r) into partial S(Q) (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
 
 	/*
 	 * S(Q) are now up-to-date
@@ -118,13 +118,13 @@ bool SQModule::sumUnweightedSQ(ProcessPool& procPool, Module* module, GenericLis
 		fingerprint += fingerprint.isEmpty() ? CharString("%i", cfg->coordinateIndex()) : CharString("_%i", cfg->coordinateIndex());
 
 		// Get weighting factor for this Configuration to contribute to the summed partials
-		double weight = GenericListHelper<double>::retrieve(moduleData, CharString("%s_Weight", cfg->niceName()), module->uniqueName(), 1.0);
+		double weight = GenericListHelper<double>::retrieve(moduleData, CharString("Weight_%s", cfg->niceName()), module->uniqueName(), 1.0);
 		totalWeight += weight;
-		Messenger::print("SQ: Weight for Configuration '%s' is %f (total weight is now %f).\n", cfg->name(), weight, totalWeight);
+		Messenger::print("Weight for Configuration '%s' is %f (total weight is now %f).\n", cfg->name(), weight, totalWeight);
 
 		// Grab partials for Configuration and add into our set
-		if (!cfg->moduleData().contains("UnweightedSQ", "SQ")) return Messenger::error("Couldn't find UnweightedSQ data for Configuration '%s'.\n", cfg->name());
-		PartialSet& cfgPartialSQ = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "", "SQ");
+		if (!cfg->moduleData().contains("UnweightedSQ")) return Messenger::error("Couldn't find UnweightedSQ data for Configuration '%s'.\n", cfg->name());
+		PartialSet& cfgPartialSQ = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedSQ");
 		summedSQ.addPartials(cfgPartialSQ, weight);
 
 		// Sum density weighted by volume, and total volume (both of which are multiplied by the overall weight)
@@ -139,7 +139,7 @@ bool SQModule::sumUnweightedSQ(ProcessPool& procPool, Module* module, GenericLis
 	summedSQ.reweightPartials(1.0 / totalWeight);
 
 	// Store the blended density of our partials
-	GenericListHelper<double>::realise(moduleData, "Density", module->uniqueName(), GenericItem::InRestartFileFlag) = density;
+	GenericListHelper<double>::realise(moduleData, "EffectiveRho", module->uniqueName(), GenericItem::InRestartFileFlag) = density;
 
 	return true;
 }
