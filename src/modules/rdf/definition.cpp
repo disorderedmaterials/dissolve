@@ -45,24 +45,6 @@ int RDFModule::nTargetableConfigurations()
 	return (configurationLocal_ ? 1 : -1);
 }
 
-// Whether the Module has a pre-processing stage
-bool RDFModule::hasPreProcessing()
-{
-	return false;
-}
-
-// Whether the Module has a processing stage
-bool RDFModule::hasProcessing()
-{
-	return true;
-}
-
-// Whether the Module has a post-processing stage
-bool RDFModule::hasPostProcessing()
-{
-	return false;
-}
-
 // Modules upon which this Module depends to have run first
 const char* RDFModule::dependentModules()
 {

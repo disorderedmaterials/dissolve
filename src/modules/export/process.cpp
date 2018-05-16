@@ -27,10 +27,10 @@
 #include "base/sysfunc.h"
 #include "base/lineparser.h"
 
-// Run pre-processing stage
-bool ExportModule::preProcess(DUQ& duq, ProcessPool& procPool)
+// Return whether the Module has a processing stage
+bool ExportModule::hasProcessing()
 {
-	return false;
+	return true;
 }
 
 // Run main processing
@@ -136,11 +136,5 @@ bool ExportModule::process(DUQ& duq, ProcessPool& procPool)
 	}
 
 	return true;
-}
-
-// Run post-processing stage
-bool ExportModule::postProcess(DUQ& duq, ProcessPool& procPool)
-{
-	return false;
 }
 

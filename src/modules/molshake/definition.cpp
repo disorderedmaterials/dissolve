@@ -45,24 +45,6 @@ int MolShakeModule::nTargetableConfigurations()
 	return 1;
 }
 
-// Whether the Module has a pre-processing stage
-bool MolShakeModule::hasPreProcessing()
-{
-	return false;
-}
-
-// Whether the Module has a processing stage
-bool MolShakeModule::hasProcessing()
-{
-	return true;
-}
-
-// Whether the Module has a post-processing stage
-bool MolShakeModule::hasPostProcessing()
-{
-	return false;
-}
-
 // Modules upon which this Module depends to have run first
 const char* MolShakeModule::dependentModules()
 {

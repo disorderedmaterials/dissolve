@@ -23,10 +23,10 @@
 #include "main/duq.h"
 #include "base/sysfunc.h"
 
-// Run pre-processing stage
-bool SkeletonModule::preProcess(DUQ& duq, ProcessPool& procPool)
+// Return whether the Module has a processing stage
+bool SkeletonModule::hasProcessing()
 {
-	return false;
+	return true;
 }
 
 // Run main processing
@@ -59,8 +59,3 @@ bool SkeletonModule::process(DUQ& duq, ProcessPool& procPool)
 	return false;
 }
 
-// Run post-processing stage
-bool SkeletonModule::postProcess(DUQ& duq, ProcessPool& procPool)
-{
-	return false;
-}

@@ -226,8 +226,3 @@ bool NeutronSQModule::process(DUQ& duq, ProcessPool& procPool)
 	return true;
 }
 
-// Run post-processing stage
-bool NeutronSQModule::postProcess(DUQ& duq, ProcessPool& procPool)
-{
-	return false;
-}

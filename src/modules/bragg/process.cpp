@@ -27,10 +27,10 @@
 #include "classes/weights.h"
 #include "templates/genericlisthelper.h"
 
-// Run pre-processing stage
-bool BraggModule::preProcess(DUQ& duq, ProcessPool& procPool)
+// Return whether the Module has a processing stage
+bool BraggModule::hasProcessing()
 {
-	return false;
+	return true;
 }
 
 // Run main processing
@@ -139,8 +139,3 @@ bool BraggModule::process(DUQ& duq, ProcessPool& procPool)
 	return true;
 }
 
-// Run post-processing stage
-bool BraggModule::postProcess(DUQ& duq, ProcessPool& procPool)
-{
-	return false;
-}

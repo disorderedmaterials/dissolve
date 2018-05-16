@@ -45,24 +45,6 @@ int ExportModule::nTargetableConfigurations()
 	return -1;
 }
 
-// Whether the Module has a pre-processing stage
-bool ExportModule::hasPreProcessing()
-{
-	return false;
-}
-
-// Whether the Module has a processing stage
-bool ExportModule::hasProcessing()
-{
-	return true;
-}
-
-// Whether the Module has a post-processing stage
-bool ExportModule::hasPostProcessing()
-{
-	return false;
-}
-
 // Modules upon which this Module depends to have run first
 const char* ExportModule::dependentModules()
 {

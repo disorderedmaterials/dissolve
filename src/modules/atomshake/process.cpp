@@ -31,10 +31,10 @@
 #include "base/timer.h"
 #include "templates/genericlisthelper.h"
 
-// Run pre-processing stage
-bool AtomShakeModule::preProcess(DUQ& duq, ProcessPool& procPool)
+// Return whether the Module has a processing stage
+bool AtomShakeModule::hasProcessing()
 {
-	return false;
+	return true;
 }
 
 // Run main processing
@@ -216,8 +216,3 @@ bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
 	return true;
 }
 
-// Run post-processing stage
-bool AtomShakeModule::postProcess(DUQ& duq, ProcessPool& procPool)
-{
-	return true;
-}

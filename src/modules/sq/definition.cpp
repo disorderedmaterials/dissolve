@@ -45,24 +45,6 @@ int SQModule::nTargetableConfigurations()
 	return (configurationLocal_ ? 1 : -1);
 }
 
-// Whether the Module has a pre-processing stage
-bool SQModule::hasPreProcessing()
-{
-	return false;
-}
-
-// Whether the Module has a processing stage
-bool SQModule::hasProcessing()
-{
-	return true;
-}
-
-// Whether the Module has a post-processing stage
-bool SQModule::hasPostProcessing()
-{
-	return false;
-}
-
 // Modules upon which this Module depends to have run first
 const char* SQModule::dependentModules()
 {

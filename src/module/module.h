@@ -32,7 +32,6 @@
 class DUQ;
 class Configuration;
 class ProcessPool;
-class Data;
 class ModuleList;
 class ModuleWidget;
 class QWidget;
@@ -87,12 +86,6 @@ class Module : public ListItem<Module>
 	virtual InstanceType instanceType() = 0;
 	// Return the maximum number of Configurations the Module can target (or -1 for any number)
 	virtual int nTargetableConfigurations() = 0;
-	// Whether the Module has a pre-processing stage
-	virtual bool hasPreProcessing() = 0;
-	// Whether the Module has a processing stage
-	virtual bool hasProcessing() = 0;
-	// Whether the Module has a post-processing stage
-	virtual bool hasPostProcessing() = 0;
 	// Add dependent Module to this Module
 	void addDependentModule(Module* module, bool autoAdded);
 	// Return pointer for specified dependent Module
@@ -159,8 +152,6 @@ class Module : public ListItem<Module>
 	RefList<Configuration,bool> targetConfigurations_;
 	// Whether this module is a local Module in a Configuration 
 	bool configurationLocal_;
-	// Data that are targetted by this Module
-	RefList<Data,bool> targetData_;
 
 	public:
 	// Add Configuration target
@@ -177,12 +168,6 @@ class Module : public ListItem<Module>
 	void setConfigurationLocal(bool b);
 	// Return whether this module is a local Module in a Configuration
 	bool configurationLocal();
-	// Add Data target
-	bool addDataTarget(Data* data);
-	// Return number of targeted Data
-	int nDataTargets();
-	// Return first targeted Data
-	RefList<Data,bool>& targetData();
 
 
 	/*
@@ -190,13 +175,21 @@ class Module : public ListItem<Module>
 	 */
 	private:
 	// Run pre-processing stage
-	virtual bool preProcess(DUQ& duq, ProcessPool& procPool) = 0;
+	virtual bool preProcess(DUQ& duq, ProcessPool& procPool);
 	// Run main processing
-	virtual bool process(DUQ& duq, ProcessPool& procPool) = 0;
+	virtual bool process(DUQ& duq, ProcessPool& procPool);
 	// Run post-processing stage
-	virtual bool postProcess(DUQ& duq, ProcessPool& procPool) = 0;
+	virtual bool postProcess(DUQ& duq, ProcessPool& procPool);
 
 	public:
+	// Whether the Module has a pre-processing stage
+	virtual bool hasPreProcessing();
+	// Whether the Module has a processing stage
+	virtual bool hasProcessing();
+	// Whether the Module has a post-processing stage
+	virtual bool hasPostProcessing();
+	// Run set-up stage
+	virtual bool setUp(DUQ& duq, ProcessPool& procPool);
 	// Run pre-processing stage
 	bool executePreProcessing(DUQ& duq, ProcessPool& procPool);
 	// Run main processing stage

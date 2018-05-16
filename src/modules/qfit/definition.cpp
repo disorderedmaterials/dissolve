@@ -45,24 +45,6 @@ int QFitModule::nTargetableConfigurations()
 	return 0;
 }
 
-// Whether the Module has a pre-processing stage
-bool QFitModule::hasPreProcessing()
-{
-	return false;
-}
-
-// Whether the Module has a processing stage
-bool QFitModule::hasProcessing()
-{
-	return true;
-}
-
-// Whether the Module has a post-processing stage
-bool QFitModule::hasPostProcessing()
-{
-	return false;
-}
-
 // Modules upon which this Module depends to have run first
 const char* QFitModule::dependentModules()
 {

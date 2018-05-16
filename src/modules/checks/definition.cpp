@@ -45,24 +45,6 @@ int ChecksModule::nTargetableConfigurations()
 	return -1;
 }
 
-// Whether the Module has a pre-processing stage
-bool ChecksModule::hasPreProcessing()
-{
-	return false;
-}
-
-// Whether the Module has a processing stage
-bool ChecksModule::hasProcessing()
-{
-	return true;
-}
-
-// Whether the Module has a post-processing stage
-bool ChecksModule::hasPostProcessing()
-{
-	return false;
-}
-
 // Modules upon which this Module depends to have run first
 const char* ChecksModule::dependentModules()
 {

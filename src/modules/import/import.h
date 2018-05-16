@@ -64,12 +64,6 @@ class ImportModule : public Module
 	InstanceType instanceType();
 	// Return the maximum number of Configurations the Module can target (or -1 for any number)
 	int nTargetableConfigurations();
-	// Whether the Module has a pre-processing stage
-	bool hasPreProcessing();
-	// Whether the Module has a processing stage
-	bool hasProcessing();
-	// Whether the Module has a post-processing stage
-	bool hasPostProcessing();
 	// Modules upon which this Module depends to have run first
 	const char* dependentModules();
 	// Set up supplied dependent module (only if it has been auto-added)
@@ -90,12 +84,12 @@ class ImportModule : public Module
 	 * Processing
 	 */
 	private:
-	// Run pre-processing stage
-	bool preProcess(DUQ& duq, ProcessPool& procPool);
 	// Run main processing
 	bool process(DUQ& duq, ProcessPool& procPool);
-	// Run post-processing stage
-	bool postProcess(DUQ& duq, ProcessPool& procPool);
+
+	public:
+	// Whether the Module has a processing stage
+	bool hasProcessing();
 
 
 	/*

@@ -45,24 +45,6 @@ int SkeletonModule::nTargetableConfigurations()
 	return 0;
 }
 
-// Whether the Module has a pre-processing stage
-bool SkeletonModule::hasPreProcessing()
-{
-	return false;
-}
-
-// Whether the Module has a processing stage
-bool SkeletonModule::hasProcessing()
-{
-	return false;
-}
-
-// Whether the Module has a post-processing stage
-bool SkeletonModule::hasPostProcessing()
-{
-	return false;
-}
-
 // Modules upon which this Module depends to have run first
 const char* SkeletonModule::dependentModules()
 {

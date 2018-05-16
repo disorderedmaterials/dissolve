@@ -24,10 +24,10 @@
 #include "base/sysfunc.h"
 #include "templates/genericlisthelper.h"
 
-// Run pre-processing stage
-bool QFitModule::preProcess(DUQ& duq, ProcessPool& procPool)
+// Return whether the Module has a processing stage
+bool QFitModule::hasProcessing()
 {
-	return false;
+	return true;
 }
 
 // Run main processing
@@ -105,8 +105,3 @@ bool QFitModule::process(DUQ& duq, ProcessPool& procPool)
 	return true;
 }
 
-// Run post-processing stage
-bool QFitModule::postProcess(DUQ& duq, ProcessPool& procPool)
-{
-	return false;
-}

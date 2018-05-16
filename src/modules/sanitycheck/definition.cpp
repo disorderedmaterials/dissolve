@@ -45,24 +45,6 @@ int SanityCheckModule::nTargetableConfigurations()
 	return 0;
 }
 
-// Whether the Module has a pre-processing stage
-bool SanityCheckModule::hasPreProcessing()
-{
-	return false;
-}
-
-// Whether the Module has a processing stage
-bool SanityCheckModule::hasProcessing()
-{
-	return true;
-}
-
-// Whether the Module has a post-processing stage
-bool SanityCheckModule::hasPostProcessing()
-{
-	return false;
-}
-
 // Modules upon which this Module depends to have run first
 const char* SanityCheckModule::dependentModules()
 {

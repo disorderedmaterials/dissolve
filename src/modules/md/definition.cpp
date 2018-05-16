@@ -45,24 +45,6 @@ int MDModule::nTargetableConfigurations()
 	return 1;
 }
 
-// Whether the Module has a pre-processing stage
-bool MDModule::hasPreProcessing()
-{
-	return false;
-}
-
-// Whether the Module has a processing stage
-bool MDModule::hasProcessing()
-{
-	return true;
-}
-
-// Whether the Module has a post-processing stage
-bool MDModule::hasPostProcessing()
-{
-	return false;
-}
-
 // Modules upon which this Module depends to have run first
 const char* MDModule::dependentModules()
 {

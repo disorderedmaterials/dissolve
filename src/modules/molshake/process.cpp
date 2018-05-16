@@ -32,10 +32,10 @@
 #include "base/timer.h"
 #include "templates/genericlisthelper.h"
 
-// Run pre-processing stage
-bool MolShakeModule::preProcess(DUQ& duq, ProcessPool& procPool)
+// Return whether the Module has a processing stage
+bool MolShakeModule::hasProcessing()
 {
-	return false;
+	return true;
 }
 
 // Run main processing
@@ -280,8 +280,3 @@ bool MolShakeModule::process(DUQ& duq, ProcessPool& procPool)
 	return true;
 }
 
-// Run post-processing stage
-bool MolShakeModule::postProcess(DUQ& duq, ProcessPool& procPool)
-{
-	return true;
-}

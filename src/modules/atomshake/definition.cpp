@@ -45,24 +45,6 @@ int AtomShakeModule::nTargetableConfigurations()
 	return 1;
 }
 
-// Whether the Module has a pre-processing stage
-bool AtomShakeModule::hasPreProcessing()
-{
-	return false;
-}
-
-// Whether the Module has a processing stage
-bool AtomShakeModule::hasProcessing()
-{
-	return true;
-}
-
-// Whether the Module has a post-processing stage
-bool AtomShakeModule::hasPostProcessing()
-{
-	return false;
-}
-
 // Modules upon which this Module depends to have run first
 const char* AtomShakeModule::dependentModules()
 {

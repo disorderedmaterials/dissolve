@@ -45,24 +45,6 @@ int IntraShakeModule::nTargetableConfigurations()
 	return -1;
 }
 
-// Whether the Module has a pre-processing stage
-bool IntraShakeModule::hasPreProcessing()
-{
-	return false;
-}
-
-// Whether the Module has a processing stage
-bool IntraShakeModule::hasProcessing()
-{
-	return true;
-}
-
-// Whether the Module has a post-processing stage
-bool IntraShakeModule::hasPostProcessing()
-{
-	return false;
-}
-
 // Modules upon which this Module depends to have run first
 const char* IntraShakeModule::dependentModules()
 {

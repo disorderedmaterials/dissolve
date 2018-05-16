@@ -24,10 +24,10 @@
 #include "classes/box.h"
 #include "base/sysfunc.h"
 
-// Run pre-processing stage
-bool ChecksModule::preProcess(DUQ& duq, ProcessPool& procPool)
+// Return whether the Module has a processing stage
+bool ChecksModule::hasProcessing()
 {
-	return false;
+	return true;
 }
 
 // Run main processing
@@ -114,8 +114,3 @@ bool ChecksModule::process(DUQ& duq, ProcessPool& procPool)
 	return true;
 }
 
-// Run post-processing stage
-bool ChecksModule::postProcess(DUQ& duq, ProcessPool& procPool)
-{
-	return false;
-}

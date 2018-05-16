@@ -27,10 +27,10 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Run pre-processing stage
-bool ImportModule::preProcess(DUQ& duq, ProcessPool& procPool)
+// Return whether the Module has a processing stage
+bool ImportModule::hasProcessing()
 {
-	return false;
+	return true;
 }
 
 // Run main processing
@@ -99,8 +99,3 @@ bool ImportModule::process(DUQ& duq, ProcessPool& procPool)
 	return true;
 }
 
-// Run post-processing stage
-bool ImportModule::postProcess(DUQ& duq, ProcessPool& procPool)
-{
-	return false;
-}

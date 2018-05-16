@@ -26,10 +26,10 @@
 #include "modules/rdf/rdf.h"
 #include "templates/genericlisthelper.h"
 
-// Run pre-processing stage
-bool SQModule::preProcess(DUQ& duq, ProcessPool& procPool)
+// Return whether the Module has a processing stage
+bool SQModule::hasProcessing()
 {
-	return false;
+	return true;
 }
 
 // Run main processing
@@ -140,8 +140,3 @@ bool SQModule::process(DUQ& duq, ProcessPool& procPool)
 	return true;
 }
 
-// Run post-processing stage
-bool SQModule::postProcess(DUQ& duq, ProcessPool& procPool)
-{
-	return false;
-}

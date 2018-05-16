@@ -24,10 +24,10 @@
 #include "classes/atomtype.h"
 #include "base/sysfunc.h"
 
-// Run pre-processing stage
-bool SanityCheckModule::preProcess(DUQ& duq, ProcessPool& procPool)
+// Return whether the Module has a processing stage
+bool SanityCheckModule::hasProcessing()
 {
-	return false;
+	return true;
 }
 
 // Run main processing
@@ -88,8 +88,3 @@ bool SanityCheckModule::process(DUQ& duq, ProcessPool& procPool)
 	return true;
 }
 
-// Run post-processing stage
-bool SanityCheckModule::postProcess(DUQ& duq, ProcessPool& procPool)
-{
-	return false;
-}

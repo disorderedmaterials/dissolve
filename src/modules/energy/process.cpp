@@ -27,10 +27,10 @@
 #include "base/lineparser.h"
 #include "templates/genericlisthelper.h"
 
-// Run pre-processing stage
-bool EnergyModule::preProcess(DUQ& duq, ProcessPool& procPool)
+// Return whether the Module has a processing stage
+bool EnergyModule::hasProcessing()
 {
-	return false;
+	return true;
 }
 
 // Run main processing
@@ -374,8 +374,3 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 	return true;
 }
 
-// Run post-processing stage
-bool EnergyModule::postProcess(DUQ& duq, ProcessPool& procPool)
-{
-	return false;
-}

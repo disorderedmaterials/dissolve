@@ -45,24 +45,6 @@ int RefineModule::nTargetableConfigurations()
 	return 0;
 }
 
-// Whether the Module has a pre-processing stage
-bool RefineModule::hasPreProcessing()
-{
-	return false;
-}
-
-// Whether the Module has a processing stage
-bool RefineModule::hasProcessing()
-{
-	return true;
-}
-
-// Whether the Module has a post-processing stage
-bool RefineModule::hasPostProcessing()
-{
-	return false;
-}
-
 // Modules upon which this Module depends to have run first
 const char* RefineModule::dependentModules()
 {

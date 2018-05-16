@@ -45,24 +45,6 @@ int ForcesModule::nTargetableConfigurations()
 	return -1;
 }
 
-// Whether the Module has a pre-processing stage
-bool ForcesModule::hasPreProcessing()
-{
-	return false;
-}
-
-// Whether the Module has a processing stage
-bool ForcesModule::hasProcessing()
-{
-	return true;
-}
-
-// Whether the Module has a post-processing stage
-bool ForcesModule::hasPostProcessing()
-{
-	return false;
-}
-
 // Modules upon which this Module depends to have run first
 const char* ForcesModule::dependentModules()
 {

@@ -23,10 +23,10 @@
 #include "main/duq.h"
 #include "base/sysfunc.h"
 
-// Run pre-processing stage
-bool TestModule::preProcess(DUQ& duq, ProcessPool& procPool)
+// Return whether the Module has a processing stage
+bool TestModule::hasProcessing()
 {
-	return false;
+	return true;
 }
 
 // Run main processing
@@ -59,8 +59,3 @@ bool TestModule::process(DUQ& duq, ProcessPool& procPool)
 	return false;
 }
 
-// Run post-processing stage
-bool TestModule::postProcess(DUQ& duq, ProcessPool& procPool)
-{
-	return false;
-}

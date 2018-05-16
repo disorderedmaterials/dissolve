@@ -337,28 +337,51 @@ bool Module::configurationLocal()
 	return configurationLocal_;
 }
 
-// Add Data target
-bool Module::addDataTarget(Data* data)
-{
-	targetData_.add(data);
-	return true;
-}
-
-// Return number of targeted Data
-int Module::nDataTargets()
-{
-	return targetData_.nItems();
-}
-
-// Return first targeted Data
-RefList<Data,bool>& Module::targetData()
-{
-	return targetData_;
-}
-
 /*
  * Processing
  */
+
+// Run pre-processing stage
+bool Module::preProcess(DUQ& duq, ProcessPool& procPool)
+{
+	return false;
+}
+
+// Run main processing
+bool Module::process(DUQ& duq, ProcessPool& procPool)
+{
+	return false;
+}
+
+// Run post-processing stage
+bool Module::postProcess(DUQ& duq, ProcessPool& procPool)
+{
+	return false;
+}
+
+// Whether the Module has a pre-processing stage
+bool Module::hasPreProcessing()
+{
+	return false;
+}
+
+// Whether the Module has a processing stage
+bool Module::hasProcessing()
+{
+	return false;
+}
+
+// Whether the Module has a post-processing stage
+bool Module::hasPostProcessing()
+{
+	return false;
+}
+
+// Run set-up stage
+bool Module::setUp(DUQ& duq, ProcessPool& procPool)
+{
+	return true;
+}
 
 // Run pre-processing stage
 bool Module::executePreProcessing(DUQ& duq, ProcessPool& procPool)

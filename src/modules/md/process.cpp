@@ -31,10 +31,10 @@
 #include "base/lineparser.h"
 #include "templates/genericlisthelper.h"
 
-// Run pre-processing stage
-bool MDModule::preProcess(DUQ& duq, ProcessPool& procPool)
+// Return whether the Module has a processing stage
+bool MDModule::hasProcessing()
 {
-	return false;
+	return true;
 }
 
 // Run main processing
@@ -327,8 +327,3 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 	return true;
 }
 
-// Run post-processing stage
-bool MDModule::postProcess(DUQ& duq, ProcessPool& procPool)
-{
-	return false;
-}
