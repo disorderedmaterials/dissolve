@@ -28,11 +28,8 @@ Configuration  'Bulk'
 EndConfiguration
 
 # Samples
-Module Partials 'RDFs'
-  StructureFactor  Off
+Module  RDF
   Configuration  'Bulk'
-  Weights  neutron
-  Isotopologue  'Bulk'  'Water'  'Deuteriated'  1.0
   # Save  On
   TestThreshold  0.57
   Frequency  1
@@ -48,13 +45,11 @@ Module Partials 'RDFs'
   TestReference  'epsr/water.EPSR.y01'  GR-original-HW-HW-bound  1  6
 EndModule
 
-Module Partials 'D2O'
-  StructureFactor  on
+Module  NeutronSQ  'D2O'
   QMin 0.05
   QBroadening  OmegaDependentGaussian  0.02    # For SLS
   WindowFunction  None
   Configuration  'Bulk'
-  Weights  neutron
   Isotopologue  'Bulk'  'Water'  'Deuteriated'  1.0
   # Save  On
   TestThreshold  0.1
@@ -71,13 +66,11 @@ Module Partials 'D2O'
   TestReference  'epsr/water.EPSR.u01'  SQ-weighted-total  1  2
 EndModule
 
-Module Partials 'H2O'
-  StructureFactor  on
+Module  NeutronSQ  'H2O'
   QMin 0.05
   QBroadening  OmegaDependentGaussian  0.02    # For SLS
   WindowFunction  None
   Configuration  'Bulk'
-  Weights  neutron
   Isotopologue  'Bulk'  'Water'  'Protiated'  1.0
   # Save  On
   TestThreshold  0.26
@@ -87,13 +80,11 @@ Module Partials 'H2O'
   TestReference  'epsr/water.EPSR.u01'  SQ-weighted-total  1  4
 EndModule
 
-Module Partials 'HDO'
-  StructureFactor  on
+Module  NeutronSQ  'HDO'
   QMin 0.05
   QBroadening  OmegaDependentGaussian  0.02    # For SLS
   WindowFunction  None
   Configuration  'Bulk'
-  Weights  neutron
   Isotopologue  'Bulk'  'Water'  'Protiated'  0.5
   Isotopologue  'Bulk'  'Water'  'Deuteriated'  0.5
   # Save  On

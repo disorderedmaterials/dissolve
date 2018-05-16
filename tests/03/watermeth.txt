@@ -59,14 +59,12 @@ Configuration  'Mix'
   RDFRange 38.0
 
   # Calculate and test g(r)
-  Module Partials 'RDFs'
+  Module  RDF
     # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
     AllIntra  true
-    Isotopologue  'Mix'  'Water'  'Protiated'  1.0
-    Isotopologue  'Mix'  'Methanol'  'Protiated'  1.0
+
     # Save  On
     Frequency  1
-    Method  Cells
   
     Test  on
     TestThreshold  0.55
@@ -120,19 +118,15 @@ Configuration  'Mix'
   EndModule
 
   # Sample Structure Factor Calculations
-  Module Partials 'HHH'
-    StructureFactor  on
+  Module  NeutronSQ  'HHH'
     # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
-    AllIntra  true
     QMin 0.05
     QBroadening  OmegaDependentGaussian  0.02    # For SLS
     WindowFunction  None
-    Weights  neutron
     Isotopologue  'Mix'  'Water'  'Protiated'  1.0
     Isotopologue  'Mix'  'Methanol'  'Protiated'  1.0
     # Save  On
     Frequency  1
-    Method  Cells
   
     Test  on
     TestThreshold  0.28
@@ -188,14 +182,11 @@ Configuration  'Mix'
     TestReference  'epsr/watermeth.EPSR.u01'  SQ-weighted-total  1  2
   EndModule
   
-  Module Partials 'H5H'
-    StructureFactor  on
+  Module  NeutronSQ  'H5H'
     # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
-    AllIntra  true
     QMin 0.05
     QBroadening  OmegaDependentGaussian  0.02    # For SLS
     WindowFunction  None
-    Weights  neutron
     Isotopologue  'Mix'  'Water'  'Protiated'  1.0
     Isotopologue  'Mix'  'Methanol'  'Protiated'  0.5
     Isotopologue  'Mix'  'Methanol'  'OD-MethylH'  0.5
@@ -210,14 +201,11 @@ Configuration  'Mix'
     TestReference  'epsr/watermeth.EPSR.u01'  SQ-weighted-total  1  4
   EndModule
   
-  Module Partials 'DHH'
-    StructureFactor  on
+  Module  NeutronSQ  'DHH'
     # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
-    AllIntra  true
     QMin 0.05
     QBroadening  OmegaDependentGaussian  0.02    # For SLS
     WindowFunction  None
-    Weights  neutron
     Isotopologue  'Mix'  'Water'  'Deuteriated'  1.0
     Isotopologue  'Mix'  'Methanol'  'Protiated'  1.0
     #  Save  On
@@ -231,14 +219,11 @@ Configuration  'Mix'
     TestReference  'epsr/watermeth.EPSR.u01'  SQ-weighted-total  1  6
   EndModule
   
-  Module Partials 'HDH'
-    StructureFactor  on
+  Module  NeutronSQ  'HDH'
     # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
-    AllIntra  true
     QMin 0.05
     QBroadening  OmegaDependentGaussian  0.02    # For SLS
     WindowFunction  None
-    Weights  neutron
     Isotopologue  'Mix'  'Water'  'Protiated'  1.0
     Isotopologue  'Mix'  'Methanol'  'OD-MethylH'  1.0
     #  Save  On
@@ -252,14 +237,11 @@ Configuration  'Mix'
     TestReference  'epsr/watermeth.EPSR.u01'  SQ-weighted-total  1  8
   EndModule
   
-  Module Partials 'HHD'
-    StructureFactor  on
+  Module  NeutronSQ  'HHD'
     # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
-    AllIntra  true
     QMin 0.05
     QBroadening  OmegaDependentGaussian  0.02    # For SLS
     WindowFunction  None
-    Weights  neutron
     Isotopologue  'Mix'  'Water'  'Protiated'  1.0
     Isotopologue  'Mix'  'Methanol'  'MethylD-OH'  1.0
     #  Save  On
@@ -273,14 +255,11 @@ Configuration  'Mix'
     TestReference  'epsr/watermeth.EPSR.u01'  SQ-weighted-total  1  10
   EndModule
   
-  Module Partials 'DDH'
-    StructureFactor  on
+  Module  NeutronSQ  'DDH'
     # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
-    AllIntra  true
     QMin 0.05
     QBroadening  OmegaDependentGaussian  0.02    # For SLS
     WindowFunction  None
-    Weights  neutron
     Isotopologue  'Mix'  'Water'  'Deuteriated'  1.0
     Isotopologue  'Mix'  'Methanol'  'OD-MethylH'  1.0
     #  Save  On
@@ -294,14 +273,11 @@ Configuration  'Mix'
     TestReference  'epsr/watermeth.EPSR.u01'  SQ-weighted-total  1  12
   EndModule
   
-  Module Partials 'HDD'
-    StructureFactor  on
+  Module  NeutronSQ  'HDD'
     # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
-    AllIntra  true
     QMin 0.05
     QBroadening  OmegaDependentGaussian  0.02    # For SLS
     WindowFunction  None
-    Weights  neutron
     Isotopologue  'Mix'  'Water'  'Protiated'  1.0
     Isotopologue  'Mix'  'Methanol'  'Deuteriated'  1.0
     #  Save  On
@@ -315,14 +291,11 @@ Configuration  'Mix'
     TestReference  'epsr/watermeth.EPSR.u01'  SQ-weighted-total  1  14
   EndModule
   
-  Module Partials 'DDD'
-    StructureFactor  on
+  Module  NeutronSQ  'DDD'
     # Make sure all intramolecular pairs contribute to the 'unbound' structure factors for consistency with EPSR
-    AllIntra  true
     QMin 0.05
     QBroadening  OmegaDependentGaussian  0.02    # For SLS
     WindowFunction  None
-    Weights  neutron
     Isotopologue  'Mix'  'Water'  'Deuteriated'  1.0
     Isotopologue  'Mix'  'Methanol'  'Deuteriated'  1.0
     #  Save  On

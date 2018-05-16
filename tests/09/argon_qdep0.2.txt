@@ -17,11 +17,14 @@ Configuration 'liquid'
   InputCoordinates  epsr  'epsr_qdep0.2/argonbox.ato'
 EndConfiguration
 
-Module Partials
+Module  RDF
   Configuration  'liquid'
-  Weights  neutron
+  Frequency  1
+EndModule
+
+Module  NeutronSQ
+  Configuration  'liquid'
   Isotopologue  'liquid'  'Argon'  'Ar36'  1.0
-  StructureFactor  on
   QBroadening  OmegaDependentGaussian  0.2
   WindowFunction  None
   Frequency  1

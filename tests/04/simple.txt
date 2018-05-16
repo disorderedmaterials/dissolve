@@ -17,8 +17,7 @@ Configuration  'Box'
   CellDivisionLength  5.0
 
   # Test 'Simple' Method
-  Module Partials
-    Isotopologue  'Box'  'Ball'  'Natural'  1.0
+  Module  RDF
     Frequency  1
     InternalTest  On
     Method  Simple

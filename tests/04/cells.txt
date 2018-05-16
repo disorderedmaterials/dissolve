@@ -16,9 +16,8 @@ Configuration  'Box'
   RDFRange 20.0
   CellDivisionLength  5.0
 
-  # Test 'Simple' Method
-  Module Partials
-    Isotopologue  'Box'  'Ball'  'Natural'  1.0
+  # Test 'Cells' method of RDF calculation
+  Module  RDF
     Frequency  1
     InternalTest  On
     Method  Cells

@@ -19,24 +19,30 @@ do
   esac
 done
 
-DUQ=../src/duq
+DUQS=../src/duq-serial
+DUQP=../src/duq
 export DUQDATA=../../data
-if [ ! -e $DUQ ]
+if [ ! -e $DUQS ]
 then
-	echo "Couldn't find binary."
+	echo "Couldn't find serial binary."
 	exit 1
+fi
+if [ ! -e $DUQP ]
+then
+	echo "Couldn't find parallel binary, so no parallel tests will be performed."
+	DUQP="NO"
 fi
 
 # Do we have a parallel exe?
 PARALLEL="FALSE"
-PROCS="1 2 3 4"
-if $DUQ -h | grep -c "MPI" >& /dev/null
+PROCS="S 1 2 3 4"
+if [ "$DUQP" != "NO" ]
 then
 	echo "Parallel version available - checks will be performed over ($PROCS) processes."
 	PARALLEL="TRUE"
 else
-	echo "Tests will be performed in serial mode."
-	PROCS="1"
+	echo "Tests will be performed in serial mode only."
+	PROCS="S"
 fi
 
 # Loop over all test directories, or supplied dirs
@@ -61,7 +67,7 @@ do
 
 	# Check for the presence of flag files
 	TARGETPROCS=$PROCS
-	if [ -e NOPARALLEL ] && [ "$PROCS" != "1" ]
+	if [ -e NOPARALLEL ] && [ "$PROCS" != "S" ]
 	then
 		echo "NOPARALLEL found - test will be performed in serial mode only."
 		TARGETPROCS="1"
@@ -81,17 +87,17 @@ do
 		for nprocs in $TARGETPROCS
 		do
 			# Set output filename path
-			if [ "$nprocs" -eq "1" ]
+			if [ "$nprocs" = "S" ]
 			then
 				output=../${test}.${input%.txt}.out
 				echo -e "\nRunning test \"${input}\" (serial)..."
 				echo "Arguments are: $ARGS"
-				../$DUQ $ARGS $input > $output
+				../$DUQS $ARGS $input > $output
 			else
 				output=../${test}.${input%.txt}.${nprocs}.out
 				echo -e "\nRunning test \"${input}\" (${nprocs} processes)..."
 				echo "Arguments are: $ARGS"
-				mpirun -np $nprocs ../$DUQ $ARGS $input -r $output > $output
+				mpirun -np $nprocs ../$DUQP $ARGS $input -r $output > $output
 			fi
 
 			if [ "$?" -eq "0" ]
