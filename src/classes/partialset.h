@@ -76,7 +76,7 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	bool setUp(Configuration* cfg, const char* prefix, const char* tag, const char* suffix, const char* abscissaUnits);
 	// Set up PartialSet, including initialising histograms for g(r) use
 	bool setUp(const AtomTypeList& atomTypes, double rdfRange, double binWidth, const char* prefix, const char* tag, const char* suffix, const char* abscissaUnits);
-	// Set up PartialSet without initialising histgram arrays
+	// Set up PartialSet without initialising histogram arrays
 	bool setUpPartials(const AtomTypeList& atomTypes, const char* prefix, const char* tag, const char* suffix, const char* abscissaUnits);
 	// Set up histogram arrays for g(r) calculation
 	void setUpHistograms(double rdfRange, double binWidth);
