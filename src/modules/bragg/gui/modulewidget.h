@@ -19,10 +19,10 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_RDFMODULEWIDGET_H
-#define DUQ_RDFMODULEWIDGET_H
+#ifndef DUQ_BRAGGMODULEWIDGET_H
+#define DUQ_BRAGGMODULEWIDGET_H
 
-#include "modules/rdf/gui/ui_modulewidget.h"
+#include "modules/bragg/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
 
 // Forward Declarations

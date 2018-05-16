@@ -57,7 +57,7 @@ int BraggModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& par
 			return false;
 		}
 
-		GenericListHelper<double>::add(targetList, CharString("%s_Weight", targetCfg->niceName()), uniqueName()) = parser.argd(2);
+		GenericListHelper<double>::add(targetList, CharString("Weight_%s", targetCfg->niceName()), uniqueName()) = parser.argd(2);
 	}
 	else return -1;
 

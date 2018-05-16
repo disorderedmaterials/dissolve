@@ -1,5 +1,5 @@
 /*
-	*** Partials Module - GUI
+	*** Bragg Module - GUI
 	*** src/modules/bragg/gui/gui.cpp
 	Copyright T. Youngs 2012-2018
 
@@ -19,11 +19,11 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/rdf/rdf.h"
-#include "modules/rdf/gui/modulewidget.h"
+#include "modules/bragg/bragg.h"
+#include "modules/bragg/gui/modulewidget.h"
 
 // Return a new widget controlling this Module
-ModuleWidget* RDFModule::createWidget(QWidget* parent, DUQ& dUQ)
+ModuleWidget* BraggModule::createWidget(QWidget* parent, DUQ& dUQ)
 {
 	return new RDFModuleWidget(parent, this, dUQ);
 }

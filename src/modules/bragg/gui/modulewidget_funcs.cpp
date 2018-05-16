@@ -1,5 +1,5 @@
 /*
-	*** Partials Module Widget - Functions
+	*** Bragg Module Widget - Functions
 	*** src/modules/bragg/gui/modulewidget_funcs.cpp
 	Copyright T. Youngs 2012-2018
 
@@ -19,7 +19,7 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/rdf/gui/modulewidget.h"
+#include "modules/bragg/gui/modulewidget.h"
 #include "gui/uchroma/gui/uchromaview.h"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/duq.h"

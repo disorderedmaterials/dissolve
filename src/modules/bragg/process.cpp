@@ -112,7 +112,7 @@ bool BraggModule::process(DUQ& duq, ProcessPool& procPool)
 // // 			fingerprint += fingerprint.isEmpty() ? CharString("%i", cfg->coordinateIndex()) : CharString("_%i", cfg->coordinateIndex());
 // // 
 // // 			// Get weighting factor for this Configuration to contribute to the summed partials
-// // 			double weight = GenericListHelper<double>::retrieve(moduleData, CharString("%s_Weight", cfg->niceName()), uniqueName_, 1.0);
+// // 			double weight = GenericListHelper<double>::retrieve(moduleData, CharString("Weight_%s", cfg->niceName()), uniqueName_, 1.0);
 // // 			totalWeight += weight;
 // // 			Messenger::print("Partials: Weight for Configuration '%s' is %f (total weight is now %f).\n", cfg->name(), weight, totalWeight);
 // // 
