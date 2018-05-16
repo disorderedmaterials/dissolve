@@ -39,68 +39,62 @@ bool QFitModule::process(DUQ& duq, ProcessPool& procPool)
 	Module* partialsModule = dependentModule("Partials");
 	if (!partialsModule)
 	{
-		Messenger::error("No Partials Module associated to QFitMoodule '%s'.\n", uniqueName());
+		Messenger::error("No Partials Module associated to QFitModule '%s'.\n", uniqueName());
 		return false;
 	}
 
 	/*
-	 * First, make sure that all of the associated Data are set up
-	 */
-	if (targetData_.nItems() == 0) return Messenger::error("No reference data provided to fit against.\n");
-	RefListIterator<Data,bool> dataIterator(targetData_);
-	while (Data* data = dataIterator.iterate()) if (!data->setUp(duq.processingModuleData())) return false;
-
-	/*
 	 * Loop over current data and perform our various fitting procedures
 	 */
-	dataIterator.restart();
-	double startTotalError = 0.0;
-	Array<double> dataSetErrors;
-	while (Data* data = dataIterator.iterate())
-	{
-		/*
-		 * IntraBroadening
-		 */
-		if (true)
-		{
-			// Must have an associated PartialsModule from which to get the total S(Q)
-			if (!data->associatedModule()) continue;
-			if (data->isAssociatedModule("Partials"))
-			{
-				Messenger::print("Requested fitting of IntraBroadening, but the associated Module for Data '%s' is not a PartialsModule (= %s).\n", data->name(), data->associatedModuleName());
-				continue;
-			}
-
-			Module* partialsModule = data->associatedModule();
-
-			// Retrieve the UnweightedGR from the PartialsModule
-			bool found = false;
-// 		/*	PartialSet& unweightedGR = GenericListHelper<PartialSet>::retrieve(duq.processingModuleData(), "UnweightedGR", data->associatedModule()->uniqueName(), PartialSet(), &found);
-// 			if (!found)
+// 	RefListIterator<Data,bool> dataIterator(targetData_);
+// 	dataIterator.restart();
+// 	double startTotalError = 0.0;
+// 	Array<double> dataSetErrors;
+// 	while (Data* data = dataIterator.iterate())
+// 	{
+// 		/*
+// 		 * IntraBroadening
+// 		 */
+// 		if (true)
+// 		{
+// 			// Must have an associated PartialsModule from which to get the total S(Q)
+// 			if (!data->associatedModule()) continue;
+// 			if (data->isAssociatedModule("Partials"))
 // 			{
-// 				Messenger::warn("Could not locate UnweightedGR for Data '%s'.\n", data->name());
+// 				Messenger::print("Requested fitting of IntraBroadening, but the associated Module for Data '%s' is not a PartialsModule (= %s).\n", data->name(), data->associatedModuleName());
 // 				continue;
-// 			}*/
+// 			}
+// 
+// 			Module* partialsModule = data->associatedModule();
+// 
+// 			// Retrieve the UnweightedGR from the PartialsModule
+// 			bool found = false;
+// // 		/*	PartialSet& unweightedGR = GenericListHelper<PartialSet>::retrieve(duq.processingModuleData(), "UnweightedGR", data->associatedModule()->uniqueName(), PartialSet(), &found);
+// // 			if (!found)
+// // 			{
+// // 				Messenger::warn("Could not locate UnweightedGR for Data '%s'.\n", data->name());
+// // 				continue;
+// // 			}*/
+// 
+// 			// Retrieve and check IntraBroadening option from the PartialsModule keywords
+// 			BroadeningFunction intraBroadening = KeywordListHelper<BroadeningFunction>::retrieve(partialsModule->keywords(), "IntraBroadening", BroadeningFunction());
+// 			if (intraBroadening.function() == BroadeningFunction::NoFunction)
+// 			{
+// // 				Messenger::print("No IntraBroadening supplied
+// 			}
+// 
+// 			// Calculate current percentage error in calculated vs experimental S(Q)
+// // 			double startError = data->data().error(calcSQ.total());
+// // 			startTotalError += startError;
+// 			
+// 		
+// 		
+// 		
+// 		}
+// 	}
+// 
 
-			// Retrieve and check IntraBroadening option from the PartialsModule keywords
-			BroadeningFunction intraBroadening = KeywordListHelper<BroadeningFunction>::retrieve(partialsModule->keywords(), "IntraBroadening", BroadeningFunction());
-			if (intraBroadening.function() == BroadeningFunction::NoFunction)
-			{
-// 				Messenger::print("No IntraBroadening supplied
-			}
-
-			// Calculate current percentage error in calculated vs experimental S(Q)
-// 			double startError = data->data().error(calcSQ.total());
-// 			startTotalError += startError;
-			
-		
-		
-		
-		}
-	}
-
-
-	Messenger::print("Average error over all specified datasets was %f%%.\n", startTotalError / targetData_.nItems());
+// 	Messenger::print("Average error over all specified datasets was %f%%.\n", startTotalError / targetData_.nItems());
 
 	return true;
 }
