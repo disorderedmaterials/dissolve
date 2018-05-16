@@ -202,9 +202,6 @@ void Weights::naturalise()
 // Set (sole) Isotope for specified AtomType and recalculate matrices
 bool Weights::setAtomTypeIsotope(AtomType* atomType, Isotope* isotope)
 {
-	// TEST
-	atomType = atomTypes_.atomType(0);
-
 	// First, make sure the AtomType is in our list
 	AtomTypeData* atd = atomTypes_.atomTypeData(atomType);
 	if (!atd) return Messenger::error("AtomType '%s' is not in the Weights' list.\n", atomType->name());
