@@ -136,7 +136,9 @@ bool GenericList::rename(const char* oldName, const char* oldPrefix, const char*
 		return false;
 	}
 
-	item->setName(CharString("%s_%s", newPrefix, newName));
+	if (DUQSys::isEmpty(newPrefix)) item->setName(newName);
+	else item->setName(CharString("%s_%s", newPrefix, newName));
+
 	return true;
 }
 
