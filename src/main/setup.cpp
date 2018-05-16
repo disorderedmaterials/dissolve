@@ -378,6 +378,32 @@ bool DUQ::setUpSimulation()
 		}
 	}
 
+	/*
+	 * Perform Set-Up Steps in Modules
+	 */
+
+	Messenger::print("*** Performing Module set-up...\n");
+	// Loop over configurations
+	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
+	{
+		// Loop over Modules
+		ListIterator<ModuleReference> moduleIterator(cfg->modules().modules());
+		while (ModuleReference* modRef = moduleIterator.iterate())
+		{
+			Module* module = modRef->module();
+
+			if (!module->setUp(*this, worldPool_)) return false;
+		}
+	}
+	// Loop over processing modules 
+	processingIterator.restart();
+	while (ModuleReference* modRef = processingIterator.iterate())
+	{
+		Module* module = modRef->module();
+
+		if (!module->setUp(*this, worldPool_)) return false;
+	}
+
 	Messenger::print("*** Defined Species\n");
 	for (Species* sp = species_.first(); sp != NULL; sp = sp->next)
 	{

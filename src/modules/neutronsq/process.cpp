@@ -29,10 +29,71 @@
 #include "modules/sq/sq.h"
 #include "templates/genericlisthelper.h"
 
-// Run pre-processing stage
-bool NeutronSQModule::preProcess(DUQ& duq, ProcessPool& procPool)
+// Run set-up stage
+bool NeutronSQModule::setUp(DUQ& duq, ProcessPool& procPool)
 {
-	return false;
+	/*
+	 * Load and set up reference data (if a filename was given)
+	 */
+	CharString referenceFile = keywords_.asString("Reference");
+	if (!referenceFile.isEmpty())
+	{
+		// Load the data
+		XYData referenceData;
+		LineParser parser(&procPool);
+		if ((!parser.openInput(referenceFile)) || (!referenceData.load(parser, 0, 1)))
+		{
+			Messenger::error("Failed to load reference data '%s'.\n", referenceFile.get());
+			return false;
+		}
+
+		// Subtract average level from data?
+		double removeAverage = keywords_.asDouble("ReferenceRemoveAverage");
+		if (removeAverage >= 0.0)
+		{
+			double level = referenceData.subtractAverage(removeAverage);
+			Messenger::print("NeutronSQ: Removed average level of %f from reference data, forming average over x >= %f.\n", level, removeAverage);
+		}
+
+		// Remove normalisation factor from data
+		
+		NeutronSQModule::NormalisationType normType = NeutronSQModule::normalisationType(keywords_.asString("ReferenceNormalisation"));
+		if (normType != NeutronSQModule::NoNormalisation)
+		{
+			// We need the summed Weights in order to do the normalisation
+			Weights summedWeights;
+			if (!calculateSummedWeights(summedWeights))
+			{
+				Messenger::error("Couldn't get summed Weights for reference data in NeutronSQ module '%s', and so can't perform requested normalisation.\n", uniqueName());
+				return false;
+			}
+
+			// Remove normalisation of data
+			if (normType == NeutronSQModule::AverageOfSquaresNormalisation)
+			{
+				referenceData.arrayY() *= summedWeights.boundCoherentAverageOfSquares();
+				Messenger::print("NeutronSQ: Removed <b>**2 normalisation from reference data ('%s'), factor = %f.\n", uniqueName(), summedWeights.boundCoherentAverageOfSquares());
+			}
+			else if (normType == NeutronSQModule::SquareOfAverageNormalisation)
+			{
+				referenceData.arrayY() *= summedWeights.boundCoherentSquareOfAverage();
+				Messenger::print("NeutronSQ: Removed <b**2> normalisation from reference data ('%s'), factor = %f.\n", uniqueName(), summedWeights.boundCoherentSquareOfAverage());
+			}
+		}
+
+		// Store the reference data in processing
+		referenceData.setName(uniqueName());
+		referenceData.setObjectName(CharString("%s//ReferenceData", uniqueName()));
+		GenericListHelper<XYData>::realise(duq.processingModuleData(), "ReferenceData", uniqueName(), GenericItem::InRestartFileFlag) = referenceData;
+	}
+
+	return true;
+}
+
+// Return whether the Module has a processing stage
+bool NeutronSQModule::hasProcessing()
+{
+	return true;
 }
 
 // Run main processing

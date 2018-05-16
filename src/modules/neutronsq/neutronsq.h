@@ -96,6 +96,14 @@ class NeutronSQModule : public Module
 
 
 	/*
+	 * Reference Data
+	 */
+	private:
+	// Reference total F(Q) filename
+	CharString referenceDataFileName_;
+
+
+	/*
 	 * Processing
 	 */
 	private:
@@ -103,6 +111,8 @@ class NeutronSQModule : public Module
 	bool process(DUQ& duq, ProcessPool& procPool);
 
 	public:
+	// Run set-up stage
+	bool setUp(DUQ& duq, ProcessPool& procPool);
 	// Whether the Module has a processing stage
 	bool hasProcessing();
 

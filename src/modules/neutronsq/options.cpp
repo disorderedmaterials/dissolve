@@ -53,6 +53,9 @@ void NeutronSQModule::setUpKeywords()
 	keywords_.add(new BroadeningFunctionModuleKeyword(BroadeningFunction()), "QBroadening", "Instrument broadening function to apply when calculating S(Q)");
 	keywords_.add(new DoubleModuleKeyword(-1.0, -1.0), "QMax", "Maximum Q for calculated S(Q)");
 	keywords_.add(new DoubleModuleKeyword(0.01, 0.0), "QMin", "Minimum Q for calculated S(Q)");
+	keywords_.add(new CharStringModuleKeyword(""), "Reference", "F(Q) reference data", "<filename>");
+	keywords_.add(new CharStringModuleKeyword("None", NeutronSQModule::nNormalisationTypes, NormalisationTypeKeywords), "ReferenceNormalisation", "Normalisation to remove from reference data before use");
+	keywords_.add(new DoubleModuleKeyword(-1.0, -1.0), "ReferenceRemoveAverage", "Q value at which to form average level to be subtracted from reference data before use (-1 for no subtraction)");
 	keywords_.add(new BoolModuleKeyword(false), "Save", "Whether to save partials to disk after calculation", "<True|False>");
 	keywords_.add(new BoolModuleKeyword(false), "Test", "Test calculated total and partials against supplied reference data", "<True|False>");
 	keywords_.add(new ComplexModuleKeyword(2,4), "TestReference", "Specify S(Q) test reference data", "<filename> <target> [xcol] [ycol]");
@@ -63,7 +66,21 @@ void NeutronSQModule::setUpKeywords()
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
 int NeutronSQModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix)
 {
-	if (DUQSys::sameString(parser.argc(0), "TestReference"))
+	if (DUQSys::sameString(parser.argc(0), "Reference"))
+	{
+		Messenger::print("Reading reference F(Q) data...\n");
+
+		// Realise an XYData to store the reference data in
+		XYData& data = GenericListHelper<XYData>::realise(targetList, "Reference", uniqueName());
+
+		// Fourth and fifth arguments are x and y columns respectively (defaulting to 0,1 if not given)
+		int xcol = parser.hasArg(2) ? parser.argi(2)-1 : 0;
+		int ycol = parser.hasArg(3) ? parser.argi(3)-1 : 1;
+
+		LineParser fileParser(&duq->worldPool());
+		if ((!fileParser.openInput(parser.argc(1))) || (!data.load(fileParser, xcol, ycol))) return false;
+	}
+	else if (DUQSys::sameString(parser.argc(0), "TestReference"))
 	{
 		Messenger::print("Reading test reference S(Q) / F(Q) data...\n");
 
