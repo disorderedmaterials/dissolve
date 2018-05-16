@@ -31,7 +31,6 @@
 // Forward Declarations
 class AtomType;
 class Weights;
-class Data;
 
 // Scattering Matrix Container
 class ScatteringMatrix
@@ -57,8 +56,10 @@ class ScatteringMatrix
 	Array2D<double> A_;
 	// Inverse of coefficients matrix
 	Array2D<double> inverseA_;
-	// Reference data (B) (n * 1) and associated scaling factors
-	RefList<Data,double> data_;
+	// Reference data (B) (n * 1)
+	Array<XYData> data_;
+	// Scaling factors for reference data (n * 1)
+	Array<double> factors_;
 
 	public:
 	// Return number of reference AtomType pairs
@@ -81,10 +82,10 @@ class ScatteringMatrix
 	void initialise(const List<AtomType>& types, Array2D<XYData>& generatedSQ, const char* objectNamePrefix);
 	// Finalise
 	bool finalise();
-	// Add reference data using its associated Weights, applying optional factor to those weights
-	bool addReferenceData(Data* data, double factor = 1.0);
+	// Add reference data with its associated Weights, applying optional factor to those weights
+	bool addReferenceData(XYData& data, Weights& weights, double factor = 1.0);
 	// Add reference partial data between specified AtomTypes
-	bool addPartialReferenceData(Data* data, AtomType* at1, AtomType* at2, double weight, double factor);
+	bool addPartialReferenceData(XYData& data, AtomType* at1, AtomType* at2, double weight, double factor);
 };
 
 #endif

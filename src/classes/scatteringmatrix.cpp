@@ -21,7 +21,6 @@
 
 #include "classes/scatteringmatrix.h"
 #include "classes/atomtype.h"
-#include "classes/data.h"
 #include "classes/weights.h"
 
 // Constructor
@@ -66,14 +65,11 @@ void ScatteringMatrix::print() const
 	Messenger::print("%s", line.get());
 
 	// Loop over reference data
-	RefListIterator<Data,double> dataIterator(data_);
-	int row = 0;
-	while (Data* data = dataIterator.iterate())
+	for (int row = 0; row < data_.nItems(); ++row)
 	{
 		line.clear();
 		for (int n=0; n<A_.nColumns(); ++n) line.strcatf("%10f ", A_.value(row, n));
-		Messenger::print("%s  %s\n", line.get(), data->name());
-		++row;
+		Messenger::print("%s  %s\n", line.get(), data_.value(row).name());
 	}
 }
 
@@ -104,12 +100,9 @@ void ScatteringMatrix::generatePartials(Array2D<XYData>& generatedSQ)
 	{
 		// Add in contribution from each datset (row).
 		// We multiply any contribution by the stored factor (in the RefList's data variable).
-		RefListIterator<Data,double> dataIterator(data_);
-		int m = 0;
-		while (Data* data = dataIterator.iterate())
+		for (int m=0; m<data_.nItems(); ++m)
 		{
-			partials[n].addInterpolated(data->data(), inverseA_.value(n, m) * dataIterator.currentData());
-			++m;
+			partials[n].addInterpolated(data_[m], inverseA_.value(n, m) * factors_[m]);
 		}
 	}
 }
@@ -173,13 +166,12 @@ bool ScatteringMatrix::finalise()
 }
 
 // Add reference data
-bool ScatteringMatrix::addReferenceData(Data* data, double factor)
+bool ScatteringMatrix::addReferenceData(XYData& data, Weights& weights, double factor)
 {
 	// Make sure that there are valid scattering weights in the supplied Data
-	Weights& weights = data->scatteringWeights();
 	if (!weights.isValid())
 	{
-		return Messenger::error("Data '%s' does not have valid scattering weights.\n", data->name());
+		return Messenger::error("Reference data '%s' does not have valid scattering weights.\n", data.name());
 	}
 
 	// Extend the scattering matrix by one row
@@ -196,7 +188,7 @@ bool ScatteringMatrix::addReferenceData(Data* data, double factor)
 			int colIndex = pairIndex(usedTypes.atomType(n), usedTypes.atomType(m));
 			if (colIndex == -1)
 			{
-				Messenger::error("Weights associated to reference Data contain one or more unknown AtomTypes ('%s' and/or '%s').\n", usedTypes.atomType(n)->name(), usedTypes.atomType(m)->name());
+				Messenger::error("Weights associated to reference data contain one or more unknown AtomTypes ('%s' and/or '%s').\n", usedTypes.atomType(n)->name(), usedTypes.atomType(m)->name());
 				return false;
 			}
 
@@ -205,14 +197,15 @@ bool ScatteringMatrix::addReferenceData(Data* data, double factor)
 		}
 	}
 
-	// Add reference data
-	data_.add(data, factor);
+	// Add reference data and its associated factor
+	data_.add(data);
+	factors_.add(factor);
 
 	return true;
 }
 
 // Add reference partial data between specified AtomTypes
-bool ScatteringMatrix::addPartialReferenceData(Data* data, AtomType* at1, AtomType* at2, double weight, double factor)
+bool ScatteringMatrix::addPartialReferenceData(XYData& data, AtomType* at1, AtomType* at2, double weight, double factor)
 {
 	// Extend the scattering matrix by one row
 	A_.addRow(typePairs_.nItems());
@@ -221,7 +214,7 @@ bool ScatteringMatrix::addPartialReferenceData(Data* data, AtomType* at1, AtomTy
 	int colIndex = pairIndex(at1, at2);
 	if (colIndex == -1)
 	{
-		Messenger::error("Weights associated to reference Data contain one or more unknown AtomTypes ('%s' and/or '%s').\n", at1->name(), at2->name());
+		Messenger::error("Weights associated to reference data contain one or more unknown AtomTypes ('%s' and/or '%s').\n", at1->name(), at2->name());
 		return false;
 	}
 
@@ -229,8 +222,9 @@ bool ScatteringMatrix::addPartialReferenceData(Data* data, AtomType* at1, AtomTy
 	A_.setRow(rowIndex, 0.0);
 	A_.ref(rowIndex, colIndex) = weight * factor;
 
-	// Add reference data
-	data_.add(data, factor);
+	// Add reference data and its associated factor
+	data_.add(data);
+	factors_.add(factor);
 
 	return true;
 }
