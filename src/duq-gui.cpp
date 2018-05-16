@@ -53,9 +53,10 @@ int main(int argc, char **argv)
 			switch (argv[n][1])
 			{
 				case ('h'):
-					printf("Monitor version %s\n\nAvailable CLI options are:\n\n", DUQVERSION);
+					printf("dUQ version %s\n\nAvailable CLI options are:\n\n", DUQVERSION);
 					printf("\t-a\t\tAuto-add dependent Modules if they are not present already\n");
 					printf("\t-i\t\tIgnore restart file\n");
+					printf("\t-I\t\tIgnore GUI state file\n");
 					printf("\t-q\t\tQuiet mode - print no output\n");
 					printf("\t-v\t\tVerbose mode - be a little more descriptive throughout\n");
 					ProcessPool::finalise();
