@@ -374,7 +374,6 @@ double Expression::execute(bool& success)
 
 	for (RefListItem<Node,int> *ri = statements_.first(); ri != NULL; ri = ri->next)
 	{
-		Messenger::printVerbose("Executing expression statement %p...\n", ri->item);
 // 		ri->item->nodePrint(1);
 		success = ri->item->execute(expressionResult);
 		if (!success) break;
