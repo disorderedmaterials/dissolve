@@ -98,7 +98,7 @@ int RDFModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parse
 			return false;
 		}
 
-		GenericListHelper<double>::add(targetList, CharString("%s_Weight", targetCfg->niceName()), uniqueName()) = parser.argd(2);
+		GenericListHelper<double>::add(targetList, CharString("Weight_%s", targetCfg->niceName()), uniqueName()) = parser.argd(2);
 	}
 	else if (DUQSys::sameString(parser.argc(0), "TestReference"))
 	{

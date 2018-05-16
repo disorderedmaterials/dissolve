@@ -23,13 +23,7 @@
 #include "classes/configuration.h"
 #include "classes/atom.h"
 #include "classes/box.h"
-// #include "classes/braggpeak.h"
 #include "classes/cell.h"
-// #include "classes/kvector.h"
-// #include "classes/species.h"
-// #include "classes/weights.h"
-// #include "math/broadeningfunction.h"
-// #include "templates/array3d.h"
 #include "templates/genericlisthelper.h"
 #include "templates/orderedpointerarray.h"
 
@@ -265,7 +259,7 @@ bool RDFModule::performGRAveraging(GenericList& moduleData, const char* name, co
 	// Establish how many stored datasets we have
 	int nStored = 0;
 	for (nStored = 0; nStored < nSetsInAverage; ++nStored) if (!moduleData.contains(CharString("%s_%i", name, nStored+1), prefix)) break;
-	Messenger::print("Partials: Average requested over %i datsets - %i available in module data (%i max).\n", nSetsInAverage, nStored, nSetsInAverage-1);
+	Messenger::print("Average requested over %i datsets - %i available in module data (%i max).\n", nSetsInAverage, nStored, nSetsInAverage-1);
 
 	// If a stored PartialSet with index 1 exists, we need to check its index value against the current one.
 	// If it is the same, we do not store it since it is the same and does not add any new information to the averaging.
@@ -275,7 +269,7 @@ bool RDFModule::performGRAveraging(GenericList& moduleData, const char* name, co
 		PartialSet& lastPartials = GenericListHelper<PartialSet>::retrieve(moduleData, CharString("%s_1", name), prefix);
 		if (DUQSys::sameString(lastPartials.fingerprint(), currentFingerprint, true))
 		{
-			Messenger::print("Partials: Current partials will not form part of average, since they are the same as the last stored set.\n");
+			Messenger::print("Current partials will not form part of average, since they are the same as the last stored set.\n");
 			storeCurrent = false;
 		}
 	}
@@ -342,7 +336,7 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 {
 	// Does a PartialSet already exist for this Configuration?
 	bool wasCreated;
-	PartialSet& originalgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "OriginalGR", "Partials", GenericItem::InRestartFileFlag, &wasCreated);
+	PartialSet& originalgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "OriginalGR", "", GenericItem::InRestartFileFlag, &wasCreated);
 	if (wasCreated) originalgr.setUp(cfg, cfg->niceName(), "original", "rdf", "r, Angstroms");
 
 	// Is the PartialSet already up-to-date?
@@ -350,12 +344,12 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 	alreadyUpToDate = false;
 	if (DUQSys::sameString(originalgr.fingerprint(), CharString("%i", cfg->coordinateIndex())) && (method != RDFModule::TestMethod))
 	{
-		Messenger::print("Partials: Partial g(r) are up-to-date for Configuration '%s'.\n", cfg->name());
+		Messenger::print("Partial g(r) are up-to-date for Configuration '%s'.\n", cfg->name());
 		alreadyUpToDate = true;
 		return true;
 	}
 
-	Messenger::print("Partials: Calculating partial g(r) for Configuration '%s'...\n", cfg->name());
+	Messenger::print("Calculating partial g(r) for Configuration '%s'...\n", cfg->name());
 
 	/*
 	 * Make sure histograms are set up, and reset any existing data
@@ -379,7 +373,7 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 		cfg->nAtoms() > 10000 ? calculateGRCells(procPool, cfg, originalgr) : calculateGRSimple(procPool, cfg, originalgr);
 	}
 	timer.stop();
-	Messenger::print("Partials: Finished calculation of partials (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
+	Messenger::print("RDF: Finished calculation of partials (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
 
 	/*
 	 * Calculate intramolecular partials
@@ -454,7 +448,7 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 		}
 	}
 	timer.stop();
-	Messenger::print("Partials: Finished calculation of intramolecular partials (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
+	Messenger::print("RDF: Finished calculation of intramolecular partials (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
 
 	/*
 	 * Sum histogram data
@@ -490,7 +484,7 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 	// Sum total functions
 	originalgr.formTotal(true);
 	timer.stop();
-	Messenger::print("Partials: Finished summation and normalisation of partial g(r) data (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
+	Messenger::print("RDF: Finished summation and normalisation of partial g(r) data (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
 
 	/*
 	 * Partials are now up-to-date
@@ -563,28 +557,28 @@ bool RDFModule::testReferencePartials(PartialSet& setA, PartialSet& setB, double
 			// Full partial
 			error = setA.partial(n,m).error(setB.partial(n,m));
 			{
-				Messenger::print("Partials: Test reference full partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+				Messenger::print("RDF: Test reference full partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 				if (error > testThreshold) return false;
 			}
 
 			// Bound partial
 			error = setA.boundPartial(n,m).error(setB.boundPartial(n,m));
 			{
-				Messenger::print("Partials: Test reference bound partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+				Messenger::print("RDF: Test reference bound partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 				if (error > testThreshold) return false;
 			}
 
 			// Unbound reference
 			error = setA.unboundPartial(n,m).error(setB.unboundPartial(n,m));
 			{
-				Messenger::print("Partials: Test reference unbound partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+				Messenger::print("RDF: Test reference unbound partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 				if (error > testThreshold) return false;
 			}
 
 			// Bragg reference
 			error = setA.braggPartial(n,m).error(setB.braggPartial(n,m));
 			{
-				Messenger::print("Partials: Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+				Messenger::print("RDF: Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 				if (error > testThreshold) return false;
 			}
 		}
@@ -593,7 +587,7 @@ bool RDFModule::testReferencePartials(PartialSet& setA, PartialSet& setB, double
 	// Total reference data supplied?
 	error = setA.total().error(setB.total());
 	{
-		Messenger::print("Partials: Test reference total has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+		Messenger::print("RDF: Test reference total has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 		if (error > testThreshold) return false;
 	}
 

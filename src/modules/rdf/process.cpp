@@ -107,7 +107,7 @@ bool RDFModule::process(DUQ& duq, ProcessPool& procPool)
 		// Save data if requested
 		if (saveData && configurationLocal_ && (!MPIRunMaster(procPool, originalgr.save()))) return false;
 
-		// Perform internal test of unweighted g(r)?
+		// Perform internal test of original g(r)?
 		if (internalTest)
 		{
 			// Copy the already-calculated g(r), then calculate a new set using the Test method
@@ -122,6 +122,13 @@ bool RDFModule::process(DUQ& duq, ProcessPool& procPool)
 			Messenger::print("\nTesting calculated g(r) without smoothing / broadening against supplied datasets (if any)...\n");
 			if (!testReferencePartials(moduleData, uniqueName(), originalgr, "TestReferenceGR-original", testThreshold)) return false;
 		}
+
+		// Form unweighted g(r) from original g(r), applying any requested smoothing / broadening
+		PartialSet& unweightedgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedGR");
+		calculateUnweightedGR(originalgr, unweightedgr, intraBroadening, smoothing);
+
+		// Set names of resources (XYData) within the PartialSet
+		unweightedgr.setObjectNames(CharString("%s//%s//%s", cfg->niceName(), "RDF", "UnweightedGR"));
 	}
 
 	return true;
