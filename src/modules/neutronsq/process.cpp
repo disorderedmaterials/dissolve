@@ -56,7 +56,6 @@ bool NeutronSQModule::setUp(DUQ& duq, ProcessPool& procPool)
 		}
 
 		// Remove normalisation factor from data
-		
 		NeutronSQModule::NormalisationType normType = NeutronSQModule::normalisationType(keywords_.asString("ReferenceNormalisation"));
 		if (normType != NeutronSQModule::NoNormalisation)
 		{
