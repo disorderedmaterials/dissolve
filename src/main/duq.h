@@ -25,7 +25,6 @@
 #include "base/ptable.h"
 #include "module/module.h"
 #include "classes/configuration.h"
-#include "classes/data.h"
 #include "classes/pairpotential.h"
 #include "classes/potentialmap.h"
 #include "classes/masterintra.h"
