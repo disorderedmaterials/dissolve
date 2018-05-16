@@ -1,5 +1,6 @@
 add_library(module
   module.cpp
+  group.cpp
   keywordbase.cpp
   keywordlist.cpp
   list.cpp
@@ -7,6 +8,7 @@ add_library(module
   registry.cpp
 
   module.h
+  group.h
   list.h
   registry.h
   keywordbase.h
