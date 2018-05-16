@@ -123,6 +123,8 @@ class NeutronSQModule : public Module
 	public:
 	// Calculate weighted S(Q) from supplied unweighted S(Q)
 	bool calculateWeightedSQ(PartialSet& unweightedsq, PartialSet& weightedsq, Weights& weights, NeutronSQModule::NormalisationType normalisation);
+	// Calculate Weights matrix summed over target Configurations
+	bool calculateSummedWeights(Weights& summedWeights) const;
 
 
 	/*

@@ -20,17 +20,9 @@
 */
 
 #include "modules/neutronsq/neutronsq.h"
-// #include "classes/configuration.h"
-// #include "classes/atom.h"
-// #include "classes/box.h"
-// #include "classes/braggpeak.h"
-// #include "classes/cell.h"
-// #include "classes/kvector.h"
-// #include "classes/species.h"
-// #include "classes/weights.h"
-// #include "math/broadeningfunction.h"
-// #include "templates/array3d.h"
-// #include "templates/genericlisthelper.h"
+#include "classes/configuration.h"
+#include "classes/species.h"
+#include "classes/speciesinfo.h"
 
 // Calculate weighted S(Q) from supplied unweighted S(Q)
 bool NeutronSQModule::calculateWeightedSQ(PartialSet& unweightedsq, PartialSet& weightedsq, Weights& weights, NeutronSQModule::NormalisationType normalisation)
@@ -58,6 +50,50 @@ bool NeutronSQModule::calculateWeightedSQ(PartialSet& unweightedsq, PartialSet& 
 	weightedsq.formTotal(false);
 	if (normalisation == NeutronSQModule::AverageOfSquaresNormalisation) weightedsq.total().arrayY() /= weights.boundCoherentAverageOfSquares();
 	else if (normalisation == NeutronSQModule::SquareOfAverageNormalisation) weightedsq.total().arrayY() /= weights.boundCoherentSquareOfAverage();
+
+	return true;
+}
+
+// Calculate Weights matrix summed over target Configurations
+bool NeutronSQModule::calculateSummedWeights(Weights& summedWeights) const
+{
+	summedWeights.clear();
+
+	// Loop over Configurations
+	RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
+	while (Configuration* cfg = configIterator.iterate())
+	{
+		// Loop over Species used in this Configuration and find its entry in the defined Isotopologues for the Module
+		ListIterator<SpeciesInfo> speciesInfoIterator(cfg->usedSpecies());
+		while (SpeciesInfo* spInfo = speciesInfoIterator.iterate())
+		{
+			// Find any relevant entries in the Isotopologues list
+			int nAdded = 0;
+			ListIterator<IsotopologueReference> refIterator(isotopologues_);
+			while (IsotopologueReference* ref = refIterator.iterate())
+			{
+				// If this reference does not target the Configuration / Species we are considering, continue the loop
+				if ((ref->configuration() != cfg) || (ref->species() != spInfo->species())) continue;
+
+				// Add the isotopologue, in the isotopic proportions defined in the Isotopologue, to the weights.
+				int speciesPopulation = spInfo->population() * cfg->multiplier();
+				summedWeights.addIsotopologue(ref->species(), speciesPopulation, ref->isotopologue(), ref->weight());
+
+				++nAdded;
+			}
+
+			// We will complain strongly if a species in the Configuration is not covered by at least one Isotopologue definition
+			if (nAdded == 0)
+			{
+				Messenger::error("Isotopologue specification for Species '%s' in Configuration '%s' is missing, so can't generate summed Weights.\n", spInfo->species()->name(), cfg->name());
+				summedWeights.clear();
+				return false;
+			}
+		}
+	}
+
+	// Finalise the Weights
+	summedWeights.createFromIsotopologues();
 
 	return true;
 }

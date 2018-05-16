@@ -141,9 +141,9 @@ bool NeutronSQModule::process(DUQ& duq, ProcessPool& procPool)
 	Messenger::print("NeutronSQ: Save data is %s.\n", DUQSys::onOff(saveData));
 
 	/*
-	 * Loop over target Configurations and Fourier transform their UnweightedGR into the UnweightedSQ.
+	 * Loop over target Configurations and Fourier transform their UnweightedGR into the corresponding UnweightedSQ.
 	 */
-	Weights combinedWeights;
+
 	RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
 	while (Configuration* cfg = configIterator.iterate())
 	{
@@ -156,7 +156,7 @@ bool NeutronSQModule::process(DUQ& duq, ProcessPool& procPool)
 
 		// Does a PartialSet for the unweighted S(Q) already exist for this Configuration?
 		bool wasCreated;
-		PartialSet& unweightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", "NeutronSQ", GenericItem::InRestartFileFlag, &wasCreated);
+		PartialSet& unweightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", NULL, GenericItem::InRestartFileFlag, &wasCreated);
 		if (wasCreated) unweightedsq.setUpPartials(unweightedgr.atomTypes(), cfg->niceName(), "unweighted", "sq", "Q, 1/Angstroms");
 
 		// Is the PartialSet already up-to-date?
@@ -204,7 +204,6 @@ bool NeutronSQModule::process(DUQ& duq, ProcessPool& procPool)
 
 			// Add the isotopologue, in the isotopic proportions defined in the Isotopologue, to the weights.
 			weights.addIsotopologue(ref->species(), speciesPopulation, ref->isotopologue(), ref->weight());
-			combinedWeights.addIsotopologue(ref->species(), speciesPopulation, ref->isotopologue(), ref->weight());
 		}
 
 		// We will complain strongly if a species in the Configuration is not covered by at least one Isotopologue definition
@@ -219,10 +218,9 @@ bool NeutronSQModule::process(DUQ& duq, ProcessPool& procPool)
 		Messenger::print("NeutronSQ: Isotopologue and isotope composition for Configuration '%s':\n\n", cfg->name());
 		weights.createFromIsotopologues();
 		weights.print();
-		GenericListHelper<Weights>::realise(cfg->moduleData(), "FullWeights", uniqueName_) = weights;
 
 		// Does a PartialSet for the unweighted S(Q) already exist for this Configuration?
-		PartialSet& weightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedSQ", "NeutronSQ", GenericItem::InRestartFileFlag, &wasCreated);
+		PartialSet& weightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedSQ", NULL, GenericItem::InRestartFileFlag, &wasCreated);
 		if (wasCreated) weightedsq.setUpPartials(unweightedsq.atomTypes(), cfg->niceName(), "weighted", "sq", "Q, 1/Angstroms");
 
 		// Calculate weighted S(Q)
@@ -230,9 +228,6 @@ bool NeutronSQModule::process(DUQ& duq, ProcessPool& procPool)
 
 		// Set names of resources (XYData) within the PartialSet
 		weightedsq.setObjectNames(CharString("%s//%s//%s", cfg->niceName(), uniqueName_.get(), "WeightedSQ"));
-
-		// If we are associated to a local Configuration, copy the partial data over to the processing module list
-		if (configurationLocal_) GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "WeightedSQ", uniqueName_) = weightedsq;
 
 		// Save data if requested
 		if (saveData && configurationLocal_ && (!MPIRunMaster(procPool, weightedsq.save()))) return false;
@@ -243,45 +238,46 @@ bool NeutronSQModule::process(DUQ& duq, ProcessPool& procPool)
 			Messenger::print("\nTesting calculated weighted S(Q) data against supplied datasets (if any)...\n");
 			if (!RDFModule::testReferencePartials(moduleData, uniqueName(), weightedsq, "TestReferenceSQ-weighted", testThreshold)) return false;
 		}
-
 	}
 
-	// If we are a main processing task, construct the weighted sum of Configuration partials and store in the processing module data list
-	if (!configurationLocal_)
+	/*
+	 * Construct the weighted sum of Configuration partials and store in the processing module data list
+	 */
+
+	// Create/retrieve PartialSet for summed partial S(Q)
+	PartialSet& summedUnweightedSQ = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
+
+	// Sum the partials from the associated Configurations
+	if (!SQModule::sumUnweightedSQ(procPool, this, duq.processingModuleData(), summedUnweightedSQ)) return false;
+
+	// Test unweighted S(Q)?
+	if (testMode)
 	{
-		// Create/retrieve PartialSet for summed partial S(Q)
-		PartialSet& summedUnweightedSQ = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
+		Messenger::print("\nTesting calculated unweighted S(Q) data against supplied datasets (if any)...\n");
+		if (!RDFModule::testReferencePartials(moduleData, uniqueName(), summedUnweightedSQ, "TestReferenceSQ-unweighted", testThreshold)) return false;
+	}
 
-		// Sum the partials from the associated Configurations
-		if (!SQModule::sumUnweightedSQ(procPool, this, duq.processingModuleData(), summedUnweightedSQ)) return false;
+	// Create/retrieve PartialSet for summed partial S(Q)
+	PartialSet& summedWeightedSQ = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "WeightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
+	summedWeightedSQ.setObjectNames(CharString("%s//%s", uniqueName_.get(), "WeightedSQ"));
+	summedWeightedSQ = summedUnweightedSQ;
 
-		// Test unweighted S(Q)?
-		if (testMode)
-		{
-			Messenger::print("\nTesting calculated unweighted S(Q) data against supplied datasets (if any)...\n");
-			if (!RDFModule::testReferencePartials(moduleData, uniqueName(), summedUnweightedSQ, "TestReferenceSQ-unweighted", testThreshold)) return false;
-		}
+	// Calculate weighted S(Q)
+	Messenger::print("NeutronSQ: Isotopologue and isotope composition over all Configurations used in '%s':\n\n", uniqueName_.get());
+	Weights summedWeights;
+	if (!calculateSummedWeights(summedWeights)) return false;
+	summedWeights.print();
+	GenericListHelper<Weights>::realise(duq.processingModuleData(), "FullWeights", uniqueName_, GenericItem::InRestartFileFlag) = summedWeights;
+	calculateWeightedSQ(summedUnweightedSQ, summedWeightedSQ, summedWeights, normalisation);
 
-		// Create/retrieve PartialSet for summed partial S(Q)
-		PartialSet& summedWeightedSQ = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "WeightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
-		summedWeightedSQ = summedUnweightedSQ;
+	// Save data if requested
+	if (saveData && (!MPIRunMaster(procPool, summedWeightedSQ.save()))) return false;
 
-		// Calculate weighted S(Q)
-		Messenger::print("NeutronSQ: Isotopologue and isotope composition over all Configurations used in '%s':\n\n", uniqueName_.get());
-		combinedWeights.createFromIsotopologues();
-		combinedWeights.print();
-		GenericListHelper<Weights>::realise(duq.processingModuleData(), "FullWeights", uniqueName_, GenericItem::InRestartFileFlag) = combinedWeights;
-		calculateWeightedSQ(summedUnweightedSQ, summedWeightedSQ, combinedWeights, normalisation);
-		
-		// Save data if requested
-		if (saveData && (!MPIRunMaster(procPool, summedWeightedSQ.save()))) return false;
-
-		// Test weighted S(Q)?
-		if (testMode)
-		{
-			Messenger::print("\nTesting calculated weighted S(Q) data against supplied datasets (if any)...\n");
-			if (!RDFModule::testReferencePartials(moduleData, uniqueName(), summedWeightedSQ, "TestReferenceSQ-weighted", testThreshold)) return false;
-		}
+	// Test weighted S(Q)?
+	if (testMode)
+	{
+		Messenger::print("\nTesting calculated weighted S(Q) data against supplied datasets (if any)...\n");
+		if (!RDFModule::testReferencePartials(moduleData, uniqueName(), summedWeightedSQ, "TestReferenceSQ-weighted", testThreshold)) return false;
 	}
 
 	return true;
