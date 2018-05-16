@@ -23,7 +23,7 @@
 #define DUQ_REFINEMODULE_H
 
 #include "module/module.h"
-#include "classes/data.h"
+#include "module/group.h"
 #include "classes/scatteringmatrix.h"
 
 // Forward Declarations
@@ -34,7 +34,7 @@ class PartialSet;
 class RefineModule : public Module
 {
 	/*
-	 * Module for testing various functions
+	 * Performs adjustment of interatomic potentials, based on differences between calculated and reference datasets.
 	 */
 
 	public:
@@ -128,14 +128,22 @@ class RefineModule : public Module
 	 * Functions
 	 */
 	private:
+	// List of target Modules to be targetted in refinement process
+	RefList<Module,bool> targets_;
+	// Target groups
+	List<ModuleGroup> targetGroups_;
+	// Full scattering matrix containing reference dat
+	ScatteringMatrix scatteringMatrix_;
+	// Simulated data added as reference data
+	Array<XYData> simulatedReferenceData_;
 	// Current data being fitted by modifyBondTerms
 	XYData fitData_;
 	// Starting position and maximum delta to allow on the x-intercept while fitting
 	double xCentreStart_, xCentreDeltaLimit_;
 
 	private:
-	// Create full scattering matrix
-	bool createScatteringMatrix(DUQ& duq, const PartialSet& unweightedSQ, MatrixAugmentationStyle augmentationStyle, double augmentationParam);
+	// Add Module target to specified group
+	bool addTarget(const char* moduleTarget, const char* group);
 	// Calculate c(r) from supplied S(Q)
 	XYData calculateCR(const XYData& sq, double normFactor, double rMin, double rStep, double rMax, WindowFunction windowFunction = WindowFunction(), BroadeningFunction broadening = BroadeningFunction(), bool unbroaden = false);
 	// Determine modification to bonds based on supplied delta g(r)
@@ -149,15 +157,9 @@ class RefineModule : public Module
 	// Sum fitting equation with the specified parameters into the specified XYData
 	void sumFitEquation(XYData& target, double xCentre, double delta, double widthSquared, double AL, double AC, double AR);
 
-
-	/*
-	 * Local Data
-	 */
-	private:
-	// Full scattering matrix containing reference dat
-	ScatteringMatrix scatteringMatrix_;
-	// Simulated data added as reference data
-	List<Data> simulatedReferenceData_;
+	public:
+	// Return list of target Modules / data for fitting process
+	const RefList<Module,bool>& targets() const;
 
 
 	/*

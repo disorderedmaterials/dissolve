@@ -165,26 +165,26 @@ void RefineModuleWidget::initialiseControls(RefineModule* module)
 	CharString blockData;
 
 	// Add reference data & calculated data to the dataGraph_, and percentage errors to the errorsGraph_
-	RefListIterator<Data,bool> dataIterator(module->targetData());
-	while (Data* data = dataIterator.iterate())
+	RefListIterator<Module,bool> targetIterator(module->targets());
+	while (Module* targetModule = targetIterator.iterate())
 	{
 		// Reference data
-		blockData.sprintf("Collection '%s Exp'; Group '%s'; LineStyle 1.0 Solid; DataSet 'Reference'; Source XYData '%s'; EndDataSet; EndCollection", data->name(), data->name(), data->data().objectName());
+		blockData.sprintf("Collection '%s Exp'; Group '%s'; LineStyle 1.0 Solid; DataSet 'Reference'; Source XYData '%s//ReferenceData'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName());
 		dataGraph_->addCollectionFromBlock(blockData);
 
-		// Calculated data (total S(Q)) from associated module (provided one is set
-		if (data->hasAssociatedModuleName())
+		// Calculated data from associated module
+		if (DUQSys::sameString(targetModule->name(), "NeutronSQ"))
 		{
-			blockData.sprintf("Collection '%s Calc'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated'; Source XYData '%s//WeightedSQ//Total'; EndDataSet; EndCollection", data->name(), data->name(), data->associatedModuleName());
+			blockData.sprintf("Collection '%s Calc'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated'; Source XYData '%s//WeightedSQ//Total'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName());
 			dataGraph_->addCollectionFromBlock(blockData);
 
-			blockData.sprintf("Collection '%s Calc'; Group '%s'; DataSet '%s Error'; Source XYData '%s//%s//Error'; EndDataSet; EndCollection", data->name(), data->name(), data->name(), module->uniqueName(), data->niceName());
+			blockData.sprintf("Collection '%s Calc'; Group '%s'; DataSet '%s Error'; Source XYData '%s//%s//Error'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
 			errorsGraph_->addCollectionFromBlock(blockData);
 		}
 	}
 
 	// Get pointer to PartialsModule which contains the unweighted S(Q) data
-	Module* partialsModule = module_->dependentModule("Partials");
+	Module* partialsModule = module_->dependentModule("");
 	CharString partialsModuleName = partialsModule ? partialsModule->uniqueName() : "Partials???";
 
 	// Add experimentally-determined partial S(Q), calculated partial S(Q), and delta S(Q) to the partialSQGraph_
