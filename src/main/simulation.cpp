@@ -156,7 +156,7 @@ bool DUQ::iterate(int nIterations)
 
 
 		/*
-		 *  1) 	Perform pre-processing tasks (using worldPool_)
+		 *  1) 	Perform pre-processing tasks (using worldPool_).
 		 */
 		if (preProcessingTasks_.nModules() > 0) Messenger::banner("Pre-Processing");
 		preIterator.restart();
@@ -171,7 +171,7 @@ bool DUQ::iterate(int nIterations)
 			// Execute the pre-processing stage
 			if (!module->executePreProcessing(*this, worldPool_))
 			{
-				Messenger::error("Module '%s' experienced errors. Exiting now.\n", module->name());
+				Messenger::error("Module '%s' experienced problems. Exiting now.\n", module->name());
 				return false;
 			}
 		}
@@ -182,8 +182,8 @@ bool DUQ::iterate(int nIterations)
 
 
 		/*
-		 *  2)	Loop over Configurations, running their modules in the sequence they are defined
-		 * 	If a process is not involved in the Configuration's ProcessPool, it can move on
+		 *  2)	Loop over Configurations and run their modules in the sequence in which they are defined.
+		 * 	If a process is not involved in the Configuration's ProcessPool, it can move on.
 		 */
 		Messenger::banner("Configuration Processing");
 
@@ -232,7 +232,7 @@ bool DUQ::iterate(int nIterations)
 
 
 		/*
-		 *  3)	Reassemble data on all nodes
+		 *  3)	Reassemble data on all nodes.
 		 */
 		Messenger::banner("Reassemble Data");
 		// Loop over Configurations
@@ -251,7 +251,7 @@ bool DUQ::iterate(int nIterations)
 
 	
 		/*
-		 *  4)	Run processing Modules (using worldPool_)
+		 *  4)	Run processing Modules (using worldPool_).
 		 */
 		if (processingModules_.nModules() > 0) Messenger::banner("Main Processing");
 		processingIterator.restart();
@@ -267,7 +267,7 @@ bool DUQ::iterate(int nIterations)
 
 			if (!result)
 			{
-				Messenger::error("Module '%s' experienced errors. Exiting now.\n", module->name());
+				Messenger::error("Module '%s' experienced problems. Exiting now.\n", module->name());
 				return false;
 			}
 		}
@@ -278,7 +278,7 @@ bool DUQ::iterate(int nIterations)
 
 
 		/*
-		 *  5)	Perform post-processing tasks (using worldPool_)
+		 *  5)	Perform post-processing tasks (using worldPool_).
 		 */
 		if (postProcessingTasks_.nModules() > 0) Messenger::banner("Post-Processing");
 		postIterator.restart();
@@ -294,7 +294,7 @@ bool DUQ::iterate(int nIterations)
 			// Execute the post-processing stage
 			if (!module->executePostProcessing(*this, worldPool_))
 			{
-				Messenger::error("Module '%s' experienced errors. Exiting now.\n", module->name());
+				Messenger::error("Module '%s' experienced problems. Exiting now.\n", module->name());
 				return false;
 			}
 		}
@@ -305,7 +305,7 @@ bool DUQ::iterate(int nIterations)
 
 
 		/*
-		 *  6)	Write restart file
+		 *  6)	Write restart / ensemble data.
 		 */
 		if (worldPool_.isMaster() && (restartFileFrequency_ > 0) && (iteration_%restartFileFrequency_ == 0))
 		{
