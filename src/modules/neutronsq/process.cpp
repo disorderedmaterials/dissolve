@@ -83,8 +83,9 @@ bool NeutronSQModule::setUp(DUQ& duq, ProcessPool& procPool)
 
 		// Store the reference data in processing
 		referenceData.setName(uniqueName());
-		referenceData.setObjectName(CharString("%s//ReferenceData", uniqueName()));
-		GenericListHelper<XYData>::realise(duq.processingModuleData(), "ReferenceData", uniqueName(), GenericItem::InRestartFileFlag) = referenceData;
+		XYData& storedData = GenericListHelper<XYData>::realise(duq.processingModuleData(), "ReferenceData", uniqueName(), GenericItem::InRestartFileFlag);
+		storedData.setObjectName(CharString("%s//ReferenceData", uniqueName()));
+		storedData = referenceData;
 	}
 
 	return true;
