@@ -120,21 +120,17 @@ bool SQModule::process(DUQ& duq, ProcessPool& procPool)
 		}
 	}
 
-	// If we are a main processing task, construct the weighted sum of Configuration partials and store in the processing module data list
-	if (!configurationLocal_)
+	// Create/retrieve PartialSet for summed partial S(Q)
+	PartialSet& summedUnweightedSQ = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
+
+	// Sum the partials from the associated Configurations
+	if (!sumUnweightedSQ(procPool, this, duq.processingModuleData(), summedUnweightedSQ)) return false;
+
+	// Test unweighted S(Q)?
+	if (testMode)
 	{
-		// Create/retrieve PartialSet for summed partial S(Q)
-		PartialSet& summedUnweightedSQ = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
-
-		// Sum the partials from the associated Configurations
-		if (!sumUnweightedSQ(procPool, this, duq.processingModuleData(), summedUnweightedSQ)) return false;
-
-		// Test unweighted S(Q)?
-		if (testMode)
-		{
-			Messenger::print("\nTesting calculated unweighted S(Q) data against supplied datasets (if any)...\n");
-			if (!RDFModule::testReferencePartials(moduleData, uniqueName(), summedUnweightedSQ, "TestReferenceSQ-unweighted", testThreshold)) return false;
-		}
+		Messenger::print("\nTesting calculated unweighted S(Q) data against supplied datasets (if any)...\n");
+		if (!RDFModule::testReferencePartials(moduleData, uniqueName(), summedUnweightedSQ, "TestReferenceSQ-unweighted", testThreshold)) return false;
 	}
 
 	return true;

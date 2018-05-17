@@ -335,3 +335,9 @@ const RefList<Module,bool>& RefineModule::targets() const
 {
 	return targets_;
 }
+
+// Return list of target groups defined
+const List<ModuleGroup>& RefineModule::targetGroups() const
+{
+	return targetGroups_;
+}

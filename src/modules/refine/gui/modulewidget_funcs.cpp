@@ -164,85 +164,85 @@ void RefineModuleWidget::initialiseControls(RefineModule* module)
 	int n, m;
 	CharString blockData;
 
-	// Add reference data & calculated data to the dataGraph_, and percentage errors to the errorsGraph_
-	RefListIterator<Module,bool> targetIterator(module->targets());
-	while (Module* targetModule = targetIterator.iterate())
-	{
-		// Reference data
-		blockData.sprintf("Collection '%s Exp'; Group '%s'; LineStyle 1.0 Solid; DataSet 'Reference'; Source XYData '%s//ReferenceData'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName());
-		dataGraph_->addCollectionFromBlock(blockData);
 
-		// Calculated data from associated module
-		if (DUQSys::sameString(targetModule->name(), "NeutronSQ"))
+	// Loop over groups
+	for (ModuleGroup* group = module_->targetGroups().first(); group != NULL; group = group->next)
+	{
+		// Add reference data & calculated data to the dataGraph_, and percentage errors to the errorsGraph_
+		RefListIterator<Module,bool> targetIterator(module->targets());
+		while (Module* targetModule = targetIterator.iterate())
 		{
-			blockData.sprintf("Collection '%s Calc'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated'; Source XYData '%s//WeightedSQ//Total'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName());
+			// Reference data
+			blockData.sprintf("Collection '%s Exp'; Group '%s'; LineStyle 1.0 Solid; DataSet 'Reference'; Source XYData '%s//ReferenceData'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName());
 			dataGraph_->addCollectionFromBlock(blockData);
 
-			blockData.sprintf("Collection '%s Calc'; Group '%s'; DataSet '%s Error'; Source XYData '%s//%s//Error'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
-			errorsGraph_->addCollectionFromBlock(blockData);
+			// Calculated data from associated module
+			if (DUQSys::sameString(targetModule->name(), "NeutronSQ"))
+			{
+				blockData.sprintf("Collection '%s Calc'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated'; Source XYData '%s//WeightedSQ//Total'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName());
+				dataGraph_->addCollectionFromBlock(blockData);
+
+				blockData.sprintf("Collection '%s Diff'; Group '%s'; LineStyle  1.0 'Dots'; DataSet '%s Error'; Source XYData '%s//Difference//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
+				dataGraph_->addCollectionFromBlock(blockData);
+
+				blockData.sprintf("Collection '%s Calc'; Group '%s'; DataSet '%s Error'; Source XYData '%s//Error//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
+				errorsGraph_->addCollectionFromBlock(blockData);
+			}
 		}
-	}
 
-	// Get pointer to PartialsModule which contains the unweighted S(Q) data
-	Module* partialsModule = module_->dependentModule("");
-	CharString partialsModuleName = partialsModule ? partialsModule->uniqueName() : "Partials???";
-
-	// Add experimentally-determined partial S(Q), calculated partial S(Q), and delta S(Q) to the partialSQGraph_
-	n = 0;
-	for (AtomType* at1 = dUQ_.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++n)
-	{
-		m = n;
-		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
+		// Add experimentally-determined partial S(Q), calculated partial S(Q), and delta S(Q) to the partialSQGraph_
+		n = 0;
+		for (AtomType* at1 = dUQ_.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++n)
 		{
-			// Experimentally-determined unweighted partial
-			blockData.sprintf("Collection '%s-%s Exp'; Group '%s-%s'; DataSet 'Experimental %s-%s'; Source XYData '%s//GeneratedSQ//%s-%s'; EndDataSet; EndCollection", at1->name(), at2->name(), at1->name(), at2->name(), at1->name(), at2->name(), module_->uniqueName(), at1->name(), at2->name());
-			partialSQGraph_->addCollectionFromBlock(blockData);
+			m = n;
+			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
+			{
+				CharString id("%s-%s/%s", at1->name(), at2->name(), group->name());
 
-			// Calculated partial
-			blockData.sprintf("Collection '%s-%s Calc'; Group '%s-%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated %s-%s'; Source XYData '%s//UnweightedSQ//%s-%s//Full'; EndDataSet; EndCollection", at1->name(), at2->name(), at1->name(), at2->name(), at1->name(), at2->name(), partialsModuleName.get(), at1->name(), at2->name());
-			partialSQGraph_->addCollectionFromBlock(blockData);
+				/*
+				 * Partial Structure Factors
+				 */
 
-			// Deltas
-			blockData.sprintf("Collection '%s-%s Diff'; Group '%s-%s'; LineStyle 1.0 'Dots'; DataSet 'Delta %s-%s'; Source XYData '%s//DeltaSQ//%s-%s'; EndDataSet; EndCollection", at1->name(), at2->name(), at1->name(), at2->name(), at1->name(), at2->name(), module_->uniqueName(), at1->name(), at2->name());
-			partialSQGraph_->addCollectionFromBlock(blockData);
-		}
-	}
+				// Experimentally-determined unweighted partial
+				blockData.sprintf("Collection '%s Exp'; Group '%s'; DataSet 'Experimental %s'; Source XYData '%s//GeneratedSQ//%s//%s-%s'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
+				partialSQGraph_->addCollectionFromBlock(blockData);
 
-	// Add experimentally-determined partial g(r) and calculated partial g(r) to the partialGRGraph_
-	n = 0;
-	for (AtomType* at1 = dUQ_.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++n)
-	{
-		m = n;
-		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
-		{
-			// Experimentally-determined unweighted partial
-			blockData.sprintf("Collection '%s-%s Exp'; Group '%s-%s'; DataSet 'Experimental %s-%s'; Source XYData '%s//GeneratedGR//%s-%s'; EndDataSet; EndCollection", at1->name(), at2->name(), at1->name(), at2->name(), at1->name(), at2->name(), module_->uniqueName(), at1->name(), at2->name());
-			partialGRGraph_->addCollectionFromBlock(blockData);
+				// Calculated / summed partial
+				blockData.sprintf("Collection '%s Calc'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated %s'; Source XYData '%s//UnweightedSQ//%s//%s-%s'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
+				partialSQGraph_->addCollectionFromBlock(blockData);
 
-			// Calculated partial
-			blockData.sprintf("Collection '%s-%s Calc'; Group '%s-%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated %s-%s'; Source XYData '%s//UnweightedGR//%s-%s//Full'; EndDataSet; EndCollection", at1->name(), at2->name(), at1->name(), at2->name(), at1->name(), at2->name(), partialsModuleName.get(), at1->name(), at2->name());
-			partialGRGraph_->addCollectionFromBlock(blockData);
-		}
-	}
+				// Deltas
+				blockData.sprintf("Collection '%s Diff'; Group '%s'; LineStyle 1.0 'Dots'; DataSet 'Delta %s'; Source XYData '%s//DeltaSQ//%s//%s-%s'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
+				partialSQGraph_->addCollectionFromBlock(blockData);
 
-	// Add delta g(r) and resulting pair potential additions to the deltaPhiRGraph_
-	n = 0;
-	for (AtomType* at1 = dUQ_.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++n)
-	{
-		int m = n;
-		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
-		{
-			// Generated potential
-			blockData.sprintf("Collection '%s-%s dphi(r)'; Group '%s-%s'; DataSet '%s-%s dphi(r)'; Source XYData '%s//DeltaPhiR//%s-%s'; EndDataSet; EndCollection", at1->name(), at2->name(), at1->name(), at2->name(), at1->name(), at2->name(), module_->uniqueName(), at1->name(), at2->name());
-			deltaPhiRGraph_->addCollectionFromBlock(blockData);
+				/*
+				 * Partial RDFs
+				 */
 
-			// Delta g(r)
-			blockData.sprintf("Collection '%s-%s dg(r)'; Group '%s-%s'; LineStyle 1.0 'Quarter Dash'; DataSet '%s-%s Delta g(r)'; Source XYData '%s//Inversion//%s-%s'; EndDataSet; EndCollection", at1->name(), at2->name(), at1->name(), at2->name(), at1->name(), at2->name(), module_->uniqueName(), at1->name(), at2->name());
-			deltaPhiRGraph_->addCollectionFromBlock(blockData);
+				// Experimentally-determined unweighted partial
+				blockData.sprintf("Collection '%s Exp'; Group '%s'; DataSet 'Experimental %s'; Source XYData '%s//GeneratedGR//%s//%s-%s'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
+				partialGRGraph_->addCollectionFromBlock(blockData);
 
-			// Delta g(r)
-			blockData.sprintf("Collection '%s-%s dBound(r)'; Group '%s-%s'; LineStyle 1.0 'Dots'; DataSet '%s-%s Delta Bound g(r)'; Source XYData '%s//DeltaGRBond//%s-%s'; EndDataSet; EndCollection", at1->name(), at2->name(), at1->name(), at2->name(), at1->name(), at2->name(), module_->uniqueName(), at1->name(), at2->name());
-			deltaPhiRGraph_->addCollectionFromBlock(blockData);
+				// Calculated partial
+				blockData.sprintf("Collection '%s Calc'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated %s'; Source XYData '%s//UnweightedGR//%s//%s-%s//Full'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
+				partialGRGraph_->addCollectionFromBlock(blockData);
+
+				/*
+				 * Phi(r)
+				 */
+
+				// Generated potential
+				blockData.sprintf("Collection '%s dphi(r)'; Group '%s'; DataSet '%s dphi(r)'; Source XYData '%s//DeltaPhiR//%s//%s-%s'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
+				deltaPhiRGraph_->addCollectionFromBlock(blockData);
+
+				// Inversion (delta g(r), FT etc.)
+				blockData.sprintf("Collection '%s dg(r)'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet '%s Delta g(r)'; Source XYData '%s//Inversion//%s//%s-%s'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
+				deltaPhiRGraph_->addCollectionFromBlock(blockData);
+
+				// Delta g(r)
+				blockData.sprintf("Collection '%s dBound(r)'; Group '%s'; LineStyle 1.0 'Dots'; DataSet '%s Delta Bound g(r)'; Source XYData '%s//DeltaGRBond//%s//%s-%s'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
+				deltaPhiRGraph_->addCollectionFromBlock(blockData);
+			}
 		}
 	}
 }

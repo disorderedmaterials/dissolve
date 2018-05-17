@@ -27,6 +27,8 @@
 #include "classes/braggpeak.h"
 
 // Forward Declarations
+class DUQ;
+class ModuleGroup;
 class PartialSet;
 class Weights;
 
@@ -126,6 +128,10 @@ class RDFModule : public Module
 	bool calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule::PartialsMethod method, bool allIntra, bool& alreadyUpToDate);
 	// Calculate smoothed/broadened partial g(r) from supplied partials
 	static bool calculateUnweightedGR(PartialSet& originalgr, PartialSet& weightedgr, BroadeningFunction intraBroadening, int smoothing);
+	// Sum unweighted g(r) over the supplied Module's target Configurations
+	static bool sumUnweightedGR(ProcessPool& procPool, Module* module, GenericList& processingModuleData, PartialSet& summedUnweightedGR);
+	// Sum unweighted g(r) over all Configurations targeted by the specified ModuleGroup
+	static bool sumUnweightedGR(ProcessPool& procPool, Module* parentModule, ModuleGroup* moduleGroup, GenericList& processingModuleData, PartialSet& summedUnweightedGR);
 	// Test supplied PartialSets against each other
 	static bool testReferencePartials(PartialSet& setA, PartialSet& setB, double testThreshold);
 	// Test reference data against calculated PartialSet set

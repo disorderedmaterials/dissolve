@@ -91,8 +91,8 @@ bool SQModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration* cfg, 
 	return true;
 }
 
-// Sum unweighted S(Q) over supplied Module's target Configurations
-bool SQModule::sumUnweightedSQ(ProcessPool& procPool, Module* module, GenericList& moduleData, PartialSet& summedSQ)
+// Sum unweighted S(Q) over the supplied Module's target Configurations
+bool SQModule::sumUnweightedSQ(ProcessPool& procPool, Module* module, GenericList& moduleData, PartialSet& summedUnweightedSQ)
 {
 	// Create an AtomTypeList containing the sum of atom types over all target configurations
 	AtomTypeList combinedAtomTypes;
@@ -103,13 +103,13 @@ bool SQModule::sumUnweightedSQ(ProcessPool& procPool, Module* module, GenericLis
 	combinedAtomTypes.finalise();
 	combinedAtomTypes.print();
 
-	// Set up partial S(Q) container
-	summedSQ.setUpPartials(combinedAtomTypes, module->uniqueName(), "unweighted", "sq", "Q, 1/Angstroms");
-	summedSQ.setObjectNames(CharString("%s//UnweightedSQ", module->uniqueName()));
+	// Set up PartialSet container
+	summedUnweightedSQ.setUpPartials(combinedAtomTypes, module->uniqueName(), "unweighted", "sq", "Q, 1/Angstroms");
+	summedUnweightedSQ.setObjectNames(CharString("%s//UnweightedSQ", module->uniqueName()));
 
 	// Loop over Configurations again, summing into the PartialSet we have just set up
 	// We will keep a running total of the weights associated with each Configuration, and re-weight the entire set of partials at the end.
-	double totalWeight = 0.0, density = 0.0, volume = 0.0;
+	double totalWeight = 0.0;
 	CharString fingerprint;
 	configIterator.restart();
 	while (Configuration* cfg = configIterator.iterate())
@@ -125,21 +125,13 @@ bool SQModule::sumUnweightedSQ(ProcessPool& procPool, Module* module, GenericLis
 		// Grab partials for Configuration and add into our set
 		if (!cfg->moduleData().contains("UnweightedSQ")) return Messenger::error("Couldn't find UnweightedSQ data for Configuration '%s'.\n", cfg->name());
 		PartialSet& cfgPartialSQ = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedSQ");
-		summedSQ.addPartials(cfgPartialSQ, weight);
-
-		// Sum density weighted by volume, and total volume (both of which are multiplied by the overall weight)
-		density += cfg->atomicDensity()*cfg->box()->volume()*weight;
-		volume += cfg->box()->volume()*weight;
+		summedUnweightedSQ.addPartials(cfgPartialSQ, weight);
 	}
-	density /= volume;
-	summedSQ.setFingerprint(fingerprint);
+	summedUnweightedSQ.setFingerprint(fingerprint);
 
 	// Now must normalise our partials to the overall weight of the source configurations
-	// TODO Is this correct?
-	summedSQ.reweightPartials(1.0 / totalWeight);
-
-	// Store the blended density of our partials
-	GenericListHelper<double>::realise(moduleData, "EffectiveRho", module->uniqueName(), GenericItem::InRestartFileFlag) = density;
+	// TODO CHECK Is this correct?
+	summedUnweightedSQ.reweightPartials(1.0 / totalWeight);
 
 	return true;
 }

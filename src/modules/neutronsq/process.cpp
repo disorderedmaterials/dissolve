@@ -21,6 +21,7 @@
 
 #include "modules/neutronsq/neutronsq.h"
 #include "main/duq.h"
+#include "classes/atomtype.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
@@ -269,6 +270,19 @@ bool NeutronSQModule::process(DUQ& duq, ProcessPool& procPool)
 	summedWeights.print();
 	GenericListHelper<Weights>::realise(duq.processingModuleData(), "FullWeights", uniqueName_, GenericItem::InRestartFileFlag) = summedWeights;
 	calculateWeightedSQ(summedUnweightedSQ, summedWeightedSQ, summedWeights, normalisation);
+
+	// Create/retrieve PartialSet for summed partial g(r)
+	PartialSet& summedUnweightedGR = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedGR", uniqueName_, GenericItem::InRestartFileFlag);
+
+	// Sum the partials from the associated Configurations
+	if (!RDFModule::sumUnweightedGR(procPool, this, duq.processingModuleData(), summedUnweightedGR)) return false;
+
+// 	int i = 0;
+// 	for (AtomType* at1 = duq.atomTypes(); at1 != NULL; at1 = at1->next, ++i)
+// 	{
+// 		int j = i;
+// 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j) summedUnweightedGR.ref(i,j).setObjectName(CharString("%s//UnweightedGR//%s-%s", uniqueName(), at1->name(), at2->name()));
+// 	}
 
 	// Save data if requested
 	if (saveData && (!MPIRunMaster(procPool, summedWeightedSQ.save()))) return false;

@@ -31,6 +31,7 @@
 void SQModule::setUpKeywords()
 {
 	frequency_ = 5;
+	keywords_.add(new ComplexModuleKeyword(2,2), "ConfigurationWeight", "Sets the relative weight of the specified Configuration in construction of the structure factors", "<Configuration Name> <weight>");
 	keywords_.add(new DoubleModuleKeyword(0.05, 1.0e-5), "QDelta", "Step size in Q for S(Q) calculation");
 	keywords_.add(new BroadeningFunctionModuleKeyword(BroadeningFunction()), "QBroadening", "Instrument broadening function to apply when calculating S(Q)");
 	keywords_.add(new DoubleModuleKeyword(-1.0, -1.0), "QMax", "Maximum Q for calculated S(Q)");
@@ -45,7 +46,27 @@ void SQModule::setUpKeywords()
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
 int SQModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix)
 {
-	if (DUQSys::sameString(parser.argc(0), "TestReference"))
+	if (DUQSys::sameString(parser.argc(0), "ConfigurationWeight"))
+	{
+		// Sets the weight of a specified Configuration in construction of the partials
+		// Find target Configuration
+		Configuration* targetCfg = duq->findConfiguration(parser.argc(1));
+		if (!targetCfg)
+		{
+			Messenger::error("Error setting Configuration weight - no Configuration named '%s' exists.\n", parser.argc(1));
+			return false;
+		}
+
+		// Raise an error if this Configuration is not targetted by the Module
+		if (!isTargetConfiguration(targetCfg)) 
+		{
+			Messenger::error("Configuration '%s' is not targetted by the Module '%s', so setting its weight is irrelevant.\n", targetCfg->name(), name());
+			return false;
+		}
+
+		GenericListHelper<double>::add(targetList, CharString("Weight_%s", targetCfg->niceName()), uniqueName()) = parser.argd(2);
+	}
+	else if (DUQSys::sameString(parser.argc(0), "TestReference"))
 	{
 		Messenger::print("Reading test reference S(Q) / F(Q) data...\n");
 

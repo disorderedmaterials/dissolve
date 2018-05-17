@@ -21,6 +21,7 @@
 
 #include "modules/refine/refine.h"
 #include "main/duq.h"
+#include "modules/rdf/rdf.h"
 #include "math/gaussfit.h"
 #include "classes/scatteringmatrix.h"
 #include "classes/weights.h"
@@ -152,8 +153,8 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 		while (Module* module = targetIterator.iterate())
 		{
 			// Realise the error array and make sure its object name is set
-			XYData& errors = GenericListHelper<XYData>::realise(duq.processingModuleData(), CharString("%s_Error", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
-			errors.setObjectName(CharString("%s//%s//Error", uniqueName_.get(), module->uniqueName()));
+			XYData& errors = GenericListHelper<XYData>::realise(duq.processingModuleData(), CharString("Error_%s", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
+			errors.setObjectName(CharString("%s//Error//%s", uniqueName_.get(), module->uniqueName()));
 
 			// Calculate our error based on the type of Module
 			double error = 100.0;
@@ -176,6 +177,12 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 				}
 
 				error = referenceData.error(calcSQ.total());
+
+				// Calculate difference
+				XYData& differenceData = GenericListHelper<XYData>::realise(duq.processingModuleData(), CharString("DifferenceData_%s", module->uniqueName()), uniqueName());
+				differenceData.setObjectName(CharString("%s//Difference//%s", uniqueName_.get(), module->uniqueName()));
+				differenceData = referenceData;
+				differenceData.addInterpolated(calcSQ.total(), -1.0);
 			}
 			else return Messenger::error("Unrecognised Module type '%s', so can't calculate error.", module->name());
 
@@ -188,8 +195,8 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 		 * Update our full scattering matrix, and use it to generate partials from the supplied reference data
 		 */
 
-		// Create temporary storage for our combined unweighted S(Q), and a corresponding density array.
-		Array2D<XYData> combinedUnweightedSQ;
+		// Create temporary storage for our summed UnweightedSQ, and related quantities such as density and sum factors
+		Array2D<XYData>& combinedUnweightedSQ = GenericListHelper< Array2D<XYData> >::realise(duq.processingModuleData(), "UnweightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
 		Array2D<double> combinedRho, combinedFactor, combinedCWeights;
 		combinedUnweightedSQ.initialise(duq.nAtomTypes(), duq.nAtomTypes(), true);
 		combinedRho.initialise(duq.nAtomTypes(), duq.nAtomTypes(), true);
@@ -199,9 +206,17 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 		combinedFactor = 0.0;
 		combinedCWeights = 0.0;
 
+		// Set object names in combinedUnweightedSQ
+		i = 0;
+		for (AtomType* at1 = duq.atomTypes(); at1 != NULL; at1 = at1->next, ++i)
+		{
+			j = i;
+			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j) combinedUnweightedSQ.ref(i,j).setObjectName(CharString("%s//UnweightedSQ//%s//%s-%s", uniqueName(), group->name(), at1->name(), at2->name()));
+		}
+
 		// Realise storage for generated S(Q), and reinitialise the scattering matrix
-		Array2D<XYData>& generatedSQ = GenericListHelper< Array2D<XYData> >::realise(duq.processingModuleData(), "GeneratedSQ", uniqueName_, GenericItem::InRestartFileFlag);
-		scatteringMatrix_.initialise(duq.atomTypeList(), generatedSQ, uniqueName_);
+		Array2D<XYData>&  generatedSQ = GenericListHelper< Array2D<XYData> >::realise(duq.processingModuleData(), "GeneratedSQ", uniqueName_, GenericItem::InRestartFileFlag);
+		scatteringMatrix_.initialise(duq.atomTypeList(), generatedSQ, uniqueName_, group->name());
 
 		// Get factor with which to add data, based on the requested AugmentationStyle
 		double dataFactor = 1.0;
@@ -319,7 +334,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 			{
 				// Grab experimental g(r) contained and make sure its object name is set
 				XYData& expGR = generatedGR.ref(i,j);
-				expGR.setObjectName(CharString("%s//GeneratedGR//%s-%s", uniqueName_.get(), at1->name(), at2->name()));
+				expGR.setObjectName(CharString("%s//GeneratedGR//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
 
 				// Copy experimental S(Q) and FT it
 				expGR = generatedSQ.ref(i,j);
@@ -327,6 +342,13 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 				expGR.arrayY() += 1.0;
 			}
 		}
+
+		/*
+		 * Generate summed unweighted g(r) from all source Module data
+		 */
+
+		PartialSet& summedUnweightedGR = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedGR", uniqueName(), GenericItem::InRestartFileFlag);
+		if (!RDFModule::sumUnweightedGR(procPool, this, group, duq.processingModuleData(), summedUnweightedGR)) return false;
 
 		/*
 		 * Construct matrix of difference partials (deltaSQ) for all AtomTypes
@@ -344,7 +366,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 			{
 				// Grab difference partial and make sure its object name is set
 				XYData& dSQ = deltaSQ.ref(i, j);
-				dSQ.setObjectName(CharString("%s//DeltaSQ//%s-%s", uniqueName_.get(), at1->name(), at2->name()));
+				dSQ.setObjectName(CharString("%s//DeltaSQ//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
 
 				// Reset the difference partial
 				dSQ.clear();
@@ -390,15 +412,6 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 			RefListIterator<Configuration,bool> configIterator(configs);
 			while (Configuration* cfg = configIterator.iterate())
 			{
-				// Get calculated g(r), from which we will determine the minimum radius to employ in the generated pair potential
-				bool found;
-				PartialSet& unweightedGR = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedGR", NULL, PartialSet(), &found);
-				if (!found)
-				{
-					Messenger::error("Couldn't locate 'UnweightedGR' data for Configuration '%s'.\n", cfg->name());
-					return false;
-				}
-
 				// Define a fraction of the determined g(r) non-zero point that will become our radius limit
 				const double rFraction = 0.95;
 				const double thresholdValue = 0.1;
@@ -409,7 +422,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 					for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 					{
 						// Grab unbound g(r)
-						XYData& gr = unweightedGR.unboundPartial(i, j);
+						XYData& gr = summedUnweightedGR.unboundPartial(i, j);
 
 						// Find first non-zero (above the threshold value) point in g(r)
 						int n;
@@ -453,11 +466,11 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 				// Grab potential perturbation container, clear it, and make sure its object name is set
 				XYData& dPhiR = deltaPhiR.ref(i, j);
 				dPhiR.clear();
-				dPhiR.setObjectName(CharString("%s//DeltaPhiR//%s-%s", uniqueName_.get(), at1->name(), at2->name()));
+				dPhiR.setObjectName(CharString("%s//DeltaPhiR//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
 
 				// Grab delta g(r) container and make sure its object name is set
 				XYData& inversion = deltaGR.ref(i, j);
-				inversion.setObjectName(CharString("%s//Inversion//%s-%s", uniqueName_.get(), at1->name(), at2->name()));
+				inversion.setObjectName(CharString("%s//Inversion//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
 
 				// Set the default weighting factor for the pair potential addition
 				weight = weighting;
@@ -487,11 +500,8 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 				}
 				else if (inversionMethod == RefineModule::DirectGaussianPotentialInversion)
 				{
-					// Copy the delta S(Q), perform a Gaussian fit and do the inverse FT to get the delta [g(r) - 1]
-					inversion = deltaSQ.ref(i, j);
-
-					// Fit the delta S(Q)
-					GaussFit gaussFit(inversion);
+					// Perform a Gaussian fit and do the inverse FT to get the delta [g(r) - 1]
+					GaussFit gaussFit(deltaSQ.ref(i, j));
 					double error = gaussFit.construct(0.5);
 					Messenger::print("Fitted function has error of %f%% with original delta S(Q) (nGaussians = %i).\n", error, gaussFit.nGaussians());
 
@@ -502,7 +512,8 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 					GenericListHelper< Array<double> >::realise(duq.processingModuleData(), CharString("%s-%s-GaussianC", at1->name(), at2->name()), uniqueName_, GenericItem::InRestartFileFlag) = gaussFit.c();
 
 					// Fourier transform the approximation, and store this as our inversion
-					dPhiR = gaussFit.fourierTransform(ppDelta, ppDelta, ppRange);
+					inversion = gaussFit.fourierTransform(ppDelta, ppDelta, ppRange);
+					dPhiR = inversion;
 					dPhiR.arrayY() *= -1.0;
 				}
 				else if (inversionMethod == RefineModule::PercusYevickPotentialInversion)

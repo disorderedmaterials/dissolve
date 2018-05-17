@@ -20,6 +20,9 @@
 */
 
 #include "modules/rdf/rdf.h"
+#include "main/duq.h"
+#include "module/group.h"
+#include "classes/atomtype.h"
 #include "classes/configuration.h"
 #include "classes/atom.h"
 #include "classes/box.h"
@@ -538,6 +541,138 @@ bool RDFModule::calculateUnweightedGR(PartialSet& originalgr, PartialSet& unweig
 
 	// Calculate total
 	unweightedgr.formTotal(false);
+
+	return true;
+}
+
+// Sum unweighted g(r) over the supplied Module's target Configurations
+bool RDFModule::sumUnweightedGR(ProcessPool& procPool, Module* module, GenericList& processingModuleData, PartialSet& summedUnweightedGR)
+{
+	// Create an AtomTypeList containing the sum of atom types over all target configurations
+	AtomTypeList combinedAtomTypes;
+	RefListIterator<Configuration,bool> targetIterator(module->targetConfigurations());
+	while (Configuration* cfg = targetIterator.iterate()) combinedAtomTypes.add(cfg->usedAtomTypesList());
+
+	// Finalise and print the combined AtomTypes matrix
+	combinedAtomTypes.finalise();
+
+	// Set up PartialSet container
+	summedUnweightedGR.setUpPartials(combinedAtomTypes, module->uniqueName(), "unweighted", "gr", "r, Angstroms");
+	summedUnweightedGR.setObjectNames(CharString("%s//UnweightedGR", module->uniqueName()));
+
+	// Determine total weighting factors and combined density over all Configurations, and set up a Configuration/weight RefList for simplicity
+	RefList<Configuration,double> configWeights;
+	targetIterator.restart();
+	double totalWeight = 0.0;
+	while (Configuration* cfg = targetIterator.iterate())
+	{
+		// Get weighting factor for this Configuration to contribute to the summed partials
+		double weight = GenericListHelper<double>::retrieve(processingModuleData, CharString("Weight_%s", cfg->niceName()), module->uniqueName(), 1.0);
+		Messenger::print("Weight for Configuration '%s' is %f.\n", cfg->name(), weight);
+	
+		// Add our Configuration target
+		configWeights.add(cfg, weight);
+		totalWeight += weight;
+	}
+
+	// Calculate overall density of combined system
+	double rho0 = 0.0;
+	RefListIterator<Configuration,double> weightsIterator(configWeights);
+	while (Configuration* cfg = weightsIterator.iterate()) rho0 += (weightsIterator.currentData() / totalWeight) / cfg->atomicDensity();
+	rho0 = 1.0 / rho0;
+
+	// Sum Configurations into the PartialSet
+	CharString fingerprint;
+	weightsIterator.restart();
+	while (Configuration* cfg = weightsIterator.iterate())
+	{
+		// Update fingerprint
+		fingerprint += fingerprint.isEmpty() ? CharString("%i", cfg->coordinateIndex()) : CharString("_%i", cfg->coordinateIndex());
+
+		// Calculate weighting factor
+		double weight = ((weightsIterator.currentData() / totalWeight) * cfg->atomicDensity()) / rho0;
+
+		// Grab partials for Configuration and add into our set
+		if (!cfg->moduleData().contains("UnweightedGR")) return Messenger::error("Couldn't find UnweightedGR data for Configuration '%s'.\n", cfg->name());
+		PartialSet& cfgPartialGR = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedGR");
+		summedUnweightedGR.addPartials(cfgPartialGR, weight);
+	}
+	summedUnweightedGR.setFingerprint(fingerprint);
+
+	// Store the overall density of our partials
+	GenericListHelper<double>::realise(processingModuleData, "EffectiveRho", module->uniqueName(), GenericItem::InRestartFileFlag) = rho0;
+
+	return true;
+}
+
+// Sum unweighted g(r) over all Configurations targeted by the specified ModuleGroup
+bool RDFModule::sumUnweightedGR(ProcessPool& procPool, Module* parentModule, ModuleGroup* moduleGroup, GenericList& processingModuleData, PartialSet& summedUnweightedGR)
+{
+	// Determine total weighting factor over all Configurations, and set up a Configuration/weight RefList for simplicity
+	RefList<Configuration,double> configWeights;
+	double totalWeight = 0.0;
+	RefListIterator<Module,bool> moduleIterator(moduleGroup->modules());
+	while (Module* module = moduleIterator.iterate())
+	{
+		// Loop over Configurations defined in this target
+		RefListIterator<Configuration,bool> targetIterator(module->targetConfigurations());
+		while (Configuration* cfg = targetIterator.iterate())
+		{
+			// Get weighting factor for this Configuration to contribute to the summed partials
+			double weight = GenericListHelper<double>::retrieve(processingModuleData, CharString("Weight_%s", cfg->niceName()), module->uniqueName(), 1.0);
+			Messenger::print("Weight for Configuration '%s' is %f.\n", cfg->name(), weight);
+		
+			// Add our Configuration target
+			configWeights.add(cfg, weight);
+			totalWeight += weight;
+		}
+	}
+	Messenger::print("Total weight over all Configurations for summed unweighted g(r) is %f (%i Configurations)\n", totalWeight, configWeights.nItems());
+
+	// Calculate overall density of combined system, normalising the Configuration weights as we go, and create an AtomTypeList to cover all used types
+	double rho0 = 0.0;
+	AtomTypeList combinedAtomTypes;
+	RefListIterator<Configuration,double> weightsIterator(configWeights);
+	while (Configuration* cfg = weightsIterator.iterate())
+	{
+		weightsIterator.currentData() /= totalWeight;
+		rho0 += weightsIterator.currentData() / cfg->atomicDensity();
+
+		combinedAtomTypes.add(cfg->usedAtomTypesList());
+	}
+	rho0 = 1.0 / rho0;
+	Messenger::print("Effective density for summed unweighted g(r) over group is %f\n", rho0);
+
+	// Finalise the combined AtomTypes matrix
+	combinedAtomTypes.finalise();
+
+	// Set up PartialSet container
+	summedUnweightedGR.setUpPartials(combinedAtomTypes, parentModule->uniqueName(), "unweighted", "gr", "r, Angstroms");
+	summedUnweightedGR.setObjectNames(CharString("%s//UnweightedGR//%s", parentModule->uniqueName(), moduleGroup->name()));
+
+	// Sum Configurations into the PartialSet
+	CharString fingerprint;
+	weightsIterator.restart();
+	while (Configuration* cfg = weightsIterator.iterate())
+	{
+		// Update fingerprint
+		fingerprint += fingerprint.isEmpty() ? CharString("%i", cfg->coordinateIndex()) : CharString("_%i", cfg->coordinateIndex());
+
+		// Calculate weighting factor
+		double weight = (weightsIterator.currentData() * cfg->atomicDensity()) / rho0;
+		printf("WEIGHT : %f %f %f\n", weightsIterator.currentData(), cfg->atomicDensity(), rho0);
+
+		// *Copy* the partials for the Configuration, subtract 1.0, and add into our set
+		if (!cfg->moduleData().contains("UnweightedGR")) return Messenger::error("Couldn't find UnweightedGR data for Configuration '%s'.\n", cfg->name());
+		PartialSet cfgPartialGR = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedGR");
+		cfgPartialGR -= 1.0;
+		summedUnweightedGR.addPartials(cfgPartialGR, weight);
+	}
+	summedUnweightedGR.setFingerprint(fingerprint);
+	summedUnweightedGR += 1.0;
+
+	// Store the overall density of our partials
+// 	GenericListHelper<double>::realise(moduleData, "EffectiveRho", module->uniqueName(), GenericItem::InRestartFileFlag) = rho0;
 
 	return true;
 }
