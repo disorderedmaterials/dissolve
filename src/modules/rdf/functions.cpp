@@ -660,7 +660,6 @@ bool RDFModule::sumUnweightedGR(ProcessPool& procPool, Module* parentModule, Mod
 
 		// Calculate weighting factor
 		double weight = (weightsIterator.currentData() * cfg->atomicDensity()) / rho0;
-		printf("WEIGHT : %f %f %f\n", weightsIterator.currentData(), cfg->atomicDensity(), rho0);
 
 		// *Copy* the partials for the Configuration, subtract 1.0, and add into our set
 		if (!cfg->moduleData().contains("UnweightedGR")) return Messenger::error("Couldn't find UnweightedGR data for Configuration '%s'.\n", cfg->name());
