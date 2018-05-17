@@ -54,8 +54,6 @@ class RefineModuleWidget : public ModuleWidget
 	Ui::RefineModuleWidget ui;
 	// Update controls within widget
 	void updateControls();
-	// Initialise controls
-	void initialiseControls(RefineModule* module);
 	// Disable sensitive controls within widget, ready for main code to run
 	void disableSensitiveControls();
 	// Enable sensitive controls within widget, ready for main code to run
@@ -76,8 +74,8 @@ class RefineModuleWidget : public ModuleWidget
 	 * Widgets / Functions
 	 */
 	private:
-
-	private slots:
+	// Set data targets in graphs
+	void setGraphDataTargets(RefineModule* module);
 };
 
 #endif

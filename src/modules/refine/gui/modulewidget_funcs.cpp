@@ -36,7 +36,6 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, DUQ& dUQ
 
 	refreshing_ = true;
 
-	// Add UChromaWidgets to the two PlotWidgets
 	ViewPane* viewPane;
 
 	// Data Graph
@@ -119,7 +118,7 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, DUQ& dUQ
 	viewPane->axes().setMax(1, 100.0);
 	viewPane->setAutoFollowType(ViewPane::XFollow);
 
-	initialiseControls(module_);
+	setGraphDataTargets(module_);
 
 	refreshing_ = false;
 }
@@ -155,8 +154,46 @@ void RefineModuleWidget::updateControls()
 	refreshing_ = false;
 }
 
-// Initialise controls
-void RefineModuleWidget::initialiseControls(RefineModule* module)
+// Disable sensitive controls within widget, ready for main code to run
+void RefineModuleWidget::disableSensitiveControls()
+{
+}
+
+// Enable sensitive controls within widget, ready for main code to run
+void RefineModuleWidget::enableSensitiveControls()
+{
+}
+
+/*
+ * ModuleWidget Implementations
+ */
+
+// Write widget state through specified LineParser
+bool RefineModuleWidget::writeState(LineParser& parser)
+{
+	// Write UChromaWidget sessions
+	if (!dataGraph_->writeSession(parser)) return false;
+	if (!partialSQGraph_->writeSession(parser)) return false;
+
+	return true;
+}
+
+// Read widget state through specified LineParser
+bool RefineModuleWidget::readState(LineParser& parser)
+{
+	// Read UChromaWidget sessions
+	if (!dataGraph_->readSession(parser)) return false;
+	if (!partialSQGraph_->readSession(parser)) return false;
+
+	return true;
+}
+
+/*
+ * Widgets / Functions
+ */
+
+// Set data targets in graphs
+void RefineModuleWidget::setGraphDataTargets(RefineModule* module)
 {
 	if (!module) return;
 
@@ -246,42 +283,4 @@ void RefineModuleWidget::initialiseControls(RefineModule* module)
 		}
 	}
 }
-
-// Disable sensitive controls within widget, ready for main code to run
-void RefineModuleWidget::disableSensitiveControls()
-{
-}
-
-// Enable sensitive controls within widget, ready for main code to run
-void RefineModuleWidget::enableSensitiveControls()
-{
-}
-
-/*
- * ModuleWidget Implementations
- */
-
-// Write widget state through specified LineParser
-bool RefineModuleWidget::writeState(LineParser& parser)
-{
-	// Write UChromaWidget sessions
-	if (!dataGraph_->writeSession(parser)) return false;
-	if (!partialSQGraph_->writeSession(parser)) return false;
-
-	return true;
-}
-
-// Read widget state through specified LineParser
-bool RefineModuleWidget::readState(LineParser& parser)
-{
-	// Read UChromaWidget sessions
-	if (!dataGraph_->readSession(parser)) return false;
-	if (!partialSQGraph_->readSession(parser)) return false;
-
-	return true;
-}
-
-/*
- * Widgets / Functions
- */
 

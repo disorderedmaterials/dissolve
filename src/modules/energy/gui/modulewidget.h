@@ -55,8 +55,6 @@ class EnergyModuleWidget : public ModuleWidget
 	Ui::EnergyModuleWidget ui;
 	// Update controls within widget
 	void updateControls();
-	// Initialise controls
-	void initialiseControls(EnergyModule* module);
 	// Disable sensitive controls within widget, ready for main code to run
 	void disableSensitiveControls();
 	// Enable sensitive controls within widget, ready for main code to run
@@ -79,6 +77,10 @@ class EnergyModuleWidget : public ModuleWidget
 	private:
 	// Current Configuration whose data is being displayed
 	Configuration* currentConfiguration_;
+
+	private:
+	// Set data targets in graphs
+	void setGraphDataTargets(EnergyModule* module);
 
 	private slots:
 	void on_TargetCombo_currentIndexChanged(int index);

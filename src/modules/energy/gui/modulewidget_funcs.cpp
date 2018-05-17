@@ -53,7 +53,7 @@ EnergyModuleWidget::EnergyModuleWidget(QWidget* parent, Module* module, DUQ& dUQ
 
 	currentConfiguration_ = NULL;
 
-	initialiseControls(module_);
+	setGraphDataTargets(module_);
 
 	refreshing_ = false;
 }
@@ -106,17 +106,6 @@ void EnergyModuleWidget::updateControls()
 	energyGraph_->updateDisplay();
 }
 
-// Initialise controls
-void EnergyModuleWidget::initialiseControls(EnergyModule* module)
-{
-	if (!module) return;
-
-	// Add Configuration targets to the combo box
-	ui.TargetCombo->clear();
-	RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
-	while (Configuration* config = configIterator.iterate()) ui.TargetCombo->addItem(config->name(), VariantPointer<Configuration>(config));
-}
-
 // Disable sensitive controls within widget, ready for main code to run
 void EnergyModuleWidget::disableSensitiveControls()
 {
@@ -152,6 +141,17 @@ bool EnergyModuleWidget::readState(LineParser& parser)
 /*
  * Widgets / Functions
  */
+
+// Set data targets in graphs
+void EnergyModuleWidget::setGraphDataTargets(EnergyModule* module)
+{
+	if (!module) return;
+
+	// Add Configuration targets to the combo box
+	ui.TargetCombo->clear();
+	RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
+	while (Configuration* config = configIterator.iterate()) ui.TargetCombo->addItem(config->name(), VariantPointer<Configuration>(config));
+}
 
 void EnergyModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 {
