@@ -128,6 +128,8 @@ class RDFModule : public Module
 	bool calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule::PartialsMethod method, bool allIntra, bool& alreadyUpToDate);
 	// Calculate smoothed/broadened partial g(r) from supplied partials
 	static bool calculateUnweightedGR(PartialSet& originalgr, PartialSet& weightedgr, BroadeningFunction intraBroadening, int smoothing);
+	// Return effective density for specified Module's target Configurations
+	static double summedRho(Module* module, GenericList& processingModuleData);
 	// Sum unweighted g(r) over the supplied Module's target Configurations
 	static bool sumUnweightedGR(ProcessPool& procPool, Module* module, GenericList& processingModuleData, PartialSet& summedUnweightedGR);
 	// Sum unweighted g(r) over all Configurations targeted by the specified ModuleGroup

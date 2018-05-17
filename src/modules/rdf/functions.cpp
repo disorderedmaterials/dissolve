@@ -545,6 +545,24 @@ bool RDFModule::calculateUnweightedGR(PartialSet& originalgr, PartialSet& unweig
 	return true;
 }
 
+// Return effective density for specified Module's target Configurations
+double RDFModule::summedRho(Module* module, GenericList& processingModuleData)
+{
+	double rho0 = 0.0, totalWeight = 0.0;
+	RefListIterator<Configuration,bool> targetIterator(module->targetConfigurations());
+	while (Configuration* cfg = targetIterator.iterate())
+	{
+		double weight = GenericListHelper<double>::retrieve(processingModuleData, CharString("Weight_%s", cfg->niceName()), module->uniqueName(), 1.0);
+		totalWeight += weight;
+
+		rho0 += weight / cfg->atomicDensity();
+	}
+	rho0 /= totalWeight;
+	rho0 = 1.0 / rho0;
+
+	return rho0;
+}
+
 // Sum unweighted g(r) over the supplied Module's target Configurations
 bool RDFModule::sumUnweightedGR(ProcessPool& procPool, Module* module, GenericList& processingModuleData, PartialSet& summedUnweightedGR)
 {
