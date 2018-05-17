@@ -76,7 +76,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 // 	if (modifyBonds) Messenger::print("Refine: Equilibrium master bond distances will be modified.\n");
 	if (modifyPotential) Messenger::print("Refine: Perturbations to interatomic potentials will be generated and applied.\n");
 	else Messenger::print("Refine: Perturbations to interatomic potentials will be generated only (current potentials will not be modified).\n");
-	if (onlyWhenStable) Messenger::print("Refine: Potential refinement will only be attempted if all related Configuration energies are stable.\n");
+	if (onlyWhenStable) Messenger::print("Refine: Potential refinement will only be performed if all related Configuration energies are stable.\n");
 	if (phiLimit >= 0) Messenger::print("Refine: Limit of additional potential phi(r) across all potentials is %f kJ/mol/Angstrom.\n", phiLimit);
 	else Messenger::warn("Refine: No limits will be applied to additional potential magnitude.\n");
 	if (windowFunction.function() == WindowFunction::NoWindow) Messenger::print("Refine: No window function will be applied in Fourier transforms of S(Q) to g(r).\n");
@@ -138,6 +138,8 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	 * Loop over groups of defined Module targets.
 	 * We will generate a contribution to dPhiR from each and blend them together.
 	 */
+	const int nTypes = duq.nAtomTypes();
+	bool created;
 	for (ModuleGroup* group = targetGroups_.first(); group != NULL; group = group->next)
 	{
 		Messenger::print("Generating dPhiR from target group '%s'...\n", group->name());
@@ -186,8 +188,9 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 			}
 			else return Messenger::error("Unrecognised Module type '%s', so can't calculate error.", module->name());
 
-			// Calculate and store the percentage error
+			// Store the percentage error
 			errors.addPoint(duq.iteration(), error);
+			Messenger::print("Current error for reference data '%s' is %f%%.\n", module->uniqueName(), error);
 		}
 
 
@@ -228,14 +231,14 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 		{
 			// Retrieve the reference data and associated Weights matrix and source unweighted partials
 			XYData& referenceData = GenericListHelper<XYData>::retrieve(duq.processingModuleData(), "ReferenceData", module->uniqueName(), XYData(), &found);
-			if (!found) return Messenger::error("Couldn't locate ReferenceData for target '%s'.\n", module->uniqueName());
+			if (!found) return Messenger::error("Could not locate ReferenceData for target '%s'.\n", module->uniqueName());
 			Weights& weights = GenericListHelper<Weights>::retrieve(duq.processingModuleData(), "FullWeights", module->uniqueName(), Weights(), &found);
-			if (!found) return Messenger::error("Couldn't locate Weights for target '%s'.\n", module->uniqueName());
+			if (!found) return Messenger::error("Could not locate Weights for target '%s'.\n", module->uniqueName());
 			PartialSet& unweightedSQ = GenericListHelper<PartialSet>::retrieve(duq.processingModuleData(), "UnweightedSQ", module->uniqueName(), PartialSet(), &found);
-			if (!found) return Messenger::error("Couldn't locate UnweightedSQ for target '%s'.\n", module->uniqueName());
+			if (!found) return Messenger::error("Could not locate UnweightedSQ for target '%s'.\n", module->uniqueName());
 			double rho = GenericListHelper<
 			double>::retrieve(duq.processingModuleData(), "EffectiveRho", module->uniqueName(), 0.0, &found);
-			if (!found) return Messenger::error("Couldn't locate EffectiveRho for target '%s'.\n", module->uniqueName());
+			if (!found) return Messenger::error("Could not locate EffectiveRho for target '%s'.\n", module->uniqueName());
 
 			// Add a row to our scattering matrix
 			if (!scatteringMatrix_.addReferenceData(referenceData, weights, dataFactor)) return Messenger::error("Failed to add target data '%s' to weights matrix.\n", module->uniqueName());
@@ -353,8 +356,6 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 		/*
 		 * Construct matrix of difference partials (deltaSQ) for all AtomTypes
 		 */
-		int nTypes = duq.atomTypeList().nItems();
-		bool created;
 		Array2D<XYData>& deltaSQ = GenericListHelper< Array2D<XYData> >::realise(duq.processingModuleData(), "DeltaSQ", uniqueName_, GenericItem::InRestartFileFlag, &created);
 		if (created) deltaSQ.initialise(nTypes, nTypes, true);
 
@@ -394,10 +395,10 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 		 * Create perturbations to interatomic potentials
 		 */
 		const double weighting = keywords_.asDouble("Weighting");
-		Array2D<XYData>& deltaPhiR = GenericListHelper< Array2D<XYData> >::realise(duq.processingModuleData(), "DeltaPhiR", uniqueName_, GenericItem::InRestartFileFlag, &created);
-		if (created) deltaPhiR.initialise(nTypes, nTypes, true);
-		Array2D<XYData>& deltaGR = GenericListHelper< Array2D<XYData> >::realise(duq.processingModuleData(), "DeltaGR", uniqueName_, GenericItem::InRestartFileFlag, &created);
-		if (created) deltaGR.initialise(nTypes, nTypes, true);
+		Array2D<XYData>& groupDeltaPhiR = GenericListHelper< Array2D<XYData> >::realise(duq.processingModuleData(), CharString("DeltaPhiR_%s", group->name()), uniqueName_, GenericItem::InRestartFileFlag, &created);
+		if (created) groupDeltaPhiR.initialise(nTypes, nTypes, true);
+		Array2D<XYData>& groupDeltaGR = GenericListHelper< Array2D<XYData> >::realise(duq.processingModuleData(), CharString("DeltaGR_%s", group->name()), uniqueName_, GenericItem::InRestartFileFlag, &created);
+		if (created) groupDeltaGR.initialise(nTypes, nTypes, true);
 	// 	if (modifyBonds)
 	// 	{
 	// 		Array2D<XYData>& deltaGRBond = GenericListHelper< Array2D<XYData> >::realise(duq.processingModuleData(), "DeltaGRBond", uniqueName_, GenericItem::InRestartFileFlag, &created);
@@ -455,21 +456,13 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 			j = i;
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 			{
-				// Grab pointer to the relevant pair potential
-				PairPotential* pp = duq.pairPotential(at1, at2);
-				if (!pp)
-				{
-					Messenger::error("Failed to find PairPotential for AtomTypes '%s' and '%s'.\n", at1->name(), at2->name());
-					return false;
-				}
-
 				// Grab potential perturbation container, clear it, and make sure its object name is set
-				XYData& dPhiR = deltaPhiR.ref(i, j);
+				XYData& dPhiR = groupDeltaPhiR.ref(i, j);
 				dPhiR.clear();
 				dPhiR.setObjectName(CharString("%s//DeltaPhiR//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
 
 				// Grab delta g(r) container and make sure its object name is set
-				XYData& inversion = deltaGR.ref(i, j);
+				XYData& inversion = groupDeltaGR.ref(i, j);
 				inversion.setObjectName(CharString("%s//Inversion//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
 
 				// Set the default weighting factor for the pair potential addition
@@ -604,35 +597,20 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 				// Make sure we go smoothly to zero at the limit of the potential
 				for (int n=0; n<dPhiR.nPoints(); ++n) dPhiR.multiplyY(n, 1.0 - double(n)/(dPhiR.nPoints()-1));
 
-				// Apply the perturbation to the PairPotential
-				if (modifyPotential)
-				{
-					dPhiR.arrayY() *= weight;
-					pp->adjustUAdditional(dPhiR);
-				}
+				// Apply factor to additional potential
+				dPhiR.arrayY() *= weight;
 			}
 		}
 	}
 
-	// Clamp magnitude of additional potentials if required
-	if (modifyPotential && (phiLimit > 0.0))
+	// Perform actual modification to potential, adding in deltaPhiR calculated over all groups
+	if (modifyPotential)
 	{
-		double phiMag = 0.0;
-		i = 0;
-		for (AtomType* at1 = duq.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+		for (ModuleGroup* group = targetGroups_.first(); group != NULL; group = group->next)
 		{
-			j = i;
-			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
-			{
-				// Grab pointer to the relevant pair potential
-				PairPotential* pp = duq.pairPotential(at1, at2);
-				if (pp) phiMag += pp->uAdditional().absIntegral();
-			}
-		}
-
-		if (phiMag > phiLimit)
-		{
-			double factor = phiLimit / phiMag;
+			// Get the delta phi(r) data for this group
+			if (!duq.processingModuleData().contains(CharString("DeltaPhiR_%s", group->name()), uniqueName())) return Messenger::error("Could not locate delta phi(r) data for group '%s'.\n", group->name());
+			Array2D<XYData>& groupDeltaPhiR = GenericListHelper< Array2D<XYData> >::retrieve(duq.processingModuleData(), CharString("DeltaPhiR_%s", group->name()), uniqueName_, Array2D<XYData>());
 
 			i = 0;
 			for (AtomType* at1 = duq.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
@@ -642,11 +620,53 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 				{
 					// Grab pointer to the relevant pair potential
 					PairPotential* pp = duq.pairPotential(at1, at2);
-					if (pp) pp->uAdditional().arrayY() *= factor;
+					if (!pp)
+					{
+						Messenger::error("Failed to find PairPotential for AtomTypes '%s' and '%s'.\n", at1->name(), at2->name());
+						return false;
+					}
+
+					pp->adjustUAdditional(groupDeltaPhiR.ref(i,j));
 				}
 			}
 		}
 	}
+
+	// Calculate current phi magnitude
+	double phiMag = 0.0;
+	i = 0;
+	for (AtomType* at1 = duq.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+	{
+		j = i;
+		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
+		{
+			// Grab pointer to the relevant pair potential
+			PairPotential* pp = duq.pairPotential(at1, at2);
+			if (pp) phiMag += pp->uAdditional().absIntegral();
+		}
+	}
+
+	// Clamp magnitude of additional potentials if required
+	if (modifyPotential && (phiLimit > 0.0) && (phiMag > phiLimit))
+	{
+		double factor = phiLimit / phiMag;
+
+		i = 0;
+		for (AtomType* at1 = duq.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+		{
+			j = i;
+			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
+			{
+				// Grab pointer to the relevant pair potential
+				PairPotential* pp = duq.pairPotential(at1, at2);
+				if (pp) pp->uAdditional().arrayY() *= factor;
+			}
+		}
+
+		phiMag *= factor;
+	}
+
+	Messenger::print("Current magnitude of additional phi(r) over all pair potentials is %12.4e kJ/mol/Angstrom.\n", phiMag);
 
 	return true;
 }
