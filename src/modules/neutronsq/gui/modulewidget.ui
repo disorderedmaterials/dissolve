@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>777</width>
-    <height>530</height>
+    <width>349</width>
+    <height>378</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,7 +22,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>Partials Controls</string>
+   <string>NeutronSQ Controls</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_3">
    <property name="spacing">
