@@ -133,6 +133,12 @@ bool SQModule::process(DUQ& duq, ProcessPool& procPool)
 		if (!RDFModule::testReferencePartials(moduleData, uniqueName(), summedUnweightedSQ, "TestReferenceSQ-unweighted", testThreshold)) return false;
 	}
 
+	// Create/retrieve PartialSet for summed unweighted g(r)
+	PartialSet& summedUnweightedGR = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedGR", uniqueName_, GenericItem::InRestartFileFlag);
+
+	// Sum the partials from the associated Configurations
+	if (!RDFModule::sumUnweightedGR(procPool, this, duq.processingModuleData(), summedUnweightedGR)) return false;
+
 	return true;
 }
 
