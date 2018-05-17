@@ -96,47 +96,48 @@ Module IntraShake
   Frequency  5
 EndModule
 
-# 3) Calculate partials for the H2O sample
-#    The averaging we specify here will apply to all other Partials modules since they
-#    will take the already-calculated partial g(r) from here.
-Module Partials 'H2O'
-  StructureFactor  on
-  #WindowFunction  Lorch0
-  Weights  Neutron
-  QBroadening  OmegaDependentGaussian  0.025
+# 3) Calculate g(r) for the Configuration
+Module RDF
   Configuration  'Bulk'
-  Isotopologue  'Bulk'  'Water'  'Natural'  1.0
+  IntraBroadening  ScaledGaussian  0.105  0.25
 EndModule
 
-# 4) Calculate partials for the HDO sample
-Module Partials 'HDO'
-  StructureFactor  on
-  Weights  Neutron
-  QBroadening  OmegaDependentGaussian  0.025
+# 4) Calculate neutron-weighted S(Q) for the H2O sample
+Module NeutronSQ 'H2O'
+  WindowFunction  Lorch0
+  QBroadening  OmegaDependentGaussian  0.02
+  Configuration  'Bulk'
+  Isotopologue  'Bulk'  'Water'  'Natural'  1.0
+  Reference  'data/SLS18498-H2O.mdcs01'
+EndModule
+
+# 5) Calculate partials for the HDO sample
+Module NeutronSQ 'HDO'
+  QBroadening  OmegaDependentGaussian  0.02
   Configuration  'Bulk'
   Isotopologue  'Bulk'  'Water'  'Deuteriated'  0.5
   Isotopologue  'Bulk'  'Water'  'Natural'  0.5
+  Reference  'data/SLS18500-HDO5050.mdcs01'
 EndModule
 
-# 5) Calculate partials for the D2O sample
-Module Partials 'D2O'
-  StructureFactor  on
-  Weights  Neutron
-  QBroadening  OmegaDependentGaussian  0.025
+# 6) Calculate partials for the D2O sample
+Module NeutronSQ 'D2O'
+  QBroadening  OmegaDependentGaussian  0.02
   Configuration  'Bulk'
   Isotopologue  'Bulk'  'Water'  'Deuteriated'  1.0
+  Reference  'data/SLS18502-D2O.mdcs01'
 EndModule
 
-# 6) Calculate energy of the Configuration
+# 7) Calculate energy of the Configuration
 Module Energy
   Configuration  'Bulk'
 EndModule
 
-# 7) Refine potentials
+# 8) Refine potentials
 Module  Refine
-  Data  'Simulated-H2O'
-  Data  'Simulated-D2O'
-  Data  'Simulated-HDO'
+  Target  'H2O'
+  Target  'D2O'
+  Target  'HDO'
   Frequency  5
   PhiLimit  30.0
 EndModule
