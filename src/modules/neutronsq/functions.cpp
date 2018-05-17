@@ -24,7 +24,41 @@
 #include "classes/species.h"
 #include "classes/speciesinfo.h"
 
-// Calculate weighted S(Q) from supplied unweighted S(Q)
+// Calculate weighted g(r) from supplied unweighted g(r) and Weights
+bool NeutronSQModule::calculateWeightedGR(PartialSet& unweightedgr, PartialSet& weightedgr, Weights& weights, NeutronSQModule::NormalisationType normalisation)
+{
+	int typeI, typeJ;
+	for (typeI=0; typeI<unweightedgr.nAtomTypes(); ++typeI)
+	{
+		for (typeJ=typeI; typeJ<unweightedgr.nAtomTypes(); ++typeJ)
+		{
+			// Weight S(Q), Bragg S(Q) and full partial S(Q)
+			double factor = weights.fullWeight(typeI, typeJ);
+
+			weightedgr.partial(typeI, typeJ).copyData(unweightedgr.partial(typeI, typeJ));
+			weightedgr.partial(typeI, typeJ).arrayY() -= 1.0;
+			weightedgr.partial(typeI, typeJ).arrayY() *= factor;
+			weightedgr.boundPartial(typeI, typeJ).copyData(unweightedgr.boundPartial(typeI, typeJ));
+			weightedgr.boundPartial(typeI, typeJ).arrayY() *= factor;
+			weightedgr.unboundPartial(typeI, typeJ).copyData(unweightedgr.unboundPartial(typeI, typeJ));
+			weightedgr.unboundPartial(typeI, typeJ).arrayY() -= 1.0;
+			weightedgr.unboundPartial(typeI, typeJ).arrayY() *= factor;
+			weightedgr.braggPartial(typeI, typeJ).copyData(unweightedgr.braggPartial(typeI, typeJ));
+			// TODO Subtract 1.0 from Bragg partials before weighting?
+			weightedgr.braggPartial(typeI, typeJ).arrayY() -= 1.0;
+			weightedgr.braggPartial(typeI, typeJ).arrayY() *= factor;
+		}
+	}
+
+	// Calculate and normalise total to form factor if requested
+	weightedgr.formTotal(false);
+	if (normalisation == NeutronSQModule::AverageOfSquaresNormalisation) weightedgr.total().arrayY() /= weights.boundCoherentAverageOfSquares();
+	else if (normalisation == NeutronSQModule::SquareOfAverageNormalisation) weightedgr.total().arrayY() /= weights.boundCoherentSquareOfAverage();
+
+	return true;
+}
+
+// Calculate weighted S(Q) from supplied unweighted S(Q) and Weights
 bool NeutronSQModule::calculateWeightedSQ(PartialSet& unweightedsq, PartialSet& weightedsq, Weights& weights, NeutronSQModule::NormalisationType normalisation)
 {
 	int typeI, typeJ;

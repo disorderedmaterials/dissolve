@@ -86,6 +86,13 @@ bool NeutronSQModule::setUp(DUQ& duq, ProcessPool& procPool)
 		XYData& storedData = GenericListHelper<XYData>::realise(duq.processingModuleData(), "ReferenceData", uniqueName(), GenericItem::InRestartFileFlag);
 		storedData.setObjectName(CharString("%s//ReferenceData", uniqueName()));
 		storedData = referenceData;
+
+		// Calculate and store the FT of the reference data in processing
+		referenceData.setName(uniqueName());
+		XYData& storedDataFT = GenericListHelper<XYData>::realise(duq.processingModuleData(), "ReferenceDataFT", uniqueName(), GenericItem::InRestartFileFlag);
+		storedDataFT.setObjectName(CharString("%s//ReferenceDataFT", uniqueName()));
+		storedDataFT = referenceData;
+		storedDataFT.sineFT(1.0 / (2.0 * PI * PI * RDFModule::summedRho(this, duq.processingModuleData())), 0.0, 0.05, 30.0, WindowFunction(WindowFunction::Lorch0Window));
 	}
 
 	return true;
@@ -145,6 +152,8 @@ bool NeutronSQModule::process(DUQ& duq, ProcessPool& procPool)
 	 * Loop over target Configurations and Fourier transform their UnweightedGR into the corresponding UnweightedSQ.
 	 */
 
+	bool created;
+
 	RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
 	while (Configuration* cfg = configIterator.iterate())
 	{
@@ -156,9 +165,8 @@ bool NeutronSQModule::process(DUQ& duq, ProcessPool& procPool)
 		PartialSet& unweightedgr = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedGR");
 
 		// Does a PartialSet for the unweighted S(Q) already exist for this Configuration?
-		bool wasCreated;
-		PartialSet& unweightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", NULL, GenericItem::InRestartFileFlag, &wasCreated);
-		if (wasCreated) unweightedsq.setUpPartials(unweightedgr.atomTypes(), cfg->niceName(), "unweighted", "sq", "Q, 1/Angstroms");
+		PartialSet& unweightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", NULL, GenericItem::InRestartFileFlag, &created);
+		if (created) unweightedsq.setUpPartials(unweightedgr.atomTypes(), cfg->niceName(), "unweighted", "sq", "Q, 1/Angstroms");
 
 		// Is the PartialSet already up-to-date?
 		if (DUQSys::sameString(unweightedsq.fingerprint(), CharString("%i", cfg->coordinateIndex())))
@@ -221,8 +229,8 @@ bool NeutronSQModule::process(DUQ& duq, ProcessPool& procPool)
 		weights.print();
 
 		// Does a PartialSet for the unweighted S(Q) already exist for this Configuration?
-		PartialSet& weightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedSQ", NULL, GenericItem::InRestartFileFlag, &wasCreated);
-		if (wasCreated) weightedsq.setUpPartials(unweightedsq.atomTypes(), cfg->niceName(), "weighted", "sq", "Q, 1/Angstroms");
+		PartialSet& weightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedSQ", NULL, GenericItem::InRestartFileFlag, &created);
+		if (created) weightedsq.setUpPartials(unweightedsq.atomTypes(), cfg->niceName(), "weighted", "sq", "Q, 1/Angstroms");
 
 		// Calculate weighted S(Q)
 		calculateWeightedSQ(unweightedsq, weightedsq, weights, normalisation);
@@ -271,18 +279,19 @@ bool NeutronSQModule::process(DUQ& duq, ProcessPool& procPool)
 	GenericListHelper<Weights>::realise(duq.processingModuleData(), "FullWeights", uniqueName_, GenericItem::InRestartFileFlag) = summedWeights;
 	calculateWeightedSQ(summedUnweightedSQ, summedWeightedSQ, summedWeights, normalisation);
 
-	// Create/retrieve PartialSet for summed partial g(r)
+	// Create/retrieve PartialSet for summed unweighted g(r)
 	PartialSet& summedUnweightedGR = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedGR", uniqueName_, GenericItem::InRestartFileFlag);
 
 	// Sum the partials from the associated Configurations
 	if (!RDFModule::sumUnweightedGR(procPool, this, duq.processingModuleData(), summedUnweightedGR)) return false;
 
-// 	int i = 0;
-// 	for (AtomType* at1 = duq.atomTypes(); at1 != NULL; at1 = at1->next, ++i)
-// 	{
-// 		int j = i;
-// 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j) summedUnweightedGR.ref(i,j).setObjectName(CharString("%s//UnweightedGR//%s-%s", uniqueName(), at1->name(), at2->name()));
-// 	}
+	// Create/retrieve PartialSet for summed weighted g(r)
+	PartialSet& summedWeightedGR = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "WeightedGR", uniqueName_, GenericItem::InRestartFileFlag, &created);
+	if (created) summedWeightedGR.setUpPartials(summedUnweightedSQ.atomTypes(), uniqueName_, "weighted", "gr", "r, Angstroms");
+	summedWeightedGR.setObjectNames(CharString("%s//%s", uniqueName_.get(), "WeightedGR"));
+
+	// Calculate weighted g(r)
+	calculateWeightedGR(summedUnweightedGR, summedWeightedGR, summedWeights, normalisation);
 
 	// Save data if requested
 	if (saveData && (!MPIRunMaster(procPool, summedWeightedSQ.save()))) return false;

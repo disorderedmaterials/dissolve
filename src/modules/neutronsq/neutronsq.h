@@ -121,7 +121,9 @@ class NeutronSQModule : public Module
 	 * Members / Functions
 	 */
 	public:
-	// Calculate weighted S(Q) from supplied unweighted S(Q)
+	// Calculate weighted g(r) from supplied unweighted g(r) and Weights
+	bool calculateWeightedGR(PartialSet& unweightedgr, PartialSet& weightedgr, Weights& weights, NeutronSQModule::NormalisationType normalisation);
+	// Calculate weighted S(Q) from supplied unweighted S(Q) and Weights
 	bool calculateWeightedSQ(PartialSet& unweightedsq, PartialSet& weightedsq, Weights& weights, NeutronSQModule::NormalisationType normalisation);
 	// Calculate Weights matrix summed over target Configurations
 	bool calculateSummedWeights(Weights& summedWeights) const;
