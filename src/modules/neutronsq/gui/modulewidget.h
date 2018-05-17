@@ -28,6 +28,7 @@
 // Forward Declarations
 class DUQ;
 class Module;
+class NeutronSQModule;
 class PartialSet;
 class UChromaViewWidget;
 
@@ -39,9 +40,9 @@ class NeutronSQModuleWidget : public ModuleWidget
 
 	private:
 	// Associated Module
-	Module* module_;
-	// UChromaView contained within this widget
-	UChromaViewWidget* uChromaView_;
+	NeutronSQModule* module_;
+	// UChromaViews contained within this widget
+	UChromaViewWidget* partialGRGraph_, *partialSQGraph_, *totalGRGraph_, *totalSQGraph_;
 	// Reference to DUQ
 	DUQ& dUQ_;
 
@@ -57,12 +58,6 @@ class NeutronSQModuleWidget : public ModuleWidget
 	void disableSensitiveControls();
 	// Enable sensitive controls within widget, ready for main code to run
 	void enableSensitiveControls();
-	// Data Type Enum
-	enum DataType { FullData=1, BoundData=2, UnboundData=3, BraggData=4,
-			UnweightedGRData=10, 
-			WeightedGRData=20, 
-			UnweightedSQData=30, 
-			WeightedSQData=40};
 
 
 	/*
@@ -79,13 +74,8 @@ class NeutronSQModuleWidget : public ModuleWidget
 	 * Widgets / Functions
 	 */
 	private:
-	// Add data from PartialSet to tree
-	void addPartialSetToTree(PartialSet& partials, QTreeWidgetItem* topLevelItem, NeutronSQModuleWidget::DataType rootType, const char* rootTitle, int addAverageContributions = 0);
-	// Repopulate tree with source data
-	void repopulateSourceTree();
-
-	private slots:
-	void on_SourcesTree_itemDoubleClicked(QTreeWidgetItem* item, int column);
+	// Set data targets in graphs
+	void setGraphDataTargets(NeutronSQModule* module);
 };
 
 #endif
