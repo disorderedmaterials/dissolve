@@ -79,7 +79,7 @@ class ScatteringMatrix
 	 */
 	public:
 	// Initialise from supplied list of AtomTypes
-	void initialise(const List<AtomType>& types, Array2D<XYData>& generatedSQ, const char* objectNamePrefix);
+	void initialise(const List<AtomType>& types, Array2D<XYData>& generatedSQ, const char* objectNamePrefix, const char* groupName);
 	// Finalise
 	bool finalise();
 	// Add reference data with its associated Weights, applying optional factor to those weights

@@ -118,7 +118,7 @@ bool ScatteringMatrix::underDetermined() const
  */
 
 // Initialise from supplied list of AtomTypes
-void ScatteringMatrix::initialise(const List<AtomType>& types, Array2D<XYData>& generatedSQ, const char* objectNamePrefix)
+void ScatteringMatrix::initialise(const List<AtomType>& types, Array2D<XYData>& generatedSQ, const char* objectNamePrefix, const char* groupName)
 {
 	// Clear coefficients matrix and its inverse_, and empty our typePairs_ and data_ lists
 	A_.clear();
@@ -143,8 +143,8 @@ void ScatteringMatrix::initialise(const List<AtomType>& types, Array2D<XYData>& 
 	int index = 0;
 	for (Pair<AtomType*,AtomType*>* pair = typePairs_.first(); pair != NULL; pair = pair->next)
 	{
-		partials[index].setName(CharString("ScatteringMatrixPartial-%s-%s.sq", pair->a->name(), pair->b->name()));
-		partials[index].setObjectName(CharString("%s//GeneratedSQ//%s-%s", objectNamePrefix, pair->a->name(), pair->b->name()));
+		partials[index].setName(CharString("ScatteringMatrixPartial-%s-%s-%s.sq", pair->a->name(), pair->b->name(), groupName));
+		partials[index].setObjectName(CharString("%s//GeneratedSQ//%s//%s-%s", objectNamePrefix, groupName, pair->a->name(), pair->b->name()));
 		++index;
 	}
 }
