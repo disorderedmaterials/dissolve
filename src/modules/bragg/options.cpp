@@ -31,7 +31,6 @@
 void BraggModule::setUpKeywords()
 {
 	frequency_ = 5;
-	keywords_.add(new ComplexModuleKeyword(2,2), "ConfigurationWeight", "Sets the relative weight of the specified Configuration in construction of the partials", "<Configuration Name> <weight>");
 	keywords_.add(new DoubleModuleKeyword(0.001), "QResolution", "Binwidth in Q to use when calculating Bragg peaks");
 	keywords_.add(new BoolModuleKeyword(false), "Save", "Whether to save partials to disk after calculation", "<True|False>");
 }
@@ -39,28 +38,6 @@ void BraggModule::setUpKeywords()
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
 int BraggModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix)
 {
-	if (DUQSys::sameString(parser.argc(0), "ConfigurationWeight"))
-	{
-		// Sets the weight of a specified Configuration in construction of the partials
-		// Find target Configuration
-		Configuration* targetCfg = duq->findConfiguration(parser.argc(1));
-		if (!targetCfg)
-		{
-			Messenger::error("Error setting Configuration weight - no Configuration named '%s' exists.\n", parser.argc(1));
-			return false;
-		}
-
-		// Raise an error if this Configuration is not targetted by the Module
-		if (!isTargetConfiguration(targetCfg)) 
-		{
-			Messenger::error("Configuration '%s' is not targetted by the Module '%s', so setting its weight is irrelevant.\n", targetCfg->name(), name());
-			return false;
-		}
-
-		GenericListHelper<double>::add(targetList, CharString("Weight_%s", targetCfg->niceName()), uniqueName()) = parser.argd(2);
-	}
-	else return -1;
-
-	return true;
+	return -1;
 }
 
