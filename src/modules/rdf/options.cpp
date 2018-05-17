@@ -65,7 +65,6 @@ void RDFModule::setUpKeywords()
 	frequency_ = 5;
 	keywords_.add(new BoolModuleKeyword(false), "AllIntra", "Consider all intramolecular pairs in intra partials", "<True|False*>");
 	keywords_.add(new IntegerModuleKeyword(5, 0), "Averaging", "Number of historical partial sets to combine into final partials", "<N[5]>");
-	keywords_.add(new ComplexModuleKeyword(2,2), "ConfigurationWeight", "Sets the relative weight of the specified Configuration in construction of the partials", "<Configuration Name> <weight>");
 	keywords_.add(new CharStringModuleKeyword("Simple", RDFModule::nAveragingSchemes, AveragingSchemeKeywords), "AveragingScheme", "Weighting scheme to use when averaging partials", "<scheme[Exponential]>");
 	keywords_.add(new BoolModuleKeyword(false), "InternalTest", "Perform internal check of calculated partials (relative to Test method)");
 	keywords_.add(new BroadeningFunctionModuleKeyword(BroadeningFunction()), "IntraBroadening", "Broadening function to apply to intramolecular g(r)");
@@ -80,27 +79,7 @@ void RDFModule::setUpKeywords()
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
 int RDFModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix)
 {
-	if (DUQSys::sameString(parser.argc(0), "ConfigurationWeight"))
-	{
-		// Sets the weight of a specified Configuration in construction of the partials
-		// Find target Configuration
-		Configuration* targetCfg = duq->findConfiguration(parser.argc(1));
-		if (!targetCfg)
-		{
-			Messenger::error("Error setting Configuration weight - no Configuration named '%s' exists.\n", parser.argc(1));
-			return false;
-		}
-
-		// Raise an error if this Configuration is not targetted by the Module
-		if (!isTargetConfiguration(targetCfg)) 
-		{
-			Messenger::error("Configuration '%s' is not targetted by the Module '%s', so setting its weight is irrelevant.\n", targetCfg->name(), name());
-			return false;
-		}
-
-		GenericListHelper<double>::add(targetList, CharString("Weight_%s", targetCfg->niceName()), uniqueName()) = parser.argd(2);
-	}
-	else if (DUQSys::sameString(parser.argc(0), "TestReference"))
+	if (DUQSys::sameString(parser.argc(0), "TestReference"))
 	{
 		Messenger::print("Reading test reference g(r) / G(r) / S(Q) / F(Q) data...\n");
 
