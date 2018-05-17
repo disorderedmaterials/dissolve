@@ -121,10 +121,14 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	/*
 	 * Manipulation
 	 */
+	private:
+	// Adjust all partials, adding specified delta to each
+	void adjust(double delta);
+
 	public:
 	// Form partials from stored Histogram data
 	void formPartials(double boxVolume, XYData& boxNormalisation);
-	// Add in partials from source PartialSet to our own
+	// Add in partials from source PartialSet to our own, with specified weighting
 	bool addPartials(PartialSet& source, double weighting);
 	// Re-weight partials (including total) with supplied weighting factor
 	void reweightPartials(double factor);
@@ -132,6 +136,14 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	static void calculateRDF(XYData& destination, Histogram& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier, XYData& boxNormalisation);
 	// Generate total, weighted correlation function from supplied partials and Weights
 	XYData generateTotal(Weights& weights) const;
+
+
+	/*
+	 * Operators
+	 */
+	public:
+	void operator+=(const double delta);
+	void operator-=(const double delta);
 
 
 	/*

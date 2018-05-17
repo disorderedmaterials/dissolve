@@ -339,6 +339,28 @@ const char* PartialSet::objectNamePrefix() const
  * Manipulation
  */
 
+
+// Adjust all partials, adding specified delta to each
+void PartialSet::adjust(double delta)
+{
+	int n, m;
+	int nTypes = atomTypes_.nItems();
+
+	AtomTypeData* at1 = atomTypes_.first(), *at2;
+	for (n=0; n<nTypes; ++n, at1 = at1->next)
+	{
+		at2 = at1;
+		for (m=n; m<nTypes; ++m, at2 = at2->next)
+		{
+			partials_.ref(n, m).arrayY() += delta;
+			boundPartials_.ref(n, m).arrayY() += delta;
+			unboundPartials_.ref(n, m).arrayY() += delta;
+		}
+	}
+
+	total_.arrayY() += delta;
+}
+
 // Form partials from stored Histogram data
 void PartialSet::formPartials(double boxVolume, XYData& boxNormalisation)
 {
@@ -468,6 +490,20 @@ XYData PartialSet::generateTotal(Weights& weights) const
 	}
 
 	return total;
+}
+
+/*
+ * Operators
+ */
+
+void PartialSet::operator+=(const double delta)
+{
+	adjust(delta);
+}
+
+void PartialSet::operator-=(const double delta)
+{
+	adjust(-delta);
 }
 
 /*
