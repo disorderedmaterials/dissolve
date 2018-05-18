@@ -87,20 +87,6 @@ int NeutronSQModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser&
 
 		GenericListHelper<double>::add(targetList, CharString("Weight_%s", targetCfg->niceName()), uniqueName()) = parser.argd(2);
 	}
-	else if (DUQSys::sameString(parser.argc(0), "Reference"))
-	{
-		Messenger::print("Reading reference F(Q) data...\n");
-
-		// Realise an XYData to store the reference data in
-		XYData& data = GenericListHelper<XYData>::realise(targetList, "Reference", uniqueName());
-
-		// Fourth and fifth arguments are x and y columns respectively (defaulting to 0,1 if not given)
-		int xcol = parser.hasArg(2) ? parser.argi(2)-1 : 0;
-		int ycol = parser.hasArg(3) ? parser.argi(3)-1 : 1;
-
-		LineParser fileParser(&duq->worldPool());
-		if ((!fileParser.openInput(parser.argc(1))) || (!data.load(fileParser, xcol, ycol))) return false;
-	}
 	else if (DUQSys::sameString(parser.argc(0), "TestReference"))
 	{
 		Messenger::print("Reading test reference S(Q) / F(Q) data...\n");
