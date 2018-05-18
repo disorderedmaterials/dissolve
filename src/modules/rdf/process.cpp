@@ -99,7 +99,7 @@ bool RDFModule::process(DUQ& duq, ProcessPool& procPool)
 		PartialSet& originalgr = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "OriginalGR");
 
 		// Set names of resources (XYData) within the PartialSet
-		originalgr.setObjectNames(CharString("%s//%s//%s", cfg->niceName(), "RDF", "OriginalGR"));
+		originalgr.setObjectNames(CharString("%s//OriginalGR", cfg->niceName()));
 
 		// Perform averaging of unweighted partials if requested, and if we're not already up-to-date
 		if ((averaging > 1) && (!alreadyUpToDate)) performGRAveraging(cfg->moduleData(), "OriginalGR", "", averaging, averagingScheme);
@@ -128,7 +128,7 @@ bool RDFModule::process(DUQ& duq, ProcessPool& procPool)
 		calculateUnweightedGR(originalgr, unweightedgr, intraBroadening, smoothing);
 
 		// Set names of resources (XYData) within the PartialSet
-		unweightedgr.setObjectNames(CharString("%s//%s//%s", cfg->niceName(), "RDF", "UnweightedGR"));
+		unweightedgr.setObjectNames(CharString("%s//UnweightedGR", cfg->niceName()));
 	}
 
 	return true;
