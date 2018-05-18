@@ -29,6 +29,7 @@
 
 // Static Members
 bool Messenger::quiet_ = false;
+bool Messenger::muted_ = false;
 bool Messenger::verbose_ = false;
 bool Messenger::redirect_ = false;
 bool Messenger::masterOnly_ = false;
@@ -124,6 +125,18 @@ void Messenger::setQuiet(bool b)
 	quiet_ = b;
 }
 
+// Temporarily mute output
+void Messenger::mute()
+{
+	muted_ = true;
+}
+
+// Unmute output
+void Messenger::unMute()
+{
+	muted_ = false;
+}
+
 // Set status of verbose mode
 void Messenger::setVerbose(bool b)
 {
@@ -139,7 +152,7 @@ void Messenger::setMasterOnly(bool b)
 // Print standard message
 void Messenger::print(const char* fmt, ...)
 {
-	if (quiet_) return;
+	if (quiet_ || muted_) return;
 
 	va_list arguments;
 	va_start(arguments,fmt);
@@ -150,7 +163,7 @@ void Messenger::print(const char* fmt, ...)
 // Print verbose message
 void Messenger::printVerbose(const char* fmt, ...)
 {
-	if (quiet_ || (!verbose_)) return;
+	if (quiet_ || muted_ || (!verbose_)) return;
 
 	va_list arguments;
 	va_start(arguments,fmt);
