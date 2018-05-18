@@ -96,11 +96,43 @@ class CalibrationModule : public Module
 
 
 	/*
+	 * Members / Functions
+	 */
+	private:
+	// RDF Module targets for IntraBroadening calibration
+	RefList<Module,bool> intraBroadeningModules_;
+	// NeutronSQ Module targets for IntraBroadening calibration
+	RefList<Module,bool> intraBroadeningReferences_;
+
+
+	/*
 	 * GUI Widget
 	 */
 	public:
 	// Return a new widget controlling this Module
 	ModuleWidget* createWidget(QWidget* parent, DUQ& dUQ);
+};
+
+// Interface Class for Complex Cost Functions
+class CalibrationModuleCostFunctions
+{
+	public:
+	// Constructor
+	CalibrationModuleCostFunctions(DUQ& duq, ProcessPool& procPool, RefList<Module,bool>& intraBroadeningModules, RefList<Module,bool>& intraBroadeningReferences);
+
+	private:
+	// DUQ Main Object
+	DUQ& duq_;
+	// Target ProcessPool
+	ProcessPool& processPool_;
+	// RDFModule targets for IntraBroadening fitting
+	RefList<Module,bool>& intraBroadeningModules_;
+	// NeutronSQModule targets for IntraBroadening fitting
+	RefList<Module,bool>& intraBroadeningReferences_;
+
+	public:
+	// Cost function for intraBroadening minimisation
+	double intraBroadeningCost(double* alpha, int nAlpha);
 };
 
 #endif

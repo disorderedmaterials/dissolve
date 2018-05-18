@@ -30,7 +30,7 @@ const char* CalibrationModule::name()
 // Return brief description of module
 const char* CalibrationModule::brief()
 {
-	return "Empty Module providing skeletal structure for new Module development";
+	return "Calibrate various parameters";
 }
 
 // Return instance type for module

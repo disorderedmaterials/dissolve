@@ -21,8 +21,10 @@
 
 #include "modules/calibration/calibration.h"
 #include "main/duq.h"
+#include "modules/energy/energy.h"
 #include "base/sysfunc.h"
 #include "templates/genericlisthelper.h"
+#include "templates/praxis.h"
 
 // Return whether the Module has a processing stage
 bool CalibrationModule::hasProcessing()
@@ -33,68 +35,80 @@ bool CalibrationModule::hasProcessing()
 // Run main processing
 bool CalibrationModule::process(DUQ& duq, ProcessPool& procPool)
 {
-	/*
-	 * Grab dependent Module pointers
+	/* 
+	 * Perform calibration of various aspects
 	 */
-	Module* partialsModule = dependentModule("Partials");
-	if (!partialsModule)
+
+	// Retrieve / print keyword setup
+	const bool onlyWhenStable = keywords_.asBool("OnlyWhenStable");
+
+	if (onlyWhenStable) Messenger::print("Calibration: Adjustments will only be performed if all related Configuration energies are stable.\n");
+
+
+	/*
+	 * IntraBroadening Calibration
+	 */
+
+	if (intraBroadeningModules_.nItems() > 0)
 	{
-		Messenger::error("No Partials Module associated to CalibrationModule '%s'.\n", uniqueName());
-		return false;
+		/*
+		 * Make a list of all Configurations related to all RDF module
+		 */
+		RefList<Configuration,bool> configs;
+		RefListIterator<Module,bool> rdfModuleIterator(intraBroadeningModules_);
+		while (Module* module = rdfModuleIterator.iterate())
+		{
+			RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
+			while (Configuration* cfg = configIterator.iterate()) configs.addUnique(cfg);
+		}
+		Messenger::print("%i Configuration(s) are involved over all RDF Module targets.\n", configs.nItems());
+
+
+		/*
+		 * Are the energies of all involved Configurations stable (if OnlyWhenStable option is on)
+		 */
+		if (onlyWhenStable)
+		{
+			int stabilityResult = EnergyModule::checkStability(configs);
+			if (stabilityResult == -1) return false;
+			else if (stabilityResult != 0)
+			{
+				Messenger::print("At least one Configuration energy is not yet stable. No adjustments will be made this iteration.\n");
+				return true;
+			}
+		}
+
+
+		/*
+		 * Assemble a list of fitting parameters from the associated RDF modules and their BroadeningFunctions
+		 */
+		CalibrationModuleCostFunctions costFunctions(duq, procPool, intraBroadeningModules_, intraBroadeningReferences_);
+		PrAxis<CalibrationModuleCostFunctions> broadeningMinimiser(costFunctions, &CalibrationModuleCostFunctions::intraBroadeningCost);
+		rdfModuleIterator.restart();
+		while (Module* module = rdfModuleIterator.iterate())
+		{
+			// Retrieve the BroadeningFunction
+			BroadeningFunction& broadening = KeywordListHelper<BroadeningFunction>::retrieve(module->keywords(), "IntraBroadening", BroadeningFunction());
+
+			// Add its parameters to our minimiser
+			for (int n=0; n<broadening.nParameters(); ++n) broadeningMinimiser.addTarget(broadening.parameters()[n]);
+		}
+
+		// Optimise the parameters - the cost function will regenerate the UnweightedGR in the RDF modules, and reassemble the target NeutronSQ data
+		double error = broadeningMinimiser.minimise(0.1);
+
+		// Final update of BroadeningFunctions
+		rdfModuleIterator.restart();
+		while (Module* rdfModule = rdfModuleIterator.iterate())
+		{
+			// Retrieve the BroadeningFunction
+			BroadeningFunction& broadening = KeywordListHelper<BroadeningFunction>::retrieve(rdfModule->keywords(), "IntraBroadening", BroadeningFunction());
+			broadening.setUpDependentParameters();
+			Messenger::print("Module '%s' IntraBroadening parameters now: %s\n", rdfModule->uniqueName(), broadening.parameterSummary().get());
+		}
+
+		Messenger::print("Total error over all specified datasets is %f%%.\n", error);
 	}
-
-	/*
-	 * Loop over current data and perform our various fitting procedures
-	 */
-// 	RefListIterator<Data,bool> dataIterator(targetData_);
-// 	dataIterator.restart();
-// 	double startTotalError = 0.0;
-// 	Array<double> dataSetErrors;
-// 	while (Data* data = dataIterator.iterate())
-// 	{
-// 		/*
-// 		 * IntraBroadening
-// 		 */
-// 		if (true)
-// 		{
-// 			// Must have an associated PartialsModule from which to get the total S(Q)
-// 			if (!data->associatedModule()) continue;
-// 			if (data->isAssociatedModule("Partials"))
-// 			{
-// 				Messenger::print("Requested fitting of IntraBroadening, but the associated Module for Data '%s' is not a PartialsModule (= %s).\n", data->name(), data->associatedModuleName());
-// 				continue;
-// 			}
-// 
-// 			Module* partialsModule = data->associatedModule();
-// 
-// 			// Retrieve the UnweightedGR from the PartialsModule
-// 			bool found = false;
-// // 		/*	PartialSet& unweightedGR = GenericListHelper<PartialSet>::retrieve(duq.processingModuleData(), "UnweightedGR", data->associatedModule()->uniqueName(), PartialSet(), &found);
-// // 			if (!found)
-// // 			{
-// // 				Messenger::warn("Could not locate UnweightedGR for Data '%s'.\n", data->name());
-// // 				continue;
-// // 			}*/
-// 
-// 			// Retrieve and check IntraBroadening option from the PartialsModule keywords
-// 			BroadeningFunction intraBroadening = KeywordListHelper<BroadeningFunction>::retrieve(partialsModule->keywords(), "IntraBroadening", BroadeningFunction());
-// 			if (intraBroadening.function() == BroadeningFunction::NoFunction)
-// 			{
-// // 				Messenger::print("No IntraBroadening supplied
-// 			}
-// 
-// 			// Calculate current percentage error in calculated vs experimental S(Q)
-// // 			double startError = data->data().error(calcSQ.total());
-// // 			startTotalError += startError;
-// 			
-// 		
-// 		
-// 		
-// 		}
-// 	}
-// 
-
-// 	Messenger::print("Average error over all specified datasets was %f%%.\n", startTotalError / targetData_.nItems());
 
 	return true;
 }
