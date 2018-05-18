@@ -172,7 +172,7 @@ double GaussFit::construct(double requiredError, int maxGaussians)
 				Messenger::printVerbose("Attempting Gaussian addition for peak/trough located at x = %f\n", trialX);
 
 				// Set up minimiser, minimising test Gaussian only
-				Praxis<GaussFit> gaussMinimiser(*this, &GaussFit::costAmplitudeWidthXCentreStaticTrial);
+				PrAxis<GaussFit> gaussMinimiser(*this, &GaussFit::costAmplitudeWidthXCentreStaticTrial);
 				fitX_.clear();
 				gaussMinimiser.addTarget(trialA);
 				gaussMinimiser.addTarget(trialC);
@@ -364,7 +364,7 @@ double GaussFit::reFit()
 			fitX_.clear();
 
 			// Set up minimiser for the next batch
-			Praxis<GaussFit> gaussMinimiser(*this, &GaussFit::costAmplitudeWidth);
+			PrAxis<GaussFit> gaussMinimiser(*this, &GaussFit::costAmplitudeWidth);
 
 			// Add Gaussian parameters as fitting targets
 			for (int n=0; n<N; ++n)

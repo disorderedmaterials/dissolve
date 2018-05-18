@@ -28,14 +28,14 @@
 #include "base/messenger.h"
 #include <iomanip>
 
-template <class T> class Praxis
+template <class T> class PrAxis
 {
 	// Command pointer typedef
-	typedef double (T::*PraxisCostFunction)(double x[], int n);
+	typedef double (T::*PrAxisCostFunction)(double x[], int n);
 
 	public:
 	// Constructor
-	Praxis<T>(T& object, PraxisCostFunction func) : object_(object), costFunction_(func)
+	PrAxis<T>(T& object, PrAxisCostFunction func) : object_(object), costFunction_(func)
 	{
 	}
 
@@ -43,7 +43,7 @@ template <class T> class Praxis
 	// Object used to call specified function
 	T& object_;
 	// Pointer to cost function
-	PraxisCostFunction costFunction_;
+	PrAxisCostFunction costFunction_;
 	// Pointers to double values to be fit
 	Array<double*> targets_;
 	// Local values for fitting
@@ -52,7 +52,7 @@ template <class T> class Praxis
 	private:
 	//****************************************************************************80
 	
-	double flin ( int n, int jsearch, double l, PraxisCostFunction f, 
+	double flin ( int n, int jsearch, double l, PrAxisCostFunction f, 
 		double x[], int &nf, double v[], double q0[], double q1[], double &qd0, 
 		double &qd1, double &qa, double &qb, double &qc )
 	
@@ -596,7 +596,7 @@ template <class T> class Praxis
 	//****************************************************************************80
 	
 	void minny ( int n, int jsearch, int nits, double &d2, double &x1, double &f1, 
-		bool fk, PraxisCostFunction f, double x[], double t, double h, 
+		bool fk, PrAxisCostFunction f, double x[], double t, double h, 
 		double v[], double q0[], double q1[], int &nl, int &nf, double dmin, 
 		double ldt, double &fx, double &qa, double &qb, double &qc, double &qd0, 
 		double &qd1 )
@@ -980,7 +980,7 @@ template <class T> class Praxis
 	}
 	//****************************************************************************80
 	
-	void quad ( int n, PraxisCostFunction f, double x[], double t, 
+	void quad ( int n, PrAxisCostFunction f, double x[], double t, 
 		double h, double v[], double q0[], double q1[], int &nl, int &nf, double dmin, 
 		double ldt, double &fx, double &qf1, double &qa, double &qb, double &qc, 
 		double &qd0, double &qd1 )
@@ -1945,7 +1945,7 @@ template <class T> class Praxis
 
 	//****************************************************************************80
 
-	double praxis ( double t0, double h0, int n, int prin, double x[], PraxisCostFunction f )
+	double praxis ( double t0, double h0, int n, int prin, double x[], PrAxisCostFunction f )
 
 	//****************************************************************************80
 	//

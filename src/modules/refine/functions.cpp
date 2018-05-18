@@ -125,7 +125,7 @@ bool RefineModule::modifyBondTerms(DUQ& duq, const XYData& deltaGR, AtomType* ty
 	// Create a minimiser, and add our target variables - the order here is important, as the costFunction() is just
 	// provided with an array of doubles in the same order.
 	double xCentre, delta, width, AL, AC, AR;
-	Praxis<RefineModule> minimiserLCR(*this, &RefineModule::costFunction3Exp);
+	PrAxis<RefineModule> minimiserLCR(*this, &RefineModule::costFunction3Exp);
 	minimiserLCR.addTarget(xCentre);
 	minimiserLCR.addTarget(delta);
 	minimiserLCR.addTarget(width);
@@ -133,7 +133,7 @@ bool RefineModule::modifyBondTerms(DUQ& duq, const XYData& deltaGR, AtomType* ty
 	minimiserLCR.addTarget(AC);
 	minimiserLCR.addTarget(AR);
 
-	Praxis<RefineModule> minimiserLR(*this, &RefineModule::costFunction2Exp);
+	PrAxis<RefineModule> minimiserLR(*this, &RefineModule::costFunction2Exp);
 	minimiserLR.addTarget(xCentre);
 	minimiserLR.addTarget(delta);
 	minimiserLR.addTarget(width);
