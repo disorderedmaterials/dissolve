@@ -1,16 +1,16 @@
 # Main Module Library
-add_library(partialsmodule
+add_library(braggmodule
   core.cpp
   definition.cpp
   functions.cpp
   options.cpp
   process.cpp
 
-  partials.h
+  bragg.h
 )
 
 # 'nogui' library
-add_library(partialsmodulenogui
+add_library(braggmodulenogui
   nogui.cpp
 )
 

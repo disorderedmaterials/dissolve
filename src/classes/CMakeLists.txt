@@ -62,7 +62,7 @@ add_library(classes
   
   angle.h
   atom.h
-  atomtypeddata.h
+  atomtypedata.h
   atomtype.h
   atomtypelist.h
   bond.h

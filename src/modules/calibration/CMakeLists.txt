@@ -1,16 +1,16 @@
 # Main Module Library
-add_library(qfitmodule
+add_library(calibrationmodule
   core.cpp
   definition.cpp
   functions.cpp
   options.cpp
   process.cpp
 
-  qfit.h
+  calibration.h
 )
 
 # 'nogui' library
-add_library(qfitmodulenogui
+add_library(calibrationmodulenogui
   nogui.cpp
 )
 

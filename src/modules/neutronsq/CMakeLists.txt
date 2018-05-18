@@ -1,16 +1,16 @@
 # Main Module Library
-add_library(partialsmodule
+add_library(neutronsqmodule
   core.cpp
   definition.cpp
   functions.cpp
   options.cpp
   process.cpp
 
-  partials.h
+  neutronsq.h
 )
 
 # 'nogui' library
-add_library(partialsmodulenogui
+add_library(neutronsqmodulenogui
   nogui.cpp
 )
 

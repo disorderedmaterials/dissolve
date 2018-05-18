@@ -179,6 +179,8 @@ set(BASIC_LINK_LIBS
 
   # Modules
   atomshakemodule
+  braggmodule
+  calibrationmodule
   checksmodule
   energymodule
   exportmodule
@@ -187,11 +189,12 @@ set(BASIC_LINK_LIBS
   intrashakemodule
   mdmodule
   molshakemodule
-  partialsmodule
-  qfitmodule
+  neutronsqmodule
+  rdfmodule
   refinemodule
   sanitycheckmodule
   skeletonmodule
+  sqmodule
   testmodule
 )
 
@@ -212,11 +215,14 @@ target_link_libraries( ${target_name}
 
   # Module 'nogui' libs
   atomshakemodulenogui
+  braggmodulenogui
+  calibrationmodulenogui
   energymodulenogui
-  partialsmodulenogui
-  qfitmodulenogui
+  neutronsqmodulenogui
+  rdfmodulenogui
   refinemodulenogui
   skeletonmodulenogui
+  sqmodulenogui
   testmodulenogui
 
   ${NO_WHOLE_ARCHIVE_FLAG}
@@ -233,10 +239,14 @@ if(GUI)
 
     # Module gui libs
     atomshakemodulegui
+    braggmodulegui
+    calibrationmodulegui
     energymodulegui
-    partialsmodulegui
+    neutronsqmodulegui
+    rdfmodulegui
     refinemodulegui
     skeletonmodulegui
+    sqmodulegui
     testmodulegui
 
     # Main gui libs

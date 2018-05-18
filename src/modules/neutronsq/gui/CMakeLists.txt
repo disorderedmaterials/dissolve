@@ -1,6 +1,6 @@
 # GUI Module Library
 
-set(lib_name sqmodulegui)
+set(lib_name neutronsqmodulegui)
 
 # Don't forget to include output directory, otherwise
 # the UI file won't be wrapped!

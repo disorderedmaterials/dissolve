@@ -1,16 +1,16 @@
 # Main Module Library
-add_library(partialsmodule
+add_library(sqmodule
   core.cpp
   definition.cpp
   functions.cpp
   options.cpp
   process.cpp
 
-  partials.h
+  sq.h
 )
 
 # 'nogui' library
-add_library(partialsmodulenogui
+add_library(sqmodulenogui
   nogui.cpp
 )
 

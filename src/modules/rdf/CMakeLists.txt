@@ -1,16 +1,16 @@
 # Main Module Library
-add_library(partialsmodule
+add_library(rdfmodule
   core.cpp
   definition.cpp
   functions.cpp
   options.cpp
   process.cpp
 
-  partials.h
+  rdf.h
 )
 
 # 'nogui' library
-add_library(partialsmodulenogui
+add_library(rdfmodulenogui
   nogui.cpp
 )
 
