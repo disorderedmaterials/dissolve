@@ -184,14 +184,6 @@ bool NeutronSQModule::process(DUQ& duq, ProcessPool& procPool)
 		// Save data if requested
 		if (saveData && configurationLocal_ && (!MPIRunMaster(procPool, unweightedsq.save()))) return false;
 
-		// If we are associated to a local Configuration, copy the partial data over to the processing module list
-		if (configurationLocal_)
-		{
-			PartialSet newSet = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
-			newSet = unweightedsq;
-			newSet.setObjectNames(CharString("%s//UnweightedSQ", uniqueName_.get()));
-		}
-
 		// Test unweighted S(Q)?
 		if (testMode && configurationLocal_)
 		{
