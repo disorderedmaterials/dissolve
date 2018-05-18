@@ -1,5 +1,5 @@
 /*
-	*** Partials Module - GUI
+	*** RDF Module - GUI
 	*** src/modules/rdf/gui/gui.cpp
 	Copyright T. Youngs 2012-2018
 
