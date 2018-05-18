@@ -22,6 +22,7 @@
 #include "modules/energy/energy.h"
 #include "classes/configuration.h"
 #include "classes/energykernel.h"
+#include "templates/genericlisthelper.h"
 
 // Return total intramolecular energy
 double EnergyModule::intraMolecularEnergy(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap)
@@ -145,4 +146,40 @@ double EnergyModule::interMolecularEnergy(ProcessPool& procPool, Configuration* 
 	Messenger::printVerbose("Intermolecular Energy (World) is %15.9e\n", totalEnergy);
 
 	return totalEnergy;
+}
+
+// Check energy stability of specified Configurations, returning the number that failed, or -1 if stability could not be assessed
+int EnergyModule::checkStability(const RefList<Configuration,bool>& configurations)
+{
+	int nFailed = 0;
+
+	RefListIterator<Configuration,bool> configIterator(configurations);
+	while (Configuration* cfg = configIterator.iterate())
+	{
+		/*
+		 * First check is for the Configuration being targeted by any EnergyModule.
+		 * Then we probe the EnergyStable data.
+		 */
+		if (!GenericListHelper<bool>::retrieve(cfg->moduleData(), "_IsEnergyModuleTarget", NULL, false))
+		{
+			Messenger::error("Configuration '%s' is not targeted by any EnergyModule, so stability cannot be assessed. Check your setup!\n", cfg->name());
+			return -1;
+		}
+		else if (cfg->moduleData().contains("EnergyStable"))
+		{
+			bool stable = GenericListHelper<bool>::retrieve(cfg->moduleData(), "EnergyStable");
+			if (!stable)
+			{
+				Messenger::print("Energy for Configuration '%s' is not yet stable.\n", cfg->name());
+				++nFailed;
+			}
+		}
+		else
+		{
+			Messenger::warn("No energy stability information is present in Configuration '%s' (yet) - check your setup.\n", cfg->name());
+			++nFailed;
+		}
+	}
+
+	return nFailed;
 }

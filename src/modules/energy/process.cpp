@@ -27,6 +27,16 @@
 #include "base/lineparser.h"
 #include "templates/genericlisthelper.h"
 
+// Run set-up stage
+bool EnergyModule::setUp(DUQ& duq, ProcessPool& procPool)
+{
+	// For each Configuration target, add a flag to its moduleData (which is *not* stored in the restart file) that we are targeting it
+	RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
+	while (Configuration* cfg = configIterator.iterate()) GenericListHelper<bool>::realise(cfg->moduleData(), "_IsEnergyModuleTarget") = true;
+
+	return true;
+}
+
 // Return whether the Module has a processing stage
 bool EnergyModule::hasProcessing()
 {

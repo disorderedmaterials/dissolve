@@ -91,6 +91,8 @@ class EnergyModule : public Module
 	bool process(DUQ& duq, ProcessPool& procPool);
 
 	public:
+	// Run set-up stage
+	bool setUp(DUQ& duq, ProcessPool& procPool);
 	// Whether the Module has a processing stage
 	bool hasProcessing();
 
@@ -107,6 +109,8 @@ class EnergyModule : public Module
 	static double interAtomicEnergy(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap);
 	// Return total intermolecular energy
 	static double interMolecularEnergy(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap);
+	// Check energy stability of specified Configurations, returning the number that failed, or -1 if stability could not be assessed
+	static int checkStability(const RefList<Configuration,bool>& configurations);
 
 
 	/*
