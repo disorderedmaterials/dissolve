@@ -21,6 +21,7 @@
 
 #include "modules/refine/refine.h"
 #include "main/duq.h"
+#include "modules/energy/energy.h"
 #include "modules/rdf/rdf.h"
 #include "math/gaussfit.h"
 #include "classes/scatteringmatrix.h"
@@ -62,7 +63,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	const double globalMaximumRadius = keywords_.asDouble("MaximumRadius");
 // 	const bool modifyBonds = keywords_.asBool("ModifyBonds");
 	const bool modifyPotential = keywords_.asBool("ModifyPotential");
-	bool onlyWhenStable = keywords_.asBool("OnlyWhenStable");
+	const bool onlyWhenStable = keywords_.asBool("OnlyWhenStable");
 	double phiLimit = keywords_.asDouble("PhiLimit");
 	const double truncationWidth = keywords_.asDouble("TruncationWidth");
 	const WindowFunction& windowFunction = KeywordListHelper<WindowFunction>::retrieve(keywords_, "WindowFunction", WindowFunction());
@@ -107,30 +108,13 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	 */
 	if (onlyWhenStable)
 	{
-		bool anyFailed = false;
-
-		RefListIterator<Configuration,bool> configIterator(configs);
-		while (Configuration* cfg = configIterator.iterate())
+		int stabilityResult = EnergyModule::checkStability(configs);
+		if (stabilityResult == -1) return false;
+		else if (stabilityResult != 0)
 		{
-			// First, check that the EnergyStable module data exists
-			if (cfg->moduleData().contains("EnergyStable"))
-			{
-				bool stable = GenericListHelper<bool>::retrieve(cfg->moduleData(), "EnergyStable", "");
-				if (!stable)
-				{
-					Messenger::print("Energy for Configuration '%s' is not yet stable. No potential refinement will be performed this iteration.\n", cfg->name());
-					anyFailed = true;
-				}
-			}
-			else
-			{
-				Messenger::error("No energy stability information found in Configuration '%s' - check your setup.\n", cfg->name());
-				return false;
-			}
+			Messenger::print("At least one Configuration energy is not yet stable. No potential refinement will be performed this iteration.\n");
+			return true;
 		}
-
-		// If one or more Configurations failed the energy check, we can't go any further, so exit now
-		if (anyFailed) return true;
 	}
 
 
@@ -495,7 +479,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 				{
 					// Perform a Gaussian fit and do the inverse FT to get the delta [g(r) - 1]
 					GaussFit gaussFit(deltaSQ.ref(i, j));
-					double error = gaussFit.construct(0.5);
+					double error = gaussFit.construct(gaussianAccuracy);
 					Messenger::print("Fitted function has error of %f%% with original delta S(Q) (nGaussians = %i).\n", error, gaussFit.nGaussians());
 
 					// Store fitted parameters
