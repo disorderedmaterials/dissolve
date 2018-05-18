@@ -25,6 +25,6 @@
 // Return a new widget controlling this Module
 ModuleWidget* BraggModule::createWidget(QWidget* parent, DUQ& dUQ)
 {
-	return new RDFModuleWidget(parent, this, dUQ);
+	return new BraggModuleWidget(parent, this, dUQ);
 }
 

@@ -26,20 +26,21 @@
 #include "gui/modulewidget.h"
 
 // Forward Declarations
+class BraggModule;
 class DUQ;
 class Module;
 class PartialSet;
 class UChromaViewWidget;
 
 // Module Widget
-class RDFModuleWidget : public ModuleWidget
+class BraggModuleWidget : public ModuleWidget
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
 	private:
 	// Associated Module
-	Module* module_;
+	BraggModule* module_;
 	// UChromaView contained within this widget
 	UChromaViewWidget* uChromaView_;
 	// Reference to DUQ
@@ -47,22 +48,16 @@ class RDFModuleWidget : public ModuleWidget
 
 	public:
 	// Constructor / Destructor
-	RDFModuleWidget(QWidget* parent, Module* module, DUQ& dUQ);
-	~RDFModuleWidget();
+	BraggModuleWidget(QWidget* parent, Module* module, DUQ& dUQ);
+	~BraggModuleWidget();
 	// Main form declaration
-	Ui::RDFModuleWidget ui;
+	Ui::BraggModuleWidget ui;
 	// Update controls within widget
 	void updateControls();
 	// Disable sensitive controls within widget, ready for main code to run
 	void disableSensitiveControls();
 	// Enable sensitive controls within widget, ready for main code to run
 	void enableSensitiveControls();
-	// Data Type Enum
-	enum DataType { FullData=1, BoundData=2, UnboundData=3, BraggData=4,
-			UnweightedGRData=10, 
-			WeightedGRData=20, 
-			UnweightedSQData=30, 
-			WeightedSQData=40};
 
 
 	/*
@@ -79,13 +74,6 @@ class RDFModuleWidget : public ModuleWidget
 	 * Widgets / Functions
 	 */
 	private:
-	// Add data from PartialSet to tree
-	void addPartialSetToTree(PartialSet& bragg, QTreeWidgetItem* topLevelItem, RDFModuleWidget::DataType rootType, const char* rootTitle, int addAverageContributions = 0);
-	// Repopulate tree with source data
-	void repopulateSourceTree();
-
-	private slots:
-	void on_SourcesTree_itemDoubleClicked(QTreeWidgetItem* item, int column);
 };
 
 #endif
