@@ -168,12 +168,14 @@ bool NeutronSQModule::process(DUQ& duq, ProcessPool& procPool)
 		PartialSet& unweightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", NULL, GenericItem::InRestartFileFlag, &created);
 		if (created) unweightedsq.setUpPartials(unweightedgr.atomTypes(), cfg->niceName(), "unweighted", "sq", "Q, 1/Angstroms");
 
-		// Is the PartialSet already up-to-date?
-		if (DUQSys::sameString(unweightedsq.fingerprint(), CharString("%i", cfg->coordinateIndex())))
+		// Is the PartialSet already up-to-date? Do we force its calculation anyway?
+		bool& forceCalculation = GenericListHelper<bool>::retrieve(cfg->moduleData(), "_ForceNeutronSQ", NULL, false);
+		if ((!forceCalculation) && DUQSys::sameString(unweightedsq.fingerprint(), CharString("%i", cfg->coordinateIndex())))
 		{
 			Messenger::print("NeutronSQ: Unweighted partial S(Q) are up-to-date for Configuration '%s'.\n", cfg->name());
 			continue;
 		}
+		forceCalculation = false;
 
 		// Transform g(r) into S(Q)
 		if (!SQModule::calculateUnweightedSQ(procPool, cfg, unweightedgr, unweightedsq, qMin, qDelta, qMax, cfg->atomicDensity(), windowFunction, qBroadening)) return false;
