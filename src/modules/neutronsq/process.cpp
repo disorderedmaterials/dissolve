@@ -126,7 +126,7 @@ bool NeutronSQModule::process(DUQ& duq, ProcessPool& procPool)
 	GenericList& moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : duq.processingModuleData();
 
 	NeutronSQModule::NormalisationType normalisation = normalisationType(keywords_.asString("Normalisation"));
-	if (normalisation == NeutronSQModule::nNormalisationTypes) return Messenger::error("Partials: Invalid normalisation type '%s' found.\n", keywords_.asString("Normalisation"));
+	if (normalisation == NeutronSQModule::nNormalisationTypes) return Messenger::error("NeutronSQ: Invalid normalisation type '%s' found.\n", keywords_.asString("Normalisation"));
 	const BroadeningFunction& qBroadening = KeywordListHelper<BroadeningFunction>::retrieve(keywords_, "QBroadening", BroadeningFunction());
 	const double qDelta = keywords_.asDouble("QDelta");
 	const double qMin = keywords_.asDouble("QMin");

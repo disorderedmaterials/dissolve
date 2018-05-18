@@ -59,14 +59,14 @@ bool RDFModule::process(DUQ& duq, ProcessPool& procPool)
 	RDFModule::AveragingScheme averagingScheme = RDFModule::averagingScheme(keywords_.asString("AveragingScheme"));
 	if (averagingScheme == RDFModule::nAveragingSchemes)
 	{
-		Messenger::error("Partials: Invalid averaging scheme '%s' found.\n", keywords_.asString("AveragingScheme"));
+		Messenger::error("RDF: Invalid averaging scheme '%s' found.\n", keywords_.asString("AveragingScheme"));
 		return false;
 	}
 	const BroadeningFunction& intraBroadening = KeywordListHelper<BroadeningFunction>::retrieve(keywords_, "IntraBroadening", BroadeningFunction());
 	RDFModule::PartialsMethod method = RDFModule::partialsMethod(keywords_.asString("Method"));
 	if (method == RDFModule::nPartialsMethods)
 	{
-		Messenger::error("Partials: Invalid calculation method '%s' found.\n", keywords_.asString("Method"));
+		Messenger::error("RDF: Invalid calculation method '%s' found.\n", keywords_.asString("Method"));
 		return false;
 	}
 	const bool internalTest = keywords_.asBool("InternalTest");
