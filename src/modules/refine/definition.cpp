@@ -49,6 +49,7 @@ int RefineModule::nTargetableConfigurations()
 const char* RefineModule::dependentModules()
 {
 	// If the 'OnlyWhenStable' keyword is 'true', we require the Energy module
+	// TODO This needs to be updated since Partials module doesn't exist. Just check for presence of EnergyStable while running instead?
 	if (keywords_.asBool("OnlyWhenStable")) return "Energy";
 	else return "";
 }
