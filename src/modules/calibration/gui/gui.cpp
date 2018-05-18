@@ -1,6 +1,6 @@
 /*
-	*** QFit Module - Functions
-	*** src/modules/qfit/functions.cpp
+	*** Calibration Module - GUI
+	*** src/modules/calibration/gui/gui.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -19,5 +19,12 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/qfit/qfit.h"
+#include "modules/calibration/calibration.h"
+#include "modules/calibration/gui/modulewidget.h"
+
+// Return a new widget controlling this Module
+ModuleWidget* CalibrationModule::createWidget(QWidget* parent, DUQ& dUQ)
+{
+	return new CalibrationModuleWidget(parent, this, dUQ);
+}
 

@@ -28,7 +28,7 @@
 #include "modules/intrashake/intrashake.h"
 #include "modules/md/md.h"
 #include "modules/molshake/molshake.h"
-#include "modules/qfit/qfit.h"
+#include "modules/calibration/calibration.h"
 #include "modules/rdf/rdf.h"
 #include "modules/refine/refine.h"
 #include "modules/sanitycheck/sanitycheck.h"
@@ -45,6 +45,7 @@
 ModuleRegistry::ModuleRegistry()
 {
 	ModuleRegistrar<AtomShakeModule> atomShakeRegistrar;
+	ModuleRegistrar<CalibrationModule> calibrationRegistrar;
 	ModuleRegistrar<ChecksModule> checksRegistrar;
 	ModuleRegistrar<EnergyModule> energyRegistrar;
 	ModuleRegistrar<ExportModule> exportRegistrar;
@@ -52,7 +53,6 @@ ModuleRegistry::ModuleRegistry()
 	ModuleRegistrar<IntraShakeModule> intraShakeRegistrar;
 	ModuleRegistrar<MDModule> mdRegistrar;
 	ModuleRegistrar<MolShakeModule> molShakeRegistrar;
-	ModuleRegistrar<QFitModule> qFitRegistrar;
 	ModuleRegistrar<RDFModule> rdfRegistrar;
 	ModuleRegistrar<RefineModule> refineRegistrar;
 	ModuleRegistrar<SanityCheckModule> sanityCheckRegistrar;

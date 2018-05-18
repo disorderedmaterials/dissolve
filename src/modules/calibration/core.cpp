@@ -1,6 +1,6 @@
 /*
-	*** QFit Module - Core
-	*** src/modules/qfit/core.cpp
+	*** Calibration Module - Core
+	*** src/modules/calibration/core.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -19,17 +19,17 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/qfit/qfit.h"
+#include "modules/calibration/calibration.h"
 
 // Static Members
-List<Module> QFitModule::instances_;
+List<Module> CalibrationModule::instances_;
 
 /*
  * Constructor / Destructor
  */
 
 // Constructor
-QFitModule::QFitModule() : Module()
+CalibrationModule::CalibrationModule() : Module()
 {
 	// Add to instances list and set unique name for this instance
 	instances_.own(this);
@@ -40,7 +40,7 @@ QFitModule::QFitModule() : Module()
 }
 
 // Destructor
-QFitModule::~QFitModule()
+CalibrationModule::~CalibrationModule()
 {
 }
 
@@ -49,13 +49,13 @@ QFitModule::~QFitModule()
  */
 
 // Create instance of this module
-List<Module>& QFitModule::instances()
+List<Module>& CalibrationModule::instances()
 {
 	return instances_;
 }
 
 // Create instance of this module
-Module* QFitModule::createInstance()
+Module* CalibrationModule::createInstance()
 {
-	return new QFitModule;
+	return new CalibrationModule;
 }

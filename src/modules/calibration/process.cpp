@@ -1,6 +1,6 @@
 /*
-	*** QFit Module - Processing
-	*** src/modules/qfit/process.cpp
+	*** Calibration Module - Processing
+	*** src/modules/calibration/process.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -19,19 +19,19 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/qfit/qfit.h"
+#include "modules/calibration/calibration.h"
 #include "main/duq.h"
 #include "base/sysfunc.h"
 #include "templates/genericlisthelper.h"
 
 // Return whether the Module has a processing stage
-bool QFitModule::hasProcessing()
+bool CalibrationModule::hasProcessing()
 {
 	return true;
 }
 
 // Run main processing
-bool QFitModule::process(DUQ& duq, ProcessPool& procPool)
+bool CalibrationModule::process(DUQ& duq, ProcessPool& procPool)
 {
 	/*
 	 * Grab dependent Module pointers
@@ -39,7 +39,7 @@ bool QFitModule::process(DUQ& duq, ProcessPool& procPool)
 	Module* partialsModule = dependentModule("Partials");
 	if (!partialsModule)
 	{
-		Messenger::error("No Partials Module associated to QFitModule '%s'.\n", uniqueName());
+		Messenger::error("No Partials Module associated to CalibrationModule '%s'.\n", uniqueName());
 		return false;
 	}
 

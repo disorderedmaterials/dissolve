@@ -1,6 +1,6 @@
 /*
-	*** QFit Module - Options
-	*** src/modules/qfit/options.cpp
+	*** Calibration Module - Options
+	*** src/modules/calibration/options.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -19,17 +19,17 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/qfit/qfit.h"
+#include "modules/calibration/calibration.h"
 #include "module/keywordtypes.h"
 
 // Set up keywords for Module
-void QFitModule::setUpKeywords()
+void CalibrationModule::setUpKeywords()
 {
 	keywords_.add(new BoolModuleKeyword(true), "ExampleKeyword", "Example keyword description", "<args>");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int QFitModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix)
+int CalibrationModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix)
 {
 	return -1;
 }
