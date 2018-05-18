@@ -30,7 +30,7 @@ const char* RefineModule::name()
 // Return brief description of module
 const char* RefineModule::brief()
 {
-	return "Refine Module";
+	return "Refine interatomic potentials based on differences between calculated and reference data";
 }
 
 // Return instance type for module
