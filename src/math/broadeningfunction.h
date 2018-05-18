@@ -68,10 +68,6 @@ class BroadeningFunction : public GenericItemBase
 	// Whether function is inverted - y returns yFT, and vice versa
 	bool inverted_;
 
-	private:
-	// Set up any dependent parameters based on the input set of parameters
-	void setUpDependentParameters();
-
 	public:
 	// Set function data
 	void set(FunctionType function, double p1 = 0.0, double p2 = 0.0, double p3 = 0.0, double p4 = 0.0, double p5 = 0.0, double p6 = 0.0);
@@ -79,12 +75,18 @@ class BroadeningFunction : public GenericItemBase
 	bool set(LineParser& parser, int startArg);
 	// Return function type
 	FunctionType function() const;
+	// Return number of parameters required
+	int nParameters() const;
 	// Return specified parameter
 	double parameter(int index) const;
+	// Return parameters array
+	double* parameters();
 	// Return specified parameter name
 	const char* parameterName(int index) const;
 	// Return short summary of function parameters
 	CharString parameterSummary() const;
+	// Set up any dependent parameters based on the current parameters
+	void setUpDependentParameters();
 	// Set inversion state
 	void setInverted(bool state);
 	// Return value of function given parameters x and omega

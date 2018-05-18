@@ -183,6 +183,51 @@ bool BroadeningFunction::set(LineParser& parser, int startArg)
 	return true;
 }
 
+// Return function type
+BroadeningFunction::FunctionType BroadeningFunction::function() const
+{
+	return function_;
+}
+
+// Return number of parameters required
+int BroadeningFunction::nParameters() const
+{
+	return nFunctionParameters(function_);
+}
+
+// Return specified parameter
+double BroadeningFunction::parameter(int index) const
+{
+	return parameters_[index];
+}
+
+// Return parameters array
+double* BroadeningFunction::parameters()
+{
+	return parameters_;
+}
+
+// Return specified parameter name
+const char* BroadeningFunction::parameterName(int index) const
+{
+	return BroadeningFunctionParameters[function_][index];
+}
+
+// Return short summary of function parameters
+CharString BroadeningFunction::parameterSummary() const
+{
+	if (BroadeningFunctionNParameters[function_] == 0) return "<No Parameters>";
+
+	CharString result;
+	for (int n=0; n<BroadeningFunctionNParameters[function_]; ++n)
+	{
+		if (n == 0) result.strcatf("%s=%f", BroadeningFunctionParameters[function_][n], parameters_[n]);
+		else result.strcatf(", %s=%f", BroadeningFunctionParameters[function_][n], parameters_[n]);
+	}
+
+	return result;
+}
+
 // Set up any dependent parameters based on the input set of parameters
 void BroadeningFunction::setUpDependentParameters()
 {
@@ -221,39 +266,6 @@ void BroadeningFunction::setUpDependentParameters()
 		default:
 			Messenger::error("Function form '%s' not accounted for in setUpDependentParameters().\n", BroadeningFunction::functionType(function_));
 	}
-}
-
-// Return function type
-BroadeningFunction::FunctionType BroadeningFunction::function() const
-{
-	return function_;
-}
-
-// Return specified parameter
-double BroadeningFunction::parameter(int index) const
-{
-	return parameters_[index];
-}
-
-// Return specified parameter name
-const char* BroadeningFunction::parameterName(int index) const
-{
-	return BroadeningFunctionParameters[function_][index];
-}
-
-// Return short summary of function parameters
-CharString BroadeningFunction::parameterSummary() const
-{
-	if (BroadeningFunctionNParameters[function_] == 0) return "<No Parameters>";
-
-	CharString result;
-	for (int n=0; n<BroadeningFunctionNParameters[function_]; ++n)
-	{
-		if (n == 0) result.strcatf("%s=%f", BroadeningFunctionParameters[function_][n], parameters_[n]);
-		else result.strcatf(", %s=%f", BroadeningFunctionParameters[function_][n], parameters_[n]);
-	}
-
-	return result;
 }
 
 // Set inversion state
