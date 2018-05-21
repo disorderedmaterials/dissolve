@@ -28,6 +28,7 @@
 // Forward Declarations
 class DUQ;
 class DUQWindow;
+class KeywordWidgetBase;
 class Module;
 class ModuleReference;
 
@@ -63,7 +64,8 @@ class FlowBlock : public QWidget
 	Module* module_;
 	// Reference for associated Module
 	ModuleReference* moduleReference_;
-
+	// List of keyword widgets displayed
+	RefList<KeywordWidgetBase,bool> keywordWidgets_;
 
 	public:
 	// Return reference for associated Module
@@ -89,6 +91,7 @@ class FlowBlock : public QWidget
 	void enableSensitiveControls();
 
 	public slots:
+	void on_ToggleKeywordsButton_clicked(bool checked);
 	void on_RemoveButton_clicked(bool checked);
 	void on_RunButton_clicked(bool checked);
 	void on_EnabledCheck_clicked(bool checked);
@@ -96,8 +99,7 @@ class FlowBlock : public QWidget
 
 	signals:
 	void windowClosed(QString windowTitle);
-	void shiftModuleUp(void* module);
-	void shiftModuleDown(void* module);
+	void settingsToggled();
 	void removeModule(void* module);
 	void moduleRun();
 };

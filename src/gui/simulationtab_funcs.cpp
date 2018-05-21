@@ -20,7 +20,7 @@
 */
 
 #include "gui/simulationtab.h"
-#include "gui/modulechart.h"
+#include "gui/modulechart.hui"
 #include "main/duq.h"
 #include "base/lineparser.h"
 

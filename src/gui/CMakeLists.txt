@@ -8,7 +8,6 @@ SET(gui_MOC_HDRS
   forcefieldtab.h
   gui.h
   maintab.h
-  modulechart.h
   modulecontrolwidget.h
   modulewidget.h
   pairpotentialwidget.h
@@ -18,6 +17,7 @@ SET(gui_MOC_HDRS
   systemtab.h
   workspacetab.h
 
+  modulechart.hui
   outputhandler.hui
   tmdiarea.hui
   thread.hui
@@ -50,7 +50,7 @@ SET(gui_SRCS
   gui_menu.cpp
   gui_tabs.cpp
   maintab.cpp
-  modulechart.cpp
+  modulechart_funcs.cpp
   modulecontrolwidget_funcs.cpp
   modulewidget.cpp
   outputhandler_funcs.cpp

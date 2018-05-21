@@ -1,6 +1,6 @@
 /*
 	*** Module Chart
-	*** src/gui/modulechart.cpp
+	*** src/gui/modulechart_funcs.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -19,7 +19,7 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/modulechart.h"
+#include "gui/modulechart.hui"
 #include "gui/flowblock.h"
 #include "module/list.h"
 #include "module/module.h"
@@ -85,6 +85,7 @@ void ModuleChart::updateControls()
 		{
 			// No current FlowBlock reference, so must create suitable widget
 			FlowBlock* flowBlock = new FlowBlock(this, duqWindow_, modRef);
+			connect(flowBlock, SIGNAL(settingsToggled()), this, SLOT(layOutWidgets()));
 			newDisplayedWidgets.add(flowBlock);
 		}
 	}
