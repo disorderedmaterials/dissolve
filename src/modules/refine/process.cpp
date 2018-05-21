@@ -281,7 +281,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 					// Copy the unweighted data and wight weight it according to the natural isotope / concentration factor calculated above
 					XYData data = combinedUnweightedSQ.ref(i, j);
 					data.arrayY() *= factor;
-// 					data->setName(CharString("Simulated Partial %s-%s", at1->name(), at2->name()));
+					data.setName(CharString("Simulated %s-%s", at1->name(), at2->name()));
 
 					// Add this partial data to the scattering matrix
 					if (!scatteringMatrix_.addPartialReferenceData(data, at1, at2, factor, (1.0 - augmentationParam))) return Messenger::error("Refine: Failed to augment scattering matrix with partial %s-%s.\n", at1->name(), at2->name());
