@@ -627,6 +627,11 @@ template <class T, class D> class RefListIterator
 
 		return (currentItem_ ? currentItem_->item : NULL);
 	}
+	// Return current reference item
+	RefListItem<T,D>* currentItem()
+	{
+		return currentItem_;
+	}
 	// Return reference to current data
 	D& currentData()
 	{
