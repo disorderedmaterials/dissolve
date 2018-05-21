@@ -4,13 +4,16 @@
 # Meta-Objects
 SET(gui_MOC_HDRS
   configurationtab.h
+  flowblock.h
   forcefieldtab.h
   gui.h
   maintab.h
+  modulechart.h
   modulecontrolwidget.h
   modulewidget.h
   pairpotentialwidget.h
   processingtab.h
+  simulationtab.h
   speciestab.h
   systemtab.h
   workspacetab.h
@@ -24,11 +27,13 @@ QT5_WRAP_CPP(gui_MOC_SRCS ${gui_MOC_HDRS})
 # User Interface Files
 SET(gui_UIS
   configurationtab.ui
+  flowblock.ui
   forcefieldtab.ui
   gui.ui
   modulecontrolwidget.ui
   pairpotentialwidget.ui
   processingtab.ui
+  simulationtab.ui
   speciestab.ui
   systemtab.ui
   workspacetab.ui
@@ -38,17 +43,20 @@ QT5_WRAP_UI(gui_UIS_H ${gui_UIS})
 # Source files (not Qt UI files or custom .h [uih])
 SET(gui_SRCS
   configurationtab_funcs.cpp
+  flowblock_funcs.cpp
   forcefieldtab_funcs.cpp
   gui_control.cpp
   gui_funcs.cpp
   gui_menu.cpp
   gui_tabs.cpp
   maintab.cpp
+  modulechart.cpp
   modulecontrolwidget_funcs.cpp
   modulewidget.cpp
   outputhandler_funcs.cpp
   pairpotentialwidget_funcs.cpp
   processingtab_funcs.cpp
+  simulationtab_funcs.cpp
   speciestab_funcs.cpp
   systemtab_funcs.cpp
   thread_funcs.cpp

@@ -23,6 +23,7 @@
 #include "gui/configurationtab.h"
 #include "gui/forcefieldtab.h"
 #include "gui/processingtab.h"
+#include "gui/simulationtab.h"
 #include "gui/speciestab.h"
 #include "gui/systemtab.h"
 #include "gui/workspacetab.h"
@@ -91,6 +92,9 @@ void DUQWindow::addCoreTabs()
 
 	MainTab* systemTab = new SystemTab(this, duq_, ui.MainTabs, "System");
 	tabs_.own(systemTab);
+
+	MainTab* simulationTab = new SimulationTab(this, duq_, ui.MainTabs, "Simulation");
+	tabs_.own(simulationTab);
 }
 
 // Add tab for specified Configuration target
