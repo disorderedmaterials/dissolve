@@ -70,9 +70,6 @@ double CalibrationModuleCostFunctions::intraBroadeningCost(double* alpha, int nA
 			PartialSet& originalGR = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "OriginalGR");
 			PartialSet& unweightedGR = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedGR");
 			RDFModule::calculateUnweightedGR(originalGR, unweightedGR, broadening, smoothing);
-
-			// Make sure the structure factors will be updated by the NeutronSQ module
-			GenericListHelper<bool>::realise(cfg->moduleData(), "_ForceNeutronSQ") = true;
 		}
 	}
 
@@ -83,6 +80,10 @@ double CalibrationModuleCostFunctions::intraBroadeningCost(double* alpha, int nA
 	{
 		// Check for ReferenceData first
 		if (!duq_.processingModuleData().contains("ReferenceData", module->uniqueName())) continue;
+
+		// Make sure the structure factors will be updated by the NeutronSQ module - set flag in the target Configurations
+		RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
+		while (Configuration* cfg = configIterator.iterate()) GenericListHelper<bool>::realise(cfg->moduleData(), "_ForceNeutronSQ") = true;
 
 		// Run the NeutronSQModule (quietly)
 		Messenger::mute();
