@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "dUQ"
-#define MyAppVersion "0.33.10"
+#define MyAppVersion "0.34.0"
 #define MyAppPublisher "Tristan Youngs"
 #define MyAppURL "https://www.projectaten.com/"
 #define MyAppExeName "dUQ-gui.exe"
@@ -28,7 +28,7 @@ DefaultDirName={pf}\dUQ
 DefaultGroupName={#MyAppName}
 LicenseFile=..\..\COPYING
 OutputDir=..\..\
-OutputBaseFilename=dUQ-0.33.10
+OutputBaseFilename=dUQ-0.34.0
 SetupIconFile=dUQ.ico
 Compression=lzma
 SolidCompression=yes

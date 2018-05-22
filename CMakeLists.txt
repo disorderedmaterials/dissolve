@@ -3,8 +3,8 @@ project(dUQ)
 set(DESCRIPTION "dUQ")
 set(AUTHOR "Tristan Youngs")
 set(VERSION_MAJOR "0")
-set(VERSION_MINOR "33")
-set(VERSION_PATCH "10")
+set(VERSION_MINOR "34")
+set(VERSION_PATCH "0")
 
 set(CMAKE_BUILD_TYPE "Release")
 
