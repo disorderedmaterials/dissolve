@@ -41,8 +41,6 @@ FlowBlock::FlowBlock(QWidget* parent, DUQWindow* duqWindow, ModuleReference* mod
 
 	initialiseWindow(module_);
 
-	initialiseControls(module_);
-
 	updateControls();
 }
 
@@ -58,122 +56,17 @@ void FlowBlock::initialiseWindow(Module* module)
 	{
 		CharString topText("%s (%s)", module->name(), module->uniqueName());
 		ui.TopLabel->setText(topText.get());
-		ui.BottomLabel->setText(module->frequencyDetails(duq_.iteration()));
+		CharString bottomText("Runs @ %s", module->frequencyDetails(duq_.iteration()));
+		ui.BottomLabel->setText(bottomText.get());
 	}
 	else
 	{
 		ui.TopLabel->setText("? (?) @ ?");
-		ui.BottomLabel->setText("Targets: ?");
-	}
-}
-
-// Initialise controls
-void FlowBlock::initialiseControls(Module* module)
-{
-	if (!module) return;
-
-	// Create keyword widgets in a new grid layout
-	QGridLayout* keywordsLayout = new QGridLayout(ui.KeywordsFrame);
-	keywordsLayout->setContentsMargins(4,4,4,4);
-	keywordsLayout->setSpacing(4);
-	int row = 0;
-	QWidget* widget;
-	KeywordWidgetBase* base;
-
-	// Select source list for keywords that have potentially been replicated / updated there
-	GenericList& moduleData = module->configurationLocal() ? module->targetConfigurations().firstItem()->moduleData() : duq_.processingModuleData();
-
-	ListIterator<ModuleKeywordBase> keywordIterator(module->keywords().keywords());
-	while (ModuleKeywordBase* keyword = keywordIterator.iterate())
-	{
-		QLabel* nameLabel = new QLabel(keyword->keyword());
-		nameLabel->setToolTip(keyword->description());
-		keywordsLayout->addWidget(nameLabel, row, 0);
-
-		// The widget to create here depends on the data type of the keyword
-		if (keyword->type() == ModuleKeywordBase::IntegerData)
-		{
-			IntegerKeywordWidget* intWidget = new IntegerKeywordWidget(NULL, keyword, moduleData, module->uniqueName());
-			connect(intWidget, SIGNAL(keywordValueChanged()), duqWindow_, SLOT(setModified()));
-			widget = intWidget;
-			base = intWidget;
-		}
-		else if (keyword->type() == ModuleKeywordBase::DoubleData)
-		{
-			DoubleKeywordWidget* doubleWidget = new DoubleKeywordWidget(NULL, keyword, moduleData, module->uniqueName());
-			connect(doubleWidget, SIGNAL(keywordValueChanged()), duqWindow_, SLOT(setModified()));
-			widget = doubleWidget;
-			base = doubleWidget;
-		}
-		else if (keyword->type() == ModuleKeywordBase::CharStringData)
-		{
-			CharStringKeywordWidget* charWidget = new CharStringKeywordWidget(NULL, keyword, moduleData, module->uniqueName());
-			connect(charWidget, SIGNAL(keywordValueChanged()), duqWindow_, SLOT(setModified()));
-			widget = charWidget;
-			base = charWidget;
-		}
-		else if (keyword->type() == ModuleKeywordBase::BoolData)
-		{
-			BoolKeywordWidget* boolWidget = new BoolKeywordWidget(NULL, keyword, moduleData, module->uniqueName());
-			connect(boolWidget, SIGNAL(keywordValueChanged()), duqWindow_, SLOT(setModified()));
-			widget = boolWidget;
-			base = boolWidget;
-		}
-		else if (keyword->type() == ModuleKeywordBase::BroadeningFunctionData)
-		{
-			BroadeningFunctionKeywordWidget* broadeningFunctionWidget = new BroadeningFunctionKeywordWidget(NULL, keyword, moduleData, module->uniqueName());
-			connect(broadeningFunctionWidget, SIGNAL(keywordValueChanged()), duqWindow_, SLOT(setModified()));
-			widget = broadeningFunctionWidget;
-			base = broadeningFunctionWidget;
-		}
-		else if (keyword->type() == ModuleKeywordBase::IsotopologueListData)
-		{
-			IsotopologueListKeywordWidget* isotopologueListWidget = new IsotopologueListKeywordWidget(NULL, keyword, moduleData, module->uniqueName());
-			connect(isotopologueListWidget, SIGNAL(keywordValueChanged()), duqWindow_, SLOT(setModified()));
-			widget = isotopologueListWidget;
-			base = isotopologueListWidget;
-		}
-		else if (keyword->type() == ModuleKeywordBase::WindowFunctionData)
-		{
-			WindowFunctionKeywordWidget* windowFunctionWidget = new WindowFunctionKeywordWidget(NULL, keyword, moduleData, module->uniqueName());
-			connect(windowFunctionWidget, SIGNAL(keywordValueChanged()), duqWindow_, SLOT(setModified()));
-			widget = windowFunctionWidget;
-			base = windowFunctionWidget;
-		}
-		else
-		{
-			widget = NULL;
-			base = NULL;
-		}
-
-		// Set tooltip on widget, and add to the layout and our list of controls
-		if (widget)
-		{
-			widget->setToolTip(keyword->description());
-			keywordsLayout->addWidget(widget, row, 1);
-			keywordWidgets_.add(base);
-		}
-
-		++row;
+		ui.BottomLabel->setText("Runs @ ");
 	}
 
-// 	// Add a vertical spacer to the end to take up any extra space
-// 	keywordsLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding), row, 0);
-
-// 	// Create module widget
-// 	QVBoxLayout* widgetLayout = new QVBoxLayout(ui.WidgetWidget);
-// 	widgetLayout->setContentsMargins(0,0,0,0);
-// 	widgetLayout->setSpacing(0);
-// 	moduleWidget_ = module->createWidget(ui.WidgetWidget, duq_);
-// 	if (moduleWidget_ == NULL) Messenger::printVerbose("Module '%s' did not provide a valid controller widget.\n", module->name());
-// 	else widgetLayout->addWidget(moduleWidget_);
-// 
-// 	// Set and disable the panel toggle button if there is no Module widget
-// 	if (!moduleWidget_)
-// 	{
-// 		setPanelState(ModuleControlWidget::OnlyControlsVisible);
-// 		ui.TogglePanelsButton->setEnabled(false);
-// 	}
+	// Set up our keywords widget
+	ui.KeywordsFrame->setUp(duqWindow_, module_);
 }
 
 /*
@@ -255,7 +148,6 @@ void FlowBlock::on_ToggleKeywordsButton_clicked(bool checked)
 
 	adjustSize();
 	updateGeometry();
-	printf("TOGGLED to %i : sizeHint is now %i x %i\n", checked, sizeHint().width(), sizeHint().height());
 
 	emit(settingsToggled());
 }
@@ -274,7 +166,7 @@ void FlowBlock::on_RunButton_clicked(bool checked)
 	emit moduleRun();
 }
 
-void FlowBlock::on_EnabledCheck_clicked(bool checked)
+void FlowBlock::on_EnabledButton_clicked(bool checked)
 {
 	if (refreshing_) return;
 
@@ -285,13 +177,13 @@ void FlowBlock::on_EnabledCheck_clicked(bool checked)
 	duqWindow_->setModified();
 }
 
-void FlowBlock::on_FrequencySpin_valueChanged(int value)
-{
-	if (refreshing_) return;
-
-	if (!module_) return;
-	
-	module_->setFrequency(value);
-
-	duqWindow_->setModified();
-}
+// void FlowBlock::on_FrequencySpin_valueChanged(int value)
+// {
+// 	if (refreshing_) return;
+// 
+// 	if (!module_) return;
+// 	
+// 	module_->setFrequency(value);
+// 
+// 	duqWindow_->setModified();
+// }

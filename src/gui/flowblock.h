@@ -52,8 +52,6 @@ class FlowBlock : public QWidget
 	Ui::FlowBlockWidget ui;
 	// Initialise window
 	void initialiseWindow(Module* module);
-	// Initialise controls
-	void initialiseControls(Module* module);
 
 
 	/*
@@ -98,11 +96,10 @@ class FlowBlock : public QWidget
 	void on_ToggleKeywordsButton_clicked(bool checked);
 	void on_RemoveButton_clicked(bool checked);
 	void on_RunButton_clicked(bool checked);
-	void on_EnabledCheck_clicked(bool checked);
-	void on_FrequencySpin_valueChanged(int value);
+	void on_EnabledButton_clicked(bool checked);
+// 	void on_FrequencySpin_valueChanged(int value);
 
 	signals:
-	void windowClosed(QString windowTitle);
 	void settingsToggled();
 	void removeModule(void* module);
 	void moduleRun();
