@@ -89,6 +89,10 @@ class FlowBlock : public QWidget
 	void disableSensitiveControls();
 	// Enable sensitive controls within widget, ready for main code to run
 	void enableSensitiveControls();
+	// Return right-hand-side flow anchor point
+	QPoint globalRightHandFlowAnchor() const;
+	// Return left-hand-side flow anchor point
+	QPoint globalLeftHandFlowAnchor() const;
 
 	public slots:
 	void on_ToggleKeywordsButton_clicked(bool checked);

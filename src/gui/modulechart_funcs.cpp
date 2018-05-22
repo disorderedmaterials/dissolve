@@ -23,12 +23,14 @@
 #include "gui/flowblock.h"
 #include "module/list.h"
 #include "module/module.h"
+#include <QPainter>
 
 // Constructor
 ModuleChart::ModuleChart(DUQWindow* duqWindow, ModuleList& modules, QWidget* parent) : QWidget(parent), modules_(modules)
 {
 	duqWindow_ = duqWindow;
 
+	minSpacing_ = 32;
 	nColumns_ = 1;
 	nRows_ = 0;
 	horizontalSpacing_ = 0;
@@ -47,10 +49,93 @@ ModuleChart::~ModuleChart()
  * QWidget Reimplementations
  */
 
+// Paint event
+void ModuleChart::paintEvent(QPaintEvent* event)
+{
+	// Draw suitable connecting lines between widgets, illustrating the execution path of the code
+	QPainter painter(this);
+
+	// Set up some QPens
+	QPen solidPen(Qt::black);
+	solidPen.setWidth(2.0);
+	QPen dottedPen(Qt::gray);
+	dottedPen.setWidth(2.0);
+	dottedPen.setStyle(Qt::DotLine);
+	dottedPen.setCapStyle(Qt::RoundCap);
+
+	// Set up a simple path representing an arrow
+	QPainterPath rightArrow;
+	rightArrow.moveTo(50,50);
+	rightArrow.lineTo(-5, 3);
+	rightArrow.lineTo(-5, -3);
+	rightArrow.closeSubpath();
+
+	RefListIterator<FlowBlock,bool> blockIterator(displayedWidgets_);
+	int col = 0, row = 0;
+	QPoint p1, p2;
+	while (FlowBlock* block = blockIterator.iterate())
+	{
+		// If this is the last block, there is nothing more to do
+		if (blockIterator.last()) break;
+
+		// Grab the next block
+		FlowBlock* nextBlock = blockIterator.peek();
+
+		/*
+		 * Draw a connecting line from the right-hand side of this block, to the left-hand side of the next one.
+		 * We will always draw the line at a y-coordinate 16 pixels below the tops of the widgets, for consistency.
+		 */
+
+		// If the two blocks are on the same row, just draw a simple solid horizontal line. If not, draw a dashed line in parts.
+		if (col < (nColumns_-1))
+		{
+			painter.setPen(solidPen);
+			p1 = mapFromGlobal(block->globalRightHandFlowAnchor());
+			p2 = mapFromGlobal(nextBlock->globalLeftHandFlowAnchor());
+			painter.drawLine(p1, p2);
+		}
+		else
+		{
+			// Work out the mid-line y-coordinate to follow, between the two rows
+			int yMid = tops_[row+1] - minSpacing_/2;
+			painter.setPen(dottedPen);
+
+			// Move out into the right-hand margin, making sure we are outside the widest widget in the column
+			p1 = mapFromGlobal(block->globalRightHandFlowAnchor());
+			p2 = p1 + QPoint(widths_[col] - block->width() + minSpacing_/2, 0);
+			painter.drawLine(p1, p2);
+
+			// Move down to the midpoint between rows
+			p1 = QPoint(p2.x(), yMid);
+			painter.drawLine(p2, p1);
+
+			// Move back across to the left-hand-side margin
+			p2 = QPoint(minSpacing_/2, p1.y());
+			painter.drawLine(p1, p2);
+
+			// Drop down to the next widget's level
+			QPoint p3 = mapFromGlobal(nextBlock->globalLeftHandFlowAnchor());
+			p1 = QPoint(p2.x(), p3.y());
+			painter.drawLine(p2, p1);
+
+			// And finally on to the widget's left-hand-side
+			painter.drawLine(p1, p3);
+		}
+
+		++col;
+		if (col == nColumns_)
+		{
+			col = 0;
+			++row;
+		}
+	}
+}
+
 // Geometry changed
 void ModuleChart::resizeEvent(QResizeEvent* event)
 {
 	layOutWidgets();
+	repaint();
 }
 
 /*
@@ -80,6 +165,7 @@ void ModuleChart::updateControls()
 			// Widget already exists, so remove the reference from the old list and add it to our new one
 			newDisplayedWidgets.add(blockRef->item, blockRef->data);
 			displayedWidgets_.remove(blockRef);
+			blockRef->item->updateControls();
 		}
 		else
 		{
@@ -122,10 +208,8 @@ void ModuleChart::layOutHorizontally()
 	 * Determine how many columns we can fit across our current geometry, obeying a minimum spacing between widgets.
 	 * Start by trying to lay out everything on one line. If this doesn't fit, increase the number of rows and try again.
 	 */
-	const int minSpacing = 32;
-	const int maxWidth = width() - 2*minSpacing;
+	const int maxWidth = width() - minSpacing_;
 	int colCount;
-	QList<int> columnWidths;
 	int totalColumnWidth, lastNCols = 0, maxColumns = displayedWidgets_.nItems();
 
 	for (nColumns_ = displayedWidgets_.nItems(); nColumns_ > 1; --nColumns_)
@@ -137,28 +221,28 @@ void ModuleChart::layOutHorizontally()
 		nRows_ = 1;
 		colCount = 0;
 		totalColumnWidth = 0;
-		columnWidths.clear();
+		widths_.clear();
 		RefListIterator<FlowBlock,bool> blockIterator(displayedWidgets_);
 		while (FlowBlock* block = blockIterator.iterate())
 		{
 			// Get the width of this block
-			int blockWidth = block->width();
+			int blockWidth = block->minimumSize().width();
 
-			// If this is the first row, add our width to the columnWidths array, and increase totalColumnWidth
+			// If this is the first row, add our width to the widths_ array, and increase totalColumnWidth
 			if (nRows_ == 1)
 			{
-				columnWidths += blockWidth;
-				totalColumnWidth += blockWidth;
-				if (!blockIterator.first()) totalColumnWidth += minSpacing;
+				widths_.add(blockWidth);
+				totalColumnWidth += blockWidth + minSpacing_;
+// 				totalColumnWidth += minSpacing;
 			}
 			else
 			{
 				// Not the first row, so check this width against the one stored for the current column.
-				if (blockWidth > columnWidths[colCount])
+				if (blockWidth > widths_[colCount])
 				{
-					// The current widget is wider than any other in this column. Need to check the totalColumnWidth taking account of the difference
-					totalColumnWidth += (blockWidth - columnWidths[colCount]);
-					columnWidths[colCount] = blockWidth;
+					// The current widget is wider than any other in this column. Need to adjust the totalColumnWidth taking account of the difference
+					totalColumnWidth += (blockWidth - widths_[colCount]);
+					widths_[colCount] = blockWidth;
 				}
 			}
 
@@ -185,33 +269,37 @@ void ModuleChart::layOutHorizontally()
 // 	printf("NCOLS = %i, nROWS = %i\n", nColumns_, nRows_);
 
 	// Work out row / column top-lefts
-	tops_.initialise(nRows_, nColumns_);
-	lefts_.initialise(nRows_, nColumns_);
+	tops_.clear();
+	lefts_.clear();
 	RefListIterator<FlowBlock,bool> blockIterator(displayedWidgets_);
-	int top = minSpacing, rowMaxHeight;
+	int top = minSpacing_, rowMaxHeight;
 	for (int row = 0; row < nRows_; ++row)
 	{
-		int left = minSpacing;
+		// Add the top coordinate of this row to our array
+		tops_.add(top);
+
+		int left = minSpacing_;
 		rowMaxHeight = 0;
 		for (int col = 0; col < nColumns_; ++col)
 		{
+			// Store this column left-hand position
+			if (row == 0) lefts_.add(left);
+
 			// Get FlowBlock for this grid reference (i.e. the next one in the list)
 			FlowBlock* block = blockIterator.iterate();
 
 			// Check the current height against the required height for this block's widget (if we still have a current one) and update if necessary
-			if (block && (block->height() > rowMaxHeight)) rowMaxHeight = block->height();
-
-			// Store this position, and set the widgets top-left
-			tops_.ref(row, col) = top;
-			lefts_.ref(row, col) = left;
-			if (block) block->move(left, top);
+			if (block && (block->minimumSize().height() > rowMaxHeight)) rowMaxHeight = block->minimumSize().height();
+ 
+			// Set the widget's geometry based on these coordinates and its SizeHint - we give it all the space it needs
+			if (block) block->setGeometry(left, top, block->minimumSize().width(), block->minimumSize().height());
 
 			// Increase left-hand coordinate
-			left += columnWidths.at(col) + minSpacing;
+			left += widths_[col] + minSpacing_;
 		}
 
 		// Increase top-side coordinate
-		top += rowMaxHeight + minSpacing;
+		top += rowMaxHeight + minSpacing_;
 	}
 }
 

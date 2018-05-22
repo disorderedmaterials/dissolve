@@ -42,6 +42,8 @@ FlowBlock::FlowBlock(QWidget* parent, DUQWindow* duqWindow, ModuleReference* mod
 	initialiseWindow(module_);
 
 	initialiseControls(module_);
+
+	updateControls();
 }
 
 FlowBlock::~FlowBlock()
@@ -56,14 +58,7 @@ void FlowBlock::initialiseWindow(Module* module)
 	{
 		CharString topText("%s (%s)", module->name(), module->uniqueName());
 		ui.TopLabel->setText(topText.get());
-		CharString bottomText;
-		RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
-		while (Configuration* cfg = configIterator.iterate())
-		{
-			if (bottomText.isEmpty()) bottomText.sprintf("Targets: %s", cfg->name());
-			else bottomText.strcatf(", %s", cfg->name());
-		}
-		ui.BottomLabel->setText(bottomText.get());
+		ui.BottomLabel->setText(module->frequencyDetails(duq_.iteration()));
 	}
 	else
 	{
@@ -91,7 +86,6 @@ void FlowBlock::initialiseControls(Module* module)
 	ListIterator<ModuleKeywordBase> keywordIterator(module->keywords().keywords());
 	while (ModuleKeywordBase* keyword = keywordIterator.iterate())
 	{
-		printf("Keyword: %s\n", keyword->keyword());
 		QLabel* nameLabel = new QLabel(keyword->keyword());
 		nameLabel->setToolTip(keyword->description());
 		keywordsLayout->addWidget(nameLabel, row, 0);
@@ -205,6 +199,18 @@ void FlowBlock::updateControls()
 {
 	if (!module_) return;
 
+	// Make sure tooltip on HeaderFrame is up-to-date
+	CharString toolTip("Targets: ");
+	RefListIterator<Configuration,bool> configIterator(module_->targetConfigurations());
+	while (Configuration* cfg = configIterator.iterate())
+	{
+		if (configIterator.first()) toolTip.strcatf("%s", cfg->name());
+		else toolTip.strcatf(", %s", cfg->name());
+	}
+	ui.HeaderFrame->setToolTip(toolTip.get());
+
+	// Set button status
+	ui.EnabledButton->setChecked(module_->enabled());
 }
 
 // Disable sensitive controls within widget, ready for main code to run
@@ -227,9 +233,29 @@ void FlowBlock::enableSensitiveControls()
 // 	if (moduleWidget_) moduleWidget_->enableSensitiveControls();
 }
 
+// Return right-hand-side flow anchor point
+QPoint FlowBlock::globalRightHandFlowAnchor() const
+{
+	QPoint X = mapToGlobal(rect().topRight() + QPoint(1, 0));
+	QPoint Y = mapToGlobal(ui.HeaderFrame->rect().topRight()) + QPoint(0, ui.HeaderFrame->height()/2);
+	return QPoint(X.x(), Y.y());
+}
+
+// Return left-hand-side flow anchor point
+QPoint FlowBlock::globalLeftHandFlowAnchor() const
+{
+	QPoint X = mapToGlobal(rect().topLeft() + QPoint(-1, 0));
+	QPoint Y = mapToGlobal(ui.HeaderFrame->rect().topLeft()) + QPoint(0, ui.HeaderFrame->height()/2);
+	return QPoint(X.x(), Y.y());
+}
+
 void FlowBlock::on_ToggleKeywordsButton_clicked(bool checked)
 {
 	ui.KeywordsFrame->setVisible(checked);
+
+	adjustSize();
+	updateGeometry();
+	printf("TOGGLED to %i : sizeHint is now %i x %i\n", checked, sizeHint().width(), sizeHint().height());
 
 	emit(settingsToggled());
 }

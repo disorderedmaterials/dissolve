@@ -22,7 +22,7 @@
 #ifndef DUQ_MODULECHART_H
 #define DUQ_MODULECHART_H
 
-#include "templates/array2d.h"
+#include "templates/array.h"
 #include "templates/reflist.h"
 #include <QWidget>
 
@@ -57,6 +57,10 @@ class ModuleChart : public QWidget
 	/*
 	 * QWidget Reimplementations
 	 */
+	protected:
+	// Paint event
+	void paintEvent(QPaintEvent* event);
+
 	public:
 	// Geometry changed
 	void resizeEvent(QResizeEvent* event);
@@ -88,6 +92,8 @@ class ModuleChart : public QWidget
 	 * Widget Layout
 	 */
 	private:
+	// Minimum spacing between widgets / extremes of chart view
+	int minSpacing_;
 	// Current number of columns of widgets
 	int nColumns_;
 	// Current number of rows of widgets
@@ -97,9 +103,11 @@ class ModuleChart : public QWidget
 	// Current vertical spacing between rows / edges
 	int verticalSpacing_;
 	// Left-hand-side coordinates of columns
-	Array2D<int> lefts_;
+	Array<int> lefts_;
 	// Top-side coordinates of rows
-	Array2D<int> tops_;
+	Array<int> tops_;
+	// Pixel widths of columns
+	Array<int> widths_;
 
 	private:
 	// Lay out widgets snaking horizontally

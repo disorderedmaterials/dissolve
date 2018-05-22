@@ -61,9 +61,7 @@ QLayout* SimulationTab::subWidgetLayout()
 // Update controls in tab
 void SimulationTab::updateControls()
 {
-	// Loop over our SubWidgets
-	ListIterator<SubWidget> subWidgetIterator(subWidgets_);
-	while (SubWidget* subWidget = subWidgetIterator.iterate()) subWidget->updateControls();
+	chartWidget_->updateControls();
 }
 
 // Disable sensitive controls within tab, ready for main code to run
