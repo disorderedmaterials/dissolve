@@ -25,14 +25,14 @@ clean-local:
 
 libgui_la_SOURCES = icons.qrc
 
-libgui_la_SOURCES += gui.ui configurationtab.ui flowblock.ui forcefieldtab.ui modulecontrolwidget.ui pairpotentialwidget.ui processingtab.ui simulationtab.ui speciestab.ui systemtab.ui workspacetab.ui
+libgui_la_SOURCES += gui.ui configurationtab.ui flowblock.ui forcefieldtab.ui modulecontrolwidget.ui moduletab.ui pairpotentialwidget.ui processingtab.ui simulationtab.ui speciestab.ui systemtab.ui workspacetab.ui
 
 libgui_la_SOURCES += modulechart.hui outputhandler.hui thread.hui
 
 libgui_la_SOURCES += configurationtab_funcs.cpp
 libgui_la_SOURCES += flowblock_funcs.cpp forcefieldtab_funcs.cpp
 libgui_la_SOURCES += gui_control.cpp gui_funcs.cpp gui_menu.cpp gui_tabs.cpp
-libgui_la_SOURCES += maintab.cpp modulechart_funcs.cpp modulecontrolwidget_funcs.cpp modulekeywordswidget_funcs.cpp modulewidget.cpp
+libgui_la_SOURCES += maintab.cpp modulechart_funcs.cpp modulecontrolwidget_funcs.cpp modulekeywordswidget_funcs.cpp moduletab_funcs.cpp modulewidget.cpp
 libgui_la_SOURCES += outputhandler_funcs.cpp
 libgui_la_SOURCES += pairpotentialwidget_funcs.cpp processingtab_funcs.cpp
 libgui_la_SOURCES += simulationtab_funcs.cpp speciestab_funcs.cpp systemtab_funcs.cpp
@@ -43,7 +43,7 @@ libgui_la_SOURCES += workspacetab_funcs.cpp
 noinst_HEADERS = configurationtab.h
 noinst_HEADERS += flowblock.h forcefieldtab.h
 noinst_HEADERS += gui.h
-noinst_HEADERS += maintab.h modulecontrolwidget.h modulekeywordswidget.h modulewidget.h
+noinst_HEADERS += maintab.h modulecontrolwidget.h modulekeywordswidget.h moduletab.h modulewidget.h
 noinst_HEADERS += pairpotentialwidget.h processingtab.h
 noinst_HEADERS += simulationtab.h speciestab.h systemtab.h
 noinst_HEADERS += workspacetab.h
