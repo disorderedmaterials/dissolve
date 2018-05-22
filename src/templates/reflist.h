@@ -627,6 +627,15 @@ template <class T, class D> class RefListIterator
 
 		return (currentItem_ ? currentItem_->item : NULL);
 	}
+	// Return the next item (if any) but don't advance the iterator
+	T* peek()
+	{
+		if (reverse_)
+		{
+			return (currentItem_ ? (currentItem_->prev ? currentItem_->prev->item : NULL) : NULL);
+		}
+		else return (currentItem_ ? (currentItem_->next ? currentItem_->next->item : NULL) : NULL);
+	}
 	// Return current reference item
 	RefListItem<T,D>* currentItem()
 	{
