@@ -64,6 +64,10 @@ class ModuleChart : public QWidget
 	public:
 	// Geometry changed
 	void resizeEvent(QResizeEvent* event);
+	// Size hint
+	QSize sizeHint() const;
+	// Minimum size hint
+	QSize minimumSizeHint() const;
 
 
 	/*
@@ -108,6 +112,8 @@ class ModuleChart : public QWidget
 	Array<int> tops_;
 	// Pixel widths of columns
 	Array<int> widths_;
+	// Pixel heights of rows
+	Array<int> heights_;
 
 	private:
 	// Lay out widgets snaking horizontally

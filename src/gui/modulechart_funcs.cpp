@@ -138,6 +138,22 @@ void ModuleChart::resizeEvent(QResizeEvent* event)
 	repaint();
 }
 
+// Size hint
+QSize ModuleChart::sizeHint() const
+{
+	// Our requested width is the left-most edge of the left-most column, plus the width of the column, plus the spacing.
+	// Our requested height is the top-most edge of the last row, plus the height of the row, plus the spacing.
+	QSize hint(lefts_.last() + widths_.last() + minSpacing_, tops_.last() + heights_.last() + minSpacing_);
+
+	return hint;
+}
+
+// Minimum size hint
+QSize ModuleChart::minimumSizeHint() const
+{
+	return sizeHint();
+}
+
 /*
  * Display Widgets
  */
@@ -271,6 +287,7 @@ void ModuleChart::layOutHorizontally()
 	// Work out row / column top-lefts
 	tops_.clear();
 	lefts_.clear();
+	heights_.clear();
 	RefListIterator<FlowBlock,bool> blockIterator(displayedWidgets_);
 	int top = minSpacing_, rowMaxHeight;
 	for (int row = 0; row < nRows_; ++row)
@@ -298,6 +315,9 @@ void ModuleChart::layOutHorizontally()
 			left += widths_[col] + minSpacing_;
 		}
 
+		// Store the row height
+		heights_.add(rowMaxHeight);
+
 		// Increase top-side coordinate
 		top += rowMaxHeight + minSpacing_;
 	}
@@ -312,4 +332,8 @@ void ModuleChart::layOutVertically()
 void ModuleChart::layOutWidgets()
 {
 	layOutHorizontally();
+
+	updateGeometry();
+
+	repaint();
 }
