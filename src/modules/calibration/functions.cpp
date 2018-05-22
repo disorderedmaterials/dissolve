@@ -32,7 +32,7 @@
  */
 
 // Constructor
-CalibrationModuleCostFunctions::CalibrationModuleCostFunctions(DUQ& duq, ProcessPool& procPool, RefList<Module,bool>& intraBroadeningModules, RefList<Module,bool>& intraBroadeningReferences) : duq_(duq), processPool_(procPool), intraBroadeningModules_(intraBroadeningModules), intraBroadeningReferences_(intraBroadeningReferences)
+CalibrationModuleCostFunctions::CalibrationModuleCostFunctions(DUQ& duq, ProcessPool& procPool, RefList<Module,bool>& intraBroadeningModules, RefList<Module,CalibrationModule::IntraBroadeningFitTarget>& intraBroadeningReferences) : duq_(duq), processPool_(procPool), intraBroadeningModules_(intraBroadeningModules), intraBroadeningReferences_(intraBroadeningReferences)
 {
 }
 
@@ -75,7 +75,7 @@ double CalibrationModuleCostFunctions::intraBroadeningCost(double* alpha, int nA
 
 	// Go over NeutronSQ Modules, run the processing, and sum errors in an ReferenceData we have
 	double totalError = 0.0;
-	RefListIterator<Module,bool> neutronModuleIterator(intraBroadeningReferences_);
+	RefListIterator<Module,CalibrationModule::IntraBroadeningFitTarget> neutronModuleIterator(intraBroadeningReferences_);
 	while (Module* module = neutronModuleIterator.iterate())
 	{
 		// Check for ReferenceData first
@@ -90,11 +90,22 @@ double CalibrationModuleCostFunctions::intraBroadeningCost(double* alpha, int nA
 		module->executeMainProcessing(duq_, processPool_);
 		Messenger::unMute();
 
-		// Grab WeightedSQ and ReferenceData and compare
-		PartialSet& weightedSQ = GenericListHelper<PartialSet>::retrieve(duq_.processingModuleData(), "WeightedSQ", module->uniqueName());
-		XYData& referenceData = GenericListHelper<XYData>::retrieve(duq_.processingModuleData(), "ReferenceData", module->uniqueName());
-
-		totalError += weightedSQ.total().error(referenceData);
+		// Grab target data and compare 
+		CalibrationModule::IntraBroadeningFitTarget target = neutronModuleIterator.currentData();
+		if ((target == CalibrationModule::IntraBroadeningTargetBoth) || (target == CalibrationModule::IntraBroadeningTargetSQ))
+		{
+			// Grab WeightedSQ and ReferenceData and compare
+			PartialSet& weightedSQ = GenericListHelper<PartialSet>::retrieve(duq_.processingModuleData(), "WeightedSQ", module->uniqueName());
+			XYData& referenceData = GenericListHelper<XYData>::retrieve(duq_.processingModuleData(), "ReferenceData", module->uniqueName());
+			totalError += weightedSQ.total().error(referenceData);
+		}
+		if ((target == CalibrationModule::IntraBroadeningTargetBoth) || (target == CalibrationModule::IntraBroadeningTargetGR))
+		{
+			// Grab WeightedGR and ReferenceDataFT and compare
+			PartialSet& weightedGR = GenericListHelper<PartialSet>::retrieve(duq_.processingModuleData(), "WeightedGR", module->uniqueName());
+			XYData& referenceDataFT = GenericListHelper<XYData>::retrieve(duq_.processingModuleData(), "ReferenceDataFT", module->uniqueName());
+			totalError += weightedGR.total().error(referenceDataFT);
+		}
 	}
 
 	return totalError;

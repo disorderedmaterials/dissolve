@@ -24,11 +24,27 @@
 #include "module/list.h"
 #include "templates/genericlisthelper.h"
 
+// IntraBroadening Fitting Targets
+const char* IntraBroadeningFitTargetKeywords[] = { "S(Q)", "g(r)", "Both" };
+
+// Convert string to functional form
+CalibrationModule::IntraBroadeningFitTarget CalibrationModule::intraBroadeningFitTarget(const char* s)
+{
+	for (int n=0; n<CalibrationModule::nIntraBroadeningFitTargets; ++n) if (DUQSys::sameString(s, IntraBroadeningFitTargetKeywords[n])) return (CalibrationModule::IntraBroadeningFitTarget) n;
+	return CalibrationModule::nIntraBroadeningFitTargets;
+}
+
+// Return fit target text
+const char* CalibrationModule::intraBroadeningFitTarget(CalibrationModule::IntraBroadeningFitTarget ft)
+{
+	return IntraBroadeningFitTargetKeywords[ft];
+}
+
 // Set up keywords for Module
 void CalibrationModule::setUpKeywords()
 {
 	keywords_.add(new ComplexModuleKeyword(1,1), "AdjustIntraBroadening", "Add specified RDF module as a target for IntraBroadening adjustment", "<RDFModule>");
-	keywords_.add(new ComplexModuleKeyword(1,1), "IntraBroadeningNeutronReference", "Add specified NeutronSQ module as a reference for IntraBroadening adjustment", "<NeutronSQModule>");
+	keywords_.add(new ComplexModuleKeyword(1,2), "IntraBroadeningNeutronReference", "Add specified NeutronSQ module as a reference for IntraBroadening adjustment", "<NeutronSQModule> [target=S(Q)]");
 	keywords_.add(new BoolModuleKeyword(true), "OnlyWhenStable", "Only perform calibrations when all related Configuration energies are stable");
 }
 
@@ -67,7 +83,15 @@ int CalibrationModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParse
 			return false;
 		}
 
-		intraBroadeningReferences_.add(module);
+		// Was a specific target supplied?
+		CalibrationModule::IntraBroadeningFitTarget target = CalibrationModule::IntraBroadeningTargetSQ;
+		if (parser.hasArg(2))
+		{
+			target = CalibrationModule::intraBroadeningFitTarget(parser.argc(2));
+			if (target == CalibrationModule::nIntraBroadeningFitTargets) return false;
+		}
+
+		intraBroadeningReferences_.add(module, target);
 	}
 	else return -1;
 

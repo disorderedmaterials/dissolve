@@ -76,6 +76,19 @@ class CalibrationModule : public Module
 	/*
 	 * Options
 	 */
+	public:
+	// IntraBroadening Fitting Targets
+	enum IntraBroadeningFitTarget
+	{
+		IntraBroadeningTargetSQ,
+		IntraBroadeningTargetGR,
+		IntraBroadeningTargetBoth,
+		nIntraBroadeningFitTargets
+	};
+	// Convert string to functional form
+	static IntraBroadeningFitTarget intraBroadeningFitTarget(const char* s);
+	// Return fit target text
+	static const char* intraBroadeningFitTarget(IntraBroadeningFitTarget ft);
 	protected:
 	// Set up options for Module
 	void setUpKeywords();
@@ -102,7 +115,7 @@ class CalibrationModule : public Module
 	// RDF Module targets for IntraBroadening calibration
 	RefList<Module,bool> intraBroadeningModules_;
 	// NeutronSQ Module targets for IntraBroadening calibration
-	RefList<Module,bool> intraBroadeningReferences_;
+	RefList<Module,IntraBroadeningFitTarget> intraBroadeningReferences_;
 
 
 	/*
@@ -118,7 +131,7 @@ class CalibrationModuleCostFunctions
 {
 	public:
 	// Constructor
-	CalibrationModuleCostFunctions(DUQ& duq, ProcessPool& procPool, RefList<Module,bool>& intraBroadeningModules, RefList<Module,bool>& intraBroadeningReferences);
+	CalibrationModuleCostFunctions(DUQ& duq, ProcessPool& procPool, RefList<Module,bool>& intraBroadeningModules, RefList<Module,CalibrationModule::IntraBroadeningFitTarget>& intraBroadeningReferences);
 
 	private:
 	// DUQ Main Object
@@ -128,7 +141,7 @@ class CalibrationModuleCostFunctions
 	// RDFModule targets for IntraBroadening fitting
 	RefList<Module,bool>& intraBroadeningModules_;
 	// NeutronSQModule targets for IntraBroadening fitting
-	RefList<Module,bool>& intraBroadeningReferences_;
+	RefList<Module,CalibrationModule::IntraBroadeningFitTarget>& intraBroadeningReferences_;
 
 	public:
 	// Cost function for intraBroadening minimisation
