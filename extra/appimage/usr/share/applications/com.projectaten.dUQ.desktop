@@ -1,5 +1,5 @@
 [Desktop Entry]
-Version=0.33.9
+Version=0.33.10
 Encoding=UTF-8
 Comment=dUQ - Potential-based refinement of neutron scattering data
 Exec=duq-gui %f
