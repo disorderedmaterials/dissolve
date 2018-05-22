@@ -35,17 +35,11 @@
     <number>4</number>
    </property>
    <item>
-    <widget class="QScrollArea" name="ModuleScroll">
-     <property name="autoFillBackground">
-      <bool>false</bool>
-     </property>
-     <property name="horizontalScrollBarPolicy">
-      <enum>Qt::ScrollBarAlwaysOff</enum>
-     </property>
+    <widget class="QScrollArea" name="ScrollArea">
      <property name="widgetResizable">
       <bool>true</bool>
      </property>
-     <widget class="QWidget" name="ModuleScrollContents">
+     <widget class="QWidget" name="scrollAreaWidgetContents">
       <property name="geometry">
        <rect>
         <x>0</x>
@@ -54,7 +48,6 @@
         <height>790</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout"/>
      </widget>
     </widget>
    </item>

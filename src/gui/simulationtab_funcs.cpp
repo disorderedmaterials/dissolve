@@ -31,7 +31,7 @@ SimulationTab::SimulationTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent,
 
 	// Create a ModuleChart widget and set its source list
 	chartWidget_ = new ModuleChart(duqWindow, duq_.processingModules());
-	ui.ModuleScroll->setWidget(chartWidget_);
+	ui.ScrollArea->setWidget(chartWidget_);
 }
 
 SimulationTab::~SimulationTab()
@@ -67,17 +67,13 @@ void SimulationTab::updateControls()
 // Disable sensitive controls within tab, ready for main code to run
 void SimulationTab::disableSensitiveControls()
 {
-	// Disable sensitive controls in SubWidgets
-	ListIterator<SubWidget> subWidgetIterator(subWidgets_);
-	while (SubWidget* subWidget = subWidgetIterator.iterate()) subWidget->disableSensitiveControls();
+	chartWidget_->setEnabled(false);
 }
 
 // Enable sensitive controls within tab, ready for main code to run
 void SimulationTab::enableSensitiveControls()
 {
-	// Enable sensitive controls in SubWidgets
-	ListIterator<SubWidget> subWidgetIterator(subWidgets_);
-	while (SubWidget* subWidget = subWidgetIterator.iterate()) subWidget->enableSensitiveControls();
+	chartWidget_->setEnabled(true);
 }
 
 /*
