@@ -8,6 +8,7 @@ SET(gui_MOC_HDRS
   forcefieldtab.h
   gui.h
   maintab.h
+  modulekeywordswidget.h
   modulecontrolwidget.h
   modulewidget.h
   pairpotentialwidget.h
@@ -52,6 +53,7 @@ SET(gui_SRCS
   maintab.cpp
   modulechart_funcs.cpp
   modulecontrolwidget_funcs.cpp
+  modulekeywordswidget_funcs.cpp
   modulewidget.cpp
   outputhandler_funcs.cpp
   pairpotentialwidget_funcs.cpp
