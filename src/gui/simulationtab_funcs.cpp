@@ -31,6 +31,7 @@ SimulationTab::SimulationTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent,
 
 	// Create a ModuleChart widget and set its source list
 	chartWidget_ = new ModuleChart(duqWindow, duq_.processingModules());
+	chartWidget_->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
 	ui.ScrollArea->setWidget(chartWidget_);
 }
 
