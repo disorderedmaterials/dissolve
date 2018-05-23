@@ -659,7 +659,7 @@ bool RDFModule::sumUnweightedGR(ProcessPool& procPool, Module* parentModule, Mod
 		combinedAtomTypes.add(cfg->usedAtomTypesList());
 	}
 	rho0 = 1.0 / rho0;
-	Messenger::print("Effective density for summed unweighted g(r) over group is %f\n", rho0);
+	Messenger::print("Effective density for summed unweighted g(r) over group is %f atoms/Angstrom**3.\n", rho0);
 
 	// Finalise the combined AtomTypes matrix
 	combinedAtomTypes.finalise();
