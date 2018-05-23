@@ -1,6 +1,6 @@
 /*
 	*** Gradient Bar
-	*** src/gui/widgets/gradientbar.cpp
+	*** src/gui/widgets/gradientbar_funcs.cpp
 	Copyright T. Youngs 2013-2018
 
 	This file is part of dUQ.

@@ -1,6 +1,6 @@
 /*
-	*** ColourButton
-	*** src/gui/widgets/colourbutton.cpp
+	*** Colour Button
+	*** src/gui/widgets/colourbutton_funcs.cpp
 	Copyright T. Youngs 2013-2018
 
 	This file is part of dUQ.

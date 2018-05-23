@@ -1,7 +1,7 @@
 /*
 	*** Gradient Bar
-	*** src/gui/uchroma/gui/gradientbar.hui
-	Copyright T. Youngs 2013
+	*** src/gui/widgets/gradientbar.hui
+	Copyright T. Youngs 2018
 
 	This file is part of dUQ.
 
@@ -19,8 +19,8 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_PLOTWIDGETGRADIENTBAR_H
-#define DUQ_PLOTWIDGETGRADIENTBAR_H
+#ifndef DUQ_GRADIENTBAR_H
+#define DUQ_GRADIENTBAR_H
 
 #include "gui/uchroma/classes/colourscale.h"
 #include <QWidget>

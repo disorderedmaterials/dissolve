@@ -1,7 +1,7 @@
 /*
-	*** ColourButton
-	*** src/gui/uchroma/gui/colourbutton.hui
-	Copyright T. Youngs 2013
+	*** Colour Button
+	*** src/gui/widgets/colourbutton.hui
+	Copyright T. Youngs 2018
 
 	This file is part of dUQ.
 
@@ -19,8 +19,8 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_PLOTWIDGETCOLOURBUTTON_H
-#define DUQ_PLOTWIDGETCOLOURBUTTON_H
+#ifndef DUQ_COLOURBUTTON_H
+#define DUQ_COLOURBUTTON_H
 
 #include <QPushButton>
 
