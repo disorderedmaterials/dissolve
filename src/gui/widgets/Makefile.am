@@ -21,12 +21,14 @@ SUFFIXES: .ui .hui .qrc
 clean-local:
 	-rm -f ui_* *.o moc_*.cpp colourbutton.cpp gradientbar.cpp icons.cpp texponentialspin.cpp tmdiarea.cpp
 
-libwidgets_la_SOURCES = colourbutton.hui colourbutton_funcs.cpp
-libwidgets_la_SOURCES += gradientbar.hui gradientbar_funcs.cpp
-libwidgets_la_SOURCES += mimestrings.cpp mimetreewidget.hui mimetreewidget_funcs.cpp mimetreewidgetitem.cpp
-libwidgets_la_SOURCES += subwidget.cpp subwindow.cpp
-libwidgets_la_SOURCES += texponentialspin.hui texponentialspin_funcs.cpp
-libwidgets_la_SOURCES += tmenubutton.hui tpopupwidget.hui tmenubutton_funcs.cpp tmenubuttongroup.cpp tpopupwidget_funcs.cpp
+libwidgets_la_SOURCES = colourbutton.hui gradientbar.hui mimetreewidget.hui supertabbar.hui supertabwidget.hui texponentialspin.hui tmenubutton.hui tpopupwidget.hui
+
+libwidgets_la_SOURCES += colourbutton_funcs.cpp
+libwidgets_la_SOURCES += gradientbar_funcs.cpp
+libwidgets_la_SOURCES += mimestrings.cpp mimetreewidget_funcs.cpp mimetreewidgetitem.cpp
+libwidgets_la_SOURCES += subwidget.cpp subwindow.cpp supertabbar_funcs.cpp supertabwidget_funcs.cpp
+libwidgets_la_SOURCES += texponentialspin_funcs.cpp
+libwidgets_la_SOURCES += tmenubutton_funcs.cpp tmenubuttongroup.cpp tpopupwidget_funcs.cpp
 
 
 noinst_HEADERS = mimestrings.h mimetreewidgetitem.h

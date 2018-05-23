@@ -12,6 +12,8 @@ SET(widgets_MOC_HDRS
   colourbutton.hui
   gradientbar.hui
   mimetreewidget.hui
+  supertabbar.hui
+  supertabwidget.hui
   texponentialspin.hui
   tmenubutton.hui
   tpopupwidget.hui
