@@ -22,6 +22,8 @@
 #include "modules/calibration/calibration.h"
 #include "main/duq.h"
 #include "modules/energy/energy.h"
+#include "modules/rdf/rdf.h"
+#include "classes/partialset.h"
 #include "base/sysfunc.h"
 #include "templates/genericlisthelper.h"
 #include "templates/praxis.h"
@@ -97,17 +99,45 @@ bool CalibrationModule::process(DUQ& duq, ProcessPool& procPool)
 		// Optimise the parameters - the cost function will regenerate the UnweightedGR in the RDF modules, and reassemble the target NeutronSQ data
 		double error = broadeningMinimiser.minimise(0.1);
 
-		// Final update of BroadeningFunctions
+		Messenger::print("Total error over all specified datasets is %f%%.\n", error);
+
+		// Make sure that we re-broaden the RDFs and NeutronSQ data by the correct (optimal) values before we leave
+		// Store alpha parameters in the BroadeningFunction in the associated RDF modules
 		rdfModuleIterator.restart();
 		while (Module* rdfModule = rdfModuleIterator.iterate())
 		{
 			// Retrieve the BroadeningFunction
 			BroadeningFunction& broadening = KeywordListHelper<BroadeningFunction>::retrieve(rdfModule->keywords(), "IntraBroadening", BroadeningFunction());
+
+			// Need to update any dependent values
 			broadening.setUpDependentParameters();
-			Messenger::print("Module '%s' IntraBroadening parameters now: %s\n", rdfModule->uniqueName(), broadening.parameterSummary().get());
+
+			Messenger::print("Optimal IntraBroadening parameters for '%s' are now: %s\n", rdfModule->uniqueName(), broadening.parameterSummary().get());
+
+			// Recalculate the UnweightedGR for all Configurations targeted by the RDFModule
+			int smoothing = rdfModule->keywords().asInt("Smoothing");
+			RefListIterator<Configuration,bool> configIterator(rdfModule->targetConfigurations());
+			while (Configuration* cfg = configIterator.iterate())
+			{
+				PartialSet& originalGR = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "OriginalGR");
+				PartialSet& unweightedGR = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedGR");
+				RDFModule::calculateUnweightedGR(originalGR, unweightedGR, broadening, smoothing);
+			}
 		}
 
-		Messenger::print("Total error over all specified datasets is %f%%.\n", error);
+		// Go over NeutronSQ Modules and run the processing
+		RefListIterator<Module,CalibrationModule::IntraBroadeningFitTarget> neutronModuleIterator(intraBroadeningReferences_);
+		while (Module* module = neutronModuleIterator.iterate())
+		{
+			// Make sure the structure factors will be updated by the NeutronSQ module - set flag in the target Configurations
+			RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
+			while (Configuration* cfg = configIterator.iterate()) GenericListHelper<bool>::realise(cfg->moduleData(), "_ForceNeutronSQ") = true;
+
+			// Run the NeutronSQModule (quietly)
+			Messenger::mute();
+			module->executeMainProcessing(duq, procPool);
+			Messenger::unMute();
+		}
 	}
 
 	return true;
