@@ -173,11 +173,9 @@ double GaussFit::construct(double requiredError, int maxGaussians)
 
 				// Set up minimiser, minimising test Gaussian only
 				PrAxis<GaussFit> gaussMinimiser(*this, &GaussFit::costAmplitudeWidthXCentreStaticTrial);
-				fitX_.clear();
 				gaussMinimiser.addTarget(trialA);
 				gaussMinimiser.addTarget(trialC);
 				gaussMinimiser.addTarget(trialX);
-// 				fitX_.add(trialX);
 				gaussMinimiser.minimise(0.001, 0.1);
 
 				// Generate trial data consisting of the current approximateData_ plus contribution from the trial Gaussian
@@ -191,12 +189,12 @@ double GaussFit::construct(double requiredError, int maxGaussians)
 				double trialError = sourceData_.error(trialData);
 				if (trialError < currentError)
 				{
-					Messenger::printVerbose("Accepting new Gaussian x = %f, A = %f, c = %f - error reduced from %f to %f\n", trialX, trialA, trialC, currentError, trialError);
+					Messenger::printVerbose("Accepting new Gaussian x = %f, A = %f, c = %f - error reduced from %f to %f\n", trialX, trialA, fabs(trialC), currentError, trialError);
 					currentError = trialError;
 
 					A_.add(trialA);
 					x_.add(trialX);
-					c_.add(trialC);
+					c_.add(fabs(trialC));
 					++nGaussians_;
 					++nAdded;
 
@@ -207,7 +205,7 @@ double GaussFit::construct(double requiredError, int maxGaussians)
 					if (currentError <= requiredError) break;
 					if (nGaussians_ == maxGaussians) break;
 				}
-				else Messenger::printVerbose("Rejecting new Gaussian x = %f, A = %f, c = %f - error increased from %f to %f\n", trialX, trialA, trialC, currentError, trialError);
+				else Messenger::printVerbose("Rejecting new Gaussian x = %f, A = %f, c = %f - error increased from %f to %f\n", trialX, trialA, fabs(trialC), currentError, trialError);
 			}
 
 			// Store current sign of gradient
@@ -431,8 +429,8 @@ double GaussFit::costAmplitudeWidthXCentreStaticTrial(double* alpha, int nAlpha)
 	// Dumb, but effective, check for c2 becoming zero
 	if (c2 == 0.0) return 100.0;
 
-	// Ensure xCentre never goes below zero
-	if (xCentre < 0.0) return 100.0;
+	// Ensure xCentre never goes outside the range of the source data
+	if ((xCentre < sourceData_.xFirst()) || (xCentre > sourceData_.xLast())) return 100.0;
 
 	for (int n=0; n<sourceData_.nPoints(); ++n)
 	{
