@@ -34,6 +34,10 @@ class LineParser;
 class Module;
 class ModuleList;
 class ModuleReference;
+class QDragEnterEvent;
+class QDragLeaveEvent;
+class QDropEvent;
+class QMouseEvent;
 
 // Module Chart - Manages display of a sequence of Modules
 class ModuleChart : public QWidget
@@ -60,14 +64,38 @@ class ModuleChart : public QWidget
 	protected:
 	// Paint event
 	void paintEvent(QPaintEvent* event);
-
-	public:
 	// Geometry changed
 	void resizeEvent(QResizeEvent* event);
 	// Size hint
 	QSize sizeHint() const;
 	// Minimum size hint
 	QSize minimumSizeHint() const;
+	// Mouse press event
+	void mousePressEvent(QMouseEvent* event);
+	// Mouse move event
+	void mouseMoveEvent(QMouseEvent* event);
+	// Mouse release event
+	void mouseReleaseEvent(QMouseEvent* event);
+	// Mouse double-click event
+	void mouseDoubleClickEvent(QMouseEvent* event);
+	// Drag enter event
+	void dragEnterEvent(QDragEnterEvent* event);
+	// Draw move event
+	void dragMoveEvent(QDragMoveEvent* event);
+	// Drag leave event
+	void dragLeaveEvent(QDragLeaveEvent* event);
+	// Drop event
+	void dropEvent(QDropEvent* event);
+
+
+	/*
+	 * Drag / Drop
+	 */
+	private:
+	// Position of mouse click
+	QPoint dragStartPosition_;
+	// FlowBlock we are dragging
+	FlowBlock* draggedBlock_;
 
 
 	/*
@@ -82,6 +110,8 @@ class ModuleChart : public QWidget
 	private:
 	// Find FlowBlock displaying specified ModuleReference
 	RefListItem<FlowBlock,bool>* flowBlockReference(ModuleReference* modRef);
+	// Return the FlowBlock clicked on its header at the specified position (if any)
+	FlowBlock* flowBlockHeaderAt(QPoint pos);
 
 	public:
 	// Update controls within widget
@@ -114,6 +144,11 @@ class ModuleChart : public QWidget
 	Array<int> widths_;
 	// Pixel heights of rows
 	Array<int> heights_;
+	// Size hint for current number of columns / rows
+	QSize sizeHint_;
+	// Minimum size hint (for single column)
+	QSize minimumSizeHint_;
+	
 
 	private:
 	// Lay out widgets snaking horizontally

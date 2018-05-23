@@ -21,8 +21,12 @@
 
 #include "gui/modulechart.hui"
 #include "gui/flowblock.h"
+#include "gui/gui.h"
 #include "module/list.h"
 #include "module/module.h"
+#include <QDrag>
+#include <QMimeData>
+#include <QMouseEvent>
 #include <QPainter>
 
 // Constructor
@@ -30,6 +34,10 @@ ModuleChart::ModuleChart(DUQWindow* duqWindow, ModuleList& modules, QWidget* par
 {
 	duqWindow_ = duqWindow;
 
+	// Drag / Drop
+	draggedBlock_ = NULL;
+
+	// Layout
 	minSpacing_ = 32;
 	nColumns_ = 1;
 	nRows_ = 0;
@@ -37,6 +45,9 @@ ModuleChart::ModuleChart(DUQWindow* duqWindow, ModuleList& modules, QWidget* par
 	verticalSpacing_ = 0;
 
 	refreshing_ = false;
+
+	// Enable drag/drop
+	setAcceptDrops(true);
 
 	updateControls();
 }
@@ -134,24 +145,119 @@ void ModuleChart::paintEvent(QPaintEvent* event)
 // Geometry changed
 void ModuleChart::resizeEvent(QResizeEvent* event)
 {
+	// Work out the new number of columns / rows in the layout, and adjust widget positions to suit
 	layOutWidgets();
+
 	repaint();
 }
 
 // Size hint
 QSize ModuleChart::sizeHint() const
 {
-	// Our requested width is the left-most edge of the left-most column, plus the width of the column, plus the spacing.
-	// Our requested height is the top-most edge of the last row, plus the height of the row, plus the spacing.
-	QSize hint(lefts_.last() + widths_.last() + minSpacing_, tops_.last() + heights_.last() + minSpacing_);
-
-	return hint;
+	return sizeHint_;
 }
 
 // Minimum size hint
 QSize ModuleChart::minimumSizeHint() const
 {
-	return sizeHint();
+	return minimumSizeHint_;
+}
+
+// Mouse press event
+void ModuleChart::mousePressEvent(QMouseEvent* event)
+{
+	// If the left-button was pressed *on a FlowBlock HeaderFrame*, store the current click position. Otherwise do nothing
+	if (event->button() == Qt::LeftButton)
+	{
+		// Check object under mouse
+		draggedBlock_ = flowBlockHeaderAt(mapToGlobal(event->pos()));
+		if (draggedBlock_) printf("BLOCK = %s\n", draggedBlock_->moduleReference()->module()->uniqueName());
+		dragStartPosition_ = event->pos();
+	}
+}
+
+// Mouse move event
+void ModuleChart::mouseMoveEvent(QMouseEvent* event)
+{
+	// If the left button is not down, nothing to do here
+	if (!(event->buttons() & Qt::LeftButton)) return;
+
+	// If we have no draggedBlock_, then nothing to do
+	if (!draggedBlock_) return;
+
+	// Check to see if we should begin a drag event based on the length of the click-drag so far
+	if ((event->pos() - dragStartPosition_).manhattanLength() < QApplication::startDragDistance()) return;
+
+	// Generate mime data for the event
+	QByteArray itemData;
+	QDataStream dataStream(&itemData, QIODevice::WriteOnly);
+	dataStream << draggedBlock_;
+	QMimeData* mimeData = new QMimeData;
+	mimeData->setData("image/x-duq-flowblock", itemData);
+
+	// Construct the drag object
+	QDrag* drag = new QDrag(this);
+	drag->setMimeData(mimeData);
+// 	drag->setHotSpot(dragStartPosition_ -
+	drag->setPixmap(draggedBlock_->grab());
+
+	// Begin the drag event
+	Qt::DropAction dropAction = drag->exec(Qt::MoveAction);
+// 	if (dropAction 
+// 	...
+}
+
+// Mouse release event
+void ModuleChart::mouseReleaseEvent(QMouseEvent* event)
+{
+
+}
+
+// Mouse double-click event
+void ModuleChart::mouseDoubleClickEvent(QMouseEvent* event)
+{
+	// If the left button is not down, nothing to do here
+	if (!(event->buttons() & Qt::LeftButton)) return;
+
+	// Was a FlowBlock's header was under the mouse?
+	FlowBlock* block = flowBlockHeaderAt(mapToGlobal(event->pos()));
+	if (!block) return;
+
+	// Attempt to open the Module in a ModuleTab
+	Module* module = block->moduleReference()->module();
+	if (!module) return;
+	duqWindow_->addModuleTab(module);
+}
+
+// Drag enter event
+void ModuleChart::dragEnterEvent(QDragEnterEvent* event)
+{
+	// Is the correct data type being dragged over us?
+	if (event->mimeData()->hasFormat("image/x-duq-flowblock")) event->accept();
+	else event->ignore();
+}
+
+// Drag leave event
+void ModuleChart::dragLeaveEvent(QDragLeaveEvent* event)
+{
+	// Object has been dragged outside the widget
+	update();
+	event->accept();
+}
+
+// Draw move event
+void ModuleChart::dragMoveEvent(QDragMoveEvent* event)
+{
+	repaint();
+}
+
+// Drop event
+void ModuleChart::dropEvent(QDropEvent* event)
+{
+	if (event->mimeData()->hasFormat("image/x-duq-flowblock"))
+	{
+	}
+	else event->ignore();
 }
 
 /*
@@ -163,6 +269,15 @@ RefListItem<FlowBlock,bool>* ModuleChart::flowBlockReference(ModuleReference* mo
 {
 	RefListIterator<FlowBlock,bool> flowBlockIterator(displayedWidgets_);
 	while (FlowBlock* block = flowBlockIterator.iterate()) if (block->moduleReference() == modRef) return flowBlockIterator.currentItem();
+
+	return NULL;
+}
+
+// Return the FlowBlock clicked on its header at the specified position (if any)
+FlowBlock* ModuleChart::flowBlockHeaderAt(QPoint globalPos)
+{
+	RefListIterator<FlowBlock,bool> flowBlockIterator(displayedWidgets_);
+	while (FlowBlock* block = flowBlockIterator.iterate()) if (block->ui.HeaderFrame->geometry().contains(block->mapFromGlobal(globalPos))) return block;
 
 	return NULL;
 }
@@ -222,13 +337,13 @@ void ModuleChart::layOutHorizontally()
 {
 	/*
 	 * Determine how many columns we can fit across our current geometry, obeying a minimum spacing between widgets.
-	 * Start by trying to lay out everything on one line. If this doesn't fit, increase the number of rows and try again.
+	 * Start by trying to lay out everything on one line. If this doesn't fit, decrease the number of columns and try again.
 	 */
 	const int maxWidth = width() - minSpacing_;
 	int colCount;
 	int totalColumnWidth, lastNCols = 0, maxColumns = displayedWidgets_.nItems();
 
-	for (nColumns_ = displayedWidgets_.nItems(); nColumns_ > 1; --nColumns_)
+	for (nColumns_ = displayedWidgets_.nItems(); nColumns_ >= 1; --nColumns_)
 	{
 		/*
 		 * Loop over FlowBlocks, summing their widths as we go for each row.
@@ -238,6 +353,7 @@ void ModuleChart::layOutHorizontally()
 		colCount = 0;
 		totalColumnWidth = 0;
 		widths_.clear();
+		minimumSizeHint_ = QSize(0,0);
 		RefListIterator<FlowBlock,bool> blockIterator(displayedWidgets_);
 		while (FlowBlock* block = blockIterator.iterate())
 		{
@@ -249,7 +365,9 @@ void ModuleChart::layOutHorizontally()
 			{
 				widths_.add(blockWidth);
 				totalColumnWidth += blockWidth + minSpacing_;
-// 				totalColumnWidth += minSpacing;
+
+				// Store max width in our minimum size hint
+				if (blockWidth > minimumSizeHint_.width()) minimumSizeHint_ = QSize(blockWidth, 0);
 			}
 			else
 			{
@@ -262,8 +380,8 @@ void ModuleChart::layOutHorizontally()
 				}
 			}
 
-			// Check for failure...
-			if (totalColumnWidth > maxWidth) break;
+			// Check if we have exceeded the available width. However, don't break if the number of columns is 1, since we still need to assess the full column width
+			if ((totalColumnWidth > maxWidth) && (nColumns_ > 1)) break;
 
 			// Added this widget OK - if it was the last one in the list, we have found a suitable number of columns
 			if (blockIterator.last()) break;
@@ -281,8 +399,9 @@ void ModuleChart::layOutHorizontally()
 		if (totalColumnWidth <= maxWidth) break;
 	}
 
-	// Now have new number of columns and rows
-// 	printf("NCOLS = %i, nROWS = %i\n", nColumns_, nRows_);
+	// If we get to this point and there are zero columns, there wasn't enough width to fit a single column of widgets in, but we still need one!
+	// nRows should always be correct
+	if (nColumns_ == 0) nColumns_ = 1;
 
 	// Work out row / column top-lefts
 	tops_.clear();
@@ -305,11 +424,18 @@ void ModuleChart::layOutHorizontally()
 			// Get FlowBlock for this grid reference (i.e. the next one in the list)
 			FlowBlock* block = blockIterator.iterate();
 
-			// Check the current height against the required height for this block's widget (if we still have a current one) and update if necessary
-			if (block && (block->minimumSize().height() > rowMaxHeight)) rowMaxHeight = block->minimumSize().height();
+			// Do we still have a valid block?
+			if (block)
+			{
+				// Check the current height against the required height for this block's widget (if we still have a current one) and update if necessary
+				if (block->minimumSize().height() > rowMaxHeight) rowMaxHeight = block->minimumSize().height();
  
-			// Set the widget's geometry based on these coordinates and its SizeHint - we give it all the space it needs
-			if (block) block->setGeometry(left, top, block->minimumSize().width(), block->minimumSize().height());
+				// Set the widget's geometry based on these coordinates and its SizeHint - we give it all the space it needs
+				block->setGeometry(left, top, block->minimumSize().width(), block->minimumSize().height());
+
+				// Store max width in our minimum size hint
+				if (rowMaxHeight > minimumSizeHint_.height()) minimumSizeHint_ = QSize(0, rowMaxHeight);
+			}
 
 			// Increase left-hand coordinate
 			left += widths_[col] + minSpacing_;
@@ -321,6 +447,14 @@ void ModuleChart::layOutHorizontally()
 		// Increase top-side coordinate
 		top += rowMaxHeight + minSpacing_;
 	}
+
+	// Calculate size hint
+	// Our requested width is the left-most edge of the left-most column, plus the width of the column, plus the spacing.
+	// Our requested height is the top-most edge of the last row, plus the height of the row, plus the spacing.
+	sizeHint_ = QSize(lefts_.last() + widths_.last() + minSpacing_, tops_.last() + heights_.last() + minSpacing_);
+
+	// Finalise minimum size hint - we just need to add on the surrounding margins
+	minimumSizeHint_ += QSize(2*minSpacing_, 2*minSpacing_);
 }
 
 // Lay out widgets snaking vertically
