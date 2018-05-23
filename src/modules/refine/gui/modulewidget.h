@@ -42,7 +42,7 @@ class RefineModuleWidget : public ModuleWidget
 	// Associated Module
 	RefineModule* module_;
 	// UChromaViews contained within this widget
-	UChromaViewWidget* dataGraph_, *partialSQGraph_, *partialGRGraph_, *deltaPhiRGraph_, *errorsGraph_;
+	UChromaViewWidget* dataGraph_, *partialSQGraph_, *partialGRGraph_, *deltaPhiRGraph_, *phiMagGraph_, *errorsGraph_;
 	// Reference to DUQ
 	DUQ& dUQ_;
 

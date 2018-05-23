@@ -102,6 +102,22 @@ RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, DUQ& dUQ
 	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
 	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
 
+	// Delta phi(r) Graph
+
+	phiMagGraph_ = ui.PhiMagPlotWidget;
+
+	// Start a new, empty session
+	phiMagGraph_->startNewSession(true);
+	viewPane = phiMagGraph_->currentViewPane();
+	viewPane->setViewType(ViewPane::FlatXYView);
+	viewPane->axes().setTitle(0, "Iteration");
+	viewPane->axes().numberFormat(0).setNDecimals(0);
+	viewPane->axes().setMax(0, 10.0);
+	viewPane->axes().setTitle(1, "\\sym{Delta}\\sym{phi}(\\it{r}), kJ mol\\sup{-1} \\sum{angstrom}\\sup{-1}");
+	viewPane->axes().setMin(1, 0.0);
+	viewPane->axes().setMax(1, 1.0);
+	viewPane->setAutoFollowType(ViewPane::XFollow);
+
 	// Errors Graph
 
 	errorsGraph_ = ui.ErrorsPlotWidget;
@@ -143,12 +159,14 @@ void RefineModuleWidget::updateControls()
 	partialSQGraph_->refreshReferencedDataSets();
 	partialGRGraph_->refreshReferencedDataSets();
 	deltaPhiRGraph_->refreshReferencedDataSets();
+	phiMagGraph_->refreshReferencedDataSets();
 	errorsGraph_->refreshReferencedDataSets();
 
 	dataGraph_->updateDisplay();
 	partialSQGraph_->updateDisplay();
 	partialGRGraph_->updateDisplay();
 	deltaPhiRGraph_->updateDisplay();
+	phiMagGraph_->updateDisplay();
 	errorsGraph_->updateDisplay();
 
 	refreshing_ = false;
@@ -174,6 +192,10 @@ bool RefineModuleWidget::writeState(LineParser& parser)
 	// Write UChromaWidget sessions
 	if (!dataGraph_->writeSession(parser)) return false;
 	if (!partialSQGraph_->writeSession(parser)) return false;
+	if (!partialGRGraph_->writeSession(parser)) return false;
+	if (!deltaPhiRGraph_->writeSession(parser)) return false;
+	if (!phiMagGraph_->writeSession(parser)) return false;
+	if (!errorsGraph_->writeSession(parser)) return false;
 
 	return true;
 }
@@ -184,6 +206,10 @@ bool RefineModuleWidget::readState(LineParser& parser)
 	// Read UChromaWidget sessions
 	if (!dataGraph_->readSession(parser)) return false;
 	if (!partialSQGraph_->readSession(parser)) return false;
+	if (!partialGRGraph_->readSession(parser)) return false;
+	if (!deltaPhiRGraph_->readSession(parser)) return false;
+	if (!phiMagGraph_->readSession(parser)) return false;
+	if (!errorsGraph_->readSession(parser)) return false;
 
 	return true;
 }
@@ -200,7 +226,6 @@ void RefineModuleWidget::setGraphDataTargets(RefineModule* module)
 	const int nTypes = dUQ_.atomTypeList().nItems();
 	int n, m;
 	CharString blockData;
-
 
 	// Loop over groups
 	for (ModuleGroup* group = module_->targetGroups().first(); group != NULL; group = group->next)
@@ -282,5 +307,9 @@ void RefineModuleWidget::setGraphDataTargets(RefineModule* module)
 			}
 		}
 	}
+
+	// Add phi magnitude data
+	blockData.sprintf("Collection 'PhiMag'; Group 'PhiMag; DataSet 'PhiMag'; Source XYData '%s//PhiMag'; EndDataSet; EndCollection", module_->uniqueName());
+	phiMagGraph_->addCollectionFromBlock(blockData);
 }
 

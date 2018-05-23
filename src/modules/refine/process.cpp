@@ -652,6 +652,11 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 
 	Messenger::print("Current magnitude of additional phi(r) over all pair potentials is %12.4e kJ/mol/Angstrom.\n", phiMag);
 
+	// Realise the phiMag array and make sure its object name is set
+	XYData& phiArray = GenericListHelper<XYData>::realise(duq.processingModuleData(), "PhiMag", uniqueName_, GenericItem::InRestartFileFlag);
+	phiArray.setObjectName(CharString("%s//PhiMag", uniqueName_.get()));
+	phiArray.addPoint(duq.iteration(), phiMag);
+
 	return true;
 }
 
