@@ -24,7 +24,7 @@
 #include "base/lineparser.h"
 
 // Constructor / Destructor
-ModuleTab::ModuleTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, Module* module, const char* title) : MainTab(duqWindow, duq, parent, module->uniqueName(), this), module_(module)
+ModuleTab::ModuleTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const char* title, Module* module) : MainTab(duqWindow, duq, parent, module->uniqueName(), this), module_(module)
 {
 	ui.setupUi(this);
 

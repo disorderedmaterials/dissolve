@@ -63,6 +63,8 @@ class MainTab : public ListItem<MainTab>
 	CharString title_;
 
 	public:
+	// Return page widget
+	QWidget* page() const;
 	// Set title of tab
 	void setTitle(const char* title);
 	// Return title of tab

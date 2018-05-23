@@ -194,7 +194,11 @@ class DUQWindow : public QMainWindow
 	// Make specified tab the current one (by index)
 	void setCurrentTab(int tabIndex);
 
-	
+	public:
+	// Add tab for specified Module target
+	void addModuleTab(Module* module);
+
+
 	/*
 	 * SubWidgets
 	 */

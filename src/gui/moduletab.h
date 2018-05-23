@@ -37,7 +37,7 @@ class ModuleTab : public QWidget, public MainTab
 
 	public:
 	// Constructor / Destructor
-	ModuleTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, Module* module, const char* title);
+	ModuleTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const char* title, Module* module);
 	~ModuleTab();
 	// Main form declaration
 	Ui::ModuleTab ui;

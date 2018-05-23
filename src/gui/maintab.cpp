@@ -61,6 +61,12 @@ MainTab::~MainTab()
  * Data
  */
 
+// Return page widget
+QWidget* MainTab::page() const
+{
+	return page_;
+}
+
 // Set title of tab
 void MainTab::setTitle(const char* title)
 {

@@ -22,6 +22,7 @@
 #include "gui/gui.h"
 #include "gui/configurationtab.h"
 #include "gui/forcefieldtab.h"
+#include "gui/moduletab.h"
 #include "gui/processingtab.h"
 #include "gui/simulationtab.h"
 #include "gui/speciestab.h"
@@ -85,6 +86,8 @@ void DUQWindow::clearAllTabs()
 void DUQWindow::addCoreTabs()
 {
 	MainTab* forcefieldTab = new ForcefieldTab(this, duq_, ui.MainTabs, "Forcefield");
+	ui.MainTabs->setTabTextColour(forcefieldTab->page(), QColor(189, 68, 0));
+	ui.MainTabs->setTabIcon(forcefieldTab->page(), QIcon(":/tabs/icons/tabs_ff.svg"));
 	tabs_.own(forcefieldTab);
 
 	MainTab* speciesTab = new SpeciesTab(this, duq_, ui.MainTabs, "Species");
@@ -94,6 +97,8 @@ void DUQWindow::addCoreTabs()
 	tabs_.own(systemTab);
 
 	MainTab* simulationTab = new SimulationTab(this, duq_, ui.MainTabs, "Simulation");
+	ui.MainTabs->setTabTextColour(simulationTab->page(), QColor(11, 36, 118));
+	ui.MainTabs->setTabIcon(simulationTab->page(), QIcon(":/tabs/icons/tabs_flow.svg"));
 	tabs_.own(simulationTab);
 }
 
@@ -152,4 +157,18 @@ void DUQWindow::setCurrentTab(MainTab* tab)
 void DUQWindow::setCurrentTab(int tabIndex)
 {
 	ui.MainTabs->setCurrentIndex(tabIndex);
+}
+
+// Create / go to Module tab for specified Module, provided it has a Module control widget
+void DUQWindow::addModuleTab(Module* module)
+{
+	// Does a tab for this Module already exist
+	MainTab* moduleTab = findTab(module->uniqueName());
+	if (moduleTab) setCurrentTab(moduleTab);
+	else
+	{
+		// Need to create a new ModuleTab
+		MainTab* tab = new ModuleTab(this, duq_, ui.MainTabs, module->uniqueName(), module);
+		tabs_.own(tab);
+	}
 }
