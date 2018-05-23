@@ -26,7 +26,6 @@
 #include "gui/processingtab.h"
 #include "gui/simulationtab.h"
 #include "gui/speciestab.h"
-#include "gui/systemtab.h"
 #include "gui/workspacetab.h"
 #include "classes/configuration.h"
 #include <QInputDialog>
@@ -92,9 +91,6 @@ void DUQWindow::addCoreTabs()
 
 	MainTab* speciesTab = new SpeciesTab(this, duq_, ui.MainTabs, "Species");
 	tabs_.own(speciesTab);
-
-	MainTab* systemTab = new SystemTab(this, duq_, ui.MainTabs, "System");
-	tabs_.own(systemTab);
 
 	MainTab* simulationTab = new SimulationTab(this, duq_, ui.MainTabs, "Simulation");
 	ui.MainTabs->setTabTextColour(simulationTab->page(), QColor(11, 36, 118));

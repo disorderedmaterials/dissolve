@@ -16,7 +16,6 @@ SET(gui_MOC_HDRS
   processingtab.h
   simulationtab.h
   speciestab.h
-  systemtab.h
   workspacetab.h
 
   modulechart.hui
@@ -38,7 +37,6 @@ SET(gui_UIS
   processingtab.ui
   simulationtab.ui
   speciestab.ui
-  systemtab.ui
   workspacetab.ui
 )
 QT5_WRAP_UI(gui_UIS_H ${gui_UIS})
@@ -63,7 +61,6 @@ SET(gui_SRCS
   processingtab_funcs.cpp
   simulationtab_funcs.cpp
   speciestab_funcs.cpp
-  systemtab_funcs.cpp
   thread_funcs.cpp
   tmdiarea_funcs.cpp
   workspacetab_funcs.cpp
