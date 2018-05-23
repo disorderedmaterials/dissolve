@@ -90,6 +90,8 @@ void DUQWindow::addCoreTabs()
 	tabs_.own(forcefieldTab);
 
 	MainTab* speciesTab = new SpeciesTab(this, duq_, ui.MainTabs, "Species");
+	ui.MainTabs->setTabTextColour(speciesTab->page(), QColor(0, 81, 0));
+	ui.MainTabs->setTabIcon(speciesTab->page(), QIcon(":/tabs/icons/tabs_species.svg"));
 	tabs_.own(speciesTab);
 
 	MainTab* simulationTab = new SimulationTab(this, duq_, ui.MainTabs, "Simulation");
@@ -102,6 +104,7 @@ void DUQWindow::addCoreTabs()
 void DUQWindow::addConfigurationTab(Configuration* cfg)
 {
 	MainTab* tab = new ConfigurationTab(this, duq_, ui.MainTabs, cfg->name(), cfg);
+	ui.MainTabs->setTabIcon(tab->page(), QIcon(":/tabs/icons/tabs_configuration.svg"));
 	tabs_.own(tab);
 }
 
