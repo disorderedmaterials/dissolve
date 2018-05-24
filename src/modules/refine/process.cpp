@@ -55,8 +55,8 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	const double augmentationParam = keywords_.asDouble("AugmentationParam");
 	const bool autoMinimumRadii = keywords_.asBool("AutoMinimumRadius");
 	const bool smoothPhiR = keywords_.asBool("DeltaPhiRSmoothing");
-	const int phiRSmoothK = keywords_.asDouble("DeltaPhiRSmoothK");
-	const int phiRSmoothM = keywords_.asDouble("DeltaPhiRSmoothM");
+	const int phiRSmoothK = keywords_.asInt("DeltaPhiRSmoothK");
+	const int phiRSmoothM = keywords_.asInt("DeltaPhiRSmoothM");
 	const double gaussianAccuracy = keywords_.asDouble("GaussianAccuracy");
 	const RefineModule::PotentialInversionMethod inversionMethod = RefineModule::potentialInversionMethod(keywords_.asString("InversionMethod"));
 	const double globalMinimumRadius = keywords_.asDouble("MinimumRadius");
