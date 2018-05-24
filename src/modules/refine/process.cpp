@@ -57,6 +57,8 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	const bool smoothPhiR = keywords_.asBool("DeltaPhiRSmoothing");
 	const int phiRSmoothK = keywords_.asInt("DeltaPhiRSmoothK");
 	const int phiRSmoothM = keywords_.asInt("DeltaPhiRSmoothM");
+	const double errorStabilityThreshold = keywords_.asDouble("EnergyStabilityThreshold");
+	const int errorStabilityWindow = keywords_.asInt("EnergyStabilityWindow");
 	const double gaussianAccuracy = keywords_.asDouble("GaussianAccuracy");
 	const RefineModule::PotentialInversionMethod inversionMethod = RefineModule::potentialInversionMethod(keywords_.asString("InversionMethod"));
 	const double globalMinimumRadius = keywords_.asDouble("MinimumRadius");
@@ -64,6 +66,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 // 	const bool modifyBonds = keywords_.asBool("ModifyBonds");
 	const bool modifyPotential = keywords_.asBool("ModifyPotential");
 	const bool onlyWhenEnergyStable = keywords_.asBool("OnlyWhenEnergyStable");
+	const bool onlyWhenErrorStable = keywords_.asBool("OnlyWhenErrorStable");
 	double phiLimit = keywords_.asDouble("PhiLimit");
 	const double truncationWidth = keywords_.asDouble("TruncationWidth");
 	const WindowFunction& windowFunction = KeywordListHelper<WindowFunction>::retrieve(keywords_, "WindowFunction", WindowFunction());
@@ -78,10 +81,12 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	if (modifyPotential) Messenger::print("Refine: Perturbations to interatomic potentials will be generated and applied.\n");
 	else Messenger::print("Refine: Perturbations to interatomic potentials will be generated only (current potentials will not be modified).\n");
 	if (onlyWhenEnergyStable) Messenger::print("Refine: Potential refinement will only be performed if all related Configuration energies are stable.\n");
+	if (onlyWhenErrorStable) Messenger::print("Refine: Potential refinement will only be performed if all percentage errors with reference data are stable.\n");
 	if (phiLimit >= 0) Messenger::print("Refine: Limit of additional potential phi(r) across all potentials is %f kJ/mol/Angstrom.\n", phiLimit);
 	else Messenger::warn("Refine: No limits will be applied to additional potential magnitude.\n");
 	if (windowFunction.function() == WindowFunction::NoWindow) Messenger::print("Refine: No window function will be applied in Fourier transforms of S(Q) to g(r).\n");
 	else Messenger::print("Refine: Window function to be applied in Fourier transforms of S(Q) to g(r) is %s (%s).", WindowFunction::functionType(windowFunction.function()), windowFunction.parameterSummary().get());
+
 
 	/*
 	 * Do we have targets to refine against?
@@ -104,38 +109,14 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 
 
 	/*
-	 * Are the energies of all involved Configurations stable (if OnlyWhenEnergyStable option is on)
+	 * Calculate current percentage errors in calculated vs reference target data
 	 */
-	if (onlyWhenEnergyStable)
-	{
-		int stabilityResult = EnergyModule::checkStability(configs);
-		if (stabilityResult == -1) return false;
-		else if (stabilityResult != 0)
-		{
-			Messenger::print("At least one Configuration energy is not yet stable. No potential refinement will be performed this iteration.\n");
-			return true;
-		}
-	}
-
-
-	/*
-	 * Loop over groups of defined Module targets.
-	 * We will generate a contribution to dPhiR from each and blend them together.
-	 */
-	const int nTypes = duq.nAtomTypes();
-	bool created;
+	int nUnstableData = 0;
 	for (ModuleGroup* group = targetGroups_.first(); group != NULL; group = group->next)
 	{
-		Messenger::print("Generating dPhiR from target group '%s'...\n", group->name());
-
 		// Grab Module list for this group and set up an iterator
 		const RefList<Module,bool>& targetModules = group->modules();
 		RefListIterator<Module,bool> targetIterator(targetModules);
-
-		/*
-		 * Calculate current percentage errors in calculated vs reference target data
-		 */
-		targetIterator.restart();
 		while (Module* module = targetIterator.iterate())
 		{
 			// Realise the error array and make sure its object name is set
@@ -175,8 +156,56 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 			// Store the percentage error
 			errors.addPoint(duq.iteration(), error);
 			Messenger::print("Current error for reference data '%s' is %f%%.\n", module->uniqueName(), error);
-		}
 
+			// Assess the stability of the current error
+			if (errorStabilityWindow < errors.nPoints()) ++nUnstableData;
+			else
+			{
+				double yMean;
+				double grad = errors.lastGradient(errorStabilityWindow, &yMean);
+				double thresholdValue = fabs(errorStabilityThreshold*yMean);
+				if (fabs(grad) > thresholdValue) ++nUnstableData;
+			}
+		}
+	}
+
+	// Check error stability if requested
+	if (onlyWhenErrorStable && (nUnstableData > 0))
+	{
+		Messenger::print("Errors for %i reference datasets are unstable, so no potential refinement will be performed this iteration.\n");
+		return true;
+	}
+
+
+	/*
+	 * Are the energies of all involved Configurations stable (if OnlyWhenEnergyStable option is on).
+	 * We still need to determine current errors for reference data, so store the result and carry on.
+	 */
+	if (onlyWhenEnergyStable)
+	{
+		int stabilityResult = EnergyModule::checkStability(configs);
+		if (stabilityResult == -1) return false;
+		else if (stabilityResult != 0)
+		{
+			Messenger::print("At least one Configuration energy is not yet stable. No potential refinement will be performed this iteration.\n");
+			return true;
+		}
+	}
+
+
+	/*
+	 * Loop over groups of defined Module targets.
+	 * We will generate a contribution to dPhiR from each and blend them together.
+	 */
+	const int nTypes = duq.nAtomTypes();
+	bool created;
+	for (ModuleGroup* group = targetGroups_.first(); group != NULL; group = group->next)
+	{
+		Messenger::print("Generating dPhiR from target group '%s'...\n", group->name());
+
+		// Grab Module list for this group and set up an iterator
+		const RefList<Module,bool>& targetModules = group->modules();
+		RefListIterator<Module,bool> targetIterator(targetModules);
 
 		/*
 		 * Update our full scattering matrix, and use it to generate partials from the supplied reference data
