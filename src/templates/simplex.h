@@ -3,24 +3,24 @@
 	*** src/base/simplex.h
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_SIMPLEX_H
-#define DUQ_SIMPLEX_H
+#ifndef DISSOLVE_SIMPLEX_H
+#define DISSOLVE_SIMPLEX_H
 
 #include "templates/array.h"
 #include "templates/list.h"
@@ -49,7 +49,7 @@ template<class T> class Simplex
 	double parameterOffset_;
 	// Maximum fraction by which to randomise when generating initial vertices
 	double initVariation_;
-	// dUQ pointer (used to call costFunction_)
+	// Dissolve pointer (used to call costFunction_)
 	T* classPtr_;
 	// Cost function pointer
 	CostFunction costFunction_;
@@ -106,7 +106,7 @@ template<class T> class Simplex
 		{
 			// Accept with some probability...
 			double deltaCost = trialCost - comparisonCost;
-			if (DUQMath::random() < exp(-deltaCost/temperature)) return true;
+			if (DissolveMath::random() < exp(-deltaCost/temperature)) return true;
 		}
 		return false;
 	}
@@ -138,17 +138,17 @@ template<class T> class Simplex
 		// ...and then randomly select points in the Simplex which we will trial as new best, worst, and nextworst points
 		do
 		{
-			n = int(DUQMath::random()*nVertices_);
+			n = int(DissolveMath::random()*nVertices_);
 		} while (n == vWorst_);
-		if (DUQMath::random() < exp(-fabs(costs_[vBest_]-costs_[n])/temperature))
+		if (DissolveMath::random() < exp(-fabs(costs_[vBest_]-costs_[n])/temperature))
 		{
 			// Swap points if necessary
 			if (vNextWorst_ == n) vNextWorst_ = vBest_;
 			// else if (vWorst_ == n) vWorst_ = vBest_;
 			vBest_ = n;
 		}
-		n = int(DUQMath::random()*nVertices_);
-		if (DUQMath::random() < exp(-fabs(costs_[vWorst_]-costs_[n])/temperature))
+		n = int(DissolveMath::random()*nVertices_);
+		if (DissolveMath::random() < exp(-fabs(costs_[vWorst_]-costs_[n])/temperature))
 		{
 			// Swap points if necessary
 			if (vNextWorst_ == n) vNextWorst_ = vWorst_;
@@ -157,9 +157,9 @@ template<class T> class Simplex
 		}
 		do
 		{
-			n = int(DUQMath::random()*nVertices_);
+			n = int(DissolveMath::random()*nVertices_);
 		} while (n == vWorst_);
-		if (DUQMath::random() < exp(-fabs(costs_[vNextWorst_]-costs_[n])/temperature))
+		if (DissolveMath::random() < exp(-fabs(costs_[vNextWorst_]-costs_[n])/temperature))
 		{
 			// Swap points if necessary
 			if (vBest_ == n) vBest_ = vNextWorst_;
@@ -325,7 +325,7 @@ template<class T> class Simplex
 			for (n=1; n<nVertices_; ++n)
 			{
 				vertices_[n] = vertices_[0];
-				r = (2.0*DUQMath::random()) - 1.0;
+				r = (2.0*DissolveMath::random()) - 1.0;
 				vertices_[n][n-1] = (vertices_[n][n-1] - parameterOffset_) * 1.0+initVariation_*r;
 				costs_[n] = cost(vertices_[n]);
 			}

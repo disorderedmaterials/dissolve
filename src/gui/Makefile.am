@@ -48,4 +48,4 @@ noinst_HEADERS += pairpotentialwidget.h processingtab_funcs.cpp
 noinst_HEADERS += speciestab.h
 noinst_HEADERS += workspacetab.h
 
-AM_CPPFLAGS = -I$(top_srcdir)/src -I../ -I./ @DUQ_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
+AM_CPPFLAGS = -I$(top_srcdir)/src -I../ -I./ @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@

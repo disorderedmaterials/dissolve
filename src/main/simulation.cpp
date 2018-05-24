@@ -1,25 +1,25 @@
 /*
-	*** dUQ - Simulation
+	*** Dissolve - Simulation
 	*** src/main/simulation.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "modules/export/export.h"
 #include "base/sysfunc.h"
 #include "base/lineparser.h"
@@ -31,13 +31,13 @@
  */
 
 // Find first occurrence of named Module in pre-processing tasks
-Module* DUQ::findPreProcessingTask(const char* name)
+Module* Dissolve::findPreProcessingTask(const char* name)
 {
 	return preProcessingTasks_.find(name);
 }
 
 // Find first occurrence of named Module in post-processing tasks
-Module* DUQ::findPostProcessingTask(const char* name)
+Module* Dissolve::findPostProcessingTask(const char* name)
 {
 	return postProcessingTasks_.find(name);
 }
@@ -47,19 +47,19 @@ Module* DUQ::findPostProcessingTask(const char* name)
  */
 
 // Return list of main processing Modules to run
-ModuleList& DUQ::processingModules()
+ModuleList& Dissolve::processingModules()
 {
 	return processingModules_;
 }
 
 // Return data associated with main processing Modules
-GenericList& DUQ::processingModuleData()
+GenericList& Dissolve::processingModuleData()
 {
 	return processingModuleData_;
 }
 
 // Iterate main simulation
-bool DUQ::iterate(int nIterations)
+bool Dissolve::iterate(int nIterations)
 {
 	/*
 	 * This is the main program loop. We perform the following steps:
@@ -83,7 +83,7 @@ bool DUQ::iterate(int nIterations)
 		++iteration_;
 		++nIterationsPerformed_;
 
-		Messenger::banner(" START MAIN LOOP ITERATION %10i         %s", iteration_, DUQSys::currentTimeAndDate());
+		Messenger::banner(" START MAIN LOOP ITERATION %10i         %s", iteration_, DissolveSys::currentTimeAndDate());
 
 		/*
 		 *  0)	Print schedule of tasks to run, and write heartbeat file
@@ -316,12 +316,12 @@ bool DUQ::iterate(int nIterations)
 			 */
 			
 			// Iteration number
-			GenericListHelper<int>::realise(processingModuleData_, "Iteration", "DUQ", GenericItem::InRestartFileFlag) = iteration_;
+			GenericListHelper<int>::realise(processingModuleData_, "Iteration", "Dissolve", GenericItem::InRestartFileFlag) = iteration_;
 
 			// Pair Potentials
 			for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next)
 			{
-				GenericListHelper<XYData>::realise(processingModuleData_, CharString("Potential_%s-%s_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ()), "DUQ", GenericItem::InRestartFileFlag) = pot->uAdditional();
+				GenericListHelper<XYData>::realise(processingModuleData_, CharString("Potential_%s-%s_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ()), "Dissolve", GenericItem::InRestartFileFlag) = pot->uAdditional();
 			}
 
 			/*
@@ -332,7 +332,7 @@ bool DUQ::iterate(int nIterations)
 			CharString restartFileBackup("%s.restart.prev", filename_.get());
 
 			// Check and remove restart file backup
-			if (DUQSys::fileExists(restartFileBackup) && (remove(restartFileBackup) != 0))
+			if (DissolveSys::fileExists(restartFileBackup) && (remove(restartFileBackup) != 0))
 			{
 				Messenger::error("Could not remove old restart file backup.\n");
 				worldPool_.decideFalse();
@@ -340,7 +340,7 @@ bool DUQ::iterate(int nIterations)
 			}
 
 			// Rename current restart file (if it exists)
-			if (DUQSys::fileExists(restartFile) && (rename(restartFile, restartFileBackup) != 0))
+			if (DissolveSys::fileExists(restartFile) && (rename(restartFile, restartFileBackup) != 0))
 			{
 				Messenger::error("Could not rename current restart file.\n");
 				worldPool_.decideFalse();
@@ -401,7 +401,7 @@ bool DUQ::iterate(int nIterations)
 		worldPool_.wait(ProcessPool::PoolProcessesCommunicator);
 
 
-		Messenger::banner("END OF MAIN LOOP ITERATION %10i         %s", iteration_, DUQSys::currentTimeAndDate());
+		Messenger::banner("END OF MAIN LOOP ITERATION %10i         %s", iteration_, DissolveSys::currentTimeAndDate());
 	}
 
 	mainLoopTimer_.stop();
@@ -410,13 +410,13 @@ bool DUQ::iterate(int nIterations)
 }
 
 // Return current simulation step
-int DUQ::iteration() const
+int Dissolve::iteration() const
 {
 	return iteration_;
 }
 
 // Print timing information
-void DUQ::printTiming()
+void Dissolve::printTiming()
 {
 	Messenger::banner("Timing Information");
 

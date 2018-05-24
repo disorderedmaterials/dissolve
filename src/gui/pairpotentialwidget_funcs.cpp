@@ -3,27 +3,27 @@
 	*** src/gui/pairpotentialwidget_funcs.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "gui/pairpotentialwidget.h"
 #include "gui/gui.h"
 #include "gui/uchroma/gui/uchromaview.h"
 #include "gui/widgets/subwindow.h"
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "classes/pairpotential.h"
 #include "classes/configuration.h"
 #include "base/lineparser.h"
@@ -32,7 +32,7 @@
 #include <QMessageBox>
 
 // Constructor
-PairPotentialWidget::PairPotentialWidget(DUQWindow* duqWindow, const char* title) : SubWidget(duqWindow, title), duq_(duqWindow->duq())
+PairPotentialWidget::PairPotentialWidget(DissolveWindow* dissolveWindow, const char* title) : SubWidget(dissolveWindow, title), dissolve_(dissolveWindow->dissolve())
 {
 	// Set up user interface
 	ui.setupUi(this);
@@ -41,7 +41,7 @@ PairPotentialWidget::PairPotentialWidget(DUQWindow* duqWindow, const char* title
 	uChromaView_ = ui.PlotWidget;
 
 	// Initialise window contents
-	lastPairPotential_ = duq_.pairPotentials().first();
+	lastPairPotential_ = dissolve_.pairPotentials().first();
 	pairPotentialIndex_ = (lastPairPotential_ ? 0 : -1);
 	initialiseWindow(lastPairPotential_);
 	initialiseControls(lastPairPotential_, true);
@@ -71,8 +71,8 @@ void PairPotentialWidget::initialiseWindow(PairPotential* pp)
 		ui.BottomLabel->setText("??");
 	}
 
-	ui.PreviousPotentialButton->setEnabled(pp && (duq_.nPairPotentials() > 1));
-	ui.NextPotentialButton->setEnabled(pp && (duq_.nPairPotentials() > 1));
+	ui.PreviousPotentialButton->setEnabled(pp && (dissolve_.nPairPotentials() > 1));
+	ui.NextPotentialButton->setEnabled(pp && (dissolve_.nPairPotentials() > 1));
 }
 
 // Initialise controls
@@ -153,9 +153,9 @@ void PairPotentialWidget::updateControls()
 	uChromaView_->updateDisplay();
 
 	// Compare current pair potential being displayed with that retrieved from the main list
-	if (lastPairPotential_ != duq_.pairPotential(pairPotentialIndex_))
+	if (lastPairPotential_ != dissolve_.pairPotential(pairPotentialIndex_))
 	{
-		lastPairPotential_ = pairPotentialIndex_ < 0 ? NULL : duq_.pairPotential(pairPotentialIndex_);
+		lastPairPotential_ = pairPotentialIndex_ < 0 ? NULL : dissolve_.pairPotential(pairPotentialIndex_);
 
 		setDataTargets(lastPairPotential_);
 		initialiseWindow(lastPairPotential_);
@@ -189,7 +189,7 @@ const char* PairPotentialWidget::widgetType()
 bool PairPotentialWidget::writeState(LineParser& parser)
 {
 	// Check validity of current pair potential
-	PairPotential* pp = duq_.pairPotential(pairPotentialIndex_);
+	PairPotential* pp = dissolve_.pairPotential(pairPotentialIndex_);
 
 	// Write PairPotential target (if there is one)
 	if (pp)
@@ -211,11 +211,11 @@ bool PairPotentialWidget::readState(LineParser& parser)
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 	lastPairPotential_ = NULL;
 	pairPotentialIndex_ = -1;
-	if ((parser.nArgs() != 1) && (!DUQSys::sameString(parser.argc(0), "None")))
+	if ((parser.nArgs() != 1) && (!DissolveSys::sameString(parser.argc(0), "None")))
 	{
 		// Locate the pair potential
-		lastPairPotential_ = duq_.pairPotential(parser.argc(0), parser.argc(1));
-		if (lastPairPotential_) pairPotentialIndex_ = duq_.pairPotentials().indexOf(lastPairPotential_);
+		lastPairPotential_ = dissolve_.pairPotential(parser.argc(0), parser.argc(1));
+		if (lastPairPotential_) pairPotentialIndex_ = dissolve_.pairPotentials().indexOf(lastPairPotential_);
 	}
 
 	// Initialise window
@@ -245,13 +245,13 @@ void PairPotentialWidget::on_PreviousPotentialButton_clicked(bool checked)
 {
 	// Decrease index of PP
 	--pairPotentialIndex_;
-	if ((pairPotentialIndex_ < 0) || (pairPotentialIndex_ >= duq_.nPairPotentials()))
+	if ((pairPotentialIndex_ < 0) || (pairPotentialIndex_ >= dissolve_.nPairPotentials()))
 	{
 		// Out-of-range, one way or another, so select the last in the list
-		pairPotentialIndex_ = duq_.nPairPotentials() - 1;
+		pairPotentialIndex_ = dissolve_.nPairPotentials() - 1;
 	}
 
-	lastPairPotential_ = pairPotentialIndex_ == -1 ? NULL : duq_.pairPotential(pairPotentialIndex_);
+	lastPairPotential_ = pairPotentialIndex_ == -1 ? NULL : dissolve_.pairPotential(pairPotentialIndex_);
 
 	setDataTargets(lastPairPotential_);
 	initialiseWindow(lastPairPotential_);
@@ -262,16 +262,16 @@ void PairPotentialWidget::on_PreviousPotentialButton_clicked(bool checked)
 void PairPotentialWidget::on_NextPotentialButton_clicked(bool checked)
 {
 	// Increase index of PP
-	if (duq_.nPairPotentials() == 0) pairPotentialIndex_ = -1;
+	if (dissolve_.nPairPotentials() == 0) pairPotentialIndex_ = -1;
 	else ++pairPotentialIndex_;
 
-	if (pairPotentialIndex_ >= duq_.nPairPotentials())
+	if (pairPotentialIndex_ >= dissolve_.nPairPotentials())
 	{
 		// Out-of-range, so cycle back to first item in list
 		pairPotentialIndex_ = 0;
 	}
 
-	lastPairPotential_ = pairPotentialIndex_ == -1 ? NULL : duq_.pairPotential(pairPotentialIndex_);
+	lastPairPotential_ = pairPotentialIndex_ == -1 ? NULL : dissolve_.pairPotential(pairPotentialIndex_);
 
 	setDataTargets(lastPairPotential_);
 	initialiseWindow(lastPairPotential_);
@@ -302,7 +302,7 @@ void PairPotentialWidget::on_FullForceCheck_clicked(bool checked)
 void PairPotentialWidget::on_ResetGraphButton_clicked(bool checked)
 {
 	ViewPane* viewPane = uChromaView_->currentViewPane();
-	viewPane->axes().setRange(0, 0.0, duqWindow_->duq().pairPotentialRange());
+	viewPane->axes().setRange(0, 0.0, dissolveWindow_->dissolve().pairPotentialRange());
 	viewPane->axes().setRange(1, -10.0, 10.0);
 
 	uChromaView_->updateDisplay();
@@ -311,9 +311,9 @@ void PairPotentialWidget::on_ResetGraphButton_clicked(bool checked)
 void PairPotentialWidget::on_ZeroUAdditionalButton_clicked(bool checked)
 {
 	// Compare current pair potential being displayed with that retrieved from the main list
-	if (lastPairPotential_ != duq_.pairPotential(pairPotentialIndex_))
+	if (lastPairPotential_ != dissolve_.pairPotential(pairPotentialIndex_))
 	{
-		lastPairPotential_ = pairPotentialIndex_ < 0 ? NULL : duq_.pairPotential(pairPotentialIndex_);
+		lastPairPotential_ = pairPotentialIndex_ < 0 ? NULL : dissolve_.pairPotential(pairPotentialIndex_);
 	}
 	if (!lastPairPotential_) return;
 

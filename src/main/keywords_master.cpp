@@ -3,24 +3,24 @@
 	*** src/main/keywords_master.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "main/keywords.h"
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "classes/species.h"
 #include "base/sysfunc.h"
 #include "base/lineparser.h"
@@ -36,7 +36,7 @@ KeywordData MasterBlockData[] = {
 // Convert text string to MasterKeyword
 MasterBlock::MasterKeyword MasterBlock::keyword(const char* s)
 {
-	for (int n=0; n<nMasterKeywords; ++n) if (DUQSys::sameString(s, MasterBlockData[n].name)) return (MasterBlock::MasterKeyword) n;
+	for (int n=0; n<nMasterKeywords; ++n) if (DissolveSys::sameString(s, MasterBlockData[n].name)) return (MasterBlock::MasterKeyword) n;
 	return nMasterKeywords;
 }
 
@@ -53,7 +53,7 @@ int MasterBlock::nArguments(MasterBlock::MasterKeyword id)
 }
 
 // Parse Master block
-bool MasterBlock::parse(LineParser& parser, DUQ* duq)
+bool MasterBlock::parse(LineParser& parser, Dissolve* dissolve)
 {
 	Messenger::print("\nParsing %s block...\n", InputBlocks::inputBlock(InputBlocks::MasterBlock));
 
@@ -92,7 +92,7 @@ bool MasterBlock::parse(LineParser& parser, DUQ* duq)
 					break;
 				}
 				// Create a new master angle definition
-				masterIntra= duq->addMasterAngle(parser.argc(1));
+				masterIntra= dissolve->addMasterAngle(parser.argc(1));
 				if (masterIntra)
 				{
 					masterIntra->setName(parser.argc(1));
@@ -120,7 +120,7 @@ bool MasterBlock::parse(LineParser& parser, DUQ* duq)
 					break;
 				}
 				// Create a new master bond definition
-				masterIntra = duq->addMasterBond(parser.argc(1));
+				masterIntra = dissolve->addMasterBond(parser.argc(1));
 				if (masterIntra)
 				{
 					masterIntra->setForm(bf);
@@ -151,7 +151,7 @@ bool MasterBlock::parse(LineParser& parser, DUQ* duq)
 					break;
 				}
 				// Create a new master torsion definition
-				masterIntra = duq->addMasterTorsion(parser.argc(1));
+				masterIntra = dissolve->addMasterTorsion(parser.argc(1));
 				if (masterIntra)
 				{
 					masterIntra->setForm(tf);

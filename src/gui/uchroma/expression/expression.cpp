@@ -339,7 +339,7 @@ Variable* Expression::variable(const char* name)
 
 	for (RefListItem<Variable,bool>* ri = variables_.first(); ri != NULL; ri = ri->next)
 	{
-		if (DUQSys::sameString(ri->item->name(), name))
+		if (DissolveSys::sameString(ri->item->name(), name))
 		{
 			result = ri->item;
 			break;

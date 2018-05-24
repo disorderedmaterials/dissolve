@@ -1,31 +1,31 @@
 /*
-	*** dUQ - Master Terms
+	*** Dissolve - Master Terms
 	*** src/main/masterterms.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "classes/speciesangle.h"
 #include "classes/speciesbond.h"
 #include "classes/speciestorsion.h"
 
 // Add new master Bond parameters
-MasterIntra* DUQ::addMasterBond(const char* name)
+MasterIntra* Dissolve::addMasterBond(const char* name)
 {
 	// Check for existence of master Bond already
 	if (hasMasterBond(name))
@@ -42,35 +42,35 @@ MasterIntra* DUQ::addMasterBond(const char* name)
 }
 
 // Return number of master Bond parameters in list
-int DUQ::nMasterBonds() const
+int Dissolve::nMasterBonds() const
 {
 	return masterBonds_.nItems();
 }
 
 // Return list of master Bond parameters
-const List<MasterIntra>& DUQ::masterBonds() const
+const List<MasterIntra>& Dissolve::masterBonds() const
 {
 	return masterBonds_;
 }
 
 // Return nth master Bond parameters
-MasterIntra* DUQ::masterBond(int n)
+MasterIntra* Dissolve::masterBond(int n)
 {
 	return masterBonds_[n];
 }
 
 // Return whether named master Bond parameters exist
-MasterIntra* DUQ::hasMasterBond(const char* name) const
+MasterIntra* Dissolve::hasMasterBond(const char* name) const
 {
 	// Remove leading '@' if necessary
 	const char* trimmedName = name[0] == '@' ? &name[1] : name;
 
-	for (MasterIntra* b = masterBonds_.first(); b != NULL; b = b->next) if (DUQSys::sameString(trimmedName, b->name())) return b;
+	for (MasterIntra* b = masterBonds_.first(); b != NULL; b = b->next) if (DissolveSys::sameString(trimmedName, b->name())) return b;
 	return NULL;
 }
 
 // Add new master Angle parameters
-MasterIntra* DUQ::addMasterAngle(const char* name)
+MasterIntra* Dissolve::addMasterAngle(const char* name)
 {
 	// Check for existence of master Angle already
 	if (hasMasterAngle(name))
@@ -87,35 +87,35 @@ MasterIntra* DUQ::addMasterAngle(const char* name)
 }
 
 // Return number of master Angle parameters in list
-int DUQ::nMasterAngles() const
+int Dissolve::nMasterAngles() const
 {
 	return masterAngles_.nItems();
 }
 
 // Return list of master Angle parameters
-const List<MasterIntra>& DUQ::masterAngles() const
+const List<MasterIntra>& Dissolve::masterAngles() const
 {
 	return masterAngles_;
 }
 
 // Return nth master Angle parameters
-MasterIntra* DUQ::masterAngle(int n)
+MasterIntra* Dissolve::masterAngle(int n)
 {
 	return masterAngles_[n];
 }
 
 // Return whether named master Angle parameters exist
-MasterIntra* DUQ::hasMasterAngle(const char* name) const
+MasterIntra* Dissolve::hasMasterAngle(const char* name) const
 {
 	// Remove leading '@' if necessary
 	const char* trimmedName = name[0] == '@' ? &name[1] : name;
 
-	for (MasterIntra* a = masterAngles_.first(); a != NULL; a = a->next) if (DUQSys::sameString(trimmedName, a->name())) return a;
+	for (MasterIntra* a = masterAngles_.first(); a != NULL; a = a->next) if (DissolveSys::sameString(trimmedName, a->name())) return a;
 	return NULL;
 }
 
 // Add new master Torsion parameters
-MasterIntra* DUQ::addMasterTorsion(const char* name)
+MasterIntra* Dissolve::addMasterTorsion(const char* name)
 {
 	// Check for existence of master Torsion already
 	if (hasMasterTorsion(name))
@@ -132,29 +132,29 @@ MasterIntra* DUQ::addMasterTorsion(const char* name)
 }
 
 // Return number of master Torsion parameters in list
-int DUQ::nMasterTorsions() const
+int Dissolve::nMasterTorsions() const
 {
 	return masterTorsions_.nItems();
 }
 
 // Return list of master Torsion parameters
-const List<MasterIntra>& DUQ::masterTorsions() const
+const List<MasterIntra>& Dissolve::masterTorsions() const
 {
 	return masterTorsions_;
 }
 
 // Return nth master Torsion parameters
-MasterIntra* DUQ::masterTorsion(int n)
+MasterIntra* Dissolve::masterTorsion(int n)
 {
 	return masterTorsions_[n];
 }
 
 // Return whether named master Torsion parameters exist
-MasterIntra* DUQ::hasMasterTorsion(const char* name) const
+MasterIntra* Dissolve::hasMasterTorsion(const char* name) const
 {
 	// Remove leading '@' if necessary
 	const char* trimmedName = name[0] == '@' ? &name[1] : name;
 
-	for (MasterIntra* t = masterTorsions_.first(); t != NULL; t = t->next) if (DUQSys::sameString(trimmedName, t->name())) return t;
+	for (MasterIntra* t = masterTorsions_.first(); t != NULL; t = t->next) if (DissolveSys::sameString(trimmedName, t->name())) return t;
 	return NULL;
 }

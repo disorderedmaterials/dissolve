@@ -3,20 +3,20 @@
 	*** src/classes/species_xyz.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "classes/species.h"
@@ -28,7 +28,7 @@
 bool Species::load(const char* filename)
 {
 	// Grab extension from filename
-	CharString ext = DUQSys::lowerCase(DUQSys::afterLastChar(filename, '.'));
+	CharString ext = DissolveSys::lowerCase(DissolveSys::afterLastChar(filename, '.'));
 
 	if (ext == "xyz") return loadFromXYZ(filename);
 	else Messenger::print("Can't load - unknown extension for file '%s'.\n", filename);

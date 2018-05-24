@@ -8,6 +8,6 @@ libuchroma_la_LDFLAGS = -static
 
 noinst_HEADERS = uchromabase.h
 
-libuchroma_la_CPPFLAGS = -I$(top_srcdir)/src @DUQ_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
+libuchroma_la_CPPFLAGS = -I$(top_srcdir)/src @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
 
 

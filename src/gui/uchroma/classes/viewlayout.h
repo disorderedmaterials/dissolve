@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMAVIEWLAYOUT_H
-#define DUQ_UCHROMAVIEWLAYOUT_H
+#ifndef DISSOLVE_UCHROMAVIEWLAYOUT_H
+#define DISSOLVE_UCHROMAVIEWLAYOUT_H
 
 #include "gui/uchroma/classes/viewpane.h"
 #include "gui/uchroma/classes/collection.h"

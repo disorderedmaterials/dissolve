@@ -3,31 +3,31 @@
 	*** src/gui/pairpotentialwidget.h
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_PAIRPOTENTIALWIDGET_H
-#define DUQ_PAIRPOTENTIALWIDGET_H
+#ifndef DISSOLVE_PAIRPOTENTIALWIDGET_H
+#define DISSOLVE_PAIRPOTENTIALWIDGET_H
 
 #include "gui/ui_pairpotentialwidget.h"
 #include "gui/widgets/subwidget.h"
 
 // Forward Declarations
 class Collection;
-class DUQ;
+class Dissolve;
 class PairPotential;
 class UChromaViewWidget;
 
@@ -38,8 +38,8 @@ class PairPotentialWidget : public SubWidget
 	Q_OBJECT
 
 	private:
-	// Reference to dUQ
-	DUQ& duq_;
+	// Reference to Dissolve
+	Dissolve& dissolve_;
 	// Index of displayed PairPotential
 	int pairPotentialIndex_;
 	// Last displayed pair potential
@@ -53,7 +53,7 @@ class PairPotentialWidget : public SubWidget
 
 	public:
 	// Constructor / Destructor
-	PairPotentialWidget(DUQWindow* duqWindow, const char* title);
+	PairPotentialWidget(DissolveWindow* dissolveWindow, const char* title);
 	~PairPotentialWidget();
 	// Main form declaration
 	Ui::PairPotentialWidget ui;

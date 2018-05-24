@@ -20,5 +20,5 @@ libmodulewidget_la_SOURCES = modulewidget.ui gui.cpp modulewidget_funcs.cpp
 
 noinst_HEADERS = modulewidget.h
 
-AM_CPPFLAGS = -I${top_srcdir}/src @DUQ_CFLAGS@ @GUI_CFLAGS@ @DUQ_READLINE@ @GUI_INCLUDES@
+AM_CPPFLAGS = -I${top_srcdir}/src @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @DISSOLVE_READLINE@ @GUI_INCLUDES@
 

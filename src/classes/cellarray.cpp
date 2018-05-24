@@ -3,20 +3,20 @@
 	*** src/classes/cellarray.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "classes/cellarray.h"
@@ -229,7 +229,7 @@ bool CellArray::generate(const Box* box, double cellSize, double pairPotentialRa
 				// Set the grid reference of the cell to check, but reduce the extent by one
 				// unit towards the central box since we need to check the distance of the closest
 				// edge to this central Cell.
-				r.set(x - DUQMath::sgn(x), y - DUQMath::sgn(y), z - DUQMath::sgn(z));
+				r.set(x - DissolveMath::sgn(x), y - DissolveMath::sgn(y), z - DissolveMath::sgn(z));
 				r = cellAxes * r;
 				if (r.magnitude() < pairPotentialRange)
 				{
@@ -424,9 +424,9 @@ bool CellArray::withinRange(const Cell* a, const Cell* b, double distance)
 	 * Subtract 1 from any vector that is not zero (adding 1 to negative indices and -1 to positive indices.
 	 * This has the effect of shortening the vector to account for atoms being at the near edges of the distant cells.
 	 */
-	u.x -= DUQMath::sgn(u.x);
-	u.y -= DUQMath::sgn(u.y);
-	u.z -= DUQMath::sgn(u.z);
+	u.x -= DissolveMath::sgn(u.x);
+	u.y -= DissolveMath::sgn(u.y);
+	u.z -= DissolveMath::sgn(u.z);
 
 	// Turn this grid reference delta into a real distamce by multiplying by the Cell axes_ matrix
 	Vec3<double> v = axes_ * Vec3<double>(u.x, u.y, u.z);

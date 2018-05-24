@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMASTYLEWINDOW_H
-#define DUQ_UCHROMASTYLEWINDOW_H
+#ifndef DISSOLVE_UCHROMASTYLEWINDOW_H
+#define DISSOLVE_UCHROMASTYLEWINDOW_H
 
 #include "gui/uchroma/gui/ui_style.h"
 

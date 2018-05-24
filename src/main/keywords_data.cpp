@@ -3,24 +3,24 @@
 	*** src/main/keywords_data.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "main/keywords.h"
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "base/sysfunc.h"
 #include "base/lineparser.h"
 
@@ -36,7 +36,7 @@ KeywordData DataBlockData[] = {
 // Convert text string to DataKeyword
 DataBlock::DataKeyword DataBlock::keyword(const char* s)
 {
-	for (int n=0; n<DataBlock::nDataKeywords; ++n) if (DUQSys::sameString(s,DataBlockData[n].name)) return (DataBlock::DataKeyword) n;
+	for (int n=0; n<DataBlock::nDataKeywords; ++n) if (DissolveSys::sameString(s,DataBlockData[n].name)) return (DataBlock::DataKeyword) n;
 	return DataBlock::nDataKeywords;
 }
 
@@ -53,7 +53,7 @@ int DataBlock::nArguments(DataBlock::DataKeyword id)
 }
 
 // Parse Data block
-bool DataBlock::parse(LineParser& parser, DUQ* duq, Data* data)
+bool DataBlock::parse(LineParser& parser, Dissolve* dissolve, Data* data)
 {
 	Messenger::print("\nParsing %s block '%s'...\n", InputBlocks::inputBlock(InputBlocks::DataBlock), data->name());
 
@@ -87,7 +87,7 @@ bool DataBlock::parse(LineParser& parser, DUQ* duq, Data* data)
 				// Were column arguments given?
 				xcol = parser.nArgs() == 4 ? parser.argi(2)-1 : 0;
 				ycol = parser.nArgs() == 4 ? parser.argi(3)-1 : 1;
-				if (!data->loadData(duq->worldPool(), parser.argc(1), xcol, ycol)) error = true;
+				if (!data->loadData(dissolve->worldPool(), parser.argc(1), xcol, ycol)) error = true;
 				break;
 			case (DataBlock::SubtractAverageLevelKeyword):
 				data->setSubtractAverageLevel(parser.argd(1));

@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMAFIT_H
-#define DUQ_UCHROMAFIT_H
+#ifndef DISSOLVE_UCHROMAFIT_H
+#define DISSOLVE_UCHROMAFIT_H
 
 #include "gui/uchroma/classes/equationvariable.h"
 #include "gui/uchroma/classes/referencevariable.h"

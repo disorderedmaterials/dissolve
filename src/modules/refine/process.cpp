@@ -3,24 +3,24 @@
 	*** src/modules/refine/process.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "modules/refine/refine.h"
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "modules/energy/energy.h"
 #include "modules/rdf/rdf.h"
 #include "math/gaussfit.h"
@@ -38,7 +38,7 @@ bool RefineModule::hasProcessing()
 }
 
 // Run main processing
-bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
+bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {
 	int i, j;
 	bool found;
@@ -46,7 +46,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	/*
 	 * Set Module data target
 	 */
-	GenericList& moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : duq.processingModuleData();
+	GenericList& moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : dissolve.processingModuleData();
 
 	/*
 	 * Get Keyword Options
@@ -120,15 +120,15 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 		while (Module* module = targetIterator.iterate())
 		{
 			// Realise the error array and make sure its object name is set
-			XYData& errors = GenericListHelper<XYData>::realise(duq.processingModuleData(), CharString("Error_%s", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
+			XYData& errors = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), CharString("Error_%s", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
 			errors.setObjectName(CharString("%s//Error//%s", uniqueName_.get(), module->uniqueName()));
 
 			// Calculate our error based on the type of Module
 			double error = 100.0;
-			if (DUQSys::sameString(module->name(), "NeutronSQ"))
+			if (DissolveSys::sameString(module->name(), "NeutronSQ"))
 			{
 				// Retrieve the ReferenceData from the Module (as XYData)
-				XYData& referenceData = GenericListHelper<XYData>::retrieve(duq.processingModuleData(), "ReferenceData", module->uniqueName(), XYData(), &found);
+				XYData& referenceData = GenericListHelper<XYData>::retrieve(dissolve.processingModuleData(), "ReferenceData", module->uniqueName(), XYData(), &found);
 				if (!found)
 				{
 					Messenger::warn("Could not locate ReferenceData for target '%s'.\n", module->uniqueName());
@@ -136,7 +136,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 				}
 
 				// Retrieve the PartialSet from the Module
-				PartialSet& calcSQ = GenericListHelper<PartialSet>::retrieve(duq.processingModuleData(), "WeightedSQ", module->uniqueName(), PartialSet(), &found);
+				PartialSet& calcSQ = GenericListHelper<PartialSet>::retrieve(dissolve.processingModuleData(), "WeightedSQ", module->uniqueName(), PartialSet(), &found);
 				if (!found)
 				{
 					Messenger::warn("Could not locate associated weighted neutron PartialSet for target '%s'.\n", module->uniqueName());
@@ -146,7 +146,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 				error = referenceData.error(calcSQ.total());
 
 				// Calculate difference
-				XYData& differenceData = GenericListHelper<XYData>::realise(duq.processingModuleData(), CharString("DifferenceData_%s", module->uniqueName()), uniqueName());
+				XYData& differenceData = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), CharString("DifferenceData_%s", module->uniqueName()), uniqueName());
 				differenceData.setObjectName(CharString("%s//Difference//%s", uniqueName_.get(), module->uniqueName()));
 				differenceData = referenceData;
 				differenceData.addInterpolated(calcSQ.total(), -1.0);
@@ -154,7 +154,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 			else return Messenger::error("Unrecognised Module type '%s', so can't calculate error.", module->name());
 
 			// Store the percentage error
-			errors.addPoint(duq.iteration(), error);
+			errors.addPoint(dissolve.iteration(), error);
 			Messenger::print("Current error for reference data '%s' is %f%%.\n", module->uniqueName(), error);
 
 			// Assess the stability of the current error
@@ -197,7 +197,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	 * Loop over groups of defined Module targets.
 	 * We will generate a contribution to dPhiR from each and blend them together.
 	 */
-	const int nTypes = duq.nAtomTypes();
+	const int nTypes = dissolve.nAtomTypes();
 	bool created;
 	for (ModuleGroup* group = targetGroups_.first(); group != NULL; group = group->next)
 	{
@@ -212,27 +212,27 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 		 */
 
 		// Create temporary storage for our summed UnweightedSQ, and related quantities such as density and sum factors
-		Array2D<XYData>& combinedUnweightedSQ = GenericListHelper< Array2D<XYData> >::realise(duq.processingModuleData(), "UnweightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
+		Array2D<XYData>& combinedUnweightedSQ = GenericListHelper< Array2D<XYData> >::realise(dissolve.processingModuleData(), "UnweightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
 		Array2D<double> combinedRho, combinedFactor, combinedCWeights;
-		combinedUnweightedSQ.initialise(duq.nAtomTypes(), duq.nAtomTypes(), true);
-		combinedRho.initialise(duq.nAtomTypes(), duq.nAtomTypes(), true);
-		combinedFactor.initialise(duq.nAtomTypes(), duq.nAtomTypes(), true);
-		combinedCWeights.initialise(duq.nAtomTypes(), duq.nAtomTypes(), true);
+		combinedUnweightedSQ.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
+		combinedRho.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
+		combinedFactor.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
+		combinedCWeights.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
 		combinedRho = 0.0;
 		combinedFactor = 0.0;
 		combinedCWeights = 0.0;
 
 		// Set object names in combinedUnweightedSQ
 		i = 0;
-		for (AtomType* at1 = duq.atomTypes(); at1 != NULL; at1 = at1->next, ++i)
+		for (AtomType* at1 = dissolve.atomTypes(); at1 != NULL; at1 = at1->next, ++i)
 		{
 			j = i;
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j) combinedUnweightedSQ.ref(i,j).setObjectName(CharString("%s//UnweightedSQ//%s//%s-%s", uniqueName(), group->name(), at1->name(), at2->name()));
 		}
 
 		// Realise storage for generated S(Q), and reinitialise the scattering matrix
-		Array2D<XYData>&  generatedSQ = GenericListHelper< Array2D<XYData> >::realise(duq.processingModuleData(), "GeneratedSQ", uniqueName_, GenericItem::InRestartFileFlag);
-		scatteringMatrix_.initialise(duq.atomTypeList(), generatedSQ, uniqueName_, group->name());
+		Array2D<XYData>&  generatedSQ = GenericListHelper< Array2D<XYData> >::realise(dissolve.processingModuleData(), "GeneratedSQ", uniqueName_, GenericItem::InRestartFileFlag);
+		scatteringMatrix_.initialise(dissolve.atomTypeList(), generatedSQ, uniqueName_, group->name());
 
 		// Get factor with which to add data, based on the requested AugmentationStyle
 		double dataFactor = 1.0;
@@ -243,14 +243,14 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 		while (Module* module = targetIterator.iterate())
 		{
 			// Retrieve the reference data and associated Weights matrix and source unweighted partials
-			XYData& referenceData = GenericListHelper<XYData>::retrieve(duq.processingModuleData(), "ReferenceData", module->uniqueName(), XYData(), &found);
+			XYData& referenceData = GenericListHelper<XYData>::retrieve(dissolve.processingModuleData(), "ReferenceData", module->uniqueName(), XYData(), &found);
 			if (!found) return Messenger::error("Could not locate ReferenceData for target '%s'.\n", module->uniqueName());
-			Weights& weights = GenericListHelper<Weights>::retrieve(duq.processingModuleData(), "FullWeights", module->uniqueName(), Weights(), &found);
+			Weights& weights = GenericListHelper<Weights>::retrieve(dissolve.processingModuleData(), "FullWeights", module->uniqueName(), Weights(), &found);
 			if (!found) return Messenger::error("Could not locate Weights for target '%s'.\n", module->uniqueName());
-			PartialSet& unweightedSQ = GenericListHelper<PartialSet>::retrieve(duq.processingModuleData(), "UnweightedSQ", module->uniqueName(), PartialSet(), &found);
+			PartialSet& unweightedSQ = GenericListHelper<PartialSet>::retrieve(dissolve.processingModuleData(), "UnweightedSQ", module->uniqueName(), PartialSet(), &found);
 			if (!found) return Messenger::error("Could not locate UnweightedSQ for target '%s'.\n", module->uniqueName());
 			double rho = GenericListHelper<
-			double>::retrieve(duq.processingModuleData(), "EffectiveRho", module->uniqueName(), 0.0, &found);
+			double>::retrieve(dissolve.processingModuleData(), "EffectiveRho", module->uniqueName(), 0.0, &found);
 			if (!found) return Messenger::error("Could not locate EffectiveRho for target '%s'.\n", module->uniqueName());
 
 			// Add a row to our scattering matrix
@@ -276,9 +276,9 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 		}
 
 		// Normalise the combined values
-		for (i=0; i<duq.nAtomTypes(); ++i)
+		for (i=0; i<dissolve.nAtomTypes(); ++i)
 		{
-			for (j=i; j<duq.nAtomTypes(); ++j)
+			for (j=i; j<dissolve.nAtomTypes(); ++j)
 			{
 				combinedUnweightedSQ.ref(i,j) /= combinedFactor.value(i,j);
 				combinedRho.ref(i,j) /= combinedFactor.value(i,j);
@@ -298,7 +298,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 			// Create the array
 			simulatedReferenceData_.createEmpty(combinedUnweightedSQ.linearArraySize());
 			i = 0;
-			for (AtomType* at1 = duq.atomTypes(); at1 != NULL; at1 = at1->next, ++i)
+			for (AtomType* at1 = dissolve.atomTypes(); at1 != NULL; at1 = at1->next, ++i)
 			{
 				j = i;
 				for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
@@ -340,10 +340,10 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 		 * Calculate g(r) from generatedSQ
 		 */
 
-		Array2D<XYData>& generatedGR = GenericListHelper< Array2D<XYData> >::realise(duq.processingModuleData(), "GeneratedGR", uniqueName_, GenericItem::InRestartFileFlag);
-		generatedGR.initialise(duq.atomTypeList().nItems(), duq.atomTypeList().nItems(), true);
+		Array2D<XYData>& generatedGR = GenericListHelper< Array2D<XYData> >::realise(dissolve.processingModuleData(), "GeneratedGR", uniqueName_, GenericItem::InRestartFileFlag);
+		generatedGR.initialise(dissolve.atomTypeList().nItems(), dissolve.atomTypeList().nItems(), true);
 		i = 0;
-		for (AtomType* at1 = duq.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+		for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
 		{
 			j = i;
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
@@ -363,17 +363,17 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 		 * Generate summed unweighted g(r) from all source Module data
 		 */
 
-		PartialSet& summedUnweightedGR = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedGR", uniqueName(), GenericItem::InRestartFileFlag);
-		if (!RDFModule::sumUnweightedGR(procPool, this, group, duq.processingModuleData(), summedUnweightedGR)) return false;
+		PartialSet& summedUnweightedGR = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedGR", uniqueName(), GenericItem::InRestartFileFlag);
+		if (!RDFModule::sumUnweightedGR(procPool, this, group, dissolve.processingModuleData(), summedUnweightedGR)) return false;
 
 		/*
 		 * Construct matrix of difference partials (deltaSQ) for all AtomTypes
 		 */
-		Array2D<XYData>& deltaSQ = GenericListHelper< Array2D<XYData> >::realise(duq.processingModuleData(), "DeltaSQ", uniqueName_, GenericItem::InRestartFileFlag, &created);
+		Array2D<XYData>& deltaSQ = GenericListHelper< Array2D<XYData> >::realise(dissolve.processingModuleData(), "DeltaSQ", uniqueName_, GenericItem::InRestartFileFlag, &created);
 		if (created) deltaSQ.initialise(nTypes, nTypes, true);
 
 		i = 0;
-		for (AtomType* at1 = duq.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+		for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
 		{
 			j = i;
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
@@ -408,18 +408,18 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 		 * Create perturbations to interatomic potentials
 		 */
 		const double weighting = keywords_.asDouble("Weighting");
-		Array2D<XYData>& groupDeltaPhiR = GenericListHelper< Array2D<XYData> >::realise(duq.processingModuleData(), CharString("DeltaPhiR_%s", group->name()), uniqueName_, GenericItem::InRestartFileFlag, &created);
+		Array2D<XYData>& groupDeltaPhiR = GenericListHelper< Array2D<XYData> >::realise(dissolve.processingModuleData(), CharString("DeltaPhiR_%s", group->name()), uniqueName_, GenericItem::InRestartFileFlag, &created);
 		if (created) groupDeltaPhiR.initialise(nTypes, nTypes, true);
-		Array2D<XYData>& groupDeltaGR = GenericListHelper< Array2D<XYData> >::realise(duq.processingModuleData(), CharString("DeltaGR_%s", group->name()), uniqueName_, GenericItem::InRestartFileFlag, &created);
+		Array2D<XYData>& groupDeltaGR = GenericListHelper< Array2D<XYData> >::realise(dissolve.processingModuleData(), CharString("DeltaGR_%s", group->name()), uniqueName_, GenericItem::InRestartFileFlag, &created);
 		if (created) groupDeltaGR.initialise(nTypes, nTypes, true);
 	// 	if (modifyBonds)
 	// 	{
-	// 		Array2D<XYData>& deltaGRBond = GenericListHelper< Array2D<XYData> >::realise(duq.processingModuleData(), "DeltaGRBond", uniqueName_, GenericItem::InRestartFileFlag, &created);
+	// 		Array2D<XYData>& deltaGRBond = GenericListHelper< Array2D<XYData> >::realise(dissolve.processingModuleData(), "DeltaGRBond", uniqueName_, GenericItem::InRestartFileFlag, &created);
 	// 		if (created) deltaGRBond.initialise(nTypes, nTypes, true);
 	// 	}
 
 		// Set up / updated minimum radii array, considering all involved Configurations
-		Array2D<double>& minimumRadii = GenericListHelper< Array2D<double> >::realise(duq.processingModuleData(), "MinimumRadii", uniqueName_, GenericItem::InRestartFileFlag, &created);
+		Array2D<double>& minimumRadii = GenericListHelper< Array2D<double> >::realise(dissolve.processingModuleData(), "MinimumRadii", uniqueName_, GenericItem::InRestartFileFlag, &created);
 		if (created) minimumRadii.initialise(nTypes, nTypes, true);
 		if (autoMinimumRadii)
 		{
@@ -430,7 +430,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 				const double rFraction = 0.95;
 				const double thresholdValue = 0.1;
 				i = 0;
-				for (AtomType* at1 = duq.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+				for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
 				{
 					j = i;
 					for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
@@ -458,13 +458,13 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 		}
 		else minimumRadii = globalMinimumRadius;
 		
-		const double ppRange = duq.pairPotentialRange();
-		const double ppDelta = duq.pairPotentialDelta();
+		const double ppRange = dissolve.pairPotentialRange();
+		const double ppDelta = dissolve.pairPotentialDelta();
 		double weight, absInt, scaleFactor;
 		XYData cr;
 		Array<double> crgr;
 		i = 0;
-		for (AtomType* at1 = duq.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+		for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
 		{
 			j = i;
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
@@ -486,11 +486,11 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	// 			if (modifyBonds)
 	// 			{
 	// 				// Grab the deltaGRBond container and make sure its object name is set
-	// 				Array2D<XYData>& deltaGRBonds = GenericListHelper< Array2D<XYData> >::retrieve(duq.processingModuleData(), "DeltaGRBond", uniqueName_);
+	// 				Array2D<XYData>& deltaGRBonds = GenericListHelper< Array2D<XYData> >::retrieve(dissolve.processingModuleData(), "DeltaGRBond", uniqueName_);
 	// 				XYData& deltaGRBond = deltaGRBonds.ref(i,j);
 	// 				deltaGRBond.setObjectName(CharString("%s//DeltaGRBond//%s-%s", uniqueName_.get(), at1->name(), at2->name()));
 	// 
-	// 				if (!modifyBondTerms(duq, dGR, at1, at2, deltaGRBond)) return false;
+	// 				if (!modifyBondTerms(dissolve, dGR, at1, at2, deltaGRBond)) return false;
 	// 				dGR.addInterpolated(deltaGRBond, -1.0);
 	// 			}
 
@@ -513,9 +513,9 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 
 					// Store fitted parameters
 					// If the fit parameter arrays already exist in the module data, retrieve and set them now.
-					GenericListHelper< Array<double> >::realise(duq.processingModuleData(), CharString("%s-%s-GaussianX", at1->name(), at2->name()), uniqueName_, GenericItem::InRestartFileFlag) = gaussFit.x();
-					GenericListHelper< Array<double> >::realise(duq.processingModuleData(), CharString("%s-%s-GaussianA", at1->name(), at2->name()), uniqueName_, GenericItem::InRestartFileFlag) = gaussFit.A();
-					GenericListHelper< Array<double> >::realise(duq.processingModuleData(), CharString("%s-%s-GaussianC", at1->name(), at2->name()), uniqueName_, GenericItem::InRestartFileFlag) = gaussFit.c();
+					GenericListHelper< Array<double> >::realise(dissolve.processingModuleData(), CharString("%s-%s-GaussianX", at1->name(), at2->name()), uniqueName_, GenericItem::InRestartFileFlag) = gaussFit.x();
+					GenericListHelper< Array<double> >::realise(dissolve.processingModuleData(), CharString("%s-%s-GaussianA", at1->name(), at2->name()), uniqueName_, GenericItem::InRestartFileFlag) = gaussFit.A();
+					GenericListHelper< Array<double> >::realise(dissolve.processingModuleData(), CharString("%s-%s-GaussianC", at1->name(), at2->name()), uniqueName_, GenericItem::InRestartFileFlag) = gaussFit.c();
 
 					// Fourier transform the approximation, and store this as our inversion
 					inversion = gaussFit.fourierTransform(ppDelta, ppDelta, ppRange);
@@ -622,17 +622,17 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 		for (ModuleGroup* group = targetGroups_.first(); group != NULL; group = group->next)
 		{
 			// Get the delta phi(r) data for this group
-			if (!duq.processingModuleData().contains(CharString("DeltaPhiR_%s", group->name()), uniqueName())) return Messenger::error("Could not locate delta phi(r) data for group '%s'.\n", group->name());
-			Array2D<XYData>& groupDeltaPhiR = GenericListHelper< Array2D<XYData> >::retrieve(duq.processingModuleData(), CharString("DeltaPhiR_%s", group->name()), uniqueName_, Array2D<XYData>());
+			if (!dissolve.processingModuleData().contains(CharString("DeltaPhiR_%s", group->name()), uniqueName())) return Messenger::error("Could not locate delta phi(r) data for group '%s'.\n", group->name());
+			Array2D<XYData>& groupDeltaPhiR = GenericListHelper< Array2D<XYData> >::retrieve(dissolve.processingModuleData(), CharString("DeltaPhiR_%s", group->name()), uniqueName_, Array2D<XYData>());
 
 			i = 0;
-			for (AtomType* at1 = duq.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+			for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
 			{
 				j = i;
 				for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 				{
 					// Grab pointer to the relevant pair potential
-					PairPotential* pp = duq.pairPotential(at1, at2);
+					PairPotential* pp = dissolve.pairPotential(at1, at2);
 					if (!pp)
 					{
 						Messenger::error("Failed to find PairPotential for AtomTypes '%s' and '%s'.\n", at1->name(), at2->name());
@@ -648,13 +648,13 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	// Calculate current phi magnitude
 	double phiMag = 0.0;
 	i = 0;
-	for (AtomType* at1 = duq.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+	for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
 	{
 		j = i;
 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 		{
 			// Grab pointer to the relevant pair potential
-			PairPotential* pp = duq.pairPotential(at1, at2);
+			PairPotential* pp = dissolve.pairPotential(at1, at2);
 			if (pp) phiMag += pp->uAdditional().absIntegral();
 		}
 	}
@@ -665,13 +665,13 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 		double factor = phiLimit / phiMag;
 
 		i = 0;
-		for (AtomType* at1 = duq.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+		for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
 		{
 			j = i;
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 			{
 				// Grab pointer to the relevant pair potential
-				PairPotential* pp = duq.pairPotential(at1, at2);
+				PairPotential* pp = dissolve.pairPotential(at1, at2);
 				if (pp) pp->uAdditional().arrayY() *= factor;
 			}
 		}
@@ -682,9 +682,9 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	Messenger::print("Current magnitude of additional phi(r) over all pair potentials is %12.4e kJ/mol/Angstrom.\n", phiMag);
 
 	// Realise the phiMag array and make sure its object name is set
-	XYData& phiArray = GenericListHelper<XYData>::realise(duq.processingModuleData(), "PhiMag", uniqueName_, GenericItem::InRestartFileFlag);
+	XYData& phiArray = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), "PhiMag", uniqueName_, GenericItem::InRestartFileFlag);
 	phiArray.setObjectName(CharString("%s//PhiMag", uniqueName_.get()));
-	phiArray.addPoint(duq.iteration(), phiMag);
+	phiArray.addPoint(dissolve.iteration(), phiMag);
 
 	return true;
 }

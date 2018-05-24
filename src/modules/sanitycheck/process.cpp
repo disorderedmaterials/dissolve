@@ -3,24 +3,24 @@
 	*** src/modules/sanitycheck/process.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "modules/sanitycheck/sanitycheck.h"
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "classes/atomtype.h"
 #include "base/sysfunc.h"
 
@@ -31,21 +31,21 @@ bool SanityCheckModule::hasProcessing()
 }
 
 // Run main processing
-bool SanityCheckModule::process(DUQ& duq, ProcessPool& procPool)
+bool SanityCheckModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {
 	/*
 	 * This is a parallel routine.
 	 * As much data as possible is checked over all processes, checking that the "everybody knows everything" ideal is true.
 	 */
 
-	// Basic checks on data from dUQ
+	// Basic checks on data from Dissolve
 	int i = 0;
-	for (AtomType* at1 = duq.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+	for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
 	{
 		int j = i;
 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 		{
-			PairPotential* pp = duq.pairPotential(at1, at2);
+			PairPotential* pp = dissolve.pairPotential(at1, at2);
 			if (!pp)
 			{
 				Messenger::error("Failed to find PairPotential for AtomTypes '%s' and '%s'.\n", at1->name(), at2->name());
@@ -61,7 +61,7 @@ bool SanityCheckModule::process(DUQ& duq, ProcessPool& procPool)
 	}
 
 	// Loop over all Configurations
-	ListIterator<Configuration> configIterator(duq.configurations());
+	ListIterator<Configuration> configIterator(dissolve.configurations());
 	while (Configuration* cfg = configIterator.iterate())
 	{
 		// TODO This is the most basic sanity checking we can do. Need to extend to bonds, angles, molecules etc.
@@ -81,7 +81,7 @@ bool SanityCheckModule::process(DUQ& duq, ProcessPool& procPool)
 
 	// Processing module data
 	Messenger::printVerbose("Sanity checking processing module data...\n");
-	if (!duq.processingModuleData().equality(procPool)) return Messenger::error("Failed sanity check for processing module data.\n");
+	if (!dissolve.processingModuleData().equality(procPool)) return Messenger::error("Failed sanity check for processing module data.\n");
 
 	Messenger::print("All checked data passed equality tests.\n");
 

@@ -34,7 +34,7 @@ const char* SymbolTokenKeywords[Expression::nSymbolTokens] = { "==", ">=", "<=",
 int SymbolTokenValues[Expression::nSymbolTokens] = { UCR_EP_EQ, UCR_EP_GEQ, UCR_EP_LEQ, UCR_EP_NEQ, UCR_EP_NEQ, UCR_EP_AND, UCR_EP_OR };
 Expression::SymbolToken symbolToken(const char* s)
 {
-	for (int n=0; n<Expression::nSymbolTokens; ++n) if (DUQSys::sameString(s, SymbolTokenKeywords[n])) return (Expression::SymbolToken) n;
+	for (int n=0; n<Expression::nSymbolTokens; ++n) if (DissolveSys::sameString(s, SymbolTokenKeywords[n])) return (Expression::SymbolToken) n;
 	return Expression::nSymbolTokens;
 }
 

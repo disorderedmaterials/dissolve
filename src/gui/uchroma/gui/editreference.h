@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMAEDITREFERENCEDIALOG_H
-#define DUQ_UCHROMAEDITREFERENCEDIALOG_H
+#ifndef DISSOLVE_UCHROMAEDITREFERENCEDIALOG_H
+#define DISSOLVE_UCHROMAEDITREFERENCEDIALOG_H
 
 #include "gui/uchroma/gui/ui_editreference.h"
 #include "gui/uchroma/classes/referencevariable.h"

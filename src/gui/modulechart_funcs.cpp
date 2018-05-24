@@ -3,20 +3,20 @@
 	*** src/gui/modulechart_funcs.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "gui/modulechart.hui"
@@ -30,9 +30,9 @@
 #include <QPainter>
 
 // Constructor
-ModuleChart::ModuleChart(DUQWindow* duqWindow, ModuleList& modules, QWidget* parent) : QWidget(parent), modules_(modules)
+ModuleChart::ModuleChart(DissolveWindow* dissolveWindow, ModuleList& modules, QWidget* parent) : QWidget(parent), modules_(modules)
 {
-	duqWindow_ = duqWindow;
+	dissolveWindow_ = dissolveWindow;
 
 	// Drag / Drop
 	draggedBlock_ = NULL;
@@ -193,7 +193,7 @@ void ModuleChart::mouseMoveEvent(QMouseEvent* event)
 	QDataStream dataStream(&itemData, QIODevice::WriteOnly);
 	dataStream << draggedBlock_;
 	QMimeData* mimeData = new QMimeData;
-	mimeData->setData("image/x-duq-flowblock", itemData);
+	mimeData->setData("image/x-dissolve-flowblock", itemData);
 
 	// Construct the drag object
 	QDrag* drag = new QDrag(this);
@@ -226,14 +226,14 @@ void ModuleChart::mouseDoubleClickEvent(QMouseEvent* event)
 	// Attempt to open the Module in a ModuleTab
 	Module* module = block->moduleReference()->module();
 	if (!module) return;
-	duqWindow_->addModuleTab(module);
+	dissolveWindow_->addModuleTab(module);
 }
 
 // Drag enter event
 void ModuleChart::dragEnterEvent(QDragEnterEvent* event)
 {
 	// Is the correct data type being dragged over us?
-	if (event->mimeData()->hasFormat("image/x-duq-flowblock")) event->accept();
+	if (event->mimeData()->hasFormat("image/x-dissolve-flowblock")) event->accept();
 	else event->ignore();
 }
 
@@ -254,7 +254,7 @@ void ModuleChart::dragMoveEvent(QDragMoveEvent* event)
 // Drop event
 void ModuleChart::dropEvent(QDropEvent* event)
 {
-	if (event->mimeData()->hasFormat("image/x-duq-flowblock"))
+	if (event->mimeData()->hasFormat("image/x-dissolve-flowblock"))
 	{
 	}
 	else event->ignore();
@@ -301,7 +301,7 @@ void ModuleChart::updateControls()
 		else
 		{
 			// No current FlowBlock reference, so must create suitable widget
-			FlowBlock* flowBlock = new FlowBlock(this, duqWindow_, modRef);
+			FlowBlock* flowBlock = new FlowBlock(this, dissolveWindow_, modRef);
 			connect(flowBlock, SIGNAL(settingsToggled()), this, SLOT(layOutWidgets()));
 			newDisplayedWidgets.add(flowBlock);
 		}

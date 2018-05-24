@@ -3,20 +3,20 @@
 	*** src/classes/isotopologuereference.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "classes/isotopologuereference.h"
@@ -120,7 +120,7 @@ bool IsotopologueReference::read(LineParser& parser)
 {
 	// Find target Configuration (first argument)
 	configuration_ = NULL;
-	for (configuration_ = List<Configuration>::masterInstance().first(); configuration_ != NULL; configuration_ = configuration_->next) if (DUQSys::sameString(parser.argc(0), configuration_->name())) break;
+	for (configuration_ = List<Configuration>::masterInstance().first(); configuration_ != NULL; configuration_ = configuration_->next) if (DissolveSys::sameString(parser.argc(0), configuration_->name())) break;
 	if (!configuration_)
 	{
 		Messenger::error("Error defining Isotopologue reference - no Configuration named '%s' exists.\n", parser.argc(0));
@@ -129,7 +129,7 @@ bool IsotopologueReference::read(LineParser& parser)
 
 	// Find specified Species (second argument) - must be present in the target Configuration
 	species_ = NULL;
-	for (species_ = List<Species>::masterInstance().first(); species_ != NULL; species_ = species_->next) if (DUQSys::sameString(parser.argc(1), species_->name())) break;
+	for (species_ = List<Species>::masterInstance().first(); species_ != NULL; species_ = species_->next) if (DissolveSys::sameString(parser.argc(1), species_->name())) break;
 	if (!species_) return Messenger::error("Error defining Isotopologue reference - no Species named '%s' exists.\n", parser.argc(1));
 	if (!configuration_->hasUsedSpecies(species_))return Messenger::error("Error defining Isotopologue reference - Species '%s' is not present in Configuration '%s'.\n", species_->name(), configuration_->name());
 

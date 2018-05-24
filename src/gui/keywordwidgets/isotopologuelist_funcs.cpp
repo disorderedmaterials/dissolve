@@ -3,20 +3,20 @@
 	*** src/gui/keywordwidgets/isotopologuelist_funcs.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of DUQ.
+	This file is part of Dissolve.
 
-	DUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	DUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with DUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "gui/keywordwidgets/isotopologuelist.h"
@@ -90,7 +90,7 @@ void IsotopologueListKeywordWidget::isotopologueTable_itemChanged(QTableWidgetIt
 	{
 		// Configuration
 		case (0):
-			for (cfg = List<Configuration>::masterInstance().first(); cfg != NULL; cfg = cfg->next) if (DUQSys::sameString(qPrintable(w->text()), cfg->name())) break;
+			for (cfg = List<Configuration>::masterInstance().first(); cfg != NULL; cfg = cfg->next) if (DissolveSys::sameString(qPrintable(w->text()), cfg->name())) break;
 			if (cfg)
 			{
 				// Set new Configuration, and update Species and Isotopologue
@@ -115,7 +115,7 @@ void IsotopologueListKeywordWidget::isotopologueTable_itemChanged(QTableWidgetIt
 				Messenger::error("No valid Configuration, so can't set Species.\n");
 				break;
 			}
-			for (sp = List<Species>::masterInstance().first(); sp != NULL; sp = sp->next) if (DUQSys::sameString(qPrintable(w->text()), sp->name())) break;
+			for (sp = List<Species>::masterInstance().first(); sp != NULL; sp = sp->next) if (DissolveSys::sameString(qPrintable(w->text()), sp->name())) break;
 			if (sp)
 			{
 				// Make sure this Species is referenced in the Configuration

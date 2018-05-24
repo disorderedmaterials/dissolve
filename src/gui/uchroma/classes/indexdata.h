@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMAINDEXDATA_H
-#define DUQ_UCHROMAINDEXDATA_H
+#ifndef DISSOLVE_UCHROMAINDEXDATA_H
+#define DISSOLVE_UCHROMAINDEXDATA_H
 
 #include <QString>
 

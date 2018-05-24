@@ -28,7 +28,7 @@ const char* DataSourceKeywords[] = { "File", "Internal", "XYData" };
 // Convert text string to SettingsKeyword
 DataSet::DataSource DataSet::dataSource(const char* s)
 {
-	for (int n=0; n<nDataSources; ++n) if (DUQSys::sameString(s, DataSourceKeywords[n])) return (DataSet::DataSource) n;
+	for (int n=0; n<nDataSources; ++n) if (DissolveSys::sameString(s, DataSourceKeywords[n])) return (DataSet::DataSource) n;
 	return nDataSources;
 }
 

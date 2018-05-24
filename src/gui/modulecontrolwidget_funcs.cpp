@@ -3,20 +3,20 @@
 	*** src/gui/modulecontrolwidget_funcs.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "gui/modulecontrolwidget.h"
@@ -31,14 +31,14 @@
 #include "gui/modulewidget.h"
 #include "gui/widgets/subwindow.h"
 #include "module/module.h"
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "classes/configuration.h"
 #include "base/lineparser.h"
 #include <QGridLayout>
 #include <QLabel>
 
 // Constructor
-ModuleControlWidget::ModuleControlWidget(DUQWindow* duqWindow, Module* module, const char* title, bool showTopControls) : SubWidget(duqWindow, title), duqWindow_(duqWindow), duq_(duqWindow->duq()), module_(module)
+ModuleControlWidget::ModuleControlWidget(DissolveWindow* dissolveWindow, Module* module, const char* title, bool showTopControls) : SubWidget(dissolveWindow, title), dissolveWindow_(dissolveWindow), dissolve_(dissolveWindow->dissolve()), module_(module)
 {
 	// Set up user interface
 	ui.setupUi(this);
@@ -99,7 +99,7 @@ void ModuleControlWidget::initialiseControls(Module* module)
 	KeywordWidgetBase* base;
 
 	// Select source list for keywords that have potentially been replicated / updated there
-	GenericList& moduleData = module->configurationLocal() ? module->targetConfigurations().firstItem()->moduleData() : duq_.processingModuleData();
+	GenericList& moduleData = module->configurationLocal() ? module->targetConfigurations().firstItem()->moduleData() : dissolve_.processingModuleData();
 
 	ListIterator<ModuleKeywordBase> keywordIterator(module->keywords().keywords());
 	while (ModuleKeywordBase* keyword = keywordIterator.iterate())
@@ -112,49 +112,49 @@ void ModuleControlWidget::initialiseControls(Module* module)
 		if (keyword->type() == ModuleKeywordBase::IntegerData)
 		{
 			IntegerKeywordWidget* intWidget = new IntegerKeywordWidget(NULL, keyword, moduleData, module->uniqueName());
-			connect(intWidget, SIGNAL(keywordValueChanged()), duqWindow_, SLOT(setModified()));
+			connect(intWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
 			widget = intWidget;
 			base = intWidget;
 		}
 		else if (keyword->type() == ModuleKeywordBase::DoubleData)
 		{
 			DoubleKeywordWidget* doubleWidget = new DoubleKeywordWidget(NULL, keyword, moduleData, module->uniqueName());
-			connect(doubleWidget, SIGNAL(keywordValueChanged()), duqWindow_, SLOT(setModified()));
+			connect(doubleWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
 			widget = doubleWidget;
 			base = doubleWidget;
 		}
 		else if (keyword->type() == ModuleKeywordBase::CharStringData)
 		{
 			CharStringKeywordWidget* charWidget = new CharStringKeywordWidget(NULL, keyword, moduleData, module->uniqueName());
-			connect(charWidget, SIGNAL(keywordValueChanged()), duqWindow_, SLOT(setModified()));
+			connect(charWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
 			widget = charWidget;
 			base = charWidget;
 		}
 		else if (keyword->type() == ModuleKeywordBase::BoolData)
 		{
 			BoolKeywordWidget* boolWidget = new BoolKeywordWidget(NULL, keyword, moduleData, module->uniqueName());
-			connect(boolWidget, SIGNAL(keywordValueChanged()), duqWindow_, SLOT(setModified()));
+			connect(boolWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
 			widget = boolWidget;
 			base = boolWidget;
 		}
 		else if (keyword->type() == ModuleKeywordBase::BroadeningFunctionData)
 		{
 			BroadeningFunctionKeywordWidget* broadeningFunctionWidget = new BroadeningFunctionKeywordWidget(NULL, keyword, moduleData, module->uniqueName());
-			connect(broadeningFunctionWidget, SIGNAL(keywordValueChanged()), duqWindow_, SLOT(setModified()));
+			connect(broadeningFunctionWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
 			widget = broadeningFunctionWidget;
 			base = broadeningFunctionWidget;
 		}
 		else if (keyword->type() == ModuleKeywordBase::IsotopologueListData)
 		{
 			IsotopologueListKeywordWidget* isotopologueListWidget = new IsotopologueListKeywordWidget(NULL, keyword, moduleData, module->uniqueName());
-			connect(isotopologueListWidget, SIGNAL(keywordValueChanged()), duqWindow_, SLOT(setModified()));
+			connect(isotopologueListWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
 			widget = isotopologueListWidget;
 			base = isotopologueListWidget;
 		}
 		else if (keyword->type() == ModuleKeywordBase::WindowFunctionData)
 		{
 			WindowFunctionKeywordWidget* windowFunctionWidget = new WindowFunctionKeywordWidget(NULL, keyword, moduleData, module->uniqueName());
-			connect(windowFunctionWidget, SIGNAL(keywordValueChanged()), duqWindow_, SLOT(setModified()));
+			connect(windowFunctionWidget, SIGNAL(keywordValueChanged()), dissolveWindow_, SLOT(setModified()));
 			widget = windowFunctionWidget;
 			base = windowFunctionWidget;
 		}
@@ -182,7 +182,7 @@ void ModuleControlWidget::initialiseControls(Module* module)
 	QVBoxLayout* widgetLayout = new QVBoxLayout(ui.WidgetWidget);
 	widgetLayout->setContentsMargins(0,0,0,0);
 	widgetLayout->setSpacing(0);
-	moduleWidget_ = module->createWidget(ui.WidgetWidget, duq_);
+	moduleWidget_ = module->createWidget(ui.WidgetWidget, dissolve_);
 	if (moduleWidget_ == NULL) Messenger::printVerbose("Module '%s' did not provide a valid controller widget.\n", module->name());
 	else widgetLayout->addWidget(moduleWidget_);
 
@@ -213,7 +213,7 @@ void ModuleControlWidget::updateControls()
 	// Update Control group
 	ui.EnabledCheck->setChecked(module_->enabled());
 	ui.FrequencySpin->setValue(module_->frequency());
-	ui.RunsInLabel->setText(module_->frequencyDetails(duq_.iteration()));
+	ui.RunsInLabel->setText(module_->frequencyDetails(dissolve_.iteration()));
 
 	RefListIterator<KeywordWidgetBase,bool> keywordIterator(keywordWidgets_);
 	while (KeywordWidgetBase* keywordWidget = keywordIterator.iterate()) keywordWidget->updateValue();
@@ -330,7 +330,7 @@ void ModuleControlWidget::on_RunButton_clicked(bool checked)
 {
 	if (!module_) return;
 
-	module_->executeMainProcessing(duq_, duq_.worldPool());
+	module_->executeMainProcessing(dissolve_, dissolve_.worldPool());
 
 	emit moduleRun();
 }
@@ -348,7 +348,7 @@ void ModuleControlWidget::on_EnabledCheck_clicked(bool checked)
 
 	module_->setEnabled(checked);
 
-	duqWindow_->setModified();
+	dissolveWindow_->setModified();
 }
 
 void ModuleControlWidget::on_FrequencySpin_valueChanged(int value)
@@ -359,5 +359,5 @@ void ModuleControlWidget::on_FrequencySpin_valueChanged(int value)
 	
 	module_->setFrequency(value);
 
-	duqWindow_->setModified();
+	dissolveWindow_->setModified();
 }

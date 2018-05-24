@@ -3,24 +3,24 @@
 	*** src/modules/calibration/calibration.h
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_CALIBRATIONMODULE_H
-#define DUQ_CALIBRATIONMODULE_H
+#ifndef DISSOLVE_CALIBRATIONMODULE_H
+#define DISSOLVE_CALIBRATIONMODULE_H
 
 #include "module/module.h"
 
@@ -93,7 +93,7 @@ class CalibrationModule : public Module
 	// Set up options for Module
 	void setUpKeywords();
 	// Parse complex keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-	int parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix);
+	int parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix);
 
 
 	/*
@@ -101,7 +101,7 @@ class CalibrationModule : public Module
 	 */
 	private:
 	// Run main processing
-	bool process(DUQ& duq, ProcessPool& procPool);
+	bool process(Dissolve& dissolve, ProcessPool& procPool);
 
 	public:
 	// Whether the Module has a processing stage
@@ -123,7 +123,7 @@ class CalibrationModule : public Module
 	 */
 	public:
 	// Return a new widget controlling this Module
-	ModuleWidget* createWidget(QWidget* parent, DUQ& dUQ);
+	ModuleWidget* createWidget(QWidget* parent, Dissolve& Dissolve);
 };
 
 // Interface Class for Complex Cost Functions
@@ -131,11 +131,11 @@ class CalibrationModuleCostFunctions
 {
 	public:
 	// Constructor
-	CalibrationModuleCostFunctions(DUQ& duq, ProcessPool& procPool, RefList<Module,bool>& intraBroadeningModules, RefList<Module,CalibrationModule::IntraBroadeningFitTarget>& intraBroadeningReferences);
+	CalibrationModuleCostFunctions(Dissolve& dissolve, ProcessPool& procPool, RefList<Module,bool>& intraBroadeningModules, RefList<Module,CalibrationModule::IntraBroadeningFitTarget>& intraBroadeningReferences);
 
 	private:
-	// DUQ Main Object
-	DUQ& duq_;
+	// Dissolve Main Object
+	Dissolve& dissolve_;
 	// Target ProcessPool
 	ProcessPool& processPool_;
 	// RDFModule targets for IntraBroadening fitting

@@ -1,26 +1,26 @@
 /*
-	*** dUQ Module Interface
+	*** Dissolve Module Interface
 	*** src/module/module.h
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_MODULE_H
-#define DUQ_MODULE_H
+#ifndef DISSOLVE_MODULE_H
+#define DISSOLVE_MODULE_H
 
 #include "base/messenger.h"
 #include "base/genericlist.h"
@@ -29,7 +29,7 @@
 #include "templates/reflist.h"
 
 // Forward Declarations
-class DUQ;
+class Dissolve;
 class Configuration;
 class ProcessPool;
 class ModuleList;
@@ -109,13 +109,13 @@ class Module : public ListItem<Module>
 	// Set up keywords for Module
 	virtual void setUpKeywords() = 0;
 	// Parse complex keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-	virtual int parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix) = 0;
+	virtual int parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix) = 0;
 
 	public:
 	// Return list of recognised keywords
 	ModuleKeywordList& keywords();
 	// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-	int parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix);
+	int parseKeyword(LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix);
 	// Print valid keywords
 	void printValidKeywords();
 
@@ -175,11 +175,11 @@ class Module : public ListItem<Module>
 	 */
 	private:
 	// Run pre-processing stage
-	virtual bool preProcess(DUQ& duq, ProcessPool& procPool);
+	virtual bool preProcess(Dissolve& dissolve, ProcessPool& procPool);
 	// Run main processing
-	virtual bool process(DUQ& duq, ProcessPool& procPool);
+	virtual bool process(Dissolve& dissolve, ProcessPool& procPool);
 	// Run post-processing stage
-	virtual bool postProcess(DUQ& duq, ProcessPool& procPool);
+	virtual bool postProcess(Dissolve& dissolve, ProcessPool& procPool);
 
 	public:
 	// Whether the Module has a pre-processing stage
@@ -189,13 +189,13 @@ class Module : public ListItem<Module>
 	// Whether the Module has a post-processing stage
 	virtual bool hasPostProcessing();
 	// Run set-up stage
-	virtual bool setUp(DUQ& duq, ProcessPool& procPool);
+	virtual bool setUp(Dissolve& dissolve, ProcessPool& procPool);
 	// Run pre-processing stage
-	bool executePreProcessing(DUQ& duq, ProcessPool& procPool);
+	bool executePreProcessing(Dissolve& dissolve, ProcessPool& procPool);
 	// Run main processing stage
-	bool executeMainProcessing(DUQ& duq, ProcessPool& procPool);
+	bool executeMainProcessing(Dissolve& dissolve, ProcessPool& procPool);
 	// Run post-processing stage
-	bool executePostProcessing(DUQ& duq, ProcessPool& procPool);
+	bool executePostProcessing(Dissolve& dissolve, ProcessPool& procPool);
 
 
 	/*
@@ -231,7 +231,7 @@ class Module : public ListItem<Module>
 	 */
 	public:
 	// Return a new widget controlling this Module
-	virtual ModuleWidget* createWidget(QWidget* parent, DUQ& dUQ);
+	virtual ModuleWidget* createWidget(QWidget* parent, Dissolve& Dissolve);
 };
 
 #endif

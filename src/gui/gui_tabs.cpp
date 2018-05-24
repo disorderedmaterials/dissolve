@@ -1,22 +1,22 @@
 /*
-	*** dUQ Main Window - Tab Management
+	*** Dissolve Main Window - Tab Management
 	*** src/gui/gui_tabs.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "gui/gui.h"
@@ -29,7 +29,7 @@
 #include "classes/configuration.h"
 #include <QInputDialog>
 
-void DUQWindow::on_MainTabs_currentChanged(int index)
+void DissolveWindow::on_MainTabs_currentChanged(int index)
 {
 	if (refreshing_) return;
 
@@ -47,7 +47,7 @@ void DUQWindow::on_MainTabs_currentChanged(int index)
 	currentTab->updateControls();
 }
 
-void DUQWindow::mainTabsDoubleClicked(int index)
+void DissolveWindow::mainTabsDoubleClicked(int index)
 {
 	if (index == -1) return;
 
@@ -69,48 +69,48 @@ void DUQWindow::mainTabsDoubleClicked(int index)
 }
 
 // Clear all tabs, except the "Setup" tab
-void DUQWindow::clearAllTabs()
+void DissolveWindow::clearAllTabs()
 {
 	// Delete all our referenced tabs - removal of the tab and widget will be handled by the destructor
 	tabs_.clear();
 }
 
 // Add core tabs
-void DUQWindow::addCoreTabs()
+void DissolveWindow::addCoreTabs()
 {
-	forcefieldTab_ = new ForcefieldTab(this, duq_, ui.MainTabs, "Forcefield");
+	forcefieldTab_ = new ForcefieldTab(this, dissolve_, ui.MainTabs, "Forcefield");
 	tabs_.own(forcefieldTab_);
 	ui.MainTabs->setTabTextColour(forcefieldTab_->page(), QColor(189, 68, 0));
 	ui.MainTabs->setTabIcon(forcefieldTab_->page(), QIcon(":/tabs/icons/tabs_ff.svg"));
 
-	speciesTab_ = new SpeciesTab(this, duq_, ui.MainTabs, "Species");
+	speciesTab_ = new SpeciesTab(this, dissolve_, ui.MainTabs, "Species");
 	tabs_.own(speciesTab_);
 	ui.MainTabs->setTabTextColour(speciesTab_->page(), QColor(0, 81, 0));
 	ui.MainTabs->setTabIcon(speciesTab_->page(), QIcon(":/tabs/icons/tabs_species.svg"));
 
-	mainProcessingTab_ = new ProcessingTab(this, duq_, ui.MainTabs, "Main Processing");
+	mainProcessingTab_ = new ProcessingTab(this, dissolve_, ui.MainTabs, "Main Processing");
 	tabs_.own(mainProcessingTab_);
 	ui.MainTabs->setTabTextColour(mainProcessingTab_->page(), QColor(11, 36, 118));
 	ui.MainTabs->setTabIcon(mainProcessingTab_->page(), QIcon(":/tabs/icons/tabs_flow.svg"));
 }
 
 // Add tab for specified Configuration target
-void DUQWindow::addConfigurationTab(Configuration* cfg)
+void DissolveWindow::addConfigurationTab(Configuration* cfg)
 {
-	MainTab* tab = new ConfigurationTab(this, duq_, ui.MainTabs, cfg->name(), cfg);
+	MainTab* tab = new ConfigurationTab(this, dissolve_, ui.MainTabs, cfg->name(), cfg);
 	tabs_.own(tab);
 
 	ui.MainTabs->setTabIcon(tab->page(), QIcon(":/tabs/icons/tabs_configuration.svg"));
 }
 
 // Add on an empty workspace tab
-MainTab* DUQWindow::addWorkspaceTab(const char* title)
+MainTab* DissolveWindow::addWorkspaceTab(const char* title)
 {
 	// Check that a tab with this title doesn't already exist
 	MainTab* tab = findTab(title);
 	if (!tab)
 	{
-		tab = new WorkspaceTab(this, duq_, ui.MainTabs, title);
+		tab = new WorkspaceTab(this, dissolve_, ui.MainTabs, title);
 		tabs_.own(tab);
 	}
 	else Messenger::printVerbose("Tab '%s' already exists, so returning that instead...\n", title);
@@ -119,15 +119,15 @@ MainTab* DUQWindow::addWorkspaceTab(const char* title)
 }
 
 // Find tab with title specified
-MainTab* DUQWindow::findTab(const char* title)
+MainTab* DissolveWindow::findTab(const char* title)
 {
-	for (MainTab* tab = tabs_.first() ; tab != NULL; tab = tab->next) if (DUQSys::sameString(title, tab->title())) return tab;
+	for (MainTab* tab = tabs_.first() ; tab != NULL; tab = tab->next) if (DissolveSys::sameString(title, tab->title())) return tab;
 
 	return NULL;
 }
 
 // Find tab with specified page widget
-MainTab* DUQWindow::findTab(QWidget* page)
+MainTab* DissolveWindow::findTab(QWidget* page)
 {
 	for (MainTab* tab = tabs_.first() ; tab != NULL; tab = tab->next) if (tab->page() == page) return tab;
 
@@ -135,7 +135,7 @@ MainTab* DUQWindow::findTab(QWidget* page)
 }
 
 // Return current tab
-MainTab* DUQWindow::currentTab()
+MainTab* DissolveWindow::currentTab()
 {
 	if (ui.MainTabs->currentIndex() == -1) return NULL;
 
@@ -143,26 +143,26 @@ MainTab* DUQWindow::currentTab()
 }
 
 // Make specified tab the current one
-void DUQWindow::setCurrentTab(MainTab* tab)
+void DissolveWindow::setCurrentTab(MainTab* tab)
 {
 	ui.MainTabs->setCurrentIndex(tabs_.indexOf(tab));
 }
 
 // Make specified tab the current one (by index)
-void DUQWindow::setCurrentTab(int tabIndex)
+void DissolveWindow::setCurrentTab(int tabIndex)
 {
 	ui.MainTabs->setCurrentIndex(tabIndex);
 }
 
 // Create / go to Module tab for specified Module, provided it has a Module control widget
-void DUQWindow::addModuleTab(Module* module)
+void DissolveWindow::addModuleTab(Module* module)
 {
 	// Does a tab for this Module already exist
 	MainTab* moduleTab = findTab(module->uniqueName());
 	if (!moduleTab)
 	{
 		// Need to create a new ModuleTab
-		moduleTab = new ModuleTab(this, duq_, ui.MainTabs, module->uniqueName(), module);
+		moduleTab = new ModuleTab(this, dissolve_, ui.MainTabs, module->uniqueName(), module);
 		tabs_.own(moduleTab);
 
 		// Add a close button
@@ -173,7 +173,7 @@ void DUQWindow::addModuleTab(Module* module)
 }
 
 // Remove tab containing the specified page widget, as it has been deleted
-void DUQWindow::removeDeletedTab(QWidget* page)
+void DissolveWindow::removeDeletedTab(QWidget* page)
 {
 	MainTab* deletedTab = findTab(page);
 	if (deletedTab)

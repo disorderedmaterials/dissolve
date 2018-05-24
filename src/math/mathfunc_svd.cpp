@@ -3,20 +3,20 @@
 	*** src/math/mathfunc_svd.cpp
 	Copyright T. Youngs 2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "math/mathfunc.h"
@@ -51,7 +51,7 @@ double pythag(double a, double b) {
 }
 
 // Perform single value decomposition of the supplied matrix A, putting left-orthogonal (U), diagonal single-value (S), and right-orthogonal (V transpose) matrices into the supplied Arrays
-bool DUQMath::svd(const Array2D<double>& A, Array2D<double>& U, Array2D<double>& S, Array2D<double>& Vt)
+bool DissolveMath::svd(const Array2D<double>& A, Array2D<double>& U, Array2D<double>& S, Array2D<double>& Vt)
 {
 	int flag,i,its,j,jj,k,l,nm;
 	double anorm,c,f,g,h,s,scale,x,y,z;
@@ -61,7 +61,7 @@ bool DUQMath::svd(const Array2D<double>& A, Array2D<double>& U, Array2D<double>&
 	const int nRows = A.nRows();
   
 	// Check for nRows >= nCols
-	if (nRows < nCols) return Messenger::error("DUQMath::svd() - nRows must be greater than nCols.\n");
+	if (nRows < nCols) return Messenger::error("DissolveMath::svd() - nRows must be greater than nCols.\n");
 	Array<double> rv1(nCols);
 	rv1 = 0.0;
 	S.initialise(nCols,nCols);
@@ -246,7 +246,7 @@ bool DUQMath::svd(const Array2D<double>& A, Array2D<double>& U, Array2D<double>&
 				}
 				break;
 			}
-			if(its == 29) return Messenger::error("DUQMath::svd() - No convergence in 30 iterations.\n");
+			if(its == 29) return Messenger::error("DissolveMath::svd() - No convergence in 30 iterations.\n");
 
 			// Shift from bottom 2x2 minor
 			x = S.value(l,l);
@@ -312,7 +312,7 @@ bool DUQMath::svd(const Array2D<double>& A, Array2D<double>& U, Array2D<double>&
 }
 
 // Test SVD
-bool DUQMath::svdTest()
+bool DissolveMath::svdTest()
 {
 	Array2D<double> A, U, V, S, I, Ut, Vt;
 
@@ -369,7 +369,7 @@ bool DUQMath::svdTest()
 }
 
 // Compute in-place pseudoinverse of supplied matrix
-bool DUQMath::pseudoinverse(Array2D<double>& A)
+bool DissolveMath::pseudoinverse(Array2D<double>& A)
 {
 	// First, compute SVD of the matrix A
 	Array2D<double> U, S, Vt;
@@ -384,7 +384,7 @@ bool DUQMath::pseudoinverse(Array2D<double>& A)
 	for (int n=0; n<A.nRows(); ++n)
 	{
 		// TODO Need better double comparison here
-		for (int m=0; m<A.nColumns(); ++m) if (fabs(A.value(n,m)-A2.value(n,m)) > 1.0e-9) return Messenger::error("DUQMath::pseudoinverse() - SVD does not appear to be valid.\n");
+		for (int m=0; m<A.nColumns(); ++m) if (fabs(A.value(n,m)-A2.value(n,m)) > 1.0e-9) return Messenger::error("DissolveMath::pseudoinverse() - SVD does not appear to be valid.\n");
 	}
 // 	A.print("Original A");
 // 	A2.print("Recombined A");

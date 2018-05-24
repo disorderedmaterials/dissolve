@@ -3,20 +3,20 @@
 	*** src/module/list.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "module/list.h"
@@ -93,7 +93,7 @@ Module* ModuleList::find(const char* name) const
 	{
 		Module* module = modRef->module();
 
-		if (DUQSys::sameString(module->name(),name)) return module;
+		if (DissolveSys::sameString(module->name(),name)) return module;
 	}
 
 	return NULL;
@@ -133,7 +133,7 @@ void ModuleList::registerMasterInstance(Module* mainInstance)
 	{
 		Module* module = modRef->module();
 
-		if (DUQSys::sameString(module->name(), mainInstance->name()))
+		if (DissolveSys::sameString(module->name(), mainInstance->name()))
 		{
 			Messenger::error("Two modules cannot have the same name (%s).\n", module->name());
 			ModuleReference* failedRef = failedRegistrations_.add();
@@ -154,7 +154,7 @@ Module* ModuleList::findMasterInstance(const char* name)
 	{
 		Module* masterInstance = modRef->module();
 		
-		if (DUQSys::sameString(masterInstance->name(), name)) return masterInstance;
+		if (DissolveSys::sameString(masterInstance->name(), name)) return masterInstance;
 	}
 
 	return NULL;
@@ -204,7 +204,7 @@ Module* ModuleList::findInstanceByUniqueName(const char* uniqueName)
 		Module* masterInstance = modRef->module();
 
 		// Master instance itself?
-		if (DUQSys::sameString(masterInstance->uniqueName(), uniqueName)) return masterInstance;
+		if (DissolveSys::sameString(masterInstance->uniqueName(), uniqueName)) return masterInstance;
 
 		// Child instances
 		Module* instance = masterInstance->findInstance(uniqueName);

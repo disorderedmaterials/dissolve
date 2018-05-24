@@ -3,24 +3,24 @@
 	*** src/modules/bragg/process.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "modules/bragg/bragg.h"
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
@@ -34,7 +34,7 @@ bool BraggModule::hasProcessing()
 }
 
 // Run main processing
-bool BraggModule::process(DUQ& duq, ProcessPool& procPool)
+bool BraggModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {
 	/*
 	 * Calculate Bragg contributions.
@@ -52,7 +52,7 @@ bool BraggModule::process(DUQ& duq, ProcessPool& procPool)
 
 	CharString varName;
 
-	GenericList& moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : duq.processingModuleData();
+	GenericList& moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : dissolve.processingModuleData();
 
 	// Print argument/parameter summary
 	// TODO
@@ -81,7 +81,7 @@ bool BraggModule::process(DUQ& duq, ProcessPool& procPool)
 // 		unweightedgr.setObjectNames(CharString("%s//%s//%s", cfg->niceName(), "Bragg", "UnweightedGR"));
 // 
 // 		// If we are associated to a local Configuration, copy the partial data over to the processing module list
-// 		if (configurationLocal_) GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedGR", uniqueName_) = unweightedgr;
+// 		if (configurationLocal_) GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedGR", uniqueName_) = unweightedgr;
 	}
 
 	// If we are a main processing task, construct the weighted sum of Configuration partials and store in the processing module data list
@@ -98,7 +98,7 @@ bool BraggModule::process(DUQ& duq, ProcessPool& procPool)
 
 // // 		// Set up partial set using the AtomTypeList we have just constructed.
 // // 		Configuration* refConfig = targetConfigurations_.firstItem();
-// // 		PartialSet& unweightedgr = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedGR", uniqueName_, GenericItem::InRestartFileFlag);
+// // 		PartialSet& unweightedgr = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedGR", uniqueName_, GenericItem::InRestartFileFlag);
 // // 		unweightedgr.setUp(combinedAtomTypes, refConfig->rdfRange(), refConfig->rdfBinWidth(), uniqueName(), "unweighted", "rdf", "r, Angstroms");
 // // 		unweightedgr.setObjectNames(CharString("%s//UnweightedGR", uniqueName_.get()));
 // // 
@@ -133,7 +133,7 @@ bool BraggModule::process(DUQ& duq, ProcessPool& procPool)
 // // 		if (saveData) if (!MPIRunMaster(procPool, unweightedgr.save())) return false;
 // // 
 // // 		// Store the blended density of our partials
-// // 		GenericListHelper<double>::realise(duq.processingModuleData(), "Density", uniqueName_, GenericItem::InRestartFileFlag) = density;
+// // 		GenericListHelper<double>::realise(dissolve.processingModuleData(), "Density", uniqueName_, GenericItem::InRestartFileFlag) = density;
 	}
 
 	return true;

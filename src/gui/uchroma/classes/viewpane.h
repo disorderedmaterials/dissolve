@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMAVIEWPANE_H
-#define DUQ_UCHROMAVIEWPANE_H
+#ifndef DISSOLVE_UCHROMAVIEWPANE_H
+#define DISSOLVE_UCHROMAVIEWPANE_H
 
 #include "gui/uchroma/classes/axes.h"
 #include "gui/uchroma/classes/collection.h"

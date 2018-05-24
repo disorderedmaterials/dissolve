@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMACOLLECTIONGROUP_H
-#define DUQ_UCHROMACOLLECTIONGROUP_H
+#ifndef DISSOLVE_UCHROMACOLLECTIONGROUP_H
+#define DISSOLVE_UCHROMACOLLECTIONGROUP_H
 
 #include "gui/uchroma/classes/colourdef.h"
 #include "base/charstring.h"

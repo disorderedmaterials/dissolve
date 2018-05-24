@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMATEXTFORMAT_H
-#define DUQ_UCHROMATEXTFORMAT_H
+#ifndef DISSOLVE_UCHROMATEXTFORMAT_H
+#define DISSOLVE_UCHROMATEXTFORMAT_H
 
 #include "templates/listitem.h"
 

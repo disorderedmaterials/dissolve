@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMAOPERATE_BGSUB_H
-#define DUQ_UCHROMAOPERATE_BGSUB_H
+#ifndef DISSOLVE_UCHROMAOPERATE_BGSUB_H
+#define DISSOLVE_UCHROMAOPERATE_BGSUB_H
 
 #include "gui/uchroma/gui/ui_operate_bgsub.h"
 #include <QDialog>

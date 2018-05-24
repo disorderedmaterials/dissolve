@@ -3,24 +3,24 @@
 	*** src/modules/calibration/process.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "modules/calibration/calibration.h"
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "modules/energy/energy.h"
 #include "modules/rdf/rdf.h"
 #include "classes/partialset.h"
@@ -35,7 +35,7 @@ bool CalibrationModule::hasProcessing()
 }
 
 // Run main processing
-bool CalibrationModule::process(DUQ& duq, ProcessPool& procPool)
+bool CalibrationModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {
 	/* 
 	 * Perform calibration of various aspects
@@ -84,7 +84,7 @@ bool CalibrationModule::process(DUQ& duq, ProcessPool& procPool)
 		/*
 		 * Assemble a list of fitting parameters from the associated RDF modules and their BroadeningFunctions
 		 */
-		CalibrationModuleCostFunctions costFunctions(duq, procPool, intraBroadeningModules_, intraBroadeningReferences_);
+		CalibrationModuleCostFunctions costFunctions(dissolve, procPool, intraBroadeningModules_, intraBroadeningReferences_);
 		PrAxis<CalibrationModuleCostFunctions> broadeningMinimiser(costFunctions, &CalibrationModuleCostFunctions::intraBroadeningCost);
 		rdfModuleIterator.restart();
 		while (Module* module = rdfModuleIterator.iterate())
@@ -135,7 +135,7 @@ bool CalibrationModule::process(DUQ& duq, ProcessPool& procPool)
 
 			// Run the NeutronSQModule (quietly)
 			Messenger::mute();
-			module->executeMainProcessing(duq, procPool);
+			module->executeMainProcessing(dissolve, procPool);
 			Messenger::unMute();
 		}
 	}

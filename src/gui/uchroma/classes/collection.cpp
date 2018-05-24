@@ -408,7 +408,7 @@ DataSet* Collection::dataSets() const
 // Return named dataset
 DataSet* Collection::dataSet(const char* name)
 {
-	for (DataSet* dataSet = dataSets_.first(); dataSet != NULL; dataSet = dataSet->next) if (DUQSys::sameString(dataSet->name(), name)) return dataSet;
+	for (DataSet* dataSet = dataSets_.first(); dataSet != NULL; dataSet = dataSet->next) if (DissolveSys::sameString(dataSet->name(), name)) return dataSet;
 	return NULL;
 }
 
@@ -1003,7 +1003,7 @@ Collection* Collection::fits()
 // Return fit with name specified
 Collection* Collection::fit(const char* name)
 {
-	for (Collection* fit = fits_.first(); fit != NULL; fit = fit->next) if (DUQSys::sameString(fit->name(), name)) return fit;
+	for (Collection* fit = fits_.first(); fit != NULL; fit = fit->next) if (DissolveSys::sameString(fit->name(), name)) return fit;
 	return NULL;
 }
 
@@ -1078,7 +1078,7 @@ Collection* Collection::slices()
 // Return slice with name specified
 Collection* Collection::slice(const char* name)
 {
-	for (Collection* slice = slices_.first(); slice != NULL; slice = slice->next) if (DUQSys::sameString(slice->name(), name)) return slice;
+	for (Collection* slice = slices_.first(); slice != NULL; slice = slice->next) if (DissolveSys::sameString(slice->name(), name)) return slice;
 	return NULL;
 }
 
@@ -1263,7 +1263,7 @@ const char* SurfaceStyleKeywords[] = { "LineXY", "LineZY", "Grid", "Surface", "U
 // Convert text string to DisplayStyle
 Collection::DisplayStyle Collection::displayStyle(const char* s)
 {
-	for (int n=0; n<nDisplayStyles; ++n) if (DUQSys::sameString(s, SurfaceStyleKeywords[n])) return (Collection::DisplayStyle) n;
+	for (int n=0; n<nDisplayStyles; ++n) if (DissolveSys::sameString(s, SurfaceStyleKeywords[n])) return (Collection::DisplayStyle) n;
 	return nDisplayStyles;
 }
 

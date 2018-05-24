@@ -3,24 +3,24 @@
 	*** src/main/keywords_module.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "main/keywords.h"
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
@@ -38,7 +38,7 @@ KeywordData ModuleBlockData[] = {
 // Convert text string to ModuleKeyword
 ModuleBlock::ModuleKeyword ModuleBlock::keyword(const char* s)
 {
-	for (int n=0; n<ModuleBlock::nModuleKeywords; ++n) if (DUQSys::sameString(s,ModuleBlockData[n].name)) return (ModuleBlock::ModuleKeyword) n;
+	for (int n=0; n<ModuleBlock::nModuleKeywords; ++n) if (DissolveSys::sameString(s,ModuleBlockData[n].name)) return (ModuleBlock::ModuleKeyword) n;
 	return ModuleBlock::nModuleKeywords;
 }
 
@@ -55,7 +55,7 @@ int ModuleBlock::nArguments(ModuleBlock::ModuleKeyword id)
 }
 
 // Parse Module block
-bool ModuleBlock::parse(LineParser& parser, DUQ* duq, Module* module, GenericList& targetList, bool moduleInConfiguration)
+bool ModuleBlock::parse(LineParser& parser, Dissolve* dissolve, Module* module, GenericList& targetList, bool moduleInConfiguration)
 {
 	Messenger::print("\nParsing %s block '%s'...\n", InputBlocks::inputBlock(InputBlocks::ModuleBlock), module->name());
 
@@ -83,7 +83,7 @@ bool ModuleBlock::parse(LineParser& parser, DUQ* duq, Module* module, GenericLis
 		{
 			case (ModuleBlock::ConfigurationKeyword):
 				// Find the named Configuration
-				targetCfg = duq->findConfiguration(parser.argc(1));
+				targetCfg = dissolve->findConfiguration(parser.argc(1));
 				if (!targetCfg)
 				{
 					Messenger::error("Can't associate Configuration '%s' to the Module '%s', since no Configuration by this name exists.\n", parser.argc(1), module->name());
@@ -120,7 +120,7 @@ bool ModuleBlock::parse(LineParser& parser, DUQ* duq, Module* module, GenericLis
 		else
 		{
 			// Might be a keyword defined in the Module itself?
-			int result = module->parseKeyword(parser, duq, targetList, module->uniqueName());
+			int result = module->parseKeyword(parser, dissolve, targetList, module->uniqueName());
 			if (result != 1)
 			{
 				if (result == -1) Messenger::error("Unrecognised %s block keyword '%s' found, and the Module '%s' contains no option with this name.\n", InputBlocks::inputBlock(InputBlocks::ModuleBlock), parser.argc(0), module->name());

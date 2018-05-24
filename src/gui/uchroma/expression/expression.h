@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMAEXPRESSION_H
-#define DUQ_UCHROMAEXPRESSION_H
+#ifndef DISSOLVE_UCHROMAEXPRESSION_H
+#define DISSOLVE_UCHROMAEXPRESSION_H
 
 #include "gui/uchroma/expression/node.h"
 #include "gui/uchroma/expression/functions.h"

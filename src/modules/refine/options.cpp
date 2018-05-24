@@ -3,20 +3,20 @@
 	*** src/modules/refine/options.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "modules/refine/refine.h"
@@ -30,7 +30,7 @@ const char* PotentialInversionMethodKeywords[] = { "Direct", "Gaussian", "PY", "
 // Convert text string to PotentialGenerationType
 RefineModule::PotentialInversionMethod RefineModule::potentialInversionMethod(const char* s)
 {
-	for (int n=0; n<RefineModule::nPotentialInversionMethods; ++n) if (DUQSys::sameString(s, PotentialInversionMethodKeywords[n])) return (RefineModule::PotentialInversionMethod) n;
+	for (int n=0; n<RefineModule::nPotentialInversionMethods; ++n) if (DissolveSys::sameString(s, PotentialInversionMethodKeywords[n])) return (RefineModule::PotentialInversionMethod) n;
 	return RefineModule::nPotentialInversionMethods;
 }
 
@@ -46,7 +46,7 @@ const char* MatrixAugmentationStyleKeywords[] = { "None", "Partials" };
 // Convert text string to MatrixAugmentationStyle
 RefineModule::MatrixAugmentationStyle RefineModule::matrixAugmentationStyle(const char* s)
 {
-	for (int n=0; n<RefineModule::nMatrixAugmentationStyles; ++n) if (DUQSys::sameString(s, MatrixAugmentationStyleKeywords[n])) return (RefineModule::MatrixAugmentationStyle) n;
+	for (int n=0; n<RefineModule::nMatrixAugmentationStyles; ++n) if (DissolveSys::sameString(s, MatrixAugmentationStyleKeywords[n])) return (RefineModule::MatrixAugmentationStyle) n;
 	return RefineModule::nMatrixAugmentationStyles;
 }
 
@@ -82,9 +82,9 @@ void RefineModule::setUpKeywords()
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int RefineModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix)
+int RefineModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
-	if (DUQSys::sameString(parser.argc(0), "Target")) return addTarget(parser.argc(1), parser.hasArg(2) ? parser.argc(2) : "Default");
+	if (DissolveSys::sameString(parser.argc(0), "Target")) return addTarget(parser.argc(1), parser.hasArg(2) ? parser.argc(2) : "Default");
 	else return -1;
 
 	return true;

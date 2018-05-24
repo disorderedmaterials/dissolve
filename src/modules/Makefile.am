@@ -5,13 +5,13 @@ libmodules_la_SOURCES =
 libmodules_la_LIBADD = 
 libmodules_la_LDFLAGS = -static
 
-libmodules_CPPFLAGS = -I../ -I../../ @DUQ_CFLAGS@ @DUQ_READLINE@
+libmodules_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@ @DISSOLVE_READLINE@
 
 libmoduledummywidgets_la_SOURCES = 
 libmoduledummywidgets_la_LIBADD = 
 libmoduledummywidgets_la_LDFLAGS = -static
 
-libmoduledummywidgets_CPPFLAGS = -I../ -I../../ @DUQ_CFLAGS@ @DUQ_READLINE@
+libmoduledummywidgets_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@ @DISSOLVE_READLINE@
 
 # Module targets
 SUBDIRS = atomshake
@@ -70,7 +70,7 @@ libmodulewidgets_la_SOURCES =
 libmodulewidgets_la_LIBADD = 
 libmodulewidgets_la_LDFLAGS = -static
 
-libmodulewidgets_CPPFLAGS = -I../ -I../../ @DUQ_CFLAGS@ @DUQ_READLINE@ @GUI_INCLUDES@
+libmodulewidgets_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@ @DISSOLVE_READLINE@ @GUI_INCLUDES@
 
 libmodulewidgets_la_LIBADD += atomshake/gui/libmodulewidget.la
 libmodulewidgets_la_LIBADD += calibration/gui/libmodulewidget.la

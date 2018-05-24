@@ -3,25 +3,25 @@
 	*** src/modules/rdf/options.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "modules/rdf/rdf.h"
 #include "module/keywordtypes.h"
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
 #include "templates/enumhelpers.h"
@@ -33,7 +33,7 @@ const char* PartialsMethodKeywords[] = { "Auto", "Test", "Simple", "Cells" };
 // Convert character string to PartialsMethod
 RDFModule::PartialsMethod RDFModule::partialsMethod(const char* s)
 {
-	for (int n=0; n<nPartialsMethods; ++n) if (DUQSys::sameString(s, PartialsMethodKeywords[n])) return (RDFModule::PartialsMethod) n;
+	for (int n=0; n<nPartialsMethods; ++n) if (DissolveSys::sameString(s, PartialsMethodKeywords[n])) return (RDFModule::PartialsMethod) n;
 	return RDFModule::nPartialsMethods;
 }
 
@@ -49,7 +49,7 @@ const char* AveragingSchemeKeywords[] = { "Simple", "Exponential" };
 // Convert character string to AveragingScheme
 RDFModule::AveragingScheme RDFModule::averagingScheme(const char* s)
 {
-	for (int n=0; n<nAveragingSchemes; ++n) if (DUQSys::sameString(s, AveragingSchemeKeywords[n])) return (RDFModule::AveragingScheme) n;
+	for (int n=0; n<nAveragingSchemes; ++n) if (DissolveSys::sameString(s, AveragingSchemeKeywords[n])) return (RDFModule::AveragingScheme) n;
 	return RDFModule::nAveragingSchemes;
 }
 
@@ -77,9 +77,9 @@ void RDFModule::setUpKeywords()
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int RDFModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix)
+int RDFModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
-	if (DUQSys::sameString(parser.argc(0), "TestReference"))
+	if (DissolveSys::sameString(parser.argc(0), "TestReference"))
 	{
 		Messenger::print("Reading test reference g(r) / G(r) / S(Q) / F(Q) data...\n");
 
@@ -90,7 +90,7 @@ int RDFModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parse
 		int xcol = parser.hasArg(3) ? parser.argi(3)-1 : 0;
 		int ycol = parser.hasArg(4) ? parser.argi(4)-1 : 1;
 
-		LineParser fileParser(&duq->worldPool());
+		LineParser fileParser(&dissolve->worldPool());
 		if ((!fileParser.openInput(parser.argc(1))) || (!data.load(fileParser, xcol, ycol))) return false;
 	}
 	else return -1;

@@ -3,23 +3,23 @@
 	*** src/modules/refine/functions.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "modules/refine/refine.h"
 #include "classes/atomtype.h"
 #include "classes/masterintra.h"
@@ -37,12 +37,12 @@ bool RefineModule::addTarget(const char* moduleTarget, const char* group)
 	if (!module) return Messenger::error("Couldn't find Module '%s' to add to RefineModule's list of targets.\n", moduleTarget);
 
 	// Check on the type of the Module given... if OK, add to the specified group
-	if (DUQSys::sameString(module->name(), "NeutronSQ")) Messenger::print("Adding NeutronSQ target '%s' to '%s'.\n", moduleTarget, uniqueName());
+	if (DissolveSys::sameString(module->name(), "NeutronSQ")) Messenger::print("Adding NeutronSQ target '%s' to '%s'.\n", moduleTarget, uniqueName());
 	else return Messenger::error("Can't use Module of type '%s' as a fitting target.\n", module->name());
 
 	// Does the specified group exist?
 	ModuleGroup* moduleGroup;
-	for (moduleGroup = targetGroups_.first(); moduleGroup != NULL; moduleGroup = moduleGroup->next) if (DUQSys::sameString(moduleGroup->name(), group)) break;
+	for (moduleGroup = targetGroups_.first(); moduleGroup != NULL; moduleGroup = moduleGroup->next) if (DissolveSys::sameString(moduleGroup->name(), group)) break;
 	if (moduleGroup == NULL)
 	{
 		moduleGroup = new ModuleGroup(group);
@@ -103,7 +103,7 @@ XYData RefineModule::calculateCR(const XYData& sq, double normFactor, double rMi
 }
 
 // Determine modification to bonds based on supplied delta g(r), returning features extracted from deltaGR
-bool RefineModule::modifyBondTerms(DUQ& duq, const XYData& deltaGR, AtomType* typeI, AtomType* typeJ, XYData& deltaBond)
+bool RefineModule::modifyBondTerms(Dissolve& dissolve, const XYData& deltaGR, AtomType* typeI, AtomType* typeJ, XYData& deltaBond)
 {
 	// exp(-(((x-r)-delta)**2)/width**2)-exp(-(((x-r)+delta)**2)/width**2) w l
 
@@ -111,7 +111,7 @@ bool RefineModule::modifyBondTerms(DUQ& duq, const XYData& deltaGR, AtomType* ty
 	const int idI = typeI->index();
 	const int idJ = typeJ->index();
 	RefList<MasterIntra,double> masterBonds;
-	for (MasterIntra* b = duq.masterBonds().first(); b != NULL; b = b->next) if (b->usageCount(idI, idJ) > 0) masterBonds.add(b);
+	for (MasterIntra* b = dissolve.masterBonds().first(); b != NULL; b = b->next) if (b->usageCount(idI, idJ) > 0) masterBonds.add(b);
 
 	/*
 	 * We now have a reference list of MasterIntra bond terms that involve these two AtomTypes.
@@ -174,7 +174,7 @@ bool RefineModule::modifyBondTerms(DUQ& duq, const XYData& deltaGR, AtomType* ty
 		if (fitValue <= 5.0)
 		{
 			// Fit is OK - try to work out what it means!
-			if (DUQMath::sgn(AL) != DUQMath::sgn(AR))
+			if (DissolveMath::sgn(AL) != DissolveMath::sgn(AR))
 			{
 				// AL and AR have opposite signs which probably means a sine-like curve indicating a mismatch of peak positions
 				// Check the magnitude of AC - if it is sufficiently small we will assume this is the case
@@ -190,7 +190,7 @@ bool RefineModule::modifyBondTerms(DUQ& duq, const XYData& deltaGR, AtomType* ty
 				Messenger::print("Resulting magnitude of fit is below threshold (A = %f), so no modification will be performed.\n", AL);
 				continue;
 			}
-			else if (DUQMath::sgn(AC) != DUQMath::sgn(AL))
+			else if (DissolveMath::sgn(AC) != DissolveMath::sgn(AL))
 			{
 				// AL and AR have the same sign, and AC is different, which may indicate the force constant is wrong
 				if (fabs(AC) > fabs(AL))

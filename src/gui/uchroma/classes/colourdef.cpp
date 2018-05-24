@@ -77,7 +77,7 @@ const char* ColourSourceKeywords[] = { "SingleColour", "RGBGradient", "HSVGradie
 // Convert text string to ColourSource
 ColourDefinition::ColourSource ColourDefinition::colourSource(const char* s)
 {
-	for (int n=0; n<ColourDefinition::nColourSources; ++n) if (DUQSys::sameString(s, ColourSourceKeywords[n])) return (ColourDefinition::ColourSource) n;
+	for (int n=0; n<ColourDefinition::nColourSources; ++n) if (DissolveSys::sameString(s, ColourSourceKeywords[n])) return (ColourDefinition::ColourSource) n;
 	return ColourDefinition::nColourSources;
 }
 
@@ -93,7 +93,7 @@ const char* AlphaControlKeywords[] = { "OwnAlpha", "FixedAlpha" };
 // Convert text string to AlphaControl
 ColourDefinition::AlphaControl ColourDefinition::alphaControl(const char* s)
 {
-	for (int n=0; n<ColourDefinition::nAlphaControls; ++n) if (DUQSys::sameString(s, AlphaControlKeywords[n])) return (ColourDefinition::AlphaControl) n;
+	for (int n=0; n<ColourDefinition::nAlphaControls; ++n) if (DissolveSys::sameString(s, AlphaControlKeywords[n])) return (ColourDefinition::AlphaControl) n;
 	return ColourDefinition::nAlphaControls;
 }
 

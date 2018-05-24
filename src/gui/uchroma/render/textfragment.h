@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMATEXTFRAGMENT_H
-#define DUQ_UCHROMATEXTFRAGMENT_H
+#ifndef DISSOLVE_UCHROMATEXTFRAGMENT_H
+#define DISSOLVE_UCHROMATEXTFRAGMENT_H
 
 #include "templates/vector3.h"
 #include "templates/list.h"

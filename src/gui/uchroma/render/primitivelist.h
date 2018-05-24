@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMAPRIMITIVELIST_H
-#define DUQ_UCHROMAPRIMITIVELIST_H
+#ifndef DISSOLVE_UCHROMAPRIMITIVELIST_H
+#define DISSOLVE_UCHROMAPRIMITIVELIST_H
 
 #include "gui/uchroma/render/primitive.h"
 #include "templates/list.h"

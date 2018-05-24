@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMAEDITSTATE_H
-#define DUQ_UCHROMAEDITSTATE_H
+#ifndef DISSOLVE_UCHROMAEDITSTATE_H
+#define DISSOLVE_UCHROMAEDITSTATE_H
 
 #include "gui/uchroma/session/editstatedata.h"
 #include "templates/objectstore.h"

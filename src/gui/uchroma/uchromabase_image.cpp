@@ -27,12 +27,12 @@ const char* imageFormatFilters[UChromaBase::nImageFormats] = { "Windows Image (*
 const char* imageFormatExtensions[UChromaBase::nImageFormats] = { "bmp", "jpg", "png", "ppm", "xbm", "xpm" };
 UChromaBase::ImageFormat UChromaBase::imageFormat(const char* s)
 {
-	for (int n=0; n<UChromaBase::nImageFormats; ++n) if (DUQSys::sameString(s, imageFormatExtensions[n])) return (UChromaBase::ImageFormat) n;
+	for (int n=0; n<UChromaBase::nImageFormats; ++n) if (DissolveSys::sameString(s, imageFormatExtensions[n])) return (UChromaBase::ImageFormat) n;
 	return UChromaBase::nImageFormats;
 }
 UChromaBase::ImageFormat UChromaBase::imageFormatFromFilter(const char* s)
 {
-	for (int n=0; n<UChromaBase::nImageFormats; ++n) if (DUQSys::sameString(s, imageFormatFilters[n])) return (UChromaBase::ImageFormat) n;
+	for (int n=0; n<UChromaBase::nImageFormats; ++n) if (DissolveSys::sameString(s, imageFormatFilters[n])) return (UChromaBase::ImageFormat) n;
 	return UChromaBase::nImageFormats;
 }
 const char* UChromaBase::imageFormatFilter(UChromaBase::ImageFormat bf)

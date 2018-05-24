@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMALINESTYLE_H
-#define DUQ_UCHROMALINESTYLE_H
+#ifndef DISSOLVE_UCHROMALINESTYLE_H
+#define DISSOLVE_UCHROMALINESTYLE_H
 
 #include "gui/uchroma/render/linestipple.h"
 #include <QColor>

@@ -3,28 +3,28 @@
 	*** src/main/keywords.h
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_KEYWORDS_H
-#define DUQ_KEYWORDS_H
+#ifndef DISSOLVE_KEYWORDS_H
+#define DISSOLVE_KEYWORDS_H
 
 // Forward Declarations
 class LineParser;
-class DUQ;
+class Dissolve;
 class Sample;
 class Configuration;
 class Species;
@@ -111,7 +111,7 @@ namespace ConfigurationBlock
 	// Return expected number of expected arguments
 	int nArguments(ConfigurationKeyword id);
 	// Parse Configuration block
-	bool parse(LineParser& parser, DUQ* duq, Configuration* cfg);
+	bool parse(LineParser& parser, Dissolve* dissolve, Configuration* cfg);
 };
 
 
@@ -137,7 +137,7 @@ namespace DataBlock
 	// Return expected number of expected arguments
 	int nArguments(DataKeyword id);
 	// Parse Data block
-	bool parse(LineParser& parser, DUQ* duq, Data* data);
+	bool parse(LineParser& parser, Dissolve* dissolve, Data* data);
 };
 
 
@@ -162,7 +162,7 @@ namespace MasterBlock
 	// Return expected number of expected arguments
 	int nArguments(MasterKeyword id);
 	// Parse Module block
-	bool parse(LineParser& parser, DUQ* duq);
+	bool parse(LineParser& parser, Dissolve* dissolve);
 };
 
 
@@ -187,7 +187,7 @@ namespace ModuleBlock
 	// Return expected number of expected arguments
 	int nArguments(ModuleKeyword id);
 	// Parse Module block
-	bool parse(LineParser& parser, DUQ* duq, Module* module, GenericList& targetList, bool moduleInConfiguration);
+	bool parse(LineParser& parser, Dissolve* dissolve, Module* module, GenericList& targetList, bool moduleInConfiguration);
 };
 
 
@@ -219,7 +219,7 @@ namespace PairPotentialsBlock
 	// Return expected number of expected arguments
 	int nArguments(PairPotentialsKeyword id);
 	// Parse PairPotentials block
-	bool parse(LineParser& parser, DUQ* duq);
+	bool parse(LineParser& parser, Dissolve* dissolve);
 };
 
 
@@ -245,7 +245,7 @@ namespace SimulationBlock
 	// Return expected number of expected arguments
 	int nArguments(SimulationKeyword id);
 	// Parse Simulation block
-	bool parse(LineParser& parser, DUQ* duq);
+	bool parse(LineParser& parser, Dissolve* dissolve);
 };
 
 
@@ -275,7 +275,7 @@ namespace SpeciesBlock
 	// Return expected number of expected arguments
 	int nArguments(SpeciesKeyword id);
 	// Parse Species block
-	bool parse(LineParser& parser, DUQ* duq, Species* species);
+	bool parse(LineParser& parser, Dissolve* dissolve, Species* species);
 };
 
 
@@ -300,7 +300,7 @@ namespace SpeciesInfoBlock
 	// Return expected number of expected arguments
 	int nArguments(SpeciesInfoKeyword id);
 	// Parse SpeciesInfo block
-	bool parse(LineParser& parser, DUQ* duq, SpeciesInfo* speciesInfo);
+	bool parse(LineParser& parser, Dissolve* dissolve, SpeciesInfo* speciesInfo);
 };
 
 #endif

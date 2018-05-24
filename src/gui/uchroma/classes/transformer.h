@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMATRANSFORMER_H
-#define DUQ_UCHROMATRANSFORMER_H
+#ifndef DISSOLVE_UCHROMATRANSFORMER_H
+#define DISSOLVE_UCHROMATRANSFORMER_H
 
 #include "gui/uchroma/expression/expression.h"
 #include "base/charstring.h"

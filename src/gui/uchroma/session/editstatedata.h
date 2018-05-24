@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMAEDITSTATEDATA_H
-#define DUQ_UCHROMAEDITSTATEDATA_H
+#ifndef DISSOLVE_UCHROMAEDITSTATEDATA_H
+#define DISSOLVE_UCHROMAEDITSTATEDATA_H
 
 #include "base/messenger.h"
 #include "gui/uchroma/classes/collection.h"

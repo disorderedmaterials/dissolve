@@ -34,4 +34,4 @@ libkeywordwidgets_la_SOURCES += windowfunction.hui windowfunction_funcs.cpp
 
 noinst_HEADERS = base.h broadeningfunction.h dropdown.h isotopologuelist.h
 
-AM_CPPFLAGS = -I$(top_srcdir)/src @DUQ_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
+AM_CPPFLAGS = -I$(top_srcdir)/src @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@

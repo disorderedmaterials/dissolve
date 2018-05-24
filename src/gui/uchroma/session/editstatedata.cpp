@@ -89,7 +89,7 @@ void EditStateData::set(const char* name, LineStyle& value)
 // Return whether name of contained data matches that supplied
 bool EditStateData::isName(const char* name)
 {
-	return DUQSys::sameString(name_, name);
+	return DissolveSys::sameString(name_, name);
 }
 
 // Return type of contained data

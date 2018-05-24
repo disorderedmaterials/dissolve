@@ -3,33 +3,33 @@
 	*** src/modules/refine/gui/modulewidget_funcs.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "modules/refine/gui/modulewidget.h"
 #include "gui/uchroma/gui/uchromaview.h"
 #include "gui/widgets/mimetreewidgetitem.h"
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "modules/refine/refine.h"
 #include "classes/atomtype.h"
 #include "templates/variantpointer.h"
 #include "templates/genericlisthelper.h"
 
 // Constructor
-RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, DUQ& dUQ) : ModuleWidget(parent), module_((RefineModule*) module), dUQ_(dUQ)
+RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, Dissolve& Dissolve) : ModuleWidget(parent), module_((RefineModule*) module), Dissolve_(Dissolve)
 {
 	// Set up user interface
 	ui.setupUi(this);
@@ -150,7 +150,7 @@ void RefineModuleWidget::updateControls()
 
 	// Set controls on Overview page
 	double phiLevel = 0.0;
-	ListIterator<PairPotential> ppIterator(dUQ_.pairPotentials());
+	ListIterator<PairPotential> ppIterator(Dissolve_.pairPotentials());
 	while (PairPotential* pp = ppIterator.iterate()) phiLevel += pp->uAdditional().absIntegral();
 	ui.PhiLevelSpin->setValue(phiLevel);
 
@@ -223,7 +223,7 @@ void RefineModuleWidget::setGraphDataTargets(RefineModule* module)
 {
 	if (!module) return;
 
-	const int nTypes = dUQ_.atomTypeList().nItems();
+	const int nTypes = Dissolve_.atomTypeList().nItems();
 	int n, m;
 	CharString blockData;
 
@@ -239,7 +239,7 @@ void RefineModuleWidget::setGraphDataTargets(RefineModule* module)
 			dataGraph_->addCollectionFromBlock(blockData);
 
 			// Calculated data from associated module
-			if (DUQSys::sameString(targetModule->name(), "NeutronSQ"))
+			if (DissolveSys::sameString(targetModule->name(), "NeutronSQ"))
 			{
 				blockData.sprintf("Collection '%s Calc'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated'; Source XYData '%s//WeightedSQ//Total'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName());
 				dataGraph_->addCollectionFromBlock(blockData);
@@ -254,7 +254,7 @@ void RefineModuleWidget::setGraphDataTargets(RefineModule* module)
 
 		// Add experimentally-determined partial S(Q), calculated partial S(Q), and delta S(Q) to the partialSQGraph_
 		n = 0;
-		for (AtomType* at1 = dUQ_.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++n)
+		for (AtomType* at1 = Dissolve_.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++n)
 		{
 			m = n;
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)

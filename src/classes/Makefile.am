@@ -35,4 +35,4 @@ noinst_HEADERS += scaledenergykernel.h scatteringmatrix.h species.h speciesangle
 noinst_HEADERS += torsion.h
 noinst_HEADERS += weights.h
 
-AM_CPPFLAGS = -I../ @DUQ_CFLAGS@
+AM_CPPFLAGS = -I../ @DISSOLVE_CFLAGS@

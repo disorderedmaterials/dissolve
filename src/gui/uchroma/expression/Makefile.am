@@ -10,5 +10,5 @@ libexpression_la_SOURCES += expression.cpp expression_lexer.cpp functionnode.cpp
 
 noinst_HEADERS = expression.h functionnode.h functions.h node.h variable.h variablenode.h
 
-AM_CPPFLAGS = -I$(top_srcdir)/src -I../ -I./ @DUQ_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
+AM_CPPFLAGS = -I$(top_srcdir)/src -I../ -I./ @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
 

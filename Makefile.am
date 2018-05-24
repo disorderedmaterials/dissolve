@@ -12,5 +12,5 @@ EXTRA_DIST += src/gui/icons/*.* src/gui/uchroma/gui/icons/* src/gui/uchroma/gui/
 #epsr_DATA = extra/epsr.png
 
 #desktopdir = @BUILDDIR@/usr/share/applications
-#desktop_DATA = dUQ.desktop
+#desktop_DATA = Dissolve.desktop
 

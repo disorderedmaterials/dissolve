@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMADATASPACE_H
-#define DUQ_UCHROMADATASPACE_H
+#ifndef DISSOLVE_UCHROMADATASPACE_H
+#define DISSOLVE_UCHROMADATASPACE_H
 
 #include "gui/uchroma/classes/dataspacerange.h"
 #include "templates/list.h"

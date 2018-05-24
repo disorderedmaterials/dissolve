@@ -4,4 +4,4 @@ libexport_la_SOURCES = core.cpp definition.cpp functions.cpp options.cpp process
 
 noinst_HEADERS = export.h
 
-AM_CPPFLAGS = -I../ -I../../ @DUQ_CFLAGS@ @DUQ_READLINE@
+AM_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@ @DISSOLVE_READLINE@

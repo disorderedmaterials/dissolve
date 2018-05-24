@@ -3,44 +3,44 @@
 	*** src/gui/moduletab_funcs.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "gui/moduletab.h"
 #include "gui/gui.h"
 #include "gui/modulewidget.h"
 #include "gui/widgets/nocontrols.h"
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "base/lineparser.h"
 
 // Constructor / Destructor
-ModuleTab::ModuleTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const char* title, Module* module) : MainTab(duqWindow, duq, parent, module->uniqueName(), this), module_(module)
+ModuleTab::ModuleTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, Module* module) : MainTab(dissolveWindow, dissolve, parent, module->uniqueName(), this), module_(module)
 {
 	ui.setupUi(this);
 
 	refreshing_ = false;
 
 	// Set up our keywords widget
-	ui.KeywordsFrame->setUp(duqWindow_, module_);
+	ui.KeywordsFrame->setUp(dissolveWindow_, module_);
 
 	// Create the module widget (if this Module has one)
 	QVBoxLayout* widgetLayout = new QVBoxLayout(ui.WidgetWidget);
 	widgetLayout->setContentsMargins(0,0,0,0);
 	widgetLayout->setSpacing(0);
-	moduleWidget_ = module->createWidget(ui.WidgetWidget, duq);
+	moduleWidget_ = module->createWidget(ui.WidgetWidget, dissolve);
 	if (moduleWidget_ == NULL)
 	{
 		NoControlsWidget* ncw = new NoControlsWidget;
@@ -64,7 +64,7 @@ void ModuleTab::updateHeaderTexts()
 {
 	CharString topText("%s (%s)", module_->name(), module_->uniqueName());
 	ui.TopLabel->setText(topText.get());
-	CharString bottomText("Runs @ %s", module_->frequencyDetails(duq_.iteration()));
+	CharString bottomText("Runs @ %s", module_->frequencyDetails(dissolve_.iteration()));
 	ui.BottomLabel->setText(bottomText.get());
 }
 
@@ -160,7 +160,7 @@ void ModuleTab::on_RunButton_clicked(bool checked)
 {
 	if (!module_) return;
 
-	module_->executeMainProcessing(duq_, duq_.worldPool());
+	module_->executeMainProcessing(dissolve_, dissolve_.worldPool());
 
 	emit(moduleRun());
 }
@@ -171,7 +171,7 @@ void ModuleTab::on_EnabledButton_clicked(bool checked)
 
 	module_->setEnabled(checked);
 
-	duqWindow_->setModified();
+	dissolveWindow_->setModified();
 }
 
 void ModuleTab::on_FrequencySpin_valueChanged(int value)
@@ -180,7 +180,7 @@ void ModuleTab::on_FrequencySpin_valueChanged(int value)
 
 	module_->setFrequency(value);
 
-	duqWindow_->setModified();
+	dissolveWindow_->setModified();
 
 	updateHeaderTexts();
 }

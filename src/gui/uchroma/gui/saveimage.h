@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMASAVEIMAGEDIALOG_H
-#define DUQ_UCHROMASAVEIMAGEDIALOG_H
+#ifndef DISSOLVE_UCHROMASAVEIMAGEDIALOG_H
+#define DISSOLVE_UCHROMASAVEIMAGEDIALOG_H
 
 #include "gui/uchroma/gui/ui_saveimage.h"
 #include <QDialog>

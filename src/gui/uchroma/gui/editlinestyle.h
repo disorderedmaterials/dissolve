@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMAEDITLINESTYLEDIALOG_H
-#define DUQ_UCHROMAEDITLINESTYLEDIALOG_H
+#ifndef DISSOLVE_UCHROMAEDITLINESTYLEDIALOG_H
+#define DISSOLVE_UCHROMAEDITLINESTYLEDIALOG_H
 
 #include "gui/uchroma/gui/ui_editlinestyle.h"
 #include "gui/uchroma/render/linestyle.h"

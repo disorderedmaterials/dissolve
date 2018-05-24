@@ -3,24 +3,24 @@
 	*** src/modules/atomshake/process.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "modules/atomshake/atomshake.h"
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/celldistributor.h"
@@ -38,7 +38,7 @@ bool AtomShakeModule::hasProcessing()
 }
 
 // Run main processing
-bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
+bool AtomShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {
 	/*
 	 * Perform an Atom shake
@@ -61,11 +61,11 @@ bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		procPool.assignProcessesToGroups(cfg->processPool());
 
 		// Get reference to relevant module data
-		GenericList& moduleData = configurationLocal_ ? cfg->moduleData() : duq.processingModuleData();
+		GenericList& moduleData = configurationLocal_ ? cfg->moduleData() : dissolve.processingModuleData();
 
 		// Retrieve control parameters from Configuration
 		double cutoffDistance = keywords_.asDouble("CutoffDistance");
-		if (cutoffDistance < 0.0) cutoffDistance = duq.pairPotentialRange();
+		if (cutoffDistance < 0.0) cutoffDistance = dissolve.pairPotentialRange();
 		const int nShakesPerAtom = keywords_.asInt("ShakesPerAtom");
 		const double targetAcceptanceRate = keywords_.asDouble("TargetAcceptanceRate");
 		double stepSize = GenericListHelper<double>::retrieve(moduleData, "StepSize", uniqueName(), keywords_.asDouble("StepSize"));
@@ -85,7 +85,7 @@ bool AtomShakeModule::process(DUQ& duq, ProcessPool& procPool)
 
 		// Create a local ChangeStore and EnergyKernel
 		ChangeStore changeStore(procPool);
-		EnergyKernel kernel(procPool, cfg, duq.potentialMap(), cutoffDistance);
+		EnergyKernel kernel(procPool, cfg, dissolve.potentialMap(), cutoffDistance);
 
 		// Initialise the random number buffer so it is suitable for our parallel strategy within the main loop
 		procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));

@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMAPRIMITIVE_H
-#define DUQ_UCHROMAPRIMITIVE_H
+#ifndef DISSOLVE_UCHROMAPRIMITIVE_H
+#define DISSOLVE_UCHROMAPRIMITIVE_H
 
 #ifdef _WIN32
 #include <windows.h>

@@ -47,5 +47,5 @@ noinst_HEADERS += operate_bgsub.h operate_setz.h
 noinst_HEADERS += selectequation.h selectsymbol.h selecttarget.h
 noinst_HEADERS += uchromafull.h uchromaview.h
 
-AM_CPPFLAGS = -I$(top_srcdir)/src -I../ -I./ @DUQ_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
+AM_CPPFLAGS = -I$(top_srcdir)/src -I../ -I./ @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
 

@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMASELECTTARGET_H
-#define DUQ_UCHROMASELECTTARGET_H
+#ifndef DISSOLVE_UCHROMASELECTTARGET_H
+#define DISSOLVE_UCHROMASELECTTARGET_H
 
 #include "gui/uchroma/gui/ui_selecttarget.h"
 #include <QDialog>

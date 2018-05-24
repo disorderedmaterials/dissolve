@@ -3,25 +3,25 @@
 	*** src/modules/neutronsq/options.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "modules/neutronsq/neutronsq.h"
 #include "module/keywordtypes.h"
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
 #include "templates/enumhelpers.h"
@@ -33,7 +33,7 @@ const char* NormalisationTypeKeywords[] = { "None", "AverageSquared", "SquaredAv
 // Convert character string to NormalisationType
 NeutronSQModule::NormalisationType NeutronSQModule::normalisationType(const char* s)
 {
-	for (int n=0; n<NeutronSQModule::nNormalisationTypes; ++n) if (DUQSys::sameString(s, NormalisationTypeKeywords[n])) return (NeutronSQModule::NormalisationType) n;
+	for (int n=0; n<NeutronSQModule::nNormalisationTypes; ++n) if (DissolveSys::sameString(s, NormalisationTypeKeywords[n])) return (NeutronSQModule::NormalisationType) n;
 	return NeutronSQModule::nNormalisationTypes;
 }
 
@@ -65,13 +65,13 @@ void NeutronSQModule::setUpKeywords()
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int NeutronSQModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix)
+int NeutronSQModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
-	if (DUQSys::sameString(parser.argc(0), "ConfigurationWeight"))
+	if (DissolveSys::sameString(parser.argc(0), "ConfigurationWeight"))
 	{
 		// Sets the weight of a specified Configuration in construction of the partials
 		// Find target Configuration
-		Configuration* targetCfg = duq->findConfiguration(parser.argc(1));
+		Configuration* targetCfg = dissolve->findConfiguration(parser.argc(1));
 		if (!targetCfg)
 		{
 			Messenger::error("Error setting Configuration weight - no Configuration named '%s' exists.\n", parser.argc(1));
@@ -87,7 +87,7 @@ int NeutronSQModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser&
 
 		GenericListHelper<double>::add(targetList, CharString("Weight_%s", targetCfg->niceName()), uniqueName()) = parser.argd(2);
 	}
-	else if (DUQSys::sameString(parser.argc(0), "TestReference"))
+	else if (DissolveSys::sameString(parser.argc(0), "TestReference"))
 	{
 		Messenger::print("Reading test reference S(Q) / F(Q) data...\n");
 
@@ -98,7 +98,7 @@ int NeutronSQModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser&
 		int xcol = parser.hasArg(3) ? parser.argi(3)-1 : 0;
 		int ycol = parser.hasArg(4) ? parser.argi(4)-1 : 1;
 
-		LineParser fileParser(&duq->worldPool());
+		LineParser fileParser(&dissolve->worldPool());
 		if ((!fileParser.openInput(parser.argc(1))) || (!data.load(fileParser, xcol, ycol))) return false;
 	}
 	else return -1;

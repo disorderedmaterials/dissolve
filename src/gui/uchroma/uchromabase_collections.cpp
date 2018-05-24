@@ -37,7 +37,7 @@ const char* UChromaBase::uniqueCollectionName(const char* baseName)
 		// Add on suffix (if index > 0)
 		if (index > 0) testName.sprintf("%s (%i)", baseName, index);
 		++index;
-		for (collection = collections_.first(); collection != NULL; collection = collection->next) if (DUQSys::sameString(collection->name(), testName)) break;
+		for (collection = collections_.first(); collection != NULL; collection = collection->next) if (DissolveSys::sameString(collection->name(), testName)) break;
 	} while (collection);
 
 	return testName.get();

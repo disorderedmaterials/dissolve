@@ -1,32 +1,32 @@
 /*
-	*** dUQ Main Window - Functions
+	*** Dissolve Main Window - Functions
 	*** src/gui/gui_funcs.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "gui/gui.h"
 #include "base/lineparser.h"
 #include <QCloseEvent>
 #include <QMdiSubWindow>
 
 // Constructor
-DUQWindow::DUQWindow(DUQ& duq) : QMainWindow(NULL), duq_(duq), threadController_(this, duq)
+DissolveWindow::DissolveWindow(Dissolve& dissolve) : QMainWindow(NULL), dissolve_(dissolve), threadController_(this, dissolve)
 {
 	// Initialise resources
 	Q_INIT_RESOURCE(icons);
@@ -42,7 +42,7 @@ DUQWindow::DUQWindow(DUQ& duq) : QMainWindow(NULL), duq_(duq), threadController_
 	// Connect signals from our main tab widget / bar
 	connect(ui.MainTabs, SIGNAL(tabClosed(QWidget*)), this, SLOT(removeDeletedTab(QWidget*)));
 	connect(ui.MainTabs, SIGNAL(tabBarDoubleClicked(int)), this, SLOT(mainTabsDoubleClicked(int)));
-	duqState_ = StoppedState;
+	dissolveState_ = StoppedState;
 
 	refreshing_ = false;
 	modified_ = false;
@@ -51,26 +51,26 @@ DUQWindow::DUQWindow(DUQ& duq) : QMainWindow(NULL), duq_(duq), threadController_
 }
 
 // Destructor
-DUQWindow::~DUQWindow()
+DissolveWindow::~DissolveWindow()
 {
 }
 
 // Flag that data has been modified via the GUI
-void DUQWindow::setModified()
+void DissolveWindow::setModified()
 {
 	modified_ = true;
 
 	updateStatus();
 }
 
-// Return reference to dUQ
-DUQ& DUQWindow::duq()
+// Return reference to Dissolve
+Dissolve& DissolveWindow::dissolve()
 {
-	return duq_;
+	return dissolve_;
 }
 
 // Catch window close event
-void DUQWindow::closeEvent(QCloseEvent* event)
+void DissolveWindow::closeEvent(QCloseEvent* event)
 {
 	// Mark the window as refreshing, so we don't try to update any more widgets
 	refreshing_ = true;
@@ -81,7 +81,7 @@ void DUQWindow::closeEvent(QCloseEvent* event)
 	event->accept();
 }
 
-void DUQWindow::resizeEvent(QResizeEvent* event)
+void DissolveWindow::resizeEvent(QResizeEvent* event)
 {
 }
 
@@ -89,19 +89,19 @@ void DUQWindow::resizeEvent(QResizeEvent* event)
  * File
  */
 
-bool DUQWindow::openFile(const char* inputFile, bool ignoreRestartFile, bool ignoreLayoutFile)
+bool DissolveWindow::openFile(const char* inputFile, bool ignoreRestartFile, bool ignoreLayoutFile)
 {
 	// Clear any existing tabs etc.
 	clearAllTabs();
 
-	// Clear duq itself
-	duq_.clear();
+	// Clear dissolve itself
+	dissolve_.clear();
 
 	// Load the input file
 	Messenger::banner("Parse Input File");
-	if (!duq_.loadInput(inputFile))
+	if (!dissolve_.loadInput(inputFile))
 	{
-		duq_.clear();
+		dissolve_.clear();
 		return false;
 	}
 
@@ -110,10 +110,10 @@ bool DUQWindow::openFile(const char* inputFile, bool ignoreRestartFile, bool ign
 	if (!ignoreRestartFile)
 	{
 		CharString restartFile("%s.restart", inputFile);
-		if (DUQSys::fileExists(restartFile))
+		if (DissolveSys::fileExists(restartFile))
 		{
 			Messenger::print("\nRestart file '%s' exists and will be loaded.\n", restartFile.get());
-			if (!duq_.loadRestart(restartFile.get()))
+			if (!dissolve_.loadRestart(restartFile.get()))
 			{
 				Messenger::error("Restart file contained errors.\n");
 				ProcessPool::finalise();
@@ -125,21 +125,21 @@ bool DUQWindow::openFile(const char* inputFile, bool ignoreRestartFile, bool ign
 	else Messenger::print("\nRestart file (if it exists) will be ignored.\n");
 
 	// Try to set-up simulation
-	duq_.setUp();
+	dissolve_.setUp();
 
 	refreshing_ = true;
 
 	// Add on necessary tabs
 	addCoreTabs();
-	ListIterator<Configuration> configIterator(duq_.configurations());
+	ListIterator<Configuration> configIterator(dissolve_.configurations());
 	while (Configuration* cfg = configIterator.iterate()) addConfigurationTab(cfg);
 	refreshing_ = false;
 
 	// Does a window state exist for this input file?
-	windowLayoutFilename_.sprintf("%s.state", duq_.inputFilename());
+	windowLayoutFilename_.sprintf("%s.state", dissolve_.inputFilename());
 
 	// Try to load in the window state file
-	if (DUQSys::fileExists(windowLayoutFilename_) && (!ignoreLayoutFile)) loadWindowLayout();
+	if (DissolveSys::fileExists(windowLayoutFilename_) && (!ignoreLayoutFile)) loadWindowLayout();
 
 	updateControls();
 
@@ -153,25 +153,25 @@ bool DUQWindow::openFile(const char* inputFile, bool ignoreRestartFile, bool ign
  */
 
 // Refresh all displayed widgets
-void DUQWindow::updateControls()
+void DissolveWindow::updateControls()
 {
 	// Iteration Panel
-	ui.IterationNumberLabel->setText(DUQSys::itoa(duq_.iteration()));
+	ui.IterationNumberLabel->setText(DissolveSys::itoa(dissolve_.iteration()));
 
 	// Loop over tabs
 	for (MainTab* tab = tabs_.first(); tab != NULL; tab = tab->next) tab->updateControls();
 }
 
 // Update status
-void DUQWindow::updateStatus()
+void DissolveWindow::updateStatus()
 {
 	// Window Title
-	QString title = QString("%1%2").arg(duq_.hasInputFileName() ? duq_.inputFilename() : "<untitled>", modified_ ? "(*)" : ""); 
+	QString title = QString("%1%2").arg(dissolve_.hasInputFileName() ? dissolve_.inputFilename() : "<untitled>", modified_ ? "(*)" : ""); 
 	setWindowTitle(title);
 
-	// dUQ Status
+	// Dissolve Status
 	QPalette labelPalette = ui.SetUpLabel->palette();
-	if (duq_.isSetUp())
+	if (dissolve_.isSetUp())
 	{
 		labelPalette.setColor(QPalette::WindowText, Qt::darkGreen);
 		ui.SetUpLabel->setText("Set Up & Ready");
@@ -187,7 +187,7 @@ void DUQWindow::updateStatus()
 }
 
 // Link output handler in to the Messenger
-void DUQWindow::addOutputHandler()
+void DissolveWindow::addOutputHandler()
 {
 	Messenger::setOutputHandler(&outputHandler_);
 	connect(&outputHandler_, SIGNAL(printText(const QString&)), ui.MessagesBrowser, SLOT(append(const QString&)));
@@ -198,7 +198,7 @@ void DUQWindow::addOutputHandler()
  */
 
 // Save current window layout
-bool DUQWindow::saveWindowLayout()
+bool DissolveWindow::saveWindowLayout()
 {
 	// Open file for writing
 	LineParser stateParser;
@@ -218,7 +218,7 @@ bool DUQWindow::saveWindowLayout()
 }
 
 // Load window layout
-bool DUQWindow::loadWindowLayout()
+bool DissolveWindow::loadWindowLayout()
 {
 	// Open file for reading
 	LineParser stateParser;

@@ -1,27 +1,27 @@
 /*
-	*** dUQ GUI Main
-	*** src/duq-gui.cpp
+	*** Dissolve GUI Main
+	*** src/dissolve-gui.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "version.h"
 #include "base/messenger.h"
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "module/registry.h"
 #include "base/processpool.h"
 #include "gui/gui.h"
@@ -39,7 +39,7 @@ int main(int argc, char **argv)
 #endif
 
 	// Instantiate main class
-	DUQ dUQ;
+	Dissolve dissolve;
 
 	// Parse CLI options...
 	int n = 1;
@@ -53,7 +53,7 @@ int main(int argc, char **argv)
 			switch (argv[n][1])
 			{
 				case ('h'):
-					printf("dUQ version %s\n\nAvailable CLI options are:\n\n", DUQVERSION);
+					printf("Dissolve version %s\n\nAvailable CLI options are:\n\n", DISSOLVEVERSION);
 					printf("\t-a\t\tAuto-add dependent Modules if they are not present already\n");
 					printf("\t-i\t\tIgnore restart file\n");
 					printf("\t-I\t\tIgnore GUI state file\n");
@@ -63,7 +63,7 @@ int main(int argc, char **argv)
 					return 0;
 					break;
 				case ('a'):
-					dUQ.setAutoAddDependentModules(true);
+					dissolve.setAutoAddDependentModules(true);
 					break;
 				case ('i'):
 					Messenger::print("Restart file (if it exists) will be ignored.\n");
@@ -103,26 +103,22 @@ int main(int argc, char **argv)
 	}
 
 	// Print GPL license information
-#ifdef PARALLEL
-	Messenger::print("Monitor PARALLEL version %s, Copyright (C) 2012-2018 T. Youngs.\n", DUQVERSION);
-#else
-	Messenger::print("Monitor SERIAL version %s, Copyright (C) 2012-2018 T. Youngs.\n", DUQVERSION);
-#endif
-	Messenger::print("Source repository: %s.\n", DUQREPO);
-	Messenger::print("dUQ comes with ABSOLUTELY NO WARRANTY.\n");
+	Messenger::print("Dissolve-GUI version %s, Copyright (C) 2012-2018 T. Youngs.\n", DISSOLVEVERSION);
+	Messenger::print("Source repository: %s.\n", DISSOLVEREPO);
+	Messenger::print("Dissolve comes with ABSOLUTELY NO WARRANTY.\n");
 	Messenger::print("This is free software, and you are welcome to redistribute it under certain conditions.\n");
 	Messenger::print("For more details read the GPL at <http://www.gnu.org/copyleft/gpl.html>.\n");
 
 	// Load external datafiles (master only)
 	Messenger::banner("Load External Data");
-	if (!MPIRunMaster(dUQ.worldPool(), dUQ.loadDataFiles()))
+	if (!MPIRunMaster(dissolve.worldPool(), dissolve.loadDataFiles()))
 	{
 		ProcessPool::finalise();
 		return 1;
 	}
 
 	// Broadcast periodic table (including isotope and parameter data)
-	if (!periodicTable.broadcast(dUQ.worldPool()))
+	if (!periodicTable.broadcast(dissolve.worldPool()))
 	{
 		ProcessPool::finalise();
 		return 1;
@@ -145,7 +141,7 @@ int main(int argc, char **argv)
 	QApplication app(argc, argv);
 	QCoreApplication::setOrganizationName("ProjectAten");
 	QCoreApplication::setOrganizationDomain("www.projectaten.com");
-	QCoreApplication::setApplicationName("DUQ GUI");
+	QCoreApplication::setApplicationName("Dissolve-GUI");
 
 	// Tweak the default QSurfaceFormat
 	QSurfaceFormat surfaceFormat;
@@ -162,24 +158,24 @@ int main(int argc, char **argv)
 	setlocale(LC_NUMERIC,"C");
 
 	// Create the main window
-	DUQWindow duqWindow(dUQ);
+	DissolveWindow dissolveWindow(dissolve);
 
 	// If an input file was specified, load it here
-	if ((!inputFile.isEmpty()) && (!duqWindow.openFile(inputFile, ignoreRestart, ignoreLayout)))
+	if ((!inputFile.isEmpty()) && (!dissolveWindow.openFile(inputFile, ignoreRestart, ignoreLayout)))
 	{
 		ProcessPool::finalise();
 		return 1;
 	}
 
 	// Update and show the main window
-	duqWindow.updateControls();
-	duqWindow.addOutputHandler();
-	duqWindow.show();
+	dissolveWindow.updateControls();
+	dissolveWindow.addOutputHandler();
+	dissolveWindow.show();
 
 	int result = app.exec();
 
 	// Clear all data
-	dUQ.clear();
+	dissolve.clear();
 
 	// End parallel communication
 	ProcessPool::finalise();

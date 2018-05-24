@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMASIGNAL_H
-#define DUQ_UCHROMASIGNAL_H
+#ifndef DISSOLVE_UCHROMASIGNAL_H
+#define DISSOLVE_UCHROMASIGNAL_H
 
 // Forward Declarations
 /* none */

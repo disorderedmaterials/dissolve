@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMASELECTEQUATION_H
-#define DUQ_UCHROMASELECTEQUATION_H
+#ifndef DISSOLVE_UCHROMASELECTEQUATION_H
+#define DISSOLVE_UCHROMASELECTEQUATION_H
 
 #include "gui/uchroma/gui/ui_selectequation.h"
 #include <QDialog>

@@ -10,5 +10,5 @@ librender_la_SOURCES += fontinstance.cpp linestipple.cpp linestyle.cpp primitive
 
 noinst_HEADERS = fontinstance.h linestipple.h linestyle.h primitive.h primitiveinfo.h primitiveinstance.h primitivelist.h surface.h textformat.h textfragment.h textprimitive.h textprimitivelist.h
 
-AM_CPPFLAGS = -I$(top_srcdir)/src -I../ -I./ @DUQ_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
+AM_CPPFLAGS = -I$(top_srcdir)/src -I../ -I./ @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
 

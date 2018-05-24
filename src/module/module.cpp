@@ -1,22 +1,22 @@
 /*
-	*** dUQ Module Interface
+	*** Dissolve Module Interface
 	*** src/module/module.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "module/module.h"
@@ -52,7 +52,7 @@ Module::~Module()
 // Find instance with unique name specified
 Module* Module::findInstance(const char* uniqueName)
 {
-	for (Module* instance = instances().first(); instance != NULL; instance = instance->next) if (DUQSys::sameString(instance->uniqueName(), uniqueName)) return instance;
+	for (Module* instance = instances().first(); instance != NULL; instance = instance->next) if (DissolveSys::sameString(instance->uniqueName(), uniqueName)) return instance;
 	return NULL;
 }
 
@@ -88,7 +88,7 @@ void Module::addDependentModule(Module* module, bool autoAdded)
 Module* Module::dependentModule(const char* name)
 {
 	RefListIterator<Module,bool> iterator(dependentModules_, true);
-	while (Module* module = iterator.iterate()) if (DUQSys::sameString(name, module->name())) return module;
+	while (Module* module = iterator.iterate()) if (DissolveSys::sameString(name, module->name())) return module;
 
 	return NULL;
 }
@@ -167,7 +167,7 @@ ModuleKeywordList& Module::keywords()
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int Module::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix)
+int Module::parseKeyword(LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
 	// The LineParser currently contains a parsed line from the input file...
 
@@ -179,7 +179,7 @@ int Module::parseKeyword(LineParser& parser, DUQ* duq, GenericList& targetList, 
 	if (keyword->type() == ModuleKeywordBase::ComplexData)
 	{
 		// It's a 'complex' keyword, one that either sets up a complicated object, or does something specific within the Module
-		return parseComplexKeyword(keyword, parser, duq, targetList, prefix);
+		return parseComplexKeyword(keyword, parser, dissolve, targetList, prefix);
 	}
 	else
 	{
@@ -342,19 +342,19 @@ bool Module::configurationLocal()
  */
 
 // Run pre-processing stage
-bool Module::preProcess(DUQ& duq, ProcessPool& procPool)
+bool Module::preProcess(Dissolve& dissolve, ProcessPool& procPool)
 {
 	return false;
 }
 
 // Run main processing
-bool Module::process(DUQ& duq, ProcessPool& procPool)
+bool Module::process(Dissolve& dissolve, ProcessPool& procPool)
 {
 	return false;
 }
 
 // Run post-processing stage
-bool Module::postProcess(DUQ& duq, ProcessPool& procPool)
+bool Module::postProcess(Dissolve& dissolve, ProcessPool& procPool)
 {
 	return false;
 }
@@ -378,27 +378,27 @@ bool Module::hasPostProcessing()
 }
 
 // Run set-up stage
-bool Module::setUp(DUQ& duq, ProcessPool& procPool)
+bool Module::setUp(Dissolve& dissolve, ProcessPool& procPool)
 {
 	return true;
 }
 
 // Run pre-processing stage
-bool Module::executePreProcessing(DUQ& duq, ProcessPool& procPool)
+bool Module::executePreProcessing(Dissolve& dissolve, ProcessPool& procPool)
 {
 	// No pre-run hooks, and no post-run hooks as-yet, so just return result
-	return preProcess(duq, procPool);
+	return preProcess(dissolve, procPool);
 }
 
 // Run main processing stage
-bool Module::executeMainProcessing(DUQ& duq, ProcessPool& procPool)
+bool Module::executeMainProcessing(Dissolve& dissolve, ProcessPool& procPool)
 {
 	// Begin timer
 	Timer timer;
 	timer.start();
 
 	// Run main processing routine
-	bool result = process(duq, procPool);
+	bool result = process(dissolve, procPool);
 
 	// Accumulate timing information
 	timer.stop();
@@ -408,10 +408,10 @@ bool Module::executeMainProcessing(DUQ& duq, ProcessPool& procPool)
 }
 
 // Run post-processing stage
-bool Module::executePostProcessing(DUQ& duq, ProcessPool& procPool)
+bool Module::executePostProcessing(Dissolve& dissolve, ProcessPool& procPool)
 {
 	// No pre-run hooks, and no post-run hooks as-yet, so just return result
-	return postProcess(duq, procPool);
+	return postProcess(dissolve, procPool);
 }
 
 /*
@@ -435,7 +435,7 @@ bool Module::readProcessTimes(LineParser& parser)
  */
 
 // Return a new widget controlling this Module
-ModuleWidget* Module::createWidget(QWidget* parent, DUQ& dUQ)
+ModuleWidget* Module::createWidget(QWidget* parent, Dissolve& Dissolve)
 {
 	return NULL;
 }

@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMACOLOURSCALE_H
-#define DUQ_UCHROMACOLOURSCALE_H
+#ifndef DISSOLVE_UCHROMACOLOURSCALE_H
+#define DISSOLVE_UCHROMACOLOURSCALE_H
 
 #include "templates/list.h"
 #include "templates/reflist.h"

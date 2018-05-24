@@ -3,24 +3,24 @@
 	*** src/modules/sq/process.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "modules/sq/sq.h"
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "modules/rdf/rdf.h"
@@ -33,7 +33,7 @@ bool SQModule::hasProcessing()
 }
 
 // Run main processing
-bool SQModule::process(DUQ& duq, ProcessPool& procPool)
+bool SQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {
 	/*
 	 * Calculate S(Q) from Configuration's g(r).
@@ -50,7 +50,7 @@ bool SQModule::process(DUQ& duq, ProcessPool& procPool)
 
 	CharString varName;
 
-	GenericList& moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : duq.processingModuleData();
+	GenericList& moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : dissolve.processingModuleData();
 
 	const BroadeningFunction& qBroadening = KeywordListHelper<BroadeningFunction>::retrieve(keywords_, "QBroadening", BroadeningFunction());
 	const double qDelta = keywords_.asDouble("QDelta");
@@ -68,7 +68,7 @@ bool SQModule::process(DUQ& duq, ProcessPool& procPool)
 	else Messenger::print("SQ: Window function to be applied in Fourier transforms is %s (%s).", WindowFunction::functionType(windowFunction.function()), windowFunction.parameterSummary().get());
 	if (qBroadening.function() == BroadeningFunction::NoFunction) Messenger::print("SQ: No broadening will be applied to calculated S(Q).");
 	else Messenger::print("SQ: Broadening to be applied in calculated S(Q) is %s (%s).", BroadeningFunction::functionType(qBroadening.function()), qBroadening.parameterSummary().get());
-	Messenger::print("SQ: Save data is %s.\n", DUQSys::onOff(saveData));
+	Messenger::print("SQ: Save data is %s.\n", DissolveSys::onOff(saveData));
 
 	/*
 	 * Loop over target Configurations and Fourier transform their UnweightedGR into the UnweightedSQ.
@@ -89,7 +89,7 @@ bool SQModule::process(DUQ& duq, ProcessPool& procPool)
 		if (wasCreated) unweightedsq.setUpPartials(unweightedgr.atomTypes(), cfg->niceName(), "unweighted", "sq", "Q, 1/Angstroms");
 
 		// Is the PartialSet already up-to-date?
-		if (DUQSys::sameString(unweightedsq.fingerprint(), CharString("%i", cfg->coordinateIndex())))
+		if (DissolveSys::sameString(unweightedsq.fingerprint(), CharString("%i", cfg->coordinateIndex())))
 		{
 			Messenger::print("SQ: Unweighted partial S(Q) are up-to-date for Configuration '%s'.\n", cfg->name());
 			continue;
@@ -107,7 +107,7 @@ bool SQModule::process(DUQ& duq, ProcessPool& procPool)
 		// If we are associated to a local Configuration, copy the partial data over to the processing module list
 		if (configurationLocal_)
 		{
-			PartialSet newSet = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
+			PartialSet newSet = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
 			newSet = unweightedsq;
 			newSet.setObjectNames(CharString("%s//UnweightedSQ", uniqueName_.get()));
 		}
@@ -121,10 +121,10 @@ bool SQModule::process(DUQ& duq, ProcessPool& procPool)
 	}
 
 	// Create/retrieve PartialSet for summed partial S(Q)
-	PartialSet& summedUnweightedSQ = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
+	PartialSet& summedUnweightedSQ = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
 
 	// Sum the partials from the associated Configurations
-	if (!sumUnweightedSQ(procPool, this, duq.processingModuleData(), summedUnweightedSQ)) return false;
+	if (!sumUnweightedSQ(procPool, this, dissolve.processingModuleData(), summedUnweightedSQ)) return false;
 
 	// Test unweighted S(Q)?
 	if (testMode)
@@ -134,10 +134,10 @@ bool SQModule::process(DUQ& duq, ProcessPool& procPool)
 	}
 
 	// Create/retrieve PartialSet for summed unweighted g(r)
-	PartialSet& summedUnweightedGR = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedGR", uniqueName_, GenericItem::InRestartFileFlag);
+	PartialSet& summedUnweightedGR = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedGR", uniqueName_, GenericItem::InRestartFileFlag);
 
 	// Sum the partials from the associated Configurations
-	if (!RDFModule::sumUnweightedGR(procPool, this, duq.processingModuleData(), summedUnweightedGR)) return false;
+	if (!RDFModule::sumUnweightedGR(procPool, this, dissolve.processingModuleData(), summedUnweightedGR)) return false;
 
 	return true;
 }

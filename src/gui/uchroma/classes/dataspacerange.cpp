@@ -388,14 +388,14 @@ void DataSpaceRange::setFittedValue(const char* name, double fittedValue)
 // Return whether named fitted value exists
 NamedValue* DataSpaceRange::hasFittedValue(const char* name)
 {
-	for (NamedValue* value = fittedValues_.first(); value != NULL; value = value->next) if (DUQSys::sameString(value->name(),name)) return value;
+	for (NamedValue* value = fittedValues_.first(); value != NULL; value = value->next) if (DissolveSys::sameString(value->name(),name)) return value;
 	return NULL;
 }
 
 // Return value of named fitted value
 double DataSpaceRange::fittedValue(const char* name)
 {
-	for (NamedValue* value = fittedValues_.first(); value != NULL; value = value->next) if (DUQSys::sameString(value->name(),name)) return value->value();
+	for (NamedValue* value = fittedValues_.first(); value != NULL; value = value->next) if (DissolveSys::sameString(value->name(),name)) return value->value();
 	return 0.0;
 }
 

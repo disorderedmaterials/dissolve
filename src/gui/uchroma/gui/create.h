@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMACREATE_H
-#define DUQ_UCHROMACREATE_H
+#ifndef DISSOLVE_UCHROMACREATE_H
+#define DISSOLVE_UCHROMACREATE_H
 
 #include <QDialog>
 #include <QObject>

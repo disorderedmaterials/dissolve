@@ -3,31 +3,31 @@
 	*** src/modules/bragg/gui/modulewidget.h
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_BRAGGMODULEWIDGET_H
-#define DUQ_BRAGGMODULEWIDGET_H
+#ifndef DISSOLVE_BRAGGMODULEWIDGET_H
+#define DISSOLVE_BRAGGMODULEWIDGET_H
 
 #include "modules/bragg/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
 
 // Forward Declarations
 class BraggModule;
-class DUQ;
+class Dissolve;
 class Module;
 class PartialSet;
 class UChromaViewWidget;
@@ -43,12 +43,12 @@ class BraggModuleWidget : public ModuleWidget
 	BraggModule* module_;
 	// UChromaView contained within this widget
 	UChromaViewWidget* uChromaView_;
-	// Reference to DUQ
-	DUQ& dUQ_;
+	// Reference to Dissolve
+	Dissolve& Dissolve_;
 
 	public:
 	// Constructor / Destructor
-	BraggModuleWidget(QWidget* parent, Module* module, DUQ& dUQ);
+	BraggModuleWidget(QWidget* parent, Module* module, Dissolve& Dissolve);
 	~BraggModuleWidget();
 	// Main form declaration
 	Ui::BraggModuleWidget ui;

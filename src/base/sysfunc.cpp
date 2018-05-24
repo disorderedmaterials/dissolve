@@ -3,20 +3,20 @@
 	*** src/base/sysfunc.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "base/sysfunc.h"
@@ -34,7 +34,7 @@ using namespace std;
  */
 
 // Convert integer to string representation
-const char* DUQSys::itoa(int n)
+const char* DissolveSys::itoa(int n)
 {
 	static CharString result;
 	result.sprintf("%i",n);
@@ -42,7 +42,7 @@ const char* DUQSys::itoa(int n)
 }
 
 // Convert double to string representation (as %f)
-const char* DUQSys::ftoa(double f)
+const char* DissolveSys::ftoa(double f)
 {
 	static CharString result;
 	result.sprintf("%f",f);
@@ -50,7 +50,7 @@ const char* DUQSys::ftoa(double f)
 }
 
 // Convert double to string representation with supplied format
-const char* DUQSys::ftoa(double f, const char* fmt)
+const char* DissolveSys::ftoa(double f, const char* fmt)
 {
 	static CharString result;
 	result.sprintf(fmt,f);
@@ -58,20 +58,20 @@ const char* DUQSys::ftoa(double f, const char* fmt)
 }
 
 // Convert string to boolean
-bool DUQSys::atob(const char* s)
+bool DissolveSys::atob(const char* s)
 {
 	if (sameString(s, "true") || sameString(s, "on")) return true;
 	return false;
 }
 
 // Convert boolean to string representation ("True" or "False")
-const char* DUQSys::btoa(bool b)
+const char* DissolveSys::btoa(bool b)
 {
 	return (b ? "True" : "False");
 }
 
 // Convert boolean to string representation ("On" or "Off")
-const char* DUQSys::onOff(bool b)
+const char* DissolveSys::onOff(bool b)
 {
 	return (b ? "On" : "Off");
 }
@@ -81,7 +81,7 @@ const char* DUQSys::onOff(bool b)
  */
 
 // Convert string to uppercase
-const char* DUQSys::upperCase(const char* s)
+const char* DissolveSys::upperCase(const char* s)
 {
 	static CharString result(1024);
 	result.clear();
@@ -90,7 +90,7 @@ const char* DUQSys::upperCase(const char* s)
 }
 
 // Convert string to lowercase
-const char* DUQSys::lowerCase(const char* s)
+const char* DissolveSys::lowerCase(const char* s)
 {
 	static CharString result(1024);
 	result.clear();
@@ -99,7 +99,7 @@ const char* DUQSys::lowerCase(const char* s)
 }
 
 // Perform case-insensitive string comparison
-bool DUQSys::sameString(const char* s1, const char* s2, bool caseSensitive)
+bool DissolveSys::sameString(const char* s1, const char* s2, bool caseSensitive)
 {
 	int len1 = strlen(s1), len2 = strlen(s2);
 	if (len1 != len2) return false;
@@ -117,7 +117,7 @@ bool DUQSys::sameString(const char* s1, const char* s2, bool caseSensitive)
 }
 
 // Get characters before first occurrence of designated character, or NULL if the character does not exist
-const char* DUQSys::beforeChar(const char* s, char delim)
+const char* DissolveSys::beforeChar(const char* s, char delim)
 {
 	static CharString result(1024);
 	result.clear();
@@ -130,7 +130,7 @@ const char* DUQSys::beforeChar(const char* s, char delim)
 }
 
 // Get characters after first occurrence of designated character, or NULL if the character does not exist
-const char* DUQSys::afterChar(const char* s, char delim)
+const char* DissolveSys::afterChar(const char* s, char delim)
 {
 	static CharString result(1024);
 	result.clear();
@@ -144,7 +144,7 @@ const char* DUQSys::afterChar(const char* s, char delim)
 }
 
 // Get characters after last occurrence of designated character
-const char* DUQSys::afterLastChar(const char* s, char delim)
+const char* DissolveSys::afterLastChar(const char* s, char delim)
 {
 	static CharString result;
 	result.clear();
@@ -155,7 +155,7 @@ const char* DUQSys::afterLastChar(const char* s, char delim)
 }
 
 // Get characters before last occurrence of designated character
-const char* DUQSys::beforeLastChar(const char* s, char delim)
+const char* DissolveSys::beforeLastChar(const char* s, char delim)
 {
 	static CharString result;
 	result.clear();
@@ -171,7 +171,7 @@ const char* DUQSys::beforeLastChar(const char* s, char delim)
 }
 
 // Get characters before first occurrence of designated string
-const char* DUQSys::beforeStr(const char* s, const char* search)
+const char* DissolveSys::beforeStr(const char* s, const char* search)
 {
 	// Search for first occurrence of string
 	static char result[8096];
@@ -183,7 +183,7 @@ const char* DUQSys::beforeStr(const char* s, const char* search)
 }
 
 // Get characters after first occurrence of designated character
-const char* DUQSys::afterStr(const char* s, const char* search)
+const char* DissolveSys::afterStr(const char* s, const char* search)
 {
 	const char* c = strstr(s, search);
 	if (c == NULL) return "";
@@ -192,7 +192,7 @@ const char* DUQSys::afterStr(const char* s, const char* search)
 }
 
 // Remove comments from line
-void DUQSys::removeComments(char* s)
+void DissolveSys::removeComments(char* s)
 {
 	char* c, quotechar = '\0';
 	bool escaped = false;
@@ -229,7 +229,7 @@ void DUQSys::removeComments(char* s)
 }
 
 // Strip trailing whitespace from string
-const char* DUQSys::stripTrailing(const char* s)
+const char* DissolveSys::stripTrailing(const char* s)
 {
 	int n;
 	static char result[1024];
@@ -241,7 +241,7 @@ const char* DUQSys::stripTrailing(const char* s)
 }
 
 // Replace all of the supplied characters in the source string
-const char* DUQSys::replaceChars(const char* s, const char* charstoreplace, char r)
+const char* DissolveSys::replaceChars(const char* s, const char* charstoreplace, char r)
 {
 	static CharString result;
 	bool found;
@@ -265,7 +265,7 @@ const char* DUQSys::replaceChars(const char* s, const char* charstoreplace, char
 }
 
 // Strip all of the supplied characters from the source string
-const char* DUQSys::stripChars(const char* s, const char* charstostrip)
+const char* DissolveSys::stripChars(const char* s, const char* charstostrip)
 {
 	static CharString result;
 	char const* c1, *c2;
@@ -288,7 +288,7 @@ const char* DUQSys::stripChars(const char* s, const char* charstostrip)
 }
 
 // Count number of times that supplied characters occur in supplied string
-int DUQSys::countChars(const char* s, const char* chars, int offset)
+int DissolveSys::countChars(const char* s, const char* chars, int offset)
 {
 	int total = 0, n, count = 0;
 	while (*s != '\0')
@@ -304,7 +304,7 @@ int DUQSys::countChars(const char* s, const char* chars, int offset)
 }
 
 // Return whether string consists of empty whitespace characters only
-bool DUQSys::isEmpty(const char* s)
+bool DissolveSys::isEmpty(const char* s)
 {
 	if (s == NULL) return true;
 	for (const char* c = s; *c != '\0'; ++c)
@@ -324,7 +324,7 @@ bool DUQSys::isEmpty(const char* s)
 }
 
 // Return nice version of string (no spaces, slashes etc.)
-const char* DUQSys::niceName(const char* original)
+const char* DissolveSys::niceName(const char* original)
 {
 	static CharString result;
 	result = original;
@@ -338,7 +338,7 @@ const char* DUQSys::niceName(const char* original)
  */
 
 // Return whether file exists
-bool DUQSys::fileExists(const char* filename)
+bool DissolveSys::fileExists(const char* filename)
 {
 	fstream f(filename,ios::in);
 	if (f.is_open())
@@ -354,7 +354,7 @@ bool DUQSys::fileExists(const char* filename)
  */
 
 // Return string of current time / date
-const char* DUQSys::currentTimeAndDate()
+const char* DissolveSys::currentTimeAndDate()
 {
 	static char result[128];
 	time_t currentTime = time(NULL);

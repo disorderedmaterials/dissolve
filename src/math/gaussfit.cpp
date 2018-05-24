@@ -3,20 +3,20 @@
 	*** src/math/gaussfit.cpp
 	Copyright T. Youngs 2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "base/xydata.h"
@@ -163,7 +163,7 @@ double GaussFit::construct(double requiredError, int maxGaussians)
 // 			Messenger::printVerbose("Gradient @ x = %f = %f\n", sourceData_.x(n), gradient);
 
 			// Check sign of previous gradient vs the current one - do we add a Gaussian at this point?
-			if ((lastSign != DUQMath::sgn(gradient)))
+			if ((lastSign != DissolveMath::sgn(gradient)))
 			{
 				trialX = sourceData_.x(n);
 				trialA = sourceData_.y(n) - approximateData_.y(n);
@@ -209,7 +209,7 @@ double GaussFit::construct(double requiredError, int maxGaussians)
 			}
 
 			// Store current sign of gradient
-			lastSign = DUQMath::sgn(gradient);
+			lastSign = DissolveMath::sgn(gradient);
 		}
 
 		// Check on error

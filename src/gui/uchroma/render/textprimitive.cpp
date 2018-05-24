@@ -51,7 +51,7 @@ const char* TextAnchorKeywords[] = { "TopLeft", "TopMiddle", "TopRight", "Middle
 // Convert text string to TextAnchor
 TextPrimitive::TextAnchor TextPrimitive::textAnchor(const char* s)
 {
-	for (int n=0; n<TextPrimitive::nTextAnchors; ++n) if (DUQSys::sameString(s, TextAnchorKeywords[n])) return (TextPrimitive::TextAnchor) n;
+	for (int n=0; n<TextPrimitive::nTextAnchors; ++n) if (DissolveSys::sameString(s, TextAnchorKeywords[n])) return (TextPrimitive::TextAnchor) n;
 	return TextPrimitive::nTextAnchors;
 }
 
@@ -67,7 +67,7 @@ const char* EscapeSequenceKeywords[] = { "b", "it", "n", "sub", "sup", "sym" };
 // Convert text string to EscapeSequence
 TextPrimitive::EscapeSequence TextPrimitive::escapeSequence(const char* s)
 {
-	for (int n=0; n<TextPrimitive::nEscapeSequences; ++n) if (DUQSys::sameString(s, EscapeSequenceKeywords[n])) return (TextPrimitive::EscapeSequence) n;
+	for (int n=0; n<TextPrimitive::nEscapeSequences; ++n) if (DissolveSys::sameString(s, EscapeSequenceKeywords[n])) return (TextPrimitive::EscapeSequence) n;
 	return TextPrimitive::nEscapeSequences;
 }
 

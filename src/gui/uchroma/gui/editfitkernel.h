@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMAEDITFITKERNELDIALOG_H
-#define DUQ_UCHROMAEDITFITKERNELDIALOG_H
+#ifndef DISSOLVE_UCHROMAEDITFITKERNELDIALOG_H
+#define DISSOLVE_UCHROMAEDITFITKERNELDIALOG_H
 
 #include <QDialog>
 #include <QObject>

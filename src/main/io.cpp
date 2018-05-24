@@ -1,25 +1,25 @@
 /*
-	*** dUQ I/O
+	*** Dissolve I/O
 	*** src/main/io.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "main/keywords.h"
 #include "classes/atomtype.h"
 #include "classes/species.h"
@@ -30,18 +30,18 @@
 #include <string.h>
 
 // Load datafiles
-bool DUQ::loadDataFiles()
+bool Dissolve::loadDataFiles()
 {
 	// Get basic path for data files
 	CharString dataPath;
-	if (!getenv("DUQDATA"))
+	if (!getenv("DISSOLVEDATA"))
 	{
-		Messenger::print("Environment variable DUQDATA not set - using './data' as the default.\n");
+		Messenger::print("Environment variable DISSOLVEDATA not set - using './data' as the default.\n");
 		dataPath = "./data";
 	}
 	else
 	{
-		dataPath = getenv("DUQDATA");
+		dataPath = getenv("DISSOLVEDATA");
 		Messenger::print("Looking for datafiles in '%s'...\n", dataPath.get());
 	}
 
@@ -59,7 +59,7 @@ bool DUQ::loadDataFiles()
 }
 
 // Load Species from specified file
-bool DUQ::loadSpecies(const char* filename)
+bool Dissolve::loadSpecies(const char* filename)
 {
 	Species* newSpecies = addSpecies();
 	if (!newSpecies->loadFromXYZ(filename))
@@ -84,7 +84,7 @@ bool DUQ::loadSpecies(const char* filename)
 }
 
 // Load input file
-bool DUQ::loadInput(const char* filename)
+bool Dissolve::loadInput(const char* filename)
 {
 	// Open file and check that we're OK to proceed reading from it (master only...)
 	LineParser parser(&worldPool_);
@@ -147,7 +147,7 @@ bool DUQ::loadInput(const char* filename)
 				// Set unique name, if it was provided - need to check if it has been used elsewhere (in any Module or instance of it)
 				if (parser.hasArg(2))
 				{
-					niceName = DUQSys::niceName(parser.argc(2));
+					niceName = DissolveSys::niceName(parser.argc(2));
 					Module* existingModule = ModuleList::findInstanceByUniqueName(niceName);
 					if (existingModule && (existingModule != module))
 					{
@@ -221,7 +221,7 @@ bool DUQ::loadInput(const char* filename)
 }
 
 // Save input file
-bool DUQ::saveInput(const char* filename)
+bool Dissolve::saveInput(const char* filename)
 {
 	// Open file
 	LineParser parser;
@@ -233,7 +233,7 @@ bool DUQ::saveInput(const char* filename)
 	}
 	
 	// Write title comment
-	parser.writeLineF("# Input file written by dUQ v%s at %s.\n\n", DUQVERSION, DUQSys::currentTimeAndDate());
+	parser.writeLineF("# Input file written by Dissolve v%s at %s.\n\n", DISSOLVEVERSION, DissolveSys::currentTimeAndDate());
 
 	// Write master terms
 	if (masterBonds_.nItems() || masterAngles_.nItems() || masterTorsions_.nItems())
@@ -398,7 +398,7 @@ bool DUQ::saveInput(const char* filename)
 		parser.writeLineF("  %s  %f  %f  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::CellLengthsKeyword), cfg->relativeBoxLengths().x, cfg->relativeBoxLengths().y, cfg->relativeBoxLengths().z);
 		parser.writeLineF("  %s  %f  %f  %f\n", ConfigurationBlock::keyword(ConfigurationBlock::CellAnglesKeyword), cfg->boxAngles().x, cfg->boxAngles().y, cfg->boxAngles().z);
 		if (cfg->nonPeriodic()) parser.writeLineF("  %s\n", ConfigurationBlock::keyword(ConfigurationBlock::NonPeriodicKeyword));
-		if (!DUQSys::isEmpty(cfg->inputCoordinatesFile())) parser.writeLineF("  %s  '%s'\n", ConfigurationBlock::keyword(ConfigurationBlock::InputCoordinatesKeyword), cfg->inputCoordinatesFile());
+		if (!DissolveSys::isEmpty(cfg->inputCoordinatesFile())) parser.writeLineF("  %s  '%s'\n", ConfigurationBlock::keyword(ConfigurationBlock::InputCoordinatesKeyword), cfg->inputCoordinatesFile());
 
 		// Species
 		parser.writeLineF("\n  # Species Information\n");
@@ -408,8 +408,8 @@ bool DUQ::saveInput(const char* filename)
 			parser.writeLineF("  %s  '%s'\n", ConfigurationBlock::keyword(ConfigurationBlock::SpeciesInfoKeyword), sp->name());
 
 			parser.writeLineF("    %s  %f\n", SpeciesInfoBlock::keyword(SpeciesInfoBlock::PopulationKeyword), spInfo->population());
-			if (!spInfo->rotateOnInsertion()) parser.writeLineF("    %s  %s\n", SpeciesInfoBlock::keyword(SpeciesInfoBlock::NoRotationKeyword), DUQSys::btoa(false));
-			if (!spInfo->translateOnInsertion()) parser.writeLineF("    %s  %s\n", SpeciesInfoBlock::keyword(SpeciesInfoBlock::NoTranslationKeyword), DUQSys::btoa(false));
+			if (!spInfo->rotateOnInsertion()) parser.writeLineF("    %s  %s\n", SpeciesInfoBlock::keyword(SpeciesInfoBlock::NoRotationKeyword), DissolveSys::btoa(false));
+			if (!spInfo->translateOnInsertion()) parser.writeLineF("    %s  %s\n", SpeciesInfoBlock::keyword(SpeciesInfoBlock::NoTranslationKeyword), DissolveSys::btoa(false));
 
 			parser.writeLineF("  %s\n", SpeciesInfoBlock::keyword(SpeciesInfoBlock::EndSpeciesInfoKeyword));
 		}
@@ -489,7 +489,7 @@ bool DUQ::saveInput(const char* filename)
 }
 
 // Load restart file
-bool DUQ::loadRestart(const char* filename)
+bool Dissolve::loadRestart(const char* filename)
 {
 	// Open file and check that we're OK to proceed reading from it (master only...)
 	LineParser parser(&worldPool_);
@@ -506,7 +506,7 @@ bool DUQ::loadRestart(const char* filename)
 		if (parser.getArgsDelim(LineParser::SkipBlanks+LineParser::StripComments+LineParser::UseQuotes) != 0) break;
 
 		// First component of line indicates the destination for the module data
-		if (DUQSys::sameString(parser.argc(0), "Local"))
+		if (DissolveSys::sameString(parser.argc(0), "Local"))
  		{
 			cfg = findConfiguration(parser.argc(1));
 			if (!cfg)
@@ -528,7 +528,7 @@ bool DUQ::loadRestart(const char* filename)
 				error = true;
 			}
 		}
-		else if (DUQSys::sameString(parser.argc(0), "Processing"))
+		else if (DissolveSys::sameString(parser.argc(0), "Processing"))
 		{
 			// Let the user know what we are doing
 			Messenger::print("Reading item '%s' (%s) into processing module data...\n", parser.argc(1), parser.argc(2));
@@ -543,7 +543,7 @@ bool DUQ::loadRestart(const char* filename)
 				error = true;
 			}
 		}
-		else if (DUQSys::sameString(parser.argc(0), "Configuration"))
+		else if (DissolveSys::sameString(parser.argc(0), "Configuration"))
 		{
 			// Let the user know what we are doing
 			Messenger::print("Reading Configuration '%s'...\n", parser.argc(1));
@@ -557,7 +557,7 @@ bool DUQ::loadRestart(const char* filename)
 			}
 			else if (!readConfiguration(cfg, parser)) error = true;
 		}
-		else if (DUQSys::sameString(parser.argc(0), "Timing"))
+		else if (DissolveSys::sameString(parser.argc(0), "Timing"))
 		{
 			// Let the user know what we are doing
 			Messenger::print("Reading timing information for Module '%s'...\n", parser.argc(1));
@@ -583,7 +583,7 @@ bool DUQ::loadRestart(const char* filename)
 	if (!error) Messenger::print("Finished reading restart file.\n");
 
 	// Set current iteration number
-	iteration_ = GenericListHelper<int>::retrieve(processingModuleData_, "Iteration", "DUQ", 0);
+	iteration_ = GenericListHelper<int>::retrieve(processingModuleData_, "Iteration", "Dissolve", 0);
 
 	// Error encountered?
 	if (error)
@@ -599,7 +599,7 @@ bool DUQ::loadRestart(const char* filename)
 }
 
 // Save restart file
-bool DUQ::saveRestart(const char* filename)
+bool Dissolve::saveRestart(const char* filename)
 {
 	// Open file
 	LineParser parser;
@@ -611,7 +611,7 @@ bool DUQ::saveRestart(const char* filename)
 	}
 	
 	// Write title comment
-	if (!parser.writeLineF("# Restart file written by dUQ v%s at %s.\n", DUQVERSION, DUQSys::currentTimeAndDate())) return false;
+	if (!parser.writeLineF("# Restart file written by Dissolve v%s at %s.\n", DISSOLVEVERSION, DissolveSys::currentTimeAndDate())) return false;
 
 	// Configuration Module Data
 	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next)
@@ -684,7 +684,7 @@ bool DUQ::saveRestart(const char* filename)
 }
 
 // Save heartbeat file
-bool DUQ::saveHeartBeat(const char* filename, double estimatedNSecs)
+bool Dissolve::saveHeartBeat(const char* filename, double estimatedNSecs)
 {
 	// Open file
 	LineParser parser;
@@ -695,10 +695,10 @@ bool DUQ::saveHeartBeat(const char* filename, double estimatedNSecs)
 	}
 	
 	// Write title comment
-	if (!parser.writeLineF("# Heartbeat file written by dUQ v%s at %s.\n", DUQVERSION, DUQSys::currentTimeAndDate())) return false;
+	if (!parser.writeLineF("# Heartbeat file written by Dissolve v%s at %s.\n", DISSOLVEVERSION, DissolveSys::currentTimeAndDate())) return false;
 
 	// Write current date and time
-	if (!parser.writeLineF("%s\n", DUQSys::currentTimeAndDate())) return false;
+	if (!parser.writeLineF("%s\n", DissolveSys::currentTimeAndDate())) return false;
 
 	// Write current iteration number
 	if (!parser.writeLineF("%i\n", iteration_)) return false;
@@ -712,25 +712,25 @@ bool DUQ::saveHeartBeat(const char* filename, double estimatedNSecs)
 }
 
 // Return whether a filename has been set
-bool DUQ::hasInputFileName() const
+bool Dissolve::hasInputFileName() const
 {
 	return (!filename_.isEmpty());
 }
 
 // Return filename of current input file
-const char* DUQ::inputFilename() const
+const char* Dissolve::inputFilename() const
 {
 	return filename_.get();
 }
 
 // Set whether to automatically add dependent Modules if they have not been defined
-void DUQ::setAutoAddDependentModules(bool b)
+void Dissolve::setAutoAddDependentModules(bool b)
 {
 	autoAddDependentModules_ = b;
 }
 
 // Return whether to automatically add dependent Modules if they have not been defined
-bool DUQ::autoAddDependentModules()
+bool Dissolve::autoAddDependentModules()
 {
 	return autoAddDependentModules_;
 }

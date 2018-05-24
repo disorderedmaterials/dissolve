@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMAOPERATE_SETZ_H
-#define DUQ_UCHROMAOPERATE_SETZ_H
+#ifndef DISSOLVE_UCHROMAOPERATE_SETZ_H
+#define DISSOLVE_UCHROMAOPERATE_SETZ_H
 
 #include "gui/uchroma/gui/ui_operate_setz.h"
 #include "gui/uchroma/expression/expression.h"

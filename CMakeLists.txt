@@ -1,6 +1,6 @@
-project(dUQ)
+project(Dissolve)
 
-set(DESCRIPTION "dUQ")
+set(DESCRIPTION "Dissolve")
 set(AUTHOR "Tristan Youngs")
 set(VERSION_MAJOR "0")
 set(VERSION_MINOR "34")
@@ -67,10 +67,10 @@ endif(GUI)
 # -- Windows
 if(WIN32)
   if(PARALLEL)
-    set (target_name duq)
+    set (target_name dissolve)
   else(PARALLEL)
-    set (target_name dUQ-serial)
-    set (gui_target_name dUQ-gui)
+    set (target_name Dissolve-serial)
+    set (gui_target_name Dissolve-gui)
   endif(PARALLEL)
 
   # Adjust external include directories for GUI
@@ -92,10 +92,10 @@ endif(WIN32)
 # -- Unix
 if(UNIX)
   if(PARALLEL)
-    set (target_name duq)
+    set (target_name dissolve)
   else(PARALLEL)
-    set (target_name duq-serial)
-    set (gui_target_name duq-gui)
+    set (target_name dissolve-serial)
+    set (gui_target_name dissolve-gui)
   endif(PARALLEL)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 endif(UNIX)
@@ -106,10 +106,10 @@ if(APPLE)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
 
   if(PARALLEL)
-    set (target_name duq)
+    set (target_name dissolve)
   else(PARALLEL)
-    set (target_name duq-serial)
-    set (gui_target_name duq-gui)
+    set (target_name dissolve-serial)
+    set (gui_target_name dissolve-gui)
   endif(PARALLEL)
 
   set(CMAKE_OSX_ARCHITECTURES "x86_64")
@@ -127,10 +127,10 @@ set(SRCS src/)
 
 # Set bundle info
 If(APPLE)
-  set(MACOSX_BUNDLE_ICON_FILE  "dUQ.icns")
-  set(MACOSX_BUNDLE_GUI_IDENTIFIER  "dUQ")
+  set(MACOSX_BUNDLE_ICON_FILE  "Dissolve.icns")
+  set(MACOSX_BUNDLE_GUI_IDENTIFIER  "Dissolve")
   set(MACOSX_BUNDLE_LONG_VERSION_STRING "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
-  set(MACOSX_BUNDLE_BUNDLE_NAME  "dUQ" )
+  set(MACOSX_BUNDLE_BUNDLE_NAME  "Dissolve" )
   set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${VERSION_MAJOR}.${VERSION_MINOR}")
   set(MACOSX_BUNDLE_BUNDLE_VERSION  "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
   set(MACOSX_BUNDLE_COPYRIGHT "${AUTHOR}")
@@ -156,7 +156,7 @@ target_include_directories(${target_name} PRIVATE
 if(GUI)
   add_executable(${gui_target_name}
     MACOSX_BUNDLE
-    ${SRCS}/duq-gui.cpp 
+    ${SRCS}/dissolve-gui.cpp 
   )
 
   # Set project-local include directories for target
@@ -277,14 +277,14 @@ endif(GUI)
 # Install target for unix
 #if(UNIX AND NOT APPLE)
 #  INSTALL_TARGET(${target_name} "")
-#  configure_file(${PROJECT_SOURCE_DIR}/desktop.cmake dUQ.desktop)
-#  install(FILES ${PROJECT_SOURCE_DIR}/src/gui/icons/duq.png
-#        DESTINATION share/duq)
-#  install(FILES ${PROJECT_BINARY_DIR}/dUQ.desktop
+#  configure_file(${PROJECT_SOURCE_DIR}/desktop.cmake Dissolve.desktop)
+#  install(FILES ${PROJECT_SOURCE_DIR}/src/gui/icons/dissolve.png
+#        DESTINATION share/dissolve)
+#  install(FILES ${PROJECT_BINARY_DIR}/Dissolve.desktop
 #        DESTINATION share/applications)
 #  foreach(i ff filters fftesting fragments partitions scripts test includes)
 #    install(DIRECTORY ${PROJECT_SOURCE_DIR}/data/${i}
-#          DESTINATION share/duq)
+#          DESTINATION share/dissolve)
 #  endforeach(i)
 #endif(UNIX AND NOT APPLE)
 

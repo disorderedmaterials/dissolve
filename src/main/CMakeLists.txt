@@ -2,7 +2,7 @@ add_library(main
   atomtypes.cpp
   comms.cpp
   configurations.cpp
-  duq.cpp
+  dissolve.cpp
   io.cpp
   keywords.cpp
   keywords_configuration.cpp
@@ -18,7 +18,7 @@ add_library(main
   simulation.cpp
   species.cpp
 
-  duq.h
+  dissolve.h
   keywords.h
 )
 

@@ -3,20 +3,20 @@
 	*** src/modules/import/formats.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "modules/import/formats.h"
@@ -33,7 +33,7 @@ const char* NiceCoordinateFormatKeywords[] = { "XYZ", "DL_POLY", "EPSR (ATO)" };
 // Convert text string to CoordinateFormat
 ImportModuleFormats::CoordinateFormat ImportModuleFormats::coordinateFormat(const char* s)
 {
-	for (int n=0; n<ImportModuleFormats::nCoordinateFormats; ++n) if (DUQSys::sameString(s,CoordinateFormatKeywords[n])) return (ImportModuleFormats::CoordinateFormat) n;
+	for (int n=0; n<ImportModuleFormats::nCoordinateFormats; ++n) if (DissolveSys::sameString(s,CoordinateFormatKeywords[n])) return (ImportModuleFormats::CoordinateFormat) n;
 	return ImportModuleFormats::nCoordinateFormats;
 }
 
@@ -61,7 +61,7 @@ const char* NiceForceFormatKeywords[] = { "XYZ", "DL_POLY" };
 // Convert text string to ForceFormat
 ImportModuleFormats::ForceFormat ImportModuleFormats::forceFormat(const char* s)
 {
-	for (int n=0; n<ImportModuleFormats::nForceFormats; ++n) if (DUQSys::sameString(s,ForceFormatKeywords[n])) return (ImportModuleFormats::ForceFormat) n;
+	for (int n=0; n<ImportModuleFormats::nForceFormats; ++n) if (DissolveSys::sameString(s,ForceFormatKeywords[n])) return (ImportModuleFormats::ForceFormat) n;
 	return ImportModuleFormats::nForceFormats;
 }
 

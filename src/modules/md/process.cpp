@@ -3,24 +3,24 @@
 	*** src/modules/md/process.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "modules/md/md.h"
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "modules/energy/energy.h"
 #include "modules/forces/forces.h"
 #include "classes/grain.h"
@@ -38,7 +38,7 @@ bool MDModule::hasProcessing()
 }
 
 // Run main processing
-bool MDModule::process(DUQ& duq, ProcessPool& procPool)
+bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {
 	/*
 	 * Perform Molecular Dynamics on a given Configuration.
@@ -53,13 +53,13 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 		return true;
 	}
 
-	GenericList& moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : duq.processingModuleData();
+	GenericList& moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : dissolve.processingModuleData();
 
 	// Get control parameters
 	const bool capForce = keywords_.asBool("CapForces");
 	const double maxForce = keywords_.asDouble("CapForcesAt") * 100.0;	// To convert from kJ/mol to 10 J/mol
 	double cutoffDistance = keywords_.asDouble("CutoffDistance");
-	if (cutoffDistance < 0.0) cutoffDistance = duq.pairPotentialRange();
+	if (cutoffDistance < 0.0) cutoffDistance = dissolve.pairPotentialRange();
 	const double cutoffSq = cutoffDistance * cutoffDistance;
 	double deltaT = GenericListHelper<double>::retrieve(moduleData, "DeltaT", uniqueName(), keywords_.asDouble("DeltaT"));
 	const int energyFrequency = keywords_.asInt("EnergyFrequency");
@@ -126,9 +126,9 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 		{
 			if (randomVelocities)
 			{
-				v[n].x = exp(DUQMath::random()-0.5) / sqrt(TWOPI);
-				v[n].y = exp(DUQMath::random()-0.5) / sqrt(TWOPI);
-				v[n].z = exp(DUQMath::random()-0.5) / sqrt(TWOPI);
+				v[n].x = exp(DissolveMath::random()-0.5) / sqrt(TWOPI);
+				v[n].y = exp(DissolveMath::random()-0.5) / sqrt(TWOPI);
+				v[n].z = exp(DissolveMath::random()-0.5) / sqrt(TWOPI);
 			}
 
 			// Grab atom mass for future use
@@ -189,7 +189,7 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 		// Variable timestep requires forces to be available immediately
 		if (variableTimestep)
 		{
-			ForcesModule::totalForces(procPool, cfg, duq.potentialMap(), fx, fy, fz);
+			ForcesModule::totalForces(procPool, cfg, dissolve.potentialMap(), fx, fy, fz);
 			// Must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
 			fx *= 100.0;
 			fy *= 100.0;
@@ -223,7 +223,7 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 			fx = 0.0;
 			fy = 0.0;
 			fz = 0.0;
-			ForcesModule::totalForces(procPool, cfg, duq.potentialMap(), fx, fy, fz);
+			ForcesModule::totalForces(procPool, cfg, dissolve.potentialMap(), fx, fy, fz);
 			fx *= 100.0;
 			fy *= 100.0;
 			fz *= 100.0;
@@ -268,8 +268,8 @@ bool MDModule::process(DUQ& duq, ProcessPool& procPool)
 				// Include total energy term?
 				if ((energyFrequency > 0) && (step%energyFrequency == 0))
 				{
-					peInter = EnergyModule::interAtomicEnergy(procPool, cfg, duq.potentialMap());
-					peIntra = EnergyModule::intraMolecularEnergy(procPool, cfg, duq.potentialMap());
+					peInter = EnergyModule::interAtomicEnergy(procPool, cfg, dissolve.potentialMap());
+					peIntra = EnergyModule::intraMolecularEnergy(procPool, cfg, dissolve.potentialMap());
 					Messenger::print("MD:  %-10i    %10.3e   %10.3e   %10.3e   %10.3e   %10.3e   %10.3e\n", step, tInstant, ke, peInter, peIntra, ke+peIntra+peInter, deltaT);
 				}
 				else Messenger::print("MD:  %-10i    %10.3e   %10.3e                                          %10.3e\n", step, tInstant, ke, deltaT);

@@ -58,7 +58,7 @@ bool FitKernel::sdModMinimise(Array<double>& alpha, double randomMin, double ran
 				tempAlpha = alpha;
 				for (i=0; i<modSDNRandomTrials_; ++i)
 				{
-					tempAlpha[n] = DUQMath::random() * (randomMax - randomMin) + randomMin;
+					tempAlpha[n] = DissolveMath::random() * (randomMax - randomMin) + randomMin;
 					currentRMSE = rmsError(tempAlpha);
 					if (currentRMSE < oldRMSE)
 					{

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop">
-  <id>com.projectaten.dUQ.desktop</id>
-  <name>dUQ</name>
-  <summary>dUQ - Potential-based refinement of neutron scattering data</summary>
+  <id>com.projectaten.Dissolve.desktop</id>
+  <name>Dissolve</name>
+  <summary>Dissolve - Potential-based refinement of total scattering data</summary>
   <developer_name>Tristan Youngs</developer_name>
   <description>
   <p>
-dUQ simulates a given system using standard interatomic potentials, and refines the potentials against
+Dissolve simulates a given system using standard interatomic potentials, and refines the potentials against
 reference experimental (or otherwise) data, e.g. as obtained from neutron diffraction experiments.
   </p>
 </description>

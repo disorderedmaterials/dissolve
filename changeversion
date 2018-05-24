@@ -39,10 +39,10 @@ fi
 if [ "$TEST" = "false" ]
 then
   #cp src/main/version.h src/main/version.h.orig
-  sed -i -e "s/#define DUQVERSION \"[0-9\.]\+\(.*\)\"/#define DUQVERSION \"$MAJOR.$MINOR.$PATCH\"\1/g" src/version.h
+  sed -i -e "s/#define DissolveVERSION \"[0-9\.]\+\(.*\)\"/#define DissolveVERSION \"$MAJOR.$MINOR.$PATCH\"\1/g" src/version.h
 fi
 echo -n "       version.h (Program Version) : "
-grep '#define DUQVERSION' src/version.h | sed -e 's/#define DUQVERSION "\([0-9a-z\.]\+\).*"/\1/g'
+grep '#define DissolveVERSION' src/version.h | sed -e 's/#define DissolveVERSION "\([0-9a-z\.]\+\).*"/\1/g'
 
 
 # ./CMakeLists.txt
@@ -62,47 +62,47 @@ grep 'set(VERSION_PATCH' ./CMakeLists.txt | sed -e 's/set(VERSION_PATCH \"\([0-9
 echo -n "  ./configure.ac (Package Version) : "
 if [ "$TEST" = "false" ]
 then
-  sed -i -e "s/m4_define(\[DUQ_VERSION\],\[\([0-9a-z\.]\+\)\])/m4_define([DUQ_VERSION],[$MAJOR.$MINOR.$PATCH])/g" configure.ac
+  sed -i -e "s/m4_define(\[Dissolve_VERSION\],\[\([0-9a-z\.]\+\)\])/m4_define([Dissolve_VERSION],[$MAJOR.$MINOR.$PATCH])/g" configure.ac
 fi
-grep 'm4_define(\[DUQ_VERSION\]' ./configure.ac | sed -e 's/m4_define(\[DUQ_VERSION\],\[\([0-9a-z\.]\+\)\])/\1/g'
+grep 'm4_define(\[Dissolve_VERSION\]' ./configure.ac | sed -e 's/m4_define(\[Dissolve_VERSION\],\[\([0-9a-z\.]\+\)\])/\1/g'
 
 
 # Change specfile name and contents
 #if [ "$TEST" = "false" ]
 #then
 #  echo "Writing new specfile..."
-#  sed -i -e "s/Version: [0-9a-z\.]\+/Version: $MAJOR.$MINOR.$PATCH/g" extra/OpenSuSE13.2/duq.spec
-#  grep "Version:" extra/OpenSuSE13.2/duq.spec
+#  sed -i -e "s/Version: [0-9a-z\.]\+/Version: $MAJOR.$MINOR.$PATCH/g" extra/OpenSuSE13.2/dissolve.spec
+#  grep "Version:" extra/OpenSuSE13.2/dissolve.spec
 #else
 #  echo -n "                          Specfile : "
-#  grep "Version:" extra/OpenSuSE13.2/duq.spec | sed -e 's/Version: \([0-9a-z\.]\+\)/\1/g'
+#  grep "Version:" extra/OpenSuSE13.2/dissolve.spec | sed -e 's/Version: \([0-9a-z\.]\+\)/\1/g'
 #fi
 
 # Debian build files
 #echo -n "       *.control (Program Version) : "
 #if [ "$TEST" = "false" ]
 #then
-#  sed -i -e "s/Version: \([0-9a-z\.]\+\)/Version: $MAJOR.$MINOR.$PATCH/g" -e "s/^ \([a-z0-9]*\) \([0-9]*\) .*/ \1 \2 duq-$MAJOR.$MINOR.$PATCH.tar.gz/g" ./extra/*/control
+#  sed -i -e "s/Version: \([0-9a-z\.]\+\)/Version: $MAJOR.$MINOR.$PATCH/g" -e "s/^ \([a-z0-9]*\) \([0-9]*\) .*/ \1 \2 dissolve-$MAJOR.$MINOR.$PATCH.tar.gz/g" ./extra/*/control
 #fi
 #grep 'Version:' ./extra/*/control | sed -e 's/Version: \([0-9a-z\.]\+\)/\1/g'
 
 # OSX build files
-echo -n "    duq.dmginfo (Program Version) : "
+echo -n "    dissolve.dmginfo (Program Version) : "
 if [ "$TEST" = "false" ]
 then
-  sed -i -e "s/APP_VERSION=\"\([0-9a-z\.]\+\)\"/APP_VERSION=\"$MAJOR.$MINOR.$PATCH\"/g" ./extra/OSX/duq.dmginfo
+  sed -i -e "s/APP_VERSION=\"\([0-9a-z\.]\+\)\"/APP_VERSION=\"$MAJOR.$MINOR.$PATCH\"/g" ./extra/OSX/dissolve.dmginfo
 fi
-grep 'APP_VERSION=' ./extra/OSX/duq.dmginfo | sed -e 's/APP_VERSION=\"\([0-9a-z\.]\+\)\"/\1/g'
+grep 'APP_VERSION=' ./extra/OSX/dissolve.dmginfo | sed -e 's/APP_VERSION=\"\([0-9a-z\.]\+\)\"/\1/g'
 
 # Windows build files
 if [ "$TEST" = "false" ]
 then
-  sed -i -e "s/#define MyAppVersion \"[0-9\.]*\"/#define MyAppVersion \"$MAJOR.$MINOR.$PATCH\"/g" -e "s/OutputBaseFilename=dUQ-[0-9\.]*/OutputBaseFilename=dUQ-$MAJOR.$MINOR.$PATCH/g" extra/Win32/duq.iss
+  sed -i -e "s/#define MyAppVersion \"[0-9\.]*\"/#define MyAppVersion \"$MAJOR.$MINOR.$PATCH\"/g" -e "s/OutputBaseFilename=dUQ-[0-9\.]*/OutputBaseFilename=dUQ-$MAJOR.$MINOR.$PATCH/g" extra/Win32/dissolve.iss
 fi
-echo -n "        duq.iss (Program Version) : "
-grep 'define MyAppVersion' extra/Win32/duq.iss | sed -e 's/#define MyAppVersion \"\([0-9\.]*\)\"/\1/g'
-echo -n "        duq.iss (Output Filename) : "
-grep 'OutputBaseFilename' extra/Win32/duq.iss | sed -e 's/OutputBaseFilename=dUQ-\([0-9\.]*\)/\1/g'
+echo -n "        dissolve.iss (Program Version) : "
+grep 'define MyAppVersion' extra/Win32/dissolve.iss | sed -e 's/#define MyAppVersion \"\([0-9\.]*\)\"/\1/g'
+echo -n "        dissolve.iss (Output Filename) : "
+grep 'OutputBaseFilename' extra/Win32/dissolve.iss | sed -e 's/OutputBaseFilename=dUQ-\([0-9\.]*\)/\1/g'
 
 # AppImage build files
 if [ "$TEST" = "false" ]

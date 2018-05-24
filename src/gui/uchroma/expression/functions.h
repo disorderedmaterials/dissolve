@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMAFUNCTIONS_H
-#define DUQ_UCHROMAFUNCTIONS_H
+#ifndef DISSOLVE_UCHROMAFUNCTIONS_H
+#define DISSOLVE_UCHROMAFUNCTIONS_H
 
 // Forward declarations
 class FunctionNode;

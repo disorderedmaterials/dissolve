@@ -3,24 +3,24 @@
 	*** src/main/keywords_pairpotentials.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "main/keywords.h"
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
 #include "base/lineparser.h"
@@ -43,7 +43,7 @@ KeywordData PairPotentialsBlockData[] = {
 // Convert text string to PairPotentialsKeyword
 PairPotentialsBlock::PairPotentialsKeyword PairPotentialsBlock::keyword(const char* s)
 {
-	for (int n=0; n<PairPotentialsBlock::nPairPotentialsKeywords; ++n) if (DUQSys::sameString(s,PairPotentialsBlockData[n].name)) return (PairPotentialsBlock::PairPotentialsKeyword) n;
+	for (int n=0; n<PairPotentialsBlock::nPairPotentialsKeywords; ++n) if (DissolveSys::sameString(s,PairPotentialsBlockData[n].name)) return (PairPotentialsBlock::PairPotentialsKeyword) n;
 	return PairPotentialsBlock::nPairPotentialsKeywords;
 }
 
@@ -59,7 +59,7 @@ int PairPotentialsBlock::nArguments(PairPotentialsBlock::PairPotentialsKeyword i
 	return PairPotentialsBlockData[id].nArguments;
 }
 // Parse PairPotentials block
-bool PairPotentialsBlock::parse(LineParser& parser, DUQ* duq)
+bool PairPotentialsBlock::parse(LineParser& parser, Dissolve* dissolve)
 {
 	Messenger::print("\nParsing %s block...\n", InputBlocks::inputBlock(InputBlocks::PairPotentialsBlock));
 
@@ -94,7 +94,7 @@ bool PairPotentialsBlock::parse(LineParser& parser, DUQ* duq)
 				PairPotential::setCoulombTruncationScheme(cTrunc);
 				break;
 			case (PairPotentialsBlock::DeltaKeyword):
-				duq->setPairPotentialDelta(parser.argd(1));
+				dissolve->setPairPotentialDelta(parser.argd(1));
 				break;
 			case (PairPotentialsBlock::EndPairPotentialsKeyword):
 				Messenger::print("Found end of %s block.\n", InputBlocks::inputBlock(InputBlocks::PairPotentialsBlock));
@@ -104,7 +104,7 @@ bool PairPotentialsBlock::parse(LineParser& parser, DUQ* duq)
 				// Loop over all provided arguments (which are atom type names) and set flags in those atom types
 				for (int n=1; n<parser.nArgs(); ++n)
 				{
-					AtomType* atomType = duq->findAtomType(parser.argc(n));
+					AtomType* atomType = dissolve->findAtomType(parser.argc(n));
 					if (!atomType)
 					{
 						Messenger::error("Unrecognised AtomType '%s' given to Exchangeable keyword.\n", parser.argc(n));
@@ -124,20 +124,20 @@ bool PairPotentialsBlock::parse(LineParser& parser, DUQ* duq)
 				}
 
 				// Grab AtomTypes...
-				at1 = duq->findAtomType(parser.argc(2));
-				at2 = duq->findAtomType(parser.argc(3));
+				at1 = dissolve->findAtomType(parser.argc(2));
+				at2 = dissolve->findAtomType(parser.argc(3));
 				if ((!at1) || (!at2))
 				{
 					Messenger::error("Unknown AtomType '%s' referenced in PairPotentials block.\n", at1 ? parser.argc(3) : parser.argc(2));
 					error = true;
 					break;
 				}
-				pot = duq->pairPotential(at1, at2);
+				pot = dissolve->pairPotential(at1, at2);
 				if (pot) Messenger::warn("Overwriting previous PairPotential parameters for interaction between '%s' and '%s'...\n", parser.argc(2), parser.argc(3));
 				else
 				{
 					Messenger::print("Adding PairPotential for interaction between '%s' and '%s'...\n", parser.argc(2), parser.argc(3));
-					pot = duq->addPairPotential(at1, at2);
+					pot = dissolve->addPairPotential(at1, at2);
 				}
 
 				// Now set the short-range type
@@ -172,14 +172,14 @@ bool PairPotentialsBlock::parse(LineParser& parser, DUQ* duq)
 					break;
 				}
 
-				duq->generateMissingPairPotentials(srType);
+				dissolve->generateMissingPairPotentials(srType);
 				break;
 			case (PairPotentialsBlock::IncludeCoulombKeyword):
-				duq->setPairPotentialsIncludeCoulomb(parser.argb(1));
+				dissolve->setPairPotentialsIncludeCoulomb(parser.argb(1));
 				break;
 			case (PairPotentialsBlock::ParametersKeyword):
 				// Find AtomType...
-				at1 = duq->findAtomType(parser.argc(1));
+				at1 = dissolve->findAtomType(parser.argc(1));
 				if (!at1)
 				{
 					Messenger::error("Unknown AtomType '%s' referenced in PairPotentials block.\n", parser.argc(1));
@@ -192,7 +192,7 @@ bool PairPotentialsBlock::parse(LineParser& parser, DUQ* duq)
 				for (int n=3; n<parser.nArgs(); ++n) at1->parameters().setParameter(n-3, parser.argd(n));
 				break;
 			case (PairPotentialsBlock::RangeKeyword):
-				duq->setPairPotentialRange(parser.argd(1));
+				dissolve->setPairPotentialRange(parser.argd(1));
 				break;
 			case (PairPotentialsBlock::ShortRangeTruncationKeyword):
 				srTrunc = PairPotential::shortRangeTruncationScheme(parser.argc(1));

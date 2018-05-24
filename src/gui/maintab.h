@@ -3,24 +3,24 @@
 	*** src/gui/maintab.h
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_MAINTAB_H
-#define DUQ_MAINTAB_H
+#ifndef DISSOLVE_MAINTAB_H
+#define DISSOLVE_MAINTAB_H
 
 #include "gui/widgets/subwindow.h"
 #include "module/module.h"
@@ -30,8 +30,8 @@
 #include "templates/reflist.h"
 
 // Forward Declarations
-class DUQ;
-class DUQWindow;
+class Dissolve;
+class DissolveWindow;
 class LineParser;
 class QLayout;
 class QMdiArea;
@@ -43,7 +43,7 @@ class MainTab : public ListItem<MainTab>
 {
 	public:
 	// Constructor / Destructor
-	MainTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const char* title, QWidget* page);
+	MainTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, QWidget* page);
 	virtual ~MainTab();
 
 
@@ -51,10 +51,10 @@ class MainTab : public ListItem<MainTab>
 	 * Data
 	 */
 	protected:
-	// Reference to dUQ
-	DUQ& duq_;
+	// Reference to Dissolve
+	Dissolve& dissolve_;
 	// Pointer to main window
-	DUQWindow* duqWindow_;
+	DissolveWindow* dissolveWindow_;
 	// Tab widget in which this tab is contained
 	QTabWidget* tabWidget_;
 	// Page widget

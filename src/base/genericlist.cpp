@@ -3,20 +3,20 @@
 	*** src/base/genericlist.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "base/genericlist.h"
@@ -57,10 +57,10 @@ bool GenericList::contains(const char* name, const char* prefix)
 {
 	// Construct full name
 	CharString varName;
-	if (DUQSys::isEmpty(prefix)) varName = name;
+	if (DissolveSys::isEmpty(prefix)) varName = name;
 	else varName.sprintf("%s_%s", prefix, name);
 
-	for (GenericItem* item = items_.first(); item != NULL; item = item->next) if (DUQSys::sameString(item->name(), varName.get())) return true;
+	for (GenericItem* item = items_.first(); item != NULL; item = item->next) if (DissolveSys::sameString(item->name(), varName.get())) return true;
 	return false;
 }
 
@@ -73,7 +73,7 @@ GenericItem* GenericList::items()
 // Return the named item from the list
 GenericItem* GenericList::find(const char* name)
 {
-	for (GenericItem* item = items_.first(); item != NULL; item = item->next) if (DUQSys::sameString(item->name(), name)) return item;
+	for (GenericItem* item = items_.first(); item != NULL; item = item->next) if (DissolveSys::sameString(item->name(), name)) return item;
 	return NULL;
 }
 
@@ -82,10 +82,10 @@ GenericItem* GenericList::find(const char* name, const char* prefix)
 {
 	// Construct full name
 	CharString varName;
-	if (DUQSys::isEmpty(prefix)) varName = name;
+	if (DissolveSys::isEmpty(prefix)) varName = name;
 	else varName.sprintf("%s_%s", prefix, name);
 
-	for (GenericItem* item = items_.first(); item != NULL; item = item->next) if (DUQSys::sameString(item->name(), varName.get())) return item;
+	for (GenericItem* item = items_.first(); item != NULL; item = item->next) if (DissolveSys::sameString(item->name(), varName.get())) return item;
 	return NULL;
 }
 
@@ -96,7 +96,7 @@ RefList<GenericItem,bool> GenericList::listWithPrefix(const char* prefix)
 	CharString itemUniqueName;
 	for (GenericItem* item = items_.first(); item != NULL; item = item->next)
 	{
-		itemUniqueName = DUQSys::beforeChar(item->name(), '_');
+		itemUniqueName = DissolveSys::beforeChar(item->name(), '_');
 		if (itemUniqueName == prefix) items.add(item);
 	}
 
@@ -136,7 +136,7 @@ bool GenericList::rename(const char* oldName, const char* oldPrefix, const char*
 		return false;
 	}
 
-	if (DUQSys::isEmpty(newPrefix)) item->setName(newName);
+	if (DissolveSys::isEmpty(newPrefix)) item->setName(newName);
 	else item->setName(CharString("%s_%s", newPrefix, newName));
 
 	return true;
@@ -230,7 +230,7 @@ bool GenericList::equality(ProcessPool& procPool)
 
 			// Receive the class name of the item and check it against ours
 			if (!procPool.broadcast(itemClassName, n)) return false;
-			if (!procPool.allTrue(DUQSys::sameString(item->itemClassName(), itemClassName)))
+			if (!procPool.allTrue(DissolveSys::sameString(item->itemClassName(), itemClassName)))
 			{
 				Messenger::error("GenericList equality check failed - item '%s' not of the correct type (is %s) on process %i.\n", item->name(), item->itemClassName(), procPool.poolRank());
 				++nFailed;

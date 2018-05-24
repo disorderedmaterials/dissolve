@@ -140,7 +140,7 @@ void FitKernel::updateVariables()
 		Variable* var = ri->item;
 
 		// Is this variable one of 'x' or 'z'? Must compare by name since the pointers are not permanent...
-		if (DUQSys::sameString(var->name(), "x") || DUQSys::sameString(var->name(), "z")) continue;
+		if (DissolveSys::sameString(var->name(), "x") || DissolveSys::sameString(var->name(), "z")) continue;
 
 		// Is it one of the reference variables that we created?
 		ReferenceVariable* refVar = reference(var->name());
@@ -229,7 +229,7 @@ RefListItem<EquationVariable,bool>* FitKernel::usedVariables()
 EquationVariable* FitKernel::variable(const char* name)
 {
 	// Search list of variables for name provided
-	for (EquationVariable* eqVar = variables_.first(); eqVar != NULL; eqVar = eqVar->next) if (DUQSys::sameString(name, eqVar->name())) return eqVar;
+	for (EquationVariable* eqVar = variables_.first(); eqVar != NULL; eqVar = eqVar->next) if (DissolveSys::sameString(name, eqVar->name())) return eqVar;
 	return NULL;
 }
 
@@ -296,7 +296,7 @@ ReferenceVariable* FitKernel::references()
 // Return named reference, if it exists
 ReferenceVariable* FitKernel::reference(const char* name)
 {
-	for (ReferenceVariable* refVar = references_.first(); refVar != NULL; refVar = refVar->next) if (DUQSys::sameString(refVar->name(), name)) return refVar;
+	for (ReferenceVariable* refVar = references_.first(); refVar != NULL; refVar = refVar->next) if (DissolveSys::sameString(refVar->name(), name)) return refVar;
 	return NULL;
 }
 
@@ -316,7 +316,7 @@ const char* RangeTypeKeywords[] = { "Absolute", "SingleIndex", "IndexRange" };
 // Convert text string to RangeType
 FitKernel::RangeType FitKernel::rangeType(const char* s)
 {
-	for (int n=0; n<FitKernel::nRangeTypes; ++n) if (DUQSys::sameString(s, RangeTypeKeywords[n])) return (FitKernel::RangeType) n;
+	for (int n=0; n<FitKernel::nRangeTypes; ++n) if (DissolveSys::sameString(s, RangeTypeKeywords[n])) return (FitKernel::RangeType) n;
 	return FitKernel::nRangeTypes;
 }
 

@@ -13,5 +13,5 @@ noinst_HEADERS += reflist.h
 noinst_HEADERS += simplex.h
 noinst_HEADERS += variantpointer.h vector3.h vector4.h
 
-AM_CPPFLAGS = -I../ @DUQ_CFLAGS@
+AM_CPPFLAGS = -I../ @DISSOLVE_CFLAGS@
 

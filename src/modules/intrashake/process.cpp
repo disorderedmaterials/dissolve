@@ -3,24 +3,24 @@
 	*** src/modules/intrashake/process.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "modules/intrashake/intrashake.h"
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "classes/changestore.h"
 #include "classes/energykernel.h"
 #include "classes/box.h"
@@ -35,7 +35,7 @@ bool IntraShakeModule::hasProcessing()
 }
 
 // Run main processing
-bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
+bool IntraShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {
 	/*
 	 * Perform intramolecular shakes, modifying individual bound terms on molecules.
@@ -60,7 +60,7 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		procPool.assignProcessesToGroups(cfg->processPool());
 
 		// Get reference to relevant module data
-		GenericList& moduleData = configurationLocal_ ? cfg->moduleData() : duq.processingModuleData();
+		GenericList& moduleData = configurationLocal_ ? cfg->moduleData() : dissolve.processingModuleData();
 
 		// Retrieve control parameters from Configuration
 		bool adjustAngles = keywords_.asBool("AdjustAngles");
@@ -73,7 +73,7 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 		const double bondStepSizeMax = keywords_.asDouble("BondStepSizeMax");
 		const double bondStepSizeMin = keywords_.asDouble("BondStepSizeMin");
 		double cutoffDistance = keywords_.asDouble("CutoffDistance");
-		if (cutoffDistance < 0.0) cutoffDistance = duq.pairPotentialRange();
+		if (cutoffDistance < 0.0) cutoffDistance = dissolve.pairPotentialRange();
 		const int nShakesPerTerm = keywords_.asInt("ShakesPerTerm");
 		const double targetAcceptanceRate = keywords_.asDouble("TargetAcceptanceRate");
 		const bool termEnergyOnly = keywords_.asBool("TermEnergyOnly");
@@ -99,7 +99,7 @@ bool IntraShakeModule::process(DUQ& duq, ProcessPool& procPool)
 
 		// Create a local ChangeStore and EnergyKernel
 		ChangeStore changeStore(procPool);
-		EnergyKernel kernel(procPool, cfg, duq.potentialMap(), cutoffDistance);
+		EnergyKernel kernel(procPool, cfg, dissolve.potentialMap(), cutoffDistance);
 
 		// Initialise the random number buffer
 		procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));

@@ -3,24 +3,24 @@
 	*** src/modules/rdf/functions.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "modules/rdf/rdf.h"
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "module/group.h"
 #include "classes/atomtype.h"
 #include "classes/configuration.h"
@@ -270,7 +270,7 @@ bool RDFModule::performGRAveraging(GenericList& moduleData, const char* name, co
 	if (moduleData.contains(CharString("%s_1", name), prefix))
 	{
 		PartialSet& lastPartials = GenericListHelper<PartialSet>::retrieve(moduleData, CharString("%s_1", name), prefix);
-		if (DUQSys::sameString(lastPartials.fingerprint(), currentFingerprint, true))
+		if (DissolveSys::sameString(lastPartials.fingerprint(), currentFingerprint, true))
 		{
 			Messenger::print("Current partials will not form part of average, since they are the same as the last stored set.\n");
 			storeCurrent = false;
@@ -345,7 +345,7 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 	// Is the PartialSet already up-to-date?
 	// If so, can exit now, *unless* the Test method is requested, in which case we go ahead and calculate anyway
 	alreadyUpToDate = false;
-	if (DUQSys::sameString(originalgr.fingerprint(), CharString("%i", cfg->coordinateIndex())) && (method != RDFModule::TestMethod))
+	if (DissolveSys::sameString(originalgr.fingerprint(), CharString("%i", cfg->coordinateIndex())) && (method != RDFModule::TestMethod))
 	{
 		Messenger::print("Partial g(r) are up-to-date for Configuration '%s'.\n", cfg->name());
 		alreadyUpToDate = true;

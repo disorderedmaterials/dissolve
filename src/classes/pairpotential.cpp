@@ -3,20 +3,20 @@
 	*** src/classes/pairpotential.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "classes/pairpotential.h"
@@ -55,7 +55,7 @@ const char* ShortRangeTypeKeywords[] = { "None", "LJ", "LJGeometric" };
 // Convert text string to ShortRangeType
 PairPotential::ShortRangeType PairPotential::shortRangeType(const char* s)
 {
-	for (int n=0; n<PairPotential::nShortRangeTypes; ++n) if (DUQSys::sameString(s,ShortRangeTypeKeywords[n])) return (PairPotential::ShortRangeType) n;
+	for (int n=0; n<PairPotential::nShortRangeTypes; ++n) if (DissolveSys::sameString(s,ShortRangeTypeKeywords[n])) return (PairPotential::ShortRangeType) n;
 	return PairPotential::nShortRangeTypes;
 }
 
@@ -77,7 +77,7 @@ const char* CoulombTruncationSchemeKeywords[] = { "None", "Shifted" };
 // Convert text string to TruncationScheme
 PairPotential::CoulombTruncationScheme PairPotential::coulombTruncationScheme(const char* s)
 {
-	for (int n=0; n<PairPotential::nCoulombTruncationSchemes; ++n) if (DUQSys::sameString(s,CoulombTruncationSchemeKeywords[n])) return (PairPotential::CoulombTruncationScheme) n;
+	for (int n=0; n<PairPotential::nCoulombTruncationSchemes; ++n) if (DissolveSys::sameString(s,CoulombTruncationSchemeKeywords[n])) return (PairPotential::CoulombTruncationScheme) n;
 	return PairPotential::nCoulombTruncationSchemes;
 }
 
@@ -99,7 +99,7 @@ const char* ShortRangeTruncationSchemeKeywords[] = { "None", "Shifted", "Cosine"
 // Convert text string to ShortRangeTruncationScheme
 PairPotential::ShortRangeTruncationScheme PairPotential::shortRangeTruncationScheme(const char* s)
 {
-	for (int n=0; n<PairPotential::nShortRangeTruncationSchemes; ++n) if (DUQSys::sameString(s,ShortRangeTruncationSchemeKeywords[n])) return (PairPotential::ShortRangeTruncationScheme) n;
+	for (int n=0; n<PairPotential::nShortRangeTruncationSchemes; ++n) if (DissolveSys::sameString(s,ShortRangeTruncationSchemeKeywords[n])) return (PairPotential::ShortRangeTruncationScheme) n;
 	return PairPotential::nShortRangeTruncationSchemes;
 }
 

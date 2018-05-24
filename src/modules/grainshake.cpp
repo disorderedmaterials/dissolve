@@ -1,25 +1,25 @@
 /*
-	*** dUQ Methods - GrainShake
+	*** Dissolve Methods - GrainShake
 	*** src/main/methods_grainshake.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "modules/grainshake.h"
 #include "classes/box.h"
 #include "classes/cell.h"
@@ -83,7 +83,7 @@ Module::ModuleType GrainShakeModule::type()
 
 // Run main processing
 
-bool GrainShakeModule::execute(DUQ& duq)
+bool GrainShakeModule::execute(Dissolve& dissolve)
 {
 	/*
 	* Perform a Grain shake
@@ -95,7 +95,7 @@ bool GrainShakeModule::execute(DUQ& duq)
 	Configuration* cfg = targetConfigurations_.firstItem();
 
 	// Retrieve control parameters from Configuration
-	const double cutoffDistance = variableAsDouble("cutoffDistance") < 0.0 ? duq.pairPotentialRange() : variableAsDouble("cutoffDistance");
+	const double cutoffDistance = variableAsDouble("cutoffDistance") < 0.0 ? dissolve.pairPotentialRange() : variableAsDouble("cutoffDistance");
 	const int nShakesPerGrain = variableAsInt("nShakesPerGrain");
 	const double targetAcceptanceRate = variableAsDouble("targetAcceptanceRate");
 	double rotationStepSize = variableAsDouble("rotationStepSize");
@@ -115,7 +115,7 @@ bool GrainShakeModule::execute(DUQ& duq)
 
 	// Create a local ChangeStore and EnergyKernel
 	ChangeStore changeStore;
-	EnergyKernel kernel(cfg, duq.potentialMap());
+	EnergyKernel kernel(cfg, dissolve.potentialMap());
 
 	// Initialise the random number buffer
 	Comm.initialiseRandomBuffer(ProcessPool::Group);

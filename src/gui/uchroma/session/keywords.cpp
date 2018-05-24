@@ -34,7 +34,7 @@ const char* UChromaInputBlockKeywords[] = { "Collection", "EndUChroma", "Setting
 // Convert text string to InputBlock
 UChromaBase::InputBlock UChromaBase::inputBlock(const char* s)
 {
-	for (int n=0; n<UChromaBase::nInputBlocks; ++n) if (DUQSys::sameString(s, UChromaInputBlockKeywords[n])) return (UChromaBase::InputBlock) n;
+	for (int n=0; n<UChromaBase::nInputBlocks; ++n) if (DissolveSys::sameString(s, UChromaInputBlockKeywords[n])) return (UChromaBase::InputBlock) n;
 	return UChromaBase::nInputBlocks;
 }
 
@@ -57,7 +57,7 @@ int UChromaAxisKeywordNArguments[] = { 1, 1, 0, 1, 1, 3, 6, 6, 1, 1, 3, 2, 1, 1,
 // Convert text string to AxisKeyword
 UChromaBase::AxisKeyword UChromaBase::axisKeyword(const char* s)
 {
-	for (int n=0; n<nAxisKeywords; ++n) if (DUQSys::sameString(s, UChromaAxisBlockKeywords[n])) return (UChromaBase::AxisKeyword) n;
+	for (int n=0; n<nAxisKeywords; ++n) if (DissolveSys::sameString(s, UChromaAxisBlockKeywords[n])) return (UChromaBase::AxisKeyword) n;
 	return nAxisKeywords;
 }
 
@@ -106,7 +106,7 @@ int UChromaCollectionKeywordNArguments[] = {
 // Convert text string to CollectionKeyword
 UChromaBase::CollectionKeyword UChromaBase::collectionKeyword(const char* s)
 {
-	for (int n=0; n<nCollectionKeywords; ++n) if (DUQSys::sameString(s, UChromaCollectionBlockKeywords[n])) return (UChromaBase::CollectionKeyword) n;
+	for (int n=0; n<nCollectionKeywords; ++n) if (DissolveSys::sameString(s, UChromaCollectionBlockKeywords[n])) return (UChromaBase::CollectionKeyword) n;
 	return nCollectionKeywords;
 }
 
@@ -135,7 +135,7 @@ int UChromaFitParametersKeywordNArguments[] = { 0, 1, 1, 1, 1, 1, 7, 7, 1, 2, 2,
 // Convert text string to FitParametersKeyword
 UChromaBase::FitParametersKeyword UChromaBase::fitParametersKeyword(const char* s)
 {
-	for (int n=0; n<nFitParametersKeywords; ++n) if (DUQSys::sameString(s, UChromaFitParametersBlockKeywords[n])) return (UChromaBase::FitParametersKeyword) n;
+	for (int n=0; n<nFitParametersKeywords; ++n) if (DissolveSys::sameString(s, UChromaFitParametersBlockKeywords[n])) return (UChromaBase::FitParametersKeyword) n;
 	return nFitParametersKeywords;
 }
 
@@ -164,7 +164,7 @@ int UChromaFitResultsKeywordNArguments[] = { 0, 1 };
 // Convert text string to FitResultsKeyword
 UChromaBase::FitResultsKeyword UChromaBase::fitResultsKeyword(const char* s)
 {
-	for (int n=0; n<nFitResultsKeywords; ++n) if (DUQSys::sameString(s, UChromaFitResultsBlockKeywords[n])) return (UChromaBase::FitResultsKeyword) n;
+	for (int n=0; n<nFitResultsKeywords; ++n) if (DissolveSys::sameString(s, UChromaFitResultsBlockKeywords[n])) return (UChromaBase::FitResultsKeyword) n;
 	return nFitResultsKeywords;
 }
 
@@ -193,7 +193,7 @@ int UChromaSettingsKeywordNArguments[] = { 0, 5 };
 // Convert text string to SettingsKeyword
 UChromaBase::SettingsKeyword UChromaBase::settingsKeyword(const char* s)
 {
-	for (int n=0; n<nSettingsKeywords; ++n) if (DUQSys::sameString(s, UChromaSettingsBlockKeywords[n])) return (UChromaBase::SettingsKeyword) n;
+	for (int n=0; n<nSettingsKeywords; ++n) if (DissolveSys::sameString(s, UChromaSettingsBlockKeywords[n])) return (UChromaBase::SettingsKeyword) n;
 	return nSettingsKeywords;
 }
 
@@ -222,7 +222,7 @@ int UChromaDataSetKeywordNArguments[] = { 0, 0, 1, 1 };
 // Convert text string to DataSetKeyword
 UChromaBase::DataSetKeyword UChromaBase::dataSetKeyword(const char* s)
 {
-	for (int n=0; n<nDataSetKeywords; ++n) if (DUQSys::sameString(s, UChromaDataSetBlockKeywords[n])) return (UChromaBase::DataSetKeyword) n;
+	for (int n=0; n<nDataSetKeywords; ++n) if (DissolveSys::sameString(s, UChromaDataSetBlockKeywords[n])) return (UChromaBase::DataSetKeyword) n;
 	return nDataSetKeywords;
 }
 
@@ -251,7 +251,7 @@ int UChromaViewKeywordNArguments[] = { 0, 2, 1 };
 // Convert text string to ViewKeyword
 UChromaBase::ViewKeyword UChromaBase::viewKeyword(const char* s)
 {
-	for (int n=0; n<nViewKeywords; ++n) if (DUQSys::sameString(s, UChromaViewBlockKeywords[n])) return (UChromaBase::ViewKeyword) n;
+	for (int n=0; n<nViewKeywords; ++n) if (DissolveSys::sameString(s, UChromaViewBlockKeywords[n])) return (UChromaBase::ViewKeyword) n;
 	return nViewKeywords;
 }
 
@@ -280,7 +280,7 @@ int UChromaViewPaneKeywordNArguments[] = { 1, 1, 1, 1, 1, 0, 1, 4, 1, 1, 1, 1, 1
 // Convert text string to ViewPaneKeyword
 UChromaBase::ViewPaneKeyword UChromaBase::viewPaneKeyword(const char* s)
 {
-	for (int n=0; n<nViewPaneKeywords; ++n) if (DUQSys::sameString(s, UChromaViewPaneBlockKeywords[n])) return (UChromaBase::ViewPaneKeyword) n;
+	for (int n=0; n<nViewPaneKeywords; ++n) if (DissolveSys::sameString(s, UChromaViewPaneBlockKeywords[n])) return (UChromaBase::ViewPaneKeyword) n;
 	return nViewPaneKeywords;
 }
 

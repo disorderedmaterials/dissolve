@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMATARGETDATA_H
-#define DUQ_UCHROMATARGETDATA_H
+#ifndef DISSOLVE_UCHROMATARGETDATA_H
+#define DISSOLVE_UCHROMATARGETDATA_H
 
 #include "gui/uchroma/classes/targetprimitive.h"
 

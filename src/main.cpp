@@ -1,27 +1,27 @@
 /*
-	*** dUQ Main
+	*** Dissolve Main
 	*** src/main.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "version.h"
 #include "base/messenger.h"
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "module/registry.h"
 #include "base/processpool.h"
 #include <time.h>
@@ -36,7 +36,7 @@ int main(int argc, char **argv)
 #endif
 
 	// Instantiate main class
-	DUQ dUQ;
+	Dissolve Dissolve;
 
 	// Parse CLI options...
 	int n = 1;
@@ -52,9 +52,9 @@ int main(int argc, char **argv)
 			{
 				case ('h'):
 #ifdef PARALLEL
-					printf("dUQ PARALLEL version %s, Copyright (C) 2012-2018 T. Youngs.\n\n", DUQVERSION);
+					printf("Dissolve PARALLEL version %s, Copyright (C) 2012-2018 T. Youngs.\n\n", DISSOLVEVERSION);
 #else
-					printf("dUQ SERIAL version %s, Copyright (C) 2012-2018 T. Youngs.\n\n", DUQVERSION);
+					printf("Dissolve SERIAL version %s, Copyright (C) 2012-2018 T. Youngs.\n\n", DISSOLVEVERSION);
 #endif
 					printf("Recognised CLI options are:\n\n");
 					printf("\t-a\t\tAuto-add dependent Modules if they are not present already\n");
@@ -71,11 +71,11 @@ int main(int argc, char **argv)
 					return 1;
 					break;
 				case ('a'):
-					dUQ.setAutoAddDependentModules(true);
+					Dissolve.setAutoAddDependentModules(true);
 					break;
 				case ('c'):
 					nIterations = 0;
-					Messenger::print("System input and set-up will be checked, then dUQ will exit.\n");
+					Messenger::print("System input and set-up will be checked, then Dissolve will exit.\n");
 					break;
 				case ('i'):
 					Messenger::print("Restart file (if it exists) will be ignored.\n");
@@ -93,7 +93,7 @@ int main(int argc, char **argv)
 						return 1;
 					}
 					nIterations = atoi(argv[n]);
-					Messenger::print("%i main-loop iterations will be performed, then dUQ will exit.\n", nIterations);
+					Messenger::print("%i main-loop iterations will be performed, then Dissolve will exit.\n", nIterations);
 					break;
 				case ('q'):
 					Messenger::setQuiet(true);
@@ -111,7 +111,7 @@ int main(int argc, char **argv)
 					Messenger::enableRedirect(redirectFileName.get());
 					break;
 				case ('s'):
-					Messenger::print("Single main-loop iteration will be performed, then dUQ will exit.\n");
+					Messenger::print("Single main-loop iteration will be performed, then Dissolve will exit.\n");
 					nIterations = 1;
 					break;
 				case ('v'):
@@ -145,18 +145,18 @@ int main(int argc, char **argv)
 
 	// Print GPL license information
 #ifdef PARALLEL
-	Messenger::print("dUQ PARALLEL version %s, Copyright (C) 2012-2018 T. Youngs.\n", DUQVERSION);
+	Messenger::print("Dissolve PARALLEL version %s, Copyright (C) 2012-2018 T. Youngs.\n", DISSOLVEVERSION);
 #else
-	Messenger::print("dUQ SERIAL version %s, Copyright (C) 2012-2018 T. Youngs.\n", DUQVERSION);
+	Messenger::print("Dissolve SERIAL version %s, Copyright (C) 2012-2018 T. Youngs.\n", DISSOLVEVERSION);
 #endif
-	Messenger::print("Source repository: %s.\n", DUQREPO);
-	Messenger::print("dUQ comes with ABSOLUTELY NO WARRANTY.\n");
+	Messenger::print("Source repository: %s.\n", DISSOLVEREPO);
+	Messenger::print("Dissolve comes with ABSOLUTELY NO WARRANTY.\n");
 	Messenger::print("This is free software, and you are welcome to redistribute it under certain conditions.\n");
 	Messenger::print("For more details read the GPL at <http://www.gnu.org/copyleft/gpl.html>.\n");
 
 	// Load external datafiles (master only)
 	Messenger::banner("Load External Data");
-	if (!MPIRunMaster(dUQ.worldPool(), dUQ.loadDataFiles()))
+	if (!MPIRunMaster(Dissolve.worldPool(), Dissolve.loadDataFiles()))
 	{
 		ProcessPool::finalise();
 		Messenger::ceaseRedirect();
@@ -164,7 +164,7 @@ int main(int argc, char **argv)
 	}
 
 	// Broadcast periodic table (including isotope and parameter data)
-	if (!periodicTable.broadcast(dUQ.worldPool()))
+	if (!periodicTable.broadcast(Dissolve.worldPool()))
 	{
 		ProcessPool::finalise();
 		Messenger::ceaseRedirect();
@@ -191,7 +191,7 @@ int main(int argc, char **argv)
 		Messenger::ceaseRedirect();
 		return 1;
 	}
-	if (!dUQ.loadInput(inputFile))
+	if (!Dissolve.loadInput(inputFile))
 	{
 		ProcessPool::finalise();
 		Messenger::ceaseRedirect();
@@ -203,10 +203,10 @@ int main(int argc, char **argv)
 	if (!ignoreRestart)
 	{
 		CharString restartFile("%s.restart", inputFile.get());
-		if (DUQSys::fileExists(restartFile))
+		if (DissolveSys::fileExists(restartFile))
 		{
 			Messenger::print("Restart file '%s' exists and will be loaded.\n", restartFile.get());
-			if (!dUQ.loadRestart(restartFile.get()))
+			if (!Dissolve.loadRestart(restartFile.get()))
 			{
 				Messenger::error("Restart file contained errors.\n");
 				ProcessPool::finalise();
@@ -219,7 +219,7 @@ int main(int argc, char **argv)
 	else Messenger::print("Restart file (if it exists) will be ignored.\n");
 
 	// Prepare for run
-	if (!dUQ.setUp())
+	if (!Dissolve.setUp())
 	{
 		ProcessPool::finalise();
 		Messenger::ceaseRedirect();
@@ -231,16 +231,16 @@ int main(int argc, char **argv)
 #endif
 	
 	// Run main simulation
-	bool result = dUQ.iterate(nIterations);
+	bool result = Dissolve.iterate(nIterations);
 
 	// Print timing information
-	dUQ.printTiming();
+	Dissolve.printTiming();
 
 	// Clear all data
-	dUQ.clear();
+	Dissolve.clear();
 
-	if (result) Messenger::print("dUQ is done.\n");
-	else Messenger::print("dUQ is done, but with errors.\n");
+	if (result) Messenger::print("Dissolve is done.\n");
+	else Messenger::print("Dissolve is done, but with errors.\n");
 
 	// End parallel communication
 	ProcessPool::finalise();

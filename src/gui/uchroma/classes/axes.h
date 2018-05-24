@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMAAXES_H
-#define DUQ_UCHROMAAXES_H
+#ifndef DISSOLVE_UCHROMAAXES_H
+#define DISSOLVE_UCHROMAAXES_H
 
 #include "gui/uchroma/classes/numberformat.h"
 #include "gui/uchroma/classes/displaydataset.h"

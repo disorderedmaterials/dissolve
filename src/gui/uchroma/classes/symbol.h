@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMASYMBOL_H
-#define DUQ_UCHROMASYMBOL_H
+#ifndef DISSOLVE_UCHROMASYMBOL_H
+#define DISSOLVE_UCHROMASYMBOL_H
 
 #include <QString>
 

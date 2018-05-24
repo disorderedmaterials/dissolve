@@ -3,20 +3,20 @@
 	*** src/math/mathfunc.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "math/mathfunc.h"
@@ -29,7 +29,7 @@
  */
 
 // Error Function
-double DUQMath::erfc(double x)
+double DissolveMath::erfc(double x)
 {
 	// Approximation to the complementary error function.
 	// Ref: Abramowitz and Stegun, Handbook of Mathematical Functions,
@@ -43,7 +43,7 @@ double DUQMath::erfc(double x)
 }
 
 // Complementary error function
-double DUQMath::erf(double x)
+double DissolveMath::erf(double x)
 {
 	return (1.0 - erfc(x));
 }
@@ -53,7 +53,7 @@ double DUQMath::erf(double x)
  */
 
 // Random Number Generator (0 - 1)
-double DUQMath::random()
+double DissolveMath::random()
 {
 	// Simple random number generator from C++ stdlib.
 	// Returns numbers from 0.0 to 1.0 inclusive.
@@ -62,20 +62,20 @@ double DUQMath::random()
 }
 
 // Return random value between -1 and 1.0 inclusive
-double DUQMath::randomPlusMinusOne()
+double DissolveMath::randomPlusMinusOne()
 {
 	return (random()-0.5)*2.0;
 }
 
 // Random number generator (0 - RAND_MAX)
-int DUQMath::randomimax()
+int DissolveMath::randomimax()
 {
 	// Returns a random number from 0->(RAND_MAX-1) inclusive.
 	return rand();
 }
 
 // Random number generator (0 - range-1)
-int DUQMath::randomi(int range)
+int DissolveMath::randomi(int range)
 {
 	// Returns a random number from 0->(range-1) inclusive.
 	return int(range * (double(rand()-1) / RAND_MAX));
@@ -86,7 +86,7 @@ int DUQMath::randomi(int range)
  */
 
 // Integer power function
-int DUQMath::power(int i, int p)
+int DissolveMath::power(int i, int p)
 {
 	static int result, n;
 	result = i;
@@ -96,25 +96,25 @@ int DUQMath::power(int i, int p)
 }
 
 // Sign function
-int DUQMath::sgn(int x)
+int DissolveMath::sgn(int x)
 {
 	return (x < 0 ? -1 : x > 0);
 }
 
 // Sign function
-int DUQMath::sgn(double x)
+int DissolveMath::sgn(double x)
 {
 	return (x < 0.0 ? -1 : x > 0.0);
 }
 
 // Apply sign of second argument to first
-double DUQMath::sgn(double a, double signOf)
+double DissolveMath::sgn(double a, double signOf)
 {
 	return signOf >= 0.0 ? fabs(a) : -fabs(a);
 }
 
 // Return the cyclic permutation of the integer 'i', span 3
-int DUQMath::cp3(int i)
+int DissolveMath::cp3(int i)
 {
 	return (i%3);
 }

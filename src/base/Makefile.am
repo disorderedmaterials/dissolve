@@ -4,5 +4,5 @@ libbase_la_SOURCES = charstring.cpp element.cpp genericitem.cpp genericitembase.
 
 noinst_HEADERS = charstring.h constants.h dummyclass.h element.h genericitem.h genericitembase.h genericlist.h geometry.h isotope.h lineparser.h messenger.h outputhandler.h parameters.h plainvalue.h plainvaluelist.h processgroup.h processpool.h ptable.h sampleddouble.h sysfunc.h timer.h xydata.h
 
-AM_CPPFLAGS = -I../ @DUQ_CFLAGS@
+AM_CPPFLAGS = -I../ @DISSOLVE_CFLAGS@
 

@@ -3,20 +3,20 @@
 	*** src/gui/speciestab_funcs.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "gui/speciestab.h"
@@ -28,14 +28,14 @@
 #include "gui/delegates/texponentialspin.hui"
 #include "gui/helpers/listwidgetupdater.h"
 #include "gui/helpers/tablewidgetupdater.h"
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "classes/atomtype.h"
 #include "classes/species.h"
 #include "classes/speciesbond.h"
 #include <QListWidgetItem>
 
 // Constructor / Destructor
-SpeciesTab::SpeciesTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const char* title) : MainTab(duqWindow, duq, parent, title, this)
+SpeciesTab::SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title) : MainTab(dissolveWindow, dissolve, parent, title, this)
 {
 	ui.setupUi(this);
 
@@ -44,13 +44,13 @@ SpeciesTab::SpeciesTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const
 	// Set item delegates in tables
 	// -- SpeciesAtomTable
 	for (int n=1; n<5; ++n) ui.AtomTable->setItemDelegateForColumn(n, new TExponentialSpinDelegate(this));
-	ui.AtomTable->setItemDelegateForColumn(5, new ComboListDelegate(this, new ComboNameListItems<AtomType>(duq_.atomTypeList())));
+	ui.AtomTable->setItemDelegateForColumn(5, new ComboListDelegate(this, new ComboNameListItems<AtomType>(dissolve_.atomTypeList())));
 	ui.AtomTable->horizontalHeader()->setFont(font());
 	// -- Isotope Table
 	ui.IsotopeTable->setItemDelegateForColumn(1, new IsotopeComboDelegate(this));
 	// -- Bond Table
 	for (int n=0; n<2; ++n) ui.BondTable->setItemDelegateForColumn(n, new IntegerSpinDelegate(this, 1, 1e9));
-	ui.BondTable->setItemDelegateForColumn(2, new IntraFormComboDelegate(this, SpeciesBond::nBondFunctions, SpeciesBond::bondFunctions(), duq_.masterBonds()));
+	ui.BondTable->setItemDelegateForColumn(2, new IntraFormComboDelegate(this, SpeciesBond::nBondFunctions, SpeciesBond::bondFunctions(), dissolve_.masterBonds()));
 	// -- Angle Table
 	for (int n=0; n<3; ++n) ui.AngleTable->setItemDelegateForColumn(n, new IntegerSpinDelegate(this, 1, 1e9));
 	// -- Torsion Table
@@ -279,7 +279,7 @@ void SpeciesTab::updateControls()
 	refreshing_ = true;
 
 	// Species List
-	ListWidgetUpdater<SpeciesTab,Species> speciesUpdater(ui.SpeciesList, duq_.species());
+	ListWidgetUpdater<SpeciesTab,Species> speciesUpdater(ui.SpeciesList, dissolve_.species());
 
 	Species* species = currentSpecies();
 
@@ -383,24 +383,24 @@ void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem* w)
 		case (2):
 		case (3):
 			speciesAtom->setCoordinate(w->column()-1, w->text().toDouble());
-			duqWindow_->setModified();
+			dissolveWindow_->setModified();
 			break;
 		// Charge
 		case (4):
 			speciesAtom->setCharge(w->text().toDouble());
-			duqWindow_->setModified();
+			dissolveWindow_->setModified();
 			break;
 		// AtomType
 		case (5):
 			// Check the text to see if it is an existing AtomType - if not, we should create it
-			atomType = duq_.findAtomType(qPrintable(w->text()));
+			atomType = dissolve_.findAtomType(qPrintable(w->text()));
 			if (!atomType)
 			{
-				atomType = duq_.addAtomType(speciesAtom->element());
+				atomType = dissolve_.addAtomType(speciesAtom->element());
 				atomType->setName(qPrintable(w->text()));
 			}
 			speciesAtom->setAtomType(atomType);
-			duqWindow_->setModified();
+			dissolveWindow_->setModified();
 			break;
 		default:
 			Messenger::error("Don't know what to do with data from column %i of SpeciesAtom table.\n", w->column());
@@ -451,7 +451,7 @@ void SpeciesTab::on_IsotopeTable_itemChanged(QTableWidgetItem* w)
 			// The new Isotope should have been set in the model data for the column
 			isotope = VariantPointer<Isotope>(w->data(Qt::UserRole));
 			if (isotope) iso->setAtomTypeIsotope(atomType, isotope);
-			duqWindow_->setModified();
+			dissolveWindow_->setModified();
 			break;
 		default:
 			Messenger::error("Don't know what to do with data from column %i of Isotopes table.\n", w->column());
@@ -485,7 +485,7 @@ void SpeciesTab::on_BondTable_itemChanged(QTableWidgetItem* w)
 			if (species->reconnectBond(speciesBond, i, j))
 			{
 				updateRow = true;
-				duqWindow_->setModified();
+				dissolveWindow_->setModified();
 			}
 			break;
 		// Functional Form
@@ -493,7 +493,7 @@ void SpeciesTab::on_BondTable_itemChanged(QTableWidgetItem* w)
 			// If the text starts with an '@' then its a reference to a master term
 			if (w->text().at(0) == '@')
 			{
-				MasterIntra* master = duq_.hasMasterBond(qPrintable(w->text()));
+				MasterIntra* master = dissolve_.hasMasterBond(qPrintable(w->text()));
 				speciesBond->setMasterParameters(master);
 			}
 			else
@@ -503,7 +503,7 @@ void SpeciesTab::on_BondTable_itemChanged(QTableWidgetItem* w)
 				speciesBond->setForm(bf);
 			}
 			updateRow = true;
-			duqWindow_->setModified();
+			dissolveWindow_->setModified();
 			break;
 		// Parameters
 		case (3):
@@ -555,7 +555,7 @@ void SpeciesTab::on_AngleTable_itemChanged(QTableWidgetItem* w)
 			if (species->reconnectAngle(speciesAngle, i, j, k))
 			{
 				updateRow = true;
-				duqWindow_->setModified();
+				dissolveWindow_->setModified();
 			}
 			break;
 		// Functional Form
@@ -563,7 +563,7 @@ void SpeciesTab::on_AngleTable_itemChanged(QTableWidgetItem* w)
 			// If the text starts with an '@' then its a reference to a master term
 			if (w->text().at(0) == '@')
 			{
-				MasterIntra* master = duq_.hasMasterAngle(qPrintable(w->text()));
+				MasterIntra* master = dissolve_.hasMasterAngle(qPrintable(w->text()));
 				speciesAngle->setMasterParameters(master);
 			}
 			else
@@ -573,7 +573,7 @@ void SpeciesTab::on_AngleTable_itemChanged(QTableWidgetItem* w)
 				speciesAngle->setForm(af);
 			}
 			updateRow = true;
-			duqWindow_->setModified();
+			dissolveWindow_->setModified();
 			break;
 		// Parameters
 		case (4):
@@ -627,7 +627,7 @@ void SpeciesTab::on_TorsionTable_itemChanged(QTableWidgetItem* w)
 			if (species->reconnectTorsion(speciesTorsion, i, j, k, l))
 			{
 				updateRow = true;
-				duqWindow_->setModified();
+				dissolveWindow_->setModified();
 			}
 			break;
 		// Functional Form
@@ -635,7 +635,7 @@ void SpeciesTab::on_TorsionTable_itemChanged(QTableWidgetItem* w)
 			// If the text starts with an '@' then its a reference to a master term
 			if (w->text().at(0) == '@')
 			{
-				MasterIntra* master = duq_.hasMasterTorsion(qPrintable(w->text()));
+				MasterIntra* master = dissolve_.hasMasterTorsion(qPrintable(w->text()));
 				speciesTorsion->setMasterParameters(master);
 			}
 			else
@@ -645,7 +645,7 @@ void SpeciesTab::on_TorsionTable_itemChanged(QTableWidgetItem* w)
 				speciesTorsion->setForm(tf);
 			}
 			updateRow = true;
-			duqWindow_->setModified();
+			dissolveWindow_->setModified();
 			break;
 		// Parameters
 		case (5):

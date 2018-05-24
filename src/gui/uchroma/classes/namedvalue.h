@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMANAMEDVALUE_H
-#define DUQ_UCHROMANAMEDVALUE_H
+#ifndef DISSOLVE_UCHROMANAMEDVALUE_H
+#define DISSOLVE_UCHROMANAMEDVALUE_H
 
 #include "gui/uchroma/classes/namedvalue.h"
 #include "base/charstring.h"

@@ -1,25 +1,25 @@
 /*
-	*** dUQ - AtomTypes
+	*** Dissolve - AtomTypes
 	*** src/main/atomtypes.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "classes/species.h"
 #include "classes/atomtype.h"
 #include "base/sysfunc.h"
@@ -29,7 +29,7 @@
  */
 
 // Add AtomType definition
-AtomType* DUQ::addAtomType(int el)
+AtomType* Dissolve::addAtomType(int el)
 {
 	AtomType* at = atomTypes_.add();
 
@@ -44,31 +44,31 @@ AtomType* DUQ::addAtomType(int el)
 }
 
 // Return number of AtomTypes in list
-int DUQ::nAtomTypes() const
+int Dissolve::nAtomTypes() const
 {
 	return atomTypes_.nItems();
 }
 
 // Return first AtomType in list
-AtomType* DUQ::atomTypes() const
+AtomType* Dissolve::atomTypes() const
 {
 	return atomTypes_.first();
 }
 
 // Return AtomTypes list
-const List<AtomType>& DUQ::atomTypeList() const
+const List<AtomType>& Dissolve::atomTypeList() const
 {
 	return atomTypes_;
 }
 
 // Return nth AtomType in list
-AtomType* DUQ::atomType(int n)
+AtomType* Dissolve::atomType(int n)
 {
 	return atomTypes_[n];
 }
 
 // Generate unique AtomType name with base name provided
-const char* DUQ::uniqueAtomTypeName(const char* base, AtomType* exclude) const
+const char* Dissolve::uniqueAtomTypeName(const char* base, AtomType* exclude) const
 {
 	CharString baseName = base;
 	AtomType* at;
@@ -81,7 +81,7 @@ const char* DUQ::uniqueAtomTypeName(const char* base, AtomType* exclude) const
 	{
 		if ( at == exclude) continue;
 		if (strcmp(baseName, at->name()) == 0) highest = 0;
-		else if (strcmp(baseName,DUQSys::beforeLastChar(at->name(),'_')) == 0) highest = atoi(DUQSys::afterLastChar(at->name(), '_'));
+		else if (strcmp(baseName,DissolveSys::beforeLastChar(at->name(),'_')) == 0) highest = atoi(DissolveSys::afterLastChar(at->name(), '_'));
 	}
 
 	static CharString uniqueName;
@@ -92,7 +92,7 @@ const char* DUQ::uniqueAtomTypeName(const char* base, AtomType* exclude) const
 }
 
 // Search for AtomType by name
-AtomType* DUQ::findAtomType(const char* name) const
+AtomType* Dissolve::findAtomType(const char* name) const
 {
 	for (AtomType* at = atomTypes_.first(); at != NULL; at = at->next) if (strcmp(at->name(),name) == 0) return at;
 	return NULL;

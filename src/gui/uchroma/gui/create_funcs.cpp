@@ -105,7 +105,7 @@ void CreateCollectionDialog::updateVariables()
 		Variable* var = ri->item;
 
 		// Is this variable one of 'x' or 'z'?
-		if (DUQSys::sameString(var->name(), "x") || DUQSys::sameString(var->name(), "z")) continue;
+		if (DissolveSys::sameString(var->name(), "x") || DissolveSys::sameString(var->name(), "z")) continue;
 
 		for (eqVar = equationVariables_.first(); eqVar != NULL; eqVar = eqVar->next) if (eqVar->name() == var->name()) break;
 		if (eqVar == NULL)

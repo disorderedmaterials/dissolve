@@ -218,7 +218,7 @@ const char* AutoScaleKeywords[Axes::nAutoScaleMethods] = { "None", "Expanding", 
 // Convert text string to AutoScaleMethod
 Axes::AutoScaleMethod Axes::autoScaleMethod(const char* s)
 {
-	for (int n=0; n<Axes::nAutoScaleMethods; ++n) if (DUQSys::sameString(s, AutoScaleKeywords[n])) return (Axes::AutoScaleMethod) n;
+	for (int n=0; n<Axes::nAutoScaleMethods; ++n) if (DissolveSys::sameString(s, AutoScaleKeywords[n])) return (Axes::AutoScaleMethod) n;
 	return Axes::nAutoScaleMethods;
 }
 

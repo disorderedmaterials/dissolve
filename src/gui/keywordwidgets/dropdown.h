@@ -3,24 +3,24 @@
 	*** src/gui/keywordwidgets/dropdown.h
 	Copyright T. Youngs 2012-2018
 
-	This file is part of DUQ.
+	This file is part of Dissolve.
 
-	DUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	DUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with DUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_KEYWORDDROPDOWN_H
-#define DUQ_KEYWORDDROPDOWN_H
+#ifndef DISSOLVE_KEYWORDDROPDOWN_H
+#define DISSOLVE_KEYWORDDROPDOWN_H
 
 #include "gui/keywordwidgets/ui_dropdown.h"
 #include "gui/keywordwidgets/dropwidget.hui"

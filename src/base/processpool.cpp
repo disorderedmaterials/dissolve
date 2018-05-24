@@ -3,20 +3,20 @@
 	*** src/base/processpool.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "base/processpool.h"
@@ -518,7 +518,7 @@ bool ProcessPool::assignProcessesToGroups(ProcessPool& groupsSource)
 {
 	/*
 	 * Since we have the ability to run Modules with any ProcessPool and at any point, we must occasionally
-	 * re-assign the processes in the pool (typically the DUQ::worldPool_) to a different set of groups in
+	 * re-assign the processes in the pool (typically the Dissolve::worldPool_) to a different set of groups in
 	 * order to utilise all available processing power (e.g. when a Module is run as, or is performing, a
 	 * post-processing step.
 	 */
@@ -1915,7 +1915,7 @@ bool ProcessPool::equality(const char* s, ProcessPool::CommunicatorType commType
 	CharString testString;
 	if (poolRank_ == 0) testString = s;
 	if (!broadcast(testString)) return false;
-	if (!allTrue(DUQSys::sameString(testString, s))) return Messenger::error("Strings are not equal - '%s' vs '%s'.\n", testString.get(), s);
+	if (!allTrue(DissolveSys::sameString(testString, s))) return Messenger::error("Strings are not equal - '%s' vs '%s'.\n", testString.get(), s);
 #endif
 	return true;
 }
@@ -2025,7 +2025,7 @@ void ProcessPool::refillRandomBuffer()
 		Messenger::printVerbose("Random Buffer - Pool parallel, so master (%s) will create and send array.\n", isMaster() ? "me" : "not me");
 		if (isMaster())
 		{
-			for (int n=0; n<RANDBUFFERSIZE; ++n) randomBuffer_[n] = DUQMath::random();
+			for (int n=0; n<RANDBUFFERSIZE; ++n) randomBuffer_[n] = DissolveMath::random();
 			broadcast(randomBuffer_, RANDBUFFERSIZE, 0, randomBufferCommGroup_);
 		}
 		else broadcast(randomBuffer_, RANDBUFFERSIZE, 0, randomBufferCommGroup_);
@@ -2036,7 +2036,7 @@ void ProcessPool::refillRandomBuffer()
 		Messenger::printVerbose("Random Buffer - Group leaders parallel, so master (%s) will create and send array.\n", isMaster() ? "me" : "not me");
 		if (isMaster())
 		{
-			for (int n=0; n<RANDBUFFERSIZE; ++n) randomBuffer_[n] = DUQMath::random();
+			for (int n=0; n<RANDBUFFERSIZE; ++n) randomBuffer_[n] = DissolveMath::random();
 			broadcast(randomBuffer_, RANDBUFFERSIZE, 0, randomBufferCommGroup_);
 		}
 		else broadcast(randomBuffer_, RANDBUFFERSIZE, 0, randomBufferCommGroup_);
@@ -2047,7 +2047,7 @@ void ProcessPool::refillRandomBuffer()
 		Messenger::printVerbose("Random Buffer - Group parallel, so process leader (%s) will create and send array.\n", groupLeader() ? "me" : "not me");
 		if (groupLeader())
 		{
-			for (int n=0; n<RANDBUFFERSIZE; ++n) randomBuffer_[n] = DUQMath::random();
+			for (int n=0; n<RANDBUFFERSIZE; ++n) randomBuffer_[n] = DissolveMath::random();
 			broadcast(randomBuffer_, RANDBUFFERSIZE, 0, randomBufferCommGroup_);
 		}
 		else broadcast(randomBuffer_, RANDBUFFERSIZE, 0, randomBufferCommGroup_);
@@ -2056,7 +2056,7 @@ void ProcessPool::refillRandomBuffer()
 	{
 		// Create own random buffer
 		Messenger::printVerbose("Random Buffer - Solo parallel, so will create own array.\n");
-		for (int n=0; n<RANDBUFFERSIZE; ++n) randomBuffer_[n] = DUQMath::random();
+		for (int n=0; n<RANDBUFFERSIZE; ++n) randomBuffer_[n] = DissolveMath::random();
 	}
 #endif
 }
@@ -2093,7 +2093,7 @@ double ProcessPool::random()
 	if (randomBufferIndex_ == RANDBUFFERSIZE) refillRandomBuffer();
 	return randomBuffer_[randomBufferIndex_++];
 #else
-	return DUQMath::random();
+	return DissolveMath::random();
 #endif
 }
 
@@ -2105,6 +2105,6 @@ double ProcessPool::randomPlusMinusOne()
 	if (randomBufferIndex_ == RANDBUFFERSIZE) refillRandomBuffer();
 	return (randomBuffer_[randomBufferIndex_++]-0.5)*2.0;
 #else
-	return DUQMath::randomPlusMinusOne();
+	return DissolveMath::randomPlusMinusOne();
 #endif
 }

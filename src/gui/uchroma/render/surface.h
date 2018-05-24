@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMASURFACE_H
-#define DUQ_UCHROMASURFACE_H
+#ifndef DISSOLVE_UCHROMASURFACE_H
+#define DISSOLVE_UCHROMASURFACE_H
 
 #include "gui/uchroma/render/primitivelist.h"
 #include "gui/uchroma/classes/displaydataset.h"

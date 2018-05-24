@@ -3,24 +3,24 @@
 	*** src/modules/rdf/process.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "modules/rdf/rdf.h"
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
@@ -34,7 +34,7 @@ bool RDFModule::hasProcessing()
 }
 
 // Run main processing
-bool RDFModule::process(DUQ& duq, ProcessPool& procPool)
+bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {
 	/*
 	 * Calculate standard partial g(r)
@@ -52,7 +52,7 @@ bool RDFModule::process(DUQ& duq, ProcessPool& procPool)
 
 	CharString varName;
 
-	GenericList& moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : duq.processingModuleData();
+	GenericList& moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : dissolve.processingModuleData();
 
 	const bool allIntra = keywords_.asBool("AllIntra");
 	const int averaging = keywords_.asInt("Averaging");
@@ -76,14 +76,14 @@ bool RDFModule::process(DUQ& duq, ProcessPool& procPool)
 	const double testThreshold = keywords_.asDouble("TestThreshold");
 
 	// Print argument/parameter summary
-	Messenger::print("RDF: Use of all pairs in intramolecular partials is %s.\n", DUQSys::onOff(allIntra));
+	Messenger::print("RDF: Use of all pairs in intramolecular partials is %s.\n", DissolveSys::onOff(allIntra));
 	if (averaging <= 1) Messenger::print("RDF: No averaging of partials will be performed.\n");
 	else Messenger::print("RDF: Partials will be averaged over %i sets (scheme = %s).\n", averaging, RDFModule::averagingScheme(averagingScheme));
 	if (intraBroadening.function() == BroadeningFunction::NoFunction) Messenger::print("RDF: No broadening will be applied to intramolecular g(r).");
 	else Messenger::print("RDF: Broadening to be applied to intramolecular g(r) is %s (%s).", BroadeningFunction::functionType(intraBroadening.function()), intraBroadening.parameterSummary().get());
 	Messenger::print("RDF: Calculation method is '%s'.\n", RDFModule::partialsMethod(method));
-	Messenger::print("RDF: Save data is %s.\n", DUQSys::onOff(saveData));
-	Messenger::print("RDF: Degree of smoothing to apply to calculated partial g(r) is %i (%s).\n", smoothing, DUQSys::onOff(smoothing > 0));
+	Messenger::print("RDF: Save data is %s.\n", DissolveSys::onOff(saveData));
+	Messenger::print("RDF: Degree of smoothing to apply to calculated partial g(r) is %i (%s).\n", smoothing, DissolveSys::onOff(smoothing > 0));
 
 	
 	/*

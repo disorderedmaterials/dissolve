@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMATARGETPRIMITIVE_H
-#define DUQ_UCHROMATARGETPRIMITIVE_H
+#ifndef DISSOLVE_UCHROMATARGETPRIMITIVE_H
+#define DISSOLVE_UCHROMATARGETPRIMITIVE_H
 
 #include "gui/uchroma/render/primitivelist.h"
 #include "base/charstring.h"

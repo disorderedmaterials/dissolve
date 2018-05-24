@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMATEXTPRIMITIVELIST_H
-#define DUQ_UCHROMATEXTPRIMITIVELIST_H
+#ifndef DISSOLVE_UCHROMATEXTPRIMITIVELIST_H
+#define DISSOLVE_UCHROMATEXTPRIMITIVELIST_H
 
 #include "gui/uchroma/render/textprimitive.h"
 #include "math/matrix4.h"

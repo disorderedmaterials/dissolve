@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMAREFERENCEVARIABLE_H
-#define DUQ_UCHROMAREFERENCEVARIABLE_H
+#ifndef DISSOLVE_UCHROMAREFERENCEVARIABLE_H
+#define DISSOLVE_UCHROMAREFERENCEVARIABLE_H
 
 #include "gui/uchroma/classes/dataspace.h"
 #include "gui/uchroma/classes/indexdata.h"

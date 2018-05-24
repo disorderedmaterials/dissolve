@@ -4,7 +4,7 @@ SUFFIXES: .ui .hui .qrc
 
 .ui.lo:
 	$(QTUIC) -o ui_$*.h $<
-	$(QTMOC) -o moc_$*.cpp $(top_srcdir)/src/gui/$*.h
+	$(QTMOC) -o moc_$*.cpp $(builddir)/$*.h
 	${LIBTOOL} --tag=CXX --mode=compile ${CXX} ${AM_CPPFLAGS} -c moc_$*.cpp -o $@
 	rm moc_$*.cpp
 
@@ -38,4 +38,4 @@ noinst_HEADERS += nocontrols.h
 noinst_HEADERS += subwidget.h subwindow.h
 noinst_HEADERS += tmenubuttongroup.h
 
-AM_CPPFLAGS = -I$(top_srcdir)/src -I../ -I./ @DUQ_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
+AM_CPPFLAGS = -I$(top_srcdir)/src -I../ -I./ @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@

@@ -3,20 +3,20 @@
 	*** src/gui/workspacetab_funcs.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "gui/workspacetab.h"
@@ -25,7 +25,7 @@
 #include "gui/modulecontrolwidget.h"
 #include "gui/pairpotentialwidget.h"
 #include "gui/widgets/subwidget.h"
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "classes/configuration.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
@@ -34,12 +34,12 @@
 #include <QMenu>
 
 // Constructor / Destructor
-WorkspaceTab::WorkspaceTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const char* title) : MainTab(duqWindow, duq, parent, title, this)
+WorkspaceTab::WorkspaceTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title) : MainTab(dissolveWindow, dissolve, parent, title, this)
 {
 	ui.setupUi(this);
 
 	// Add a TMdiArea to the main layout
-	mdiArea_ = new TMdiArea(duqWindow);
+	mdiArea_ = new TMdiArea(dissolveWindow);
 	ui.verticalLayout->addWidget(mdiArea_);
 	connect(mdiArea_, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
 }
@@ -100,7 +100,7 @@ bool WorkspaceTab::writeState(LineParser& parser)
 		// Write window geometry / state
 		if (!parser.writeLineF("'%s'  %s  '%s'\n", title_.get(), subWindow->subWidget()->widgetType(), subWindow->subWidget()->title())) return false;
 		QRect geometry = subWindow->window()->geometry();
-		if (!parser.writeLineF("%i %i %i %i %s %s\n", geometry.x(), geometry.y(), geometry.width(), geometry.height(), DUQSys::btoa(subWindow->window()->isMaximized()), DUQSys::btoa(subWindow->window()->isShaded()))) return false;
+		if (!parser.writeLineF("%i %i %i %i %s %s\n", geometry.x(), geometry.y(), geometry.width(), geometry.height(), DissolveSys::btoa(subWindow->window()->isMaximized()), DissolveSys::btoa(subWindow->window()->isShaded()))) return false;
 		if (!subWindow->subWidget()->writeState(parser)) return false;
 	}
 
@@ -157,7 +157,7 @@ bool WorkspaceTab::removeWindowFromMDIArea(void* windowContents)
 SubWindow* WorkspaceTab::findSubWindow(const char* title)
 {
 	ListIterator<SubWindow> subWindowIterator(subWindows_);
-	while (SubWindow* subWindow = subWindowIterator.iterate()) if (DUQSys::sameString(subWindow->subWidget()->title(), title)) return subWindow;
+	while (SubWindow* subWindow = subWindowIterator.iterate()) if (DissolveSys::sameString(subWindow->subWidget()->title(), title)) return subWindow;
 
 	return NULL;
 }
@@ -232,7 +232,7 @@ void WorkspaceTab::createContextMenu(QMenu* parent)
 	menuItem = parent->addAction("Configurations");
 	menuItem->setFont(italicFont);
 	menuItem->setEnabled(false);
-	ListIterator<Configuration> configIterator(duq_.configurations());
+	ListIterator<Configuration> configIterator(dissolve_.configurations());
 	while (Configuration* cfg = configIterator.iterate())
 	{
 		QMenu* cfgMenu = parent->addMenu(cfg->name());
@@ -257,13 +257,13 @@ void WorkspaceTab::createContextMenu(QMenu* parent)
 	menuItem = parent->addAction("Processing");
 	menuItem->setFont(italicFont);
 	menuItem->setEnabled(false);
-	if (duq_.processingModules().nModules() == 0)
+	if (dissolve_.processingModules().nModules() == 0)
 	{
 		QAction* moduleItem = parent->addAction("None");
 		moduleItem->setFont(italicFont);
 		moduleItem->setEnabled(false);
 	}
-	ListIterator<ModuleReference> moduleIterator(duq_.processingModules().modules());
+	ListIterator<ModuleReference> moduleIterator(dissolve_.processingModules().modules());
 	while (ModuleReference* modRef = moduleIterator.iterate())
 	{
 		Module* module = modRef->module();
@@ -317,12 +317,12 @@ void WorkspaceTab::addModuleControlWidget(Module* module)
 	if (!window)
 	{
 		// Create a new ModuleWidget
-		ModuleControlWidget* moduleControlWidget = new ModuleControlWidget(duqWindow_, module, CharString("%s (%s)", module->name(), module->uniqueName()), false);
+		ModuleControlWidget* moduleControlWidget = new ModuleControlWidget(dissolveWindow_, module, CharString("%s (%s)", module->name(), module->uniqueName()), false);
 		connect(moduleControlWidget, SIGNAL(windowClosed(QString)), this, SLOT(removeSubWindow(QString)));
 		window = addSubWindow(moduleControlWidget, module);
 
 		// If we are currently running, we need to disable sensitive controls in the newly-created widget
-		if ((duqWindow_->duqState() != DUQWindow::StoppedState) && window && window->subWidget()) window->subWidget()->disableSensitiveControls();
+		if ((dissolveWindow_->dissolveState() != DissolveWindow::StoppedState) && window && window->subWidget()) window->subWidget()->disableSensitiveControls();
 	}
 	else window->raise();
 }
@@ -336,9 +336,9 @@ void WorkspaceTab::addNamedWidget(const char* widgetName, const char* title)
 	while (findSubWindow(uniqueTitle)) uniqueTitle.sprintf("%s%02i", title, ++index);
 
 	SubWidget* subWidget = NULL;
-        if (DUQSys::sameString(widgetName, "PairPotential"))
+        if (DissolveSys::sameString(widgetName, "PairPotential"))
         {
-                PairPotentialWidget* ppWidget = new PairPotentialWidget(duqWindow_, uniqueTitle);
+                PairPotentialWidget* ppWidget = new PairPotentialWidget(dissolveWindow_, uniqueTitle);
                 connect(ppWidget, SIGNAL(windowClosed(QString)), this, SLOT(removeSubWindow(QString)));
                 subWidget = ppWidget;
         }

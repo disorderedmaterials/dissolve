@@ -1,25 +1,25 @@
 /*
-	*** dUQ Methods - IntraShake
+	*** Dissolve Methods - IntraShake
 	*** src/main/methods_intrashake.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/changestore.h"
@@ -30,7 +30,7 @@
 #include "base/timer.h"
 
 // Perform an Intramolecular Shake
-bool DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
+bool Dissolve::intraShake(Configuration& cfg, int nShakesPerMol)
 {
 	// Start a Timer
 	Timer timer;
@@ -212,7 +212,7 @@ bool DUQ::intraShake(Configuration& cfg, int nShakesPerMol)
 }
 
 // Shake intermolecular terms between Grains
-bool DUQ::interShake(Configuration& cfg)
+bool Dissolve::interShake(Configuration& cfg)
 {
 	// Initialise the Cell distributor
 	const bool willBeModified = true, allowRepeats = false;
@@ -299,7 +299,7 @@ bool DUQ::interShake(Configuration& cfg)
 				// The delta now reflects the distance and direction we should try to travel.
 				// TODO Implement ProcessPool random buffer here!
 				currentBondEnergy = kernel.energy(mol, b);
-				vec *= delta * DUQMath::random();
+				vec *= delta * DissolveMath::random();
 				grainI->translate(vec);
 
 				// Calculate new energy
@@ -310,7 +310,7 @@ bool DUQ::interShake(Configuration& cfg)
 
 				// Trial the transformed Grain position (the Master is in charge of this)
 				delta = (newGrainEnergy + newBondEnergy) - (currentGrainEnergy + currentBondEnergy);
-				accept = delta < 0 ? true : (DUQMath::random() < exp(-delta*rRT));
+				accept = delta < 0 ? true : (DissolveMath::random() < exp(-delta*rRT));
 
 				// Broadcast result to process group
 				if (!procPool.broadcast(&accept, 1, 0, ProcessPool::Group)) return false;
@@ -356,13 +356,13 @@ bool DUQ::interShake(Configuration& cfg)
 // 		double acceptanceRate = double(nAccepted)/nTries;
 // 		if (acceptanceRate < reqAcceptandRate)
 // 		{
-// 			translationStep_ *= 1.0-(0.1 * DUQMath::random());
-// 			rotationStep_ *= 1.0-(0.1 * DUQMath::random());
+// 			translationStep_ *= 1.0-(0.1 * DissolveMath::random());
+// 			rotationStep_ *= 1.0-(0.1 * DissolveMath::random());
 // 		}
 // 		else
 // 		{
-// 			translationStep_ /= 1.0-(0.1 * DUQMath::random());
-// 			rotationStep_ /= 1.0-(0.1 * DUQMath::random());
+// 			translationStep_ /= 1.0-(0.1 * DissolveMath::random());
+// 			rotationStep_ /= 1.0-(0.1 * DissolveMath::random());
 // 		}
 // 		if (translationStep_ < 0.05) translationStep_ = 0.05;
 // 		else if (translationStep_ > maxTranslationStep_) translationStep_ = maxTranslationStep_;
@@ -377,7 +377,7 @@ bool DUQ::interShake(Configuration& cfg)
 }
 
 // Individually Shake all Intramolecular Terms
-bool DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
+bool Dissolve::termShake(Configuration& cfg, int nShakesPerTerm)
 {
 	// Start a Timer
 	Timer timer;
@@ -433,7 +433,7 @@ bool DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 				delta = b->equilibrium() - distance;
 				
 				// The delta now reflects the distance and direction we should try to travel.
-				vec *= -delta * DUQMath::random();
+				vec *= -delta * DissolveMath::random();
 				
 				// Shift the fewest Atoms possible...
 				// Need to take care and reverse the vector if necessary
@@ -448,7 +448,7 @@ bool DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 				newEnergy = kernel.energy(mol);
 				delta = newEnergy - currentEnergy;
 				
-				if ((delta < 0) || (DUQMath::random() < exp(-delta*rRT)))
+				if ((delta < 0) || (DissolveMath::random() < exp(-delta*rRT)))
 				{
 					changeStore.updateAtomsLocal(nAttachedAtoms, attachedIndices);
 					currentEnergy = newEnergy;
@@ -486,7 +486,7 @@ bool DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 				delta = a->equilibrium() - angle;
 				
 				// The delta now reflects the distance and direction we should try to travel.
-				delta *= DUQMath::random();
+				delta *= DissolveMath::random();
 				vec = vecji*vecjk;
 
 				// Shift the fewest Atoms possible...
@@ -516,7 +516,7 @@ bool DUQ::termShake(Configuration& cfg, int nShakesPerTerm)
 				newEnergy = kernel.energy(mol);
 				delta = newEnergy - currentEnergy;
 				
-				if ((delta < 0) || (DUQMath::random() < exp(-delta*rRT)))
+				if ((delta < 0) || (DissolveMath::random() < exp(-delta*rRT)))
 				{
 					changeStore.updateAtomsLocal(nAttachedAtoms, attachedIndices);
 					currentEnergy = newEnergy;

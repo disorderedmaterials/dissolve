@@ -3,24 +3,24 @@
 	*** src/modules/neutronsq/process.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "modules/neutronsq/neutronsq.h"
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "classes/atomtype.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
@@ -31,7 +31,7 @@
 #include "templates/genericlisthelper.h"
 
 // Run set-up stage
-bool NeutronSQModule::setUp(DUQ& duq, ProcessPool& procPool)
+bool NeutronSQModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 {
 	/*
 	 * Load and set up reference data (if a filename was given)
@@ -83,16 +83,16 @@ bool NeutronSQModule::setUp(DUQ& duq, ProcessPool& procPool)
 
 		// Store the reference data in processing
 		referenceData.setName(uniqueName());
-		XYData& storedData = GenericListHelper<XYData>::realise(duq.processingModuleData(), "ReferenceData", uniqueName(), GenericItem::InRestartFileFlag);
+		XYData& storedData = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), "ReferenceData", uniqueName(), GenericItem::InRestartFileFlag);
 		storedData.setObjectName(CharString("%s//ReferenceData", uniqueName()));
 		storedData = referenceData;
 
 		// Calculate and store the FT of the reference data in processing
 		referenceData.setName(uniqueName());
-		XYData& storedDataFT = GenericListHelper<XYData>::realise(duq.processingModuleData(), "ReferenceDataFT", uniqueName(), GenericItem::InRestartFileFlag);
+		XYData& storedDataFT = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), "ReferenceDataFT", uniqueName(), GenericItem::InRestartFileFlag);
 		storedDataFT.setObjectName(CharString("%s//ReferenceDataFT", uniqueName()));
 		storedDataFT = referenceData;
-		storedDataFT.sineFT(1.0 / (2.0 * PI * PI * RDFModule::summedRho(this, duq.processingModuleData())), 0.0, 0.05, 30.0, WindowFunction(WindowFunction::Lorch0Window));
+		storedDataFT.sineFT(1.0 / (2.0 * PI * PI * RDFModule::summedRho(this, dissolve.processingModuleData())), 0.0, 0.05, 30.0, WindowFunction(WindowFunction::Lorch0Window));
 	}
 
 	return true;
@@ -105,7 +105,7 @@ bool NeutronSQModule::hasProcessing()
 }
 
 // Run main processing
-bool NeutronSQModule::process(DUQ& duq, ProcessPool& procPool)
+bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {
 	/*
 	 * Calculate weighted or unweighted partials and total g(r)/G(r) or S(Q)/F(Q)
@@ -123,7 +123,7 @@ bool NeutronSQModule::process(DUQ& duq, ProcessPool& procPool)
 
 	CharString varName;
 
-	GenericList& moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : duq.processingModuleData();
+	GenericList& moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : dissolve.processingModuleData();
 
 	NeutronSQModule::NormalisationType normalisation = normalisationType(keywords_.asString("Normalisation"));
 	if (normalisation == NeutronSQModule::nNormalisationTypes) return Messenger::error("NeutronSQ: Invalid normalisation type '%s' found.\n", keywords_.asString("Normalisation"));
@@ -146,7 +146,7 @@ bool NeutronSQModule::process(DUQ& duq, ProcessPool& procPool)
 	else if (normalisation == NeutronSQModule::SquareOfAverageNormalisation) Messenger::print("NeutronSQ: Total F(Q) will be normalised to <b**2>");
 	if (qBroadening.function() == BroadeningFunction::NoFunction) Messenger::print("NeutronSQ: No broadening will be applied to calculated S(Q).");
 	else Messenger::print("NeutronSQ: Broadening to be applied in calculated S(Q) is %s (%s).", BroadeningFunction::functionType(qBroadening.function()), qBroadening.parameterSummary().get());
-	Messenger::print("NeutronSQ: Save data is %s.\n", DUQSys::onOff(saveData));
+	Messenger::print("NeutronSQ: Save data is %s.\n", DissolveSys::onOff(saveData));
 
 	/*
 	 * Loop over target Configurations and Fourier transform their UnweightedGR into the corresponding UnweightedSQ.
@@ -170,7 +170,7 @@ bool NeutronSQModule::process(DUQ& duq, ProcessPool& procPool)
 
 		// Is the PartialSet already up-to-date? Do we force its calculation anyway?
 		bool& forceCalculation = GenericListHelper<bool>::retrieve(cfg->moduleData(), "_ForceNeutronSQ", NULL, false);
-		if ((!forceCalculation) && DUQSys::sameString(unweightedsq.fingerprint(), CharString("%i", cfg->coordinateIndex())))
+		if ((!forceCalculation) && DissolveSys::sameString(unweightedsq.fingerprint(), CharString("%i", cfg->coordinateIndex())))
 		{
 			Messenger::print("NeutronSQ: Unweighted partial S(Q) are up-to-date for Configuration '%s'.\n", cfg->name());
 			continue;
@@ -248,10 +248,10 @@ bool NeutronSQModule::process(DUQ& duq, ProcessPool& procPool)
 	 */
 
 	// Create/retrieve PartialSet for summed partial S(Q)
-	PartialSet& summedUnweightedSQ = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
+	PartialSet& summedUnweightedSQ = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
 
 	// Sum the partials from the associated Configurations
-	if (!SQModule::sumUnweightedSQ(procPool, this, duq.processingModuleData(), summedUnweightedSQ)) return false;
+	if (!SQModule::sumUnweightedSQ(procPool, this, dissolve.processingModuleData(), summedUnweightedSQ)) return false;
 
 	// Test unweighted S(Q)?
 	if (testMode)
@@ -261,7 +261,7 @@ bool NeutronSQModule::process(DUQ& duq, ProcessPool& procPool)
 	}
 
 	// Create/retrieve PartialSet for summed partial S(Q)
-	PartialSet& summedWeightedSQ = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "WeightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
+	PartialSet& summedWeightedSQ = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "WeightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
 	summedWeightedSQ.setObjectNames(CharString("%s//%s", uniqueName_.get(), "WeightedSQ"));
 	summedWeightedSQ = summedUnweightedSQ;
 
@@ -270,17 +270,17 @@ bool NeutronSQModule::process(DUQ& duq, ProcessPool& procPool)
 	Weights summedWeights;
 	if (!calculateSummedWeights(summedWeights)) return false;
 	summedWeights.print();
-	GenericListHelper<Weights>::realise(duq.processingModuleData(), "FullWeights", uniqueName_, GenericItem::InRestartFileFlag) = summedWeights;
+	GenericListHelper<Weights>::realise(dissolve.processingModuleData(), "FullWeights", uniqueName_, GenericItem::InRestartFileFlag) = summedWeights;
 	calculateWeightedSQ(summedUnweightedSQ, summedWeightedSQ, summedWeights, normalisation);
 
 	// Create/retrieve PartialSet for summed unweighted g(r)
-	PartialSet& summedUnweightedGR = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "UnweightedGR", uniqueName_, GenericItem::InRestartFileFlag);
+	PartialSet& summedUnweightedGR = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedGR", uniqueName_, GenericItem::InRestartFileFlag);
 
 	// Sum the partials from the associated Configurations
-	if (!RDFModule::sumUnweightedGR(procPool, this, duq.processingModuleData(), summedUnweightedGR)) return false;
+	if (!RDFModule::sumUnweightedGR(procPool, this, dissolve.processingModuleData(), summedUnweightedGR)) return false;
 
 	// Create/retrieve PartialSet for summed weighted g(r)
-	PartialSet& summedWeightedGR = GenericListHelper<PartialSet>::realise(duq.processingModuleData(), "WeightedGR", uniqueName_, GenericItem::InRestartFileFlag, &created);
+	PartialSet& summedWeightedGR = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "WeightedGR", uniqueName_, GenericItem::InRestartFileFlag, &created);
 	if (created) summedWeightedGR.setUpPartials(summedUnweightedSQ.atomTypes(), uniqueName_, "weighted", "gr", "r, Angstroms");
 	summedWeightedGR.setObjectNames(CharString("%s//%s", uniqueName_.get(), "WeightedGR"));
 

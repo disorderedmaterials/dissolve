@@ -6,7 +6,7 @@ libmodule_la_LDFLAGS = -static
 
 noinst_HEADERS = group.h keywordbase.h keyworddata.h keywordlist.h keywordtypes.h list.h module.h reference.h registry.h
 
-AM_CPPFLAGS = -I../ -I../../ @DUQ_CFLAGS@ @DUQ_READLINE@
+AM_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@ @DISSOLVE_READLINE@
 
 SUBDIRS = keywordtypes
 

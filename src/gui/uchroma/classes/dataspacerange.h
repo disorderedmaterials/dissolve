@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMADATASPACERANGE_H
-#define DUQ_UCHROMADATASPACERANGE_H
+#ifndef DISSOLVE_UCHROMADATASPACERANGE_H
+#define DISSOLVE_UCHROMADATASPACERANGE_H
 
 #include "gui/uchroma/classes/indexdata.h"
 #include "gui/uchroma/classes/equationvariable.h"

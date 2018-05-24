@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMAIMPORT_H
-#define DUQ_UCHROMAIMPORT_H
+#ifndef DISSOLVE_UCHROMAIMPORT_H
+#define DISSOLVE_UCHROMAIMPORT_H
 
 #include "gui/uchroma/gui/ui_import.h"
 #include "gui/uchroma/classes/dataset.h"

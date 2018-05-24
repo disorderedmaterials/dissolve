@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMAAXESWINDOW_H
-#define DUQ_UCHROMAAXESWINDOW_H
+#ifndef DISSOLVE_UCHROMAAXESWINDOW_H
+#define DISSOLVE_UCHROMAAXESWINDOW_H
 
 #include "gui/uchroma/gui/ui_axes.h"
 #include "gui/uchroma/classes/axes.h"

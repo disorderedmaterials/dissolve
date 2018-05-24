@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMADISPLAYDATASET_H
-#define DUQ_UCHROMADISPLAYDATASET_H
+#ifndef DISSOLVE_UCHROMADISPLAYDATASET_H
+#define DISSOLVE_UCHROMADISPLAYDATASET_H
 
 #include "base/xydata.h"
 #include "templates/list.h"

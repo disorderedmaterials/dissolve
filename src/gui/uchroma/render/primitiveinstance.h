@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMAPRIMITIVEINSTANCE_H
-#define DUQ_UCHROMAPRIMITIVEINSTANCE_H
+#ifndef DISSOLVE_UCHROMAPRIMITIVEINSTANCE_H
+#define DISSOLVE_UCHROMAPRIMITIVEINSTANCE_H
 
 #ifndef __APPLE__
 #include <GL/gl.h>

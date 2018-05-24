@@ -173,7 +173,7 @@ CollectionGroup* CollectionGroupManager::addToGroup(Collection* collection)
 // Return named group, if it exists
 CollectionGroup* CollectionGroupManager::group(const char* name)
 {
-	for (CollectionGroup* group = collectionGroups_.first(); group != NULL; group = group->next) if (DUQSys::sameString(group->name(), name)) return group;
+	for (CollectionGroup* group = collectionGroups_.first(); group != NULL; group = group->next) if (DissolveSys::sameString(group->name(), name)) return group;
 	return NULL;
 }
 

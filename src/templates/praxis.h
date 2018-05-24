@@ -22,8 +22,8 @@
  *   LC: QA402.5.B74.
  */
 
-#ifndef DUQ_PRAXIS_H
-#define DUQ_PRAXIS_H
+#ifndef DISSOLVE_PRAXIS_H
+#define DISSOLVE_PRAXIS_H
 
 #include "base/messenger.h"
 #include <iomanip>

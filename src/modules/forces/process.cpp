@@ -3,25 +3,25 @@
 	*** src/modules/forces/process.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "modules/forces/forces.h"
 #include "modules/import/import.h"
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "classes/species.h"
 #include "classes/box.h"
 #include "base/sysfunc.h"
@@ -35,7 +35,7 @@ bool ForcesModule::hasProcessing()
 }
 
 // Run main processing
-bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
+bool ForcesModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {
 	/*
 	 * Calculate Forces for the target Configuration(s)
@@ -60,7 +60,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 		procPool.assignProcessesToGroups(cfg->processPool());
 
 		// Get reference to relevant module data
-		GenericList& moduleData = configurationLocal_ ? cfg->moduleData() : duq.processingModuleData();
+		GenericList& moduleData = configurationLocal_ ? cfg->moduleData() : dissolve.processingModuleData();
 
 		// Retrieve control parameters from Configuration
 		const bool saveData = keywords_.asBool("Save");
@@ -87,7 +87,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 			 * Calculation Begins
 			 */
 
-			const PotentialMap& potentialMap = duq.potentialMap();
+			const PotentialMap& potentialMap = dissolve.potentialMap();
 			double cutoffSq = potentialMap.range()*potentialMap.range();
 
 			double angle, magjisq, magji, magjk, dp, force, r;
@@ -365,7 +365,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 				Timer interTimer;
 				interTimer.start();
 
-				interatomicForces(procPool, cfg, duq.potentialMap(), checkInterFx, checkInterFy, checkInterFz);
+				interatomicForces(procPool, cfg, dissolve.potentialMap(), checkInterFx, checkInterFy, checkInterFz);
 				if (!procPool.allSum(checkInterFx, cfg->nAtoms())) return false;
 				if (!procPool.allSum(checkInterFy, cfg->nAtoms())) return false;
 				if (!procPool.allSum(checkInterFz, cfg->nAtoms())) return false;
@@ -380,7 +380,7 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 				Timer intraTimer;
 				intraTimer.start();
 
-				intramolecularForces(procPool, cfg, duq.potentialMap(), checkIntraFx, checkIntraFy, checkIntraFz);
+				intramolecularForces(procPool, cfg, dissolve.potentialMap(), checkIntraFx, checkIntraFy, checkIntraFz);
 				if (!procPool.allSum(checkIntraFx, cfg->nAtoms())) return false;
 				if (!procPool.allSum(checkIntraFy, cfg->nAtoms())) return false;
 				if (!procPool.allSum(checkIntraFz, cfg->nAtoms())) return false;
@@ -550,14 +550,14 @@ bool ForcesModule::process(DUQ& duq, ProcessPool& procPool)
 			// Calculate interatomic forces
 			Timer interTimer;
 			interTimer.start();
-			interatomicForces(procPool, cfg, duq.potentialMap(), fx, fy, fz);
+			interatomicForces(procPool, cfg, dissolve.potentialMap(), fx, fy, fz);
 			interTimer.stop();
 			Messenger::printVerbose("Forces: Time to do interatomic forces was %s.\n", interTimer.totalTimeString());
 			
 			// Calculate intramolecular forces
 			Timer intraTimer;
 			intraTimer.start();
-			intramolecularForces(procPool, cfg, duq.potentialMap(), fx, fy, fz);
+			intramolecularForces(procPool, cfg, dissolve.potentialMap(), fx, fy, fz);
 			intraTimer.stop();
 
 			Messenger::print("Forces: Time to do interatomic forces was %s, intramolecular forces was %s (%s comms).\n", interTimer.totalTimeString(), intraTimer.totalTimeString(), procPool.accumulatedTimeString());

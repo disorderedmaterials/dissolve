@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMAPANEORGANISER_H
-#define DUQ_UCHROMAPANEORGANISER_H
+#ifndef DISSOLVE_UCHROMAPANEORGANISER_H
+#define DISSOLVE_UCHROMAPANEORGANISER_H
 
 #include "gui/uchroma/classes/viewpane.h"
 #include <QWidget>

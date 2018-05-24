@@ -37,6 +37,8 @@ SET(widgets_SRCS
   nocontrols_funcs.cpp
   subwidget.cpp
   subwindow.cpp
+  supertabbar_funcs.cpp
+  supertabwidget_funcs.cpp
   texponentialspin_funcs.cpp
   tmenubutton_funcs.cpp
   tmenubuttongroup.cpp

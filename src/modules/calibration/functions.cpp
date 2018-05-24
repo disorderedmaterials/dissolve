@@ -3,24 +3,24 @@
 	*** src/modules/calibration/functions.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "modules/calibration/calibration.h"
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "modules/rdf/rdf.h"
 #include "math/broadeningfunction.h"
 #include "classes/configuration.h"
@@ -32,7 +32,7 @@
  */
 
 // Constructor
-CalibrationModuleCostFunctions::CalibrationModuleCostFunctions(DUQ& duq, ProcessPool& procPool, RefList<Module,bool>& intraBroadeningModules, RefList<Module,CalibrationModule::IntraBroadeningFitTarget>& intraBroadeningReferences) : duq_(duq), processPool_(procPool), intraBroadeningModules_(intraBroadeningModules), intraBroadeningReferences_(intraBroadeningReferences)
+CalibrationModuleCostFunctions::CalibrationModuleCostFunctions(Dissolve& dissolve, ProcessPool& procPool, RefList<Module,bool>& intraBroadeningModules, RefList<Module,CalibrationModule::IntraBroadeningFitTarget>& intraBroadeningReferences) : dissolve_(dissolve), processPool_(procPool), intraBroadeningModules_(intraBroadeningModules), intraBroadeningReferences_(intraBroadeningReferences)
 {
 }
 
@@ -79,7 +79,7 @@ double CalibrationModuleCostFunctions::intraBroadeningCost(double* alpha, int nA
 	while (Module* module = neutronModuleIterator.iterate())
 	{
 		// Check for ReferenceData first
-		if (!duq_.processingModuleData().contains("ReferenceData", module->uniqueName())) continue;
+		if (!dissolve_.processingModuleData().contains("ReferenceData", module->uniqueName())) continue;
 
 		// Make sure the structure factors will be updated by the NeutronSQ module - set flag in the target Configurations
 		RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
@@ -87,7 +87,7 @@ double CalibrationModuleCostFunctions::intraBroadeningCost(double* alpha, int nA
 
 		// Run the NeutronSQModule (quietly)
 		Messenger::mute();
-		module->executeMainProcessing(duq_, processPool_);
+		module->executeMainProcessing(dissolve_, processPool_);
 		Messenger::unMute();
 
 		// Grab target data and compare 
@@ -95,15 +95,15 @@ double CalibrationModuleCostFunctions::intraBroadeningCost(double* alpha, int nA
 		if ((target == CalibrationModule::IntraBroadeningTargetBoth) || (target == CalibrationModule::IntraBroadeningTargetSQ))
 		{
 			// Grab WeightedSQ and ReferenceData and compare
-			PartialSet& weightedSQ = GenericListHelper<PartialSet>::retrieve(duq_.processingModuleData(), "WeightedSQ", module->uniqueName());
-			XYData& referenceData = GenericListHelper<XYData>::retrieve(duq_.processingModuleData(), "ReferenceData", module->uniqueName());
+			PartialSet& weightedSQ = GenericListHelper<PartialSet>::retrieve(dissolve_.processingModuleData(), "WeightedSQ", module->uniqueName());
+			XYData& referenceData = GenericListHelper<XYData>::retrieve(dissolve_.processingModuleData(), "ReferenceData", module->uniqueName());
 			totalError += weightedSQ.total().error(referenceData);
 		}
 		if ((target == CalibrationModule::IntraBroadeningTargetBoth) || (target == CalibrationModule::IntraBroadeningTargetGR))
 		{
 			// Grab WeightedGR and ReferenceDataFT and compare
-			PartialSet& weightedGR = GenericListHelper<PartialSet>::retrieve(duq_.processingModuleData(), "WeightedGR", module->uniqueName());
-			XYData& referenceDataFT = GenericListHelper<XYData>::retrieve(duq_.processingModuleData(), "ReferenceDataFT", module->uniqueName());
+			PartialSet& weightedGR = GenericListHelper<PartialSet>::retrieve(dissolve_.processingModuleData(), "WeightedGR", module->uniqueName());
+			XYData& referenceDataFT = GenericListHelper<XYData>::retrieve(dissolve_.processingModuleData(), "ReferenceDataFT", module->uniqueName());
 			totalError += weightedGR.total().error(referenceDataFT);
 		}
 	}

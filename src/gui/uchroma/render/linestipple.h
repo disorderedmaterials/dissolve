@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMALINESTIPPLE_H
-#define DUQ_UCHROMALINESTIPPLE_H
+#ifndef DISSOLVE_UCHROMALINESTIPPLE_H
+#define DISSOLVE_UCHROMALINESTIPPLE_H
 
 #ifdef _WIN32
 #include <windows.h>

@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMATRANSFORMWINDOW_H
-#define DUQ_UCHROMATRANSFORMWINDOW_H
+#ifndef DISSOLVE_UCHROMATRANSFORMWINDOW_H
+#define DISSOLVE_UCHROMATRANSFORMWINDOW_H
 
 #include "gui/uchroma/gui/ui_transform.h"
 

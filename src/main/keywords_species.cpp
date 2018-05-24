@@ -3,24 +3,24 @@
 	*** src/main/keywords_species.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "main/keywords.h"
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "classes/atomtype.h"
 #include "classes/species.h"
 #include "base/sysfunc.h"
@@ -42,7 +42,7 @@ KeywordData SpeciesBlockData[] = {
 // Convert text string to SpeciesKeyword
 SpeciesBlock::SpeciesKeyword SpeciesBlock::keyword(const char* s)
 {
-	for (int n=0; n<nSpeciesKeywords; ++n) if (DUQSys::sameString(s,SpeciesBlockData[n].name)) return (SpeciesBlock::SpeciesKeyword) n;
+	for (int n=0; n<nSpeciesKeywords; ++n) if (DissolveSys::sameString(s,SpeciesBlockData[n].name)) return (SpeciesBlock::SpeciesKeyword) n;
 	return nSpeciesKeywords;
 }
 
@@ -59,7 +59,7 @@ int SpeciesBlock::nArguments(SpeciesBlock::SpeciesKeyword id)
 }
 
 // Parse Species block
-bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
+bool SpeciesBlock::parse(LineParser& parser, Dissolve* dissolve, Species* species)
 {
 	Messenger::print("\nParsing %s '%s'\n", InputBlocks::inputBlock(InputBlocks::SpeciesBlock), species->name());
 
@@ -97,7 +97,7 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 				if (parser.argc(4)[0] == '@')
 				{
 					// Search through master Angle parameters to see if this name exists
-					MasterIntra* master = duq->hasMasterAngle(parser.argc(4));
+					MasterIntra* master = dissolve->hasMasterAngle(parser.argc(4));
 					if (!master)
 					{
 						Messenger::error("No master Angle parameters named '%s' exist.\n", &parser.argc(4)[1]);
@@ -160,11 +160,11 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 				if (parser.hasArg(7)) i->setCharge(parser.argd(7));
 
 				// Locate the AtomType assigned to the Atom
-				at = duq->findAtomType(parser.argc(6));
+				at = dissolve->findAtomType(parser.argc(6));
 				if (!at)
 				{
 					Messenger::print("Creating AtomType '%s'...\n", parser.argc(6));
-					at = duq->addAtomType(el);
+					at = dissolve->addAtomType(el);
 					at->setName(parser.argc(6));
 				}
 
@@ -179,7 +179,7 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 				if (parser.argc(3)[0] == '@')
 				{
 					// Search through master Bond parameters to see if this name exists
-					MasterIntra* master = duq->hasMasterBond(parser.argc(3));
+					MasterIntra* master = dissolve->hasMasterBond(parser.argc(3));
 					if (!master)
 					{
 						Messenger::error("No master Bond parameters named '%s' exist.\n", &parser.argc(3)[1]);
@@ -269,10 +269,10 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 				for (int n=2; n<parser.nArgs(); ++n)
 				{
 					// Split argument into parts before and after '='
-					arg1 = DUQSys::beforeChar(parser.argc(n),'=');
-					arg2 = DUQSys::afterChar(parser.argc(n),'=');
+					arg1 = DissolveSys::beforeChar(parser.argc(n),'=');
+					arg2 = DissolveSys::afterChar(parser.argc(n),'=');
 					
-					at = duq->findAtomType(arg1.get());
+					at = dissolve->findAtomType(arg1.get());
 					if (at == NULL)
 					{
 						Messenger::error("Failed to find AtomType '%s', referred to in Isotopologue '%s', Species '%s'\n", arg1.get(), iso->name(), species->name());
@@ -303,7 +303,7 @@ bool SpeciesBlock::parse(LineParser& parser, DUQ* duq, Species* species)
 				if (parser.argc(5)[0] == '@')
 				{
 					// Search through master Torsion parameters to see if this name exists
-					MasterIntra* master = duq->hasMasterTorsion(parser.argc(5));
+					MasterIntra* master = dissolve->hasMasterTorsion(parser.argc(5));
 					if (!master)
 					{
 						Messenger::error("No master Torsion parameters named '%s' exist.\n", &parser.argc(5)[1]);

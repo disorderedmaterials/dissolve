@@ -4,5 +4,5 @@ libkeywordtypes_la_SOURCES = bool.cpp broadeningfunction.cpp charstring.cpp comp
 
 noinst_HEADERS = bool.h broadeningfunction.h charstring.h complex.h double.h int.h isotopologuelist.h windowfunction.h
 
-AM_CPPFLAGS = -I../ -I../../ @DUQ_CFLAGS@ @DUQ_READLINE@
+AM_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@ @DISSOLVE_READLINE@
 

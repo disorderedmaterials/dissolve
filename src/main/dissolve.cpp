@@ -1,25 +1,25 @@
 /*
-	*** dUQ Main Structure
-	*** src/main/duq.cpp
+	*** Dissolve Main Structure
+	*** src/main/dissolve.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "classes/species.h"
 #include "classes/atomtype.h"
 #include "classes/braggpeak.h"
@@ -33,7 +33,7 @@
 template <class T> List<T> List<T>::masterInstance_;
 
 // Constructor
-DUQ::DUQ() : atomTypes_(List<AtomType>::master()), species_(List<Species>::master()), configurations_(List<Configuration>::master())
+Dissolve::Dissolve() : atomTypes_(List<AtomType>::master()), species_(List<Species>::master()), configurations_(List<Configuration>::master())
 {
 	// PairPotentials
 	pairPotentialDelta_ = 0.005;
@@ -51,7 +51,7 @@ DUQ::DUQ() : atomTypes_(List<AtomType>::master()), species_(List<Species>::maste
 	restartFileFrequency_ = 10;
 
 	// Parallel Comms
-	parallelStrategy_ = DUQ::SequentialConfigStrategy;
+	parallelStrategy_ = Dissolve::SequentialConfigStrategy;
 
 	// I/O
 	autoAddDependentModules_ = false;
@@ -61,7 +61,7 @@ DUQ::DUQ() : atomTypes_(List<AtomType>::master()), species_(List<Species>::maste
 }
 
 // Destructor
-DUQ::~DUQ()
+Dissolve::~Dissolve()
 {
 	clear();
 }
@@ -71,7 +71,7 @@ DUQ::~DUQ()
  */
 
 // Clear all data
-void DUQ::clear()
+void Dissolve::clear()
 {
 	Messenger::printVerbose("Clearing Configurations...\n");
 	configurations_.clear();
@@ -92,7 +92,7 @@ void DUQ::clear()
 }
 
 // Register GenericItems
-void DUQ::registerGenericItems()
+void Dissolve::registerGenericItems()
 {
 	GenericItem::addItemClass(new GenericItemContainer<bool>("bool"));
 	GenericItem::addItemClass(new GenericItemContainer<int>("int"));
@@ -120,7 +120,7 @@ void DUQ::registerGenericItems()
 }
 
 // Set up everything needed to run the simulation
-bool DUQ::setUp()
+bool Dissolve::setUp()
 {
 	setUp_ = false;
 
@@ -150,7 +150,7 @@ bool DUQ::setUp()
 }
 
 // Return whether the simulation has been set up
-bool DUQ::isSetUp() const
+bool Dissolve::isSetUp() const
 {
 	return setUp_;
 }

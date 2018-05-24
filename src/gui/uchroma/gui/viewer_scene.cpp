@@ -188,9 +188,9 @@ void UChromaViewer::renderFullScene(int xOffset, int yOffset)
 			for (axis=0; axis<3; ++axis) if (pane->axes().visible(axis) && (axis != skipAxis))
 			{
 				pane->axes().labelPrimitive(axis).renderAll(fontInstance_, viewMatrix, viewRotationInverse, pane->textZScale());
-				if (updateQueryDepth()) setQueryObject(UChromaViewer::AxisTickLabelObject, DUQSys::itoa(axis));
+				if (updateQueryDepth()) setQueryObject(UChromaViewer::AxisTickLabelObject, DissolveSys::itoa(axis));
 				pane->axes().titlePrimitive(axis).renderAll(fontInstance_, viewMatrix, viewRotationInverse, pane->textZScale());
-				if (updateQueryDepth()) setQueryObject(UChromaViewer::AxisTitleLabelObject, DUQSys::itoa(axis));
+				if (updateQueryDepth()) setQueryObject(UChromaViewer::AxisTitleLabelObject, DissolveSys::itoa(axis));
 			}
 		}
 
@@ -202,19 +202,19 @@ void UChromaViewer::renderFullScene(int xOffset, int yOffset)
 		{
 			pane->axes().gridLineMinorStyle(axis).apply();
 			pane->axes().gridLineMinorPrimitive(axis).sendToGL();
-			if (updateQueryDepth()) setQueryObject(UChromaViewer::GridLineMinorObject, DUQSys::itoa(axis));
+			if (updateQueryDepth()) setQueryObject(UChromaViewer::GridLineMinorObject, DissolveSys::itoa(axis));
 		}
 		for (axis=0; axis<3; ++axis) if (pane->axes().visible(axis) && (axis != skipAxis))
 		{
 			pane->axes().gridLineMajorStyle(axis).apply();
 			pane->axes().gridLineMajorPrimitive(axis).sendToGL();
-			if (updateQueryDepth()) setQueryObject(UChromaViewer::GridLineMajorObject, DUQSys::itoa(axis));
+			if (updateQueryDepth()) setQueryObject(UChromaViewer::GridLineMajorObject, DissolveSys::itoa(axis));
 		}
 		LineStyle::revert();
 		for (axis=0; axis<3; ++axis) if (pane->axes().visible(axis) && (axis != skipAxis))
 		{
 			pane->axes().axisPrimitive(axis).sendToGL();
-			if (updateQueryDepth()) setQueryObject(UChromaViewer::AxisLineObject, DUQSys::itoa(axis));
+			if (updateQueryDepth()) setQueryObject(UChromaViewer::AxisLineObject, DissolveSys::itoa(axis));
 		}
 		glEnable(GL_LIGHTING);
 		glDisable(GL_LINE_SMOOTH);

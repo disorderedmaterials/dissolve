@@ -3,20 +3,20 @@
 	*** src/modules/calibration/options.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "modules/calibration/calibration.h"
@@ -30,7 +30,7 @@ const char* IntraBroadeningFitTargetKeywords[] = { "S(Q)", "g(r)", "Both" };
 // Convert string to functional form
 CalibrationModule::IntraBroadeningFitTarget CalibrationModule::intraBroadeningFitTarget(const char* s)
 {
-	for (int n=0; n<CalibrationModule::nIntraBroadeningFitTargets; ++n) if (DUQSys::sameString(s, IntraBroadeningFitTargetKeywords[n])) return (CalibrationModule::IntraBroadeningFitTarget) n;
+	for (int n=0; n<CalibrationModule::nIntraBroadeningFitTargets; ++n) if (DissolveSys::sameString(s, IntraBroadeningFitTargetKeywords[n])) return (CalibrationModule::IntraBroadeningFitTarget) n;
 	return CalibrationModule::nIntraBroadeningFitTargets;
 }
 
@@ -49,9 +49,9 @@ void CalibrationModule::setUpKeywords()
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-int CalibrationModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix)
+int CalibrationModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix)
 {
-	if (DUQSys::sameString(parser.argc(0), "AdjustIntraBroadening"))
+	if (DissolveSys::sameString(parser.argc(0), "AdjustIntraBroadening"))
 	{
 		// Find specified RDFModule
 		Module* module = ModuleList::findInstanceByUniqueName(parser.argc(1));
@@ -60,7 +60,7 @@ int CalibrationModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParse
 			Messenger::error("Error adding RDFModule fitting target - no Module named '%s' exists.\n", parser.argc(1));
 			return false;
 		}
-		if (!DUQSys::sameString(module->name(), "RDF"))
+		if (!DissolveSys::sameString(module->name(), "RDF"))
 		{
 			Messenger::error("Error adding RDFModule fitting target - Module '%s' is not an RDF Module (%s).\n", parser.argc(1), module->name());
 			return false;
@@ -68,7 +68,7 @@ int CalibrationModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParse
 
 		intraBroadeningModules_.add(module);
 	}
-	else 	if (DUQSys::sameString(parser.argc(0), "IntraBroadeningNeutronReference"))
+	else 	if (DissolveSys::sameString(parser.argc(0), "IntraBroadeningNeutronReference"))
 	{
 		// Find specified RDFModule
 		Module* module = ModuleList::findInstanceByUniqueName(parser.argc(1));
@@ -77,7 +77,7 @@ int CalibrationModule::parseComplexKeyword(ModuleKeywordBase* keyword, LineParse
 			Messenger::error("Error adding NeutronSQ reference target - no Module named '%s' exists.\n", parser.argc(1));
 			return false;
 		}
-		if (!DUQSys::sameString(module->name(), "NeutronSQ"))
+		if (!DissolveSys::sameString(module->name(), "NeutronSQ"))
 		{
 			Messenger::error("Error adding NeutronSQ reference target - Module '%s' is not a NeutronSQ Module (%s).\n", parser.argc(1), module->name());
 			return false;

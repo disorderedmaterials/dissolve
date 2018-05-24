@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMAEQUATIONVARIABLE_H
-#define DUQ_UCHROMAEQUATIONVARIABLE_H
+#ifndef DISSOLVE_UCHROMAEQUATIONVARIABLE_H
+#define DISSOLVE_UCHROMAEQUATIONVARIABLE_H
 
 #include "base/charstring.h"
 #include "templates/listitem.h"

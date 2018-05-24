@@ -3,24 +3,24 @@
 	*** src/modules/energy/energy.h
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_ENERGYMODULE_H
-#define DUQ_ENERGYMODULE_H
+#ifndef DISSOLVE_ENERGYMODULE_H
+#define DISSOLVE_ENERGYMODULE_H
 
 #include "module/module.h"
 
@@ -80,7 +80,7 @@ class EnergyModule : public Module
 	// Set up options for Module
 	void setUpKeywords();
 	// Parse complex keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-	int parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix);
+	int parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix);
 
 
 	/*
@@ -88,11 +88,11 @@ class EnergyModule : public Module
 	 */
 	private:
 	// Run main processing
-	bool process(DUQ& duq, ProcessPool& procPool);
+	bool process(Dissolve& dissolve, ProcessPool& procPool);
 
 	public:
 	// Run set-up stage
-	bool setUp(DUQ& duq, ProcessPool& procPool);
+	bool setUp(Dissolve& dissolve, ProcessPool& procPool);
 	// Whether the Module has a processing stage
 	bool hasProcessing();
 
@@ -118,7 +118,7 @@ class EnergyModule : public Module
 	 */
 	public:
 	// Return a new widget controlling this Module
-	ModuleWidget* createWidget(QWidget* parent, DUQ& dUQ);
+	ModuleWidget* createWidget(QWidget* parent, Dissolve& Dissolve);
 };
 
 #endif

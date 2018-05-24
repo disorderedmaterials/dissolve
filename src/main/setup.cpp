@@ -1,67 +1,67 @@
 /*
-	*** dUQ - Setup
+	*** Dissolve - Setup
 	*** src/main/setup.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "classes/atomtype.h"
 #include "classes/species.h"
 #include "templates/genericlisthelper.h"
 
 // Set number of test points to use when calculating Box normalisation arrays
-void DUQ::setNBoxNormalisationPoints(int nPoints)
+void Dissolve::setNBoxNormalisationPoints(int nPoints)
 {
 	nBoxNormalisationPoints_ = nPoints;
 }
 
 // Return number of test points to use when calculating Box normalisation arrays
-int DUQ::nBoxNormalisationPoints() const
+int Dissolve::nBoxNormalisationPoints() const
 {
 	return nBoxNormalisationPoints_;
 }
 
 // Set random seed
-void DUQ::setSeed(int seed)
+void Dissolve::setSeed(int seed)
 {
 	seed_ = seed;
 }
 
 // Return random seed
-int DUQ::seed() const
+int Dissolve::seed() const
 {
 	return seed_;
 }
 
 // Set frequency with which to write various iteration dat
-void DUQ::setRestartFileFrequency(int n)
+void Dissolve::setRestartFileFrequency(int n)
 {
 	restartFileFrequency_ = n;
 }
 
 // Return frequency with which to write restart file
-int DUQ::restartFileFrequency() const
+int Dissolve::restartFileFrequency() const
 {
 	return restartFileFrequency_;
 }
 
 // Set up all simulation data, checking it as we go
-bool DUQ::setUpSimulation()
+bool Dissolve::setUpSimulation()
 {
 	/*
 	 * Check Species
@@ -90,7 +90,7 @@ bool DUQ::setUpSimulation()
 		// Otherwise, if the restart file does not exist, and the inputCoordinatesFile_ is not set, generate a random configuration.
 		if (cfg->hasInputCoordinatesFile())
 		{
-			if (DUQSys::fileExists(cfg->inputCoordinatesFile()))
+			if (DissolveSys::fileExists(cfg->inputCoordinatesFile()))
 			{
 				// Set up the Configuration from the Species populations, unless it has already been set up by reading the restart file
 				if (cfg->nAtoms() == 0)
@@ -147,8 +147,8 @@ bool DUQ::setUpSimulation()
 			// Retrieve additional potential from the processing module data, if present
 			CharString itemName("Potential_%s-%s_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ());
 
-			if (!processingModuleData_.contains(itemName, "DUQ")) continue;
-			pot->setUAdditional(GenericListHelper<XYData>::retrieve(processingModuleData_, itemName, "DUQ", XYData()));
+			if (!processingModuleData_.contains(itemName, "Dissolve")) continue;
+			pot->setUAdditional(GenericListHelper<XYData>::retrieve(processingModuleData_, itemName, "Dissolve", XYData()));
 
 		}
 	}

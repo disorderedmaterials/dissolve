@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMAPRIMITIVEINFO_H
-#define DUQ_UCHROMAPRIMITIVEINFO_H
+#ifndef DISSOLVE_UCHROMAPRIMITIVEINFO_H
+#define DISSOLVE_UCHROMAPRIMITIVEINFO_H
 
 #include "math/matrix4.h"
 

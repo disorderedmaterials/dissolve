@@ -338,7 +338,7 @@ const char* RoleKeywords[ViewPane::nPaneRoles] = { "Extractor", "SliceMonitor", 
 // Convert text string to PaneRole
 ViewPane::PaneRole ViewPane::paneRole(const char* s)
 {
-	for (int n=0; n<ViewPane::nPaneRoles; ++n) if (DUQSys::sameString(s, RoleKeywords[n])) return (ViewPane::PaneRole) n;
+	for (int n=0; n<ViewPane::nPaneRoles; ++n) if (DissolveSys::sameString(s, RoleKeywords[n])) return (ViewPane::PaneRole) n;
 	return ViewPane::nPaneRoles;
 }
 
@@ -448,7 +448,7 @@ const char* ViewTypeKeywords[ViewPane::nViewTypes] = { "Normal", "AutoStretched"
 // Convert text string to ViewType
 ViewPane::ViewType ViewPane::viewType(const char* s)
 {
-	for (int n=0; n<ViewPane::nViewTypes; ++n) if (DUQSys::sameString(s, ViewTypeKeywords[n])) return (ViewPane::ViewType) n;
+	for (int n=0; n<ViewPane::nViewTypes; ++n) if (DissolveSys::sameString(s, ViewTypeKeywords[n])) return (ViewPane::ViewType) n;
 	return ViewPane::nViewTypes;
 }
 
@@ -464,7 +464,7 @@ const char* AutoFollowTypeKeywords[ViewPane::nAutoFollowTypes] = { "None", "All"
 // Convert text string to AutoFollowType
 ViewPane::AutoFollowType ViewPane::autoFollowType(const char* s)
 {
-	for (int n=0; n<ViewPane::nAutoFollowTypes; ++n) if (DUQSys::sameString(s, AutoFollowTypeKeywords[n])) return (ViewPane::AutoFollowType) n;
+	for (int n=0; n<ViewPane::nAutoFollowTypes; ++n) if (DissolveSys::sameString(s, AutoFollowTypeKeywords[n])) return (ViewPane::AutoFollowType) n;
 	return ViewPane::nAutoFollowTypes;
 }
 

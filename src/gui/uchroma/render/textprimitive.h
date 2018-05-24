@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMATEXTPRIMITIVE_H
-#define DUQ_UCHROMATEXTPRIMITIVE_H
+#ifndef DISSOLVE_UCHROMATEXTPRIMITIVE_H
+#define DISSOLVE_UCHROMATEXTPRIMITIVE_H
 
 #include "gui/uchroma/render/textfragment.h"
 #include "gui/uchroma/render/textformat.h"

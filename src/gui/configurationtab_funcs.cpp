@@ -3,20 +3,20 @@
 	*** src/gui/configurationtab_funcs.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "gui/configurationtab.h"
@@ -25,7 +25,7 @@
 #include "gui/delegates/texponentialspin.hui"
 #include "gui/helpers/combopopulator.h"
 #include "gui/helpers/tablewidgetupdater.h"
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "modules/export/export.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
@@ -34,7 +34,7 @@
 #include <QMessageBox>
 
 // Constructor / Destructor
-ConfigurationTab::ConfigurationTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const char* title, Configuration* cfg) : MainTab(duqWindow, duq, parent, CharString("Configuration: %s", title), this)
+ConfigurationTab::ConfigurationTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title, Configuration* cfg) : MainTab(dissolveWindow, dissolve, parent, CharString("Configuration: %s", title), this)
 {
 	ui.setupUi(this);
 
@@ -163,7 +163,7 @@ void ConfigurationTab::on_NameEdit_textChanged(QString text)
 
 	configuration_->setName(qPrintable(text));
 
-	duqWindow_->setModified();
+	dissolveWindow_->setModified();
 }
 
 void ConfigurationTab::on_TemperatureSpin_valueChanged(double value)
@@ -172,7 +172,7 @@ void ConfigurationTab::on_TemperatureSpin_valueChanged(double value)
 
 	configuration_->setTemperature(value);
 
-	duqWindow_->setModified();
+	dissolveWindow_->setModified();
 }
 
 // Box
@@ -182,7 +182,7 @@ void ConfigurationTab::on_BoxASpin_valueChanged(double value)
 
 	configuration_->setRelativeBoxLength(0, value);
 
-	duqWindow_->setModified();
+	dissolveWindow_->setModified();
 }
 
 void ConfigurationTab::on_BoxBSpin_valueChanged(double value)
@@ -191,7 +191,7 @@ void ConfigurationTab::on_BoxBSpin_valueChanged(double value)
 
 	configuration_->setRelativeBoxLength(1, value);
 
-	duqWindow_->setModified();
+	dissolveWindow_->setModified();
 }
 
 void ConfigurationTab::on_BoxCSpin_valueChanged(double value)
@@ -200,7 +200,7 @@ void ConfigurationTab::on_BoxCSpin_valueChanged(double value)
 
 	configuration_->setRelativeBoxLength(2, value);
 
-	duqWindow_->setModified();
+	dissolveWindow_->setModified();
 }
 
 void ConfigurationTab::on_BoxAlphaSpin_valueChanged(double value)
@@ -209,7 +209,7 @@ void ConfigurationTab::on_BoxAlphaSpin_valueChanged(double value)
 
 	configuration_->setBoxAngle(0, value);
 
-	duqWindow_->setModified();
+	dissolveWindow_->setModified();
 }
 
 void ConfigurationTab::on_BoxBetaSpin_valueChanged(double value)
@@ -218,7 +218,7 @@ void ConfigurationTab::on_BoxBetaSpin_valueChanged(double value)
 
 	configuration_->setBoxAngle(1, value);
 
-	duqWindow_->setModified();
+	dissolveWindow_->setModified();
 }
 
 void ConfigurationTab::on_BoxGammaSpin_valueChanged(double value)
@@ -227,7 +227,7 @@ void ConfigurationTab::on_BoxGammaSpin_valueChanged(double value)
 
 	configuration_->setBoxAngle(2, value);
 
-	duqWindow_->setModified();
+	dissolveWindow_->setModified();
 }
 
 // Content
@@ -237,7 +237,7 @@ void ConfigurationTab::on_MultiplierSpin_valueChanged(int value)
 
 	configuration_->setBoxAngle(2, value);
 
-	duqWindow_->setModified();
+	dissolveWindow_->setModified();
 }
 
 void ConfigurationTab::on_DensitySpin_valueChanged(double value)
@@ -247,21 +247,21 @@ void ConfigurationTab::on_DensitySpin_valueChanged(double value)
 	if (ui.DensityUnitsCombo->currentIndex() == 0) configuration_->setAtomicDensity(value);
 	else configuration_->setChemicalDensity(value);
 
-	duqWindow_->setModified();
+	dissolveWindow_->setModified();
 }
 
 void ConfigurationTab::on_SpeciesInfoAddButton_clicked(bool checked)
 {
 	if (refreshing_) return;
 
-// 	duqWindow_->setModified();
+// 	dissolveWindow_->setModified();
 }
 
 void ConfigurationTab::on_SpeciesInfoRemoveButton_clicked(bool checked)
 {
 	if (refreshing_) return;
 
-// 	duqWindow_->setModified();
+// 	dissolveWindow_->setModified();
 }
 
 void ConfigurationTab::on_DensityUnitsCombo_currentIndexChanged(int index)
@@ -271,7 +271,7 @@ void ConfigurationTab::on_DensityUnitsCombo_currentIndexChanged(int index)
 	if (ui.DensityUnitsCombo->currentIndex() == 0) configuration_->setAtomicDensity(ui.DensitySpin->value());
 	else configuration_->setChemicalDensity(ui.DensitySpin->value());
 
-	duqWindow_->setModified();
+	dissolveWindow_->setModified();
 }
 
 void ConfigurationTab::on_SpeciesInfoTable_itemChanged(QTableWidgetItem* w)
@@ -302,7 +302,7 @@ void ConfigurationTab::on_RegenerateNowButton_clicked(bool checked)
 
 	if (ret == QMessageBox::Yes)
 	{
-		configuration_->initialise(duq_.worldPool(), true, duq_.pairPotentialRange(), duq_.nBoxNormalisationPoints());
+		configuration_->initialise(dissolve_.worldPool(), true, dissolve_.pairPotentialRange(), dissolve_.nBoxNormalisationPoints());
 	}
 }
 

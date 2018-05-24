@@ -4,4 +4,4 @@ libsession_la_SOURCES = editstate_axes.cpp editstate_collection.cpp editstate.cp
 
 noinst_HEADERS = editstatedata.h editstategroup.h editstate.h
 
-AM_CPPFLAGS = -I$(top_srcdir)/src -I../ -I./ @DUQ_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
+AM_CPPFLAGS = -I$(top_srcdir)/src -I../ -I./ @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@

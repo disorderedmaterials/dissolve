@@ -3,20 +3,20 @@
 	*** src/base/charstring.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "base/sysfunc.h"
@@ -363,7 +363,7 @@ bool CharString::asBool() const
 {
 	// Convert string to boolean
 	bool result = false;
-	CharString lcase(DUQSys::lowerCase(data_));
+	CharString lcase(DissolveSys::lowerCase(data_));
 	if (lcase == "off") result = false;
 	else if (lcase == "on") result = true;
 	else if (lcase == "no") result = false;
@@ -406,14 +406,14 @@ bool CharString::isNumeric() const
 const char* CharString::lower() const
 {
 	if (data_ == NULL) return "";
-	return DUQSys::lowerCase(data_);
+	return DissolveSys::lowerCase(data_);
 }
 
 // Return the uppercase conversion of the string
 const char* CharString::upper() const
 {
 	if (data_ == NULL) return "";
-	return DUQSys::upperCase(data_);
+	return DissolveSys::upperCase(data_);
 }
 
 /*

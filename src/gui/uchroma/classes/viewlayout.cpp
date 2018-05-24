@@ -231,7 +231,7 @@ ViewPane* ViewLayout::lastPane()
 // Return named pane (if it exists)
 ViewPane* ViewLayout::pane(const char* name)
 {
-	for (ViewPane* pane = panes_.first(); pane != NULL; pane = pane->next) if (DUQSys::sameString(pane->name(), name)) return pane;
+	for (ViewPane* pane = panes_.first(); pane != NULL; pane = pane->next) if (DissolveSys::sameString(pane->name(), name)) return pane;
 	return NULL;
 }
 

@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMAEDINUMBERFORMATDIALOG_H
-#define DUQ_UCHROMAEDINUMBERFORMATDIALOG_H
+#ifndef DISSOLVE_UCHROMAEDINUMBERFORMATDIALOG_H
+#define DISSOLVE_UCHROMAEDINUMBERFORMATDIALOG_H
 
 #include "gui/uchroma/gui/ui_editnumberformat.h"
 #include "gui/uchroma/classes/numberformat.h"

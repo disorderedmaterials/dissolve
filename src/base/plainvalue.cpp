@@ -3,20 +3,20 @@
 	*** src/base/plainvalue.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "base/plainvalue.h"
@@ -326,7 +326,7 @@ bool PlainValue::isValid(const char* s)
 	if (!hasValidation_) return true;
 
 	// Loop over list of values
-	for (int n=0; n<nValidC_; ++n) if (DUQSys::sameString(s, validC_[n])) return true;
+	for (int n=0; n<nValidC_; ++n) if (DissolveSys::sameString(s, validC_[n])) return true;
 
 	return false;
 }
@@ -362,7 +362,7 @@ bool PlainValue::asBool()
 	if (type_ == PlainValue::BooleanType) return valueB_;
 	else if (type_ == PlainValue::IntegerType) return valueI_;
 	else if (type_ == PlainValue::DoubleType) return (valueD_ > 0.0);
-	else if (type_ == PlainValue::StringType) return DUQSys::atob(valueC_.get());
+	else if (type_ == PlainValue::StringType) return DissolveSys::atob(valueC_.get());
 
 	return false;
 }

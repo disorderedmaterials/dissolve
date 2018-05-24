@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMANODE_H
-#define DUQ_UCHROMANODE_H
+#ifndef DISSOLVE_UCHROMANODE_H
+#define DISSOLVE_UCHROMANODE_H
 
 #include "templates/listitem.h"
 #include "templates/reflist.h"

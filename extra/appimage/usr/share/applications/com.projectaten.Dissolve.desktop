@@ -1,11 +1,11 @@
 [Desktop Entry]
 Version=0.34.0
 Encoding=UTF-8
-Comment=dUQ - Potential-based refinement of neutron scattering data
-Exec=duq-gui %f
-GenericName=dUQ
-Icon=duq
-Name=dUQ
+Comment=Dissolve - Potential-based refinement of neutron scattering data
+Exec=dissolve-gui %f
+GenericName=Dissolve
+Icon=dissolve
+Name=Dissolve
 StartupNotify=false
 Terminal=0
 Type=Application

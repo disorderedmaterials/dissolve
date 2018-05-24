@@ -3,24 +3,24 @@
 	*** src/main/keywords_speciesinfo.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "main/keywords.h"
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "classes/speciesinfo.h"
 #include "classes/species.h"
 #include "base/sysfunc.h"
@@ -37,7 +37,7 @@ KeywordData SpeciesInfoBlockData[] = {
 // Convert text string to SpeciesInfoKeyword
 SpeciesInfoBlock::SpeciesInfoKeyword SpeciesInfoBlock::keyword(const char* s)
 {
-	for (int n=0; n<nSpeciesInfoKeywords; ++n) if (DUQSys::sameString(s,SpeciesInfoBlockData[n].name)) return (SpeciesInfoBlock::SpeciesInfoKeyword) n;
+	for (int n=0; n<nSpeciesInfoKeywords; ++n) if (DissolveSys::sameString(s,SpeciesInfoBlockData[n].name)) return (SpeciesInfoBlock::SpeciesInfoKeyword) n;
 	return nSpeciesInfoKeywords;
 }
 
@@ -54,7 +54,7 @@ int SpeciesInfoBlock::nArguments(SpeciesInfoBlock::SpeciesInfoKeyword id)
 }
 
 // Parse SpeciesInfo block
-bool SpeciesInfoBlock::parse(LineParser& parser, DUQ* duq, SpeciesInfo* speciesInfo)
+bool SpeciesInfoBlock::parse(LineParser& parser, Dissolve* dissolve, SpeciesInfo* speciesInfo)
 {
 	Messenger::print("\nParsing %s block '%s'...\n", ConfigurationBlock::keyword(ConfigurationBlock::SpeciesInfoKeyword), speciesInfo->species()->name());
 

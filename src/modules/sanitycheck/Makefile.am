@@ -4,4 +4,4 @@ libsanitycheck_la_SOURCES = core.cpp definition.cpp functions.cpp options.cpp pr
 
 noinst_HEADERS = sanitycheck.h
 
-AM_CPPFLAGS = -I../ -I../../ @DUQ_CFLAGS@ @DUQ_READLINE@
+AM_CPPFLAGS = -I../ -I../../ @DISSOLVE_CFLAGS@ @DISSOLVE_READLINE@

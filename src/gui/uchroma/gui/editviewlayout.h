@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMAEDITVIEWLAYOUTDIALOG_H
-#define DUQ_UCHROMAEDITVIEWLAYOUTDIALOG_H
+#ifndef DISSOLVE_UCHROMAEDITVIEWLAYOUTDIALOG_H
+#define DISSOLVE_UCHROMAEDITVIEWLAYOUTDIALOG_H
 
 #include "gui/uchroma/gui/ui_editviewlayout.h"
 #include "gui/uchroma/classes/viewlayout.h"

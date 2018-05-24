@@ -3,24 +3,24 @@
 	*** src/modules/sanitycheck/sanitycheck.h
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_SANITYCHECKMODULE_H
-#define DUQ_SANITYCHECKMODULE_H
+#ifndef DISSOLVE_SANITYCHECKMODULE_H
+#define DISSOLVE_SANITYCHECKMODULE_H
 
 #include "module/module.h"
 
@@ -80,7 +80,7 @@ class SanityCheckModule : public Module
 	// Set up options for Module
 	void setUpKeywords();
 	// Parse complex keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-	int parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, DUQ* duq, GenericList& targetList, const char* prefix);
+	int parseComplexKeyword(ModuleKeywordBase* keyword, LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix);
 
 
 	/*
@@ -88,7 +88,7 @@ class SanityCheckModule : public Module
 	 */
 	private:
 	// Run main processing
-	bool process(DUQ& duq, ProcessPool& procPool);
+	bool process(Dissolve& dissolve, ProcessPool& procPool);
 
 	public:
 	// Whether the Module has a processing stage

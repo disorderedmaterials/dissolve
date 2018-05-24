@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMACOLLECTION_H
-#define DUQ_UCHROMACOLLECTION_H
+#ifndef DISSOLVE_UCHROMACOLLECTION_H
+#define DISSOLVE_UCHROMACOLLECTION_H
 
 #include "gui/uchroma/classes/dataset.h"
 #include "gui/uchroma/classes/displaydataset.h"

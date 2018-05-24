@@ -3,31 +3,31 @@
 	*** src/modules/calibration/gui/modulewidget.h
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_CALIBRATIONMODULEWIDGET_H
-#define DUQ_CALIBRATIONMODULEWIDGET_H
+#ifndef DISSOLVE_CALIBRATIONMODULEWIDGET_H
+#define DISSOLVE_CALIBRATIONMODULEWIDGET_H
 
 #include "modules/calibration/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
 
 // Forward Declarations
 class CalibrationModule;
-class DUQ;
+class Dissolve;
 class Module;
 class PartialSet;
 class UChromaViewWidget;
@@ -43,12 +43,12 @@ class CalibrationModuleWidget : public ModuleWidget
 	CalibrationModule* module_;
 	// UChromaView contained within this widget
 	UChromaViewWidget* uChromaView_;
-	// Reference to DUQ
-	DUQ& dUQ_;
+	// Reference to Dissolve
+	Dissolve& Dissolve_;
 
 	public:
 	// Constructor / Destructor
-	CalibrationModuleWidget(QWidget* parent, Module* module, DUQ& dUQ);
+	CalibrationModuleWidget(QWidget* parent, Module* module, Dissolve& Dissolve);
 	~CalibrationModuleWidget();
 	// Main form declaration
 	Ui::CalibrationModuleWidget ui;

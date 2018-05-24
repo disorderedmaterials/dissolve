@@ -3,24 +3,24 @@
 	*** src/main/keywords_configuration.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "main/keywords.h"
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
@@ -53,7 +53,7 @@ KeywordData ConfigurationBlockData[] = {
 // Convert text string to ConfigurationKeyword
 ConfigurationBlock::ConfigurationKeyword ConfigurationBlock::keyword(const char* s)
 {
-	for (int n=0; n<ConfigurationBlock::nConfigurationKeywords; ++n) if (DUQSys::sameString(s,ConfigurationBlockData[n].name)) return (ConfigurationBlock::ConfigurationKeyword) n;
+	for (int n=0; n<ConfigurationBlock::nConfigurationKeywords; ++n) if (DissolveSys::sameString(s,ConfigurationBlockData[n].name)) return (ConfigurationBlock::ConfigurationKeyword) n;
 	return ConfigurationBlock::nConfigurationKeywords;
 }
 
@@ -70,7 +70,7 @@ int ConfigurationBlock::nArguments(ConfigurationBlock::ConfigurationKeyword id)
 }
 
 // Parse Configuration block
-bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
+bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configuration* cfg)
 {
 	Messenger::print("\nParsing %s block '%s'...\n", InputBlocks::inputBlock(InputBlocks::ConfigurationBlock), cfg->name());
 
@@ -118,8 +118,8 @@ bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
 				break;
 			case (ConfigurationBlock::DensityKeyword):
 				// Determine units given
-				if (DUQSys::sameString(parser.argc(2),"atoms/A3")) cfg->setAtomicDensity(parser.argd(1));
-				else if (DUQSys::sameString(parser.argc(2),"g/cm3")) cfg->setChemicalDensity(parser.argd(1));
+				if (DissolveSys::sameString(parser.argc(2),"atoms/A3")) cfg->setAtomicDensity(parser.argd(1));
+				else if (DissolveSys::sameString(parser.argc(2),"g/cm3")) cfg->setChemicalDensity(parser.argd(1));
 				else
 				{
 					Messenger::error("Unrecognised density unit given - '%s'\nValid values are 'atoms/A3' or 'g/cm3'.\n", parser.argc(2));
@@ -179,7 +179,7 @@ bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
 				// Set unique name, if it was provided - need to check if it has been used elsewhere (in any Module or instance of it, or any Configuration)
 				if (parser.hasArg(2))
 				{
-					niceName = DUQSys::niceName(parser.argc(2));
+					niceName = DissolveSys::niceName(parser.argc(2));
 					Module* existingModule = ModuleList::findInstanceByUniqueName(niceName);
 					if (existingModule && (existingModule != module))
 					{
@@ -187,7 +187,7 @@ bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
 						error = true;
 						break;
 					}
-					else if (duq->findConfiguration(niceName, true))
+					else if (dissolve->findConfiguration(niceName, true))
 					{
 						Messenger::error("A Configuration with the unique name '%s' already exist, and so cannot be used as a Module name.\n", niceName.get());
 						error = true;
@@ -198,10 +198,10 @@ bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
 
 				// Parse rest of Module block
 				module->setConfigurationLocal(true);
-				if (!ModuleBlock::parse(parser, duq, module, cfg->moduleData(), true)) error = true;
+				if (!ModuleBlock::parse(parser, dissolve, module, cfg->moduleData(), true)) error = true;
 
 				// Now finished parsing the Module block, so must update targets and auto-add Modules if necessary
-				if (!module->updateDependentTargets(cfg->modules(), duq->autoAddDependentModules(), cfg->moduleData())) error = true;
+				if (!module->updateDependentTargets(cfg->modules(), dissolve->autoAddDependentModules(), cfg->moduleData())) error = true;
 				break;
 			case (ConfigurationBlock::MultiplierKeyword):
 				cfg->setMultiplier(parser.argd(1));
@@ -221,7 +221,7 @@ bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
 				cfg->setSizeFactor(parser.argd(1));
 				break;
 			case (ConfigurationBlock::SpeciesInfoKeyword):
-				sp = duq->findSpecies(parser.argc(1));
+				sp = dissolve->findSpecies(parser.argc(1));
 				if (sp == NULL)
 				{
 					Messenger::error("Configuration refers to Species '%s', but no such Species is defined.\n", parser.argc(1));
@@ -242,7 +242,7 @@ bool ConfigurationBlock::parse(LineParser& parser, DUQ* duq, Configuration* cfg)
 					// If no population was given, assume that a block will follow with additional information
 					if (!parser.hasArg(2))
 					{
-						if (!SpeciesInfoBlock::parse(parser, duq, spInfo))
+						if (!SpeciesInfoBlock::parse(parser, dissolve, spInfo))
 						{
 							error = true;
 							break;

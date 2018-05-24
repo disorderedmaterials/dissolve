@@ -1,26 +1,26 @@
 /*
-	*** dUQ Main Window
+	*** Dissolve Main Window
 	*** src/gui/gui.h
 	Copyright T. Youngs 2012-2018
 
-	This file is part of DUQ.
+	This file is part of Dissolve.
 
-	DUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	DUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with DUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_MAINWINDOW_H
-#define DUQ_MAINWINDOW_H
+#ifndef DISSOLVE_MAINWINDOW_H
+#define DISSOLVE_MAINWINDOW_H
 
 #include "gui/ui_gui.h"
 #include "gui/widgets/subwindow.h"
@@ -33,20 +33,20 @@
 // Forward Declarations
 class BrowserWidget;
 class Configuration;
-class DUQ;
+class Dissolve;
 class QMdiSubWindow;
 
-class DUQWindow : public QMainWindow
+class DissolveWindow : public QMainWindow
 {
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
 	public:
 	// Constructor / Destructor
-	DUQWindow(DUQ& duq);
-	~DUQWindow();
+	DissolveWindow(Dissolve& dissolve);
+	~DissolveWindow();
 	// Main form declaration
-	Ui::DUQWindow ui;
+	Ui::DissolveWindow ui;
 
 	protected:
 	void closeEvent(QCloseEvent* event);
@@ -54,11 +54,11 @@ class DUQWindow : public QMainWindow
 
 
 	/*
-	 * DUQ Reference
+	 * Dissolve Reference
 	 */
 	private:
-	// DUQ reference
-	DUQ& duq_;
+	// Dissolve reference
+	Dissolve& dissolve_;
 	// Whether any data has been modified in the GUI
 	bool modified_;
 
@@ -67,8 +67,8 @@ class DUQWindow : public QMainWindow
 	void setModified();
 
 	public:
-	// Return reference to DUQ
-	DUQ& duq();
+	// Return reference to Dissolve
+	Dissolve& dissolve();
 
 
 	/*
@@ -116,23 +116,23 @@ class DUQWindow : public QMainWindow
 	 * Run Control
 	 */
 	public:
-	// dUQ State Enum
-	enum DUQState {
-		RunningState,		/* dUQ is currently running in the GUI */
-		StoppedState,		/* dUQ is currently stopped in the GUI */
-		MonitoringState,	/* dUQ is running in the background, and we are monitoring it */
-		nDUQStates
+	// Dissolve State Enum
+	enum DissolveState {
+		RunningState,		/* Dissolve is currently running in the GUI */
+		StoppedState,		/* Dissolve is currently stopped in the GUI */
+		MonitoringState,	/* Dissolve is running in the background, and we are monitoring it */
+		nDissolveStates
 	};
 
 	private:
 	// Thread controller
-	DUQThreadController threadController_;
-	// Current state of dUQ
-	DUQState duqState_;
+	DissolveThreadController threadController_;
+	// Current state of Dissolve
+	DissolveState dissolveState_;
 
 	public:
-	// Return current state of dUQ
-	DUQState duqState() const;
+	// Return current state of Dissolve
+	DissolveState dissolveState() const;
 
 	private slots: 
 	void on_ControlSetUpButton_clicked(bool checked);

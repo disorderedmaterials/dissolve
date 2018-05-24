@@ -445,7 +445,7 @@ bool UChromaBase::readDataSetBlock(LineParser& parser, DataSet* dataSet, Collect
 				{
 					parser.getArgsDelim(LineParser::Defaults);
 					// Check for 'EndData'
-					if (DUQSys::sameString(parser.argc(0), "EndData")) foundEnd = true;
+					if (DissolveSys::sameString(parser.argc(0), "EndData")) foundEnd = true;
 					else data.addPoint(parser.argd(0), parser.argd(1));
 				} while ((!foundEnd) && (!parser.eofOrBlank()));
 				if (!foundEnd)

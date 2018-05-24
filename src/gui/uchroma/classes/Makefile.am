@@ -4,4 +4,4 @@ libclasses_la_SOURCES = axes.cpp collection.cpp collectiongroup.cpp colourdef.cp
 
 noinst_HEADERS = axes.h collection.h collectiongroup.h colourdef.h colourscale.h dataset.h dataspace.h dataspacerange.h displaydataset.h equationvariable.h indexdata.h namedvalue.h numberformat.h referencevariable.h signal.h symbol.h targetdata.h targetprimitive.h transformer.h viewlayout.h viewpane.h
 
-AM_CPPFLAGS = -I$(top_srcdir)/src -I../ -I./ @DUQ_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@
+AM_CPPFLAGS = -I$(top_srcdir)/src -I../ -I./ @DISSOLVE_CFLAGS@ @GUI_CFLAGS@ @GUI_INCLUDES@

@@ -3,24 +3,24 @@
 	*** src/main/keywords_simulation.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "main/keywords.h"
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "base/sysfunc.h"
 #include "base/lineparser.h"
 
@@ -36,7 +36,7 @@ KeywordData SimulationBlockData[] = {
 // Convert text string to SimulationKeyword
 SimulationBlock::SimulationKeyword SimulationBlock::keyword(const char* s)
 {
-	for (int n=0; n<SimulationBlock::nSimulationKeywords; ++n) if (DUQSys::sameString(s,SimulationBlockData[n].name)) return (SimulationBlock::SimulationKeyword) n;
+	for (int n=0; n<SimulationBlock::nSimulationKeywords; ++n) if (DissolveSys::sameString(s,SimulationBlockData[n].name)) return (SimulationBlock::SimulationKeyword) n;
 	return SimulationBlock::nSimulationKeywords;
 }
 
@@ -53,7 +53,7 @@ int SimulationBlock::nArguments(SimulationBlock::SimulationKeyword id)
 }
 
 // Parse Simulation block
-bool SimulationBlock::parse(LineParser& parser, DUQ* duq)
+bool SimulationBlock::parse(LineParser& parser, Dissolve* dissolve)
 {
 	Messenger::print("\nParsing %s block...\n", InputBlocks::inputBlock(InputBlocks::SimulationBlock));
 
@@ -73,28 +73,28 @@ bool SimulationBlock::parse(LineParser& parser, DUQ* duq)
 		switch (simKeyword)
 		{
 			case (SimulationBlock::BoxNormalisationPointsKeyword):
-				duq->setNBoxNormalisationPoints(parser.argi(1));
-				Messenger::print("Number of points to use in Box normalisation calculation = %i\n", duq->nBoxNormalisationPoints());
+				dissolve->setNBoxNormalisationPoints(parser.argi(1));
+				Messenger::print("Number of points to use in Box normalisation calculation = %i\n", dissolve->nBoxNormalisationPoints());
 				break;
 			case (SimulationBlock::EndSimulationKeyword):
 				Messenger::print("Found end of %s block.\n", InputBlocks::inputBlock(InputBlocks::SimulationBlock));
 				blockDone = true;
 				break;
 			case (SimulationBlock::ParallelStrategyKeyword):
-				if (DUQ::parallelStrategy(parser.argc(1)) == DUQ::nParallelStrategies)
+				if (Dissolve::parallelStrategy(parser.argc(1)) == Dissolve::nParallelStrategies)
 				{
 					Messenger::error("Unrecognised parallel strategy '%s'.\n", parser.argc(1));
 					error = true;
 				}
-				else duq->setParallelStrategy(DUQ::parallelStrategy(parser.argc(1)));
+				else dissolve->setParallelStrategy(Dissolve::parallelStrategy(parser.argc(1)));
 				break;
 			case (SimulationBlock::RestartFileFrequencyKeyword):
-				duq->setRestartFileFrequency(parser.argi(1));
-				Messenger::print("Restart data will be written to disk every %i iteration(s).\n", duq->restartFileFrequency());
+				dissolve->setRestartFileFrequency(parser.argi(1));
+				Messenger::print("Restart data will be written to disk every %i iteration(s).\n", dissolve->restartFileFrequency());
 				break;
 			case (SimulationBlock::SeedKeyword):
-				duq->setSeed(parser.argi(1));
-				Messenger::print("Random seed set to %i.\n", duq->seed());
+				dissolve->setSeed(parser.argi(1));
+				Messenger::print("Random seed set to %i.\n", dissolve->seed());
 				break;
 			case (SimulationBlock::nSimulationKeywords):
 				Messenger::print("Unrecognised %s block keyword '%s' found.\n", InputBlocks::inputBlock(InputBlocks::SimulationBlock), parser.argc(0));

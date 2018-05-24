@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMABASE_H
-#define DUQ_UCHROMABASE_H
+#ifndef DISSOLVE_UCHROMABASE_H
+#define DISSOLVE_UCHROMABASE_H
 
 #include "base/charstring.h"
 

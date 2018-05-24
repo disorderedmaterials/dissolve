@@ -76,7 +76,7 @@ void TargetPrimitive::updateAndSendPrimitive(ViewPane* pane, bool forceUpdate, b
 	bool upToDate = true;
 	if (forceUpdate) upToDate = false;
 	else if (primitiveAxesUsedAt_ != axes.displayVersion()) upToDate = false;
-	else if (!DUQSys::sameString(primitiveColourFingerprint_, CharString("%s%i", collection_->groupName(), colour.colourVersion()), true)) upToDate = false;
+	else if (!DissolveSys::sameString(primitiveColourFingerprint_, CharString("%s%i", collection_->groupName(), colour.colourVersion()), true)) upToDate = false;
 	else if (primitiveDataUsedAt_ != collection_->dataVersion()) upToDate = false;
 	else if (primitiveStyleUsedAt_ != collection_->displayStyleVersion()) upToDate = false;
 

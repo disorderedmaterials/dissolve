@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMAEDITFITRESULTSDIALOG_H
-#define DUQ_UCHROMAEDITFITRESULTSDIALOG_H
+#ifndef DISSOLVE_UCHROMAEDITFITRESULTSDIALOG_H
+#define DISSOLVE_UCHROMAEDITFITRESULTSDIALOG_H
 
 #include "gui/uchroma/gui/ui_editfitresults.h"
 #include <QDialog>

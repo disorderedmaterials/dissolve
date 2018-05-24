@@ -21,9 +21,9 @@ stamp-h1
 *.hh
 ui_*
 moc_*
-src/duq
-src/duq-gui
-src/duq-serial
+src/dissolve
+src/dissolve-gui
+src/dissolve-serial
 .kdev4/
 build/
 

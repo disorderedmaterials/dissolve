@@ -3,24 +3,24 @@
 	*** src/modules/energy/process.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "modules/energy/energy.h"
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "classes/species.h"
 #include "classes/box.h"
 #include "base/sysfunc.h"
@@ -28,7 +28,7 @@
 #include "templates/genericlisthelper.h"
 
 // Run set-up stage
-bool EnergyModule::setUp(DUQ& duq, ProcessPool& procPool)
+bool EnergyModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 {
 	// For each Configuration target, add a flag to its moduleData (which is *not* stored in the restart file) that we are targeting it
 	RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
@@ -44,7 +44,7 @@ bool EnergyModule::hasProcessing()
 }
 
 // Run main processing
-bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
+bool EnergyModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {
 	/*
 	 * Calculate Energy for the target Configuration(s)
@@ -68,7 +68,7 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 		procPool.assignProcessesToGroups(cfg->processPool());
 
 		// Get reference to relevant module data
-		GenericList& moduleData = configurationLocal_ ? cfg->moduleData() : duq.processingModuleData();
+		GenericList& moduleData = configurationLocal_ ? cfg->moduleData() : dissolve.processingModuleData();
 
 		// Retrieve control parameters from Configuration
 		const bool saveData = keywords_.asBool("Save");
@@ -96,7 +96,7 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 			 * Test Calculation Begins
 			 */
 
-			const PotentialMap& potentialMap = duq.potentialMap();
+			const PotentialMap& potentialMap = dissolve.potentialMap();
 			double correctInterEnergy = 0.0, correctIntraEnergy = 0.0;
 
 			double r, angle;
@@ -105,7 +105,7 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 			Molecule* molN, *molM;
 			const Box* box = cfg->box();
 			double scale;
-			const double cutoff = duq.potentialMap().range();
+			const double cutoff = dissolve.potentialMap().range();
 
 			Timer testTimer;
 
@@ -220,12 +220,12 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 
 			// Calculate interatomic energy
 			Timer interTimer;
-			double interEnergy = interAtomicEnergy(procPool, cfg, duq.potentialMap());
+			double interEnergy = interAtomicEnergy(procPool, cfg, dissolve.potentialMap());
 			interTimer.stop();
 
 			// Calculate intramolecular energy
 			Timer intraTimer;
-			double intraEnergy = intraMolecularEnergy(procPool, cfg, duq.potentialMap());
+			double intraEnergy = intraMolecularEnergy(procPool, cfg, dissolve.potentialMap());
 			intraTimer.stop();
 
 			Messenger::print("Energy: Production interatomic pairpotential energy is %15.9e kJ/mol\n", interEnergy);
@@ -289,13 +289,13 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 
 			// Calculate Grain energy
 			Timer interTimer;
-			double interEnergy = interAtomicEnergy(procPool, cfg, duq.potentialMap());
+			double interEnergy = interAtomicEnergy(procPool, cfg, dissolve.potentialMap());
 			interTimer.stop();
 
 			// Calculate intramolecular and interGrain correction energy
 			Timer intraTimer;
 			double bondEnergy, angleEnergy, torsionEnergy;
-			double intraEnergy = intraMolecularEnergy(procPool, cfg, duq.potentialMap(), bondEnergy, angleEnergy, torsionEnergy);
+			double intraEnergy = intraMolecularEnergy(procPool, cfg, dissolve.potentialMap(), bondEnergy, angleEnergy, torsionEnergy);
 			intraTimer.stop();
 
 			Messenger::print("Energy: Time to do interatomic energy was %s, intramolecular energy was %s (%s comms).\n", interTimer.totalTimeString(), intraTimer.totalTimeString(), procPool.accumulatedTimeString());
@@ -304,24 +304,24 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 
 			// Store current energies in the Configuration in case somebody else needs them
 			XYData& interData = GenericListHelper<XYData>::realise(cfg->moduleData(), "Inter", uniqueName(), GenericItem::InRestartFileFlag);
-			interData.addPoint(duq.iteration(), interEnergy);
+			interData.addPoint(dissolve.iteration(), interEnergy);
 			interData.setObjectName(CharString("%s//%s//Inter", cfg->niceName(), uniqueName()));
 			XYData& intraData = GenericListHelper<XYData>::realise(cfg->moduleData(), "Intra", uniqueName(), GenericItem::InRestartFileFlag);
-			intraData.addPoint(duq.iteration(), intraEnergy);
+			intraData.addPoint(dissolve.iteration(), intraEnergy);
 			intraData.setObjectName(CharString("%s//%s//Intra", cfg->niceName(), uniqueName()));
 			XYData& bondData = GenericListHelper<XYData>::realise(cfg->moduleData(), "Bond", uniqueName(), GenericItem::InRestartFileFlag);
-			bondData.addPoint(duq.iteration(), bondEnergy);
+			bondData.addPoint(dissolve.iteration(), bondEnergy);
 			bondData.setObjectName(CharString("%s//%s//Bond", cfg->niceName(), uniqueName()));
 			XYData& angleData = GenericListHelper<XYData>::realise(cfg->moduleData(), "Angle", uniqueName(), GenericItem::InRestartFileFlag);
-			angleData.addPoint(duq.iteration(), angleEnergy);
+			angleData.addPoint(dissolve.iteration(), angleEnergy);
 			angleData.setObjectName(CharString("%s//%s//Angle", cfg->niceName(), uniqueName()));
 			XYData& torsionData = GenericListHelper<XYData>::realise(cfg->moduleData(), "Torsion", uniqueName(), GenericItem::InRestartFileFlag);
-			torsionData.addPoint(duq.iteration(), torsionEnergy);
+			torsionData.addPoint(dissolve.iteration(), torsionEnergy);
 			torsionData.setObjectName(CharString("%s//%s//Torsion", cfg->niceName(), uniqueName()));
 
 			// Append to arrays of total energies
 			XYData& totalEnergyArray = GenericListHelper<XYData>::realise(cfg->moduleData(), "Total", uniqueName(), GenericItem::InRestartFileFlag);
-			totalEnergyArray.addPoint(duq.iteration(), interEnergy+intraEnergy);
+			totalEnergyArray.addPoint(dissolve.iteration(), interEnergy+intraEnergy);
 			totalEnergyArray.setObjectName(CharString("%s//%s//Total", cfg->niceName(), uniqueName()));
 
 			// Determine stability of energy
@@ -336,13 +336,13 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 				double thresholdValue = fabs(stabilityThreshold*yMean);
 				stable = fabs(grad) < thresholdValue;
 
-				Messenger::print("Energy: Gradient of last %i points is %e kJ/mol/step (absolute threshold value is %e, stable = %s).\n", stabilityWindow, grad, thresholdValue, DUQSys::btoa(stable));
+				Messenger::print("Energy: Gradient of last %i points is %e kJ/mol/step (absolute threshold value is %e, stable = %s).\n", stabilityWindow, grad, thresholdValue, DissolveSys::btoa(stable));
 			}
 
 			// Set variable in Configuration
 			GenericListHelper<double>::realise(cfg->moduleData(), "EnergyGradient", "", GenericItem::InRestartFileFlag) = grad;
 			GenericListHelper<bool>::realise(cfg->moduleData(), "EnergyStable", "", GenericItem::InRestartFileFlag) = stable;
-			GenericListHelper<XYData>::realise(cfg->moduleData(), "EnergyStability", "", GenericItem::InRestartFileFlag).addPoint(duq.iteration(), stable);
+			GenericListHelper<XYData>::realise(cfg->moduleData(), "EnergyStability", "", GenericItem::InRestartFileFlag).addPoint(dissolve.iteration(), stable);
 
 			// If writing to a file, append it here
 			if (saveData)
@@ -350,7 +350,7 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 				LineParser parser;
 				CharString filename("%s.energy.txt", cfg->niceName());
 
-				if (!DUQSys::fileExists(filename))
+				if (!DissolveSys::fileExists(filename))
 				{
 					parser.openOutput(filename);
 					parser.writeLineF("# Energies for Configuration '%s'.\n", cfg->name());
@@ -358,7 +358,7 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 					parser.writeLine("# Iteration   Total         Inter         Bond          Angle         Torsion       Gradient      S?\n");
 				}
 				else parser.appendOutput(filename);
-				parser.writeLineF("  %10i  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e  %i\n", duq.iteration(), interEnergy+intraEnergy, interEnergy, bondEnergy, angleEnergy, torsionEnergy, grad, stable);
+				parser.writeLineF("  %10i  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e  %i\n", dissolve.iteration(), interEnergy+intraEnergy, interEnergy, bondEnergy, angleEnergy, torsionEnergy, grad, stable);
 				parser.closeFiles();
 			}
 		}

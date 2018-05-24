@@ -3,20 +3,20 @@
 	*** src/base/lineparser.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "base/lineparser.h"
@@ -437,7 +437,7 @@ LineParser::ParseReturnValue LineParser::readNextLine(int optionMask)
 // 			Messenger::print("Line from file is: [%s]\n", line_);
 
 			// Remove comments from line
-			if (optionMask&LineParser::StripComments) DUQSys::removeComments(line_);
+			if (optionMask&LineParser::StripComments) DissolveSys::removeComments(line_);
 			
 			// If we are skipping blank lines, check for a blank line here
 			if (optionMask&LineParser::SkipBlanks)
@@ -1017,7 +1017,7 @@ bool LineParser::writeArg(double d) const
 // Write bool argument as single line
 bool LineParser::writeArg(bool b) const
 {
-	return writeLineF("%s\n", DUQSys::btoa(b));
+	return writeLineF("%s\n", DissolveSys::btoa(b));
 }
 
 // Write Vec3<int> argument as single line

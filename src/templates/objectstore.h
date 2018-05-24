@@ -3,24 +3,24 @@
 	*** src/templates/objectstore.h
 	Copyright T. Youngs 2013-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_OBJECTSTORE_H
-#define DUQ_OBJECTSTORE_H
+#ifndef DISSOLVE_OBJECTSTORE_H
+#define DISSOLVE_OBJECTSTORE_H
 
 #include "templates/reflist.h"
 #include "base/sysfunc.h"
@@ -157,11 +157,11 @@ template <class T> class ObjectStore
 		CharString nameOfObject;
 		if (strchr(name, '@'))
 		{
-			CharString typePrefix = DUQSys::beforeChar(name, '@');
-			nameOfObject = DUQSys::afterChar(name, '@');
+			CharString typePrefix = DissolveSys::beforeChar(name, '@');
+			nameOfObject = DissolveSys::afterChar(name, '@');
 
 			// Do a sanity check on the type prefix...
-			if (!DUQSys::sameString(typePrefix, objectTypeName_)) Messenger::error("Setting an object name (%s) with a string that contains the wrong type prefix ('%s', while this class is '%s').\n", name, typePrefix.get(), objectTypeName_);
+			if (!DissolveSys::sameString(typePrefix, objectTypeName_)) Messenger::error("Setting an object name (%s) with a string that contains the wrong type prefix ('%s', while this class is '%s').\n", name, typePrefix.get(), objectTypeName_);
 		}
 		else nameOfObject = name;
 #ifdef CHECKS
@@ -185,7 +185,7 @@ template <class T> class ObjectStore
 	// Return whether object matches this name
 	bool objectNameIs(const char* name)
 	{
-		return (DUQSys::sameString(objectInfo_.name(), name, true));
+		return (DissolveSys::sameString(objectInfo_.name(), name, true));
 	}
 
 
@@ -265,14 +265,14 @@ template <class T> class ObjectStore
 	static bool isObject(const char* objectName)
 	{
 		// Get part before '@', which denotes the type
-		const char* prefix = DUQSys::beforeChar(objectName, '@');
-		return DUQSys::sameString(prefix, objectTypeName_);
+		const char* prefix = DissolveSys::beforeChar(objectName, '@');
+		return DissolveSys::sameString(prefix, objectTypeName_);
 	}
 	// Find specified object
 	static T* findObject(const char* objectName)
 	{
 		// Does the supplied name contain a type prefix? If so, check it and then strip it
-		CharString typePrefix = DUQSys::beforeChar(objectName, '@');
+		CharString typePrefix = DissolveSys::beforeChar(objectName, '@');
 		if (typePrefix.isEmpty())
 		{
 			// No type prefix, so add ours and do the search
@@ -286,7 +286,7 @@ template <class T> class ObjectStore
 		else
 		{
 			// Check the type prefix
-			if (!DUQSys::sameString(typePrefix, objectTypeName_))
+			if (!DissolveSys::sameString(typePrefix, objectTypeName_))
 			{
 				Messenger::error("Searched for object '%s' in a store containing objects of type '%s'.\n", typePrefix.get(), objectTypeName_);
 				return false;

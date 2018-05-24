@@ -1,32 +1,32 @@
 /*
-	*** dUQ - Configurations
+	*** Dissolve - Configurations
 	*** src/main/configurations.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "classes/grain.h"
 #include "classes/species.h"
 #include "base/lineparser.h"
 #include <string.h>
 
 // Add new Configuration
-Configuration* DUQ::addConfiguration()
+Configuration* Dissolve::addConfiguration()
 {
 	Configuration* cfg = configurations_.add();
 
@@ -36,21 +36,21 @@ Configuration* DUQ::addConfiguration()
 }
 
 // Return first Configuration in list
-const List<Configuration>& DUQ::configurations() const
+const List<Configuration>& Dissolve::configurations() const
 {
 	return configurations_;
 }
 
 // Find configuration by name
-Configuration* DUQ::findConfiguration(const char* name, bool useNiceName) const
+Configuration* Dissolve::findConfiguration(const char* name, bool useNiceName) const
 {
-	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next) if (DUQSys::sameString(name, useNiceName ? cfg->niceName() : cfg->name())) return cfg;
+	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next) if (DissolveSys::sameString(name, useNiceName ? cfg->niceName() : cfg->name())) return cfg;
 
 	return NULL;
 }
 
 // Write Configuration through specified LineParser
-bool DUQ::writeConfiguration(Configuration* cfg, LineParser& parser)
+bool Dissolve::writeConfiguration(Configuration* cfg, LineParser& parser)
 {
 	Species* sp;
 	int molId;
@@ -111,7 +111,7 @@ bool DUQ::writeConfiguration(Configuration* cfg, LineParser& parser)
 }
 
 // Read Configuration through specified LineParser
-bool DUQ::readConfiguration(Configuration* cfg, LineParser& parser)
+bool Dissolve::readConfiguration(Configuration* cfg, LineParser& parser)
 {
 	Species* sp;
 	Molecule* mol;
@@ -148,7 +148,7 @@ bool DUQ::readConfiguration(Configuration* cfg, LineParser& parser)
 
 		// Find the AtomType
 		atomType = findAtomType(parser.argc(0));
-		if (!atomType) return Messenger::error("Configuration '%s' references AtomType '%s', but it is not known to dUQ.\n", cfg->name(), parser.argc(0));
+		if (!atomType) return Messenger::error("Configuration '%s' references AtomType '%s', but it is not known to Dissolve.\n", cfg->name(), parser.argc(0));
 
 		mol = cfg->molecule(parser.argi(5));
 		grain = parser.argi(6) == -1 ? NULL : cfg->grain(parser.argi(6));

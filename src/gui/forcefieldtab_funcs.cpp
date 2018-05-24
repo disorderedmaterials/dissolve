@@ -3,20 +3,20 @@
 	*** src/gui/forcefieldtab_funcs.cpp
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "gui/forcefieldtab.h"
@@ -25,7 +25,7 @@
 #include "gui/delegates/texponentialspin.hui"
 #include "gui/helpers/listwidgetupdater.h"
 #include "gui/helpers/tablewidgetupdater.h"
-#include "main/duq.h"
+#include "main/dissolve.h"
 #include "classes/atomtype.h"
 #include "classes/speciesbond.h"
 #include "classes/speciesangle.h"
@@ -33,7 +33,7 @@
 #include <QListWidgetItem>
 
 // Constructor / Destructor
-ForcefieldTab::ForcefieldTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const char* title) : MainTab(duqWindow, duq, parent, title, this)
+ForcefieldTab::ForcefieldTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title) : MainTab(dissolveWindow, dissolve, parent, title, this)
 {
 	ui.setupUi(this);
 
@@ -346,32 +346,32 @@ void ForcefieldTab::updateControls()
 	refreshing_ = true;
 
 	// Master Bonds Table
-	TableWidgetUpdater<ForcefieldTab,MasterIntra> bondsUpdater(ui.MasterBondsTable, duq_.masterBonds(), this, &ForcefieldTab::updateBondsTableRow);
+	TableWidgetUpdater<ForcefieldTab,MasterIntra> bondsUpdater(ui.MasterBondsTable, dissolve_.masterBonds(), this, &ForcefieldTab::updateBondsTableRow);
 	ui.MasterBondsTable->resizeColumnsToContents();
 
 	// Master Angles Table
-	TableWidgetUpdater<ForcefieldTab,MasterIntra> anglesUpdater(ui.MasterAnglesTable, duq_.masterAngles(), this, &ForcefieldTab::updateAnglesTableRow);
+	TableWidgetUpdater<ForcefieldTab,MasterIntra> anglesUpdater(ui.MasterAnglesTable, dissolve_.masterAngles(), this, &ForcefieldTab::updateAnglesTableRow);
 	ui.MasterAnglesTable->resizeColumnsToContents();
 
 	// Torsions Table
-	TableWidgetUpdater<ForcefieldTab,MasterIntra> torsionsUpdater(ui.MasterTorsionsTable, duq_.masterTorsions(), this, &ForcefieldTab::updateTorsionsTableRow);
+	TableWidgetUpdater<ForcefieldTab,MasterIntra> torsionsUpdater(ui.MasterTorsionsTable, dissolve_.masterTorsions(), this, &ForcefieldTab::updateTorsionsTableRow);
 	ui.MasterTorsionsTable->resizeColumnsToContents();
 
 	// AtomTypes Table
-	TableWidgetUpdater<ForcefieldTab,AtomType> atomTypesUpdater(ui.AtomTypesTable, duq_.atomTypeList(), this, &ForcefieldTab::updateAtomTypesTableRow);
+	TableWidgetUpdater<ForcefieldTab,AtomType> atomTypesUpdater(ui.AtomTypesTable, dissolve_.atomTypeList(), this, &ForcefieldTab::updateAtomTypesTableRow);
 	ui.AtomTypesTable->resizeColumnsToContents();
 
 	// PairPotentials
-	ui.PairPotentialRangeSpin->setValue(duq_.pairPotentialRange());
-	ui.PairPotentialDeltaSpin->setValue(duq_.pairPotentialDelta());
+	ui.PairPotentialRangeSpin->setValue(dissolve_.pairPotentialRange());
+	ui.PairPotentialDeltaSpin->setValue(dissolve_.pairPotentialDelta());
 	ui.ShortRangeFormCombo->setCurrentIndex(PairPotential::LennardJonesType);
-	ui.CoulombIncludeCheck->setChecked(duq_.pairPotentialsIncludeCoulomb());
+	ui.CoulombIncludeCheck->setChecked(dissolve_.pairPotentialsIncludeCoulomb());
 	ui.ShortRangeTruncationCombo->setCurrentIndex(PairPotential::shortRangeTruncationScheme());
 	ui.ShortRangeTruncationWidthSpin->setValue(PairPotential::shortRangeTruncationWidth());
 	ui.ShortRangeTruncationWidthSpin->setEnabled(PairPotential::shortRangeTruncationScheme() == PairPotential::CosineShortRangeTruncation);
 	ui.CoulombTruncationCombo->setCurrentIndex(PairPotential::coulombTruncationScheme());
 	// -- Table
-	TableWidgetUpdater<ForcefieldTab,PairPotential> ppUpdater(ui.PairPotentialsTable, duq_.pairPotentials(), this, &ForcefieldTab::updatePairPotentialsTableRow);
+	TableWidgetUpdater<ForcefieldTab,PairPotential> ppUpdater(ui.PairPotentialsTable, dissolve_.pairPotentials(), this, &ForcefieldTab::updatePairPotentialsTableRow);
 	ui.PairPotentialsTable->resizeColumnsToContents();
 
 	refreshing_ = false;
@@ -417,17 +417,17 @@ void ForcefieldTab::on_AtomTypesTable_itemChanged(QTableWidgetItem* w)
 		// Name
 		case (0):
 			atomType->setName(qPrintable(w->text()));
-			duqWindow_->setModified();
+			dissolveWindow_->setModified();
 			break;
 		// Exchangeable flag
 		case (1):
 			atomType->setExchangeable(w->checkState() == Qt::Checked);
-			duqWindow_->setModified();
+			dissolveWindow_->setModified();
 			break;
 		// Charge
 		case (2):
 			atomType->parameters().setCharge(w->text().toDouble());
-			duqWindow_->setModified();
+			dissolveWindow_->setModified();
 			break;
 		// Parameters
 		case (3):
@@ -435,7 +435,7 @@ void ForcefieldTab::on_AtomTypesTable_itemChanged(QTableWidgetItem* w)
 		case (5):
 		case (6):
 			atomType->parameters().setParameter(w->column()-3, w->text().toDouble());
-			duqWindow_->setModified();
+			dissolveWindow_->setModified();
 			break;
 		default:
 			Messenger::error("Don't know what to do with data from column %i of AtomTypes table.\n", w->column());
@@ -447,27 +447,27 @@ void ForcefieldTab::on_PairPotentialRangeSpin_valueChanged(double value)
 {
 	if (refreshing_) return;
 
-	duq_.setPairPotentialRange(value);
+	dissolve_.setPairPotentialRange(value);
 	
-	duqWindow_->setModified();
+	dissolveWindow_->setModified();
 }
 
 void ForcefieldTab::on_PairPotentialDeltaSpin_valueChanged(double value)
 {
 	if (refreshing_) return;
 
-	duq_.setPairPotentialDelta(value);
+	dissolve_.setPairPotentialDelta(value);
 	
-	duqWindow_->setModified();
+	dissolveWindow_->setModified();
 }
 
 void ForcefieldTab::on_CoulombIncludeCheck_clicked(bool checked)
 {
 	if (refreshing_) return;
 
-	duq_.setPairPotentialsIncludeCoulomb(checked);
+	dissolve_.setPairPotentialsIncludeCoulomb(checked);
 	
-	duqWindow_->setModified();
+	dissolveWindow_->setModified();
 }
 
 void ForcefieldTab::on_ShortRangeTruncationCombo_currentIndexChanged(int index)
@@ -477,7 +477,7 @@ void ForcefieldTab::on_ShortRangeTruncationCombo_currentIndexChanged(int index)
 	PairPotential::setShortRangeTruncationScheme( (PairPotential::ShortRangeTruncationScheme) index );
 	ui.ShortRangeTruncationWidthSpin->setEnabled(PairPotential::shortRangeTruncationScheme() == PairPotential::CosineShortRangeTruncation);
 	
-	duqWindow_->setModified();
+	dissolveWindow_->setModified();
 }
 
 void ForcefieldTab::on_CoulombTruncationCombo_currentIndexChanged(int index)
@@ -486,51 +486,51 @@ void ForcefieldTab::on_CoulombTruncationCombo_currentIndexChanged(int index)
 
 	PairPotential::setCoulombTruncationScheme( (PairPotential::CoulombTruncationScheme) index );
 
-	duqWindow_->setModified();
+	dissolveWindow_->setModified();
 }
 
 void ForcefieldTab::on_RegenerateAllPairPotentialsButton_clicked(bool checked)
 {
-	duq_.regeneratePairPotentials((PairPotential::ShortRangeType) ui.ShortRangeFormCombo->currentIndex());
+	dissolve_.regeneratePairPotentials((PairPotential::ShortRangeType) ui.ShortRangeFormCombo->currentIndex());
 
 	refreshing_ = true;
 
-	TableWidgetUpdater<ForcefieldTab,PairPotential> ppUpdater(ui.PairPotentialsTable, duq_.pairPotentials(), this, &ForcefieldTab::updatePairPotentialsTableRow);
+	TableWidgetUpdater<ForcefieldTab,PairPotential> ppUpdater(ui.PairPotentialsTable, dissolve_.pairPotentials(), this, &ForcefieldTab::updatePairPotentialsTableRow);
 	ui.PairPotentialsTable->resizeColumnsToContents();
 
 	refreshing_ = false;
 
-	duqWindow_->updateStatus();
+	dissolveWindow_->updateStatus();
 }
 
 void ForcefieldTab::on_UpdatePairPotentialsButton_clicked(bool checked)
 {
-	duq_.updateCurrentPairPotentials();
+	dissolve_.updateCurrentPairPotentials();
 
 	updateControls();
 
 	refreshing_ = true;
 
-	TableWidgetUpdater<ForcefieldTab,PairPotential> ppUpdater(ui.PairPotentialsTable, duq_.pairPotentials(), this, &ForcefieldTab::updatePairPotentialsTableRow);
+	TableWidgetUpdater<ForcefieldTab,PairPotential> ppUpdater(ui.PairPotentialsTable, dissolve_.pairPotentials(), this, &ForcefieldTab::updatePairPotentialsTableRow);
 	ui.PairPotentialsTable->resizeColumnsToContents();
 
 	refreshing_ = false;
 
-	duqWindow_->updateStatus();
+	dissolveWindow_->updateStatus();
 }
 
 void ForcefieldTab::on_GenerateMissingPairPotentialsButton_clicked(bool checked)
 {
-	duq_.generateMissingPairPotentials((PairPotential::ShortRangeType) ui.ShortRangeFormCombo->currentIndex());
+	dissolve_.generateMissingPairPotentials((PairPotential::ShortRangeType) ui.ShortRangeFormCombo->currentIndex());
 
 	refreshing_ = true;
 
-	TableWidgetUpdater<ForcefieldTab,PairPotential> ppUpdater(ui.PairPotentialsTable, duq_.pairPotentials(), this, &ForcefieldTab::updatePairPotentialsTableRow);
+	TableWidgetUpdater<ForcefieldTab,PairPotential> ppUpdater(ui.PairPotentialsTable, dissolve_.pairPotentials(), this, &ForcefieldTab::updatePairPotentialsTableRow);
 	ui.PairPotentialsTable->resizeColumnsToContents();
 
 	refreshing_ = false;
 
-	duqWindow_->updateStatus();
+	dissolveWindow_->updateStatus();
 }
 
 void ForcefieldTab::on_PairPotentialsTable_itemChanged(QTableWidgetItem* w)
@@ -547,17 +547,17 @@ void ForcefieldTab::on_PairPotentialsTable_itemChanged(QTableWidgetItem* w)
 		// Functional form
 		case (2):
 			pairPotential->setShortRangeType(PairPotential::shortRangeType(qPrintable(w->text())));
-			duqWindow_->setModified();
+			dissolveWindow_->setModified();
 			break;
 		// Charge I
 		case (3):
 			pairPotential->setChargeI(w->text().toDouble());
-			duqWindow_->setModified();
+			dissolveWindow_->setModified();
 			break;
 		// Charge J
 		case (4):
 			pairPotential->setChargeJ(w->text().toDouble());
-			duqWindow_->setModified();
+			dissolveWindow_->setModified();
 			break;
 		// Parameters
 		case (5):
@@ -565,7 +565,7 @@ void ForcefieldTab::on_PairPotentialsTable_itemChanged(QTableWidgetItem* w)
 		case (7):
 		case (8):
 			pairPotential->setParameter(w->column()-5, w->text().toDouble());
-			duqWindow_->setModified();
+			dissolveWindow_->setModified();
 			break;
 		default:
 			Messenger::error("Don't know what to do with data from column %i of PairPotentials table.\n", w->column());

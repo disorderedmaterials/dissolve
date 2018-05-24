@@ -3,24 +3,24 @@
 	*** src/gui/workspacetab.h
 	Copyright T. Youngs 2012-2018
 
-	This file is part of dUQ.
+	This file is part of Dissolve.
 
-	dUQ is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	dUQ is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_WORKSPACETAB_H
-#define DUQ_WORKSPACETAB_H
+#ifndef DISSOLVE_WORKSPACETAB_H
+#define DISSOLVE_WORKSPACETAB_H
 
 #include "gui/ui_workspacetab.h"
 #include "gui/maintab.h"
@@ -36,7 +36,7 @@ class WorkspaceTab : public QWidget, public MainTab
 
 	public:
 	// Constructor / Destructor
-	WorkspaceTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const char* title);
+	WorkspaceTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWidget* parent, const char* title);
 	~WorkspaceTab();
 	// Main form declaration
 	Ui::WorkspaceTab ui;

@@ -19,8 +19,8 @@
 	along with uChroma.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_UCHROMASELECTSYMBOL_H
-#define DUQ_UCHROMASELECTSYMBOL_H
+#ifndef DISSOLVE_UCHROMASELECTSYMBOL_H
+#define DISSOLVE_UCHROMASELECTSYMBOL_H
 
 #include "gui/uchroma/gui/ui_selectsymbol.h"
 #include <QDialog>

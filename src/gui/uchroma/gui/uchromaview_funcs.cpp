@@ -124,12 +124,12 @@ void UChromaViewWidget::saveSettings()
 void UChromaViewWidget::dragEnterEvent(QDragEnterEvent* event)
 {
 	// Check that the event contains suitable data
-	if (event->mimeData()->hasFormat("duq/mimestrings")) event->acceptProposedAction();
+	if (event->mimeData()->hasFormat("dissolve/mimestrings")) event->acceptProposedAction();
 }
 
 void UChromaViewWidget::dropEvent(QDropEvent* event)
 {
-	if (!event->mimeData()->hasFormat("duq/mimestrings")) return;
+	if (!event->mimeData()->hasFormat("dissolve/mimestrings")) return;
 
 	// Cast into a MimeStrings object
 	MimeStrings* mimeStrings = (MimeStrings*) event->mimeData();
