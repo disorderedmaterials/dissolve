@@ -48,9 +48,9 @@ int RefineModule::nTargetableConfigurations()
 // Modules upon which this Module depends to have run first
 const char* RefineModule::dependentModules()
 {
-	// If the 'OnlyWhenStable' keyword is 'true', we require the Energy module
+	// If the 'OnlyWhenEnergyStable' keyword is 'true', we require the Energy module
 	// TODO This needs to be updated since Partials module doesn't exist. Just check for presence of EnergyStable while running instead?
-	if (keywords_.asBool("OnlyWhenStable")) return "Energy";
+	if (keywords_.asBool("OnlyWhenEnergyStable")) return "Energy";
 	else return "";
 }
 

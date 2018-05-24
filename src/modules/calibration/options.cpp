@@ -45,7 +45,7 @@ void CalibrationModule::setUpKeywords()
 {
 	keywords_.add(new ComplexModuleKeyword(1,1), "AdjustIntraBroadening", "Add specified RDF module as a target for IntraBroadening adjustment", "<RDFModule>");
 	keywords_.add(new ComplexModuleKeyword(1,2), "IntraBroadeningNeutronReference", "Add specified NeutronSQ module as a reference for IntraBroadening adjustment", "<NeutronSQModule> [target=S(Q)]");
-	keywords_.add(new BoolModuleKeyword(true), "OnlyWhenStable", "Only perform calibrations when all related Configuration energies are stable");
+	keywords_.add(new BoolModuleKeyword(true), "OnlyWhenEnergyStable", "Only perform calibrations when all related Configuration energies are stable");
 }
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised

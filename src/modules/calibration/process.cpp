@@ -42,9 +42,9 @@ bool CalibrationModule::process(DUQ& duq, ProcessPool& procPool)
 	 */
 
 	// Retrieve / print keyword setup
-	const bool onlyWhenStable = keywords_.asBool("OnlyWhenStable");
+	const bool onlyWhenEnergyStable = keywords_.asBool("OnlyWhenEnergyStable");
 
-	if (onlyWhenStable) Messenger::print("Calibration: Adjustments will only be performed if all related Configuration energies are stable.\n");
+	if (onlyWhenEnergyStable) Messenger::print("Calibration: Adjustments will only be performed if all related Configuration energies are stable.\n");
 
 
 	/*
@@ -67,9 +67,9 @@ bool CalibrationModule::process(DUQ& duq, ProcessPool& procPool)
 
 
 		/*
-		 * Are the energies of all involved Configurations stable (if OnlyWhenStable option is on)
+		 * Are the energies of all involved Configurations stable (if OnlyWhenEnergyStable option is on)
 		 */
-		if (onlyWhenStable)
+		if (onlyWhenEnergyStable)
 		{
 			int stabilityResult = EnergyModule::checkStability(configs);
 			if (stabilityResult == -1) return false;

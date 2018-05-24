@@ -63,7 +63,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 	const double globalMaximumRadius = keywords_.asDouble("MaximumRadius");
 // 	const bool modifyBonds = keywords_.asBool("ModifyBonds");
 	const bool modifyPotential = keywords_.asBool("ModifyPotential");
-	const bool onlyWhenStable = keywords_.asBool("OnlyWhenStable");
+	const bool onlyWhenEnergyStable = keywords_.asBool("OnlyWhenEnergyStable");
 	double phiLimit = keywords_.asDouble("PhiLimit");
 	const double truncationWidth = keywords_.asDouble("TruncationWidth");
 	const WindowFunction& windowFunction = KeywordListHelper<WindowFunction>::retrieve(keywords_, "WindowFunction", WindowFunction());
@@ -77,7 +77,7 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 // 	if (modifyBonds) Messenger::print("Refine: Equilibrium master bond distances will be modified.\n");
 	if (modifyPotential) Messenger::print("Refine: Perturbations to interatomic potentials will be generated and applied.\n");
 	else Messenger::print("Refine: Perturbations to interatomic potentials will be generated only (current potentials will not be modified).\n");
-	if (onlyWhenStable) Messenger::print("Refine: Potential refinement will only be performed if all related Configuration energies are stable.\n");
+	if (onlyWhenEnergyStable) Messenger::print("Refine: Potential refinement will only be performed if all related Configuration energies are stable.\n");
 	if (phiLimit >= 0) Messenger::print("Refine: Limit of additional potential phi(r) across all potentials is %f kJ/mol/Angstrom.\n", phiLimit);
 	else Messenger::warn("Refine: No limits will be applied to additional potential magnitude.\n");
 	if (windowFunction.function() == WindowFunction::NoWindow) Messenger::print("Refine: No window function will be applied in Fourier transforms of S(Q) to g(r).\n");
@@ -104,9 +104,9 @@ bool RefineModule::process(DUQ& duq, ProcessPool& procPool)
 
 
 	/*
-	 * Are the energies of all involved Configurations stable (if OnlyWhenStable option is on)
+	 * Are the energies of all involved Configurations stable (if OnlyWhenEnergyStable option is on)
 	 */
-	if (onlyWhenStable)
+	if (onlyWhenEnergyStable)
 	{
 		int stabilityResult = EnergyModule::checkStability(configs);
 		if (stabilityResult == -1) return false;
