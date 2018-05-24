@@ -43,14 +43,6 @@ class TMdiArea : public QMdiArea
 	private:
 	// DUQWindow Pointer
 	DUQWindow* duqWindow_;
-
-
-	/*
-	 * Signals / Slots
-	 */
-	private slots:
-	// Custom context menu requested
-	void showContextMenu(const QPoint& pos);
 };
 
 #endif

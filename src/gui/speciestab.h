@@ -50,16 +50,6 @@ class SpeciesTab : public QWidget, public MainTab
 
 
 	/*
-	 * SubWidget / SubWindow Handling
-	 */
-	public:
-	// Return the tab's SubWindow area, if it has one
-	QMdiArea* subWindowArea();
-	// Return the tab's SubWidget layout, if it has one
-	QLayout* subWidgetLayout();
-
-
-	/*
 	 * Update
 	 */
 	private:

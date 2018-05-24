@@ -459,15 +459,7 @@
     <property name="title">
      <string>&amp;Workspace</string>
     </property>
-    <widget class="QMenu" name="WorkspaceAddWidgetAction">
-     <property name="title">
-      <string>Add &amp;Widget...</string>
-     </property>
-    </widget>
     <addaction name="WorkspaceAddNewAction"/>
-    <addaction name="separator"/>
-    <addaction name="WorkspaceCurrentAction"/>
-    <addaction name="WorkspaceAddWidgetAction"/>
    </widget>
    <widget class="QMenu" name="SimulationMenu">
     <property name="font">

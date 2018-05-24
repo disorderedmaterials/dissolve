@@ -31,7 +31,6 @@
 class DUQ;
 class DUQWindow;
 class Module;
-class ModuleReference;
 class ModuleWidget;
 
 // Module Control Widget
@@ -41,10 +40,8 @@ class ModuleControlWidget : public SubWidget
 	Q_OBJECT
 
 	private:
-	// Associated Module (taken from either moduleReference on Construction or determined in readState())
+	// Associated Module
 	Module* module_;
-	// Reference for associated Module (if available)
-	ModuleReference* moduleReference_;
 	// Pointer to DUQWindow
 	DUQWindow* duqWindow_;
 	// Reference to dUQ
@@ -52,7 +49,7 @@ class ModuleControlWidget : public SubWidget
 
 	public:
 	// Constructor / Destructor
-	ModuleControlWidget(DUQWindow* duqWindow, ModuleReference* moduleReference, const char* title, bool showTopControls);
+	ModuleControlWidget(DUQWindow* duqWindow, Module* module, const char* title, bool showTopControls);
 	~ModuleControlWidget();
 	// Main form declaration
 	Ui::ModuleControlWidget ui;
@@ -108,15 +105,9 @@ class ModuleControlWidget : public SubWidget
 	 */
 	signals:
 	void windowClosed(QString windowTitle);
-	void shiftModuleUp(void* module);
-	void shiftModuleDown(void* module);
-	void removeModule(void* module);
 	void moduleRun();
 
 	public slots:
-	void on_ShiftLeftButton_clicked(bool checked);
-	void on_ShiftRightButton_clicked(bool checked);
-	void on_RemoveButton_clicked(bool checked);
 	void on_RunButton_clicked(bool checked);
 	void on_TogglePanelsButton_clicked(bool checked);
 	void on_EnabledCheck_clicked(bool checked);

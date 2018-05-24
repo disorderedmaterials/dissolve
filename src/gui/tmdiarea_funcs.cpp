@@ -34,20 +34,4 @@ TMdiArea::TMdiArea(DUQWindow* duqWindow, QWidget* parent) : QMdiArea(parent)
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 	setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 	setContextMenuPolicy(Qt::CustomContextMenu);
-
-	connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
-}
-
-/*
- * Signals / Slots
- */
-
-// Custom context menu requested
-void TMdiArea::showContextMenu(const QPoint& pos)
-{
-	QMenu menu;
-	menu.setFont(font());
-	QMenu* subMenu = menu.addMenu("Add &Widget");
-	duqWindow_->createModuleMenu(subMenu);
-	menu.exec(mapToGlobal(pos));
 }

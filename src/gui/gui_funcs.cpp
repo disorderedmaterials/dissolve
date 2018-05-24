@@ -21,8 +21,6 @@
 
 #include "main/duq.h"
 #include "gui/gui.h"
-#include "gui/modulecontrolwidget.h"
-#include "gui/pairpotentialwidget.h"
 #include "base/lineparser.h"
 #include <QCloseEvent>
 #include <QMdiSubWindow>
@@ -196,55 +194,6 @@ void DUQWindow::addOutputHandler()
 }
 
 /*
- * SubWidgets
- */
-
-// Create named SubWidget
-SubWidget* DUQWindow::createSubWidget(const char* widgetName, const char* title)
-{
-	SubWidget* subWidget = NULL;
-
-	if (DUQSys::sameString(widgetName, "PairPotential"))
-	{
-		PairPotentialWidget* ppWidget = new PairPotentialWidget(this, title);
-		connect(ppWidget, SIGNAL(windowClosed(QString)), this, SLOT(removeWidgetFromCurrentWorkspace(QString)));
-		subWidget = ppWidget;
-	}
-	else if (DUQSys::sameString(widgetName, "ModuleControl"))
-	{
-		ModuleControlWidget* moduleControlWidget = new ModuleControlWidget(this, NULL, title, false);
-		connect(moduleControlWidget, SIGNAL(moduleRun()), this, SLOT(updateControls()));
-		connect(moduleControlWidget, SIGNAL(windowClosed(QString)), this, SLOT(removeWidgetFromCurrentWorkspace(QString)));
-		subWidget = moduleControlWidget;
-	}
-	else Messenger::error("Don't know how to create SubWidget of type '%s'.\n", widgetName);
-
-	return subWidget;
-}
-
-// Shift ModuleReference up in its list
-void DUQWindow::shiftModuleUp(void* moduleReference)
-{
-	// Cast the pointer into a valid ModuleReference*
-	ModuleReference* modRef = static_cast<ModuleReference*>(moduleReference);
-	if (!modRef) return;
-
-	// Make sure the reference contains a ModuleList pointer
-	if (!modRef->parentList()) return;
-	
-}
-
-// Shift ModuleReference down in its list
-void DUQWindow::shiftModuleDown(void* moduleReference)
-{
-}
-
-// Remove Module(Reference)
-void DUQWindow::removeModule(void* moduleReference)
-{
-}
-
-/*
  * Window State
  */
 
@@ -256,7 +205,7 @@ bool DUQWindow::saveWindowLayout()
 	stateParser.openOutput(windowLayoutFilename_);
 	if (!stateParser.isFileGoodForWriting()) return false;
 
-	// Main GUI elemnets
+	// Main GUI elements
 	// -- Current tab
 	if (!stateParser.writeLineF("%i\n", ui.MainTabs->currentIndex())) return false;
 
@@ -281,69 +230,69 @@ bool DUQWindow::loadWindowLayout()
 	if (stateParser.getArgsDelim(LineParser::UseQuotes) != LineParser::Success) return false;
 	int currentTab = stateParser.argi(0);
 
-	// Remainder of file references widgets / modules in some order
-	while (!stateParser.eofOrBlank())
-	{
-		// Parse the line
-		if (stateParser.getArgsDelim(LineParser::UseQuotes) != LineParser::Success) return false;
+// 	// Remainder of file references widgets / modules in some order
+// 	while (!stateParser.eofOrBlank())
+// 	{
+// 		// Parse the line
+// 		if (stateParser.getArgsDelim(LineParser::UseQuotes) != LineParser::Success) return false;
+// 
+// 		SubWidget* subWidget = NULL;
+// 		SubWindow* subWindow = NULL;
+// 
+// 		// The line should contain the title of the target mdiArea, the type of the widget we should create in a subwindow, and the subwindow title
+// 		MainTab* targetTab = findTab(stateParser.argc(0));
+// 		if (!targetTab)
+// 		{
+// 			Messenger::printVerbose("Tab titled '%s' does not yet exist, so we will create it now...\n");
+// 			targetTab = addWorkspaceTab(stateParser.argc(0));
+// 		}
+// 
+// 		// We now check the availability of an area for SubWindows in the tab.
+// 		// If there is one then we must create the window and add it to the tab before reading its state.
+// 		// If not, we search for the named sub *widget*, which should already exist in the tab.
+// 		if (targetTab->subWindowArea())
+// 		{
+// 			subWidget = createSubWidget(stateParser.argc(1), stateParser.argc(2));
+// 
+// 			if (subWidget) subWindow = targetTab->addSubWindow(subWidget, NULL);
+// 			else
+// 			{
+// 				Messenger::error("Couldn't read state information - unrecognised widget type '%s' encountered.\n", stateParser.argc(1));
+// 				return false;
+// 			}
+// 		}
+// 		else
+// 		{
+// 			// No SubWindow area, so just try to find the named widget (which should already exist)
+// 			subWidget = targetTab->findSubWidget(stateParser.argc(2));
+// 			if (!subWidget)
+// 			{
+// 				Messenger::error("Couldn't read state information - widget '%s' not found in tab '%s'.\n", stateParser.argc(2), stateParser.argc(0));
+// 				return false;
+// 			}
+// 		}
+// 
+// 		// Read in the widget's geometry / state / flags (depending on whether it went into a new SubWindow or is just a SubWidget)
+// 		if (targetTab->subWindowArea())
+// 		{
+// 			if (stateParser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+// 			QMdiSubWindow* window = subWindow->window();
+// 			window->setGeometry(stateParser.argi(0), stateParser.argi(1), stateParser.argi(2), stateParser.argi(3));
+// 			// -- Is the window maximised, or shaded?
+// 			if (stateParser.argb(4)) window->showMaximized();
+// 			else if (stateParser.argb(5)) window->showShaded();
+// 		}
+// 		else
+// 		{
+// 			// Discard line, which is not currently used (left in for future use)
+// 			if (stateParser.skipLines(1) != LineParser::Success) return false;
+// 		}
+// 
+// 		// Now call the widget's local readState()
+// 		if (!subWidget->readState(stateParser)) return false;
+// 	}
 
-		SubWidget* subWidget = NULL;
-		SubWindow* subWindow = NULL;
-
-		// The line should contain the title of the target mdiArea, the type of the widget we should create in a subwindow, and the subwindow title
-		MainTab* targetTab = findTab(stateParser.argc(0));
-		if (!targetTab)
-		{
-			Messenger::printVerbose("Tab titled '%s' does not yet exist, so we will create it now...\n");
-			targetTab = addWorkspaceTab(stateParser.argc(0));
-		}
-
-		// We now check the availability of an area for SubWindows in the tab.
-		// If there is one then we must create the window and add it to the tab before reading its state.
-		// If not, we search for the named sub *widget*, which should already exist in the tab.
-		if (targetTab->subWindowArea())
-		{
-			subWidget = createSubWidget(stateParser.argc(1), stateParser.argc(2));
-
-			if (subWidget) subWindow = targetTab->addSubWindow(subWidget, NULL);
-			else
-			{
-				Messenger::error("Couldn't read state information - unrecognised widget type '%s' encountered.\n", stateParser.argc(1));
-				return false;
-			}
-		}
-		else
-		{
-			// No SubWindow area, so just try to find the named widget (which should already exist)
-			subWidget = targetTab->findSubWidget(stateParser.argc(2));
-			if (!subWidget)
-			{
-				Messenger::error("Couldn't read state information - widget '%s' not found in tab '%s'.\n", stateParser.argc(2), stateParser.argc(0));
-				return false;
-			}
-		}
-
-		// Read in the widget's geometry / state / flags (depending on whether it went into a new SubWindow or is just a SubWidget)
-		if (targetTab->subWindowArea())
-		{
-			if (stateParser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-			QMdiSubWindow* window = subWindow->window();
-			window->setGeometry(stateParser.argi(0), stateParser.argi(1), stateParser.argi(2), stateParser.argi(3));
-			// -- Is the window maximised, or shaded?
-			if (stateParser.argb(4)) window->showMaximized();
-			else if (stateParser.argb(5)) window->showShaded();
-		}
-		else
-		{
-			// Discard line, which is not currently used (left in for future use)
-			if (stateParser.skipLines(1) != LineParser::Success) return false;
-		}
-
-		// Now call the widget's local readState()
-		if (!subWidget->readState(stateParser)) return false;
-	}
-
-	// Set current tab (we store the index earlier)
+	// Set current tab (we stored the index earlier)
 	ui.MainTabs->setCurrentIndex(currentTab);
 
 	return true;

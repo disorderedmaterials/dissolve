@@ -97,22 +97,6 @@ ForcefieldTab::~ForcefieldTab()
 }
 
 /*
- * SubWidget / SubWindow Handling
- */
-
-// Return the tab's SubWindow area, if it has one
-QMdiArea* ForcefieldTab::subWindowArea()
-{
-	return NULL;
-}
-
-// Return the tab's SubWidget layout, if it has one
-QLayout* ForcefieldTab::subWidgetLayout()
-{
-	return NULL;
-}
-
-/*
  * Update
  */
 

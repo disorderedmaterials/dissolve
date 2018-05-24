@@ -74,34 +74,6 @@ class MainTab : public ListItem<MainTab>
 
 
 	/*
-	 * SubWidget / SubWindow Handling
-	 */
-	protected:
-	// List of all current MDI SubWindows in this tab, if it has an MDI area
-	List<SubWindow> subWindows_;
-	// List of module SubWidgets, if there is no MDI area
-	List<SubWidget> subWidgets_;
-
-	public:
-	// Return the tab's SubWindow area, if it has one
-	virtual QMdiArea* subWindowArea() = 0;
-	// Return the tab's SubWidget layout, if it has one
-	virtual QLayout* subWidgetLayout() = 0;
-	// Find SubWindow by title
-	SubWindow* findSubWindow(const char* title);
-	// Find SubWindow by SubWidget
-	SubWindow* findSubWindow(SubWidget* subWidget);
-	// Find SubWindow by data content
-	SubWindow* findSubWindow(void* windowData);
-	// Find and return named SubWidget
-	SubWidget* findSubWidget(const char* widgetTitle);
-	// Add SubWindow for widget containing specified data (as pointer)
-	SubWindow* addSubWindow(SubWidget* widget, void* windowContents);
-	// Remove SubWindow specified
-	void removeSubWindow(SubWindow* window);
-
-
-	/*
 	 * Update
 	 */
 	protected:
@@ -123,14 +95,6 @@ class MainTab : public ListItem<MainTab>
 	public:
 	// Write widget state through specified LineParser
 	virtual bool writeState(LineParser& parser) = 0;
-
-
-	/*
-	 * Helper Functions
-	 */
-	public:
-	// Add module widgets to specified layout
-	void addModuleWidgets(const List<ModuleReference>& modules, List<SubWidget>& widgets, QLayout* layout, bool allowShiftAndRemove);
 };
 
 #endif

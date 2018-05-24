@@ -40,22 +40,6 @@ ProcessingTab::~ProcessingTab()
 }
 
 /*
- * SubWidget / SubWindow Handling
- */
-
-// Return the tab's SubWindow area, if it has one
-QMdiArea* ProcessingTab::subWindowArea()
-{
-	return NULL;
-}
-
-// Return the tab's SubWidget layout, if it has one
-QLayout* ProcessingTab::subWidgetLayout()
-{
-	return NULL;
-}
-
-/*
  * Update
  */
 
@@ -84,15 +68,5 @@ void ProcessingTab::enableSensitiveControls()
 // Write widget state through specified LineParser
 bool ProcessingTab::writeState(LineParser& parser)
 {
-	// Loop over our SubWidgets
-	ListIterator<SubWidget> subWidgetIterator(subWidgets_);
-	while (SubWidget* subWidget = subWidgetIterator.iterate())
-	{
-		// Write window state
-		if (!parser.writeLineF("'%s'  %s  '%s'\n", title_.get(), subWidget->widgetType(), subWidget->title())) return false;
-		if (!parser.writeLineF("0\n")) return false;
-		if (!subWidget->writeState(parser)) return false;
-	}
-
 	return true;
 }

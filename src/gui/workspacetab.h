@@ -51,16 +51,6 @@ class WorkspaceTab : public QWidget, public MainTab
 
 
 	/*
-	 * SubWidget / SubWindow Handling
-	 */
-	public:
-	// Return the tab's SubWindow area, if it has one
-	QMdiArea* subWindowArea();
-	// Return the tab's SubWidget layout, if it has one
-	QLayout* subWidgetLayout();
-
-
-	/*
 	 * Update
 	 */
 	protected:
@@ -86,18 +76,56 @@ class WorkspaceTab : public QWidget, public MainTab
 	private:
 	// MDI area widget
 	TMdiArea* mdiArea_;
-	// List of all current MDI sub-windows over all tabs
-	RefList<SubWindow,bool> allSubWindows_;
+	// List of all current MDI sub-windows
+	List<SubWindow> subWindows_;
 
 	private:
 	// Find SubWindow from specified data pointer
 	SubWindow* subWindow(void* data);
+
+	private slots:
+	// Remove subWindow with specified title
+	void removeSubWindow(QString title);
 
 	public:
 	// Remove window for specified data (as pointer) from this widget's MDI area
 	bool removeWindowFromMDIArea(void* windowContents);
 	// Return window for specified data (as pointer) in this widget's MDI area, if it exists
 	QMdiSubWindow* findMDIWindow(void* windowContents);
+	// Find SubWindow by title
+	SubWindow* findSubWindow(const char* title);
+	// Find SubWindow by SubWidget
+	SubWindow* findSubWindow(SubWidget* subWidget);
+	// Find SubWindow by data content
+	SubWindow* findSubWindow(void* windowData);
+	// Add SubWindow for widget containing specified data (as pointer)
+	SubWindow* addSubWindow(SubWidget* widget, void* windowContents);
+	// Remove SubWindow specified
+	void removeSubWindow(SubWindow* window);
+
+
+	/*
+	 * Context Menu
+	 */
+	private:
+	// Create Module menu with specified QMenu as parent
+	void createContextMenu(QMenu* parent);
+
+	private slots:
+	// Module selected on context menu
+	void contextMenuModuleSelected(bool checked);
+	// General widget selected on context menu
+	void contextMenuWidgetSelected(bool checked);
+
+	public:
+	// Add ModuleControl widget to workspace
+	void addModuleControlWidget(Module* module);
+	// Add named widget to workspace
+	void addNamedWidget(const char* widgetName, const char* title);
+
+	public slots:
+	// Custom context menu requested
+	void showContextMenu(const QPoint& pos);
 };
 
 #endif

@@ -38,7 +38,7 @@
 #include <QLabel>
 
 // Constructor
-ModuleControlWidget::ModuleControlWidget(DUQWindow* duqWindow, ModuleReference* modRef, const char* title, bool showTopControls) : SubWidget(duqWindow, title), duqWindow_(duqWindow), duq_(duqWindow->duq())
+ModuleControlWidget::ModuleControlWidget(DUQWindow* duqWindow, Module* module, const char* title, bool showTopControls) : SubWidget(duqWindow, title), duqWindow_(duqWindow), duq_(duqWindow->duq()), module_(module)
 {
 	// Set up user interface
 	ui.setupUi(this);
@@ -47,10 +47,6 @@ ModuleControlWidget::ModuleControlWidget(DUQWindow* duqWindow, ModuleReference* 
 	if (!showTopControls) ui.TopControlsFrame->setVisible(false);
 
 	moduleWidget_ = NULL;
-
-	moduleReference_ = modRef;
-
-	module_ = moduleReference_ ? moduleReference_->module() : NULL;
 
 	panelState_ = ModuleControlWidget::ControlsAndWidgetVisible;
 
@@ -329,21 +325,6 @@ void ModuleControlWidget::setPanelState(ModuleControlWidget::PanelState state)
 /*
  * Widget Slots
  */
-
-void ModuleControlWidget::on_ShiftLeftButton_clicked(bool checked)
-{
-	emit (shiftModuleUp(moduleReference_));
-}
-
-void ModuleControlWidget::on_ShiftRightButton_clicked(bool checked)
-{
-	emit (shiftModuleDown(moduleReference_));
-}
-
-void ModuleControlWidget::on_RemoveButton_clicked(bool checked)
-{
-	emit (removeModule(moduleReference_));
-}
 
 void ModuleControlWidget::on_RunButton_clicked(bool checked)
 {

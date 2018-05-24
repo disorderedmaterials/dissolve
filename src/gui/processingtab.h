@@ -44,17 +44,11 @@ class ProcessingTab : public QWidget, public MainTab
 
 
 	/*
-	 * SubWidget / SubWindow Handling
+	 * Widgets
 	 */
 	private:
 	// Chart widget being displayed
 	ModuleChart* chartWidget_;
-
-	public:
-	// Return the tab's SubWindow area, if it has one
-	QMdiArea* subWindowArea();
-	// Return the tab's SubWidget layout, if it has one
-	QLayout* subWidgetLayout();
 
 
 	/*

@@ -51,28 +51,12 @@ ConfigurationTab::ConfigurationTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* p
 	// Populate coordinates file format combo
 	ComboPopulator(ui.CoordinatesFileFormatCombo, ImportModuleFormats::nCoordinateFormats, ImportModuleFormats::niceCoordinateFormats());
 
-	// Add current Module widgets to layout
-	addModuleWidgets(configuration_->modules().modules(), subWidgets_, ui.ModuleWidgetLayout, true);
+// 	// Add current Module widgets to layout
+// 	addModuleWidgets(configuration_->modules().modules(), subWidgets_, ui.ModuleWidgetLayout, true);
 }
 
 ConfigurationTab::~ConfigurationTab()
 {
-}
-
-/*
- * SubWidget / SubWindow Handling
- */
-
-// Return the tab's SubWindow area, if it has one
-QMdiArea* ConfigurationTab::subWindowArea()
-{
-	return NULL;
-}
-
-// Return the tab's SubWidget layout, if it has one
-QLayout* ConfigurationTab::subWidgetLayout()
-{
-	return ui.ModuleWidgetLayout;
 }
 
 /*
@@ -156,27 +140,17 @@ void ConfigurationTab::updateControls()
 	ui.CoordinatesFileFormatCombo->setCurrentIndex(configuration_->inputCoordinatesFormat());
 	ui.CoordinatesFromFileGroup->setChecked(configuration_->hasInputCoordinatesFile());
 
-	// Loop over our SubWidgets
-	ListIterator<SubWidget> subWidgetIterator(subWidgets_);
-	while (SubWidget* subWidget = subWidgetIterator.iterate()) subWidget->updateControls();
-
 	refreshing_ = false;
 }
 
 // Disable sensitive controls within tab, ready for main code to run
 void ConfigurationTab::disableSensitiveControls()
 {
-	// Disable sensitive controls in SubWidgets
-	ListIterator<SubWidget> subWidgetIterator(subWidgets_);
-	while (SubWidget* subWidget = subWidgetIterator.iterate()) subWidget->disableSensitiveControls();
 }
 
 // Enable sensitive controls within tab, ready for main code to run
 void ConfigurationTab::enableSensitiveControls()
 {
-	// Enable sensitive controls in SubWidgets
-	ListIterator<SubWidget> subWidgetIterator(subWidgets_);
-	while (SubWidget* subWidget = subWidgetIterator.iterate()) subWidget->enableSensitiveControls();
 }
 
 /*
@@ -347,15 +321,5 @@ void ConfigurationTab::on_ExportButton_clicked(bool checked)
 // Write widget state through specified LineParser
 bool ConfigurationTab::writeState(LineParser& parser)
 {
-	// Loop over our SubWidgets
-	ListIterator<SubWidget> subWidgetIterator(subWidgets_);
-	while (SubWidget* subWidget = subWidgetIterator.iterate())
-	{
-		// Write window state
-		if (!parser.writeLineF("'%s'  %s  '%s'\n", title_.get(), subWidget->widgetType(), subWidget->title())) return false;
-		if (!parser.writeLineF("0\n")) return false;
-		if (!subWidget->writeState(parser)) return false;
-	}
-
 	return true;
 }

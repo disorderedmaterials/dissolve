@@ -64,22 +64,6 @@ SpeciesTab::~SpeciesTab()
 }
 
 /*
- * SubWidget / SubWindow Handling
- */
-
-// Return the tab's SubWindow area, if it has one
-QMdiArea* SpeciesTab::subWindowArea()
-{
-	return NULL;
-}
-
-// Return the tab's SubWidget layout, if it has one
-QLayout* SpeciesTab::subWidgetLayout()
-{
-	return NULL;
-}
-
-/*
  * Update
  */
 

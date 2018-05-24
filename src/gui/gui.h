@@ -110,14 +110,6 @@ class DUQWindow : public QMainWindow
 	// Simulation
 	// Workspace
 	void on_WorkspaceAddNewAction_triggered(bool checked);
-	void addWidgetToCurrentWorkspace(bool checked);
-	void removeWidgetFromCurrentWorkspace(QString windowTitle);
-
-	public:
-	// Update menu items (after change in Modules etc.)
-	void updateMenuItems();
-	// Create Module menu with specified QAction as parent
-	void createModuleMenu(QMenu* parent);
 
 
 	/*
@@ -209,22 +201,6 @@ class DUQWindow : public QMainWindow
 	public slots:
 	// Remove tab containing the specified page widget, as it has been deleted
 	void removeDeletedTab(QWidget* page);
-
-
-	/*
-	 * SubWidgets
-	 */
-	private:
-	// Create named SubWidget
-	SubWidget* createSubWidget(const char* widgetName, const char* title);
-
-	public slots:
-	// Shift ModuleReference up in its list
-	void shiftModuleUp(void* moduleReference);
-	// Shift ModuleReference down in its list
-	void shiftModuleDown(void* moduleReference);
-	// Remove Module(Reference)
-	void removeModule(void* moduleReference);
 
 
 	/*
