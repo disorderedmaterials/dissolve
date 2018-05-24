@@ -1,6 +1,6 @@
 /*
-	*** Simulation Tab
-	*** src/gui/simulationtab.h
+	*** Processing Tab
+	*** src/gui/processingtab.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -19,10 +19,10 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DUQ_SIMULATIONTAB_H
-#define DUQ_SIMULATIONTAB_H
+#ifndef DUQ_PROCESSINGTAB_H
+#define DUQ_PROCESSINGTAB_H
 
-#include "gui/ui_simulationtab.h"
+#include "gui/ui_processingtab.h"
 #include "gui/maintab.h"
 #include "gui/widgets/subwidget.h"
 
@@ -30,17 +30,17 @@
 class ModuleChart;
 
 // Simulation Tab
-class SimulationTab : public QWidget, public MainTab
+class ProcessingTab : public QWidget, public MainTab
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
 	public:
 	// Constructor / Destructor
-	SimulationTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const char* title);
-	~SimulationTab();
+	ProcessingTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const char* title);
+	~ProcessingTab();
 	// Main form declaration
-	Ui::SimulationTab ui;
+	Ui::ProcessingTab ui;
 
 
 	/*

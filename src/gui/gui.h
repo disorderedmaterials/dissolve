@@ -169,6 +169,14 @@ class DUQWindow : public QMainWindow
 	private:
 	// List of all displayed tabs
 	List<MainTab> tabs_;
+	// Pointer to Forcefield tab
+	MainTab* forcefieldTab_;
+	// Pointer to Species tab
+	MainTab* speciesTab_;
+	// Pointer to Main Processing tab
+	MainTab* mainProcessingTab_;
+	// Pointer to Analysis Processing tab
+	MainTab* analysisProcessingTab_;
 
 	private slots:
 	void on_MainTabs_currentChanged(int index);

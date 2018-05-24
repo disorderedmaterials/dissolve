@@ -23,7 +23,7 @@
 #include "gui/configurationtab.h"
 #include "gui/forcefieldtab.h"
 #include "gui/moduletab.h"
-#include "gui/simulationtab.h"
+#include "gui/processingtab.h"
 #include "gui/speciestab.h"
 #include "gui/workspacetab.h"
 #include "classes/configuration.h"
@@ -83,21 +83,20 @@ void DUQWindow::clearAllTabs()
 // Add core tabs
 void DUQWindow::addCoreTabs()
 {
-	MainTab* forcefieldTab = new ForcefieldTab(this, duq_, ui.MainTabs, "Forcefield");
-	tabs_.own(forcefieldTab);
-	ui.MainTabs->setTabTextColour(forcefieldTab->page(), QColor(189, 68, 0));
-	ui.MainTabs->setTabIcon(forcefieldTab->page(), QIcon(":/tabs/icons/tabs_ff.svg"));
+	forcefieldTab_ = new ForcefieldTab(this, duq_, ui.MainTabs, "Forcefield");
+	tabs_.own(forcefieldTab_);
+	ui.MainTabs->setTabTextColour(forcefieldTab_->page(), QColor(189, 68, 0));
+	ui.MainTabs->setTabIcon(forcefieldTab_->page(), QIcon(":/tabs/icons/tabs_ff.svg"));
 
-	MainTab* speciesTab = new SpeciesTab(this, duq_, ui.MainTabs, "Species");
-	tabs_.own(speciesTab);
-	ui.MainTabs->setTabTextColour(speciesTab->page(), QColor(0, 81, 0));
-	ui.MainTabs->setTabIcon(speciesTab->page(), QIcon(":/tabs/icons/tabs_species.svg"));
+	speciesTab_ = new SpeciesTab(this, duq_, ui.MainTabs, "Species");
+	tabs_.own(speciesTab_);
+	ui.MainTabs->setTabTextColour(speciesTab_->page(), QColor(0, 81, 0));
+	ui.MainTabs->setTabIcon(speciesTab_->page(), QIcon(":/tabs/icons/tabs_species.svg"));
 
-	MainTab* simulationTab = new SimulationTab(this, duq_, ui.MainTabs, "Simulation");
-	tabs_.own(simulationTab);
-
-	ui.MainTabs->setTabTextColour(simulationTab->page(), QColor(11, 36, 118));
-	ui.MainTabs->setTabIcon(simulationTab->page(), QIcon(":/tabs/icons/tabs_flow.svg"));
+	mainProcessingTab_ = new ProcessingTab(this, duq_, ui.MainTabs, "Main Processing");
+	tabs_.own(mainProcessingTab_);
+	ui.MainTabs->setTabTextColour(mainProcessingTab_->page(), QColor(11, 36, 118));
+	ui.MainTabs->setTabIcon(mainProcessingTab_->page(), QIcon(":/tabs/icons/tabs_flow.svg"));
 }
 
 // Add tab for specified Configuration target

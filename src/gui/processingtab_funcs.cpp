@@ -1,6 +1,6 @@
 /*
-	*** SimulationTab Functions
-	*** src/gui/simulationtab_funcs.cpp
+	*** ProcessingTab Functions
+	*** src/gui/processingtab_funcs.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of dUQ.
@@ -19,13 +19,13 @@
 	along with dUQ.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/simulationtab.h"
+#include "gui/processingtab.h"
 #include "gui/modulechart.hui"
 #include "main/duq.h"
 #include "base/lineparser.h"
 
 // Constructor / Destructor
-SimulationTab::SimulationTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const char* title) : MainTab(duqWindow, duq, parent, CharString("Simulation", title), this)
+ProcessingTab::ProcessingTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent, const char* title) : MainTab(duqWindow, duq, parent, title, this)
 {
 	ui.setupUi(this);
 
@@ -35,7 +35,7 @@ SimulationTab::SimulationTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* parent,
 	ui.ScrollArea->setWidget(chartWidget_);
 }
 
-SimulationTab::~SimulationTab()
+ProcessingTab::~ProcessingTab()
 {
 }
 
@@ -44,13 +44,13 @@ SimulationTab::~SimulationTab()
  */
 
 // Return the tab's SubWindow area, if it has one
-QMdiArea* SimulationTab::subWindowArea()
+QMdiArea* ProcessingTab::subWindowArea()
 {
 	return NULL;
 }
 
 // Return the tab's SubWidget layout, if it has one
-QLayout* SimulationTab::subWidgetLayout()
+QLayout* ProcessingTab::subWidgetLayout()
 {
 	return NULL;
 }
@@ -60,19 +60,19 @@ QLayout* SimulationTab::subWidgetLayout()
  */
 
 // Update controls in tab
-void SimulationTab::updateControls()
+void ProcessingTab::updateControls()
 {
 	chartWidget_->updateControls();
 }
 
 // Disable sensitive controls within tab, ready for main code to run
-void SimulationTab::disableSensitiveControls()
+void ProcessingTab::disableSensitiveControls()
 {
 	chartWidget_->setEnabled(false);
 }
 
 // Enable sensitive controls within tab, ready for main code to run
-void SimulationTab::enableSensitiveControls()
+void ProcessingTab::enableSensitiveControls()
 {
 	chartWidget_->setEnabled(true);
 }
@@ -82,7 +82,7 @@ void SimulationTab::enableSensitiveControls()
  */
 
 // Write widget state through specified LineParser
-bool SimulationTab::writeState(LineParser& parser)
+bool ProcessingTab::writeState(LineParser& parser)
 {
 	// Loop over our SubWidgets
 	ListIterator<SubWidget> subWidgetIterator(subWidgets_);
