@@ -19,7 +19,7 @@ SUFFIXES: .ui .hui .qrc
 	rm $*.cpp
 
 clean-local:
-	-rm -f ui_* *.o moc_*.cpp colourbutton.cpp gradientbar.cpp icons.cpp texponentialspin.cpp tmdiarea.cpp
+	-rm -f ui_* *.o moc_*.cpp colourbutton.cpp gradientbar.cpp mimetreewidget.cpp supertabbar.cpp supertabwidget.cpp texponentialspin.cpp tmenubutton.cpp tpopupwidget.cpp
 
 libwidgets_la_SOURCES = colourbutton.hui gradientbar.hui mimetreewidget.hui supertabbar.hui supertabwidget.hui texponentialspin.hui tmenubutton.hui tpopupwidget.hui
 
