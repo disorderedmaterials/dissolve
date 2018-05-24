@@ -171,7 +171,7 @@ void ModuleChart::mousePressEvent(QMouseEvent* event)
 	{
 		// Check object under mouse
 		draggedBlock_ = flowBlockHeaderAt(mapToGlobal(event->pos()));
-		if (draggedBlock_) printf("BLOCK = %s\n", draggedBlock_->moduleReference()->module()->uniqueName());
+// 		if (draggedBlock_) printf("BLOCK = %s\n", draggedBlock_->moduleReference()->module()->uniqueName());
 		dragStartPosition_ = event->pos();
 	}
 }

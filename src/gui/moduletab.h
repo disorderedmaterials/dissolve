@@ -49,6 +49,8 @@ class ModuleTab : public QWidget, public MainTab
 	public:
 	// Module displayed in this tab
 	Module* module_;
+	// ModuleWidget displayed in this control widget (if any)
+	ModuleWidget* moduleWidget_;
 
 
 	/*
@@ -64,6 +66,10 @@ class ModuleTab : public QWidget, public MainTab
 	/*
 	 * Update
 	 */
+	private:
+	// Update header texts
+	void updateHeaderTexts();
+
 	protected:
 	// Update controls in tab
 	void updateControls();
@@ -80,6 +86,7 @@ class ModuleTab : public QWidget, public MainTab
 	// Write widget state through specified LineParser
 	bool writeState(LineParser& parser);
 
+
 	/*
 	 * Widget Functions
 	 */
@@ -87,6 +94,7 @@ class ModuleTab : public QWidget, public MainTab
 	void on_ToggleKeywordsButton_clicked(bool checked);
 	void on_RunButton_clicked(bool checked);
 	void on_EnabledButton_clicked(bool checked);
+	void on_FrequencySpin_valueChanged(int value);
 
 	signals:
 	void moduleRun();
