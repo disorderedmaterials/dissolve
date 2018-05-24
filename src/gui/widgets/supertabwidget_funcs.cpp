@@ -22,6 +22,7 @@
 #include "gui/widgets/supertabwidget.hui"
 #include "gui/widgets/supertabbar.hui"
 #include "base/messenger.h"
+#include <QToolButton>
 
 // Constructor
 SuperTabWidget::SuperTabWidget(QWidget* parent) : QTabWidget(parent)
@@ -29,7 +30,6 @@ SuperTabWidget::SuperTabWidget(QWidget* parent) : QTabWidget(parent)
 	// Create our own tab bar
 	superTabBar_ = new SuperTabBar(this);
 	setTabBar(superTabBar_);
-
 }
 
 /*
@@ -64,5 +64,58 @@ void SuperTabWidget::setTabIcon(QWidget* pageWidget, QIcon icon)
 
 	// Set the style via the tab bar
 	superTabBar_->setTabIcon(tabIndex, icon);
-	
+}
+
+// Add close button to specified tab
+QToolButton* SuperTabWidget::addTabCloseButton(QWidget* pageWidget)
+{
+	// Find the tab containing the specified page
+	int tabIndex = indexOf(pageWidget);
+	if (tabIndex == -1)
+	{
+		Messenger::error("SuperTabWidget::setTabFont - Failed to find tab containing widget %p.\n", pageWidget);
+		return NULL;
+	}
+
+	// Create a suitable tool button for the tab
+	QToolButton* closeButton = new QToolButton;
+	closeButton->setIcon(QIcon(":/general/icons/general_cross.svg"));
+	closeButton->setIconSize(QSize(10,10));
+	closeButton->setAutoRaise(true);
+	superTabBar_->setTabButton(tabIndex, QTabBar::RightSide	, closeButton);
+	connect(closeButton, SIGNAL(clicked(bool)), this, SLOT(tabCloseButtonClicked(bool)));
+	closeButtons_.add(closeButton, pageWidget);
+
+	return closeButton;
+}
+
+/*
+ * Widget Functions
+ */
+
+// Tab close button clicked
+void SuperTabWidget::tabCloseButtonClicked(bool checked)
+{
+	// Find the close button that sent the signal in our buttons reflist
+	QToolButton* toolButton = (QToolButton*) sender();
+	if (!toolButton) return;
+
+	RefListItem<QToolButton,QWidget*>* item = closeButtons_.contains(toolButton);
+	if (item)
+	{
+		// Find the tab containing the page widget (stored as the RefListItem's data)
+		int tabIndex = indexOf(item->data);
+		if (tabIndex == -1)
+		{
+			Messenger::error("SuperTabWidget::tabCloseButtonClicked - Failed to find tab containing widget %p.\n", item->data);
+			return;
+		}
+
+		// Remove the button item
+		closeButtons_.remove(item);
+
+		// Signal that the specified page widget no longer exists. The main GUI will handle deletion of the page in the TabBar
+		emit(tabClosed(item->data));
+	}
+	else printf("Tabs received a close event from an unknown button...\n");
 }

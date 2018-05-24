@@ -48,7 +48,7 @@ MainTab::MainTab(DUQWindow* duqWindow, DUQ& duq, QTabWidget* tabWidget, const ch
 
 MainTab::~MainTab()
 {
-	// Delete the tab from the tabwidget first - find its index (based on our, the page's, pointer) and remove that
+	// Delete the tab from the tabwidget first - find its index (based on the page widget pointer) and remove that
 	int index = tabWidget_->indexOf(page_);
 	if (index == -1) printf("Couldn't remove tab '%s' since its page widget could not be found.\n", title_.get());
 	else

@@ -187,6 +187,8 @@ class DUQWindow : public QMainWindow
 	MainTab* addWorkspaceTab(const char* title);
 	// Find tab with title specified
 	MainTab* findTab(const char* title);
+	// Find tab with specified page widget
+	MainTab* findTab(QWidget* page);
 	// Return current tab
 	MainTab* currentTab();
 	// Make specified tab the current one
@@ -197,6 +199,10 @@ class DUQWindow : public QMainWindow
 	public:
 	// Add tab for specified Module target
 	void addModuleTab(Module* module);
+
+	public slots:
+	// Remove tab containing the specified page widget, as it has been deleted
+	void removeDeletedTab(QWidget* page);
 
 
 	/*

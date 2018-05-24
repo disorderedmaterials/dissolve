@@ -41,7 +41,8 @@ DUQWindow::DUQWindow(DUQ& duq) : QMainWindow(NULL), duq_(duq), threadController_
 	connect(this, SIGNAL(iterate(int)), &threadController_, SLOT(iterate(int)));
 	connect(this, SIGNAL(stopIterating()), &threadController_, SLOT(stopIterating()));
 
-	// Connect signals from our main tabbar
+	// Connect signals from our main tab widget / bar
+	connect(ui.MainTabs, SIGNAL(tabClosed(QWidget*)), this, SLOT(removeDeletedTab(QWidget*)));
 	connect(ui.MainTabs, SIGNAL(tabBarDoubleClicked(int)), this, SLOT(mainTabsDoubleClicked(int)));
 	duqState_ = StoppedState;
 

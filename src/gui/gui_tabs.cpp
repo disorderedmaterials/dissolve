@@ -85,27 +85,29 @@ void DUQWindow::clearAllTabs()
 void DUQWindow::addCoreTabs()
 {
 	MainTab* forcefieldTab = new ForcefieldTab(this, duq_, ui.MainTabs, "Forcefield");
+	tabs_.own(forcefieldTab);
 	ui.MainTabs->setTabTextColour(forcefieldTab->page(), QColor(189, 68, 0));
 	ui.MainTabs->setTabIcon(forcefieldTab->page(), QIcon(":/tabs/icons/tabs_ff.svg"));
-	tabs_.own(forcefieldTab);
 
 	MainTab* speciesTab = new SpeciesTab(this, duq_, ui.MainTabs, "Species");
+	tabs_.own(speciesTab);
 	ui.MainTabs->setTabTextColour(speciesTab->page(), QColor(0, 81, 0));
 	ui.MainTabs->setTabIcon(speciesTab->page(), QIcon(":/tabs/icons/tabs_species.svg"));
-	tabs_.own(speciesTab);
 
 	MainTab* simulationTab = new SimulationTab(this, duq_, ui.MainTabs, "Simulation");
+	tabs_.own(simulationTab);
+
 	ui.MainTabs->setTabTextColour(simulationTab->page(), QColor(11, 36, 118));
 	ui.MainTabs->setTabIcon(simulationTab->page(), QIcon(":/tabs/icons/tabs_flow.svg"));
-	tabs_.own(simulationTab);
 }
 
 // Add tab for specified Configuration target
 void DUQWindow::addConfigurationTab(Configuration* cfg)
 {
 	MainTab* tab = new ConfigurationTab(this, duq_, ui.MainTabs, cfg->name(), cfg);
-	ui.MainTabs->setTabIcon(tab->page(), QIcon(":/tabs/icons/tabs_configuration.svg"));
 	tabs_.own(tab);
+
+	ui.MainTabs->setTabIcon(tab->page(), QIcon(":/tabs/icons/tabs_configuration.svg"));
 }
 
 // Add processing workspace
@@ -138,6 +140,14 @@ MainTab* DUQWindow::findTab(const char* title)
 	return NULL;
 }
 
+// Find tab with specified page widget
+MainTab* DUQWindow::findTab(QWidget* page)
+{
+	for (MainTab* tab = tabs_.first() ; tab != NULL; tab = tab->next) if (tab->page() == page) return tab;
+
+	return NULL;
+}
+
 // Return current tab
 MainTab* DUQWindow::currentTab()
 {
@@ -163,11 +173,26 @@ void DUQWindow::addModuleTab(Module* module)
 {
 	// Does a tab for this Module already exist
 	MainTab* moduleTab = findTab(module->uniqueName());
-	if (moduleTab) setCurrentTab(moduleTab);
-	else
+	if (!moduleTab)
 	{
 		// Need to create a new ModuleTab
-		MainTab* tab = new ModuleTab(this, duq_, ui.MainTabs, module->uniqueName(), module);
-		tabs_.own(tab);
+		moduleTab = new ModuleTab(this, duq_, ui.MainTabs, module->uniqueName(), module);
+		tabs_.own(moduleTab);
+
+		// Add a close button
+		ui.MainTabs->addTabCloseButton(moduleTab->page());
 	}
+
+	setCurrentTab(moduleTab);
+}
+
+// Remove tab containing the specified page widget, as it has been deleted
+void DUQWindow::removeDeletedTab(QWidget* page)
+{
+	MainTab* deletedTab = findTab(page);
+	if (deletedTab)
+	{
+		tabs_.remove(deletedTab);
+	}
+	else printf("Couldn't remove deleted tab as it could not be found in our list.\n");
 }

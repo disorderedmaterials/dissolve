@@ -22,9 +22,11 @@
 #ifndef DUQ_SUPERTABWIDGET_H
 #define DUQ_SUPERTABWIDGET_H
 
+#include "templates/reflist.h"
 #include <QTabWidget>
 
 // Forward declarations
+class QToolButton;
 class SuperTabBar;
 
 // SuperTabWidget
@@ -49,6 +51,23 @@ class SuperTabWidget : public QTabWidget
 	void setTabTextColour(QWidget* pageWidget, QColor colour);
 	// Set icon for tab with specified page widget
 	void setTabIcon(QWidget* pageWidget, QIcon icon);
+	// Add close button to specified tab
+	QToolButton* addTabCloseButton(QWidget* pageWidget);
+
+
+	/*
+	 * Widget Functions
+	 */
+	private:
+	// RefList of close buttons and their associated pageWidgets
+	RefList<QToolButton,QWidget*> closeButtons_;
+
+	private slots:
+	// Tab close button clicked
+	void tabCloseButtonClicked(bool);
+
+	signals:
+	void tabClosed(QWidget*);
 };
 
 #endif
