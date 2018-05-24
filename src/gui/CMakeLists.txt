@@ -13,7 +13,6 @@ SET(gui_MOC_HDRS
   moduletab.h
   modulewidget.h
   pairpotentialwidget.h
-  processingtab.h
   simulationtab.h
   speciestab.h
   workspacetab.h
@@ -34,7 +33,6 @@ SET(gui_UIS
   modulecontrolwidget.ui
   moduletab.ui
   pairpotentialwidget.ui
-  processingtab.ui
   simulationtab.ui
   speciestab.ui
   workspacetab.ui
@@ -58,7 +56,6 @@ SET(gui_SRCS
   modulewidget.cpp
   outputhandler_funcs.cpp
   pairpotentialwidget_funcs.cpp
-  processingtab_funcs.cpp
   simulationtab_funcs.cpp
   speciestab_funcs.cpp
   thread_funcs.cpp

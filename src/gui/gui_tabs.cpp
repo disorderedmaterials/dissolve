@@ -23,7 +23,6 @@
 #include "gui/configurationtab.h"
 #include "gui/forcefieldtab.h"
 #include "gui/moduletab.h"
-#include "gui/processingtab.h"
 #include "gui/simulationtab.h"
 #include "gui/speciestab.h"
 #include "gui/workspacetab.h"
@@ -108,13 +107,6 @@ void DUQWindow::addConfigurationTab(Configuration* cfg)
 	tabs_.own(tab);
 
 	ui.MainTabs->setTabIcon(tab->page(), QIcon(":/tabs/icons/tabs_configuration.svg"));
-}
-
-// Add processing workspace
-void DUQWindow::addProcessingTab()
-{
-	MainTab* tab = new ProcessingTab(this, duq_, ui.MainTabs, "Processing");
-	tabs_.own(tab);
 }
 
 // Add on an empty workspace tab

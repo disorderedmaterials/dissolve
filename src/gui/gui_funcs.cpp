@@ -135,7 +135,6 @@ bool DUQWindow::openFile(const char* inputFile, bool ignoreRestartFile, bool ign
 	addCoreTabs();
 	ListIterator<Configuration> configIterator(duq_.configurations());
 	while (Configuration* cfg = configIterator.iterate()) addConfigurationTab(cfg);
-	addProcessingTab();
 	refreshing_ = false;
 
 	// Does a window state exist for this input file?
