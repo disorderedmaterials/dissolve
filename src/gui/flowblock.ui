@@ -87,7 +87,7 @@
         <item row="0" column="1">
          <widget class="QToolButton" name="RemoveButton">
           <property name="toolTip">
-           <string>Toggle additional module control panel</string>
+           <string>Remove this module</string>
           </property>
           <property name="text">
            <string>...</string>
@@ -104,6 +104,9 @@
           </property>
           <property name="checkable">
            <bool>false</bool>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -303,7 +306,7 @@
              <item>
               <widget class="QToolButton" name="ToggleKeywordsButton">
                <property name="toolTip">
-                <string>Toggle additional module control panel</string>
+                <string>Toggle module keyword controls</string>
                </property>
                <property name="text">
                 <string/>
