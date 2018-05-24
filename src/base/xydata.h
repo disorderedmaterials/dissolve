@@ -164,6 +164,14 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 
 
 	/*
+	 * Gradients
+	 */
+	public:
+	// Return gradient of last n points, and average y value if requested
+	double lastGradient(int nSamples, double* yMean = NULL) const;
+
+
+	/*
 	 * Integration
 	 */
 	public:

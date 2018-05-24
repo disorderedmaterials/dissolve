@@ -586,6 +586,41 @@ void XYData::trim(double minX, double maxX)
 }
 
 /*
+ * Gradients
+ */
+
+// Return gradient of last n points, and average y value if requested
+double XYData::lastGradient(int nSamples, double* yMean) const
+{
+	// Work out standard deviation of energy points
+	double Sx = 0.0, Sy = 0.0, Sxy = 0.0;
+	double xBar = 0.0, yBar = 0.0;
+
+	// Calculate mean values
+	for (int n=nPoints()-nSamples; n<nPoints(); ++n)
+	{
+		xBar += n;
+		yBar += y(n);
+	}
+	xBar /= nSamples;
+	yBar /= nSamples;
+
+	// Determine Sx, Sy, and Sxy
+	for (int n=nPoints()-nSamples; n<nPoints(); ++n)
+	{
+		Sx += (n - xBar)*(n - xBar);
+		Sy += (y(n) - yBar)*(y(n) - yBar);
+		Sxy += (n - xBar) * (y(n) - yBar);
+	}
+
+	// Set yMean value (if a variable was provided)
+	if (yMean) (*yMean) = yBar;
+
+	// Return the gradient
+	return Sxy / Sx;
+}
+
+/*
  * Integration
  */
 

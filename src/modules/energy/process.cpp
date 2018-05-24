@@ -331,26 +331,9 @@ bool EnergyModule::process(DUQ& duq, ProcessPool& procPool)
 			if (stabilityWindow > totalEnergyArray.nPoints()) Messenger::print("Energy: Too few points to assess stability.\n");
 			else
 			{
-				// Work out standard deviation of energy points
-				double Sx = 0.0, Sy = 0.0, Sxy = 0.0;
-				double xBar = 0.0, yBar = 0.0;
-				// -- Calculate mean values
-				for (int n=totalEnergyArray.nPoints()-stabilityWindow; n<totalEnergyArray.nPoints(); ++n)
-				{
-					xBar += n;
-					yBar += totalEnergyArray.y(n);
-				}
-				xBar /= stabilityWindow;
-				yBar /= stabilityWindow;
-				// -- Determine Sx, Sy, and Sxy
-				for (int n=totalEnergyArray.nPoints()-stabilityWindow; n<totalEnergyArray.nPoints(); ++n)
-				{
-					Sx += (n - xBar)*(n - xBar);
-					Sy += (totalEnergyArray.y(n) - yBar)*(totalEnergyArray.y(n) - yBar);
-					Sxy += (n - xBar) * (totalEnergyArray.y(n) - yBar);
-				}
-				grad = Sxy / Sx;
-				double thresholdValue = fabs(stabilityThreshold*yBar);
+				double yMean;
+				grad = totalEnergyArray.lastGradient(stabilityWindow, &yMean);
+				double thresholdValue = fabs(stabilityThreshold*yMean);
 				stable = fabs(grad) < thresholdValue;
 
 				Messenger::print("Energy: Gradient of last %i points is %e kJ/mol/step (absolute threshold value is %e, stable = %s).\n", stabilityWindow, grad, thresholdValue, DUQSys::btoa(stable));
