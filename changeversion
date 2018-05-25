@@ -39,10 +39,10 @@ fi
 if [ "$TEST" = "false" ]
 then
   #cp src/main/version.h src/main/version.h.orig
-  sed -i -e "s/#define DissolveVERSION \"[0-9\.]\+\(.*\)\"/#define DissolveVERSION \"$MAJOR.$MINOR.$PATCH\"\1/g" src/version.h
+  sed -i -e "s/#define DISSOLVEVERSION \"[0-9\.]\+\(.*\)\"/#define DISSOLVEVERSION \"$MAJOR.$MINOR.$PATCH\"\1/g" src/version.h
 fi
 echo -n "       version.h (Program Version) : "
-grep '#define DissolveVERSION' src/version.h | sed -e 's/#define DissolveVERSION "\([0-9a-z\.]\+\).*"/\1/g'
+grep '#define DISSOLVEVERSION' src/version.h | sed -e 's/#define DISSOLVEVERSION "\([0-9a-z\.]\+\).*"/\1/g'
 
 
 # ./CMakeLists.txt
@@ -62,9 +62,9 @@ grep 'set(VERSION_PATCH' ./CMakeLists.txt | sed -e 's/set(VERSION_PATCH \"\([0-9
 echo -n "  ./configure.ac (Package Version) : "
 if [ "$TEST" = "false" ]
 then
-  sed -i -e "s/m4_define(\[Dissolve_VERSION\],\[\([0-9a-z\.]\+\)\])/m4_define([Dissolve_VERSION],[$MAJOR.$MINOR.$PATCH])/g" configure.ac
+  sed -i -e "s/m4_define(\[DISSOLVE_VERSION\],\[\([0-9a-z\.]\+\)\])/m4_define([DISSOLVE_VERSION],[$MAJOR.$MINOR.$PATCH])/g" configure.ac
 fi
-grep 'm4_define(\[Dissolve_VERSION\]' ./configure.ac | sed -e 's/m4_define(\[Dissolve_VERSION\],\[\([0-9a-z\.]\+\)\])/\1/g'
+grep 'm4_define(\[DISSOLVE_VERSION\]' ./configure.ac | sed -e 's/m4_define(\[DISSOLVE_VERSION\],\[\([0-9a-z\.]\+\)\])/\1/g'
 
 
 # Change specfile name and contents
@@ -97,20 +97,20 @@ grep 'APP_VERSION=' ./extra/OSX/dissolve.dmginfo | sed -e 's/APP_VERSION=\"\([0-
 # Windows build files
 if [ "$TEST" = "false" ]
 then
-  sed -i -e "s/#define MyAppVersion \"[0-9\.]*\"/#define MyAppVersion \"$MAJOR.$MINOR.$PATCH\"/g" -e "s/OutputBaseFilename=dUQ-[0-9\.]*/OutputBaseFilename=dUQ-$MAJOR.$MINOR.$PATCH/g" extra/Win32/dissolve.iss
+  sed -i -e "s/#define MyAppVersion \"[0-9\.]*\"/#define MyAppVersion \"$MAJOR.$MINOR.$PATCH\"/g" -e "s/OutputBaseFilename=Dissolve-[0-9\.]*/OutputBaseFilename=Dissolve-$MAJOR.$MINOR.$PATCH/g" extra/Win32/dissolve.iss
 fi
 echo -n "        dissolve.iss (Program Version) : "
 grep 'define MyAppVersion' extra/Win32/dissolve.iss | sed -e 's/#define MyAppVersion \"\([0-9\.]*\)\"/\1/g'
 echo -n "        dissolve.iss (Output Filename) : "
-grep 'OutputBaseFilename' extra/Win32/dissolve.iss | sed -e 's/OutputBaseFilename=dUQ-\([0-9\.]*\)/\1/g'
+grep 'OutputBaseFilename' extra/Win32/dissolve.iss | sed -e 's/OutputBaseFilename=Dissolve-\([0-9\.]*\)/\1/g'
 
 # AppImage build files
 if [ "$TEST" = "false" ]
 then
-  sed -i -e "s/Version=[0-9\.]*/Version=$MAJOR.$MINOR.$PATCH/g" extra/appimage/usr/share/applications/com.projectaten.dUQ.desktop
+  sed -i -e "s/Version=[0-9\.]*/Version=$MAJOR.$MINOR.$PATCH/g" extra/appimage/usr/share/applications/com.projectaten.Dissolve.desktop
 fi
 echo -n "appimage.desktop (Program Version) : "
-grep 'Version=' extra/appimage/usr/share/applications/com.projectaten.dUQ.desktop | sed -e 's/Version=\([0-9\.]*\)/\1/g'
+grep 'Version=' extra/appimage/usr/share/applications/com.projectaten.Dissolve.desktop | sed -e 's/Version=\([0-9\.]*\)/\1/g'
 
 exit 0
 
