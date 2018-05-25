@@ -241,9 +241,9 @@ class Configuration : public ListItem<Configuration>
 	Vec3<double> relativeBoxLengths_;
 	// Box angles
 	Vec3<double> boxAngles_;
-	// Current size factor for Box
-	double sizeFactor_;
-	// Last size factor applied to Box / Cells
+	// Requested size factor for Box
+	double requestedSizeFactor_;
+	// Size factor currently applied to Box / Cells
 	double appliedSizeFactor_;
 	// Whether the Configuration is non-periodic
 	bool nonPeriodic_;
@@ -272,9 +272,11 @@ class Configuration : public ListItem<Configuration>
 	// Return Box angles
 	Vec3<double> boxAngles() const;
 	// Set requested size factor for Box
-	void setSizeFactor(double factor);
+	void setRequestedSizeFactor(double factor);
 	// Return requested size factor for Box
-	double sizeFactor();
+	double requestedSizeFactor();
+	// Return last size factor applied to Box / Cells
+	double appliedSizeFactor();
 	// Set whether the Box is non-periodic
 	void setNonPeriodic(bool b);
 	// Return whether the Box is non-periodic

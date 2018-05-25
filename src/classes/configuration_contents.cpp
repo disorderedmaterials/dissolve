@@ -141,8 +141,8 @@ bool Configuration::finaliseAfterLoad(ProcessPool& procPool, double pairPotentia
 	if (!setUpBox(procPool, pairPotentialRange, -1, boxNormalisationNPoints)) return false;
 
 	// Loaded coordinates will reflect any sizeFactor scaling, but Box and Cells will not, so scale them here
-	scaleBox(sizeFactor_);
-	appliedSizeFactor_ = sizeFactor_;
+	scaleBox(requestedSizeFactor_);
+	appliedSizeFactor_ = requestedSizeFactor_;
 
 	// Finalise used AtomType list
 	usedAtomTypes_.finalise();

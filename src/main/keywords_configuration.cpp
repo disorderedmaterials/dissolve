@@ -218,7 +218,7 @@ bool ConfigurationBlock::parse(LineParser& parser, Dissolve* dissolve, Configura
 				cfg->setRequestedRDFRange(parser.argd(1));
 				break;
 			case (ConfigurationBlock::SizeFactorKeyword):
-				cfg->setSizeFactor(parser.argd(1));
+				cfg->setRequestedSizeFactor(parser.argd(1));
 				break;
 			case (ConfigurationBlock::SpeciesInfoKeyword):
 				sp = dissolve->findSpecies(parser.argc(1));

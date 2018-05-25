@@ -64,7 +64,7 @@ bool Dissolve::writeConfiguration(Configuration* cfg, LineParser& parser)
 	if (!parser.writeLineF("'%s'  %i  %i  # nMolecules  nGrains\n", cfg->name(), cfg->nMolecules(), cfg->nGrains())) return false;
 
 	// Write unit cell (box) lengths and angles
-	if (!parser.writeLineF("%12e %12e %12e  %f\n", cfg->relativeBoxLengths().x, cfg->relativeBoxLengths().y, cfg->relativeBoxLengths().z, cfg->sizeFactor())) return false;
+	if (!parser.writeLineF("%12e %12e %12e  %f\n", cfg->relativeBoxLengths().x, cfg->relativeBoxLengths().y, cfg->relativeBoxLengths().z, cfg->requestedSizeFactor())) return false;
 	if (!parser.writeLineF("%12e %12e %12e\n", cfg->boxAngles().x, cfg->boxAngles().y, cfg->boxAngles().z)) return false;
 
 	// Write all Atoms - for each write type, coordinates, charge, mol ID, and grain ID
@@ -132,7 +132,7 @@ bool Dissolve::readConfiguration(Configuration* cfg, LineParser& parser)
 	// Read unit cell (box) lengths and angles
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 	cfg->setRelativeBoxLengths(parser.arg3d(0));
-	cfg->setSizeFactor(parser.hasArg(3) ? parser.argd(3) : 1.0);
+	cfg->setRequestedSizeFactor(parser.hasArg(3) ? parser.argd(3) : 1.0);
 	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 	cfg->setBoxAngles(parser.arg3d(0));
 

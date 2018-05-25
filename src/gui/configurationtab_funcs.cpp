@@ -130,6 +130,10 @@ void ConfigurationTab::updateControls()
 	ui.NameEdit->setText(configuration_->name());
 	ui.TemperatureSpin->setValue(configuration_->temperature());
 
+	// Size Factor
+	ui.RequestedSizeFactorSpin->setValue(configuration_->requestedSizeFactor()); 
+	ui.AppliedSizeFactorSpin->setValue(configuration_->appliedSizeFactor());
+
 	// Box
 	ui.BoxASpin->setValue(configuration_->relativeBoxLengths().x);
 	ui.BoxBSpin->setValue(configuration_->relativeBoxLengths().y);

@@ -61,16 +61,22 @@ Vec3<double> Configuration::boxAngles() const
 	return boxAngles_;
 }
 
-// Set size factor for Box
-void Configuration::setSizeFactor(double factor)
+// Set requested size factor for Box
+void Configuration::setRequestedSizeFactor(double factor)
 {
-	sizeFactor_ = factor;
+	requestedSizeFactor_ = factor;
 }
 
-// Return size factor for Box
-double Configuration::sizeFactor()
+// Return requested size factor for Box
+double Configuration::requestedSizeFactor()
 {
-	return sizeFactor_;
+	return requestedSizeFactor_;
+}
+
+// Return last size factor applied to Box / Cells
+double Configuration::appliedSizeFactor()
+{
+	return appliedSizeFactor_;
 }
 
 // Set whether the configuration is non-periodic
