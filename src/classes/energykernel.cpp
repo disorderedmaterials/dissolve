@@ -757,6 +757,12 @@ double EnergyKernel::energy(const Bond* b)
 	// Determine whether we need to apply minimum image to the distance calculation
 	Atom* i = b->i(), *j = b->j();
 
+#ifdef CHECKS
+	// Check for spurious bond distances
+	double distance = cells_.useMim(i->cell(), j->cell()) ? box_->minimumDistance(i, j) : (i->r() - j->r()).magnitude();
+	if (distance > 5.0) printf("!!! Long bond: %i-%i = %f Angstroms\n", i->arrayIndex(), j->arrayIndex(), distance);
+#endif
+
 	if (cells_.useMim(i->cell(), j->cell())) return b->energy(box_->minimumDistance(i, j));
 	else return b->energy((i->r() - j->r()).magnitude());
 }
