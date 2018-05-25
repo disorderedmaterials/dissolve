@@ -261,7 +261,7 @@ bool Configuration::prepare(const PotentialMap& potentialMap)
 				Molecule* mol = molecules_[n];
 
 				// Calculate current and new centre of geometry
-				oldCog = mol->centreOfGeometry(box());
+				oldCog = box()->fold(mol->centreOfGeometry(box()));
 				newCog = oldCog * sizeFactorRatio;
 
 				// Loop over Atoms in Molecule, setting new coordinates as we go. Remove Atom from its current Cell at the same time
