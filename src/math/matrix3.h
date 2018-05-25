@@ -46,6 +46,7 @@ class Matrix3
 	Matrix3 operator-(const Matrix3& B) const;
 	Vec3<double> operator*(const Vec3<double>& v) const;
 	Matrix3& operator*=(const Matrix3& B);
+	Matrix3& operator*=(const double a);
 	double& operator[](int);
 
 

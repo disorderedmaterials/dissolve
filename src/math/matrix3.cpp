@@ -105,6 +105,21 @@ Matrix3& Matrix3::operator*=(const Matrix3& B)
 	return* this;
 }
 
+Matrix3& Matrix3::operator*=(const double a)
+{
+	matrix_[0] *= a;
+	matrix_[1] *= a;
+	matrix_[2] *= a;
+	matrix_[3] *= a;
+	matrix_[4] *= a;
+	matrix_[5] *= a;
+	matrix_[6] *= a;
+	matrix_[7] *= a;
+	matrix_[8] *= a;
+
+	return *this;
+}
+
 // Array access (operator [])
 double& Matrix3::operator[](int index)
 {
