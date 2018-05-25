@@ -155,7 +155,7 @@ void DissolveWindow::setCurrentTab(int tabIndex)
 }
 
 // Create / go to Module tab for specified Module, provided it has a Module control widget
-void DissolveWindow::addModuleTab(Module* module)
+MainTab* DissolveWindow::addModuleTab(Module* module)
 {
 	// Does a tab for this Module already exist
 	MainTab* moduleTab = findTab(module->uniqueName());
@@ -170,6 +170,8 @@ void DissolveWindow::addModuleTab(Module* module)
 	}
 
 	setCurrentTab(moduleTab);
+
+	return moduleTab;
 }
 
 // Remove tab containing the specified page widget, as it has been deleted

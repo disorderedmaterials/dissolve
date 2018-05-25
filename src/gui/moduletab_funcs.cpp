@@ -33,20 +33,7 @@ ModuleTab::ModuleTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, QTabWid
 
 	refreshing_ = false;
 
-	// Set up our keywords widget
-	ui.KeywordsFrame->setUp(dissolveWindow_, module_);
-
-	// Create the module widget (if this Module has one)
-	QVBoxLayout* widgetLayout = new QVBoxLayout(ui.WidgetWidget);
-	widgetLayout->setContentsMargins(0,0,0,0);
-	widgetLayout->setSpacing(0);
-	moduleWidget_ = module->createWidget(ui.WidgetWidget, dissolve);
-	if (moduleWidget_ == NULL)
-	{
-		NoControlsWidget* ncw = new NoControlsWidget;
-		widgetLayout->addWidget(ncw);
-	}
-	else widgetLayout->addWidget(moduleWidget_);
+	initialiseControls(module_);
 
 	updateControls();
 }
@@ -56,8 +43,39 @@ ModuleTab::~ModuleTab()
 }
 
 /*
+ * Data
+ */
+
+// Return tab type
+const char* ModuleTab::tabType() const
+{
+	return "ModuleTab";
+}
+
+/*
  * Update
  */
+
+// Initialise controls for the specified Module
+void ModuleTab::initialiseControls(Module* module)
+{
+	if (!module) return;
+
+	// Set up our keywords widget
+	ui.KeywordsFrame->setUp(dissolveWindow_, module);
+
+	// Create the module widget (if this Module has one)
+	QVBoxLayout* widgetLayout = new QVBoxLayout(ui.WidgetWidget);
+	widgetLayout->setContentsMargins(0,0,0,0);
+	widgetLayout->setSpacing(0);
+	moduleWidget_ = module->createWidget(ui.WidgetWidget, dissolve_);
+	if (moduleWidget_ == NULL)
+	{
+		NoControlsWidget* ncw = new NoControlsWidget(ui.WidgetWidget);
+		widgetLayout->addWidget(ncw);
+	}
+	else widgetLayout->addWidget(moduleWidget_);
+}
 
 // Update header texts
 void ModuleTab::updateHeaderTexts()
@@ -135,17 +153,6 @@ void ModuleTab::enableSensitiveControls()
 }
 
 /*
- * State
- */
-
-// Write widget state through specified LineParser
-bool ModuleTab::writeState(LineParser& parser)
-{
-	return true;
-}
-
-
-/*
  * Widget Functions
  */
 
@@ -183,4 +190,41 @@ void ModuleTab::on_FrequencySpin_valueChanged(int value)
 	dissolveWindow_->setModified();
 
 	updateHeaderTexts();
+}
+
+/*
+ * State
+ */
+
+// Write widget state through specified LineParser
+bool ModuleTab::writeState(LineParser& parser)
+{
+	// Write state information for the tab : KeywordsShown(bool)
+	if (!parser.writeLineF("%s\n", DissolveSys::btoa(ui.ToggleKeywordsButton->isChecked()))) return false;
+
+	// Write any state information associated with the displayed ModuleWidget
+	if (module_ && moduleWidget_)
+	{
+		if (!moduleWidget_->writeState(parser)) return false;
+	}
+
+	return true;
+}
+
+// Read widget state through specified LineParser
+bool ModuleTab::readState(LineParser& parser)
+{
+	// Read state information for the tab : KeywordsShown(bool)
+	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+	bool keywordsVisible = parser.argb(0);
+	ui.ToggleKeywordsButton->setChecked(keywordsVisible);
+	ui.KeywordsGroup->setVisible(keywordsVisible);
+
+	// Read any state information associated with the displayed ModuleWidget
+	if (module_ && moduleWidget_)
+	{
+		if (!moduleWidget_->readState(parser)) return false;
+	}
+
+	return true;
 }

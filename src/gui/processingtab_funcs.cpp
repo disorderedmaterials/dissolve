@@ -40,6 +40,16 @@ ProcessingTab::~ProcessingTab()
 }
 
 /*
+ * Data
+ */
+
+// Return tab type
+const char* ProcessingTab::tabType() const
+{
+	return "ProcessingTab";
+}
+
+/*
  * Update
  */
 
@@ -67,6 +77,12 @@ void ProcessingTab::enableSensitiveControls()
 
 // Write widget state through specified LineParser
 bool ProcessingTab::writeState(LineParser& parser)
+{
+	return true;
+}
+
+// Read widget state through specified LineParser
+bool ProcessingTab::readState(LineParser& parser)
 {
 	return true;
 }

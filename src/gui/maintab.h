@@ -63,6 +63,8 @@ class MainTab : public ListItem<MainTab>
 	CharString title_;
 
 	public:
+	// Return tab type
+	virtual const char* tabType() const = 0;
 	// Return page widget
 	QWidget* page() const;
 	// Set title of tab
@@ -70,7 +72,7 @@ class MainTab : public ListItem<MainTab>
 	// Return title of tab
 	const char* title() const;
 	// Return whether the title of the tab can be changed
-	virtual bool canChangeTitle();
+	virtual bool canChangeTitle() const;
 
 
 	/*
@@ -95,6 +97,8 @@ class MainTab : public ListItem<MainTab>
 	public:
 	// Write widget state through specified LineParser
 	virtual bool writeState(LineParser& parser) = 0;
+	// Read widget state through specified LineParser
+	virtual bool readState(LineParser& parser) = 0;
 };
 
 #endif

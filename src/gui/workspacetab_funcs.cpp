@@ -52,6 +52,12 @@ WorkspaceTab::~WorkspaceTab()
  * Data
  */
 
+// Return tab type
+const char* WorkspaceTab::tabType() const
+{
+	return "WorkspaceTab";
+}
+
 // Return whether the title of the tab can be changed
 bool WorkspaceTab::canChangeTitle()
 {
@@ -84,27 +90,6 @@ void WorkspaceTab::enableSensitiveControls()
 	// Enable sensitive controls in subwindows
 	ListIterator<SubWindow> subWindowIterator(subWindows_);
 	while (SubWindow* subWindow = subWindowIterator.iterate()) subWindow->subWidget()->enableSensitiveControls();
-}
-
-/*
- * State
- */
-
-// Write widget state through specified LineParser
-bool WorkspaceTab::writeState(LineParser& parser)
-{
-	// Loop over our subwindow list
-	ListIterator<SubWindow> subWindowIterator(subWindows_);
-	while (SubWindow* subWindow = subWindowIterator.iterate())
-	{
-		// Write window geometry / state
-		if (!parser.writeLineF("'%s'  %s  '%s'\n", title_.get(), subWindow->subWidget()->widgetType(), subWindow->subWidget()->title())) return false;
-		QRect geometry = subWindow->window()->geometry();
-		if (!parser.writeLineF("%i %i %i %i %s %s\n", geometry.x(), geometry.y(), geometry.width(), geometry.height(), DissolveSys::btoa(subWindow->window()->isMaximized()), DissolveSys::btoa(subWindow->window()->isShaded()))) return false;
-		if (!subWindow->subWidget()->writeState(parser)) return false;
-	}
-
-	return true;
 }
 
 /*
@@ -310,14 +295,14 @@ void WorkspaceTab::contextMenuWidgetSelected(bool checked)
 }
 
 // Add ModuleControl widget to workspace
-void WorkspaceTab::addModuleControlWidget(Module* module)
+SubWindow* WorkspaceTab::addModuleControlWidget(Module* module)
 {
 	// Is the Module already displayed?
 	SubWindow* window = findSubWindow(CharString("%s (%s)", module->name(), module->uniqueName()));
 	if (!window)
 	{
 		// Create a new ModuleWidget
-		ModuleControlWidget* moduleControlWidget = new ModuleControlWidget(dissolveWindow_, module, CharString("%s (%s)", module->name(), module->uniqueName()), false);
+		ModuleControlWidget* moduleControlWidget = new ModuleControlWidget(dissolveWindow_, module, module->uniqueName(), false);
 		connect(moduleControlWidget, SIGNAL(windowClosed(QString)), this, SLOT(removeSubWindow(QString)));
 		window = addSubWindow(moduleControlWidget, module);
 
@@ -325,10 +310,12 @@ void WorkspaceTab::addModuleControlWidget(Module* module)
 		if ((dissolveWindow_->dissolveState() != DissolveWindow::StoppedState) && window && window->subWidget()) window->subWidget()->disableSensitiveControls();
 	}
 	else window->raise();
+
+	return window;
 }
 
 // Add named widget to workspace
-void WorkspaceTab::addNamedWidget(const char* widgetName, const char* title)
+SubWindow* WorkspaceTab::addNamedWidget(const char* widgetName, const char* title)
 {
 	// Make sure we have a unique title for the widget
 	CharString uniqueTitle = title;
@@ -338,15 +325,82 @@ void WorkspaceTab::addNamedWidget(const char* widgetName, const char* title)
 	SubWidget* subWidget = NULL;
         if (DissolveSys::sameString(widgetName, "PairPotential"))
         {
-                PairPotentialWidget* ppWidget = new PairPotentialWidget(dissolveWindow_, uniqueTitle);
-                connect(ppWidget, SIGNAL(windowClosed(QString)), this, SLOT(removeSubWindow(QString)));
-                subWidget = ppWidget;
+		PairPotentialWidget* ppWidget = new PairPotentialWidget(dissolveWindow_, uniqueTitle);
+		connect(ppWidget, SIGNAL(windowClosed(QString)), this, SLOT(removeSubWindow(QString)));
+		subWidget = ppWidget;
         }
 	else
 	{
 		Messenger::error("Couldn't add widget to current workspace - unrecognised widget type '%s' encountered.\n", widgetName);
-		return;
+		return NULL;
 	}
 
-	if (subWidget) addSubWindow(subWidget, NULL);
+	return addSubWindow(subWidget, NULL);
+}
+
+/*
+ * State
+ */
+
+// Write widget state through specified LineParser
+bool WorkspaceTab::writeState(LineParser& parser)
+{
+	// Write tab state information:   nSubWindows
+	if (!parser.writeLineF("%i\n", subWindows_.nItems())) return false;
+
+	// Loop over our subwindow list
+	ListIterator<SubWindow> subWindowIterator(subWindows_);
+	while (SubWindow* subWindow = subWindowIterator.iterate())
+	{
+		// Write window title/contents and type
+		if (!parser.writeLineF("'%s'  %s\n", subWindow->subWidget()->title(), subWindow->subWidget()->widgetType())) return false;
+
+		// Write window geometry / state
+		QRect geometry = subWindow->window()->geometry();
+		if (!parser.writeLineF("%i %i %i %i %s %s\n", geometry.x(), geometry.y(), geometry.width(), geometry.height(), DissolveSys::btoa(subWindow->window()->isMaximized()), DissolveSys::btoa(subWindow->window()->isShaded()))) return false;
+
+		// Write widget-specific state information
+		if (!subWindow->subWidget()->writeState(parser)) return false;
+	}
+
+	return true;
+}
+
+// Read widget state through specified LineParser
+bool WorkspaceTab::readState(LineParser& parser)
+{
+	// Read tab state information:   nSubWindows
+	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+	const int nWidgets = parser.argi(0);
+
+	// Read in widgets
+	for (int n=0; n<nWidgets; ++n)
+	{
+		// Read line from the file, which should contain the window type, title, and any identifying info
+		if (parser.getArgsDelim(LineParser::UseQuotes) != LineParser::Success) return false;
+		SubWindow* subWindow = NULL;
+		if (DissolveSys::sameString(parser.argc(1), "ModuleControl"))
+		{
+			// Create a new ModuleControl widget - the target module's unique name is the title of the window
+			Module* module = ModuleList::findInstanceByUniqueName(parser.argc(0));
+			if (!module) return Messenger::error("Module '%s' could not be located and added to workspace '%s'.\n", parser.argc(0), title());
+			subWindow = addModuleControlWidget(module);
+		}
+		else subWindow = addNamedWidget(parser.argc(1), parser.argc(0));
+		
+		if (subWindow == NULL) return Messenger::error("Unrecognised widget type '%s' in workspace '%s'.\n", parser.argc(1), title());
+
+		// Read in the widget's geometry / state / flags
+		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+		QMdiSubWindow* window = subWindow->window();
+		window->setGeometry(parser.argi(0), parser.argi(1), parser.argi(2), parser.argi(3));
+		// -- Is the window maximised, or shaded?
+		if (parser.argb(4)) window->showMaximized();
+		else if (parser.argb(5)) window->showShaded();
+
+		// Now call the widget's local readState()
+		if (!subWindow->subWidget()->readState(parser)) return false;
+	}
+
+	return true;
 }

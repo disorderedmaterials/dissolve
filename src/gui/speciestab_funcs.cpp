@@ -64,9 +64,18 @@ SpeciesTab::~SpeciesTab()
 }
 
 /*
- * Update
+ * Data
  */
 
+// Return tab type
+const char* SpeciesTab::tabType() const
+{
+	return "SpeciesTab";
+}
+
+/*
+ * Update
+ */
 
 // SpeciesAtomTable row update function
 void SpeciesTab::updateAtomTableRow(int row, SpeciesAtom* speciesAtom, bool createItems)
@@ -675,6 +684,12 @@ void SpeciesTab::on_TorsionTable_itemChanged(QTableWidgetItem* w)
 
 // Write widget state through specified LineParser
 bool SpeciesTab::writeState(LineParser& parser)
+{
+	return true;
+}
+
+// Read widget state through specified LineParser
+bool SpeciesTab::readState(LineParser& parser)
 {
 	return true;
 }

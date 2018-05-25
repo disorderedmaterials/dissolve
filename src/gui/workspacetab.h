@@ -46,6 +46,8 @@ class WorkspaceTab : public QWidget, public MainTab
 	 * Data
 	 */
 	public:
+	// Return tab type
+	const char* tabType() const;
 	// Return whether the title of the tab can be changed
 	bool canChangeTitle();
 
@@ -60,14 +62,6 @@ class WorkspaceTab : public QWidget, public MainTab
 	void disableSensitiveControls();
 	// Enable sensitive controls within tab, ready for main code to run
 	void enableSensitiveControls();
-
-
-	/*
-	 * State
-	 */
-	public:
-	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser);
 
 
 	/*
@@ -119,13 +113,23 @@ class WorkspaceTab : public QWidget, public MainTab
 
 	public:
 	// Add ModuleControl widget to workspace
-	void addModuleControlWidget(Module* module);
+	SubWindow* addModuleControlWidget(Module* module);
 	// Add named widget to workspace
-	void addNamedWidget(const char* widgetName, const char* title);
+	SubWindow* addNamedWidget(const char* widgetName, const char* title);
 
 	public slots:
 	// Custom context menu requested
 	void showContextMenu(const QPoint& pos);
+
+
+	/*
+	 * State
+	 */
+	public:
+	// Write widget state through specified LineParser
+	bool writeState(LineParser& parser);
+	// Read widget state through specified LineParser
+	bool readState(LineParser& parser);
 };
 
 #endif

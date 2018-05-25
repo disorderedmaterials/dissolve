@@ -97,6 +97,16 @@ ForcefieldTab::~ForcefieldTab()
 }
 
 /*
+ * Data
+ */
+
+// Return tab type
+const char* ForcefieldTab::tabType() const
+{
+	return "ForcefieldTab";
+}
+
+/*
  * Update
  */
 
@@ -579,6 +589,12 @@ void ForcefieldTab::on_PairPotentialsTable_itemChanged(QTableWidgetItem* w)
 
 // Write widget state through specified LineParser
 bool ForcefieldTab::writeState(LineParser& parser)
+{
+	return true;
+}
+
+// Read widget state through specified LineParser
+bool ForcefieldTab::readState(LineParser& parser)
 {
 	return true;
 }

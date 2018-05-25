@@ -66,9 +66,3 @@ const char* SubWidget::title()
 {
 	return title_.get();
 }
-
-// Return string specifying widget type
-const char* SubWidget::widgetType()
-{
-	return "NULL";
-}

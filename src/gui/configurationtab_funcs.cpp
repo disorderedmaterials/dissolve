@@ -60,6 +60,16 @@ ConfigurationTab::~ConfigurationTab()
 }
 
 /*
+ * Data
+ */
+
+// Return tab type
+const char* ConfigurationTab::tabType() const
+{
+	return "ConfigurationTab";
+}
+
+/*
  * Update
  */
 
@@ -320,6 +330,12 @@ void ConfigurationTab::on_ExportButton_clicked(bool checked)
 
 // Write widget state through specified LineParser
 bool ConfigurationTab::writeState(LineParser& parser)
+{
+	return true;
+}
+
+// Read widget state through specified LineParser
+bool ConfigurationTab::readState(LineParser& parser)
 {
 	return true;
 }

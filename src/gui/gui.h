@@ -196,7 +196,7 @@ class DissolveWindow : public QMainWindow
 
 	public:
 	// Add tab for specified Module target
-	void addModuleTab(Module* module);
+	MainTab* addModuleTab(Module* module);
 
 	public slots:
 	// Remove tab containing the specified page widget, as it has been deleted

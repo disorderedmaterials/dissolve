@@ -44,6 +44,14 @@ class ModuleTab : public QWidget, public MainTab
 
 
 	/*
+	 * Data
+	 */
+	public:
+	// Return tab type
+	const char* tabType() const;
+
+
+	/*
 	 * Module Target
 	 */
 	public:
@@ -57,6 +65,8 @@ class ModuleTab : public QWidget, public MainTab
 	 * Update
 	 */
 	private:
+	// Initialise controls for the specified Module
+	void initialiseControls(Module* module);
 	// Update header texts
 	void updateHeaderTexts();
 
@@ -70,14 +80,6 @@ class ModuleTab : public QWidget, public MainTab
 
 
 	/*
-	 * State
-	 */
-	public:
-	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser);
-
-
-	/*
 	 * Widget Functions
 	 */
 	public slots:
@@ -88,6 +90,16 @@ class ModuleTab : public QWidget, public MainTab
 
 	signals:
 	void moduleRun();
+
+
+	/*
+	 * State
+	 */
+	public:
+	// Write widget state through specified LineParser
+	bool writeState(LineParser& parser);
+	// Read widget state through specified LineParser
+	bool readState(LineParser& parser);
 };
 
 #endif

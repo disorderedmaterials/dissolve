@@ -263,9 +263,6 @@ bool ModuleControlWidget::writeState(LineParser& parser)
 {
 	if (!module_) return false;
 
-	// Write Module target
-	if (!parser.writeLineF("%s\n", module_->uniqueName())) return false;
-
 	// Write state data from ModuleWidget (if one exists)
 	if (moduleWidget_ && (!moduleWidget_->writeState(parser))) return false;
 
@@ -275,21 +272,7 @@ bool ModuleControlWidget::writeState(LineParser& parser)
 // Read widget state through specified LineParser
 bool ModuleControlWidget::readState(LineParser& parser)
 {
-	// First check if there is a current module pointer
-	// It is possible that one has not yet been set, e.g. if we are reading in a SubWindow.
-	bool moduleSet = module_;
-
-	// Read Module target
-	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-	module_ = ModuleList::findInstanceByUniqueName(parser.argc(0));
-
-	// If we didn't previously have a module, but now we do, initialise the window and its controls
-	// This will also create the moduleWidget_ (in initialiseControls())
-	if (module_ && (!moduleSet))
-	{
-		initialiseWindow(module_);
-		initialiseControls(module_);
-	}
+	if (!module_) return false;
 
 	// Read state data from ModuleWidget (if one exists)
 	if (moduleWidget_ && (!moduleWidget_->readState(parser))) return false;

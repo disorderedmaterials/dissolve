@@ -92,7 +92,7 @@ const char* MainTab::title() const
 }
 
 // Return whether the title of the tab can be changed
-bool MainTab::canChangeTitle()
+bool MainTab::canChangeTitle() const
 {
 	return false;
 }

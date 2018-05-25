@@ -45,6 +45,14 @@ class ForcefieldTab : public QWidget, public MainTab
 
 
 	/*
+	 * Data
+	 */
+	public:
+	// Return tab type
+	const char* tabType() const;
+
+
+	/*
 	 * Update
 	 */
 	private:
@@ -97,6 +105,8 @@ class ForcefieldTab : public QWidget, public MainTab
 	public:
 	// Write widget state through specified LineParser
 	bool writeState(LineParser& parser);
+	// Read widget state through specified LineParser
+	bool readState(LineParser& parser);
 };
 
 #endif
