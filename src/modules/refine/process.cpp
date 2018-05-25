@@ -57,8 +57,8 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	const bool smoothPhiR = keywords_.asBool("DeltaPhiRSmoothing");
 	const int phiRSmoothK = keywords_.asInt("DeltaPhiRSmoothK");
 	const int phiRSmoothM = keywords_.asInt("DeltaPhiRSmoothM");
-	const double errorStabilityThreshold = keywords_.asDouble("EnergyStabilityThreshold");
-	const int errorStabilityWindow = keywords_.asInt("EnergyStabilityWindow");
+	const double errorStabilityThreshold = keywords_.asDouble("ErrorStabilityThreshold");
+	const int errorStabilityWindow = keywords_.asInt("ErrorStabilityWindow");
 	const double gaussianAccuracy = keywords_.asDouble("GaussianAccuracy");
 	const RefineModule::PotentialInversionMethod inversionMethod = RefineModule::potentialInversionMethod(keywords_.asString("InversionMethod"));
 	const double globalMinimumRadius = keywords_.asDouble("MinimumRadius");
@@ -67,7 +67,9 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	const bool modifyPotential = keywords_.asBool("ModifyPotential");
 	const bool onlyWhenEnergyStable = keywords_.asBool("OnlyWhenEnergyStable");
 	const bool onlyWhenErrorStable = keywords_.asBool("OnlyWhenErrorStable");
-	double phiLimit = keywords_.asDouble("PhiLimit");
+	const double phiMax = keywords_.asDouble("PhiMax");
+	const double qMax = keywords_.asDouble("QMax");
+	const double qMin = keywords_.asDouble("QMin");
 	const double truncationWidth = keywords_.asDouble("TruncationWidth");
 	const WindowFunction& windowFunction = KeywordListHelper<WindowFunction>::retrieve(keywords_, "WindowFunction", WindowFunction());
 
@@ -82,8 +84,9 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	else Messenger::print("Refine: Perturbations to interatomic potentials will be generated only (current potentials will not be modified).\n");
 	if (onlyWhenEnergyStable) Messenger::print("Refine: Potential refinement will only be performed if all related Configuration energies are stable.\n");
 	if (onlyWhenErrorStable) Messenger::print("Refine: Potential refinement will only be performed if all percentage errors with reference data are stable.\n");
-	if (phiLimit >= 0) Messenger::print("Refine: Limit of additional potential phi(r) across all potentials is %f kJ/mol/Angstrom.\n", phiLimit);
-	else Messenger::warn("Refine: No limits will be applied to additional potential magnitude.\n");
+	if (phiMax >= 0) Messenger::print("Refine: Limit of additional potential for any one pair potential is %f kJ/mol/Angstrom.\n", phiMax);
+	else Messenger::warn("Refine: No limits will be applied to the magnitudes of additional potentials.\n");
+	Messenger::print("Refine: Range for potential generation is %f < Q < %f Angstroms**-1.\n", qMin, qMax);
 	if (windowFunction.function() == WindowFunction::NoWindow) Messenger::print("Refine: No window function will be applied in Fourier transforms of S(Q) to g(r).\n");
 	else Messenger::print("Refine: Window function to be applied in Fourier transforms of S(Q) to g(r) is %s (%s).", WindowFunction::functionType(windowFunction.function()), windowFunction.parameterSummary().get());
 
@@ -158,13 +161,15 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			Messenger::print("Current error for reference data '%s' is %f%%.\n", module->uniqueName(), error);
 
 			// Assess the stability of the current error
-			if (errorStabilityWindow < errors.nPoints()) ++nUnstableData;
+			if (errorStabilityWindow > errors.nPoints()) ++nUnstableData;
 			else
 			{
 				double yMean;
 				double grad = errors.lastGradient(errorStabilityWindow, &yMean);
 				double thresholdValue = fabs(errorStabilityThreshold*yMean);
 				if (fabs(grad) > thresholdValue) ++nUnstableData;
+
+				Messenger::print("Error gradient of last %i points for reference data '%s' is %e %%/step (absolute threshold value is %e, stable = %s).\n", errorStabilityWindow, module->uniqueName(), grad, thresholdValue, DissolveSys::btoa(fabs(grad) <= thresholdValue));
 			}
 		}
 	}
@@ -172,7 +177,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	// Check error stability if requested
 	if (onlyWhenErrorStable && (nUnstableData > 0))
 	{
-		Messenger::print("Errors for %i reference datasets are unstable, so no potential refinement will be performed this iteration.\n");
+		Messenger::print("Errors for %i reference datasets are unstable, so no potential refinement will be performed this iteration.\n", nUnstableData);
 		return true;
 	}
 
@@ -198,6 +203,9 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	 * We will generate a contribution to dPhiR from each and blend them together.
 	 */
 	const int nTypes = dissolve.nAtomTypes();
+	Array2D<double> globalCombinedErrors;
+	globalCombinedErrors.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
+	globalCombinedErrors = 0.0;
 	bool created;
 	for (ModuleGroup* group = targetGroups_.first(); group != NULL; group = group->next)
 	{
@@ -385,22 +393,30 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				// Reset the difference partial
 				dSQ.clear();
 
-				// Create the difference partial, over the range permitted by both datasets
+				// Create the difference partial
 				const Array<double> x1 = generatedSQ.ref(i, j).constArrayX();
 				const Array<double> y1 = generatedSQ.ref(i, j).constArrayY();
 				XYData& simulatedSQ = combinedUnweightedSQ.ref(i,j);
-				const double x2min = 0.5; //simulatedSQ.xFirst();
-				const double x2max = simulatedSQ.xLast();
 
+				// Determine allowable range for fit, based on requested values and limits of generated / simulated datasets
+				double deltaSQMin = qMin, deltaSQMax = (qMax < 0.0 ? x1.last() : qMax);
+				if ((deltaSQMin < x1.first()) || (deltaSQMin < simulatedSQ.xFirst())) deltaSQMin = max(x1.first(), simulatedSQ.xFirst());
+				if ((deltaSQMax > x1.last()) || (deltaSQMax > simulatedSQ.xLast())) deltaSQMax = min(x1.last(), simulatedSQ.xLast());
+
+				XYData refSQTrimmed;
 				double x;
 				for (int n=0; n<x1.nItems(); ++n)
 				{
 					x = x1.value(n);
-					if (x < x2min) continue;
-					if (x > x2max) break;
+					if (x < deltaSQMin) continue;
+					if (x > deltaSQMax) break;
+					refSQTrimmed.addPoint(x, y1.value(n));
 
 					dSQ.addPoint(x, y1.value(n) - simulatedSQ.interpolated(x));
 				}
+
+				// Calculate current error between experimental and simulation partials and sum it into our array
+				globalCombinedErrors.ref(i, j) += refSQTrimmed.error(simulatedSQ);
 			}
 		}
 
@@ -616,6 +632,21 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		}
 	}
 
+	/*
+	 * Normalise and store our combined partial errors
+	 */
+	i = 0;
+	for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+	{
+		j = i;
+		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
+		{
+			XYData& partialErrors = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), CharString("PartialError_%s-%s", at1->name(), at2->name()), uniqueName_, GenericItem::InRestartFileFlag);
+			// TODO This will be a straight sum of errors over groups, and may not be entirely representative? Needs to be weighted?
+			partialErrors.addPoint(dissolve.iteration(), globalCombinedErrors.value(i,j));
+		}
+	}
+
 	// Perform actual modification to potential, adding in deltaPhiR calculated over all groups
 	if (modifyPotential)
 	{
@@ -631,6 +662,23 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				j = i;
 				for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 				{
+					// Assess error of partial if requested, and decide whether to adjust potential
+					if (onlyWhenErrorStable)
+					{
+						XYData& partialErrors = GenericListHelper<XYData>::retrieve(dissolve.processingModuleData(), CharString("PartialError_%s-%s", at1->name(), at2->name()), uniqueName_);
+						if (partialErrors.nPoints() >= errorStabilityWindow)
+						{
+							double yMean;
+							double grad = partialErrors.lastGradient(errorStabilityWindow, &yMean);
+							double thresholdValue = fabs(0.001*yMean);
+							if (fabs(grad) < thresholdValue)
+							{
+								Messenger::print("Error gradient of last %i points for partial %s-%s is %e %%/step (absolute threshold value is %e, stable = %s) so no potential adjustment will be made.\n", errorStabilityWindow, at1->name(), at2->name(), grad, thresholdValue, DissolveSys::btoa(fabs(grad) <= thresholdValue));
+								continue;
+							}
+						}
+					}
+
 					// Grab pointer to the relevant pair potential
 					PairPotential* pp = dissolve.pairPotential(at1, at2);
 					if (!pp)
@@ -645,8 +693,10 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		}
 	}
 
-	// Calculate current phi magnitude
-	double phiMag = 0.0;
+	/*
+	 * Calculate overall phi magnitude and clamp individual magnitudes if required
+	 */
+	double phiMagTot = 0.0;
 	i = 0;
 	for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
 	{
@@ -655,36 +705,30 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		{
 			// Grab pointer to the relevant pair potential
 			PairPotential* pp = dissolve.pairPotential(at1, at2);
-			if (pp) phiMag += pp->uAdditional().absIntegral();
-		}
-	}
+			if (!pp) continue;
 
-	// Clamp magnitude of additional potentials if required
-	if (modifyPotential && (phiLimit > 0.0) && (phiMag > phiLimit))
-	{
-		double factor = phiLimit / phiMag;
+			// Calculate phi magnitude for this pair potential
+			double phiMag = pp->uAdditional().absIntegral();
 
-		i = 0;
-		for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
-		{
-			j = i;
-			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
+			// Clamp it?
+			if (modifyPotential && (phiMax > 0.0) && (phiMag > phiMax))
 			{
-				// Grab pointer to the relevant pair potential
-				PairPotential* pp = dissolve.pairPotential(at1, at2);
-				if (pp) pp->uAdditional().arrayY() *= factor;
+				double factor = phiMax / phiMag;
+				pp->uAdditional().arrayY() *= factor;
+				phiMag = phiMax;
 			}
-		}
 
-		phiMag *= factor;
+			// Sum into phiMagTot
+			phiMagTot += phiMag;
+		}
 	}
 
-	Messenger::print("Current magnitude of additional phi(r) over all pair potentials is %12.4e kJ/mol/Angstrom.\n", phiMag);
+	Messenger::print("Current magnitude of additional phi(r) over all pair potentials is %12.4e kJ/mol/Angstrom.\n", phiMagTot);
 
 	// Realise the phiMag array and make sure its object name is set
 	XYData& phiArray = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), "PhiMag", uniqueName_, GenericItem::InRestartFileFlag);
 	phiArray.setObjectName(CharString("%s//PhiMag", uniqueName_.get()));
-	phiArray.addPoint(dissolve.iteration(), phiMag);
+	phiArray.addPoint(dissolve.iteration(), phiMagTot);
 
 	return true;
 }
