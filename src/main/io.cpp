@@ -434,6 +434,11 @@ bool Dissolve::saveInput(const char* filename)
 
 			parser.writeLineF("  %s  %s  '%s'\n", ConfigurationBlock::keyword(ConfigurationBlock::ModuleKeyword), module->name(), module->uniqueName());
 
+			// Write frequency and disabled keywords
+			parser.writeLineF("    Frequency  %i\n", module->frequency());
+			if (!module->enabled()) parser.writeLineF("    Disabled\n");
+			parser.writeLineF("\n");
+
 			// Print keyword options
 			ListIterator<ModuleKeywordBase> keywordIterator(module->keywords().keywords());
 			while (ModuleKeywordBase* keyword = keywordIterator.iterate())
@@ -459,9 +464,15 @@ bool Dissolve::saveInput(const char* filename)
 
 		parser.writeLineF("\n%s  %s  '%s'\n", InputBlocks::inputBlock(InputBlocks::ModuleBlock), module->name(), module->uniqueName());
 
+		// Write frequency and disabled keywords
+		parser.writeLineF("  Frequency  %i\n", module->frequency());
+		if (!module->enabled()) parser.writeLineF("  Disabled\n");
+		parser.writeLineF("\n");
+
 		// Write Configuration target(s)
 		RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
 		while (Configuration* cfg = configIterator.iterate()) parser.writeLineF("  %s  '%s'\n", ModuleBlock::keyword(ModuleBlock::ConfigurationKeyword), cfg->name());
+		parser.writeLineF("\n");
 
 		// Print keyword options
 		ListIterator<ModuleKeywordBase> keywordIterator(module->keywords().keywords());
