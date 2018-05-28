@@ -328,8 +328,9 @@ bool Dissolve::iterate(int nIterations)
 			 * Restart File
 			 */
 
-			CharString restartFile("%s.restart", filename_.get());
-			CharString restartFileBackup("%s.restart.prev", filename_.get());
+			// If a restart filename isn't currently set, generate one now.
+			if (restartFilename_.isEmpty()) restartFilename_ = CharString("%s.restart", filename_.get());
+			CharString restartFileBackup("%s.prev", restartFilename_.get());
 
 			// Check and remove restart file backup
 			if (DissolveSys::fileExists(restartFileBackup) && (remove(restartFileBackup) != 0))
@@ -340,7 +341,7 @@ bool Dissolve::iterate(int nIterations)
 			}
 
 			// Rename current restart file (if it exists)
-			if (DissolveSys::fileExists(restartFile) && (rename(restartFile, restartFileBackup) != 0))
+			if (DissolveSys::fileExists(restartFilename_) && (rename(restartFilename_, restartFileBackup) != 0))
 			{
 				Messenger::error("Could not rename current restart file.\n");
 				worldPool_.decideFalse();
@@ -351,7 +352,7 @@ bool Dissolve::iterate(int nIterations)
 			Timer saveRestartTimer;
 			saveRestartTimer.start();
 
-			if (!saveRestart(restartFile))
+			if (!saveRestart(restartFilename_))
 			{
 				Messenger::error("Failed to write restart file.\n");
 				worldPool_.decideFalse();

@@ -491,9 +491,11 @@ bool Dissolve::saveInput(const char* filename)
 // Load restart file
 bool Dissolve::loadRestart(const char* filename)
 {
+	restartFilename_ = filename;
+
 	// Open file and check that we're OK to proceed reading from it (master only...)
 	LineParser parser(&worldPool_);
-	if (!parser.openInput(filename)) return false;
+	if (!parser.openInput(restartFilename_)) return false;
 
 	// Variables
 	Configuration* cfg;
@@ -711,16 +713,34 @@ bool Dissolve::saveHeartBeat(const char* filename, double estimatedNSecs)
 	return true;
 }
 
-// Return whether a filename has been set
-bool Dissolve::hasInputFileName() const
+// Return whether an input filename has been set
+bool Dissolve::hasInputFilename() const
 {
 	return (!filename_.isEmpty());
 }
 
-// Return filename of current input file
+// Set current input filename
+void Dissolve::setInputFilename(const char* filename)
+{
+	filename_ = filename;
+}
+
+// Return current input filename
 const char* Dissolve::inputFilename() const
 {
 	return filename_.get();
+}
+
+// Return restart filename
+const char* Dissolve::restartFilename() const
+{
+	return restartFilename_.get();
+}
+
+// Return whether a restart filename has been set
+bool Dissolve::hasRestartFilename() const
+{
+	return (!restartFilename_.isEmpty());
 }
 
 // Set whether to automatically add dependent Modules if they have not been defined
