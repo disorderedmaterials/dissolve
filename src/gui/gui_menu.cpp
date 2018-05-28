@@ -24,6 +24,8 @@
 #include "main/dissolve.h"
 #include "templates/variantpointer.h"
 #include <QInputDialog>
+#include <QMessageBox>
+#include <QFileDialog>
 
 /*
  * Main Menu
@@ -31,12 +33,77 @@
 
 void DissolveWindow::on_SessionOpenAction_triggered(bool checked)
 {
+	// First, check the modification status of the current session
+	if (modified_)
+	{
+		QMessageBox queryBox;
+		queryBox.setText("The current input file is unsaved.");
+		queryBox.setInformativeText("Would you like to save it first?");
+		queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+		queryBox.setDefaultButton(QMessageBox::Cancel);
+		int ret = queryBox.exec();
+
+		if (ret == QMessageBox::Cancel) return;
+		else if (ret == QMessageBox::Yes)
+		{
+			// If an input filename has been set, just overwrite it. If not, request a name first
+			if (!dissolve_.hasInputFilename())
+			{
+				QString newFile = QFileDialog::getSaveFileName(this, "Choose input file name to save", QDir().absolutePath(), "Dissolve input files (*.txt)");
+				if (newFile.isEmpty()) return;
+
+				dissolve_.setInputFilename(qPrintable(newFile));
+			}
+
+			// Save the file
+			if (!dissolve_.saveInput(dissolve_.inputFilename())) return;
+		}
+	}
+
+	// Request a new file to open
+	QString inputFile = QFileDialog::getOpenFileName(this, "Choose input file to open", QDir().absolutePath(), "Dissolve input files (*.txt)");
+	if (inputFile.isEmpty()) return;
+
+	// Clear any tabs from the UI
+	clearAllTabs();
+
+	// Clear the main object
+	dissolve_.clear();
+
+	// Load the new file
+	openFile(qPrintable(inputFile), false, false);
+
+	updateStatus();
+
+	updateFileLabels();
+}
+
+void DissolveWindow::on_SessionOpenRemoteAction_triggered(bool checked)
+{
+	// TODO
+}
+
+void DissolveWindow::on_SessionOpenRecentAction_triggered(bool checked)
+{
+	// TODO
 }
 
 void DissolveWindow::on_SessionSaveAction_triggered(bool checked)
 {
-	// Attempt to save the file (TEST)
-	dissolve_.saveInput("shitty.txt");
+	// If the file is not modified, nothing to do.
+	if (!modified_) return;
+
+	// If an input file name has not been set, get one now
+	if (!dissolve_.hasInputFilename())
+	{
+		QString newFile = QFileDialog::getSaveFileName(this, "Choose input file name to save", QDir().absolutePath(), "Dissolve input files (*.txt)");
+		if (newFile.isEmpty()) return;
+
+		dissolve_.setInputFilename(qPrintable(newFile));
+	}
+
+	// Attempt to save the file
+	if (!dissolve_.saveInput(dissolve_.inputFilename())) return;
 
 	modified_ = false;
 
@@ -45,7 +112,63 @@ void DissolveWindow::on_SessionSaveAction_triggered(bool checked)
 
 void DissolveWindow::on_SessionQuitAction_triggered(bool checked)
 {
+	// First, check the modification status of the current session
+	if (modified_)
+	{
+		QMessageBox queryBox;
+		queryBox.setText("The current input file is unsaved.");
+		queryBox.setInformativeText("Would you like to save it before quitting?");
+		queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+		queryBox.setDefaultButton(QMessageBox::Cancel);
+		int ret = queryBox.exec();
+
+		if (ret == QMessageBox::Cancel) return;
+		else if (ret == QMessageBox::Yes)
+		{
+			// If an input filename has been set, just overwrite it. If not, request a name first
+			if (!dissolve_.hasInputFilename())
+			{
+				QString newFile = QFileDialog::getSaveFileName(this, "Choose input file name to save", QDir().absolutePath(), "Dissolve input files (*.txt)");
+				if (newFile.isEmpty()) return;
+
+				dissolve_.setInputFilename(qPrintable(newFile));
+			}
+
+			// Save the file
+			if (!dissolve_.saveInput(dissolve_.inputFilename())) return;
+		}
+	}
+
+	QCoreApplication::quit();
 }
+
+/*
+ * Simulation
+ */
+
+void DissolveWindow::on_SimulationRunAction_triggered(bool checked)
+{
+	ui.ControlRunButton->click();
+}
+
+void DissolveWindow::on_SimulationStepAction_triggered(bool checked)
+{
+	ui.ControlStepButton->click();
+}
+
+void DissolveWindow::on_SimulationFiveStepsAction_triggered(bool checked)
+{
+	ui.ControlStepFiveButton->click();
+}
+
+void DissolveWindow::on_SimulationPauseAction_triggered(bool checked)
+{
+	ui.ControlPauseButton->click();
+}
+
+/*
+ * Workspace
+ */
 
 void DissolveWindow::on_WorkspaceAddNewAction_triggered(bool checked)
 {

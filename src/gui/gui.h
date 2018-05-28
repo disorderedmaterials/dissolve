@@ -95,6 +95,8 @@ class DissolveWindow : public QMainWindow
 	void updateControls();
 	// Update status
 	void updateStatus();
+	// Update file labels
+	void updateFileLabels();
 	// Link output handler in to the Messenger
 	void addOutputHandler();
 
@@ -105,9 +107,15 @@ class DissolveWindow : public QMainWindow
 	private slots:
 	// Session
 	void on_SessionOpenAction_triggered(bool checked);
+	void on_SessionOpenRemoteAction_triggered(bool checked);
+	void on_SessionOpenRecentAction_triggered(bool checked);
 	void on_SessionSaveAction_triggered(bool checked);
 	void on_SessionQuitAction_triggered(bool checked);
 	// Simulation
+	void on_SimulationRunAction_triggered(bool checked);
+	void on_SimulationStepAction_triggered(bool checked);
+	void on_SimulationFiveStepsAction_triggered(bool checked);
+	void on_SimulationPauseAction_triggered(bool checked);
 	// Workspace
 	void on_WorkspaceAddNewAction_triggered(bool checked);
 
@@ -120,7 +128,7 @@ class DissolveWindow : public QMainWindow
 	enum DissolveState {
 		RunningState,		/* Dissolve is currently running in the GUI */
 		StoppedState,		/* Dissolve is currently stopped in the GUI */
-		MonitoringState,	/* Dissolve is running in the background, and we are monitoring it */
+		MonitoringState,	/* Dissolve is running in the background, and we are monitoring it via the restart file */
 		nDissolveStates
 	};
 

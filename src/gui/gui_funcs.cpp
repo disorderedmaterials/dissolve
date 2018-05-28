@@ -187,6 +187,13 @@ void DissolveWindow::updateStatus()
 	ui.SetUpLabel->setPalette(labelPalette);
 }
 
+// Update file labels
+void DissolveWindow::updateFileLabels()
+{
+	ui.InputFileLabel->setText(dissolve_.inputFilename());
+	ui.RestartFileLabel->setText(dissolve_.hasRestartFilename() ? dissolve_.restartFilename() : "<none>");
+}
+
 // Link output handler in to the Messenger
 void DissolveWindow::addOutputHandler()
 {
