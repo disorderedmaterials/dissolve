@@ -253,6 +253,8 @@ class Dissolve
 	ModuleList preProcessingTasks_;
 	// List of main processing Modules to run
 	ModuleList mainProcessingModules_;
+	// List of analysis processing Modules to run
+	ModuleList analysisProcessingModules_;
 	// Data associated with main processing Modules
 	GenericList processingModuleData_;
 	// List of Modules with post-processing tasks to perform
@@ -285,6 +287,8 @@ class Dissolve
 	int restartFileFrequency() const;
 	// Return list of main processing Modules to run
 	ModuleList& mainProcessingModules();
+	// Return list of analysis processing Modules to run
+	ModuleList& analysisProcessingModules();
 	// Return data associated with main processing Modules
 	GenericList& processingModuleData();
 	// Iterate main simulation
