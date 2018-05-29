@@ -25,6 +25,7 @@
 #include "base/lineparser.h"
 #include <QCloseEvent>
 #include <QMdiSubWindow>
+#include <QFileInfo>
 
 // Constructor
 DissolveWindow::DissolveWindow(Dissolve& dissolve) : QMainWindow(NULL), dissolve_(dissolve), threadController_(this, dissolve)
@@ -190,6 +191,7 @@ void DissolveWindow::updateStatus()
 // Update file labels
 void DissolveWindow::updateFileLabels()
 {
+	ui.LocationLabel->setText(QFileInfo(dissolve_.inputFilename()).absolutePath() + " (Local)");
 	ui.InputFileLabel->setText(dissolve_.inputFilename());
 	ui.RestartFileLabel->setText(dissolve_.hasRestartFilename() ? dissolve_.restartFilename() : "<none>");
 }
