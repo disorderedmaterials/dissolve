@@ -321,6 +321,7 @@ void ModuleChart::updateControls()
 // Disable sensitive controls within widget, ready for main code to run
 void ModuleChart::disableSensitiveControls()
 {
+	// TODO Need to disable drag/drop here too
 	RefListIterator<FlowBlock,bool> flowBlockIterator(displayedWidgets_);
 	while (FlowBlock* block = flowBlockIterator.iterate()) block->disableSensitiveControls();
 }
