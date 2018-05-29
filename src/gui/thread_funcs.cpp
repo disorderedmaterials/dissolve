@@ -40,7 +40,7 @@ void DissolveThreadWorker::beginIterating(int nIterations)
 	keepIterating_ = true;
 	while (keepIterating_)
 	{
-		dissolve_.iterate(1);
+		if (!dissolve_.iterate(1)) keepIterating_ = false;
 		if (nIterationsToRun_ > 0) --nIterationsToRun_;
 		if (nIterationsToRun_ == 0) keepIterating_ = false;
 
