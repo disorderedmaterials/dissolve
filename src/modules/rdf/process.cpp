@@ -84,6 +84,7 @@ bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	Messenger::print("RDF: Calculation method is '%s'.\n", RDFModule::partialsMethod(method));
 	Messenger::print("RDF: Save data is %s.\n", DissolveSys::onOff(saveData));
 	Messenger::print("RDF: Degree of smoothing to apply to calculated partial g(r) is %i (%s).\n", smoothing, DissolveSys::onOff(smoothing > 0));
+	Messenger::print("\n");
 
 	
 	/*

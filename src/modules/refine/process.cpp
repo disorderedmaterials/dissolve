@@ -86,15 +86,16 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	if (onlyWhenErrorStable) Messenger::print("Refine: Potential refinement will only be performed if all percentage errors with reference data are stable.\n");
 	if (phiMax >= 0) Messenger::print("Refine: Limit of additional potential for any one pair potential is %f kJ/mol/Angstrom.\n", phiMax);
 	else Messenger::warn("Refine: No limits will be applied to the magnitudes of additional potentials.\n");
+	Messenger::print("Refine: Potential inversion method to employ is '%s'.\n", RefineModule::potentialInversionMethod(inversionMethod));
 	Messenger::print("Refine: Range for potential generation is %f < Q < %f Angstroms**-1.\n", qMin, qMax);
 	if (windowFunction.function() == WindowFunction::NoWindow) Messenger::print("Refine: No window function will be applied in Fourier transforms of S(Q) to g(r).\n");
 	else Messenger::print("Refine: Window function to be applied in Fourier transforms of S(Q) to g(r) is %s (%s).", WindowFunction::functionType(windowFunction.function()), windowFunction.parameterSummary().get());
+	Messenger::print("\n");
 
 
 	/*
 	 * Do we have targets to refine against?
 	 */
-
 	if (targets_.nItems() == 0) return Messenger::error("At least one Module target containing suitable data must be provided.\n");
 
 

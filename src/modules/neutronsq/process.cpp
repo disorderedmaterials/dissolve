@@ -147,6 +147,8 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	if (qBroadening.function() == BroadeningFunction::NoFunction) Messenger::print("NeutronSQ: No broadening will be applied to calculated S(Q).");
 	else Messenger::print("NeutronSQ: Broadening to be applied in calculated S(Q) is %s (%s).", BroadeningFunction::functionType(qBroadening.function()), qBroadening.parameterSummary().get());
 	Messenger::print("NeutronSQ: Save data is %s.\n", DissolveSys::onOff(saveData));
+	Messenger::print("\n");
+
 
 	/*
 	 * Loop over target Configurations and Fourier transform their UnweightedGR into the corresponding UnweightedSQ.
@@ -172,7 +174,7 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		bool& forceCalculation = GenericListHelper<bool>::retrieve(cfg->moduleData(), "_ForceNeutronSQ", NULL, false);
 		if ((!forceCalculation) && DissolveSys::sameString(unweightedsq.fingerprint(), CharString("%i", cfg->coordinateIndex())))
 		{
-			Messenger::print("NeutronSQ: Unweighted partial S(Q) are up-to-date for Configuration '%s'.\n", cfg->name());
+			Messenger::print("Unweighted partial S(Q) are up-to-date for Configuration '%s'.\n", cfg->name());
 			continue;
 		}
 		forceCalculation = false;
@@ -218,7 +220,7 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		}
 
 		// Create, print, and store weights
-		Messenger::print("NeutronSQ: Isotopologue and isotope composition for Configuration '%s':\n\n", cfg->name());
+		Messenger::print("Isotopologue and isotope composition for Configuration '%s':\n\n", cfg->name());
 		weights.createFromIsotopologues();
 		weights.print();
 
@@ -266,7 +268,7 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	summedWeightedSQ = summedUnweightedSQ;
 
 	// Calculate weighted S(Q)
-	Messenger::print("NeutronSQ: Isotopologue and isotope composition over all Configurations used in '%s':\n\n", uniqueName_.get());
+	Messenger::print("Isotopologue and isotope composition over all Configurations used in '%s':\n\n", uniqueName_.get());
 	Weights summedWeights;
 	if (!calculateSummedWeights(summedWeights)) return false;
 	summedWeights.print();

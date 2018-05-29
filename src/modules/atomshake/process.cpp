@@ -76,6 +76,7 @@ bool AtomShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		Messenger::print("AtomShake: Cutoff distance is %f\n", cutoffDistance);
 		Messenger::print("AtomShake: Performing %i shake(s) per Atom\n", nShakesPerAtom);
 		Messenger::print("AtomShake: Translation step is %f Angstroms, target acceptance rate is %f.\n", stepSize, targetAcceptanceRate);
+		Messenger::print("\n");
 
 		ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
 
@@ -122,7 +123,7 @@ bool AtomShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			 */
 
 			cell = cellArray.cell(cellId);
-			Messenger::printVerbose("AtomShake: Cell %i now the target on process %s, containing %i Atoms interacting with %i neighbour cells.\n", cellId, procPool.processInfo(), cell->nAtoms(), cell->nTotalCellNeighbours());
+			Messenger::printVerbose("Cell %i now the target on process %s, containing %i Atoms interacting with %i neighbour cells.\n", cellId, procPool.processInfo(), cell->nAtoms(), cell->nTotalCellNeighbours());
 
 			// Set current atom targets in ChangeStore (entire cell contents)
 			changeStore.add(cell);
@@ -194,8 +195,8 @@ bool AtomShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		double rate = double(nAccepted)/nTries;
 
-		Messenger::print("AtomShake: Overall acceptance rate was %4.2f% (%i of %i attempted moves) (%s work, %s comms, %i nodists, %i broadcasts)\n", 100.0*rate, nAccepted, nTries, timer.totalTimeString(), procPool.accumulatedTimeString(), distributor.nUnavailableInstances(), distributor.nChangeBroadcastsRequired());
-		Messenger::print("AtomShake: Total energy delta was %10.4e kJ/mol.\n", totalDelta);
+		Messenger::print("Overall acceptance rate was %4.2f% (%i of %i attempted moves) (%s work, %s comms, %i nodists, %i broadcasts)\n", 100.0*rate, nAccepted, nTries, timer.totalTimeString(), procPool.accumulatedTimeString(), distributor.nUnavailableInstances(), distributor.nChangeBroadcastsRequired());
+		Messenger::print("Total energy delta was %10.4e kJ/mol.\n", totalDelta);
 
 		// Adjust step size - if nAccepted was zero, just decrease the current stepSize by a constant factor
 		stepSize *= (nAccepted == 0) ? 0.8 : rate/targetAcceptanceRate;
@@ -207,7 +208,7 @@ bool AtomShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Store updated parameter values
 		GenericListHelper<double>::realise(moduleData, "StepSize", uniqueName(), GenericItem::InRestartFileFlag) = stepSize;
-		Messenger::print("AtomShake: Updated translation step is %f Angstroms.\n", stepSize);
+		Messenger::print("Updated translation step is %f Angstroms.\n", stepSize);
 		
 		// Increase coordinate index in Configuration
 		if (nAccepted > 0) cfg->incrementCoordinateIndex();

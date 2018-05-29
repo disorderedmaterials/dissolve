@@ -84,6 +84,7 @@ bool MolShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		Messenger::print("MolShake: Performing %i shake(s) per Molecule.\n", nShakesPerMolecule);
 		Messenger::print("MolShake: Step size for translation adjustments is %f Angstroms (allowed range is %f <= delta <= %f).\n", translationStepSize, translationStepSizeMin, translationStepSizeMax);
 		Messenger::print("MolShake: Step size for rotation adjustments is %f degrees (allowed range is %f <= delta <= %f).\n", rotationStepSize, rotationStepSizeMin, rotationStepSizeMax);
+		Messenger::print("\n");
 
 		ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
 
@@ -248,21 +249,21 @@ bool MolShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		timer.stop();
 
-		Messenger::print("MolShake: Total energy delta was %10.4e kJ/mol.\n", totalDelta);
+		Messenger::print("Total energy delta was %10.4e kJ/mol.\n", totalDelta);
 
 		// Calculate and print acceptance rates
 		double transRate = double(nTranslationsAccepted)/nTranslationAttempts;
 		double rotRate = double(nRotationsAccepted)/nRotationAttempts;
-		Messenger::print("MolShake: Total number of attempted moves was %i (%s work, %s comms)\n", nGeneralAttempts, timer.totalTimeString(), procPool.accumulatedTimeString());
-		Messenger::print("MolShake: Overall translation acceptance rate was %4.2f% (%i of %i attempted moves)\n", 100.0*transRate, nTranslationsAccepted, nTranslationAttempts);
-		Messenger::print("MolShake: Overall rotation acceptance rate was %4.2f% (%i of %i attempted moves)\n", 100.0*rotRate, nRotationsAccepted, nRotationAttempts);
+		Messenger::print("Total number of attempted moves was %i (%s work, %s comms)\n", nGeneralAttempts, timer.totalTimeString(), procPool.accumulatedTimeString());
+		Messenger::print("Overall translation acceptance rate was %4.2f% (%i of %i attempted moves)\n", 100.0*transRate, nTranslationsAccepted, nTranslationAttempts);
+		Messenger::print("Overall rotation acceptance rate was %4.2f% (%i of %i attempted moves)\n", 100.0*rotRate, nRotationsAccepted, nRotationAttempts);
 
 		// Update and set translation step size
 		translationStepSize *= (nTranslationsAccepted == 0) ? 0.8 : transRate/targetAcceptanceRate;
 		if (translationStepSize < translationStepSizeMin) translationStepSize = translationStepSizeMin;
 		else if (translationStepSize > translationStepSizeMax) translationStepSize = translationStepSizeMax;
 
-		Messenger::print("MolShake: Updated step size for translations is %f Angstroms.\n", translationStepSize); 
+		Messenger::print("Updated step size for translations is %f Angstroms.\n", translationStepSize); 
 		GenericListHelper<double>::realise(moduleData, "TranslationStepSize", uniqueName(), GenericItem::InRestartFileFlag) = translationStepSize;
 
 		// Update and set rotation step size
@@ -270,7 +271,7 @@ bool MolShakeModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		if (rotationStepSize < rotationStepSizeMin) rotationStepSize = rotationStepSizeMin;
 		else if (rotationStepSize > rotationStepSizeMax) rotationStepSize = rotationStepSizeMax;
 
-		Messenger::print("MolShake: Updated step size for rotations is %f degrees.\n", rotationStepSize); 
+		Messenger::print("Updated step size for rotations is %f degrees.\n", rotationStepSize); 
 		GenericListHelper<double>::realise(moduleData, "RotationStepSize", uniqueName(), GenericItem::InRestartFileFlag) = rotationStepSize;
 
 		// Increase coordinate index in Configuration

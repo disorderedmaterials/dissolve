@@ -376,7 +376,7 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 		cfg->nAtoms() > 10000 ? calculateGRCells(procPool, cfg, originalgr) : calculateGRSimple(procPool, cfg, originalgr);
 	}
 	timer.stop();
-	Messenger::print("RDF: Finished calculation of partials (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
+	Messenger::print("Finished calculation of partials (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
 
 	/*
 	 * Calculate intramolecular partials
@@ -451,7 +451,7 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 		}
 	}
 	timer.stop();
-	Messenger::print("RDF: Finished calculation of intramolecular partials (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
+	Messenger::print("Finished calculation of intramolecular partials (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
 
 	/*
 	 * Sum histogram data
@@ -487,7 +487,7 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 	// Sum total functions
 	originalgr.formTotal(true);
 	timer.stop();
-	Messenger::print("RDF: Finished summation and normalisation of partial g(r) data (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
+	Messenger::print("Finished summation and normalisation of partial g(r) data (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
 
 	/*
 	 * Partials are now up-to-date
@@ -709,28 +709,28 @@ bool RDFModule::testReferencePartials(PartialSet& setA, PartialSet& setB, double
 			// Full partial
 			error = setA.partial(n,m).error(setB.partial(n,m));
 			{
-				Messenger::print("RDF: Test reference full partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+				Messenger::print("Test reference full partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 				if (error > testThreshold) return false;
 			}
 
 			// Bound partial
 			error = setA.boundPartial(n,m).error(setB.boundPartial(n,m));
 			{
-				Messenger::print("RDF: Test reference bound partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+				Messenger::print("Test reference bound partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 				if (error > testThreshold) return false;
 			}
 
 			// Unbound reference
 			error = setA.unboundPartial(n,m).error(setB.unboundPartial(n,m));
 			{
-				Messenger::print("RDF: Test reference unbound partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+				Messenger::print("Test reference unbound partial '%s-%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 				if (error > testThreshold) return false;
 			}
 
 			// Bragg reference
 			error = setA.braggPartial(n,m).error(setB.braggPartial(n,m));
 			{
-				Messenger::print("RDF: Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+				Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", typeI->atomTypeName(), typeJ->atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 				if (error > testThreshold) return false;
 			}
 		}
@@ -739,7 +739,7 @@ bool RDFModule::testReferencePartials(PartialSet& setA, PartialSet& setB, double
 	// Total reference data supplied?
 	error = setA.total().error(setB.total());
 	{
-		Messenger::print("RDF: Test reference total has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
+		Messenger::print("Test reference total has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 		if (error > testThreshold) return false;
 	}
 

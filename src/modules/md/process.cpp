@@ -73,7 +73,6 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	// Print argument/parameter summary
 	Messenger::print("MD: Cutoff distance is %f\n", cutoffDistance);
 	Messenger::print("MD: Number of steps = %i\n", nSteps);
-	Messenger::print("MD: Timestep = %10.3e ps\n", deltaT);
 	if (writeTraj) Messenger::print("MD: Trajectory file will be appended every %i step(s).\n", trajectoryFrequency);
 	else Messenger::print("MD: Trajectory file off.\n");
 	if (capForce) Messenger::print("MD: Forces will be capped to %10.3e kJ/mol per atom per axis.\n", maxForce / 100.0);
@@ -83,6 +82,7 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	else Messenger::print("MD: Summary will not be written.\n");
 	if (variableTimestep) Messenger::print("MD: Variable timestep will be employed.");
 	else Messenger::print("MD: Constant timestep of %e ps will be used.\n", deltaT);
+	Messenger::print("\n");
 
 	RefListIterator<Configuration,bool> configIterator(targetConfigurations_);
 	while (Configuration* cfg = configIterator.iterate())
@@ -117,8 +117,8 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			randomVelocities = true;
 			v.initialise(cfg->nAtoms());
 		}
-		if (randomVelocities) Messenger::print("MD: Random initial velocities will be assigned.\n");
-		else Messenger::print("MD: Existing velocities will be used.\n");
+		if (randomVelocities) Messenger::print("Random initial velocities will be assigned.\n");
+		else Messenger::print("Existing velocities will be used.\n");
 
 		Vec3<double> vCom;
 		double massSum = 0.0;
@@ -177,8 +177,8 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Write header
 		if (outputFrequency > 0)
 		{
-			Messenger::print("MD:                                             Energies (kJ/mol)\n");
-			Messenger::print("MD:  Step             T(K)         Kinetic      Inter        Intra        Total      deltaT(ps)\n");
+			Messenger::print("                                             Energies (kJ/mol)\n");
+			Messenger::print("  Step             T(K)         Kinetic      Inter        Intra        Total      deltaT(ps)\n");
 		}
 
 		// Start a timer and reset the ProcessPool's time accumulator
@@ -270,9 +270,9 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				{
 					peInter = EnergyModule::interAtomicEnergy(procPool, cfg, dissolve.potentialMap());
 					peIntra = EnergyModule::intraMolecularEnergy(procPool, cfg, dissolve.potentialMap());
-					Messenger::print("MD:  %-10i    %10.3e   %10.3e   %10.3e   %10.3e   %10.3e   %10.3e\n", step, tInstant, ke, peInter, peIntra, ke+peIntra+peInter, deltaT);
+					Messenger::print("  %-10i    %10.3e   %10.3e   %10.3e   %10.3e   %10.3e   %10.3e\n", step, tInstant, ke, peInter, peIntra, ke+peIntra+peInter, deltaT);
 				}
-				else Messenger::print("MD:  %-10i    %10.3e   %10.3e                                          %10.3e\n", step, tInstant, ke, deltaT);
+				else Messenger::print("  %-10i    %10.3e   %10.3e                                          %10.3e\n", step, tInstant, ke, deltaT);
 			}
 
 			// Save trajectory frame
@@ -313,8 +313,8 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Close trajectory file
 		if (writeTraj && procPool.isMaster()) trajParser.closeFiles();
 
-		if (capForce) Messenger::print("MD: A total of %i forces were capped over the course of the dynamics (%9.3e per step).\n", nCapped, double(nCapped) / nSteps);
-		Messenger::print("MD: %i steps performed (%s work, %s comms)\n", nSteps, timer.totalTimeString(), procPool.accumulatedTimeString());
+		if (capForce) Messenger::print("A total of %i forces were capped over the course of the dynamics (%9.3e per step).\n", nCapped, double(nCapped) / nSteps);
+		Messenger::print("%i steps performed (%s work, %s comms)\n", nSteps, timer.totalTimeString(), procPool.accumulatedTimeString());
 
 		// Increment configuration changeCount
 		cfg->incrementCoordinateIndex();
