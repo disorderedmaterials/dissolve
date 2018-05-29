@@ -29,7 +29,7 @@
 // Forward Declarations
 class ModuleChart;
 
-// Simulation Tab
+// Processing Tab
 class ProcessingTab : public QWidget, public MainTab
 {
 	// All Qt declarations derived from QObject must include this macro
