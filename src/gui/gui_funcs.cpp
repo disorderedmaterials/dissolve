@@ -191,7 +191,7 @@ void DissolveWindow::updateStatus()
 // Update file labels
 void DissolveWindow::updateFileLabels()
 {
-	ui.LocationLabel->setText(QFileInfo(dissolve_.inputFilename()).absolutePath() + " (Local)");
+	ui.LocationLabel->setText(QFileInfo(dissolve_.inputFilename()).absolutePath() + "  (Local)");
 	ui.InputFileLabel->setText(dissolve_.inputFilename());
 	ui.RestartFileLabel->setText(dissolve_.hasRestartFilename() ? dissolve_.restartFilename() : "<none>");
 }
