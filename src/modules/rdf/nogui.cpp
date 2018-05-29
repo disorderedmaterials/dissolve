@@ -22,7 +22,7 @@
 #include "modules/rdf/rdf.h"
 
 // Return a new widget controlling this Module
-ModuleWidget* RDFModule::createWidget(QWidget* parent, Dissolve& Dissolve)
+ModuleWidget* RDFModule::createWidget(QWidget* parent, Dissolve& dissolve)
 {
 	return NULL;
 }

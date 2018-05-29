@@ -22,7 +22,7 @@
 #include "modules/neutronsq/neutronsq.h"
 
 // Return a new widget controlling this Module
-ModuleWidget* NeutronSQModule::createWidget(QWidget* parent, Dissolve& Dissolve)
+ModuleWidget* NeutronSQModule::createWidget(QWidget* parent, Dissolve& dissolve)
 {
 	return NULL;
 }

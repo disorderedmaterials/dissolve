@@ -28,7 +28,7 @@
 #include "templates/genericlisthelper.h"
 
 // Constructor
-BraggModuleWidget::BraggModuleWidget(QWidget* parent, Module* module, Dissolve& Dissolve) : ModuleWidget(parent), module_((BraggModule*) module), Dissolve_(Dissolve)
+BraggModuleWidget::BraggModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_((BraggModule*) module), dissolve_(dissolve)
 {
 	// Set up user interface
 	ui.setupUi(this);

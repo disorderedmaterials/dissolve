@@ -110,7 +110,7 @@ class SQModule : public Module
 	 */
 	public:
 	// Return a new widget controlling this Module
-	ModuleWidget* createWidget(QWidget* parent, Dissolve& Dissolve);
+	ModuleWidget* createWidget(QWidget* parent, Dissolve& dissolve);
 };
 
 #endif

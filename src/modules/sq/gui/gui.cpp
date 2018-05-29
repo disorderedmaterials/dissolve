@@ -23,8 +23,8 @@
 #include "modules/sq/gui/modulewidget.h"
 
 // Return a new widget controlling this Module
-ModuleWidget* SQModule::createWidget(QWidget* parent, Dissolve& Dissolve)
+ModuleWidget* SQModule::createWidget(QWidget* parent, Dissolve& dissolve)
 {
-	return new SQModuleWidget(parent, this, Dissolve);
+	return new SQModuleWidget(parent, this, dissolve);
 }
 

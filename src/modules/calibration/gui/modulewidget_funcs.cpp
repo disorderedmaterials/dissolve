@@ -28,7 +28,7 @@
 #include "templates/genericlisthelper.h"
 
 // Constructor
-CalibrationModuleWidget::CalibrationModuleWidget(QWidget* parent, Module* module, Dissolve& Dissolve) : ModuleWidget(parent), module_((CalibrationModule*) module), Dissolve_(Dissolve)
+CalibrationModuleWidget::CalibrationModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_((CalibrationModule*) module), dissolve_(dissolve)
 {
 	// Set up user interface
 	ui.setupUi(this);

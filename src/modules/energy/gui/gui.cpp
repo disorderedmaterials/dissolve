@@ -23,8 +23,8 @@
 #include "modules/energy/gui/modulewidget.h"
 
 // Return a new widget controlling this Module
-ModuleWidget* EnergyModule::createWidget(QWidget* parent, Dissolve& Dissolve)
+ModuleWidget* EnergyModule::createWidget(QWidget* parent, Dissolve& dissolve)
 {
-	return new EnergyModuleWidget(parent, this, Dissolve);
+	return new EnergyModuleWidget(parent, this, dissolve);
 }
 

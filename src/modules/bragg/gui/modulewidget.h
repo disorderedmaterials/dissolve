@@ -44,11 +44,11 @@ class BraggModuleWidget : public ModuleWidget
 	// UChromaView contained within this widget
 	UChromaViewWidget* uChromaView_;
 	// Reference to Dissolve
-	Dissolve& Dissolve_;
+	Dissolve& dissolve_;
 
 	public:
 	// Constructor / Destructor
-	BraggModuleWidget(QWidget* parent, Module* module, Dissolve& Dissolve);
+	BraggModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve);
 	~BraggModuleWidget();
 	// Main form declaration
 	Ui::BraggModuleWidget ui;

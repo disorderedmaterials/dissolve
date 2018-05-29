@@ -44,11 +44,11 @@ class SQModuleWidget : public ModuleWidget
 	// UChromaViews contained within this widget
 	UChromaViewWidget* partialGRGraph_, *partialSQGraph_, *totalGRGraph_, *totalSQGraph_;
 	// Reference to Dissolve
-	Dissolve& Dissolve_;
+	Dissolve& dissolve_;
 
 	public:
 	// Constructor / Destructor
-	SQModuleWidget(QWidget* parent, Module* module, Dissolve& Dissolve);
+	SQModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve);
 	~SQModuleWidget();
 	// Main form declaration
 	Ui::SQModuleWidget ui;

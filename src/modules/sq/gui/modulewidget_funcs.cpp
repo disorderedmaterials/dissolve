@@ -29,7 +29,7 @@
 #include "templates/genericlisthelper.h"
 
 // Constructor
-SQModuleWidget::SQModuleWidget(QWidget* parent, Module* module, Dissolve& Dissolve) : ModuleWidget(parent), module_((SQModule*) module), Dissolve_(Dissolve)
+SQModuleWidget::SQModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_((SQModule*) module), dissolve_(dissolve)
 {
 	// Set up user interface
 	ui.setupUi(this);
@@ -169,7 +169,7 @@ void SQModuleWidget::setGraphDataTargets(SQModule* module)
 
 	// Add partials
 	int n = 0;
-	for (AtomType* at1 = Dissolve_.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++n)
+	for (AtomType* at1 = dissolve_.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++n)
 	{
 		int m = n;
 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)

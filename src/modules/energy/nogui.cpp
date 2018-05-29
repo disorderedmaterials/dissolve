@@ -22,7 +22,7 @@
 #include "modules/energy/energy.h"
 
 // Return a new widget controlling this Module
-ModuleWidget* EnergyModule::createWidget(QWidget* parent, Dissolve& Dissolve)
+ModuleWidget* EnergyModule::createWidget(QWidget* parent, Dissolve& dissolve)
 {
 	return NULL;
 }

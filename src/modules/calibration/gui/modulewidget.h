@@ -44,11 +44,11 @@ class CalibrationModuleWidget : public ModuleWidget
 	// UChromaView contained within this widget
 	UChromaViewWidget* uChromaView_;
 	// Reference to Dissolve
-	Dissolve& Dissolve_;
+	Dissolve& dissolve_;
 
 	public:
 	// Constructor / Destructor
-	CalibrationModuleWidget(QWidget* parent, Module* module, Dissolve& Dissolve);
+	CalibrationModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve);
 	~CalibrationModuleWidget();
 	// Main form declaration
 	Ui::CalibrationModuleWidget ui;

@@ -44,11 +44,11 @@ class NeutronSQModuleWidget : public ModuleWidget
 	// UChromaViews contained within this widget
 	UChromaViewWidget* partialGRGraph_, *partialSQGraph_, *totalGRGraph_, *totalSQGraph_;
 	// Reference to Dissolve
-	Dissolve& Dissolve_;
+	Dissolve& dissolve_;
 
 	public:
 	// Constructor / Destructor
-	NeutronSQModuleWidget(QWidget* parent, Module* module, Dissolve& Dissolve);
+	NeutronSQModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve);
 	~NeutronSQModuleWidget();
 	// Main form declaration
 	Ui::NeutronSQModuleWidget ui;

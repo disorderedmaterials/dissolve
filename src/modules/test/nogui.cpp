@@ -22,7 +22,7 @@
 #include "modules/test/test.h"
 
 // Return a new widget controlling this Module
-ModuleWidget* TestModule::createWidget(QWidget* parent, Dissolve& Dissolve)
+ModuleWidget* TestModule::createWidget(QWidget* parent, Dissolve& dissolve)
 {
 	return NULL;
 }

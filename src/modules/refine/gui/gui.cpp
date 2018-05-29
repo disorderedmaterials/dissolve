@@ -23,8 +23,8 @@
 #include "modules/refine/gui/modulewidget.h"
 
 // Return a new widget controlling this Module
-ModuleWidget* RefineModule::createWidget(QWidget* parent, Dissolve& Dissolve)
+ModuleWidget* RefineModule::createWidget(QWidget* parent, Dissolve& dissolve)
 {
-	return new RefineModuleWidget(parent, this, Dissolve);
+	return new RefineModuleWidget(parent, this, dissolve);
 }
 

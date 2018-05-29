@@ -23,12 +23,13 @@
 #include "gui/uchroma/gui/uchromaview.h"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
+#include "modules/rdf/rdf.h"
 #include "classes/atomtype.h"
 #include "templates/variantpointer.h"
 #include "templates/genericlisthelper.h"
 
 // Constructor
-RDFModuleWidget::RDFModuleWidget(QWidget* parent, Module* module, Dissolve& Dissolve) : ModuleWidget(parent), module_((RDFModule*) module), Dissolve_(Dissolve)
+RDFModuleWidget::RDFModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_((RDFModule*) module), dissolve_(dissolve)
 {
 	// Set up user interface
 	ui.setupUi(this);
@@ -120,3 +121,32 @@ bool RDFModuleWidget::readState(LineParser& parser)
 /*
  * Widgets / Functions
  */
+
+// Set data targets in graphs
+void RDFModuleWidget::setGraphDataTargets(RDFModule* module)
+{
+	CharString blockData;
+
+	// Loop over Configurations
+	RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
+	while (Configuration* cfg = configIterator.iterate())
+	{
+		// Add partials
+		int n = 0;
+		for (AtomType* at1 = dissolve_.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++n)
+		{
+			int m = n;
+			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
+			{
+				CharString id("%s-%s", at1->name(), at2->name());
+
+				blockData.sprintf("Collection '%s'; Group '%s'; DataSet 'Calculated %s'; Source XYData '%s//UnweightedGR//%s-%s//Full'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), cfg->niceName(), at1->name(), at2->name());
+				partialsGraph_->addCollectionFromBlock(blockData);
+			}
+		}
+
+		// Add calculated total G(r)
+		blockData.sprintf("Collection 'G(r)'; Group 'Calc'; DataSet 'Calculated'; Source XYData '%s//UnweightedGR//Total'; EndDataSet; EndCollection", cfg->niceName());
+		totalsGraph_->addCollectionFromBlock(blockData);
+	}
+}

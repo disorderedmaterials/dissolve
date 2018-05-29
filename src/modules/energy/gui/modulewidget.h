@@ -45,11 +45,11 @@ class EnergyModuleWidget : public ModuleWidget
 	// UChromaViews contained within this widget
 	UChromaViewWidget* energyGraph_;
 	// Reference to Dissolve
-	Dissolve& Dissolve_;
+	Dissolve& dissolve_;
 
 	public:
 	// Constructor / Destructor
-	EnergyModuleWidget(QWidget* parent, Module* module, Dissolve& Dissolve);
+	EnergyModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve);
 	~EnergyModuleWidget();
 	// Main form declaration
 	Ui::EnergyModuleWidget ui;

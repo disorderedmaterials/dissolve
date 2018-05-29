@@ -44,11 +44,11 @@ class RDFModuleWidget : public ModuleWidget
 	// UChromaViews contained within this widget
 	UChromaViewWidget* partialsGraph_, *totalsGraph_;
 	// Reference to Dissolve
-	Dissolve& Dissolve_;
+	Dissolve& dissolve_;
 
 	public:
 	// Constructor / Destructor
-	RDFModuleWidget(QWidget* parent, Module* module, Dissolve& Dissolve);
+	RDFModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve);
 	~RDFModuleWidget();
 	// Main form declaration
 	Ui::RDFModuleWidget ui;
@@ -74,6 +74,8 @@ class RDFModuleWidget : public ModuleWidget
 	 * Widgets / Functions
 	 */
 	private:
+	// Set data targets in graphs
+	void setGraphDataTargets(RDFModule* module);
 };
 
 #endif

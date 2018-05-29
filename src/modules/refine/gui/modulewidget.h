@@ -44,11 +44,11 @@ class RefineModuleWidget : public ModuleWidget
 	// UChromaViews contained within this widget
 	UChromaViewWidget* dataGraph_, *partialSQGraph_, *partialGRGraph_, *deltaPhiRGraph_, *phiMagGraph_, *errorsGraph_;
 	// Reference to Dissolve
-	Dissolve& Dissolve_;
+	Dissolve& dissolve_;
 
 	public:
 	// Constructor / Destructor
-	RefineModuleWidget(QWidget* parent, Module* module, Dissolve& Dissolve);
+	RefineModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve);
 	~RefineModuleWidget();
 	// Main form declaration
 	Ui::RefineModuleWidget ui;

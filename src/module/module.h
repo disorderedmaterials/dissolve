@@ -231,7 +231,7 @@ class Module : public ListItem<Module>
 	 */
 	public:
 	// Return a new widget controlling this Module
-	virtual ModuleWidget* createWidget(QWidget* parent, Dissolve& Dissolve);
+	virtual ModuleWidget* createWidget(QWidget* parent, Dissolve& dissolve);
 };
 
 #endif

@@ -29,7 +29,7 @@
 #include "templates/genericlisthelper.h"
 
 // Constructor
-RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, Dissolve& Dissolve) : ModuleWidget(parent), module_((RefineModule*) module), Dissolve_(Dissolve)
+RefineModuleWidget::RefineModuleWidget(QWidget* parent, Module* module, Dissolve& dissolve) : ModuleWidget(parent), module_((RefineModule*) module), dissolve_(dissolve)
 {
 	// Set up user interface
 	ui.setupUi(this);
@@ -150,7 +150,7 @@ void RefineModuleWidget::updateControls()
 
 	// Set controls on Overview page
 	double phiLevel = 0.0;
-	ListIterator<PairPotential> ppIterator(Dissolve_.pairPotentials());
+	ListIterator<PairPotential> ppIterator(dissolve_.pairPotentials());
 	while (PairPotential* pp = ppIterator.iterate()) phiLevel += pp->uAdditional().absIntegral();
 	ui.PhiLevelSpin->setValue(phiLevel);
 
@@ -223,7 +223,7 @@ void RefineModuleWidget::setGraphDataTargets(RefineModule* module)
 {
 	if (!module) return;
 
-	const int nTypes = Dissolve_.atomTypeList().nItems();
+	const int nTypes = dissolve_.atomTypeList().nItems();
 	int n, m;
 	CharString blockData;
 
@@ -254,7 +254,7 @@ void RefineModuleWidget::setGraphDataTargets(RefineModule* module)
 
 		// Add experimentally-determined partial S(Q), calculated partial S(Q), and delta S(Q) to the partialSQGraph_
 		n = 0;
-		for (AtomType* at1 = Dissolve_.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++n)
+		for (AtomType* at1 = dissolve_.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++n)
 		{
 			m = n;
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
