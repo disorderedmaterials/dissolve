@@ -54,6 +54,7 @@ void DissolveWindow::mainTabsDoubleClicked(int index)
 	// We can only rename workspace-type tabs
 	MainTab* tab = tabs_[index];
 	if (!tab) return;
+	if (!tab->canChangeTitle()) return;
 
 	// Rename the current workspace
 	bool ok;
@@ -68,7 +69,7 @@ void DissolveWindow::mainTabsDoubleClicked(int index)
 	tab->setTitle(newName);
 }
 
-// Clear all tabs, except the "Setup" tab
+// Clear all tabs
 void DissolveWindow::clearAllTabs()
 {
 	// Delete all our referenced tabs - removal of the tab and widget will be handled by the destructor

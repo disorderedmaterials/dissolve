@@ -528,7 +528,6 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					Messenger::print("Fitted function has error of %f%% with original delta S(Q) (nGaussians = %i).\n", error, gaussFit.nGaussians());
 
 					// Store fitted parameters
-					// If the fit parameter arrays already exist in the module data, retrieve and set them now.
 					GenericListHelper< Array<double> >::realise(dissolve.processingModuleData(), CharString("%s-%s-GaussianX", at1->name(), at2->name()), uniqueName_, GenericItem::InRestartFileFlag) = gaussFit.x();
 					GenericListHelper< Array<double> >::realise(dissolve.processingModuleData(), CharString("%s-%s-GaussianA", at1->name(), at2->name()), uniqueName_, GenericItem::InRestartFileFlag) = gaussFit.A();
 					GenericListHelper< Array<double> >::realise(dissolve.processingModuleData(), CharString("%s-%s-GaussianC", at1->name(), at2->name()), uniqueName_, GenericItem::InRestartFileFlag) = gaussFit.c();

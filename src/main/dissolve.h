@@ -311,6 +311,8 @@ class Dissolve
 	private:
 	// Filename of current input file
 	CharString filename_;
+	// Filename of current restart file
+	CharString restartFilename_;
 	// Whether to automatically add dependent Modules if they have not been defined
 	bool autoAddDependentModules_;
 	// Accumulated timing information for saving restart file
@@ -331,10 +333,16 @@ class Dissolve
 	bool saveRestart(const char* filename);
 	// Save heartbeat file
 	bool saveHeartBeat(const char* filename, double estimatedNSecs);
-	// Return whether a filename has been set
-	bool hasInputFileName() const;
-	// Return filename of current input file
+	// Return whether an input filename has been set
+	bool hasInputFilename() const;
+	// Set current input filenamea
+	void setInputFilename(const char* filename);
+	// Return current input filename
 	const char* inputFilename() const;
+	// Return whether a restart filename has been set
+	bool hasRestartFilename() const;
+	// Return restart filename
+	const char* restartFilename() const;
 	// Set whether to automatically add dependent Modules if they have not been defined
 	void setAutoAddDependentModules(bool b);
 	// Return whether to automatically add dependent Modules if they have not been defined

@@ -20,6 +20,7 @@
 */
 
 #include "main/dissolve.h"
+#include "version.h"
 #include "gui/gui.h"
 #include "base/lineparser.h"
 #include <QCloseEvent>
@@ -166,7 +167,7 @@ void DissolveWindow::updateControls()
 void DissolveWindow::updateStatus()
 {
 	// Window Title
-	QString title = QString("%1%2").arg(dissolve_.hasInputFileName() ? dissolve_.inputFilename() : "<untitled>", modified_ ? "(*)" : ""); 
+	QString title = QString("Dissolve v%1 - %2%3").arg(DISSOLVEVERSION, dissolve_.hasInputFilename() ? dissolve_.inputFilename() : "<untitled>", modified_ ? "(*)" : "");
 	setWindowTitle(title);
 
 	// Dissolve Status
@@ -184,6 +185,13 @@ void DissolveWindow::updateStatus()
 		ui.ControlSetUpButton->setEnabled(true);
 	}
 	ui.SetUpLabel->setPalette(labelPalette);
+}
+
+// Update file labels
+void DissolveWindow::updateFileLabels()
+{
+	ui.InputFileLabel->setText(dissolve_.inputFilename());
+	ui.RestartFileLabel->setText(dissolve_.hasRestartFilename() ? dissolve_.restartFilename() : "<none>");
 }
 
 // Link output handler in to the Messenger

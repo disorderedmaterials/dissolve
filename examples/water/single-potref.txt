@@ -121,7 +121,8 @@ Module  Refine
   Target  'D2O'
   Target  'HDO'
   Frequency  1
-  OnlyWhenStable  False
-  PhiLimit  30.0
+  OnlyWhenEnergyStable  False
+  OnlyWhenErrorStable  False
+  PhiMax  30.0
 EndModule
 
