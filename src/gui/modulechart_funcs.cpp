@@ -321,11 +321,15 @@ void ModuleChart::updateControls()
 // Disable sensitive controls within widget, ready for main code to run
 void ModuleChart::disableSensitiveControls()
 {
+	RefListIterator<FlowBlock,bool> flowBlockIterator(displayedWidgets_);
+	while (FlowBlock* block = flowBlockIterator.iterate()) block->disableSensitiveControls();
 }
 
 // Enable sensitive controls within widget, ready for main code to run
 void ModuleChart::enableSensitiveControls()
 {
+	RefListIterator<FlowBlock,bool> flowBlockIterator(displayedWidgets_);
+	while (FlowBlock* block = flowBlockIterator.iterate()) block->enableSensitiveControls();
 }
 
 /*

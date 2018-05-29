@@ -83,6 +83,10 @@ class FlowBlock : public QWidget
 	public:
 	// Update controls within widget
 	void updateControls();
+	// Disable sensitive controls, ready for main code to run
+	void disableSensitiveControls();
+	// Enable sensitive controls, ready for main code to run
+	void enableSensitiveControls();
 	// Return right-hand-side flow anchor point
 	QPoint globalRightHandFlowAnchor() const;
 	// Return left-hand-side flow anchor point

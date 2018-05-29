@@ -106,6 +106,24 @@ void FlowBlock::updateControls()
 	ui.EnabledButton->setChecked(module_->enabled());
 }
 
+// Disable sensitive controls, ready for main code to run
+void FlowBlock::disableSensitiveControls()
+{
+	ui.KeywordsFrame->setEnabled(false);
+	ui.RunButton->setEnabled(false);
+	ui.EnabledButton->setEnabled(false);
+	ui.RemoveButton->setEnabled(false);
+}
+
+// Enable sensitive controls, ready for main code to run
+void FlowBlock::enableSensitiveControls()
+{
+	ui.KeywordsFrame->setEnabled(true);
+	ui.RunButton->setEnabled(true);
+	ui.EnabledButton->setEnabled(true);
+	ui.RemoveButton->setEnabled(true);
+}
+
 // Return right-hand-side flow anchor point
 QPoint FlowBlock::globalRightHandFlowAnchor() const
 {
