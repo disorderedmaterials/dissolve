@@ -292,6 +292,33 @@ bool GaussFit::saveCoefficients(const char* filename) const
 	return true;
 }
 
+// Save Fourier-transformed Gaussians to individual files
+bool GaussFit::saveFTGaussians(const char* filenamePrefix, double xStep) const
+{
+	double xDelta = (xStep < 0.0 ? sourceData_.x(1) - sourceData_.xFirst() : xStep);
+	for (int n=0; n<nGaussians_; ++n)
+	{
+		LineParser parser;
+		if (!parser.openOutput(CharString("%s-%03i.gauss", filenamePrefix, n))) return false;
+
+		double xCentre = x_.value(n);
+		double A = A_.value(n);
+		double c = c_.value(n);
+		if (!parser.writeLineF("#  x=%f  A=%f  c=%f\n", xCentre, A, c)) return false;
+
+		double x = sourceData_.xFirst();
+		while (x < sourceData_.xLast())
+		{
+			parser.writeLineF("%f  %f\n", x, A * exp(-(x*x*c*c)/2.0) * sin(xCentre*x)/(xCentre*x));
+			x += xDelta;
+		}
+
+		parser.closeFiles();
+	}
+
+	return true;
+}
+
 // Return approximate function
 const XYData& GaussFit::approximation() const
 {

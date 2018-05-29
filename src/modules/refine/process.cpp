@@ -533,6 +533,15 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					GenericListHelper< Array<double> >::realise(dissolve.processingModuleData(), CharString("%s-%s-GaussianA", at1->name(), at2->name()), uniqueName_, GenericItem::InRestartFileFlag) = gaussFit.A();
 					GenericListHelper< Array<double> >::realise(dissolve.processingModuleData(), CharString("%s-%s-GaussianC", at1->name(), at2->name()), uniqueName_, GenericItem::InRestartFileFlag) = gaussFit.c();
 
+					// DEBUG
+					if (false)
+					{
+						deltaSQ.ref(i, j).save(CharString("%s-%s.orig", at1->name(), at2->name()));
+						gaussFit.approximation().save(CharString("%s-%s.approx", at1->name(), at2->name()));
+						gaussFit.saveCoefficients(CharString("%s-%s.coeff", at1->name(), at2->name()));
+						gaussFit.saveFTGaussians(CharString("%s-%s", at1->name(), at2->name()), 0.01);
+					}
+
 					// Fourier transform the approximation, and store this as our inversion
 					inversion = gaussFit.fourierTransform(ppDelta, ppDelta, ppRange);
 					dPhiR = inversion;

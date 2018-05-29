@@ -79,6 +79,8 @@ class GaussFit
 	const Array<double>& c() const;
 	// Save coefficients to specified file
 	bool saveCoefficients(const char* filename) const;
+	// Save Fourier-transformed Gaussians to individual files
+	bool saveFTGaussians(const char* filenamePrefix, double xStep = -1.0) const;
 
 
 	/*
