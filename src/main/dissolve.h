@@ -243,10 +243,16 @@ class Dissolve
 	 * Simulation
 	 */
 	private:
+	// Number of test points to use when calculating Box normalisation arrays
+	int nBoxNormalisationPoints_;
+	// Random seed
+	int seed_;
+	// Frequency at which to write restart file
+	int restartFileFrequency_;
 	// List of Modules with pre-processing tasks to perform
 	ModuleList preProcessingTasks_;
 	// List of main processing Modules to run
-	ModuleList processingModules_;
+	ModuleList mainProcessingModules_;
 	// Data associated with main processing Modules
 	GenericList processingModuleData_;
 	// List of Modules with post-processing tasks to perform
@@ -265,8 +271,20 @@ class Dissolve
 	Module* findPostProcessingTask(const char* name);
 
 	public:
+	// Set number of test points to use when calculating Box normalisation arrays
+	void setNBoxNormalisationPoints(int nPoints);
+	// Return number of test points to use when calculating Box normalisation arrays
+	int nBoxNormalisationPoints() const;
+	// Set random seed
+	void setSeed(int seed);
+	// Return random seed
+	int seed() const;
+	// Set frequency with which to write various iteration data
+	void setRestartFileFrequency(int n);
+	// Return frequency with which to write restart file
+	int restartFileFrequency() const;
 	// Return list of main processing Modules to run
-	ModuleList& processingModules();
+	ModuleList& mainProcessingModules();
 	// Return data associated with main processing Modules
 	GenericList& processingModuleData();
 	// Iterate main simulation
@@ -278,29 +296,9 @@ class Dissolve
 
 
 	/*
-	 * Simulation
+	 * Setup
 	 */
-	private:
-	// Number of test points to use when calculating Box normalisation arrays
-	int nBoxNormalisationPoints_;
-	// Random seed
-	int seed_;
-	// Frequency at which to write restart file
-	int restartFileFrequency_;
-
 	public:
-	// Set number of test points to use when calculating Box normalisation arrays
-	void setNBoxNormalisationPoints(int nPoints);
-	// Return number of test points to use when calculating Box normalisation arrays
-	int nBoxNormalisationPoints() const;
-	// Set random seed
-	void setSeed(int seed);
-	// Return random seed
-	int seed() const;
-	// Set frequency with which to write various iteration dat
-	void setRestartFileFrequency(int n);
-	// Return frequency with which to write restart file
-	int restartFileFrequency() const;
 	// Set up all simulation data, checking it as we go
 	bool setUpSimulation();
 

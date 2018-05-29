@@ -24,42 +24,6 @@
 #include "classes/species.h"
 #include "templates/genericlisthelper.h"
 
-// Set number of test points to use when calculating Box normalisation arrays
-void Dissolve::setNBoxNormalisationPoints(int nPoints)
-{
-	nBoxNormalisationPoints_ = nPoints;
-}
-
-// Return number of test points to use when calculating Box normalisation arrays
-int Dissolve::nBoxNormalisationPoints() const
-{
-	return nBoxNormalisationPoints_;
-}
-
-// Set random seed
-void Dissolve::setSeed(int seed)
-{
-	seed_ = seed;
-}
-
-// Return random seed
-int Dissolve::seed() const
-{
-	return seed_;
-}
-
-// Set frequency with which to write various iteration dat
-void Dissolve::setRestartFileFrequency(int n)
-{
-	restartFileFrequency_ = n;
-}
-
-// Return frequency with which to write restart file
-int Dissolve::restartFileFrequency() const
-{
-	return restartFileFrequency_;
-}
-
 // Set up all simulation data, checking it as we go
 bool Dissolve::setUpSimulation()
 {
@@ -297,7 +261,7 @@ bool Dissolve::setUpSimulation()
 		}
 	}
 	// Loop over processing modules and add pre/post tasks
-	ListIterator<ModuleReference> processingIterator(processingModules_.modules());
+	ListIterator<ModuleReference> processingIterator(mainProcessingModules_.modules());
 	while (ModuleReference* modRef = processingIterator.iterate())
 	{
 		Module* module = modRef->module();
@@ -344,9 +308,9 @@ bool Dissolve::setUpSimulation()
 		}
 	}
 
-	if (processingModules_.nModules() == 0) Messenger::print("No main processing Modules found.\n");
-	else Messenger::print("%i main processing %s found.\n", processingModules_.nModules(), processingModules_.nModules() == 1 ? "Module" : "Modules");
-	ListIterator<ModuleReference> mainProcessingIterator(processingModules_.modules());
+	if (mainProcessingModules_.nModules() == 0) Messenger::print("No main processing Modules found.\n");
+	else Messenger::print("%i main processing %s found.\n", mainProcessingModules_.nModules(), mainProcessingModules_.nModules() == 1 ? "Module" : "Modules");
+	ListIterator<ModuleReference> mainProcessingIterator(mainProcessingModules_.modules());
 	while (ModuleReference* modRef = mainProcessingIterator.iterate())
 	{
 		Module* module = modRef->module();

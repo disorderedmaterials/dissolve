@@ -136,7 +136,7 @@ bool Dissolve::loadInput(const char* filename)
 				}
 
 				// Try to add this module (or an instance of it) to the main processing Module list
-				module = processingModules_.add(masterInstance);
+				module = mainProcessingModules_.add(masterInstance);
 				if (!module)
 				{
 					Messenger::error("Failed to add Module '%s' as main processing task.\n", parser.argc(1));
@@ -170,7 +170,7 @@ bool Dissolve::loadInput(const char* filename)
 				if (error) break;
 
 				// Now finished parsing the Module block, so must update targets and auto-add Modules if necessary
-				if (!module->updateDependentTargets(processingModules_, autoAddDependentModules_, processingModuleData_)) error = true;
+				if (!module->updateDependentTargets(mainProcessingModules_, autoAddDependentModules_, processingModuleData_)) error = true;
 				break;
 			case (InputBlocks::PairPotentialsBlock):
 				if (!PairPotentialsBlock::parse(parser, this)) error = true;
@@ -457,7 +457,7 @@ bool Dissolve::saveInput(const char* filename)
 
 	// Write processing Module blocks
 	parser.writeBannerComment("Processing Modules");
-	ListIterator<ModuleReference> processingIterator(processingModules_.modules());
+	ListIterator<ModuleReference> processingIterator(mainProcessingModules_.modules());
 	while (ModuleReference* modRef = processingIterator.iterate())
 	{
 		Module* module = modRef->module();
@@ -677,7 +677,7 @@ bool Dissolve::saveRestart(const char* filename)
 		}
 	}
 	// -- Processing
-	ListIterator<ModuleReference> procModIterator(processingModules_.modules());
+	ListIterator<ModuleReference> procModIterator(mainProcessingModules_.modules());
 	while (ModuleReference* modRef = procModIterator.iterate())
 	{
 		Module* module = modRef->module();

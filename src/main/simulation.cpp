@@ -46,10 +46,52 @@ Module* Dissolve::findPostProcessingTask(const char* name)
  * Public Functions
  */
 
-// Return list of main processing Modules to run
-ModuleList& Dissolve::processingModules()
+// Set number of test points to use when calculating Box normalisation arrays
+void Dissolve::setNBoxNormalisationPoints(int nPoints)
 {
-	return processingModules_;
+	nBoxNormalisationPoints_ = nPoints;
+}
+
+// Return number of test points to use when calculating Box normalisation arrays
+int Dissolve::nBoxNormalisationPoints() const
+{
+	return nBoxNormalisationPoints_;
+}
+
+// Set random seed
+void Dissolve::setSeed(int seed)
+{
+	seed_ = seed;
+}
+
+// Return random seed
+int Dissolve::seed() const
+{
+	return seed_;
+}
+
+// Set frequency with which to write various iteration dat
+void Dissolve::setRestartFileFrequency(int n)
+{
+	restartFileFrequency_ = n;
+}
+
+// Return frequency with which to write restart file
+int Dissolve::restartFileFrequency() const
+{
+	return restartFileFrequency_;
+}
+
+// Return list of main processing Modules to run
+ModuleList& Dissolve::mainProcessingModules()
+{
+	return mainProcessingModules_;
+}
+
+// Return list of analysis processing Modules to run
+ModuleList& Dissolve::analysisProcessingModules()
+{
+	return analysisProcessingModules_;
 }
 
 // Return data associated with main processing Modules
@@ -121,7 +163,7 @@ bool Dissolve::iterate(int nIterations)
 		Messenger::print("\n");
 
 		Messenger::print("Main Processing\n");
-		ListIterator<ModuleReference> processingIterator(processingModules_.modules());
+		ListIterator<ModuleReference> processingIterator(mainProcessingModules_.modules());
 		while (ModuleReference* modRef = processingIterator.iterate())
 		{
 			Module* module = modRef->module();
@@ -253,7 +295,7 @@ bool Dissolve::iterate(int nIterations)
 		/*
 		 *  4)	Run processing Modules (using worldPool_).
 		 */
-		if (processingModules_.nModules() > 0) Messenger::banner("Main Processing");
+		if (mainProcessingModules_.nModules() > 0) Messenger::banner("Main Processing");
 		processingIterator.restart();
 		while (ModuleReference* modRef = processingIterator.iterate())
 		{
@@ -439,7 +481,7 @@ void Dissolve::printTiming()
 	Messenger::print("\n");
 
 	Messenger::print("Main Processing:\n");
-	ListIterator<ModuleReference> processingIterator(processingModules_.modules());
+	ListIterator<ModuleReference> processingIterator(mainProcessingModules_.modules());
 	while (ModuleReference* modRef = processingIterator.iterate())
 	{
 		Module* module = modRef->module();

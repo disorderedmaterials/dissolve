@@ -242,13 +242,13 @@ void WorkspaceTab::createContextMenu(QMenu* parent)
 	menuItem = parent->addAction("Processing");
 	menuItem->setFont(italicFont);
 	menuItem->setEnabled(false);
-	if (dissolve_.processingModules().nModules() == 0)
+	if (dissolve_.mainProcessingModules().nModules() == 0)
 	{
 		QAction* moduleItem = parent->addAction("None");
 		moduleItem->setFont(italicFont);
 		moduleItem->setEnabled(false);
 	}
-	ListIterator<ModuleReference> moduleIterator(dissolve_.processingModules().modules());
+	ListIterator<ModuleReference> moduleIterator(dissolve_.mainProcessingModules().modules());
 	while (ModuleReference* modRef = moduleIterator.iterate())
 	{
 		Module* module = modRef->module();

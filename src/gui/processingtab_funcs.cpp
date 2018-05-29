@@ -30,7 +30,7 @@ ProcessingTab::ProcessingTab(DissolveWindow* dissolveWindow, Dissolve& dissolve,
 	ui.setupUi(this);
 
 	// Create a ModuleChart widget and set its source list
-	chartWidget_ = new ModuleChart(dissolveWindow, dissolve_.processingModules());
+	chartWidget_ = new ModuleChart(dissolveWindow, dissolve_.mainProcessingModules());
 	chartWidget_->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
 	ui.ScrollArea->setWidget(chartWidget_);
 }
