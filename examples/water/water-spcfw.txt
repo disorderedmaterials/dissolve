@@ -88,7 +88,7 @@ EndModule
 # 3) Calculate g(r) for the Configuration
 Module RDF
   Configuration  'Bulk'
-  IntraBroadening  ScaledGaussian  0.105  0.25
+  IntraBroadening  ScaledGaussian  0.138  0.152
 EndModule
 
 # 4) Calculate neutron-weighted S(Q) for the H2O sample
