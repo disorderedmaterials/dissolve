@@ -169,6 +169,8 @@ void ModuleTab::on_RunButton_clicked(bool checked)
 
 	module_->executeMainProcessing(dissolve_, dissolve_.worldPool());
 
+	updateControls();
+
 	emit(moduleRun());
 }
 

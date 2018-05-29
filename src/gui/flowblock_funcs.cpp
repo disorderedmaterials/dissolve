@@ -104,6 +104,9 @@ void FlowBlock::updateControls()
 
 	// Set button status
 	ui.EnabledButton->setChecked(module_->enabled());
+
+	// Update keywords
+	ui.KeywordsFrame->updateControls();
 }
 
 // Disable sensitive controls, ready for main code to run
@@ -160,6 +163,8 @@ void FlowBlock::on_RunButton_clicked(bool checked)
 	if (!module_) return;
 
 	module_->executeMainProcessing(dissolve_, dissolve_.worldPool());
+
+	updateControls();
 
 	emit moduleRun();
 }
