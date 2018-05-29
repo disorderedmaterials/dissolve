@@ -42,7 +42,7 @@ int main(int argc, char **argv)
 	int n = 1;
 	CharString inputFile, redirectFileName;
 	int nIterations = 5;
-	bool ignoreRestart = false;
+	bool ignoreRestart = false, dontWriteRestart = false;
 	while (n < argc)
 	{
 		if (argv[n][0] == '-')
@@ -66,6 +66,7 @@ int main(int argc, char **argv)
 					printf("\t-r <file>\tRedirect output from all process to 'file.N', where N is the process rank\n");
 					printf("\t-s\t\tPerform single main loop iteration and then quit\n");
 					printf("\t-v\t\tVerbose mode - be a little more descriptive throughout\n");
+					printf("\t-x\t\tDon't write any restart information (but still read in the restart file if present)\n");
 					ProcessPool::finalise();
 					Messenger::ceaseRedirect();
 					return 1;
@@ -117,6 +118,10 @@ int main(int argc, char **argv)
 				case ('v'):
 					Messenger::setVerbose(true);
 					Messenger::printVerbose("Verbose mode enabled.\n");
+					break;
+				case ('x'):
+					dontWriteRestart = true;
+					Messenger::print("No restart file will be written.\n");
 					break;
 				default:
 					printf("Unrecognised command-line switch '%s'.\n", argv[n]);
@@ -229,7 +234,10 @@ int main(int argc, char **argv)
 #ifdef PARALLEL
 	Messenger::print("This is process rank %i of %i processes total.\n", ProcessPool::worldRank(), ProcessPool::nWorldProcesses());
 #endif
-	
+
+	// Set restart file frequency to 0 if 'dontWriteRestart' is set
+	if (dontWriteRestart) Dissolve.setRestartFileFrequency(0);
+
 	// Run main simulation
 	bool result = Dissolve.iterate(nIterations);
 
