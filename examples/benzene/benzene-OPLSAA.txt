@@ -116,26 +116,9 @@ Configuration  'Liquid'
   Density  0.876  g/cm3
   Multiplier  200
   SpeciesInfo  'Benzene'  1.0
+  SizeFactor  10.0
 EndConfiguration
 
-#------------------------#
-#  Define Data Targets   #
-#------------------------#
-
-Data  'Simulated-C6H6'
-  File  'data/C6H6.mint01'
-  AssociatedTo  'C6H6'
-EndData
-
-Data  'Simulated-C6D6'
-  File  'data/C6D6.mint01'
-  AssociatedTo  'C6D6'
-EndData
-
-Data  'Simulated-5050'
-  File  'data/5050.mint01'
-  AssociatedTo  '5050'
-EndData
 
 #------------------------#
 #   Define Processing    #
@@ -153,47 +136,51 @@ Module IntraShake
   Frequency  5
 EndModule
 
-# 3) Calculate partials for the C6H6 sample
-#    The averaging we specify here will apply to all other Partials modules since they
-#    will take the already-calculated partial g(r) from here.
-Module Partials 'C6H6'
-  StructureFactor  on
-  WindowFunction  Lorch0
-  Weights  Neutron
-  IntraBroadening  ScaledGaussian  0.105  0.25
+# 3) Calculate RDFs
+Module  RDF  'RDFs'
+  Configuration  'Liquid'
+  IntraBroadening  ScaledGaussian  0.13  0.15
+EndModule
+
+# 4) Calculate S(Q) for the C6H6 sample
+Module  NeutronSQ  'C6H6'
+  Configuration  'Liquid'
   QBroadening  OmegaDependentGaussian  0.02
-  Configuration  'Liquid'
   Isotopologue  'Liquid'  'Benzene'  'Natural'  1.0
+  Reference  'data/C6H6.mint01'
 EndModule
 
-# 4) Calculate partials for the C6D6 sample
-Module Partials 'C6D6'
-  StructureFactor  on
-  Weights  Neutron
+# 5) Calculate S(Q) for the C6D6 sample
+Module  NeutronSQ  'C6D6'
   Configuration  'Liquid'
+  QBroadening  OmegaDependentGaussian  0.02
   Isotopologue  'Liquid'  'Benzene'  'Deuteriated'  1.0
+  Reference  'data/C6D6.mint01'
 EndModule
 
-# 5) Calculate partials for the 5050 sample
-Module Partials '5050'
-  StructureFactor  on
-  Weights  Neutron
+# 6) Calculate S(Q) for the 5050 sample
+Module  NeutronSQ  '5050'
   Configuration  'Liquid'
+  QBroadening  OmegaDependentGaussian  0.02
   Isotopologue  'Liquid'  'Benzene'  'Deuteriated'  0.5
   Isotopologue  'Liquid'  'Benzene'  'Natural'  0.5
+  Reference  'data/5050.mint01'
 EndModule
 
-# 6) Calculate energy of the Configuration
+# 7) Calculate energy of the Configuration
 Module Energy
   Configuration  'Liquid'
 EndModule
 
-# 7) Refine potentials
+# 8) Refine potentials
 Module  Refine
-  Data  'Simulated-C6H6'
-  Data  'Simulated-C6D6'
-  Data  'Simulated-5050'
-  Frequency  20
-  PhiLimit  30.0
+  Target  'C6H6'
+  Target  'C6D6'
+  Target  '5050'
+  OnlyWhenEnergyStable  False
+  Frequency  5
 EndModule
 
+Simulation
+  Seed  888
+EndSimulation
