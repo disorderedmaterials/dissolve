@@ -21,15 +21,7 @@
 
 #include "modules/sq/sq.h"
 #include "classes/configuration.h"
-// #include "classes/atom.h"
 #include "classes/box.h"
-// #include "classes/braggpeak.h"
-// #include "classes/cell.h"
-// #include "classes/kvector.h"
-// #include "classes/species.h"
-// #include "classes/weights.h"
-// #include "math/broadeningfunction.h"
-// #include "templates/array3d.h"
 #include "templates/genericlisthelper.h"
 
 /*
