@@ -92,7 +92,7 @@ bool NeutronSQModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 		XYData& storedDataFT = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), "ReferenceDataFT", uniqueName(), GenericItem::InRestartFileFlag);
 		storedDataFT.setObjectName(CharString("%s//ReferenceDataFT", uniqueName()));
 		storedDataFT = referenceData;
-		storedDataFT.sineFT(1.0 / (2.0 * PI * PI * RDFModule::summedRho(this, dissolve.processingModuleData())), 0.0, 0.05, 30.0, WindowFunction(WindowFunction::Lorch0Window));
+		storedDataFT.sineFT(1.0 / (2.0 * PI * PI * RDFModule::summedRho(this, dissolve.processingModuleData())), 0.05, 0.05, 30.0, WindowFunction(WindowFunction::Lorch0Window));
 	}
 
 	return true;
