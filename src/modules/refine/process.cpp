@@ -524,7 +524,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				else if (inversionMethod == RefineModule::DirectGaussianPotentialInversion)
 				{
 					// Perform a Gaussian fit and do the inverse FT to get the delta [g(r) - 1]
-					GaussFit gaussFit(deltaSQ.ref(i, j));
+					GaussFit gaussFit(deltaSQ.ref(i, j), 5, 5);
 					double error = gaussFit.construct(gaussianAccuracy);
 					Messenger::print("Fitted function has error of %f%% with original delta S(Q) (nGaussians = %i).\n", error, gaussFit.nGaussians());
 
@@ -539,7 +539,8 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 						deltaSQ.ref(i, j).save(CharString("%s-%s.orig", at1->name(), at2->name()));
 						gaussFit.approximation().save(CharString("%s-%s.approx", at1->name(), at2->name()));
 						gaussFit.saveCoefficients(CharString("%s-%s.coeff", at1->name(), at2->name()));
-						gaussFit.saveFTGaussians(CharString("%s-%s", at1->name(), at2->name()), 0.01);
+// 						gaussFit.saveFTGaussians(CharString("%s-%s", at1->name(), at2->name()), 0.01);
+						gaussFit.fourierTransform(ppDelta, ppDelta, ppRange).save(CharString("%s-%s.ft", at1->name(), at2->name()));
 					}
 
 					// Fourier transform the approximation, and store this as our inversion
