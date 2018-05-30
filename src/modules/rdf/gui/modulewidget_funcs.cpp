@@ -67,6 +67,8 @@ RDFModuleWidget::RDFModuleWidget(QWidget* parent, Module* module, Dissolve& diss
 	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
 
 	refreshing_ = false;
+
+	setGraphDataTargets(module_);
 }
 
 RDFModuleWidget::~RDFModuleWidget()
