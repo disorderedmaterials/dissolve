@@ -32,16 +32,16 @@ class GaussFit
 {
 	public:
 	// Constructor / Destructor
-	GaussFit(XYData& sourceData);
+	GaussFit(const XYData& referenceData, int kzSmoothK = 0, int kzSmoothM = 0);
 
 
 	/*
 	 * Data
 	 */
 	private:
-	// Source XYData upon which we are performing the fit
-	const XYData& sourceData_;
-	// Resulting approximate data
+	// Reference XYData to which we are performing the fit
+	XYData referenceData_;
+	// Approximate (fitted) data
 	XYData approximateData_;
 	// Number of Gaussians used in fit
 	int nGaussians_;
@@ -61,8 +61,6 @@ class GaussFit
 	double initialise(int nGaussians, double fwhm);
 	// Perform initial fit to source data, specifying spacing between Gaussians
 	double initialise(double gaussianSpacing, double fwhm);
-	// Construct suitable representation with minimal Gaussians automatically
-	double construct(double requiredError, int maxGaussians = -1);
 	// Return approximate function
 	const XYData& approximation() const;
 	// Return Fourier transform of approximate function, ignoring all Gaussians whose width coefficient is below the provided value
@@ -87,12 +85,16 @@ class GaussFit
 	 * Fitting
 	 */
 	private:
-	// Working array for cost function
-	XYData partialSum_;
+	// Difference function between reference and approximate datsets
+	XYData referenceDelta_;
+	// Current error
+	double currentError_;
 	// Centre coordinates of Gaussians currently being fit
 	Array<double> fitX_;
 
 	public:
+	// Construct suitable representation with minimal Gaussians automatically
+	double construct(double requiredError, int maxGaussians = -1);
 	// Re-fit to source data, starting from current parameters
 	double reFit();
 
@@ -101,6 +103,8 @@ class GaussFit
 	 * Cost Functions
 	 */
 	private:
+	// Return percentage error between reference data and approximate data augmented with specified Gaussian
+	double referenceError(double xCentre, double A, double C) const;
 	// Two-parameter cost function over full sourceData, using current approximateData_ and alpha array containing new trial A and c values
 	double costAmplitudeWidthStaticTrial(double* alpha, int nAlpha);
 	// Three-parameter cost function over full sourceData, using current approximateData_ and alpha array containing new trial x, A and c values

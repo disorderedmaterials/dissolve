@@ -25,9 +25,13 @@
 #include "templates/praxis.h"
 
 // Constructor
-GaussFit::GaussFit(XYData& sourceData) : sourceData_(sourceData)
+GaussFit::GaussFit(const XYData& referenceData, int kzSmoothK, int kzSmoothM)
 {
 	nGaussians_ = 0;
+
+	// Copy reference data, and smooth it if requested
+	referenceData_ = referenceData;
+	if (kzSmoothK > 0) referenceData_.kolmogorovZurbenkoFilter(kzSmoothK, kzSmoothM);
 }
 
 /*
@@ -37,7 +41,7 @@ GaussFit::GaussFit(XYData& sourceData) : sourceData_(sourceData)
 // Generate full data from current parameters, ignoring all Gaussians whose width coefficient is below the provided value
 void GaussFit::generateData(double minC)
 {
-	approximateData_.templateFrom(sourceData_);
+	approximateData_.templateFrom(referenceData_);
 
 	// Loop over defined Gaussians
 	double A, c, c2, xCentre, x;
@@ -70,16 +74,16 @@ double GaussFit::initialise(int nGaussians, double fwhm)
 	A_.initialise(nGaussians_);
 	c_.initialise(nGaussians_);
 
-	const double gaussDelta = (sourceData_.xLast() - sourceData_.xFirst()) / nGaussians - 1;
+	const double gaussDelta = (referenceData_.xLast() - referenceData_.xFirst()) / nGaussians - 1;
 
 	// Set initial parameters
 	for (int n=0; n<nGaussians_; ++n)
 	{
 		// Centre of Gaussian
-		x_[n] = sourceData_.xFirst() + (n+0.5)*gaussDelta;
+		x_[n] = referenceData_.xFirst() + (n+0.5)*gaussDelta;
 
 		// Amplitude (taken as approximate value of the source function)
-		A_[n] = sourceData_.approximate((n+0.5)*gaussDelta);
+		A_[n] = referenceData_.approximate((n+0.5)*gaussDelta);
 	}
 
 	// Width coefficient, based on supplied FWHM
@@ -93,7 +97,7 @@ double GaussFit::initialise(int nGaussians, double fwhm)
 double GaussFit::initialise(double gaussianSpacing, double fwhm)
 {
 	// Set up Gaussian parameter arrays
-	nGaussians_ = (sourceData_.xLast() - sourceData_.xFirst()) / gaussianSpacing - 1;
+	nGaussians_ = (referenceData_.xLast() - referenceData_.xFirst()) / gaussianSpacing - 1;
 	x_.initialise(nGaussians_);
 	A_.initialise(nGaussians_);
 	c_.initialise(nGaussians_);
@@ -102,10 +106,10 @@ double GaussFit::initialise(double gaussianSpacing, double fwhm)
 	for (int n=0; n<nGaussians_; ++n)
 	{
 		// Centre of Gaussian
-		x_[n] = sourceData_.xFirst() + (n+0.5)*gaussianSpacing;
+		x_[n] = referenceData_.xFirst() + (n+0.5)*gaussianSpacing;
 
 		// Amplitude (taken as approximate value of the source function)
-		A_[n] = sourceData_.approximate((n+0.5)*gaussianSpacing);
+		A_[n] = referenceData_.approximate((n+0.5)*gaussianSpacing);
 	}
 
 	// Width coefficient, based on supplied FWHM
@@ -113,128 +117,6 @@ double GaussFit::initialise(double gaussianSpacing, double fwhm)
 
 	// Perform fit
 	return reFit();
-}
-
-// Construct suitable representation with minimal Gaussians automatically
-double GaussFit::construct(double requiredError, int maxGaussians)
-{
-	// Clear any existing data
-	x_.clear();
-	A_.clear();
-	c_.clear();
-	nGaussians_ = 0;
-	approximateData_.templateFrom(sourceData_);
-
-	// Set up our additional data, including a smoothed version of the original function, and a 
-	XYData smoothedData = sourceData_;
-	smoothedData.kolmogorovZurbenkoFilter(3,3);
-
-	double currentError = 100.0;
-
-	// Make sure the approximate function is up to date
-	generateData();
-
-	// Step through the smoothed function seeking peaks / troughs in the data
-	const int regionWidth = 3, regionDelta = regionWidth / 2;
-	int lastSign = 0;
-	double gradient, trialX, trialA, trialC;
-	XYData trialData;
-	trialData.templateFrom(sourceData_);
-	Array<double>& trialDataY = trialData.arrayY();
-
-	// Outer loop
-	do
-	{
-		// Construct a smoothed representation of the sourceData_, with the current approximateData_ subtracted
-		smoothedData.clear();
-		for (int n=0; n<sourceData_.nPoints(); ++n) smoothedData.addPoint(sourceData_.x(n), sourceData_.y(n) - approximateData_.y(n));
-		smoothedData.kolmogorovZurbenkoFilter(3,3);
-
-		// Keep track of the number of Gaussians we add this cycle
-		int nAdded = 0;
-
-		// Go through smoothed data, calculating the gradient as we go, and seeking gradient minima (actually, crossovers between -ve and +ve gradients)
-		for (int n=regionDelta; n<sourceData_.nPoints() - regionDelta; ++n)
-		{
-			// Calculate gradient at this point
-			gradient = 0.0;
-			for (int m=-regionDelta; m<regionDelta; ++m) gradient += (smoothedData.y(n+m+1) - smoothedData.y(n+m)) / (smoothedData.x(n+m+1) - smoothedData.x(n+m));
-
-// 			Messenger::printVerbose("Gradient @ x = %f = %f\n", sourceData_.x(n), gradient);
-
-			// Check sign of previous gradient vs the current one - do we add a Gaussian at this point?
-			if ((lastSign != DissolveMath::sgn(gradient)))
-			{
-				trialX = sourceData_.x(n);
-				trialA = sourceData_.y(n) - approximateData_.y(n);
-				trialC = 0.1;
-
-				Messenger::printVerbose("Attempting Gaussian addition for peak/trough located at x = %f\n", trialX);
-
-				// Set up minimiser, minimising test Gaussian only
-				PrAxis<GaussFit> gaussMinimiser(*this, &GaussFit::costAmplitudeWidthXCentreStaticTrial);
-				gaussMinimiser.addTarget(trialA);
-				gaussMinimiser.addTarget(trialC);
-				gaussMinimiser.addTarget(trialX);
-				gaussMinimiser.minimise(0.001, 0.1);
-
-				// Generate trial data consisting of the current approximateData_ plus contribution from the trial Gaussian
-				for (int m=0; m<sourceData_.nPoints(); ++m)
-				{
-					double x = sourceData_.x(m);
-					trialDataY[m] = approximateData_.y(m) + trialA * exp(-((x-trialX)*(x-trialX))/(2*trialC*trialC));
-				}
-
-				// Have we decreased the overall error?
-				double trialError = sourceData_.error(trialData);
-				if (trialError < currentError)
-				{
-					Messenger::printVerbose("Accepting new Gaussian x = %f, A = %f, c = %f - error reduced from %f to %f\n", trialX, trialA, fabs(trialC), currentError, trialError);
-					currentError = trialError;
-
-					A_.add(trialA);
-					x_.add(trialX);
-					c_.add(fabs(trialC));
-					++nGaussians_;
-					++nAdded;
-
-					// Store the trial data as the new approximate function
-					approximateData_.arrayY() = trialDataY;
-
-					// Check on error / nGaussians
-					if (currentError <= requiredError) break;
-					if (nGaussians_ == maxGaussians) break;
-				}
-				else Messenger::printVerbose("Rejecting new Gaussian x = %f, A = %f, c = %f - error increased from %f to %f\n", trialX, trialA, fabs(trialC), currentError, trialError);
-			}
-
-			// Store current sign of gradient
-			lastSign = DissolveMath::sgn(gradient);
-		}
-
-		// Check on error
-		if (currentError <= requiredError)
-		{
-			Messenger::printVerbose("Required error threshold (%f) achieved - current error is %f, nGaussians = %i\n", requiredError, currentError, nGaussians_);
-			break;
-		}
-
-		// Check on nGaussians
-		if (nGaussians_ == maxGaussians)
-		{
-			Messenger::printVerbose("Maximum number of Gaussians (%i) reached - current error is %f\n", nGaussians_, currentError);
-			break;
-		}
-
-		// If we added no Gaussians this cycle, bail out now
-		if (nAdded == 0)
-		{
-			Messenger::printVerbose("No Gaussians added during last cycle, so exiting now.\n");
-			break;
-		}
-	} while (1);
-
-	return currentError;
 }
 
 // Set current parameters
@@ -295,7 +177,7 @@ bool GaussFit::saveCoefficients(const char* filename) const
 // Save Fourier-transformed Gaussians to individual files
 bool GaussFit::saveFTGaussians(const char* filenamePrefix, double xStep) const
 {
-	double xDelta = (xStep < 0.0 ? sourceData_.x(1) - sourceData_.xFirst() : xStep);
+	double xDelta = (xStep < 0.0 ? referenceData_.x(1) - referenceData_.xFirst() : xStep);
 	for (int n=0; n<nGaussians_; ++n)
 	{
 		LineParser parser;
@@ -306,8 +188,8 @@ bool GaussFit::saveFTGaussians(const char* filenamePrefix, double xStep) const
 		double c = c_.value(n);
 		if (!parser.writeLineF("#  x=%f  A=%f  c=%f\n", xCentre, A, c)) return false;
 
-		double x = sourceData_.xFirst();
-		while (x < sourceData_.xLast())
+		double x = referenceData_.xFirst();
+		while (x < referenceData_.xLast())
 		{
 			parser.writeLineF("%f  %f\n", x, A * exp(-(x*x*c*c)/2.0) * sin(xCentre*x)/(xCentre*x));
 			x += xDelta;
@@ -361,6 +243,128 @@ XYData GaussFit::fourierTransform(double xMin, double xStep, double xMax, double
  * Fitting
  */
 
+// Construct suitable representation with minimal Gaussians automatically
+double GaussFit::construct(double requiredError, int maxGaussians)
+{
+	// Clear any existing data
+	x_.clear();
+	A_.clear();
+	c_.clear();
+	nGaussians_ = 0;
+	approximateData_.templateFrom(referenceData_);
+
+	// Make sure the approximate function is up to date
+	generateData();
+
+	// Step through the smoothed function seeking peaks / troughs in the data
+	const int regionWidth = 5, regionDelta = regionWidth / 2;
+	int lastSign = 0;
+	double gradient, trialX, trialA, trialC;
+
+	// Calculate starting error of the reference data with the approximate function
+	currentError_ = referenceData_.error(approximateData_);
+
+	// Outer loop
+	do
+	{
+		// Calculate the delta function between the reference and current approximate data
+		referenceDelta_.clear();
+		for (int n=0; n<referenceData_.nPoints(); ++n) referenceDelta_.addPoint(referenceData_.x(n), referenceData_.y(n) - approximateData_.y(n));
+
+		// Keep track of the number of Gaussians we add this cycle
+		int nAdded = 0;
+
+		// Go over points in the delta, calculating the gradient as we go, and seeking gradient minima (actually, crossovers between -ve and +ve gradients)
+		for (int n=regionDelta; n<referenceData_.nPoints() - regionDelta; ++n)
+		{
+			// Calculate gradient at this point
+			gradient = 0.0;
+			for (int m=-regionDelta; m<regionDelta; ++m) gradient += (referenceDelta_.y(n+m+1) - referenceDelta_.y(n+m)) / (referenceDelta_.x(n+m+1) - referenceDelta_.x(n+m));
+
+// 			Messenger::printVerbose("Gradient @ x = %f = %f\n", referenceData_.x(n), gradient);
+
+			// Check sign of previous gradient vs the current one - do we add a Gaussian at this point?
+			if ((lastSign != DissolveMath::sgn(gradient)))
+			{
+				trialX = referenceDelta_.x(n);
+				trialA = referenceDelta_.y(n);
+				trialC = 0.1;
+
+				Messenger::printVerbose("Attempting Gaussian addition for peak/trough located at x = %f\n", trialX);
+
+				// Set up minimiser, minimising test Gaussian only
+				PrAxis<GaussFit> gaussMinimiser(*this, &GaussFit::costAmplitudeWidthXCentreStaticTrial);
+				gaussMinimiser.addTarget(trialA);
+				gaussMinimiser.addTarget(trialC);
+				gaussMinimiser.addTarget(trialX);
+				double trialError = gaussMinimiser.minimise(0.01, 0.1);
+
+// 				// Generate trial data consisting of the current approximateData_ plus contribution from the trial Gaussian
+// 				for (int m=0; m<referenceData_.nPoints(); ++m)
+// 				{
+// 					double x = referenceData_.x(m);
+// 					trialDataY[m] = approximateData_.y(m) + trialA * exp(-((x-trialX)*(x-trialX))/(2*trialC*trialC));
+// 				}
+// 
+// 				// Have we decreased the overall error?
+// 				double trialError = referenceData_.error(trialData);
+
+				if (trialError < currentError_)
+				{
+					Messenger::printVerbose("Accepting new Gaussian x = %f, A = %f, c = %f - error reduced from %f to %f\n", trialX, trialA, fabs(trialC), currentError_, trialError);
+					currentError_ = trialError;
+
+					A_.add(trialA);
+					x_.add(trialX);
+					c_.add(fabs(trialC));
+					++nGaussians_;
+					++nAdded;
+
+					// Add the accepted Gaussian in to the approximate data, and remove it from the reference delta
+					double x, y;
+					for (int m=0; m<referenceData_.nPoints(); ++m)
+					{
+						x = referenceData_.x(m);
+						y = trialA * exp(-((x-trialX)*(x-trialX))/(2*trialC*trialC));
+						approximateData_.addY(m, y);
+						referenceDelta_.addY(m, -y);
+					}
+
+					// Check on error / nGaussians
+					if (currentError_ <= requiredError) break;
+					if (nGaussians_ == maxGaussians) break;
+				}
+				else Messenger::printVerbose("Rejecting new Gaussian x = %f, A = %f, c = %f - error increased from %f to %f\n", trialX, trialA, fabs(trialC), currentError_, trialError);
+			}
+
+			// Store current sign of gradient
+			lastSign = DissolveMath::sgn(gradient);
+		}
+
+		// Check on error
+		if (currentError_ <= requiredError)
+		{
+			Messenger::printVerbose("Required error threshold (%f) achieved - current error is %f, nGaussians = %i\n", requiredError, currentError_, nGaussians_);
+			break;
+		}
+
+		// Check on nGaussians
+		if (nGaussians_ == maxGaussians)
+		{
+			Messenger::printVerbose("Maximum number of Gaussians (%i) reached - current error is %f\n", nGaussians_, currentError_);
+			break;
+		}
+
+		// If we added no Gaussians this cycle, bail out now
+		if (nAdded == 0)
+		{
+			Messenger::printVerbose("No Gaussians added during last cycle, so exiting now.\n");
+			break;
+		}
+	} while (1);
+
+	return currentError_;
+}
 
 // Re-fit to source data, starting from current parameters
 double GaussFit::reFit()
@@ -414,12 +418,43 @@ double GaussFit::reFit()
 	// Calculate the approximate function
 	generateData();
 
-	return sourceData_.error(approximateData_);
+	return referenceData_.error(approximateData_);
 }
 
 /*
  * Cost Function Callbacks
  */
+
+// Return percentage error between reference data and approximate data augmented with specified Gaussian
+double GaussFit::referenceError(double xCentre, double A, double C) const
+{
+	double sume = 0.0, sumf = 0.0, sumy = 0.0;
+	const Array<double> refX = referenceData_.constArrayX();
+	const Array<double> refY = referenceData_.constArrayY();
+	double x, y, yApprox, c2 = C*C;
+	for (int n=0; n<referenceData_.nPoints(); ++n)
+	{
+		// Grab reference x and y values
+		x = refX.value(n);
+		y = refY.value(n);
+
+		// Calculate yApprox at this x
+		yApprox = approximateData_.y(n) + A * exp(-((x-xCentre)*(x-xCentre))/(2*c2));
+
+		// Accumulate numerator - sum of forecast errors
+		sume += fabs(y - yApprox);
+		sumy += fabs(yApprox);
+
+		// Accumulate denominator - one-step naive forecast (backwards forecast for first point)
+		if (n > 0) sumf += fabs(y - refY.value(n-1));
+		else if (n < refX.nItems()-1) sumf += fabs(y - refY.value(n+1));
+	}
+
+	double mape = sume;
+	if (sumf > 0.0) mape /= sumf;
+
+	return mape;
+}
 
 // Two-parameter cost function over full sourceData, using current approximateData_ and alpha array containing new trial A and c values
 double GaussFit::costAmplitudeWidthStaticTrial(double* alpha, int nAlpha)
@@ -431,14 +466,14 @@ double GaussFit::costAmplitudeWidthStaticTrial(double* alpha, int nAlpha)
 	// Dumb, but effective, check for c2 becoming zero
 	if (c2 == 0.0) return 100.0;
 
-	for (int n=0; n<sourceData_.nPoints(); ++n)
+	for (int n=0; n<referenceData_.nPoints(); ++n)
 	{
-		x = sourceData_.x(n);
+		x = referenceData_.x(n);
 
 		// Calculate current y - interpolated value of approximateData_ plus contribution from trial Gaussian
 		y = approximateData_.y(n) + A * exp(-((x-xCentre)*(x-xCentre))/(2*c2));
 
-		dy = sourceData_.y(n) - y;
+		dy = referenceData_.y(n) - y;
 
 		sose += dy*dy;
 	}
@@ -449,29 +484,15 @@ double GaussFit::costAmplitudeWidthStaticTrial(double* alpha, int nAlpha)
 // Three-parameter cost function over full sourceData, using current approximateData_ and alpha array containing new trial x, A and c values
 double GaussFit::costAmplitudeWidthXCentreStaticTrial(double* alpha, int nAlpha)
 {
-	double A = alpha[0], c2 = alpha[1]*alpha[1], xCentre = alpha[2];
+	double A = alpha[0], c = alpha[1], xCentre = alpha[2];
 
-	double sose = 0.0, x, y, dy;
-
-	// Dumb, but effective, check for c2 becoming zero
-	if (c2 == 0.0) return 100.0;
+	// Must check for c approaching zero
+	if (fabs(c) < 1.0e-5) return currentError_*100.0;
 
 	// Ensure xCentre never goes outside the range of the source data
-	if ((xCentre < sourceData_.xFirst()) || (xCentre > sourceData_.xLast())) return 100.0;
+	if ((xCentre < referenceData_.xFirst()) || (xCentre > referenceData_.xLast())) return currentError_ * 100.0;
 
-	for (int n=0; n<sourceData_.nPoints(); ++n)
-	{
-		x = sourceData_.x(n);
-
-		// Calculate current y - interpolated value of approximateData_ plus contribution from trial Gaussian
-		y = approximateData_.y(n) + A * exp(-((x-xCentre)*(x-xCentre))/(2*c2));
-
-		dy = sourceData_.y(n) - y;
-
-		sose += dy*dy;
-	}
-
-	return sose;
+	return referenceError(xCentre, A, c);
 }
 
 // Two-parameter cost function, with alpha array containing A and c values
@@ -481,11 +502,11 @@ double GaussFit::costAmplitudeWidth(double* alpha, int nAlpha)
 
 	// Construct working array of x values
 	XYData sum;
-	for (int m=0; m<sourceData_.nPoints(); ++m)
+	for (int m=0; m<referenceData_.nPoints(); ++m)
 	{
-		if (sourceData_.x(m) < fitX_[0]) continue;
-		sum.addPoint(sourceData_.x(m), 0.0);
-		if (sourceData_.x(m) > fitX_[nGauss-1]) break;
+		if (referenceData_.x(m) < fitX_[0]) continue;
+		sum.addPoint(referenceData_.x(m), 0.0);
+		if (referenceData_.x(m) > fitX_[nGauss-1]) break;
 	}
 	
 	double A, c, c2, xCentre;
@@ -499,5 +520,5 @@ double GaussFit::costAmplitudeWidth(double* alpha, int nAlpha)
 		for (int m=0; m<sum.nPoints(); ++m) sum.addY(m, A * exp(-((sum.x(m)-xCentre)*(sum.x(m)-xCentre))/(2*c2)));
 	}
 
-	return sourceData_.error(sum);
+	return referenceData_.error(sum);
 }
