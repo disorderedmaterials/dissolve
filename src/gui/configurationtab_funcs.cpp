@@ -160,11 +160,21 @@ void ConfigurationTab::updateControls()
 // Disable sensitive controls within tab, ready for main code to run
 void ConfigurationTab::disableSensitiveControls()
 {
+	ui.DefinitionGroup->setEnabled(false);
+	ui.BoxGroup->setEnabled(false);
+	ui.ContentsGroup->setEnabled(false);
+	ui.SizeFactorGroup->setEnabled(false);
+	ui.ActionsGroup->setEnabled(false);
 }
 
 // Enable sensitive controls within tab, ready for main code to run
 void ConfigurationTab::enableSensitiveControls()
 {
+	ui.DefinitionGroup->setEnabled(true);
+	ui.BoxGroup->setEnabled(true);
+	ui.ContentsGroup->setEnabled(true);
+	ui.SizeFactorGroup->setEnabled(true);
+	ui.ActionsGroup->setEnabled(true);
 }
 
 /*
