@@ -33,6 +33,8 @@ ProcessingTab::ProcessingTab(DissolveWindow* dissolveWindow, Dissolve& dissolve,
 	chartWidget_ = new ModuleChart(dissolveWindow, dissolve_.mainProcessingModules());
 	chartWidget_->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
 	ui.ScrollArea->setWidget(chartWidget_);
+
+	refreshing_ = false;
 }
 
 ProcessingTab::~ProcessingTab()
@@ -50,25 +52,74 @@ const char* ProcessingTab::tabType() const
 }
 
 /*
+ * Widgets
+ */
+
+void ProcessingTab::on_WriteRestartFileCheck_clicked(bool checked)
+{
+	if (refreshing_) return;
+
+	dissolve_.setRestartFileFrequency(checked ? ui.RestartFrequencySpin->value() : 0);
+}
+
+void ProcessingTab::on_RestartFrequencySpin_valueChanged(int value)
+{
+	if (refreshing_) return;
+
+	dissolve_.setRestartFileFrequency(value);
+}
+
+void ProcessingTab::on_SetRandomSeedCheck_clicked(bool checked)
+{
+	if (refreshing_) return;
+
+	dissolve_.setSeed(checked ? ui.RandomSeedSpin->value() : -1);
+
+	// Initialise random seed
+	if (dissolve_.seed() == -1) srand( (unsigned)time( NULL ) );
+	else srand(dissolve_.seed());
+}
+
+void ProcessingTab::on_RandomSeedSpin_valueChanged(int value)
+{
+	if (refreshing_) return;
+
+	dissolve_.setSeed(value);
+
+	// Initialise random seed
+	if (dissolve_.seed() == -1) srand( (unsigned)time( NULL ) );
+	else srand(dissolve_.seed());
+}
+
+/*
  * Update
  */
 
 // Update controls in tab
 void ProcessingTab::updateControls()
 {
+	refreshing_ = true;
+
+	ui.WriteRestartFileCheck->setChecked(dissolve_.restartFileFrequency() > 0);
+	ui.RestartFrequencySpin->setValue(dissolve_.restartFileFrequency() > 0 ? dissolve_.restartFileFrequency() : 10);
+	ui.SetRandomSeedCheck->setChecked(dissolve_.seed() != -1);
+	ui.RandomSeedSpin->setValue(dissolve_.seed() == -1 ? 0 : dissolve_.seed());
+
 	chartWidget_->updateControls();
+
+	refreshing_ = false;
 }
 
 // Disable sensitive controls within tab, ready for main code to run
 void ProcessingTab::disableSensitiveControls()
 {
-	chartWidget_->setEnabled(false);
+	chartWidget_->disableSensitiveControls();
 }
 
 // Enable sensitive controls within tab, ready for main code to run
 void ProcessingTab::enableSensitiveControls()
 {
-	chartWidget_->setEnabled(true);
+	chartWidget_->enableSensitiveControls();
 }
 
 /*
