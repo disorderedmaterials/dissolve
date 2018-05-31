@@ -24,6 +24,7 @@
 #include "gui/keywordwidgets.h"
 #include "main/dissolve.h"
 #include "classes/configuration.h"
+#include <QPainter>
 
 // Constructor
 FlowBlock::FlowBlock(QWidget* parent, DissolveWindow* dissolveWindow, ModuleReference* modRef) : QWidget(parent), dissolveWindow_(dissolveWindow), dissolve_(dissolveWindow->dissolve())
@@ -31,7 +32,7 @@ FlowBlock::FlowBlock(QWidget* parent, DissolveWindow* dissolveWindow, ModuleRefe
 	// Set up user interface
 	ui.setupUi(this);
 
-	ui.KeywordsFrame->setVisible(false);
+	ui.KeywordsWidget->setVisible(false);
 
 	moduleReference_ = modRef;
 
@@ -66,7 +67,7 @@ void FlowBlock::initialiseWindow(Module* module)
 	}
 
 	// Set up our keywords widget
-	ui.KeywordsFrame->setUp(dissolveWindow_, module_);
+	ui.KeywordsWidget->setUp(dissolveWindow_, module_);
 }
 
 /*
@@ -77,6 +78,19 @@ void FlowBlock::initialiseWindow(Module* module)
 ModuleReference* FlowBlock::moduleReference()
 {
 	return moduleReference_;
+}
+
+/*
+ * QWidget Reimplementations
+ */
+
+// Paint event
+void FlowBlock::paintEvent(QPaintEvent* event)
+{
+	QPainter painter(this);
+
+	painter.setBrush(QBrush(Qt::red, Qt::SolidPattern));
+	painter.drawRect(0, 0, width(), height());
 }
 
 /*
@@ -106,13 +120,13 @@ void FlowBlock::updateControls()
 	ui.EnabledButton->setChecked(module_->enabled());
 
 	// Update keywords
-	ui.KeywordsFrame->updateControls();
+	ui.KeywordsWidget->updateControls();
 }
 
 // Disable sensitive controls, ready for main code to run
 void FlowBlock::disableSensitiveControls()
 {
-	ui.KeywordsFrame->setEnabled(false);
+	ui.KeywordsWidget->setEnabled(false);
 	ui.RunButton->setEnabled(false);
 	ui.EnabledButton->setEnabled(false);
 	ui.RemoveButton->setEnabled(false);
@@ -121,7 +135,7 @@ void FlowBlock::disableSensitiveControls()
 // Enable sensitive controls, ready for main code to run
 void FlowBlock::enableSensitiveControls()
 {
-	ui.KeywordsFrame->setEnabled(true);
+	ui.KeywordsWidget->setEnabled(true);
 	ui.RunButton->setEnabled(true);
 	ui.EnabledButton->setEnabled(true);
 	ui.RemoveButton->setEnabled(true);
@@ -145,7 +159,7 @@ QPoint FlowBlock::globalLeftHandFlowAnchor() const
 
 void FlowBlock::on_ToggleKeywordsButton_clicked(bool checked)
 {
-	ui.KeywordsFrame->setVisible(checked);
+	ui.KeywordsWidget->setVisible(checked);
 
 	adjustSize();
 	updateGeometry();

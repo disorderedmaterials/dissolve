@@ -29,7 +29,7 @@
 #include <QLabel>
 
 // Constructor
-ModuleKeywordsWidget::ModuleKeywordsWidget(QWidget* parent) : QFrame(parent)
+ModuleKeywordsWidget::ModuleKeywordsWidget(QWidget* parent) : QWidget(parent)
 {
 	refreshing_ = false;
 }

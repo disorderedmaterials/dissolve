@@ -62,7 +62,7 @@ void ModuleTab::initialiseControls(Module* module)
 	if (!module) return;
 
 	// Set up our keywords widget
-	ui.KeywordsFrame->setUp(dissolveWindow_, module);
+	ui.KeywordsWidget->setUp(dissolveWindow_, module);
 
 	// Create the module widget (if this Module has one)
 	QVBoxLayout* widgetLayout = new QVBoxLayout(ui.WidgetWidget);
@@ -114,7 +114,7 @@ void ModuleTab::updateControls()
 	ui.FrequencySpin->setValue(module_->frequency());
 
 	// Update keyword widget
-	ui.KeywordsFrame->updateControls();
+	ui.KeywordsWidget->updateControls();
 
 	// Update module control widget (if there is one)
 	if (moduleWidget_) moduleWidget_->updateControls();

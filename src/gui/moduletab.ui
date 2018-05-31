@@ -290,39 +290,26 @@
         </font>
        </property>
        <property name="title">
-        <string>Keyword Control</string>
+        <string>Keyword Options</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout">
         <property name="spacing">
-         <number>4</number>
+         <number>0</number>
         </property>
         <property name="leftMargin">
-         <number>4</number>
+         <number>0</number>
         </property>
         <property name="topMargin">
-         <number>4</number>
+         <number>0</number>
         </property>
         <property name="rightMargin">
-         <number>4</number>
+         <number>0</number>
         </property>
         <property name="bottomMargin">
-         <number>4</number>
+         <number>0</number>
         </property>
         <item>
-         <widget class="ModuleKeywordsWidget" name="KeywordsFrame">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Sunken</enum>
-          </property>
-         </widget>
+         <widget class="ModuleKeywordsWidget" name="KeywordsWidget" native="true"/>
         </item>
        </layout>
       </widget>
@@ -349,7 +336,7 @@
  <customwidgets>
   <customwidget>
    <class>ModuleKeywordsWidget</class>
-   <extends>QFrame</extends>
+   <extends>QWidget</extends>
    <header>gui/modulekeywordswidget.h</header>
    <container>1</container>
   </customwidget>

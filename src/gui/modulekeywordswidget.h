@@ -24,7 +24,7 @@
 
 #include "gui/keywordwidgets/base.h"
 #include "templates/reflist.h"
-#include <QFrame>
+#include <QWidget>
 
 // Forward Declarations
 class Dissolve;
@@ -33,7 +33,7 @@ class Module;
 class ModuleReference;
 
 // Module Keywords Widget
-class ModuleKeywordsWidget : public QFrame
+class ModuleKeywordsWidget : public QWidget
 {
 	private:
 	// Whether the widget is currently refreshing
