@@ -36,7 +36,7 @@ int main(int argc, char **argv)
 #endif
 
 	// Instantiate main class
-	Dissolve Dissolve;
+	Dissolve dissolve;
 
 	// Parse CLI options...
 	int n = 1;
@@ -72,7 +72,7 @@ int main(int argc, char **argv)
 					return 1;
 					break;
 				case ('a'):
-					Dissolve.setAutoAddDependentModules(true);
+					dissolve.setAutoAddDependentModules(true);
 					break;
 				case ('c'):
 					nIterations = 0;
@@ -161,7 +161,7 @@ int main(int argc, char **argv)
 
 	// Load external datafiles (master only)
 	Messenger::banner("Load External Data");
-	if (!MPIRunMaster(Dissolve.worldPool(), Dissolve.loadDataFiles()))
+	if (!MPIRunMaster(dissolve.worldPool(), dissolve.loadDataFiles()))
 	{
 		ProcessPool::finalise();
 		Messenger::ceaseRedirect();
@@ -169,7 +169,7 @@ int main(int argc, char **argv)
 	}
 
 	// Broadcast periodic table (including isotope and parameter data)
-	if (!periodicTable.broadcast(Dissolve.worldPool()))
+	if (!periodicTable.broadcast(dissolve.worldPool()))
 	{
 		ProcessPool::finalise();
 		Messenger::ceaseRedirect();
@@ -196,7 +196,7 @@ int main(int argc, char **argv)
 		Messenger::ceaseRedirect();
 		return 1;
 	}
-	if (!Dissolve.loadInput(inputFile))
+	if (!dissolve.loadInput(inputFile))
 	{
 		ProcessPool::finalise();
 		Messenger::ceaseRedirect();
@@ -211,7 +211,7 @@ int main(int argc, char **argv)
 		if (DissolveSys::fileExists(restartFile))
 		{
 			Messenger::print("Restart file '%s' exists and will be loaded.\n", restartFile.get());
-			if (!Dissolve.loadRestart(restartFile.get()))
+			if (!dissolve.loadRestart(restartFile.get()))
 			{
 				Messenger::error("Restart file contained errors.\n");
 				ProcessPool::finalise();
@@ -224,7 +224,7 @@ int main(int argc, char **argv)
 	else Messenger::print("Restart file (if it exists) will be ignored.\n");
 
 	// Prepare for run
-	if (!Dissolve.setUp())
+	if (!dissolve.setUp())
 	{
 		ProcessPool::finalise();
 		Messenger::ceaseRedirect();
@@ -236,16 +236,16 @@ int main(int argc, char **argv)
 #endif
 
 	// Set restart file frequency to 0 if 'dontWriteRestart' is set
-	if (dontWriteRestart) Dissolve.setRestartFileFrequency(0);
+	if (dontWriteRestart) dissolve.setRestartFileFrequency(0);
 
 	// Run main simulation
-	bool result = Dissolve.iterate(nIterations);
+	bool result = dissolve.iterate(nIterations);
 
 	// Print timing information
-	Dissolve.printTiming();
+	dissolve.printTiming();
 
 	// Clear all data
-	Dissolve.clear();
+	dissolve.clear();
 
 	if (result) Messenger::print("Dissolve is done.\n");
 	else Messenger::print("Dissolve is done, but with errors.\n");
