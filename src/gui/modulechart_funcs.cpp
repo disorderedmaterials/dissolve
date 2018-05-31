@@ -66,6 +66,10 @@ void ModuleChart::paintEvent(QPaintEvent* event)
 	// Draw suitable connecting lines between widgets, illustrating the execution path of the code
 	QPainter painter(this);
 
+	// Draw the background before we do anything else
+	QBrush backgroundBrush = QBrush(Qt::black, QPixmap(":/images/images/squares.jpg"));
+	painter.fillRect(QRect(0,0,width(),height()), backgroundBrush);
+
 	// Set up some QPens
 	QPen solidPen(Qt::black);
 	solidPen.setWidth(2.0);

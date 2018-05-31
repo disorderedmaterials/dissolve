@@ -72,6 +72,8 @@ class Module : public ListItem<Module>
 	CharString uniqueName_;
 	// RefList of dependent Modules
 	RefList<Module,bool> dependentModules_;
+	// Colour used in visual representation of Module
+	int colour_[3];
 
 	public:
 	// Return name of Module
@@ -96,7 +98,8 @@ class Module : public ListItem<Module>
 	virtual bool setUpDependentModule(Module* depMod) = 0;
 	// Update targets for any auto-added dependent Modules with those of this Module
 	bool updateDependentTargets(ModuleList& currentModuleList, bool autoAddDependents, GenericList& currentModuleData);
-
+	// Return colour used in visual representation of Module
+	const int* colour() const;
 
 	/*
 	 * Keywords

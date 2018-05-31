@@ -6,6 +6,9 @@
     <file>icons/file_save.svg</file>
     <file>icons/file_saveas.svg</file>
   </qresource>
+  <qresource prefix="images">
+    <file>images/squares.jpg</file>
+  </qresource>
   <qresource prefix="tabs">
     <file>icons/tabs_ff.svg</file>
     <file>icons/tabs_configuration.svg</file>

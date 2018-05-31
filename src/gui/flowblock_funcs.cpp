@@ -32,7 +32,8 @@ FlowBlock::FlowBlock(QWidget* parent, DissolveWindow* dissolveWindow, ModuleRefe
 	// Set up user interface
 	ui.setupUi(this);
 
-	ui.KeywordsWidget->setVisible(false);
+	setAutoFillBackground(true);
+	ui.KeywordsControlFrame->setVisible(false);
 
 	moduleReference_ = modRef;
 
@@ -87,10 +88,17 @@ ModuleReference* FlowBlock::moduleReference()
 // Paint event
 void FlowBlock::paintEvent(QPaintEvent* event)
 {
+	if (!module_) return;
+
 	QPainter painter(this);
 
-	painter.setBrush(QBrush(Qt::red, Qt::SolidPattern));
-	painter.drawRect(0, 0, width(), height());
+	const int* colour = module_->colour();
+	QColor blockColour(colour[0], colour[1], colour[2], 50);
+
+	QLinearGradient linearGrad(QPointF(0, 0), QPointF(100, 50));
+	linearGrad.setColorAt(0, blockColour);
+	linearGrad.setColorAt(1, QColor(0,0,0,0));
+	painter.fillRect(QRect(0, 0, width(), height()), linearGrad);
 }
 
 /*
@@ -126,7 +134,7 @@ void FlowBlock::updateControls()
 // Disable sensitive controls, ready for main code to run
 void FlowBlock::disableSensitiveControls()
 {
-	ui.KeywordsWidget->setEnabled(false);
+	ui.KeywordsControlFrame->setEnabled(false);
 	ui.RunButton->setEnabled(false);
 	ui.EnabledButton->setEnabled(false);
 	ui.RemoveButton->setEnabled(false);
@@ -135,7 +143,7 @@ void FlowBlock::disableSensitiveControls()
 // Enable sensitive controls, ready for main code to run
 void FlowBlock::enableSensitiveControls()
 {
-	ui.KeywordsWidget->setEnabled(true);
+	ui.KeywordsControlFrame->setEnabled(true);
 	ui.RunButton->setEnabled(true);
 	ui.EnabledButton->setEnabled(true);
 	ui.RemoveButton->setEnabled(true);
@@ -159,7 +167,7 @@ QPoint FlowBlock::globalLeftHandFlowAnchor() const
 
 void FlowBlock::on_ToggleKeywordsButton_clicked(bool checked)
 {
-	ui.KeywordsWidget->setVisible(checked);
+	ui.KeywordsControlFrame->setVisible(checked);
 
 	adjustSize();
 	updateGeometry();

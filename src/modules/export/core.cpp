@@ -37,6 +37,11 @@ ExportModule::ExportModule() : Module()
 
 	// Set up variables / control parameters
 	setUpKeywords();
+
+	// Set representative colour
+	colour_[0] = 200;
+	colour_[1] = 200;
+	colour_[2] = 0;
 }
 
 // Destructor
