@@ -105,16 +105,16 @@ void UChromaViewWidget::updateCoordinateInfo()
 		switch (viewPane->viewType())
 		{
 			case (ViewPane::FlatXYView):
-				text.sprintf("(x,y) = (%e,%e)", rCurrentLocal_.x, rCurrentLocal_.y);
+				text.sprintf("x = %e, y = %e", rCurrentLocal_.x, rCurrentLocal_.y);
 				break;
 			case (ViewPane::FlatXZView):
-				text.sprintf("(x,z) = (%e,%e)", rCurrentLocal_.x, rCurrentLocal_.z);
+				text.sprintf("x = %e, z = %e", rCurrentLocal_.x, rCurrentLocal_.z);
 				break;
 			case (ViewPane::FlatZYView):
-				text.sprintf("(z,y) = (%e,%e)", rCurrentLocal_.z, rCurrentLocal_.y);
+				text.sprintf("z = %e, y = %e", rCurrentLocal_.z, rCurrentLocal_.y);
 				break;
 			default:
-				text.sprintf("(x,y,z) = (%e,%e,%e)", rCurrentLocal_.x, rCurrentLocal_.y, rCurrentLocal_.z);
+				text.sprintf("x = %e, y = %e, z = %e", rCurrentLocal_.x, rCurrentLocal_.y, rCurrentLocal_.z);
 				break;
 		}
 
