@@ -540,7 +540,7 @@ bool RDFModule::calculateUnweightedGR(PartialSet& originalgr, PartialSet& unweig
 	}
 
 	// Calculate total
-	unweightedgr.formTotal(false);
+	unweightedgr.formTotal(true);
 
 	return true;
 }

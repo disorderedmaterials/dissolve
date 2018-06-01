@@ -128,7 +128,7 @@ bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		}
 
 		// Form unweighted g(r) from original g(r), applying any requested smoothing / broadening
-		PartialSet& unweightedgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedGR");
+		PartialSet& unweightedgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedGR", NULL, GenericItem::InRestartFileFlag);
 		calculateUnweightedGR(originalgr, unweightedgr, intraBroadening, smoothing);
 
 		// Set names of resources (XYData) within the PartialSet
