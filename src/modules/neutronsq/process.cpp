@@ -186,10 +186,10 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		unweightedsq.setObjectNames(CharString("%s//%s//%s", cfg->niceName(), "NeutronSQ", "UnweightedSQ"));
 
 		// Save data if requested
-		if (saveData && configurationLocal_ && (!MPIRunMaster(procPool, unweightedsq.save()))) return false;
+		if (saveData && (!MPIRunMaster(procPool, unweightedsq.save()))) return false;
 
 		// Test unweighted S(Q)?
-		if (testMode && configurationLocal_)
+		if (testMode)
 		{
 			Messenger::print("\nTesting calculated unweighted S(Q) data against supplied datasets (if any)...\n");
 			if (!RDFModule::testReferencePartials(moduleData, uniqueName(), unweightedsq, "TestReferenceSQ-unweighted", testThreshold)) return false;
@@ -235,10 +235,10 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		weightedsq.setObjectNames(CharString("%s//%s//%s", cfg->niceName(), uniqueName_.get(), "WeightedSQ"));
 
 		// Save data if requested
-		if (saveData && configurationLocal_ && (!MPIRunMaster(procPool, weightedsq.save()))) return false;
+		if (saveData && (!MPIRunMaster(procPool, weightedsq.save()))) return false;
 
 		// Test weighted S(Q)?
-		if (testMode && configurationLocal_)
+		if (testMode)
 		{
 			Messenger::print("\nTesting calculated weighted S(Q) data against supplied datasets (if any)...\n");
 			if (!RDFModule::testReferencePartials(moduleData, uniqueName(), weightedsq, "TestReferenceSQ-weighted", testThreshold)) return false;

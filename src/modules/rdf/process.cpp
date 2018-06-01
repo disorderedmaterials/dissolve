@@ -108,9 +108,6 @@ bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Perform averaging of unweighted partials if requested, and if we're not already up-to-date
 		if ((averaging > 1) && (!alreadyUpToDate)) performGRAveraging(cfg->moduleData(), "OriginalGR", "", averaging, averagingScheme);
 
-		// Save data if requested
-		if (saveData && configurationLocal_ && (!MPIRunMaster(procPool, originalgr.save()))) return false;
-
 		// Perform internal test of original g(r)?
 		if (internalTest)
 		{
@@ -121,7 +118,7 @@ bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		}
 
 		// Test original g(r)?
-		if (testMode && configurationLocal_)
+		if (testMode)
 		{
 			Messenger::print("\nTesting calculated g(r) without smoothing / broadening against supplied datasets (if any)...\n");
 			if (!testReferencePartials(moduleData, uniqueName(), originalgr, "TestReferenceGR-original", testThreshold)) return false;
@@ -133,6 +130,9 @@ bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Set names of resources (XYData) within the PartialSet
 		unweightedgr.setObjectNames(CharString("%s//UnweightedGR", cfg->niceName()));
+
+		// Save data if requested
+		if (saveData && (!MPIRunMaster(procPool, unweightedgr.save()))) return false;
 	}
 
 	return true;
