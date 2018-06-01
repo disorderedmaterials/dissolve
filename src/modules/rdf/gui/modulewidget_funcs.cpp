@@ -48,7 +48,7 @@ RDFModuleWidget::RDFModuleWidget(QWidget* parent, Module* module, Dissolve& diss
 	viewPane->axes().setTitle(1, "g(r)");
 	viewPane->axes().setMin(1, -1.0);
 	viewPane->axes().setMax(1, 1.0);
-	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::HalfVerticalShift);
+	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
 	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
 
 	// Set up total G(r) graph
@@ -63,10 +63,12 @@ RDFModuleWidget::RDFModuleWidget(QWidget* parent, Module* module, Dissolve& diss
 	viewPane->axes().setTitle(1, "g(r)");
 	viewPane->axes().setMin(1, -1.0);
 	viewPane->axes().setMax(1, 1.0);
-	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::NoVerticalShift);
+	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::OneVerticalShift);
 	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
 
 	refreshing_ = false;
+
+	currentConfiguration_ = NULL;
 
 	setGraphDataTargets(module_);
 }
@@ -127,28 +129,54 @@ bool RDFModuleWidget::readState(LineParser& parser)
 // Set data targets in graphs
 void RDFModuleWidget::setGraphDataTargets(RDFModule* module)
 {
-	CharString blockData;
+	if (!module) return;
 
-	// Loop over Configurations
+	// Add Configuration targets to the combo box
+	ui.TargetCombo->clear();
 	RefListIterator<Configuration,bool> configIterator(module->targetConfigurations());
+	while (Configuration* config = configIterator.iterate()) ui.TargetCombo->addItem(config->name(), VariantPointer<Configuration>(config));
+
+	// Loop over Configurations and add total G(R)
+	CharString blockData;
+	configIterator.restart();
 	while (Configuration* cfg = configIterator.iterate())
 	{
-		// Add partials
-		int n = 0;
-		for (AtomType* at1 = dissolve_.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++n)
-		{
-			int m = n;
-			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
-			{
-				CharString id("%s-%s", at1->name(), at2->name());
-
-				blockData.sprintf("Collection '%s'; Group '%s'; DataSet 'Calculated %s'; Source XYData '%s//UnweightedGR//%s-%s//Full'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), cfg->niceName(), at1->name(), at2->name());
-				partialsGraph_->addCollectionFromBlock(blockData);
-			}
-		}
-
 		// Add calculated total G(r)
 		blockData.sprintf("Collection 'G(r)'; Group 'Calc'; DataSet 'Calculated'; Source XYData '%s//UnweightedGR//Total'; EndDataSet; EndCollection", cfg->niceName());
 		totalsGraph_->addCollectionFromBlock(blockData);
+	}
+}
+
+void RDFModuleWidget::on_TargetCombo_currentIndexChanged(int index)
+{
+	// Remove any current collections
+	partialsGraph_->clearCollections();
+
+	// Get target Configuration
+	currentConfiguration_ = (Configuration*) VariantPointer<Configuration>(ui.TargetCombo->itemData(index));
+	if (!currentConfiguration_) return;
+
+	CharString blockData;
+	const AtomTypeList cfgTypes = currentConfiguration_->usedAtomTypesList();
+	int n = 0;
+	for (AtomType* at1 = dissolve_.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++n)
+	{
+		int m = n;
+		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
+		{
+			CharString id("%s-%s", at1->name(), at2->name());
+
+			// Full partial
+			blockData.sprintf("Collection '%s'; Group '%s'; DataSet 'Calculated %s'; Source XYData '%s//UnweightedGR//%s-%s//Full'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), currentConfiguration_->niceName(), at1->name(), at2->name());
+			partialsGraph_->addCollectionFromBlock(blockData);
+
+			// Bound partial
+			blockData.sprintf("Collection '%s Bound'; Group '%s'; LineStyle 1.0 'Half Dash'; DataSet 'Calculated %s'; Source XYData '%s//UnweightedGR//%s-%s//Bound'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), currentConfiguration_->niceName(), at1->name(), at2->name());
+			partialsGraph_->addCollectionFromBlock(blockData);
+
+			// Unbound partial
+			blockData.sprintf("Collection '%s Unbound'; Group '%s'; LineStyle 1.0 Dots; DataSet 'Calculated %s'; Source XYData '%s//UnweightedGR//%s-%s//Unbound'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), currentConfiguration_->niceName(), at1->name(), at2->name());
+			partialsGraph_->addCollectionFromBlock(blockData);
+		}
 	}
 }

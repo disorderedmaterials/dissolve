@@ -26,6 +26,7 @@
 #include "gui/modulewidget.h"
 
 // Forward Declarations
+class Configuration;
 class Dissolve;
 class Module;
 class RDFModule;
@@ -74,8 +75,15 @@ class RDFModuleWidget : public ModuleWidget
 	 * Widgets / Functions
 	 */
 	private:
+	// Current Configuration whose data is being displayed
+	Configuration* currentConfiguration_;
+
+	private:
 	// Set data targets in graphs
 	void setGraphDataTargets(RDFModule* module);
+
+	private slots:
+	void on_TargetCombo_currentIndexChanged(int index);
 };
 
 #endif
