@@ -28,6 +28,7 @@
 
 // Forward Declarations
 class ModuleChart;
+class ModulePalette;
 
 // Processing Tab
 class ProcessingTab : public QWidget, public MainTab
@@ -57,8 +58,11 @@ class ProcessingTab : public QWidget, public MainTab
 	private:
 	// Chart widget being displayed
 	ModuleChart* chartWidget_;
+	// Palette widget
+	ModulePalette* paletteWidget_;
 
 	public slots:
+	void on_TogglePaletteButton_clicked(bool checked);
 	void on_WriteRestartFileCheck_clicked(bool checked);
 	void on_RestartFrequencySpin_valueChanged(int value);
 	void on_SetRandomSeedCheck_clicked(bool checked);

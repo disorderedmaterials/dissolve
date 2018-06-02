@@ -1,0 +1,123 @@
+/*
+	*** Module Palette
+	*** src/gui/modulepalette.hui
+	Copyright T. Youngs 2012-2018
+
+	This file is part of Dissolve.
+
+	Dissolve is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	Dissolve is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#ifndef DISSOLVE_MODULEPALETTE_H
+#define DISSOLVE_MODULEPALETTE_H
+
+#include "templates/array.h"
+#include "templates/reflist.h"
+#include <QWidget>
+
+// Forward Declarations
+class DissolveWindow;
+class PaletteBlock;
+class LineParser;
+class Module;
+class ModuleReference;
+class QDragEnterEvent;
+class QDragLeaveEvent;
+class QDropEvent;
+class QMouseEvent;
+
+// Module Palette - Provides all available Modules for addition on to a ModuleChart
+class ModulePalette : public QWidget
+{
+	Q_OBJECT
+
+	protected:
+	// Whether widget is currently refreshing
+	bool refreshing_;
+
+	public:
+	// Constructor / Destructor
+	ModulePalette(DissolveWindow* dissolveWindow, QWidget* parent = NULL);
+	virtual ~ModulePalette();
+
+	private:
+	// Pointer to DissolveWindow
+	DissolveWindow* dissolveWindow_;
+
+
+	/*
+	 * QWidget Reimplementations
+	 */
+	protected:
+	// Mouse press event
+	void mousePressEvent(QMouseEvent* event);
+	// Mouse move event
+	void mouseMoveEvent(QMouseEvent* event);
+	// Mouse release event
+	void mouseReleaseEvent(QMouseEvent* event);
+	// Mouse double-click event
+	void mouseDoubleClickEvent(QMouseEvent* event);
+	// Drag enter event
+	void dragEnterEvent(QDragEnterEvent* event);
+	// Draw move event
+	void dragMoveEvent(QDragMoveEvent* event);
+	// Drag leave event
+	void dragLeaveEvent(QDragLeaveEvent* event);
+	// Drop event
+	void dropEvent(QDropEvent* event);
+
+
+	/*
+	 * Drag / Drop
+	 */
+	private:
+	// Position of mouse click
+	QPoint dragStartPosition_;
+	// PaletteBlock we are dragging
+	PaletteBlock* draggedModule_;
+
+
+	/*
+	 * Display Widgets
+	 */
+	private:
+	// Displayed Widgets
+	RefList<PaletteBlock,bool> displayedWidgets_;
+
+	private:
+	// Find PaletteBlock displaying specified ModuleReference
+	RefListItem<PaletteBlock,bool>* paletteBlockReference(ModuleReference* modRef);
+	// Return the PaletteBlock clicked on its header at the specified position (if any)
+	PaletteBlock* paletteBlockHeaderAt(QPoint pos);
+
+	public:
+	// Update controls within widget
+	void updateControls();
+	// Disable sensitive controls within widget, ready for main code to run
+	void disableSensitiveControls();
+	// Enable sensitive controls within widget, ready for main code to run
+	void enableSensitiveControls();
+
+
+	/*
+	 * State I/O
+	 */
+	public:
+	// Write widget state through specified LineParser
+	bool writeState(LineParser& parser);
+	// Read widget state through specified LineParser
+	bool readState(LineParser& parser);
+};
+
+#endif

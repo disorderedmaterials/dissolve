@@ -21,6 +21,7 @@
 
 #include "gui/processingtab.h"
 #include "gui/modulechart.hui"
+#include "gui/modulepalette.hui"
 #include "main/dissolve.h"
 #include "base/lineparser.h"
 
@@ -32,7 +33,14 @@ ProcessingTab::ProcessingTab(DissolveWindow* dissolveWindow, Dissolve& dissolve,
 	// Create a ModuleChart widget and set its source list
 	chartWidget_ = new ModuleChart(dissolveWindow, dissolve_.mainProcessingModules());
 	chartWidget_->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
-	ui.ScrollArea->setWidget(chartWidget_);
+	ui.ModuleScrollArea->setWidget(chartWidget_);
+
+	// Create a ModulePalette widget
+	paletteWidget_ = new ModulePalette(dissolveWindow);
+	ui.PaletteScrollArea->setWidget(paletteWidget_);
+
+	// Hide palette group initially
+	ui.PaletteGroup->setVisible(false);
 
 	refreshing_ = false;
 }
@@ -54,6 +62,11 @@ const char* ProcessingTab::tabType() const
 /*
  * Widgets
  */
+
+void ProcessingTab::on_TogglePaletteButton_clicked(bool checked)
+{
+	ui.PaletteGroup->setVisible(checked);
+}
 
 void ProcessingTab::on_WriteRestartFileCheck_clicked(bool checked)
 {

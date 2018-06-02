@@ -13,11 +13,13 @@ SET(gui_MOC_HDRS
   moduletab.h
   modulewidget.h
   pairpotentialwidget.h
+  paletteblock.h
   processingtab.h
   speciestab.h
   workspacetab.h
 
   modulechart.hui
+  modulepalette.hui
   outputhandler.hui
   tmdiarea.hui
   thread.hui
@@ -33,6 +35,7 @@ SET(gui_UIS
   modulecontrolwidget.ui
   moduletab.ui
   pairpotentialwidget.ui
+  paletteblock.ui
   processingtab.ui
   speciestab.ui
   workspacetab.ui
@@ -52,10 +55,12 @@ SET(gui_SRCS
   modulechart_funcs.cpp
   modulecontrolwidget_funcs.cpp
   modulekeywordswidget_funcs.cpp
+  modulepalette_funcs.cpp
   moduletab_funcs.cpp
   modulewidget.cpp
   outputhandler_funcs.cpp
   pairpotentialwidget_funcs.cpp
+  paletteblock_funcs.cpp
   processingtab_funcs.cpp
   speciestab_funcs.cpp
   thread_funcs.cpp
