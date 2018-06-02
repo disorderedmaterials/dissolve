@@ -128,8 +128,9 @@ bool RDFModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		PartialSet& unweightedgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedGR", NULL, GenericItem::InRestartFileFlag);
 		calculateUnweightedGR(originalgr, unweightedgr, intraBroadening, smoothing);
 
-		// Set names of resources (XYData) within the PartialSet
+		// Set names of resources and filename in XYData within the PartialSet
 		unweightedgr.setObjectNames(CharString("%s//UnweightedGR", cfg->niceName()));
+		unweightedgr.setFileNames(cfg->niceName(), "unweighted", "rdf");
 
 		// Save data if requested
 		if (saveData && (!MPIRunMaster(procPool, unweightedgr.save()))) return false;

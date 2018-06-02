@@ -502,7 +502,7 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 // Calculate smoothed/broadened partial g(r) from supplied partials
 bool RDFModule::calculateUnweightedGR(PartialSet& originalgr, PartialSet& unweightedgr, BroadeningFunction intraBroadening, int smoothing)
 {
-	// Copy data
+	// Copy data and set new filenames
 	unweightedgr = originalgr;
 
 	int typeI, typeJ;

@@ -335,10 +335,35 @@ const char* PartialSet::objectNamePrefix() const
 	return objectNamePrefix_.get();
 }
 
+// Set underlying XYData file names
+void PartialSet::setFileNames(const char* prefix, const char* tag, const char* suffix)
+{
+	int nTypes = atomTypes_.nItems();
+
+	// Set titles for partials
+	CharString title;
+	AtomTypeData* at1 = atomTypes_.first(), *at2;
+	for (int n=0; n<nTypes; ++n, at1 = at1->next)
+	{
+		at2 = at1;
+		for (int m=n; m<nTypes; ++m, at2 = at2->next)
+		{
+			title.sprintf("%s-%s-%s-%s.%s", prefix, tag, at1->atomTypeName(), at2->atomTypeName(), suffix);
+			partials_.ref(n,m).setName(title.get());
+			boundPartials_.ref(n,m).setName(title.get());
+			unboundPartials_.ref(n,m).setName(title.get());
+			braggPartials_.ref(n,m).setName(title.get());
+		}
+	}
+
+	// Set up array for total
+	title.sprintf("%s-%s-total.%s", prefix, tag, suffix);
+	total_.setName(title);
+}
+
 /*
  * Manipulation
  */
-
 
 // Adjust all partials, adding specified delta to each
 void PartialSet::adjust(double delta)
