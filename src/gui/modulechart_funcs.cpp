@@ -28,14 +28,12 @@
 #include <QMimeData>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QPropertyAnimation>
 
 // Constructor
 ModuleChart::ModuleChart(DissolveWindow* dissolveWindow, ModuleList& modules, QWidget* parent) : QWidget(parent), modules_(modules)
 {
 	dissolveWindow_ = dissolveWindow;
-
-	// Drag / Drop
-	draggedBlock_ = NULL;
 
 	// Layout
 	minSpacing_ = 32;
@@ -46,8 +44,10 @@ ModuleChart::ModuleChart(DissolveWindow* dissolveWindow, ModuleList& modules, QW
 
 	refreshing_ = false;
 
-	// Enable drag/drop
+	// Drag / Drop
 	setAcceptDrops(true);
+	draggedBlock_ = NULL;
+	currentHotSpotIndex_ = -1;
 
 	updateControls();
 }
@@ -68,7 +68,7 @@ void ModuleChart::paintEvent(QPaintEvent* event)
 
 	// Draw the background before we do anything else
 	QBrush backgroundBrush = QBrush(Qt::black, QPixmap(":/images/images/squares.jpg"));
-	painter.fillRect(QRect(0,0,width(),height()), backgroundBrush);
+	painter.fillRect(QRect(0, 0, width(), height()), backgroundBrush);
 
 	// Set up some QPens
 	QPen solidPen(Qt::black);
@@ -88,13 +88,17 @@ void ModuleChart::paintEvent(QPaintEvent* event)
 	RefListIterator<FlowBlock,bool> blockIterator(displayedWidgets_);
 	int col = 0, row = 0;
 	QPoint p1, p2;
-	while (FlowBlock* block = blockIterator.iterate())
+	FlowBlock* block = blockIterator.iterate();
+	while (!blockIterator.last())
 	{
-		// If this is the last block, there is nothing more to do
-		if (blockIterator.last()) break;
+		// If this block is the draggedBlock (i.e. it is temporarily hidden), move on to the next one
+		if (block == draggedBlock_) block = blockIterator.iterate();
 
 		// Grab the next block
-		FlowBlock* nextBlock = blockIterator.peek();
+		FlowBlock* nextBlock = blockIterator.iterate();
+
+		// Make sure that the next block is not the draggedBlock_
+		if (nextBlock == draggedBlock_) nextBlock = blockIterator.iterate();
 
 		/*
 		 * Draw a connecting line from the right-hand side of this block, to the left-hand side of the next one.
@@ -143,6 +147,20 @@ void ModuleChart::paintEvent(QPaintEvent* event)
 			col = 0;
 			++row;
 		}
+
+		// Set the next block pointer
+		block = nextBlock;
+	}
+
+	// Highlight current HotSpot, if there is one
+	painter.setPen(Qt::NoPen);
+	if (currentHotSpotIndex_ != -1)
+	{
+		// Get the hot spot from the list
+		ModuleChartHotSpot* hotSpot = hotSpots_[currentHotSpotIndex_];
+
+		// If a Module insertion or addition hotspot, highlight the area in yellow
+		if (hotSpot->type() == ModuleChartHotSpot::ModuleInsertionHotSpot) painter.fillRect(hotSpot->geometry(), QBrush(QColor(200,200,0,50)));
 	}
 }
 
@@ -205,10 +223,19 @@ void ModuleChart::mouseMoveEvent(QMouseEvent* event)
 // 	drag->setHotSpot(dragStartPosition_ -
 	drag->setPixmap(draggedBlock_->grab());
 
+	// Recalculate the layout
+	layOutWidgets(true);
+
 	// Begin the drag event
 	Qt::DropAction dropAction = drag->exec(Qt::MoveAction);
 // 	if (dropAction 
 // 	...
+
+	// Nullify the dragged block
+	draggedBlock_ = NULL;
+
+	// Recalculate layout
+	layOutWidgets(true);
 }
 
 // Mouse release event
@@ -238,6 +265,7 @@ void ModuleChart::dragEnterEvent(QDragEnterEvent* event)
 {
 	// Is the correct data type being dragged over us?
 	if (event->mimeData()->hasFormat("image/x-dissolve-flowblock")) event->accept();
+	else if (event->mimeData()->hasFormat("image/x-dissolve-paletteblock")) event->accept();
 	else event->ignore();
 }
 
@@ -252,6 +280,26 @@ void ModuleChart::dragLeaveEvent(QDragLeaveEvent* event)
 // Draw move event
 void ModuleChart::dragMoveEvent(QDragMoveEvent* event)
 {
+	// Check to see if the mouse is currently over any defined hot spot
+	ModuleChartHotSpot* spotUnderMouse = hotSpotAt(event->pos());
+	if (!spotUnderMouse)
+	{
+		currentHotSpotIndex_ = -1;
+		return;
+	}
+
+	/*
+	 * Store the index of the hot spot, rather than the pointer to it, since the pointer will become invalid as soon as we
+	 * recalculate the layout of the widgets (when the dragged widget is made invisible). The index of the hot spot should always be valid.
+	 */
+	currentHotSpotIndex_ = hotSpots_.indexOf(spotUnderMouse);
+
+	// There is a hotspot here - do we need to recalculate the layout?
+	if ((spotUnderMouse->type() == ModuleChartHotSpot::ModuleInsertionHotSpot) || (spotUnderMouse->type() == ModuleChartHotSpot::ModuleInsertionHotSpot))
+	{
+		layOutWidgets(true);
+	}
+
 	repaint();
 }
 
@@ -262,6 +310,18 @@ void ModuleChart::dropEvent(QDropEvent* event)
 	{
 	}
 	else event->ignore();
+}
+
+/*
+ * Drag / Drop
+ */
+
+// Return drop hotspot, if any, under specified point
+ModuleChartHotSpot* ModuleChart::hotSpotAt(QPoint pos)
+{
+	for (ModuleChartHotSpot* hotSpot = hotSpots_.first(); hotSpot != NULL; hotSpot = hotSpot->next) if (hotSpot->contains(pos)) return hotSpot;
+
+	return NULL;
 }
 
 /*
@@ -306,7 +366,7 @@ void ModuleChart::updateControls()
 		{
 			// No current FlowBlock reference, so must create suitable widget
 			FlowBlock* flowBlock = new FlowBlock(this, dissolveWindow_, modRef);
-			connect(flowBlock, SIGNAL(settingsToggled()), this, SLOT(layOutWidgets()));
+			connect(flowBlock, SIGNAL(settingsToggled()), this, SLOT(recalculateLayout()));
 			newDisplayedWidgets.add(flowBlock);
 		}
 	}
@@ -342,17 +402,37 @@ void ModuleChart::enableSensitiveControls()
 */
 
 // Lay out widgets snaking horizontally
-void ModuleChart::layOutHorizontally()
+void ModuleChart::layOutWidgets(bool animateWidgets)
 {
 	/*
 	 * Determine how many columns we can fit across our current geometry, obeying a minimum spacing between widgets.
+	 * We will work from a temporary list of FlowBlocks/sizes constructed from the current list and any temporary placeholder
+	 * block (i.e. from a drag/drop operation)
+	 * 
 	 * Start by trying to lay out everything on one line. If this doesn't fit, decrease the number of columns and try again.
 	 */
+
+	// Construct the temporary list, excluding the dragged block if there is one. Store the minimumSize here too.
+	RefList<FlowBlock,QSize> blocks;
+	RefListIterator<FlowBlock,bool> displayedBlockIterator(displayedWidgets_);
+	while (FlowBlock* block = displayedBlockIterator.iterate())
+	{
+		// If this FlowBlock is being dragged, skip it and make sure its not visible
+		if (block == draggedBlock_) block->setVisible(false);
+		else blocks.add(block, block->minimumSize());
+	}
+
+	// If there is a current hotSpot, add in a suitable 'fake' widget to the list
+	if (currentHotSpotIndex_ != -1)
+	{
+		// If we have a valid draggedBlock_, add
+	}
+
 	const int maxWidth = width() - minSpacing_;
 	int colCount;
-	int totalColumnWidth, lastNCols = 0, maxColumns = displayedWidgets_.nItems();
+	int totalColumnWidth, lastNCols = 0, maxColumns = blocks.nItems();
 
-	for (nColumns_ = displayedWidgets_.nItems(); nColumns_ >= 1; --nColumns_)
+	for (nColumns_ = blocks.nItems(); nColumns_ >= 1; --nColumns_)
 	{
 		/*
 		 * Loop over FlowBlocks, summing their widths as we go for each row.
@@ -363,11 +443,16 @@ void ModuleChart::layOutHorizontally()
 		totalColumnWidth = 0;
 		widths_.clear();
 		minimumSizeHint_ = QSize(0,0);
-		RefListIterator<FlowBlock,bool> blockIterator(displayedWidgets_);
-		while (FlowBlock* block = blockIterator.iterate())
+		for (RefListItem<FlowBlock,QSize>* currentBlock = blocks.first(); currentBlock != NULL; currentBlock = currentBlock->next)
 		{
+			// Grab the FlowBlock in this displayedWidget - it can be NULL, if its a placeholder for an insertion etc.
+			FlowBlock* block = currentBlock->item;
+
+			// Make sure the current block is visible
+			if (block) block->setVisible(true);
+
 			// Get the width of this block
-			int blockWidth = block->minimumSize().width();
+			int blockWidth = currentBlock->data.width();
 
 			// If this is the first row, add our width to the widths_ array, and increase totalColumnWidth
 			if (nRows_ == 1)
@@ -393,7 +478,7 @@ void ModuleChart::layOutHorizontally()
 			if ((totalColumnWidth > maxWidth) && (nColumns_ > 1)) break;
 
 			// Added this widget OK - if it was the last one in the list, we have found a suitable number of columns
-			if (blockIterator.last()) break;
+			if (!currentBlock->next) break;
 			
 			// Not the end of the list, so increase column count and check against the current nColumns_
 			++colCount;
@@ -416,7 +501,8 @@ void ModuleChart::layOutHorizontally()
 	tops_.clear();
 	lefts_.clear();
 	heights_.clear();
-	RefListIterator<FlowBlock,bool> blockIterator(displayedWidgets_);
+	hotSpots_.clear();
+	RefListItem<FlowBlock,QSize>* currentBlock = blocks.first();
 	int top = minSpacing_, rowMaxHeight;
 	for (int row = 0; row < nRows_; ++row)
 	{
@@ -430,20 +516,34 @@ void ModuleChart::layOutHorizontally()
 			// Store this column left-hand position
 			if (row == 0) lefts_.add(left);
 
-			// Get FlowBlock for this grid reference (i.e. the next one in the list)
-			FlowBlock* block = blockIterator.iterate();
-
-			// Do we still have a valid block?
-			if (block)
+			// Do we still have a valid display widget to consider?
+			if (currentBlock)
 			{
+				// Get the block represented by the displayWidget
+				FlowBlock* block = currentBlock->item;
+
 				// Check the current height against the required height for this block's widget (if we still have a current one) and update if necessary
-				if (block->minimumSize().height() > rowMaxHeight) rowMaxHeight = block->minimumSize().height();
- 
+				if (currentBlock->data.height() > rowMaxHeight) rowMaxHeight = currentBlock->data.height();
+
 				// Set the widget's geometry based on these coordinates and its SizeHint - we give it all the space it needs
-				block->setGeometry(left, top, block->minimumSize().width(), block->minimumSize().height());
+				if (animateWidgets)
+				{
+					QPropertyAnimation *animation = new QPropertyAnimation(block, "geometry");
+					animation->setDuration(100);
+					animation->setEndValue(QRect(left, top, currentBlock->data.width(), currentBlock->data.height()));
+					animation->start();
+				}
+				else block->setGeometry(left, top, block->minimumSize().width(), block->minimumSize().height());
 
 				// Store max width in our minimum size hint
 				if (rowMaxHeight > minimumSizeHint_.height()) minimumSizeHint_ = QSize(0, rowMaxHeight);
+
+				// Work out hot spot for insertion before this block
+				ModuleChartHotSpot* hotSpot = hotSpots_.add();
+				hotSpot->set(row, ModuleChartHotSpot::ModuleInsertionHotSpot, QRect(left-minSpacing_, top, minSpacing_, 40), block);
+
+				// Move to next displayedWidget
+				currentBlock = currentBlock->next;
 			}
 
 			// Increase left-hand coordinate
@@ -457,6 +557,9 @@ void ModuleChart::layOutHorizontally()
 		top += rowMaxHeight + minSpacing_;
 	}
 
+	// Loop over defined hotspots and set the correct heights based on their row indices
+	for (ModuleChartHotSpot* hotSpot = hotSpots_.first(); hotSpot != NULL; hotSpot = hotSpot->next) hotSpot->setAreaHeight(heights_[hotSpot->row()]);
+
 	// Calculate size hint
 	// Our requested width is the left-most edge of the left-most column, plus the width of the column, plus the spacing.
 	// Our requested height is the top-most edge of the last row, plus the height of the row, plus the spacing.
@@ -464,19 +567,14 @@ void ModuleChart::layOutHorizontally()
 
 	// Finalise minimum size hint - we just need to add on the surrounding margins
 	minimumSizeHint_ += QSize(2*minSpacing_, 2*minSpacing_);
-}
-
-// Lay out widgets snaking vertically
-void ModuleChart::layOutVertically()
-{
-}
-
-// Lay out the current widgets according to our available geometry
-void ModuleChart::layOutWidgets()
-{
-	layOutHorizontally();
 
 	updateGeometry();
 
 	repaint();
+}
+
+// Recalculate layout (after widget size change etc.)
+void ModuleChart::recalculateLayout()
+{
+	layOutWidgets(false);
 }

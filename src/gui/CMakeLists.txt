@@ -8,6 +8,7 @@ SET(gui_MOC_HDRS
   forcefieldtab.h
   gui.h
   maintab.h
+  modulecharthotspot.h
   modulekeywordswidget.h
   modulecontrolwidget.h
   moduletab.h
@@ -53,6 +54,7 @@ SET(gui_SRCS
   gui_tabs.cpp
   maintab.cpp
   modulechart_funcs.cpp
+  modulecharthotspot.cpp
   modulecontrolwidget_funcs.cpp
   modulekeywordswidget_funcs.cpp
   modulepalette_funcs.cpp

@@ -41,7 +41,6 @@ ModulePalette::ModulePalette(DissolveWindow* dissolveWindow, QWidget* parent) : 
 	QVBoxLayout* layout = new QVBoxLayout(this);
 	layout->setContentsMargins(0,0,0,0);
 	layout->setSpacing(4);
-	printf("HKJHKJHJk\n");
 
 	// Add available Modules to our widget
 	for (ModuleReference* modRef = ModuleList::masterInstances().first(); modRef != NULL; modRef = modRef->next)

@@ -22,13 +22,15 @@
 #ifndef DISSOLVE_MODULECHART_H
 #define DISSOLVE_MODULECHART_H
 
+#include "gui/modulecharthotspot.h"
+#include "gui/flowblock.h"
 #include "templates/array.h"
+#include "templates/list.h"
 #include "templates/reflist.h"
 #include <QWidget>
 
 // Forward Declarations
 class DissolveWindow;
-class FlowBlock;
 class FlowLayout;
 class LineParser;
 class Module;
@@ -94,8 +96,16 @@ class ModuleChart : public QWidget
 	private:
 	// Position of mouse click
 	QPoint dragStartPosition_;
-	// FlowBlock we are dragging
+	// FlowBlock being dragged (if a local drag)
 	FlowBlock* draggedBlock_;
+	// Drop hotspots avialable on the chart
+	List<ModuleChartHotSpot> hotSpots_;
+	// Index of the current hotspot the dragged object is over (if any)
+	int currentHotSpotIndex_;
+
+	private:
+	// Return drop hotspot, if any, under specified point
+	ModuleChartHotSpot* hotSpotAt(QPoint pos);
 
 
 	/*
@@ -152,13 +162,11 @@ class ModuleChart : public QWidget
 
 	private:
 	// Lay out widgets snaking horizontally
-	void layOutHorizontally();
-	// Lay out widgets snaking vertically
-	void layOutVertically();
+	void layOutWidgets(bool animateWidgets = false);
 
 	public slots:
-	// Lay out the current widgets according to our available geometry
-	void layOutWidgets();
+	// Recalculate layout (after widget size change etc.)
+	void recalculateLayout();
 
 
 	/*
