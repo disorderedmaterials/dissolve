@@ -667,6 +667,41 @@ template <class T> class List
 		item->next = newnext;
 		regenerate_ = true;
 	}
+	// Move item so it is before specified item
+	void moveBefore(T* item, T* reference)
+	{
+		// Check for valid item
+		if (item == NULL)
+		{
+			Messenger::error("Internal Error: NULL pointer passed to List<T>::moveAfter().\n");
+			return;
+		}
+
+		// Cut item out of list
+		T *prev, *next;
+		prev = item->prev;
+		next = item->next;
+		if (prev == NULL) listHead_ = next;
+		else prev->next = next;
+		if (next == NULL) listTail_ = prev;
+		else next->prev = prev;
+
+		// ...and then re-insert it
+		// Get pointer to item before the reference (our newPrev)
+		T* newPrev = (reference == NULL ? listTail_ : reference->prev);
+
+		// Re-point reference and the new item
+		if (reference != NULL) reference->prev = item;
+		else listTail_ = item;
+		item->next = reference;
+
+		// Re-point newPrev and the new item
+		if (newPrev != NULL) newPrev->next = item;
+		else listHead_ = item;
+		item->prev = newPrev;
+
+		regenerate_ = true;
+	}
         // Swap two items in list
         void swapByIndex(int id1, int id2)
 	{
