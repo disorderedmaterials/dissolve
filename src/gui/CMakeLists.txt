@@ -4,11 +4,13 @@
 # Meta-Objects
 SET(gui_MOC_HDRS
   configurationtab.h
-  flowblock.h
   forcefieldtab.h
   gui.h
   maintab.h
+  modulechartblock.h
   modulecharthotspot.h
+  modulechartinsertionblock.h
+  modulechartmoduleblock.h
   modulekeywordswidget.h
   modulecontrolwidget.h
   moduletab.h
@@ -30,9 +32,10 @@ QT5_WRAP_CPP(gui_MOC_SRCS ${gui_MOC_HDRS})
 # User Interface Files
 SET(gui_UIS
   configurationtab.ui
-  flowblock.ui
   forcefieldtab.ui
   gui.ui
+  modulechartinsertionblock.ui
+  modulechartmoduleblock.ui
   modulecontrolwidget.ui
   moduletab.ui
   pairpotentialwidget.ui
@@ -46,7 +49,6 @@ QT5_WRAP_UI(gui_UIS_H ${gui_UIS})
 # Source files (not Qt UI files or custom .h [uih])
 SET(gui_SRCS
   configurationtab_funcs.cpp
-  flowblock_funcs.cpp
   forcefieldtab_funcs.cpp
   gui_control.cpp
   gui_funcs.cpp
@@ -54,7 +56,10 @@ SET(gui_SRCS
   gui_tabs.cpp
   maintab.cpp
   modulechart_funcs.cpp
+  modulechartblock.cpp
   modulecharthotspot.cpp
+  modulechartinsertionblock_funcs.cpp
+  modulechartmoduleblock_funcs.cpp
   modulecontrolwidget_funcs.cpp
   modulekeywordswidget_funcs.cpp
   modulepalette_funcs.cpp

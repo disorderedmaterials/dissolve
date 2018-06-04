@@ -25,14 +25,14 @@ clean-local:
 
 libgui_la_SOURCES = icons.qrc
 
-libgui_la_SOURCES += gui.ui configurationtab.ui flowblock.ui forcefieldtab.ui modulecontrolwidget.ui moduletab.ui pairpotentialwidget.ui paletteblock.ui processingtab.ui speciestab.ui workspacetab.ui
+libgui_la_SOURCES += gui.ui configurationtab.ui forcefieldtab.ui modulechartinsertionblock.ui modulechartmoduleblock.ui modulecontrolwidget.ui moduletab.ui pairpotentialwidget.ui paletteblock.ui processingtab.ui speciestab.ui workspacetab.ui
 
 libgui_la_SOURCES += modulechart.hui modulepalette.hui outputhandler.hui thread.hui
 
 libgui_la_SOURCES += configurationtab_funcs.cpp
-libgui_la_SOURCES += flowblock_funcs.cpp forcefieldtab_funcs.cpp
+libgui_la_SOURCES += forcefieldtab_funcs.cpp
 libgui_la_SOURCES += gui_control.cpp gui_funcs.cpp gui_menu.cpp gui_tabs.cpp
-libgui_la_SOURCES += maintab.cpp modulechart_funcs.cpp modulecharthotspot.cpp modulecontrolwidget_funcs.cpp modulekeywordswidget_funcs.cpp modulepalette_funcs.cpp moduletab_funcs.cpp modulewidget.cpp
+libgui_la_SOURCES += maintab.cpp modulechart_funcs.cpp modulechartblock.cpp modulecharthotspot.cpp modulechartinsertionblock_funcs.cpp modulechartmoduleblock_funcs.cpp modulecontrolwidget_funcs.cpp modulekeywordswidget_funcs.cpp modulepalette_funcs.cpp moduletab_funcs.cpp modulewidget.cpp
 libgui_la_SOURCES += outputhandler_funcs.cpp
 libgui_la_SOURCES += pairpotentialwidget_funcs.cpp paletteblock_funcs.cpp processingtab_funcs.cpp
 libgui_la_SOURCES += speciestab_funcs.cpp
@@ -41,9 +41,9 @@ libgui_la_SOURCES += tmdiarea.hui tmdiarea_funcs.cpp
 libgui_la_SOURCES += workspacetab_funcs.cpp
 
 noinst_HEADERS = configurationtab.h
-noinst_HEADERS += flowblock.h forcefieldtab.h
+noinst_HEADERS += forcefieldtab.h
 noinst_HEADERS += gui.h
-noinst_HEADERS += maintab.h modulecharthotspot.h modulecontrolwidget.h modulekeywordswidget.h moduletab.h modulewidget.h
+noinst_HEADERS += maintab.h modulechartblock.h modulecharthotspot.h modulechartinsertionblock.h modulechartmoduleblock.h modulecontrolwidget.h modulekeywordswidget.h moduletab.h modulewidget.h
 noinst_HEADERS += pairpotentialwidget.h paletteblock.h processingtab.h
 noinst_HEADERS += speciestab.h
 noinst_HEADERS += workspacetab.h
