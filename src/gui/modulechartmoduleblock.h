@@ -1,6 +1,6 @@
 /*
-	*** Flow Block Widget
-	*** src/gui/flowblock.h
+	*** ModuleChart Module Block Widget
+	*** src/gui/modulechartmoduleblock.h
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,10 +19,11 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_FLOWBLOCKWIDGET_H
-#define DISSOLVE_FLOWBLOCKWIDGET_H
+#ifndef DISSOLVE_MODULECHARTMODULEBLOCKWIDGET_H
+#define DISSOLVE_MODULECHARTMODULEBLOCKWIDGET_H
 
-#include "gui/ui_flowblock.h"
+#include "gui/ui_modulechartmoduleblock.h"
+#include "gui/modulechartblock.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
@@ -32,24 +33,18 @@ class KeywordWidgetBase;
 class Module;
 class ModuleReference;
 
-// Flow Block Widget
-class FlowBlock : public QWidget
+// ModuleChart Module Block Widget
+class ModuleChartModuleBlock : public QWidget, public ModuleChartBlock
 {
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-	private:
-	// Pointer to DissolveWindow
-	DissolveWindow* dissolveWindow_;
-	// Reference to Dissolve
-	Dissolve& dissolve_;
-
 	public:
 	// Constructor / Destructor
-	FlowBlock(QWidget* parent, DissolveWindow* dissolveWindow, ModuleReference* moduleReference);
-	~FlowBlock();
+	ModuleChartModuleBlock(QWidget* parent, DissolveWindow* dissolveWindow, ModuleReference* moduleReference);
+	~ModuleChartModuleBlock();
 	// Main form declaration
-	Ui::FlowBlockWidget ui;
+	Ui::ModuleChartModuleWidget ui;
 	// Initialise window
 	void initialiseWindow(Module* module);
 
@@ -81,24 +76,15 @@ class FlowBlock : public QWidget
 	/*
 	 * Widget Functions
 	 */
-	private:
-	// Whether the widget is currently refreshing
-	bool refreshing_;
-
-	protected:
-	void closeEvent(QCloseEvent* event);
-
 	public:
+	// Return underlying widget
+	QWidget* widget();
 	// Update controls within widget
 	void updateControls();
 	// Disable sensitive controls, ready for main code to run
 	void disableSensitiveControls();
 	// Enable sensitive controls, ready for main code to run
 	void enableSensitiveControls();
-	// Return right-hand-side flow anchor point
-	QPoint globalRightHandFlowAnchor() const;
-	// Return left-hand-side flow anchor point
-	QPoint globalLeftHandFlowAnchor() const;
 
 	public slots:
 	void on_ToggleKeywordsButton_clicked(bool checked);
@@ -110,6 +96,23 @@ class FlowBlock : public QWidget
 	void settingsToggled();
 	void removeModule(void* module);
 	void moduleRun();
+
+
+	/*
+	 * Geometry
+	 */
+	public:
+	// Return width of underlying widget
+	int widgetWidth() const;
+	// Return height of underlying widget
+	int widgetHeight() const;
+	// Set underlying widget geometry
+	void setWidgetGeometry(int left, int top, int width, int height);
+	// Return right-hand-side widget anchor point
+	QPoint globalRightHandWidgetAnchor() const;
+	// Return left-hand-side widget anchor point
+	QPoint globalLeftHandWidgetAnchor() const;
+
 };
 
 #endif

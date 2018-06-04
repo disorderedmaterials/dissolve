@@ -23,7 +23,7 @@
 #define DISSOLVE_MODULECHART_H
 
 #include "gui/modulecharthotspot.h"
-#include "gui/flowblock.h"
+#include "gui/modulechartmoduleblock.h"
 #include "templates/array.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
@@ -34,6 +34,7 @@ class DissolveWindow;
 class FlowLayout;
 class LineParser;
 class Module;
+class ModuleChartInsertionBlock;
 class ModuleList;
 class ModuleReference;
 class QDragEnterEvent;
@@ -96,8 +97,8 @@ class ModuleChart : public QWidget
 	private:
 	// Position of mouse click
 	QPoint dragStartPosition_;
-	// FlowBlock being dragged (if a local drag)
-	FlowBlock* draggedBlock_;
+	// ModuleChartModuleBlock being dragged (if a local drag)
+	ModuleChartModuleBlock* draggedBlock_;
 	// Drop hotspots avialable on the chart
 	List<ModuleChartHotSpot> hotSpots_;
 	// Index of the current hotspot the dragged object is over (if any)
@@ -109,19 +110,25 @@ class ModuleChart : public QWidget
 
 
 	/*
-	 * Display Widgets
+	 * Block Widgets
 	 */
 	private:
-	// Displayed Widgets
-	RefList<FlowBlock,bool> displayedWidgets_;
 	// Target ModuleList
 	ModuleList& modules_;
+	// Module widgets for Modules in target ModuleList
+	RefList<ModuleChartModuleBlock,bool> moduleWidgets_;
+	// Insertion point widget
+	ModuleChartInsertionBlock* insertionWidget_;
+	// List of block widgets to display, in order, in the chart
+	RefList<ModuleChartBlock,bool> displayBlocks_;
 
 	private:
-	// Find FlowBlock displaying specified ModuleReference
-	RefListItem<FlowBlock,bool>* flowBlockReference(ModuleReference* modRef);
-	// Return the FlowBlock clicked on its header at the specified position (if any)
-	FlowBlock* flowBlockHeaderAt(QPoint pos);
+	// Recreate list of widgets for display, reflecting current state of widget (e.g. drag/drop etc.)
+	void recreateDisplayWidgets();
+	// Find ModuleChartModuleBlock displaying specified ModuleReference
+	RefListItem<ModuleChartModuleBlock,bool>* moduleChartModuleBlockReference(ModuleReference* modRef);
+	// Return the ModuleChartModuleBlock clicked on its header at the specified position (if any)
+	ModuleChartModuleBlock* moduleChartModuleBlockHeaderAt(QPoint pos);
 
 	public:
 	// Update controls within widget
@@ -158,7 +165,6 @@ class ModuleChart : public QWidget
 	QSize sizeHint_;
 	// Minimum size hint (for single column)
 	QSize minimumSizeHint_;
-	
 
 	private:
 	// Lay out widgets snaking horizontally

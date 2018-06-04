@@ -1,6 +1,6 @@
 /*
-	*** Flow Block Widget - Functions
-	*** src/gui/flowblock_funcs.cpp
+	*** ModuleChart Module Block Widget - Functions
+	*** src/gui/modulechartmoduleblock_funcs.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/flowblock.h"
+#include "gui/modulechartmoduleblock.h"
 #include "gui/gui.h"
 #include "gui/keywordwidgets.h"
 #include "main/dissolve.h"
@@ -27,7 +27,7 @@
 #include <QPainter>
 
 // Constructor
-FlowBlock::FlowBlock(QWidget* parent, DissolveWindow* dissolveWindow, ModuleReference* modRef) : QWidget(parent), dissolveWindow_(dissolveWindow), dissolve_(dissolveWindow->dissolve())
+ModuleChartModuleBlock::ModuleChartModuleBlock(QWidget* parent, DissolveWindow* dissolveWindow, ModuleReference* modRef) : QWidget(parent), ModuleChartBlock(dissolveWindow, dissolveWindow->dissolve())
 {
 	// Set up user interface
 	ui.setupUi(this);
@@ -39,19 +39,17 @@ FlowBlock::FlowBlock(QWidget* parent, DissolveWindow* dissolveWindow, ModuleRefe
 
 	module_ = moduleReference_ ? moduleReference_->module() : NULL;
 
-	refreshing_ = false;
-
 	initialiseWindow(module_);
 
 	updateControls();
 }
 
-FlowBlock::~FlowBlock()
+ModuleChartModuleBlock::~ModuleChartModuleBlock()
 {
 }
 
 // Initialise window
-void FlowBlock::initialiseWindow(Module* module)
+void ModuleChartModuleBlock::initialiseWindow(Module* module)
 {
 	// Set information panel contents
 	if (module)
@@ -76,7 +74,7 @@ void FlowBlock::initialiseWindow(Module* module)
  */
 
 // Return reference for associated Module
-ModuleReference* FlowBlock::moduleReference()
+ModuleReference* ModuleChartModuleBlock::moduleReference()
 {
 	return moduleReference_;
 }
@@ -86,7 +84,7 @@ ModuleReference* FlowBlock::moduleReference()
  */
 
 // Paint event
-void FlowBlock::paintEvent(QPaintEvent* event)
+void ModuleChartModuleBlock::paintEvent(QPaintEvent* event)
 {
 	if (!module_) return;
 
@@ -105,12 +103,14 @@ void FlowBlock::paintEvent(QPaintEvent* event)
  * Widget Functions
  */
 
-void FlowBlock::closeEvent(QCloseEvent* event)
+// Return underlying widget
+QWidget* ModuleChartModuleBlock::widget()
 {
+	return this;
 }
 
 // Update controls within widget
-void FlowBlock::updateControls()
+void ModuleChartModuleBlock::updateControls()
 {
 	if (!module_) return;
 
@@ -132,7 +132,7 @@ void FlowBlock::updateControls()
 }
 
 // Disable sensitive controls, ready for main code to run
-void FlowBlock::disableSensitiveControls()
+void ModuleChartModuleBlock::disableSensitiveControls()
 {
 	ui.KeywordsControlFrame->setEnabled(false);
 	ui.RunButton->setEnabled(false);
@@ -141,7 +141,7 @@ void FlowBlock::disableSensitiveControls()
 }
 
 // Enable sensitive controls, ready for main code to run
-void FlowBlock::enableSensitiveControls()
+void ModuleChartModuleBlock::enableSensitiveControls()
 {
 	ui.KeywordsControlFrame->setEnabled(true);
 	ui.RunButton->setEnabled(true);
@@ -149,23 +149,7 @@ void FlowBlock::enableSensitiveControls()
 	ui.RemoveButton->setEnabled(true);
 }
 
-// Return right-hand-side flow anchor point
-QPoint FlowBlock::globalRightHandFlowAnchor() const
-{
-	QPoint X = mapToGlobal(rect().topRight() + QPoint(1, 0));
-	QPoint Y = mapToGlobal(ui.HeaderFrame->rect().topRight()) + QPoint(0, ui.HeaderFrame->height()/2);
-	return QPoint(X.x(), Y.y());
-}
-
-// Return left-hand-side flow anchor point
-QPoint FlowBlock::globalLeftHandFlowAnchor() const
-{
-	QPoint X = mapToGlobal(rect().topLeft() + QPoint(-1, 0));
-	QPoint Y = mapToGlobal(ui.HeaderFrame->rect().topLeft()) + QPoint(0, ui.HeaderFrame->height()/2);
-	return QPoint(X.x(), Y.y());
-}
-
-void FlowBlock::on_ToggleKeywordsButton_clicked(bool checked)
+void ModuleChartModuleBlock::on_ToggleKeywordsButton_clicked(bool checked)
 {
 	ui.KeywordsControlFrame->setVisible(checked);
 
@@ -175,12 +159,12 @@ void FlowBlock::on_ToggleKeywordsButton_clicked(bool checked)
 	emit(settingsToggled());
 }
 
-void FlowBlock::on_RemoveButton_clicked(bool checked)
+void ModuleChartModuleBlock::on_RemoveButton_clicked(bool checked)
 {
 	emit (removeModule(moduleReference_));
 }
 
-void FlowBlock::on_RunButton_clicked(bool checked)
+void ModuleChartModuleBlock::on_RunButton_clicked(bool checked)
 {
 	if (!module_) return;
 
@@ -191,7 +175,7 @@ void FlowBlock::on_RunButton_clicked(bool checked)
 	emit moduleRun();
 }
 
-void FlowBlock::on_EnabledButton_clicked(bool checked)
+void ModuleChartModuleBlock::on_EnabledButton_clicked(bool checked)
 {
 	if (refreshing_) return;
 
@@ -202,13 +186,40 @@ void FlowBlock::on_EnabledButton_clicked(bool checked)
 	dissolveWindow_->setModified();
 }
 
-// void FlowBlock::on_FrequencySpin_valueChanged(int value)
-// {
-// 	if (refreshing_) return;
-// 
-// 	if (!module_) return;
-// 	
-// 	module_->setFrequency(value);
-// 
-// 	dissolveWindow_->setModified();
-// }
+/*
+ * Geometry
+ */
+
+// Return width of underlying widget
+int ModuleChartModuleBlock::widgetWidth() const
+{
+	return minimumSize().width();
+}
+
+// Return height of underlying widget
+int ModuleChartModuleBlock::widgetHeight() const
+{
+	return minimumSize().height();
+}
+
+// Set underlying widget geometry
+void ModuleChartModuleBlock::setWidgetGeometry(int left, int top, int width, int height)
+{
+	setGeometry(left, top, width, height);
+}
+
+// Return right-hand-side flow anchor point
+QPoint ModuleChartModuleBlock::globalRightHandWidgetAnchor() const
+{
+	QPoint X = mapToGlobal(rect().topRight() + QPoint(1, 0));
+	QPoint Y = mapToGlobal(ui.HeaderFrame->rect().topRight()) + QPoint(0, ui.HeaderFrame->height()/2);
+	return QPoint(X.x(), Y.y());
+}
+
+// Return left-hand-side flow anchor point
+QPoint ModuleChartModuleBlock::globalLeftHandWidgetAnchor() const
+{
+	QPoint X = mapToGlobal(rect().topLeft() + QPoint(-1, 0));
+	QPoint Y = mapToGlobal(ui.HeaderFrame->rect().topLeft()) + QPoint(0, ui.HeaderFrame->height()/2);
+	return QPoint(X.x(), Y.y());
+}

@@ -26,7 +26,7 @@
 #include <QRect>
 
 // Forward Declarations
-class FlowBlock;
+/* none */
 
 // Chart HotSpot - Definition of an area onto which a dragged object can be dropped
 class ModuleChartHotSpot : public ListItem<ModuleChartHotSpot>
@@ -49,12 +49,12 @@ class ModuleChartHotSpot : public ListItem<ModuleChartHotSpot>
 	HotSpotType type_;
 	// Geometry of area
 	QRect geometry_;
-	// FlowBlock following area which, if an object is dropped here, it will appear before (if any)
-	FlowBlock* flowBlockAfterArea_;
+	// Displayed block index immediately after the hotspot
+	int blockIndexAfter_;
 
 	public:
 	// Set area information
-	void set(int row, HotSpotType type, QRect geometry, FlowBlock* blockAfter);
+	void set(int row, HotSpotType type, QRect geometry, int blockIndexAfter);
 	// Return row in which the hotspot exists
 	int row() const;
 	// Return the area type
@@ -65,8 +65,8 @@ class ModuleChartHotSpot : public ListItem<ModuleChartHotSpot>
 	QRect geometry() const;
 	// Return if the supplied point exists within the defined area
 	bool contains(QPoint p) const;
-	// FlowBlock following area which, if an object is dropped here, it will appear before (if any)
-	FlowBlock* flowBlockAfterArea() const;
+	// Return displayed block index immediately after the hotspot
+	int blockIndexAfter() const;
 };
 
 #endif
