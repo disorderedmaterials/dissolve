@@ -39,6 +39,16 @@ ModuleChartInsertionBlock::~ModuleChartInsertionBlock()
 }
 
 /*
+ * Block Type
+ */
+
+// Return type of this block
+ModuleChartBlock::ModuleChartBlockType ModuleChartInsertionBlock::blockType()
+{
+	return ModuleChartBlock::InsertionBlockType;
+}
+
+/*
  * Widget Functions
  */
 

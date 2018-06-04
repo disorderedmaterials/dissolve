@@ -100,6 +100,16 @@ void ModuleChartModuleBlock::paintEvent(QPaintEvent* event)
 }
 
 /*
+ * Block Type
+ */
+
+// Return type of this block
+ModuleChartBlock::ModuleChartBlockType ModuleChartModuleBlock::blockType()
+{
+	return ModuleChartBlock::ModuleBlockType;
+}
+
+/*
  * Widget Functions
  */
 

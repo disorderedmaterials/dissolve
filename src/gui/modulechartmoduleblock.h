@@ -74,6 +74,14 @@ class ModuleChartModuleBlock : public QWidget, public ModuleChartBlock
 
 
 	/*
+	 * Block Type
+	 */
+	public:
+	// Return type of this block
+	ModuleChartBlock::ModuleChartBlockType blockType();
+
+
+	/*
 	 * Widget Functions
 	 */
 	public:

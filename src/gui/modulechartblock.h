@@ -46,6 +46,18 @@ class ModuleChartBlock : public ListItem<ModuleChartBlock>
 
 
 	/*
+	 * Block Type
+	 */
+	public:
+	// Block Type Enum
+	enum ModuleChartBlockType { ModuleBlockType, InsertionBlockType, nModuleChartBlockTypes };
+
+	public:
+	// Return type of this block
+	virtual ModuleChartBlockType blockType() = 0;
+
+
+	/*
 	 * Widget Functions
 	 */
 	protected:

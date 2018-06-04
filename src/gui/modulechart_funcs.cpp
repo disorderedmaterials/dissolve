@@ -185,14 +185,7 @@ QSize ModuleChart::minimumSizeHint() const
 // Mouse press event
 void ModuleChart::mousePressEvent(QMouseEvent* event)
 {
-	// If the left-button was pressed *on a FlowBlock HeaderFrame*, store the current click position. Otherwise do nothing
-	if (event->button() == Qt::LeftButton)
-	{
-		// Check object under mouse
-		draggedBlock_ = moduleChartModuleBlockHeaderAt(mapToGlobal(event->pos()));
-// 		if (draggedBlock_) printf("BLOCK = %s\n", draggedBlock_->moduleReference()->module()->uniqueName());
-		dragStartPosition_ = event->pos();
-	}
+	mouseDownPosition_ = event->pos();
 }
 
 // Mouse move event
@@ -201,12 +194,13 @@ void ModuleChart::mouseMoveEvent(QMouseEvent* event)
 	// If the left button is not down, nothing to do here
 	if (!(event->buttons() & Qt::LeftButton)) return;
 
-	// If we have no draggedBlock_, then nothing to do
-	if (!draggedBlock_) return;
-
 	// Check to see if we should begin a drag event based on the length of the click-drag so far
-	if ((event->pos() - dragStartPosition_).manhattanLength() > QApplication::startDragDistance())
+	if ((event->pos() - mouseDownPosition_).manhattanLength() > QApplication::startDragDistance())
 	{
+		// If a ModuleChartModuleBlock header was clicked on at the original position, begin the drag
+		draggedBlock_ = moduleChartModuleBlockHeaderAt(mapToGlobal(mouseDownPosition_));
+		if (!draggedBlock_) return;
+
 		// Generate mime data for the event
 		QByteArray itemData;
 		QDataStream dataStream(&itemData, QIODevice::WriteOnly);
@@ -327,6 +321,16 @@ void ModuleChart::dropEvent(QDropEvent* event)
 	{
 	}
 	else event->ignore();
+
+	// Reset any drag/drop-related variables
+	currentHotSpotIndex_ = -1;
+	draggedBlock_ = NULL;
+
+	recreateDisplayWidgets();
+
+	layOutWidgets(true);
+
+	repaint();
 }
 
 /*
@@ -578,9 +582,10 @@ void ModuleChart::layOutWidgets(bool animateWidgets)
 				// Store max width in our minimum size hint
 				if (rowMaxHeight > minimumSizeHint_.height()) minimumSizeHint_ = QSize(0, rowMaxHeight);
 
-				// Work out hot spot for insertion before this block
+				// Work out hot spot for insertion before this block - if it is a ModuleChartInsertionBlock, extend the hotspot to cover the whole area
 				ModuleChartHotSpot* hotSpot = hotSpots_.add();
-				hotSpot->set(row, ModuleChartHotSpot::ModuleInsertionHotSpot, QRect(left-minSpacing_, top, minSpacing_, 40), blockCount++);
+				if (block->blockType() == ModuleChartBlock::InsertionBlockType) hotSpot->set(row, ModuleChartHotSpot::ModuleInsertionHotSpot, QRect(left-minSpacing_, top, minSpacing_+blockWidth, blockHeight), blockCount++);
+				else hotSpot->set(row, ModuleChartHotSpot::ModuleInsertionHotSpot, QRect(left-minSpacing_, top, minSpacing_, blockHeight), blockCount++);
 			}
 
 			// Increase left-hand coordinate

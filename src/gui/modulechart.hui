@@ -95,8 +95,8 @@ class ModuleChart : public QWidget
 	 * Drag / Drop
 	 */
 	private:
-	// Position of mouse click
-	QPoint dragStartPosition_;
+	// Position of last mouse click
+	QPoint mouseDownPosition_;
 	// ModuleChartModuleBlock being dragged (if a local drag)
 	ModuleChartModuleBlock* draggedBlock_;
 	// Drop hotspots avialable on the chart
