@@ -517,7 +517,7 @@ bool RDFModule::calculateUnweightedGR(const PartialSet& originalgr, PartialSet& 
 				unweightedgr.partial(typeI, typeJ).addInterpolated(unweightedgr.boundPartial(typeI, typeJ), -1.0);
 
 				// Convolute the bound partial with the broadening function
-				unweightedgr.boundPartial(typeI, typeJ).convolute(intraBroadening);
+				unweightedgr.boundPartial(typeI, typeJ).convolveNormalised(intraBroadening);
 
 				// Add the broadened bound partial back into the full partial array
 				unweightedgr.partial(typeI, typeJ).addInterpolated(unweightedgr.boundPartial(typeI, typeJ), 1.0);

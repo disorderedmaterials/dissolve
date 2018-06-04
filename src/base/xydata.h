@@ -200,7 +200,9 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	 */
 	public:
 	// Perform point-wise convolution of this data with the supplied BroadeningFunction
-	bool convolute(BroadeningFunction function);
+	void convolve(BroadeningFunction function);
+	// Perform point-wise convolution of this data with the supplied BroadeningFunction, normalising to the original integral of the function
+	void convolveNormalised(BroadeningFunction function);
 	// Add interpolated data
 	void addInterpolated(XYData& source, double weighting = 1.0);
 	// Subtract average level from data, forming average from supplied x value

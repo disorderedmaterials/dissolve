@@ -784,7 +784,7 @@ void XYData::kolmogorovZurbenkoFilter(int k, int m)
  */
 
 // Perform point-wise convolution of this data with the supplied BroadeningFunction
-bool XYData::convolute(BroadeningFunction function)
+void XYData::convolve(BroadeningFunction function)
 {
 	Array<double> newY(y_.nItems());
 
@@ -806,8 +806,23 @@ bool XYData::convolute(BroadeningFunction function)
 	y_ = newY;
 
 	interpolationInterval_ = -1;
+}
 
-	return true;
+// Perform point-wise convolution of this data with the supplied BroadeningFunction, normalising to the original integral of the function
+void XYData::convolveNormalised(BroadeningFunction function)
+{
+	// Calculate the original integral
+	double originalIntegral = absIntegral();
+
+	// Convolve the function
+	convolve(function);
+
+	// Calculate the new integral
+	double newIntegral = absIntegral();
+
+	y_ *= (originalIntegral / newIntegral);
+
+	interpolationInterval_ = -1;
 }
 
 // Add interpolated data
