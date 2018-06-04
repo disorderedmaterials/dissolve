@@ -97,8 +97,12 @@ template <class T, class D> class RefList
 	RefListItem<T,D>* addStart(T* item);
 	// Add reference after the specified item
 	RefListItem<T,D>* addAfter(RefListItem<T,D>* target, T* item);
+	// Add reference after the specified item (overload)
+	RefListItem<T,D>* addAfter(T* targetItem, T* item);
 	// Add reference before the specified item
 	RefListItem<T,D>* addBefore(RefListItem<T,D>* target, T* item);
+	// Add reference before the specified item (overload)
+	RefListItem<T,D>* addBefore(T* targetItem, T* item);
 	// Add reference to the beginning of the list with extra data
 	RefListItem<T,D>* addStart(T* item, D extradata);
 	// Add reference to list, unless already there
@@ -257,38 +261,58 @@ template <class T, class D> RefListItem<T,D>* RefList<T,D>::addStart(T* item)
 template <class T, class D> RefListItem<T,D>* RefList<T,D>::addAfter(RefListItem<T,D>* target, T* item)
 {
 	if (target == NULL) return add(item);
-	else
-	{
-		RefListItem<T,D>* newitem = new RefListItem<T,D>;
-		newitem->prev = target;
-		newitem->next = target->next;
-		if (target->next != NULL) target->next->prev = newitem;
-		target->next = newitem;
-		if (target == listTail_) listTail_ = newitem;
-		newitem->item = item;
-		nItems_ ++;
-		regenerate_ = 1;
-		return newitem;
-	}
+
+	RefListItem<T,D>* newitem = new RefListItem<T,D>;
+	newitem->prev = target;
+	newitem->next = target->next;
+	if (target->next != NULL) target->next->prev = newitem;
+	target->next = newitem;
+	if (target == listTail_) listTail_ = newitem;
+	newitem->item = item;
+	nItems_ ++;
+	regenerate_ = 1;
+
+	return newitem;
+}
+
+// Add reference after the specified item (overload)
+template <class T, class D> RefListItem<T,D>* RefList<T,D>::addAfter(T* targetItem, T* item)
+{
+	// Find the specified item
+	RefListItem<T,D>* target = contains(targetItem);
+	if (target) return addAfter(target, item);
+
+	printf("Couldn't find specified item %p in RefList, so adding to end.\n", item);
+	return add(item);
 }
 
 // Add reference before the specified item
 template <class T, class D> RefListItem<T,D>* RefList<T,D>::addBefore(RefListItem<T,D>* target, T* item)
 {
 	if (target == NULL) return add(item);
-	else
-	{
-		RefListItem<T,D>* newitem = new RefListItem<T,D>;
-		newitem->next = target;
-		newitem->prev = target->prev;
-		if (target->prev != NULL) target->prev->next = newitem;
-		target->prev = newitem;
-		if (target == listHead_) listHead_ = newitem;
-		newitem->item = item;
-		nItems_ ++;
-		regenerate_ = 1;
-		return newitem;
-	}
+
+	RefListItem<T,D>* newitem = new RefListItem<T,D>;
+	newitem->next = target;
+	newitem->prev = target->prev;
+	if (target->prev != NULL) target->prev->next = newitem;
+	target->prev = newitem;
+	if (target == listHead_) listHead_ = newitem;
+	newitem->item = item;
+	nItems_ ++;
+	regenerate_ = 1;
+
+	return newitem;
+}
+
+// Add reference before the specified item (overload)
+template <class T, class D> RefListItem<T,D>* RefList<T,D>::addBefore(T* targetItem, T* item)
+{
+	// Find the specified item
+	RefListItem<T,D>* target = contains(targetItem);
+	if (target) return addBefore(target, item);
+
+	printf("Couldn't find specified item %p in RefList, so adding to start.\n", item);
+	return addStart(item);
 }
 
 // Add item to start of list with extra data
