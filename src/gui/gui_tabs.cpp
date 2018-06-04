@@ -175,13 +175,16 @@ MainTab* DissolveWindow::addModuleTab(Module* module)
 	return moduleTab;
 }
 
-// Remove tab containing the specified page widget, as it has been deleted
-void DissolveWindow::removeDeletedTab(QWidget* page)
+// Remove tab containing the specified page widget
+void DissolveWindow::removeTab(QWidget* page)
 {
-	MainTab* deletedTab = findTab(page);
-	if (deletedTab)
-	{
-		tabs_.remove(deletedTab);
-	}
-	else printf("Couldn't remove deleted tab as it could not be found in our list.\n");
+	// Delete the tab from the tabwidget first - find its index (based on the page widget pointer) and remove that
+	int indexToRemove = ui.MainTabs->indexOf(page);
+	if (indexToRemove == -1) printf("Couldn't remove tab since its page widget (%p) could not be found.\n", page);
+	else ui.MainTabs->removeTab(indexToRemove);
+
+	// Now delete the tab from our list - this will delete the actual page widget
+	MainTab* tabToRemove = findTab(page);
+	if (!tabToRemove) printf("Couldn't remove tab as it could not be found in our list.\n");
+	else tabs_.remove(tabToRemove);
 }
