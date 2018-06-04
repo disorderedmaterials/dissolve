@@ -111,11 +111,14 @@ void SuperTabWidget::tabCloseButtonClicked(bool checked)
 			return;
 		}
 
+		// Grab the widget pointer before we delete the button item
+		QWidget* button = item->data;
+
 		// Remove the button item
 		closeButtons_.remove(item);
 
 		// Signal that the specified page widget no longer exists. The main GUI will handle deletion of the page in the TabBar
-		emit(tabClosed(item->data));
+		emit(tabClosed(button));
 	}
 	else printf("Tabs received a close event from an unknown button...\n");
 }

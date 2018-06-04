@@ -358,9 +358,9 @@ void ModuleChart::updateControls()
 		if (blockRef)
 		{
 			// Widget already exists, so remove the reference from the old list and add it to our new one
-			newDisplayedWidgets.add(blockRef->item, blockRef->data);
+			RefListItem<FlowBlock,bool>* newItem = newDisplayedWidgets.add(blockRef->item, blockRef->data);
 			displayedWidgets_.remove(blockRef);
-			blockRef->item->updateControls();
+			newItem->item->updateControls();
 		}
 		else
 		{
