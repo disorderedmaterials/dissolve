@@ -3,6 +3,7 @@
 
 # Meta-Objects
 SET(gui_MOC_HDRS
+  analysistab.h
   configurationtab.h
   forcefieldtab.h
   gui.h
@@ -31,6 +32,7 @@ QT5_WRAP_CPP(gui_MOC_SRCS ${gui_MOC_HDRS})
 
 # User Interface Files
 SET(gui_UIS
+  analysistab.ui
   configurationtab.ui
   forcefieldtab.ui
   gui.ui
@@ -48,6 +50,7 @@ QT5_WRAP_UI(gui_UIS_H ${gui_UIS})
 
 # Source files (not Qt UI files or custom .h [uih])
 SET(gui_SRCS
+  analysistab_funcs.cpp
   configurationtab_funcs.cpp
   forcefieldtab_funcs.cpp
   gui_control.cpp
