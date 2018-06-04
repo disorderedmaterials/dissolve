@@ -61,7 +61,7 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	double cutoffDistance = keywords_.asDouble("CutoffDistance");
 	if (cutoffDistance < 0.0) cutoffDistance = dissolve.pairPotentialRange();
 	const double cutoffSq = cutoffDistance * cutoffDistance;
-	double deltaT = GenericListHelper<double>::retrieve(moduleData, "DeltaT", uniqueName(), keywords_.asDouble("DeltaT"));
+	double deltaT = GenericListHelper<double>::value(moduleData, "DeltaT", uniqueName(), keywords_.asDouble("DeltaT"));
 	const int energyFrequency = keywords_.asInt("EnergyFrequency");
 	const int nSteps = keywords_.asInt("NSteps");
 	const int outputFrequency = keywords_.asInt("OutputFrequency");

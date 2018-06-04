@@ -70,7 +70,7 @@ class WindowFunctionKeywordWidget : public QWidget, public KeywordWidgetBase
 	// Update value displayed in widget, using specified source if necessary
 	void updateValue();
 	// Set widgets from supplied object
-	void setWidgets(WindowFunction& windowFunction);
+	void setWidgets(const WindowFunction& windowFunction);
 };
 
 #endif

@@ -31,6 +31,7 @@ GenericItem::GenericItem(const char* name, int flags)
 	flags_ = flags;
 	prev = NULL;
 	next = NULL;
+	version_ = 0;
 }
 
 GenericItem::~GenericItem()
@@ -87,6 +88,24 @@ void GenericItem::setDescription(const char* description)
 const char* GenericItem::description()
 {
 	return description_.get();
+}
+
+// Return version of the item
+int GenericItem::version() const
+{
+	return version_;
+}
+
+// Set version of the item
+void GenericItem::setVersion(int version)
+{
+	version_ = version;
+}
+
+// Bump the version of the item
+void GenericItem::bumpVersion()
+{
+	++version_;
 }
 
 // Set flags for item

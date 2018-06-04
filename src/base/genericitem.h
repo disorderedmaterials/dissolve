@@ -72,6 +72,8 @@ class GenericItem
 	CharString name_;
 	// Description, if any, for the item
 	CharString description_;
+	// Version of the item
+	int version_;
 	// Flags
 	int flags_;
 
@@ -84,6 +86,12 @@ class GenericItem
 	void setDescription(const char* description);
 	// Return item description
 	const char* description();
+	// Return version of the item
+	int version() const;
+	// Set version of the item
+	void setVersion(int version);
+	// Bump the version of the item
+	void bumpVersion();
 	// Set flags for item
 	void setFlags(int flags);
 	// Return flags

@@ -816,8 +816,8 @@ void XYData::addInterpolated(XYData& source, double weighting)
 	// If there is currently no data, just copy the source data
 	if (x_.nItems() == 0)
 	{
-		x_ = source.arrayX();
-		y_ = source.arrayY();
+		x_ = source.constArrayX();
+		y_ = source.constArrayY();
 		y_ *= weighting;
 	}
 	else for (int n=0; n<x_.nItems(); ++n) addY(n, source.interpolated(x_.value(n)) * weighting);

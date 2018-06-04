@@ -67,7 +67,7 @@ double CalibrationModuleCostFunctions::intraBroadeningCost(double* alpha, int nA
 		RefListIterator<Configuration,bool> configIterator(rdfModule->targetConfigurations());
 		while (Configuration* cfg = configIterator.iterate())
 		{
-			PartialSet& originalGR = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "OriginalGR");
+			const PartialSet& originalGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "OriginalGR");
 			PartialSet& unweightedGR = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedGR");
 			RDFModule::calculateUnweightedGR(originalGR, unweightedGR, broadening, smoothing);
 		}
@@ -95,16 +95,16 @@ double CalibrationModuleCostFunctions::intraBroadeningCost(double* alpha, int nA
 		if ((target == CalibrationModule::IntraBroadeningTargetBoth) || (target == CalibrationModule::IntraBroadeningTargetSQ))
 		{
 			// Grab WeightedSQ and ReferenceData and compare
-			PartialSet& weightedSQ = GenericListHelper<PartialSet>::retrieve(dissolve_.processingModuleData(), "WeightedSQ", module->uniqueName());
-			XYData& referenceData = GenericListHelper<XYData>::retrieve(dissolve_.processingModuleData(), "ReferenceData", module->uniqueName());
-			totalError += weightedSQ.total().error(referenceData);
+			const PartialSet& weightedSQ = GenericListHelper<PartialSet>::value(dissolve_.processingModuleData(), "WeightedSQ", module->uniqueName());
+			const XYData& referenceData = GenericListHelper<XYData>::value(dissolve_.processingModuleData(), "ReferenceData", module->uniqueName());
+			totalError += weightedSQ.constTotal().error(referenceData);
 		}
 		if ((target == CalibrationModule::IntraBroadeningTargetBoth) || (target == CalibrationModule::IntraBroadeningTargetGR))
 		{
 			// Grab WeightedGR and ReferenceDataFT and compare
-			PartialSet& weightedGR = GenericListHelper<PartialSet>::retrieve(dissolve_.processingModuleData(), "WeightedGR", module->uniqueName());
-			XYData& referenceDataFT = GenericListHelper<XYData>::retrieve(dissolve_.processingModuleData(), "ReferenceDataFT", module->uniqueName());
-			totalError += weightedGR.total().error(referenceDataFT);
+			const PartialSet& weightedGR = GenericListHelper<PartialSet>::value(dissolve_.processingModuleData(), "WeightedGR", module->uniqueName());
+			const XYData& referenceDataFT = GenericListHelper<XYData>::value(dissolve_.processingModuleData(), "ReferenceDataFT", module->uniqueName());
+			totalError += weightedGR.constTotal().error(referenceDataFT);
 		}
 	}
 

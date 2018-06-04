@@ -29,38 +29,30 @@
  */
 
 // Generate S(Q) from supplied g(r)
-bool SQModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration* cfg, PartialSet& unweightedgr, PartialSet& unweightedsq, double qMin, double qDelta, double qMax, double rho, const WindowFunction& windowFunction, const BroadeningFunction& broadening)
+bool SQModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration* cfg, const PartialSet& unweightedgr, PartialSet& unweightedsq, double qMin, double qDelta, double qMax, double rho, const WindowFunction& windowFunction, const BroadeningFunction& broadening)
 {
-	// Copy partial g(r) into our new S(Q) matrices
-	Messenger::printVerbose("  --> Copying partial g(r) into S(Q) matrices...\n");
-	int nTypes = unweightedgr.nAtomTypes();
-	for (int n=0; n<nTypes; ++n)
-	{
-		for (int m=n; m<nTypes; ++m)
-		{
-			// Copy g(r) data into our arrays
-			// Subtract 1.0 from the full and unbound partials so as to give (g(r)-1)
-			// Don't subtract 1.0 from the bound partials
-			unweightedsq.partial(n,m).copyData(unweightedgr.partial(n,m));
-			unweightedsq.partial(n,m).arrayY() -= 1.0;
-			unweightedsq.boundPartial(n,m).copyData(unweightedgr.boundPartial(n,m));
-// 			unweightedsq.boundPartial(n,m).arrayY() -= 1.0;
-			unweightedsq.unboundPartial(n,m).copyData(unweightedgr.unboundPartial(n,m));
-			unweightedsq.unboundPartial(n,m).arrayY() -= 1.0;
-		}
-	}
+	// Copy partial g(r) into our new S(Q) object
+	unweightedsq = unweightedgr;
 
-	// Perform FT of partial g(r) into S(Q)
+	// Subtract 1.0 from the full and unbound partials so as to give (g(r)-1) and FT into S(Q)
+	// Don't subtract 1.0 from the bound partials
 	// TODO Parallelise this
 	procPool.resetAccumulatedTime();
 	Timer timer;
-	timer.start();
+	timer.start();	int nTypes = unweightedgr.nAtomTypes();
 	for (int n=0; n<nTypes; ++n)
 	{
 		for (int m=n; m<nTypes; ++m)
 		{
+			// Total partial
+			unweightedsq.partial(n,m).arrayY() -= 1.0;
 			if (!unweightedsq.partial(n,m).sineFT(4.0*PI*rho, qMin, qDelta, qMax, windowFunction, broadening)) return false;
+
+			// Bound partial
 			if (!unweightedsq.boundPartial(n,m).sineFT(4.0*PI*rho, qMin, qDelta, qMax, windowFunction, broadening)) return false;
+
+			// Unbound partial
+			unweightedsq.unboundPartial(n,m).arrayY() -= 1.0;
 			if (!unweightedsq.unboundPartial(n,m).sineFT(4.0*PI*rho, qMin, qDelta, qMax, windowFunction, broadening)) return false;
 
 			// Zero Bragg partial, leave x array intact for use if needed
@@ -73,12 +65,6 @@ bool SQModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration* cfg, 
 
 	timer.stop();
 	Messenger::print("Finished Fourier transform and summation of partial g(r) into partial S(Q) (%s elapsed, %s comms).\n", timer.totalTimeString(), procPool.accumulatedTimeString());
-
-	/*
-	 * S(Q) are now up-to-date
-	 */
-
-	unweightedsq.setFingerprint(unweightedgr.fingerprint());
 
 	return true;
 }
@@ -110,13 +96,13 @@ bool SQModule::sumUnweightedSQ(ProcessPool& procPool, Module* module, GenericLis
 		fingerprint += fingerprint.isEmpty() ? CharString("%i", cfg->coordinateIndex()) : CharString("_%i", cfg->coordinateIndex());
 
 		// Get weighting factor for this Configuration to contribute to the summed partials
-		double weight = GenericListHelper<double>::retrieve(moduleData, CharString("Weight_%s", cfg->niceName()), module->uniqueName(), 1.0);
+		double weight = GenericListHelper<double>::value(moduleData, CharString("Weight_%s", cfg->niceName()), module->uniqueName(), 1.0);
 		totalWeight += weight;
 		Messenger::print("Weight for Configuration '%s' is %f (total weight is now %f).\n", cfg->name(), weight, totalWeight);
 
 		// Grab partials for Configuration and add into our set
 		if (!cfg->moduleData().contains("UnweightedSQ")) return Messenger::error("Couldn't find UnweightedSQ data for Configuration '%s'.\n", cfg->name());
-		PartialSet& cfgPartialSQ = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedSQ");
+		PartialSet cfgPartialSQ = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedSQ");
 		summedUnweightedSQ.addPartials(cfgPartialSQ, weight);
 	}
 	summedUnweightedSQ.setFingerprint(fingerprint);

@@ -119,7 +119,7 @@ bool CalibrationModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			RefListIterator<Configuration,bool> configIterator(rdfModule->targetConfigurations());
 			while (Configuration* cfg = configIterator.iterate())
 			{
-				PartialSet& originalGR = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "OriginalGR");
+				const PartialSet& originalGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "OriginalGR");
 				PartialSet& unweightedGR = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedGR");
 				RDFModule::calculateUnweightedGR(originalGR, unweightedGR, broadening, smoothing);
 			}

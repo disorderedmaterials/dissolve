@@ -110,6 +110,8 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	void formTotal(bool applyConcentrationWeights);
 	// Return total function
 	XYData& total();
+	// Return copy of total function
+	XYData constTotal() const;
 	// Save all partials and total
 	bool save();
 	// Name all object based on the supplied prefix

@@ -38,7 +38,7 @@ class GenericList
 	// Add specified item to list (from base class pointer)
 	void add(GenericItem* item);
 	// Create an item of the specified type
-	GenericItem* create(const char* name, const char* itemClassName);
+	GenericItem* create(const char* name, const char* itemClassName, int version = 0);
 	// Return whether the named item is contained in the list
 	bool contains(const char* name, const char* prefix = NULL);
 	// Return head of the list
@@ -47,6 +47,8 @@ class GenericList
 	GenericItem* find(const char* name);
 	// Return the named item from the list (with prefix)
 	GenericItem* find(const char* name, const char* prefix);
+	// Return the version of the named item from the list
+	int version(const char* name, const char* prefix = NULL) const;
 	// Return list of all items with specified prefix (before first '_')
 	RefList<GenericItem,bool> listWithPrefix(const char* prefix);
 	// List all items

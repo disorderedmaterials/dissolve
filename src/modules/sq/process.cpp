@@ -81,7 +81,7 @@ bool SQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Get unweighted g(r) for this Configuration - we don't supply a specific Module prefix, since the unweighted g(r) may come from one of many RDF-type modules
 		if (!cfg->moduleData().contains("UnweightedGR")) return Messenger::error("Couldn't locate UnweightedGR for Configuration '%s'.\n", cfg->name());
-		PartialSet& unweightedgr = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedGR");
+		const PartialSet& unweightedgr = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR");
 
 		// Does a PartialSet already exist for this Configuration?
 		bool wasCreated;
@@ -89,7 +89,7 @@ bool SQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		if (wasCreated) unweightedsq.setUpPartials(unweightedgr.atomTypes(), cfg->niceName(), "unweighted", "sq", "Q, 1/Angstroms");
 
 		// Is the PartialSet already up-to-date?
-		if (DissolveSys::sameString(unweightedsq.fingerprint(), CharString("%i", cfg->coordinateIndex())))
+		if (DissolveSys::sameString(unweightedsq.fingerprint(), CharString("%i", cfg->moduleData().version("UnweightedGR"))))
 		{
 			Messenger::print("SQ: Unweighted partial S(Q) are up-to-date for Configuration '%s'.\n", cfg->name());
 			continue;
@@ -100,6 +100,7 @@ bool SQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Set names of resources (XYData) within the PartialSet
 		unweightedsq.setObjectNames(CharString("%s//%s//%s", cfg->niceName(), "SQ", "UnweightedSQ"));
+		unweightedsq.setFingerprint(CharString("%i", cfg->moduleData().version("UnweightedGR")));
 
 		// Save data if requested
 		if (saveData && configurationLocal_ && (!MPIRunMaster(procPool, unweightedsq.save()))) return false;

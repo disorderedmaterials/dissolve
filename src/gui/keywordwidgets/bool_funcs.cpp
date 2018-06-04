@@ -65,7 +65,7 @@ void BoolKeywordWidget::updateValue()
 	if ((keyword_->genericItemFlags()&GenericItem::InRestartFileFlag) && moduleData_.contains(keyword_->keyword(), modulePrefix_))
 	{
 		// Retrieve the item from the list
-		setChecked(GenericListHelper<bool>::retrieve(moduleData_, keyword_->keyword(), modulePrefix_));
+		setChecked(GenericListHelper<bool>::value(moduleData_, keyword_->keyword(), modulePrefix_));
 	}
 	else setChecked(keyword_->asBool());
 

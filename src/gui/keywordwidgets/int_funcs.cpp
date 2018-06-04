@@ -69,7 +69,7 @@ void IntegerKeywordWidget::updateValue()
 	if ((keyword_->genericItemFlags()&GenericItem::InRestartFileFlag) && moduleData_.contains(keyword_->keyword(), modulePrefix_))
 	{
 		// Retrieve the item from the list
-		setValue(GenericListHelper<int>::retrieve(moduleData_, keyword_->keyword(), modulePrefix_));
+		setValue(GenericListHelper<int>::value(moduleData_, keyword_->keyword(), modulePrefix_));
 	}
 	else setValue(keyword_->asInt());
 

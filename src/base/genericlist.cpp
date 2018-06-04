@@ -28,7 +28,7 @@ void GenericList::add(GenericItem* item)
 }
 
 // Create an item of the specified type
-GenericItem* GenericList::create(const char* name, const char* itemClassName)
+GenericItem* GenericList::create(const char* name, const char* itemClassName, int version)
 {
 	// Check for existing item with this name
 	GenericItem* newItem = find(name);
@@ -48,6 +48,9 @@ GenericItem* GenericList::create(const char* name, const char* itemClassName)
 
 	// Add the new item to our list
 	add(newItem);
+
+	// Set its version
+	newItem->setVersion(version);
 
 	return newItem;
 }
@@ -87,6 +90,19 @@ GenericItem* GenericList::find(const char* name, const char* prefix)
 
 	for (GenericItem* item = items_.first(); item != NULL; item = item->next) if (DissolveSys::sameString(item->name(), varName.get())) return item;
 	return NULL;
+}
+
+// Return the version of the named item from the list
+int GenericList::version(const char* name, const char* prefix) const
+{
+	// Construct full name
+	CharString varName;
+	if (DissolveSys::isEmpty(prefix)) varName = name;
+	else varName.sprintf("%s_%s", prefix, name);
+
+	for (GenericItem* item = items_.first(); item != NULL; item = item->next) if (DissolveSys::sameString(item->name(), varName.get())) return item->version();
+
+	return -99;
 }
 
 // Return list of all items with specified prefix (before first '_')

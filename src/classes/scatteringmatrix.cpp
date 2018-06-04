@@ -166,7 +166,7 @@ bool ScatteringMatrix::finalise()
 }
 
 // Add reference data
-bool ScatteringMatrix::addReferenceData(XYData& data, Weights& weights, double factor)
+bool ScatteringMatrix::addReferenceData(const XYData& data, Weights& weights, double factor)
 {
 	// Make sure that there are valid scattering weights in the supplied Data
 	if (!weights.isValid())

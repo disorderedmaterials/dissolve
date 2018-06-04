@@ -720,7 +720,7 @@ void PairPotential::setUAdditional(XYData& newUAdditional)
 }
 
 // Adjust additional potential, and recalculate UFull and dUFull
-void PairPotential::adjustUAdditional(XYData& u, double factor)
+void PairPotential::adjustUAdditional(XYData u, double factor)
 {
 	uAdditional_.addInterpolated(u, factor);
 

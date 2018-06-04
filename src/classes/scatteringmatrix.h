@@ -83,7 +83,7 @@ class ScatteringMatrix
 	// Finalise
 	bool finalise();
 	// Add reference data with its associated Weights, applying optional factor to those weights
-	bool addReferenceData(XYData& data, Weights& weights, double factor = 1.0);
+	bool addReferenceData(const XYData& data, Weights& weights, double factor = 1.0);
 	// Add reference partial data between specified AtomTypes
 	bool addPartialReferenceData(XYData& data, AtomType* at1, AtomType* at2, double weight, double factor);
 };

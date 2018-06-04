@@ -269,7 +269,7 @@ bool RDFModule::performGRAveraging(GenericList& moduleData, const char* name, co
 	bool storeCurrent = true;
 	if (moduleData.contains(CharString("%s_1", name), prefix))
 	{
-		PartialSet& lastPartials = GenericListHelper<PartialSet>::retrieve(moduleData, CharString("%s_1", name), prefix);
+		const PartialSet& lastPartials = GenericListHelper<PartialSet>::value(moduleData, CharString("%s_1", name), prefix);
 		if (DissolveSys::sameString(lastPartials.fingerprint(), currentFingerprint, true))
 		{
 			Messenger::print("Current partials will not form part of average, since they are the same as the last stored set.\n");
@@ -313,8 +313,8 @@ bool RDFModule::performGRAveraging(GenericList& moduleData, const char* name, co
 	double weight = 1.0;
 	for (int n=0; n<nStored; ++n)
 	{
-		// Get the (n+1)'th dataset
-		PartialSet& set = GenericListHelper<PartialSet>::retrieve(moduleData, CharString("%s_%i", name, n+1), prefix);
+		// Get a copy of the (n+1)'th dataset
+		PartialSet set = GenericListHelper<PartialSet>::value(moduleData, CharString("%s_%i", name, n+1), prefix);
 
 		// Determine the weighting factor
 		if (averagingScheme == RDFModule::SimpleAveraging) weight = 1.0 / normalisation;
@@ -500,9 +500,9 @@ bool RDFModule::calculateGR(ProcessPool& procPool, Configuration* cfg, RDFModule
 }
 
 // Calculate smoothed/broadened partial g(r) from supplied partials
-bool RDFModule::calculateUnweightedGR(PartialSet& originalgr, PartialSet& unweightedgr, BroadeningFunction intraBroadening, int smoothing)
+bool RDFModule::calculateUnweightedGR(const PartialSet& originalgr, PartialSet& unweightedgr, BroadeningFunction intraBroadening, int smoothing)
 {
-	// Copy data and set new filenames
+	// Copy data
 	unweightedgr = originalgr;
 
 	int typeI, typeJ;
@@ -510,12 +510,6 @@ bool RDFModule::calculateUnweightedGR(PartialSet& originalgr, PartialSet& unweig
 	{
 		for (typeJ=typeI; typeJ<unweightedgr.nAtomTypes(); ++typeJ)
 		{
-			// Copy data from the unweighted g(r) provided, and broaden / smooth as requested
-			unweightedgr.partial(typeI, typeJ).copyData(originalgr.partial(typeI, typeJ));
-			unweightedgr.boundPartial(typeI, typeJ).copyData(originalgr.boundPartial(typeI, typeJ));
-			unweightedgr.unboundPartial(typeI, typeJ).copyData(originalgr.unboundPartial(typeI, typeJ));
-			unweightedgr.braggPartial(typeI, typeJ).copyData(originalgr.braggPartial(typeI, typeJ));
-
 			// Broaden bound partials?
 			if (intraBroadening.function() != BroadeningFunction::NoFunction)
 			{
@@ -552,7 +546,7 @@ double RDFModule::summedRho(Module* module, GenericList& processingModuleData)
 	RefListIterator<Configuration,bool> targetIterator(module->targetConfigurations());
 	while (Configuration* cfg = targetIterator.iterate())
 	{
-		double weight = GenericListHelper<double>::retrieve(processingModuleData, CharString("Weight_%s", cfg->niceName()), module->uniqueName(), 1.0);
+		double weight = GenericListHelper<double>::value(processingModuleData, CharString("Weight_%s", cfg->niceName()), module->uniqueName(), 1.0);
 		totalWeight += weight;
 
 		rho0 += weight / cfg->atomicDensity();
@@ -585,7 +579,7 @@ bool RDFModule::sumUnweightedGR(ProcessPool& procPool, Module* module, GenericLi
 	while (Configuration* cfg = targetIterator.iterate())
 	{
 		// Get weighting factor for this Configuration to contribute to the summed partials
-		double weight = GenericListHelper<double>::retrieve(processingModuleData, CharString("Weight_%s", cfg->niceName()), module->uniqueName(), 1.0);
+		double weight = GenericListHelper<double>::value(processingModuleData, CharString("Weight_%s", cfg->niceName()), module->uniqueName(), 1.0);
 		Messenger::print("Weight for Configuration '%s' is %f.\n", cfg->name(), weight);
 	
 		// Add our Configuration target
@@ -612,7 +606,7 @@ bool RDFModule::sumUnweightedGR(ProcessPool& procPool, Module* module, GenericLi
 
 		// Grab partials for Configuration and add into our set
 		if (!cfg->moduleData().contains("UnweightedGR")) return Messenger::error("Couldn't find UnweightedGR data for Configuration '%s'.\n", cfg->name());
-		PartialSet& cfgPartialGR = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedGR");
+		PartialSet cfgPartialGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR");
 		summedUnweightedGR.addPartials(cfgPartialGR, weight);
 	}
 	summedUnweightedGR.setFingerprint(fingerprint);
@@ -637,7 +631,7 @@ bool RDFModule::sumUnweightedGR(ProcessPool& procPool, Module* parentModule, Mod
 		while (Configuration* cfg = targetIterator.iterate())
 		{
 			// Get weighting factor for this Configuration to contribute to the summed partials
-			double weight = GenericListHelper<double>::retrieve(processingModuleData, CharString("Weight_%s", cfg->niceName()), module->uniqueName(), 1.0);
+			double weight = GenericListHelper<double>::value(processingModuleData, CharString("Weight_%s", cfg->niceName()), module->uniqueName(), 1.0);
 			Messenger::print("Weight for Configuration '%s' is %f.\n", cfg->name(), weight);
 		
 			// Add our Configuration target
@@ -681,7 +675,7 @@ bool RDFModule::sumUnweightedGR(ProcessPool& procPool, Module* parentModule, Mod
 
 		// *Copy* the partials for the Configuration, subtract 1.0, and add into our set
 		if (!cfg->moduleData().contains("UnweightedGR")) return Messenger::error("Couldn't find UnweightedGR data for Configuration '%s'.\n", cfg->name());
-		PartialSet cfgPartialGR = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "UnweightedGR");
+		PartialSet cfgPartialGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR");
 		cfgPartialGR -= 1.0;
 		summedUnweightedGR.addPartials(cfgPartialGR, weight);
 	}
@@ -765,7 +759,7 @@ bool RDFModule::testReferencePartials(GenericList& sourceModuleData, const char*
 			dataName = CharString("%s-%s-%s", dataPrefix, typeI->atomTypeName(), typeJ->atomTypeName());
 			if (sourceModuleData.contains(dataName, sourceModuleUniqueName))
 			{
-				double error = partials.partial(n,m).error(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, sourceModuleUniqueName));
+				double error = partials.partial(n,m).error(GenericListHelper<XYData>::value(sourceModuleData, dataName, sourceModuleUniqueName));
 				{
 					Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 					if (error > testThreshold) return false;
@@ -776,7 +770,7 @@ bool RDFModule::testReferencePartials(GenericList& sourceModuleData, const char*
 			dataName = CharString("%s-%s-%s-bound", dataPrefix, typeI->atomTypeName(), typeJ->atomTypeName());
 			if (sourceModuleData.contains(dataName, sourceModuleUniqueName))
 			{
-				double error = partials.boundPartial(n,m).error(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, sourceModuleUniqueName));
+				double error = partials.boundPartial(n,m).error(GenericListHelper<XYData>::value(sourceModuleData, dataName, sourceModuleUniqueName));
 				{
 					Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 					if (error > testThreshold) return false;
@@ -787,7 +781,7 @@ bool RDFModule::testReferencePartials(GenericList& sourceModuleData, const char*
 			dataName = CharString("%s-%s-%s-unbound", dataPrefix, typeI->atomTypeName(), typeJ->atomTypeName());
 			if (sourceModuleData.contains(dataName, sourceModuleUniqueName))
 			{
-				double error = partials.unboundPartial(n,m).error(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, sourceModuleUniqueName));
+				double error = partials.unboundPartial(n,m).error(GenericListHelper<XYData>::value(sourceModuleData, dataName, sourceModuleUniqueName));
 				{
 					Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 					if (error > testThreshold) return false;
@@ -798,7 +792,7 @@ bool RDFModule::testReferencePartials(GenericList& sourceModuleData, const char*
 			dataName = CharString("%s-%s-%s-bragg", dataPrefix, typeI->atomTypeName(), typeJ->atomTypeName());
 			if (sourceModuleData.contains(dataName, sourceModuleUniqueName))
 			{
-				double error = partials.braggPartial(n,m).error(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, sourceModuleUniqueName));
+				double error = partials.braggPartial(n,m).error(GenericListHelper<XYData>::value(sourceModuleData, dataName, sourceModuleUniqueName));
 				{
 					Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 					if (error > testThreshold) return false;
@@ -811,7 +805,7 @@ bool RDFModule::testReferencePartials(GenericList& sourceModuleData, const char*
 	dataName = CharString("%s-total", dataPrefix);
 	if (sourceModuleData.contains(dataName, sourceModuleUniqueName))
 	{
-		double error = partials.total().error(GenericListHelper<XYData>::retrieve(sourceModuleData, dataName, sourceModuleUniqueName));
+		double error = partials.total().error(GenericListHelper<XYData>::value(sourceModuleData, dataName, sourceModuleUniqueName));
 		{
 			Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n", dataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
 			if (error > testThreshold) return false;

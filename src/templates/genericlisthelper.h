@@ -53,8 +53,8 @@ template <class T> class GenericListHelper
 		targetList.add(newItem);
 		return newItem->data;
 	}
-	// Retrieve named item from specified list as template-guided type
-	static T& retrieve(GenericList& sourceList, const char* name, const char* prefix = NULL, T defaultValue = T(), bool* found = NULL)
+	// Return named (const) item from specified list as template-guided type
+	static const T& value(GenericList& sourceList, const char* name, const char* prefix = NULL, T defaultValue = T(), bool* found = NULL)
 	{
 		// Construct full name
 		CharString varName;
@@ -85,7 +85,42 @@ template <class T> class GenericListHelper
 		if (found != NULL) (*found) = true;
 		return castItem->data;
 	}
-	// Retrieve (or create and retrieve) named item from specified list as template-guided type
+	// Retrieve named item from specified list as template-guided type, assuming that it is going to be modified
+	static T& retrieve(GenericList& sourceList, const char* name, const char* prefix = NULL, T defaultValue = T(), bool* found = NULL)
+	{
+		// Construct full name
+		CharString varName;
+		if (DissolveSys::isEmpty(prefix)) varName = name;
+		else varName.sprintf("%s_%s", prefix, name);
+
+		// Find item in the list
+		GenericItem* item = sourceList.find(varName);
+		if (!item)
+		{
+			Messenger::printVerbose("No item named '%s' in list - default value item will be returned.\n", varName.get());
+			static T dummy;
+			dummy = defaultValue;
+			if (found != NULL) (*found) = false;
+			return dummy;
+		}
+
+		// Cast to correct type
+		GenericItemContainer<T>* castItem = (GenericItemContainer<T>*) item;
+		if (!castItem)
+		{
+			printf("That didn't work, because its of the wrong type.\n");
+			static T dummy;
+			if (found != NULL) (*found) = false;
+			return dummy;
+		}
+
+		// Bump the version of the item
+		item->bumpVersion();
+
+		if (found != NULL) (*found) = true;
+		return castItem->data;
+	}
+	// Create or retrieve named item from specified list as template-guided type
 	static T& realise(GenericList& sourceList, const char* name, const char* prefix = NULL, int flags = -1, bool* created = NULL)
 	{
 		// Construct full name
@@ -112,6 +147,9 @@ template <class T> class GenericListHelper
 
 		// Update flags
 		if (flags >= 0) item->setFlags(flags);
+
+		// Bump the version of the item
+		item->bumpVersion();
 
 		if (created != NULL) (*created) = false;
 		return castItem->data;

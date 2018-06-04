@@ -100,7 +100,7 @@ void BroadeningFunctionKeywordWidget::updateValue()
 	if ((keyword_->genericItemFlags()&GenericItem::InRestartFileFlag) && moduleData_.contains(keyword_->keyword(), modulePrefix_))
 	{
 		// Retrieve the item from the list and set our widgets
-		keyword_->data() = GenericListHelper<BroadeningFunction>::retrieve(moduleData_, keyword_->keyword(), modulePrefix_);
+		keyword_->data() = GenericListHelper<BroadeningFunction>::value(moduleData_, keyword_->keyword(), modulePrefix_);
 	}
 
 	refreshing_ = false;

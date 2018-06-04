@@ -76,13 +76,13 @@ void WindowFunctionKeywordWidget::updateValue()
 	if ((keyword_->genericItemFlags()&GenericItem::InRestartFileFlag) && moduleData_.contains(keyword_->keyword(), modulePrefix_))
 	{
 		// Retrieve the item from the list and set our widgets
-		setWidgets(GenericListHelper<WindowFunction>::retrieve(moduleData_, keyword_->keyword(), modulePrefix_));
+		setWidgets(GenericListHelper<WindowFunction>::value(moduleData_, keyword_->keyword(), modulePrefix_));
 	}
 	else setWidgets(keyword_->data());
 }
 
 // Set widgets from supplied object
-void WindowFunctionKeywordWidget::setWidgets(WindowFunction& windowFunction)
+void WindowFunctionKeywordWidget::setWidgets(const WindowFunction& windowFunction)
 {
 	refreshing_ = true;
 

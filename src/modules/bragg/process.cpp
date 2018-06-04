@@ -75,7 +75,7 @@ bool BraggModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Calculate unweighted partials for this Configuration (under generic Module name 'Bragg', rather than the uniqueName_)
 		bool alreadyUpToDate;
 // 		calculateBraggTerms(procPool, cfg, method, allIntra, alreadyUpToDate);
-		PartialSet& unweightedgr = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "Intensities", "Bragg");
+		const PartialSet& unweightedgr = GenericListHelper<PartialSet>::value(cfg->moduleData(), "Intensities", "Bragg");
 
 // 		// Set names of resources (XYData) within the PartialSet
 // 		unweightedgr.setObjectNames(CharString("%s//%s//%s", cfg->niceName(), "Bragg", "UnweightedGR"));

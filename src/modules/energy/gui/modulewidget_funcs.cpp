@@ -72,15 +72,15 @@ void EnergyModuleWidget::updateControls()
 	QPalette labelPalette = ui.StableLabel->palette();
 	if (currentConfiguration_)
 	{
-		XYData& totalEnergyArray = GenericListHelper<XYData>::retrieve(currentConfiguration_->moduleData(), "Total", module_->uniqueName(), XYData());
+		const XYData& totalEnergyArray = GenericListHelper<XYData>::value(currentConfiguration_->moduleData(), "Total", module_->uniqueName(), XYData());
 		if (totalEnergyArray.nPoints() < stabilityWindow) ui.GradientValueLabel->setText("N/A");
 		else
 		{
-			double grad = GenericListHelper<double>::retrieve(currentConfiguration_->moduleData(), "EnergyGradient", "", 0.0);
+			double grad = GenericListHelper<double>::value(currentConfiguration_->moduleData(), "EnergyGradient", "", 0.0);
 			ui.GradientValueLabel->setText(QString::number(grad));
 		}
 
-		bool stable = GenericListHelper<bool>::retrieve(currentConfiguration_->moduleData(), "EnergyStable", "", false);
+		bool stable = GenericListHelper<bool>::value(currentConfiguration_->moduleData(), "EnergyStable", "", false);
 
 		if (stable)
 		{

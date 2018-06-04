@@ -132,7 +132,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			if (DissolveSys::sameString(module->name(), "NeutronSQ"))
 			{
 				// Retrieve the ReferenceData from the Module (as XYData)
-				XYData& referenceData = GenericListHelper<XYData>::retrieve(dissolve.processingModuleData(), "ReferenceData", module->uniqueName(), XYData(), &found);
+				const XYData& referenceData = GenericListHelper<XYData>::value(dissolve.processingModuleData(), "ReferenceData", module->uniqueName(), XYData(), &found);
 				if (!found)
 				{
 					Messenger::warn("Could not locate ReferenceData for target '%s'.\n", module->uniqueName());
@@ -140,20 +140,21 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				}
 
 				// Retrieve the PartialSet from the Module
-				PartialSet& calcSQ = GenericListHelper<PartialSet>::retrieve(dissolve.processingModuleData(), "WeightedSQ", module->uniqueName(), PartialSet(), &found);
+				const PartialSet& calcSQ = GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "WeightedSQ", module->uniqueName(), PartialSet(), &found);
 				if (!found)
 				{
 					Messenger::warn("Could not locate associated weighted neutron PartialSet for target '%s'.\n", module->uniqueName());
 					return false;
 				}
+				XYData calcSQTotal = calcSQ.constTotal();
 
-				error = referenceData.error(calcSQ.total());
+				error = referenceData.error(calcSQTotal);
 
 				// Calculate difference
 				XYData& differenceData = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), CharString("DifferenceData_%s", module->uniqueName()), uniqueName());
 				differenceData.setObjectName(CharString("%s//Difference//%s", uniqueName_.get(), module->uniqueName()));
 				differenceData = referenceData;
-				differenceData.addInterpolated(calcSQ.total(), -1.0);
+				differenceData.addInterpolated(calcSQTotal, -1.0);
 			}
 			else return Messenger::error("Unrecognised Module type '%s', so can't calculate error.", module->name());
 
@@ -252,14 +253,14 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		while (Module* module = targetIterator.iterate())
 		{
 			// Retrieve the reference data and associated Weights matrix and source unweighted partials
-			XYData& referenceData = GenericListHelper<XYData>::retrieve(dissolve.processingModuleData(), "ReferenceData", module->uniqueName(), XYData(), &found);
+			const XYData& referenceData = GenericListHelper<XYData>::value(dissolve.processingModuleData(), "ReferenceData", module->uniqueName(), XYData(), &found);
 			if (!found) return Messenger::error("Could not locate ReferenceData for target '%s'.\n", module->uniqueName());
 			Weights& weights = GenericListHelper<Weights>::retrieve(dissolve.processingModuleData(), "FullWeights", module->uniqueName(), Weights(), &found);
 			if (!found) return Messenger::error("Could not locate Weights for target '%s'.\n", module->uniqueName());
-			PartialSet& unweightedSQ = GenericListHelper<PartialSet>::retrieve(dissolve.processingModuleData(), "UnweightedSQ", module->uniqueName(), PartialSet(), &found);
+			const PartialSet& unweightedSQ = GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "UnweightedSQ", module->uniqueName(), PartialSet(), &found);
 			if (!found) return Messenger::error("Could not locate UnweightedSQ for target '%s'.\n", module->uniqueName());
 			double rho = GenericListHelper<
-			double>::retrieve(dissolve.processingModuleData(), "EffectiveRho", module->uniqueName(), 0.0, &found);
+			double>::value(dissolve.processingModuleData(), "EffectiveRho", module->uniqueName(), 0.0, &found);
 			if (!found) return Messenger::error("Could not locate EffectiveRho for target '%s'.\n", module->uniqueName());
 
 			// Add a row to our scattering matrix
@@ -276,7 +277,8 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					double globalI = atd1->atomType()->index();
 					double globalJ = atd2->atomType()->index();
 
-					combinedUnweightedSQ.ref(globalI, globalJ ).addInterpolated(unweightedSQ.partial(i,j), factor);
+					XYData partialIJ = unweightedSQ.constPartial(i,j);
+					combinedUnweightedSQ.ref(globalI, globalJ ).addInterpolated(partialIJ, factor);
 					combinedRho.ref(globalI, globalJ) += rho * factor;
 					combinedFactor.ref(globalI, globalJ) += factor;
 					combinedCWeights.ref(globalI, globalJ) += weights.concentrationWeight(i,j);
@@ -664,7 +666,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		{
 			// Get the delta phi(r) data for this group
 			if (!dissolve.processingModuleData().contains(CharString("DeltaPhiR_%s", group->name()), uniqueName())) return Messenger::error("Could not locate delta phi(r) data for group '%s'.\n", group->name());
-			Array2D<XYData>& groupDeltaPhiR = GenericListHelper< Array2D<XYData> >::retrieve(dissolve.processingModuleData(), CharString("DeltaPhiR_%s", group->name()), uniqueName_, Array2D<XYData>());
+			const Array2D<XYData>& groupDeltaPhiR = GenericListHelper< Array2D<XYData> >::value(dissolve.processingModuleData(), CharString("DeltaPhiR_%s", group->name()), uniqueName_, Array2D<XYData>());
 
 			i = 0;
 			for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
@@ -675,7 +677,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					// Assess error of partial if requested, and decide whether to adjust potential
 					if (onlyWhenErrorStable)
 					{
-						XYData& partialErrors = GenericListHelper<XYData>::retrieve(dissolve.processingModuleData(), CharString("PartialError_%s-%s", at1->name(), at2->name()), uniqueName_);
+						const XYData& partialErrors = GenericListHelper<XYData>::value(dissolve.processingModuleData(), CharString("PartialError_%s-%s", at1->name(), at2->name()), uniqueName_);
 						if (partialErrors.nPoints() >= errorStabilityWindow)
 						{
 							double yMean;
@@ -697,7 +699,7 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 						return false;
 					}
 
-					pp->adjustUAdditional(groupDeltaPhiR.ref(i,j));
+					pp->adjustUAdditional(groupDeltaPhiR.value(i,j));
 				}
 			}
 		}

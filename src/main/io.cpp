@@ -596,7 +596,7 @@ bool Dissolve::loadRestart(const char* filename)
 	if (!error) Messenger::print("Finished reading restart file.\n");
 
 	// Set current iteration number
-	iteration_ = GenericListHelper<int>::retrieve(processingModuleData_, "Iteration", "Dissolve", 0);
+	iteration_ = GenericListHelper<int>::value(processingModuleData_, "Iteration", "Dissolve", 0);
 
 	// Error encountered?
 	if (error)
@@ -635,7 +635,7 @@ bool Dissolve::saveRestart(const char* filename)
 			// If it is not flagged to be saved in the restart file, skip it
 			if (!(item->flags()&GenericItem::InRestartFileFlag)) continue;
 
-			parser.writeLineF("Local  %s  %s  %s\n", cfg->name(), item->name(), item->itemClassName());
+			parser.writeLineF("Local  %s  %s  %s  %i\n", cfg->name(), item->name(), item->itemClassName(), item->version());
 			if (!item->write(parser)) return false;
 		}
 	}
@@ -646,7 +646,7 @@ bool Dissolve::saveRestart(const char* filename)
 		// If it is not flagged to be saved in the restart file, skip it
 		if (!(item->flags()&GenericItem::InRestartFileFlag)) continue;
 
-		if (!parser.writeLineF("Processing  %s  %s\n", item->name(), item->itemClassName())) return false;
+		if (!parser.writeLineF("Processing  %s  %s  %i\n", item->name(), item->itemClassName(), item->version())) return false;
 		if (!item->write(parser)) return false;
 	}
 

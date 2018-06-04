@@ -160,14 +160,14 @@ int EnergyModule::checkStability(const RefList<Configuration,bool>& configuratio
 		 * First check is for the Configuration being targeted by any EnergyModule.
 		 * Then we probe the EnergyStable data.
 		 */
-		if (!GenericListHelper<bool>::retrieve(cfg->moduleData(), "_IsEnergyModuleTarget", NULL, false))
+		if (!GenericListHelper<bool>::value(cfg->moduleData(), "_IsEnergyModuleTarget", NULL, false))
 		{
 			Messenger::error("Configuration '%s' is not targeted by any EnergyModule, so stability cannot be assessed. Check your setup!\n", cfg->name());
 			return -1;
 		}
 		else if (cfg->moduleData().contains("EnergyStable"))
 		{
-			bool stable = GenericListHelper<bool>::retrieve(cfg->moduleData(), "EnergyStable");
+			bool stable = GenericListHelper<bool>::value(cfg->moduleData(), "EnergyStable");
 			if (!stable)
 			{
 				Messenger::print("Energy for Configuration '%s' is not yet stable.\n", cfg->name());

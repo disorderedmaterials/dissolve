@@ -82,7 +82,7 @@ void CharStringKeywordWidget::updateValue()
 	if ((keyword_->genericItemFlags()&GenericItem::InRestartFileFlag) && moduleData_.contains(keyword_->keyword(), modulePrefix_))
 	{
 		// Retrieve the item from the list
-		newValue = GenericListHelper<double>::retrieve(moduleData_, keyword_->keyword(), modulePrefix_);
+		newValue = GenericListHelper<double>::value(moduleData_, keyword_->keyword(), modulePrefix_);
 	}
 	else newValue = keyword_->asString();
 

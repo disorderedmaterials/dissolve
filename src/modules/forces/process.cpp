@@ -448,19 +448,19 @@ bool ForcesModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			if (moduleData.contains("ReferenceFX", uniqueName()) && moduleData.contains("ReferenceFY", uniqueName()) && moduleData.contains("ReferenceFZ", uniqueName()))
 			{
 				// Grab reference force arrays and check sizes
-				Array<double>& referenceFx = GenericListHelper< Array<double> >::retrieve(moduleData, "ReferenceFX", uniqueName());
+				const Array<double>& referenceFx = GenericListHelper< Array<double> >::value(moduleData, "ReferenceFX", uniqueName());
 				if (referenceFx.nItems() != cfg->nAtoms())
 				{
 					Messenger::error("Number of force components in ReferenceFX is %i, but the Configuration '%s' contains %i atoms.\n", referenceFx.nItems(), cfg->name(), cfg->nAtoms());
 					return false;
 				}
-				Array<double>& referenceFy = GenericListHelper< Array<double> >::retrieve(moduleData, "ReferenceFY", uniqueName());
+				const Array<double>& referenceFy = GenericListHelper< Array<double> >::value(moduleData, "ReferenceFY", uniqueName());
 				if (referenceFy.nItems() != cfg->nAtoms())
 				{
 					Messenger::error("Number of force components in ReferenceFY is %i, but the Configuration '%s' contains %i atoms.\n", referenceFy.nItems(), cfg->name(), cfg->nAtoms());
 					return false;
 				}
-				Array<double>& referenceFz = GenericListHelper< Array<double> >::retrieve(moduleData, "ReferenceFZ", uniqueName());
+				const Array<double>& referenceFz = GenericListHelper< Array<double> >::value(moduleData, "ReferenceFZ", uniqueName());
 				if (referenceFz.nItems() != cfg->nAtoms())
 				{
 					Messenger::error("Number of force components in ReferenceFZ is %i, but the Configuration '%s' contains %i atoms.\n", referenceFz.nItems(), cfg->name(), cfg->nAtoms());
@@ -471,9 +471,9 @@ bool ForcesModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				sumError = 0.0;
 				for (int n=0; n<cfg->nAtoms(); ++n)
 				{
-					totalRatio.x = referenceFx[n] - (interFx[n] + intraFx[n]);
-					totalRatio.y = referenceFy[n] - (interFy[n] + intraFy[n]);
-					totalRatio.z = referenceFz[n] - (interFz[n] + intraFz[n]);
+					totalRatio.x = referenceFx.value(n) - (interFx[n] + intraFx[n]);
+					totalRatio.y = referenceFy.value(n) - (interFy[n] + intraFy[n]);
+					totalRatio.z = referenceFz.value(n) - (interFz[n] + intraFz[n]);
 					if (fabs(interFx[n]+intraFx[n]) > 1.0e-6) totalRatio.x *= 100.0 / (interFx[n]+intraFx[n]);
 					if (fabs(interFy[n]+intraFy[n]) > 1.0e-6) totalRatio.y *= 100.0 / (interFy[n]+intraFy[n]);
 					if (fabs(interFz[n]+intraFz[n]) > 1.0e-6) totalRatio.z *= 100.0 / (interFz[n]+intraFz[n]);
@@ -488,7 +488,7 @@ bool ForcesModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 					if (failed)
 					{
-						Messenger::print("Forces: Check atom %10i - errors are %15.8e (%5.2f%%) %15.8e (%5.2f%%) %15.8e (%5.2f%%) (x y z) 10J/mol\n", n+1, referenceFx[n] - (interFx[n] + intraFx[n]), totalRatio.x, referenceFy[n] - (interFy[n] + intraFy[n]), totalRatio.y, referenceFz[n] - (interFz[n] + intraFz[n]), totalRatio.z);
+						Messenger::print("Forces: Check atom %10i - errors are %15.8e (%5.2f%%) %15.8e (%5.2f%%) %15.8e (%5.2f%%) (x y z) 10J/mol\n", n+1, referenceFx.value(n) - (interFx[n] + intraFx[n]), totalRatio.x, referenceFy.value(n) - (interFy[n] + intraFy[n]), totalRatio.y, referenceFz.value(n) - (interFz[n] + intraFz[n]), totalRatio.z);
 						++nFailed2;
 					}
 				}
@@ -500,9 +500,9 @@ bool ForcesModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				sumError = 0.0;
 				for (int n=0; n<cfg->nAtoms(); ++n)
 				{
-					totalRatio.x = referenceFx[n] - (checkInterFx[n] + checkIntraFx[n]);
-					totalRatio.y = referenceFy[n] - (checkInterFy[n] + checkIntraFy[n]);
-					totalRatio.z = referenceFz[n] - (checkInterFz[n] + checkIntraFz[n]);
+					totalRatio.x = referenceFx.value(n) - (checkInterFx[n] + checkIntraFx[n]);
+					totalRatio.y = referenceFy.value(n) - (checkInterFy[n] + checkIntraFy[n]);
+					totalRatio.z = referenceFz.value(n) - (checkInterFz[n] + checkIntraFz[n]);
 					if (fabs(checkInterFx[n]+checkIntraFx[n]) > 1.0e-6) totalRatio.x *= 100.0 / (checkInterFx[n]+checkIntraFx[n]);
 					if (fabs(checkInterFy[n]+checkIntraFy[n]) > 1.0e-6) totalRatio.y *= 100.0 / (checkInterFy[n]+checkIntraFy[n]);
 					if (fabs(checkInterFz[n]+checkIntraFz[n]) > 1.0e-6) totalRatio.z *= 100.0 / (checkInterFz[n]+checkIntraFz[n]);
@@ -517,7 +517,7 @@ bool ForcesModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 					if (failed)
 					{
-						Messenger::print("Forces: Check atom %10i - errors are %15.8e (%5.2f%%) %15.8e (%5.2f%%) %15.8e (%5.2f%%) (x y z) 10J/mol\n", n+1, referenceFx[n] - (checkInterFx[n] + checkIntraFx[n]), totalRatio.x, referenceFy[n] - (checkInterFy[n] + checkIntraFy[n]), totalRatio.y, referenceFz[n] - (checkInterFz[n] + checkIntraFz[n]), totalRatio.z);
+						Messenger::print("Forces: Check atom %10i - errors are %15.8e (%5.2f%%) %15.8e (%5.2f%%) %15.8e (%5.2f%%) (x y z) 10J/mol\n", n+1, referenceFx.value(n) - (checkInterFx[n] + checkIntraFx[n]), totalRatio.x, referenceFy.value(n) - (checkInterFy[n] + checkIntraFy[n]), totalRatio.y, referenceFz.value(n) - (checkInterFz[n] + checkIntraFz[n]), totalRatio.z);
 						++nFailed3;
 					}
 				}

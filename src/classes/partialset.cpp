@@ -266,6 +266,12 @@ XYData& PartialSet::total()
 	return total_;
 }
 
+// Return copy of total function
+XYData PartialSet::constTotal() const
+{
+	return total_;
+}
+
 // Save all partials and total
 bool PartialSet::save()
 {
