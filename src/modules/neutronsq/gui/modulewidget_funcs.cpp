@@ -48,7 +48,7 @@ NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget* parent, Module* module, Di
 	viewPane->axes().setTitle(1, "g(r)");
 	viewPane->axes().setMin(1, -1.0);
 	viewPane->axes().setMax(1, 1.0);
-	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::HalfVerticalShift);
+	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
 	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
 
 	// Set up partial S(Q) graph
@@ -63,7 +63,7 @@ NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget* parent, Module* module, Di
 	viewPane->axes().setTitle(1, "S(Q)");
 	viewPane->axes().setMin(1, -1.0);
 	viewPane->axes().setMax(1, 1.0);
-	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::HalfVerticalShift);
+	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
 	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
 
 	// Set up total G(r) graph
@@ -180,14 +180,32 @@ void NeutronSQModuleWidget::setGraphDataTargets(NeutronSQModule* module)
 			 * Partial g(r)
 			 */
 
+			// Full partial
 			blockData.sprintf("Collection '%s'; Group '%s'; DataSet 'Calculated %s'; Source XYData '%s//UnweightedGR//%s-%s//Full'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), at1->name(), at2->name());
+			partialGRGraph_->addCollectionFromBlock(blockData);
+
+			// Bound partial
+			blockData.sprintf("Collection '%s Bound'; Group '%s'; LineStyle 1.0 'Half Dash'; DataSet 'Calculated %s'; Source XYData '%s//UnweightedGR//%s-%s//Bound'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), at1->name(), at2->name());
+			partialGRGraph_->addCollectionFromBlock(blockData);
+
+			// Unbound partial
+			blockData.sprintf("Collection '%s Unbound'; Group '%s'; LineStyle 1.0 Dots; DataSet 'Calculated %s'; Source XYData '%s//UnweightedGR//%s-%s//Unbound'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), at1->name(), at2->name());
 			partialGRGraph_->addCollectionFromBlock(blockData);
 
 			/*
 			 * Partial S(Q)
 			 */
 
+			// Full partial
 			blockData.sprintf("Collection '%s'; Group '%s'; DataSet 'Calculated %s'; Source XYData '%s//UnweightedSQ//%s-%s//Full'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), at1->name(), at2->name());
+			partialSQGraph_->addCollectionFromBlock(blockData);
+
+			// Bound partial
+			blockData.sprintf("Collection '%s Bound'; Group '%s'; LineStyle 1.0 'Half Dash'; DataSet 'Calculated %s'; Source XYData '%s//UnweightedSQ//%s-%s//Bound'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), at1->name(), at2->name());
+			partialSQGraph_->addCollectionFromBlock(blockData);
+
+			// Unbound partial
+			blockData.sprintf("Collection '%s Unbound'; Group '%s'; LineStyle 1.0 Dots; DataSet 'Calculated %s'; Source XYData '%s//UnweightedSQ//%s-%s//Unbound'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), at1->name(), at2->name());
 			partialSQGraph_->addCollectionFromBlock(blockData);
 		}
 	}
