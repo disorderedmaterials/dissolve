@@ -264,8 +264,8 @@ bool NeutronSQModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 	// Create/retrieve PartialSet for summed partial S(Q)
 	PartialSet& summedWeightedSQ = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "WeightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
-	summedWeightedSQ.setObjectNames(CharString("%s//%s", uniqueName_.get(), "WeightedSQ"));
 	summedWeightedSQ = summedUnweightedSQ;
+	summedWeightedSQ.setObjectNames(CharString("%s//%s", uniqueName_.get(), "WeightedSQ"));
 
 	// Calculate weighted S(Q)
 	Messenger::print("Isotopologue and isotope composition over all Configurations used in '%s':\n\n", uniqueName_.get());

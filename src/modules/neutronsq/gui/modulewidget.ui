@@ -147,7 +147,7 @@
      </widget>
      <widget class="QWidget" name="PartialGRTab">
       <attribute name="title">
-       <string>Partial g(r)</string>
+       <string>Weighted g(r)</string>
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <property name="spacing">
@@ -208,7 +208,7 @@
      </widget>
      <widget class="QWidget" name="PartialSQTab">
       <attribute name="title">
-       <string>Partial S(Q)</string>
+       <string>Weighted S(Q)</string>
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <property name="spacing">
