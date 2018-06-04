@@ -107,6 +107,8 @@ class ModuleChart : public QWidget
 	private:
 	// Return drop hotspot, if any, under specified point
 	ModuleChartHotSpot* hotSpotAt(QPoint pos);
+	// Reset after drop
+	void resetAfterDrop();
 
 
 	/*
@@ -120,7 +122,7 @@ class ModuleChart : public QWidget
 	// Insertion point widget
 	ModuleChartInsertionBlock* insertionWidget_;
 	// List of block widgets to display, in order, in the chart
-	RefList<ModuleChartBlock,bool> displayBlocks_;
+	RefList<ModuleChartBlock,ModuleChartModuleBlock*> displayBlocks_;
 
 	private:
 	// Recreate list of widgets for display, reflecting current state of widget (e.g. drag/drop etc.)

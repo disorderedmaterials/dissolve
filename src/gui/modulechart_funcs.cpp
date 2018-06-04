@@ -88,7 +88,7 @@ void ModuleChart::paintEvent(QPaintEvent* event)
 
 	int col = 0, row = 0;
 	QPoint p1, p2;
-	RefListIterator<ModuleChartBlock,bool> blockIterator(displayBlocks_);
+	RefListIterator<ModuleChartBlock,ModuleChartModuleBlock*> blockIterator(displayBlocks_);
 	while (ModuleChartBlock* block = blockIterator.iterate())
 	{
 		// If this is the last block then there is nothing more to do
@@ -206,7 +206,7 @@ void ModuleChart::mouseMoveEvent(QMouseEvent* event)
 		QDataStream dataStream(&itemData, QIODevice::WriteOnly);
 		dataStream << draggedBlock_;
 		QMimeData* mimeData = new QMimeData;
-		mimeData->setData("image/x-dissolve-flowblock", itemData);
+		mimeData->setData("image/x-dissolve-moduleblock", itemData);
 
 		// Construct the drag object
 		QDrag* drag = new QDrag(this);
@@ -262,7 +262,7 @@ void ModuleChart::mouseDoubleClickEvent(QMouseEvent* event)
 void ModuleChart::dragEnterEvent(QDragEnterEvent* event)
 {
 	// Is the correct data type being dragged over us?
-	if (event->mimeData()->hasFormat("image/x-dissolve-flowblock")) event->accept();
+	if (event->mimeData()->hasFormat("image/x-dissolve-moduleblock")) event->accept();
 	else if (event->mimeData()->hasFormat("image/x-dissolve-paletteblock")) event->accept();
 	else event->ignore();
 }
@@ -317,20 +317,52 @@ void ModuleChart::dragMoveEvent(QDragMoveEvent* event)
 // Drop event
 void ModuleChart::dropEvent(QDropEvent* event)
 {
-	if (event->mimeData()->hasFormat("image/x-dissolve-flowblock"))
+	if (event->mimeData()->hasFormat("image/x-dissolve-moduleblock"))
 	{
+		// Check for a current hot spot and ensure we have a current draggedBlock_
+		printf("Current hotspot index = %i\n", currentHotSpotIndex_);
+		ModuleChartHotSpot* hotSpot = (currentHotSpotIndex_ == -1 ? NULL : hotSpots_[currentHotSpotIndex_]);
+		if ((!hotSpot) || (!draggedBlock_))
+		{
+			event->ignore();
+			resetAfterDrop();
+			return;
+		}
+
+		// Get the ModuleReference of the dragged block, and check it has a parent list
+		ModuleReference* targetReference = draggedBlock_->moduleReference();
+		if (targetReference->parentList())
+		{
+			// Get the ModuleRefernce before which we are going to move the targetReference
+			if (hotSpot->blockIndexAfter() >= displayBlocks_.nItems())
+			{
+				// No next block, so move widget to the end of the list
+				targetReference->parentList()->modules().moveBefore(targetReference, NULL);
+			}
+			else
+			{
+				// Get the block 
+				RefListItem<ModuleChartBlock,ModuleChartModuleBlock*>* blockAfter = displayBlocks_[hotSpot->blockIndexAfter()];
+				printf("ModuleChartModuleBlock before which we are going to move the reference = %p\n", blockAfter);
+
+				if (blockAfter && blockAfter->data)
+				{
+					ModuleReference* beforeReference = blockAfter->data->moduleReference();
+					targetReference->parentList()->modules().moveBefore(targetReference, beforeReference);
+
+					updateControls();
+				}
+			}
+
+// 			? displayBlocks_[hotSpot->blockIndexAfter()]->data : NULL;
+
+			// Move the dragged Module into its new position
+		}
+		else printf("ModuleReference from dragged block has no parent list, so can't move it.\n");
 	}
 	else event->ignore();
 
-	// Reset any drag/drop-related variables
-	currentHotSpotIndex_ = -1;
-	draggedBlock_ = NULL;
-
-	recreateDisplayWidgets();
-
-	layOutWidgets(true);
-
-	repaint();
+	resetAfterDrop();
 }
 
 /*
@@ -343,6 +375,19 @@ ModuleChartHotSpot* ModuleChart::hotSpotAt(QPoint pos)
 	for (ModuleChartHotSpot* hotSpot = hotSpots_.first(); hotSpot != NULL; hotSpot = hotSpot->next) if (hotSpot->contains(pos)) return hotSpot;
 
 	return NULL;
+}
+
+// Reset after drop
+void ModuleChart::resetAfterDrop()
+{
+	currentHotSpotIndex_ = -1;
+	draggedBlock_ = NULL;
+
+	recreateDisplayWidgets();
+
+	layOutWidgets(true);
+
+	repaint();
 }
 
 /*
@@ -367,8 +412,9 @@ void ModuleChart::recreateDisplayWidgets()
 		if (block == draggedBlock_) block->setVisible(false);
 		else
 		{
+			// Make the block visible, and add the original pointer to the block as the RefListItem data
 			block->setVisible(true);
-			displayBlocks_.add(block);
+			displayBlocks_.add(block, block);
 		}
 	}
 
@@ -383,8 +429,10 @@ void ModuleChart::recreateDisplayWidgets()
 		if (!insertionWidget_) insertionWidget_ = new ModuleChartInsertionBlock(this, dissolveWindow_);
 		insertionWidget_->setVisible(true);
 
+		// Get the current index
 		// Insert the widget into the appropriate point in the list
-		displayBlocks_.addBefore(displayBlocks_[hotSpot->blockIndexAfter()], insertionWidget_);
+		RefListItem<ModuleChartBlock,ModuleChartModuleBlock*>* item = displayBlocks_.addBefore(displayBlocks_[hotSpot->blockIndexAfter()], insertionWidget_);
+		item->data = hotSpot->blockIndexAfter() >= moduleWidgets_.nItems() ? NULL : moduleWidgets_[hotSpot->blockIndexAfter()]->item;
 	}
 	else if (insertionWidget_) insertionWidget_->setVisible(false);
 }
@@ -490,7 +538,7 @@ void ModuleChart::layOutWidgets(bool animateWidgets)
 		totalColumnWidth = 0;
 		widths_.clear();
 		minimumSizeHint_ = QSize(0,0);
-		RefListIterator<ModuleChartBlock,bool> blockIterator(displayBlocks_);
+		RefListIterator<ModuleChartBlock,ModuleChartModuleBlock*> blockIterator(displayBlocks_);
 		while (ModuleChartBlock* block = blockIterator.iterate())
 		{
 			// Get the width of this block
@@ -546,7 +594,7 @@ void ModuleChart::layOutWidgets(bool animateWidgets)
 	hotSpots_.clear();
 	int top = minSpacing_, rowMaxHeight;
 	int blockCount = 0;
-	RefListIterator<ModuleChartBlock,bool> blockIterator(displayBlocks_);
+	RefListIterator<ModuleChartBlock,ModuleChartModuleBlock*> blockIterator(displayBlocks_);
 	for (int row = 0; row < nRows_; ++row)
 	{
 		// Add the top coordinate of this row to our array

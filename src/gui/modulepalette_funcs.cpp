@@ -90,7 +90,7 @@ void ModulePalette::mouseMoveEvent(QMouseEvent* event)
 	QDataStream dataStream(&itemData, QIODevice::WriteOnly);
 	dataStream << draggedModule_;
 	QMimeData* mimeData = new QMimeData;
-	mimeData->setData("image/x-dissolve-flowblock", itemData);
+	mimeData->setData("image/x-dissolve-paletteblock", itemData);
 
 	// Construct the drag object
 	QDrag* drag = new QDrag(this);
@@ -129,9 +129,7 @@ void ModulePalette::mouseDoubleClickEvent(QMouseEvent* event)
 // Drag enter event
 void ModulePalette::dragEnterEvent(QDragEnterEvent* event)
 {
-	// Is the correct data type being dragged over us?
-	if (event->mimeData()->hasFormat("image/x-dissolve-flowblock")) event->accept();
-	else event->ignore();
+	event->ignore();
 }
 
 // Drag leave event
@@ -151,10 +149,7 @@ void ModulePalette::dragMoveEvent(QDragMoveEvent* event)
 // Drop event
 void ModulePalette::dropEvent(QDropEvent* event)
 {
-	if (event->mimeData()->hasFormat("image/x-dissolve-flowblock"))
-	{
-	}
-	else event->ignore();
+	event->ignore();
 }
 
 /*
