@@ -625,13 +625,13 @@ double XYData::lastGradient(int nSamples, double* yMean) const
  */
 
 // Compute integral of the data
-double XYData::integral()
+double XYData::integral() const
 {
 	double total = 0.0, y0 = y_.first(), y1, x0 = x_.first(), x1;
 	for (int n=1; n<x_.nItems(); ++n)
 	{
-		x1 = x_[n];
-		y1 = y_[n];
+		x1 = x_.value(n);
+		y1 = y_.value(n);
 		total += (x1 - x0) * (y0 + y1) * 0.5;
 		x0 = x1;
 		y0 = y1;
@@ -640,14 +640,14 @@ double XYData::integral()
 }
 
 // Compute absolute integral of the data
-double XYData::absIntegral()
+double XYData::absIntegral() const
 {
 	if (nPoints() < 2) return 0.0;
 	double total = 0.0, y0 = y_.first(), y1, x0 = x_.first(), x1;
 	for (int n=1; n<x_.nItems(); ++n)
 	{
-		x1 = x_[n];
-		y1 = y_[n];
+		x1 = x_.value(n);
+		y1 = y_.value(n);
 		total += fabs((x1 - x0) * (y0 + y1) * 0.5);
 		x0 = x1;
 		y0 = y1;

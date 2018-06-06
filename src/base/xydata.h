@@ -176,9 +176,9 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	 */
 	public:
 	// Compute integral of the data
-	double integral();
+	double integral() const;
 	// Compute absolute integral of the data
-	double absIntegral();
+	double absIntegral() const;
 
 
 	/*
