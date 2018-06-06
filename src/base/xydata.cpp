@@ -824,6 +824,9 @@ void XYData::convolveNormalised(BroadeningFunction function)
 	// Calculate the original integral
 	double originalIntegral = absIntegral();
 
+	// If the original integral is zero, nothing to do
+	if (originalIntegral == 0.0) return;
+
 	// Convolve the function
 	convolve(function);
 
