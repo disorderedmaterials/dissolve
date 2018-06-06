@@ -655,6 +655,16 @@ double XYData::absIntegral() const
 	return total;
 }
 
+// Return sum of squares of all y values
+double XYData::sumOfSquares() const
+{
+	double total = 0.0;
+
+	for (int n=0; n<y_.nItems(); ++n) total += y_.value(n)*y_.value(n);
+
+	return total;
+}
+
 /*
  * Filtering
  */

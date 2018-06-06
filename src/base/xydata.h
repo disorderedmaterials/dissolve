@@ -179,6 +179,8 @@ class XYData : public ListItem<XYData>, public ObjectStore<XYData>, public Gener
 	double integral() const;
 	// Compute absolute integral of the data
 	double absIntegral() const;
+	// Return sum of squares of all y values
+	double sumOfSquares() const;
 
 
 	/*
