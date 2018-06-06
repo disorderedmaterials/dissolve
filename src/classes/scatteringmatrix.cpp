@@ -22,6 +22,7 @@
 #include "classes/scatteringmatrix.h"
 #include "classes/atomtype.h"
 #include "classes/weights.h"
+#include "math/svd.h"
 
 // Constructor
 ScatteringMatrix::ScatteringMatrix()
@@ -160,7 +161,7 @@ bool ScatteringMatrix::finalise()
 	}
 
 	inverseA_ = A_;
-	if (!DissolveMath::pseudoinverse(inverseA_)) return false;
+	if (!SVD::pseudoinverse(inverseA_)) return false;
 
 	return true;
 }

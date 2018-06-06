@@ -1,6 +1,6 @@
 /*
-	*** Perform Singular Value Decomposition on an Array2D
-	*** src/math/mathfunc_svd.cpp
+	*** Singular Value Decomposition
+	*** src/math/svd.cpp
 	Copyright T. Youngs 2018
 
 	This file is part of Dissolve.
@@ -19,20 +19,10 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "math/mathfunc.h"
+#include "math/svd.h"
 #include "templates/array.h"
 #include "templates/array2d.h"
 #include <algorithm>
-
-static double PYTHAG(double a, double b)
-{
-    double at = fabs(a), bt = fabs(b), ct, result;
-
-    if (at > bt)       { ct = bt / at; result = at * sqrt(1.0 + ct * ct); }
-    else if (bt > 0.0) { ct = at / bt; result = bt * sqrt(1.0 + ct * ct); }
-    else result = 0.0;
-    return(result);
-}
 
 static double sqrarg;
 #define SQR(a) ((sqrarg = (a)) == 0.0 ? 0.0 : sqrarg * sqrarg)
@@ -51,7 +41,7 @@ double pythag(double a, double b) {
 }
 
 // Perform single value decomposition of the supplied matrix A, putting left-orthogonal (U), diagonal single-value (S), and right-orthogonal (V transpose) matrices into the supplied Arrays
-bool DissolveMath::svd(const Array2D<double>& A, Array2D<double>& U, Array2D<double>& S, Array2D<double>& Vt)
+bool SVD::decompose(const Array2D<double>& A, Array2D<double>& U, Array2D<double>& S, Array2D<double>& Vt)
 {
 	int flag,i,its,j,jj,k,l,nm;
 	double anorm,c,f,g,h,s,scale,x,y,z;
@@ -92,7 +82,7 @@ bool DissolveMath::svd(const Array2D<double>& A, Array2D<double>& U, Array2D<dou
 				}
 
 				f = U.value(i,i);
-				g = -sgn(sqrt(s),f);
+				g = -DissolveMath::sgn(sqrt(s),f);
 				h = f * g - s;
 				U.ref(i,i) = f - g;
 
@@ -120,7 +110,7 @@ bool DissolveMath::svd(const Array2D<double>& A, Array2D<double>& U, Array2D<dou
 					s += U.value(i,k) * U.value(i,k);
 				}
 				f = U.value(i,l);
-				g = - sgn(sqrt(s),f);
+				g = - DissolveMath::sgn(sqrt(s),f);
 				h = f * g - s;
 				U.ref(i,l) = f - g;
 				for(k=l;k<nCols;k++) rv1[k] = U.value(i,k) / h;
@@ -256,7 +246,7 @@ bool DissolveMath::svd(const Array2D<double>& A, Array2D<double>& U, Array2D<dou
 			h = rv1[k];
 			f = ((y - z) * (y + z) + (g - h) * (g + h)) / (2.0 * h * y);
 			g = pythag(f,1.0);
-			f = ((x - z) * (x + z) + h * ((y / (f + sgn(g,f))) - h)) / x;
+			f = ((x - z) * (x + z) + h * ((y / (f + DissolveMath::sgn(g,f))) - h)) / x;
 			c = 1.0;
 			s = 1.0;
 			for(j=l;j<=nm;j++)
@@ -312,7 +302,7 @@ bool DissolveMath::svd(const Array2D<double>& A, Array2D<double>& U, Array2D<dou
 }
 
 // Test SVD
-bool DissolveMath::svdTest()
+bool SVD::test()
 {
 	Array2D<double> A, U, V, S, I, Ut, Vt;
 
@@ -326,7 +316,7 @@ bool DissolveMath::svdTest()
 	A.ref(1,1) = 1.0;
 	A.ref(2,2) = 1.0;
 	A.print("A");
-	svd(A, U, S, V);
+	decompose(A, U, S, V);
 	U.print("U");
 	S.print("S");
 	V.print("V");
@@ -351,7 +341,7 @@ bool DissolveMath::svdTest()
 	A.ref(2,1) = 3.0;
 	A.ref(1,3) = 2.0;
 	A.print("A");
-	svd(A, U, S, V);
+	decompose(A, U, S, V);
 	U.print("U");
 	S.print("S");
 	V.print("V");
@@ -369,11 +359,11 @@ bool DissolveMath::svdTest()
 }
 
 // Compute in-place pseudoinverse of supplied matrix
-bool DissolveMath::pseudoinverse(Array2D<double>& A)
+bool SVD::pseudoinverse(Array2D<double>& A)
 {
 	// First, compute SVD of the matrix A
 	Array2D<double> U, S, Vt;
-	if (!svd(A, U, S, Vt)) return false;
+	if (!decompose(A, U, S, Vt)) return false;
 // 	U.print("U");
 // 	S.print("S");
 // 	V.print("V");

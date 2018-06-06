@@ -5,9 +5,9 @@ add_library(math
   gaussfit.cpp
   gj.cpp
   mathfunc.cpp
-  mathfunc_svd.cpp
   matrix3.cpp
   matrix4.cpp
+  svd.cpp
   windowfunction.cpp
 
   broadeningfunction.h
@@ -19,6 +19,7 @@ add_library(math
   mathfunc.h
   matrix3.h
   matrix4.h
+  svd.h
   windowfunction.h
 )
 
