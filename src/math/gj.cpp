@@ -1,6 +1,6 @@
 /*
 	*** Gauss-Jordan Inversion
-	*** src/math/mathfunc_gj.cpp
+	*** src/math/gj.cpp
 	Copyright T. Youngs 2012-2018
 
 	This file is part of Dissolve.
@@ -19,11 +19,11 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "math/mathfunc.h"
+#include "math/gj.h"
 #include "templates/array2d.h"
 
 // Perform Gauss-Jordan inversion of the supplied Array2D<double>
-bool DissolveMath::gjInvert(Array2D<double>& A)
+bool GaussJordan::invert(Array2D<double>& A)
 {
 	// Matrix must be square, and not stored as a half-matrix
 	if (A.nRows() != A.nColumns())

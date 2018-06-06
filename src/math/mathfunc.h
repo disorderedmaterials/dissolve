@@ -66,8 +66,6 @@ class DissolveMath
 	 * Matrix Math
 	 */
 	public:
-	// Perform Gauss-Jordan inversion of the supplied Array2D<double>
-	static bool gjInvert(Array2D<double>& A);
 	// Perform single value decomposition of the supplied matrix A, putting left-orthogonal (U), diagonal single-value (S), and right-orthogonal (V) matrices into the supplied Arrays
 	static bool svd(const Array2D<double>& A, Array2D<double>& U, Array2D<double>& S, Array2D<double>& Vt);
 	// Test SVD

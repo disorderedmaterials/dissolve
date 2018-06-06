@@ -3,8 +3,8 @@ add_library(math
   cuboid.cpp
   doubleexp.cpp
   gaussfit.cpp
+  gj.cpp
   mathfunc.cpp
-  mathfunc_gj.cpp
   mathfunc_svd.cpp
   matrix3.cpp
   matrix4.cpp
@@ -15,6 +15,7 @@ add_library(math
   cuboid.h
   doubleexp.h
   gaussfit.h
+  gj.h
   mathfunc.h
   matrix3.h
   matrix4.h
