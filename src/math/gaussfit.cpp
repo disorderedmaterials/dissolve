@@ -261,8 +261,8 @@ double GaussFit::construct(double requiredError, int maxGaussians)
 	int lastSign = 0;
 	double gradient, trialX, trialA, trialC;
 
-	// Calculate starting error of the reference data with the approximate function
-	currentError_ = referenceData_.error(approximateData_);
+	// Calculate starting sum-of-squares error
+	currentError_ = referenceData_.sumOfSquares();
 
 	// Outer loop
 	do
