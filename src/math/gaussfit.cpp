@@ -261,8 +261,9 @@ double GaussFit::construct(double requiredError, int maxGaussians)
 	int lastSign = 0;
 	double gradient, trialX, trialA, trialC;
 
-	// Calculate starting sum-of-squares error
-	currentError_ = referenceData_.sumOfSquares();
+	// Calculate starting error
+	currentError_ = 0.0;
+	for (int n=0; n<referenceData_.nPoints(); ++n) currentError_ += fabs(referenceData_.y(n));
 
 	// Outer loop
 	do
