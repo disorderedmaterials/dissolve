@@ -274,7 +274,7 @@ class FitKernel
 
 	private:
 	// Calculate SOS error for current targets
-	double sosError(Array<double>& alpha);
+	double sosError(const Array<double>& alpha);
 	// Calculate RMS error for current targets
 	double rmsError(Array<double>& alpha);
 	// Simplex minimise

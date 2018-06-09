@@ -32,7 +32,7 @@ template<class T> class Simplex
 	// Simplex move types
 	enum SimplexMove { ReflectionMove, ExpansionMove, OuterContractionMove, InnerContractionMove, ShrinkMove, AllMoves, nSimplexMoves };
 	// Command pointer typedef
-	typedef double (T::*CostFunction)(Array<double>&);
+	typedef double (T::*SimplexCostFunction)(const Array<double>& alpha);
 
 
 	/*
@@ -49,10 +49,10 @@ template<class T> class Simplex
 	double parameterOffset_;
 	// Maximum fraction by which to randomise when generating initial vertices
 	double initVariation_;
-	// Dissolve pointer (used to call costFunction_)
-	T* classPtr_;
+	// Object (used to call costFunction_)
+	T& object_;
 	// Cost function pointer
-	CostFunction costFunction_;
+	SimplexCostFunction costFunction_;
 	// Vertex array
 	Array< Array<double> > vertices_;
 	// Cost array
@@ -80,7 +80,7 @@ template<class T> class Simplex
 	{
 		// Compute cold cost of vertex first, to compare against bestAlpha
 		vertex -= parameterOffset_;
-		double coldCost = (classPtr_->*(costFunction_))(vertex);
+		double coldCost = (object_.*(costFunction_))(vertex);
 		vertex += parameterOffset_;
 		
 		// Check against best point found so far 
@@ -217,13 +217,12 @@ template<class T> class Simplex
 
 	public:
 	// Constructor
-	Simplex(T* classPtr, CostFunction costFunc)
+	Simplex(T& object, SimplexCostFunction costFunc) : object_(object)
 	{
 		// Private variables
 		nAlpha_ = 0;
 		nVertices_= 0;
 		betterPointsFound_ = 0;
-		classPtr_ = classPtr;
 		costFunction_ = costFunc;
 
 		// Set move parameters

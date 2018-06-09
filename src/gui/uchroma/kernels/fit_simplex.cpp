@@ -34,7 +34,7 @@ bool FitKernel::simplexMinimise(Array<double>& alpha)
 
 	// Setup the simplex minimiser 
 	Messenger::print("Initialising Simplex minimiser");
-        Simplex<FitKernel> simplex(this, &FitKernel::sosError);
+        Simplex<FitKernel> simplex(*this, &FitKernel::sosError);
 
 	simplex.initialise(alpha, 0.0, 0.01);
 

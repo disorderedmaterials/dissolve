@@ -675,11 +675,11 @@ const char* FitKernel::minimisationMethod(FitKernel::MinimisationMethod id)
 }
 
 // Generate SOS error for current targets
-double FitKernel::sosError(Array<double>& alpha)
+double FitKernel::sosError(const Array<double>& alpha)
 {
 	// Poke current values back into the equation variables
 	int n = 0;
-	for (RefListItem<EquationVariable,bool>* ri = fitVariables_.first(); ri != NULL; ri = ri->next) ri->item->variable()->set(alpha[n++]);
+	for (RefListItem<EquationVariable,bool>* ri = fitVariables_.first(); ri != NULL; ri = ri->next) ri->item->variable()->set(alpha.value(n++));
 	
 	// Generate new data from current variable values
 	if (!currentFitRange_->calculateValues(equation_, xVariable_, zVariable_, usedReferences_)) return -1.0;
@@ -702,8 +702,8 @@ double FitKernel::sosError(Array<double>& alpha)
 		// Grab variable from reflist item
 		fitVar = ri->item;
 
-		if (fitVar->minimumLimitEnabled() && (alpha[n] < fitVar->minimumLimit())) penalty += pow(fitVar->minimumLimit() - alpha[n], 2.0) * 1000.0;
-		if (fitVar->maximumLimitEnabled() && (alpha[n] > fitVar->maximumLimit())) penalty += pow(alpha[n] - fitVar->maximumLimit(), 2.0) * 1000.0;
+		if (fitVar->minimumLimitEnabled() && (alpha.value(n) < fitVar->minimumLimit())) penalty += pow(fitVar->minimumLimit() - alpha.value(n), 2.0) * 1000.0;
+		if (fitVar->maximumLimitEnabled() && (alpha.value(n) > fitVar->maximumLimit())) penalty += pow(alpha.value(n) - fitVar->maximumLimit(), 2.0) * 1000.0;
 	}
 
 	return sos * penalty;
