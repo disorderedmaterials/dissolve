@@ -60,6 +60,9 @@
 // Speed of light (m s-1)
 #define SPEEDOFLIGHT 299792458
 
+// 2 * sqrt(2 log 2)
+#define TWOSQRT2LN2 2.354820045
+
 /*
  * Conversion from atomic units to kJ/mol for Electrostatic Energy / Forces
  *
