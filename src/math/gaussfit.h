@@ -32,7 +32,7 @@ class GaussFit
 {
 	public:
 	// Constructor / Destructor
-	GaussFit(const XYData& referenceData, int kzSmoothK = 0, int kzSmoothM = 0);
+	GaussFit(const XYData& referenceData);
 
 
 	/*
@@ -49,34 +49,38 @@ class GaussFit
 	Array<double> x_;
 	// Amplitudes
 	Array<double> A_;
-	// C values ( = FWHM / (2 * sqrt(2 log 2))
-	Array<double> c_;
+	// FWHM values
+	Array<double> fwhm_;
 
 	private:
-	// Generate full data and FT from current parameters, ignoring all Gaussians whose width coefficient is below the provided value
-	void generateData(double cMin = -1.0);
+	// Generate full approximation from current parameters
+	void generateApproximation(bool realSpace);
+	// Add contribution to specified XYData
+	void addFunction(XYData& data, bool realSpace, double xCentre, double A, double fwhm) const;
+	// Return value of Gaussian at specified x value
+	double gaussian(double x, double xCentre, double A, double FWHM) const;
+	// Return Fourier transform of Gaussian at specified x value
+	double gaussianFT(double x, double xCentre, double A, double FWHM) const;
 
 	public:
-	// Perform initial fit to source data, specifying number of Gaussians to use uniformly across source data range
-	double initialise(int nGaussians, double fwhm);
-	// Perform initial fit to source data, specifying spacing between Gaussians
-	double initialise(double gaussianSpacing, double fwhm);
 	// Return approximate function
 	const XYData& approximation() const;
-	// Return Fourier transform of approximate function, ignoring all Gaussians whose width coefficient is below the provided value
-	XYData fourierTransform(double xMin, double xStep, double xMax, double cMin = -1.0) const;
+	// Calculate and return approximate function in requested space
+	XYData approximation(bool realSpace, double factor, double xMin, double xStep, double xMax, double fwhmFactor = 1.0) const;
 	// Set current parameters
-	bool set(const Array<double>& x, const Array<double>& A, const Array<double>& c);
+	bool set(const Array<double>& x, const Array<double>& A, const Array<double>& fwhm);
 	// Return number of Gaussians in fit
 	int nGaussians() const;
 	// Return current function centres
 	const Array<double>& x() const;
 	// Return current amplitudes
 	const Array<double>& A() const;
-	// Return current C values
-	const Array<double>& c() const;
+	// Return current full-width half-maximum values
+	const Array<double>& fwhm() const;
 	// Save coefficients to specified file
 	bool saveCoefficients(const char* filename) const;
+	// Print coefficients
+	void printCoefficients() const;
 	// Save Fourier-transformed Gaussians to individual files
 	bool saveFTGaussians(const char* filenamePrefix, double xStep = -1.0) const;
 
@@ -85,32 +89,42 @@ class GaussFit
 	 * Fitting
 	 */
 	private:
-	// Difference function between reference and approximate datsets
-	XYData referenceDelta_;
 	// Current error
 	double currentError_;
-	// Centre coordinates of Gaussians currently being fit
-	Array<double> fitX_;
+	// Whether Gaussians being fit are in real or reciprocal space
+	bool alphaReal_;
+	// Indices of Gaussians being fit
+	Array<int> alphaIndex_;
+	// Precalculated function data
+	Array2D<double> functions_;
+
+	private:
+	// Update precalculated function data (using A = 1.0)
+	void updatePrecalculatedFunctions();
 
 	public:
-	// Construct suitable representation with minimal Gaussians automatically
-	double construct(double requiredError, int maxGaussians = -1);
-	// Re-fit to source data, starting from current parameters
-	double reFit();
+	// Construct suitable representation in with minimal real-space Gaussians
+	double constructReal(double requiredError, int maxGaussians = -1);
+	// Construct function representation in reciprocal space, spacing Gaussians out evenly in real space up to rMax
+	double constructReciprocal(double rMax, int nGaussians, double sigmaQ = 0.02);
+	// Re-fit amplitudes in specified space, starting from current parameters
+	double reFitA(bool realSpace, int sampleSize = 10, int overlap = 2, int nLoops = 3);
 
 
 	/*
 	 * Cost Functions
 	 */
 	private:
-	// Return percentage error between reference data and approximate data augmented with specified Gaussian
-	double referenceError(double xCentre, double A, double C) const;
-	// Two-parameter cost function over full sourceData, using current approximateData_ and alpha array containing new trial A and c values
-	double costAmplitudeWidthStaticTrial(double* alpha, int nAlpha);
-	// Three-parameter cost function over full sourceData, using current approximateData_ and alpha array containing new trial x, A and c values
-	double costAmplitudeWidthXCentreStaticTrial(double* alpha, int nAlpha);
-	// Two-parameter cost function, with alpha array containing A and c values
-	double costAmplitudeWidth(double* alpha, int nAlpha);
+	// One-parameter cost function (amplitude) with alpha array containing A values, including current approximate data into sum
+	double costAnalyticA(const Array<double>& alpha);
+	// Two-parameter cost function (amplitude and FWHM) with alpha array containing A and FWHM values, including current approximate data into sum
+	double costAnalyticAF(const Array<double>& alpha);
+	// Two-parameter cost function (amplitude and xCentre) with alpha array containing A and FWHM values, including current approximate data into sum
+	double costAnalyticAX(const Array<double>& alpha);
+	// Three-parameter cost function (amplitude, FWHM, and xCentre) with alpha array containing A and FWHM values, including current approximate data into sum
+	double costAnalyticAFX(const Array<double>& alpha);
+	// One-parameter cost function (amplitude) using pre-calculated function array, including current approximate data in sum
+	double costTabulatedA(const Array<double>& alpha);
 };
 
 #endif
