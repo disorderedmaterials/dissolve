@@ -19,6 +19,8 @@ add_library(math
   mathfunc.h
   matrix3.h
   matrix4.h
+  mc.h
+  praxis.h
   svd.h
   windowfunction.h
 )
