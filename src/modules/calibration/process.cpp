@@ -26,7 +26,7 @@
 #include "classes/partialset.h"
 #include "base/sysfunc.h"
 #include "templates/genericlisthelper.h"
-#include "templates/praxis.h"
+#include "math/praxis.h"
 
 // Return whether the Module has a processing stage
 bool CalibrationModule::hasProcessing()
