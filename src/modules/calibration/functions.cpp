@@ -37,10 +37,11 @@ CalibrationModuleCostFunctions::CalibrationModuleCostFunctions(Dissolve& dissolv
 }
 
 // Cost function for intraBroadening minimisation
-double CalibrationModuleCostFunctions::intraBroadeningCost(double* alpha, int nAlpha)
+double CalibrationModuleCostFunctions::intraBroadeningCost(const Array<double>& alpha)
 {
 	// Store alpha parameters in the BroadeningFunction in the associated RDF modules
 	int alphaIndex = 0;
+	const int nAlpha = alpha.nItems();
 	RefListIterator<Module,bool> rdfModuleIterator(intraBroadeningModules_);
 	while (Module* rdfModule = rdfModuleIterator.iterate())
 	{
@@ -55,7 +56,7 @@ double CalibrationModuleCostFunctions::intraBroadeningCost(double* alpha, int nA
 				Messenger::error("Parameters required by BroadeningFunctions exceeds number available in alpha array.\n");
 				return 100.0;
 			}
-			broadening.parameters()[n] = alpha[alphaIndex];
+			broadening.parameters()[n] = alpha.value(alphaIndex);
 			++alphaIndex;
 		}
 

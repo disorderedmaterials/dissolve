@@ -151,9 +151,9 @@ class RefineModule : public Module
 	// Return value of fit equation given specified parameters
 	inline double fitEquation(double x, double xCentre, double delta, double widthSquared, double AL, double AC, double AR);
 	// Two-exponential, 5-parameter cost function for modifyBondTerms() fitting
-	double costFunction2Exp(double x[], int n);
+	double costFunction2Exp(const Array<double>& alpha);
 	// Three-exponential, 6-parameter cost function for modifyBondTerms() fitting
-	double costFunction3Exp(double x[], int n);
+	double costFunction3Exp(const Array<double>& alpha);
 	// Sum fitting equation with the specified parameters into the specified XYData
 	void sumFitEquation(XYData& target, double xCentre, double delta, double widthSquared, double AL, double AC, double AR);
 

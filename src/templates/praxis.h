@@ -26,12 +26,13 @@
 #define DISSOLVE_PRAXIS_H
 
 #include "base/messenger.h"
+#include "templates/array.h"
 #include <iomanip>
 
 template <class T> class PrAxis
 {
 	// Command pointer typedef
-	typedef double (T::*PrAxisCostFunction)(double x[], int n);
+	typedef double (T::*PrAxisCostFunction)(const Array<double>& alpha);
 
 	public:
 	// Constructor
@@ -52,8 +53,8 @@ template <class T> class PrAxis
 	private:
 	//****************************************************************************80
 	
-	double flin ( int n, int jsearch, double l, PrAxisCostFunction f, 
-		double x[], int &nf, double v[], double q0[], double q1[], double &qd0, 
+	double flin ( const Array<double> alpha, int jsearch, double l, PrAxisCostFunction f, 
+		int &nf, double v[], double q0[], double q1[], double &qd0, 
 		double &qd1, double &qa, double &qb, double &qc )
 	
 	//****************************************************************************80
@@ -125,10 +126,11 @@ template <class T> class PrAxis
 	//
 	{
 		int i;
-		double *t;
 		double value;
 	
-		t = new double[n];
+		int n = alpha.nItems();
+		Array<double> t(n);
+
 	//
 	//  The search is linear.
 	//
@@ -136,7 +138,7 @@ template <class T> class PrAxis
 		{
 			for ( i = 0; i < n; i++ )
 			{
-				t[i] = x[i] + l * v[i+jsearch*n];
+				t[i] = alpha.value(i) + l * v[i+jsearch*n];
 			}
 		}
 	//
@@ -150,7 +152,7 @@ template <class T> class PrAxis
 	
 			for ( i = 0; i < n; i++ )
 			{
-				t[i] = qa * q0[i] + qb * x[i] + qc * q1[i];
+				t[i] = qa * q0[i] + qb * alpha.value(i) + qc * q1[i];
 			}
 		}
 	//
@@ -160,9 +162,7 @@ template <class T> class PrAxis
 	//
 	//  Evaluate the function.
 	//
-		value = (object_.*f) ( t, n );
-	
-		delete [] t;
+		value = (object_.*f) ( t );
 	
 		return value;
 	}
@@ -595,8 +595,8 @@ template <class T> class PrAxis
 	}
 	//****************************************************************************80
 	
-	void minny ( int n, int jsearch, int nits, double &d2, double &x1, double &f1, 
-		bool fk, PrAxisCostFunction f, double x[], double t, double h, 
+	void minny ( Array<double>& alpha, int jsearch, int nits, double &d2, double &x1, double &f1, 
+		bool fk, PrAxisCostFunction f, double t, double h, 
 		double v[], double q0[], double q1[], int &nl, int &nf, double dmin, 
 		double ldt, double &fx, double &qa, double &qb, double &qc, double &qd0, 
 		double &qd1 )
@@ -696,6 +696,7 @@ template <class T> class PrAxis
 		double fm;
 		int i;
 		int k;
+		int n = alpha.nItems();
 		double m2;
 		double m4;
 		double machep;
@@ -723,7 +724,7 @@ template <class T> class PrAxis
 	//
 	//  Find the step size.
 	//
-		s = r8vec_norm ( n, x );
+		s = r8vec_norm ( alpha.nItems(), alpha.array() );
 	
 		if ( dz )
 		{
@@ -762,7 +763,7 @@ template <class T> class PrAxis
 			}
 	
 			x1 = temp * t2;
-			f1 = flin ( n, jsearch, x1, f, x, nf, v, q0, q1, qd0, qd1, qa, qb, qc );
+			f1 = flin ( alpha, jsearch, x1, f, nf, v, q0, q1, qd0, qd1, qa, qb, qc );
 		}
 	
 		if ( f1 <= fm )
@@ -786,7 +787,7 @@ template <class T> class PrAxis
 					x2 = - x1;
 				}
 	
-				f2 = flin ( n, jsearch, x2, f, x, nf, v, q0, q1, qd0, qd1, qa, qb, qc );
+				f2 = flin ( alpha, jsearch, x2, f, nf, v, q0, q1, qd0, qd1, qa, qb, qc );
 	
 				if ( f2 <= fm )
 				{
@@ -839,7 +840,7 @@ template <class T> class PrAxis
 	
 			for ( ; ; )
 			{
-				f2 = flin ( n, jsearch, x2, f, x, nf, v, q0, q1, qd0, qd1, qa, qb, qc );
+				f2 = flin ( alpha, jsearch, x2, f, nf, v, q0, q1, qd0, qd1, qa, qb, qc );
 	
 				if ( nits <= k || f2 <= f0 )
 				{
@@ -907,7 +908,7 @@ template <class T> class PrAxis
 		{
 			for ( i = 0; i < n; i++ )
 			{
-				x[i] = x[i] + x1 * v[i+jsearch*n];
+				alpha[i] = alpha[i] + x1 * v[i+jsearch*n];
 			}
 		}
 	
@@ -980,7 +981,7 @@ template <class T> class PrAxis
 	}
 	//****************************************************************************80
 	
-	void quad ( int n, PrAxisCostFunction f, double x[], double t, 
+	void quad ( Array<double>& alpha, PrAxisCostFunction f, double t, 
 		double h, double v[], double q0[], double q1[], int &nl, int &nf, double dmin, 
 		double ldt, double &fx, double &qf1, double &qa, double &qb, double &qc, 
 		double &qd0, double &qd1 )
@@ -1050,6 +1051,7 @@ template <class T> class PrAxis
 		bool fk;
 		int i;
 		int jsearch;
+		int n = alpha.nItems();
 		double l;
 		int nits;
 		double s;
@@ -1062,15 +1064,15 @@ template <class T> class PrAxis
 	
 		for ( i = 0; i < n; i++ )
 		{
-			temp  = x[i];
-			x[i]  = q1[i];
+			temp  = alpha[i];
+			alpha[i]  = q1[i];
 			q1[i] = temp;
 		}
 	
 		qd1 = 0.0;
 		for ( i = 0; i < n; i++ )
 		{
-			qd1 = qd1 + ( x[i] - q1[i] ) * ( x[i] - q1[i] );
+			qd1 = qd1 + ( alpha[i] - q1[i] ) * ( alpha[i] - q1[i] );
 		}
 		qd1 = sqrt ( qd1 );
 	
@@ -1091,7 +1093,7 @@ template <class T> class PrAxis
 			value = qf1;
 			fk = true;
 	
-			minny ( n, jsearch, nits, s, l, value, fk, f, x, t, 
+			minny ( alpha, jsearch, nits, s, l, value, fk, f, t, 
 				h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1 );
 	
 			qa =                 l * ( l - qd1 )       / ( qd0 + qd1 ) / qd0;
@@ -1104,8 +1106,8 @@ template <class T> class PrAxis
 		for ( i = 0; i < n; i++ )
 		{
 			s = q0[i];
-			q0[i] = x[i];
-			x[i] = qa * s + qb * x[i] + qc * q1[i];
+			q0[i] = alpha[i];
+			alpha[i] = qa * s + qb * alpha[i] + qc * q1[i];
 		}
 	
 		return;
@@ -1945,7 +1947,7 @@ template <class T> class PrAxis
 
 	//****************************************************************************80
 
-	double praxis ( double t0, double h0, int n, int prin, double x[], PrAxisCostFunction f )
+	double praxis ( double t0, double h0, Array<double>& x, int prin, PrAxisCostFunction f )
 
 	//****************************************************************************80
 	//
@@ -2098,6 +2100,7 @@ template <class T> class PrAxis
 	//
 	//  Allocation.
 	//
+		int n = x.nItems();
 		d = new double[n];
 		q0 = new double[n];
 		q1 = new double[n];
@@ -2143,7 +2146,7 @@ template <class T> class PrAxis
 		kt = 0;
 		nl = 0;
 		nf = 1;
-		fx = (object_.*f) ( x, n );
+		fx = (object_.*f) ( x );
 		qf1 = fx;
 		t = small + fabs ( t0 );
 		t2 = t;
@@ -2172,12 +2175,12 @@ template <class T> class PrAxis
 		qc = 0.0;
 		qd0 = 0.0;
 		qd1 = 0.0;
-		r8vec_copy ( n, x, q0 );
-		r8vec_copy ( n, x, q1 );
+		r8vec_copy ( n, x.array(), q0 );
+		r8vec_copy ( n, x.array(), q1 );
 	
 		if ( 0 < prin )
 		{
-			print2 ( n, x, prin, fx, nf, nl );
+			print2 ( n, x.array(), prin, fx, nf, nl );
 		}
 	//
 	//  The main loop starts here.
@@ -2196,7 +2199,7 @@ template <class T> class PrAxis
 			value = fx;
 			fk = false;
 	
-			minny ( n, jsearch, nits, d2, s, value, fk, f, x, t, 
+			minny ( x, jsearch, nits, d2, s, value, fk, f, t, 
 				h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1 );
 	
 			d[0] = d2;
@@ -2221,7 +2224,7 @@ template <class T> class PrAxis
 	//
 			for ( k = 2; k <= n; k++ )
 			{
-				r8vec_copy ( n, x, y );
+				r8vec_copy ( x.nItems(), x.array(), y );
 	
 				sf = fx;
 	
@@ -2250,7 +2253,7 @@ template <class T> class PrAxis
 							}
 						}
 	
-						fx = (object_.*f) ( x, n );
+						fx = (object_.*f) ( x );
 						nf = nf + 1;
 					}
 	//
@@ -2267,7 +2270,7 @@ template <class T> class PrAxis
 						value = fx;
 						fk = false;
 	
-						minny ( n, jsearch, nits, d2, s, value, fk, f, x, t, 
+						minny ( x, jsearch, nits, d2, s, value, fk, f, t, 
 							h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1 );
 	
 						d[k2-1] = d2;
@@ -2319,7 +2322,7 @@ template <class T> class PrAxis
 					value = fx;
 					fk = false;
 	
-					minny ( n, jsearch, nits, d2, s, value, fk, f, x, t, 
+					minny ( x, jsearch, nits, d2, s, value, fk, f, t, 
 						h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1 );
 	
 					d[k2-1] = d2;
@@ -2369,7 +2372,7 @@ template <class T> class PrAxis
 					value = f1;
 					fk = true;
 	
-					minny ( n, jsearch, nits, d2, lds, value, fk, f, x, t, 
+					minny ( x, jsearch, nits, d2, lds, value, fk, f, t, 
 						h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1 );
 	
 					d[k-1] = d2;
@@ -2428,7 +2431,7 @@ template <class T> class PrAxis
 	//
 	//  Try quadratic extrapolation in case we are in a curved valley.
 	//
-			quad ( n, f, x, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qf1, 
+			quad ( x, f, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qf1, 
 				qa, qb, qc, qd0, qd1 );
 	
 			for ( j = 0; j < n; j++ )
@@ -2611,7 +2614,7 @@ template <class T> class PrAxis
 	// Perform minimisation
 	double minimise(double tolerance = 1.0e-5, double maxStep = 0.01, int printLevel = 0)
 	{
-		double value = praxis(tolerance, maxStep, values_.nItems(), printLevel, values_.array(), costFunction_);
+		double value = praxis(tolerance, maxStep, values_, printLevel, costFunction_);
 
 		// Set minimised values back into their original variables
 		for (int n=0; n<targets_.nItems(); ++n) (*targets_[n]) = values_[n];

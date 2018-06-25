@@ -262,18 +262,17 @@ double RefineModule::fitEquation(double x, double xCentre, double delta, double 
 }
 
 // Three-exponential, 6-parameter cost function for modifyBondTerms() fitting
-double RefineModule::costFunction3Exp(double params[], int n)
+double RefineModule::costFunction3Exp(const Array<double>& alpha)
 {
 	/*
-	 * params[] are as follows:
+	 * alpha[] are as follows:
 	 *
-	 * params[0] = x intercept of function
-	 * params[1] = position difference about x intercept, delta
-	 * params[2] = width-squared of function lobes
-	 * params[3] = amplitude of left function lobe
-	 * params[4] = amplitude of central function lobe
-	 * params[5] = amplitude of right function lobe
-	 * 
+	 * alpha[0] = x intercept of function
+	 * alpha[1] = position difference about x intercept, delta
+	 * alpha[2] = width-squared of function lobes
+	 * alpha[3] = amplitude of left function lobe
+	 * alpha[4] = amplitude of central function lobe
+	 * alpha[5] = amplitude of right function lobe
 	 */
 
 	// We will evaluate the fit over r +/- window
@@ -281,8 +280,8 @@ double RefineModule::costFunction3Exp(double params[], int n)
 	const double windowDelta = 0.01;
 	double sos = 0.0, delta, func;
 	int nPoints = 0;
-	double x = params[0] - window;
-	const double xMax = params[0] + window;
+	double x = alpha.value(0) - window;
+	const double xMax = alpha.value(0) + window;
 	while (x <= xMax)
 	{
 		// Check x against limits of function
@@ -294,13 +293,13 @@ double RefineModule::costFunction3Exp(double params[], int n)
 		else if (x > fitData_.xLast()) break;
 
 		// Evaluate the function
-		func = fitEquation(x, params[0], params[1], params[2], params[3], params[4], params[5]);
+		func = fitEquation(x, alpha.value(0), alpha.value(1), alpha.value(2), alpha.value(3), alpha.value(4), alpha.value(5));
 		delta = fitData_.interpolated(x) - func;
 		sos += delta*delta;
 		++nPoints;
 
-		// Add on penalty for params[0] (the x intercept) straying too far from the starting value
-		delta = fabs(xCentreStart_ - params[0]) - xCentreDeltaLimit_;
+		// Add on penalty for alpha.value(0] (the x intercept) straying too far from the starting value
+		delta = fabs(xCentreStart_ - alpha.value(0)) - xCentreDeltaLimit_;
 		if (delta > 0.0) sos += (delta * 10000.0)*(delta * 10000.0);
 
 		x += windowDelta;
@@ -310,18 +309,51 @@ double RefineModule::costFunction3Exp(double params[], int n)
 }
 
 // Two-exponential, 5-parameter cost function for modifyBondTerms() fitting
-double RefineModule::costFunction2Exp(double params[], int n)
+double RefineModule::costFunction2Exp(const Array<double>& alpha)
 {
-	// Copy parameters, adding in zero for AC
-	double x[6];
-	x[0] = params[0];
-	x[1] = params[1];
-	x[2] = params[2];
-	x[3] = params[3];
-	x[4] = 0.0;
-	x[5] = params[4];
+	/*
+	 * alpha[] are as follows:
+	 *
+	 * alpha[0] = x intercept of function
+	 * alpha[1] = position difference about x intercept, delta
+	 * alpha[2] = width-squared of function lobes
+	 * alpha[3] = amplitude of left function lobe
+	 * alpha[4] = amplitude of right function lobe
+	 * 
+	 * Amplitude of central obe is zero
+	 */
 
-	return costFunction3Exp(x, 6);
+	// We will evaluate the fit over r +/- window
+	const double window = 0.5;
+	const double windowDelta = 0.01;
+	double sos = 0.0, delta, func;
+	int nPoints = 0;
+	double x = alpha.value(0) - window;
+	const double xMax = alpha.value(0) + window;
+	while (x <= xMax)
+	{
+		// Check x against limits of function
+		if (x < fitData_.xFirst())
+		{
+			x += windowDelta;
+			continue;
+		}
+		else if (x > fitData_.xLast()) break;
+
+		// Evaluate the function
+		func = fitEquation(x, alpha.value(0), alpha.value(1), alpha.value(2), alpha.value(3), 0.0, alpha.value(4));
+		delta = fitData_.interpolated(x) - func;
+		sos += delta*delta;
+		++nPoints;
+
+		// Add on penalty for alpha.value(0] (the x intercept) straying too far from the starting value
+		delta = fabs(xCentreStart_ - alpha.value(0)) - xCentreDeltaLimit_;
+		if (delta > 0.0) sos += (delta * 10000.0)*(delta * 10000.0);
+
+		x += windowDelta;
+	}
+
+	return sos;
 }
 
 // Sum fitting equation with the specified parameters into the specified XYData
