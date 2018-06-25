@@ -7,6 +7,7 @@ add_library(math
   mathfunc.cpp
   matrix3.cpp
   matrix4.cpp
+  poissonfit.cpp
   svd.cpp
   windowfunction.cpp
 
@@ -20,6 +21,7 @@ add_library(math
   matrix3.h
   matrix4.h
   mc.h
+  poissonfit.h
   praxis.h
   svd.h
   windowfunction.h
