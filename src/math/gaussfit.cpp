@@ -126,6 +126,17 @@ const Array<double>& GaussFit::A() const
 	return A_;
 }
 
+// Return amplitudes (and xCentres) as XYData
+XYData GaussFit::Ax() const
+{
+	XYData data;
+
+	data.arrayX() = x_;
+	data.arrayY() = A_;
+
+	return data;
+}
+
 // Return current full-width half-maximum values
 const Array<double>& GaussFit::fwhm() const
 {
@@ -347,7 +358,7 @@ double GaussFit::constructReal(double requiredError, int maxGaussians)
 }
 
 // Construct function representation in reciprocal space, spacing Gaussians out evenly in real space up to rMax
-double GaussFit::constructReciprocal(double rMax, int nGaussians, double sigmaQ)
+double GaussFit::constructReciprocal(double rMax, int nGaussians, int nIterations, double initialStepSize, double sigmaQ, int smoothingThreshold, int smoothingK, int smoothingM)
 {
 	// Clear any existing data
 	x_.clear();
@@ -371,7 +382,7 @@ double GaussFit::constructReciprocal(double rMax, int nGaussians, double sigmaQ)
 
 	// Perform Monte Carlo minimisation on the amplitudes
 	MonteCarloMinimiser<GaussFit> gaussMinimiser(*this, &GaussFit::costTabulatedA);
-	gaussMinimiser.enableParameterSmoothing(100, 3, 3);
+	gaussMinimiser.enableParameterSmoothing(smoothingThreshold, smoothingK, smoothingM);
 	alphaReal_ = false;
 
 	for (int n=0; n<nGaussians_; ++n)
@@ -381,7 +392,7 @@ double GaussFit::constructReciprocal(double rMax, int nGaussians, double sigmaQ)
 	}
 
 	// Optimise this set of Gaussians
-	currentError_ = gaussMinimiser.minimise(5000, 0.01);
+	currentError_ = gaussMinimiser.minimise(nIterations, initialStepSize);
 
 	// Regenerate approximation and calculate percentage error of fit
 	generateApproximation(false);
@@ -441,7 +452,7 @@ double GaussFit::reFitA(bool realSpace, int sampleSize, int overlap, int nLoops)
 
 			// Optimise this set of Gaussians
 			currentError_ = gaussMinimiser.minimise(100, 0.01);
-			printf("G = %i, error = %f\n", g, currentError_);
+			Messenger::printVerbose("MonteCarloMinimiser<T>::reFit() - G = %i, error = %f\n", g, currentError_);
 
 			// If we are not at the end of the Gaussian array, move the index backwards so the next set overlaps a little with this one
 			if (g < nGaussians_) g -= overlap;

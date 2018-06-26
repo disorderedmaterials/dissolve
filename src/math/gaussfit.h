@@ -75,6 +75,8 @@ class GaussFit
 	const Array<double>& x() const;
 	// Return current amplitudes
 	const Array<double>& A() const;
+	// Return amplitudes (and xCentres) as XYData
+	XYData Ax() const;
 	// Return current full-width half-maximum values
 	const Array<double>& fwhm() const;
 	// Save coefficients to specified file
@@ -106,7 +108,7 @@ class GaussFit
 	// Construct suitable representation in with minimal real-space Gaussians
 	double constructReal(double requiredError, int maxGaussians = -1);
 	// Construct function representation in reciprocal space, spacing Gaussians out evenly in real space up to rMax
-	double constructReciprocal(double rMax, int nGaussians, double sigmaQ = 0.02);
+	double constructReciprocal(double rMax, int nGaussians, int nIterations = 1000, double initialStepSize = 0.01, double sigmaQ = 0.02, int smoothingThreshold = 0, int smoothingK = 3, int smoothingM = 3);
 	// Re-fit amplitudes in specified space, starting from current parameters
 	double reFitA(bool realSpace, int sampleSize = 10, int overlap = 2, int nLoops = 3);
 
