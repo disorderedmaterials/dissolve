@@ -526,14 +526,14 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				else if (inversionMethod == RefineModule::DirectGaussianPotentialInversion)
 				{
 					// Perform a Gaussian fit and do the inverse FT to get the delta [g(r) - 1]
-					GaussFit gaussFit(deltaSQ.ref(i, j), 5, 5);
-					double error = gaussFit.construct(gaussianAccuracy);
+					GaussFit gaussFit(deltaSQ.ref(i, j));
+					double error = 999.999; //gaussFit.constructReciprocal();
 					Messenger::print("Fitted function has error of %f%% with original delta S(Q) (nGaussians = %i).\n", error, gaussFit.nGaussians());
 
 					// Store fitted parameters
 					GenericListHelper< Array<double> >::realise(dissolve.processingModuleData(), CharString("%s-%s-GaussianX", at1->name(), at2->name()), uniqueName_, GenericItem::InRestartFileFlag) = gaussFit.x();
 					GenericListHelper< Array<double> >::realise(dissolve.processingModuleData(), CharString("%s-%s-GaussianA", at1->name(), at2->name()), uniqueName_, GenericItem::InRestartFileFlag) = gaussFit.A();
-					GenericListHelper< Array<double> >::realise(dissolve.processingModuleData(), CharString("%s-%s-GaussianC", at1->name(), at2->name()), uniqueName_, GenericItem::InRestartFileFlag) = gaussFit.c();
+					GenericListHelper< Array<double> >::realise(dissolve.processingModuleData(), CharString("%s-%s-GaussianFWHM", at1->name(), at2->name()), uniqueName_, GenericItem::InRestartFileFlag) = gaussFit.fwhm();
 
 					// DEBUG
 					if (false)
@@ -542,11 +542,11 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 						gaussFit.approximation().save(CharString("%s-%s.approx", at1->name(), at2->name()));
 						gaussFit.saveCoefficients(CharString("%s-%s.coeff", at1->name(), at2->name()));
 // 						gaussFit.saveFTGaussians(CharString("%s-%s", at1->name(), at2->name()), 0.01);
-						gaussFit.fourierTransform(ppDelta, ppDelta, ppRange).save(CharString("%s-%s.ft", at1->name(), at2->name()));
+						gaussFit.approximation(true, 1.0 / (2 * PI * PI * combinedRho.ref(i,j)), ppDelta, ppDelta, ppRange).save(CharString("%s-%s.ft", at1->name(), at2->name()));
 					}
 
 					// Fourier transform the approximation, and store this as our inversion
-					inversion = gaussFit.fourierTransform(ppDelta, ppDelta, ppRange);
+					inversion = gaussFit.approximation(true, 1.0 / (2 * PI * PI * combinedRho.ref(i,j)), ppDelta, ppDelta, ppRange);
 					dPhiR = inversion;
 					dPhiR.arrayY() *= -1.0;
 				}
