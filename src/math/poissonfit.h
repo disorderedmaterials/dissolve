@@ -1,6 +1,6 @@
 /*
 	*** Poisson Function Approximation
-	*** src/math/poissonqfit.h
+	*** src/math/poissonfit.h
 	Copyright T. Youngs 2018
 
 	This file is part of Dissolve.
@@ -19,9 +19,10 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_POISSONQFIT_H
-#define DISSOLVE_POISSONQFIT_H
+#ifndef DISSOLVE_POISSONFIT_H
+#define DISSOLVE_POISSONFIT_H
 
+#include "math/functionspace.h"
 #include "templates/array.h"
 
 // Forward Declarations
@@ -32,15 +33,15 @@ class PoissonFit
 {
 	public:
 	// Constructor / Destructor
-	PoissonFit(const XYData& referenceQSpaceData, double rho);
+	PoissonFit(const XYData& referenceData);
 
 
 	/*
 	 * Data
 	 */
 	private:
-	// Reference XYData, in Q-space, to which we are performing the fit
-	const XYData& referenceData_;
+	// Reference XYData to which we are performing the fit
+	XYData referenceData_;
 	// Approximate (fitted) data
 	XYData approximateData_;
 	// Width coefficient for functions in real-space
@@ -53,28 +54,36 @@ class PoissonFit
 	double rMax_;
 	// Stepsize between function centres (in real space)
 	double rStep_;
+	// Broadening (decay) applied to functions in r-space
+	double rBroad_;
 	// Atomic density associated to reference data
 	double rho_;
 	// Number of functions used in fit
 	int nPoissons_;
 	// Function scale coefficients
 	Array<double> C_;
+	// Maximum value of exponential
+	const double expMax_;
 
 	private:
-	// Return function value at given x and specified parameters
-	double functionValue(const double x, const int n) const;
-	// Return Fourier transform of function at given Q index and specified parameters
-	double functionFT(const int qIndex, const int n) const;
 	// Generate full approximation from current parameters
-	void generateApproximation();
+	void generateApproximation(FunctionSpace::SpaceType space);
+	// Add contribution to specified XYData
+	void addFunction(XYData& data, FunctionSpace::SpaceType space, double C, const int nIndex) const;
+	// Return value of Poisson function at x value given specified power index
+	double poisson(const double x, const int nIndex) const;
+	// Return Fourier transform of Poisson function at Q index given specified power index
+	double poissonFT(const int qIndex, const int nIndex) const;
 
 	public:
 	// Return approximate function
 	const XYData& approximation() const;
+	// Calculate and return approximate function in requested space
+	XYData approximation(FunctionSpace::SpaceType space, double factor, double xMin, double xStep, double xMax) const; 
 	// Return Fourier transform of approximate function
 	XYData fourierTransform(double gammaMin, double gammaStep, double gammaMax) const;
 	// Set current parameters
-	bool set(const Array<double>& C, double sigmaQ = 0.02, double sigmaR = 0.08);
+	bool set(const Array<double>& C, FunctionSpace::SpaceType space, double sigmaQ = 0.02, double sigmaR = 0.08);
 	// Return number of functions in fit
 	int nFunctions() const;
 	// Return current C values
@@ -87,33 +96,40 @@ class PoissonFit
 	 * Fitting
 	 */
 	private:
-	// Difference function between reference and approximate datsets
-	XYData referenceDelta_;
 	// Current error
 	double currentError_;
+	// Function space in which current alpha are being fit
+	FunctionSpace::SpaceType alphaSpace_;
 	// Precalculated terms
 	Array<double> sqrtOnePlusQSqSigmaSq_, arcTanQSigma_, oneMinusQSqSigmaSq_;
 	Array<int> n_, lnNPlusTwoFactorial_;
 	double sigmaRCubed_;
+	// Precalculated function data
+	Array2D<double> functions_;
+	// Indices of Gaussians being fit
+	Array<int> alphaIndex_;
 
 	private:
 	// Precalculate necessary terms
 	void preCalculateTerms();
+	// Update precalculated function data using specified C
+	void updatePrecalculatedFunctions(FunctionSpace::SpaceType space, double C = 1.0);
 
 	public:
-	// Construct suitable representation using givent number of Poissons spaced evenly over the real-space range specified
-	double construct(int nPoissons, double rMin, double rMax, double sigmaQ, double sigmaR);
-	// Re-fit to source data, starting from current parameters
-	double reFit();
+	// Construct suitable representation using given number of Poissons spaced evenly in real space up to rMax
+	double constructReciprocal(double rMax, int nPoissons, int nIterations = 1000, double initialStepSize = 0.01, double sigmaQ = 0.02, double sigmaR = 0.08, int smoothingThreshold = 0, int smoothingK = 3, int smoothingM = 3);
+	// Re-fit amplitudes in specified space, starting from current parameters
+	double reFitC(FunctionSpace::SpaceType space, int sampleSize = 10, int overlap = 2, int nLoops = 3);
 
 
 	/*
 	 * Cost Functions
 	 */
 	private:
-	// Cost function (all current C values)
-	double costAllC(double* alpha, int nAlpha);
-	double costAllC(const Array<double>& alpha);
+	// One-parameter cost function (coefficient) with alpha array containing C values, including current approximate data into sum
+	double costAnalyticC(const Array<double>& alpha);
+	// One-parameter cost function (coefficient) using pre-calculated function array, including current approximate data in sum
+	double costTabulatedC(const Array<double>& alpha);
 };
 
 #endif
