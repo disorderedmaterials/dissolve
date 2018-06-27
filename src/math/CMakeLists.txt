@@ -15,6 +15,7 @@ add_library(math
   constants.h
   cuboid.h
   doubleexp.h
+  functionspace.h
   gaussfit.h
   gj.h
   mathfunc.h

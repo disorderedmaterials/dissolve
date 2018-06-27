@@ -30,7 +30,7 @@ GaussFit::GaussFit(const XYData& referenceData)
 {
 	referenceData_ = referenceData;
 
-	alphaReal_ = true;
+	alphaSpace_ = FunctionSpace::RealSpace;
 	nGaussians_ = 0;
 }
 
@@ -39,38 +39,25 @@ GaussFit::GaussFit(const XYData& referenceData)
  */
 
 // Generate full approximation from current parameters
-void GaussFit::generateApproximation(bool realSpace)
+void GaussFit::generateApproximation(FunctionSpace::SpaceType space)
 {
 	approximateData_.templateFrom(referenceData_);
 
 	// Sum defined Gaussians
-	for (int n=0; n<nGaussians_; ++n) addFunction(approximateData_, realSpace, x_.value(n), A_.value(n), fwhm_.value(n));
+	for (int n=0; n<nGaussians_; ++n) addFunction(approximateData_, space, x_.value(n), A_.value(n), fwhm_.value(n));
 }
 
 // Add contribution to specified XYData
-void GaussFit::addFunction(XYData& data, bool realSpace, double xCentre, double A, double fwhm) const
+void GaussFit::addFunction(XYData& data, FunctionSpace::SpaceType space, double xCentre, double A, double fwhm) const
 {
 	// Functional form of function to add depends on whether we're fitting Gaussians or FTs of Gaussians
-	double x;
-	if (realSpace)
+	if (space == FunctionSpace::RealSpace)
 	{
-		for (int m=0; m<data.nPoints(); ++m)
-		{
-			x = data.x(m);
-
-			// Approximation to original function
-			data.addY(m, gaussian(x, xCentre, A, fwhm));
-		}
+		for (int m=0; m<data.nPoints(); ++m) data.addY(m, gaussian(data.x(m), xCentre, A, fwhm));
 	}
 	else
 	{
-		for (int m=0; m<data.nPoints(); ++m)
-		{
-			x = data.x(m);
-
-			// Approximation to original function
-			data.addY(m, gaussianFT(x, xCentre, A, fwhm));
-		}
+		for (int m=0; m<data.nPoints(); ++m) data.addY(m, gaussianFT(data.x(m), xCentre, A, fwhm));
 	}
 }
 
@@ -89,6 +76,12 @@ double GaussFit::gaussianFT(double x, double xCentre, double A, double FWHM) con
 	double c = FWHM / TWOSQRT2LN2;
 	const double xCx = xCentre*x;
 	return xCx > 0.0 ? A * exp(-(x*x*c*c)/2.0) * sin(xCx)/(xCx) : A * exp(-(x*x*c*c)/2.0);
+}
+
+// Return function value at specified x value in desired space
+double GaussFit::functionValue(FunctionSpace::SpaceType space, double x, double xCentre, double A, double FWHM) const
+{
+	return (space == FunctionSpace::RealSpace ? gaussian(x, xCentre, A, FWHM) : gaussianFT(x, xCentre, A, FWHM));
 }
 
 // Set current parameters
@@ -199,7 +192,7 @@ const XYData& GaussFit::approximation() const
 }
 
 // Calculate and return approximate function in requested space
-XYData GaussFit::approximation(bool realSpace, double preFactor, double xMin, double xStep, double xMax, double fwhmFactor) const
+XYData GaussFit::approximation(FunctionSpace::SpaceType space, double preFactor, double xMin, double xStep, double xMax, double fwhmFactor) const
 {
 	XYData ft;
 	double x = xMin;
@@ -210,7 +203,7 @@ XYData GaussFit::approximation(bool realSpace, double preFactor, double xMin, do
 	}
 
 	// Loop over defined Gaussians
-	for (int n=0; n<nGaussians_; ++n) addFunction(ft, realSpace, x_.value(n), A_.value(n), fwhm_.value(n)*fwhmFactor);
+	for (int n=0; n<nGaussians_; ++n) addFunction(ft, space, x_.value(n), A_.value(n), fwhm_.value(n)*fwhmFactor);
 
 	ft.arrayY() *= preFactor;
 
@@ -221,12 +214,24 @@ XYData GaussFit::approximation(bool realSpace, double preFactor, double xMin, do
  * Fitting
  */
 
-// Update precalculated function data (using A = 1.0)
-void GaussFit::updatePrecalculatedFunctions()
+// Update precalculated function data using specified A
+void GaussFit::updatePrecalculatedFunctions(FunctionSpace::SpaceType space, double A)
 {
-	for (int n=0; n<nGaussians_; ++n)
+	functions_.initialise(nGaussians_, referenceData_.nPoints());
+	
+	if (space == FunctionSpace::RealSpace)
 	{
-		for (int m=0; m<referenceData_.nPoints(); ++m) functions_.ref(n, m) = gaussianFT(referenceData_.x(m), x_[n], 1.0, fwhm_[n]);
+		for (int n=0; n<nGaussians_; ++n)
+		{
+			for (int m=0; m<referenceData_.nPoints(); ++m) functions_.ref(n, m) = gaussian(referenceData_.x(m), x_[n], A, fwhm_[n]);
+		}
+	}
+	else 
+	{
+		for (int n=0; n<nGaussians_; ++n)
+		{
+			for (int m=0; m<referenceData_.nPoints(); ++m) functions_.ref(n, m) = gaussianFT(referenceData_.x(m), x_[n], A, fwhm_[n]);
+		}
 	}
 }
 
@@ -280,7 +285,7 @@ double GaussFit::constructReal(double requiredError, int maxGaussians)
 
 				// Set up minimiser, minimising test Gaussian only
 				PrAxis<GaussFit> gaussMinimiser(*this, &GaussFit::costAnalyticAFX);
-				alphaReal_ = true;
+				alphaSpace_ = FunctionSpace::RealSpace;
 				gaussMinimiser.addTarget(trialA);
 				gaussMinimiser.addTarget(trialFWHM);
 				gaussMinimiser.addTarget(trialX);
@@ -367,7 +372,6 @@ double GaussFit::constructReciprocal(double rMax, int nGaussians, int nIteration
 	nGaussians_ = nGaussians;
 	approximateData_.templateFrom(referenceData_);
 
-	functions_.initialise(nGaussians_, referenceData_.nPoints());
 	double x, gDelta = rMax/nGaussians_;
 	for (int n=0; n<nGaussians_; ++n)
 	{
@@ -378,12 +382,12 @@ double GaussFit::constructReciprocal(double rMax, int nGaussians, int nIteration
 	}
 
 	// Update the tabulated functions
-	updatePrecalculatedFunctions();
+	updatePrecalculatedFunctions(FunctionSpace::ReciprocalSpace);
 
 	// Perform Monte Carlo minimisation on the amplitudes
 	MonteCarloMinimiser<GaussFit> gaussMinimiser(*this, &GaussFit::costTabulatedA);
 	gaussMinimiser.enableParameterSmoothing(smoothingThreshold, smoothingK, smoothingM);
-	alphaReal_ = false;
+	alphaSpace_ = FunctionSpace::ReciprocalSpace;
 
 	for (int n=0; n<nGaussians_; ++n)
 	{
@@ -394,18 +398,18 @@ double GaussFit::constructReciprocal(double rMax, int nGaussians, int nIteration
 	// Optimise this set of Gaussians
 	currentError_ = gaussMinimiser.minimise(nIterations, initialStepSize);
 
-	// Regenerate approximation and calculate percentage error of fit
-	generateApproximation(false);
-	currentError_ = referenceData_.error(approximateData_);
-
 	// Perform a final grouped refit of the amplitudes
-	reFitA(false);
+	reFitA(FunctionSpace::ReciprocalSpace);
+
+	// Regenerate approximation and calculate percentage error of fit
+	generateApproximation(FunctionSpace::ReciprocalSpace);
+	currentError_ = referenceData_.error(approximateData_);
 
 	return currentError_;
 }
 
 // Re-fit amplitudes in specified space, starting from current parameters
-double GaussFit::reFitA(bool realSpace, int sampleSize, int overlap, int nLoops)
+double GaussFit::reFitA(FunctionSpace::SpaceType space, int sampleSize, int overlap, int nLoops)
 {
 	/*
 	 * Our strategy for optimising the parameters with respect to the fit between approximate and source data will be as
@@ -426,24 +430,23 @@ double GaussFit::reFitA(bool realSpace, int sampleSize, int overlap, int nLoops)
 		while (g < nGaussians_)
 		{
 			// Generate the approximate data - we will subtract the Gaussians that we are fitting in the next loop
-			generateApproximation(realSpace);
+			generateApproximation(space);
 
 			// Clear the reference array of Gaussian indices
 			alphaIndex_.clear();
 
 			// Set up minimiser for the next batch
 			MonteCarloMinimiser<GaussFit> gaussMinimiser(*this, &GaussFit::costAnalyticA);
-			alphaReal_ = realSpace;
+			alphaSpace_ = space;
 
 			// Add Gaussian parameters as fitting targets
 			for (int n=0; n<sampleSize; ++n)
 			{
 				gaussMinimiser.addTarget(A_[g]);
-// 				gaussMinimiser.addTarget(fwhm_[g]);
 				alphaIndex_.add(g);
 
 				// Remove this Gaussian from the approximate data
-				addFunction(approximateData_, realSpace, x_[g], -A_[g], fwhm_[g]);
+				addFunction(approximateData_, space, x_[g], -A_[g], fwhm_[g]);
 
 				// Increase Gaussian index - if that was the last one, break now
 				++g;
@@ -452,7 +455,7 @@ double GaussFit::reFitA(bool realSpace, int sampleSize, int overlap, int nLoops)
 
 			// Optimise this set of Gaussians
 			currentError_ = gaussMinimiser.minimise(100, 0.01);
-			Messenger::printVerbose("MonteCarloMinimiser<T>::reFit() - G = %i, error = %f\n", g, currentError_);
+			Messenger::printVerbose("GaussFit::reFitA() - G = %i, error = %f\n", g, currentError_);
 
 			// If we are not at the end of the Gaussian array, move the index backwards so the next set overlaps a little with this one
 			if (g < nGaussians_) g -= overlap;
@@ -460,7 +463,7 @@ double GaussFit::reFitA(bool realSpace, int sampleSize, int overlap, int nLoops)
 	}
 
 	// Calculate the approximate function
-	generateApproximation(realSpace);
+	generateApproximation(space);
 
 	return referenceData_.error(approximateData_);
 }
@@ -475,7 +478,7 @@ double GaussFit::costAnalyticA(const Array<double>& alpha)
 	double sose = 0.0;
 	double multiplier = 1.0;
 
-	double A, fwhm, xCentre;
+	double A;
 	int g;
 
 	// Loop over data points, add in our Gaussian contributions, and 
@@ -492,7 +495,7 @@ double GaussFit::costAnalyticA(const Array<double>& alpha)
 			g = alphaIndex_[n];
 			A = alpha.value(n);
 
-			y += alphaReal_ ? gaussian(x, x_[g], A, fwhm_[g]) : gaussianFT(x, x_[g], A, fwhm_[g]);
+			y += functionValue(alphaSpace_, x, x_[g], A, fwhm_[g]);
 		}
 
 		dy = referenceData_.y(i) - y;
@@ -530,7 +533,7 @@ double GaussFit::costAnalyticAF(const Array<double>& alpha)
 			// Must check for FWHM approaching zero and penalise accordingly
 			if (fabs(fwhm) < 1.0e-5) ++multiplier;
 
-			y += alphaReal_ ? gaussian(x, xCentre, A, fwhm) : gaussianFT(x, xCentre, A, fwhm);
+			y += functionValue(alphaSpace_, x, xCentre, A, fwhm);
 		}
 
 		dy = referenceData_.y(i) - y;
@@ -568,7 +571,7 @@ double GaussFit::costAnalyticAX(const Array<double>& alpha)
 			// Must check for FWHM approaching zero and penalise accordingly
 			if (fabs(fwhm) < 1.0e-5) ++multiplier;
 
-			y += alphaReal_ ? gaussian(x, xCentre, A, fwhm) : gaussianFT(x, xCentre, A, fwhm);
+			y += functionValue(alphaSpace_, x, xCentre, A, fwhm);
 		}
 
 		dy = referenceData_.y(i) - y;
@@ -606,7 +609,7 @@ double GaussFit::costAnalyticAFX(const Array<double>& alpha)
 			// Must check for FWHM approaching zero and penalise accordingly
 			if (fabs(fwhm) < 1.0e-5) ++multiplier;
 
-			y += alphaReal_ ? gaussian(x, xCentre, A, fwhm) : gaussianFT(x, xCentre, A, fwhm);
+			y += functionValue(alphaSpace_, x, xCentre, A, fwhm);
 		}
 
 		dy = referenceData_.y(i) - y;
@@ -616,36 +619,12 @@ double GaussFit::costAnalyticAFX(const Array<double>& alpha)
 	return sose * multiplier;
 }
 
-// // Three-parameter cost function (amplitude, FWHM, and xCentre) in reciprocal space, with alpha array containing A and FWHM values, including current approximate data into sum
-// double GaussFit::costAnalyticReciprocal3(const Array<double>& alpha)
-// {
-// 	int nGauss = alpha.nItems() / 3;
-// 
-// 	// Copy current approximate data into a temporary array
-// 	XYData sum = approximateData_;
-// 	
-// 	double A, fwhm, xCentre;
-// 	for (int n=0; n<nGauss; ++n)
-// 	{
-// 		A = alpha.value(n*3);
-// 		fwhm = alpha.value(n*3+1);
-// 		xCentre = alpha.value(n*3+2);
-// 
-// 		// Must check for FWHM approaching zero
-// 		if (fabs(fwhm) < 1.0e-5) return currentError_*100.0;
-// 
-// 		for (int m=0; m<sum.nPoints(); ++m) sum.addY(m, gaussianFT(sum.x(m), xCentre, A, fwhm));
-// 	}
-// 
-// 	return referenceData_.error(sum);
-// }
-
 // One-parameter cost function (amplitude) using pre-calculated function array, including current approximate data in sum
 double GaussFit::costTabulatedA(const Array<double>& alpha)
 {
 	double sose = 0.0;
 
-	// Loop over data points, add in our Gaussian contributions, and 
+	// Loop over data points and sum contributions from tabulated functions on to the current approximate data
 	double y, dy;
 	int nAlpha = alpha.nItems();
 	for (int i=0; i<approximateData_.nPoints(); ++i)

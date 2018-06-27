@@ -542,11 +542,11 @@ bool RefineModule::process(Dissolve& dissolve, ProcessPool& procPool)
 						gaussFit.approximation().save(CharString("%s-%s.approx", at1->name(), at2->name()));
 						gaussFit.saveCoefficients(CharString("%s-%s.coeff", at1->name(), at2->name()));
 // 						gaussFit.saveFTGaussians(CharString("%s-%s", at1->name(), at2->name()), 0.01);
-						gaussFit.approximation(true, 1.0 / (2 * PI * PI * combinedRho.ref(i,j)), ppDelta, ppDelta, ppRange).save(CharString("%s-%s.ft", at1->name(), at2->name()));
+						gaussFit.approximation(FunctionSpace::RealSpace, 1.0 / (2 * PI * PI * combinedRho.ref(i,j)), ppDelta, ppDelta, ppRange).save(CharString("%s-%s.ft", at1->name(), at2->name()));
 					}
 
 					// Fourier transform the approximation, and store this as our inversion
-					inversion = gaussFit.approximation(true, 1.0 / (2 * PI * PI * combinedRho.ref(i,j)), ppDelta, ppDelta, ppRange);
+					inversion = gaussFit.approximation(FunctionSpace::RealSpace, 1.0 / (2 * PI * PI * combinedRho.ref(i,j)), ppDelta, ppDelta, ppRange);
 					dPhiR = inversion;
 					dPhiR.arrayY() *= -1.0;
 				}

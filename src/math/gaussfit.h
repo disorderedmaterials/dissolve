@@ -22,6 +22,7 @@
 #ifndef DISSOLVE_GAUSSFIT_H
 #define DISSOLVE_GAUSSFIT_H
 
+#include "math/functionspace.h"
 #include "templates/array.h"
 
 // Forward Declarations
@@ -54,19 +55,21 @@ class GaussFit
 
 	private:
 	// Generate full approximation from current parameters
-	void generateApproximation(bool realSpace);
+	void generateApproximation(FunctionSpace::SpaceType space);
 	// Add contribution to specified XYData
-	void addFunction(XYData& data, bool realSpace, double xCentre, double A, double fwhm) const;
+	void addFunction(XYData& data, FunctionSpace::SpaceType space, double xCentre, double A, double fwhm) const;
 	// Return value of Gaussian at specified x value
 	double gaussian(double x, double xCentre, double A, double FWHM) const;
 	// Return Fourier transform of Gaussian at specified x value
 	double gaussianFT(double x, double xCentre, double A, double FWHM) const;
+	// Return function value at specified x value in desired space
+	double functionValue(FunctionSpace::SpaceType space, double x, double xCentre, double A, double FWHM) const;
 
 	public:
 	// Return approximate function
 	const XYData& approximation() const;
 	// Calculate and return approximate function in requested space
-	XYData approximation(bool realSpace, double factor, double xMin, double xStep, double xMax, double fwhmFactor = 1.0) const;
+	XYData approximation(FunctionSpace::SpaceType space, double factor, double xMin, double xStep, double xMax, double fwhmFactor = 1.0) const;
 	// Set current parameters
 	bool set(const Array<double>& x, const Array<double>& A, const Array<double>& fwhm);
 	// Return number of Gaussians in fit
@@ -93,16 +96,16 @@ class GaussFit
 	private:
 	// Current error
 	double currentError_;
-	// Whether Gaussians being fit are in real or reciprocal space
-	bool alphaReal_;
+	// Function space relevant to current functions being fit space
+	FunctionSpace::SpaceType alphaSpace_;
 	// Indices of Gaussians being fit
 	Array<int> alphaIndex_;
 	// Precalculated function data
 	Array2D<double> functions_;
 
 	private:
-	// Update precalculated function data (using A = 1.0)
-	void updatePrecalculatedFunctions();
+	// Update precalculated function data using specified A
+	void updatePrecalculatedFunctions(FunctionSpace::SpaceType space, double A = 1.0);
 
 	public:
 	// Construct suitable representation in with minimal real-space Gaussians
@@ -110,7 +113,7 @@ class GaussFit
 	// Construct function representation in reciprocal space, spacing Gaussians out evenly in real space up to rMax
 	double constructReciprocal(double rMax, int nGaussians, int nIterations = 1000, double initialStepSize = 0.01, double sigmaQ = 0.02, int smoothingThreshold = 0, int smoothingK = 3, int smoothingM = 3);
 	// Re-fit amplitudes in specified space, starting from current parameters
-	double reFitA(bool realSpace, int sampleSize = 10, int overlap = 2, int nLoops = 3);
+	double reFitA(FunctionSpace::SpaceType space, int sampleSize = 10, int overlap = 2, int nLoops = 3);
 
 
 	/*
