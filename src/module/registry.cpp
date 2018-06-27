@@ -23,6 +23,7 @@
 #include "modules/atomshake/atomshake.h"
 #include "modules/checks/checks.h"
 #include "modules/energy/energy.h"
+#include "modules/epsr/epsr.h"
 #include "modules/export/export.h"
 #include "modules/forces/forces.h"
 #include "modules/intrashake/intrashake.h"
@@ -48,6 +49,7 @@ ModuleRegistry::ModuleRegistry()
 	ModuleRegistrar<CalibrationModule> calibrationRegistrar;
 	ModuleRegistrar<ChecksModule> checksRegistrar;
 	ModuleRegistrar<EnergyModule> energyRegistrar;
+	ModuleRegistrar<EPSRModule> epsrRegistrar;
 	ModuleRegistrar<ExportModule> exportRegistrar;
 	ModuleRegistrar<ForcesModule> forcesRegistrar;
 	ModuleRegistrar<IntraShakeModule> intraShakeRegistrar;
