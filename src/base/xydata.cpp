@@ -51,7 +51,7 @@ XYData::~XYData()
 }
 
 // Copy Constructor
-XYData::XYData(const XYData& source) : ObjectStore<XYData>(NULL)
+XYData::XYData(const XYData& source) : ObjectStore<XYData>(this)
 {
 	(*this) = source;
 }

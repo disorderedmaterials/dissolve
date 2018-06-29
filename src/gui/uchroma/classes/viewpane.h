@@ -63,7 +63,7 @@ class ViewPane : public ListItem<ViewPane>, public ObjectStore<ViewPane>
 
 	public:
 	// Return parent
-	ViewLayout& parent();
+	ViewLayout& parent() const;
 	// Notify parent that this pane has been changed
 	void paneChanged();
 

@@ -83,7 +83,7 @@ ViewPane::~ViewPane()
 }
 
 // Copy constructor
-ViewPane::ViewPane(const ViewPane& source) : ObjectStore<ViewPane>(), parent_(parent_), axes_(*this)
+ViewPane::ViewPane(const ViewPane& source) : ObjectStore<ViewPane>(this), parent_(source.parent()), axes_(*this)
 {
 	(*this) = source;
 }
@@ -144,7 +144,7 @@ void ViewPane::operator=(const ViewPane& source)
  */
 
 // Return parent
-ViewLayout& ViewPane::parent()
+ViewLayout& ViewPane::parent() const
 {
 	return parent_;
 }

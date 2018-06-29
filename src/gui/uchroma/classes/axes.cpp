@@ -128,7 +128,7 @@ Axes::~Axes()
 }
 
 // Copy constructor
-Axes::Axes(const Axes& source) : parent_(parent_), ObjectStore<Axes>(NULL)
+Axes::Axes(const Axes& source) : parent_(parent_), ObjectStore<Axes>(this)
 {
 	(*this) = source;
 }

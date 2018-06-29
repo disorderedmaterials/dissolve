@@ -91,23 +91,27 @@ template <class T> class ObjectStore
 {
 	public:
 	// Constructor
-	ObjectStore<T>(T* object = NULL)
+	ObjectStore<T>(T* object)
 	{
 		// If the passed pointer is NULL, do not add anything to the list (we were probably called from a copy constructor)
-		if (object != NULL)
+		if (object == NULL)
 		{
-			// Store the parent object pointer, and add it to the master list
-			object_ = object;
-			objectInfo_.set(objectType_, objectCount_++);
-			setObjectName("");
-			objects_.add(object_, objectInfo_.id());
+			Messenger::error("ObjectStore was passed a NULL pointer...\n");
+			object_ = NULL;
+			return;
 		}
+
+		// Store the parent object pointer, and add it to the master list
+		object_ = object;
+		objectInfo_.set(objectType_, objectCount_++);
+		setObjectName("");
+		objects_.add(object_, objectInfo_.id());
 	}
 	// Destructor
 	~ObjectStore<T>()
 	{
 		// Remove our pointer from the master list
-		objects_.remove(object_);
+		if (object_) objects_.remove(object_);
 	}
 	// Copy Constructor
 	ObjectStore<T>(const ObjectStore<T>& source)

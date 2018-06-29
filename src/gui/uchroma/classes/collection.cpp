@@ -91,7 +91,7 @@ Collection::~Collection()
 }
 
 // Copy constructor
-Collection::Collection(const Collection& source) : ObjectStore<Collection>()
+Collection::Collection(const Collection& source) : ObjectStore<Collection>(this)
 {
 	(*this) = source;
 }
