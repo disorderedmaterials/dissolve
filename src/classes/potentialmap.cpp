@@ -92,7 +92,7 @@ bool PotentialMap::initialise(const List<AtomType>& masterAtomTypes, const List<
 		}
 	}
 
-	// Store potential range and square
+	// Store potential range
 	range_ = pairPotentialRange;
 	
 	return true;
