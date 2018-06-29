@@ -66,8 +66,12 @@ class ScatteringMatrix
 	int nPairs() const;
 	// Return index of specified AtomType pair
 	int pairIndex(AtomType* typeI, AtomType* typeJ) const;
+	// Return weight of the specified AtomType pair in the inverse matrix
+	int pairWeightInverse(AtomType* typeI, AtomType* typeJ, int dataIndex) const;
 	// Print the matrix
 	void print() const;
+	// Print the inverse matrix
+	void printInverse() const;
 	// Generate partials from reference data using inverse matrix
 	void generatePartials(Array2D<XYData>& generatedSQ);
 	// Return if the scattering matrix is underdetermined

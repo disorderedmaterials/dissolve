@@ -53,6 +53,18 @@ int ScatteringMatrix::pairIndex(AtomType* typeI, AtomType* typeJ) const
 	return -1;
 }
 
+// Return weight of the specified AtomType pair in the inverse matrix
+int ScatteringMatrix::pairWeightInverse(AtomType* typeI, AtomType* typeJ, int dataIndex) const
+{
+	/*
+	 * The required row of the inverse matrix is the index of the AtomType pair.
+	 * The required column of the inverse matrix is the original (row) index of the supplied data.
+	 */
+
+	int index = pairIndex(typeI, typeJ);
+	return inverseA_.value(index, dataIndex);
+}
+
 // Print the matrix
 void ScatteringMatrix::print() const
 {
@@ -74,15 +86,30 @@ void ScatteringMatrix::print() const
 	}
 }
 
+// Print the inverse matrix
+void ScatteringMatrix::printInverse() const
+{
+	// Write header
+	CharString text, line;
+	for (Pair<AtomType*,AtomType*>* pair = typePairs_.first(); pair != NULL; pair = pair->next)
+	{
+		text.sprintf("%s-%s", pair->a->name(), pair->b->name());
+		line.strcatf("%10s ", text.get());
+	}
+	Messenger::print("%s", line.get());
+
+	// Loop over inverse matrix columns, rather than rows, to match the AtomType headers
+	for (int col = 0; col < inverseA_.nColumns(); ++col)
+	{
+		line.clear();
+		for (int row=0; row<inverseA_.nRows(); ++row) line.strcatf("%10f ", inverseA_.value(row, col));
+		Messenger::print("%s  %s\n", line.get(), data_.value(col).name());
+	}
+}
+
 // Generate partials from reference data using the inverse coefficients matrix
 void ScatteringMatrix::generatePartials(Array2D<XYData>& generatedSQ)
 {
-	// Get linear array from generatedSQ
-	XYData* partials = generatedSQ.linearArray();
-
-	// Clear current partials
-	for (int n=0; n<generatedSQ.linearArraySize(); ++n) partials[n].clear();
-
 	/*
 	 * Currently our scattering matrix / data look as follows:
 	 * 
@@ -95,6 +122,12 @@ void ScatteringMatrix::generatePartials(Array2D<XYData>& generatedSQ)
 	 * 
 	 * Take the matrix inverse and multiply it by the known data to generate the estimated partials.
 	 */
+
+	// Get linear array from generatedSQ
+	XYData* partials = generatedSQ.linearArray();
+
+	// Clear current partials
+	for (int n=0; n<generatedSQ.linearArraySize(); ++n) partials[n].clear();
 
 	// Generate new partials (nPartials = nColumns)
 	for (int n=0; n<A_.nColumns(); ++n)
