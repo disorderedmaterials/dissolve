@@ -304,7 +304,7 @@ template <class A> class Array2D
 	// Operator/= (divide all)
 	void operator/=(const A value) { for (int n=0; n<linearSize_; ++n) array_[n] /= value; }
 	// Operator* (matrix multiply)
-	Array2D<A> operator*(const Array2D<A>& B)
+	Array2D<A> operator*(const Array2D<A>& B) const
 	{
 		// Check array sizes are compatible
 		if (nColumns_ != B.nRows_)
