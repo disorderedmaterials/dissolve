@@ -66,12 +66,16 @@ class Messenger
 	public:
 	// Set status of quiet mode
 	static void setQuiet(bool b);
+	// Return status of quiet mode
+	static bool isQuiet();
 	// Temporarily mute output
 	static void mute();
 	// Unmute output
 	static void unMute();
 	// Set status of verbose mode
 	static void setVerbose(bool b);
+	// Return status of verbose mode
+	static bool isVerbose();
 	// Set status of master-only mode
 	static void setMasterOnly(bool b);
 	// Print normal message

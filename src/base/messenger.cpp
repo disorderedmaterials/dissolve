@@ -125,6 +125,12 @@ void Messenger::setQuiet(bool b)
 	quiet_ = b;
 }
 
+// Return status of quiet mode
+bool Messenger::isQuiet()
+{
+	return quiet_;
+}
+
 // Temporarily mute output
 void Messenger::mute()
 {
@@ -141,6 +147,12 @@ void Messenger::unMute()
 void Messenger::setVerbose(bool b)
 {
 	verbose_ = b;
+}
+
+// Return status of verbose mode
+bool Messenger::isVerbose()
+{
+	return verbose_;
 }
 
 // Set status of master-only mode
