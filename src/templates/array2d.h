@@ -280,7 +280,7 @@ template <class A> class Array2D
 		return nColumns_;
 	}
 	// Return linear array size
-	int linearArraySize()
+	int linearArraySize() const
 	{
 		return linearSize_;
 	}
@@ -288,6 +288,19 @@ template <class A> class Array2D
 	A* linearArray()
 	{
 		return array_;
+	}
+	// Return linear value
+	A& linearValue(int index) const
+	{
+#ifdef CHECKS
+		static A dummy;
+		if ((index < 0) || (index >= linearSize_))
+		{
+			Messenger::print("OUT_OF_RANGE - Index (%i) is out of range in Array2D::linearValue() (linearSize = %i).\n", index, linearSize_);
+			return dummy;
+		}
+#endif
+		return array_[index];
 	}
 
 
