@@ -64,7 +64,7 @@ template <class T> class GenericItemContainer< Array2D<T> > : public GenericItem
 	bool write(LineParser& parser)
 	{
 		parser.writeLineF("%i  %i  %s\n", data.nRows(), data.nColumns(), DissolveSys::btoa(data.halved()));
-		for (int n=0; n<data.linearArraySize(); ++n) if (!data.linearArray()[n].write(parser)) return false;
+		for (int n=0; n<data.linearArraySize(); ++n) if (!data.linearValue(n).write(parser)) return false;
 		return true;
 	}
 	// Read data through specified parser

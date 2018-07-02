@@ -63,10 +63,9 @@ template <> class GenericItemContainer< Array<int> > : public GenericItem
 	bool write(LineParser& parser)
 	{
 		parser.writeLineF("%i\n", data.nItems());
-		int* array = data.array();
 		for (int n=0; n<data.nItems(); ++n)
 		{
-			if (!parser.writeLineF("%i\n", array[n])) return false;
+			if (!parser.writeLineF("%i\n", data.value(n))) return false;
 		}
 		return true;
 	}

@@ -70,10 +70,10 @@ template <> class GenericItemContainer< Array2D<double> > : public GenericItem
 		return read(data, parser);
 	}
 	// Write specified data through specified parser
-	static bool write(Array2D<double>& thisData, LineParser& parser)
+	static bool write(const Array2D<double>& thisData, LineParser& parser)
 	{
 		parser.writeLineF("%i  %i  %s\n", thisData.nRows(), thisData.nColumns(), DissolveSys::btoa(thisData.halved()));
-		for (int n=0; n<thisData.linearArraySize(); ++n) if (!parser.writeLineF("%16.9e\n", thisData.linearArray()[n])) return false;
+		for (int n=0; n<thisData.linearArraySize(); ++n) if (!parser.writeLineF("%16.9e\n", thisData.linearValue(n))) return false;
 		return true;
 	}
 	// Read specified data through specified parser

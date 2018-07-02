@@ -62,24 +62,33 @@ template <> class GenericItemContainer< Array<double> > : public GenericItem
 	// Write data through specified parser
 	bool write(LineParser& parser)
 	{
-		parser.writeLineF("%i\n", data.nItems());
-		double* array = data.array();
-		for (int n=0; n<data.nItems(); ++n)
-		{
-			if (!parser.writeLineF("%16.9e\n", array[n])) return false;
-		}
-		return true;
+		return write(data, parser);
 	}
 	// Read data through specified parser
 	bool read(LineParser& parser)
 	{
+		return read(data, parser);
+	}
+	// Write specified data through specified parser
+	static bool write(const Array<double>& thisData, LineParser& parser)
+	{
+		parser.writeLineF("%i\n", thisData.nItems());
+		for (int n=0; n<thisData.nItems(); ++n)
+		{
+			if (!parser.writeLineF("%16.9e\n", thisData.value(n))) return false;
+		}
+		return true;
+	}
+	// Read specified data through specified parser
+	static bool read(Array<double>& thisData, LineParser& parser)
+	{
 		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
 		int nItems = parser.argi(0);
-		data.createEmpty(nItems);
+		thisData.createEmpty(nItems);
 		for (int n=0; n<nItems; ++n)
 		{
 			if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
-			data.add(parser.argd(0));
+			thisData.add(parser.argd(0));
 		}
 		return true;
 	}
