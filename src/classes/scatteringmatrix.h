@@ -76,7 +76,8 @@ class ScatteringMatrix
 	void generatePartials(Array2D<XYData>& generatedSQ);
 	// Return if the scattering matrix is underdetermined
 	bool underDetermined() const;
-
+	// Return the product of inverseA_ and A_ (which should be the identity matrix)
+	Array2D<double> matrixProduct() const;
 
 	/*
 	 * Construction

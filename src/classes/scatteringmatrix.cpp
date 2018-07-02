@@ -147,6 +147,12 @@ bool ScatteringMatrix::underDetermined() const
 	return (data_.nItems() < A_.nColumns());
 }
 
+// Return the product of inverseA_ and A_ (which should be the identity matrix)
+Array2D<double> ScatteringMatrix::matrixProduct() const
+{
+	return inverseA_ * A_;
+}
+
 /*
  * Construction
  */
