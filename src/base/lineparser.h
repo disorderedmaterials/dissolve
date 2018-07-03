@@ -31,7 +31,7 @@
 #include <sstream>
 using namespace std;
 
-#define MAXLINELENGTH 1024
+#define MAXLINELENGTH 8092
 
 // Forward Declarations
 /* none */
