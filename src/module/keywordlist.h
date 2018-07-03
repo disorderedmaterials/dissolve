@@ -84,7 +84,7 @@ template <class T> class KeywordListHelper
 			return dummy;
 		}
 
-		// Attempt to cast to interface
+		// Attempt to cast to specified type
 		ModuleKeywordData<T>* castItem = dynamic_cast<ModuleKeywordData<T>*>(item);
 		if (!castItem)
 		{
@@ -96,6 +96,30 @@ template <class T> class KeywordListHelper
 
 		if (found != NULL) (*found) = true;
 		return castItem->data();
+	}
+	// Set named item from specified list as a template-guided type
+	static bool set(ModuleKeywordList& sourceList, const char* name, T value)
+	{
+		// Find item in the list
+		ModuleKeywordBase* item = sourceList.find(name);
+		if (!item)
+		{
+			Messenger::warn("No item named '%s' in the keyword list - cannot set it's value.\n", name);
+			return false;
+		}
+
+		// Attempt to cast to specified type
+		ModuleKeywordData<T>* castItem = dynamic_cast<ModuleKeywordData<T>*>(item);
+		if (!castItem)
+		{
+			printf("That didn't work, because it's of the wrong type.\n");
+			return false;
+		}
+
+		// Set the new value
+		castItem->setData(value);
+
+		return true;
 	}
 };
 
