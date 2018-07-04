@@ -64,9 +64,14 @@ void GaussFit::addFunction(XYData& data, FunctionSpace::SpaceType space, double 
 // Return value of Gaussian at specified x value
 double GaussFit::gaussian(double x, double xCentre, double A, double FWHM) const
 {
+	/*
+	 * Normalisation term omits factor of rho in the denominator, and which should be applied to coefficients or the preFactor argument of approximation().
+	 */
+
 	double c = FWHM / TWOSQRT2LN2;
-	double gfac = 0.5 * (sqrt(0.5*PI) / PI) / FWHM;
-	gfac /= x;
+	double gfac = (sqrt(0.5*PI) / (4.0 * PI * PI)) / c;
+	if ((x > 0.0) && (xCentre > 0.0)) gfac /= x * xCentre;
+	else gfac *= 2.0 / (c * c);
 	return gfac * A * exp(-((x-xCentre)*(x-xCentre))/(2.0*c*c));
 }
 
@@ -82,23 +87,6 @@ double GaussFit::gaussianFT(double x, double xCentre, double A, double FWHM) con
 double GaussFit::functionValue(FunctionSpace::SpaceType space, double x, double xCentre, double A, double FWHM) const
 {
 	return (space == FunctionSpace::RealSpace ? gaussian(x, xCentre, A, FWHM) : gaussianFT(x, xCentre, A, FWHM));
-}
-
-// Set current parameters
-bool GaussFit::set(const Array<double>& x, const Array<double>& A, const Array<double>& fwhm)
-{
-	// Check sizes of provided Arrays
-	int nInputGauss = x.nItems();
-	if (A.nItems() != nInputGauss) return Messenger::error("Amplitude array does not match the size of the supplied xCentres array (%i vs %i items).\n", nInputGauss, A.nItems()); 
-	if (fwhm.nItems() != nInputGauss) return Messenger::error("FWHM array does not match the size of the supplied xCentres array (%i vs %i items).\n", nInputGauss, fwhm.nItems());
-
-	// Copy data
-	nGaussians_ = nInputGauss;
-	x_ = x;
-	A_ = A;
-	fwhm_ = fwhm;
-
-	return true;
 }
 
 // Return number of Gaussians in fit
@@ -208,6 +196,27 @@ XYData GaussFit::approximation(FunctionSpace::SpaceType space, double preFactor,
 	ft.arrayY() *= preFactor;
 
 	return ft;
+}
+
+// Set coefficients from supplied values
+void GaussFit::set(double rMax, const Array<double>& A, double sigma)
+{
+	// Clear any existing data
+	x_.clear();
+	A_.clear();
+	fwhm_.clear();
+
+	// Set new data
+	nGaussians_ = A.nItems();
+	A_ = A;
+
+	double x, gDelta = rMax/nGaussians_;
+	for (int n=0; n<nGaussians_; ++n)
+	{
+		x = (n+1)*gDelta;
+		x_.add(x);
+		fwhm_.add(sigma);
+	}
 }
 
 /*
@@ -363,7 +372,7 @@ double GaussFit::constructReal(double requiredError, int maxGaussians)
 }
 
 // Construct function representation in reciprocal space, spacing Gaussians out evenly in real space up to rMax
-double GaussFit::constructReciprocal(double rMax, int nGaussians, int nIterations, double initialStepSize, double sigmaQ, int smoothingThreshold, int smoothingK, int smoothingM)
+double GaussFit::constructReciprocal(double rMax, int nGaussians, double sigmaQ, int nIterations, double initialStepSize, int smoothingThreshold, int smoothingK, int smoothingM, bool reFitAtEnd)
 {
 	// Clear any existing data
 	x_.clear();
@@ -399,7 +408,51 @@ double GaussFit::constructReciprocal(double rMax, int nGaussians, int nIteration
 	currentError_ = gaussMinimiser.minimise(nIterations, initialStepSize);
 
 	// Perform a final grouped refit of the amplitudes
-	reFitA(FunctionSpace::ReciprocalSpace);
+	if (reFitAtEnd) reFitA(FunctionSpace::ReciprocalSpace);
+
+	// Regenerate approximation and calculate percentage error of fit
+	generateApproximation(FunctionSpace::ReciprocalSpace);
+	currentError_ = referenceData_.error(approximateData_);
+
+	return currentError_;
+}
+
+// Construct function representation in reciprocal space using specified parameters as starting point
+double GaussFit::constructReciprocal(double rMax, const Array<double>& A, double sigmaQ, int nIterations, double initialStepSize, int smoothingThreshold, int smoothingK, int smoothingM, bool reFitAtEnd)
+{
+	// Create the fitting functions
+	A_ = A;
+	x_.clear();
+	fwhm_.clear();
+	nGaussians_ = A_.nItems();
+	approximateData_.templateFrom(referenceData_);
+	double x, gDelta = rMax/nGaussians_;
+	for (int n=0; n<nGaussians_; ++n)
+	{
+		x = (n+1)*gDelta;
+		x_.add(x);
+		fwhm_.add(sigmaQ);
+	}
+
+	// Update the tabulated functions
+	updatePrecalculatedFunctions(FunctionSpace::ReciprocalSpace);
+
+	// Perform Monte Carlo minimisation on the amplitudes
+	MonteCarloMinimiser<GaussFit> gaussMinimiser(*this, &GaussFit::costTabulatedA);
+	gaussMinimiser.enableParameterSmoothing(smoothingThreshold, smoothingK, smoothingM);
+	alphaSpace_ = FunctionSpace::ReciprocalSpace;
+
+	for (int n=0; n<nGaussians_; ++n)
+	{
+		alphaIndex_.add(n);
+		gaussMinimiser.addTarget(A_[n]);
+	}
+
+	// Optimise this set of Gaussians
+	currentError_ = gaussMinimiser.minimise(nIterations, initialStepSize);
+
+	// Perform a final grouped refit of the amplitudes
+	if (reFitAtEnd) reFitA(FunctionSpace::ReciprocalSpace);
 
 	// Regenerate approximation and calculate percentage error of fit
 	generateApproximation(FunctionSpace::ReciprocalSpace);

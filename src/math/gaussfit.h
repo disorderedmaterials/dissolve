@@ -70,8 +70,8 @@ class GaussFit
 	const XYData& approximation() const;
 	// Calculate and return approximate function in requested space
 	XYData approximation(FunctionSpace::SpaceType space, double factor, double xMin, double xStep, double xMax, double fwhmFactor = 1.0) const;
-	// Set current parameters
-	bool set(const Array<double>& x, const Array<double>& A, const Array<double>& fwhm);
+	// Set coefficients from supplied values
+	void set(double rMax, const Array<double>& A, double sigma);
 	// Return number of Gaussians in fit
 	int nGaussians() const;
 	// Return current function centres
@@ -111,7 +111,9 @@ class GaussFit
 	// Construct suitable representation in with minimal real-space Gaussians
 	double constructReal(double requiredError, int maxGaussians = -1);
 	// Construct function representation in reciprocal space, spacing Gaussians out evenly in real space up to rMax
-	double constructReciprocal(double rMax, int nGaussians, int nIterations = 1000, double initialStepSize = 0.01, double sigmaQ = 0.02, int smoothingThreshold = 0, int smoothingK = 3, int smoothingM = 3);
+	double constructReciprocal(double rMax, int nGaussians, double sigmaQ = 0.02, int nIterations = 1000, double initialStepSize = 0.01, int smoothingThreshold = 0, int smoothingK = 3, int smoothingM = 3, bool reFitAtEnd = false);
+	// Construct function representation in reciprocal space using specified parameters as starting point
+	double constructReciprocal(double rMax, const Array<double>& A, double sigmaQ = 0.02, int nIterations = 1000, double initialStepSize = 0.01, int smoothingThreshold = 0, int smoothingK = 3, int smoothingM = 3, bool reFitAtEnd = false);
 	// Re-fit amplitudes in specified space, starting from current parameters
 	double reFitA(FunctionSpace::SpaceType space, int sampleSize = 10, int overlap = 2, int nLoops = 3);
 

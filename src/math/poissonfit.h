@@ -62,6 +62,8 @@ class PoissonFit
 	int nPoissons_;
 	// Function scale coefficients
 	Array<double> C_;
+	// Whether the first coefficient should be ignored (set to zero)
+	bool ignoreZerothTerm_;
 	// Maximum value of exponential
 	const double expMax_;
 
@@ -80,12 +82,14 @@ class PoissonFit
 	const XYData& approximation() const;
 	// Calculate and return approximate function in requested space
 	XYData approximation(FunctionSpace::SpaceType space, double factor, double xMin, double xStep, double xMax) const; 
-	// Return Fourier transform of approximate function
-	XYData fourierTransform(double gammaMin, double gammaStep, double gammaMax) const;
-	// Set current parameters
-	bool set(const Array<double>& C, FunctionSpace::SpaceType space, double sigmaQ = 0.02, double sigmaR = 0.08);
-	// Return number of functions in fit
-	int nFunctions() const;
+	// Set coefficients from supplied values
+	void set(FunctionSpace::SpaceType space, double rMax, Array<double> coefficients, double sigmaQ = 0.02, double sigmaR = 0.08);
+	// Return number of Poisson functions in fit
+	int nPoissons() const;
+	// Set whether the first coefficient should be ignored (set to zero)
+	void setIgnoreZerothTerm(bool ignore);
+	// Return whether the first coefficient should be ignored (set to zero)
+	bool ignoreZerothTerm() const;
 	// Return current C values
 	const Array<double>& C() const;
 	// Save coefficients to specified file
@@ -101,9 +105,9 @@ class PoissonFit
 	// Function space in which current alpha are being fit
 	FunctionSpace::SpaceType alphaSpace_;
 	// Precalculated terms
-	Array<double> sqrtOnePlusQSqSigmaSq_, arcTanQSigma_, oneMinusQSqSigmaSq_;
-	Array<int> n_, lnNPlusTwoFactorial_;
-	double sigmaRCubed_;
+	Array<double> sqrtOnePlusQSqSigmaSq_, arcTanQSigma_, oneMinusQSqSigmaSq_, lnNPlusTwoFactorial_;
+	Array<int> n_;
+	double fourPiSigmaRCubed_;
 	// Precalculated function data
 	Array2D<double> functions_;
 	// Indices of Gaussians being fit
@@ -116,8 +120,10 @@ class PoissonFit
 	void updatePrecalculatedFunctions(FunctionSpace::SpaceType space, double C = 1.0);
 
 	public:
-	// Construct suitable representation using given number of Poissons spaced evenly in real space up to rMax
-	double constructReciprocal(double rMax, int nPoissons, int nIterations = 1000, double initialStepSize = 0.01, double sigmaQ = 0.02, double sigmaR = 0.08, int smoothingThreshold = 0, int smoothingK = 3, int smoothingM = 3);
+	// Construct suitable reciprocal-space representation using given number of Poissons spaced evenly in real space up to rMax
+	double constructReciprocal(double rMax, int nPoissons, double sigmaQ = 0.02, double sigmaR = 0.08, int nIterations = 1000, double initialStepSize = 0.01, int smoothingThreshold = 0, int smoothingK = 3, int smoothingM = 3, bool reFitAtEnd = false);
+	// Construct suitable reciprocal-space representation using provided coefficients as a starting point
+	double constructReciprocal(double rMax, Array<double> coefficients, double sigmaQ = 0.02, double sigmaR = 0.08, int nIterations = 1000, double initialStepSize = 0.01, int smoothingThreshold = 0, int smoothingK = 3, int smoothingM = 3, bool reFitAtEnd = false);
 	// Re-fit amplitudes in specified space, starting from current parameters
 	double reFitC(FunctionSpace::SpaceType space, int sampleSize = 10, int overlap = 2, int nLoops = 3);
 
