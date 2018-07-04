@@ -48,7 +48,7 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	viewPane->setViewType(ViewPane::FlatXYView);
 	viewPane->axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
 	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "F(Q)");
+	viewPane->axes().setTitle(1, "F(\\it{Q})");
 	viewPane->axes().setMin(1, -1.0);
 	viewPane->axes().setMax(1, 1.0);
 	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::HalfVerticalShift);
@@ -64,7 +64,7 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	viewPane->setViewType(ViewPane::FlatXYView);
 	viewPane->axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
 	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "\\sym{delta}F(Q)");
+	viewPane->axes().setTitle(1, "\\sym{Delta}F(\\it{Q})");
 	viewPane->axes().setMin(1, -1.0);
 	viewPane->axes().setMax(1, 1.0);
 	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::HalfVerticalShift);
@@ -80,19 +80,19 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	viewPane->setViewType(ViewPane::FlatXYView);
 	viewPane->axes().setTitle(0, "\\it{Q}, \\sym{angstrom}\\sup{-1}");
 	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "S(Q)");
+	viewPane->axes().setTitle(1, "S(\\it{Q})");
 	viewPane->axes().setMin(1, -1.0);
 	viewPane->axes().setMax(1, 1.0);
 	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
 	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
 
-	// Partial g(r) Graph
+	// g(r) Graph
 	
-	partialGRGraph_ = ui.PartialGRPlotWidget;
+	GRGraph_ = ui.GRPlotWidget;
 
 	// Start a new, empty session
-	partialGRGraph_->startNewSession(true);
-	viewPane = partialGRGraph_->currentViewPane();
+	GRGraph_->startNewSession(true);
+	viewPane = GRGraph_->currentViewPane();
 	viewPane->setViewType(ViewPane::FlatXYView);
 	viewPane->axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	viewPane->axes().setMax(0, 10.0);
@@ -102,23 +102,39 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget* parent, Module* module, Dissolve& di
 	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
 	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
 
-	// Delta phi(r) Graph
-
-	deltaPhiRGraph_ = ui.DeltaPhiRPlotWidget;
+	// F(r) Graph
+	
+	FRGraph_ = ui.GRPlotWidget;
 
 	// Start a new, empty session
-	deltaPhiRGraph_->startNewSession(true);
-	viewPane = deltaPhiRGraph_->currentViewPane();
+	FRGraph_->startNewSession(true);
+	viewPane = FRGraph_->currentViewPane();
 	viewPane->setViewType(ViewPane::FlatXYView);
 	viewPane->axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	viewPane->axes().setMax(0, 10.0);
-	viewPane->axes().setTitle(1, "\\sym{Delta}g(r), \\sym{Delta}\\sym{phi}(\\it{r})");
+	viewPane->axes().setTitle(1, "F(r)");
 	viewPane->axes().setMin(1, -1.0);
 	viewPane->axes().setMax(1, 1.0);
 	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
 	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
 
-	// Delta phi(r) Graph
+	// Phi(r) (Empirical Potentials) Graph
+
+	phiRGraph_ = ui.PhiRPlotWidget;
+
+	// Start a new, empty session
+	phiRGraph_->startNewSession(true);
+	viewPane = phiRGraph_->currentViewPane();
+	viewPane->setViewType(ViewPane::FlatXYView);
+	viewPane->axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
+	viewPane->axes().setMax(0, 10.0);
+	viewPane->axes().setTitle(1, "\\sym{phi}(\\it{r})");
+	viewPane->axes().setMin(1, -1.0);
+	viewPane->axes().setMax(1, 1.0);
+	viewPane->collectionGroupManager().setVerticalShift(CollectionGroupManager::TwoVerticalShift);
+	viewPane->setAutoFollowType(ViewPane::AllAutoFollow);
+
+	// phi(r) Magnitude Graph
 
 	phiMagGraph_ = ui.PhiMagPlotWidget;
 
@@ -168,16 +184,18 @@ void EPSRModuleWidget::updateControls()
 	FQGraph_->refreshReferencedDataSets();
 	FQFitGraph_->refreshReferencedDataSets();
 	SQGraph_->refreshReferencedDataSets();
-	partialGRGraph_->refreshReferencedDataSets();
-	deltaPhiRGraph_->refreshReferencedDataSets();
+	GRGraph_->refreshReferencedDataSets();
+	FRGraph_->refreshReferencedDataSets();
+	phiRGraph_->refreshReferencedDataSets();
 	phiMagGraph_->refreshReferencedDataSets();
 	errorsGraph_->refreshReferencedDataSets();
 
 	FQGraph_->updateDisplay();
 	FQFitGraph_->updateDisplay();
 	SQGraph_->updateDisplay();
-	partialGRGraph_->updateDisplay();
-	deltaPhiRGraph_->updateDisplay();
+	GRGraph_->updateDisplay();
+	FRGraph_->updateDisplay();
+	phiRGraph_->updateDisplay();
 	phiMagGraph_->updateDisplay();
 	errorsGraph_->updateDisplay();
 
@@ -205,8 +223,9 @@ bool EPSRModuleWidget::writeState(LineParser& parser)
 	if (!FQGraph_->writeSession(parser)) return false;
 	if (!FQFitGraph_->writeSession(parser)) return false;
 	if (!SQGraph_->writeSession(parser)) return false;
-	if (!partialGRGraph_->writeSession(parser)) return false;
-	if (!deltaPhiRGraph_->writeSession(parser)) return false;
+	if (!GRGraph_->writeSession(parser)) return false;
+	if (!FRGraph_->writeSession(parser)) return false;
+	if (!phiRGraph_->writeSession(parser)) return false;
 	if (!phiMagGraph_->writeSession(parser)) return false;
 	if (!errorsGraph_->writeSession(parser)) return false;
 
@@ -220,8 +239,9 @@ bool EPSRModuleWidget::readState(LineParser& parser)
 	if (!FQGraph_->readSession(parser)) return false;
 	if (!FQFitGraph_->readSession(parser)) return false;
 	if (!SQGraph_->readSession(parser)) return false;
-	if (!partialGRGraph_->readSession(parser)) return false;
-	if (!deltaPhiRGraph_->readSession(parser)) return false;
+	if (!GRGraph_->readSession(parser)) return false;
+	if (!FRGraph_->readSession(parser)) return false;
+	if (!phiRGraph_->readSession(parser)) return false;
 	if (!phiMagGraph_->readSession(parser)) return false;
 	if (!errorsGraph_->readSession(parser)) return false;
 
@@ -241,38 +261,38 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 	int n, m;
 	CharString blockData;
 
+	// Add reference data & calculated data to the FQGraph_, and percentage errors to the errorsGraph_
+	RefListIterator<Module,bool> targetIterator(module->targets());
+	while (Module* targetModule = targetIterator.iterate())
+	{
+		// Reference data
+		blockData.sprintf("Collection '%s Exp'; Group '%s'; LineStyle 1.0 Solid; DataSet 'Reference'; Source XYData '%s//ReferenceData'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName());
+		FQGraph_->addCollectionFromBlock(blockData);
+
+		// Calculated data from associated module
+		if (DissolveSys::sameString(targetModule->name(), "NeutronSQ"))
+		{
+			blockData.sprintf("Collection '%s Calc'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated'; Source XYData '%s//WeightedSQ//Total'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName());
+			FQGraph_->addCollectionFromBlock(blockData);
+
+			blockData.sprintf("Collection '%s Diff'; Group '%s'; LineStyle  1.0 'Dots'; DataSet '%s Error'; Source XYData '%s//Difference//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
+			FQGraph_->addCollectionFromBlock(blockData);
+
+			blockData.sprintf("Collection '%s Calc'; Group '%s'; DataSet '%s Error'; Source XYData '%s//Error//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
+			errorsGraph_->addCollectionFromBlock(blockData);
+		}
+
+		// Delta F(Q) and fit
+		blockData.sprintf("Collection '%s Delta'; Group '%s'; DataSet '%s Delta'; Source XYData '%s//DeltaFQ//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
+		FQFitGraph_->addCollectionFromBlock(blockData);
+
+		blockData.sprintf("Collection '%s Fit'; Group '%s'; LineStyle  1.0 'Quarter Dash'; DataSet '%s Fit'; Source XYData '%s//DeltaFQFit//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
+		FQFitGraph_->addCollectionFromBlock(blockData);
+	}
+
 	// Loop over groups
 	for (ModuleGroup* group = module_->targetGroups().first(); group != NULL; group = group->next)
 	{
-		// Add reference data & calculated data to the FQGraph_, and percentage errors to the errorsGraph_
-		RefListIterator<Module,bool> targetIterator(module->targets());
-		while (Module* targetModule = targetIterator.iterate())
-		{
-			// Reference data
-			blockData.sprintf("Collection '%s Exp'; Group '%s'; LineStyle 1.0 Solid; DataSet 'Reference'; Source XYData '%s//ReferenceData'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName());
-			FQGraph_->addCollectionFromBlock(blockData);
-
-			// Calculated data from associated module
-			if (DissolveSys::sameString(targetModule->name(), "NeutronSQ"))
-			{
-				blockData.sprintf("Collection '%s Calc'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated'; Source XYData '%s//WeightedSQ//Total'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName());
-				FQGraph_->addCollectionFromBlock(blockData);
-
-				blockData.sprintf("Collection '%s Diff'; Group '%s'; LineStyle  1.0 'Dots'; DataSet '%s Error'; Source XYData '%s//Difference//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
-				FQGraph_->addCollectionFromBlock(blockData);
-
-				blockData.sprintf("Collection '%s Calc'; Group '%s'; DataSet '%s Error'; Source XYData '%s//Error//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), targetModule->uniqueName());
-				errorsGraph_->addCollectionFromBlock(blockData);
-			}
-
-			// Delta F(Q) and fit
-			blockData.sprintf("Collection '%s Delta'; Group '%s'; DataSet '%s Error'; Source XYData '%s//DeltaFQ//%s//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), group->name(), targetModule->uniqueName());
-			FQFitGraph_->addCollectionFromBlock(blockData);
-
-			blockData.sprintf("Collection '%s Fit'; Group '%s'; LineStyle  1.0 'Quarter Dash'; DataSet '%s Error'; Source XYData '%s//DeltaFQFit//%s//%s'; EndDataSet; EndCollection", targetModule->uniqueName(), targetModule->uniqueName(), targetModule->uniqueName(), module->uniqueName(), group->name(), targetModule->uniqueName());
-			FQFitGraph_->addCollectionFromBlock(blockData);
-		}
-
 		// Add experimentally-determined partial S(Q), calculated partial S(Q), and delta S(Q) to the SQGraph_
 		n = 0;
 		for (AtomType* at1 = dissolve_.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++n)
@@ -304,28 +324,26 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 
 				// Experimentally-determined unweighted partial
 				blockData.sprintf("Collection '%s Exp'; Group '%s'; DataSet 'Experimental %s'; Source XYData '%s//GeneratedGR//%s//%s-%s'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
-				partialGRGraph_->addCollectionFromBlock(blockData);
+				GRGraph_->addCollectionFromBlock(blockData);
 
 				// Calculated partial
 				blockData.sprintf("Collection '%s Calc'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet 'Calculated %s'; Source XYData '%s//UnweightedGR//%s//%s-%s//Full'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
-				partialGRGraph_->addCollectionFromBlock(blockData);
-
-				/*
-				 * Phi(r)
-				 */
-
-				// Generated potential
-				blockData.sprintf("Collection '%s dphi(r)'; Group '%s'; DataSet '%s dphi(r)'; Source XYData '%s//DeltaPhiR//%s//%s-%s'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
-				deltaPhiRGraph_->addCollectionFromBlock(blockData);
-
-				// Inversion (delta g(r), FT etc.)
-				blockData.sprintf("Collection '%s dg(r)'; Group '%s'; LineStyle 1.0 'Quarter Dash'; DataSet '%s Delta g(r)'; Source XYData '%s//Inversion//%s//%s-%s'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
-				deltaPhiRGraph_->addCollectionFromBlock(blockData);
-
-				// Delta g(r)
-				blockData.sprintf("Collection '%s dBound(r)'; Group '%s'; LineStyle 1.0 'Dots'; DataSet '%s Delta Bound g(r)'; Source XYData '%s//DeltaGRBond//%s//%s-%s'; EndDataSet; EndCollection", id.get(), id.get(), id.get(), module_->uniqueName(), group->name(), at1->name(), at2->name());
-				deltaPhiRGraph_->addCollectionFromBlock(blockData);
+				GRGraph_->addCollectionFromBlock(blockData);
 			}
+		}
+	}
+
+	n = 0;
+	for (AtomType* at1 = dissolve_.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++n)
+	{
+		m = n;
+		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++m)
+		{
+			CharString id("%s-%s", at1->name(), at2->name());
+
+			// Generated potential
+			blockData.sprintf("Collection '%s phi(r)'; Group '%s'; DataSet '%s phi(r)'; Source XYData 'PairPotential//%s-%s//Additional'; EndDataSet; EndCollection", id.get(), id.get(), id.get(),  at1->name(), at2->name());
+			phiRGraph_->addCollectionFromBlock(blockData);
 		}
 	}
 

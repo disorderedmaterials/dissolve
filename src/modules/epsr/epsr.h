@@ -24,7 +24,8 @@
 
 #include "module/module.h"
 #include "module/group.h"
-#include "classes/scatteringmatrix.h"
+#include "base/xydata.h"
+#include "templates/array3d.h"
 
 // Forward Declarations
 class AtomType;
@@ -107,6 +108,8 @@ class EPSRModule : public Module
 	bool process(Dissolve& dissolve, ProcessPool& procPool);
 
 	public:
+	// Run set-up stage
+	bool setUp(Dissolve& dissolve, ProcessPool& procPool);
 	// Whether the Module has a processing stage
 	bool hasProcessing();
 
@@ -119,8 +122,6 @@ class EPSRModule : public Module
 	RefList<Module,bool> targets_;
 	// Target groups
 	List<ModuleGroup> targetGroups_;
-	// Full scattering matrix containing reference dat
-	ScatteringMatrix scatteringMatrix_;
 	// Simulated data added as reference data
 	Array<XYData> simulatedReferenceData_;
 
@@ -133,6 +134,47 @@ class EPSRModule : public Module
 	const RefList<Module,bool>& targets() const;
 	// Return list of target groups defined
 	const List<ModuleGroup>& targetGroups() const;
+	// Create / retrieve arrays for storage of empirical potential coefficients
+	Array2D< Array<double> >& potentialCoefficients(Dissolve& dissolve, const int nAtomTypes, const int ncoeffp);
+	// Generate empirical potentials from current coefficients
+	bool generateEmpiricalPotentials(Dissolve& dissolve, EPSRModule::ExpansionFunctionType functionType, int ncoeffp, double rmaxpt, double sigma1, double sigma2);
+
+
+	/*
+	 * EPSR File I/O
+	 */
+	public:
+	// PCof File Keywords
+	enum EPSRPCofKeyword { 
+		AddPotTypePCofKeyword,		/* addpottype - Additional potential type: Gaussian or modmorse. [Gaussian] */
+		ExpecFPCofKeyword,		/* expecf - Additional potential type: Gaussian or modmorse. [Gaussian] */
+		GaussianPCofKeyword,		/* gaussian - Select T for Gaussian representation of EP. Otherwise Poisson. [F] */
+		NCoeffPPCofKeyword,		/* ncoeffp - Number of coefficients used to define the EP. */
+		NPItSSPCofKeyword,		/* npitss - Number of steps for refining the potential. */
+		PAcceptPCofKeyword,		/* paccept - Acceptance factor for potential refinement. [0.0005] */
+		PDMaxPCofKeyword,		/* pdmax - Maximum distance of Empirical Potential. */
+		PDStepPCofKeyword,		/* pdstep - Spacing between coefficients in r. */
+		PowerPCofKeyword,		/* power - Repulsive power in Lennard-Jones potential. [12] */
+		PSigma2PCofKeyword,		/* psigma2 - Width for empirical potential functions. [0.01] */
+		QuitPCofKeyword,		/* q - Signals the end of the pcof keyword section */
+		RBroadPCofKeyword,		/* rbroad - Controls potential decay. [0.0] */
+		RChargePCofKeyword,		/* rcharge - Calculates energy due to molecular polarisation. [0.0] */
+		RefPotFacPCofKeyword,		/* refpotfac - Factor to apply to reference potential. [1.0] */
+		RepPotTypePCofKeyword,		/* reppottype - Repulsive potential type: exponential or harmonic. [exponential] */
+		RMaxPtPCofKeyword,		/* rmaxpt - Radius at which potential truncation goes to 0.0. */
+		RMinFacPCofKeyword,		/* rminfac - Factor to set the minimum separation between pairs. [0.0] */
+		RMinPtPCofKeyword,		/* rminpt - Radius at which potential truncation begins. */
+		ROverlapPCofKeyword,		/* roverlap - Minimum allowed intermolecular separation between two atoms. */
+		nEPSRPCofKeywords
+	};
+	// Convert text string to EPSRPCofKeyword
+	static EPSRPCofKeyword epsrPCofKeyword(const char* s);
+	// Convert EPSRPCofKeyword to text string
+	static const char* epsrPCofKeyword(EPSRPCofKeyword pcofkwd);
+
+	public:
+	// Read data from supplied pcof file
+	bool readPCof(Dissolve& dissolve, ProcessPool& procPool, const char* filename);
 
 
 	/*

@@ -3,6 +3,7 @@ add_library(epsrmodule
   core.cpp
   definition.cpp
   functions.cpp
+  io.cpp
   options.cpp
   process.cpp
 

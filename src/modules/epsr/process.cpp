@@ -31,6 +31,42 @@
 #include "classes/partialset.h"
 #include "base/sysfunc.h"
 #include "templates/genericlisthelper.h"
+#include "templates/array3d.h"
+
+// Run set-up stage
+bool EPSRModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
+{
+	// If a pcof file was provided, read in the parameters from it here
+	CharString pcofFile = keywords_.asString("PCofFile");
+	if (!pcofFile.isEmpty())
+	{
+		// Read in the coefficients / setup from the supplied file
+		if (!readPCof(dissolve, procPool, pcofFile)) return Messenger::error("Failed to read in potential coefficients from EPSR pcof file.\n");
+
+		// Get some control parameters
+		const double ereq = keywords_.asDouble("EReq");
+		int ncoeffp = keywords_.asInt("NCoeffP");
+		double rmaxpt = keywords_.asDouble("RMaxPT");
+		double rminpt = keywords_.asDouble("RMinPT");
+
+		// Set up the additional potentials - reconstruct them from the current coefficients
+		ExpansionFunctionType functionType = expansionFunctionType(keywords_.asString("ExpansionFunction"));
+		if (functionType == EPSRModule::GaussianExpansionFunction)
+		{
+			const double gsigma1 = keywords_.asDouble("GSigma1");
+			const double gsigma2 = keywords_.asDouble("GSigma2");
+			if (!generateEmpiricalPotentials(dissolve, functionType, ncoeffp, rmaxpt, gsigma1, gsigma2)) return false; 
+		}
+		else
+		{
+			const double psigma1 = keywords_.asDouble("PSigma1");
+			const double psigma2 = keywords_.asDouble("PSigma2");
+			if (!generateEmpiricalPotentials(dissolve, functionType, ncoeffp, rmaxpt, psigma1, psigma2)) return false; 
+		}
+	}
+
+	return true;
+}
 
 // Return whether the Module has a processing stage
 bool EPSRModule::hasProcessing()
@@ -42,7 +78,6 @@ bool EPSRModule::hasProcessing()
 bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 {
 	int i, j;
-	bool found;
 
 	/*
 	 * Set Module data target
@@ -52,11 +87,13 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	/*
 	 * Get Keyword Options
 	 */
-	const double feedback = keywords_.asDouble("Feedback");
 	const double ereq = keywords_.asDouble("EReq");
 	const double errorStabilityThreshold = keywords_.asDouble("ErrorStabilityThreshold");
 	const int errorStabilityWindow = keywords_.asInt("ErrorStabilityWindow");
 	ExpansionFunctionType functionType = expansionFunctionType(keywords_.asString("ExpansionFunction"));
+	const double feedback = keywords_.asDouble("Feedback");
+	const double gsigma1 = keywords_.asDouble("GSigma1");
+	const double gsigma2 = keywords_.asDouble("GSigma2");
 	const double globalMinimumRadius = keywords_.asDouble("MinimumRadius");
 	const double globalMaximumRadius = keywords_.asDouble("MaximumRadius");
 	const bool modifyPotential = keywords_.asBool("ModifyPotential");
@@ -64,16 +101,19 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	const int npitss = keywords_.asInt("NPItSs");
 	const bool onlyWhenEnergyStable = keywords_.asBool("OnlyWhenEnergyStable");
 	const bool onlyWhenErrorStable = keywords_.asBool("OnlyWhenErrorStable");
+	const double psigma1 = keywords_.asDouble("PSigma1");
 	const double psigma2 = keywords_.asDouble("PSigma2");
 	const double qMax = keywords_.asDouble("QMax");
 	const double qMin = keywords_.asDouble("QMin");
-	const double rmaxpt = keywords_.asDouble("RMaxPT");
-	const double rminpt = keywords_.asDouble("RMinPT");
+	double rmaxpt = keywords_.asDouble("RMaxPT");
+	double rminpt = keywords_.asDouble("RMinPT");
 
 	// EPSR constants
 	const int mcoeff = 200;
 
 	// Calculate some values if they were not provided
+	if (rmaxpt < 0.0) rmaxpt = dissolve.pairPotentialRange();
+	if (rminpt < 0.0) rminpt = rmaxpt - 2.0;
 	if (ncoeffp <= 0) ncoeffp = std::min(int(10.0*rmaxpt+0.0001), mcoeff);
 
 	// Print option summary
@@ -109,66 +149,63 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 
 	/*
-	 * Calculate current percentage errors in calculated vs reference target data
+	 * Calculate difference functions and current percentage errors in calculated vs reference target data
 	 */
 	int nUnstableData = 0;
-	for (ModuleGroup* group = targetGroups_.first(); group != NULL; group = group->next)
+	allTargetsIterator.restart();
+	while (Module* module = allTargetsIterator.iterate())
 	{
-		// Grab Module list for this group and set up an iterator
-		const RefList<Module,bool>& targetModules = group->modules();
-		RefListIterator<Module,bool> targetIterator(targetModules);
-		while (Module* module = targetIterator.iterate())
+		// Realise the error array and make sure its object name is set
+		XYData& errors = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), CharString("Error_%s", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
+		errors.setObjectName(CharString("%s//Error//%s", uniqueName_.get(), module->uniqueName()));
+
+		// Calculate our error based on the type of Module
+		double error = 100.0;
+		if (DissolveSys::sameString(module->name(), "NeutronSQ"))
 		{
-			// Realise the error array and make sure its object name is set
-			XYData& errors = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), CharString("Error_%s", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
-			errors.setObjectName(CharString("%s//Error//%s", uniqueName_.get(), module->uniqueName()));
+			bool found;
 
-			// Calculate our error based on the type of Module
-			double error = 100.0;
-			if (DissolveSys::sameString(module->name(), "NeutronSQ"))
+			// Retrieve the ReferenceData from the Module (as XYData)
+			const XYData& referenceData = GenericListHelper<XYData>::value(dissolve.processingModuleData(), "ReferenceData", module->uniqueName(), XYData(), &found);
+			if (!found)
 			{
-				// Retrieve the ReferenceData from the Module (as XYData)
-				const XYData& referenceData = GenericListHelper<XYData>::value(dissolve.processingModuleData(), "ReferenceData", module->uniqueName(), XYData(), &found);
-				if (!found)
-				{
-					Messenger::warn("Could not locate ReferenceData for target '%s'.\n", module->uniqueName());
-					return false;
-				}
-
-				// Retrieve the PartialSet from the Module
-				const PartialSet& calcSQ = GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "WeightedSQ", module->uniqueName(), PartialSet(), &found);
-				if (!found)
-				{
-					Messenger::warn("Could not locate associated weighted neutron PartialSet for target '%s'.\n", module->uniqueName());
-					return false;
-				}
-				XYData calcSQTotal = calcSQ.constTotal();
-
-				error = referenceData.error(calcSQTotal);
-
-				// Calculate difference
-				XYData& differenceData = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), CharString("DifferenceData_%s", module->uniqueName()), uniqueName());
-				differenceData.setObjectName(CharString("%s//Difference//%s", uniqueName_.get(), module->uniqueName()));
-				differenceData = referenceData;
-				differenceData.addInterpolated(calcSQTotal, -1.0);
+				Messenger::warn("Could not locate ReferenceData for target '%s'.\n", module->uniqueName());
+				return false;
 			}
-			else return Messenger::error("Unrecognised Module type '%s', so can't calculate error.", module->name());
 
-			// Store the percentage error
-			errors.addPoint(dissolve.iteration(), error);
-			Messenger::print("Current error for reference data '%s' is %f%%.\n", module->uniqueName(), error);
-
-			// Assess the stability of the current error
-			if (errorStabilityWindow > errors.nPoints()) ++nUnstableData;
-			else
+			// Retrieve the PartialSet from the Module
+			const PartialSet& calcSQ = GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "WeightedSQ", module->uniqueName(), PartialSet(), &found);
+			if (!found)
 			{
-				double yMean;
-				double grad = errors.lastGradient(errorStabilityWindow, &yMean);
-				double thresholdValue = fabs(errorStabilityThreshold*yMean);
-				if (fabs(grad) > thresholdValue) ++nUnstableData;
-
-				Messenger::print("Error gradient of last %i points for reference data '%s' is %e %%/step (absolute threshold value is %e, stable = %s).\n", errorStabilityWindow, module->uniqueName(), grad, thresholdValue, DissolveSys::btoa(fabs(grad) <= thresholdValue));
+				Messenger::warn("Could not locate associated weighted neutron PartialSet for target '%s'.\n", module->uniqueName());
+				return false;
 			}
+			XYData calcSQTotal = calcSQ.constTotal();
+
+			error = referenceData.error(calcSQTotal);
+
+			// Calculate difference
+			XYData& differenceData = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), CharString("DifferenceData_%s", module->uniqueName()), uniqueName(), GenericItem::InRestartFileFlag);
+			differenceData.setObjectName(CharString("%s//Difference//%s", uniqueName_.get(), module->uniqueName()));
+			differenceData = referenceData;
+			differenceData.addInterpolated(calcSQTotal, -1.0);
+		}
+		else return Messenger::error("Unrecognised Module type '%s', so can't calculate error.", module->name());
+
+		// Store the percentage error
+		errors.addPoint(dissolve.iteration(), error);
+		Messenger::print("Current error for reference data '%s' is %f%%.\n", module->uniqueName(), error);
+
+		// Assess the stability of the current error
+		if (errorStabilityWindow > errors.nPoints()) ++nUnstableData;
+		else
+		{
+			double yMean;
+			double grad = errors.lastGradient(errorStabilityWindow, &yMean);
+			double thresholdValue = fabs(errorStabilityThreshold*yMean);
+			if (fabs(grad) > thresholdValue) ++nUnstableData;
+
+			Messenger::print("Error gradient of last %i points for reference data '%s' is %e %%/step (absolute threshold value is %e, stable = %s).\n", errorStabilityWindow, module->uniqueName(), grad, thresholdValue, DissolveSys::btoa(fabs(grad) <= thresholdValue));
 		}
 	}
 
@@ -197,13 +234,118 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 
 	/*
+	 * Calculate difference functions for each experimental dataset and fit them.
+	 */
+
+	allTargetsIterator.restart();
+	while (Module* module = allTargetsIterator.iterate())
+	{
+		bool found;
+
+		// Retrieve the reference (experimental) data for the target Module
+		const XYData& referenceData = GenericListHelper<XYData>::value(dissolve.processingModuleData(), "ReferenceData", module->uniqueName(), XYData(), &found);
+		if (!found) return Messenger::error("Could not locate ReferenceData for target '%s'.\n", module->uniqueName());
+
+		// Retrieve the simulated data for the target Module
+		const PartialSet& weightedSQ = GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "WeightedSQ", module->uniqueName(), PartialSet(), &found);
+		if (!found) return Messenger::error("Could not locate WeightedSQ for target '%s'.\n", module->uniqueName());
+
+		// Retrieve the density for this dataset
+		double rho = GenericListHelper<
+		double>::value(dissolve.processingModuleData(), "EffectiveRho", module->uniqueName(), 0.0);
+
+		// Get difference and fit function objects
+		XYData& deltaFQ = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), CharString("DeltaFQ_%s", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
+		XYData& deltaFQFit = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), CharString("DeltaFQFit_%s", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
+		deltaFQ.setObjectName(CharString("%s//DeltaFQ//%s", uniqueName_.get(), module->uniqueName()));
+		deltaFQFit.setObjectName(CharString("%s//DeltaFQFit//%s", uniqueName_.get(), module->uniqueName()));
+
+		// Create the difference partial
+		deltaFQ.clear();
+		const Array<double> x1 = referenceData.constArrayX();
+		const Array<double> y1 = referenceData.constArrayY();
+		XYData simulatedSQ = weightedSQ.constTotal();
+
+		// Determine allowable range for fit, based on requested values and limits of generated / simulated datasets
+		double deltaSQMin = qMin, deltaSQMax = (qMax < 0.0 ? x1.last() : qMax);
+		if ((deltaSQMin < x1.first()) || (deltaSQMin < simulatedSQ.xFirst())) deltaSQMin = max(x1.first(), simulatedSQ.xFirst());
+		if ((deltaSQMax > x1.last()) || (deltaSQMax > simulatedSQ.xLast())) deltaSQMax = min(x1.last(), simulatedSQ.xLast());
+
+		double x;
+		for (int n=0; n<x1.nItems(); ++n)
+		{
+			// Grab experimental data x value
+			x = x1.value(n);
+
+			// If this x value is below the minimum Q value we are fitting, set the difference to zero. Otherwise, store the "inverse" value ([sim - exp], for consistency with EPSR)
+			if (x < deltaSQMin) deltaFQ.addPoint(x, 0.0);
+			else if (x > deltaSQMax) break;
+			else deltaFQ.addPoint(x, simulatedSQ.interpolated(x) - y1.value(n));
+		}
+
+		/*
+		 * Fit a function expansion to the deltaFQ
+		 */
+
+		// Do the coefficient arrays already exist? If so, we re-fit from this set of coefficients. If not, start from scratch
+		bool created;
+		Array<double>& fitCoefficients = GenericListHelper< Array<double> >::realise(dissolve.processingModuleData(), CharString("FitCoefficients_%s", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag, &created);
+
+		if (functionType == EPSRModule::GaussianExpansionFunction)
+		{
+			// Construct our fitting object
+			GaussFit coeffMinimiser(deltaFQ);
+
+			if (created) coeffMinimiser.constructReciprocal(rmaxpt, ncoeffp, gsigma1, npitss, 0.01, 10, 3, 3, false);
+			else
+			{
+				if (fitCoefficients.nItems() != ncoeffp)
+				{
+					Messenger::warn("Number of terms (%i) in existing FitCoefficients array for target '%s' does not match the current number (%i), so will fit from scratch.\n", fitCoefficients.nItems(), module->uniqueName(), ncoeffp);
+					coeffMinimiser.constructReciprocal(rmaxpt, ncoeffp, gsigma1, npitss, 0.01, 10, 3, 3, false);
+				}
+				else coeffMinimiser.constructReciprocal(rmaxpt, fitCoefficients, gsigma1, npitss, 0.01, 10, 3, 3, false);
+			}
+
+			// Store the new fit coefficients
+			fitCoefficients = coeffMinimiser.A();
+
+			deltaFQFit = coeffMinimiser.approximation();
+		}
+		else if (functionType == EPSRModule::PoissonExpansionFunction)
+		{
+			// Construct our fitting object
+			PoissonFit coeffMinimiser(deltaFQ);
+
+			if (created) coeffMinimiser.constructReciprocal(rmaxpt, ncoeffp, psigma1, psigma2, npitss, 0.01, 10, 3, 3, false);
+			else
+			{
+				if (fitCoefficients.nItems() != ncoeffp)
+				{
+					Messenger::warn("Number of terms (%i) in existing FitCoefficients array for target '%s' does not match the current number (%i), so will fit from scratch.\n", fitCoefficients.nItems(), module->uniqueName(), ncoeffp);
+					coeffMinimiser.constructReciprocal(rmaxpt, ncoeffp, psigma1, psigma2, npitss, 0.01, 10, 3, 3, false);
+				}
+				else coeffMinimiser.constructReciprocal(rmaxpt, fitCoefficients, psigma1, psigma2, npitss, 0.0005, 100, 3, 3, false);
+			}
+
+			// Store the new fit coefficients
+			fitCoefficients = coeffMinimiser.C();
+
+			deltaFQFit = coeffMinimiser.approximation();
+		}
+		else return Messenger::error("Sellotape the developer to the ceiling and poke through with long thin things - he hasn't implemented this expansion function type yet.\n");
+	}
+
+	/*
 	 * Loop over groups of defined Module targets.
 	 * We will generate a contribution to dPhiR from each and blend them together.
 	 */
-	const int nTypes = dissolve.nAtomTypes();
-	Array2D<double> globalCombinedErrors;
-	globalCombinedErrors.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
-	globalCombinedErrors = 0.0;
+
+	// Set up storage for the changes to coefficients used to generate the empirical potentials
+	const int nAtomTypes = dissolve.nAtomTypes();
+	Array3D<double> fluctuationCoefficients(nAtomTypes, nAtomTypes, ncoeffp);
+	fluctuationCoefficients = 0.0;
+
 	bool created;
 	for (ModuleGroup* group = targetGroups_.first(); group != NULL; group = group->next)
 	{
@@ -220,10 +362,10 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Create temporary storage for our summed UnweightedSQ, and related quantities such as density and sum factors
 		Array2D<XYData>& combinedUnweightedSQ = GenericListHelper< Array2D<XYData> >::realise(dissolve.processingModuleData(), "UnweightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
 		Array2D<double> combinedRho, combinedFactor, combinedCWeights;
-		combinedUnweightedSQ.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
-		combinedRho.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
-		combinedFactor.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
-		combinedCWeights.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
+		combinedUnweightedSQ.initialise(nAtomTypes, nAtomTypes, true);
+		combinedRho.initialise(nAtomTypes, nAtomTypes, true);
+		combinedFactor.initialise(nAtomTypes, nAtomTypes, true);
+		combinedCWeights.initialise(nAtomTypes, nAtomTypes, true);
 		combinedRho = 0.0;
 		combinedFactor = 0.0;
 		combinedCWeights = 0.0;
@@ -236,27 +378,33 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j) combinedUnweightedSQ.ref(i,j).setObjectName(CharString("%s//UnweightedSQ//%s//%s-%s", uniqueName(), group->name(), at1->name(), at2->name()));
 		}
 
-		// Realise storage for generated S(Q), and reinitialise the scattering matrix
-		Array2D<XYData>&  generatedSQ = GenericListHelper< Array2D<XYData> >::realise(dissolve.processingModuleData(), "GeneratedSQ", uniqueName_, GenericItem::InRestartFileFlag);
-		scatteringMatrix_.initialise(dissolve.atomTypeList(), generatedSQ, uniqueName_, group->name());
+		// Realise storage for generated S(Q), and initialise a scattering matrix
+		Array2D<XYData>& generatedSQ = GenericListHelper< Array2D<XYData> >::realise(dissolve.processingModuleData(), "GeneratedSQ", uniqueName_, GenericItem::InRestartFileFlag);
+		ScatteringMatrix scatteringMatrix;
+		scatteringMatrix.initialise(dissolve.atomTypeList(), generatedSQ, uniqueName_, group->name());
 
 		// Add a row in the scattering matrix for each target in the group
 		targetIterator.restart();
 		while (Module* module = targetIterator.iterate())
 		{
+			bool found;
+
 			// Retrieve the reference data and associated Weights matrix and source unweighted partials
 			const XYData& referenceData = GenericListHelper<XYData>::value(dissolve.processingModuleData(), "ReferenceData", module->uniqueName(), XYData(), &found);
 			if (!found) return Messenger::error("Could not locate ReferenceData for target '%s'.\n", module->uniqueName());
+
 			Weights& weights = GenericListHelper<Weights>::retrieve(dissolve.processingModuleData(), "FullWeights", module->uniqueName(), Weights(), &found);
 			if (!found) return Messenger::error("Could not locate Weights for target '%s'.\n", module->uniqueName());
+
 			const PartialSet& unweightedSQ = GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "UnweightedSQ", module->uniqueName(), PartialSet(), &found);
 			if (!found) return Messenger::error("Could not locate UnweightedSQ for target '%s'.\n", module->uniqueName());
+
 			double rho = GenericListHelper<
 			double>::value(dissolve.processingModuleData(), "EffectiveRho", module->uniqueName(), 0.0, &found);
 			if (!found) return Messenger::error("Could not locate EffectiveRho for target '%s'.\n", module->uniqueName());
 
 			// Add a row to our scattering matrix
-			if (!scatteringMatrix_.addReferenceData(referenceData, weights, feedback)) return Messenger::error("Failed to add target data '%s' to weights matrix.\n", module->uniqueName());
+			if (!scatteringMatrix.addReferenceData(referenceData, weights, feedback)) return Messenger::error("Failed to add target data '%s' to weights matrix.\n", module->uniqueName());
 
 			// Sum up the unweighted partials and density from this target
 			double factor = 1.0;
@@ -279,9 +427,9 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		}
 
 		// Normalise the combined values
-		for (i=0; i<dissolve.nAtomTypes(); ++i)
+		for (i=0; i<nAtomTypes; ++i)
 		{
-			for (j=i; j<dissolve.nAtomTypes(); ++j)
+			for (j=i; j<nAtomTypes; ++j)
 			{
 				combinedUnweightedSQ.ref(i,j) /= combinedFactor.value(i,j);
 				combinedRho.ref(i,j) /= combinedFactor.value(i,j);
@@ -314,19 +462,28 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				data.setName(CharString("Simulated %s-%s", at1->name(), at2->name()));
 
 				// Add this partial data to the scattering matrix
-				if (!scatteringMatrix_.addPartialReferenceData(data, at1, at2, factor, (1.0 - feedback))) return Messenger::error("EPSR: Failed to augment scattering matrix with partial %s-%s.\n", at1->name(), at2->name());
+				if (!scatteringMatrix.addPartialReferenceData(data, at1, at2, factor, (1.0 - feedback))) return Messenger::error("EPSR: Failed to augment scattering matrix with partial %s-%s.\n", at1->name(), at2->name());
 			}
 		}
 
-		scatteringMatrix_.finalise();
-		scatteringMatrix_.print();
+		scatteringMatrix.finalise();
+		scatteringMatrix.print();
+
+		if (Messenger::isVerbose())
+		{
+			Messenger::print("\nScattering Matrix Inverse:\n");
+			scatteringMatrix.printInverse();
+
+			Messenger::print("\nIdentity (Ainv * A):\n");
+			scatteringMatrix.matrixProduct().print();
+		}
 
 		/*
 		 * Generate S(Q) from completed scattering matrix
 		 */
 
 		// Generate the scattering matrix 
-		scatteringMatrix_.generatePartials(generatedSQ);
+		scatteringMatrix.generatePartials(generatedSQ);
 
 		/*
 		 * Calculate g(r) from generatedSQ
@@ -340,7 +497,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			j = i;
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 			{
-				// Grab experimental g(r) contained and make sure its object name is set
+				// Grab experimental g(r) container and make sure its object name is set
 				XYData& expGR = generatedGR.ref(i,j);
 				expGR.setObjectName(CharString("%s//GeneratedGR//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
 
@@ -359,10 +516,47 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		if (!RDFModule::sumUnweightedGR(procPool, this, group, dissolve.processingModuleData(), summedUnweightedGR)) return false;
 
 		/*
-		 * Construct matrix of difference partials (deltaSQ) for all AtomTypes
+		 * Calculate contribution to potential coefficients from this group.
+		 * Multiply each coefficient by the associated weight in the inverse scattering matrix.
+		 * Note: the data were added to the scattering matrix in the order they appear in the targets iterator.
 		 */
-		Array2D<XYData>& deltaSQ = GenericListHelper< Array2D<XYData> >::realise(dissolve.processingModuleData(), "DeltaSQ", uniqueName_, GenericItem::InRestartFileFlag, &created);
-		if (created) deltaSQ.initialise(nTypes, nTypes, true);
+		targetIterator.restart();
+		int dataIndex = 0;
+		while (Module* module = targetIterator.iterate())
+		{
+			// For this Module, retrive the coefficents of the fit performed above.
+			const Array<double>& fitCoefficients = GenericListHelper< Array<double> >::value(dissolve.processingModuleData(), CharString("FitCoefficients_%s", module->uniqueName()), uniqueName_);
+			
+			// Loop over pair potentials and retrieve the inverse weight from the scattering matrix
+			i = 0;
+			for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
+			{
+				j = i;
+				for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
+				{
+					double weight = scatteringMatrix.pairWeightInverse(at1, at2, dataIndex);
+
+					// Halve contribution from unlike terms to avoid adding double the potential for those partials
+					if (i != j) weight *= 0.5;
+
+					// Apply the (1.0/rho) factor here, since our expansion function normalisations don't contain it
+					weight /= combinedRho.ref(i,j);
+
+					// Store fluctuation coefficients ready for addition to potential coefficients later on.
+					for (int n=0; n<ncoeffp; ++n) fluctuationCoefficients.ref(i, j, n) += weight * fitCoefficients.value(n);
+				}
+			}
+
+			// Increase dataIndex
+			++dataIndex;
+		}
+	}
+
+	// Generate new empirical potentials
+	if (modifyPotential)
+	{
+		// Sum fluctuation coefficients in to the potential coefficients
+		Array2D< Array<double> >& coefficients = potentialCoefficients(dissolve, nAtomTypes, ncoeffp);
 
 		i = 0;
 		for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
@@ -370,236 +564,23 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			j = i;
 			for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 			{
-				// Grab difference partial and make sure its object name is set
-				XYData& dSQ = deltaSQ.ref(i, j);
-				dSQ.setObjectName(CharString("%s//DeltaSQ//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
-
-				// Reset the difference partial
-				dSQ.clear();
-
-				// Create the difference partial
-				const Array<double> x1 = generatedSQ.ref(i, j).constArrayX();
-				const Array<double> y1 = generatedSQ.ref(i, j).constArrayY();
-				XYData& simulatedSQ = combinedUnweightedSQ.ref(i,j);
-
-				// Determine allowable range for fit, based on requested values and limits of generated / simulated datasets
-				double deltaSQMin = qMin, deltaSQMax = (qMax < 0.0 ? x1.last() : qMax);
-				if ((deltaSQMin < x1.first()) || (deltaSQMin < simulatedSQ.xFirst())) deltaSQMin = max(x1.first(), simulatedSQ.xFirst());
-				if ((deltaSQMax > x1.last()) || (deltaSQMax > simulatedSQ.xLast())) deltaSQMax = min(x1.last(), simulatedSQ.xLast());
-
-				XYData refSQTrimmed;
-				double x;
-				for (int n=0; n<x1.nItems(); ++n)
-				{
-					x = x1.value(n);
-					if (x < deltaSQMin) continue;
-					if (x > deltaSQMax) break;
-					refSQTrimmed.addPoint(x, y1.value(n));
-
-					dSQ.addPoint(x, y1.value(n) - simulatedSQ.interpolated(x));
-				}
-
-				// Calculate current error between experimental and simulation partials and sum it into our array
-				globalCombinedErrors.ref(i, j) += refSQTrimmed.error(simulatedSQ);
+				Array<double>& potCoeff = coefficients.ref(i, j);
+				for (int n=0; n<ncoeffp; ++n) potCoeff[n] += fluctuationCoefficients.value(i, j, n);
 			}
 		}
 
-
-		/*
-		 * For each experimental dataset, form the delta F(Q) and fit a function series to it.
-		 * This generates the C(i) coefficients from the Q-space data.
-		 */
-
-		Array<XYData>& groupDeltaFQ = GenericListHelper< Array<XYData> >::realise(dissolve.processingModuleData(), CharString("DeltaFQ_%s", group->name()), uniqueName_, GenericItem::InRestartFileFlag, &created);
-		if (created) groupDeltaFQ.initialise(targetModules.nItems());
-		Array<XYData>& groupDeltaFQFit = GenericListHelper< Array<XYData> >::realise(dissolve.processingModuleData(), CharString("DeltaFQFit_%s", group->name()), uniqueName_, GenericItem::InRestartFileFlag, &created);
-		if (created) groupDeltaFQFit.initialise(targetModules.nItems());
-
-		targetIterator.restart();
-		int index = 0;
-		while (Module* module = targetIterator.iterate())
-		{
-			// Retrieve the reference (experimental) data for the target Module
-			const XYData& referenceData = GenericListHelper<XYData>::value(dissolve.processingModuleData(), "ReferenceData", module->uniqueName(), XYData(), &found);
-			if (!found) return Messenger::error("Could not locate ReferenceData for target '%s'.\n", module->uniqueName());
-
-			// Retrieve the simulated data for the target Module
-			const PartialSet& weightedSQ = GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "WeightedSQ", module->uniqueName(), PartialSet(), &found);
-			if (!found) return Messenger::error("Could not locate WeightedSQ for target '%s'.\n", module->uniqueName());
-
-			// Grab difference partial and make sure its object name is set
-			XYData& dFQ = groupDeltaFQ[index];
-			dFQ.setObjectName(CharString("%s//DeltaFQ//%s//%s", uniqueName_.get(), group->name(), module->uniqueName()));
-
-			// Reset the difference partial
-			dFQ.clear();
-
-			// Create the difference partial
-			const Array<double> x1 = referenceData.constArrayX();
-			const Array<double> y1 = referenceData.constArrayY();
-			XYData simulatedSQ = weightedSQ.constTotal();
-
-			// Determine allowable range for fit, based on requested values and limits of generated / simulated datasets
-			double deltaSQMin = qMin, deltaSQMax = (qMax < 0.0 ? x1.last() : qMax);
-			if ((deltaSQMin < x1.first()) || (deltaSQMin < simulatedSQ.xFirst())) deltaSQMin = max(x1.first(), simulatedSQ.xFirst());
-			if ((deltaSQMax > x1.last()) || (deltaSQMax > simulatedSQ.xLast())) deltaSQMax = min(x1.last(), simulatedSQ.xLast());
-
-			XYData refSQTrimmed;
-			double x;
-			for (int n=0; n<x1.nItems(); ++n)
-			{
-				// Grab experimental data x value
-				x = x1.value(n);
-
-				// If this x value is below the minimum Q value we are fitting, set the difference to zero
-				if (x < deltaSQMin) dFQ.addPoint(x, 0.0);
-				else if (x > deltaSQMax) break;
-				else dFQ.addPoint(x, y1.value(n) - simulatedSQ.interpolated(x));
-			}
-
-			/*
-			 * Fit a function expansion to the differenceFQ
-			 */
-
-			// Grab deltaFQ fit storage and make sure its object name is set
-			XYData& dFQFit = groupDeltaFQFit[index];
-			dFQFit.setObjectName(CharString("%s//DeltaFQFit//%s//%s", uniqueName_.get(), group->name(), module->uniqueName()));
-
-			// Do the coefficient arrays already exist? If so, we re-fit from this set of coefficients. If not, start from scratch
-			Array<double>& fitCoefficients = GenericListHelper< Array<double> >::realise(dissolve.processingModuleData(), CharString("FitCoefficients_%s_%s", group->name(), module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag, &created);
-
-			if (functionType == EPSRModule::GaussianExpansionFunction)
-			{
-				// Construct our fitting object
-				GaussFit coeffMinimiser(dFQ);
-
-				if (created)
-				{
-					// Start from scratch...
-					coeffMinimiser.constructReciprocal(dissolve.pairPotentialRange(), ncoeffp, 	npitss, 0.01, psigma2, 10, 3, 3);
-				}
-				else
-				{
-					// TODO Set coefficients and reFit.
-				}
-
-				// Store the new fit coefficients
-				fitCoefficients = coeffMinimiser.A();
-
-				dFQFit = coeffMinimiser.approximation();
-			}
-			else if (functionType == EPSRModule::PoissonExpansionFunction)
-			{
-				// Construct our fitting object
-				PoissonFit coeffMinimiser(dFQ);
-
-				if (created)
-				{
-					// Start from scratch...
-					coeffMinimiser.constructReciprocal(dissolve.pairPotentialRange(), ncoeffp, npitss, 0.01, psigma2, psigma2, 10, 3, 3);
-				}
-				else
-				{
-					// TODO Set coefficients and reFit.
-				}
-
-				// Store the new fit coefficients
-				fitCoefficients = coeffMinimiser.C();
-
-				dFQFit = coeffMinimiser.approximation();
-			}
-			else Messenger::error("Sellotape the developer to the ceiling and poke through with long thin things - he hasn't implemented this expansion function type yet.\n");
-
-			// Increment index
-			++index;
-		}
-
+		double sigma1 = functionType == EPSRModule::PoissonExpansionFunction ? psigma1 : gsigma1;
+		double sigma2 = functionType == EPSRModule::PoissonExpansionFunction ? psigma2 : gsigma2;
 		
+		if (!generateEmpiricalPotentials(dissolve, functionType, ncoeffp, rmaxpt, sigma1, sigma2)) return false;
 	}
 
-	
-	// Perform actual modification to potential, adding in deltaPhiR calculated over all groups
-	if (modifyPotential)
-	{
-		for (ModuleGroup* group = targetGroups_.first(); group != NULL; group = group->next)
-		{
-			// Get the delta phi(r) data for this group
-			if (!dissolve.processingModuleData().contains(CharString("DeltaPhiR_%s", group->name()), uniqueName())) return Messenger::error("Could not locate delta phi(r) data for group '%s'.\n", group->name());
-			const Array2D<XYData>& groupDeltaPhiR = GenericListHelper< Array2D<XYData> >::value(dissolve.processingModuleData(), CharString("DeltaPhiR_%s", group->name()), uniqueName_, Array2D<XYData>());
-
-			i = 0;
-			for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
-			{
-				j = i;
-				for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
-				{
-					// Assess error of partial if requested, and decide whether to adjust potential
-					if (onlyWhenErrorStable)
-					{
-						const XYData& partialErrors = GenericListHelper<XYData>::value(dissolve.processingModuleData(), CharString("PartialError_%s-%s", at1->name(), at2->name()), uniqueName_);
-						if (partialErrors.nPoints() >= errorStabilityWindow)
-						{
-							double yMean;
-							double grad = partialErrors.lastGradient(errorStabilityWindow, &yMean);
-							double thresholdValue = fabs(0.001*yMean);
-							if (fabs(grad) < thresholdValue)
-							{
-								Messenger::print("Error gradient of last %i points for partial %s-%s is %e %%/step (absolute threshold value is %e, stable = %s) so no potential adjustment will be made.\n", errorStabilityWindow, at1->name(), at2->name(), grad, thresholdValue, DissolveSys::btoa(fabs(grad) <= thresholdValue));
-								continue;
-							}
-						}
-					}
-
-					// Grab pointer to the relevant pair potential
-					PairPotential* pp = dissolve.pairPotential(at1, at2);
-					if (!pp)
-					{
-						Messenger::error("Failed to find PairPotential for AtomTypes '%s' and '%s'.\n", at1->name(), at2->name());
-						return false;
-					}
-
-					pp->adjustUAdditional(groupDeltaPhiR.value(i,j));
-				}
-			}
-		}
-	}
-
-	/*
-	 * Calculate overall phi magnitude and clamp individual magnitudes if required
-	 */
-	double phiMagTot = 0.0;
-	i = 0;
-	for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
-	{
-		j = i;
-		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
-		{
-			// Grab pointer to the relevant pair potential
-			PairPotential* pp = dissolve.pairPotential(at1, at2);
-			if (!pp) continue;
-
-			// Calculate phi magnitude for this pair potential
-			double phiMag = pp->uAdditional().absIntegral();
-
-// 			// Clamp it?  TODO
-// 			if (modifyPotential && (ereq > 0.0) && (phiMag > phiMax))
-// 			{
-// 				double factor = phiMax / phiMag;
-// 				pp->uAdditional().arrayY() *= factor;
-// 				phiMag = phiMax;
-// 			}
-
-			// Sum into phiMagTot
-			phiMagTot += phiMag;
-		}
-	}
-
-	Messenger::print("Current magnitude of additional phi(r) over all pair potentials is %12.4e kJ/mol/Angstrom.\n", phiMagTot);
+// 	Messenger::print("Current magnitude of additional phi(r) over all pair potentials is %12.4e kJ/mol/Angstrom.\n", phiMagTot);
 
 	// Realise the phiMag array and make sure its object name is set
-	XYData& phiArray = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), "PhiMag", uniqueName_, GenericItem::InRestartFileFlag);
-	phiArray.setObjectName(CharString("%s//PhiMag", uniqueName_.get()));
-	phiArray.addPoint(dissolve.iteration(), phiMagTot);
+// 	XYData& phiArray = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), "PhiMag", uniqueName_, GenericItem::InRestartFileFlag);
+// 	phiArray.setObjectName(CharString("%s//PhiMag", uniqueName_.get()));
+// 	phiArray.addPoint(dissolve.iteration(), phiMagTot);
 
 	return true;
 }
