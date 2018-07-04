@@ -106,7 +106,6 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve& dissolve, EPSRModule::Exp
 				GaussFit generator(ep);
 				generator.set(rmaxpt, potCoeff, sigma1);
 				ep = generator.approximation(FunctionSpace::RealSpace, 1.0, 0.0, dissolve.pairPotentialDelta(), dissolve.pairPotentialRange(), sigma2 / sigma1);
-				ep.save(CharString("EP.%i%i", i, j));
 			}
 			else if (functionType == EPSRModule::PoissonExpansionFunction)
 			{
