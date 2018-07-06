@@ -55,13 +55,13 @@ bool EPSRModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 		{
 			const double gsigma1 = keywords_.asDouble("GSigma1");
 			const double gsigma2 = keywords_.asDouble("GSigma2");
-			if (!generateEmpiricalPotentials(dissolve, functionType, ncoeffp, rmaxpt, gsigma1, gsigma2)) return false; 
+			if (!generateEmpiricalPotentials(dissolve, functionType, ncoeffp, rminpt, rmaxpt, gsigma1, gsigma2)) return false; 
 		}
 		else
 		{
 			const double psigma1 = keywords_.asDouble("PSigma1");
 			const double psigma2 = keywords_.asDouble("PSigma2");
-			if (!generateEmpiricalPotentials(dissolve, functionType, ncoeffp, rmaxpt, psigma1, psigma2)) return false; 
+			if (!generateEmpiricalPotentials(dissolve, functionType, ncoeffp, rminpt, rmaxpt, psigma1, psigma2)) return false; 
 		}
 	}
 
@@ -553,6 +553,7 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	}
 
 	// Generate new empirical potentials
+	double energabs = 0.0;
 	if (modifyPotential)
 	{
 		// Sum fluctuation coefficients in to the potential coefficients
@@ -569,18 +570,50 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			}
 		}
 
+		// Determine absolute energy of empirical potentials
+		energabs = absEnergyEP(dissolve);
+
+		/*
+		 * Determine the scaling we will apply to the coefficients (if any)
+		 * Notes:
+		 * 	- ereq is actually read in as a variable called 'pressreq', then assigned to another variable 'absolute_energy' in the EPSR25 source.
+		 * 	- erequnit appears to be set to the value of ereqstep read in from the 'ereqstep' command (clamped to 0.0-1.0).
+		 */
+		double pressfac = 1.0;
+		double erequnit = 0.0, ereqstep = 0.0;
+
+		if (fabs(ereq) == 0.0)
+		{
+			pressfac=0.0;
+			energabs=0.0;
+		}
+		else if (fabs(energabs) > 0.0)
+		{
+			if (fabs(energabs) < fabs(erequnit)) pressfac = fabs(erequnit) / fabs(energabs);
+			else
+			{
+				pressfac = fabs(ereq) / fabs(energabs);
+				if ((pressfac > 1.0)  && (ereqstep == 0.0)) pressfac = 1.0;
+			}
+		}
+		Messenger::print("  generate_ep>  %f  %f  %f\n", ereq, energabs, pressfac);
+
+		// Scale coefficients
+		for (i = 0; i<coefficients.linearArraySize(); ++i) coefficients.linearArray()[i] *= pressfac;
+		energabs *= pressfac;
+      
+		// Generate additional potentials from the coefficients
 		double sigma1 = functionType == EPSRModule::PoissonExpansionFunction ? psigma1 : gsigma1;
 		double sigma2 = functionType == EPSRModule::PoissonExpansionFunction ? psigma2 : gsigma2;
 		
-		if (!generateEmpiricalPotentials(dissolve, functionType, ncoeffp, rmaxpt, sigma1, sigma2)) return false;
+		if (!generateEmpiricalPotentials(dissolve, functionType, ncoeffp, rminpt, rmaxpt, sigma1, sigma2)) return false;
 	}
-
-// 	Messenger::print("Current magnitude of additional phi(r) over all pair potentials is %12.4e kJ/mol/Angstrom.\n", phiMagTot);
+	else energabs = absEnergyEP(dissolve);
 
 	// Realise the phiMag array and make sure its object name is set
-// 	XYData& phiArray = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), "PhiMag", uniqueName_, GenericItem::InRestartFileFlag);
-// 	phiArray.setObjectName(CharString("%s//PhiMag", uniqueName_.get()));
-// 	phiArray.addPoint(dissolve.iteration(), phiMagTot);
+	XYData& phiArray = GenericListHelper<XYData>::realise(dissolve.processingModuleData(), "EPMag", uniqueName_, GenericItem::InRestartFileFlag);
+	phiArray.setObjectName(CharString("%s//EPMag", uniqueName_.get()));
+	phiArray.addPoint(dissolve.iteration(), energabs);
 
 	return true;
 }

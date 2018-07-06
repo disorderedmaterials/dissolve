@@ -45,19 +45,14 @@ const char* EPSRModule::expansionFunctionType(EPSRModule::ExpansionFunctionType 
 void EPSRModule::setUpKeywords()
 {
 	keywords_.add(new DoubleModuleKeyword(3.0, -1.0), "EReq", "Limit of magnitude of additional potential for any one pair potential");
-	keywords_.add(new DoubleModuleKeyword(0.005), "ErrorStabilityThreshold", "Threshold value at which error is deemed stable over the defined windowing period", "<value[0.0-1.0]>");
-	keywords_.add(new IntegerModuleKeyword(10), "ErrorStabilityWindow", "Number of points over which to assess the stability of errors");
 	keywords_.add(new CharStringModuleKeyword("Poisson", EPSRModule::nExpansionFunctionTypes, ExpansionFunctionTypeKeywords), "ExpansionFunction", "Form of expansion function to use when fitting difference data");
 	keywords_.add(new DoubleModuleKeyword(0.9), "Feedback", "Confidence factor");
 	keywords_.add(new DoubleModuleKeyword(0.1, 0.001, 1.0), "GSigma1", "Width for Gaussian function in reciprocal space");
 	keywords_.add(new DoubleModuleKeyword(0.2, 0.001, 1.0), "GSigma2", "Width for Gaussian function in real space");
-	keywords_.add(new DoubleModuleKeyword(0.9, 0.0, 5.0), "MinimumRadius", "Minimum value of r at which additional potential is allowed to take effect (neglecting width of truncation strip)");
-	keywords_.add(new DoubleModuleKeyword(3.0, 0.0, 100.0), "MaximumRadius", "Maximum value of r (if AutoMinimumRadii = true) at which additional potential is zeroed");
 	keywords_.add(new BoolModuleKeyword(true), "ModifyPotential", "Whether to apply generated perturbations to interatomic potentials");
 	keywords_.add(new IntegerModuleKeyword(-1, -1), "NCoeffP", "Number of coefficients user to define the empirical potential (-1 for automatic)");
 	keywords_.add(new IntegerModuleKeyword(1000, 10), "NPItSs", "Number of steps for refining the potential");
 	keywords_.add(new BoolModuleKeyword(true), "OnlyWhenEnergyStable", "Assesses the energy of all involved Configurations, refining the potential only when all their total energies are stable");
-	keywords_.add(new BoolModuleKeyword(false), "OnlyWhenErrorStable", "Assesses the error of the fits to the reference data, refining the potential only when all errors are stable");
 	keywords_.add(new CharStringModuleKeyword(""), "PCofFile", "EPSR pcof file from which to read starting coefficients from");
 	keywords_.add(new DoubleModuleKeyword(0.1, 0.001, 10.0), "PCofRho", "Atomic number density with which to weight coefficients from pcof file");
 	keywords_.add(new DoubleModuleKeyword(0.01, 0.001, 1.0), "PSigma1", "Width for Poisson functions in reciprocal space (N.B. this is psigma2 in EPSR)");

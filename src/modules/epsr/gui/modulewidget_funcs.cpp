@@ -348,7 +348,7 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule* module)
 	}
 
 	// Add phi magnitude data
-	blockData.sprintf("Collection 'PhiMag'; Group 'PhiMag; DataSet 'PhiMag'; Source XYData '%s//PhiMag'; EndDataSet; EndCollection", module_->uniqueName());
+	blockData.sprintf("Collection 'EPMag'; Group 'EPMag'; DataSet 'EPMag'; Source XYData '%s//EPMag'; EndDataSet; EndCollection", module_->uniqueName());
 	phiMagGraph_->addCollectionFromBlock(blockData);
 }
 

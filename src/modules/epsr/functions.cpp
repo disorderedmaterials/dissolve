@@ -82,7 +82,7 @@ Array2D< Array<double> >& EPSRModule::potentialCoefficients(Dissolve& dissolve, 
 }
 
 // Generate empirical potentials from current coefficients
-bool EPSRModule::generateEmpiricalPotentials(Dissolve& dissolve, EPSRModule::ExpansionFunctionType functionType, int ncoeffp, double rmaxpt, double sigma1, double sigma2)
+bool EPSRModule::generateEmpiricalPotentials(Dissolve& dissolve, EPSRModule::ExpansionFunctionType functionType, int ncoeffp, double rminpt, double rmaxpt, double sigma1, double sigma2)
 {
 	const int nAtomTypes = dissolve.nAtomTypes();
 	int i, j;
@@ -114,7 +114,10 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve& dissolve, EPSRModule::Exp
 				generator.set(FunctionSpace::ReciprocalSpace, rmaxpt, potCoeff, sigma1, sigma2);
 				ep = generator.approximation(FunctionSpace::RealSpace, 1.0, 0.0, dissolve.pairPotentialDelta(), dissolve.pairPotentialRange());
 			}
-		
+
+			// Multiply by truncation function
+			truncate(ep, rminpt, rmaxpt);
+
 			// Grab pointer to the relevant pair potential
 			PairPotential* pp = dissolve.pairPotential(at1, at2);
 			if (!pp)
@@ -127,35 +130,62 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve& dissolve, EPSRModule::Exp
 		}
 	}
 
+	return true;
+}
+
+// Calculate absolute energy of empirical potentials
+double EPSRModule::absEnergyEP(Dissolve& dissolve)
+{
 	/*
-	 * Calculate overall phi magnitude and clamp individual magnitudes if required
+	 * Routine from EPSR25.
+	 * Loop over sets of empirical potential coefficients and find the maximal/minimal values.
+	 * Return the largest range we find.
 	 */
-	double phiMagTot = 0.0;
-	i = 0;
+
+	// Get coefficients array
+	Array2D< Array<double> >& coefficients = potentialCoefficients(dissolve, dissolve.nAtomTypes());
+
+	double absEnergyEP = 0.0;
+
+	int i = 0;
 	for (AtomType* at1 = dissolve.atomTypeList().first(); at1 != NULL; at1 = at1->next, ++i)
 	{
-		j = i;
+		int j = i;
 		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next, ++j)
 		{
-			// Grab pointer to the relevant pair potential
-			PairPotential* pp = dissolve.pairPotential(at1, at2);
-			if (!pp) continue;
+			Array<double>& potCoeff = coefficients.ref(i, j);
 
-			// Calculate phi magnitude for this pair potential
-			double phiMag = pp->uAdditional().absIntegral();
+			double cMin = potCoeff.value(0);
+			double cMax = cMin;
+			for (int n=1; n<potCoeff.nItems(); ++n)
+			{
+				if (potCoeff.value(n) < cMin) cMin = potCoeff.value(n);
+				if (potCoeff.value(n) > cMax) cMax = potCoeff.value(n); 
+			}
 
-// 			// Clamp it?  TODO
-// 			if (modifyPotential && (ereq > 0.0) && (phiMag > phiMax))
-// 			{
-// 				double factor = phiMax / phiMag;
-// 				pp->uAdditional().arrayY() *= factor;
-// 				phiMag = phiMax;
-// 			}
+			double range = cMax - cMin;
+			if (range > absEnergyEP) absEnergyEP = range;
 
-			// Sum into phiMagTot
-			phiMagTot += phiMag;
+			// Output information
+			Messenger::print("  abs_energy_ep>    %4s %4s %12.6f\n", at1->name(), at2->name(), range);
 		}
 	}
 
-	return true;
+	return absEnergyEP;
+}
+
+// Truncate the supplied data
+void EPSRModule::truncate(XYData& data, double rMin, double rMax)
+{
+	// Replicates the EPSR25 truncate(xx,rminpt,rmaxpt) function applied over a whole dataset.
+	double x;
+	const double decay = rMax - rMin;
+	for (int n=0; n<data.nPoints(); ++n)
+	{
+		x = data.x(n);
+
+		if (x >= rMax) data.setY(n, 0.0);
+// 		else if (x <= rMin) data.setY(n, data.y(n));
+		else if (x > rMin) data.setY(n, 0.5 * (1.0+cos( ((x-rMin)*PI)/decay )));
+	}
 }
