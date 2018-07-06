@@ -296,15 +296,15 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			// Construct our fitting object
 			GaussFit coeffMinimiser(deltaFQ);
 
-			if (created) coeffMinimiser.constructReciprocal(rmaxpt, ncoeffp, gsigma1, npitss, 0.01, 10, 3, 3, false);
+			if (created) coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, gsigma1, npitss, 0.01, 10, 3, 3, false);
 			else
 			{
 				if (fitCoefficients.nItems() != ncoeffp)
 				{
 					Messenger::warn("Number of terms (%i) in existing FitCoefficients array for target '%s' does not match the current number (%i), so will fit from scratch.\n", fitCoefficients.nItems(), module->uniqueName(), ncoeffp);
-					coeffMinimiser.constructReciprocal(rmaxpt, ncoeffp, gsigma1, npitss, 0.01, 10, 3, 3, false);
+					coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, gsigma1, npitss, 0.01, 10, 3, 3, false);
 				}
-				else coeffMinimiser.constructReciprocal(rmaxpt, fitCoefficients, gsigma1, npitss, 0.01, 10, 3, 3, false);
+				else coeffMinimiser.constructReciprocal(0.0, rmaxpt, fitCoefficients, gsigma1, npitss, 0.01, 10, 3, 3, false);
 			}
 
 			// Store the new fit coefficients
@@ -317,15 +317,15 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			// Construct our fitting object
 			PoissonFit coeffMinimiser(deltaFQ);
 
-			if (created) coeffMinimiser.constructReciprocal(rmaxpt, ncoeffp, psigma1, psigma2, npitss, 0.01, 10, 3, 3, false);
+			if (created) coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, psigma1, psigma2, npitss, 0.01, 10, 3, 3, false);
 			else
 			{
 				if (fitCoefficients.nItems() != ncoeffp)
 				{
 					Messenger::warn("Number of terms (%i) in existing FitCoefficients array for target '%s' does not match the current number (%i), so will fit from scratch.\n", fitCoefficients.nItems(), module->uniqueName(), ncoeffp);
-					coeffMinimiser.constructReciprocal(rmaxpt, ncoeffp, psigma1, psigma2, npitss, 0.01, 10, 3, 3, false);
+					coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, psigma1, psigma2, npitss, 0.01, 10, 3, 3, false);
 				}
-				else coeffMinimiser.constructReciprocal(rmaxpt, fitCoefficients, psigma1, psigma2, npitss, 0.0005, 100, 3, 3, false);
+				else coeffMinimiser.constructReciprocal(0.0, rmaxpt, fitCoefficients, psigma1, psigma2, npitss, 0.01, 100, 3, 3, false);
 			}
 
 			// Store the new fit coefficients

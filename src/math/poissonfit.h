@@ -118,14 +118,14 @@ class PoissonFit
 	void preCalculateTerms();
 	// Update precalculated function data using specified C
 	void updatePrecalculatedFunctions(FunctionSpace::SpaceType space, double C = 1.0);
+	// Sweep-fit coefficients in specified space, starting from current parameters
+	double sweepFitC(FunctionSpace::SpaceType space, double xMin, int sampleSize = 10, int overlap = 2, int nLoops = 3);
 
 	public:
-	// Construct suitable reciprocal-space representation using given number of Poissons spaced evenly in real space up to rMax
-	double constructReciprocal(double rMax, int nPoissons, double sigmaQ = 0.02, double sigmaR = 0.08, int nIterations = 1000, double initialStepSize = 0.01, int smoothingThreshold = 0, int smoothingK = 3, int smoothingM = 3, bool reFitAtEnd = false);
+	// Construct suitable reciprocal-space representation using given number of Poissons spaced evenly in real space up to rMax (those below rMin will be ignored)
+	double constructReciprocal(double rMin, double rMax, int nPoissons, double sigmaQ = 0.02, double sigmaR = 0.08, int nIterations = 1000, double initialStepSize = 0.01, int smoothingThreshold = 0, int smoothingK = 3, int smoothingM = 3, bool reFitAtEnd = false);
 	// Construct suitable reciprocal-space representation using provided coefficients as a starting point
-	double constructReciprocal(double rMax, Array<double> coefficients, double sigmaQ = 0.02, double sigmaR = 0.08, int nIterations = 1000, double initialStepSize = 0.01, int smoothingThreshold = 0, int smoothingK = 3, int smoothingM = 3, bool reFitAtEnd = false);
-	// Re-fit amplitudes in specified space, starting from current parameters
-	double reFitC(FunctionSpace::SpaceType space, int sampleSize = 10, int overlap = 2, int nLoops = 3);
+	double constructReciprocal(double rMin, double rMax, Array<double> coefficients, double sigmaQ = 0.02, double sigmaR = 0.08, int nIterations = 1000, double initialStepSize = 0.01, int smoothingThreshold = 0, int smoothingK = 3, int smoothingM = 3, bool reFitAtEnd = false);
 
 
 	/*

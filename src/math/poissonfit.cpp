@@ -269,93 +269,8 @@ void PoissonFit::updatePrecalculatedFunctions(FunctionSpace::SpaceType space, do
 	}
 }
 
-// Construct suitable representation using given number of Poissons spaced evenly in real space up to rMax
-double PoissonFit::constructReciprocal(double rMax, int nPoissons, double sigmaQ, double sigmaR, int nIterations, double initialStepSize, int smoothingThreshold, int smoothingK, int smoothingM, bool reFitAtEnd)
-{
-	// Clear any existing data
-	nPoissons_ = nPoissons;
-	C_.initialise(nPoissons_);
-	C_ = 0.0;
-	sigmaQ_ = sigmaQ;
-	sigmaR_ = sigmaR;
-	rMin_ = 0.0;
-	rMax_ = rMax;
-	rStep_ = (rMax_ - rMin_) / nPoissons_;
-
-	// Pre-calculate the necessary terms and function data
-	preCalculateTerms();
-	updatePrecalculatedFunctions(FunctionSpace::ReciprocalSpace);
-
-	// Clear the approximate data
-	approximateData_.templateFrom(referenceData_);
-
-	// Perform Monte Carlo minimisation on the amplitudes
-	MonteCarloMinimiser<PoissonFit> poissonMinimiser(*this, &PoissonFit::costTabulatedC);
-	poissonMinimiser.enableParameterSmoothing(smoothingThreshold, smoothingK, smoothingM);
-	alphaSpace_ = FunctionSpace::ReciprocalSpace;
-
-	for (int n=(ignoreZerothTerm_ ? 1 : 0); n<nPoissons_; ++n)
-	{
-		alphaIndex_.add(n);
-		poissonMinimiser.addTarget(C_[n]);
-	}
-
-	currentError_ = poissonMinimiser.minimise(nIterations, initialStepSize);
-
-	// Perform a final grouped refit of the amplitudes
-	if (reFitAtEnd) reFitC(FunctionSpace::ReciprocalSpace);
-
-	// Regenerate approximation and calculate percentage error of fit
-	generateApproximation(FunctionSpace::ReciprocalSpace);
-	currentError_ = referenceData_.error(approximateData_);
-
-	return currentError_;
-}
-
-// Refit specified Poissons in reciprocal space
-double PoissonFit::constructReciprocal(double rMax, Array<double> coefficients, double sigmaQ, double sigmaR, int nIterations, double initialStepSize, int smoothingThreshold, int smoothingK, int smoothingM, bool reFitAtEnd)
-{
-	// Set up data
-	nPoissons_ = coefficients.nItems();
-	C_ = coefficients;
-	sigmaQ_ = sigmaQ;
-	sigmaR_ = sigmaR;
-	rMin_ = 0.0;
-	rMax_ = rMax;
-	rStep_ = (rMax_ - rMin_) / nPoissons_;
-
-	// Pre-calculate the necessary terms and function data
-	preCalculateTerms();
-	updatePrecalculatedFunctions(FunctionSpace::ReciprocalSpace);
-
-	// Clear the approximate data
-	approximateData_.templateFrom(referenceData_);
-
-	// Perform Monte Carlo minimisation on the amplitudes
-	MonteCarloMinimiser<PoissonFit> poissonMinimiser(*this, &PoissonFit::costTabulatedC);
-	poissonMinimiser.enableParameterSmoothing(smoothingThreshold, smoothingK, smoothingM);
-	alphaSpace_ = FunctionSpace::ReciprocalSpace;
-
-	for (int n=(ignoreZerothTerm_ ? 1 : 0); n<nPoissons_; ++n)
-	{
-		alphaIndex_.add(n);
-		poissonMinimiser.addTarget(C_[n]);
-	}
-
-	currentError_ = poissonMinimiser.minimise(nIterations, initialStepSize);
-
-	// Perform a final grouped refit of the amplitudes
-	if (reFitAtEnd) reFitC(FunctionSpace::ReciprocalSpace);
-
-	// Regenerate approximation and calculate percentage error of fit
-	generateApproximation(FunctionSpace::ReciprocalSpace);
-	currentError_ = referenceData_.error(approximateData_);
-
-	return currentError_;
-}
-
-// Re-fit amplitudes in specified space, starting from current parameters
-double PoissonFit::reFitC(FunctionSpace::SpaceType space, int sampleSize, int overlap, int nLoops)
+// Sweep-fit coefficients in specified space, starting from current parameters
+double PoissonFit::sweepFitC(FunctionSpace::SpaceType space, double xMin, int sampleSize, int overlap, int nLoops)
 {
 	/*
 	 * Our strategy for optimising the parameters with respect to the fit between approximate and source data will be as
@@ -386,14 +301,18 @@ double PoissonFit::reFitC(FunctionSpace::SpaceType space, int sampleSize, int ov
 			MonteCarloMinimiser<PoissonFit> poissonMinimiser(*this, &PoissonFit::costAnalyticC);
 			alphaSpace_ = space;
 
-			// Add Gaussian parameters as fitting targets
+			// Set-up fitting targets 
 			for (int n=0; n<sampleSize; ++n)
 			{
-				poissonMinimiser.addTarget(C_[p]);
-				alphaIndex_.add(p);
+				// Add the Poisson coefficients to the fitting pool - ignore any whose x centre is below rMin
+				if (((p+1)*sigmaR_) >= xMin)
+				{
+					poissonMinimiser.addTarget(C_[p]);
+					alphaIndex_.add(p);
 
-				// Remove this function from the approximate data
-				addFunction(approximateData_, space, -C_[p], p);
+					// Remove this function from the approximate data
+					addFunction(approximateData_, space, -C_[p], p);
+				}
 
 				// Increase function index - if that was the last one, break now
 				++p;
@@ -413,6 +332,97 @@ double PoissonFit::reFitC(FunctionSpace::SpaceType space, int sampleSize, int ov
 	generateApproximation(space);
 
 	return referenceData_.error(approximateData_);
+}
+
+// Construct suitable representation using given number of Poissons spaced evenly in real space up to rMax (those below rMin will be zeroed)
+double PoissonFit::constructReciprocal(double rMin, double rMax, int nPoissons, double sigmaQ, double sigmaR, int nIterations, double initialStepSize, int smoothingThreshold, int smoothingK, int smoothingM, bool reFitAtEnd)
+{
+	// Clear any existing data
+	nPoissons_ = nPoissons;
+	C_.initialise(nPoissons_);
+	C_ = 0.0;
+	sigmaQ_ = sigmaQ;
+	sigmaR_ = sigmaR;
+	rMin_ = 0.0;
+	rMax_ = rMax;
+	rStep_ = rMax_ / nPoissons_;
+
+	// Pre-calculate the necessary terms and function data
+	preCalculateTerms();
+	updatePrecalculatedFunctions(FunctionSpace::ReciprocalSpace);
+
+	// Clear the approximate data
+	approximateData_.templateFrom(referenceData_);
+
+	// Perform Monte Carlo minimisation on the amplitudes
+	MonteCarloMinimiser<PoissonFit> poissonMinimiser(*this, &PoissonFit::costTabulatedC);
+	poissonMinimiser.enableParameterSmoothing(smoothingThreshold, smoothingK, smoothingM);
+	alphaSpace_ = FunctionSpace::ReciprocalSpace;
+
+	// Add coefficients for minimising
+	for (int n=(ignoreZerothTerm_ ? 1 : 0); n<nPoissons_; ++n)
+	{
+		if (((n+1)*sigmaR_) < rMin) continue;
+
+		alphaIndex_.add(n);
+		poissonMinimiser.addTarget(C_[n]);
+	}
+
+	currentError_ = poissonMinimiser.minimise(nIterations, initialStepSize);
+
+	// Perform a final grouped refit of the amplitudes
+	if (reFitAtEnd) sweepFitC(FunctionSpace::ReciprocalSpace, rMin);
+
+	// Regenerate approximation and calculate percentage error of fit
+	generateApproximation(FunctionSpace::ReciprocalSpace);
+	currentError_ = referenceData_.error(approximateData_);
+
+	return currentError_;
+}
+
+// Construct suitable reciprocal-space representation using provided coefficients as a starting point
+double PoissonFit::constructReciprocal(double rMin, double rMax, Array<double> coefficients, double sigmaQ, double sigmaR, int nIterations, double initialStepSize, int smoothingThreshold, int smoothingK, int smoothingM, bool reFitAtEnd)
+{
+	// Set up data
+	nPoissons_ = coefficients.nItems();
+	C_ = coefficients;
+	sigmaQ_ = sigmaQ;
+	sigmaR_ = sigmaR;
+	rMin_ = 0.0;
+	rMax_ = rMax;
+	rStep_ = rMax_ / nPoissons_;
+
+	// Pre-calculate the necessary terms and function data
+	preCalculateTerms();
+	updatePrecalculatedFunctions(FunctionSpace::ReciprocalSpace);
+
+	// Clear the approximate data
+	approximateData_.templateFrom(referenceData_);
+
+	// Perform Monte Carlo minimisation on the amplitudes
+	MonteCarloMinimiser<PoissonFit> poissonMinimiser(*this, &PoissonFit::costTabulatedC);
+	poissonMinimiser.enableParameterSmoothing(smoothingThreshold, smoothingK, smoothingM);
+	alphaSpace_ = FunctionSpace::ReciprocalSpace;
+
+	// Add coefficients for minimising
+	for (int n=(ignoreZerothTerm_ ? 1 : 0); n<nPoissons_; ++n)
+	{
+		if (((n+1)*sigmaR_) < rMin) continue;
+
+		alphaIndex_.add(n);
+		poissonMinimiser.addTarget(C_[n]);
+	}
+
+	currentError_ = poissonMinimiser.minimise(nIterations, initialStepSize);
+
+	// Perform a final grouped refit of the amplitudes
+	if (reFitAtEnd) sweepFitC(FunctionSpace::ReciprocalSpace, rMin);
+
+	// Regenerate approximation and calculate percentage error of fit
+	generateApproximation(FunctionSpace::ReciprocalSpace);
+	currentError_ = referenceData_.error(approximateData_);
+
+	return currentError_;
 }
 
 /*

@@ -243,6 +243,69 @@ void GaussFit::updatePrecalculatedFunctions(FunctionSpace::SpaceType space, doub
 		}
 	}
 }
+// Sweep-fit amplitudes in specified space, starting from current parameters
+double GaussFit::sweepFitA(FunctionSpace::SpaceType space, double xMin, int sampleSize, int overlap, int nLoops)
+{
+	/*
+	 * Our strategy for optimising the parameters with respect to the fit between approximate and source data will be as
+	 * follows. Since the number of Gaussians may be reasonably large (N=hundreds, with 2N parameters total) attempting a
+	 * multidimensional fit of this scope is going to be very slow. Since the Gaussians are only locally-dependent (in x)
+	 * on each other, we can reduce the problem to a series of local minimisations of a smaller number of Gaussians at a
+	 * time. To prevent discontinuities at the extremes of these ranges, we overlap the fit regions a little, and to get
+	 * a good global fit we perform several loops of fitting over the data range (shifting the starting point a little
+	 * each time).
+	 */
+
+	currentError_ = 1.0e9;
+
+	for (int loop=0; loop < nLoops; ++loop)
+	{
+		// Index of the Gaussian in the x_, A_, and fwhm_ arrays is given by 'g'
+		int g = loop*(sampleSize/nLoops);
+		while (g < nGaussians_)
+		{
+			// Generate the approximate data - we will subtract the Gaussians that we are fitting in the next loop
+			generateApproximation(space);
+
+			// Clear the reference array of Gaussian indices
+			alphaIndex_.clear();
+
+			// Set up minimiser for the next batch
+			MonteCarloMinimiser<GaussFit> gaussMinimiser(*this, &GaussFit::costAnalyticA);
+			alphaSpace_ = space;
+
+			// Add Gaussian parameters as fitting targets
+			for (int n=0; n<sampleSize; ++n)
+			{
+				// Add the Gaussian only if its xCentre is above xMin
+				if (x_[g] >= xMin)
+				{
+					gaussMinimiser.addTarget(A_[g]);
+					alphaIndex_.add(g);
+
+					// Remove this Gaussian from the approximate data
+					addFunction(approximateData_, space, x_[g], -A_[g], fwhm_[g]);
+				}
+
+				// Increase Gaussian index - if that was the last one, break now
+				++g;
+				if (g == nGaussians_) break;
+			}
+
+			// Optimise this set of Gaussians
+			currentError_ = gaussMinimiser.minimise(100, 0.01);
+			Messenger::printVerbose("GaussFit::reFitA() - G = %i, error = %f\n", g, currentError_);
+
+			// If we are not at the end of the Gaussian array, move the index backwards so the next set overlaps a little with this one
+			if (g < nGaussians_) g -= overlap;
+		}
+	}
+
+	// Calculate the approximate function
+	generateApproximation(space);
+
+	return referenceData_.error(approximateData_);
+}
 
 // Construct suitable representation with minimal Gaussians automatically
 double GaussFit::constructReal(double requiredError, int maxGaussians)
@@ -371,8 +434,8 @@ double GaussFit::constructReal(double requiredError, int maxGaussians)
 	return currentError_;
 }
 
-// Construct function representation in reciprocal space, spacing Gaussians out evenly in real space up to rMax
-double GaussFit::constructReciprocal(double rMax, int nGaussians, double sigmaQ, int nIterations, double initialStepSize, int smoothingThreshold, int smoothingK, int smoothingM, bool reFitAtEnd)
+// Construct function representation in reciprocal space, spacing Gaussians out evenly in real space up to rMax (those below rMin will be ignored)
+double GaussFit::constructReciprocal(double rMin, double rMax, int nGaussians, double sigmaQ, int nIterations, double initialStepSize, int smoothingThreshold, int smoothingK, int smoothingM, bool reFitAtEnd)
 {
 	// Clear any existing data
 	x_.clear();
@@ -398,8 +461,10 @@ double GaussFit::constructReciprocal(double rMax, int nGaussians, double sigmaQ,
 	gaussMinimiser.enableParameterSmoothing(smoothingThreshold, smoothingK, smoothingM);
 	alphaSpace_ = FunctionSpace::ReciprocalSpace;
 
+	// Add the Gaussian amplitudes to the fitting pool - ignore any whose x centre is below rMin
 	for (int n=0; n<nGaussians_; ++n)
 	{
+		if (x_[n] < rMin) continue;
 		alphaIndex_.add(n);
 		gaussMinimiser.addTarget(A_[n]);
 	}
@@ -408,7 +473,7 @@ double GaussFit::constructReciprocal(double rMax, int nGaussians, double sigmaQ,
 	currentError_ = gaussMinimiser.minimise(nIterations, initialStepSize);
 
 	// Perform a final grouped refit of the amplitudes
-	if (reFitAtEnd) reFitA(FunctionSpace::ReciprocalSpace);
+	if (reFitAtEnd) sweepFitA(FunctionSpace::ReciprocalSpace, rMin);
 
 	// Regenerate approximation and calculate percentage error of fit
 	generateApproximation(FunctionSpace::ReciprocalSpace);
@@ -418,7 +483,7 @@ double GaussFit::constructReciprocal(double rMax, int nGaussians, double sigmaQ,
 }
 
 // Construct function representation in reciprocal space using specified parameters as starting point
-double GaussFit::constructReciprocal(double rMax, const Array<double>& A, double sigmaQ, int nIterations, double initialStepSize, int smoothingThreshold, int smoothingK, int smoothingM, bool reFitAtEnd)
+double GaussFit::constructReciprocal(double rMin, double rMax, const Array<double>& A, double sigmaQ, int nIterations, double initialStepSize, int smoothingThreshold, int smoothingK, int smoothingM, bool reFitAtEnd)
 {
 	// Create the fitting functions
 	A_ = A;
@@ -442,8 +507,10 @@ double GaussFit::constructReciprocal(double rMax, const Array<double>& A, double
 	gaussMinimiser.enableParameterSmoothing(smoothingThreshold, smoothingK, smoothingM);
 	alphaSpace_ = FunctionSpace::ReciprocalSpace;
 
+	// Add the Gaussian amplitudes to the fitting pool - ignore any whose x centre is below rMin
 	for (int n=0; n<nGaussians_; ++n)
 	{
+		if (x_[n] < rMin) continue;
 		alphaIndex_.add(n);
 		gaussMinimiser.addTarget(A_[n]);
 	}
@@ -452,7 +519,7 @@ double GaussFit::constructReciprocal(double rMax, const Array<double>& A, double
 	currentError_ = gaussMinimiser.minimise(nIterations, initialStepSize);
 
 	// Perform a final grouped refit of the amplitudes
-	if (reFitAtEnd) reFitA(FunctionSpace::ReciprocalSpace);
+	if (reFitAtEnd) sweepFitA(FunctionSpace::ReciprocalSpace, rMin);
 
 	// Regenerate approximation and calculate percentage error of fit
 	generateApproximation(FunctionSpace::ReciprocalSpace);
@@ -461,65 +528,6 @@ double GaussFit::constructReciprocal(double rMax, const Array<double>& A, double
 	return currentError_;
 }
 
-// Re-fit amplitudes in specified space, starting from current parameters
-double GaussFit::reFitA(FunctionSpace::SpaceType space, int sampleSize, int overlap, int nLoops)
-{
-	/*
-	 * Our strategy for optimising the parameters with respect to the fit between approximate and source data will be as
-	 * follows. Since the number of Gaussians may be reasonably large (N=hundreds, with 2N parameters total) attempting a
-	 * multidimensional fit of this scope is going to be very slow. Since the Gaussians are only locally-dependent (in x)
-	 * on each other, we can reduce the problem to a series of local minimisations of a smaller number of Gaussians at a
-	 * time. To prevent discontinuities at the extremes of these ranges, we overlap the fit regions a little, and to get
-	 * a good global fit we perform several loops of fitting over the data range (shifting the starting point a little
-	 * each time).
-	 */
-
-	currentError_ = 1.0e9;
-
-	for (int loop=0; loop < nLoops; ++loop)
-	{
-		// Index of the Gaussian in the x_, A_, and fwhm_ arrays is given by 'g'
-		int g = loop*(sampleSize/nLoops);
-		while (g < nGaussians_)
-		{
-			// Generate the approximate data - we will subtract the Gaussians that we are fitting in the next loop
-			generateApproximation(space);
-
-			// Clear the reference array of Gaussian indices
-			alphaIndex_.clear();
-
-			// Set up minimiser for the next batch
-			MonteCarloMinimiser<GaussFit> gaussMinimiser(*this, &GaussFit::costAnalyticA);
-			alphaSpace_ = space;
-
-			// Add Gaussian parameters as fitting targets
-			for (int n=0; n<sampleSize; ++n)
-			{
-				gaussMinimiser.addTarget(A_[g]);
-				alphaIndex_.add(g);
-
-				// Remove this Gaussian from the approximate data
-				addFunction(approximateData_, space, x_[g], -A_[g], fwhm_[g]);
-
-				// Increase Gaussian index - if that was the last one, break now
-				++g;
-				if (g == nGaussians_) break;
-			}
-
-			// Optimise this set of Gaussians
-			currentError_ = gaussMinimiser.minimise(100, 0.01);
-			Messenger::printVerbose("GaussFit::reFitA() - G = %i, error = %f\n", g, currentError_);
-
-			// If we are not at the end of the Gaussian array, move the index backwards so the next set overlaps a little with this one
-			if (g < nGaussians_) g -= overlap;
-		}
-	}
-
-	// Calculate the approximate function
-	generateApproximation(space);
-
-	return referenceData_.error(approximateData_);
-}
 
 /*
  * Cost Function Callbacks
