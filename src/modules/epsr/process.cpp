@@ -88,19 +88,14 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	 * Get Keyword Options
 	 */
 	const double ereq = keywords_.asDouble("EReq");
-	const double errorStabilityThreshold = keywords_.asDouble("ErrorStabilityThreshold");
-	const int errorStabilityWindow = keywords_.asInt("ErrorStabilityWindow");
 	ExpansionFunctionType functionType = expansionFunctionType(keywords_.asString("ExpansionFunction"));
 	const double feedback = keywords_.asDouble("Feedback");
 	const double gsigma1 = keywords_.asDouble("GSigma1");
 	const double gsigma2 = keywords_.asDouble("GSigma2");
-	const double globalMinimumRadius = keywords_.asDouble("MinimumRadius");
-	const double globalMaximumRadius = keywords_.asDouble("MaximumRadius");
 	const bool modifyPotential = keywords_.asBool("ModifyPotential");
 	int ncoeffp = keywords_.asInt("NCoeffP");
 	const int npitss = keywords_.asInt("NPItSs");
 	const bool onlyWhenEnergyStable = keywords_.asBool("OnlyWhenEnergyStable");
-	const bool onlyWhenErrorStable = keywords_.asBool("OnlyWhenErrorStable");
 	const double psigma1 = keywords_.asDouble("PSigma1");
 	const double psigma2 = keywords_.asDouble("PSigma2");
 	const double qMax = keywords_.asDouble("QMax");
@@ -118,13 +113,11 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 	// Print option summary
 	Messenger::print("EPSR: Feedback factor is %f.\n", feedback);
-	Messenger::print("EPSR: %s functions will be used to approximate difference functions.\n", expansionFunctionType(functionType));
+	Messenger::print("EPSR: %s functions will be used to approximate difference data.\n", expansionFunctionType(functionType));
 	Messenger::print("EPSR: Number of functions used in approximation is %i, sigma(Q) = %f.\n", ncoeffp, psigma2);
-// 	else Messenger::print("EPSR: Minimum radius of %f Angstroms will be applied to all generated potentials.\n", globalMinimumRadius);
 	if (modifyPotential) Messenger::print("EPSR: Perturbations to interatomic potentials will be generated and applied.\n");
 	else Messenger::print("EPSR: Perturbations to interatomic potentials will be generated only (current potentials will not be modified).\n");
 	if (onlyWhenEnergyStable) Messenger::print("EPSR: Potential refinement will only be performed if all related Configuration energies are stable.\n");
-	if (onlyWhenErrorStable) Messenger::print("EPSR: Potential refinement will only be performed if all percentage errors with reference data are stable.\n");
 	Messenger::print("EPSR: Range for potential generation is %f < Q < %f Angstroms**-1.\n", qMin, qMax);
 	Messenger::print("\n");
 
@@ -195,25 +188,6 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Store the percentage error
 		errors.addPoint(dissolve.iteration(), error);
 		Messenger::print("Current error for reference data '%s' is %f%%.\n", module->uniqueName(), error);
-
-		// Assess the stability of the current error
-		if (errorStabilityWindow > errors.nPoints()) ++nUnstableData;
-		else
-		{
-			double yMean;
-			double grad = errors.lastGradient(errorStabilityWindow, &yMean);
-			double thresholdValue = fabs(errorStabilityThreshold*yMean);
-			if (fabs(grad) > thresholdValue) ++nUnstableData;
-
-			Messenger::print("Error gradient of last %i points for reference data '%s' is %e %%/step (absolute threshold value is %e, stable = %s).\n", errorStabilityWindow, module->uniqueName(), grad, thresholdValue, DissolveSys::btoa(fabs(grad) <= thresholdValue));
-		}
-	}
-
-	// Check error stability if requested
-	if (onlyWhenErrorStable && (nUnstableData > 0))
-	{
-		Messenger::print("Errors for %i reference datasets are unstable, so no potential refinement will be performed this iteration.\n", nUnstableData);
-		return true;
 	}
 
 
