@@ -125,7 +125,7 @@ template <class T> class MonteCarloMinimiser
 		// Get initial error of input parameters
 		double currentError = (object_.*costFunction_)(currentTargetValues());
 		Messenger::printVerbose("MonteCarloMinimiser<T>::minimise() - Initial error = %f\n", currentError);
-
+		
 		double trialError;
 		stepSize_ = stepSize;
 		Array<double> trialValues;
