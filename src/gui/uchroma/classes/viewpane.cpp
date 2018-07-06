@@ -1062,10 +1062,17 @@ void ViewPane::showAllData(double xFrac, double yFrac, double zFrac)
 {
 	updateAxisLimits(xFrac, yFrac, zFrac);
 
+	// Set axes limits to the extreme data values, making sure we have a sensible (i.e. non-zero range)
 	for (int axis = 0; axis < 3; ++axis)
 	{
-		axes_.setToLimit(axis, true);
-		axes_.setToLimit(axis, false);
+		// Grab axis limits and make sure the limits are sensible, expanding only if the range is zero
+		double limitMin = axes_.limitMin(axis);
+		double limitMax = axes_.limitMax(axis);
+		Axes::ensureSensibleRange(limitMin, limitMax, true);
+
+		axes_.setRange(axis, limitMin, limitMax);
+// 		axes_.setToLimit(axis, true);
+// 		axes_.setToLimit(axis, false);
 	}
 }
 
@@ -1167,6 +1174,10 @@ void ViewPane::autoFollowData()
 			yMin -= yDelta;
 		}
 	
+		// Ensure a sensible range for the axes
+		Axes::ensureSensibleRange(xMin, xMax, true);
+		Axes::ensureSensibleRange(yMin, yMax, false);
+
 		// Set new limits
 		axes_.setRange(0, xMin, xMax);
 		axes_.setRange(1, yMin, yMax);

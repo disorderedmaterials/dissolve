@@ -352,6 +352,53 @@ double Axes::realRange(int axis) const
 	else return max_.get(axis) - min_.get(axis);
 }
 
+// Ensure a sensible (non-zero) range, modifying the supplied values
+void Axes::ensureSensibleRange(double& minValue, double& maxValue, bool expandOnlyIfZero, double expansionFactor)
+{
+	// Get exponents and significands for both numbers
+	int expMin, expMax;
+	double significandMin = frexp(minValue, &expMin);
+	double significandMax = frexp(maxValue, &expMax);
+
+	/*
+	 * If exponents are different or the difference in the significands is large enough, we consider the range to be
+	 * acceptable, and only expand the range if 'expandOnlyIfZero' is false. The degree to which we expand the range is governed
+	 * by the 'expansionFactor'. If positive this represents a fractional amount of the total range that we will increase by.
+	 * If negative, this represents an absolute value by which we will increase the range.
+	 */
+	if ((expMin != expMax) || (fabs(significandMax-significandMin) > 1.0e-4))
+	{
+		// Increase the range (if 'expandOnlyIfZero' is false)
+		if (!expandOnlyIfZero)
+		{
+			if (expansionFactor > 0.0)
+			{
+				double yDelta = (maxValue - minValue)*expansionFactor;
+				maxValue += yDelta;
+				minValue -= yDelta;
+			}
+			else
+			{
+				maxValue += fabs(expansionFactor);
+				minValue -= fabs(expansionFactor);
+			}
+		}
+	}
+	else
+	{
+		if (expansionFactor > 0.0)
+		{
+			maxValue += expansionFactor*pow(2,expMax);
+			minValue -= expansionFactor*pow(2,expMax); 
+		}
+		else
+		{
+			maxValue += fabs(expansionFactor);
+			minValue -= fabs(expansionFactor);
+		}
+	}
+}
+
 // Return real axis minimum (accounting for log axes)
 double Axes::realMin(int axis) const
 {
