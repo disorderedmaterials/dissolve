@@ -154,14 +154,31 @@ int DoubleExp::exponent() const
 }
 
 // Return value as string
-CharString DoubleExp::asString()
+CharString DoubleExp::asString(const double formatThreshold, const int maxDecimals) const
 {
-	// Print the mantissa value to a formatted string, and strip any trailing zeroes
-	CharString mantissaString("%f", mantissa_);
+	/*
+	 * Check the absolute value against the provided threshold, and decide whether to use scientific or normal formatting.
+	 *
+	 * If using scientific notation, print the mantissa to a formatted string with maxDecimals. Otherwise, print the 
+	 * actual value to a formatted string.
+	 *
+	 * Strip any unnecessary trailing zeroes from the formatted string (we always keep one after the decimal point, if present).
+	 * 
+	 * Then, return the final formatted string, adding the exponent on if using scientificNotation.
+	 */
+
+	bool scientificNotation = fabs(value_) >= formatThreshold;
+	char formatString[32];
+	sprintf(formatString, "%%.%if", maxDecimals);
+
+	// Print the mantissa or full value to a formatted string, and strip any trailing zeroes
+	CharString mantissaString(formatString, scientificNotation ? mantissa_ : value_);
 	int dot = mantissaString.find('.');
 	if (dot != -1)
 	{
 		int nZeroesAtEnd = 0;
+		int nDecimals = 0;
+
 		// Start the search at [dot+2], skipping the dot and the first char after it - we will always allow one lone zero after the decimal point
 		for (int n=dot+2; n<mantissaString.length(); ++n)
 		{
@@ -169,11 +186,17 @@ CharString DoubleExp::asString()
 			// If anything else, reset the counter
 			if (mantissaString[n] == '0') ++nZeroesAtEnd;
 			else nZeroesAtEnd = 0;
+
+			// Increase the number of decimal places
+			++nDecimals;
 		}
 		mantissaString.eraseEnd(nZeroesAtEnd);
 	}
 
-	// If the exponent is 0, omit the 'e'
-	if (exponent_ == 0) return mantissaString;
-	else return CharString("%se%i", mantissaString.get(), exponent_);
+	/*
+	 * If using normal notation, the mantissaString is our result.
+	 * If not, add on the exponent (unless it is zero).
+	 */
+	if ((!scientificNotation) || (exponent_ == 0)) return mantissaString;
+	else return CharString("%sE%i", mantissaString.get(), exponent_);
 }

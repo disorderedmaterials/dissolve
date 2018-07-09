@@ -70,10 +70,11 @@ bool TExponentialSpin::clamp()
 }
 
 // Create text from current value, and display in lineEdit
-void TExponentialSpin::updateTextFromValue(int precision)
+void TExponentialSpin::updateTextFromValue()
 {
+	const double formatThreshold = 1.0e3;
 // 	printf("Here we are in updateText, setting [%s].\n", qPrintable(value_.text(precision)));
-	lineEdit()->setText(value_.asString().get());
+	lineEdit()->setText(value_.asString(formatThreshold, 4).get());
 	textChanged_ = false;
 }
 
@@ -195,6 +196,8 @@ void TExponentialSpin::updateValueFromText()
 
 	textChanged_ = false;
 	emit(valueChanged(value_.value()));
+
+	updateTextFromValue();
 }
 
 // Flag that the text has been modified since the last emit of valueChanged()

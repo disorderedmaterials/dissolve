@@ -59,7 +59,7 @@ class TExponentialSpin : public QAbstractSpinBox
 	// Clamp current value to allowable range
 	bool clamp();
 	// Create text from current value, and display in lineEdit
-	void updateTextFromValue(int precision = 4);
+	void updateTextFromValue();
 
 	public:
 	// Return double value
