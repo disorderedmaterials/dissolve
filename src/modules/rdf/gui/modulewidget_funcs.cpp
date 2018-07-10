@@ -142,7 +142,7 @@ void RDFModuleWidget::setGraphDataTargets(RDFModule* module)
 	while (Configuration* cfg = configIterator.iterate())
 	{
 		// Add calculated total G(r)
-		blockData.sprintf("Collection 'G(r)'; Group 'Calc'; DataSet 'Calculated'; Source XYData '%s//UnweightedGR//Total'; EndDataSet; EndCollection", cfg->niceName());
+		blockData.sprintf("Collection '%s'; Group 'Calc'; DataSet 'Calculated'; Source XYData '%s//UnweightedGR//Total'; EndDataSet; EndCollection", cfg->niceName(), cfg->niceName());
 		totalsGraph_->addCollectionFromBlock(blockData);
 	}
 }
