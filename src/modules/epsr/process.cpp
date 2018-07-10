@@ -307,7 +307,6 @@ bool EPSRModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 			deltaFQFit = coeffMinimiser.approximation();
 		}
-		else return Messenger::error("Sellotape the developer to the ceiling and poke through with long thin things - he hasn't implemented this expansion function type yet.\n");
 	}
 
 	/*
