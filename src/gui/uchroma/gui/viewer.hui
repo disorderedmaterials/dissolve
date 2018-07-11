@@ -31,7 +31,7 @@
 #include "gui/uchroma/classes/axes.h"
 #include "gui/uchroma/classes/colourscale.h"
 #include "gui/uchroma/render/fontinstance.h"
-#include "base/xydata.h"
+#include "math/xydata.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
 

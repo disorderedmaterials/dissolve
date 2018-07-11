@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "base/xydata.h"
+#include "math/xydata.h"
 #include "base/sysfunc.h"
 
 // Make some checks before doing transform

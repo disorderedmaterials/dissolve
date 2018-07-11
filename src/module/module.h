@@ -24,7 +24,7 @@
 
 #include "base/messenger.h"
 #include "base/genericlist.h"
-#include "base/sampleddouble.h"
+#include "math/sampleddouble.h"
 #include "module/keywordlist.h"
 #include "templates/reflist.h"
 

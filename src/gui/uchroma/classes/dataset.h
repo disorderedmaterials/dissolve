@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_UCHROMADATASET_H
 #define DISSOLVE_UCHROMADATASET_H
 
-#include "base/xydata.h"
+#include "math/xydata.h"
 #include "gui/uchroma/classes/transformer.h"
 #include "templates/listitem.h"
 #include <QDir>

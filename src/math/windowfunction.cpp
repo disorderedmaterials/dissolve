@@ -23,7 +23,7 @@
 #include "base/lineparser.h"
 #include "base/processpool.h"
 #include "base/sysfunc.h"
-#include "base/xydata.h"
+#include "math/xydata.h"
 #include "templates/enumhelpers.h"
 
 // Constructor

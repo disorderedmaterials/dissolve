@@ -24,7 +24,6 @@
 
 #include "templates/genericitemcontainer.h"
 #include "base/dummyclass.h"
-#include "base/xydata.h"
 
 // GenericItemContainer< Array<DummyClass> >
 template <> class GenericItemContainer< Array<DummyClass> > : public GenericItem

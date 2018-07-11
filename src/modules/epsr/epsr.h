@@ -24,7 +24,7 @@
 
 #include "module/module.h"
 #include "module/group.h"
-#include "base/xydata.h"
+#include "math/xydata.h"
 #include "templates/array3d.h"
 
 // Forward Declarations

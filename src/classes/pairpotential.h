@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_PAIRPOTENTIAL_H
 #define DISSOLVE_PAIRPOTENTIAL_H
 
-#include "base/xydata.h"
+#include "math/xydata.h"
 #include "base/parameters.h"
 #include "templates/list.h"
 

@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "base/sampleddouble.h"
+#include "math/sampleddouble.h"
 #include "base/lineparser.h"
 #include <math.h>
 

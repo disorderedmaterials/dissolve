@@ -22,7 +22,7 @@
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "base/processpool.h"
-#include "base/xydata.h"
+#include "math/xydata.h"
 #include <string.h>
 
 // Constructor

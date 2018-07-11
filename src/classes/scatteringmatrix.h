@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_SCATTERINGMATRIX_H
 #define DISSOLVE_SCATTERINGMATRIX_H
 
-#include "base/xydata.h"
+#include "math/xydata.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
 #include "templates/pair.h"

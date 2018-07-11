@@ -33,7 +33,7 @@
 #include "classes/speciesinfo.h"
 #include "module/list.h"
 #include "modules/import/formats.h"
-#include "base/xydata.h"
+#include "math/xydata.h"
 #include "base/processpool.h"
 #include "base/genericlist.h"
 #include "templates/vector3.h"

@@ -25,7 +25,7 @@
 #include "classes/histogram.h"
 #include "classes/atomtypelist.h"
 #include "classes/weights.h"
-#include "base/xydata.h"
+#include "math/xydata.h"
 #include "templates/list.h"
 #include "templates/array2d.h"
 

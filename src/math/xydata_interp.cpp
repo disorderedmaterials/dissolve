@@ -19,7 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "base/xydata.h"
+#include "math/xydata.h"
 
 // Construct natural spline interpolation of data
 void XYData::interpolateSpline()

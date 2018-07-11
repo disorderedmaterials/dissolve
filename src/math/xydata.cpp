@@ -20,7 +20,7 @@
 */
 
 #include "base/processpool.h"
-#include "base/xydata.h"
+#include "math/xydata.h"
 #include "base/messenger.h"
 #include "base/lineparser.h"
 #include "math/constants.h"
